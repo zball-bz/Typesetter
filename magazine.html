@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irregular Shape Typesetting — Magazine Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #f7f3ec;
+    --ink: #1a1612;
+    --rust: #b8492f;
+    --gold: #c5993a;
+    --sage: #6b7c5e;
+    --slate: #4a5568;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--cream);
+  }
+
+  /* ── Header ── */
+  .masthead {
+    text-align: center;
+    padding: 40px 20px 20px;
+    border-bottom: 1px solid var(--ink);
+    margin: 0 60px;
+  }
+  .masthead-label {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 8px;
+  }
+  .masthead-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .masthead-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+
+  /* ── Magazine Grid ── */
+  .magazine {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 60px 80px;
+  }
+
+  .section-label {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--rust);
+    display: inline-block;
+  }
+
+  .section {
+    margin-bottom: 60px;
+    position: relative;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .section-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--slate);
+    margin-bottom: 20px;
+    max-width: 500px;
+    line-height: 1.6;
+  }
+
+  /* ── Shape Containers ── */
+  .shape-demo {
+    position: relative;
+    margin: 20px 0;
+  }
+
+  .shape-container {
+    position: relative;
+    font-family: 'Crimson Text', serif;
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  /* Circle cutout overlay */
+  .circle-overlay {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .circle-overlay img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .circle-label {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gold);
+    text-align: center;
+    padding: 10px;
+  }
+
+  /* Diamond shape */
+  .diamond-container {
+    position: relative;
+  }
+
+  /* Trapezoid */
+  .trapezoid-container {
+    position: relative;
+  }
+
+  /* ── Two-column layout ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .divider-v {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--ink);
+    opacity: 0.15;
+  }
+
+  /* ── Pull quote ── */
+  .pull-quote {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 24px;
+    line-height: 1.4;
+    color: var(--rust);
+    text-align: center;
+    padding: 30px 40px;
+    margin: 30px 0;
+    border-top: 3px solid var(--rust);
+    border-bottom: 3px solid var(--rust);
+    position: relative;
+  }
+  .pull-quote::before {
+    content: '\201C';
+    font-size: 72px;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--rust);
+    opacity: 0.2;
+    line-height: 1;
+  }
+
+  /* ── Shape viz (SVG overlays) ── */
+  .shape-viz {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── Code block ── */
+  .code-block {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: var(--ink);
+    color: #e2ddd5;
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 16px 0;
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+  .code-block .kw { color: var(--rust); }
+  .code-block .fn { color: var(--gold); }
+  .code-block .cm { color: #7a736b; }
+
+  /* ── Typeset paragraph styles ── */
+  .typeset-paragraph { margin-bottom: 0.6em; }
+  .typeset-line { /* lines are divs */ }
+
+  /* ── Wavy section ── */
+  .wave-section {
+    position: relative;
+  }
+
+  /* ── Footer ── */
+  .colophon {
+    text-align: center;
+    padding: 30px;
+    border-top: 1px solid var(--ink);
+    margin: 0 60px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-label">A Demonstration of</div>
+  <div class="masthead-title">Shaped Text</div>
+  <div class="masthead-sub">Knuth–Plass Line Breaking in Arbitrary Containers</div>
+</div>
+
+<div class="magazine">
+
+  <!-- ═══ Section 1: Circle Cutout ═══ -->
+  <div class="section">
+    <div class="section-label">I — Circle Wrap</div>
+    <div class="section-title">Text Flows Around<br>Any Obstacle</div>
+    <div class="section-desc">
+      The line width function accepts a line number and returns the available width.
+      By subtracting the circular obstruction from each line's available space,
+      text flows naturally around any shape.
+    </div>
+    <div class="shape-demo" style="position: relative;">
+      <div class="circle-overlay" id="circle-el"
+           style="width: 160px; height: 160px; right: 30px; top: 10px; z-index: 2;">
+        <div class="circle-label">lineWidths(n)<br>= f(geometry)</div>
+      </div>
+      <div class="shape-container" id="circle-text" style="width: 520px; min-height: 200px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ Section 2: Diamond ═══ -->
+  <div class="section">
+    <div class="section-label">II — Diamond Form</div>
+    <div class="section-title">Expanding &amp; Contracting</div>
+    <div class="section-desc">
+      Lines start narrow, widen to the middle, then narrow again — forming a diamond.
+      The optimizer distributes text evenly across all line widths.
+    </div>
+    <div class="shape-demo" style="display: flex; justify-content: center;">
+      <div class="shape-container" id="diamond-text" style="width: 500px; min-height: 200px; text-align: center;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ Pull Quote ═══ -->
+  <div class="pull-quote">
+    The algorithm considers every possible arrangement of words<br>
+    and selects the one that minimizes a global cost function.
+  </div>
+
+  <!-- ═══ Section 3: Hourglass ═══ -->
+  <div class="section">
+    <div class="section-label">III — Hourglass</div>
+    <div class="section-title">Pinch &amp; Release</div>
+    <div class="section-desc">
+      Wide at the edges, pinched in the center. The inverse of the diamond
+      demonstrates how the algorithm handles dramatic width changes gracefully.
+    </div>
+    <div class="shape-demo" style="display: flex; justify-content: center;">
+      <div class="shape-container" id="hourglass-text" style="width: 500px; min-height: 200px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ Section 4: Wave / Sine ═══ -->
+  <div class="section">
+    <div class="section-label">IV — Sinusoidal Margins</div>
+    <div class="section-title">Riding the Wave</div>
+    <div class="section-desc">
+      Both left and right margins follow sine curves with different phases,
+      creating an undulating text column.
+    </div>
+    <div class="shape-demo" style="display: flex; justify-content: center;">
+      <div class="shape-container" id="wave-text" style="width: 520px; min-height: 200px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ Section 5: Circular Text ═══ -->
+  <div class="section">
+    <div class="section-label">V — Circular Fill</div>
+    <div class="section-title">Text in a Circle</div>
+    <div class="section-desc">
+      Each line's width is computed from the chord length at that vertical position
+      within a circle. The text fills the circular boundary perfectly.
+    </div>
+    <div class="shape-demo" style="display: flex; justify-content: center;">
+      <div class="shape-container" id="circle-fill-text" style="width: 400px; min-height: 380px; position: relative;"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="colophon">
+  Typeset with Knuth–Plass · Hyphenation by Liang · Built in TypeScript
+</div>
+
+<script id="bundle">%%BUNDLE%%</script>
+<script>
+const TEXT_CIRCLE = 'Typography has always been a dance between constraint and expression. The earliest scribes shaped their letters to fit the vellum they had, working within the natural boundaries of animal skin. Medieval illuminators wrapped text around elaborate initials and marginalia, creating pages where words and images intertwined in complex harmony. The Knuth-Plass algorithm brings this ancient flexibility to digital text, allowing paragraphs to flow around any obstacle with mathematically optimal spacing.';
+
+const TEXT_DIAMOND = 'Words can take any shape. The line breaking algorithm does not care whether lines are uniform or wildly varied. It simply finds the best way to distribute text across whatever widths it is given. Here the lines expand from narrow to wide and back again, forming a diamond. Each line is optimized not in isolation but as part of the whole paragraph, trading local perfection for global harmony. This is the heart of the Knuth-Plass insight: the beauty of a paragraph emerges from the relationships between all its lines, not from any single line considered alone.';
+
+const TEXT_HOURGLASS = 'The hourglass shape demonstrates how the algorithm handles dramatic width variations. At the top and bottom, lines are wide and comfortable. In the center, they pinch to a narrow waist, forcing aggressive hyphenation and tight spacing. Yet the optimizer finds a way through, distributing the strain across all lines rather than letting any single line bear the burden. Like sand through an hourglass, the words flow smoothly through the constriction, emerging on the other side with renewed breadth.';
+
+const TEXT_WAVE = 'Imagine text that breathes, that expands and contracts like a living thing. Sinusoidal margins create exactly this effect. The left edge pushes in as the right edge pulls out, then reverses. The column of text undulates like a flag in the wind or a stream finding its way between stones. The algorithm adapts to each line individually while maintaining the overall rhythm and even spacing that makes text pleasant to read. No greedy algorithm could achieve this level of refinement across so many varying widths.';
+
+const TEXT_CIRCLE_FILL = 'A circle is perhaps the most alien shape for text, which naturally wants to live in rectangles. Yet with variable line widths computed from chord lengths, even a circle becomes a viable text container. The lines are shortest at the top and bottom, widest at the equator. The optimizer must work especially hard here, balancing the extreme variation in line lengths while maintaining readable spacing. Hyphenation becomes essential at the narrow extremes, where only a few words can fit. The result is text that fills the circle like water fills a bowl, finding its natural level at every point along the boundary. This is the power of separating the line breaking algorithm from any assumption about container geometry.';
+
+const LINE_H = 27; // line height in px (18px * 1.5)
+
+async function runDemos() {
+  await Typesetter.initHyphenation();
+  const measurer = new Typesetter.TextMeasurer();
+  const baseStyle = { fontFamily: '"Crimson Text", serif', fontSize: 18, fontWeight: 400, italic: false };
+
+  function typesetCustom(text, container, lineWidthFn, centerLines) {
+    const ast = Typesetter.parse(text);
+    const allNodes = [];
+    for (const p of ast) {
+      for (const n of p.children) allNodes.push(n);
+    }
+    const blocks = Typesetter.flattenToBlocks(allNodes, measurer, 18);
+    const result = Typesetter.breakLines(blocks, lineWidthFn);
+
+    // Custom render with per-line centering support
+    container.innerHTML = '';
+    const para = document.createElement('div');
+    para.className = 'typeset-paragraph';
+
+    let blockIdx = 0;
+    for (let lineIdx = 0; lineIdx < result.breakpoints.length; lineIdx++) {
+      const lineEnd = result.breakpoints[lineIdx];
+      const isLastLine = lineIdx === result.breakpoints.length - 1;
+
+      const lineDiv = document.createElement('div');
+      lineDiv.className = 'typeset-line';
+
+      // Collect line blocks
+      let lineBlocks = [];
+      while (blockIdx < lineEnd) {
+        lineBlocks.push(blocks[blockIdx]);
+        blockIdx++;
+      }
+      // Trim spaces
+      while (lineBlocks.length > 0 && lineBlocks[0].isSpace) lineBlocks.shift();
+      while (lineBlocks.length > 0 && lineBlocks[lineBlocks.length - 1].isSpace) lineBlocks.pop();
+
+      const lastBlock = lineBlocks[lineBlocks.length - 1];
+      const endsWithHyphen = lastBlock && lastBlock.isHyphen && !isLastLine;
+
+      const lineW = lineWidthFn(lineIdx);
+
+      // Compute content width for spacing
+      if (!isLastLine) {
+        let contentW = 0, totalSpaceW = 0, spaceCount = 0;
+        for (const b of lineBlocks) {
+          if (b.isHyphen) continue;
+          if (b.isSpace) { totalSpaceW += b.spaceWidth; spaceCount++; }
+          else contentW += b.width;
+        }
+        if (endsWithHyphen && lastBlock.breakWidth > 0) contentW += lastBlock.breakWidth;
+
+        const slack = lineW - contentW - totalSpaceW;
+        if (slack < 0 && spaceCount > 0) {
+          lineDiv.style.wordSpacing = (slack / spaceCount) + 'px';
+        }
+        lineDiv.style.textAlign = 'justify';
+        lineDiv.style.textAlignLast = 'justify';
+      } else {
+        lineDiv.style.textAlign = centerLines ? 'center' : 'left';
+      }
+
+      // Always set explicit width; center if needed
+      lineDiv.style.width = lineW + 'px';
+      if (centerLines) {
+        const totalW = container.clientWidth || 500;
+        lineDiv.style.marginLeft = ((totalW - lineW) / 2) + 'px';
+      }
+
+      // Render spans
+      for (const block of lineBlocks) {
+        if (block.isHyphen) continue;
+        if (!block.text) continue;
+        const span = document.createElement('span');
+        span.style.fontFamily = block.style.fontFamily;
+        span.style.fontSize = block.style.fontSize + 'px';
+        span.style.fontWeight = String(block.style.fontWeight);
+        if (block.style.italic) span.style.fontStyle = 'italic';
+        span.textContent = block.text;
+        lineDiv.appendChild(span);
+      }
+
+      if (endsWithHyphen && lastBlock.breakWidth > 0) {
+        const hyphenSpan = document.createElement('span');
+        hyphenSpan.style.fontFamily = lastBlock.style.fontFamily;
+        hyphenSpan.style.fontSize = lastBlock.style.fontSize + 'px';
+        hyphenSpan.textContent = '-';
+        lineDiv.appendChild(hyphenSpan);
+      }
+
+      para.appendChild(lineDiv);
+    }
+    container.appendChild(para);
+    return result;
+  }
+
+  // ─── 1. Circle cutout ───
+  const circleR = 80, circleX = 520 - 30 - 80, circleY = 10 + 80; // center of circle
+  const totalW1 = 520;
+  typesetCustom(TEXT_CIRCLE, document.getElementById('circle-text'), function(n) {
+    const y = n * LINE_H + LINE_H / 2;
+    const dy = y - circleY;
+    if (Math.abs(dy) < circleR + 8) {
+      const chordHalf = Math.sqrt(Math.max(0, (circleR + 8) * (circleR + 8) - dy * dy));
+      const obstStart = circleX - chordHalf;
+      const obstEnd = circleX + chordHalf;
+      if (obstEnd > totalW1 - 10) {
+        return Math.max(100, obstStart - 12);
+      }
+      return Math.max(100, totalW1 - (totalW1 - obstStart + 12));
+    }
+    return totalW1;
+  }, false);
+
+  // ─── 2. Diamond ───
+  const totalW2 = 480;
+  const minW2 = 100;
+  const diamondLines = 18;
+  typesetCustom(TEXT_DIAMOND, document.getElementById('diamond-text'), function(n) {
+    const mid = diamondLines / 2;
+    const t = 1 - Math.abs(n - mid) / mid;
+    return minW2 + (totalW2 - minW2) * Math.max(0, t);
+  }, true);
+
+  // ─── 3. Hourglass ───
+  const totalW3 = 480;
+  const minW3 = 140;
+  const hourglassLines = 18;
+  typesetCustom(TEXT_HOURGLASS, document.getElementById('hourglass-text'), function(n) {
+    const mid = hourglassLines / 2;
+    const t = Math.abs(n - mid) / mid;
+    return minW3 + (totalW3 - minW3) * Math.max(0, t);
+  }, true);
+
+  // ─── 4. Wave ───
+  const totalW4 = 480;
+  const amplitude = 60;
+  typesetCustom(TEXT_WAVE, document.getElementById('wave-text'), function(n) {
+    const leftIndent = amplitude * (0.5 + 0.5 * Math.sin(n * 0.45));
+    const rightIndent = amplitude * (0.5 + 0.5 * Math.sin(n * 0.45 + 2.5));
+    return totalW4 - leftIndent - rightIndent;
+  }, false).breakpoints; // just run it
+
+  // Apply wave margins per line
+  const waveContainer = document.getElementById('wave-text');
+  const waveLines = waveContainer.querySelectorAll('.typeset-line');
+  waveLines.forEach(function(lineEl, n) {
+    const leftIndent = amplitude * (0.5 + 0.5 * Math.sin(n * 0.45));
+    lineEl.style.marginLeft = leftIndent + 'px';
+    lineEl.style.width = (480 - leftIndent - amplitude * (0.5 + 0.5 * Math.sin(n * 0.45 + 2.5))) + 'px';
+  });
+
+  // ─── 5. Circle fill ───
+  const circleR5 = 190;
+  const circleFillContainer = document.getElementById('circle-fill-text');
+  // Skip top/bottom lines where chords are too narrow
+  const circleTopPad = 2; // skip 2 lines from top
+
+  typesetCustom(TEXT_CIRCLE_FILL, circleFillContainer, function(n) {
+    const y = (n + circleTopPad + 0.5) * LINE_H;
+    const dy = y - circleR5;
+    const chord = 2 * Math.sqrt(Math.max(0, circleR5 * circleR5 - dy * dy));
+    return Math.max(120, chord - 10);
+  }, true);
+
+  // Apply top padding to push text down into the circle
+  circleFillContainer.style.paddingTop = (circleTopPad * LINE_H) + 'px';
+
+  // Draw circle border
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', '400');
+  svg.setAttribute('height', '400');
+  svg.style.position = 'absolute';
+  svg.style.top = '0';
+  svg.style.left = '0';
+  svg.style.pointerEvents = 'none';
+  const circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circ.setAttribute('cx', '200');
+  circ.setAttribute('cy', String(circleR5));
+  circ.setAttribute('r', String(circleR5));
+  circ.setAttribute('fill', 'none');
+  circ.setAttribute('stroke', '#c5993a');
+  circ.setAttribute('stroke-width', '2');
+  circ.setAttribute('stroke-dasharray', '4 3');
+  svg.appendChild(circ);
+  circleFillContainer.appendChild(svg);
+}
+
+// Wait for fonts then run
+document.fonts.ready.then(function() {
+  console.log('[magazine] Typesetter keys:', Object.keys(Typesetter));
+  console.log('[magazine] parse:', typeof Typesetter.parse);
+  console.log('[magazine] flattenToBlocks:', typeof Typesetter.flattenToBlocks);
+  console.log('[magazine] breakLines:', typeof Typesetter.breakLines);
+  runDemos().then(function() {
+    console.log('[magazine] done');
+  }).catch(function(e) {
+    console.error('[magazine] error:', e);
+  });
+});
+</script>
+
+</body>
+</html>
