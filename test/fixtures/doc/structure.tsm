@@ -1,0 +1,23 @@
+= Typesetting Notes
+
+== Structure and *emphasis*
+
+An introductory paragraph with a [useful link](https://example.org)
+and some `inline code` in it. %-- invisible note --%
+
+- First bullet item with enough words to wrap onto lines
+- Second item
+  continued on an indented line
+  - Nested child item
++ Ordered starts here
++ And continues
+
+> A quoted paragraph, indented by the engine rather than the
+> browser, wrapping across lines.
+
+---
+
+```js
+const x = compute(1, 2);
+return x;
+```

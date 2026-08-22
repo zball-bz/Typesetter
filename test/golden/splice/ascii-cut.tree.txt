@@ -1,0 +1,4 @@
+doc @[13,60) [base]
+  para @[13,60) [base]
+    text @[0,0) [base] str="7"
+    text @[17,60) [base] str="的结果 should cut at the ASCII boundary."

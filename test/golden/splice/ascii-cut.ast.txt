@@ -1,0 +1,5 @@
+doc @[0,61)
+  code-let @[0,12) js=" avg = 7"
+  para @[13,60)
+    splice @[13,17) expr="avg"
+    text @[17,60) str="的结果 should cut at the ASCII boundary."

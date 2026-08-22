@@ -1,0 +1,41 @@
+doc @[0,481) [base]
+  heading @[0,19) [base] level=1
+    text @[2,19) [base] str="Typesetting Notes"
+  heading @[21,48) [base] level=2
+    text @[24,37) [base] str="Structure and "
+    styled @[38,48) [BOLD]
+      text @[39,47) [BOLD] str="emphasis"
+  para @[50,170) [base]
+    text @[50,82) [base] str="An introductory paragraph with a "
+    link @[83,117) [base] url="https://example.org"
+      text @[84,95) [base] str="useful link"
+    text @[118,126) [base] str=" and some "
+    code @[127,140) [base]
+      text @[0,0) [base] str="inline code"
+    text @[141,147) [base] str=" in it."
+    comment @[148,170) [base]
+      text @[0,0) [base] str=" invisible note "
+  list @[172,228) [base] ordered=false start=1
+    item @[172,228) [base]
+      para @[174,228) [base]
+        text @[174,228) [base] str="First bullet item with enough words to wrap onto lines"
+    item @[229,242) [base]
+      para @[231,274) [base]
+        text @[231,274) [base] str="Second item continued on an indented line"
+      list @[277,296) [base] ordered=false start=1
+        item @[277,296) [base]
+          para @[279,296) [base]
+            text @[279,296) [base] str="Nested child item"
+  list @[297,318) [base] ordered=true start=1
+    item @[297,318) [base]
+      para @[299,318) [base]
+        text @[299,318) [base] str="Ordered starts here"
+    item @[319,334) [base]
+      para @[321,334) [base]
+        text @[321,334) [base] str="And continues"
+  quote @[336,396) [base]
+    para @[338,430) [base]
+      text @[338,430) [base] str="A quoted paragraph, indented by the engine rather than the browser, wrapping across lines."
+  rule @[432,435) [base]
+  codeblock @[437,481) [base] lang="js"
+    text @[0,0) [base] str="const x = compute(1, 2);\nreturn x;"

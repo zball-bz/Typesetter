@@ -1,0 +1,24 @@
+top pid=0 units=1
+ unit text indent=0su
+  word "First" w=2561su pen=INF @[0,39)
+  space w=257su stretch=1 @[0,39)
+  word "para" w=2049su pen=INF @[0,39)
+  hyphen bw=513su pen=0.70 @[0,39)
+  word "graph" w=2561su pen=INF @[0,39)
+  space w=257su stretch=1 @[0,39)
+  word "spans" w=2561su pen=INF @[0,39)
+  space w=257su stretch=1 @[0,39)
+  word "two" w=1537su pen=INF @[0,39)
+  space w=257su stretch=1 @[0,39)
+  word "source" w=3073su pen=INF @[0,39)
+  space w=257su stretch=1 @[0,39)
+  word "lines." w=3073su pen=INF @[0,39)
+top pid=1 units=1
+ unit text indent=0su
+  word "Sec" w=1537su pen=INF @[41,58)
+  hyphen bw=513su pen=0.70 @[41,58)
+  word "ond" w=1537su pen=INF @[41,58)
+  space w=257su stretch=1 @[41,58)
+  word "para" w=2049su pen=INF @[41,58)
+  hyphen bw=513su pen=0.70 @[41,58)
+  word "graph." w=3073su pen=INF @[41,58)

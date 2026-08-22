@@ -1,0 +1,8 @@
+doc @[0,64)
+  code-let @[0,11) js=" x = 42"
+  para @[12,63)
+    text @[12,24) str="The value is "
+    splice @[25,27) expr="x"
+    text @[27,50) str=". Next sentence follows "
+    splice @[51,58) expr="x.here"
+    text @[59,63) str=" too."

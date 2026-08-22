@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:engine": "ctest --test-dir engine/build",
+    "record": "node tools/record-fixtures.mjs",
+    "e2e": "playwright test"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +16,9 @@
     "esbuild": "^0.27.3",
     "hyphen": "^1.14.1",
     "typescript": "^5.9.3"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
   }
 }

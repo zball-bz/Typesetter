@@ -1,0 +1,26 @@
+doc @[0,207)
+  code-let @[0,45) js=" wrap = (label, c) => seq(text(label), c)"
+  para @[47,135)
+    text @[47,60) str="Content args: "
+    splice @[61,90) expr="em"
+      arg @[65,89)
+        text @[65,75) str="emphasized "
+        styled @[76,84) marker=*
+          text @[77,83) str="nested"
+        text @[85,89) str=" text"
+    text @[91,94) str=" and "
+    splice @[95,129) expr="wrap(\"tip: \")"
+      arg @[110,128)
+        text @[110,115) str="boxed "
+        styled @[116,122) marker=*
+          text @[117,121) str="bold"
+        text @[123,128) str=" words"
+    text @[130,135) str=" here."
+  para @[137,206)
+    text @[137,162) str="Deep JS brackets stay JS: "
+    splice @[163,178) expr="([\"a\",\"b\"][0])"
+    text @[179,182) str=" and "
+    splice @[183,205) expr="wrap(\"n: \")"
+      arg @[196,204)
+        text @[196,204) str="trailing"
+    text @[205,206) str="."

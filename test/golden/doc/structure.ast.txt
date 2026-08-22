@@ -1,0 +1,38 @@
+doc @[0,482)
+  heading @[0,19) level=1
+    text @[2,19) str="Typesetting Notes"
+  heading @[21,48) level=2
+    text @[24,37) str="Structure and "
+    styled @[38,48) marker=*
+      text @[39,47) str="emphasis"
+  para @[50,170)
+    text @[50,82) str="An introductory paragraph with a "
+    link @[83,117) url="https://example.org"
+      text @[84,95) str="useful link"
+    text @[118,126) str=" and some "
+    code @[127,140) str="inline code"
+    text @[141,147) str=" in it."
+    comment @[148,170) body=" invisible note "
+  list @[172,228) bullet start=1
+    item @[172,228)
+      para @[174,228)
+        text @[174,228) str="First bullet item with enough words to wrap onto lines"
+    item @[229,242)
+      para @[231,274)
+        text @[231,274) str="Second item continued on an indented line"
+      list @[277,296) bullet start=1
+        item @[277,296)
+          para @[279,296)
+            text @[279,296) str="Nested child item"
+  list @[297,318) ordered start=1
+    item @[297,318)
+      para @[299,318)
+        text @[299,318) str="Ordered starts here"
+    item @[319,334)
+      para @[321,334)
+        text @[321,334) str="And continues"
+  quote @[336,396)
+    para @[338,430)
+      text @[338,430) str="A quoted paragraph, indented by the engine rather than the browser, wrapping across lines."
+  rule @[432,435)
+  codeblock @[437,481) lang="js" body="const x = compute(1, 2);\nreturn x;"

@@ -1,0 +1,5 @@
+doc @[0,59)
+  para @[0,39)
+    text @[0,39) str="First paragraph spans two source lines."
+  para @[41,58)
+    text @[41,58) str="Second paragraph."

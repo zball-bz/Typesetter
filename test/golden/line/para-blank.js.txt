@@ -1,0 +1,5 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq}, $) => {
+__emit(__at(para(__at(text("First paragraph spans two source lines."),0,39)),0,39));
+__emit(__at(para(__at(text("Second paragraph."),41,58)),41,58));
+};
+//# sourceURL=tsm:doc

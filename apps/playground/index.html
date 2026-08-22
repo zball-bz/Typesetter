@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Typesetter Playground (M1)</title>
+<style>
+  body { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+         padding: 28px; font-family: system-ui, sans-serif; background: #faf8f5; }
+  h1 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #9a8e82; margin: 0 0 10px; }
+  .bar { margin-bottom: 10px; font-size: 13px; color: #666; }
+  textarea { width: 100%; height: 72vh; font: 13px/1.7 monospace; border: 1px solid #e0d8cf;
+             background: #f5f2ee; padding: 14px; box-sizing: border-box; outline: none; }
+  #out { width: 340px; color: #2c2420; }
+  #diags { font: 11px/1.5 monospace; color: #a33; white-space: pre-wrap; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div>
+  <h1>Typesetter — M2</h1>
+  <div class="bar">
+    <label>width <input id="w" type="range" min="220" max="640" value="340"></label>
+    <span id="wv">340</span>px
+  </div>
+  <textarea id="src" spellcheck="false">= 中西混排引擎 M3
+
+#let avg = (a,b) => (a+b)/2
+
+每个汉字都是独立的排版块，通过字距的微小伸缩实现两端
+对齐；标点遵循挤压规则：《书名》、「引号」与（括号）
+相邻时压缩半宽，句号收尾时也一样。省略号……与破折
+号——是不可拆分的双字块。
+
+中文与 English words 混排时，引擎在 CJK 和 Latin 之间
+插入 0.25em 的边界胶。行内代码 `avg(3,5)` 求值为
+#avg(3,5)，长英文词如 extraordinary 会按 Knuth-Plass
+断点连字。%-- 这条注释不会被排版 --%
+
+== Structure
+
+- 列表项照常工作，*强调* 与 _着重号_ 都可用
+- Nested and mixed 内容 wrap correctly
+
+> 引用块由引擎自己缩进，而不是浏览器。</textarea>
+</div>
+<div>
+  <h1>Typeset output</h1>
+  <div id="out"></div>
+  <div id="diags"></div>
+</div>
+<script type="module">
+import { createEngine } from '../../runtime/src/main/shell.mjs';
+
+const engine = createEngine();
+const out = document.getElementById('out');
+const src = document.getElementById('src');
+const w = document.getElementById('w');
+const wv = document.getElementById('wv');
+const diags = document.getElementById('diags');
+
+let timer = 0;
+const debounce = (fn, ms) => () => { clearTimeout(timer); timer = setTimeout(fn, ms); };
+
+async function go() {
+  const width = Number(w.value);
+  wv.textContent = width;
+  out.style.width = width + 'px';
+  try {
+    const res = await engine.typeset(src.value, out, {
+      widthPx: width, fontFamily: 'Georgia, serif', paraIndentEm: 2,
+    });
+    diags.textContent = res.diags || '';
+  } catch (e) {
+    diags.textContent = String(e);
+  }
+}
+src.addEventListener('input', debounce(go, 250));
+w.addEventListener('input', debounce(go, 100));
+go();
+</script>
+</body>
+</html>

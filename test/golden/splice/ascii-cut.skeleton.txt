@@ -1,0 +1,3 @@
+doc @[0,61)
+  code-let @[0,12) js=" avg = 7"
+  para @[13,60) lines=1

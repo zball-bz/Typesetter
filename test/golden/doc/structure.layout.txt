@@ -1,0 +1,26 @@
+doc h=36045su
+para pid=0 y=0su w=19200su h=1639su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,7) @[2,19)
+para pid=1 y=2868su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,11) @[24,47)
+para pid=2 y=5633su w=19200su h=3072su
+  L0 y=0su left=0su w=19200su dw=102su dc=0su join=space blocks=[0,23) @[50,95)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[24,35) @[84,147)
+para pid=3 y=9934su w=19200su h=8498su
+  L0 y=0su left=1536su w=17664su dw=-43su dc=0su join=space marker blocks=[0,15) @[174,228)
+  L1 y=1536su left=1536su w=17664su dw=0su dc=0su join=last blocks=[16,21) @[174,228)
+  L2 y=3481su left=1536su w=17664su dw=102su dc=0su join=space marker blocks=[0,21) @[231,274)
+  L3 y=5017su left=1536su w=17664su dw=0su dc=0su join=last blocks=[22,23) @[231,274)
+  L4 y=6962su left=3072su w=16128su dw=0su dc=0su join=last marker blocks=[0,7) @[279,296)
+para pid=4 y=19661su w=19200su h=3481su
+  L0 y=0su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,7) @[299,318)
+  L1 y=1945su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,7) @[321,334)
+para pid=5 y=24371su w=19200su h=4608su
+  L0 y=0su left=1024su w=18176su dw=-43su dc=0su join=none hyphen blocks=[0,22) @[338,430)
+  L1 y=1536su left=1024su w=18176su dw=0su dc=0su join=space blocks=[22,37) @[338,430)
+  L2 y=3072su left=1024su w=18176su dw=0su dc=0su join=last blocks=[38,41) @[338,430)
+para pid=6 y=30208su w=19200su h=1536su
+  L0 rule y=768su left=0su w=19200su
+para pid=7 y=32973su w=19200su h=3072su
+  L0 code y=0su left=0su
+  L1 code y=1536su left=0su

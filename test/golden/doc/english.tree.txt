@@ -1,0 +1,5 @@
+doc @[0,302) [base]
+  para @[0,219) [base]
+    text @[0,219) [base] str="The quick brown fox jumps over the lazy dog while the typesetting engine measures every word and chooses optimal break points for a narrow measure so that interword spacing stays even across all lines of this paragraph."
+  para @[221,302) [base]
+    text @[221,302) [base] str="A second shorter paragraph exercises paragraph spacing and the final ragged line."

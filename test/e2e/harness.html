@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>tsr harness</title>
+<style>
+  body { margin: 0; padding: 24px; background: #fff; }
+  #out { width: 300px; }
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script type="module">
+import { createEngine } from '/runtime/src/main/shell.mjs';
+import { auditTypeset } from '/runtime/src/main/audit.mjs';
+
+const engine = createEngine();
+const out = document.getElementById('out');
+
+window.__tsr = {
+  async typeset(source, opts = {}) {
+    if (opts.widthPx) out.style.width = opts.widthPx + 'px';
+    const res = await engine.typeset(source, out, opts);
+    return { diags: res.diags, heightPx: res.heightPx, dpr: devicePixelRatio };
+  },
+  audit() {
+    return auditTypeset(out);
+  },
+};
+window.__tsrReady = true;
+</script>
+</body>
+</html>

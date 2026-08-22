@@ -1,0 +1,3 @@
+doc @[0,203)
+  para @[0,202)
+    text @[0,202) str="The demonstration paragraph exercises hyphenation with extraordinary representation of measurement terminology, justification arithmetic and quantization boundaries throughout typesetting documentation."

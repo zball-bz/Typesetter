@@ -1,0 +1,2 @@
+#let avg = (a,b) => (a+b)/2
+The mean is #avg(3,5), computed *inline* here.

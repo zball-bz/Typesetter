@@ -1,0 +1,56 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: configure + build (Debug, ASan/UBSan)
+        run: |
+          cmake -S engine -B engine/build-debug -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
+          cmake --build engine/build-debug -j
+      - name: ctest (Debug)
+        run: ctest --test-dir engine/build-debug --output-on-failure
+      - name: configure + build (Release)
+        run: |
+          cmake -S engine -B engine/build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+          cmake --build engine/build -j
+      - name: ctest (Release)
+        run: ctest --test-dir engine/build --output-on-failure
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: mymindstorm/setup-emsdk@v14
+      - name: build native tsrc (recorder dependency)
+        run: |
+          cmake -S engine -B engine/build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+          cmake --build engine/build -j
+      - name: build wasm
+        run: |
+          emcmake cmake -S engine -B engine/build-wasm -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+          cmake --build engine/build-wasm -j
+      - name: npm ci
+        run: npm ci --no-audit --no-fund
+      - name: ops contract is regenerated
+        run: |
+          node tools/gen-ops-ts.mjs
+          git diff --exit-code runtime/src/shared/ops.gen.mjs
+      - name: recordings are current
+        run: node tools/record-fixtures.mjs --check
+      - name: install chromium
+        run: npx playwright install --with-deps chromium
+      - name: e2e (audit matrix, dsf 1.0/1.25/1.5/2.0)
+        run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-results
+          path: test-results/

@@ -1,0 +1,11 @@
+doc @[0,81)
+  para @[0,80)
+    text @[0,5) str="Plain "
+    styled @[6,18) marker=*
+      text @[7,17) str="bold words"
+    text @[19,22) str=" and "
+    styled @[23,31) marker=_
+      text @[24,30) str="italic"
+    text @[32,65) str=" text with *escaped* markers, un"
+    text @[65,66) str="*"
+    text @[66,80) str="closed at end."

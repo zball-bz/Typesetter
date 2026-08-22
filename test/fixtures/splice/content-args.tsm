@@ -1,0 +1,5 @@
+#let wrap = (label, c) => seq(text(label), c)
+
+Content args: #em[emphasized *nested* text] and #wrap("tip: ")[boxed *bold* words] here.
+
+Deep JS brackets stay JS: #(["a","b"][0]) and #wrap("n: ")[trailing].

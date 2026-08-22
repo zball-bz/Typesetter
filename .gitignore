@@ -1,2 +1,7 @@
 node_modules/
 dist/
+engine/build/
+engine/build-debug/
+engine/build-wasm/
+test-results/
+playwright-report/

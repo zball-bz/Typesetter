@@ -1,0 +1,26 @@
+doc @[47,206) [base]
+  para @[47,135) [base]
+    text @[47,60) [base] str="Content args: "
+    styled @[0,0) [EM]
+      seq @[0,0) [EM]
+        text @[65,75) [EM] str="emphasized "
+        styled @[76,84) [EM+BOLD]
+          text @[77,83) [EM+BOLD] str="nested"
+        text @[85,89) [EM] str=" text"
+    text @[91,94) [base] str=" and "
+    seq @[0,0) [base]
+      text @[0,0) [base] str="tip: "
+      seq @[0,0) [base]
+        text @[110,115) [base] str="boxed "
+        styled @[116,122) [BOLD]
+          text @[117,121) [BOLD] str="bold"
+        text @[123,128) [base] str=" words"
+    text @[130,135) [base] str=" here."
+  para @[137,206) [base]
+    text @[137,162) [base] str="Deep JS brackets stay JS: "
+    text @[0,0) [base] str="a"
+    text @[179,182) [base] str=" and "
+    seq @[0,0) [base]
+      text @[0,0) [base] str="n: "
+      text @[196,204) [base] str="trailing"
+    text @[205,206) [base] str="."

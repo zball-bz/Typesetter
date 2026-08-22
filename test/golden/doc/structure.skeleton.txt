@@ -1,0 +1,21 @@
+doc @[0,482)
+  heading1 @[0,19)
+  heading2 @[21,48)
+  para @[50,170) lines=2
+  list bullet start=1 @[172,228)
+    item @[172,228)
+      para @[174,228) lines=1
+    item @[229,242)
+      para @[231,274) lines=2
+      list bullet start=1 @[277,296)
+        item @[277,296)
+          para @[279,296) lines=1
+  list ordered start=1 @[297,318)
+    item @[297,318)
+      para @[299,318) lines=1
+    item @[319,334)
+      para @[321,334) lines=1
+  quote @[336,396)
+    para @[338,430) lines=2
+  rule @[432,435)
+  fence @[437,481) lang="js" lines=2

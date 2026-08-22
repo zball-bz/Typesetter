@@ -1,0 +1,8 @@
+doc @[28,74) [base]
+  para @[28,74) [base]
+    text @[28,39) [base] str="The mean is "
+    text @[0,0) [base] str="4"
+    text @[49,59) [base] str=", computed "
+    styled @[60,68) [BOLD]
+      text @[61,67) [BOLD] str="inline"
+    text @[69,74) [base] str=" here."

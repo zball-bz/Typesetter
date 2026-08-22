@@ -1,0 +1,61 @@
+// GENERATED from engine/src/ops/ops.def by tools/gen-ops-ts.mjs — do not edit.
+export const OPS_VERSION = 1;
+export const OP = Object.freeze({
+  "MAKE_TEXT": 1,
+  "MAKE_NODE": 2,
+  "EMIT": 3,
+  "STYLE_PUSH": 4,
+  "STYLE_POP_TO": 5,
+  "SPAN": 6
+});
+export const KIND = Object.freeze({
+  "doc": 0,
+  "para": 1,
+  "heading": 2,
+  "list": 3,
+  "item": 4,
+  "quote": 5,
+  "codeblock": 6,
+  "rule": 7,
+  "group": 8,
+  "table": 9,
+  "trow": 10,
+  "tcell": 11,
+  "term": 12,
+  "collect": 13,
+  "mathblock": 14,
+  "error": 15,
+  "comment": 16,
+  "text": 17,
+  "styled": 18,
+  "link": 19,
+  "code": 20,
+  "ref": 21,
+  "mathinline": 22,
+  "raw": 23,
+  "hardbreak": 24,
+  "seq": 25
+});
+export const ARGK = Object.freeze({
+  "label": 0,
+  "level": 1,
+  "ordered": 2,
+  "start": 3,
+  "lang": 4,
+  "body": 5,
+  "role": 6,
+  "cols": 7,
+  "align": 8,
+  "name": 9,
+  "what": 10,
+  "src": 11,
+  "message": 12,
+  "code": 13,
+  "url": 14,
+  "target": 15,
+  "form": 16,
+  "html": 17,
+  "w": 18,
+  "h": 19,
+  "bits": 20
+});

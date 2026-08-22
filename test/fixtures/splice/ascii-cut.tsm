@@ -1,0 +1,2 @@
+#let avg = 7
+#avg的结果 should cut at the ASCII boundary.
