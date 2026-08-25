@@ -10,11 +10,20 @@ export function auditTypeset(root) {
 
   for (const line of root.querySelectorAll('.tsr-line')) {
     report.lines++;
-    const range = document.createRange();
-    range.selectNodeContents(line);
-    // height>0: zero-height inline-block spacers (tsr-sp) are not line fragments
-    const rects = [...range.getClientRects()].filter((r) => r.width > 0 && r.height > 0);
-    range.detach?.();
+    // Collect text rects from in-flow children only: absolutely positioned
+    // gutter markers sit outside the line box and are not line fragments
+    // (their rect top differs from the text's on mixed-script lines), and
+    // zero-height inline-block spacers (tsr-sp) are filtered by height.
+    const rects = [];
+    for (const el of line.children) {
+      if (getComputedStyle(el).position === 'absolute') continue;
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      for (const r of range.getClientRects()) {
+        if (r.width > 0 && r.height > 0) rects.push(r);
+      }
+      range.detach?.();
+    }
 
     // line-integrity: exactly one fragment row (v2 §7 rule 1 held?)
     const rows = [];
@@ -33,7 +42,7 @@ export function auditTypeset(root) {
     // end within 1px of the measure. Measured as the flow edge of the last
     // child element (rect.right + margin-right) so letter-spacing overhangs
     // and punct-squeeze margins are accounted exactly.
-    if (line.dataset.join !== undefined && rects.length) {
+    if (line.dataset.join !== undefined && line.dataset.ragged === undefined && rects.length) {
       const lineRect = line.getBoundingClientRect();
       let contentRight = -Infinity;
       for (const el of line.children) {
@@ -66,6 +75,27 @@ export function auditTypeset(root) {
         by: para.scrollWidth - para.clientWidth,
         pid: para.dataset.pid,
       });
+    }
+    // line stacking: tops strictly increase — a failed break plan collapses
+    // a whole paragraph onto one line (the audit blind spot behind the
+    // overprinted-specimen bug)
+    let prevTop = -Infinity;
+    for (const l of para.querySelectorAll('.tsr-line')) {
+      const top = parseFloat(l.style.top);
+      if (!(top > prevTop || prevTop === -Infinity)) {
+        report.failures.push({ audit: 'line-stacking', pid: para.dataset.pid, top });
+        break;
+      }
+      prevTop = top;
+    }
+    // and no absurd compression: word-spacing beyond -2px means an
+    // infeasible line was force-fitted
+    for (const l of para.querySelectorAll('.tsr-line')) {
+      const ws = parseFloat(l.style.wordSpacing || '0');
+      if (ws < -2.5) {
+        report.failures.push({ audit: 'compression', pid: para.dataset.pid, ws });
+        break;
+      }
     }
   }
 

@@ -27,6 +27,9 @@ struct LinebreakBlock {
   u16 flags = 0;
   StrRef text = 0;
   StrRef linkUrl = 0;  // 0 = not inside a link
+  // Latin word spaces: cross-space kerning context (document-model §6).
+  // gap width = m(trigram) - m(prevCh) - m(nextCh); 0 = no correction.
+  StrRef ctxTrigram = 0, ctxPrev = 0, ctxNext = 0;
   bool widthResolved = false;
   Span span;
   bool isSpace() const { return flags & BF_SPACE; }
@@ -43,6 +46,7 @@ struct FlowUnit {
   const ContentNode* src = nullptr;
   Su indent = 0;
   bool tightAbove = false;  // list-item start: reduced inter-unit gap
+  bool ragged = false;      // display unit (heading): no justify, no hyphens
   StrRef marker = 0;  // list marker text (0 = none), rendered in the gutter
   StyleId markerStyle = 0;
   StyleId codeStyle = 0;

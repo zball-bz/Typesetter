@@ -24,7 +24,12 @@ for (const f of fixtures) {
     await page.waitForFunction(() => window.__tsrReady);
     // convention (mirrors the native runner): *indent* fixtures run with the
     // CJK 2em first-line indent
-    const opts = { widthPx: 300, paraIndentEm: f.name.includes('indent') ? 2 : 0 };
+    const opts = {
+      widthPx: 300,
+      paraIndentEm: f.name.includes('indent') ? 2 : 0,
+      punctCompress: f.name.includes('punct-full') ? 'full'
+        : f.name.includes('punct-none') ? 'none' : 'book',
+    };
     const res = await page.evaluate(
       async ({ source, opts }) => await window.__tsr.typeset(source, opts),
       { source: f.source, opts },

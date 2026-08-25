@@ -380,6 +380,7 @@ Notes:
 
 - Punctuation compressible spaces are NOT stretchable.
 - Line-start/-end compression falls out of the breakable half-width spaces vanishing at line edges.
+- **Adjacent-punct compression is a 3-level config** (`punctCompress: full | book | none`, default **book**): close+close and open+open always set solid (a breakable gap there would violate 禁则 — a dangling opener at line end or a closer at line start); `book` keeps a breakable half-width breathing space between a closing/dot and an opening punct (《书名》、「引号」), `full` compresses it too (newspaper-tight), `none` is the full-width style with rigid spaces wherever 禁则 forbids a break.
 - No CJK italic; emphasis via `text-emphasis: filled dot`.
 - Mixed-line justification distribution: `Δcjk = k × Δword` on absolute values (§8).
 

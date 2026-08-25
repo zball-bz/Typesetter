@@ -244,7 +244,7 @@ measure-fallback     info     glyphs measured via fallback font
 {
   "fonts":   { "body": "...", "cjk": "...", "mono": "...", "math": "Neo Euler" },
   "baseSizePx": 18, "lineHeight": 1.5,
-  "cjkJustifyK": 0.6,
+  "cjkJustifyK": 0.6, "punctCompress": "book",
   "epsilon": { "perWordSu": 1 },
   "supplements": { "heading": "§", "figure": "图 ", "equation": "式 " },
   "counters": { "figure": { "resetAt": "none" } },

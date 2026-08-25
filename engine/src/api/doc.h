@@ -57,8 +57,16 @@ struct Doc {
     for (TopBlock& tb : tops) {
       for (FlowUnit& u : tb.units) {
         if (u.kind != FlowUnit::K::Text) continue;
-        BreakResult r =
-            breakLines(u.blocks, {suFloorPx(cfg.widthPx) - u.indent}, cfg.cost);
+        LineWidths lw{suFloorPx(cfg.widthPx) - u.indent};
+        BreakResult r = breakLines(u.blocks, lw, cfg.cost);
+        // PoC retry ladder: a narrow measure can starve the ±5 cursor window
+        // of feasible transitions; widen until a finite solution appears.
+        if (r.cost >= 1e17) {
+          for (u32 range : {10u, 20u, 50u, 0xFFFFFFFFu}) {
+            r = breakLines(u.blocks, lw, cfg.cost, range);
+            if (r.cost < 1e17) break;
+          }
+        }
         u.breakpoints = std::move(r.breakpoints);
         u.breakCost = r.cost;
       }

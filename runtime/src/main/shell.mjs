@@ -49,13 +49,13 @@ export function createEngine(opts = {}) {
     else p.resolve(ev.data);
   };
   return {
-    async typeset(source, container, { widthPx, baseSizePx = 18, lineHeight, fontFamily = 'Georgia, serif', paraIndentEm } = {}) {
+    async typeset(source, container, { widthPx, baseSizePx = 18, lineHeight, fontFamily = 'Georgia, serif', paraIndentEm, punctCompress = 'book' } = {}) {
       ensureCss();
       const id = nextId++;
       const width = widthPx ?? container.getBoundingClientRect().width;
       const res = await new Promise((resolve, reject) => {
         pending.set(id, { resolve, reject });
-        worker.postMessage({ type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight, fontFamily, paraIndentEm });
+        worker.postMessage({ type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight, fontFamily, paraIndentEm, punctCompress });
       });
       // The container must render with exactly the family/size the engine
       // measured — this is the measure/render contract, not styling sugar.

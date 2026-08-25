@@ -47,6 +47,10 @@ TSR_EXPORT void tsr_config(WasmDoc* d, double widthPx, double baseSizePx,
   if (paraIndentEm >= 0) d->doc.cfg.paraIndentEm = paraIndentEm;
 }
 
+TSR_EXPORT void tsr_set_punct_compress(WasmDoc* d, int mode) {
+  if (mode >= 0 && mode <= 2) d->doc.cfg.punctCompress = (PunctCompress)mode;
+}
+
 TSR_EXPORT void tsr_set_font(WasmDoc* d, const char* family) {
   d->doc.cfg.bodyFont = family;
 }

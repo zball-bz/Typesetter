@@ -169,9 +169,14 @@ int main(int argc, char** argv) {
       Doc doc;
       doc.cfg.widthPx = 300;
       doc.cfg.baseSizePx = 16;  // testing.md §2: su-exact mock metrics
-      // convention: fixtures named *indent* run with the CJK 2em first-line indent
+      // conventions: *indent* fixtures run with the CJK 2em first-line
+      // indent; *punct-full* / *punct-none* select those compression modes
       if (rel.stem().string().find("indent") != std::string::npos)
         doc.cfg.paraIndentEm = 2;
+      if (rel.stem().string().find("punct-full") != std::string::npos)
+        doc.cfg.punctCompress = PunctCompress::Full;
+      else if (rel.stem().string().find("punct-none") != std::string::npos)
+        doc.cfg.punctCompress = PunctCompress::None;
       doc.compile(source);
 
       auto g = [&](const char* stage) {

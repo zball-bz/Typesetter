@@ -73,6 +73,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start, l.srcSpan.end);
       if (l.join == 1) out += " data-join=\"space\"";
       else if (l.join == 2) out += " data-join=\"none\"";
+      if (tb.units[l.unitIdx].ragged) out += " data-ragged=\"1\"";
       out += " style=\"top:";
       fmtPx(out, suToPx(l.y));
       out += ";left:";
@@ -169,8 +170,10 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         if (b.isPunctGlyph()) {
           const bool open = b.flags & BF_PUNCT_OPEN;
           const bool halfPresent =
-              open ? (i > l.blockBegin && (u.blocks[i - 1].flags & BF_PUNCT_SP))
-                   : (i + 1 < l.blockEnd && (u.blocks[i + 1].flags & BF_PUNCT_SP));
+              open ? (i > l.blockBegin && (u.blocks[i - 1].flags & BF_PUNCT_SP) &&
+                      (u.blocks[i - 1].flags & BF_PUNCT_OPEN))
+                   : (i + 1 < l.blockEnd && (u.blocks[i + 1].flags & BF_PUNCT_SP) &&
+                      !(u.blocks[i + 1].flags & BF_PUNCT_OPEN));
           const char* squeeze = halfPresent ? "" : (open ? "tsr-sqL" : "tsr-sqR");
           bool link = openRun(styles.get(b.style), b.linkUrl, b, "", squeeze);
           escapeHtml(out, strs.get(b.text));
@@ -214,8 +217,10 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
             bool keep = nx && (nx->isCjkChar() ||
                                (nx->isPunctGlyph() && !(nx->flags & BF_PUNCT_OPEN)));
             if (!keep) {
-              extra += ";margin-right:-";
-              fmtPx(extra, l.cjkDeltaPx);
+              // negate via the value, never by prepending '-': a negative
+              // delta would otherwise render "--Npx" (invalid, dropped)
+              extra += ";margin-right:";
+              fmtPx(extra, -l.cjkDeltaPx);
             }
           }
           bool link = openRun(styles.get(st), url, b, extra, nullptr);

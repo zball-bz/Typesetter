@@ -1,25 +1,15 @@
 top pid=0 units=1
  unit text indent=0su
-  word "Type" w=3278su pen=INF BOLD x1.60 @[2,19)
-  hyphen bw=821su pen=0.70 BOLD x1.60 @[2,19)
-  word "set" w=2459su pen=INF BOLD x1.60 @[2,19)
-  hyphen bw=821su pen=0.70 BOLD x1.60 @[2,19)
-  word "ting" w=3278su pen=INF BOLD x1.60 @[2,19)
+  word "Typesetting" w=9013su pen=INF BOLD x1.60 @[2,19)
   space w=411su stretch=1 BOLD x1.60 @[2,19)
   word "Notes" w=4098su pen=INF BOLD x1.60 @[2,19)
 top pid=1 units=1
  unit text indent=0su
-  word "Struc" w=3458su pen=INF BOLD x1.35 @[24,37)
-  hyphen bw=693su pen=0.70 BOLD x1.35 @[24,37)
-  word "ture" w=2766su pen=INF BOLD x1.35 @[24,37)
+  word "Structure" w=6222su pen=INF BOLD x1.35 @[24,37)
   space w=347su stretch=1 BOLD x1.35 @[24,37)
   word "and" w=2075su pen=INF BOLD x1.35 @[24,37)
   space w=347su stretch=1 BOLD x1.35 @[24,37)
-  word "em" w=1384su pen=INF BOLD x1.35 @[39,47)
-  hyphen bw=693su pen=0.70 BOLD x1.35 @[39,47)
-  word "pha" w=2075su pen=INF BOLD x1.35 @[39,47)
-  hyphen bw=693su pen=0.70 BOLD x1.35 @[39,47)
-  word "sis" w=2075su pen=INF BOLD x1.35 @[39,47)
+  word "emphasis" w=5531su pen=INF BOLD x1.35 @[39,47)
 top pid=2 units=1
  unit text indent=0su
   word "An" w=1025su pen=INF @[50,82)

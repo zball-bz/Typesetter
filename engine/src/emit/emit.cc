@@ -25,6 +25,7 @@ struct Emitter {
     u64 addBits = 0;
     float mul = 1.0f;
     StrRef url = 0;
+    bool noHyphen = false;  // display context (headings)
   };
 
   void inlineWalk(const ContentNode* n, FlowUnit& u, ICtx ctx) {
@@ -62,7 +63,7 @@ struct Emitter {
   }
 
   void pushWordBlock(std::string_view w, const ContentNode* n, FlowUnit& u, StyleId st,
-                     StrRef url, float penalty, u8 extraFlags = 0) {
+                     StrRef url, float penalty, u16 extraFlags = 0) {
     LinebreakBlock b;
     b.breakPenalty = penalty;
     b.style = st;
@@ -73,7 +74,8 @@ struct Emitter {
     u.blocks.push_back(b);
   }
 
-  void emitWord(std::string_view w, const ContentNode* n, FlowUnit& u, StyleId st, StrRef url) {
+  void emitWord(std::string_view w, const ContentNode* n, FlowUnit& u, StyleId st, StrRef url,
+                bool noHyphen) {
     // lead / core / trail split (ASCII letters core) for hyphenation
     u32 a = 0, b = (u32)w.size();
     auto isL = [](char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); };
@@ -85,7 +87,7 @@ struct Emitter {
       if (!isL(w[k])) coreLetters = false;
 
     std::vector<u32> pts;
-    if (coreLetters && e - a >= 5 && cfg.hyphenPenalty < BREAK_INF)
+    if (!noHyphen && coreLetters && e - a >= 5 && cfg.hyphenPenalty < BREAK_INF)
       pts = hyphenPoints(w.substr(a, e - a));
     if (pts.empty()) {
       pushWordBlock(w, n, u, st, url, BREAK_INF);
@@ -146,7 +148,7 @@ struct Emitter {
 
     auto flushWord = [&] {
       if (!word.empty()) {
-        emitWord(word, n, u, st, ctx.url);
+        emitWord(word, n, u, st, ctx.url, ctx.noHyphen);
         word.clear();
       }
     };
@@ -154,8 +156,13 @@ struct Emitter {
       double px = kCjkBoundaryEm * fontPx(st);
       pushSynthetic(u, st, ctx.url, n->span, px, BF_SPACE | BF_BOUND, 1.0f, 0.0f, px);
     };
-    auto lastIsPunctSp = [&] {
-      return !u.blocks.empty() && (u.blocks.back().flags & BF_PUNCT_SP);
+    auto lastIsCloseSp = [&] {  // a closing/dot punct's trailing half
+      return !u.blocks.empty() && (u.blocks.back().flags & BF_PUNCT_SP) &&
+             !(u.blocks.back().flags & BF_PUNCT_OPEN);
+    };
+    auto lastIsOpenGlyph = [&] {
+      return !u.blocks.empty() && (u.blocks.back().flags & BF_PUNCT_GLYPH) &&
+             (u.blocks.back().flags & BF_PUNCT_OPEN);
     };
     auto pushCjkChar = [&](std::string_view chars, bool pair = false) {
       LinebreakBlock b;
@@ -170,18 +177,39 @@ struct Emitter {
       u.blocks.push_back(b);
     };
     auto pushPunct = [&](std::string_view ch, bool open) {
+      const PunctCompress mode = cfg.punctCompress;
+      // BF_PUNCT_OPEN on a half-space marks it as an OPENING punct's leading
+      // half — the renderer squeezes a glyph only when its OWN half is absent.
+      const u16 openSpFlags = BF_SPACE | BF_PUNCT_SP | BF_PUNCT_OPEN;
       if (open) {
-        if (lastIsPunctSp()) u.blocks.pop_back();  // consecutive-punct compression
-        else pushSynthetic(u, stCjk, ctx.url, n->span, halfPx, BF_SPACE | BF_PUNCT_SP,
-                           0.0f, 0.0f, 0.0);  // compressible half — NOT stretchable
+        if (lastIsCloseSp()) {
+          // closing/dot + opening
+          if (mode == PunctCompress::Full) u.blocks.pop_back();  // set solid
+          else if (mode == PunctCompress::None)
+            pushSynthetic(u, stCjk, ctx.url, n->span, halfPx, openSpFlags, 0.0f, 0.0f, 0.0);
+          // Book: the closer's breakable half stays as the breathing space
+        } else if (lastIsOpenGlyph()) {
+          // opening + opening: solid (a breakable gap here would let the
+          // first opener dangle at a line end — 禁则); None keeps a RIGID half
+          if (mode == PunctCompress::None)
+            pushSynthetic(u, stCjk, ctx.url, n->span, halfPx, openSpFlags, 0.0f, BREAK_INF, 0.0);
+        } else {
+          pushSynthetic(u, stCjk, ctx.url, n->span, halfPx, openSpFlags,
+                        0.0f, 0.0f, 0.0);  // leading half — breakable, NOT stretchable
+        }
       } else {
         // 禁则: no break before a closing punct
         if (!u.blocks.empty() && u.blocks.back().isCjkChar())
           u.blocks.back().breakPenalty = BREAK_INF;
-        if (lastIsPunctSp()) u.blocks.pop_back();
+        if (lastIsCloseSp()) {
+          // closing + closing: solid; None keeps the half but rigid (a break
+          // would put the second closer at a line start — 禁则)
+          if (mode == PunctCompress::None) u.blocks.back().breakPenalty = BREAK_INF;
+          else u.blocks.pop_back();
+        }
       }
       LinebreakBlock g;
-      g.flags = (u8)(BF_CJK | BF_PUNCT_GLYPH | (open ? BF_PUNCT_OPEN : 0));
+      g.flags = (u16)(BF_CJK | BF_PUNCT_GLYPH | (open ? BF_PUNCT_OPEN : 0));
       g.breakPenalty = BREAK_INF;
       g.style = stCjk;
       g.text = strs.intern(ch);
@@ -271,9 +299,11 @@ struct Emitter {
         u.indent = indent;
         u.marker = marker;
         u.markerStyle = n->style;
+        u.ragged = true;  // display line: ragged right, no hyphenation
         ICtx ctx;
         ctx.addBits = CLS_BOLD;
         ctx.mul = (float)headingSizeMul(level);
+        ctx.noHyphen = true;
         inlineWalk(n, u, ctx);
         tb.units.push_back(std::move(u));
         return;
@@ -357,6 +387,51 @@ struct Emitter {
 
 }  // namespace
 
+// Word spaces absorb cross-space kerning (e.g. Georgia "s. A"): sum-of-words
+// measurement misses it, leaving every justified line systematically short.
+// Tag each plain space with its neighbouring codepoints; resolveWidths turns
+// that into gap = m(prev+' '+next) - m(prev) - m(next).
+static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
+  auto lastCp = [&](const LinebreakBlock& b) -> std::string {
+    std::string_view t = strs.get(b.text);
+    if (t.empty()) return {};
+    u32 cp = utf8PrevCp(t, (u32)t.size());
+    if (isCjk(cp) || cp >= 0x2000) return {};  // no cross-space kern vs CJK
+    u32 i = (u32)t.size();
+    while (i > 0 && ((u8)t[i - 1] & 0xC0) == 0x80) i--;
+    if (i > 0) i--;
+    return std::string(t.substr(i));
+  };
+  auto firstCp = [&](const LinebreakBlock& b) -> std::string {
+    std::string_view t = strs.get(b.text);
+    if (t.empty()) return {};
+    u32 i = 0;
+    u32 cp = utf8Next(t, i);
+    if (isCjk(cp) || cp >= 0x2000) return {};
+    return std::string(t.substr(0, i));
+  };
+  auto isWord = [](const LinebreakBlock& b) {
+    return !b.isSpace() && !b.isHyphen() && !b.isSynthetic() && !b.isCjkChar() &&
+           !b.isPunctGlyph() && b.text != 0;
+  };
+  for (TopBlock& tb : tops) {
+    for (FlowUnit& u : tb.units) {
+      for (size_t i = 0; i < u.blocks.size(); i++) {
+        LinebreakBlock& b = u.blocks[i];
+        if (!b.isSpace() || (b.flags & (BF_PUNCT_SP | BF_BOUND))) continue;
+        if (i == 0 || i + 1 >= u.blocks.size()) continue;
+        if (!isWord(u.blocks[i - 1]) || !isWord(u.blocks[i + 1])) continue;
+        std::string prev = lastCp(u.blocks[i - 1]);
+        std::string next = firstCp(u.blocks[i + 1]);
+        if (prev.empty() || next.empty()) continue;
+        b.ctxPrev = strs.intern(prev);
+        b.ctxNext = strs.intern(next);
+        b.ctxTrigram = strs.intern(prev + " " + next);
+      }
+    }
+  }
+}
+
 std::vector<TopBlock> emitDoc(const ContentTree& tree, Interner& strs,
                               StyleTable& styles, const Config& cfg) {
   std::vector<TopBlock> tops;
@@ -370,6 +445,7 @@ std::vector<TopBlock> emitDoc(const ContentTree& tree, Interner& strs,
     e.blockWalk(child, 0, 0, tb);
     if (!tb.units.empty()) tops.push_back(std::move(tb));
   }
+  fillSpaceContexts(tops, strs);
   return tops;
 }
 
@@ -390,7 +466,20 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
       for (LinebreakBlock& b : u.blocks) {
         needStyle(b.style);
         if (b.widthResolved) continue;
-        if (store.hasWord(b.text, b.style)) {
+        bool ctxReady = true;
+        if (b.ctxTrigram) {
+          for (StrRef r : {b.ctxTrigram, b.ctxPrev, b.ctxNext}) {
+            if (!store.hasWord(r, b.style)) {
+              ctxReady = false;
+              u64 k = MetricStore::key(r, b.style);
+              if (!seenWord.count(k)) {
+                seenWord[k] = true;
+                req.words.push_back({r, b.style});
+              }
+            }
+          }
+        }
+        if (store.hasWord(b.text, b.style) && ctxReady) {
           const WordMet& w = store.word(b.text, b.style);
           if (b.isHyphen()) {
             b.breakWidth = w.su;
@@ -404,9 +493,19 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
             b.width = suCeilPx(gpx);
             b.rawPx = gpx;
           } else if (b.isSpace()) {
-            b.spaceWidth = w.su;
-            b.width = w.su;
-            b.rawPx = w.px;
+            double px = w.px;
+            if (b.ctxTrigram && store.hasWord(b.ctxTrigram, b.style) &&
+                store.hasWord(b.ctxPrev, b.style) && store.hasWord(b.ctxNext, b.style)) {
+              // cross-space kerning correction: gap = m(tri) - m(prev) - m(next)
+              px = store.word(b.ctxTrigram, b.style).px -
+                   store.word(b.ctxPrev, b.style).px -
+                   store.word(b.ctxNext, b.style).px;
+              if (px < 0) px = 0;
+            }
+            Su su = suCeilPx(px) + (Su)cfg.epsilonPerWordSu;
+            b.spaceWidth = su;
+            b.width = su;
+            b.rawPx = px;
           } else {
             b.width = w.su;
             b.rawPx = w.px;

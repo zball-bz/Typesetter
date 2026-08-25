@@ -7,11 +7,13 @@ import { CanvasMeasurer } from './canvas_measure.mjs';
 let modPromise = null;
 const getMod = () => (modPromise ??= createTypesetter());
 
-async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily, paraIndentEm }) {
+async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily, paraIndentEm, punctCompress }) {
   const M = await getMod();
   const doc = M._tsr_doc_new();
   try {
     M._tsr_config(doc, widthPx ?? 300, baseSizePx ?? 18, lineHeight ?? 1.5, paraIndentEm ?? 0);
+    const pcMap = { full: 0, book: 1, none: 2 };
+    if (punctCompress in pcMap) M._tsr_set_punct_compress(doc, pcMap[punctCompress]);
     if (fontFamily) {
       const f = M.stringToNewUTF8(fontFamily);
       M._tsr_set_font(doc, f);

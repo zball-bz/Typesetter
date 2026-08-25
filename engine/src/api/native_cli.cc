@@ -32,7 +32,7 @@ static bool typesetWithMock(Doc& doc) {
 }
 
 int main(int argc, char** argv) {
-  std::string stage = "ast", opsPath, file;
+  std::string stage = "ast", opsPath, file, punct;
   double width = 300, indentEm = 0;
   for (int i = 1; i < argc; i++) {
     std::string a = argv[i];
@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
     else if (a.rfind("--ops=", 0) == 0) opsPath = a.substr(6);
     else if (a.rfind("--width=", 0) == 0) width = atof(a.c_str() + 8);
     else if (a.rfind("--indent=", 0) == 0) indentEm = atof(a.c_str() + 9);
+    else if (a.rfind("--punct=", 0) == 0) punct = a.substr(8);
     else file = a;
   }
   if (file.empty()) {
@@ -55,6 +56,9 @@ int main(int argc, char** argv) {
   Doc doc;
   doc.cfg.widthPx = width;
   doc.cfg.paraIndentEm = indentEm;
+  if (punct == "full") doc.cfg.punctCompress = PunctCompress::Full;
+  else if (punct == "none") doc.cfg.punctCompress = PunctCompress::None;
+  else if (punct == "book" || punct.empty()) doc.cfg.punctCompress = PunctCompress::Book;
   doc.compile(std::move(source));
 
   std::string out;

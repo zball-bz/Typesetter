@@ -115,7 +115,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         if (firstLine && u.marker) { line.marker = u.marker; line.markerStyle = u.markerStyle; }
         firstLine = false;
 
-        const bool isLast = (bp == bl.size());
+        const bool isLast = (bp == bl.size()) || u.ragged;
         double slackPx = (cfg.widthPx - suToPx(u.indent)) - naturalPx;
         if (totalWeight > 0) {
           double d = slackPx / totalWeight;  // per unit weight (v2 §8)
