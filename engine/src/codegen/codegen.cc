@@ -93,8 +93,15 @@ struct Gen {
         close(n);
         break;
       case AstKind::Heading:
-        appendf(out, "__at(heading(%d", n->tag);
+        appendf(out, "__at(heading(%d, ", n->tag);
+        if (n->aux) strLit(n->aux);
+        else out += "null";
         children(n->kids, true);
+        close(n);
+        break;
+      case AstKind::Ref:
+        out += "__at(ref(";
+        strLit(n->str);
         close(n);
         break;
       case AstKind::ListB:
@@ -135,7 +142,8 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
   JsProgram p;
   std::string& out = p.text;
   out += "export default async ({__emit, __at, para, text, em, strong, val, m, "
-         "heading, list, item, quote, codeblock, rule, comment, link, code, seq}, $) => {\n";
+         "heading, list, item, quote, codeblock, rule, comment, link, code, seq, "
+         "ref, term, toc, glossary}, $) => {\n";
   Gen g{src, strs, out};
   for (const AstNode* n : doc->kids) {
     if (n->kind == AstKind::CodeStmt) {

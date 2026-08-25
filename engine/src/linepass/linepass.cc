@@ -268,6 +268,18 @@ struct LinePass {
           u32 cs = pos + n + 1;
           u32 e = le;
           while (e > cs && (all[e - 1] == ' ' || all[e - 1] == '\r')) e--;
+          // trailing "<id>" label (v2 §11.1): space + <…> at line end
+          if (e > cs + 2 && all[e - 1] == '>') {
+            u32 lb = e - 1;
+            while (lb > cs && all[lb - 1] != '<' && all[lb - 1] != '>' &&
+                   all[lb - 1] != ' ')
+              lb--;
+            if (lb >= cs + 2 && all[lb - 1] == '<' && lb < e - 1 && all[lb - 2] == ' ') {
+              h->labelSpan = {lb, e - 1};
+              e = lb - 2;
+              while (e > cs && all[e - 1] == ' ') e--;
+            }
+          }
           h->span = {pos, e};
           h->lineSpans.push_back({cs, e});
           parent()->kids.push_back(h);
@@ -336,7 +348,13 @@ static void dumpNode(std::string& out, const SkelNode* n, const SourceText& src,
       appendf(out, "para @[%u,%u) lines=%zu\n", n->span.start, n->span.end, n->lineSpans.size());
       break;
     case SkelKind::Heading:
-      appendf(out, "heading%d @[%u,%u)\n", n->level, n->span.start, n->span.end);
+      appendf(out, "heading%d @[%u,%u)", n->level, n->span.start, n->span.end);
+      if (!n->labelSpan.empty()) {
+        out += " label=\"";
+        appendEscaped(out, src.slice(n->labelSpan));
+        out += "\"";
+      }
+      out += "\n";
       break;
     case SkelKind::List:
       appendf(out, "list %s start=%d @[%u,%u)\n", n->ordered ? "ordered" : "bullet", n->start,
@@ -360,6 +378,11 @@ static void dumpNode(std::string& out, const SkelNode* n, const SourceText& src,
       break;
     case SkelKind::Comment:
       appendf(out, "comment @[%u,%u)\n", n->span.start, n->span.end);
+      break;
+    case SkelKind::Region:
+      appendf(out, "region @[%u,%u) name=\"", n->span.start, n->span.end);
+      appendEscaped(out, src.slice(n->langSpan));
+      out += "\"\n";
       break;
   }
   for (const SkelNode* k : n->kids) dumpNode(out, k, src, depth + 1);

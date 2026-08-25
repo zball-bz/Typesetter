@@ -81,7 +81,9 @@ class Arena {
 using StrRef = u32;
 class Interner {
  public:
-  explicit Interner(Arena& a) : arena_(a) {}
+  // ref 0 is pre-interned "" so StrRef 0 is a safe "unset" sentinel
+  // everywhere (marker, linkUrl, labels, …).
+  explicit Interner(Arena& a) : arena_(a) { intern(""); }
   StrRef intern(std::string_view s) {
     auto it = map_.find(s);
     if (it != map_.end()) return it->second;

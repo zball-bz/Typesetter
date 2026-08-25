@@ -3,6 +3,7 @@
 #pragma once
 #include "../ast/ast.h"
 #include "../codegen/codegen.h"
+#include "../resolve/resolve.h"
 #include "../layout/layout.h"
 #include "../render/typeset_html.h"
 
@@ -42,6 +43,7 @@ struct Doc {
     raw = decodeOps(buf, len, diags);
     if (!raw.ok) return false;
     tree = instantiate(raw, arena, strs, styles, diags);
+    resolveDoc(tree, arena, strs, styles, cfg, diags);
     emitted = false;
     laidOut = false;
     return true;

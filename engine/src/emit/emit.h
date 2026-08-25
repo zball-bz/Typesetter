@@ -16,6 +16,8 @@ enum : u16 {
   BF_BOUND = 64,       // CJK–Latin boundary glue (synthetic, no character)
   BF_INDENT = 128,     // paragraph indent block (synthetic, unbreakable)
   BF_PAIR = 256,       // ——/…… two-char block: no internal letter-spacing
+  BF_REF = 512,        // resolver-synthesized run (rendered data-syn="ref";
+                       //   skipped by the copy rebuild, document-model §9.3)
 };
 
 struct LinebreakBlock {
@@ -47,6 +49,7 @@ struct FlowUnit {
   Su indent = 0;
   bool tightAbove = false;  // list-item start: reduced inter-unit gap
   bool ragged = false;      // display unit (heading): no justify, no hyphens
+  StrRef anchor = 0;  // label anchor: first line renders id="tsr-<label>"
   StrRef marker = 0;  // list marker text (0 = none), rendered in the gutter
   StyleId markerStyle = 0;
   StyleId codeStyle = 0;

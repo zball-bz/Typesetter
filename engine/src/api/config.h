@@ -32,6 +32,10 @@ struct Config {
   PunctCompress punctCompress = PunctCompress::Book;
   double listIndentEm = 1.5;
   double quoteIndentEm = 1.0;
+  // Resolver supplements (v2 §11.1, document-model §5); localizable.
+  std::string supHeading = "\xC2\xA7";  // §
+  std::string supTable = "\xE8\xA1\xA8 ";    // 表␣
+  std::string supFigure = "\xE5\x9B\xBE ";   // 图␣
   CostParams cost;
 };
 

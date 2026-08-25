@@ -1,0 +1,35 @@
+doc @[0,437)
+  heading @[0,14) level=1 label="intro"
+    text @[2,14) str="Introduction"
+  para @[24,121)
+    text @[24,71) str="The typesetting engine resolves references like "
+    ref @[72,78) target="intro"
+    text @[79,82) str=" and "
+    ref @[83,91) target="results"
+    text @[92,121) str=" before any rendering happens."
+  heading @[123,132) level=2
+    text @[126,132) str="Method"
+  para @[134,183)
+    text @[134,183) str="Terms are definition sites with automatic labels."
+  para @[185,246)
+    splice @[185,246) expr="term"
+      arg @[191,198)
+        text @[191,198) str="measure"
+      arg @[200,245)
+        text @[200,245) str="The width available to a single typeset line."
+  heading @[248,257) level=1 label="results"
+    text @[250,257) str="Results"
+  para @[269,380)
+    text @[269,283) str="As promised in "
+    ref @[284,290) target="intro"
+    text @[290,348) str=", the resolver links back to sections and to terms such as "
+    ref @[349,357) target="measure"
+    text @[358,380) str=" without a second pass."
+  heading @[382,402) level=2
+    text @[385,402) str="Table of contents"
+  para @[404,410)
+    splice @[404,410) expr="toc()"
+  heading @[412,423) level=2
+    text @[415,423) str="Glossary"
+  para @[425,436)
+    splice @[425,436) expr="glossary()"

@@ -1,10 +1,10 @@
 top pid=0 units=1
- unit text indent=0su
+ unit text indent=0su anchor="h-1"
   word "Typesetting" w=9013su pen=INF BOLD x1.60 @[2,19)
   space w=411su stretch=1 BOLD x1.60 @[2,19)
   word "Notes" w=4098su pen=INF BOLD x1.60 @[2,19)
 top pid=1 units=1
- unit text indent=0su
+ unit text indent=0su anchor="h-1.1"
   word "Structure" w=6222su pen=INF BOLD x1.35 @[24,37)
   space w=347su stretch=1 BOLD x1.35 @[24,37)
   word "and" w=2075su pen=INF BOLD x1.35 @[24,37)

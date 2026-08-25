@@ -1,9 +1,9 @@
 <div class="tsr-doc">
 <div class="tsr-para" data-pid="0" style="position:relative;height:25.609px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="2" data-e="19" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Typesetting Notes</span></div>
+<div class="tsr-line" id="tsr-h-1" data-s="2" data-e="19" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Typesetting Notes</span></div>
 </div>
 <div class="tsr-para" data-pid="1" style="position:relative;height:24px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="24" data-e="47" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="24" style="font-size:21.6px">Structure and emphasis</span></div>
+<div class="tsr-line" id="tsr-h-1.1" data-s="24" data-e="47" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="24" style="font-size:21.6px">Structure and emphasis</span></div>
 </div>
 <div class="tsr-para" data-pid="2" style="position:relative;height:48px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="50" data-e="95" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="50">An in</span><span class="tsr-r" data-s="50">tro</span><span class="tsr-r" data-s="50">duc</span><span class="tsr-r" data-s="50">to</span><span class="tsr-r" data-s="50">ry para</span><span class="tsr-r" data-s="50">graph with a </span><a class="tsr-r" href="https://example.org" data-s="84">use</a><a class="tsr-r" href="https://example.org" data-s="84">ful</a></div>

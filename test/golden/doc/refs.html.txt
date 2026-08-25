@@ -1,0 +1,46 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-intro" data-s="2" data-e="14" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Introduction</span></div>
+</div>
+<div class="tsr-para" data-pid="1" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="24" data-e="71" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3px"><span class="tsr-r" data-s="24">The type</span><span class="tsr-r" data-s="24">set</span><span class="tsr-r" data-s="24">ting en</span><span class="tsr-r" data-s="24">gine re</span><span class="tsr-r" data-s="24">solves ref</span><span class="tsr-r" data-s="24">er</span><span class="tsr-r" data-s="24" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="24" data-e="121" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-0.457px"><span class="tsr-r" data-s="24">ences like </span><a class="tsr-r" href="#tsr-intro" data-syn="ref">§1</a><span class="tsr-r" data-s="79"> and </span><a class="tsr-r" href="#tsr-results" data-syn="ref">§2</a><span class="tsr-r" data-s="92"> be</span><span class="tsr-r" data-s="92">fore any ren</span><span class="tsr-r" data-s="92">der</span><span class="tsr-r" data-s="92">ing</span></div>
+<div class="tsr-line" data-s="92" data-e="121" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="92">hap</span><span class="tsr-r" data-s="92">pens.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-1.1" data-s="126" data-e="132" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="126" style="font-size:21.6px">Method</span></div>
+</div>
+<div class="tsr-para" data-pid="3" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="134" data-e="183" data-join="none" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="134">Terms are de</span><span class="tsr-r" data-s="134">f</span><span class="tsr-r" data-s="134">i</span><span class="tsr-r" data-s="134">n</span><span class="tsr-r" data-s="134">i</span><span class="tsr-r" data-s="134">tion sites with au</span><span class="tsr-r" data-s="134">to</span><span class="tsr-r" data-s="134">mat</span><span class="tsr-r" data-s="134" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="134" data-e="183" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="134">ic la</span><span class="tsr-r" data-s="134">bels.</span></div>
+</div>
+<div class="tsr-para" data-pid="4" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-measure" data-s="200" data-e="245" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.229px"><span class="tsr-r tsr-b">mea</span><span class="tsr-r tsr-b">sure</span><span class="tsr-r"> </span><span class="tsr-r tsr-cjk">—</span><span class="tsr-r"> The width avail</span><span class="tsr-r" data-s="200">able to a sin</span><span class="tsr-r" data-s="200">gle</span></div>
+<div class="tsr-line" data-s="200" data-e="245" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="200">type</span><span class="tsr-r" data-s="200">set line.</span></div>
+</div>
+<div class="tsr-para" data-pid="5" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-results" data-s="250" data-e="257" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="250" style="font-size:25.6px">Results</span></div>
+</div>
+<div class="tsr-para" data-pid="6" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="269" data-e="348" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.4px"><span class="tsr-r" data-s="269">As promised in </span><a class="tsr-r" href="#tsr-intro" data-syn="ref">§1</a><span class="tsr-r" data-s="290">, the re</span><span class="tsr-r" data-s="290">solver links</span></div>
+<div class="tsr-line" data-s="290" data-e="348" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:4.571px"><span class="tsr-r" data-s="290">back to sec</span><span class="tsr-r" data-s="290">tions and to terms such as</span></div>
+<div class="tsr-line" data-s="349" data-e="380" style="top:48px;left:0px;width:300px"><a class="tsr-r" href="#tsr-measure" data-syn="ref">mea</a><a class="tsr-r" href="#tsr-measure" data-syn="ref">sure</a><span class="tsr-r" data-s="358"> with</span><span class="tsr-r" data-s="358">out a sec</span><span class="tsr-r" data-s="358">ond pass.</span></div>
+</div>
+<div class="tsr-para" data-pid="7" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-2.1" data-s="385" data-e="402" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="385" style="font-size:21.6px">Table of contents</span></div>
+</div>
+<div class="tsr-para" data-pid="8" style="position:relative;height:145.562px;margin-bottom:19.2px">
+<div class="tsr-line" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-intro">1 In</a><a class="tsr-r" href="#tsr-intro">tro</a><a class="tsr-r" href="#tsr-intro">duc</a><a class="tsr-r" href="#tsr-intro">tion</a></div>
+<div class="tsr-line" style="top:30.391px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-1.1">1.1 Method</a></div>
+<div class="tsr-line" style="top:60.781px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-results">2 Re</a><a class="tsr-r" href="#tsr-results">sults</a></div>
+<div class="tsr-line" style="top:91.172px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-2.1">2.1 Ta</a><a class="tsr-r" href="#tsr-h-2.1">ble of con</a><a class="tsr-r" href="#tsr-h-2.1">tents</a></div>
+<div class="tsr-line" style="top:121.562px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-2.2">2.2 Glos</a><a class="tsr-r" href="#tsr-h-2.2">sary</a></div>
+</div>
+<div class="tsr-para" data-pid="9" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-2.2" data-s="415" data-e="423" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="415" style="font-size:21.6px">Glossary</span></div>
+</div>
+<div class="tsr-para" data-pid="10" style="position:relative;height:48px">
+<div class="tsr-line" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:4.4px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-measure">mea</a><a class="tsr-r" href="#tsr-measure">sure</a><span class="tsr-r"> </span><span class="tsr-r tsr-cjk">—</span><span class="tsr-r"> The width avail</span><span class="tsr-r">able to a</span></div>
+<div class="tsr-line" style="top:24px;left:24px;width:276px"><span class="tsr-r">sin</span><span class="tsr-r">gle type</span><span class="tsr-r">set line.</span></div>
+</div>
+</div>

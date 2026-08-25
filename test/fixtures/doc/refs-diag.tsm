@@ -1,0 +1,8 @@
+= First <dup>
+
+A reference to @missing stays unresolved and a second label
+reuses the first one.
+
+= Second <dup>
+
+Back to @dup resolves to the first heading.

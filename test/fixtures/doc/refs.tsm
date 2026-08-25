@@ -1,0 +1,23 @@
+= Introduction <intro>
+
+The typesetting engine resolves references like @intro and
+@results before any rendering happens.
+
+== Method
+
+Terms are definition sites with automatic labels.
+
+#term[measure][The width available to a single typeset line.]
+
+= Results <results>
+
+As promised in @intro, the resolver links back to sections and
+to terms such as @measure without a second pass.
+
+== Table of contents
+
+#toc()
+
+== Glossary
+
+#glossary()

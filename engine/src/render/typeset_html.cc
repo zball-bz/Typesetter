@@ -50,6 +50,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
   for (size_t p = 0; p < lr.paras.size(); p++) {
     const ParaFrame& fr = lr.paras[p];
     const TopBlock& tb = tops[p];
+    u32 lastAnchored = 0xFFFFFFFFu;
     appendf(out, "<div class=\"tsr-para\" data-pid=\"%u\" style=\"position:relative;height:", fr.pid);
     fmtPx(out, suToPx(fr.h));
     if (p + 1 < lr.paras.size()) {
@@ -69,6 +70,15 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         continue;
       }
       out += "<div class=\"tsr-line\"";
+      {  // label anchor: first line of an anchored unit gets the id
+        const FlowUnit& au = tb.units[l.unitIdx];
+        if (au.anchor && l.unitIdx != lastAnchored) {
+          lastAnchored = l.unitIdx;
+          out += " id=\"tsr-";
+          escapeHtml(out, strs.get(au.anchor));
+          out += "\"";
+        }
+      }
       if (!l.srcSpan.empty())
         appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start, l.srcSpan.end);
       if (l.join == 1) out += " data-join=\"space\"";
@@ -124,7 +134,8 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
           escapeHtml(out, strs.get(url));
           out += "\"";
         }
-        if (!first.span.empty()) appendf(out, " data-s=\"%u\"", first.span.start);
+        if (first.flags & BF_REF) out += " data-syn=\"ref\"";  // §9.3: copy skips
+        else if (!first.span.empty()) appendf(out, " data-s=\"%u\"", first.span.start);
         std::string style;
         if (sty.sizeMul != 1.0f) {
           style += "font-size:";

@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary}, $) => {
 __emit(__at(para(__at(text("The demonstration paragraph exercises hyphenation with extraordinary representation of measurement terminology, justification arithmetic and quantization boundaries throughout typesetting documentation."),0,202)),0,202));
 };
 //# sourceURL=tsm:doc

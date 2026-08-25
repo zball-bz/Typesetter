@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary}, $) => {
 __emit(__at(para(__at(text("中文段落在源码里经常需要折行书写，两个汉字之间的换行必须无缝连接；但是 English words 之间的折行仍然是空格。"),0,155)),0,155));
 };
 //# sourceURL=tsm:doc

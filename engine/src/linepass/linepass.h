@@ -7,7 +7,8 @@
 namespace tsr {
 
 enum class SkelKind : u8 {
-  Doc, Para, Heading, List, Item, Quote, Fence, Rule, CodeLet, CodeBlock, Comment
+  Doc, Para, Heading, List, Item, Quote, Fence, Rule, CodeLet, CodeBlock, Comment,
+  Region  // #!name(args) … #name! (v2 §4.1); langSpan=name, inner=args
 };
 
 struct SkelNode {
@@ -15,7 +16,8 @@ struct SkelNode {
   Span span;
   Span inner;                   // code stmts: JS; Comment: body
   std::vector<Span> lineSpans;  // Para/Heading/Fence: per-line content spans
-  Span langSpan;                // Fence: info string
+  Span langSpan;                // Fence: info string; Region: name
+  Span labelSpan;               // Heading: trailing <id> label (empty = none)
   u8 level = 0;                 // Heading
   bool ordered = false;         // List
   int start = 1;                // List (ordered)

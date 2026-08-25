@@ -1,0 +1,16 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-dup" data-s="2" data-e="7" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">First</span></div>
+</div>
+<div class="tsr-para" data-pid="1" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="15" data-e="96" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="15">A ref</span><span class="tsr-r" data-s="15">er</span><span class="tsr-r" data-s="15">ence to ?? stays un</span><span class="tsr-r" data-s="39">re</span><span class="tsr-r" data-s="39">solved and a</span></div>
+<div class="tsr-line" data-s="39" data-e="96" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="39">sec</span><span class="tsr-r" data-s="39">ond la</span><span class="tsr-r" data-s="39">bel reuses the first one.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-2" data-s="100" data-e="106" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="100" style="font-size:25.6px">Second</span></div>
+</div>
+<div class="tsr-para" data-pid="3" style="position:relative;height:48px">
+<div class="tsr-line" data-s="114" data-e="157" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="114">Back to </span><a class="tsr-r" href="#tsr-dup" data-syn="ref">§1</a><span class="tsr-r" data-s="127"> re</span><span class="tsr-r" data-s="127">solves to the first head</span><span class="tsr-r" data-s="127" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="127" data-e="157" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="127">ing.</span></div>
+</div>
+</div>

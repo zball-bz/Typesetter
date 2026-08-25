@@ -34,7 +34,8 @@ for (const f of fixtures) {
       async ({ source, opts }) => await window.__tsr.typeset(source, opts),
       { source: f.source, opts },
     );
-    expect(res.diags).toBe('');
+    // *diag* fixtures exist to golden-test diagnostics (e.g. unresolved refs)
+    if (!f.name.includes('diag')) expect(res.diags).toBe('');
     const report = await page.evaluate(() => window.__tsr.audit());
     expect(report.lines).toBeGreaterThan(0);
     expect(report.failures).toEqual([]);

@@ -1,0 +1,5 @@
+doc @[0,158)
+  heading1 @[0,7) label="dup"
+  para @[15,96) lines=2
+  heading1 @[98,106) label="dup"
+  para @[114,157) lines=1

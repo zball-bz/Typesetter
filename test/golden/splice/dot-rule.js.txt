@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary}, $) => {
 let x = 42;
 __emit(__at(para(__at(text("The value is "),12,24), val((x)), __at(text(". Next sentence follows "),27,50), val((x.here)), __at(text(" too."),59,63)),12,63));
 };

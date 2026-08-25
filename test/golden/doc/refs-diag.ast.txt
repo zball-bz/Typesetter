@@ -1,0 +1,13 @@
+doc @[0,158)
+  heading @[0,7) level=1 label="dup"
+    text @[2,7) str="First"
+  para @[15,96)
+    text @[15,29) str="A reference to "
+    ref @[30,38) target="missing"
+    text @[39,96) str=" stays unresolved and a second label reuses the first one."
+  heading @[98,106) level=1 label="dup"
+    text @[100,106) str="Second"
+  para @[114,157)
+    text @[114,121) str="Back to "
+    ref @[122,126) target="dup"
+    text @[127,157) str=" resolves to the first heading."

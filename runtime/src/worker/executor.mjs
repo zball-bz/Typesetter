@@ -12,6 +12,11 @@ export function buildContext(ob) {
     ob.makeNode(KIND.styled, { bits }, kids.map(toShadow));
   const node = (kind, args = {}) => (...kids) =>
     ob.makeNode(kind, args, kids.map(toShadow));
+  // plain-text projection of a content value (term names → label strings)
+  const shadowText = (x) =>
+    x && typeof x === 'object' && 'opId' in x
+      ? (x.text !== undefined ? x.text : x.children.map(shadowText).join(''))
+      : String(x);
   const ctors = {
     __emit: (n) => ob.emitNode(toShadow(n)),
     __at: (n, s, e) => { ob.span(n, s, e); return n; },
@@ -19,7 +24,13 @@ export function buildContext(ob) {
     para: node(KIND.para),
     em: styled(CLS_EM),
     strong: styled(CLS_BOLD),
-    heading: (level, ...kids) => ob.makeNode(KIND.heading, { level }, kids.map(toShadow)),
+    heading: (level, label, ...kids) =>
+      ob.makeNode(KIND.heading, { level, label: label ?? undefined }, kids.map(toShadow)),
+    ref: (target) => ob.makeNode(KIND.ref, { target: String(target) }, []),
+    term: (name, ...desc) =>
+      ob.makeNode(KIND.term, { name: shadowText(name) }, desc.map(toShadow)),
+    toc: () => ob.makeNode(KIND.collect, { what: 'toc' }, []),
+    glossary: () => ob.makeNode(KIND.collect, { what: 'glossary' }, []),
     list: (ordered, start, ...items) =>
       ob.makeNode(KIND.list, { ordered, start }, items.map(toShadow)),
     item: node(KIND.item),

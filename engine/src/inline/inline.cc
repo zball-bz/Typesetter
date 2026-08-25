@@ -333,6 +333,35 @@ struct InlineParser {
         handleSplice(i);
         continue;
       }
+      if (c == '@') {
+        // reference sugar (v2 §11.1): literal when preceded by an identifier
+        // character (user@domain); bare form ASCII, CJK labels use @[…]
+        bool prevIdent = i > 0 && isIdentCont(all[i - 1]);
+        u32 tStart = 0, tEnd = 0, end = 0;
+        if (!prevIdent) {
+          if (i + 1 < lim && all[i + 1] == '[') {
+            u32 close = i + 2;
+            while (close < lim && all[close] != ']') close++;
+            if (close < lim && close > i + 2) { tStart = i + 2; tEnd = close; end = close + 1; }
+          } else if (i + 1 < lim && isIdentStart(all[i + 1])) {
+            u32 p = i + 1;
+            while (p < lim && (isIdentCont(all[p]) || all[p] == '-')) p++;
+            tStart = i + 1; tEnd = p; end = p;
+          }
+        }
+        if (tEnd > tStart) {
+          spaceBeforeItem();
+          flushText();
+          AstNode* r = mk(AstKind::Ref, {i, end});
+          r->str = strs.intern(all.substr(tStart, tEnd - tStart));
+          pushItem(r);
+          i = end;
+          continue;
+        }
+        put(c, i);
+        i++;
+        continue;
+      }
       put(c, i);
       i++;
     }
@@ -385,6 +414,7 @@ struct AstBuilder {
       case SkelKind::Heading: {
         AstNode* h = mk(AstKind::Heading, s->span);
         h->tag = s->level;
+        if (!s->labelSpan.empty()) h->aux = strs.intern(src.slice(s->labelSpan));
         h->kids = inlineParse(s->lineSpans);
         return h;
       }
@@ -426,6 +456,8 @@ struct AstBuilder {
         c->str = strs.intern(body);
         return c;
       }
+      case SkelKind::Region:
+        return mk(AstKind::Region, s->span);  // populated in the region step
       case SkelKind::CodeLet:
       case SkelKind::CodeBlock: {
         AstNode* c = mk(AstKind::CodeStmt, s->span);
@@ -455,7 +487,15 @@ static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,
   switch (n->kind) {
     case AstKind::Doc: hdr("doc"); break;
     case AstKind::Para: hdr("para"); break;
-    case AstKind::Heading: hdr("heading"); appendf(out, " level=%d", n->tag); break;
+    case AstKind::Heading:
+      hdr("heading");
+      appendf(out, " level=%d", n->tag);
+      if (n->aux) {
+        out += " label=\"";
+        appendEscaped(out, strs.get(n->aux));
+        out += "\"";
+      }
+      break;
     case AstKind::ListB:
       hdr("list");
       appendf(out, " %s start=%d", n->ordered ? "ordered" : "bullet", n->num);
@@ -509,6 +549,20 @@ static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,
       appendEscaped(out, strs.get(n->str));
       out += "\"";
       break;
+    case AstKind::Ref:
+      hdr("ref");
+      out += " target=\"";
+      appendEscaped(out, strs.get(n->str));
+      out += "\"";
+      break;
+    case AstKind::Region:
+      hdr("region");
+      out += " name=\"";
+      appendEscaped(out, strs.get(n->str));
+      out += "\"";
+      break;
+    case AstKind::Row: hdr("row"); break;
+    case AstKind::Cell: hdr("cell"); break;
   }
   out += "\n";
   for (const AstNode* k : n->kids) dumpNode(out, k, src, strs, depth + 1);

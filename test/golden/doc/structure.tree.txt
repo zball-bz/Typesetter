@@ -1,7 +1,7 @@
 doc @[0,481) [base]
-  heading @[0,19) [base] level=1
+  heading @[0,19) [base] level=1 label="h-1"
     text @[2,19) [base] str="Typesetting Notes"
-  heading @[21,48) [base] level=2
+  heading @[21,48) [base] level=2 label="h-1.1"
     text @[24,37) [base] str="Structure and "
     styled @[38,48) [BOLD]
       text @[39,47) [BOLD] str="emphasis"

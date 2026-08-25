@@ -11,6 +11,12 @@ struct Emitter {
   StyleTable& styles;
   const Config& cfg;
   StrRef spaceRef, hyphenRef, bulletRef;
+  StrRef pendingAnchor = 0;  // labeled container (group): first unit anchors
+  StrRef takeAnchor() {
+    StrRef a = pendingAnchor;
+    pendingAnchor = 0;
+    return a;
+  }
 
   StyleId compose(StyleId base, u64 addBits, float mul) {
     if (addBits == 0 && mul == 1.0f) return base;
@@ -23,6 +29,7 @@ struct Emitter {
   // ---- inline walk --------------------------------------------------------
   struct ICtx {
     u64 addBits = 0;
+    u16 addFlags = 0;  // e.g. BF_REF for resolver-synthesized content
     float mul = 1.0f;
     StrRef url = 0;
     bool noHyphen = false;  // display context (headings)
@@ -46,6 +53,7 @@ struct Emitter {
         if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
           LinebreakBlock b;
           b.breakPenalty = BREAK_INF;
+          b.flags = ctx.addFlags;
           b.style = compose(n->style, ctx.addBits | CLS_CODE, ctx.mul);
           b.text = n->kids[0]->str;
           b.linkUrl = ctx.url;
@@ -54,8 +62,29 @@ struct Emitter {
         }
         return;
       }
+      case Kind::ref: {
+        // resolver output: kids = display text, url arg = "#tsr-<label>"
+        ICtx c2 = ctx;
+        for (const ArgVal& a : n->args)
+          if (a.key == ArgK::url && a.tag == ArgTag::Str) {
+            c2.url = a.ref;
+            c2.addBits |= CLS_LINK;
+          }
+        c2.addFlags |= BF_REF;
+        for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);
+        return;
+      }
       case Kind::comment:
         return;
+      case Kind::group: {
+        // inline-embedded labeled group (e.g. a term spliced mid-paragraph):
+        // the containing unit carries the anchor so refs still land
+        for (const ArgVal& a : n->args)
+          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref && !u.anchor)
+            u.anchor = a.ref;
+        for (const ContentNode* k : n->kids) inlineWalk(k, u, ctx);
+        return;
+      }
       default:
         for (const ContentNode* k : n->kids) inlineWalk(k, u, ctx);
         return;
@@ -75,7 +104,7 @@ struct Emitter {
   }
 
   void emitWord(std::string_view w, const ContentNode* n, FlowUnit& u, StyleId st, StrRef url,
-                bool noHyphen) {
+                bool noHyphen, u16 extraFlags) {
     // lead / core / trail split (ASCII letters core) for hyphenation
     u32 a = 0, b = (u32)w.size();
     auto isL = [](char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); };
@@ -90,7 +119,7 @@ struct Emitter {
     if (!noHyphen && coreLetters && e - a >= 5 && cfg.hyphenPenalty < BREAK_INF)
       pts = hyphenPoints(w.substr(a, e - a));
     if (pts.empty()) {
-      pushWordBlock(w, n, u, st, url, BREAK_INF);
+      pushWordBlock(w, n, u, st, url, BREAK_INF, extraFlags);
       return;
     }
     u32 prev = 0;  // within core
@@ -100,14 +129,14 @@ struct Emitter {
       if (k == 0) seg += w.substr(0, a);  // lead
       seg += w.substr(a + prev, end - prev);
       if (k == pts.size()) seg += w.substr(e);  // trail
-      pushWordBlock(seg, n, u, st, url, BREAK_INF);
+      pushWordBlock(seg, n, u, st, url, BREAK_INF, extraFlags);
       if (k < pts.size()) {
         LinebreakBlock hy;
         hy.breakPenalty = (float)cfg.hyphenPenalty;
         hy.style = st;
         hy.text = hyphenRef;
         hy.linkUrl = url;
-        hy.flags = BF_HYPHEN;
+        hy.flags = (u16)(BF_HYPHEN | extraFlags);
         hy.span = n->span;
         u.blocks.push_back(hy);
       }
@@ -148,13 +177,14 @@ struct Emitter {
 
     auto flushWord = [&] {
       if (!word.empty()) {
-        emitWord(word, n, u, st, ctx.url, ctx.noHyphen);
+        emitWord(word, n, u, st, ctx.url, ctx.noHyphen, ctx.addFlags);
         word.clear();
       }
     };
     auto boundary = [&] {
       double px = kCjkBoundaryEm * fontPx(st);
-      pushSynthetic(u, st, ctx.url, n->span, px, BF_SPACE | BF_BOUND, 1.0f, 0.0f, px);
+      pushSynthetic(u, st, ctx.url, n->span, px, (u16)(BF_SPACE | BF_BOUND | ctx.addFlags),
+                    1.0f, 0.0f, px);
     };
     auto lastIsCloseSp = [&] {  // a closing/dot punct's trailing half
       return !u.blocks.empty() && (u.blocks.back().flags & BF_PUNCT_SP) &&
@@ -166,7 +196,7 @@ struct Emitter {
     };
     auto pushCjkChar = [&](std::string_view chars, bool pair = false) {
       LinebreakBlock b;
-      b.flags = pair ? (BF_CJK | BF_PAIR) : BF_CJK;
+      b.flags = (u16)((pair ? (BF_CJK | BF_PAIR) : BF_CJK) | ctx.addFlags);
       b.breakPenalty = 0;
       b.stretchWeight = (float)cfg.cjkJustifyK;
       b.spaceWidth = glueSu;  // stretch capacity for the cost fn (App C)
@@ -180,7 +210,7 @@ struct Emitter {
       const PunctCompress mode = cfg.punctCompress;
       // BF_PUNCT_OPEN on a half-space marks it as an OPENING punct's leading
       // half — the renderer squeezes a glyph only when its OWN half is absent.
-      const u16 openSpFlags = BF_SPACE | BF_PUNCT_SP | BF_PUNCT_OPEN;
+      const u16 openSpFlags = (u16)(BF_SPACE | BF_PUNCT_SP | BF_PUNCT_OPEN | ctx.addFlags);
       if (open) {
         if (lastIsCloseSp()) {
           // closing/dot + opening
@@ -209,7 +239,7 @@ struct Emitter {
         }
       }
       LinebreakBlock g;
-      g.flags = (u16)(BF_CJK | BF_PUNCT_GLYPH | (open ? BF_PUNCT_OPEN : 0));
+      g.flags = (u16)(BF_CJK | BF_PUNCT_GLYPH | (open ? BF_PUNCT_OPEN : 0) | ctx.addFlags);
       g.breakPenalty = BREAK_INF;
       g.style = stCjk;
       g.text = strs.intern(ch);
@@ -217,8 +247,8 @@ struct Emitter {
       g.span = n->span;
       u.blocks.push_back(g);
       if (!open)
-        pushSynthetic(u, stCjk, ctx.url, n->span, halfPx, BF_SPACE | BF_PUNCT_SP, 0.0f,
-                      0.0f, 0.0);
+        pushSynthetic(u, stCjk, ctx.url, n->span, halfPx,
+                      (u16)(BF_SPACE | BF_PUNCT_SP | ctx.addFlags), 0.0f, 0.0f, 0.0);
     };
 
     while (i < s.size()) {
@@ -227,7 +257,7 @@ struct Emitter {
       if (cp == ' ' || cp == '\t') {
         flushWord();
         LinebreakBlock b;
-        b.flags = BF_SPACE;
+        b.flags = (u16)(BF_SPACE | ctx.addFlags);
         b.breakPenalty = 0;
         b.stretchWeight = 1;
         b.style = st;
@@ -282,6 +312,7 @@ struct Emitter {
         u.indent = indent;
         u.marker = marker;
         u.markerStyle = compose(n->style, 0, 1.0f);
+        u.anchor = takeAnchor();
         if (cfg.paraIndentEm > 0 && marker == 0) {  // 首行缩进 (App C: blocks, not CSS)
           double px = cfg.paraIndentEm * cfg.baseSizePx;
           pushSynthetic(u, n->style, 0, n->span, px, BF_INDENT, 0.0f, BREAK_INF, 0.0);
@@ -292,13 +323,17 @@ struct Emitter {
       }
       case Kind::heading: {
         int level = 1;
-        for (const ArgVal& a : n->args)
+        for (const ArgVal& a : n->args) {
           if (a.key == ArgK::level && a.tag == ArgTag::Num) level = (int)a.num;
+        }
         FlowUnit u;
         u.src = n;
         u.indent = indent;
         u.marker = marker;
         u.markerStyle = n->style;
+        u.anchor = takeAnchor();
+        for (const ArgVal& a : n->args)
+          if (a.key == ArgK::label && a.tag == ArgTag::Str) u.anchor = a.ref;
         u.ragged = true;  // display line: ragged right, no hyphenation
         ICtx ctx;
         ctx.addBits = CLS_BOLD;
@@ -378,6 +413,14 @@ struct Emitter {
       }
       case Kind::comment:
         return;
+      case Kind::group: {
+        for (const ArgVal& a : n->args)
+          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref)
+            pendingAnchor = a.ref;
+        for (const ContentNode* k : n->kids) blockWalk(k, indent, 0, tb);
+        pendingAnchor = 0;
+        return;
+      }
       default:
         for (const ContentNode* k : n->kids) blockWalk(k, indent, 0, tb);
         return;
@@ -533,6 +576,11 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
       const char* k = u.kind == FlowUnit::K::Text ? "text"
                       : u.kind == FlowUnit::K::Code ? "code" : "rule";
       appendf(out, " unit %s indent=%dsu", k, u.indent);
+      if (u.anchor) {
+        out += " anchor=\"";
+        appendEscaped(out, strs.get(u.anchor));
+        out += "\"";
+      }
       if (u.marker) {
         out += " marker=\"";
         appendEscaped(out, strs.get(u.marker));
@@ -568,6 +616,7 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
         if (st.bits & CLS_EM) out += " EM";
         if (st.bits & CLS_CODE) out += " CODE";
         if (st.bits & CLS_LINK) out += " LINK";
+        if (b.flags & BF_REF) out += " SYN";
         if (st.sizeMul != 1.0f) appendf(out, " x%.2f", (double)st.sizeMul);
         appendf(out, " @[%u,%u)\n", b.span.start, b.span.end);
       }

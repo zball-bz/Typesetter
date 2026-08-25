@@ -1,0 +1,15 @@
+doc @[0,157) [base]
+  heading @[0,7) [base] level=1 label="dup"
+    text @[2,7) [base] str="First"
+  para @[15,96) [base]
+    text @[15,29) [base] str="A reference to "
+    ref @[30,38) [base] target="missing"
+      text @[30,38) [base] str="??"
+    text @[39,96) [base] str=" stays unresolved and a second label reuses the first one."
+  heading @[98,106) [base] level=1 label="h-2"
+    text @[100,106) [base] str="Second"
+  para @[114,157) [base]
+    text @[114,121) [base] str="Back to "
+    ref @[122,126) [base] target="dup" url="#tsr-dup"
+      text @[122,126) [base] str="§1"
+    text @[127,157) [base] str=" resolves to the first heading."
