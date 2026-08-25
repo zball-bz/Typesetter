@@ -63,7 +63,7 @@ struct Resolver {
 
   // ---- node fabrication ---------------------------------------------------
   ContentNode* mkNode(Kind k, Span span, StyleId style = 0) {
-    ContentNode* n = new (arena.alloc(sizeof(ContentNode), alignof(ContentNode))) ContentNode();
+    ContentNode* n = arena.make<ContentNode>();
     n->kind = k;
     n->span = span;
     n->style = style;

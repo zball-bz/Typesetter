@@ -22,7 +22,7 @@ struct LinePass {
   SkelNode* leaf = nullptr;  // open paragraph
 
   SkelNode* mk(SkelKind k) {
-    SkelNode* n = new (arena.alloc(sizeof(SkelNode), alignof(SkelNode))) SkelNode();
+    SkelNode* n = arena.make<SkelNode>();
     n->kind = k;
     return n;
   }

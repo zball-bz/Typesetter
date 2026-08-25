@@ -17,7 +17,7 @@ struct Inst {
       for (const ArgVal& a : rn.args)
         if (a.key == ArgK::bits && a.tag == ArgTag::Num) own |= (u64)a.num;
     }
-    ContentNode* n = new (arena.alloc(sizeof(ContentNode), alignof(ContentNode))) ContentNode();
+    ContentNode* n = arena.make<ContentNode>();
     n->kind = rn.kind;
     n->span = rn.span;
     n->style = styles.idOf({own});
@@ -37,7 +37,7 @@ struct Inst {
 ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
                         StyleTable& styles, DiagSink& diags) {
   ContentTree t;
-  ContentNode* root = new (arena.alloc(sizeof(ContentNode), alignof(ContentNode))) ContentNode();
+  ContentNode* root = arena.make<ContentNode>();
   root->kind = Kind::doc;
   t.root = root;
   if (!raw.ok) return t;

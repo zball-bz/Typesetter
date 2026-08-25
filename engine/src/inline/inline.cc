@@ -32,7 +32,7 @@ struct InlineParser {
   bool prevGlyph = false;
 
   AstNode* mk(AstKind k, Span s) {
-    AstNode* n = new (arena.alloc(sizeof(AstNode), alignof(AstNode))) AstNode();
+    AstNode* n = arena.make<AstNode>();
     n->kind = k;
     n->span = s;
     return n;
@@ -446,7 +446,7 @@ struct AstBuilder {
   DiagSink& diags;
 
   AstNode* mk(AstKind k, Span s) {
-    AstNode* n = new (arena.alloc(sizeof(AstNode), alignof(AstNode))) AstNode();
+    AstNode* n = arena.make<AstNode>();
     n->kind = k;
     n->span = s;
     return n;

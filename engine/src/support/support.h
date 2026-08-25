@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
+#include <new>
+#include <type_traits>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -34,13 +36,25 @@ struct Span {
 };
 
 // --- arena: document-scoped bump allocator ---
+// Node types placement-new'd here carry std::vector members whose heap
+// buffers are NOT arena memory — construct them through make<T>() so their
+// destructors run at arena teardown (LeakSanitizer-clean by construction).
 class Arena {
  public:
   Arena() = default;
   Arena(const Arena&) = delete;
   Arena& operator=(const Arena&) = delete;
   ~Arena() {
+    for (size_t i = fins_.size(); i > 0; i--) fins_[i - 1].fn(fins_[i - 1].p);
     for (char* b : blocks_) std::free(b);
+  }
+
+  template <class T>
+  T* make() {
+    T* p = new (alloc(sizeof(T), alignof(T))) T();
+    if constexpr (!std::is_trivially_destructible_v<T>)
+      fins_.push_back({p, [](void* q) { ((T*)q)->~T(); }});
+    return p;
   }
   void* alloc(size_t n, size_t align = 8) {
     uintptr_t base = (uintptr_t)cur_;
@@ -72,6 +86,11 @@ class Arena {
     pos_ = 0;
     blocks_.push_back(cur_);
   }
+  struct Fin {
+    void* p;
+    void (*fn)(void*);
+  };
+  std::vector<Fin> fins_;
   std::vector<char*> blocks_;
   char* cur_ = nullptr;
   size_t cap_ = 0, pos_ = 0;
