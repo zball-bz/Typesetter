@@ -34,10 +34,44 @@ static void runClasses(std::string& out, const Styling& st) {
   if (st.bits & CLS_CODE) out += " tsr-code";
 }
 
-static void runStyleAttr(std::string& out, const Styling& st, const Config& cfg) {
-  if (st.sizeMul != 1.0f) {
-    out += " style=\"font-size:";
-    fmtPx(out, cfg.baseSizePx * (double)st.sizeMul);
+// Inline-style overrides a run carries beyond its classes (document-model
+// §3): explicit font-family wins over the .tsr-cjk var rule by specificity.
+static void styleInto(std::string& style, const Styling& st, const Config& cfg,
+                      const Interner& strs) {
+  double base = st.sizePx > 0 ? (double)st.sizePx : cfg.baseSizePx;
+  if (st.sizeMul != 1.0f || st.sizePx > 0) {
+    style += "font-size:";
+    fmtPx(style, base * (double)st.sizeMul);
+    style += ";";
+  }
+  if (st.fontFamily) {
+    style += "font-family:";
+    escapeHtml(style, strs.get(st.fontFamily));
+    style += ";";
+  }
+  if (st.color) {
+    style += "color:";
+    escapeHtml(style, strs.get(st.color));
+    style += ";";
+  }
+  if (!style.empty() && style.back() == ';') style.pop_back();
+}
+
+static void langAttr(std::string& out, const Styling& st, const Interner& strs) {
+  if (!st.lang) return;
+  out += " lang=\"";
+  escapeHtml(out, strs.get(st.lang));
+  out += "\"";
+}
+
+static void runStyleAttr(std::string& out, const Styling& st, const Config& cfg,
+                         const Interner& strs) {
+  std::string style;
+  styleInto(style, st, cfg, strs);
+  langAttr(out, st, strs);
+  if (!style.empty()) {
+    out += " style=\"";
+    out += style;
     out += "\"";
   }
 }
@@ -117,7 +151,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         out += "<span class=\"tsr-marker ";
         runClasses(out, mst);
         out += "\" data-syn=\"marker\"";
-        runStyleAttr(out, mst, cfg);
+        runStyleAttr(out, mst, cfg, strs);
         out += ">";
         escapeHtml(out, strs.get(l.marker));
         out += "</span>";
@@ -129,7 +163,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         out += "<span class=\"";
         runClasses(out, cst);
         out += "\"";
-        runStyleAttr(out, cst, cfg);
+        runStyleAttr(out, cst, cfg, strs);
         out += ">";
         escapeHtml(out, strs.get(l.codeText));
         out += "</span></div>\n";
@@ -154,11 +188,9 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         }
         if (first.flags & BF_REF) out += " data-syn=\"ref\"";  // §9.3: copy skips
         else if (!first.span.empty()) appendf(out, " data-s=\"%u\"", first.span.start);
+        langAttr(out, sty, strs);
         std::string style;
-        if (sty.sizeMul != 1.0f) {
-          style += "font-size:";
-          fmtPx(style, cfg.baseSizePx * (double)sty.sizeMul);
-        }
+        styleInto(style, sty, cfg, strs);
         if (!extraStyle.empty()) {
           if (!style.empty()) style += ";";
           style += extraStyle;

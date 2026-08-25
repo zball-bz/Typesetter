@@ -23,11 +23,11 @@ inline void mockProvide(const MeasureRequest& req, MetricStore& store,
                         const Interner& strs, const StyleTable& styles,
                         const Config& cfg) {
   for (StyleId st : req.vmetStyles) {
-    StyleDesc d = describeStyle(cfg, styles.get(st));
+    StyleDesc d = describeStyle(cfg, styles.get(st), strs);
     store.provideVmet(st, 0.8 * d.sizePx, 0.2 * d.sizePx);
   }
   for (const MeasureItem& it : req.words) {
-    StyleDesc d = describeStyle(cfg, styles.get(it.style));
+    StyleDesc d = describeStyle(cfg, styles.get(it.style), strs);
     store.provideWord(it.str, it.style, mockWordWidthPx(strs.get(it.str), d.sizePx), cfg);
   }
 }

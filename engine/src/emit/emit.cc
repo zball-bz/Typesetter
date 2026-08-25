@@ -722,6 +722,20 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
         if (st.bits & CLS_LINK) out += " LINK";
         if (b.flags & BF_REF) out += " SYN";
         if (st.sizeMul != 1.0f) appendf(out, " x%.2f", (double)st.sizeMul);
+        if (st.fontFamily) {
+          out += " font=\"";
+          appendEscaped(out, strs.get(st.fontFamily));
+          out += "\"";
+        }
+        if (st.lang) {
+          out += " lang=";
+          out += strs.get(st.lang);
+        }
+        if (st.color) {
+          out += " color=";
+          out += strs.get(st.color);
+        }
+        if (st.sizePx > 0) appendf(out, " size=%gpx", (double)st.sizePx);
         appendf(out, " @[%u,%u)\n", b.span.start, b.span.end);
       };
       for (const LinebreakBlock& b : u.blocks) dumpBlock(b);

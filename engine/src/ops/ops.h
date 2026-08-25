@@ -4,7 +4,7 @@
 
 namespace tsr {
 
-constexpr u8 OPS_VERSION = 1;
+constexpr u8 OPS_VERSION = 2;
 
 enum class Op : u8 {
 #define OP(n, c) n = c,
@@ -61,6 +61,7 @@ struct SchedItem {
   Op op;          // EMIT | STYLE_PUSH | STYLE_POP_TO
   u32 a = 0;      // EMIT: node id; STYLE_POP_TO: height
   u64 bits = 0;   // STYLE_PUSH: class bits delta
+  std::vector<ArgVal> patch;  // STYLE_PUSH: InlineStyle patch (v2)
 };
 
 // Decoded, validated buffer. Strings live in the buffer's own table; the

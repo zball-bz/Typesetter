@@ -1,0 +1,27 @@
+doc @[0,571)
+  code-block @[0,67) js=" $.style.push({ font: '\"LXGW WenKai\", serif', lang: \"zh-TW\" }); "
+  para @[69,190)
+    text @[69,190) str="塊級作用域——這一段整體改用文楷與繁體語言標記，破折號與省略號……照常走定義寬。"
+  code-block @[192,214) js=" $.style.popTo(0); "
+  para @[216,429)
+    text @[216,255) str="回到默认样式的段落，行内有"
+    splice @[255,295) expr="style({color: \"#a8432a\"})"
+      arg @[282,294)
+        text @[282,294) str="着色强调"
+    text @[295,298) str="、 "
+    splice @[299,351) expr="style({font: '\"LXGW WenKai\", serif'})"
+      arg @[338,350)
+        text @[338,350) str="楷体片段"
+    text @[351,354) str="和"
+    splice @[354,388) expr="style({sizePx: 22})"
+      arg @[375,387)
+        text @[375,387) str="放大片段"
+    text @[388,398) str="，连同 "
+    styled @[399,407) marker=*
+      text @[400,406) str="粗体"
+    text @[408,429) str=" 一起参与断行。"
+  region @[431,570) name="aside"
+    para @[484,562)
+      row @[484,562)
+        cell @[484,562)
+          text @[484,562) str="區域級作用域：字體與語言一起換，內部照樣是普通標記。"

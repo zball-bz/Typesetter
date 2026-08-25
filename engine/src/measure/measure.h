@@ -57,12 +57,14 @@ struct StyleDesc {
   int weight;
   bool italic;
 };
-inline StyleDesc describeStyle(const Config& cfg, const Styling& s) {
+inline StyleDesc describeStyle(const Config& cfg, const Styling& s, const Interner& strs) {
   StyleDesc d;
-  d.family = (s.bits & CLS_CODE) ? cfg.monoFont
-             : (s.bits & CLS_CJK) ? cfg.cjkFont
-                                  : cfg.bodyFont;
-  d.sizePx = cfg.baseSizePx * (double)s.sizeMul;
+  d.family = s.fontFamily ? std::string(strs.get(s.fontFamily))
+             : (s.bits & CLS_CODE) ? cfg.monoFont
+             : (s.bits & CLS_CJK)  ? cfg.cjkFont
+                                   : cfg.bodyFont;
+  double base = s.sizePx > 0 ? (double)s.sizePx : cfg.baseSizePx;
+  d.sizePx = base * (double)s.sizeMul;
   d.weight = (s.bits & CLS_BOLD) ? 700 : 400;
   d.italic = (s.bits & CLS_EM) != 0;
   return d;

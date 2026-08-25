@@ -78,6 +78,8 @@ Notes:
 
 - `TextStyling = { classBits: u64, dynClasses: sorted u32[], inline: InlineStyle? }`, interned by hash → `StyleId`. Blocks and runs store StyleIds, never copies.
 - `InlineStyle` props (initial set): `fontFamily, fontSizePx, fontWeight, italic, color, letterSpacingPx`. Extending the set is a model version bump.
+- **Implemented subset (ops v2)**: `fontFamily` (CSS family list; wins over the class-based body/cjk/mono split and the `.tsr-cjk` var by inline-style specificity), `sizePx` (absolute base; `sizeMul` still composes on top), `color`, plus `lang` (BCP-47 → per-run `lang` attribute, drives OpenType 'locl' forms — the promised set extension). `fontWeight`/`italic` ride the class bits; `letterSpacingPx` is deliberately NOT exposed — letter-spacing is the engine's CJK justification channel and a user value would fight it. Caveat: canvas measurement has no lang concept, so a `lang` that changes advances via 'locl' is invisible to measurement — defined-width dashes/ellipses are immune, fullwidth punctuation is 1em in every locale, so the practical exposure is nil (recorded).
+- Authoring surface: inline `#style({font, lang, color, sizePx, bold, italic})[…]`; block scope `#{ $.style.push({…}) } … #{ $.style.popTo(h) }`; region scope `#!aside(font: '…', lang: "zh-TW")` (the region wraps itself in a `styled` node).
 - **StyleDelta** (used by both `styled` nodes and the schedule stack): `{ addBits: u64, addDyn: u32[], patch: InlineStyle? }`.
 - **Resolution** (at instantiation, §4): effective style of a node = fold of (schedule stack at its `EMIT`) ∘ (path of `styled` deltas from the emitted root down to the node). Bits OR; dyn sets union; inline patches nearest-wins per prop.
 - **Binding time is emission-time** (v2 §12): a DAG value emitted twice under different stacks instantiates into two differently-styled subtrees. The instantiation walk therefore *copies* per emission; the DAG is a sharing optimization of the op stream, not of the content tree.
@@ -92,7 +94,7 @@ A content value in user/constructor JS is a **shadow node** `{ kind, args, child
 ### 4.2 Buffer layout
 
 ```
-header   magic "TSOP", version u8, nStrings varint, stringBytes varint, nOps varint
+header   magic "TSOP", version u8 (=2), nStrings varint, stringBytes varint, nOps varint
 strings  UTF-8 blob + varint end-offsets
 ops      op stream (all ints varint/LEB128 unless noted)
 ```
@@ -103,7 +105,7 @@ ops      op stream (all ints varint/LEB128 unless noted)
 0x01 MAKE_TEXT   strRef                                  → id
 0x02 MAKE_NODE   kind nargs (argKey argVal)* nchildren id*  → id
 0x03 EMIT        id
-0x04 STYLE_PUSH  delta
+0x04 STYLE_PUSH  bits npatch (argKey argVal)*   (v2: npatch was fixed 0 in v1)
 0x05 STYLE_POP_TO height
 0x06 SPAN        id start end       (post-hoc span attach; codegen wraps
                                      constructor calls in __at(node, s, e))

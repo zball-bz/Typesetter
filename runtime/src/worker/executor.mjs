@@ -62,10 +62,19 @@ export function buildContext(ob) {
   const regionHandlers = {};
   const __region = (name, args = {}, children = []) => {
     const h = regionHandlers[name];
-    if (h) return toShadow(h(args, children));
-    if (name === 'table') return tableBuild(args, children);
+    let node;
+    if (h) node = toShadow(h(args, children));
+    else if (name === 'table') node = tableBuild(args, children);
     // generic region → role-tagged group (#!figure, #!aside, …)
-    return ob.makeNode(KIND.group, { role: name, label: args.label }, regionJoin(children));
+    else node = ob.makeNode(KIND.group, { role: name, label: args.label }, regionJoin(children));
+    // region-level style scope: #!aside(font: '…', lang: "zh-TW")
+    if (args.font !== undefined || args.lang !== undefined ||
+        args.color !== undefined || args.sizePx !== undefined) {
+      node = ob.makeNode(KIND.styled, {
+        font: args.font, lang: args.lang, color: args.color, sizePx: args.sizePx,
+      }, [node]);
+    }
+    return node;
   };
   // --- fence dispatcher (v2 §4.1) ------------------------------------------
   const fenceHandlers = {};
@@ -115,6 +124,13 @@ export function buildContext(ob) {
     link: (url, ...kids) => ob.makeNode(KIND.link, { url: String(url) }, kids.map(toShadow)),
     code: (s) => ob.makeNode(KIND.code, {}, [ob.makeText(String(s))]),
     seq: node(KIND.seq),
+    // inline/block style scope (document-model §3): patch keys font (CSS
+    // family list), lang (BCP-47), color, sizePx, plus bold/italic sugar
+    style: (patch = {}, ...kids) =>
+      ob.makeNode(KIND.styled, {
+        bits: ((patch.bold ? CLS_BOLD : 0) | (patch.italic ? CLS_EM : 0)) || undefined,
+        font: patch.font, lang: patch.lang, color: patch.color, sizePx: patch.sizePx,
+      }, kids.map(toShadow)),
     val: (x) => toShadow(x),
     // M1: cooked-text tag; runtime markup re-entry (m.parse via WASM) is M2.
     m: (strings, ...vals) => {
@@ -128,7 +144,13 @@ export function buildContext(ob) {
     fence(tag, fn) { fenceHandlers[tag] = fn; },     // registration precedes use
     region(name, fn) { regionHandlers[name] = fn; },
     style: {
-      push(bits) { styleStack.push(bits); ob.stylePush(bits); },
+      push(x) {
+        styleStack.push(x);
+        if (typeof x === 'number') ob.stylePush(x, {});
+        else ob.stylePush((x.bold ? CLS_BOLD : 0) | (x.italic ? CLS_EM : 0), {
+          font: x.font, lang: x.lang, color: x.color, sizePx: x.sizePx,
+        });
+      },
       get height() { return styleStack.length; },
       popTo(h) { styleStack.length = Math.max(0, h); ob.stylePopTo(h); },
     },

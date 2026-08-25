@@ -10,17 +10,38 @@ struct Inst {
   StyleTable& styles;
   DiagSink& diags;
 
-  ContentNode* copy(u32 id, u64 bits) {
-    const RawNode& rn = raw.nodes[id];
-    u64 own = bits;
-    if (rn.kind == Kind::styled) {
-      for (const ArgVal& a : rn.args)
-        if (a.key == ArgK::bits && a.tag == ArgTag::Num) own |= (u64)a.num;
+  // fold one delta (bits + InlineStyle patch args) onto an effective style
+  void applyPatch(Styling& st, const ArgVal& a) {
+    switch (a.key) {
+      case ArgK::bits:
+        if (a.tag == ArgTag::Num) st.bits |= (u64)a.num;
+        break;
+      case ArgK::font:
+        if (a.tag == ArgTag::Str) st.fontFamily = strs.intern(raw.strings[a.ref]);
+        break;
+      case ArgK::lang:
+        if (a.tag == ArgTag::Str) st.lang = strs.intern(raw.strings[a.ref]);
+        break;
+      case ArgK::color:
+        if (a.tag == ArgTag::Str) st.color = strs.intern(raw.strings[a.ref]);
+        break;
+      case ArgK::sizePx:
+        if (a.tag == ArgTag::Num) st.sizePx = (float)a.num;
+        break;
+      default:
+        break;
     }
+  }
+
+  ContentNode* copy(u32 id, const Styling& inherited) {
+    const RawNode& rn = raw.nodes[id];
+    Styling own = inherited;
+    if (rn.kind == Kind::styled)
+      for (const ArgVal& a : rn.args) applyPatch(own, a);
     ContentNode* n = arena.make<ContentNode>();
     n->kind = rn.kind;
     n->span = rn.span;
-    n->style = styles.idOf({own});
+    n->style = styles.idOf(own);
     if (rn.isText) n->str = strs.intern(raw.strings[rn.str]);
     for (const ArgVal& a : rn.args) {
       ArgVal v = a;
@@ -43,13 +64,22 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
   if (!raw.ok) return t;
 
   Inst inst{raw, arena, strs, styles, diags};
-  std::vector<u64> stack;  // schedule style stack (bits deltas)
-  u64 cur = 0;
+  std::vector<const SchedItem*> stack;  // schedule deltas (bits + patches)
+  auto refold = [&] {
+    Styling st{};
+    for (const SchedItem* d : stack) {
+      st.bits |= d->bits;
+      for (const ArgVal& a : d->patch) inst.applyPatch(st, a);
+    }
+    return st;
+  };
+  Styling cur{};
   for (const SchedItem& s : raw.sched) {
     switch (s.op) {
       case Op::STYLE_PUSH:
-        stack.push_back(s.bits);
-        cur |= s.bits;
+        stack.push_back(&s);
+        cur.bits |= s.bits;
+        for (const ArgVal& a : s.patch) inst.applyPatch(cur, a);
         break;
       case Op::STYLE_POP_TO: {
         u32 h = s.a;
@@ -58,8 +88,7 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
           h = (u32)stack.size();
         }
         stack.resize(h);
-        cur = 0;
-        for (u64 b : stack) cur |= b;
+        cur = refold();
         break;
       }
       case Op::EMIT:
@@ -77,7 +106,7 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
   return t;
 }
 
-static void styleStr(std::string& out, const Styling& s) {
+static void styleStr(std::string& out, const Styling& s, const Interner& strs) {
   out += "[";
   bool first = true;
   auto f = [&](u64 bit, const char* n) {
@@ -95,6 +124,20 @@ static void styleStr(std::string& out, const Styling& s) {
   f(CLS_LINK, "LINK");
   if (first) out += "base";
   if (s.sizeMul != 1.0f) appendf(out, "x%.2f", (double)s.sizeMul);
+  if (s.fontFamily) {
+    out += " font=\"";
+    appendEscaped(out, strs.get(s.fontFamily));
+    out += "\"";
+  }
+  if (s.lang) {
+    out += " lang=";
+    out += strs.get(s.lang);
+  }
+  if (s.color) {
+    out += " color=";
+    out += strs.get(s.color);
+  }
+  if (s.sizePx > 0) appendf(out, " size=%gpx", (double)s.sizePx);
   out += "]";
 }
 
@@ -102,7 +145,7 @@ static void dumpNode(std::string& out, const ContentNode* n, const Interner& str
                      const StyleTable& styles, int depth) {
   for (int i = 0; i < depth; i++) out += "  ";
   appendf(out, "%s @[%u,%u) ", kindName(n->kind), n->span.start, n->span.end);
-  styleStr(out, styles.get(n->style));
+  styleStr(out, styles.get(n->style), strs);
   if (n->kind == Kind::text) {
     out += " str=\"";
     appendEscaped(out, strs.get(n->str));

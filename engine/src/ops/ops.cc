@@ -63,6 +63,32 @@ struct Reader {
 };
 }  // namespace
 
+// Shared arg decoding for MAKE_NODE args and STYLE_PUSH patches (v2).
+static const char* readArg(Reader& rd, const RawOps& r, ArgVal& a, bool allowNode) {
+  a.key = (ArgK)rd.varint();
+  a.tag = (ArgTag)rd.byte();
+  switch (a.tag) {
+    case ArgTag::Null: break;
+    case ArgTag::Bool: a.num = rd.byte() ? 1 : 0; break;
+    case ArgTag::Num: a.num = rd.f64(); break;
+    case ArgTag::Str: {
+      u64 s = rd.varint();
+      if (rd.fail || s >= r.strings.size()) return "arg bad str";
+      a.ref = (u32)s;
+      break;
+    }
+    case ArgTag::Node: {
+      if (!allowNode) return "patch bad tag";
+      u64 id = rd.varint();
+      if (rd.fail || id >= r.nodes.size()) return "arg bad node id";
+      a.ref = (u32)id;
+      break;
+    }
+    default: return "arg bad tag";
+  }
+  return rd.fail ? "truncated arg" : nullptr;
+}
+
 void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
   out = RawOps{};  // reset before any views exist — safe to move-assign empty
   RawOps& r = out;
@@ -109,27 +135,8 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
         if (rd.fail || nargs > 64) { bad("MAKE_NODE bad nargs"); return; }
         for (u64 i = 0; i < nargs; i++) {
           ArgVal a;
-          a.key = (ArgK)rd.varint();
-          a.tag = (ArgTag)rd.byte();
-          switch (a.tag) {
-            case ArgTag::Null: break;
-            case ArgTag::Bool: a.num = rd.byte() ? 1 : 0; break;
-            case ArgTag::Num: a.num = rd.f64(); break;
-            case ArgTag::Str: {
-              u64 s = rd.varint();
-              if (rd.fail || s >= r.strings.size()) { bad("arg bad str"); return; }
-              a.ref = (u32)s;
-              break;
-            }
-            case ArgTag::Node: {
-              u64 id = rd.varint();
-              if (rd.fail || id >= r.nodes.size()) { bad("arg bad node id"); return; }
-              a.ref = (u32)id;
-              break;
-            }
-            default: { bad("arg bad tag"); return; }
-          }
-          if (rd.fail) { bad("truncated arg"); return; }
+          const char* err = readArg(rd, r, a, /*allowNode=*/true);
+          if (err) { bad(err); return; }
           n.args.push_back(a);
         }
         u64 nch = rd.varint();
@@ -149,10 +156,18 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
         break;
       }
       case Op::STYLE_PUSH: {
-        u64 bits = rd.varint();
+        SchedItem it;
+        it.op = Op::STYLE_PUSH;
+        it.bits = rd.varint();
         u8 npatch = rd.byte();
-        if (rd.fail || npatch != 0) { bad("STYLE_PUSH patch unsupported"); return; }
-        r.sched.push_back({Op::STYLE_PUSH, 0, bits});
+        if (rd.fail || npatch > 16) { bad("STYLE_PUSH bad patch count"); return; }
+        for (u8 i = 0; i < npatch; i++) {
+          ArgVal a;
+          const char* err = readArg(rd, r, a, /*allowNode=*/false);
+          if (err) { bad(err); return; }
+          it.patch.push_back(a);
+        }
+        r.sched.push_back(std::move(it));
         break;
       }
       case Op::STYLE_POP_TO: {
@@ -212,8 +227,18 @@ std::string dumpOps(const RawOps& r) {
   }
   for (const SchedItem& s : r.sched) {
     if (s.op == Op::EMIT) appendf(out, "EMIT %%%u\n", s.a);
-    else if (s.op == Op::STYLE_PUSH) appendf(out, "STYLE_PUSH bits=0x%llx\n", (unsigned long long)s.bits);
-    else appendf(out, "STYLE_POP_TO %u\n", s.a);
+    else if (s.op == Op::STYLE_PUSH) {
+      appendf(out, "STYLE_PUSH bits=0x%llx", (unsigned long long)s.bits);
+      for (const ArgVal& a : s.patch) {
+        appendf(out, " %s=", argName(a.key));
+        if (a.tag == ArgTag::Str) {
+          out += "\"";
+          appendEscaped(out, r.strings[a.ref]);
+          out += "\"";
+        } else appendf(out, "%g", a.num);
+      }
+      out += "\n";
+    } else appendf(out, "STYLE_POP_TO %u\n", s.a);
   }
   return out;
 }

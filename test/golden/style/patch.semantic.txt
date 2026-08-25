@@ -1,0 +1,5 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="69" data-e="190">塊級作用域——這一段整體改用文楷與繁體語言標記，破折號與省略號……照常走定義寬。</p>
+<p data-pid="1" data-s="216" data-e="429">回到默认样式的段落，行内有<span style="color:#a8432a">着色强调</span>、 <span style="font-family:&quot;LXGW WenKai&quot;, serif">楷体片段</span>和<span style="font-size:22px">放大片段</span>，连同 <strong>粗体</strong> 一起参与断行。</p>
+<p data-pid="2" data-s="431" data-e="570"><span lang="zh-TW" style="font-family:&quot;LXGW WenKai&quot;, serif">區域級作用域：字體與語言一起換，內部照樣是普通標記。</span></p>
+</div>

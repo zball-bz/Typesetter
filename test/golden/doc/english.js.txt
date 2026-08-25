@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, __region, __fence}, $) => {
 __emit(__at(para(__at(text("The quick brown fox jumps over the lazy dog while the typesetting engine measures every word and chooses optimal break points for a narrow measure so that interword spacing stays even across all lines of this paragraph."),0,219)),0,219));
 __emit(__at(para(__at(text("A second shorter paragraph exercises paragraph spacing and the final ragged line."),221,302)),221,302));
 };

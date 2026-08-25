@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, __region, __fence}, $) => {
 __emit(__at(para(__at(text("这是一个中文排版引擎的演示段落，它会把每个汉字作为独立的块来处理，并通过字距的微小伸缩实现两端对齐，这正是传统排版的做法。"),0,183)),0,183));
 };
 //# sourceURL=tsm:doc

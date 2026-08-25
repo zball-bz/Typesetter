@@ -96,7 +96,7 @@ TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
   out += "{\"styles\":[";
   bool first = true;
   for (u32 sid : styleIds) {
-    StyleDesc desc = describeStyle(d->doc.cfg, d->doc.styles.get(sid));
+    StyleDesc desc = describeStyle(d->doc.cfg, d->doc.styles.get(sid), d->doc.strs);
     if (!first) out += ",";
     first = false;
     appendf(out, "{\"id\":%u,\"family\":\"", sid);

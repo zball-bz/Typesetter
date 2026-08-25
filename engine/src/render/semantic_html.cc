@@ -62,6 +62,37 @@ struct Sem {
         const char* tag = (bits & CLS_BOLD) ? "strong" : (bits & CLS_EM) ? "em" : "span";
         out += "<";
         out += tag;
+        std::string_view lang = argS(n, ArgK::lang);
+        if (!lang.empty()) {
+          out += " lang=\"";
+          esc(out, lang);
+          out += "\"";
+        }
+        std::string style;
+        std::string_view font = argS(n, ArgK::font);
+        if (!font.empty()) {
+          style += "font-family:";
+          style += font;
+          style += ";";
+        }
+        std::string_view color = argS(n, ArgK::color);
+        if (!color.empty()) {
+          style += "color:";
+          style += color;
+          style += ";";
+        }
+        double sizePx = argN(n, ArgK::sizePx, 0);
+        if (sizePx > 0) {
+          char buf[32];
+          std::snprintf(buf, sizeof buf, "font-size:%gpx;", sizePx);
+          style += buf;
+        }
+        if (!style.empty()) {
+          style.pop_back();
+          out += " style=\"";
+          esc(out, style);
+          out += "\"";
+        }
         out += ">";
         inlineKids(n);
         out += "</";

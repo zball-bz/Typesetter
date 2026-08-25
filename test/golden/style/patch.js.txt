@@ -1,0 +1,8 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, __region, __fence}, $) => {
+ $.style.push({ font: '"LXGW WenKai", serif', lang: "zh-TW" }); 
+__emit(__at(para(__at(text("塊級作用域——這一段整體改用文楷與繁體語言標記，破折號與省略號……照常走定義寬。"),69,190)),69,190));
+ $.style.popTo(0); 
+__emit(__at(para(__at(text("回到默认样式的段落，行内有"),216,255), val(style({color: "#a8432a"}, __at(text("着色强调"),282,294))), __at(text("、 "),295,298), val(style({font: '"LXGW WenKai", serif'}, __at(text("楷体片段"),338,350))), __at(text("和"),351,354), val(style({sizePx: 22}, __at(text("放大片段"),375,387))), __at(text("，连同 "),388,398), __at(strong(__at(text("粗体"),400,406)),399,407), __at(text(" 一起参与断行。"),408,429)),216,429));
+__emit(__at(__region("aside", ({font: '"LXGW WenKai", serif', lang: "zh-TW"}), [[[__at(text("區域級作用域：字體與語言一起換，內部照樣是普通標記。"),484,562)]]]),431,570));
+};
+//# sourceURL=tsm:doc
