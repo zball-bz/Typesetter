@@ -48,6 +48,7 @@ struct LinePass {
   size_t matchPrefixes(u32 ls, u32 le, u32& pos, u32& col, bool blank) {
     size_t matched = 0;
     for (const OpenC& c : open) {
+      if (c.node->kind == SkelKind::Region) { matched++; continue; }
       if (c.node->kind == SkelKind::Quote) {
         u32 p = pos, cl = col;
         while (p < le && all[p] == ' ') { p++; cl++; }
@@ -299,6 +300,61 @@ struct LinePass {
           continue;
         }
       }
+      // region opener: #!name(args)? alone on its line (v2 §4.1)
+      if (rest.size() >= 3 && rest[0] == '#' && rest[1] == '!' && isIdentStart(rest[2])) {
+        u32 np = pos + 2;
+        while (np < le && isIdentCont(all[np])) np++;
+        Span nameSpan{pos + 2, np};
+        Span argsSpan{np, np};
+        u32 after = np;
+        bool ok = true;
+        if (after < le && all[after] == '(') {
+          JsScan js = scanJs(all.substr(0, le), after, true);
+          if (js.ok) {
+            argsSpan = {after + 1, js.end - 1};
+            after = js.end;
+          } else ok = false;
+        }
+        u32 t = after;
+        while (t < le && (all[t] == ' ' || all[t] == '\r')) t++;
+        if (ok && t == le) {
+          SkelNode* rg = mk(SkelKind::Region);
+          rg->span = {pos, le};
+          rg->langSpan = nameSpan;
+          rg->inner = argsSpan;
+          parent()->kids.push_back(rg);
+          open.push_back({rg, 0});
+          closeLeaf();
+          continue;
+        }
+        // fall through: not a region opener, plain paragraph text
+      }
+      // region closer: #name! alone on its line
+      if (rest.size() >= 3 && rest[0] == '#' && isIdentStart(rest[1])) {
+        u32 np = pos + 1;
+        while (np < le && isIdentCont(all[np])) np++;
+        u32 t = np + 1;
+        while (t < le && (all[t] == ' ' || all[t] == '\r')) t++;
+        if (np < le && all[np] == '!' && t == le) {
+          size_t ri = open.size();
+          while (ri > 0 && open[ri - 1].node->kind != SkelKind::Region) ri--;
+          if (ri > 0) {
+            SkelNode* rg = open[ri - 1].node;
+            std::string_view want = src.slice(rg->langSpan);
+            std::string_view got = all.substr(pos + 1, np - (pos + 1));
+            if (want != got)
+              diags.add(Sev::Error, "region-mismatch", {pos, le},
+                        "closer '#" + std::string(got) +
+                            "!' does not match open region '#!" + std::string(want) + "'");
+            rg->span.end = le;
+            closeTo(ri);       // pop containers opened inside the region
+            open.pop_back();   // pop the region itself
+            closeLeaf();
+            continue;
+          }
+          // no open region: plain paragraph text
+        }
+      }
       if (rest.size() >= 4 && rest.substr(0, 4) == "#let" &&
           (rest.size() == 4 || rest[4] == ' ' || rest[4] == '\t')) {
         closeLeaf();
@@ -329,6 +385,11 @@ struct LinePass {
       }
       addParaLine(pos, le);
     }
+    for (const OpenC& c : open)
+      if (c.node->kind == SkelKind::Region)
+        diags.add(Sev::Error, "region-unclosed", c.node->span,
+                  "region '#!" + std::string(src.slice(c.node->langSpan)) +
+                      "' has no matching closer");
   }
 };
 

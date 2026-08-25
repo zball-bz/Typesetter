@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, __region, __fence}, $) => {
 let wrap = (label, c) => seq(text(label), c);
 __emit(__at(para(__at(text("Content args: "),47,60), val((em)(seq(__at(text("emphasized "),65,75), __at(strong(__at(text("nested"),77,83)),76,84), __at(text(" text"),85,89)))), __at(text(" and "),91,94), val(wrap("tip: ", seq(__at(text("boxed "),110,115), __at(strong(__at(text("bold"),117,121)),116,122), __at(text(" words"),123,128)))), __at(text(" here."),130,135)),47,135));
 __emit(__at(para(__at(text("Deep JS brackets stay JS: "),137,162), val(((["a","b"][0]))), __at(text(" and "),179,182), val(wrap("n: ", __at(text("trailing"),196,204))), __at(text("."),205,206)),137,206));

@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, __region, __fence}, $) => {
 __emit(__at(heading(1, "dup", __at(text("First"),2,7)),0,7));
 __emit(__at(para(__at(text("A reference to "),15,29), __at(ref("missing"),30,38), __at(text(" stays unresolved and a second label reuses the first one."),39,96)),15,96));
 __emit(__at(heading(1, "dup", __at(text("Second"),100,106)),98,106));

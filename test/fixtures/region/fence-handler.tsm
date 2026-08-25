@@ -1,0 +1,16 @@
+#{
+  $.fence("shout", (body) => para(strong(text(body.trim().toUpperCase()))));
+  $.fence("box", (body, ctx) => ctx.raw("<b>" + body.trim() + "</b>", { height: 30 }));
+}
+
+```shout
+loud text
+```
+
+```box
+boxed
+```
+
+```js
+plain(fence);
+```

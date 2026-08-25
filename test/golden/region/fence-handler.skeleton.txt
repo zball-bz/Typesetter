@@ -1,0 +1,5 @@
+doc @[0,237)
+  code-block @[0,169) js="\n  $.fence(\"shout\", (body) => para(strong(text(body.trim().toUpperCase()))));\n  $.fence(\"box\", (body, ctx) => ctx.raw(\"<b>\" + body.trim() + \"</b>\", { height: 30 }));\n"
+  fence @[171,193) lang="shout" lines=1
+  fence @[195,211) lang="box" lines=1
+  fence @[213,236) lang="js" lines=1

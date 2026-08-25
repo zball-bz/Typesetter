@@ -7,7 +7,9 @@ namespace tsr {
 struct LineBox {
   Su y = 0, left = 0, width = 0;
   u32 unitIdx = 0;
+  i32 cellIdx = -1;                  // >=0: index into the unit's table cells
   u32 blockBegin = 0, blockEnd = 0;  // trimmed range into the unit's blocks
+                                     //   (or the cell's blocks, cellIdx >= 0)
   double wordDeltaPx = 0;            // raw-px justification value (render uses this)
   double cjkDeltaPx = 0;             // k × wordDeltaPx (v2 §8), letter-spacing value
   i32 wordDeltaSu = 0;               // rounded, for dumps

@@ -1,0 +1,17 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-top" data-s="2" data-e="9" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Regions</span></div>
+</div>
+<div class="tsr-para" data-pid="1" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-fig1" data-s="41" data-e="103" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="41">A pre</span><span class="tsr-r" data-s="41">tend fig</span><span class="tsr-r" data-s="41">ure body line con</span><span class="tsr-r" data-s="68">tin</span><span class="tsr-r" data-s="68">u</span><span class="tsr-r" data-s="68">ing on</span></div>
+<div class="tsr-line" data-s="68" data-e="103" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="68">a sec</span><span class="tsr-r" data-s="68">ond source line.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" style="position:relative;height:97.594px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="122" data-e="154" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="122">Side note with </span><span class="tsr-r tsr-b" data-s="138">em</span><span class="tsr-r tsr-b" data-s="138">pha</span><span class="tsr-r tsr-b" data-s="138">sis</span><span class="tsr-r" data-s="148"> in</span><span class="tsr-r" data-s="148">side</span></div>
+<div class="tsr-line" data-s="157" data-e="172" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="157">a nest</span><span class="tsr-r" data-s="157">ed bul</span><span class="tsr-r" data-s="157">let</span></div>
+<div class="tsr-line" data-s="175" data-e="189" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="175">an</span><span class="tsr-r" data-s="175">oth</span><span class="tsr-r" data-s="175">er bul</span><span class="tsr-r" data-s="175">let</span></div>
+</div>
+<div class="tsr-para" data-pid="3" style="position:relative;height:24px">
+<div class="tsr-line" data-s="199" data-e="243" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="199">The fig</span><span class="tsr-r" data-s="199">ure is </span><a class="tsr-r tsr-cjk" href="#tsr-fig1" data-syn="ref">图</a><a class="tsr-r" href="#tsr-fig1" data-syn="ref"> 1</a><span class="tsr-r" data-s="219"> and the sec</span><span class="tsr-r" data-s="219">tion is </span><a class="tsr-r" href="#tsr-top" data-syn="ref">§1</a><span class="tsr-r" data-s="242">.</span></div>
+</div>
+</div>

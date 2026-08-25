@@ -43,8 +43,16 @@ struct LinebreakBlock {
 
 constexpr float BREAK_INF = 1e18f;
 
+// One table cell: its own miniature block stream, broken to the cell width
+// by the same KP breaker (document-model §6; alignment is layout-side).
+struct TableCell {
+  std::vector<LinebreakBlock> blocks;
+  std::vector<u32> breakpoints;
+  double breakCost = 0;
+};
+
 struct FlowUnit {
-  enum class K : u8 { Text, Code, Rule } kind = K::Text;
+  enum class K : u8 { Text, Code, Rule, Raw, Table } kind = K::Text;
   const ContentNode* src = nullptr;
   Su indent = 0;
   bool tightAbove = false;  // list-item start: reduced inter-unit gap
@@ -54,6 +62,11 @@ struct FlowUnit {
   StyleId markerStyle = 0;
   StyleId codeStyle = 0;
   std::vector<StrRef> codeLines;
+  StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup
+  double rawHpx = 0;    // Raw: declared height (px)
+  u32 tCols = 0;               // Table: column count
+  std::vector<u8> tAligns;     // Table: per-column 'l'/'c'/'r'
+  std::vector<TableCell> cells;  // Table: row-major cells
   std::vector<LinebreakBlock> blocks;
   // filled by the typeset loop (Text units)
   std::vector<u32> breakpoints;

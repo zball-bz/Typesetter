@@ -1,0 +1,7 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, __region, __fence}, $) => {
+__emit(__at(heading(1, "top", __at(text("Regions"),2,9)),0,9));
+__emit(__at(__region("figure", ({label: "fig1"}), [[[__at(text("A pretend figure body line"),41,67)], [__at(text("continuing on a second source line."),68,103)]]]),17,112));
+__emit(__at(__region("aside", ({}), [[[seq(__at(text("Side note with "),122,136), __at(strong(__at(text("emphasis"),138,146)),137,147), __at(text(" inside"),148,154))]], __at(list(false, 1, __at(item(__at(para(__at(text("a nested bullet"),157,172)),157,172)),155,172), __at(item(__at(para(__at(text("another bullet"),175,189)),175,189)),173,189)),155,172)]),114,197));
+__emit(__at(para(__at(text("The figure is "),199,212), __at(ref("fig1"),213,218), __at(text(" and the section is "),219,237), __at(ref("top"),238,242), __at(text("."),242,243)),199,243));
+};
+//# sourceURL=tsm:doc

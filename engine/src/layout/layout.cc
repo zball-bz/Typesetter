@@ -34,6 +34,17 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         fr.lines.push_back(line);
         continue;
       }
+      if (u.kind == FlowUnit::K::Raw) {
+        LineBox line;
+        line.unitIdx = ui;
+        line.special = 3;
+        line.left = u.indent;
+        line.width = lineWidth;
+        line.y = (Su)py;
+        py += suRoundPx(u.rawHpx);
+        fr.lines.push_back(line);
+        continue;
+      }
       if (u.kind == FlowUnit::K::Code) {
         Su adv = baseLeading;
         if (metrics.hasVmet(u.codeStyle)) {
@@ -57,6 +68,90 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         continue;
       }
 
+      if (u.kind == FlowUnit::K::Table && u.tCols > 0) {
+        // three-line-flavoured grid: full-width rules above, between, and
+        // below rows; equal columns; ragged cells aligned per column
+        const Su colW = lineWidth / (Su)u.tCols;
+        const Su padX = suRoundPx(kTableCellPadEm * cfg.baseSizePx);
+        const Su padY = suRoundPx(kTableRowPadEm * cfg.baseSizePx);
+        Su cellW = colW - 2 * padX;
+        if (cellW < 64) cellW = 64;
+        const size_t nRows = u.cells.size() / u.tCols;
+        auto addRule = [&](i64 yy) {
+          LineBox rl;
+          rl.unitIdx = ui;
+          rl.special = 1;
+          rl.left = u.indent;
+          rl.width = lineWidth;
+          rl.y = (Su)yy;
+          fr.lines.push_back(rl);
+        };
+        addRule(py);
+        for (size_t r = 0; r < nRows; r++) {
+          i64 rowTop = py + padY;
+          i64 rowBottom = rowTop + baseLeading;
+          for (u32 c = 0; c < u.tCols; c++) {
+            const TableCell& cell = u.cells[r * u.tCols + c];
+            i64 cy = rowTop;
+            u32 prevBp = 0;
+            for (u32 bp : cell.breakpoints) {
+              u32 lo = prevBp, hi = bp;
+              while (lo < hi && cell.blocks[lo].isSpace()) lo++;
+              while (hi > lo && cell.blocks[hi - 1].isSpace()) hi--;
+              prevBp = bp;
+              if (lo >= hi) continue;
+              double naturalPx = 0;
+              Su maxAsc = 0, maxDesc = 0;
+              Span span{};
+              bool spanSet = false;
+              for (u32 i2 = lo; i2 < hi; i2++) {
+                const LinebreakBlock& b = cell.blocks[i2];
+                if (!b.isHyphen()) naturalPx += b.rawPx;
+                if (metrics.hasVmet(b.style)) {
+                  const VMet& v = metrics.vmet(b.style);
+                  if (v.ascent > maxAsc) maxAsc = v.ascent;
+                  if (v.descent > maxDesc) maxDesc = v.descent;
+                }
+                if (!b.span.empty()) {
+                  if (!spanSet) { span = b.span; spanSet = true; }
+                  else {
+                    if (b.span.start < span.start) span.start = b.span.start;
+                    if (b.span.end > span.end) span.end = b.span.end;
+                  }
+                }
+              }
+              const bool endsHyphen = cell.blocks[hi - 1].isHyphen();
+              if (endsHyphen) naturalPx += cell.blocks[hi - 1].rawPx;
+              Su shift = 0;
+              Su slack = cellW - suCeilPx(naturalPx);
+              if (slack > 0) {
+                u8 al = u.tAligns[c];
+                if (al == 'c') shift = slack / 2;
+                else if (al == 'r') shift = slack;
+              }
+              LineBox line;
+              line.unitIdx = ui;
+              line.cellIdx = (i32)(r * u.tCols + c);
+              line.blockBegin = lo;
+              line.blockEnd = hi;
+              line.left = (Su)(u.indent + (Su)c * colW + padX + shift);
+              line.width = cellW - shift;  // right edge stays at the column
+                                           // content edge (audit: no overflow)
+              line.srcSpan = span;
+              line.endsWithHyphen = endsHyphen;
+              line.y = (Su)cy;
+              Su advance = baseLeading;
+              if (maxAsc + maxDesc > advance) advance = maxAsc + maxDesc;
+              cy += advance;
+              fr.lines.push_back(line);
+            }
+            if (cy > rowBottom) rowBottom = cy;
+          }
+          py = rowBottom + padY;
+          addRule(py);
+        }
+        continue;
+      }
       // Text unit
       const std::vector<LinebreakBlock>& bl = u.blocks;
       u32 prev = 0;
@@ -158,6 +253,15 @@ std::string dumpLayout(const LayoutResult& lr) {
       }
       if (l.special == 2) {
         appendf(out, "  L%zu code y=%dsu left=%dsu\n", i, l.y, l.left);
+        continue;
+      }
+      if (l.special == 3) {
+        appendf(out, "  L%zu raw y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
+        continue;
+      }
+      if (l.cellIdx >= 0) {
+        appendf(out, "  L%zu cell=%d y=%dsu left=%dsu w=%dsu blocks=[%u,%u)\n",
+                i, l.cellIdx, l.y, l.left, l.width, l.blockBegin, l.blockEnd);
         continue;
       }
       appendf(out, "  L%zu y=%dsu left=%dsu w=%dsu dw=%dsu dc=%dsu join=%s%s%s blocks=[%u,%u) @[%u,%u)\n",

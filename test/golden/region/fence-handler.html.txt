@@ -1,0 +1,11 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b">LOUD TEXT</span></div>
+</div>
+<div class="tsr-para" data-pid="1" style="position:relative;height:30px;margin-bottom:19.2px">
+<div class="tsr-raw" style="top:0px;left:0px;width:300px;height:30px"><b>boxed</b></div>
+</div>
+<div class="tsr-para" data-pid="2" style="position:relative;height:24px">
+<div class="tsr-line" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code">plain(fence);</span></div>
+</div>
+</div>

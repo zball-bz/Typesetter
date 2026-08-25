@@ -1,0 +1,33 @@
+doc @[0,168) [base]
+  heading @[0,6) [base] level=1 label="sec"
+    text @[2,6) [base] str="Data"
+  table @[14,136) [base] cols=3 align="lcr" label="tbl"
+    trow @[0,0) [base]
+      tcell @[0,0) [base]
+        text @[59,63) [base] str="Name"
+      tcell @[0,0) [base]
+        text @[66,69) [base] str="Qty"
+      tcell @[0,0) [base]
+        text @[72,77) [base] str="Price"
+    trow @[0,0) [base]
+      tcell @[0,0) [base]
+        text @[78,90) [base] str="Alpha widget"
+      tcell @[0,0) [base]
+        text @[93,94) [base] str="2"
+      tcell @[0,0) [base]
+        text @[97,101) [base] str="3.50"
+    trow @[0,0) [base]
+      tcell @[0,0) [base]
+        text @[102,114) [base] str="中文条目"
+      tcell @[0,0) [base]
+        text @[117,120) [base] str="三"
+      tcell @[0,0) [base]
+        text @[123,128) [base] str="12.00"
+  para @[138,168) [base]
+    text @[138,154) [base] str="Totals appear in "
+    ref @[155,159) [base] target="tbl" url="#tsr-tbl"
+      text @[155,159) [base] str="表 1"
+    text @[160,162) [base] str=" of "
+    ref @[163,167) [base] target="sec" url="#tsr-sec"
+      text @[163,167) [base] str="§1"
+    text @[167,168) [base] str="."

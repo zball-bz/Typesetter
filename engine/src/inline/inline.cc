@@ -379,6 +379,66 @@ struct InlineParser {
   }
 };
 
+// Top-level segmentation of a region line at unescaped '|' (v2 §4.1):
+// code spans and splices (head chains, #(…), content args) are opaque, so
+// `a|b` in a code span or #f("a|b") never splits. \| escapes; || is an
+// empty cell; leading/trailing empty segments from |-framed lines drop.
+static void splitCells(std::string_view all, Span line, std::vector<Span>& cells) {
+  std::vector<u32> cuts;
+  u32 p = line.start;
+  std::string_view clipped = all.substr(0, line.end);
+  while (p < line.end) {
+    char c = all[p];
+    if (c == '\\') { p += 2; continue; }
+    if (c == '`') {
+      u32 q = p + 1;
+      while (q < line.end && all[q] != '`') q++;
+      p = (q < line.end) ? q + 1 : q + 1;
+      continue;
+    }
+    if (c == '#') {
+      u32 q = p + 1;
+      if (q < line.end && all[q] == '(') {
+        JsScan js = scanJs(clipped, q, true);
+        p = js.ok ? js.end : line.end;
+        continue;
+      }
+      u32 h = scanSpliceHead(clipped, q);
+      if (h > q) {
+        p = h;
+        while (p < line.end && all[p] == '[') {  // content args
+          int depth = 0;
+          u32 r = p;
+          for (; r < line.end; r++) {
+            if (all[r] == '\\') { r++; continue; }
+            if (all[r] == '[') depth++;
+            else if (all[r] == ']' && --depth == 0) break;
+          }
+          p = (r < line.end) ? r + 1 : line.end;
+        }
+        continue;
+      }
+      p++;
+      continue;
+    }
+    if (c == '|') cuts.push_back(p);
+    p++;
+  }
+  u32 prev = line.start;
+  for (u32 cut : cuts) {
+    cells.push_back({prev, cut});
+    prev = cut + 1;
+  }
+  cells.push_back({prev, line.end});
+  auto blank = [&](Span sp) {
+    for (u32 i = sp.start; i < sp.end; i++)
+      if (all[i] != ' ' && all[i] != '\t' && all[i] != '\r') return false;
+    return true;
+  };
+  if (cells.size() > 1 && blank(cells.front())) cells.erase(cells.begin());
+  if (cells.size() > 1 && blank(cells.back())) cells.pop_back();
+}
+
 struct AstBuilder {
   const SourceText& src;
   Arena& arena;
@@ -437,9 +497,23 @@ struct AstBuilder {
       }
       case SkelKind::Fence: {
         AstNode* f = mk(AstKind::CodeBlockB, s->span);
-        std::string lang(src.slice(s->langSpan));
+        // info string "tag(args)": args reuse the splice argument lexer and
+        // compile to a JS object literal for the fence dispatcher (v2 §4.1)
+        Span tagSpan = s->langSpan;
+        u32 lp = tagSpan.start;
+        std::string_view all = src.view();
+        while (lp < tagSpan.end && all[lp] != '(') lp++;
+        if (lp < tagSpan.end) {
+          JsScan js = scanJs(all.substr(0, tagSpan.end), lp, true);
+          if (js.ok) {
+            f->expr = {lp + 1, js.end - 1};
+            tagSpan.end = lp;
+          }
+        }
+        std::string lang(src.slice(tagSpan));
         while (!lang.empty() && (lang.back() == ' ' || lang.back() == '\r')) lang.pop_back();
         f->aux = strs.intern(lang);
+        f->num = (int)(s->lineSpans.empty() ? s->span.end : s->lineSpans[0].start);
         std::string body;
         for (size_t k = 0; k < s->lineSpans.size(); k++) {
           if (k) body += '\n';
@@ -456,8 +530,33 @@ struct AstBuilder {
         c->str = strs.intern(body);
         return c;
       }
-      case SkelKind::Region:
-        return mk(AstKind::Region, s->span);  // populated in the region step
+      case SkelKind::Region: {
+        AstNode* r = mk(AstKind::Region, s->span);
+        r->str = strs.intern(src.slice(s->langSpan));
+        r->expr = s->inner;  // opener args (inside parens; empty span = none)
+        for (const SkelNode* k : s->kids) {
+          if (k->kind == SkelKind::Para) {
+            // line provenance (v2 §4.1): each source line is a Row whose
+            // Cells are the top-level '|' segmentation, inline-parsed
+            AstNode* p = mk(AstKind::Para, k->span);
+            for (const Span& line : k->lineSpans) {
+              AstNode* row = mk(AstKind::Row, line);
+              std::vector<Span> cells;
+              splitCells(src.view(), line, cells);
+              for (const Span& c : cells) {
+                AstNode* cell = mk(AstKind::Cell, c);
+                cell->kids = inlineParse({c});
+                row->kids.push_back(cell);
+              }
+              p->kids.push_back(row);
+            }
+            r->kids.push_back(p);
+          } else {
+            r->kids.push_back(build(k));
+          }
+        }
+        return r;
+      }
       case SkelKind::CodeLet:
       case SkelKind::CodeBlock: {
         AstNode* c = mk(AstKind::CodeStmt, s->span);

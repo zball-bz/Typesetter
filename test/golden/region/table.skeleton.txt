@@ -1,0 +1,5 @@
+doc @[0,169)
+  heading1 @[0,6) label="sec"
+  region @[14,136) name="table"
+    para @[59,128) lines=3
+  para @[138,168) lines=1

@@ -17,8 +17,81 @@ export function buildContext(ob) {
     x && typeof x === 'object' && 'opId' in x
       ? (x.text !== undefined ? x.text : x.children.map(shadowText).join(''))
       : String(x);
+  // --- region constructors (v2 §4.1) ---------------------------------------
+  // children: an Array element is one source paragraph (array of rows, each
+  // an array of cell values from top-level '|' segmentation); anything else
+  // is a block child (nested list, fence, nested region).
+  const tableBuild = (args, children) => {
+    const rows = [];  // per row: array of per-cell shadow lists
+    for (const ch of children) {
+      if (Array.isArray(ch)) {
+        for (const row of ch) rows.push(row.map((c) => [toShadow(c)]));
+      } else if (rows.length) {
+        rows.at(-1).at(-1).push(toShadow(ch));  // continuation → last cell
+      }
+      // block content before the first row is dropped (documented limitation)
+    }
+    const cols = args.cols ?? rows.reduce((m, r) => Math.max(m, r.length), 1);
+    const trows = rows.map((r) => {
+      const cells = r.slice(0, cols);
+      while (cells.length < cols) cells.push([]);
+      return ob.makeNode(KIND.trow, {}, cells.map((c) => ob.makeNode(KIND.tcell, {}, c)));
+    });
+    return ob.makeNode(KIND.table, { cols, align: args.align, label: args.label }, trows);
+  };
+  const regionJoin = (children) => {
+    // non-tabular interiors: rows of one source paragraph rejoin into one
+    // para (cells reunited with " | " — segmentation is provenance, the
+    // pipe convention belongs to the table constructor)
+    const out = [];
+    for (const ch of children) {
+      if (Array.isArray(ch)) {
+        const acc = [];
+        ch.forEach((row, ri) => {
+          if (ri) acc.push(ob.makeText(' '));
+          row.forEach((cell, ci) => {
+            if (ci) acc.push(ob.makeText(' | '));
+            acc.push(toShadow(cell));
+          });
+        });
+        out.push(ob.makeNode(KIND.para, {}, acc));
+      } else out.push(toShadow(ch));
+    }
+    return out;
+  };
+  const regionHandlers = {};
+  const __region = (name, args = {}, children = []) => {
+    const h = regionHandlers[name];
+    if (h) return toShadow(h(args, children));
+    if (name === 'table') return tableBuild(args, children);
+    // generic region → role-tagged group (#!figure, #!aside, …)
+    return ob.makeNode(KIND.group, { role: name, label: args.label }, regionJoin(children));
+  };
+  // --- fence dispatcher (v2 §4.1) ------------------------------------------
+  const fenceHandlers = {};
+  const __fence = async (tag, args = {}, body = '', offset = 0) => {
+    const h = fenceHandlers[tag];
+    if (!h) return ob.makeNode(KIND.codeblock, { lang: tag }, [ob.makeText(body)]);
+    const mkErr = (msg) =>
+      ob.makeNode(KIND.error, { message: String(msg), code: 'fence-error' }, []);
+    const ctx = {
+      args,
+      offset,
+      m: (...a) => ctors.m(...a),  // m.parse (WASM re-entry) is deferred
+      error: mkErr,
+      raw: (html, { width, height } = {}) =>
+        ob.makeNode(KIND.raw, { html: String(html), w: width, h: height }, []),
+    };
+    try {
+      return toShadow(await h(body, ctx));
+    } catch (e) {
+      return mkErr(e?.message || e);
+    }
+  };
   const ctors = {
     __emit: (n) => ob.emitNode(toShadow(n)),
+    __region,
+    __fence,
     __at: (n, s, e) => { ob.span(n, s, e); return n; },
     text: (s) => ob.makeText(String(s)),
     para: node(KIND.para),
@@ -52,6 +125,8 @@ export function buildContext(ob) {
   };
   const styleStack = [];
   const dollar = {
+    fence(tag, fn) { fenceHandlers[tag] = fn; },     // registration precedes use
+    region(name, fn) { regionHandlers[name] = fn; },
     style: {
       push(bits) { styleStack.push(bits); ob.stylePush(bits); },
       get height() { return styleStack.length; },

@@ -120,12 +120,54 @@ struct Gen {
         close(n);
         break;
       case AstKind::CodeBlockB:
-        out += "__at(codeblock(";
+        // dispatcher call: unknown tags fall back to a plain code block at
+        // runtime; handlers may be async (document fn already is)
+        out += "__at(val(await __fence(";
         strLit(n->aux);
-        out += ", ";
+        out += ", ({";
+        if (!n->expr.empty()) out += src.slice(n->expr);
+        out += "}), ";
         strLit(n->str);
+        appendf(out, ", %d)", n->num);  // body source offset (close() ends val)
         close(n);
         break;
+      case AstKind::Region: {
+        out += "__at(__region(";
+        strLit(n->str);
+        out += ", ({";
+        if (!n->expr.empty()) out += src.slice(n->expr);
+        out += "}), [";
+        for (size_t i = 0; i < n->kids.size(); i++) {
+          if (i) out += ", ";
+          const AstNode* k = n->kids[i];
+          if (k->kind == AstKind::Para && !k->kids.empty() &&
+              k->kids[0]->kind == AstKind::Row) {
+            out += "[";  // one source paragraph: array of rows
+            for (size_t r = 0; r < k->kids.size(); r++) {
+              if (r) out += ", ";
+              const AstNode* row = k->kids[r];
+              out += "[";  // one row: array of cell values
+              for (size_t c = 0; c < row->kids.size(); c++) {
+                if (c) out += ", ";
+                const AstNode* cell = row->kids[c];
+                if (cell->kids.size() == 1) value(cell->kids[0]);
+                else {
+                  out += "seq(";
+                  children(cell->kids, false);
+                  out += ")";
+                }
+              }
+              out += "]";
+            }
+            out += "]";
+          } else {
+            value(k);
+          }
+        }
+        out += "]";
+        close(n);
+        break;
+      }
       case AstKind::Rule:
         out += "__at(rule(";
         close(n);
@@ -143,7 +185,7 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
   std::string& out = p.text;
   out += "export default async ({__emit, __at, para, text, em, strong, val, m, "
          "heading, list, item, quote, codeblock, rule, comment, link, code, seq, "
-         "ref, term, toc, glossary}, $) => {\n";
+         "ref, term, toc, glossary, __region, __fence}, $) => {\n";
   Gen g{src, strs, out};
   for (const AstNode* n : doc->kids) {
     if (n->kind == AstKind::CodeStmt) {

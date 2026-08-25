@@ -1,0 +1,30 @@
+doc @[0,243) [base]
+  heading @[0,9) [base] level=1 label="top"
+    text @[2,9) [base] str="Regions"
+  group @[17,112) [base] role="figure" label="fig1"
+    para @[0,0) [base]
+      text @[41,67) [base] str="A pretend figure body line"
+      text @[0,0) [base] str=" "
+      text @[68,103) [base] str="continuing on a second source line."
+  group @[114,197) [base] role="aside"
+    para @[0,0) [base]
+      seq @[0,0) [base]
+        text @[122,136) [base] str="Side note with "
+        styled @[137,147) [BOLD]
+          text @[138,146) [BOLD] str="emphasis"
+        text @[148,154) [base] str=" inside"
+    list @[155,172) [base] ordered=false start=1
+      item @[155,172) [base]
+        para @[157,172) [base]
+          text @[157,172) [base] str="a nested bullet"
+      item @[173,189) [base]
+        para @[175,189) [base]
+          text @[175,189) [base] str="another bullet"
+  para @[199,243) [base]
+    text @[199,212) [base] str="The figure is "
+    ref @[213,218) [base] target="fig1" url="#tsr-fig1"
+      text @[213,218) [base] str="图 1"
+    text @[219,237) [base] str=" and the section is "
+    ref @[238,242) [base] target="top" url="#tsr-top"
+      text @[238,242) [base] str="§1"
+    text @[242,243) [base] str="."

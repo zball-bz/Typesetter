@@ -1,0 +1,52 @@
+top pid=0 units=1
+ unit text indent=0su anchor="sec"
+  word "Data" w=3278su pen=INF BOLD x1.60 @[2,6)
+top pid=1 units=1
+ unit table indent=0su anchor="tbl" cols=3 cells=9
+  cell 0
+  word "Name" w=2049su pen=INF @[59,63)
+  cell 1
+  word "Qty" w=1537su pen=INF @[66,69)
+  cell 2
+  word "Price" w=2561su pen=INF @[72,77)
+  cell 3
+  word "Al" w=1025su pen=INF @[78,90)
+  hyphen bw=513su pen=0.70 @[78,90)
+  word "pha" w=1537su pen=INF @[78,90)
+  space w=257su stretch=1 @[78,90)
+  word "wid" w=1537su pen=INF @[78,90)
+  hyphen bw=513su pen=0.70 @[78,90)
+  word "get" w=1537su pen=INF @[78,90)
+  cell 4
+  word "2" w=513su pen=INF @[93,94)
+  cell 5
+  word "3.50" w=2049su pen=INF @[97,101)
+  cell 6
+  cjk "中" w=1025su glue=102su wt=0.6 pen=0 @[102,114)
+  cjk "文" w=1025su glue=102su wt=0.6 pen=0 @[102,114)
+  cjk "条" w=1025su glue=102su wt=0.6 pen=0 @[102,114)
+  cjk "目" w=1025su glue=102su wt=0.6 pen=0 @[102,114)
+  cell 7
+  cjk "三" w=1025su glue=102su wt=0.6 pen=0 @[117,120)
+  cell 8
+  word "12.00" w=2561su pen=INF @[123,128)
+top pid=2 units=1
+ unit text indent=0su
+  word "To" w=1025su pen=INF @[138,154)
+  hyphen bw=513su pen=0.70 @[138,154)
+  word "tals" w=2049su pen=INF @[138,154)
+  space w=257su stretch=1 @[138,154)
+  word "ap" w=1025su pen=INF @[138,154)
+  hyphen bw=513su pen=0.70 @[138,154)
+  word "pear" w=2049su pen=INF @[138,154)
+  space w=257su stretch=1 @[138,154)
+  word "in" w=1025su pen=INF @[138,154)
+  space w=257su stretch=1 @[138,154)
+  cjk "表" w=1025su glue=102su wt=0.6 pen=0 LINK SYN @[155,159)
+  space w=257su stretch=1 LINK SYN @[155,159)
+  word "1" w=513su pen=INF LINK SYN @[155,159)
+  space w=257su stretch=1 @[160,162)
+  word "of" w=1025su pen=INF @[160,162)
+  space w=257su stretch=1 @[160,162)
+  word "§1" w=1128su pen=INF LINK SYN @[163,167)
+  word "." w=513su pen=INF @[167,168)

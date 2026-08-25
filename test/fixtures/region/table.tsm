@@ -1,0 +1,9 @@
+= Data <sec>
+
+#!table(cols: 3, align: "lcr", label: "tbl")
+Name | Qty | Price
+Alpha widget | 2 | 3.50
+中文条目 | 三 | 12.00
+#table!
+
+Totals appear in @tbl of @sec.

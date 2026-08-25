@@ -81,6 +81,7 @@ export function auditTypeset(root) {
     // overprinted-specimen bug)
     let prevTop = -Infinity;
     for (const l of para.querySelectorAll('.tsr-line')) {
+      if (l.dataset.cell !== undefined) continue;  // table cells share row tops
       const top = parseFloat(l.style.top);
       if (!(top > prevTop || prevTop === -Infinity)) {
         report.failures.push({ audit: 'line-stacking', pid: para.dataset.pid, top });

@@ -1,0 +1,32 @@
+doc @[0,244)
+  heading @[0,9) level=1 label="top"
+    text @[2,9) str="Regions"
+  region @[17,112) name="figure"
+    para @[41,103)
+      row @[41,67)
+        cell @[41,67)
+          text @[41,67) str="A pretend figure body line"
+      row @[68,103)
+        cell @[68,103)
+          text @[68,103) str="continuing on a second source line."
+  region @[114,197) name="aside"
+    para @[122,154)
+      row @[122,154)
+        cell @[122,154)
+          text @[122,136) str="Side note with "
+          styled @[137,147) marker=*
+            text @[138,146) str="emphasis"
+          text @[148,154) str=" inside"
+    list @[155,172) bullet start=1
+      item @[155,172)
+        para @[157,172)
+          text @[157,172) str="a nested bullet"
+      item @[173,189)
+        para @[175,189)
+          text @[175,189) str="another bullet"
+  para @[199,243)
+    text @[199,212) str="The figure is "
+    ref @[213,218) target="fig1"
+    text @[219,237) str=" and the section is "
+    ref @[238,242) target="top"
+    text @[242,243) str="."

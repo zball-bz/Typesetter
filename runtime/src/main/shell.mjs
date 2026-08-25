@@ -18,6 +18,7 @@ export const TSR_CSS = `
 .tsr-code { font-family: monospace; }
 .tsr-marker { position: absolute; right: 100%; padding-right: 0.55em; }
 .tsr-rule { position: absolute; height: 0; border-top: 1px solid currentColor; opacity: 0.35; }
+.tsr-raw { position: absolute; overflow: hidden; }
 .tsr-doc a { color: #1a5276; text-decoration: underline; text-underline-offset: 2px; }
 .tsr-sp { display: inline-block; }
 .tsr-sqL { margin-left: -0.5em; }   /* punct half squeezed at line start / pair */

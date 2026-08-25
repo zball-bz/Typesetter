@@ -59,6 +59,21 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
     }
     out += "\">\n";
     for (const LineBox& l : fr.lines) {
+      if (l.special == 3) {  // raw passthrough (trusted, handler-declared)
+        const FlowUnit& ru = tb.units[l.unitIdx];
+        out += "<div class=\"tsr-raw\" style=\"top:";
+        fmtPx(out, suToPx(l.y));
+        out += ";left:";
+        fmtPx(out, suToPx(l.left));
+        out += ";width:";
+        fmtPx(out, suToPx(l.width));
+        out += ";height:";
+        fmtPx(out, ru.rawHpx);
+        out += "\">";
+        out += strs.get(ru.rawHtml);  // the ONE unescaped path (§9)
+        out += "</div>\n";
+        continue;
+      }
       if (l.special == 1) {
         out += "<div class=\"tsr-rule\" style=\"top:";
         fmtPx(out, suToPx(l.y));
@@ -84,6 +99,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
       if (l.join == 1) out += " data-join=\"space\"";
       else if (l.join == 2) out += " data-join=\"none\"";
       if (tb.units[l.unitIdx].ragged) out += " data-ragged=\"1\"";
+      if (l.cellIdx >= 0) out += " data-cell=\"1\"";
       out += " style=\"top:";
       fmtPx(out, suToPx(l.y));
       out += ";left:";
@@ -121,6 +137,8 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
       }
 
       const FlowUnit& u = tb.units[l.unitIdx];
+      const std::vector<LinebreakBlock>& bl =
+          l.cellIdx >= 0 ? u.cells[(size_t)l.cellIdx].blocks : u.blocks;
       u32 i = l.blockBegin;
       auto openRun = [&](const Styling& sty, StrRef url, const LinebreakBlock& first,
                          const std::string& extraStyle, const char* extraCls) {
@@ -154,7 +172,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         return isLink;
       };
       while (i < l.blockEnd) {
-        const LinebreakBlock& b = u.blocks[i];
+        const LinebreakBlock& b = bl[i];
         // final hyphen glyph
         if (b.isHyphen()) {
           if (i == l.blockEnd - 1 && l.endsWithHyphen) {
@@ -181,10 +199,10 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         if (b.isPunctGlyph()) {
           const bool open = b.flags & BF_PUNCT_OPEN;
           const bool halfPresent =
-              open ? (i > l.blockBegin && (u.blocks[i - 1].flags & BF_PUNCT_SP) &&
-                      (u.blocks[i - 1].flags & BF_PUNCT_OPEN))
-                   : (i + 1 < l.blockEnd && (u.blocks[i + 1].flags & BF_PUNCT_SP) &&
-                      !(u.blocks[i + 1].flags & BF_PUNCT_OPEN));
+              open ? (i > l.blockBegin && (bl[i - 1].flags & BF_PUNCT_SP) &&
+                      (bl[i - 1].flags & BF_PUNCT_OPEN))
+                   : (i + 1 < l.blockEnd && (bl[i + 1].flags & BF_PUNCT_SP) &&
+                      !(bl[i + 1].flags & BF_PUNCT_OPEN));
           const char* squeeze = halfPresent ? "" : (open ? "tsr-sqL" : "tsr-sqR");
           bool link = openRun(styles.get(b.style), b.linkUrl, b, "", squeeze);
           escapeHtml(out, strs.get(b.text));
@@ -197,7 +215,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         if (b.flags & BF_PAIR) {
           std::string extra;
           if (l.cjkDeltaPx != 0) {
-            const LinebreakBlock* nx = (i + 1 < l.blockEnd) ? &u.blocks[i + 1] : nullptr;
+            const LinebreakBlock* nx = (i + 1 < l.blockEnd) ? &bl[i + 1] : nullptr;
             bool keep = nx && (nx->isCjkChar() ||
                                (nx->isPunctGlyph() && !(nx->flags & BF_PUNCT_OPEN)));
             if (keep) {
@@ -215,8 +233,8 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
           StyleId st = b.style;
           StrRef url = b.linkUrl;
           u32 j = i;
-          while (j < l.blockEnd && u.blocks[j].isCjkChar() && !(u.blocks[j].flags & BF_PAIR) &&
-                 u.blocks[j].style == st && u.blocks[j].linkUrl == url)
+          while (j < l.blockEnd && bl[j].isCjkChar() && !(bl[j].flags & BF_PAIR) &&
+                 bl[j].style == st && bl[j].linkUrl == url)
             j++;
           std::string extra;
           if (l.cjkDeltaPx != 0) {
@@ -224,7 +242,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
             fmtPx(extra, l.cjkDeltaPx);
             // trailing letter-space is real only when the next rendered gap is
             // CJK (char run of another style, or a closing punct glyph)
-            const LinebreakBlock* nx = (j < l.blockEnd) ? &u.blocks[j] : nullptr;
+            const LinebreakBlock* nx = (j < l.blockEnd) ? &bl[j] : nullptr;
             bool keep = nx && (nx->isCjkChar() ||
                                (nx->isPunctGlyph() && !(nx->flags & BF_PUNCT_OPEN)));
             if (!keep) {
@@ -236,7 +254,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
           }
           bool link = openRun(styles.get(st), url, b, extra, nullptr);
           std::string runText;
-          for (u32 k = i; k < j; k++) runText += strs.get(u.blocks[k].text);
+          for (u32 k = i; k < j; k++) runText += strs.get(bl[k].text);
           escapeHtml(out, runText);
           out += link ? "</a>" : "</span>";
           i = j;
@@ -246,16 +264,16 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         StyleId st = b.style;
         StrRef url = b.linkUrl;
         u32 j = i;
-        while (j < l.blockEnd && u.blocks[j].style == st && u.blocks[j].linkUrl == url &&
-               !u.blocks[j].isHyphen() && !u.blocks[j].isCjkChar() &&
-               !u.blocks[j].isPunctGlyph() && !(u.blocks[j].flags & (BF_INDENT | BF_BOUND)) &&
-               !(u.blocks[j].flags & BF_PUNCT_SP))
+        while (j < l.blockEnd && bl[j].style == st && bl[j].linkUrl == url &&
+               !bl[j].isHyphen() && !bl[j].isCjkChar() &&
+               !bl[j].isPunctGlyph() && !(bl[j].flags & (BF_INDENT | BF_BOUND)) &&
+               !(bl[j].flags & BF_PUNCT_SP))
           j++;
         bool link = openRun(styles.get(st), url, b, "", nullptr);
         std::string runText;
         for (u32 k = i; k < j; k++)
-          runText += u.blocks[k].isSpace() ? std::string(" ")
-                                           : std::string(strs.get(u.blocks[k].text));
+          runText += bl[k].isSpace() ? std::string(" ")
+                                           : std::string(strs.get(bl[k].text));
         escapeHtml(out, runText);
         out += link ? "</a>" : "</span>";
         i = j;

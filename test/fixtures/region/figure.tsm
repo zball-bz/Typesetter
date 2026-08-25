@@ -1,0 +1,14 @@
+= Regions <top>
+
+#!figure(label: "fig1")
+A pretend figure body line
+continuing on a second source line.
+#figure!
+
+#!aside
+Side note with *emphasis* inside
+- a nested bullet
+- another bullet
+#aside!
+
+The figure is @fig1 and the section is @top.

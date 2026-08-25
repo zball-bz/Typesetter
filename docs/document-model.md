@@ -124,6 +124,14 @@ Pure function of (ContentTree, Config). Document-order walk:
 - **Collectors**: `collect{what: toc|glossary|lof|bibliography}` expand into engine-kind subtrees (nested lists of links) from the tables. Citation order for bibliography = first-citation order.
 - Runs before any rendering, so fallback HTML already carries final numbers (v2 §11.1).
 
+Implementation notes (M4, normative for the dumps):
+- The resolver **mutates the tree in place** between instantiation and emission; `--stage=tree` shows the post-resolve tree.
+- Every heading gets an anchor: user label, or auto label `h-<number>` (also the fallback when a user label is a duplicate). Labeled units render `id="tsr-<label>"` on their first line; resolved refs render as `<a href="#tsr-<label>" data-syn="ref">`.
+- `ref` keeps its kind; the resolver fills kids (display text) and a `url` arg. Display text per target kind uses the config supplements (`supHeading` "§", `supTable` "表 ", `supFigure` "图 ").
+- `term` rewrites to `group{role:"term", label:name}` — bold name para (inline description joined with " — "), block description children follow.
+- A paragraph whose only child is a `term`/`collect` splice is that construct at block level (unwrapped before dispatch).
+
+
 ## 6. Block stream
 
 ### 6.1 Units: `su` (subpixel unit) = 1/64 CSS px, `i32`
@@ -154,7 +162,28 @@ LinebreakBlock {
 
 `stretchWeight` carries the v2 §8 k-rule into the breaker: line stretchability = Σ weights; the renderer distributes `Δword` per unit weight, so cost model and rendering agree by construction. Emission rules per Appendix C of v2.
 
-### 6.3 Measurement states
+### 6.3 Table cells (M6 v1)
+
+Each `tcell` flattens to its own miniature block stream (`TableCell`), broken
+by the same KP breaker at the cell content width. v1 geometry: **equal
+columns** (`colW = measure / cols`), horizontal cell padding 0.4em, vertical
+row padding 0.3em, full-width rules above/between/below rows. Cells are
+**ragged** (never justified); the `align` string ('l'/'c'/'r' per column)
+shifts whole lines at layout time. Cell lines carry `data-cell="1"`, no
+`data-join`, and reference the cell's block stream via `cellIdx` in the
+layout result. Region provenance is materialized at codegen: each source
+line of a region paragraph is a row, segmented at top-level unescaped `|`
+(code spans and splices are opaque; `\|` escapes; `||` is an empty cell;
+leading/trailing empties of |-framed lines drop). Non-tabular regions rejoin
+the segmentation (" | ") into ordinary paragraphs and become
+`group{role:<name>}`. Fences compile to a runtime dispatcher: unknown tags
+fall back to plain code blocks; handlers (registered `#{ $.fence(tag, fn) }`
+before use) may be async, get `{args, offset, m, error, raw}`, and a thrown
+handler becomes a renderable error node. `raw` nodes are block units with
+handler-declared height (default one leading). Deferred: `m.parse` WASM
+re-entry, the indented cell-continuation rule, `#use`.
+
+### 6.4 Measurement states
 
 MetricStore entries per (strRef × StyleId): `exact | pending(estimate) | invalid`. Bundled-font entries are born `exact` (precompiled metrics). A paragraph is `estimated` if any of its blocks is pending; upgrades re-run break+layout+render for exactly those paragraphs when measurements arrive.
 

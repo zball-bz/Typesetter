@@ -1,0 +1,7 @@
+doc @[171,236) [base]
+  para @[171,193) [base]
+    styled @[0,0) [BOLD]
+      text @[0,0) [BOLD] str="LOUD TEXT"
+  raw @[195,211) [base] html="<b>boxed</b>" h=30
+  codeblock @[213,236) [base] lang="js"
+    text @[0,0) [base] str="plain(fence);"

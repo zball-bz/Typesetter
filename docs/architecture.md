@@ -203,9 +203,18 @@ M2  markup completeness: full line pass (lists, quotes, regions, comments),
     full splice grammar, hyphenation port, links, verbatim islands
 M3  CJK: emission rules (App C), mixed justification k-rule, clreq conformance fixtures
 M4  resolver: labels/refs/terms/collectors, diagnostics surfacing, section tree
+    [DONE — shipped together with M6: engine/src/resolve/; trailing <id>
+     labels, @id/@[…] sugar, auto heading anchors h-<number>, TOC/glossary
+     collectors, term → group{role:term} rewrite]
 M5  native fallback: semantic serializer, estimate states, paragraph upgrade
     protocol, copy handler, size-adjust polish
 M6  extensibility: fence handler API, #!table + provenance queries, #use ergonomics
+    [DONE except #use — pulled ahead of M5 for the M4 synergy (numbered,
+     referenceable tables): #!name(args) regions (generic → group{role:name}),
+     codegen-materialized '|' segmentation provenance, __region/__fence
+     dispatchers, $.fence/$.region registration, raw passthrough units,
+     #!table with equal columns + per-column alignment + three-line rules.
+     Deferred: #use, m.parse fence re-entry, cell-continuation indent rule]
 M7  math: operator dictionary artifact, box model, Neo Euler metrics, inline boxes
 M8  pages: PDF-oriented layout, static export path
 ```

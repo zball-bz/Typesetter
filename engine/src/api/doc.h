@@ -56,19 +56,36 @@ struct Doc {
     }
     MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg);
     if (!missing.empty()) return Status::NeedMeasure;
+    // PoC retry ladder: a narrow measure can starve the ±5 cursor window
+    // of feasible transitions; widen until a finite solution appears.
+    auto breakWithRetry = [&](const std::vector<LinebreakBlock>& blocks, LineWidths lw) {
+      BreakResult r = breakLines(blocks, lw, cfg.cost);
+      if (r.cost >= 1e17) {
+        for (u32 range : {10u, 20u, 50u, 0xFFFFFFFFu}) {
+          r = breakLines(blocks, lw, cfg.cost, range);
+          if (r.cost < 1e17) break;
+        }
+      }
+      return r;
+    };
     for (TopBlock& tb : tops) {
       for (FlowUnit& u : tb.units) {
+        if (u.kind == FlowUnit::K::Table && u.tCols > 0) {
+          // equal columns (v1); each cell breaks to its content width
+          Su colW = (suFloorPx(cfg.widthPx) - u.indent) / (Su)u.tCols;
+          Su pad = suRoundPx(kTableCellPadEm * cfg.baseSizePx);
+          Su cellW = colW - 2 * pad;
+          if (cellW < 64) cellW = 64;
+          for (TableCell& c : u.cells) {
+            BreakResult r = breakWithRetry(c.blocks, LineWidths{cellW});
+            c.breakpoints = std::move(r.breakpoints);
+            c.breakCost = r.cost;
+          }
+          continue;
+        }
         if (u.kind != FlowUnit::K::Text) continue;
         LineWidths lw{suFloorPx(cfg.widthPx) - u.indent};
-        BreakResult r = breakLines(u.blocks, lw, cfg.cost);
-        // PoC retry ladder: a narrow measure can starve the ±5 cursor window
-        // of feasible transitions; widen until a finite solution appears.
-        if (r.cost >= 1e17) {
-          for (u32 range : {10u, 20u, 50u, 0xFFFFFFFFu}) {
-            r = breakLines(u.blocks, lw, cfg.cost, range);
-            if (r.cost < 1e17) break;
-          }
-        }
+        BreakResult r = breakWithRetry(u.blocks, lw);
         u.breakpoints = std::move(r.breakpoints);
         u.breakCost = r.cost;
       }

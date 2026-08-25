@@ -1,0 +1,32 @@
+doc @[0,169)
+  heading @[0,6) level=1 label="sec"
+    text @[2,6) str="Data"
+  region @[14,136) name="table"
+    para @[59,128)
+      row @[59,77)
+        cell @[59,64)
+          text @[59,63) str="Name"
+        cell @[65,70)
+          text @[66,69) str="Qty"
+        cell @[71,77)
+          text @[72,77) str="Price"
+      row @[78,101)
+        cell @[78,91)
+          text @[78,90) str="Alpha widget"
+        cell @[92,95)
+          text @[93,94) str="2"
+        cell @[96,101)
+          text @[97,101) str="3.50"
+      row @[102,128)
+        cell @[102,115)
+          text @[102,114) str="中文条目"
+        cell @[116,121)
+          text @[117,120) str="三"
+        cell @[122,128)
+          text @[123,128) str="12.00"
+  para @[138,168)
+    text @[138,154) str="Totals appear in "
+    ref @[155,159) target="tbl"
+    text @[160,162) str=" of "
+    ref @[163,167) target="sec"
+    text @[167,168) str="."

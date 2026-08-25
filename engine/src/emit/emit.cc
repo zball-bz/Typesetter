@@ -74,6 +74,20 @@ struct Emitter {
         for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);
         return;
       }
+      case Kind::error: {
+        std::string msg = "\xE2\x9A\xA0 ";  // ⚠
+        for (const ArgVal& a : n->args)
+          if (a.key == ArgK::message && a.tag == ArgTag::Str) msg += strs.get(a.ref);
+        ContentNode tmp;
+        tmp.kind = Kind::text;
+        tmp.span = n->span;
+        tmp.style = n->style;
+        tmp.str = strs.intern(msg);
+        ICtx c2 = ctx;
+        c2.addBits |= CLS_CODE;
+        emitText(&tmp, u, c2);
+        return;
+      }
       case Kind::comment:
         return;
       case Kind::group: {
@@ -411,6 +425,71 @@ struct Emitter {
         tb.units.push_back(std::move(u));
         return;
       }
+      case Kind::table: {
+        FlowUnit u;
+        u.kind = FlowUnit::K::Table;
+        u.src = n;
+        u.indent = indent;
+        u.anchor = takeAnchor();
+        int cols = 1;
+        StrRef alignRef = 0;
+        for (const ArgVal& a : n->args) {
+          if (a.key == ArgK::cols && a.tag == ArgTag::Num) cols = (int)a.num;
+          if (a.key == ArgK::align && a.tag == ArgTag::Str) alignRef = a.ref;
+          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) u.anchor = a.ref;
+        }
+        if (cols < 1) cols = 1;
+        u.tCols = (u32)cols;
+        std::string_view al = strs.get(alignRef);
+        for (int c = 0; c < cols; c++)
+          u.tAligns.push_back(c < (int)al.size() ? (u8)al[(size_t)c] : (u8)'l');
+        for (const ContentNode* row : n->kids) {
+          if (row->kind != Kind::trow) continue;
+          u32 c = 0;
+          for (const ContentNode* cell : row->kids) {
+            if (cell->kind != Kind::tcell || c >= u.tCols) continue;
+            TableCell tc;
+            FlowUnit tmp;  // cell content flattens to one inline stream (v1)
+            for (const ContentNode* k : cell->kids) inlineWalk(k, tmp, {});
+            tc.blocks = std::move(tmp.blocks);
+            u.cells.push_back(std::move(tc));
+            c++;
+          }
+          while (c < u.tCols) {
+            u.cells.push_back({});
+            c++;
+          }
+        }
+        tb.units.push_back(std::move(u));
+        return;
+      }
+      case Kind::raw: {
+        // pre-rendered passthrough (v2 §4.1); height declared by the
+        // handler, defaulting to one leading
+        FlowUnit u;
+        u.kind = FlowUnit::K::Raw;
+        u.src = n;
+        u.indent = indent;
+        u.anchor = takeAnchor();
+        for (const ArgVal& a : n->args) {
+          if (a.key == ArgK::html && a.tag == ArgTag::Str) u.rawHtml = a.ref;
+          if (a.key == ArgK::h && a.tag == ArgTag::Num) u.rawHpx = a.num;
+        }
+        if (u.rawHpx <= 0) u.rawHpx = cfg.lineHeight * cfg.baseSizePx;
+        tb.units.push_back(std::move(u));
+        return;
+      }
+      case Kind::error: {
+        FlowUnit u;
+        u.src = n;
+        u.indent = indent;
+        u.ragged = true;
+        u.anchor = takeAnchor();
+        ICtx ctx;
+        inlineWalk(n, u, ctx);  // error case renders ⚠ + message
+        tb.units.push_back(std::move(u));
+        return;
+      }
       case Kind::comment:
         return;
       case Kind::group: {
@@ -457,20 +536,24 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
     return !b.isSpace() && !b.isHyphen() && !b.isSynthetic() && !b.isCjkChar() &&
            !b.isPunctGlyph() && b.text != 0;
   };
+  auto tag = [&](std::vector<LinebreakBlock>& blocks) {
+    for (size_t i = 0; i < blocks.size(); i++) {
+      LinebreakBlock& b = blocks[i];
+      if (!b.isSpace() || (b.flags & (BF_PUNCT_SP | BF_BOUND))) continue;
+      if (i == 0 || i + 1 >= blocks.size()) continue;
+      if (!isWord(blocks[i - 1]) || !isWord(blocks[i + 1])) continue;
+      std::string prev = lastCp(blocks[i - 1]);
+      std::string next = firstCp(blocks[i + 1]);
+      if (prev.empty() || next.empty()) continue;
+      b.ctxPrev = strs.intern(prev);
+      b.ctxNext = strs.intern(next);
+      b.ctxTrigram = strs.intern(prev + " " + next);
+    }
+  };
   for (TopBlock& tb : tops) {
     for (FlowUnit& u : tb.units) {
-      for (size_t i = 0; i < u.blocks.size(); i++) {
-        LinebreakBlock& b = u.blocks[i];
-        if (!b.isSpace() || (b.flags & (BF_PUNCT_SP | BF_BOUND))) continue;
-        if (i == 0 || i + 1 >= u.blocks.size()) continue;
-        if (!isWord(u.blocks[i - 1]) || !isWord(u.blocks[i + 1])) continue;
-        std::string prev = lastCp(u.blocks[i - 1]);
-        std::string next = firstCp(u.blocks[i + 1]);
-        if (prev.empty() || next.empty()) continue;
-        b.ctxPrev = strs.intern(prev);
-        b.ctxNext = strs.intern(next);
-        b.ctxTrigram = strs.intern(prev + " " + next);
-      }
+      tag(u.blocks);
+      for (TableCell& c : u.cells) tag(c.blocks);
     }
   }
 }
@@ -503,10 +586,8 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
       if (!store.hasVmet(st)) req.vmetStyles.push_back(st);
     }
   };
-  for (TopBlock& tb : tops) {
-    for (FlowUnit& u : tb.units) {
-      if (u.kind == FlowUnit::K::Code) needStyle(u.codeStyle);
-      for (LinebreakBlock& b : u.blocks) {
+  auto resolveBlocks = [&](std::vector<LinebreakBlock>& blocks) {
+      for (LinebreakBlock& b : blocks) {
         needStyle(b.style);
         if (b.widthResolved) continue;
         bool ctxReady = true;
@@ -562,6 +643,12 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
           }
         }
       }
+  };
+  for (TopBlock& tb : tops) {
+    for (FlowUnit& u : tb.units) {
+      if (u.kind == FlowUnit::K::Code) needStyle(u.codeStyle);
+      resolveBlocks(u.blocks);
+      for (TableCell& c : u.cells) resolveBlocks(c.blocks);
     }
   }
   return req;
@@ -574,7 +661,9 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
     appendf(out, "top pid=%u units=%zu\n", tb.pid, tb.units.size());
     for (const FlowUnit& u : tb.units) {
       const char* k = u.kind == FlowUnit::K::Text ? "text"
-                      : u.kind == FlowUnit::K::Code ? "code" : "rule";
+                      : u.kind == FlowUnit::K::Code ? "code"
+                      : u.kind == FlowUnit::K::Raw ? "raw"
+                      : u.kind == FlowUnit::K::Table ? "table" : "rule";
       appendf(out, " unit %s indent=%dsu", k, u.indent);
       if (u.anchor) {
         out += " anchor=\"";
@@ -587,8 +676,9 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
         out += "\"";
       }
       if (u.kind == FlowUnit::K::Code) appendf(out, " lines=%zu", u.codeLines.size());
+      if (u.kind == FlowUnit::K::Table) appendf(out, " cols=%u cells=%zu", u.tCols, u.cells.size());
       out += "\n";
-      for (const LinebreakBlock& b : u.blocks) {
+      auto dumpBlock = [&](const LinebreakBlock& b) {
         out += "  ";
         if (b.flags & BF_INDENT) appendf(out, "indent w=%dsu", b.width);
         else if (b.flags & BF_BOUND) appendf(out, "boundary w=%dsu stretch=%g", b.width, (double)b.stretchWeight);
@@ -619,6 +709,11 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
         if (b.flags & BF_REF) out += " SYN";
         if (st.sizeMul != 1.0f) appendf(out, " x%.2f", (double)st.sizeMul);
         appendf(out, " @[%u,%u)\n", b.span.start, b.span.end);
+      };
+      for (const LinebreakBlock& b : u.blocks) dumpBlock(b);
+      for (size_t ci = 0; ci < u.cells.size(); ci++) {
+        appendf(out, "  cell %zu\n", ci);
+        for (const LinebreakBlock& b : u.cells[ci].blocks) dumpBlock(b);
       }
     }
   }

@@ -1,0 +1,24 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-sec" data-s="2" data-e="6" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Data</span></div>
+</div>
+<div class="tsr-para" data-pid="1" style="position:relative;height:124.781px;margin-bottom:19.2px">
+<div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-tbl" data-s="59" data-e="63" data-cell="1" style="top:4.797px;left:6.406px;width:87.188px"><span class="tsr-r" data-s="59">Name</span></div>
+<div class="tsr-line" data-s="66" data-e="69" data-cell="1" style="top:4.797px;left:138px;width:55.594px"><span class="tsr-r" data-s="66">Qty</span></div>
+<div class="tsr-line" data-s="72" data-e="77" data-cell="1" style="top:4.797px;left:253.594px;width:40px"><span class="tsr-r" data-s="72">Price</span></div>
+<div class="tsr-rule" style="top:33.594px;left:0px;width:300px"></div>
+<div class="tsr-line" data-s="78" data-e="90" data-cell="1" style="top:38.391px;left:6.406px;width:87.188px"><span class="tsr-r" data-s="78">Al</span><span class="tsr-r" data-s="78">pha wid</span><span class="tsr-r" data-s="78" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="78" data-e="90" data-cell="1" style="top:62.391px;left:6.406px;width:87.188px"><span class="tsr-r" data-s="78">get</span></div>
+<div class="tsr-line" data-s="93" data-e="94" data-cell="1" style="top:38.391px;left:146px;width:47.594px"><span class="tsr-r" data-s="93">2</span></div>
+<div class="tsr-line" data-s="97" data-e="101" data-cell="1" style="top:38.391px;left:261.594px;width:32px"><span class="tsr-r" data-s="97">3.50</span></div>
+<div class="tsr-rule" style="top:91.188px;left:0px;width:300px"></div>
+<div class="tsr-line" data-s="102" data-e="114" data-cell="1" style="top:95.984px;left:6.406px;width:87.188px"><span class="tsr-r tsr-cjk" data-s="102">中文条目</span></div>
+<div class="tsr-line" data-s="117" data-e="120" data-cell="1" style="top:95.984px;left:142px;width:51.594px"><span class="tsr-r tsr-cjk" data-s="117">三</span></div>
+<div class="tsr-line" data-s="123" data-e="128" data-cell="1" style="top:95.984px;left:253.594px;width:40px"><span class="tsr-r" data-s="123">12.00</span></div>
+<div class="tsr-rule" style="top:124.781px;left:0px;width:300px"></div>
+</div>
+<div class="tsr-para" data-pid="2" style="position:relative;height:24px">
+<div class="tsr-line" data-s="138" data-e="168" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="138">To</span><span class="tsr-r" data-s="138">tals ap</span><span class="tsr-r" data-s="138">pear in </span><a class="tsr-r tsr-cjk" href="#tsr-tbl" data-syn="ref">表</a><a class="tsr-r" href="#tsr-tbl" data-syn="ref"> 1</a><span class="tsr-r" data-s="160"> of </span><a class="tsr-r" href="#tsr-sec" data-syn="ref">§1</a><span class="tsr-r" data-s="167">.</span></div>
+</div>
+</div>
