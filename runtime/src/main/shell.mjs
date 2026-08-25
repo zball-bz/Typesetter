@@ -94,7 +94,7 @@ export function createEngine(opts = {}) {
   return {
     async typeset(source, container, {
       widthPx, baseSizePx = 18, lineHeight, fontFamily = 'Georgia, serif',
-      cjkFontFamily = TSR_CJK_FONT,
+      cjkFontFamily = TSR_CJK_FONT, lang = 'zh-CN',
       paraIndentEm, punctCompress = 'book', progressive = true,
       onSemantic, onUpgrade,
     } = {}) {
@@ -110,6 +110,9 @@ export function createEngine(opts = {}) {
       container.style.fontFamily = fontFamily;
       container.style.fontSize = `${baseSizePx}px`;
       container.style.setProperty('--tsr-cjk-font', cjkFontFamily);
+      // language tag drives OpenType 'locl' punctuation forms (multi-locale
+      // CJK fonts pick 简中/繁中/日 glyph variants by it)
+      if (lang) container.setAttribute('lang', lang);
       let semanticHtml = null;
       const res = await request(
         { type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight,
