@@ -210,21 +210,20 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
           i++;
           continue;
         }
-        // —/…… defined-width block: own span pinned to its DEFINED advance
-        // (1em single, 2em pair — App C): canvas cannot predict DOM's
-        // full-width-ization/cluster shaping for these, so the box width is
-        // forced instead of trusted; glyphs center inside. No internal
-        // letter-spacing; its stretch gap becomes a margin.
+        // —/…… defined-width block (1em single, 2em pair — App C): the
+        // engine ASSUMES the defined advance instead of measuring (canvas
+        // cannot predict DOM's full-width-ization of these), and the DOM —
+        // under text-spacing-trim — shapes them to exactly that advance
+        // with connected ink. Own span so no letter-spacing splits the
+        // pair; its stretch gap becomes a margin.
         if (b.flags & BF_PAIR) {
-          std::string extra = "display:inline-block;width:";
-          fmtPx(extra, b.rawPx);
-          extra += ";text-align:center";
+          std::string extra;
           if (l.cjkDeltaPx != 0) {
             const LinebreakBlock* nx = (i + 1 < l.blockEnd) ? &bl[i + 1] : nullptr;
             bool keep = nx && (nx->isCjkChar() ||
                                (nx->isPunctGlyph() && !(nx->flags & BF_PUNCT_OPEN)));
             if (keep) {
-              extra += ";margin-right:";
+              extra += "margin-right:";
               fmtPx(extra, l.cjkDeltaPx);
             }
           }
