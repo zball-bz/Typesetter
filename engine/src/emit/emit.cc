@@ -208,9 +208,14 @@ struct Emitter {
       return !u.blocks.empty() && (u.blocks.back().flags & BF_PUNCT_GLYPH) &&
              (u.blocks.back().flags & BF_PUNCT_OPEN);
     };
-    auto pushCjkChar = [&](std::string_view chars, bool pair = false) {
+    // definedEm > 0: the block's width is DEFINED, never measured, and the
+    // renderer pins its box to exactly that advance (BF_PAIR). Used for
+    // U+2014/U+2026 (1em single, 2em pairs — App C): canvas and DOM disagree
+    // on their advance (full-width-ization, cluster shaping), so measurement
+    // cannot predict rendering for them.
+    auto pushCjkChar = [&](std::string_view chars, double definedEm = 0) {
       LinebreakBlock b;
-      b.flags = (u16)((pair ? (BF_CJK | BF_PAIR) : BF_CJK) | ctx.addFlags);
+      b.flags = (u16)((definedEm > 0 ? (BF_CJK | BF_PAIR) : BF_CJK) | ctx.addFlags);
       b.breakPenalty = 0;
       b.stretchWeight = (float)cfg.cjkJustifyK;
       b.spaceWidth = glueSu;  // stretch capacity for the cost fn (App C)
@@ -218,6 +223,12 @@ struct Emitter {
       b.text = strs.intern(chars);
       b.linkUrl = ctx.url;
       b.span = n->span;
+      if (definedEm > 0) {
+        double px = definedEm * fontPx(stCjk);
+        b.width = suRoundPx(px);
+        b.rawPx = px;
+        b.widthResolved = true;
+      }
       u.blocks.push_back(b);
     };
     auto pushPunct = [&](std::string_view ch, bool open) {
@@ -288,16 +299,19 @@ struct Emitter {
       if (isCjkIdeo(cp) || cp == 0x2014 || cp == 0x2026) {
         flushWord();
         if (prev == Prev::Latin) boundary();
-        // em-dash / ellipsis pairs: one unbreakable 2em block (App C)
-        if ((cp == 0x2014 || cp == 0x2026) && i < s.size()) {
+        // em-dash / ellipsis: defined-width pinned blocks — 2em as a pair,
+        // 1em alone (App C; advance is unmeasurable, see pushCjkChar)
+        if (cp == 0x2014 || cp == 0x2026) {
           u32 j = i;
-          u32 cp2 = utf8Next(s, j);
+          u32 cp2 = (i < s.size()) ? utf8Next(s, j) : 0;
           if (cp2 == cp) {
-            pushCjkChar(s.substr(start, j - start), /*pair=*/true);
+            pushCjkChar(s.substr(start, j - start), /*definedEm=*/2.0);
             i = j;
-            prev = Prev::Cjk;
-            continue;
+          } else {
+            pushCjkChar(s.substr(start, i - start), /*definedEm=*/1.0);
           }
+          prev = Prev::Cjk;
+          continue;
         }
         pushCjkChar(s.substr(start, i - start));
         prev = Prev::Cjk;

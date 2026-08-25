@@ -25,17 +25,19 @@ export function auditTypeset(root) {
       range.detach?.();
     }
 
-    // line-integrity: exactly one fragment row (v2 §7 rule 1 held?)
-    const rows = [];
-    for (const r of rects) {
-      if (!rows.some((t) => Math.abs(t - r.top) < 0.5)) rows.push(r.top);
-    }
-    if (rows.length !== 1) {
-      report.failures.push({
-        audit: 'line-integrity',
-        rows: rows.length,
-        text: (line.textContent || '').slice(0, 48),
-      });
+    // line-integrity: all fragments share one vertical band (v2 §7 rule 1).
+    // Mixed fonts on a line legitimately differ in rect top/height (baseline
+    // aligned, ascents differ) — a real browser re-break stacks fragments,
+    // i.e. some fragment's top clears another's bottom.
+    if (rects.length) {
+      const maxTop = Math.max(...rects.map((r) => r.top));
+      const minBottom = Math.min(...rects.map((r) => r.bottom));
+      if (maxTop >= minBottom - 0.5) {
+        report.failures.push({
+          audit: 'line-integrity',
+          text: (line.textContent || '').slice(0, 48),
+        });
+      }
     }
 
     // right-edge: justified lines (any data-join — space or hyphen breaks)

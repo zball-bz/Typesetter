@@ -15,7 +15,7 @@
 <div class="tsr-line" data-s="134" data-e="183" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="134">ic la</span><span class="tsr-r" data-s="134">bels.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" style="position:relative;height:48px;margin-bottom:19.2px">
-<div class="tsr-line" id="tsr-measure" data-s="200" data-e="245" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.229px"><span class="tsr-r tsr-b">mea</span><span class="tsr-r tsr-b">sure</span><span class="tsr-r"> </span><span class="tsr-r tsr-cjk">—</span><span class="tsr-r"> The width avail</span><span class="tsr-r" data-s="200">able to a sin</span><span class="tsr-r" data-s="200">gle</span></div>
+<div class="tsr-line" id="tsr-measure" data-s="200" data-e="245" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r tsr-b">mea</span><span class="tsr-r tsr-b">sure</span><span class="tsr-r"> </span><span class="tsr-r tsr-cjk" style="display:inline-block;width:16px;text-align:center">—</span><span class="tsr-r"> The width avail</span><span class="tsr-r" data-s="200">able to a sin</span><span class="tsr-r" data-s="200">gle</span></div>
 <div class="tsr-line" data-s="200" data-e="245" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="200">type</span><span class="tsr-r" data-s="200">set line.</span></div>
 </div>
 <div class="tsr-para" data-pid="5" style="position:relative;height:25.609px;margin-bottom:19.2px">
@@ -40,7 +40,7 @@
 <div class="tsr-line" id="tsr-h-2.2" data-s="415" data-e="423" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="415" style="font-size:21.6px">Glossary</span></div>
 </div>
 <div class="tsr-para" data-pid="10" style="position:relative;height:48px">
-<div class="tsr-line" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:4.4px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-measure">mea</a><a class="tsr-r" href="#tsr-measure">sure</a><span class="tsr-r"> </span><span class="tsr-r tsr-cjk">—</span><span class="tsr-r"> The width avail</span><span class="tsr-r">able to a</span></div>
+<div class="tsr-line" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:3.333px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-measure">mea</a><a class="tsr-r" href="#tsr-measure">sure</a><span class="tsr-r"> </span><span class="tsr-r tsr-cjk" style="display:inline-block;width:16px;text-align:center">—</span><span class="tsr-r"> The width avail</span><span class="tsr-r">able to a</span></div>
 <div class="tsr-line" style="top:24px;left:24px;width:276px"><span class="tsr-r">sin</span><span class="tsr-r">gle type</span><span class="tsr-r">set line.</span></div>
 </div>
 </div>

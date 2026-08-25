@@ -44,7 +44,7 @@ function postResult(M, doc, id) {
 }
 
 async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily,
-                         paraIndentEm, punctCompress, progressive }) {
+                         cjkFontFamily, paraIndentEm, punctCompress, progressive }) {
   const M = await getMod();
   const doc = M._tsr_doc_new();
   try {
@@ -54,6 +54,11 @@ async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily
     if (fontFamily) {
       const f = M.stringToNewUTF8(fontFamily);
       M._tsr_set_font(doc, f);
+      M._free(f);
+    }
+    if (cjkFontFamily) {
+      const f = M.stringToNewUTF8(cjkFontFamily);
+      M._tsr_set_cjk_font(doc, f);
       M._free(f);
     }
     const srcPtr = M.stringToNewUTF8(source);

@@ -55,6 +55,10 @@ TSR_EXPORT void tsr_set_font(WasmDoc* d, const char* family) {
   d->doc.cfg.bodyFont = family;
 }
 
+TSR_EXPORT void tsr_set_cjk_font(WasmDoc* d, const char* family) {
+  d->doc.cfg.cjkFont = family;
+}
+
 TSR_EXPORT int tsr_compile(WasmDoc* d, const char* src) {
   d->doc.compile(std::string(src));
   return 0;

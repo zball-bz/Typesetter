@@ -142,6 +142,14 @@ All engine-internal widths/positions are integer `su`. Why fixed-point: golden d
 - container widths: `floor(px * 64)`;
 - vertical metrics: `round`.
 
+Widths are measured per string with two exceptions. ——/…… **pair blocks are
+never measured**: their width is the App C-normative 2em, and the typeset
+serializer pins the pair span to `display:inline-block;width:2em` — canvas
+and DOM disagree on cluster shaping / font selection for consecutive U+2014,
+so measurement there cannot predict rendering. CJK-class runs measure (and
+render, via `--tsr-cjk-font`) with `fonts.cjk`, keeping ambiguous glyphs
+(dashes, ellipses, curly quotes) out of the Latin face.
+
 **Quantized widths feed the breaker only.** Justification arithmetic (line slack, per-gap Δ) uses the **raw f64 px** measurements, which the metric store retains alongside the quantized value — otherwise ε and ceil would leak into the right edge as a systematic ~0.3px shortfall. Overflow safety comes from quantization; edge precision comes from raw math.
 
 Document-height accumulation uses i64.
@@ -284,6 +292,9 @@ measure-fallback     info     glyphs measured via fallback font
 ```json
 {
   "fonts":   { "body": "...", "cjk": "...", "mono": "...", "math": "Neo Euler" },
+  // fonts.cjk is live (M6+): CJK-class runs measure AND render with this
+  // stack (renderer: .tsr-cjk { font-family: var(--tsr-cjk-font) }) so
+  // U+2014/…/fullwidth puncts never resolve into the Latin face,
   "baseSizePx": 18, "lineHeight": 1.5,
   "cjkJustifyK": 0.6, "punctCompress": "book",
   "epsilon": { "perWordSu": 1 },

@@ -5,6 +5,12 @@
 // caller's responsibility (the engine provides the information).
 import { installCopy } from './copy.mjs';
 
+// Default CJK stack — mirrors the engine default (config.h cjkFont). CJK-class
+// runs must resolve in ONE font: U+2014/…/fullwidth puncts exist in Latin
+// faces and would otherwise split a line across two vertical metrics.
+export const TSR_CJK_FONT =
+  '"Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif';
+
 // The serializer's CSS contract (document-model §9.1) — the nowrap rule IS
 // the DPR robustness contract (v2 §7 rule 1); never remove it.
 export const TSR_CSS = `
@@ -20,6 +26,7 @@ export const TSR_CSS = `
 .tsr-b { font-weight: 700; }
 .tsr-i { font-style: italic; }
 .tsr-code { font-family: monospace; }
+.tsr-cjk { font-family: var(--tsr-cjk-font, inherit); }
 .tsr-marker { position: absolute; right: 100%; padding-right: 0.55em; }
 .tsr-rule { position: absolute; height: 0; border-top: 1px solid currentColor; opacity: 0.35; }
 .tsr-raw { position: absolute; overflow: hidden; }
@@ -87,6 +94,7 @@ export function createEngine(opts = {}) {
   return {
     async typeset(source, container, {
       widthPx, baseSizePx = 18, lineHeight, fontFamily = 'Georgia, serif',
+      cjkFontFamily = TSR_CJK_FONT,
       paraIndentEm, punctCompress = 'book', progressive = true,
       onSemantic, onUpgrade,
     } = {}) {
@@ -101,10 +109,11 @@ export function createEngine(opts = {}) {
       // measured — this is the measure/render contract, not styling sugar.
       container.style.fontFamily = fontFamily;
       container.style.fontSize = `${baseSizePx}px`;
+      container.style.setProperty('--tsr-cjk-font', cjkFontFamily);
       let semanticHtml = null;
       const res = await request(
         { type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight,
-          fontFamily, paraIndentEm, punctCompress, progressive },
+          fontFamily, cjkFontFamily, paraIndentEm, punctCompress, progressive },
         (html) => {
           semanticHtml = html;
           if (progressive) {

@@ -59,7 +59,9 @@ struct StyleDesc {
 };
 inline StyleDesc describeStyle(const Config& cfg, const Styling& s) {
   StyleDesc d;
-  d.family = (s.bits & CLS_CODE) ? cfg.monoFont : cfg.bodyFont;
+  d.family = (s.bits & CLS_CODE) ? cfg.monoFont
+             : (s.bits & CLS_CJK) ? cfg.cjkFont
+                                  : cfg.bodyFont;
   d.sizePx = cfg.baseSizePx * (double)s.sizeMul;
   d.weight = (s.bits & CLS_BOLD) ? 700 : 400;
   d.italic = (s.bits & CLS_EM) != 0;

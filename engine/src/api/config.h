@@ -19,6 +19,12 @@ enum class PunctCompress : u8 { Full = 0, Book = 1, None = 2 };
 
 struct Config {
   std::string bodyFont = "\"Crimson Text\", Georgia, serif";
+  // CJK-class runs (ideographs, fullwidth punctuation, ——/…… pairs) measure
+  // and render with an explicit CJK-first stack: characters like U+2014 that
+  // also exist in Latin faces must NOT resolve there — mixed vertical
+  // metrics ragged the line box and Georgia's dashes don't even connect.
+  std::string cjkFont =
+      "\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif";
   std::string monoFont = "monospace";
   double baseSizePx = 18;
   double lineHeight = 1.5;
