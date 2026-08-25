@@ -1,0 +1,6 @@
+doc @[0,286)
+  para @[0,54) lines=1
+  fence @[56,88) lang="" lines=1
+  para @[90,160) lines=1
+  fence @[165,278) lang="js" lines=2
+  para @[280,285) lines=1

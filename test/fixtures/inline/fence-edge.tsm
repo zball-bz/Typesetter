@@ -1,0 +1,14 @@
+Four backticks fence the corpus edge cases from Typst:
+
+````
+```backticks inside```
+````
+
+An indented opener dedents its content and accepts an indented closer:
+
+   ```js
+   const kept = "indent stripped to the opener column";
+     const deeper = "extra indent survives";
+   ```
+
+Done.

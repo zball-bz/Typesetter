@@ -1,0 +1,8 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq}, $) => {
+__emit(__at(para(__at(text("Four backticks fence the corpus edge cases from Typst:"),0,54)),0,54));
+__emit(__at(codeblock("", "```backticks inside```"),56,88));
+__emit(__at(para(__at(text("An indented opener dedents its content and accepts an indented closer:"),90,160)),90,160));
+__emit(__at(codeblock("js", "const kept = \"indent stripped to the opener column\";\n  const deeper = \"extra indent survives\";"),165,278));
+__emit(__at(para(__at(text("Done."),280,285)),280,285));
+};
+//# sourceURL=tsm:doc

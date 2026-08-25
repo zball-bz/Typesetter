@@ -45,6 +45,8 @@ jobs:
           git diff --exit-code runtime/src/shared/ops.gen.mjs
       - name: recordings are current
         run: node tools/record-fixtures.mjs --check
+      - name: typst corpus smoke
+        run: node tools/corpus-run.mjs
       - name: install chromium
         run: npx playwright install --with-deps chromium
       - name: e2e (audit matrix, dsf 1.0/1.25/1.5/2.0)

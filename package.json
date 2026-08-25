@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:engine": "ctest --test-dir engine/build",
     "record": "node tools/record-fixtures.mjs",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "corpus": "node tools/corpus-run.mjs"
   },
   "keywords": [],
   "author": "",

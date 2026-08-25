@@ -1,0 +1,9 @@
+doc @[0,286)
+  para @[0,54)
+    text @[0,54) str="Four backticks fence the corpus edge cases from Typst:"
+  codeblock @[56,88) lang="" body="```backticks inside```"
+  para @[90,160)
+    text @[90,160) str="An indented opener dedents its content and accepts an indented closer:"
+  codeblock @[165,278) lang="js" body="const kept = \"indent stripped to the opener column\";\n  const deeper = \"extra indent survives\";"
+  para @[280,285)
+    text @[280,285) str="Done."

@@ -155,12 +155,17 @@ struct LinePass {
     leaf->lineSpans.push_back({pos, e});
   }
 
-  // consume a fence starting at line ln; returns last consumed line
-  u32 fence(u32 ln, u32 pos, u32 nlines) {
+  // consume a fence starting at line ln; returns last consumed line.
+  // CommonMark-style: N>=3 backticks, closer needs >= N; the opener's
+  // indentation is stripped from content lines (dedent); the closer may be
+  // indented. `openCol` = column of the first backtick within the content.
+  u32 fence(u32 ln, u32 pos, u32 openCol, u32 nlines) {
     u32 le = src.lineEnd(ln);
+    u32 nTicks = 0;
+    while (pos + nTicks < le && all[pos + nTicks] == '`') nTicks++;
     SkelNode* f = mk(SkelKind::Fence);
     f->span = {pos, le};
-    u32 lang0 = pos + 3, lang1 = le;
+    u32 lang0 = pos + nTicks, lang1 = le;
     while (lang0 < lang1 && all[lang0] == ' ') lang0++;
     f->langSpan = {lang0, lang1};
     parent()->kids.push_back(f);
@@ -170,14 +175,23 @@ struct LinePass {
       u32 ls2 = src.lineStart(l), le2 = src.lineEnd(l);
       u32 p2 = ls2, c2 = 0;
       matchPrefixes(ls2, le2, p2, c2, isBlank(all.substr(ls2, le2 - ls2)));
-      std::string_view rest = all.substr(p2, le2 - p2);
-      u32 re = (u32)rest.size();
-      while (re > 0 && (rest[re - 1] == ' ' || rest[re - 1] == '\r')) re--;
-      if (rest.substr(0, re) == "```") {
-        f->span.end = le2;
-        return l;
+      // closer: optional indentation, then >= nTicks backticks, only trailing ws
+      {
+        u32 q = p2;
+        while (q < le2 && all[q] == ' ') q++;
+        u32 t = 0;
+        while (q + t < le2 && all[q + t] == '`') t++;
+        u32 after = q + t;
+        while (after < le2 && (all[after] == ' ' || all[after] == '\r')) after++;
+        if (t >= nTicks && after == le2) {
+          f->span.end = le2;
+          return l;
+        }
       }
-      f->lineSpans.push_back({p2, le2});
+      // content line: dedent up to the opener's column
+      u32 strip = 0;
+      while (strip < openCol && p2 + strip < le2 && all[p2 + strip] == ' ') strip++;
+      f->lineSpans.push_back({p2 + strip, le2});
       f->span.end = le2;
     }
     diags.add(Sev::Error, "parse-block", f->span, "unterminated fence");
@@ -236,7 +250,7 @@ struct LinePass {
       std::string_view rest = all.substr(pos, le - pos);
 
       if (rest.size() >= 3 && rest.substr(0, 3) == "```") {
-        ln = fence(ln, pos, nlines);
+        ln = fence(ln, pos, col, nlines);
         continue;
       }
       if (rest.size() >= 3 && rest.substr(0, 3) == "%--") {
