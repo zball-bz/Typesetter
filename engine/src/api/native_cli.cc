@@ -1,6 +1,6 @@
 // tsrc — stage inspection CLI (architecture §2.1).
 //   tsrc --stage=skeleton|ast|js|diags <file.tsm>
-//   tsrc --stage=ops|tree|blocks|breaks|layout|html --ops=<file.ops> [--width=300] <file.tsm>
+//   tsrc --stage=ops|tree|semantic|blocks|breaks|layout|html --ops=<file.ops> [--width=300] <file.tsm>
 // Post-ops stages use the normative mock measurer.
 #include <cstdio>
 #include <fstream>
@@ -82,6 +82,7 @@ int main(int argc, char** argv) {
     }
     if (stage == "ops") out = dumpOps(doc.raw);
     else if (stage == "tree") out = dumpTree(doc.tree, doc.strs, doc.styles);
+    else if (stage == "semantic") out = doc.renderFallback();
     else {
       if (!typesetWithMock(doc)) {
         fprintf(stderr, "typeset did not converge\n");

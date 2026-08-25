@@ -17,7 +17,7 @@ using namespace tsr;
 namespace {
 struct WasmDoc {
   Doc doc;
-  std::string jsOut, htmlOut, reqOut, diagOut;
+  std::string jsOut, htmlOut, semOut, reqOut, diagOut;
 };
 
 void jsonEscapeInto(std::string& out, std::string_view s) {
@@ -125,6 +125,17 @@ TSR_EXPORT void tsr_provide_vmet(WasmDoc* d, int styleId, double ascPx, double d
 TSR_EXPORT const char* tsr_render(WasmDoc* d) {
   d->htmlOut = d->doc.render();
   return d->htmlOut.c_str();
+}
+
+// Semantic flow HTML (document-model §9.2) — valid right after ingest,
+// before any measurement: the progressive-upgrade first paint.
+TSR_EXPORT const char* tsr_render_semantic(WasmDoc* d) {
+  d->semOut = d->doc.renderFallback();
+  return d->semOut.c_str();
+}
+
+TSR_EXPORT void tsr_set_width(WasmDoc* d, double widthPx) {
+  d->doc.setWidth(widthPx);
 }
 
 TSR_EXPORT const char* tsr_diags(WasmDoc* d) {

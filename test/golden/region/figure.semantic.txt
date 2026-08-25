@@ -1,0 +1,14 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="9" id="tsr-top">Regions</h1>
+<div data-role="figure" data-pid="1" data-s="17" data-e="112" id="tsr-fig1">
+<p>A pretend figure body line continuing on a second source line.</p>
+</div>
+<div data-role="aside" data-pid="2" data-s="114" data-e="197">
+<p>Side note with <strong>emphasis</strong> inside</p>
+<ul data-s="155" data-e="172">
+<li>a nested bullet</li>
+<li>another bullet</li>
+</ul>
+</div>
+<p data-pid="3" data-s="199" data-e="243">The figure is <a href="#tsr-fig1">图 1</a> and the section is <a href="#tsr-top">§1</a>.</p>
+</div>

@@ -5,6 +5,7 @@
 #include "../codegen/codegen.h"
 #include "../resolve/resolve.h"
 #include "../layout/layout.h"
+#include "../render/semantic_html.h"
 #include "../render/typeset_html.h"
 
 namespace tsr {
@@ -98,6 +99,13 @@ struct Doc {
   MeasureRequest pendingRequests() { return resolveWidths(tops, metrics, styles, cfg); }
 
   std::string render() { return renderTypeset(tops, layout, styles, strs, cfg); }
+
+  // needs only the post-resolve tree — valid before any measurement
+  std::string renderFallback() { return renderSemantic(tree, strs); }
+
+  // width-only relayout (architecture §2.4): metrics persist, the next
+  // typeset() re-breaks and re-lays out at the new measure
+  void setWidth(double widthPx) { cfg.widthPx = widthPx; laidOut = false; }
 
   std::string dumpDiags() const {
     std::string out;

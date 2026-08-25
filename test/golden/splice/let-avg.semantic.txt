@@ -1,0 +1,3 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="28" data-e="74">The mean is 4, computed <strong>inline</strong> here.</p>
+</div>

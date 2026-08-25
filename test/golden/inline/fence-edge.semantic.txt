@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="54">Four backticks fence the corpus edge cases from Typst:</p>
+<pre data-pid="1" data-s="56" data-e="88"><code>```backticks inside```</code></pre>
+<p data-pid="2" data-s="90" data-e="160">An indented opener dedents its content and accepts an indented closer:</p>
+<pre data-pid="3" data-s="165" data-e="278"><code class="language-js">const kept = &quot;indent stripped to the opener column&quot;;
+  const deeper = &quot;extra indent survives&quot;;</code></pre>
+<p data-pid="4" data-s="280" data-e="285">Done.</p>
+</div>

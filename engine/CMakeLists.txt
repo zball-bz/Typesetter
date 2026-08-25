@@ -19,6 +19,7 @@ add_library(tsr_core STATIC
   src/break/break.cc
   src/layout/layout.cc
   src/render/typeset_html.cc
+  src/render/semantic_html.cc
 )
 target_compile_options(tsr_core PUBLIC -fno-exceptions -fno-rtti -Wall -Wextra)
 target_include_directories(tsr_core PUBLIC src)

@@ -198,6 +198,15 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         }
         const bool endsHyphen = bl[hi - 1].isHyphen();
         if (endsHyphen) naturalPx += bl[hi - 1].rawPx;
+        // did this break consume a real source space? (copy contract §9.3 —
+        // synthetic glue: CJK boundary, punct halves, indents don't count)
+        bool joinSpace = false;
+        for (u32 j = hi; j < (u32)bl.size() && bl[j].isSpace(); j++) {
+          if (!(bl[j].flags & (BF_BOUND | BF_PUNCT_SP | BF_INDENT))) {
+            joinSpace = true;
+            break;
+          }
+        }
 
         LineBox line;
         line.unitIdx = ui;
@@ -222,7 +231,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             line.cjkDeltaSu = (i32)std::llround(line.cjkDeltaPx * 64.0);
           }
         }
-        line.join = isLast ? 0 : (endsHyphen ? 2 : 1);
+        line.join = isLast ? 0 : (endsHyphen || !joinSpace) ? 2 : 1;
 
         Su advance = baseLeading;
         if (maxAsc + maxDesc > advance) advance = maxAsc + maxDesc;

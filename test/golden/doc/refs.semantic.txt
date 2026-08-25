@@ -1,0 +1,29 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="14" id="tsr-intro">Introduction</h1>
+<p data-pid="1" data-s="24" data-e="121">The typesetting engine resolves references like <a href="#tsr-intro">§1</a> and <a href="#tsr-results">§2</a> before any rendering happens.</p>
+<h2 data-pid="2" data-s="123" data-e="132" id="tsr-h-1.1">Method</h2>
+<p data-pid="3" data-s="134" data-e="183">Terms are definition sites with automatic labels.</p>
+<div data-role="term" data-pid="4" id="tsr-measure">
+<p>measure — The width available to a single typeset line.</p>
+</div>
+<h1 data-pid="5" data-s="248" data-e="257" id="tsr-results">Results</h1>
+<p data-pid="6" data-s="269" data-e="380">As promised in <a href="#tsr-intro">§1</a>, the resolver links back to sections and to terms such as <a href="#tsr-measure">measure</a> without a second pass.</p>
+<h2 data-pid="7" data-s="382" data-e="402" id="tsr-h-2.1">Table of contents</h2>
+<ul data-pid="8">
+<li><p><a href="#tsr-intro">1 Introduction</a></p>
+<ul>
+<li><a href="#tsr-h-1.1">1.1 Method</a></li>
+</ul>
+</li>
+<li><p><a href="#tsr-results">2 Results</a></p>
+<ul>
+<li><a href="#tsr-h-2.1">2.1 Table of contents</a></li>
+<li><a href="#tsr-h-2.2">2.2 Glossary</a></li>
+</ul>
+</li>
+</ul>
+<h2 data-pid="9" data-s="412" data-e="423" id="tsr-h-2.2">Glossary</h2>
+<ul data-pid="10">
+<li><a href="#tsr-measure">measure</a> — The width available to a single typeset line.</li>
+</ul>
+</div>

@@ -13,15 +13,28 @@
 <script type="module">
 import { createEngine } from '/runtime/src/main/shell.mjs';
 import { auditTypeset } from '/runtime/src/main/audit.mjs';
+import { contentTextFromRange } from '/runtime/src/main/copy.mjs';
 
 const engine = createEngine();
 const out = document.getElementById('out');
+let handle = null;
 
 window.__tsr = {
   async typeset(source, opts = {}) {
     if (opts.widthPx) out.style.width = opts.widthPx + 'px';
-    const res = await engine.typeset(source, out, opts);
-    return { diags: res.diags, heightPx: res.heightPx, dpr: devicePixelRatio };
+    handle = await engine.typeset(source, out, opts);
+    return { diags: handle.diags, heightPx: handle.heightPx, dpr: devicePixelRatio,
+             hasSemantic: !!handle.semanticHtml, upgrades: handle.upgrades.length };
+  },
+  async relayout(widthPx) {
+    out.style.width = widthPx + 'px';
+    const r = await handle.relayout(widthPx);
+    return { heightPx: r.heightPx, upgrades: r.upgrades.length };
+  },
+  copyText() {
+    const range = document.createRange();
+    range.selectNodeContents(out);
+    return contentTextFromRange(range, out);
   },
   audit() {
     return auditTypeset(out);

@@ -1,0 +1,23 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="19" id="tsr-h-1">Typesetting Notes</h1>
+<h2 data-pid="1" data-s="21" data-e="48" id="tsr-h-1.1">Structure and <strong>emphasis</strong></h2>
+<p data-pid="2" data-s="50" data-e="170">An introductory paragraph with a <a href="https://example.org">useful link</a> and some <code>inline code</code> in it.</p>
+<ul data-pid="3" data-s="172" data-e="228">
+<li>First bullet item with enough words to wrap onto lines</li>
+<li><p data-s="231" data-e="274">Second item continued on an indented line</p>
+<ul data-s="277" data-e="296">
+<li>Nested child item</li>
+</ul>
+</li>
+</ul>
+<ol data-pid="4" data-s="297" data-e="318">
+<li>Ordered starts here</li>
+<li>And continues</li>
+</ol>
+<blockquote data-pid="5" data-s="336" data-e="396">
+<p data-s="338" data-e="430">A quoted paragraph, indented by the engine rather than the browser, wrapping across lines.</p>
+</blockquote>
+<hr data-pid="6" data-s="432" data-e="435">
+<pre data-pid="7" data-s="437" data-e="481"><code class="language-js">const x = compute(1, 2);
+return x;</code></pre>
+</div>

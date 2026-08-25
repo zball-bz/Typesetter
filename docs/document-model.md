@@ -244,7 +244,19 @@ Class prefix `tsr-`. Both serializers escape all text (`& < > " '`); the only un
 
 Element mapping: `para→p, heading→h1..h6, list→ul|ol, item→li, quote→blockquote, codeblock→pre>code, rule→hr, group→div[data-role], table→table/tr/td, term→dl>dt+dd, collect→nav|section, styled→em|strong|span[class], link/ref→a, code→code, raw→passthrough`. Paragraph-level elements carry the same `data-pid` (the upgrade swap keys on it) and `data-s/e`. No positioning, no spacing styles — the browser flows it (v2 §9).
 
-### 9.3 Copy (normative for `runtime/main/copy.ts`)
+Implementation notes (M5): the semantic serializer runs on the post-resolve
+tree with no measurements — the worker posts it immediately after ingest and
+the shell paints it before the pull loop starts. Upgrade = one keyed
+`data-pid` swap; the shell reports `{pid, old:{top,height}, new:{top,height}}`
+per paragraph to the caller (`onUpgrade`), scroll anchoring stays caller-side
+(v2 §9). `relayout(widthPx)` re-breaks/lays out the worker-held doc with
+persisted metrics. The `data-join` attribute reflects whether the break
+consumed a REAL source space: CJK inter-character breaks and synthetic glue
+(boundary, punct halves, indents) render `data-join="none"`, so the §9.3
+rebuild reproduces source text exactly. Deferred: `pending(estimate)` states
+and webfont-settle re-typesets, `size-adjust` fallback descriptors.
+
+### 9.3 Copy (normative for `runtime/main/copy.mjs`)
 
 Copy produces **content text**, not markup source: walk selected `.tsr-r` runs in DOM order — skip `data-syn` runs; take runs' text (partial at the selection endpoints, character-offset within the run); between consecutive lines insert `" "` or `""` per the line's `data-join`; between paragraphs insert `"\n\n"`. Source offsets (`data-s`) are for anchoring and diagnostics, not for copy.
 

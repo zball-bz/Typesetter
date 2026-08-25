@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="7" id="tsr-dup">First</h1>
+<p data-pid="1" data-s="15" data-e="96">A reference to <a href="">??</a> stays unresolved and a second label reuses the first one.</p>
+<h1 data-pid="2" data-s="98" data-e="106" id="tsr-h-2">Second</h1>
+<p data-pid="3" data-s="114" data-e="157">Back to <a href="#tsr-dup">§1</a> resolves to the first heading.</p>
+</div>

@@ -53,3 +53,53 @@ test('wide measure long doc', async ({ page }) => {
   const report = await page.evaluate(() => window.__tsr.audit());
   expect(report.failures).toEqual([]);
 });
+
+// --- M5: progressive upgrade, relayout, copy contract (§9.2/§9.3) ---------
+
+test('progressive semantic phase, upgrade records, relayout', async ({ page }) => {
+  const source = fixtures.find((f) => f.name === 'doc/refs').source;
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 300 }),
+    { source },
+  );
+  expect(res.hasSemantic).toBe(true);
+  expect(res.upgrades).toBeGreaterThan(0);
+  // width-only relayout keeps every audit invariant
+  await page.evaluate(() => window.__tsr.relayout(500));
+  const report = await page.evaluate(() => window.__tsr.audit());
+  expect(report.failures).toEqual([]);
+  expect(report.lines).toBeGreaterThan(0);
+});
+
+test('copy rebuilds exact content text (Latin, hyphenated)', async ({ page }) => {
+  // single paragraph with single spaces: the §9.3 rebuild must reproduce the
+  // source exactly — hyphen glyphs skipped, line breaks rejoined per join
+  const source =
+    'The measurement contract keeps every rendered line inside its measure ' +
+    'while typography survives copying and hyphenation disappears again.';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 220 }),
+    { source },
+  );
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text).toBe(source);
+});
+
+test('copy joins CJK line breaks seamlessly and skips resolved refs', async ({ page }) => {
+  const cjk = '排版引擎在断行处不引入空格，标点挤压后的文本也保持原样，复制即内容。';
+  const source = '= 引言 <s>\n\n' + cjk + '\n\n见 @s 一节。';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 160 }),
+    { source },
+  );
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text).toContain(cjk);          // rejoined with no inserted characters
+  expect(text).not.toContain('§');      // resolved ref runs are synthetic
+  expect(text).toContain('见');
+});

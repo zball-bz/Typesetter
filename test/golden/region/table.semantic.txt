@@ -1,0 +1,9 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="6" id="tsr-sec">Data</h1>
+<table data-pid="1" data-s="14" data-e="136" id="tsr-tbl">
+<tr><td>Name</td><td style="text-align:center">Qty</td><td style="text-align:right">Price</td></tr>
+<tr><td>Alpha widget</td><td style="text-align:center">2</td><td style="text-align:right">3.50</td></tr>
+<tr><td>中文条目</td><td style="text-align:center">三</td><td style="text-align:right">12.00</td></tr>
+</table>
+<p data-pid="2" data-s="138" data-e="168">Totals appear in <a href="#tsr-tbl">表 1</a> of <a href="#tsr-sec">§1</a>.</p>
+</div>

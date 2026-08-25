@@ -200,6 +200,7 @@ int main(int argc, char** argv) {
           continue;
         }
         goldenCompare(g("tree"), dumpTree(doc.tree, doc.strs, doc.styles), update, label + ":tree");
+        goldenCompare(g("semantic"), doc.renderFallback(), update, label + ":semantic");
         if (!typesetWithMock(doc)) {
           printf("FAIL %s: typeset did not converge\n", label.c_str());
           failures++;

@@ -1,5 +1,9 @@
 // Public API (main thread). Thin by design: worker does everything except
-// DOM injection (architecture §4.2).
+// DOM injection and clipboard (architecture §4.2). Progressive upgrade
+// (v2 §9): semantic flow HTML paints first; the typeset result swaps in
+// keyed by data-pid, reporting old/new rects — scroll anchoring is the
+// caller's responsibility (the engine provides the information).
+import { installCopy } from './copy.mjs';
 
 // The serializer's CSS contract (document-model §9.1) — the nowrap rule IS
 // the DPR robustness contract (v2 §7 rule 1); never remove it.
@@ -40,32 +44,99 @@ export function createEngine(opts = {}) {
   const workerUrl = new URL('../worker/worker.mjs', import.meta.url);
   const worker = new Worker(workerUrl, { type: 'module' });
   let nextId = 1;
-  const pending = new Map();
+  let liveDocId = null;
+  let uninstallCopy = null;
+  const pending = new Map(); // id → {resolve, reject, onSemantic}
   worker.onmessage = (ev) => {
-    const { id } = ev.data;
+    const { id, type } = ev.data;
     const p = pending.get(id);
     if (!p) return;
+    if (type === 'semantic') {
+      p.onSemantic?.(ev.data.html);
+      return; // the result for this id is still coming
+    }
     pending.delete(id);
-    if (ev.data.type === 'error') p.reject(new Error(ev.data.message));
+    if (type === 'error') p.reject(new Error(ev.data.message));
     else p.resolve(ev.data);
   };
+  const request = (msg, onSemantic) =>
+    new Promise((resolve, reject) => {
+      pending.set(msg.id, { resolve, reject, onSemantic });
+      worker.postMessage(msg);
+    });
+
+  // Atomic per-pid swap with upgrade records (old/new paragraph rects).
+  const swapIn = (container, html) => {
+    const oldRects = new Map();
+    for (const el of container.querySelectorAll('[data-pid]'))
+      oldRects.set(el.dataset.pid, el.getBoundingClientRect());
+    container.innerHTML = html;
+    const upgrades = [];
+    for (const el of container.querySelectorAll('.tsr-para[data-pid]')) {
+      const o = oldRects.get(el.dataset.pid);
+      const n = el.getBoundingClientRect();
+      upgrades.push({
+        pid: +el.dataset.pid,
+        old: o ? { top: o.top, height: o.height } : null,
+        new: { top: n.top, height: n.height },
+      });
+    }
+    return upgrades;
+  };
+
   return {
-    async typeset(source, container, { widthPx, baseSizePx = 18, lineHeight, fontFamily = 'Georgia, serif', paraIndentEm, punctCompress = 'book' } = {}) {
+    async typeset(source, container, {
+      widthPx, baseSizePx = 18, lineHeight, fontFamily = 'Georgia, serif',
+      paraIndentEm, punctCompress = 'book', progressive = true,
+      onSemantic, onUpgrade,
+    } = {}) {
       ensureCss();
+      if (liveDocId !== null) {
+        worker.postMessage({ type: 'dispose', docId: liveDocId });
+        liveDocId = null;
+      }
       const id = nextId++;
       const width = widthPx ?? container.getBoundingClientRect().width;
-      const res = await new Promise((resolve, reject) => {
-        pending.set(id, { resolve, reject });
-        worker.postMessage({ type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight, fontFamily, paraIndentEm, punctCompress });
-      });
       // The container must render with exactly the family/size the engine
       // measured — this is the measure/render contract, not styling sugar.
       container.style.fontFamily = fontFamily;
       container.style.fontSize = `${baseSizePx}px`;
-      container.innerHTML = res.html;
-      return { html: res.html, diags: res.diags, heightPx: res.heightPx };
+      let semanticHtml = null;
+      const res = await request(
+        { type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight,
+          fontFamily, paraIndentEm, punctCompress, progressive },
+        (html) => {
+          semanticHtml = html;
+          if (progressive) {
+            container.innerHTML = html; // first paint: browser flows it
+            onSemantic?.(html);
+          }
+        },
+      );
+      const upgrades = swapIn(container, res.html);
+      onUpgrade?.(upgrades);
+      liveDocId = id;
+      uninstallCopy?.();
+      uninstallCopy = installCopy(container);
+      const handle = {
+        html: res.html,
+        diags: res.diags,
+        heightPx: res.heightPx,
+        semanticHtml,
+        upgrades,
+        // width-only re-typeset: metrics persist in the worker-held doc
+        async relayout(newWidthPx) {
+          const rid = nextId++;
+          const r = await request({ type: 'relayout', id: rid, docId: id, widthPx: newWidthPx });
+          const ups = swapIn(container, r.html);
+          onUpgrade?.(ups);
+          return { html: r.html, diags: r.diags, heightPx: r.heightPx, upgrades: ups };
+        },
+      };
+      return handle;
     },
     dispose() {
+      uninstallCopy?.();
       worker.terminate();
     },
   };

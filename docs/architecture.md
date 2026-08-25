@@ -208,6 +208,14 @@ M4  resolver: labels/refs/terms/collectors, diagnostics surfacing, section tree
      collectors, term → group{role:term} rewrite]
 M5  native fallback: semantic serializer, estimate states, paragraph upgrade
     protocol, copy handler, size-adjust polish
+    [DONE except estimate states + size-adjust — engine/src/render/
+     semantic_html.cc (both serializers share pids/anchors), worker posts
+     semantic HTML pre-measurement, shell swaps keyed on data-pid with
+     old/new-rect upgrade records, copy.mjs implements §9.3 (line joins
+     fixed: data-join reflects consumed REAL spaces — CJK breaks join
+     'none'), width-only relayout on the persistent worker-held doc.
+     Deferred: pending(estimate) metric states + webfont settle re-typeset
+     (worker-scope font loading), size-adjust fallback descriptors]
 M6  extensibility: fence handler API, #!table + provenance queries, #use ergonomics
     [DONE except #use — pulled ahead of M5 for the M4 synergy (numbered,
      referenceable tables): #!name(args) regions (generic → group{role:name}),
