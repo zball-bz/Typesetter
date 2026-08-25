@@ -1,0 +1,8 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" style="position:relative;height:33.594px">
+<div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
+<div class="tsr-line" data-s="17" data-e="18" data-cell="1" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="17">A</span></div>
+<div class="tsr-line" data-s="21" data-e="22" data-cell="1" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="21">B</span></div>
+<div class="tsr-rule" style="top:33.594px;left:0px;width:300px"></div>
+</div>
+</div>

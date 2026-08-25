@@ -1,0 +1,24 @@
+#!table(cols: 3)
+A | B | C
+#table!
+
+#!table(cols: 3)
+A | B | C
+#table!
+
+#!table(cols: 3)
+A | B | C
+#table!
+
+#!table(cols: 2)
+A | B
+#table!
+
+#!table(cols: 3)
+A | B | C
+A | B | C
+#table!
+
+#!table(cols: 3)
+A | B | C
+#table!

@@ -1,0 +1,3 @@
+doc @[0,31)
+  region @[0,30) name="table"
+    para @[17,22) lines=1

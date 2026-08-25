@@ -1,0 +1,6 @@
+```py
+import this
+
+def hi():
+  print("Hi!")
+```

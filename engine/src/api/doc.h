@@ -41,7 +41,7 @@ struct Doc {
   }
 
   bool ingest(const u8* buf, size_t len) {
-    raw = decodeOps(buf, len, diags);
+    decodeOps(buf, len, raw, diags);  // in place: raw.strings view raw.blob
     if (!raw.ok) return false;
     tree = instantiate(raw, arena, strs, styles, diags);
     resolveDoc(tree, arena, strs, styles, cfg, diags);

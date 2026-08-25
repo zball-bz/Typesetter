@@ -1,0 +1,4 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, __region, __fence}, $) => {
+__emit(__at(__region("table", ({cols: 2}), [[[__at(text("A"),17,18), __at(text("B"),21,22)]]]),0,30));
+};
+//# sourceURL=tsm:doc

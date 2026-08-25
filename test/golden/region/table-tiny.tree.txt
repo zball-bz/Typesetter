@@ -1,0 +1,7 @@
+doc @[0,30) [base]
+  table @[0,30) [base] cols=2
+    trow @[0,0) [base]
+      tcell @[0,0) [base]
+        text @[17,18) [base] str="A"
+      tcell @[0,0) [base]
+        text @[21,22) [base] str="B"

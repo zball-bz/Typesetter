@@ -63,36 +63,36 @@ struct Reader {
 };
 }  // namespace
 
-RawOps decodeOps(const u8* buf, size_t len, DiagSink& diags) {
-  RawOps r;
+void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
+  out = RawOps{};  // reset before any views exist — safe to move-assign empty
+  RawOps& r = out;
   auto bad = [&](const char* msg) {
     diags.add(Sev::Error, "ops-invalid", {}, msg);
     r.ok = false;
-    return r;
   };
-  if (len < 5 || std::memcmp(buf, "TSOP", 4) != 0) return bad("bad magic");
-  if (buf[4] != OPS_VERSION) return bad("ops version mismatch");
+  if (len < 5 || std::memcmp(buf, "TSOP", 4) != 0) { bad("bad magic"); return; }
+  if (buf[4] != OPS_VERSION) { bad("ops version mismatch"); return; }
   Reader rd{buf + 5, buf + len};
   u64 nStrings = rd.varint();
   u64 stringBytes = rd.varint();
   u64 nOps = rd.varint();
-  if (rd.fail || rd.p + stringBytes > rd.end) return bad("truncated header");
+  if (rd.fail || rd.p + stringBytes > rd.end) { bad("truncated header"); return; }
   r.blob.assign((const char*)rd.p, stringBytes);
   rd.p += stringBytes;
   u64 prev = 0;
   for (u64 i = 0; i < nStrings; i++) {
     u64 off = rd.varint();
-    if (rd.fail || off < prev || off > stringBytes) return bad("bad string table");
+    if (rd.fail || off < prev || off > stringBytes) { bad("bad string table"); return; }
     r.strings.push_back(std::string_view(r.blob).substr(prev, off - prev));
     prev = off;
   }
   for (u64 k = 0; k < nOps; k++) {
     u8 opb = rd.byte();
-    if (rd.fail) return bad("truncated ops");
+    if (rd.fail) { bad("truncated ops"); return; }
     switch ((Op)opb) {
       case Op::MAKE_TEXT: {
         u64 s = rd.varint();
-        if (rd.fail || s >= r.strings.size()) return bad("MAKE_TEXT bad str");
+        if (rd.fail || s >= r.strings.size()) { bad("MAKE_TEXT bad str"); return; }
         RawNode n;
         n.kind = Kind::text;
         n.isText = true;
@@ -103,10 +103,10 @@ RawOps decodeOps(const u8* buf, size_t len, DiagSink& diags) {
       case Op::MAKE_NODE: {
         RawNode n;
         u64 kind = rd.varint();
-        if (rd.fail || kind >= KIND_COUNT) return bad("MAKE_NODE bad kind");
+        if (rd.fail || kind >= KIND_COUNT) { bad("MAKE_NODE bad kind"); return; }
         n.kind = (Kind)kind;
         u64 nargs = rd.varint();
-        if (rd.fail || nargs > 64) return bad("MAKE_NODE bad nargs");
+        if (rd.fail || nargs > 64) { bad("MAKE_NODE bad nargs"); return; }
         for (u64 i = 0; i < nargs; i++) {
           ArgVal a;
           a.key = (ArgK)rd.varint();
@@ -117,26 +117,26 @@ RawOps decodeOps(const u8* buf, size_t len, DiagSink& diags) {
             case ArgTag::Num: a.num = rd.f64(); break;
             case ArgTag::Str: {
               u64 s = rd.varint();
-              if (rd.fail || s >= r.strings.size()) return bad("arg bad str");
+              if (rd.fail || s >= r.strings.size()) { bad("arg bad str"); return; }
               a.ref = (u32)s;
               break;
             }
             case ArgTag::Node: {
               u64 id = rd.varint();
-              if (rd.fail || id >= r.nodes.size()) return bad("arg bad node id");
+              if (rd.fail || id >= r.nodes.size()) { bad("arg bad node id"); return; }
               a.ref = (u32)id;
               break;
             }
-            default: return bad("arg bad tag");
+            default: { bad("arg bad tag"); return; }
           }
-          if (rd.fail) return bad("truncated arg");
+          if (rd.fail) { bad("truncated arg"); return; }
           n.args.push_back(a);
         }
         u64 nch = rd.varint();
-        if (rd.fail || nch > 1u << 20) return bad("MAKE_NODE bad nchildren");
+        if (rd.fail || nch > 1u << 20) { bad("MAKE_NODE bad nchildren"); return; }
         for (u64 i = 0; i < nch; i++) {
           u64 id = rd.varint();
-          if (rd.fail || id >= r.nodes.size()) return bad("child id out of range");
+          if (rd.fail || id >= r.nodes.size()) { bad("child id out of range"); return; }
           n.children.push_back((u32)id);
         }
         r.nodes.push_back(std::move(n));
@@ -144,20 +144,20 @@ RawOps decodeOps(const u8* buf, size_t len, DiagSink& diags) {
       }
       case Op::EMIT: {
         u64 id = rd.varint();
-        if (rd.fail || id >= r.nodes.size()) return bad("EMIT bad id");
+        if (rd.fail || id >= r.nodes.size()) { bad("EMIT bad id"); return; }
         r.sched.push_back({Op::EMIT, (u32)id, 0});
         break;
       }
       case Op::STYLE_PUSH: {
         u64 bits = rd.varint();
         u8 npatch = rd.byte();
-        if (rd.fail || npatch != 0) return bad("STYLE_PUSH patch unsupported");
+        if (rd.fail || npatch != 0) { bad("STYLE_PUSH patch unsupported"); return; }
         r.sched.push_back({Op::STYLE_PUSH, 0, bits});
         break;
       }
       case Op::STYLE_POP_TO: {
         u64 h = rd.varint();
-        if (rd.fail) return bad("STYLE_POP_TO truncated");
+        if (rd.fail) { bad("STYLE_POP_TO truncated"); return; }
         r.sched.push_back({Op::STYLE_POP_TO, (u32)h, 0});
         break;
       }
@@ -165,17 +165,16 @@ RawOps decodeOps(const u8* buf, size_t len, DiagSink& diags) {
         u64 id = rd.varint();
         u64 s = rd.varint();
         u64 e = rd.varint();
-        if (rd.fail || id >= r.nodes.size()) return bad("SPAN bad id");
+        if (rd.fail || id >= r.nodes.size()) { bad("SPAN bad id"); return; }
         r.nodes[id].span = {(u32)s, (u32)e};
         break;
       }
       default:
-        return bad("unknown op");
+        { bad("unknown op"); return; }
     }
   }
-  if (rd.p != rd.end) return bad("trailing bytes");
+  if (rd.p != rd.end) { bad("trailing bytes"); return; }
   r.ok = true;
-  return r;
 }
 
 std::string dumpOps(const RawOps& r) {

@@ -1,0 +1,7 @@
+```sexp
+(defun factorial (x)
+  (if (zerop x)
+    ; with a comment
+    1
+    (* x (factorial (- x 1)))))
+```

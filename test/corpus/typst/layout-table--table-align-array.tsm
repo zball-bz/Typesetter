@@ -1,0 +1,7 @@
+#!table(cols: 3, align: "lcr")
+A | B | C
+#table!
+
+#!table(cols: 3)
+A | B | C
+#table!

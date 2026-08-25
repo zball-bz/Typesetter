@@ -1,0 +1,8 @@
+doc @[0,31)
+  region @[0,30) name="table"
+    para @[17,22)
+      row @[17,22)
+        cell @[17,19)
+          text @[17,18) str="A"
+        cell @[20,22)
+          text @[21,22) str="B"

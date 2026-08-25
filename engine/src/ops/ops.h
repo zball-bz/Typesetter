@@ -73,7 +73,11 @@ struct RawOps {
   bool ok = false;
 };
 
-RawOps decodeOps(const u8* buf, size_t len, DiagSink& diags);
+// Decodes IN PLACE into `out` (out is reset first). The strings are views
+// into out.blob — decoding into the final home avoids dangling views when a
+// short blob would sit in std::string's SSO buffer (a returned/moved RawOps
+// would carry views into the moved-from object).
+void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags);
 std::string dumpOps(const RawOps& r);
 
 }  // namespace tsr

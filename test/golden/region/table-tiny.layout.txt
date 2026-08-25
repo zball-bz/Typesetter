@@ -1,0 +1,6 @@
+doc h=2150su
+para pid=0 y=0su w=19200su h=2150su
+  L0 rule y=0su left=0su w=19200su
+  L1 cell=0 y=307su left=410su w=8780su blocks=[0,1)
+  L2 cell=1 y=307su left=10010su w=8780su blocks=[0,1)
+  L3 rule y=2150su left=0su w=19200su
