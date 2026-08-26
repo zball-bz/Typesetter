@@ -58,3 +58,36 @@ jobs:
         with:
           name: playwright-results
           path: test-results/
+
+  # rolling engine distribution (consumed by zball-bz/zball-io): wasm +
+  # runtime + hl grammars + math font, published only from a green main
+  dist:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [native, web]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: mymindstorm/setup-emsdk@v14
+      - name: build wasm
+        run: |
+          emcmake cmake -S engine -B engine/build-wasm -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+          cmake --build engine/build-wasm -j
+      - name: npm ci
+        run: npm ci --no-audit --no-fund
+      - name: code highlighting assets
+        run: node tools/codehl-assets.mjs
+      - name: pack
+        run: node tools/pack-dist.mjs
+      - name: publish rolling release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete engine-dist --yes --cleanup-tag || true
+          gh release create engine-dist dist/typesetter-dist.tgz \
+            -t "engine dist (rolling)" \
+            -n "Built from ${{ github.sha }}. Consumed by zball-bz/zball-io."

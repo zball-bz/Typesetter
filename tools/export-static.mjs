@@ -27,43 +27,15 @@ if (inputs.length !== 1) {
   process.exit(2);
 }
 
-const [{ execute }, { TSR_CSS, TSR_CJK_FONT }, createTypesetter] = await Promise.all([
-  import(join(root, 'runtime/src/worker/executor.mjs')),
+const [{ renderTsm }, { TSR_CSS, TSR_CJK_FONT }] = await Promise.all([
+  import(join(root, 'runtime/src/node/render.mjs')),
   import(join(root, 'runtime/src/main/shell.mjs')),
-  import(join(root, 'engine/build-wasm/typesetter.js')).then((m) => m.default),
 ]);
-const { tokenize } = await import(join(root, 'runtime/src/worker/tokens.mjs'));
 
 const source = await readFile(inputs[0], 'utf8');
-const M = await createTypesetter();
-const doc = M._tsr_doc_new();
-const srcPtr = M.stringToNewUTF8(source);
-M._tsr_compile(doc, srcPtr);
-M._free(srcPtr);
-const js = M.UTF8ToString(M._tsr_get_js(doc));
-const ops = await execute(js);
-const opsPtr = M._malloc(ops.length);
-M.HEAPU8.set(ops, opsPtr);
-if (M._tsr_ingest(doc, opsPtr, ops.length) !== 0) {
-  console.error('ops ingest failed:\n' + M.UTF8ToString(M._tsr_diags(doc)));
-  process.exit(1);
-}
-M._free(opsPtr);
-
-// answer token requests BEFORE the semantic render: foldTokens rewrites the
-// tree, so the static page carries the highlight spans (code-design.md §5)
-const req = JSON.parse(M.UTF8ToString(M._tsr_measure_requests(doc)));
-for (const t of req.tokens ?? []) {
-  const tri = await tokenize(t.lang, t.text);
-  const ptr = M._malloc(Math.max(4, tri.length * 4));
-  M.HEAPU32.set(tri, ptr >> 2);
-  M._tsr_provide_tokens(doc, t.id, ptr, tri.length / 3);
-  M._free(ptr);
-}
-const semantic = M.UTF8ToString(M._tsr_render_semantic(doc));
-const diags = M.UTF8ToString(M._tsr_diags(doc));
+const { html: semantic, diags, ok } = await renderTsm(source);
 if (diags.trim()) console.error(diags.trim());
-if (/^error /m.test(diags)) process.exit(1);
+if (!ok) process.exit(1);
 
 const pageTitle = title ?? inputs[0].replace(/^.*\//, '').replace(/\.tsm$/, '');
 const escapedSrc = source.replace(/<\/script/gi, '<\\/script');
@@ -119,6 +91,5 @@ if (hydrate) {
              { recursive: true });
   } catch { /* hl assets not built: hydrated code stays plain */ }
 }
-M._tsr_doc_free(doc);
 console.log(`exported ${inputs[0]} -> ${resolve(outDir)}/index.html` +
             (hydrate ? ' (+assets)' : ''));
