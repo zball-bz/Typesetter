@@ -80,6 +80,8 @@ struct FlowUnit {
   StrRef cjkChRef = 0;       // interned "中" (measured CJK width — no more
                              //   assumed 2:1; budget uses the real ratio)
   StrRef codeLang = 0;       // language tag (font-feature selection)
+  Su sidebarW = 0;           // sidecar column width (0 = no sidecar);
+                             //   sidecar rows reuse `cells` (one per line)
   i32 codeLineNo = 0;        // 0 = no numbers; else first line number
   std::vector<u32> hlLines;  // 1-based highlighted lines
   StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup

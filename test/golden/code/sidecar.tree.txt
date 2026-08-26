@@ -1,0 +1,22 @@
+doc @[0,305) [base]
+  para @[0,51) [base]
+    text @[0,51) [base] str="三盒模型：行号、代码与结构化边注。"
+  codeblock @[53,289) [base] lang="js" lineNo=1 sidecar="///"
+    text @[0,0) [base] str="const memo = new Map();\nfunction fib(n) {\n  if (n <= 1) return n;\n  return fib(n - 1) + fib(n - 2);\n}"
+    group @[0,0) [base] role="sidecar-lines"
+      seq @[0,0) [base]
+        text @[0,0) [base] str="记忆化容器，均摊 "
+        mathinline @[0,0) [base] src="O(1)"
+        text @[0,0) [base] str=" 查询"
+      seq @[0,0) [base]
+      seq @[0,0) [base]
+        text @[0,0) [BOLD] str="基例"
+        text @[0,0) [base] str="："
+        mathinline @[0,0) [base] src="n <= 1"
+        text @[0,0) [base] str=" 时直接返回，详见 "
+        ref @[0,0) [base] target="base" url="#tsr-base"
+          text @[0,0) [base] str="§1"
+      seq @[0,0) [base]
+      seq @[0,0) [base]
+  heading @[291,305) [base] level=1 label="base"
+    text @[293,305) [base] str="基例说明"

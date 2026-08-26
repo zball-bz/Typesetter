@@ -25,6 +25,12 @@ struct AstNode {
 
 AstNode* parseDoc(const SourceText& src, const Skeleton& sk, Arena& arena,
                   Interner& strs, DiagSink& diags);
+
+// Inline-parse a bare span list (fragment re-entry: sidecars, m.parse).
+std::vector<AstNode*> parseInlineSpans(const SourceText& src,
+                                       const std::vector<Span>& spans,
+                                       Arena& arena, Interner& strs,
+                                       DiagSink& diags);
 std::string dumpAst(const AstNode* doc, const SourceText& src, const Interner& strs);
 
 }  // namespace tsr

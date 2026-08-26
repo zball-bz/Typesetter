@@ -11,6 +11,7 @@ add_library(tsr_core STATIC
   src/hyphen/hyphen.cc
   src/linepass/linepass.cc
   src/inline/inline.cc
+  src/inline/fragment.cc
   src/codegen/codegen.cc
   src/ops/ops.cc
   src/model/model.cc

@@ -1,0 +1,17 @@
+doc h=19457su
+para pid=0 y=0su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,19) @[0,51)
+para pid=1 y=2765su w=19200su h=13824su
+  L0 code y=0su left=0su line=0 [0,23) marker
+  L1 cell=0 y=0su left=11520su w=7680su blocks=[0,8)
+  L2 cell=0 y=1536su left=11520su w=7680su blocks=[8,14)
+  L3 code y=3072su left=0su line=1 [0,17) marker
+  L4 code y=4608su left=0su line=2 [0,23) marker
+  L5 cell=2 y=4608su left=11520su w=7680su blocks=[0,11)
+  L6 cell=2 y=6144su left=11520su w=7680su blocks=[11,19)
+  L7 cell=2 y=7680su left=11520su w=7680su blocks=[20,21)
+  L8 code y=9216su left=0su line=3 [0,22) marker
+  L9 code y=10752su left=0su line=3 [22,33) cont cc=4
+  L10 code y=12288su left=0su line=4 [0,1) marker
+para pid=2 y=17818su w=19200su h=1639su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,4) @[293,305)

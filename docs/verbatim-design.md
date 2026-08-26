@@ -1,6 +1,9 @@
 # Verbatim Grid Design (V)
 
-Status: **design settled (discussion of 2026-08-26) — V1 in progress.**
+Status: **implemented (V1, V1.5, V3; 2026-08-26).** m.parse note: the
+engine half (parseInlineFragment) is live and serves sidecars; the JS
+fence-handler surface (`ctx.m.parse`) remains deferred — it needs an
+ops-slice return channel (document-model §4.1).
 Generalizes the CH4 character grid ([code-design.md](code-design.md) §4)
 into a generic monospace/verbatim text layer. Orthogonal to highlighting:
 the grid consumes styled runs, whoever produced them.

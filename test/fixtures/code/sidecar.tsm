@@ -1,0 +1,11 @@
+三盒模型：行号、代码与结构化边注。
+
+```js(sidecar: "///", lineNo: 1)
+const memo = new Map(); /// 记忆化容器，均摊 $O(1)$ 查询
+function fib(n) {
+  if (n <= 1) return n; /// *基例*：$n <= 1$ 时直接返回，详见 @base
+  return fib(n - 1) + fib(n - 2);
+}
+```
+
+= 基例说明 <base>

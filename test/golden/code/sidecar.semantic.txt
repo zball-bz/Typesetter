@@ -1,0 +1,9 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="51">三盒模型：行号、代码与结构化边注。</p>
+<pre data-pid="1" data-s="53" data-e="289"><code class="language-js">const memo = new Map();
+function fib(n) {
+  if (n &lt;= 1) return n;
+  return fib(n - 1) + fib(n - 2);
+}</code></pre>
+<h1 data-pid="2" data-s="291" data-e="305" id="tsr-base">基例说明</h1>
+</div>

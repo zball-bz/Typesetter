@@ -222,7 +222,8 @@ M6  extensibility: fence handler API, #!table + provenance queries, #use ergonom
      codegen-materialized '|' segmentation provenance, __region/__fence
      dispatchers, $.fence/$.region registration, raw passthrough units,
      #!table with equal columns + per-column alignment + three-line rules.
-     Deferred: #use, m.parse fence re-entry, cell-continuation indent rule]
+     Deferred: #use, cell-continuation indent rule; m.parse ENGINE half done
+     (parseInlineFragment, verbatim-design §5) — JS handler surface still deferred]
 M7  math: operator dictionary artifact, box model, Euler-Math metrics, inline boxes — DONE (mathc.py -> euler_math.h artifact; MathBox layout in su, zero measurement; $...$ islands; display/limits/stretch; equation labels+refs; 3-class inline breaks; woff2 subset). Deferred: cut-in kerning (no font data), horizontal stretch (wide accents), corpus math opt-ins
 CH  code highlighting — DONE (build-time tree-sitter grammars as emcc side
     modules + NEED_TOKENS pull state; native tests statically link the same

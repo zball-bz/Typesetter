@@ -625,6 +625,16 @@ AstNode* parseDoc(const SourceText& src, const Skeleton& sk, Arena& arena,
   return b.build(sk.root);
 }
 
+std::vector<AstNode*> parseInlineSpans(const SourceText& src,
+                                       const std::vector<Span>& spans,
+                                       Arena& arena, Interner& strs,
+                                       DiagSink& diags) {
+  InlineParser p{src, arena, strs, diags, src.view()};
+  p.spans = spans;
+  p.run();
+  return std::move(p.stack.back().items);
+}
+
 static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,
                      const Interner& strs, int depth) {
   for (int i = 0; i < depth; i++) out += "  ";

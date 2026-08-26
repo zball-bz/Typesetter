@@ -1,0 +1,6 @@
+doc @[0,313)
+  para @[0,51)
+    text @[0,51) str="三盒模型：行号、代码与结构化边注。"
+  codeblock @[53,289) lang="js" body="const memo = new Map(); /// 记忆化容器，均摊 $O(1)$ 查询\nfunction fib(n) {\n  if (n <= 1) return n; /// *基例*：$n <= 1$ 时直接返回，详见 @base\n  return fib(n - 1) + fib(n - 2);\n}"
+  heading @[291,305) level=1 label="base"
+    text @[293,305) str="基例说明"

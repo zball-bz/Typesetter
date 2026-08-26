@@ -46,6 +46,7 @@ struct Config {
   PunctCompress punctCompress = PunctCompress::Book;
   double codeScale = 0.85;    // code sizes down consistently (measure+render)
   int verbatimContIndent = 2; // grid wrap: hanging indent adds this many ch
+  double sidebarFrac = 0.40;  // sidecar column fraction of the code measure
   // CSS font-feature-settings for code (verbatim-design §3): ligature sets
   // differ per language (Haskell vs C++); empty = font default. NOTE:
   // snap-kerning (V1.5) requires ligatures OFF — letter-spacing disables

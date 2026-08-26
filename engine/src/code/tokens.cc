@@ -19,7 +19,9 @@ int tokenTagFromCapture(std::string_view name) {
 
 void foldTokens(ContentNode* cb, const CodeToken* toks, size_t n,
                 Arena& arena, Interner& strs, StyleTable& styles) {
-  if (cb->kids.size() != 1 || cb->kids[0]->kind != Kind::text) return;
+  if (cb->kids.empty() || cb->kids[0]->kind != Kind::text) return;
+  // a trailing sidecar group (and anything after the body text) survives
+  std::vector<ContentNode*> tail(cb->kids.begin() + 1, cb->kids.end());
   const ContentNode* bodyNode = cb->kids[0];
   std::string_view body = strs.get(bodyNode->str);
   StyleId baseStyle = bodyNode->style;
@@ -83,6 +85,7 @@ void foldTokens(ContentNode* cb, const CodeToken* toks, size_t n,
     pos = eol + 1;
   }
   cb->kids.assign(lines.begin(), lines.end());
+  cb->kids.insert(cb->kids.end(), tail.begin(), tail.end());
 }
 
 }  // namespace tsr

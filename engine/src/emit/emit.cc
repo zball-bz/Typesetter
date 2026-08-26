@@ -506,11 +506,35 @@ struct Emitter {
             }
           }
         }
+        // sidecar rows (verbatim-design §5): the trailing group becomes one
+        // TableCell-shaped inline stream per logical line — the whole body
+        // pipeline (KP, math, links) applies inside each
+        std::vector<const ContentNode*> bodyKids;
+        for (const ContentNode* k : n->kids) {
+          bool isSidecar = false;
+          if (k->kind == Kind::group)
+            for (const ArgVal& a : k->args)
+              if (a.key == ArgK::role && a.tag == ArgTag::Str &&
+                  strs.get(a.ref) == std::string_view("sidecar-lines"))
+                isSidecar = true;
+          if (isSidecar) {
+            u.sidebarW = suRoundPx(cfg.sidebarFrac * (cfg.widthPx - suToPx(indent)));
+            for (const ContentNode* lineNode : k->kids) {
+              TableCell tc;
+              FlowUnit tmp;
+              for (const ContentNode* c2 : lineNode->kids) inlineWalk(c2, tmp, {});
+              tc.blocks = std::move(tmp.blocks);
+              u.cells.push_back(std::move(tc));
+            }
+          } else {
+            bodyKids.push_back(k);
+          }
+        }
         // Two body forms (CH1): a single text child = plain lines split on
         // \n; otherwise each child is one line (seq of styled runs — the
         // leaves' styles were already folded at instantiation).
-        if (n->kids.size() == 1 && n->kids[0]->kind == Kind::text) {
-          std::string_view body = strs.get(n->kids[0]->str);
+        if (bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text) {
+          std::string_view body = strs.get(bodyKids[0]->str);
           size_t pos = 0;
           while (pos <= body.size()) {
             size_t eol = body.find('\n', pos);
@@ -533,7 +557,7 @@ struct Emitter {
                 if (k->kind == Kind::comment) return;
                 for (const ContentNode* c : k->kids) collect(c, out);
               };
-          for (const ContentNode* lineNode : n->kids) {
+          for (const ContentNode* lineNode : bodyKids) {
             std::vector<FlowUnit::CodeRun> runs;
             collect(lineNode, runs);
             u.codeRuns.push_back(std::move(runs));

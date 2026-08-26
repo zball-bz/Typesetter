@@ -87,7 +87,8 @@ export function buildContext(ob) {
   const fenceHandlers = {};
   const __fence = async (tag, args = {}, body = '', offset = 0) => {
     const h = fenceHandlers[tag];
-    if (!h) return ob.makeNode(KIND.codeblock, { lang: tag }, [ob.makeText(body)]);
+    // default path: the fence info args ARE codeblock grid options
+    if (!h) return ctors.codeblock(tag, body, args);
     const mkErr = (msg) =>
       ob.makeNode(KIND.error, { message: String(msg), code: 'fence-error' }, []);
     const ctx = {
@@ -129,7 +130,7 @@ export function buildContext(ob) {
     codeblock: (lang, body, opts = {}) => {
       const args = { lang: String(lang), wrap: opts.wrap,
                      lineNo: opts.lineNo === true ? 1 : opts.lineNo,
-                     hl: opts.hl };
+                     hl: opts.hl, sidecar: opts.sidecar };
       if (Array.isArray(body)) {
         const lines = body.map((line) => ob.makeNode(KIND.seq, {},
           (Array.isArray(line) ? line : [line]).map(toShadow)));

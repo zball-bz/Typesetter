@@ -55,6 +55,18 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           const VMet& v = metrics.vmet(u.codeStyle);
           if (v.ascent + v.descent > adv) adv = v.ascent + v.descent;
         }
+        // three-box partition (verbatim §5): the code measure stops before
+        // the sidecar column; the gutter stays out-of-flow (markers)
+        const bool hasSidecar = u.sidebarW > 0 && !u.cells.empty();
+        Su gapSu = 0;
+        Su lineWidthFull = lineWidth;
+        Su lineWidthCode = lineWidth;
+        if (hasSidecar) {
+          gapSu = suRoundPx(cfg.baseSizePx * cfg.codeScale);
+          lineWidthCode = lineWidth - u.sidebarW - gapSu;
+          if (lineWidthCode < 64) lineWidthCode = 64;
+        }
+        (void)lineWidthFull;
         // ch grid (CH4, code-design.md §4): monospace is a metric contract —
         // 1ch per char, 2ch for CJK; wrap is a COLUMN computation, greedy
         // with a token-boundary preference, continuation rows indent 2ch.
@@ -69,7 +81,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           cjkCols = (i32)((c + chSu - 1) / chSu);
           if (cjkCols < 1) cjkCols = 1;
         }
-        i32 cols = chSu > 0 ? (i32)(lineWidth / chSu) : 0;
+        i32 cols = chSu > 0 ? (i32)(lineWidthCode / chSu) : 0;
         if (cols > 0 && cols < 8) cols = 8;
         // snap-kerning (verbatim §3): solve the rational grid from RAW
         // measurements; column budget switches to atom units — Latin = q,
@@ -206,6 +218,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             rowContOut = std::move(rowCont);
           }
           bool hl = hlSet.count(li + 1) != 0;
+          const i64 rowTop = py;
           for (size_t ri = 0; ri < rows.size(); ri++) {
             LineBox line;
             line.unitIdx = ui;
@@ -220,7 +233,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             line.codeHl = hl;
             line.height = adv;
             line.left = u.indent;
-            line.width = lineWidth;
+            line.width = lineWidthCode;
             line.y = (Su)py;
             if (ri == 0 && u.codeLineNo > 0) {
               line.marker = strs.intern(std::to_string(u.codeLineNo + (i32)li));
@@ -232,6 +245,57 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             first = false;
             py += adv;
             fr.lines.push_back(line);
+          }
+          // sidecar rows for this logical line (equal-height zip, §5):
+          // ordinary inline lines broken to the sidebar measure — math,
+          // links and refs land through the generic cell render path
+          if (hasSidecar && li < u.cells.size()) {
+            const TableCell& cell = u.cells[li];
+            i64 cy = rowTop;
+            u32 prevBp = 0;
+            for (u32 bp : cell.breakpoints) {
+              u32 lo2 = prevBp, hi2 = bp;
+              while (lo2 < hi2 && cell.blocks[lo2].isSpace()) lo2++;
+              while (hi2 > lo2 && cell.blocks[hi2 - 1].isSpace()) hi2--;
+              prevBp = bp;
+              if (lo2 >= hi2) continue;
+              Su maxAsc = 0, maxDesc = 0;
+              Span span{};
+              bool spanSet = false;
+              for (u32 i2 = lo2; i2 < hi2; i2++) {
+                const LinebreakBlock& b = cell.blocks[i2];
+                if (metrics.hasVmet(b.style)) {
+                  const VMet& v = metrics.vmet(b.style);
+                  if (v.ascent > maxAsc) maxAsc = v.ascent;
+                  if (v.descent > maxDesc) maxDesc = v.descent;
+                }
+                if (b.math) {
+                  if (b.math->asc > maxAsc) maxAsc = b.math->asc;
+                  if (b.math->desc > maxDesc) maxDesc = b.math->desc;
+                }
+                if (!b.span.empty()) {
+                  if (!spanSet) { span = b.span; spanSet = true; }
+                  else {
+                    if (b.span.start < span.start) span.start = b.span.start;
+                    if (b.span.end > span.end) span.end = b.span.end;
+                  }
+                }
+              }
+              LineBox sl;
+              sl.unitIdx = ui;
+              sl.cellIdx = (i32)li;
+              sl.blockBegin = lo2;
+              sl.blockEnd = hi2;
+              sl.left = (Su)(u.indent + lineWidthCode + gapSu);
+              sl.width = u.sidebarW;
+              sl.srcSpan = span;
+              sl.y = (Su)cy;
+              Su sadv = baseLeading;
+              if (maxAsc + maxDesc > sadv) sadv = maxAsc + maxDesc;
+              cy += sadv;
+              fr.lines.push_back(sl);
+            }
+            if (cy > py) py = cy;  // the equal-height constraint
           }
         }
         continue;

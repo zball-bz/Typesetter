@@ -213,9 +213,13 @@ struct Sem {
         if (n->kids.size() == 1 && n->kids[0]->kind == Kind::text) {
           esc(out, strs.get(n->kids[0]->str));
         } else {
-          // structured lines: seq of styled runs per child (CH1)
+          // structured lines: seq of styled runs per child (CH1); the
+          // trailing sidecar group is display-layer only (verbatim §5)
+          bool firstLine = true;
           for (size_t li = 0; li < n->kids.size(); li++) {
-            if (li) out += "\n";
+            if (n->kids[li]->kind == Kind::group) continue;
+            if (!firstLine) out += "\n";
+            firstLine = false;
             inl(n->kids[li]);
           }
         }

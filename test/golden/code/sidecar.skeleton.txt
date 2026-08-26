@@ -1,0 +1,4 @@
+doc @[0,313)
+  para @[0,51) lines=1
+  fence @[53,289) lang="js(sidecar: \"///\", lineNo: 1)" lines=5
+  heading1 @[291,305) label="base"

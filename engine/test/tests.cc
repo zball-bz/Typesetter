@@ -3,6 +3,7 @@
 // Goldens live at test/golden/<area>/<name>.<stage>.txt.
 #include <cstdio>
 #include <filesystem>
+#include <functional>
 #include <fstream>
 #include <sstream>
 
@@ -11,6 +12,7 @@
 #include "../src/inline/jslex.h"
 #include "../src/math/math.h"
 #include "../src/code/grid.h"
+#include "../src/inline/fragment.h"
 #include "../src/math/mathfont.h"
 #include "native_tokens.h"
 #include "../src/measure/mock.h"
@@ -253,6 +255,46 @@ static void unitGrid() {
   CHECK(m.q <= 7);
 }
 
+static void unitFragment() {
+  Arena a;
+  Interner strs{a};
+  StyleTable styles;
+  DiagSink d;
+  auto ns = parseInlineFragment(
+      "\xE5\x9D\x87\xE6\x91\x8A *O* \xE5\xA4\x8D\xE6\x9D\x82\xE5\xBA\xA6 $n log n$ \xE8\xA7\x81 @sec \xE5\x92\x8C [doc](https://x) \xE4\xB8\x8E `code`",
+      0, {5, 9}, a, strs, styles, d);
+  int kinds[8] = {0};
+  std::function<void(const ContentNode*)> walk = [&](const ContentNode* n) {
+    if (n->kind == Kind::text) kinds[0]++;
+    if (n->kind == Kind::mathinline) kinds[1]++;
+    if (n->kind == Kind::ref) kinds[2]++;
+    if (n->kind == Kind::link) kinds[3]++;
+    if (n->kind == Kind::code) kinds[4]++;
+    for (const ContentNode* k : n->kids) walk(k);
+  };
+  for (const ContentNode* n : ns) walk(n);
+  CHECK(kinds[1] == 1 && kinds[2] == 1 && kinds[3] == 1 && kinds[4] == 1);
+  CHECK(kinds[0] >= 4);
+  // bold bits folded into the leaf style
+  bool sawBold = false;
+  for (const ContentNode* n : ns)
+    if (n->kind == Kind::text && (styles.get(n->style).bits & CLS_BOLD))
+      sawBold = true;
+  CHECK(sawBold);
+  // every node stamped with the caller's span
+  CHECK(!ns.empty() && ns[0]->span.start == 5 && ns[0]->span.end == 9);
+  // splice stays literal with an Info diag
+  DiagSink d2;
+  auto ns2 = parseInlineFragment("x #toc y", 0, {}, a, strs, styles, d2);
+  bool lit = false;
+  for (const ContentNode* n : ns2)
+    if (n->kind == Kind::text &&
+        strs.get(n->str).find("#toc") != std::string::npos)
+      lit = true;
+  CHECK(lit);
+  CHECK(!d2.items.empty() && d2.items[0].sev == Sev::Info);
+}
+
 // --- golden runner ---
 static bool typesetWithMock(Doc& doc) {
   provideNativeTokens(doc);
@@ -303,6 +345,7 @@ int main(int argc, char** argv) {
   unitMathStretch();
   unitMathSegments();
   unitGrid();
+  unitFragment();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");
