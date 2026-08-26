@@ -1,0 +1,3 @@
+doc @[0,178)
+  para @[0,95) lines=1
+  fence @[97,177) lang="json" lines=1

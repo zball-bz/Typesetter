@@ -5,3 +5,4 @@ engine/build-debug/
 engine/build-wasm/
 test-results/
 playwright-report/
+runtime/assets/hl/

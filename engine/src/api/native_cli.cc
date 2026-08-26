@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "../measure/mock.h"
+#include "../../test/native_tokens.h"
 #include "doc.h"
 
 using namespace tsr;
@@ -21,6 +22,7 @@ static bool readFile(const std::string& path, std::string& out) {
 }
 
 static bool typesetWithMock(Doc& doc) {
+  provideNativeTokens(doc);
   for (int i = 0; i < 64; i++) {
     Doc::Status st = doc.typeset();
     if (st == Doc::Status::Ok) return true;

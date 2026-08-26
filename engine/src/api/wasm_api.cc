@@ -93,7 +93,7 @@ TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
 
   std::string& out = d->reqOut;
   out.clear();
-  out += "{\"styles\":[";
+  out += "{\"styles\":[";  // NOLINT
   bool first = true;
   for (u32 sid : styleIds) {
     StyleDesc desc = describeStyle(d->doc.cfg, d->doc.styles.get(sid), d->doc.strs);
@@ -114,8 +114,32 @@ TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
     }
     out += "]}";
   }
+  out += "]";
+  // NEED_TOKENS pull state (code-design.md §2): unanswered codeblocks
+  out += ",\"tokens\":[";
+  bool ft = true;
+  for (const Doc::TokenReq& r : d->doc.tokenReqs) {
+    if (r.provided) continue;
+    if (!ft) out += ",";
+    ft = false;
+    appendf(out, "{\"id\":%u,\"lang\":\"", r.id);
+    jsonEscapeInto(out, d->doc.strs.get(r.lang));
+    out += "\",\"text\":\"";
+    jsonEscapeInto(out, d->doc.strs.get(r.body));
+    out += "\"}";
+  }
   out += "]}";
   return out.c_str();
+}
+
+// triples: (start, end, tagId) × n as a flat u32 array; n may be 0 —
+// every request must be answered (empty = plain code)
+TSR_EXPORT void tsr_provide_tokens(WasmDoc* d, int id, const u32* triples, int n) {
+  std::vector<CodeToken> toks;
+  toks.reserve((size_t)n);
+  for (int i = 0; i < n; i++)
+    toks.push_back({triples[i * 3], triples[i * 3 + 1], (u8)triples[i * 3 + 2]});
+  d->doc.provideTokens((u32)id, toks.data(), toks.size());
 }
 
 TSR_EXPORT void tsr_provide_word(WasmDoc* d, const char* word, int styleId, double px) {

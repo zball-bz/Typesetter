@@ -2,6 +2,7 @@
 // (architecture §2.4). Single-threaded; one pipeline state per handle.
 #pragma once
 #include "../ast/ast.h"
+#include "../code/tokens.h"
 #include "../codegen/codegen.h"
 #include "../resolve/resolve.h"
 #include "../layout/layout.h"
@@ -25,6 +26,16 @@ struct Doc {
   StyleTable styles;
   ContentTree tree;
 
+  // NEED_TOKENS pull state (code-design.md §2): codeblocks with a language
+  // and a plain body wait for a token provider before emit.
+  struct TokenReq {
+    u32 id = 0;
+    ContentNode* node = nullptr;
+    StrRef lang = 0, body = 0;
+    bool provided = false;
+  };
+  std::vector<TokenReq> tokenReqs;
+
   std::vector<TopBlock> tops;
   bool emitted = false;
   MetricStore metrics;
@@ -45,12 +56,50 @@ struct Doc {
     if (!raw.ok) return false;
     tree = instantiate(raw, arena, strs, styles, diags);
     resolveDoc(tree, arena, strs, styles, cfg, diags);
+    tokenReqs.clear();
+    scanTokenReqs(tree.root);
     emitted = false;
     laidOut = false;
     return true;
   }
 
+  void scanTokenReqs(ContentNode* n) {
+    if (!n) return;
+    if (n->kind == Kind::codeblock && n->kids.size() == 1 &&
+        n->kids[0]->kind == Kind::text) {
+      StrRef lang = 0;
+      for (const ArgVal& a : n->args)
+        if (a.key == ArgK::lang && a.tag == ArgTag::Str) lang = a.ref;
+      if (lang && !strs.get(lang).empty()) {
+        TokenReq r;
+        r.id = (u32)tokenReqs.size();
+        r.node = n;
+        r.lang = lang;
+        r.body = n->kids[0]->str;
+        tokenReqs.push_back(r);
+      }
+    }
+    for (ContentNode* k : n->kids) scanTokenReqs(k);
+  }
+
+  bool tokensPending() const {
+    for (const TokenReq& r : tokenReqs)
+      if (!r.provided) return true;
+    return false;
+  }
+
+  // provider contract: EVERY request must be answered (empty = plain code),
+  // mirroring the measurement loop. Tokens sorted, non-overlapping.
+  void provideTokens(u32 id, const CodeToken* toks, size_t n) {
+    if (id >= tokenReqs.size() || tokenReqs[id].provided) return;
+    TokenReq& r = tokenReqs[id];
+    r.provided = true;
+    if (n > 0) foldTokens(r.node, toks, n, arena, strs, styles);
+    emitted = false;
+  }
+
   Status typeset() {
+    if (tokensPending()) return Status::NeedMeasure;
     if (!emitted) {
       tops = emitDoc(tree, arena, strs, styles, cfg, diags);
       emitted = true;

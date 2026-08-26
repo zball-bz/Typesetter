@@ -11,6 +11,7 @@
 #include "../src/inline/jslex.h"
 #include "../src/math/math.h"
 #include "../src/math/mathfont.h"
+#include "native_tokens.h"
 #include "../src/measure/mock.h"
 
 namespace fs = std::filesystem;
@@ -234,6 +235,7 @@ static void unitMathSegments() {
 
 // --- golden runner ---
 static bool typesetWithMock(Doc& doc) {
+  provideNativeTokens(doc);
   for (int i = 0; i < 64; i++) {
     if (doc.typeset() == Doc::Status::Ok) return true;
     MeasureRequest req = doc.pendingRequests();

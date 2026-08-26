@@ -45,6 +45,8 @@ jobs:
           git diff --exit-code runtime/src/shared/ops.gen.mjs
       - name: recordings are current
         run: node tools/record-fixtures.mjs --check
+      - name: code highlighting assets
+        run: node tools/codehl-assets.mjs
       - name: typst corpus smoke
         run: node tools/corpus-run.mjs
       - name: install chromium

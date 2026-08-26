@@ -25,7 +25,7 @@ export const TSR_CSS = `
    outside the line box — paint containment would clip them */
 .tsr-b { font-weight: 700; }
 .tsr-i { font-style: italic; }
-.tsr-code { font-family: monospace; }
+.tsr-code { font-family: monospace; white-space: pre; }
 .tsr-cjk { font-family: var(--tsr-cjk-font, inherit); }
 .tsr-marker { position: absolute; right: 100%; padding-right: 0.55em; }
 .tsr-rule { position: absolute; height: 0; border-top: 1px solid currentColor; opacity: 0.35; }
@@ -42,6 +42,22 @@ export const TSR_CSS = `
                     font-family: 'Euler Math', 'STIX Two Math', serif; }
 .tsr-math .tsr-mr { position: absolute; background: currentColor; }
 .tsr-eqno { position: absolute; top: 50%; transform: translateY(-50%); }
+/* code token theme (code-design.md §5): engine emits var(--tsr-tok-<tag>);
+   theming lives entirely here */
+.tsr-doc { --tsr-tok-keyword: #7c4dbe; --tsr-tok-string: #2e7d32;
+  --tsr-tok-number: #b45309; --tsr-tok-comment: #8d897f;
+  --tsr-tok-function: #1d4ed8; --tsr-tok-type: #0f766e;
+  --tsr-tok-constant: #b91c1c; --tsr-tok-variable: inherit;
+  --tsr-tok-operator: #6b6b6b; --tsr-tok-punctuation: #7a7a72;
+  --tsr-tok-property: #92400e; --tsr-tok-attribute: #92400e;
+  --tsr-tok-label: #7c4dbe; --tsr-tok-embedded: inherit; }
+@media (prefers-color-scheme: dark) {
+  .tsr-doc { --tsr-tok-keyword: #b794f6; --tsr-tok-string: #7bc98b;
+    --tsr-tok-number: #e5a45b; --tsr-tok-comment: #8f8b81;
+    --tsr-tok-function: #7fb3f5; --tsr-tok-type: #5ecfbf;
+    --tsr-tok-constant: #ef8a8a; --tsr-tok-operator: #9a9a92;
+    --tsr-tok-punctuation: #8b8b83; --tsr-tok-property: #dfb27a;
+    --tsr-tok-attribute: #dfb27a; --tsr-tok-label: #b794f6; } }
 `;
 
 // Bundled math font: metrics are precompiled (engine/gen/euler_math.h), so

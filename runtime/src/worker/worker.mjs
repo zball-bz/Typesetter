@@ -7,6 +7,7 @@
 import createTypesetter from '../../../engine/build-wasm/typesetter.js';
 import { execute } from './executor.mjs';
 import { CanvasMeasurer } from './canvas_measure.mjs';
+import { tokenize } from './tokens.mjs';
 
 let modPromise = null;
 const getMod = () => (modPromise ??= createTypesetter());
@@ -17,6 +18,13 @@ async function measureLoop(M, doc) {
   for (let round = 0; round < 64; round++) {
     if (M._tsr_typeset(doc) === 0) return;
     const req = JSON.parse(M.UTF8ToString(M._tsr_measure_requests(doc)));
+    for (const t of req.tokens ?? []) {
+      const tri = await tokenize(t.lang, t.text);
+      const ptr = M._malloc(Math.max(4, tri.length * 4));
+      M.HEAPU32.set(tri, ptr >> 2);
+      M._tsr_provide_tokens(doc, t.id, ptr, tri.length / 3);
+      M._free(ptr);
+    }
     for (const st of req.styles) {
       measurer.setStyle(st);
       if (st.needVmet) {

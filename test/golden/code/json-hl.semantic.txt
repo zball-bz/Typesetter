@@ -1,0 +1,4 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="95">JSON 高亮（native 静态链接 tree-sitter，与 web side module 同一份 parse table）：</p>
+<pre data-pid="1" data-s="97" data-e="177"><code class="language-json">{&quot;name&quot;: &quot;typesetter&quot;, &quot;version&quot;: 3, &quot;ok&quot;: true, &quot;tags&quot;: [null, 42]}</code></pre>
+</div>
