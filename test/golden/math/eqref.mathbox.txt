@@ -9,13 +9,13 @@ hbox Ord w=3804 asc=967 desc=19
     glyph "c" Ord w=498 asc=486 desc=19 px=16
     glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(498,461)
 display pid=3
-hbox Ord w=7788 asc=1394 desc=882
-  hbox Op w=4977 asc=1394 desc=882
-    hbox Op w=1878 asc=1394 desc=882
+hbox Ord w=7788 asc=1458 desc=941
+  hbox Op w=4977 asc=1458 desc=941
+    hbox Op w=1878 asc=1458 desc=941
       hbox Op w=568 asc=1394 desc=882
         glyph "" Op w=568 asc=1394 desc=882 px=16
-      glyph "∞" Ord w=717 asc=317 desc=8 px=11.2 @(568,461)
-      hbox Ord w=1259 asc=317 desc=8 @(568,-154)
+      glyph "∞" Ord w=717 asc=317 desc=8 px=11.2 @(568,1141)
+      hbox Ord w=1259 asc=317 desc=8 @(568,-933)
         glyph "−" Ord w=542 asc=194 desc=-165 px=11.2
         glyph "∞" Ord w=717 asc=317 desc=8 px=11.2 @(542,0)
     hbox Ord w=2928 asc=1145 desc=19 @(2049,0)

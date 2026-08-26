@@ -794,14 +794,17 @@ struct Layouter {
     out->kids.push_back({0, 0, base});
     Su right = base->w;
     if (sup) {
-      Su dx = base->w + base->italic;
+      Su dx = base->w;
       out->kids.push_back({dx, shiftUp, sup});
       if (dx + sup->w > right) right = dx + sup->w;
       if (shiftUp + sup->asc > out->asc) out->asc = shiftUp + sup->asc;
       if (sup->desc - shiftUp > out->desc) out->desc = sup->desc - shiftUp;
     }
     if (sub) {
-      Su dx = base->w;
+      // OpenType convention: the subscript hangs back by the italic
+      // correction (the ∫ slant tuck); the advance includes the full ink
+      Su dx = base->w - base->italic;
+      if (dx < 0) dx = 0;
       out->kids.push_back({dx, -shiftDown, sub});
       if (dx + sub->w > right) right = dx + sub->w;
       if (shiftDown + sub->desc > out->desc) out->desc = shiftDown + sub->desc;
@@ -937,7 +940,7 @@ struct Layouter {
     bool limits = (n->flags & kFlagLimits) && isDisplay(st);
     MathBox* scripted = limits ? attachLimits(op, n->sub, n->sup, st)
                                : attachScripts(op, n->sub, n->sup, st,
-                                               /*isChar=*/!textOp);
+                                               /*isChar=*/false);
     MathBox* body = n->b && !n->b->kids.empty() ? layoutRun(n->b, st) : nullptr;
     if (!body) {
       scripted->cls = scripted->firstCls = scripted->lastCls = kOp;

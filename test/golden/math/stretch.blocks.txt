@@ -55,7 +55,7 @@ top pid=2 units=1
   punct-close "。" w=512su @[181,184)
   punct-sp w=512su @[181,184)
 top pid=3 units=1
- unit math indent=0su w=10784su asc=1394su desc=882su
+ unit math indent=0su w=10784su asc=1458su desc=941su
 top pid=4 units=1
  unit text indent=0su
   cjk "单" w=1025su glue=102su wt=0.6 pen=0 @[243,261)

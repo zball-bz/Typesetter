@@ -101,7 +101,7 @@ inline pid=2 ""
 hbox Ord w=511 asc=723 desc=0
   glyph "2" Ord w=511 asc=723 desc=0 px=16
 display pid=3
-hbox Ord w=10784 asc=1394 desc=882
+hbox Ord w=10784 asc=1458 desc=941
   hbox Ord w=429 asc=936 desc=12
     hbox Ord w=429 asc=685 desc=12
       glyph "f" Ord w=429 asc=685 desc=12 px=16
@@ -113,12 +113,12 @@ hbox Ord w=10784 asc=1394 desc=882
   glue w=284 @(1667,0)
   glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(1951,0)
   glue w=284 @(2725,0)
-  hbox Op w=7775 asc=1394 desc=882 @(3009,0)
-    hbox Op w=1878 asc=1394 desc=882
+  hbox Op w=7775 asc=1458 desc=941 @(3009,0)
+    hbox Op w=1878 asc=1458 desc=941
       hbox Op w=568 asc=1394 desc=882
         glyph "" Op w=568 asc=1394 desc=882 px=16
-      glyph "∞" Ord w=717 asc=317 desc=8 px=11.2 @(568,461)
-      hbox Ord w=1259 asc=317 desc=8 @(568,-154)
+      glyph "∞" Ord w=717 asc=317 desc=8 px=11.2 @(568,1141)
+      hbox Ord w=1259 asc=317 desc=8 @(568,-933)
         glyph "−" Ord w=542 asc=194 desc=-165 px=11.2
         glyph "∞" Ord w=717 asc=317 desc=8 px=11.2 @(542,0)
     hbox Ord w=5726 asc=967 desc=209 @(2049,0)

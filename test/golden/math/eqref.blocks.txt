@@ -41,7 +41,7 @@ top pid=2 units=1
   cjk "积" w=1025su glue=102su wt=0.6 pen=0 @[78,120)
   cjk "分" w=1025su glue=102su wt=0.6 pen=0 @[78,120)
 top pid=3 units=1
- unit math indent=0su anchor="gauss" w=7788su asc=1394su desc=882su
+ unit math indent=0su anchor="gauss" w=7788su asc=1458su desc=941su
 top pid=4 units=1
  unit text indent=0su
   cjk "的" w=1025su glue=102su wt=0.6 pen=0 @[172,181)
