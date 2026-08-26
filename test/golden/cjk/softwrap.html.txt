@@ -2,6 +2,6 @@
 <div class="tsr-para" data-pid="0" style="position:relative;height:72px">
 <div class="tsr-line" data-s="0" data-e="155" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.25px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.75px">中文段落在源码里经常需要折行书写</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.75px;margin-right:-0.75px">两</span></div>
 <div class="tsr-line" data-s="0" data-e="155" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.111px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:1.867px">个汉字之间的换行必须无缝连接</span><span class="tsr-r tsr-cjk" data-s="0">；</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:1.867px;margin-right:-1.867px">但是</span></div>
-<div class="tsr-line" data-s="0" data-e="155" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">Eng</span><span class="tsr-r" data-s="0">lish words </span><span class="tsr-r tsr-cjk" data-s="0">之间的折行仍然是空格</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
+<div class="tsr-line" data-s="0" data-e="155" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">English words </span><span class="tsr-r tsr-cjk" data-s="0">之间的折行仍然是空格</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
 </div>
 </div>

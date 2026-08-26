@@ -1,14 +1,14 @@
 <div class="tsr-doc">
 <div class="tsr-para" data-pid="0" style="position:relative;height:48px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="54" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">Four back</span><span class="tsr-r" data-s="0">ticks fence the cor</span><span class="tsr-r" data-s="0">pus edge cas</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="54" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">Four backticks fence the corpus edge cas</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="0" data-e="54" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">es from Typst:</span></div>
 </div>
 <div class="tsr-para" data-pid="1" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">```backticks inside```</span></div>
 </div>
 <div class="tsr-para" data-pid="2" style="position:relative;height:48px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="90" data-e="160" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="90">An in</span><span class="tsr-r" data-s="90">dent</span><span class="tsr-r" data-s="90">ed open</span><span class="tsr-r" data-s="90">er de</span><span class="tsr-r" data-s="90">dents its con</span><span class="tsr-r" data-s="90">tent</span></div>
-<div class="tsr-line" data-s="90" data-e="160" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="90">and ac</span><span class="tsr-r" data-s="90">cepts an in</span><span class="tsr-r" data-s="90">dent</span><span class="tsr-r" data-s="90">ed clos</span><span class="tsr-r" data-s="90">er:</span></div>
+<div class="tsr-line" data-s="90" data-e="160" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="90">An indented opener dedents its content</span></div>
+<div class="tsr-line" data-s="90" data-e="160" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="90">and accepts an indented closer:</span></div>
 </div>
 <div class="tsr-para" data-pid="3" style="position:relative;height:72px;margin-bottom:19.2px">
 <div class="tsr-line" data-ragged="1" data-join="none" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">const kept = &quot;indent stripped to the </span></div>

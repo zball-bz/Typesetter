@@ -1,6 +1,6 @@
 <div class="tsr-doc">
 <div class="tsr-para" data-pid="0" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="65" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.667px"><span class="tsr-r" data-s="0">Plain </span><span class="tsr-r tsr-b" data-s="7">bold words</span><span class="tsr-r" data-s="19"> and </span><span class="tsr-r tsr-i" data-s="24">ital</span><span class="tsr-r tsr-i" data-s="24">ic</span><span class="tsr-r" data-s="32"> text with</span></div>
-<div class="tsr-line" data-s="32" data-e="80" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="32">*es</span><span class="tsr-r" data-s="32">caped* mark</span><span class="tsr-r" data-s="32">ers, un*closed at end.</span></div>
+<div class="tsr-line" data-s="0" data-e="65" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.667px"><span class="tsr-r" data-s="0">Plain </span><span class="tsr-r tsr-b" data-s="7">bold words</span><span class="tsr-r" data-s="19"> and </span><span class="tsr-r tsr-i" data-s="24">italic</span><span class="tsr-r" data-s="32"> text with</span></div>
+<div class="tsr-line" data-s="32" data-e="80" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="32">*escaped* markers, un*closed at end.</span></div>
 </div>
 </div>

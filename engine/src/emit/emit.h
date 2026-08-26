@@ -32,7 +32,11 @@ struct LinebreakBlock {
   StrRef linkUrl = 0;  // 0 = not inside a link
   // Latin word spaces: cross-space kerning context (document-model §6).
   // gap width = m(trigram) - m(prevCh) - m(nextCh); 0 = no correction.
+  // Hyphen points reuse the same fields with a JUNCTION bigram (no space):
+  // adjacent pieces render as one shaped run, so the browser kerns across
+  // the piece boundary — the un-broken hyphen block carries that delta.
   StrRef ctxTrigram = 0, ctxPrev = 0, ctxNext = 0;
+  float kernPx = 0;  // hyphen junction kern, applied when NOT broken here
   bool widthResolved = false;
   // inline formula (math-design.md §8): width DEFINED by the box, never
   // measured; layout takes the line's vertical extents from the box

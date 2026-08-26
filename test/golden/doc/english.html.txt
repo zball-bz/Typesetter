@@ -1,15 +1,15 @@
 <div class="tsr-doc">
 <div class="tsr-para" data-pid="0" style="position:relative;height:144px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="219" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="0">The quick brown fox jumps over the lazy</span></div>
-<div class="tsr-line" data-s="0" data-e="219" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="0">dog while the type</span><span class="tsr-r" data-s="0">set</span><span class="tsr-r" data-s="0">ting en</span><span class="tsr-r" data-s="0">gine mea</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="219" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:6.4px"><span class="tsr-r" data-s="0">sures every word and choos</span><span class="tsr-r" data-s="0">es op</span><span class="tsr-r" data-s="0">ti</span><span class="tsr-r" data-s="0">mal</span></div>
-<div class="tsr-line" data-s="0" data-e="219" data-join="space" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">break points for a nar</span><span class="tsr-r" data-s="0">row mea</span><span class="tsr-r" data-s="0">sure so that</span></div>
-<div class="tsr-line" data-s="0" data-e="219" data-join="space" style="top:96px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">in</span><span class="tsr-r" data-s="0">ter</span><span class="tsr-r" data-s="0">word spac</span><span class="tsr-r" data-s="0">ing stays even across all</span></div>
-<div class="tsr-line" data-s="0" data-e="219" style="top:120px;left:0px;width:300px"><span class="tsr-r" data-s="0">lines of this para</span><span class="tsr-r" data-s="0">graph.</span></div>
+<div class="tsr-line" data-s="0" data-e="219" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="0">dog while the typesetting engine mea</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="219" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:6.4px"><span class="tsr-r" data-s="0">sures every word and chooses optimal</span></div>
+<div class="tsr-line" data-s="0" data-e="219" data-join="space" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">break points for a narrow measure so that</span></div>
+<div class="tsr-line" data-s="0" data-e="219" data-join="space" style="top:96px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">interword spacing stays even across all</span></div>
+<div class="tsr-line" data-s="0" data-e="219" style="top:120px;left:0px;width:300px"><span class="tsr-r" data-s="0">lines of this paragraph.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" style="position:relative;height:72px">
-<div class="tsr-line" data-s="221" data-e="302" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:7px"><span class="tsr-r" data-s="221">A sec</span><span class="tsr-r" data-s="221">ond short</span><span class="tsr-r" data-s="221">er para</span><span class="tsr-r" data-s="221">graph ex</span><span class="tsr-r" data-s="221">er</span><span class="tsr-r" data-s="221">cis</span><span class="tsr-r" data-s="221">es</span></div>
-<div class="tsr-line" data-s="221" data-e="302" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="221">para</span><span class="tsr-r" data-s="221">graph spac</span><span class="tsr-r" data-s="221">ing and the fi</span><span class="tsr-r" data-s="221">nal ragged</span></div>
+<div class="tsr-line" data-s="221" data-e="302" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:7px"><span class="tsr-r" data-s="221">A second shorter paragraph exercises</span></div>
+<div class="tsr-line" data-s="221" data-e="302" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="221">paragraph spacing and the final ragged</span></div>
 <div class="tsr-line" data-s="221" data-e="302" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="221">line.</span></div>
 </div>
 </div>

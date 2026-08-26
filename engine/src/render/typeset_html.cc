@@ -551,20 +551,26 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
           i = j;
           continue;
         }
-        // Latin run: words and spaces
+        // Latin run: words and spaces. Mid-line hyphen points are absorbed
+        // (they render nothing) so the pieces sit in ONE text node and the
+        // browser kerns across the junction — the widths modelled it
+        // (LinebreakBlock::kernPx); a line-final hyphen still terminates
+        // the run to get its glyph.
         StyleId st = b.style;
         StrRef url = b.linkUrl;
         u32 j = i;
         while (j < l.blockEnd && bl[j].style == st && bl[j].linkUrl == url &&
-               !bl[j].isHyphen() && !bl[j].isCjkChar() && !bl[j].math &&
+               (!bl[j].isHyphen() || j + 1 < l.blockEnd) &&
+               !bl[j].isCjkChar() && !bl[j].math &&
                !bl[j].isPunctGlyph() && !(bl[j].flags & (BF_INDENT | BF_BOUND)) &&
                !(bl[j].flags & BF_PUNCT_SP))
           j++;
         bool link = openRun(styles.get(st), url, b, "", nullptr);
         std::string runText;
         for (u32 k = i; k < j; k++)
-          runText += bl[k].isSpace() ? std::string(" ")
-                                           : std::string(strs.get(bl[k].text));
+          runText += bl[k].isHyphen() ? std::string()
+                     : bl[k].isSpace() ? std::string(" ")
+                                       : std::string(strs.get(bl[k].text));
         escapeHtml(out, runText);
         out += link ? "</a>" : "</span>";
         i = j;

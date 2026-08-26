@@ -437,6 +437,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               for (u32 i2 = lo; i2 < hi; i2++) {
                 const LinebreakBlock& b = cell.blocks[i2];
                 if (!b.isHyphen()) naturalPx += b.rawPx;
+                else if (i2 != hi - 1) naturalPx += b.kernPx;  // junction kern
                 if (metrics.hasVmet(b.style)) {
                   const VMet& v = metrics.vmet(b.style);
                   if (v.ascent > maxAsc) maxAsc = v.ascent;
@@ -508,6 +509,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         for (u32 i = lo; i < hi; i++) {
           const LinebreakBlock& b = bl[i];
           if (!b.isHyphen()) naturalPx += b.rawPx;
+          else if (i != hi - 1) naturalPx += b.kernPx;  // junction kern
           if (b.isSpace() && b.stretchWeight > 0) totalWeight += b.stretchWeight;
           if (b.isCjkChar() && i + 1 < hi) {
             // a CJK char stretches (letter-spacing) only when the rendered gap

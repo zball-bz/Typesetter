@@ -361,14 +361,25 @@ struct Emitter {
       // (em-dash/ellipsis pairs, App C) — without this they would take the
       // Latin path and grow spurious boundary glue on both sides.
       if (isCjkIdeo(cp) || cp == 0x2014 || cp == 0x2026) {
-        flushWord();
-        if (prev == Prev::Latin) boundary();
         // em-dash / ellipsis: defined-width pinned blocks — 2em as a pair,
-        // 1em alone (App C; advance is unmeasurable, see pushCjkChar)
+        // 1em alone (App C; advance is unmeasurable, see pushCjkChar).
+        // BUT an English em dash / ellipsis — single, with no CJK on either
+        // side — is ordinary text: it measures in the Latin face, where the
+        // 1em convention would over-budget it (blog EN pages showed ~2px).
         if (cp == 0x2014 || cp == 0x2026) {
           u32 j = i;
           u32 cp2 = (i < s.size()) ? utf8Next(s, j) : 0;
-          if (cp2 == cp) {
+          const bool pair = cp2 == cp;
+          const bool cjkAfter =
+              cp2 != 0 && (isCjk(cp2) || cp2 == 0x2014 || cp2 == 0x2026);
+          if (!pair && prev != Prev::Cjk && !cjkAfter) {
+            word.append(s.data() + start, i - start);
+            prev = Prev::Latin;
+            continue;
+          }
+          flushWord();
+          if (prev == Prev::Latin) boundary();
+          if (pair) {
             pushCjkChar(s.substr(start, j - start), /*definedEm=*/2.0);
             i = j;
           } else {
@@ -377,6 +388,8 @@ struct Emitter {
           prev = Prev::Cjk;
           continue;
         }
+        flushWord();
+        if (prev == Prev::Latin) boundary();
         pushCjkChar(s.substr(start, i - start));
         prev = Prev::Cjk;
         continue;
@@ -796,7 +809,9 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
   auto tag = [&](std::vector<LinebreakBlock>& blocks) {
     for (size_t i = 0; i < blocks.size(); i++) {
       LinebreakBlock& b = blocks[i];
-      if (!b.isSpace() || (b.flags & (BF_PUNCT_SP | BF_BOUND))) continue;
+      const bool hyph = b.isHyphen();
+      if (!hyph && (!b.isSpace() || (b.flags & (BF_PUNCT_SP | BF_BOUND))))
+        continue;
       if (i == 0 || i + 1 >= blocks.size()) continue;
       if (!isWord(blocks[i - 1]) || !isWord(blocks[i + 1])) continue;
       std::string prev = lastCp(blocks[i - 1]);
@@ -804,7 +819,9 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
       if (prev.empty() || next.empty()) continue;
       b.ctxPrev = strs.intern(prev);
       b.ctxNext = strs.intern(next);
-      b.ctxTrigram = strs.intern(prev + " " + next);
+      // hyphen point: JUNCTION bigram — the pieces shape as one run when the
+      // break is not taken, and the browser kerns across the boundary
+      b.ctxTrigram = strs.intern(hyph ? prev + next : prev + " " + next);
     }
   };
   for (TopBlock& tb : tops) {
@@ -867,6 +884,16 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
           if (b.isHyphen()) {
             b.breakWidth = w.su;
             b.rawPx = w.px;  // only added to a line when it ends at this block
+            if (b.ctxTrigram && store.hasWord(b.ctxTrigram, b.style) &&
+                store.hasWord(b.ctxPrev, b.style) &&
+                store.hasWord(b.ctxNext, b.style)) {
+              // junction kern when NOT broken here: pieces shape as one run
+              double k = store.word(b.ctxTrigram, b.style).px -
+                         store.word(b.ctxPrev, b.style).px -
+                         store.word(b.ctxNext, b.style).px;
+              b.kernPx = (float)k;
+              b.width = suRoundPx(k);  // feeds KP's in-line width sum
+            }
           } else if (b.isPunctGlyph()) {
             // glyph advance minus its compressible half (App C): the half
             // lives in the adjacent BF_PUNCT_SP block (or was compressed away)
