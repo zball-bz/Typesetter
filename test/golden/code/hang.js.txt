@@ -1,0 +1,5 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
+__emit(__at(para(__at(text("悬挂缩进与注释感知续行："),0,36)),0,36));
+__emit(__at(para(val((codeblock("", [["    indented_call(alpha, beta, gamma, delta, epsilon, zeta_long_tail);"], ["value = 1; ", style({color: "var(--tsr-tok-comment)"}, "// a very long inline comment that wraps and its continuation aligns to the comment content column")]], {})))),38,295));
+};
+//# sourceURL=tsm:doc

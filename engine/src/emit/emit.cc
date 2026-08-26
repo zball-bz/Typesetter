@@ -481,6 +481,7 @@ struct Emitter {
         u.codeStyle = compose(n->style, CLS_CODE, (float)cfg.codeScale);
         u.markerStyle = u.codeStyle;
         u.chRef = strs.intern("0");
+        u.cjkChRef = strs.intern("\xE4\xB8\xAD");
         for (const ArgVal& a : n->args) {
           if (a.key == ArgK::wrap && a.tag == ArgTag::Bool) u.codeWrap = a.num != 0;
           if (a.key == ArgK::lineNo && a.tag == ArgTag::Num) u.codeLineNo = (i32)a.num;
@@ -519,11 +520,13 @@ struct Emitter {
             pos = eol + 1;
           }
         } else {
+          const StrRef commentColor = strs.intern("var(--tsr-tok-comment)");
           std::function<void(const ContentNode*, std::vector<FlowUnit::CodeRun>&)>
               collect = [&](const ContentNode* k, std::vector<FlowUnit::CodeRun>& out) {
                 if (k->kind == Kind::text) {
+                  bool cm = styles.get(k->style).color == commentColor;
                   out.push_back(
-                      {k->str, compose(k->style, CLS_CODE, (float)cfg.codeScale)});
+                      {k->str, compose(k->style, CLS_CODE, (float)cfg.codeScale), cm});
                   return;
                 }
                 if (k->kind == Kind::comment) return;
@@ -789,11 +792,14 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
     for (FlowUnit& u : tb.units) {
       if (u.kind == FlowUnit::K::Code) {
         needStyle(u.codeStyle);
-        if (u.codeWrap && u.chRef && !store.hasWord(u.chRef, u.codeStyle)) {
-          u64 k = MetricStore::key(u.chRef, u.codeStyle);
-          if (!seenWord.count(k)) {
-            seenWord[k] = true;
-            req.words.push_back({u.chRef, u.codeStyle});
+        if (u.codeWrap) {
+          for (StrRef probe : {u.chRef, u.cjkChRef}) {
+            if (!probe || store.hasWord(probe, u.codeStyle)) continue;
+            u64 k = MetricStore::key(probe, u.codeStyle);
+            if (!seenWord.count(k)) {
+              seenWord[k] = true;
+              req.words.push_back({probe, u.codeStyle});
+            }
           }
         }
       }

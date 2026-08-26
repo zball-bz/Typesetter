@@ -70,12 +70,15 @@ struct FlowUnit {
   struct CodeRun {
     StrRef text = 0;
     StyleId style = 0;
+    bool isComment = false;  // comment-aware hanging (verbatim-design §4)
   };
   std::vector<std::vector<CodeRun>> codeRuns;
   // CH4 grid: monospace is a METRIC CONTRACT — every char is 1ch (CJK 2ch),
   // the engine measures exactly one thing per code style: ch itself ("0").
   bool codeWrap = true;      // absolute lines have no scroll container
-  StrRef chRef = 0;          // interned "0" (the ch probe)
+  StrRef chRef = 0;          // interned "0" (the Latin ch probe)
+  StrRef cjkChRef = 0;       // interned "中" (measured CJK width — no more
+                             //   assumed 2:1; budget uses the real ratio)
   i32 codeLineNo = 0;        // 0 = no numbers; else first line number
   std::vector<u32> hlLines;  // 1-based highlighted lines
   StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup

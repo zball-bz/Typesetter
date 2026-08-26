@@ -1,0 +1,10 @@
+doc @[0,295) [base]
+  para @[0,36) [base]
+    text @[0,36) [base] str="悬挂缩进与注释感知续行："
+  codeblock @[0,0) [base] lang=""
+    seq @[0,0) [base]
+      text @[0,0) [base] str="    indented_call(alpha, beta, gamma, delta, epsilon, zeta_long_tail);"
+    seq @[0,0) [base]
+      text @[0,0) [base] str="value = 1; "
+      styled @[0,0) [base color=var(--tsr-tok-comment)] color="var(--tsr-tok-comment)"
+        text @[0,0) [base color=var(--tsr-tok-comment)] str="// a very long inline comment that wraps and its continuation aligns to the comment content column"

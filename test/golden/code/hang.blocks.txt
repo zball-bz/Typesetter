@@ -1,0 +1,17 @@
+top pid=0 units=1
+ unit text indent=0su
+  cjk "悬" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "挂" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "缩" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "进" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "与" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "注" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "释" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "感" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "知" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "续" w=1025su glue=102su wt=0.6 pen=0 @[0,36)
+  cjk "行" w=1025su glue=102su wt=0.6 pen=INF @[0,36)
+  punct-close "：" w=512su @[0,36)
+  punct-sp w=512su @[0,36)
+top pid=1 units=1
+ unit code indent=0su lines=2 wrap

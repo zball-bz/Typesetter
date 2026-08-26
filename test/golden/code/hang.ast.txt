@@ -1,0 +1,5 @@
+doc @[0,296)
+  para @[0,36)
+    text @[0,36) str="悬挂缩进与注释感知续行："
+  para @[38,295)
+    splice @[38,295) expr="codeblock(\"\", [[\"    indented_call(alpha, beta, gamma, delta, epsilon, zeta_long_tail);\"], [\"value = 1; \", style({color: \"var(--tsr-tok-comment)\"}, \"// a very long inline comment that wraps and its continuation aligns to the comment content column\")]], {})"

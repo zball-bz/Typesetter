@@ -59,6 +59,14 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         Su chSu = 0;
         if (u.codeWrap && u.chRef && metrics.hasWord(u.chRef, u.codeStyle))
           chSu = metrics.word(u.chRef, u.codeStyle).su;
+        // measured CJK width (verbatim-design §2): budget columns from the
+        // real ratio, conservatively ceiled — no assumed 2:1
+        i32 cjkCols = 2;
+        if (chSu > 0 && u.cjkChRef && metrics.hasWord(u.cjkChRef, u.codeStyle)) {
+          Su c = metrics.word(u.cjkChRef, u.codeStyle).su;
+          cjkCols = (i32)((c + chSu - 1) / chSu);
+          if (cjkCols < 1) cjkCols = 1;
+        }
         i32 cols = chSu > 0 ? (i32)(lineWidth / chSu) : 0;
         if (cols > 0 && cols < 8) cols = 8;
         auto isBreakable = [](u32 cp) {
@@ -69,16 +77,60 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         bool first = true;
         for (u32 li = 0; li < (u32)u.codeRuns.size(); li++) {
           std::string joined;
-          for (const FlowUnit::CodeRun& r : u.codeRuns[li])
+          std::vector<std::pair<u32, u32>> commentSpans;  // byte ranges
+          for (const FlowUnit::CodeRun& r : u.codeRuns[li]) {
+            u32 b0 = (u32)joined.size();
             joined.append(strs.get(r.text));
+            if (r.isComment) commentSpans.push_back({b0, (u32)joined.size()});
+          }
+          // hanging base: the logical line's own leading whitespace columns
+          i32 leadCols = 0;
+          while ((size_t)leadCols < joined.size() &&
+                 (joined[leadCols] == ' ' || joined[leadCols] == '\t'))
+            leadCols++;
+          auto contColsAt = [&](u32 breakByte) -> u16 {
+            i32 cc = leadCols + cfg.verbatimContIndent;
+            // comment-aware (verbatim-design §4): a break inside a comment
+            // run aligns the continuation to the comment's CONTENT column
+            for (auto [cs, ce] : commentSpans) {
+              if (breakByte <= cs || breakByte > ce) continue;
+              // column of the comment start
+              i32 col = 0;
+              u32 pb = 0;
+              while (pb < cs) {
+                u32 cp2 = utf8Next(joined, pb);
+                col += isCjk(cp2) ? cjkCols : 1;
+              }
+              // lead-in: opening punctuation streak + one space
+              u32 q2 = cs;
+              i32 lead = 0;
+              while (q2 < ce && joined[q2] != ' ' &&
+                     !((joined[q2] >= 'a' && joined[q2] <= 'z') ||
+                       (joined[q2] >= 'A' && joined[q2] <= 'Z') ||
+                       (joined[q2] >= '0' && joined[q2] <= '9')) &&
+                     (u8)joined[q2] < 0x80) {
+                q2++;
+                lead++;
+              }
+              if (q2 < ce && joined[q2] == ' ') lead++;
+              cc = col + lead;
+              break;
+            }
+            if (cc > cols - 8) cc = cols > 8 ? cols - 8 : 0;
+            if (cc < 0) cc = 0;
+            return (u16)cc;
+          };
           struct Row { u32 lo, hi; };
           std::vector<Row> rows;
+          std::vector<u16> rowContOut;
           if (cols <= 0 || joined.empty()) {
             rows.push_back({0, (u32)joined.size()});
           } else {
             u32 lo = 0;
+            u16 nextCont = 0;
+            std::vector<u16> rowCont;
             while (lo < joined.size()) {
-              i32 avail = rows.empty() ? cols : cols - 2;
+              i32 avail = rows.empty() ? cols : cols - (i32)nextCont;
               if (avail < 8) avail = 8;
               u32 p = lo;
               i32 col = 0;
@@ -86,7 +138,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               while (p < joined.size()) {
                 u32 q = p;
                 u32 cp = utf8Next(joined, q);
-                i32 w = isCjk(cp) ? 2 : 1;
+                i32 w = isCjk(cp) ? cjkCols : 1;
                 if (col + w > avail) break;
                 col += w;
                 p = q;
@@ -102,6 +154,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               }
               if (p >= joined.size()) {
                 rows.push_back({lo, (u32)joined.size()});
+                rowCont.push_back(nextCont);
                 break;
               }
               u32 cut = lastBrk > lo ? lastBrk : p;
@@ -116,9 +169,15 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               u32 ext = cut;
               while (ext < joined.size() && joined[ext] == ' ') ext++;
               rows.push_back({lo, ext});
+              rowCont.push_back(nextCont);
+              nextCont = contColsAt(cut);  // the NEXT row's indent
               lo = ext;
             }
-            if (rows.empty()) rows.push_back({0, 0});
+            if (rows.empty()) {
+              rows.push_back({0, 0});
+              rowCont.push_back(0);
+            }
+            rowContOut = std::move(rowCont);
           }
           bool hl = hlSet.count(li + 1) != 0;
           for (size_t ri = 0; ri < rows.size(); ri++) {
@@ -129,6 +188,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             line.cbLo = rows[ri].lo;
             line.cbHi = rows[ri].hi;
             line.codeCont = ri > 0;
+            line.contCols = ri < rowContOut.size() ? rowContOut[ri] : 0;
             line.codeHl = hl;
             line.height = adv;
             line.left = u.indent;
@@ -372,6 +432,8 @@ std::string dumpLayout(const LayoutResult& lr) {
                 l.y, l.left, l.codeLine, l.cbLo, l.cbHi,
                 l.codeCont ? " cont" : "", l.codeHl ? " hl" : "",
                 l.marker ? " marker" : "");
+        if (l.contCols) out.insert(out.size() - 1,
+                                   " cc=" + std::to_string(l.contCols));
         continue;
       }
       if (l.special == 3) {

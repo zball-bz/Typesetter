@@ -43,6 +43,7 @@ struct Config {
   double mathBinAfterPenalty = 0.95;
   PunctCompress punctCompress = PunctCompress::Book;
   double codeScale = 0.85;    // code sizes down consistently (measure+render)
+  int verbatimContIndent = 2; // grid wrap: hanging indent adds this many ch
   double listIndentEm = 1.5;
   double quoteIndentEm = 1.0;
   // Resolver supplements (v2 §11.1, document-model §5); localizable.
