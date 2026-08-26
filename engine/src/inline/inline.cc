@@ -263,6 +263,39 @@ struct InlineParser {
         seekTo(p);
         continue;
       }
+      if (c == '$') {
+        // math island (v2 §5): verbatim to the closing '$'; may cross source
+        // lines when only plain newlines intervene (same rule as splices)
+        u32 hardEnd = (u32)all.size();
+        u32 p = i + 1;
+        while (p < hardEnd && all[p] != '$') {
+          if (all[p] == '\\' && p + 1 < hardEnd) p++;
+          p++;
+        }
+        bool ok = p < hardEnd && (p < lim || contiguous(p));
+        if (ok && p > i + 1) {
+          spaceBeforeItem();
+          flushText();
+          std::string body(all.substr(i + 1, p - (i + 1)));
+          // $ x $ (whitespace inside both fences) is display math (Typst rule)
+          auto isWs = [](char ch) {
+            return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
+          };
+          bool display = body.size() >= 2 && isWs(body.front()) && isWs(body.back());
+          size_t b0 = 0, b1 = body.size();
+          while (b0 < b1 && isWs(body[b0])) b0++;
+          while (b1 > b0 && isWs(body[b1 - 1])) b1--;
+          AstNode* mn = mk(AstKind::Math, {i, p + 1});
+          mn->str = strs.intern(body.substr(b0, b1 - b0));
+          mn->tag = display ? 1 : 0;
+          pushItem(mn);
+          seekTo(p + 1);
+          continue;
+        }
+        put(c, i);
+        i++;
+        continue;
+      }
       if (c == '`') {
         u32 close = i + 1;
         while (close < lim && all[close] != '`') close++;
@@ -657,6 +690,12 @@ static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,
     case AstKind::Region:
       hdr("region");
       out += " name=\"";
+      appendEscaped(out, strs.get(n->str));
+      out += "\"";
+      break;
+    case AstKind::Math:
+      hdr("math");
+      appendf(out, " display=%d src=\"", n->tag);
       appendEscaped(out, strs.get(n->str));
       out += "\"";
       break;

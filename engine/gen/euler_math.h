@@ -6,6 +6,10 @@
 namespace tsr { namespace mathfont {
 
 inline constexpr int kUpem = 1000;
+// hhea line metrics: browser glyph-span baseline sits kAscender
+// below the span top when line-height == kAscender+kDescender.
+inline constexpr int kAscender = 800;
+inline constexpr int kDescender = 200;
 inline constexpr int kMinConnectorOverlap = 20;
 inline constexpr int16_t kNoTopAccent = -32768;
 

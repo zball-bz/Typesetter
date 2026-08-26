@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
 __emit(__at(para(__at(text("「引号成对」出现时：（括号）与标点相邻，以及句号。连续标点：《书名》，压缩生效。省略号……与破折号——是双字块，不可从中间断开。"),0,192)),0,192));
 };
 //# sourceURL=tsm:doc

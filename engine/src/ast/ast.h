@@ -6,14 +6,14 @@ namespace tsr {
 enum class AstKind : u8 {
   Doc, Para, CodeStmt, Text, Styled, Splice,
   Heading, ListB, Item, Quote, CodeBlockB, Rule, Comment, Link, Code, SpliceArg,
-  Ref, Region, Row, Cell
+  Ref, Region, Row, Cell, Math
 };
 
 struct AstNode {
   AstKind kind;
   Span span;
   StrRef str = 0;   // Text; Code: code text; CodeBlockB: body; Comment: body;
-                    // Ref: target label; Region: name
+                    // Ref: target label; Region: name; Math: formula source
   StrRef aux = 0;   // CodeBlockB: lang; Link: url; Heading: label
   u8 tag = 0;       // Styled: marker; CodeStmt: 0=let 1=block; Heading: level
   bool ordered = false;  // ListB

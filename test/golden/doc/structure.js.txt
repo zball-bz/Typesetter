@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
 __emit(__at(heading(1, null, __at(text("Typesetting Notes"),2,19)),0,19));
 __emit(__at(heading(2, null, __at(text("Structure and "),24,37), __at(strong(__at(text("emphasis"),39,47)),38,48)),21,48));
 __emit(__at(para(__at(text("An introductory paragraph with a "),50,82), __at(link("https://example.org", __at(text("useful link"),84,95)),83,117), __at(text(" and some "),118,126), __at(code("inline code"),127,140), __at(text(" in it."),141,147), __at(comment(" invisible note "),148,170)),50,170));

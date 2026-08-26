@@ -118,6 +118,12 @@ struct Sem {
       case Kind::hardbreak:
         out += "<br>";
         return;
+      case Kind::mathinline:
+        // §9.2: source-text fallback until the semantic phase learns boxes
+        out += "<code class=\"tsr-mathsrc\">$";
+        esc(out, argS(n, ArgK::src));
+        out += "$</code>";
+        return;
       case Kind::error:
         out += "<span class=\"tsr-err\" title=\"";
         esc(out, argS(n, ArgK::message));
@@ -205,6 +211,13 @@ struct Sem {
         out += "<hr";
         attrs(n, pid);
         out += ">\n";
+        return;
+      case Kind::mathblock:
+        out += "<p class=\"tsr-mathblock\"";
+        attrs(n, pid);
+        out += "><code class=\"tsr-mathsrc\">$ ";
+        esc(out, argS(n, ArgK::src));
+        out += " $</code></p>\n";
         return;
       case Kind::group: {
         out += "<div";

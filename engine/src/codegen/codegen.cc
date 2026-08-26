@@ -88,8 +88,22 @@ struct Gen {
         break;
       }
       case AstKind::Para:
+        // a paragraph that is exactly one display formula IS the mathblock
+        if (n->kids.size() == 1 && n->kids[0]->kind == AstKind::Math &&
+            n->kids[0]->tag == 1) {
+          out += "__at(mathblock(";
+          strLit(n->kids[0]->str);
+          close(n->kids[0]);
+          break;
+        }
         out += "__at(para(";
         children(n->kids, false);
+        close(n);
+        break;
+      case AstKind::Math:
+        // mid-paragraph display degrades to inline (deterministic; documented)
+        out += "__at(mathinline(";
+        strLit(n->str);
         close(n);
         break;
       case AstKind::Heading:
@@ -185,7 +199,7 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
   std::string& out = p.text;
   out += "export default async ({__emit, __at, para, text, em, strong, val, m, "
          "heading, list, item, quote, codeblock, rule, comment, link, code, seq, "
-         "ref, term, toc, glossary, style, __region, __fence}, $) => {\n";
+         "ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {\n";
   Gen g{src, strs, out};
   for (const AstNode* n : doc->kids) {
     if (n->kind == AstKind::CodeStmt) {

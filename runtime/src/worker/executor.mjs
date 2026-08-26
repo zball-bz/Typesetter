@@ -124,6 +124,9 @@ export function buildContext(ob) {
     link: (url, ...kids) => ob.makeNode(KIND.link, { url: String(url) }, kids.map(toShadow)),
     code: (s) => ob.makeNode(KIND.code, {}, [ob.makeText(String(s))]),
     seq: node(KIND.seq),
+    mathinline: (src) => ob.makeNode(KIND.mathinline, { src: String(src) }, []),
+    mathblock: (src, label) =>
+      ob.makeNode(KIND.mathblock, { src: String(src), label }, []),
     // inline/block style scope (document-model §3): patch keys font (CSS
     // family list), lang (BCP-47), color, sizePx, plus bold/italic sugar
     style: (patch = {}, ...kids) =>

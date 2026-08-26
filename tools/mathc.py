@@ -381,7 +381,12 @@ def main():
     o.append("#include <cstdint>")
     o.append("namespace tsr { namespace mathfont {")
     o.append("")
+    hhea = font["hhea"]
     o.append("inline constexpr int kUpem = %d;" % upem)
+    o.append("// hhea line metrics: browser glyph-span baseline sits kAscender")
+    o.append("// below the span top when line-height == kAscender+kDescender.")
+    o.append("inline constexpr int kAscender = %d;" % hhea.ascender)
+    o.append("inline constexpr int kDescender = %d;" % -hhea.descender)
     o.append("inline constexpr int kMinConnectorOverlap = %d;" % mv.MinConnectorOverlap)
     o.append("inline constexpr int16_t kNoTopAccent = -32768;")
     o.append("")

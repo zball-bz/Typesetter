@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
  $.style.push({ font: '"LXGW WenKai", serif', lang: "zh-TW" }); 
 __emit(__at(para(__at(text("塊級作用域——這一段整體改用文楷與繁體語言標記，破折號與省略號……照常走定義寬。"),69,190)),69,190));
  $.style.popTo(0); 
