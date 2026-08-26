@@ -1011,10 +1011,18 @@ struct Layouter {
   // base; the accent rides at max(0, base.asc − AccentBaseHeight).
   MathBox* layoutAccent(u32 accCp, MNode* baseN, u8 st) {
     MathBox* base = layoutRun(baseN, (u8)(st | 1));
+    // single-glyph base: the glyph's own TopAccentAttachment is authoritative
+    // (the run wrapper only knows w/2 — same for Euler's x, off by ~0.04em
+    // for f-like glyphs whose ink centre leads the advance centre)
+    Su baseAttach = base->topAccent;
+    if (baseN->kids.size() == 1 && baseN->kids[0]->k == MNode::Atom) {
+      if (const GlyphRec* r = mathGlyph(baseN->kids[0]->cp))
+        if (r->topAccent != kNoTopAccent) baseAttach = toSu(r->topAccent, st);
+    }
     MathBox* acc = glyphBox(accCp, kOrd, st);
     Su dy = base->asc - constSu(C::AccentBaseHeight, st);
     if (dy < 0) dy = 0;
-    Su x = base->topAccent - acc->topAccent;
+    Su x = baseAttach - acc->topAccent;
     MathBox* out = mkBox(MathKind::HBox);
     out->cls = out->firstCls = out->lastCls = kOrd;
     out->w = base->w;
