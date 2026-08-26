@@ -281,6 +281,18 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
       fmtPx(out, suToPx(l.left));
       out += ";width:";
       fmtPx(out, suToPx(l.width));
+      if (l.special == 2) {
+        const std::string* feats = &cfg.codeFontFeatures;
+        if (tb.units[l.unitIdx].codeLang) {
+          auto it = cfg.codeFontFeaturesByLang.find(
+              std::string(strs.get(tb.units[l.unitIdx].codeLang)));
+          if (it != cfg.codeFontFeaturesByLang.end()) feats = &it->second;
+        }
+        if (!feats->empty()) {
+          out += ";font-feature-settings:";
+          escapeHtml(out, *feats);
+        }
+      }
       if (l.special == 2 && l.height > 0) {
         // baseline sits centred in the row (the hl background made the
         // top-stuck default line box visible); hl rows also paint height

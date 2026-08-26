@@ -79,6 +79,7 @@ struct FlowUnit {
   StrRef chRef = 0;          // interned "0" (the Latin ch probe)
   StrRef cjkChRef = 0;       // interned "中" (measured CJK width — no more
                              //   assumed 2:1; budget uses the real ratio)
+  StrRef codeLang = 0;       // language tag (font-feature selection)
   i32 codeLineNo = 0;        // 0 = no numbers; else first line number
   std::vector<u32> hlLines;  // 1-based highlighted lines
   StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup

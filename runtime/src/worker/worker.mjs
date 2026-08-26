@@ -52,7 +52,8 @@ function postResult(M, doc, id) {
 }
 
 async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily,
-                         cjkFontFamily, paraIndentEm, punctCompress, progressive }) {
+                         cjkFontFamily, paraIndentEm, punctCompress, progressive,
+                         codeFontFeatures, codeFontFeaturesByLang }) {
   const M = await getMod();
   const doc = M._tsr_doc_new();
   try {
@@ -69,6 +70,13 @@ async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily
       M._tsr_set_cjk_font(doc, f);
       M._free(f);
     }
+    const setFeat = (lang, feat) => {
+      const l = M.stringToNewUTF8(lang), f = M.stringToNewUTF8(feat);
+      M._tsr_set_code_features(doc, l, f);
+      M._free(l); M._free(f);
+    };
+    if (codeFontFeatures) setFeat('', codeFontFeatures);
+    for (const [l, f] of Object.entries(codeFontFeaturesByLang ?? {})) setFeat(l, f);
     const srcPtr = M.stringToNewUTF8(source);
     M._tsr_compile(doc, srcPtr);
     M._free(srcPtr);

@@ -1,4 +1,6 @@
 #pragma once
+#include <map>
+
 #include "../support/support.h"
 
 namespace tsr {
@@ -44,6 +46,12 @@ struct Config {
   PunctCompress punctCompress = PunctCompress::Book;
   double codeScale = 0.85;    // code sizes down consistently (measure+render)
   int verbatimContIndent = 2; // grid wrap: hanging indent adds this many ch
+  // CSS font-feature-settings for code (verbatim-design §3): ligature sets
+  // differ per language (Haskell vs C++); empty = font default. NOTE:
+  // snap-kerning (V1.5) requires ligatures OFF — letter-spacing disables
+  // liga/calt in browsers, a binary switch not a dial.
+  std::string codeFontFeatures;
+  std::map<std::string, std::string> codeFontFeaturesByLang;
   double listIndentEm = 1.5;
   double quoteIndentEm = 1.0;
   // Resolver supplements (v2 §11.1, document-model §5); localizable.

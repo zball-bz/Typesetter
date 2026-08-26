@@ -59,6 +59,13 @@ TSR_EXPORT void tsr_set_cjk_font(WasmDoc* d, const char* family) {
   d->doc.cfg.cjkFont = family;
 }
 
+// lang "" sets the default; else a per-language override (verbatim §3)
+TSR_EXPORT void tsr_set_code_features(WasmDoc* d, const char* lang,
+                                      const char* features) {
+  if (!lang || !*lang) d->doc.cfg.codeFontFeatures = features;
+  else d->doc.cfg.codeFontFeaturesByLang[lang] = features;
+}
+
 TSR_EXPORT int tsr_compile(WasmDoc* d, const char* src) {
   d->doc.compile(std::string(src));
   return 0;

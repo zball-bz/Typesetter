@@ -483,6 +483,7 @@ struct Emitter {
         u.chRef = strs.intern("0");
         u.cjkChRef = strs.intern("\xE4\xB8\xAD");
         for (const ArgVal& a : n->args) {
+          if (a.key == ArgK::lang && a.tag == ArgTag::Str) u.codeLang = a.ref;
           if (a.key == ArgK::wrap && a.tag == ArgTag::Bool) u.codeWrap = a.num != 0;
           if (a.key == ArgK::lineNo && a.tag == ArgTag::Num) u.codeLineNo = (i32)a.num;
           if (a.key == ArgK::lineNo && a.tag == ArgTag::Bool && a.num != 0) u.codeLineNo = 1;

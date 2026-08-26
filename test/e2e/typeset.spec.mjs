@@ -103,6 +103,23 @@ test('math copies as source text', async ({ page }) => {
   expect(text).toContain('面积为');
 });
 
+test('code font features configurable per language', async ({ page }) => {
+  const source = '```js\nconst a = 1;\n```\n\n```json\n{"k": 1}\n```';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, {
+    widthPx: 400,
+    codeFontFeatures: '"calt" 0',
+    codeFontFeaturesByLang: { js: '"liga" 1, "ss01" 1' },
+  }), { source });
+  const feats = await page.evaluate(() =>
+    [...document.querySelectorAll('.tsr-line')]
+      .map((l) => l.style.fontFeatureSettings).filter(Boolean));
+  // browsers normalize the serialized value ("liga" 1 → "liga")
+  expect(feats).toContain('"liga", "ss01"');  // js override
+  expect(feats).toContain('"calt" 0');        // json falls to default
+});
+
 test('wrapped code copies as its logical lines', async ({ page }) => {
   const line = 'const aVeryLongIdentifierName = anotherLongIdentifier + someMoreLength;';
   const source = '```js\n' + line + '\nshort();\n```';
