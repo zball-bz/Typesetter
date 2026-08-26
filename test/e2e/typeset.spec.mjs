@@ -230,3 +230,25 @@ test('float figure: narrowed wrap lines, edge placement, recovery', async ({ pag
   const text = await page.evaluate(() => window.__tsr.copyText());
   expect(text).toContain('图 1：右浮动图。');          // caption still copies
 });
+
+test('declared webfonts: worker measures with the loaded face (audit holds)', async ({ page }) => {
+  // pages-design.md §1: fonts are declared, the worker loads them into its
+  // own FontFaceSet before measuring. If the worker measured a fallback
+  // while paint uses the webfont, the right-edge audit below would fail.
+  const source =
+    'The quick brown fox jumps over the lazy dog again and again, ' +
+    'measuring rivers of text 0123456789 until the right edge holds.';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, {
+    widthPx: 260,
+    fontFamily: 'TsrTestEuler, monospace',
+    fonts: [{ family: 'TsrTestEuler', src: '/fonts/euler-math.woff2' }],
+  }), { source });
+  expect(res.diags).toBe('');
+  await page.evaluate(() => document.fonts.ready);
+  const loaded = await page.evaluate(() => document.fonts.check('16px TsrTestEuler'));
+  expect(loaded).toBe(true);
+  const report = await page.evaluate(() => window.__tsr.audit());
+  expect(report.failures).toEqual([]);
+});

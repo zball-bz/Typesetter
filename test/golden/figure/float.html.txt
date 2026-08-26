@@ -5,7 +5,7 @@
 </div>
 <div class="tsr-para" data-pid="1" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-tower" src="photos/tower.jpg" alt="塔楼" style="top:0px;left:180px;width:120px;height:90px">
-<div class="tsr-line" data-ragged="1" data-cell="1" style="top:90px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="210">右浮动的</span></div>
+<div class="tsr-line" data-join="none" data-ragged="1" data-cell="1" style="top:90px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="210">右浮动的</span></div>
 <div class="tsr-line" data-ragged="1" data-cell="1" style="top:114px;left:180px;width:120px"><span class="tsr-r tsr-cjk" data-s="210">塔楼小图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="210">。</span></div>
 </div>
 <div class="tsr-para" data-pid="2" style="position:relative;height:168px;margin-bottom:19.2px">
@@ -24,7 +24,7 @@
 </div>
 <div class="tsr-para" data-pid="4" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-gate" src="photos/gate.jpg" alt="山门" style="top:0px;left:0px;width:120px;height:72px">
-<div class="tsr-line" data-ragged="1" data-cell="1" style="top:72px;left:0px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="746">左浮动的</span></div>
+<div class="tsr-line" data-join="none" data-ragged="1" data-cell="1" style="top:72px;left:0px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="746">左浮动的</span></div>
 <div class="tsr-line" data-ragged="1" data-cell="1" style="top:96px;left:0px;width:120px"><span class="tsr-r tsr-cjk" data-s="746">山门</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="746">。</span></div>
 </div>
 <div class="tsr-para" data-pid="5" style="position:relative;height:72px;margin-bottom:19.2px">

@@ -16,6 +16,35 @@ const docs = new Map(); // docId → wasm doc handle (kept alive for relayout)
 // NEED_IMAGES (figure-design.md §2): intrinsic CSS dims only, cached per
 // src for the worker's lifetime; 0×0 = failure (engine placeholder + diag)
 const imageDims = new Map();
+
+// W (pages-design.md §1): fonts are DECLARED, not discovered — the worker
+// loads them into its own FontFaceSet before measuring, so metrics are
+// right on the first pass and no settle re-typeset can exist. A font that
+// misses the 4s deadline measures as its fallback.
+const loadedFonts = new Set();
+async function loadFonts(fonts) {
+  const want = (fonts ?? []).filter((f) => {
+    const key = `${f.family}|${f.weight ?? 'normal'}|${f.style ?? 'normal'}`;
+    if (loadedFonts.has(key) || !f.family || !f.src) return false;
+    loadedFonts.add(key);
+    return true;
+  });
+  if (!want.length) return;
+  await Promise.race([
+    Promise.allSettled(want.map(async (f) => {
+      try {
+        const ff = new FontFace(f.family, `url(${JSON.stringify(String(f.src))})`, {
+          weight: f.weight ?? 'normal', style: f.style ?? 'normal',
+        });
+        await ff.load();
+        self.fonts.add(ff);
+      } catch (e) {
+        console.warn(`tsr: font failed to load: ${f.family}`, e);
+      }
+    })),
+    new Promise((r) => setTimeout(r, 4000)),
+  ]);
+}
 async function imageSize(src) {
   if (imageDims.has(src)) return imageDims.get(src);
   let dims = { w: 0, h: 0 };
@@ -75,8 +104,9 @@ function postResult(M, doc, id) {
 async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily,
                          cjkFontFamily, paraIndentEm, punctCompress, progressive,
                          codeFontFeatures, codeFontFeaturesByLang,
-                         verbatimSnapKerning }) {
+                         verbatimSnapKerning, fonts }) {
   const M = await getMod();
+  await loadFonts(fonts);
   const doc = M._tsr_doc_new();
   try {
     M._tsr_config(doc, widthPx ?? 300, baseSizePx ?? 18, lineHeight ?? 1.5, paraIndentEm ?? 0);

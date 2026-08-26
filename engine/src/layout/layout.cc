@@ -63,6 +63,19 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             cl.left = boxLeft;
             cl.width = u.imgW;
             cl.y = (Su)cy;
+            // §9.3: wrapped caption rows rejoin on copy (unlike table cells,
+            // whose row boundaries are content)
+            if (bp != (u32)cell.blocks.size()) {
+              bool joinSpace = false;
+              for (u32 j = hi; j < (u32)cell.blocks.size() &&
+                              cell.blocks[j].isSpace(); j++)
+                if (!(cell.blocks[j].flags &
+                      (BF_BOUND | BF_PUNCT_SP | BF_INDENT))) {
+                  joinSpace = true;
+                  break;
+                }
+              cl.join = joinSpace ? 1 : 2;
+            }
             cy += baseLeading;
             fr.lines.push_back(cl);
           }

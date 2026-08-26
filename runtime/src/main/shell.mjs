@@ -74,6 +74,37 @@ export const TSR_CSS = `
 export const TSR_MATH_FONT_URL =
   new URL('../../../fonts/euler-math.woff2', import.meta.url).href;
 
+// Declared webfonts (pages-design.md §1): one @font-face per entry on the
+// paint side; the worker loads the same files into its own FontFaceSet so
+// measurement never sees a fallback the paint doesn't.
+const injectedFonts = new Set();
+function ensureFontFaces(fonts) {
+  for (const f of fonts ?? []) {
+    const key = `${f.family}|${f.weight ?? 'normal'}|${f.style ?? 'normal'}`;
+    if (!f.family || !f.src || injectedFonts.has(key)) continue;
+    injectedFonts.add(key);
+    const style = document.createElement('style');
+    style.dataset.tsrFont = f.family;
+    style.textContent =
+      `@font-face { font-family: ${JSON.stringify(f.family)};` +
+      ` src: url(${JSON.stringify(String(f.src))});` +
+      ` font-weight: ${f.weight ?? 'normal'}; font-style: ${f.style ?? 'normal'};` +
+      ` font-display: block; }`;
+    document.head.appendChild(style);
+  }
+}
+
+// Bound wait so the first typeset paint uses the same faces the engine
+// measured with (glyph ink only — geometry is engine-owned either way).
+function settleFonts(fonts) {
+  const loads = (fonts ?? []).map((f) =>
+    document.fonts.load(`${f.style ?? 'normal'} ${f.weight ?? 'normal'} 16px ${JSON.stringify(f.family)}`)
+      .catch(() => {}));
+  if (!loads.length) return Promise.resolve();
+  return Promise.race([Promise.allSettled(loads),
+                       new Promise((r) => setTimeout(r, 4000))]);
+}
+
 let cssInjected = false;
 function ensureCss() {
   if (cssInjected) return;
@@ -136,9 +167,10 @@ export function createEngine(opts = {}) {
       cjkFontFamily = TSR_CJK_FONT, lang = 'zh-CN',
       paraIndentEm, punctCompress = 'book', progressive = true,
       codeFontFeatures, codeFontFeaturesByLang, verbatimSnapKerning,
-      onSemantic, onUpgrade,
+      fonts, onSemantic, onUpgrade,
     } = {}) {
       ensureCss();
+      ensureFontFaces(fonts);
       if (liveDocId !== null) {
         worker.postMessage({ type: 'dispose', docId: liveDocId });
         liveDocId = null;
@@ -157,7 +189,7 @@ export function createEngine(opts = {}) {
       const res = await request(
         { type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight,
           fontFamily, cjkFontFamily, paraIndentEm, punctCompress, progressive,
-          codeFontFeatures, codeFontFeaturesByLang, verbatimSnapKerning },
+          codeFontFeatures, codeFontFeaturesByLang, verbatimSnapKerning, fonts },
         (html) => {
           semanticHtml = html;
           if (progressive) {
@@ -166,6 +198,7 @@ export function createEngine(opts = {}) {
           }
         },
       );
+      await settleFonts(fonts);  // paint with the faces the engine measured
       const upgrades = swapIn(container, res.html);
       onUpgrade?.(upgrades);
       liveDocId = id;
