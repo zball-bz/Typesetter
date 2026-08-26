@@ -262,10 +262,19 @@ down.**
 ## 9. Line integration
 
 - `mathinline` emits **one unbreakable LinebreakBlock per breakable segment**:
-  following TeX (TeXbook p.173; K `buildHTMLUnbreakable`, T `into_par_items`),
-  optional break points after top-level Rel and Bin atoms — each segment is a
-  block with `content = inlineBox`, `breakPenalty` = a config
-  `mathBreakPenalty` (default high), no stretch. The block carries its own
+  break points exist only between top-level atoms (scripts, fractions,
+  delimited groups are opaque). Three break classes, penalties independently
+  configurable: **after Rel**, **before Rel**, **after Bin** (no before-Bin —
+  neither TeX nor AMS style admits it). After-Rel/after-Bin follows TeX
+  (TeXbook p.173, `\relpenalty=500` < `\binoppenalty=700`; K
+  `buildHTMLUnbreakable`, T `into_par_items`); before-Rel is added because
+  CJK/Russian convention puts the relation at the head of the continuation
+  line — for a Chinese-language target both sides of `=` read fine, and KP
+  picks the globally better cut. Defaults: after-Rel ≈ before-Rel < after-Bin,
+  all high enough that breaking mid-formula loses to any decent whole-line
+  alternative. At a break the thick/medium space beside the atom is
+  discardable glue. Each segment is a block with `content = inlineBox`,
+  `breakPenalty` per its class, no stretch. The block carries its own
   `asc/desc` su so `layoutDoc`'s per-line max-advance picks it up (extend
   `LinebreakBlock` with optional intrinsic vertical extents — the mechanism
   headings-in-line already wants).
