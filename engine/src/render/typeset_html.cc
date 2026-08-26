@@ -1,5 +1,7 @@
 #include "typeset_html.h"
 
+#include "../math/mathfont.h"
+
 namespace tsr {
 
 static void escapeHtml(std::string& out, std::string_view s) {
@@ -76,6 +78,79 @@ static void runStyleAttr(std::string& out, const Styling& st, const Config& cfg,
   }
 }
 
+// Positioned glyph runs inside one formula (math-design.md §8): flatten the
+// MathBox tree to absolute (x, baseline) leaves. A glyph span pins its text
+// baseline by explicit line-height == the font's hhea height: the baseline
+// then sits exactly kAscender·px/upem below the span top.
+static void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
+                       Su x, Su base) {
+  switch (b->kind) {
+    case MathKind::Glyph: {
+      const double px = (double)b->px;
+      const double fA = (double)mathfont::kAscender * px / mathfont::kUpem;
+      const double fH =
+          (double)(mathfont::kAscender + mathfont::kDescender) * px / mathfont::kUpem;
+      out += "<span class=\"tsr-mg\" style=\"left:";
+      fmtPx(out, suToPx(x));
+      out += ";top:";
+      fmtPx(out, suToPx(base) - fA);
+      out += ";font-size:";
+      fmtPx(out, px);
+      out += ";line-height:";
+      fmtPx(out, fH);
+      out += "\">";
+      escapeHtml(out, strs.get(b->text));
+      out += "</span>";
+      return;
+    }
+    case MathKind::Rule:
+      out += "<span class=\"tsr-mr\" style=\"left:";
+      fmtPx(out, suToPx(x));
+      out += ";top:";
+      fmtPx(out, suToPx(base - b->asc));
+      out += ";width:";
+      fmtPx(out, suToPx(b->w));
+      out += ";height:";
+      fmtPx(out, suToPx(b->asc + b->desc));
+      out += "\"></span>";
+      return;
+    case MathKind::Spacer:
+      return;
+    case MathKind::HBox:
+      for (const MathKid& k : b->kids)
+        mathLeaves(out, k.box, strs, x + k.dx, base - k.dy);
+      return;
+  }
+}
+
+// One formula as an inline box (§8): width/height from the box, the baseline
+// pinned with vertical-align (inline) or an explicit top offset (display).
+// data-syn="math" + data-src carry the copy contract (§9.3: source text).
+static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
+                     bool display, const Interner& strs, Span span,
+                     const std::string& posStyle) {
+  out += "<span class=\"tsr-math\" data-syn=\"math\" data-src=\"";
+  out += display ? "$ " : "$";
+  escapeHtml(out, strs.get(srcRef));
+  out += display ? " $" : "$";
+  out += "\"";
+  if (!span.empty()) appendf(out, " data-s=\"%u\" data-e=\"%u\"", span.start, span.end);
+  out += " style=\"width:";
+  fmtPx(out, suToPx(mb->w));
+  out += ";height:";
+  fmtPx(out, suToPx(mb->asc + mb->desc));
+  if (!posStyle.empty()) {
+    out += ";";
+    out += posStyle;
+  } else {
+    out += ";vertical-align:";
+    fmtPx(out, -suToPx(mb->desc));
+  }
+  out += "\">";
+  mathLeaves(out, mb, strs, 0, mb->asc);
+  out += "</span>";
+}
+
 std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult& lr,
                           const StyleTable& styles, const Interner& strs,
                           const Config& cfg) {
@@ -116,6 +191,36 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         out += ";width:";
         fmtPx(out, suToPx(l.width));
         out += "\"></div>\n";
+        continue;
+      }
+      if (l.special == 4) {  // display math (§8): centred block formula
+        const FlowUnit& mu = tb.units[l.unitIdx];
+        out += "<div class=\"tsr-line\"";
+        if (mu.anchor && l.unitIdx != lastAnchored) {
+          lastAnchored = l.unitIdx;
+          out += " id=\"tsr-";
+          escapeHtml(out, strs.get(mu.anchor));
+          out += "\"";
+        }
+        if (!l.srcSpan.empty())
+          appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start, l.srcSpan.end);
+        out += " data-ragged=\"1\" style=\"top:";
+        fmtPx(out, suToPx(l.y));
+        out += ";left:";
+        fmtPx(out, suToPx(l.left));
+        out += ";width:";
+        fmtPx(out, suToPx(l.width));
+        out += "\">";
+        StrRef srcRef = 0;
+        if (mu.src)
+          for (const ArgVal& a : mu.src->args)
+            if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+        Su boxH = mu.mathBox->asc + mu.mathBox->desc;
+        Su adv = suRoundPx(cfg.lineHeight * cfg.baseSizePx);
+        std::string pos = "position:absolute;left:0;top:";
+        fmtPx(pos, boxH < adv ? suToPx(adv - boxH) / 2.0 : 0.0);
+        mathSpan(out, mu.mathBox, srcRef, /*display=*/true, strs, {}, pos);
+        out += "</div>\n";
         continue;
       }
       out += "<div class=\"tsr-line\"";
@@ -205,6 +310,12 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
       };
       while (i < l.blockEnd) {
         const LinebreakBlock& b = bl[i];
+        if (b.math) {  // inline formula: one box, baseline via vertical-align
+          mathSpan(out, b.math, b.text, /*display=*/false, strs, b.span,
+                   std::string());
+          i++;
+          continue;
+        }
         // final hyphen glyph
         if (b.isHyphen()) {
           if (i == l.blockEnd - 1 && l.endsWithHyphen) {
@@ -301,7 +412,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         StrRef url = b.linkUrl;
         u32 j = i;
         while (j < l.blockEnd && bl[j].style == st && bl[j].linkUrl == url &&
-               !bl[j].isHyphen() && !bl[j].isCjkChar() &&
+               !bl[j].isHyphen() && !bl[j].isCjkChar() && !bl[j].math &&
                !bl[j].isPunctGlyph() && !(bl[j].flags & (BF_INDENT | BF_BOUND)) &&
                !(bl[j].flags & BF_PUNCT_SP))
           j++;

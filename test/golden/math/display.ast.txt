@@ -1,0 +1,11 @@
+doc @[0,152)
+  para @[0,24)
+    text @[0,24) str="黎曼级数判别法："
+  para @[26,63)
+    math @[26,63) display=1 src="sum_(n=1)^oo 1/n^s < oo <=> s > 1"
+  para @[65,107)
+    text @[65,86) str="因此调和级数在 "
+    math @[87,94) display=0 src="s = 1"
+    text @[95,107) str=" 处发散。"
+  para @[109,151)
+    math @[109,151) display=1 src="f'(x) = lim_(h -> 0) (f(x+h) - f(x))/h"

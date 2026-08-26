@@ -2,6 +2,7 @@
 // M2: Latin words + spaces + hyphen points, links, inline/block code,
 // headings (size-composed styles), list markers, quote indents, rules.
 #pragma once
+#include "../math/math.h"
 #include "../measure/measure.h"
 
 namespace tsr {
@@ -33,6 +34,9 @@ struct LinebreakBlock {
   // gap width = m(trigram) - m(prevCh) - m(nextCh); 0 = no correction.
   StrRef ctxTrigram = 0, ctxPrev = 0, ctxNext = 0;
   bool widthResolved = false;
+  // inline formula (math-design.md §8): width DEFINED by the box, never
+  // measured; layout takes the line's vertical extents from the box
+  const MathBox* math = nullptr;
   Span span;
   bool isSpace() const { return flags & BF_SPACE; }
   bool isHyphen() const { return flags & BF_HYPHEN; }
@@ -52,7 +56,7 @@ struct TableCell {
 };
 
 struct FlowUnit {
-  enum class K : u8 { Text, Code, Rule, Raw, Table } kind = K::Text;
+  enum class K : u8 { Text, Code, Rule, Raw, Table, Math } kind = K::Text;
   const ContentNode* src = nullptr;
   Su indent = 0;
   bool tightAbove = false;  // list-item start: reduced inter-unit gap
@@ -64,6 +68,7 @@ struct FlowUnit {
   std::vector<StrRef> codeLines;
   StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup
   double rawHpx = 0;    // Raw: declared height (px)
+  const MathBox* mathBox = nullptr;  // Math: display formula
   u32 tCols = 0;               // Table: column count
   std::vector<u8> tAligns;     // Table: per-column 'l'/'c'/'r'
   std::vector<TableCell> cells;  // Table: row-major cells
@@ -79,8 +84,9 @@ struct TopBlock {
   std::vector<FlowUnit> units;
 };
 
-std::vector<TopBlock> emitDoc(const ContentTree& tree, Interner& strs,
-                              StyleTable& styles, const Config& cfg);
+std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena,
+                              Interner& strs, StyleTable& styles,
+                              const Config& cfg, DiagSink& diags);
 
 // Fills widths from the store; returns what is still missing (deduped).
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
@@ -89,5 +95,6 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
 std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
                        const StyleTable& styles);
 std::string dumpBreaks(const std::vector<TopBlock>& tops);
+std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& strs);
 
 }  // namespace tsr

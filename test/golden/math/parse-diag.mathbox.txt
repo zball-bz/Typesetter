@@ -1,0 +1,2 @@
+inline pid=0 "x^^2"
+glyph "x^^2" Ord w=2072 asc=753 desc=12 px=16

@@ -35,14 +35,27 @@ export const TSR_CSS = `
 .tsr-sqL { margin-left: -0.5em; }   /* punct half squeezed at line start / pair */
 .tsr-sqR { margin-right: -0.5em; }  /* punct half squeezed at line end / pair */
 .tsr-cjk.tsr-i { font-style: normal; text-emphasis: filled dot; text-emphasis-position: under right; }
+/* math (math-design.md §8): one inline box per formula, absolutely
+   positioned glyph runs in the bundled font; rules are painted boxes */
+.tsr-math { position: relative; display: inline-block; }
+.tsr-math .tsr-mg { position: absolute; white-space: pre;
+                    font-family: 'Euler Math', 'STIX Two Math', serif; }
+.tsr-math .tsr-mr { position: absolute; background: currentColor; }
 `;
+
+// Bundled math font: metrics are precompiled (engine/gen/euler_math.h), so
+// layout never waits on this file — only paint does (font-display: block).
+export const TSR_MATH_FONT_URL =
+  new URL('../../../fonts/Euler-Math.otf', import.meta.url).href;
 
 let cssInjected = false;
 function ensureCss() {
   if (cssInjected) return;
   const style = document.createElement('style');
   style.dataset.tsr = '1';
-  style.textContent = TSR_CSS;
+  style.textContent = TSR_CSS +
+    `\n@font-face { font-family: 'Euler Math'; src: url('${TSR_MATH_FONT_URL}')` +
+    ` format('opentype'); font-display: block; }`;
   document.head.appendChild(style);
   cssInjected = true;
 }

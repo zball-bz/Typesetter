@@ -12,6 +12,10 @@ export function contentTextFromRange(range, root) {
     if (!range.intersectsNode(line)) continue;
     let lineText = '';
     for (const run of line.children) {
+      if (run.dataset.syn === 'math') {  // §9.3 extension: formulas copy as source
+        if (range.intersectsNode(run)) lineText += run.dataset.src ?? '';
+        continue;
+      }
       if (run.dataset.syn !== undefined) continue; // synthetic: skip
       for (const tn of run.childNodes) {
         if (tn.nodeType !== Node.TEXT_NODE) continue;

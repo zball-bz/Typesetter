@@ -1,0 +1,4 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="117">勾股定理 <code class="tsr-mathsrc">$x^2 + y^2 = z^2$</code> 对一切直角三角形成立；调和平均 <code class="tsr-mathsrc">$2/(1/a + 1/b)$</code> 不超过几何平均。</p>
+<p data-pid="1" data-s="119" data-e="202">Euler&#39;s identity links <code class="tsr-mathsrc">$e^(i pi) + 1 = 0$</code> with <code class="tsr-mathsrc">$phi = (1 + 5^(1/2))/2$</code> in one line.</p>
+</div>

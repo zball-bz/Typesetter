@@ -52,7 +52,7 @@ struct Doc {
 
   Status typeset() {
     if (!emitted) {
-      tops = emitDoc(tree, strs, styles, cfg);
+      tops = emitDoc(tree, arena, strs, styles, cfg, diags);
       emitted = true;
     }
     MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg);

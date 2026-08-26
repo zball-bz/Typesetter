@@ -7,6 +7,8 @@ namespace tsr {
 namespace {
 
 struct Emitter {
+  Arena& arena;
+  DiagSink& diags;
   Interner& strs;
   StyleTable& styles;
   const Config& cfg;
@@ -86,6 +88,27 @@ struct Emitter {
         ICtx c2 = ctx;
         c2.addBits |= CLS_CODE;
         emitText(&tmp, u, c2);
+        return;
+      }
+      case Kind::mathinline: {
+        StrRef srcRef = 0;
+        for (const ArgVal& a : n->args)
+          if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+        StyleId st = compose(n->style, ctx.addBits, ctx.mul);
+        MathBox* mb = layoutMathFormula(strs.get(srcRef), /*display=*/false,
+                                        fontPx(st), arena, strs, diags, n->span);
+        LinebreakBlock b;
+        b.breakPenalty = 0;  // CJK-context break after a formula is legal
+        b.style = st;
+        b.text = srcRef;
+        b.linkUrl = ctx.url;
+        b.flags = ctx.addFlags;
+        b.span = n->span;
+        b.math = mb;
+        b.width = mb->w;
+        b.rawPx = suToPx(mb->w);
+        b.widthResolved = true;
+        u.blocks.push_back(b);
         return;
       }
       case Kind::comment:
@@ -493,6 +516,23 @@ struct Emitter {
         tb.units.push_back(std::move(u));
         return;
       }
+      case Kind::mathblock: {
+        FlowUnit u;
+        u.kind = FlowUnit::K::Math;
+        u.src = n;
+        u.indent = indent;
+        u.ragged = true;
+        u.anchor = takeAnchor();
+        StrRef srcRef = 0;
+        for (const ArgVal& a : n->args) {
+          if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) u.anchor = a.ref;
+        }
+        u.mathBox = layoutMathFormula(strs.get(srcRef), /*display=*/true,
+                                      fontPx(n->style), arena, strs, diags, n->span);
+        tb.units.push_back(std::move(u));
+        return;
+      }
       case Kind::error: {
         FlowUnit u;
         u.src = n;
@@ -548,7 +588,7 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
   };
   auto isWord = [](const LinebreakBlock& b) {
     return !b.isSpace() && !b.isHyphen() && !b.isSynthetic() && !b.isCjkChar() &&
-           !b.isPunctGlyph() && b.text != 0;
+           !b.isPunctGlyph() && !b.math && b.text != 0;
   };
   auto tag = [&](std::vector<LinebreakBlock>& blocks) {
     for (size_t i = 0; i < blocks.size(); i++) {
@@ -572,11 +612,13 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
   }
 }
 
-std::vector<TopBlock> emitDoc(const ContentTree& tree, Interner& strs,
-                              StyleTable& styles, const Config& cfg) {
+std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena,
+                              Interner& strs, StyleTable& styles,
+                              const Config& cfg, DiagSink& diags) {
   std::vector<TopBlock> tops;
   if (!tree.root) return tops;
-  Emitter e{strs, styles, cfg, strs.intern(" "), strs.intern("-"), strs.intern("\xE2\x80\xA2")};
+  Emitter e{arena, diags, strs, styles, cfg,
+            strs.intern(" "), strs.intern("-"), strs.intern("\xE2\x80\xA2")};
   u32 pid = 0;
   for (const ContentNode* child : tree.root->kids) {
     TopBlock tb;
@@ -677,7 +719,8 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
       const char* k = u.kind == FlowUnit::K::Text ? "text"
                       : u.kind == FlowUnit::K::Code ? "code"
                       : u.kind == FlowUnit::K::Raw ? "raw"
-                      : u.kind == FlowUnit::K::Table ? "table" : "rule";
+                      : u.kind == FlowUnit::K::Table ? "table"
+                      : u.kind == FlowUnit::K::Math ? "math" : "rule";
       appendf(out, " unit %s indent=%dsu", k, u.indent);
       if (u.anchor) {
         out += " anchor=\"";
@@ -691,10 +734,19 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
       }
       if (u.kind == FlowUnit::K::Code) appendf(out, " lines=%zu", u.codeLines.size());
       if (u.kind == FlowUnit::K::Table) appendf(out, " cols=%u cells=%zu", u.tCols, u.cells.size());
+      if (u.kind == FlowUnit::K::Math && u.mathBox)
+        appendf(out, " w=%dsu asc=%dsu desc=%dsu", u.mathBox->w, u.mathBox->asc,
+                u.mathBox->desc);
       out += "\n";
       auto dumpBlock = [&](const LinebreakBlock& b) {
         out += "  ";
-        if (b.flags & BF_INDENT) appendf(out, "indent w=%dsu", b.width);
+        if (b.math) {
+          out += "math \"";
+          appendEscaped(out, strs.get(b.text));
+          appendf(out, "\" w=%dsu asc=%dsu desc=%dsu", b.width, b.math->asc,
+                  b.math->desc);
+        }
+        else if (b.flags & BF_INDENT) appendf(out, "indent w=%dsu", b.width);
         else if (b.flags & BF_BOUND) appendf(out, "boundary w=%dsu stretch=%g", b.width, (double)b.stretchWeight);
         else if (b.flags & BF_PUNCT_SP) appendf(out, "punct-sp w=%dsu", b.width);
         else if (b.isPunctGlyph()) {
@@ -742,6 +794,26 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
       for (size_t ci = 0; ci < u.cells.size(); ci++) {
         appendf(out, "  cell %zu\n", ci);
         for (const LinebreakBlock& b : u.cells[ci].blocks) dumpBlock(b);
+      }
+    }
+  }
+  return out;
+}
+
+std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& strs) {
+  std::string out;
+  for (const TopBlock& tb : tops) {
+    for (const FlowUnit& u : tb.units) {
+      if (u.kind == FlowUnit::K::Math && u.mathBox) {
+        appendf(out, "display pid=%u\n", tb.pid);
+        out += dumpMathBox(u.mathBox, strs);
+      }
+      for (const LinebreakBlock& b : u.blocks) {
+        if (!b.math) continue;
+        appendf(out, "inline pid=%u \"", tb.pid);
+        appendEscaped(out, strs.get(b.text));
+        out += "\"\n";
+        out += dumpMathBox(b.math, strs);
       }
     }
   }

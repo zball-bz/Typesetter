@@ -91,6 +91,7 @@ int main(int argc, char** argv) {
       if (stage == "blocks") out = dumpBlocks(doc.tops, doc.strs, doc.styles);
       else if (stage == "breaks") out = dumpBreaks(doc.tops);
       else if (stage == "layout") out = dumpLayout(doc.layout);
+      else if (stage == "mathbox") out = dumpMathBoxes(doc.tops, doc.strs);
       else if (stage == "html") out = doc.render();
       else {
         fprintf(stderr, "unknown stage %s\n", stage.c_str());

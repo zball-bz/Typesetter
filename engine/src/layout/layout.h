@@ -16,7 +16,7 @@ struct LineBox {
   i32 cjkDeltaSu = 0;
   u8 join = 0;                       // 0 last (no attr), 1 space, 2 none (hyphen)
   bool endsWithHyphen = false;
-  u8 special = 0;                    // 0 text, 1 rule, 2 code line
+  u8 special = 0;                    // 0 text, 1 rule, 2 code, 3 raw, 4 math
   StrRef codeText = 0;               // special==2
   StrRef marker = 0;                 // list marker on the unit's first line
   StyleId markerStyle = 0;

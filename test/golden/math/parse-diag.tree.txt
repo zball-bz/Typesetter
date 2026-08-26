@@ -1,0 +1,5 @@
+doc @[0,59) [base]
+  para @[0,59) [base]
+    text @[0,9) [base] str="坏公式 "
+    mathinline @[10,16) [base] src="x^^2"
+    text @[17,59) [base] str=" 会退化为原样文本并携带诊断。"

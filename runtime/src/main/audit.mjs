@@ -17,6 +17,11 @@ export function auditTypeset(root) {
     const rects = [];
     for (const el of line.children) {
       if (getComputedStyle(el).position === 'absolute') continue;
+      if (el.dataset.syn === 'math') {  // one engine-defined fragment
+        const r = el.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) rects.push(r);
+        continue;
+      }
       const range = document.createRange();
       range.selectNodeContents(el);
       for (const r of range.getClientRects()) {

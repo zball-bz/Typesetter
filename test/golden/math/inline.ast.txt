@@ -1,0 +1,13 @@
+doc @[0,203)
+  para @[0,117)
+    text @[0,12) str="勾股定理 "
+    math @[13,30) display=0 src="x^2 + y^2 = z^2"
+    text @[31,76) str=" 对一切直角三角形成立；调和平均 "
+    math @[77,92) display=0 src="2/(1/a + 1/b)"
+    text @[93,117) str=" 不超过几何平均。"
+  para @[119,202)
+    text @[119,141) str="Euler's identity links "
+    math @[142,160) display=0 src="e^(i pi) + 1 = 0"
+    text @[161,165) str=" with "
+    math @[166,189) display=0 src="phi = (1 + 5^(1/2))/2"
+    text @[190,202) str=" in one line."

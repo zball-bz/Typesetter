@@ -68,6 +68,24 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         continue;
       }
 
+      if (u.kind == FlowUnit::K::Math && u.mathBox) {
+        // display formula: centred on the measure, advance = box extents
+        const MathBox* mb = u.mathBox;
+        LineBox line;
+        line.unitIdx = ui;
+        line.special = 4;
+        Su shift = (lineWidth - mb->w) / 2;
+        if (shift < 0) shift = 0;
+        line.left = u.indent + shift;
+        line.width = mb->w;
+        if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
+        line.y = (Su)py;
+        Su adv = mb->asc + mb->desc;
+        if (adv < baseLeading) adv = baseLeading;
+        py += adv;
+        fr.lines.push_back(line);
+        continue;
+      }
       if (u.kind == FlowUnit::K::Table && u.tCols > 0) {
         // three-line-flavoured grid: full-width rules above, between, and
         // below rows; equal columns; ragged cells aligned per column
@@ -111,6 +129,10 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
                   const VMet& v = metrics.vmet(b.style);
                   if (v.ascent > maxAsc) maxAsc = v.ascent;
                   if (v.descent > maxDesc) maxDesc = v.descent;
+                }
+                if (b.math) {
+                  if (b.math->asc > maxAsc) maxAsc = b.math->asc;
+                  if (b.math->desc > maxDesc) maxDesc = b.math->desc;
                 }
                 if (!b.span.empty()) {
                   if (!spanSet) { span = b.span; spanSet = true; }
@@ -187,6 +209,10 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             const VMet& v = metrics.vmet(b.style);
             if (v.ascent > maxAsc) maxAsc = v.ascent;
             if (v.descent > maxDesc) maxDesc = v.descent;
+          }
+          if (b.math) {
+            if (b.math->asc > maxAsc) maxAsc = b.math->asc;
+            if (b.math->desc > maxDesc) maxDesc = b.math->desc;
           }
           if (!b.span.empty()) {
             if (!spanSet) { span = b.span; spanSet = true; }
@@ -266,6 +292,10 @@ std::string dumpLayout(const LayoutResult& lr) {
       }
       if (l.special == 3) {
         appendf(out, "  L%zu raw y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
+        continue;
+      }
+      if (l.special == 4) {
+        appendf(out, "  L%zu math y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
         continue;
       }
       if (l.cellIdx >= 0) {

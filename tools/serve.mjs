@@ -16,6 +16,8 @@ const MIME = {
   '.css': 'text/css',
   '.json': 'application/json',
   '.tsm': 'text/plain; charset=utf-8',
+  '.otf': 'font/otf',
+  '.woff2': 'font/woff2',
 };
 
 createServer(async (req, res) => {

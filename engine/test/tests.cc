@@ -295,6 +295,9 @@ int main(int argc, char** argv) {
                       label + ":blocks");
         goldenCompare(g("breaks"), dumpBreaks(doc.tops), update, label + ":breaks");
         goldenCompare(g("layout"), dumpLayout(doc.layout), update, label + ":layout");
+        std::string mbx = dumpMathBoxes(doc.tops, doc.strs);
+        if (!mbx.empty() || fs::exists(g("mathbox")))
+          goldenCompare(g("mathbox"), mbx, update, label + ":mathbox");
         goldenCompare(g("html"), doc.render(), update, label + ":html");
       }
     }
