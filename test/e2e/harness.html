@@ -31,6 +31,9 @@ window.__tsr = {
     const r = await handle.relayout(widthPx);
     return { heightPx: r.heightPx, upgrades: r.upgrades.length };
   },
+  async paginate(opts) {
+    return await handle.paginate(opts);
+  },
   copyText() {
     const range = document.createRange();
     range.selectNodeContents(out);

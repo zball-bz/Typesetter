@@ -459,6 +459,10 @@ int main(int argc, char** argv) {
         if (!mbx.empty() || fs::exists(g("mathbox")))
           goldenCompare(g("mathbox"), mbx, update, label + ":mathbox");
         goldenCompare(g("html"), doc.render(), update, label + ":html");
+        // *paged* fixtures additionally golden the print pagination
+        // (pages-design.md §2) at 240px sheets
+        if (rel.stem().string().find("paged") != std::string::npos)
+          goldenCompare(g("paged"), doc.renderPaged(240), update, label + ":paged");
       }
     }
   }

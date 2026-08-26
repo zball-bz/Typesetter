@@ -355,6 +355,11 @@ struct Doc {
 
   std::string render() { return renderTypeset(tops, layout, styles, strs, cfg); }
 
+  // paged rendering for print (pages-design.md §2); needs a finished layout
+  std::string renderPaged(double pageHeightPx) {
+    return renderPages(tops, layout, styles, strs, cfg, pageHeightPx);
+  }
+
   // needs only the post-resolve tree — valid before any measurement
   std::string renderFallback() { return renderSemantic(tree, strs); }
 

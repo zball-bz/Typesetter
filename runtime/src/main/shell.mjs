@@ -218,6 +218,56 @@ export function createEngine(opts = {}) {
           onUpgrade?.(ups);
           return { html: r.html, diags: r.diags, heightPx: r.heightPx, upgrades: ups };
         },
+        // P1 (pages-design.md §2): sheets at the page measure; the live
+        // document is restored to its screen width before this resolves
+        async paginate({ pageWidthPx = 666, pageHeightPx = 995 } = {}) {
+          const rid = nextId++;
+          const r = await request({ type: 'paginate', id: rid, docId: id,
+            pageWidthPx, pageHeightPx, restoreWidthPx: width });
+          return { html: r.html, diags: r.diags };
+        },
+        // print-to-PDF = the browser's print engine over our paged layout:
+        // hidden iframe, @page margins, break-after per sheet
+        async print({ pageWidthPx = 666, pageHeightPx = 995, marginPx = 64,
+                      title } = {}) {
+          const { html } = await handle.paginate({ pageWidthPx, pageHeightPx });
+          const iframe = document.createElement('iframe');
+          iframe.style.cssText =
+            'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+          document.body.appendChild(iframe);
+          const d = iframe.contentDocument;
+          let fontCss = `@font-face { font-family: 'Euler Math'; src: url('${TSR_MATH_FONT_URL}') format('woff2'); font-display: block; }`;
+          for (const f of fonts ?? []) {
+            fontCss += `@font-face { font-family: ${JSON.stringify(f.family)};` +
+              ` src: url(${JSON.stringify(String(f.src))});` +
+              ` font-weight: ${f.weight ?? 'normal'}; font-style: ${f.style ?? 'normal'};` +
+              ` font-display: block; }`;
+          }
+          const pageCss =
+            `@page { size: A4; margin: ${marginPx}px }` +
+            ` html, body { margin: 0 }` +
+            ` .tsr-sheet { page-break-after: always; break-after: page; }`;
+          d.open();
+          d.write('<!doctype html><html><head><meta charset="utf-8"><title>' +
+            String(title ?? document.title).replace(/[<&]/g, '') +
+            '</title><style>' + TSR_CSS + fontCss + pageCss + '</style></head><body></body></html>');
+          d.close();
+          const wrap = d.createElement('div');
+          wrap.style.fontFamily = fontFamily;
+          wrap.style.fontSize = `${baseSizePx}px`;
+          wrap.style.setProperty('--tsr-cjk-font', cjkFontFamily);
+          if (lang) wrap.setAttribute('lang', lang);
+          wrap.innerHTML = html;
+          d.body.appendChild(wrap);
+          try { await d.fonts.ready; } catch { /* print with what settled */ }
+          const done = new Promise((r) =>
+            iframe.contentWindow.addEventListener('afterprint', r, { once: true }));
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+          await Promise.race([done, new Promise((r) => setTimeout(r, 60000))]);
+          iframe.remove();
+          return { html };
+        },
       };
       return handle;
     },

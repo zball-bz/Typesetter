@@ -1,0 +1,9 @@
+doc @[0,701)
+  heading1 @[0,14) label="top"
+  para @[22,304) lines=1
+  heading2 @[306,321)
+  para @[323,383) lines=1
+  fence @[385,494) lang="json" lines=5
+  region @[496,611) name="figure"
+    para @[572,602) lines=1
+  para @[613,700) lines=1

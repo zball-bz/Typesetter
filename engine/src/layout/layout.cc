@@ -76,6 +76,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
                 }
               cl.join = joinSpace ? 1 : 2;
             }
+            cl.height = baseLeading;
             cy += baseLeading;
             fr.lines.push_back(cl);
           }
@@ -90,6 +91,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         line.special = 1;
         line.left = u.indent;
         line.width = lineWidth;
+        line.height = baseLeading;  // band extent (pagination); y is midline
         line.y = (Su)(py + baseLeading / 2);
         py += baseLeading;
         fr.lines.push_back(line);
@@ -101,6 +103,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         line.special = 3;
         line.left = u.indent;
         line.width = lineWidth;
+        line.height = suRoundPx(u.rawHpx);
         line.y = (Su)py;
         py += suRoundPx(u.rawHpx);
         fr.lines.push_back(line);
@@ -349,6 +352,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               sl.y = (Su)cy;
               Su sadv = baseLeading;
               if (maxAsc + maxDesc > sadv) sadv = maxAsc + maxDesc;
+              sl.height = sadv;
               cy += sadv;
               fr.lines.push_back(sl);
             }
@@ -389,6 +393,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         line.y = (Su)py;
         Su adv = mb->asc + mb->desc;
         if (adv < baseLeading) adv = baseLeading;
+        line.height = adv;
         py += adv;
         fr.lines.push_back(line);
         continue;
@@ -471,6 +476,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               line.y = (Su)cy;
               Su advance = baseLeading;
               if (maxAsc + maxDesc > advance) advance = maxAsc + maxDesc;
+              line.height = advance;
               cy += advance;
               fr.lines.push_back(line);
             }
@@ -583,6 +589,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
 
         Su advance = baseLeading;
         if (maxAsc + maxDesc > advance) advance = maxAsc + maxDesc;
+        line.height = advance;
         line.y = (Su)py;
         py += advance;
         fr.lines.push_back(line);

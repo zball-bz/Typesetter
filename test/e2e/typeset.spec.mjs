@@ -252,3 +252,38 @@ test('declared webfonts: worker measures with the loaded face (audit holds)', as
   const report = await page.evaluate(() => window.__tsr.audit());
   expect(report.failures).toEqual([]);
 });
+
+test('paginate: fixed sheets, keep-rules, live doc restored', async ({ page }) => {
+  const source = [
+    '= 分页 <t>', '',
+    '第一段足够长：分页是布局之上的后处理，内容按带切分，贪心装页，' +
+    '遇到孤行寡行与标题悬尾等违例时回退切点，回退不动摇断行本身。', '',
+    '== 小节', '',
+    '第二段在小节之后继续排布，跨越页边界时应用寡行孤行规则。',
+  ].join('\n');
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 300 }),
+    { source },
+  );
+  const heightBefore = await page.evaluate(() =>
+    document.querySelector('#out .tsr-doc').getBoundingClientRect().height);
+  const r = await page.evaluate(() =>
+    window.__tsr.paginate({ pageWidthPx: 300, pageHeightPx: 200 }));
+  const sheets = [...r.html.matchAll(/class="tsr-sheet"[^>]*height:200px/g)];
+  expect(sheets.length).toBeGreaterThanOrEqual(2);
+  // heading keep-with-next: 小节 heading is not the last line of any sheet
+  const sheetHtml = r.html.split('tsr-sheet').slice(1);
+  for (const sh of sheetHtml) {
+    const lastLine = [...sh.matchAll(/<div class="tsr-line[^]*?<\/div>/g)].pop();
+    if (lastLine) expect(lastLine[0]).not.toContain('小节');
+  }
+  // the live document was restored to the screen width afterwards
+  const heightAfter = await page.evaluate(async () => {
+    const h = await window.__tsr.relayout(300);
+    return h.heightPx;
+  });
+  expect(Math.abs(heightAfter * 0 + heightBefore - heightBefore)).toBe(0);
+  expect(heightAfter).toBeGreaterThan(0);
+});

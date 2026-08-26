@@ -1,5 +1,7 @@
 #include "typeset_html.h"
 
+#include <algorithm>
+
 #include "../math/mathfont.h"
 
 namespace tsr {
@@ -161,27 +163,18 @@ static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
   out += "</span>";
 }
 
-std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult& lr,
-                          const StyleTable& styles, const Interner& strs,
-                          const Config& cfg) {
-  std::string out;
-  out += "<div class=\"tsr-doc\">\n";
-  for (size_t p = 0; p < lr.paras.size(); p++) {
-    const ParaFrame& fr = lr.paras[p];
-    const TopBlock& tb = tops[p];
-    u32 lastAnchored = 0xFFFFFFFFu;
-    appendf(out, "<div class=\"tsr-para\" data-pid=\"%u\" style=\"position:relative;height:", fr.pid);
-    fmtPx(out, suToPx(fr.h));
-    if (p + 1 < lr.paras.size()) {
-      out += ";margin-bottom:";
-      fmtPx(out, cfg.paraSpacingEm * cfg.baseSizePx);
-    }
-    out += "\">\n";
-    for (const LineBox& l : fr.lines) {
+// One line box (any kind) at an optional vertical rebase — shared by the
+// flowing serializer (yShift 0, lines inside their para frame) and the
+// paged serializer (yShift rebases into the sheet).
+static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame& fr,
+                          size_t li, const StyleTable& styles, const Interner& strs,
+                          const Config& cfg, u32& lastAnchored, Su yShift) {
+  const LineBox& l = fr.lines[li];
+  const Su ly = (Su)(l.y + yShift);
       if (l.special == 3) {  // raw passthrough (trusted, handler-declared)
         const FlowUnit& ru = tb.units[l.unitIdx];
         out += "<div class=\"tsr-raw\" style=\"top:";
-        fmtPx(out, suToPx(l.y));
+        fmtPx(out, suToPx(ly));
         out += ";left:";
         fmtPx(out, suToPx(l.left));
         out += ";width:";
@@ -191,17 +184,17 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         out += "\">";
         out += strs.get(ru.rawHtml);  // the ONE unescaped path (§9)
         out += "</div>\n";
-        continue;
+        return;
       }
       if (l.special == 1) {
         out += "<div class=\"tsr-rule\" style=\"top:";
-        fmtPx(out, suToPx(l.y));
+        fmtPx(out, suToPx(ly));
         out += ";left:";
         fmtPx(out, suToPx(l.left));
         out += ";width:";
         fmtPx(out, suToPx(l.width));
         out += "\"></div>\n";
-        continue;
+        return;
       }
       if (l.special == 4) {  // display math (§8): centred block formula
         const FlowUnit& mu = tb.units[l.unitIdx];
@@ -215,7 +208,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         if (!l.srcSpan.empty())
           appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start, l.srcSpan.end);
         out += " data-ragged=\"1\" style=\"top:";
-        fmtPx(out, suToPx(l.y));
+        fmtPx(out, suToPx(ly));
         out += ";left:";
         fmtPx(out, suToPx(l.left));
         out += ";width:";
@@ -246,12 +239,12 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         fmtPx(pos, boxH < adv ? suToPx(adv - boxH) / 2.0 : 0.0);
         mathSpan(out, mu.mathBox, srcRef, /*display=*/true, strs, {}, pos);
         out += "</div>\n";
-        continue;
+        return;
       }
       if (l.special == 5) {  // figure image / placeholder (figure-design §5)
         const FlowUnit& iu = tb.units[l.unitIdx];
         std::string pos = "top:";
-        fmtPx(pos, suToPx(l.y));
+        fmtPx(pos, suToPx(ly));
         pos += ";left:";
         fmtPx(pos, suToPx(l.left));
         pos += ";width:";
@@ -290,7 +283,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
           if (iu.imgAlt) escapeHtml(out, strs.get(iu.imgAlt));
           out += "</div>\n";
         }
-        continue;
+        return;
       }
       out += "<div class=\"tsr-line";
       if (l.special == 2 && l.codeHl) out += " tsr-hlline";
@@ -299,7 +292,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         // code rows are ragged by nature (the audit's justify checks do not
         // apply); a wrapped row additionally rejoins its continuation (§9.3)
         out += " data-ragged=\"1\"";
-        size_t self = (size_t)(&l - fr.lines.data());
+        size_t self = li;
         if (self + 1 < fr.lines.size() && fr.lines[self + 1].special == 2 &&
             fr.lines[self + 1].codeCont)
           out += " data-join=\"none\"";
@@ -320,7 +313,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
       if (tb.units[l.unitIdx].ragged) out += " data-ragged=\"1\"";
       if (l.cellIdx >= 0) out += " data-cell=\"1\"";
       out += " style=\"top:";
-      fmtPx(out, suToPx(l.y));
+      fmtPx(out, suToPx(ly));
       out += ";left:";
       fmtPx(out, suToPx(l.left));
       out += ";width:";
@@ -423,7 +416,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
           }
         }
         out += "</div>\n";
-        continue;
+        return;
       }
 
       const FlowUnit& u = tb.units[l.unitIdx];
@@ -577,6 +570,154 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         i = j;
       }
       out += "</div>\n";
+}
+
+std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult& lr,
+                          const StyleTable& styles, const Interner& strs,
+                          const Config& cfg) {
+  std::string out;
+  out += "<div class=\"tsr-doc\">\n";
+  for (size_t p = 0; p < lr.paras.size(); p++) {
+    const ParaFrame& fr = lr.paras[p];
+    const TopBlock& tb = tops[p];
+    u32 lastAnchored = 0xFFFFFFFFu;
+    appendf(out, "<div class=\"tsr-para\" data-pid=\"%u\" style=\"position:relative;height:", fr.pid);
+    fmtPx(out, suToPx(fr.h));
+    if (p + 1 < lr.paras.size()) {
+      out += ";margin-bottom:";
+      fmtPx(out, cfg.paraSpacingEm * cfg.baseSizePx);
+    }
+    out += "\">\n";
+    for (size_t li = 0; li < fr.lines.size(); li++)
+      renderLineBox(out, tb, fr, li, styles, strs, cfg, lastAnchored, 0);
+    out += "</div>\n";
+  }
+  out += "</div>\n";
+  return out;
+}
+
+// Paged serializer (pages-design.md §2): a post-pass over the finished
+// layout — no re-break, no new layout mode. Lines are grouped into atomic
+// BANDS, bands are cut greedily into sheets with keep-rules, and each band
+// renders via renderLineBox rebased into its sheet.
+std::string renderPages(const std::vector<TopBlock>& tops, const LayoutResult& lr,
+                        const StyleTable& styles, const Interner& strs,
+                        const Config& cfg, double pageHeightPx) {
+  struct Band {
+    size_t para;
+    u32 lo, hi;          // [lo, hi) into fr.lines
+    i64 top, bot;        // absolute su
+    bool stickAfter = false;  // heading / image: keep with what follows
+    u32 ordinal = 0, count = 0;  // text-unit line position (widow/orphan)
+  };
+  const Su H = suRoundPx(pageHeightPx);
+  std::vector<Band> bands;
+
+  for (size_t p = 0; p < lr.paras.size(); p++) {
+    const ParaFrame& fr = lr.paras[p];
+    const TopBlock& tb = tops[p];
+    // per-unit text line counts (widow/orphan bookkeeping)
+    std::vector<u32> unitLines(tb.units.size(), 0), unitSeen(tb.units.size(), 0);
+    for (const LineBox& l : fr.lines)
+      if (l.special == 0 && l.cellIdx < 0 &&
+          tb.units[l.unitIdx].kind == FlowUnit::K::Text)
+        unitLines[l.unitIdx]++;
+    size_t i = 0;
+    while (i < fr.lines.size()) {
+      const LineBox& l = fr.lines[i];
+      const FlowUnit& u = tb.units[l.unitIdx];
+      Band b;
+      b.para = p;
+      b.lo = (u32)i;
+      auto lineTop = [&](const LineBox& x) -> i64 {
+        // rules store y at their midline
+        return (i64)fr.y + x.y - (x.special == 1 ? x.height / 2 : 0);
+      };
+      b.top = lineTop(l);
+      b.bot = b.top + l.height;
+      size_t j = i + 1;
+      auto sameUnit = [&](size_t k) {
+        return k < fr.lines.size() && fr.lines[k].unitIdx == l.unitIdx;
+      };
+      if (u.kind == FlowUnit::K::Table ||
+          (u.kind == FlowUnit::K::Image && u.floatSide != 0)) {
+        // whole unit atomic (table incl. rules; float box incl. caption)
+        while (sameUnit(j)) j++;
+      } else if (u.kind == FlowUnit::K::Code) {
+        // one logical code line: its wrapped rows + zipped sidecar rows
+        u32 row = l.special == 2 ? l.codeLine : (u32)l.cellIdx;
+        while (sameUnit(j)) {
+          const LineBox& n = fr.lines[j];
+          u32 nrow = n.special == 2 ? n.codeLine : (u32)n.cellIdx;
+          if (nrow != row) break;
+          j++;
+        }
+      }
+      for (size_t k = i; k < j; k++) {
+        i64 t = lineTop(fr.lines[k]);
+        i64 bo = t + fr.lines[k].height;
+        if (t < b.top) b.top = t;
+        if (bo > b.bot) b.bot = bo;
+      }
+      b.hi = (u32)j;
+      if (u.kind == FlowUnit::K::Image && u.floatSide == 0)
+        b.stickAfter = true;  // block image keeps its caption
+      if (tb.node && tb.node->kind == Kind::heading && j >= fr.lines.size())
+        b.stickAfter = true;  // heading sticks to the next block
+      if (u.kind == FlowUnit::K::Text && l.special == 0 && l.cellIdx < 0) {
+        b.count = unitLines[l.unitIdx];
+        b.ordinal = unitSeen[l.unitIdx]++;
+      }
+      bands.push_back(b);
+      i = j;
+    }
+  }
+  std::stable_sort(bands.begin(), bands.end(),
+                   [](const Band& a, const Band& b) { return a.top < b.top; });
+
+  // greedy cuts with keep-rules; a violated cut backs up, an impossible one
+  // falls back to the greedy position (mirrors KP's hard-cut fallback)
+  std::vector<size_t> starts{0};
+  std::vector<i64> tops0{0};
+  size_t pageFirst = 0;
+  i64 S = 0;
+  auto violates = [&](size_t j) -> bool {
+    if (j == 0 || j <= pageFirst) return false;
+    if (bands[j - 1].stickAfter) return true;
+    const Band& b = bands[j];
+    if (b.count > 0 && b.ordinal > 0 &&
+        (b.ordinal < 2 || b.count - b.ordinal < 2))
+      return true;  // orphan / widow
+    return false;
+  };
+  for (size_t i = 0; i < bands.size(); i++) {
+    if (i == pageFirst) continue;
+    if (bands[i].bot - S <= (i64)H) continue;
+    size_t j = i;
+    while (j > pageFirst && violates(j)) j--;
+    if (j == pageFirst) j = i;  // oversized atom: overflow this sheet
+    starts.push_back(j);
+    tops0.push_back(bands[j].top);
+    pageFirst = j;
+    S = bands[j].top;
+  }
+
+  std::string out;
+  out += "<div class=\"tsr-doc tsr-paged\">\n";
+  for (size_t pg = 0; pg < starts.size(); pg++) {
+    size_t lo = starts[pg];
+    size_t hi = pg + 1 < starts.size() ? starts[pg + 1] : bands.size();
+    out += "<div class=\"tsr-sheet\" style=\"position:relative;overflow:hidden;height:";
+    fmtPx(out, suToPx(H));
+    out += "\">\n";
+    u32 lastAnchored = 0xFFFFFFFFu;
+    for (size_t bi = lo; bi < hi; bi++) {
+      const Band& b = bands[bi];
+      const ParaFrame& fr = lr.paras[b.para];
+      const TopBlock& tb = tops[b.para];
+      Su shift = (Su)((i64)fr.y - tops0[pg]);
+      for (u32 li = b.lo; li < b.hi; li++)
+        renderLineBox(out, tb, fr, li, styles, strs, cfg, lastAnchored, shift);
     }
     out += "</div>\n";
   }

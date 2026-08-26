@@ -194,6 +194,13 @@ TSR_EXPORT void tsr_set_width(WasmDoc* d, double widthPx) {
   d->doc.setWidth(widthPx);
 }
 
+// Paged print rendering (pages-design.md §2): requires a converged typeset
+// at the current width; sheets of pageHeightPx with keep-rules.
+TSR_EXPORT const char* tsr_render_pages(WasmDoc* d, double pageHeightPx) {
+  d->htmlOut = d->doc.renderPaged(pageHeightPx);
+  return d->htmlOut.c_str();
+}
+
 TSR_EXPORT const char* tsr_diags(WasmDoc* d) {
   d->diagOut = d->doc.dumpDiags();
   return d->diagOut.c_str();

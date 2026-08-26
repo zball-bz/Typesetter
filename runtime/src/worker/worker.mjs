@@ -154,6 +154,28 @@ async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily
   }
 }
 
+// P1 (pages-design.md §2): re-typeset at the page measure, render sheets,
+// then restore the live width (metrics persist — both loops exit fast).
+async function paginate({ id, docId, pageWidthPx, pageHeightPx, restoreWidthPx }) {
+  const M = await getMod();
+  const doc = docs.get(docId);
+  if (doc === undefined)
+    return postMessage({ type: 'error', id, message: 'paginate: doc disposed' });
+  try {
+    M._tsr_set_width(doc, pageWidthPx);
+    await measureLoop(M, doc);
+    const html = M.UTF8ToString(M._tsr_render_pages(doc, pageHeightPx));
+    const diags = M.UTF8ToString(M._tsr_diags(doc));
+    if (restoreWidthPx) {
+      M._tsr_set_width(doc, restoreWidthPx);
+      await measureLoop(M, doc);
+    }
+    postMessage({ type: 'result', id, html, diags, heightPx: 0 });
+  } catch (e) {
+    postMessage({ type: 'error', id, message: String(e?.stack || e) });
+  }
+}
+
 async function relayout({ id, docId, widthPx }) {
   const M = await getMod();
   const doc = docs.get(docId);
@@ -178,6 +200,7 @@ function dispose({ docId }) {
 onmessage = (ev) => {
   const m = ev.data;
   if (m?.type === 'typeset') typeset(m);
+  else if (m?.type === 'paginate') paginate(m);
   else if (m?.type === 'relayout') relayout(m);
   else if (m?.type === 'dispose') dispose(m);
 };

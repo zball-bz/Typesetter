@@ -1,0 +1,16 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="14" id="tsr-top">分页样例</h1>
+<p data-pid="1" data-s="22" data-e="304">分页是布局之上的后处理：内容按带切分，贪心装页，遇到孤行寡行、标题悬尾等违例时回退切点。这一段足够长，可以在窄页高下跨越页边界，从而测试寡行与孤行规则的实际效果，并让回退逻辑真正运行一次。</p>
+<h2 data-pid="2" data-s="306" data-e="321" id="tsr-h-1.1">保持规则</h2>
+<p data-pid="3" data-s="323" data-e="383">标题不落页尾；下面的代码块按逻辑行切分：</p>
+<pre data-pid="4" data-s="385" data-e="494"><code class="language-json">{
+  &quot;a&quot;: 1,
+  &quot;b&quot;: [2, 3],
+  &quot;c&quot;: &quot;long enough to wrap at the narrow measure used by the tests&quot;
+}</code></pre>
+<figure data-pid="5" data-s="496" data-e="611" id="tsr-fig-p">
+<img src="photos/x.png" alt="样图" style="max-width:100%">
+<figcaption>图 1：图与图注保持在同页。</figcaption>
+</figure>
+<p data-pid="6" data-s="613" data-e="700">尾段：越过图之后继续排布，直至文档结束，引用<a href="#tsr-fig-p">图 1</a>照常解析。</p>
+</div>
