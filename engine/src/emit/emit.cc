@@ -16,6 +16,7 @@ struct Emitter {
   const Config& cfg;
   StrRef spaceRef, hyphenRef, bulletRef;
   StrRef pendingAnchor = 0;  // labeled container (group): first unit anchors
+  int figDepth = 0;          // inside group{role:figure}: paras are captions
   StrRef takeAnchor() {
     StrRef a = pendingAnchor;
     pendingAnchor = 0;
@@ -404,11 +405,18 @@ struct Emitter {
         u.marker = marker;
         u.markerStyle = compose(n->style, 0, 1.0f);
         u.anchor = takeAnchor();
-        if (cfg.paraIndentEm > 0 && marker == 0) {  // 首行缩进 (App C: blocks, not CSS)
+        ICtx ctx;
+        if (figDepth > 0) {
+          // figure caption (figure-design.md §3): centred ragged lines,
+          // no hyphenation, never indented
+          u.ragged = true;
+          u.centered = true;
+          ctx.noHyphen = true;
+        } else if (cfg.paraIndentEm > 0 && marker == 0) {  // 首行缩进 (App C)
           double px = cfg.paraIndentEm * cfg.baseSizePx;
           pushSynthetic(u, n->style, 0, n->span, px, BF_INDENT, 0.0f, BREAK_INF, 0.0);
         }
-        inlineWalk(n, u, {});
+        inlineWalk(n, u, ctx);
         tb.units.push_back(std::move(u));
         return;
       }
@@ -628,6 +636,50 @@ struct Emitter {
         tb.units.push_back(std::move(u));
         return;
       }
+      case Kind::image: {
+        // figure-design.md §3: display box from intrinsic dims (author-
+        // declared or pull-provided) + optional scale; placeholder on an
+        // unsafe scheme or a failed load (0×0)
+        FlowUnit u;
+        u.kind = FlowUnit::K::Image;
+        u.src = n;
+        u.indent = indent;
+        u.ragged = true;
+        u.anchor = takeAnchor();
+        double iw = 0, ih = 0, scale = 0;
+        StrRef srcRef = 0, altRef = 0, sideRef = 0;
+        for (const ArgVal& a : n->args) {
+          if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+          if (a.key == ArgK::alt && a.tag == ArgTag::Str) altRef = a.ref;
+          if (a.key == ArgK::side && a.tag == ArgTag::Str) sideRef = a.ref;
+          if (a.key == ArgK::w && a.tag == ArgTag::Num) iw = a.num;
+          if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
+          if (a.key == ArgK::scale && a.tag == ArgTag::Num) scale = a.num;
+        }
+        const double measurePx = cfg.widthPx - suToPx(indent);
+        bool safe = srcRef && safeImageSrc(strs.get(srcRef));
+        if (srcRef && !safe)
+          diags.add(Sev::Warning, "image-src", n->span,
+                    "image src scheme not allowed");
+        double dw, dh;
+        if (safe && iw > 0 && ih > 0) {
+          dw = scale > 0 ? scale * measurePx : iw;
+          if (dw > measurePx) dw = measurePx;
+          if (dw < 1) dw = 1;
+          dh = dw * ih / iw;
+          u.imgSrc = srcRef;
+        } else {
+          dw = measurePx;
+          dh = measurePx / 3;
+        }
+        u.imgAlt = altRef;
+        u.imgW = suRoundPx(dw);
+        u.imgH = suRoundPx(dh);
+        std::string_view side = sideRef ? strs.get(sideRef) : std::string_view{};
+        u.floatSide = side == "left" ? 1 : side == "right" ? 2 : 0;
+        tb.units.push_back(std::move(u));
+        return;
+      }
       case Kind::mathblock: {
         FlowUnit u;
         u.kind = FlowUnit::K::Math;
@@ -660,10 +712,17 @@ struct Emitter {
       case Kind::comment:
         return;
       case Kind::group: {
-        for (const ArgVal& a : n->args)
+        bool isFigure = false;
+        for (const ArgVal& a : n->args) {
           if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref)
             pendingAnchor = a.ref;
+          if (a.key == ArgK::role && a.tag == ArgTag::Str &&
+              strs.get(a.ref) == std::string_view("figure"))
+            isFigure = true;
+        }
+        if (isFigure) figDepth++;
         for (const ContentNode* k : n->kids) blockWalk(k, indent, 0, tb);
+        if (isFigure) figDepth--;
         pendingAnchor = 0;
         return;
       }
@@ -845,7 +904,8 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
                       : u.kind == FlowUnit::K::Code ? "code"
                       : u.kind == FlowUnit::K::Raw ? "raw"
                       : u.kind == FlowUnit::K::Table ? "table"
-                      : u.kind == FlowUnit::K::Math ? "math" : "rule";
+                      : u.kind == FlowUnit::K::Math ? "math"
+                      : u.kind == FlowUnit::K::Image ? "img" : "rule";
       appendf(out, " unit %s indent=%dsu", k, u.indent);
       if (u.anchor) {
         out += " anchor=\"";
@@ -867,6 +927,12 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
       if (u.kind == FlowUnit::K::Math && u.mathBox)
         appendf(out, " w=%dsu asc=%dsu desc=%dsu", u.mathBox->w, u.mathBox->asc,
                 u.mathBox->desc);
+      if (u.kind == FlowUnit::K::Image) {
+        appendf(out, " w=%dsu h=%dsu%s", u.imgW, u.imgH,
+                u.imgSrc ? "" : " placeholder");
+        if (u.floatSide) out += u.floatSide == 1 ? " float=left" : " float=right";
+      }
+      if (u.centered) out += " centered";
       out += "\n";
       auto dumpBlock = [&](const LinebreakBlock& b) {
         out += "  ";

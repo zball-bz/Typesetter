@@ -1,0 +1,16 @@
+doc @[0,368) [base]
+  para @[0,99) [base]
+    text @[0,99) [base] str="拉取路径与占位框（原生桩提供 512×384；浏览器中加载失败也不会卡住）。"
+  group @[101,248) [base] role="figure" label="fig-light"
+    image @[0,0) [base] src="photos/lighthouse.jpg" alt="海边灯塔"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 1："
+      seq @[0,0) [base]
+        text @[181,222) [base] str="黄昏时分的灯塔，尺寸来自 NEED"
+        text @[222,223) [base] str="_"
+        text @[223,239) [base] str="IMAGES 拉取。"
+  group @[250,368) [base] role="figure"
+    image @[0,0) [base] src="javascript:alert(1)" alt="恶意来源"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 2："
+      text @[308,359) [base] str="这一条的来源被拒绝，渲染为占位框。"

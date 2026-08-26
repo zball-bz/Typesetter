@@ -31,6 +31,10 @@ export const TSR_CSS = `
               user-select: none; -webkit-user-select: none; }
 .tsr-doc [data-syn="cont"] { user-select: none; -webkit-user-select: none; }
 .tsr-rule { position: absolute; height: 0; border-top: 1px solid currentColor; opacity: 0.35; }
+.tsr-img { position: absolute; }
+.tsr-imgph { position: absolute; border: 1px dashed currentColor; opacity: 0.5;
+             display: flex; align-items: center; justify-content: center;
+             font-size: 0.85em; box-sizing: border-box; }
 .tsr-raw { position: absolute; overflow: hidden; }
 .tsr-doc a { color: #1a5276; text-decoration: underline; text-underline-offset: 2px; }
 .tsr-sp { display: inline-block; }

@@ -208,6 +208,24 @@ inline void appendf(std::string& out, const char* fmt, ...) {
   if (n > 0) out.append(buf, (size_t)((n < (int)sizeof buf) ? n : (int)sizeof buf - 1));
 }
 
+// Image src allow-list (figure-design.md §5): relative paths, http(s), and
+// data:image/* — never javascript: or other schemes. Shared by both
+// serializers and emit.
+inline bool safeImageSrc(std::string_view src) {
+  if (src.empty()) return false;
+  size_t colon = src.find(':');
+  if (colon == std::string_view::npos) return true;  // relative / absolute path
+  // a ':' after the first '/', '?' or '#' is not a scheme separator
+  size_t stop = src.find_first_of("/?#");
+  if (stop != std::string_view::npos && stop < colon) return true;
+  std::string_view scheme = src.substr(0, colon);
+  std::string low(scheme);
+  for (char& c : low) c = (char)((c >= 'A' && c <= 'Z') ? c + 32 : c);
+  if (low == "http" || low == "https") return true;
+  if (low == "data") return src.substr(colon + 1).rfind("image/", 0) == 0;
+  return false;
+}
+
 // JSON-style escaping for dumps and JS string literals.
 inline void appendEscaped(std::string& out, std::string_view s) {
   for (unsigned char c : s) {

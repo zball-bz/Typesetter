@@ -66,12 +66,21 @@ export function buildContext(ob) {
     }
     return out;
   };
+  // #!figure default builder (figure-design.md §1): an image node from the
+  // region args (if src is given) followed by the caption paragraphs
+  const figureBuild = (args, children) => {
+    const kids = [];
+    if (args.src !== undefined) kids.push(ctors.image(args.src, args));
+    kids.push(...regionJoin(children));
+    return ob.makeNode(KIND.group, { role: 'figure', label: args.label }, kids);
+  };
   const regionHandlers = {};
   const __region = (name, args = {}, children = []) => {
     const h = regionHandlers[name];
     let node;
     if (h) node = toShadow(h(args, children));
     else if (name === 'table') node = tableBuild(args, children);
+    else if (name === 'figure') node = figureBuild(args, children);
     // generic region → role-tagged group (#!figure, #!aside, …)
     else node = ob.makeNode(KIND.group, { role: name, label: args.label }, regionJoin(children));
     // region-level style scope: #!aside(font: '…', lang: "zh-TW")
@@ -143,6 +152,12 @@ export function buildContext(ob) {
     link: (url, ...kids) => ob.makeNode(KIND.link, { url: String(url) }, kids.map(toShadow)),
     code: (s) => ob.makeNode(KIND.code, {}, [ob.makeText(String(s))]),
     seq: node(KIND.seq),
+    // opts: alt, scale (fraction of measure), w/h (intrinsic CSS px —
+    // declaring both skips the NEED_IMAGES pull), float: "left"/"right" (F2)
+    image: (src, opts = {}) => ob.makeNode(KIND.image, {
+      src: String(src), alt: opts.alt, w: opts.w, h: opts.h,
+      scale: opts.scale, side: opts.float ?? opts.side,
+    }, []),
     mathinline: (src) => ob.makeNode(KIND.mathinline, { src: String(src) }, []),
     mathblock: (src, label) =>
       ob.makeNode(KIND.mathblock, { src: String(src), label }, []),

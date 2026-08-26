@@ -248,6 +248,50 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         out += "</div>\n";
         continue;
       }
+      if (l.special == 5) {  // figure image / placeholder (figure-design §5)
+        const FlowUnit& iu = tb.units[l.unitIdx];
+        std::string pos = "top:";
+        fmtPx(pos, suToPx(l.y));
+        pos += ";left:";
+        fmtPx(pos, suToPx(l.left));
+        pos += ";width:";
+        fmtPx(pos, suToPx(l.width));
+        pos += ";height:";
+        fmtPx(pos, suToPx(l.height));
+        std::string id;
+        if (iu.anchor && l.unitIdx != lastAnchored) {
+          lastAnchored = l.unitIdx;
+          id = " id=\"tsr-";
+          escapeHtml(id, strs.get(iu.anchor));
+          id += "\"";
+        }
+        std::string span;
+        if (!l.srcSpan.empty())
+          appendf(span, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start,
+                  l.srcSpan.end);
+        if (iu.imgSrc) {
+          out += "<img class=\"tsr-img\" draggable=\"false\" data-syn=\"image\"";
+          out += id;
+          out += span;
+          out += " src=\"";
+          escapeHtml(out, strs.get(iu.imgSrc));
+          out += "\" alt=\"";
+          if (iu.imgAlt) escapeHtml(out, strs.get(iu.imgAlt));
+          out += "\" style=\"";
+          out += pos;
+          out += "\">\n";
+        } else {
+          out += "<div class=\"tsr-imgph\" data-syn=\"image\"";
+          out += id;
+          out += span;
+          out += " style=\"";
+          out += pos;
+          out += "\">";
+          if (iu.imgAlt) escapeHtml(out, strs.get(iu.imgAlt));
+          out += "</div>\n";
+        }
+        continue;
+      }
       out += "<div class=\"tsr-line";
       if (l.special == 2 && l.codeHl) out += " tsr-hlline";
       out += "\"";

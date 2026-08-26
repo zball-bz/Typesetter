@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("Four backticks fence the corpus edge cases from Typst:"),0,54)),0,54));
 __emit(__at(val(await __fence("", ({}), "```backticks inside```", 61)),56,88));
 __emit(__at(para(__at(text("An indented opener dedents its content and accepts an indented closer:"),90,160)),90,160));

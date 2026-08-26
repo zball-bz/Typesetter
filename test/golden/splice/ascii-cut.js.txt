@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
 let avg = 7;
 __emit(__at(para(val((avg)), __at(text("的结果 should cut at the ASCII boundary."),17,60)),13,60));
 };

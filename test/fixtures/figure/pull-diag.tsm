@@ -1,0 +1,9 @@
+拉取路径与占位框（原生桩提供 512×384；浏览器中加载失败也不会卡住）。
+
+#!figure(src: "photos/lighthouse.jpg", alt: "海边灯塔", label: "fig-light")
+黄昏时分的灯塔，尺寸来自 NEED_IMAGES 拉取。
+#figure!
+
+#!figure(src: "javascript:alert(1)", alt: "恶意来源")
+这一条的来源被拒绝，渲染为占位框。
+#figure!

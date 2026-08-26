@@ -139,8 +139,25 @@ TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
     jsonEscapeInto(out, d->doc.strs.get(r.body));
     out += "\"}";
   }
+  out += "]";
+  // NEED_IMAGES pull state (figure-design.md §2): unanswered image nodes
+  out += ",\"images\":[";
+  bool fi = true;
+  for (const Doc::ImageReq& r : d->doc.imageReqs) {
+    if (r.provided) continue;
+    if (!fi) out += ",";
+    fi = false;
+    appendf(out, "{\"id\":%u,\"src\":\"", r.id);
+    jsonEscapeInto(out, d->doc.strs.get(r.src));
+    out += "\"}";
+  }
   out += "]}";
   return out.c_str();
+}
+
+// intrinsic CSS dims; 0×0 = load failure (placeholder + warning)
+TSR_EXPORT void tsr_provide_image(WasmDoc* d, int id, double wPx, double hPx) {
+  d->doc.provideImage((u32)id, wPx, hPx);
 }
 
 // triples: (start, end, tagId) × n as a flat u32 array; n may be 0 —

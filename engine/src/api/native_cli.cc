@@ -23,6 +23,8 @@ static bool readFile(const std::string& path, std::string& out) {
 
 static bool typesetWithMock(Doc& doc) {
   provideNativeTokens(doc);
+  // NEED_IMAGES stub (figure-design.md §6): any src measures 512x384
+  for (auto& ir : doc.imageReqs) doc.provideImage(ir.id, 512, 384);
   for (int i = 0; i < 64; i++) {
     Doc::Status st = doc.typeset();
     if (st == Doc::Status::Ok) return true;

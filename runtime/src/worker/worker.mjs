@@ -13,11 +13,32 @@ let modPromise = null;
 const getMod = () => (modPromise ??= createTypesetter());
 const docs = new Map(); // docId → wasm doc handle (kept alive for relayout)
 
+// NEED_IMAGES (figure-design.md §2): intrinsic CSS dims only, cached per
+// src for the worker's lifetime; 0×0 = failure (engine placeholder + diag)
+const imageDims = new Map();
+async function imageSize(src) {
+  if (imageDims.has(src)) return imageDims.get(src);
+  let dims = { w: 0, h: 0 };
+  try {
+    const bm = await createImageBitmap(await (await fetch(src)).blob());
+    dims = { w: bm.width, h: bm.height };
+    bm.close();
+  } catch (e) {
+    console.warn(`tsr: image failed to load: ${src}`, e);
+  }
+  imageDims.set(src, dims);
+  return dims;
+}
+
 async function measureLoop(M, doc) {
   const measurer = new CanvasMeasurer();
   for (let round = 0; round < 64; round++) {
     if (M._tsr_typeset(doc) === 0) return;
     const req = JSON.parse(M.UTF8ToString(M._tsr_measure_requests(doc)));
+    for (const im of req.images ?? []) {
+      const d = await imageSize(im.src);
+      M._tsr_provide_image(doc, im.id, d.w, d.h);
+    }
     for (const t of req.tokens ?? []) {
       const tri = await tokenize(t.lang, t.text);
       const ptr = M._malloc(Math.max(4, tri.length * 4));

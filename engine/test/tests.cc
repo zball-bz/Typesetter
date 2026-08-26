@@ -255,6 +255,21 @@ static void unitGrid() {
   CHECK(m.q <= 7);
 }
 
+static void unitImageSrc() {
+  // figure-design.md §5: relative / http(s) / data:image only
+  CHECK(safeImageSrc("photos/a.jpg"));
+  CHECK(safeImageSrc("/abs/path.png"));
+  CHECK(safeImageSrc("a/b:c.png"));  // ':' after '/' is not a scheme
+  CHECK(safeImageSrc("https://x.example/i.png"));
+  CHECK(safeImageSrc("HTTP://x.example/i.png"));
+  CHECK(safeImageSrc("data:image/png;base64,AAAA"));
+  CHECK(!safeImageSrc(""));
+  CHECK(!safeImageSrc("javascript:alert(1)"));
+  CHECK(!safeImageSrc("data:text/html,<script>"));
+  CHECK(!safeImageSrc("file:///etc/passwd"));
+  CHECK(!safeImageSrc("vbscript:x"));
+}
+
 static void unitFragment() {
   Arena a;
   Interner strs{a};
@@ -298,6 +313,8 @@ static void unitFragment() {
 // --- golden runner ---
 static bool typesetWithMock(Doc& doc) {
   provideNativeTokens(doc);
+  // NEED_IMAGES stub (figure-design.md §6): any src measures 512x384
+  for (auto& ir : doc.imageReqs) doc.provideImage(ir.id, 512, 384);
   for (int i = 0; i < 64; i++) {
     if (doc.typeset() == Doc::Status::Ok) return true;
     MeasureRequest req = doc.pendingRequests();
@@ -346,6 +363,7 @@ int main(int argc, char** argv) {
   unitMathSegments();
   unitGrid();
   unitFragment();
+  unitImageSrc();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");

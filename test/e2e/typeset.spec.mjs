@@ -148,3 +148,56 @@ test('copy joins CJK line breaks seamlessly and skips resolved refs', async ({ p
   expect(text).not.toContain('§');      // resolved ref runs are synthetic
   expect(text).toContain('见');
 });
+
+test('block figure: pulled dims, centred image, caption prefix, copy skips', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(async () => {
+    const cv = document.createElement('canvas');
+    cv.width = 64; cv.height = 48;
+    cv.getContext('2d').fillStyle = '#c00';
+    cv.getContext('2d').fillRect(0, 0, 64, 48);
+    const uri = cv.toDataURL('image/png');
+    const source = '#!figure(src: "' + uri + '", alt: "示例", label: "f1")\n' +
+      '一张红色示例图。\n#figure!\n\n见@f1。';
+    return await window.__tsr.typeset(source, { widthPx: 300 });
+  });
+  expect(res.diags).toBe('');
+  const img = page.locator('.tsr-img');
+  await expect(img).toHaveCount(1);
+  const box = await img.boundingBox();
+  expect(box.width).toBeCloseTo(64, 0);   // natural size, under the measure
+  expect(box.height).toBeCloseTo(48, 0);
+  // centred: left inset ≈ (300 - 64) / 2 within the container
+  const holder = await page.locator('#out').boundingBox();
+  expect(box.x - holder.x).toBeCloseTo((300 - 64) / 2, 0);
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text).toContain('图 1：一张红色示例图。');
+  expect(text).toContain('见');
+  expect(text).not.toContain('data:image'); // the image itself never copies
+  // the ref resolved and links to the figure anchor
+  await expect(page.locator('a[href="#tsr-f1"]').first()).toBeVisible();
+});
+
+test('figure: scale option and placeholder on refused scheme', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(async () => {
+    const source =
+      '#!figure(src: "x.png", alt: "半宽", w: 400, h: 100, scale: 0.5)\n半宽图。\n#figure!\n\n' +
+      '#!figure(src: "javascript:alert(1)", alt: "拒绝")\n占位。\n#figure!';
+    return await window.__tsr.typeset(source, { widthPx: 320 });
+  });
+  expect(res.diags).toContain('image-src');       // refused scheme warned
+  expect(res.diags).not.toContain('error');
+  const img = page.locator('.tsr-img');
+  await expect(img).toHaveCount(1);               // declared dims: no fetch
+  const box = await img.boundingBox();
+  expect(box.width).toBeCloseTo(160, 0);          // scale 0.5 × 320
+  expect(box.height).toBeCloseTo(40, 0);          // aspect 4:1 preserved
+  const ph = page.locator('.tsr-imgph');
+  await expect(ph).toHaveCount(1);
+  await expect(ph).toHaveText('拒绝');
+  const html = await page.content();
+  expect(html).not.toContain('javascript:alert'); // refused src never renders
+});

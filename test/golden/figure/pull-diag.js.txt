@@ -1,0 +1,6 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("拉取路径与占位框（原生桩提供 512×384；浏览器中加载失败也不会卡住）。"),0,99)),0,99));
+__emit(__at(__region("figure", ({src: "photos/lighthouse.jpg", alt: "海边灯塔", label: "fig-light"}), [[[seq(__at(text("黄昏时分的灯塔，尺寸来自 NEED"),181,222), __at(text("_"),222,223), __at(text("IMAGES 拉取。"),223,239))]]]),101,248));
+__emit(__at(__region("figure", ({src: "javascript:alert(1)", alt: "恶意来源"}), [[[__at(text("这一条的来源被拒绝，渲染为占位框。"),308,359)]]]),250,368));
+};
+//# sourceURL=tsm:doc

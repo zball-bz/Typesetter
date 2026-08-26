@@ -154,6 +154,16 @@ struct Resolver {
           std::string label(strs.get(argStr(n, ArgK::label)));
           if (!label.empty())
             addLabel(label, {Kind::group, std::to_string(figNo), ""}, n->span);
+          // caption prefix (figure-design.md §1): 图 n： bolded into the
+          // first paragraph child; captionless figures keep just the number
+          for (ContentNode* k : n->kids) {
+            if (k->kind != Kind::para) continue;
+            ContentNode* t =
+                mkText(cfg.supFigure + std::to_string(figNo) + "\xEF\xBC\x9A",
+                       k->span, styles.idOf(Styling{CLS_BOLD, 1.0f}));
+            k->kids.insert(k->kids.begin(), t);
+            break;
+          }
         }
         break;
       }

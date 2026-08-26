@@ -37,6 +37,16 @@ struct Doc {
   };
   std::vector<TokenReq> tokenReqs;
 
+  // NEED_IMAGES pull state (figure-design.md §2): image nodes without
+  // intrinsic dims wait for the host — the engine wants CSS px, not pixels.
+  struct ImageReq {
+    u32 id = 0;
+    ContentNode* node = nullptr;
+    StrRef src = 0;
+    bool provided = false;
+  };
+  std::vector<ImageReq> imageReqs;
+
   std::vector<TopBlock> tops;
   bool emitted = false;
   MetricStore metrics;
@@ -60,6 +70,8 @@ struct Doc {
     resolveDoc(tree, arena, strs, styles, cfg, diags);
     tokenReqs.clear();
     scanTokenReqs(tree.root);
+    imageReqs.clear();
+    scanImageReqs(tree.root);
     emitted = false;
     laidOut = false;
     return true;
@@ -158,6 +170,64 @@ struct Doc {
     return false;
   }
 
+  void scanImageReqs(ContentNode* n) {
+    if (!n) return;
+    if (n->kind == Kind::image) {
+      double iw = 0, ih = 0;
+      StrRef src = 0;
+      for (const ArgVal& a : n->args) {
+        if (a.key == ArgK::w && a.tag == ArgTag::Num) iw = a.num;
+        if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
+        if (a.key == ArgK::src && a.tag == ArgTag::Str) src = a.ref;
+      }
+      // author-declared dims (or an empty/unsafe src) skip the pull; the
+      // unsafe case renders the placeholder without ever fetching
+      if (src && !(iw > 0 && ih > 0) && safeImageSrc(strs.get(src))) {
+        ImageReq r;
+        r.id = (u32)imageReqs.size();
+        r.node = n;
+        r.src = src;
+        imageReqs.push_back(r);
+      }
+    }
+    for (ContentNode* k : n->kids) scanImageReqs(k);
+  }
+
+  bool imagesPending() const {
+    for (const ImageReq& r : imageReqs)
+      if (!r.provided) return true;
+    return false;
+  }
+
+  // provider contract: EVERY request must be answered; 0×0 = load failure
+  // (placeholder + warning), mirroring the token loop.
+  void provideImage(u32 id, double wPx, double hPx) {
+    if (id >= imageReqs.size() || imageReqs[id].provided) return;
+    ImageReq& r = imageReqs[id];
+    r.provided = true;
+    auto setNum = [&](ArgK k, double v) {
+      for (ArgVal& a : r.node->args)
+        if (a.key == k) {
+          a.tag = ArgTag::Num;
+          a.num = v;
+          return;
+        }
+      ArgVal a;
+      a.key = k;
+      a.tag = ArgTag::Num;
+      a.num = v;
+      r.node->args.push_back(a);
+    };
+    if (wPx > 0 && hPx > 0) {
+      setNum(ArgK::w, wPx);
+      setNum(ArgK::h, hPx);
+    } else {
+      diags.add(Sev::Warning, "image-load", r.node->span,
+                "image failed to load: " + std::string(strs.get(r.src)));
+    }
+    emitted = false;
+  }
+
   // provider contract: EVERY request must be answered (empty = plain code),
   // mirroring the measurement loop. Tokens sorted, non-overlapping.
   void provideTokens(u32 id, const CodeToken* toks, size_t n) {
@@ -169,7 +239,7 @@ struct Doc {
   }
 
   Status typeset() {
-    if (tokensPending()) return Status::NeedMeasure;
+    if (tokensPending() || imagesPending()) return Status::NeedMeasure;
     if (!emitted) {
       tops = emitDoc(tree, arena, strs, styles, cfg, diags);
       emitted = true;

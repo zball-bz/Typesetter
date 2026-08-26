@@ -301,6 +301,23 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         continue;
       }
 
+      if (u.kind == FlowUnit::K::Image) {
+        // block figure image (figure-design.md §3): centred on the measure,
+        // advance = display height (float placement is F2)
+        LineBox line;
+        line.unitIdx = ui;
+        line.special = 5;
+        Su shift = (lineWidth - u.imgW) / 2;
+        if (shift < 0) shift = 0;
+        line.left = u.indent + shift;
+        line.width = u.imgW;
+        line.height = u.imgH;
+        if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
+        line.y = (Su)py;
+        py += u.imgH;
+        fr.lines.push_back(line);
+        continue;
+      }
       if (u.kind == FlowUnit::K::Math && u.mathBox) {
         // display formula: centred on the measure, advance = box extents
         const MathBox* mb = u.mathBox;
@@ -491,6 +508,13 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           }
         }
         line.join = isLast ? 0 : (endsHyphen || !joinSpace) ? 2 : 1;
+        if (u.centered && slackPx > 0) {
+          // caption centring: slack splits both sides; the right edge stays
+          // inside the measure (width shrinks by the shift)
+          Su cs = suRoundPx(slackPx / 2);
+          line.left += cs;
+          line.width -= cs;
+        }
 
         Su advance = baseLeading;
         if (maxAsc + maxDesc > advance) advance = maxAsc + maxDesc;
@@ -534,6 +558,11 @@ std::string dumpLayout(const LayoutResult& lr) {
       }
       if (l.special == 4) {
         appendf(out, "  L%zu math y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
+        continue;
+      }
+      if (l.special == 5) {
+        appendf(out, "  L%zu img y=%dsu left=%dsu w=%dsu h=%dsu\n", i, l.y,
+                l.left, l.width, l.height);
         continue;
       }
       if (l.cellIdx >= 0) {

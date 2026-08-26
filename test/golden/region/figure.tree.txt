@@ -3,6 +3,7 @@ doc @[0,243) [base]
     text @[2,9) [base] str="Regions"
   group @[17,112) [base] role="figure" label="fig1"
     para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 1："
       text @[41,67) [base] str="A pretend figure body line"
       text @[0,0) [base] str=" "
       text @[68,103) [base] str="continuing on a second source line."

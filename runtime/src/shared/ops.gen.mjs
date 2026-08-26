@@ -1,5 +1,5 @@
 // GENERATED from engine/src/ops/ops.def by tools/gen-ops-ts.mjs — do not edit.
-export const OPS_VERSION = 4;
+export const OPS_VERSION = 5;
 export const OP = Object.freeze({
   "MAKE_TEXT": 1,
   "MAKE_NODE": 2,
@@ -34,7 +34,8 @@ export const KIND = Object.freeze({
   "mathinline": 22,
   "raw": 23,
   "hardbreak": 24,
-  "seq": 25
+  "seq": 25,
+  "image": 26
 });
 export const ARGK = Object.freeze({
   "label": 0,
@@ -64,5 +65,8 @@ export const ARGK = Object.freeze({
   "wrap": 24,
   "lineNo": 25,
   "hl": 26,
-  "sidecar": 27
+  "sidecar": 27,
+  "scale": 28,
+  "alt": 29,
+  "side": 30
 });

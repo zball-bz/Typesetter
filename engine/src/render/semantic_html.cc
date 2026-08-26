@@ -238,9 +238,47 @@ struct Sem {
         esc(out, argS(n, ArgK::src));
         out += " $</code></p>\n";
         return;
+      case Kind::image: {
+        std::string_view src = argS(n, ArgK::src);
+        if (!safeImageSrc(src)) {
+          out += "<div class=\"tsr-imgph\">";
+          esc(out, argS(n, ArgK::alt));
+          out += "</div>\n";
+          return;
+        }
+        out += "<img";
+        attrs(n, pid);
+        out += " src=\"";
+        esc(out, src);
+        out += "\" alt=\"";
+        esc(out, argS(n, ArgK::alt));
+        out += "\" style=\"max-width:100%\">\n";
+        return;
+      }
       case Kind::group: {
-        out += "<div";
         std::string_view role = argS(n, ArgK::role);
+        if (role == "figure") {
+          // real HTML for the no-JS page (figure-design.md §5)
+          out += "<figure";
+          attrs(n, pid);
+          out += ">\n";
+          bool capOpen = false;
+          for (const ContentNode* k : n->kids) {
+            if (k->kind == Kind::para) {
+              if (!capOpen) {
+                out += "<figcaption>";
+                capOpen = true;
+              }
+              inlineKids(k);
+            } else {
+              block(k, -1);
+            }
+          }
+          if (capOpen) out += "</figcaption>\n";
+          out += "</figure>\n";
+          return;
+        }
+        out += "<div";
         if (!role.empty()) {
           out += " data-role=\"";
           esc(out, role);

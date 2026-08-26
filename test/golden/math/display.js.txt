@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("黎曼级数判别法："),0,24)),0,24));
 __emit(__at(mathblock("sum_(n=1)^oo 1/n^s < oo <=> s > 1"),26,63));
 __emit(__at(para(__at(text("因此调和级数在 "),65,86), __at(mathinline("s = 1"),87,94), __at(text(" 处发散。"),95,107)),65,107));

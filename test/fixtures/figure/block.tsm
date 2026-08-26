@@ -1,0 +1,11 @@
+图片作为一等内容：块级插图、编号图注与引用。
+
+#!figure(src: "diagrams/pipeline.png", alt: "管线示意", w: 300, h: 150, scale: 0.5, label: "fig-pipe")
+排版管线示意图，*声明尺寸*不经拉取。
+#figure!
+
+#!figure(src: "photos/wide.png", alt: "宽幅", w: 1200, h: 300, label: "fig-wide")
+过宽的图片收敛到版心，按比例缩放。
+#figure!
+
+参见@fig-pipe与@fig-wide；前者宽度为版心之半。

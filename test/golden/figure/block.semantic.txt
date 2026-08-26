@@ -1,0 +1,12 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="66">图片作为一等内容：块级插图、编号图注与引用。</p>
+<figure data-pid="1" data-s="68" data-e="237" id="tsr-fig-pipe">
+<img src="diagrams/pipeline.png" alt="管线示意" style="max-width:100%">
+<figcaption>图 1：排版管线示意图，<strong>声明尺寸</strong>不经拉取。</figcaption>
+</figure>
+<figure data-pid="2" data-s="239" data-e="383" id="tsr-fig-wide">
+<img src="photos/wide.png" alt="宽幅" style="max-width:100%">
+<figcaption>图 2：过宽的图片收敛到版心，按比例缩放。</figcaption>
+</figure>
+<p data-pid="3" data-s="385" data-e="445">参见<a href="#tsr-fig-pipe">图 1</a>与<a href="#tsr-fig-wide">图 2</a>；前者宽度为版心之半。</p>
+</div>

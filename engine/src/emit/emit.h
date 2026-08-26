@@ -56,11 +56,12 @@ struct TableCell {
 };
 
 struct FlowUnit {
-  enum class K : u8 { Text, Code, Rule, Raw, Table, Math } kind = K::Text;
+  enum class K : u8 { Text, Code, Rule, Raw, Table, Math, Image } kind = K::Text;
   const ContentNode* src = nullptr;
   Su indent = 0;
   bool tightAbove = false;  // list-item start: reduced inter-unit gap
   bool ragged = false;      // display unit (heading): no justify, no hyphens
+  bool centered = false;    // figure caption: line slack split both sides
   StrRef anchor = 0;  // label anchor: first line renders id="tsr-<label>"
   StrRef marker = 0;  // list marker text (0 = none), rendered in the gutter
   StyleId markerStyle = 0;
@@ -86,6 +87,11 @@ struct FlowUnit {
   std::vector<u32> hlLines;  // 1-based highlighted lines
   StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup
   double rawHpx = 0;    // Raw: declared height (px)
+  // Image (figure-design.md §3): display box in su; src 0 = placeholder
+  // (unsafe scheme or failed load — the box carries the alt text)
+  StrRef imgSrc = 0, imgAlt = 0;
+  Su imgW = 0, imgH = 0;
+  u8 floatSide = 0;  // 0 = block; 1 = left float, 2 = right float (F2)
   const MathBox* mathBox = nullptr;  // Math: display formula
   StrRef eqTag = 0;                  // Math: "(n)" right-margin number
   u32 tCols = 0;               // Table: column count

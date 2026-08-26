@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("二次方程 "),0,12), __at(mathinline("a x^2 + b x + c = 0"),13,34), __at(text(" 的求根公式："),35,53)),0,53));
 __emit(__at(mathblock("x = (-b +- sqrt(b^2 - 4 a c))/(2 a)"),55,94));
 __emit(__at(para(__at(text("组合数 "),96,105), __at(mathinline("binom(n, k) = n!/(k! (n-k)!)"),106,136), __at(text(" 满足对称性；立方根 "),137,164), __at(mathinline("root(3, 8) = 2"),165,181), __at(text("。"),181,184)),96,184));

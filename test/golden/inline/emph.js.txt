@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("Plain "),0,5), __at(strong(__at(text("bold words"),7,17)),6,18), __at(text(" and "),19,22), __at(em(__at(text("italic"),24,30)),23,31), __at(text(" text with *escaped* markers, un"),32,65), __at(text("*"),65,66), __at(text("closed at end."),66,80)),0,80));
 };
 //# sourceURL=tsm:doc

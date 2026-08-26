@@ -1,0 +1,22 @@
+doc @[0,446)
+  para @[0,66)
+    text @[0,66) str="图片作为一等内容：块级插图、编号图注与引用。"
+  region @[68,237) name="figure"
+    para @[175,228)
+      row @[175,228)
+        cell @[175,228)
+          text @[175,199) str="排版管线示意图，"
+          styled @[199,213) marker=*
+            text @[200,212) str="声明尺寸"
+          text @[213,228) str="不经拉取。"
+  region @[239,383) name="figure"
+    para @[323,374)
+      row @[323,374)
+        cell @[323,374)
+          text @[323,374) str="过宽的图片收敛到版心，按比例缩放。"
+  para @[385,445)
+    text @[385,391) str="参见"
+    ref @[391,400) target="fig-pipe"
+    text @[400,403) str="与"
+    ref @[403,412) target="fig-wide"
+    text @[412,445) str="；前者宽度为版心之半。"

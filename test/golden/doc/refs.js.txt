@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(heading(1, "intro", __at(text("Introduction"),2,14)),0,14));
 __emit(__at(para(__at(text("The typesetting engine resolves references like "),24,71), __at(ref("intro"),72,78), __at(text(" and "),79,82), __at(ref("results"),83,91), __at(text(" before any rendering happens."),92,121)),24,121));
 __emit(__at(heading(2, null, __at(text("Method"),126,132)),123,132));
