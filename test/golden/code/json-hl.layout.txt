@@ -4,5 +4,5 @@ para pid=0 y=0su w=19200su h=4608su
   L1 y=1536su left=0su w=19200su dw=107su dc=64su join=none blocks=[18,39) @[0,95)
   L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[40,42) @[0,95)
 para pid=1 y=5837su w=19200su h=3072su
-  L0 code y=0su left=0su line=0 [0,37)
-  L1 code y=1536su left=1026su line=0 [37,68) cont
+  L0 code y=0su left=0su line=0 [0,43)
+  L1 code y=1536su left=874su line=0 [43,68) cont

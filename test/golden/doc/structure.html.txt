@@ -7,7 +7,7 @@
 </div>
 <div class="tsr-para" data-pid="2" style="position:relative;height:48px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="50" data-e="95" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="50">An in</span><span class="tsr-r" data-s="50">tro</span><span class="tsr-r" data-s="50">duc</span><span class="tsr-r" data-s="50">to</span><span class="tsr-r" data-s="50">ry para</span><span class="tsr-r" data-s="50">graph with a </span><a class="tsr-r" href="https://example.org" data-s="84">use</a><a class="tsr-r" href="https://example.org" data-s="84">ful</a></div>
-<div class="tsr-line" data-s="84" data-e="147" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="https://example.org" data-s="84">link</a><span class="tsr-r" data-s="118"> and some </span><span class="tsr-r tsr-code" data-s="127">inline code</span><span class="tsr-r" data-s="141"> in it.</span></div>
+<div class="tsr-line" data-s="84" data-e="147" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="https://example.org" data-s="84">link</a><span class="tsr-r" data-s="118"> and some </span><span class="tsr-r tsr-code" data-s="127" style="font-size:13.6px">inline code</span><span class="tsr-r" data-s="141"> in it.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" style="position:relative;height:132.781px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="174" data-e="228" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:-0.667px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="174">First bul</span><span class="tsr-r" data-s="174">let item with enough words to</span></div>
@@ -29,7 +29,7 @@
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="7" style="position:relative;height:48px">
-<div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code">const x = compute(1, 2);</span></div>
-<div class="tsr-line" data-ragged="1" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-code">return x;</span></div>
+<div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">const x = compute(1, 2);</span></div>
+<div class="tsr-line" data-ragged="1" style="top:24px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">return x;</span></div>
 </div>
 </div>

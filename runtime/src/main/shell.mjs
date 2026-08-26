@@ -27,7 +27,8 @@ export const TSR_CSS = `
 .tsr-i { font-style: italic; }
 .tsr-code { font-family: monospace; white-space: pre; }
 .tsr-cjk { font-family: var(--tsr-cjk-font, inherit); }
-.tsr-marker { position: absolute; right: 100%; padding-right: 0.55em; }
+.tsr-marker { position: absolute; right: 100%; padding-right: 0.55em;
+              user-select: none; -webkit-user-select: none; }
 .tsr-rule { position: absolute; height: 0; border-top: 1px solid currentColor; opacity: 0.35; }
 .tsr-raw { position: absolute; overflow: hidden; }
 .tsr-doc a { color: #1a5276; text-decoration: underline; text-underline-offset: 2px; }

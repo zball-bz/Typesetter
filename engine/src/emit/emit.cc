@@ -58,7 +58,8 @@ struct Emitter {
           LinebreakBlock b;
           b.breakPenalty = BREAK_INF;
           b.flags = ctx.addFlags;
-          b.style = compose(n->style, ctx.addBits | CLS_CODE, ctx.mul);
+          b.style = compose(n->style, ctx.addBits | CLS_CODE,
+                            ctx.mul * (float)cfg.codeScale);
           b.text = n->kids[0]->str;
           b.linkUrl = ctx.url;
           b.span = n->span;
@@ -477,7 +478,7 @@ struct Emitter {
         u.src = n;
         u.indent = indent;
         u.marker = marker;
-        u.codeStyle = compose(n->style, CLS_CODE, 1.0f);
+        u.codeStyle = compose(n->style, CLS_CODE, (float)cfg.codeScale);
         u.markerStyle = u.codeStyle;
         u.chRef = strs.intern("0");
         for (const ArgVal& a : n->args) {
@@ -521,7 +522,8 @@ struct Emitter {
           std::function<void(const ContentNode*, std::vector<FlowUnit::CodeRun>&)>
               collect = [&](const ContentNode* k, std::vector<FlowUnit::CodeRun>& out) {
                 if (k->kind == Kind::text) {
-                  out.push_back({k->str, compose(k->style, CLS_CODE, 1.0f)});
+                  out.push_back(
+                      {k->str, compose(k->style, CLS_CODE, (float)cfg.codeScale)});
                   return;
                 }
                 if (k->kind == Kind::comment) return;

@@ -42,7 +42,7 @@ top pid=2 units=1
   space w=257su stretch=1 @[118,126)
   word "some" w=2049su pen=INF @[118,126)
   space w=257su stretch=1 @[118,126)
-  word "inline code" w=5377su pen=INF CODE @[127,140)
+  word "inline code" w=4571su pen=INF CODE x0.85 @[127,140)
   space w=257su stretch=1 @[141,147)
   word "in" w=1025su pen=INF @[141,147)
   space w=257su stretch=1 @[141,147)

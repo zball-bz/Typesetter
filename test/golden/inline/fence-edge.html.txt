@@ -4,17 +4,16 @@
 <div class="tsr-line" data-s="0" data-e="54" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">es from Typst:</span></div>
 </div>
 <div class="tsr-para" data-pid="1" style="position:relative;height:24px;margin-bottom:19.2px">
-<div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code">```backticks inside```</span></div>
+<div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">```backticks inside```</span></div>
 </div>
 <div class="tsr-para" data-pid="2" style="position:relative;height:48px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="90" data-e="160" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="90">An in</span><span class="tsr-r" data-s="90">dent</span><span class="tsr-r" data-s="90">ed open</span><span class="tsr-r" data-s="90">er de</span><span class="tsr-r" data-s="90">dents its con</span><span class="tsr-r" data-s="90">tent</span></div>
 <div class="tsr-line" data-s="90" data-e="160" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="90">and ac</span><span class="tsr-r" data-s="90">cepts an in</span><span class="tsr-r" data-s="90">dent</span><span class="tsr-r" data-s="90">ed clos</span><span class="tsr-r" data-s="90">er:</span></div>
 </div>
-<div class="tsr-para" data-pid="3" style="position:relative;height:96px;margin-bottom:19.2px">
-<div class="tsr-line" data-ragged="1" data-join="none" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code">const kept = &quot;indent stripped to the </span></div>
-<div class="tsr-line" data-ragged="1" style="top:24px;left:16.031px;width:283.969px"><span class="tsr-r tsr-code">opener column&quot;;</span></div>
-<div class="tsr-line" data-ragged="1" data-join="none" style="top:48px;left:0px;width:300px"><span class="tsr-r tsr-code">  const deeper = &quot;extra indent </span></div>
-<div class="tsr-line" data-ragged="1" style="top:72px;left:16.031px;width:283.969px"><span class="tsr-r tsr-code">survives&quot;;</span></div>
+<div class="tsr-para" data-pid="3" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-ragged="1" data-join="none" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">const kept = &quot;indent stripped to the </span></div>
+<div class="tsr-line" data-ragged="1" style="top:24px;left:13.656px;width:286.344px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">opener column&quot;;</span></div>
+<div class="tsr-line" data-ragged="1" style="top:48px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">  const deeper = &quot;extra indent survives&quot;;</span></div>
 </div>
 <div class="tsr-para" data-pid="4" style="position:relative;height:24px">
 <div class="tsr-line" data-s="280" data-e="285" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="280">Done.</span></div>

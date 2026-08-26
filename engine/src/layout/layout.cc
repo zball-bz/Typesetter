@@ -90,7 +90,15 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
                 if (col + w > avail) break;
                 col += w;
                 p = q;
-                if (isBreakable(cp)) lastBrk = p;  // break AFTER the boundary
+                if (isBreakable(cp)) {
+                  lastBrk = p;  // break AFTER the boundary
+                } else if (isCjk(cp) && !isPunctOpen(cp)) {
+                  // CJK wraps between any two characters (clreq), except
+                  // before a closing punct / after an opening one (禁则)
+                  u32 r = q;
+                  u32 nx = q < joined.size() ? utf8Next(joined, r) : 0;
+                  if (!(nx && isPunctClose(nx))) lastBrk = p;
+                }
               }
               if (p >= joined.size()) {
                 rows.push_back({lo, (u32)joined.size()});
@@ -102,9 +110,13 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
                 utf8Next(joined, q);
                 cut = q;
               }
-              rows.push_back({lo, cut});
-              while (cut < joined.size() && joined[cut] == ' ') cut++;
-              lo = cut;
+              // trailing spaces stay in the ROW (not swallowed between
+              // slices): the copy rebuild must be byte-lossless, and pre
+              // whitespace at a ragged row's end is invisible anyway
+              u32 ext = cut;
+              while (ext < joined.size() && joined[ext] == ' ') ext++;
+              rows.push_back({lo, ext});
+              lo = ext;
             }
             if (rows.empty()) rows.push_back({0, 0});
           }

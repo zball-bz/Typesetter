@@ -281,9 +281,15 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
       fmtPx(out, suToPx(l.left));
       out += ";width:";
       fmtPx(out, suToPx(l.width));
-      if (l.special == 2 && l.codeHl && l.height > 0) {
-        out += ";height:";
+      if (l.special == 2 && l.height > 0) {
+        // baseline sits centred in the row (the hl background made the
+        // top-stuck default line box visible); hl rows also paint height
+        out += ";line-height:";
         fmtPx(out, suToPx(l.height));
+        if (l.codeHl) {
+          out += ";height:";
+          fmtPx(out, suToPx(l.height));
+        }
       }
       if (l.special == 0 && l.wordDeltaPx != 0) {
         out += ";word-spacing:";
