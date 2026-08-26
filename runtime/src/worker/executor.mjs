@@ -6,8 +6,10 @@ import { OpBuf } from '../shared/opbuf.mjs';
 const CLS_EM = 1 << 2, CLS_BOLD = 1 << 3;  // frozen bits (document-model §3)
 
 export function buildContext(ob) {
-  const toShadow = (x) =>
-    x && typeof x === 'object' && 'opId' in x ? x : ob.makeText(String(x));
+  const toShadow = (x) => {
+    if (typeof x === 'function') x = x();  // bare #toc / #glossary splices
+    return x && typeof x === 'object' && 'opId' in x ? x : ob.makeText(String(x));
+  };
   const styled = (bits) => (...kids) =>
     ob.makeNode(KIND.styled, { bits }, kids.map(toShadow));
   const node = (kind, args = {}) => (...kids) =>
