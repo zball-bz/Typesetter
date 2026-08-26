@@ -13,6 +13,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
   const Su baseLeading = suRoundPx(cfg.lineHeight * cfg.baseSizePx);
   const Su paraGap = suRoundPx(cfg.paraSpacingEm * cfg.baseSizePx);
   i64 y = 0;
+  i64 floatBottomAbs = 0;  // doc-height watermark for a trailing float (F2)
 
   for (size_t p = 0; p < tops.size(); p++) {
     const TopBlock& tb = tops[p];
@@ -25,7 +26,50 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
     for (u32 ui = 0; ui < tb.units.size(); ui++) {
       const FlowUnit& u = tb.units[ui];
       if (ui > 0) py += u.tightAbove ? paraGap / 3 : paraGap;
+      if (u.floatClearSu > 0) py += u.floatClearSu;  // clear the active float
       const Su lineWidth = measure - u.indent;
+
+      if (u.kind == FlowUnit::K::Image && u.floatSide != 0) {
+        // float box (figure-design.md §4): out of flow — zero advance; the
+        // image at the measure's edge, caption rows beneath at the float
+        // width. The break phase stored matching narrowing on the units
+        // that flow beside it.
+        const Su boxLeft = u.floatSide == 1 ? u.indent
+                                            : u.indent + lineWidth - u.imgW;
+        LineBox line;
+        line.unitIdx = ui;
+        line.special = 5;
+        line.left = boxLeft;
+        line.width = u.imgW;
+        line.height = u.imgH;
+        if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
+        line.y = (Su)py;
+        fr.lines.push_back(line);
+        i64 cy = py + u.imgH;
+        for (u32 ci = 0; ci < (u32)u.cells.size(); ci++) {
+          const TableCell& cell = u.cells[ci];
+          u32 prevBp = 0;
+          for (u32 bp : cell.breakpoints) {
+            u32 lo = prevBp, hi = bp;
+            while (lo < hi && cell.blocks[lo].isSpace()) lo++;
+            while (hi > lo && cell.blocks[hi - 1].isSpace()) hi--;
+            prevBp = bp;
+            if (lo >= hi) continue;
+            LineBox cl;
+            cl.unitIdx = ui;
+            cl.cellIdx = (i32)ci;
+            cl.blockBegin = lo;
+            cl.blockEnd = hi;
+            cl.left = boxLeft;
+            cl.width = u.imgW;
+            cl.y = (Su)cy;
+            cy += baseLeading;
+            fr.lines.push_back(cl);
+          }
+        }
+        if ((i64)fr.y + cy > floatBottomAbs) floatBottomAbs = (i64)fr.y + cy;
+        continue;  // no py advance: the float is out of flow
+      }
 
       if (u.kind == FlowUnit::K::Rule) {
         LineBox line;
@@ -490,13 +534,21 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         line.blockEnd = hi;
         line.left = u.indent;
         line.width = lineWidth;
+        // F2 parshape replay: the first narrowK lines run beside the float
+        const bool narrowed = li < (size_t)u.narrowK && u.narrow > 0;
+        if (narrowed) {
+          line.width = u.narrow;
+          if (u.narrowLeft) line.left += lineWidth - u.narrow;
+        }
         line.srcSpan = span;
         line.endsWithHyphen = endsHyphen;
         if (firstLine && u.marker) { line.marker = u.marker; line.markerStyle = u.markerStyle; }
         firstLine = false;
 
         const bool isLast = (bp == bl.size()) || u.ragged;
-        double slackPx = (cfg.widthPx - suToPx(u.indent)) - naturalPx;
+        double slackPx = narrowed
+                             ? suToPx(u.narrow) - naturalPx
+                             : (cfg.widthPx - suToPx(u.indent)) - naturalPx;
         if (totalWeight > 0) {
           double d = slackPx / totalWeight;  // per unit weight (v2 §8)
           if (isLast && slackPx > 0) d = 0;
@@ -528,6 +580,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
     if (p + 1 < tops.size()) y += paraGap;
     lr.paras.push_back(std::move(fr));
   }
+  if (floatBottomAbs > y) y = floatBottomAbs;  // a trailing float still shows
   lr.docHeightSu = y;
   return lr;
 }

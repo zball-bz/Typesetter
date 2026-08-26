@@ -1,0 +1,42 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="95" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.3px;margin-right:-0.3px">浮动插图与环绕</span><span class="tsr-r tsr-cjk" data-s="0">（</span><span class="tsr-sp" data-syn="boundary" style="width:4.5px"></span><span class="tsr-r" data-s="0">par</span><span class="tsr-r" data-s="0">shape</span><span class="tsr-sp" data-syn="boundary" style="width:4.5px"></span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">）</span><span class="tsr-r tsr-cjk" data-s="0">：</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.3px">右侧浮动</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">，</span></div>
+<div class="tsr-line" data-s="0" data-e="95" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">正文前若干行按收窄宽度断行</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
+</div>
+<div class="tsr-para" data-pid="1" style="position:relative;height:0px;margin-bottom:19.2px">
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-tower" src="photos/tower.jpg" alt="塔楼" style="top:0px;left:180px;width:120px;height:90px">
+<div class="tsr-line" data-ragged="1" data-cell="1" style="top:90px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="210">右浮动的</span></div>
+<div class="tsr-line" data-ragged="1" data-cell="1" style="top:114px;left:180px;width:120px"><span class="tsr-r tsr-cjk" data-s="210">塔楼小图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="210">。</span></div>
+</div>
+<div class="tsr-para" data-pid="2" style="position:relative;height:168px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="248" data-e="464" data-join="none" style="top:0px;left:0px;width:164px;word-spacing:2.222px"><span class="tsr-r tsr-cjk" data-s="248" style="letter-spacing:1.333px">正文围绕浮动图排布</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="248">：</span></div>
+<div class="tsr-line" data-s="248" data-e="464" data-join="none" style="top:24px;left:0px;width:164px;word-spacing:0.741px"><span class="tsr-r tsr-cjk" data-s="248" style="letter-spacing:0.444px;margin-right:-0.444px">前几行的断行宽度收窄</span></div>
+<div class="tsr-line" data-s="248" data-e="464" data-join="none" style="top:48px;left:0px;width:164px;word-spacing:0.741px"><span class="tsr-r tsr-cjk" data-s="248" style="letter-spacing:0.444px;margin-right:-0.444px">为版心减去浮动框与间</span></div>
+<div class="tsr-line" data-s="248" data-e="464" data-join="none" style="top:72px;left:0px;width:164px;word-spacing:0.833px"><span class="tsr-r tsr-cjk" data-s="248" style="letter-spacing:0.5px">隙</span><span class="tsr-r tsr-cjk" data-s="248">，</span><span class="tsr-r tsr-cjk" data-s="248" style="letter-spacing:0.5px;margin-right:-0.5px">越过浮动框底部之</span></div>
+<div class="tsr-line" data-s="248" data-e="464" data-join="none" style="top:96px;left:0px;width:164px;word-spacing:0.741px"><span class="tsr-r tsr-cjk" data-s="248" style="letter-spacing:0.444px;margin-right:-0.444px">后恢复整幅版心宽度继</span></div>
+<div class="tsr-line" data-s="248" data-e="464" data-join="none" style="top:120px;left:0px;width:164px;word-spacing:0.833px"><span class="tsr-r tsr-cjk" data-s="248" style="letter-spacing:0.5px">续排布</span><span class="tsr-r tsr-cjk" data-s="248">，</span><span class="tsr-r tsr-cjk" data-s="248" style="letter-spacing:0.5px;margin-right:-0.5px">段落之间的间</span></div>
+<div class="tsr-line" data-s="248" data-e="464" style="top:144px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="248">距也计入占用高度的消耗</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="248">。</span></div>
+</div>
+<div class="tsr-para" data-pid="3" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="466" data-e="634" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.392px"><span class="tsr-r tsr-cjk" data-s="466" style="letter-spacing:-0.235px">第二个段落若仍处于浮动高度之内</span><span class="tsr-r tsr-cjk" data-s="466">，</span><span class="tsr-r tsr-cjk" data-s="466" style="letter-spacing:-0.235px;margin-right:0.235px">则继续</span></div>
+<div class="tsr-line" data-s="466" data-e="634" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:-0.417px"><span class="tsr-r tsr-cjk" data-s="466" style="letter-spacing:-0.25px">以收窄宽度开始</span><span class="tsr-r tsr-cjk" data-s="466">；</span><span class="tsr-r tsr-cjk" data-s="466" style="letter-spacing:-0.25px">此段足够长</span><span class="tsr-r tsr-cjk" data-s="466">，</span><span class="tsr-r tsr-cjk" data-s="466" style="letter-spacing:-0.25px;margin-right:0.25px">尾部行应当</span></div>
+<div class="tsr-line" data-s="466" data-e="634" style="top:48px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="466">已经回到整幅宽度</span><span class="tsr-r tsr-cjk" data-s="466">，</span><span class="tsr-r tsr-cjk" data-s="466">环绕由此自然结束</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="466">。</span></div>
+</div>
+<div class="tsr-para" data-pid="4" style="position:relative;height:0px;margin-bottom:19.2px">
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-gate" src="photos/gate.jpg" alt="山门" style="top:0px;left:0px;width:120px;height:72px">
+<div class="tsr-line" data-ragged="1" data-cell="1" style="top:72px;left:0px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="746">左浮动的</span></div>
+<div class="tsr-line" data-ragged="1" data-cell="1" style="top:96px;left:0px;width:120px"><span class="tsr-r tsr-cjk" data-s="746">山门</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="746">。</span></div>
+</div>
+<div class="tsr-para" data-pid="5" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="778" data-e="835" data-join="none" style="top:0px;left:136px;width:164px;word-spacing:0.741px"><span class="tsr-r tsr-cjk" data-s="778" style="letter-spacing:0.444px;margin-right:-0.444px">左侧浮动时行盒整体右</span></div>
+<div class="tsr-line" data-s="778" data-e="845" data-join="space" style="top:24px;left:136px;width:164px;word-spacing:0.952px"><span class="tsr-r tsr-cjk" data-s="778" style="letter-spacing:0.571px">移</span><span class="tsr-r tsr-cjk" data-s="778">，</span><span class="tsr-r tsr-cjk" data-s="778" style="letter-spacing:0.571px">宽度同样收窄</span><span class="tsr-r tsr-cjk" data-s="778">；</span><a class="tsr-r tsr-cjk" href="#tsr-fig-tower" data-syn="ref" style="letter-spacing:0.571px;margin-right:-0.571px">图</a></div>
+<div class="tsr-line" data-s="835" data-e="878" style="top:48px;left:136px;width:164px"><a class="tsr-r" href="#tsr-fig-tower" data-syn="ref">1</a><span class="tsr-r tsr-cjk" data-s="845">与</span><a class="tsr-r tsr-cjk" href="#tsr-fig-gate" data-syn="ref">图</a><a class="tsr-r" href="#tsr-fig-gate" data-syn="ref"> 2</a><span class="tsr-r tsr-cjk" data-s="857">都可以被引用</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="857">。</span></div>
+</div>
+<div class="tsr-para" data-pid="6" style="position:relative;height:52.797px;margin-bottom:19.2px">
+<div class="tsr-rule" style="top:40.797px;left:0px;width:300px"></div>
+</div>
+<div class="tsr-para" data-pid="7" style="position:relative;height:48px">
+<div class="tsr-line" data-s="885" data-e="945" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.176px"><span class="tsr-r tsr-cjk" data-s="885" style="letter-spacing:0.706px;margin-right:-0.706px">分隔线等非文本单元会先越过浮动框再排</span></div>
+<div class="tsr-line" data-s="885" data-e="945" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="885">布</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="885">。</span></div>
+</div>
+</div>

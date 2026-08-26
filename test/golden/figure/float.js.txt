@@ -1,0 +1,11 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("浮动插图与环绕（parshape）：右侧浮动，正文前若干行按收窄宽度断行。"),0,95)),0,95));
+__emit(__at(__region("figure", ({src: "photos/tower.jpg", alt: "塔楼", w: 400, h: 300, scale: 0.4, float: "right", label: "fig-tower"}), [[[__at(text("右浮动的塔楼小图。"),210,237)]]]),97,246));
+__emit(__at(para(__at(text("正文围绕浮动图排布：前几行的断行宽度收窄为版心减去浮动框与间隙，越过浮动框底部之后恢复整幅版心宽度继续排布，段落之间的间距也计入占用高度的消耗。"),248,464)),248,464));
+__emit(__at(para(__at(text("第二个段落若仍处于浮动高度之内，则继续以收窄宽度开始；此段足够长，尾部行应当已经回到整幅宽度，环绕由此自然结束。"),466,634)),466,634));
+__emit(__at(__region("figure", ({src: "photos/gate.jpg", alt: "山门", w: 400, h: 240, scale: 0.4, float: "left", label: "fig-gate"}), [[[__at(text("左浮动的山门。"),746,767)]]]),636,776));
+__emit(__at(para(__at(text("左侧浮动时行盒整体右移，宽度同样收窄；"),778,835), __at(ref("fig-tower"),835,845), __at(text("与"),845,848), __at(ref("fig-gate"),848,857), __at(text("都可以被引用。"),857,878)),778,878));
+__emit(__at(rule(),880,883));
+__emit(__at(para(__at(text("分隔线等非文本单元会先越过浮动框再排布。"),885,945)),885,945));
+};
+//# sourceURL=tsm:doc

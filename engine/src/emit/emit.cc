@@ -720,6 +720,37 @@ struct Emitter {
               strs.get(a.ref) == std::string_view("figure"))
             isFigure = true;
         }
+        if (isFigure) {
+          // float form (figure-design.md §4): the caption breaks to the
+          // float's width and rides the image unit as cells — the float box
+          // is image + caption rows, placed out of flow by layout
+          const ContentNode* img = nullptr;
+          for (const ContentNode* k : n->kids)
+            if (k->kind == Kind::image) { img = k; break; }
+          bool floats = false;
+          if (img)
+            for (const ArgVal& a : img->args)
+              if (a.key == ArgK::side && a.tag == ArgTag::Str) {
+                std::string_view s = strs.get(a.ref);
+                floats = s == "left" || s == "right";
+              }
+          if (floats) {
+            blockWalk(img, indent, 0, tb);
+            FlowUnit& iu = tb.units.back();
+            for (const ContentNode* k : n->kids) {
+              if (k->kind != Kind::para) continue;
+              TableCell tc;
+              FlowUnit tmp;
+              ICtx cctx;
+              cctx.noHyphen = true;
+              inlineWalk(k, tmp, cctx);
+              tc.blocks = std::move(tmp.blocks);
+              iu.cells.push_back(std::move(tc));
+            }
+            pendingAnchor = 0;
+            return;
+          }
+        }
         if (isFigure) figDepth++;
         for (const ContentNode* k : n->kids) blockWalk(k, indent, 0, tb);
         if (isFigure) figDepth--;

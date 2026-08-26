@@ -1,6 +1,7 @@
 # Figures: images, captions, float wrap
 
-Status: **design**. Companion to [document-model.md](document-model.md) and
+Status: **implemented** (F1 + F2; §8 records as-built deltas). Companion to
+[document-model.md](document-model.md) and
 [architecture.md](architecture.md) §7 (milestone F). Supersedes nothing; the
 resolver's `group{role:"figure"}` numbering hooks (figNo, `supFigure`) were
 laid in M4 and finally get content here.
@@ -154,3 +155,30 @@ narrowed units get `left += occlW` when the float is on the left.
   serializers, copy, native+e2e.
 - **F2** float wrap: LineWidths prefix, FloatTracker, float caption cells,
   clearing rules, tests.
+
+## 8. As-built deltas
+
+- **Display sizing is scale-only** (§3 simplified): `w`/`h` args are purely
+  the intrinsic dims; `scale` is the one display control (else natural size
+  capped at the measure). An absolute-px display width was dropped — `scale`
+  covers the blog cases and keeps one source of truth.
+- Captions keep the body size (no 0.92 shrink — per-leaf style composition
+  wasn't worth it); they are ragged + centred + unhyphenated, and skip 首行
+  缩进.
+- The KP breaker needed **zero changes** for parshape: the DP always carried
+  the line index and called `widths.at(e.line)` — only the `LineWidths`
+  struct grew the prefix form.
+- The float tracker lives in `Doc::typeset()`'s unit walk and mirrors
+  layout's exact gap accounting (tightAbove paraGap/3, inter-block paraGap);
+  decisions replay via `u.narrow/narrowK/narrowLeft/floatClearSu`. Float
+  registration charges image + caption rows + one paraGap of clearance;
+  narrowing engages only when `occl < measure − 1px`.
+- Float caption rows advance at `baseLeading` flat (no vmet/math extents) —
+  formulas in float captions may sit tight; block-figure captions are
+  ordinary text units and unaffected. Non-para kids of a *float* figure are
+  dropped (block figures flow them normally).
+- A float pushing past the last unit extends `docHeightSu` via a watermark
+  in layout (the box must not clip at the document edge).
+- The layout replay keeps the historical justification formula for full
+  lines (`cfg.widthPx − indent`, unfloored) and uses `suToPx(narrow)` only
+  for narrowed lines — zero golden churn on non-figure fixtures.

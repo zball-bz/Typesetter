@@ -1,0 +1,11 @@
+doc @[0,946)
+  para @[0,95) lines=1
+  region @[97,246) name="figure"
+    para @[210,237) lines=1
+  para @[248,464) lines=1
+  para @[466,634) lines=1
+  region @[636,776) name="figure"
+    para @[746,767) lines=1
+  para @[778,878) lines=1
+  rule @[880,883)
+  para @[885,945) lines=1

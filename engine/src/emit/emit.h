@@ -92,6 +92,12 @@ struct FlowUnit {
   StrRef imgSrc = 0, imgAlt = 0;
   Su imgW = 0, imgH = 0;
   u8 floatSide = 0;  // 0 = block; 1 = left float, 2 = right float (F2)
+  // F2 float tracker decisions (figure-design.md §4), stored at break time
+  // and replayed verbatim by layout so the two phases cannot disagree:
+  Su narrow = 0;         // Text: width of the first narrowK lines
+  u32 narrowK = 0;       // Text: how many leading lines run beside the float
+  bool narrowLeft = false;  // Text: float on the left (lines shift right)
+  Su floatClearSu = 0;   // any unit: extra advance to clear the active float
   const MathBox* mathBox = nullptr;  // Math: display formula
   StrRef eqTag = 0;                  // Math: "(n)" right-margin number
   u32 tCols = 0;               // Table: column count

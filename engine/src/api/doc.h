@@ -258,8 +258,54 @@ struct Doc {
       }
       return r;
     };
+    // F2 float tracker (figure-design.md §4): walks units in reading order,
+    // mirroring layout's gap accounting; decisions are STORED on the units
+    // (narrow/narrowK/floatClearSu) so layout replays instead of re-deriving.
+    const Su baseLeading = suRoundPx(cfg.lineHeight * cfg.baseSizePx);
+    const Su paraGapSu = suRoundPx(cfg.paraSpacingEm * cfg.baseSizePx);
+    const Su emGapSu = suRoundPx(cfg.baseSizePx);
+    i64 flRemain = 0;  // occlusion height left, measured from the cursor
+    Su flOccl = 0;
+    u8 flSide = 0;
+    bool firstBlock = true;
     for (TopBlock& tb : tops) {
-      for (FlowUnit& u : tb.units) {
+      for (u32 ui = 0; ui < (u32)tb.units.size(); ui++) {
+        FlowUnit& u = tb.units[ui];
+        u.narrow = 0;
+        u.narrowK = 0;
+        u.narrowLeft = false;
+        u.floatClearSu = 0;
+        // the gap layout will insert before this unit
+        Su gapBefore = ui > 0 ? (u.tightAbove ? paraGapSu / 3 : paraGapSu)
+                              : (firstBlock ? 0 : paraGapSu);
+        if (flRemain > 0) {
+          flRemain -= gapBefore;
+          if (flRemain < 0) flRemain = 0;
+        }
+        if (u.kind == FlowUnit::K::Image && u.floatSide != 0) {
+          if (flRemain > 0) {  // one float at a time: clear the previous
+            u.floatClearSu = (Su)flRemain;
+            flRemain = 0;
+          }
+          for (TableCell& c : u.cells) {  // caption breaks to the float width
+            BreakResult r = breakWithRetry(c.blocks, LineWidths{u.imgW});
+            c.breakpoints = std::move(r.breakpoints);
+            c.breakCost = r.cost;
+          }
+          i64 capH = 0;
+          for (const TableCell& c : u.cells)
+            capH += (i64)c.breakpoints.size() * baseLeading;
+          flRemain = (i64)u.imgH + capH + paraGapSu;  // + one gap of clearance
+          flOccl = u.imgW + emGapSu;
+          flSide = u.floatSide;
+          continue;
+        }
+        if (u.kind != FlowUnit::K::Text && flRemain > 0) {
+          // every non-text unit clears the float (figure-design.md §4)
+          u.floatClearSu = (Su)flRemain;
+          flRemain = 0;
+          flOccl = 0;
+        }
         if (u.kind == FlowUnit::K::Table && u.tCols > 0) {
           // equal columns (v1); each cell breaks to its content width
           Su colW = (suFloorPx(cfg.widthPx) - u.indent) / (Su)u.tCols;
@@ -283,10 +329,22 @@ struct Doc {
         }
         if (u.kind != FlowUnit::K::Text) continue;
         LineWidths lw{suFloorPx(cfg.widthPx) - u.indent};
+        if (flRemain > 0 && flOccl > 0 && flOccl < lw.constant - 64) {
+          lw.narrow = lw.constant - flOccl;
+          lw.narrowK = (u32)((flRemain + baseLeading - 1) / baseLeading);
+          u.narrow = lw.narrow;
+          u.narrowK = lw.narrowK;
+          u.narrowLeft = flSide == 1;
+        }
         BreakResult r = breakWithRetry(u.blocks, lw);
         u.breakpoints = std::move(r.breakpoints);
         u.breakCost = r.cost;
+        if (flRemain > 0) {
+          flRemain -= (i64)u.breakpoints.size() * baseLeading;
+          if (flRemain < 0) flRemain = 0;
+        }
       }
+      firstBlock = false;
     }
     layout = layoutDoc(tops, metrics, strs, cfg);
     laidOut = true;

@@ -1,0 +1,28 @@
+doc @[0,945) [base]
+  para @[0,95) [base]
+    text @[0,95) [base] str="浮动插图与环绕（parshape）：右侧浮动，正文前若干行按收窄宽度断行。"
+  group @[97,246) [base] role="figure" label="fig-tower"
+    image @[0,0) [base] src="photos/tower.jpg" alt="塔楼" w=400 h=300 scale=0.4 side="right"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 1："
+      text @[210,237) [base] str="右浮动的塔楼小图。"
+  para @[248,464) [base]
+    text @[248,464) [base] str="正文围绕浮动图排布：前几行的断行宽度收窄为版心减去浮动框与间隙，越过浮动框底部之后恢复整幅版心宽度继续排布，段落之间的间距也计入占用高度的消耗。"
+  para @[466,634) [base]
+    text @[466,634) [base] str="第二个段落若仍处于浮动高度之内，则继续以收窄宽度开始；此段足够长，尾部行应当已经回到整幅宽度，环绕由此自然结束。"
+  group @[636,776) [base] role="figure" label="fig-gate"
+    image @[0,0) [base] src="photos/gate.jpg" alt="山门" w=400 h=240 scale=0.4 side="left"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 2："
+      text @[746,767) [base] str="左浮动的山门。"
+  para @[778,878) [base]
+    text @[778,835) [base] str="左侧浮动时行盒整体右移，宽度同样收窄；"
+    ref @[835,845) [base] target="fig-tower" url="#tsr-fig-tower"
+      text @[835,845) [base] str="图 1"
+    text @[845,848) [base] str="与"
+    ref @[848,857) [base] target="fig-gate" url="#tsr-fig-gate"
+      text @[848,857) [base] str="图 2"
+    text @[857,878) [base] str="都可以被引用。"
+  rule @[880,883) [base]
+  para @[885,945) [base]
+    text @[885,945) [base] str="分隔线等非文本单元会先越过浮动框再排布。"

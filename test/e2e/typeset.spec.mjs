@@ -201,3 +201,32 @@ test('figure: scale option and placeholder on refused scheme', async ({ page }) 
   const html = await page.content();
   expect(html).not.toContain('javascript:alert'); // refused src never renders
 });
+
+test('float figure: narrowed wrap lines, edge placement, recovery', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(async () => {
+    const source =
+      '#!figure(src: "x.png", alt: "浮", w: 400, h: 300, scale: 0.4, float: "right")\n' +
+      '右浮动图。\n#figure!\n\n' +
+      '正文围绕浮动图排布，前几行的断行宽度收窄为版心减去浮动框与间隙，' +
+      '越过浮动框底部之后恢复整幅版心宽度继续排布，环绕自然结束，' +
+      '此段足够长以同时覆盖收窄与恢复两种状态，从而一次验证两侧。';
+    return await window.__tsr.typeset(source, { widthPx: 300 });
+  });
+  expect(res.diags).toBe('');
+  const img = page.locator('.tsr-img');
+  const ibox = await img.boundingBox();
+  const holder = await page.locator('#out').boundingBox();
+  expect(ibox.width).toBeCloseTo(120, 0);            // scale 0.4 × 300
+  expect(ibox.x + ibox.width - holder.x).toBeCloseTo(300, 0);  // right edge
+  const widths = await page.evaluate(() =>
+    [...document.querySelectorAll('.tsr-line')]
+      .filter((l) => !l.querySelector('[data-syn="marker"]'))
+      .map((l) => parseFloat(l.style.width)));
+  const body = widths.slice(1); // drop the figure-caption-free first para? none: caption rows are data-cell
+  expect(Math.min(...body)).toBeLessThan(200);        // narrowed lines exist
+  expect(Math.max(...body)).toBeCloseTo(300, 0);      // and recovery to full
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text).toContain('图 1：右浮动图。');          // caption still copies
+});
