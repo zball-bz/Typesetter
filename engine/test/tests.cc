@@ -187,10 +187,17 @@ static void unitMathStretch() {
   std::string rt = mathDump("root(3, 2)");
   CHECK(rt.find("DIAG") == std::string::npos);
   CHECK(rt.find("glyph \"3\"") != std::string::npos);
-  // accents: combining circumflex above a cramped base
+  // accents: SPACING circumflex above a cramped base (browser-portable)
   std::string hat = mathDump("hat(x)");
   CHECK(hat.find("DIAG") == std::string::npos);
-  CHECK(hat.find("\xCC\x82") != std::string::npos);  // U+0302
+  CHECK(hat.find("\xCB\x86") != std::string::npos);  // U+02C6, spacing
+  // bar is a Rule construct (Overbar* constants), never a glyph
+  std::string bar = mathDump("bar(x)");
+  CHECK(bar.find("DIAG") == std::string::npos);
+  CHECK(bar.find("rule") != std::string::npos);
+  CHECK(bar.find("\xCC\x84") == std::string::npos);   // no U+0304
+  CHECK(bar.find("\xC2\xAF") == std::string::npos);   // no U+00AF either
+  CHECK(mathDump("underline(x)").find("rule") != std::string::npos);
   // groups stay visible atoms; fenced tall content stretches without diags
   CHECK(mathDump("(a+b) c").find("glyph \"(\" Open") != std::string::npos);
   CHECK(mathDump("abs(a/b)").find("DIAG") == std::string::npos);

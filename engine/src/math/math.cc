@@ -221,7 +221,8 @@ struct Lexer {
 // structural function names (call-syntax constructs beyond the dictionary)
 inline bool isCallName(const std::string& w) {
   return w == "sqrt" || w == "root" || w == "frac" || w == "binom" ||
-         w == "abs" || w == "norm" || w == "floor" || w == "ceil";
+         w == "abs" || w == "norm" || w == "floor" || w == "ceil" ||
+         w == "overline" || w == "underline";
 }
 
 // ---- parser ----------------------------------------------------------------
@@ -1083,11 +1084,43 @@ struct Layouter {
     return out;
   }
 
+  // over/underline: MATH Overbar*/Underbar* rule constructs. `bar` routes
+  // here too (user-visible contract): a Rule box renders as a plain div —
+  // identical in every browser, unlike accent glyph shaping.
+  MathBox* layoutHRule(MNode* baseN, u8 st, bool over) {
+    MathBox* base = layoutRun(baseN, (u8)(st | 1));  // cramped
+    Su gap = constSu(over ? C::OverbarVerticalGap : C::UnderbarVerticalGap, st);
+    Su thick = constSu(over ? C::OverbarRuleThickness : C::UnderbarRuleThickness, st);
+    Su extra = constSu(over ? C::OverbarExtraAscender : C::UnderbarExtraDescender, st);
+    MathBox* out = mkBox(MathKind::HBox);
+    out->cls = out->firstCls = out->lastCls = kOrd;
+    out->w = base->w;
+    out->italic = base->italic;
+    out->topAccent = base->topAccent;
+    MathBox* bar = mkBox(MathKind::Rule);
+    bar->w = base->w;
+    bar->asc = thick;
+    out->kids.push_back({0, 0, base});
+    if (over) {
+      out->kids.push_back({0, base->asc + gap, bar});
+      out->asc = base->asc + gap + thick + extra;
+      out->desc = base->desc;
+    } else {
+      out->kids.push_back({0, -(base->desc + gap + thick), bar});
+      out->asc = base->asc;
+      out->desc = base->desc + gap + thick + extra;
+    }
+    return out;
+  }
+
   MathBox* layoutCall(MNode* n, u8 st) {
     auto arg = [&](size_t i) -> MNode* {
       static MNode empty;
       return i < n->kids.size() ? n->kids[i] : &empty;
     };
+    if (n->txt == "overline" || n->txt == "bar")
+      return layoutHRule(arg(0), st, /*over=*/true);
+    if (n->txt == "underline") return layoutHRule(arg(0), st, /*over=*/false);
     if (n->flags & kFlagAccent) return layoutAccent(n->cp, arg(0), st);
     if (n->txt == "sqrt") return layoutRadical(nullptr, arg(0), st);
     if (n->txt == "root") return layoutRadical(arg(0), arg(1), st);

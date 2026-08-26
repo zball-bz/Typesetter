@@ -231,11 +231,17 @@ for n, c, cls in [
 # Punctuation
 for n, c in [(",", 0x2C), (";", 0x3B)]: d(n, c, PUNCT)
 
-# Accents (combining marks; call-style hat(x) in the grammar)
+# Accents, call-style hat(x). SPACING forms, not combining marks: Firefox
+# and Chromium disagree on isolated combining-mark placement (different
+# shaping fallbacks), while spacing glyphs anchor at their origin in every
+# browser. All are cmapped in Euler with TopAccentAttachment entries.
+# `bar` renders as an Overbar* RULE (layout-side); `vec` has no spacing
+# equivalent (U+20D7 combining only) — the one remaining shaping-dependent
+# accent, recorded.
 for n, c in [
-    ("hat", 0x302), ("tilde", 0x303), ("bar", 0x304), ("vec", 0x20D7),
-    ("dot", 0x307), ("ddot", 0x308), ("breve", 0x306), ("check", 0x30C),
-    ("ring", 0x30A), ("acute", 0x301), ("grave", 0x300),
+    ("hat", 0x2C6), ("tilde", 0x2DC), ("bar", 0xAF), ("vec", 0x20D7),
+    ("dot", 0x2D9), ("ddot", 0xA8), ("breve", 0x2D8), ("check", 0x2C7),
+    ("ring", 0x2DA), ("acute", 0xB4), ("grave", 0x60),
 ]: d(n, c, ORD, ACCENT)
 
 # Blackboard bold AA..ZZ (letterlike exceptions inline)

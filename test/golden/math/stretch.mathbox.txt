@@ -102,10 +102,10 @@ hbox Ord w=511 asc=723 desc=0
   glyph "2" Ord w=511 asc=723 desc=0 px=16
 display pid=3
 hbox Ord w=10784 asc=1458 desc=941
-  hbox Ord w=429 asc=936 desc=12
+  hbox Ord w=429 asc=1015 desc=12
     hbox Ord w=429 asc=685 desc=12
       glyph "f" Ord w=429 asc=685 desc=12 px=16
-    glyph "̂" Ord w=0 asc=674 desc=-518 px=16 @(510,262)
+    glyph "ˆ" Ord w=511 asc=753 desc=-463 px=16 @(-2,262)
   hbox Ord w=1238 asc=721 desc=209 @(429,0)
     glyph "(" Open w=336 asc=721 desc=209 px=16
     glyph "ξ" Ord w=566 asc=711 desc=140 px=16 @(336,0)
@@ -145,8 +145,8 @@ hbox Ord w=511 asc=834 desc=12
       glyph "e" Ord w=511 asc=489 desc=12 px=16
     glyph "⃗" Ord w=0 asc=768 desc=-490 px=16 @(475,66)
 inline pid=4 "bar(x)"
-hbox Ord w=539 asc=679 desc=12
-  hbox Ord w=539 asc=679 desc=12
+hbox Ord w=539 asc=680 desc=12
+  hbox Ord w=539 asc=680 desc=12
     hbox Ord w=539 asc=475 desc=12
       glyph "x" Ord w=539 asc=475 desc=12 px=16
-    glyph "̄" Ord w=0 asc=627 desc=-586 px=16 @(524,52)
+    rule w=539 h=41 @(0,598)

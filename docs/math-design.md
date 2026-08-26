@@ -345,6 +345,15 @@ decisions:
   following closing punct; quarter-em boundary glue on CJK–formula seams.
 - **Copy across segments**: a split formula carries its `$src$` on the
   first segment only; later segments contribute empty data-src.
+- **Accents are SPACING glyphs; `bar` is a rule.** Firefox and Chromium
+  disagree on isolated combining-mark placement (different shaping
+  fallbacks), so the dictionary maps hat/tilde/dot/… to their spacing
+  forms (U+02C6, U+02DC, U+02D9, …) — origin-anchored in every browser,
+  TopAccentAttachment present in Euler for all of them. `bar` (and the
+  `overline`/`underline` calls) render as Overbar*/Underbar* RULE
+  constructs — plain boxes, shaping-independent, the user-preferred form.
+  `vec` (U+20D7) has no spacing equivalent and stays combining: the one
+  shaping-dependent accent left (Firefox may place it differently).
 - **STIX swap test: negative result, gate works.** mathc.py over STIX Two
   Math 2.13 FAILS the §1 gating check — all ~500 of its variant/assembly
   glyphs (`parenleft.s1`, `uni222B.dsp`, …) are unencoded. Euler-Math's

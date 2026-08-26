@@ -73,6 +73,6 @@ top pid=4 units=1
   cjk "记" w=1025su glue=102su wt=0.6 pen=0 @[270,285)
   cjk "作" w=1025su glue=102su wt=0.6 pen=0 @[270,285)
   space w=257su stretch=1 @[270,285)
-  math "bar(x)" w=539su asc=679su desc=12su @[286,294)
+  math "bar(x)" w=539su asc=680su desc=12su @[286,294)
   punct-close "。" w=512su @[294,297)
   punct-sp w=512su @[294,297)
