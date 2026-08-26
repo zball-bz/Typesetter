@@ -4,7 +4,7 @@
 <h2 data-pid="2" data-s="123" data-e="132" id="tsr-h-1.1">Method</h2>
 <p data-pid="3" data-s="134" data-e="183">Terms are definition sites with automatic labels.</p>
 <div data-role="term" data-pid="4" id="tsr-measure">
-<p>measure — The width available to a single typeset line.</p>
+<p><strong>measure</strong> — The width available to a single typeset line.</p>
 </div>
 <h1 data-pid="5" data-s="248" data-e="257" id="tsr-results">Results</h1>
 <p data-pid="6" data-s="269" data-e="380">As promised in <a href="#tsr-intro">§1</a>, the resolver links back to sections and to terms such as <a href="#tsr-measure">measure</a> without a second pass.</p>

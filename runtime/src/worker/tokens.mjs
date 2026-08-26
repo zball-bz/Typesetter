@@ -24,6 +24,9 @@ const LANGS = { json: 'json', js: 'javascript', javascript: 'javascript',
                 cc: 'cpp', rust: 'rust', rs: 'rust' };
 
 const HL_BASE = new URL('../../assets/hl/', import.meta.url);
+// Node (static export, pages-design.md §3): web-tree-sitter resolves asset
+// strings through fs, not fetch — hand it filesystem paths there.
+const IS_NODE = typeof process !== 'undefined' && !!process.versions?.node;
 let tsMod = null;   // web-tree-sitter module (lazy)
 let initDone = null;
 const langs = new Map();   // name → {lang, query} | null (failed/unknown)
@@ -32,13 +35,19 @@ async function load(name) {
   if (langs.has(name)) return langs.get(name);
   let entry = null;
   try {
+    const asRef = IS_NODE
+      ? (await import('node:url')).fileURLToPath
+      : (u) => u.href;
     if (!tsMod) tsMod = await import(new URL('../../assets/hl/web-tree-sitter.js', import.meta.url));
     if (!initDone) initDone = tsMod.Parser.init({
-      locateFile: () => new URL('web-tree-sitter.wasm', HL_BASE).href,
+      locateFile: () => asRef(new URL('web-tree-sitter.wasm', HL_BASE)),
     });
     await initDone;
-    const lang = await tsMod.Language.load(new URL(`tree-sitter-${name}.wasm`, HL_BASE).href);
-    const scm = await (await fetch(new URL(`${name}.scm`, HL_BASE))).text();
+    const lang = await tsMod.Language.load(asRef(new URL(`tree-sitter-${name}.wasm`, HL_BASE)));
+    const scmUrl = new URL(`${name}.scm`, HL_BASE);
+    const scm = IS_NODE
+      ? await (await import('node:fs/promises')).readFile(asRef(scmUrl), 'utf8')
+      : await (await fetch(scmUrl)).text();
     entry = { lang, query: new tsMod.Query(lang, scm) };
   } catch {
     entry = null;  // missing asset / load failure → plain code, never a stall

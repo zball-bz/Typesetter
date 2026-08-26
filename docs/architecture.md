@@ -231,8 +231,9 @@ CH  code highlighting — DONE (build-time tree-sitter grammars as emcc side
     line numbers + hl rows; ops v3). See code-design.md.
 F   figures: image kind + NEED_IMAGES pull + numbered captions/refs +
     float wrap (parshape) — DONE, see figure-design.md
-M8  pages: PDF-oriented layout, static export path — design in
-    pages-design.md (W webfonts, P1 paged print, P2 static export)
+M8  pages — DONE, see pages-design.md (W declared webfonts kill the M5
+    settle deferral; P1 band pagination + print-to-PDF via the browser;
+    P2 static export: tools/export-static.mjs, semantic page + hydration)
 ```
 
 Order rationale: M1 buys the robustness contract (the project's reason to exist) at minimum surface; M2–M3 make it a real typesetter for the blog's actual content; resolver before fallback because fallback HTML must already carry resolved numbers (§11.1); math late — independent and metric-precomputed, it slots in without touching the core.

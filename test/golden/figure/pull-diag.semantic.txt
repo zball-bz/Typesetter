@@ -2,10 +2,10 @@
 <p data-pid="0" data-s="0" data-e="99">拉取路径与占位框（原生桩提供 512×384；浏览器中加载失败也不会卡住）。</p>
 <figure data-pid="1" data-s="101" data-e="248" id="tsr-fig-light">
 <img src="photos/lighthouse.jpg" alt="海边灯塔" style="max-width:100%">
-<figcaption>图 1：黄昏时分的灯塔，尺寸来自 NEED_IMAGES 拉取。</figcaption>
+<figcaption><strong>图 1：</strong>黄昏时分的灯塔，尺寸来自 NEED_IMAGES 拉取。</figcaption>
 </figure>
 <figure data-pid="2" data-s="250" data-e="368">
 <div class="tsr-imgph">恶意来源</div>
-<figcaption>图 2：这一条的来源被拒绝，渲染为占位框。</figcaption>
+<figcaption><strong>图 2：</strong>这一条的来源被拒绝，渲染为占位框。</figcaption>
 </figure>
 </div>

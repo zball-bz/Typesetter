@@ -1,7 +1,7 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="0" data-e="9" id="tsr-top">Regions</h1>
 <figure data-pid="1" data-s="17" data-e="112" id="tsr-fig1">
-<figcaption>图 1：A pretend figure body line continuing on a second source line.</figcaption>
+<figcaption><strong>图 1：</strong>A pretend figure body line continuing on a second source line.</figcaption>
 </figure>
 <div data-role="aside" data-pid="2" data-s="114" data-e="197">
 <p>Side note with <strong>emphasis</strong> inside</p>

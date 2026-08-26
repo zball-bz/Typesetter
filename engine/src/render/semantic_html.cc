@@ -19,6 +19,7 @@ void esc(std::string& out, std::string_view s) {
 
 struct Sem {
   const Interner& strs;
+  const StyleTable& styles;
   std::string& out;
 
   const ArgVal* arg(const ContentNode* n, ArgK k) {
@@ -54,60 +55,72 @@ struct Sem {
 
   void inl(const ContentNode* n) {
     switch (n->kind) {
-      case Kind::text:
-        esc(out, strs.get(n->str));
-        return;
-      case Kind::styled: {
-        u64 bits = (u64)argN(n, ArgK::bits, 0);
-        const char* tag = (bits & CLS_BOLD) ? "strong" : (bits & CLS_EM) ? "em" : "span";
-        out += "<";
-        out += tag;
-        std::string_view lang = argS(n, ArgK::lang);
-        if (!lang.empty()) {
-          out += " lang=\"";
-          esc(out, lang);
-          out += "\"";
-        }
+      case Kind::text: {
+        // leaf styles are the effective styles (instantiation folds styled
+        // deltas onto leaves — document-model §3); render from them so
+        // token colors, resolver-fabricated bold, and patch styles all
+        // reach the no-JS page. Kind::styled is transparent below.
+        const Styling& st = styles.get(n->style);
+        const char* tag = (st.bits & CLS_BOLD) ? "strong"
+                          : (st.bits & CLS_EM) ? "em" : nullptr;
         std::string style;
-        std::string_view font = argS(n, ArgK::font);
-        if (!font.empty()) {
+        if (st.fontFamily) {
           style += "font-family:";
-          style += font;
+          style += strs.get(st.fontFamily);
           style += ";";
         }
-        std::string_view color = argS(n, ArgK::color);
-        if (!color.empty()) {
+        if (st.color) {
           style += "color:";
-          style += color;
+          style += strs.get(st.color);
           style += ";";
         }
-        double sizePx = argN(n, ArgK::sizePx, 0);
-        if (sizePx > 0) {
+        if (st.sizePx > 0) {
           char buf[32];
-          std::snprintf(buf, sizeof buf, "font-size:%gpx;", sizePx);
+          std::snprintf(buf, sizeof buf, "font-size:%gpx;", st.sizePx);
           style += buf;
         }
-        if (bits & (CLS_UNDER | CLS_OVER | CLS_STRIKE)) {
+        if (st.bits & (CLS_UNDER | CLS_OVER | CLS_STRIKE)) {
           style += "text-decoration:";
-          if (bits & CLS_UNDER) style += "underline ";
-          if (bits & CLS_OVER) style += "overline ";
-          if (bits & CLS_STRIKE) style += "line-through ";
+          if (st.bits & CLS_UNDER) style += "underline ";
+          if (st.bits & CLS_OVER) style += "overline ";
+          if (st.bits & CLS_STRIKE) style += "line-through ";
           style.pop_back();
           style += ";";
         }
-        if (!style.empty()) {
-          style.pop_back();
-          out += " style=\"";
-          esc(out, style);
-          out += "\"";
+        if (!style.empty()) style.pop_back();
+        const bool wrap = tag || !style.empty() || st.lang;
+        if (wrap) {
+          out += "<";
+          out += tag ? tag : "span";
+          if (st.lang) {
+            out += " lang=\"";
+            esc(out, strs.get(st.lang));
+            out += "\"";
+          }
+          if ((st.bits & CLS_EM) && tag && (st.bits & CLS_BOLD)) {
+            // bold+italic: strong tag + italic style
+            if (!style.empty()) style += ";";
+            style += "font-style:italic";
+          }
+          if (!style.empty()) {
+            out += " style=\"";
+            esc(out, style);
+            out += "\"";
+          }
+          out += ">";
         }
-        out += ">";
-        inlineKids(n);
-        out += "</";
-        out += tag;
-        out += ">";
+        esc(out, strs.get(n->str));
+        if (wrap) {
+          out += "</";
+          out += tag ? tag : "span";
+          out += ">";
+        }
         return;
       }
+      case Kind::styled:
+        // transparent: the leaves carry the folded styles (above)
+        inlineKids(n);
+        return;
       case Kind::link:
       case Kind::ref: {
         out += "<a href=\"";
@@ -344,13 +357,14 @@ struct Sem {
 
 }  // namespace
 
-std::string renderSemantic(const ContentTree& tree, const Interner& strs) {
+std::string renderSemantic(const ContentTree& tree, const Interner& strs,
+                           const StyleTable& styles) {
   std::string out;
   out += "<div class=\"tsr-flow\">\n";
   if (tree.root) {
     int pid = 0;
     for (const ContentNode* k : tree.root->kids) {
-      Sem s{strs, out};
+      Sem s{strs, styles, out};
       s.block(k, pid);  // pid mirrors emitDoc's per-root-child numbering
       pid++;
     }

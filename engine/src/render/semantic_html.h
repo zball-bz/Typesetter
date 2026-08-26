@@ -9,6 +9,7 @@
 
 namespace tsr {
 
-std::string renderSemantic(const ContentTree& tree, const Interner& strs);
+std::string renderSemantic(const ContentTree& tree, const Interner& strs,
+                           const StyleTable& styles);
 
 }  // namespace tsr

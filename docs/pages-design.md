@@ -1,7 +1,7 @@
 # Publication path: webfonts, paged print, static export
 
-Status: **design**. Covers the M5 webfont deferral and milestone M8
-(architecture.md §7). Ordered W → P1 → P2.
+Status: **implemented** (W + P1 + P2; §5 records as-built deltas). Covers
+the M5 webfont deferral and milestone M8 (architecture.md §7).
 
 ## 1. W: worker-scope webfonts (kills the settle race by construction)
 
@@ -101,3 +101,31 @@ plus optional hydration that upgrades to the typeset rendering client-side.
 - **P1** pagination post-pass + print shell + pdf smoke test.
 - **P2** exporter + node smoke test (export a corpus file, assert semantic
   HTML + zero diags + hydration script present).
+
+## 5. As-built deltas
+
+- **Semantic leaf styles** (unlocked by P2, benefits everything): the
+  semantic serializer now renders inline text from the LEAF's effective
+  Styling (instantiation already folds styled deltas onto leaves) and
+  treats `Kind::styled` as transparent. Token colors, the resolver's bold
+  图 n： prefixes, and block-scope style patches all reach the no-JS page —
+  previously they were silently dropped. `renderSemantic` gained the
+  StyleTable parameter. The token palette CSS now targets `.tsr-flow` too.
+- The exporter answers NEED_TOKENS **before** the semantic render, so the
+  static page carries highlight spans; the native golden runner keeps the
+  browser's progressive order (semantic first), so `*.semantic.txt` goldens
+  stay un-highlighted by design.
+- `tokens.mjs` is environment-adaptive: under Node it hands web-tree-sitter
+  filesystem paths and reads `.scm` via fs (web-tree-sitter resolves
+  strings through fs there, not fetch). No global fetch polyfill.
+- Table units paginate atomically (whole table, not rule-to-rule rows) —
+  simpler, and blog tables are small; oversized atoms overflow their sheet
+  (clipped) exactly like KP's hard-cut fallback.
+- A float box separated from its wrapped text by a sheet cut keeps the
+  narrowed lines (cosmetic under-fill beside no float) — accepted; floats
+  near page boundaries are an authoring concern in print.
+- Hydration embeds the source in a `text/plain` script tag and calls the
+  ordinary `createEngine()` with `progressive: false` (the static page IS
+  the first paint); assets ship under `out/assets/` mirroring the repo
+  layout so the runtime's relative imports hold. `--no-hydrate` gives the
+  pure no-JS artifact.

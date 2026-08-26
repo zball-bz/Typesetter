@@ -361,7 +361,7 @@ struct Doc {
   }
 
   // needs only the post-resolve tree — valid before any measurement
-  std::string renderFallback() { return renderSemantic(tree, strs); }
+  std::string renderFallback() { return renderSemantic(tree, strs, styles); }
 
   // width-only relayout (architecture §2.4): metrics persist, the next
   // typeset() re-breaks and re-lays out at the new measure

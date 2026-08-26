@@ -10,7 +10,7 @@
 }</code></pre>
 <figure data-pid="5" data-s="496" data-e="611" id="tsr-fig-p">
 <img src="photos/x.png" alt="样图" style="max-width:100%">
-<figcaption>图 1：图与图注保持在同页。</figcaption>
+<figcaption><strong>图 1：</strong>图与图注保持在同页。</figcaption>
 </figure>
 <p data-pid="6" data-s="613" data-e="700">尾段：越过图之后继续排布，直至文档结束，引用<a href="#tsr-fig-p">图 1</a>照常解析。</p>
 </div>

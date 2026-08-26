@@ -53,7 +53,7 @@ export const TSR_CSS = `
                        font-size: 0.85em; padding-top: 0.15em; }
 /* code token theme (code-design.md §5): engine emits var(--tsr-tok-<tag>);
    theming lives entirely here */
-.tsr-doc { --tsr-tok-keyword: #7c4dbe; --tsr-tok-string: #2e7d32;
+.tsr-doc, .tsr-flow { --tsr-tok-keyword: #7c4dbe; --tsr-tok-string: #2e7d32;
   --tsr-tok-number: #b45309; --tsr-tok-comment: #8d897f;
   --tsr-tok-function: #1d4ed8; --tsr-tok-type: #0f766e;
   --tsr-tok-constant: #b91c1c; --tsr-tok-variable: inherit;
@@ -61,7 +61,7 @@ export const TSR_CSS = `
   --tsr-tok-property: #92400e; --tsr-tok-attribute: #92400e;
   --tsr-tok-label: #7c4dbe; --tsr-tok-embedded: inherit; }
 @media (prefers-color-scheme: dark) {
-  .tsr-doc { --tsr-tok-keyword: #b794f6; --tsr-tok-string: #7bc98b;
+  .tsr-doc, .tsr-flow { --tsr-tok-keyword: #b794f6; --tsr-tok-string: #7bc98b;
     --tsr-tok-number: #e5a45b; --tsr-tok-comment: #8f8b81;
     --tsr-tok-function: #7fb3f5; --tsr-tok-type: #5ecfbf;
     --tsr-tok-constant: #ef8a8a; --tsr-tok-operator: #9a9a92;
