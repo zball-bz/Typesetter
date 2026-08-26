@@ -1,6 +1,6 @@
 # Code Highlighting Design (CH)
 
-Status: **design settled — awaiting implementation go-ahead.**
+Status: **implemented (CH1–CH5, 2026-08-26)** — §7 records the as-built deltas.
 Companion to [design-decisions-v2.md](design-decisions-v2.md) §4.1 (fence
 handlers), [document-model.md](document-model.md) §2/§3, and the M7
 precedent ([math-design.md](math-design.md)) for pull-state resources and
@@ -127,3 +127,31 @@ at emit) renders into what already exists:
 Defaults taken unless overridden: initial grammar list js, ts, python,
 cpp, rust, json (+tsm itself later); cpp ships despite its size (lazy
 load); wrap continuation indent 2ch with no marker glyph.
+
+## 7. As-built deltas (CH completion)
+
+- **Side modules are self-compiled** (tools/codehl-assets.mjs): the
+  prebuilt `tree-sitter-wasms` package was dylink-ABI-incompatible with
+  web-tree-sitter 0.26; emcc SIDE_MODULE=2 over the grammar packages'
+  checked-in parser.c produces far smaller modules anyway (json 5KB …
+  cpp 3.3MB). No `tree-sitter generate` at build time either — every
+  grammar repo checks its generated parser.c in.
+- **Query inheritance is flattened at asset build**: web-tree-sitter has
+  no `; inherits:` support; typescript concatenates javascript's
+  highlights, cpp concatenates c's (node names line up).
+- **UTF-16→UTF-8 mapping in the worker provider**: web-tree-sitter node
+  indices are JS string offsets; the engine folds by byte — a CJK char or
+  en-dash in a comment shifted every later token until mapped.
+- **Priority contract**: captures sort (start asc, patternIndex asc),
+  earlier pattern wins on overlap — implemented identically in the native
+  (C++) and worker (JS) providers; kTokenTags + alias table shared by
+  hand (comment: keep in sync).
+- **.tsr-code gained white-space:pre** — leading indentation collapsed in
+  every code path until CH3's graphical pass caught it.
+- **Wrapped rows emit data-ragged + data-join="none"**: ragged exempts
+  code rows from the justify audits; the join keeps the §9.3 copy rebuild
+  emitting LOGICAL lines (e2e-pinned).
+- **Deferred**: duplex-font audit (bold/italic 'M' width probe — the
+  contract is documented, the audit is not yet armed), Sarasa as the
+  default code stack (user call), tsm's own grammar, line-number column
+  in the static-export path.

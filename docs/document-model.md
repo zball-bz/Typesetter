@@ -39,7 +39,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `list` | block | `ordered`, `start?` | `item*` | M2 |
 | `item` | block | — | blocks | M2 |
 | `quote` | block | — | blocks | M2 |
-| `codeblock` | block | `lang`, `body` | — | M2 |
+| `codeblock` | block | `lang`, `wrap?`, `lineNo?`, `hl?` (ops v3) | plain text child OR one `seq` per line of styled runs (CH1) | M2/CH |
 | `rule` | block | — | — | M2 |
 | `group` | block | `role?`, `label?` | blocks | M2 |
 | `table` | block | `cols`, `align?`, `label?` | `trow*` | M6 |
@@ -74,6 +74,7 @@ Notes:
 1 CJK     5 HAS_STYLE   9 PUNCT_CLOSE  13 LINK
 2 EM      6 CODE       10 INDENT       14 CJK_SPACE
 3 BOLD    7 CJK_EMPH   11 HYPHEN       15 PUNCT_SPACE
+16 UNDER  17 OVER      18 STRIKE   (CH1: text-decoration, metric-neutral)
 ```
 
 - `TextStyling = { classBits: u64, dynClasses: sorted u32[], inline: InlineStyle? }`, interned by hash → `StyleId`. Blocks and runs store StyleIds, never copies.
