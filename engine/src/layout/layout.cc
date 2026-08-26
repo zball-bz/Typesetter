@@ -2,6 +2,8 @@
 
 #include <unordered_set>
 
+#include "../code/grid.h"
+
 namespace tsr {
 
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
@@ -69,6 +71,28 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         }
         i32 cols = chSu > 0 ? (i32)(lineWidth / chSu) : 0;
         if (cols > 0 && cols < 8) cols = 8;
+        // snap-kerning (verbatim §3): solve the rational grid from RAW
+        // measurements; column budget switches to atom units — Latin = q,
+        // CJK = p atoms — with letter-spacing pulling advances onto it
+        GridSpec grid;
+        i32 latinAtoms = 1;
+        if (cfg.verbatimSnapKerning && chSu > 0 && u.cjkChRef &&
+            metrics.hasWord(u.chRef, u.codeStyle) &&
+            metrics.hasWord(u.cjkChRef, u.codeStyle)) {
+          double chLpx = metrics.word(u.chRef, u.codeStyle).px;
+          double chCpx = metrics.word(u.cjkChRef, u.codeStyle).px;
+          grid = solveGrid(chLpx, chCpx, cols);
+          if (grid.atomPx > 0 && grid.dLatinPx <= 0.1 * chLpx &&
+              grid.dCjkPx <= 0.1 * chCpx) {
+            Su atomSu = suCeilPx(grid.atomPx);
+            latinAtoms = grid.q;
+            cjkCols = grid.p;              // in atom units now
+            cols = (i32)(lineWidth / atomSu);
+            if (cols > 0 && cols < 8 * grid.q) cols = 8 * grid.q;
+          } else {
+            grid = GridSpec{};             // budget-only fallback
+          }
+        }
         auto isBreakable = [](u32 cp) {
           return cp == ' ' || cp == '\t' || cp == ',' || cp == ';' ||
                  cp == ')' || cp == '}' || cp == ']' || cp == '>';
@@ -84,12 +108,13 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             if (r.isComment) commentSpans.push_back({b0, (u32)joined.size()});
           }
           // hanging base: the logical line's own leading whitespace columns
-          i32 leadCols = 0;
-          while ((size_t)leadCols < joined.size() &&
-                 (joined[leadCols] == ' ' || joined[leadCols] == '\t'))
-            leadCols++;
+          i32 leadChars = 0;
+          while ((size_t)leadChars < joined.size() &&
+                 (joined[leadChars] == ' ' || joined[leadChars] == '\t'))
+            leadChars++;
+          i32 leadCols = leadChars * latinAtoms;  // in atom units
           auto contColsAt = [&](u32 breakByte) -> u16 {
-            i32 cc = leadCols + cfg.verbatimContIndent;
+            i32 cc = leadCols / latinAtoms + cfg.verbatimContIndent;
             // comment-aware (verbatim-design §4): a break inside a comment
             // run aligns the continuation to the comment's CONTENT column
             for (auto [cs, ce] : commentSpans) {
@@ -99,7 +124,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               u32 pb = 0;
               while (pb < cs) {
                 u32 cp2 = utf8Next(joined, pb);
-                col += isCjk(cp2) ? cjkCols : 1;
+                col += isCjk(cp2) ? cjkCols : latinAtoms;
               }
               // lead-in: opening punctuation streak + one space
               u32 q2 = cs;
@@ -113,10 +138,11 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
                 lead++;
               }
               if (q2 < ce && joined[q2] == ' ') lead++;
-              cc = col + lead;
+              cc = col / latinAtoms + lead;
               break;
             }
-            if (cc > cols - 8) cc = cols > 8 ? cols - 8 : 0;
+            i32 colCap = cols / latinAtoms;
+            if (cc > colCap - 8) cc = colCap > 8 ? colCap - 8 : 0;
             if (cc < 0) cc = 0;
             return (u16)cc;
           };
@@ -130,15 +156,15 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             u16 nextCont = 0;
             std::vector<u16> rowCont;
             while (lo < joined.size()) {
-              i32 avail = rows.empty() ? cols : cols - (i32)nextCont;
-              if (avail < 8) avail = 8;
+              i32 avail = rows.empty() ? cols : cols - (i32)nextCont * latinAtoms;
+              if (avail < 8 * latinAtoms) avail = 8 * latinAtoms;
               u32 p = lo;
               i32 col = 0;
               u32 lastBrk = 0;
               while (p < joined.size()) {
                 u32 q = p;
                 u32 cp = utf8Next(joined, q);
-                i32 w = isCjk(cp) ? cjkCols : 1;
+                i32 w = isCjk(cp) ? cjkCols : latinAtoms;
                 if (col + w > avail) break;
                 col += w;
                 p = q;
@@ -189,6 +215,8 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             line.cbHi = rows[ri].hi;
             line.codeCont = ri > 0;
             line.contCols = ri < rowContOut.size() ? rowContOut[ri] : 0;
+            line.snapLatinPx = (float)grid.dLatinPx;
+            line.snapCjkPx = (float)grid.dCjkPx;
             line.codeHl = hl;
             line.height = adv;
             line.left = u.indent;

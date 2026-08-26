@@ -131,7 +131,7 @@ export function createEngine(opts = {}) {
       widthPx, baseSizePx = 18, lineHeight, fontFamily = 'Georgia, serif',
       cjkFontFamily = TSR_CJK_FONT, lang = 'zh-CN',
       paraIndentEm, punctCompress = 'book', progressive = true,
-      codeFontFeatures, codeFontFeaturesByLang,
+      codeFontFeatures, codeFontFeaturesByLang, verbatimSnapKerning,
       onSemantic, onUpgrade,
     } = {}) {
       ensureCss();
@@ -153,7 +153,7 @@ export function createEngine(opts = {}) {
       const res = await request(
         { type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight,
           fontFamily, cjkFontFamily, paraIndentEm, punctCompress, progressive,
-          codeFontFeatures, codeFontFeaturesByLang },
+          codeFontFeatures, codeFontFeaturesByLang, verbatimSnapKerning },
         (html) => {
           semanticHtml = html;
           if (progressive) {

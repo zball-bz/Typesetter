@@ -50,6 +50,10 @@ struct Config {
   // differ per language (Haskell vs C++); empty = font default. NOTE:
   // snap-kerning (V1.5) requires ligatures OFF — letter-spacing disables
   // liga/calt in browsers, a binary switch not a dial.
+  // snap-kerning (verbatim-design §3): pull both scripts onto the rational
+  // grid via letter-spacing. MUTUALLY EXCLUSIVE with ligatures by browser
+  // mechanism (non-zero letter-spacing disables liga/calt).
+  bool verbatimSnapKerning = false;
   std::string codeFontFeatures;
   std::map<std::string, std::string> codeFontFeaturesByLang;
   double listIndentEm = 1.5;

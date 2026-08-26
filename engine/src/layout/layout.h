@@ -21,6 +21,8 @@ struct LineBox {
   u32 cbLo = 0, cbHi = 0;            // special==2: byte slice of the joined line
   bool codeCont = false;             // wrap continuation row (indented, unnumbered)
   u16 contCols = 0;                  // continuation indent, in ch columns
+  float snapLatinPx = 0;             // snap-kerning letter-spacing (render)
+  float snapCjkPx = 0;
   bool codeHl = false;               // hl-range line (background)
   Su height = 0;                     // row advance (hl background needs it)
   StrRef marker = 0;                 // list marker on the unit's first line

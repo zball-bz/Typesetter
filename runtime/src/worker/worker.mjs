@@ -53,7 +53,8 @@ function postResult(M, doc, id) {
 
 async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily,
                          cjkFontFamily, paraIndentEm, punctCompress, progressive,
-                         codeFontFeatures, codeFontFeaturesByLang }) {
+                         codeFontFeatures, codeFontFeaturesByLang,
+                         verbatimSnapKerning }) {
   const M = await getMod();
   const doc = M._tsr_doc_new();
   try {
@@ -75,6 +76,7 @@ async function typeset({ id, source, widthPx, baseSizePx, lineHeight, fontFamily
       M._tsr_set_code_features(doc, l, f);
       M._free(l); M._free(f);
     };
+    if (verbatimSnapKerning) M._tsr_set_snap_kerning(doc, 1);
     if (codeFontFeatures) setFeat('', codeFontFeatures);
     for (const [l, f] of Object.entries(codeFontFeaturesByLang ?? {})) setFeat(l, f);
     const srcPtr = M.stringToNewUTF8(source);

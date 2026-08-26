@@ -10,6 +10,7 @@
 #include "../src/hyphen/hyphen.h"
 #include "../src/inline/jslex.h"
 #include "../src/math/math.h"
+#include "../src/code/grid.h"
 #include "../src/math/mathfont.h"
 #include "native_tokens.h"
 #include "../src/measure/mock.h"
@@ -233,6 +234,25 @@ static void unitMathSegments() {
   CHECK(opq.size() == 1);            // groups are opaque
 }
 
+static void unitGrid() {
+  // strict 2:1 → exact 2/1, zero deltas (the common case costs nothing)
+  GridSpec g = solveGrid(8.0, 16.0, 40);
+  CHECK(g.exact && g.p == 2 && g.q == 1);
+  CHECK(g.dLatinPx == 0 && g.dCjkPx == 0);
+  // 5:3 pair → 5/3 within q≤7; thinner side gains positive spacing
+  GridSpec h = solveGrid(9.0, 15.0, 40);
+  CHECK(h.exact && h.p == 5 && h.q == 3);
+  CHECK(h.dLatinPx == 0 && h.dCjkPx == 0);  // exactly rational: no deltas
+  // slightly-thin CJK: best q≤7 approximation is still 2/1 and the CJK
+  // side gains the (modest) spacing; natural flow would NOT be exact
+  GridSpec k = solveGrid(8.0, 15.6, 20);
+  CHECK(k.p == 2 && k.q == 1 && !k.exact);
+  CHECK(k.dCjkPx > 0.3 && k.dCjkPx < 0.5 && k.dLatinPx == 0);
+  // irrational-ish ratio, q capped at 7
+  GridSpec m = solveGrid(8.0, 8.0 * 1.618, 200);
+  CHECK(m.q <= 7);
+}
+
 // --- golden runner ---
 static bool typesetWithMock(Doc& doc) {
   provideNativeTokens(doc);
@@ -282,6 +302,7 @@ int main(int argc, char** argv) {
   unitMathLayout();
   unitMathStretch();
   unitMathSegments();
+  unitGrid();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");

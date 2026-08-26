@@ -59,6 +59,10 @@ TSR_EXPORT void tsr_set_cjk_font(WasmDoc* d, const char* family) {
   d->doc.cfg.cjkFont = family;
 }
 
+TSR_EXPORT void tsr_set_snap_kerning(WasmDoc* d, int on) {
+  d->doc.cfg.verbatimSnapKerning = on != 0;
+}
+
 // lang "" sets the default; else a per-language override (verbatim §3)
 TSR_EXPORT void tsr_set_code_features(WasmDoc* d, const char* lang,
                                       const char* features) {

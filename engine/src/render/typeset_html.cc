@@ -334,6 +334,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
           out.append(l.contCols, ' ');
           out += "</span>";
         }
+        const bool snap = l.snapLatinPx > 0 || l.snapCjkPx > 0;
         u32 off = 0;
         for (const FlowUnit::CodeRun& r : u.codeRuns[l.codeLine]) {
           std::string_view t = strs.get(r.text);
@@ -342,14 +343,40 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
           u32 lo = l.cbLo > rLo ? l.cbLo : rLo;
           u32 hi = l.cbHi < rHi ? l.cbHi : rHi;
           if (lo >= hi) continue;
-          const Styling& cst = styles.get(r.style);
-          out += "<span class=\"";
-          runClasses(out, cst);
-          out += "\"";
-          runStyleAttr(out, cst, cfg, strs);
-          out += ">";
-          escapeHtml(out, t.substr(lo - rLo, hi - lo));
-          out += "</span>";
+          std::string_view seg = t.substr(lo - rLo, hi - lo);
+          // snap-kerning: split the run by script, letter-spacing per side
+          u32 s0 = 0;
+          while (s0 < seg.size()) {
+            u32 s1 = s0;
+            bool cjk = false;
+            if (snap) {
+              u32 probe = s0;
+              cjk = isCjk(utf8Next(seg, probe));
+              s1 = s0;
+              while (s1 < seg.size()) {
+                u32 nx = s1;
+                if (isCjk(utf8Next(seg, nx)) != cjk) break;
+                s1 = nx;
+              }
+            } else {
+              s1 = (u32)seg.size();
+            }
+            const Styling& cst = styles.get(r.style);
+            out += "<span class=\"";
+            runClasses(out, cst);
+            out += "\"";
+            runStyleAttr(out, cst, cfg, strs);
+            double d = snap ? (cjk ? l.snapCjkPx : l.snapLatinPx) : 0;
+            if (d > 0) {
+              out += " data-snap=\"1\" style=\"letter-spacing:";
+              fmtPx(out, d);
+              out += "\"";
+            }
+            out += ">";
+            escapeHtml(out, seg.substr(s0, s1 - s0));
+            out += "</span>";
+            s0 = s1;
+          }
         }
         out += "</div>\n";
         continue;
