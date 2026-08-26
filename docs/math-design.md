@@ -1,6 +1,6 @@
 # Math Design Study (M7)
 
-Status: **research complete, design proposed — for review before implementation.**
+Status: **implemented (M7a–M7d, 2026-08-26)** — §13 records the as-built deltas.
 Companion to [design-decisions-v2.md](design-decisions-v2.md) §13 (the standing
 decisions this study details) and [document-model.md](document-model.md).
 
@@ -323,3 +323,37 @@ decisions:
   artifact, accents, `@ref`-able equations.
 - **M7d — polish**: font subsetting, specimen, corpus opt-ins, STIX swap
   test, a11y pass decision.
+
+## 13. As-built deltas (M7 completion)
+
+- **Factorial**: postfix `!` folds into the preceding atom (`n!/2` has an
+  `n!` numerator); `!=`-style negations stay lexer sequences.
+- **`inf`** is the infimum text operator; ∞ is `oo`/`infty`/`infinity`
+  (v1 listed `inf` as ∞ — collision, recorded deviation).
+- **Groups always survive parsing** (no atom splicing): a group box carries
+  firstCls=Open/lastCls=Close, so neighbour glue and demotion are unchanged
+  while delimiters stretch adaptively (natural glyph until the content
+  outgrows it; §7 target with 10% short_fall).
+- **Segmentation demotion preview**: inline break segmentation simulates
+  Rules 5–6 over top-level effective classes before cutting, so unary minus
+  never opens a break point; segments lay out with edge-aware assembly
+  (a segment-final Bin stays a Bin).
+- **Equation numbers render at the right margin** (`.tsr-eqno`, synthetic,
+  skipped by copy/audits); only labelled display formulas number; @ref
+  displays cfg.supEquation + "(n)".
+- **禁则 extends to formulas**: no break between an inline formula and a
+  following closing punct; quarter-em boundary glue on CJK–formula seams.
+- **Copy across segments**: a split formula carries its `$src$` on the
+  first segment only; later segments contribute empty data-src.
+- **STIX swap test: negative result, gate works.** mathc.py over STIX Two
+  Math 2.13 FAILS the §1 gating check — all ~500 of its variant/assembly
+  glyphs (`parenleft.s1`, `uni222B.dsp`, …) are unencoded. Euler-Math's
+  cmapped variants are the exception, not the rule; the codepoint-painting
+  render path is therefore a real constraint on font choice, and the gate
+  rejects unusable fonts at compile time instead of shipping tofu. A future
+  font swap needs either a font with encoded variants or a build step that
+  injects PUA cmap entries for the referenced glyphs (fontTools can; noted
+  as the designated escape hatch).
+- **Deferred**: cut-in kerning (MathKernInfo absent in Euler-Math), wide
+  horizontal accents/over-braces (52 horiz chains unused so far), corpus
+  math opt-ins, MathML/a11y output (semantic fallback emits source text).

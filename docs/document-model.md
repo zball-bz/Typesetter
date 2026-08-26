@@ -47,7 +47,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `tcell` | block | — | blocks | M6 |
 | `term` | block | `name`, `label?` | blocks (description) | M4 |
 | `collect` | block | `what`, params | — (expanded by resolver) | M4 |
-| `mathblock` | block | `src`, `label?` | — (boxes at M7) | M7 |
+| `mathblock` | block | `src`, `label?`, `name?` (resolver: "(n)") | — (MathBox at emit) | M7 ✓ |
 | `error` | both | `message`, `code` | best-effort content | M1 |
 | `comment` | both | `body` | — | M2 |
 | `text` | inline | `str` | — | M1 |
@@ -55,7 +55,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `link` | inline | `url` | inline | M2 |
 | `code` | inline | `str` | — | M2 |
 | `ref` | inline | `target`, `form?` (+resolved fields) | — | M4 |
-| `mathinline` | inline | `src` | — | M7 |
+| `mathinline` | inline | `src` | — (MathBox segments at emit) | M7 ✓ |
 | `raw` | inline | `html`, `w?`, `h?` | — | M6 |
 | `hardbreak` | inline | — (syntax reserved, not yet granted) | — | — |
 
@@ -270,6 +270,23 @@ and webfont-settle re-typesets, `size-adjust` fallback descriptors.
 
 Copy produces **content text**, not markup source: walk selected `.tsr-r` runs in DOM order — skip `data-syn` runs; take runs' text (partial at the selection endpoints, character-offset within the run); between consecutive lines insert `" "` or `""` per the line's `data-join`; between paragraphs insert `"\n\n"`. Source offsets (`data-s`) are for anchoring and diagnostics, not for copy.
 
+### 9.4 Math runs (M7)
+
+- A formula renders as one `<span class="tsr-math" data-syn="math"
+  data-src="$…$">` inline box (width/height/vertical-align from the MathBox;
+  display formulas sit in a `special` centred line with an explicit height
+  and an optional `.tsr-eqno` right-margin number, `data-syn="eqno"`).
+  Inside: absolutely positioned `.tsr-mg` glyph runs (baseline pinned by
+  line-height == hhea height) and `.tsr-mr` rule boxes. Glyphs are painted
+  BY CODEPOINT in the bundled font — the artifact's gating check guarantees
+  every variant/assembly glyph is cmap-reachable.
+- Copy (§9.3 extension): `data-syn="math"` runs contribute their `data-src`
+  source text; a formula split into break segments carries the source on
+  the FIRST segment only (later segments have empty data-src). Audits treat
+  a math span as one engine-defined line fragment.
+- Semantic fallback (§9.2): `<code class="tsr-mathsrc">$src$</code>` inline;
+  `<p class="tsr-mathblock">` for display. MathML stays rejected (v2 §13).
+
 ## 10. Diagnostics
 
 `{ severity: error|warning|info, code, span, message, related?: span[] }`, JSON via `tsr_diagnostics`. Initial code table:
@@ -293,7 +310,7 @@ measure-fallback     info     glyphs measured via fallback font
 
 ```json
 {
-  "fonts":   { "body": "...", "cjk": "...", "mono": "...", "math": "Neo Euler" },
+  "fonts":   { "body": "...", "cjk": "...", "mono": "...", "math": "Euler Math (bundled woff2; metrics precompiled)" },
   // fonts.cjk is live (M6+): CJK-class runs measure AND render with this
   // stack (renderer: .tsr-cjk { font-family: var(--tsr-cjk-font) }) so
   // U+2014/…/fullwidth puncts never resolve into the Latin face,
@@ -309,6 +326,12 @@ measure-fallback     info     glyphs measured via fallback font
 Unknown keys → diagnostic, not error (forward compat).
 
 ## 12. Dump formats (golden-test contract, byte-exact)
+
+`--stage=mathbox` (M7): per-formula box trees in document order —
+`display pid=N` / `inline pid=N "src"` headers, then an indented tree of
+`hbox/glyph/rule/glue` lines with atom class, `w/asc/desc` in su, `@(dx,dy)`
+child offsets (dy positive = up) and per-glyph `px` sizes. Only fixtures
+containing math carry this golden.
 
 - **Tree dump** — one node per line, children indented two spaces:
 

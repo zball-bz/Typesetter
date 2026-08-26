@@ -47,7 +47,7 @@ export const TSR_CSS = `
 // Bundled math font: metrics are precompiled (engine/gen/euler_math.h), so
 // layout never waits on this file — only paint does (font-display: block).
 export const TSR_MATH_FONT_URL =
-  new URL('../../../fonts/Euler-Math.otf', import.meta.url).href;
+  new URL('../../../fonts/euler-math.woff2', import.meta.url).href;
 
 let cssInjected = false;
 function ensureCss() {
@@ -56,7 +56,7 @@ function ensureCss() {
   style.dataset.tsr = '1';
   style.textContent = TSR_CSS +
     `\n@font-face { font-family: 'Euler Math'; src: url('${TSR_MATH_FONT_URL}')` +
-    ` format('opentype'); font-display: block; }`;
+    ` format('woff2'); font-display: block; }`;
   document.head.appendChild(style);
   cssInjected = true;
 }

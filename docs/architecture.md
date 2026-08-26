@@ -223,7 +223,7 @@ M6  extensibility: fence handler API, #!table + provenance queries, #use ergonom
      dispatchers, $.fence/$.region registration, raw passthrough units,
      #!table with equal columns + per-column alignment + three-line rules.
      Deferred: #use, m.parse fence re-entry, cell-continuation indent rule]
-M7  math: operator dictionary artifact, box model, Neo Euler metrics, inline boxes
+M7  math: operator dictionary artifact, box model, Euler-Math metrics, inline boxes — DONE (mathc.py -> euler_math.h artifact; MathBox layout in su, zero measurement; $...$ islands; display/limits/stretch; equation labels+refs; 3-class inline breaks; woff2 subset). Deferred: cut-in kerning (no font data), horizontal stretch (wide accents), corpus math opt-ins
 M8  pages: PDF-oriented layout, static export path
 ```
 
