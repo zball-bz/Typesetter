@@ -65,17 +65,42 @@ satisfies both, the block stays budget-only (no alignment features).
 The indent itself renders as literal spaces in the flow (font-independent,
 the e2e242e lesson), synthetic for both copy paths.
 
-## 5. Sidebar comments (V3, recorded — build on demand)
+## 5. The three-box model (V3, supersedes the two-column zip)
 
-Fence-declared marker (e.g. `///` or `#`), chosen by the author to be a
-comment or illegal in the source language (string-literal collisions are
-the author's risk, documented). Character-level preprocessing splits each
-line BEFORE tokenization; code wraps to a measure that stops at the
-sidebar column; the sidebar column word-wraps independently; each logical
-line is an anchor row with height = max(code rows, comment rows) — a
-two-column zip, closed inside the unit, fully deterministic. Copy must
-restore `/// …` at end of line. TeX precedent: listings escapechar,
-algorithmicx right-aligned \Comment. Scope ≈ half of CH4.
+**A code block IS three horizontally arranged boxes: gutter (line
+numbers), code, sidecar (structured comments).** The columns are fully
+autonomous — fixed horizontal position and width each — and share exactly
+ONE constraint: rows belonging to the same logical line are equal-height
+(row height = max over columns). Consequences:
+
+- The gutter is the DEGENERATE column: vertical contribution always zero
+  (one marker per logical line). The existing marker mechanism already
+  implements "fixed x, out of flow" — it becomes column one conceptually.
+- The code box does verbatim grid layout knowing NOTHING about the
+  sidecar: its measure is settled at column-partition time. §2–§4 apply
+  unchanged inside it.
+- **The sidecar is an ordinary INLINE FLOW, not verbatim**: once only the
+  equal-height constraint couples it, its interior gets the whole body
+  pipeline for free — Knuth–Plass breaking (it is proportional prose),
+  inline MATH (`/// amortized $O(n log n)$` — the killer use), links,
+  @refs, styled runs. A taller formula row raises that row; the code
+  column shows white below — exactly the intended look.
+
+**Unlocks `m.parse`**: structured sidecars require re-entrant inline
+markup parsing of an extracted string. Precedent exists (mathinline
+parses runtime strings in-engine); a `parseInlineFragment(string)`
+adaptation of InlineParser serves the sidecar AND finally delivers the
+long-deferred fence-handler `m.parse` — one mechanism, two debts.
+
+Mechanics: fence-declared marker (e.g. `///`), chosen by the author to be
+a comment or illegal in the source language (string-literal collisions
+are the author's risk, documented); character-level split BEFORE
+tokenization; each logical line's sidecar text parses as an inline
+fragment into a trailing `group{role:"sidecar"}` child of the line seq
+(existing kinds only). `sidebarCol` configures the code box's right
+edge. Copy contract (OPEN): the sidecar is display content — copy emits
+`/// ` + content text, not a byte-exact source round-trip. TeX
+precedent: listings escapechar, algorithmicx right-aligned \Comment.
 
 ## 6. Rejected / withdrawn
 
