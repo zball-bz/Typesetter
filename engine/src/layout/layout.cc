@@ -1,9 +1,11 @@
 #include "layout.h"
 
+#include <unordered_set>
+
 namespace tsr {
 
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
-                       const Config& cfg) {
+                       Interner& strs, const Config& cfg) {
   LayoutResult lr;
   const Su measure = suFloorPx(cfg.widthPx);
   const Su baseLeading = suRoundPx(cfg.lineHeight * cfg.baseSizePx);
@@ -51,19 +53,86 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           const VMet& v = metrics.vmet(u.codeStyle);
           if (v.ascent + v.descent > adv) adv = v.ascent + v.descent;
         }
+        // ch grid (CH4, code-design.md §4): monospace is a metric contract —
+        // 1ch per char, 2ch for CJK; wrap is a COLUMN computation, greedy
+        // with a token-boundary preference, continuation rows indent 2ch.
+        Su chSu = 0;
+        if (u.codeWrap && u.chRef && metrics.hasWord(u.chRef, u.codeStyle))
+          chSu = metrics.word(u.chRef, u.codeStyle).su;
+        i32 cols = chSu > 0 ? (i32)(lineWidth / chSu) : 0;
+        if (cols > 0 && cols < 8) cols = 8;
+        auto isBreakable = [](u32 cp) {
+          return cp == ' ' || cp == '\t' || cp == ',' || cp == ';' ||
+                 cp == ')' || cp == '}' || cp == ']' || cp == '>';
+        };
+        std::unordered_set<u32> hlSet(u.hlLines.begin(), u.hlLines.end());
         bool first = true;
         for (u32 li = 0; li < (u32)u.codeRuns.size(); li++) {
-          LineBox line;
-          line.unitIdx = ui;
-          line.special = 2;
-          line.codeLine = li;
-          line.left = u.indent;
-          line.width = lineWidth;
-          line.y = (Su)py;
-          if (first && u.marker) { line.marker = u.marker; line.markerStyle = u.markerStyle; }
-          first = false;
-          py += adv;
-          fr.lines.push_back(line);
+          std::string joined;
+          for (const FlowUnit::CodeRun& r : u.codeRuns[li])
+            joined.append(strs.get(r.text));
+          struct Row { u32 lo, hi; };
+          std::vector<Row> rows;
+          if (cols <= 0 || joined.empty()) {
+            rows.push_back({0, (u32)joined.size()});
+          } else {
+            u32 lo = 0;
+            while (lo < joined.size()) {
+              i32 avail = rows.empty() ? cols : cols - 2;
+              if (avail < 8) avail = 8;
+              u32 p = lo;
+              i32 col = 0;
+              u32 lastBrk = 0;
+              while (p < joined.size()) {
+                u32 q = p;
+                u32 cp = utf8Next(joined, q);
+                i32 w = isCjk(cp) ? 2 : 1;
+                if (col + w > avail) break;
+                col += w;
+                p = q;
+                if (isBreakable(cp)) lastBrk = p;  // break AFTER the boundary
+              }
+              if (p >= joined.size()) {
+                rows.push_back({lo, (u32)joined.size()});
+                break;
+              }
+              u32 cut = lastBrk > lo ? lastBrk : p;
+              if (cut <= lo) {  // guarantee progress on pathological input
+                u32 q = lo;
+                utf8Next(joined, q);
+                cut = q;
+              }
+              rows.push_back({lo, cut});
+              while (cut < joined.size() && joined[cut] == ' ') cut++;
+              lo = cut;
+            }
+            if (rows.empty()) rows.push_back({0, 0});
+          }
+          bool hl = hlSet.count(li + 1) != 0;
+          for (size_t ri = 0; ri < rows.size(); ri++) {
+            LineBox line;
+            line.unitIdx = ui;
+            line.special = 2;
+            line.codeLine = li;
+            line.cbLo = rows[ri].lo;
+            line.cbHi = rows[ri].hi;
+            line.codeCont = ri > 0;
+            line.codeHl = hl;
+            line.height = adv;
+            line.left = u.indent + (ri ? 2 * chSu : 0);
+            line.width = lineWidth - (ri ? 2 * chSu : 0);
+            line.y = (Su)py;
+            if (ri == 0 && u.codeLineNo > 0) {
+              line.marker = strs.intern(std::to_string(u.codeLineNo + (i32)li));
+              line.markerStyle = u.codeStyle;
+            } else if (first && u.marker) {
+              line.marker = u.marker;
+              line.markerStyle = u.markerStyle;
+            }
+            first = false;
+            py += adv;
+            fr.lines.push_back(line);
+          }
         }
         continue;
       }
@@ -287,7 +356,10 @@ std::string dumpLayout(const LayoutResult& lr) {
         continue;
       }
       if (l.special == 2) {
-        appendf(out, "  L%zu code y=%dsu left=%dsu\n", i, l.y, l.left);
+        appendf(out, "  L%zu code y=%dsu left=%dsu line=%u [%u,%u)%s%s%s\n", i,
+                l.y, l.left, l.codeLine, l.cbLo, l.cbHi,
+                l.codeCont ? " cont" : "", l.codeHl ? " hl" : "",
+                l.marker ? " marker" : "");
         continue;
       }
       if (l.special == 3) {

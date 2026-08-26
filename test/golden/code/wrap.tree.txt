@@ -1,0 +1,5 @@
+doc @[0,274) [base]
+  para @[0,42) [base]
+    text @[0,42) [base] str="窄栏网格换行、行号与行高亮："
+  codeblock @[0,0) [base] lang="json" lineNo=1 hl="1"
+    text @[0,0) [base] str="{\"description\": \"a deliberately long single line that must wrap on the column grid\", \"值\": \"中文按两列宽度参与网格计算，行会在合适的边界断开\", \"n\": 42}"

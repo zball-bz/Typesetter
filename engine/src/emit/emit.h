@@ -72,7 +72,10 @@ struct FlowUnit {
     StyleId style = 0;
   };
   std::vector<std::vector<CodeRun>> codeRuns;
-  bool codeWrap = false;     // CH4: column wrap (stored now, applied later)
+  // CH4 grid: monospace is a METRIC CONTRACT — every char is 1ch (CJK 2ch),
+  // the engine measures exactly one thing per code style: ch itself ("0").
+  bool codeWrap = true;      // absolute lines have no scroll container
+  StrRef chRef = 0;          // interned "0" (the ch probe)
   i32 codeLineNo = 0;        // 0 = no numbers; else first line number
   std::vector<u32> hlLines;  // 1-based highlighted lines
   StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup

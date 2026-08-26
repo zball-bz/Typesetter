@@ -6,4 +6,4 @@ top pid=0 units=1
 top pid=1 units=1
  unit raw indent=0su
 top pid=2 units=1
- unit code indent=0su lines=1
+ unit code indent=0su lines=1 wrap

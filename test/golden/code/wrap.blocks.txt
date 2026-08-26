@@ -1,0 +1,20 @@
+top pid=0 units=1
+ unit text indent=0su
+  cjk "窄" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "栏" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "网" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "格" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "换" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "行" w=1025su glue=102su wt=0.6 pen=INF @[0,42)
+  punct-close "、" w=512su @[0,42)
+  punct-sp w=512su @[0,42)
+  cjk "行" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "号" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "与" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "行" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "高" w=1025su glue=102su wt=0.6 pen=0 @[0,42)
+  cjk "亮" w=1025su glue=102su wt=0.6 pen=INF @[0,42)
+  punct-close "：" w=512su @[0,42)
+  punct-sp w=512su @[0,42)
+top pid=1 units=1
+ unit code indent=0su lines=1 wrap lineNo=1 hl=1

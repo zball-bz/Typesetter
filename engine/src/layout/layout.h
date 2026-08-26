@@ -18,6 +18,10 @@ struct LineBox {
   bool endsWithHyphen = false;
   u8 special = 0;                    // 0 text, 1 rule, 2 code, 3 raw, 4 math
   u32 codeLine = 0;                  // special==2: index into unit codeRuns
+  u32 cbLo = 0, cbHi = 0;            // special==2: byte slice of the joined line
+  bool codeCont = false;             // wrap continuation row (indented, unnumbered)
+  bool codeHl = false;               // hl-range line (background)
+  Su height = 0;                     // row advance (hl background needs it)
   StrRef marker = 0;                 // list marker on the unit's first line
   StyleId markerStyle = 0;
   Span srcSpan;
@@ -35,7 +39,7 @@ struct LayoutResult {
 };
 
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
-                       const Config& cfg);
+                       Interner& strs, const Config& cfg);
 
 std::string dumpLayout(const LayoutResult& lr);
 

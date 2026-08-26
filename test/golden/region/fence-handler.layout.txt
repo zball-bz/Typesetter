@@ -4,4 +4,4 @@ para pid=0 y=0su w=19200su h=1536su
 para pid=1 y=2765su w=19200su h=1920su
   L0 raw y=0su left=0su w=19200su
 para pid=2 y=5914su w=19200su h=1536su
-  L0 code y=0su left=0su
+  L0 code y=0su left=0su line=0 [0,13)

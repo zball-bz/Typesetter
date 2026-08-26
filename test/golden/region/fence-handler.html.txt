@@ -6,6 +6,6 @@
 <div class="tsr-raw" style="top:0px;left:0px;width:300px;height:30px"><b>boxed</b></div>
 </div>
 <div class="tsr-para" data-pid="2" style="position:relative;height:24px">
-<div class="tsr-line" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code">plain(fence);</span></div>
+<div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code">plain(fence);</span></div>
 </div>
 </div>

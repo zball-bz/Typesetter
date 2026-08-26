@@ -248,7 +248,18 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         out += "</div>\n";
         continue;
       }
-      out += "<div class=\"tsr-line\"";
+      out += "<div class=\"tsr-line";
+      if (l.special == 2 && l.codeHl) out += " tsr-hlline";
+      out += "\"";
+      if (l.special == 2) {
+        // code rows are ragged by nature (the audit's justify checks do not
+        // apply); a wrapped row additionally rejoins its continuation (§9.3)
+        out += " data-ragged=\"1\"";
+        size_t self = (size_t)(&l - fr.lines.data());
+        if (self + 1 < fr.lines.size() && fr.lines[self + 1].special == 2 &&
+            fr.lines[self + 1].codeCont)
+          out += " data-join=\"none\"";
+      }
       {  // label anchor: first line of an anchored unit gets the id
         const FlowUnit& au = tb.units[l.unitIdx];
         if (au.anchor && l.unitIdx != lastAnchored) {
@@ -270,6 +281,10 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
       fmtPx(out, suToPx(l.left));
       out += ";width:";
       fmtPx(out, suToPx(l.width));
+      if (l.special == 2 && l.codeHl && l.height > 0) {
+        out += ";height:";
+        fmtPx(out, suToPx(l.height));
+      }
       if (l.special == 0 && l.wordDeltaPx != 0) {
         out += ";word-spacing:";
         fmtPx(out, l.wordDeltaPx);
@@ -289,14 +304,21 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
 
       if (l.special == 2) {
         const FlowUnit& u = tb.units[l.unitIdx];
+        u32 off = 0;
         for (const FlowUnit::CodeRun& r : u.codeRuns[l.codeLine]) {
+          std::string_view t = strs.get(r.text);
+          u32 rLo = off, rHi = off + (u32)t.size();
+          off = rHi;
+          u32 lo = l.cbLo > rLo ? l.cbLo : rLo;
+          u32 hi = l.cbHi < rHi ? l.cbHi : rHi;
+          if (lo >= hi) continue;
           const Styling& cst = styles.get(r.style);
           out += "<span class=\"";
           runClasses(out, cst);
           out += "\"";
           runStyleAttr(out, cst, cfg, strs);
           out += ">";
-          escapeHtml(out, strs.get(r.text));
+          escapeHtml(out, t.substr(lo - rLo, hi - lo));
           out += "</span>";
         }
         out += "</div>\n";

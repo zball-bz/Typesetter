@@ -479,6 +479,7 @@ struct Emitter {
         u.marker = marker;
         u.codeStyle = compose(n->style, CLS_CODE, 1.0f);
         u.markerStyle = u.codeStyle;
+        u.chRef = strs.intern("0");
         for (const ArgVal& a : n->args) {
           if (a.key == ArgK::wrap && a.tag == ArgTag::Bool) u.codeWrap = a.num != 0;
           if (a.key == ArgK::lineNo && a.tag == ArgTag::Num) u.codeLineNo = (i32)a.num;
@@ -784,7 +785,16 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
   };
   for (TopBlock& tb : tops) {
     for (FlowUnit& u : tb.units) {
-      if (u.kind == FlowUnit::K::Code) needStyle(u.codeStyle);
+      if (u.kind == FlowUnit::K::Code) {
+        needStyle(u.codeStyle);
+        if (u.codeWrap && u.chRef && !store.hasWord(u.chRef, u.codeStyle)) {
+          u64 k = MetricStore::key(u.chRef, u.codeStyle);
+          if (!seenWord.count(k)) {
+            seenWord[k] = true;
+            req.words.push_back({u.chRef, u.codeStyle});
+          }
+        }
+      }
       resolveBlocks(u.blocks);
       for (TableCell& c : u.cells) resolveBlocks(c.blocks);
     }

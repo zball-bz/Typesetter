@@ -22,5 +22,5 @@ para pid=5 y=24371su w=19200su h=4608su
 para pid=6 y=30208su w=19200su h=1536su
   L0 rule y=768su left=0su w=19200su
 para pid=7 y=32973su w=19200su h=3072su
-  L0 code y=0su left=0su
-  L1 code y=1536su left=0su
+  L0 code y=0su left=0su line=0 [0,24)
+  L1 code y=1536su left=0su line=1 [0,9)

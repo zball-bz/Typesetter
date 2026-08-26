@@ -140,7 +140,7 @@ struct Doc {
         u.breakCost = r.cost;
       }
     }
-    layout = layoutDoc(tops, metrics, cfg);
+    layout = layoutDoc(tops, metrics, strs, cfg);
     laidOut = true;
     return Status::Ok;
   }

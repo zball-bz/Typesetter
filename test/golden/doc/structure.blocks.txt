@@ -165,4 +165,4 @@ top pid=5 units=1
 top pid=6 units=1
  unit rule indent=0su
 top pid=7 units=1
- unit code indent=0su lines=2
+ unit code indent=0su lines=2 wrap

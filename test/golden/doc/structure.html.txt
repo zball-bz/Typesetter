@@ -29,7 +29,7 @@
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="7" style="position:relative;height:48px">
-<div class="tsr-line" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code">const x = compute(1, 2);</span></div>
-<div class="tsr-line" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-code">return x;</span></div>
+<div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code">const x = compute(1, 2);</span></div>
+<div class="tsr-line" data-ragged="1" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-code">return x;</span></div>
 </div>
 </div>

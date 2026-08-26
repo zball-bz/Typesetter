@@ -103,6 +103,20 @@ test('math copies as source text', async ({ page }) => {
   expect(text).toContain('面积为');
 });
 
+test('wrapped code copies as its logical lines', async ({ page }) => {
+  const line = 'const aVeryLongIdentifierName = anotherLongIdentifier + someMoreLength;';
+  const source = '```js\n' + line + '\nshort();\n```';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 220 }),
+    { source },
+  );
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text).toContain(line);        // rejoined across grid-wrap rows
+  expect(text).toContain('short();');
+});
+
 test('copy joins CJK line breaks seamlessly and skips resolved refs', async ({ page }) => {
   const cjk = '排版引擎在断行处不引入空格，标点挤压后的文本也保持原样，复制即内容。';
   const source = '= 引言 <s>\n\n' + cjk + '\n\n见 @s 一节。';

@@ -42,6 +42,9 @@ export const TSR_CSS = `
                     font-family: 'Euler Math', 'STIX Two Math', serif; }
 .tsr-math .tsr-mr { position: absolute; background: currentColor; }
 .tsr-eqno { position: absolute; top: 50%; transform: translateY(-50%); }
+.tsr-hlline { background: var(--tsr-hl-line, rgba(250, 200, 60, 0.16)); }
+.tsr-marker.tsr-code { color: var(--tsr-tok-comment, #8d897f);
+                       font-size: 0.85em; padding-top: 0.15em; }
 /* code token theme (code-design.md §5): engine emits var(--tsr-tok-<tag>);
    theming lives entirely here */
 .tsr-doc { --tsr-tok-keyword: #7c4dbe; --tsr-tok-string: #2e7d32;

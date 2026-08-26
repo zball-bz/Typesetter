@@ -24,7 +24,7 @@ top pid=0 units=1
   space w=257su stretch=1 @[0,54)
   word "Typst:" w=3073su pen=INF @[0,54)
 top pid=1 units=1
- unit code indent=0su lines=1
+ unit code indent=0su lines=1 wrap
 top pid=2 units=1
  unit text indent=0su
   word "An" w=1025su pen=INF @[90,160)
@@ -67,7 +67,7 @@ top pid=2 units=1
   hyphen bw=513su pen=0.70 @[90,160)
   word "er:" w=1537su pen=INF @[90,160)
 top pid=3 units=1
- unit code indent=0su lines=2
+ unit code indent=0su lines=2 wrap
 top pid=4 units=1
  unit text indent=0su
   word "Done." w=2561su pen=INF @[280,285)

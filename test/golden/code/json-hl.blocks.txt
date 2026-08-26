@@ -44,4 +44,4 @@ top pid=0 units=1
   punct-close "：" w=512su @[0,95)
   punct-sp w=512su @[0,95)
 top pid=1 units=1
- unit code indent=0su lines=1
+ unit code indent=0su lines=1 wrap
