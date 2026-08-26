@@ -95,20 +95,50 @@ struct Emitter {
         for (const ArgVal& a : n->args)
           if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
         StyleId st = compose(n->style, ctx.addBits, ctx.mul);
-        MathBox* mb = layoutMathFormula(strs.get(srcRef), /*display=*/false,
-                                        fontPx(st), arena, strs, diags, n->span);
-        LinebreakBlock b;
-        b.breakPenalty = 0;  // CJK-context break after a formula is legal
-        b.style = st;
-        b.text = srcRef;
-        b.linkUrl = ctx.url;
-        b.flags = ctx.addFlags;
-        b.span = n->span;
-        b.math = mb;
-        b.width = mb->w;
-        b.rawPx = suToPx(mb->w);
-        b.widthResolved = true;
-        u.blocks.push_back(b);
+        // CJK–formula boundary glue (App C: formulas are Latin-class)
+        if (!u.blocks.empty() && u.blocks.back().isCjkChar()) {
+          double px = kCjkBoundaryEm * fontPx(st);
+          pushSynthetic(u, st, ctx.url, n->span, px,
+                        (u16)(BF_SPACE | BF_BOUND | ctx.addFlags), 1.0f, 0.0f, px);
+        }
+        std::vector<MathSeg> segs = layoutMathSegments(
+            strs.get(srcRef), /*display=*/false, fontPx(st), arena, strs,
+            diags, n->span);
+        for (size_t k = 0; k < segs.size(); k++) {
+          if (k) {
+            // the break-point glue: discardable at a break (BF_SPACE trims
+            // at line edges), rigid otherwise; synthetic for copy (§9.3)
+            double pen = segs[k].brkBefore == 1 ? cfg.mathRelAfterPenalty
+                         : segs[k].brkBefore == 2 ? cfg.mathRelBeforePenalty
+                                                  : cfg.mathBinAfterPenalty;
+            LinebreakBlock g;
+            g.flags = (u16)(BF_SPACE | BF_BOUND | ctx.addFlags);
+            g.breakPenalty = (float)pen;
+            g.style = st;
+            g.text = spaceRef;
+            g.linkUrl = ctx.url;
+            g.span = n->span;
+            g.width = segs[k].glueBefore;
+            g.spaceWidth = 0;
+            g.rawPx = suToPx(segs[k].glueBefore);
+            g.widthResolved = true;
+            // the previous segment itself is unbreakable-after
+            u.blocks.back().breakPenalty = BREAK_INF;
+            u.blocks.push_back(g);
+          }
+          LinebreakBlock b;
+          b.breakPenalty = 0;  // CJK-context break after a formula is legal
+          b.style = st;
+          b.text = k == 0 ? srcRef : 0;  // copy: source rides the first segment
+          b.linkUrl = ctx.url;
+          b.flags = ctx.addFlags;
+          b.span = n->span;
+          b.math = segs[k].box;
+          b.width = segs[k].box->w;
+          b.rawPx = suToPx(segs[k].box->w);
+          b.widthResolved = true;
+          u.blocks.push_back(b);
+        }
         return;
       }
       case Kind::comment:
@@ -223,6 +253,13 @@ struct Emitter {
       pushSynthetic(u, st, ctx.url, n->span, px, (u16)(BF_SPACE | BF_BOUND | ctx.addFlags),
                     1.0f, 0.0f, px);
     };
+    {  // formula → CJK boundary: the previous inline block was math
+      if (!u.blocks.empty() && u.blocks.back().math && !s.empty()) {
+        u32 j0 = 0;
+        u32 first = utf8Next(s, j0);
+        if (isCjkIdeo(first)) boundary();
+      }
+    }
     auto lastIsCloseSp = [&] {  // a closing/dot punct's trailing half
       return !u.blocks.empty() && (u.blocks.back().flags & BF_PUNCT_SP) &&
              !(u.blocks.back().flags & BF_PUNCT_OPEN);
@@ -527,6 +564,7 @@ struct Emitter {
         for (const ArgVal& a : n->args) {
           if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
           if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) u.anchor = a.ref;
+          if (a.key == ArgK::name && a.tag == ArgTag::Str) u.eqTag = a.ref;
         }
         u.mathBox = layoutMathFormula(strs.get(srcRef), /*display=*/true,
                                       fontPx(n->style), arena, strs, diags, n->span);

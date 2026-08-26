@@ -89,6 +89,20 @@ test('copy rebuilds exact content text (Latin, hyphenated)', async ({ page }) =>
   expect(text).toBe(source);
 });
 
+test('math copies as source text', async ({ page }) => {
+  const source = '面积为 $pi r^2$ 的圆，其周长为 $2 pi r$。';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 280 }),
+    { source },
+  );
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text).toContain('$pi r^2$');
+  expect(text).toContain('$2 pi r$');
+  expect(text).toContain('面积为');
+});
+
 test('copy joins CJK line breaks seamlessly and skips resolved refs', async ({ page }) => {
   const cjk = '排版引擎在断行处不引入空格，标点挤压后的文本也保持原样，复制即内容。';
   const source = '= 引言 <s>\n\n' + cjk + '\n\n见 @s 一节。';

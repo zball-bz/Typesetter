@@ -35,6 +35,12 @@ struct Config {
   double cjkGlueEm = 0.1;     // per-char stretch capacity (App C)
   double paraIndentEm = 0;    // CJK paragraph indent (2 for 首行缩进); 0 = off
   double hyphenPenalty = 0.7;
+  // math-design.md §9: inline-formula break classes. after-Rel ≈ before-Rel
+  // < after-Bin, all costlier than a hyphen — breaking mid-formula loses to
+  // any decent whole-line alternative.
+  double mathRelAfterPenalty = 0.8;
+  double mathRelBeforePenalty = 0.85;
+  double mathBinAfterPenalty = 0.95;
   PunctCompress punctCompress = PunctCompress::Book;
   double listIndentEm = 1.5;
   double quoteIndentEm = 1.0;
@@ -42,6 +48,7 @@ struct Config {
   std::string supHeading = "\xC2\xA7";  // §
   std::string supTable = "\xE8\xA1\xA8 ";    // 表␣
   std::string supFigure = "\xE5\x9B\xBE ";   // 图␣
+  std::string supEquation = "\xE5\xBC\x8F ";  // 式␣
   CostParams cost;
 };
 

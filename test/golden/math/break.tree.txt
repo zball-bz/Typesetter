@@ -1,0 +1,5 @@
+doc @[0,164) [base]
+  para @[0,164) [base]
+    text @[0,33) [base] str="在很窄的栏里，长关系链 "
+    mathinline @[34,76) [base] src="a_1 + a_2 + a_3 = b_1 + b_2 <= c^2 + d^2"
+    text @[77,164) [base] str=" 必须在关系号或运算号处得体地断行，续行以关系号开头也合法。"

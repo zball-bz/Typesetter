@@ -1,18 +1,21 @@
 inline pid=0 "x^2 + y^2 = z^2"
-hbox Ord w=5425 asc=967 desc=239
+hbox Ord w=1949 asc=967 desc=76
   hbox Ord w=948 asc=967 desc=12
     glyph "x" Ord w=539 asc=475 desc=12 px=16
     glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(539,461)
   glue w=228 @(948,0)
   glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1176,0)
-  glue w=228 @(1949,0)
-  hbox Ord w=1016 asc=967 desc=239 @(2177,0)
+inline pid=0 ""
+hbox Ord w=1016 asc=967 desc=239
+  hbox Ord w=1016 asc=967 desc=239
     glyph "y" Ord w=607 asc=479 desc=239 px=16
     glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(607,461)
-  glue w=284 @(3193,0)
-  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(3477,0)
-  glue w=284 @(4251,0)
-  hbox Ord w=890 asc=967 desc=28 @(4535,0)
+inline pid=0 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=0 ""
+hbox Ord w=890 asc=967 desc=28
+  hbox Ord w=890 asc=967 desc=28
     glyph "z" Ord w=481 asc=473 desc=28 px=16
     glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(481,461)
 inline pid=0 "2/(1/a + 1/b)"
@@ -31,7 +34,7 @@ hbox Ord w=1154 asc=909 desc=704
         rule w=301 h=29 @(0,165)
         glyph "b" Ord w=301 asc=350 desc=5 px=8 @(0,-247)
 inline pid=1 "e^(i pi) + 1 = 0"
-hbox Ord w=4850 asc=951 desc=76
+hbox Ord w=2258 asc=951 desc=76
   hbox Ord w=1257 asc=951 desc=12
     glyph "e" Ord w=511 asc=489 desc=12 px=16
     hbox Ord w=695 asc=490 desc=6 @(511,461)
@@ -39,19 +42,24 @@ hbox Ord w=4850 asc=951 desc=76
       glyph "π" Ord w=437 asc=350 desc=4 px=11.2 @(258,0)
   glue w=228 @(1257,0)
   glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1485,0)
-  glue w=228 @(2258,0)
-  glyph "1" Ord w=511 asc=727 desc=7 px=16 @(2486,0)
-  glue w=284 @(2997,0)
-  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(3281,0)
-  glue w=284 @(4055,0)
-  glyph "0" Ord w=511 asc=721 desc=14 px=16 @(4339,0)
+inline pid=1 ""
+hbox Ord w=511 asc=727 desc=7
+  glyph "1" Ord w=511 asc=727 desc=7 px=16
+inline pid=1 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=1 ""
+hbox Ord w=511 asc=721 desc=14
+  glyph "0" Ord w=511 asc=721 desc=14 px=16
 inline pid=1 "phi = (1 + 5^(1/2))/2"
-hbox Ord w=3671 asc=1309 desc=353
+hbox Ord w=781 asc=478 desc=202
   glyph "φ" Ord w=781 asc=478 desc=202 px=16
-  glue w=284 @(781,0)
-  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(1065,0)
-  glue w=284 @(1839,0)
-  hbox Ord w=1548 asc=1309 desc=353 @(2123,0)
+inline pid=1 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=1 ""
+hbox Ord w=1548 asc=1309 desc=353
+  hbox Ord w=1548 asc=1309 desc=353
     hbox Ord w=1548 asc=906 desc=53 @(0,403)
       glyph "1" Ord w=358 asc=509 desc=5 px=11.2
       glyph "+" Bin w=541 asc=420 desc=53 px=11.2 @(358,0)

@@ -69,6 +69,7 @@ struct FlowUnit {
   StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup
   double rawHpx = 0;    // Raw: declared height (px)
   const MathBox* mathBox = nullptr;  // Math: display formula
+  StrRef eqTag = 0;                  // Math: "(n)" right-margin number
   u32 tCols = 0;               // Table: column count
   std::vector<u8> tAligns;     // Table: per-column 'l'/'c'/'r'
   std::vector<TableCell> cells;  // Table: row-major cells

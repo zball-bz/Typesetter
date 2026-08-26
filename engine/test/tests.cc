@@ -207,6 +207,24 @@ static void unitMathStretch() {
   CHECK(bi.find("glyph \"n\"") != std::string::npos);
 }
 
+static void unitMathSegments() {
+  Arena a;
+  Interner strs{a};
+  DiagSink d;
+  auto segs = layoutMathSegments("a + b = c", false, 16, a, strs, d, {});
+  CHECK(segs.size() == 4);           // [a +][b][=][c]
+  CHECK(segs[1].brkBefore == 3);     // after-Bin
+  CHECK(segs[2].brkBefore == 2);     // before-Rel
+  CHECK(segs[3].brkBefore == 1);     // after-Rel
+  CHECK(segs[2].glueBefore > 0 && segs[3].glueBefore > 0);  // thick glue
+  auto neg = layoutMathSegments("-x", false, 16, a, strs, d, {});
+  CHECK(neg.size() == 1);            // unary minus demoted: no break
+  auto disp = layoutMathSegments("a + b", true, 16, a, strs, d, {});
+  CHECK(disp.size() == 1);           // display formulas never segment
+  auto opq = layoutMathSegments("(a = b)", false, 16, a, strs, d, {});
+  CHECK(opq.size() == 1);            // groups are opaque
+}
+
 // --- golden runner ---
 static bool typesetWithMock(Doc& doc) {
   for (int i = 0; i < 64; i++) {
@@ -254,6 +272,7 @@ int main(int argc, char** argv) {
   unitMathFont();
   unitMathLayout();
   unitMathStretch();
+  unitMathSegments();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");

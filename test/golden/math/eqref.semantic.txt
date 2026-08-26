@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="48">质能关系是狭义相对论的核心结论：</p>
+<p class="tsr-mathblock" data-pid="1" data-s="50" data-e="69" id="tsr-emc"><code class="tsr-mathsrc">$ E = m c^2 $</code></p>
+<p data-pid="2" data-s="71" data-e="120">由<a href="#tsr-emc">式 (1)</a>可知能量与质量等价。高斯积分</p>
+<p class="tsr-mathblock" data-pid="3" data-s="122" data-e="170" id="tsr-gauss"><code class="tsr-mathsrc">$ int_(-oo)^oo e^(-x^2) d x = sqrt(pi) $</code></p>
+<p data-pid="4" data-s="172" data-e="260">的值见<a href="#tsr-gauss">式 (2)</a>；无标签公式不编号。设<code class="tsr-mathsrc">$x$</code>为实数，则<code class="tsr-mathsrc">$x^2 &gt;= 0$</code>恒成立。</p>
+</div>

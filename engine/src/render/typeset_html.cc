@@ -130,9 +130,11 @@ static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
                      bool display, const Interner& strs, Span span,
                      const std::string& posStyle) {
   out += "<span class=\"tsr-math\" data-syn=\"math\" data-src=\"";
-  out += display ? "$ " : "$";
-  escapeHtml(out, strs.get(srcRef));
-  out += display ? " $" : "$";
+  if (srcRef) {  // later segments of a split formula contribute nothing
+    out += display ? "$ " : "$";
+    escapeHtml(out, strs.get(srcRef));
+    out += display ? " $" : "$";
+  }
   out += "\"";
   if (!span.empty()) appendf(out, " data-s=\"%u\" data-e=\"%u\"", span.start, span.end);
   out += " style=\"width:";
@@ -210,7 +212,22 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
         fmtPx(out, suToPx(l.left));
         out += ";width:";
         fmtPx(out, suToPx(l.width));
+        Su boxHh = mu.mathBox->asc + mu.mathBox->desc;
+        Su advH = suRoundPx(cfg.lineHeight * cfg.baseSizePx);
+        if (boxHh > advH) advH = boxHh;
+        out += ";height:";
+        fmtPx(out, suToPx(advH));
         out += "\">";
+        if (mu.eqTag) {
+          // right-margin equation number, at the measure's right edge
+          Su lineRight = l.left + l.width;
+          Su measureR = suFloorPx(cfg.widthPx);
+          out += "<span class=\"tsr-eqno\" data-syn=\"eqno\" style=\"right:";
+          fmtPx(out, -suToPx(measureR - lineRight));
+          out += "\">";
+          escapeHtml(out, strs.get(mu.eqTag));
+          out += "</span>";
+        }
         StrRef srcRef = 0;
         if (mu.src)
           for (const ArgVal& a : mu.src->args)

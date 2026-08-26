@@ -1,0 +1,49 @@
+inline pid=0 "a_1 + a_2 + a_3 = b_1 + b_2 <= c^2 + d^2"
+hbox Ord w=2034 asc=600 desc=162
+  hbox Ord w=1033 asc=477 desc=162
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "1" Ord w=358 asc=509 desc=5 px=11.2 @(624,-157)
+  glue w=228 @(1033,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1261,0)
+inline pid=0 ""
+hbox Ord w=2034 asc=600 desc=154
+  hbox Ord w=1033 asc=477 desc=154
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(624,-154)
+  glue w=228 @(1033,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1261,0)
+inline pid=0 ""
+hbox Ord w=1033 asc=477 desc=166
+  hbox Ord w=1033 asc=477 desc=166
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "3" Ord w=358 asc=503 desc=12 px=11.2 @(624,-154)
+inline pid=0 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=0 ""
+hbox Ord w=2012 asc=700 desc=162
+  hbox Ord w=1011 asc=700 desc=162
+    glyph "b" Ord w=602 asc=700 desc=10 px=16
+    glyph "1" Ord w=358 asc=509 desc=5 px=11.2 @(602,-157)
+  glue w=228 @(1011,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1239,0)
+inline pid=0 ""
+hbox Ord w=1011 asc=700 desc=154
+  hbox Ord w=1011 asc=700 desc=154
+    glyph "b" Ord w=602 asc=700 desc=10 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(602,-154)
+inline pid=0 ""
+hbox Ord w=819 asc=665 desc=153
+  glyph "≤" Rel w=819 asc=665 desc=153 px=16
+inline pid=0 ""
+hbox Ord w=1908 asc=967 desc=76
+  hbox Ord w=907 asc=967 desc=19
+    glyph "c" Ord w=498 asc=486 desc=19 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(498,461)
+  glue w=228 @(907,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1135,0)
+inline pid=0 ""
+hbox Ord w=1026 asc=967 desc=19
+  hbox Ord w=1026 asc=967 desc=19
+    glyph "d" Ord w=617 asc=700 desc=19 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(617,461)

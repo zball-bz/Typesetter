@@ -673,14 +673,22 @@ struct Layouter {
   }
 
   MathBox* layoutRun(MNode* n, u8 st) {
-    std::vector<MathBox*> boxes;
-    boxes.reserve(n->kids.size());
-    for (MNode* k : n->kids) boxes.push_back(layout(k, st));
-    return assemble(boxes, st);
+    return layoutSlice(n->kids, 0, n->kids.size(), st, true, true);
   }
 
-  // demotion (TeXbook Rules 5–6) + pair glue + horizontal assembly
-  MathBox* assemble(std::vector<MathBox*>& boxes, u8 st) {
+  MathBox* layoutSlice(const std::vector<MNode*>& kids, size_t lo, size_t hi,
+                       u8 st, bool startEdge, bool endEdge) {
+    std::vector<MathBox*> boxes;
+    boxes.reserve(hi - lo);
+    for (size_t k = lo; k < hi; k++) boxes.push_back(layout(kids[k], st));
+    return assemble(boxes, st, startEdge, endEdge);
+  }
+
+  // demotion (TeXbook Rules 5–6) + pair glue + horizontal assembly.
+  // startEdge/endEdge false = this run is an inner slice of a segmented
+  // formula: the formula start/end demotion rules do not apply.
+  MathBox* assemble(std::vector<MathBox*>& boxes, u8 st, bool startEdge = true,
+                    bool endEdge = true) {
     // Rule 5: Bin after {start, Bin, Op, Rel, Open, Punct} → Ord.
     // Rule 6: Bin before {Rel, Close, Punct, end} → Ord (KaTeX
     // binRightCanceller folded into the same forward pass).
@@ -688,8 +696,8 @@ struct Layouter {
       u8 c = boxes[i]->cls;
       if (c == kBin) {
         u8 prev = i ? boxes[i - 1]->lastCls : 0xFF;
-        if (i == 0 || prev == kBin || prev == kOp || prev == kRel ||
-            prev == kOpen || prev == kPunct)
+        if ((i == 0 && startEdge) || (i && (prev == kBin || prev == kOp ||
+            prev == kRel || prev == kOpen || prev == kPunct)))
           boxes[i]->cls = boxes[i]->firstCls = boxes[i]->lastCls = kOrd;
       }
       if (c == kRel || c == kClose || c == kPunct) {
@@ -697,7 +705,7 @@ struct Layouter {
           boxes[i - 1]->cls = boxes[i - 1]->firstCls = boxes[i - 1]->lastCls = kOrd;
       }
     }
-    if (!boxes.empty() && boxes.back()->cls == kBin)
+    if (endEdge && !boxes.empty() && boxes.back()->cls == kBin)
       boxes.back()->cls = boxes.back()->firstCls = boxes.back()->lastCls = kOrd;
 
     MathBox* out = mkBox(MathKind::HBox);
@@ -1097,6 +1105,37 @@ struct Layouter {
 
 }  // namespace
 
+// effective edge classes of a parse node, for segmentation's demotion
+// preview (mirrors what layout will produce)
+static void effClsOf(const MNode* n, u8& f, u8& l) {
+  switch (n->k) {
+    case MNode::Atom:
+    case MNode::Text:
+      f = l = n->cls;
+      return;
+    case MNode::Script:
+      effClsOf(n->a, f, l);
+      l = f;
+      return;
+    case MNode::Group:
+      f = kOpen;
+      l = kClose;
+      return;
+    case MNode::BigOp: {
+      f = kOp;
+      l = kOp;
+      if (n->b && !n->b->kids.empty()) {
+        u8 bf;
+        effClsOf(n->b->kids.back(), bf, l);
+      }
+      return;
+    }
+    default:
+      f = l = kOrd;
+      return;
+  }
+}
+
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
                            Span span) {
@@ -1110,6 +1149,84 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
     return L.textBox(src, mathfont::kOrd, display ? D : T);
   }
   return L.layout(run, display ? D : T);
+}
+
+std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
+                                        double sizePx, Arena& arena,
+                                        Interner& strs, DiagSink& diags,
+                                        Span span) {
+  std::vector<MathSeg> out;
+  Parser p{Lexer{src}, arena, diags, span, {}, 0};
+  p.advance();
+  MNode* run = p.parseRun();
+  if (p.tok.k != Tok::End) p.err("unexpected closing bracket");
+  Layouter L{arena, strs, diags, span, sizePx, false};
+  u8 st = display ? D : T;
+  if (p.errors) {
+    out.push_back({L.textBox(src, kOrd, st), 0, 0});
+    return out;
+  }
+  const std::vector<MNode*>& kids = run->kids;
+  size_t n = kids.size();
+  if (display || n == 0) {
+    out.push_back({L.layout(run, st), 0, 0});
+    return out;
+  }
+  // demotion preview over top-level effective classes
+  std::vector<u8> f(n), l(n);
+  for (size_t i = 0; i < n; i++) effClsOf(kids[i], f[i], l[i]);
+  for (size_t i = 0; i < n; i++) {
+    if (f[i] == kBin && l[i] == kBin) {
+      u8 prev = i ? l[i - 1] : 0xFF;
+      if (i == 0 || prev == kBin || prev == kOp || prev == kRel ||
+          prev == kOpen || prev == kPunct)
+        f[i] = l[i] = kOrd;
+    }
+    if ((f[i] == kRel || f[i] == kClose || f[i] == kPunct) && i &&
+        f[i - 1] == kBin && l[i - 1] == kBin)
+      f[i - 1] = l[i - 1] = kOrd;
+  }
+  if (n && f[n - 1] == kBin && l[n - 1] == kBin) f[n - 1] = l[n - 1] = kOrd;
+
+  // cut points: a top-level Rel atom is its own segment (break before AND
+  // after); a top-level Bin atom ends its segment (break after)
+  struct Cut { size_t lo, hi; u8 brk; };
+  std::vector<Cut> cuts;
+  size_t cur = 0;
+  u8 pending = 0;
+  for (size_t i = 0; i < n; i++) {
+    bool relAtom = kids[i]->k == MNode::Atom && f[i] == kRel;
+    bool binAtom = kids[i]->k == MNode::Atom && f[i] == kBin && l[i] == kBin;
+    if (relAtom) {
+      if (i > cur) {
+        cuts.push_back({cur, i, pending});
+      }
+      cuts.push_back({i, i + 1, i > cur || !cuts.empty() ? (u8)2 : pending});
+      pending = 1;  // after-Rel
+      cur = i + 1;
+      continue;
+    }
+    if (binAtom) {
+      cuts.push_back({cur, i + 1, pending});
+      pending = 3;  // after-Bin
+      cur = i + 1;
+    }
+  }
+  if (cur < n) cuts.push_back({cur, n, pending});
+  if (cuts.size() <= 1) {
+    out.push_back({L.layout(run, st), 0, 0});
+    return out;
+  }
+  MathBox* prev = nullptr;
+  for (size_t c = 0; c < cuts.size(); c++) {
+    MathBox* b = L.layoutSlice(kids, cuts[c].lo, cuts[c].hi, st,
+                               /*startEdge=*/c == 0,
+                               /*endEdge=*/c + 1 == cuts.size());
+    Su glue = prev ? L.pairGlue(prev->lastCls, b->firstCls, st) : 0;
+    out.push_back({b, glue, cuts[c].brk});
+    prev = b;
+  }
+  return out;
 }
 
 static void dumpBox(std::string& out, const MathBox* b, const Interner& strs,

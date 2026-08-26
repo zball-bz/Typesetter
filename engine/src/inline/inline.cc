@@ -289,6 +289,21 @@ struct InlineParser {
           mn->str = strs.intern(body.substr(b0, b1 - b0));
           mn->tag = display ? 1 : 0;
           pushItem(mn);
+          // equation label: ` <id>` directly after the closing $ (v2 §11.1
+          // heading-label form); labelled display formulas get numbers
+          u32 after = p + 1;
+          u32 lim2 = spanEnd();
+          if (after < lim2 && all[after] == ' ' && after + 1 < lim2 &&
+              all[after + 1] == '<') {
+            u32 lb = after + 2, le2 = lb;
+            while (le2 < lim2 && all[le2] != '>' && all[le2] != '<') le2++;
+            if (le2 < lim2 && all[le2] == '>' && le2 > lb) {
+              mn->aux = strs.intern(all.substr(lb, le2 - lb));
+              mn->span.end = le2 + 1;
+              seekTo(le2 + 1);
+              continue;
+            }
+          }
           seekTo(p + 1);
           continue;
         }
@@ -698,6 +713,11 @@ static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,
       appendf(out, " display=%d src=\"", n->tag);
       appendEscaped(out, strs.get(n->str));
       out += "\"";
+      if (n->aux) {
+        out += " label=\"";
+        appendEscaped(out, strs.get(n->aux));
+        out += "\"";
+      }
       break;
     case AstKind::Row: hdr("row"); break;
     case AstKind::Cell: hdr("cell"); break;

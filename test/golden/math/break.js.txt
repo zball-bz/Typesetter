@@ -1,0 +1,4 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
+__emit(__at(para(__at(text("在很窄的栏里，长关系链 "),0,33), __at(mathinline("a_1 + a_2 + a_3 = b_1 + b_2 <= c^2 + d^2"),34,76), __at(text(" 必须在关系号或运算号处得体地断行，续行以关系号开头也合法。"),77,164)),0,164));
+};
+//# sourceURL=tsm:doc

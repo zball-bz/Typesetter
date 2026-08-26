@@ -93,6 +93,10 @@ struct Gen {
             n->kids[0]->tag == 1) {
           out += "__at(mathblock(";
           strLit(n->kids[0]->str);
+          if (n->kids[0]->aux) {
+            out += ", ";
+            strLit(n->kids[0]->aux);
+          }
           close(n->kids[0]);
           break;
         }

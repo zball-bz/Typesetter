@@ -29,12 +29,14 @@ hbox Ord w=9074 asc=1495 desc=1148
   glue w=284 @(8279,0)
   glyph "1" Ord w=511 asc=727 desc=7 px=16 @(8563,0)
 inline pid=2 "s = 1"
-hbox Ord w=2319 asc=727 desc=17
+hbox Ord w=466 asc=477 desc=17
   glyph "s" Ord w=466 asc=477 desc=17 px=16
-  glue w=284 @(466,0)
-  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(750,0)
-  glue w=284 @(1524,0)
-  glyph "1" Ord w=511 asc=727 desc=7 px=16 @(1808,0)
+inline pid=2 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=2 ""
+hbox Ord w=511 asc=727 desc=7
+  glyph "1" Ord w=511 asc=727 desc=7 px=16
 display pid=3
 hbox Ord w=11418 asc=1414 desc=712
   hbox Ord w=640 asc=991 desc=12

@@ -36,6 +36,23 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
                            Span span);
 
+// Inline-formula line breaking (math-design.md §9): the formula splits into
+// unbreakable segments at top-level relations (a break point BEFORE and
+// AFTER each Rel — CJK convention heads the continuation line with the
+// relation, TeX breaks after) and after top-level binary operators. Display
+// formulas and degraded parses stay one segment. glueBefore is the
+// inter-atom glue the break consumes; brkBefore: 0 first segment,
+// 1 after-Rel, 2 before-Rel, 3 after-Bin.
+struct MathSeg {
+  MathBox* box;
+  Su glueBefore = 0;
+  u8 brkBefore = 0;
+};
+std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
+                                        double sizePx, Arena& arena,
+                                        Interner& strs, DiagSink& diags,
+                                        Span span);
+
 std::string dumpMathBox(const MathBox* box, const Interner& strs);
 
 }  // namespace tsr

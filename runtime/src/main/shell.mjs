@@ -41,6 +41,7 @@ export const TSR_CSS = `
 .tsr-math .tsr-mg { position: absolute; white-space: pre;
                     font-family: 'Euler Math', 'STIX Two Math', serif; }
 .tsr-math .tsr-mr { position: absolute; background: currentColor; }
+.tsr-eqno { position: absolute; top: 50%; transform: translateY(-50%); }
 `;
 
 // Bundled math font: metrics are precompiled (engine/gen/euler_math.h), so

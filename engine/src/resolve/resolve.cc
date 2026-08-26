@@ -59,7 +59,7 @@ struct Resolver {
   std::vector<GlossItem> gloss;
 
   std::vector<int> secc;  // section counter stack (derived heading tree)
-  int tableNo = 0, figNo = 0;
+  int tableNo = 0, figNo = 0, eqNo = 0;
 
   // ---- node fabrication ---------------------------------------------------
   ContentNode* mkNode(Kind k, Span span, StyleId style = 0) {
@@ -157,6 +157,19 @@ struct Resolver {
         }
         break;
       }
+      case Kind::mathblock: {
+        // labelled display formulas number sequentially; the tag renders at
+        // the right margin (emit reads ArgK::name)
+        StrRef label = argStr(n, ArgK::label);
+        if (label) {
+          eqNo++;
+          std::string num = std::to_string(eqNo);
+          addLabel(std::string(strs.get(label)), {Kind::mathblock, num, ""},
+                   n->span);
+          setArgStr(n, ArgK::name, "(" + num + ")");
+        }
+        break;
+      }
       case Kind::term: {
         std::string name(strs.get(argStr(n, ArgK::name)));
         if (!name.empty()) {
@@ -191,6 +204,7 @@ struct Resolver {
       case Kind::heading: disp = cfg.supHeading + e.number; break;
       case Kind::table: disp = cfg.supTable + e.number; break;
       case Kind::group: disp = cfg.supFigure + e.number; break;
+      case Kind::mathblock: disp = cfg.supEquation + "(" + e.number + ")"; break;
       default: disp = e.excerpt.empty() ? target : e.excerpt; break;
     }
     setArgStr(r, ArgK::url, "#tsr-" + target);
