@@ -14,6 +14,7 @@ add_library(tsr_core STATIC
   src/codegen/codegen.cc
   src/ops/ops.cc
   src/model/model.cc
+  src/math/math.cc
   src/resolve/resolve.cc
   src/emit/emit.cc
   src/break/break.cc

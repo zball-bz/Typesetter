@@ -9,6 +9,7 @@
 #include "../src/api/doc.h"
 #include "../src/hyphen/hyphen.h"
 #include "../src/inline/jslex.h"
+#include "../src/math/math.h"
 #include "../src/math/mathfont.h"
 #include "../src/measure/mock.h"
 
@@ -116,6 +117,47 @@ static void unitMathFont() {
   CHECK(mathSu(250, 16) == 256);  // axis height = 4px
 }
 
+static std::string mathDump(const char* src) {
+  Arena a;
+  Interner strs{a};
+  DiagSink d;
+  MathBox* b = layoutMathFormula(src, false, 16, a, strs, d, {});
+  std::string out = dumpMathBox(b, strs);
+  for (const Diag& dg : d.items) { out += "DIAG "; out += dg.code; out += "\n"; }
+  return out;
+}
+
+static void unitMathLayout() {
+  std::string s = mathDump("x + y");
+  CHECK(s.find("glyph \"x\" Ord") != std::string::npos);
+  CHECK(s.find("glyph \"+\" Bin") != std::string::npos);
+  CHECK(s.find("glue w=228") != std::string::npos);  // medium 4mu at 16px
+  CHECK(s.find("DIAG") == std::string::npos);
+  std::string neg = mathDump("-x");  // Rule 5: Bin at start demotes
+  CHECK(neg.find("Bin") == std::string::npos && neg.find("glue") == std::string::npos);
+  std::string rel = mathDump("x = y");
+  CHECK(rel.find("glue w=284") != std::string::npos);  // thick 5mu at 16px
+  std::string sup = mathDump("a^2");  // script size = ScriptPercentScaleDown
+  CHECK(sup.find("px=11.2") != std::string::npos);
+  std::string fr = mathDump("(n+1)/2");  // consumed group sheds its parens
+  CHECK(fr.find("rule") != std::string::npos);
+  CHECK(fr.find("glyph \"(\"") == std::string::npos);
+  std::string grp = mathDump("(a+b) c");  // visible group splices Open/Close
+  CHECK(grp.find("glyph \"(\" Open") != std::string::npos);
+  std::string ar = mathDump("x -> y");
+  CHECK(ar.find("glyph \"\xE2\x86\x92\" Rel") != std::string::npos);  // U+2192
+  std::string nn = mathDump("NN");
+  CHECK(nn.find("glyph \"\xE2\x84\x95\" Ord") != std::string::npos);  // U+2115
+  std::string lim = mathDump("lim_n x");
+  CHECK(lim.find("glyph \"lim\" Op") != std::string::npos);
+  std::string sum = mathDump("sum_(i=0)^n i/n ~> (n+1)/2");
+  CHECK(sum.find("glyph \"\xE2\x88\x91\" Op") != std::string::npos);  // U+2211
+  CHECK(sum.find("glyph \"\xE2\x87\x9D\"") != std::string::npos);     // U+21DD
+  CHECK(sum.find("DIAG") == std::string::npos);
+  std::string ab = mathDump("x^ab");  // single-token script: x^a then b
+  CHECK(ab.find("glyph \"b\" Ord") != std::string::npos);
+}
+
 // --- golden runner ---
 static bool typesetWithMock(Doc& doc) {
   for (int i = 0; i < 64; i++) {
@@ -161,6 +203,7 @@ int main(int argc, char** argv) {
   unitSu();
   unitMock();
   unitMathFont();
+  unitMathLayout();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");
