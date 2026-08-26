@@ -9,6 +9,7 @@
 #include "../src/api/doc.h"
 #include "../src/hyphen/hyphen.h"
 #include "../src/inline/jslex.h"
+#include "../src/math/mathfont.h"
 #include "../src/measure/mock.h"
 
 namespace fs = std::filesystem;
@@ -75,6 +76,46 @@ static void unitMock() {
   CHECK(mockWordWidthPx("\xE4\xB8\xAD", 16) == 16.0);  // 中 = 1em
 }
 
+static void unitMathFont() {
+  using namespace mathfont;
+  // constants sanity against fontTools-inspected values (Euler-Math 0.75)
+  CHECK(kUpem == 1000);
+  CHECK(mathConst(C::AxisHeight) == 250);
+  CHECK(mathConst(C::DisplayOperatorMinHeight) == 1130);
+  CHECK(mathConst(C::ScriptPercentScaleDown) > 0 &&
+        mathConst(C::ScriptPercentScaleDown) <= 100);
+  CHECK(kMinConnectorOverlap == 20);
+  // glyph lookup
+  const GlyphRec* x = mathGlyph('x');
+  CHECK(x && x->adv > 0 && x->asc > 0);
+  CHECK(mathGlyph(0x2211) != nullptr);           // ∑
+  CHECK(mathGlyph(0x10FFFF) == nullptr);
+  // dictionary
+  const OpEntry* sum = mathOp("sum");
+  CHECK(sum && sum->cp == 0x2211 && sum->cls == kOp &&
+        (sum->flags & kFlagLarge) && (sum->flags & kFlagLimits));
+  const OpEntry* arrow = mathOp("->");
+  CHECK(arrow && arrow->cp == 0x2192 && arrow->cls == kRel);
+  const OpEntry* nn = mathOp("NN");
+  CHECK(nn && nn->cp == 0x2115);
+  const OpEntry* lim = mathOp("lim");
+  CHECK(lim && lim->cp == 0 && (lim->flags & kFlagTextOp) && (lim->flags & kFlagLimits));
+  CHECK(mathOp("nonexistent") == nullptr);
+  // variant chain: '(' has a growing chain plus a 3-part assembly
+  const VarChain* paren = mathChain('(', /*vertical=*/true);
+  CHECK(paren && paren->n >= 4 && paren->asmN == 3);
+  CHECK(mathChain('x', true) == nullptr);
+  // every chain/assembly cp has a glyph record (renderer paints by cp)
+  for (int i = 0; i < kVertChainCount; i++) {
+    const VarChain& c = kVertChains[i];
+    for (int k = 0; k < c.n; k++) CHECK(mathGlyph(kVariantCps[c.off + k]) != nullptr);
+    for (int k = 0; k < c.asmN; k++) CHECK(mathGlyph(kAsmParts[c.asmOff + k].cp) != nullptr);
+  }
+  // su conversion: 1em at 16px = 1024 su
+  CHECK(mathSu(1000, 16) == 1024);
+  CHECK(mathSu(250, 16) == 256);  // axis height = 4px
+}
+
 // --- golden runner ---
 static bool typesetWithMock(Doc& doc) {
   for (int i = 0; i < 64; i++) {
@@ -119,6 +160,7 @@ int main(int argc, char** argv) {
   unitSpliceHead();
   unitSu();
   unitMock();
+  unitMathFont();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");
