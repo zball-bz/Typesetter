@@ -1,5 +1,7 @@
 #include "emit.h"
 
+#include <functional>
+
 #include "../hyphen/hyphen.h"
 
 namespace tsr {
@@ -477,15 +479,57 @@ struct Emitter {
         u.marker = marker;
         u.codeStyle = compose(n->style, CLS_CODE, 1.0f);
         u.markerStyle = u.codeStyle;
-        if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
+        for (const ArgVal& a : n->args) {
+          if (a.key == ArgK::wrap && a.tag == ArgTag::Bool) u.codeWrap = a.num != 0;
+          if (a.key == ArgK::lineNo && a.tag == ArgTag::Num) u.codeLineNo = (i32)a.num;
+          if (a.key == ArgK::lineNo && a.tag == ArgTag::Bool && a.num != 0) u.codeLineNo = 1;
+          if (a.key == ArgK::hl && a.tag == ArgTag::Str) {
+            // "3,5-7" → 1-based line set
+            std::string_view h = strs.get(a.ref);
+            size_t p = 0;
+            while (p < h.size()) {
+              size_t c = h.find(',', p);
+              if (c == std::string_view::npos) c = h.size();
+              std::string_view part = h.substr(p, c - p);
+              size_t dash = part.find('-');
+              int lo = atoi(std::string(part.substr(0, dash)).c_str());
+              int hi = dash == std::string_view::npos
+                           ? lo
+                           : atoi(std::string(part.substr(dash + 1)).c_str());
+              for (int k = lo; k <= hi && k - lo < 10000; k++)
+                if (k > 0) u.hlLines.push_back((u32)k);
+              p = c + 1;
+            }
+          }
+        }
+        // Two body forms (CH1): a single text child = plain lines split on
+        // \n; otherwise each child is one line (seq of styled runs — the
+        // leaves' styles were already folded at instantiation).
+        if (n->kids.size() == 1 && n->kids[0]->kind == Kind::text) {
           std::string_view body = strs.get(n->kids[0]->str);
           size_t pos = 0;
           while (pos <= body.size()) {
             size_t eol = body.find('\n', pos);
             if (eol == std::string_view::npos) eol = body.size();
-            u.codeLines.push_back(strs.intern(body.substr(pos, eol - pos)));
+            u.codeRuns.push_back(
+                {{strs.intern(body.substr(pos, eol - pos)), u.codeStyle}});
             if (eol == body.size()) break;
             pos = eol + 1;
+          }
+        } else {
+          std::function<void(const ContentNode*, std::vector<FlowUnit::CodeRun>&)>
+              collect = [&](const ContentNode* k, std::vector<FlowUnit::CodeRun>& out) {
+                if (k->kind == Kind::text) {
+                  out.push_back({k->str, compose(k->style, CLS_CODE, 1.0f)});
+                  return;
+                }
+                if (k->kind == Kind::comment) return;
+                for (const ContentNode* c : k->kids) collect(c, out);
+              };
+          for (const ContentNode* lineNode : n->kids) {
+            std::vector<FlowUnit::CodeRun> runs;
+            collect(lineNode, runs);
+            u.codeRuns.push_back(std::move(runs));
           }
         }
         tb.units.push_back(std::move(u));
@@ -770,7 +814,12 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
         appendEscaped(out, strs.get(u.marker));
         out += "\"";
       }
-      if (u.kind == FlowUnit::K::Code) appendf(out, " lines=%zu", u.codeLines.size());
+      if (u.kind == FlowUnit::K::Code) {
+        appendf(out, " lines=%zu", u.codeRuns.size());
+        if (u.codeWrap) out += " wrap";
+        if (u.codeLineNo) appendf(out, " lineNo=%d", u.codeLineNo);
+        if (!u.hlLines.empty()) appendf(out, " hl=%zu", u.hlLines.size());
+      }
       if (u.kind == FlowUnit::K::Table) appendf(out, " cols=%u cells=%zu", u.tCols, u.cells.size());
       if (u.kind == FlowUnit::K::Math && u.mathBox)
         appendf(out, " w=%dsu asc=%dsu desc=%dsu", u.mathBox->w, u.mathBox->asc,

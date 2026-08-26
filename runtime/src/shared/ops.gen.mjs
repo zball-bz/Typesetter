@@ -1,5 +1,5 @@
 // GENERATED from engine/src/ops/ops.def by tools/gen-ops-ts.mjs — do not edit.
-export const OPS_VERSION = 2;
+export const OPS_VERSION = 3;
 export const OP = Object.freeze({
   "MAKE_TEXT": 1,
   "MAKE_NODE": 2,
@@ -60,5 +60,8 @@ export const ARGK = Object.freeze({
   "bits": 20,
   "font": 21,
   "color": 22,
-  "sizePx": 23
+  "sizePx": 23,
+  "wrap": 24,
+  "lineNo": 25,
+  "hl": 26
 });

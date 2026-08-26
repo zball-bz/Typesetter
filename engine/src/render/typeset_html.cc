@@ -56,6 +56,14 @@ static void styleInto(std::string& style, const Styling& st, const Config& cfg,
     escapeHtml(style, strs.get(st.color));
     style += ";";
   }
+  if (st.bits & (CLS_UNDER | CLS_OVER | CLS_STRIKE)) {
+    style += "text-decoration:";
+    if (st.bits & CLS_UNDER) style += "underline ";
+    if (st.bits & CLS_OVER) style += "overline ";
+    if (st.bits & CLS_STRIKE) style += "line-through ";
+    style.pop_back();
+    style += ";";
+  }
   if (!style.empty() && style.back() == ';') style.pop_back();
 }
 
@@ -281,14 +289,17 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
 
       if (l.special == 2) {
         const FlowUnit& u = tb.units[l.unitIdx];
-        const Styling& cst = styles.get(u.codeStyle);
-        out += "<span class=\"";
-        runClasses(out, cst);
-        out += "\"";
-        runStyleAttr(out, cst, cfg, strs);
-        out += ">";
-        escapeHtml(out, strs.get(l.codeText));
-        out += "</span></div>\n";
+        for (const FlowUnit::CodeRun& r : u.codeRuns[l.codeLine]) {
+          const Styling& cst = styles.get(r.style);
+          out += "<span class=\"";
+          runClasses(out, cst);
+          out += "\"";
+          runStyleAttr(out, cst, cfg, strs);
+          out += ">";
+          escapeHtml(out, strs.get(r.text));
+          out += "</span>";
+        }
+        out += "</div>\n";
         continue;
       }
 

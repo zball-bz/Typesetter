@@ -12,6 +12,11 @@ enum : u64 {
   CLS_BOLD = 1ull << 3,
   CLS_CODE = 1ull << 6,
   CLS_LINK = 1ull << 13,
+  // decorations (CH1, code-design.md §3): rendered as text-decoration,
+  // metric-neutral by construction
+  CLS_UNDER = 1ull << 16,
+  CLS_OVER = 1ull << 17,
+  CLS_STRIKE = 1ull << 18,
 };
 
 // Effective style: class bits + relative size + InlineStyle overrides

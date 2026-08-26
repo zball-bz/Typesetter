@@ -1,0 +1,19 @@
+doc @[0,478)
+  para @[0,48)
+    text @[0,48) str="结构化代码行、装饰位与网格参数："
+  para @[50,347)
+    splice @[50,347) expr="codeblock(\"demo\", [[style({color: \"var(--tsr-tok-keyword)\"}, \"const\"), \" answer = \", style({color: \"var(--tsr-tok-number)\"}, \"42\"), \";\"], [], [style({strike: true}, \"old_name\"), \" \", style({underline: true, color: \"var(--tsr-tok-function)\"}, \"new_name\"), \"()\"]], {lineNo: 1, hl: \"3\", wrap: true})"
+  para @[349,477)
+    text @[349,364) str="行内装饰："
+    splice @[364,400) expr="style({underline: true})"
+      arg @[390,399)
+        text @[390,399) str="下划线"
+    text @[400,403) str="、"
+    splice @[403,436) expr="style({strike: true})"
+      arg @[426,435)
+        text @[426,435) str="删除线"
+    text @[436,439) str="、"
+    splice @[439,474) expr="style({overline: true})"
+      arg @[464,473)
+        text @[464,473) str="上划线"
+    text @[474,477) str="。"

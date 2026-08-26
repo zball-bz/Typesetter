@@ -4,7 +4,7 @@
 
 namespace tsr {
 
-constexpr u8 OPS_VERSION = 2;
+constexpr u8 OPS_VERSION = 3;
 
 enum class Op : u8 {
 #define OP(n, c) n = c,

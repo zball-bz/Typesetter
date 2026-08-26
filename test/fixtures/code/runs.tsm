@@ -1,0 +1,5 @@
+结构化代码行、装饰位与网格参数：
+
+#codeblock("demo", [[style({color: "var(--tsr-tok-keyword)"}, "const"), " answer = ", style({color: "var(--tsr-tok-number)"}, "42"), ";"], [], [style({strike: true}, "old_name"), " ", style({underline: true, color: "var(--tsr-tok-function)"}, "new_name"), "()"]], {lineNo: 1, hl: "3", wrap: true})
+
+行内装饰：#style({underline: true})[下划线]、#style({strike: true})[删除线]、#style({overline: true})[上划线]。

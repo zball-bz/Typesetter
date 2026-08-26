@@ -292,10 +292,12 @@ struct Resolver {
   void rewrite(ContentNode* n) {
     for (size_t i = 0; i < n->kids.size(); i++) {
       ContentNode* k = n->kids[i];
-      // a paragraph that is nothing but one splice (#term / #toc / #glossary)
-      // is that construct at block level — unwrap before dispatching
+      // a paragraph that is nothing but one block-level splice (#term,
+      // #toc, #codeblock(...), a handler-built table, …) IS that construct
+      // at block level — unwrap before dispatching (CH1: generalized from
+      // the term/collect special case to every non-inline kind)
       if (k->kind == Kind::para && k->kids.size() == 1 &&
-          (k->kids[0]->kind == Kind::term || k->kids[0]->kind == Kind::collect))
+          !isInlineKind(k->kids[0]->kind) && k->kids[0]->kind != Kind::para)
         k = n->kids[i] = k->kids[0];
       if (k->kind == Kind::collect) {
         n->kids[i] = buildCollect(k);

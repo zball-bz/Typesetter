@@ -1,0 +1,9 @@
+doc h=10138su
+para pid=0 y=0su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,17) @[0,48)
+para pid=1 y=2765su w=19200su h=4608su
+  L0 code y=0su left=0su
+  L1 code y=1536su left=0su
+  L2 code y=3072su left=0su
+para pid=2 y=8602su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,20) @[349,477)

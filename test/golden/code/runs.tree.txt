@@ -1,0 +1,30 @@
+doc @[0,477) [base]
+  para @[0,48) [base]
+    text @[0,48) [base] str="结构化代码行、装饰位与网格参数："
+  codeblock @[0,0) [base] lang="demo" wrap=true lineNo=1 hl="3"
+    seq @[0,0) [base]
+      styled @[0,0) [base color=var(--tsr-tok-keyword)] color="var(--tsr-tok-keyword)"
+        text @[0,0) [base color=var(--tsr-tok-keyword)] str="const"
+      text @[0,0) [base] str=" answer = "
+      styled @[0,0) [base color=var(--tsr-tok-number)] color="var(--tsr-tok-number)"
+        text @[0,0) [base color=var(--tsr-tok-number)] str="42"
+      text @[0,0) [base] str=";"
+    seq @[0,0) [base]
+    seq @[0,0) [base]
+      styled @[0,0) [S]
+        text @[0,0) [S] str="old_name"
+      text @[0,0) [base] str=" "
+      styled @[0,0) [U color=var(--tsr-tok-function)] color="var(--tsr-tok-function)"
+        text @[0,0) [U color=var(--tsr-tok-function)] str="new_name"
+      text @[0,0) [base] str="()"
+  para @[349,477) [base]
+    text @[349,364) [base] str="行内装饰："
+    styled @[0,0) [U]
+      text @[390,399) [U] str="下划线"
+    text @[400,403) [base] str="、"
+    styled @[0,0) [S]
+      text @[426,435) [S] str="删除线"
+    text @[436,439) [base] str="、"
+    styled @[0,0) [O]
+      text @[464,473) [O] str="上划线"
+    text @[474,477) [base] str="。"

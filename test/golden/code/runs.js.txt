@@ -1,0 +1,6 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, __region, __fence}, $) => {
+__emit(__at(para(__at(text("结构化代码行、装饰位与网格参数："),0,48)),0,48));
+__emit(__at(para(val((codeblock("demo", [[style({color: "var(--tsr-tok-keyword)"}, "const"), " answer = ", style({color: "var(--tsr-tok-number)"}, "42"), ";"], [], [style({strike: true}, "old_name"), " ", style({underline: true, color: "var(--tsr-tok-function)"}, "new_name"), "()"]], {lineNo: 1, hl: "3", wrap: true})))),50,347));
+__emit(__at(para(__at(text("行内装饰："),349,364), val(style({underline: true}, __at(text("下划线"),390,399))), __at(text("、"),400,403), val(style({strike: true}, __at(text("删除线"),426,435))), __at(text("、"),436,439), val(style({overline: true}, __at(text("上划线"),464,473))), __at(text("。"),474,477)),349,477));
+};
+//# sourceURL=tsm:doc

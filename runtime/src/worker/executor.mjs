@@ -4,6 +4,11 @@ import { KIND } from '../shared/ops.gen.mjs';
 import { OpBuf } from '../shared/opbuf.mjs';
 
 const CLS_EM = 1 << 2, CLS_BOLD = 1 << 3;  // frozen bits (document-model §3)
+const CLS_UNDER = 1 << 16, CLS_OVER = 1 << 17, CLS_STRIKE = 1 << 18;
+const styleBits = (p) =>
+  ((p.bold ? CLS_BOLD : 0) | (p.italic ? CLS_EM : 0) |
+   (p.underline ? CLS_UNDER : 0) | (p.overline ? CLS_OVER : 0) |
+   (p.strike ? CLS_STRIKE : 0)) || undefined;
 
 export function buildContext(ob) {
   const toShadow = (x) => {
@@ -119,8 +124,19 @@ export function buildContext(ob) {
       ob.makeNode(KIND.list, { ordered, start }, items.map(toShadow)),
     item: node(KIND.item),
     quote: node(KIND.quote),
-    codeblock: (lang, body) =>
-      ob.makeNode(KIND.codeblock, { lang: String(lang) }, [ob.makeText(String(body))]),
+    // body: string (plain, split on \n at emit) OR array of lines, each a
+    // shadow/string or array of runs (CH1 structured form). opts: grid args.
+    codeblock: (lang, body, opts = {}) => {
+      const args = { lang: String(lang), wrap: opts.wrap,
+                     lineNo: opts.lineNo === true ? 1 : opts.lineNo,
+                     hl: opts.hl };
+      if (Array.isArray(body)) {
+        const lines = body.map((line) => ob.makeNode(KIND.seq, {},
+          (Array.isArray(line) ? line : [line]).map(toShadow)));
+        return ob.makeNode(KIND.codeblock, args, lines);
+      }
+      return ob.makeNode(KIND.codeblock, args, [ob.makeText(String(body))]);
+    },
     rule: node(KIND.rule),
     comment: (body) => ob.makeNode(KIND.comment, {}, [ob.makeText(String(body))]),
     link: (url, ...kids) => ob.makeNode(KIND.link, { url: String(url) }, kids.map(toShadow)),
@@ -131,9 +147,11 @@ export function buildContext(ob) {
       ob.makeNode(KIND.mathblock, { src: String(src), label }, []),
     // inline/block style scope (document-model §3): patch keys font (CSS
     // family list), lang (BCP-47), color, sizePx, plus bold/italic sugar
+    // patch keys: font/lang/color/sizePx + bold/italic/underline/overline/
+    // strike sugar (decorations are CH1 bits, metric-neutral)
     style: (patch = {}, ...kids) =>
       ob.makeNode(KIND.styled, {
-        bits: ((patch.bold ? CLS_BOLD : 0) | (patch.italic ? CLS_EM : 0)) || undefined,
+        bits: styleBits(patch),
         font: patch.font, lang: patch.lang, color: patch.color, sizePx: patch.sizePx,
       }, kids.map(toShadow)),
     val: (x) => toShadow(x),
@@ -152,7 +170,7 @@ export function buildContext(ob) {
       push(x) {
         styleStack.push(x);
         if (typeof x === 'number') ob.stylePush(x, {});
-        else ob.stylePush((x.bold ? CLS_BOLD : 0) | (x.italic ? CLS_EM : 0), {
+        else ob.stylePush(styleBits(x) || 0, {
           font: x.font, lang: x.lang, color: x.color, sizePx: x.sizePx,
         });
       },

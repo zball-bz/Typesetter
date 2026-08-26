@@ -2,7 +2,7 @@
 // Consumed by: engine/src/ops/ops.h (X-macro), tools/gen-ops-ts.mjs (regex).
 // Changing any number is a protocol version bump: update OPS_VERSION.
 //
-// OPS_VERSION(2)
+// OPS_VERSION(3)
 
 OP(MAKE_TEXT, 1)
 OP(MAKE_NODE, 2)
@@ -62,5 +62,8 @@ ARGK(bits, 20)
 ARGK(font, 21)
 ARGK(color, 22)
 ARGK(sizePx, 23)
+ARGK(wrap, 24)
+ARGK(lineNo, 25)
+ARGK(hl, 26)
 // style patches reuse ARGK(lang, 4): codeblock's language tag and the
 // InlineStyle BCP-47 tag are per-kind namespaces over one key

@@ -52,11 +52,11 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           if (v.ascent + v.descent > adv) adv = v.ascent + v.descent;
         }
         bool first = true;
-        for (StrRef lineRef : u.codeLines) {
+        for (u32 li = 0; li < (u32)u.codeRuns.size(); li++) {
           LineBox line;
           line.unitIdx = ui;
           line.special = 2;
-          line.codeText = lineRef;
+          line.codeLine = li;
           line.left = u.indent;
           line.width = lineWidth;
           line.y = (Su)py;

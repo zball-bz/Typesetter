@@ -65,7 +65,16 @@ struct FlowUnit {
   StrRef marker = 0;  // list marker text (0 = none), rendered in the gutter
   StyleId markerStyle = 0;
   StyleId codeStyle = 0;
-  std::vector<StrRef> codeLines;
+  // one Code line = a sequence of styled runs (CH1); plain code is a
+  // single run per line. Replaces the old per-line StrRef list.
+  struct CodeRun {
+    StrRef text = 0;
+    StyleId style = 0;
+  };
+  std::vector<std::vector<CodeRun>> codeRuns;
+  bool codeWrap = false;     // CH4: column wrap (stored now, applied later)
+  i32 codeLineNo = 0;        // 0 = no numbers; else first line number
+  std::vector<u32> hlLines;  // 1-based highlighted lines
   StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup
   double rawHpx = 0;    // Raw: declared height (px)
   const MathBox* mathBox = nullptr;  // Math: display formula

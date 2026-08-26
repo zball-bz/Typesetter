@@ -87,6 +87,14 @@ struct Sem {
           std::snprintf(buf, sizeof buf, "font-size:%gpx;", sizePx);
           style += buf;
         }
+        if (bits & (CLS_UNDER | CLS_OVER | CLS_STRIKE)) {
+          style += "text-decoration:";
+          if (bits & CLS_UNDER) style += "underline ";
+          if (bits & CLS_OVER) style += "overline ";
+          if (bits & CLS_STRIKE) style += "line-through ";
+          style.pop_back();
+          style += ";";
+        }
         if (!style.empty()) {
           style.pop_back();
           out += " style=\"";
@@ -202,8 +210,15 @@ struct Sem {
           out += "\"";
         }
         out += ">";
-        if (!n->kids.empty() && n->kids[0]->kind == Kind::text)
+        if (n->kids.size() == 1 && n->kids[0]->kind == Kind::text) {
           esc(out, strs.get(n->kids[0]->str));
+        } else {
+          // structured lines: seq of styled runs per child (CH1)
+          for (size_t li = 0; li < n->kids.size(); li++) {
+            if (li) out += "\n";
+            inl(n->kids[li]);
+          }
+        }
         out += "</code></pre>\n";
         return;
       }

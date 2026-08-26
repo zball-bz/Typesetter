@@ -122,6 +122,9 @@ static void styleStr(std::string& out, const Styling& s, const Interner& strs) {
   f(CLS_BOLD, "BOLD");
   f(CLS_CODE, "CODE");
   f(CLS_LINK, "LINK");
+  f(CLS_UNDER, "U");
+  f(CLS_OVER, "O");
+  f(CLS_STRIKE, "S");
   if (first) out += "base";
   if (s.sizeMul != 1.0f) appendf(out, "x%.2f", (double)s.sizeMul);
   if (s.fontFamily) {
