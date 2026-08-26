@@ -276,8 +276,8 @@ struct Emitter {
                         0.0f, 0.0f, 0.0);  // leading half — breakable, NOT stretchable
         }
       } else {
-        // 禁则: no break before a closing punct
-        if (!u.blocks.empty() && u.blocks.back().isCjkChar())
+        // 禁则: no break before a closing punct (inline formulas included)
+        if (!u.blocks.empty() && (u.blocks.back().isCjkChar() || u.blocks.back().math))
           u.blocks.back().breakPenalty = BREAK_INF;
         if (lastIsCloseSp()) {
           // closing + closing: solid; None keeps the half but rigid (a break

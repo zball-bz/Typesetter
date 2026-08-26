@@ -23,6 +23,7 @@ struct MathBox {
   u8 firstCls = 0, lastCls = 0;  // effective edge classes (glue vs neighbours)
   Su w = 0, asc = 0, desc = 0;   // extents relative to the box baseline
   Su italic = 0;              // italic correction (glyph/base boxes)
+  Su topAccent = 0;           // top-accent attachment x (default w/2 at build)
   StrRef text = 0;            // Glyph: UTF-8 character(s) to paint
   float px = 0;               // Glyph: font-size for emission (style-scaled)
   std::vector<MathKid> kids;  // HBox children

@@ -10,7 +10,7 @@ top pid=0 units=1
   punct-close "：" w=512su @[0,24)
   punct-sp w=512su @[0,24)
 top pid=1 units=1
- unit math indent=0su w=10103su asc=1420su desc=712su
+ unit math indent=0su w=9074su asc=1495su desc=1148su
 top pid=2 units=1
  unit text indent=0su
   cjk "因" w=1025su glue=102su wt=0.6 pen=0 @[65,86)
@@ -29,4 +29,4 @@ top pid=2 units=1
   punct-close "。" w=512su @[95,107)
   punct-sp w=512su @[95,107)
 top pid=3 units=1
- unit math indent=0su w=12989su asc=1414su desc=712su
+ unit math indent=0su w=11418su asc=1414su desc=712su

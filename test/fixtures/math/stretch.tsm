@@ -1,0 +1,9 @@
+二次方程 $a x^2 + b x + c = 0$ 的求根公式：
+
+$ x = (-b +- sqrt(b^2 - 4 a c))/(2 a) $
+
+组合数 $binom(n, k) = n!/(k! (n-k)!)$ 满足对称性；立方根 $root(3, 8) = 2$。
+
+$ hat(f)(xi) = int_(-oo)^oo f(x) e^(-2 pi i x xi) d x $
+
+单位向量记作 $vec(e)$，均值记作 $bar(x)$。

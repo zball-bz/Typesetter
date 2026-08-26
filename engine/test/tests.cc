@@ -158,6 +158,55 @@ static void unitMathLayout() {
   CHECK(ab.find("glyph \"b\" Ord") != std::string::npos);
 }
 
+static std::string mathDumpD(const char* src) {  // display style
+  Arena a;
+  Interner strs{a};
+  DiagSink d;
+  MathBox* b = layoutMathFormula(src, true, 16, a, strs, d, {});
+  std::string out = dumpMathBox(b, strs);
+  for (const Diag& dg : d.items) { out += "DIAG "; out += dg.code; out += "\n"; }
+  return out;
+}
+
+static void unitMathStretch() {
+  auto ascOf = [](const std::string& d) {
+    return atoi(d.c_str() + d.find("asc=") + 4);
+  };
+  // display big operator: glyph grown + true limits -> taller than text style
+  std::string sumD = mathDumpD("sum_(n=1)^oo x_n");
+  std::string sumT = mathDump("sum_(n=1)^oo x_n");
+  CHECK(sumD.find("DIAG") == std::string::npos);
+  CHECK(ascOf(sumD) > ascOf(sumT));
+  // radicals: no more math-unsupported; overbar rule present; natural surd
+  std::string sq = mathDump("sqrt(x+1)");
+  CHECK(sq.find("DIAG") == std::string::npos);
+  CHECK(sq.find("rule") != std::string::npos);
+  CHECK(sq.find("\xE2\x88\x9A") != std::string::npos);  // U+221A
+  CHECK(mathDump("sqrt(a/b)").find("DIAG") == std::string::npos);
+  // root: scriptscript degree raised on the surd
+  std::string rt = mathDump("root(3, 2)");
+  CHECK(rt.find("DIAG") == std::string::npos);
+  CHECK(rt.find("glyph \"3\"") != std::string::npos);
+  // accents: combining circumflex above a cramped base
+  std::string hat = mathDump("hat(x)");
+  CHECK(hat.find("DIAG") == std::string::npos);
+  CHECK(hat.find("\xCC\x82") != std::string::npos);  // U+0302
+  // groups stay visible atoms; fenced tall content stretches without diags
+  CHECK(mathDump("(a+b) c").find("glyph \"(\" Open") != std::string::npos);
+  CHECK(mathDump("abs(a/b)").find("DIAG") == std::string::npos);
+  // factorial binds postfix: the numerator of n!/2 is "n!"
+  std::string fact = mathDump("n!/2");
+  size_t ruleAt = fact.find("rule");
+  CHECK(ruleAt != std::string::npos);
+  CHECK(fact.find("glyph \"!\"") < ruleAt);   // '!' above the bar
+  CHECK(fact.find("glyph \"n\"") < ruleAt);
+  // binom: barless stack (no rule)
+  std::string bi = mathDump("binom(n, k)");
+  CHECK(bi.find("DIAG") == std::string::npos);
+  CHECK(bi.find("rule") == std::string::npos);
+  CHECK(bi.find("glyph \"n\"") != std::string::npos);
+}
+
 // --- golden runner ---
 static bool typesetWithMock(Doc& doc) {
   for (int i = 0; i < 64; i++) {
@@ -204,6 +253,7 @@ int main(int argc, char** argv) {
   unitMock();
   unitMathFont();
   unitMathLayout();
+  unitMathStretch();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");

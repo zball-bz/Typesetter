@@ -1,0 +1,21 @@
+doc @[0,298)
+  para @[0,53)
+    text @[0,12) str="二次方程 "
+    math @[13,34) display=0 src="a x^2 + b x + c = 0"
+    text @[35,53) str=" 的求根公式："
+  para @[55,94)
+    math @[55,94) display=1 src="x = (-b +- sqrt(b^2 - 4 a c))/(2 a)"
+  para @[96,184)
+    text @[96,105) str="组合数 "
+    math @[106,136) display=0 src="binom(n, k) = n!/(k! (n-k)!)"
+    text @[137,164) str=" 满足对称性；立方根 "
+    math @[165,181) display=0 src="root(3, 8) = 2"
+    text @[181,184) str="。"
+  para @[186,241)
+    math @[186,241) display=1 src="hat(f)(xi) = int_(-oo)^oo f(x) e^(-2 pi i x xi) d x"
+  para @[243,297)
+    text @[243,261) str="单位向量记作 "
+    math @[262,270) display=0 src="vec(e)"
+    text @[270,285) str="，均值记作 "
+    math @[286,294) display=0 src="bar(x)"
+    text @[294,297) str="。"

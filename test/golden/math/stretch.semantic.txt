@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="53">二次方程 <code class="tsr-mathsrc">$a x^2 + b x + c = 0$</code> 的求根公式：</p>
+<p class="tsr-mathblock" data-pid="1" data-s="55" data-e="94"><code class="tsr-mathsrc">$ x = (-b +- sqrt(b^2 - 4 a c))/(2 a) $</code></p>
+<p data-pid="2" data-s="96" data-e="184">组合数 <code class="tsr-mathsrc">$binom(n, k) = n!/(k! (n-k)!)$</code> 满足对称性；立方根 <code class="tsr-mathsrc">$root(3, 8) = 2$</code>。</p>
+<p class="tsr-mathblock" data-pid="3" data-s="186" data-e="241"><code class="tsr-mathsrc">$ hat(f)(xi) = int_(-oo)^oo f(x) e^(-2 pi i x xi) d x $</code></p>
+<p data-pid="4" data-s="243" data-e="297">单位向量记作 <code class="tsr-mathsrc">$vec(e)$</code>，均值记作 <code class="tsr-mathsrc">$bar(x)$</code>。</p>
+</div>
