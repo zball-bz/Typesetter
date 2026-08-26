@@ -310,6 +310,16 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
 
       if (l.special == 2) {
         const FlowUnit& u = tb.units[l.unitIdx];
+        if (l.codeCont) {
+          // grid-exact continuation indent: two REAL spaces in the same
+          // mono flow (2ch in ANY font), synthetic for both copy paths
+          const Styling& cst = styles.get(u.codeStyle);
+          out += "<span class=\"";
+          runClasses(out, cst);
+          out += "\" data-syn=\"cont\"";
+          runStyleAttr(out, cst, cfg, strs);
+          out += ">  </span>";
+        }
         u32 off = 0;
         for (const FlowUnit::CodeRun& r : u.codeRuns[l.codeLine]) {
           std::string_view t = strs.get(r.text);

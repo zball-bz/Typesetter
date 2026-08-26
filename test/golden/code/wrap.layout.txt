@@ -3,6 +3,6 @@ para pid=0 y=0su w=19200su h=1536su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,15) @[0,42)
 para pid=1 y=2765su w=19200su h=6144su
   L0 code y=0su left=0su line=0 [0,37) hl marker
-  L1 code y=1536su left=874su line=0 [37,78) cont hl
-  L2 code y=3072su left=874su line=0 [78,129) cont hl
-  L3 code y=4608su left=874su line=0 [129,176) cont hl
+  L1 code y=1536su left=0su line=0 [37,78) cont hl
+  L2 code y=3072su left=0su line=0 [78,129) cont hl
+  L3 code y=4608su left=0su line=0 [129,176) cont hl

@@ -131,8 +131,8 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             line.codeCont = ri > 0;
             line.codeHl = hl;
             line.height = adv;
-            line.left = u.indent + (ri ? 2 * chSu : 0);
-            line.width = lineWidth - (ri ? 2 * chSu : 0);
+            line.left = u.indent;
+            line.width = lineWidth;
             line.y = (Su)py;
             if (ri == 0 && u.codeLineNo > 0) {
               line.marker = strs.intern(std::to_string(u.codeLineNo + (i32)li));

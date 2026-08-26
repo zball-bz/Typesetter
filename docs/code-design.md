@@ -148,6 +148,11 @@ load); wrap continuation indent 2ch with no marker glyph.
   hand (comment: keep in sync).
 - **.tsr-code gained white-space:pre** — leading indentation collapsed in
   every code path until CH3's graphical pass caught it.
+- **Continuation indent is two literal spaces in the text flow**, not an
+  absolute px offset: static export renders on fonts the engine never
+  measured, and a baked 2×ch offset misaligns there — real spaces are
+  exactly 2ch in whatever mono font paints. Synthetic
+  (data-syn="cont" + user-select:none) for both copy paths.
 - **Wrapped rows emit data-ragged + data-join="none"**: ragged exempts
   code rows from the justify audits; the join keeps the §9.3 copy rebuild
   emitting LOGICAL lines (e2e-pinned).
