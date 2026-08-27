@@ -241,7 +241,8 @@ export function createEngine(opts = {}) {
         liveDocId = null;
       }
       const id = nextId++;
-      const width = widthPx ?? container.getBoundingClientRect().width;
+      // the session measure: relayout() moves it so later update()s follow
+      let width = widthPx ?? container.getBoundingClientRect().width;
       // The container must render with exactly the family/size the engine
       // measured — this is the measure/render contract, not styling sugar.
       container.style.fontFamily = fontFamily;
@@ -305,6 +306,7 @@ export function createEngine(opts = {}) {
         async relayout(newWidthPx) {
           const rid = nextId++;
           const r = await request({ type: 'relayout', id: rid, docId: id, widthPx: newWidthPx });
+          width = newWidthPx;
           const ups = swapIn(container, r.html);
           paraChunks = chunkParas(r.html);
           onUpgrade?.(ups);

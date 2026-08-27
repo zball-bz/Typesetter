@@ -67,3 +67,40 @@ test('preview page: a broken engine load surfaces as error state', async ({ page
   const res = await page.request.get(`http://127.0.0.1:${srv.port}/no/such/file.mjs`);
   expect(res.status()).toBe(404);
 });
+
+test('preview page: panel resize relayouts at the new measure', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto(`http://127.0.0.1:${srv.port}/preview.html`);
+  const src = ['= 宽度重排', '',
+    '这一段足够长，足以在不同的版心宽度下产生不同的行数。' +
+    'Enough mixed Latin text to make the line count depend on the measure, ' +
+    'and then some more words so the difference is unmistakable.'].join('\n');
+  const before = await page.evaluate(async (text) => {
+    const done = new Promise((r) => window.addEventListener('message', (e) => {
+      if (e.data?.type === 'state') r();
+    }));
+    window.postMessage({ type: 'src', text, version: 1, cfg: { baseSizePx: 18 } }, '*');
+    await done;
+    return { lines: document.querySelectorAll('.tsr-line').length,
+             w: document.querySelector('.tsr-line').getBoundingClientRect().width };
+  }, src);
+  await page.setViewportSize({ width: 420, height: 700 });
+  await page.waitForFunction((n) => document.querySelectorAll('.tsr-line').length > n, before.lines);
+  const after = await page.evaluate(() => ({
+    lines: document.querySelectorAll('.tsr-line').length,
+    w: document.querySelector('.tsr-line').getBoundingClientRect().width,
+    out: document.getElementById('out').getBoundingClientRect().width,
+  }));
+  expect(after.lines).toBeGreaterThan(before.lines);
+  expect(Math.abs(after.w - after.out)).toBeLessThan(1); // lines fill the new measure
+  // and an edit after the resize keeps the NEW measure (shell width tracking)
+  const edited = await page.evaluate(async (text) => {
+    const done = new Promise((r) => window.addEventListener('message', (e) => {
+      if (e.data?.type === 'state' && e.data.version === 2) r();
+    }));
+    window.postMessage({ type: 'src', text: text + ' 尾巴。', version: 2, cfg: {} }, '*');
+    await done;
+    return document.querySelector('.tsr-line').getBoundingClientRect().width;
+  }, src);
+  expect(Math.abs(edited - after.out)).toBeLessThan(1);
+});

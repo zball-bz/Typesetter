@@ -2,7 +2,7 @@
   "name": "vscode-tsm",
   "displayName": "Typesetter (tsm)",
   "description": "Language support and live typeset preview for .tsm — the Typesetter markup language",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "zball",
   "license": "MIT",
   "repository": { "type": "git", "url": "https://github.com/zball-bz/Typesetter" },

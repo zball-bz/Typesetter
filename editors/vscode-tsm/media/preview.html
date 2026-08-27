@@ -33,6 +33,8 @@ const engine = createEngine();
 let handle = null;
 let queued = null;
 let busy = false;
+let width = 0;           // measure the live document was set at
+let resizePending = false;
 
 // serialized update pump: only the LATEST queued source is typeset; results
 // report the message's version so the extension can drop stale diagnostics
@@ -47,6 +49,7 @@ async function pump() {
       let r;
       if (!handle) {
         handle = await engine.typeset(m.text, out, { ...m.cfg, progressive: true });
+        width = out.getBoundingClientRect().width;
         r = handle;
       } else {
         r = await handle.update(m.text);
@@ -62,8 +65,32 @@ async function pump() {
                            error: String(e?.message ?? e), ms: 0 }, '*');
     }
   }
+  // panel resized while (or since) we were busy: width-only relayout on
+  // the same doc — metrics persist in the worker, so this is the fast path
+  if (resizePending && handle) {
+    resizePending = false;
+    const w = out.getBoundingClientRect().width;
+    if (Math.abs(w - width) >= 1) {
+      try {
+        width = w;
+        await handle.relayout(w);
+      } catch (e) { console.warn('tsm relayout failed', e); }
+    }
+  }
   busy = false;
+  if (queued || resizePending) pump();
 }
+
+let resizeTimer = null;
+new ResizeObserver(() => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (!handle) return;
+    if (Math.abs(out.getBoundingClientRect().width - width) < 1) return;
+    resizePending = true;
+    pump();
+  }, 150);
+}).observe(out);
 
 // engine byte offset of an element inside a paragraph container
 function offsetOf(el) {
