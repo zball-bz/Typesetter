@@ -1,6 +1,8 @@
 #include "break.h"
 
 #include <algorithm>
+#include <cstring>
+#include <unordered_map>
 
 namespace tsr {
 
@@ -140,6 +142,55 @@ BreakResult breakLines(const std::vector<LinebreakBlock>& blocks, LineWidths wid
   while (!breaks.empty() && breaks.front() == 0) breaks.erase(breaks.begin());
   if (breaks.empty() || breaks.back() != n) breaks.push_back(n);
   return {breaks, bestVal};
+}
+
+// FNV-1a over exactly the inputs breakLines reads — nothing else may leak
+// into the key, and any new field the DP starts reading MUST be added here.
+static u64 breakKey(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
+                    const CostParams& params) {
+  u64 h = 1469598103934665603ull;
+  auto mix = [&](u64 v) {
+    h ^= v;
+    h *= 1099511628211ull;
+  };
+  auto mixD = [&](double d) {
+    u64 v;
+    std::memcpy(&v, &d, 8);
+    mix(v);
+  };
+  mixD(params.exponent);
+  mixD(params.shrinkThreshold);
+  mixD(params.shrinkCoeff);
+  mix((u64)(i64)widths.constant);
+  mix((u64)(i64)widths.narrow);
+  mix(widths.narrowK);
+  for (const LinebreakBlock& b : blocks) {
+    mix(((u64)(i64)b.width << 21) ^ ((u64)(i64)b.spaceWidth << 42) ^ (u64)(i64)b.breakWidth);
+    u32 pen;
+    std::memcpy(&pen, &b.breakPenalty, 4);
+    mix(pen);
+  }
+  return h;
+}
+
+BreakResult breakLinesRetry(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
+                            const CostParams& params) {
+  static std::unordered_map<u64, BreakResult> cache;
+  const u64 key = breakKey(blocks, widths, params);
+  auto it = cache.find(key);
+  if (it != cache.end()) return it->second;
+  BreakResult r = breakLines(blocks, widths, params);
+  if (r.cost >= 1e17) {
+    // retry ladder: a narrow measure can starve the ±5 cursor window of
+    // feasible transitions; widen until a finite solution appears
+    for (u32 range : {10u, 20u, 50u, 0xFFFFFFFFu}) {
+      r = breakLines(blocks, widths, params, range);
+      if (r.cost < 1e17) break;
+    }
+  }
+  if (cache.size() >= 16384) cache.clear();
+  cache.emplace(key, r);
+  return r;
 }
 
 }  // namespace tsr

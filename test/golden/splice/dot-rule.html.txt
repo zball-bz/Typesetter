@@ -1,6 +1,6 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:48px">
-<div class="tsr-line" data-s="12" data-e="50" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="12">The value is 42. Next sentence follows</span></div>
-<div class="tsr-line" data-s="59" data-e="63" style="top:24px;left:0px;width:300px"><span class="tsr-r">undefined too.</span></div>
+<div class="tsr-para" data-pid="0" data-s0="12" style="position:relative;height:48px">
+<div class="tsr-line" data-s="0" data-e="38" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">The value is 42. Next sentence follows</span></div>
+<div class="tsr-line" data-s="47" data-e="51" style="top:24px;left:0px;width:300px"><span class="tsr-r">undefined too.</span></div>
 </div>
 </div>

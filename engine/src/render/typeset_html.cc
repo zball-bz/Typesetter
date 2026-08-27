@@ -138,7 +138,7 @@ static void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
 // data-syn="math" + data-src carry the copy contract (§9.3: source text).
 static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
                      bool display, const Interner& strs, Span span,
-                     const std::string& posStyle) {
+                     const std::string& posStyle, u32 srcBase = 0) {
   out += "<span class=\"tsr-math\" data-syn=\"math\" data-src=\"";
   if (srcRef) {  // later segments of a split formula contribute nothing
     out += display ? "$ " : "$";
@@ -146,7 +146,8 @@ static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
     out += display ? " $" : "$";
   }
   out += "\"";
-  if (!span.empty()) appendf(out, " data-s=\"%u\" data-e=\"%u\"", span.start, span.end);
+  if (!span.empty())
+    appendf(out, " data-s=\"%u\" data-e=\"%u\"", span.start - srcBase, span.end - srcBase);
   out += " style=\"width:";
   fmtPx(out, suToPx(mb->w));
   out += ";height:";
@@ -168,7 +169,8 @@ static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
 // paged serializer (yShift rebases into the sheet).
 static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame& fr,
                           size_t li, const StyleTable& styles, const Interner& strs,
-                          const Config& cfg, u32& lastAnchored, Su yShift) {
+                          const Config& cfg, u32& lastAnchored, Su yShift,
+                          u32 srcBase = 0) {
   const LineBox& l = fr.lines[li];
   const Su ly = (Su)(l.y + yShift);
       if (l.special == 3) {  // raw passthrough (trusted, handler-declared)
@@ -206,7 +208,8 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
           out += "\"";
         }
         if (!l.srcSpan.empty())
-          appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start, l.srcSpan.end);
+          appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start - srcBase,
+                  l.srcSpan.end - srcBase);
         out += " data-ragged=\"1\" style=\"top:";
         fmtPx(out, suToPx(ly));
         out += ";left:";
@@ -260,8 +263,8 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
         }
         std::string span;
         if (!l.srcSpan.empty())
-          appendf(span, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start,
-                  l.srcSpan.end);
+          appendf(span, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start - srcBase,
+                  l.srcSpan.end - srcBase);
         if (iu.imgSrc) {
           out += "<img class=\"tsr-img\" draggable=\"false\" data-syn=\"image\"";
           out += id;
@@ -307,7 +310,8 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
         }
       }
       if (!l.srcSpan.empty())
-        appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start, l.srcSpan.end);
+        appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start - srcBase,
+                l.srcSpan.end - srcBase);
       if (l.join == 1) out += " data-join=\"space\"";
       else if (l.join == 2) out += " data-join=\"none\"";
       if (tb.units[l.unitIdx].ragged) out += " data-ragged=\"1\"";
@@ -436,7 +440,8 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
           out += "\"";
         }
         if (first.flags & BF_REF) out += " data-syn=\"ref\"";  // §9.3: copy skips
-        else if (!first.span.empty()) appendf(out, " data-s=\"%u\"", first.span.start);
+        else if (!first.span.empty())
+          appendf(out, " data-s=\"%u\"", first.span.start - srcBase);
         langAttr(out, sty, strs);
         std::string style;
         styleInto(style, sty, cfg, strs);
@@ -456,7 +461,7 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
         const LinebreakBlock& b = bl[i];
         if (b.math) {  // inline formula: one box, baseline via vertical-align
           mathSpan(out, b.math, b.text, /*display=*/false, strs, b.span,
-                   std::string());
+                   std::string(), srcBase);
           i++;
           continue;
         }
@@ -593,7 +598,17 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
     const ParaFrame& fr = lr.paras[p];
     const TopBlock& tb = tops[p];
     u32 lastAnchored = 0xFFFFFFFFu;
-    appendf(out, "<div class=\"tsr-para\" data-pid=\"%u\" style=\"position:relative;height:", fr.pid);
+    // Source anchors are PARA-RELATIVE (base in data-s0 on the container):
+    // an edit then leaves every untouched paragraph byte-identical in
+    // serialized form, so the editing loop patches exactly the damaged
+    // paragraphs (shell.mjs patchIn). Paged output keeps absolute offsets.
+    u32 srcBase = 0xFFFFFFFFu;
+    for (const LineBox& l : fr.lines)
+      if (!l.srcSpan.empty() && l.srcSpan.start < srcBase) srcBase = l.srcSpan.start;
+    if (srcBase == 0xFFFFFFFFu) srcBase = 0;
+    appendf(out,
+            "<div class=\"tsr-para\" data-pid=\"%u\" data-s0=\"%u\" style=\"position:relative;height:",
+            fr.pid, srcBase);
     fmtPx(out, suToPx(fr.h));
     if (p + 1 < lr.paras.size()) {
       out += ";margin-bottom:";
@@ -601,7 +616,7 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
     }
     out += "\">\n";
     for (size_t li = 0; li < fr.lines.size(); li++)
-      renderLineBox(out, tb, fr, li, styles, strs, cfg, lastAnchored, 0);
+      renderLineBox(out, tb, fr, li, styles, strs, cfg, lastAnchored, 0, srcBase);
     out += "</div>\n";
   }
   out += "</div>\n";

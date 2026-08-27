@@ -23,4 +23,12 @@ struct LineWidths {
 BreakResult breakLines(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
                        const CostParams& params, u32 cursorSearchRange = 5);
 
+// Cached form with the PoC retry ladder folded in (editor-design.md §2).
+// KP reads ONLY block geometry (width, spaceWidth, breakWidth,
+// breakPenalty) plus the line widths and cost params, so results are keyed
+// by a content hash and shared process-wide across documents — an editing
+// session re-breaks only the paragraphs a keystroke actually changed.
+BreakResult breakLinesRetry(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
+                            const CostParams& params);
+
 }  // namespace tsr

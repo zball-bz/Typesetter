@@ -1,10 +1,10 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:48px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="47" data-e="94" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="47">Content args: </span><span class="tsr-r tsr-i" data-s="65">emphasized </span><span class="tsr-r tsr-b tsr-i" data-s="77">nested</span><span class="tsr-r tsr-i" data-s="85"> text</span><span class="tsr-r" data-s="91"> and</span></div>
-<div class="tsr-line" data-s="110" data-e="135" style="top:24px;left:0px;width:300px"><span class="tsr-r">tip: boxed </span><span class="tsr-r tsr-b" data-s="117">bold</span><span class="tsr-r" data-s="123"> words here.</span></div>
+<div class="tsr-para" data-pid="0" data-s0="47" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="47" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Content args: </span><span class="tsr-r tsr-i" data-s="18">emphasized </span><span class="tsr-r tsr-b tsr-i" data-s="30">nested</span><span class="tsr-r tsr-i" data-s="38"> text</span><span class="tsr-r" data-s="44"> and</span></div>
+<div class="tsr-line" data-s="63" data-e="88" style="top:24px;left:0px;width:300px"><span class="tsr-r">tip: boxed </span><span class="tsr-r tsr-b" data-s="70">bold</span><span class="tsr-r" data-s="76"> words here.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" style="position:relative;height:48px">
-<div class="tsr-line" data-s="137" data-e="204" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="137">Deep JS brackets stay JS: a and n: trail</span><span class="tsr-r" data-s="196" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="196" data-e="206" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="196">ing.</span></div>
+<div class="tsr-para" data-pid="1" data-s0="137" style="position:relative;height:48px">
+<div class="tsr-line" data-s="0" data-e="67" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">Deep JS brackets stay JS: a and n: trail</span><span class="tsr-r" data-s="59" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="59" data-e="69" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="59">ing.</span></div>
 </div>
 </div>

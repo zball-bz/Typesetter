@@ -246,17 +246,10 @@ struct Doc {
     }
     MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg);
     if (!missing.empty()) return Status::NeedMeasure;
-    // PoC retry ladder: a narrow measure can starve the ±5 cursor window
-    // of feasible transitions; widen until a finite solution appears.
+    // Cached KP with the retry ladder folded in (break.cc): keyed by block
+    // geometry, shared across documents — the editing loop's fast path.
     auto breakWithRetry = [&](const std::vector<LinebreakBlock>& blocks, LineWidths lw) {
-      BreakResult r = breakLines(blocks, lw, cfg.cost);
-      if (r.cost >= 1e17) {
-        for (u32 range : {10u, 20u, 50u, 0xFFFFFFFFu}) {
-          r = breakLines(blocks, lw, cfg.cost, range);
-          if (r.cost < 1e17) break;
-        }
-      }
-      return r;
+      return breakLinesRetry(blocks, lw, cfg.cost);
     };
     // F2 float tracker (figure-design.md §4): walks units in reading order,
     // mirroring layout's gap accounting; decisions are STORED on the units

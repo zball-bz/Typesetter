@@ -1,5 +1,5 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:144px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:144px">
 <div class="tsr-line" data-s="0" data-e="202" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:5.333px"><span class="tsr-r" data-s="0">The demonstration paragraph exercises</span></div>
 <div class="tsr-line" data-s="0" data-e="202" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:5.333px"><span class="tsr-r" data-s="0">hyphenation with extraordinary repre</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="0" data-e="202" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:5.333px"><span class="tsr-r" data-s="0">sentation of measurement terminology,</span></div>

@@ -1,6 +1,6 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:48px">
-<div class="tsr-line" data-s="17" data-e="60" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2.778px"><span class="tsr-r">7</span><span class="tsr-r tsr-cjk" data-s="17" style="letter-spacing:1.667px;margin-right:-1.667px">的结果</span><span class="tsr-r" data-s="17"> should cut at the ASCII bound</span><span class="tsr-r" data-s="17" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="17" data-e="60" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="17">ary.</span></div>
+<div class="tsr-para" data-pid="0" data-s0="17" style="position:relative;height:48px">
+<div class="tsr-line" data-s="0" data-e="43" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2.778px"><span class="tsr-r">7</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:1.667px;margin-right:-1.667px">的结果</span><span class="tsr-r" data-s="0"> should cut at the ASCII bound</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="43" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">ary.</span></div>
 </div>
 </div>

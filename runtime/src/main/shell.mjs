@@ -142,6 +142,52 @@ export function createEngine(opts = {}) {
       worker.postMessage(msg);
     });
 
+  // Editing path (editor-design.md §3): the typeset HTML is a flat list of
+  // per-paragraph containers in normal flow, so an edit's DOM damage is
+  // computed by chunking the OLD and NEW strings at paragraph boundaries
+  // and replacing only the differing middle — a one-paragraph edit touches
+  // one node, and the browser reflows the tail by normal-flow shifting.
+  const chunkParas = (html) => {
+    const open = html.indexOf('<div class="tsr-para"');
+    if (open < 0 || !html.startsWith('<div class="tsr-doc">')) return null;
+    const head = html.slice(0, open);
+    const chunks = [];
+    let at = open;
+    while (at >= 0) {
+      const next = html.indexOf('<div class="tsr-para"', at + 1);
+      chunks.push(next >= 0 ? html.slice(at, next) : html.slice(at));
+      at = next;
+    }
+    // last chunk carries the doc-wrapper close; peel it so chunks compare
+    // structurally (it is re-added only conceptually — patching never
+    // rewrites the wrapper)
+    const tail = '</div>\n</div>\n';
+    if (!chunks[chunks.length - 1].endsWith(tail)) return null;
+    chunks[chunks.length - 1] =
+      chunks[chunks.length - 1].slice(0, -'</div>\n'.length);
+    return { head, chunks };
+  };
+  const patchIn = (container, prev, nextHtml) => {
+    const next = chunkParas(nextHtml);
+    const root = container.firstElementChild;
+    if (!next || !prev || prev.head !== next.head || !root ||
+        root.children.length !== prev.chunks.length) return null;
+    const a = prev.chunks, b = next.chunks;
+    let pre = 0;
+    while (pre < a.length && pre < b.length && a[pre] === b[pre]) pre++;
+    let suf = 0;
+    while (suf < a.length - pre && suf < b.length - pre &&
+           a[a.length - 1 - suf] === b[b.length - 1 - suf]) suf++;
+    const mid = b.slice(pre, b.length - suf).join('');
+    for (let i = a.length - suf - 1; i >= pre; i--) root.children[i].remove();
+    if (mid) {
+      const ref = root.children[pre];
+      if (ref) ref.insertAdjacentHTML('beforebegin', mid);
+      else root.insertAdjacentHTML('beforeend', mid);
+    }
+    return next;
+  };
+
   // Atomic per-pid swap with upgrade records (old/new paragraph rects).
   const swapIn = (container, html) => {
     const oldRects = new Map();
@@ -204,17 +250,44 @@ export function createEngine(opts = {}) {
       liveDocId = id;
       uninstallCopy?.();
       uninstallCopy = installCopy(container);
+      let paraChunks = chunkParas(res.html);
       const handle = {
         html: res.html,
         diags: res.diags,
         heightPx: res.heightPx,
+        timings: res.timings,
         semanticHtml,
         upgrades,
+        // Editing session (editor-design.md §2): re-typeset new source under
+        // the SAME doc handle. The worker's persistent caches make this the
+        // low-latency path; a failing edit keeps the last good doc alive.
+        // DOM damage is patched per-paragraph; full swap is the fallback.
+        async update(newSource) {
+          const rid = nextId++;
+          const r = await request({ type: 'update', id: rid, docId: id,
+            source: newSource, widthPx: width, baseSizePx, lineHeight,
+            fontFamily, cjkFontFamily, paraIndentEm, punctCompress,
+            progressive: false, codeFontFeatures, codeFontFeaturesByLang,
+            verbatimSnapKerning, fonts });
+          let ups = [];
+          const patched = patchIn(container, paraChunks, r.html);
+          if (patched) paraChunks = patched;
+          else {
+            ups = swapIn(container, r.html);
+            paraChunks = chunkParas(r.html);
+          }
+          onUpgrade?.(ups);
+          Object.assign(handle, { html: r.html, diags: r.diags,
+                                  heightPx: r.heightPx, timings: r.timings });
+          return { html: r.html, diags: r.diags, heightPx: r.heightPx,
+                   timings: r.timings, upgrades: ups, patched: !!patched };
+        },
         // width-only re-typeset: metrics persist in the worker-held doc
         async relayout(newWidthPx) {
           const rid = nextId++;
           const r = await request({ type: 'relayout', id: rid, docId: id, widthPx: newWidthPx });
           const ups = swapIn(container, r.html);
+          paraChunks = chunkParas(r.html);
           onUpgrade?.(ups);
           return { html: r.html, diags: r.diags, heightPx: r.heightPx, upgrades: ups };
         },

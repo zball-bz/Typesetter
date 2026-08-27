@@ -1,8 +1,8 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="39" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">First paragraph spans two source lines.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" style="position:relative;height:24px">
-<div class="tsr-line" data-s="41" data-e="58" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="41">Second paragraph.</span></div>
+<div class="tsr-para" data-pid="1" data-s0="41" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="17" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Second paragraph.</span></div>
 </div>
 </div>

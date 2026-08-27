@@ -1,8 +1,8 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="36" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">悬挂缩进与注释感知续行</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">：</span></div>
 </div>
-<div class="tsr-para" data-pid="1" style="position:relative;height:144px">
+<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:144px">
 <div class="tsr-line" data-ragged="1" data-join="none" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">    indented_call(alpha, beta, gamma, </span></div>
 <div class="tsr-line" data-ragged="1" style="top:24px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" data-syn="cont" style="font-size:13.6px">      </span><span class="tsr-r tsr-code" style="font-size:13.6px">delta, epsilon, zeta_long_tail);</span></div>
 <div class="tsr-line" data-ragged="1" data-join="none" style="top:48px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">value = 1; </span><span class="tsr-r tsr-code" style="font-size:13.6px;color:var(--tsr-tok-comment)">// a very long inline comment </span></div>

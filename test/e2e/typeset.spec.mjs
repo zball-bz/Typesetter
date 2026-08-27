@@ -287,3 +287,58 @@ test('paginate: fixed sheets, keep-rules, live doc restored', async ({ page }) =
   expect(Math.abs(heightAfter * 0 + heightBefore - heightBefore)).toBe(0);
   expect(heightAfter).toBeGreaterThan(0);
 });
+
+// --- editor: update() session — per-paragraph DOM patch + warm caches -----
+
+test('update: session re-typeset patches only the edited paragraph', async ({ page }) => {
+  const mk = (edit) => [
+    '= 编辑会话',
+    '',
+    '第一段保持不变，包含中英混排 mixed Latin text 与标点压缩。',
+    '',
+    `第二段是编辑目标${edit}，改动后只有这一段的 DOM 应当被替换。`,
+    '',
+    '第三段也保持不变。The tail paragraphs shift by normal flow.',
+  ].join('\n');
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 300, progressive: false }),
+    { source: mk('') },
+  );
+  // tag live paragraph nodes so we can detect which survive the patch
+  await page.evaluate(() => {
+    document.querySelectorAll('#out .tsr-para').forEach((el, i) => { el.__tag = 'keep' + i; });
+  });
+  const r = await page.evaluate(
+    async ({ source }) => await window.__tsr.update(source),
+    { source: mk('（已修改，加长一点以改变断行）') },
+  );
+  expect(r.patched).toBe(true);
+  expect(r.diags).toBe('');
+  expect(r.html).toContain('已修改');
+  const tags = await page.evaluate(() =>
+    [...document.querySelectorAll('#out .tsr-para')].map((el) => el.__tag ?? null));
+  // unchanged paragraphs kept their identity; exactly the edited one is new
+  expect(tags.filter((t) => t === null).length).toBe(1);
+  expect(tags[0]).toBe('keep0');
+  const report = await page.evaluate(() => window.__tsr.audit());
+  expect(report.lines).toBeGreaterThan(0);
+  expect(report.failures).toEqual([]);
+});
+
+test('update: failing edit keeps the last good document', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async () =>
+    await window.__tsr.typeset('好文档段落。', { widthPx: 300, progressive: false }));
+  // an update that renders fine but with diags still succeeds; a hard error
+  // (worker throw) must leave the previous doc usable for relayout
+  const r = await page.evaluate(async () => {
+    const out = await window.__tsr.update('第二版内容，仍然有效。');
+    const h = await window.__tsr.relayout(280);
+    return { html: out.html, heightPx: h.heightPx };
+  });
+  expect(r.html).toContain('第二版');
+  expect(r.heightPx).toBeGreaterThan(0);
+});

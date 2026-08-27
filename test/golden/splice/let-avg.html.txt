@@ -1,5 +1,5 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:24px">
-<div class="tsr-line" data-s="28" data-e="74" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="28">The mean is 4, computed </span><span class="tsr-r tsr-b" data-s="61">inline</span><span class="tsr-r" data-s="69"> here.</span></div>
+<div class="tsr-para" data-pid="0" data-s0="28" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="46" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The mean is 4, computed </span><span class="tsr-r tsr-b" data-s="33">inline</span><span class="tsr-r" data-s="41"> here.</span></div>
 </div>
 </div>

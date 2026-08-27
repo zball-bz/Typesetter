@@ -1,17 +1,17 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:25.609px;margin-bottom:19.2px">
-<div class="tsr-line" id="tsr-top" data-s="2" data-e="9" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Regions</span></div>
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-top" data-s="0" data-e="7" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Regions</span></div>
 </div>
-<div class="tsr-para" data-pid="1" style="position:relative;height:48px;margin-bottom:19.2px">
-<div class="tsr-line" id="tsr-fig1" data-s="41" data-e="67" data-ragged="1" style="top:0px;left:30px;width:270px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="41">A pretend figure body line</span></div>
-<div class="tsr-line" data-s="68" data-e="103" data-ragged="1" style="top:24px;left:20px;width:280px"><span class="tsr-r" data-s="68">continuing on a second source line.</span></div>
+<div class="tsr-para" data-pid="1" data-s0="41" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-fig1" data-s="0" data-e="26" data-ragged="1" style="top:0px;left:30px;width:270px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">A pretend figure body line</span></div>
+<div class="tsr-line" data-s="27" data-e="62" data-ragged="1" style="top:24px;left:20px;width:280px"><span class="tsr-r" data-s="27">continuing on a second source line.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" style="position:relative;height:97.594px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="122" data-e="154" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="122">Side note with </span><span class="tsr-r tsr-b" data-s="138">emphasis</span><span class="tsr-r" data-s="148"> inside</span></div>
-<div class="tsr-line" data-s="157" data-e="172" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="157">a nested bullet</span></div>
-<div class="tsr-line" data-s="175" data-e="189" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="175">another bullet</span></div>
+<div class="tsr-para" data-pid="2" data-s0="122" style="position:relative;height:97.594px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="32" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Side note with </span><span class="tsr-r tsr-b" data-s="16">emphasis</span><span class="tsr-r" data-s="26"> inside</span></div>
+<div class="tsr-line" data-s="35" data-e="50" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="35">a nested bullet</span></div>
+<div class="tsr-line" data-s="53" data-e="67" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="53">another bullet</span></div>
 </div>
-<div class="tsr-para" data-pid="3" style="position:relative;height:24px">
-<div class="tsr-line" data-s="199" data-e="243" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="199">The figure is </span><a class="tsr-r tsr-cjk" href="#tsr-fig1" data-syn="ref">图</a><a class="tsr-r" href="#tsr-fig1" data-syn="ref"> 1</a><span class="tsr-r" data-s="219"> and the section is </span><a class="tsr-r" href="#tsr-top" data-syn="ref">§1</a><span class="tsr-r" data-s="242">.</span></div>
+<div class="tsr-para" data-pid="3" data-s0="199" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="44" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The figure is </span><a class="tsr-r tsr-cjk" href="#tsr-fig1" data-syn="ref">图</a><a class="tsr-r" href="#tsr-fig1" data-syn="ref"> 1</a><span class="tsr-r" data-s="20"> and the section is </span><a class="tsr-r" href="#tsr-top" data-syn="ref">§1</a><span class="tsr-r" data-s="43">.</span></div>
 </div>
 </div>

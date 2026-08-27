@@ -26,6 +26,12 @@ window.__tsr = {
     return { diags: handle.diags, heightPx: handle.heightPx, dpr: devicePixelRatio,
              hasSemantic: !!handle.semanticHtml, upgrades: handle.upgrades.length };
   },
+  async update(source) {
+    const r = await handle.update(source);
+    return { diags: r.diags, heightPx: r.heightPx, timings: r.timings,
+             upgrades: r.upgrades.length, patched: r.patched,
+             html: document.getElementById('out').innerHTML };
+  },
   async relayout(widthPx) {
     out.style.width = widthPx + 'px';
     const r = await handle.relayout(widthPx);

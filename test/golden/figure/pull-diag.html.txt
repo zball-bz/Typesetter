@@ -1,16 +1,16 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="99" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.279px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.167px;margin-right:-0.167px">拉取路径与占位框</span><span class="tsr-r tsr-cjk" data-s="0">（</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.167px;margin-right:-0.167px">原生桩提供</span><span class="tsr-r" data-s="0"> 512×384</span><span class="tsr-sp" data-syn="boundary" style="width:4.279px"></span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">；</span></div>
 <div class="tsr-line" data-s="0" data-e="99" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">浏览器中加载失败也不会卡住</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">）</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
 </div>
-<div class="tsr-para" data-pid="1" style="position:relative;height:292.203px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="181" style="position:relative;height:292.203px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-light" src="photos/lighthouse.jpg" alt="海边灯塔" style="top:0px;left:0px;width:300px;height:225px">
-<div class="tsr-line" data-s="181" data-e="222" data-ragged="1" style="top:244.203px;left:30px;width:270px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="181">黄昏时分的灯塔</span><span class="tsr-r tsr-cjk" data-s="181">，</span><span class="tsr-r tsr-cjk" data-s="181">尺寸来自</span></div>
-<div class="tsr-line" data-s="181" data-e="239" data-ragged="1" style="top:268.203px;left:84px;width:216px"><span class="tsr-r" data-s="181">NEED_IMAGES </span><span class="tsr-r tsr-cjk" data-s="223">拉取</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="223">。</span></div>
+<div class="tsr-line" data-s="0" data-e="41" data-ragged="1" style="top:244.203px;left:30px;width:270px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">黄昏时分的灯塔</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0">尺寸来自</span></div>
+<div class="tsr-line" data-s="0" data-e="58" data-ragged="1" style="top:268.203px;left:84px;width:216px"><span class="tsr-r" data-s="0">NEED_IMAGES </span><span class="tsr-r tsr-cjk" data-s="42">拉取</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="42">。</span></div>
 </div>
-<div class="tsr-para" data-pid="2" style="position:relative;height:167.203px">
+<div class="tsr-para" data-pid="2" data-s0="308" style="position:relative;height:167.203px">
 <div class="tsr-imgph" data-syn="image" style="top:0px;left:0px;width:300px;height:100px">恶意来源</div>
-<div class="tsr-line" data-s="308" data-e="359" data-ragged="1" style="top:119.203px;left:6px;width:294px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="308">这一条的来源被拒绝</span><span class="tsr-r tsr-cjk" data-s="308">，</span><span class="tsr-r tsr-cjk" data-s="308">渲染为占位</span></div>
-<div class="tsr-line" data-s="308" data-e="359" data-ragged="1" style="top:143.203px;left:138px;width:162px"><span class="tsr-r tsr-cjk" data-s="308">框</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="308">。</span></div>
+<div class="tsr-line" data-s="0" data-e="51" data-ragged="1" style="top:119.203px;left:6px;width:294px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">这一条的来源被拒绝</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0">渲染为占位</span></div>
+<div class="tsr-line" data-s="0" data-e="51" data-ragged="1" style="top:143.203px;left:138px;width:162px"><span class="tsr-r tsr-cjk" data-s="0">框</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
 </div>
 </div>

@@ -1,5 +1,5 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:48px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="59" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2.003px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:1.202px;margin-right:-1.202px">坏公式</span><span class="tsr-r" data-s="0"> </span><span class="tsr-math" data-syn="math" data-src="$x^^2$" data-s="10" data-e="16" style="width:32.375px;height:11.953px;vertical-align:-0.188px"><span class="tsr-mg" style="left:0px;top:-1.034px;font-size:16px;line-height:16px">x^^2</span></span><span class="tsr-r" data-s="17"> </span><span class="tsr-r tsr-cjk" data-s="17" style="letter-spacing:1.202px;margin-right:-1.202px">会退化为原样文本并携带诊</span></div>
 <div class="tsr-line" data-s="17" data-e="59" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="17">断</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="17">。</span></div>
 </div>

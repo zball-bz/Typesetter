@@ -1,34 +1,34 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" style="position:relative;height:25.609px;margin-bottom:19.2px">
-<div class="tsr-line" id="tsr-h-1" data-s="2" data-e="19" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Typesetting Notes</span></div>
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-1" data-s="0" data-e="17" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Typesetting Notes</span></div>
 </div>
-<div class="tsr-para" data-pid="1" style="position:relative;height:24px;margin-bottom:19.2px">
-<div class="tsr-line" id="tsr-h-1.1" data-s="24" data-e="47" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="24" style="font-size:21.6px">Structure and emphasis</span></div>
+<div class="tsr-para" data-pid="1" data-s0="24" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-1.1" data-s="0" data-e="23" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">Structure and emphasis</span></div>
 </div>
-<div class="tsr-para" data-pid="2" style="position:relative;height:48px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="50" data-e="95" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="50">An introductory paragraph with a </span><a class="tsr-r" href="https://example.org" data-s="84">useful</a></div>
-<div class="tsr-line" data-s="84" data-e="147" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="https://example.org" data-s="84">link</a><span class="tsr-r" data-s="118"> and some </span><span class="tsr-r tsr-code" data-s="127" style="font-size:13.6px">inline code</span><span class="tsr-r" data-s="141"> in it.</span></div>
+<div class="tsr-para" data-pid="2" data-s0="50" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="45" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">An introductory paragraph with a </span><a class="tsr-r" href="https://example.org" data-s="34">useful</a></div>
+<div class="tsr-line" data-s="34" data-e="97" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="https://example.org" data-s="34">link</a><span class="tsr-r" data-s="68"> and some </span><span class="tsr-r tsr-code" data-s="77" style="font-size:13.6px">inline code</span><span class="tsr-r" data-s="91"> in it.</span></div>
 </div>
-<div class="tsr-para" data-pid="3" style="position:relative;height:132.781px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="174" data-e="228" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:-0.667px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="174">First bullet item with enough words to</span></div>
-<div class="tsr-line" data-s="174" data-e="228" style="top:24px;left:24px;width:276px"><span class="tsr-r" data-s="174">wrap onto lines</span></div>
-<div class="tsr-line" data-s="231" data-e="274" data-join="space" style="top:54.391px;left:24px;width:276px;word-spacing:1.6px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="231">Second item continued on an indented</span></div>
-<div class="tsr-line" data-s="231" data-e="274" style="top:78.391px;left:24px;width:276px"><span class="tsr-r" data-s="231">line</span></div>
-<div class="tsr-line" data-s="279" data-e="296" style="top:108.781px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="279">Nested child item</span></div>
+<div class="tsr-para" data-pid="3" data-s0="174" style="position:relative;height:132.781px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="54" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:-0.667px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">First bullet item with enough words to</span></div>
+<div class="tsr-line" data-s="0" data-e="54" style="top:24px;left:24px;width:276px"><span class="tsr-r" data-s="0">wrap onto lines</span></div>
+<div class="tsr-line" data-s="57" data-e="100" data-join="space" style="top:54.391px;left:24px;width:276px;word-spacing:1.6px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="57">Second item continued on an indented</span></div>
+<div class="tsr-line" data-s="57" data-e="100" style="top:78.391px;left:24px;width:276px"><span class="tsr-r" data-s="57">line</span></div>
+<div class="tsr-line" data-s="105" data-e="122" style="top:108.781px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="105">Nested child item</span></div>
 </div>
-<div class="tsr-para" data-pid="4" style="position:relative;height:54.391px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="299" data-e="318" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="299">Ordered starts here</span></div>
-<div class="tsr-line" data-s="321" data-e="334" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="321">And continues</span></div>
+<div class="tsr-para" data-pid="4" data-s0="299" style="position:relative;height:54.391px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="19" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="0">Ordered starts here</span></div>
+<div class="tsr-line" data-s="22" data-e="35" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="22">And continues</span></div>
 </div>
-<div class="tsr-para" data-pid="5" style="position:relative;height:72px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="338" data-e="430" data-join="none" style="top:0px;left:16px;width:284px;word-spacing:-0.667px"><span class="tsr-r" data-s="338">A quoted paragraph, indented by the en</span><span class="tsr-r" data-s="338" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="338" data-e="430" data-join="space" style="top:24px;left:16px;width:284px"><span class="tsr-r" data-s="338">gine rather than the browser, wrapping</span></div>
-<div class="tsr-line" data-s="338" data-e="430" style="top:48px;left:16px;width:284px"><span class="tsr-r" data-s="338">across lines.</span></div>
+<div class="tsr-para" data-pid="5" data-s0="338" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="92" data-join="none" style="top:0px;left:16px;width:284px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">A quoted paragraph, indented by the en</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="92" data-join="space" style="top:24px;left:16px;width:284px"><span class="tsr-r" data-s="0">gine rather than the browser, wrapping</span></div>
+<div class="tsr-line" data-s="0" data-e="92" style="top:48px;left:16px;width:284px"><span class="tsr-r" data-s="0">across lines.</span></div>
 </div>
-<div class="tsr-para" data-pid="6" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="6" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 </div>
-<div class="tsr-para" data-pid="7" style="position:relative;height:48px">
+<div class="tsr-para" data-pid="7" data-s0="0" style="position:relative;height:48px">
 <div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">const x = compute(1, 2);</span></div>
 <div class="tsr-line" data-ragged="1" style="top:24px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">return x;</span></div>
 </div>
