@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>tsm preview</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; padding: 28px 0 40vh;
+         background: #fdfdfb; color: #1c1c1a;
+         display: flex; justify-content: center; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #1e1e1e; color: #d4d4d0; }
+    .tsr-doc a { color: #7fb3f5; }
+  }
+  #out { width: min(42em, calc(100vw - 56px)); }
+  #err { position: fixed; left: 0; right: 0; bottom: 0; margin: 0;
+         padding: 6px 12px; font: 12px/1.5 monospace; white-space: pre-wrap;
+         background: #7a1f1f; color: #ffdcdc; display: none; }
+  .tsr-jump { outline: 2px solid rgba(120, 160, 255, 0.9);
+              outline-offset: 4px; transition: outline-color 1.2s ease; }
+  .tsr-jump.fade { outline-color: rgba(120, 160, 255, 0); }
+</style>
+</head>
+<body>
+<div id="out" lang="zh-CN"></div>
+<pre id="err"></pre>
+<script type="module">
+import { createEngine } from '/runtime/src/main/shell.mjs';
+
+const out = document.getElementById('out');
+const err = document.getElementById('err');
+const engine = createEngine();
+let handle = null;
+let queued = null;
+let busy = false;
+
+// serialized update pump: only the LATEST queued source is typeset; results
+// report the message's version so the extension can drop stale diagnostics
+async function pump() {
+  if (busy) return;
+  busy = true;
+  while (queued) {
+    const m = queued;
+    queued = null;
+    const t0 = performance.now();
+    try {
+      let r;
+      if (!handle) {
+        handle = await engine.typeset(m.text, out, { ...m.cfg, progressive: true });
+        r = handle;
+      } else {
+        r = await handle.update(m.text);
+      }
+      err.style.display = 'none';
+      parent.postMessage({ type: 'state', version: m.version, diags: r.diags,
+                           heightPx: r.heightPx, ms: performance.now() - t0,
+                           timings: r.timings ?? null }, '*');
+    } catch (e) {
+      err.textContent = String(e?.message ?? e);
+      err.style.display = 'block';
+      parent.postMessage({ type: 'state', version: m.version, diags: '',
+                           error: String(e?.message ?? e), ms: 0 }, '*');
+    }
+  }
+  busy = false;
+}
+
+// engine byte offset of an element inside a paragraph container
+function offsetOf(el) {
+  const para = el.closest('.tsr-para[data-s0]');
+  if (!para) return null;
+  const anchored = el.closest('[data-s]');
+  const rel = anchored && para.contains(anchored) ? +anchored.dataset.s : 0;
+  return +para.dataset.s0 + rel;
+}
+
+out.addEventListener('dblclick', (e) => {
+  const off = offsetOf(e.target);
+  if (off !== null) parent.postMessage({ type: 'jump', offset: off }, '*');
+});
+
+let lastMark = null;
+function reveal(offset) {
+  let best = null;
+  for (const para of out.querySelectorAll('.tsr-para[data-s0]')) {
+    if (+para.dataset.s0 <= offset) best = para;
+    else break;
+  }
+  if (!best) return;
+  let target = best;
+  const rel = offset - +best.dataset.s0;
+  for (const line of best.querySelectorAll(':scope > [data-s][data-e]')) {
+    if (+line.dataset.s <= rel && rel < +line.dataset.e) { target = line; break; }
+  }
+  target.scrollIntoView({ block: 'center' });
+  lastMark?.classList.remove('tsr-jump', 'fade');
+  lastMark = target;
+  target.classList.add('tsr-jump');
+  requestAnimationFrame(() => requestAnimationFrame(() => target.classList.add('fade')));
+}
+
+window.addEventListener('message', (e) => {
+  const m = e.data;
+  if (!m || typeof m !== 'object') return;
+  if (m.type === 'src') { queued = m; pump(); }
+  else if (m.type === 'reveal') reveal(m.offset);
+  else if (m.type === 'print') handle?.print();
+});
+parent.postMessage({ type: 'ready' }, '*');
+</script>
+</body>
+</html>

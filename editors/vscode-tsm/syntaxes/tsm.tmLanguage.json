@@ -1,0 +1,70 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Typesetter Markup",
+  "scopeName": "source.tsm",
+  "comment": "Coarse first-paint grammar. Precise coloring comes from the semantic tokens provider (tree-sitter-tsm); keep this to unambiguous line shapes.",
+  "patterns": [
+    { "include": "#block-comment" },
+    { "include": "#fence" },
+    { "include": "#heading" },
+    { "include": "#region" },
+    { "include": "#code-statement" },
+    { "include": "#rule" },
+    { "include": "#inline" }
+  ],
+  "repository": {
+    "block-comment": {
+      "name": "comment.block.tsm",
+      "begin": "%--",
+      "end": "--%"
+    },
+    "fence": {
+      "name": "markup.raw.block.tsm",
+      "begin": "^(```)([^\\n]*)$",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.markdown.tsm" },
+        "2": { "name": "fenced_code.block.language.tsm" }
+      },
+      "end": "^(```)\\s*$",
+      "endCaptures": { "1": { "name": "punctuation.definition.markdown.tsm" } }
+    },
+    "heading": {
+      "name": "markup.heading.tsm",
+      "match": "^(={1,6}) .*$",
+      "captures": { "1": { "name": "punctuation.definition.heading.tsm" } }
+    },
+    "region": {
+      "match": "^(#![A-Za-z_][A-Za-z0-9_]*|#[A-Za-z_][A-Za-z0-9_]*!)(\\([^\\n]*\\))?\\s*$",
+      "captures": {
+        "1": { "name": "keyword.control.region.tsm" },
+        "2": { "name": "meta.function-call.arguments.tsm" }
+      }
+    },
+    "code-statement": {
+      "name": "keyword.control.let.tsm",
+      "match": "^#let\\b.*$"
+    },
+    "rule": {
+      "name": "meta.separator.tsm",
+      "match": "^-{3,}\\s*$"
+    },
+    "inline": {
+      "patterns": [
+        { "name": "markup.inline.raw.tsm", "match": "`[^`\\n]*`" },
+        { "name": "string.other.math.tsm", "match": "\\$[^$\\n]*\\$" },
+        { "name": "markup.bold.tsm", "match": "\\*[^*\\n]+\\*" },
+        { "name": "markup.italic.tsm", "match": "_[^_\\n]+_" },
+        {
+          "match": "(\\[[^\\]\\n]*\\])(\\([^)\\n]*\\))",
+          "captures": {
+            "1": { "name": "string.other.link.title.tsm" },
+            "2": { "name": "markup.underline.link.tsm" }
+          }
+        },
+        { "name": "constant.other.reference.tsm", "match": "@([A-Za-z][A-Za-z0-9_-]*|\\[[^\\]\\n]+\\])" },
+        { "name": "entity.name.label.tsm", "match": "<[A-Za-z][A-Za-z0-9_-]*>" },
+        { "name": "entity.name.function.splice.tsm", "match": "#(\\(|[A-Za-z_][A-Za-z0-9_.]*)" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "name": "vscode-tsm",
+  "displayName": "Typesetter (tsm)",
+  "description": "Language support and live typeset preview for .tsm — the Typesetter markup language",
+  "version": "0.1.0",
+  "publisher": "zball",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/zball-bz/Typesetter" },
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Programming Languages"],
+  "main": "./src/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "tsm",
+        "aliases": ["Typesetter Markup", "tsm"],
+        "extensions": [".tsm"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "tsm",
+        "scopeName": "source.tsm",
+        "path": "./syntaxes/tsm.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "tsm.openPreview",
+        "title": "TSM: Open Typeset Preview to the Side",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "tsm.printPreview",
+        "title": "TSM: Print / Export PDF from Preview"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "tsm.openPreview",
+          "when": "editorLangId == tsm",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Typesetter (tsm)",
+      "properties": {
+        "tsm.preview.fontFamily": {
+          "type": "string",
+          "default": "Georgia, serif",
+          "description": "Latin body font for the typeset preview."
+        },
+        "tsm.preview.cjkFontFamily": {
+          "type": "string",
+          "default": "\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif",
+          "description": "CJK body font stack for the typeset preview."
+        },
+        "tsm.preview.baseSizePx": {
+          "type": "number",
+          "default": 18,
+          "description": "Base font size (px) for the typeset preview."
+        },
+        "tsm.preview.debounceMs": {
+          "type": "number",
+          "default": 150,
+          "description": "Idle delay before the preview re-typesets after an edit."
+        }
+      }
+    }
+  }
+}

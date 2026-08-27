@@ -152,10 +152,18 @@ export function createEngine(opts = {}) {
     if (open < 0 || !html.startsWith('<div class="tsr-doc">')) return null;
     const head = html.slice(0, open);
     const chunks = [];
+    const s0 = [];
     let at = open;
     while (at >= 0) {
       const next = html.indexOf('<div class="tsr-para"', at + 1);
-      chunks.push(next >= 0 ? html.slice(at, next) : html.slice(at));
+      let chunk = next >= 0 ? html.slice(at, next) : html.slice(at);
+      // data-s0 is the paragraph's ABSOLUTE source base — a length-changing
+      // edit shifts it for every tail paragraph, so chunks compare with it
+      // normalized out and the live attribute is fixed up afterwards
+      const m = /^(<div class="tsr-para" data-pid="\d+" data-s0=)"(\d+)"/.exec(chunk);
+      if (!m) return null;
+      s0.push(m[2]);
+      chunks.push(m[1] + '""' + chunk.slice(m[0].length));
       at = next;
     }
     // last chunk carries the doc-wrapper close; peel it so chunks compare
@@ -165,7 +173,7 @@ export function createEngine(opts = {}) {
     if (!chunks[chunks.length - 1].endsWith(tail)) return null;
     chunks[chunks.length - 1] =
       chunks[chunks.length - 1].slice(0, -'</div>\n'.length);
-    return { head, chunks };
+    return { head, chunks, s0 };
   };
   const patchIn = (container, prev, nextHtml) => {
     const next = chunkParas(nextHtml);
@@ -178,12 +186,23 @@ export function createEngine(opts = {}) {
     let suf = 0;
     while (suf < a.length - pre && suf < b.length - pre &&
            a[a.length - 1 - suf] === b[b.length - 1 - suf]) suf++;
-    const mid = b.slice(pre, b.length - suf).join('');
+    let mid = '';
+    for (let i = pre; i < b.length - suf; i++)
+      mid += b[i].replace('data-s0=""', 'data-s0="' + next.s0[i] + '"');
     for (let i = a.length - suf - 1; i >= pre; i--) root.children[i].remove();
     if (mid) {
       const ref = root.children[pre];
       if (ref) ref.insertAdjacentHTML('beforebegin', mid);
       else root.insertAdjacentHTML('beforeend', mid);
+    }
+    // restore real source bases: inserted middle already carries its own;
+    // kept prefix/suffix paragraphs get a one-attribute fix-up when shifted
+    for (let i = 0; i < pre; i++)
+      if (prev.s0[i] !== next.s0[i]) root.children[i].dataset.s0 = next.s0[i];
+    for (let k = 0; k < suf; k++) {
+      const bi = b.length - suf + k;
+      if (prev.s0[a.length - suf + k] !== next.s0[bi])
+        root.children[bi].dataset.s0 = next.s0[bi];
     }
     return next;
   };
