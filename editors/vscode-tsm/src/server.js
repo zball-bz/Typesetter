@@ -46,7 +46,19 @@ function startServer({ assetRoot, mediaDir, docRoots = new Map() }) {
           file = cand;
         }
       }
-      const data = await fs.readFile(file);
+      let data;
+      try {
+        data = await fs.readFile(file);
+      } catch (e) {
+        // relative document assets (images in the previewed .tsm) fall back
+        // to the document's own folder
+        const fb = docRoots.get('/__fallback/');
+        if (!fb) throw e;
+        const cand = path.join(fb, p);
+        if (!cand.startsWith(fb)) throw e;
+        file = cand;
+        data = await fs.readFile(file);
+      }
       res.writeHead(200, {
         'content-type': MIME[path.extname(file)] || 'application/octet-stream',
         'cache-control': 'no-store',
