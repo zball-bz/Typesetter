@@ -7,7 +7,8 @@
 //
 // Consumed by the blog repo (zball-bz/zball-io): its CI downloads the
 // rolling `engine-dist` release asset and unpacks it into vendor/.
-import { rm, mkdir, cp, writeFile } from 'node:fs/promises';
+import { rm, mkdir, cp, writeFile, readFile, readdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,7 +30,25 @@ for (const [from, to] of parts) {
   await cp(join(root, from), join(stage, to), { recursive: true });
 }
 
-const sha = process.env.GITHUB_SHA?.slice(0, 9) ?? 'local';
+// CONTENT-HASH versioning: the blog serves these files under an immutable
+// /assets/eng-<version>/ prefix, so the version MUST change exactly when
+// the bytes do — a fixed label ('local') once pinned stale wasm in browser
+// caches for a year. Same bytes → same URL (caches survive); any change →
+// new URL (forced re-download). Git shas would over-invalidate.
+async function* walk(dir) {
+  for (const e of (await readdir(dir, { withFileTypes: true })).sort(
+      (a, b) => a.name.localeCompare(b.name))) {
+    const p = join(dir, e.name);
+    if (e.isDirectory()) yield* walk(p);
+    else yield p;
+  }
+}
+const h = createHash('sha256');
+for await (const f of walk(stage)) {
+  h.update(f.slice(stage.length));
+  h.update(await readFile(f));
+}
+const sha = h.digest('hex').slice(0, 12);
 await writeFile(join(stage, 'package.json'), JSON.stringify({
   name: '@zball/typesetter',
   version: '0.0.0-' + sha,
