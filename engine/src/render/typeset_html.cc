@@ -504,13 +504,19 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
         // with connected ink. Own span so no letter-spacing splits the
         // pair; its stretch gap becomes a margin.
         if (b.flags & BF_PAIR) {
-          std::string extra;
+          // the assumed advance is ENFORCED as an inline-block width: Blink
+          // full-width-izes CJK dashes to exactly this budget, Gecko does
+          // not (Noto's em dash is ~0.89em) and would leave every line with
+          // a —— visibly short of the measure. No overflow:hidden — that
+          // would move the baseline to the box bottom.
+          std::string extra = "display:inline-block;text-align:center;width:";
+          fmtPx(extra, b.rawPx);
           if (l.cjkDeltaPx != 0) {
             const LinebreakBlock* nx = (i + 1 < l.blockEnd) ? &bl[i + 1] : nullptr;
             bool keep = nx && (nx->isCjkChar() ||
                                (nx->isPunctGlyph() && !(nx->flags & BF_PUNCT_OPEN)));
             if (keep) {
-              extra += "margin-right:";
+              extra += ";margin-right:";
               fmtPx(extra, l.cjkDeltaPx);
             }
           }
