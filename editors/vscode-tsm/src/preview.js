@@ -62,7 +62,7 @@ class TsmPreview {
       const src = `http://127.0.0.1:${this.server.port}/preview.html`;
       this.panel.webview.html = [
         '<!doctype html><html><head><meta charset="utf-8">',
-        `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; frame-src http://127.0.0.1:*; script-src 'unsafe-inline';">`,
+        `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; frame-src http://127.0.0.1:*; script-src 'unsafe-inline'; style-src 'unsafe-inline';">`,
         '<style>html,body{margin:0;padding:0;height:100%;overflow:hidden}iframe{border:0;width:100%;height:100%}</style>',
         `</head><body><iframe id="f" src="${src}"></iframe><script>`,
         'const vscode = acquireVsCodeApi();',
@@ -160,7 +160,15 @@ class TsmPreview {
   send() {
     if (!this.panel || !this.doc || !this.ready) return;
     const cfgw = vscode.workspace.getConfiguration('tsm.preview');
-    const text = this.doc.getText();
+    let text = this.doc.getText();
+    // SSG front matter is not markup: blank it out LINE BY LINE, so the
+    // engine never sees it while every line keeps its number — diagnostics
+    // and jump/reveal offsets are computed against this transformed text
+    const fm = /^---\r?\n[\s\S]*?\r?\n---(\r?\n|$)/.exec(text);
+    if (fm) {
+      const blanked = fm[0].replace(/[^\n]/g, '');
+      text = blanked + text.slice(fm[0].length);
+    }
     this.version = this.doc.version;
     this.byteStarts = lineByteStarts(text);
     this.panel.webview.postMessage({
