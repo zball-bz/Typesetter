@@ -329,14 +329,26 @@ export function createEngine(opts = {}) {
           document.getElementById('tsr-print-style')?.remove();
           const style = document.createElement('style');
           style.id = 'tsr-print-style';
+          // Gecko sizes A4 at FRACTIONAL css px (793.70 × 1122.52) and
+          // fragments with zero overflow tolerance: a 995px sheet inside a
+          // 994.52px page content box splits into content + clipped-blank
+          // page — every page doubles. (Chromium tolerates the sub-pixel
+          // overflow, which is why it hid there.) Clamp the margins so the
+          // content box clears the sheets with ≥3px slack on both axes,
+          // and never force a break after the LAST sheet — Gecko honors
+          // that literally too, as a trailing blank page.
+          const A4W = 793.7, A4H = 1122.5;
+          const mx = Math.max(0, Math.min(marginPx, Math.floor((A4W - pageWidthPx - 3) / 2)));
+          const my = Math.max(0, Math.min(marginPx, Math.floor((A4H - pageHeightPx - 3) / 2)));
           style.textContent =
-            `@page { size: A4; margin: ${marginPx}px }` +
+            `@page { size: A4; margin: ${my}px ${mx}px }` +
             `#tsr-print-root { display: none; }` +
             `@media print {` +
             ` body { margin: 0 !important; }` +
             ` body > :not(#tsr-print-root) { display: none !important; }` +
             ` #tsr-print-root { display: block !important; }` +
             ` .tsr-sheet { break-after: page; page-break-after: always; }` +
+            ` .tsr-sheet:last-child { break-after: auto; page-break-after: auto; }` +
             `}`;
           document.head.appendChild(style);
           const root = document.createElement('div');
