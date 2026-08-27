@@ -2,19 +2,31 @@
   "name": "vscode-tsm",
   "displayName": "Typesetter (tsm)",
   "description": "Language support and live typeset preview for .tsm — the Typesetter markup language",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "publisher": "zball",
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/zball-bz/Typesetter" },
-  "engines": { "vscode": "^1.85.0" },
-  "categories": ["Programming Languages"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zball-bz/Typesetter"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
   "main": "./src/extension.js",
   "contributes": {
     "languages": [
       {
         "id": "tsm",
-        "aliases": ["Typesetter Markup", "tsm"],
-        "extensions": [".tsm"],
+        "aliases": [
+          "Typesetter Markup",
+          "tsm"
+        ],
+        "extensions": [
+          ".tsm"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -22,7 +34,16 @@
       {
         "language": "tsm",
         "scopeName": "source.tsm",
-        "path": "./syntaxes/tsm.tmLanguage.json"
+        "path": "./syntaxes/tsm.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.javascript": "javascript",
+          "meta.embedded.block.typescript": "typescript",
+          "meta.embedded.block.json": "json",
+          "meta.embedded.block.python": "python",
+          "meta.embedded.block.cpp": "cpp",
+          "meta.embedded.block.rust": "rust",
+          "meta.embedded.block.tsm": "tsm"
+        }
       }
     ],
     "commands": [
@@ -67,6 +88,16 @@
           "type": "number",
           "default": 150,
           "description": "Idle delay before the preview re-typesets after an edit."
+        }
+      }
+    },
+    "configurationDefaults": {
+      "[tsm]": {
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": {
+          "other": true,
+          "comments": false,
+          "strings": false
         }
       }
     }

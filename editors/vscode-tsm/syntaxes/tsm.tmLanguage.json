@@ -4,13 +4,48 @@
   "scopeName": "source.tsm",
   "comment": "Coarse first-paint grammar. Precise coloring comes from the semantic tokens provider (tree-sitter-tsm); keep this to unambiguous line shapes.",
   "patterns": [
-    { "include": "#block-comment" },
-    { "include": "#fence" },
-    { "include": "#heading" },
-    { "include": "#region" },
-    { "include": "#code-statement" },
-    { "include": "#rule" },
-    { "include": "#inline" }
+    {
+      "include": "#block-comment"
+    },
+    {
+      "include": "#fence-javascript"
+    },
+    {
+      "include": "#fence-typescript"
+    },
+    {
+      "include": "#fence-json"
+    },
+    {
+      "include": "#fence-python"
+    },
+    {
+      "include": "#fence-cpp"
+    },
+    {
+      "include": "#fence-rust"
+    },
+    {
+      "include": "#fence-tsm"
+    },
+    {
+      "include": "#fence"
+    },
+    {
+      "include": "#heading"
+    },
+    {
+      "include": "#region"
+    },
+    {
+      "include": "#code-statement"
+    },
+    {
+      "include": "#rule"
+    },
+    {
+      "include": "#inline"
+    }
   ],
   "repository": {
     "block-comment": {
@@ -20,24 +55,40 @@
     },
     "fence": {
       "name": "markup.raw.block.tsm",
-      "begin": "^(```)([^\\n]*)$",
+      "begin": "^(`{3,})([^\\n]*)$",
       "beginCaptures": {
-        "1": { "name": "punctuation.definition.markdown.tsm" },
-        "2": { "name": "fenced_code.block.language.tsm" }
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        },
+        "2": {
+          "name": "fenced_code.block.language.tsm"
+        }
       },
-      "end": "^(```)\\s*$",
-      "endCaptures": { "1": { "name": "punctuation.definition.markdown.tsm" } }
+      "end": "^(\\1)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        }
+      }
     },
     "heading": {
       "name": "markup.heading.tsm",
       "match": "^(={1,6}) .*$",
-      "captures": { "1": { "name": "punctuation.definition.heading.tsm" } }
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.heading.tsm"
+        }
+      }
     },
     "region": {
       "match": "^(#![A-Za-z_][A-Za-z0-9_]*|#[A-Za-z_][A-Za-z0-9_]*!)(\\([^\\n]*\\))?\\s*$",
       "captures": {
-        "1": { "name": "keyword.control.region.tsm" },
-        "2": { "name": "meta.function-call.arguments.tsm" }
+        "1": {
+          "name": "keyword.control.region.tsm"
+        },
+        "2": {
+          "name": "meta.function-call.arguments.tsm"
+        }
       }
     },
     "code-statement": {
@@ -50,20 +101,206 @@
     },
     "inline": {
       "patterns": [
-        { "name": "markup.inline.raw.tsm", "match": "`[^`\\n]*`" },
-        { "name": "string.other.math.tsm", "match": "\\$[^$\\n]*\\$" },
-        { "name": "markup.bold.tsm", "match": "\\*[^*\\n]+\\*" },
-        { "name": "markup.italic.tsm", "match": "_[^_\\n]+_" },
+        {
+          "name": "markup.inline.raw.tsm",
+          "match": "`[^`\\n]*`"
+        },
+        {
+          "name": "string.other.math.tsm",
+          "match": "\\$[^$\\n]*\\$"
+        },
+        {
+          "name": "markup.bold.tsm",
+          "match": "\\*[^*\\n]+\\*"
+        },
+        {
+          "name": "markup.italic.tsm",
+          "match": "_[^_\\n]+_"
+        },
         {
           "match": "(\\[[^\\]\\n]*\\])(\\([^)\\n]*\\))",
           "captures": {
-            "1": { "name": "string.other.link.title.tsm" },
-            "2": { "name": "markup.underline.link.tsm" }
+            "1": {
+              "name": "string.other.link.title.tsm"
+            },
+            "2": {
+              "name": "markup.underline.link.tsm"
+            }
           }
         },
-        { "name": "constant.other.reference.tsm", "match": "@([A-Za-z][A-Za-z0-9_-]*|\\[[^\\]\\n]+\\])" },
-        { "name": "entity.name.label.tsm", "match": "<[A-Za-z][A-Za-z0-9_-]*>" },
-        { "name": "entity.name.function.splice.tsm", "match": "#(\\(|[A-Za-z_][A-Za-z0-9_.]*)" }
+        {
+          "name": "constant.other.reference.tsm",
+          "match": "@([A-Za-z][A-Za-z0-9_-]*|\\[[^\\]\\n]+\\])"
+        },
+        {
+          "name": "entity.name.label.tsm",
+          "match": "<[A-Za-z][A-Za-z0-9_-]*>"
+        },
+        {
+          "name": "entity.name.function.splice.tsm",
+          "match": "#(\\(|[A-Za-z_][A-Za-z0-9_.]*)"
+        }
+      ]
+    },
+    "fence-javascript": {
+      "begin": "^(`{3,})\\s*(?i:(js|javascript|mjs))\\b[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        },
+        "2": {
+          "name": "fenced_code.block.language.tsm"
+        }
+      },
+      "end": "^(\\1)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        }
+      },
+      "contentName": "meta.embedded.block.javascript",
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "fence-typescript": {
+      "begin": "^(`{3,})\\s*(?i:(ts|typescript))\\b[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        },
+        "2": {
+          "name": "fenced_code.block.language.tsm"
+        }
+      },
+      "end": "^(\\1)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        }
+      },
+      "contentName": "meta.embedded.block.typescript",
+      "patterns": [
+        {
+          "include": "source.ts"
+        }
+      ]
+    },
+    "fence-json": {
+      "begin": "^(`{3,})\\s*(?i:(json))\\b[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        },
+        "2": {
+          "name": "fenced_code.block.language.tsm"
+        }
+      },
+      "end": "^(\\1)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        }
+      },
+      "contentName": "meta.embedded.block.json",
+      "patterns": [
+        {
+          "include": "source.json"
+        }
+      ]
+    },
+    "fence-python": {
+      "begin": "^(`{3,})\\s*(?i:(py|python))\\b[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        },
+        "2": {
+          "name": "fenced_code.block.language.tsm"
+        }
+      },
+      "end": "^(\\1)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        }
+      },
+      "contentName": "meta.embedded.block.python",
+      "patterns": [
+        {
+          "include": "source.python"
+        }
+      ]
+    },
+    "fence-cpp": {
+      "begin": "^(`{3,})\\s*(?i:(cpp|c\\+\\+|cc|c))\\b[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        },
+        "2": {
+          "name": "fenced_code.block.language.tsm"
+        }
+      },
+      "end": "^(\\1)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        }
+      },
+      "contentName": "meta.embedded.block.cpp",
+      "patterns": [
+        {
+          "include": "source.cpp"
+        }
+      ]
+    },
+    "fence-rust": {
+      "begin": "^(`{3,})\\s*(?i:(rs|rust))\\b[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        },
+        "2": {
+          "name": "fenced_code.block.language.tsm"
+        }
+      },
+      "end": "^(\\1)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        }
+      },
+      "contentName": "meta.embedded.block.rust",
+      "patterns": [
+        {
+          "include": "source.rust"
+        }
+      ]
+    },
+    "fence-tsm": {
+      "begin": "^(`{3,})\\s*(?i:(tsm))\\b[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        },
+        "2": {
+          "name": "fenced_code.block.language.tsm"
+        }
+      },
+      "end": "^(\\1)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown.tsm"
+        }
+      },
+      "contentName": "meta.embedded.block.tsm",
+      "patterns": [
+        {
+          "include": "source.tsm"
+        }
       ]
     }
   }

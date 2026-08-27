@@ -1,9 +1,11 @@
 ; tree-sitter-tsm highlights — the 14-tag contract (code-design.md §5,
 ; kTokenTags / tokens.mjs TAGS). Kept in sync by hand with the engine.
-; whole-line heading capture comes FIRST: the fold contract (start asc,
-; patternIndex asc, earlier wins on overlap) lets it own the line, markdown
-; convention — inner labels/markers yield to it
-(heading) @function
+; headings color per CHILD token rather than as one whole-line capture:
+; the fold contract (start asc, patternIndex asc, earlier wins on overlap)
+; cannot nest, so a whole-line capture would swallow inline labels and
+; references — `== 标题 <label>` keeps its label colored this way
+(heading (word) @function)
+(heading (punct) @function)
 (heading_marker) @keyword
 (list_marker) @keyword
 (quote_marker) @keyword
