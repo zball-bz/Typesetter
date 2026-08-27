@@ -35,6 +35,9 @@ const GRAMMARS = {
                nm('tree-sitter-cpp/queries/highlights.scm')] },
   rust: { srcDir: nm('tree-sitter-rust/src'), srcs: ['parser.c', 'scanner.c'],
           scm: [nm('tree-sitter-rust/queries/highlights.scm')] },
+  // our own markup (grammar/tree-sitter-tsm; generated parser vendored)
+  tsm: { srcDir: join(root, 'third_party/grammars/tsm'), srcs: ['parser.c'],
+         scm: [join(root, 'third_party/grammars/tsm/highlights.scm')] },
 };
 
 for (const [name, g] of Object.entries(GRAMMARS)) {

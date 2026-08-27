@@ -1,0 +1,20 @@
+doc h=27341su
+para pid=0 y=0su w=19200su h=3072su
+  L0 y=0su left=0su w=19200su dw=29su dc=17su join=none blocks=[0,22) @[0,58)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[22,25) @[0,58)
+para pid=1 y=4301su w=19200su h=23040su
+  L0 code y=0su left=0su line=0 [0,25)
+  L1 code y=1536su left=0su line=1 [0,0)
+  L2 code y=3072su left=0su line=2 [0,48)
+  L3 code y=4608su left=0su line=2 [48,89) cont cc=2
+  L4 code y=6144su left=0su line=3 [0,0)
+  L5 code y=7680su left=0su line=4 [0,34)
+  L6 code y=9216su left=0su line=5 [0,18)
+  L7 code y=10752su left=0su line=6 [0,8)
+  L8 code y=12288su left=0su line=7 [0,0)
+  L9 code y=13824su left=0su line=8 [0,5)
+  L10 code y=15360su left=0su line=9 [0,12)
+  L11 code y=16896su left=0su line=10 [0,3)
+  L12 code y=18432su left=0su line=11 [0,0)
+  L13 code y=19968su left=0su line=12 [0,11)
+  L14 code y=21504su left=0su line=13 [0,11)

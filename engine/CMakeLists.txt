@@ -43,11 +43,13 @@ else()
   add_library(tsr_treesitter STATIC
     ../third_party/tree-sitter/lib/src/lib.c
     ../third_party/grammars/json/parser.c
+    ../third_party/grammars/tsm/parser.c
   )
   target_include_directories(tsr_treesitter PUBLIC
     ../third_party/tree-sitter/lib/include
     ../third_party/tree-sitter/lib/src
     ../third_party/grammars/json
+    ../third_party/grammars/tsm
   )
   target_compile_options(tsr_treesitter PRIVATE -w)
 

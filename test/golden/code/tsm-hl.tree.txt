@@ -1,0 +1,5 @@
+doc @[0,302) [base]
+  para @[0,58) [base]
+    text @[0,58) [base] str="内置 tsm 文法：Typesetter 标记语言自举高亮。"
+  codeblock @[60,302) [base] lang="tsm"
+    text @[0,0) [base] str="= 标题与标签 <intro>\n\n正文有 *加粗*、`代码` 与 $a^2$；引用@intro，链接[站点](https://x.dev)。\n\n#!figure(src: \"a.png\", label: \"f\")\n图注 | 单元格\n#figure!\n\n```js\nconst x = 1;\n```\n\n- 列表项\n#let n = 42"

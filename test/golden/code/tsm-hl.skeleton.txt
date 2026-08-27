@@ -1,0 +1,3 @@
+doc @[0,303)
+  para @[0,58) lines=1
+  fence @[60,302) lang="tsm" lines=14

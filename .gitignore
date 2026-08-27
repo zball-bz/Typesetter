@@ -6,3 +6,4 @@ engine/build-wasm/
 test-results/
 playwright-report/
 runtime/assets/hl/
+grammar/tree-sitter-tsm/src/

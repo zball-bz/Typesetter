@@ -1,0 +1,10 @@
+{
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Highlighting grammar for the Typesetter markup language"
+  },
+  "grammars": [
+    { "name": "tsm", "scope": "source.tsm", "file-types": ["tsm"] }
+  ]
+}

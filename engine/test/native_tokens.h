@@ -13,11 +13,13 @@
 #include "../src/api/doc.h"
 
 extern "C" const TSLanguage* tree_sitter_json();
+extern "C" const TSLanguage* tree_sitter_tsm();
 
 namespace tsr {
 
 inline const TSLanguage* nativeGrammar(std::string_view lang) {
   if (lang == "json") return tree_sitter_json();
+  if (lang == "tsm") return tree_sitter_tsm();
   return nullptr;
 }
 

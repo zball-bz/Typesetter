@@ -1,0 +1,18 @@
+内置 tsm 文法：Typesetter 标记语言自举高亮。
+
+````tsm
+= 标题与标签 <intro>
+
+正文有 *加粗*、`代码` 与 $a^2$；引用@intro，链接[站点](https://x.dev)。
+
+#!figure(src: "a.png", label: "f")
+图注 | 单元格
+#figure!
+
+```js
+const x = 1;
+```
+
+- 列表项
+#let n = 42
+````

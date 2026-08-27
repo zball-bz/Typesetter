@@ -1,0 +1,17 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="58">内置 tsm 文法：Typesetter 标记语言自举高亮。</p>
+<pre data-pid="1" data-s="60" data-e="302"><code class="language-tsm">= 标题与标签 &lt;intro&gt;
+
+正文有 *加粗*、`代码` 与 $a^2$；引用@intro，链接[站点](https://x.dev)。
+
+#!figure(src: &quot;a.png&quot;, label: &quot;f&quot;)
+图注 | 单元格
+#figure!
+
+```js
+const x = 1;
+```
+
+- 列表项
+#let n = 42</code></pre>
+</div>
