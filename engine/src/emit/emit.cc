@@ -201,6 +201,28 @@ struct Emitter {
     if (!noHyphen && coreLetters && e - a >= 5 && cfg.hyphenPenalty < BREAK_INF)
       pts = hyphenPoints(w.substr(a, e - a));
     if (pts.empty()) {
+      // long unhyphenatable tokens (URLs, paths, identifiers): break
+      // opportunities after separators, glyph-free — the browser's own
+      // "break after slash" convention, under KP control (no hyphen glyph,
+      // penalty urlBreakPenalty). Pieces stay one shaped run when unbroken.
+      if (!noHyphen && w.size() >= cfg.urlBreakMinLen && cfg.urlBreakPenalty < BREAK_INF) {
+        std::vector<u32> cuts;
+        for (u32 k = 1; k + 1 < w.size(); k++) {
+          char c = w[k];
+          if (c == '/' || c == '?' || c == '&' || c == '=' || c == '.' || c == '-' || c == '_')
+            if (k - (cuts.empty() ? 0 : cuts.back()) >= 3) cuts.push_back(k + 1);
+        }
+        if (!cuts.empty()) {
+          u32 from = 0;
+          for (u32 cut : cuts) {
+            pushWordBlock(w.substr(from, cut - from), n, u, st, url,
+                          (float)cfg.urlBreakPenalty, extraFlags);
+            from = cut;
+          }
+          pushWordBlock(w.substr(from), n, u, st, url, BREAK_INF, extraFlags);
+          return;
+        }
+      }
       pushWordBlock(w, n, u, st, url, BREAK_INF, extraFlags);
       return;
     }
@@ -827,6 +849,12 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
         continue;
       if (i == 0 || i + 1 >= blocks.size()) continue;
       if (!isWord(blocks[i - 1]) || !isWord(blocks[i + 1])) continue;
+      // the browser only kerns INSIDE one shaped run: a style or link
+      // boundary (italic title → roman period, real-world-report.md) splits
+      // the run, so no cross-space kern exists there to budget for
+      if (blocks[i - 1].style != blocks[i + 1].style || blocks[i - 1].style != b.style ||
+          blocks[i - 1].linkUrl != blocks[i + 1].linkUrl)
+        continue;
       std::string prev = lastCp(blocks[i - 1]);
       std::string next = firstCp(blocks[i + 1]);
       if (prev.empty() || next.empty()) continue;

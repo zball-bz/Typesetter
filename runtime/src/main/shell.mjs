@@ -127,8 +127,18 @@ export function createEngine(opts = {}) {
   let liveDocId = null;
   let uninstallCopy = null;
   const pending = new Map(); // id → {resolve, reject, onSemantic}
+  // NEED_IMAGES fallback (figure-design.md §2): the worker could not read
+  // the image (cross-origin, no CORS); an <img> here still yields its size
+  const answerDims = (src) => {
+    const img = new Image();
+    const reply = (w, h) => worker.postMessage({ type: 'image-dims', src, w, h });
+    img.onload = () => reply(img.naturalWidth, img.naturalHeight);
+    img.onerror = () => reply(0, 0);
+    img.src = src;
+  };
   worker.onmessage = (ev) => {
     const { id, type } = ev.data;
+    if (type === 'image-dims?') { answerDims(ev.data.src); return; }
     const p = pending.get(id);
     if (!p) return;
     if (type === 'semantic') {
