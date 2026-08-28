@@ -1,0 +1,7 @@
+doc @[0,421)
+  para @[0,276) lines=1
+  list bullet start=1 @[278,364)
+    item @[278,364)
+      para @[280,364) lines=1
+    item @[365,420)
+      para @[367,420) lines=1

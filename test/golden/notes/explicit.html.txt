@@ -1,0 +1,21 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-1" data-s="0" data-e="18" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Explicit placement</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="22" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="97" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.467px"><span class="tsr-r" data-s="0">First note here</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="ref" style="font-size:11.2px">1</a><span class="tsr-r" data-s="23"> and another</span><a class="tsr-r tsr-sup" href="#tsr-fn-2" id="tsr-fnref-2" data-syn="ref" style="font-size:11.2px">2</a><span class="tsr-r" data-s="68"> before the</span></div>
+<div class="tsr-line" data-s="68" data-e="97" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="68">section is placed.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="37" style="position:relative;height:97.594px;margin-bottom:19.2px">
+<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="7" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="2" style="font-size:13.6px">One. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="ref" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-2" data-s="19" data-e="52" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="21" style="font-size:13.6px">Two, with a reference to </span><a class="tsr-r" href="#tsr-top" data-syn="ref" style="font-size:13.6px">§2</a><span class="tsr-r" data-s="50" style="font-size:13.6px">. </span><a class="tsr-r" href="#tsr-fnref-2" data-syn="ref" style="font-size:13.6px">↩</a></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="133" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-top" data-s="0" data-e="8" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Appendix</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="149" style="position:relative;height:48px">
+<div class="tsr-line" data-s="0" data-e="78" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">Text after the explicitly placed notes</span></div>
+<div class="tsr-line" data-s="0" data-e="78" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">section: no second section is appended.</span></div>
+</div>
+</div>

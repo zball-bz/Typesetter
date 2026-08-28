@@ -41,6 +41,9 @@ export const TSR_CSS = `
 .tsr-sqL { margin-left: -0.5em; }   /* punct half squeezed at line start / pair */
 .tsr-sqR { margin-right: -0.5em; }  /* punct half squeezed at line end / pair */
 .tsr-cjk.tsr-i { font-style: normal; text-emphasis: filled dot; text-emphasis-position: under right; }
+/* footnote markers (notes-design.md §1): size is measured (sizeMul); the
+   raise is paint-only so line geometry is untouched */
+.tsr-sup, .tsr-doc a.tsr-sup { position: relative; top: -0.45em; text-decoration: none; }
 /* math (math-design.md §8): one inline box per formula, absolutely
    positioned glyph runs in the bundled font; rules are painted boxes */
 .tsr-math { position: relative; display: inline-block; }

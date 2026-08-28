@@ -1,0 +1,12 @@
+inline pid=4 "x^2 + y^2"
+hbox Ord w=1656 asc=822 desc=64
+  hbox Ord w=806 asc=822 desc=10
+    glyph "x" Ord w=458 asc=404 desc=10 px=13.6
+    glyph "2" Ord w=304 asc=430 desc=0 px=9.52 @(458,392)
+  glue w=193 @(806,0)
+  glyph "+" Bin w=657 asc=510 desc=64 px=13.6 @(999,0)
+inline pid=4 ""
+hbox Ord w=864 asc=822 desc=203
+  hbox Ord w=864 asc=822 desc=203
+    glyph "y" Ord w=516 asc=407 desc=203 px=13.6
+    glyph "2" Ord w=304 asc=430 desc=0 px=9.52 @(516,392)

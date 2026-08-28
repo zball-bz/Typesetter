@@ -4,7 +4,7 @@
 
 namespace tsr {
 
-constexpr u8 OPS_VERSION = 5;
+constexpr u8 OPS_VERSION = 6;
 
 enum class Op : u8 {
 #define OP(n, c) n = c,
@@ -25,7 +25,7 @@ enum class Kind : u16 {
 #undef KIND
 #undef ARGK
 };
-constexpr u16 KIND_COUNT = 27;
+constexpr u16 KIND_COUNT = 28;
 
 enum class ArgK : u16 {
 #define OP(n, c)

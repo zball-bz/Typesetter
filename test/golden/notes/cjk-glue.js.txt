@@ -1,0 +1,5 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("中文正文里的断言"),0,24), __at(note(__at(text("脚注正文。"),26,41)),24,42), __at(text("之后继续排布，句末的脚注。"),42,81), __at(note(__at(text("句号之后的脚注。"),83,107)),81,108), __at(text("也应当粘在标点之后，绝不落到行首；再来一个很长的句子把标记推到行尾附近看它是否会孤立地掉到下一行去"),108,255), __at(note(__at(text("行尾脚注。"),257,272)),255,273), __at(text("。"),273,276)),0,276));
+__emit(__at(list(false, 1, __at(item(__at(para(__at(text("列表项里的脚注"),280,301), __at(note(__at(text("列表中的脚注正文。"),303,330)),301,331), __at(text("也进入同一个编号序列。"),331,364)),280,364)),278,364), __at(item(__at(para(__at(text("English word"),367,379), __at(note(__at(text("Latin-context note."),381,400)),379,401), __at(text(" before the marker."),402,420)),367,420)),365,420)),278,364));
+};
+//# sourceURL=tsm:doc

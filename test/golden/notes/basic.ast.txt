@@ -1,0 +1,26 @@
+doc @[0,314)
+  heading @[0,11) level=1 label="top"
+    text @[2,11) str="Footnotes"
+  para @[19,211)
+    text @[19,42) str="A claim in running text"
+    
+      text @[44,65) str="The note body carries "
+      styled @[66,74) marker=*
+        text @[67,73) str="markup"
+      text @[74,75) str=", "
+      code @[76,82) str="code"
+      text @[82,92) str=", and math "
+      math @[93,104) display=0 src="x^2 + y^2"
+      text @[104,105) str="."
+    text @[107,152) str=" continues after the marker, and a second note"
+    
+      text @[154,173) str="Second note, short."
+    text @[175,211) str=" follows later in the same paragraph."
+  heading @[213,225) level=2
+    text @[216,225) str="A section"
+  para @[227,313)
+    text @[227,241) str="Notes may cite "
+    ref @[242,246) target="top"
+    text @[247,283) str=" and the text may cite a note back as "
+    ref @[284,289) target="fn-1"
+    text @[289,313) str="; the section ends here."

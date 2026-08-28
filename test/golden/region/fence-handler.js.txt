@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
 
   $.fence("shout", (body) => para(strong(text(body.trim().toUpperCase()))));
   $.fence("box", (body, ctx) => ctx.raw("<b>" + body.trim() + "</b>", { height: 30 }));

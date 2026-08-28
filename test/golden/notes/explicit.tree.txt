@@ -1,0 +1,33 @@
+doc @[0,227) [base]
+  heading @[0,20) [base] level=1 label="h-1"
+    text @[2,20) [base] str="Explicit placement"
+  para @[22,119) [base]
+    text @[22,37) [base] str="First note here"
+    ref @[37,44) [basex0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
+      text @[37,44) [basex0.70] str="1"
+    text @[45,56) [base] str=" and another"
+    ref @[56,89) [basex0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
+      text @[56,89) [basex0.70] str="2"
+    text @[90,119) [base] str=" before the section is placed."
+  group @[0,0) [base] role="notes"
+    rule @[0,0) [base]
+    list @[0,0) [base] ordered=true
+      item @[37,44) [base]
+        para @[37,44) [base] label="fn-1"
+          text @[39,43) [basex0.85] str="One."
+          text @[37,44) [basex0.85] str=" "
+          ref @[37,44) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+            text @[37,44) [basex0.85] str="↩"
+      item @[56,89) [base]
+        para @[56,89) [base] label="fn-2"
+          text @[58,82) [basex0.85] str="Two, with a reference to "
+          ref @[83,87) [basex0.85] target="top" url="#tsr-top"
+            text @[83,87) [basex0.85] str="§2"
+          text @[87,88) [basex0.85] str="."
+          text @[56,89) [basex0.85] str=" "
+          ref @[56,89) [basex0.85] target="fnref-2" url="#tsr-fnref-2"
+            text @[56,89) [basex0.85] str="↩"
+  heading @[131,141) [base] level=1 label="top"
+    text @[133,141) [base] str="Appendix"
+  para @[149,227) [base]
+    text @[149,227) [base] str="Text after the explicitly placed notes section: no second section is appended."

@@ -36,6 +36,7 @@ static void runClasses(std::string& out, const Styling& st) {
   if (st.bits & CLS_EM) out += " tsr-i";
   if (st.bits & CLS_CJK) out += " tsr-cjk";
   if (st.bits & CLS_CODE) out += " tsr-code";
+  if (st.bits & CLS_SUP) out += " tsr-sup";
 }
 
 // Inline-style overrides a run carries beyond its classes (document-model
@@ -437,6 +438,11 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
         if (isLink) {
           out += " href=\"";
           escapeHtml(out, strs.get(url));
+          out += "\"";
+        }
+        if (first.anchorId) {  // inline anchor (footnote marker)
+          out += " id=\"tsr-";
+          escapeHtml(out, strs.get(first.anchorId));
           out += "\"";
         }
         if (first.flags & BF_REF) out += " data-syn=\"ref\"";  // §9.3: copy skips

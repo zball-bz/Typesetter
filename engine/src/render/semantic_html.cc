@@ -61,7 +61,8 @@ struct Sem {
         // token colors, resolver-fabricated bold, and patch styles all
         // reach the no-JS page. Kind::styled is transparent below.
         const Styling& st = styles.get(n->style);
-        const char* tag = (st.bits & CLS_BOLD) ? "strong"
+        const char* tag = (st.bits & CLS_SUP) ? "sup"
+                          : (st.bits & CLS_BOLD) ? "strong"
                           : (st.bits & CLS_EM) ? "em" : nullptr;
         std::string style;
         if (st.fontFamily) {
@@ -125,7 +126,14 @@ struct Sem {
       case Kind::ref: {
         out += "<a href=\"";
         esc(out, argS(n, ArgK::url));
-        out += "\">";
+        out += "\"";
+        std::string_view id = argS(n, ArgK::label);  // inline anchor (marker)
+        if (!id.empty()) {
+          out += " id=\"tsr-";
+          esc(out, id);
+          out += "\"";
+        }
+        out += ">";
         inlineKids(n);
         out += "</a>";
         return;

@@ -21,6 +21,7 @@
 (label) @label
 (code_span) @string
 (math_span) @type
+(footnote) @attribute
 (strong) @attribute
 (emphasis) @attribute
 (link) @property

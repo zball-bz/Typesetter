@@ -1,0 +1,19 @@
+doc @[0,228)
+  heading @[0,20) level=1
+    text @[2,20) str="Explicit placement"
+  para @[22,119)
+    text @[22,37) str="First note here"
+    
+      text @[39,43) str="One."
+    text @[45,56) str=" and another"
+    
+      text @[58,82) str="Two, with a reference to "
+      ref @[83,87) target="top"
+      text @[87,88) str="."
+    text @[90,119) str=" before the section is placed."
+  para @[121,129)
+    splice @[121,129) expr="notes()"
+  heading @[131,141) level=1 label="top"
+    text @[133,141) str="Appendix"
+  para @[149,227)
+    text @[149,227) str="Text after the explicitly placed notes section: no second section is appended."

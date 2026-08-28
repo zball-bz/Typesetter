@@ -1,0 +1,9 @@
+= Explicit placement
+
+First note here^[One.] and another^[Two, with a reference to @top.] before the section is placed.
+
+#notes()
+
+= Appendix <top>
+
+Text after the explicitly placed notes section: no second section is appended.

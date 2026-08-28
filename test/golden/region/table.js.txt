@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(heading(1, "sec", __at(text("Data"),2,6)),0,6));
 __emit(__at(__region("table", ({cols: 3, align: "lcr", label: "tbl"}), [[[__at(text("Name"),59,63), __at(text("Qty"),66,69), __at(text("Price"),72,77)], [__at(text("Alpha widget"),78,90), __at(text("2"),93,94), __at(text("3.50"),97,101)], [__at(text("中文条目"),102,114), __at(text("三"),117,120), __at(text("12.00"),123,128)]]]),14,136));
 __emit(__at(para(__at(text("Totals appear in "),138,154), __at(ref("tbl"),155,159), __at(text(" of "),160,162), __at(ref("sec"),163,167), __at(text("."),167,168)),138,168));

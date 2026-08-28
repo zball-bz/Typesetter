@@ -129,6 +129,10 @@ export function buildContext(ob) {
     term: (name, ...desc) =>
       ob.makeNode(KIND.term, { name: shadowText(name) }, desc.map(toShadow)),
     toc: () => ob.makeNode(KIND.collect, { what: 'toc' }, []),
+    // footnotes (notes-design.md §1): ^[…] sugar → note; #notes() places
+    // the collector explicitly (implicit at document end otherwise)
+    notes: () => ob.makeNode(KIND.collect, { what: 'notes' }, []),
+    note: node(KIND.note),
     glossary: () => ob.makeNode(KIND.collect, { what: 'glossary' }, []),
     list: (ordered, start, ...items) =>
       ob.makeNode(KIND.list, { ordered, start }, items.map(toShadow)),

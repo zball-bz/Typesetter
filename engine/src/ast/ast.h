@@ -6,7 +6,7 @@ namespace tsr {
 enum class AstKind : u8 {
   Doc, Para, CodeStmt, Text, Styled, Splice,
   Heading, ListB, Item, Quote, CodeBlockB, Rule, Comment, Link, Code, SpliceArg,
-  Ref, Region, Row, Cell, Math
+  Ref, Region, Row, Cell, Math, Note
 };
 
 struct AstNode {

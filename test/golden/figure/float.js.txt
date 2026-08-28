@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("浮动插图与环绕（parshape）：右侧浮动，正文前若干行按收窄宽度断行。"),0,95)),0,95));
 __emit(__at(__region("figure", ({src: "photos/tower.jpg", alt: "塔楼", w: 400, h: 300, scale: 0.4, float: "right", label: "fig-tower"}), [[[__at(text("右浮动的塔楼小图。"),210,237)]]]),97,246));
 __emit(__at(para(__at(text("正文围绕浮动图排布：前几行的断行宽度收窄为版心减去浮动框与间隙，越过浮动框底部之后恢复整幅版心宽度继续排布，段落之间的间距也计入占用高度的消耗。"),248,464)),248,464));

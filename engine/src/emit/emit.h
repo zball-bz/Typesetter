@@ -30,6 +30,7 @@ struct LinebreakBlock {
   u16 flags = 0;
   StrRef text = 0;
   StrRef linkUrl = 0;  // 0 = not inside a link
+  StrRef anchorId = 0; // inline anchor (footnote marker): run gets id="tsr-<id>"
   // Latin word spaces: cross-space kerning context (document-model §6).
   // gap width = m(trigram) - m(prevCh) - m(nextCh); 0 = no correction.
   // Hyphen points reuse the same fields with a JUNCTION bigram (no space):

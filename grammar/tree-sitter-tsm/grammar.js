@@ -72,6 +72,7 @@ module.exports = grammar({
     _inline: ($) => choice(
       $.code_span,
       $.math_span,
+      $.footnote,
       $.strong,
       $.emphasis,
       $.link,
@@ -85,6 +86,8 @@ module.exports = grammar({
 
     code_span: () => token(/`[^`\n]*`/),
     math_span: () => token(/\$[^$\n]*\$/),
+    // ^[…] footnote sugar (notes-design.md §1); body approximated as opaque
+    footnote: () => token(prec(1, /\^\[[^\]\n]*\]/)),
     strong: () => token(/\*[^*\n]+\*/),
     emphasis: () => token(/_[^_\n]+_/),
     link: () => token(/\[[^\]\n]*\]\([^)\n]*\)/),

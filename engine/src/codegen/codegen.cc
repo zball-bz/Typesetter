@@ -45,6 +45,11 @@ struct Gen {
         strLit(n->str);
         close(n);
         break;
+      case AstKind::Note:
+        out += "__at(note(";
+        children(n->kids, false);
+        close(n);
+        break;
       case AstKind::Link:
         out += "__at(link(";
         strLit(n->aux);
@@ -203,7 +208,7 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
   std::string& out = p.text;
   out += "export default async ({__emit, __at, para, text, em, strong, val, m, "
          "heading, list, item, quote, codeblock, rule, comment, link, code, seq, "
-         "ref, term, toc, glossary, style, mathinline, mathblock, image, "
+         "ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, "
          "__region, __fence}, $) => {\n";
   Gen g{src, strs, out};
   for (const AstNode* n : doc->kids) {

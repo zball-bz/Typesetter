@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("三盒模型：行号、代码与结构化边注。"),0,51)),0,51));
 __emit(__at(val(await __fence("js", ({sidecar: "///", lineNo: 1}), "const memo = new Map(); /// 记忆化容器，均摊 $O(1)$ 查询\nfunction fib(n) {\n  if (n <= 1) return n; /// *基例*：$n <= 1$ 时直接返回，详见 @base\n  return fib(n - 1) + fib(n - 2);\n}", 86)),53,289));
 __emit(__at(heading(1, "base", __at(text("基例说明"),293,305)),291,305));

@@ -2,7 +2,7 @@
 // Consumed by: engine/src/ops/ops.h (X-macro), tools/gen-ops-ts.mjs (regex).
 // Changing any number is a protocol version bump: update OPS_VERSION.
 //
-// OPS_VERSION(5)
+// OPS_VERSION(6)
 
 OP(MAKE_TEXT, 1)
 OP(MAKE_NODE, 2)
@@ -38,6 +38,7 @@ KIND(raw, 23)
 KIND(hardbreak, 24)
 KIND(seq, 25)
 KIND(image, 26)
+KIND(note, 27)
 
 ARGK(label, 0)
 ARGK(level, 1)

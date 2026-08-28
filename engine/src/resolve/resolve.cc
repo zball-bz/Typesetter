@@ -27,7 +27,7 @@ bool isInlineKind(Kind k) {
   switch (k) {
     case Kind::text: case Kind::styled: case Kind::link: case Kind::code:
     case Kind::ref: case Kind::seq: case Kind::mathinline: case Kind::comment:
-    case Kind::hardbreak: case Kind::raw:
+    case Kind::hardbreak: case Kind::raw: case Kind::note:
       return true;
     default:
       return false;
@@ -60,6 +60,12 @@ struct Resolver {
 
   std::vector<int> secc;  // section counter stack (derived heading tree)
   int tableNo = 0, figNo = 0, eqNo = 0;
+
+  // footnotes (notes-design.md §1): document-order counter; bodies are
+  // lifted into the `notes` collector (implicit at document end)
+  int noteNo = 0;
+  std::vector<ContentNode*> notes;
+  bool notesPlaced = false;
 
   // ---- node fabrication ---------------------------------------------------
   ContentNode* mkNode(Kind k, Span span, StyleId style = 0) {
@@ -180,6 +186,17 @@ struct Resolver {
         }
         break;
       }
+      case Kind::note: {
+        noteNo++;
+        std::string num = std::to_string(noteNo);
+        setArgStr(n, ArgK::name, num);
+        // fn-n: the note body (list item, back-link target of the marker);
+        // fnref-n: the marker itself (inline anchor, target of the ↩)
+        addLabel("fn-" + num, {Kind::note, num, ""}, n->span);
+        addLabel("fnref-" + num, {Kind::ref, num, "\xE2\x86\xA9"}, n->span);
+        notes.push_back(n);
+        break;
+      }
       case Kind::term: {
         std::string name(strs.get(argStr(n, ArgK::name)));
         if (!name.empty()) {
@@ -215,6 +232,7 @@ struct Resolver {
       case Kind::table: disp = cfg.supTable + e.number; break;
       case Kind::group: disp = cfg.supFigure + e.number; break;
       case Kind::mathblock: disp = cfg.supEquation + "(" + e.number + ")"; break;
+      case Kind::note: disp = e.number; break;  // bare digit (marker / @fn-n)
       default: disp = e.excerpt.empty() ? target : e.excerpt; break;
     }
     setArgStr(r, ArgK::url, "#tsr-" + target);
@@ -263,10 +281,69 @@ struct Resolver {
     return list;
   }
 
+  // ---- footnotes (notes-design.md §1) ------------------------------------
+  // the marker: a superscript ref to the note's list item, itself anchored
+  // (fnref-n) so the note's ↩ can return. Style composes on the note's own
+  // style so color/font scopes carry into the marker.
+  ContentNode* buildMarker(ContentNode* note) {
+    std::string num(strs.get(argStr(note, ArgK::name)));
+    Styling s = styles.get(note->style);
+    s.bits |= CLS_SUP;
+    s.sizeMul *= 0.7f;
+    ContentNode* r = mkNode(Kind::ref, note->span, styles.idOf(s));
+    setArgStr(r, ArgK::target, "fn-" + num);
+    setArgStr(r, ArgK::label, "fnref-" + num);
+    return r;
+  }
+  void rescale(ContentNode* n, float f) {
+    Styling s = styles.get(n->style);
+    s.sizeMul *= f;
+    n->style = styles.idOf(s);
+    for (ContentNode* k : n->kids) rescale(k, f);
+  }
+  // the notes section: rule + ordered list, one item per note in document
+  // order (the list marker IS the number, matching the superscripts);
+  // bodies at 0.85× with a ↩ back-link. Built once: explicitly at
+  // #notes(), else appended to the document by resolveDoc.
+  ContentNode* buildNotes(Span span) {
+    notesPlaced = true;
+    ContentNode* g = mkNode(Kind::group, span);
+    setArgStr(g, ArgK::role, "notes");
+    if (notes.empty()) return g;
+    g->kids.push_back(mkNode(Kind::rule, span));
+    ContentNode* list = mkNode(Kind::list, span);
+    setArgBool(list, ArgK::ordered, true);
+    for (size_t i = 0; i < notes.size(); i++) {
+      ContentNode* nd = notes[i];
+      rewrite(nd);  // refs inside the body resolve like anywhere else
+      std::string num = std::to_string(i + 1);
+      ContentNode* item = mkNode(Kind::item, nd->span);
+      ContentNode* para = mkNode(Kind::para, nd->span);
+      setArgStr(para, ArgK::label, "fn-" + num);
+      for (ContentNode* k : nd->kids) {
+        rescale(k, 0.85f);
+        para->kids.push_back(k);
+      }
+      Styling small = styles.get(nd->style);
+      small.sizeMul *= 0.85f;
+      StyleId smallId = styles.idOf(small);
+      para->kids.push_back(mkText(" ", nd->span, smallId));
+      ContentNode* back = mkNode(Kind::ref, nd->span, smallId);
+      setArgStr(back, ArgK::target, "fnref-" + num);
+      resolveRef(back);
+      para->kids.push_back(back);
+      item->kids.push_back(para);
+      list->kids.push_back(item);
+    }
+    g->kids.push_back(list);
+    return g;
+  }
+
   ContentNode* buildCollect(ContentNode* c) {
     std::string what(strs.get(argStr(c, ArgK::what)));
     if (what == "toc") return buildToc(c);
     if (what == "glossary") return buildGlossary(c);
+    if (what == "notes") return buildNotes(c->span);
     diags.add(Sev::Warning, "collect-unknown", c->span,
               "unknown collector '" + what + "'");
     return mkNode(Kind::group, c->span);
@@ -322,6 +399,13 @@ struct Resolver {
         resolveRef(k);
         continue;
       }
+      if (k->kind == Kind::note) {
+        // the body leaves the paragraph (buildNotes lifts it); the marker
+        // stays — a resolved superscript reference
+        n->kids[i] = buildMarker(k);
+        resolveRef(n->kids[i]);
+        continue;
+      }
       rewrite(k);
     }
   }
@@ -335,6 +419,10 @@ void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs,
   Resolver r{arena, strs, styles, cfg, diags, {}, {}, {}, {}, 0, 0};
   r.scan(tree.root);
   r.rewrite(tree.root);
+  // implicit notes section (notes-design.md §1): at document end unless
+  // the author placed #notes() themselves
+  if (!r.notes.empty() && !r.notesPlaced)
+    tree.root->kids.push_back(r.buildNotes(tree.root->span));
 }
 
 }  // namespace tsr

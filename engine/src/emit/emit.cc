@@ -77,7 +77,18 @@ struct Emitter {
             c2.addBits |= CLS_LINK;
           }
         c2.addFlags |= BF_REF;
+        const size_t before = u.blocks.size();
         for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);
+        if (u.blocks.size() > before) {
+          // labelled ref = inline anchor (footnote marker, notes-design.md
+          // §1); a superscript marker also glues to what precedes it —
+          // never a line start, like a closing punct
+          for (const ArgVal& a : n->args)
+            if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref)
+              u.blocks[before].anchorId = a.ref;
+          if ((styles.get(u.blocks[before].style).bits & CLS_SUP) && before > 0)
+            u.blocks[before - 1].breakPenalty = BREAK_INF;
+        }
         return;
       }
       case Kind::error: {
@@ -418,6 +429,8 @@ struct Emitter {
         u.marker = marker;
         u.markerStyle = compose(n->style, 0, 1.0f);
         u.anchor = takeAnchor();
+        for (const ArgVal& a : n->args)  // labelled paragraph (note bodies)
+          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) u.anchor = a.ref;
         ICtx ctx;
         if (figDepth > 0) {
           // figure caption (figure-design.md §3): centred ragged lines,

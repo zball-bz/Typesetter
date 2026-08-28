@@ -1,0 +1,23 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-top" data-s="0" data-e="9" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Footnotes</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="19" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="133" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.067px"><span class="tsr-r" data-s="0">A claim in running text</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="ref" style="font-size:11.2px">1</a><span class="tsr-r" data-s="88"> continues after</span></div>
+<div class="tsr-line" data-s="88" data-e="192" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.733px"><span class="tsr-r" data-s="88">the marker, and a second note</span><a class="tsr-r tsr-sup" href="#tsr-fn-2" id="tsr-fnref-2" data-syn="ref" style="font-size:11.2px">2</a><span class="tsr-r" data-s="156"> follows</span></div>
+<div class="tsr-line" data-s="156" data-e="192" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="156">later in the same paragraph.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="216" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-1.1" data-s="0" data-e="9" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">A section</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="227" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="56" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.711px"><span class="tsr-r" data-s="0">Notes may cite </span><a class="tsr-r" href="#tsr-top" data-syn="ref">§1</a><span class="tsr-r" data-s="20"> and the text may cite a</span></div>
+<div class="tsr-line" data-s="20" data-e="86" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="20">note back as </span><a class="tsr-r" href="#tsr-fn-1" data-syn="ref">1</a><span class="tsr-r" data-s="62">; the section ends here.</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="42" style="position:relative;height:121.594px">
+<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="2" data-e="50" data-join="space" style="top:43.203px;left:24px;width:276px;word-spacing:0.669px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="2" style="font-size:13.6px">The note body carries </span><span class="tsr-r tsr-b" data-s="25" style="font-size:13.6px">markup</span><span class="tsr-r" data-s="32" style="font-size:13.6px">, </span><span class="tsr-r tsr-code" data-s="34" style="font-size:11.56px">code</span><span class="tsr-r" data-s="40" style="font-size:13.6px">, and math</span></div>
+<div class="tsr-line" data-s="0" data-e="64" style="top:67.203px;left:24px;width:276px"><span class="tsr-math" data-syn="math" data-src="$x^2 + y^2$" data-s="51" data-e="62" style="width:25.875px;height:13.844px;vertical-align:-1px"><span class="tsr-mg" style="left:0px;top:1.964px;font-size:13.6px;line-height:13.6px">x</span><span class="tsr-mg" style="left:7.156px;top:-0.897px;font-size:9.52px;line-height:9.52px">2</span><span class="tsr-mg" style="left:15.609px;top:1.964px;font-size:13.6px;line-height:13.6px">+</span></span><span class="tsr-sp" data-syn="boundary" style="width:3.016px"></span><span class="tsr-math" data-syn="math" data-src="" data-s="51" data-e="62" style="width:13.5px;height:16.016px;vertical-align:-3.172px"><span class="tsr-mg" style="left:0px;top:1.964px;font-size:13.6px;line-height:13.6px">y</span><span class="tsr-mg" style="left:8.062px;top:-0.897px;font-size:9.52px;line-height:9.52px">2</span></span><span class="tsr-r" data-s="62" style="font-size:13.6px">. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="ref" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-2" data-s="110" data-e="132" style="top:97.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="112" style="font-size:13.6px">Second note, short. </span><a class="tsr-r" href="#tsr-fnref-2" data-syn="ref" style="font-size:13.6px">↩</a></div>
+</div>
+</div>

@@ -1,0 +1,25 @@
+doc @[0,421)
+  para @[0,276)
+    text @[0,24) str="中文正文里的断言"
+    
+      text @[26,41) str="脚注正文。"
+    text @[42,81) str="之后继续排布，句末的脚注。"
+    
+      text @[83,107) str="句号之后的脚注。"
+    text @[108,255) str="也应当粘在标点之后，绝不落到行首；再来一个很长的句子把标记推到行尾附近看它是否会孤立地掉到下一行去"
+    
+      text @[257,272) str="行尾脚注。"
+    text @[273,276) str="。"
+  list @[278,364) bullet start=1
+    item @[278,364)
+      para @[280,364)
+        text @[280,301) str="列表项里的脚注"
+        
+          text @[303,330) str="列表中的脚注正文。"
+        text @[331,364) str="也进入同一个编号序列。"
+    item @[365,420)
+      para @[367,420)
+        text @[367,379) str="English word"
+        
+          text @[381,400) str="Latin-context note."
+        text @[402,420) str=" before the marker."

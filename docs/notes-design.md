@@ -1,6 +1,8 @@
 # Footnotes & citations — design
 
-Status: DESIGN (not implemented). Builds on design-decisions-v2 §11.1 and
+Status: footnotes IMPLEMENTED (screen; print inserts pending), citations
+DESIGN. As-built deltas for footnotes are listed at the end of §1.
+Builds on design-decisions-v2 §11.1 and
 document-model §counters/collectors: *execution declares, the resolver
 decides*. Both features are reference-shaped — they reuse the label table,
 the counter automata, and the collector mechanism that already number
@@ -70,6 +72,28 @@ style at 0.85em.
 `cfg.supNote` = "" (bare digits) by default; CJK books sometimes prefer
 circled digits ①②③ — a config switch (`noteMarks: digits | circled`)
 selects the glyph set at emit time; the counter is unchanged.
+
+### As built (2026-08)
+
+- Ops v6 adds inline `Kind::note` (`^[…]` → `note(...)` ctor); the named
+  `#note(name)[…]` form is NOT implemented — inline bodies only.
+- Resolver: counter + labels `fn-n` (the body item) and `fnref-n` (the
+  marker); the note node is replaced by a `ref` to `fn-n` styled
+  `CLS_SUP × 0.7`, so `@fn-n` from prose renders the same digit. Bodies
+  are lifted into `group{role:notes}` = rule + ordered list, items at
+  0.85× with a `↩` ref back to the marker; built at `#notes()` or appended
+  by `resolveDoc`. Refs inside note bodies resolve normally.
+- Emit: labelled refs set `LinebreakBlock.anchorId` (run gets `id=`);
+  a superscript ref forces `breakPenalty = INF` on the block before it, so
+  a marker never starts a line. No CJK–Latin boundary is inserted before
+  it (cross-node boundaries were never inserted; the digit hugs the text).
+  Known nit: after a closing punct the marker follows the punct's
+  trailing half-space rather than hugging the glyph.
+- Render: `.tsr-sup` (paint-only raise via `position: relative`),
+  semantic `<sup>` + `<ol>`; paragraphs honor `label` as anchors.
+- Highlighting: `footnote` token in tree-sitter-tsm (`@attribute`).
+- Print: notes currently print as endnotes (the section is ordinary flow);
+  bottom-of-sheet inserts remain as designed above.
 
 ## 2. Citations
 

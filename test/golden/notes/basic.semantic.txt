@@ -1,0 +1,13 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="11" id="tsr-top">Footnotes</h1>
+<p data-pid="1" data-s="19" data-e="211">A claim in running text<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> continues after the marker, and a second note<a href="#tsr-fn-2" id="tsr-fnref-2"><sup>2</sup></a> follows later in the same paragraph.</p>
+<h2 data-pid="2" data-s="213" data-e="225" id="tsr-h-1.1">A section</h2>
+<p data-pid="3" data-s="227" data-e="313">Notes may cite <a href="#tsr-top">§1</a> and the text may cite a note back as <a href="#tsr-fn-1">1</a>; the section ends here.</p>
+<div data-role="notes" data-pid="4" data-s="0" data-e="313">
+<hr data-s="0" data-e="313">
+<ol data-s="0" data-e="313">
+<li>The note body carries <strong>markup</strong>, <code>code</code>, and math <code class="tsr-mathsrc">$x^2 + y^2$</code>. <a href="#tsr-fnref-1">↩</a></li>
+<li>Second note, short. <a href="#tsr-fnref-2">↩</a></li>
+</ol>
+</div>
+</div>

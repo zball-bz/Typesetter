@@ -17,6 +17,9 @@ enum : u64 {
   CLS_UNDER = 1ull << 16,
   CLS_OVER = 1ull << 17,
   CLS_STRIKE = 1ull << 18,
+  // superscript (notes-design.md §1): footnote markers — size rides
+  // sizeMul (measured), the raise is paint-only (position: relative)
+  CLS_SUP = 1ull << 19,
 };
 
 // Effective style: class bits + relative size + InlineStyle overrides

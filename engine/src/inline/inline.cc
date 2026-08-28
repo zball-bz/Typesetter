@@ -381,6 +381,26 @@ struct InlineParser {
         handleSplice(i);
         continue;
       }
+      if (c == '^' && i + 1 < lim && all[i + 1] == '[') {
+        // footnote sugar (notes-design.md §1): ^[inline body]; brackets
+        // nest; an unclosed form stays literal text
+        u32 depth = 0, close = i + 1;
+        for (; close < lim; close++) {
+          if (all[close] == '[') depth++;
+          else if (all[close] == ']' && --depth == 0) break;
+        }
+        if (close < lim && all[close] == ']') {
+          flushText();
+          AstNode* nt = parseSub({i + 2, close}, AstKind::Note);
+          nt->span = {i, close + 1};
+          pushItem(nt);
+          i = close + 1;
+          continue;
+        }
+        put(c, i);
+        i++;
+        continue;
+      }
       if (c == '@') {
         // reference sugar (v2 §11.1): literal when preceded by an identifier
         // character (user@domain); bare form ASCII, CJK labels use @[…]

@@ -1,0 +1,7 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(heading(1, "top", __at(text("Footnotes"),2,11)),0,11));
+__emit(__at(para(__at(text("A claim in running text"),19,42), __at(note(__at(text("The note body carries "),44,65), __at(strong(__at(text("markup"),67,73)),66,74), __at(text(", "),74,75), __at(code("code"),76,82), __at(text(", and math "),82,92), __at(mathinline("x^2 + y^2"),93,104), __at(text("."),104,105)),42,106), __at(text(" continues after the marker, and a second note"),107,152), __at(note(__at(text("Second note, short."),154,173)),152,174), __at(text(" follows later in the same paragraph."),175,211)),19,211));
+__emit(__at(heading(2, null, __at(text("A section"),216,225)),213,225));
+__emit(__at(para(__at(text("Notes may cite "),227,241), __at(ref("top"),242,246), __at(text(" and the text may cite a note back as "),247,283), __at(ref("fn-1"),284,289), __at(text("; the section ends here."),289,313)),227,313));
+};
+//# sourceURL=tsm:doc

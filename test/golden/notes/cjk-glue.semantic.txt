@@ -1,0 +1,17 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="276">中文正文里的断言<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a>之后继续排布，句末的脚注。<a href="#tsr-fn-2" id="tsr-fnref-2"><sup>2</sup></a>也应当粘在标点之后，绝不落到行首；再来一个很长的句子把标记推到行尾附近看它是否会孤立地掉到下一行去<a href="#tsr-fn-3" id="tsr-fnref-3"><sup>3</sup></a>。</p>
+<ul data-pid="1" data-s="278" data-e="364">
+<li>列表项里的脚注<a href="#tsr-fn-4" id="tsr-fnref-4"><sup>4</sup></a>也进入同一个编号序列。</li>
+<li>English word<a href="#tsr-fn-5" id="tsr-fnref-5"><sup>5</sup></a> before the marker.</li>
+</ul>
+<div data-role="notes" data-pid="2" data-s="0" data-e="364">
+<hr data-s="0" data-e="364">
+<ol data-s="0" data-e="364">
+<li>脚注正文。 <a href="#tsr-fnref-1">↩</a></li>
+<li>句号之后的脚注。 <a href="#tsr-fnref-2">↩</a></li>
+<li>行尾脚注。 <a href="#tsr-fnref-3">↩</a></li>
+<li>列表中的脚注正文。 <a href="#tsr-fnref-4">↩</a></li>
+<li>Latin-context note. <a href="#tsr-fnref-5">↩</a></li>
+</ol>
+</div>
+</div>

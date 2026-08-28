@@ -1,0 +1,7 @@
+= Footnotes <top>
+
+A claim in running text^[The note body carries *markup*, `code`, and math $x^2 + y^2$.] continues after the marker, and a second note^[Second note, short.] follows later in the same paragraph.
+
+== A section
+
+Notes may cite @top and the text may cite a note back as @fn-1; the section ends here.

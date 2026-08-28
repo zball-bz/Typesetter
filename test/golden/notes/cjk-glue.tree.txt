@@ -1,0 +1,58 @@
+doc @[0,364) [base]
+  para @[0,276) [base]
+    text @[0,24) [base] str="中文正文里的断言"
+    ref @[24,42) [basex0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
+      text @[24,42) [basex0.70] str="1"
+    text @[42,81) [base] str="之后继续排布，句末的脚注。"
+    ref @[81,108) [basex0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
+      text @[81,108) [basex0.70] str="2"
+    text @[108,255) [base] str="也应当粘在标点之后，绝不落到行首；再来一个很长的句子把标记推到行尾附近看它是否会孤立地掉到下一行去"
+    ref @[255,273) [basex0.70] target="fn-3" label="fnref-3" url="#tsr-fn-3"
+      text @[255,273) [basex0.70] str="3"
+    text @[273,276) [base] str="。"
+  list @[278,364) [base] ordered=false start=1
+    item @[278,364) [base]
+      para @[280,364) [base]
+        text @[280,301) [base] str="列表项里的脚注"
+        ref @[301,331) [basex0.70] target="fn-4" label="fnref-4" url="#tsr-fn-4"
+          text @[301,331) [basex0.70] str="4"
+        text @[331,364) [base] str="也进入同一个编号序列。"
+    item @[365,420) [base]
+      para @[367,420) [base]
+        text @[367,379) [base] str="English word"
+        ref @[379,401) [basex0.70] target="fn-5" label="fnref-5" url="#tsr-fn-5"
+          text @[379,401) [basex0.70] str="5"
+        text @[402,420) [base] str=" before the marker."
+  group @[0,364) [base] role="notes"
+    rule @[0,364) [base]
+    list @[0,364) [base] ordered=true
+      item @[24,42) [base]
+        para @[24,42) [base] label="fn-1"
+          text @[26,41) [basex0.85] str="脚注正文。"
+          text @[24,42) [basex0.85] str=" "
+          ref @[24,42) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+            text @[24,42) [basex0.85] str="↩"
+      item @[81,108) [base]
+        para @[81,108) [base] label="fn-2"
+          text @[83,107) [basex0.85] str="句号之后的脚注。"
+          text @[81,108) [basex0.85] str=" "
+          ref @[81,108) [basex0.85] target="fnref-2" url="#tsr-fnref-2"
+            text @[81,108) [basex0.85] str="↩"
+      item @[255,273) [base]
+        para @[255,273) [base] label="fn-3"
+          text @[257,272) [basex0.85] str="行尾脚注。"
+          text @[255,273) [basex0.85] str=" "
+          ref @[255,273) [basex0.85] target="fnref-3" url="#tsr-fnref-3"
+            text @[255,273) [basex0.85] str="↩"
+      item @[301,331) [base]
+        para @[301,331) [base] label="fn-4"
+          text @[303,330) [basex0.85] str="列表中的脚注正文。"
+          text @[301,331) [basex0.85] str=" "
+          ref @[301,331) [basex0.85] target="fnref-4" url="#tsr-fnref-4"
+            text @[301,331) [basex0.85] str="↩"
+      item @[379,401) [base]
+        para @[379,401) [base] label="fn-5"
+          text @[381,400) [basex0.85] str="Latin-context note."
+          text @[379,401) [basex0.85] str=" "
+          ref @[379,401) [basex0.85] target="fnref-5" url="#tsr-fnref-5"
+            text @[379,401) [basex0.85] str="↩"

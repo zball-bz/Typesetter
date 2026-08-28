@@ -1,0 +1,13 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="20" id="tsr-h-1">Explicit placement</h1>
+<p data-pid="1" data-s="22" data-e="119">First note here<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> and another<a href="#tsr-fn-2" id="tsr-fnref-2"><sup>2</sup></a> before the section is placed.</p>
+<div data-role="notes" data-pid="2">
+<hr>
+<ol>
+<li>One. <a href="#tsr-fnref-1">↩</a></li>
+<li>Two, with a reference to <a href="#tsr-top">§2</a>. <a href="#tsr-fnref-2">↩</a></li>
+</ol>
+</div>
+<h1 data-pid="3" data-s="131" data-e="141" id="tsr-top">Appendix</h1>
+<p data-pid="4" data-s="149" data-e="227">Text after the explicitly placed notes section: no second section is appended.</p>
+</div>
