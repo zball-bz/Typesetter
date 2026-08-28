@@ -57,7 +57,8 @@ jobs:
         run: PLAYWRIGHT_JSON_OUTPUT_NAME=e2e-report.json npx playwright test --reporter=list,json
       - name: fonts on the runner (diagnostics)
         if: always()
-        run: fc-match serif; fc-match "Noto Serif CJK SC"; fc-list : family | sort -u | head -40 > fonts.txt || true
+        run: |
+          { fc-match serif; fc-match "Noto Serif CJK SC"; fc-list --format='%{family}\n' | sort -u | head -60; } > fonts.txt 2>&1 || true
       - name: publish failure diagnostics
         if: failure()
         env:
