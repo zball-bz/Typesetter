@@ -125,7 +125,7 @@ src = src.replace(/\\index\{[^{}]*(\{[^{}]*\}[^{}]*)*\}/g, '');
 src = src.replace(/\\indexsee\{[^{}]*\}\{[^{}]*\}/g, '');
 src = src.replace(/\\label\{([^{}]*)\}/g, (m, l) => ` <${safeKey(l)}>`);
 src = src.replace(/\\OPTwidow|\\OPTorphan|\\noindent|\\clearpage|\\newpage|\\addlinespace|\\toprule|\\midrule|\\bottomrule/g, '');
-src = src.replace(/\\(markboth|addcontentsline|setcounter|pagenumbering)\{[^{}]*\}(\{[^{}]*\})*/g, '');
+src = src.replace(/\\(markboth|addcontentsline|setcounter|pagenumbering)(\{(?:[^{}]|\{[^{}]*\})*\})+/g, '');
 src = src.replace(/\\chapter\*?\{([^{}]*)\}/g, (m, t) => `\n= ${t}\n`);
 src = src.replace(/\\section\*?\{([^{}]*)\}/g, (m, t) => `\n== ${t}\n`);
 src = src.replace(/\\subsection\*?\{([^{}]*)\}/g, (m, t) => `\n=== ${t}\n`);
