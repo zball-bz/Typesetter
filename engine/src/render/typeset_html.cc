@@ -315,7 +315,7 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
                 l.srcSpan.end - srcBase);
       if (l.join == 1) out += " data-join=\"space\"";
       else if (l.join == 2) out += " data-join=\"none\"";
-      if (tb.units[l.unitIdx].ragged) out += " data-ragged=\"1\"";
+      if (tb.units[l.unitIdx].ragged || l.noGlue) out += " data-ragged=\"1\"";
       if (l.cellIdx >= 0) out += " data-cell=\"1\"";
       out += " style=\"top:";
       fmtPx(out, suToPx(ly));

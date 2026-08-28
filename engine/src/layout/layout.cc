@@ -570,6 +570,10 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         double slackPx = narrowed
                              ? suToPx(u.narrow) - naturalPx
                              : (cfg.widthPx - suToPx(u.indent)) - naturalPx;
+        // a line without stretchable glue (all URL pieces / one unbreakable
+        // token) cannot be justified — TeX's underfull box; it sets ragged
+        // rather than pretending (real-world-report.md)
+        if (totalWeight <= 0 && !isLast && slackPx != 0) line.noGlue = true;
         if (totalWeight > 0) {
           double d = slackPx / totalWeight;  // per unit weight (v2 §8)
           if (isLast && slackPx > 0) d = 0;
