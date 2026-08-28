@@ -83,11 +83,17 @@ jobs:
         run: node tools/codehl-assets.mjs
       - name: pack
         run: node tools/pack-dist.mjs
+      # VSCode extension: vendor the same dist, package a .vsix
+      - name: package vscode-tsm
+        run: |
+          node editors/vscode-tsm/scripts/vendor.mjs
+          cd editors/vscode-tsm && npx --yes @vscode/vsce package --allow-missing-repository
+          ls *.vsix
       - name: publish rolling release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release delete engine-dist --yes --cleanup-tag || true
-          gh release create engine-dist dist/typesetter-dist.tgz \
-            -t "engine dist (rolling)" \
-            -n "Built from ${{ github.sha }}. Consumed by zball-bz/zball-io."
+          gh release create engine-dist dist/typesetter-dist.tgz editors/vscode-tsm/*.vsix \
+            -t "engine dist + vscode-tsm (rolling)" \
+            -n "Built from ${{ github.sha }}. typesetter-dist.tgz is consumed by zball-bz/zball-io; vscode-tsm-*.vsix installs with \`code --install-extension\`."
