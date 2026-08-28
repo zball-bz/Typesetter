@@ -94,12 +94,14 @@ const MATH = [
   [/\\pi/g, 'pi'], [/\\sigma/g, 'sigma'], [/\\omega/g, 'omega'], [/\\epsilon/g, 'epsilon'],
   [/\\Pi/g, 'Pi'], [/\\Sigma/g, 'Sigma'],
   [/\\simeq/g, ' tilde.eq '], [/\\equiv/g, ' equiv '], [/\\leq/g, '<='], [/\\geq/g, '>='], [/\\neq/g, '!='],
-  [/\\in\b/g, ' in '], [/\\wedge/g, ' and '], [/\\vee/g, ' or '], [/\\neg/g, 'not'],
-  [/\\emptyset/g, 'nothing'], [/\\forall/g, 'forall'], [/\\exists/g, 'exists'],
-  [/\\mathcal\{([A-Za-z])\}/g, 'cal($1)'],
-  [/\\mathbf\{([A-Za-z0-9]+)\}/g, 'bold($1)'],
-  [/\\mathsf\{([A-Za-z]+)\}/g, 'sans($1)'], [/\\mathrm\{([A-Za-z]+)\}/g, 'upright($1)'],
-  [/\\mathbb\{([A-Z])\}/g, '$1$1'], [/\\operatorname\{([A-Za-z]+)\}/g, 'op("$1")'],
+  [/\\in\b/g, ' ∈ '], [/\\wedge/g, ' ∧ '], [/\\vee/g, ' ∨ '], [/\\neg/g, '¬'],
+  [/\\emptyset/g, '∅'], [/\\forall/g, 'forall'], [/\\exists/g, 'exists'],
+  [/\\mathcal\{([A-Za-z])\}/g, '$1'],
+  [/\\mathbf\{([A-Za-z0-9]+)\}/g, '$1'],
+  [/\\mathsf\{([A-Za-z]+)\}/g, '$1'], [/\\mathrm\{([A-Za-z]+)\}/g, '$1'],
+  [/\\mathbb\{([A-Z])\}/g, '$1$1'], [/\\operatorname\{([A-Za-z]+)\}/g, '$1'],
+  [/\\setof\{([^{}]*)\}/g, '{$1}'], [/\\mid\b/g, ' | '], [/\\bot\b/g, '⊥'], [/\\top\b/g, '⊤'],
+  [/\\Rightarrow/g, ' ⇒ '],
   [/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)'], [/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '($1)/($2)'],
   [/\\left\(/g, '('], [/\\right\)/g, ')'], [/\\left\[/g, '['], [/\\right\]/g, ']'],
   [/\\big\b|\\Big\b|\\bigl|\\bigr|\\Bigl|\\Bigr/g, ''],
@@ -110,12 +112,13 @@ const MATH = [
   [/\\defeq/g, ' := '], [/\\jdeq/g, ' equiv '], [/\\narrowbreak|\\allowbreak/g, ' '],
   [/\\prd\{([^{}]*)\}/g, 'Pi_($1)'], [/\\sm\{([^{}]*)\}/g, 'Sigma_($1)'],
   [/\\([A-Za-z]+)/g, '$1'],  // unknown math macro → its name as an identifier
+  [/\\\{/g, '\u0002'], [/\\\}/g, '\u0003'],  // set braces survive the grouping-brace strip
   [/[{}]/g, ''],
 ];
 const mathToTsm = (m) => {
   let s = expandMacros(m);
   for (const [re, rep] of MATH) s = s.replace(re, rep);
-  return s.replace(/\s+/g, ' ').trim();
+  return s.replace(/\s+/g, ' ').trim().replace(/\u0002/g, '{').replace(/\u0003/g, '}');
 };
 
 // ---- prose --------------------------------------------------------------------
@@ -124,7 +127,8 @@ src = src.replace(/^[ \t]*\\index(see)?\{[^{}]*(\{[^{}]*\}[^{}]*)*\}(\{[^{}]*\})
 src = src.replace(/\\index\{[^{}]*(\{[^{}]*\}[^{}]*)*\}/g, '');
 src = src.replace(/\\indexsee\{[^{}]*\}\{[^{}]*\}/g, '');
 src = src.replace(/\\label\{([^{}]*)\}/g, (m, l) => ` <${safeKey(l)}>`);
-src = src.replace(/\\OPTwidow|\\OPTorphan|\\noindent|\\clearpage|\\newpage|\\addlinespace|\\toprule|\\midrule|\\bottomrule/g, '');
+src = src.replace(/\\addlinespace(\[[^\]]*\])?/g, '');
+src = src.replace(/\\OPT[A-Za-z]+|\\noindent|\\clearpage|\\newpage|\\addlinespace|\\toprule|\\midrule|\\bottomrule/g, '');
 src = src.replace(/\\(markboth|addcontentsline|setcounter|pagenumbering)(\{(?:[^{}]|\{[^{}]*\})*\})+/g, '');
 src = src.replace(/\\chapter\*?\{([^{}]*)\}/g, (m, t) => `\n= ${t}\n`);
 src = src.replace(/\\section\*?\{([^{}]*)\}/g, (m, t) => `\n== ${t}\n`);
@@ -132,11 +136,12 @@ src = src.replace(/\\subsection\*?\{([^{}]*)\}/g, (m, t) => `\n=== ${t}\n`);
 src = src.replace(/\\subsubsection\*?\{([^{}]*)\}/g, (m, t) => `\n==== ${t}\n`);
 // math islands first so the prose rules never touch them
 const maths = [];
-const stash = (m) => { maths.push(m); return ` M${maths.length - 1} `; };
+const stash = (m) => { maths.push(m); return `\u0001M${maths.length - 1}\u0001`; };
 src = src.replace(/\\begin\{(equation\*?|align\*?|narrowmultline\*?|multline\*?)\}([\s\S]*?)\\end\{\1\}/g,
   (m, env, body) => stash('\n$ ' + mathToTsm(body.replace(/\\\\/g, ' ').replace(/&/g, ' ')) + ' $\n'));
 src = src.replace(/\\\[([\s\S]*?)\\\]/g, (m, b) => stash('\n$ ' + mathToTsm(b) + ' $\n'));
 src = src.replace(/\$([^$]+)\$/g, (m, b) => stash('$' + mathToTsm(b) + '$'));
+src = src.replace(/\\\(([\s\S]*?)\\\)/g, (m, b) => stash('$' + mathToTsm(b) + '$'));
 src = expandMacros(src);
 src = src.replace(/\\footnote\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => `^[${b}]`);
 src = src.replace(/\\emph\{((?:[^{}]|\{[^{}]*\})*)\}/g, '_$1_');
@@ -169,7 +174,7 @@ src = src.replace(/\\(hline|centering|small|large|Large|bigskip|medskip|smallski
 src = src.replace(/\\\\/g, ' ').replace(/(?<!\\)&/g, ' | ');
 src = src.replace(/\\([A-Za-z]+)\b\*?/g, (m, name) => `⟨\\${name}⟩`);  // survivors = visible gaps
 src = src.replace(/[{}]/g, '');
-src = src.replace(/ M(\d+) /g, (m, i) => maths[+i]);
+src = src.replace(/\u0001M(\d+)\u0001/g, (m, i) => maths[+i]);
 // HoTT sources put one sentence per line: join lines inside paragraphs
 src = src.split(/\n\s*\n/).map((p) => {
   const t = p.trim();

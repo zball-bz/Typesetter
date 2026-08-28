@@ -5,12 +5,12 @@
 </div>
 <div class="tsr-para" data-pid="1" data-s0="175" style="position:relative;height:142.203px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-pipe" src="diagrams/pipeline.png" alt="管线示意" style="top:0px;left:75px;width:150px;height:75px">
-<div class="tsr-line" data-s="0" data-e="53" data-ragged="1" style="top:94.203px;left:6px;width:294px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">排版管线示意图</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-b tsr-cjk" data-s="25">声明尺寸</span><span class="tsr-r tsr-cjk" data-s="38">不经拉</span></div>
+<div class="tsr-line" data-s="0" data-e="53" data-ragged="1" style="top:94.203px;left:8px;width:292px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">排版管线示意图</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-b tsr-cjk" data-s="25">声明尺寸</span><span class="tsr-r tsr-cjk" data-s="38">不经拉</span></div>
 <div class="tsr-line" data-s="38" data-e="53" data-ragged="1" style="top:118.203px;left:138px;width:162px"><span class="tsr-r tsr-cjk" data-s="38">取</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="38">。</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="323" style="position:relative;height:142.203px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-wide" src="photos/wide.png" alt="宽幅" style="top:0px;left:0px;width:300px;height:75px">
-<div class="tsr-line" data-s="0" data-e="51" data-ragged="1" style="top:94.203px;left:6px;width:294px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">过宽的图片收敛到版心</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0">按比例缩</span></div>
+<div class="tsr-line" data-s="0" data-e="51" data-ragged="1" style="top:94.203px;left:8px;width:292px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">过宽的图片收敛到版心</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0">按比例缩</span></div>
 <div class="tsr-line" data-s="0" data-e="51" data-ragged="1" style="top:118.203px;left:138px;width:162px"><span class="tsr-r tsr-cjk" data-s="0">放</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="385" style="position:relative;height:24px">

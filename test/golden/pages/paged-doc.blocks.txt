@@ -147,7 +147,6 @@ top pid=5 units=2
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)
   word "1" w=513su pen=INF BOLD @[0,0)
-  boundary w=256su stretch=1 BOLD @[0,0)
   punct-close "：" w=512su BOLD @[0,0)
   punct-sp w=512su BOLD @[0,0)
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 @[572,602)

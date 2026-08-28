@@ -39,7 +39,6 @@ top pid=0 units=1
   cjk "隙" w=1025su glue=102su wt=0.6 pen=INF @[0,130)
   punct-close "，" w=512su @[0,130)
   punct-sp w=512su @[0,130)
-  boundary w=256su stretch=1 @[0,130)
   word "K-P" w=1537su pen=INF @[0,130)
   space w=257su stretch=1 @[0,130)
   cjk "算" w=1025su glue=102su wt=0.6 pen=0 @[0,130)

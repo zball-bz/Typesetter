@@ -21,7 +21,7 @@ para pid=4 y=18843su w=19200su h=9216su
   L5 code y=7680su left=0su line=4 [0,1)
 para pid=5 y=29288su w=19200su h=7885su
   L0 img y=0su left=3200su w=12800su h=5120su
-  L1 y=6349su left=3200su w=16000su dw=0su dc=0su join=last blocks=[0,16) @[572,602)
+  L1 y=6349su left=3328su w=15872su dw=0su dc=0su join=last blocks=[0,15) @[572,602)
 para pid=6 y=38402su w=19200su h=3072su
   L0 y=0su left=0su w=19200su dw=85su dc=51su join=none blocks=[0,20) @[613,679)
   L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[20,33) @[613,700)

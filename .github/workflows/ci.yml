@@ -53,6 +53,11 @@ jobs:
         run: node tools/corpus-run.mjs
       - name: install chromium
         run: npx playwright install --with-deps chromium
+      # a CJK serif with full-width punctuation glyphs, as real readers have;
+      # without it “ ” fall back to DejaVu's proportional glyphs and CJK
+      # fixtures miss the right edge by ~2px
+      - name: install CJK fonts
+        run: sudo apt-get install -y --no-install-recommends fonts-noto-cjk && fc-cache -f && fc-match "Noto Serif CJK SC"
       - name: e2e (audit matrix, dsf 1.0/1.25/1.5/2.0)
         run: PLAYWRIGHT_JSON_OUTPUT_NAME=e2e-report.json npx playwright test --reporter=list,json
       - name: fonts on the runner (diagnostics)

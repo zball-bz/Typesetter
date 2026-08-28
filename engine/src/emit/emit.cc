@@ -274,7 +274,7 @@ struct Emitter {
     const double halfPx = kPunctHalfEm * fontPx(stCjk);
     const Su glueSu = suRoundPx(cfg.cjkGlueEm * fontPx(stCjk));
 
-    enum class Prev : u8 { None, Latin, Cjk };
+    enum class Prev : u8 { None, Latin, Cjk, Punct };  // Punct: CJK punctuation glyph
     Prev prev = Prev::None;
     std::string word;
     u32 i = 0;
@@ -442,9 +442,10 @@ struct Emitter {
           }
         }
         flushWord();
-        if (prev == Prev::Latin) boundary();
+        // no CJK–Latin boundary glue next to full-width punctuation: （1322
+        // 年） sets solid (GB/T 15834; real-world-report.md)
         pushPunct(s.substr(start, i - start), isPunctOpen(cp));
-        prev = Prev::Cjk;
+        prev = Prev::Punct;
         continue;
       }
       if (prev == Prev::Cjk) boundary();

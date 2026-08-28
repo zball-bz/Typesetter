@@ -9,7 +9,6 @@ top pid=0 units=1
   cjk "法" w=1025su glue=102su wt=0.6 pen=INF @[0,58)
   punct-close "：" w=512su @[0,58)
   punct-sp w=512su @[0,58)
-  boundary w=256su stretch=1 @[0,58)
   word "Type" w=2049su pen=INF @[0,58)
   hyphen bw=513su pen=0.70 @[0,58)
   word "set" w=1537su pen=INF @[0,58)
