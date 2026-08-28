@@ -1,0 +1,3 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="206">A long address such as https://commons.wikimedia.org/wiki/Special:FilePath/Metal<em>movable</em>type.jpg?width=800 must be able to break after separators instead of overflowing the measure; short/paths stay whole.</p>
+</div>

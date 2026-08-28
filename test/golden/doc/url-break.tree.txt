@@ -1,0 +1,6 @@
+doc @[0,206) [base]
+  para @[0,206) [base]
+    text @[0,80) [base] str="A long address such as https://commons.wikimedia.org/wiki/Special:FilePath/Metal"
+    styled @[80,89) [EM]
+      text @[81,88) [EM] str="movable"
+    text @[89,206) [base] str="type.jpg?width=800 must be able to break after separators instead of overflowing the measure; short/paths stay whole."

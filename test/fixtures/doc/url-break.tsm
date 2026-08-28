@@ -1,0 +1,1 @@
+A long address such as https://commons.wikimedia.org/wiki/Special:FilePath/Metal_movable_type.jpg?width=800 must be able to break after separators instead of overflowing the measure; short/paths stay whole.

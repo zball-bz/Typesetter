@@ -1,0 +1,11 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:168px">
+<div class="tsr-line" data-s="0" data-e="41" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r" data-s="0">The title </span><span class="tsr-r tsr-i" data-s="11">Breaking Paragraphs into</span></div>
+<div class="tsr-line" data-s="11" data-e="246" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:5px"><span class="tsr-r tsr-i" data-s="11">Lines</span><span class="tsr-r" data-s="42">. Software: Practice and Experi</span><span class="tsr-r" data-s="42" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="42" data-e="246" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:1.3px"><span class="tsr-r" data-s="42">ence — an italic run followed by a roman</span></div>
+<div class="tsr-line" data-s="42" data-e="246" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="42">period and a space is shaped as separate</span></div>
+<div class="tsr-line" data-s="42" data-e="246" data-join="space" style="top:96px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="42">runs, so no cross-space kern is budgeted</span></div>
+<div class="tsr-line" data-s="42" data-e="246" data-join="space" style="top:120px;left:0px;width:300px;word-spacing:-0.5px"><span class="tsr-r" data-s="42">at the boundary. Plain text s. A keeps its</span></div>
+<div class="tsr-line" data-s="42" data-e="246" style="top:144px;left:0px;width:300px"><span class="tsr-r" data-s="42">kern.</span></div>
+</div>
+</div>

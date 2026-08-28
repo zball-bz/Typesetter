@@ -17,3 +17,8 @@ editors/vscode-tsm/vendor/
 probe-*.mjs
 *.tmp.mjs
 .DS_Store
+
+# real-world corpus: pbr-book.org text is not freely licensed; regenerate
+# locally with examples/real-world/fetch.mjs
+examples/real-world/pbr-*.tsm
+examples/real-world/.cache/

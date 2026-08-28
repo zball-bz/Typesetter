@@ -1,0 +1,3 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="246">The title <em>Breaking Paragraphs into Lines</em>. Software: Practice and Experience — an italic run followed by a roman period and a space is shaped as separate runs, so no cross-space kern is budgeted at the boundary. Plain text s. A keeps its kern.</p>
+</div>

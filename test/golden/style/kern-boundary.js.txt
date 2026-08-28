@@ -1,0 +1,4 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("The title "),0,9), __at(em(__at(text("Breaking Paragraphs into Lines"),11,41)),10,42), __at(text(". Software: Practice and Experience — an italic run followed by a roman period and a space is shaped as separate runs, so no cross-space kern is budgeted at the boundary. Plain text s. A keeps its kern."),42,246)),0,246));
+};
+//# sourceURL=tsm:doc

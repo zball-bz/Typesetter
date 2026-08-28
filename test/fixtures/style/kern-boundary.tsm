@@ -1,0 +1,1 @@
+The title _Breaking Paragraphs into Lines_. Software: Practice and Experience — an italic run followed by a roman period and a space is shaped as separate runs, so no cross-space kern is budgeted at the boundary. Plain text s. A keeps its kern.

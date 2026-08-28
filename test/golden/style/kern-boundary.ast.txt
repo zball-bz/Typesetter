@@ -1,0 +1,6 @@
+doc @[0,247)
+  para @[0,246)
+    text @[0,9) str="The title "
+    styled @[10,42) marker=_
+      text @[11,41) str="Breaking Paragraphs into Lines"
+    text @[42,246) str=". Software: Practice and Experience — an italic run followed by a roman period and a space is shaped as separate runs, so no cross-space kern is budgeted at the boundary. Plain text s. A keeps its kern."

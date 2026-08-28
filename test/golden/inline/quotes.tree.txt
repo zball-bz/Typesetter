@@ -1,0 +1,5 @@
+doc @[0,273) [base]
+  para @[0,131) [base]
+    text @[0,131) [base] str="We treat these “spaces” as “homotopical” notions; don’t split at the apostrophe, and ‘single’ quotes behave the same."
+  para @[133,273) [base]
+    text @[133,273) [base] str="中文里的“引号”仍然是全角标点，前后带可压缩的半角空隙；混排时“English inside”也按中文引号处理。"

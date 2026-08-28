@@ -1,0 +1,4 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("A long address such as https://commons.wikimedia.org/wiki/Special:FilePath/Metal"),0,80), __at(em(__at(text("movable"),81,88)),80,89), __at(text("type.jpg?width=800 must be able to break after separators instead of overflowing the measure; short/paths stay whole."),89,206)),0,206));
+};
+//# sourceURL=tsm:doc
