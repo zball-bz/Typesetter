@@ -1,0 +1,9 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("两张同侧浮动图连续出现时应当堆叠，而不是把第二张清到第一张之下留出空白。"),0,108)),0,108));
+__emit(__at(__region("figure", ({src: "photos/a.jpg", alt: "甲", w: 400, h: 300, scale: 0.4, float: "right", label: "fig-a"}), [[[__at(text("第一张图。"),212,227)]]]),110,236));
+__emit(__at(__region("figure", ({src: "photos/b.jpg", alt: "乙", w: 400, h: 200, scale: 0.4, float: "right", label: "fig-b"}), [[[__at(text("第二张图，紧接着第一张。"),340,376)]]]),238,385));
+__emit(__at(heading(2, null, __at(text("标题不清除浮动"),390,411)),387,411));
+__emit(__at(para(__at(text("正文从第一张图的顶部开始环绕，收窄宽度取两张图中较宽者，直到越过第二张图的底部才恢复整幅版心；这一段要写得足够长，以便看到恢复整幅宽度之后的行，再多写一些字来保证它跨越两张图叠加起来的高度，并且继续向下延伸到浮动结束以后的位置。"),413,755)),413,755));
+__emit(__at(para(__at(text("第二段接着排布，此时应当已经离开了浮动区域，回到整幅版心；如果没有，说明占位高度的合并计算有误。"),757,901)),757,901));
+};
+//# sourceURL=tsm:doc

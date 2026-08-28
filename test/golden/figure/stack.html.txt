@@ -1,0 +1,35 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="108" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.392px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px">两张同侧浮动图连续出现时应当堆叠</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px;margin-right:0.235px">而不</span></div>
+<div class="tsr-line" data-s="0" data-e="108" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">是把第二张清到第一张之下留出空白</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:0px;margin-bottom:19.2px">
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" src="photos/a.jpg" alt="甲" style="top:0px;left:180px;width:120px;height:90px">
+<div class="tsr-line" data-ragged="1" data-cell="1" style="top:90px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="212">第一张图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="212">。</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="0" style="position:relative;height:0px;margin-bottom:19.2px">
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-b" src="photos/b.jpg" alt="乙" style="top:114px;left:180px;width:120px;height:60px">
+<div class="tsr-line" data-join="none" data-ragged="1" data-cell="1" style="top:174px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="340">第二张图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="340">，</span></div>
+<div class="tsr-line" data-ragged="1" data-cell="1" style="top:198px;left:180px;width:120px"><span class="tsr-r tsr-cjk" data-s="340">紧接着第一张</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="340">。</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="390" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-0.1" data-s="0" data-e="21" data-ragged="1" style="top:0px;left:0px;width:164px"><span class="tsr-r tsr-b tsr-cjk" data-s="0" style="font-size:21.6px">标题不清除浮动</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="413" style="position:relative;height:240px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="342" data-join="none" style="top:0px;left:0px;width:164px;word-spacing:0.741px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.444px;margin-right:-0.444px">正文从第一张图的顶部</span></div>
+<div class="tsr-line" data-s="0" data-e="342" data-join="none" style="top:24px;left:0px;width:164px;word-spacing:0.833px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px">开始环绕</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px;margin-right:-0.5px">收窄宽度取</span></div>
+<div class="tsr-line" data-s="0" data-e="342" data-join="none" style="top:48px;left:0px;width:164px;word-spacing:0.833px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px">两张图中较宽者</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px;margin-right:-0.5px">直到</span></div>
+<div class="tsr-line" data-s="0" data-e="342" data-join="none" style="top:72px;left:0px;width:164px;word-spacing:0.741px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.444px;margin-right:-0.444px">越过第二张图的底部才</span></div>
+<div class="tsr-line" data-s="0" data-e="342" data-join="none" style="top:96px;left:0px;width:164px;word-spacing:0.833px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px">恢复整幅版心</span><span class="tsr-r tsr-cjk" data-s="0">；</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px;margin-right:-0.5px">这一段</span></div>
+<div class="tsr-line" data-s="0" data-e="342" data-join="none" style="top:120px;left:0px;width:164px;word-spacing:0.833px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px">要写得足够长</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px;margin-right:-0.5px">以便看</span></div>
+<div class="tsr-line" data-s="0" data-e="342" data-join="none" style="top:144px;left:0px;width:164px;word-spacing:0.741px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.444px;margin-right:-0.444px">到恢复整幅宽度之后的</span></div>
+<div class="tsr-line" data-s="0" data-e="342" data-join="none" style="top:168px;left:0px;width:164px;word-spacing:0.833px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px">行</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.5px;margin-right:-0.5px">再多写一些字来保</span></div>
+<div class="tsr-line" data-s="0" data-e="342" data-join="none" style="top:192px;left:0px;width:300px;word-spacing:-0.392px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px">证它跨越两张图叠加起来的高度</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px;margin-right:0.235px">并且继续</span></div>
+<div class="tsr-line" data-s="0" data-e="342" style="top:216px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">向下延伸到浮动结束以后的位置</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
+</div>
+<div class="tsr-para" data-pid="5" data-s0="757" style="position:relative;height:72px">
+<div class="tsr-line" data-s="0" data-e="144" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.392px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px">第二段接着排布</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px;margin-right:0.235px">此时应当已经离开了浮动</span></div>
+<div class="tsr-line" data-s="0" data-e="144" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:-0.444px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.267px">区域</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.267px">回到整幅版心</span><span class="tsr-r tsr-cjk" data-s="0">；</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.267px">如果没有</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.267px;margin-right:0.267px">说明占位</span></div>
+<div class="tsr-line" data-s="0" data-e="144" style="top:48px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">高度的合并计算有误</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
+</div>
+</div>

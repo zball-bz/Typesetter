@@ -43,9 +43,9 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         line.width = u.imgW;
         line.height = u.imgH;
         if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
-        line.y = (Su)py;
+        line.y = (Su)(py + u.floatShiftSu);  // stacked below an active float
         fr.lines.push_back(line);
-        i64 cy = py + u.imgH;
+        i64 cy = py + u.floatShiftSu + u.imgH;
         for (u32 ci = 0; ci < (u32)u.cells.size(); ci++) {
           const TableCell& cell = u.cells[ci];
           u32 prevBp = 0;

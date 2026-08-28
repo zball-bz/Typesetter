@@ -1,0 +1,19 @@
+doc @[0,901) [base]
+  para @[0,108) [base]
+    text @[0,108) [base] str="两张同侧浮动图连续出现时应当堆叠，而不是把第二张清到第一张之下留出空白。"
+  group @[110,236) [base] role="figure" label="fig-a"
+    image @[0,0) [base] src="photos/a.jpg" alt="甲" w=400 h=300 scale=0.4 side="right"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 1："
+      text @[212,227) [base] str="第一张图。"
+  group @[238,385) [base] role="figure" label="fig-b"
+    image @[0,0) [base] src="photos/b.jpg" alt="乙" w=400 h=200 scale=0.4 side="right"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 2："
+      text @[340,376) [base] str="第二张图，紧接着第一张。"
+  heading @[387,411) [base] level=2 label="h-0.1"
+    text @[390,411) [base] str="标题不清除浮动"
+  para @[413,755) [base]
+    text @[413,755) [base] str="正文从第一张图的顶部开始环绕，收窄宽度取两张图中较宽者，直到越过第二张图的底部才恢复整幅版心；这一段要写得足够长，以便看到恢复整幅宽度之后的行，再多写一些字来保证它跨越两张图叠加起来的高度，并且继续向下延伸到浮动结束以后的位置。"
+  para @[757,901) [base]
+    text @[757,901) [base] str="第二段接着排布，此时应当已经离开了浮动区域，回到整幅版心；如果没有，说明占位高度的合并计算有误。"

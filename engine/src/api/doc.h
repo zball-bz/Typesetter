@@ -268,6 +268,7 @@ struct Doc {
         u.narrowK = 0;
         u.narrowLeft = false;
         u.floatClearSu = 0;
+        u.floatShiftSu = 0;
         // the gap layout will insert before this unit
         Su gapBefore = ui > 0 ? (u.tightAbove ? paraGapSu / 3 : paraGapSu)
                               : (firstBlock ? 0 : paraGapSu);
@@ -276,9 +277,18 @@ struct Doc {
           if (flRemain < 0) flRemain = 0;
         }
         if (u.kind == FlowUnit::K::Image && u.floatSide != 0) {
-          if (flRemain > 0) {  // one float at a time: clear the previous
+          // a float arriving while one is active: same side → STACK it
+          // below (the text keeps flowing beside both; occlusion extends,
+          // width = the wider); other side → clear the previous one
+          // (real-world-report.md: Wikipedia opens with two thumbnails)
+          i64 shift = 0;
+          if (flRemain > 0 && flSide == u.floatSide) {
+            shift = flRemain;
+            u.floatShiftSu = (Su)flRemain;
+          } else if (flRemain > 0) {
             u.floatClearSu = (Su)flRemain;
             flRemain = 0;
+            flOccl = 0;
           }
           for (TableCell& c : u.cells) {  // caption breaks to the float width
             BreakResult r = breakWithRetry(c.blocks, LineWidths{u.imgW});
@@ -288,8 +298,9 @@ struct Doc {
           i64 capH = 0;
           for (const TableCell& c : u.cells)
             capH += (i64)c.breakpoints.size() * baseLeading;
-          flRemain = (i64)u.imgH + capH + paraGapSu;  // + one gap of clearance
-          flOccl = u.imgW + emGapSu;
+          flRemain = shift + (i64)u.imgH + capH + paraGapSu;  // + one gap of clearance
+          Su occl = u.imgW + emGapSu;
+          flOccl = shift > 0 && flOccl > occl ? flOccl : occl;
           flSide = u.floatSide;
           continue;
         }

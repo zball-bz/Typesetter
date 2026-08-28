@@ -44,6 +44,15 @@ export const TSR_CSS = `
 /* footnote markers (notes-design.md §1): size is measured (sizeMul); the
    raise is paint-only so line geometry is untouched */
 .tsr-sup, .tsr-doc a.tsr-sup { position: relative; top: -0.45em; text-decoration: none; }
+/* hover/focus popup with the note body (shell installNotePopups) */
+.tsr-notepop { position: absolute; z-index: 20; max-width: 28em; padding: 0.5em 0.7em;
+  font-size: 0.85em; line-height: 1.45; background: var(--tsr-pop-bg, #fffdf7);
+  color: var(--tsr-pop-fg, #1c1c1a); border: 1px solid rgba(0,0,0,0.18);
+  border-radius: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); pointer-events: none;
+  white-space: normal; }
+@media (prefers-color-scheme: dark) {
+  .tsr-notepop { background: var(--tsr-pop-bg, #2a2a28); color: var(--tsr-pop-fg, #e6e4dc);
+    border-color: rgba(255,255,255,0.18); } }
 /* math (math-design.md §8): one inline box per formula, absolutely
    positioned glyph runs in the bundled font; rules are painted boxes */
 .tsr-math { position: relative; display: inline-block; }
@@ -106,6 +115,58 @@ function settleFonts(fonts) {
   if (!loads.length) return Promise.resolve();
   return Promise.race([Promise.allSettled(loads),
                        new Promise((r) => setTimeout(r, 4000))]);
+}
+
+// Footnote popups: hovering (or focusing) a marker shows the note body
+// next to it. Delegated on the container so DOM patches never lose it;
+// the body text is read from the note's paragraph (minus its ↩ link).
+function installNotePopups(container) {
+  let pop = null, current = null;
+  const hide = () => { pop?.remove(); pop = null; current = null; };
+  const bodyOf = (marker) => {
+    const id = marker.getAttribute('href')?.slice(1);
+    const para = id && container.querySelector(`[id="${CSS.escape(id)}"]`);
+    if (!para) return null;
+    const clone = para.cloneNode(true);
+    for (const a of clone.querySelectorAll('a[href^="#tsr-fnref-"]')) a.remove();
+    for (const m of clone.querySelectorAll('.tsr-marker')) m.remove();
+    return clone.textContent.replace(/\s+/g, ' ').trim();
+  };
+  const show = (marker) => {
+    if (current === marker) return;
+    hide();
+    const text = bodyOf(marker);
+    if (!text) return;
+    pop = document.createElement('div');
+    pop.className = 'tsr-notepop';
+    pop.textContent = text;
+    container.appendChild(pop);
+    const cr = container.getBoundingClientRect();
+    const mr = marker.getBoundingClientRect();
+    const w = Math.min(pop.offsetWidth, cr.width);
+    let left = mr.left - cr.left;
+    if (left + w > cr.width) left = Math.max(0, cr.width - w);
+    pop.style.left = `${left}px`;
+    pop.style.top = `${mr.bottom - cr.top + 6}px`;
+    current = marker;
+  };
+  const markerAt = (t) => t?.closest?.('a.tsr-sup[href^="#tsr-fn-"]');
+  const onOver = (e) => { const m = markerAt(e.target); if (m) show(m); else if (!e.target.closest?.('.tsr-notepop')) hide(); };
+  const onOut = (e) => { if (markerAt(e.target) && !markerAt(e.relatedTarget)) hide(); };
+  const onFocus = (e) => { const m = markerAt(e.target); if (m) show(m); };
+  container.addEventListener('mouseover', onOver);
+  container.addEventListener('mouseout', onOut);
+  container.addEventListener('focusin', onFocus);
+  container.addEventListener('focusout', hide);
+  window.addEventListener('scroll', hide, { passive: true });
+  return () => {
+    hide();
+    container.removeEventListener('mouseover', onOver);
+    container.removeEventListener('mouseout', onOut);
+    container.removeEventListener('focusin', onFocus);
+    container.removeEventListener('focusout', hide);
+    window.removeEventListener('scroll', hide);
+  };
 }
 
 let cssInjected = false;
@@ -283,7 +344,9 @@ export function createEngine(opts = {}) {
       onUpgrade?.(upgrades);
       liveDocId = id;
       uninstallCopy?.();
-      uninstallCopy = installCopy(container);
+      const uc = installCopy(container);
+      const un = installNotePopups(container);
+      uninstallCopy = () => { uc?.(); un(); };
       let paraChunks = chunkParas(res.html);
       const handle = {
         html: res.html,

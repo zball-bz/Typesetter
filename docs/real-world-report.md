@@ -34,7 +34,12 @@ the shrink threshold) at 680px, Chromium.
    worker; cross-origin images without CORS (Commons, pbr-book.org) are
    opaque there. Fix: the worker asks the main thread, which reads
    `naturalWidth/Height` off an `<img>`.
-5. **Caption/ref supplements were Chinese in English documents** (“图 3：”
+5. **Boundary glue beside CJK punctuation** — `（1322 年）` set with a
+   0.25em gap after the paren; the CJK–Latin boundary is now inserted only
+   between ideographs and Latin (GB/T 15834).
+6. **Underfull lines** (URL-only) pretended to be justified; they now set
+   ragged, TeX's underfull box.
+7. **Caption/ref supplements were Chinese in English documents** (“图 3：”
    in PBR). Fix: `tsr_set_lang` / `renderTsm(src, {lang})` →
    Figure/Table/Eq. + `: ` for non-CJK documents.
 
@@ -43,13 +48,12 @@ except one HoTT line (+1.0px, an inline formula boundary — open).
 
 ## Engine gaps observed (not fixed)
 
-- **Stacked floats.** Wikipedia opens with two thumbnails in a row; the
-  second float clears the first, and the text after both starts beside
-  the *second* one, leaving the first float's height empty on the left.
-  TeX-style float queue needs `LineWidths` in piecewise form (K1 lines at
-  width A, K2 at width B …) instead of the single narrow prefix; KP's
-  `widths.at(i)` already abstracts this, so it is break.h + layout replay
-  + the tracker in `Doc::typeset`. The most visible remaining defect.
+- ~~Stacked floats~~ — FIXED (2026-08-28): same-side floats now stack
+  (the second sits below the first, `FlowUnit.floatShiftSu`; the
+  occlusion extends and takes the wider width), so text keeps flowing
+  beside both. Opposite-side floats still clear. A piecewise `LineWidths`
+  (K1 lines at width A, K2 at width B) would let text widen between two
+  floats of different widths; not needed for the corpus.
 - **Footnote inserts in print** still render as endnotes (notes-design §1).
 - **Table column widths** are equal; the HoTT points-of-view table wants
   content-fitted columns.
