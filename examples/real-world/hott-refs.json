@@ -1,0 +1,3292 @@
+[
+ {
+  "id": "Euclid",
+  "type": "book",
+  "author": [
+   {
+    "family": "Euclid",
+    "given": ""
+   }
+  ],
+  "title": "Elements, Vols.\\ 1--13",
+  "publisher": "Elsevier",
+  "issued": {
+   "date-parts": [
+    [
+     null
+    ]
+   ]
+  }
+ },
+ {
+  "id": "BauerTaylor09",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Bauer",
+    "given": "Andrej"
+   },
+   {
+    "family": "Taylor",
+    "given": "Paul"
+   }
+  ],
+  "title": "The Dedekind reals in abstract Stone duality",
+  "container-title": "Mathematical structures in computer science",
+  "volume": "19",
+  "issue": "4",
+  "page": "757-838",
+  "issued": {
+   "date-parts": [
+    [
+     2009
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Moh93",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Paulin-Mohring",
+    "given": "Christine"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Bezem",
+    "given": "Marc"
+   },
+   {
+    "family": "Groote",
+    "given": "Jan Friso"
+   }
+  ],
+  "container-title": "Proceedings of the conference Typed Lambda Calculi and Applications",
+  "issue": "664",
+  "issued": {
+   "date-parts": [
+    [
+     1993
+    ]
+   ]
+  }
+ },
+ {
+  "id": "PeterssonSynek",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Petersson",
+    "given": "Kent"
+   },
+   {
+    "family": "Synek",
+    "given": "Dan"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Pitt",
+    "given": "David H."
+   },
+   {
+    "family": "Rydeheard",
+    "given": "David E."
+   },
+   {
+    "family": "Dybjer",
+    "given": "Peter"
+   },
+   {
+    "family": "Pitts",
+    "given": "Andrew M."
+   },
+   {
+    "family": "Poign\\'e",
+    "given": "Axel"
+   }
+  ],
+  "container-title": "Category Theory and Computer Science, Manchester, UK, September 5--8, 1989, Proceedings",
+  "volume": "389",
+  "page": "128-140",
+  "publisher": "Springer",
+  "issued": {
+   "date-parts": [
+    [
+     1989
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Dybjer-2000",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Dybjer",
+    "given": "Peter"
+   }
+  ],
+  "title": "A general formulation of simultaneous inductive-recursive definitions in type theory",
+  "container-title": "Journal of Symbolic Logic",
+  "volume": "65",
+  "issue": "2",
+  "page": "525-549",
+  "issued": {
+   "date-parts": [
+    [
+     2000
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Dybjer-1991",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Dybjer",
+    "given": "Peter"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Huet",
+    "given": "Gerard"
+   },
+   {
+    "family": "Plotkin",
+    "given": "Gordon"
+   }
+  ],
+  "title": "Inductive sets and families in Martin-L\\\"of's type theory and their set-theoretic semantics",
+  "container-title": "Logical Frameworks",
+  "page": "280-30",
+  "publisher": "Cambridge University Press",
+  "issued": {
+   "date-parts": [
+    [
+     1991
+    ]
+   ]
+  }
+ },
+ {
+  "id": "CoquandPaulin",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Coquand",
+    "given": "Thierry"
+   },
+   {
+    "family": "Paulin",
+    "given": "Christine"
+   }
+  ],
+  "title": "Inductively defined types",
+  "container-title": "COLOG-88 (Tallinn, 1988)",
+  "volume": "416",
+  "page": "50-66",
+  "publisher": "Springer",
+  "issued": {
+   "date-parts": [
+    [
+     1990
+    ]
+   ]
+  }
+ },
+ {
+  "id": "PfenningPaulinMohring",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Pfenning",
+    "given": "Frank"
+   },
+   {
+    "family": "Paulin-Mohring",
+    "given": "Christine"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Main",
+    "given": "Michael G."
+   },
+   {
+    "family": "Melton",
+    "given": "Austin"
+   },
+   {
+    "family": "Mislove",
+    "given": "Michael W."
+   },
+   {
+    "family": "Schmidt",
+    "given": "David A."
+   }
+  ],
+  "title": "Inductively defined types in the calculus of constructions",
+  "container-title": "Mathematical Foundations of Programming Semantics, 5th International Conference, Tulane University, New Orleans, Louisiana, USA, March 29 -- April 1, 1989, Proceedings",
+  "issue": "442",
+  "page": "209-228",
+  "publisher": "Springer",
+  "issued": {
+   "date-parts": [
+    [
+     1990
+    ]
+   ]
+  }
+ },
+ {
+  "id": "martin-lof-hauptsatz",
+  "type": "paper-conference",
+  "title": "Hauptsatz for the intuitionistic theory of iterated inductive definitions",
+  "container-title": "Proceedings of the Second Scandinavian Logic Symposium (University of Oslo 1970)",
+  "volume": "63",
+  "page": "179-216",
+  "publisher": "North-Holland",
+  "issued": {
+   "date-parts": [
+    [
+     1971
+    ]
+   ]
+  }
+ },
+ {
+  "id": "WR-PM",
+  "type": "book",
+  "author": [
+   {
+    "family": "Whitehead",
+    "given": "Alfred North"
+   },
+   {
+    "family": "Russell",
+    "given": "Bertrand"
+   }
+  ],
+  "page": "xlvi+410",
+  "publisher": "Cambridge University Press",
+  "issued": {
+   "date-parts": [
+    [
+     1962
+    ]
+   ]
+  }
+ },
+ {
+  "id": "TroelstraII",
+  "type": "book",
+  "author": [
+   {
+    "family": "Troelstra",
+    "given": "Anne Sjerp"
+   },
+   {
+    "family": "van Dalen",
+    "given": "Dirk"
+   }
+  ],
+  "title": "Constructivism in mathematics. Vol. II",
+  "volume": "123",
+  "page": "i-xviii and 345-880 and I-LII",
+  "publisher": "North-Holland Publishing Co.",
+  "issued": {
+   "date-parts": [
+    [
+     1988
+    ]
+   ]
+  }
+ },
+ {
+  "id": "TroelstraI",
+  "type": "book",
+  "author": [
+   {
+    "family": "Troelstra",
+    "given": "Anne Sjerp"
+   },
+   {
+    "family": "van Dalen",
+    "given": "Dirk"
+   }
+  ],
+  "title": "Constructivism in mathematics. Vol. I",
+  "volume": "121",
+  "page": "xx+342+XIV",
+  "publisher": "North-Holland Publishing Co.",
+  "issued": {
+   "date-parts": [
+    [
+     1988
+    ]
+   ]
+  }
+ },
+ {
+  "id": "martin2006100",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Martin-L\\\"of",
+    "given": "Per"
+   }
+  ],
+  "title": "100 years of Zermelo's axiom of choice: what was the problem with it?",
+  "container-title": "The Computer Journal",
+  "volume": "49",
+  "issue": "3",
+  "page": "345-350",
+  "publisher": "BCS",
+  "issued": {
+   "date-parts": [
+    [
+     2006
+    ]
+   ]
+  }
+ },
+ {
+  "id": "aczel2002collection",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Aczel",
+    "given": "Peter"
+   },
+   {
+    "family": "Gambino",
+    "given": "Nicola"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Callaghan",
+    "given": "Paul"
+   },
+   {
+    "family": "Luo",
+    "given": "Zhaohui"
+   },
+   {
+    "family": "McKinna",
+    "given": "James"
+   },
+   {
+    "family": "Pollack",
+    "given": "Robert"
+   }
+  ],
+  "title": "Collection principles in dependent type theory",
+  "container-title": "Types for Proofs and Programs, International Workshop, TYPES 2000, Durham, UK, December 8-12, 2000, Selected Papers",
+  "volume": "2277",
+  "page": "1-23",
+  "publisher": "Springer",
+  "issued": {
+   "date-parts": [
+    [
+     2002
+    ]
+   ]
+  }
+ },
+ {
+  "id": "maietti2005toward",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Maietti",
+    "given": "Maria Emilia"
+   },
+   {
+    "family": "Sambin",
+    "given": "Giovanni"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Crosilla",
+    "given": "Laura"
+   },
+   {
+    "family": "Schuster",
+    "given": "Peter"
+   }
+  ],
+  "title": "Toward a minimalist foundation for constructive mathematics",
+  "container-title": "From Sets and Types to Topology and Analysis: Practicable Foundations for Constructive Mathematics",
+  "volume": "48",
+  "page": "91-114",
+  "publisher": "Clarendon Press",
+  "issued": {
+   "date-parts": [
+    [
+     2005
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Spiwack",
+  "type": "thesis",
+  "author": [
+   {
+    "family": "Spiwack",
+    "given": "Arnaud"
+   }
+  ],
+  "title": "A Journey Exploring the Power and Limits of Dependent Type Theory",
+  "publisher": "\\'Ecole Polytechnique, Palaiseau, France",
+  "issued": {
+   "date-parts": [
+    [
+     2011
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Palmgren-FT",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Palmgren",
+    "given": "Erik"
+   }
+  ],
+  "title": "A constructive and functorial embedding of locally compact metric spaces into locales",
+  "container-title": "Topology and its Applications",
+  "volume": "154",
+  "issue": "9",
+  "page": "1854-1880",
+  "issued": {
+   "date-parts": [
+    [
+     2007
+    ]
+   ]
+  },
+  "DOI": "10.1016/j.topol.2007.01.018",
+  "URL": "http://dx.doi.org/10.1016/j.topol.2007.01.018"
+ },
+ {
+  "id": "forsbergfinite",
+  "type": "manuscript",
+  "author": [
+   {
+    "family": "Forsberg",
+    "given": "Fredrik Nordvall"
+   },
+   {
+    "family": "Setzer",
+    "given": "Anton"
+   }
+  ],
+  "title": "A finite axiomatisation of inductive-inductive definitions",
+  "issued": {
+   "date-parts": [
+    [
+     2012
+    ]
+   ]
+  }
+ },
+ {
+  "id": "lawvere-adjinfound",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Lawvere",
+    "given": "F. William"
+   }
+  ],
+  "title": "Adjointness in Foundations",
+  "container-title": "Reprints in Theory and Applications of Categories",
+  "volume": "16",
+  "page": "1-16",
+  "issued": {
+   "date-parts": [
+    [
+     2006
+    ]
+   ]
+  }
+ },
+ {
+  "id": "somma",
+  "type": "book",
+  "author": [
+   {
+    "family": "Sommaruga",
+    "given": "Giovanni"
+   }
+  ],
+  "title": "History and Philosophy of Constructive Type Theory",
+  "issue": "290",
+  "publisher": "Kluwer",
+  "issued": {
+   "date-parts": [
+    [
+     2010
+    ]
+   ]
+  }
+ },
+ {
+  "id": "kamar",
+  "type": "book",
+  "author": [
+   {
+    "family": "Kamareddine",
+    "given": "Fairouz"
+   },
+   {
+    "family": "Laan",
+    "given": "Twan"
+   },
+   {
+    "family": "Nederpelt",
+    "given": "Rob"
+   }
+  ],
+  "title": "A Modern Perspective on Type Theory: From its Origins until Today",
+  "issue": "29",
+  "publisher": "Kluwer",
+  "issued": {
+   "date-parts": [
+    [
+     2004
+    ]
+   ]
+  }
+ },
+ {
+  "id": "beeson",
+  "type": "book",
+  "author": [
+   {
+    "family": "Beeson",
+    "given": "Michael"
+   }
+  ],
+  "title": "Foundations of Constructive Mathematics",
+  "publisher": "Springer",
+  "issued": {
+   "date-parts": [
+    [
+     1985
+    ]
+   ]
+  }
+ },
+ {
+  "id": "heyting1966intuitionism",
+  "type": "book",
+  "author": [
+   {
+    "family": "Heyting",
+    "given": "Arend"
+   }
+  ],
+  "title": "Intuitionism: an introduction",
+  "publisher": "North-Holland Pub. Co.",
+  "issued": {
+   "date-parts": [
+    [
+     1966
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Scott70",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Scott",
+    "given": "Dana"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Laudet",
+    "given": "M."
+   },
+   {
+    "family": "Lacombe",
+    "given": "D."
+   },
+   {
+    "family": "Nolin",
+    "given": "L."
+   },
+   {
+    "family": "Sch\\\"utzenberger",
+    "given": "M."
+   }
+  ],
+  "title": "Constructive Validity",
+  "container-title": "Symposium on Automatic Demonstration",
+  "volume": "125",
+  "page": "237-275",
+  "publisher": "Springer-Verlag",
+  "issued": {
+   "date-parts": [
+    [
+     1970
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Richman-reals",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Richman",
+    "given": "Fred"
+   }
+  ],
+  "title": "Real numbers and other completions",
+  "container-title": "Mathematical Logic Quarterly",
+  "volume": "54",
+  "issue": "1",
+  "page": "98-108",
+  "issued": {
+   "date-parts": [
+    [
+     2008
+    ]
+   ]
+  },
+  "DOI": "10.1002/malq.200710024",
+  "URL": "http://dx.doi.org/10.1002/malq.200710024"
+ },
+ {
+  "id": "Richman00thefundamental",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Richman",
+    "given": "Fred"
+   }
+  ],
+  "title": "The fundamental theorem of algebra: a constructive development without choice",
+  "container-title": "Pacific Journal of Mathematics",
+  "volume": "196",
+  "issue": "1",
+  "page": "213-230",
+  "issued": {
+   "date-parts": [
+    [
+     2000
+    ]
+   ]
+  }
+ },
+ {
+  "id": "HoTTbook",
+  "type": "report",
+  "author": [
+   {
+    "family": "Program",
+    "given": "The Univalent Foundations"
+   }
+  ],
+  "title": "Homotopy type theory: Univalent foundations of mathematics",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "AczelCZF",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Aczel",
+    "given": "Peter"
+   }
+  ],
+  "editor": [
+   {
+    "family": "MacIntyre",
+    "given": "A."
+   },
+   {
+    "family": "Pacholski",
+    "given": "L."
+   },
+   {
+    "family": "Paris",
+    "given": "J."
+   }
+  ],
+  "title": "The type theoretic interpretation of constructive set theory",
+  "container-title": "Logic Colloquium '77",
+  "volume": "96",
+  "page": "55-66",
+  "publisher": "North-Holland",
+  "issued": {
+   "date-parts": [
+    [
+     1978
+    ]
+   ]
+  }
+ },
+ {
+  "id": "JoyalMoerdijk1995",
+  "type": "book",
+  "author": [
+   {
+    "family": "Joyal",
+    "given": "A."
+   },
+   {
+    "family": "Moerdijk",
+    "given": "I."
+   }
+  ],
+  "title": "Algebraic set theory",
+  "volume": "220",
+  "page": "viii+123",
+  "publisher": "Cambridge University Press",
+  "issued": {
+   "date-parts": [
+    [
+     1995
+    ]
+   ]
+  },
+  "DOI": "10.1017/CBO9780511752483",
+  "URL": "http://dx.doi.org/10.1017/CBO9780511752483"
+ },
+ {
+  "id": "PM2",
+  "type": "book",
+  "author": [
+   {
+    "family": "Whitehead",
+    "given": "Alfred North"
+   },
+   {
+    "family": "Russell",
+    "given": "Bertrand"
+   }
+  ],
+  "title": "Principia mathematica, 3 vol.s",
+  "publisher": "Cambridge University Press",
+  "issued": {
+   "date-parts": [
+    [
+     null
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Lawvere-Rosenburgh",
+  "type": "book",
+  "author": [
+   {
+    "family": "Lawvere",
+    "given": "F. William"
+   },
+   {
+    "family": "Rosebrugh",
+    "given": "Robert"
+   }
+  ],
+  "title": "Sets for mathematics",
+  "page": "xiv+261",
+  "publisher": "Cambridge University Press",
+  "issued": {
+   "date-parts": [
+    [
+     2003
+    ]
+   ]
+  },
+  "DOI": "10.1017/CBO9780511755460",
+  "URL": "http://dx.doi.org/10.1017/CBO9780511755460"
+ },
+ {
+  "id": "modalTT",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Paiva",
+    "given": "Valeria de"
+   },
+   {
+    "family": "Gor\\'e",
+    "given": "Rajeev"
+   },
+   {
+    "family": "Mendler",
+    "given": "Michael"
+   }
+  ],
+  "title": "Modalities in constructive logics and type theories",
+  "container-title": "Journal of Logic and Computation",
+  "volume": "14",
+  "issue": "4",
+  "page": "439-446",
+  "issued": {
+   "date-parts": [
+    [
+     2004
+    ]
+   ]
+  }
+ },
+ {
+  "id": "gonthier",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Gonthier",
+    "given": "Georges"
+   },
+   {
+    "family": "Asperti",
+    "given": "Andrea"
+   },
+   {
+    "family": "Avigad",
+    "given": "Jeremy"
+   },
+   {
+    "family": "Bertot",
+    "given": "Yves"
+   },
+   {
+    "family": "Cohen",
+    "given": "Cyril"
+   },
+   {
+    "family": "Garillot",
+    "given": "Fran\\c cois"
+   },
+   {
+    "family": "Roux",
+    "given": "St\\'ephane Le"
+   },
+   {
+    "family": "Mahboubi",
+    "given": "Assia"
+   },
+   {
+    "family": "O'Connor",
+    "given": "Russell"
+   },
+   {
+    "family": "Biha",
+    "given": "Sidi Ould"
+   },
+   {
+    "family": "Pasca",
+    "given": "Ioana"
+   },
+   {
+    "family": "Rideau",
+    "given": "Laurence"
+   },
+   {
+    "family": "Solovyev",
+    "given": "Alexey"
+   },
+   {
+    "family": "Tassi",
+    "given": "Enrico"
+   },
+   {
+    "family": "Thery",
+    "given": "Laurent"
+   }
+  ],
+  "title": "A Machine-Checked Proof of the Odd Order Theorem",
+  "container-title": "Interactive Theorem Proving",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "wikipedia-groups",
+  "type": "document",
+  "author": [
+   {
+    "family": "Wikipedia",
+    "given": ""
+   }
+  ],
+  "title": "Homotopy groups of spheres",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  },
+  "URL": "http://en.wikipedia.org/wiki/Homotopy_groups_of_spheres\\#Table"
+ },
+ {
+  "id": "bridges2002compactness",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Bridges",
+    "given": "Douglas"
+   },
+   {
+    "family": "Ishihara",
+    "given": "Hajime"
+   },
+   {
+    "family": "Schuster",
+    "given": "Peter"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Bradfield",
+    "given": "Julian C."
+   }
+  ],
+  "title": "Compactness and continuity, constructively revisited",
+  "container-title": "Computer Science Logic, 16th International Workshop, CSL 2002, 11th Annual Conference of the EACSL, Edinburgh, Scotland, UK, September 22-25, 2002, Proceedings",
+  "volume": "2471",
+  "page": "89-102",
+  "publisher": "Springer",
+  "issued": {
+   "date-parts": [
+    [
+     2002
+    ]
+   ]
+  }
+ },
+ {
+  "id": "EscardoSimpson-01",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Escard\\'o",
+    "given": "Mart\\'\\in H\\\"otzel"
+   },
+   {
+    "family": "Simpson",
+    "given": "Alex K."
+   }
+  ],
+  "title": "A Universal Characterization of the Closed Euclidean Interval",
+  "container-title": "16th Annual IEEE Symposium on Logic in Computer Science, Boston, Massachusetts, USA, June 16-19, 2001, Proceedings",
+  "page": "115-125",
+  "publisher": "IEEE Computer Society",
+  "issued": {
+   "date-parts": [
+    [
+     2001
+    ]
+   ]
+  }
+ },
+ {
+  "id": "knuth74-_surreal_number",
+  "type": "book",
+  "author": [
+   {
+    "family": "Knuth",
+    "given": "Donald Ervin"
+   }
+  ],
+  "title": "Surreal Numbers",
+  "publisher": "Addison-Wesley",
+  "issued": {
+   "date-parts": [
+    [
+     1974
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Diaconescu",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Diaconescu",
+    "given": "Radu"
+   }
+  ],
+  "title": "Axiom of choice and complementation",
+  "container-title": "Proceedings of the American Mathematical Society",
+  "volume": "51",
+  "page": "176-178",
+  "issued": {
+   "date-parts": [
+    [
+     1975
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Bishop1967",
+  "type": "book",
+  "author": [
+   {
+    "family": "Bishop",
+    "given": "Erret"
+   }
+  ],
+  "title": "Foundations of constructive analysis",
+  "page": "xiii+370",
+  "publisher": "McGraw-Hill Book Co.",
+  "issued": {
+   "date-parts": [
+    [
+     1967
+    ]
+   ]
+  }
+ },
+ {
+  "id": "aczel2001notes",
+  "type": "report",
+  "author": [
+   {
+    "family": "Aczel",
+    "given": "Peter"
+   },
+   {
+    "family": "Rathjen",
+    "given": "Michael"
+   }
+  ],
+  "title": "Notes on Constructive Set Theory",
+  "volume": "40",
+  "issued": {
+   "date-parts": [
+    [
+     2000
+    ]
+   ]
+  }
+ },
+ {
+  "id": "MoerdijkPalmgren2002",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Moerdijk",
+    "given": "Ieke"
+   },
+   {
+    "family": "Palmgren",
+    "given": "Erik"
+   }
+  ],
+  "title": "Type theories, toposes and constructive set theory: predicative aspects of AST",
+  "container-title": "Annals of Pure and Applied Logic",
+  "volume": "114",
+  "issue": "1--3",
+  "page": "155-201",
+  "issued": {
+   "date-parts": [
+    [
+     2002
+    ]
+   ]
+  },
+  "DOI": "10.1016/S0168-0072(01)00079-3",
+  "URL": "http://dx.doi.org/10.1016/S0168-0072(01)00079-3"
+ },
+ {
+  "id": "jacobs1999categorical",
+  "type": "book",
+  "author": [
+   {
+    "family": "Jacobs",
+    "given": "Bart"
+   }
+  ],
+  "title": "Categorical logic and type theory",
+  "volume": "141",
+  "publisher": "Elsevier",
+  "issued": {
+   "date-parts": [
+    [
+     1999
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Universe-poly",
+  "type": "manuscript",
+  "author": [
+   {
+    "family": "Voevodsky",
+    "given": "Vladimir"
+   }
+  ],
+  "title": "A universe polymorphic type system",
+  "issued": {
+   "date-parts": [
+    [
+     2012
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Altenkirch1999",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Altenkirch",
+    "given": "Thorsten"
+   }
+  ],
+  "title": "Extensional Equality in Intensional Type Theory",
+  "container-title": "14th Annual IEEE Symposium on Logic in Computer Science, Trento, Italy, July 2--5, 1999",
+  "page": "412-420",
+  "issued": {
+   "date-parts": [
+    [
+     1999
+    ]
+   ]
+  }
+ },
+ {
+  "id": "pelayo2013preliminary",
+  "type": "document",
+  "author": [
+   {
+    "family": "Pelayo",
+    "given": "\\'Alvaro"
+   },
+   {
+    "family": "Voevodsky",
+    "given": "Vladimir"
+   },
+   {
+    "family": "Warren",
+    "given": "Michael A"
+   }
+  ],
+  "title": "A preliminary univalent formalization of the $p$-adic numbers",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Wilander2010",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Wilander",
+    "given": "Olov"
+   }
+  ],
+  "title": "Setoids and universes",
+  "container-title": "Mathematical Structures in Computer Science",
+  "volume": "20",
+  "issue": "4",
+  "page": "563-576",
+  "issued": {
+   "date-parts": [
+    [
+     2010
+    ]
+   ]
+  },
+  "DOI": "10.1017/S0960129510000071",
+  "URL": "http://dx.doi.org/10.1017/S0960129510000071"
+ },
+ {
+  "id": "Mines-R-R-1988",
+  "type": "book",
+  "author": [
+   {
+    "family": "Mines",
+    "given": "Ray"
+   },
+   {
+    "family": "Richman",
+    "given": "Fred"
+   },
+   {
+    "family": "Ruitenburg",
+    "given": "Wim"
+   }
+  ],
+  "title": "A course in constructive algebra",
+  "publisher": "Springer-Verlag",
+  "issued": {
+   "date-parts": [
+    [
+     1988
+    ]
+   ]
+  }
+ },
+ {
+  "id": "coquand2012constructive",
+  "type": "manuscript",
+  "author": [
+   {
+    "family": "Barras",
+    "given": "Bruno"
+   },
+   {
+    "family": "Coquand",
+    "given": "Thierry"
+   },
+   {
+    "family": "Huber",
+    "given": "Simon"
+   }
+  ],
+  "title": "A Generalization of Takeuti-Gandy Interpretation",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "RijkeSpitters",
+  "type": "document",
+  "author": [
+   {
+    "family": "Rijke",
+    "given": "Egbert"
+   },
+   {
+    "family": "Spitters",
+    "given": "Bas"
+   }
+  ],
+  "title": "Sets in homotopy type theory",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "hedberg1998coherence",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Hedberg",
+    "given": "Michael"
+   }
+  ],
+  "title": "A coherence theorem for Martin-L\\\"of's type theory",
+  "container-title": "Journal of Functional Programming",
+  "volume": "8",
+  "issue": "4",
+  "page": "413-436",
+  "publisher": "Cambridge Univ Press",
+  "issued": {
+   "date-parts": [
+    [
+     1998
+    ]
+   ]
+  }
+ },
+ {
+  "id": "krausgeneralizations",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Kraus",
+    "given": "Nicolai"
+   },
+   {
+    "family": "Escard\\'o",
+    "given": "Mart\\in"
+   },
+   {
+    "family": "Coquand",
+    "given": "Thierry"
+   },
+   {
+    "family": "Altenkirch",
+    "given": "Thorsten"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Hasegawa",
+    "given": "Masahito"
+   }
+  ],
+  "title": "Generalizations of Hedberg's Theorem",
+  "container-title": "11th International Conference, Typed Lambda Calculus and Applications 2013, Eindhoven, The Netherlands, June 26--28, 2013. Proceedings",
+  "volume": "7941",
+  "page": "173-188",
+  "publisher": "Springer Berlin Heidelberg",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "rezk01css",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Rezk",
+    "given": "Charles"
+   }
+  ],
+  "title": "A model for the homotopy theory of homotopy theory",
+  "container-title": "Transactions of the American Mathematical Society",
+  "volume": "353",
+  "issue": "3",
+  "page": "973-1007",
+  "issued": {
+   "date-parts": [
+    [
+     2001
+    ]
+   ]
+  }
+ },
+ {
+  "id": "bsp12infncats",
+  "type": "document",
+  "author": [
+   {
+    "family": "Barwick",
+    "given": "Clark"
+   },
+   {
+    "family": "Schommer-Pries",
+    "given": "Christopher"
+   }
+  ],
+  "title": "On the Unicity of the Homotopy Theory of Higher Categories",
+  "issued": {
+   "date-parts": [
+    [
+     2011
+    ]
+   ]
+  }
+ },
+ {
+  "id": "hs-gpd-typethy",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Hofmann",
+    "given": "Martin"
+   },
+   {
+    "family": "Streicher",
+    "given": "Thomas"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Sambin",
+    "given": "Giovanni"
+   },
+   {
+    "family": "Smith",
+    "given": "Jan M."
+   }
+  ],
+  "title": "The groupoid interpretation of type theory",
+  "container-title": "Twenty-five years of constructive type theory (Venice, 1995)",
+  "volume": "36",
+  "page": "83-111",
+  "publisher": "Oxford University Press",
+  "issued": {
+   "date-parts": [
+    [
+     1998
+    ]
+   ]
+  }
+ },
+ {
+  "id": "bg-type-wkom",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "van den Berg",
+    "given": "Benno"
+   },
+   {
+    "family": "Garner",
+    "given": "Richard"
+   }
+  ],
+  "title": "Types are weak $\\omega$-groupoids",
+  "container-title": "Proceedings of the London Mathematical Society",
+  "volume": "102",
+  "issue": "2",
+  "page": "370-394",
+  "issued": {
+   "date-parts": [
+    [
+     2011
+    ]
+   ]
+  },
+  "DOI": "10.1112/plms/pdq026",
+  "URL": "http://plms.oxfordjournals.org/content/102/2/370.abstract"
+ },
+ {
+  "id": "pll-wkom-type",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Lumsdaine",
+    "given": "Peter LeFanu"
+   }
+  ],
+  "title": "Weak $\\omega$-categories from intensional type theory",
+  "container-title": "Typed lambda calculi and applications",
+  "volume": "6",
+  "page": "1-19",
+  "issued": {
+   "date-parts": [
+    [
+     2010
+    ]
+   ]
+  },
+  "URL": "http://www.springerlink.com/index/k5w4n04273035095.pdf"
+ },
+ {
+  "id": "lh-canonicity",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Licata",
+    "given": "Daniel R."
+   },
+   {
+    "family": "Harper",
+    "given": "Robert"
+   }
+  ],
+  "title": "Canonicity for 2-dimensional type theory",
+  "container-title": "Proceedings of the 39th annual ACM SIGPLAN-SIGACT symposium on Principles of programming languages",
+  "page": "337-348",
+  "publisher": "ACM",
+  "issued": {
+   "date-parts": [
+    [
+     2012
+    ]
+   ]
+  },
+  "DOI": "10.1145/2103656.2103697",
+  "URL": "http://doi.acm.org/10.1145/2103656.2103697"
+ },
+ {
+  "id": "garner-depprod",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Garner",
+    "given": "Richard"
+   }
+  ],
+  "title": "On the strength of dependent products in the type theory of Martin-L\\\"of",
+  "container-title": "Annals of Pure and Applied Logic",
+  "volume": "160",
+  "issue": "1",
+  "page": "1-12",
+  "issued": {
+   "date-parts": [
+    [
+     2009
+    ]
+   ]
+  },
+  "DOI": "10.1016/j.apal.2008.12.003",
+  "URL": "http://dx.doi.org/10.1016/j.apal.2008.12.003"
+ },
+ {
+  "id": "klv-ssetmodel",
+  "type": "document",
+  "author": [
+   {
+    "family": "Kapulkin",
+    "given": "Chris"
+   },
+   {
+    "family": "Lumsdaine",
+    "given": "Peter LeFanu"
+   },
+   {
+    "family": "Voevodsky",
+    "given": "Vladimir"
+   }
+  ],
+  "title": "The Simplicial Model of Univalent Foundations",
+  "issued": {
+   "date-parts": [
+    [
+     2012
+    ]
+   ]
+  }
+ },
+ {
+  "id": "ls-pi1s1",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Licata",
+    "given": "Daniel R."
+   },
+   {
+    "family": "Shulman",
+    "given": "Michael"
+   }
+  ],
+  "title": "Calculating the Fundamental Group of the Circle in Homotopy Type Theory",
+  "container-title": "LICS 2013: Proceedings of the Twenty-Eighth Annual ACM/IEEE Symposium on Logic in Computer Science",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "ab-bracket-types",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Awodey",
+    "given": "Steven"
+   },
+   {
+    "family": "Bauer",
+    "given": "Andrej"
+   }
+  ],
+  "title": "Propositions as [types]",
+  "container-title": "Journal of Logic and Computation",
+  "volume": "14",
+  "issue": "4",
+  "page": "447-471",
+  "issued": {
+   "date-parts": [
+    [
+     2004
+    ]
+   ]
+  },
+  "DOI": "10.1093/logcom/14.4.447",
+  "URL": "http://dx.doi.org/10.1093/logcom/14.4.447"
+ },
+ {
+  "id": "ls-hits",
+  "type": "manuscript",
+  "author": [
+   {
+    "family": "Lumsdaine",
+    "given": "Peter LeFanu"
+   },
+   {
+    "family": "Shulman",
+    "given": "Michael"
+   }
+  ],
+  "title": "Semantics of higher inductive types",
+  "issued": {
+   "date-parts": [
+    [
+     2017
+    ]
+   ]
+  }
+ },
+ {
+  "id": "howard-pat",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Howard",
+    "given": "William A."
+   }
+  ],
+  "editor": [
+   {
+    "family": "Seldin",
+    "given": "Jonathan P.; Hindley"
+   }
+  ],
+  "title": "The formulae-as-types notion of construction",
+  "container-title": "To H.B. Curry: Essays on Combinatory Logic, Lambda Calculus and Formalism",
+  "page": "479-490",
+  "publisher": "Academic Press",
+  "issued": {
+   "date-parts": [
+    [
+     1980
+    ]
+   ]
+  }
+ },
+ {
+  "id": "lurie-higher-topoi",
+  "type": "book",
+  "author": [
+   {
+    "family": "Lurie",
+    "given": "Jacob"
+   }
+  ],
+  "title": "Higher topos theory",
+  "issue": "170",
+  "publisher": "Princeton University Press",
+  "issued": {
+   "date-parts": [
+    [
+     2009
+    ]
+   ]
+  }
+ },
+ {
+  "id": "blass-freealg",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Blass",
+    "given": "Andreas"
+   }
+  ],
+  "title": "Words, free algebras, and coequalizers",
+  "container-title": "Fundamenta Mathematicae",
+  "volume": "117",
+  "issue": "2",
+  "page": "117-160",
+  "publisher": "Institute of Mathematics Polish Academy of Sciences",
+  "issued": {
+   "date-parts": [
+    [
+     1983
+    ]
+   ]
+  },
+  "URL": "http://eudml.org/doc/211359"
+ },
+ {
+  "id": "gitik-unc-sing",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Gitik",
+    "given": "Moti"
+   }
+  ],
+  "title": "All uncountable cardinals can be singular",
+  "container-title": "Israel Journal of Mathematics",
+  "volume": "35",
+  "issue": "1--2",
+  "page": "61-88",
+  "issued": {
+   "date-parts": [
+    [
+     1980
+    ]
+   ]
+  },
+  "DOI": "10.1007/BF02760939",
+  "URL": "http://dx.doi.org/10.1007/BF02760939"
+ },
+ {
+  "id": "constable-86nuprl-book",
+  "type": "book",
+  "author": [
+   {
+    "family": "Constable",
+    "given": "Robert L."
+   },
+   {
+    "family": "Allen",
+    "given": "Stuart F."
+   },
+   {
+    "family": "Bromley",
+    "given": "H. M."
+   },
+   {
+    "family": "Cleaveland",
+    "given": "W. R."
+   },
+   {
+    "family": "Cremer",
+    "given": "J. F."
+   },
+   {
+    "family": "Harper",
+    "given": "Robert W."
+   },
+   {
+    "family": "Howe",
+    "given": "Douglas J."
+   },
+   {
+    "family": "Knoblock",
+    "given": "T. B."
+   },
+   {
+    "family": "Mendler",
+    "given": "N. P."
+   },
+   {
+    "family": "Panangaden",
+    "given": "P."
+   },
+   {
+    "family": "Sasaki",
+    "given": "James T."
+   },
+   {
+    "family": "Smith",
+    "given": "Scott F."
+   }
+  ],
+  "title": "Implementing Mathematics with the NuPRL Proof Development System",
+  "publisher": "Prentice Hall",
+  "issued": {
+   "date-parts": [
+    [
+     1986
+    ]
+   ]
+  }
+ },
+ {
+  "id": "altenkirch-07ott",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Altenkirch",
+    "given": "Thorsten"
+   },
+   {
+    "family": "McBride",
+    "given": "Conor"
+   },
+   {
+    "family": "Swierstra",
+    "given": "Wouter"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Stump",
+    "given": "Aaron"
+   },
+   {
+    "family": "Xi",
+    "given": "Hongwei"
+   }
+  ],
+  "title": "Observational Equality, Now!",
+  "container-title": "Proceedings of the ACM Workshop Programming Languages meets Program Verification, PLPV 2007, Freiburg, Germany, October 5, 2007",
+  "issued": {
+   "date-parts": [
+    [
+     2007
+    ]
+   ]
+  }
+ },
+ {
+  "id": "hofmann-thesis",
+  "type": "thesis",
+  "author": [
+   {
+    "family": "Hofmann",
+    "given": "Martin"
+   }
+  ],
+  "title": "Extensional concepts in intensional type theory",
+  "publisher": "University of Edinburgh",
+  "issued": {
+   "date-parts": [
+    [
+     1995
+    ]
+   ]
+  }
+ },
+ {
+  "id": "hofmann-syntax-and-semantics",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Hofmann",
+    "given": "Martin"
+   }
+  ],
+  "title": "Syntax and semantics of dependent types",
+  "container-title": "Semantics and logics of computation",
+  "volume": "14",
+  "page": "79-130",
+  "publisher": "Cambridge University Press",
+  "issued": {
+   "date-parts": [
+    [
+     1997
+    ]
+   ]
+  },
+  "DOI": "10.1017/CBO9780511526619.004",
+  "URL": "http://dx.doi.org/10.1017/CBO9780511526619.004"
+ },
+ {
+  "id": "martin-lof-bibliopolis",
+  "type": "book",
+  "author": [
+   {
+    "family": "Martin-L\\\"of",
+    "given": "Per"
+   }
+  ],
+  "title": "Intuitionistic type theory",
+  "volume": "1",
+  "page": "iv+91",
+  "publisher": "Bibliopolis",
+  "issued": {
+   "date-parts": [
+    [
+     1984
+    ]
+   ]
+  }
+ },
+ {
+  "id": "coquand-paradox",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Coquand",
+    "given": "Thierry"
+   }
+  ],
+  "title": "The paradox of trees in type theory",
+  "container-title": "BIT Numerical Mathematics",
+  "volume": "32",
+  "issue": "1",
+  "page": "10-14",
+  "publisher": "Springer",
+  "issued": {
+   "date-parts": [
+    [
+     1992
+    ]
+   ]
+  }
+ },
+ {
+  "id": "conway-onag",
+  "type": "book",
+  "author": [
+   {
+    "family": "Conway",
+    "given": "John H."
+   }
+  ],
+  "title": "On numbers and games",
+  "page": "xii+242",
+  "publisher": "A K Peters Ltd.",
+  "issued": {
+   "date-parts": [
+    [
+     1976
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Goedel-T-1958",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "G\\\"odel",
+    "given": "Kurt"
+   }
+  ],
+  "title": "\\\"Uber eine bisher noch nicht ben\\\"utzte Erweiterung des finiten Standpunktes",
+  "container-title": "Dialectica. International Journal of Philosophy",
+  "volume": "12",
+  "page": "280-287",
+  "issued": {
+   "date-parts": [
+    [
+     1958
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Tait-1966",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Tait",
+    "given": "William W."
+   }
+  ],
+  "title": "Intensional interpretations of functionals of finite type. I",
+  "container-title": "The Journal of Symbolic Logic",
+  "volume": "32",
+  "page": "198-212",
+  "issued": {
+   "date-parts": [
+    [
+     1967
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Martin-Lof-1972",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Martin-L\\\"of",
+    "given": "Per"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Sambin",
+    "given": "Giovanni"
+   },
+   {
+    "family": "Smith",
+    "given": "Jan M."
+   }
+  ],
+  "title": "An intuitionistic theory of types",
+  "container-title": "Twenty-five years of constructive type theory (Venice, 1995)",
+  "volume": "36",
+  "page": "127-172",
+  "publisher": "Oxford University Press",
+  "issued": {
+   "date-parts": [
+    [
+     1998
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Martin-Lof-1973",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Martin-L\\\"of",
+    "given": "Per"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Rose",
+    "given": "H.E."
+   },
+   {
+    "family": "Shepherdson",
+    "given": "J.C."
+   }
+  ],
+  "title": "An intuitionistic theory of types: predicative part",
+  "container-title": "Logic Colloquium '73, Proceedings of the Logic Colloquium",
+  "volume": "80",
+  "page": "73-118",
+  "publisher": "North-Holland",
+  "issued": {
+   "date-parts": [
+    [
+     1975
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Martin-Lof-1979",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Martin-L\\\"of",
+    "given": "Per"
+   }
+  ],
+  "editor": [
+   {
+    "family": "Cohen",
+    "given": "L. Jonathan"
+   },
+   {
+    "family": "Łoś",
+    "given": "Jerzy"
+   },
+   {
+    "family": "Pfeiffer",
+    "given": "Helmut"
+   },
+   {
+    "family": "Podewski",
+    "given": "Klaus-Peter"
+   }
+  ],
+  "title": "Constructive mathematics and computer programming",
+  "container-title": "Logic, Methodology and Philosophy of Science VI, Proceedings of the Sixth International Congress of Logic, Methodology and Philosophy of Science, Hannover 1979",
+  "volume": "104",
+  "page": "153-175",
+  "publisher": "North-Holland",
+  "issued": {
+   "date-parts": [
+    [
+     1982
+    ]
+   ]
+  },
+  "DOI": "10.1016/S0049-237X(09)70189-2",
+  "URL": "http://dx.doi.org/10.1016/S0049-237X(09)70189-2"
+ },
+ {
+  "id": "deBruijn-1973",
+  "type": "book",
+  "author": [
+   {
+    "family": "de Bruijn",
+    "given": "Nicolaas Govert"
+   }
+  ],
+  "title": "AUTOMATH, a language for mathematics",
+  "page": "62",
+  "publisher": "Les Presses de l'Universit\\'e de Montr\\'eal, Montreal, Quebec",
+  "issued": {
+   "date-parts": [
+    [
+     1973
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Streicher-1991",
+  "type": "book",
+  "author": [
+   {
+    "family": "Streicher",
+    "given": "Thomas"
+   }
+  ],
+  "title": "Semantics of type theory",
+  "page": "xii+298",
+  "publisher": "Birkh\\\"auser Boston Inc.",
+  "issued": {
+   "date-parts": [
+    [
+     1991
+    ]
+   ]
+  },
+  "DOI": "10.1007/978-1-4612-0433-6",
+  "URL": "http://dx.doi.org/10.1007/978-1-4612-0433-6"
+ },
+ {
+  "id": "Hilbert-1925",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Hilbert",
+    "given": "David"
+   }
+  ],
+  "title": "\\\"Uber das Unendliche",
+  "container-title": "Mathematische Annalen",
+  "volume": "95",
+  "issue": "1",
+  "page": "161-190",
+  "issued": {
+   "date-parts": [
+    [
+     1926
+    ]
+   ]
+  },
+  "DOI": "10.1007/BF01206605",
+  "URL": "http://dx.doi.org/10.1007/BF01206605"
+ },
+ {
+  "id": "lawvere-etcs-long",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Lawvere",
+    "given": "F. William"
+   }
+  ],
+  "title": "An elementary theory of the category of sets (long version) with commentary",
+  "container-title": "Reprints in Theory and Applications of Categories",
+  "volume": "11",
+  "page": "1-35",
+  "issued": {
+   "date-parts": [
+    [
+     2005
+    ]
+   ]
+  }
+ },
+ {
+  "id": "ags-it-hott",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Awodey",
+    "given": "Steve"
+   },
+   {
+    "family": "Gambino",
+    "given": "Nicola"
+   },
+   {
+    "family": "Sojakova",
+    "given": "Kristina"
+   }
+  ],
+  "title": "Inductive Types in Homotopy Type Theory",
+  "container-title": "Proceedings of the 2012 27th Annual IEEE/ACM Symposium on Logic in Computer Science",
+  "page": "95-104",
+  "publisher": "IEEE Computer Society",
+  "issued": {
+   "date-parts": [
+    [
+     2012
+    ]
+   ]
+  },
+  "DOI": "10.1109/LICS.2012.21",
+  "URL": "http://dx.doi.org/10.1109/LICS.2012.21"
+ },
+ {
+  "id": "mp-wftrees",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Moerdijk",
+    "given": "Ieke"
+   },
+   {
+    "family": "Palmgren",
+    "given": "Erik"
+   }
+  ],
+  "title": "Wellfounded trees in categories",
+  "container-title": "Annals of Pure and Applied Logic",
+  "volume": "104",
+  "page": "189-218",
+  "issued": {
+   "date-parts": [
+    [
+     2000
+    ]
+   ]
+  }
+ },
+ {
+  "id": "mvdb-wtypes",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "van den Berg",
+    "given": "Benno"
+   },
+   {
+    "family": "Moerdijk",
+    "given": "Ieke"
+   }
+  ],
+  "title": "W-types in homotopy type theory",
+  "container-title": "Mathematical Structures in Computer Science",
+  "volume": "25",
+  "page": "1100-1115",
+  "issued": {
+   "date-parts": [
+    [
+     2015
+    ]
+   ]
+  },
+  "DOI": "10.1017/S0960129514000516",
+  "URL": "http://journals.cambridge.org/article_S0960129514000516"
+ },
+ {
+  "id": "DBLP-conf-lop-ConstableM85",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Constable",
+    "given": "Robert L."
+   },
+   {
+    "family": "Mendler",
+    "given": "N. P."
+   }
+  ],
+  "editor": [
+   {
+    "family": "Parikh",
+    "given": "Rohit"
+   }
+  ],
+  "title": "Recursive Definitions in Type Theory",
+  "container-title": "Logics of Programs, Conference, Brooklyn College, June 17--19, 1985, Proceedings",
+  "volume": "193",
+  "page": "61-78",
+  "issued": {
+   "date-parts": [
+    [
+     1985
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Con85",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Constable",
+    "given": "Robert L."
+   }
+  ],
+  "title": "Constructive Mathematics as a Programming Logic I: Some Principles of Theory",
+  "container-title": "Annals of Mathematics",
+  "volume": "24",
+  "page": "21-37",
+  "publisher": "Elsevier Science Publishers, B.V. (North-Holland)",
+  "issued": {
+   "date-parts": [
+    [
+     1985
+    ]
+   ]
+  }
+ },
+ {
+  "id": "ToenVezzosi02",
+  "type": "document",
+  "author": [
+   {
+    "family": "To\\\"en",
+    "given": "Bertrand"
+   },
+   {
+    "family": "Vezzosi",
+    "given": "Gabriele"
+   }
+  ],
+  "title": "Homotopical Algebraic Geometry I: Topos theory",
+  "issued": {
+   "date-parts": [
+    [
+     2002
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Rezk05",
+  "type": "manuscript",
+  "author": [
+   {
+    "family": "Rezk",
+    "given": "Charles"
+   }
+  ],
+  "title": "Toposes and homotopy toposes",
+  "issued": {
+   "date-parts": [
+    [
+     2005
+    ]
+   ]
+  },
+  "URL": "http://www.math.uiuc.edu/~rezk/homotopy-topos-sketch.pdf"
+ },
+ {
+  "id": "bertot-10coq",
+  "type": "book",
+  "author": [
+   {
+    "family": "Bertot",
+    "given": "Yves"
+   },
+   {
+    "family": "Cast\\'eran",
+    "given": "Pierre"
+   }
+  ],
+  "title": "Interactive Theorem Proving and Program Development: Coq'Art: The Calculus of Inductive Constructions",
+  "publisher": "Springer-Verlag",
+  "issued": {
+   "date-parts": [
+    [
+     2010
+    ]
+   ]
+  }
+ },
+ {
+  "id": "nordstrom-90mltt",
+  "type": "book",
+  "author": [
+   {
+    "family": "Nordstr\\\"om",
+    "given": "Bengt"
+   },
+   {
+    "family": "Petersson",
+    "given": "Kent"
+   },
+   {
+    "family": "Smith",
+    "given": "Jan"
+   }
+  ],
+  "title": "Programming in Martin-L\\\"of's Type Theory",
+  "publisher": "Oxford University Press",
+  "issued": {
+   "date-parts": [
+    [
+     1990
+    ]
+   ]
+  },
+  "URL": "http://www.cs.chalmers.se/Cs/Research/Logic/book/"
+ },
+ {
+  "id": "Coq",
+  "type": "book",
+  "author": [
+   {
+    "family": "Team",
+    "given": "Coq Development"
+   }
+  ],
+  "title": "The Coq Proof Assistant Reference Manual",
+  "publisher": "INRIA-Rocquencourt",
+  "issued": {
+   "date-parts": [
+    [
+     2012
+    ]
+   ]
+  }
+ },
+ {
+  "id": "norell2007towards",
+  "type": "thesis",
+  "author": [
+   {
+    "family": "Norell",
+    "given": "Ulf"
+   }
+  ],
+  "title": "Towards a practical programming language based on dependent type theory",
+  "publisher": "Chalmers, G\\\"oteborg University",
+  "issued": {
+   "date-parts": [
+    [
+     2007
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Tait-1968",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Tait",
+    "given": "William W."
+   }
+  ],
+  "title": "Constructive reasoning",
+  "container-title": "Logic, Methodology and Philos. Sci. III (Proc. Third Internat. Congr., Amsterdam, 1967)",
+  "page": "185-199",
+  "publisher": "North-Holland",
+  "issued": {
+   "date-parts": [
+    [
+     1968
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Pierce-TAPL",
+  "type": "book",
+  "author": [
+   {
+    "family": "Pierce",
+    "given": "Benjamin C."
+   }
+  ],
+  "title": "Types and Programming Languages",
+  "publisher": "MIT Press",
+  "issued": {
+   "date-parts": [
+    [
+     2002
+    ]
+   ]
+  }
+ },
+ {
+  "id": "AW",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Awodey",
+    "given": "Steve"
+   },
+   {
+    "family": "Warren",
+    "given": "Michael A."
+   }
+  ],
+  "title": "Homotopy theoretic models of identity types",
+  "container-title": "Mathematical Proceedings of the Cambridge Philosophical Society",
+  "volume": "146",
+  "page": "45-55",
+  "issued": {
+   "date-parts": [
+    [
+     2009
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Bourbaki",
+  "type": "book",
+  "author": [
+   {
+    "family": "Bourbaki",
+    "given": "Nicolas"
+   }
+  ],
+  "title": "Theory of Sets",
+  "publisher": "Hermann, Paris",
+  "issued": {
+   "date-parts": [
+    [
+     1968
+    ]
+   ]
+  }
+ },
+ {
+  "id": "carboni",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Carboni",
+    "given": "Aurelio"
+   }
+  ],
+  "title": "Some free constructions in realizability and proof theory",
+  "container-title": "Journal of Pure and Applied Algebra",
+  "volume": "103",
+  "page": "117-148",
+  "issued": {
+   "date-parts": [
+    [
+     1995
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Church1932",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Church",
+    "given": "Alonzo"
+   }
+  ],
+  "title": "A set of postulates for the foundation of logic 1",
+  "container-title": "Annals of Mathematics",
+  "volume": "33",
+  "page": "346-366",
+  "issued": {
+   "date-parts": [
+    [
+     1932
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Church-1933cl",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Church",
+    "given": "Alonzo"
+   }
+  ],
+  "title": "A set of postulates for the foundation of logic 2",
+  "container-title": "Annals of Mathematics",
+  "volume": "34",
+  "page": "839-864",
+  "issued": {
+   "date-parts": [
+    [
+     1933
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Church-1940tu",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Church",
+    "given": "Alonzo"
+   }
+  ],
+  "title": "A formulation of the simple theory of types",
+  "container-title": "Journal of Symbolic Logic",
+  "volume": "5",
+  "page": "56-68",
+  "issued": {
+   "date-parts": [
+    [
+     1940
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Church-1941tc",
+  "type": "book",
+  "author": [
+   {
+    "family": "Church",
+    "given": "Alonzo"
+   }
+  ],
+  "title": "The Calculi of Lambda Conversion",
+  "publisher": "Princeton University Press",
+  "issued": {
+   "date-parts": [
+    [
+     1941
+    ]
+   ]
+  }
+ },
+ {
+  "id": "kolmogorov",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Kolmogorov",
+    "given": "Andrey"
+   }
+  ],
+  "title": "Zur Deutung der intuitionistischen Logik",
+  "container-title": "Mathematische Zeitschrift",
+  "volume": "35",
+  "page": "58-65",
+  "issued": {
+   "date-parts": [
+    [
+     1932
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Russell-1908",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Russell",
+    "given": "Bertand"
+   }
+  ],
+  "title": "Mathematical logic based on the theory of types",
+  "container-title": "American Journal of Mathematics",
+  "volume": "30",
+  "page": "222-262",
+  "issued": {
+   "date-parts": [
+    [
+     1908
+    ]
+   ]
+  }
+ },
+ {
+  "id": "mw-thesis",
+  "type": "thesis",
+  "author": [
+   {
+    "family": "Warren",
+    "given": "Michael A."
+   }
+  ],
+  "title": "Homotopy Theoretic Aspects of Constructive Type Theory",
+  "publisher": "Carnegie Mellon University",
+  "issued": {
+   "date-parts": [
+    [
+     2008
+    ]
+   ]
+  }
+ },
+ {
+  "id": "VV",
+  "type": "manuscript",
+  "author": [
+   {
+    "family": "Voevodsky",
+    "given": "Vladimir"
+   }
+  ],
+  "title": "A very short note on the homotopy $\\lambda$-calculus",
+  "issued": {
+   "date-parts": [
+    [
+     2006
+    ]
+   ]
+  }
+ },
+ {
+  "id": "blanc-eqv-log",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Blanc",
+    "given": "Georges"
+   }
+  ],
+  "title": "\\'Equivalence naturelle et formules logiques en th\\'eorie des cat\\'egories",
+  "container-title": "Archiv f\\\"ur Mathematische Logik und Grundlagenforschung",
+  "volume": "19",
+  "issue": "3-4",
+  "page": "131-137",
+  "issued": {
+   "date-parts": [
+    [
+     null
+    ]
+   ]
+  },
+  "DOI": "10.1007/BF02011874",
+  "URL": "http://dx.doi.org/10.1007/BF02011874"
+ },
+ {
+  "id": "freyd-invar-eqv",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Freyd",
+    "given": "Peter"
+   }
+  ],
+  "title": "Properties invariant within equivalence types of categories",
+  "container-title": "Algebra, topology, and category theory (a collection of papers in honor of Samuel Eilenberg)",
+  "page": "55-61",
+  "publisher": "Academic Press",
+  "issued": {
+   "date-parts": [
+    [
+     1976
+    ]
+   ]
+  }
+ },
+ {
+  "id": "makkai-folds",
+  "type": "manuscript",
+  "author": [
+   {
+    "family": "Makkai",
+    "given": "Michael"
+   }
+  ],
+  "title": "First order logic with dependent sorts, with applications to category theory",
+  "issued": {
+   "date-parts": [
+    [
+     1995
+    ]
+   ]
+  }
+ },
+ {
+  "id": "makkai-comparing",
+  "type": "document",
+  "author": [
+   {
+    "family": "Makkai",
+    "given": "Michael"
+   }
+  ],
+  "title": "On comparing definitions of weak $n$-category",
+  "issued": {
+   "date-parts": [
+    [
+     2001
+    ]
+   ]
+  }
+ },
+ {
+  "id": "jt-strong-stacks",
+  "type": "chapter",
+  "author": [
+   {
+    "family": "Joyal",
+    "given": "Andr\\'e"
+   },
+   {
+    "family": "Tierney",
+    "given": "Myles"
+   }
+  ],
+  "title": "Strong stacks and classifying spaces",
+  "container-title": "Category Theory. Proceedings of the International Conference held in Como, Italy, July 22–28, 1990",
+  "volume": "1488",
+  "page": "213-236",
+  "publisher": "Springer",
+  "issued": {
+   "date-parts": [
+    [
+     1991
+    ]
+   ]
+  }
+ },
+ {
+  "id": "bunge-stacks-morita-internal",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Bunge",
+    "given": "Marta"
+   }
+  ],
+  "title": "Stack completions and Morita equivalence for categories in a topos",
+  "container-title": "Cahiers de Topologie et G\\'eom\\'etrie Diff\\'erentielle",
+  "volume": "20",
+  "issue": "4",
+  "page": "401-436",
+  "issued": {
+   "date-parts": [
+    [
+     1979
+    ]
+   ]
+  }
+ },
+ {
+  "id": "aks-rezk",
+  "type": "document",
+  "author": [
+   {
+    "family": "Ahrens",
+    "given": "Benedikt"
+   },
+   {
+    "family": "Kapulkin",
+    "given": "Krzysztof"
+   },
+   {
+    "family": "Shulman",
+    "given": "Michael"
+   }
+  ],
+  "title": "Univalent categories and the Rezk completion",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "palmgren-cetcs",
+  "type": "manuscript",
+  "author": [
+   {
+    "family": "Palmgren",
+    "given": "Erik"
+   }
+  ],
+  "title": "Constructivist and Structuralist Foundations: Bishop's and Lawvere's Theories of Sets",
+  "issued": {
+   "date-parts": [
+    [
+     2009
+    ]
+   ]
+  }
+ },
+ {
+  "id": "taylor-ordinals",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Taylor",
+    "given": "Paul"
+   }
+  ],
+  "title": "Intuitionistic sets and ordinals",
+  "container-title": "The Journal of Symbolic Logic",
+  "volume": "61",
+  "issue": "3",
+  "page": "705-744",
+  "issued": {
+   "date-parts": [
+    [
+     1996
+    ]
+   ]
+  }
+ },
+ {
+  "id": "hatcher02topology",
+  "type": "book",
+  "author": [
+   {
+    "family": "Hatcher",
+    "given": "Allen"
+   }
+  ],
+  "title": "Algebraic Topology",
+  "publisher": "Cambridge University Press",
+  "issued": {
+   "date-parts": [
+    [
+     2002
+    ]
+   ]
+  }
+ },
+ {
+  "id": "elephant",
+  "type": "book",
+  "author": [
+   {
+    "family": "Johnstone",
+    "given": "Peter T."
+   }
+  ],
+  "title": "Sketches of an Elephant: A Topos Theory Compendium: Volumes 1 and 2",
+  "issue": "43",
+  "publisher": "Oxford Science Publications",
+  "issued": {
+   "date-parts": [
+    [
+     2002
+    ]
+   ]
+  }
+ },
+ {
+  "id": "bergner-infty-one",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Bergner",
+    "given": "Julia E."
+   }
+  ],
+  "editor": [
+   {
+    "family": "C.~Baez",
+    "given": "John"
+   },
+   {
+    "family": "May",
+    "given": "J.~Peter"
+   }
+  ],
+  "title": "A survey of $(\\infty, 1)$-categories",
+  "container-title": "Towards Higher Categories",
+  "volume": "152",
+  "page": "69-83",
+  "publisher": "Springer",
+  "issued": {
+   "date-parts": [
+    [
+     2009
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Moggi89",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Moggi",
+    "given": "Eugenio"
+   }
+  ],
+  "title": "Notions of Computation and Monads",
+  "container-title": "Information and Computation",
+  "volume": "93",
+  "page": "55-92",
+  "issued": {
+   "date-parts": [
+    [
+     1989
+    ]
+   ]
+  }
+ },
+ {
+  "id": "QGFTinCHoTT12",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Schreiber",
+    "given": "Urs"
+   },
+   {
+    "family": "Shulman",
+    "given": "Michael"
+   }
+  ],
+  "title": "Quantum gauge field theory in cohesive homotopy type theory",
+  "container-title": "Quantum Physics and Logic",
+  "issued": {
+   "date-parts": [
+    [
+     2012
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Huet80",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Huet",
+    "given": "G\\'erard"
+   }
+  ],
+  "title": "Confluent Reductions: Abstract Properties and Applications to Term Rewriting Systems: Abstract Properties and Applications to Term Rewriting Systems",
+  "container-title": "Journal of the ACM",
+  "volume": "27",
+  "issue": "4",
+  "page": "797-821",
+  "publisher": "ACM",
+  "issued": {
+   "date-parts": [
+    [
+     1980
+    ]
+   ]
+  },
+  "DOI": "10.1145/322217.322230",
+  "URL": "http://doi.acm.org/10.1145/322217.322230"
+ },
+ {
+  "id": "Nordstrom88",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Nordstr\\\"om",
+    "given": "Bengt"
+   }
+  ],
+  "title": "Terminating general recursion",
+  "container-title": "BIT Numerical Mathematics",
+  "volume": "28",
+  "issue": "3",
+  "page": "605-619",
+  "publisher": "Kluwer Academic Publishers",
+  "issued": {
+   "date-parts": [
+    [
+     1988
+    ]
+   ]
+  },
+  "DOI": "10.1007/BF01941137",
+  "URL": "http://dx.doi.org/10.1007/BF01941137"
+ },
+ {
+  "id": "Gentzen36",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Gentzen",
+    "given": "Gerhard"
+   }
+  ],
+  "title": "Die Widerspruchsfreiheit der reinen Zahlentheorie",
+  "container-title": "Mathematische Annalen",
+  "volume": "112",
+  "issue": "1",
+  "page": "493-565",
+  "publisher": "Springer-Verlag",
+  "issued": {
+   "date-parts": [
+    [
+     1936
+    ]
+   ]
+  },
+  "DOI": "10.1007/BF01565428",
+  "URL": "http://dx.doi.org/10.1007/BF01565428"
+ },
+ {
+  "id": "Paulson86",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Paulson",
+    "given": "Lawrence C."
+   }
+  ],
+  "title": "Constructing Recursion Operators in Intuitionistic Type Theory",
+  "container-title": "Journal of Symbolic Computation",
+  "volume": "2",
+  "issue": "4",
+  "page": "325-355",
+  "issued": {
+   "date-parts": [
+    [
+     1986
+    ]
+   ]
+  }
+ },
+ {
+  "id": "AKL13",
+  "type": "document",
+  "author": [
+   {
+    "family": "Avigad",
+    "given": "Jeremy"
+   },
+   {
+    "family": "Kapulkin",
+    "given": "Krzysztof"
+   },
+   {
+    "family": "Lumsdaine",
+    "given": "Peter LeFanu"
+   }
+  ],
+  "title": "Homotopy limits in Coq",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Streicher93",
+  "type": "document",
+  "author": [
+   {
+    "family": "Streicher",
+    "given": "Thomas"
+   }
+  ],
+  "title": "Investigations into intensional type theory",
+  "issued": {
+   "date-parts": [
+    [
+     1993
+    ]
+   ]
+  }
+ },
+ {
+  "id": "lawvere-metric-spaces",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Lawvere",
+    "given": "F. William"
+   }
+  ],
+  "title": "Metric spaces, generalized logic, and closed categories",
+  "container-title": "Rendiconti del Seminario Matematico e Fisico di Milano",
+  "volume": "43",
+  "page": "135-166",
+  "issued": {
+   "date-parts": [
+    [
+     1974
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Angiuli13",
+  "type": "article-journal",
+  "author": [
+   {
+    "family": "Angiuli",
+    "given": "Carlo"
+   }
+  ],
+  "title": "The $(\\infty,1)$-accidentopos model of unintentional type theory\\indextype theory!unintentional\\indexunintentional type theory\\indexmistaken identity type\\indextype!mistaken identity",
+  "container-title": "Sigbovik '13",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "BauerAcceptanceVideo",
+  "type": "document",
+  "author": [
+   {
+    "family": "Bauer",
+    "given": "Andrej"
+   }
+  ],
+  "title": "Five Stages of Accepting Constructive Mathematics\\indexstages, five, of accepting constructive mathematics",
+  "issued": {
+   "date-parts": [
+    [
+     2013
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Taylor99",
+  "type": "book",
+  "author": [
+   {
+    "family": "Taylor",
+    "given": "Paul"
+   }
+  ],
+  "title": "Practical Foundations of Mathematics",
+  "publisher": "Cambridge University Press",
+  "issued": {
+   "date-parts": [
+    [
+     1999
+    ]
+   ]
+  }
+ },
+ {
+  "id": "CDP14",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Cockx",
+    "given": "Jesper"
+   },
+   {
+    "family": "Devriese",
+    "given": "Dominique"
+   },
+   {
+    "family": "Piessens",
+    "given": "Frank"
+   }
+  ],
+  "title": "Pattern matching without K",
+  "container-title": "Proceedings of the 19th ACM SIGPLAN International Conference on Functional Programming, ICFP 2014, Gothenburg, Sweden, September 1-3, 2014",
+  "issued": {
+   "date-parts": [
+    [
+     2014
+    ]
+   ]
+  }
+ },
+ {
+  "id": "Coquand92Pattern",
+  "type": "paper-conference",
+  "author": [
+   {
+    "family": "Coquand",
+    "given": "Thierry"
+   }
+  ],
+  "title": "Pattern matching with dependent types",
+  "container-title": "Proceedings of the Workshop on Types for Proofs and Programs",
+  "page": "71-83",
+  "issued": {
+   "date-parts": [
+    [
+     1992
+    ]
+   ]
+  }
+ }
+]

@@ -173,7 +173,7 @@ struct Resolver {
           for (ContentNode* k : n->kids) {
             if (k->kind != Kind::para) continue;
             ContentNode* t =
-                mkText(cfg.supFigure + std::to_string(figNo) + "\xEF\xBC\x9A",
+                mkText(cfg.supFigure + std::to_string(figNo) + cfg.capSep,
                        k->span, styles.idOf(Styling{CLS_BOLD, 1.0f}));
             k->kids.insert(k->kids.begin(), t);
             break;

@@ -21,6 +21,11 @@ export async function renderTsm(source, opts = {}) {
   const M = await getMod();
   const doc = M._tsr_doc_new();
   try {
+    if (opts.lang) {  // supplement words follow the document language
+      const l = M.stringToNewUTF8(String(opts.lang));
+      M._tsr_set_lang(doc, l);
+      M._free(l);
+    }
     const srcPtr = M.stringToNewUTF8(String(source));
     M._tsr_compile(doc, srcPtr);
     M._free(srcPtr);

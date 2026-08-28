@@ -428,6 +428,19 @@ struct Emitter {
         continue;
       }
       if (isPunctOpen(cp) || isPunctClose(cp)) {
+        // Latin-context curly quotes / apostrophes (real-world-report.md):
+        // “…” and don’t between Latin text are ordinary Latin glyphs, not
+        // full-width CJK punctuation with half-em compressible spaces
+        if ((cp == 0x2018 || cp == 0x2019 || cp == 0x201C || cp == 0x201D) &&
+            prev != Prev::Cjk) {
+          u32 j = i;
+          u32 cp2 = (i < s.size()) ? utf8Next(s, j) : 0;
+          if (cp2 == 0 || !(isCjk(cp2) || isPunctOpen(cp2) || isPunctClose(cp2))) {
+            word.append(s.data() + start, i - start);
+            prev = Prev::Latin;
+            continue;
+          }
+        }
         flushWord();
         if (prev == Prev::Latin) boundary();
         pushPunct(s.substr(start, i - start), isPunctOpen(cp));

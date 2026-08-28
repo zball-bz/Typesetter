@@ -59,6 +59,11 @@ TSR_EXPORT void tsr_set_cjk_font(WasmDoc* d, const char* family) {
   d->doc.cfg.cjkFont = family;
 }
 
+// BCP-47 tag → supplement words (Figure/图 …); default is zh
+TSR_EXPORT void tsr_set_lang(WasmDoc* d, const char* lang) {
+  if (lang && *lang) applyLang(d->doc.cfg, lang);
+}
+
 TSR_EXPORT void tsr_set_snap_kerning(WasmDoc* d, int on) {
   d->doc.cfg.verbatimSnapKerning = on != 0;
 }
