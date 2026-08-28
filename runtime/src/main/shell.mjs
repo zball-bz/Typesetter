@@ -45,11 +45,11 @@ export const TSR_CSS = `
    raise is paint-only so line geometry is untouched */
 .tsr-sup, .tsr-doc a.tsr-sup { position: relative; top: -0.45em; text-decoration: none; }
 /* hover/focus popup with the note body (shell installNotePopups) */
-.tsr-notepop { position: absolute; z-index: 20; max-width: 28em; padding: 0.5em 0.7em;
-  font-size: 0.85em; line-height: 1.45; background: var(--tsr-pop-bg, #fffdf7);
+.tsr-notepop { position: absolute; z-index: 20; max-width: 28em; max-height: 45vh;
+  overflow: auto; padding: 0.5em 0.7em; font-size: 0.85em; line-height: 1.45;
+  font-family: var(--tsr-pop-font, inherit); background: var(--tsr-pop-bg, #fffdf7);
   color: var(--tsr-pop-fg, #1c1c1a); border: 1px solid rgba(0,0,0,0.18);
-  border-radius: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); pointer-events: none;
-  white-space: normal; }
+  border-radius: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); white-space: normal; }
 @media (prefers-color-scheme: dark) {
   .tsr-notepop { background: var(--tsr-pop-bg, #2a2a28); color: var(--tsr-pop-fg, #e6e4dc);
     border-color: rgba(255,255,255,0.18); } }
@@ -159,8 +159,13 @@ function installNotePopups(container) {
     current = marker;
   };
   const markerAt = (t) => t?.closest?.('a.tsr-sup[href^="#tsr-fn-"]');
-  const onOver = (e) => { const m = markerAt(e.target); if (m) show(m); else if (!e.target.closest?.('.tsr-notepop')) hide(); };
-  const onOut = (e) => { if (markerAt(e.target) && !markerAt(e.relatedTarget)) hide(); };
+  const inPop = (t) => !!t?.closest?.('.tsr-notepop');
+  const onOver = (e) => { const m = markerAt(e.target); if (m) show(m); else if (!inPop(e.target)) hide(); };
+  // leaving the marker keeps the popup while the pointer moves INTO it
+  // (long notes scroll); leaving both hides
+  const onOut = (e) => {
+    if ((markerAt(e.target) || inPop(e.target)) && !markerAt(e.relatedTarget) && !inPop(e.relatedTarget)) hide();
+  };
   const onFocus = (e) => { const m = markerAt(e.target); if (m) show(m); };
   container.addEventListener('mouseover', onOver);
   container.addEventListener('mouseout', onOut);
@@ -330,6 +335,8 @@ export function createEngine(opts = {}) {
       container.style.fontFamily = fontFamily;
       container.style.fontSize = `${baseSizePx}px`;
       container.style.setProperty('--tsr-cjk-font', cjkFontFamily);
+      // footnote popups are plain text: Latin stack first, CJK stack after
+      container.style.setProperty('--tsr-pop-font', `${fontFamily}, ${cjkFontFamily}`);
       // language tag drives OpenType 'locl' punctuation forms (multi-locale
       // CJK fonts pick 简中/繁中/日 glyph variants by it)
       if (lang) container.setAttribute('lang', lang);
