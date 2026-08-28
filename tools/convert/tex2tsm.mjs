@@ -100,7 +100,7 @@ const MATH = [
   [/\\mathbf\{([A-Za-z0-9]+)\}/g, '$1'],
   [/\\mathsf\{([A-Za-z]+)\}/g, '$1'], [/\\mathrm\{([A-Za-z]+)\}/g, '$1'],
   [/\\mathbb\{([A-Z])\}/g, '$1$1'], [/\\operatorname\{([A-Za-z]+)\}/g, '$1'],
-  [/\\setof\{([^{}]*)\}/g, '{$1}'], [/\\mid\b/g, ' | '], [/\\bot\b/g, '⊥'], [/\\top\b/g, '⊤'],
+  [/\\setof\{([^{}]*)\}/g, '{$1}'], [/\\mid\b/g, ' ∣ '], [/\\bot\b/g, '⊥'], [/\\top\b/g, '⊤'],
   [/\\Rightarrow/g, ' ⇒ '],
   [/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)'], [/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '($1)/($2)'],
   [/\\left\(/g, '('], [/\\right\)/g, ')'], [/\\left\[/g, '['], [/\\right\]/g, ']'],
@@ -168,7 +168,7 @@ src = src.replace(/\\begin\{tabular\}\{([^{}]*)\}([\s\S]*?)\\end\{tabular\}/g, (
     .map((r) => r.split(/(?<!\\)&/).map((c) => c.replace(/\s*\n\s*/g, ' ').trim()).join(' | '));
   return '\n\n#!table(cols: ' + cols + ')\n' + rows.join('\n') + '\n#table!\n\n';
 });
-src = src.replace(/\\begin\{(center|table|figure)\}(\{[^{}]*\})?/g, '').replace(/\\end\{(center|table|figure)\}/g, '');
+src = src.replace(/\\begin\{(center|table|figure)\}(\[[^\]]*\])?(\{[^{}]*\})?/g, '').replace(/\\end\{(center|table|figure)\}/g, '');
 src = src.replace(/\\caption\{([^{}]*)\}/g, '_$1_');
 src = src.replace(/\\(hline|centering|small|large|Large|bigskip|medskip|smallskip|vspace\{[^}]*\}|hspace\{[^}]*\})/g, '');
 src = src.replace(/\\\\/g, ' ').replace(/(?<!\\)&/g, ' | ');

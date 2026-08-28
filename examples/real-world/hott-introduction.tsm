@@ -143,8 +143,6 @@ as we need nested univalent universes). Giving a more traditionally type-theoret
 
 We summarize the different points of view of the type-theoretic operations in @tab-pov.
 
-[htb]
-
 #!table(cols: 5)
 Types |  | Logic | Sets | Homotopy
 $A$ |  | proposition | set | space
