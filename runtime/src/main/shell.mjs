@@ -130,13 +130,24 @@ function installNotePopups(container) {
     const id = marker.getAttribute('href')?.slice(1);
     const el = id && container.querySelector(`[id="${CSS.escape(id)}"]`);
     if (!el) return null;
-    // the anchor id sits on the note's FIRST line box; the body is the
-    // whole paragraph container (semantic page: the <li>/<p> itself)
-    const para = el.closest('.tsr-para') ?? el;
-    const clone = para.cloneNode(true);
-    for (const a of clone.querySelectorAll('a[href^="#tsr-fnref-"]')) a.remove();
-    for (const m of clone.querySelectorAll('.tsr-marker')) m.remove();
-    return clone.textContent.replace(/\s+/g, ' ').trim();
+    // typeset DOM: the id sits on the note's FIRST line box and the notes
+    // list is ONE .tsr-para — take this line and the following sibling
+    // lines up to the next item's first line (it carries a list marker /
+    // the next anchor). Semantic page: the element itself.
+    const lines = [];
+    if (el.classList.contains('tsr-line')) {
+      for (let n = el; n; n = n.nextElementSibling) {
+        if (n !== el && (n.id || n.querySelector('.tsr-marker'))) break;
+        lines.push(n);
+      }
+    } else lines.push(el);
+    const text = lines.map((n) => {
+      const clone = n.cloneNode(true);
+      for (const a of clone.querySelectorAll('a[href^="#tsr-fnref-"]')) a.remove();
+      for (const m of clone.querySelectorAll('.tsr-marker')) m.remove();
+      return clone.textContent;
+    }).join(' ');
+    return text.replace(/\s+/g, ' ').trim();
   };
   const show = (marker) => {
     if (current === marker) return;
