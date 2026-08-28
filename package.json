@@ -1,26 +1,22 @@
 {
   "name": "typesetter",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "TeX-grade web typesetting engine: C++/WASM core + JS runtime (.tsm markup)",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run test:engine && npm run corpus && npm run e2e",
     "test:engine": "ctest --test-dir engine/build",
     "record": "node tools/record-fixtures.mjs",
     "e2e": "playwright test",
-    "corpus": "node tools/corpus-run.mjs"
+    "corpus": "node tools/corpus-run.mjs",
+    "bench:edit": "node tools/bench-edit.mjs",
+    "hl-assets": "node tools/codehl-assets.mjs",
+    "pack": "node tools/pack-dist.mjs"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "esbuild": "^0.27.3",
-    "hyphen": "^1.14.1",
-    "typescript": "^5.9.3"
-  },
   "type": "module",
   "devDependencies": {
     "@playwright/test": "^1.62.1",
+    "hyphen": "^1.14.1",
     "tree-sitter-c": "^0.24.1",
     "tree-sitter-cli": "^0.25.10",
     "tree-sitter-cpp": "^0.23.4",
@@ -30,5 +26,6 @@
     "tree-sitter-typescript": "^0.23.2",
     "tree-sitter-wasms": "^0.1.13",
     "web-tree-sitter": "^0.26.13"
-  }
+  },
+  "private": true
 }

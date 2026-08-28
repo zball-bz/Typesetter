@@ -1,5 +1,10 @@
 # Typesetter Project Plan
 
+> **Status (2026-08):** historical planning document from the PoC era. The
+> PoC (`src/`, `index.html`, `magazine.html`) has been removed; the current
+> layout and stage map live in [architecture.md](architecture.md), the
+> per-feature designs in the other `*-design.md` files.
+
 ## Status
 
 This document is the proposed plan for moving the repository from a proof of concept into a real engine. It is intended for discussion, not as a frozen spec.

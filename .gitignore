@@ -1,9 +1,19 @@
+# deps / build products
 node_modules/
 dist/
-engine/build/
-engine/build-debug/
-engine/build-wasm/
+engine/build*/
+grammar/tree-sitter-tsm/src/
+runtime/assets/hl/
+
+# test output
 test-results/
 playwright-report/
-runtime/assets/hl/
-grammar/tree-sitter-tsm/src/
+
+# editor extension packaging
+editors/vscode-tsm/vendor/
+*.vsix
+
+# scratch
+probe-*.mjs
+*.tmp.mjs
+.DS_Store
