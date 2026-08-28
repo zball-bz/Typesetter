@@ -98,10 +98,16 @@ static void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
   switch (b->kind) {
     case MathKind::Glyph: {
       const double px = (double)b->px;
-      const double fA = (double)mathfont::kAscender * px / mathfont::kUpem;
-      const double fH =
-          (double)(mathfont::kAscender + mathfont::kDescender) * px / mathfont::kUpem;
-      out += "<span class=\"tsr-mg\" style=\"left:";
+      // text-font run (names/operators): the box carries the body font's
+      // ascent/descent from the host measurer; the span's line box equals
+      // the content area so the baseline lands exactly at `base`
+      const double fA = b->textFont ? suToPx(b->asc)
+                                    : (double)mathfont::kAscender * px / mathfont::kUpem;
+      const double fH = b->textFont
+          ? suToPx(b->asc + b->desc)
+          : (double)(mathfont::kAscender + mathfont::kDescender) * px / mathfont::kUpem;
+      out += b->textFont ? "<span class=\"tsr-mg tsr-mt\" style=\"left:"
+                         : "<span class=\"tsr-mg\" style=\"left:";
       fmtPx(out, suToPx(x));
       out += ";top:";
       fmtPx(out, suToPx(base) - fA);

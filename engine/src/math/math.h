@@ -2,6 +2,7 @@
 // The entire box tree is a pure function of (source, sizePx, display) over the
 // precompiled MATH artifact — natively golden-testable (--stage=mathbox).
 #pragma once
+#include "../measure/measure.h"
 #include "../support/support.h"
 
 namespace tsr {
@@ -26,7 +27,22 @@ struct MathBox {
   Su topAccent = 0;           // top-accent attachment x (default w/2 at build)
   StrRef text = 0;            // Glyph: UTF-8 character(s) to paint
   float px = 0;               // Glyph: font-size for emission (style-scaled)
+  bool textFont = false;      // Glyph: painted in the TEXT font (names, operators)
   std::vector<MathKid> kids;  // HBox children
+};
+
+// Text-font runs inside formulas (math-design.md §10): multi-letter names
+// (Id, Equiv), named operators (sin, lim) and "quoted text" are set upright
+// in the document's body font — the Concrete-Mathematics contract (Euler
+// variables, roman names). Their widths come from the host measurer through
+// the ordinary pull loop: the layouter looks them up here and records what
+// is missing; the doc re-emits once they arrive.
+struct MathTextCtx {
+  const MetricStore* metrics = nullptr;
+  StyleTable* styles = nullptr;
+  Interner* strs = nullptr;
+  double docBasePx = 0;                 // Config::baseSizePx (style ids scale on it)
+  std::vector<MeasureItem>* missing = nullptr;
 };
 
 // Parses + lays out one formula. Errors/diags are non-fatal: the returned box
@@ -34,7 +50,7 @@ struct MathBox {
 // display style (mathblock); inline formulas use text style.
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
-                           Span span);
+                           Span span, const MathTextCtx* text = nullptr);
 
 // Inline-formula line breaking (math-design.md §9): the formula splits into
 // unbreakable segments at top-level relations (a break point BEFORE and
@@ -51,7 +67,7 @@ struct MathSeg {
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         double sizePx, Arena& arena,
                                         Interner& strs, DiagSink& diags,
-                                        Span span);
+                                        Span span, const MathTextCtx* text = nullptr);
 
 std::string dumpMathBox(const MathBox* box, const Interner& strs);
 

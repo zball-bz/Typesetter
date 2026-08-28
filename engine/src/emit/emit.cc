@@ -118,7 +118,7 @@ struct Emitter {
         }
         std::vector<MathSeg> segs = layoutMathSegments(
             strs.get(srcRef), /*display=*/false, fontPx(st), arena, strs,
-            diags, n->span);
+            diags, n->span, mathText);
         for (size_t k = 0; k < segs.size(); k++) {
           if (k) {
             // the break-point glue: discardable at a break (BF_SPACE trims
@@ -756,7 +756,7 @@ struct Emitter {
           if (a.key == ArgK::name && a.tag == ArgTag::Str) u.eqTag = a.ref;
         }
         u.mathBox = layoutMathFormula(strs.get(srcRef), /*display=*/true,
-                                      fontPx(n->style), arena, strs, diags, n->span);
+                                      fontPx(n->style), arena, strs, diags, n->span, mathText);
         tb.units.push_back(std::move(u));
         return;
       }
@@ -824,6 +824,7 @@ struct Emitter {
         return;
     }
   }
+  const MathTextCtx* mathText = nullptr;  // text-font runs in formulas (math-design §10)
 };
 
 }  // namespace
@@ -889,11 +890,13 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
 
 std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena,
                               Interner& strs, StyleTable& styles,
-                              const Config& cfg, DiagSink& diags) {
+                              const Config& cfg, DiagSink& diags,
+                              const MathTextCtx* mathText) {
   std::vector<TopBlock> tops;
   if (!tree.root) return tops;
   Emitter e{arena, diags, strs, styles, cfg,
             strs.intern(" "), strs.intern("-"), strs.intern("\xE2\x80\xA2")};
+  e.mathText = mathText;
   u32 pid = 0;
   for (const ContentNode* child : tree.root->kids) {
     TopBlock tb;

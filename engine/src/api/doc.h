@@ -50,6 +50,10 @@ struct Doc {
   std::vector<TopBlock> tops;
   bool emitted = false;
   MetricStore metrics;
+  // text-font runs inside formulas (math-design.md §10): emit reports the
+  // words whose body-font metrics are still missing; they ride the next
+  // measure request and the document re-emits when they arrive
+  std::vector<MeasureItem> mathTextMissing;
   LayoutResult layout;
   bool laidOut = false;
 
@@ -241,8 +245,13 @@ struct Doc {
   Status typeset() {
     if (tokensPending() || imagesPending()) return Status::NeedMeasure;
     if (!emitted) {
-      tops = emitDoc(tree, arena, strs, styles, cfg, diags);
-      emitted = true;
+      mathTextMissing.clear();
+      MathTextCtx mt{&metrics, &styles, &strs, cfg.baseSizePx, &mathTextMissing};
+      tops = emitDoc(tree, arena, strs, styles, cfg, diags, &mt);
+      // formulas with unmeasured text-font names laid out with stand-ins:
+      // ask for the metrics and emit again once they are here
+      emitted = mathTextMissing.empty();
+      if (!emitted) return Status::NeedMeasure;
     }
     MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg);
     if (!missing.empty()) return Status::NeedMeasure;
@@ -355,7 +364,18 @@ struct Doc {
     return Status::Ok;
   }
 
-  MeasureRequest pendingRequests() { return resolveWidths(tops, metrics, styles, cfg); }
+  MeasureRequest pendingRequests() {
+    MeasureRequest r = resolveWidths(tops, metrics, styles, cfg);
+    for (const MeasureItem& it : mathTextMissing) {
+      if (!metrics.hasWord(it.str, it.style)) r.words.push_back(it);
+      if (!metrics.hasVmet(it.style)) {
+        bool have = false;
+        for (StyleId s : r.vmetStyles) have = have || s == it.style;
+        if (!have) r.vmetStyles.push_back(it.style);
+      }
+    }
+    return r;
+  }
 
   std::string render() { return renderTypeset(tops, layout, styles, strs, cfg); }
 

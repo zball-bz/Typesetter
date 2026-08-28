@@ -84,7 +84,33 @@ const MACROS = [
   [/\\Coq\b/g, 'Coq'], [/\\Agda\b/g, 'Agda'], [/\\HoTT\b/g, 'HoTT'],
   [/\\xspace/g, ''],
 ];
-const expandMacros = (s) => { for (const [re, rep] of MACROS) s = s.replace(re, rep); return s; };
+// TeX takes undelimited arguments too: \eqv A B, \idtype[\UU]AB — one
+// token each (a brace group, a control word, or a single character)
+const ARG = String.raw`(?:\{(?:[^{}]|\{[^{}]*\})*\}|\\[A-Za-z]+|[^\s\\{}])`;
+const OPT = String.raw`(?:\[([^\]]*)\])?`;
+const strip = (a) => (a && a.startsWith('{') ? a.slice(1, -1) : (a ?? ''));
+const macroN = (name, n, fn, opt = false) => [
+  new RegExp(String.raw`\\` + name + (opt ? OPT : '') + Array(n).fill(String.raw`\s*(` + ARG + ')').join(''), 'g'),
+  (...m) => fn(...(opt ? [m[1], ...m.slice(2, 2 + n)] : m.slice(1, 1 + n)).map(strip)),
+];
+const MACROS2 = [
+  macroN('idtype', 2, (o, a, b) => `\\mathsf{Id}${o ? `_{${o}}` : ''}(${a},${b})`, true),
+  macroN('idtypevar', 1, (a) => `\\mathsf{Id}_{${a}}`),
+  macroN('eqvspaced', 2, (a, b) => `${a} \\simeq ${b}`),
+  macroN('eqv', 2, (a, b) => `${a} \\simeq ${b}`),
+  macroN('texteqv', 2, (a, b) => `\\mathsf{Equiv}(${a},${b})`),
+  macroN('pairr', 1, (a) => `(${a})`),
+  macroN('LEM', 1, (a) => `\\mathsf{LEM}_{${a}}`),
+  macroN('choice', 1, (a) => `\\mathsf{AC}_{${a}}`),
+  macroN('tprd', 1, (a) => `\\Pi_{(${a})}`),
+  macroN('sm', 1, (a) => `\\Sigma_{(${a})}`),
+  macroN('prd', 1, (a) => `\\Pi_{(${a})}`),
+];
+const expandMacros = (s) => {
+  for (const [re, rep] of MACROS2) s = s.replace(re, rep);
+  for (const [re, rep] of MACROS) s = s.replace(re, rep);
+  return s;
+};
 
 // ---- LaTeX math → Typst-ish math -----------------------------------------
 const MATH = [
@@ -93,7 +119,7 @@ const MATH = [
   [/\\lambda/g, 'lambda'], [/\\alpha/g, 'alpha'], [/\\beta/g, 'beta'], [/\\gamma/g, 'gamma'],
   [/\\pi/g, 'pi'], [/\\sigma/g, 'sigma'], [/\\omega/g, 'omega'], [/\\epsilon/g, 'epsilon'],
   [/\\Pi/g, 'Pi'], [/\\Sigma/g, 'Sigma'],
-  [/\\simeq/g, ' tilde.eq '], [/\\equiv/g, ' equiv '], [/\\leq/g, '<='], [/\\geq/g, '>='], [/\\neq/g, '!='],
+  [/\\simeq/g, ' simeq '], [/\\equiv/g, ' equiv '], [/\\leq/g, '<='], [/\\geq/g, '>='], [/\\neq/g, '!='],
   [/\\in\b/g, ' ∈ '], [/\\wedge/g, ' ∧ '], [/\\vee/g, ' ∨ '], [/\\neg/g, '¬'],
   [/\\emptyset/g, '∅'], [/\\forall/g, 'forall'], [/\\exists/g, 'exists'],
   [/\\mathcal\{([A-Za-z])\}/g, '$1'],

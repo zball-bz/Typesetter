@@ -38,7 +38,7 @@ inline pid=2 ""
 hbox Ord w=511 asc=727 desc=7
   glyph "1" Ord w=511 asc=727 desc=7 px=16
 display pid=3
-hbox Ord w=11418 asc=1414 desc=712
+hbox Ord w=11275 asc=1414 desc=891
   hbox Ord w=640 asc=991 desc=12
     glyph "f" Ord w=429 asc=685 desc=12 px=16
     hbox Ord w=160 asc=530 desc=0 @(429,461)
@@ -50,14 +50,14 @@ hbox Ord w=11418 asc=1414 desc=712
   glue w=284 @(1851,0)
   glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(2135,0)
   glue w=284 @(2909,0)
-  hbox Op w=1679 asc=702 desc=704 @(3193,0)
-    glyph "lim" Op w=1679 asc=702 desc=18 px=16
-    hbox Ord w=1520 asc=505 desc=10 @(79,-694)
+  hbox Op w=1536 asc=819 desc=891 @(3193,0)
+    glyph "lim" Op w=1536 asc=819 desc=205 px=16
+    hbox Ord w=1520 asc=505 desc=10 @(8,-881)
       glyph "h" Ord w=445 asc=488 desc=7 px=11.2
       glyph "→" Rel w=717 asc=358 desc=0 px=11.2 @(445,0)
       glyph "0" Ord w=358 asc=505 desc=10 px=11.2 @(1162,0)
-  glue w=171 @(4872,0)
-  hbox Ord w=6375 asc=1414 desc=712 @(5043,0)
+  glue w=171 @(4729,0)
+  hbox Ord w=6375 asc=1414 desc=712 @(4900,0)
     hbox Ord w=6375 asc=721 desc=209 @(0,693)
       glyph "f" Ord w=429 asc=685 desc=12 px=16
       hbox Ord w=3076 asc=721 desc=209 @(429,0)

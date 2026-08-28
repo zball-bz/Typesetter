@@ -121,9 +121,12 @@ struct TopBlock {
   std::vector<FlowUnit> units;
 };
 
+// mathText: text-font runs in formulas measure through the pull loop; the
+// emitter reports what is still missing (Doc re-emits once provided)
 std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena,
                               Interner& strs, StyleTable& styles,
-                              const Config& cfg, DiagSink& diags);
+                              const Config& cfg, DiagSink& diags,
+                              const MathTextCtx* mathText = nullptr);
 
 // Fills widths from the store; returns what is still missing (deduped).
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,

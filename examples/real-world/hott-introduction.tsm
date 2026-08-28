@@ -16,7 +16,7 @@ In type theory, unlike set theory, objects are classified using a primitive noti
 
 One problem in understanding type theory from a mathematical point of view, however, has always been that the basic concept of _type_ is unlike that of _set_ in ways that have been hard to make precise.  We believe that the new idea of regarding types, not as strange sets (perhaps constructed without using classical logic), but as spaces, viewed from the perspective of homotopy theory, is a significant step forward.  In particular, it solves the problem of understanding how the notion of equality of elements of a type differs from that of elements of a set.
 
-In homotopy theory one is concerned with spaces and continuous mappings between them, up to homotopy.  A _homotopy_ between a pair of continuous maps $f : X -> Y$ and  $g : X -> Y$ is a continuous map $H : X times [0, 1] -> Y$ satisfying $H(x, 0) = f (x)$  and $H(x, 1) = g(x)$. The homotopy $H$ may be thought of as a “continuous deformation” of $f$ into $g$. The spaces $X$ and $Y$ are said to be _homotopy equivalent_, $eqv X Y$, if there are continuous maps going back and forth, the composites of which are homotopical to the respective identity mappings, i.e., if they are isomorphic “up to homotopy”.  Homotopy equivalent spaces have the same algebraic invariants (e.g., homology, or the fundamental group), and are said to have the same _homotopy type_.
+In homotopy theory one is concerned with spaces and continuous mappings between them, up to homotopy.  A _homotopy_ between a pair of continuous maps $f : X -> Y$ and  $g : X -> Y$ is a continuous map $H : X times [0, 1] -> Y$ satisfying $H(x, 0) = f (x)$  and $H(x, 1) = g(x)$. The homotopy $H$ may be thought of as a “continuous deformation” of $f$ into $g$. The spaces $X$ and $Y$ are said to be _homotopy equivalent_, $X simeq Y$, if there are continuous maps going back and forth, the composites of which are homotopical to the respective identity mappings, i.e., if they are isomorphic “up to homotopy”.  Homotopy equivalent spaces have the same algebraic invariants (e.g., homology, or the fundamental group), and are said to have the same _homotopy type_.
 
 === Homotopy type theory
 
@@ -40,7 +40,7 @@ We should stress that these “spaces” are treated purely homotopically, not t
 
 The idea of interpreting types as structured objects, rather than sets, has a long pedigree, and is known to clarify various mysterious aspects of type theory. For instance, interpreting types as sheaves helps explain the intuitionistic nature of type-theoretic logic, while interpreting them as partial equivalence relations or “domains” helps explain its computational aspects. It also implies that we can use type-theoretic reasoning to study the structured objects, leading to the rich field of categorical logic. The homotopical interpretation fits this same pattern: it clarifies the nature of _identity_ (or equality) in type theory, and allows us to use type-theoretic reasoning in the study of homotopy theory.
 
-The key new idea of the homotopy interpretation is that the logical notion of identity $a = b$ of two objects $a, b: A$ of the same type $A$ can be understood as the existence of a path $p : a -> b$ from point $a$ to point $b$ in the space $A$. This also means that two functions $f, g: A -> B$ can be identified if they are homotopic, since a homotopy is just a (continuous) family of paths $p_x: f(x) -> g(x)$ in $B$, one for each $x:A$. In type theory, for every type $A$ there is a (formerly somewhat mysterious) type $Id_(A)$ of identifications of two objects of $A$; in homotopy type theory, this is just the _path space_ $A^I$ of all continuous maps $I -> A$ from the unit interval. In this way, a term $p : Id_(A)(a,b)$ represents a path $p : a -> b$ in $A$.
+The key new idea of the homotopy interpretation is that the logical notion of identity $a = b$ of two objects $a, b: A$ of the same type $A$ can be understood as the existence of a path $p : a -> b$ from point $a$ to point $b$ in the space $A$. This also means that two functions $f, g: A -> B$ can be identified if they are homotopic, since a homotopy is just a (continuous) family of paths $p_x: f(x) -> g(x)$ in $B$, one for each $x:A$. In type theory, for every type $A$ there is a (formerly somewhat mysterious) type $Id(v,a)rA$ of identifications of two objects of $A$; in homotopy type theory, this is just the _path space_ $A^I$ of all continuous maps $I -> A$ from the unit interval. In this way, a term $p : Id_(A)(a,b)$ represents a path $p : a -> b$ in $A$.
 
 The idea of homotopy type theory arose around 2006 in independent work by Awodey and Warren @AW and Voevodsky @VV, but it was inspired by Hofmann and Streicher's earlier groupoid interpretation @hs-gpd-typethy. Indeed, higher-dimensional category theory (particularly the theory of weak $oo$-groupoids) is now known to be intimately connected to homotopy theory, as proposed by Grothendieck and now being studied intensely by mathematicians of both sorts. The original semantic models of Awodey–Warren and Voevodsky use well-known notions and techniques from homotopy theory which are now also in use in higher category theory, such as  Quillen model categories and Kan simplicial sets.
 
@@ -48,13 +48,13 @@ In particular, Voevodsky constructed an interpretation of type theory in Kan sim
 
 === Univalent foundations
 
-Very briefly, the basic idea of the univalence axiom can be explained as follows. In type theory, one can have a type whose elements are themselves types; such a type is called a _universe_ and is usually denoted by $U$. Those types that are terms of $U$ are commonly called _small_ types. Like any type, $U$ has an identity type $idtypevarU$, which expresses the identity relation $A = B$ between small types. Thinking of types as spaces, $U$ is a space, the points of which are spaces; to understand its identity type, we must ask, what is a path $p : A -> B$ between spaces in $U$? The univalence axiom says that such paths correspond to homotopy equivalences $eqv A B$, (roughly) as explained above. A bit more precisely, given any (small) types $A$ and $B$, in addition to the primitive type $idtype[U]AB$ of identifications of $A$ with $B$, there is the defined type $texteqv AB$ of equivalences from $A$ to $B$. Since the identity map on any object is an equivalence, there is a canonical map,
+Very briefly, the basic idea of the univalence axiom can be explained as follows. In type theory, one can have a type whose elements are themselves types; such a type is called a _universe_ and is usually denoted by $U$. Those types that are terms of $U$ are commonly called _small_ types. Like any type, $U$ has an identity type $Id(v,a)rU$, which expresses the identity relation $A = B$ between small types. Thinking of types as spaces, $U$ is a space, the points of which are spaces; to understand its identity type, we must ask, what is a path $p : A -> B$ between spaces in $U$? The univalence axiom says that such paths correspond to homotopy equivalences $A simeq B$, (roughly) as explained above. A bit more precisely, given any (small) types $A$ and $B$, in addition to the primitive type $Id_(U)(A,B)$ of identifications of $A$ with $B$, there is the defined type $Equiv(A,B)$ of equivalences from $A$ to $B$. Since the identity map on any object is an equivalence, there is a canonical map,
 
-$ idtype[U]AB -> texteqv AB. $
+$ Id_(U)(A,B) -> Equiv(A,B). $
 
 The univalence axiom states that this map is itself an equivalence. At the risk of oversimplifying, we can state this succinctly as follows:
 
-- *Univalence Axiom:* $eqvspaced(A = B)(eqv A B)$.
+- *Univalence Axiom:* $(A = B) simeq (A simeq B)$.
 
 In other words, identity is equivalent to equivalence. In particular, one may say that “equivalent types are identical”. However, this phrase is somewhat misleading, since it may sound like a sort of “skeletality” condition which _collapses_ the notion of equivalence to coincide with identity, whereas in fact univalence is about _expanding_ the notion of identity so as to coincide with the (unchanged) notion of equivalence.
 
@@ -64,7 +64,7 @@ Thus in sum, for points $A$ and $B$ of the universe $U$ (i.e., small types), the
 
 - (logical) an identification $p:A=B$ of $A$ and $B$
 - (topological) a path $p:A -> B$ from $A$ to $B$ in $U$
-- (homotopical) an equivalence $p:eqv A B$ between $A$ and $B$.
+- (homotopical) an equivalence $p:A simeq B$ between $A$ and $B$.
 
 === Higher inductive types
 
@@ -154,7 +154,7 @@ $A + B$ |  | $A ∨ B$ | disjoint union | coproduct
 $A times B$ |  | $A ∧ B$ | set of pairs | product space
 $A -> B$ |  | $A ⇒ B$ | set of functions | function space
 $Sigma_((x:A))B(x)$ |  | $exists_(x:A)B(x)$ | disjoint sum | total space
-$Pi_(x:A)B(x)$ |  | $forall_(x:A)B(x)$ | product | space of sections
+$Pi_((x:A))B(x)$ |  | $forall_(x:A)B(x)$ | product | space of sections
 $Id_(A)$ |  | equality $=$ | $(x,x) | x ∈ A$ | path space $A^I$
 #table!
 

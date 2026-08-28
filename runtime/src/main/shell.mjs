@@ -59,6 +59,9 @@ export const TSR_CSS = `
 .tsr-math .tsr-mg { position: absolute; white-space: pre;
                     font-family: 'Euler Math', 'STIX Two Math', serif; }
 .tsr-math .tsr-mr { position: absolute; background: currentColor; }
+/* names / operators / "text" in formulas: upright, in the body font (the
+   engine measured them there) — Euler stays for variables and symbols */
+.tsr-math .tsr-mg.tsr-mt { font-family: inherit; font-style: normal; }
 .tsr-eqno { position: absolute; top: 50%; transform: translateY(-50%); }
 .tsr-hlline { background: var(--tsr-hl-line, rgba(250, 200, 60, 0.16)); }
 .tsr-marker.tsr-code { color: var(--tsr-tok-comment, #8d897f);

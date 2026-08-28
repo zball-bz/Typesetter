@@ -33,4 +33,4 @@ top pid=2 units=1
   punct-close "。" w=512su @[95,107)
   punct-sp w=512su @[95,107)
 top pid=3 units=1
- unit math indent=0su w=11418su asc=1414su desc=712su
+ unit math indent=0su w=11275su asc=1414su desc=891su

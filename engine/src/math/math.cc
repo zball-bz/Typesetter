@@ -68,6 +68,7 @@ struct MNode {
   u32 cp = 0;
   u8 cls = kOrd, flags = 0;
   std::string txt;            // Text: literal glyph run; Call: function name
+  bool textFont = false;      // Text: set in the document's text font (names)
   MNode* a = nullptr;         // Script/BigOp: base; Frac: numerator
   MNode* sub = nullptr;       // Script/BigOp
   MNode* sup = nullptr;       // Script/BigOp
@@ -78,7 +79,7 @@ struct MNode {
 
 // ---- tokenizer -------------------------------------------------------------
 struct Tok {
-  enum K : u8 { End, Num, Word, Op, Chr, Sup, Sub, Slash, Open, Close, Prime } k = End;
+  enum K : u8 { End, Num, Word, Op, Chr, Sup, Sub, Slash, Open, Close, Prime, Quote } k = End;
   std::string text;               // Num/Word
   const OpEntry* op = nullptr;    // Op (dictionary hit)
   u32 cp = 0;                     // Chr (direct char) / Open / Close
@@ -130,6 +131,14 @@ struct Lexer {
       t.k = Tok::Word;
       t.text = std::string(s.substr(i, j - i));
       i = j;
+      return t;
+    }
+    if (c == '"') {  // "quoted text": an upright text-font run (Ord)
+      u32 j = i + 1;
+      while (j < s.size() && s[j] != '"') j++;
+      t.k = Tok::Quote;
+      t.text = std::string(s.substr(i + 1, j - (i + 1)));
+      i = j < s.size() ? j + 1 : j;
       return t;
     }
     switch (c) {
@@ -362,6 +371,14 @@ struct Parser {
       case Tok::Word:
         (void)scriptArg;
         return parseWord(items);
+      case Tok::Quote: {
+        MNode* n = mk(MNode::Text);
+        n->txt = tok.text;
+        n->cls = kOrd;
+        n->textFont = true;
+        advance();
+        return n;
+      }
       case Tok::Op: {
         const OpEntry* e = tok.op;
         advance();
@@ -416,12 +433,12 @@ struct Parser {
         n->txt = w;
         n->cls = kOp;
         n->flags = e->flags;
+        n->textFont = true;
         return n;
       }
       if (e->flags & kFlagLarge) return parseBigOp(e);
       return atom(e->cp, e->cls, e->flags);
     }
-    // unknown word: juxtaposed letters; scripts bind to the LAST letter.
     // Single-token contexts consume only the first letter (x^ab == x^a b):
     // rewind the lexer to just past it and re-lex the remainder.
     if (w.size() > 1 && !items) {
@@ -429,11 +446,18 @@ struct Parser {
       advance();
       return atom((u8)w[0], kOrd);
     }
+    // unknown multi-letter word = a NAME (Typst rule): one upright text-font
+    // box with TeX's \operatorname spacing (Op: thin space before an Ord,
+    // none before an opening paren) — Id(A,B), Equiv, eqv. Scripts bind to
+    // the whole name. Single letters stay variables in the math font.
     if (w.size() > 1) {
-      for (size_t k = 0; k + 1 < w.size(); k++)
-        items->push_back(atom((u8)w[k], kOrd));
+      MNode* n = mk(MNode::Text);
+      n->txt = w;
+      n->cls = kOp;
+      n->textFont = true;
+      return n;
     }
-    return atom((u8)w[w.size() - 1], kOrd);
+    return atom((u8)w[0], kOrd);
   }
 
   // sqrt(x) root(n, x) frac(a, b) binom(n, k) abs(x) … and accents hat(x)
@@ -499,6 +523,7 @@ struct Layouter {
   Span span;
   double basePx;
   bool coverageWarned = false;
+  const MathTextCtx* text = nullptr;  // text-font runs (nullptr = Euler only)
 
   MathBox* mkBox(MathKind k) {
     MathBox* b = arena.make<MathBox>();
@@ -539,18 +564,46 @@ struct Layouter {
     return b;
   }
 
+  // text-font run: measured by the host in the body font at the style's
+  // size; missing metrics are recorded (the doc re-emits after the pull)
+  // and the Euler box stands in meanwhile
+  bool textFontBox(MathBox* b, std::string_view txt, u8 st) {
+    if (!text || !text->metrics || !text->styles || !text->strs || text->docBasePx <= 0)
+      return false;
+    Styling sty;
+    sty.sizeMul = (float)(basePx * styleScale(st) / text->docBasePx);
+    StyleId sid = text->styles->idOf(sty);
+    StrRef ref = text->strs->intern(txt);
+    if (!text->metrics->hasWord(ref, sid) || !text->metrics->hasVmet(sid)) {
+      if (text->missing) text->missing->push_back({ref, sid});
+      return false;
+    }
+    const WordMet& wm = text->metrics->word(ref, sid);
+    const VMet& vm = text->metrics->vmet(sid);
+    b->textFont = true;
+    b->w = suCeilPx(wm.px);
+    b->asc = vm.ascent;
+    b->desc = vm.descent;
+    b->italic = 0;
+    b->topAccent = b->w / 2;
+    return true;
+  }
+
   // literal glyph run (digits, text operators): one box, summed advances
-  MathBox* textBox(std::string_view txt, u8 cls, u8 st) {
+  MathBox* textBox(std::string_view txt, u8 cls, u8 st, bool textFont = false) {
     MathBox* b = mkBox(MathKind::Glyph);
     b->cls = b->firstCls = b->lastCls = cls;
     b->text = strs.intern(txt);
     b->px = (float)(basePx * styleScale(st));
+    if (textFont && textFontBox(b, txt, st)) return b;
     double advU = 0;
     int ascU = 0, descU = 0, italU = 0;
     u32 i = 0;
     while (i < txt.size()) {
       u32 cp = utf8Next(txt, i);
-      if (const GlyphRec* r = rec(cp)) {
+      // a text-font run measured on a later pass: the Euler stand-in must
+      // not raise coverage warnings for glyphs it will never paint
+      if (const GlyphRec* r = textFont ? mathGlyph(cp) : rec(cp)) {
         advU += r->adv;
         if (r->asc > ascU) ascU = r->asc;
         if (r->desc > descU) descU = r->desc;
@@ -663,7 +716,7 @@ struct Layouter {
     switch (n->k) {
       case MNode::Run: return layoutRun(n, st);
       case MNode::Atom: return glyphBox(n->cp, n->cls, st);
-      case MNode::Text: return textBox(n->txt, n->cls, st);
+      case MNode::Text: return textBox(n->txt, n->cls, st, n->textFont);
       case MNode::Script: return layoutScript(n, st);
       case MNode::Frac: return layoutFrac(n, st);
       case MNode::Group: return layoutGroup(n, st);
@@ -742,7 +795,7 @@ struct Layouter {
     // take their scripts above/below (TeXbook \\op limits convention)
     if (n->a->k == MNode::Text && (n->a->flags & kFlagLimits) &&
         (n->a->flags & kFlagTextOp) && isDisplay(st)) {
-      MathBox* base = textBox(n->a->txt, kOp, st);
+      MathBox* base = textBox(n->a->txt, kOp, st, n->a->textFont);
       return attachLimits(base, n->sub, n->sup, st);
     }
     MathBox* base = layout(n->a, st);
@@ -927,7 +980,7 @@ struct Layouter {
     MathBox* op;
     bool textOp = (n->flags & kFlagTextOp) != 0;
     if (textOp) {
-      op = textBox(n->txt, kOp, st);
+      op = textBox(n->txt, kOp, st, n->textFont);
     } else {
       op = glyphBox(n->cp, kOp, st);
       if (isDisplay(st)) {
@@ -1182,12 +1235,12 @@ static void effClsOf(const MNode* n, u8& f, u8& l) {
 
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
-                           Span span) {
+                           Span span, const MathTextCtx* text) {
   Parser p{Lexer{src}, arena, diags, span, {}, 0};
   p.advance();
   MNode* run = p.parseRun();
   if (p.tok.k != Tok::End) p.err("unexpected closing bracket");
-  Layouter L{arena, strs, diags, span, sizePx, false};
+  Layouter L{arena, strs, diags, span, sizePx, false, text};
   if (p.errors) {
     // degrade: the raw source as an upright text box (still one formula box)
     return L.textBox(src, mathfont::kOrd, display ? D : T);
@@ -1198,13 +1251,13 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         double sizePx, Arena& arena,
                                         Interner& strs, DiagSink& diags,
-                                        Span span) {
+                                        Span span, const MathTextCtx* text) {
   std::vector<MathSeg> out;
   Parser p{Lexer{src}, arena, diags, span, {}, 0};
   p.advance();
   MNode* run = p.parseRun();
   if (p.tok.k != Tok::End) p.err("unexpected closing bracket");
-  Layouter L{arena, strs, diags, span, sizePx, false};
+  Layouter L{arena, strs, diags, span, sizePx, false, text};
   u8 st = display ? D : T;
   if (p.errors) {
     out.push_back({L.textBox(src, kOrd, st), 0, 0});
