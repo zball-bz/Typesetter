@@ -125,8 +125,11 @@ function installNotePopups(container) {
   const hide = () => { pop?.remove(); pop = null; current = null; };
   const bodyOf = (marker) => {
     const id = marker.getAttribute('href')?.slice(1);
-    const para = id && container.querySelector(`[id="${CSS.escape(id)}"]`);
-    if (!para) return null;
+    const el = id && container.querySelector(`[id="${CSS.escape(id)}"]`);
+    if (!el) return null;
+    // the anchor id sits on the note's FIRST line box; the body is the
+    // whole paragraph container (semantic page: the <li>/<p> itself)
+    const para = el.closest('.tsr-para') ?? el;
     const clone = para.cloneNode(true);
     for (const a of clone.querySelectorAll('a[href^="#tsr-fnref-"]')) a.remove();
     for (const m of clone.querySelectorAll('.tsr-marker')) m.remove();
@@ -140,14 +143,19 @@ function installNotePopups(container) {
     pop = document.createElement('div');
     pop.className = 'tsr-notepop';
     pop.textContent = text;
-    container.appendChild(pop);
-    const cr = container.getBoundingClientRect();
+    // host = the positioned .tsr-doc (the container itself may not be a
+    // containing block); offsets are relative to the host's box
+    const host = container.querySelector('.tsr-doc') ?? container;
+    if (host === container && getComputedStyle(host).position === 'static')
+      host.style.position = 'relative';
+    host.appendChild(pop);
+    const hr = host.getBoundingClientRect();
     const mr = marker.getBoundingClientRect();
-    const w = Math.min(pop.offsetWidth, cr.width);
-    let left = mr.left - cr.left;
-    if (left + w > cr.width) left = Math.max(0, cr.width - w);
+    const w = Math.min(pop.offsetWidth, hr.width);
+    let left = mr.left - hr.left;
+    if (left + w > hr.width) left = Math.max(0, hr.width - w);
     pop.style.left = `${left}px`;
-    pop.style.top = `${mr.bottom - cr.top + 6}px`;
+    pop.style.top = `${mr.bottom - hr.top + 6}px`;
     current = marker;
   };
   const markerAt = (t) => t?.closest?.('a.tsr-sup[href^="#tsr-fn-"]');
