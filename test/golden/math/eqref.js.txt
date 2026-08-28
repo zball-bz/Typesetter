@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("质能关系是狭义相对论的核心结论："),0,48)),0,48));
 __emit(__at(mathblock("E = m c^2", "emc"),50,69));
 __emit(__at(para(__at(text("由"),71,74), __at(ref("emc"),74,78), __at(text("可知能量与质量等价。高斯积分"),78,120)),71,120));

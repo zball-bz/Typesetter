@@ -1,0 +1,17 @@
+doc @[0,367)
+  heading @[0,11) level=1
+    text @[2,11) str="Citations"
+  para @[13,318)
+    text @[13,60) str="Optimal line breaking is due to Knuth and Plass "
+    ref @[61,66) target="kp81"
+    text @[66,101) str="; hyphenation patterns follow Liang "
+    ref @[102,110) target="liang83"
+    text @[110,142) str=", and the pair is cited again as "
+    ref @[143,159) target="kp81, liang83"
+    text @[159,172) str=". The TeXbook "
+    ref @[173,181) target="knuth84"
+    text @[182,254) str=" comes last in citation order even though it is first in the data. Citing "
+    ref @[255,260) target="kp81"
+    text @[261,318) str=" once more keeps its number; the uncited entry is omitted."
+  para @[320,366)
+    splice @[320,366) expr="bibliography(\"/test/fixtures/cite/refs.json\")"

@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(heading(1, null, __at(text("Explicit placement"),2,20)),0,20));
 __emit(__at(para(__at(text("First note here"),22,37), __at(note(__at(text("One."),39,43)),37,44), __at(text(" and another"),45,56), __at(note(__at(text("Two, with a reference to "),58,82), __at(ref("top"),83,87), __at(text("."),87,88)),56,89), __at(text(" before the section is placed."),90,119)),22,119));
 __emit(__at(para(val((notes()))),121,129));

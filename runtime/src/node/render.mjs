@@ -14,7 +14,10 @@ function getMod() {
 }
 
 // → { html, diags, ok }; ok=false on ingest failure or error-severity diags
-export async function renderTsm(source) {
+// opts.baseDir / opts.rootDir: where document resources (#bibliography
+// src) resolve — relative paths against baseDir, /site-root paths against
+// rootDir (defaults: process.cwd())
+export async function renderTsm(source, opts = {}) {
   const M = await getMod();
   const doc = M._tsr_doc_new();
   try {
@@ -22,7 +25,7 @@ export async function renderTsm(source) {
     M._tsr_compile(doc, srcPtr);
     M._free(srcPtr);
     const js = M.UTF8ToString(M._tsr_get_js(doc));
-    const ops = await execute(js);
+    const ops = await execute(js, { baseDir: opts.baseDir, rootDir: opts.rootDir });
     const opsPtr = M._malloc(ops.length);
     M.HEAPU8.set(ops, opsPtr);
     const ingested = M._tsr_ingest(doc, opsPtr, ops.length) === 0;

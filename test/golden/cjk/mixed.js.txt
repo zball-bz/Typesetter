@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("中文与 English words 混排时引擎会插入边界胶，比如 CJK 和 Latin 之间的间隙，K-P 算法照常选取断点。"),0,130)),0,130));
 };
 //# sourceURL=tsm:doc

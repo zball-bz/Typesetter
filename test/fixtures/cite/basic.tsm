@@ -1,0 +1,5 @@
+= Citations
+
+Optimal line breaking is due to Knuth and Plass @kp81; hyphenation patterns follow Liang @liang83, and the pair is cited again as @[kp81, liang83]. The TeXbook @knuth84 comes last in citation order even though it is first in the data. Citing @kp81 once more keeps its number; the uncited entry is omitted.
+
+#bibliography("/test/fixtures/cite/refs.json")

@@ -1,7 +1,7 @@
 # Footnotes & citations — design
 
-Status: footnotes IMPLEMENTED (screen; print inserts pending), citations
-DESIGN. As-built deltas for footnotes are listed at the end of §1.
+Status: footnotes and citations IMPLEMENTED (screen; footnote print
+inserts pending). As-built deltas are listed at the end of §1 and §2.
 Builds on design-decisions-v2 §11.1 and
 document-model §counters/collectors: *execution declares, the resolver
 decides*. Both features are reference-shaped — they reuse the label table,
@@ -130,6 +130,28 @@ emit) — no BibTeX parser in the engine. Keys are the CSL `id`.
   order, each with its anchor. Uncited entries are omitted unless
   `all: true`.
 - **paged render**: nothing new — the bibliography is ordinary flow.
+
+### As built (2026-08)
+
+The pull-resource design (`NEED_BIB`) was NOT used. The executor already
+runs async JS with host access, so the data loads there: `#bibliography(
+src, {all})` records a request and returns an empty placeholder; after the
+document program ran, the executor loads the CSL-JSON (browser/worker:
+fetch against the page's base URL; Node: file, `/`-paths against
+`rootDir`, relative against `baseDir` — `renderTsm(src, {baseDir,
+rootDir})`), formats each entry with `$.bib.format` (default
+`formatEntryDefault`: numeric, author–title–container–publisher–year–
+doi/url) into inline shadows, and emits `collect{what: bibliography}` with
+`group{role: bibentry, name: key}` kids at document END. Formatting stays
+a JS function; the engine never parses JSON or knows CSL.
+
+Resolver: `@key` falls back from the label table to the bib table;
+`@[k1, k2]` splits on commas; ordinals are first-citation order; the ref
+renders `[n]` with each number linking to `bib-<key>`; the collector
+rebuilds as `group{role: bibliography}` = rule + one anchored paragraph
+per cited key in citation order (`{all: true}` appends the uncited). The
+placeholder's empty paragraph is dropped by the rewrite pass. The
+bibliography position is always document end in this version.
 
 ## 3. What is shared
 

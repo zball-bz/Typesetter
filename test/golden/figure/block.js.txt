@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("图片作为一等内容：块级插图、编号图注与引用。"),0,66)),0,66));
 __emit(__at(__region("figure", ({src: "diagrams/pipeline.png", alt: "管线示意", w: 300, h: 150, scale: 0.5, label: "fig-pipe"}), [[[seq(__at(text("排版管线示意图，"),175,199), __at(strong(__at(text("声明尺寸"),200,212)),199,213), __at(text("不经拉取。"),213,228))]]]),68,237));
 __emit(__at(__region("figure", ({src: "photos/wide.png", alt: "宽幅", w: 1200, h: 300, label: "fig-wide"}), [[[__at(text("过宽的图片收敛到版心，按比例缩放。"),323,374)]]]),239,383));

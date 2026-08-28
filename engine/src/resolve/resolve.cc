@@ -67,6 +67,14 @@ struct Resolver {
   std::vector<ContentNode*> notes;
   bool notesPlaced = false;
 
+  // citations (notes-design.md §2): entries come from the executor
+  // (collect{what:bibliography} kids = group{role:bibentry, name:key});
+  // @key resolves against labels first, then this table; ordinals are
+  // assigned in first-citation order
+  std::unordered_map<std::string, ContentNode*> bib;
+  std::unordered_map<std::string, int> citeNo;
+  std::vector<std::string> citeOrder;
+
   // ---- node fabrication ---------------------------------------------------
   ContentNode* mkNode(Kind k, Span span, StyleId style = 0) {
     ContentNode* n = arena.make<ContentNode>();
@@ -186,6 +194,14 @@ struct Resolver {
         }
         break;
       }
+      case Kind::collect: {
+        if (std::string_view(strs.get(argStr(n, ArgK::what))) == "bibliography")
+          for (ContentNode* k : n->kids) {
+            std::string key(strs.get(argStr(k, ArgK::name)));
+            if (!key.empty() && !bib.count(key)) bib.emplace(key, k);
+          }
+        break;
+      }
       case Kind::note: {
         noteNo++;
         std::string num = std::to_string(noteNo);
@@ -215,11 +231,49 @@ struct Resolver {
   }
 
   // ---- pass 2: REF rewriting + collector/term expansion -------------------
+  int citeOrdinal(const std::string& key) {
+    auto it = citeNo.find(key);
+    if (it != citeNo.end()) return it->second;
+    int n = (int)citeOrder.size() + 1;
+    citeNo.emplace(key, n);
+    citeOrder.push_back(key);
+    return n;
+  }
+  // @key / @[k1, k2] against the bibliography: numeric style "[1]" /
+  // "[1, 2]", each number linking to its entry (bib-<key>)
+  bool resolveCite(ContentNode* r, const std::string& target) {
+    std::vector<std::string> keys;
+    size_t at = 0;
+    while (at <= target.size()) {
+      size_t comma = target.find(',', at);
+      if (comma == std::string::npos) comma = target.size();
+      std::string k = target.substr(at, comma - at);
+      while (!k.empty() && k.front() == ' ') k.erase(k.begin());
+      while (!k.empty() && k.back() == ' ') k.pop_back();
+      if (!k.empty()) keys.push_back(k);
+      at = comma + 1;
+    }
+    if (keys.empty()) return false;
+    for (const std::string& k : keys)
+      if (!bib.count(k)) return false;
+    r->kids.push_back(mkText("[", r->span, r->style));
+    for (size_t i = 0; i < keys.size(); i++) {
+      if (i) r->kids.push_back(mkText(", ", r->span, r->style));
+      ContentNode* l = mkNode(Kind::link, r->span, r->style);
+      setArgStr(l, ArgK::url, "#tsr-bib-" + keys[i]);
+      l->kids.push_back(mkText(std::to_string(citeOrdinal(keys[i])), r->span, r->style));
+      r->kids.push_back(l);
+    }
+    r->kids.push_back(mkText("]", r->span, r->style));
+    return true;
+  }
+
   void resolveRef(ContentNode* r) {
     std::string target(strs.get(argStr(r, ArgK::target)));
     r->kids.clear();
     auto it = labels.find(target);
     if (it == labels.end()) {
+      if (resolveCite(r, target)) return;
       diags.add(Sev::Warning, "ref-unresolved", r->span,
                 "reference '" + target + "' has no label");
       r->kids.push_back(mkText("??", r->span, r->style));
@@ -339,11 +393,47 @@ struct Resolver {
     return g;
   }
 
+  // the bibliography section: cited entries in citation order (all
+  // entries, cited-first, with all: true), each "[n] formatted entry" as
+  // an anchored paragraph. The executor emits the collector at document
+  // end, after every citation has been seen by the rewrite pass.
+  ContentNode* buildBibliography(ContentNode* c) {
+    ContentNode* g = mkNode(Kind::group, c->span, c->style);
+    setArgStr(g, ArgK::role, "bibliography");
+    bool all = false;
+    for (const ArgVal& a : c->args)
+      if (a.key == ArgK::form && a.tag == ArgTag::Str &&
+          std::string_view(strs.get(a.ref)) == "all") all = true;
+    std::vector<std::string> keys = citeOrder;
+    if (all)
+      for (ContentNode* k : c->kids) {
+        std::string key(strs.get(argStr(k, ArgK::name)));
+        if (!key.empty() && !citeNo.count(key)) {
+          citeOrdinal(key);
+          keys.push_back(key);
+        }
+      }
+    if (keys.empty()) return g;
+    g->kids.push_back(mkNode(Kind::rule, c->span));
+    for (const std::string& key : keys) {
+      ContentNode* e = bib[key];
+      ContentNode* para = mkNode(Kind::para, e->span, e->style);
+      setArgStr(para, ArgK::label, "bib-" + key);
+      para->kids.push_back(
+          mkText("[" + std::to_string(citeNo[key]) + "] ", e->span, e->style));
+      for (ContentNode* k : e->kids) para->kids.push_back(k);
+      rewrite(para);  // entries may carry links/refs of their own
+      g->kids.push_back(para);
+    }
+    return g;
+  }
+
   ContentNode* buildCollect(ContentNode* c) {
     std::string what(strs.get(argStr(c, ArgK::what)));
     if (what == "toc") return buildToc(c);
     if (what == "glossary") return buildGlossary(c);
     if (what == "notes") return buildNotes(c->span);
+    if (what == "bibliography") return buildBibliography(c);
     diags.add(Sev::Warning, "collect-unknown", c->span,
               "unknown collector '" + what + "'");
     return mkNode(Kind::group, c->span);
@@ -376,9 +466,23 @@ struct Resolver {
     return g;
   }
 
+  bool emptyPara(const ContentNode* p) const {
+    if (p->kind != Kind::para) return false;
+    for (const ContentNode* k : p->kids)
+      if (k->kind != Kind::text || !strs.get(k->str).empty()) return false;
+    return true;
+  }
+
   void rewrite(ContentNode* n) {
     for (size_t i = 0; i < n->kids.size(); i++) {
       ContentNode* k = n->kids[i];
+      // a paragraph left empty by a placeholder splice (#bibliography(...)
+      // emits its section later) vanishes rather than spacing the flow
+      if (emptyPara(k)) {
+        n->kids.erase(n->kids.begin() + (long)i);
+        i--;
+        continue;
+      }
       // a paragraph that is nothing but one block-level splice (#term,
       // #toc, #codeblock(...), a handler-built table, …) IS that construct
       // at block level — unwrap before dispatching (CH1: generalized from

@@ -21,7 +21,7 @@ for (const f of readdirSync(dir).filter((f) => f.endsWith('.tsm')).sort()) {
   const p = join(dir, f);
   try {
     const js = run(['--stage=js', p]);
-    const ops = Buffer.from(await execute(js));
+    const ops = Buffer.from(await execute(js, { rootDir: root }));
     const opsPath = join(tmpdir(), 'corpus.ops');
     writeFileSync(opsPath, ops);
     const diags = run(['--stage=diags', p]);

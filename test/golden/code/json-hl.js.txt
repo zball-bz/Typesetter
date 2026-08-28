@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
 __emit(__at(para(__at(text("JSON 高亮（native 静态链接 tree-sitter，与 web side module 同一份 parse table）："),0,95)),0,95));
 __emit(__at(val(await __fence("json", ({}), "{\"name\": \"typesetter\", \"version\": 3, \"ok\": true, \"tags\": [null, 42]}", 105)),97,177));
 };

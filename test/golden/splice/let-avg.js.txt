@@ -1,4 +1,4 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
 let avg = (a,b) => (a+b)/2;
 __emit(__at(para(__at(text("The mean is "),28,39), val((avg(3,5))), __at(text(", computed "),49,59), __at(strong(__at(text("inline"),61,67)),60,68), __at(text(" here."),69,74)),28,74));
 };

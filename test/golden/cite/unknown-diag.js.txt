@@ -1,0 +1,5 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("A key that exists nowhere, "),0,26), __at(ref("nosuch"),27,34), __at(text(", stays unresolved with a warning; a real one, "),34,80), __at(ref("liang83"),81,89), __at(text(", still resolves."),89,106)),0,106));
+__emit(__at(para(val((bibliography("/test/fixtures/cite/refs.json", {all: true})))),108,167));
+};
+//# sourceURL=tsm:doc

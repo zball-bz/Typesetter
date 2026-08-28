@@ -258,7 +258,8 @@ export function createEngine(opts = {}) {
       const res = await request(
         { type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight,
           fontFamily, cjkFontFamily, paraIndentEm, punctCompress, progressive,
-          codeFontFeatures, codeFontFeaturesByLang, verbatimSnapKerning, fonts },
+          codeFontFeatures, codeFontFeaturesByLang, verbatimSnapKerning, fonts,
+          baseUrl: document.baseURI },
         (html) => {
           semanticHtml = html;
           if (progressive) {
@@ -291,7 +292,7 @@ export function createEngine(opts = {}) {
             source: newSource, widthPx: width, baseSizePx, lineHeight,
             fontFamily, cjkFontFamily, paraIndentEm, punctCompress,
             progressive: false, codeFontFeatures, codeFontFeaturesByLang,
-            verbatimSnapKerning, fonts });
+            verbatimSnapKerning, fonts, baseUrl: document.baseURI });
           let ups = [];
           const patched = patchIn(container, paraChunks, r.html);
           if (patched) paraChunks = patched;

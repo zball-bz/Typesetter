@@ -1,0 +1,9 @@
+doc @[0,168)
+  para @[0,106)
+    text @[0,26) str="A key that exists nowhere, "
+    ref @[27,34) target="nosuch"
+    text @[34,80) str=", stays unresolved with a warning; a real one, "
+    ref @[81,89) target="liang83"
+    text @[89,106) str=", still resolves."
+  para @[108,167)
+    splice @[108,167) expr="bibliography(\"/test/fixtures/cite/refs.json\", {all: true})"

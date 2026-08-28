@@ -1,0 +1,6 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(heading(1, null, __at(text("Citations"),2,11)),0,11));
+__emit(__at(para(__at(text("Optimal line breaking is due to Knuth and Plass "),13,60), __at(ref("kp81"),61,66), __at(text("; hyphenation patterns follow Liang "),66,101), __at(ref("liang83"),102,110), __at(text(", and the pair is cited again as "),110,142), __at(ref("kp81, liang83"),143,159), __at(text(". The TeXbook "),159,172), __at(ref("knuth84"),173,181), __at(text(" comes last in citation order even though it is first in the data. Citing "),182,254), __at(ref("kp81"),255,260), __at(text(" once more keeps its number; the uncited entry is omitted."),261,318)),13,318));
+__emit(__at(para(val((bibliography("/test/fixtures/cite/refs.json")))),320,366));
+};
+//# sourceURL=tsm:doc

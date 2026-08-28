@@ -10,7 +10,52 @@ const styleBits = (p) =>
    (p.underline ? CLS_UNDER : 0) | (p.overline ? CLS_OVER : 0) |
    (p.strike ? CLS_STRIKE : 0)) || undefined;
 
-export function buildContext(ob) {
+// Default numeric bibliography formatter over CSL-JSON (notes-design.md §2):
+// "Author, Author, and Author. Title. Container vol(issue), pages.
+//  Publisher, year. doi/url". Overridable per document via $.bib.format.
+export function formatEntryDefault(e, c) {
+  const people = (e.author ?? e.editor ?? []).map((p) =>
+    p.literal ?? [p.given, p.family].filter(Boolean).join(' '));
+  const names = people.length <= 1 ? people.join('')
+    : people.length === 2 ? people.join(' and ')
+    : people.slice(0, -1).join(', ') + ', and ' + people.at(-1);
+  const year = e.issued?.['date-parts']?.[0]?.[0] ?? e.issued?.raw ?? '';
+  const parts = [];
+  if (names) parts.push(c.text(names + '.'));
+  if (e.title) parts.push(c.text(' '), c.em(c.text(e.title)), c.text('.'));
+  if (e['container-title']) {
+    let s = ' ' + e['container-title'];
+    if (e.volume) s += ' ' + e.volume;
+    if (e.issue) s += '(' + e.issue + ')';
+    if (e.page) s += ', ' + e.page;
+    parts.push(c.text(s + '.'));
+  }
+  const tail = [e.publisher, year].filter(Boolean).join(', ');
+  if (tail) parts.push(c.text(' ' + tail + '.'));
+  if (e.DOI) parts.push(c.text(' '), c.link('https://doi.org/' + e.DOI, c.text('doi:' + e.DOI)));
+  else if (e.URL) parts.push(c.text(' '), c.link(e.URL, c.text(e.URL)));
+  return parts;
+}
+
+// resource loader for #bibliography(src): browser/worker fetch against the
+// page's base URL; Node reads the file — absolute paths against rootDir
+// (the site/repo root), relative ones against the document's folder
+async function loadResource(src, opts) {
+  const s = String(src);
+  if (typeof process !== 'undefined' && process.versions?.node && !/^https?:/.test(s)) {
+    const { readFile } = await import('node:fs/promises');
+    const { join, isAbsolute } = await import('node:path');
+    const file = s.startsWith('/') ? join(opts.rootDir ?? process.cwd(), s)
+      : isAbsolute(s) ? s : join(opts.baseDir ?? process.cwd(), s);
+    return await readFile(file, 'utf8');
+  }
+  const url = opts.baseUrl ? new URL(s, opts.baseUrl) : s;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return await res.text();
+}
+
+export function buildContext(ob, opts = {}) {
   const toShadow = (x) => {
     if (typeof x === 'function') x = x();  // bare #toc / #glossary splices
     return x && typeof x === 'object' && 'opId' in x ? x : ob.makeText(String(x));
@@ -133,6 +178,14 @@ export function buildContext(ob) {
     // the collector explicitly (implicit at document end otherwise)
     notes: () => ob.makeNode(KIND.collect, { what: 'notes' }, []),
     note: node(KIND.note),
+    // citations (notes-design.md §2): the data loads after the program
+    // ran (splices are synchronous); the collector is then emitted at
+    // document end with one formatted entry per key — the resolver
+    // numbers cited keys and rebuilds the section in citation order
+    bibliography: (src, o = {}) => {
+      bibRequests.push({ src: String(src), all: !!o.all });
+      return ob.makeText('');
+    },
     glossary: () => ob.makeNode(KIND.collect, { what: 'glossary' }, []),
     list: (ordered, start, ...items) =>
       ob.makeNode(KIND.list, { ordered, start }, items.map(toShadow)),
@@ -183,9 +236,41 @@ export function buildContext(ob) {
     },
   };
   const styleStack = [];
+  const bibRequests = [];
+  const bibHooks = { format: null };
+  // runs after the document program: load + format + emit bibliographies
+  const finishBibliographies = async () => {
+    for (const req of bibRequests) {
+      let entries;
+      try {
+        entries = JSON.parse(await loadResource(req.src, opts));
+        if (!Array.isArray(entries)) throw new Error('CSL-JSON array expected');
+      } catch (e) {
+        ob.emitNode(ob.makeNode(KIND.error, {
+          message: `bibliography ${req.src}: ${e?.message ?? e}`, code: 'bib-load' }, []));
+        continue;
+      }
+      const fmt = bibHooks.format ?? formatEntryDefault;
+      const kids = [];
+      for (const e of entries) {
+        if (!e || !e.id) continue;
+        let inline;
+        try { inline = fmt(e, ctors); }
+        catch (err) { inline = [ctors.text(`⚠ ${err?.message ?? err}`)]; }
+        kids.push(ob.makeNode(KIND.group, { role: 'bibentry', name: String(e.id) },
+                              (Array.isArray(inline) ? inline : [inline]).map(toShadow)));
+      }
+      ob.emitNode(ob.makeNode(KIND.collect,
+        { what: 'bibliography', form: req.all ? 'all' : undefined }, kids));
+    }
+  };
   const dollar = {
     fence(tag, fn) { fenceHandlers[tag] = fn; },     // registration precedes use
     region(name, fn) { regionHandlers[name] = fn; },
+    bib: {
+      set format(fn) { bibHooks.format = fn; },
+      get format() { return bibHooks.format ?? formatEntryDefault; },
+    },
     style: {
       push(x) {
         styleStack.push(x);
@@ -198,7 +283,7 @@ export function buildContext(ob) {
       popTo(h) { styleStack.length = Math.max(0, h); ob.stylePopTo(h); },
     },
   };
-  return { ctors, dollar };
+  return { ctors, dollar, finishBibliographies };
 }
 
 async function importModule(jsText) {
@@ -224,11 +309,14 @@ async function importModule(jsText) {
   finally { URL.revokeObjectURL(url); }
 }
 
-export async function execute(jsText) {
+// opts: { baseUrl } (browser/worker) or { baseDir, rootDir } (Node) —
+// where #bibliography(src) and other document resources resolve
+export async function execute(jsText, opts = {}) {
   const ob = new OpBuf();
-  const { ctors, dollar } = buildContext(ob);
+  const { ctors, dollar, finishBibliographies } = buildContext(ob, opts);
   const mod = await importModule(jsText);
   if (typeof mod.default !== 'function') throw new Error('document program has no default export');
   await mod.default(ctors, dollar);
+  await finishBibliographies();
   return ob.finalize();
 }

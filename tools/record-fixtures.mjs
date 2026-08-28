@@ -23,7 +23,7 @@ function* walk(dir) {
 let stale = 0, wrote = 0;
 for (const tsm of walk(fixtures)) {
   const js = execFileSync(tsrc, ['--stage=js', tsm], { encoding: 'utf8' });
-  const ops = Buffer.from(await execute(js));
+  const ops = Buffer.from(await execute(js, { baseDir: dirname(tsm), rootDir: root }));
   const opsPath = tsm.replace(/\.tsm$/, '.ops');
   const prev = existsSync(opsPath) ? readFileSync(opsPath) : null;
   if (prev && prev.equals(ops)) continue;

@@ -124,8 +124,13 @@ struct Sem {
         return;
       case Kind::link:
       case Kind::ref: {
+        std::string_view url = argS(n, ArgK::url);
+        if (url.empty()) {  // unresolved ref / grouped citation container
+          inlineKids(n);
+          return;
+        }
         out += "<a href=\"";
-        esc(out, argS(n, ArgK::url));
+        esc(out, url);
         out += "\"";
         std::string_view id = argS(n, ArgK::label);  // inline anchor (marker)
         if (!id.empty()) {

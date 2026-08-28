@@ -1,0 +1,3 @@
+A key that exists nowhere, @nosuch, stays unresolved with a warning; a real one, @liang83, still resolves.
+
+#bibliography("/test/fixtures/cite/refs.json", {all: true})
