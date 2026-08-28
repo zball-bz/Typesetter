@@ -45,9 +45,24 @@ class TsmPreview {
         docRoots: this.docRoots,
       });
     }
-    // relative image srcs in the document resolve against its own folder
-    this.docRoots.set('/__doc/', path.dirname(doc.uri.fsPath) + path.sep);
-    this.docRoots.set('/__fallback/', path.dirname(doc.uri.fsPath) + path.sep);
+    // asset fallback roots: the document's folder (relative srcs), then
+    // every ancestor up to the workspace folder plus its SSG static dirs
+    // (site-root srcs like /images/x.png, served from public/ by Eleventy)
+    const docDir = path.dirname(doc.uri.fsPath);
+    const ws = vscode.workspace.getWorkspaceFolder(doc.uri)?.uri.fsPath ?? null;
+    const staticDirs = vscode.workspace.getConfiguration('tsm.preview')
+      .get('assetDirs', ['public', 'static']);
+    const roots = [];
+    let dir = docDir;
+    for (let i = 0; i < 12; i++) {
+      roots.push(dir + path.sep);
+      for (const s of staticDirs) roots.push(path.join(dir, s) + path.sep);
+      if (dir === ws || path.dirname(dir) === dir) break;
+      if (!ws && i >= 3) break;   // no workspace: a few levels up is enough
+      dir = path.dirname(dir);
+    }
+    this.docRoots.set('/__doc/', docDir + path.sep);
+    this.docRoots.set('__fallback', roots);
     if (!this.panel) {
       this.panel = vscode.window.createWebviewPanel(
         'tsmPreview', 'TSM Preview', vscode.ViewColumn.Beside,

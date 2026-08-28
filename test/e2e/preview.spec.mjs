@@ -104,3 +104,34 @@ test('preview page: panel resize relayouts at the new measure', async ({ page })
   }, src);
   expect(Math.abs(edited - after.out)).toBeLessThan(1);
 });
+
+test('preview server: site-root asset srcs resolve via SSG static dirs', async ({ page }) => {
+  const { mkdtempSync, mkdirSync, writeFileSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const site = mkdtempSync(join(tmpdir(), 'tsm-site-'));
+  mkdirSync(join(site, 'public', 'images'), { recursive: true });
+  mkdirSync(join(site, 'src', 'posts'), { recursive: true });
+  writeFileSync(join(site, 'public', 'images', 'x.png'), 'PNG');
+  writeFileSync(join(site, 'src', 'posts', 'rel.png'), 'REL');
+  const docDir = join(site, 'src', 'posts');
+  const own = await startServer({
+    assetRoot: root,
+    mediaDir: join(root, 'editors/vscode-tsm/media'),
+    docRoots: new Map([
+      ['/__doc/', docDir + '/'],
+      // what preview.js computes: doc dir, ancestors, each with public/static
+      ['__fallback', [docDir + '/', join(site, 'src') + '/', site + '/', join(site, 'public') + '/']],
+    ]),
+  });
+  try {
+    const base = `http://127.0.0.1:${own.port}`;
+    expect((await page.request.get(base + '/images/x.png')).status()).toBe(200);
+    expect(await (await page.request.get(base + '/images/x.png')).text()).toBe('PNG');
+    expect((await page.request.get(base + '/rel.png')).status()).toBe(200);
+    expect((await page.request.get(base + '/images/missing.png')).status()).toBe(404);
+    // path escape stays closed
+    expect((await page.request.get(base + '/../../etc/passwd')).status()).toBe(404);
+  } finally {
+    own.close();
+  }
+});

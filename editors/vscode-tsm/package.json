@@ -2,7 +2,7 @@
   "name": "vscode-tsm",
   "displayName": "Typesetter (tsm)",
   "description": "Language support and live typeset preview for .tsm — the Typesetter markup language",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "zball",
   "license": "MIT",
   "repository": {
@@ -88,6 +88,17 @@
           "type": "number",
           "default": 150,
           "description": "Idle delay before the preview re-typesets after an edit."
+        },
+        "tsm.preview.assetDirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "public",
+            "static"
+          ],
+          "description": "Static-asset directories (relative to each ancestor folder up to the workspace root) searched when the preview resolves a site-root src such as /images/x.png."
         }
       }
     },

@@ -50,14 +50,23 @@ function startServer({ assetRoot, mediaDir, docRoots = new Map() }) {
       try {
         data = await fs.readFile(file);
       } catch (e) {
-        // relative document assets (images in the previewed .tsm) fall back
-        // to the document's own folder
-        const fb = docRoots.get('/__fallback/');
-        if (!fb) throw e;
-        const cand = path.join(fb, p);
-        if (!cand.startsWith(fb)) throw e;
-        file = cand;
-        data = await fs.readFile(file);
+        // document assets: relative srcs resolve against the document's
+        // folder; site-root srcs (/images/x.png) against the SSG's static
+        // dirs up the tree (Eleventy/Astro `public`, Hugo `static`) — the
+        // fallback list is computed per document by preview.js
+        const roots = docRoots.get('__fallback') ?? [];
+        let found = null;
+        for (const dir of roots) {
+          const cand = path.join(dir, p);
+          if (!cand.startsWith(dir)) continue;
+          try {
+            data = await fs.readFile(cand);
+            found = cand;
+            break;
+          } catch { /* next root */ }
+        }
+        if (!found) throw e;
+        file = found;
       }
       res.writeHead(200, {
         'content-type': MIME[path.extname(file)] || 'application/octet-stream',
