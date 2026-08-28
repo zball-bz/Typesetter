@@ -23,6 +23,8 @@ jobs:
 
   web:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # failure diagnostics ride on the rolling release
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -52,7 +54,25 @@ jobs:
       - name: install chromium
         run: npx playwright install --with-deps chromium
       - name: e2e (audit matrix, dsf 1.0/1.25/1.5/2.0)
-        run: npx playwright test
+        run: PLAYWRIGHT_JSON_OUTPUT_NAME=e2e-report.json npx playwright test --reporter=list,json
+      - name: fonts on the runner (diagnostics)
+        if: always()
+        run: fc-match serif; fc-match "Noto Serif CJK SC"; fc-list : family | sort -u | head -40 > fonts.txt || true
+      - name: publish failure diagnostics
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node -e '
+            const r = require("./e2e-report.json");
+            const out = [];
+            const walk = (s) => { for (const t of s.suites ?? []) walk(t); for (const sp of s.specs ?? [])
+              for (const t of sp.tests) for (const res of t.results) if (res.status !== "passed" && res.status !== "skipped")
+                out.push({ title: sp.title, project: t.projectName, error: (res.error?.message ?? "").slice(0, 1500) }); };
+            for (const s of r.suites) walk(s);
+            require("fs").writeFileSync("e2e-failures-${{ github.sha }}.txt", JSON.stringify(out, null, 1) + "\n" + require("fs").readFileSync("fonts.txt", "utf8"));
+          '
+          gh release upload engine-dist "e2e-failures-${{ github.sha }}.txt" --clobber || true
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
