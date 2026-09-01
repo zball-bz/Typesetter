@@ -395,8 +395,12 @@ struct Parser {
         u32 close = open == '(' ? ')' : open == '[' ? ']' : '}';
         advance();
         MNode* inner = parseRun();
-        if (tok.k == Tok::Close && tok.cp == close) advance();
-        else err("unclosed bracket");
+        if (tok.k == Tok::Close) {
+          close = tok.cp;  // mixed delimiters are fine: [0, 1) intervals
+          advance();
+        } else {
+          err("unclosed bracket");
+        }
         MNode* g = mk(MNode::Group);
         g->a = inner;
         g->openCp = open;
@@ -409,9 +413,14 @@ struct Parser {
         advance();
         return atom(0x2032, kOrd);
       }
-      case Tok::Sup:
-      case Tok::Sub:
       case Tok::Slash: {
+        // dangling / is an ordinary slash, as in TeX (formulas split across
+        // sources routinely end mid-expression)
+        advance();
+        return atom('/', kOrd);
+      }
+      case Tok::Sup:
+      case Tok::Sub: {
         err("operator without operand");
         advance();
         return nullptr;

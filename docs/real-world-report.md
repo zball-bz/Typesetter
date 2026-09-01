@@ -61,11 +61,45 @@ except one HoTT line (+1.0px, an inline formula boundary — open).
   hanging-indent unit (first line full, continuation indented) is a small
   layout feature worth having for both notes and bibliographies.
 
+## Whole-book conversion (2026-09-01)
+
+The corpus grew from two sections to the whole 4th edition:
+`tools/convert/pbr2tsm.mjs` batch-converts an mmp/pbr-book-website
+checkout (163 sections, 3.76M chars, 8,047 formulas, 369 figures, 2,190
+literate fragments) to local, gitignored `.tsm` (CC BY-NC-ND: private
+adaptation only). Findings:
+
+- **MathSpeak is invertible.** The site's MathJax SVGs carry no LaTeX,
+  but their accessibility `<title>`s are structured MathSpeak with a
+  456-token vocabulary ("StartFraction 1 Over 4 pi EndFraction") — a
+  recursive parser in pbr2tsm.mjs recovers real math for all 8,047
+  formulas (fractions, roots, sub/sup incl. msubsup nesting rules,
+  under/overscripts, floor/ceiling pairs, matrices as a bracket
+  fallback). Browser-validated: 163/163 sections typeset, 526 → 0
+  math diagnostics over six converter iterations.
+- **Two more TeX-grade leniencies landed engine-side** (math.cc):
+  mixed delimiters (`[0, 1)` interval notation closes a `[` group with
+  `)`), and a dangling `/` renders as an ordinary slash instead of
+  erroring (formulas split across sources routinely end mid-expression).
+  Goldens, corpus (199), and e2e (264) stay green.
+- **HTML4 optional end tags bite.** pbr-book's `<ul>` lists use unclosed
+  `<li>`; a `</li>`-requiring regex silently dropped every list in the
+  book (0.46M chars). Translation workers doing structural parity checks
+  caught it — dangling "the following:" colons with nothing after.
+- pbr-book.org itself now runs a client-side Knuth–Plass justifier
+  (`pretext-layout.js`, Yining Karl Li, over `@chenglou/pretext`): a
+  post-hoc DOM re-layout with KP + adaptive retries, excluding
+  code-bearing paragraphs and captions. Converging goals, opposite
+  architecture — retrofit atop browser layout vs. engine-native breaks.
+
 ## Converter gaps (source-side, documented, not engine problems)
 
-- pbr-book.org ships math as pre-rendered MathJax SVG; 77 formulas
-  became their accessibility titles in italics ("upper A is proportional
-  to cosine theta"). A LaTeX source is needed to typeset them.
+- ~~pbr-book math becomes italic prose~~ — FIXED via MathSpeak recovery
+  (above); remaining known imperfections: two transmittance
+  formulas in Light Transport II whose depth-2 MathSpeak prefix stacks
+  (`Super Superscript …`) defeat the flat parser (one flattened, one
+  garbled with a stray space-glyph warning), matrices render as bracketed
+  rows pending a real matrix construct.
 - HoTT: cross-chapter `\cref` targets (chapters not converted) resolve to
   `??`; the book's own macro set is covered only as far as the
   introduction uses it; unknown math macros become identifiers.

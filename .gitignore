@@ -21,4 +21,6 @@ probe-*.mjs
 # real-world corpus: pbr-book.org text is not freely licensed; regenerate
 # locally with examples/real-world/fetch.mjs
 examples/real-world/pbr-*.tsm
+examples/real-world/pbr-en/
+examples/real-world/pbr-zh/
 examples/real-world/.cache/
