@@ -130,6 +130,20 @@ load); wrap continuation indent 2ch with no marker glyph.
 
 ## 7. As-built deltas (CH completion)
 
+**Literate C++ fragments (2026-09-01).** pbrt-style `<<Fragment Name>>`
+references and `<<Name>>=` / `+=` definition headers are not C++, so
+tree-sitter-cpp shredded them (Function → type, Definitions → variable,
+`>>` → operators) and degraded the surrounding parse. Rather than fork
+the grammar (530K-line parser.c to vendor; `<<` fights the shift
+operator lexically), the token provider handles them: `tokenize()` in
+runtime/src/worker/tokens.mjs recognizes fragment spans by regex, emits
+each as one `label` token (priority above grammar captures), and hands
+tree-sitter the text with those spans blanked to spaces — same length,
+so no offset mapping. Applies to the cpp family only. Editor side: the
+VSCode extension injects `entity.name.tag.fragment.literate.tsm` into
+`meta.embedded.block.cpp` via a TextMate injection grammar (0.2.2). The
+native token provider links only json+tsm, so goldens are unaffected.
+
 - **Side modules are self-compiled** (tools/codehl-assets.mjs): the
   prebuilt `tree-sitter-wasms` package was dylink-ABI-incompatible with
   web-tree-sitter 0.26; emcc SIDE_MODULE=2 over the grammar packages'

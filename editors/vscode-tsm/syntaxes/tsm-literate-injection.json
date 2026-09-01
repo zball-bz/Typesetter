@@ -1,0 +1,10 @@
+{
+  "scopeName": "tsm.literate.injection",
+  "injectionSelector": "L:meta.embedded.block.cpp",
+  "patterns": [
+    {
+      "name": "entity.name.tag.fragment.literate.tsm",
+      "match": "<<[^<>\\n]+>>(\\+?=)?"
+    }
+  ]
+}

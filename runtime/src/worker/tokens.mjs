@@ -75,12 +75,39 @@ function u16ToU8Map(text) {
   return map;
 }
 
+// Literate-programming fragments (pbrt / noweb style): `<<Name>>`
+// references and `<<Name>>=` / `<<Name>>+=` definition headers are not
+// valid C++, so the grammar shreds them into type/variable/operator
+// noise and the surrounding parse degrades. Instead of forking the
+// grammar (530K-line parser.c, and a lexical fight with `<<` shifts),
+// the provider recognizes them itself: each fragment span becomes one
+// `label` token, and the text handed to tree-sitter has those spans
+// blanked (same length, so offsets need no mapping).
+const FRAGMENT_RE = /<<[^<>\n]+>>(?:\+?=)?/g;
+const LABEL_TAG = TAGS.indexOf('label');
+
+function literateSpans(text) {
+  const spans = [];
+  for (const m of text.matchAll(FRAGMENT_RE)) spans.push([m.index, m.index + m[0].length]);
+  return spans;
+}
+
 // → flat Uint32Array of (start, end, tagId) triples (possibly empty)
 export async function tokenize(langTag, text) {
   const name = LANGS[String(langTag).toLowerCase()];
   if (!name) return new Uint32Array(0);
   const entry = await load(name);
   if (!entry) return new Uint32Array(0);
+  let fragments = [];
+  if (name === 'cpp') {
+    fragments = literateSpans(text);
+    if (fragments.length) {
+      let masked = '';
+      let pos = 0;
+      for (const [a, b] of fragments) { masked += text.slice(pos, a) + ' '.repeat(b - a); pos = b; }
+      text = masked + text.slice(pos);
+    }
+  }
   const u8 = u16ToU8Map(text);
   const parser = new tsMod.Parser();
   parser.setLanguage(entry.lang);
@@ -94,6 +121,11 @@ export async function tokenize(langTag, text) {
       const e = u8 ? u8[c.node.endIndex] : c.node.endIndex;
       caps.push({ s, e, pat: m.patternIndex, tag });
     }
+  }
+  for (const [a, b] of fragments) {
+    const s0 = u8 ? u8[a] : a;
+    const e0 = u8 ? u8[b] : b;
+    caps.push({ s: s0, e: e0, pat: -1, tag: LABEL_TAG });  // pat -1: fragments win overlaps
   }
   caps.sort((a, b) => a.s - b.s || a.pat - b.pat);
   const out = [];
