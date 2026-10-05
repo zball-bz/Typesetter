@@ -16,17 +16,6 @@ void excerptInto(const ContentNode* n, const Interner& strs, std::string& out) {
   for (const ContentNode* k : n->kids) excerptInto(k, strs, out);
 }
 
-bool isInlineKind(Kind k) {
-  switch (k) {
-    case Kind::text: case Kind::styled: case Kind::link: case Kind::code:
-    case Kind::ref: case Kind::seq: case Kind::mathinline: case Kind::comment:
-    case Kind::hardbreak: case Kind::raw: case Kind::note:
-      return true;
-    default:
-      return false;
-  }
-}
-
 struct Entry {
   Kind kind;
   std::string number;   // heading "2.1"; table/figure ordinal
@@ -446,7 +435,7 @@ struct Resolver {
         mkText(name, t->span, styles.idOf(Styling{CLS_BOLD, 1.0f})));
     bool sep = false;
     for (ContentNode* k : t->kids) {
-      if (isInlineKind(k->kind)) {
+      if (isInlineLevel(k->kind)) {
         if (!sep) {
           namePara->kids.push_back(mkText(" \xE2\x80\x94 ", t->span, t->style));
           sep = true;
@@ -456,34 +445,15 @@ struct Resolver {
     }
     g->kids.push_back(namePara);
     for (ContentNode* k : t->kids)
-      if (!isInlineKind(k->kind)) g->kids.push_back(k);
+      if (!isInlineLevel(k->kind)) g->kids.push_back(k);
     return g;
-  }
-
-  bool emptyPara(const ContentNode* p) const {
-    if (p->kind != Kind::para) return false;
-    for (const ContentNode* k : p->kids)
-      if (k->kind != Kind::text || !strs.get(k->str).empty()) return false;
-    return true;
   }
 
   void rewrite(ContentNode* n) {
     for (size_t i = 0; i < n->kids.size(); i++) {
       ContentNode* k = n->kids[i];
-      // a paragraph left empty by a placeholder splice (#bibliography(...)
-      // emits its section later) vanishes rather than spacing the flow
-      if (emptyPara(k)) {
-        n->kids.erase(n->kids.begin() + (long)i);
-        i--;
-        continue;
-      }
-      // a paragraph that is nothing but one block-level splice (#term,
-      // #toc, #codeblock(...), a handler-built table, …) IS that construct
-      // at block level — unwrap before dispatching (CH1: generalized from
-      // the term/collect special case to every non-inline kind)
-      if (k->kind == Kind::para && k->kids.size() == 1 &&
-          !isInlineKind(k->kids[0]->kind) && k->kids[0]->kind != Kind::para)
-        k = n->kids[i] = k->kids[0];
+      // (empty-para removal and block unwrapping now run in normalize(),
+      // right after instantiation — plan P0-07)
       if (k->kind == Kind::collect) {
         n->kids[i] = buildCollect(k);
         continue;  // built subtrees contain no refs/collects

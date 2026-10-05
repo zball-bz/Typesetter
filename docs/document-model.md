@@ -86,6 +86,10 @@ Notes:
 - **StyleDelta** (used by both `styled` nodes and the schedule stack): `{ addBits: u64, addDyn: u32[], patch: InlineStyle? }`.
 - **Resolution** (at instantiation, §4): effective style of a node = fold of (schedule stack at its `EMIT`) ∘ (path of `styled` deltas from the emitted root down to the node). Bits OR; dyn sets union; inline patches nearest-wins per prop.
 - **Binding time is emission-time** (v2 §12): a DAG value emitted twice under different stacks instantiates into two differently-styled subtrees. The instantiation walk therefore *copies* per emission; the DAG is a sharing optimization of the op stream, not of the content tree.
+- **InstLimits** (remediation P0-07). Because copies are per occurrence, a few bytes of ops can describe an exponential tree. The copy runs on an explicit stack with two bounds: at most max(262144, 64 × raw nodes) nodes, and nesting at most 256 deep. A cut-off subtree becomes `error{inst-limit}` with one diagnostic.
+- **Normal form** (P0-07, `model/normalize.cc`). Right after instantiation, two rules apply; inline-ness comes from the schema's level classes:
+  - a paragraph made only of empty text vanishes;
+  - a paragraph whose only child is a block- or adaptive-level node is replaced by that node (for example a `#toc` splice alone on a line).
 - Block boundaries snapshot the schedule stack height; block exit and error recovery pop to it.
 
 ## 4. Ops (normative binary contract)

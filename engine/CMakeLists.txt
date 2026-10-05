@@ -16,6 +16,7 @@ add_library(tsr_core STATIC
   src/ops/ops.cc
   src/ops/schema.gen.cc
   src/model/model.cc
+  src/model/normalize.cc
   src/code/tokens.cc
   src/math/math.cc
   src/resolve/resolve.cc

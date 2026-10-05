@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P0
-- 下一步：P0-07
+- 下一步：P0-08
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -20,7 +20,7 @@
 | P0-04 | 前端越界修复（过渡） | done | grep:plan P0-04 | 2026-10-06 | +7 用例（仅新增） | contiguous/注释扫描限于叶子；CRLF；splitCells 跳过数学/代码；未闭合语句在空行或块起点恢复；CRLF 单测 |
 | P0-05 | 执行容错（过渡） | done | grep:plan P0-05 | 2026-10-06 | 全部 js.txt；line/*-unclosed-diag 出现 error 块；+15 用例 | 模块：外层用户名 + 内层参数 __ 别名；仅直接执行用户 JS 的单元加帧；__region/__fence 内部容错；SyntaxError 标记二分；ingest 扫描 script-error 诊断；87K compile+execute +1.6% |
 | P0-06 | 模式抽取、读取器校验、样式值校验 | done | grep:plan P0-06 | 2026-10-06 | +1 用例（style/inject-diag） | schema.json+lock；gen-schema/gen-all（ops.def、schema.gen.*、ops.gen.mjs、schema-table.md）；解码时按域校验；颜色/字体/lang 校验关闭 CSS 注入；类型化访问器；-Werror=switch；G9 启用 |
-| P0-07 | 实例化加固（显式栈 + InstLimits） | todo | | | | |
+| P0-07 | 实例化加固（显式栈 + InstLimits） | done | grep:plan P0-07 | 2026-10-06 | 0 | 显式栈 copy + InstLimits（下限 256K，见偏差）；normalize.cc（N1/N2，按 schema level）；删除 isInlineKind；炸弹单测 25.8ms，峰值 35MB |
 | P0-08 | 样式卫生与统一 em | todo | | | | |
 | P0-09 | 语义正确性修复 | todo | | | | |
 | P0-10 | 渲染正确性修复（HtmlWriter/AnchorNamer、run 键、列表锚点） | todo | | | | |
@@ -133,6 +133,7 @@
 
 | 步骤 | 偏差 | 原因 | 影响的后续步骤 |
 |---|---|---|---|
+| P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）
 

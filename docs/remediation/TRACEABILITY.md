@@ -1062,7 +1062,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/note-kind-and-lift` | adhoc | medium | P3-01, P3-13 | |
 | `codegen-ops-model/collector-switch-and-fixed-counters` | adhoc | medium | P2-07 | |
 | `codegen-ops-model/occurrence-spans-unsound` | issue | high | P2-04 | |
-| `codegen-ops-model/exponential-instantiation` | issue | high | P0-07 | |
+| `codegen-ops-model/exponential-instantiation` | issue | high | P0-07 | grep:plan P0-07 |
 | `codegen-ops-model/no-per-block-containment` | issue | high | P0-05, P2-02 | |
 | `codegen-ops-model/keyword-forms-uncompiled` | issue | high | P0-05, P2-12, P3-31 | |
 | `codegen-ops-model/css-injection-style-values` | issue | high | P0-06, P1-02 | |

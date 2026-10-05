@@ -117,11 +117,34 @@ struct ContentTree {
   ContentNode* root = nullptr;  // kind doc; children = pid-bearing blocks
 };
 
+// InstLimits (plan P0-07): the instantiated tree holds at most
+// max(kInstMinBudget, kInstPerRawNode × raw nodes) nodes, nested at most 256
+// deep. HostOnly configuration once the settings ABI exists (P1-03).
+constexpr size_t kInstMinBudget = 262144;
+constexpr size_t kInstPerRawNode = 64;
+
 // EMIT walk with emission-time style resolution; DAG values are copied per
 // emission (document-model §3).
 ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
                         StyleTable& styles, DiagSink& diags);
 
 std::string dumpTree(const ContentTree& t, const Interner& strs, const StyleTable& styles);
+
+// Level class of a kind (schema.json "level"): what a node may stand next to.
+inline Level levelOf(Kind k) {
+  return (u16)k < KIND_COUNT ? kKinds[(u16)k].level : Level::Block;
+}
+// Inline content: inline, transparent (styled, seq) and trivia (comment).
+inline bool isInlineLevel(Kind k) {
+  Level l = levelOf(k);
+  return l == Level::Inline || l == Level::Transparent || l == Level::Trivia;
+}
+
+// Normal form (plan P0-07, normalize.cc): run on the instantiated tree, and
+// on every subtree the resolver builds.
+//   N1 empty-para: a paragraph of only empty text vanishes (placeholder splices)
+//   N2 unwrap:     a paragraph whose only child is block/adaptive-level IS that
+//                  block (a #term / #toc / #codeblock(…) splice alone on a line)
+void normalize(ContentNode* n, const Interner& strs);
 
 }  // namespace tsr

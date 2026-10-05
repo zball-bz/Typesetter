@@ -1,6 +1,7 @@
 // Native test runner: unit tests + golden tests over test/fixtures.
 //   tsr_tests <repo Typesetter dir> [--update]
 // Goldens live at test/golden/<area>/<name>.<stage>.txt.
+#include <chrono>
 #include <cstdio>
 #include <filesystem>
 #include <functional>
@@ -436,6 +437,59 @@ static void unitCrlf() {
   CHECK(astNoSpans(lf) == astNoSpans(crlf));
 }
 
+// InstLimits (plan P0-07, defect #12): a tiny ops buffer describing an
+// exponential DAG (each node references the previous one twice, 2^40 leaves)
+// and a 300-deep chain must instantiate within the budget, with an
+// inst-limit diagnostic.
+static std::string bombOps(int levels, bool chain) {
+  std::string ops;
+  auto v = [&](u64 x) {
+    while (x > 127) { ops += (char)((x & 127) | 128); x >>= 7; }
+    ops += (char)x;
+  };
+  ops += (char)1;  // MAKE_TEXT "x"
+  v(0);
+  for (int k = 1; k <= levels; k++) {
+    ops += (char)2;  // MAKE_NODE seq, no args
+    v(25);
+    v(0);
+    if (chain) { v(1); v((u64)k - 1); }
+    else { v(2); v((u64)k - 1); v((u64)k - 1); }
+  }
+  ops += (char)3;  // EMIT the top node
+  v((u64)levels);
+  std::string head = "TSOP";
+  head += (char)OPS_VERSION;
+  std::string h;
+  auto hv = [&](u64 x) {
+    while (x > 127) { h += (char)((x & 127) | 128); x >>= 7; }
+    h += (char)x;
+  };
+  hv(1);                  // strings
+  hv(1);                  // string bytes
+  hv((u64)levels + 2);    // ops
+  return head + h + "x" + std::string(1, (char)1) + ops;
+}
+static size_t countNodes(const ContentNode* n) {
+  size_t c = 1;
+  for (const ContentNode* k : n->kids) c += countNodes(k);
+  return c;
+}
+static void unitInstLimits() {
+  for (bool chain : {false, true}) {
+    std::string buf = bombOps(chain ? 300 : 40, chain);
+    Doc doc;
+    auto t0 = std::chrono::steady_clock::now();
+    CHECK(doc.ingest((const u8*)buf.data(), buf.size()));
+    double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();
+    bool limit = false;
+    for (const Diag& d : doc.diags.items) limit = limit || std::string_view(d.code) == "inst-limit";
+    CHECK(limit);
+    CHECK(countNodes(doc.tree.root) <= kInstMinBudget + 1024);  // + error placeholders
+    if (!chain) printf("unit: exponential DAG instantiated in %.1f ms\n", ms);
+  }
+}
+
 int main(int argc, char** argv) {
   std::string root;
   bool update = false;
@@ -456,6 +510,7 @@ int main(int argc, char** argv) {
   unitFragment();
   unitImageSrc();
   unitCrlf();
+  unitInstLimits();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");
