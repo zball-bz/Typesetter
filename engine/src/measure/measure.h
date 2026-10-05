@@ -1,6 +1,8 @@
 // Metric store + request building (document-model §6.3/§7). Widths are
 // quantized on ingestion: ceil to su + epsilon (the §7 ε policy as arithmetic).
 #pragma once
+#include <algorithm>
+#include <cmath>
 #include "../api/config.h"
 #include "../model/model.h"
 
@@ -22,14 +24,18 @@ class MetricStore {
   static u64 key(StrRef s, StyleId st) { return ((u64)s << 32) | st; }
   bool hasWord(StrRef s, StyleId st) const { return words_.count(key(s, st)) != 0; }
   const WordMet& word(StrRef s, StyleId st) const { return words_.at(key(s, st)); }
+  // host metrics are clamped to a finite, representable range (plan P0-11):
+  // NaN or 1e300 would overflow the su conversion
+  static double hostPx(double px) { return std::isfinite(px) ? std::clamp(px, 0.0, 1e6) : 0.0; }
   void provideWord(StrRef s, StyleId st, double px, const Config& cfg) {
+    px = hostPx(px);
     words_[key(s, st)] = {suCeilPx(px) + (Su)cfg.epsilonPerWordSu, px};
   }
   bool hasVmet(StyleId st) const { return st < vmets_.size() && vmets_[st].have; }
   const VMet& vmet(StyleId st) const { return vmets_[st]; }
   void provideVmet(StyleId st, double ascentPx, double descentPx) {
     if (vmets_.size() <= st) vmets_.resize(st + 1);
-    vmets_[st] = {suRoundPx(ascentPx), suRoundPx(descentPx), true};
+    vmets_[st] = {suRoundPx(hostPx(ascentPx)), suRoundPx(hostPx(descentPx)), true};
   }
   void invalidate() {
     words_.clear();

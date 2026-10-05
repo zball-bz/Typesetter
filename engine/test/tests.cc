@@ -392,6 +392,76 @@ static void contractCheck(const std::string& label, const char* output, const st
 // --- fuzz regressions (plan P0-03): every crash libFuzzer found is kept as
 // test/fuzz/<target>/<name> and replayed here, so the ASan/UBSan build (G2)
 // proves it stays fixed ---
+// Host inputs are checked at the provider boundary (plan P0-11): hostile
+// tokens (unknown tag, out of the body, inside a UTF-8 sequence, overlapping)
+// are dropped, non-finite metrics and image dims are refused, and a width
+// change re-emits (image boxes follow the new measure — defect #16).
+static void unitHostInputs(const fs::path& root) {
+  auto load = [&](const char* rel, Doc& doc) {
+    std::string ops;
+    readFile(root / "test" / "fixtures" / rel, ops);
+    doc.cfg.widthPx = 600;
+    doc.cfg.baseSizePx = 16;
+    return doc.ingest((const u8*)ops.data(), ops.size());
+  };
+  {
+    Doc doc;
+    CHECK(load("code/tsm-hl.ops", doc) && !doc.tokenReqs.empty());
+    std::string_view body = doc.strs.get(doc.tokenReqs[0].body);
+    u32 cjk = (u32)body.find("\xE6\xAD\xA3");  // 正: a 3-byte sequence
+    CHECK(cjk != (u32)std::string_view::npos);
+    const CodeToken bad[] = {
+        {0, 1, 200},                        // unknown tag
+        {cjk, cjk + 1, 0},                  // ends inside 正
+        {cjk + 1, cjk + 3, 1},              // starts inside 正
+        {cjk, cjk + 3, 2},                  // fine
+        {cjk + 1, cjk + 6, 3},              // overlaps the previous one
+        {(u32)body.size(), (u32)body.size() + 4, 0},  // past the body
+    };
+    doc.provideTokens(0, bad, std::size(bad));
+    for (size_t i = 1; i < doc.tokenReqs.size(); i++) doc.provideTokens((u32)i, nullptr, 0);
+    for (int i = 0; i < 64 && doc.typeset() != Doc::Status::Ok; i++)
+      mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.styles, doc.cfg);
+    std::string html = doc.render();
+    CHECK(html.find("\xE6\xAD\xA3") != std::string::npos);  // 正 survives whole
+    doc.metrics.provideWord(doc.strs.intern("nan"), 0, std::nan(""), doc.cfg);
+    doc.metrics.provideWord(doc.strs.intern("big"), 0, 1e300, doc.cfg);
+    CHECK(doc.metrics.word(doc.strs.intern("nan"), 0).px == 0);
+    CHECK(doc.metrics.word(doc.strs.intern("big"), 0).px == 1e6);
+  }
+  {
+    Doc doc;
+    CHECK(load("figure/pull-diag.ops", doc) && doc.imageReqs.size() == 1);
+    doc.provideImage(0, std::nan(""), 384);  // refused: placeholder + image-load
+    bool loadDiag = false;
+    for (const Diag& d : doc.diags.items) loadDiag = loadDiag || std::string_view(d.code) == "image-load";
+    CHECK(loadDiag);
+  }
+  {
+    Doc doc;
+    CHECK(load("figure/w-only.ops", doc));
+    for (auto& ir : doc.imageReqs) doc.provideImage(ir.id, 1000, 500);
+    auto imgW = [&] {
+      for (int i = 0; i < 64 && doc.typeset() != Doc::Status::Ok; i++)
+        mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.styles, doc.cfg);
+      for (const TopBlock& tb : doc.tops)
+        for (const FlowUnit& u : tb.units)
+          if (u.kind == FlowUnit::K::Image) return suToPx(u.imgW);
+      return -1.0;
+    };
+    CHECK(imgW() == 120);  // the author's w (defect #24), h from the ratio
+    doc.cfg.widthPx = 600;
+    doc.setWidth(100);
+    CHECK(imgW() == 100);  // clamped to the NEW measure (defect #16)
+    doc.setWidth(600);
+    CHECK(imgW() == 120);
+    size_t n = doc.diags.items.size();
+    doc.setWidth(100);
+    (void)imgW();
+    CHECK(doc.diags.items.size() == n);  // a re-emit replaces, never repeats
+  }
+}
+
 static void fuzzRegressions(const fs::path& root) {
   fs::path dir = root / "test" / "fuzz";
   if (!fs::exists(dir)) return;
@@ -490,6 +560,44 @@ static void unitInstLimits() {
   }
 }
 
+// The KP memo (plan P0-11) answers exactly what breakLines computes: keys
+// are verified on hit, and eviction under many distinct streams only costs
+// recomputation.
+static void unitBreakMemo() {
+  u64 seed = 12345;
+  auto rnd = [&](u32 n) {
+    seed = seed * 6364136223846793005ull + 1442695040888963407ull;
+    return (u32)(seed >> 33) % n;
+  };
+  CostParams cp;
+  int mismatches = 0;
+  for (int round = 0; round < 2; round++) {  // round 2: hits (or recomputes after eviction)
+    seed = 12345;
+#ifdef NDEBUG
+    const int kParas = 9000;  // ~4.4M key words: past the budget, so entries evict
+#else
+    const int kParas = 600;   // sanitizer builds: consistency only
+#endif
+    for (int p = 0; p < kParas; p++) {
+      std::vector<LinebreakBlock> bl(40 + rnd(160));
+      for (size_t i = 0; i < bl.size(); i++) {
+        LinebreakBlock& b = bl[i];
+        b.width = (Su)(64 * (2 + rnd(60)));
+        b.spaceWidth = (i % 2) ? (Su)(64 * 4) : 0;
+        b.breakWidth = 0;
+        b.breakPenalty = (i % 2) ? 0.f : 1e9f;  // break at spaces only
+      }
+      bl.back().breakPenalty = 0;
+      LineWidths lw{(Su)(64 * (300 + rnd(200)))};
+      BreakResult a = breakLinesRetry(bl, lw, cp);
+      BreakResult b = breakLines(bl, lw, cp);
+      if (b.cost < 1e17 && (a.breakpoints != b.breakpoints || a.cost != b.cost)) mismatches++;
+      if (a.breakpoints.empty() || a.breakpoints.back() != bl.size()) mismatches++;
+    }
+  }
+  CHECK(mismatches == 0);
+}
+
 // the shared HTML writer (plan P0-10): one style attribute, one escaper,
 // ids through AnchorNamer, first-wins on a repeated attribute (release)
 static void unitHtmlWriter() {
@@ -556,6 +664,7 @@ int main(int argc, char** argv) {
   unitCrlf();
   unitInstLimits();
   unitHtmlWriter();
+  unitBreakMemo();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");
@@ -593,6 +702,7 @@ int main(int argc, char** argv) {
   }
 
   fuzzRegressions(fs::path(root));
+  unitHostInputs(fs::path(root));
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";
   fs::path golden = fs::path(root) / "test" / "golden";

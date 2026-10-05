@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <list>
 #include <unordered_map>
 
 namespace tsr {
@@ -144,41 +145,100 @@ BreakResult breakLines(const std::vector<LinebreakBlock>& blocks, LineWidths wid
   return {breaks, bestVal};
 }
 
-// FNV-1a over exactly the inputs breakLines reads — nothing else may leak
-// into the key, and any new field the DP starts reading MUST be added here.
-static u64 breakKey(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
-                    const CostParams& params) {
-  u64 h = 1469598103934665603ull;
-  auto mix = [&](u64 v) {
-    h ^= v;
-    h *= 1099511628211ull;
+// The process-wide KP memo (plan P0-11; shared across documents — the
+// editing loop's fast path). The key is exactly the inputs breakLines
+// reads, packed field by field into 32-bit words; any new field the DP
+// starts reading MUST be added to breakKey. A hit compares the stored key
+// words, so a hash collision is a miss, never another paragraph's
+// breakpoints. Least-recently-used entries go once the stored words exceed
+// the budget (it used to wipe itself whole at 16384 entries).
+namespace {
+
+void breakKey(std::vector<u32>& k, const std::vector<LinebreakBlock>& blocks, LineWidths widths,
+              const CostParams& params) {
+  k.clear();
+  k.reserve(10 + blocks.size() * 4);
+  auto d = [&](double v) {
+    u64 b;
+    std::memcpy(&b, &v, 8);
+    k.push_back((u32)b);
+    k.push_back((u32)(b >> 32));
   };
-  auto mixD = [&](double d) {
-    u64 v;
-    std::memcpy(&v, &d, 8);
-    mix(v);
-  };
-  mixD(params.exponent);
-  mixD(params.shrinkThreshold);
-  mixD(params.shrinkCoeff);
-  mix((u64)(i64)widths.constant);
-  mix((u64)(i64)widths.narrow);
-  mix(widths.narrowK);
+  d(params.exponent);
+  d(params.shrinkThreshold);
+  d(params.shrinkCoeff);
+  k.push_back((u32)widths.constant);
+  k.push_back((u32)widths.narrow);
+  k.push_back(widths.narrowK);
+  k.push_back((u32)blocks.size());
   for (const LinebreakBlock& b : blocks) {
-    mix(((u64)(i64)b.width << 21) ^ ((u64)(i64)b.spaceWidth << 42) ^ (u64)(i64)b.breakWidth);
+    k.push_back((u32)b.width);
+    k.push_back((u32)b.spaceWidth);
+    k.push_back((u32)b.breakWidth);
     u32 pen;
     std::memcpy(&pen, &b.breakPenalty, 4);
-    mix(pen);
+    k.push_back(pen);
+  }
+}
+
+u64 hashWords(const std::vector<u32>& k) {
+  u64 h = 0x9E3779B97F4A7C15ull ^ k.size();
+  for (u32 w : k) {  // one multiply-xorshift round per field
+    h = (h ^ w) * 0xFF51AFD7ED558CCDull;
+    h ^= h >> 32;
   }
   return h;
 }
 
+class BreakMemo {
+ public:
+  static constexpr size_t kBudgetWords = size_t(4) << 20;  // 16 MB of key + result words
+
+  const BreakResult* find(u64 h, const std::vector<u32>& key) {
+    auto it = map_.find(h);
+    if (it == map_.end() || it->second.key != key) return nullptr;
+    lru_.splice(lru_.begin(), lru_, it->second.lru);  // most recent first
+    return &it->second.result;
+  }
+  void put(u64 h, const std::vector<u32>& key, const BreakResult& r) {
+    auto it = map_.find(h);
+    if (it != map_.end()) erase(it);  // a colliding key replaces the old one
+    lru_.push_front(h);
+    Entry& e = map_[h];
+    e.key = key;
+    e.result = r;
+    e.lru = lru_.begin();
+    words_ += cost(e);
+    while (words_ > kBudgetWords && lru_.size() > 1) erase(map_.find(lru_.back()));
+  }
+  size_t size() const { return map_.size(); }
+
+ private:
+  struct Entry {
+    std::vector<u32> key;
+    BreakResult result;
+    std::list<u64>::iterator lru;
+  };
+  static size_t cost(const Entry& e) { return e.key.size() + e.result.breakpoints.size() + 16; }
+  void erase(std::unordered_map<u64, Entry>::iterator it) {
+    words_ -= cost(it->second);
+    lru_.erase(it->second.lru);
+    map_.erase(it);
+  }
+  std::unordered_map<u64, Entry> map_;
+  std::list<u64> lru_;
+  size_t words_ = 0;
+};
+
+}  // namespace
+
 BreakResult breakLinesRetry(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
                             const CostParams& params) {
-  static std::unordered_map<u64, BreakResult> cache;
-  const u64 key = breakKey(blocks, widths, params);
-  auto it = cache.find(key);
-  if (it != cache.end()) return it->second;
+  static BreakMemo memo;
+  static std::vector<u32> key;  // scratch: rebuilt per call
+  breakKey(key, blocks, widths, params);
+  const u64 h = hashWords(key);
+  if (const BreakResult* hit = memo.find(h, key)) return *hit;
   BreakResult r = breakLines(blocks, widths, params);
   if (r.cost >= 1e17) {
     // retry ladder: a narrow measure can starve the ±5 cursor window of
@@ -188,8 +248,7 @@ BreakResult breakLinesRetry(const std::vector<LinebreakBlock>& blocks, LineWidth
       if (r.cost < 1e17) break;
     }
   }
-  if (cache.size() >= 16384) cache.clear();
-  cache.emplace(key, r);
+  memo.put(h, key, r);
   return r;
 }
 

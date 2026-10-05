@@ -169,17 +169,23 @@ TSR_EXPORT void tsr_provide_image(WasmDoc* d, int id, double wPx, double hPx) {
 // every request must be answered (empty = plain code)
 TSR_EXPORT void tsr_provide_tokens(WasmDoc* d, int id, const u32* triples, int n) {
   std::vector<CodeToken> toks;
-  toks.reserve((size_t)n);
-  for (int i = 0; i < n; i++)
-    toks.push_back({triples[i * 3], triples[i * 3 + 1], (u8)triples[i * 3 + 2]});
+  if (n > 0) toks.reserve((size_t)n);
+  for (int i = 0; i < n; i++) {
+    u32 tag = triples[i * 3 + 2];
+    if (tag >= (u32)kTokenTagCount) continue;  // never truncate into a valid tag
+    toks.push_back({triples[i * 3], triples[i * 3 + 1], (u8)tag});
+  }
   d->doc.provideTokens((u32)id, toks.data(), toks.size());
 }
 
+// a style id the document never issued is ignored (plan P0-11)
 TSR_EXPORT void tsr_provide_word(WasmDoc* d, const char* word, int styleId, double px) {
+  if (styleId < 0 || (size_t)styleId >= d->doc.styles.count()) return;
   d->doc.metrics.provideWord(d->doc.strs.intern(word), (StyleId)styleId, px, d->doc.cfg);
 }
 
 TSR_EXPORT void tsr_provide_vmet(WasmDoc* d, int styleId, double ascPx, double descPx) {
+  if (styleId < 0 || (size_t)styleId >= d->doc.styles.count()) return;
   d->doc.metrics.provideVmet((StyleId)styleId, ascPx, descPx);
 }
 

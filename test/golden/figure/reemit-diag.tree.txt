@@ -1,0 +1,10 @@
+doc @[0,225) [base]
+  para @[0,117) [base]
+    text @[0,64) [base] str="A refused image scheme is reported once, even though the formula "
+    mathinline @[65,82) [base] src="f(x) \"if\" x > 0"
+    text @[83,117) [base] str=" makes emit run twice (plan P0-11)."
+  group @[119,225) [base] role="figure" label="fig-bad"
+    image @[0,0) [base] src="javascript:alert(1)" alt="refused"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 1："
+      text @[190,216) [base] str="The placeholder stands in."

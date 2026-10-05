@@ -61,6 +61,7 @@ struct Doc {
   enum class Status { Ok, NeedMeasure };
 
   void compile(std::string source) {
+    diags.begin(DiagOrigin::Compile);
     src.init(std::move(source));
     skel = linepass(src, arena, diags);
     ast = parseDoc(src, skel, arena, strs, diags);
@@ -68,6 +69,7 @@ struct Doc {
   }
 
   bool ingest(const u8* buf, size_t len) {
+    diags.begin(DiagOrigin::Ingest);
     decodeOps(buf, len, raw, diags);  // in place: raw.strings view raw.blob
     if (!raw.ok) return false;
     tree = instantiate(raw, arena, strs, styles, diags);
@@ -245,29 +247,60 @@ struct Doc {
       a.num = v;
       r.node->args.push_back(a);
     };
-    if (wPx > 0 && hPx > 0) {
-      setNum(ArgK::w, wPx);
-      setNum(ArgK::h, hPx);
+    if (std::isfinite(wPx) && std::isfinite(hPx) && wPx > 0 && hPx > 0) {
+      // intrinsic dims fill only what the author left out (defect #24,
+      // D-H01 interim): a declared w (or h) stays and the other side
+      // follows the image's aspect ratio
+      double aw = 0, ah = 0;
+      for (const ArgVal& a : r.node->args) {
+        if (a.key == ArgK::w && a.tag == ArgTag::Num) aw = a.num;
+        if (a.key == ArgK::h && a.tag == ArgTag::Num) ah = a.num;
+      }
+      if (aw > 0) setNum(ArgK::h, aw * hPx / wPx);
+      else if (ah > 0) setNum(ArgK::w, ah * wPx / hPx);
+      else {
+        setNum(ArgK::w, wPx);
+        setNum(ArgK::h, hPx);
+      }
     } else {
-      diags.add(Sev::Warning, "image-load", r.node->span,
-                "image failed to load: " + std::string(strs.get(r.src)));
+      diags.addAs(DiagOrigin::Provide, Sev::Warning, "image-load", r.node->span,
+                  "image failed to load: " + std::string(strs.get(r.src)));
     }
     emitted = false;
   }
 
   // provider contract: EVERY request must be answered (empty = plain code),
   // mirroring the measurement loop. Tokens sorted, non-overlapping.
+  // Host input is checked here (plan P0-11): a token with an unknown tag, an
+  // empty or out-of-body range, a boundary inside a UTF-8 sequence, or out
+  // of order / overlapping is dropped (its text stays plain).
   void provideTokens(u32 id, const CodeToken* toks, size_t n) {
     if (id >= tokenReqs.size() || tokenReqs[id].provided) return;
     TokenReq& r = tokenReqs[id];
     r.provided = true;
-    if (n > 0) foldTokens(r.node, toks, n, arena, strs, styles);
+    std::string_view body = strs.get(r.body);
+    auto boundary = [&](u32 at) {
+      return at == body.size() || (at < body.size() && ((u8)body[at] & 0xC0) != 0x80);
+    };
+    std::vector<CodeToken> ok;
+    ok.reserve(n);
+    u32 covered = 0;
+    for (size_t i = 0; i < n; i++) {
+      const CodeToken& t = toks[i];
+      if (t.tag >= kTokenTagCount || t.start >= t.end || t.end > body.size() ||
+          t.start < covered || !boundary(t.start) || !boundary(t.end))
+        continue;
+      ok.push_back(t);
+      covered = t.end;
+    }
+    if (!ok.empty()) foldTokens(r.node, ok.data(), ok.size(), arena, strs, styles);
     emitted = false;
   }
 
   Status typeset() {
     if (tokensPending() || imagesPending()) return Status::NeedMeasure;
     if (!emitted) {
+      diags.begin(DiagOrigin::Emit);  // a re-emit replaces its diagnostics
       mathTextMissing.clear();
       MathTextCtx mt{&metrics, &styles, &strs, cfg.baseSizePx, &mathTextMissing};
       tops = emitDoc(tree, arena, strs, styles, cfg, diags, &mt);
@@ -401,6 +434,7 @@ struct Doc {
   }
 
   std::string render() {
+    diags.begin(DiagOrigin::Render);
     writerDefects() = {};
     std::string html = renderTypeset(tops, layout, styles, strs, cfg);
     reportWriterDefects();
@@ -409,6 +443,7 @@ struct Doc {
 
   // paged rendering for print (pages-design.md §2); needs a finished layout
   std::string renderPaged(double pageHeightPx) {
+    diags.begin(DiagOrigin::Render);
     writerDefects() = {};
     std::string html = renderPages(tops, layout, styles, strs, cfg, pageHeightPx);
     reportWriterDefects();
@@ -417,6 +452,7 @@ struct Doc {
 
   // needs only the post-resolve tree — valid before any measurement
   std::string renderFallback() {
+    diags.begin(DiagOrigin::Render);
     writerDefects() = {};
     std::string html = renderSemantic(tree, strs, styles);
     reportWriterDefects();
@@ -432,9 +468,16 @@ struct Doc {
                 std::to_string(d.count) + " attribute defect(s), first: " + d.first);
   }
 
-  // width-only relayout (architecture §2.4): metrics persist, the next
-  // typeset() re-breaks and re-lays out at the new measure
-  void setWidth(double widthPx) { cfg.widthPx = widthPx; laidOut = false; }
+  // relayout (architecture §2.4): metrics persist; emit bakes width-
+  // dependent products (image display boxes, sidecar columns), so the next
+  // typeset() re-emits, re-breaks and re-lays out at the new measure
+  // (defect #16; P1-16 takes width out of emit)
+  void setWidth(double widthPx) {
+    if (widthPx == cfg.widthPx) return;
+    cfg.widthPx = widthPx;
+    emitted = false;
+    laidOut = false;
+  }
 
   std::string dumpDiags() const {
     std::string out;

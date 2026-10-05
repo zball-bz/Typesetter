@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="106">作者只声明宽度时，高度按图片的宽高比推出，宽度保持作者的值（缺陷 #24）。</p>
+<figure data-pid="1" data-s="108" data-e="262" id="tsr-fig-w">
+<img src="/test/e2e/img/w40h20.png" alt="只给宽度" style="max-width:100%">
+<figcaption><strong>图 1：</strong>宽 120px 的插图，高度来自拉取到的宽高比。</figcaption>
+</figure>
+</div>

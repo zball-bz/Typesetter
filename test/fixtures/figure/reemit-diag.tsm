@@ -1,0 +1,5 @@
+A refused image scheme is reported once, even though the formula $f(x) "if" x > 0$ makes emit run twice (plan P0-11).
+
+#!figure(src: "javascript:alert(1)", alt: "refused", label: "fig-bad")
+The placeholder stands in.
+#figure!

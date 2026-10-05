@@ -160,7 +160,9 @@ narrowed units get `left += occlW` when the float is on the left.
 
 - **Display sizing is scale-only** (§3 simplified): `w`/`h` args are purely
   the intrinsic dims; `scale` is the one display control (else natural size
-  capped at the measure). An absolute-px display width was dropped — `scale`
+  capped at the measure). When the author declares only one of them, the
+  pulled dims fill the other by aspect ratio and the declared one stays
+  (plan P0-11, defect #24; P1-19 separates author and intrinsic dims). An absolute-px display width was dropped — `scale`
   covers the blog cases and keeps one source of truth.
 - Captions keep the body size (no 0.92 shrink — per-leaf style composition
   wasn't worth it); they are ragged + centred + unhyphenated, and skip 首行

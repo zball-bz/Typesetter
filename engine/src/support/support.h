@@ -145,16 +145,30 @@ inline void parseRangeSet(std::string_view h, std::vector<u32>& out) {
 
 // --- diagnostics (document-model §10) ---
 enum class Sev : u8 { Error, Warning, Info };
+// The pass that reported a diagnostic (plan P0-11, design T9 M1). A pass
+// that can re-run (emit after late metrics or a width change, render)
+// truncates its own slice when it begins, so re-runs never duplicate.
+enum class DiagOrigin : u8 { Compile, Ingest, Provide, Emit, Render };
 struct Diag {
   Sev sev;
   const char* code;
   Span span;
   std::string msg;
+  DiagOrigin origin = DiagOrigin::Compile;
 };
 struct DiagSink {
   std::vector<Diag> items;
+  DiagOrigin origin = DiagOrigin::Compile;  // stamped on every add
   void add(Sev s, const char* code, Span sp, std::string msg) {
-    items.push_back({s, code, sp, std::move(msg)});
+    items.push_back({s, code, sp, std::move(msg), origin});
+  }
+  void addAs(DiagOrigin o, Sev s, const char* code, Span sp, std::string msg) {
+    items.push_back({s, code, sp, std::move(msg), o});
+  }
+  // starts pass `o`: drops what an earlier run of it reported
+  void begin(DiagOrigin o) {
+    origin = o;
+    std::erase_if(items, [o](const Diag& d) { return d.origin == o; });
   }
 };
 

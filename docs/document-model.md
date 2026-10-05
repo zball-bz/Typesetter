@@ -15,7 +15,7 @@ A document handle owns, in order of production:
 | **ContentTree** (post-resolve) + label/term/bib tables | handle | recompile |
 | **BlockStreams** (per paragraph) + MetricStore | handle | recompile; entries invalidated by dppx change |
 | **LayoutResult** | until next typeset/relayout | `tsr_typeset` / `tsr_relayout` |
-| Diagnostics | handle (append-only) | recompile |
+| Diagnostics | handle; each entry carries its origin pass (compile / ingest / provide / emit / render) | a pass that re-runs (emit after late metrics or a width change, render) replaces its own slice (plan P0-11) |
 
 Persistence of the middle products is what makes the pull-loop resumable and `relayout` cheap (architecture §2.4). All of it lives in the document arena.
 
@@ -298,6 +298,8 @@ Copy produces **content text**, not markup source: walk selected `.tsr-r` runs i
   `<p class="tsr-mathblock">` for display. MathML stays rejected (v2 §13).
 
 ## 10. Diagnostics
+
+As built (plan P0-11): `DiagSink` stamps every diagnostic with the pass that reported it, and `begin(origin)` drops that pass's earlier slice, so a re-emit (late math-text metrics, `tsr_set_width`) never duplicates its warnings. A diagnostic about a generated node without a span (a figure's image) points at its innermost spanned block. The wire format is still the text dump until the JSON form below lands.
 
 `{ severity: error|warning|info, code, span, message, related?: span[] }`, JSON via `tsr_diagnostics`. Initial code table:
 
