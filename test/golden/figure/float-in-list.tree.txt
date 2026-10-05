@@ -1,0 +1,20 @@
+doc @[0,92) [base]
+  para @[0,60) [base]
+    text @[0,60) [base] str="A left float inside a list item (guard fixture, plan P0-01)."
+  list @[62,92) [base] ordered=false start=1
+    item @[62,92) [base]
+      para @[64,92) [base]
+        text @[64,92) [base] str="First item before the float."
+    item @[93,130) [base]
+      para @[95,130) [base]
+        text @[95,130) [base] str="Second item holds a floated figure."
+      group @[134,276) [base] role="figure" label="fig-icon"
+        image @[0,0) [base] src="photos/icon.png" alt="icon" w=200 h=200 scale=0.4 side="left"
+        para @[0,0) [base]
+          text @[0,0) [BOLD] str="图 1："
+          text @[244,265) [base] str="A small floated icon."
+      para @[280,419) [base]
+        text @[280,419) [base] str="The item text continues beside the float and should narrow around it for a few lines before returning to the full measure of the list body."
+    item @[420,449) [base]
+      para @[422,449) [base]
+        text @[422,449) [base] str="Third item after the float."

@@ -1,0 +1,5 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="215" style="top:0px;left:0px;width:300px;word-spacing:-153.778px"><span class="tsr-r" data-s="0">Two overlong addresses in one paragraph: https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere and https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure end.</span></div>
+</div>
+</div>

@@ -1,0 +1,17 @@
+doc @[0,201)
+  heading @[0,18) level=1 label="sec-a"
+    text @[2,18) str="Labelled heading"
+  para @[28,99)
+    text @[28,99) str="A short paragraph before a labelled display equation on the same sheet."
+  para @[101,130)
+    math @[101,130) display=1 src="a^2 + b^2 = c^2" label="eq-pyth"
+  para @[132,163)
+    math @[132,163) display=1 src="e^(i pi) + 1 = 0" label="eq-euler"
+  para @[165,200)
+    text @[165,168) str="See "
+    ref @[169,175) target="sec-a"
+    text @[175,176) str=", "
+    ref @[177,185) target="eq-pyth"
+    text @[186,189) str=" and "
+    ref @[190,199) target="eq-euler"
+    text @[199,200) str="."

@@ -1,0 +1,7 @@
+= Sheet boundary
+
+Filler paragraph one fills most of the first sheet with ordinary running text so that the next paragraph starts close to the bottom edge.
+
+Filler paragraph two continues to push the content down the page by a few more lines of text.
+
+This three-line paragraph starts near the sheet boundary: its first line may fit, but widow and orphan rules decide where it breaks.

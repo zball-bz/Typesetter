@@ -1,0 +1,17 @@
+doc h=22222su
+para pid=0 y=0su w=19200su h=1639su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,3) @[2,16)
+para pid=1 y=2868su w=19200su h=6144su
+  L0 y=0su left=0su w=19200su dw=213su dc=0su join=space blocks=[0,15) @[18,155)
+  L1 y=1536su left=0su w=19200su dw=-43su dc=0su join=space blocks=[16,35) @[18,155)
+  L2 y=3072su left=0su w=19200su dw=128su dc=0su join=space blocks=[36,51) @[18,155)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[52,59) @[18,155)
+para pid=2 y=10241su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=205su dc=0su join=space blocks=[0,17) @[157,250)
+  L1 y=1536su left=0su w=19200su dw=160su dc=0su join=space blocks=[18,37) @[157,250)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[38,43) @[157,250)
+para pid=3 y=16078su w=19200su h=6144su
+  L0 y=0su left=0su w=19200su dw=320su dc=0su join=space blocks=[0,11) @[252,384)
+  L1 y=1536su left=0su w=19200su dw=213su dc=0su join=space blocks=[12,27) @[252,384)
+  L2 y=3072su left=0su w=19200su dw=213su dc=0su join=space blocks=[28,47) @[252,384)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[48,53) @[252,384)

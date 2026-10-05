@@ -1,0 +1,5 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("Snap-kerning with a sidecar column (guard fixture, plan P0-01): the code track and the sidecar track must share the measure."),0,124)),0,124));
+__emit(__at(val(await __fence("js", ({sidecar: "///", lineNo: 1}), "const 标题 = \"中文与 ASCII 混排\"; /// 中文边注 with Latin\nfor (let i = 0; i < 3; i++) emit(标题, i); /// 每行一个", 159)),126,293));
+};
+//# sourceURL=tsm:doc

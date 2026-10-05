@@ -1,0 +1,12 @@
+Nested containers at a 18px base (vertical algebra guard, plan P0-01).
+
+- Outer item
+  > A quote inside the item
+  > with two lines.
+
+  ```js
+  nested(code);
+  ```
+  - Inner item
+    > Deep quote
+- Last outer item

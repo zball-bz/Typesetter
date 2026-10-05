@@ -1,0 +1,7 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(heading(1, null, __at(text("Sheet boundary"),2,16)),0,16));
+__emit(__at(para(__at(text("Filler paragraph one fills most of the first sheet with ordinary running text so that the next paragraph starts close to the bottom edge."),18,155)),18,155));
+__emit(__at(para(__at(text("Filler paragraph two continues to push the content down the page by a few more lines of text."),157,250)),157,250));
+__emit(__at(para(__at(text("This three-line paragraph starts near the sheet boundary: its first line may fit, but widow and orphan rules decide where it breaks."),252,384)),252,384));
+};
+//# sourceURL=tsm:doc

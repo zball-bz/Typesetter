@@ -1,0 +1,6 @@
+doc @[0,201)
+  heading1 @[0,18) label="sec-a"
+  para @[28,99) lines=1
+  para @[101,130) lines=1
+  para @[132,163) lines=1
+  para @[165,200) lines=1

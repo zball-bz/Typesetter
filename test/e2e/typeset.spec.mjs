@@ -18,6 +18,13 @@ const fixtures = [...walk(fixturesDir)].map((p) => ({
   source: readFileSync(p, 'utf8'),
 }));
 
+// Known audit failures (remediation plan P0-01): guard fixtures that record
+// a defect before the step that fixes it. A listed fixture whose audit passes
+// fails the run, so the list can only shrink. Mirrors test/golden/XFAIL.
+const AUDIT_XFAIL = new Map([
+  ['doc/url-overlong', 'compression: overfull paragraph collapses to one line (defect #19, P0-12)'],
+]);
+
 for (const f of fixtures) {
   test(`audit ${f.name}`, async ({ page }) => {
     await page.goto('/test/e2e/harness.html');
@@ -38,7 +45,11 @@ for (const f of fixtures) {
     if (!f.name.includes('diag')) expect(res.diags).toBe('');
     const report = await page.evaluate(() => window.__tsr.audit());
     expect(report.lines).toBeGreaterThan(0);
-    expect(report.failures).toEqual([]);
+    if (AUDIT_XFAIL.has(f.name)) {
+      expect(report.failures.length, `XPASS: remove ${f.name} from AUDIT_XFAIL`).toBeGreaterThan(0);
+    } else {
+      expect(report.failures).toEqual([]);
+    }
   });
 }
 

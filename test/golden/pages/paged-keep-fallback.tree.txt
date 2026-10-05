@@ -1,0 +1,10 @@
+doc @[0,182) [base]
+  heading @[0,30) [base] level=1 label="h-1"
+    text @[2,30) [base] str="Heading before a tall figure"
+  group @[32,158) [base] role="figure" label="fig-tall"
+    image @[0,0) [base] src="photos/tall.png" alt="tall" w=300 h=200
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 1："
+      text @[113,149) [base] str="A figure 200px tall on 240px sheets."
+  para @[160,182) [base]
+    text @[160,182) [base] str="Text after the figure."

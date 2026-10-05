@@ -1,0 +1,8 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(heading(1, "sec-a", __at(text("Labelled heading"),2,18)),0,18));
+__emit(__at(para(__at(text("A short paragraph before a labelled display equation on the same sheet."),28,99)),28,99));
+__emit(__at(mathblock("a^2 + b^2 = c^2", "eq-pyth"),101,130));
+__emit(__at(mathblock("e^(i pi) + 1 = 0", "eq-euler"),132,163));
+__emit(__at(para(__at(text("See "),165,168), __at(ref("sec-a"),169,175), __at(text(", "),175,176), __at(ref("eq-pyth"),177,185), __at(text(" and "),186,189), __at(ref("eq-euler"),190,199), __at(text("."),199,200)),165,200));
+};
+//# sourceURL=tsm:doc

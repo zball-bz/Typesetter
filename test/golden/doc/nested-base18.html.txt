@@ -1,0 +1,16 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:81px;margin-bottom:21.6px">
+<div class="tsr-line" data-s="0" data-e="70" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6.9px"><span class="tsr-r" data-s="0">Nested containers at a 18px base</span></div>
+<div class="tsr-line" data-s="0" data-e="70" data-join="space" style="top:27px;left:0px;width:300px;word-spacing:17.5px"><span class="tsr-r" data-s="0">(vertical algebra guard, plan</span></div>
+<div class="tsr-line" data-s="0" data-e="70" style="top:54px;left:0px;width:300px"><span class="tsr-r" data-s="0">P0-01).</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="74" style="position:relative;height:224.938px">
+<div class="tsr-line" data-s="0" data-e="10" style="top:0px;left:27px;width:273px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">Outer item</span></div>
+<div class="tsr-line" data-s="15" data-e="58" data-join="space" style="top:34.188px;left:45px;width:255px;word-spacing:-1px"><span class="tsr-r" data-s="15">A quote inside the item with two</span></div>
+<div class="tsr-line" data-s="15" data-e="58" style="top:61.188px;left:45px;width:255px"><span class="tsr-r" data-s="15">lines.</span></div>
+<div class="tsr-line" data-ragged="1" style="top:95.375px;left:27px;width:273px;line-height:27px"><span class="tsr-r tsr-code" style="font-size:15.3px">nested(code);</span></div>
+<div class="tsr-line" data-s="94" data-e="104" style="top:129.562px;left:54px;width:246px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="94">Inner item</span></div>
+<div class="tsr-line" data-s="111" data-e="121" style="top:163.75px;left:72px;width:228px"><span class="tsr-r" data-s="111">Deep quote</span></div>
+<div class="tsr-line" data-s="124" data-e="139" style="top:197.938px;left:27px;width:273px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="124">Last outer item</span></div>
+</div>
+</div>

@@ -1,0 +1,7 @@
+= Heading before a tall figure
+
+#!figure(src: "photos/tall.png", alt: "tall", w: 300, h: 200, label: "fig-tall")
+A figure 200px tall on 240px sheets.
+#figure!
+
+Text after the figure.

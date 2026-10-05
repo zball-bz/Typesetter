@@ -42,8 +42,8 @@ run() {
   local desc=$1; shift
   want "$g" || return 0
   local t0=$SECONDS
-  local log="$ROOT/test-results/gate-$g.log"
-  mkdir -p "$ROOT/test-results"
+  local log="$ROOT/.gate-logs/$g.log"
+  mkdir -p "$ROOT/.gate-logs"
   if "$@" >"$log" 2>&1; then
     RESULTS+=("PASS $g $desc ($((SECONDS - t0))s)")
   else

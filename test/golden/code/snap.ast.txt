@@ -1,0 +1,4 @@
+doc @[0,217)
+  para @[0,78)
+    text @[0,78) str="Snap-kerning on a wrapping code block (guard fixture, plan P0-01; defect #21)."
+  codeblock @[80,216) lang="js" body="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";\nemit(标题);"

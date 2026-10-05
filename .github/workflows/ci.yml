@@ -51,6 +51,8 @@ jobs:
         run: node tools/codehl-assets.mjs
       - name: typst corpus smoke
         run: node tools/corpus-run.mjs
+      - name: real-world corpus review (no new error diagnostics)
+        run: node tools/review-corpus.mjs --check
       - name: install chromium
         run: npx playwright install --with-deps chromium
       # a CJK serif with full-width punctuation glyphs, as real readers have;

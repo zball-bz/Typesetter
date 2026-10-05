@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="135">Opening text that occupies the first part of the sheet so the following float begins roughly one hundred pixels above the sheet bottom.</p>
+<figure data-pid="1" data-s="137" data-e="280" id="tsr-fig-box">
+<img src="photos/box.png" alt="box" style="max-width:100%">
+<figcaption><strong>图 1：</strong>Right float near the bottom.</figcaption>
+</figure>
+<p data-pid="2" data-s="282" data-e="397">Text that wraps beside the float and continues onto the next sheet, where the float must not straddle the boundary.</p>
+</div>

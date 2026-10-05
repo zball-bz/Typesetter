@@ -1,0 +1,9 @@
+= Labelled heading <sec-a>
+
+A short paragraph before a labelled display equation on the same sheet.
+
+$ a^2 + b^2 = c^2 $ <eq-pyth>
+
+$ e^(i pi) + 1 = 0 $ <eq-euler>
+
+See @sec-a, @eq-pyth and @eq-euler.

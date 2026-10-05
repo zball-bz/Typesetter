@@ -1,0 +1,5 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("Nested containers at a 16px base (vertical algebra guard, plan P0-01)."),0,70)),0,70));
+__emit(__at(list(false, 1, __at(item(__at(para(__at(text("Outer item"),74,84)),74,84), __at(quote(__at(para(__at(text("A quote inside the item with two lines."),89,132)),89,132)),87,112), __at(val(await __fence("js", ({}), "nested(code);", 144)),136,163), __at(list(false, 1, __at(item(__at(para(__at(text("Inner item"),168,178)),168,178), __at(quote(__at(para(__at(text("Deep quote"),185,195)),185,195)),183,195)),166,178)),166,178)),72,84), __at(item(__at(para(__at(text("Last outer item"),198,213)),198,213)),196,213)),72,84));
+};
+//# sourceURL=tsm:doc

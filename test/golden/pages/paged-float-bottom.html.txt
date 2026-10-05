@@ -1,0 +1,22 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="135" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">Opening text that occupies the first part</span></div>
+<div class="tsr-line" data-s="0" data-e="135" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="0">of the sheet so the following float be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="135" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">gins roughly one hundred pixels above the</span></div>
+<div class="tsr-line" data-s="0" data-e="135" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">sheet bottom.</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:0px;margin-bottom:19.2px">
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-box" src="photos/box.png" alt="box" style="top:0px;left:180px;width:120px;height:120px">
+<div class="tsr-line" data-join="space" data-ragged="1" data-cell="1" style="top:120px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="243">Right</span></div>
+<div class="tsr-line" data-join="space" data-ragged="1" data-cell="1" style="top:144px;left:180px;width:120px"><span class="tsr-r" data-s="243">float near the</span></div>
+<div class="tsr-line" data-ragged="1" data-cell="1" style="top:168px;left:180px;width:120px"><span class="tsr-r" data-s="243">bottom.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="282" style="position:relative;height:144px">
+<div class="tsr-line" data-s="0" data-e="115" data-join="none" style="top:0px;left:0px;width:164px;word-spacing:8px"><span class="tsr-r" data-s="0">Text that wraps be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="115" data-join="none" style="top:24px;left:0px;width:164px;word-spacing:-1px"><span class="tsr-r" data-s="0">side the float and con</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="115" data-join="space" style="top:48px;left:0px;width:164px;word-spacing:5.333px"><span class="tsr-r" data-s="0">tinues onto the next</span></div>
+<div class="tsr-line" data-s="0" data-e="115" data-join="space" style="top:72px;left:0px;width:164px"><span class="tsr-r" data-s="0">sheet, where the float</span></div>
+<div class="tsr-line" data-s="0" data-e="115" data-join="space" style="top:96px;left:0px;width:164px;word-spacing:2.667px"><span class="tsr-r" data-s="0">must not straddle the</span></div>
+<div class="tsr-line" data-s="0" data-e="115" style="top:120px;left:0px;width:164px"><span class="tsr-r" data-s="0">boundary.</span></div>
+</div>
+</div>

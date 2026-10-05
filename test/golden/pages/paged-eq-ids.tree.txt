@@ -1,0 +1,18 @@
+doc @[0,200) [base]
+  heading @[0,18) [base] level=1 label="sec-a"
+    text @[2,18) [base] str="Labelled heading"
+  para @[28,99) [base]
+    text @[28,99) [base] str="A short paragraph before a labelled display equation on the same sheet."
+  mathblock @[101,130) [base] src="a^2 + b^2 = c^2" label="eq-pyth" name="(1)"
+  mathblock @[132,163) [base] src="e^(i pi) + 1 = 0" label="eq-euler" name="(2)"
+  para @[165,200) [base]
+    text @[165,168) [base] str="See "
+    ref @[169,175) [base] target="sec-a" url="#tsr-sec-a"
+      text @[169,175) [base] str="§1"
+    text @[175,176) [base] str=", "
+    ref @[177,185) [base] target="eq-pyth" url="#tsr-eq-pyth"
+      text @[177,185) [base] str="式 (1)"
+    text @[186,189) [base] str=" and "
+    ref @[190,199) [base] target="eq-euler" url="#tsr-eq-euler"
+      text @[190,199) [base] str="式 (2)"
+    text @[199,200) [base] str="."

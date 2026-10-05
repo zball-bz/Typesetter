@@ -6,6 +6,7 @@
 #include <functional>
 #include <fstream>
 #include <sstream>
+#include <set>
 
 #include "../src/api/doc.h"
 #include "../src/hyphen/hyphen.h"
@@ -16,6 +17,7 @@
 #include "../src/math/mathfont.h"
 #include "native_tokens.h"
 #include "../src/measure/mock.h"
+#include "contract.h"
 
 namespace fs = std::filesystem;
 using namespace tsr;
@@ -345,6 +347,47 @@ static void goldenCompare(const fs::path& goldenPath, const std::string& actual,
   }
 }
 
+// --- output contract checks (contract.h; plan P0-01) ---
+static std::set<std::string> xfail;      // "<fixture>:<output>:<check>"
+static std::set<std::string> xfailSeen;  // entries that did fail this run
+static int xfailCount = 0;
+
+static void loadXfail(const fs::path& p) {
+  std::string txt;
+  if (!readFile(p, txt)) return;
+  size_t pos = 0;
+  while (pos < txt.size()) {
+    size_t eol = txt.find('\n', pos);
+    if (eol == std::string::npos) eol = txt.size();
+    std::string line = txt.substr(pos, eol - pos);
+    pos = eol + 1;
+    size_t hash = line.find('#');
+    if (hash != std::string::npos) line = line.substr(0, hash);
+    while (!line.empty() && (line.back() == ' ' || line.back() == '\r')) line.pop_back();
+    while (!line.empty() && line.front() == ' ') line.erase(line.begin());
+    if (!line.empty()) xfail.insert(line);
+  }
+}
+
+static void contractCheck(const std::string& label, const char* output, const std::string& html,
+                          bool typeset) {
+  auto fails = contract::check(html, typeset);
+  for (const char* c : {"attr-dup", "id-unique", "anchor-closure", "allowlist", "line-spans"}) {
+    std::string key = label + ":" + output + ":" + c;
+    bool listed = xfail.count(key) > 0;
+    auto it = fails.find(c);
+    if (it != fails.end()) {
+      if (listed) {
+        xfailSeen.insert(key);
+        xfailCount++;
+      } else {
+        printf("FAIL contract %s: %s\n", key.c_str(), it->second.c_str());
+        failures++;
+      }
+    }
+  }
+}
+
 int main(int argc, char** argv) {
   std::string root;
   bool update = false;
@@ -402,6 +445,7 @@ int main(int argc, char** argv) {
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";
   fs::path golden = fs::path(root) / "test" / "golden";
+  loadXfail(golden / "XFAIL");
   int count = 0;
   if (fs::exists(fixtures)) {
     for (auto& entry : fs::recursive_directory_iterator(fixtures)) {
@@ -422,6 +466,11 @@ int main(int argc, char** argv) {
         doc.cfg.punctCompress = PunctCompress::Full;
       else if (rel.stem().string().find("punct-none") != std::string::npos)
         doc.cfg.punctCompress = PunctCompress::None;
+      // *snap* fixtures enable verbatim snap-kerning; *base18* runs at 18px
+      if (rel.stem().string().find("snap") != std::string::npos)
+        doc.cfg.verbatimSnapKerning = true;
+      if (rel.stem().string().find("base18") != std::string::npos)
+        doc.cfg.baseSizePx = 18;
       doc.compile(source);
 
       auto g = [&](const char* stage) {
@@ -445,7 +494,9 @@ int main(int argc, char** argv) {
           continue;
         }
         goldenCompare(g("tree"), dumpTree(doc.tree, doc.strs, doc.styles), update, label + ":tree");
-        goldenCompare(g("semantic"), doc.renderFallback(), update, label + ":semantic");
+        std::string semantic = doc.renderFallback();
+        goldenCompare(g("semantic"), semantic, update, label + ":semantic");
+        contractCheck(label, "semantic", semantic, false);
         if (!typesetWithMock(doc)) {
           printf("FAIL %s: typeset did not converge\n", label.c_str());
           failures++;
@@ -458,14 +509,24 @@ int main(int argc, char** argv) {
         std::string mbx = dumpMathBoxes(doc.tops, doc.strs);
         if (!mbx.empty() || fs::exists(g("mathbox")))
           goldenCompare(g("mathbox"), mbx, update, label + ":mathbox");
-        goldenCompare(g("html"), doc.render(), update, label + ":html");
+        std::string html = doc.render();
+        goldenCompare(g("html"), html, update, label + ":html");
+        contractCheck(label, "html", html, true);
         // *paged* fixtures additionally golden the print pagination
         // (pages-design.md §2) at 240px sheets
-        if (rel.stem().string().find("paged") != std::string::npos)
-          goldenCompare(g("paged"), doc.renderPaged(240), update, label + ":paged");
+        if (rel.stem().string().find("paged") != std::string::npos) {
+          std::string paged = doc.renderPaged(240);
+          goldenCompare(g("paged"), paged, update, label + ":paged");
+          contractCheck(label, "paged", paged, true);
+        }
       }
     }
   }
-  printf("%d fixtures, %d failures\n", count, failures);
+  for (const std::string& k : xfail)
+    if (!xfailSeen.count(k)) {
+      printf("XPASS contract %s: remove it from test/golden/XFAIL\n", k.c_str());
+      failures++;
+    }
+  printf("%d fixtures, %d failures, %d xfail\n", count, failures, xfailCount);
   return failures ? 1 : 0;
 }

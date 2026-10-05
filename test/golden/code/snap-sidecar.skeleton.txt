@@ -1,0 +1,3 @@
+doc @[0,294)
+  para @[0,124) lines=2
+  fence @[126,293) lang="js(sidecar: \"///\", lineNo: 1)" lines=2

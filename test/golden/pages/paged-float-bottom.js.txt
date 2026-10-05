@@ -1,0 +1,6 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("Opening text that occupies the first part of the sheet so the following float begins roughly one hundred pixels above the sheet bottom."),0,135)),0,135));
+__emit(__at(__region("figure", ({src: "photos/box.png", alt: "box", w: 300, h: 300, scale: 0.4, float: "right", label: "fig-box"}), [[[__at(text("Right float near the bottom."),243,271)]]]),137,280));
+__emit(__at(para(__at(text("Text that wraps beside the float and continues onto the next sheet, where the float must not straddle the boundary."),282,397)),282,397));
+};
+//# sourceURL=tsm:doc

@@ -1,0 +1,3 @@
+doc @[0,216)
+  para @[0,215)
+    text @[0,215) str="Two overlong addresses in one paragraph: https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere and https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure end."

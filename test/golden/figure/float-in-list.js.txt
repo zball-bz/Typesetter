@@ -1,0 +1,5 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("A left float inside a list item (guard fixture, plan P0-01)."),0,60)),0,60));
+__emit(__at(list(false, 1, __at(item(__at(para(__at(text("First item before the float."),64,92)),64,92)),62,92), __at(item(__at(para(__at(text("Second item holds a floated figure."),95,130)),95,130), __at(__region("figure", ({src: "photos/icon.png", alt: "icon", w: 200, h: 200, scale: 0.4, float: "left", label: "fig-icon"}), [[[__at(text("A small floated icon."),244,265)]]]),134,276), __at(para(__at(text("The item text continues beside the float and should narrow around it for a few lines before returning to the full measure of the list body."),280,419)),280,419)),93,130), __at(item(__at(para(__at(text("Third item after the float."),422,449)),422,449)),420,449)),62,92));
+};
+//# sourceURL=tsm:doc

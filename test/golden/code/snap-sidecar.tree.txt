@@ -1,0 +1,10 @@
+doc @[0,293) [base]
+  para @[0,124) [base]
+    text @[0,124) [base] str="Snap-kerning with a sidecar column (guard fixture, plan P0-01): the code track and the sidecar track must share the measure."
+  codeblock @[126,293) [base] lang="js" lineNo=1 sidecar="///"
+    text @[0,0) [base] str="const 标题 = \"中文与 ASCII 混排\";\nfor (let i = 0; i < 3; i++) emit(标题, i);"
+    group @[0,0) [base] role="sidecar-lines"
+      seq @[0,0) [base]
+        text @[0,0) [base] str="中文边注 with Latin"
+      seq @[0,0) [base]
+        text @[0,0) [base] str="每行一个"

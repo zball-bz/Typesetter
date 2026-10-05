@@ -1,0 +1,22 @@
+doc @[0,84) [base]
+  para @[0,70) [base]
+    text @[0,70) [base] str="Nested containers at a 18px base (vertical algebra guard, plan P0-01)."
+  list @[72,84) [base] ordered=false start=1
+    item @[72,84) [base]
+      para @[74,84) [base]
+        text @[74,84) [base] str="Outer item"
+      quote @[87,112) [base]
+        para @[89,132) [base]
+          text @[89,132) [base] str="A quote inside the item with two lines."
+      codeblock @[136,163) [base] lang="js"
+        text @[0,0) [base] str="nested(code);"
+      list @[166,178) [base] ordered=false start=1
+        item @[166,178) [base]
+          para @[168,178) [base]
+            text @[168,178) [base] str="Inner item"
+          quote @[183,195) [base]
+            para @[185,195) [base]
+              text @[185,195) [base] str="Deep quote"
+    item @[196,213) [base]
+      para @[198,213) [base]
+        text @[198,213) [base] str="Last outer item"

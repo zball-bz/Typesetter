@@ -6,15 +6,15 @@
 ## 当前位置
 
 - 阶段：P0
-- 下一步：P0-01
+- 下一步：P0-02
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
 
 | 步骤 | 标题 | 状态 | 提交 | 日期 | golden 变化 | 备注 |
 |---|---|---|---|---|---|---|
-| P0-00 | 准备：分支、计划文档、基线、环境脚本 | done | (本提交) | 2026-10-05 | 0 | gate.sh/env.sh/bench.sh；bench-edit 支持 --runs/--json/relayout；Debug 加 -fno-sanitize-recover=all |
-| P0-01 | 契约检查与守护用例 | todo | | | | |
+| P0-00 | 准备：分支、计划文档、基线、环境脚本 | done | grep:plan P0-00 | 2026-10-05 | 0 | gate.sh/env.sh/bench.sh；bench-edit --runs/--json/relayout；Debug -fno-sanitize-recover |
+| P0-01 | 契约检查与守护用例 | done | grep:plan P0-01 | 2026-10-05 | +11 用例（仅新增） | contract.h 五项检查；XFAIL 27 项；tsrc --snap/--base/--page-height（默认 base 16）；review-corpus 340 篇；e2e AUDIT_XFAIL |
 | P0-02 | 编译器防护（去掉 default 分支，AST dump 补 Note） | todo | | | | |
 | P0-03 | Fuzz 基础设施 | todo | | | | |
 | P0-04 | 前端越界修复（过渡） | todo | | | | |
@@ -120,6 +120,7 @@
 | 阶段 | G1 | G2 | G3 | G4 | G5 | G6 | G7 xfail 数 | G8 --long | G9 | G10 | 日期 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 基线 | ✓ 48/0 | ✓ 48/0 | ✓ | ✓ | ✓ 264 | ✓ 199/0 | — | — | — | — | 2026-10-05 |
+| P0-01 后 | ✓ 59/0 | ✓ | ✓ | ✓ | ✓ 304 | ✓ 199/0 + 340 篇 | 27 | — | — | — | 2026-10-05 |
 
 ## 性能曲线（update 模式中位数，3 次取最小；单位 ms）
 

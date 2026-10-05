@@ -1,0 +1,6 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(heading(1, null, __at(text("A heading long enough that it has to wrap across two lines at the test measure"),2,80)),0,80));
+__emit(__at(__region("figure", ({src: "photos/wide.png", alt: "wide", w: 300, h: 100, label: "fig-wide"}), [[[__at(text("A caption that is long enough to wrap onto a second line at the narrow measure, so copy must join its lines."),163,271)]]]),82,280));
+__emit(__at(para(__at(text("Body text after the figure refers to "),282,318), __at(ref("fig-wide"),319,328), __at(text("."),328,329)),282,329));
+};
+//# sourceURL=tsm:doc

@@ -1,6 +1,8 @@
 // tsrc — stage inspection CLI (architecture §2.1).
 //   tsrc --stage=skeleton|ast|js|diags <file.tsm>
-//   tsrc --stage=ops|tree|semantic|blocks|breaks|layout|html --ops=<file.ops> [--width=300] <file.tsm>
+//   tsrc --stage=ops|tree|semantic|blocks|breaks|layout|html|paged --ops=<file.ops>
+//        [--width=300] [--base=16] [--indent=em] [--punct=book|full|none] [--snap]
+//        [--page-height=px] <file.tsm>
 // Post-ops stages use the normative mock measurer.
 #include <cstdio>
 #include <fstream>
@@ -37,7 +39,8 @@ static bool typesetWithMock(Doc& doc) {
 
 int main(int argc, char** argv) {
   std::string stage = "ast", opsPath, file, punct;
-  double width = 300, indentEm = 0;
+  double width = 300, indentEm = 0, base = 16, pageHeight = 240;
+  bool snap = false;
   for (int i = 1; i < argc; i++) {
     std::string a = argv[i];
     if (a.rfind("--stage=", 0) == 0) stage = a.substr(8);
@@ -45,6 +48,9 @@ int main(int argc, char** argv) {
     else if (a.rfind("--width=", 0) == 0) width = atof(a.c_str() + 8);
     else if (a.rfind("--indent=", 0) == 0) indentEm = atof(a.c_str() + 9);
     else if (a.rfind("--punct=", 0) == 0) punct = a.substr(8);
+    else if (a.rfind("--base=", 0) == 0) base = atof(a.c_str() + 7);
+    else if (a.rfind("--page-height=", 0) == 0) pageHeight = atof(a.c_str() + 14);
+    else if (a == "--snap") snap = true;
     else file = a;
   }
   if (file.empty()) {
@@ -59,7 +65,9 @@ int main(int argc, char** argv) {
 
   Doc doc;
   doc.cfg.widthPx = width;
+  doc.cfg.baseSizePx = base;
   doc.cfg.paraIndentEm = indentEm;
+  doc.cfg.verbatimSnapKerning = snap;
   if (punct == "full") doc.cfg.punctCompress = PunctCompress::Full;
   else if (punct == "none") doc.cfg.punctCompress = PunctCompress::None;
   else if (punct == "book" || punct.empty()) doc.cfg.punctCompress = PunctCompress::Book;
@@ -97,6 +105,7 @@ int main(int argc, char** argv) {
       else if (stage == "layout") out = dumpLayout(doc.layout);
       else if (stage == "mathbox") out = dumpMathBoxes(doc.tops, doc.strs);
       else if (stage == "html") out = doc.render();
+      else if (stage == "paged") out = doc.renderPaged(pageHeight);
       else {
         fprintf(stderr, "unknown stage %s\n", stage.c_str());
         return 2;

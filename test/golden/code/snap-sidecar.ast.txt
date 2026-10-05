@@ -1,0 +1,4 @@
+doc @[0,294)
+  para @[0,124)
+    text @[0,124) str="Snap-kerning with a sidecar column (guard fixture, plan P0-01): the code track and the sidecar track must share the measure."
+  codeblock @[126,293) lang="js" body="const 标题 = \"中文与 ASCII 混排\"; /// 中文边注 with Latin\nfor (let i = 0; i < 3; i++) emit(标题, i); /// 每行一个"

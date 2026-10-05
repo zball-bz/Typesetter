@@ -1,0 +1,9 @@
+doc @[0,385)
+  heading @[0,16) level=1
+    text @[2,16) str="Sheet boundary"
+  para @[18,155)
+    text @[18,155) str="Filler paragraph one fills most of the first sheet with ordinary running text so that the next paragraph starts close to the bottom edge."
+  para @[157,250)
+    text @[157,250) str="Filler paragraph two continues to push the content down the page by a few more lines of text."
+  para @[252,384)
+    text @[252,384) str="This three-line paragraph starts near the sheet boundary: its first line may fit, but widow and orphan rules decide where it breaks."

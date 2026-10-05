@@ -1,0 +1,4 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("Two overlong addresses in one paragraph: https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere and https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure end."),0,215)),0,215));
+};
+//# sourceURL=tsm:doc

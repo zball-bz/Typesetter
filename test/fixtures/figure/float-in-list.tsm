@@ -1,0 +1,11 @@
+A left float inside a list item (guard fixture, plan P0-01).
+
+- First item before the float.
+- Second item holds a floated figure.
+
+  #!figure(src: "photos/icon.png", alt: "icon", w: 200, h: 200, scale: 0.4, float: "left", label: "fig-icon")
+  A small floated icon.
+  #figure!
+
+  The item text continues beside the float and should narrow around it for a few lines before returning to the full measure of the list body.
+- Third item after the float.

@@ -1,0 +1,22 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="60" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.429px"><span class="tsr-r" data-s="0">A left float inside a list item (guard</span></div>
+<div class="tsr-line" data-s="0" data-e="60" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">fixture, plan P0-01).</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="64" style="position:relative;height:289.562px">
+<div class="tsr-line" data-s="0" data-e="28" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">First item before the float.</span></div>
+<div class="tsr-line" data-s="31" data-e="66" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="31">Second item holds a floated figure.</span></div>
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-icon" src="photos/icon.png" alt="icon" style="top:60.781px;left:24px;width:110.406px;height:110.406px">
+<div class="tsr-line" data-join="space" data-ragged="1" data-cell="1" style="top:171.188px;left:24px;width:110.406px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="180">A small</span></div>
+<div class="tsr-line" data-ragged="1" data-cell="1" style="top:195.188px;left:24px;width:110.406px"><span class="tsr-r" data-s="180">floated icon.</span></div>
+<div class="tsr-line" data-s="216" data-e="355" data-join="none" style="top:67.172px;left:150.406px;width:149.594px;word-spacing:5.865px"><span class="tsr-r" data-s="216">The item text con</span><span class="tsr-r" data-s="216" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="216" data-e="355" data-join="space" style="top:91.172px;left:150.406px;width:149.594px;word-spacing:10.797px"><span class="tsr-r" data-s="216">tinues beside the</span></div>
+<div class="tsr-line" data-s="216" data-e="355" data-join="space" style="top:115.172px;left:150.406px;width:149.594px;word-spacing:14.797px"><span class="tsr-r" data-s="216">float and should</span></div>
+<div class="tsr-line" data-s="216" data-e="355" data-join="space" style="top:139.172px;left:150.406px;width:149.594px;word-spacing:0.531px"><span class="tsr-r" data-s="216">narrow around it for</span></div>
+<div class="tsr-line" data-s="216" data-e="355" data-join="space" style="top:163.172px;left:150.406px;width:149.594px;word-spacing:5.865px"><span class="tsr-r" data-s="216">a few lines before</span></div>
+<div class="tsr-line" data-s="216" data-e="355" data-join="space" style="top:187.172px;left:150.406px;width:149.594px;word-spacing:14.797px"><span class="tsr-r" data-s="216">returning to the</span></div>
+<div class="tsr-line" data-s="216" data-e="355" data-join="space" style="top:211.172px;left:150.406px;width:149.594px;word-spacing:3.198px"><span class="tsr-r" data-s="216">full measure of the</span></div>
+<div class="tsr-line" data-s="216" data-e="355" style="top:235.172px;left:150.406px;width:149.594px"><span class="tsr-r" data-s="216">list body.</span></div>
+<div class="tsr-line" data-s="358" data-e="385" style="top:265.562px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="358">Third item after the float.</span></div>
+</div>
+</div>

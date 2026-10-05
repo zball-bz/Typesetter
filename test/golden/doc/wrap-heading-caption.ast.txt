@@ -1,0 +1,12 @@
+doc @[0,330)
+  heading @[0,80) level=1
+    text @[2,80) str="A heading long enough that it has to wrap across two lines at the test measure"
+  region @[82,280) name="figure"
+    para @[163,271)
+      row @[163,271)
+        cell @[163,271)
+          text @[163,271) str="A caption that is long enough to wrap onto a second line at the narrow measure, so copy must join its lines."
+  para @[282,329)
+    text @[282,318) str="Body text after the figure refers to "
+    ref @[319,328) target="fig-wide"
+    text @[328,329) str="."

@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="80" id="tsr-h-1">A heading long enough that it has to wrap across two lines at the test measure</h1>
+<figure data-pid="1" data-s="82" data-e="280" id="tsr-fig-wide">
+<img src="photos/wide.png" alt="wide" style="max-width:100%">
+<figcaption><strong>图 1：</strong>A caption that is long enough to wrap onto a second line at the narrow measure, so copy must join its lines.</figcaption>
+</figure>
+<p data-pid="2" data-s="282" data-e="329">Body text after the figure refers to <a href="#tsr-fig-wide">图 1</a>.</p>
+</div>

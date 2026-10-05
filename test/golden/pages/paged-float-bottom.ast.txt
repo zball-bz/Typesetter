@@ -1,0 +1,10 @@
+doc @[0,398)
+  para @[0,135)
+    text @[0,135) str="Opening text that occupies the first part of the sheet so the following float begins roughly one hundred pixels above the sheet bottom."
+  region @[137,280) name="figure"
+    para @[243,271)
+      row @[243,271)
+        cell @[243,271)
+          text @[243,271) str="Right float near the bottom."
+  para @[282,397)
+    text @[282,397) str="Text that wraps beside the float and continues onto the next sheet, where the float must not straddle the boundary."

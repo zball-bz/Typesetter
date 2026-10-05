@@ -1,0 +1,19 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="70">Nested containers at a 16px base (vertical algebra guard, plan P0-01).</p>
+<ul data-pid="1" data-s="72" data-e="84">
+<li><p data-s="74" data-e="84">Outer item</p>
+<blockquote data-s="87" data-e="112">
+<p data-s="89" data-e="132">A quote inside the item with two lines.</p>
+</blockquote>
+<pre data-s="136" data-e="163"><code class="language-js">nested(code);</code></pre>
+<ul data-s="166" data-e="178">
+<li><p data-s="168" data-e="178">Inner item</p>
+<blockquote data-s="183" data-e="195">
+<p data-s="185" data-e="195">Deep quote</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>Last outer item</li>
+</ul>
+</div>

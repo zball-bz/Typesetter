@@ -1,0 +1,12 @@
+doc @[0,450)
+  para @[0,60) lines=1
+  list bullet start=1 @[62,92)
+    item @[62,92)
+      para @[64,92) lines=1
+    item @[93,130)
+      para @[95,130) lines=1
+      region @[134,276) name="figure"
+        para @[244,265) lines=1
+      para @[280,419) lines=1
+    item @[420,449)
+      para @[422,449) lines=1

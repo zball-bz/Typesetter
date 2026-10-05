@@ -1,0 +1,7 @@
+Opening text that occupies the first part of the sheet so the following float begins roughly one hundred pixels above the sheet bottom.
+
+#!figure(src: "photos/box.png", alt: "box", w: 300, h: 300, scale: 0.4, float: "right", label: "fig-box")
+Right float near the bottom.
+#figure!
+
+Text that wraps beside the float and continues onto the next sheet, where the float must not straddle the boundary.

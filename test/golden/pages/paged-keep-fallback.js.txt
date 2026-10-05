@@ -1,0 +1,6 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(heading(1, null, __at(text("Heading before a tall figure"),2,30)),0,30));
+__emit(__at(__region("figure", ({src: "photos/tall.png", alt: "tall", w: 300, h: 200, label: "fig-tall"}), [[[__at(text("A figure 200px tall on 240px sheets."),113,149)]]]),32,158));
+__emit(__at(para(__at(text("Text after the figure."),160,182)),160,182));
+};
+//# sourceURL=tsm:doc

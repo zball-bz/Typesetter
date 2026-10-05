@@ -1,0 +1,5 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="78">Snap-kerning on a wrapping code block (guard fixture, plan P0-01; defect #21).</p>
+<pre data-pid="1" data-s="80" data-e="216"><code class="language-js">const 标题 = &quot;中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格&quot;;
+emit(标题);</code></pre>
+</div>

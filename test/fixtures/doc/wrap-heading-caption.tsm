@@ -1,0 +1,7 @@
+= A heading long enough that it has to wrap across two lines at the test measure
+
+#!figure(src: "photos/wide.png", alt: "wide", w: 300, h: 100, label: "fig-wide")
+A caption that is long enough to wrap onto a second line at the narrow measure, so copy must join its lines.
+#figure!
+
+Body text after the figure refers to @fig-wide.

@@ -1,0 +1,20 @@
+doc @[0,450)
+  para @[0,60)
+    text @[0,60) str="A left float inside a list item (guard fixture, plan P0-01)."
+  list @[62,92) bullet start=1
+    item @[62,92)
+      para @[64,92)
+        text @[64,92) str="First item before the float."
+    item @[93,130)
+      para @[95,130)
+        text @[95,130) str="Second item holds a floated figure."
+      region @[134,276) name="figure"
+        para @[244,265)
+          row @[244,265)
+            cell @[244,265)
+              text @[244,265) str="A small floated icon."
+      para @[280,419)
+        text @[280,419) str="The item text continues beside the float and should narrow around it for a few lines before returning to the full measure of the list body."
+    item @[420,449)
+      para @[422,449)
+        text @[422,449) str="Third item after the float."
