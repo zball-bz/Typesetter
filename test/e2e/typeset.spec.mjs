@@ -258,17 +258,21 @@ test('abi: handshake accepts this build and refuses mismatches', async ({ page }
   const out = await page.evaluate(async () => {
     const { checkAbi } = await import('/runtime/src/shared/abi.mjs');
     const { OPS_VERSION, SCHEMA_HASH } = await import('/runtime/src/shared/ops.gen.mjs');
+    const { SYNTAX_VERSION } = await import('/runtime/src/shared/syntax.gen.mjs');
     const fake = (abi) => ({ _tsr2_abi: () => 0, UTF8ToString: () => JSON.stringify(abi) });
     const msg = (abi) => { try { checkAbi(fake(abi)); return 'ok'; } catch (e) { return e.message; } };
+    const ok = { opsWindow: [6, OPS_VERSION], schemaHash: SCHEMA_HASH, syntaxVersion: SYNTAX_VERSION };
     return {
-      same: msg({ opsWindow: [6, OPS_VERSION], schemaHash: SCHEMA_HASH }),
-      hash: msg({ opsWindow: [6, OPS_VERSION], schemaHash: 'deadbeef' }),
-      window: msg({ opsWindow: [6, OPS_VERSION - 1], schemaHash: SCHEMA_HASH }),
+      same: msg(ok),
+      hash: msg({ ...ok, schemaHash: 'deadbeef' }),
+      window: msg({ ...ok, opsWindow: [6, OPS_VERSION - 1] }),
+      syntax: msg({ ...ok, syntaxVersion: SYNTAX_VERSION + 1 }),
     };
   });
   expect(out.same).toBe('ok');
   expect(out.hash).toContain('differs from runtime schema');
   expect(out.window).toContain('the engine reads ops');
+  expect(out.syntax).toContain('differs from runtime syntax');
 });
 
 // --- plan P0-12: breaker semantics -------------------------------------------

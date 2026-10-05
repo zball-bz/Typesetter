@@ -12,7 +12,7 @@ Typesetter/
   src/                     frozen TS PoC (reference only; do not touch)
   engine/                  C++ engine → typesetter.wasm (+ native builds)
     CMakeLists.txt
-    grammar/               PackCC sources: inline.peg, math.peg
+    schema/                schema.json: ops vocabulary, settings, domains (gen-schema)
     gen/                   committed build-time artifacts (opdict, hyphen patterns, font metrics)
     include/tsr/           boundary headers only (api surface)
     src/                   modules, one directory per pipeline stage (see §2.2)
@@ -51,15 +51,18 @@ One directory per stage; a stage's input and output are named types with a debug
 
 ```
 support/    arena, string interning, utf8, span, Result, diagnostics sink
-source/     SourceText, offset math, LineIndex, SourceMap builder
+source/     SourceText (raw bytes, line starts, CRLF cooking); no source-map
+            builder — codegen's unit table maps the program back to spans
 linepass/   SourceText → BlockSkeleton         (containers, regions, islands,
                                                 per-line provenance §4.1)
-inline/     BlockSkeleton → AST                (PackCC driver + splice lexer;
-                                                UTF-8/CJK classes as C predicates.
-                                                M1 ships a hand-rolled parser to the
-                                                same spec; PackCC lands with the M2
-                                                grammar)
-ast/        AST node definitions + dump
+syntax/     syntax.def → syntax.gen.{h,cc}     (character classes, delimiters,
+                                                blocks, sugar slots + payloads,
+                                                token tags; docs/syntax-design.md)
+inline/     BlockSkeleton → AST                (hand-written inline parser + splice
+                                                lexer; PackCC was planned and never
+                                                adopted)
+ast/        CallAST: Call{slot}/Splice/Stmt/Error nodes, side records, generic
+            dump (plan P1-05)
 codegen/    AST → JsProgram                    (text, source map, import list)
 ops/        generated vocabulary (ops.def, schema.gen.*), OpReader + value validation; writer lives in JS (§3)
 model/      ContentTree: node defs, instantiation from ops (EMIT walk with
@@ -176,13 +179,14 @@ As built (plan P0-11, `runtime/src/worker/worker.mjs`): the worker keeps one **m
 
 ## 5. Build and generated artifacts
 
-- **engine**: CMake presets `native-debug` (ASan/UBSan), `native-release`, `wasm-release` (emcmake). C++20, `-fno-exceptions -fno-rtti` (errors are diagnostics, not exceptions — WASM size and the §11 error-block model both want this). PackCC runs at build time: `grammar/*.peg → build/gen_parser.c`.
+- **engine**: CMake presets `native-debug` (ASan/UBSan), `native-release`, `wasm-release` (emcmake). C++20, `-fno-exceptions -fno-rtti` (errors are diagnostics, not exceptions — WASM size and the §11 error-block model both want this). There is no parser generator: the front end is hand-written C++ driven by the generated syntax table (`docs/syntax-design.md`).
 - **runtime**: esbuild (as in the PoC) → ESM bundle + the worker file; no framework.
 - **tools** (Node, build-time only; outputs committed under `engine/gen/` so CI needs no network):
   - `opdict` — MathML Core operator dictionary + codex-style names → compiled operator table (§13);
   - `hyphc` — TeX hyphenation patterns → compact trie;
   - `fontmetrics` — bundled fonts (Neo Euler MATH constants, advances) → binary metrics (§6 backend 3);
-  - `gen-schema` — `engine/schema/schema.json` → `ops.def`, `schema.gen.{h,cc}`, `shared/ops.gen.mjs`, `docs/schema-table.md` (§3).
+  - `gen-schema` — `engine/schema/schema.json` → `ops.def`, `schema.gen.{h,cc}`, `shared/ops.gen.mjs`, `docs/schema-table.md` (§3);
+  - `gen-syntax` — `engine/src/syntax/syntax.def` → `syntax.gen.{h,cc}`, `shared/syntax.gen.{mjs,json}`, `docs/syntax-table.md`.
 - **playground**: esbuild dev server; the page is also the e2e harness target.
 
 ## 6. Testing architecture

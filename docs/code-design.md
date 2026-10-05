@@ -158,8 +158,9 @@ native token provider links only json+tsm, so goldens are unaffected.
   en-dash in a comment shifted every later token until mapped.
 - **Priority contract**: captures sort (start asc, patternIndex asc),
   earlier pattern wins on overlap — implemented identically in the native
-  (C++) and worker (JS) providers; kTokenTags + alias table shared by
-  hand (comment: keep in sync).
+  (C++) and worker (JS) providers; the alias table is shared by hand, the
+  tag set (kTokenTags / TOKEN_TAGS) is generated from syntax.def since
+  plan P1-05.
 - **.tsr-code gained white-space:pre** — leading indentation collapsed in
   every code path until CH3's graphical pass caught it.
 - **Continuation indent is two literal spaces in the text flow**, not an

@@ -18,10 +18,19 @@ struct Gen {
   void close(const AstNode* n) {
     appendf(out, "),%u,%u)", n->span.start, n->span.end);
   }
-  void children(const std::vector<AstNode*>& kids, bool leadingComma) {
+  void children(std::span<AstNode* const> kids, bool leadingComma) {
     for (size_t i = 0; i < kids.size(); i++) {
       if (leadingComma || i) out += ", ";
       value(kids[i]);
+    }
+  }
+  // a content body: its one value, or a sequence
+  void body(const AstNode* n) {
+    if (n->nkids == 1) value(n->kids()[0]);
+    else {
+      out += "__sq(";
+      children(n->kids(), false);
+      out += ")";
     }
   }
 
@@ -32,155 +41,181 @@ struct Gen {
         strLit(n->str);
         close(n);
         break;
-      case AstKind::Styled:
-        appendf(out, "__a(%s(", n->tag == (u8)'*' ? "__b" : "__i");
-        children(n->kids, false);
-        close(n);
-        break;
-      case AstKind::Code:
-        out += "__a(__cd(";
-        strLit(n->str);
-        close(n);
-        break;
       case AstKind::Comment:
         out += "__a(__cm(";
         strLit(n->str);
         close(n);
         break;
-      case AstKind::Note:
-        out += "__a(__nt(";
-        children(n->kids, false);
-        close(n);
-        break;
-      case AstKind::Link:
-        out += "__a(__ln(";
-        strLit(n->aux);
-        children(n->kids, true);
-        close(n);
-        break;
-      case AstKind::SpliceArg:
-        if (n->kids.size() == 1) value(n->kids[0]);
-        else {
-          out += "__sq(";
-          children(n->kids, false);
-          out += ")";
-        }
+      case AstKind::Call:
+        call(n);
         break;
       case AstKind::Splice: {
+        const SpliceP& sp = side<SpliceP>(n);
         out += "__v(";
-        if (n->kids.empty()) {
+        if (n->nkids == 0) {
           out += "(";
-          out += src.slice(n->expr);
+          out += src.slice(sp.expr);
           out += ")";
-        } else if (n->lastCallStart > 0) {
+        } else if (sp.lastCallStart > 0) {
           // trailing content args desugar into the final call: f(a)[c] → f(a, c)
-          out += src.view().substr(n->expr.start, n->lastCallStart - n->expr.start);
+          out += src.view().substr(sp.expr.start, sp.lastCallStart - sp.expr.start);
           out += "(";
           std::string_view inner =
-              src.view().substr(n->lastCallStart + 1, n->expr.end - 1 - (n->lastCallStart + 1));
+              src.view().substr(sp.lastCallStart + 1, sp.expr.end - 1 - (sp.lastCallStart + 1));
           bool innerEmpty = true;
           for (char c : inner)
             if (c != ' ' && c != '\t' && c != '\n' && c != '\r') { innerEmpty = false; break; }
           out += inner;
-          children(n->kids, !innerEmpty);
+          children(n->kids(), !innerEmpty);
           out += ")";
         } else {
           out += "(";
-          out += src.slice(n->expr);
+          out += src.slice(sp.expr);
           out += ")(";
-          children(n->kids, false);
+          children(n->kids(), false);
           out += ")";
         }
         out += ")";
         break;
       }
-      case AstKind::Para:
+      case AstKind::Error:
+        out += "__a(__er(";
+        strLit(n->str);
+        out += ", ";
+        strLit(side<ErrorP>(n).message);
+        close(n);
+        break;
+      case AstKind::Stmt:
+        // unreachable: nested statements become Error nodes in the AST
+        // builder (plan P0-05); top-level ones are units of the program
+        out += "__t(\"\")";
+        break;
+      case AstKind::Doc:
+        // structural: the program
+        out += "__t(\"\")";
+        break;
+    }
+  }
+
+  // Built-in sugar: one adapter per slot, printing today's constructor call
+  // (the lowering contract of T2 replaces these in plan P2-xx).
+  void call(const AstNode* n) {
+    switch (n->sugar) {
+      case SugarId::strong:
+      case SugarId::em:
+        appendf(out, "__a(%s(", n->sugar == SugarId::strong ? "__b" : "__i");
+        children(n->kids(), false);
+        close(n);
+        break;
+      case SugarId::code:
+        out += "__a(__cd(";
+        strLit(n->str);
+        close(n);
+        break;
+      case SugarId::note:
+        out += "__a(__nt(";
+        children(n->kids(), false);
+        close(n);
+        break;
+      case SugarId::link:
+        out += "__a(__ln(";
+        strLit(side<LinkP>(n).url);
+        children(n->kids(), true);
+        close(n);
+        break;
+      case SugarId::arg:
+        body(n);
+        break;
+      case SugarId::para: {
         // a paragraph that is exactly one display formula IS the mathblock
-        if (n->kids.size() == 1 && n->kids[0]->kind == AstKind::Math &&
-            n->kids[0]->tag == 1) {
+        // (interim L1 rule until T2's normalization; no promotion in the AST)
+        const AstNode* only = n->nkids == 1 ? n->kids()[0] : nullptr;
+        if (only && only->isCall(SugarId::math) && side<MathP>(only).display) {
           out += "__a(__mb(";
-          strLit(n->kids[0]->str);
-          if (n->kids[0]->aux) {
+          strLit(only->str);
+          if (side<MathP>(only).label) {
             out += ", ";
-            strLit(n->kids[0]->aux);
+            strLit(side<MathP>(only).label);
           }
-          close(n->kids[0]);
+          close(only);
           break;
         }
         out += "__a(__p(";
-        children(n->kids, false);
+        children(n->kids(), false);
         close(n);
         break;
-      case AstKind::Math:
+      }
+      case SugarId::math:
         // mid-paragraph display degrades to inline (deterministic; documented)
         out += "__a(__mi(";
         strLit(n->str);
         close(n);
         break;
-      case AstKind::Heading:
-        appendf(out, "__a(__hd(%d, ", n->tag);
-        if (n->aux) strLit(n->aux);
+      case SugarId::heading: {
+        const HeadingP& h = side<HeadingP>(n);
+        appendf(out, "__a(__hd(%d, ", h.level);
+        if (h.label) strLit(h.label);
         else out += "null";
-        children(n->kids, true);
+        children(n->kids(), true);
         close(n);
         break;
-      case AstKind::Ref:
+      }
+      case SugarId::ref:
         out += "__a(__rf(";
         strLit(n->str);
         close(n);
         break;
-      case AstKind::ListB:
-        appendf(out, "__a(__l(%s, %d", n->ordered ? "true" : "false", n->num);
-        children(n->kids, true);
+      case SugarId::list: {
+        const ListP& l = side<ListP>(n);
+        appendf(out, "__a(__l(%s, %d", l.ordered ? "true" : "false", l.start);
+        children(n->kids(), true);
         close(n);
         break;
-      case AstKind::Item:
+      }
+      case SugarId::item:
         out += "__a(__it(";
-        children(n->kids, false);
+        children(n->kids(), false);
         close(n);
         break;
-      case AstKind::Quote:
+      case SugarId::quote:
         out += "__a(__qt(";
-        children(n->kids, false);
+        children(n->kids(), false);
         close(n);
         break;
-      case AstKind::CodeBlockB:
+      case SugarId::fence: {
         // dispatcher call: unknown tags fall back to a plain code block at
         // runtime; handlers may be async (document fn already is)
+        const FenceP& f = side<FenceP>(n);
         out += "__a(__v(await __fence(";
-        strLit(n->aux);
+        strLit(f.lang);
         out += ", ({";
-        if (!n->expr.empty()) out += src.slice(n->expr);
+        if (!f.args.empty()) out += src.slice(f.args);
         out += "}), ";
         strLit(n->str);
-        appendf(out, ", %d)", n->num);  // body source offset (close() ends val)
+        appendf(out, ", %d)", (int)f.bodyOffset);  // body source offset (close() ends val)
         close(n);
         break;
-      case AstKind::Region: {
+      }
+      case SugarId::region: {
+        const RegionP& r = side<RegionP>(n);
         out += "__a(__region(";
         strLit(n->str);
         out += ", ({";
-        if (!n->expr.empty()) out += src.slice(n->expr);
+        if (!r.args.empty()) out += src.slice(r.args);
         out += "}), [";
-        for (size_t i = 0; i < n->kids.size(); i++) {
+        std::span<AstNode* const> kids = n->kids();
+        for (size_t i = 0; i < kids.size(); i++) {
           if (i) out += ", ";
-          const AstNode* k = n->kids[i];
-          if (k->kind == AstKind::Para && !k->kids.empty() &&
-              k->kids[0]->kind == AstKind::Row) {
+          const AstNode* k = kids[i];
+          if (k->isCall(SugarId::para) && k->nkids && k->kids()[0]->isCall(SugarId::row)) {
             out += "[";  // one source paragraph: array of rows
-            for (size_t r = 0; r < k->kids.size(); r++) {
+            for (size_t r = 0; r < k->nkids; r++) {
               if (r) out += ", ";
-              const AstNode* row = k->kids[r];
+              const AstNode* row = k->kids()[r];
               out += "[";  // one row: array of cell values
-              for (size_t c = 0; c < row->kids.size(); c++) {
+              for (size_t c = 0; c < row->nkids; c++) {
                 if (c) out += ", ";
-                const AstNode* cell = row->kids[c];
-                if (cell->kids.size() == 1) value(cell->kids[0]);
-                else {
-                  out += "__sq(";
-                  children(cell->kids, false);
-                  out += ")";
-                }
+                body(row->kids()[c]);
               }
               out += "]";
             }
@@ -193,26 +228,13 @@ struct Gen {
         close(n);
         break;
       }
-      case AstKind::Rule:
+      case SugarId::rule:
         out += "__a(__hr(";
         close(n);
         break;
-      case AstKind::Error:
-        out += "__a(__er(";
-        strLit(n->str);
-        out += ", ";
-        strLit(n->aux);
-        close(n);
-        break;
-      case AstKind::CodeStmt:
-        // unreachable: nested statements become Error nodes in the AST
-        // builder (plan P0-05); top-level ones are units of the program
-        out += "__t(\"\")";
-        break;
-      case AstKind::Doc:
-      case AstKind::Row:
-      case AstKind::Cell:
-        // structural: Doc is the program, Row/Cell are consumed by Region
+      case SugarId::row:
+      case SugarId::cell:
+        // structural: consumed by region
         out += "__t(\"\")";
         break;
     }
@@ -227,9 +249,9 @@ struct Gen {
 // blocks on the 87K bench: P0-05 perf gate).
 static bool hasUserCode(const AstNode* n) {
   if (n->kind == AstKind::Splice) return true;
-  if ((n->kind == AstKind::CodeBlockB || n->kind == AstKind::Region) && !n->expr.empty())
-    return true;
-  for (const AstNode* k : n->kids)
+  if (n->isCall(SugarId::fence) && !side<FenceP>(n).args.empty()) return true;
+  if (n->isCall(SugarId::region) && !side<RegionP>(n).args.empty()) return true;
+  for (const AstNode* k : n->kids())
     if (hasUserCode(k)) return true;
   return false;
 }
@@ -282,9 +304,9 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
 
   // hoisted simple #let names (deduped: a repeated #let is a reassignment, D-L02)
   std::vector<std::string> hoisted;
-  for (const AstNode* n : doc->kids) {
-    if (n->kind != AstKind::CodeStmt || n->tag != 0) continue;
-    std::string_view inner = src.slice(n->expr);
+  for (const AstNode* n : doc->kids()) {
+    if (n->kind != AstKind::Stmt || !side<StmtP>(n).let) continue;
+    std::string_view inner = src.slice(side<StmtP>(n).js);
     JsSimpleLet sl = jsSimpleLet(inner);
     if (!sl.ok) continue;
     std::string name(inner.substr(sl.identStart, sl.identEnd - sl.identStart));
@@ -316,14 +338,14 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
   auto framedOpen = [&]() { out += "{ const __h = __height(); try {\n"; };
   auto framedClose = [&](u32 i) { appendf(out, "\n} catch (__e) { __fail(%u, __e, __h); } }", i); };
 
-  for (const AstNode* n : doc->kids) {
+  for (const AstNode* n : doc->kids()) {
     u32 i = (u32)units.size();
     u32 flags = 0;
-    if (n->kind == AstKind::CodeStmt) {
+    if (n->kind == AstKind::Stmt) {
       flags = kStmt;
-      std::string_view inner = src.slice(n->expr);
+      std::string_view inner = src.slice(side<StmtP>(n).js);
       open(i);
-      if (n->tag == 0) {
+      if (side<StmtP>(n).let) {
         JsSimpleLet sl = jsSimpleLet(inner);
         if (sl.ok) {  // #let x = e  →  framed assignment to the hoisted binding
           flags |= kFramed;

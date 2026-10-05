@@ -43,38 +43,6 @@ struct Conv {
         out.push_back(t);
         return;
       }
-      case AstKind::Styled: {
-        u64 add = a->tag == (u8)'*' ? CLS_BOLD : CLS_EM;
-        for (const AstNode* k : a->kids) conv(k, bits | add, base, out);
-        return;
-      }
-      case AstKind::Code: {
-        ContentNode* c = mk(Kind::code, eff);
-        ContentNode* t = mk(Kind::text, eff);
-        t->str = a->str;
-        c->kids.push_back(t);
-        out.push_back(c);
-        return;
-      }
-      case AstKind::Math: {
-        ContentNode* m = mk(Kind::mathinline, eff);
-        setStr(m, ArgK::src, strs.get(a->str));
-        out.push_back(m);
-        return;
-      }
-      case AstKind::Ref: {
-        ContentNode* r = mk(Kind::ref, eff);
-        setStr(r, ArgK::target, strs.get(a->str));
-        out.push_back(r);
-        return;
-      }
-      case AstKind::Link: {
-        ContentNode* l = mk(Kind::link, eff);
-        setStr(l, ArgK::url, strs.get(a->aux));
-        for (const AstNode* k : a->kids) conv(k, bits, base, l->kids);
-        out.push_back(l);
-        return;
-      }
       case AstKind::Comment:
         return;
       case AstKind::Splice: {
@@ -88,33 +56,78 @@ struct Conv {
       }
       case AstKind::Error: {
         ContentNode* e = mk(Kind::error, eff);
-        setStr(e, ArgK::message, strs.get(a->aux));
+        setStr(e, ArgK::message, strs.get(side<ErrorP>(a).message));
         setStr(e, ArgK::code, strs.get(a->str));
         out.push_back(e);
         return;
       }
-      case AstKind::Note:
+      case AstKind::Call:
+        call(a, bits, base, eff, out);
+        return;
+      case AstKind::Doc:
+      case AstKind::Stmt:
+        // block structure cannot come out of an inline parse; flatten
+        for (const AstNode* k : a->kids()) conv(k, bits, base, out);
+        return;
+    }
+  }
+
+  void call(const AstNode* a, u64 bits, StyleId base, StyleId eff,
+            std::vector<ContentNode*>& out) {
+    switch (a->sugar) {
+      case SugarId::strong:
+      case SugarId::em: {
+        u64 add = a->sugar == SugarId::strong ? CLS_BOLD : CLS_EM;
+        for (const AstNode* k : a->kids()) conv(k, bits | add, base, out);
+        return;
+      }
+      case SugarId::code: {
+        ContentNode* c = mk(Kind::code, eff);
+        ContentNode* t = mk(Kind::text, eff);
+        t->str = a->str;
+        c->kids.push_back(t);
+        out.push_back(c);
+        return;
+      }
+      case SugarId::math: {
+        ContentNode* m = mk(Kind::mathinline, eff);
+        setStr(m, ArgK::src, strs.get(a->str));
+        out.push_back(m);
+        return;
+      }
+      case SugarId::ref: {
+        ContentNode* r = mk(Kind::ref, eff);
+        setStr(r, ArgK::target, strs.get(a->str));
+        out.push_back(r);
+        return;
+      }
+      case SugarId::link: {
+        ContentNode* l = mk(Kind::link, eff);
+        setStr(l, ArgK::url, strs.get(side<LinkP>(a).url));
+        for (const AstNode* k : a->kids()) conv(k, bits, base, l->kids);
+        out.push_back(l);
+        return;
+      }
+      case SugarId::note:
         // notes need the resolver's flow: flattened in fragments until the
         // single fragment lowering (plan P2-13)
         diags.add(Sev::Info, "fragment-note", outer,
                   "notes in inline fragments are flattened");
-        for (const AstNode* k : a->kids) conv(k, bits, base, out);
+        for (const AstNode* k : a->kids()) conv(k, bits, base, out);
         return;
-      case AstKind::Doc:
-      case AstKind::Para:
-      case AstKind::CodeStmt:
-      case AstKind::Heading:
-      case AstKind::ListB:
-      case AstKind::Item:
-      case AstKind::Quote:
-      case AstKind::CodeBlockB:
-      case AstKind::Rule:
-      case AstKind::SpliceArg:
-      case AstKind::Region:
-      case AstKind::Row:
-      case AstKind::Cell:
+      case SugarId::para:
+      case SugarId::heading:
+      case SugarId::list:
+      case SugarId::item:
+      case SugarId::quote:
+      case SugarId::rule:
+      case SugarId::fence:
+      case SugarId::region:
+      case SugarId::arg:
+      case SugarId::row:
+      case SugarId::cell:
         // block structure cannot come out of an inline parse; flatten
-        for (const AstNode* k : a->kids) conv(k, bits, base, out);
+        for (const AstNode* k : a->kids()) conv(k, bits, base, out);
         return;
     }
   }

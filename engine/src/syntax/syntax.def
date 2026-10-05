@@ -1,0 +1,84 @@
+// The surface language's lexical and structural facts (plan P1-05; design
+// T1 SyntaxTable) — the single source tools/gen-syntax.mjs reads to generate
+// engine/src/syntax/syntax.gen.{h,cc}, runtime/src/shared/syntax.gen.{json,mjs}
+// and docs/syntax-table.md. Rows are data; behaviour (body modes, ownership,
+// block shapes) is a closed set implemented in code. Never hand-edit the
+// generated files.
+SYNTAX_VERSION(1)
+
+// ---- character classes ----------------------------------------------------
+CLASS(SpliceHead, "A-Za-z_$")
+CLASS(SpliceCont, "A-Za-z0-9_$")
+CLASS(IdStart, "A-Za-z_")
+CLASS(IdCont, "A-Za-z0-9_")
+CLASS(IdJoin, "-.:")
+CLASS(Escapable, "!-/:-@[-`{-~")
+
+// ---- inline delimiters: id, open, close, body mode, params, guard, prec, slot, capture
+INLINE(code,    "`",       "`",        Verbatim,  "pad=Strip",            "-",         Island,  code,      "string")
+INLINE(math,    "$",       "$",        Verbatim,  "esc=$ pad=Display",    "-",         Island,  math,      "embedded")
+INLINE(comment, "%--",     "--%",      Verbatim,  "nest",                 "-",         Comment, comment,   "comment")
+INLINE(splice,  "#HEAD",   "HEAD_CHAIN", CallChain, "-",                  "PrevIdent", Markup,  splice,    "function")
+INLINE(strong,  "*",       "*",        Pair,      "-",                    "Intraword", Markup,  strong,    "strong")
+INLINE(em,      "_",       "_",        Pair,      "-",                    "Intraword", Markup,  em,        "emphasis")
+INLINE(link,    "[",       "](URL)",   LinkText,  "-",                    "-",         Markup,  link,      "link")
+INLINE(note,    "^[",      "]",        Content,   "-",                    "-",         Markup,  note,      "note")
+INLINE(ref,     "@",       "BARE_ID",  Ident,     "-",                    "PrevIdent", Markup,  ref,       "label")
+INLINE(refs,    "@[",      "]",        IdList,    "-",                    "-",         Markup,  ref,       "label")
+
+// ---- blocks: id, shape, starter, interrupts, ownership, slot ---------------
+BLOCK(quote,   Prefix,   "> ",                  Always,    None,      quote)
+BLOCK(item,    Column,   "LIST_MARKER",         ListRule,  None,      item)
+BLOCK(region,  Explicit, "#!NAME ARGS?",        Always,    Container, region)
+BLOCK(fence,   Verbatim, "``` INFO",            Always,    Container, fence)
+BLOCK(comment, Verbatim, "%--",                 LeafOwned, Container, comment)
+BLOCK(heading, Leaf,     "={1,6} TEXT <label>?", Always,   None,      heading)
+BLOCK(rule,    Leaf,     "---",                 Always,    None,      rule)
+BLOCK(let,     Stmt,     "#let ",               Always,    Container, -)
+BLOCK(stmt,    Stmt,     "#{",                  Always,    Container, -)
+BLOCK(para,    Leaf,     "DEFAULT",             -,         None,      para)
+
+// ---- keyword forms (P2-12) and words a splice head may not be -------------
+KEYWORD(if, elseChain)
+KEYWORD(for)
+KEYWORD(while)
+RESERVED_UNSUPPORTED(if, else, for, while, use, let)
+RESERVED(break, case, catch, class, const, continue, debugger, default, delete, do, export, extends, finally, function, import, in, instanceof, new, return, switch, throw, try, typeof, var, void, with, yield, static, enum, await)
+
+// ---- highlight token tags (shared by the engine fold, the token providers
+// and the editor grammars) -------------------------------------------------
+TOKEN_TAGS(keyword, string, number, comment, function, type, constant, variable, operator, punctuation, property, attribute, label, embedded)
+
+// ---- sugar: slot, form, typed payload, dump format --------------------------
+// Payload fields: name:type, type ∈ u8 | bool | i32 | u32 | str (an interned
+// string) | src (a source span, printed as its text). The node's own `str` is
+// $str. Dump templates: {field} prints a value, "…{field}…" an escaped
+// string, {?field …} prints its body only when the field is set,
+// {field?yes:no} picks by a boolean. Legacy formats keep today's dump bytes.
+SUGAR(para,    Block,  "",                                  "para")
+SUGAR(heading, Block,  "level:u8 label:str",                "heading level={level}{?label label=\"{label}\"}")
+SUGAR(list,    Block,  "ordered:bool start:i32",            "list {ordered?ordered:bullet} start={start}")
+SUGAR(item,    Block,  "",                                  "item")
+SUGAR(quote,   Block,  "",                                  "quote")
+SUGAR(rule,    Block,  "",                                  "rule")
+SUGAR(fence,   Block,  "lang:str args:src bodyOffset:u32",  "codeblock lang=\"{lang}\" body=\"{$str}\"")
+SUGAR(region,  Block,  "args:src",                          "region name=\"{$str}\"")
+SUGAR(strong,  Inline, "",                                  "styled marker=*")
+SUGAR(em,      Inline, "",                                  "styled marker=_")
+SUGAR(code,    Inline, "",                                  "code str=\"{$str}\"")
+SUGAR(link,    Inline, "url:str",                           "link url=\"{url}\"")
+SUGAR(note,    Inline, "",                                  "note")
+SUGAR(ref,     Inline, "",                                  "ref target=\"{$str}\"")
+SUGAR(math,    Both,   "display:bool label:str",            "math display={display} src=\"{$str}\"{?label label=\"{label}\"}")
+// legacy shapes until P2-11 (region provenance) / P2-13 (splice bodies)
+SUGAR(arg,     Inline, "",                                  "arg")
+SUGAR(row,     Block,  "",                                  "row")
+SUGAR(cell,    Inline, "",                                  "cell")
+
+// non-sugar node payloads (Splice, Stmt, Error)
+NODE(Splice, "expr:src lastCallStart:u32",                  "splice expr=\"{expr}\"")
+NODE(Stmt,   "let:bool js:src",                             "{let?code-let:code-block} js=\"{js}\"")
+NODE(Error,  "message:str",                                 "error code=\"{$str}\" msg=\"{message}\"")
+NODE(Text,   "",                                            "text str=\"{$str}\"")
+NODE(Comment, "",                                           "comment body=\"{$str}\"")
+NODE(Doc,    "",                                            "doc")

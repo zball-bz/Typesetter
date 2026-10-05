@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-05
+- 下一步：P1-06
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -30,7 +30,7 @@
 | P1-02 | 属性注册表（props 行进入共享模式） | done | grep:plan P1-02 | 2026-10-06 | +1 用例（notes/sup-emphasis）；其余字节不变 | schema.json 新增 props（运行属性行）与 domains（正则→DFA）两节；生成 Styling/==/哈希/规范化/applyStyleArg/转储字段（props.gen.h）、typeset 的 runCss（style_css.gen.h）、executor 键表 STYLE_KEYS/STYLE_SUGAR、C++ matchDomain DFA（domains.gen.*）与 JS validDomain；删除 values.h（300 万随机串与旧实现 0 差异）；check-domains（JS↔C++ 一致）入 G4/CI；语义页 sup 内嵌 strong/em；docs/style-design.md |
 | P1-03 | 设置文档 ABI、阶段模型、驱动循环、用例配置 | done | grep:plan P1-03 | 2026-10-06 | code/snap-sidecar layout+html（原 golden 错：代码行伸进边注栏）；+2 用例（code/nowrap-snap、ref/supplements-en） | 设置文档（schema settings/policy 行生成 Config、编解码、JS 默认值与旧选项映射；tsr2_set_config，旧 setter 为包装）；stages.def/products.def、validThrough、Resolve 独立；configure 的原地/REBUILD/REEXECUTE 规则；tsr2_doc_fork（克隆字符串/样式表、复制度量、重放 token/图片答案），worker relayout/paginate 用 fork；driver.h + ProviderSet，原生 token provider 移入 engine/src/code（查询嵌入构建）；profiles/golden.json + X.fixture.json 取代文件名约定；tsrc --profile/--fixture/--settings/--set，check-tsrc 928 个 golden 全部复现；每个用例 fork==fresh 差分；fuzz_settings；视图以 lint 检查（偏差）；docs/host-protocol-design.md |
 | P1-04 | 字体面与根契约 | done | grep:plan P1-04 | 2026-10-06 | 103 个 html/paged 的根行（tools/golden-diff/root-line-only.mjs 核对只有根行变化） | FaceTable/faceOf/FaceKey；度量、vmet、resolveWidths、请求按 FaceId；族解析顺序含 mono×cjk（fonts.monoCjk）；CJK 斜体按直立测量；.tsr-doc 输出 lang、字体角色变量、基础字号；CSS 契约从变量绘制；shell chunkParas 解析根开标签（e2e 补丁测试）；数学文字经 faceOf |
-| P1-05 | syntax.def 与 CallAST | todo | | | | |
+| P1-05 | syntax.def 与 CallAST | done | grep:plan P1-05 | 2026-10-06 | 0（skeleton/ast/js/tree 全部字节不变） | syntax.def（CLASS/INLINE/BLOCK/KEYWORD/RESERVED/TOKEN_TAGS/SUGAR/NODE 行）+ tools/gen-syntax.mjs 生成 syntax.gen.{h,cc}、shared/syntax.gen.{mjs,json}、docs/syntax-table.md（入 gen-all/G9）；CallAST：AstKind {Doc,Text,Comment,Call,Splice,Stmt,Error} + SugarId，节点 32 字节（static_assert），载荷为紧随节点的旁路记录，kids 为 arena 切片；通用 dump 由模板生成；codegen/fragment 按 slot 分派（Para→mathblock 窥孔保留）；reservedSpliceHead、kTokenTags/TOKEN_TAGS 由表生成；tsr2_abi syntaxVersion=1，abi.mjs 核对；AST 字节 87K 116680→64664（−45%），unitAstBytes 守住；原生 parse 0.428→0.405ms；docs/syntax-design.md，PackCC/SourceMap 文档漂移更正 |
 | P1-06 | SurfaceLexer | todo | | | | |
 | P1-07 | BlockAutomaton | todo | | | | |
 | P1-08 | 行所有权与内容体 | todo | | | | |

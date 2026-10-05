@@ -14,21 +14,6 @@ struct Frame {
   std::vector<AstNode*> items;
 };
 
-// A bare splice head that cannot start a JS expression (plan P0-05).
-static const char* reservedHead(std::string_view w) {
-  static const char* kw[] = {"if", "else", "for", "while", "use", "let"};
-  for (const char* k : kw)
-    if (w == k) return "keyword-unsupported";
-  static const char* js[] = {"break", "case", "catch", "class", "const", "continue", "debugger",
-                             "default", "delete", "do", "export", "extends", "finally",
-                             "function", "import", "in", "instanceof", "new", "return",
-                             "switch", "throw", "try", "typeof", "var", "void", "with",
-                             "yield", "static", "enum", "await"};
-  for (const char* k : js)
-    if (w == k) return "reserved-word";
-  return nullptr;
-}
-
 struct InlineParser {
   const SourceText& src;
   Arena& arena;
@@ -46,12 +31,7 @@ struct InlineParser {
   bool pendingSpace = false;
   bool prevGlyph = false;
 
-  AstNode* mk(AstKind k, Span s) {
-    AstNode* n = arena.make<AstNode>();
-    n->kind = k;
-    n->span = s;
-    return n;
-  }
+  AstAlloc A{arena};
 
   u32 spanEnd() const { return spans[sp].end; }
   bool atEnd() const { return sp >= spans.size(); }
@@ -123,7 +103,7 @@ struct InlineParser {
 
   void flushText() {
     if (buf.empty()) return;
-    AstNode* t = mk(AstKind::Text, {bufStart, bufEnd});
+    AstNode* t = A.node(AstKind::Text, {bufStart, bufEnd});
     t->str = strs.intern(buf);
     stack.back().items.push_back(t);
     buf.clear();
@@ -175,13 +155,12 @@ struct InlineParser {
     return -1;
   }
 
-  AstNode* parseSub(Span s, AstKind kind) {
+  // a content body: an inline parse of one span
+  std::vector<AstNode*> parseSub(Span s) {
     InlineParser p{src, arena, strs, diags, all};
     p.spans = {s};
     p.run();
-    AstNode* n = mk(kind, s);
-    n->kids = std::move(p.stack.back().items);
-    return n;
+    return std::move(p.stack.back().items);
   }
 
   void handleSplice(u32 hashPos) {
@@ -235,7 +214,7 @@ struct InlineParser {
       u32 h = exprStart;
       while (h < exprEnd && isIdentCont(all[h])) h++;
       std::string_view head = all.substr(exprStart, h - exprStart);
-      const char* code = reservedHead(head);
+      const char* code = reservedSpliceHead(head);
       if (code) {
         u32 after = exprEnd;
         while (after < lim && all[after] == '[') {
@@ -247,19 +226,19 @@ struct InlineParser {
             ? "#" + std::string(head) + " is not supported yet (keyword forms: plan P2-12)"
             : "'" + std::string(head) + "' is a reserved word and cannot start a splice";
         diags.add(Sev::Error, code, {hashPos, after}, msg);
-        AstNode* e = mk(AstKind::Error, {hashPos, after});
+        AstNode* e = A.node<ErrorP>(AstKind::Error, {hashPos, after});
         e->str = strs.intern(code);
-        e->aux = strs.intern(msg);
+        side<ErrorP>(e).message = strs.intern(msg);
         pushItem(e);
         seekTo(after);
         return;
       }
     }
-    AstNode* spl = mk(AstKind::Splice, {hashPos, exprEnd});
-    spl->expr = {exprStart, exprEnd};
-    spl->lastCallStart = lastCall;
+    AstNode* spl = A.node<SpliceP>(AstKind::Splice, {hashPos, exprEnd});
+    side<SpliceP>(spl) = {{exprStart, exprEnd}, lastCall};
 
     // content arguments: directly adjacent [ ... ], repeatable (single span)
+    std::vector<AstNode*> args;
     u32 after = exprEnd;
     while (after < lim && all[after] == '[') {
       i32 close = matchBracket(after, lim);
@@ -267,9 +246,12 @@ struct InlineParser {
         diags.add(Sev::Error, "parse-inline", {after, lim}, "unclosed content argument");
         break;
       }
-      spl->kids.push_back(parseSub({after + 1, (u32)close}, AstKind::SpliceArg));
+      AstNode* arg = A.call(SugarId::arg, {after + 1, (u32)close});
+      A.setKids(arg, parseSub({after + 1, (u32)close}));
+      args.push_back(arg);
       after = (u32)close + 1;
     }
+    A.setKids(spl, args);
     if (after < lim && all[after] == ';') after++;  // hard terminator
     spl->span.end = after;
     pushItem(spl);
@@ -323,7 +305,7 @@ struct InlineParser {
           continue;
         }
         flushText();
-        AstNode* cm = mk(AstKind::Comment, {i, p});
+        AstNode* cm = A.node(AstKind::Comment, {i, p});
         std::string body = crlfToLf(all.substr(i + 3, p - 3 - (i + 3)));
         cm->str = strs.intern(body);
         stack.back().items.push_back(cm);  // does not set prevGlyph
@@ -354,9 +336,9 @@ struct InlineParser {
           size_t b0 = 0, b1 = body.size();
           while (b0 < b1 && isWs(body[b0])) b0++;
           while (b1 > b0 && isWs(body[b1 - 1])) b1--;
-          AstNode* mn = mk(AstKind::Math, {i, p + 1});
+          AstNode* mn = A.call<MathP>(SugarId::math, {i, p + 1});
           mn->str = strs.intern(body.substr(b0, b1 - b0));
-          mn->tag = display ? 1 : 0;
+          side<MathP>(mn).display = display;
           pushItem(mn);
           // equation label: ` <id>` directly after the closing $ (v2 §11.1
           // heading-label form); labelled display formulas get numbers
@@ -367,7 +349,7 @@ struct InlineParser {
             u32 lb = after + 2, le2 = lb;
             while (le2 < lim2 && all[le2] != '>' && all[le2] != '<') le2++;
             if (le2 < lim2 && all[le2] == '>' && le2 > lb) {
-              mn->aux = strs.intern(all.substr(lb, le2 - lb));
+              side<MathP>(mn).label = strs.intern(all.substr(lb, le2 - lb));
               mn->span.end = le2 + 1;
               seekTo(le2 + 1);
               continue;
@@ -386,7 +368,7 @@ struct InlineParser {
         if (close < lim) {
           spaceBeforeItem();
           flushText();
-          AstNode* code = mk(AstKind::Code, {i, close + 1});
+          AstNode* code = A.call(SugarId::code, {i, close + 1});
           std::string body(all.substr(i + 1, close - (i + 1)));
           code->str = strs.intern(body);
           pushItem(code);
@@ -404,10 +386,10 @@ struct InlineParser {
           if (pclose >= 0) {
             spaceBeforeItem();
             flushText();
-            AstNode* link = parseSub({i + 1, (u32)close}, AstKind::Link);
-            link->span = {i, (u32)pclose + 1};
+            AstNode* link = A.call<LinkP>(SugarId::link, {i, (u32)pclose + 1});
+            A.setKids(link, parseSub({i + 1, (u32)close}));
             std::string url(all.substr((u32)close + 2, (u32)pclose - ((u32)close + 2)));
-            link->aux = strs.intern(url);
+            side<LinkP>(link).url = strs.intern(url);
             pushItem(link);
             i = (u32)pclose + 1;
             continue;
@@ -424,9 +406,8 @@ struct InlineParser {
           flushText();
           Frame f = std::move(stack.back());
           stack.pop_back();
-          AstNode* s = mk(AstKind::Styled, {f.markerPos, i + 1});
-          s->tag = (u8)c;
-          s->kids = std::move(f.items);
+          AstNode* s = A.call(c == '*' ? SugarId::strong : SugarId::em, {f.markerPos, i + 1});
+          A.setKids(s, f.items);
           stack.back().items.push_back(s);
           prevGlyph = true;
           i++;
@@ -460,8 +441,8 @@ struct InlineParser {
         }
         if (close < lim && all[close] == ']') {
           flushText();
-          AstNode* nt = parseSub({i + 2, close}, AstKind::Note);
-          nt->span = {i, close + 1};
+          AstNode* nt = A.call(SugarId::note, {i, close + 1});
+          A.setKids(nt, parseSub({i + 2, close}));
           pushItem(nt);
           i = close + 1;
           continue;
@@ -489,7 +470,7 @@ struct InlineParser {
         if (tEnd > tStart) {
           spaceBeforeItem();
           flushText();
-          AstNode* r = mk(AstKind::Ref, {i, end});
+          AstNode* r = A.call(SugarId::ref, {i, end});
           r->str = strs.intern(all.substr(tStart, tEnd - tStart));
           pushItem(r);
           i = end;
@@ -506,7 +487,7 @@ struct InlineParser {
     while (stack.size() > 1) {
       Frame f = std::move(stack.back());
       stack.pop_back();
-      AstNode* lit = mk(AstKind::Text, {f.markerPos, f.markerPos + 1});
+      AstNode* lit = A.node(AstKind::Text, {f.markerPos, f.markerPos + 1});
       char m = (char)f.marker;
       lit->str = strs.intern(std::string_view(&m, 1));
       auto& parent = stack.back().items;
@@ -591,12 +572,7 @@ struct AstBuilder {
   Interner& strs;
   DiagSink& diags;
 
-  AstNode* mk(AstKind k, Span s) {
-    AstNode* n = arena.make<AstNode>();
-    n->kind = k;
-    n->span = s;
-    return n;
-  }
+  AstAlloc A{arena};
 
   std::vector<AstNode*> inlineParse(const std::vector<Span>& spans) {
     InlineParser p{src, arena, strs, diags, src.view()};
@@ -607,72 +583,80 @@ struct AstBuilder {
 
   AstNode* errorNode(Span sp, const char* code, const std::string& msg, bool report = true) {
     if (report) diags.add(Sev::Error, code, sp, msg);
-    AstNode* e = mk(AstKind::Error, sp);
+    AstNode* e = A.node<ErrorP>(AstKind::Error, sp);
     e->str = strs.intern(code);
-    e->aux = strs.intern(msg);
+    side<ErrorP>(e).message = strs.intern(msg);
     return e;
+  }
+
+  std::vector<AstNode*> buildKids(const SkelNode* s, bool top = false) {
+    std::vector<AstNode*> kids;
+    kids.reserve(s->kids.size());
+    for (const SkelNode* k : s->kids) kids.push_back(build(k, top));
+    return kids;
   }
 
   AstNode* build(const SkelNode* s, bool top = false) {
     switch (s->kind) {
       case SkelKind::Doc: {
-        AstNode* d = mk(AstKind::Doc, s->span);
-        for (const SkelNode* k : s->kids) d->kids.push_back(build(k, /*top=*/true));
+        AstNode* d = A.node(AstKind::Doc, s->span);
+        A.setKids(d, buildKids(s, /*top=*/true));
         return d;
       }
       case SkelKind::Error:  // reported by the line pass
         return errorNode(s->span, s->errCode, s->errMsg, /*report=*/false);
       case SkelKind::Para: {
-        AstNode* p = mk(AstKind::Para, s->span);
-        p->kids = inlineParse(s->lineSpans);
+        AstNode* p = A.call(SugarId::para, s->span);
+        A.setKids(p, inlineParse(s->lineSpans));
         return p;
       }
       case SkelKind::Heading: {
-        AstNode* h = mk(AstKind::Heading, s->span);
-        h->tag = s->level;
-        if (!s->labelSpan.empty()) h->aux = strs.intern(src.slice(s->labelSpan));
-        h->kids = inlineParse(s->lineSpans);
+        AstNode* h = A.call<HeadingP>(SugarId::heading, s->span);
+        side<HeadingP>(h).level = s->level;
+        if (!s->labelSpan.empty()) side<HeadingP>(h).label = strs.intern(src.slice(s->labelSpan));
+        A.setKids(h, inlineParse(s->lineSpans));
         return h;
       }
       case SkelKind::List: {
-        AstNode* l = mk(AstKind::ListB, s->span);
-        l->ordered = s->ordered;
-        l->num = s->start;
-        for (const SkelNode* k : s->kids) l->kids.push_back(build(k));
+        AstNode* l = A.call<ListP>(SugarId::list, s->span);
+        side<ListP>(l) = {s->ordered, s->start};
+        A.setKids(l, buildKids(s));
         return l;
       }
       case SkelKind::Item: {
-        AstNode* it = mk(AstKind::Item, s->span);
-        for (const SkelNode* k : s->kids) it->kids.push_back(build(k));
+        AstNode* it = A.call(SugarId::item, s->span);
+        A.setKids(it, buildKids(s));
         return it;
       }
       case SkelKind::Quote: {
-        AstNode* q = mk(AstKind::Quote, s->span);
-        for (const SkelNode* k : s->kids) q->kids.push_back(build(k));
+        AstNode* q = A.call(SugarId::quote, s->span);
+        A.setKids(q, buildKids(s));
         return q;
       }
       case SkelKind::Fence: {
-        AstNode* f = mk(AstKind::CodeBlockB, s->span);
         // info string "tag(args)": args reuse the splice argument lexer and
         // compile to a JS object literal for the fence dispatcher (v2 §4.1)
-        Span tagSpan = s->langSpan;
+        Span tagSpan = s->langSpan, args;
         u32 lp = tagSpan.start;
         std::string_view all = src.view();
         while (lp < tagSpan.end && all[lp] != '(') lp++;
         if (lp < tagSpan.end) {
           JsScan js = scanJs(all.substr(0, tagSpan.end), lp, true);
           if (js.ok) {
-            f->expr = {lp + 1, js.end - 1};
+            args = {lp + 1, js.end - 1};
             tagSpan.end = lp;
           }
         }
-        if (!f->expr.empty() && !jsNamedArgList(src.slice(f->expr)))
+        if (!args.empty() && !jsNamedArgList(src.slice(args)))
           return errorNode(s->span, "header-positional",
                            "fence arguments must be named (key: value)");
+        AstNode* f = A.call<FenceP>(SugarId::fence, s->span);
         std::string lang(src.slice(tagSpan));
         while (!lang.empty() && (lang.back() == ' ' || lang.back() == '\r')) lang.pop_back();
-        f->aux = strs.intern(lang);
-        f->num = (int)(s->lineSpans.empty() ? s->span.end : s->lineSpans[0].start);
+        FenceP& fp = side<FenceP>(f);
+        fp.lang = strs.intern(lang);
+        fp.args = args;
+        fp.bodyOffset = s->lineSpans.empty() ? s->span.end : s->lineSpans[0].start;
         std::string body;
         for (size_t k = 0; k < s->lineSpans.size(); k++) {
           if (k) body += '\n';
@@ -682,9 +666,9 @@ struct AstBuilder {
         return f;
       }
       case SkelKind::Rule:
-        return mk(AstKind::Rule, s->span);
+        return A.call(SugarId::rule, s->span);
       case SkelKind::Comment: {
-        AstNode* c = mk(AstKind::Comment, s->span);
+        AstNode* c = A.node(AstKind::Comment, s->span);
         std::string body = crlfToLf(src.slice(s->inner));
         c->str = strs.intern(body);
         return c;
@@ -693,30 +677,36 @@ struct AstBuilder {
         if (!s->inner.empty() && !jsNamedArgList(src.slice(s->inner)))
           return errorNode(s->span, "header-positional",
                            "region arguments must be named (key: value)");
-        AstNode* r = mk(AstKind::Region, s->span);
+        AstNode* r = A.call<RegionP>(SugarId::region, s->span);
         r->str = strs.intern(src.slice(s->langSpan));
-        r->expr = s->inner;  // opener args (inside parens; empty span = none)
+        side<RegionP>(r).args = s->inner;  // opener args (inside parens; empty span = none)
+        std::vector<AstNode*> kids;
         for (const SkelNode* k : s->kids) {
           if (k->kind == SkelKind::Para) {
-            // line provenance (v2 §4.1): each source line is a Row whose
-            // Cells are the top-level '|' segmentation, inline-parsed
-            AstNode* p = mk(AstKind::Para, k->span);
+            // line provenance (v2 §4.1): each source line is a row whose
+            // cells are the top-level '|' segmentation, inline-parsed
+            AstNode* p = A.call(SugarId::para, k->span);
+            std::vector<AstNode*> rows;
             for (const Span& line : k->lineSpans) {
-              AstNode* row = mk(AstKind::Row, line);
+              AstNode* row = A.call(SugarId::row, line);
               std::vector<Span> cells;
               splitCells(src.view(), line, cells);
+              std::vector<AstNode*> cellNodes;
               for (const Span& c : cells) {
-                AstNode* cell = mk(AstKind::Cell, c);
-                cell->kids = inlineParse({c});
-                row->kids.push_back(cell);
+                AstNode* cell = A.call(SugarId::cell, c);
+                A.setKids(cell, inlineParse({c}));
+                cellNodes.push_back(cell);
               }
-              p->kids.push_back(row);
+              A.setKids(row, cellNodes);
+              rows.push_back(row);
             }
-            r->kids.push_back(p);
+            A.setKids(p, rows);
+            kids.push_back(p);
           } else {
-            r->kids.push_back(build(k));
+            kids.push_back(build(k));
           }
         }
+        A.setKids(r, kids);
         return r;
       }
       case SkelKind::CodeLet:
@@ -731,13 +721,12 @@ struct AstBuilder {
           return errorNode(s->span, "reserved-name",
                            "'" + std::string(reserved) +
                                "': names starting with __ are reserved for the engine");
-        AstNode* c = mk(AstKind::CodeStmt, s->span);
-        c->expr = s->inner;
-        c->tag = s->kind == SkelKind::CodeLet ? 0 : 1;
+        AstNode* c = A.node<StmtP>(AstKind::Stmt, s->span);
+        side<StmtP>(c) = {s->kind == SkelKind::CodeLet, s->inner};
         return c;
       }
     }
-    return mk(AstKind::Doc, s->span);
+    return A.node(AstKind::Doc, s->span);
   }
 };
 
@@ -762,111 +751,9 @@ std::vector<AstNode*> parseInlineSpans(const SourceText& src,
 static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,
                      const Interner& strs, int depth) {
   for (int i = 0; i < depth; i++) out += "  ";
-  auto hdr = [&](const char* name) {
-    appendf(out, "%s @[%u,%u)", name, n->span.start, n->span.end);
-  };
-  switch (n->kind) {
-    case AstKind::Doc: hdr("doc"); break;
-    case AstKind::Para: hdr("para"); break;
-    case AstKind::Heading:
-      hdr("heading");
-      appendf(out, " level=%d", n->tag);
-      if (n->aux) {
-        out += " label=\"";
-        appendEscaped(out, strs.get(n->aux));
-        out += "\"";
-      }
-      break;
-    case AstKind::ListB:
-      hdr("list");
-      appendf(out, " %s start=%d", n->ordered ? "ordered" : "bullet", n->num);
-      break;
-    case AstKind::Item: hdr("item"); break;
-    case AstKind::Quote: hdr("quote"); break;
-    case AstKind::CodeBlockB:
-      hdr("codeblock");
-      out += " lang=\"";
-      appendEscaped(out, strs.get(n->aux));
-      out += "\" body=\"";
-      appendEscaped(out, strs.get(n->str));
-      out += "\"";
-      break;
-    case AstKind::Rule: hdr("rule"); break;
-    case AstKind::Comment:
-      hdr("comment");
-      out += " body=\"";
-      appendEscaped(out, strs.get(n->str));
-      out += "\"";
-      break;
-    case AstKind::CodeStmt:
-      hdr(n->tag == 0 ? "code-let" : "code-block");
-      out += " js=\"";
-      appendEscaped(out, src.slice(n->expr));
-      out += "\"";
-      break;
-    case AstKind::Text:
-      hdr("text");
-      out += " str=\"";
-      appendEscaped(out, strs.get(n->str));
-      out += "\"";
-      break;
-    case AstKind::Styled: hdr("styled"); appendf(out, " marker=%c", (char)n->tag); break;
-    case AstKind::Splice:
-      hdr("splice");
-      out += " expr=\"";
-      appendEscaped(out, src.slice(n->expr));
-      out += "\"";
-      break;
-    case AstKind::SpliceArg: hdr("arg"); break;
-    case AstKind::Link:
-      hdr("link");
-      out += " url=\"";
-      appendEscaped(out, strs.get(n->aux));
-      out += "\"";
-      break;
-    case AstKind::Code:
-      hdr("code");
-      out += " str=\"";
-      appendEscaped(out, strs.get(n->str));
-      out += "\"";
-      break;
-    case AstKind::Ref:
-      hdr("ref");
-      out += " target=\"";
-      appendEscaped(out, strs.get(n->str));
-      out += "\"";
-      break;
-    case AstKind::Region:
-      hdr("region");
-      out += " name=\"";
-      appendEscaped(out, strs.get(n->str));
-      out += "\"";
-      break;
-    case AstKind::Math:
-      hdr("math");
-      appendf(out, " display=%d src=\"", n->tag);
-      appendEscaped(out, strs.get(n->str));
-      out += "\"";
-      if (n->aux) {
-        out += " label=\"";
-        appendEscaped(out, strs.get(n->aux));
-        out += "\"";
-      }
-      break;
-    case AstKind::Row: hdr("row"); break;
-    case AstKind::Cell: hdr("cell"); break;
-    case AstKind::Note: hdr("note"); break;
-    case AstKind::Error:
-      hdr("error");
-      out += " code=\"";
-      appendEscaped(out, strs.get(n->str));
-      out += "\" msg=\"";
-      appendEscaped(out, strs.get(n->aux));
-      out += "\"";
-      break;
-  }
+  dumpAstNode(out, n, src, strs);
   out += "\n";
-  for (const AstNode* k : n->kids) dumpNode(out, k, src, strs, depth + 1);
+  for (const AstNode* k : n->kids()) dumpNode(out, k, src, strs, depth + 1);
 }
 
 std::string dumpAst(const AstNode* doc, const SourceText& src, const Interner& strs) {

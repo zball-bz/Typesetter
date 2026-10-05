@@ -462,6 +462,29 @@ static void unitHostInputs(const fs::path& root) {
 
 // The ops version window (plan P1-01): MIN_COMPAT..OPS_VERSION is read, the
 // buffer remembers its version, anything outside the window is refused.
+// AST bytes (plan P1-05 bench gate): node + side record + kid slot per
+// node, against what the pre-CallAST layout (a 64-byte node with an
+// std::vector of kid pointers) took for the same tree — over every fixture.
+static void unitAstBytes(const fs::path& root) {
+  size_t bytes = 0, before = 0, nodes = 0;
+  std::function<void(const AstNode*)> walk = [&](const AstNode* n) {
+    nodes++;
+    bytes += sizeof(AstNode) + n->side + n->nkids * sizeof(AstNode*);
+    before += 64 + n->nkids * sizeof(AstNode*);
+    for (const AstNode* k : n->kids()) walk(k);
+  };
+  for (auto& e : fs::recursive_directory_iterator(root / "test" / "fixtures")) {
+    if (!e.is_regular_file() || e.path().extension() != ".tsm") continue;
+    std::string text;
+    readFile(e.path(), text);
+    Doc doc;
+    doc.compile(std::move(text));
+    if (doc.ast) walk(doc.ast);
+  }
+  CHECK(nodes > 0 && bytes <= before);
+  printf("unit: AST %zu nodes, %zu bytes (pre-CallAST layout %zu)\n", nodes, bytes, before);
+}
+
 static void unitOpsWindow(const fs::path& root) {
   std::string ops;
   readFile(root / "test" / "fixtures" / "inline" / "emph.ops", ops);
@@ -913,6 +936,7 @@ int main(int argc, char** argv) {
   fuzzRegressions(fs::path(root));
   unitHostInputs(fs::path(root));
   unitOpsWindow(fs::path(root));
+  unitAstBytes(fs::path(root));
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";
   fs::path golden = fs::path(root) / "test" / "golden";

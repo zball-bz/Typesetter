@@ -4,17 +4,13 @@
 // and fold into the codeblock's structured-line form (CH1).
 #pragma once
 #include "../model/model.h"
+#include "../syntax/syntax.gen.h"
 
 namespace tsr {
 
-// Fixed tag set: tree-sitter highlight-capture names, first segment.
-// Shared contract with runtime/src/worker/tokens.mjs — keep in sync.
-constexpr const char* kTokenTags[] = {
-    "keyword", "string", "number", "comment", "function", "type",
-    "constant", "variable", "operator", "punctuation", "property",
-    "attribute", "label", "embedded",
-};
-constexpr int kTokenTagCount = 14;
+// The tag set (kTokenTags: tree-sitter highlight-capture names, first
+// segment) is the TOKEN_TAGS row of syntax.def, shared with the worker's
+// providers through runtime/src/shared/syntax.gen.mjs.
 
 struct CodeToken {
   u32 start = 0, end = 0;  // byte range into the code body

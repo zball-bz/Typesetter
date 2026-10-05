@@ -291,13 +291,14 @@ TSR_EXPORT double tsr_doc_height_px(WasmDoc* d) {
 
 // The one ABI handshake (plan P1-01, D-H06): the host checks it before it
 // writes a single op. Fields of subsystems that do not exist yet carry 0
-// (programAbi → P2-02, syntaxVersion → P1-05, resVersion → P1-19).
+// (programAbi → P2-02, resVersion → P1-19); syntaxVersion is syntax.def's.
 TSR_EXPORT const char* tsr2_abi() {
   static std::string out;
   if (out.empty()) {
     out = "{\"opsWindow\":[" + std::to_string(OPS_MIN_COMPAT) + "," + std::to_string(OPS_VERSION) +
           "],\"schemaHash\":\"" + SCHEMA_HASH +
-          "\",\"programAbi\":0,\"resVersion\":0,\"renderVersion\":1,\"syntaxVersion\":0}";
+          "\",\"programAbi\":0,\"resVersion\":0,\"renderVersion\":1,\"syntaxVersion\":" +
+          std::to_string(SYNTAX_VERSION) + "}";
   }
   return out.c_str();
 }

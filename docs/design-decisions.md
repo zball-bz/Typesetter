@@ -2,6 +2,8 @@
 
 Settled during architecture discussions. This is the agreed foundation for the new engine.
 
+> Historical (v1). Superseded by [design-decisions-v2.md](design-decisions-v2.md): there is no Lua evaluator and no PackCC parser — the front end is hand-written C++ driven by `engine/src/syntax/syntax.def` ([syntax-design.md](syntax-design.md)).
+
 ## Architecture
 
 **C++/Emscripten core.** The entire pipeline runs in WASM:

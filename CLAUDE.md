@@ -20,7 +20,7 @@ grammar/           tree-sitter-tsm (highlighting grammar; vendored parser.c in
                    third_party/grammars/tsm)
 editors/vscode-tsm VSCode extension (no build step; vendor/ via scripts/vendor.mjs)
 tools/             serve, record-fixtures, corpus-run, codehl-assets, pack-dist,
-                   export-static, bench-edit, hyphc, gen-schema/gen-all
+                   export-static, bench-edit, hyphc, gen-schema/gen-syntax/gen-all
 test/              fixtures/ (+ .ops recordings) · golden/ · e2e/ (Playwright) ·
                    corpus/ (typst-derived smoke corpus)
 docs/              architecture.md (stage map) + one *-design.md per feature
@@ -69,7 +69,9 @@ rolling `engine-dist` release.
   (schema.lock.json pins ids and since values). New vocabulary takes the next
   `since` (and raises opsVersion to it) — old buffers stay readable; only a
   change of meaning of an existing row raises minCompat and needs a full
-  fixture re-record (`npm run record`).
+  fixture re-record (`npm run record`). Surface-syntax facts (character
+  classes, delimiters, sugar slots and payloads, token tags) live in
+  engine/src/syntax/syntax.def (docs/syntax-design.md), also run by gen-all.
 - Design first: a `docs/<feature>-design.md` precedes implementation and is
   updated with as-built deltas.
 - Host knobs are rows of the `settings` section of engine/schema/schema.json

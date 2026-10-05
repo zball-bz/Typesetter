@@ -1008,7 +1008,7 @@ Theme steps: — · findings: 1
 | `markup-language/missed:3` | missed | medium | P2-02, P3-01 | |
 | `markup-language/missed:4` | missed | low | P1-07 | |
 | `markup-language/missed:5` | missed | low | P1-07 | |
-| `parser-frontend/per-feature-ast-kinds` | adhoc | high | P1-05 | |
+| `parser-frontend/per-feature-ast-kinds` | adhoc | high | P1-05 | grep:plan P1-05 |
 | `parser-frontend/inline-recognizer-cascade` | adhoc | high | P1-06 | |
 | `parser-frontend/region-pipe-segmentation-in-parser` | adhoc | high | P2-11 | |
 | `parser-frontend/cross-line-raw-scans` | adhoc | high | P1-08 | |

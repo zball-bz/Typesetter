@@ -101,7 +101,7 @@ Keyword forms are a closed set: `#let`, `#if (…) […] else […]` (else-chain
 
 ## 4. Block structure: two-phase parsing
 
-**Decision: block structure does not enter the PEG.** Phase 1 is a line-oriented, prefix-driven automaton (container stack, hand-written C++); it produces the block skeleton and carves out verbatim islands. Phase 2 (PackCC PEG) parses only inline markup + splices within blocks.
+**Decision: block structure does not enter the PEG.** Phase 1 is a line-oriented, prefix-driven automaton (container stack, hand-written C++); it produces the block skeleton and carves out verbatim islands. Phase 2 (PackCC PEG) parses only inline markup + splices within blocks. *(As built: phase 2 is a hand-written parser; PackCC was never adopted. Lexical facts live in `engine/src/syntax/syntax.def` — docs/syntax-design.md.)*
 
 Why: (a) the PEG never touches context-sensitive indentation; (b) error recovery is naturally block-granular (a failed block becomes an error block, §11); (c) the line pass and the splice codegen emit into the same compiled JS program — `- a` and `#list(…)` produce identical ops.
 
@@ -286,8 +286,8 @@ The public API is designed on top of a full document model, specified before imp
 
 - **Type system**: `TextStyling` with bitset base classes (`uint64_t`+ in C++), dynamic class ids ≥ 256, inline-style escape hatch with `CLS_HAS_STYLE`; span tree builder via subset/superset nesting. (Now driven by the style stack, §12.)
 - **Hyphenation**: owned C++ Liang implementation; TeX patterns compiled to a compact runtime format (format decided at implementation time); English first, pluggable language packs.
-- **Parser tooling**: PackCC PEG — with reduced scope (inline + splice lexing + math; block structure is the hand-written line pass, §4). UTF-8/CJK classification via C semantic predicates, not grammar rules.
-- **Build**: CMake + emcc; PackCC at build time. Lua removed from the build.
+- **Parser tooling**: PackCC PEG — with reduced scope (inline + splice lexing + math; block structure is the hand-written line pass, §4). UTF-8/CJK classification via C semantic predicates, not grammar rules. *(As built: hand-written C++ throughout, driven by the generated syntax table — docs/syntax-design.md.)*
+- **Build**: CMake + emcc; no parser generator. Lua removed from the build.
 
 ## 16. Testing strategy
 

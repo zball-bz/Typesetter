@@ -2,12 +2,10 @@
 // modules, lazily loaded, all compute in wasm. Priority contract (shared
 // with engine/test/native_tokens.h): captures sort by (start asc,
 // patternIndex asc); earlier pattern wins on overlap.
-// Tag set mirrors engine/src/code/tokens.h kTokenTags — keep in sync.
+// The tag set is syntax.def's TOKEN_TAGS row (engine kTokenTags).
 import { POLICY } from '../shared/settings.gen.mjs';
+import { TOKEN_TAGS as TAGS } from '../shared/syntax.gen.mjs';
 
-const TAGS = ['keyword', 'string', 'number', 'comment', 'function', 'type',
-              'constant', 'variable', 'operator', 'punctuation', 'property',
-              'attribute', 'label', 'embedded'];
 const ALIAS = { tag: 'type', conditional: 'keyword', repeat: 'keyword',
                 include: 'keyword', boolean: 'constant', constructor: 'constant',
                 method: 'function', field: 'property', parameter: 'property' };
