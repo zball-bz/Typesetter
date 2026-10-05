@@ -1,0 +1,4 @@
+doc h=3072su
+para pid=0 y=0su w=19200su h=3072su
+  L0 y=0su left=0su w=19200su dw=75su dc=45su join=none blocks=[0,18) @[0,60)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[18,42) @[0,126)

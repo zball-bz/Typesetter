@@ -1,0 +1,7 @@
+doc @[0,127)
+  para @[0,126)
+    text @[0,60) str="数学字体没有的码位排成测量过的文字叶子："
+    math @[60,85) display=0 src="varrho + 中 = varsigma"
+    text @[85,115) str="，诊断每个码位一次："
+    math @[115,123) display=0 src="varrho"
+    text @[123,126) str="。"

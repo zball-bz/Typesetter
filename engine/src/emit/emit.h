@@ -151,9 +151,12 @@ struct ImageData {
   ImageSize size;
 };
 struct MathData {  // a display formula
-  const MathBox* box = nullptr;
+  const MathBox* box = nullptr;  // laid out in Measure (plan P1-25), once its text runs are measured
   StrRef tag = 0;  // "(n)" right-margin number
   StrRef src = 0;  // its source (the copy contract)
+  double sizePx = 0;
+  Span span;
+  StyleId style = 0;  // its context style (paint: colour)
 };
 using LeafData = std::variant<std::monostate, RuleData, GridData, TableData, RawData, ImageData, MathData>;
 
@@ -213,6 +216,7 @@ struct ObjectEnv {
   Interner& strs;
   StyleTable& styles;
   double docBasePx;
+  DiagSink* diags = nullptr;  // a finalized layout's own diagnostics (coverage)
 };
 
 // Fills widths from the store; returns what is still missing (deduped).

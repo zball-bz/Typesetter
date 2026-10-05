@@ -104,6 +104,14 @@ struct Layouter {
   }
 
   MathBox* glyphBox(u32 cp, u8 cls, u8 st) {
+    // a code point the math font does not cover is a measured text leaf (plan
+    // P1-25; design T8 coverage chain): never a stand-in box another font paints
+    if (!F.glyph(cp) && text) {
+      rec(cp);  // the coverage warning, once per code point
+      MathBox* t = textBox(cpToUtf8(cp), cls, st, /*textFont=*/true);
+      t->cls = t->firstCls = t->lastCls = cls;
+      return t;
+    }
     MathBox* b = mkBox(MathKind::Glyph);
     b->cls = b->firstCls = b->lastCls = cls;
     b->text = strs.intern(cpToUtf8(cp));
@@ -785,10 +793,10 @@ static void effClsOf(const MNode* n, u8& f, u8& l) {
 
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
-                           Span span, const MeasureNeeds* text) {
+                           Span span, const MeasureNeeds* text, bool parseDiags) {
   // errors are local (plan P1-24): an Error leaf lays out in place
   MathIR ir = parseMath(src, arena);
-  reportMathDiags(ir, src, span, diags);
+  if (parseDiags) reportMathDiags(ir, src, span, diags);
   Layouter L{arena, strs, diags, span, sizePx, text};
   return L.layout(ir.root, display ? D : T);
 }
@@ -796,10 +804,10 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         double sizePx, Arena& arena,
                                         Interner& strs, DiagSink& diags,
-                                        Span span, const MeasureNeeds* text) {
+                                        Span span, const MeasureNeeds* text, bool parseDiags) {
   std::vector<MathSeg> out;
   MathIR ir = parseMath(src, arena);
-  reportMathDiags(ir, src, span, diags);
+  if (parseDiags) reportMathDiags(ir, src, span, diags);
   MNode* run = ir.root;
   Layouter L{arena, strs, diags, span, sizePx, text};
   u8 st = display ? D : T;

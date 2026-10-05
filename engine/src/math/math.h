@@ -39,12 +39,13 @@ struct MathBox {
 // that laid the formula out, which then defers (an inline formula: its
 // object, resolved in Measure; a display formula: its top-level block).
 
-// Parses + lays out one formula. Errors/diags are non-fatal: the returned box
+// Parses + lays out one formula (parseDiags false: the parse diagnostics
+// were reported when it was prepared, plan P1-25). Errors/diags are non-fatal: the returned box
 // degrades to an upright text rendering of the source. `display` selects
 // display style (mathblock); inline formulas use text style.
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
-                           Span span, const MeasureNeeds* text = nullptr);
+                           Span span, const MeasureNeeds* text = nullptr, bool parseDiags = true);
 
 // Inline-formula line breaking (math-design.md §9): the formula splits into
 // unbreakable segments at top-level relations (a break point BEFORE and
@@ -61,7 +62,7 @@ struct MathSeg {
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         double sizePx, Arena& arena,
                                         Interner& strs, DiagSink& diags,
-                                        Span span, const MeasureNeeds* text = nullptr);
+                                        Span span, const MeasureNeeds* text = nullptr, bool parseDiags = true);
 
 std::string dumpMathBox(const MathBox* box, const Interner& strs);
 

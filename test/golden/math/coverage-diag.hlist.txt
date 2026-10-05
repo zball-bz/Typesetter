@@ -1,0 +1,93 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Ideo "数" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "学" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "字" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "体" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "没" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "有" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "的" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "码" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "位" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "排" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "成" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "测" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "量" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "过" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "的" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "字" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "叶" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box Ideo "子" w=1025su wt=0.6 cap=102su r0 @[0,60)
+  pen INF r0
+  glue inter w=0su x=0.6 cap=102su r0 @[0,60)
+  box ColonW "：" w=512su blank=R r1 @[0,60)
+  glue blank w=512su x=0 cap=0su r1 @[0,60)
+  box object o0 math part=0 asc=819su desc=205su "varrho + 中 = varsigma" w=1616su r2 @[60,85)
+  pen 0.95 r3
+  glue objspace w=228su x=0 cap=0su r3 @[60,85)
+  box object o0 math part=1 asc=819su desc=205su w=1024su r4 @[60,85)
+  pen 0.85 r5
+  glue objspace w=284su x=0 cap=0su r5 @[60,85)
+  box object o0 math part=2 asc=377su desc=0su w=774su r6 @[60,85)
+  pen 0.8 r7
+  glue objspace w=284su x=0 cap=0su r7 @[60,85)
+  box object o0 math part=3 asc=819su desc=205su w=615su r8 @[60,85)
+  box CommaW "，" w=512su blank=R r9 @[85,115)
+  glue blank w=512su x=0 cap=0su r9 @[85,115)
+  box Ideo "诊" w=1025su wt=0.6 cap=102su r10 @[85,115)
+  glue inter w=0su x=0.6 cap=102su r10 @[85,115)
+  box Ideo "断" w=1025su wt=0.6 cap=102su r10 @[85,115)
+  glue inter w=0su x=0.6 cap=102su r10 @[85,115)
+  box Ideo "每" w=1025su wt=0.6 cap=102su r10 @[85,115)
+  glue inter w=0su x=0.6 cap=102su r10 @[85,115)
+  box Ideo "个" w=1025su wt=0.6 cap=102su r10 @[85,115)
+  glue inter w=0su x=0.6 cap=102su r10 @[85,115)
+  box Ideo "码" w=1025su wt=0.6 cap=102su r10 @[85,115)
+  glue inter w=0su x=0.6 cap=102su r10 @[85,115)
+  box Ideo "位" w=1025su wt=0.6 cap=102su r10 @[85,115)
+  glue inter w=0su x=0.6 cap=102su r10 @[85,115)
+  box Ideo "一" w=1025su wt=0.6 cap=102su r10 @[85,115)
+  glue inter w=0su x=0.6 cap=102su r10 @[85,115)
+  box Ideo "次" w=1025su wt=0.6 cap=102su r10 @[85,115)
+  pen INF r10
+  glue inter w=0su x=0.6 cap=102su r10 @[85,115)
+  box ColonW "：" w=512su blank=R r11 @[85,115)
+  glue blank w=512su x=0 cap=0su r11 @[85,115)
+  box object o1 math part=0 asc=819su desc=205su "varrho" w=615su r12 @[115,123)
+  box FullStopW "。" w=512su blank=R r13 @[123,126)
+  glue blank w=512su x=0 cap=0su r13 @[123,126)
+  obj o0 math parts=4 edges=Alpha/Alpha src="varrho + 中 = varsigma" [w=1616su asc=819su desc=205su] [w=1024su asc=819su desc=205su glue=228su] [w=774su asc=377su desc=0su glue=284su] [w=615su asc=819su desc=205su glue=284su]
+  obj o1 math parts=1 edges=Alpha/Alpha src="varrho" [w=615su asc=819su desc=205su]
+  run r0 letter-spaced CJK
+  run r1 blank-bearing CJK
+  run r2 object
+  run r3 plain
+  run r4 object
+  run r5 plain
+  run r6 object
+  run r7 plain
+  run r8 object
+  run r9 blank-bearing CJK
+  run r10 letter-spaced CJK
+  run r11 blank-bearing CJK
+  run r12 object
+  run r13 blank-bearing CJK

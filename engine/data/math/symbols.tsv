@@ -311,3 +311,6 @@ zeta	03B6	ord	-	-	-	-	y	mathml
 ~=	2245	rel	-	2247	cong	-	n	mathml
 ~>	21DD	rel	-	-	-	-	y	mathml
 ~~	2248	rel	-	2249	approx	-	n	mathml
+varrho	03F1	ord	-	-	-	-	y	mathml
+varsigma	03C2	ord	-	-	-	-	y	mathml
+::=	2A74	rel	-	-	-	-	y	mathml

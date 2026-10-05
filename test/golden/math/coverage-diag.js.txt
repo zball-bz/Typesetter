@@ -1,0 +1,8 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("数学字体没有的码位排成测量过的文字叶子："),0,60), __a(__mi("varrho + 中 = varsigma"),60,85), __a(__t("，诊断每个码位一次："),85,115), __a(__mi("varrho"),115,123), __a(__t("。"),123,126)),0,126));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=f1a22efdba8a1c08;127;[]

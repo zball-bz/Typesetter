@@ -54,11 +54,10 @@ struct Doc {
   FaceTable faces;
   MetricStore metrics;
   // Emit per top-level block (plan P1-20; design T9 M5): a block waits while
-  // a code block or image of it waits for its answer, and defers while a
-  // display formula of it lacks text metrics (what it lacked rides the next
-  // request); the others are emitted, and measured, meanwhile
-  std::vector<u8> emitted;                    // per top
-  std::vector<std::vector<MeasureItem>> topNeeds;  // per top: its last attempt lacked
+  // a code block or image of it waits for its answer; the others are
+  // emitted, and measured, meanwhile. Formulas never hold emit back: they lay
+  // out in Measure (plan P1-25)
+  std::vector<u8> emitted;                              // per top
   std::vector<std::vector<u32>> waitTokens, waitBoxes;  // per pid: its needs
   LayoutResult layout;
 
@@ -592,10 +591,10 @@ struct Doc {
       if (tops.size() != n || emitted.size() != n) {
         tops.assign(n, {});
         emitted.assign(n, 0);
-        topNeeds.assign(n, {});
       }
-      EmitPass pass(boxtree, arena, strs, styles, cfg, diags, &metrics, &rt);
+      EmitPass pass(boxtree, arena, strs, styles, cfg, diags, nullptr, &rt);
       bool waiting = false;
+      std::vector<MeasureItem> none;
       for (size_t t = 0; t < n; t++) {
         if (emitted[t]) continue;
         const u32 pid = boxtree.tops[t].pid;
@@ -604,13 +603,7 @@ struct Doc {
           continue;
         }
         diags.beginPid(DiagOrigin::Emit, pid);  // a retry replaces its diagnostics
-        if (!pass.top(t, tops[t], topNeeds[t])) {
-          // a display formula lacked text metrics: discard the attempt
-          diags.beginPid(DiagOrigin::Emit, pid);
-          tops[t] = {};
-          waiting = true;
-          continue;
-        }
+        pass.top(t, tops[t], none);
         emitted[t] = 1;
       }
       diags.origin = DiagOrigin::Emit;
@@ -621,8 +614,12 @@ struct Doc {
     }
     if (!done(Stage::Measure)) {
       metrics.setEpsilon((Su)cfg.epsilonPerWordSu);  // Measure quantizes (plan P1-19)
-      ObjectEnv oe{arena, strs, styles, cfg.baseSizePx};
+      // formulas finalize here (plan P1-25): their layout diagnostics are
+      // their block's Emit slice
+      ObjectEnv oe{arena, strs, styles, cfg.baseSizePx, &diags};
+      diags.origin = DiagOrigin::Emit;
       MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg, &oe);
+      diags.pid = ~0u;
       if (!missing.empty()) return Status::NeedMeasure;
       fuseLegacy(tops);  // the legacy breaker's blocks (until P4-08)
       validThrough = (int)Stage::Measure;
@@ -646,27 +643,13 @@ struct Doc {
     return false;
   }
 
-  // the widths and vertical metrics still missing: the emitted blocks' (they
-  // join the same round as the deferred blocks' needs, plan P1-20) and what
-  // the deferred blocks' last attempts lacked
+  // the widths and vertical metrics still missing (the emitted blocks'; a
+  // pending formula's text runs among them)
   MeasureRequest pendingRequests() {
-    ObjectEnv oe{arena, strs, styles, cfg.baseSizePx};
+    ObjectEnv oe{arena, strs, styles, cfg.baseSizePx, &diags};
+    diags.origin = DiagOrigin::Emit;
     MeasureRequest r = resolveWidths(tops, metrics, styles, cfg, &oe);
-    for (size_t t = 0; t < topNeeds.size(); t++) {
-      if (t < emitted.size() && emitted[t]) continue;
-      for (const MeasureItem& it : topNeeds[t]) {
-        if (!metrics.hasFaceWord(it.str, it.face)) {
-          bool have = false;
-          for (const MeasureItem& w : r.words) have = have || (w.str == it.str && w.face == it.face);
-          if (!have) r.words.push_back(it);
-        }
-        if (!metrics.hasFaceVmet(it.face)) {
-          bool have = false;
-          for (FaceId f : r.vmetFaces) have = have || f == it.face;
-          if (!have) r.vmetFaces.push_back(it.face);
-        }
-      }
-    }
+    diags.pid = ~0u;
     return r;
   }
 

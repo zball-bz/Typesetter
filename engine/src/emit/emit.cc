@@ -494,52 +494,19 @@ struct HlInline final : InlineSink {
     StyleId st = E.compose(n->style, ctx.addBits, ctx.mul);
     // CJK–formula boundary glue (App C: formulas are Latin-class)
     if (count(u) > 0 && isCjkChar(count(u) - 1)) autospace(u, st, ctx, n->span);
-    // the structure is laid out now; a formula whose text-font runs are not
-    // measured yet is deferred — one placeholder part that resolveWidths
-    // lays out and splices for this list alone (no document re-emit)
-    std::vector<MeasureItem> missing;
-    MeasureNeeds mt;
-    if (E.mathText) {
-      mt = *E.mathText;
-      mt.missing = &missing;
-    }
-    std::vector<MathSeg> segs = layoutMathSegments(strs.get(srcRef), /*display=*/false, E.fontPx(st),
-                                                   E.arena, strs, E.diags, n->span,
-                                                   E.mathText ? &mt : nullptr);
+    // prepare (plan P1-25; design T8 S6): the formula parses here — its
+    // diagnostics are this block's — and lays out once the text-font runs it
+    // needs are measured: a pending object with one placeholder part, which
+    // resolveWidths finalizes through the object table (no layer below emit
+    // reads metrics, no block re-emits)
+    reportMathDiags(parseMath(strs.get(srcRef), E.arena), strs.get(srcRef), n->span, E.diags);
     u32 obj = addObject(u, ObjKind::Math, n, st);
     B.objs[obj].src = srcRef;
-    if (!missing.empty()) {
-      B.objs[obj].deferred = true;
-      B.hasDeferred = true;
-      ObjPart pt;
-      pt.obj = obj;
-      objectBox(u, obj, pt, st, ctx, n->span, srcRef, false);
-      return;
-    }
-    for (size_t k = 0; k < segs.size(); k++) {
-      if (k) {
-        // the break-point glue: discardable at a break, rigid otherwise;
-        // synthetic for copy (§9.3); the previous part is unbreakable-after
-        pend.back() = kPenInf;
-        AdvanceSpec gs;
-        gs.k = AdvanceSpec::Object;
-        gs.obj = (u32)B.parts.size();  // the part it precedes
-        gs.str = E.spaceRef;
-        u32 g = push(u, IK::Glue, (u8)GC::ObjectSpace, 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Plain),
-                     gs, n->span, 0.0f, (float)mathPenalty(cfg, segs[k].brkBefore));
-        fixWidth(u, g, suToPx(segs[k].glueBefore), segs[k].glueBefore, 0);
-      }
-      ObjPart pt;
-      pt.obj = obj;
-      pt.math = segs[k].box;
-      pt.w = segs[k].box->w;
-      pt.asc = segs[k].box->asc;
-      pt.desc = segs[k].box->desc;
-      pt.glueBefore = k ? segs[k].glueBefore : 0;
-      // copy: the source rides the first part; a CJK-context break after a
-      // formula is legal
-      objectBox(u, obj, pt, st, ctx, n->span, k == 0 ? srcRef : 0, true);
-    }
+    B.objs[obj].deferred = true;
+    B.hasDeferred = true;
+    ObjPart pt;
+    pt.obj = obj;
+    objectBox(u, obj, pt, st, ctx, n->span, srcRef, false);
   }
 
   void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, StrRef url,
@@ -960,13 +927,20 @@ struct Emitter {
             return;
           }
           case Painter::MathRow: {
+            // prepared here, laid out in Measure (plan P1-25): see math()
             MathData& m = u.data.emplace<MathData>();
             for (const ArgVal& a : n->args) {
               if (a.key == ArgK::src && a.tag == ArgTag::Str) m.src = a.ref;
               if (a.key == ArgK::name && a.tag == ArgTag::Str) m.tag = a.ref;
             }
-            m.box = layoutMathFormula(strs.get(m.src), /*display=*/true, fontPx(n->style), arena, strs, diags,
-                                      n->span, mathText);
+            m.sizePx = fontPx(n->style);
+            m.span = n->span;
+            m.style = n->style;
+            reportMathDiags(parseMath(strs.get(m.src), arena), strs.get(m.src), n->span, diags);
+            if (mathText) {  // the legacy oracle lays out at emit (MIGRATION, until P4-02)
+              m.box = layoutMathFormula(strs.get(m.src), /*display=*/true, m.sizePx, arena, strs, diags, n->span,
+                                        mathText);
+            }
             return;
           }
           case Painter::None:
@@ -1126,27 +1100,38 @@ void HlInline::finish(Flow& u) {
 // part — exactly what emit writes for a formula it could lay out at once —
 // each part and glue a run of its own; the placeholder's run, anchor and
 // trailing penalty stay with the first / last part.
-static void resolveDeferred(HList& h, MetricStore& store, const Config& cfg, ObjectEnv& env,
+// a layout's own diagnostics (the parser's were reported at emit, plan
+// P1-25): copied once, on the pass that succeeds
+static void keepLayoutDiags(const DiagSink& scratch, ObjectEnv& env) {
+  if (!env.diags) return;
+  for (const Diag& d : scratch.items) env.diags->add(d.sev, d.code, d.span, d.msg);
+}
+
+// The formula finalizer (the object table's entry for ObjKind::Math): lay
+// the formula out now that the store may know its text-font runs. Still
+// missing → those join `need`; complete → its parts replace the
+// placeholder: Box, then [Penalty(p)] Glue(ObjectSpace) Box per part —
+// exactly what emit wrote for a formula before plan P1-25 — each part and
+// glue a run of its own; the placeholder's run, anchor and trailing penalty
+// stay with the first / last part.
+static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const Config& cfg, ObjectEnv& env,
                             std::vector<MeasureItem>& need) {
-  bool still = false;
-  for (size_t at = 0; at < h.items.size(); at++) {
-    const HItem ph = h.items[at];
-    if (ph.k != IK::Box || h.runs[ph.run].rc != RealizeClass::Object) continue;
-    const u32 objIdx = h.parts[h.specs[ph.aux].obj].obj;
-    InlineObject& ob = h.objs[objIdx];
-    if (!ob.deferred) continue;
+  const HItem ph = h.items[at];
+  const u32 objIdx = h.parts[h.specs[ph.aux].obj].obj;
+  InlineObject& ob = h.objs[objIdx];
+  {
     std::vector<MeasureItem> missing;
     MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
-    DiagSink scratch;  // the emit-time layout reported its diagnostics
+    DiagSink scratch;
     std::vector<MathSeg> segs =
         layoutMathSegments(env.strs.get(ob.src), /*display=*/false, emPx(cfg, env.styles.get(ob.style)),
                            env.arena, env.strs, scratch, Span{h.cold[ph.cold].srcStart, h.cold[ph.cold].srcEnd},
-                           &mt);
+                           &mt, /*parseDiags=*/false);
     if (!missing.empty()) {
       need.insert(need.end(), missing.begin(), missing.end());
-      still = true;
-      continue;
+      return false;
     }
+    keepLayoutDiags(scratch, env);
     ob.deferred = false;
     const u32 r = ph.run;
     RunRec boxKey = h.runs[r];
@@ -1236,7 +1221,46 @@ static void resolveDeferred(HList& h, MetricStore& store, const Config& cfg, Obj
     h.items.insert(h.items.begin() + (long)at, ins.begin(), ins.end());
     at += ins.size() - 1;
   }
+  return true;
+}
+
+// The pending-object hook (plan P1-25; design T8 S6, T5 owns it later): a
+// pending object of a kind with a finalizer is finalized by it in Measure;
+// resolveWidths never names a kind.
+using ObjectFinalizer = bool (*)(HList& h, size_t& at, MetricStore& store, const Config& cfg, ObjectEnv& env,
+                                 std::vector<MeasureItem>& need);
+static constexpr ObjectFinalizer kFinalizers[] = {
+    /*Math*/ finalizeFormula, /*Image*/ nullptr, /*Raw*/ nullptr, /*Error*/ nullptr};
+static void finalizePending(HList& h, MetricStore& store, const Config& cfg, ObjectEnv& env,
+                            std::vector<MeasureItem>& need) {
+  bool still = false;
+  for (size_t at = 0; at < h.items.size(); at++) {
+    const HItem& ph = h.items[at];
+    if (ph.k != IK::Box || h.runs[ph.run].rc != RealizeClass::Object) continue;
+    const InlineObject& ob = h.objs[h.parts[h.specs[ph.aux].obj].obj];
+    if (!ob.deferred) continue;
+    const ObjectFinalizer f = kFinalizers[(size_t)ob.kind];
+    if (!f || !f(h, at, store, cfg, env, need)) still = true;
+  }
   h.hasDeferred = still;
+}
+
+// a display formula (a leaf's MathData) lays out the same way: prepared at
+// emit, finalized once its text-font runs are measured
+static void finalizeDisplay(MathData& m, MetricStore& store, const Config& cfg, ObjectEnv& env,
+                            std::vector<MeasureItem>& need) {
+  (void)cfg;
+  std::vector<MeasureItem> missing;
+  MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
+  DiagSink scratch;
+  MathBox* box = layoutMathFormula(env.strs.get(m.src), /*display=*/true, m.sizePx, env.arena, env.strs, scratch,
+                                   m.span, &mt, /*parseDiags=*/false);
+  if (!missing.empty()) {
+    need.insert(need.end(), missing.begin(), missing.end());
+    return;
+  }
+  keepLayoutDiags(scratch, env);
+  m.box = box;
 }
 
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
@@ -1282,7 +1306,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
   };
   std::vector<MeasureItem> need;  // deferred formulas' text-font runs
   auto resolveItems = [&](HList& h) {
-    if (h.hasDeferred && objects) resolveDeferred(h, store, cfg, *objects, need);
+    if (h.hasDeferred && objects) finalizePending(h, store, cfg, *objects, need);
     for (HItem& it : h.items) {
       if (it.k == IK::Penalty || (it.k == IK::Glue && it.cls == (u8)GC::InterChar)) continue;
       const StyleId st = h.runs[it.run].face;
@@ -1314,7 +1338,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
         continue;
       }
       const AdvanceSpec& sp = h.specs[it.aux];
-      if (sp.k == AdvanceSpec::Object && h.objs[h.parts[sp.obj].obj].deferred) continue;  // resolveDeferred's
+      if (sp.k == AdvanceSpec::Object && h.objs[h.parts[sp.obj].obj].deferred) continue;  // the finalizer's
       const bool ready = ctxReady(sp.k == AdvanceSpec::KernCtx ? &sp : nullptr, st);
       if (store.hasWord(sp.str, st) && ready) {
         const WordMet& w = store.word(sp.str, st);
@@ -1351,7 +1375,10 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
     }
   };
   for (TopBlock& tb : tops) {
+    if (objects && objects->diags) objects->diags->pid = tb.pid;  // a layout's diagnostics are its block's
     for (FlowUnit& u : tb.units) {
+      if (MathData* m = std::get_if<MathData>(&u.data); m && !m->box && objects)
+        finalizeDisplay(*m, store, cfg, *objects, need);
       if (const GridData* g = std::get_if<GridData>(&u.data)) {
         needStyle(g->codeStyle);
         if (g->wrap) {

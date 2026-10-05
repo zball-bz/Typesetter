@@ -1,0 +1,4 @@
+warning math-coverage @[60,85) symbol U+03F1 not in math font
+warning math-coverage @[60,85) symbol U+4E2D not in math font
+warning math-coverage @[60,85) symbol U+03C2 not in math font
+warning math-coverage @[115,123) symbol U+03F1 not in math font

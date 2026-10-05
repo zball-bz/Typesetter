@@ -458,16 +458,19 @@ Layout: a `MeasureNeeds` (metrics, style table, interner, base size, and
 where to record what is missing; plan P1-20 replaced `MathTextCtx`) rides
 into `layoutMathSegments`/`layoutMathFormula`. A text run needs the body
 font's width and vertical metrics at the style's size (`Styling{sizeMul}`
-→ StyleId). An inline formula whose runs are not measured yet is
-**deferred** (plan P1-13): emit keeps one placeholder part of its object,
-the runs join the measure request, and `resolveWidths` lays the formula out
-and splices its parts into that list once they arrive — no document
-re-emit. A display formula's missing runs defer its top-level block (plan
-P1-20; host-protocol §4a): the attempt and its diagnostics are discarded,
-the runs ride the next request with every emitted block's widths, and only
-that block is emitted again once they arrive (T8 splits structure from
-widths, P3-26). Boxes
-carry `textFont`; the renderer paints them as `.tsr-mg.tsr-mt`
+→ StyleId). **Lazy layout** (plan P1-25; design T8 S6): emit only
+prepares a formula — it parses (the parse diagnostics are the block's) and
+leaves a pending object: an inline formula one placeholder part, a display
+formula a `MathData` without a box. Measure finalizes it through the
+pending-object hook of `resolveWidths` (the object table's finalizer; the
+loop never names math): once the text runs it needs are measured, the
+formula lays out, an inline one's parts are spliced into its list, and its
+layout diagnostics (coverage) are reported once, on that pass. Nothing
+upstream of Measure reads the metric store, and no block is ever emitted
+again for a formula. A code point the math font does not cover is a
+measured text leaf (warned once per code point), never a stand-in box. A
+formula paints in its run's style: its colour, inside its link. Text
+leaves carry the text font (`MathBox::font`); the renderer paints them as `.tsr-mg.tsr-mt`
 (`font-family: inherit; font-style: normal`) with the line box sized from
 the measured ascent/descent so the baseline lands exactly. Native goldens
 use the mock measurer like every other word.

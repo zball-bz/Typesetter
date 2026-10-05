@@ -181,15 +181,13 @@ lists the object table. Until the paragraph shaper reads the edge classes
 closing glyph after it is kinsoku-protected, and only a formula gets
 CJK autospace.
 
-**Two phases for formulas.** Emit lays a formula out at once when the
-store already has its text-font runs; otherwise it keeps a single
-placeholder part and flags the list (`hasDeferred`). `resolveWidths` (given
-the document's arena and styles) lays the formula out for that list alone,
-adds still-missing runs to the request, and on success splices the parts in
-place of the placeholder — the same items emit would have written, with the
-runs renumbered (the fuse check covers both paths: the golden fixtures
-defer and splice `Id_(A)` and `f(x) "if" x > 0`). A display formula defers
-its top-level block instead (plan P1-20) until T8 (P3-26).
+**Two phases for formulas.** Since plan P1-25 emit never lays a formula
+out: it keeps a single placeholder part and flags the list (`hasDeferred`),
+and `resolveWidths` finalizes every pending object through the object
+table's finalizer once the formula's text-font runs are measured, splicing
+its parts in place of the placeholder — the same items, with the runs
+renumbered (the fuse check covers it: the legacy oracle still lays out at
+emit). A display formula's box is made the same way.
 
 **Hard breaks.** A `hardbreak` node (no surface syntax yet) makes the break
 after the preceding item forced. The lowering keeps it as a block penalty of

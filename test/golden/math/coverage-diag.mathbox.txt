@@ -1,0 +1,17 @@
+inline pid=0 "varrho + 中 = varsigma"
+hbox Ord w=1616 asc=819 desc=205
+  glyph "ϱ" Ord w=615 asc=819 desc=205 px=16
+  glue w=228 @(615,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(843,0)
+inline pid=0 ""
+hbox Ord w=1024 asc=819 desc=205
+  glyph "中" Ord w=1024 asc=819 desc=205 px=16
+inline pid=0 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=0 ""
+hbox Ord w=615 asc=819 desc=205
+  glyph "ς" Ord w=615 asc=819 desc=205 px=16
+inline pid=0 "varrho"
+hbox Ord w=615 asc=819 desc=205
+  glyph "ϱ" Ord w=615 asc=819 desc=205 px=16
