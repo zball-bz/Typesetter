@@ -323,6 +323,8 @@ measure-fallback     info     glyphs measured via fallback font
 
 ## 11. Config (`tsr_doc_new` JSON)
 
+As built (plan P1-03): one settings document, `tsr2_set_config(doc, json)`, whose rows are generated from the schema (`docs/settings-table.md`; paths such as `host.width`, `doc.lang`, `fonts.body`, `code.snapKerning`, `cost.exponent`); see `docs/host-protocol-design.md`. The sketch below is the original plan of the document's shape.
+
 ```json
 {
   "fonts":   { "body": "...", "cjk": "...", "mono": "...", "math": "Euler Math (bundled woff2; metrics precompiled)" },

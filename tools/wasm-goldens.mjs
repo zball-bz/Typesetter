@@ -27,23 +27,26 @@ function* walk(dir) {
   }
 }
 const str = (s) => M.stringToNewUTF8(s);
+const profile = (name) => JSON.parse(readFileSync(join(root, 'test/profiles', name + '.json'), 'utf8'));
 
 let checked = 0;
 const diffs = [];
 for (const tsm of walk(fixtures)) {
   const rel = relative(fixtures, tsm).replace(/\.tsm$/, '');
-  const stem = rel.split('/').pop();
   const goldenPath = join(root, 'test/golden', rel + '.breaks.txt');
   const opsPath = tsm.replace(/\.tsm$/, '.ops');
   if (!existsSync(goldenPath) || !existsSync(opsPath)) continue;
   const doc = M._tsr_doc_new();
   try {
-    // conventions mirror the native runner (tests.cc)
-    M._tsr_config(doc, 300, stem.includes('base18') ? 18 : 16, 0,
-                  stem.includes('indent') ? 2 : 0);
-    if (stem.includes('punct-full')) M._tsr_set_punct_compress(doc, 0);
-    else if (stem.includes('punct-none')) M._tsr_set_punct_compress(doc, 2);
-    if (stem.includes('snap')) M._tsr_set_snap_kerning(doc, 1);
+    // the native runner's configuration (tests.cc): the golden profile plus
+    // the fixture's own X.fixture.json settings
+    const fxPath = tsm.replace(/\.tsm$/, '.fixture.json');
+    const fx = existsSync(fxPath) ? JSON.parse(readFileSync(fxPath, 'utf8')) : {};
+    for (const settings of [profile(fx.profile ?? 'golden'), fx.settings ?? {}]) {
+      const p = str(JSON.stringify(settings));
+      M._tsr2_set_config(doc, p);
+      M._free(p);
+    }
     const sp = str(readFileSync(tsm, 'utf8'));
     M._tsr_compile(doc, sp);
     M._free(sp);

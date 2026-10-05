@@ -1,0 +1,8 @@
+doc @[0,309)
+  heading1 @[0,14) label="intro"
+  para @[24,147) lines=1
+  region @[149,238) name="figure"
+    para @[220,229) lines=1
+  region @[240,286) name="table"
+    para @[273,278) lines=1
+  para @[288,308) lines=1

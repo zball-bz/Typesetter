@@ -20,6 +20,7 @@ add_library(tsr_core STATIC
   src/model/model.cc
   src/model/normalize.cc
   src/code/tokens.cc
+  src/code/sidecars.cc
   src/math/math.cc
   src/resolve/resolve.cc
   src/emit/emit.cc
@@ -74,15 +75,21 @@ else()
   )
   target_compile_options(tsr_treesitter PRIVATE -w)
 
+  # the native token provider, with its highlight queries embedded at build
+  # time (plan P1-03: tsrc needs no repository path)
+  file(READ ../third_party/grammars/json/highlights.scm JSON_SCM)
+  file(READ ../third_party/grammars/tsm/highlights.scm TSM_SCM)
+  configure_file(src/code/native_queries.gen.h.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/gen/native_queries.gen.h @ONLY)
+  add_library(tsr_native STATIC src/code/native_tokens.cc)
+  target_include_directories(tsr_native PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/gen)
+  target_link_libraries(tsr_native tsr_core tsr_treesitter)
+
   add_executable(tsrc src/api/native_cli.cc)
-  target_link_libraries(tsrc tsr_core tsr_treesitter)
-  target_compile_definitions(tsrc PRIVATE
-    TSR_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+  target_link_libraries(tsrc tsr_native tsr_core tsr_treesitter)
 
   add_executable(tsr_tests test/tests.cc)
-  target_link_libraries(tsr_tests tsr_core tsr_treesitter)
-  target_compile_definitions(tsr_tests PRIVATE
-    TSR_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+  target_link_libraries(tsr_tests tsr_native tsr_core tsr_treesitter)
 
   enable_testing()
   add_test(NAME engine COMMAND tsr_tests ${CMAKE_CURRENT_SOURCE_DIR}/..)

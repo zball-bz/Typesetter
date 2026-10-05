@@ -2,6 +2,7 @@
 // (architecture §2.4). Single-threaded; one pipeline state per handle.
 #pragma once
 #include "../ast/ast.h"
+#include "../code/sidecars.h"
 #include "../code/tokens.h"
 #include "../inline/fragment.h"
 #include "../codegen/codegen.h"
@@ -50,49 +51,134 @@ struct Doc {
   std::vector<ImageReq> imageReqs;
 
   std::vector<TopBlock> tops;
-  bool emitted = false;
   MetricStore metrics;
   // text-font runs inside formulas (math-design.md §10): emit reports the
   // words whose body-font metrics are still missing; they ride the next
   // measure request and the document re-emits when they arrive
   std::vector<MeasureItem> mathTextMissing;
   LayoutResult layout;
-  bool laidOut = false;
+
+  // ---- stage model (plan P1-03; stages.def, docs/host-protocol-design.md) --
+  // Every stage up to validThrough has its product; invalidateFrom drops the
+  // later ones. Replaces the old emitted/laidOut flags.
+  int validThrough = -1;
+  bool done(Stage s) const { return validThrough >= (int)s; }
+  void invalidateFrom(Stage s) {
+    if (validThrough >= (int)s) validThrough = (int)s - 1;
+  }
+  // the ops this document was ingested from: a fork rebuilds from them
+  std::string opsBytes;
+  // host answers, retained so a fork does not ask again
+  struct TokenAnswer {
+    std::string lang, body;
+    std::vector<CodeToken> toks;
+  };
+  std::vector<TokenAnswer> tokenAnswers;
+  std::vector<std::pair<std::string, std::pair<double, double>>> imageAnswers;  // src → w, h
 
   enum class Status { Ok, NeedMeasure };
 
   // Host settings (plan P1-03): one JSON document, applied in row order;
   // unknown paths and bad values are diagnostics of the Settings slice
-  // (replaced by the next document). Returns 0.
+  // (replaced by the next document). A patch whose first affected stage has
+  // already run applies in place only if every stage from there on is
+  // Reentrant; otherwise nothing changes and the caller rebuilds: REBUILD
+  // (fork from the retained ops) or REEXECUTE (compile and run again).
+  static constexpr int kApplied = 0, kRebuild = 4, kReexecute = 5;
   int configure(std::string_view json) {
     diags.begin(DiagOrigin::Settings);
-    applySettings(cfg, json, diags);
-    return 0;
+    Config next = cfg;
+    SettingsPatch p = applySettings(next, json, diags);
+    if (!p.applied) return kApplied;
+    const Stage first = firstStage(p.affects);
+    if ((int)first > validThrough) {  // nothing it affects has run yet
+      cfg = std::move(next);
+      return kApplied;
+    }
+    if (first <= Stage::Execute) return kReexecute;
+    for (int k = (int)first; k <= validThrough; k++)
+      if (kStageRerun[k] != Rerun::Reentrant) return kRebuild;
+    cfg = std::move(next);
+    invalidateFrom(first);
+    return kApplied;
   }
+
+  // A new document from this one's retained ops with `patch` applied
+  // (tsr2_doc_fork; relayout, paginate and any REBUILD patch). Strings and
+  // styles are cloned first so ids — and therefore the metric answers,
+  // copied unless the patch affects Measure — mean the same; token and image
+  // answers replay. false: the patch needs re-execution (or there is
+  // nothing to fork from).
+  bool forkInto(Doc& f, std::string_view patch) const {
+    if (!done(Stage::Ingest)) return false;
+    f.cfg = cfg;
+    f.diags.begin(DiagOrigin::Settings);
+    SettingsPatch p = applySettings(f.cfg, patch, f.diags);
+    if (p.applied && firstStage(p.affects) <= Stage::Execute) return false;
+    for (const Diag& d : diags.items)  // compile happened once, for both
+      if (d.origin == DiagOrigin::Compile) f.diags.items.push_back(d);
+    for (StrRef r = 1; r < (StrRef)strs.count(); r++) f.strs.intern(strs.get(r));
+    f.styles = styles;
+    if (!(p.affects & stageBit(Stage::Measure))) f.metrics = metrics;
+    f.validThrough = (int)Stage::Execute;
+    if (!f.ingest((const u8*)opsBytes.data(), opsBytes.size())) return true;
+    for (const TokenReq& r : f.tokenReqs) {
+      std::string_view lang = f.strs.get(r.lang), body = f.strs.get(r.body);
+      for (const TokenAnswer& a : tokenAnswers)
+        if (a.lang == lang && a.body == body) {
+          f.provideTokens(r.id, a.toks.data(), a.toks.size());
+          break;
+        }
+    }
+    for (const ImageReq& r : f.imageReqs) {
+      std::string_view src = f.strs.get(r.src);
+      for (const auto& [s, wh] : imageAnswers)
+        if (s == src) {
+          f.provideImage(r.id, wh.first, wh.second);
+          break;
+        }
+    }
+    return true;
+  }
+
 
   void compile(std::string source) {
     diags.begin(DiagOrigin::Compile);
+    validThrough = (int)Stage::Compile;
     src.init(std::move(source));
     skel = linepass(src, arena, diags);
     ast = parseDoc(src, skel, arena, strs, diags);
     js = codegen(ast, src, strs);
   }
 
+  // Ingest (decode + instantiate) and Resolve in one call, as hosts use it.
   bool ingest(const u8* buf, size_t len) {
+    opsBytes.assign((const char*)buf, len);
+    if (!stageIngest()) return false;
+    stageResolve();
+    return true;
+  }
+  bool stageIngest() {
     diags.begin(DiagOrigin::Ingest);
-    decodeOps(buf, len, raw, diags);  // in place: raw.strings view raw.blob
+    decodeOps((const u8*)opsBytes.data(), opsBytes.size(), raw, diags);  // raw views raw.blob
+    validThrough = std::min(validThrough, (int)Stage::Execute);
     if (!raw.ok) return false;
     tree = instantiate(raw, arena, strs, styles, diags);
     scanScriptErrors(tree.root);
-    extractSidecars(tree.root);
+    validThrough = (int)Stage::Ingest;
+    return true;
+  }
+  // Resolve (once: it rewrites the instantiated tree): sidecars, references,
+  // numbering, then the host needs it raises (tokens, image sizes)
+  void stageResolve() {
+    diags.begin(DiagOrigin::Resolve);
+    extractSidecars(tree.root, arena, strs, styles, diags);
     resolveDoc(tree, arena, strs, styles, cfg, diags);
     tokenReqs.clear();
     scanTokenReqs(tree.root);
     imageReqs.clear();
     scanImageReqs(tree.root);
-    emitted = false;
-    laidOut = false;
-    return true;
+    validThrough = (int)Stage::Resolve;
   }
 
   // Execution errors arrive as error nodes (plan P0-05): report the ones the
@@ -116,73 +202,6 @@ struct Doc {
     for (const ContentNode* k : n->kids) scanScriptErrors(k);
   }
 
-  // verbatim-design §5: split each code line at the fence-declared marker;
-  // the code part re-forms the body (what the tokenizer will see), the
-  // comment part parses as an inline fragment into a trailing
-  // group{role:"sidecar-lines"} child — one seq per logical line.
-  void extractSidecars(ContentNode* n) {
-    if (!n) return;
-    if (n->kind == Kind::codeblock && n->kids.size() == 1 &&
-        n->kids[0]->kind == Kind::text) {
-      StrRef mk = 0;
-      for (const ArgVal& a : n->args)
-        if (a.key == ArgK::sidecar && a.tag == ArgTag::Str) mk = a.ref;
-      std::string marker(mk ? strs.get(mk) : std::string_view{});
-      if (!marker.empty()) {
-        std::string_view body = strs.get(n->kids[0]->str);
-        StyleId st = n->kids[0]->style;
-        Span sp = n->kids[0]->span;
-        std::string codeBody;
-        ContentNode* group = arena.make<ContentNode>();
-        group->kind = Kind::group;
-        group->span = sp;
-        group->style = n->style;
-        {
-          ArgVal a;
-          a.key = ArgK::role;
-          a.tag = ArgTag::Str;
-          a.ref = strs.intern("sidecar-lines");
-          group->args.push_back(a);
-        }
-        bool any = false;
-        size_t pos = 0;
-        while (pos <= body.size()) {
-          size_t eol = body.find('\n', pos);
-          if (eol == std::string_view::npos) eol = body.size();
-          std::string_view line = body.substr(pos, eol - pos);
-          size_t cut = line.find(marker);
-          ContentNode* seq = arena.make<ContentNode>();
-          seq->kind = Kind::seq;
-          seq->span = sp;
-          seq->style = n->style;
-          if (cut != std::string_view::npos) {
-            std::string_view code = line.substr(0, cut);
-            while (!code.empty() && (code.back() == ' ' || code.back() == '\t'))
-              code.remove_suffix(1);
-            std::string_view note = line.substr(cut + marker.size());
-            while (!note.empty() && note.front() == ' ') note.remove_prefix(1);
-            codeBody.append(code);
-            if (!note.empty()) {
-              auto ns2 = parseInlineFragment(note, st, sp, arena, strs, styles, diags);
-              seq->kids.assign(ns2.begin(), ns2.end());
-              any = true;
-            }
-          } else {
-            codeBody.append(line);
-          }
-          group->kids.push_back(seq);
-          if (eol == body.size()) break;
-          codeBody += '\n';
-          pos = eol + 1;
-        }
-        if (any) {
-          n->kids[0]->str = strs.intern(codeBody);
-          n->kids.push_back(group);
-        }
-      }
-    }
-    for (ContentNode* k : n->kids) extractSidecars(k);
-  }
 
   void scanTokenReqs(ContentNode* n) {
     if (!n) return;
@@ -278,7 +297,8 @@ struct Doc {
       diags.addAs(DiagOrigin::Provide, Sev::Warning, "image-load", r.span,
                   "image failed to load: " + std::string(strs.get(r.src)));
     }
-    emitted = false;
+    imageAnswers.push_back({std::string(strs.get(r.src)), {wPx, hPx}});
+    invalidateFrom(Stage::Emit);
   }
 
   // provider contract: EVERY request must be answered (empty = plain code),
@@ -305,24 +325,33 @@ struct Doc {
       ok.push_back(t);
       covered = t.end;
     }
+    tokenAnswers.push_back({std::string(strs.get(r.lang)), std::string(body), ok});
     if (!ok.empty()) foldTokens(r.node, ok.data(), ok.size(), arena, strs, styles);
-    emitted = false;
+    invalidateFrom(Stage::Emit);
   }
 
+  // Drives Emit → Measure → Break → Layout as far as the host's answers
+  // allow; NeedMeasure = see pendingRequests(). Earlier stages are the
+  // caller's (compile, execute, ingest).
   Status typeset() {
+    if (!done(Stage::Resolve)) return Status::NeedMeasure;
     if (tokensPending() || imagesPending()) return Status::NeedMeasure;
-    if (!emitted) {
+    if (done(Stage::Layout)) return Status::Ok;
+    if (!done(Stage::Emit)) {
       diags.begin(DiagOrigin::Emit);  // a re-emit replaces its diagnostics
       mathTextMissing.clear();
       MathTextCtx mt{&metrics, &styles, &strs, cfg.baseSizePx, &mathTextMissing};
       tops = emitDoc(tree, arena, strs, styles, cfg, diags, &mt);
       // formulas with unmeasured text-font names laid out with stand-ins:
       // ask for the metrics and emit again once they are here
-      emitted = mathTextMissing.empty();
-      if (!emitted) return Status::NeedMeasure;
+      if (!mathTextMissing.empty()) return Status::NeedMeasure;
+      validThrough = (int)Stage::Emit;
     }
-    MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg);
-    if (!missing.empty()) return Status::NeedMeasure;
+    if (!done(Stage::Measure)) {
+      MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg);
+      if (!missing.empty()) return Status::NeedMeasure;
+      validThrough = (int)Stage::Measure;
+    }
     // Cached KP with the retry ladder folded in (break.cc): keyed by block
     // geometry, shared across documents — the editing loop's fast path.
     // a run wider than the line is set Overfull on a line of its own (the
@@ -448,7 +477,7 @@ struct Doc {
       firstBlock = false;
     }
     layout = layoutDoc(tops, metrics, strs, cfg);
-    laidOut = true;
+    validThrough = (int)Stage::Layout;
     return Status::Ok;
   }
 
@@ -463,6 +492,39 @@ struct Doc {
       }
     }
     return r;
+  }
+
+  // ---- products (products.def) ------------------------------------------
+  // The stage a product needs; false = unknown product.
+  static bool productStage(std::string_view name, Stage& st) {
+#define PRODUCT(n, stage) \
+  if (name == #n) {       \
+    st = Stage::stage;    \
+    return true;          \
+  }
+#include "products.def"
+#undef PRODUCT
+    return false;
+  }
+  // The text of a product of this document as it stands (the caller has
+  // driven it far enough: productStage). `paged` renders sheets of
+  // page.height px.
+  std::string product(std::string_view name) {
+    if (name == "skeleton") return dumpSkeleton(skel, src);
+    if (name == "ast") return dumpAst(ast, src, strs);
+    if (name == "js") return js.text;
+    if (name == "ops") return dumpOps(raw);
+    if (name == "tree") return dumpTree(tree, strs, styles);
+    if (name == "semantic") return renderFallback();
+    if (name == "mathbox") return dumpMathBoxes(tops, strs);
+    if (name == "blocks") return dumpBlocks(tops, strs, styles);
+    if (name == "breaks") return dumpBreaks(tops);
+    if (name == "layout") return dumpLayout(layout);
+    if (name == "paged") return renderPaged(cfg.pageHeightPx);
+    if (name == "html") return render();
+    if (name == "diags") return dumpDiags();
+    if (name == "settings") return settingsJson(cfg) + "\n";
+    return {};
   }
 
   std::string render() {
@@ -504,11 +566,11 @@ struct Doc {
   // dependent products (image display boxes, sidecar columns), so the next
   // typeset() re-emits, re-breaks and re-lays out at the new measure
   // (defect #16; P1-16 takes width out of emit)
+  // (deprecated: hosts fork with a host.width patch instead — tsr2_doc_fork)
   void setWidth(double widthPx) {
     if (widthPx == cfg.widthPx) return;
     cfg.widthPx = widthPx;
-    emitted = false;
-    laidOut = false;
+    invalidateFrom(Stage::Emit);
   }
 
   std::string dumpDiags() const {

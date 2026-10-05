@@ -1,0 +1,20 @@
+// The inspectable products (plan P1-03; design T9 A3) — X-macro read by
+// engine/src/api/doc.h (Doc::product), tsrc --stage=<name> and the golden
+// runner. PRODUCT(name, stage): the stage that must have run first.
+// `semantic` is taken right after Resolve, before any host answer (the
+// golden runner's pre-token dump); `diags` and `settings` are available at
+// any stage.
+PRODUCT(skeleton, Compile)
+PRODUCT(ast, Compile)
+PRODUCT(js, Compile)
+PRODUCT(ops, Ingest)
+PRODUCT(tree, Resolve)
+PRODUCT(semantic, Resolve)
+PRODUCT(mathbox, Emit)
+PRODUCT(blocks, Measure)
+PRODUCT(breaks, Break)
+PRODUCT(layout, Layout)
+PRODUCT(paged, Paginate)
+PRODUCT(html, Paint)
+PRODUCT(diags, Compile)
+PRODUCT(settings, Compile)

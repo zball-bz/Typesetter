@@ -1,0 +1,24 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-intro" data-s="0" data-e="12" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Introduction</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="24" style="position:relative;height:96px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="89" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">An English document takes English sup</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="89" data-join="space" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">plements from the doc.lang setting (plan</span></div>
+<div class="tsr-line" data-s="0" data-e="122" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:0.3px"><span class="tsr-r" data-s="0">P1-03): see </span><a class="tsr-r" href="#tsr-intro" data-syn="ref">§1</a><span class="tsr-r" data-s="96">, </span><a class="tsr-r" href="#tsr-fig-a" data-syn="ref">Figure 1</a><span class="tsr-r" data-s="104">, </span><a class="tsr-r" href="#tsr-tab-a" data-syn="ref">Table 1</a><span class="tsr-r" data-s="113"> and </span><a class="tsr-r" href="#tsr-eq-a" data-syn="ref">Eq.</a></div>
+<div class="tsr-line" data-s="117" data-e="123" style="top:72px;left:0px;width:300px"><a class="tsr-r" href="#tsr-eq-a" data-syn="ref">(1)</a><span class="tsr-r" data-s="122">.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="220" style="position:relative;height:103.203px;margin-bottom:19.2px">
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" src="a.png" alt="a figure" style="top:0px;left:90px;width:120px;height:60px">
+<div class="tsr-line" data-s="0" data-e="9" data-ragged="1" style="top:79.203px;left:80px;width:220px"><span class="tsr-r tsr-b">Figure 1: </span><span class="tsr-r" data-s="0">A figure.</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="273" style="position:relative;height:33.594px;margin-bottom:19.2px">
+<div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-tab-a" data-s="0" data-e="1" data-cell="1" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">x</span></div>
+<div class="tsr-line" data-s="4" data-e="5" data-cell="1" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="4">y</span></div>
+<div class="tsr-rule" style="top:33.594px;left:0px;width:300px"></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="288" style="position:relative;height:24px">
+<div class="tsr-line" id="tsr-eq-a" data-s="0" data-e="20" data-ragged="1" style="top:0px;left:121.109px;width:57.766px;height:24px"><span class="tsr-eqno" data-syn="eqno" style="right:-121.125px">(1)</span><span class="tsr-math" data-syn="math" data-src="$ e = m c^2 $" style="width:57.766px;height:15.406px;position:absolute;left:0;top:4.297px"><span class="tsr-mg" style="left:0px;top:2.309px;font-size:16px;line-height:16px">e</span><span class="tsr-mg" style="left:12.422px;top:2.309px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:28.953px;top:2.309px;font-size:16px;line-height:16px">m</span><span class="tsr-mg" style="left:43.594px;top:2.309px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:51.375px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span></span></div>
+</div>
+</div>

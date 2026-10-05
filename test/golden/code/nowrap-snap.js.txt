@@ -1,0 +1,9 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("Snap-kerning on code that fits the measure (plan P1-03): both scripts snap to the grid, no row wraps."),0,101)),0,101));
+__emit(__a(__v(await __fence("js", ({}), "let 名 = \"a\"; // 注", 109)),103,134));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=8619427e8df9fcce;135;[]

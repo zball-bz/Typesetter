@@ -57,6 +57,32 @@ const RULES = [
   },
 ];
 
+// P1-03 stage settings views (interim until P3-02 generates struct views): a
+// stage's sources read a Config member only if that setting row lists the
+// stage in `affects` — the stage model invalidates exactly what it declares.
+const schema = JSON.parse(readFileSync(join(root, 'engine/schema/schema.json'), 'utf8'));
+const affectsOf = {};  // Config member → stages
+for (const [path, row] of Object.entries(schema.settings ?? {})) {
+  if (path === '$comment') continue;
+  affectsOf[row.field.startsWith('cost.') ? 'cost' : row.field] =
+    [...(affectsOf[row.field.startsWith('cost.') ? 'cost' : row.field] ?? []), ...row.affects];
+}
+const STAGE_DIRS = {
+  Resolve: ['engine/src/resolve'],
+  Emit: ['engine/src/emit', 'engine/src/math', 'engine/src/code'],
+  Break: ['engine/src/break'],
+  Layout: ['engine/src/layout'],
+  Paint: ['engine/src/render'],
+};
+for (const [stage, dirs] of Object.entries(STAGE_DIRS)) {
+  RULES.push({
+    id: `settings-view-${stage}`,
+    why: `P1-03: ${stage} reads a setting whose schema row does not list ${stage} in "affects"`,
+    files: () => files(dirs, ['.cc', '.h']),
+    re: { test: (line) => [...line.matchAll(/\bcfg\.(\w+)/g)].some((m) => !(affectsOf[m[1]] ?? []).includes(stage)) },
+  });
+}
+
 const found = [];
 for (const r of RULES) {
   for (const f of r.files()) {

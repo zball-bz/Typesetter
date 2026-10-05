@@ -1,0 +1,27 @@
+doc @[0,309)
+  heading @[0,14) level=1 label="intro"
+    text @[2,14) str="Introduction"
+  para @[24,147)
+    text @[24,113) str="An English document takes English supplements from the doc.lang setting (plan P1-03): see "
+    ref @[114,120) target="intro"
+    text @[120,121) str=", "
+    ref @[122,128) target="fig-a"
+    text @[128,129) str=", "
+    ref @[130,136) target="tab-a"
+    text @[137,140) str=" and "
+    ref @[141,146) target="eq-a"
+    text @[146,147) str="."
+  region @[149,238) name="figure"
+    para @[220,229)
+      row @[220,229)
+        cell @[220,229)
+          text @[220,229) str="A figure."
+  region @[240,286) name="table"
+    para @[273,278)
+      row @[273,278)
+        cell @[273,275)
+          text @[273,274) str="x"
+        cell @[276,278)
+          text @[277,278) str="y"
+  para @[288,308)
+    math @[288,308) display=1 src="e = m c^2" label="eq-a"

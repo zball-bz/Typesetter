@@ -148,7 +148,7 @@ enum class Sev : u8 { Error, Warning, Info };
 // The pass that reported a diagnostic (plan P0-11, design T9 M1). A pass
 // that can re-run (emit after late metrics or a width change, render)
 // truncates its own slice when it begins, so re-runs never duplicate.
-enum class DiagOrigin : u8 { Settings, Compile, Ingest, Provide, Emit, Layout, Render };
+enum class DiagOrigin : u8 { Settings, Compile, Ingest, Resolve, Provide, Emit, Layout, Render };
 struct Diag {
   Sev sev;
   const char* code;

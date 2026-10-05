@@ -138,6 +138,8 @@
 | 步骤 | 偏差 | 原因 | 影响的后续步骤 |
 |---|---|---|---|
 | P0-12 | golden 影响大于计划所列（计划 11 用例 12 段；实际 29 用例 34 段） | 计划的测量早于 P0-01…P0-10 新增的守护用例（B、C 类，同一模式）；计划外的已有用例（figure/block、figure/pull-diag pid 2、notes/cjk-glue、math/inline、math/parse-diag）是"末行收缩"与 Disc 语义的直接结果，逐段审阅为改进或中性，记入 REPORT.md | 无；P1-14（活跃表）须保持这些断点 |
+| P1-03 | 按阶段的设置视图先以 lint 机械检查（tools/lint-arch.mjs settings-view-<stage>：阶段源码只能读 affects 含该阶段的 Config 成员），而不是手写 struct 视图 | 手写视图需要改动所有阶段函数签名，P3-02 会再生成一次；lint 由 schema 的 affects 自动推出，达到"读未声明的行即报错"的同一保证 | P3-02 生成 struct 视图并删除该 lint 规则 |
+| P1-03 | XFAIL 由 30 增至 31：新用例 code/nowrap-snap 属于已有的"代码行缺 line-spans"类（P3-07 修） | 计划要求新增此用例；该类缺陷已在清单中按用例逐条列出 | P3-07 修复后整类移除 |
 | P0-12 | 审计 compression 阈值改为相对空格宽度（不严于旧的 −2.5px）；e2e 增加 EXPECTED_DIAGS（doc/url-overlong、region/hott-row 预期 overfull-line） | 收缩极限是空格宽度的 0.37，18px 等宽字体的合法收缩可达 −4px；内容宽于版心时诊断是正确输出 | P3-07 审计提示统一时并入 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 

@@ -1,0 +1,4 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="101">Snap-kerning on code that fits the measure (plan P1-03): both scripts snap to the grid, no row wraps.</p>
+<pre data-pid="1" data-s="103" data-e="134"><code class="language-js">let 名 = &quot;a&quot;; // 注</code></pre>
+</div>

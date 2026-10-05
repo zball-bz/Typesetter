@@ -237,4 +237,32 @@ inline void jsonString(std::string& out, std::string_view s) {
   out += '"';
 }
 
+// writes a value back as JSON (numbers with up to 17 significant digits)
+inline void jsonDump(std::string& out, const JsonValue& v) {
+  switch (v.t) {
+    case JsonValue::T::Null: out += "null"; return;
+    case JsonValue::T::Bool: out += v.b ? "true" : "false"; return;
+    case JsonValue::T::Num: appendf(out, "%.17g", v.num); return;
+    case JsonValue::T::Str: jsonString(out, v.str); return;
+    case JsonValue::T::Arr:
+      out += '[';
+      for (size_t k = 0; k < v.arr.size(); k++) {
+        if (k) out += ',';
+        jsonDump(out, v.arr[k]);
+      }
+      out += ']';
+      return;
+    case JsonValue::T::Obj:
+      out += '{';
+      for (size_t k = 0; k < v.keys.size(); k++) {
+        if (k) out += ',';
+        jsonString(out, v.keys[k]);
+        out += ':';
+        jsonDump(out, v.vals[k]);
+      }
+      out += '}';
+      return;
+  }
+}
+
 }  // namespace tsr

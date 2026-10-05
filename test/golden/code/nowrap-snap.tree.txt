@@ -1,0 +1,5 @@
+doc @[0,134) [base]
+  para @[0,101) [base]
+    text @[0,101) [base] str="Snap-kerning on code that fits the measure (plan P1-03): both scripts snap to the grid, no row wraps."
+  codeblock @[103,134) [base] lang="js"
+    text @[0,0) [base] str="let 名 = \"a\"; // 注"

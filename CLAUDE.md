@@ -72,6 +72,12 @@ rolling `engine-dist` release.
   fixture re-record (`npm run record`).
 - Design first: a `docs/<feature>-design.md` precedes implementation and is
   updated with as-built deltas.
+- Host knobs are rows of the `settings` section of engine/schema/schema.json
+  (docs/settings-table.md, docs/host-protocol-design.md): add a row, never a
+  per-knob C setter or worker field. Fixture configuration lives in
+  `X.fixture.json` (`{settings, products}`) on top of test/profiles/golden.json;
+  `tsrc --stage=<product> --profile=golden --fixture=X.fixture.json --ops=X.ops
+  X.tsm` reproduces a golden.
 - Commit per milestone; messages end with
   `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`.
 - Playwright probe scripts must live in the repo root (node_modules); they

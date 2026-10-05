@@ -1,34 +1,37 @@
-// Native token provider: statically linked tree-sitter + grammars, the
-// same parse tables the web side modules are compiled from — highlight
-// goldens are therefore byte-deterministic (code-design.md §2).
+// Native token provider (plan P1-03 moved it from engine/test into the
+// engine's native build): statically linked tree-sitter + grammars, the same
+// parse tables the web side modules are compiled from — highlight goldens
+// are therefore byte-deterministic (code-design.md §2). Queries are embedded
+// at build time (native_queries.gen.h), so tsrc needs no repository path.
 // Priority contract (shared with runtime/src/worker/tokens.mjs): captures
 // sort by (start asc, patternIndex asc); earlier pattern wins on overlap.
-#pragma once
+#include "native_tokens.h"
+
 #include <tree_sitter/api.h>
 
 #include <algorithm>
-#include <fstream>
-#include <sstream>
 
-#include "../src/api/doc.h"
+#include "native_queries.gen.h"
 
 extern "C" const TSLanguage* tree_sitter_json();
 extern "C" const TSLanguage* tree_sitter_tsm();
 
 namespace tsr {
 
-inline const TSLanguage* nativeGrammar(std::string_view lang) {
+namespace {
+const TSLanguage* nativeGrammar(std::string_view lang) {
   if (lang == "json") return tree_sitter_json();
   if (lang == "tsm") return tree_sitter_tsm();
   return nullptr;
 }
-
-inline std::string nativeQueryPath(std::string_view lang) {
-  return std::string(TSR_REPO_ROOT "/third_party/grammars/") +
-         std::string(lang) + "/highlights.scm";
+std::string_view nativeQuery(std::string_view lang) {
+  if (lang == "json") return kQueryJson;
+  if (lang == "tsm") return kQueryTsm;
+  return {};
 }
+}  // namespace
 
-inline void provideNativeTokens(Doc& doc) {
+void provideNativeTokens(Doc& doc) {
   for (auto& req : doc.tokenReqs) {
     if (req.provided) continue;
     std::string lang(doc.strs.get(req.lang));
@@ -38,10 +41,7 @@ inline void provideNativeTokens(Doc& doc) {
       doc.provideTokens(req.id, nullptr, 0);
       continue;
     }
-    std::ifstream f(nativeQueryPath(lang), std::ios::binary);
-    std::stringstream ss;
-    ss << f.rdbuf();
-    std::string scm = ss.str();
+    std::string_view scm = nativeQuery(lang);
 
     TSParser* parser = ts_parser_new();
     ts_parser_set_language(parser, g);

@@ -12,6 +12,7 @@ code/json-hl.tsm:html:line-spans  # code rows / cells / captions / generated lin
 code/runs.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 code/sidecar.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 code/snap-sidecar.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
+code/nowrap-snap.tsm:html:line-spans  # code rows lack spans (P3-07): a P1-03 fixture of the existing class
 code/snap.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 code/tsm-hl.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 code/wrap.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)

@@ -1,16 +1,24 @@
-// tsrc — stage inspection CLI (architecture §2.1).
-//   tsrc --stage=skeleton|ast|js|diags <file.tsm>
-//   tsrc --stage=ops|tree|semantic|blocks|breaks|layout|html|paged --ops=<file.ops>
-//        [--width=300] [--base=16] [--indent=em] [--punct=book|full|none] [--snap]
-//        [--page-height=px] <file.tsm>
-// Post-ops stages use the normative mock measurer.
+// tsrc — stage inspection CLI (architecture §2.1), on the shared drive loop
+// (api/driver.h) and one settings document (plan P1-03):
+//   tsrc --stage=<product> [--ops=f.ops] [--profile=golden|path.json]
+//        [--fixture=f.fixture.json] [--settings=f.json] [--set path=value]…
+//        <file.tsm>
+// Products are products.def (skeleton ast js ops tree semantic mathbox blocks
+// breaks layout paged html diags settings); those after Ingest need --ops.
+// Settings layer in order: profile, fixture, --settings, --set. A profile
+// name resolves to test/profiles/<name>.json under the current directory.
+// Legacy flags (--width --base --indent --punct --snap --page-height) are
+// sugar for their settings rows. Post-ops stages use the normative mock
+// measurer, the policy's image answer and the native token provider — with
+// --profile=golden and a fixture's X.fixture.json, tsrc reproduces the
+// golden files byte for byte (tools/check-tsrc.mjs).
 #include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 
-#include "../measure/mock.h"
-#include "../../test/native_tokens.h"
-#include "doc.h"
+#include "../code/native_tokens.h"
+#include "driver.h"
 
 using namespace tsr;
 
@@ -23,38 +31,69 @@ static bool readFile(const std::string& path, std::string& out) {
   return true;
 }
 
-static bool typesetWithMock(Doc& doc) {
-  provideNativeTokens(doc);
-  // NEED_IMAGES stub (figure-design.md §6): any src measures 512x384
-  for (auto& ir : doc.imageReqs) doc.provideImage(ir.id, 512, 384);
-  for (int i = 0; i < 64; i++) {
-    Doc::Status st = doc.typeset();
-    if (st == Doc::Status::Ok) return true;
-    MeasureRequest req = doc.pendingRequests();
-    if (req.empty()) return false;
-    mockProvide(req, doc.metrics, doc.strs, doc.styles, doc.cfg);
-  }
-  return false;
+// --set path=value: value is JSON when it parses as JSON, else a string
+static std::string setDocument(const std::string& arg) {
+  size_t eq = arg.find('=');
+  std::string path = arg.substr(0, eq), value = eq == std::string::npos ? "" : arg.substr(eq + 1);
+  JsonValue probe;
+  JsonReader rd;
+  std::string v;
+  if (rd.parse(value, probe)) v = value;
+  else jsonString(v, value);
+  size_t dot = path.find('.');
+  std::string sec = path.substr(0, dot), key = dot == std::string::npos ? "" : path.substr(dot + 1);
+  std::string out = "{";
+  jsonString(out, sec);
+  out += ":{";
+  jsonString(out, key);
+  out += ":" + v + "}}";
+  return out;
+}
+
+static std::string legacy(const char* sec, const char* key, const std::string& jsonValue) {
+  return std::string("{\"") + sec + "\":{\"" + key + "\":" + jsonValue + "}}";
 }
 
 int main(int argc, char** argv) {
-  std::string stage = "ast", opsPath, file, punct;
-  double width = 300, indentEm = 0, base = 16, pageHeight = 240;
-  bool snap = false;
+  std::string stage = "ast", opsPath, file;
+  std::vector<std::string> layers;  // settings documents, applied in order
+  std::string profile, fixture;
   for (int i = 1; i < argc; i++) {
     std::string a = argv[i];
-    if (a.rfind("--stage=", 0) == 0) stage = a.substr(8);
-    else if (a.rfind("--ops=", 0) == 0) opsPath = a.substr(6);
-    else if (a.rfind("--width=", 0) == 0) width = atof(a.c_str() + 8);
-    else if (a.rfind("--indent=", 0) == 0) indentEm = atof(a.c_str() + 9);
-    else if (a.rfind("--punct=", 0) == 0) punct = a.substr(8);
-    else if (a.rfind("--base=", 0) == 0) base = atof(a.c_str() + 7);
-    else if (a.rfind("--page-height=", 0) == 0) pageHeight = atof(a.c_str() + 14);
-    else if (a == "--snap") snap = true;
+    auto val = [&](size_t n) { return a.substr(n); };
+    if (a.rfind("--stage=", 0) == 0) stage = val(8);
+    else if (a.rfind("--ops=", 0) == 0) opsPath = val(6);
+    else if (a.rfind("--profile=", 0) == 0) profile = val(10);
+    else if (a.rfind("--fixture=", 0) == 0) fixture = val(10);
+    else if (a.rfind("--settings=", 0) == 0) {
+      std::string t;
+      if (!readFile(val(11), t)) {
+        fprintf(stderr, "cannot read %s\n", val(11).c_str());
+        return 2;
+      }
+      layers.push_back(t);
+    } else if (a.rfind("--set", 0) == 0 && a.size() > 6 && (a[5] == '=' || a[5] == ' ')) {
+      layers.push_back(setDocument(val(6)));
+    } else if (a == "--set" && i + 1 < argc) {
+      layers.push_back(setDocument(argv[++i]));
+    }
+    // legacy sugar (deprecated)
+    else if (a.rfind("--width=", 0) == 0) layers.push_back(legacy("host", "width", val(8)));
+    else if (a.rfind("--base=", 0) == 0) layers.push_back(legacy("doc", "baseSize", val(7)));
+    else if (a.rfind("--indent=", 0) == 0) layers.push_back(legacy("par", "indent", val(9)));
+    else if (a.rfind("--punct=", 0) == 0) layers.push_back(legacy("cjk", "punctCompress", "\"" + val(8) + "\""));
+    else if (a.rfind("--page-height=", 0) == 0) layers.push_back(legacy("page", "height", val(14)));
+    else if (a == "--snap") layers.push_back(legacy("code", "snapKerning", "true"));
     else file = a;
   }
   if (file.empty()) {
-    fprintf(stderr, "usage: tsrc --stage=<stage> [--ops=f.ops] [--width=px] file.tsm\n");
+    fprintf(stderr, "usage: tsrc --stage=<product> [--ops=f.ops] [--profile=P] [--fixture=F] "
+                    "[--settings=F] [--set path=value] file.tsm\n");
+    return 2;
+  }
+  Stage need;
+  if (!Doc::productStage(stage, need)) {
+    fprintf(stderr, "unknown product %s\n", stage.c_str());
     return 2;
   }
   std::string source;
@@ -63,24 +102,44 @@ int main(int argc, char** argv) {
     return 2;
   }
 
+  // settings: profile < fixture < --settings < --set
+  std::vector<std::string> docs;
+  FixtureConfig fx;
+  if (!fixture.empty()) {
+    std::string t;
+    if (!readFile(fixture, t)) {
+      fprintf(stderr, "cannot read %s\n", fixture.c_str());
+      return 2;
+    }
+    fx = parseFixtureConfig(t);
+    if (!fx.error.empty()) {
+      fprintf(stderr, "%s: %s\n", fixture.c_str(), fx.error.c_str());
+      return 2;
+    }
+    if (profile.empty()) profile = fx.profile;
+  }
+  if (!profile.empty()) {
+    std::string path = profile.find('/') == std::string::npos && profile.find(".json") == std::string::npos
+                           ? "test/profiles/" + profile + ".json"
+                           : profile;
+    std::string t;
+    if (!readFile(path, t)) {
+      fprintf(stderr, "cannot read profile %s\n", path.c_str());
+      return 2;
+    }
+    docs.push_back(t);
+  }
+  if (!fixture.empty()) docs.push_back(fx.settings);
+  docs.insert(docs.end(), layers.begin(), layers.end());
+
   Doc doc;
-  doc.cfg.widthPx = width;
-  doc.cfg.baseSizePx = base;
-  doc.cfg.paraIndentEm = indentEm;
-  doc.cfg.verbatimSnapKerning = snap;
-  if (punct == "full") doc.cfg.punctCompress = PunctCompress::Full;
-  else if (punct == "none") doc.cfg.punctCompress = PunctCompress::None;
-  else if (punct == "book" || punct.empty()) doc.cfg.punctCompress = PunctCompress::Book;
+  for (const std::string& d : docs) doc.configure(d);
   doc.compile(std::move(source));
 
-  std::string out;
-  if (stage == "skeleton") out = dumpSkeleton(doc.skel, doc.src);
-  else if (stage == "ast") out = dumpAst(doc.ast, doc.src, doc.strs);
-  else if (stage == "js") out = doc.js.text;
-  else if (stage == "diags" && opsPath.empty()) out = doc.dumpDiags();
-  else {
+  if (need > Stage::Compile && need <= Stage::Execute) need = Stage::Ingest;
+  if (need >= Stage::Ingest || (stage == "diags" && !opsPath.empty())) {
     if (opsPath.empty()) {
-      fprintf(stderr, "stage %s needs --ops=\n", stage.c_str());
+      fprintf(stderr, "product %s needs --ops=\n", stage.c_str());
       return 2;
     }
     std::string ops;
@@ -92,27 +151,18 @@ int main(int argc, char** argv) {
       fprintf(stderr, "ops decode failed:\n%s", doc.dumpDiags().c_str());
       return 1;
     }
-    if (stage == "ops") out = dumpOps(doc.raw);
-    else if (stage == "tree") out = dumpTree(doc.tree, doc.strs, doc.styles);
-    else if (stage == "semantic") out = doc.renderFallback();
-    else {
-      if (!typesetWithMock(doc)) {
+    // semantic is the pre-answer render; everything later (and diags with
+    // ops) drives the pull loop to completion
+    if (need >= Stage::Emit || stage == "diags") {
+      ProviderSet p = mockProviders();
+      p.tokens = [](Doc& d) { provideNativeTokens(d); };
+      if (!driveToCompletion(doc, p)) {
         fprintf(stderr, "typeset did not converge\n");
         return 1;
       }
-      if (stage == "blocks") out = dumpBlocks(doc.tops, doc.strs, doc.styles);
-      else if (stage == "breaks") out = dumpBreaks(doc.tops);
-      else if (stage == "layout") out = dumpLayout(doc.layout);
-      else if (stage == "mathbox") out = dumpMathBoxes(doc.tops, doc.strs);
-      else if (stage == "html") out = doc.render();
-      else if (stage == "diags") out = doc.dumpDiags();  // with --ops: the whole pipeline
-      else if (stage == "paged") out = doc.renderPaged(pageHeight);
-      else {
-        fprintf(stderr, "unknown stage %s\n", stage.c_str());
-        return 2;
-      }
     }
   }
+  std::string out = doc.product(stage);
   fwrite(out.data(), 1, out.size(), stdout);
   return 0;
 }

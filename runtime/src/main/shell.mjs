@@ -428,7 +428,7 @@ export function createEngine(opts = {}) {
         async paginate({ pageWidthPx = 666, pageHeightPx = 995 } = {}) {
           const rid = nextId++;
           const r = await request({ type: 'paginate', id: rid, docId: id,
-            pageWidthPx, pageHeightPx, restoreWidthPx: width });
+            pageWidthPx, pageHeightPx });
           return { html: r.html, diags: r.diags };
         },
         // print-to-PDF = the browser's print engine over our paged layout.

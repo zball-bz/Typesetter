@@ -55,7 +55,10 @@ run() {
 
 na() { want "$1" && RESULTS+=("n/a  $1 $2"); return 0; }
 
-g1() { cmake --build engine/build && ./engine/build/tsr_tests .; }
+g1() {
+  cmake --build engine/build && ./engine/build/tsr_tests . || return 1
+  node tools/check-tsrc.mjs --check  # tsrc --profile=golden reproduces every golden (P1-03)
+}
 g2() {
   grep -q '^CMAKE_BUILD_TYPE:STRING=Debug$' engine/build-debug/CMakeCache.txt ||
     { echo "engine/build-debug is not a Debug (sanitizer) build"; return 1; }

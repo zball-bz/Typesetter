@@ -47,6 +47,21 @@ TSR_EXPORT int tsr2_set_config(WasmDoc* d, const char* json) {
   return d->doc.configure(json ? std::string_view(json) : std::string_view{});
 }
 
+// A new document from this one's retained ops with a settings patch applied
+// (plan P1-03): what relayout and paginate use, and the answer to a
+// tsr2_set_config that returned REBUILD (4). Metric, token and image answers
+// carry over, so the new document converges without asking the host again
+// (except for metrics when the patch changes measurement). Null when the
+// patch needs re-execution (5) or the source was never ingested.
+TSR_EXPORT WasmDoc* tsr2_doc_fork(WasmDoc* d, const char* patchJson) {
+  WasmDoc* f = new WasmDoc();
+  if (!d->doc.forkInto(f->doc, patchJson ? std::string_view(patchJson) : std::string_view("{}"))) {
+    delete f;
+    return nullptr;
+  }
+  return f;
+}
+
 // --- deprecated per-knob setters (MD-06): wrappers over tsr2_set_config ----
 namespace {
 int configure1(WasmDoc* d, const char* section, const char* key, const std::string& jsonValue) {

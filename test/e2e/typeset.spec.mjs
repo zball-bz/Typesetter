@@ -1,7 +1,7 @@
 // M1 acceptance: typeset fixtures in a real browser, assert the invariant
 // audits — no browser re-break, right edge within 1px — across the dsf matrix.
 import { test, expect } from '@playwright/test';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -13,10 +13,15 @@ function* walk(dir) {
     else if (p.endsWith('.tsm')) yield p;
   }
 }
-const fixtures = [...walk(fixturesDir)].map((p) => ({
-  name: relative(fixturesDir, p).replace(/\.tsm$/, ''),
-  source: readFileSync(p, 'utf8'),
-}));
+const fixtures = [...walk(fixturesDir)].map((p) => {
+  const fx = p.replace(/\.tsm$/, '.fixture.json');
+  return {
+    name: relative(fixturesDir, p).replace(/\.tsm$/, ''),
+    source: readFileSync(p, 'utf8'),
+    // the fixture's own settings (plan P1-03; its golden profile is native-only)
+    settings: existsSync(fx) ? JSON.parse(readFileSync(fx, 'utf8')).settings ?? {} : {},
+  };
+});
 
 // Known audit failures (remediation plan P0-01): guard fixtures that record
 // a defect before the step that fixes it. A listed fixture whose audit passes
@@ -35,14 +40,7 @@ for (const f of fixtures) {
   test(`audit ${f.name}`, async ({ page }) => {
     await page.goto('/test/e2e/harness.html');
     await page.waitForFunction(() => window.__tsrReady);
-    // convention (mirrors the native runner): *indent* fixtures run with the
-    // CJK 2em first-line indent
-    const opts = {
-      widthPx: 300,
-      paraIndentEm: f.name.includes('indent') ? 2 : 0,
-      punctCompress: f.name.includes('punct-full') ? 'full'
-        : f.name.includes('punct-none') ? 'none' : 'book',
-    };
+    const opts = { widthPx: 300, settings: f.settings };
     const res = await page.evaluate(
       async ({ source, opts }) => await window.__tsr.typeset(source, opts),
       { source: f.source, opts },

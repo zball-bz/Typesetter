@@ -17,7 +17,8 @@
 #include "../src/code/grid.h"
 #include "../src/inline/fragment.h"
 #include "../src/math/mathfont.h"
-#include "native_tokens.h"
+#include "../src/api/driver.h"
+#include "../src/code/native_tokens.h"
 #include "../src/measure/mock.h"
 #include "contract.h"
 
@@ -315,17 +316,12 @@ static void unitFragment() {
 }
 
 // --- golden runner ---
+// the shared drive loop (api/driver.h) with the golden providers: native
+// tree-sitter tokens, the policy's image answer, the mock measurer
 static bool typesetWithMock(Doc& doc) {
-  provideNativeTokens(doc);
-  // NEED_IMAGES stub (figure-design.md §6): any src measures 512x384
-  for (auto& ir : doc.imageReqs) doc.provideImage(ir.id, 512, 384);
-  for (int i = 0; i < 64; i++) {
-    if (doc.typeset() == Doc::Status::Ok) return true;
-    MeasureRequest req = doc.pendingRequests();
-    if (req.empty()) return false;
-    mockProvide(req, doc.metrics, doc.strs, doc.styles, doc.cfg);
-  }
-  return false;
+  ProviderSet p = mockProviders();
+  p.tokens = [](Doc& d) { provideNativeTokens(d); };
+  return driveToCompletion(doc, p);
 }
 
 static void goldenCompare(const fs::path& goldenPath, const std::string& actual,
@@ -897,22 +893,32 @@ int main(int argc, char** argv) {
       std::string source;
       readFile(entry.path(), source);
 
+      // configuration (plan P1-03): the fixture's profile (golden: 300px,
+      // 16px base — testing.md §2, su-exact mock metrics) plus its own
+      // X.fixture.json settings; no file-name conventions
+      fs::path fxPath = entry.path();
+      fxPath.replace_extension(".fixture.json");
+      FixtureConfig fx;
+      if (fs::exists(fxPath)) {
+        std::string t;
+        readFile(fxPath, t);
+        fx = parseFixtureConfig(t);
+      }
+      std::string profile;
+      readFile(fs::path(root) / "test" / "profiles" / (fx.profile + ".json"), profile);
+      std::string label = rel.string();
+      if (!fx.error.empty() || profile.empty()) {
+        printf("FAIL %s: fixture configuration: %s\n", label.c_str(),
+               fx.error.empty() ? "profile not found" : fx.error.c_str());
+        failures++;
+        continue;
+      }
+      auto hasProduct = [&](const char* p) {
+        return std::find(fx.products.begin(), fx.products.end(), p) != fx.products.end();
+      };
       Doc doc;
-      doc.cfg.widthPx = 300;
-      doc.cfg.baseSizePx = 16;  // testing.md §2: su-exact mock metrics
-      // conventions: *indent* fixtures run with the CJK 2em first-line
-      // indent; *punct-full* / *punct-none* select those compression modes
-      if (rel.stem().string().find("indent") != std::string::npos)
-        doc.cfg.paraIndentEm = 2;
-      if (rel.stem().string().find("punct-full") != std::string::npos)
-        doc.cfg.punctCompress = PunctCompress::Full;
-      else if (rel.stem().string().find("punct-none") != std::string::npos)
-        doc.cfg.punctCompress = PunctCompress::None;
-      // *snap* fixtures enable verbatim snap-kerning; *base18* runs at 18px
-      if (rel.stem().string().find("snap") != std::string::npos)
-        doc.cfg.verbatimSnapKerning = true;
-      if (rel.stem().string().find("base18") != std::string::npos)
-        doc.cfg.baseSizePx = 18;
+      doc.configure(profile);
+      doc.configure(fx.settings);
       doc.compile(source);
 
       auto g = [&](const char* stage) {
@@ -920,10 +926,8 @@ int main(int argc, char** argv) {
                       (rel.stem().string() + std::string(".") + stage + ".txt");
         return gp;
       };
-      std::string label = rel.string();
-      goldenCompare(g("skeleton"), dumpSkeleton(doc.skel, doc.src), update, label + ":skeleton");
-      goldenCompare(g("ast"), dumpAst(doc.ast, doc.src, doc.strs), update, label + ":ast");
-      goldenCompare(g("js"), doc.js.text, update, label + ":js");
+      for (const char* p : {"skeleton", "ast", "js"})
+        goldenCompare(g(p), doc.product(p), update, label + ":" + p);
 
       fs::path opsPath = entry.path();
       opsPath.replace_extension(".ops");
@@ -943,8 +947,8 @@ int main(int argc, char** argv) {
               printf("FAIL %s: %s %s\n", label.c_str(), d.code, d.msg.c_str());
               failures++;
             }
-        goldenCompare(g("tree"), dumpTree(doc.tree, doc.strs, doc.styles), update, label + ":tree");
-        std::string semantic = doc.renderFallback();
+        goldenCompare(g("tree"), doc.product("tree"), update, label + ":tree");
+        std::string semantic = doc.product("semantic");
         goldenCompare(g("semantic"), semantic, update, label + ":semantic");
         contractCheck(label, "semantic", semantic, false);
         if (!typesetWithMock(doc)) {
@@ -952,23 +956,21 @@ int main(int argc, char** argv) {
           failures++;
           continue;
         }
-        goldenCompare(g("blocks"), dumpBlocks(doc.tops, doc.strs, doc.styles), update,
-                      label + ":blocks");
-        goldenCompare(g("breaks"), dumpBreaks(doc.tops), update, label + ":breaks");
-        goldenCompare(g("layout"), dumpLayout(doc.layout), update, label + ":layout");
-        std::string mbx = dumpMathBoxes(doc.tops, doc.strs);
+        for (const char* p : {"blocks", "breaks", "layout"})
+          goldenCompare(g(p), doc.product(p), update, label + ":" + p);
+        std::string mbx = doc.product("mathbox");
         if (!mbx.empty() || fs::exists(g("mathbox")))
           goldenCompare(g("mathbox"), mbx, update, label + ":mathbox");
-        std::string html = doc.render();
+        std::string html = doc.product("html");
         goldenCompare(g("html"), html, update, label + ":html");
         // *diag* fixtures golden every diagnostic of the full pipeline (P0-09 m)
         if (rel.stem().string().find("diag") != std::string::npos)
-          goldenCompare(g("diags"), doc.dumpDiags(), update, label + ":diags");
+          goldenCompare(g("diags"), doc.product("diags"), update, label + ":diags");
         contractCheck(label, "html", html, true);
-        // *paged* fixtures additionally golden the print pagination
-        // (pages-design.md §2) at 240px sheets
-        if (rel.stem().string().find("paged") != std::string::npos) {
-          std::string paged = doc.renderPaged(240);
+        // a fixture may golden the print pagination (pages-design.md §2):
+        // "products": ["paged"] with its page.height setting
+        if (hasProduct("paged")) {
+          std::string paged = doc.product("paged");
           goldenCompare(g("paged"), paged, update, label + ":paged");
           contractCheck(label, "paged", paged, true);
         }
@@ -977,6 +979,29 @@ int main(int argc, char** argv) {
             printf("FAIL %s: %s %s\n", label.c_str(), d.code, d.msg.c_str());
             failures++;
           }
+        // fork == fresh (plan P1-03): a fork without a patch reproduces the
+        // document, and a width patch equals a fresh build at that width
+        // (with a warm metric store: the copy must be transparent)
+        {
+          Doc same;
+          if (!doc.forkInto(same, "{}") || !typesetWithMock(same) ||
+              same.product("html") != html || same.product("diags") != doc.product("diags")) {
+            printf("FAIL %s: fork differs from its source\n", label.c_str());
+            failures++;
+          }
+          Doc narrow, fresh;
+          fresh.configure(profile);
+          fresh.configure(fx.settings);
+          fresh.configure("{\"host\":{\"width\":260}}");
+          fresh.compile(source);
+          bool ok = doc.forkInto(narrow, "{\"host\":{\"width\":260}}") && typesetWithMock(narrow) &&
+                    fresh.ingest((const u8*)ops.data(), ops.size()) && typesetWithMock(fresh);
+          if (!ok || narrow.product("html") != fresh.product("html") ||
+              narrow.product("diags") != fresh.product("diags")) {
+            printf("FAIL %s: fork at 260px differs from a fresh build\n", label.c_str());
+            failures++;
+          }
+        }
       }
     }
   }

@@ -17,11 +17,15 @@ Status: **draft for review**. Operationalizes [architecture.md](architecture.md)
 test/fixtures/
   <area>/<name>.tsm          source (area ∈ splice, line, cjk, ref, region, fence, math, dpr, doc)
   <area>/<name>.ops          recorded op buffer (regenerated, reviewed as a diff)
+  <area>/<name>.fixture.json optional configuration: {profile, settings, products} (plan P1-03)
+test/profiles/
+  golden.json                the golden profile (300px measure, 16px base); fixtures add settings
 test/golden/
   <area>/<name>.<stage>.txt  expected dump per asserted stage
 ```
 
 - **Recording workflow**: stages after codegen need JS execution, which native tests cannot do. `tools/record-fixtures` (Node) runs the real wasm + executor over every `.tsm` and rewrites `.ops` files. Regeneration is a normal PR diff — an unexpected `.ops` change is itself a signal. Native tests consume `.ops` directly; the seam (codegen → execution → ops) is covered continuously by e2e and by the contract tests below.
+- **Configuration** (plan P1-03): a fixture runs with `test/profiles/golden.json` plus the `settings` of its `X.fixture.json` — no file-name conventions (`*indent*`, `*punct-*`, `*snap*`, `*base18*`, `*paged*` became fixture files; `"products": ["paged"]` adds the pagination golden). `*diag*` fixtures still golden their diagnostics. `tsrc --profile=golden --fixture=…` reproduces every golden (`tools/check-tsrc.mjs`, gate G1), and every fixture also checks that a fork equals a fresh build (docs/host-protocol-design.md §3).
 - **CJK conformance fixtures** are named after the clreq rule they exercise (`cjk/clreq-punct-compress-1.tsm` …) so coverage against the reference is greppable.
 - **Adversarial fixtures** are first-class: `#avg的结果` (ASCII cut), `值是 #x. 下一句` (dot rule), `a %-- b` inside code (comment precedence), `#f("a|b")` in a table cell (tree-level split), nested comments, `\|`/`\*`/`\#` escapes, unclosed regions, regex-literal rejection.
 

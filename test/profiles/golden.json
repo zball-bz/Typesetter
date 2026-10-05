@@ -1,0 +1,5 @@
+{
+  "$comment": "The golden profile (plan P1-03): the native goldens, tsrc --profile=golden and the WASM parity check run with it; a fixture's X.fixture.json adds its own settings on top.",
+  "host": {"width": 300},
+  "doc": {"baseSize": 16}
+}

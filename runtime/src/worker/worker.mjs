@@ -317,32 +317,52 @@ async function runTypeset(s, { ids, msg }, stale) {
   }
 }
 
-// P1 (pages-design.md §2): re-typeset at the page measure (a width change
-// re-emits), render sheets, then restore the live width
-async function runPaginate(s, { ids, msg }) {
-  const { pageWidthPx, pageHeightPx, restoreWidthPx, baseUrl } = msg;
-  const M = await getMod();
-  if (s.doc === undefined) return postError(ids, 'paginate: doc disposed');
-  const doc = s.doc;
-  M._tsr_set_width(doc, pageWidthPx);
-  await measureLoop(M, doc, { baseUrl });
-  const html = M.UTF8ToString(M._tsr_render_pages(doc, pageHeightPx));
-  const diags = M.UTF8ToString(M._tsr_diags(doc));
-  if (restoreWidthPx) {
-    M._tsr_set_width(doc, restoreWidthPx);
-    await measureLoop(M, doc, { baseUrl });
-  }
-  for (const id of ids) postMessage({ type: 'result', id, html, diags, heightPx: 0 });
+// a fork of the live doc with a settings patch (plan P1-03): the live doc's
+// products are never mutated; metric/token/image answers carry over, so the
+// pull loop exits fast. Null when the patch would need re-execution.
+function forkDoc(M, doc, patch) {
+  const p = M.stringToNewUTF8(JSON.stringify(patch));
+  const f = M._tsr2_doc_fork(doc, p);
+  M._free(p);
+  return f || undefined;
 }
 
-// a width change re-emits (image boxes and sidecar columns depend on the
-// measure — defect #16); metrics persist, so the pull loop exits fast
+// P1 (pages-design.md §2): sheets at the page measure from a fork — the
+// live document stays as it is
+async function runPaginate(s, { ids, msg }) {
+  const { pageWidthPx, pageHeightPx, baseUrl } = msg;
+  const M = await getMod();
+  if (s.doc === undefined) return postError(ids, 'paginate: doc disposed');
+  const doc = forkDoc(M, s.doc, { host: { width: pageWidthPx }, page: { height: pageHeightPx } });
+  if (doc === undefined) return postError(ids, 'paginate: cannot fork the document');
+  try {
+    await measureLoop(M, doc, { baseUrl });
+    const html = M.UTF8ToString(M._tsr_render_pages(doc, pageHeightPx));
+    const diags = M.UTF8ToString(M._tsr_diags(doc));
+    for (const id of ids) postMessage({ type: 'result', id, html, diags, heightPx: 0 });
+  } finally {
+    M._tsr_doc_free(doc);
+  }
+}
+
+// a width change rebuilds from the retained ops (emit bakes width-dependent
+// products until P1-16): the fork replaces the live doc only once it has
+// converged
 async function runRelayout(s, { ids, msg }, stale) {
   const M = await getMod();
   if (s.doc === undefined) return postError(ids, 'relayout: doc disposed');
-  M._tsr_set_width(s.doc, msg.widthPx);
-  if (!(await measureLoop(M, s.doc, { baseUrl: msg.baseUrl, stale }))) return false;
-  postResult(M, s.doc, ids);
+  const doc = forkDoc(M, s.doc, { host: { width: msg.widthPx } });
+  if (doc === undefined) return postError(ids, 'relayout: cannot fork the document');
+  let ok = false;
+  try {
+    ok = await measureLoop(M, doc, { baseUrl: msg.baseUrl, stale });
+    if (!ok) return false;
+    M._tsr_doc_free(s.doc);
+    s.doc = doc;
+    postResult(M, doc, ids);
+  } finally {
+    if (!ok) M._tsr_doc_free(doc);
+  }
 }
 
 async function runDispose(s) {

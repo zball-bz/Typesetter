@@ -1,0 +1,10 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="101" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">Snap-kerning on code that fits the mea</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="101" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">sure (plan P1-03): both scripts snap to</span></div>
+<div class="tsr-line" data-s="0" data-e="101" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">the grid, no row wraps.</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:24px">
+<div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">let 名 = &quot;a&quot;; // 注</span></div>
+</div>
+</div>

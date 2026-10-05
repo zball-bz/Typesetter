@@ -97,6 +97,8 @@ tsr_measure_provide(doc, buf) → void          (then call tsr_typeset again to 
 
 The doc handle retains stage products (content tree, per-paragraph block streams, metric store), so resuming re-runs only what the new measurements invalidate — which is also exactly the machinery `relayout(width)` (re-break only) and dppx invalidation (§6) need. The `pending(estimate)` state makes the same loop serve estimate-first typesetting for fallback upgrades.
 
+As built (plan P1-03; docs/host-protocol-design.md): the stages and their rerun classes are `engine/src/api/stages.def`; the document records `validThrough` and a settings patch either re-enters the Reentrant tail in place or returns REBUILD, upon which the host forks a new document from the retained ops (`tsr2_doc_fork`, metric/token/image answers carried over). Relayout and paginate are forks — the live document's products are never mutated. Products are `engine/src/api/products.def`; `api/driver.h` is the one native drive loop.
+
 Two rejected alternatives, recorded:
 
 - **Synchronous EM_JS callback** (v1's protocol): incompatible with the DOM measurement backend (worker→main is inherently async) and with clean native testing.
@@ -170,7 +172,7 @@ worker → main : ready
 
 The `semantic` → `paragraphs` sequence *is* the native-fallback state machine as seen from the DOM: inject flow HTML immediately, swap paragraphs as they arrive.
 
-As built (plan P0-11, `runtime/src/worker/worker.mjs`): the worker keeps one **mailbox per docId** — messages for a document run strictly in order (an older update can no longer install its document over a newer one, and paginate's width round trip cannot interleave with a relayout). A newer `update` or `relayout` supersedes the running one of its kind: the running job checks its generation after every await and stops, queued jobs of the same kind coalesce, and superseded requests are answered with the newer result. The main-thread image-size fallback is an RPC with per-request ids (`image-dims?{rid, src}` → `image-dims{rid, w, h}`). Image sizes are resolved against the page's base URL, looked up in parallel, and read from the file header (PNG/GIF/WebP/JPEG with EXIF orientation) before falling back to a decode. A width change re-emits (image boxes and sidecar columns are width-dependent until P1-16).
+As built (plan P0-11, `runtime/src/worker/worker.mjs`): the worker keeps one **mailbox per docId** — messages for a document run strictly in order (an older update can no longer install its document over a newer one, and paginate's width round trip cannot interleave with a relayout). A newer `update` or `relayout` supersedes the running one of its kind: the running job checks its generation after every await and stops, queued jobs of the same kind coalesce, and superseded requests are answered with the newer result. The main-thread image-size fallback is an RPC with per-request ids (`image-dims?{rid, src}` → `image-dims{rid, w, h}`). Image sizes are resolved against the page's base URL, looked up in parallel, and read from the file header (PNG/GIF/WebP/JPEG with EXIF orientation) before falling back to a decode. A width change re-emits (image boxes and sidecar columns are width-dependent until P1-16): since plan P1-03 relayout and paginate fork the document (`tsr2_doc_fork` with a `host.width` / `page.height` patch) instead of mutating the live one, and every message carries one settings document (`settings`) instead of per-knob fields.
 
 ## 5. Build and generated artifacts
 

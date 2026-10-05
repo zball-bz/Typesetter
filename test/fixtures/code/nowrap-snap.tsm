@@ -1,0 +1,5 @@
+Snap-kerning on code that fits the measure (plan P1-03): both scripts snap to the grid, no row wraps.
+
+```js
+let 名 = "a"; // 注
+```
