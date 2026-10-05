@@ -1,6 +1,6 @@
-lower v1 abi 3c18dc46 docEnd 946 holes 2 module 26d3874d3c7eda65
-piece 0 hole 0 js [315,423)
-piece 1 hole 1 js [425,530)
+lower v1 abi 3c18dc46 docEnd 946 holes 2 module 382b212db1fd76f3
+piece 0 hole 0 js [103,211)
+piece 1 hole 1 js [213,318)
 block 0 content [0,95)
   CALL para [0,95)
     TEXT "浮动插图与环绕（parshape）：右侧浮动，正文前若干行按收窄宽度断行。" [0,95)

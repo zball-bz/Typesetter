@@ -152,11 +152,11 @@ inline void jsTokens(std::string_view src, Fn&& fn) {
   }
 }
 
-// Does `word` occur as an identifier token anywhere in s — outside strings
-// and comments, inside template ${…} holes too (plan P2-02: a hole whose
-// code mentions `await` is an async function). A property name (x.await)
-// counts as well: over-approximation only makes a hole async.
-inline bool jsMentions(std::string_view s, std::string_view word) {
+// Every identifier token of s — outside strings and comments, inside
+// template ${…} holes too — as fn(name); fn returns false to stop early.
+// Property names (x.await) are included: callers over-approximate.
+template <class Fn>
+inline void jsIdentsDeep(std::string_view s, Fn&& fn) {
   std::vector<int> holes;  // brace depth at each open template ${ hole
   int depth = 0;
   bool lit = false;  // inside template literal text
@@ -198,7 +198,7 @@ inline bool jsMentions(std::string_view s, std::string_view word) {
     if (isIdentStart(c)) {
       u32 a = i;
       while (i < n && isIdentCont(s[i])) i++;
-      if (s.substr(a, i - a) == word) return true;
+      if (!fn(s.substr(a, i - a))) return;
       continue;
     }
     if (c >= '0' && c <= '9') {
@@ -207,7 +207,18 @@ inline bool jsMentions(std::string_view s, std::string_view word) {
     }
     i++;
   }
-  return false;
+}
+
+// Does `word` occur as an identifier anywhere in s (plan P2-02: a hole whose
+// code mentions `await` is an async function; over-approximation only makes
+// a hole async)?
+inline bool jsMentions(std::string_view s, std::string_view word) {
+  bool found = false;
+  jsIdentsDeep(s, [&](std::string_view id) {
+    found = id == word;
+    return !found;
+  });
+  return found;
 }
 
 // An ECMAScript reserved word (strict mode and module code): never a

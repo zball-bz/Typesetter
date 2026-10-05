@@ -1,8 +1,8 @@
-lower v1 abi 3c18dc46 docEnd 199 holes 4 module ea61f15ef4bbb7ab
-piece 0 hole 0 js [326,388)
-piece 1 hole 1 js [390,403)
-piece 2 hole 2 js [405,446)
-piece 3 hole 3 js [448,521)
+lower v1 abi 3c18dc46 docEnd 199 holes 4 module de9e192827c460e0
+piece 0 hole 0 js [140,202)
+piece 1 hole 1 js [204,217)
+piece 2 hole 2 js [219,260)
+piece 3 hole 3 js [262,335)
 block 0 stmt [0,45) user framed async holes 0..1
   STMT async 0
 block 1 content [47,99) user framed async holes 1..3

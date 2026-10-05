@@ -1,5 +1,5 @@
-lower v1 abi 3c18dc46 docEnd 263 holes 1 module 3670447e65cceaae
-piece 0 hole 0 js [315,393)
+lower v1 abi 3c18dc46 docEnd 263 holes 1 module 4e18b293826c0fc8
+piece 0 hole 0 js [103,181)
 block 0 content [0,106)
   CALL para [0,106)
     TEXT "作者只声明宽度时，高度按图片的宽高比推出，宽度保持作者的值（缺陷 #24）。" [0,106)

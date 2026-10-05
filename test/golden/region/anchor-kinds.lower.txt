@@ -1,7 +1,7 @@
-lower v1 abi 3c18dc46 docEnd 259 holes 3 module 6ba6cea1232db239
-piece 0 hole 0 js [315,339)
-piece 1 hole 1 js [341,365)
-piece 2 hole 2 js [367,392)
+lower v1 abi 3c18dc46 docEnd 259 holes 3 module 3e84e662cadcbe9f
+piece 0 hole 0 js [103,127)
+piece 1 hole 1 js [129,153)
+piece 2 hole 2 js [155,180)
 block 0 content [0,14)
   CALL heading [0,14) level=1 label="top"
     TEXT "Anchor kinds" [2,14)

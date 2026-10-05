@@ -1,5 +1,5 @@
-lower v1 abi 3c18dc46 docEnd 360 holes 1 module 3c8afb1645b464a9
-piece 0 hole 0 js [315,360)
+lower v1 abi 3c18dc46 docEnd 360 holes 1 module 113bab1641b18e47
+piece 0 hole 0 js [136,181)
 block 0 content [0,113)
   CALL para [0,113)
     TEXT "A comment opened mid-line" [0,25)

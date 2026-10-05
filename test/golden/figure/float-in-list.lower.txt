@@ -1,5 +1,5 @@
-lower v1 abi 3c18dc46 docEnd 450 holes 1 module d203885edda4f514
-piece 0 hole 0 js [315,422)
+lower v1 abi 3c18dc46 docEnd 450 holes 1 module ad98bd2fd33f902a
+piece 0 hole 0 js [103,210)
 block 0 content [0,60)
   CALL para [0,60)
     TEXT "A left float inside a list item (guard fixture, plan P0-01)." [0,60)

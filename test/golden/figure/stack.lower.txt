@@ -1,6 +1,6 @@
-lower v1 abi 3c18dc46 docEnd 902 holes 2 module cf3ab9e0ca28efdb
-piece 0 hole 0 js [315,414)
-piece 1 hole 1 js [416,515)
+lower v1 abi 3c18dc46 docEnd 902 holes 2 module 9b2b6eefd6928d51
+piece 0 hole 0 js [103,202)
+piece 1 hole 1 js [204,303)
 block 0 content [0,108)
   CALL para [0,108)
     TEXT "两张同侧浮动图连续出现时应当堆叠，而不是把第二张清到第一张之下留出空白。" [0,108)

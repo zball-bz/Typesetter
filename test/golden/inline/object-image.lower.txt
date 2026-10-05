@@ -1,7 +1,7 @@
-lower v1 abi 3c18dc46 docEnd 227 holes 3 module fa0a4a1273757576
-piece 0 hole 0 js [315,353)
-piece 1 hole 1 js [355,393)
-piece 2 hole 2 js [395,445)
+lower v1 abi 3c18dc46 docEnd 227 holes 3 module d63ab07878c9d9d9
+piece 0 hole 0 js [129,167)
+piece 1 hole 1 js [169,207)
+piece 2 hole 2 js [209,259)
 block 0 content [0,226) user framed holes 0..3
   CALL para [0,226)
     TEXT "Text before " [0,11)

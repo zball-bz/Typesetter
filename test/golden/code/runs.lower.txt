@@ -1,8 +1,8 @@
-lower v1 abi 3c18dc46 docEnd 478 holes 4 module d435d2a9c858b71c
-piece 0 hole 0 js [315,619)
-piece 1 hole 1 js [621,671)
-piece 2 hole 2 js [673,720)
-piece 3 hole 3 js [722,771)
+lower v1 abi 3c18dc46 docEnd 478 holes 4 module 9914753c174de991
+piece 0 hole 0 js [140,444)
+piece 1 hole 1 js [446,496)
+piece 2 hole 2 js [498,545)
+piece 3 hole 3 js [547,596)
 block 0 content [0,48)
   CALL para [0,48)
     TEXT "结构化代码行、装饰位与网格参数：" [0,48)

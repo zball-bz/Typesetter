@@ -1,5 +1,5 @@
-lower v1 abi 3c18dc46 docEnd 398 holes 1 module 8eb8430c982169d7
-piece 0 hole 0 js [315,420)
+lower v1 abi 3c18dc46 docEnd 398 holes 1 module b3345176e2652475
+piece 0 hole 0 js [103,208)
 block 0 content [0,135)
   CALL para [0,135)
     TEXT "Opening text that occupies the first part of the sheet so the following float begins roughly one hundred pixels above the sheet bottom." [0,135)

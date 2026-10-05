@@ -1,6 +1,5 @@
 export const abi = 0x3c18dc46;
 export default async (__rt, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
 return (async () => {
 const __h = [
 () => ({sidecar: "///"}),

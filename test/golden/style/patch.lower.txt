@@ -1,10 +1,10 @@
-lower v1 abi 3c18dc46 docEnd 571 holes 6 module dae6aa6d36834ca3
-piece 0 hole 0 js [315,389)
-piece 1 hole 1 js [391,420)
-piece 2 hole 2 js [422,473)
-piece 3 hole 3 js [475,538)
-piece 4 hole 4 js [540,585)
-piece 5 hole 5 js [587,640)
+lower v1 abi 3c18dc46 docEnd 571 holes 6 module caedd1e523161212
+piece 0 hole 0 js [129,203)
+piece 1 hole 1 js [205,234)
+piece 2 hole 2 js [236,287)
+piece 3 hole 3 js [289,352)
+piece 4 hole 4 js [354,399)
+piece 5 hole 5 js [401,454)
 block 0 stmt [0,67) user framed holes 0..1
   STMT 0
 block 1 content [69,190)

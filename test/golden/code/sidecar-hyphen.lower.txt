@@ -1,5 +1,5 @@
-lower v1 abi 3c18dc46 docEnd 194 holes 1 module f585776b4b7e7268
-piece 0 hole 0 js [315,339)
+lower v1 abi 3c18dc46 docEnd 194 holes 1 module 9c349639ce5ee026
+piece 0 hole 0 js [103,127)
 block 0 content [0,74)
   CALL para [0,74)
     TEXT "A sidecar note narrow enough to hyphenate keeps its hyphen at the row end." [0,74)

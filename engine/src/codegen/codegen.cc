@@ -10,7 +10,8 @@ namespace tsr {
 
 namespace {
 
-// Names user code sees (the hole module's outer scope: a #let shadows them).
+// Names user code sees (the hole module's outer scope: a #let shadows them;
+// a module destructures those its code mentions).
 const char* kUserCtors[] = {"para", "text", "em", "strong", "val", "m", "heading",
                             "list", "item", "quote", "codeblock", "rule", "comment",
                             "link", "code", "seq", "ref", "term", "toc", "glossary",
@@ -449,12 +450,27 @@ Lowered codegen(const AstNode* doc, const SourceText& src, const Interner& strs)
   if (module) {
     std::string& js = L.js;
     std::vector<size_t> marks;  // byte offsets of each piece's start and end
-    appendf(js, "export const abi = 0x%08x;\nexport default async (__rt, $) => {\nconst {", PROGRAM_ABI);
+    // the std names the user code mentions (a name it never mentions cannot
+    // be referenced; a new constructor therefore changes no module)
+    std::vector<bool> used(std::size(kUserCtors), false);
+    auto mark = [&](std::string_view code) {
+      jsIdentsDeep(code, [&](std::string_view id) {
+        for (size_t i = 0; i < std::size(kUserCtors); i++)
+          if (id == kUserCtors[i]) used[i] = true;
+        return true;
+      });
+    };
+    for (const std::string& h : g.holes) mark(h);
+    for (const Verbatim& v : verbatims) mark(v.text);
+    appendf(js, "export const abi = 0x%08x;\nexport default async (__rt, $) => {\n", PROGRAM_ABI);
+    std::string names;
     for (size_t i = 0; i < std::size(kUserCtors); i++) {
-      if (i) js += ", ";
-      js += kUserCtors[i];
+      if (!used[i]) continue;
+      if (!names.empty()) names += ", ";
+      names += kUserCtors[i];
     }
-    js += "} = __rt.std;\nreturn (async () => {\n";
+    if (!names.empty()) js += "const {" + names + "} = __rt.std;\n";
+    js += "return (async () => {\n";
     if (!hoisted.empty()) {
       js += "let ";
       for (size_t i = 0; i < hoisted.size(); i++) {

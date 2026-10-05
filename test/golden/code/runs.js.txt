@@ -1,6 +1,6 @@
 export const abi = 0x3c18dc46;
 export default async (__rt, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+const {codeblock, style} = __rt.std;
 return (async () => {
 const __h = [
 () => (codeblock("demo", [[style({color: "var(--tsr-tok-keyword)"}, "const"), " answer = ", style({color: "var(--tsr-tok-number)"}, "42"), ";"], [], [style({strike: true}, "old_name"), " ", style({underline: true, color: "var(--tsr-tok-function)"}, "new_name"), "()"]], {lineNo: 1, hl: "3", wrap: true})),

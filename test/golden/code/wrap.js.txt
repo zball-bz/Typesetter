@@ -1,6 +1,6 @@
 export const abi = 0x3c18dc46;
 export default async (__rt, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+const {codeblock} = __rt.std;
 return (async () => {
 const __h = [
 () => (codeblock("json", "{\"description\": \"a deliberately long single line that must wrap on the column grid\", \"值\": \"中文按两列宽度参与网格计算，行会在合适的边界断开\", \"n\": 42}", {lineNo: 1, hl: "1"})),

@@ -1,5 +1,5 @@
-lower v1 abi 3c18dc46 docEnd 294 holes 1 module a5c5463794aade04
-piece 0 hole 0 js [315,350)
+lower v1 abi 3c18dc46 docEnd 294 holes 1 module 5ff3b9bf0a44166e
+piece 0 hole 0 js [103,138)
 block 0 content [0,124)
   CALL para [0,124)
     TEXT "Snap-kerning with a sidecar column (guard fixture, plan P0-01): the code track and the sidecar track must share the measure." [0,124)

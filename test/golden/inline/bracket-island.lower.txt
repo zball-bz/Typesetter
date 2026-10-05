@@ -1,6 +1,6 @@
-lower v1 abi 3c18dc46 docEnd 583 holes 2 module 299b756a0b1fd46b
-piece 0 hole 0 js [315,344)
-piece 1 hole 1 js [346,375)
+lower v1 abi 3c18dc46 docEnd 583 holes 2 module 41e337fa170f2832
+piece 0 hole 0 js [130,159)
+piece 1 hole 1 js [161,190)
 block 0 content [0,66)
   CALL para [0,66)
     TEXT "Notes close at their own bracket: a" [0,35)

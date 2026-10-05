@@ -1,6 +1,6 @@
-lower v1 abi 3c18dc46 docEnd 446 holes 2 module 5f08853c494f109b
-piece 0 hole 0 js [315,413)
-piece 1 hole 1 js [415,494)
+lower v1 abi 3c18dc46 docEnd 446 holes 2 module 47bc139d071ad73d
+piece 0 hole 0 js [103,201)
+piece 1 hole 1 js [203,282)
 block 0 content [0,66)
   CALL para [0,66)
     TEXT "图片作为一等内容：块级插图、编号图注与引用。" [0,66)

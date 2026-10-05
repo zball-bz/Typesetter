@@ -86,7 +86,7 @@ module, `*.js.txt`), `--stage=program` (the bytes; the recorder runs them).
 ```js
 export const abi = 0x3c18dc46;
 export default async (__rt, $) => {
-const {para, text, em, …} = __rt.std;     // the user-visible names
+const {seq, text} = __rt.std;             // the std names its code mentions
 return (async () => {
 let avg;                                   // hoisted #let names
 const __h = [
@@ -105,9 +105,11 @@ await __rt.run(__h, 1);
 //# sourceURL=tsm:doc
 ```
 
-- **Scopes.** The outer function binds every user-visible constructor name;
-  the inner one holds the hoisted names and the user's declarations, which
-  may shadow them (`#let list = 1`). Generated names are only `__rt`, `$`,
+- **Scopes.** The outer function binds the user-visible std names the
+  module's code mentions (an identifier scan that also sees template `${…}`
+  holes — a name never mentioned cannot be referenced, so a new constructor
+  changes no module); the inner one holds the hoisted names and the user's
+  declarations, which may shadow them (`#let list = 1`). Generated names are only `__rt`, `$`,
   `__h` and `__k`; user bindings may not start with `__` (`reserved-name`).
 - **`#let x = e`** hoists `x` (once: a repeated `#let` reassigns, D-L02)
   and becomes the statement hole `x = (e)`. A reserved word (`#let class =
@@ -224,9 +226,6 @@ while a job runs, and the module import used to provide that turn.
 
 ## 8. Deltas from the design (T2 S5)
 
-- The module destructures every user-visible name rather than those its
-  holes mention: the two scopes make that safe, and a missed name could
-  never become a ReferenceError.
 - `__rt.run(__h, k)` takes a segment number instead of a block range, which
   keeps the module text independent of prose (cache hits).
 - The NAME, IF, FOR, SOFTBREAK and ERROR ops are not needed yet (fragments,

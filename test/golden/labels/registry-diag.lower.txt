@@ -1,8 +1,8 @@
-lower v1 abi 3c18dc46 docEnd 352 holes 4 module e281c7cedf48dcba
-piece 0 hole 0 js [315,340)
-piece 1 hole 1 js [342,366)
-piece 2 hole 2 js [368,392)
-piece 3 hole 3 js [394,418)
+lower v1 abi 3c18dc46 docEnd 352 holes 4 module e8ac0e3bed8b6de0
+piece 0 hole 0 js [103,128)
+piece 1 hole 1 js [130,154)
+piece 2 hole 2 js [156,180)
+piece 3 hole 3 js [182,206)
 block 0 content [0,8)
   CALL heading [0,8) level=1 label="sec-a"
     TEXT "Labels" [2,8)
