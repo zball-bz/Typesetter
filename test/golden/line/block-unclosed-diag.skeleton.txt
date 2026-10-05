@@ -1,3 +1,4 @@
 doc @[0,89)
   para @[0,7) lines=1
+  error @[9,61) code=statement-unclosed
   para @[63,88) lines=1

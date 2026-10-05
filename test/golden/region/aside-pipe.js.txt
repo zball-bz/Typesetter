@@ -1,4 +1,10 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(__region("aside", ({title: "pipes"}), [[[seq(__at(text("绝对值 "),24,33), __at(mathinline("|x|"),34,39), __at(text(" 的性质："),40,52), __at(mathinline("|a b| = |a| |b|"),52,69), __at(text("。"),69,72))]]]),0,80));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+/*2a5e209cd6eb26a1[0*/{ const __h = __height(); try {
+__emit(__a(__region("aside", ({title: "pipes"}), [[[__sq(__a(__t("绝对值 "),24,33), __a(__mi("|x|"),34,39), __a(__t(" 的性质："),40,52), __a(__mi("|a b| = |a| |b|"),52,69), __a(__t("。"),69,72))]]]),0,80));
+} catch (__e) { __fail(0, __e, __h); } }/*2a5e209cd6eb26a1]0*/
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=2a5e209cd6eb26a1;81;[[0,80,2]]

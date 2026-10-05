@@ -1,6 +1,12 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(para(__at(text("三盒模型：行号、代码与结构化边注。"),0,51)),0,51));
-__emit(__at(val(await __fence("js", ({sidecar: "///", lineNo: 1}), "const memo = new Map(); /// 记忆化容器，均摊 $O(1)$ 查询\nfunction fib(n) {\n  if (n <= 1) return n; /// *基例*：$n <= 1$ 时直接返回，详见 @base\n  return fib(n - 1) + fib(n - 2);\n}", 86)),53,289));
-__emit(__at(heading(1, "base", __at(text("基例说明"),293,305)),291,305));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("三盒模型：行号、代码与结构化边注。"),0,51)),0,51));
+/*8fd7a91932dd2414[0*/{ const __h = __height(); try {
+__emit(__a(__v(await __fence("js", ({sidecar: "///", lineNo: 1}), "const memo = new Map(); /// 记忆化容器，均摊 $O(1)$ 查询\nfunction fib(n) {\n  if (n <= 1) return n; /// *基例*：$n <= 1$ 时直接返回，详见 @base\n  return fib(n - 1) + fib(n - 2);\n}", 86)),53,289));
+} catch (__e) { __fail(0, __e, __h); } }/*8fd7a91932dd2414]0*/
+__emit(__a(__hd(1, "base", __a(__t("基例说明"),293,305)),291,305));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=8fd7a91932dd2414;313;[[53,289,2]]

@@ -1,0 +1,7 @@
+Before.
+
+#!table(3)
+a | b
+#table!
+
+After.

@@ -1,4 +1,8 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(para(__at(text("「引号成对」出现时：（括号）与标点相邻，以及句号。连续标点：《书名》，压缩生效。省略号……与破折号——是双字块，不可从中间断开。"),0,192)),0,192));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("「引号成对」出现时：（括号）与标点相邻，以及句号。连续标点：《书名》，压缩生效。省略号……与破折号——是双字块，不可从中间断开。"),0,192)),0,192));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=f9a88bf0abd501a6;193;[]

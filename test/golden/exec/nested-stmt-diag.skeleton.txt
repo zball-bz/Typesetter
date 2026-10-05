@@ -1,0 +1,8 @@
+doc @[0,43)
+  list bullet start=1 @[0,10)
+    item @[0,10)
+      para @[2,10) lines=1
+      code-let @[13,23) js=" x = 1"
+    item @[24,34)
+      para @[26,34) lines=1
+  para @[36,42) lines=1

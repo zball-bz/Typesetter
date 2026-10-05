@@ -1,0 +1,41 @@
+top pid=0 units=1
+ unit text indent=0su
+  word "Be" w=1025su pen=INF @[0,7)
+  hyphen bw=513su pen=0.70 @[0,7)
+  word "fore." w=2561su pen=INF @[0,7)
+top pid=1 units=1
+ unit text indent=0su
+  word "⚠" w=616su pen=INF CODE @[9,21)
+  space w=257su stretch=1 CODE @[9,21)
+  word "Syn" w=1537su pen=INF CODE @[9,21)
+  hyphen bw=513su pen=0.70 CODE @[9,21)
+  word "tax" w=1537su pen=INF CODE @[9,21)
+  hyphen bw=513su pen=0.70 CODE @[9,21)
+  word "Er" w=1025su pen=INF CODE @[9,21)
+  hyphen bw=513su pen=0.70 CODE @[9,21)
+  word "ror:" w=2049su pen=INF CODE @[9,21)
+  space w=257su stretch=1 CODE @[9,21)
+  word "in" w=1025su pen=INF CODE @[9,21)
+  hyphen bw=513su pen=0.70 CODE @[9,21)
+  word "valid" w=2561su pen=INF CODE @[9,21)
+  space w=257su stretch=1 CODE @[9,21)
+  word "JavaScript" w=5121su pen=INF CODE @[9,21)
+  space w=257su stretch=1 CODE @[9,21)
+  word "in" w=1025su pen=INF CODE @[9,21)
+  space w=257su stretch=1 CODE @[9,21)
+  word "this" w=2049su pen=INF CODE @[9,21)
+  space w=257su stretch=1 CODE @[9,21)
+  word "block" w=2561su pen=INF CODE @[9,21)
+top pid=2 units=1
+ unit text indent=0su
+  word "Mid" w=1537su pen=INF @[23,30)
+  hyphen bw=513su pen=0.70 @[23,30)
+  word "dle." w=2049su pen=INF @[23,30)
+top pid=3 units=1
+ unit text indent=0su
+  word "Af" w=1025su pen=INF @[50,56)
+  hyphen bw=513su pen=0.70 @[50,56)
+  word "ter:" w=2049su pen=INF @[50,56)
+  space w=257su stretch=1 @[50,56)
+  word "fine" w=2049su pen=INF @[0,0)
+  word "." w=513su pen=INF @[60,61)

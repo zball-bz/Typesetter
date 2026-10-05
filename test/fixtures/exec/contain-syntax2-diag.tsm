@@ -1,0 +1,9 @@
+Before.
+
+#{ let = 1 }
+
+Middle #(1 + 2).
+
+#{ const = 2 }
+
+After #(3 * 4).

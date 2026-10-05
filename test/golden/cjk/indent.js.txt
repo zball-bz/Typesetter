@@ -1,5 +1,9 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(para(__at(text("每个段落的首行都会缩进两个汉字的宽度，这是通过引擎内部的缩进块实现的，而不是样式表的文本缩进属性。"),0,147)),0,147));
-__emit(__at(para(__at(text("第二个段落同样如此，缩进块参与断行计算，因此首行的可用宽度正确地减少了。"),149,257)),149,257));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("每个段落的首行都会缩进两个汉字的宽度，这是通过引擎内部的缩进块实现的，而不是样式表的文本缩进属性。"),0,147)),0,147));
+__emit(__a(__p(__a(__t("第二个段落同样如此，缩进块参与断行计算，因此首行的可用宽度正确地减少了。"),149,257)),149,257));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=c4c4b33db31be985;258;[]

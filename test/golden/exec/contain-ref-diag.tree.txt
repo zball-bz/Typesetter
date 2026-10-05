@@ -1,0 +1,6 @@
+doc @[0,53) [base]
+  para @[0,17) [base]
+    text @[0,17) [base] str="Before the error."
+  error @[19,35) [base] message="ReferenceError: todo is not defined" code="script-error"
+  para @[37,53) [base]
+    text @[37,53) [base] str="After the error."

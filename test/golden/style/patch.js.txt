@@ -1,8 +1,20 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+/*999c52d4db8121ce[0*/{ const __h = __height(); try {
  $.style.push({ font: '"LXGW WenKai", serif', lang: "zh-TW" }); 
-__emit(__at(para(__at(text("塊級作用域——這一段整體改用文楷與繁體語言標記，破折號與省略號……照常走定義寬。"),69,190)),69,190));
+} catch (__e) { __fail(0, __e, __h); } }/*999c52d4db8121ce]0*/
+__emit(__a(__p(__a(__t("塊級作用域——這一段整體改用文楷與繁體語言標記，破折號與省略號……照常走定義寬。"),69,190)),69,190));
+/*999c52d4db8121ce[1*/{ const __h = __height(); try {
  $.style.popTo(0); 
-__emit(__at(para(__at(text("回到默认样式的段落，行内有"),216,255), val(style({color: "#a8432a"}, __at(text("着色强调"),282,294))), __at(text("、 "),295,298), val(style({font: '"LXGW WenKai", serif'}, __at(text("楷体片段"),338,350))), __at(text("和"),351,354), val(style({sizePx: 22}, __at(text("放大片段"),375,387))), __at(text("，连同 "),388,398), __at(strong(__at(text("粗体"),400,406)),399,407), __at(text(" 一起参与断行。"),408,429)),216,429));
-__emit(__at(__region("aside", ({font: '"LXGW WenKai", serif', lang: "zh-TW"}), [[[__at(text("區域級作用域：字體與語言一起換，內部照樣是普通標記。"),484,562)]]]),431,570));
+} catch (__e) { __fail(1, __e, __h); } }/*999c52d4db8121ce]1*/
+/*999c52d4db8121ce[2*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("回到默认样式的段落，行内有"),216,255), __v(style({color: "#a8432a"}, __a(__t("着色强调"),282,294))), __a(__t("、 "),295,298), __v(style({font: '"LXGW WenKai", serif'}, __a(__t("楷体片段"),338,350))), __a(__t("和"),351,354), __v(style({sizePx: 22}, __a(__t("放大片段"),375,387))), __a(__t("，连同 "),388,398), __a(__b(__a(__t("粗体"),400,406)),399,407), __a(__t(" 一起参与断行。"),408,429)),216,429));
+} catch (__e) { __fail(2, __e, __h); } }/*999c52d4db8121ce]2*/
+/*999c52d4db8121ce[3*/{ const __h = __height(); try {
+__emit(__a(__region("aside", ({font: '"LXGW WenKai", serif', lang: "zh-TW"}), [[[__a(__t("區域級作用域：字體與語言一起換，內部照樣是普通標記。"),484,562)]]]),431,570));
+} catch (__e) { __fail(3, __e, __h); } }/*999c52d4db8121ce]3*/
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=999c52d4db8121ce;571;[[0,67,6],[192,214,6],[216,429,2],[431,570,2]]

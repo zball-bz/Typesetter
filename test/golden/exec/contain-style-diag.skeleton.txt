@@ -1,0 +1,4 @@
+doc @[0,103)
+  para @[0,7) lines=1
+  code-block @[9,73) js=" $.style.push({ bold: true }); throw new Error(\"after push\") "
+  para @[75,102) lines=1

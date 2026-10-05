@@ -1,0 +1,9 @@
+Before.
+
+#{ let = 1 }
+
+Middle.
+
+#let ok = "fine"
+
+After: #ok.

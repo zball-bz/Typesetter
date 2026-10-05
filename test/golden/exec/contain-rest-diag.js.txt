@@ -1,0 +1,18 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+let f;
+/*819cba3cf75b6b8f[0*/{ const __h = __height(); try {
+f = (
+ () => { throw new Error("boom") }
+);
+} catch (__e) { __fail(0, __e, __h); } }/*819cba3cf75b6b8f]0*/
+__emit(__a(__p(__a(__t("Before."),44,51)),44,51));
+/*819cba3cf75b6b8f[1*/__cur(1);
+ let a = f(); 
+/*819cba3cf75b6b8f]1*/
+__emit(__a(__p(__a(__t("Never executed."),72,87)),72,87));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=819cba3cf75b6b8f;88;[[0,42,6],[53,70,4]]

@@ -1,6 +1,19 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-let wrap = (label, c) => seq(text(label), c);
-__emit(__at(para(__at(text("Content args: "),47,60), val((em)(seq(__at(text("emphasized "),65,75), __at(strong(__at(text("nested"),77,83)),76,84), __at(text(" text"),85,89)))), __at(text(" and "),91,94), val(wrap("tip: ", seq(__at(text("boxed "),110,115), __at(strong(__at(text("bold"),117,121)),116,122), __at(text(" words"),123,128)))), __at(text(" here."),130,135)),47,135));
-__emit(__at(para(__at(text("Deep JS brackets stay JS: "),137,162), val(((["a","b"][0]))), __at(text(" and "),179,182), val(wrap("n: ", __at(text("trailing"),196,204))), __at(text("."),205,206)),137,206));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+let wrap;
+/*e3af3acb2e0217ca[0*/{ const __h = __height(); try {
+wrap = (
+ (label, c) => seq(text(label), c)
+);
+} catch (__e) { __fail(0, __e, __h); } }/*e3af3acb2e0217ca]0*/
+/*e3af3acb2e0217ca[1*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("Content args: "),47,60), __v((em)(__sq(__a(__t("emphasized "),65,75), __a(__b(__a(__t("nested"),77,83)),76,84), __a(__t(" text"),85,89)))), __a(__t(" and "),91,94), __v(wrap("tip: ", __sq(__a(__t("boxed "),110,115), __a(__b(__a(__t("bold"),117,121)),116,122), __a(__t(" words"),123,128)))), __a(__t(" here."),130,135)),47,135));
+} catch (__e) { __fail(1, __e, __h); } }/*e3af3acb2e0217ca]1*/
+/*e3af3acb2e0217ca[2*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("Deep JS brackets stay JS: "),137,162), __v(((["a","b"][0]))), __a(__t(" and "),179,182), __v(wrap("n: ", __a(__t("trailing"),196,204))), __a(__t("."),205,206)),137,206));
+} catch (__e) { __fail(2, __e, __h); } }/*e3af3acb2e0217ca]2*/
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=e3af3acb2e0217ca;207;[[0,45,6],[47,135,2],[137,206,2]]

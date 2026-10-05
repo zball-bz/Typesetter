@@ -1,0 +1,13 @@
+doc @[0,84)
+  code-let @[0,13) js=" list = 1"
+  list @[15,43) bullet start=1
+    item @[15,43)
+      para @[17,43)
+        text @[17,43) str="the list sugar still works"
+    item @[44,57)
+      para @[46,57)
+        text @[46,57) str="second item"
+  para @[59,83)
+    text @[59,76) str="The user binding: "
+    splice @[77,82) expr="list"
+    text @[82,83) str="."

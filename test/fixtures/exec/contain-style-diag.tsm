@@ -1,0 +1,5 @@
+Before.
+
+#{ $.style.push({ bold: true }); throw new Error("after push") }
+
+This paragraph is not bold.

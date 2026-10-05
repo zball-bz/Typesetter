@@ -1,0 +1,5 @@
+Before.
+
+#{ throw new Error("boom") }
+
+After.

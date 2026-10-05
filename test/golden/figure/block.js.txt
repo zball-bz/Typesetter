@@ -1,7 +1,15 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(para(__at(text("图片作为一等内容：块级插图、编号图注与引用。"),0,66)),0,66));
-__emit(__at(__region("figure", ({src: "diagrams/pipeline.png", alt: "管线示意", w: 300, h: 150, scale: 0.5, label: "fig-pipe"}), [[[seq(__at(text("排版管线示意图，"),175,199), __at(strong(__at(text("声明尺寸"),200,212)),199,213), __at(text("不经拉取。"),213,228))]]]),68,237));
-__emit(__at(__region("figure", ({src: "photos/wide.png", alt: "宽幅", w: 1200, h: 300, label: "fig-wide"}), [[[__at(text("过宽的图片收敛到版心，按比例缩放。"),323,374)]]]),239,383));
-__emit(__at(para(__at(text("参见"),385,391), __at(ref("fig-pipe"),391,400), __at(text("与"),400,403), __at(ref("fig-wide"),403,412), __at(text("；前者宽度为版心之半。"),412,445)),385,445));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("图片作为一等内容：块级插图、编号图注与引用。"),0,66)),0,66));
+/*72f60e2fcaa8adf7[0*/{ const __h = __height(); try {
+__emit(__a(__region("figure", ({src: "diagrams/pipeline.png", alt: "管线示意", w: 300, h: 150, scale: 0.5, label: "fig-pipe"}), [[[__sq(__a(__t("排版管线示意图，"),175,199), __a(__b(__a(__t("声明尺寸"),200,212)),199,213), __a(__t("不经拉取。"),213,228))]]]),68,237));
+} catch (__e) { __fail(0, __e, __h); } }/*72f60e2fcaa8adf7]0*/
+/*72f60e2fcaa8adf7[1*/{ const __h = __height(); try {
+__emit(__a(__region("figure", ({src: "photos/wide.png", alt: "宽幅", w: 1200, h: 300, label: "fig-wide"}), [[[__a(__t("过宽的图片收敛到版心，按比例缩放。"),323,374)]]]),239,383));
+} catch (__e) { __fail(1, __e, __h); } }/*72f60e2fcaa8adf7]1*/
+__emit(__a(__p(__a(__t("参见"),385,391), __a(__rf("fig-pipe"),391,400), __a(__t("与"),400,403), __a(__rf("fig-wide"),403,412), __a(__t("；前者宽度为版心之半。"),412,445)),385,445));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=72f60e2fcaa8adf7;446;[[68,237,2],[239,383,2]]

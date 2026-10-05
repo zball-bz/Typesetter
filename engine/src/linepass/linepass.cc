@@ -141,6 +141,18 @@ struct LinePass {
     return any;
   }
 
+  // A block-granular parse error: diagnostic + an Error leaf that lowers to
+  // an error node in place (plan P0-05).
+  void errorBlock(Span sp, const char* code, std::string msg) {
+    closeLeaf();
+    diags.add(Sev::Error, code, sp, msg);
+    SkelNode* e = mk(SkelKind::Error);
+    e->span = sp;
+    e->errCode = code;
+    e->errMsg = std::move(msg);
+    parent()->kids.push_back(e);
+  }
+
   // End offset of an unbalanced statement opened on line `ln` (plan P0-04).
   // Inside a container the scan was bounded to the line, so recovery is the
   // line end. At top level the broken statement extends to the first blank
@@ -403,8 +415,8 @@ struct LinePass {
           // unbalanced: recover at the first blank line instead of swallowing
           // the rest of the document (plan P0-04); the statement is dropped
           u32 end = recoverStatement(ln, nlines);
-          diags.add(Sev::Error, "statement-unclosed", {pos, end},
-                    "unterminated #let: dropped up to the next blank line");
+          errorBlock({pos, end}, "statement-unclosed",
+                     "unterminated #let: dropped up to the next blank line");
           while (ln + 1 < nlines && src.lineStart(ln + 1) <= end) ln++;
           continue;
         }
@@ -423,8 +435,8 @@ struct LinePass {
           // unbalanced: never paste partial JS (it fails the whole module);
           // recover at the first blank line and drop the statement (P0-04)
           u32 end = recoverStatement(ln, nlines);
-          diags.add(Sev::Error, "statement-unclosed", {pos, end},
-                    "unterminated #{ block: dropped up to the next blank line");
+          errorBlock({pos, end}, "statement-unclosed",
+                     "unterminated #{ block: dropped up to the next blank line");
           while (ln + 1 < nlines && src.lineStart(ln + 1) <= end) ln++;
           continue;
         }
@@ -492,6 +504,9 @@ static void dumpNode(std::string& out, const SkelNode* n, const SourceText& src,
       break;
     case SkelKind::Comment:
       appendf(out, "comment @[%u,%u)\n", n->span.start, n->span.end);
+      break;
+    case SkelKind::Error:
+      appendf(out, "error @[%u,%u) code=%s\n", n->span.start, n->span.end, n->errCode);
       break;
     case SkelKind::Region:
       appendf(out, "region @[%u,%u) name=\"", n->span.start, n->span.end);

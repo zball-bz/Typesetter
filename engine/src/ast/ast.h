@@ -6,7 +6,8 @@ namespace tsr {
 enum class AstKind : u8 {
   Doc, Para, CodeStmt, Text, Styled, Splice,
   Heading, ListB, Item, Quote, CodeBlockB, Rule, Comment, Link, Code, SpliceArg,
-  Ref, Region, Row, Cell, Math, Note
+  Ref, Region, Row, Cell, Math, Note,
+  Error  // malformed input (plan P0-05): str = code, aux = message
 };
 
 struct AstNode {

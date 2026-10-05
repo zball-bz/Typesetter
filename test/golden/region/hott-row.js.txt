@@ -1,4 +1,10 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(__region("table", ({cols: 5}), [[[__at(text("Types"),17,22), seq(), __at(text("Logic"),28,33), __at(text("Sets"),36,40), __at(text("Homotopy"),43,51)], [__at(mathinline("Id_(A)"),52,60), seq(), seq(__at(text("equality "),66,74), __at(mathinline("="),75,78)), __at(mathinline("(x,x) | x ∈ A"),81,98), seq(__at(text("path space "),101,111), __at(mathinline("A^I"),112,117))]]]),0,125));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+/*7922b47172ed8553[0*/{ const __h = __height(); try {
+__emit(__a(__region("table", ({cols: 5}), [[[__a(__t("Types"),17,22), __sq(), __a(__t("Logic"),28,33), __a(__t("Sets"),36,40), __a(__t("Homotopy"),43,51)], [__a(__mi("Id_(A)"),52,60), __sq(), __sq(__a(__t("equality "),66,74), __a(__mi("="),75,78)), __a(__mi("(x,x) | x ∈ A"),81,98), __sq(__a(__t("path space "),101,111), __a(__mi("A^I"),112,117))]]]),0,125));
+} catch (__e) { __fail(0, __e, __h); } }/*7922b47172ed8553]0*/
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=7922b47172ed8553;126;[[0,125,2]]

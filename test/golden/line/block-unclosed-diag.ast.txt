@@ -1,5 +1,6 @@
 doc @[0,89)
   para @[0,7)
     text @[0,7) str="Before."
+  error @[9,61) code="statement-unclosed" msg="unterminated #{ block: dropped up to the next blank line"
   para @[63,88)
     text @[63,88) str="Paragraph after survives."

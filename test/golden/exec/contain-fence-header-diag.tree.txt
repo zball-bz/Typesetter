@@ -1,0 +1,6 @@
+doc @[0,37) [base]
+  para @[0,7) [base]
+    text @[0,7) [base] str="Before."
+  error @[9,29) [base] message="fence arguments must be named (key: value)" code="header-positional"
+  para @[31,37) [base]
+    text @[31,37) [base] str="After."

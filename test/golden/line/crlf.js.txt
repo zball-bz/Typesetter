@@ -1,7 +1,11 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(heading(1, null, __at(text("CRLF source"),2,13)),0,13));
-__emit(__at(para(__at(text("A paragraph that spans two lines with "),17,55), __at(mathinline("a +\nb"),56,64), __at(text(" math."),65,70)),17,70));
-__emit(__at(val(await __fence("js", ({}), "let x = 1;\nx++", 81)),74,101));
-__emit(__at(comment(" a comment\nover lines "),105,134));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__hd(1, null, __a(__t("CRLF source"),2,13)),0,13));
+__emit(__a(__p(__a(__t("A paragraph that spans two lines with "),17,55), __a(__mi("a +\nb"),56,64), __a(__t(" math."),65,70)),17,70));
+__emit(__a(__v(await __fence("js", ({}), "let x = 1;\nx++", 81)),74,101));
+__emit(__a(__cm(" a comment\nover lines "),105,134));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=327ec37785a6ce01;136;[]

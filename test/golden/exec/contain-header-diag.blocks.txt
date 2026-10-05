@@ -1,0 +1,35 @@
+top pid=0 units=1
+ unit text indent=0su
+  word "Be" w=1025su pen=INF @[0,7)
+  hyphen bw=513su pen=0.70 @[0,7)
+  word "fore." w=2561su pen=INF @[0,7)
+top pid=1 units=1
+ unit text indent=0su
+  word "⚠" w=616su pen=INF CODE @[9,33)
+  space w=257su stretch=1 CODE @[9,33)
+  word "re" w=1025su pen=INF CODE @[9,33)
+  hyphen bw=513su pen=0.70 CODE @[9,33)
+  word "gion" w=2049su pen=INF CODE @[9,33)
+  space w=257su stretch=1 CODE @[9,33)
+  word "ar" w=1025su pen=INF CODE @[9,33)
+  hyphen bw=513su pen=0.70 CODE @[9,33)
+  word "gu" w=1025su pen=INF CODE @[9,33)
+  hyphen bw=513su pen=0.70 CODE @[9,33)
+  word "ments" w=2561su pen=INF CODE @[9,33)
+  space w=257su stretch=1 CODE @[9,33)
+  word "must" w=2049su pen=INF CODE @[9,33)
+  space w=257su stretch=1 CODE @[9,33)
+  word "be" w=1025su pen=INF CODE @[9,33)
+  space w=257su stretch=1 CODE @[9,33)
+  word "named" w=2561su pen=INF CODE @[9,33)
+  space w=257su stretch=1 CODE @[9,33)
+  word "(key:" w=2561su pen=INF CODE @[9,33)
+  space w=257su stretch=1 CODE @[9,33)
+  word "val" w=1537su pen=INF CODE @[9,33)
+  hyphen bw=513su pen=0.70 CODE @[9,33)
+  word "ue)" w=1537su pen=INF CODE @[9,33)
+top pid=2 units=1
+ unit text indent=0su
+  word "Af" w=1025su pen=INF @[35,41)
+  hyphen bw=513su pen=0.70 @[35,41)
+  word "ter." w=2049su pen=INF @[35,41)

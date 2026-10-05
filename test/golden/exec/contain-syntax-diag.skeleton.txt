@@ -1,0 +1,6 @@
+doc @[0,62)
+  para @[0,7) lines=1
+  code-block @[9,21) js=" let = 1 "
+  para @[23,30) lines=1
+  code-let @[32,48) js=" ok = \"fine\""
+  para @[50,61) lines=1

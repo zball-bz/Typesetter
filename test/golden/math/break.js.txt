@@ -1,4 +1,8 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(para(__at(text("在很窄的栏里，长关系链 "),0,33), __at(mathinline("a_1 + a_2 + a_3 = b_1 + b_2 <= c^2 + d^2"),34,76), __at(text(" 必须在关系号或运算号处得体地断行，续行以关系号开头也合法。"),77,164)),0,164));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("在很窄的栏里，长关系链 "),0,33), __a(__mi("a_1 + a_2 + a_3 = b_1 + b_2 <= c^2 + d^2"),34,76), __a(__t(" 必须在关系号或运算号处得体地断行，续行以关系号开头也合法。"),77,164)),0,164));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=793b8e23b29d710f;165;[]

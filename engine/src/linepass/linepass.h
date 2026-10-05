@@ -8,7 +8,8 @@ namespace tsr {
 
 enum class SkelKind : u8 {
   Doc, Para, Heading, List, Item, Quote, Fence, Rule, CodeLet, CodeBlock, Comment,
-  Region  // #!name(args) … #name! (v2 §4.1); langSpan=name, inner=args
+  Region,  // #!name(args) … #name! (v2 §4.1); langSpan=name, inner=args
+  Error    // block-granular parse error (plan P0-05): errCode, errMsg
 };
 
 struct SkelNode {
@@ -22,6 +23,8 @@ struct SkelNode {
   bool ordered = false;         // List
   int start = 1;                // List (ordered)
   std::vector<SkelNode*> kids;  // Doc/List/Item/Quote
+  const char* errCode = nullptr;  // Error
+  std::string errMsg;             // Error
 };
 
 struct Skeleton {

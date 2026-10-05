@@ -14,6 +14,21 @@ struct Frame {
   std::vector<AstNode*> items;
 };
 
+// A bare splice head that cannot start a JS expression (plan P0-05).
+static const char* reservedHead(std::string_view w) {
+  static const char* kw[] = {"if", "else", "for", "while", "use", "let"};
+  for (const char* k : kw)
+    if (w == k) return "keyword-unsupported";
+  static const char* js[] = {"break", "case", "catch", "class", "const", "continue", "debugger",
+                             "default", "delete", "do", "export", "extends", "finally",
+                             "function", "import", "in", "instanceof", "new", "return",
+                             "switch", "throw", "try", "typeof", "var", "void", "with",
+                             "yield", "static", "enum", "await"};
+  for (const char* k : js)
+    if (w == k) return "reserved-word";
+  return nullptr;
+}
+
 struct InlineParser {
   const SourceText& src;
   Arena& arena;
@@ -214,6 +229,32 @@ struct InlineParser {
 
     spaceBeforeItem();
     flushText();
+    // a keyword as a bare head (#if, #for, #new …) would paste invalid JS
+    // and fail the whole document: it becomes an error node (plan P0-05)
+    if (exprStart < lim && all[exprStart] != '(') {
+      u32 h = exprStart;
+      while (h < exprEnd && isIdentCont(all[h])) h++;
+      std::string_view head = all.substr(exprStart, h - exprStart);
+      const char* code = reservedHead(head);
+      if (code) {
+        u32 after = exprEnd;
+        while (after < lim && all[after] == '[') {
+          i32 close = matchBracket(after, lim);
+          if (close < 0) break;
+          after = (u32)close + 1;
+        }
+        std::string msg = std::string(code) == "keyword-unsupported"
+            ? "#" + std::string(head) + " is not supported yet (keyword forms: plan P2-12)"
+            : "'" + std::string(head) + "' is a reserved word and cannot start a splice";
+        diags.add(Sev::Error, code, {hashPos, after}, msg);
+        AstNode* e = mk(AstKind::Error, {hashPos, after});
+        e->str = strs.intern(code);
+        e->aux = strs.intern(msg);
+        pushItem(e);
+        seekTo(after);
+        return;
+      }
+    }
     AstNode* spl = mk(AstKind::Splice, {hashPos, exprEnd});
     spl->expr = {exprStart, exprEnd};
     spl->lastCallStart = lastCall;
@@ -564,13 +605,23 @@ struct AstBuilder {
     return std::move(p.stack.back().items);
   }
 
-  AstNode* build(const SkelNode* s) {
+  AstNode* errorNode(Span sp, const char* code, const std::string& msg, bool report = true) {
+    if (report) diags.add(Sev::Error, code, sp, msg);
+    AstNode* e = mk(AstKind::Error, sp);
+    e->str = strs.intern(code);
+    e->aux = strs.intern(msg);
+    return e;
+  }
+
+  AstNode* build(const SkelNode* s, bool top = false) {
     switch (s->kind) {
       case SkelKind::Doc: {
         AstNode* d = mk(AstKind::Doc, s->span);
-        for (const SkelNode* k : s->kids) d->kids.push_back(build(k));
+        for (const SkelNode* k : s->kids) d->kids.push_back(build(k, /*top=*/true));
         return d;
       }
+      case SkelKind::Error:  // reported by the line pass
+        return errorNode(s->span, s->errCode, s->errMsg, /*report=*/false);
       case SkelKind::Para: {
         AstNode* p = mk(AstKind::Para, s->span);
         p->kids = inlineParse(s->lineSpans);
@@ -615,6 +666,9 @@ struct AstBuilder {
             tagSpan.end = lp;
           }
         }
+        if (!f->expr.empty() && !jsNamedArgList(src.slice(f->expr)))
+          return errorNode(s->span, "header-positional",
+                           "fence arguments must be named (key: value)");
         std::string lang(src.slice(tagSpan));
         while (!lang.empty() && (lang.back() == ' ' || lang.back() == '\r')) lang.pop_back();
         f->aux = strs.intern(lang);
@@ -636,6 +690,9 @@ struct AstBuilder {
         return c;
       }
       case SkelKind::Region: {
+        if (!s->inner.empty() && !jsNamedArgList(src.slice(s->inner)))
+          return errorNode(s->span, "header-positional",
+                           "region arguments must be named (key: value)");
         AstNode* r = mk(AstKind::Region, s->span);
         r->str = strs.intern(src.slice(s->langSpan));
         r->expr = s->inner;  // opener args (inside parens; empty span = none)
@@ -664,6 +721,16 @@ struct AstBuilder {
       }
       case SkelKind::CodeLet:
       case SkelKind::CodeBlock: {
+        if (!top)  // was silently dropped (codegen text("")); P2-12 runs them
+          return errorNode(s->span, "statement-nested-unsupported",
+                           "statements inside lists, quotes and regions are not "
+                           "supported yet (plan P2-12)");
+        std::string_view reserved =
+            jsReservedBinding(src.slice(s->inner), s->kind == SkelKind::CodeLet);
+        if (!reserved.empty())
+          return errorNode(s->span, "reserved-name",
+                           "'" + std::string(reserved) +
+                               "': names starting with __ are reserved for the engine");
         AstNode* c = mk(AstKind::CodeStmt, s->span);
         c->expr = s->inner;
         c->tag = s->kind == SkelKind::CodeLet ? 0 : 1;
@@ -789,6 +856,14 @@ static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,
     case AstKind::Row: hdr("row"); break;
     case AstKind::Cell: hdr("cell"); break;
     case AstKind::Note: hdr("note"); break;
+    case AstKind::Error:
+      hdr("error");
+      out += " code=\"";
+      appendEscaped(out, strs.get(n->str));
+      out += "\" msg=\"";
+      appendEscaped(out, strs.get(n->aux));
+      out += "\"";
+      break;
   }
   out += "\n";
   for (const AstNode* k : n->kids) dumpNode(out, k, src, strs, depth + 1);

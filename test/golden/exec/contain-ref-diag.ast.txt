@@ -1,0 +1,9 @@
+doc @[0,54)
+  para @[0,17)
+    text @[0,17) str="Before the error."
+  para @[19,35)
+    text @[19,24) str="issue "
+    splice @[25,30) expr="todo"
+    text @[31,35) str=" here"
+  para @[37,53)
+    text @[37,53) str="After the error."

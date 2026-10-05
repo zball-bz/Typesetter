@@ -1,0 +1,12 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:132.781px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="8" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">item one</span></div>
+<div class="tsr-line" data-s="11" data-e="21" data-ragged="1" style="top:30.391px;left:24px;width:276px;word-spacing:-0.32px"><span class="tsr-r tsr-code" data-s="11">⚠ statements inside lists, quotes and</span></div>
+<div class="tsr-line" data-s="11" data-e="21" data-ragged="1" style="top:54.391px;left:24px;width:276px"><span class="tsr-r tsr-code" data-s="11">regions are not supported yet (plan</span></div>
+<div class="tsr-line" data-s="11" data-e="21" data-ragged="1" style="top:78.391px;left:24px;width:276px"><span class="tsr-r tsr-code" data-s="11">P2-12)</span></div>
+<div class="tsr-line" data-s="24" data-e="32" style="top:108.781px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="24">item two</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="36" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="6" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">After.</span></div>
+</div>
+</div>

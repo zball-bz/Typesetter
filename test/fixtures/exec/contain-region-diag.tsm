@@ -1,0 +1,9 @@
+#{ $.region("boom", () => { throw new Error("handler failed") }) }
+
+Before.
+
+#!boom
+inside
+#boom!
+
+After.

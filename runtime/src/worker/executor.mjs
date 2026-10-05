@@ -55,7 +55,7 @@ async function loadResource(src, opts) {
   return await res.text();
 }
 
-export function buildContext(ob, opts = {}) {
+export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
   const toShadow = (x) => {
     if (typeof x === 'function') x = x();  // bare #toc / #glossary splices
     return x && typeof x === 'object' && 'opId' in x ? x : ob.makeText(String(x));
@@ -123,7 +123,13 @@ export function buildContext(ob, opts = {}) {
   const __region = (name, args = {}, children = []) => {
     const h = regionHandlers[name];
     let node;
-    if (h) node = toShadow(h(args, children));
+    if (h) {
+      // a throwing handler is contained here, like a fence handler (P0-05)
+      try { node = toShadow(h(args, children)); }
+      catch (e) {
+        return ob.makeNode(KIND.error, { message: String(e?.message ?? e), code: 'region-error' }, []);
+      }
+    }
     else if (name === 'table') node = tableBuild(args, children);
     else if (name === 'figure') node = figureBuild(args, children);
     // generic region → role-tagged group (#!figure, #!aside, …)
@@ -228,6 +234,9 @@ export function buildContext(ob, opts = {}) {
         font: patch.font, lang: patch.lang, color: patch.color, sizePx: patch.sizePx,
       }, kids.map(toShadow)),
     val: (x) => toShadow(x),
+    // block-granular error (plan P0-05): parse errors lowered by codegen
+    error: (code, message) =>
+      ob.makeNode(KIND.error, { message: String(message), code: String(code) }, []),
     // M1: cooked-text tag; runtime markup re-entry (m.parse via WASM) is M2.
     m: (strings, ...vals) => {
       let s = strings[0];
@@ -283,7 +292,95 @@ export function buildContext(ob, opts = {}) {
       popTo(h) { styleStack.length = Math.max(0, h); ob.stylePopTo(h); },
     },
   };
-  return { ctors, dollar, finishBibliographies };
+  // --- execution containment (plan P0-05, D-I10/D-I11) ---------------------
+  // A framed unit that throws becomes an error node at its place; the style
+  // stack returns to the unit's entry height (v2 §12). An unframed statement
+  // that throws stops the program: the rest becomes one error block.
+  let current = 0;
+  const errorAt = (i, code, message, toEnd = false) => {
+    const u = units[i];
+    const n = ob.makeNode(KIND.error, { message, code }, []);
+    if (u) ob.span(n, u.s, toEnd ? Math.max(docEnd, u.e) : u.e);
+    ob.emitNode(n);
+  };
+  const describe = (e) => `${e?.name ?? 'Error'}: ${e?.message ?? String(e)}`;
+  const helpers = {
+    __height: () => styleStack.length,
+    __cur: (i) => { current = i; },
+    __fail: (i, e, h) => {
+      if (styleStack.length > h) dollar.style.popTo(h);
+      errorAt(i, 'script-error', describe(e));
+    },
+    __syntax: (i) => errorAt(i, 'script-syntax', 'SyntaxError: invalid JavaScript in this block'),
+    failRest: (e) => {
+      if (styleStack.length) dollar.style.popTo(0);
+      errorAt(current, 'script-error',
+              `${describe(e)} (the rest of the document was not executed)`, true);
+    },
+  };
+  return { ctors, dollar, finishBibliographies, helpers };
+}
+
+// Unit table written by codegen on the module's last line (D-I11):
+//   //# tsm-units=<nonce>;<doc end>;[[srcStart, srcEnd, flags], …]
+// Only units that run user code are listed; in the module text each is
+// bracketed by /*<nonce>[i*/ … /*<nonce>]i*/ (found on the failure path only).
+function parseUnits(jsText) {
+  const at = jsText.lastIndexOf('//# tsm-units=');
+  if (at < 0) return { units: [], docEnd: 0, nonce: '' };
+  try {
+    const [nonce, end, list] = jsText.slice(at + 14).trim().split(';');
+    const units = JSON.parse(list).map(([s, e, flags], i) => ({ i, s, e, flags }));
+    return { units, docEnd: Number(end), nonce };
+  } catch { return { units: [], docEnd: 0, nonce: '' }; }
+}
+
+const isSyntaxError = (e) => e?.name === 'SyntaxError' || e instanceof SyntaxError;
+
+// SyntaxError isolation, failure path only (D-I11): stub every unit that
+// carries user code, then restore groups by bisection; units that still do
+// not compile stay stubbed as __syntax(i) error blocks.
+async function isolateSyntax(jsText, units, nonce) {
+  // locate every unit's text between its markers
+  for (const u of units) {
+    const a = jsText.indexOf(`/*${nonce}[${u.i}*/`);
+    const b = jsText.indexOf(`/*${nonce}]${u.i}*/`, a);
+    u.js0 = a;
+    u.js1 = b < 0 ? -1 : b;
+  }
+  const cands = units.filter((u) => u.js0 >= 0 && u.js1 > u.js0).map((u) => u.i);
+  const build = (stubbed) => {
+    let t = jsText;
+    for (const u of [...stubbed].map((i) => units[i]).sort((a, b) => b.js0 - a.js0))
+      t = t.slice(0, u.js0) + `__syntax(${u.i});\n` + t.slice(u.js1);
+    return t;
+  };
+  const tryImport = async (stubbed) => {
+    try { return await importModule(build(stubbed)); }
+    catch (e) { if (isSyntaxError(e)) return null; throw e; }
+  };
+  const stubbed = new Set(cands);
+  let mod = await tryImport(stubbed);
+  if (!mod) throw new SyntaxError('document program is invalid outside user code');
+  let budget = 2 * Math.ceil(Math.log2(cands.length + 1)) + 4;
+  const visit = async (group) => {
+    if (!group.length) return;
+    if (budget <= 0) return;  // exhausted: the group stays stubbed
+    budget--;
+    const trial = new Set([...stubbed].filter((i) => !group.includes(i)));
+    const m = await tryImport(trial);
+    if (m) {
+      for (const i of group) stubbed.delete(i);
+      mod = m;
+      return;
+    }
+    if (group.length === 1) return;  // this unit is the culprit: keep it stubbed
+    const mid = group.length >> 1;
+    await visit(group.slice(0, mid));
+    await visit(group.slice(mid));
+  };
+  await visit(cands);
+  return mod;
 }
 
 async function importModule(jsText) {
@@ -313,10 +410,21 @@ async function importModule(jsText) {
 // where #bibliography(src) and other document resources resolve
 export async function execute(jsText, opts = {}) {
   const ob = new OpBuf();
-  const { ctors, dollar, finishBibliographies } = buildContext(ob, opts);
-  const mod = await importModule(jsText);
+  const { units, docEnd, nonce } = parseUnits(jsText);
+  const { ctors, dollar, finishBibliographies, helpers } = buildContext(ob, opts, units, docEnd);
+  let mod;
+  try {
+    mod = await importModule(jsText);
+  } catch (e) {
+    if (!isSyntaxError(e) || !units.length) throw e;
+    mod = await isolateSyntax(jsText, units, nonce);
+  }
   if (typeof mod.default !== 'function') throw new Error('document program has no default export');
-  await mod.default(ctors, dollar);
+  try {
+    await mod.default({ ...ctors, ...helpers }, dollar);
+  } catch (e) {
+    helpers.failRest(e);  // an unframed statement threw (D-I10)
+  }
   await finishBibliographies();
   return ob.finalize();
 }

@@ -1,0 +1,31 @@
+top pid=0 units=1
+ unit text indent=0su
+  word "Be" w=1025su pen=INF @[0,7)
+  hyphen bw=513su pen=0.70 @[0,7)
+  word "fore." w=2561su pen=INF @[0,7)
+top pid=1 units=1
+ unit text indent=0su
+  word "⚠" w=616su pen=INF CODE @[9,73)
+  space w=257su stretch=1 CODE @[9,73)
+  word "Er" w=1025su pen=INF CODE @[9,73)
+  hyphen bw=513su pen=0.70 CODE @[9,73)
+  word "ror:" w=2049su pen=INF CODE @[9,73)
+  space w=257su stretch=1 CODE @[9,73)
+  word "af" w=1025su pen=INF CODE @[9,73)
+  hyphen bw=513su pen=0.70 CODE @[9,73)
+  word "ter" w=1537su pen=INF CODE @[9,73)
+  space w=257su stretch=1 CODE @[9,73)
+  word "push" w=2049su pen=INF CODE @[9,73)
+top pid=2 units=1
+ unit text indent=0su
+  word "This" w=2049su pen=INF @[75,102)
+  space w=257su stretch=1 @[75,102)
+  word "para" w=2049su pen=INF @[75,102)
+  hyphen bw=513su pen=0.70 @[75,102)
+  word "graph" w=2561su pen=INF @[75,102)
+  space w=257su stretch=1 @[75,102)
+  word "is" w=1025su pen=INF @[75,102)
+  space w=257su stretch=1 @[75,102)
+  word "not" w=1537su pen=INF @[75,102)
+  space w=257su stretch=1 @[75,102)
+  word "bold." w=2561su pen=INF @[75,102)

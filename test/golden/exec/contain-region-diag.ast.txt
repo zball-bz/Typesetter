@@ -1,0 +1,11 @@
+doc @[0,106)
+  code-block @[0,66) js=" $.region(\"boom\", () => { throw new Error(\"handler failed\") }) "
+  para @[68,75)
+    text @[68,75) str="Before."
+  region @[77,97) name="boom"
+    para @[84,90)
+      row @[84,90)
+        cell @[84,90)
+          text @[84,90) str="inside"
+  para @[99,105)
+    text @[99,105) str="After."

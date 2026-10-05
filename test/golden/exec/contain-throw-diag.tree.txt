@@ -1,0 +1,6 @@
+doc @[0,45) [base]
+  para @[0,7) [base]
+    text @[0,7) [base] str="Before."
+  error @[9,37) [base] message="Error: boom" code="script-error"
+  para @[39,45) [base]
+    text @[39,45) [base] str="After."

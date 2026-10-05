@@ -1,4 +1,5 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="7">Before.</p>
-<p data-pid="1" data-s="63" data-e="88">Paragraph after survives.</p>
+<div class="tsr-err" data-pid="1" data-s="9" data-e="61" title="unterminated #{ block: dropped up to the next blank line">&#9888; unterminated #{ block: dropped up to the next blank line</div>
+<p data-pid="2" data-s="63" data-e="88">Paragraph after survives.</p>
 </div>

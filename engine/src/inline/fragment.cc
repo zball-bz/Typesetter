@@ -86,6 +86,13 @@ struct Conv {
         out.push_back(t);
         return;
       }
+      case AstKind::Error: {
+        ContentNode* e = mk(Kind::error, eff);
+        setStr(e, ArgK::message, strs.get(a->aux));
+        setStr(e, ArgK::code, strs.get(a->str));
+        out.push_back(e);
+        return;
+      }
       case AstKind::Note:
         // notes need the resolver's flow: flattened in fragments until the
         // single fragment lowering (plan P2-13)

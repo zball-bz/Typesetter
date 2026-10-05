@@ -1,0 +1,31 @@
+top pid=0 units=2
+ unit text indent=1536su marker="•"
+  word "the" w=1537su pen=INF @[17,43)
+  space w=257su stretch=1 @[17,43)
+  word "list" w=2049su pen=INF @[17,43)
+  space w=257su stretch=1 @[17,43)
+  word "sug" w=1537su pen=INF @[17,43)
+  hyphen bw=513su pen=0.70 @[17,43)
+  word "ar" w=1025su pen=INF @[17,43)
+  space w=257su stretch=1 @[17,43)
+  word "still" w=2561su pen=INF @[17,43)
+  space w=257su stretch=1 @[17,43)
+  word "works" w=2561su pen=INF @[17,43)
+ unit text indent=1536su marker="•"
+  word "sec" w=1537su pen=INF @[46,57)
+  hyphen bw=513su pen=0.70 @[46,57)
+  word "ond" w=1537su pen=INF @[46,57)
+  space w=257su stretch=1 @[46,57)
+  word "item" w=2049su pen=INF @[46,57)
+top pid=1 units=1
+ unit text indent=0su
+  word "The" w=1537su pen=INF @[59,76)
+  space w=257su stretch=1 @[59,76)
+  word "user" w=2049su pen=INF @[59,76)
+  space w=257su stretch=1 @[59,76)
+  word "bind" w=2049su pen=INF @[59,76)
+  hyphen bw=513su pen=0.70 @[59,76)
+  word "ing:" w=2049su pen=INF @[59,76)
+  space w=257su stretch=1 @[59,76)
+  word "1" w=513su pen=INF @[0,0)
+  word "." w=513su pen=INF @[82,83)

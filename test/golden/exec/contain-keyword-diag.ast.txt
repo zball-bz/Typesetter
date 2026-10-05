@@ -1,0 +1,9 @@
+doc @[0,51)
+  para @[0,7)
+    text @[0,7) str="Before."
+  para @[9,42)
+    text @[9,16) str="Status: "
+    error @[17,20) code="keyword-unsupported" msg="#if is not supported yet (keyword forms: plan P2-12)"
+    text @[21,42) str=" (ok) [yes] else [no]."
+  para @[44,50)
+    text @[44,50) str="After."

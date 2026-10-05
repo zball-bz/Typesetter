@@ -1,0 +1,5 @@
+doc @[0,88)
+  code-let @[0,42) js=" f = () => { throw new Error(\"boom\") }"
+  para @[44,51) lines=1
+  code-block @[53,70) js=" let a = f(); "
+  para @[72,87) lines=1

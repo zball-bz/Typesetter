@@ -1,0 +1,10 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("Before."),0,7)),0,7));
+__emit(__a(__p(__a(__t("Status: "),9,16), __a(__er("keyword-unsupported", "#if is not supported yet (keyword forms: plan P2-12)"),17,20), __a(__t(" (ok) [yes] else [no]."),21,42)),9,42));
+__emit(__a(__p(__a(__t("After."),44,50)),44,50));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=23671712b77b5651;51;[]

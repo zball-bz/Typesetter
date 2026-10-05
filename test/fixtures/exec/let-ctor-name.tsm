@@ -1,0 +1,6 @@
+#let list = 1
+
+- the list sugar still works
+- second item
+
+The user binding: #list.

@@ -1,5 +1,9 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(para(__at(text("Snap-kerning on a wrapping code block (guard fixture, plan P0-01; defect #21)."),0,78)),0,78));
-__emit(__at(val(await __fence("js", ({}), "const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";\nemit(标题);", 86)),80,216));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("Snap-kerning on a wrapping code block (guard fixture, plan P0-01; defect #21)."),0,78)),0,78));
+__emit(__a(__v(await __fence("js", ({}), "const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";\nemit(标题);", 86)),80,216));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=783bfb2f9f15c7b2;217;[]

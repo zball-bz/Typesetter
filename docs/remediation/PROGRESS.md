@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P0
-- 下一步：P0-05
+- 下一步：P0-06
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -18,7 +18,7 @@
 | P0-02 | 编译器防护（去掉 default 分支，AST dump 补 Note） | done | grep:plan P0-02 | 2026-10-05 | notes/*.ast ×3（原 golden 错）+2 用例 | -Werror=switch-enum（linepass/inline/fragment/codegen）；lint-arch 15 项基线；App A/B 一致性用例 |
 | P0-03 | Fuzz 基础设施 | done | grep:plan P0-03 | 2026-10-05 | 0 | fuzz_opreader/linepass/inline；三处发现已修（strtab 指针溢出、负 bits、缺 bib 条目）并入 test/fuzz 回放；各 3 分钟无发现 |
 | P0-04 | 前端越界修复（过渡） | done | grep:plan P0-04 | 2026-10-06 | +7 用例（仅新增） | contiguous/注释扫描限于叶子；CRLF；splitCells 跳过数学/代码；未闭合语句在空行或块起点恢复；CRLF 单测 |
-| P0-05 | 执行容错（过渡） | todo | | | | |
+| P0-05 | 执行容错（过渡） | done | grep:plan P0-05 | 2026-10-06 | 全部 js.txt；line/*-unclosed-diag 出现 error 块；+15 用例 | 模块：外层用户名 + 内层参数 __ 别名；仅直接执行用户 JS 的单元加帧；__region/__fence 内部容错；SyntaxError 标记二分；ingest 扫描 script-error 诊断；87K compile+execute +1.6% |
 | P0-06 | 模式抽取、读取器校验、样式值校验 | todo | | | | |
 | P0-07 | 实例化加固（显式栈 + InstLimits） | todo | | | | |
 | P0-08 | 样式卫生与统一 em | todo | | | | |

@@ -1,0 +1,3 @@
+doc @[0,21)
+  code-let @[0,12) js=" __x = 1"
+  para @[14,20) lines=1

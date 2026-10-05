@@ -1,0 +1,13 @@
+doc @[0,73)
+  para @[0,7)
+    text @[0,7) str="Before."
+  code-block @[9,21) js=" let = 1 "
+  para @[23,39)
+    text @[23,29) str="Middle "
+    splice @[30,38) expr="(1 + 2)"
+    text @[38,39) str="."
+  code-block @[41,55) js=" const = 2 "
+  para @[57,72)
+    text @[57,62) str="After "
+    splice @[63,71) expr="(3 * 4)"
+    text @[71,72) str="."

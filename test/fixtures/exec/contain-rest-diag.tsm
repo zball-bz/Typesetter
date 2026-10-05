@@ -1,0 +1,7 @@
+#let f = () => { throw new Error("boom") }
+
+Before.
+
+#{ let a = f(); }
+
+Never executed.

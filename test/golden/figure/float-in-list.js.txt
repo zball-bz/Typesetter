@@ -1,5 +1,11 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(para(__at(text("A left float inside a list item (guard fixture, plan P0-01)."),0,60)),0,60));
-__emit(__at(list(false, 1, __at(item(__at(para(__at(text("First item before the float."),64,92)),64,92)),62,92), __at(item(__at(para(__at(text("Second item holds a floated figure."),95,130)),95,130), __at(__region("figure", ({src: "photos/icon.png", alt: "icon", w: 200, h: 200, scale: 0.4, float: "left", label: "fig-icon"}), [[[__at(text("A small floated icon."),244,265)]]]),134,276), __at(para(__at(text("The item text continues beside the float and should narrow around it for a few lines before returning to the full measure of the list body."),280,419)),280,419)),93,130), __at(item(__at(para(__at(text("Third item after the float."),422,449)),422,449)),420,449)),62,92));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("A left float inside a list item (guard fixture, plan P0-01)."),0,60)),0,60));
+/*3306c60a03d643ba[0*/{ const __h = __height(); try {
+__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("First item before the float."),64,92)),64,92)),62,92), __a(__it(__a(__p(__a(__t("Second item holds a floated figure."),95,130)),95,130), __a(__region("figure", ({src: "photos/icon.png", alt: "icon", w: 200, h: 200, scale: 0.4, float: "left", label: "fig-icon"}), [[[__a(__t("A small floated icon."),244,265)]]]),134,276), __a(__p(__a(__t("The item text continues beside the float and should narrow around it for a few lines before returning to the full measure of the list body."),280,419)),280,419)),93,130), __a(__it(__a(__p(__a(__t("Third item after the float."),422,449)),422,449)),420,449)),62,92));
+} catch (__e) { __fail(0, __e, __h); } }/*3306c60a03d643ba]0*/
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=3306c60a03d643ba;450;[[62,92,2]]

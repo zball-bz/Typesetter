@@ -1,6 +1,12 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(heading(1, "sec", __at(text("Data"),2,6)),0,6));
-__emit(__at(__region("table", ({cols: 3, align: "lcr", label: "tbl"}), [[[__at(text("Name"),59,63), __at(text("Qty"),66,69), __at(text("Price"),72,77)], [__at(text("Alpha widget"),78,90), __at(text("2"),93,94), __at(text("3.50"),97,101)], [__at(text("中文条目"),102,114), __at(text("三"),117,120), __at(text("12.00"),123,128)]]]),14,136));
-__emit(__at(para(__at(text("Totals appear in "),138,154), __at(ref("tbl"),155,159), __at(text(" of "),160,162), __at(ref("sec"),163,167), __at(text("."),167,168)),138,168));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__hd(1, "sec", __a(__t("Data"),2,6)),0,6));
+/*665c899a544c1e10[0*/{ const __h = __height(); try {
+__emit(__a(__region("table", ({cols: 3, align: "lcr", label: "tbl"}), [[[__a(__t("Name"),59,63), __a(__t("Qty"),66,69), __a(__t("Price"),72,77)], [__a(__t("Alpha widget"),78,90), __a(__t("2"),93,94), __a(__t("3.50"),97,101)], [__a(__t("中文条目"),102,114), __a(__t("三"),117,120), __a(__t("12.00"),123,128)]]]),14,136));
+} catch (__e) { __fail(0, __e, __h); } }/*665c899a544c1e10]0*/
+__emit(__a(__p(__a(__t("Totals appear in "),138,154), __a(__rf("tbl"),155,159), __a(__t(" of "),160,162), __a(__rf("sec"),163,167), __a(__t("."),167,168)),138,168));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=665c899a544c1e10;169;[[14,136,2]]

@@ -1,0 +1,11 @@
+doc @[0,48)
+  code-let @[0,10) js=" x = 1"
+  para @[12,22)
+    text @[12,18) str="First: "
+    splice @[19,21) expr="x"
+    text @[21,22) str="."
+  code-let @[24,34) js=" x = 2"
+  para @[36,47)
+    text @[36,43) str="Second: "
+    splice @[44,46) expr="x"
+    text @[46,47) str="."

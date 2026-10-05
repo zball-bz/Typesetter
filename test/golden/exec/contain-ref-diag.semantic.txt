@@ -1,0 +1,5 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="17">Before the error.</p>
+<div class="tsr-err" data-pid="1" data-s="19" data-e="35" title="ReferenceError: todo is not defined">&#9888; ReferenceError: todo is not defined</div>
+<p data-pid="2" data-s="37" data-e="53">After the error.</p>
+</div>

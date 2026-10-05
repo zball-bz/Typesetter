@@ -1,0 +1,20 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("Before."),0,7)),0,7));
+/*f05a2223b733d12b[0*/__cur(0);
+ let = 1 
+/*f05a2223b733d12b]0*/
+/*f05a2223b733d12b[1*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("Middle "),23,29), __v(((1 + 2))), __a(__t("."),38,39)),23,39));
+} catch (__e) { __fail(1, __e, __h); } }/*f05a2223b733d12b]1*/
+/*f05a2223b733d12b[2*/__cur(2);
+ const = 2 
+/*f05a2223b733d12b]2*/
+/*f05a2223b733d12b[3*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("After "),57,62), __v(((3 * 4))), __a(__t("."),71,72)),57,72));
+} catch (__e) { __fail(3, __e, __h); } }/*f05a2223b733d12b]3*/
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=f05a2223b733d12b;73;[[9,21,4],[23,39,2],[41,55,4],[57,72,2]]

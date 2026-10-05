@@ -1,0 +1,6 @@
+doc @[0,106)
+  code-block @[0,66) js=" $.region(\"boom\", () => { throw new Error(\"handler failed\") }) "
+  para @[68,75) lines=1
+  region @[77,97) name="boom"
+    para @[84,90) lines=1
+  para @[99,105) lines=1

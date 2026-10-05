@@ -1,9 +1,38 @@
 top pid=0 units=1
+ unit text indent=0su
+  word "⚠" w=616su pen=INF CODE @[0,12)
+  space w=257su stretch=1 CODE @[0,12)
+  word "un" w=1025su pen=INF CODE @[0,12)
+  hyphen bw=513su pen=0.70 CODE @[0,12)
+  word "ter" w=1537su pen=INF CODE @[0,12)
+  hyphen bw=513su pen=0.70 CODE @[0,12)
+  word "mi" w=1025su pen=INF CODE @[0,12)
+  hyphen bw=513su pen=0.70 CODE @[0,12)
+  word "nat" w=1537su pen=INF CODE @[0,12)
+  hyphen bw=513su pen=0.70 CODE @[0,12)
+  word "ed" w=1025su pen=INF CODE @[0,12)
+  space w=257su stretch=1 CODE @[0,12)
+  word "#let:" w=2561su pen=INF CODE @[0,12)
+  space w=257su stretch=1 CODE @[0,12)
+  word "dropped" w=3585su pen=INF CODE @[0,12)
+  space w=257su stretch=1 CODE @[0,12)
+  word "up" w=1025su pen=INF CODE @[0,12)
+  space w=257su stretch=1 CODE @[0,12)
+  word "to" w=1025su pen=INF CODE @[0,12)
+  space w=257su stretch=1 CODE @[0,12)
+  word "the" w=1537su pen=INF CODE @[0,12)
+  space w=257su stretch=1 CODE @[0,12)
+  word "next" w=2049su pen=INF CODE @[0,12)
+  space w=257su stretch=1 CODE @[0,12)
+  word "blank" w=2561su pen=INF CODE @[0,12)
+  space w=257su stretch=1 CODE @[0,12)
+  word "line" w=2049su pen=INF CODE @[0,12)
+top pid=1 units=1
  unit text indent=0su anchor="h-1"
   word "Heading" w=5736su pen=INF BOLD x1.60 @[15,28)
   space w=411su stretch=1 BOLD x1.60 @[15,28)
   word "after" w=4098su pen=INF BOLD x1.60 @[15,28)
-top pid=1 units=1
+top pid=2 units=1
  unit text indent=0su
   word "Para" w=2049su pen=INF @[30,67)
   hyphen bw=513su pen=0.70 @[30,67)

@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="7">Before.</p>
+<div class="tsr-err" data-pid="1" data-s="9" data-e="21" title="SyntaxError: invalid JavaScript in this block">&#9888; SyntaxError: invalid JavaScript in this block</div>
+<p data-pid="2" data-s="23" data-e="39">Middle 3.</p>
+<div class="tsr-err" data-pid="3" data-s="41" data-e="55" title="SyntaxError: invalid JavaScript in this block">&#9888; SyntaxError: invalid JavaScript in this block</div>
+<p data-pid="4" data-s="57" data-e="72">After 12.</p>
+</div>

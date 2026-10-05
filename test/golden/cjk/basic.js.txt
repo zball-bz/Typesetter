@@ -1,4 +1,8 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(para(__at(text("这是一个中文排版引擎的演示段落，它会把每个汉字作为独立的块来处理，并通过字距的微小伸缩实现两端对齐，这正是传统排版的做法。"),0,183)),0,183));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("这是一个中文排版引擎的演示段落，它会把每个汉字作为独立的块来处理，并通过字距的微小伸缩实现两端对齐，这正是传统排版的做法。"),0,183)),0,183));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=e143f1f74d1311a3;184;[]

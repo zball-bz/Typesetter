@@ -1,0 +1,4 @@
+doc @[0,21)
+  error @[0,12) code="reserved-name" msg="'__x': names starting with __ are reserved for the engine"
+  para @[14,20)
+    text @[14,20) str="After."

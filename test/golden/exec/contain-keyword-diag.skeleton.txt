@@ -1,0 +1,4 @@
+doc @[0,51)
+  para @[0,7) lines=1
+  para @[9,42) lines=1
+  para @[44,50) lines=1

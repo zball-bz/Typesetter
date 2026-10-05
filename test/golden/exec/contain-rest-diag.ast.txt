@@ -1,0 +1,7 @@
+doc @[0,88)
+  code-let @[0,42) js=" f = () => { throw new Error(\"boom\") }"
+  para @[44,51)
+    text @[44,51) str="Before."
+  code-block @[53,70) js=" let a = f(); "
+  para @[72,87)
+    text @[72,87) str="Never executed."

@@ -1,0 +1,6 @@
+doc @[0,24) [base]
+  para @[0,7) [base]
+    text @[0,7) [base] str="Before."
+  error @[9,16) [base] message="ReferenceError: aside is not defined" code="script-error"
+  para @[18,24) [base]
+    text @[18,24) [base] str="After."

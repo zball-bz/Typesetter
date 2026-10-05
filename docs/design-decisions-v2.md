@@ -74,6 +74,17 @@ This one model settles:
 - **Libraries**: `#use("./helpers.js")` hoists to a top-level `await import()`; the document function is async.
 - **Dynamic markup in deep code**: tagged template `` m`*bold* ${x}` `` — standard JS; the tag re-enters the WASM parser at runtime (also exposed as `m.parse(string)` for fence handlers, §4).
 
+**As built (remediation P0-05, 2026-10):**
+- **Hygiene.** The generated module has two scopes. The outer function binds the user-visible constructor names (`para`, `text`, `list`…), and user code may shadow them (`#let list = 1` is legal). The inner function receives the generated code's own aliases as parameters (`__p`, `__t`, `__a` …). Names starting with `__` are reserved (`reserved-name`), so user bindings never reach them.
+- **Error containment.**
+  - A top-level block that evaluates user JavaScript (a splice, or fence/region arguments) runs inside a frame. A throw becomes an error block at that place, and the style stack returns to the block's entry height.
+  - Fence and region handlers are contained at the call (`fence-error`, `region-error`).
+  - A `#{…}` that declares bindings, and a `#let` with a pattern or several declarators, run unframed so their bindings stay visible. If one of them throws, the rest of the document becomes one error block.
+- **Syntax errors.** A JavaScript SyntaxError is isolated on the failure path only, by bisecting the units that carry user code; each culprit becomes a `script-syntax` error block. This uses the unit table on the module's last line.
+- **Repeated `#let`.** The simple form `#let x = e` is hoisted, and a repeated `#let x` is a reassignment of the same binding. Closures therefore see the latest value.
+- **Parse errors.** Keyword heads (`#if`, `#for`, …), positional region or fence arguments, nested statements and unclosed statements become error blocks with diagnostics instead of invalid JavaScript.
+- The plan's target (MD-04, step P2-02) replaces this printed-JS form with a LowerProgram executed by one interpreter.
+
 **Execution boundary**: constructors are thin JS wrappers that append opcodes to a flat op buffer (typed arrays + string table). The buffer crosses into WASM once per document and is reconstructed into the content tree in C++. (Rejected alternative: constructors as direct WASM exports — workable but chattier; the buffer keeps the one-crossing-per-stage discipline.)
 
 ## 3. Splice grammar (`#`)
@@ -318,6 +329,7 @@ The TS PoC in `src/` is frozen as reference. The grammar can mature in parallel 
 #(expr)                  arbitrary expression splice (100% standard JS inside)
 #{ statements }          statement splice (braces stripped; 'let' lands in document scope)
 #let name = expr         binding; RHS ends at a newline at bracket depth 0, or ';'
+                           (a repeated #let name is a reassignment — remediation D-L02)
 #if (c) […] else […]     keyword form; 'else' continues only before '[' or 'if ('
 #for (const x of xs) […] keyword form; loop vars bind inside the content block
 #use("./mod.js")         hoisted to top-level await import(); document fn is async

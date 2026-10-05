@@ -1,5 +1,9 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(para(__at(text("内置 tsm 文法：Typesetter 标记语言自举高亮。"),0,58)),0,58));
-__emit(__at(val(await __fence("tsm", ({}), "= 标题与标签 <intro>\n\n正文有 *加粗*、`代码` 与 $a^2$；引用@intro，链接[站点](https://x.dev)。\n\n#!figure(src: \"a.png\", label: \"f\")\n图注 | 单元格\n#figure!\n\n```js\nconst x = 1;\n```\n\n- 列表项\n#let n = 42", 68)),60,302));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("内置 tsm 文法：Typesetter 标记语言自举高亮。"),0,58)),0,58));
+__emit(__a(__v(await __fence("tsm", ({}), "= 标题与标签 <intro>\n\n正文有 *加粗*、`代码` 与 $a^2$；引用@intro，链接[站点](https://x.dev)。\n\n#!figure(src: \"a.png\", label: \"f\")\n图注 | 单元格\n#figure!\n\n```js\nconst x = 1;\n```\n\n- 列表项\n#let n = 42", 68)),60,302));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=d56e4a222f3c464b;303;[]

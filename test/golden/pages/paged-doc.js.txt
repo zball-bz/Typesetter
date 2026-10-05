@@ -1,10 +1,16 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(heading(1, "top", __at(text("分页样例"),2,14)),0,14));
-__emit(__at(para(__at(text("分页是布局之上的后处理：内容按带切分，贪心装页，遇到孤行寡行、标题悬尾等违例时回退切点。这一段足够长，可以在窄页高下跨越页边界，从而测试寡行与孤行规则的实际效果，并让回退逻辑真正运行一次。"),22,304)),22,304));
-__emit(__at(heading(2, null, __at(text("保持规则"),309,321)),306,321));
-__emit(__at(para(__at(text("标题不落页尾；下面的代码块按逻辑行切分："),323,383)),323,383));
-__emit(__at(val(await __fence("json", ({}), "{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}", 393)),385,494));
-__emit(__at(__region("figure", ({src: "photos/x.png", alt: "样图", w: 200, h: 80, label: "fig-p"}), [[[__at(text("图与图注保持在同页。"),572,602)]]]),496,611));
-__emit(__at(para(__at(text("尾段：越过图之后继续排布，直至文档结束，引用"),613,679), __at(ref("fig-p"),679,685), __at(text("照常解析。"),685,700)),613,700));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__hd(1, "top", __a(__t("分页样例"),2,14)),0,14));
+__emit(__a(__p(__a(__t("分页是布局之上的后处理：内容按带切分，贪心装页，遇到孤行寡行、标题悬尾等违例时回退切点。这一段足够长，可以在窄页高下跨越页边界，从而测试寡行与孤行规则的实际效果，并让回退逻辑真正运行一次。"),22,304)),22,304));
+__emit(__a(__hd(2, null, __a(__t("保持规则"),309,321)),306,321));
+__emit(__a(__p(__a(__t("标题不落页尾；下面的代码块按逻辑行切分："),323,383)),323,383));
+__emit(__a(__v(await __fence("json", ({}), "{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}", 393)),385,494));
+/*79aac75c08ce336a[0*/{ const __h = __height(); try {
+__emit(__a(__region("figure", ({src: "photos/x.png", alt: "样图", w: 200, h: 80, label: "fig-p"}), [[[__a(__t("图与图注保持在同页。"),572,602)]]]),496,611));
+} catch (__e) { __fail(0, __e, __h); } }/*79aac75c08ce336a]0*/
+__emit(__a(__p(__a(__t("尾段：越过图之后继续排布，直至文档结束，引用"),613,679), __a(__rf("fig-p"),679,685), __a(__t("照常解析。"),685,700)),613,700));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=79aac75c08ce336a;701;[[496,611,2]]

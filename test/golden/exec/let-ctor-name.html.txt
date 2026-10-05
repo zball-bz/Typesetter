@@ -1,0 +1,9 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="17" style="position:relative;height:54.391px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="26" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">the list sugar still works</span></div>
+<div class="tsr-line" data-s="29" data-e="40" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="29">second item</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="59" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="24" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The user binding: 1.</span></div>
+</div>
+</div>

@@ -1,7 +1,13 @@
-export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
-__emit(__at(heading(1, "top", __at(text("Regions"),2,9)),0,9));
-__emit(__at(__region("figure", ({label: "fig1"}), [[[__at(text("A pretend figure body line"),41,67)], [__at(text("continuing on a second source line."),68,103)]]]),17,112));
-__emit(__at(__region("aside", ({}), [[[seq(__at(text("Side note with "),122,136), __at(strong(__at(text("emphasis"),138,146)),137,147), __at(text(" inside"),148,154))]], __at(list(false, 1, __at(item(__at(para(__at(text("a nested bullet"),157,172)),157,172)),155,172), __at(item(__at(para(__at(text("another bullet"),175,189)),175,189)),173,189)),155,172)]),114,197));
-__emit(__at(para(__at(text("The figure is "),199,212), __at(ref("fig1"),213,218), __at(text(" and the section is "),219,237), __at(ref("top"),238,242), __at(text("."),242,243)),199,243));
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__hd(1, "top", __a(__t("Regions"),2,9)),0,9));
+/*4fc83ccf997f266c[0*/{ const __h = __height(); try {
+__emit(__a(__region("figure", ({label: "fig1"}), [[[__a(__t("A pretend figure body line"),41,67)], [__a(__t("continuing on a second source line."),68,103)]]]),17,112));
+} catch (__e) { __fail(0, __e, __h); } }/*4fc83ccf997f266c]0*/
+__emit(__a(__region("aside", ({}), [[[__sq(__a(__t("Side note with "),122,136), __a(__b(__a(__t("emphasis"),138,146)),137,147), __a(__t(" inside"),148,154))]], __a(__l(false, 1, __a(__it(__a(__p(__a(__t("a nested bullet"),157,172)),157,172)),155,172), __a(__it(__a(__p(__a(__t("another bullet"),175,189)),175,189)),173,189)),155,172)]),114,197));
+__emit(__a(__p(__a(__t("The figure is "),199,212), __a(__rf("fig1"),213,218), __a(__t(" and the section is "),219,237), __a(__rf("top"),238,242), __a(__t("."),242,243)),199,243));
+})(__s);
 };
 //# sourceURL=tsm:doc
+//# tsm-units=4fc83ccf997f266c;244;[[17,112,2]]

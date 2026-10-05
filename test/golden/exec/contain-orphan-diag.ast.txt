@@ -1,0 +1,8 @@
+doc @[0,25)
+  para @[0,7)
+    text @[0,7) str="Before."
+  para @[9,16)
+    splice @[9,15) expr="aside"
+    text @[15,16) str="!"
+  para @[18,24)
+    text @[18,24) str="After."

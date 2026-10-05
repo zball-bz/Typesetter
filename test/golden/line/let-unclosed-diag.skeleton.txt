@@ -1,3 +1,4 @@
 doc @[0,68)
+  error @[0,12) code=statement-unclosed
   heading1 @[13,28)
   para @[30,67) lines=1
