@@ -1156,7 +1156,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/hyphen-url-not-discretionary` | adhoc | medium | P4-08 | |
 | `break-layout-pages/break-policy-config-knobs` | adhoc | medium | P4-06, P4-08 | |
 | `break-layout-pages/parshape-prefix-form` | adhoc | high | P3-08 | |
-| `break-layout-pages/float-tracker-replay` | adhoc | high | P1-15 | |
+| `break-layout-pages/float-tracker-replay` | adhoc | high | P1-15 | grep:plan P1-15 |
 | `break-layout-pages/float-model-closed` | adhoc | high | P3-15 | |
 | `break-layout-pages/unit-kind-switch` | adhoc | high | P1-18 | |
 | `break-layout-pages/nested-stream-copies` | adhoc | high | P1-17 | |
@@ -1180,7 +1180,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/float-indent-geometry` | issue | low | P3-08 | |
 | `break-layout-pages/paged-atoms-clipped` | issue | medium | P3-12 | |
 | `break-layout-pages/break-cache-robustness` | issue | low | P0-11, P1-14 | grep:plan P1-14 |
-| `break-layout-pages/api-hosts-layout-policy` | issue | medium | P1-03, P1-15 | |
+| `break-layout-pages/api-hosts-layout-policy` | issue | medium | P1-03, P1-15 | grep:plan P1-15 |
 | `break-layout-pages/baseline-not-communicated` | issue | low | P1-18 | |
 | `break-layout-pages/doc-drift` | issue | low | P1-15, P3-12 | |
 | `break-layout-pages/missed:0` | missed | medium | P1-18, P3-12 | |
@@ -1279,7 +1279,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/literate-cpp-special-case` | adhoc | low | P3-22 | |
 | `api-measure-code/grid-is-codeblock-only` | adhoc | medium | P3-11 | |
 | `api-measure-code/sidecar-api-layer-rewrite` | adhoc | high | P2-13 | |
-| `api-measure-code/doc-typeset-hosts-layout-logic` | adhoc | medium | P1-15 | |
+| `api-measure-code/doc-typeset-hosts-layout-logic` | adhoc | medium | P1-15 | grep:plan P1-15 |
 | `api-measure-code/adhoc-invalidation-flags` | adhoc | high | P1-03 | grep:plan P1-03 |
 | `api-measure-code/adhoc-caches` | adhoc | high | P1-21 | |
 | `api-measure-code/per-feature-api-entry-points` | adhoc | medium | P3-37 | |

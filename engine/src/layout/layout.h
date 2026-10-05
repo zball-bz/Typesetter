@@ -1,4 +1,4 @@
-// Flow units + breaks + vertical metrics → frames (document-model §8).
+// Flow units → breaks → frames with vertical metrics (document-model §8).
 #pragma once
 #include "../break/break.h"
 
@@ -41,14 +41,24 @@ struct ParaFrame {
   std::vector<LineBox> lines;
 };
 
+// the breaks layout made for a text unit (tsrc --stage=breaks)
+struct UnitBreaks {
+  u32 pid = 0, unit = 0;
+  BreakResult r;
+};
+
 struct LayoutResult {
   i64 docHeightSu = 0;
   std::vector<ParaFrame> paras;
+  std::vector<UnitBreaks> breaks;  // text units, in order
 };
 
+// Breaks and lays out (plan P1-15: breaking is layout's; the float
+// exclusions live at its cursor); overfull streams are reported to diags.
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
-                       Interner& strs, const Config& cfg);
+                       Interner& strs, const Config& cfg, DiagSink& diags);
 
+std::string dumpBreaks(const LayoutResult& lr);
 std::string dumpLayout(const LayoutResult& lr);
 
 }  // namespace tsr

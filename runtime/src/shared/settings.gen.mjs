@@ -7,7 +7,6 @@ export const SETTINGS = Object.freeze({
     "prec": "HostOnly",
     "affects": [
       "Emit",
-      "Break",
       "Layout",
       "Paint"
     ]
@@ -37,7 +36,6 @@ export const SETTINGS = Object.freeze({
     "affects": [
       "Emit",
       "Measure",
-      "Break",
       "Layout",
       "Paint"
     ]
@@ -48,7 +46,6 @@ export const SETTINGS = Object.freeze({
     "prec": "HostDefault",
     "affects": [
       "Emit",
-      "Break",
       "Layout",
       "Paint"
     ]
@@ -58,7 +55,6 @@ export const SETTINGS = Object.freeze({
     "def": 1.2,
     "prec": "HostDefault",
     "affects": [
-      "Break",
       "Layout",
       "Paint"
     ]
@@ -201,7 +197,7 @@ export const SETTINGS = Object.freeze({
     "def": 3,
     "prec": "HostDefault",
     "affects": [
-      "Break"
+      "Layout"
     ]
   },
   "cost.shrinkThreshold": {
@@ -209,7 +205,6 @@ export const SETTINGS = Object.freeze({
     "def": 0.37,
     "prec": "HostDefault",
     "affects": [
-      "Break",
       "Layout"
     ]
   },
@@ -218,7 +213,7 @@ export const SETTINGS = Object.freeze({
     "def": 0.6,
     "prec": "HostDefault",
     "affects": [
-      "Break"
+      "Layout"
     ]
   },
   "cost.cap": {
@@ -226,7 +221,7 @@ export const SETTINGS = Object.freeze({
     "def": 10000,
     "prec": "HostDefault",
     "affects": [
-      "Break"
+      "Layout"
     ]
   },
   "code.scale": {
@@ -418,7 +413,7 @@ export const POLICY = Object.freeze({
     384
   ]
 });
-export const STAGES = Object.freeze(["Compile","Execute","Ingest","Resolve","Emit","Measure","Break","Layout","Paginate","Paint"]);
+export const STAGES = Object.freeze(["Compile","Execute","Ingest","Resolve","Emit","Measure","Layout","Paginate","Paint"]);
 // the value of a dotted setting in a (partial) settings document, else its default
 export function settingOf(settings, path) {
   const [a, b] = path.split('.');

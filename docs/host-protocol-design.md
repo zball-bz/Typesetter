@@ -44,7 +44,7 @@ defaults, rows, the legacy option map, `settingsFromOptions`).
 | Resolve | engine | Once (it rewrites the instantiated tree) |
 | Emit | engine | PidRetry (re-run while math-text metrics arrive) |
 | Measure | engine | Resumable (the pull loop) |
-| Break, Layout, Paginate, Paint | engine | Reentrant (pure over earlier products) |
+| Layout (breaking included, plan P1-15), Paginate, Paint | engine | Reentrant (pure over earlier products) |
 
 `Doc::validThrough` records how far a document has run (it replaced the old
 `emitted`/`laidOut` flags); `invalidateFrom(stage)` drops the later products.

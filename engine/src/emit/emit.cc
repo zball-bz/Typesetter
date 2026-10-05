@@ -1835,20 +1835,5 @@ std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& str
   return out;
 }
 
-std::string dumpBreaks(const std::vector<TopBlock>& tops) {
-  std::string out;
-  for (const TopBlock& tb : tops) {
-    for (size_t ui = 0; ui < tb.units.size(); ui++) {
-      const FlowUnit& u = tb.units[ui];
-      if (u.kind != FlowUnit::K::Text) continue;
-      appendf(out, "top pid=%u unit=%zu lines=%zu cost=%.4f breakpoints=[", tb.pid, ui,
-              u.breakpoints.size(), u.breakCost);
-      for (size_t k = 0; k < u.breakpoints.size(); k++)
-        appendf(out, "%s%u", k ? "," : "", u.breakpoints[k]);
-      out += "]\n";
-    }
-  }
-  return out;
-}
 
 }  // namespace tsr

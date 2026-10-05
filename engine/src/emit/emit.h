@@ -73,9 +73,6 @@ struct TableCell {
   std::vector<BreakBlock> blocks;  // fuseLegacy(hl), for the legacy breaker
   std::vector<u32> blockStart;     // block b = hl.items [blockStart[b], blockStart[b+1])
   std::vector<LinebreakBlock> legacy;  // MIGRATION: the legacy emitter's blocks (fuseCheck)
-  std::vector<u32> breakpoints;
-  double breakCost = 0;
-  std::vector<u32> overfullLines;  // lines the breaker had to set Overfull
 };
 
 struct FlowUnit {
@@ -115,13 +112,6 @@ struct FlowUnit {
   StrRef imgSrc = 0, imgAlt = 0;
   Su imgW = 0, imgH = 0;
   u8 floatSide = 0;  // 0 = block; 1 = left float, 2 = right float (F2)
-  // F2 float tracker decisions (figure-design.md §4), stored at break time
-  // and replayed verbatim by layout so the two phases cannot disagree:
-  Su narrow = 0;         // Text: width of the first narrowK lines
-  u32 narrowK = 0;       // Text: how many leading lines run beside the float
-  bool narrowLeft = false;
-  Su floatShiftSu = 0;   // stacked float: placed this far below its cursor (F2 stacking)  // Text: float on the left (lines shift right)
-  Su floatClearSu = 0;   // any unit: extra advance to clear the active float
   const MathBox* mathBox = nullptr;  // Math: display formula
   StrRef eqTag = 0;                  // Math: "(n)" right-margin number
   u32 tCols = 0;               // Table: column count
@@ -133,11 +123,6 @@ struct FlowUnit {
   std::vector<BreakBlock> blocks;
   std::vector<u32> blockStart;
   std::vector<LinebreakBlock> legacy;  // MIGRATION: the legacy emitter's blocks (fuseCheck)
-  // filled by the typeset loop (Text units)
-  std::vector<u32> breakpoints;
-  double breakCost = 0;
-  std::vector<u32> overfullLines;  // lines the breaker had to set Overfull (layout
-                                   // shrinks them to the limit, never past it)
 };
 
 struct TopBlock {
@@ -189,7 +174,6 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
                        const StyleTable& styles);
 std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
                        const StyleTable& styles);
-std::string dumpBreaks(const std::vector<TopBlock>& tops);
 std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& strs);
 
 }  // namespace tsr

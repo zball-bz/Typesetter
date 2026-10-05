@@ -220,7 +220,6 @@
       "prec": "HostOnly",
       "affects": [
         "Emit",
-        "Break",
         "Layout",
         "Paint"
       ],
@@ -255,7 +254,6 @@
       "affects": [
         "Emit",
         "Measure",
-        "Break",
         "Layout",
         "Paint"
       ],
@@ -268,7 +266,6 @@
       "prec": "HostDefault",
       "affects": [
         "Emit",
-        "Break",
         "Layout",
         "Paint"
       ],
@@ -280,7 +277,6 @@
       "def": 1.2,
       "prec": "HostDefault",
       "affects": [
-        "Break",
         "Layout",
         "Paint"
       ]
@@ -447,7 +443,7 @@
       "def": 3,
       "prec": "HostDefault",
       "affects": [
-        "Break"
+        "Layout"
       ],
       "ctype": "u8"
     },
@@ -457,7 +453,6 @@
       "def": 0.37,
       "prec": "HostDefault",
       "affects": [
-        "Break",
         "Layout"
       ]
     },
@@ -467,7 +462,7 @@
       "def": 0.6,
       "prec": "HostDefault",
       "affects": [
-        "Break"
+        "Layout"
       ]
     },
     "cost.cap": {
@@ -476,7 +471,7 @@
       "def": 10000.0,
       "prec": "HostDefault",
       "affects": [
-        "Break"
+        "Layout"
       ]
     },
     "code.scale": {

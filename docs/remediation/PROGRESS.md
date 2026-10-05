@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-15
+- 下一步：P1-16
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -40,7 +40,7 @@
 | P1-12 | HList 与 run 实例 | done | grep:plan P1-12 | 2026-10-06 | 结构性提交 0 变化（全部现有 golden 字节不变）；+111 个 hlist golden（每个排版用例一份） | engine/src/shape/hlist.{h,cc}：HItem 24B（IK Box/Glue/Penalty/Disc，GC Word/InterChar/Autospace/Blank/ObjectSpace，IA_* 属性，run，aux，w，x，cold）、ColdRec（源 span、rawPx、blank、迁移用 capSu、anchor）、AdvanceSpec 32B（Measured/Defined/Fixed/MeasuredMinusBlanks/KernCtx/Object）、DiscRec、RunRec（face/link/SynKind/copyText/RealizeClass/anchor）；TeX 合法性写在头文件，lintHList（每边界至多一个断点、开标点后与闭标点前无断点、run 连续且 BlankBearing/Pinned/Object 单盒、LetterSpaced 盒后有 InterChar）在每个 golden 上运行；emit 以旧逐节点逻辑直接产出 HItem（InlineSink 接口，块遍历共享），finish() 按今天的断行结构写成 TeX 形式并加 InterChar 胶，run 随项生成；resolveWidths 读 AdvanceSpec；fuseLegacy 为规定的降级表（模板化：生产只保留断行器读的 BreakBlock 五字段，完整 LinebreakBlock 只供 blocks dump 与校验）；emit/legacy.cc 原样保留旧行内发射器作为 CI 预言机（仅原生链接），黄金运行器与 tsrc --fuse-check 逐字段比较——111 个用例及真实/typst/博客语料共 650 篇全部相等；layout 四个行循环与 renderLineBox 改读 item 区间与 run 实例（blockStart 映射断点，块区间只用于 dump）；tsrc --stage=hlist（数值罚分、类、span，修复 dump-hides-finite-penalties）；性能：同时把词宽表改为按字符串下标的槽表（哈希查找占 WASM 引擎约五分之一）、px 格式化改为精确整数实现（render −2ms），87K update 29.5ms（同机交替测 HEAD 29.6–30.0）；docs/shaping-design.md §5 |
 | P1-13 | InlineObject 注册表与扁平化表 | done | grep:plan P1-13 | 2026-10-06 | 17 个含公式用例的 hlist golden（增加对象记录：object 盒带种类/部件/上下伸、对象表）；+4 用例（inline/object-image、inline/object-raw、inline/hardbreak、inline/object-unsupported-diag），其余全部字节不变 | 扁平化表 = schema 每个 kind 的 inline 列（text/container/code/object/break/error/skip/unsupported），gen-schema 强制每行都有并生成 KindInfo::inl，emit 行内遍历按它分派（封闭，无 default 递归）；shape/objects.{h,cc} 对象注册表（math/image/raw/error，边界类 firstCC/lastCC），HList 增加 parts（每部件 w/asc/desc）；数学成为对象：emit 时度量齐全即展开，否则留一个占位部件并标记 hasDeferred，resolveWidths 对该列表单独排版并拼接（不再整篇重 emit；显示公式保持至 P3-26），黄金流程中 Id_(A)、f(x) "if" x > 0 走拼接路径且 fuseCheck 相等；行内 image/raw 成为对象（声明或拉取的尺寸，基线上的盒；无尺寸/不安全为 1em 虚线占位并给 image-src），修复行内图片被静默丢弃；不支持的 kind 成为 error 对象（⚠ kind）并给 shape-unsupported，黄金运行器对非 unsupported 用例出现该诊断即失败（语料扫描为零）；hardbreak → Penalty(-INF)，经 fuseLegacy 成为块罚分 -BREAK_INF，适配器映射为 Penalty(Forced)，断行器对强制断点前的行用 fil、layout 视为段末（不两端对齐、复制为换行）；layout 三处高度副本已在 P1-12 合一，改走 objectPart 垫片；渲染按对象种类分派（公式盒、img、tsr-iraw、错误文本），语义渲染器同样绘出行内 image/raw；record-fixtures 支持 X.tree.json（无表层语法词汇的原始 ops 用例），contract 检查把 span.tsr-iraw 视为可信内容；docs/shaping-design.md §6 |
 | P1-14 | KP 正式化与校验缓存 | done | grep:plan P1-14 | 2026-10-06 | 0（全部 golden 字节不变，115 个用例） | break.cc 改为 TeX 活动表：节点的行一旦 Overfull 即失活，Forced 断点使之前所有节点失活，只在 parshape 前缀内按行数分开保存节点（之后每个断点一个，按全序取优），去掉 ±5 窗口、±1 行数剪枝与重试阶梯；救援并入末遍（所有活动节点在某断点都 Overfull 时按全序取最优者在此断开）；BreakParams{cost, tolerance, emergencyStretch}，默认只跑末遍（与今天一致），容差遍与应急伸展遍按设计实现并有单测；缓存键为条目字节 + 块数 + 行宽 + 参数的 128 位哈希（MurmurHash3 x64_128 的块步骤），命中时以条目数校验，LRU 预算按结果字计；i64 su 前缀和与 -ffp-contract=off 已在 P0-12；语料对比（真实文档/typst/博客 539 篇 × 300/640px）：133 个单元的断点变化，106 个代价更低，其余 27 个（24 篇）代价更高者全部是旧窗口搜索把内容挤进多条 Overfull 救援行（救援行不计代价），新结果 Overfull 行严格更少，无一例更差；性能：未缓存 KP 在 HoTT + 40 章 pbr-zh × 两种宽度上 50.0 → 38.0ms；bench 87K update 29.1ms、relayout 56.7ms，均在预算内，无需有界活动模式 |
-| P1-15 | 断行移入布局（ExclusionMap） | todo | | | | |
+| P1-15 | 断行移入布局（ExclusionMap） | done | grep:plan P1-15 | 2026-10-06 | 0（全部 golden 字节不变） | layoutDoc 自己断行（breakLinesCached，overfull-line 诊断随之移入 layout，顺序不变）：段落、浮动题注（按图宽）、表格格（同一 colW 公式）、sidecar 行（按 sidebarW）；浮动追踪器改为 layout.cc 中的 ExclusionMap，在 layout 自己的游标处计算，与游标共用一个 gapBefore()，按今天的前缀 ParShape 规则（以 baseLeading 计遮挡、同侧堆叠取最宽、异侧与非文本单元清除）逐位复现；删除 Doc::typeset 的逐 kind 循环、FlowUnit 的五个重放字段（narrow/narrowK/narrowLeft/floatShiftSu/floatClearSu）与断点三字段（FlowUnit 与 TableCell），断点结果记录在 LayoutResult::breaks（dumpBreaks 读它）；stages.def 删除 Break（并入 Layout），schema 设置行 affects 中的 Break 改为 Layout（8 行），products breaks→Layout，lint-arch 把 break/ 归入 Layout；figure-design 的 "under-clears" 更正为 "over-clears" 并改写追踪器说明 |
 | P1-16 | 与宽度无关的 emit（SizeSpec） | todo | | | | |
 | P1-17 | 统一行物化（materializeLines） | todo | | | | |
 | P1-18 | 盒树、布局器注册表、Fragment、DisplayList | todo | | | | |
@@ -166,6 +166,7 @@
 | P1-13 | 对象的边界类只记录、暂不参与边界判断：对象沿用公式规则（其后可断、其后紧接闭标点则禁断），只有公式产生 CJK autospace；行内图片忽略 scale（只用 w/h） | 边界类由整形器的成对规则读取（P4-02）；scale 依赖版心宽度，宽度无关的 emit 在 P1-16 | P1-16、P4-02 |
 | P1-13 | 语义渲染器（静态导出）也改为绘出行内 image/raw（对象行），其余 kind 保持原有递归 | 同一缺陷的另一条输出路径（博客静态页走它）；块级进入行内的处理留给 P2-11/P3-17 | P2-11、P3-17 |
 | P1-13 | hardbreak 与行内 raw 的用例用 X.tree.json 构造原始 ops（record-fixtures 用运行时 OpBuf 编码，G3 照常校验） | 两者都没有表层语法（hardbreak 语法保留未开放；raw 只在区域处理器中可得） | 语法开放后可改为普通用例 |
+| P1-15 | ExclusionMap 先以今天的追踪器算术实现（剩余遮挡高度、遮挡宽度、侧别），而不是设计中的几何矩形 + available()/clearY() 接口 | 计划要求本步"先复现今天的前缀 ParShape"、golden 不变；几何矩形与保守行带需要真实行高，属于 ParShape 步骤 | ParShape/保守行带落地的步骤（T6，P1-17 之后） |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

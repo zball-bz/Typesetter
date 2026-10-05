@@ -104,16 +104,119 @@ bool joinsSpace(const HList& h, u32 ihi) {
   return false;
 }
 
+// The gap before a unit: one rule for the cursor and the exclusions.
+Su gapBefore(u32 ui, const FlowUnit& u, bool firstBlock, Su paraGap) {
+  return ui > 0 ? (u.tightAbove ? paraGap / 3 : paraGap) : (firstBlock ? 0 : paraGap);
+}
+
+// The float exclusions of the flow (plan P1-15; design T6 "ExclusionMap"):
+// the F2 tracker (figure-design.md §4) that Doc::typeset used to run ahead
+// of layout and replay through five fields on the units, now at layout's
+// own cursor. It reproduces today's prefix ParShape exactly — occlusion
+// counted from the float's top in baseLeading lines, a same-side float
+// stacked below (the widest of the stack occludes), an opposite-side float
+// and every non-text unit clearing — so breaks and lines are unchanged;
+// conservative bands over real line heights come with ParShape (T6).
+class ExclusionMap {
+ public:
+  ExclusionMap(Su baseLeading, Su paraGap, Su emGap) : lead_(baseLeading), paraGap_(paraGap), emGap_(emGap) {}
+  // the cursor moves down by a gap
+  void advance(Su gap) {
+    if (remain_ > 0) {
+      remain_ -= gap;
+      if (remain_ < 0) remain_ = 0;
+    }
+  }
+  // a float arriving while one is active: same side → stacked below the
+  // active one (`shift`); the other side → the active one is cleared first
+  // (`clear`) — real-world-report.md: Wikipedia opens with two thumbnails
+  void arrive(u8 side, Su& shift, Su& clear) {
+    shift = clear = 0;
+    if (remain_ > 0 && side_ == side) {
+      shift = (Su)remain_;
+    } else if (remain_ > 0) {
+      clear = (Su)remain_;
+      remain_ = 0;
+      occl_ = 0;
+    }
+  }
+  // the float placed: image + caption + one gap of clearance, beside the
+  // measure's edge
+  void add(u8 side, Su shift, Su imgW, Su imgH, i64 captionH) {
+    remain_ = shift + (i64)imgH + captionH + paraGap_;
+    Su occl = imgW + emGap_;
+    occl_ = shift > 0 && occl_ > occl ? occl_ : occl;
+    side_ = side;
+  }
+  // a non-text unit clears the float: the advance that does it
+  Su clear() {
+    if (remain_ <= 0) return 0;
+    Su c = (Su)remain_;
+    remain_ = 0;
+    occl_ = 0;
+    return c;
+  }
+  // the line widths of a paragraph starting here: the prefix beside the
+  // float, then the measure
+  LineWidths widths(Su lineWidth, bool& fromLeft) const {
+    LineWidths lw{lineWidth};
+    fromLeft = false;
+    if (remain_ > 0 && occl_ > 0 && occl_ < lw.constant - 64) {
+      lw.narrow = lw.constant - occl_;
+      lw.narrowK = (u32)((remain_ + lead_ - 1) / lead_);
+      fromLeft = side_ == 1;
+    }
+    return lw;
+  }
+  // the paragraph's lines, counted in baseLeading
+  void consume(size_t lines) {
+    if (remain_ > 0) {
+      remain_ -= (i64)lines * lead_;
+      if (remain_ < 0) remain_ = 0;
+    }
+  }
+
+ private:
+  Su lead_, paraGap_, emGap_;
+  i64 remain_ = 0;  // occlusion height left, measured from the cursor
+  Su occl_ = 0;     // the occluded width
+  u8 side_ = 0;
+};
+
 }  // namespace
 
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
-                       Interner& strs, const Config& cfg) {
+                       Interner& strs, const Config& cfg, DiagSink& diags) {
   LayoutResult lr;
   const Su measure = suFloorPx(cfg.widthPx);
   const Su baseLeading = suRoundPx(cfg.lineHeight * cfg.baseSizePx);
   const Su paraGap = suRoundPx(cfg.paraSpacingEm * cfg.baseSizePx);
   i64 y = 0;
   i64 floatBottomAbs = 0;  // doc-height watermark for a trailing float (F2)
+  ExclusionMap excl(baseLeading, paraGap, suRoundPx(cfg.baseSizePx));
+  bool firstBlock = true;
+  // Layout breaks its paragraphs (plan P1-15) with the cached KP (break.cc:
+  // keyed by exactly the DP inputs, shared across documents — the editing
+  // loop's fast path). A run wider than the line is set Overfull on a line
+  // of its own (the final-pass rescue) and reported once per stream.
+  BreakParams bparams;
+  bparams.cost = cfg.cost;
+  auto breakStream = [&](const std::vector<BreakBlock>& blocks, const HList& h, LineWidths lw) {
+    BreakResult r = breakLinesCached(blocks, lw, bparams);
+    if (!r.overfullLines.empty()) {
+      Span sp{};
+      for (const ColdRec& c : h.cold)
+        if (c.srcEnd > c.srcStart) {
+          if (sp.empty()) sp = Span{c.srcStart, c.srcEnd};
+          sp.start = std::min(sp.start, c.srcStart);
+          sp.end = std::max(sp.end, c.srcEnd);
+        }
+      diags.add(Sev::Warning, "overfull-line", sp,
+                std::to_string(r.overfullLines.size()) + " line(s) hold a run wider than the measure");
+    }
+    return r;
+  };
+  std::vector<BreakResult> cellBreaks;  // the current unit's cells
 
   for (size_t p = 0; p < tops.size(); p++) {
     const TopBlock& tb = tops[p];
@@ -125,15 +228,26 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
     i64 py = 0;
     for (u32 ui = 0; ui < tb.units.size(); ui++) {
       const FlowUnit& u = tb.units[ui];
-      if (ui > 0) py += u.tightAbove ? paraGap / 3 : paraGap;
-      if (u.floatClearSu > 0) py += u.floatClearSu;  // clear the active float
+      const Su gap = gapBefore(ui, u, firstBlock, paraGap);
+      if (ui > 0) py += gap;
+      excl.advance(gap);
+      Su floatShift = 0, clearSu = 0;
+      if (u.kind == FlowUnit::K::Image && u.floatSide != 0) excl.arrive(u.floatSide, floatShift, clearSu);
+      else if (u.kind != FlowUnit::K::Text) clearSu = excl.clear();  // every non-text unit clears the float
+      if (clearSu > 0) py += clearSu;
       const Su lineWidth = measure - u.indent;
+      cellBreaks.clear();
 
       if (u.kind == FlowUnit::K::Image && u.floatSide != 0) {
         // float box (figure-design.md §4): out of flow — zero advance; the
         // image at the measure's edge, caption rows beneath at the float
-        // width. The break phase stored matching narrowing on the units
-        // that flow beside it.
+        // width; the units that flow beside it narrow by the exclusion
+        i64 captionH = 0;
+        for (const TableCell& c : u.cells) {  // the caption breaks to the float width
+          cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{u.imgW}));
+          captionH += (i64)cellBreaks.back().breakpoints.size() * baseLeading;
+        }
+        excl.add(u.floatSide, floatShift, u.imgW, u.imgH, captionH);
         const Su boxLeft = u.floatSide == 1 ? u.indent
                                             : u.indent + lineWidth - u.imgW;
         LineBox line;
@@ -143,13 +257,13 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         line.width = u.imgW;
         line.height = u.imgH;
         if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
-        line.y = (Su)(py + u.floatShiftSu);  // stacked below an active float
+        line.y = (Su)(py + floatShift);  // stacked below an active float
         fr.lines.push_back(line);
-        i64 cy = py + u.floatShiftSu + u.imgH;
+        i64 cy = py + floatShift + u.imgH;
         for (u32 ci = 0; ci < (u32)u.cells.size(); ci++) {
           const TableCell& cell = u.cells[ci];
           u32 prevBp = 0;
-          for (u32 bp : cell.breakpoints) {
+          for (u32 bp : cellBreaks[ci].breakpoints) {
             LineItems r;
             const bool any = lineItems(cell.hl, cell.blockStart, prevBp, bp, r);
             prevBp = bp;
@@ -216,6 +330,8 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           gapSu = suRoundPx(cfg.baseSizePx * cfg.codeScale);
           lineWidthCode = lineWidth - u.sidebarW - gapSu;
           if (lineWidthCode < 64) lineWidthCode = 64;
+          for (const TableCell& c : u.cells)  // sidecar rows break to the sidebar
+            cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{u.sidebarW}));
         }
         (void)lineWidthFull;
         // ch grid (CH4, code-design.md §4): monospace is a metric contract —
@@ -404,7 +520,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             const TableCell& cell = u.cells[li];
             i64 cy = rowTop;
             u32 prevBp = 0;
-            for (u32 bp : cell.breakpoints) {
+            for (u32 bp : cellBreaks[li].breakpoints) {
               LineItems r;
               const bool any = lineItems(cell.hl, cell.blockStart, prevBp, bp, r);
               prevBp = bp;
@@ -477,6 +593,8 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         const Su padY = suRoundPx(kTableRowPadEm * cfg.baseSizePx);
         Su cellW = colW - 2 * padX;
         if (cellW < 64) cellW = 64;
+        for (const TableCell& c : u.cells)  // each cell breaks to its content width
+          cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{cellW}));
         const size_t nRows = u.cells.size() / u.tCols;
         auto addRule = [&](i64 yy) {
           LineBox rl;
@@ -493,10 +611,11 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           i64 rowBottom = rowTop + baseLeading;
           for (u32 c = 0; c < u.tCols; c++) {
             const TableCell& cell = u.cells[r * u.tCols + c];
+            const BreakResult& cb = cellBreaks[r * u.tCols + c];
             i64 cy = rowTop;
             u32 prevBp = 0;
-            for (size_t cli = 0; cli < cell.breakpoints.size(); cli++) {
-              const u32 bp = cell.breakpoints[cli];
+            for (size_t cli = 0; cli < cb.breakpoints.size(); cli++) {
+              const u32 bp = cb.breakpoints[cli];
               LineItems lr;
               const bool any = lineItems(cell.hl, cell.blockStart, prevBp, bp, lr);
               prevBp = bp;
@@ -512,8 +631,8 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               LineBox line;
               line.unitIdx = ui;
               line.cellIdx = (i32)(r * u.tCols + c);
-              line.overfull = std::binary_search(cell.overfullLines.begin(),
-                                                 cell.overfullLines.end(), (u32)cli);
+              line.overfull = std::binary_search(cb.overfullLines.begin(),
+                                                 cb.overfullLines.end(), (u32)cli);
               line.blockBegin = lr.lo;
               line.blockEnd = lr.hi;
               line.itemBegin = lr.ilo;
@@ -541,8 +660,13 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
       const HList& h = u.hl;
       u32 prev = 0;
       bool firstLine = true;
-      for (size_t li = 0; li < u.breakpoints.size(); li++) {
-        u32 bp = u.breakpoints[li];
+      bool narrowLeft = false;
+      const LineWidths lw = excl.widths(lineWidth, narrowLeft);
+      lr.breaks.push_back({tb.pid, ui, breakStream(u.blocks, u.hl, lw)});
+      const BreakResult& br = lr.breaks.back().r;
+      excl.consume(br.breakpoints.size());
+      for (size_t li = 0; li < br.breakpoints.size(); li++) {
+        u32 bp = br.breakpoints[li];
         LineItems r;
         const bool any = lineItems(h, u.blockStart, prev, bp, r);
         prev = bp;
@@ -563,10 +687,10 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         line.left = u.indent;
         line.width = lineWidth;
         // F2 parshape replay: the first narrowK lines run beside the float
-        const bool narrowed = li < (size_t)u.narrowK && u.narrow > 0;
+        const bool narrowed = li < (size_t)lw.narrowK && lw.narrow > 0;
         if (narrowed) {
-          line.width = u.narrow;
-          if (u.narrowLeft) line.left += lineWidth - u.narrow;
+          line.width = lw.narrow;
+          if (narrowLeft) line.left += lineWidth - lw.narrow;
         }
         line.srcSpan = f.span;
         line.endsWithHyphen = endsHyphen;
@@ -577,10 +701,10 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         // real line boundary for copy
         const bool isLast = (bp == u.blocks.size()) || u.ragged || endsForced(h, r.ihi, u.blockStart[bp]);
         const bool overfull =
-            std::binary_search(u.overfullLines.begin(), u.overfullLines.end(), (u32)li);
+            std::binary_search(br.overfullLines.begin(), br.overfullLines.end(), (u32)li);
         line.overfull = overfull;
         double slackPx = narrowed
-                             ? suToPx(u.narrow) - naturalPx
+                             ? suToPx(lw.narrow) - naturalPx
                              : (cfg.widthPx - suToPx(u.indent)) - naturalPx;
         // a line without stretchable glue (all URL pieces / one unbreakable
         // token) cannot be justified — TeX's underfull box; it sets ragged
@@ -624,10 +748,22 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
     y += py;
     if (p + 1 < tops.size()) y += paraGap;
     lr.paras.push_back(std::move(fr));
+    firstBlock = false;
   }
   if (floatBottomAbs > y) y = floatBottomAbs;  // a trailing float still shows
   lr.docHeightSu = y;
   return lr;
+}
+
+std::string dumpBreaks(const LayoutResult& lr) {
+  std::string out;
+  for (const UnitBreaks& b : lr.breaks) {
+    appendf(out, "top pid=%u unit=%u lines=%zu cost=%.4f breakpoints=[", b.pid, b.unit, b.r.breakpoints.size(),
+            b.r.cost);
+    for (size_t k = 0; k < b.r.breakpoints.size(); k++) appendf(out, "%s%u", k ? "," : "", b.r.breakpoints[k]);
+    out += "]\n";
+  }
+  return out;
 }
 
 std::string dumpLayout(const LayoutResult& lr) {

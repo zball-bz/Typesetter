@@ -99,8 +99,9 @@ struct LineWidths {
 };
 ```
 
-A `FloatTracker` runs inside `Doc::typeset()`'s unit walk (the only place
-that already visits units in reading order with breakpoints in hand):
+The float exclusions live in layout (plan P1-15: `ExclusionMap` in
+`layout.cc`, at layout's own cursor — it used to be a `FloatTracker` in
+`Doc::typeset()` whose decisions layout replayed from five unit fields):
 
 - A float image unit registers `{side, occlW = imgW + gap, heightSu}`,
   where `heightSu` covers image + its caption (see below) + one paraGap of
@@ -111,14 +112,15 @@ that already visits units in reading order with breakpoints in hand):
 - Every **non-text** unit (code, table, math, rule, another figure) *clears*:
   the tracker charges the leftover height so layout starts it below the
   float. Simple, predictable; magazine-style code wrap is out of scope.
-- The tracker's decisions are *stored on the units* (`u.narrowK, u.narrow,
-  u.narrowLeft` for text; `u.floatClearSu` advance for clearing units;
-  placement on the image unit) — layout replays them verbatim instead of
-  re-deriving, so break and layout cannot disagree.
+- Layout breaks each paragraph with the widths the exclusions give at
+  that point and lays its lines out in the same pass, so breaking and
+  layout cannot disagree; no decision is stored on the units.
 
 Approximation, documented: occlusion is counted in `baseLeading` lines; a
-taller line (inline display-ish math) under-clears by the excess. Identical
-to TeX's `\parshape`-in-lines behaviour; acceptable for a blog.
+taller line (inline display-ish math) over-clears by the excess — the
+narrowed lines reach below the float. Identical to TeX's
+`\parshape`-in-lines behaviour; ParShape's conservative bands over real
+line heights replace it (design T6).
 
 Float figure caption: broken to the float's width and rendered inside the
 float box (below the image), reusing `TableCell` — `u.cells[0]` broken to
@@ -157,7 +159,7 @@ narrowed units get `left += occlW` when the float is on the left.
 - **F1** block figures: ops v5, image kind, NEED_IMAGES loop, sizing,
   centred layout + captions + numbering/refs, placeholder path, both
   serializers, copy, native+e2e.
-- **F2** float wrap: LineWidths prefix, FloatTracker, float caption cells,
+- **F2** float wrap: LineWidths prefix, float exclusions (ExclusionMap in layout since P1-15), float caption cells,
   clearing rules, tests.
 
 ## 8. As-built deltas
@@ -174,11 +176,12 @@ narrowed units get `left += occlW` when the float is on the left.
 - The KP breaker needed **zero changes** for parshape: the DP always carried
   the line index and called `widths.at(e.line)` — only the `LineWidths`
   struct grew the prefix form.
-- The float tracker lives in `Doc::typeset()`'s unit walk and mirrors
-  layout's exact gap accounting (tightAbove paraGap/3, inter-block paraGap);
-  decisions replay via `u.narrow/narrowK/narrowLeft/floatClearSu`. Float
-  registration charges image + caption rows + one paraGap of clearance;
-  narrowing engages only when `occl < measure − 1px`.
+- The float exclusions live in layout's unit walk (plan P1-15; they used to
+  run in `Doc::typeset()` and replay through `u.narrow/narrowK/narrowLeft/
+  floatClearSu`) and share layout's gap rule (`gapBefore`: tightAbove
+  paraGap/3, inter-block paraGap). Float registration charges image +
+  caption rows + one paraGap of clearance; narrowing engages only when
+  `occl < measure − 1px`.
 - Float caption rows advance at `baseLeading` flat (no vmet/math extents) —
   formulas in float captions may sit tight; block-figure captions are
   ordinary text units and unaffected. Non-para kids of a *float* figure are

@@ -19,7 +19,7 @@ TSR_EXPORT void tsr_debug_mock_measure(WasmDoc* d) {
 TSR_EXPORT const char* tsr_debug_dump(WasmDoc* d, const char* stage) {
   std::string_view s(stage);
   Doc& doc = d->doc;
-  if (s == "breaks") debugOut = dumpBreaks(doc.tops);
+  if (s == "breaks") debugOut = dumpBreaks(doc.layout);
   else if (s == "layout") debugOut = dumpLayout(doc.layout);
   else if (s == "html") debugOut = doc.render();
   else debugOut.clear();

@@ -70,8 +70,7 @@ for (const [path, row] of Object.entries(schema.settings ?? {})) {
 const STAGE_DIRS = {
   Resolve: ['engine/src/resolve'],
   Emit: ['engine/src/emit', 'engine/src/math', 'engine/src/code'],
-  Break: ['engine/src/break'],
-  Layout: ['engine/src/layout'],
+  Layout: ['engine/src/layout', 'engine/src/break'],
   Paint: ['engine/src/render'],
 };
 for (const [stage, dirs] of Object.entries(STAGE_DIRS)) {

@@ -5,12 +5,12 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 
 | setting | domain | default | precedence | affects | replaces |
 |---|---|---|---|---|---|
-| `host.width` | num:1:100000 | `300` | HostOnly | Emit, Break, Layout, Paint | `widthPx` |
+| `host.width` | num:1:100000 | `300` | HostOnly | Emit, Layout, Paint | `widthPx` |
 | `host.epsilonSu` | num:0:64 | `1` | HostOnly | Emit, Measure |  |
 | `doc.lang` | lang | `"zh-CN"` | HostDefault | Resolve, Paint | `lang` |
-| `doc.baseSize` | num:4:96 | `18` | HostDefault | Emit, Measure, Break, Layout, Paint | `baseSizePx` |
-| `doc.leading` | num:0.5:4 | `1.5` | HostDefault | Emit, Break, Layout, Paint | `lineHeight` |
-| `doc.parGap` | num:0:10 | `1.2` | HostDefault | Break, Layout, Paint |  |
+| `doc.baseSize` | num:4:96 | `18` | HostDefault | Emit, Measure, Layout, Paint | `baseSizePx` |
+| `doc.leading` | num:0.5:4 | `1.5` | HostDefault | Emit, Layout, Paint | `lineHeight` |
+| `doc.parGap` | num:0:10 | `1.2` | HostDefault | Layout, Paint |  |
 | `doc.cjkJustify` | num:0:4 | `0.6` | HostDefault | Emit, Layout |  |
 | `doc.cjkGlue` | num:0:1 | `0.1` | HostDefault | Emit |  |
 | `fonts.body` | font | `"\"Crimson Text\", Georgia, serif"` | HostDefault | Measure, Paint | `fontFamily` |
@@ -27,10 +27,10 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `break.mathRelAfter` | num:0:1e18 | `0.8` | HostDefault | Emit |  |
 | `break.mathRelBefore` | num:0:1e18 | `0.85` | HostDefault | Emit |  |
 | `break.mathBinAfter` | num:0:1e18 | `0.95` | HostDefault | Emit |  |
-| `cost.exponent` | int:1:4 | `3` | HostDefault | Break |  |
-| `cost.shrinkThreshold` | num:0:1 | `0.37` | HostDefault | Break, Layout |  |
-| `cost.shrinkCoeff` | num:0:100 | `0.6` | HostDefault | Break |  |
-| `cost.cap` | num:1:1e12 | `10000` | HostDefault | Break |  |
+| `cost.exponent` | int:1:4 | `3` | HostDefault | Layout |  |
+| `cost.shrinkThreshold` | num:0:1 | `0.37` | HostDefault | Layout |  |
+| `cost.shrinkCoeff` | num:0:100 | `0.6` | HostDefault | Layout |  |
+| `cost.cap` | num:1:1e12 | `10000` | HostDefault | Layout |  |
 | `code.scale` | num:0.1:4 | `0.85` | HostDefault | Emit, Layout |  |
 | `code.contIndent` | int:0:40 | `2` | HostDefault | Layout |  |
 | `code.sidecarFrac` | num:0.1:0.9 | `0.4` | HostDefault | Emit |  |
