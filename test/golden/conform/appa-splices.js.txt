@@ -19,9 +19,9 @@ __emit(__a(__p(__a(__t("Value splice: "),60,73), __v((who)), __a(__t(" and a cal
  let hidden = 40 + 2 
 /*8a63b5117b0fe68c]3*/
 /*8a63b5117b0fe68c[4*/{ const __h = __height(); try {
-__emit(__a(__p(__a(__t("A splice ends at punctuation: "),252,281), __v((who)), __a(__t(". Semicolon terminator: "),286,309), __v((who)), __a(__t("[not an argument]. Content argument desugars to a trailing argument: "),315,383), __v((strong)(__a(__t("bold text"),392,401))), __a(__t(". Literal hash: #who stays literal."),402,438)),252,438));
+__emit(__a(__p(__a(__t("Statement splice binds in document scope: "),201,242), __v((hidden)), __a(__t(". A splice ends at punctuation: "),250,281), __v((who)), __a(__t(". Semicolon terminator: "),286,309), __v((who)), __a(__t("[not an argument]. Content argument desugars to a trailing argument: "),315,383), __v((strong)(__a(__t("bold text"),392,401))), __a(__t(". Literal hash: #who stays literal."),402,438)),201,438));
 } catch (__e) { __fail(4, __e, __h); } }/*8a63b5117b0fe68c]4*/
 })(__s);
 };
 //# sourceURL=tsm:doc
-//# tsm-units=8a63b5117b0fe68c;439;[[0,18,6],[19,58,6],[60,176,2],[177,201,4],[252,438,2]]
+//# tsm-units=8a63b5117b0fe68c;439;[[0,18,6],[19,58,6],[60,176,2],[177,201,4],[201,438,2]]

@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-07
+- 下一步：P1-08
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -32,7 +32,7 @@
 | P1-04 | 字体面与根契约 | done | grep:plan P1-04 | 2026-10-06 | 103 个 html/paged 的根行（tools/golden-diff/root-line-only.mjs 核对只有根行变化） | FaceTable/faceOf/FaceKey；度量、vmet、resolveWidths、请求按 FaceId；族解析顺序含 mono×cjk（fonts.monoCjk）；CJK 斜体按直立测量；.tsr-doc 输出 lang、字体角色变量、基础字号；CSS 契约从变量绘制；shell chunkParas 解析根开标签（e2e 补丁测试）；数学文字经 faceOf |
 | P1-05 | syntax.def 与 CallAST | done | grep:plan P1-05 | 2026-10-06 | 0（skeleton/ast/js/tree 全部字节不变） | syntax.def（CLASS/INLINE/BLOCK/KEYWORD/RESERVED/TOKEN_TAGS/SUGAR/NODE 行）+ tools/gen-syntax.mjs 生成 syntax.gen.{h,cc}、shared/syntax.gen.{mjs,json}、docs/syntax-table.md（入 gen-all/G9）；CallAST：AstKind {Doc,Text,Comment,Call,Splice,Stmt,Error} + SugarId，节点 32 字节（static_assert），载荷为紧随节点的旁路记录，kids 为 arena 切片；通用 dump 由模板生成；codegen/fragment 按 slot 分派（Para→mathblock 窥孔保留）；reservedSpliceHead、kTokenTags/TOKEN_TAGS 由表生成；tsr2_abi syntaxVersion=1，abi.mjs 核对；AST 字节 87K 116680→64664（−45%），unitAstBytes 守住；原生 parse 0.428→0.405ms；docs/syntax-design.md，PackCC/SourceMap 文档漂移更正 |
 | P1-06 | SurfaceLexer | done | grep:plan P1-06 | 2026-10-06 | 0（现有用例全部字节不变）；+3 用例（inline/bracket-island、line/crlf-inline、line/trailing-blank） | LeafText：叶子各行以单个 \n 结构性连接（CRLF/行尾空白/容器前缀不进入词法器），所有扫描以叶子或体为界，偏移映射回原始 span；按 INLINE 行生成的 inlineOpener/kInlineOpenerByte 分派（纯文本成段追加，87K parse 0.43→0.19ms）；syntax/lexer.{h,cc}：lexCodeSpan（多反引号游程）、lexMath（只解码 \$）、lexComment、lexSplice、atomEnd、BracketMatcher（岛感知 + 普通回退，单次扫描记忆化，线性）；内容体/脚注/链接文字跨行；@[ 为 IdList；splitCells 用同一原子；SpliceP 存连接后的 JS 文本；删除 contiguous/plainGap/seekTo/scanSpliceHead；SYNTAX_VERSION 2；链接匹配方式偏差见偏差表 |
-| P1-07 | BlockAutomaton | todo | | | | |
+| P1-07 | BlockAutomaton | done | grep:plan P1-07 | 2026-10-06 | 容器 span：doc/structure、notes/cjk-glue、region/figure、doc/nested-base16/18、figure/float-in-list、exec/let-ctor-name、exec/nested-stmt-diag、line/crlf-inline、line/trailing-blank（skeleton/ast/js/tree/semantic/html/.ops）；行为：conform/appa-splices、conform/appb-lines、exec/contain-orphan-diag；+5 用例（line/tabs、line/interrupt-diag、line/fence-container-diag、line/blankblock-diag、region/resync-diag） | 容器协议 Prefix/Column/Explicit（tab 宽 4，span 随每个归属行扩展，空行结束引用）；fence/块注释/段内注释为 verbatim carry，容器退出即结束；fence 按内容列相对缩进去缩进，容器内 fence 传 ctx.lineOffsets；区域按名闭合，内层与随容器结束的区域报 region-unclosed，孤立闭合行为 region-orphan 错误块；段落打断逐条规则（空项、N≠1 不打断）；列表身份（标记类别、列）+ list-number 信息诊断；语句平衡到容器退出（结构连接、倍增窗口，线性），失败恢复到空行/块起始/容器退出；--%、}、; 后的行余部重新进入；SYNTAX_VERSION 3；偏差见偏差表 |
 | P1-08 | 行所有权与内容体 | todo | | | | |
 | P1-09 | 前端导出与工具链 | todo | | | | |
 | P1-10 | 元素注册表、索引与分阶段解析器 | todo | | | | |
@@ -143,6 +143,10 @@
 | P0-12 | 审计 compression 阈值改为相对空格宽度（不严于旧的 −2.5px）；e2e 增加 EXPECTED_DIAGS（doc/url-overlong、region/hott-row 预期 overfull-line） | 收缩极限是空格宽度的 0.37，18px 等宽字体的合法收缩可达 −4px；内容宽于版心时诊断是正确输出 | P3-07 审计提示统一时并入 |
 | P1-06 | 链接文字不用行内栈上的"弱 `[` 帧"，而是与内容体同一个括号计数器预先匹配：先按岛感知匹配，若岛吞掉了闭括号（或其后不是 `(url)`），回退到只认转义的普通匹配，此时体内的岛以该闭括号为界；内容体（`#f[`、`^[`）同样回退 | P0-04 的验收与 golden 要求 `[price $5](u) and $x$` 是链接、其后 `$x$` 是公式，而纯岛优先（含设计中的弱帧）会把 `$5](u) and $` 读成公式；弱帧还会让 `*a [b* c](u)` 的强调抢走链接（CommonMark 中链接优先），并改变今天的文本节点边界。预先匹配用一次扫描记下途经的所有括号，保持线性 | 无；P1-08 的 AtomTape 可直接替换匹配器内部的原子跳过 |
 | P1-06 | `@[…]` 的 IdList 只在一行内匹配，`\,` 不作为转义（反斜杠只转义 `]` 等字符本身） | 解析器之后 resolver 仍按逗号切分一个目标字符串，转义逗号无法表示；行内匹配与今天一致，避免病态输入的二次扫描 | P2-06（统一的 ref 语法）改为结构化 id 列表 |
+| P1-07 | golden 影响多于设计所列（4 个用例）：容器 span 还改动 doc/nested-base16/18、figure/float-in-list、exec/let-ctor-name、exec/nested-stmt-diag、line/crlf-inline、line/trailing-blank（P0-01…P1-06 新增的含列表/引用的用例）；行为改动 conform/appa-splices（`}` 后文本保留）、conform/appb-lines（`+` 与 `3.` 不再合并，`3.` 起始号生效）、exec/contain-orphan-diag（孤立闭合行为 region-orphan 错误块） | 设计的统计早于这些守护用例；三处行为改动正是本步要修的发现（trailing-text-after-block-closers-dropped、missed:5、region-error-recovery），逐个审阅 | 无 |
+| P1-07 | 语句失败的恢复界保留 P0-04 的"块起始行"停止条件（不只第一个空行），并扩展到容器内 | line/let-unclosed-diag 的验收要求 `#let x = f(1` 下一行的标题保留；只按空行恢复会吞掉它 | P1-08 的试探性 carry 沿用同一恢复界 |
+| P1-07 | 被迫闭合的区域只给 `region-unclosed` 诊断，不包成 Error 块；容器内多行语句的 JS 仍记原始 span，不拆成 JsText 片段 | 计划条目只要求诊断；容器内语句在 AST 中仍是 statement-nested-unsupported 错误，JS 文本无人使用 | P2-12 让容器内语句可执行时改为 JsText 片段 |
+| P1-07 | 空行结束引用（`> a⏎⏎> b` 为两个引用）；XFAIL +1（line/fence-container-diag：代码行缺 line-spans 的既有类别） | 前缀容器的继续规则（与 CommonMark 一致）；新用例必须含容器内 fence | P3-07 修复代码行 span 后整类移除 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

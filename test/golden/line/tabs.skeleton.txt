@@ -1,0 +1,11 @@
+doc @[0,137)
+  list bullet start=1 @[0,114)
+    item @[0,74)
+      para @[2,74) lines=2
+    item @[76,114)
+      para @[78,82) lines=1
+      list bullet start=1 @[84,114)
+        item @[84,114)
+          para @[86,114) lines=1
+  quote @[116,136)
+    para @[118,136) lines=1

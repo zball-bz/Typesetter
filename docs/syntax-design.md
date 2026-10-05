@@ -164,9 +164,54 @@ boundaries; see PROGRESS, deviations.)
 **Cells.** `splitCells` cuts a region line at `|` outside atoms and outside a
 splice's content arguments.
 
-## 6. Next steps
+## 6. The block automaton (as built from plan P1-07)
 
-- P1-07: the block automaton reads `BLOCK`.
+`linepass/linepass.cc` walks physical lines under one container protocol:
+
+| shape | container | continues on |
+|---|---|---|
+| Prefix | quote | lines with its `>` prefix (a blank line ends it) |
+| Column | list item | blank lines, and lines indented to its content column |
+| Explicit | region | every line until its named closer |
+
+Columns are computed in one place: a tab advances to the next multiple of 4
+(App B). Every non-blank line a container continues extends its span (and its
+list's), so containers cover all their lines.
+
+Per line: match the open containers (outermost first); a verbatim **carry**
+(a fence, a block comment, or a comment owned by the open paragraph) takes the
+line while the containers it opened in continue, and container exit ends it
+(`unterminated fence` / `unterminated comment`). Otherwise unmatched
+containers close (a region closed this way reports `region-unclosed`), a
+`#name!` line closes the innermost open region of that name — regions opened
+inside it end unclosed — and the starters and the leaf rules run:
+
+- **Interruption.** Headings, fences, regions, quotes, rules and statements
+  always interrupt a paragraph; a list item only when it is not empty, and an
+  `N.` item only when N is 1 (`1984. Then` continues the paragraph).
+- **List identity** is (marker class, column): `-`, `+` and `N.` lists never
+  merge; an `N.` that does not continue the numbering gets an info
+  diagnostic (`list-number`).
+- **Fences** dedent their content by the opener's indentation relative to the
+  container's content column (no double dedent in items). A fence inside a
+  quote or item passes each body line's source offset to its handler
+  (`ctx.lineOffsets`, beside `ctx.offset`).
+- **Comments.** A `%--` line while a paragraph is open belongs to the
+  paragraph (an inline comment: invisible); elsewhere it is a block comment
+  whose body is its lines with container prefixes stripped.
+- **Statements.** `#let …` (to the end of the line or `;`) and `#{…}`
+  (balanced) continue over the following lines of their containers — EOF at
+  the root, container exit or the enclosing region's closer inside one. The
+  lines are joined structurally and scanned in doubling windows (linear in
+  the statement's length). A broken statement is an Error block up to the
+  first blank line, the first line that starts a block, or container exit.
+- **Line remainders.** Text after `--%`, `}` or `;` on the same line re-enters
+  (another comment or statement, else paragraph text).
+- **Orphan closers.** A `#name!` line with no open region of that name is an
+  Error block (`region-orphan`), never a splice.
+
+## 7. Next steps
+
 - P1-09: editor grammars from `syntax.gen.json`.
 - P2-11 / P2-13: region provenance and splice bodies delete the legacy
   `row`/`cell`/`arg` slots.

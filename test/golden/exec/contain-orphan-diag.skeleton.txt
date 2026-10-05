@@ -1,4 +1,4 @@
 doc @[0,25)
   para @[0,7) lines=1
-  para @[9,16) lines=1
+  error @[9,16) code=region-orphan
   para @[18,24) lines=1

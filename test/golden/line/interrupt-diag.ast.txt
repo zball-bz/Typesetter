@@ -1,0 +1,48 @@
+doc @[0,551)
+  para @[0,103)
+    text @[0,103) str="A paragraph mentions the year 1984. Then it goes on: an N. line with N other than 1 does not interrupt."
+  para @[105,181)
+    text @[105,181) str="A paragraph with a dash line - continues: an empty item does not interrupt."
+  para @[183,213)
+    text @[183,213) str="A paragraph followed by a list"
+  list @[214,227) ordered start=1
+    item @[214,220)
+      para @[217,220)
+        text @[217,220) str="one"
+    item @[221,227)
+      para @[224,227)
+        text @[224,227) str="two"
+  para @[229,321)
+    text @[229,275) str="Comment lines inside a paragraph are invisible"
+    comment @[276,292) body=" a remark "
+    text @[293,321) str=" and the paragraph continues."
+  comment @[323,346) body=" a block comment "
+  para @[347,377)
+    text @[347,377) str="Text after the closer is kept."
+  code-let @[378,389) js=" y = 2"
+  para @[390,420)
+    text @[390,416) str="and after a let statement: "
+    splice @[417,419) expr="y"
+    text @[419,420) str="."
+  code-block @[421,435) js=" let z = 3 "
+  para @[436,458)
+    text @[436,454) str="and after a block: "
+    splice @[455,457) expr="z"
+    text @[457,458) str="."
+  list @[460,481) ordered start=1
+    item @[460,470)
+      para @[462,470)
+        text @[462,470) str="auto one"
+    item @[471,481)
+      para @[473,481)
+        text @[473,481) str="auto two"
+  list @[482,550) ordered start=1
+    item @[482,509)
+      para @[485,509)
+        text @[485,509) str="a separate explicit list"
+    item @[510,525)
+      para @[513,525)
+        text @[513,525) str="continues it"
+    item @[526,550)
+      para @[529,550)
+        text @[529,550) str="numbered out of order"

@@ -1,4 +1,4 @@
-doc @[0,142) [base]
+doc @[0,169) [base]
   para @[0,77) [base]
     text @[0,1) [base] str="A "
     styled @[0,0) [BOLD]
@@ -10,7 +10,7 @@ doc @[0,142) [base]
     code @[60,72) [base]
       text @[0,0) [base] str="code span"
     text @[73,77) [base] str=" end."
-  quote @[79,94) [base]
+  quote @[79,126) [base]
     para @[81,126) [base]
       text @[81,87) [base] str="quoted "
       mathinline @[88,99) [base] src="a +\nb"
@@ -18,8 +18,8 @@ doc @[0,142) [base]
       styled @[0,0) [EM]
         text @[113,119) [EM] str="x y"
       text @[121,126) [base] str=" done."
-  list @[128,142) [base] ordered=false start=1
-    item @[128,142) [base]
+  list @[128,169) [base] ordered=false start=1
+    item @[128,169) [base]
       para @[130,169) [base]
         text @[130,134) [base] str="item "
         mathinline @[135,147) [base] src="c +\nd"

@@ -1,0 +1,3 @@
+error region-unclosed @[20,39) region '#!inner' has no matching closer
+error region-unclosed @[71,97) region '#!aside' has no matching closer
+error region-unclosed @[146,177) region '#!lonely' has no matching closer

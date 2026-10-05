@@ -1,11 +1,11 @@
 doc @[0,450)
   para @[0,60)
     text @[0,60) str="A left float inside a list item (guard fixture, plan P0-01)."
-  list @[62,92) bullet start=1
+  list @[62,449) bullet start=1
     item @[62,92)
       para @[64,92)
         text @[64,92) str="First item before the float."
-    item @[93,130)
+    item @[93,419)
       para @[95,130)
         text @[95,130) str="Second item holds a floated figure."
       region @[134,276) name="figure"

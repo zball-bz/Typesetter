@@ -1,0 +1,9 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("first item with a tab after the marker continued on a tab-indented line"),2,74)),2,74)),0,74), __a(__it(__a(__p(__a(__t("item"),78,82)),78,82), __a(__l(false, 1, __a(__it(__a(__p(__a(__t("nested by one tab (column 4)"),86,114)),86,114)),84,114)),84,114)),76,114)),0,114));
+__emit(__a(__qt(__a(__p(__a(__t("quoted after a tab"),118,136)),118,136)),116,136));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=551a4f199ce12691;137;[]

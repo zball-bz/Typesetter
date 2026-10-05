@@ -1,0 +1,28 @@
+doc @[0,551)
+  para @[0,103) lines=2
+  para @[105,181) lines=3
+  para @[183,213) lines=1
+  list ordered start=1 @[214,227)
+    item @[214,220)
+      para @[217,220) lines=1
+    item @[221,227)
+      para @[224,227) lines=1
+  para @[229,321) lines=3
+  comment @[323,346)
+  para @[347,377) lines=1
+  code-let @[378,389) js=" y = 2"
+  para @[390,420) lines=1
+  code-block @[421,435) js=" let z = 3 "
+  para @[436,458) lines=1
+  list ordered start=1 @[460,481)
+    item @[460,470)
+      para @[462,470) lines=1
+    item @[471,481)
+      para @[473,481) lines=1
+  list ordered start=1 @[482,550)
+    item @[482,509)
+      para @[485,509) lines=1
+    item @[510,525)
+      para @[513,525) lines=1
+    item @[526,550)
+      para @[529,550) lines=1

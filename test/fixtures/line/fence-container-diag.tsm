@@ -1,0 +1,12 @@
+- an item with a fence whose content is indented:
+
+  ```js
+  if (x) {
+    y();
+  }
+  ```
+
+> a quote with a fence
+> ```js
+> quoted(code);
+the quote ends here, and so does its fence.

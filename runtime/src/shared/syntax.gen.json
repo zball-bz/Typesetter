@@ -1,5 +1,5 @@
 {
- "version": 2,
+ "version": 3,
  "classes": {
   "SpliceHead": "A-Za-z_$",
   "SpliceCont": "A-Za-z0-9_$",
@@ -340,6 +340,10 @@
     [
      "bodyOffset",
      "u32"
+    ],
+    [
+     "lines",
+     "str"
     ]
    ]
   },

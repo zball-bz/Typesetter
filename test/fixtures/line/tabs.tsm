@@ -1,0 +1,7 @@
+-	first item with a tab after the marker
+	continued on a tab-indented line
+
+- item
+	- nested by one tab (column 4)
+
+>	quoted after a tab

@@ -1,1 +1,1 @@
-error script-error @[9,16) ReferenceError: aside is not defined
+error region-orphan @[9,16) closer '#aside!' has no open region '#!aside'

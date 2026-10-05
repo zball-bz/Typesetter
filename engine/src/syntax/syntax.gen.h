@@ -6,7 +6,7 @@
 
 namespace tsr {
 
-constexpr u32 SYNTAX_VERSION = 2;
+constexpr u32 SYNTAX_VERSION = 3;
 
 // character classes
 inline bool isSpliceHead(char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == '$'; }
@@ -34,6 +34,7 @@ struct FenceP {
   StrRef lang = 0;
   Span args{};
   u32 bodyOffset = 0;
+  StrRef lines = 0;
 };
 struct RegionP {
   Span args{};

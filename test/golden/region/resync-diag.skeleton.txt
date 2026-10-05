@@ -1,0 +1,12 @@
+doc @[0,178)
+  region @[0,47) name="outer"
+    para @[8,19) lines=1
+    region @[20,39) name="inner"
+      para @[28,39) lines=1
+  para @[49,67) lines=1
+  quote @[69,97)
+    region @[71,97) name="aside"
+      para @[81,97) lines=1
+  para @[98,144) lines=1
+  region @[146,177) name="lonely"
+    para @[155,177) lines=1

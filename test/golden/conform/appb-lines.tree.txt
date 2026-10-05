@@ -5,31 +5,32 @@ doc @[0,370) [base]
     text @[15,24) [base] str="Level two"
   heading @[25,40) [base] level=3 label="h-1.1.1"
     text @[29,40) [base] str="Level three"
-  list @[42,58) [base] ordered=false start=1
+  list @[42,132) [base] ordered=false start=1
     item @[42,58) [base]
       para @[44,58) [base]
         text @[44,58) [base] str="unordered item"
-    item @[59,82) [base]
+    item @[59,132) [base]
       para @[61,116) [base]
         text @[61,116) [base] str="second unordered item continued at the content column"
       list @[119,132) [base] ordered=false start=1
         item @[119,132) [base]
           para @[121,132) [base]
             text @[121,132) [base] str="nested item"
-  list @[133,147) [base] ordered=true start=1
+  list @[133,166) [base] ordered=true start=1
     item @[133,147) [base]
       para @[135,147) [base]
         text @[135,147) [base] str="ordered auto"
     item @[148,166) [base]
       para @[150,166) [base]
         text @[150,166) [base] str="ordered auto two"
+  list @[167,192) [base] ordered=true start=3
     item @[167,184) [base]
       para @[170,184) [base]
         text @[170,184) [base] str="explicit start"
     item @[185,192) [base]
       para @[188,192) [base]
         text @[188,192) [base] str="next"
-  quote @[194,206) [base]
+  quote @[194,223) [base]
     para @[196,206) [base]
       text @[196,206) [base] str="quote line"
     quote @[209,223) [base]

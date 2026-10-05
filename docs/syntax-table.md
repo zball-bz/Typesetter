@@ -1,7 +1,7 @@
 <!-- GENERATED from engine/src/syntax/syntax.def by tools/gen-syntax.mjs — do not edit. -->
 # Surface syntax (generated)
 
-From `engine/src/syntax/syntax.def`, syntax version 2. Behaviour for each body mode, ownership class and block shape: `docs/syntax-design.md`.
+From `engine/src/syntax/syntax.def`, syntax version 3. Behaviour for each body mode, ownership class and block shape: `docs/syntax-design.md`.
 
 ## Inline delimiters
 
@@ -43,7 +43,7 @@ From `engine/src/syntax/syntax.def`, syntax version 2. Behaviour for each body m
 | `item` | Block | — | `item` |
 | `quote` | Block | — | `quote` |
 | `rule` | Block | — | `rule` |
-| `fence` | Block | lang:str args:src bodyOffset:u32 | `codeblock lang="{lang}" body="{$str}"` |
+| `fence` | Block | lang:str args:src bodyOffset:u32 lines:str | `codeblock lang="{lang}" body="{$str}"` |
 | `region` | Block | args:src | `region name="{$str}"` |
 | `strong` | Inline | — | `styled marker=*` |
 | `em` | Inline | — | `styled marker=_` |

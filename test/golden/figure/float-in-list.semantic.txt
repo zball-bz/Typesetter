@@ -1,6 +1,6 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="60">A left float inside a list item (guard fixture, plan P0-01).</p>
-<ul data-pid="1" data-s="62" data-e="92">
+<ul data-pid="1" data-s="62" data-e="449">
 <li>First item before the float.</li>
 <li><p data-s="95" data-e="130">Second item holds a floated figure.</p>
 <figure data-s="134" data-e="276" id="tsr-fig-icon">

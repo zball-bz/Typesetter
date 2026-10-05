@@ -1,6 +1,6 @@
 doc @[0,43)
-  list bullet start=1 @[0,10)
-    item @[0,10)
+  list bullet start=1 @[0,34)
+    item @[0,23)
       para @[2,10) lines=1
       code-let @[13,23) js=" x = 1"
     item @[24,34)

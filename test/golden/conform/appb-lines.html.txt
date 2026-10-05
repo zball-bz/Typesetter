@@ -14,26 +14,28 @@
 <div class="tsr-line" data-s="17" data-e="72" style="top:54.391px;left:24px;width:276px"><span class="tsr-r" data-s="17">the content column</span></div>
 <div class="tsr-line" data-s="77" data-e="88" style="top:84.781px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="77">nested item</span></div>
 </div>
-<div class="tsr-para" data-pid="4" data-s0="135" style="position:relative;height:115.172px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="4" data-s0="135" style="position:relative;height:54.391px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="12" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="0">ordered auto</span></div>
 <div class="tsr-line" data-s="15" data-e="31" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="15">ordered auto two</span></div>
-<div class="tsr-line" data-s="35" data-e="49" style="top:60.781px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">3.</span><span class="tsr-r" data-s="35">explicit start</span></div>
-<div class="tsr-line" data-s="53" data-e="57" style="top:91.172px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">4.</span><span class="tsr-r" data-s="53">next</span></div>
 </div>
-<div class="tsr-para" data-pid="5" data-s0="196" style="position:relative;height:67.203px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="5" data-s0="170" style="position:relative;height:54.391px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="14" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">3.</span><span class="tsr-r" data-s="0">explicit start</span></div>
+<div class="tsr-line" data-s="18" data-e="22" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">4.</span><span class="tsr-r" data-s="18">next</span></div>
+</div>
+<div class="tsr-para" data-pid="6" data-s0="196" style="position:relative;height:67.203px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="10" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">quote line</span></div>
 <div class="tsr-line" data-s="15" data-e="27" style="top:43.203px;left:32px;width:268px"><span class="tsr-r" data-s="15">nested quote</span></div>
 </div>
-<div class="tsr-para" data-pid="7" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="8" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">verbatim(island);</span></div>
 </div>
-<div class="tsr-para" data-pid="8" data-s0="302" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="9" data-s0="302" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="13" data-ragged="1" style="top:0px;left:116.438px;width:67.109px;height:24px"><span class="tsr-math" data-syn="math" data-src="$ a + b = c $" style="width:67.109px;height:12.125px;position:absolute;left:0;top:5.938px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:13.312px;top:-1.863px;font-size:16px;line-height:16px">+</span><span class="tsr-mg" style="left:28.953px;top:-1.863px;font-size:16px;line-height:16px">b</span><span class="tsr-mg" style="left:42.797px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:59.328px;top:-1.863px;font-size:16px;line-height:16px">c</span></span></div>
 </div>
-<div class="tsr-para" data-pid="9" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="10" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 </div>
-<div class="tsr-para" data-pid="10" data-s0="322" style="position:relative;height:48px">
+<div class="tsr-para" data-pid="11" data-s0="322" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="48" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.6px"><span class="tsr-r" data-s="0">= not a heading, - not a list, &gt; not a</span></div>
 <div class="tsr-line" data-s="0" data-e="48" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">quote.</span></div>
 </div>

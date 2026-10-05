@@ -1,9 +1,9 @@
 doc @[0,450)
   para @[0,60) lines=1
-  list bullet start=1 @[62,92)
+  list bullet start=1 @[62,449)
     item @[62,92)
       para @[64,92) lines=1
-    item @[93,130)
+    item @[93,419)
       para @[95,130) lines=1
       region @[134,276) name="figure"
         para @[244,265) lines=1

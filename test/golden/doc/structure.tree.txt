@@ -15,25 +15,25 @@ doc @[0,481) [base]
     text @[141,147) [base] str=" in it."
     comment @[148,170) [base]
       text @[0,0) [base] str=" invisible note "
-  list @[172,228) [base] ordered=false start=1
+  list @[172,296) [base] ordered=false start=1
     item @[172,228) [base]
       para @[174,228) [base]
         text @[174,228) [base] str="First bullet item with enough words to wrap onto lines"
-    item @[229,242) [base]
+    item @[229,296) [base]
       para @[231,274) [base]
         text @[231,274) [base] str="Second item continued on an indented line"
       list @[277,296) [base] ordered=false start=1
         item @[277,296) [base]
           para @[279,296) [base]
             text @[279,296) [base] str="Nested child item"
-  list @[297,318) [base] ordered=true start=1
+  list @[297,334) [base] ordered=true start=1
     item @[297,318) [base]
       para @[299,318) [base]
         text @[299,318) [base] str="Ordered starts here"
     item @[319,334) [base]
       para @[321,334) [base]
         text @[321,334) [base] str="And continues"
-  quote @[336,396) [base]
+  quote @[336,430) [base]
     para @[338,430) [base]
       text @[338,430) [base] str="A quoted paragraph, indented by the engine rather than the browser, wrapping across lines."
   rule @[432,435) [base]

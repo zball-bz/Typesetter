@@ -4,9 +4,9 @@ return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, _
 __emit(__a(__hd(1, null, __a(__t("Typesetting Notes"),2,19)),0,19));
 __emit(__a(__hd(2, null, __a(__t("Structure and "),24,37), __a(__b(__a(__t("emphasis"),39,47)),38,48)),21,48));
 __emit(__a(__p(__a(__t("An introductory paragraph with a "),50,82), __a(__ln("https://example.org", __a(__t("useful link"),84,95)),83,117), __a(__t(" and some "),118,126), __a(__cd("inline code"),127,140), __a(__t(" in it."),141,147), __a(__cm(" invisible note "),148,170)),50,170));
-__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("First bullet item with enough words to wrap onto lines"),174,228)),174,228)),172,228), __a(__it(__a(__p(__a(__t("Second item continued on an indented line"),231,274)),231,274), __a(__l(false, 1, __a(__it(__a(__p(__a(__t("Nested child item"),279,296)),279,296)),277,296)),277,296)),229,242)),172,228));
-__emit(__a(__l(true, 1, __a(__it(__a(__p(__a(__t("Ordered starts here"),299,318)),299,318)),297,318), __a(__it(__a(__p(__a(__t("And continues"),321,334)),321,334)),319,334)),297,318));
-__emit(__a(__qt(__a(__p(__a(__t("A quoted paragraph, indented by the engine rather than the browser, wrapping across lines."),338,430)),338,430)),336,396));
+__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("First bullet item with enough words to wrap onto lines"),174,228)),174,228)),172,228), __a(__it(__a(__p(__a(__t("Second item continued on an indented line"),231,274)),231,274), __a(__l(false, 1, __a(__it(__a(__p(__a(__t("Nested child item"),279,296)),279,296)),277,296)),277,296)),229,296)),172,296));
+__emit(__a(__l(true, 1, __a(__it(__a(__p(__a(__t("Ordered starts here"),299,318)),299,318)),297,318), __a(__it(__a(__p(__a(__t("And continues"),321,334)),321,334)),319,334)),297,334));
+__emit(__a(__qt(__a(__p(__a(__t("A quoted paragraph, indented by the engine rather than the browser, wrapping across lines."),338,430)),338,430)),336,430));
 __emit(__a(__hr(),432,435));
 __emit(__a(__v(await __fence("js", ({}), "const x = compute(1, 2);\nreturn x;", 443)),437,481));
 })(__s);

@@ -12,8 +12,10 @@ doc @[0,439)
     splice @[163,175) expr="(1 + 2 * 3)"
     text @[175,176) str="."
   code-block @[177,201) js=" let hidden = 40 + 2 "
-  para @[252,438)
-    text @[252,281) str="A splice ends at punctuation: "
+  para @[201,438)
+    text @[201,242) str="Statement splice binds in document scope: "
+    splice @[243,250) expr="hidden"
+    text @[250,281) str=". A splice ends at punctuation: "
     splice @[282,286) expr="who"
     text @[286,309) str=". Semicolon terminator: "
     splice @[310,315) expr="who"

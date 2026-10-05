@@ -1,0 +1,22 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="103">A paragraph mentions the year 1984. Then it goes on: an N. line with N other than 1 does not interrupt.</p>
+<p data-pid="1" data-s="105" data-e="181">A paragraph with a dash line - continues: an empty item does not interrupt.</p>
+<p data-pid="2" data-s="183" data-e="213">A paragraph followed by a list</p>
+<ol data-pid="3" data-s="214" data-e="227">
+<li>one</li>
+<li>two</li>
+</ol>
+<p data-pid="4" data-s="229" data-e="321">Comment lines inside a paragraph are invisible and the paragraph continues.</p>
+<p data-pid="6" data-s="347" data-e="377">Text after the closer is kept.</p>
+<p data-pid="7" data-s="390" data-e="420">and after a let statement: 2.</p>
+<p data-pid="8" data-s="436" data-e="458">and after a block: 3.</p>
+<ol data-pid="9" data-s="460" data-e="481">
+<li>auto one</li>
+<li>auto two</li>
+</ol>
+<ol data-pid="10" data-s="482" data-e="550">
+<li>a separate explicit list</li>
+<li>continues it</li>
+<li>numbered out of order</li>
+</ol>
+</div>

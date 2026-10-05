@@ -41,3 +41,11 @@ Format: `- [step] what changed — migration (if any)`.
 - [P1-06] Inside a formula `\$` is a literal dollar (`$a \$ b$`); every other backslash sequence reaches the math parser unchanged.
 - [P1-06] Brackets inside formulas, code spans, comments and splice arguments no longer close a footnote, a content argument or link text: `` #strong[code `a]b` here] `` ends after the code span, `[range $[0,1)$](u)` is a link, and `\]` works in `^[…]`, `@[…]`, `#f[…]` and link text alike. A `$` inside link text or a content argument that has no closer before the bracket stays literal (`[price $5](u) and $x$`).
 - [P1-06] `@[a, b]` lists ids separated by commas; spaces around each id are ignored.
+- [P1-07] A tab advances to the next multiple of 4 columns, so tab-indented list continuations, nested lists and quotes work (a tab used to end the list).
+- [P1-07] A list item interrupts a paragraph only when it has content, and a numbered item only when its number is 1: `1984. Then …` on the second line of a paragraph continues the paragraph.
+- [P1-07] `-`, `+` and `N.` lists never merge: `+ a` followed by `3. b` makes two lists, the second starting at 3 (the start number used to be dropped). An `N.` that breaks the numbering of its list is reported (`list-number`, info).
+- [P1-07] A blank line ends a quote (`> a⏎⏎> b` is two quotes).
+- [P1-07] Fences and block comments inside a quote or list item end with their container; fence content inside a list item keeps its own indentation (it used to lose the item's indentation twice).
+- [P1-07] A `%--` comment line inside a paragraph no longer splits it. Text after `--%`, `}` or `;` on the same line is kept (it was silently dropped): `#{ let z = 3 } and after: #z.`.
+- [P1-07] `#let` and `#{…}` may span lines inside lists, quotes and regions as at the top level (they still report `statement-nested-unsupported` until P2-12), and a broken one inside a container is an error block up to the next blank line instead of the rest of its line only.
+- [P1-07] A region closer `#name!` closes the innermost open region of that name; regions opened inside it report `region-unclosed`, as does a region whose quote or list item ends. A closer with no open region of its name is an error block (`region-orphan`) instead of a `#name` splice.

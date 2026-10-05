@@ -4,11 +4,12 @@
 <div class="tsr-line" data-s="50" data-e="102" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r">lo, tsm. Member access: 5 characters; ex</span><span class="tsr-r" data-s="79" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="79" data-e="116" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="79">pression: 7.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="252" style="position:relative;height:120px">
-<div class="tsr-line" data-s="0" data-e="57" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6.4px"><span class="tsr-r" data-s="0">A splice ends at punctuation: world.</span></div>
-<div class="tsr-line" data-s="34" data-e="131" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:3px"><span class="tsr-r" data-s="34">Semicolon terminator: world[not an ar</span><span class="tsr-r" data-s="63" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="63" data-e="131" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="63">gument]. Content argument desugars to a</span></div>
-<div class="tsr-line" data-s="63" data-e="186" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:5px"><span class="tsr-r" data-s="63">trailing argument: </span><span class="tsr-r tsr-b" data-s="140">bold text</span><span class="tsr-r" data-s="150">. Literal</span></div>
-<div class="tsr-line" data-s="150" data-e="186" style="top:96px;left:0px;width:300px"><span class="tsr-r" data-s="150">hash: #who stays literal.</span></div>
+<div class="tsr-para" data-pid="1" data-s0="201" style="position:relative;height:144px">
+<div class="tsr-line" data-s="0" data-e="41" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r" data-s="0">Statement splice binds in document</span></div>
+<div class="tsr-line" data-s="0" data-e="80" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">scope: 42. A splice ends at punctuation:</span></div>
+<div class="tsr-line" data-s="85" data-e="182" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:2.667px"><span class="tsr-r">world. Semicolon terminator: world[not</span></div>
+<div class="tsr-line" data-s="114" data-e="182" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:1px"><span class="tsr-r" data-s="114">an argument]. Content argument desugars</span></div>
+<div class="tsr-line" data-s="114" data-e="237" data-join="none" style="top:96px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="114">to a trailing argument: </span><span class="tsr-r tsr-b" data-s="191">bold text</span><span class="tsr-r" data-s="201">. Liter</span><span class="tsr-r" data-s="201" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="201" data-e="237" style="top:120px;left:0px;width:300px"><span class="tsr-r" data-s="201">al hash: #who stays literal.</span></div>
 </div>
 </div>

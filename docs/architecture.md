@@ -53,8 +53,9 @@ One directory per stage; a stage's input and output are named types with a debug
 support/    arena, string interning, utf8, span, Result, diagnostics sink
 source/     SourceText (raw bytes, line starts, CRLF cooking); no source-map
             builder — codegen's unit table maps the program back to spans
-linepass/   SourceText → BlockSkeleton         (containers, regions, islands,
-                                                per-line provenance §4.1)
+linepass/   SourceText → BlockSkeleton         (one container protocol — quote,
+                                                list item, region — verbatim carries,
+                                                statements; docs/syntax-design.md §6)
 syntax/     syntax.def → syntax.gen.{h,cc}     (character classes, delimiters,
                                                 blocks, sugar slots + payloads,
                                                 token tags; docs/syntax-design.md);

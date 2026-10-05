@@ -192,7 +192,12 @@ struct Gen {
         if (!f.args.empty()) out += src.slice(f.args);
         out += "}), ";
         strLit(n->str);
-        appendf(out, ", %d)", (int)f.bodyOffset);  // body source offset (close() ends val)
+        appendf(out, ", %d", (int)f.bodyOffset);  // body source offset
+        if (f.lines) {                              // per-line offsets (contained)
+          out += ", ";
+          out += strs.get(f.lines);
+        }
+        out += ")";  // close() ends val
         close(n);
         break;
       }

@@ -1,0 +1,11 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:108.781px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="72" data-join="space" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">first item with a tab after the marker</span></div>
+<div class="tsr-line" data-s="0" data-e="72" style="top:24px;left:24px;width:276px"><span class="tsr-r" data-s="0">continued on a tab-indented line</span></div>
+<div class="tsr-line" data-s="76" data-e="80" style="top:54.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="76">item</span></div>
+<div class="tsr-line" data-s="84" data-e="112" style="top:84.781px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="84">nested by one tab (column 4)</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="118" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="18" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">quoted after a tab</span></div>
+</div>
+</div>

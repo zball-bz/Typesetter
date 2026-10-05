@@ -1,0 +1,19 @@
+doc @[30,192) [base]
+  para @[30,78) [base]
+    text @[30,68) [base] str="A root statement may hold blank lines: "
+    text @[0,0) [base] str="3"
+    text @[77,78) [base] str="."
+  list @[80,136) [base] ordered=false start=1
+    item @[80,124) [base]
+      para @[82,86) [base]
+        text @[82,86) [base] str="item"
+      error @[89,124) [base] message="statements inside lists, quotes and regions are not supported yet (plan P2-12)" code="statement-nested-unsupported"
+    item @[125,136) [base]
+      para @[127,136) [base]
+        text @[127,136) [base] str="next item"
+  quote @[138,192) [base]
+    para @[140,145) [base]
+      text @[140,145) [base] str="quote"
+    error @[148,184) [base] message="statements inside lists, quotes and regions are not supported yet (plan P2-12)" code="statement-nested-unsupported"
+    para @[187,192) [base]
+      text @[187,192) [base] str="after"

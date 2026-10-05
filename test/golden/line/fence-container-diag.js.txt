@@ -1,0 +1,10 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("an item with a fence whose content is indented:"),2,49)),2,49), __a(__v(await __fence("js", ({}), "if (x) {\n  y();\n}", 61, [61,72,81])),53,88)),0,88)),0,88));
+__emit(__a(__qt(__a(__p(__a(__t("a quote with a fence"),92,112)),92,112), __a(__v(await __fence("js", ({}), "quoted(code);", 123, [123])),115,136)),90,136));
+__emit(__a(__p(__a(__t("the quote ends here, and so does its fence."),137,180)),137,180));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=586f97444015f897;181;[]

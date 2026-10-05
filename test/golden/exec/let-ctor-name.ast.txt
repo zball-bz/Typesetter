@@ -1,6 +1,6 @@
 doc @[0,84)
   code-let @[0,13) js=" list = 1"
-  list @[15,43) bullet start=1
+  list @[15,57) bullet start=1
     item @[15,43)
       para @[17,43)
         text @[17,43) str="the list sugar still works"

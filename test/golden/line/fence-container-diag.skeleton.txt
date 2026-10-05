@@ -1,0 +1,9 @@
+doc @[0,181)
+  list bullet start=1 @[0,88)
+    item @[0,88)
+      para @[2,49) lines=1
+      fence @[53,88) lang="js" lines=3
+  quote @[90,136)
+    para @[92,112) lines=1
+    fence @[115,136) lang="js" lines=1
+  para @[137,180) lines=1

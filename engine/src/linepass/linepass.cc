@@ -1,144 +1,213 @@
 #include "linepass.h"
 
 #include "../inline/jslex.h"
+#include "../syntax/cursor.h"
 
 namespace tsr {
 
 namespace {
 
+constexpr u32 kTabStop = 4;  // App B: a tab advances to the next multiple of 4
+constexpr u32 kNone = ~0u;
+
+// The container protocol (design T1 BlockAutomaton): a Prefix container
+// continues on lines with its prefix ('>'), a Column container on blank lines
+// and lines indented to its content column, an Explicit container (a region)
+// until its named closer.
+enum class Shape : u8 { Prefix, Column, Explicit };
+
 struct OpenC {
-  SkelNode* node;      // Quote / Item (List is implicit parent of Item)
-  u32 contentCol = 0;  // Item: required continuation column
+  SkelNode* node;            // Quote / Item / Region
+  Shape shape;
+  u32 contentCol = 0;        // Column: required continuation column
+  SkelNode* list = nullptr;  // Column: the item's list (its span follows)
 };
+
+bool starts(std::string_view s, std::string_view p) { return s.substr(0, p.size()) == p; }
+bool isLet(std::string_view r) {
+  return starts(r, "#let") && (r.size() == 4 || r[4] == ' ' || r[4] == '\t');
+}
 
 struct LinePass {
   const SourceText& src;
   Arena& arena;
   DiagSink& diags;
   std::string_view all;
+  u32 nlines = 0;
 
-  SkelNode* root;
-  std::vector<OpenC> open;   // container stack (Quote/Item entries)
-  SkelNode* leaf = nullptr;  // open paragraph
+  SkelNode* root = nullptr;
+  std::vector<OpenC> open;   // container stack, outermost first
+  SkelNode* leaf = nullptr;  // open paragraph (always in the innermost container)
+
+  // A verbatim carry — a fence, a block comment, or a comment owned by the
+  // open paragraph — continues over the following lines while the containers
+  // it opened in continue; container exit ends it.
+  enum class Carry : u8 { None, Fence, Comment, LeafComment };
+  Carry carry = Carry::None;
+  SkelNode* carryNode = nullptr;
+  size_t carryDepth = 0;
+  u32 fenceTicks = 0, fenceIndent = 0;
+  int commentDepth = 0;
 
   SkelNode* mk(SkelKind k) {
     SkelNode* n = arena.make<SkelNode>();
     n->kind = k;
     return n;
   }
-  SkelNode* parent() {
-    for (auto it = open.rbegin(); it != open.rend(); ++it)
-      return it->node;
-    return root;
-  }
+  SkelNode* parent() { return open.empty() ? root : open.back().node; }
   void closeLeaf() { leaf = nullptr; }
-  void closeTo(size_t depth) {
-    closeLeaf();
-    while (open.size() > depth) open.pop_back();
-  }
 
-  static bool isBlank(std::string_view t) {
-    for (char c : t)
-      if (c != ' ' && c != '\t' && c != '\r') return false;
+  static u32 advance(char c, u32 col) { return c == '\t' ? (col / kTabStop + 1) * kTabStop : col + 1; }
+  // skip spaces and tabs while the column is below `limit`
+  void skipBlanks(u32 le, u32& pos, u32& col, u32 limit = kNone) const {
+    while (pos < le && (all[pos] == ' ' || all[pos] == '\t') && col < limit) {
+      col = advance(all[pos], col);
+      pos++;
+    }
+  }
+  bool isBlank(u32 a, u32 b) const {
+    for (u32 p = a; p < b; p++)
+      if (all[p] != ' ' && all[p] != '\t' && all[p] != '\r') return false;
     return true;
   }
+  static void grow(SkelNode* n, u32 end) {
+    if (end > n->span.end) n->span.end = end;
+  }
+  // a line attributed to every open container extends their spans
+  void extend(u32 le) {
+    for (OpenC& c : open) {
+      grow(c.node, le);
+      if (c.list) grow(c.list, le);
+    }
+  }
 
-  // --- per-line prefix matching -------------------------------------------
-  // pos/col walk the line; returns count of open containers matched.
-  size_t matchPrefixes(u32 ls, u32 le, u32& pos, u32& col, bool blank) {
+  void regionUnclosed(const SkelNode* rg) {
+    diags.add(Sev::Error, "region-unclosed", rg->span,
+              "region '#!" + std::string(src.slice(rg->langSpan)) + "' has no matching closer");
+  }
+  // pop to `depth`; a region closed this way never saw its closer
+  void closeTo(size_t depth) {
+    closeLeaf();
+    while (open.size() > depth) {
+      if (open.back().shape == Shape::Explicit) regionUnclosed(open.back().node);
+      open.pop_back();
+    }
+  }
+
+  // --- per-line container matching (pure) ----------------------------------
+  // pos/col walk past the prefixes of the matched containers; returns how many
+  // of the open containers (outermost first) the line continues.
+  size_t matchContainers(u32 le, u32& pos, u32& col, bool blank) const {
     size_t matched = 0;
     for (const OpenC& c : open) {
-      if (c.node->kind == SkelKind::Region) { matched++; continue; }
-      if (c.node->kind == SkelKind::Quote) {
+      if (c.shape == Shape::Explicit) {
+        matched++;
+        continue;
+      }
+      if (c.shape == Shape::Prefix) {
         u32 p = pos, cl = col;
-        while (p < le && all[p] == ' ') { p++; cl++; }
+        skipBlanks(le, p, cl);
         if (p < le && all[p] == '>') {
-          p++; cl++;
-          if (p < le && all[p] == ' ') { p++; cl++; }
-          pos = p; col = cl; matched++;
+          p++;
+          cl++;
+          if (p < le && (all[p] == ' ' || all[p] == '\t')) cl = advance(all[p++], cl);
+          pos = p;
+          col = cl;
+          matched++;
           continue;
         }
-        break;  // quote prefix absent
+        break;
       }
-      // Item: blank lines stay inside; content must reach contentCol
-      if (blank) { matched++; continue; }
+      // Column: blank lines stay inside; content must reach contentCol
+      if (blank) {
+        matched++;
+        continue;
+      }
       u32 p = pos, cl = col;
-      while (p < le && all[p] == ' ' && cl < c.contentCol) { p++; cl++; }
-      if (cl >= c.contentCol) { pos = p; col = cl; matched++; continue; }
-      break;
+      skipBlanks(le, p, cl, c.contentCol);
+      if (cl < c.contentCol) break;
+      pos = p;
+      col = cl;
+      matched++;
     }
-    (void)ls;
     return matched;
   }
 
-  // --- new container starters ---------------------------------------------
-  // Returns true if a starter was consumed (and containers opened).
-  bool tryStarters(u32 le, u32& pos, u32& col) {
-    bool any = false;
+  // --- container starters ----------------------------------------------------
+  // Quotes always interrupt a paragraph; a list item only when it is not
+  // empty, and an 'N.' item only when N is 1 ('1984. Then' continues it).
+  void tryStarters(u32 le, u32& pos, u32& col) {
     for (;;) {
       u32 p = pos, cl = col;
-      while (p < le && all[p] == ' ') { p++; cl++; }
-      if (p >= le) break;
+      skipBlanks(le, p, cl);
+      if (p >= le) return;
       char c = all[p];
       if (c == '>') {
+        closeLeaf();
         SkelNode* q = mk(SkelKind::Quote);
         q->span = {p, le};
         parent()->kids.push_back(q);
-        open.push_back({q, 0});
-        p++; cl++;
-        if (p < le && all[p] == ' ') { p++; cl++; }
-        pos = p; col = cl;
-        closeLeaf();
-        any = true;
+        open.push_back({q, Shape::Prefix});
+        p++;
+        cl++;
+        if (p < le && (all[p] == ' ' || all[p] == '\t')) cl = advance(all[p++], cl);
+        pos = p;
+        col = cl;
         continue;
       }
-      bool ordered = false;
+      char marker = 0;
       u32 markerLen = 0;
-      int startNum = 1;
-      if ((c == '-' || c == '+') && p + 1 < le && all[p + 1] == ' ') {
-        ordered = (c == '+');
+      int num = 1;
+      auto blankAt = [&](u32 q) { return q < le && (all[q] == ' ' || all[q] == '\t'); };
+      if ((c == '-' || c == '+') && blankAt(p + 1)) {
+        marker = c;
         markerLen = 1;
       } else if (c >= '0' && c <= '9') {
         u32 q = p;
-        int num = 0;
-        while (q < le && all[q] >= '0' && all[q] <= '9' && q - p < 9) {
-          num = num * 10 + (all[q] - '0');
-          q++;
-        }
-        if (q < le && all[q] == '.' && q + 1 < le && all[q + 1] == ' ') {
-          ordered = true;
+        int n = 0;
+        while (q < le && all[q] >= '0' && all[q] <= '9' && q - p < 9) n = n * 10 + (all[q++] - '0');
+        if (q < le && all[q] == '.' && blankAt(q + 1)) {
+          marker = '.';
           markerLen = (q + 1) - p;
-          startNum = num;
+          num = n;
         }
       }
-      if (markerLen == 0) break;
-      // thematic break `---` shadows a `- ` start? "- " requires space, "---" has none — fine.
-      u32 contentCol = cl + markerLen + 1;
-      // same-type list at same column continues; else open a new List
-      SkelNode* list = nullptr;
+      if (!marker) return;
+      if (leaf && (isBlank(p + markerLen, le) || (marker == '.' && num != 1))) return;
+      closeLeaf();
+      const u32 markerCol = cl;
+      u32 after = p + markerLen, acol = cl + markerLen;
+      acol = advance(all[after], acol);  // the blank after the marker
+      after++;
+      // list identity: (marker class, column)
       SkelNode* par = parent();
+      SkelNode* list = nullptr;
       if (!par->kids.empty() && par->kids.back()->kind == SkelKind::List &&
-          par->kids.back()->ordered == ordered && par->kids.back()->level == (u8)cl)
+          par->kids.back()->marker == marker && par->kids.back()->markerCol == markerCol)
         list = par->kids.back();
       if (!list) {
         list = mk(SkelKind::List);
-        list->ordered = ordered;
-        list->start = startNum;
-        list->level = (u8)cl;  // marker column (repurposed)
+        list->ordered = marker != '-';
+        list->marker = marker;
+        list->markerCol = markerCol;
+        list->start = num;
         list->span = {p, le};
         par->kids.push_back(list);
+      } else if (marker == '.') {
+        int expect = list->start + (int)list->kids.size();
+        if (num != expect && num != list->start)
+          diags.add(Sev::Info, "list-number", {p, p + markerLen},
+                    "item " + std::to_string(num) + " continues a list numbered from " +
+                        std::to_string(list->start) + "; it is shown as " + std::to_string(expect));
       }
       SkelNode* item = mk(SkelKind::Item);
       item->span = {p, le};
       list->kids.push_back(item);
-      open.push_back({item, contentCol});
-      pos = p + markerLen;
-      col = cl + markerLen;
-      if (pos < le && all[pos] == ' ') { pos++; col++; }
-      closeLeaf();
-      any = true;
+      grow(list, le);
+      open.push_back({item, Shape::Column, acol, list});
+      pos = after;
+      col = acol;
     }
-    return any;
   }
 
   // A block-granular parse error: diagnostic + an Error leaf that lowers to
@@ -153,47 +222,62 @@ struct LinePass {
     parent()->kids.push_back(e);
   }
 
-  // End offset of an unbalanced statement opened on line `ln` (plan P0-04).
-  // Inside a container the scan was bounded to the line, so recovery is the
-  // line end. At top level the broken statement extends to the first blank
-  // line or the first line that starts a block (heading, fence, region,
-  // statement, list item, quote, rule) -- error recovery only: a balanced
-  // statement is never cut.
-  u32 recoverStatement(u32 ln, u32 nlines) const {
-    if (!open.empty()) return src.lineEnd(ln);
-    u32 last = ln;
-    for (u32 l = ln + 1; l < nlines; l++) {
-      u32 a = src.lineStart(l), b = src.lineEnd(l);
-      std::string_view t = all.substr(a, b - a);
-      if (isBlank(t)) break;
-      size_t k = 0;
-      while (k < t.size() && t[k] == ' ') k++;
-      std::string_view r = t.substr(k);
-      auto starts = [&](std::string_view p) { return r.substr(0, p.size()) == p; };
-      bool block = starts("```") || starts("#!") || starts("#let") || starts("#{") ||
-                   starts("> ") || r == ">" || starts("- ") || starts("+ ") ||
-                   starts("%--") || starts("---");
-      if (!block && !r.empty() && r[0] == '=') {
-        size_t n = 0;
-        while (n < r.size() && r[n] == '=') n++;
-        block = n <= 6 && n < r.size() && r[n] == ' ';
-      }
-      if (!block && !r.empty() && r[0] >= '0' && r[0] <= '9') {
-        size_t n = 0;
-        while (n < r.size() && r[n] >= '0' && r[n] <= '9') n++;
-        block = n + 1 < r.size() && r[n] == '.' && r[n + 1] == ' ';
-      }
-      if (!block && r.size() >= 3 && r[0] == '#' && r.back() == '!') block = true;  // #name!
-      if (block) break;
-      last = l;
-    }
-    return src.lineEnd(last);
+  // '#name!' alone on its line: the region name, else empty
+  std::string_view closerName(u32 pos, u32 le) const {
+    if (pos + 2 >= le || all[pos] != '#' || !isIdentStart(all[pos + 1])) return {};
+    u32 np = pos + 1;
+    while (np < le && isIdentCont(all[np])) np++;
+    if (np >= le || all[np] != '!' || !isBlank(np + 1, le)) return {};
+    return all.substr(pos + 1, np - (pos + 1));
+  }
+  // index + 1 of the innermost open region named `name`, 0 when none
+  size_t openRegion(std::string_view name) const {
+    for (size_t ri = open.size(); ri > 0; ri--)
+      if (open[ri - 1].shape == Shape::Explicit && src.slice(open[ri - 1].node->langSpan) == name)
+        return ri;
+    return 0;
   }
 
-  // --- leaves --------------------------------------------------------------
+  // Does a line (content from p) start a block? Recovery heuristic for a
+  // broken statement (plan P0-04).
+  bool startsBlock(u32 p, u32 le) const {
+    std::string_view r = all.substr(p, le - p);
+    bool block = starts(r, "```") || starts(r, "#!") || starts(r, "#let") || starts(r, "#{") ||
+                 starts(r, "> ") || r == ">" || starts(r, "- ") || starts(r, "+ ") ||
+                 starts(r, "%--") || starts(r, "---");
+    if (!block && !r.empty() && r[0] == '=') {
+      size_t n = 0;
+      while (n < r.size() && r[n] == '=') n++;
+      block = n <= 6 && n < r.size() && r[n] == ' ';
+    }
+    if (!block && !r.empty() && r[0] >= '0' && r[0] <= '9') {
+      size_t n = 0;
+      while (n < r.size() && r[n] >= '0' && r[n] <= '9') n++;
+      block = n + 1 < r.size() && r[n] == '.' && r[n + 1] == ' ';
+    }
+    if (!block && r.size() >= 3 && r[0] == '#' && r.back() == '!') block = true;  // #name!
+    return block;
+  }
+
+  // The last line of a broken statement opened on line `ln`: the statement
+  // extends over the following lines of its containers up to a blank line, a
+  // line that starts a block, or container exit.
+  u32 recoverStatement(u32 ln) const {
+    u32 last = ln;
+    for (u32 l = ln + 1; l < nlines; l++) {
+      u32 ls = src.lineStart(l), le = src.lineEnd(l), p = ls, c = 0;
+      bool blank = isBlank(ls, le);
+      if (blank || matchContainers(le, p, c, blank) < open.size()) break;
+      skipBlanks(le, p, c);
+      if (isBlank(p, le) || startsBlock(p, le)) break;
+      last = l;
+    }
+    return last;
+  }
+
+  // --- leaves ----------------------------------------------------------------
   void addParaLine(u32 pos, u32 le) {
-    // strip trailing ws
-    u32 e = le;
+    u32 e = le;  // strip trailing blanks
     while (e > pos && (all[e - 1] == ' ' || all[e - 1] == '\t' || all[e - 1] == '\r')) e--;
     if (e <= pos) return;
     if (!leaf) {
@@ -205,256 +289,353 @@ struct LinePass {
     leaf->lineSpans.push_back({pos, e});
   }
 
-  // consume a fence starting at line ln; returns last consumed line.
-  // CommonMark-style: N>=3 backticks, closer needs >= N; the opener's
-  // indentation is stripped from content lines (dedent); the closer may be
-  // indented. `openCol` = column of the first backtick within the content.
-  u32 fence(u32 ln, u32 pos, u32 openCol, u32 nlines) {
-    u32 le = src.lineEnd(ln);
-    u32 nTicks = 0;
-    while (pos + nTicks < le && all[pos + nTicks] == '`') nTicks++;
-    SkelNode* f = mk(SkelKind::Fence);
-    f->span = {pos, le};
-    u32 lang0 = pos + nTicks, lang1 = le;
-    while (lang0 < lang1 && all[lang0] == ' ') lang0++;
-    f->langSpan = {lang0, lang1};
-    parent()->kids.push_back(f);
-    closeLeaf();
-    u32 l = ln + 1;
-    for (; l < nlines; l++) {
-      u32 ls2 = src.lineStart(l), le2 = src.lineEnd(l);
-      u32 p2 = ls2, c2 = 0;
-      matchPrefixes(ls2, le2, p2, c2, isBlank(all.substr(ls2, le2 - ls2)));
-      // closer: optional indentation, then >= nTicks backticks, only trailing ws
-      {
-        u32 q = p2;
-        while (q < le2 && all[q] == ' ') q++;
-        u32 t = 0;
-        while (q + t < le2 && all[q + t] == '`') t++;
-        u32 after = q + t;
-        while (after < le2 && (all[after] == ' ' || all[after] == '\r')) after++;
-        if (t >= nTicks && after == le2) {
-          f->span.end = le2;
-          return l;
-        }
-      }
-      // content line: dedent up to the opener's column
-      u32 strip = 0;
-      while (strip < openCol && p2 + strip < le2 && all[p2 + strip] == ' ') strip++;
-      f->lineSpans.push_back({p2 + strip, le2});
-      f->span.end = le2;
-    }
-    diags.add(Sev::Error, "parse-block", f->span, "unterminated fence");
-    return l - 1;
-  }
-
-  // block comment starting at pos; returns end offset (after --%)
-  u32 blockComment(u32 pos) {
-    u32 i = pos + 3;  // after %--
-    int depth = 1;
-    while (i < all.size()) {
-      if (i + 2 < all.size() && all[i] == '%' && all[i + 1] == '-' && all[i + 2] == '-') { depth++; i += 3; continue; }
-      if (i + 2 < all.size() && all[i] == '-' && all[i + 1] == '-' && all[i + 2] == '%') {
-        depth--;
-        i += 3;
-        if (depth == 0) {
-          SkelNode* cm = mk(SkelKind::Comment);
-          cm->span = {pos, i};
-          cm->inner = {pos + 3, i - 3};
-          parent()->kids.push_back(cm);
-          closeLeaf();
-          return i;
-        }
+  // nesting-aware scan for the '--%' that closes a comment: one past it, or
+  // kNone with `depth` updated
+  u32 scanComment(u32 p, u32 e, int& depth) const {
+    while (p < e) {
+      if (p + 2 < e && all[p] == '%' && all[p + 1] == '-' && all[p + 2] == '-') {
+        depth++;
+        p += 3;
         continue;
       }
-      i++;
+      if (p + 2 < e && all[p] == '-' && all[p + 1] == '-' && all[p + 2] == '%') {
+        p += 3;
+        if (--depth == 0) return p;
+        continue;
+      }
+      p++;
     }
-    diags.add(Sev::Error, "parse-block", {pos, (u32)all.size()}, "unterminated comment");
+    return kNone;
+  }
+
+  // A fence: N >= 3 backticks; the closer needs >= N and only trailing
+  // blanks. Content lines are dedented by the opener's indentation relative
+  // to its container's content column; container exit ends the fence.
+  void openFence(u32 pos, u32 indent, u32 le) {
+    closeLeaf();
+    u32 n = 0;
+    while (pos + n < le && all[pos + n] == '`') n++;
+    SkelNode* f = mk(SkelKind::Fence);
+    f->span = {pos, le};
+    u32 l0 = pos + n;
+    while (l0 < le && all[l0] == ' ') l0++;
+    f->langSpan = {l0, le};
+    for (const OpenC& c : open) f->contained = f->contained || c.shape != Shape::Explicit;
+    parent()->kids.push_back(f);
+    carry = Carry::Fence;
+    carryNode = f;
+    carryDepth = open.size();
+    fenceTicks = n;
+    fenceIndent = indent;
+  }
+  void fenceLine(u32 pos, u32 col, u32 le) {
+    SkelNode* f = carryNode;
+    u32 q = pos, qc = col;
+    skipBlanks(le, q, qc);
+    u32 t = 0;
+    while (q + t < le && all[q + t] == '`') t++;
+    if (t >= fenceTicks && isBlank(q + t, le)) {
+      f->span.end = le;
+      carry = Carry::None;
+      return;
+    }
+    u32 p = pos, c = col;
+    skipBlanks(le, p, c, col + fenceIndent);
+    f->lineSpans.push_back({p, le});
+    f->span.end = le;
+  }
+
+  // A block comment from '%--' at `pos`; it may close on its own line (the
+  // remainder of the line re-enters) or carry on.
+  u32 blockComment(u32 ln, u32 pos, u32 le) {
+    closeLeaf();
     SkelNode* cm = mk(SkelKind::Comment);
-    cm->span = {pos, (u32)all.size()};
-    cm->inner = {pos + 3, (u32)all.size()};
+    cm->span = {pos, le};
+    cm->inner = {pos + 3, le};
     parent()->kids.push_back(cm);
-    return (u32)all.size();
+    int depth = 1;
+    u32 end = scanComment(pos + 3, le, depth);
+    if (end != kNone) return closeComment(ln, cm, pos + 3, end, le);
+    cm->lineSpans.push_back({pos + 3, le});
+    carry = Carry::Comment;
+    carryNode = cm;
+    carryDepth = open.size();
+    commentDepth = depth;
+    return ln + 1;
+  }
+  u32 closeComment(u32 ln, SkelNode* cm, u32 from, u32 end, u32 le) {
+    cm->lineSpans.push_back({from, end - 3});
+    cm->span.end = end;
+    cm->inner.end = end - 3;
+    carry = Carry::None;
+    return remainder(ln, end, le);
+  }
+
+  // container exit (or EOF) before a carry's closer
+  void endCarry() {
+    if (carry == Carry::Fence)
+      diags.add(Sev::Error, "parse-block", carryNode->span, "unterminated fence");
+    else if (carry == Carry::Comment)
+      diags.add(Sev::Error, "parse-block", carryNode->span, "unterminated comment");
+    // LeafComment: the paragraph keeps its lines; the inline lexer reports
+    // the unclosed '%--'
+    carry = Carry::None;
+  }
+
+  u32 carryLine(u32 ln, u32 pos, u32 col, u32 le) {
+    switch (carry) {
+      case Carry::Fence:
+        fenceLine(pos, col, le);
+        return ln + 1;
+      case Carry::Comment: {
+        int depth = commentDepth;
+        u32 end = scanComment(pos, le, depth);
+        if (end != kNone) return closeComment(ln, carryNode, pos, end, le);
+        carryNode->lineSpans.push_back({pos, le});
+        carryNode->span.end = le;
+        carryNode->inner.end = le;
+        commentDepth = depth;
+        return ln + 1;
+      }
+      case Carry::LeafComment: {
+        skipBlanks(le, pos, col);
+        if (scanComment(pos, le, commentDepth) != kNone) carry = Carry::None;
+        addParaLine(pos, le);
+        return ln + 1;
+      }
+      case Carry::None:
+        break;
+    }
+    return ln + 1;
+  }
+
+  // A statement — '#let …' to the end of its line or a ';' at depth 0,
+  // '#{…}' balanced — may continue over the following lines of its
+  // containers (to container exit; EOF at the root). The lines are joined
+  // structurally and scanned in growing windows, so a statement costs time in
+  // proportion to its own length. A broken statement is an Error block, never
+  // pasted JS.
+  u32 statement(u32 ln, u32 pos, u32 le, bool let) {
+    closeLeaf();
+    std::vector<Span> slices{{pos, le}};
+    std::vector<u32> sliceLine{ln};
+    u32 next = ln + 1;
+    bool exhausted = false;  // container exit or EOF reached
+    for (size_t want = 2;; want *= 2) {
+      while (slices.size() < want && !exhausted) {
+        if (next >= nlines) {
+          exhausted = true;
+          break;
+        }
+        u32 ls = src.lineStart(next), le2 = src.lineEnd(next), p = ls, c = 0;
+        bool blank = isBlank(ls, le2);
+        if (matchContainers(le2, p, c, blank) < open.size()) {
+          exhausted = true;
+          break;
+        }
+        u32 q = p, qc = c;
+        skipBlanks(le2, q, qc);
+        std::string_view name = closerName(q, le2);
+        if (!name.empty() && openRegion(name)) {
+          exhausted = true;
+          break;
+        }
+        slices.push_back({p, le2});
+        sliceLine.push_back(next++);
+      }
+      LeafText view(all, slices);
+      JsScan s = scanJs(view.text(), let ? 4 : 1, !let);
+      if (!s.ok) {
+        bool ranOut = s.err && std::string_view(s.err) == "unterminated";
+        if (ranOut && !exhausted) continue;
+        u32 last = recoverStatement(ln);
+        for (u32 l = ln + 1; l <= last; l++) extend(src.lineEnd(l));
+        errorBlock({pos, src.lineEnd(last)}, "statement-unclosed",
+                   let ? "unterminated #let: dropped up to the next blank line"
+                       : "unterminated #{ block: dropped up to the next blank line");
+        return last + 1;
+      }
+      // the slice holding the end
+      size_t k = 0;
+      for (u32 at = 0; k + 1 < slices.size(); k++) {
+        at += (slices[k].end - slices[k].start) + 1;
+        if (s.end < at) break;
+      }
+      const u32 end = view.raw(s.end);
+      SkelNode* c = mk(let ? SkelKind::CodeLet : SkelKind::CodeBlock);
+      c->span = {pos, end};
+      if (let) c->inner = {pos + 4, s.hitSemicolon ? view.raw(s.end - 1) : end};
+      else c->inner = {pos + 2, view.raw(s.end - 1)};
+      parent()->kids.push_back(c);
+      for (size_t l = 1; l <= k; l++) extend(slices[l].end);
+      return remainder(sliceLine[k], end, src.lineEnd(sliceLine[k]));
+    }
+  }
+
+  // The rest of a line after a construct closed mid-line ('--%', '}', ';'):
+  // another comment or statement, else paragraph text.
+  u32 remainder(u32 ln, u32 at, u32 le) {
+    u32 p = at, c = 0;
+    skipBlanks(le, p, c);
+    if (isBlank(p, le)) return ln + 1;
+    std::string_view rest = all.substr(p, le - p);
+    if (starts(rest, "%--")) return blockComment(ln, p, le);
+    if (isLet(rest)) return statement(ln, p, le, true);
+    if (starts(rest, "#{")) return statement(ln, p, le, false);
+    addParaLine(p, le);
+    return ln + 1;
+  }
+
+  // A line's leaf content from `pos` (after its containers and starters);
+  // returns the next line to process.
+  u32 leafLine(u32 ln, u32 pos, u32 col, u32 le) {
+    const u32 baseCol = col;
+    skipBlanks(le, pos, col);
+    if (pos >= le || isBlank(pos, le)) {
+      closeLeaf();
+      return ln + 1;
+    }
+    std::string_view rest = all.substr(pos, le - pos);
+
+    if (starts(rest, "```")) {
+      openFence(pos, col - baseCol, le);
+      return ln + 1;
+    }
+    if (starts(rest, "%--")) {
+      if (leaf) {  // a comment line inside a paragraph is part of it (inline)
+        int depth = 1;
+        if (scanComment(pos + 3, le, depth) == kNone) {
+          carry = Carry::LeafComment;
+          carryNode = leaf;
+          carryDepth = open.size();
+          commentDepth = depth;
+        }
+        addParaLine(pos, le);
+        return ln + 1;
+      }
+      return blockComment(ln, pos, le);
+    }
+    if (rest[0] == '=') {
+      u32 n = 0;
+      while (n < rest.size() && rest[n] == '=') n++;
+      if (n <= 6 && n < rest.size() && rest[n] == ' ') {
+        closeLeaf();
+        SkelNode* h = mk(SkelKind::Heading);
+        h->level = (u8)n;
+        u32 cs = pos + n + 1;
+        u32 e = le;
+        while (e > cs && (all[e - 1] == ' ' || all[e - 1] == '\r')) e--;
+        // trailing "<id>" label (v2 §11.1): space + <…> at line end
+        if (e > cs + 2 && all[e - 1] == '>') {
+          u32 lb = e - 1;
+          while (lb > cs && all[lb - 1] != '<' && all[lb - 1] != '>' && all[lb - 1] != ' ') lb--;
+          if (lb >= cs + 2 && all[lb - 1] == '<' && lb < e - 1 && all[lb - 2] == ' ') {
+            h->labelSpan = {lb, e - 1};
+            e = lb - 2;
+            while (e > cs && all[e - 1] == ' ') e--;
+          }
+        }
+        h->span = {pos, e};
+        h->lineSpans.push_back({cs, e});
+        parent()->kids.push_back(h);
+        return ln + 1;
+      }
+    }
+    {  // thematic break: 3+ dashes alone
+      u32 n = 0;
+      while (n < rest.size() && rest[n] == '-') n++;
+      if (n >= 3 && isBlank(pos + n, le)) {
+        closeLeaf();
+        SkelNode* r = mk(SkelKind::Rule);
+        r->span = {pos, le};
+        parent()->kids.push_back(r);
+        return ln + 1;
+      }
+    }
+    // region opener: #!name(args)? alone on its line (v2 §4.1)
+    if (rest.size() >= 3 && rest[0] == '#' && rest[1] == '!' && isIdentStart(rest[2])) {
+      u32 np = pos + 2;
+      while (np < le && isIdentCont(all[np])) np++;
+      Span argsSpan{np, np};
+      u32 after = np;
+      bool ok = true;
+      if (after < le && all[after] == '(') {
+        JsScan js = scanJs(all.substr(0, le), after, true);
+        if (js.ok) {
+          argsSpan = {after + 1, js.end - 1};
+          after = js.end;
+        } else {
+          ok = false;
+        }
+      }
+      if (ok && isBlank(after, le)) {
+        closeLeaf();
+        SkelNode* rg = mk(SkelKind::Region);
+        rg->span = {pos, le};
+        rg->langSpan = {pos + 2, np};
+        rg->inner = argsSpan;
+        parent()->kids.push_back(rg);
+        open.push_back({rg, Shape::Explicit});
+        return ln + 1;
+      }
+      // fall through: not a region opener, plain paragraph text
+    }
+    // a region closer with no open region of its name is an error block,
+    // never a splice (App B rule 5; matched closers: processLine)
+    if (std::string_view name = closerName(pos, le); !name.empty()) {
+      errorBlock({pos, le}, "region-orphan",
+                 "closer '#" + std::string(name) + "!' has no open region '#!" + std::string(name) + "'");
+      return ln + 1;
+    }
+    if (isLet(rest)) return statement(ln, pos, le, true);
+    if (starts(rest, "#{")) return statement(ln, pos, le, false);
+    addParaLine(pos, le);
+    return ln + 1;
+  }
+
+  u32 processLine(u32 ln) {
+    const u32 ls = src.lineStart(ln), le = src.lineEnd(ln);
+    const bool blank = isBlank(ls, le);
+    u32 pos = ls, col = 0;
+    const size_t matched = matchContainers(le, pos, col, blank);
+    if (carry != Carry::None) {
+      if (matched >= carryDepth) {
+        if (!blank) extend(le);
+        return carryLine(ln, pos, col, le);
+      }
+      endCarry();
+    }
+    if (matched < open.size()) closeTo(matched);  // a blank line ends a quote
+    if (blank) {
+      closeLeaf();
+      return ln + 1;
+    }
+    // region closer: '#name!' alone on its line closes the innermost open
+    // region of that name; regions opened inside it end unclosed
+    {
+      u32 q = pos, qc = col;
+      skipBlanks(le, q, qc);
+      std::string_view name = closerName(q, le);
+      if (size_t ri = name.empty() ? 0 : openRegion(name)) {
+        closeTo(ri);
+        extend(le);
+        open.pop_back();
+        return ln + 1;
+      }
+    }
+    extend(le);
+    tryStarters(le, pos, col);
+    return leafLine(ln, pos, col, le);
   }
 
   void run() {
     root = mk(SkelKind::Doc);
     root->span = {0, src.size()};
-    const u32 nlines = src.lineCount();
-    for (u32 ln = 0; ln < nlines; ln++) {
-      u32 ls = src.lineStart(ln), le = src.lineEnd(ln);
-      bool blank = isBlank(all.substr(ls, le - ls));
-      u32 pos = ls, col = 0;
-      size_t matched = matchPrefixes(ls, le, pos, col, blank);
-
-      if (blank) {
-        closeLeaf();  // containers stay open; items close on failed indent later
-        continue;
-      }
-      if (matched < open.size()) closeTo(matched);
-      tryStarters(le, pos, col);
-
-      // skip leading spaces of leaf content
-      while (pos < le && all[pos] == ' ') { pos++; col++; }
-      if (pos >= le) { closeLeaf(); continue; }
-      std::string_view rest = all.substr(pos, le - pos);
-
-      if (rest.size() >= 3 && rest.substr(0, 3) == "```") {
-        ln = fence(ln, pos, col, nlines);
-        continue;
-      }
-      if (rest.size() >= 3 && rest.substr(0, 3) == "%--") {
-        u32 end = blockComment(pos);
-        while (ln + 1 < nlines && src.lineStart(ln + 1) <= end) ln++;
-        continue;
-      }
-      if (rest[0] == '=') {
-        u32 n = 0;
-        while (n < rest.size() && rest[n] == '=') n++;
-        if (n <= 6 && n < rest.size() && rest[n] == ' ') {
-          closeLeaf();
-          SkelNode* h = mk(SkelKind::Heading);
-          h->level = (u8)n;
-          u32 cs = pos + n + 1;
-          u32 e = le;
-          while (e > cs && (all[e - 1] == ' ' || all[e - 1] == '\r')) e--;
-          // trailing "<id>" label (v2 §11.1): space + <…> at line end
-          if (e > cs + 2 && all[e - 1] == '>') {
-            u32 lb = e - 1;
-            while (lb > cs && all[lb - 1] != '<' && all[lb - 1] != '>' &&
-                   all[lb - 1] != ' ')
-              lb--;
-            if (lb >= cs + 2 && all[lb - 1] == '<' && lb < e - 1 && all[lb - 2] == ' ') {
-              h->labelSpan = {lb, e - 1};
-              e = lb - 2;
-              while (e > cs && all[e - 1] == ' ') e--;
-            }
-          }
-          h->span = {pos, e};
-          h->lineSpans.push_back({cs, e});
-          parent()->kids.push_back(h);
-          continue;
-        }
-      }
-      {  // thematic break: 3+ dashes alone
-        u32 n = 0;
-        while (n < rest.size() && rest[n] == '-') n++;
-        u32 t = n;
-        while (t < rest.size() && (rest[t] == ' ' || rest[t] == '\r')) t++;
-        if (n >= 3 && t == rest.size()) {
-          closeLeaf();
-          SkelNode* r = mk(SkelKind::Rule);
-          r->span = {pos, le};
-          parent()->kids.push_back(r);
-          continue;
-        }
-      }
-      // region opener: #!name(args)? alone on its line (v2 §4.1)
-      if (rest.size() >= 3 && rest[0] == '#' && rest[1] == '!' && isIdentStart(rest[2])) {
-        u32 np = pos + 2;
-        while (np < le && isIdentCont(all[np])) np++;
-        Span nameSpan{pos + 2, np};
-        Span argsSpan{np, np};
-        u32 after = np;
-        bool ok = true;
-        if (after < le && all[after] == '(') {
-          JsScan js = scanJs(all.substr(0, le), after, true);
-          if (js.ok) {
-            argsSpan = {after + 1, js.end - 1};
-            after = js.end;
-          } else ok = false;
-        }
-        u32 t = after;
-        while (t < le && (all[t] == ' ' || all[t] == '\r')) t++;
-        if (ok && t == le) {
-          SkelNode* rg = mk(SkelKind::Region);
-          rg->span = {pos, le};
-          rg->langSpan = nameSpan;
-          rg->inner = argsSpan;
-          parent()->kids.push_back(rg);
-          open.push_back({rg, 0});
-          closeLeaf();
-          continue;
-        }
-        // fall through: not a region opener, plain paragraph text
-      }
-      // region closer: #name! alone on its line
-      if (rest.size() >= 3 && rest[0] == '#' && isIdentStart(rest[1])) {
-        u32 np = pos + 1;
-        while (np < le && isIdentCont(all[np])) np++;
-        u32 t = np + 1;
-        while (t < le && (all[t] == ' ' || all[t] == '\r')) t++;
-        if (np < le && all[np] == '!' && t == le) {
-          size_t ri = open.size();
-          while (ri > 0 && open[ri - 1].node->kind != SkelKind::Region) ri--;
-          if (ri > 0) {
-            SkelNode* rg = open[ri - 1].node;
-            std::string_view want = src.slice(rg->langSpan);
-            std::string_view got = all.substr(pos + 1, np - (pos + 1));
-            if (want != got)
-              diags.add(Sev::Error, "region-mismatch", {pos, le},
-                        "closer '#" + std::string(got) +
-                            "!' does not match open region '#!" + std::string(want) + "'");
-            rg->span.end = le;
-            closeTo(ri);       // pop containers opened inside the region
-            open.pop_back();   // pop the region itself
-            closeLeaf();
-            continue;
-          }
-          // no open region: plain paragraph text
-        }
-      }
-      if (rest.size() >= 4 && rest.substr(0, 4) == "#let" &&
-          (rest.size() == 4 || rest[4] == ' ' || rest[4] == '\t')) {
-        closeLeaf();
-        u32 innerStart = pos + 4;
-        // multi-line statements only at top level (container prefixes would
-        // corrupt the JS text) — inside containers, scan stops at EOL.
-        JsScan s = scanJs(open.empty() ? all : all.substr(0, le), innerStart, false);
-        if (!s.ok) {
-          // unbalanced: recover at the first blank line instead of swallowing
-          // the rest of the document (plan P0-04); the statement is dropped
-          u32 end = recoverStatement(ln, nlines);
-          errorBlock({pos, end}, "statement-unclosed",
-                     "unterminated #let: dropped up to the next blank line");
-          while (ln + 1 < nlines && src.lineStart(ln + 1) <= end) ln++;
-          continue;
-        }
-        u32 end = s.end;
-        SkelNode* c = mk(SkelKind::CodeLet);
-        c->span = {pos, end};
-        c->inner = {innerStart, s.hitSemicolon ? end - 1 : end};
-        parent()->kids.push_back(c);
-        while (ln + 1 < nlines && src.lineStart(ln + 1) <= end) ln++;
-        continue;
-      }
-      if (rest.size() >= 2 && rest.substr(0, 2) == "#{") {
-        closeLeaf();
-        JsScan s = scanJs(open.empty() ? all : all.substr(0, le), pos + 1, true);
-        if (!s.ok) {
-          // unbalanced: never paste partial JS (it fails the whole module);
-          // recover at the first blank line and drop the statement (P0-04)
-          u32 end = recoverStatement(ln, nlines);
-          errorBlock({pos, end}, "statement-unclosed",
-                     "unterminated #{ block: dropped up to the next blank line");
-          while (ln + 1 < nlines && src.lineStart(ln + 1) <= end) ln++;
-          continue;
-        }
-        u32 end = s.end;
-        SkelNode* c = mk(SkelKind::CodeBlock);
-        c->span = {pos, end};
-        c->inner = {pos + 2, s.ok ? end - 1 : end};
-        parent()->kids.push_back(c);
-        while (ln + 1 < nlines && src.lineStart(ln + 1) <= end) ln++;
-        continue;
-      }
-      addParaLine(pos, le);
-    }
+    nlines = src.lineCount();
+    for (u32 ln = 0; ln < nlines;) ln = processLine(ln);
+    if (carry != Carry::None) endCarry();
     for (const OpenC& c : open)
-      if (c.node->kind == SkelKind::Region)
-        diags.add(Sev::Error, "region-unclosed", c.node->span,
-                  "region '#!" + std::string(src.slice(c.node->langSpan)) +
-                      "' has no matching closer");
+      if (c.shape == Shape::Explicit) regionUnclosed(c.node);
   }
 };
 

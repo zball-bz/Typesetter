@@ -10,7 +10,7 @@ doc @[0,421)
     note @[255,273)
       text @[257,272) str="行尾脚注。"
     text @[273,276) str="。"
-  list @[278,364) bullet start=1
+  list @[278,420) bullet start=1
     item @[278,364)
       para @[280,364)
         text @[280,301) str="列表项里的脚注"

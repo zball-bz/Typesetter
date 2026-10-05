@@ -1,0 +1,12 @@
+doc @[0,181)
+  list @[0,88) bullet start=1
+    item @[0,88)
+      para @[2,49)
+        text @[2,49) str="an item with a fence whose content is indented:"
+      codeblock @[53,88) lang="js" body="if (x) {\n  y();\n}"
+  quote @[90,136)
+    para @[92,112)
+      text @[92,112) str="a quote with a fence"
+    codeblock @[115,136) lang="js" body="quoted(code);"
+  para @[137,180)
+    text @[137,180) str="the quote ends here, and so does its fence."

@@ -2,24 +2,25 @@ doc @[0,371)
   heading1 @[0,11)
   heading2 @[12,24)
   heading3 @[25,40)
-  list bullet start=1 @[42,58)
+  list bullet start=1 @[42,132)
     item @[42,58)
       para @[44,58) lines=1
-    item @[59,82)
+    item @[59,132)
       para @[61,116) lines=2
       list bullet start=1 @[119,132)
         item @[119,132)
           para @[121,132) lines=1
-  list ordered start=1 @[133,147)
+  list ordered start=1 @[133,166)
     item @[133,147)
       para @[135,147) lines=1
     item @[148,166)
       para @[150,166) lines=1
+  list ordered start=3 @[167,192)
     item @[167,184)
       para @[170,184) lines=1
     item @[185,192)
       para @[188,192) lines=1
-  quote @[194,206)
+  quote @[194,223)
     para @[196,206) lines=1
     quote @[209,223)
       para @[211,223) lines=1

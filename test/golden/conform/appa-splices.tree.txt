@@ -9,8 +9,10 @@ doc @[60,438) [base]
     text @[139,162) [base] str=" characters; expression: "
     text @[0,0) [base] str="7"
     text @[175,176) [base] str="."
-  para @[252,438) [base]
-    text @[252,281) [base] str="A splice ends at punctuation: "
+  para @[201,438) [base]
+    text @[201,242) [base] str="Statement splice binds in document scope: "
+    text @[0,0) [base] str="42"
+    text @[250,281) [base] str=". A splice ends at punctuation: "
     text @[0,0) [base] str="world"
     text @[286,309) [base] str=". Semicolon terminator: "
     text @[0,0) [base] str="world"

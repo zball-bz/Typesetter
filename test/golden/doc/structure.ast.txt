@@ -13,25 +13,25 @@ doc @[0,482)
     code @[127,140) str="inline code"
     text @[141,147) str=" in it."
     comment @[148,170) body=" invisible note "
-  list @[172,228) bullet start=1
+  list @[172,296) bullet start=1
     item @[172,228)
       para @[174,228)
         text @[174,228) str="First bullet item with enough words to wrap onto lines"
-    item @[229,242)
+    item @[229,296)
       para @[231,274)
         text @[231,274) str="Second item continued on an indented line"
       list @[277,296) bullet start=1
         item @[277,296)
           para @[279,296)
             text @[279,296) str="Nested child item"
-  list @[297,318) ordered start=1
+  list @[297,334) ordered start=1
     item @[297,318)
       para @[299,318)
         text @[299,318) str="Ordered starts here"
     item @[319,334)
       para @[321,334)
         text @[321,334) str="And continues"
-  quote @[336,396)
+  quote @[336,430)
     para @[338,430)
       text @[338,430) str="A quoted paragraph, indented by the engine rather than the browser, wrapping across lines."
   rule @[432,435)

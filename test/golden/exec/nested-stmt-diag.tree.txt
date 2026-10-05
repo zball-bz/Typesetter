@@ -1,6 +1,6 @@
 doc @[0,42) [base]
-  list @[0,10) [base] ordered=false start=1
-    item @[0,10) [base]
+  list @[0,34) [base] ordered=false start=1
+    item @[0,23) [base]
       para @[2,10) [base]
         text @[2,10) [base] str="item one"
       error @[13,23) [base] message="statements inside lists, quotes and regions are not supported yet (plan P2-12)" code="statement-nested-unsupported"

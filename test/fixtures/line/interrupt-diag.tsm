@@ -1,0 +1,24 @@
+A paragraph mentions the year
+1984. Then it goes on: an N. line with N other than 1 does not interrupt.
+
+A paragraph with a dash line
+- 
+continues: an empty item does not interrupt.
+
+A paragraph followed by a list
+1. one
+2. two
+
+Comment lines inside a paragraph are invisible
+%-- a remark --%
+and the paragraph continues.
+
+%-- a block comment --% Text after the closer is kept.
+#let y = 2; and after a let statement: #y.
+#{ let z = 3 } and after a block: #z.
+
++ auto one
++ auto two
+1. a separate explicit list
+2. continues it
+5. numbered out of order

@@ -1,0 +1,20 @@
+doc @[0,193)
+  code-block @[0,29) js="\n  let a = 1\n\n  let b = 2\n"
+  para @[30,78)
+    text @[30,68) str="A root statement may hold blank lines: "
+    splice @[69,77) expr="(a + b)"
+    text @[77,78) str="."
+  list @[80,136) bullet start=1
+    item @[80,124)
+      para @[82,86)
+        text @[82,86) str="item"
+      error @[89,124) code="statement-nested-unsupported" msg="statements inside lists, quotes and regions are not supported yet (plan P2-12)"
+    item @[125,136)
+      para @[127,136)
+        text @[127,136) str="next item"
+  quote @[138,192)
+    para @[140,145)
+      text @[140,145) str="quote"
+    error @[148,184) code="statement-nested-unsupported" msg="statements inside lists, quotes and regions are not supported yet (plan P2-12)"
+    para @[187,192)
+      text @[187,192) str="after"

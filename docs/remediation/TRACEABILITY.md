@@ -995,19 +995,19 @@ Theme steps: — · findings: 1
 | `markup-language/spec-features-unimplemented` | issue | high | P0-05, P2-12, P3-31 | |
 | `markup-language/nested-code-statements-dropped` | issue | high | P0-05, P2-12 | |
 | `markup-language/inline-scanner-overrun` | issue | high | P1-06 | grep:plan P1-06 |
-| `markup-language/same-line-trailing-text-dropped` | issue | medium | P1-07 | |
-| `markup-language/region-error-recovery` | issue | medium | P1-07 | |
+| `markup-language/same-line-trailing-text-dropped` | issue | medium | P1-07 | grep:plan P1-07 |
+| `markup-language/region-error-recovery` | issue | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/span-loss` | issue | medium | P2-04 | |
 | `markup-language/structured-content-flattened` | issue | medium | P3-03 | |
 | `markup-language/ambiguity-hazards` | issue | medium | P3-33 | |
 | `markup-language/ast-dump-note` | issue | low | P0-02 | grep:plan P0-02 |
 | `markup-language/doc-drift` | issue | low | P3-35 | |
 | `markup-language/missed:0` | missed | high | P2-11 | |
-| `markup-language/missed:1` | missed | medium | P1-07 | |
-| `markup-language/missed:2` | missed | medium | P1-07 | |
+| `markup-language/missed:1` | missed | medium | P1-07 | grep:plan P1-07 |
+| `markup-language/missed:2` | missed | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/missed:3` | missed | medium | P2-02, P3-01 | |
-| `markup-language/missed:4` | missed | low | P1-07 | |
-| `markup-language/missed:5` | missed | low | P1-07 | |
+| `markup-language/missed:4` | missed | low | P1-07 | grep:plan P1-07 |
+| `markup-language/missed:5` | missed | low | P1-07 | grep:plan P1-07 |
 | `parser-frontend/per-feature-ast-kinds` | adhoc | high | P1-05 | grep:plan P1-05 |
 | `parser-frontend/inline-recognizer-cascade` | adhoc | high | P1-06 | grep:plan P1-06 |
 | `parser-frontend/region-pipe-segmentation-in-parser` | adhoc | high | P2-11 | |
@@ -1020,27 +1020,27 @@ Theme steps: — · findings: 1
 | `parser-frontend/parser-owned-cjk-line-join` | adhoc | medium | P2-10, P4-02 | |
 | `parser-frontend/fragment-parallel-lowering` | adhoc | high | P2-13 | |
 | `parser-frontend/region-fence-private-dispatch` | adhoc | medium | P2-03, P2-06 | |
-| `parser-frontend/region-container-special-case` | adhoc | medium | P1-07 | |
+| `parser-frontend/region-container-special-case` | adhoc | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/multiple-tsm-grammars` | adhoc | high | P1-09 | |
 | `parser-frontend/sigil-context-rules` | adhoc | medium | P3-33 | |
 | `parser-frontend/front-matter-editor-only` | adhoc | low | P3-35 | |
 | `parser-frontend/editor-region-builder-list` | adhoc | low | P1-09 | |
 | `parser-frontend/contiguous-escapes-blocks` | issue | high | P1-06 | grep:plan P1-06 |
 | `parser-frontend/inline-comment-leaks-block-structure` | issue | high | P1-08 | |
-| `parser-frontend/unterminated-let-swallows-document` | issue | high | P0-04, P1-07 | |
+| `parser-frontend/unterminated-let-swallows-document` | issue | high | P0-04, P1-07 | grep:plan P1-07 |
 | `parser-frontend/ctor-names-are-reserved-words` | issue | high | P0-05, P2-02 | |
-| `parser-frontend/trailing-text-after-block-closers-dropped` | issue | medium | P1-07 | |
-| `parser-frontend/fence-double-dedent-in-containers` | issue | medium | P1-07 | |
-| `parser-frontend/span-fidelity` | issue | medium | P1-07 | |
+| `parser-frontend/trailing-text-after-block-closers-dropped` | issue | medium | P1-07 | grep:plan P1-07 |
+| `parser-frontend/fence-double-dedent-in-containers` | issue | medium | P1-07 | grep:plan P1-07 |
+| `parser-frontend/span-fidelity` | issue | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/no-error-nodes` | issue | medium | P2-02, P2-12 | |
 | `parser-frontend/docs-drift` | issue | medium | P1-09 | |
 | `parser-frontend/ast-dump-missing-note` | issue | low | P0-02 | grep:plan P0-02 |
 | `parser-frontend/missed:0` | missed | high | P0-04, P1-06 | grep:plan P1-06 |
 | `parser-frontend/missed:1` | missed | high | P1-06 | grep:plan P1-06 |
-| `parser-frontend/missed:2` | missed | medium | P1-07 | |
+| `parser-frontend/missed:2` | missed | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/missed:3` | missed | medium | P2-02, P2-06 | |
 | `parser-frontend/missed:4` | missed | low | P1-06 | grep:plan P1-06 |
-| `parser-frontend/missed:5` | missed | low | P1-07 | |
+| `parser-frontend/missed:5` | missed | low | P1-07 | grep:plan P1-07 |
 | `codegen-ops-model/ctor-signatures-break-sugar-equivalence` | adhoc | high | P2-03 | |
 | `codegen-ops-model/private-region-builders-and-missing-ctors` | adhoc | high | P2-03 | |
 | `codegen-ops-model/region-meta-args-hijack` | adhoc | medium | P2-03, P2-08 | |

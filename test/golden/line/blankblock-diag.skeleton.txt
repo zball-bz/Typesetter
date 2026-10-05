@@ -1,0 +1,13 @@
+doc @[0,193)
+  code-block @[0,29) js="\n  let a = 1\n\n  let b = 2\n"
+  para @[30,78) lines=1
+  list bullet start=1 @[80,136)
+    item @[80,124)
+      para @[82,86) lines=1
+      code-block @[89,124) js="\n    let c = 1\n\n    let d = 2\n  "
+    item @[125,136)
+      para @[127,136) lines=1
+  quote @[138,192)
+    para @[140,145) lines=1
+    code-block @[148,184) js="\n>   let e = 1\n>\n>   let f = 2\n> "
+    para @[187,192) lines=1

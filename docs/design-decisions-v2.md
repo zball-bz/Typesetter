@@ -145,6 +145,8 @@ handler(body, ctx) → Content | Promise<Content>
 ctx = {
   args,                      // parsed info-string arguments
   offset,                    // absolute source offset of body start
+  lineOffsets,               // as built (P1-07): each body line's offset when the
+                             // fence sits in a quote or list item, else null
   m,                         // m`…` and m.parse(str, {offset}) re-entry
   error(msg, localOffset),   // diagnostic anchored at offset+localOffset
   raw(html, {width, height}) // pre-rendered passthrough node

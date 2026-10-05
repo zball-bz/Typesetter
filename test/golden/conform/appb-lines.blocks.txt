@@ -54,7 +54,7 @@ top pid=3 units=3
   word "ed" w=1025su pen=INF @[121,132)
   space w=257su stretch=1 @[121,132)
   word "item" w=2049su pen=INF @[121,132)
-top pid=4 units=4
+top pid=4 units=2
  unit text indent=1536su marker="1."
   word "or" w=1025su pen=INF @[135,147)
   hyphen bw=513su pen=0.70 @[135,147)
@@ -69,6 +69,7 @@ top pid=4 units=4
   word "auto" w=2049su pen=INF @[150,166)
   space w=257su stretch=1 @[150,166)
   word "two" w=1537su pen=INF @[150,166)
+top pid=5 units=2
  unit text indent=1536su marker="3."
   word "ex" w=1025su pen=INF @[170,184)
   hyphen bw=513su pen=0.70 @[170,184)
@@ -79,7 +80,7 @@ top pid=4 units=4
   word "start" w=2561su pen=INF @[170,184)
  unit text indent=1536su marker="4."
   word "next" w=2049su pen=INF @[188,192)
-top pid=5 units=2
+top pid=6 units=2
  unit text indent=1024su
   word "quote" w=2561su pen=INF @[196,206)
   space w=257su stretch=1 @[196,206)
@@ -90,13 +91,13 @@ top pid=5 units=2
   word "ed" w=1025su pen=INF @[211,223)
   space w=257su stretch=1 @[211,223)
   word "quote" w=2561su pen=INF @[211,223)
-top pid=7 units=1
- unit code indent=0su lines=1 wrap
 top pid=8 units=1
- unit math indent=0su w=4295su asc=700su desc=76su
+ unit code indent=0su lines=1 wrap
 top pid=9 units=1
- unit rule indent=0su
+ unit math indent=0su w=4295su asc=700su desc=76su
 top pid=10 units=1
+ unit rule indent=0su
+top pid=11 units=1
  unit text indent=0su
   word "=" w=513su pen=INF @[322,370)
   space w=257su stretch=1 @[322,370)

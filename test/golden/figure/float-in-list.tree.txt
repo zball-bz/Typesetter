@@ -1,11 +1,11 @@
-doc @[0,92) [base]
+doc @[0,449) [base]
   para @[0,60) [base]
     text @[0,60) [base] str="A left float inside a list item (guard fixture, plan P0-01)."
-  list @[62,92) [base] ordered=false start=1
+  list @[62,449) [base] ordered=false start=1
     item @[62,92) [base]
       para @[64,92) [base]
         text @[64,92) [base] str="First item before the float."
-    item @[93,130) [base]
+    item @[93,419) [base]
       para @[95,130) [base]
         text @[95,130) [base] str="Second item holds a floated figure."
       group @[134,276) [base] role="figure" label="fig-icon"

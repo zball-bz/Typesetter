@@ -1,0 +1,31 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+let y;
+__emit(__a(__p(__a(__t("A paragraph mentions the year 1984. Then it goes on: an N. line with N other than 1 does not interrupt."),0,103)),0,103));
+__emit(__a(__p(__a(__t("A paragraph with a dash line - continues: an empty item does not interrupt."),105,181)),105,181));
+__emit(__a(__p(__a(__t("A paragraph followed by a list"),183,213)),183,213));
+__emit(__a(__l(true, 1, __a(__it(__a(__p(__a(__t("one"),217,220)),217,220)),214,220), __a(__it(__a(__p(__a(__t("two"),224,227)),224,227)),221,227)),214,227));
+__emit(__a(__p(__a(__t("Comment lines inside a paragraph are invisible"),229,275), __a(__cm(" a remark "),276,292), __a(__t(" and the paragraph continues."),293,321)),229,321));
+__emit(__a(__cm(" a block comment "),323,346));
+__emit(__a(__p(__a(__t("Text after the closer is kept."),347,377)),347,377));
+/*8de5e42d54af7085[0*/{ const __h = __height(); try {
+y = (
+ 2
+);
+} catch (__e) { __fail(0, __e, __h); } }/*8de5e42d54af7085]0*/
+/*8de5e42d54af7085[1*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("and after a let statement: "),390,416), __v((y)), __a(__t("."),419,420)),390,420));
+} catch (__e) { __fail(1, __e, __h); } }/*8de5e42d54af7085]1*/
+/*8de5e42d54af7085[2*/__cur(2);
+ let z = 3 
+/*8de5e42d54af7085]2*/
+/*8de5e42d54af7085[3*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("and after a block: "),436,454), __v((z)), __a(__t("."),457,458)),436,458));
+} catch (__e) { __fail(3, __e, __h); } }/*8de5e42d54af7085]3*/
+__emit(__a(__l(true, 1, __a(__it(__a(__p(__a(__t("auto one"),462,470)),462,470)),460,470), __a(__it(__a(__p(__a(__t("auto two"),473,481)),473,481)),471,481)),460,481));
+__emit(__a(__l(true, 1, __a(__it(__a(__p(__a(__t("a separate explicit list"),485,509)),485,509)),482,509), __a(__it(__a(__p(__a(__t("continues it"),513,525)),513,525)),510,525), __a(__it(__a(__p(__a(__t("numbered out of order"),529,550)),529,550)),526,550)),482,550));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=8de5e42d54af7085;551;[[378,389,6],[390,420,2],[421,435,4],[436,458,2]]

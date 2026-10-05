@@ -1,0 +1,22 @@
+#{
+  let a = 1
+
+  let b = 2
+}
+A root statement may hold blank lines: #(a + b).
+
+- item
+  #{
+    let c = 1
+
+    let d = 2
+  }
+- next item
+
+> quote
+> #{
+>   let e = 1
+>
+>   let f = 2
+> }
+> after

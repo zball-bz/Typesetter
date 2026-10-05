@@ -1,0 +1,19 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+/*4ba0630e5ecb50f5[0*/__cur(0);
+
+  let a = 1
+
+  let b = 2
+
+/*4ba0630e5ecb50f5]0*/
+/*4ba0630e5ecb50f5[1*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("A root statement may hold blank lines: "),30,68), __v(((a + b))), __a(__t("."),77,78)),30,78));
+} catch (__e) { __fail(1, __e, __h); } }/*4ba0630e5ecb50f5]1*/
+__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("item"),82,86)),82,86), __a(__er("statement-nested-unsupported", "statements inside lists, quotes and regions are not supported yet (plan P2-12)"),89,124)),80,124), __a(__it(__a(__p(__a(__t("next item"),127,136)),127,136)),125,136)),80,136));
+__emit(__a(__qt(__a(__p(__a(__t("quote"),140,145)),140,145), __a(__er("statement-nested-unsupported", "statements inside lists, quotes and regions are not supported yet (plan P2-12)"),148,184), __a(__p(__a(__t("after"),187,192)),187,192)),138,192));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=4ba0630e5ecb50f5;193;[[0,29,4],[30,78,2]]

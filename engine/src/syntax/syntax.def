@@ -4,7 +4,7 @@
 // and docs/syntax-table.md. Rows are data; behaviour (body modes, ownership,
 // block shapes) is a closed set implemented in code. Never hand-edit the
 // generated files.
-SYNTAX_VERSION(2)
+SYNTAX_VERSION(3)
 
 // ---- character classes ----------------------------------------------------
 CLASS(SpliceHead, "A-Za-z_$")
@@ -61,7 +61,7 @@ SUGAR(list,    Block,  "ordered:bool start:i32",            "list {ordered?order
 SUGAR(item,    Block,  "",                                  "item")
 SUGAR(quote,   Block,  "",                                  "quote")
 SUGAR(rule,    Block,  "",                                  "rule")
-SUGAR(fence,   Block,  "lang:str args:src bodyOffset:u32",  "codeblock lang=\"{lang}\" body=\"{$str}\"")
+SUGAR(fence,   Block,  "lang:str args:src bodyOffset:u32 lines:str", "codeblock lang=\"{lang}\" body=\"{$str}\"")
 SUGAR(region,  Block,  "args:src",                          "region name=\"{$str}\"")
 SUGAR(strong,  Inline, "",                                  "styled marker=*")
 SUGAR(em,      Inline, "",                                  "styled marker=_")

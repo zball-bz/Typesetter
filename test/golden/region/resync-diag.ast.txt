@@ -1,0 +1,26 @@
+doc @[0,178)
+  region @[0,47) name="outer"
+    para @[8,19)
+      row @[8,19)
+        cell @[8,19)
+          text @[8,19) str="Outer text."
+    region @[20,39) name="inner"
+      para @[28,39)
+        row @[28,39)
+          cell @[28,39)
+            text @[28,39) str="Inner text."
+  para @[49,67)
+    text @[49,67) str="After the regions."
+  quote @[69,97)
+    region @[71,97) name="aside"
+      para @[81,97)
+        row @[81,97)
+          cell @[81,97)
+            text @[81,97) str="A quoted region."
+  para @[98,144)
+    text @[98,144) str="Not quoted: the quote and its region end here."
+  region @[146,177) name="lonely"
+    para @[155,177)
+      row @[155,177)
+        cell @[155,177)
+          text @[155,177) str="Text without a closer."

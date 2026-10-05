@@ -509,6 +509,16 @@ struct AstBuilder {
 
   AstAlloc A{arena};
 
+  // a verbatim body: its line slices (container prefixes stripped) joined
+  std::string joinLines(const std::vector<Span>& lines) const {
+    std::string body;
+    for (size_t k = 0; k < lines.size(); k++) {
+      if (k) body += '\n';
+      body += src.slice(lines[k]);
+    }
+    return body;
+  }
+
   std::vector<AstNode*> inlineParse(const std::vector<Span>& spans) {
     return parseLeaf(src.view(), spans, arena, strs, diags);
   }
@@ -589,20 +599,22 @@ struct AstBuilder {
         fp.lang = strs.intern(lang);
         fp.args = args;
         fp.bodyOffset = s->lineSpans.empty() ? s->span.end : s->lineSpans[0].start;
-        std::string body;
-        for (size_t k = 0; k < s->lineSpans.size(); k++) {
-          if (k) body += '\n';
-          body += src.slice(s->lineSpans[k]);
+        // inside a quote or list item the body lines are not contiguous in
+        // the source: each line's offset goes to the handler
+        if (s->contained) {
+          std::string offs = "[";
+          for (size_t k = 0; k < s->lineSpans.size(); k++)
+            appendf(offs, "%s%u", k ? "," : "", s->lineSpans[k].start);
+          fp.lines = strs.intern(offs + "]");
         }
-        f->str = strs.intern(body);
+        f->str = strs.intern(joinLines(s->lineSpans));
         return f;
       }
       case SkelKind::Rule:
         return A.call(SugarId::rule, s->span);
       case SkelKind::Comment: {
         AstNode* c = A.node(AstKind::Comment, s->span);
-        std::string body = crlfToLf(src.slice(s->inner));
-        c->str = strs.intern(body);
+        c->str = strs.intern(joinLines(s->lineSpans));
         return c;
       }
       case SkelKind::Region: {

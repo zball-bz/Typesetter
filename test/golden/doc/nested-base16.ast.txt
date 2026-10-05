@@ -1,16 +1,16 @@
 doc @[0,214)
   para @[0,70)
     text @[0,70) str="Nested containers at a 16px base (vertical algebra guard, plan P0-01)."
-  list @[72,84) bullet start=1
-    item @[72,84)
+  list @[72,213) bullet start=1
+    item @[72,195)
       para @[74,84)
         text @[74,84) str="Outer item"
-      quote @[87,112)
+      quote @[87,132)
         para @[89,132)
           text @[89,132) str="A quote inside the item with two lines."
       codeblock @[136,163) lang="js" body="nested(code);"
-      list @[166,178) bullet start=1
-        item @[166,178)
+      list @[166,195) bullet start=1
+        item @[166,195)
           para @[168,178)
             text @[168,178) str="Inner item"
           quote @[183,195)

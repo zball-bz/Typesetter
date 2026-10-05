@@ -26,6 +26,7 @@ figure/float-in-list.tsm:html:line-spans  # code rows / cells / captions / gener
 figure/float.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 figure/stack.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 inline/fence-edge.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
+line/fence-container-diag.tsm:html:line-spans  # code rows lack spans (P3-07): a P1-07 fixture of the existing class
 line/crlf.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 pages/paged-doc.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 pages/paged-doc.tsm:paged:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)

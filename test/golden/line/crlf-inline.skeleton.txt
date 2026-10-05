@@ -1,7 +1,7 @@
 doc @[0,169)
   para @[0,75) lines=4
-  quote @[79,92)
+  quote @[79,125)
     para @[81,125) lines=3
-  list bullet start=1 @[129,140)
-    item @[129,140)
+  list bullet start=1 @[129,167)
+    item @[129,167)
       para @[131,167) lines=3

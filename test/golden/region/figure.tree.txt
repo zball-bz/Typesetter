@@ -14,7 +14,7 @@ doc @[0,243) [base]
         styled @[137,147) [BOLD]
           text @[138,146) [BOLD] str="emphasis"
         text @[148,154) [base] str=" inside"
-    list @[155,172) [base] ordered=false start=1
+    list @[155,189) [base] ordered=false start=1
       item @[155,172) [base]
         para @[157,172) [base]
           text @[157,172) [base] str="a nested bullet"

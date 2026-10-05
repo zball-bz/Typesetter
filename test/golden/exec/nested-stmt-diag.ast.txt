@@ -1,6 +1,6 @@
 doc @[0,43)
-  list @[0,10) bullet start=1
-    item @[0,10)
+  list @[0,34) bullet start=1
+    item @[0,23)
       para @[2,10)
         text @[2,10) str="item one"
       error @[13,23) code="statement-nested-unsupported" msg="statements inside lists, quotes and regions are not supported yet (plan P2-12)"

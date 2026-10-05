@@ -10,7 +10,7 @@ doc @[0,169)
     text @[54,57) str=" and "
     code @[58,70) str="code span"
     text @[71,75) str=" end."
-  quote @[79,92)
+  quote @[79,125)
     para @[81,125)
       text @[81,87) str="quoted "
       math @[88,98) display=0 src="a +\nb"
@@ -19,8 +19,8 @@ doc @[0,169)
         arg @[112,118)
           text @[112,118) str="x y"
       text @[120,125) str=" done."
-  list @[129,140) bullet start=1
-    item @[129,140)
+  list @[129,167) bullet start=1
+    item @[129,167)
       para @[131,167)
         text @[131,135) str="item "
         math @[136,146) display=0 src="c +\nd"

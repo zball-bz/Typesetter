@@ -1,0 +1,15 @@
+doc @[0,137)
+  list @[0,114) bullet start=1
+    item @[0,74)
+      para @[2,74)
+        text @[2,74) str="first item with a tab after the marker continued on a tab-indented line"
+    item @[76,114)
+      para @[78,82)
+        text @[78,82) str="item"
+      list @[84,114) bullet start=1
+        item @[84,114)
+          para @[86,114)
+            text @[86,114) str="nested by one tab (column 4)"
+  quote @[116,136)
+    para @[118,136)
+      text @[118,136) str="quoted after a tab"

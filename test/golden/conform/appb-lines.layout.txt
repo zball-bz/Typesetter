@@ -1,4 +1,4 @@
-doc h=42086su
+doc h=42906su
 para pid=0 y=0su w=19200su h=1639su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,3) @[2,11)
 para pid=1 y=2868su w=19200su h=1536su
@@ -10,20 +10,21 @@ para pid=3 y=8398su w=19200su h=6962su
   L1 y=1945su left=1536su w=17664su dw=320su dc=0su join=space marker blocks=[0,17) @[61,116)
   L2 y=3481su left=1536su w=17664su dw=0su dc=0su join=last blocks=[18,27) @[61,116)
   L3 y=5426su left=3072su w=16128su dw=0su dc=0su join=last marker blocks=[0,5) @[121,132)
-para pid=4 y=16589su w=19200su h=7371su
+para pid=4 y=16589su w=19200su h=3481su
   L0 y=0su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,5) @[135,147)
   L1 y=1945su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,7) @[150,166)
-  L2 y=3890su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,7) @[170,184)
-  L3 y=5835su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,1) @[188,192)
-para pid=5 y=25189su w=19200su h=4301su
+para pid=5 y=21299su w=19200su h=3481su
+  L0 y=0su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,7) @[170,184)
+  L1 y=1945su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,1) @[188,192)
+para pid=6 y=26009su w=19200su h=4301su
   L0 y=0su left=1024su w=18176su dw=0su dc=0su join=last blocks=[0,3) @[196,206)
   L1 y=2765su left=2048su w=17152su dw=0su dc=0su join=last blocks=[0,5) @[211,223)
-para pid=7 y=30719su w=19200su h=1536su
+para pid=8 y=31539su w=19200su h=1536su
   L0 code y=0su left=0su line=0 [0,17)
-para pid=8 y=33484su w=19200su h=1536su
+para pid=9 y=34304su w=19200su h=1536su
   L0 math y=0su left=7452su w=4295su
-para pid=9 y=36249su w=19200su h=1536su
+para pid=10 y=37069su w=19200su h=1536su
   L0 rule y=768su left=0su w=19200su
-para pid=10 y=39014su w=19200su h=3072su
+para pid=11 y=39834su w=19200su h=3072su
   L0 y=0su left=0su w=19200su dw=230su dc=0su join=space blocks=[0,23) @[322,370)
   L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[24,25) @[322,370)

@@ -5,7 +5,7 @@
 </figure>
 <div data-role="aside" data-pid="2" data-s="114" data-e="197">
 <p>Side note with <strong>emphasis</strong> inside</p>
-<ul data-s="155" data-e="172">
+<ul data-s="155" data-e="189">
 <li>a nested bullet</li>
 <li>another bullet</li>
 </ul>

@@ -1,0 +1,14 @@
+<div class="tsr-flow">
+<ul data-pid="0" data-s="0" data-e="88">
+<li><p data-s="2" data-e="49">an item with a fence whose content is indented:</p>
+<pre data-s="53" data-e="88"><code class="language-js">if (x) {
+  y();
+}</code></pre>
+</li>
+</ul>
+<blockquote data-pid="1" data-s="90" data-e="136">
+<p data-s="92" data-e="112">a quote with a fence</p>
+<pre data-s="115" data-e="136"><code class="language-js">quoted(code);</code></pre>
+</blockquote>
+<p data-pid="2" data-s="137" data-e="180">the quote ends here, and so does its fence.</p>
+</div>

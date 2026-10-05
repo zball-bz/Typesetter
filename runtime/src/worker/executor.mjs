@@ -157,7 +157,9 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
   };
   // --- fence dispatcher (v2 §4.1) ------------------------------------------
   const fenceHandlers = {};
-  const __fence = async (tag, args = {}, body = '', offset = 0) => {
+  // offset: the body's source offset; lines: each body line's offset when the
+  // fence sits in a quote or list item (its lines are not contiguous)
+  const __fence = async (tag, args = {}, body = '', offset = 0, lines = null) => {
     const h = fenceHandlers[tag];
     // default path: the fence info args ARE codeblock grid options
     if (!h) return ctors.codeblock(tag, body, args);
@@ -166,6 +168,7 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     const ctx = {
       args,
       offset,
+      lineOffsets: lines,
       m: (...a) => ctors.m(...a),  // m.parse (WASM re-entry) is deferred
       error: mkErr,
       raw: (html, { width, height } = {}) =>

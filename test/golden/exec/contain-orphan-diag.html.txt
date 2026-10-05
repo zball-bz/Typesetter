@@ -2,8 +2,9 @@
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="7" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Before.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="9" style="position:relative;height:24px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="7" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code" data-s="0">⚠ ReferenceError: aside is not defined</span></div>
+<div class="tsr-para" data-pid="1" data-s0="9" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="7" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code" data-s="0">⚠ closer &#39;#aside!&#39; has no open region</span></div>
+<div class="tsr-line" data-s="0" data-e="7" data-ragged="1" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-code" data-s="0">&#39;#!aside&#39;</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="18" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="6" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">After.</span></div>

@@ -1,0 +1,15 @@
+doc @[0,136) [base]
+  list @[0,114) [base] ordered=false start=1
+    item @[0,74) [base]
+      para @[2,74) [base]
+        text @[2,74) [base] str="first item with a tab after the marker continued on a tab-indented line"
+    item @[76,114) [base]
+      para @[78,82) [base]
+        text @[78,82) [base] str="item"
+      list @[84,114) [base] ordered=false start=1
+        item @[84,114) [base]
+          para @[86,114) [base]
+            text @[86,114) [base] str="nested by one tab (column 4)"
+  quote @[116,136) [base]
+    para @[118,136) [base]
+      text @[118,136) [base] str="quoted after a tab"

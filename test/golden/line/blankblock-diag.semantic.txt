@@ -1,0 +1,14 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="30" data-e="78">A root statement may hold blank lines: 3.</p>
+<ul data-pid="1" data-s="80" data-e="136">
+<li><p data-s="82" data-e="86">item</p>
+<div class="tsr-err" data-s="89" data-e="124" title="statements inside lists, quotes and regions are not supported yet (plan P2-12)">&#9888; statements inside lists, quotes and regions are not supported yet (plan P2-12)</div>
+</li>
+<li>next item</li>
+</ul>
+<blockquote data-pid="2" data-s="138" data-e="192">
+<p data-s="140" data-e="145">quote</p>
+<div class="tsr-err" data-s="148" data-e="184" title="statements inside lists, quotes and regions are not supported yet (plan P2-12)">&#9888; statements inside lists, quotes and regions are not supported yet (plan P2-12)</div>
+<p data-s="187" data-e="192">after</p>
+</blockquote>
+</div>

@@ -17,7 +17,7 @@ doc @[0,244)
           styled @[137,147) marker=*
             text @[138,146) str="emphasis"
           text @[148,154) str=" inside"
-    list @[155,172) bullet start=1
+    list @[155,189) bullet start=1
       item @[155,172)
         para @[157,172)
           text @[157,172) str="a nested bullet"

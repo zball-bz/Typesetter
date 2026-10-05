@@ -1,4 +1,4 @@
-doc @[0,364) [base]
+doc @[0,420) [base]
   para @[0,276) [base]
     text @[0,24) [base] str="中文正文里的断言"
     ref @[24,42) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
@@ -10,7 +10,7 @@ doc @[0,364) [base]
     ref @[255,273) [SUPx0.70] target="fn-3" label="fnref-3" url="#tsr-fn-3"
       text @[255,273) [SUPx0.70] str="3"
     text @[273,276) [base] str="。"
-  list @[278,364) [base] ordered=false start=1
+  list @[278,420) [base] ordered=false start=1
     item @[278,364) [base]
       para @[280,364) [base]
         text @[280,301) [base] str="列表项里的脚注"
@@ -23,9 +23,9 @@ doc @[0,364) [base]
         ref @[379,401) [SUPx0.70] target="fn-5" label="fnref-5" url="#tsr-fn-5"
           text @[379,401) [SUPx0.70] str="5"
         text @[402,420) [base] str=" before the marker."
-  group @[0,364) [base] role="notes"
-    rule @[0,364) [base]
-    list @[0,364) [base] ordered=true
+  group @[0,420) [base] role="notes"
+    rule @[0,420) [base]
+    list @[0,420) [base] ordered=true
       item @[24,42) [base]
         para @[24,42) [base] label="fn-1"
           text @[26,41) [basex0.85] str="脚注正文。"

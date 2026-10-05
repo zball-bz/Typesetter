@@ -1,0 +1,14 @@
+#!outer
+Outer text.
+#!inner
+Inner text.
+#outer!
+
+After the regions.
+
+> #!aside
+> A quoted region.
+Not quoted: the quote and its region end here.
+
+#!lonely
+Text without a closer.

@@ -1,13 +1,13 @@
 doc @[0,214)
   para @[0,70) lines=1
-  list bullet start=1 @[72,84)
-    item @[72,84)
+  list bullet start=1 @[72,213)
+    item @[72,195)
       para @[74,84) lines=1
-      quote @[87,112)
+      quote @[87,132)
         para @[89,132) lines=2
       fence @[136,163) lang="js" lines=1
-      list bullet start=1 @[166,178)
-        item @[166,178)
+      list bullet start=1 @[166,195)
+        item @[166,195)
           para @[168,178) lines=1
           quote @[183,195)
             para @[185,195) lines=1

@@ -1,0 +1,48 @@
+doc @[0,550) [base]
+  para @[0,103) [base]
+    text @[0,103) [base] str="A paragraph mentions the year 1984. Then it goes on: an N. line with N other than 1 does not interrupt."
+  para @[105,181) [base]
+    text @[105,181) [base] str="A paragraph with a dash line - continues: an empty item does not interrupt."
+  para @[183,213) [base]
+    text @[183,213) [base] str="A paragraph followed by a list"
+  list @[214,227) [base] ordered=true start=1
+    item @[214,220) [base]
+      para @[217,220) [base]
+        text @[217,220) [base] str="one"
+    item @[221,227) [base]
+      para @[224,227) [base]
+        text @[224,227) [base] str="two"
+  para @[229,321) [base]
+    text @[229,275) [base] str="Comment lines inside a paragraph are invisible"
+    comment @[276,292) [base]
+      text @[0,0) [base] str=" a remark "
+    text @[293,321) [base] str=" and the paragraph continues."
+  comment @[323,346) [base]
+    text @[0,0) [base] str=" a block comment "
+  para @[347,377) [base]
+    text @[347,377) [base] str="Text after the closer is kept."
+  para @[390,420) [base]
+    text @[390,416) [base] str="and after a let statement: "
+    text @[0,0) [base] str="2"
+    text @[419,420) [base] str="."
+  para @[436,458) [base]
+    text @[436,454) [base] str="and after a block: "
+    text @[0,0) [base] str="3"
+    text @[457,458) [base] str="."
+  list @[460,481) [base] ordered=true start=1
+    item @[460,470) [base]
+      para @[462,470) [base]
+        text @[462,470) [base] str="auto one"
+    item @[471,481) [base]
+      para @[473,481) [base]
+        text @[473,481) [base] str="auto two"
+  list @[482,550) [base] ordered=true start=1
+    item @[482,509) [base]
+      para @[485,509) [base]
+        text @[485,509) [base] str="a separate explicit list"
+    item @[510,525) [base]
+      para @[513,525) [base]
+        text @[513,525) [base] str="continues it"
+    item @[526,550) [base]
+      para @[529,550) [base]
+        text @[529,550) [base] str="numbered out of order"
