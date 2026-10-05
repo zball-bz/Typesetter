@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P0
-- 下一步：P0-03
+- 下一步：P0-04
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -16,7 +16,7 @@
 | P0-00 | 准备：分支、计划文档、基线、环境脚本 | done | grep:plan P0-00 | 2026-10-05 | 0 | gate.sh/env.sh/bench.sh；bench-edit --runs/--json/relayout；Debug -fno-sanitize-recover |
 | P0-01 | 契约检查与守护用例 | done | grep:plan P0-01 | 2026-10-05 | +11 用例（仅新增） | contract.h 五项检查；XFAIL 27 项；tsrc --snap/--base/--page-height（默认 base 16）；review-corpus 340 篇；e2e AUDIT_XFAIL |
 | P0-02 | 编译器防护（去掉 default 分支，AST dump 补 Note） | done | grep:plan P0-02 | 2026-10-05 | notes/*.ast ×3（原 golden 错）+2 用例 | -Werror=switch-enum（linepass/inline/fragment/codegen）；lint-arch 15 项基线；App A/B 一致性用例 |
-| P0-03 | Fuzz 基础设施 | todo | | | | |
+| P0-03 | Fuzz 基础设施 | done | grep:plan P0-03 | 2026-10-05 | 0 | fuzz_opreader/linepass/inline；三处发现已修（strtab 指针溢出、负 bits、缺 bib 条目）并入 test/fuzz 回放；各 3 分钟无发现 |
 | P0-04 | 前端越界修复（过渡） | todo | | | | |
 | P0-05 | 执行容错（过渡） | todo | | | | |
 | P0-06 | 模式抽取、读取器校验、样式值校验 | todo | | | | |

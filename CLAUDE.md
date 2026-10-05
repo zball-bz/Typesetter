@@ -46,7 +46,15 @@ npm run e2e              # Playwright audit matrix, dsf 1/1.25/1.5/2
 npm run record           # re-record .ops after codegen/ops changes
 npm run hl-assets        # regenerate runtime/assets/hl (gitignored)
 npm run bench:edit       # editing-latency bench
+tools/gate.sh --quick|--full   # remediation gates G1-G10 (docs/remediation/PLAN.md §4.3)
+tools/fuzz.sh --smoke|--long   # libFuzzer targets; findings go to test/fuzz/<target>/
+tools/bench.sh                 # perf gate table (update/relayout at 7.8K/35K/87K)
+node tools/review-corpus.mjs --check   # real-world corpus: no new error diagnostics
+node tools/lint-arch.mjs       # architecture lint (baseline only shrinks)
 ```
+
+Audit remediation in progress: follow `docs/remediation/PLAN.md` and resume
+from `docs/remediation/PROGRESS.md`.
 
 CI (`.github/workflows/ci.yml`) runs native (ASan Debug + Release), the web
 job (wasm + recordings check + corpus + e2e), and on main publishes the

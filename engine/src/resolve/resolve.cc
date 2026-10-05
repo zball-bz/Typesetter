@@ -416,7 +416,9 @@ struct Resolver {
     if (keys.empty()) return g;
     g->kids.push_back(mkNode(Kind::rule, c->span));
     for (const std::string& key : keys) {
-      ContentNode* e = bib[key];
+      auto it = bib.find(key);
+      if (it == bib.end() || !it->second) continue;  // cited key without entry (fuzz: bib-missing-entry)
+      ContentNode* e = it->second;
       ContentNode* para = mkNode(Kind::para, e->span, e->style);
       setArgStr(para, ArgK::label, "bib-" + key);
       para->kids.push_back(

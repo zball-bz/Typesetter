@@ -54,7 +54,7 @@ struct Reader {
     }
   }
   double f64() {
-    if (p + 8 > end) { fail = true; return 0; }
+    if (end - p < 8) { fail = true; return 0; }
     double d;
     std::memcpy(&d, p, 8);
     p += 8;
@@ -70,7 +70,14 @@ static const char* readArg(Reader& rd, const RawOps& r, ArgVal& a, bool allowNod
   switch (a.tag) {
     case ArgTag::Null: break;
     case ArgTag::Bool: a.num = rd.byte() ? 1 : 0; break;
-    case ArgTag::Num: a.num = rd.f64(); break;
+    case ArgTag::Num:
+      a.num = rd.f64();
+      // every numeric arg is a size, count or level: non-finite or beyond
+      // ±2^31 is malformed, and later (int) conversions stay defined
+      // (fuzz: num-out-of-range)
+      if (!rd.fail && !(a.num >= -2147483648.0 && a.num <= 2147483647.0))
+        return "arg bad num";
+      break;
     case ArgTag::Str: {
       u64 s = rd.varint();
       if (rd.fail || s >= r.strings.size()) return "arg bad str";
@@ -102,7 +109,8 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
   u64 nStrings = rd.varint();
   u64 stringBytes = rd.varint();
   u64 nOps = rd.varint();
-  if (rd.fail || rd.p + stringBytes > rd.end) { bad("truncated header"); return; }
+  // compare lengths, never form an out-of-range pointer (fuzz: strtab-ptr-overflow)
+  if (rd.fail || stringBytes > (u64)(rd.end - rd.p)) { bad("truncated header"); return; }
   r.blob.assign((const char*)rd.p, stringBytes);
   rd.p += stringBytes;
   u64 prev = 0;

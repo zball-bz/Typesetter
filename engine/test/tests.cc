@@ -388,6 +388,29 @@ static void contractCheck(const std::string& label, const char* output, const st
   }
 }
 
+// --- fuzz regressions (plan P0-03): every crash libFuzzer found is kept as
+// test/fuzz/<target>/<name> and replayed here, so the ASan/UBSan build (G2)
+// proves it stays fixed ---
+static void fuzzRegressions(const fs::path& root) {
+  fs::path dir = root / "test" / "fuzz";
+  if (!fs::exists(dir)) return;
+  for (auto& e : fs::recursive_directory_iterator(dir)) {
+    if (!e.is_regular_file()) continue;
+    std::string target = e.path().parent_path().filename().string();
+    std::string data;
+    readFile(e.path(), data);
+    Doc doc;
+    doc.cfg.widthPx = 300;
+    doc.cfg.baseSizePx = 16;
+    if (target == "fuzz_opreader") {
+      if (doc.ingest((const u8*)data.data(), data.size())) (void)doc.renderFallback();
+    } else {
+      doc.compile(data);
+      (void)dumpAst(doc.ast, doc.src, doc.strs);
+    }
+  }
+}
+
 int main(int argc, char** argv) {
   std::string root;
   bool update = false;
@@ -442,6 +465,8 @@ int main(int argc, char** argv) {
       }
     }
   }
+
+  fuzzRegressions(fs::path(root));
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";
   fs::path golden = fs::path(root) / "test" / "golden";

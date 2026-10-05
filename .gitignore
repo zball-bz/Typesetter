@@ -26,3 +26,4 @@ examples/real-world/pbr-zh/
 examples/real-world/.cache/
 .gate-logs/
 .review/
+.fuzz/

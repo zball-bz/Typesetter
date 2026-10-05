@@ -1000,7 +1000,7 @@ Theme steps: — · findings: 1
 | `markup-language/span-loss` | issue | medium | P2-04 | |
 | `markup-language/structured-content-flattened` | issue | medium | P3-03 | |
 | `markup-language/ambiguity-hazards` | issue | medium | P3-33 | |
-| `markup-language/ast-dump-note` | issue | low | P0-02 | |
+| `markup-language/ast-dump-note` | issue | low | P0-02 | grep:plan P0-02 |
 | `markup-language/doc-drift` | issue | low | P3-35 | |
 | `markup-language/missed:0` | missed | high | P2-11 | |
 | `markup-language/missed:1` | missed | medium | P1-07 | |
@@ -1034,7 +1034,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/span-fidelity` | issue | medium | P1-07 | |
 | `parser-frontend/no-error-nodes` | issue | medium | P2-02, P2-12 | |
 | `parser-frontend/docs-drift` | issue | medium | P1-09 | |
-| `parser-frontend/ast-dump-missing-note` | issue | low | P0-02 | |
+| `parser-frontend/ast-dump-missing-note` | issue | low | P0-02 | grep:plan P0-02 |
 | `parser-frontend/missed:0` | missed | high | P0-04, P1-06 | |
 | `parser-frontend/missed:1` | missed | high | P1-06 | |
 | `parser-frontend/missed:2` | missed | medium | P1-07 | |

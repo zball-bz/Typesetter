@@ -14,7 +14,8 @@ struct Inst {
   void applyPatch(Styling& st, const ArgVal& a) {
     switch (a.key) {
       case ArgK::bits:
-        if (a.tag == ArgTag::Num) st.bits |= (u64)a.num;
+        // a bit set is a non-negative integer (fuzz: negative-bits)
+        if (a.tag == ArgTag::Num && a.num >= 0) st.bits |= (u64)a.num;
         break;
       case ArgK::font:
         if (a.tag == ArgTag::Str) st.fontFamily = strs.intern(raw.strings[a.ref]);

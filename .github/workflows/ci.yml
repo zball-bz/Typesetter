@@ -21,6 +21,13 @@ jobs:
       - name: ctest (Release)
         run: ctest --test-dir engine/build --output-on-failure
 
+  fuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: libFuzzer smoke (every decoder target, 10 s each)
+        run: tools/fuzz.sh --smoke
+
   web:
     runs-on: ubuntu-latest
     permissions:
