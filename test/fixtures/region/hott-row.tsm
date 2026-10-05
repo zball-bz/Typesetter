@@ -1,0 +1,4 @@
+#!table(cols: 5)
+Types |  | Logic | Sets | Homotopy
+$Id_(A)$ |  | equality $=$ | $(x,x) | x ∈ A$ | path space $A^I$
+#table!

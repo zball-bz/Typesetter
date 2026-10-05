@@ -1,0 +1,30 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  word "CRLF" w=3278su pen=INF BOLD x1.60 @[2,13)
+  space w=411su stretch=1 BOLD x1.60 @[2,13)
+  word "source" w=4917su pen=INF BOLD x1.60 @[2,13)
+top pid=1 units=1
+ unit text indent=0su
+  word "A" w=513su pen=INF @[17,55)
+  space w=257su stretch=1 @[17,55)
+  word "para" w=2049su pen=INF @[17,55)
+  hyphen bw=513su pen=0.70 @[17,55)
+  word "graph" w=2561su pen=INF @[17,55)
+  space w=257su stretch=1 @[17,55)
+  word "that" w=2049su pen=INF @[17,55)
+  space w=257su stretch=1 @[17,55)
+  word "spans" w=2561su pen=INF @[17,55)
+  space w=257su stretch=1 @[17,55)
+  word "two" w=1537su pen=INF @[17,55)
+  space w=257su stretch=1 @[17,55)
+  word "lines" w=2561su pen=INF @[17,55)
+  space w=257su stretch=1 @[17,55)
+  word "with" w=2049su pen=INF @[17,55)
+  space w=257su stretch=1 @[17,55)
+  math "a +\nb" w=1625su asc=600su desc=76su @[56,64)
+  boundary w=228su stretch=0 @[56,64)
+  math "" w=602su asc=700su desc=10su @[56,64)
+  space w=257su stretch=1 @[65,70)
+  word "math." w=2561su pen=INF @[65,70)
+top pid=2 units=1
+ unit code indent=0su lines=2 wrap

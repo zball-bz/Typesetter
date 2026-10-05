@@ -1,0 +1,3 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="63">A link with a dollar: <a href="u">price $5</a> and a formula <code class="tsr-mathsrc">$x$</code> after it.</p>
+</div>

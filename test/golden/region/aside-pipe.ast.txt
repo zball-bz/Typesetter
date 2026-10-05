@@ -1,0 +1,10 @@
+doc @[0,81)
+  region @[0,80) name="aside"
+    para @[24,72)
+      row @[24,72)
+        cell @[24,72)
+          text @[24,33) str="绝对值 "
+          math @[34,39) display=0 src="|x|"
+          text @[40,52) str=" 的性质："
+          math @[52,69) display=0 src="|a b| = |a| |b|"
+          text @[69,72) str="。"

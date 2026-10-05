@@ -1,0 +1,11 @@
+doc @[0,134) [base]
+  heading @[0,13) [base] level=1 label="h-1"
+    text @[2,13) [base] str="CRLF source"
+  para @[17,70) [base]
+    text @[17,55) [base] str="A paragraph that spans two lines with "
+    mathinline @[56,64) [base] src="a +\nb"
+    text @[65,70) [base] str=" math."
+  codeblock @[74,101) [base] lang="js"
+    text @[0,0) [base] str="let x = 1;\nx++"
+  comment @[105,134) [base]
+    text @[0,0) [base] str=" a comment\nover lines "

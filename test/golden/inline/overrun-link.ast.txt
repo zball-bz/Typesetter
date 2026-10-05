@@ -1,0 +1,8 @@
+doc @[0,64)
+  para @[0,63)
+    text @[0,21) str="A link with a dollar: "
+    link @[22,35) url="u"
+      text @[23,31) str="price $5"
+    text @[36,49) str=" and a formula "
+    math @[50,53) display=0 src="x"
+    text @[54,63) str=" after it."

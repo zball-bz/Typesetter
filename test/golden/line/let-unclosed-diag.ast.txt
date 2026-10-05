@@ -1,0 +1,5 @@
+doc @[0,68)
+  heading @[13,28) level=1
+    text @[15,28) str="Heading after"
+  para @[30,67)
+    text @[30,67) str="Paragraph after the heading survives."

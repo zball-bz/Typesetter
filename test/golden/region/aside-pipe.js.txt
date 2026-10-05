@@ -1,0 +1,4 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(__region("aside", ({title: "pipes"}), [[[seq(__at(text("绝对值 "),24,33), __at(mathinline("|x|"),34,39), __at(text(" 的性质："),40,52), __at(mathinline("|a b| = |a| |b|"),52,69), __at(text("。"),69,72))]]]),0,80));
+};
+//# sourceURL=tsm:doc

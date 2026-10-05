@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="13" id="tsr-h-1">CRLF source</h1>
+<p data-pid="1" data-s="17" data-e="70">A paragraph that spans two lines with <code class="tsr-mathsrc">$a +
+b$</code> math.</p>
+<pre data-pid="2" data-s="74" data-e="101"><code class="language-js">let x = 1;
+x++</code></pre>
+</div>

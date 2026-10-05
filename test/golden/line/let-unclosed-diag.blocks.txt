@@ -1,0 +1,24 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  word "Heading" w=5736su pen=INF BOLD x1.60 @[15,28)
+  space w=411su stretch=1 BOLD x1.60 @[15,28)
+  word "after" w=4098su pen=INF BOLD x1.60 @[15,28)
+top pid=1 units=1
+ unit text indent=0su
+  word "Para" w=2049su pen=INF @[30,67)
+  hyphen bw=513su pen=0.70 @[30,67)
+  word "graph" w=2561su pen=INF @[30,67)
+  space w=257su stretch=1 @[30,67)
+  word "af" w=1025su pen=INF @[30,67)
+  hyphen bw=513su pen=0.70 @[30,67)
+  word "ter" w=1537su pen=INF @[30,67)
+  space w=257su stretch=1 @[30,67)
+  word "the" w=1537su pen=INF @[30,67)
+  space w=257su stretch=1 @[30,67)
+  word "head" w=2049su pen=INF @[30,67)
+  hyphen bw=513su pen=0.70 @[30,67)
+  word "ing" w=1537su pen=INF @[30,67)
+  space w=257su stretch=1 @[30,67)
+  word "sur" w=1537su pen=INF @[30,67)
+  hyphen bw=513su pen=0.70 @[30,67)
+  word "vives." w=3073su pen=INF @[30,67)

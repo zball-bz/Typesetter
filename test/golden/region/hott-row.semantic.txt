@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<table data-pid="0" data-s="0" data-e="125">
+<tr><td>Types</td><td></td><td>Logic</td><td>Sets</td><td>Homotopy</td></tr>
+<tr><td><code class="tsr-mathsrc">$Id_(A)$</code></td><td></td><td>equality <code class="tsr-mathsrc">$=$</code></td><td><code class="tsr-mathsrc">$(x,x) | x ∈ A$</code></td><td>path space <code class="tsr-mathsrc">$A^I$</code></td></tr>
+</table>
+</div>

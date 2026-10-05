@@ -1,0 +1,7 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(heading(1, null, __at(text("CRLF source"),2,13)),0,13));
+__emit(__at(para(__at(text("A paragraph that spans two lines with "),17,55), __at(mathinline("a +\nb"),56,64), __at(text(" math."),65,70)),17,70));
+__emit(__at(val(await __fence("js", ({}), "let x = 1;\nx++", 81)),74,101));
+__emit(__at(comment(" a comment\nover lines "),105,134));
+};
+//# sourceURL=tsm:doc

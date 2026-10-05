@@ -1,0 +1,7 @@
+doc @[0,37)
+  para @[0,11)
+    text @[0,11) str="para one $x"
+  heading @[13,22) level=1
+    text @[15,22) str="Heading"
+  para @[24,36)
+    text @[24,36) str="second $ end"

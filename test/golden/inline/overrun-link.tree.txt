@@ -1,0 +1,8 @@
+doc @[0,63) [base]
+  para @[0,63) [base]
+    text @[0,21) [base] str="A link with a dollar: "
+    link @[22,35) [base] url="u"
+      text @[23,31) [base] str="price $5"
+    text @[36,49) [base] str=" and a formula "
+    mathinline @[50,53) [base] src="x"
+    text @[54,63) [base] str=" after it."

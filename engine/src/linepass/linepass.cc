@@ -141,6 +141,43 @@ struct LinePass {
     return any;
   }
 
+  // End offset of an unbalanced statement opened on line `ln` (plan P0-04).
+  // Inside a container the scan was bounded to the line, so recovery is the
+  // line end. At top level the broken statement extends to the first blank
+  // line or the first line that starts a block (heading, fence, region,
+  // statement, list item, quote, rule) -- error recovery only: a balanced
+  // statement is never cut.
+  u32 recoverStatement(u32 ln, u32 nlines) const {
+    if (!open.empty()) return src.lineEnd(ln);
+    u32 last = ln;
+    for (u32 l = ln + 1; l < nlines; l++) {
+      u32 a = src.lineStart(l), b = src.lineEnd(l);
+      std::string_view t = all.substr(a, b - a);
+      if (isBlank(t)) break;
+      size_t k = 0;
+      while (k < t.size() && t[k] == ' ') k++;
+      std::string_view r = t.substr(k);
+      auto starts = [&](std::string_view p) { return r.substr(0, p.size()) == p; };
+      bool block = starts("```") || starts("#!") || starts("#let") || starts("#{") ||
+                   starts("> ") || r == ">" || starts("- ") || starts("+ ") ||
+                   starts("%--") || starts("---");
+      if (!block && !r.empty() && r[0] == '=') {
+        size_t n = 0;
+        while (n < r.size() && r[n] == '=') n++;
+        block = n <= 6 && n < r.size() && r[n] == ' ';
+      }
+      if (!block && !r.empty() && r[0] >= '0' && r[0] <= '9') {
+        size_t n = 0;
+        while (n < r.size() && r[n] >= '0' && r[n] <= '9') n++;
+        block = n + 1 < r.size() && r[n] == '.' && r[n + 1] == ' ';
+      }
+      if (!block && r.size() >= 3 && r[0] == '#' && r.back() == '!') block = true;  // #name!
+      if (block) break;
+      last = l;
+    }
+    return src.lineEnd(last);
+  }
+
   // --- leaves --------------------------------------------------------------
   void addParaLine(u32 pos, u32 le) {
     // strip trailing ws
@@ -362,8 +399,16 @@ struct LinePass {
         // multi-line statements only at top level (container prefixes would
         // corrupt the JS text) — inside containers, scan stops at EOL.
         JsScan s = scanJs(open.empty() ? all : all.substr(0, le), innerStart, false);
+        if (!s.ok) {
+          // unbalanced: recover at the first blank line instead of swallowing
+          // the rest of the document (plan P0-04); the statement is dropped
+          u32 end = recoverStatement(ln, nlines);
+          diags.add(Sev::Error, "statement-unclosed", {pos, end},
+                    "unterminated #let: dropped up to the next blank line");
+          while (ln + 1 < nlines && src.lineStart(ln + 1) <= end) ln++;
+          continue;
+        }
         u32 end = s.end;
-        if (!s.ok) diags.add(Sev::Error, "splice-js", {pos, end}, "unterminated #let");
         SkelNode* c = mk(SkelKind::CodeLet);
         c->span = {pos, end};
         c->inner = {innerStart, s.hitSemicolon ? end - 1 : end};
@@ -374,8 +419,16 @@ struct LinePass {
       if (rest.size() >= 2 && rest.substr(0, 2) == "#{") {
         closeLeaf();
         JsScan s = scanJs(open.empty() ? all : all.substr(0, le), pos + 1, true);
-        u32 end = s.ok ? s.end : le;
-        if (!s.ok) diags.add(Sev::Error, "splice-js", {pos, end}, "unterminated #{ block");
+        if (!s.ok) {
+          // unbalanced: never paste partial JS (it fails the whole module);
+          // recover at the first blank line and drop the statement (P0-04)
+          u32 end = recoverStatement(ln, nlines);
+          diags.add(Sev::Error, "statement-unclosed", {pos, end},
+                    "unterminated #{ block: dropped up to the next blank line");
+          while (ln + 1 < nlines && src.lineStart(ln + 1) <= end) ln++;
+          continue;
+        }
+        u32 end = s.end;
         SkelNode* c = mk(SkelKind::CodeBlock);
         c->span = {pos, end};
         c->inner = {pos + 2, s.ok ? end - 1 : end};

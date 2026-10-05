@@ -411,6 +411,31 @@ static void fuzzRegressions(const fs::path& root) {
   }
 }
 
+// CRLF line terminators read as LF (plan P0-04): a CRLF source and its LF
+// twin produce the same AST, spans aside.
+static void unitCrlf() {
+  auto astNoSpans = [](const std::string& src) {
+    Doc d;
+    d.compile(src);
+    std::string a = dumpAst(d.ast, d.src, d.strs), out;
+    for (size_t i = 0; i < a.size(); i++) {
+      if (a[i] == '@' && i + 1 < a.size() && a[i + 1] == '[') {
+        while (i < a.size() && a[i] != ')') i++;
+        continue;
+      }
+      out += a[i];
+    }
+    return out;
+  };
+  std::string lf = "= Head\n\nA para\nwith $a +\nb$ math %-- c\nd --% end.\n\n```js\nlet x = 1;\nx++\n```\n\n%-- block\ncomment --%\n";
+  std::string crlf;
+  for (char c : lf) {
+    if (c == '\n') crlf += '\r';
+    crlf += c;
+  }
+  CHECK(astNoSpans(lf) == astNoSpans(crlf));
+}
+
 int main(int argc, char** argv) {
   std::string root;
   bool update = false;
@@ -430,6 +455,7 @@ int main(int argc, char** argv) {
   unitGrid();
   unitFragment();
   unitImageSrc();
+  unitCrlf();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");

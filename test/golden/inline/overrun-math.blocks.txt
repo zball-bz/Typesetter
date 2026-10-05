@@ -1,0 +1,19 @@
+top pid=0 units=1
+ unit text indent=0su
+  word "para" w=2049su pen=INF @[0,11)
+  space w=257su stretch=1 @[0,11)
+  word "one" w=1537su pen=INF @[0,11)
+  space w=257su stretch=1 @[0,11)
+  word "$x" w=1025su pen=INF @[0,11)
+top pid=1 units=1
+ unit text indent=0su anchor="h-1"
+  word "Heading" w=5736su pen=INF BOLD x1.60 @[15,22)
+top pid=2 units=1
+ unit text indent=0su
+  word "sec" w=1537su pen=INF @[24,36)
+  hyphen bw=513su pen=0.70 @[24,36)
+  word "ond" w=1537su pen=INF @[24,36)
+  space w=257su stretch=1 @[24,36)
+  word "$" w=513su pen=INF @[24,36)
+  space w=257su stretch=1 @[24,36)
+  word "end" w=1537su pen=INF @[24,36)

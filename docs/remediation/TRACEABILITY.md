@@ -1249,7 +1249,7 @@ Theme steps: — · findings: 1
 | `math/math-text-pull-channel` | adhoc | medium | P1-25 | |
 | `math/math-span-lexer-triplication` | adhoc | medium | P2-11 | |
 | `math/missing-glyph-fallback` | adhoc | low | P1-25, P5-01 | |
-| `math/island-scan-escapes-block` | issue | high | P0-04 | |
+| `math/island-scan-escapes-block` | issue | high | P0-04 | grep:plan P0-04 |
 | `math/prime-then-script-degrades` | issue | medium | P1-24 | |
 | `math/bracket-shedding-any-group` | issue | medium | P3-24 | |
 | `math/call-arity-silent` | issue | medium | P1-24 | |

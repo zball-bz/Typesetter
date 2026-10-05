@@ -1,0 +1,5 @@
+doc @[0,89)
+  para @[0,7)
+    text @[0,7) str="Before."
+  para @[63,88)
+    text @[63,88) str="Paragraph after survives."

@@ -1,0 +1,5 @@
+doc @[0,136)
+  heading1 @[0,13)
+  para @[17,70) lines=3
+  fence @[74,101) lang="js" lines=2
+  comment @[105,134)

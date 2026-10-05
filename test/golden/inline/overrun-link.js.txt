@@ -1,0 +1,4 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("A link with a dollar: "),0,21), __at(link("u", __at(text("price $5"),23,31)),22,35), __at(text(" and a formula "),36,49), __at(mathinline("x"),50,53), __at(text(" after it."),54,63)),0,63));
+};
+//# sourceURL=tsm:doc

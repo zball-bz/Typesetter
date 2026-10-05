@@ -1,0 +1,6 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(para(__at(text("para one $x"),0,11)),0,11));
+__emit(__at(heading(1, null, __at(text("Heading"),15,22)),13,22));
+__emit(__at(para(__at(text("second $ end"),24,36)),24,36));
+};
+//# sourceURL=tsm:doc

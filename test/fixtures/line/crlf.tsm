@@ -1,0 +1,13 @@
+= CRLF source
+
+A paragraph that spans
+two lines with $a +
+b$ math.
+
+```js
+let x = 1;
+x++
+```
+
+%-- a comment
+over lines --%

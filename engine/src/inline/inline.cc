@@ -62,14 +62,33 @@ struct InlineParser {
     }
   }
 
-  // True if scanning from `from` to `to` crosses only plain newlines (no
-  // container prefixes stripped in between) — cross-line raw scans are only
-  // sound then.
+  // The bytes between two line spans of this leaf are a plain line break:
+  // trailing/leading blanks and exactly one \n (\r\n included) — no container
+  // prefix was stripped in between.
+  bool plainGap(u32 a, u32 b) const {
+    int nl = 0;
+    for (u32 p = a; p < b; p++) {
+      char c = all[p];
+      if (c == '\n') {
+        if (++nl > 1) return false;
+      } else if (c != ' ' && c != '\t' && c != '\r') {
+        return false;
+      }
+    }
+    return nl == 1;
+  }
+  // True if a raw scan from the cursor to the exclusive end `to` stays inside
+  // this leaf and crosses only plain line breaks — cross-line raw scans are
+  // only sound then. A scan that would end past the leaf's last span never
+  // is: islands and splices cannot escape their block (plan P0-04).
   bool contiguous(u32 to) const {
+    if (spans.empty() || to > spans.back().end) return false;
     for (size_t k = sp; k + 1 < spans.size() && spans[k].end < to; k++)
-      if (spans[k + 1].start != spans[k].end + 1) return false;
+      if (!plainGap(spans[k].end, spans[k + 1].start)) return false;
     return true;
   }
+  // exclusive end of this leaf's text
+  u32 leafEnd() const { return spans.empty() ? 0 : spans.back().end; }
   // Move the cursor to raw offset `to`.
   void seekTo(u32 to) {
     while (sp < spans.size() && spans[sp].end < to) sp++;
@@ -242,7 +261,7 @@ struct InlineParser {
         // unaffected (a comment is invisible to the text around it).
         u32 p = i + 3;
         int depth = 1;
-        u32 hardEnd = (u32)all.size();
+        u32 hardEnd = leafEnd();  // a comment never escapes its block
         while (p < hardEnd) {
           if (p + 2 < hardEnd && all[p] == '%' && all[p + 1] == '-' && all[p + 2] == '-') { depth++; p += 3; continue; }
           if (p + 2 < hardEnd && all[p] == '-' && all[p + 1] == '-' && all[p + 2] == '%') {
@@ -253,11 +272,18 @@ struct InlineParser {
           }
           p++;
         }
-        if (depth != 0)
-          diags.add(Sev::Error, "parse-inline", {i, p}, "unterminated comment");
+        if (depth != 0) {
+          // unclosed inside its block: literal text, the error stays visible
+          diags.add(Sev::Error, "parse-inline", {i, i + 3}, "unterminated comment");
+          put('%', i);
+          put('-', i + 1);
+          put('-', i + 2);
+          i += 3;
+          continue;
+        }
         flushText();
         AstNode* cm = mk(AstKind::Comment, {i, p});
-        std::string body(all.substr(i + 3, (depth == 0 ? p - 3 : p) - (i + 3)));
+        std::string body = crlfToLf(all.substr(i + 3, p - 3 - (i + 3)));
         cm->str = strs.intern(body);
         stack.back().items.push_back(cm);  // does not set prevGlyph
         seekTo(p);
@@ -266,17 +292,19 @@ struct InlineParser {
       if (c == '$') {
         // math island (v2 §5): verbatim to the closing '$'; may cross source
         // lines when only plain newlines intervene (same rule as splices)
-        u32 hardEnd = (u32)all.size();
+        u32 hardEnd = leafEnd();  // an island never escapes its block
         u32 p = i + 1;
         while (p < hardEnd && all[p] != '$') {
           if (all[p] == '\\' && p + 1 < hardEnd) p++;
           p++;
         }
-        bool ok = p < hardEnd && (p < lim || contiguous(p));
+        // a '$' not closed within its block stays literal text (it used to
+        // take a closer from a later block, duplicating the blocks between)
+        bool ok = p < hardEnd && (p < lim || contiguous(p + 1));
         if (ok && p > i + 1) {
           spaceBeforeItem();
           flushText();
-          std::string body(all.substr(i + 1, p - (i + 1)));
+          std::string body = crlfToLf(all.substr(i + 1, p - (i + 1)));
           // $ x $ (whitespace inside both fences) is display math (Typst rule)
           auto isWs = [](char ch) {
             return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
@@ -458,10 +486,19 @@ static void splitCells(std::string_view all, Span line, std::vector<Span>& cells
   while (p < line.end) {
     char c = all[p];
     if (c == '\\') { p += 2; continue; }
-    if (c == '`') {
+    if (c == '`') {  // code span is opaque; an unclosed backtick is literal
       u32 q = p + 1;
       while (q < line.end && all[q] != '`') q++;
-      p = (q < line.end) ? q + 1 : q + 1;
+      p = (q < line.end) ? q + 1 : p + 1;
+      continue;
+    }
+    if (c == '$') {  // math island is opaque: `$|x|$` is one formula (plan P0-04)
+      u32 q = p + 1;
+      while (q < line.end && all[q] != '$') {
+        if (all[q] == '\\') q++;
+        q++;
+      }
+      p = (q < line.end) ? q + 1 : p + 1;
       continue;
     }
     if (c == '#') {
@@ -594,7 +631,7 @@ struct AstBuilder {
         return mk(AstKind::Rule, s->span);
       case SkelKind::Comment: {
         AstNode* c = mk(AstKind::Comment, s->span);
-        std::string body(src.slice(s->inner));
+        std::string body = crlfToLf(src.slice(s->inner));
         c->str = strs.intern(body);
         return c;
       }

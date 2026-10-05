@@ -1,0 +1,6 @@
+Before.
+
+#{ x = f(1
+this line belongs to the broken statement
+
+Paragraph after survives.

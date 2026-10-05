@@ -1,0 +1,4 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+__emit(__at(__region("table", ({cols: 5}), [[[__at(text("Types"),17,22), seq(), __at(text("Logic"),28,33), __at(text("Sets"),36,40), __at(text("Homotopy"),43,51)], [__at(mathinline("Id_(A)"),52,60), seq(), seq(__at(text("equality "),66,74), __at(mathinline("="),75,78)), __at(mathinline("(x,x) | x ∈ A"),81,98), seq(__at(text("path space "),101,111), __at(mathinline("A^I"),112,117))]]]),0,125));
+};
+//# sourceURL=tsm:doc
