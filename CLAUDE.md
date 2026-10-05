@@ -66,7 +66,10 @@ rolling `engine-dist` release.
 - Every engine change lands with goldens/e2e green; re-record goldens only
   after inspecting the diff. Vocabulary lives in engine/schema/schema.json:
   edit it, run `node tools/gen-all.mjs`, never hand-edit ops.def or *.gen.*
-  (schema.lock.json pins ids). Bumping OPS_VERSION needs a full fixture re-record.
+  (schema.lock.json pins ids and since values). New vocabulary takes the next
+  `since` (and raises opsVersion to it) — old buffers stay readable; only a
+  change of meaning of an existing row raises minCompat and needs a full
+  fixture re-record (`npm run record`).
 - Design first: a `docs/<feature>-design.md` precedes implementation and is
   updated with as-built deltas.
 - Commit per milestone; messages end with

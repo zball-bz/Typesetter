@@ -208,6 +208,27 @@ test('snap-kerning: one style attribute carrying letter-spacing', async ({ page 
   expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
 });
 
+// plan P1-01: the ABI handshake refuses an engine that cannot read what the
+// runtime writes, or that was generated from another schema
+test('abi: handshake accepts this build and refuses mismatches', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const out = await page.evaluate(async () => {
+    const { checkAbi } = await import('/runtime/src/shared/abi.mjs');
+    const { OPS_VERSION, SCHEMA_HASH } = await import('/runtime/src/shared/ops.gen.mjs');
+    const fake = (abi) => ({ _tsr2_abi: () => 0, UTF8ToString: () => JSON.stringify(abi) });
+    const msg = (abi) => { try { checkAbi(fake(abi)); return 'ok'; } catch (e) { return e.message; } };
+    return {
+      same: msg({ opsWindow: [6, OPS_VERSION], schemaHash: SCHEMA_HASH }),
+      hash: msg({ opsWindow: [6, OPS_VERSION], schemaHash: 'deadbeef' }),
+      window: msg({ opsWindow: [6, OPS_VERSION - 1], schemaHash: SCHEMA_HASH }),
+    };
+  });
+  expect(out.same).toBe('ok');
+  expect(out.hash).toContain('differs from runtime schema');
+  expect(out.window).toContain('the engine reads ops');
+});
+
 // --- plan P0-12: breaker semantics -------------------------------------------
 
 // defect #19: a run wider than the measure used to collapse the whole

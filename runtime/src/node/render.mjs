@@ -5,11 +5,13 @@
 // output is the resolver-complete semantic page with static token spans.
 import { execute } from '../worker/executor.mjs';
 import { tokenize } from '../worker/tokens.mjs';
+import { checkAbi } from '../shared/abi.mjs';
 
 let modPromise = null;
 function getMod() {
   modPromise ??= import('../../../engine/build-wasm/typesetter.js')
-    .then((m) => m.default());
+    .then((m) => m.default())
+    .then((M) => { checkAbi(M); return M; });
   return modPromise;
 }
 

@@ -463,6 +463,27 @@ static void unitHostInputs(const fs::path& root) {
   }
 }
 
+// The ops version window (plan P1-01): MIN_COMPAT..OPS_VERSION is read, the
+// buffer remembers its version, anything outside the window is refused.
+static void unitOpsWindow(const fs::path& root) {
+  std::string ops;
+  readFile(root / "test" / "fixtures" / "inline" / "emph.ops", ops);
+  CHECK(ops.size() > 5 && (u8)ops[4] == OPS_MIN_COMPAT);  // today's buffers: v6
+  for (int v : {(int)OPS_MIN_COMPAT - 1, (int)OPS_VERSION + 1}) {
+    std::string b = ops;
+    b[4] = (char)v;
+    RawOps r;
+    DiagSink d;
+    decodeOps((const u8*)b.data(), b.size(), r, d);
+    CHECK(!r.ok && !d.items.empty() &&
+          d.items[0].msg.find("outside the reader's window") != std::string::npos);
+  }
+  RawOps r;
+  DiagSink d;
+  decodeOps((const u8*)ops.data(), ops.size(), r, d);
+  CHECK(r.ok && r.version == OPS_MIN_COMPAT);
+}
+
 static void fuzzRegressions(const fs::path& root) {
   fs::path dir = root / "test" / "fuzz";
   if (!fs::exists(dir)) return;
@@ -819,6 +840,7 @@ int main(int argc, char** argv) {
 
   fuzzRegressions(fs::path(root));
   unitHostInputs(fs::path(root));
+  unitOpsWindow(fs::path(root));
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";
   fs::path golden = fs::path(root) / "test" / "golden";

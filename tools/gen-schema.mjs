@@ -75,6 +75,17 @@ const ops = byId(S.ops, (v) => v.id);
 const kinds = byId(S.kinds, (v) => v.id);
 const keys = byId(S.keys, (v) => v);
 const HDR = 'GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.';
+// The ABI handshake's schemaHash (plan P1-01, D-H06): FNV-1a 32 over the
+// canonical JSON of the vocabulary (comments excluded), so the WASM engine
+// and the JS writer prove they were generated from the same schema.
+const canon = (v) => Array.isArray(v) ? v.map(canon)
+  : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).filter((k) => k !== '$comment').sort().map((k) => [k, canon(v[k])]))
+  : v;
+const SCHEMA_HASH = (() => {
+  let h = 0x811c9dc5;
+  for (const c of Buffer.from(JSON.stringify(canon(S)), 'utf8')) { h ^= c; h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(16).padStart(8, '0');
+})();
 
 // ---- ops.def -----------------------------------------------------------------
 let def = `// ${HDR}\n// X-macro lists consumed by engine/src/ops/ops.h and ops.cc.\n//\n` +
@@ -95,6 +106,7 @@ const cstr = (s) => JSON.stringify(s);
 let h = `// ${HDR}\n#pragma once\n#include <cstdint>\n\nnamespace tsr {\n\n` +
   `constexpr std::uint8_t OPS_VERSION = ${S.opsVersion};\n` +
   `constexpr std::uint8_t OPS_MIN_COMPAT = ${S.minCompat};\n` +
+  `constexpr const char* SCHEMA_HASH = "${SCHEMA_HASH}";\n` +
   `constexpr std::uint16_t KIND_COUNT = ${kinds.length};\n` +
   `constexpr std::uint16_t ARGK_COUNT = ${keys.length};\n\n` +
   `enum class Level : std::uint8_t { ${LEVELS.map(cap).join(', ')} };\n` +
@@ -107,7 +119,9 @@ let h = `// ${HDR}\n#pragma once\n#include <cstdint>\n\nnamespace tsr {\n\n` +
   `  std::uint8_t since;\n};\n\n` +
   `struct KindInfo {\n  const char* name;\n  Level level;\n  Body body;\n  std::uint8_t since;\n` +
   `  const AttrSpec* attrs;  // writer order\n  std::uint8_t nAttrs;\n};\n\n` +
-  `extern const KindInfo kKinds[KIND_COUNT];  // indexed by Kind id\n\n}  // namespace tsr\n`;
+  `extern const KindInfo kKinds[KIND_COUNT];  // indexed by Kind id\n` +
+  `// the version an opcode first appeared in (0 = no such opcode)\n` +
+  `constexpr std::uint8_t kOpSince[] = {${(() => { const t = new Array(Math.max(...ops.map(([, o]) => o.id)) + 1).fill(0); for (const [, o] of ops) t[o.id] = o.since; return t.join(', '); })()}};\n\n}  // namespace tsr\n`;
 
 let cc = `// ${HDR}\n#include "schema.gen.h"\n\nnamespace tsr {\nnamespace {\n`;
 const kindRows = [];
@@ -145,9 +159,17 @@ const obj = (pairs) => Object.fromEntries(pairs);
 const emit = (name, o) => `export const ${name} = Object.freeze(${JSON.stringify(o, null, 2)});\n`;
 const schemaJs = obj(kinds.map(([n, k]) => [n, { id: k.id, level: k.level, body: k.body,
   attrs: Object.fromEntries(Object.entries(k.attrs).map(([a, s]) => [a, s.dom])) }]));
+// since tables for the writer's per-buffer version (plan P1-01)
+const sinceJs = {
+  op: obj(ops.map(([, o]) => [o.id, o.since])),
+  kind: obj(kinds.map(([, k]) => [k.id, k.since])),
+  attr: obj(kinds.map(([, k]) => [k.id, obj(Object.entries(k.attrs).map(([a, sp]) => [S.keys[a], sp.since ?? k.since]))])),
+};
 const js = `// ${HDR}\n` +
   `export const OPS_VERSION = ${S.opsVersion};\n` +
   `export const OPS_MIN_COMPAT = ${S.minCompat};\n` +
+  `export const SCHEMA_HASH = '${SCHEMA_HASH}';\n` +
+  emit('SINCE', sinceJs) +
   emit('OP', obj(ops.map(([n, o]) => [n, o.id]))) +
   emit('KIND', obj(kinds.map(([n, k]) => [n, k.id]))) +
   emit('ARGK', obj(keys.map(([n, id]) => [n, id]))) +

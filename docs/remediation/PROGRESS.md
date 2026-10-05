@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-01
+- 下一步：P1-02
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -26,7 +26,7 @@
 | P0-10 | 渲染正确性修复（HtmlWriter/AnchorNamer、run 键、列表锚点） | done | grep:plan P0-10 | 2026-10-06 | cite/* ×5 + doc/refs-diag html（原 golden 错）；+1 用例（inline/hyphen-link） | html_writer.h：编译期属性白名单、单一 style、流式写出（87K 原生渲染 2.09→1.97ms）；BF_REF 过渡 run 键；连字符在链接内；render-attr 诊断；e2e 引文旁复制、snap 单 style；fuzz 发现（参考文献嵌套收集器无限递归）单独修复 |
 | P0-11 | 宿主卫生（worker 串行化、fork 重排、引擎卫生） | done | grep:plan P0-11 | 2026-10-06 | figure/pull-diag diags span（原 golden 错）；+3 用例（figure/w-only、figure/reemit-diag、cite/outside-root-diag） | worker 按 docId 信箱（顺序执行、同类合并、每次 await 后查 generation）；dims RPC 带 rid；图片尺寸并行、按页面 baseUrl 解析、文件头嗅探（含 EXIF 方向）；字体成功才算已加载、迟到清缓存、失败 30s 重试；tokens 语法加载失败重试、literate 偏移用原文；loadResource 限定 rootDir/baseDir；DiagSink 来源切片；setWidth 重新 emit；KP 备忘录校验键 + LRU；provider 边界检查；w-only 按比例。relayout 新基准 6.1/23.0/57.3ms |
 | P0-12 | 断行语义包 | done | grep:plan P0-12 | 2026-10-06 | 34 段断点（29 用例，审阅见 REPORT.md）；64 个 breaks.txt 代价数值 | 提交 1：items.h 适配器、-ffp-contract=off、WASM/native 断点一致门禁（95/95）。提交 2：TeX 丢弃、Forbidden、Disc、Forced 段末（末行 fil + 收缩）、代价上限 1e4、i32 千分位罚分、总序平局、最终一遍救援 + overfull-line + data-overfull、布局收缩极限；断点下标取下一行首块；审计 compression 阈值按空格宽度；AUDIT_XFAIL 清空 |
-| P1-01 | 版本窗口与 ABI 握手 | todo | | | | |
+| P1-01 | 版本窗口与 ABI 握手 | done | grep:plan P1-01 | 2026-10-06 | 0（所有缓冲区仍为 v6，字节不变） | 写入器按所用词汇行的 since 定版本（≥MIN_COMPAT）；读取器接受 6..OPS_VERSION 窗口、拒绝新于缓冲区的 op/kind/attr；tsr2_abi() 握手 {opsWindow, schemaHash(FNV-1a 规范 JSON), programAbi/resVersion/syntaxVersion 占位 0, renderVersion 1}，worker 与 Node 渲染器核对；since 表生成到 ops.gen.mjs / kOpSince；CLAUDE.md 与 architecture §3 修订 |
 | P1-02 | 属性注册表（props 行进入共享模式） | todo | | | | |
 | P1-03 | 设置文档 ABI、阶段模型、驱动循环、用例配置 | todo | | | | |
 | P1-04 | 字体面与根契约 | todo | | | | |

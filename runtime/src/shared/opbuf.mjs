@@ -1,6 +1,6 @@
 // Op buffer writer + shadow nodes (document-model §4). The C++ OpReader is
 // the other half of this contract; cross-tested via recorded fixtures.
-import { OP, OPS_VERSION, ARGK } from './ops.gen.mjs';
+import { OP, OPS_MIN_COMPAT, ARGK, SINCE } from './ops.gen.mjs';
 
 const ARG_NULL = 0, ARG_BOOL = 1, ARG_NUM = 2, ARG_STR = 3, ARG_NODE = 4;
 
@@ -11,6 +11,12 @@ export class OpBuf {
     this.strList = [];
     this.nextId = 0;
     this.opCount = 0;
+    // per-buffer version (plan P1-01): the newest vocabulary row used, at
+    // least MIN_COMPAT — a buffer readable by every engine that knows it
+    this.version = OPS_MIN_COMPAT;
+  }
+  uses(since) {
+    if (since > this.version) this.version = since;
   }
 
   vint(v) {
@@ -40,6 +46,7 @@ export class OpBuf {
   makeText(s) {
     const str = String(s);
     this.opCount++;
+    this.uses(SINCE.op[OP.MAKE_TEXT]);
     this.ops.push(OP.MAKE_TEXT);
     this.vint(this.strRef(str));
     const id = this.nextId++;
@@ -48,6 +55,8 @@ export class OpBuf {
 
   makeNode(kind, args = {}, children = []) {
     this.opCount++;
+    this.uses(SINCE.op[OP.MAKE_NODE]);
+    this.uses(SINCE.kind[kind] ?? OPS_MIN_COMPAT);
     this.ops.push(OP.MAKE_NODE);
     this.vint(kind);
     const keys = Object.keys(args).filter((k) => args[k] !== undefined);
@@ -55,6 +64,7 @@ export class OpBuf {
     for (const k of keys) {
       const argk = ARGK[k];
       if (argk === undefined) throw new Error(`unknown arg key: ${k}`);
+      this.uses(SINCE.attr[kind]?.[argk] ?? OPS_MIN_COMPAT);
       this.vint(argk);
       const v = args[k];
       if (v === null) this.ops.push(ARG_NULL);
@@ -72,11 +82,13 @@ export class OpBuf {
 
   emitNode(shadow) {
     this.opCount++;
+    this.uses(SINCE.op[OP.EMIT]);
     this.ops.push(OP.EMIT);
     this.vint(shadow.opId);
   }
   stylePush(bits, patch = {}) {
     this.opCount++;
+    this.uses(SINCE.op[OP.STYLE_PUSH]);
     this.ops.push(OP.STYLE_PUSH);
     this.vint(bits);
     const entries = Object.entries(patch).filter(
@@ -90,11 +102,13 @@ export class OpBuf {
   }
   stylePopTo(h) {
     this.opCount++;
+    this.uses(SINCE.op[OP.STYLE_POP_TO]);
     this.ops.push(OP.STYLE_POP_TO);
     this.vint(h);
   }
   span(shadow, s, e) {
     this.opCount++;
+    this.uses(SINCE.op[OP.SPAN]);
     this.ops.push(OP.SPAN);
     this.vint(shadow.opId);
     this.vint(s);
@@ -130,7 +144,7 @@ export class OpBuf {
     const total = 5 + head.length + blobLen + offs.length + this.ops.length;
     const out = new Uint8Array(total);
     let p = 0;
-    out.set([0x54, 0x53, 0x4f, 0x50, OPS_VERSION], p); p += 5;  // "TSOP" + version
+    out.set([0x54, 0x53, 0x4f, 0x50, this.version], p); p += 5;  // "TSOP" + version
     out.set(head, p); p += head.length;
     for (const b of strBytes) { out.set(b, p); p += b.length; }
     out.set(offs, p); p += offs.length;

@@ -6,6 +6,7 @@ namespace tsr {
 
 constexpr std::uint8_t OPS_VERSION = 6;
 constexpr std::uint8_t OPS_MIN_COMPAT = 6;
+constexpr const char* SCHEMA_HASH = "91a935ac";
 constexpr std::uint16_t KIND_COUNT = 28;
 constexpr std::uint16_t ARGK_COUNT = 31;
 
@@ -38,5 +39,7 @@ struct KindInfo {
 };
 
 extern const KindInfo kKinds[KIND_COUNT];  // indexed by Kind id
+// the version an opcode first appeared in (0 = no such opcode)
+constexpr std::uint8_t kOpSince[] = {0, 6, 6, 6, 6, 6, 6};
 
 }  // namespace tsr

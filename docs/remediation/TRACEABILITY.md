@@ -1054,7 +1054,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/token-class-as-color` | adhoc | medium | P3-01 | |
 | `codegen-ops-model/fixed-styling-fields` | adhoc | high | P1-02 | |
 | `codegen-ops-model/global-argk-namespace` | adhoc | high | P0-06 | grep:plan P0-06 |
-| `codegen-ops-model/version-bump-per-vocabulary` | adhoc | medium | P1-01 | |
+| `codegen-ops-model/version-bump-per-vocabulary` | adhoc | medium | P1-01 | grep:plan P1-01 |
 | `codegen-ops-model/two-style-encodings-and-stack` | adhoc | medium | P0-06, P2-08 | |
 | `codegen-ops-model/val-coercion-adhoc` | adhoc | medium | P2-01 | |
 | `codegen-ops-model/block-promotion-peepholes` | adhoc | medium | P2-11 | |

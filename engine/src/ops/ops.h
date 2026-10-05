@@ -72,6 +72,7 @@ struct RawOps {
   std::deque<std::string> extra;          // strings the reader synthesizes (error messages)
   std::vector<RawNode> nodes;
   std::vector<SchedItem> sched;
+  u8 version = 0;  // the buffer's version byte (within OPS_MIN_COMPAT..OPS_VERSION)
   bool ok = false;
 };
 

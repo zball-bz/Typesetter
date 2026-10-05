@@ -185,7 +185,11 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
     r.ok = false;
   };
   if (len < 5 || std::memcmp(buf, "TSOP", 4) != 0) { bad("bad magic"); return; }
-  if (buf[4] != OPS_VERSION) { bad("ops version mismatch"); return; }
+  // version window (plan P1-01): a buffer is written at the newest
+  // vocabulary row it uses; anything newer than its byte is malformed
+  const u8 ver = buf[4];
+  if (ver < OPS_MIN_COMPAT || ver > OPS_VERSION) { bad("ops version outside the reader's window"); return; }
+  r.version = ver;
   Reader rd{buf + 5, buf + len};
   struct Pending { u32 node; std::string msg; };
   std::vector<Pending> pendingWarn, pendingErr;
@@ -206,6 +210,7 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
   for (u64 k = 0; k < nOps; k++) {
     u8 opb = rd.byte();
     if (rd.fail) { bad("truncated ops"); return; }
+    if (opb < std::size(kOpSince) && kOpSince[opb] > ver) { bad("op newer than the buffer version"); return; }
     switch ((Op)opb) {
       case Op::MAKE_TEXT: {
         u64 s = rd.varint();
@@ -240,10 +245,12 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
         // validate against the schema
         std::string invalid;
         if (kind >= KIND_COUNT) invalid = "unknown kind " + std::to_string(kind);
+        else if (kKinds[kind].since > ver) invalid = std::string("kind ") + kindName(n.kind) + " is newer than the buffer";
         std::vector<ArgVal> kept;
         for (ArgVal& a : n.args) {
           if (!invalid.empty()) break;
           const AttrSpec* sp = findSpec((u16)kind, (u16)a.key);
+          if (sp && sp->since > ver) sp = nullptr;  // newer than the buffer: unknown here
           if (!sp) {
             invalid = std::string("kind ") + kindName(n.kind) + " has no attribute " +
                       ((u16)a.key < ARGK_COUNT ? argName(a.key) : std::to_string((u16)a.key));
@@ -285,6 +292,7 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
           const char* err = readArg(rd, r, a, /*allowNode=*/false);
           if (err) { bad(err); return; }
           const AttrSpec* sp = findSpec((u16)Kind::styled, (u16)a.key);
+          if (sp && sp->since > ver) sp = nullptr;
           std::string why;
           if (!sp) why = "STYLE_PUSH patch key is not a style attribute";
           else if (validateArg(a, *sp, r, why)) it.patch.push_back(a);

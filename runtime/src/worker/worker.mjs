@@ -9,9 +9,10 @@ import { execute } from './executor.mjs';
 import { CanvasMeasurer } from './canvas_measure.mjs';
 import { tokenize } from './tokens.mjs';
 import { sniffImageSize } from './image_sniff.mjs';
+import { checkAbi } from '../shared/abi.mjs';
 
 let modPromise = null;
-const getMod = () => (modPromise ??= createTypesetter());
+const getMod = () => (modPromise ??= createTypesetter().then((M) => { checkAbi(M); return M; }));
 
 // NEED_IMAGES (figure-design.md §2): intrinsic CSS dims only, cached per
 // absolute URL for the worker's lifetime (in-flight lookups shared);
