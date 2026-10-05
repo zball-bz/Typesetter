@@ -1,7 +1,7 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="0" data-e="18" id="tsr-sec-a">Labelled heading</h1>
 <p data-pid="1" data-s="28" data-e="99">A short paragraph before a labelled display equation on the same sheet.</p>
-<p class="tsr-mathblock" data-pid="2" data-s="101" data-e="130" id="tsr-eq-pyth"><code class="tsr-mathsrc">$ a^2 + b^2 = c^2 $</code></p>
-<p class="tsr-mathblock" data-pid="3" data-s="132" data-e="163" id="tsr-eq-euler"><code class="tsr-mathsrc">$ e^(i pi) + 1 = 0 $</code></p>
+<p class="tsr-mathblock" data-pid="2" data-s="101" data-e="130" id="tsr-eq-pyth"><code class="tsr-mathsrc">$ a^2 + b^2 = c^2 $</code> <span class="tsr-eqno">(1)</span></p>
+<p class="tsr-mathblock" data-pid="3" data-s="132" data-e="163" id="tsr-eq-euler"><code class="tsr-mathsrc">$ e^(i pi) + 1 = 0 $</code> <span class="tsr-eqno">(2)</span></p>
 <p data-pid="4" data-s="165" data-e="200">See <a href="#tsr-sec-a">§1</a>, <a href="#tsr-eq-pyth">式 (1)</a> and <a href="#tsr-eq-euler">式 (2)</a>.</p>
 </div>

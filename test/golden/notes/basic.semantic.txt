@@ -6,8 +6,8 @@
 <div data-role="notes" data-pid="4" data-s="0" data-e="313">
 <hr data-s="0" data-e="313">
 <ol data-s="0" data-e="313">
-<li>The note body carries <strong>markup</strong>, <code>code</code>, and math <code class="tsr-mathsrc">$x^2 + y^2$</code>. <a href="#tsr-fnref-1">↩</a></li>
-<li>Second note, short. <a href="#tsr-fnref-2">↩</a></li>
+<li id="tsr-fn-1">The note body carries <strong>markup</strong>, <code>code</code>, and math <code class="tsr-mathsrc">$x^2 + y^2$</code>. <a href="#tsr-fnref-1">↩</a></li>
+<li id="tsr-fn-2">Second note, short. <a href="#tsr-fnref-2">↩</a></li>
 </ol>
 </div>
 </div>

@@ -4,8 +4,8 @@
 <div data-role="notes" data-pid="2">
 <hr>
 <ol>
-<li>One. <a href="#tsr-fnref-1">↩</a></li>
-<li>Two, with a reference to <a href="#tsr-top">§2</a>. <a href="#tsr-fnref-2">↩</a></li>
+<li id="tsr-fn-1">One. <a href="#tsr-fnref-1">↩</a></li>
+<li id="tsr-fn-2">Two, with a reference to <a href="#tsr-top">§2</a>. <a href="#tsr-fnref-2">↩</a></li>
 </ol>
 </div>
 <h1 data-pid="3" data-s="131" data-e="141" id="tsr-top">Appendix</h1>

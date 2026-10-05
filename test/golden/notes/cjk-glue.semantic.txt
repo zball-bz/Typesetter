@@ -7,11 +7,11 @@
 <div data-role="notes" data-pid="2" data-s="0" data-e="364">
 <hr data-s="0" data-e="364">
 <ol data-s="0" data-e="364">
-<li>脚注正文。 <a href="#tsr-fnref-1">↩</a></li>
-<li>句号之后的脚注。 <a href="#tsr-fnref-2">↩</a></li>
-<li>行尾脚注。 <a href="#tsr-fnref-3">↩</a></li>
-<li>列表中的脚注正文。 <a href="#tsr-fnref-4">↩</a></li>
-<li>Latin-context note. <a href="#tsr-fnref-5">↩</a></li>
+<li id="tsr-fn-1">脚注正文。 <a href="#tsr-fnref-1">↩</a></li>
+<li id="tsr-fn-2">句号之后的脚注。 <a href="#tsr-fnref-2">↩</a></li>
+<li id="tsr-fn-3">行尾脚注。 <a href="#tsr-fnref-3">↩</a></li>
+<li id="tsr-fn-4">列表中的脚注正文。 <a href="#tsr-fnref-4">↩</a></li>
+<li id="tsr-fn-5">Latin-context note. <a href="#tsr-fnref-5">↩</a></li>
 </ol>
 </div>
 </div>

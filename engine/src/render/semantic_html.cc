@@ -202,7 +202,17 @@ struct Sem {
         attrs(n, pid);
         out += ">\n";
         for (const ContentNode* k : n->kids) {
-          out += "<li>";
+          // a tight single-paragraph item inlines the paragraph: its anchor
+          // moves onto the <li> (P0-09 i; footnote ids used to dangle)
+          bool tight = k->kids.size() == 1 && k->kids[0]->kind == Kind::para;
+          std::string_view lid = tight ? argS(k->kids[0], ArgK::label) : std::string_view{};
+          if (!lid.empty()) {
+            out += "<li id=\"tsr-";
+            esc(out, lid);
+            out += "\">";
+          } else {
+            out += "<li>";
+          }
           // an item's blocks flow inside the li
           bool sub = false;
           for (const ContentNode* b : k->kids) {
@@ -262,7 +272,14 @@ struct Sem {
         attrs(n, pid);
         out += "><code class=\"tsr-mathsrc\">$ ";
         esc(out, argS(n, ArgK::src));
-        out += " $</code></p>\n";
+        out += " $</code>";
+        if (std::string_view tag = argS(n, ArgK::name); !tag.empty()) {
+          // the equation number on the no-JS page too (P0-09 k)
+          out += " <span class=\"tsr-eqno\">";
+          esc(out, tag);
+          out += "</span>";
+        }
+        out += "</p>\n";
         return;
       case Kind::image: {
         std::string_view src = argS(n, ArgK::src);
