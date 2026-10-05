@@ -1,52 +1,62 @@
 // The one place HTML start tags are assembled (plan P0-10; design T7 S2).
 //
-// - Attributes are buffered and written in insertion order.
+// - Attribute names are an allowlist checked at COMPILE time (AttrName is
+//   consteval): an unlisted name does not build.
+// - Attributes stream into the output in call order; nothing is buffered.
 // - Style declarations accumulate into ONE style attribute, placed where the
 //   first declaration was added (a second style="" used to be appended by
 //   hand: snap-kerning's letter-spacing was dropped by every browser).
-// - Attribute names come from an allowlist (kAttrs + data-*). A repeated or
-//   unlisted attribute is a serializer defect: debug builds assert; release
-//   keeps the first value / drops the attribute and counts it, and the Doc
-//   turns the count into a "render-attr" diagnostic.
+// - A repeated attribute is a serializer defect: debug builds assert; release
+//   keeps the first value and counts it, and the Doc turns the count into a
+//   "render-attr" diagnostic.
 // - Attribute values are escaped here (attr), except values the caller marks
-//   safe (attrSafe: numbers and fixed literals) and style declarations, whose
-//   values were validated at decode (P0-06) and escaped where they carry text.
+//   safe (attrSafe: numbers and fixed literals). Style values were validated
+//   at decode (P0-06); declEsc escapes the ones that carry text.
 // - Element ids are spelled by AnchorNamer only.
 #pragma once
 #include <cassert>
+#include <charconv>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <iterator>
 #include <string>
 #include <string_view>
-#include <utility>
-#include <vector>
-
-#include "../support/support.h"
 
 namespace tsr {
 
 inline void escapeHtml(std::string& out, std::string_view s) {
-  for (char c : s) {
-    switch (c) {
-      case '&': out += "&amp;"; break;
-      case '<': out += "&lt;"; break;
-      case '>': out += "&gt;"; break;
-      case '"': out += "&quot;"; break;
-      case '\'': out += "&#39;"; break;
-      default: out += c;
+  size_t from = 0;
+  for (size_t i = 0; i < s.size(); i++) {
+    const char* rep;
+    switch (s[i]) {
+      case '&': rep = "&amp;"; break;
+      case '<': rep = "&lt;"; break;
+      case '>': rep = "&gt;"; break;
+      case '"': rep = "&quot;"; break;
+      case '\'': rep = "&#39;"; break;
+      default: continue;
     }
+    out.append(s.data() + from, i - from);
+    out += rep;
+    from = i + 1;
   }
+  out.append(s.data() + from, s.size() - from);
 }
 
 // Stable px formatting: up to 3 decimals, trailing zeros trimmed.
-inline void fmtPx(std::string& out, double px) {
-  char buf[48];
-  std::snprintf(buf, sizeof buf, "%.3f", px);
-  size_t len = std::strlen(buf);
+inline size_t fmtPxBuf(char (&buf)[48], double px) {
+  int n = std::snprintf(buf, sizeof buf - 2, "%.3f", px);
+  size_t len = n > 0 ? (size_t)n : 0;
   while (len > 0 && buf[len - 1] == '0') len--;
   if (len > 0 && buf[len - 1] == '.') len--;
-  out.append(buf, len);
-  out += "px";
+  buf[len++] = 'p';
+  buf[len++] = 'x';
+  return len;
+}
+inline void fmtPx(std::string& out, double px) {
+  char buf[48];
+  out.append(buf, fmtPxBuf(buf, px));
 }
 inline std::string pxStr(double px) {
   std::string s;
@@ -64,6 +74,33 @@ struct AnchorNamer {
   }
 };
 
+// The attribute allowlist — the whole DOM vocabulary both serializers emit
+// besides style (document-model §9).
+inline constexpr std::string_view kHtmlAttrs[] = {
+    "alt",       "class",     "draggable", "href",    "id",       "lang",      "src",
+    "start",     "title",     "data-s",    "data-e",  "data-syn", "data-join", "data-ragged",
+    "data-cell", "data-snap", "data-pid",  "data-s0", "data-src", "data-role",
+};
+static_assert(std::size(kHtmlAttrs) <= 32);
+constexpr int htmlAttrIndex(std::string_view name) {
+  for (size_t i = 0; i < std::size(kHtmlAttrs); i++)
+    if (kHtmlAttrs[i] == name) return (int)i;
+  return -1;
+}
+
+// not constexpr: reaching it during constant evaluation is a compile error
+void attributeNotInAllowlist();
+
+struct AttrName {
+  std::string_view name;
+  uint32_t bit;
+  consteval AttrName(const char* s) : name(s), bit(0) {
+    int i = htmlAttrIndex(name);
+    if (i < 0) attributeNotInAllowlist();
+    bit = 1u << i;
+  }
+};
+
 // serializer defects since the last reset (per thread: one render at a time)
 struct WriterDefects {
   unsigned count = 0;
@@ -76,88 +113,135 @@ inline WriterDefects& writerDefects() {
 
 class Tag {
  public:
-  // attribute names put() accepts; style is written by style() alone
-  static bool allowed(std::string_view name) {
-    static constexpr std::string_view kAttrs[] = {
-        "alt", "class", "draggable", "href", "id", "lang", "src", "start", "title"};
-    if (name.starts_with("data-")) return name.size() > 5;
-    for (std::string_view a : kAttrs)
-      if (a == name) return true;
-    return false;
+  Tag(std::string& out, std::string_view name) : out_(out), name_(name) {
+    out_ += '<';
+    out_ += name;
   }
-
-  Tag(std::string& out, std::string_view name) : out_(out), name_(name) {}
   Tag(const Tag&) = delete;
   Tag& operator=(const Tag&) = delete;
 
   // a text value: escaped
-  Tag& attr(std::string_view name, std::string_view value) {
-    std::string v;
-    escapeHtml(v, value);
-    return put(name, std::move(v));
-  }
-  // a value that cannot contain markup (numbers, fixed literals)
-  Tag& attrSafe(std::string_view name, std::string value) { return put(name, std::move(value)); }
-  Tag& num(std::string_view name, unsigned long long v) { return put(name, std::to_string(v)); }
-  // an element id, spelled by AnchorNamer
-  Tag& id(std::string_view label) {
-    std::string v;
-    AnchorNamer::id(v, label);
-    return put("id", std::move(v));
-  }
-  // style declarations "prop:value;prop:value" (validated, escaped by caller)
-  Tag& style(std::string_view decls) {
-    if (decls.empty()) return *this;
-    if (styleAt_ < 0) {
-      styleAt_ = (int)attrs_.size();
-      attrs_.push_back({"style", std::string()});
-    }
-    std::string& s = attrs_[(size_t)styleAt_].second;
-    if (!s.empty()) s += ';';
-    s += decls;
-    return *this;
-  }
-  bool has(std::string_view name) const {
-    for (const auto& a : attrs_)
-      if (a.first == name) return true;
-    return false;
-  }
-  // writes "<name a=\"…\" …>"
-  void open() {
-    out_ += '<';
-    out_ += name_;
-    for (const auto& [n, v] : attrs_) {
-      out_ += ' ';
-      out_ += n;
-      out_ += "=\"";
-      out_ += v;
+  Tag& attr(AttrName n, std::string_view value) {
+    if (begin(n)) {
+      escapeHtml(out_, value);
       out_ += '"';
     }
+    return *this;
+  }
+  // a value that cannot contain markup (numbers, fixed literals)
+  Tag& attrSafe(AttrName n, std::string_view value) {
+    if (begin(n)) {
+      out_ += value;
+      out_ += '"';
+    }
+    return *this;
+  }
+  Tag& num(AttrName n, unsigned long long v) {
+    if (begin(n)) {
+      char buf[24];
+      auto r = std::to_chars(buf, buf + sizeof buf, v);
+      out_.append(buf, (size_t)(r.ptr - buf));
+      out_ += '"';
+    }
+    return *this;
+  }
+  // an element id, spelled by AnchorNamer
+  Tag& id(std::string_view label) {
+    if (begin("id")) {
+      AnchorNamer::id(out_, label);
+      out_ += '"';
+    }
+    return *this;
+  }
+
+  // style declarations "prop:value;prop:value" (validated literals)
+  Tag& style(std::string_view decls) {
+    if (decls.empty()) return *this;
+    char* p = styleAt(decls.size());
+    std::memcpy(p, decls.data(), decls.size());
+    return *this;
+  }
+  // one declaration with a px value
+  Tag& px(std::string_view prop, double v) {
+    char buf[48];
+    size_t n = fmtPxBuf(buf, v);
+    return decl(prop, std::string_view(buf, n));
+  }
+  // one declaration, value appended as is (validated at decode)
+  Tag& decl(std::string_view prop, std::string_view value) {
+    char* p = styleAt(prop.size() + 1 + value.size());
+    std::memcpy(p, prop.data(), prop.size());
+    p[prop.size()] = ':';
+    std::memcpy(p + prop.size() + 1, value.data(), value.size());
+    return *this;
+  }
+  // one declaration whose value carries text (font names): attribute-escaped
+  Tag& declEsc(std::string_view prop, std::string_view value) {
+    if (value.find_first_of("&<>\"'") == std::string_view::npos) return decl(prop, value);
+    std::string v;
+    escapeHtml(v, value);
+    return decl(prop, v);
+  }
+
+  // writes the '>' that ends the start tag
+  void open() {
+    closeStyle();
     out_ += '>';
   }
 
  private:
-  Tag& put(std::string_view name, std::string value) {
-    bool ok = allowed(name);  // style goes through style() only
-    assert(ok && "attribute not in the writer allowlist");
-    for (const auto& a : attrs_)
-      if (a.first == name) ok = false;
-    assert(ok && "repeated attribute");
-    if (!ok) {  // first wins; an unlisted attribute is dropped
+  // writes ` name="`; false (and nothing written) on a repeated attribute
+  bool begin(AttrName n) {
+    if (seen_ & n.bit) {
+      assert(false && "repeated attribute");
       WriterDefects& d = writerDefects();
-      if (d.count++ == 0) {
-        d.first = "<" + std::string(name_) + "> " + std::string(name);
-      }
-      return *this;
+      if (d.count++ == 0) d.first = "<" + std::string(name_) + "> " + std::string(n.name);
+      return false;  // first wins
     }
-    attrs_.push_back({std::string(name), std::move(value)});
-    return *this;
+    seen_ |= n.bit;
+    closeStyle();
+    out_ += ' ';
+    out_ += n.name;
+    out_ += "=\"";
+    return true;
+  }
+  void closeStyle() {
+    if (styleOpen_) {
+      out_ += '"';
+      styleOpen_ = false;
+    }
+  }
+  // room for one more declaration (with its ';' separator) inside the single
+  // style attribute; returns where to write it
+  char* styleAt(size_t len) {
+    if (styleEnd_ == std::string::npos) {  // first declaration: open style="
+      closeStyle();
+      out_ += " style=\"";
+      styleOpen_ = true;
+      size_t at = out_.size();
+      out_.resize(at + len);
+      styleEnd_ = out_.size();
+      return &out_[at];
+    }
+    if (styleOpen_) {  // style is still the last attribute: append
+      size_t at = out_.size();
+      out_.resize(at + 1 + len);
+      out_[at] = ';';
+      styleEnd_ = out_.size();
+      return &out_[at + 1];
+    }
+    // attributes followed the style: insert before its closing quote
+    size_t at = styleEnd_;
+    out_.insert(at, 1 + len, ';');
+    styleEnd_ = at + 1 + len;
+    return &out_[at + 1];
   }
 
   std::string& out_;
   std::string_view name_;
-  std::vector<std::pair<std::string, std::string>> attrs_;
-  int styleAt_ = -1;
+  uint32_t seen_ = 0;
+  size_t styleEnd_ = std::string::npos;  // end of the style value in out_
+  bool styleOpen_ = false;               // style value written last, quote not closed yet
 };
 
 }  // namespace tsr

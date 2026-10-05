@@ -507,8 +507,18 @@ static void unitHtmlWriter() {
   CHECK(out == "<span class=\"tsr-r\" lang=\"en\" style=\"font-size:14px;letter-spacing:0.5px\" "
                "data-snap=\"1\" id=\"tsr-a&quot;&lt;b\">");
   CHECK(pxStr(1.0) == "1px" && pxStr(-0.1234) == "-0.123px" && pxStr(2.5) == "2.5px");
-  CHECK(Tag::allowed("data-x") && Tag::allowed("href") && !Tag::allowed("onclick") &&
-        !Tag::allowed("data-"));
+  static_assert(htmlAttrIndex("href") >= 0 && htmlAttrIndex("onclick") < 0 &&
+                htmlAttrIndex("data-x") < 0);  // the allowlist is explicit
+  out.clear();
+  {  // a declaration after a later attribute still lands in the one style
+    Tag t(out, "span");
+    t.px("left", 1.5);
+    t.attrSafe("data-snap", "1");
+    t.px("letter-spacing", 0.25).declEsc("font-family", "\"A&B\"");
+    t.open();
+  }
+  CHECK(out == "<span style=\"left:1.5px;letter-spacing:0.25px;font-family:&quot;A&amp;B&quot;\" "
+               "data-snap=\"1\">");
 #ifdef NDEBUG
   writerDefects() = {};
   out.clear();
@@ -516,11 +526,10 @@ static void unitHtmlWriter() {
     Tag t(out, "a");
     t.attr("href", "#x");
     t.attr("href", "#y");
-    t.attr("onclick", "z");
     t.open();
   }
   CHECK(out == "<a href=\"#x\">");
-  CHECK(writerDefects().count == 2 && writerDefects().first == "<a> href");
+  CHECK(writerDefects().count == 1 && writerDefects().first == "<a> href");
   writerDefects() = {};
 #endif
 }
