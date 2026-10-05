@@ -278,6 +278,142 @@ const propsJs = `// ${HDR}\n// Run style properties (plan P1-02): the $.style.pu
   `export const STYLE_KEYS = Object.freeze(${JSON.stringify(Object.fromEntries(props.filter(([, r]) => r.attr && r.type !== 'bits').map(([, r]) => [r.key ?? r.attr, r.attr])))});\n` +
   `export const STYLE_SUGAR = Object.freeze(${JSON.stringify(sugar)});\n` + domJs;
 
+// ---- host settings (plan P1-03): Config, its JSON codec, JS defaults --------------
+const STAGES = [...readFileSync(join(root, 'engine/src/api/stages.def'), 'utf8')
+  .matchAll(/^STAGE\((\w+),/gm)].map((m) => m[1]);
+const settings = Object.entries(S.settings ?? {}).filter(([n]) => n !== '$comment');
+const policy = Object.entries(S.policy ?? {}).filter(([n]) => n !== '$comment');
+for (const [n, r] of settings) {
+  for (const a of r.affects) if (!STAGES.includes(a)) errors.push(`settings.${n}: unknown stage ${a}`);
+  if (!/^[a-z]+\.[A-Za-z]+$/.test(n)) errors.push(`settings.${n}: paths are section.name`);
+}
+if (errors.length) { for (const e of errors) console.error('gen-schema: ' + e); process.exit(1); }
+const textDomains = domains.map(([n]) => n);
+const ctypeOf = (r) => r.ctype ?? (r.dom.startsWith('num') ? 'double' : r.dom.startsWith('int') ? 'int'
+  : r.dom === 'bool' ? 'bool' : r.dom.startsWith('map') ? 'std::map<std::string, std::string>' : 'std::string');
+const cLit = (r, v) => {
+  const t = ctypeOf(r);
+  if (r.ctype === 'PunctCompress') return `PunctCompress::${cap(v)}`;
+  if (t.startsWith('std::map')) return '{}';
+  if (t === 'std::string') return JSON.stringify(v);
+  if (t === 'bool') return v ? 'true' : 'false';
+  return String(v);
+};
+const costRows = settings.filter(([, r]) => r.field.startsWith('cost.'));
+const cfgRows = settings.filter(([, r]) => !r.field.startsWith('cost.'));
+const pc = settings.find(([, r]) => r.ctype === 'PunctCompress');
+let sh = `// ${HDR}\n// Host settings (schema "settings"; plan P1-03, design T4 M3 / T9 A4).\n#pragma once\n#include <map>\n#include <string>\n#include <string_view>\n\n` +
+  `#include "../support/support.h"\n#include "stages.h"\n\nnamespace tsr {\n\n` +
+  `// Adjacent-punctuation compression style (clreq; v2 App C).\n//   Full: every adjacent gap compressed (newspaper-tight)\n` +
+  `//   Book: close+close and open+open set solid, but a breakable half-width\n//         breathing space is kept between a closing/dot and an opening punct\n` +
+  `//   None: full-width style — all punctuation spaces kept (rigid where 禁则\n//         forbids a break)\n` +
+  `enum class PunctCompress : u8 { ${pc[1].dom.slice(5).split('|').map((m, k) => `${cap(m)} = ${k}`).join(', ')} };\n\n` +
+  `// Line cost (document-model §11; TeX-bounded since P0-12): x below\n// -shrinkThreshold is Overfull; cost = min(mapped(x)^exponent, cap).\nstruct CostParams {\n`;
+for (const [n, r] of costRows) sh += `  ${ctypeOf(r)} ${r.field.slice(5)} = ${cLit(r, r.def)};  // ${n}\n`;
+sh += `};\n\n// Every host setting, one member per row (defaults = the registry's).\nstruct Config {\n`;
+for (const [n, r] of cfgRows) sh += `  ${ctypeOf(r)} ${r.field} = ${cLit(r, r.def)};  // ${n}\n`;
+sh += `  CostParams cost;\n};\n\n` +
+  `// host policy (schema "policy"): how hosts drive the engine\n` +
+  policy.filter(([, r]) => typeof r.def === 'number').map(([n, r]) => `constexpr u32 kPolicy${cap(n)} = ${r.def};  // ${r.doc}\n`).join('') +
+  policy.filter(([, r]) => Array.isArray(r.def)).map(([n, r]) => `constexpr double kPolicy${cap(n)}[] = {${r.def.join(', ')}};  // ${r.doc}\n`).join('') +
+  `\n// the result of a settings document: which stages its applied rows affect\nstruct SettingsPatch {\n  bool ok = true;       // the document parsed\n` +
+  `  u32 applied = 0;      // rows applied\n  u32 affects = 0;      // stageBit() set of the applied rows\n};\n` +
+  `// applies a JSON settings document onto c in row order; unknown paths and\n// bad values are diagnostics (the row keeps its value)\n` +
+  `SettingsPatch applySettings(Config& c, std::string_view json, DiagSink& diags);\n` +
+  `// the effective settings as one JSON document (every row)\nstd::string settingsJson(const Config& c);\n\n}  // namespace tsr\n`;
+
+const rowCase = ([n, r], k) => {
+  const f = r.field.startsWith('cost.') ? `c.cost.${r.field.slice(5)}` : `c.${r.field}`;
+  const [dom, ...rest] = r.dom.split(':');
+  let body;
+  if (dom === 'num') body = `double x;\n      if (!num(v, ${rest[0]}, ${rest[1]}, false, x, why)) return false;\n      ${f} = x;`;
+  else if (dom === 'int') body = `double x;\n      if (!num(v, ${rest[0]}, ${rest[1]}, true, x, why)) return false;\n      ${f} = (${ctypeOf(r)})x;`;
+  else if (dom === 'bool') body = `if (v.t != JsonValue::T::Bool) return type(why, "true or false");\n      ${f} = v.b;`;
+  else if (dom === 'enum') {
+    const ms = rest.join(':').split('|');
+    body = `static const char* const kM[] = {${ms.map((m) => JSON.stringify(m)).join(', ')}};\n      int m = member(v, kM, ${ms.length}, why);\n      if (m < 0) return false;\n      ${f} = (${ctypeOf(r)})m;`;
+  } else if (dom === 'map') {
+    const vd = rest[0];
+    body = `if (v.t != JsonValue::T::Obj) return type(why, "an object of strings");\n      std::map<std::string, std::string> mm;\n` +
+      `      for (size_t mi = 0; mi < v.keys.size(); mi++) {\n        const JsonValue& mv = v.vals[mi];\n        if (mv.t != JsonValue::T::Str${vd ? ` || !matchDomain(TextDomain::${domEnum(vd)}, mv.str)` : ''}) return type(why, "${vd ?? 'string'} values");\n        mm[v.keys[mi]] = mv.str;\n      }\n      ${f} = std::move(mm);`;
+  } else if (textDomains.includes(dom)) body = `if (v.t != JsonValue::T::Str || !matchDomain(TextDomain::${domEnum(dom)}, v.str)) return type(why, "${dom}");\n      ${f} = v.str;`;
+  else if (dom === 'str') body = `if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");\n      ${f} = v.str;`;
+  else { console.error(`gen-schema: settings.${n}: unknown domain ${r.dom}`); process.exit(1); }
+  if (r.apply) body += `\n      ${r.apply}(c, ${f});`;
+  return `    case ${k}: {  // ${n}\n      ${body}\n      return true;\n    }\n`;
+};
+let sc = `// ${HDR}\n#include "settings.gen.h"\n\n#include <algorithm>\n#include <cmath>\n#include <cstdio>\n\n#include "../ops/domains.gen.h"\n#include "../support/json.h"\n#include "config.h"\n\nnamespace tsr {\nnamespace {\n\n` +
+  `struct Row {\n  const char* path;\n  u32 affects;  // stageBit set\n  bool group;   // the value is an object (map rows)\n};\nconst Row kRows[] = {\n` +
+  settings.map(([n, r]) => `    {${JSON.stringify(n)}, ${r.affects.map((a) => `stageBit(Stage::${a})`).join(' | ')}, ${r.dom.startsWith('map')}},`).join('\n') +
+  `\n};\nconstexpr u32 kRowCount = sizeof kRows / sizeof kRows[0];\n\n` +
+  `bool type(std::string& why, const char* want) {\n  why = std::string("expected ") + want;\n  return false;\n}\n` +
+  `bool num(const JsonValue& v, double lo, double hi, bool integral, double& x, std::string& why) {\n` +
+  `  if (v.t != JsonValue::T::Num || !std::isfinite(v.num)) return type(why, integral ? "an integer" : "a number");\n` +
+  `  if (integral && v.num != std::floor(v.num)) return type(why, "an integer");\n` +
+  `  if (v.num < lo || v.num > hi) {\n    char b[96];\n    std::snprintf(b, sizeof b, "a value in [%g, %g]", lo, hi);\n    why = std::string("expected ") + b;\n    return false;\n  }\n  x = v.num;\n  return true;\n}\n` +
+  `int member(const JsonValue& v, const char* const* ms, int n, std::string& why) {\n  if (v.t == JsonValue::T::Str)\n    for (int k = 0; k < n; k++)\n      if (v.str == ms[k]) return k;\n` +
+  `  why = "expected one of";\n  for (int k = 0; k < n; k++) why += std::string(k ? "|" : " ") + ms[k];\n  return -1;\n}\n\n` +
+  `bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {\n  switch (row) {\n` +
+  settings.map(rowCase).join('') + `    default:\n      return false;\n  }\n}\n\n` +
+  `int rowOf(std::string_view path) {\n  for (u32 k = 0; k < kRowCount; k++)\n    if (path == kRows[k].path) return (int)k;\n  return -1;\n}\n` +
+  `bool isPrefix(std::string_view path) {\n  for (u32 k = 0; k < kRowCount; k++) {\n    std::string_view p = kRows[k].path;\n` +
+  `    if (p.size() > path.size() && p.substr(0, path.size()) == path && p[path.size()] == '.') return true;\n  }\n  return false;\n}\n\n` +
+  `struct Hit {\n  u32 row;\n  const JsonValue* v;\n};\n` +
+  `void collect(const JsonValue& o, const std::string& prefix, std::vector<Hit>& hits, DiagSink& diags) {\n` +
+  `  for (size_t i = 0; i < o.keys.size(); i++) {\n    const std::string& k = o.keys[i];\n    const JsonValue& v = o.vals[i];\n    if (!k.empty() && k[0] == '$') continue;  // $comment, $vocab: annotations\n` +
+  `    std::string path = prefix.empty() ? k : prefix + "." + k;\n    int r = rowOf(path);\n` +
+  `    if (r >= 0) hits.push_back({(u32)r, &v});\n    else if (v.t == JsonValue::T::Obj && isPrefix(path)) collect(v, path, hits, diags);\n` +
+  `    else diags.add(Sev::Warning, "setting-unknown", {}, "unknown setting '" + path + "'");\n  }\n}\n\n` +
+  `void num(std::string& out, double v) {\n  char b[40];\n  std::snprintf(b, sizeof b, "%.15g", v);\n  out += b;\n}\n\n}  // namespace\n\n` +
+  `SettingsPatch applySettings(Config& c, std::string_view json, DiagSink& diags) {\n  SettingsPatch p;\n  JsonValue doc;\n  JsonReader rd;\n` +
+  `  if (!rd.parse(json, doc)) {\n    diags.add(Sev::Error, "setting-json", {}, std::string("settings: ") + rd.error() + " at byte " + std::to_string(rd.offset()));\n    p.ok = false;\n    return p;\n  }\n` +
+  `  if (doc.t != JsonValue::T::Obj) {\n    diags.add(Sev::Error, "setting-json", {}, "settings: expected an object");\n    p.ok = false;\n    return p;\n  }\n` +
+  `  std::vector<Hit> hits;\n  collect(doc, "", hits, diags);\n` +
+  `  std::stable_sort(hits.begin(), hits.end(), [](const Hit& a, const Hit& b) { return a.row < b.row; });  // row order\n` +
+  `  for (const Hit& h : hits) {\n    std::string why;\n    if (applyRow(c, h.row, *h.v, why)) {\n      p.applied++;\n      p.affects |= kRows[h.row].affects;\n` +
+  `    } else {\n      diags.add(Sev::Warning, "setting-type", {}, std::string(kRows[h.row].path) + ": " + why);\n    }\n  }\n  return p;\n}\n\n` +
+  `std::string settingsJson(const Config& c) {\n  std::string out = "{";\n`;
+let lastSec = null;
+settings.forEach(([n, r], k) => {
+  const [sec, name] = n.split('.');
+  const f = r.field.startsWith('cost.') ? `c.cost.${r.field.slice(5)}` : `c.${r.field}`;
+  let pre = '';
+  if (sec !== lastSec) pre = `${lastSec ? '}, ' : ''}"${sec}": {`;
+  else pre = ', ';
+  lastSec = sec;
+  sc += `  out += ${JSON.stringify(pre + JSON.stringify(name) + ': ')};\n`;
+  const t = ctypeOf(r);
+  if (r.ctype === 'PunctCompress') sc += `  { static const char* const kM[] = {${r.dom.slice(5).split('|').map((m) => JSON.stringify(m)).join(', ')}}; jsonString(out, kM[(int)${f}]); }\n`;
+  else if (t.startsWith('std::map')) sc += `  out += '{';\n  { bool first = true; for (const auto& [mk, mv] : ${f}) { if (!first) out += ", "; first = false; jsonString(out, mk); out += ": "; jsonString(out, mv); } }\n  out += '}';\n`;
+  else if (t === 'std::string') sc += `  jsonString(out, ${f});\n`;
+  else if (t === 'bool') sc += `  out += ${f} ? "true" : "false";\n`;
+  else sc += `  num(out, (double)${f});\n`;
+});
+sc += `  out += "}}";\n  return out;\n}\n\n}  // namespace tsr\n`;
+
+// JS: defaults, rows, legacy options, policy
+const nested = {};
+for (const [n, r] of settings) { const [a, b] = n.split('.'); (nested[a] ??= {})[b] = r.def; }
+const jsRows = Object.fromEntries(settings.map(([n, r]) => [n, { dom: r.dom, def: r.def, prec: r.prec, affects: r.affects }]));
+const legacy = Object.fromEntries(settings.filter(([, r]) => r.legacy).map(([n, r]) => [r.legacy, n]));
+const settingsJs = `// ${HDR}\n// Host settings (schema "settings"; plan P1-03) and host policy.\n` +
+  emit('SETTINGS', jsRows) + emit('SETTINGS_DEFAULTS', nested) + emit('LEGACY_OPTIONS', legacy) +
+  emit('POLICY', Object.fromEntries(policy.map(([n, r]) => [n, r.def]))) +
+  `export const STAGES = Object.freeze(${JSON.stringify(STAGES)});\n` +
+  `// the value of a dotted setting in a (partial) settings document, else its default\n` +
+  `export function settingOf(settings, path) {\n  const [a, b] = path.split('.');\n  const v = settings?.[a]?.[b];\n  return v !== undefined ? v : SETTINGS[path]?.def;\n}\n` +
+  `// one settings document from createEngine's legacy named options (MD-06) and\n// an explicit \`settings\` object, which wins\n` +
+  `export function settingsFromOptions(opts = {}) {\n  const out = {};\n  for (const [opt, path] of Object.entries(LEGACY_OPTIONS)) {\n` +
+  `    if (opts[opt] === undefined || opts[opt] === null) continue;\n    const [a, b] = path.split('.');\n    (out[a] ??= {})[b] = opts[opt];\n  }\n` +
+  `  for (const [a, sec] of Object.entries(opts.settings ?? {})) {\n    if (sec && typeof sec === 'object' && !Array.isArray(sec)) out[a] = { ...(out[a] ?? {}), ...sec };\n    else out[a] = sec;\n  }\n  return out;\n}\n`;
+
+let setMd = `<!-- ${HDR} -->\n# Host settings (generated)\n\nThe settings document of document-model §11 / docs/host-protocol-design.md, generated from ` +
+  '`engine/schema/schema.json`. `affects` lists the stages whose products a change invalidates; the first one decides whether a patch applies in place or rebuilds the document.\n\n' +
+  '| setting | domain | default | precedence | affects | replaces |\n|---|---|---|---|---|---|\n' +
+  settings.map(([n, r]) => `| \`${n}\` | ${r.dom.replace(/\|/g, '\\|')} | \`${JSON.stringify(r.def).replace(/\|/g, '\\|')}\` | ${r.prec} | ${r.affects.join(', ')} | ${r.legacy ? '`' + r.legacy + '`' : ''} |`).join('\n') +
+  '\n\n## Host policy\n\n| policy | default | meaning |\n|---|---|---|\n' +
+  policy.map(([n, r]) => `| \`${n}\` | \`${JSON.stringify(r.def)}\` | ${r.doc} |`).join('\n') + '\n';
+
 // ---- docs/schema-table.md --------------------------------------------------------
 let md = `<!-- ${HDR} -->\n# Ops vocabulary (generated)\n\nThe kind table of document-model §2.1, generated from ` +
   '`engine/schema/schema.json`. Ops version ' + S.opsVersion + ', min compat ' + S.minCompat + '.\n\n' +
@@ -299,6 +435,10 @@ const outputs = {
   'engine/src/model/props.gen.h': ph,
   'engine/src/render/style_css.gen.h': css,
   'runtime/src/shared/props.gen.mjs': propsJs,
+  'engine/src/api/settings.gen.h': sh,
+  'engine/src/api/settings.gen.cc': sc,
+  'runtime/src/shared/settings.gen.mjs': settingsJs,
+  'docs/settings-table.md': setMd,
   'docs/schema-table.md': md,
 };
 let stale = 0;

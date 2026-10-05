@@ -124,6 +124,10 @@
     "font": {
       "max": 512,
       "re": " *(\"[^\"'\\\\\\x00-\\x1f\\x7f]+\" *|'[^\"'\\\\\\x00-\\x1f\\x7f]+' *|[A-Za-z0-9_\\-\\x80-\\xff][A-Za-z0-9 _\\-\\x80-\\xff]*)(, *(\"[^\"'\\\\\\x00-\\x1f\\x7f]+\" *|'[^\"'\\\\\\x00-\\x1f\\x7f]+' *|[A-Za-z0-9_\\-\\x80-\\xff][A-Za-z0-9 _\\-\\x80-\\xff]*))*"
+    },
+    "features": {
+      "max": 256,
+      "re": "( *(\"[A-Za-z0-9]{4}\"|'[A-Za-z0-9]{4}')( +(on|off|[0-9]{1,3}))?( *, *(\"[A-Za-z0-9]{4}\"|'[A-Za-z0-9]{4}')( +(on|off|[0-9]{1,3}))?)* *)?"
     }
   },
   "props": {
@@ -197,6 +201,423 @@
       "css": "font-size",
       "cssOrder": 1,
       "cssValue": "emPx"
+    }
+  },
+  "settings": {
+    "$comment": [
+      "Host settings (plan P1-03; design T4 M3 / T9 A4): one row per setting, by dotted path.",
+      "field: the Config member (cost.* fill CostParams); dom: value domain (a domains entry, num:LO:HI, int:LO:HI, bool,",
+      "enum:A|B, str, map); def: default; prec: HostOnly | HostDefault | HostForce | DocOnly (no document layer before P3);",
+      "affects: the stages (stages.def) whose products the setting changes — the first one decides whether a patch",
+      "applies in place or the document is rebuilt; legacy: the createEngine/tsr_* option it replaces (MD-06).",
+      "Rows apply in this order, so doc.lang (which resets terms.*) precedes terms.*."
+    ],
+    "host.width": {
+      "field": "widthPx",
+      "dom": "num:1:100000",
+      "def": 300,
+      "prec": "HostOnly",
+      "affects": [
+        "Emit",
+        "Break",
+        "Layout",
+        "Paint"
+      ],
+      "legacy": "widthPx"
+    },
+    "host.epsilonSu": {
+      "field": "epsilonPerWordSu",
+      "dom": "num:0:64",
+      "def": 1,
+      "prec": "HostOnly",
+      "affects": [
+        "Emit",
+        "Measure"
+      ]
+    },
+    "doc.lang": {
+      "field": "lang",
+      "dom": "lang",
+      "def": "zh-CN",
+      "prec": "HostDefault",
+      "affects": [
+        "Resolve"
+      ],
+      "legacy": "lang",
+      "apply": "applyLang"
+    },
+    "doc.baseSize": {
+      "field": "baseSizePx",
+      "dom": "num:4:96",
+      "def": 18,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit",
+        "Measure",
+        "Break",
+        "Layout",
+        "Paint"
+      ],
+      "legacy": "baseSizePx"
+    },
+    "doc.leading": {
+      "field": "lineHeight",
+      "dom": "num:0.5:4",
+      "def": 1.5,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit",
+        "Break",
+        "Layout",
+        "Paint"
+      ],
+      "legacy": "lineHeight"
+    },
+    "doc.parGap": {
+      "field": "paraSpacingEm",
+      "dom": "num:0:10",
+      "def": 1.2,
+      "prec": "HostDefault",
+      "affects": [
+        "Break",
+        "Layout",
+        "Paint"
+      ]
+    },
+    "doc.cjkJustify": {
+      "field": "cjkJustifyK",
+      "dom": "num:0:4",
+      "def": 0.6,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit",
+        "Layout"
+      ]
+    },
+    "doc.cjkGlue": {
+      "field": "cjkGlueEm",
+      "dom": "num:0:1",
+      "def": 0.1,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
+    "fonts.body": {
+      "field": "bodyFont",
+      "dom": "font",
+      "def": "\"Crimson Text\", Georgia, serif",
+      "prec": "HostDefault",
+      "affects": [
+        "Measure"
+      ],
+      "legacy": "fontFamily"
+    },
+    "fonts.cjk": {
+      "field": "cjkFont",
+      "dom": "font",
+      "def": "\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif",
+      "prec": "HostDefault",
+      "affects": [
+        "Measure"
+      ],
+      "legacy": "cjkFontFamily"
+    },
+    "fonts.mono": {
+      "field": "monoFont",
+      "dom": "font",
+      "def": "monospace",
+      "prec": "HostDefault",
+      "affects": [
+        "Measure"
+      ]
+    },
+    "par.indent": {
+      "field": "paraIndentEm",
+      "dom": "num:0:20",
+      "def": 0,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ],
+      "legacy": "paraIndentEm"
+    },
+    "list.indent": {
+      "field": "listIndentEm",
+      "dom": "num:0:20",
+      "def": 1.5,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
+    "quote.indent": {
+      "field": "quoteIndentEm",
+      "dom": "num:0:20",
+      "def": 1.0,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
+    "cjk.punctCompress": {
+      "field": "punctCompress",
+      "dom": "enum:full|book|none",
+      "def": "book",
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ],
+      "legacy": "punctCompress",
+      "ctype": "PunctCompress"
+    },
+    "break.hyphenPenalty": {
+      "field": "hyphenPenalty",
+      "dom": "num:0:1e18",
+      "def": 0.7,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
+    "break.urlPenalty": {
+      "field": "urlBreakPenalty",
+      "dom": "num:0:1e18",
+      "def": 1.2,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
+    "break.urlMinLen": {
+      "field": "urlBreakMinLen",
+      "dom": "int:1:100000",
+      "def": 20,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ],
+      "ctype": "u32"
+    },
+    "break.mathRelAfter": {
+      "field": "mathRelAfterPenalty",
+      "dom": "num:0:1e18",
+      "def": 0.8,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
+    "break.mathRelBefore": {
+      "field": "mathRelBeforePenalty",
+      "dom": "num:0:1e18",
+      "def": 0.85,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
+    "break.mathBinAfter": {
+      "field": "mathBinAfterPenalty",
+      "dom": "num:0:1e18",
+      "def": 0.95,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
+    "cost.exponent": {
+      "field": "cost.exponent",
+      "dom": "int:1:4",
+      "def": 3,
+      "prec": "HostDefault",
+      "affects": [
+        "Break"
+      ],
+      "ctype": "u8"
+    },
+    "cost.shrinkThreshold": {
+      "field": "cost.shrinkThreshold",
+      "dom": "num:0:1",
+      "def": 0.37,
+      "prec": "HostDefault",
+      "affects": [
+        "Break",
+        "Layout"
+      ]
+    },
+    "cost.shrinkCoeff": {
+      "field": "cost.shrinkCoeff",
+      "dom": "num:0:100",
+      "def": 0.6,
+      "prec": "HostDefault",
+      "affects": [
+        "Break"
+      ]
+    },
+    "cost.cap": {
+      "field": "cost.cap",
+      "dom": "num:1:1e12",
+      "def": 10000.0,
+      "prec": "HostDefault",
+      "affects": [
+        "Break"
+      ]
+    },
+    "code.scale": {
+      "field": "codeScale",
+      "dom": "num:0.1:4",
+      "def": 0.85,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit",
+        "Layout"
+      ]
+    },
+    "code.contIndent": {
+      "field": "verbatimContIndent",
+      "dom": "int:0:40",
+      "def": 2,
+      "prec": "HostDefault",
+      "affects": [
+        "Layout"
+      ],
+      "ctype": "int"
+    },
+    "code.sidecarFrac": {
+      "field": "sidebarFrac",
+      "dom": "num:0.1:0.9",
+      "def": 0.4,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
+    "code.snapKerning": {
+      "field": "verbatimSnapKerning",
+      "dom": "bool",
+      "def": false,
+      "prec": "HostDefault",
+      "affects": [
+        "Layout",
+        "Paint"
+      ],
+      "legacy": "verbatimSnapKerning"
+    },
+    "code.fontFeatures": {
+      "field": "codeFontFeatures",
+      "dom": "features",
+      "def": "",
+      "prec": "HostDefault",
+      "affects": [
+        "Paint"
+      ],
+      "legacy": "codeFontFeatures"
+    },
+    "code.fontFeaturesByLang": {
+      "field": "codeFontFeaturesByLang",
+      "dom": "map:features",
+      "def": {},
+      "prec": "HostDefault",
+      "affects": [
+        "Paint"
+      ],
+      "legacy": "codeFontFeaturesByLang"
+    },
+    "terms.heading": {
+      "field": "supHeading",
+      "dom": "str",
+      "def": "§",
+      "prec": "HostDefault",
+      "affects": [
+        "Resolve"
+      ]
+    },
+    "terms.table": {
+      "field": "supTable",
+      "dom": "str",
+      "def": "表 ",
+      "prec": "HostDefault",
+      "affects": [
+        "Resolve"
+      ]
+    },
+    "terms.figure": {
+      "field": "supFigure",
+      "dom": "str",
+      "def": "图 ",
+      "prec": "HostDefault",
+      "affects": [
+        "Resolve"
+      ]
+    },
+    "terms.equation": {
+      "field": "supEquation",
+      "dom": "str",
+      "def": "式 ",
+      "prec": "HostDefault",
+      "affects": [
+        "Resolve"
+      ]
+    },
+    "terms.captionSep": {
+      "field": "capSep",
+      "dom": "str",
+      "def": "：",
+      "prec": "HostDefault",
+      "affects": [
+        "Resolve"
+      ]
+    },
+    "page.height": {
+      "field": "pageHeightPx",
+      "dom": "num:16:100000",
+      "def": 995,
+      "prec": "HostDefault",
+      "affects": [
+        "Paginate"
+      ]
+    }
+  },
+  "policy": {
+    "$comment": [
+      "Host policy (plan P1-03; design T9 A4): how hosts drive the engine, not what it typesets.",
+      "Not a document setting: createEngine({policy}) and the native driver read it."
+    ],
+    "maxRounds": {
+      "def": 64,
+      "doc": "pull-loop rounds before a typeset is declared stalled"
+    },
+    "fontDeadlineMs": {
+      "def": 4000,
+      "doc": "declared fonts measure as their fallback after this"
+    },
+    "fontRetryMs": {
+      "def": 30000,
+      "doc": "a failed font load is retried after this"
+    },
+    "grammarRetryMs": {
+      "def": 30000,
+      "doc": "a failed highlight grammar load is retried after this"
+    },
+    "imageTimeoutMs": {
+      "def": 15000,
+      "doc": "main-thread image size fallback timeout"
+    },
+    "tokenCacheEntries": {
+      "def": 400,
+      "doc": "worker token cache capacity"
+    },
+    "measureCacheWords": {
+      "def": 200000,
+      "doc": "measurer word cache capacity"
+    },
+    "nativeImagePx": {
+      "def": [
+        512,
+        384
+      ],
+      "doc": "the native/golden image provider's answer"
     }
   }
 }

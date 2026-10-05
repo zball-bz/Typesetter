@@ -5,6 +5,9 @@
 // page progressively upgrades to the typeset rendering client-side.
 //
 //   node tools/export-static.mjs post.tsm -o out/ [--no-hydrate] [--title T]
+//                                 [--settings site.json]
+// --settings: the settings document (docs/settings-table.md) — document
+// language, fonts, sizes — used for the static page and passed to hydration.
 import { readFile, writeFile, mkdir, cp, access } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,24 +19,31 @@ const inputs = [];
 let outDir = 'out';
 let hydrate = true;
 let title = null;
+let settingsPath = null;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '-o') outDir = args[++i];
   else if (args[i] === '--no-hydrate') hydrate = false;
   else if (args[i] === '--title') title = args[++i];
+  else if (args[i] === '--settings') settingsPath = args[++i];
   else inputs.push(args[i]);
 }
 if (inputs.length !== 1) {
-  console.error('usage: export-static.mjs <post.tsm> [-o out/] [--no-hydrate] [--title T]');
+  console.error('usage: export-static.mjs <post.tsm> [-o out/] [--no-hydrate] [--title T] [--settings f.json]');
   process.exit(2);
 }
 
-const [{ renderTsm }, { TSR_CSS, TSR_CJK_FONT }] = await Promise.all([
+const [{ renderTsm }, { TSR_CSS }, { settingOf }] = await Promise.all([
   import(join(root, 'runtime/src/node/render.mjs')),
   import(join(root, 'runtime/src/main/shell.mjs')),
+  import(join(root, 'runtime/src/shared/settings.gen.mjs')),
 ]);
 
+const settings = settingsPath ? JSON.parse(await readFile(settingsPath, 'utf8')) : {};
+const lang = settingOf(settings, 'doc.lang');
+const bodyFont = settingOf(settings, 'fonts.body');
+const cjkFont = settingOf(settings, 'fonts.cjk');
 const source = await readFile(inputs[0], 'utf8');
-const { html: semantic, diags, ok } = await renderTsm(source);
+const { html: semantic, diags, ok } = await renderTsm(source, { settings });
 if (diags.trim()) console.error(diags.trim());
 if (!ok) process.exit(1);
 
@@ -42,18 +52,17 @@ const escapedSrc = source.replace(/<\/script/gi, '<\\/script');
 const hydrateBlock = hydrate ? `
 <script type="text/plain" id="tsr-src">${escapedSrc}</script>
 <script type="module">
-import { createEngine, TSR_CJK_FONT } from './assets/runtime/src/main/shell.mjs';
+import { createEngine } from './assets/runtime/src/main/shell.mjs';
 const el = document.getElementById('tsr-root');
 const engine = createEngine();
 engine.typeset(document.getElementById('tsr-src').textContent, el, {
-  fontFamily: '"Crimson Text", Georgia, serif',
-  cjkFontFamily: TSR_CJK_FONT,
+  settings: ${JSON.stringify(settings).replace(/</g, '\\u003c')},
   progressive: false,  // the static semantic page IS the first paint
 }).catch((e) => console.warn('tsr hydrate failed; static page stands', e));
 </script>` : '';
 
 const html = `<!doctype html>
-<html lang="zh-CN">
+<html lang="${lang.replace(/[^A-Za-z0-9-]/g, '')}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -61,8 +70,8 @@ const html = `<!doctype html>
 <style>
 ${TSR_CSS}
 body { margin: 0 auto; max-width: 42em; padding: 2em 1em;
-       font-family: "Crimson Text", Georgia, serif; }
-#tsr-root { --tsr-cjk-font: ${TSR_CJK_FONT.replace(/"/g, "'")}; }
+       font-family: ${bodyFont.replace(/[<>{};]/g, '')}; }
+#tsr-root { --tsr-cjk-font: ${cjkFont.replace(/"/g, "'").replace(/[<>{};]/g, '')}; }
 .tsr-flow img { max-width: 100%; height: auto; }
 .tsr-flow pre { overflow-x: auto; }
 .tsr-flow code .tsr-err { color: #b00; }

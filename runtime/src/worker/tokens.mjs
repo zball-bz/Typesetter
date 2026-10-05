@@ -3,6 +3,8 @@
 // with engine/test/native_tokens.h): captures sort by (start asc,
 // patternIndex asc); earlier pattern wins on overlap.
 // Tag set mirrors engine/src/code/tokens.h kTokenTags — keep in sync.
+import { POLICY } from '../shared/settings.gen.mjs';
+
 const TAGS = ['keyword', 'string', 'number', 'comment', 'function', 'type',
               'constant', 'variable', 'operator', 'punctuation', 'property',
               'attribute', 'label', 'embedded'];
@@ -32,7 +34,7 @@ let initDone = null;
 // name → {lang, query} | {failedAt}: a failed grammar load (missing asset,
 // network) is retried after LOAD_RETRY_MS instead of never (plan P0-11)
 const langs = new Map();
-const LOAD_RETRY_MS = 30000;
+const LOAD_RETRY_MS = POLICY.grammarRetryMs;
 const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
 async function load(name) {

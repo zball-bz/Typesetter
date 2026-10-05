@@ -5,7 +5,9 @@
 // the edited handful are cache hits. The cache must be cleared whenever a
 // new FontFace lands in the worker's FontFaceSet: widths measured against a
 // fallback face are stale the moment the real face arrives.
-const CACHE_CAP = 200000; // words across all fonts; reset wholesale beyond
+import { POLICY } from '../shared/settings.gen.mjs';
+
+const CACHE_CAP = POLICY.measureCacheWords; // words across all fonts; reset wholesale beyond
 
 export class CanvasMeasurer {
   constructor() {

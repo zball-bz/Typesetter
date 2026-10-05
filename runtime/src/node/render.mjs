@@ -6,6 +6,7 @@
 import { execute } from '../worker/executor.mjs';
 import { tokenize } from '../worker/tokens.mjs';
 import { checkAbi } from '../shared/abi.mjs';
+import { settingsFromOptions } from '../shared/settings.gen.mjs';
 
 let modPromise = null;
 function getMod() {
@@ -16,18 +17,19 @@ function getMod() {
 }
 
 // → { html, diags, ok }; ok=false on ingest failure or error-severity diags
-// opts.baseDir / opts.rootDir: where document resources (#bibliography
+// opts.settings: the settings document (docs/settings-table.md; opts.lang is
+// sugar for doc.lang). opts.baseDir / opts.rootDir: where document resources (#bibliography
 // src) resolve — relative paths against baseDir, /site-root paths against
 // rootDir (defaults: process.cwd())
 export async function renderTsm(source, opts = {}) {
   const M = await getMod();
   const doc = M._tsr_doc_new();
   try {
-    if (opts.lang) {  // supplement words follow the document language
-      const l = M.stringToNewUTF8(String(opts.lang));
-      M._tsr_set_lang(doc, l);
-      M._free(l);
-    }
+    // one settings document (plan P1-03); opts.lang stays as sugar for doc.lang
+    const settings = settingsFromOptions(opts);
+    const cfg = M.stringToNewUTF8(JSON.stringify(settings));
+    M._tsr2_set_config(doc, cfg);
+    M._free(cfg);
     const srcPtr = M.stringToNewUTF8(String(source));
     M._tsr_compile(doc, srcPtr);
     M._free(srcPtr);

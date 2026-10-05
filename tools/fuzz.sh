@@ -13,7 +13,7 @@ set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 BUILD=engine/build-fuzz
-TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader)
+TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings)
 
 if [ ! -f "$BUILD/CMakeCache.txt" ]; then
   GEN="Unix Makefiles"; command -v ninja >/dev/null && GEN=Ninja
@@ -27,6 +27,12 @@ seed() {
   mkdir -p "$dir" .fuzz/crashes
   local ext=tsm
   [ "$t" = fuzz_opreader ] && ext=ops
+  if [ "$t" = fuzz_settings ]; then
+    # settings documents: the profiles, fixture settings and the full dump
+    find test/profiles test/fixtures -name "*.json" -exec cp -n {} "$dir/" \; 2>/dev/null || true
+    printf '{"host":{"width":420},"doc":{"lang":"en"},"code":{"fontFeaturesByLang":{"js":"\\"liga\\" 1"}}}' > "$dir/seed-mixed.json"
+    return
+  fi
   find test/fixtures -name "*.$ext" -exec cp -n {} "$dir/" \; 2>/dev/null || true
 }
 

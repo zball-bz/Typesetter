@@ -582,6 +582,48 @@ static void unitInstLimits() {
   }
 }
 
+// The settings codec (plan P1-03): one JSON document, rows applied in
+// schema order, unknown paths and bad values diagnosed and skipped.
+static void unitSettings() {
+  {
+    Config c;
+    DiagSink d;
+    SettingsPatch p = applySettings(c, R"({"host":{"width":420},"cost":{"exponent":2},
+        "cjk":{"punctCompress":"full"},"code":{"fontFeaturesByLang":{"js":"\"liga\" 1"}},
+        "terms":{"figure":"Fig. "},"doc":{"lang":"en"},"bogus":{"x":1},"$comment":"ignored"})", d);
+    CHECK(p.ok && p.applied == 6);
+    CHECK(c.widthPx == 420 && c.cost.exponent == 2 && c.punctCompress == PunctCompress::Full);
+    CHECK(c.codeFontFeaturesByLang.at("js") == "\"liga\" 1");
+    // doc.lang (English supplements) applies before terms.*, which wins
+    CHECK(c.lang == "en" && c.supFigure == "Fig. " && c.supTable == "Table ");
+    CHECK(p.affects & stageBit(Stage::Emit));
+    CHECK(d.items.size() == 1 && std::string_view(d.items[0].code) == "setting-unknown");
+  }
+  {
+    Config c;
+    DiagSink d;
+    applySettings(c, R"({"host":{"width":-5},"cost":{"exponent":2.5},"fonts":{"body":"x;y"},
+        "code":{"snapKerning":1},"cjk":{"punctCompress":"tight"}})", d);
+    CHECK(d.items.size() == 5 && c.widthPx == 300 && c.cost.exponent == 3 && !c.verbatimSnapKerning);
+    for (const Diag& x : d.items) CHECK(std::string_view(x.code) == "setting-type");
+  }
+  for (const char* bad : {"", "{", "[1]", "{\"a\":}", "{\"host\":{\"width\":1e999}}x"}) {
+    Config c;
+    DiagSink d;
+    SettingsPatch p = applySettings(c, bad, d);
+    CHECK(!p.ok && !d.items.empty() && std::string_view(d.items[0].code) == "setting-json");
+  }
+  {  // the effective document round-trips
+    Config a;
+    a.widthPx = 333;
+    a.codeFontFeaturesByLang["cpp"] = "\"calt\" 0";
+    Config b;
+    DiagSink d;
+    SettingsPatch p = applySettings(b, settingsJson(a), d);
+    CHECK(p.ok && d.items.empty() && settingsJson(b) == settingsJson(a));
+  }
+}
+
 // The breaker's item adapter (plan P0-12): legal breaks, discardables and the
 // block each break consumes.
 static void unitBreakItems() {
@@ -801,6 +843,7 @@ int main(int argc, char** argv) {
   unitHtmlWriter();
   unitBreakMemo();
   unitBreakItems();
+  unitSettings();
   unitBreakSemantics();
 
   if (root.empty()) {

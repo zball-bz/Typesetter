@@ -208,6 +208,26 @@ test('snap-kerning: one style attribute carrying letter-spacing', async ({ page 
   expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
 });
 
+// plan P1-03: one settings document replaces the per-knob options (which
+// stay as sugar); unknown paths and bad values are diagnostics
+test('settings: one document, legacy options as sugar, diagnostics', async ({ page }) => {
+  const source = '#!figure(src: "x.png", alt: "a", w: 100, h: 50, label: "f")\nCaption.\n#figure!\n\nSee @f.';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const en = await page.evaluate(async ({ source }) => await window.__tsr.typeset(source,
+    { widthPx: 300, settings: { doc: { lang: 'en' }, terms: { figure: 'Fig. ' } } }), { source });
+  expect(en.html).toContain('Fig. 1');
+  expect(en.diags).toBe('');
+  const legacy = await page.evaluate(async ({ source }) =>
+    await window.__tsr.typeset(source, { widthPx: 300, lang: 'en' }), { source });
+  expect(legacy.html).toContain('Figure 1');
+  const bad = await page.evaluate(async ({ source }) => await window.__tsr.typeset(source,
+    { widthPx: 300, settings: { doc: { leading: 'tall' }, nope: { x: 1 } } }), { source });
+  expect(bad.diags).toContain('setting-type');
+  expect(bad.diags).toContain('setting-unknown');
+  expect(bad.html).toContain('>图</span>');  // defaults stand (zh terms)
+});
+
 // plan P1-01: the ABI handshake refuses an engine that cannot read what the
 // runtime writes, or that was generated from another schema
 test('abi: handshake accepts this build and refuses mismatches', async ({ page }) => {

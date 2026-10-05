@@ -1,0 +1,20 @@
+// The pipeline stages (plan P1-03; design T9 A3) — X-macro, read by
+// engine/src/api/stages.h and by tools/gen-schema.mjs (settings `affects`).
+// STAGE(id, side, unit, rerun)
+//   side:  Engine | Host (the host runs Execute: the document program)
+//   unit:  Doc | Pid (Emit runs per top-level block)
+//   rerun: Once (its product is consumed or mutated downstream: changing an
+//          input means rebuilding the document — tsr2_doc_fork)
+//          PidRetry (re-run whole, per block, while metrics arrive)
+//          Resumable (the pull loop: answers accumulate)
+//          Reentrant (pure over earlier products: re-run in place)
+STAGE(Compile, Engine, Doc, Once)
+STAGE(Execute, Host, Doc, Once)
+STAGE(Ingest, Engine, Doc, Once)
+STAGE(Resolve, Engine, Doc, Once)
+STAGE(Emit, Engine, Pid, PidRetry)
+STAGE(Measure, Engine, Doc, Resumable)
+STAGE(Break, Engine, Doc, Reentrant)
+STAGE(Layout, Engine, Doc, Reentrant)
+STAGE(Paginate, Engine, Doc, Reentrant)
+STAGE(Paint, Engine, Doc, Reentrant)

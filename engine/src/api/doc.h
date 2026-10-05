@@ -61,6 +61,15 @@ struct Doc {
 
   enum class Status { Ok, NeedMeasure };
 
+  // Host settings (plan P1-03): one JSON document, applied in row order;
+  // unknown paths and bad values are diagnostics of the Settings slice
+  // (replaced by the next document). Returns 0.
+  int configure(std::string_view json) {
+    diags.begin(DiagOrigin::Settings);
+    applySettings(cfg, json, diags);
+    return 0;
+  }
+
   void compile(std::string source) {
     diags.begin(DiagOrigin::Compile);
     src.init(std::move(source));

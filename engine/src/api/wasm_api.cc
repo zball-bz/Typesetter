@@ -11,6 +11,7 @@
 
 #include "../measure/measure.h"
 #include "doc.h"
+#include "../support/json.h"
 
 using namespace tsr;
 
@@ -39,40 +40,86 @@ void jsonEscapeInto(std::string& out, std::string_view s) {
 TSR_EXPORT WasmDoc* tsr_doc_new() { return new WasmDoc(); }
 TSR_EXPORT void tsr_doc_free(WasmDoc* d) { delete d; }
 
+// One settings document per call (plan P1-03; docs/host-protocol-design.md,
+// docs/settings-table.md). 0 = applied; diagnostics name unknown paths and
+// bad values.
+TSR_EXPORT int tsr2_set_config(WasmDoc* d, const char* json) {
+  return d->doc.configure(json ? std::string_view(json) : std::string_view{});
+}
+
+// --- deprecated per-knob setters (MD-06): wrappers over tsr2_set_config ----
+namespace {
+int configure1(WasmDoc* d, const char* section, const char* key, const std::string& jsonValue) {
+  std::string j = "{";
+  jsonString(j, section);
+  j += ":{";
+  jsonString(j, key);
+  j += ":" + jsonValue + "}}";
+  return d->doc.configure(j);
+}
+std::string jstr(const char* s) {
+  std::string out;
+  jsonString(out, s ? s : "");
+  return out;
+}
+std::string jnum(double v) {
+  char b[40];
+  std::snprintf(b, sizeof b, "%.17g", v);
+  return b;
+}
+}  // namespace
+
 TSR_EXPORT void tsr_config(WasmDoc* d, double widthPx, double baseSizePx,
                            double lineHeight, double paraIndentEm) {
-  d->doc.cfg.widthPx = widthPx;
-  if (baseSizePx > 0) d->doc.cfg.baseSizePx = baseSizePx;
-  if (lineHeight > 0) d->doc.cfg.lineHeight = lineHeight;
-  if (paraIndentEm >= 0) d->doc.cfg.paraIndentEm = paraIndentEm;
+  configure1(d, "host", "width", jnum(widthPx));
+  if (baseSizePx > 0) configure1(d, "doc", "baseSize", jnum(baseSizePx));
+  if (lineHeight > 0) configure1(d, "doc", "leading", jnum(lineHeight));
+  if (paraIndentEm >= 0) configure1(d, "par", "indent", jnum(paraIndentEm));
 }
 
 TSR_EXPORT void tsr_set_punct_compress(WasmDoc* d, int mode) {
-  if (mode >= 0 && mode <= 2) d->doc.cfg.punctCompress = (PunctCompress)mode;
+  static const char* const kModes[] = {"full", "book", "none"};
+  if (mode >= 0 && mode <= 2) configure1(d, "cjk", "punctCompress", jstr(kModes[mode]));
 }
 
 TSR_EXPORT void tsr_set_font(WasmDoc* d, const char* family) {
-  d->doc.cfg.bodyFont = family;
+  configure1(d, "fonts", "body", jstr(family));
 }
 
 TSR_EXPORT void tsr_set_cjk_font(WasmDoc* d, const char* family) {
-  d->doc.cfg.cjkFont = family;
+  configure1(d, "fonts", "cjk", jstr(family));
 }
 
 // BCP-47 tag → supplement words (Figure/图 …); default is zh
 TSR_EXPORT void tsr_set_lang(WasmDoc* d, const char* lang) {
-  if (lang && *lang) applyLang(d->doc.cfg, lang);
+  if (lang && *lang) configure1(d, "doc", "lang", jstr(lang));
 }
 
 TSR_EXPORT void tsr_set_snap_kerning(WasmDoc* d, int on) {
-  d->doc.cfg.verbatimSnapKerning = on != 0;
+  configure1(d, "code", "snapKerning", on ? "true" : "false");
 }
 
 // lang "" sets the default; else a per-language override (verbatim §3)
 TSR_EXPORT void tsr_set_code_features(WasmDoc* d, const char* lang,
                                       const char* features) {
-  if (!lang || !*lang) d->doc.cfg.codeFontFeatures = features;
-  else d->doc.cfg.codeFontFeaturesByLang[lang] = features;
+  if (!lang || !*lang) {
+    configure1(d, "code", "fontFeatures", jstr(features));
+    return;
+  }
+  std::string m = "{";
+  bool first = true;
+  for (const auto& [k, v] : d->doc.cfg.codeFontFeaturesByLang) {
+    if (k == lang) continue;
+    if (!first) m += ",";
+    first = false;
+    jsonString(m, k);
+    m += ":";
+    jsonString(m, v);
+  }
+  if (!first) m += ",";
+  jsonString(m, lang);
+  m += ":" + jstr(features) + "}";
+  configure1(d, "code", "fontFeaturesByLang", m);
 }
 
 TSR_EXPORT int tsr_compile(WasmDoc* d, const char* src) {

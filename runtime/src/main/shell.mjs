@@ -4,6 +4,7 @@
 // keyed by data-pid, reporting old/new rects — scroll anchoring is the
 // caller's responsibility (the engine provides the information).
 import { installCopy } from './copy.mjs';
+import { settingsFromOptions, settingOf } from '../shared/settings.gen.mjs';
 
 // Default CJK stack — mirrors the engine default (config.h cjkFont). CJK-class
 // runs must resolve in ONE font: U+2014/…/fullwidth puncts exist in Latin
@@ -211,6 +212,8 @@ function ensureCss() {
 export function createEngine(opts = {}) {
   const workerUrl = new URL('../worker/worker.mjs', import.meta.url);
   const worker = new Worker(workerUrl, { type: 'module' });
+  // host policy (schema "policy": round cap, font deadline, caches, …)
+  if (opts.policy) worker.postMessage({ type: 'policy', policy: opts.policy });
   let nextId = 1;
   let liveDocId = null;
   let uninstallCopy = null;
@@ -328,13 +331,8 @@ export function createEngine(opts = {}) {
   };
 
   return {
-    async typeset(source, container, {
-      widthPx, baseSizePx = 18, lineHeight, fontFamily = 'Georgia, serif',
-      cjkFontFamily = TSR_CJK_FONT, lang = 'zh-CN',
-      paraIndentEm, punctCompress = 'book', progressive = true,
-      codeFontFeatures, codeFontFeaturesByLang, verbatimSnapKerning,
-      fonts, onSemantic, onUpgrade,
-    } = {}) {
+    async typeset(source, container, opts = {}) {
+      const { progressive = true, fonts, onSemantic, onUpgrade } = opts;
       ensureCss();
       ensureFontFaces(fonts);
       if (liveDocId !== null) {
@@ -342,8 +340,17 @@ export function createEngine(opts = {}) {
         liveDocId = null;
       }
       const id = nextId++;
+      // one settings document (plan P1-03; docs/settings-table.md): the
+      // legacy named options (widthPx, fontFamily, lang, …) are sugar for
+      // their rows, and opts.settings wins over them
+      const base = settingsFromOptions(opts);
       // the session measure: relayout() moves it so later update()s follow
-      let width = widthPx ?? container.getBoundingClientRect().width;
+      let width = opts.widthPx ?? base.host?.width ?? container.getBoundingClientRect().width;
+      const settingsAt = (w) => ({ ...base, host: { ...(base.host ?? {}), width: w } });
+      const fontFamily = settingOf(base, 'fonts.body');
+      const cjkFontFamily = settingOf(base, 'fonts.cjk');
+      const baseSizePx = settingOf(base, 'doc.baseSize');
+      const lang = settingOf(base, 'doc.lang');
       // The container must render with exactly the family/size the engine
       // measured — this is the measure/render contract, not styling sugar.
       container.style.fontFamily = fontFamily;
@@ -356,10 +363,8 @@ export function createEngine(opts = {}) {
       if (lang) container.setAttribute('lang', lang);
       let semanticHtml = null;
       const res = await request(
-        { type: 'typeset', id, source, widthPx: width, baseSizePx, lineHeight,
-          fontFamily, cjkFontFamily, paraIndentEm, punctCompress, progressive,
-          codeFontFeatures, codeFontFeaturesByLang, verbatimSnapKerning, fonts,
-          baseUrl: document.baseURI, lang },
+        { type: 'typeset', id, source, settings: settingsAt(width), progressive,
+          fontFaces: fonts, baseUrl: document.baseURI },
         (html) => {
           semanticHtml = html;
           if (progressive) {
@@ -391,10 +396,8 @@ export function createEngine(opts = {}) {
         async update(newSource) {
           const rid = nextId++;
           const r = await request({ type: 'update', id: rid, docId: id,
-            source: newSource, widthPx: width, baseSizePx, lineHeight,
-            fontFamily, cjkFontFamily, paraIndentEm, punctCompress,
-            progressive: false, codeFontFeatures, codeFontFeaturesByLang,
-            verbatimSnapKerning, fonts, baseUrl: document.baseURI, lang });
+            source: newSource, settings: settingsAt(width), progressive: false,
+            fontFaces: fonts, baseUrl: document.baseURI });
           let ups = [];
           const patched = patchIn(container, paraChunks, r.html);
           if (patched) paraChunks = patched;

@@ -10,6 +10,10 @@ import { CanvasMeasurer } from './canvas_measure.mjs';
 import { tokenize } from './tokens.mjs';
 import { sniffImageSize } from './image_sniff.mjs';
 import { checkAbi } from '../shared/abi.mjs';
+import { POLICY } from '../shared/settings.gen.mjs';
+
+// host policy (schema "policy"): createEngine({policy}) overrides it
+const policy = { ...POLICY };
 
 let modPromise = null;
 const getMod = () => (modPromise ??= createTypesetter().then((M) => { checkAbi(M); return M; }));
@@ -25,13 +29,12 @@ const imageDims = new Map(); // url → Promise<{w, h}>
 // new font lands (widths measured against a fallback face are stale).
 const measurer = new CanvasMeasurer();
 const tokenCache = new Map(); // `${lang}\0${text}` → Uint32Array
-const TOKEN_CACHE_CAP = 400;
 async function tokenizeCached(lang, text) {
   const key = lang + '\0' + text;
   const hit = tokenCache.get(key);
   if (hit) return hit;
   const tri = await tokenize(lang, text);
-  if (tokenCache.size >= TOKEN_CACHE_CAP) tokenCache.clear();
+  if (tokenCache.size >= policy.tokenCacheEntries) tokenCache.clear();
   tokenCache.set(key, tri);
   return tri;
 }
@@ -41,9 +44,7 @@ async function tokenizeCached(lang, text) {
 // right on the first pass and no settle re-typeset can exist. A font that
 // misses the 4s deadline measures as its fallback until it lands; landing
 // clears the measurer (later typesets use the real face). A face counts as
-// loaded only on success; a failed one is retried after FONT_RETRY_MS.
-const FONT_DEADLINE_MS = 4000;
-const FONT_RETRY_MS = 30000;
+// loaded only on success; a failed one is retried after policy.fontRetryMs.
 const fontState = new Map(); // key → {loaded} | {loading: Promise} | {failedAt}
 function loadFont(key, f) {
   const st = { loading: null };
@@ -72,11 +73,11 @@ async function loadFonts(fonts) {
     const st = fontState.get(key);
     if (st?.loaded) continue;
     if (st?.loading) wait.push(st.loading);
-    else if (!st || performance.now() - st.failedAt > FONT_RETRY_MS) wait.push(loadFont(key, f));
+    else if (!st || performance.now() - st.failedAt > policy.fontRetryMs) wait.push(loadFont(key, f));
   }
   if (!wait.length) return;
   await Promise.race([Promise.allSettled(wait),
-                      new Promise((r) => setTimeout(r, FONT_DEADLINE_MS))]);
+                      new Promise((r) => setTimeout(r, policy.fontDeadlineMs))]);
 }
 
 // cross-origin images without CORS headers cannot be read in a worker
@@ -90,7 +91,7 @@ function askMainForDims(src) {
     const rid = nextRid++;
     mainDims.set(rid, resolve);
     postMessage({ type: 'image-dims?', rid, src });
-    setTimeout(() => { if (mainDims.delete(rid)) resolve({ w: 0, h: 0 }); }, 15000);
+    setTimeout(() => { if (mainDims.delete(rid)) resolve({ w: 0, h: 0 }); }, policy.imageTimeoutMs);
   });
 }
 // the header carries the size: read a prefix of the body, decode only
@@ -157,7 +158,7 @@ function imageSize(src, baseUrl) {
 // superseded job stops (returns false) instead of finishing stale work.
 async function measureLoop(M, doc, { tm = {}, baseUrl, stale = () => false } = {}) {
   const mark = (k, t0) => { tm[k] = (tm[k] ?? 0) + performance.now() - t0; };
-  for (let round = 0; round < 64; round++) {
+  for (let round = 0; round < policy.maxRounds; round++) {
     if (stale()) return false;
     tm.rounds = round + 1;
     let t0 = performance.now();
@@ -265,42 +266,19 @@ async function pump(key, s) {
 // session's doc only on success, so a failing edit keeps the last good
 // document alive for relayout/paginate
 async function runTypeset(s, { ids, msg }, stale) {
-  const { source, widthPx, baseSizePx, lineHeight, fontFamily, cjkFontFamily, paraIndentEm,
-          punctCompress, progressive, codeFontFeatures, codeFontFeaturesByLang,
-          verbatimSnapKerning, fonts, baseUrl, lang } = msg;
+  // one settings document (plan P1-03): what to typeset; fontFaces: which
+  // declared webfaces to load before measuring
+  const { source, settings, progressive, fontFaces, baseUrl } = msg;
   const tm = {};
   const mark = (k, t0) => { tm[k] = performance.now() - t0; };
   const M = await getMod();
-  await loadFonts(fonts);
+  await loadFonts(fontFaces);
   if (stale()) return false;
   const doc = M._tsr_doc_new();
   try {
-    M._tsr_config(doc, widthPx ?? 300, baseSizePx ?? 18, lineHeight ?? 1.5, paraIndentEm ?? 0);
-    const pcMap = { full: 0, book: 1, none: 2 };
-    if (punctCompress in pcMap) M._tsr_set_punct_compress(doc, pcMap[punctCompress]);
-    if (fontFamily) {
-      const f = M.stringToNewUTF8(fontFamily);
-      M._tsr_set_font(doc, f);
-      M._free(f);
-    }
-    if (cjkFontFamily) {
-      const f = M.stringToNewUTF8(cjkFontFamily);
-      M._tsr_set_cjk_font(doc, f);
-      M._free(f);
-    }
-    const setFeat = (l, feat) => {
-      const lp = M.stringToNewUTF8(l), fp = M.stringToNewUTF8(feat);
-      M._tsr_set_code_features(doc, lp, fp);
-      M._free(lp); M._free(fp);
-    };
-    if (lang) {
-      const l = M.stringToNewUTF8(String(lang));
-      M._tsr_set_lang(doc, l);
-      M._free(l);
-    }
-    if (verbatimSnapKerning) M._tsr_set_snap_kerning(doc, 1);
-    if (codeFontFeatures) setFeat('', codeFontFeatures);
-    for (const [l, f] of Object.entries(codeFontFeaturesByLang ?? {})) setFeat(l, f);
+    const cfg = M.stringToNewUTF8(JSON.stringify(settings ?? {}));
+    M._tsr2_set_config(doc, cfg);
+    M._free(cfg);
     let t0 = performance.now();
     const srcPtr = M.stringToNewUTF8(source);
     M._tsr_compile(doc, srcPtr);
@@ -381,6 +359,10 @@ const RUN = { update: runTypeset, paginate: runPaginate, relayout: runRelayout,
 
 onmessage = (ev) => {
   const m = ev.data;
+  if (m?.type === 'policy') {  // createEngine({policy}): host policy overrides
+    for (const [k, v] of Object.entries(m.policy ?? {})) if (k in policy) policy[k] = v;
+    return;
+  }
   if (m?.type === 'image-dims') {
     const r = mainDims.get(m.rid);
     if (r) { mainDims.delete(m.rid); r({ w: m.w, h: m.h }); }

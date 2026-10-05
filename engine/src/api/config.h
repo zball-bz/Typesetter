@@ -2,80 +2,12 @@
 #include <map>
 
 #include "../support/support.h"
+#include "settings.gen.h"
 
 namespace tsr {
 
-// Line cost (document-model §11, TeX-bounded since plan P0-12): the ratio x
-// of slack to the line's glue maps to cost = mapped(x)^exponent (an integer
-// power by repeated multiplication), capped at `cap`; x below
-// -shrinkThreshold is Overfull, a class of its own, never a magnitude.
-struct CostParams {
-  u8 exponent = 3;  // 1..4
-  double shrinkThreshold = 0.37;
-  double shrinkCoeff = 0.6;
-  double cap = 1e4;
-};
-
-// Adjacent-punctuation compression style (clreq; v2 App C).
-//   Full: every adjacent gap compressed (newspaper-tight)
-//   Book: close+close and open+open set solid, but a breakable half-width
-//         breathing space is kept between a closing/dot and an opening punct
-//   None: full-width style — all punctuation spaces kept (rigid where 禁则
-//         forbids a break)
-enum class PunctCompress : u8 { Full = 0, Book = 1, None = 2 };
-
-struct Config {
-  std::string bodyFont = "\"Crimson Text\", Georgia, serif";
-  // CJK-class runs (ideographs, fullwidth punctuation, ——/…… pairs) measure
-  // and render with an explicit CJK-first stack: characters like U+2014 that
-  // also exist in Latin faces must NOT resolve there — mixed vertical
-  // metrics ragged the line box and Georgia's dashes don't even connect.
-  std::string cjkFont =
-      "\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif";
-  std::string monoFont = "monospace";
-  double baseSizePx = 18;
-  double lineHeight = 1.5;
-  double paraSpacingEm = 1.2;
-  double widthPx = 300;
-  double epsilonPerWordSu = 1;  // document-model §6.1
-  double cjkJustifyK = 0.6;
-  double cjkGlueEm = 0.1;     // per-char stretch capacity (App C)
-  double paraIndentEm = 0;    // CJK paragraph indent (2 for 首行缩进); 0 = off
-  double hyphenPenalty = 0.7;
-  // break opportunity inside long unhyphenatable tokens (URLs, paths) after
-  // '/', '?', '&', '=', '.', '-' — no glyph is inserted (real-world-report.md)
-  double urlBreakPenalty = 1.2;
-  u32 urlBreakMinLen = 20;
-  // math-design.md §9: inline-formula break classes. after-Rel ≈ before-Rel
-  // < after-Bin, all costlier than a hyphen — breaking mid-formula loses to
-  // any decent whole-line alternative.
-  double mathRelAfterPenalty = 0.8;
-  double mathRelBeforePenalty = 0.85;
-  double mathBinAfterPenalty = 0.95;
-  PunctCompress punctCompress = PunctCompress::Book;
-  double codeScale = 0.85;    // code sizes down consistently (measure+render)
-  int verbatimContIndent = 2; // grid wrap: hanging indent adds this many ch
-  double sidebarFrac = 0.40;  // sidecar column fraction of the code measure
-  // CSS font-feature-settings for code (verbatim-design §3): ligature sets
-  // differ per language (Haskell vs C++); empty = font default. NOTE:
-  // snap-kerning (V1.5) requires ligatures OFF — letter-spacing disables
-  // liga/calt in browsers, a binary switch not a dial.
-  // snap-kerning (verbatim-design §3): pull both scripts onto the rational
-  // grid via letter-spacing. MUTUALLY EXCLUSIVE with ligatures by browser
-  // mechanism (non-zero letter-spacing disables liga/calt).
-  bool verbatimSnapKerning = false;
-  std::string codeFontFeatures;
-  std::map<std::string, std::string> codeFontFeaturesByLang;
-  double listIndentEm = 1.5;
-  double quoteIndentEm = 1.0;
-  // Resolver supplements (v2 §11.1, document-model §5); localizable.
-  std::string supHeading = "\xC2\xA7";  // §
-  std::string supTable = "\xE8\xA1\xA8 ";    // 表␣
-  std::string supFigure = "\xE5\x9B\xBE ";   // 图␣
-  std::string supEquation = "\xE5\xBC\x8F ";  // 式␣
-  std::string capSep = "\xEF\xBC\x9A";       // 图 n：(caption prefix separator)
-  CostParams cost;
-};
+// Config (every host setting), CostParams and PunctCompress are generated
+// from the schema's "settings" rows (plan P1-03): settings.gen.h.
 
 // App C constants (em): punct compressible half, CJK–Latin boundary glue.
 constexpr double kPunctHalfEm = 0.5;
