@@ -20,7 +20,7 @@ struct MathKid {
 
 struct MathBox {
   MathKind kind = MathKind::HBox;
-  u8 cls = 0;                 // TeX atom class (mathfont::kOrd..kInner)
+  u8 cls = 0;                 // TeX atom class (atom.h: kOrd..kInner)
   u8 firstCls = 0, lastCls = 0;  // effective edge classes (glue vs neighbours)
   Su w = 0, asc = 0, desc = 0;   // extents relative to the box baseline
   Su italic = 0;              // italic correction (glyph/base boxes)

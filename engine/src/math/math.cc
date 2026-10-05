@@ -4,6 +4,7 @@
 // bin→ord demotion (Rules 5–6), and the style-transition algebra.
 #include "math.h"
 
+#include "dict.h"
 #include "mathfont.h"
 
 namespace tsr {
@@ -81,7 +82,7 @@ struct MNode {
 struct Tok {
   enum K : u8 { End, Num, Word, Op, Chr, Sup, Sub, Slash, Open, Close, Prime, Quote } k = End;
   std::string text;               // Num/Word
-  const OpEntry* op = nullptr;    // Op (dictionary hit)
+  const SymbolInfo* op = nullptr;  // Op (dictionary hit)
   u32 cp = 0;                     // Chr (direct char) / Open / Close
   u8 cls = kOrd;                  // Chr fallback class
   u32 pos = 0;                    // token start offset (for re-lexing)
@@ -164,7 +165,7 @@ struct Lexer {
     if (c == '_') {
       // maximal munch may claim _|_ ; otherwise structural subscript
       if (i + 2 < s.size() && s[i + 1] == '|' && s[i + 2] == '_') {
-        if (const OpEntry* e = mathOp("_|_")) {
+        if (const SymbolInfo* e = MathDict::byName("_|_")) {
           i += 3;
           t.k = Tok::Op;
           t.op = e;
@@ -180,7 +181,7 @@ struct Lexer {
       u32 j = i + 1;
       while (j < s.size() && isLetter(s[j])) j++;
       std::string name(s.substr(i, j - i));
-      if (const OpEntry* e = mathOp(name)) {
+      if (const SymbolInfo* e = MathDict::byName(name)) {
         i = j;
         t.k = Tok::Op;
         t.op = e;
@@ -194,16 +195,13 @@ struct Lexer {
       return t;
     }
     if (isOpChar(c)) {
-      u32 runEnd = i;
-      while (runEnd < s.size() && isOpChar(s[runEnd]) && runEnd - i < 4) runEnd++;
-      for (u32 len = runEnd - i; len >= 1; len--) {
-        std::string cand(s.substr(i, len));
-        if (const OpEntry* e = mathOp(cand)) {
-          i += len;
-          t.k = Tok::Op;
-          t.op = e;
-          return t;
-        }
+      // maximal munch over the operator-key trie (operator characters only)
+      u32 len = 0;
+      if (const SymbolInfo* e = MathDict::matchOp(s, i, len)) {
+        i += len;
+        t.k = Tok::Op;
+        t.op = e;
+        return t;
       }
       i++;
       t.k = Tok::Chr;
@@ -211,18 +209,12 @@ struct Lexer {
       t.cls = kOrd;
       return t;
     }
-    // direct Unicode character: class from the dictionary if any entry
-    // names this codepoint, Ord otherwise
+    // direct Unicode character: the class of its default dictionary row,
+    // Ord otherwise
     u32 cp = utf8Next(s, i);
     t.k = Tok::Chr;
     t.cp = cp;
-    t.cls = kOrd;
-    for (int k = 0; k < kOpCount; k++) {
-      if (kOps[k].cp == cp && !(kOps[k].flags & kFlagAccent)) {
-        t.cls = kOps[k].cls;
-        break;
-      }
-    }
+    t.cls = MathDict::classOfCp(cp);
     return t;
   }
 };
@@ -282,12 +274,12 @@ struct Parser {
     f = attachPostfix(f);
     while (tok.k == Tok::Slash) {
       advance();
-      MNode* rhs = parseFactor(nullptr, true);
+      MNode* rhs = parseFactor(nullptr);
       if (!rhs) {
         err("missing denominator");
         break;
       }
-      rhs = attachPostfix(rhs, /*allowFraction=*/false);
+      rhs = attachPostfix(rhs);
       MNode* fr = mk(MNode::Frac);
       fr->a = shed(f);
       fr->b = shed(rhs);
@@ -300,13 +292,12 @@ struct Parser {
   // group consumed as a script/fraction argument sheds its parens
   MNode* shed(MNode* f) { return f->k == MNode::Group ? f->a : f; }
 
-  MNode* attachPostfix(MNode* f, bool allowFraction = true) {
-    (void)allowFraction;
+  MNode* attachPostfix(MNode* f) {
     for (;;) {
       if (tok.k == Tok::Sup || tok.k == Tok::Sub) {
         bool isSup = tok.k == Tok::Sup;
         advance();
-        MNode* arg = parseFactor(nullptr, true);
+        MNode* arg = parseFactor(nullptr);
         if (!arg) {
           err("missing script argument");
           return f;
@@ -357,9 +348,9 @@ struct Parser {
     return f;
   }
 
-  // scriptArg: no splicing target (single-token semantics: x^ab = x^a · b)
-  // items == nullptr: single-token context (script/fraction argument)
-  MNode* parseFactor(std::vector<MNode*>* items, bool scriptArg = false) {
+  // items == nullptr: single-token context (script/fraction argument; no
+  // splicing target — single-token semantics: x^ab = x^a · b)
+  MNode* parseFactor(std::vector<MNode*>* items) {
     switch (tok.k) {
       case Tok::Num: {
         MNode* n = mk(MNode::Text);
@@ -369,7 +360,6 @@ struct Parser {
         return n;
       }
       case Tok::Word:
-        (void)scriptArg;
         return parseWord(items);
       case Tok::Quote: {
         MNode* n = mk(MNode::Text);
@@ -380,7 +370,7 @@ struct Parser {
         return n;
       }
       case Tok::Op: {
-        const OpEntry* e = tok.op;
+        const SymbolInfo* e = tok.op;
         advance();
         if (e->flags & kFlagLarge) return parseBigOp(e);
         return atom(e->cp, e->cls, e->flags);
@@ -435,7 +425,7 @@ struct Parser {
     u32 wpos = tok.pos;
     advance();
     if (isCallName(w)) return parseCall(w);
-    if (const OpEntry* e = mathOp(w)) {
+    if (const SymbolInfo* e = MathDict::byName(w)) {
       if (e->flags & kFlagAccent) return parseCall(w, e);
       if (e->flags & kFlagTextOp) {
         MNode* n = mk(MNode::Text);
@@ -470,7 +460,7 @@ struct Parser {
   }
 
   // sqrt(x) root(n, x) frac(a, b) binom(n, k) abs(x) … and accents hat(x)
-  MNode* parseCall(const std::string& name, const OpEntry* accent = nullptr) {
+  MNode* parseCall(const std::string& name, const SymbolInfo* accent = nullptr) {
     MNode* call = mk(MNode::Call);
     call->txt = name;
     if (accent) {
@@ -501,7 +491,7 @@ struct Parser {
 
   // big operator: optional scripts in either order, then greedy body until a
   // relation, a closing bracket, or end (v2 §13)
-  MNode* parseBigOp(const OpEntry* e) {
+  MNode* parseBigOp(const SymbolInfo* e) {
     MNode* op = mk(MNode::BigOp);
     op->cp = e->cp;
     op->cls = kOp;
@@ -509,7 +499,7 @@ struct Parser {
     while (tok.k == Tok::Sup || tok.k == Tok::Sub) {
       bool isSup = tok.k == Tok::Sup;
       advance();
-      MNode* arg = parseFactor(nullptr, true);
+      MNode* arg = parseFactor(nullptr);
       if (!arg) {
         err("missing script argument");
         break;
@@ -639,7 +629,7 @@ struct Layouter {
   MathBox* stretchVert(u32 cp, u8 cls, u8 st, Su target) {
     MathBox* natural = glyphBox(cp, cls, st);
     if (natural->asc + natural->desc >= target) return natural;
-    const VarChain* ch = mathChain(cp, /*vertical=*/true);
+    const VarChain* ch = mathChain(cp);
     if (!ch) return natural;
     MathBox* best = natural;
     for (int k = 0; k < ch->n; k++) {
@@ -986,19 +976,14 @@ struct Layouter {
 
   // big operator + scripts, then the greedy body as an opaque subrun.
   MathBox* layoutBigOp(MNode* n, u8 st) {
-    MathBox* op;
-    bool textOp = (n->flags & kFlagTextOp) != 0;
-    if (textOp) {
-      op = textBox(n->txt, kOp, st, n->textFont);
-    } else {
-      op = glyphBox(n->cp, kOp, st);
-      if (isDisplay(st)) {
-        // grow to DisplayOperatorMinHeight and centre on the axis (T glyph
-        // stretch; K makeLargeOp Size2 swap)
-        Su minH = constSu(C::DisplayOperatorMinHeight, st);
-        if (op->asc + op->desc < minH)
-          op = centerOnAxis(stretchVert(n->cp, kOp, st, minH), kOp, st);
-      }
+    // (a text operator never reaches here: parseWord makes it a Text node)
+    MathBox* op = glyphBox(n->cp, kOp, st);
+    if (isDisplay(st)) {
+      // grow to DisplayOperatorMinHeight and centre on the axis (T glyph
+      // stretch; K makeLargeOp Size2 swap)
+      Su minH = constSu(C::DisplayOperatorMinHeight, st);
+      if (op->asc + op->desc < minH)
+        op = centerOnAxis(stretchVert(n->cp, kOp, st, minH), kOp, st);
     }
     bool limits = (n->flags & kFlagLimits) && isDisplay(st);
     MathBox* scripted = limits ? attachLimits(op, n->sub, n->sup, st)
@@ -1252,7 +1237,7 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
   Layouter L{arena, strs, diags, span, sizePx, false, text};
   if (p.errors) {
     // degrade: the raw source as an upright text box (still one formula box)
-    return L.textBox(src, mathfont::kOrd, display ? D : T);
+    return L.textBox(src, kOrd, display ? D : T);
   }
   return L.layout(run, display ? D : T);
 }

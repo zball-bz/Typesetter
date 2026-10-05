@@ -9,20 +9,20 @@ Status: **draft for review**. Companion to [design-decisions-v2.md](design-decis
 ```
 Typesetter/
   docs/                    design documents (this file, design-decisions-v2)
-  src/                     frozen TS PoC (reference only; do not touch)
   engine/                  C++ engine → typesetter.wasm (+ native builds)
     CMakeLists.txt
     schema/                schema.json: ops vocabulary, settings, domains (gen-schema)
-    gen/                   committed build-time artifacts (opdict, hyphen patterns, font metrics)
-    include/tsr/           boundary headers only (api surface)
+    gen/                   committed build-time artifacts (math vocabulary, hyphen patterns, math font metrics, TextRules)
+    data/                  data the generators and the engine read (math symbols, MathML Core, elements, locales)
+    rules/                 TextRules classes and the pinned UCD
     src/                   modules, one directory per pipeline stage (see §2.2)
     test/                  native unit + golden tests (ctest)
   runtime/                 JS/TS runtime
     src/shared/            worker↔main protocol types, generated ops.ts
     src/worker/            engine host, executor, measurers, fence registry, op writer
     src/main/              public API shell, DOM injection/upgrade, copy, observers
-  tools/                   build-time generators (Node): opdict, hyphc, fontmetrics, gen-schema (gen-all)
-  fonts/                   bundled fonts (Neo Euler, text faces)
+  tools/                   build-time generators: gen-all (gen-schema, gen-syntax, gen-res, mathdict.py, ucdc), hyphc, mathc.py
+  fonts/                   bundled fonts (Euler-Math)
   apps/playground/         dev editor page (successor of the PoC demo)
   test/
     fixtures/              *.tsm sources + recorded *.ops buffers (see §6)
@@ -208,9 +208,9 @@ As built (plan P0-11, `runtime/src/worker/worker.mjs`): the worker keeps one **m
 - **engine**: CMake presets `native-debug` (ASan/UBSan), `native-release`, `wasm-release` (emcmake). C++20, `-fno-exceptions -fno-rtti` (errors are diagnostics, not exceptions — WASM size and the §11 error-block model both want this). There is no parser generator: the front end is hand-written C++ driven by the generated syntax table (`docs/syntax-design.md`).
 - **runtime**: esbuild (as in the PoC) → ESM bundle + the worker file; no framework.
 - **tools** (Node, build-time only; outputs committed under `engine/gen/` so CI needs no network):
-  - `opdict` — MathML Core operator dictionary + codex-style names → compiled operator table (§13);
+  - `mathdict.py` — `engine/data/math/symbols.tsv` + the pinned UCD and MathML Core operator dictionary → `engine/gen/math_dict.h`, `math/atom.h` (the math vocabulary, docs/math-design.md §3);
   - `hyphc` — TeX hyphenation patterns → compact trie;
-  - `fontmetrics` — bundled fonts (Neo Euler MATH constants, advances) → binary metrics (§6 backend 3);
+  - `mathc.py` (python3 + fontTools) — `fonts/Euler-Math.otf` → `engine/gen/euler_math.h` (MATH constants, glyph records, vertical chains, assemblies);
   - `gen-schema` — `engine/schema/schema.json` → `ops.def`, `schema.gen.{h,cc}`, `shared/ops.gen.mjs`, `docs/schema-table.md` (§3);
   - `gen-syntax` — `engine/src/syntax/syntax.def` → `syntax.gen.{h,cc}`, `shared/syntax.gen.{mjs,json}`, `docs/syntax-table.md`.
 - **playground**: esbuild dev server; the page is also the e2e harness target.

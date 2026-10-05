@@ -20,6 +20,7 @@
 #include "../src/syntax/exports.h"
 #include "../src/semantic/terms.h"
 #include "semantic_data.gen.h"
+#include "../src/math/dict.h"
 #include "../src/math/mathfont.h"
 #include "../src/api/driver.h"
 #include "../src/emit/legacy.h"
@@ -126,21 +127,37 @@ static void unitMathFont() {
   CHECK(x && x->adv > 0 && x->asc > 0);
   CHECK(mathGlyph(0x2211) != nullptr);           // ∑
   CHECK(mathGlyph(0x10FFFF) == nullptr);
-  // dictionary
-  const OpEntry* sum = mathOp("sum");
+  // the vocabulary (plan P1-22: MathDict, font-independent)
+  const SymbolInfo* sum = MathDict::byName("sum");
   CHECK(sum && sum->cp == 0x2211 && sum->cls == kOp &&
         (sum->flags & kFlagLarge) && (sum->flags & kFlagLimits));
-  const OpEntry* arrow = mathOp("->");
+  const SymbolInfo* arrow = MathDict::byName("->");
   CHECK(arrow && arrow->cp == 0x2192 && arrow->cls == kRel);
-  const OpEntry* nn = mathOp("NN");
+  const SymbolInfo* nn = MathDict::byName("NN");
   CHECK(nn && nn->cp == 0x2115);
-  const OpEntry* lim = mathOp("lim");
+  const SymbolInfo* lim = MathDict::byName("lim");
   CHECK(lim && lim->cp == 0 && (lim->flags & kFlagTextOp) && (lim->flags & kFlagLimits));
-  CHECK(mathOp("nonexistent") == nullptr);
+  CHECK(MathDict::byName("nonexistent") == nullptr);
+  u32 len = 0;
+  const SymbolInfo* munch = MathDict::matchOp("|-->x", 0, len);  // the longest key
+  CHECK(munch && len == 4 && munch->cp == 0x27FC);
+  CHECK(MathDict::matchOp("+-", 0, len) && len == 2 && MathDict::matchOp("@", 0, len) == nullptr);
+  CHECK(MathDict::classOfCp(0x2295) == kBin && MathDict::classOfCp(0x41) == kOrd);
+  CHECK(MathDict::negate(0x3D) == 0x2260 && MathDict::negate(0x2208) == 0x2209);
+  // every key lexes back to its own symbol (gate math_dict_lexes_every_key):
+  // a word, an operator key through the trie, a !word, AA..ZZ
+  for (int i = 0; i < mathdict::kSymbolCount; i++) {
+    std::string_view k = mathdict::kSymbols[i].name;
+    bool ops = true;
+    for (char c : k) ops = ops && std::string_view("+-*=<>|~:;.,!@&?%").find(c) != std::string_view::npos;
+    if (ops) CHECK(MathDict::matchOp(k, 0, len) == &mathdict::kSymbols[i] && len == k.size());
+    else CHECK(MathDict::byName(k) == &mathdict::kSymbols[i]);
+  }
+
   // variant chain: '(' has a growing chain plus a 3-part assembly
-  const VarChain* paren = mathChain('(', /*vertical=*/true);
+  const VarChain* paren = mathChain('(');
   CHECK(paren && paren->n >= 4 && paren->asmN == 3);
-  CHECK(mathChain('x', true) == nullptr);
+  CHECK(mathChain('x') == nullptr);
   // every chain/assembly cp has a glyph record (renderer paints by cp)
   for (int i = 0; i < kVertChainCount; i++) {
     const VarChain& c = kVertChains[i];
@@ -479,6 +496,24 @@ static void unitResources(const fs::path& root) {
         if (l.kind == FragKind::Image) CHECK(suToPx(l.width) == 120 && suToPx(l.height) == 90);
     CHECK(doc.product("tree").find("h=") == std::string::npos);
   }
+}
+
+
+// the font artifact keeps every glyph it shipped before the vocabulary left
+// it (plan P1-22 gate: the record set is a superset of the baseline)
+static void unitMathGlyphs(const fs::path& root) {
+  std::string base;
+  CHECK(readFile(root / "engine/data/math/glyph-cps.baseline.txt", base));
+  size_t missing = 0, n = 0;
+  for (size_t at = 0; at < base.size();) {
+    size_t nl = base.find('\n', at);
+    std::string line = base.substr(at, nl == std::string::npos ? std::string::npos : nl - at);
+    at = nl == std::string::npos ? base.size() : nl + 1;
+    if (line.empty() || line[0] == '#') continue;
+    n++;
+    if (!mathGlyph((u32)std::stoul(line, nullptr, 16))) missing++;
+  }
+  CHECK(n > 2000 && missing == 0);
 }
 
 // --- golden runner ---
@@ -1322,6 +1357,7 @@ int main(int argc, char** argv) {
   fuzzRegressions(fs::path(root));
   unitHostInputs(fs::path(root));
   unitResources(fs::path(root));
+  unitMathGlyphs(fs::path(root));
   unitOpsWindow(fs::path(root));
   unitAstBytes(fs::path(root));
   unitTokenConformance(fs::path(root));

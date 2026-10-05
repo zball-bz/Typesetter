@@ -1256,8 +1256,8 @@ Theme steps: — · findings: 1
 | `math/exactness-gaps-paint` | issue | medium | P1-23 | |
 | `math/spacing-edge-classes` | issue | low | P3-25 | |
 | `math/diag-quality` | issue | low | P1-24 | |
-| `math/dead-data-and-params` | issue | low | P1-22 | |
-| `math/doc-drift` | issue | low | P1-22 | |
+| `math/dead-data-and-params` | issue | low | P1-22 | grep:plan P1-22 |
+| `math/doc-drift` | issue | low | P1-22 | grep:plan P1-22 |
 | `math/fallback-and-a11y` | issue | low | P3-26, P3-27 | |
 | `math/toc-excerpt-drops-math` | issue | low | P2-15 | |
 | `math/missed:0` | missed | high | P0-04, P2-11 | |

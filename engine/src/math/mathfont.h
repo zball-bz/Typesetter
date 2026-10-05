@@ -29,9 +29,11 @@ inline const mathfont::GlyphRec* mathGlyph(u32 cp) {
   return nullptr;
 }
 
-inline const mathfont::VarChain* mathChain(u32 cp, bool vertical) {
-  const mathfont::VarChain* arr = vertical ? mathfont::kVertChains : mathfont::kHorizChains;
-  int n = vertical ? mathfont::kVertChainCount : mathfont::kHorizChainCount;
+// a vertical variant chain (horizontal stretch is a recorded deferral: the
+// artifact compiles no horizontal chains)
+inline const mathfont::VarChain* mathChain(u32 cp) {
+  const mathfont::VarChain* arr = mathfont::kVertChains;
+  int n = mathfont::kVertChainCount;
   int lo = 0, hi = n;
   while (lo < hi) {
     int mid = (lo + hi) / 2;
@@ -39,19 +41,6 @@ inline const mathfont::VarChain* mathChain(u32 cp, bool vertical) {
     else hi = mid;
   }
   if (lo < n && arr[lo].baseCp == cp) return &arr[lo];
-  return nullptr;
-}
-
-// Dictionary names are ASCII and sorted bytewise (Python sort == strcmp).
-inline const mathfont::OpEntry* mathOp(std::string_view name) {
-  int lo = 0, hi = mathfont::kOpCount;
-  while (lo < hi) {
-    int mid = (lo + hi) / 2;
-    if (std::string_view(mathfont::kOps[mid].name) < name) lo = mid + 1;
-    else hi = mid;
-  }
-  if (lo < mathfont::kOpCount && std::string_view(mathfont::kOps[lo].name) == name)
-    return &mathfont::kOps[lo];
   return nullptr;
 }
 

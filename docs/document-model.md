@@ -362,7 +362,9 @@ As built (plan P1-03): one settings document, `tsr2_set_config(doc, json)`, whos
 
 ```json
 {
-  "fonts":   { "body": "...", "cjk": "...", "mono": "...", "math": "Euler Math (bundled woff2; metrics precompiled)" },
+  "fonts":   { "body": "...", "cjk": "...", "mono": "...", "monoCjk": "..." },
+  // (no fonts.math key exists: the math font is the bundled Euler-Math,
+  // metrics precompiled — docs/math-design.md §3)
   // fonts.cjk is live (M6+): CJK-class runs measure AND render with this
   // stack (renderer: .tsr-cjk { font-family: var(--tsr-cjk-font) }) so
   // U+2014/…/fullwidth puncts never resolve into the Latin face,
