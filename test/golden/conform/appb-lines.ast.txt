@@ -1,0 +1,44 @@
+doc @[0,371)
+  heading @[0,11) level=1
+    text @[2,11) str="Level one"
+  heading @[12,24) level=2
+    text @[15,24) str="Level two"
+  heading @[25,40) level=3
+    text @[29,40) str="Level three"
+  list @[42,58) bullet start=1
+    item @[42,58)
+      para @[44,58)
+        text @[44,58) str="unordered item"
+    item @[59,82)
+      para @[61,116)
+        text @[61,116) str="second unordered item continued at the content column"
+      list @[119,132) bullet start=1
+        item @[119,132)
+          para @[121,132)
+            text @[121,132) str="nested item"
+  list @[133,147) ordered start=1
+    item @[133,147)
+      para @[135,147)
+        text @[135,147) str="ordered auto"
+    item @[148,166)
+      para @[150,166)
+        text @[150,166) str="ordered auto two"
+    item @[167,184)
+      para @[170,184)
+        text @[170,184) str="explicit start"
+    item @[185,192)
+      para @[188,192)
+        text @[188,192) str="next"
+  quote @[194,206)
+    para @[196,206)
+      text @[196,206) str="quote line"
+    quote @[209,223)
+      para @[211,223)
+        text @[211,223) str="nested quote"
+  comment @[225,271) body=" a comment %-- nested --% still comment "
+  codeblock @[273,300) lang="js" body="verbatim(island);"
+  para @[302,315)
+    math @[302,315) display=1 src="a + b = c"
+  rule @[317,320)
+  para @[322,370)
+    text @[322,370) str="= not a heading, - not a list, > not a quote."

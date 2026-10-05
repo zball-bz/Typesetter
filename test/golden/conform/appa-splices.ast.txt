@@ -1,0 +1,24 @@
+doc @[0,439)
+  code-let @[0,18) js=" who = \"world\""
+  code-let @[19,58) js=" greet = (name) => \"Hello, \" + name"
+  para @[60,176)
+    text @[60,73) str="Value splice: "
+    splice @[74,78) expr="who"
+    text @[79,96) str=" and a call chain: "
+    splice @[97,110) expr="greet(\"tsm\")"
+    text @[110,126) str=". Member access: "
+    splice @[127,138) expr="who.length"
+    text @[139,162) str=" characters; expression: "
+    splice @[163,175) expr="(1 + 2 * 3)"
+    text @[175,176) str="."
+  code-block @[177,201) js=" let hidden = 40 + 2 "
+  para @[252,438)
+    text @[252,281) str="A splice ends at punctuation: "
+    splice @[282,286) expr="who"
+    text @[286,309) str=". Semicolon terminator: "
+    splice @[310,315) expr="who"
+    text @[315,383) str="[not an argument]. Content argument desugars to a trailing argument: "
+    splice @[384,402) expr="strong"
+      arg @[392,401)
+        text @[392,401) str="bold text"
+    text @[402,438) str=". Literal hash: #who stays literal."

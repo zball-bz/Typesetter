@@ -1,0 +1,4 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="60" data-e="176">Value splice: world and a call chain: Hello, tsm. Member access: 5 characters; expression: 7.</p>
+<p data-pid="1" data-s="252" data-e="438">A splice ends at punctuation: world. Semicolon terminator: world[not an argument]. Content argument desugars to a trailing argument: <strong>bold text</strong>. Literal hash: #who stays literal.</p>
+</div>

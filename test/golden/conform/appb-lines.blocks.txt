@@ -1,0 +1,125 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  word "Level" w=4098su pen=INF BOLD x1.60 @[2,11)
+  space w=411su stretch=1 BOLD x1.60 @[2,11)
+  word "one" w=2459su pen=INF BOLD x1.60 @[2,11)
+top pid=1 units=1
+ unit text indent=0su anchor="h-1.1"
+  word "Level" w=3458su pen=INF BOLD x1.35 @[15,24)
+  space w=347su stretch=1 BOLD x1.35 @[15,24)
+  word "two" w=2075su pen=INF BOLD x1.35 @[15,24)
+top pid=2 units=1
+ unit text indent=0su anchor="h-1.1.1"
+  word "Level" w=2945su pen=INF BOLD x1.15 @[29,40)
+  space w=296su stretch=1 BOLD x1.15 @[29,40)
+  word "three" w=2945su pen=INF BOLD x1.15 @[29,40)
+top pid=3 units=3
+ unit text indent=1536su marker="•"
+  word "un" w=1025su pen=INF @[44,58)
+  hyphen bw=513su pen=0.70 @[44,58)
+  word "ordered" w=3585su pen=INF @[44,58)
+  space w=257su stretch=1 @[44,58)
+  word "item" w=2049su pen=INF @[44,58)
+ unit text indent=1536su marker="•"
+  word "sec" w=1537su pen=INF @[61,116)
+  hyphen bw=513su pen=0.70 @[61,116)
+  word "ond" w=1537su pen=INF @[61,116)
+  space w=257su stretch=1 @[61,116)
+  word "un" w=1025su pen=INF @[61,116)
+  hyphen bw=513su pen=0.70 @[61,116)
+  word "ordered" w=3585su pen=INF @[61,116)
+  space w=257su stretch=1 @[61,116)
+  word "item" w=2049su pen=INF @[61,116)
+  space w=257su stretch=1 @[61,116)
+  word "con" w=1537su pen=INF @[61,116)
+  hyphen bw=513su pen=0.70 @[61,116)
+  word "tin" w=1537su pen=INF @[61,116)
+  hyphen bw=513su pen=0.70 @[61,116)
+  word "ued" w=1537su pen=INF @[61,116)
+  space w=257su stretch=1 @[61,116)
+  word "at" w=1025su pen=INF @[61,116)
+  space w=257su stretch=1 @[61,116)
+  word "the" w=1537su pen=INF @[61,116)
+  space w=257su stretch=1 @[61,116)
+  word "con" w=1537su pen=INF @[61,116)
+  hyphen bw=513su pen=0.70 @[61,116)
+  word "tent" w=2049su pen=INF @[61,116)
+  space w=257su stretch=1 @[61,116)
+  word "col" w=1537su pen=INF @[61,116)
+  hyphen bw=513su pen=0.70 @[61,116)
+  word "umn" w=1537su pen=INF @[61,116)
+ unit text indent=3072su marker="•"
+  word "nest" w=2049su pen=INF @[121,132)
+  hyphen bw=513su pen=0.70 @[121,132)
+  word "ed" w=1025su pen=INF @[121,132)
+  space w=257su stretch=1 @[121,132)
+  word "item" w=2049su pen=INF @[121,132)
+top pid=4 units=4
+ unit text indent=1536su marker="1."
+  word "or" w=1025su pen=INF @[135,147)
+  hyphen bw=513su pen=0.70 @[135,147)
+  word "dered" w=2561su pen=INF @[135,147)
+  space w=257su stretch=1 @[135,147)
+  word "auto" w=2049su pen=INF @[135,147)
+ unit text indent=1536su marker="2."
+  word "or" w=1025su pen=INF @[150,166)
+  hyphen bw=513su pen=0.70 @[150,166)
+  word "dered" w=2561su pen=INF @[150,166)
+  space w=257su stretch=1 @[150,166)
+  word "auto" w=2049su pen=INF @[150,166)
+  space w=257su stretch=1 @[150,166)
+  word "two" w=1537su pen=INF @[150,166)
+ unit text indent=1536su marker="3."
+  word "ex" w=1025su pen=INF @[170,184)
+  hyphen bw=513su pen=0.70 @[170,184)
+  word "plic" w=2049su pen=INF @[170,184)
+  hyphen bw=513su pen=0.70 @[170,184)
+  word "it" w=1025su pen=INF @[170,184)
+  space w=257su stretch=1 @[170,184)
+  word "start" w=2561su pen=INF @[170,184)
+ unit text indent=1536su marker="4."
+  word "next" w=2049su pen=INF @[188,192)
+top pid=5 units=2
+ unit text indent=1024su
+  word "quote" w=2561su pen=INF @[196,206)
+  space w=257su stretch=1 @[196,206)
+  word "line" w=2049su pen=INF @[196,206)
+ unit text indent=2048su
+  word "nest" w=2049su pen=INF @[211,223)
+  hyphen bw=513su pen=0.70 @[211,223)
+  word "ed" w=1025su pen=INF @[211,223)
+  space w=257su stretch=1 @[211,223)
+  word "quote" w=2561su pen=INF @[211,223)
+top pid=7 units=1
+ unit code indent=0su lines=1 wrap
+top pid=8 units=1
+ unit math indent=0su w=4295su asc=700su desc=76su
+top pid=9 units=1
+ unit rule indent=0su
+top pid=10 units=1
+ unit text indent=0su
+  word "=" w=513su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "not" w=1537su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "a" w=513su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "head" w=2049su pen=INF @[322,370)
+  hyphen bw=513su pen=0.70 @[322,370)
+  word "ing," w=2049su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "-" w=513su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "not" w=1537su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "a" w=513su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "list," w=2561su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word ">" w=513su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "not" w=1537su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "a" w=513su pen=INF @[322,370)
+  space w=257su stretch=1 @[322,370)
+  word "quote." w=3073su pen=INF @[322,370)

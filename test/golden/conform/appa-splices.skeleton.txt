@@ -1,0 +1,6 @@
+doc @[0,439)
+  code-let @[0,18) js=" who = \"world\""
+  code-let @[19,58) js=" greet = (name) => \"Hello, \" + name"
+  para @[60,176) lines=2
+  code-block @[177,201) js=" let hidden = 40 + 2 "
+  para @[252,438) lines=3

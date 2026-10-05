@@ -195,7 +195,15 @@ struct Gen {
         out += "__at(rule(";
         close(n);
         break;
-      default:
+      case AstKind::CodeStmt:
+        // a statement nested inside a container: dropped until P0-05 gives
+        // it an error node (and P2-12 real nested statements)
+        out += "text(\"\")";
+        break;
+      case AstKind::Doc:
+      case AstKind::Row:
+      case AstKind::Cell:
+        // structural: Doc is the program, Row/Cell are consumed by Region
         out += "text(\"\")";
         break;
     }

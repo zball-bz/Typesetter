@@ -47,6 +47,8 @@ jobs:
           git diff --exit-code runtime/src/shared/ops.gen.mjs
       - name: recordings are current
         run: node tools/record-fixtures.mjs --check
+      - name: architecture lint
+        run: node tools/lint-arch.mjs
       - name: code highlighting assets
         run: node tools/codehl-assets.mjs
       - name: typst corpus smoke

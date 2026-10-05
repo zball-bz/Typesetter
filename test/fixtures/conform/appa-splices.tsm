@@ -1,0 +1,9 @@
+#let who = "world"
+#let greet = (name) => "Hello, " + name
+
+Value splice: #who and a call chain: #greet("tsm").
+Member access: #who.length characters; expression: #(1 + 2 * 3).
+#{ let hidden = 40 + 2 }Statement splice binds in document scope: #hidden.
+A splice ends at punctuation: #who. Semicolon terminator: #who;[not an argument].
+Content argument desugars to a trailing argument: #strong[bold text].
+Literal hash: \#who stays literal.

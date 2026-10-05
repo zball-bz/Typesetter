@@ -1,0 +1,17 @@
+{
+ "role-string-compare engine/src/resolve/resolve.cc if (std::string_view(strs.get(argStr(n, ArgK::role))) == \"figure\") {": 1,
+ "role-string-compare engine/src/resolve/resolve.cc if (std::string_view(strs.get(argStr(n, ArgK::what))) == \"bibliography\")": 1,
+ "role-string-compare engine/src/resolve/resolve.cc std::string_view(strs.get(a.ref)) == \"all\") all = true;": 1,
+ "role-string-compare engine/src/resolve/resolve.cc if (what == \"toc\") return buildToc(c);": 1,
+ "role-string-compare engine/src/resolve/resolve.cc if (what == \"glossary\") return buildGlossary(c);": 1,
+ "role-string-compare engine/src/resolve/resolve.cc if (what == \"notes\") return buildNotes(c->span);": 1,
+ "role-string-compare engine/src/resolve/resolve.cc if (what == \"bibliography\") return buildBibliography(c);": 1,
+ "role-string-compare engine/src/emit/emit.cc strs.get(a.ref) == std::string_view(\"sidecar-lines\"))": 1,
+ "role-string-compare engine/src/emit/emit.cc u.floatSide = side == \"left\" ? 1 : side == \"right\" ? 2 : 0;": 1,
+ "role-string-compare engine/src/emit/emit.cc strs.get(a.ref) == std::string_view(\"figure\"))": 1,
+ "role-string-compare engine/src/emit/emit.cc floats = s == \"left\" || s == \"right\";": 1,
+ "role-string-compare engine/src/render/semantic_html.cc if (role == \"figure\") {": 1,
+ "shell-dom-scrape runtime/src/main/shell.mjs for (const a of clone.querySelectorAll('a[href^=\"#tsr-fnref-\"]')) a.remove();": 1,
+ "shell-dom-scrape runtime/src/main/shell.mjs const markerAt = (t) => t?.closest?.('a.tsr-sup[href^=\"#tsr-fn-\"]');": 1,
+ "colour-as-semantics engine/src/emit/emit.cc const StrRef commentColor = strs.intern(\"var(--tsr-tok-comment)\");": 1
+}

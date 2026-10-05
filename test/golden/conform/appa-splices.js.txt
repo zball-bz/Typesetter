@@ -1,0 +1,8 @@
+export default async ({__emit, __at, para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image, __region, __fence}, $) => {
+let who = "world";
+let greet = (name) => "Hello, " + name;
+__emit(__at(para(__at(text("Value splice: "),60,73), val((who)), __at(text(" and a call chain: "),79,96), val((greet("tsm"))), __at(text(". Member access: "),110,126), val((who.length)), __at(text(" characters; expression: "),139,162), val(((1 + 2 * 3))), __at(text("."),175,176)),60,176));
+ let hidden = 40 + 2 
+__emit(__at(para(__at(text("A splice ends at punctuation: "),252,281), val((who)), __at(text(". Semicolon terminator: "),286,309), val((who)), __at(text("[not an argument]. Content argument desugars to a trailing argument: "),315,383), val((strong)(__at(text("bold text"),392,401))), __at(text(". Literal hash: #who stays literal."),402,438)),252,438));
+};
+//# sourceURL=tsm:doc

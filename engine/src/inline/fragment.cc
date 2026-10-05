@@ -86,7 +86,27 @@ struct Conv {
         out.push_back(t);
         return;
       }
-      default:
+      case AstKind::Note:
+        // notes need the resolver's flow: flattened in fragments until the
+        // single fragment lowering (plan P2-13)
+        diags.add(Sev::Info, "fragment-note", outer,
+                  "notes in inline fragments are flattened");
+        for (const AstNode* k : a->kids) conv(k, bits, base, out);
+        return;
+      case AstKind::Doc:
+      case AstKind::Para:
+      case AstKind::CodeStmt:
+      case AstKind::Heading:
+      case AstKind::ListB:
+      case AstKind::Item:
+      case AstKind::Quote:
+      case AstKind::CodeBlockB:
+      case AstKind::Rule:
+      case AstKind::SpliceArg:
+      case AstKind::Region:
+      case AstKind::Row:
+      case AstKind::Cell:
+        // block structure cannot come out of an inline parse; flatten
         for (const AstNode* k : a->kids) conv(k, bits, base, out);
         return;
     }
