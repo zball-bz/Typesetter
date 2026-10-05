@@ -3,50 +3,28 @@
 #include <algorithm>
 
 #include "../math/mathfont.h"
+#include "html_writer.h"
 
 namespace tsr {
 
-static void escapeHtml(std::string& out, std::string_view s) {
-  for (char c : s) {
-    switch (c) {
-      case '&': out += "&amp;"; break;
-      case '<': out += "&lt;"; break;
-      case '>': out += "&gt;"; break;
-      case '"': out += "&quot;"; break;
-      case '\'': out += "&#39;"; break;
-      default: out += c;
-    }
-  }
-}
-
-// Stable px formatting: up to 3 decimals, trailing zeros trimmed.
-static void fmtPx(std::string& out, double px) {
-  char buf[48];
-  std::snprintf(buf, sizeof buf, "%.3f", px);
-  size_t len = std::strlen(buf);
-  while (len > 0 && buf[len - 1] == '0') len--;
-  if (len > 0 && buf[len - 1] == '.') len--;
-  out.append(buf, len);
-  out += "px";
-}
-
-static void runClasses(std::string& out, const Styling& st) {
-  out += "tsr-r";
+static std::string runClasses(const Styling& st) {
+  std::string out = "tsr-r";
   if (st.bits & CLS_BOLD) out += " tsr-b";
   if (st.bits & CLS_EM) out += " tsr-i";
   if (st.bits & CLS_CJK) out += " tsr-cjk";
   if (st.bits & CLS_CODE) out += " tsr-code";
   if (st.bits & CLS_SUP) out += " tsr-sup";
+  return out;
 }
 
 // Inline-style overrides a run carries beyond its classes (document-model
 // §3): explicit font-family wins over the .tsr-cjk var rule by specificity.
-static void styleInto(std::string& style, const Styling& st, const Config& cfg,
-                      const Interner& strs) {
-  double base = st.sizePx > 0 ? (double)st.sizePx : cfg.baseSizePx;
+// Values were validated at decode (P0-06); text values are escaped here.
+static std::string runStyle(const Styling& st, const Config& cfg, const Interner& strs) {
+  std::string style;
   if (st.sizeMul != 1.0f || st.sizePx > 0) {
     style += "font-size:";
-    fmtPx(style, base * (double)st.sizeMul);
+    fmtPx(style, emPx(cfg, st));
     style += ";";
   }
   if (st.fontFamily) {
@@ -68,26 +46,16 @@ static void styleInto(std::string& style, const Styling& st, const Config& cfg,
     style += ";";
   }
   if (!style.empty() && style.back() == ';') style.pop_back();
+  return style;
 }
 
-static void langAttr(std::string& out, const Styling& st, const Interner& strs) {
-  if (!st.lang) return;
-  out += " lang=\"";
-  escapeHtml(out, strs.get(st.lang));
-  out += "\"";
+// lang + style of a run, in that order (today's attribute order)
+static void runAttrs(Tag& t, const Styling& st, const Config& cfg, const Interner& strs) {
+  if (st.lang) t.attr("lang", strs.get(st.lang));
+  t.style(runStyle(st, cfg, strs));
 }
 
-static void runStyleAttr(std::string& out, const Styling& st, const Config& cfg,
-                         const Interner& strs) {
-  std::string style;
-  styleInto(style, st, cfg, strs);
-  langAttr(out, st, strs);
-  if (!style.empty()) {
-    out += " style=\"";
-    out += style;
-    out += "\"";
-  }
-}
+static std::string spanAttr(Span sp, u32 base) { return std::to_string(sp.start - base); }
 
 // Positioned glyph runs inside one formula (math-design.md §8): flatten the
 // MathBox tree to absolute (x, baseline) leaves. A glyph span pins its text
@@ -106,31 +74,24 @@ static void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
       const double fH = b->textFont
           ? suToPx(b->asc + b->desc)
           : (double)(mathfont::kAscender + mathfont::kDescender) * px / mathfont::kUpem;
-      out += b->textFont ? "<span class=\"tsr-mg tsr-mt\" style=\"left:"
-                         : "<span class=\"tsr-mg\" style=\"left:";
-      fmtPx(out, suToPx(x));
-      out += ";top:";
-      fmtPx(out, suToPx(base) - fA);
-      out += ";font-size:";
-      fmtPx(out, px);
-      out += ";line-height:";
-      fmtPx(out, fH);
-      out += "\">";
+      Tag t(out, "span");
+      t.attrSafe("class", b->textFont ? "tsr-mg tsr-mt" : "tsr-mg");
+      t.style("left:" + pxStr(suToPx(x)) + ";top:" + pxStr(suToPx(base) - fA) +
+              ";font-size:" + pxStr(px) + ";line-height:" + pxStr(fH));
+      t.open();
       escapeHtml(out, strs.get(b->text));
       out += "</span>";
       return;
     }
-    case MathKind::Rule:
-      out += "<span class=\"tsr-mr\" style=\"left:";
-      fmtPx(out, suToPx(x));
-      out += ";top:";
-      fmtPx(out, suToPx(base - b->asc));
-      out += ";width:";
-      fmtPx(out, suToPx(b->w));
-      out += ";height:";
-      fmtPx(out, suToPx(b->asc + b->desc));
-      out += "\"></span>";
+    case MathKind::Rule: {
+      Tag t(out, "span");
+      t.attrSafe("class", "tsr-mr");
+      t.style("left:" + pxStr(suToPx(x)) + ";top:" + pxStr(suToPx(base - b->asc)) +
+              ";width:" + pxStr(suToPx(b->w)) + ";height:" + pxStr(suToPx(b->asc + b->desc)));
+      t.open();
+      out += "</span>";
       return;
+    }
     case MathKind::Spacer:
       return;
     case MathKind::HBox:
@@ -146,27 +107,25 @@ static void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
 static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
                      bool display, const Interner& strs, Span span,
                      const std::string& posStyle, u32 srcBase = 0) {
-  out += "<span class=\"tsr-math\" data-syn=\"math\" data-src=\"";
+  Tag t(out, "span");
+  t.attrSafe("class", "tsr-math");
+  t.attrSafe("data-syn", "math");
+  std::string src;
   if (srcRef) {  // later segments of a split formula contribute nothing
-    out += display ? "$ " : "$";
-    escapeHtml(out, strs.get(srcRef));
-    out += display ? " $" : "$";
+    src = display ? "$ " : "$";
+    src += strs.get(srcRef);
+    src += display ? " $" : "$";
   }
-  out += "\"";
-  if (!span.empty())
-    appendf(out, " data-s=\"%u\" data-e=\"%u\"", span.start - srcBase, span.end - srcBase);
-  out += " style=\"width:";
-  fmtPx(out, suToPx(mb->w));
-  out += ";height:";
-  fmtPx(out, suToPx(mb->asc + mb->desc));
-  if (!posStyle.empty()) {
-    out += ";";
-    out += posStyle;
-  } else {
-    out += ";vertical-align:";
-    fmtPx(out, -suToPx(mb->desc));
+  t.attr("data-src", src);
+  if (!span.empty()) {
+    t.attrSafe("data-s", spanAttr(span, srcBase));
+    t.attrSafe("data-e", std::to_string(span.end - srcBase));
   }
-  out += "\">";
+  std::string style = "width:" + pxStr(suToPx(mb->w)) + ";height:" + pxStr(suToPx(mb->asc + mb->desc));
+  if (!posStyle.empty()) style += ";" + posStyle;
+  else style += ";vertical-align:" + pxStr(-suToPx(mb->desc));
+  t.style(style);
+  t.open();
   mathLeaves(out, mb, strs, 0, mb->asc);
   out += "</span>";
 }
@@ -180,69 +139,65 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
                           u32 srcBase = 0) {
   const LineBox& l = fr.lines[li];
   const Su ly = (Su)(l.y + yShift);
+  const std::string pos3 = "top:" + pxStr(suToPx(ly)) + ";left:" + pxStr(suToPx(l.left)) +
+                           ";width:" + pxStr(suToPx(l.width));
+  auto anchorOf = [&](const FlowUnit& u, Tag& t) {  // first line of an anchored unit
+    if (u.anchor && l.unitIdx != lastAnchored) {
+      lastAnchored = l.unitIdx;
+      t.id(strs.get(u.anchor));
+    }
+  };
+  auto lineSpan = [&](Tag& t) {
+    if (!l.srcSpan.empty()) {
+      t.attrSafe("data-s", spanAttr(l.srcSpan, srcBase));
+      t.attrSafe("data-e", std::to_string(l.srcSpan.end - srcBase));
+    }
+  };
       if (l.special == 3) {  // raw passthrough (trusted, handler-declared)
         const FlowUnit& ru = tb.units[l.unitIdx];
-        out += "<div class=\"tsr-raw\" style=\"top:";
-        fmtPx(out, suToPx(ly));
-        out += ";left:";
-        fmtPx(out, suToPx(l.left));
-        out += ";width:";
-        fmtPx(out, suToPx(l.width));
-        out += ";height:";
-        fmtPx(out, ru.rawHpx);
-        out += "\">";
+        Tag t(out, "div");
+        t.attrSafe("class", "tsr-raw");
+        t.style(pos3 + ";height:" + pxStr(ru.rawHpx));
+        t.open();
         out += strs.get(ru.rawHtml);  // the ONE unescaped path (§9)
         out += "</div>\n";
         return;
       }
       if (l.special == 1) {
-        out += "<div class=\"tsr-rule\" style=\"top:";
-        fmtPx(out, suToPx(ly));
-        out += ";left:";
-        fmtPx(out, suToPx(l.left));
-        out += ";width:";
-        fmtPx(out, suToPx(l.width));
-        out += "\"></div>\n";
+        Tag t(out, "div");
+        t.attrSafe("class", "tsr-rule");
+        t.style(pos3);
+        t.open();
+        out += "</div>\n";
         return;
       }
       if (l.special == 4) {  // display math (§8): centred block formula
         const FlowUnit& mu = tb.units[l.unitIdx];
-        out += "<div class=\"tsr-line\"";
-        if (mu.anchor && l.unitIdx != lastAnchored) {
-          lastAnchored = l.unitIdx;
-          out += " id=\"tsr-";
-          escapeHtml(out, strs.get(mu.anchor));
-          out += "\"";
-        }
-        if (!l.srcSpan.empty())
-          appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start - srcBase,
-                  l.srcSpan.end - srcBase);
-        out += " data-ragged=\"1\" style=\"top:";
-        fmtPx(out, suToPx(ly));
-        out += ";left:";
-        fmtPx(out, suToPx(l.left));
-        out += ";width:";
-        fmtPx(out, suToPx(l.width));
         Su boxHh = mu.mathBox->asc + mu.mathBox->desc;
         Su advH = suRoundPx(cfg.lineHeight * cfg.baseSizePx);
         if (boxHh > advH) advH = boxHh;
-        out += ";height:";
-        fmtPx(out, suToPx(advH));
-        out += "\">";
+        {
+          Tag t(out, "div");
+          t.attrSafe("class", "tsr-line");
+          anchorOf(mu, t);
+          lineSpan(t);
+          t.attrSafe("data-ragged", "1");
+          t.style(pos3 + ";height:" + pxStr(suToPx(advH)));
+          t.open();
+        }
         if (mu.eqTag) {
           // right-margin equation number, at the measure's right edge
           Su lineRight = l.left + l.width;
           Su measureR = suFloorPx(cfg.widthPx);
-          out += "<span class=\"tsr-eqno\" data-syn=\"eqno\" style=\"right:";
-          fmtPx(out, -suToPx(measureR - lineRight));
-          out += "\">";
+          Tag t(out, "span");
+          t.attrSafe("class", "tsr-eqno");
+          t.attrSafe("data-syn", "eqno");
+          t.style("right:" + pxStr(-suToPx(measureR - lineRight)));
+          t.open();
           escapeHtml(out, strs.get(mu.eqTag));
           out += "</span>";
         }
-        StrRef srcRef = 0;
-        if (mu.src)
-          for (const ArgVal& a : mu.src->args)
-            if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+        StrRef srcRef = mu.src ? attrStr(mu.src, ArgK::src) : 0;
         Su boxH = mu.mathBox->asc + mu.mathBox->desc;
         Su adv = suRoundPx(cfg.lineHeight * cfg.baseSizePx);
         std::string pos = "position:absolute;left:0;top:";
@@ -253,117 +208,85 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
       }
       if (l.special == 5) {  // figure image / placeholder (figure-design §5)
         const FlowUnit& iu = tb.units[l.unitIdx];
-        std::string pos = "top:";
-        fmtPx(pos, suToPx(ly));
-        pos += ";left:";
-        fmtPx(pos, suToPx(l.left));
-        pos += ";width:";
-        fmtPx(pos, suToPx(l.width));
-        pos += ";height:";
-        fmtPx(pos, suToPx(l.height));
-        std::string id;
-        if (iu.anchor && l.unitIdx != lastAnchored) {
-          lastAnchored = l.unitIdx;
-          id = " id=\"tsr-";
-          escapeHtml(id, strs.get(iu.anchor));
-          id += "\"";
-        }
-        std::string span;
-        if (!l.srcSpan.empty())
-          appendf(span, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start - srcBase,
-                  l.srcSpan.end - srcBase);
+        std::string pos = pos3 + ";height:" + pxStr(suToPx(l.height));
         if (iu.imgSrc) {
-          out += "<img class=\"tsr-img\" draggable=\"false\" data-syn=\"image\"";
-          out += id;
-          out += span;
-          out += " src=\"";
-          escapeHtml(out, strs.get(iu.imgSrc));
-          out += "\" alt=\"";
-          if (iu.imgAlt) escapeHtml(out, strs.get(iu.imgAlt));
-          out += "\" style=\"";
-          out += pos;
-          out += "\">\n";
+          Tag t(out, "img");
+          t.attrSafe("class", "tsr-img");
+          t.attrSafe("draggable", "false");
+          t.attrSafe("data-syn", "image");
+          anchorOf(iu, t);
+          lineSpan(t);
+          t.attr("src", strs.get(iu.imgSrc));
+          t.attr("alt", iu.imgAlt ? strs.get(iu.imgAlt) : std::string_view{});
+          t.style(pos);
+          t.open();
+          out += "\n";
         } else {
-          out += "<div class=\"tsr-imgph\" data-syn=\"image\"";
-          out += id;
-          out += span;
-          out += " style=\"";
-          out += pos;
-          out += "\">";
+          Tag t(out, "div");
+          t.attrSafe("class", "tsr-imgph");
+          t.attrSafe("data-syn", "image");
+          anchorOf(iu, t);
+          lineSpan(t);
+          t.style(pos);
+          t.open();
           if (iu.imgAlt) escapeHtml(out, strs.get(iu.imgAlt));
           out += "</div>\n";
         }
         return;
       }
-      out += "<div class=\"tsr-line";
-      if (l.special == 2 && l.codeHl) out += " tsr-hlline";
-      out += "\"";
-      if (l.special == 2) {
-        // code rows are ragged by nature (the audit's justify checks do not
-        // apply); a wrapped row additionally rejoins its continuation (§9.3)
-        out += " data-ragged=\"1\"";
-        size_t self = li;
-        if (self + 1 < fr.lines.size() && fr.lines[self + 1].special == 2 &&
-            fr.lines[self + 1].codeCont)
-          out += " data-join=\"none\"";
-      }
-      {  // label anchor: first line of an anchored unit gets the id
-        const FlowUnit& au = tb.units[l.unitIdx];
-        if (au.anchor && l.unitIdx != lastAnchored) {
-          lastAnchored = l.unitIdx;
-          out += " id=\"tsr-";
-          escapeHtml(out, strs.get(au.anchor));
-          out += "\"";
+      {
+        Tag t(out, "div");
+        t.attrSafe("class", l.special == 2 && l.codeHl ? "tsr-line tsr-hlline" : "tsr-line");
+        bool ragged = false;
+        const char* join = l.join == 1 ? "space" : l.join == 2 ? "none" : nullptr;
+        if (l.special == 2) {
+          // code rows are ragged by nature (the audit's justify checks do not
+          // apply); a wrapped row additionally rejoins its continuation (§9.3)
+          t.attrSafe("data-ragged", "1");
+          ragged = true;
+          size_t self = li;
+          if (self + 1 < fr.lines.size() && fr.lines[self + 1].special == 2 &&
+              fr.lines[self + 1].codeCont) {
+            t.attrSafe("data-join", "none");
+            join = nullptr;
+          }
         }
-      }
-      if (!l.srcSpan.empty())
-        appendf(out, " data-s=\"%u\" data-e=\"%u\"", l.srcSpan.start - srcBase,
-                l.srcSpan.end - srcBase);
-      if (l.join == 1) out += " data-join=\"space\"";
-      else if (l.join == 2) out += " data-join=\"none\"";
-      if (tb.units[l.unitIdx].ragged || l.noGlue) out += " data-ragged=\"1\"";
-      if (l.cellIdx >= 0) out += " data-cell=\"1\"";
-      out += " style=\"top:";
-      fmtPx(out, suToPx(ly));
-      out += ";left:";
-      fmtPx(out, suToPx(l.left));
-      out += ";width:";
-      fmtPx(out, suToPx(l.width));
-      if (l.special == 2) {
-        const std::string* feats = &cfg.codeFontFeatures;
-        if (tb.units[l.unitIdx].codeLang) {
-          auto it = cfg.codeFontFeaturesByLang.find(
-              std::string(strs.get(tb.units[l.unitIdx].codeLang)));
-          if (it != cfg.codeFontFeaturesByLang.end()) feats = &it->second;
+        anchorOf(tb.units[l.unitIdx], t);  // label anchor: first line of the unit
+        lineSpan(t);
+        if (join) t.attrSafe("data-join", join);
+        if (!ragged && (tb.units[l.unitIdx].ragged || l.noGlue)) t.attrSafe("data-ragged", "1");
+        if (l.cellIdx >= 0) t.attrSafe("data-cell", "1");
+        std::string style = pos3;
+        if (l.special == 2) {
+          const std::string* feats = &cfg.codeFontFeatures;
+          if (tb.units[l.unitIdx].codeLang) {
+            auto it = cfg.codeFontFeaturesByLang.find(
+                std::string(strs.get(tb.units[l.unitIdx].codeLang)));
+            if (it != cfg.codeFontFeaturesByLang.end()) feats = &it->second;
+          }
+          if (!feats->empty()) {
+            style += ";font-feature-settings:";
+            escapeHtml(style, *feats);
+          }
         }
-        if (!feats->empty()) {
-          out += ";font-feature-settings:";
-          escapeHtml(out, *feats);
+        if (l.special == 2 && l.height > 0) {
+          // baseline sits centred in the row (the hl background made the
+          // top-stuck default line box visible); hl rows also paint height
+          style += ";line-height:" + pxStr(suToPx(l.height));
+          if (l.codeHl) style += ";height:" + pxStr(suToPx(l.height));
         }
+        if (l.special == 0 && l.wordDeltaPx != 0) style += ";word-spacing:" + pxStr(l.wordDeltaPx);
+        t.style(style);
+        t.open();
       }
-      if (l.special == 2 && l.height > 0) {
-        // baseline sits centred in the row (the hl background made the
-        // top-stuck default line box visible); hl rows also paint height
-        out += ";line-height:";
-        fmtPx(out, suToPx(l.height));
-        if (l.codeHl) {
-          out += ";height:";
-          fmtPx(out, suToPx(l.height));
-        }
-      }
-      if (l.special == 0 && l.wordDeltaPx != 0) {
-        out += ";word-spacing:";
-        fmtPx(out, l.wordDeltaPx);
-      }
-      out += "\">";
 
       if (l.marker) {
         const Styling& mst = styles.get(l.markerStyle);
-        out += "<span class=\"tsr-marker ";
-        runClasses(out, mst);
-        out += "\" data-syn=\"marker\"";
-        runStyleAttr(out, mst, cfg, strs);
-        out += ">";
+        Tag t(out, "span");
+        t.attrSafe("class", "tsr-marker " + runClasses(mst));
+        t.attrSafe("data-syn", "marker");
+        runAttrs(t, mst, cfg, strs);
+        t.open();
         escapeHtml(out, strs.get(l.marker));
         out += "</span>";
       }
@@ -374,24 +297,24 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
           // grid-exact continuation indent: REAL spaces in the same mono
           // flow (exact ch in ANY font), synthetic for both copy paths
           const Styling& cst = styles.get(u.codeStyle);
-          out += "<span class=\"";
-          runClasses(out, cst);
-          out += "\" data-syn=\"cont\"";
-          runStyleAttr(out, cst, cfg, strs);
-          out += ">";
+          Tag t(out, "span");
+          t.attrSafe("class", runClasses(cst));
+          t.attrSafe("data-syn", "cont");
+          runAttrs(t, cst, cfg, strs);
+          t.open();
           out.append(l.contCols, ' ');
           out += "</span>";
         }
         const bool snap = l.snapLatinPx > 0 || l.snapCjkPx > 0;
         u32 off = 0;
         for (const FlowUnit::CodeRun& r : u.codeRuns[l.codeLine]) {
-          std::string_view t = strs.get(r.text);
-          u32 rLo = off, rHi = off + (u32)t.size();
+          std::string_view t0 = strs.get(r.text);
+          u32 rLo = off, rHi = off + (u32)t0.size();
           off = rHi;
           u32 lo = l.cbLo > rLo ? l.cbLo : rLo;
           u32 hi = l.cbHi < rHi ? l.cbHi : rHi;
           if (lo >= hi) continue;
-          std::string_view seg = t.substr(lo - rLo, hi - lo);
+          std::string_view seg = t0.substr(lo - rLo, hi - lo);
           // snap-kerning: split the run by script, letter-spacing per side
           u32 s0 = 0;
           while (s0 < seg.size()) {
@@ -410,17 +333,17 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
               s1 = (u32)seg.size();
             }
             const Styling& cst = styles.get(r.style);
-            out += "<span class=\"";
-            runClasses(out, cst);
-            out += "\"";
-            runStyleAttr(out, cst, cfg, strs);
+            Tag t(out, "span");
+            t.attrSafe("class", runClasses(cst));
+            runAttrs(t, cst, cfg, strs);
             double d = snap ? (cjk ? l.snapCjkPx : l.snapLatinPx) : 0;
             if (d > 0) {
-              out += " data-snap=\"1\" style=\"letter-spacing:";
-              fmtPx(out, d);
-              out += "\"";
+              // ONE style attribute: the letter-spacing joins the run's
+              // own declarations (defect #21: a second style="" was dropped)
+              t.attrSafe("data-snap", "1");
+              t.style("letter-spacing:" + pxStr(d));
             }
-            out += ">";
+            t.open();
             escapeHtml(out, seg.substr(s0, s1 - s0));
             out += "</span>";
             s0 = s1;
@@ -434,40 +357,28 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
       const std::vector<LinebreakBlock>& bl =
           l.cellIdx >= 0 ? u.cells[(size_t)l.cellIdx].blocks : u.blocks;
       u32 i = l.blockBegin;
+      // opens a run; `syn` (e.g. "hyphen") is added after the style, as
+      // today; returns whether the run is a link
       auto openRun = [&](const Styling& sty, StrRef url, const LinebreakBlock& first,
-                         const std::string& extraStyle, const char* extraCls) {
+                         const std::string& extraStyle, const char* extraCls,
+                         const char* syn = nullptr) {
         const bool isLink = url != 0;
-        out += isLink ? "<a class=\"" : "<span class=\"";
-        runClasses(out, sty);
-        if (extraCls && *extraCls) { out += " "; out += extraCls; }
-        out += "\"";
-        if (isLink) {
-          out += " href=\"";
-          escapeHtml(out, strs.get(url));
-          out += "\"";
-        }
-        if (first.anchorId) {  // inline anchor (footnote marker)
-          out += " id=\"tsr-";
-          escapeHtml(out, strs.get(first.anchorId));
-          out += "\"";
-        }
-        if (first.flags & BF_REF) out += " data-syn=\"ref\"";  // §9.3: copy skips
-        else if (!first.span.empty())
-          appendf(out, " data-s=\"%u\"", first.span.start - srcBase);
-        langAttr(out, sty, strs);
-        std::string style;
-        styleInto(style, sty, cfg, strs);
-        if (!extraStyle.empty()) {
-          if (!style.empty()) style += ";";
-          style += extraStyle;
-        }
-        if (!style.empty()) {
-          out += " style=\"";
-          out += style;
-          out += "\"";
-        }
-        out += ">";
+        Tag t(out, isLink ? "a" : "span");
+        std::string cls = runClasses(sty);
+        if (extraCls && *extraCls) { cls += " "; cls += extraCls; }
+        t.attrSafe("class", cls);
+        if (isLink) t.attr("href", strs.get(url));
+        if (first.anchorId) t.id(strs.get(first.anchorId));  // inline anchor (footnote marker)
+        if (first.flags & BF_REF) t.attrSafe("data-syn", "ref");  // §9.3: copy skips
+        else if (!first.span.empty()) t.attrSafe("data-s", spanAttr(first.span, srcBase));
+        runAttrs(t, sty, cfg, strs);
+        t.style(extraStyle);
+        if (syn) t.attrSafe("data-syn", syn);
+        t.open();
         return isLink;
+      };
+      auto sameRun = [&](const LinebreakBlock& a, const LinebreakBlock& b) {
+        return a.style == b.style && a.linkUrl == b.linkUrl;
       };
       while (i < l.blockEnd) {
         const LinebreakBlock& b = bl[i];
@@ -477,11 +388,9 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
           i++;
           continue;
         }
-        // final hyphen glyph
         if (b.isHyphen()) {
           if (i == l.blockEnd - 1 && l.endsWithHyphen) {
-            bool link = openRun(styles.get(b.style), 0, b, "", nullptr);
-            out.insert(out.size() - 1, " data-syn=\"hyphen\"");  // before '>'
+            bool link = openRun(styles.get(b.style), 0, b, "", nullptr, "hyphen");
             out += "-";
             out += link ? "</a>" : "</span>";
           }
@@ -491,11 +400,12 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
         if (b.flags & (BF_INDENT | BF_BOUND)) {
           double w = b.rawPx;
           if (b.flags & BF_BOUND) w += l.wordDeltaPx * (double)b.stretchWeight;
-          out += "<span class=\"tsr-sp\" data-syn=\"";
-          out += (b.flags & BF_INDENT) ? "indent" : "boundary";
-          out += "\" style=\"width:";
-          fmtPx(out, w);
-          out += "\"></span>";
+          Tag t(out, "span");
+          t.attrSafe("class", "tsr-sp");
+          t.attrSafe("data-syn", (b.flags & BF_INDENT) ? "indent" : "boundary");
+          t.style("width:" + pxStr(w));
+          t.open();
+          out += "</span>";
           i++;
           continue;
         }
@@ -544,11 +454,9 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
           continue;
         }
         if (b.isCjkChar()) {
-          StyleId st = b.style;
-          StrRef url = b.linkUrl;
           u32 j = i;
           while (j < l.blockEnd && bl[j].isCjkChar() && !(bl[j].flags & BF_PAIR) &&
-                 bl[j].style == st && bl[j].linkUrl == url)
+                 sameRun(bl[j], b))
             j++;
           std::string extra;
           if (l.cjkDeltaPx != 0) {
@@ -566,7 +474,7 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
               fmtPx(extra, -l.cjkDeltaPx);
             }
           }
-          bool link = openRun(styles.get(st), url, b, extra, nullptr);
+          bool link = openRun(styles.get(b.style), b.linkUrl, b, extra, nullptr);
           std::string runText;
           for (u32 k = i; k < j; k++) runText += strs.get(bl[k].text);
           escapeHtml(out, runText);
@@ -579,16 +487,14 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
         // browser kerns across the junction — the widths modelled it
         // (LinebreakBlock::kernPx); a line-final hyphen still terminates
         // the run to get its glyph.
-        StyleId st = b.style;
-        StrRef url = b.linkUrl;
         u32 j = i;
-        while (j < l.blockEnd && bl[j].style == st && bl[j].linkUrl == url &&
+        while (j < l.blockEnd && sameRun(bl[j], b) &&
                (!bl[j].isHyphen() || j + 1 < l.blockEnd) &&
                !bl[j].isCjkChar() && !bl[j].math &&
                !bl[j].isPunctGlyph() && !(bl[j].flags & (BF_INDENT | BF_BOUND)) &&
                !(bl[j].flags & BF_PUNCT_SP))
           j++;
-        bool link = openRun(styles.get(st), url, b, "", nullptr);
+        bool link = openRun(styles.get(b.style), b.linkUrl, b, "", nullptr);
         std::string runText;
         for (u32 k = i; k < j; k++)
           runText += bl[k].isHyphen() ? std::string()
@@ -618,15 +524,17 @@ std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult&
     for (const LineBox& l : fr.lines)
       if (!l.srcSpan.empty() && l.srcSpan.start < srcBase) srcBase = l.srcSpan.start;
     if (srcBase == 0xFFFFFFFFu) srcBase = 0;
-    appendf(out,
-            "<div class=\"tsr-para\" data-pid=\"%u\" data-s0=\"%u\" style=\"position:relative;height:",
-            fr.pid, srcBase);
-    fmtPx(out, suToPx(fr.h));
-    if (p + 1 < lr.paras.size()) {
-      out += ";margin-bottom:";
-      fmtPx(out, cfg.paraSpacingEm * cfg.baseSizePx);
+    {
+      Tag t(out, "div");
+      t.attrSafe("class", "tsr-para");
+      t.num("data-pid", fr.pid);
+      t.num("data-s0", srcBase);
+      std::string style = "position:relative;height:" + pxStr(suToPx(fr.h));
+      if (p + 1 < lr.paras.size()) style += ";margin-bottom:" + pxStr(cfg.paraSpacingEm * cfg.baseSizePx);
+      t.style(style);
+      t.open();
+      out += "\n";
     }
-    out += "\">\n";
     for (size_t li = 0; li < fr.lines.size(); li++)
       renderLineBox(out, tb, fr, li, styles, strs, cfg, lastAnchored, 0, srcBase);
     out += "</div>\n";
@@ -746,9 +654,13 @@ std::string renderPages(const std::vector<TopBlock>& tops, const LayoutResult& l
   for (size_t pg = 0; pg < starts.size(); pg++) {
     size_t lo = starts[pg];
     size_t hi = pg + 1 < starts.size() ? starts[pg + 1] : bands.size();
-    out += "<div class=\"tsr-sheet\" style=\"position:relative;overflow:hidden;height:";
-    fmtPx(out, suToPx(H));
-    out += "\">\n";
+    {
+      Tag t(out, "div");
+      t.attrSafe("class", "tsr-sheet");
+      t.style("position:relative;overflow:hidden;height:" + pxStr(suToPx(H)));
+      t.open();
+      out += "\n";
+    }
     u32 lastAnchored = 0xFFFFFFFFu;
     for (size_t bi = lo; bi < hi; bi++) {
       const Band& b = bands[bi];

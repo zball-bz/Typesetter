@@ -7,6 +7,7 @@
 #include "../codegen/codegen.h"
 #include "../resolve/resolve.h"
 #include "../layout/layout.h"
+#include "../render/html_writer.h"
 #include "../render/semantic_html.h"
 #include "../render/typeset_html.h"
 
@@ -399,15 +400,37 @@ struct Doc {
     return r;
   }
 
-  std::string render() { return renderTypeset(tops, layout, styles, strs, cfg); }
+  std::string render() {
+    writerDefects() = {};
+    std::string html = renderTypeset(tops, layout, styles, strs, cfg);
+    reportWriterDefects();
+    return html;
+  }
 
   // paged rendering for print (pages-design.md §2); needs a finished layout
   std::string renderPaged(double pageHeightPx) {
-    return renderPages(tops, layout, styles, strs, cfg, pageHeightPx);
+    writerDefects() = {};
+    std::string html = renderPages(tops, layout, styles, strs, cfg, pageHeightPx);
+    reportWriterDefects();
+    return html;
   }
 
   // needs only the post-resolve tree — valid before any measurement
-  std::string renderFallback() { return renderSemantic(tree, strs, styles); }
+  std::string renderFallback() {
+    writerDefects() = {};
+    std::string html = renderSemantic(tree, strs, styles);
+    reportWriterDefects();
+    return html;
+  }
+
+  // a repeated / unlisted attribute reached the HTML writer (a serializer
+  // defect; debug builds assert at the call site)
+  void reportWriterDefects() {
+    const WriterDefects& d = writerDefects();
+    if (d.count)
+      diags.add(Sev::Error, "render-attr", {},
+                std::to_string(d.count) + " attribute defect(s), first: " + d.first);
+  }
 
   // width-only relayout (architecture §2.4): metrics persist, the next
   // typeset() re-breaks and re-lays out at the new measure

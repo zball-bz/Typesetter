@@ -1,0 +1,6 @@
+doc @[0,216) [base]
+  para @[0,216) [base]
+    text @[0,63) [base] str="The demonstration paragraph exercises hyphenation inside links: "
+    link @[64,149) [base] url="https://example.org/hyphen"
+      text @[65,120) [base] str="extraordinary representation of measurement terminology"
+    text @[150,216) [base] str=" and justification arithmetic throughout typesetting documentation."

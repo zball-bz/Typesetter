@@ -490,6 +490,41 @@ static void unitInstLimits() {
   }
 }
 
+// the shared HTML writer (plan P0-10): one style attribute, one escaper,
+// ids through AnchorNamer, first-wins on a repeated attribute (release)
+static void unitHtmlWriter() {
+  std::string out;
+  {
+    Tag t(out, "span");
+    t.attrSafe("class", "tsr-r");
+    t.attr("lang", "en");
+    t.style("font-size:14px");
+    t.attrSafe("data-snap", "1");
+    t.style("letter-spacing:0.5px");
+    t.id("a\"<b");
+    t.open();
+  }
+  CHECK(out == "<span class=\"tsr-r\" lang=\"en\" style=\"font-size:14px;letter-spacing:0.5px\" "
+               "data-snap=\"1\" id=\"tsr-a&quot;&lt;b\">");
+  CHECK(pxStr(1.0) == "1px" && pxStr(-0.1234) == "-0.123px" && pxStr(2.5) == "2.5px");
+  CHECK(Tag::allowed("data-x") && Tag::allowed("href") && !Tag::allowed("onclick") &&
+        !Tag::allowed("data-"));
+#ifdef NDEBUG
+  writerDefects() = {};
+  out.clear();
+  {
+    Tag t(out, "a");
+    t.attr("href", "#x");
+    t.attr("href", "#y");
+    t.attr("onclick", "z");
+    t.open();
+  }
+  CHECK(out == "<a href=\"#x\">");
+  CHECK(writerDefects().count == 2 && writerDefects().first == "<a> href");
+  writerDefects() = {};
+#endif
+}
+
 int main(int argc, char** argv) {
   std::string root;
   bool update = false;
@@ -511,6 +546,7 @@ int main(int argc, char** argv) {
   unitImageSrc();
   unitCrlf();
   unitInstLimits();
+  unitHtmlWriter();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");
@@ -636,6 +672,11 @@ int main(int argc, char** argv) {
           goldenCompare(g("paged"), paged, update, label + ":paged");
           contractCheck(label, "paged", paged, true);
         }
+        for (const Diag& d : doc.diags.items)  // the writer saw a serializer defect
+          if (std::string_view(d.code) == "render-attr") {
+            printf("FAIL %s: %s %s\n", label.c_str(), d.code, d.msg.c_str());
+            failures++;
+          }
       }
     }
   }

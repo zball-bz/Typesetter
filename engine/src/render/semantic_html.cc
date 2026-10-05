@@ -1,21 +1,12 @@
 #include "semantic_html.h"
 
+#include "html_writer.h"
+
 namespace tsr {
 
 namespace {
 
-void esc(std::string& out, std::string_view s) {
-  for (char c : s) {
-    switch (c) {
-      case '&': out += "&amp;"; break;
-      case '<': out += "&lt;"; break;
-      case '>': out += "&gt;"; break;
-      case '"': out += "&quot;"; break;
-      case '\'': out += "&#39;"; break;
-      default: out += c;
-    }
-  }
-}
+constexpr auto esc = escapeHtml;
 
 struct Sem {
   const Interner& strs;
@@ -37,16 +28,21 @@ struct Sem {
   }
 
   // shared attributes: span anchoring + optional pid + label anchor
-  void attrs(const ContentNode* n, int pid) {
-    if (pid >= 0) appendf(out, " data-pid=\"%d\"", pid);
-    if (!n->span.empty())
-      appendf(out, " data-s=\"%u\" data-e=\"%u\"", n->span.start, n->span.end);
-    std::string_view label = argS(n, ArgK::label);
-    if (!label.empty()) {
-      out += " id=\"tsr-";
-      esc(out, label);
-      out += "\"";
+  void attrs(Tag& t, const ContentNode* n, int pid) {
+    if (pid >= 0) t.num("data-pid", (unsigned)pid);
+    if (!n->span.empty()) {
+      t.num("data-s", n->span.start);
+      t.num("data-e", n->span.end);
     }
+    std::string_view label = argS(n, ArgK::label);
+    if (!label.empty()) t.id(label);
+  }
+  // <name …shared attributes…>
+  void open(std::string_view name, const ContentNode* n, int pid, const char* cls = nullptr) {
+    Tag t(out, name);
+    if (cls) t.attrSafe("class", cls);
+    attrs(t, n, pid);
+    t.open();
   }
 
   void inlineKids(const ContentNode* n) {
@@ -67,18 +63,18 @@ struct Sem {
         std::string style;
         if (st.fontFamily) {
           style += "font-family:";
-          style += strs.get(st.fontFamily);
+          esc(style, strs.get(st.fontFamily));
           style += ";";
         }
         if (st.color) {
           style += "color:";
-          style += strs.get(st.color);
+          esc(style, strs.get(st.color));
           style += ";";
         }
         if (st.sizePx > 0) {
-          char buf[32];
-          std::snprintf(buf, sizeof buf, "font-size:%gpx;", st.sizePx);
-          style += buf;
+          style += "font-size:";
+          fmtPx(style, st.sizePx);
+          style += ";";
         }
         if (st.bits & (CLS_UNDER | CLS_OVER | CLS_STRIKE)) {
           style += "text-decoration:";
@@ -91,24 +87,12 @@ struct Sem {
         if (!style.empty()) style.pop_back();
         const bool wrap = tag || !style.empty() || st.lang;
         if (wrap) {
-          out += "<";
-          out += tag ? tag : "span";
-          if (st.lang) {
-            out += " lang=\"";
-            esc(out, strs.get(st.lang));
-            out += "\"";
-          }
-          if ((st.bits & CLS_EM) && tag && (st.bits & CLS_BOLD)) {
-            // bold+italic: strong tag + italic style
-            if (!style.empty()) style += ";";
-            style += "font-style:italic";
-          }
-          if (!style.empty()) {
-            out += " style=\"";
-            esc(out, style);
-            out += "\"";
-          }
-          out += ">";
+          Tag t(out, tag ? tag : "span");
+          if (st.lang) t.attr("lang", strs.get(st.lang));
+          t.style(style);
+          // bold+italic: strong tag + italic style
+          if ((st.bits & CLS_EM) && tag && (st.bits & CLS_BOLD)) t.style("font-style:italic");
+          t.open();
         }
         esc(out, strs.get(n->str));
         if (wrap) {
@@ -129,16 +113,13 @@ struct Sem {
           inlineKids(n);
           return;
         }
-        out += "<a href=\"";
-        esc(out, url);
-        out += "\"";
-        std::string_view id = argS(n, ArgK::label);  // inline anchor (marker)
-        if (!id.empty()) {
-          out += " id=\"tsr-";
-          esc(out, id);
-          out += "\"";
+        {
+          Tag t(out, "a");
+          t.attr("href", url);
+          std::string_view id = argS(n, ArgK::label);  // inline anchor (marker)
+          if (!id.empty()) t.id(id);
+          t.open();
         }
-        out += ">";
         inlineKids(n);
         out += "</a>";
         return;
@@ -159,9 +140,13 @@ struct Sem {
         out += "$</code>";
         return;
       case Kind::error:
-        out += "<span class=\"tsr-err\" title=\"";
-        esc(out, argS(n, ArgK::message));
-        out += "\">&#9888; ";
+        {
+          Tag t(out, "span");
+          t.attrSafe("class", "tsr-err");
+          t.attr("title", argS(n, ArgK::message));
+          t.open();
+        }
+        out += "&#9888; ";
         esc(out, argS(n, ArgK::message));
         out += "</span>";
         return;
@@ -176,9 +161,7 @@ struct Sem {
   void block(const ContentNode* n, int pid) {
     switch (n->kind) {
       case Kind::para:
-        out += "<p";
-        attrs(n, pid);
-        out += ">";
+        open("p", n, pid);
         inlineKids(n);
         out += "</p>\n";
         return;
@@ -186,9 +169,8 @@ struct Sem {
         int level = attrInt(n, ArgK::level, 1);
         if (level < 1) level = 1;
         if (level > 6) level = 6;
-        appendf(out, "<h%d", level);
-        attrs(n, pid);
-        out += ">";
+        const char hn[3] = {'h', (char)('0' + level), 0};
+        open(hn, n, pid);
         inlineKids(n);
         appendf(out, "</h%d>\n", level);
         return;
@@ -197,21 +179,22 @@ struct Sem {
         const ArgVal* ord = arg(n, ArgK::ordered);
         bool ordered = ord && ord->num != 0;
         int start = attrInt(n, ArgK::start, 1);
-        if (ordered && start != 1) appendf(out, "<ol start=\"%d\"", start);
-        else out += ordered ? "<ol" : "<ul";
-        attrs(n, pid);
-        out += ">\n";
+        {
+          Tag t(out, ordered ? "ol" : "ul");
+          if (ordered && start != 1) t.attrSafe("start", std::to_string(start));
+          attrs(t, n, pid);
+          t.open();
+          out += "\n";
+        }
         for (const ContentNode* k : n->kids) {
           // a tight single-paragraph item inlines the paragraph: its anchor
           // moves onto the <li> (P0-09 i; footnote ids used to dangle)
           bool tight = k->kids.size() == 1 && k->kids[0]->kind == Kind::para;
           std::string_view lid = tight ? argS(k->kids[0], ArgK::label) : std::string_view{};
-          if (!lid.empty()) {
-            out += "<li id=\"tsr-";
-            esc(out, lid);
-            out += "\">";
-          } else {
-            out += "<li>";
+          {
+            Tag t(out, "li");
+            if (!lid.empty()) t.id(lid);
+            t.open();
           }
           // an item's blocks flow inside the li
           bool sub = false;
@@ -229,23 +212,19 @@ struct Sem {
         return;
       }
       case Kind::quote:
-        out += "<blockquote";
-        attrs(n, pid);
-        out += ">\n";
+        open("blockquote", n, pid);
+        out += "\n";
         for (const ContentNode* k : n->kids) block(k, -1);
         out += "</blockquote>\n";
         return;
       case Kind::codeblock: {
-        out += "<pre";
-        attrs(n, pid);
-        out += "><code";
-        std::string_view lang = argS(n, ArgK::lang);
-        if (!lang.empty()) {
-          out += " class=\"language-";
-          esc(out, lang);
-          out += "\"";
+        open("pre", n, pid);
+        {
+          Tag t(out, "code");
+          std::string_view lang = argS(n, ArgK::lang);
+          if (!lang.empty()) t.attr("class", "language-" + std::string(lang));
+          t.open();
         }
-        out += ">";
         if (n->kids.size() == 1 && n->kids[0]->kind == Kind::text) {
           esc(out, strs.get(n->kids[0]->str));
         } else {
@@ -263,14 +242,12 @@ struct Sem {
         return;
       }
       case Kind::rule:
-        out += "<hr";
-        attrs(n, pid);
-        out += ">\n";
+        open("hr", n, pid);
+        out += "\n";
         return;
       case Kind::mathblock:
-        out += "<p class=\"tsr-mathblock\"";
-        attrs(n, pid);
-        out += "><code class=\"tsr-mathsrc\">$ ";
+        open("p", n, pid, "tsr-mathblock");
+        out += "<code class=\"tsr-mathsrc\">$ ";
         esc(out, argS(n, ArgK::src));
         out += " $</code>";
         if (std::string_view tag = argS(n, ArgK::name); !tag.empty()) {
@@ -289,22 +266,23 @@ struct Sem {
           out += "</div>\n";
           return;
         }
-        out += "<img";
-        attrs(n, pid);
-        out += " src=\"";
-        esc(out, src);
-        out += "\" alt=\"";
-        esc(out, argS(n, ArgK::alt));
-        out += "\" style=\"max-width:100%\">\n";
+        {
+          Tag t(out, "img");
+          attrs(t, n, pid);
+          t.attr("src", src);
+          t.attr("alt", argS(n, ArgK::alt));
+          t.style("max-width:100%");
+          t.open();
+          out += "\n";
+        }
         return;
       }
       case Kind::group: {
         std::string_view role = argS(n, ArgK::role);
         if (role == "figure") {
           // real HTML for the no-JS page (figure-design.md §5)
-          out += "<figure";
-          attrs(n, pid);
-          out += ">\n";
+          open("figure", n, pid);
+          out += "\n";
           bool capOpen = false;
           for (const ContentNode* k : n->kids) {
             if (k->kind == Kind::para) {
@@ -321,22 +299,20 @@ struct Sem {
           out += "</figure>\n";
           return;
         }
-        out += "<div";
-        if (!role.empty()) {
-          out += " data-role=\"";
-          esc(out, role);
-          out += "\"";
+        {
+          Tag t(out, "div");
+          if (!role.empty()) t.attr("data-role", role);
+          attrs(t, n, pid);
+          t.open();
+          out += "\n";
         }
-        attrs(n, pid);
-        out += ">\n";
         for (const ContentNode* k : n->kids) block(k, -1);
         out += "</div>\n";
         return;
       }
       case Kind::table: {
-        out += "<table";
-        attrs(n, pid);
-        out += ">\n";
+        open("table", n, pid);
+        out += "\n";
         std::string_view align = argS(n, ArgK::align);
         for (const ContentNode* row : n->kids) {
           if (row->kind != Kind::trow) continue;
@@ -345,9 +321,12 @@ struct Sem {
           for (const ContentNode* cell : row->kids) {
             if (cell->kind != Kind::tcell) continue;
             char al = c < align.size() ? align[c] : 'l';
-            if (al == 'c') out += "<td style=\"text-align:center\">";
-            else if (al == 'r') out += "<td style=\"text-align:right\">";
-            else out += "<td>";
+            {
+              Tag t(out, "td");
+              if (al == 'c') t.style("text-align:center");
+              else if (al == 'r') t.style("text-align:right");
+              t.open();
+            }
             for (const ContentNode* k : cell->kids) inl(k);
             out += "</td>";
             c++;
@@ -363,11 +342,14 @@ struct Sem {
         out += "\n";
         return;
       case Kind::error:
-        out += "<div class=\"tsr-err\"";
-        attrs(n, pid);
-        out += " title=\"";
-        esc(out, argS(n, ArgK::message));
-        out += "\">&#9888; ";
+        {
+          Tag t(out, "div");
+          t.attrSafe("class", "tsr-err");
+          attrs(t, n, pid);
+          t.attr("title", argS(n, ArgK::message));
+          t.open();
+        }
+        out += "&#9888; ";
         esc(out, argS(n, ArgK::message));
         out += "</div>\n";
         return;
@@ -375,9 +357,7 @@ struct Sem {
         return;
       default:
         // inline content at block level (defensive): wrap in a paragraph
-        out += "<p";
-        attrs(n, pid);
-        out += ">";
+        open("p", n, pid);
         inl(n);
         out += "</p>\n";
         return;

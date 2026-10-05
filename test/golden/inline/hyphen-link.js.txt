@@ -1,0 +1,8 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("The demonstration paragraph exercises hyphenation inside links: "),0,63), __a(__ln("https://example.org/hyphen", __a(__t("extraordinary representation of measurement terminology"),65,120)),64,149), __a(__t(" and justification arithmetic throughout typesetting documentation."),150,216)),0,216));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=d3f0eef186e684fc;217;[]
