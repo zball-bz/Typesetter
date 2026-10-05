@@ -341,12 +341,113 @@ static void unitFragment() {
   CHECK(!d2.items.empty() && d2.items[0].sev == Sev::Info);
 }
 
+
+// The resource pull (plan P1-19): the wire codec round-trips every column
+// type; an answer to another batch is refused whole; a missing or invalid
+// row degrades only what consumed it, with one diagnostic per kind.
+static void unitResources(const fs::path& root) {
+  {
+    WireBatch b;
+    b.batch = 7;
+    b.mks.push_back({b.str("Serif"), 0x123456789ull, 18, 700, 1, b.str("liga"), b.str("ja"), 2});
+    WireKind& w = b.kinds.emplace_back();
+    w.kind = (u16)ResKind::textWidth;
+    w.rows.resize(2);
+    w.rows[1].resId = 1;
+    w.rows[1].col[1] = b.str("fox");
+    WireKind& bx = b.kinds.emplace_back();
+    bx.kind = (u16)ResKind::boxInfo;
+    bx.rows.resize(1);
+    bx.rows[0].col[0] = 0;
+    bx.rows[0].col[1] = b.str("a.png");
+    bx.rows[0].setF64(2, 320.5);
+    std::string q, a, err;
+    encodeWire(b, false, q);
+    WireBatch d;
+    CHECK(decodeWire((const u8*)q.data(), q.size(), false, d, err));
+    CHECK(d.batch == 7 && d.mks.size() == 1 && d.mks[0].faceDigest == 0x123456789ull && d.mks[0].dppx == 2);
+    CHECK(d.strings[d.mks[0].lang] == "ja" && d.kinds.size() == 2 && d.strings[d.kinds[0].rows[1].col[1]] == "fox");
+    CHECK(d.kinds[1].rows[0].f64(2) == 320.5);
+    WireBatch ans;
+    ans.batch = 7;
+    WireKind& t = ans.kinds.emplace_back();
+    t.kind = (u16)ResKind::codeTokens;
+    t.rows.resize(1);
+    t.rows[0].list = {0, 3, 1};
+    t.rows[0].status = 1;
+    t.rows[0].msg = ans.str("no grammar");
+    encodeWire(ans, true, a);
+    CHECK(decodeWire((const u8*)a.data(), a.size(), true, d, err) && d.kinds[0].rows[0].list.size() == 3 &&
+          d.strings[d.kinds[0].rows[0].msg] == "no grammar");
+    CHECK(!decodeWire((const u8*)a.data(), a.size() - 1, true, d, err));  // truncated
+    CHECK(!decodeWire((const u8*)q.data(), q.size(), true, d, err));      // a request is not an answer
+  }
+  std::string ops;
+  readFile(root / "test" / "fixtures" / "figure" / "w-only.ops", ops);
+  auto fresh = [&](Doc& doc) { return doc.ingest((const u8*)ops.data(), ops.size()); };
+  auto has = [](const Doc& doc, std::string_view code) {
+    for (const Diag& d : doc.diags.items)
+      if (code == d.code) return true;
+    return false;
+  };
+  {
+    Doc doc;
+    CHECK(fresh(doc) && doc.typeset() == Doc::Status::NeedMeasure && doc.rt.boxNeeds.size() == 1);
+    std::string req, ans;
+    doc.requests(req);
+    WireBatch stale;
+    stale.batch = doc.rt.batch.id + 1;
+    encodeWire(stale, true, ans);
+    CHECK(!doc.provide((const u8*)ans.data(), ans.size()) && has(doc, "provider-invalid"));
+    CHECK(doc.rt.boxNeeds[0].st == ResState::Pending);  // refused whole: still pending
+    WireBatch empty;
+    empty.batch = doc.rt.batch.id;
+    encodeWire(empty, true, ans);
+    CHECK(doc.provide((const u8*)ans.data(), ans.size()));
+    CHECK(doc.rt.boxNeeds[0].st == ResState::Failed && has(doc, "provider-missing") && has(doc, "image-load"));
+    // the measure batch: one width answered NaN, the rest missing
+    CHECK(doc.typeset() == Doc::Status::NeedMeasure);
+    doc.requests(req);
+    WireBatch q, a;
+    std::string err;
+    CHECK(decodeWire((const u8*)req.data(), req.size(), false, q, err));
+    a.batch = q.batch;
+    for (const WireKind& k : q.kinds)
+      if (k.kind == (u16)ResKind::textWidth) {
+        WireKind& w = a.kinds.emplace_back();
+        w.kind = k.kind;
+        w.rows.resize(1);
+        w.rows[0].setF64(0, std::nan(""));
+      }
+    encodeWire(a, true, ans);
+    CHECK(doc.provide((const u8*)ans.data(), ans.size()));
+    CHECK(doc.typeset() == Doc::Status::Ok);  // degraded, never stuck
+    CHECK(has(doc, "measure-failed") || has(doc, "provider-invalid"));
+    CHECK(doc.render().find("tsr-imgph") != std::string::npos);  // the failed image: a placeholder
+  }
+  {
+    // the author's lone w survives the host's size (defect #24), and the
+    // tree keeps the author's args (finding image-dims-in-author-args)
+    Doc doc;
+    CHECK(fresh(doc));
+    ProviderSet p = mockProviders();
+    CHECK(driveToCompletion(doc, p));
+    for (const ParaFrame& fr : doc.layout.paras)
+      for (const Fragment& l : fr.lines)
+        if (l.kind == FragKind::Image) CHECK(suToPx(l.width) == 120 && suToPx(l.height) == 90);
+    CHECK(doc.product("tree").find("h=") == std::string::npos);
+  }
+}
+
 // --- golden runner ---
 // the shared drive loop (api/driver.h) with the golden providers: native
 // tree-sitter tokens, the policy's image answer, the mock measurer
 static bool typesetWithMock(Doc& doc) {
   ProviderSet p = mockProviders();
-  p.tokens = [](Doc& d) { provideNativeTokens(d); };
+  p.tokens = [](std::string_view lang, std::string_view text, std::vector<CodeToken>& out) {
+    out = nativeTokens(lang, text);
+    return true;
+  };
   return driveToCompletion(doc, p);
 }
 
@@ -429,8 +530,8 @@ static void unitHostInputs(const fs::path& root) {
   };
   {
     Doc doc;
-    CHECK(load("code/tsm-hl.ops", doc) && !doc.tokenReqs.empty());
-    std::string_view body = doc.strs.get(doc.tokenReqs[0].body);
+    CHECK(load("code/tsm-hl.ops", doc) && !doc.rt.tokenNeeds.empty());
+    std::string_view body = doc.strs.get(doc.rt.tokenNeeds[0].body);
     u32 cjk = (u32)body.find("\xE6\xAD\xA3");  // 正: a 3-byte sequence
     CHECK(cjk != (u32)std::string_view::npos);
     const CodeToken bad[] = {
@@ -441,21 +542,24 @@ static void unitHostInputs(const fs::path& root) {
         {cjk + 1, cjk + 6, 3},              // overlaps the previous one
         {(u32)body.size(), (u32)body.size() + 4, 0},  // past the body
     };
-    doc.provideTokens(0, bad, std::size(bad));
-    for (size_t i = 1; i < doc.tokenReqs.size(); i++) doc.provideTokens((u32)i, nullptr, 0);
+    // (tsm is answered in-engine: re-open the need to answer it badly)
+    doc.rt.tokenNeeds[0].st = ResState::Pending;
+    doc.provideTokens(0, bad, std::size(bad));  // rejected whole: plain code, provider-invalid
+    CHECK(doc.rt.tokenNeeds[0].st == ResState::Failed);
+    for (size_t i = 1; i < doc.rt.tokenNeeds.size(); i++) doc.provideTokens((u32)i, nullptr, 0);
     for (int i = 0; i < 64 && doc.typeset() != Doc::Status::Ok; i++)
-      mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces, doc.cfg);
+      mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces);
     std::string html = doc.render();
     CHECK(html.find("\xE6\xAD\xA3") != std::string::npos);  // 正 survives whole
     const FaceId f0 = doc.metrics.faceOf(0);
-    doc.metrics.provideWord(doc.strs.intern("nan"), f0, std::nan(""), doc.cfg);
-    doc.metrics.provideWord(doc.strs.intern("big"), f0, 1e300, doc.cfg);
+    doc.metrics.provideWord(doc.strs.intern("nan"), f0, std::nan(""));
+    doc.metrics.provideWord(doc.strs.intern("big"), f0, 1e300);
     CHECK(doc.metrics.word(doc.strs.intern("nan"), 0).px == 0);
     CHECK(doc.metrics.word(doc.strs.intern("big"), 0).px == 1e6);
   }
   {
     Doc doc;
-    CHECK(load("figure/pull-diag.ops", doc) && doc.imageReqs.size() == 1);
+    CHECK(load("figure/pull-diag.ops", doc) && doc.rt.boxNeeds.size() == 1);
     doc.provideImage(0, std::nan(""), 384);  // refused: placeholder + image-load
     bool loadDiag = false;
     for (const Diag& d : doc.diags.items) loadDiag = loadDiag || std::string_view(d.code) == "image-load";
@@ -464,10 +568,10 @@ static void unitHostInputs(const fs::path& root) {
   {
     Doc doc;
     CHECK(load("figure/w-only.ops", doc));
-    for (auto& ir : doc.imageReqs) doc.provideImage(ir.id, 1000, 500);
+    for (u32 i = 0; i < doc.rt.boxNeeds.size(); i++) doc.provideImage(i, 1000, 500);
     auto imgW = [&] {
       for (int i = 0; i < 64 && doc.typeset() != Doc::Status::Ok; i++)
-        mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces, doc.cfg);
+        mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces);
       for (const ParaFrame& fr : doc.layout.paras)
         for (const Fragment& l : fr.lines)
           if (l.kind == FragKind::Image) return suToPx(l.width);
@@ -866,7 +970,7 @@ static void unitFaces() {
   d2.configure(R"({"fonts":{"monoCjk":"\"Sarasa Mono SC\""}})");
   CHECK(d2.faces.family(d2.faces.faceOf(d2.styles.idOf(monoCjk))) == "\"Sarasa Mono SC\"");
   // one metric answer serves every style of the face
-  doc.metrics.provideWord(doc.strs.intern("word"), doc.faces.faceOf(plain), 40, doc.cfg);
+  doc.metrics.provideWord(doc.strs.intern("word"), doc.faces.faceOf(plain), 40);
   CHECK(doc.metrics.hasWord(doc.strs.intern("word"), doc.styles.idOf(red)));
 }
 
@@ -1174,6 +1278,7 @@ int main(int argc, char** argv) {
 
   fuzzRegressions(fs::path(root));
   unitHostInputs(fs::path(root));
+  unitResources(fs::path(root));
   unitOpsWindow(fs::path(root));
   unitAstBytes(fs::path(root));
   unitTokenConformance(fs::path(root));

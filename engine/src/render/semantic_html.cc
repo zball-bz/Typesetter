@@ -1,6 +1,7 @@
 #include "semantic_html.h"
 
 #include "html_writer.h"
+#include "../resource/resource_table.h"
 
 namespace tsr {
 
@@ -9,9 +10,10 @@ namespace {
 constexpr auto esc = escapeHtml;
 
 struct Sem {
-  const Interner& strs;
-  const StyleTable& styles;
+  Interner& strs;
+  StyleTable& styles;
   std::string& out;
+  const ResourceTable* rt;  // answered code tokens (plan P1-19)
 
   const ArgVal* arg(const ContentNode* n, ArgK k) {
     for (const ArgVal& a : n->args)
@@ -45,67 +47,71 @@ struct Sem {
     t.open();
   }
 
+  // a text leaf in its effective style
+  void textRun(StyleId sid, std::string_view text) {
+    // leaf styles are the effective styles (instantiation folds styled
+    // deltas onto leaves — document-model §3); render from them so
+    // token colors, resolver-fabricated bold, and patch styles all
+    // reach the no-JS page. Kind::styled is transparent below.
+    const Styling& st = styles.get(sid);
+    // a superscript nests its emphasis (sup > strong|em): it used to
+    // drop the bold/italic of a marker inside emphasis (plan P1-02)
+    const char* outer = (st.bits & CLS_SUP) ? "sup" : nullptr;
+    const char* inner = (st.bits & CLS_BOLD) ? "strong" : (st.bits & CLS_EM) ? "em" : nullptr;
+    const char* tag = inner ? inner : outer;
+    if (inner && outer) out += "<sup>";
+    std::string style;
+    if (st.fontFamily) {
+      style += "font-family:";
+      esc(style, strs.get(st.fontFamily));
+      style += ";";
+    }
+    if (st.color) {
+      style += "color:";
+      esc(style, strs.get(st.color));
+      style += ";";
+    }
+    if (st.sizePx > 0) {
+      style += "font-size:";
+      fmtPx(style, st.sizePx);
+      style += ";";
+    }
+    if (st.bits & (CLS_UNDER | CLS_OVER | CLS_STRIKE)) {
+      style += "text-decoration:";
+      if (st.bits & CLS_UNDER) style += "underline ";
+      if (st.bits & CLS_OVER) style += "overline ";
+      if (st.bits & CLS_STRIKE) style += "line-through ";
+      style.pop_back();
+      style += ";";
+    }
+    if (!style.empty()) style.pop_back();
+    const bool wrap = tag || !style.empty() || st.lang;
+    if (wrap) {
+      Tag t(out, tag ? tag : "span");
+      if (st.lang) t.attr("lang", strs.get(st.lang));
+      t.style(style);
+      // bold+italic: strong tag + italic style
+      if ((st.bits & CLS_EM) && tag && (st.bits & CLS_BOLD)) t.style("font-style:italic");
+      t.open();
+    }
+    esc(out, text);
+    if (wrap) {
+      out += "</";
+      out += tag ? tag : "span";
+      out += ">";
+    }
+    if (inner && outer) out += "</sup>";
+  }
+
   void inlineKids(const ContentNode* n) {
     for (const ContentNode* k : n->kids) inl(k);
   }
 
   void inl(const ContentNode* n) {
     switch (n->kind) {
-      case Kind::text: {
-        // leaf styles are the effective styles (instantiation folds styled
-        // deltas onto leaves — document-model §3); render from them so
-        // token colors, resolver-fabricated bold, and patch styles all
-        // reach the no-JS page. Kind::styled is transparent below.
-        const Styling& st = styles.get(n->style);
-        // a superscript nests its emphasis (sup > strong|em): it used to
-        // drop the bold/italic of a marker inside emphasis (plan P1-02)
-        const char* outer = (st.bits & CLS_SUP) ? "sup" : nullptr;
-        const char* inner = (st.bits & CLS_BOLD) ? "strong" : (st.bits & CLS_EM) ? "em" : nullptr;
-        const char* tag = inner ? inner : outer;
-        if (inner && outer) out += "<sup>";
-        std::string style;
-        if (st.fontFamily) {
-          style += "font-family:";
-          esc(style, strs.get(st.fontFamily));
-          style += ";";
-        }
-        if (st.color) {
-          style += "color:";
-          esc(style, strs.get(st.color));
-          style += ";";
-        }
-        if (st.sizePx > 0) {
-          style += "font-size:";
-          fmtPx(style, st.sizePx);
-          style += ";";
-        }
-        if (st.bits & (CLS_UNDER | CLS_OVER | CLS_STRIKE)) {
-          style += "text-decoration:";
-          if (st.bits & CLS_UNDER) style += "underline ";
-          if (st.bits & CLS_OVER) style += "overline ";
-          if (st.bits & CLS_STRIKE) style += "line-through ";
-          style.pop_back();
-          style += ";";
-        }
-        if (!style.empty()) style.pop_back();
-        const bool wrap = tag || !style.empty() || st.lang;
-        if (wrap) {
-          Tag t(out, tag ? tag : "span");
-          if (st.lang) t.attr("lang", strs.get(st.lang));
-          t.style(style);
-          // bold+italic: strong tag + italic style
-          if ((st.bits & CLS_EM) && tag && (st.bits & CLS_BOLD)) t.style("font-style:italic");
-          t.open();
-        }
-        esc(out, strs.get(n->str));
-        if (wrap) {
-          out += "</";
-          out += tag ? tag : "span";
-          out += ">";
-        }
-        if (inner && outer) out += "</sup>";
+      case Kind::text:
+        textRun(n->style, strs.get(n->str));
         return;
-      }
       case Kind::styled:
         // transparent: the leaves carry the folded styles (above)
         inlineKids(n);
@@ -282,8 +288,18 @@ struct Sem {
           if (!lang.empty()) t.attr("class", "language-" + std::string(lang));
           t.open();
         }
-        if (n->kids.size() == 1 && n->kids[0]->kind == Kind::text) {
-          esc(out, strs.get(n->kids[0]->str));
+        const ContentNode* body = !n->kids.empty() && n->kids[0]->kind == Kind::text ? n->kids[0] : nullptr;
+        const TokenNeed* tok = body && rt ? rt->tokens(attrStr(n, ArgK::lang), body->str) : nullptr;
+        if (tok && tok->st == ResState::Ready) {
+          // its code tokens, folded here (the tree is never rewritten)
+          std::vector<std::vector<TokenRun>> lines;
+          tokenLines(strs.get(body->str), body->style, tok->toks.data(), tok->toks.size(), strs, styles, lines);
+          for (size_t li = 0; li < lines.size(); li++) {
+            if (li) out += "\n";
+            for (const TokenRun& r : lines[li]) textRun(r.style, r.text);
+          }
+        } else if (n->kids.size() == 1 && body) {
+          esc(out, strs.get(body->str));
         } else {
           // structured lines: seq of styled runs per child (CH1); the
           // trailing sidecar group is display-layer only (verbatim §5)
@@ -424,14 +440,14 @@ struct Sem {
 
 }  // namespace
 
-std::string renderSemantic(const ContentTree& tree, const Interner& strs,
-                           const StyleTable& styles) {
+std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& styles,
+                           const ResourceTable* rt) {
   std::string out;
   out += "<div class=\"tsr-flow\">\n";
   if (tree.root) {
     int pid = 0;
     for (const ContentNode* k : tree.root->kids) {
-      Sem s{strs, styles, out};
+      Sem s{strs, styles, out, rt};
       s.block(k, pid);  // pid mirrors emitDoc's per-root-child numbering
       pid++;
     }

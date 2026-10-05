@@ -1,0 +1,26 @@
+// What the engine may ask for after Ingest (plan P1-19; design T9 A1) — the
+// one vocabulary of the resource pull. Read by tools/gen-res.mjs, which
+// generates the column tables of both codecs: engine/src/resource/
+// resources.gen.h and runtime/src/shared/resources.gen.mjs (the wire format
+// is docs/host-protocol-design.md §5).
+//
+// Admission rule: a row is a datum the engine can obtain only after Ingest,
+// keyed by content the engine computes. Anything known before Ingest is a
+// setting or a declared input, never a resource.
+//
+// RES_VERSION(n): raised by any change of a row or of the wire format.
+// RES(name, id, cache, docProviders, "key columns", "answer columns")
+//   cache:        Content (answers are a function of the key: a session may
+//                 keep them) | Host (only the host's cache, with validators) |
+//                 None
+//   docProviders: whether a document-registered provider may answer (keys of
+//                 authored content only)
+//   columns:      name:type, types Str (a string of the batch's blob),
+//                 MetricKey (a row of the batch's metric-key table), U8, U16,
+//                 U32, F64, U32List
+RES_VERSION(1)
+RES(textWidth, 1, Content, false, "mk:MetricKey text:Str", "px:F64")
+RES(fontVmet, 2, Content, false, "mk:MetricKey", "asc:F64 desc:F64")
+RES(fontFace, 3, None, false, "family:Str src:Str weight:U16 style:U8", "status:U8")
+RES(codeTokens, 4, Content, true, "lang:Str text:Str", "runs:U32List")
+RES(boxInfo, 5, Host, true, "kind:U8 ref:Str availPx:F64", "w:F64 h:F64 baseline:F64")

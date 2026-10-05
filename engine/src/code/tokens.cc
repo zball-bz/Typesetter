@@ -17,49 +17,42 @@ int tokenTagFromCapture(std::string_view name) {
   return -1;
 }
 
-void foldTokens(ContentNode* cb, const CodeToken* toks, size_t n,
-                Arena& arena, Interner& strs, StyleTable& styles) {
-  if (cb->kids.empty() || cb->kids[0]->kind != Kind::text) return;
-  // a trailing sidecar group (and anything after the body text) survives
-  std::vector<ContentNode*> tail(cb->kids.begin() + 1, cb->kids.end());
-  const ContentNode* bodyNode = cb->kids[0];
-  std::string_view body = strs.get(bodyNode->str);
-  StyleId baseStyle = bodyNode->style;
-  Span span = bodyNode->span;
+bool validTokens(std::string_view body, const CodeToken* toks, size_t n) {
+  auto boundary = [&](u32 at) { return at == body.size() || (at < body.size() && ((u8)body[at] & 0xC0) != 0x80); };
+  u32 covered = 0;
+  for (size_t i = 0; i < n; i++) {
+    const CodeToken& t = toks[i];
+    if (t.tag >= kTokenTagCount || t.start >= t.end || t.end > body.size() || t.start < covered ||
+        !boundary(t.start) || !boundary(t.end))
+      return false;
+    covered = t.end;
+  }
+  return true;
+}
 
-  auto mkText = [&](std::string_view s, StyleId st) {
-    ContentNode* t = arena.make<ContentNode>();
-    t->kind = Kind::text;
-    t->span = span;
-    t->style = st;
-    t->str = strs.intern(s);
-    return t;
-  };
+void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size_t n, Interner& strs,
+                StyleTable& styles, std::vector<std::vector<TokenRun>>& lines) {
+  lines.clear();
   // one interned style per tag, created lazily
   StyleId tagStyle[kTokenTagCount];
   bool tagStyleMade[kTokenTagCount] = {false};
   auto styleFor = [&](u8 tag) {
     if (!tagStyleMade[tag]) {
-      Styling s = styles.get(baseStyle);
+      Styling s = styles.get(base);
       std::string var = std::string("var(--tsr-tok-") + kTokenTags[tag] + ")";
       s.color = strs.intern(var);
-      if (tag == 3) s.bits |= CLS_EM;  // comment: italic (duplex contract)
+      if (tag == kTokenTagComment) s.bits |= CLS_EM;  // comment: italic (duplex contract)
       tagStyle[tag] = styles.idOf(s);
       tagStyleMade[tag] = true;
     }
     return tagStyle[tag];
   };
-
-  std::vector<ContentNode*> lines;
   size_t ti = 0;
   size_t pos = 0;
   while (pos <= body.size()) {
     size_t eol = body.find('\n', pos);
     if (eol == std::string_view::npos) eol = body.size();
-    ContentNode* line = arena.make<ContentNode>();
-    line->kind = Kind::seq;
-    line->span = span;
-    line->style = cb->style;
+    std::vector<TokenRun>& line = lines.emplace_back();
     while (ti < n && toks[ti].end <= pos) ti++;
     size_t scan = ti;
     size_t cur = pos;
@@ -67,25 +60,21 @@ void foldTokens(ContentNode* cb, const CodeToken* toks, size_t n,
       if (scan < n && toks[scan].start < eol && toks[scan].end > cur) {
         size_t ts = toks[scan].start > cur ? toks[scan].start : cur;
         size_t te = toks[scan].end < eol ? toks[scan].end : eol;
-        if (ts > cur) line->kids.push_back(mkText(body.substr(cur, ts - cur), baseStyle));
-        line->kids.push_back(mkText(body.substr(ts, te - ts), styleFor(toks[scan].tag)));
+        if (ts > cur) line.push_back({body.substr(cur, ts - cur), base, false});
+        line.push_back({body.substr(ts, te - ts), styleFor(toks[scan].tag), toks[scan].tag == kTokenTagComment});
         cur = te;
         if (toks[scan].end <= eol) scan++;
         continue;
       }
-      // no token covering cur on this line: emit plain up to the next one
+      // no token covering cur on this line: plain up to the next one
       size_t stop = eol;
-      if (scan < n && toks[scan].start < eol && toks[scan].start > cur)
-        stop = toks[scan].start;
-      line->kids.push_back(mkText(body.substr(cur, stop - cur), baseStyle));
+      if (scan < n && toks[scan].start < eol && toks[scan].start > cur) stop = toks[scan].start;
+      line.push_back({body.substr(cur, stop - cur), base, false});
       cur = stop;
     }
-    lines.push_back(line);
     if (eol == body.size()) break;
     pos = eol + 1;
   }
-  cb->kids.assign(lines.begin(), lines.end());
-  cb->kids.insert(cb->kids.end(), tail.begin(), tail.end());
 }
 
 }  // namespace tsr

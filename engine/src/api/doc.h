@@ -8,6 +8,7 @@
 #include "../codegen/codegen.h"
 #include "../resolve/resolve.h"
 #include "../boxtree/build.h"
+#include "../resource/resource_table.h"
 #include "../layout/layout.h"
 #include "../layout/paginate.h"
 #include "../render/html_writer.h"
@@ -36,26 +37,10 @@ struct Doc {
   const Registry* registry = &Registry::builtin();
   Index index;
 
-  // NEED_TOKENS pull state (code-design.md §2): codeblocks with a language
-  // and a plain body wait for a token provider before emit.
-  struct TokenReq {
-    u32 id = 0;
-    ContentNode* node = nullptr;
-    StrRef lang = 0, body = 0;
-    bool provided = false;
-  };
-  std::vector<TokenReq> tokenReqs;
-
-  // NEED_IMAGES pull state (figure-design.md §2): image nodes without
-  // intrinsic dims wait for the host — the engine wants CSS px, not pixels.
-  struct ImageReq {
-    u32 id = 0;
-    ContentNode* node = nullptr;
-    StrRef src = 0;
-    Span span;  // the node's, else its innermost spanned ancestor's (diagnostics)
-    bool provided = false;
-  };
-  std::vector<ImageReq> imageReqs;
+  // what the engine asks the host for after Ingest (plan P1-19;
+  // resource/resources.def): code tokens and image sizes here, widths and
+  // vertical metrics in the MetricStore
+  ResourceTable rt;
 
   BoxTree boxtree;  // the block structure (plan P1-18)
   std::vector<TopBlock> tops;
@@ -78,14 +63,6 @@ struct Doc {
   }
   // the ops this document was ingested from: a fork rebuilds from them
   std::string opsBytes;
-  // host answers, retained so a fork does not ask again
-  struct TokenAnswer {
-    std::string lang, body;
-    std::vector<CodeToken> toks;
-  };
-  std::vector<TokenAnswer> tokenAnswers;
-  std::vector<std::pair<std::string, std::pair<double, double>>> imageAnswers;  // src → w, h
-
   enum class Status { Ok, NeedMeasure };
 
   Doc() {
@@ -144,27 +121,32 @@ struct Doc {
     }
     f.validThrough = (int)Stage::Execute;
     if (!f.ingest((const u8*)opsBytes.data(), opsBytes.size())) return true;
-    for (const TokenReq& r : f.tokenReqs) {
-      std::string_view lang = f.strs.get(r.lang), body = f.strs.get(r.body);
-      for (const TokenAnswer& a : tokenAnswers)
-        if (a.lang == lang && a.body == body) {
-          f.provideTokens(r.id, a.toks.data(), a.toks.size());
-          break;
-        }
+    // settled answers replay by key (content-keyed: the same key, the same
+    // answer), so the fork does not ask again
+    for (u32 i = 0; i < f.rt.tokenNeeds.size(); i++) {
+      const TokenNeed& t = f.rt.tokenNeeds[i];
+      if (t.st != ResState::Pending) continue;
+      const TokenNeed* src = rt.tokens(strs.find(f.strs.get(t.lang)), strs.find(f.strs.get(t.body)));
+      if (src && src->st != ResState::Pending) f.settleTokens(i, src->toks.data(), src->toks.size(), src->st);
     }
-    for (const ImageReq& r : f.imageReqs) {
-      std::string_view src = f.strs.get(r.src);
-      for (const auto& [s, wh] : imageAnswers)
-        if (s == src) {
-          f.provideImage(r.id, wh.first, wh.second);
-          break;
-        }
+    for (u32 i = 0; i < f.rt.boxNeeds.size(); i++) {
+      const BoxNeed& b = f.rt.boxNeeds[i];
+      if (b.st != ResState::Pending) continue;
+      const BoxNeed* src = rt.box(strs.find(f.strs.get(b.src)));
+      if (src && src->st != ResState::Pending) f.settleBox(i, src->w, src->h, src->st == ResState::Failed);
     }
     return true;
   }
 
 
+  // A document compiles and ingests once (finding
+  // api-measure-code/unchecked-boundary-invariants): a second call is refused
+  // with a diagnostic instead of accumulating arena, diagnostics and needs.
   void compile(std::string source) {
+    if (validThrough >= (int)Stage::Compile) {
+      diags.add(Sev::Error, "doc-reuse", {}, "compile on a document that already compiled: use a new document");
+      return;
+    }
     diags.begin(DiagOrigin::Compile);
     validThrough = (int)Stage::Compile;
     src.init(std::move(source));
@@ -175,6 +157,10 @@ struct Doc {
 
   // Ingest (decode + instantiate) and Resolve in one call, as hosts use it.
   bool ingest(const u8* buf, size_t len) {
+    if (done(Stage::Ingest)) {
+      diags.add(Sev::Error, "doc-reuse", {}, "ingest on a document that already ingested: use a new document");
+      return false;
+    }
     opsBytes.assign((const char*)buf, len);
     if (!stageIngest()) return false;
     stageResolve();
@@ -196,17 +182,9 @@ struct Doc {
     diags.begin(DiagOrigin::Resolve);
     extractSidecars(tree.root, arena, strs, styles, diags);
     resolveDoc(tree, arena, strs, styles, cfg, diags, *registry, index);
-    tokenReqs.clear();
-    scanTokenReqs(tree.root);
-    // the engine tokenizes its own language (plan P1-09; code-design §2):
-    // a 'tsm' code block never waits for the host
-    for (const TokenReq& r : std::vector<TokenReq>(tokenReqs))
-      if (strs.get(r.lang) == "tsm") {
-        std::vector<CodeToken> toks = syntaxTokens(strs.get(r.body));
-        provideTokens(r.id, toks.data(), toks.size());
-      }
-    imageReqs.clear();
-    scanImageReqs(tree.root);
+    rt.clear();
+    scanTokenNeeds(tree.root);
+    scanImageNeeds(tree.root);
     validThrough = (int)Stage::Resolve;
   }
 
@@ -232,134 +210,273 @@ struct Doc {
   }
 
 
-  void scanTokenReqs(ContentNode* n) {
+  // a code block with a language and a plain body needs its tokens; the
+  // engine answers its own language (plan P1-09; code-design §2): 'tsm'
+  void scanTokenNeeds(const ContentNode* n) {
     if (!n) return;
-    if (n->kind == Kind::codeblock && !n->kids.empty() &&
-        n->kids[0]->kind == Kind::text) {
-      StrRef lang = 0;
-      for (const ArgVal& a : n->args)
-        if (a.key == ArgK::lang && a.tag == ArgTag::Str) lang = a.ref;
+    if (n->kind == Kind::codeblock && !n->kids.empty() && n->kids[0]->kind == Kind::text) {
+      const StrRef lang = attrStr(n, ArgK::lang);
       if (lang && !strs.get(lang).empty()) {
-        TokenReq r;
-        r.id = (u32)tokenReqs.size();
-        r.node = n;
-        r.lang = lang;
-        r.body = n->kids[0]->str;
-        tokenReqs.push_back(r);
+        const u32 i = rt.needTokens(lang, n->kids[0]->str);
+        if (rt.tokenNeeds[i].st == ResState::Pending && strs.get(lang) == "tsm") {
+          std::vector<CodeToken> toks = syntaxTokens(strs.get(n->kids[0]->str));
+          settleTokens(i, toks.data(), toks.size(), ResState::Ready);
+        }
       }
     }
-    for (ContentNode* k : n->kids) scanTokenReqs(k);
+    for (const ContentNode* k : n->kids) scanTokenNeeds(k);
   }
 
-  bool tokensPending() const {
-    for (const TokenReq& r : tokenReqs)
-      if (!r.provided) return true;
-    return false;
-  }
-
-  void scanImageReqs(ContentNode* n, Span outer = {}) {
+  // an image without both declared dims needs its intrinsic size
+  // (figure-design.md §2): the engine wants CSS px, not pixels
+  void scanImageNeeds(const ContentNode* n, Span outer = {}) {
     if (!n) return;
     if (!n->span.empty()) outer = n->span;
     if (n->kind == Kind::image) {
-      double iw = 0, ih = 0;
-      StrRef src = 0;
-      for (const ArgVal& a : n->args) {
-        if (a.key == ArgK::w && a.tag == ArgTag::Num) iw = a.num;
-        if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
-        if (a.key == ArgK::src && a.tag == ArgTag::Str) src = a.ref;
-      }
+      const double iw = attrNum(n, ArgK::w, 0), ih = attrNum(n, ArgK::h, 0);
+      const StrRef src = attrStr(n, ArgK::src);
       // an unsafe scheme is reported here, once (plan P1-16: not by emit,
       // which re-runs), and renders the placeholder without ever fetching
       if (src && !safeImageSrc(strs.get(src)))
         diags.add(Sev::Warning, "image-src", n->span.empty() ? outer : n->span, "image src scheme not allowed");
-      // author-declared dims (or an empty/unsafe src) skip the pull
-      if (src && !(iw > 0 && ih > 0) && safeImageSrc(strs.get(src))) {
-        ImageReq r;
-        r.id = (u32)imageReqs.size();
-        r.node = n;
-        r.src = src;
-        r.span = outer;
-        imageReqs.push_back(r);
-      }
+      else if (src && !(iw > 0 && ih > 0))
+        rt.needBox(src, outer);
     }
-    for (ContentNode* k : n->kids) scanImageReqs(k, outer);
+    for (const ContentNode* k : n->kids) scanImageNeeds(k, outer);
   }
 
-  bool imagesPending() const {
-    for (const ImageReq& r : imageReqs)
-      if (!r.provided) return true;
-    return false;
+  // ---- settling needs (the wire's rows and the old per-kind shims) --------
+  // Tokens: an unacceptable answer fails whole (plain code, provider-invalid).
+  void settleTokens(u32 i, const CodeToken* toks, size_t n, ResState st) {
+    if (i >= rt.tokenNeeds.size() || rt.tokenNeeds[i].st != ResState::Pending) return;
+    TokenNeed& t = rt.tokenNeeds[i];
+    if (st == ResState::Ready && !validTokens(strs.get(t.body), toks, n)) {
+      diags.addAs(DiagOrigin::Provide, Sev::Warning, "provider-invalid", {},
+                  "code tokens for '" + std::string(strs.get(t.lang)) + "' rejected: unsorted, overlapping, "
+                  "off a UTF-8 boundary, past the body or of an unknown tag");
+      st = ResState::Failed;
+    }
+    t.st = st;
+    if (st == ResState::Ready) t.toks.assign(toks, toks + n);
+    invalidateFrom(Stage::Emit);
   }
-
-  // provider contract: EVERY request must be answered; 0×0 = load failure
-  // (placeholder + warning), mirroring the token loop.
-  void provideImage(u32 id, double wPx, double hPx) {
-    if (id >= imageReqs.size() || imageReqs[id].provided) return;
-    ImageReq& r = imageReqs[id];
-    r.provided = true;
-    auto setNum = [&](ArgK k, double v) {
-      for (ArgVal& a : r.node->args)
-        if (a.key == k) {
-          a.tag = ArgTag::Num;
-          a.num = v;
-          return;
-        }
-      ArgVal a;
-      a.key = k;
-      a.tag = ArgTag::Num;
-      a.num = v;
-      r.node->args.push_back(a);
-    };
-    if (std::isfinite(wPx) && std::isfinite(hPx) && wPx > 0 && hPx > 0) {
-      // intrinsic dims fill only what the author left out (defect #24,
-      // D-H01 interim): a declared w (or h) stays and the other side
-      // follows the image's aspect ratio
-      double aw = 0, ah = 0;
-      for (const ArgVal& a : r.node->args) {
-        if (a.key == ArgK::w && a.tag == ArgTag::Num) aw = a.num;
-        if (a.key == ArgK::h && a.tag == ArgTag::Num) ah = a.num;
-      }
-      if (aw > 0) setNum(ArgK::h, aw * hPx / wPx);
-      else if (ah > 0) setNum(ArgK::w, ah * wPx / hPx);
-      else {
-        setNum(ArgK::w, wPx);
-        setNum(ArgK::h, hPx);
-      }
+  // Box sizes: 0×0 (or anything not finite and positive) is a failed load:
+  // a placeholder and a warning. The author's own dims stay theirs (emit
+  // fills only what they left out — defect #24).
+  void settleBox(u32 i, double wPx, double hPx, bool failed) {
+    if (i >= rt.boxNeeds.size() || rt.boxNeeds[i].st != ResState::Pending) return;
+    BoxNeed& b = rt.boxNeeds[i];
+    if (!failed && std::isfinite(wPx) && std::isfinite(hPx) && wPx > 0 && hPx > 0) {
+      b.st = ResState::Ready;
+      b.w = wPx;
+      b.h = hPx;
     } else {
-      diags.addAs(DiagOrigin::Provide, Sev::Warning, "image-load", r.span,
-                  "image failed to load: " + std::string(strs.get(r.src)));
+      b.st = ResState::Failed;
+      diags.addAs(DiagOrigin::Provide, Sev::Warning, "image-load", b.span,
+                  "image failed to load: " + std::string(strs.get(b.src)));
     }
-    imageAnswers.push_back({std::string(strs.get(r.src)), {wPx, hPx}});
     invalidateFrom(Stage::Emit);
   }
-
-  // provider contract: EVERY request must be answered (empty = plain code),
-  // mirroring the measurement loop. Tokens sorted, non-overlapping.
-  // Host input is checked here (plan P0-11): a token with an unknown tag, an
-  // empty or out-of-body range, a boundary inside a UTF-8 sequence, or out
-  // of order / overlapping is dropped (its text stays plain).
+  // the old per-kind provide exports (shims of tsr2_provide): an answer to
+  // no pending need is reported, never silently dropped
+  void provideImage(u32 id, double wPx, double hPx) {
+    if (id >= rt.boxNeeds.size() || rt.boxNeeds[id].st != ResState::Pending) return unmatched("image", id);
+    settleBox(id, wPx, hPx, false);
+  }
   void provideTokens(u32 id, const CodeToken* toks, size_t n) {
-    if (id >= tokenReqs.size() || tokenReqs[id].provided) return;
-    TokenReq& r = tokenReqs[id];
-    r.provided = true;
-    std::string_view body = strs.get(r.body);
-    auto boundary = [&](u32 at) {
-      return at == body.size() || (at < body.size() && ((u8)body[at] & 0xC0) != 0x80);
-    };
-    std::vector<CodeToken> ok;
-    ok.reserve(n);
-    u32 covered = 0;
-    for (size_t i = 0; i < n; i++) {
-      const CodeToken& t = toks[i];
-      if (t.tag >= kTokenTagCount || t.start >= t.end || t.end > body.size() ||
-          t.start < covered || !boundary(t.start) || !boundary(t.end))
-        continue;
-      ok.push_back(t);
-      covered = t.end;
+    if (id >= rt.tokenNeeds.size() || rt.tokenNeeds[id].st != ResState::Pending) return unmatched("tokens", id);
+    settleTokens(id, toks, n, ResState::Ready);
+  }
+  void unmatched(const char* kind, u32 id) {
+    diags.addAs(DiagOrigin::Provide, Sev::Warning, "provider-invalid", {},
+                std::string(kind) + " answer " + std::to_string(id) + " matches no pending need");
+  }
+
+  // ---- the resource pull (plan P1-19; docs/host-protocol-design.md §5) -----
+  // A new batch of every pending need (of the kinds in `kinds`, bit = kind
+  // id; 0 = all: a host that answers only some kinds asks only for them);
+  // the host answers it with provide().
+  void requests(std::string& out, u32 kinds = 0) {
+    auto want = [&](ResKind k) { return kinds == 0 || (kinds >> (u16)k & 1); };
+    ResourceTable::Batch& b = rt.batch;
+    b = {};
+    b.id = rt.nextBatch++;
+    b.open = true;
+    if (!rt.barrierPending() && (want(ResKind::textWidth) || want(ResKind::fontVmet))) {
+      MeasureRequest mr = pendingRequests();
+      if (want(ResKind::textWidth)) b.words = std::move(mr.words);
+      if (want(ResKind::fontVmet)) b.vmets = std::move(mr.vmetFaces);
     }
-    tokenAnswers.push_back({std::string(strs.get(r.lang)), std::string(body), ok});
-    if (!ok.empty()) foldTokens(r.node, ok.data(), ok.size(), arena, strs, styles);
-    invalidateFrom(Stage::Emit);
+    for (u32 i = 0; i < rt.tokenNeeds.size() && want(ResKind::codeTokens); i++)
+      if (rt.tokenNeeds[i].st == ResState::Pending) b.tokens.push_back(i);
+    for (u32 i = 0; i < rt.boxNeeds.size() && want(ResKind::boxInfo); i++)
+      if (rt.boxNeeds[i].st == ResState::Pending) b.boxes.push_back(i);
+    WireBatch w;
+    w.batch = b.id;
+    std::unordered_map<StrRef, u32> strIdx;
+    auto str = [&](StrRef r) -> u32 {
+      auto it = strIdx.find(r);
+      if (it != strIdx.end()) return it->second;
+      return strIdx[r] = w.str(strs.get(r));
+    };
+    std::unordered_map<FaceId, u32> mkIdx;
+    auto mk = [&](FaceId f) -> u32 {
+      auto it = mkIdx.find(f);
+      if (it != mkIdx.end()) return it->second;
+      const FaceKey& k = faces.get(f);
+      WireMetricKey m;
+      m.stack = str(k.family);
+      m.faceDigest = k.faceDigest;
+      m.sizePx = k.sizePx;
+      m.weight = k.weight;
+      m.italic = k.italic;
+      m.features = str(k.features);
+      m.lang = str(k.lang);
+      m.dppx = k.dppx;
+      w.mks.push_back(m);
+      return mkIdx[f] = (u32)w.mks.size() - 1;
+    };
+    auto kind = [&](ResKind k, size_t n) -> WireKind& {
+      WireKind& wk = w.kinds.emplace_back();
+      wk.kind = (u16)k;
+      wk.rows.resize(n);
+      for (u32 i = 0; i < n; i++) wk.rows[i].resId = i;
+      return wk;
+    };
+    if (!b.boxes.empty()) {
+      WireKind& k = kind(ResKind::boxInfo, b.boxes.size());
+      for (size_t i = 0; i < b.boxes.size(); i++) {
+        k.rows[i].col[0] = 0;  // an image
+        k.rows[i].col[1] = str(rt.boxNeeds[b.boxes[i]].src);
+      }
+    }
+    if (!b.tokens.empty()) {
+      WireKind& k = kind(ResKind::codeTokens, b.tokens.size());
+      for (size_t i = 0; i < b.tokens.size(); i++) {
+        k.rows[i].col[0] = str(rt.tokenNeeds[b.tokens[i]].lang);
+        k.rows[i].col[1] = str(rt.tokenNeeds[b.tokens[i]].body);
+      }
+    }
+    if (!b.vmets.empty()) {
+      WireKind& k = kind(ResKind::fontVmet, b.vmets.size());
+      for (size_t i = 0; i < b.vmets.size(); i++) k.rows[i].col[0] = mk(b.vmets[i]);
+    }
+    if (!b.words.empty()) {
+      WireKind& k = kind(ResKind::textWidth, b.words.size());
+      for (size_t i = 0; i < b.words.size(); i++) {
+        k.rows[i].col[0] = mk(b.words[i].face);
+        k.rows[i].col[1] = str(b.words[i].str);
+      }
+    }
+    encodeWire(w, false, out);
+  }
+
+  // The host's answer to the open batch: every row is validated; a row that
+  // is missing, invalid or failed degrades the quantity that consumed it
+  // (design T9 A1) with one diagnostic per kind. false: rejected whole (not
+  // a well-formed answer to the open batch) — the needs stay pending.
+  bool provide(const u8* p, size_t n) {
+    WireBatch a;
+    std::string err;
+    ResourceTable::Batch& b = rt.batch;
+    if (!decodeWire(p, n, true, a, err) || !b.open || a.batch != b.id) {
+      if (err.empty()) err = "answers batch " + std::to_string(a.batch) + ", the open batch is " + std::to_string(b.id);
+      diags.addAs(DiagOrigin::Provide, Sev::Warning, "provider-invalid", {}, "resource answer rejected: " + err);
+      return false;
+    }
+    b.open = false;
+    struct Tally {
+      u32 missing = 0, invalid = 0, failed = 0;
+    };
+    Tally tally[kResKindCount + 1] = {};
+    std::vector<u8> seenWords(b.words.size()), seenVmets(b.vmets.size()), seenTokens(b.tokens.size()),
+        seenBoxes(b.boxes.size());
+    auto fresh = [&](std::vector<u8>& seen, u32 id, Tally& t) {
+      if (id >= seen.size() || seen[id]) {
+        t.invalid++;
+        return false;
+      }
+      seen[id] = 1;
+      return true;
+    };
+    auto okNum = [](double v) { return std::isfinite(v) && v >= 0; };
+    for (const WireKind& k : a.kinds) {
+      Tally& t = tally[k.kind <= kResKindCount ? k.kind : 0];
+      for (const WireRow& r : k.rows) {
+        const bool ok = r.status == 0;
+        switch ((ResKind)k.kind) {
+          case ResKind::textWidth:
+            if (!fresh(seenWords, r.resId, t)) break;
+            if (ok && okNum(r.f64(0))) metrics.provideWord(b.words[r.resId].str, b.words[r.resId].face, r.f64(0));
+            else failWord(b.words[r.resId], ok ? t.invalid : t.failed);
+            break;
+          case ResKind::fontVmet:
+            if (!fresh(seenVmets, r.resId, t)) break;
+            if (ok && okNum(r.f64(0)) && okNum(r.f64(1))) metrics.provideVmet(b.vmets[r.resId], r.f64(0), r.f64(1));
+            else failVmet(b.vmets[r.resId], ok ? t.invalid : t.failed);
+            break;
+          case ResKind::codeTokens: {
+            if (!fresh(seenTokens, r.resId, t)) break;
+            std::vector<CodeToken> toks;
+            const bool shaped = r.list.size() % 3 == 0;
+            for (size_t i = 0; shaped && i + 2 < r.list.size(); i += 3)
+              toks.push_back({r.list[i], r.list[i + 1], (u8)std::min<u32>(r.list[i + 2], 255)});
+            if (!ok) t.failed++;
+            settleTokens(b.tokens[r.resId], toks.data(), toks.size(),
+                         ok && shaped ? ResState::Ready : ResState::Failed);
+            break;
+          }
+          case ResKind::boxInfo:
+            if (!fresh(seenBoxes, r.resId, t)) break;
+            settleBox(b.boxes[r.resId], r.f64(0), r.f64(1), !ok);
+            break;
+          default:
+            t.invalid++;
+            break;
+        }
+      }
+    }
+    // a row of the batch without an answer fails as 'provider-missing'
+    Tally& tw = tally[(u16)ResKind::textWidth];
+    for (u32 i = 0; i < seenWords.size(); i++)
+      if (!seenWords[i]) failWord(b.words[i], tw.missing);
+    Tally& tv = tally[(u16)ResKind::fontVmet];
+    for (u32 i = 0; i < seenVmets.size(); i++)
+      if (!seenVmets[i]) failVmet(b.vmets[i], tv.missing);
+    for (u32 i = 0; i < seenTokens.size(); i++)
+      if (!seenTokens[i]) {
+        tally[(u16)ResKind::codeTokens].missing++;
+        settleTokens(b.tokens[i], nullptr, 0, ResState::Failed);
+      }
+    for (u32 i = 0; i < seenBoxes.size(); i++)
+      if (!seenBoxes[i]) {
+        tally[(u16)ResKind::boxInfo].missing++;
+        settleBox(b.boxes[i], 0, 0, true);
+      }
+    for (const ResKindInfo& k : kResKinds) {
+      const Tally& t = tally[(u16)k.kind];
+      if (t.missing)
+        diags.addAs(DiagOrigin::Provide, Sev::Warning, "provider-missing", {},
+                    std::to_string(t.missing) + " " + k.name + " answer(s) missing");
+      if (t.invalid)
+        diags.addAs(DiagOrigin::Provide, Sev::Warning, "provider-invalid", {},
+                    std::to_string(t.invalid) + " " + k.name + " answer(s) invalid");
+      if (t.failed)
+        diags.addAs(DiagOrigin::Provide, Sev::Warning, "measure-failed", {},
+                    std::to_string(t.failed) + " " + k.name + " answer(s) failed");
+    }
+    return true;
+  }
+  // a width the host did not give: the em bound (design T9 A1)
+  void failWord(const MeasureItem& w, u32& count) {
+    count++;
+    metrics.provideWord(w.str, w.face, failedWidthPx(strs.get(w.str), faces.get(w.face).sizePx));
+  }
+  // vertical metrics the host did not give: ascent 1em, descent 0.3em
+  void failVmet(FaceId f, u32& count) {
+    count++;
+    const double px = faces.get(f).sizePx;
+    metrics.provideVmet(f, px, 0.3 * px);
   }
 
   // Drives Emit → Measure → Layout (breaking included) as far as the host's answers
@@ -367,7 +484,7 @@ struct Doc {
   // caller's (compile, execute, ingest).
   Status typeset() {
     if (!done(Stage::Resolve)) return Status::NeedMeasure;
-    if (tokensPending() || imagesPending()) return Status::NeedMeasure;
+    if (rt.barrierPending()) return Status::NeedMeasure;
     if (done(Stage::Layout)) return Status::Ok;
     if (!done(Stage::BoxTree)) {  // the block structure (plan P1-18): once per resolved tree
       boxtree = buildBoxTree(tree, strs, styles, cfg);
@@ -377,13 +494,14 @@ struct Doc {
       diags.begin(DiagOrigin::Emit);  // a re-emit replaces its diagnostics
       mathTextMissing.clear();
       MathTextCtx mt{&metrics, &styles, &strs, cfg.baseSizePx, &mathTextMissing};
-      tops = emitDoc(boxtree, arena, strs, styles, cfg, diags, &mt);
+      tops = emitDoc(boxtree, arena, strs, styles, cfg, diags, &mt, &rt);
       // formulas with unmeasured text-font names laid out with stand-ins:
       // ask for the metrics and emit again once they are here
       if (!mathTextMissing.empty()) return Status::NeedMeasure;
       validThrough = (int)Stage::Emit;
     }
     if (!done(Stage::Measure)) {
+      metrics.setEpsilon((Su)cfg.epsilonPerWordSu);  // Measure quantizes (plan P1-19)
       ObjectEnv oe{arena, strs, styles, cfg.baseSizePx};
       MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg, &oe);
       if (!missing.empty()) return Status::NeedMeasure;
@@ -453,7 +571,14 @@ struct Doc {
     return {};
   }
 
+  // rendering needs a converged typeset (finding unchecked-boundary-invariants)
+  bool renderReady() {
+    if (done(Stage::Layout)) return true;
+    diags.add(Sev::Error, "render-precondition", {}, "render before the typeset converged");
+    return false;
+  }
   std::string render() {
+    if (!renderReady()) return {};
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
     // paint (plan P1-18): each block's DisplayList, written by the
@@ -472,6 +597,7 @@ struct Doc {
 
   // paged rendering for print (pages-design.md §2); needs a finished layout
   std::string renderPaged(double pageHeightPx) {
+    if (!renderReady()) return {};
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
     // the sheets (layout/paginate.cc), each band's nodes rebased into its
@@ -503,7 +629,7 @@ struct Doc {
   std::string renderFallback() {
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
-    std::string html = renderSemantic(tree, strs, styles);
+    std::string html = renderSemantic(tree, strs, styles, &rt);
     reportWriterDefects();
     return html;
   }

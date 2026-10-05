@@ -42,6 +42,15 @@ typeset() → NEED_TOKENS { blockId, lang }
 tsr_provide_tokens(doc, blockId, (start,end,tagId)*)  → resume
 ```
 
+As built (plan P1-19): the pull is the `codeTokens` row of the resource
+table (docs/host-protocol-design.md §4a), keyed by (language, body) — two
+identical blocks ask once — and answered in the binary batch
+(`tsr2_requests` / `tsr2_provide`; `tsr_provide_tokens` stays as a shim).
+The answer is never folded into the tree: emit and the semantic product
+both apply it (`tokenLines`, code/tokens.h). An unacceptable answer
+(unsorted, overlapping, off a UTF-8 boundary, past the body, an unknown
+tag) fails whole: plain code and a `provider-invalid` warning.
+
 - Why not linking in: it would force MAIN_MODULE/dlopen on the engine
   module (size, call overhead, build complexity) for zero layout benefit.
   The engine stays the layout authority; the tokenizer is an async

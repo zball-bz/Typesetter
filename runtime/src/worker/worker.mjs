@@ -10,6 +10,7 @@ import { CanvasMeasurer } from './canvas_measure.mjs';
 import { tokenize } from './tokens.mjs';
 import { sniffImageSize } from './image_sniff.mjs';
 import { checkAbi } from '../shared/abi.mjs';
+import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
 import { POLICY } from '../shared/settings.gen.mjs';
 
 // host policy (schema "policy"): createEngine({policy}) overrides it
@@ -152,6 +153,22 @@ function imageSize(src, baseUrl) {
   return p;
 }
 
+// one request batch, copied out of wasm memory ([u32 length][TSRQ …])
+function takeRequests(M, doc, kinds = 0) {
+  const p = M._tsr2_requests(doc, kinds);
+  const len = new DataView(M.HEAPU8.buffer).getUint32(p, true);
+  return decodeRequest(M.HEAPU8.slice(p + 4, p + 4 + len));
+}
+function provideAnswer(M, doc, ans) {
+  const bytes = encodeAnswer(ans);
+  const p = M._malloc(bytes.length);
+  M.HEAPU8.set(bytes, p);
+  M._tsr2_provide(doc, p, bytes.length);
+  M._free(p);
+}
+// a metric key → the canvas font (phase 1: the stack, size, weight, style)
+const styleOf = (mk) => ({ family: mk.stack, sizePx: mk.sizePx, weight: mk.weight, italic: mk.italic });
+
 // timings (bench-edit.mjs): engineMs = wasm typeset passes (emit + KP +
 // layout), the rest is the provider side of the pull loop
 // `stale()` is the job's generation check: polled after every await, a
@@ -165,40 +182,45 @@ async function measureLoop(M, doc, { tm = {}, baseUrl, stale = () => false } = {
     const done = M._tsr_typeset(doc) === 0;
     mark('engineMs', t0);
     if (done) return true;
+    // the resource pull (plan P1-19): one binary batch out, one answer in
     t0 = performance.now();
-    const req = JSON.parse(M.UTF8ToString(M._tsr_measure_requests(doc)));
+    const req = takeRequests(M, doc);
     mark('requestMs', t0);
+    // not done, and nothing to ask: the engine has stalled (never loop)
+    if (!Object.values(req.kinds).some((rows) => rows.length))
+      throw new Error('typeset stalled: the engine asked for nothing');
+    const ans = { batch: req.batch, kinds: {} };
     t0 = performance.now();
-    const ims = req.images ?? [];
-    const dims = await Promise.all(ims.map((im) => imageSize(im.src, baseUrl)));
+    const ims = req.kinds.boxInfo ?? [];
+    const dims = await Promise.all(ims.map((im) => imageSize(im.ref, baseUrl)));
     if (stale()) return false;
-    ims.forEach((im, k) => M._tsr_provide_image(doc, im.id, dims[k].w, dims[k].h));
+    // 0×0 = a failed load: the engine's placeholder + image-load warning
+    ans.kinds.boxInfo = ims.map((im, k) => ({ resId: im.resId, w: dims[k].w, h: dims[k].h, baseline: dims[k].h }));
     mark('imagesMs', t0);
     t0 = performance.now();
-    for (const t of req.tokens ?? []) {
-      const tri = await tokenizeCached(t.lang, t.text);
+    ans.kinds.codeTokens = [];
+    for (const t of req.kinds.codeTokens ?? []) {
+      const runs = await tokenizeCached(t.lang, t.text);
       if (stale()) return false;
-      const ptr = M._malloc(Math.max(4, tri.length * 4));
-      M.HEAPU32.set(tri, ptr >> 2);
-      M._tsr_provide_tokens(doc, t.id, ptr, tri.length / 3);
-      M._free(ptr);
+      ans.kinds.codeTokens.push({ resId: t.resId, runs });
     }
     mark('tokensMs', t0);
     t0 = performance.now();
-    for (const st of req.styles) {
-      measurer.setStyle(st);
-      if (st.needVmet) {
-        const { ascent, descent } = measurer.vmet();
-        M._tsr_provide_vmet(doc, st.id, ascent, descent);
-      }
-      for (const w of st.words) {
-        const p = M.stringToNewUTF8(w);
-        M._tsr_provide_word(doc, p, st.id, measurer.width(w));
-        M._free(p);
-      }
-      tm.words = (tm.words ?? 0) + st.words.length;
-    }
+    ans.kinds.fontVmet = (req.kinds.fontVmet ?? []).map((r) => {
+      measurer.setStyle(styleOf(req.mks[r.mk]));
+      const { ascent, descent } = measurer.vmet();
+      return { resId: r.resId, asc: ascent, desc: descent };
+    });
+    const words = req.kinds.textWidth ?? [];
+    ans.kinds.textWidth = words.map((r) => {
+      measurer.setStyle(styleOf(req.mks[r.mk]));
+      return { resId: r.resId, px: measurer.width(r.text) };
+    });
+    tm.words = (tm.words ?? 0) + words.length;
     mark('wordsMs', t0);
+    t0 = performance.now();
+    provideAnswer(M, doc, ans);
+    mark('requestMs', t0);
   }
   throw new Error('typeset did not converge');
 }

@@ -6,6 +6,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | setting | domain | default | precedence | affects | replaces |
 |---|---|---|---|---|---|
 | `host.width` | num:1:100000 | `300` | HostOnly | Layout, Paint | `widthPx` |
+| `host.dppx` | num:0.25:16 | `1` | HostOnly | Measure |  |
 | `host.epsilonSu` | num:0:64 | `1` | HostOnly | Emit, Measure |  |
 | `doc.lang` | lang | `"zh-CN"` | HostDefault | Resolve, Paint | `lang` |
 | `doc.baseSize` | num:4:96 | `18` | HostDefault | BoxTree, Emit, Measure, Layout, Paint | `baseSizePx` |
@@ -35,7 +36,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `code.contIndent` | int:0:40 | `2` | HostDefault | Layout |  |
 | `code.sidecarFrac` | num:0.1:0.9 | `0.4` | HostDefault | Layout |  |
 | `code.snapKerning` | bool | `false` | HostDefault | Layout, Paint | `verbatimSnapKerning` |
-| `code.fontFeatures` | features | `""` | HostDefault | Paint | `codeFontFeatures` |
+| `code.fontFeatures` | features | `""` | HostDefault | Measure, Paint | `codeFontFeatures` |
 | `code.fontFeaturesByLang` | map:features | `{}` | HostDefault | Paint | `codeFontFeaturesByLang` |
 | `terms.heading` | str | `""` | HostDefault | Resolve |  |
 | `terms.table` | str | `""` | HostDefault | Resolve |  |

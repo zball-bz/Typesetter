@@ -30,13 +30,13 @@ inline double mockWordWidthPx(std::string_view word, double sizePx) {
 
 // widths and vertical metrics depend only on the face's px size
 inline void mockProvide(const MeasureRequest& req, MetricStore& store, const Interner& strs,
-                        const FaceTable& faces, const Config& cfg) {
+                        const FaceTable& faces) {
   for (FaceId f : req.vmetFaces) {
     double px = faces.get(f).sizePx;
     store.provideVmet(f, 0.8 * px, 0.2 * px);
   }
   for (const MeasureItem& it : req.words)
-    store.provideWord(it.str, it.face, mockWordWidthPx(strs.get(it.str), faces.get(it.face).sizePx), cfg);
+    store.provideWord(it.str, it.face, mockWordWidthPx(strs.get(it.str), faces.get(it.face).sizePx));
 }
 
 }  // namespace tsr

@@ -1266,8 +1266,8 @@ Theme steps: — · findings: 1
 | `math/missed:3` | missed | medium | P3-24 | |
 | `math/missed:4` | missed | medium | P3-24 | |
 | `math/missed:5` | missed | medium | P1-24 | |
-| `api-measure-code/per-resource-pull-plumbing` | adhoc | high | P1-19 | |
-| `api-measure-code/image-dims-in-author-args` | adhoc | high | P1-19 | |
+| `api-measure-code/per-resource-pull-plumbing` | adhoc | high | P1-19 | grep:plan P1-19 |
+| `api-measure-code/image-dims-in-author-args` | adhoc | high | P1-19 | grep:plan P1-19 |
 | `api-measure-code/math-text-measure-side-channel` | adhoc | medium | P1-20, P1-25 | |
 | `api-measure-code/config-plumbing-per-knob` | adhoc | high | P1-03 | grep:plan P1-03 |
 | `api-measure-code/global-feature-knobs-no-cascade` | adhoc | high | P3-02 | |
@@ -1288,22 +1288,22 @@ Theme steps: — · findings: 1
 | `api-measure-code/magic-policy-constants` | adhoc | low | P1-03, P3-02 | |
 | `api-measure-code/snap-kerning-duplicate-style-attr` | issue | high | P0-10, P1-03 | grep:plan P1-03 |
 | `api-measure-code/relayout-stale-emit` | issue | high | P0-11, P1-16 | grep:plan P1-16 |
-| `api-measure-code/image-w-only-overwritten` | issue | high | P0-11, P1-19 | |
+| `api-measure-code/image-w-only-overwritten` | issue | high | P0-11, P1-19 | grep:plan P1-19 |
 | `api-measure-code/snap-ignores-sidecar-partition` | issue | medium | P1-03, P3-11 | |
 | `api-measure-code/late-font-stale-measure-cache` | issue | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/main-dims-rpc-race` | issue | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/worker-no-per-doc-serialization` | issue | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/image-fetch-serial-and-decode` | issue | medium | P0-11 | grep:plan P0-11 |
-| `api-measure-code/per-word-boundary-marshalling` | issue | medium | P1-19 | |
+| `api-measure-code/per-word-boundary-marshalling` | issue | medium | P1-19 | grep:plan P1-19 |
 | `api-measure-code/kp-cache-unverified-hash` | issue | low | P0-11 | grep:plan P0-11 |
 | `api-measure-code/diag-format-and-duplication` | issue | low | P0-11 | grep:plan P0-11 |
 | `api-measure-code/nul-byte-in-worker-source` | issue | low | P0-11 | grep:plan P0-11 |
-| `api-measure-code/unchecked-boundary-invariants` | issue | low | P1-19 | |
+| `api-measure-code/unchecked-boundary-invariants` | issue | low | P1-19 | grep:plan P1-19 |
 | `api-measure-code/doc-drift-api-subsystem` | issue | low | P3-37 | |
 | `api-measure-code/missed:0` | missed | medium | P0-11 | grep:plan P0-11 |
-| `api-measure-code/missed:1` | missed | medium | P1-19 | |
+| `api-measure-code/missed:1` | missed | medium | P1-19 | grep:plan P1-19 |
 | `api-measure-code/missed:2` | missed | medium | P3-23 | |
-| `api-measure-code/missed:3` | missed | medium | P1-04, P1-19 | |
+| `api-measure-code/missed:3` | missed | medium | P1-04, P1-19 | grep:plan P1-19 |
 | `api-measure-code/missed:4` | missed | low | P3-11 | |
 | `real-world-evidence/role-figure-hardwired` | adhoc | high | P2-07 | |
 | `real-world-evidence/counters-fixed-fields` | adhoc | high | P2-07 | |

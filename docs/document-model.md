@@ -210,8 +210,14 @@ MetricStore entries per (strRef × StyleId): `exact | pending(estimate) | invali
 
 ## 7. Measurement buffers
 
-- **Request** (`tsr_measure_requests`): list of style descriptors (id, family, sizePx, weight, italic) needing vertical metrics + per-style list of strings needing widths. Only missing entries are requested (the JS cache sits above; this is the engine-side dedup).
-- **Provide**: per style `{ascentPx, descentPx: f64}`; per string `{widthPx: f64}`. Quantization per §6.1 happens engine-side.
+As built (plan P1-19; docs/host-protocol-design.md §4a): measurement is two
+rows of the resource pull — `textWidth` (metric key, text → px) and
+`fontVmet` (metric key → ascent, descent px) — in one binary batch with the
+code tokens and image sizes. Only missing entries are requested (the JS
+cache sits above; this is the engine-side dedup). The store keeps raw px;
+quantization per §6.1 is the Measure stage's. The JSON
+`tsr_measure_requests` / `tsr_provide_word` / `tsr_provide_vmet` remain as
+shims.
 
 ## 8. Layout result
 

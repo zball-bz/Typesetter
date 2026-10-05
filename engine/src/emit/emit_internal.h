@@ -6,6 +6,7 @@
 #pragma once
 #include "emit.h"
 #include "../model/model.h"
+#include "../resource/resource_table.h"
 
 namespace tsr {
 
@@ -16,12 +17,25 @@ struct EmitEnv {
   StyleTable& styles;
   const Config& cfg;
   const MathTextCtx* mathText = nullptr;  // text-font runs in formulas (math-design §10)
+  const ResourceTable* rt = nullptr;      // answered code tokens and image sizes
   StrRef spaceRef = 0, hyphenRef = 0, bulletRef = 0;
   const Flow* leafFlow = nullptr;  // the leaf's own stream (not a cell's) and
   Span leafSpan{};                 //   its node's span
 
   StyleId compose(StyleId base, u64 addBits, float mul) {
     return tsr::compose(styles, base, addBits, mul);
+  }
+  // an image's size: the host's intrinsic size fills only what the author
+  // left out (defect #24; plan P1-19: the answer lives in the resource
+  // table, never in the author's args) — a declared w (or h) stays, the
+  // other side follows the image's aspect ratio
+  void imageDims(StrRef src, double& iw, double& ih) const {
+    if ((iw > 0 && ih > 0) || !rt) return;
+    const BoxNeed* bx = rt->box(src);
+    if (!bx || bx->st != ResState::Ready) return;
+    if (iw > 0) ih = iw * bx->h / bx->w;
+    else if (ih > 0) iw = ih * bx->w / bx->h;
+    else iw = bx->w, ih = bx->h;
   }
   // the style's em (sizePx honoured): one formula with measurement (P0-08)
   double fontPx(StyleId st) const { return emPx(cfg, styles.get(st)); }

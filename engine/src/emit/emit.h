@@ -174,9 +174,12 @@ struct TopBlock {
 // Shapes the box tree's leaves. mathText: text-font runs in formulas measure
 // through the pull loop; the emitter reports what is still missing (Doc
 // re-emits once provided)
+// rt: the answered resources (code tokens, image sizes; plan P1-19)
 struct BoxTree;
+class ResourceTable;
 std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
-                              const Config& cfg, DiagSink& diags, const MathTextCtx* mathText = nullptr);
+                              const Config& cfg, DiagSink& diags, const MathTextCtx* mathText = nullptr,
+                              const ResourceTable* rt = nullptr);
 
 // the penalty before a formula part, by its break class (math.h MathSeg)
 inline double mathPenalty(const Config& cfg, u8 brkBefore) {

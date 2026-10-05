@@ -48,8 +48,10 @@ get no prefix (the number still exists for refs).
 Exactly symmetric to NEED_MEASURE and NEED_TOKENS (code-design.md §2): the
 engine wants *intrinsic CSS dimensions*, never pixels.
 
-- `Doc::imageReqs` scanned after resolve: every `image` node whose intrinsic
-  dims are unknown (no author `w`+`h`).
+- As built (plan P1-19): the `boxInfo` row of the resource table
+  (docs/host-protocol-design.md §4a), one need per distinct src, scanned
+  after resolve for every `image` node without both author dims. The answer
+  stays in the table: emit fills only the dims the author left out.
 - `typeset()` returns `NeedMeasure` while any request is unanswered.
 - `tsr_measure_requests` JSON gains `"images": [{id, src}]`;
   `tsr_provide_image(doc, id, wPx, hPx)` answers one.

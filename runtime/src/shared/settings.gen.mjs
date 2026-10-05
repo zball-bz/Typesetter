@@ -10,6 +10,14 @@ export const SETTINGS = Object.freeze({
       "Paint"
     ]
   },
+  "host.dppx": {
+    "dom": "num:0.25:16",
+    "def": 1,
+    "prec": "HostOnly",
+    "affects": [
+      "Measure"
+    ]
+  },
   "host.epsilonSu": {
     "dom": "num:0:64",
     "def": 1,
@@ -265,6 +273,7 @@ export const SETTINGS = Object.freeze({
     "def": "",
     "prec": "HostDefault",
     "affects": [
+      "Measure",
       "Paint"
     ]
   },
@@ -328,6 +337,7 @@ export const SETTINGS = Object.freeze({
 export const SETTINGS_DEFAULTS = Object.freeze({
   "host": {
     "width": 300,
+    "dppx": 1,
     "epsilonSu": 1
   },
   "doc": {

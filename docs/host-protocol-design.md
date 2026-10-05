@@ -83,12 +83,68 @@ metrics included), and that the in-place width patch equals it too.
 ## 4. One drive loop
 
 `engine/src/api/driver.h`: `driveToCompletion(doc, providers, maxRounds)` over a
-`ProviderSet {tokens, images, metrics}`; `mockProviders()` is the golden set
-(mock measurer, the policy's 512×384 image answer, plain code) and the native
+`ProviderSet {tokens, images, width, vmet}` — one provider per resource kind;
+`answerRound` takes the document's request batch through the wire codec,
+answers every row and provides it (a provider that cannot answer marks its
+row failed). `mockProviders()` is the golden set (the mock measurer on the
+key's size, the policy's 512×384 image answer, plain code) and the native
 tree-sitter token provider (`code/native_tokens.cc`, queries embedded at build
-time) plugs in. `tsrc`, the golden runner and the WASM debug build share it;
-the worker's `measureLoop` is the JS twin (with the per-document mailbox and
-generation checks of plan P0-11).
+time) plugs in. `tsrc`, the golden runner and `fuzz_resanswer` share it; the
+worker's `measureLoop` is the JS twin (with the per-document mailbox and
+generation checks of plan P0-11). A document that is not done and has
+nothing left to ask, or is not done within `policy.maxRounds`, has stalled.
+
+## 4a. The resource pull (plan P1-19; design T9 A1)
+
+Everything the engine can only learn after Ingest is a row of
+`engine/src/resource/resources.def` (`tools/gen-res.mjs` generates the
+column tables of both codecs: `resource/resources.gen.h`,
+`runtime/src/shared/resources.gen.mjs`):
+
+| kind | key | answer | cache |
+|---|---|---|---|
+| textWidth (1) | metric key, text | px | Content |
+| fontVmet (2) | metric key | ascent, descent px | Content |
+| fontFace (3) | family, src, weight, style | status (reserved: no declared faces yet) | None |
+| codeTokens (4) | language, body | runs (start, end, tag)… | Content |
+| boxInfo (5) | kind (0 image), ref, available px | w, h, baseline px | Host |
+
+The **metric key** is the complete measurement tuple (D-T04): the resolved
+family stack, the digest of the loaded declared faces in it (0 until
+`fonts.declared`), size px, weight, italic, font features (code runs:
+`code.fontFeatures`), the shaping language (the run's, else `doc.lang`) and
+`host.dppx`. A width is never applied under another key, so no answer is
+ever invalidated. The engine keeps raw px; Measure quantizes (ceil to su +
+`host.epsilonSu`).
+
+**Wire** (little-endian; `resource/codec.cc`, `runtime/src/shared/rescodec.mjs`):
+
+- request `tsr2_requests(doc, kinds)` → `[u32 length]` then `'TSRQ' u32
+  version u32 batch | u32 nStrings (u32 len, bytes)… | u32 nKeys (u32 stack,
+  u64 faceDigest, f64 size, u16 weight, u8 italic, u32 features, u32 lang,
+  f64 dppx)… | u32 nKinds (u16 kind, u32 n, u32 resId[n], key columns)…`
+  — every pending need of the kinds in the mask (bit = kind id; 0 = all), a
+  new batch number each call;
+- answer `tsr2_provide(doc, bytes, len)` ← `'TSRA' u32 version u32 batch |
+  strings | u32 nKinds (u16 kind, u32 n, u32 resId[n], u8 status[n] (1 =
+  failed), u8 flags[n] (bit0 store), answer columns, u32 msg[n])…`.
+  Columns are column-major; a list column is its counts then its values.
+
+**Validation and degradation**: an answer that is malformed or not for the
+open batch is refused whole (`provider-invalid`; the needs stay pending). A
+row that is a duplicate, out of range, non-finite or negative is invalid; a
+row the answer leaves out is `provider-missing`; a failed row is
+`measure-failed`. Each degrades only what consumed it: a width becomes the
+code-point em bound × 1.2, vertical metrics 1em / 0.3em, tokens plain code
+(tokens must be sorted, disjoint, on UTF-8 boundaries and of a known tag, or
+the whole row fails), an image a placeholder with an `image-load` warning.
+One diagnostic per kind and cause, in the Provide slice.
+
+Answers never touch the authored tree: emit folds code tokens and fills an
+image's missing dims from the table (an author's lone `w` or `h` stays, the
+other follows the aspect ratio), and the semantic product reads the same
+token answers. The JSON `tsr_measure_requests` and the per-kind
+`tsr_provide_*` exports remain as shims over the same table.
 
 ## 5. Fixtures, profiles, tsrc
 
@@ -105,10 +161,12 @@ generation checks of plan P0-11).
 
 ## 6. ABI
 
-`tsr2_abi()` (plan P1-01) is the one handshake; `tsr2_set_config` and
-`tsr2_doc_fork` are the first `tsr2_*` entry points. The remaining `tsr2_*`
-surface (`tsr2_typeset(target)`, `tsr2_get(product, opts)`, inputs, resources)
-arrives with plans P1-19 and P3-37.
+`tsr2_abi()` (plan P1-01) is the one handshake (`resVersion` is
+resources.def's: a runtime and an engine with different wire formats refuse
+each other); `tsr2_set_config`, `tsr2_doc_fork`, `tsr2_requests` and
+`tsr2_provide` are the `tsr2_*` entry points so far. The remaining surface
+(`tsr2_typeset(target)`, `tsr2_get(product, opts)`, inputs) arrives with plan
+P3-37.
 
 ## 7. Interim choices
 

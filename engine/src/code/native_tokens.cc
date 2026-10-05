@@ -75,12 +75,5 @@ std::vector<CodeToken> nativeTokens(std::string_view lang, std::string_view body
   return out;
 }
 
-void provideNativeTokens(Doc& doc) {
-  for (auto& req : doc.tokenReqs) {
-    if (req.provided) continue;
-    std::vector<CodeToken> out = nativeTokens(doc.strs.get(req.lang), doc.strs.get(req.body));
-    doc.provideTokens(req.id, out.data(), out.size());
-  }
-}
 
 }  // namespace tsr

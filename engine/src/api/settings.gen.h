@@ -30,6 +30,7 @@ struct CostParams {
 // Every host setting, one member per row (defaults = the registry's).
 struct Config {
   double widthPx = 300;  // host.width
+  double dppx = 1;  // host.dppx
   double epsilonPerWordSu = 1;  // host.epsilonSu
   std::string lang = "zh-CN";  // doc.lang
   double baseSizePx = 18;  // doc.baseSize

@@ -437,6 +437,7 @@ struct HlInline final : InlineSink {
           if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
         }
         const bool safe = src && safeImageSrc(strs.get(src));  // unsafe: reported at ingest
+        if (safe) E.imageDims(src, iw, ih);
         const bool sized = safe && iw > 0 && ih > 0;
         const double em = E.fontPx(st);
         u32 obj = addObject(u, ObjKind::Image, n, st);
@@ -845,9 +846,24 @@ struct Emitter {
         for (const ContentNode* k : n->kids)
           if (k != ls.sidecar) bodyKids.push_back(k);
         // Two body forms (CH1): a single text child = plain lines split on
-        // \n; otherwise each child is one line (seq of styled runs — the
-        // leaves' styles were already folded at instantiation).
-        if (bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text) {
+        // \n, styled by its code tokens when they were answered (plan P1-19:
+        // the answer is folded here, the tree is never rewritten); otherwise
+        // each child is one line (seq of styled runs — the leaves' styles
+        // were already folded at instantiation).
+        const StrRef lang = attrStr(n, ArgK::lang);
+        const TokenNeed* tok = bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text && lang && E.rt
+                                   ? E.rt->tokens(lang, bodyKids[0]->str)
+                                   : nullptr;
+        if (tok && tok->st == ResState::Ready) {
+          std::vector<std::vector<TokenRun>> lines;
+          tokenLines(strs.get(bodyKids[0]->str), bodyKids[0]->style, tok->toks.data(), tok->toks.size(), strs,
+                     styles, lines);
+          for (const std::vector<TokenRun>& line : lines) {
+            std::vector<CodeRun>& runs = g.lines.emplace_back();
+            for (const TokenRun& r : line)
+              runs.push_back({strs.intern(r.text), compose(r.style, CLS_CODE, (float)cfg.codeScale), r.comment});
+          }
+        } else if (bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text) {
           std::string_view body = strs.get(bodyKids[0]->str);
           size_t pos = 0;
           while (pos <= body.size()) {
@@ -858,6 +874,8 @@ struct Emitter {
             pos = eol + 1;
           }
         } else {
+          // authored structured lines mark a comment by its token colour
+          // (a run role replaces it, T4)
           const StrRef commentColor = strs.intern("var(--tsr-tok-comment)");
           std::function<void(const ContentNode*, std::vector<CodeRun>&)> collect =
               [&](const ContentNode* k, std::vector<CodeRun>& out) {
@@ -928,6 +946,7 @@ struct Emitter {
               if (a.key == ArgK::scale && a.tag == ArgTag::Num) scale = a.num;
             }
             const bool safe = srcRef && safeImageSrc(strs.get(srcRef));
+            if (safe) E.imageDims(srcRef, iw, ih);
             if (safe && iw > 0 && ih > 0) im.src = srcRef;
             im.size.iw = iw;
             im.size.ih = ih;
@@ -981,8 +1000,9 @@ std::vector<TopBlock> emitWith(const BoxTree& bt, EmitEnv& env, InlineSink& sink
 }
 
 std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
-                              const Config& cfg, DiagSink& diags, const MathTextCtx* mathText) {
-  EmitEnv env{arena, diags, strs, styles, cfg, mathText};
+                              const Config& cfg, DiagSink& diags, const MathTextCtx* mathText,
+                              const ResourceTable* rt) {
+  EmitEnv env{arena, diags, strs, styles, cfg, mathText, rt};
   HlInline sink(env);
   return emitWith(bt, env, sink);
 }

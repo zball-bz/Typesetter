@@ -224,6 +224,15 @@
       ],
       "legacy": "widthPx"
     },
+    "host.dppx": {
+      "field": "dppx",
+      "dom": "num:0.25:16",
+      "def": 1,
+      "prec": "HostOnly",
+      "affects": [
+        "Measure"
+      ]
+    },
     "host.epsilonSu": {
       "field": "epsilonPerWordSu",
       "dom": "num:0:64",
@@ -522,6 +531,7 @@
       "def": "",
       "prec": "HostDefault",
       "affects": [
+        "Measure",
         "Paint"
       ],
       "legacy": "codeFontFeatures"

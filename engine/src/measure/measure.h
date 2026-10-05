@@ -30,23 +30,25 @@ class MetricStore {
   FaceId faceOf(StyleId st) const { return faces_->faceOf(st); }
   bool hasFaceWord(StrRef s, FaceId f) const { return find(s, f) != nullptr; }
   bool hasWord(StrRef s, StyleId st) const { return hasFaceWord(s, faceOf(st)); }
-  const WordMet& word(StrRef s, StyleId st) const {
-    const WordMet* w = find(s, faceOf(st));
-    if (!w) std::abort();  // precondition: hasWord
-    return *w;
+  // the store keeps raw px (plan P1-19: answers are the host's, quantization
+  // is Measure's): ceil to su + the per-word ε of the Measure stage
+  WordMet word(StrRef s, StyleId st) const {
+    const double* px = find(s, faceOf(st));
+    if (!px) std::abort();  // precondition: hasWord
+    return {suCeilPx(*px) + epsilon_, *px};
   }
+  void setEpsilon(Su eps) { epsilon_ = eps; }
   // host metrics are clamped to a finite, representable range (plan P0-11):
   // NaN or 1e300 would overflow the su conversion
   static double hostPx(double px) { return std::isfinite(px) ? std::clamp(px, 0.0, 1e6) : 0.0; }
-  void provideWord(StrRef s, FaceId f, double px, const Config& cfg) {
+  void provideWord(StrRef s, FaceId f, double px) {
     px = hostPx(px);
-    const WordMet m{suCeilPx(px) + (Su)cfg.epsilonPerWordSu, px};
-    if (WordMet* w = const_cast<WordMet*>(find(s, f))) {
-      *w = m;
+    if (double* w = const_cast<double*>(find(s, f))) {
+      *w = px;
       return;
     }
     if (s >= head_.size()) head_.resize((size_t)s + 1, 0);
-    slots_.push_back({f, head_[s], m});
+    slots_.push_back({f, head_[s], px});
     head_[s] = (u32)slots_.size();
   }
   bool hasFaceVmet(FaceId f) const { return f < vmets_.size() && vmets_[f].have; }
@@ -69,18 +71,19 @@ class MetricStore {
   struct Slot {
     FaceId face;
     u32 next;  // 1 + the next slot of this string, 0 = none
-    WordMet met;
+    double px;
   };
-  const WordMet* find(StrRef s, FaceId f) const {
+  const double* find(StrRef s, FaceId f) const {
     if (s >= head_.size()) return nullptr;
     for (u32 i = head_[s]; i; i = slots_[i - 1].next)
-      if (slots_[i - 1].face == f) return &slots_[i - 1].met;
+      if (slots_[i - 1].face == f) return &slots_[i - 1].px;
     return nullptr;
   }
   FaceTable* faces_ = nullptr;
   std::vector<u32> head_;  // per string: 1 + its first slot, 0 = none
   std::vector<Slot> slots_;
   std::vector<VMet> vmets_;
+  Su epsilon_ = 1;
 };
 
 struct MeasureItem {

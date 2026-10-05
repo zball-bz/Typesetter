@@ -15,20 +15,31 @@ namespace tsr {
 using FaceId = u32;
 enum class Script : u8 { Latin, Cjk };  // classification moves to TextRules (P1-11)
 
+// The complete measurement tuple (plan P1-19; design T9 A1 MetricKey, D-T04):
+// a width measured under one key is never applied under another — any
+// change of font, face status, size, weight, style, features, language or
+// device pixel ratio is a different key, so no invalidation channel exists.
 struct FaceKey {
-  StrRef family = 0;  // the resolved family list
+  StrRef family = 0;    // the resolved family stack
+  u64 faceDigest = 0;   // the loaded declared faces in the stack (none yet: 0)
   double sizePx = 0;
   u16 weight = 400;
   u8 italic = 0;
-  u8 caps = 0;  // reserved (synthetic small caps, T5)
+  u8 caps = 0;          // reserved (synthetic small caps, T5)
+  StrRef features = 0;  // font-feature-settings (code runs: code.fontFeatures)
+  StrRef lang = 0;      // the shaping language (the run's, else the document's)
+  double dppx = 1;      // the device pixel ratio the host measures at
   bool operator==(const FaceKey&) const = default;
 };
 struct FaceKeyHash {
   size_t operator()(const FaceKey& k) const {
-    u64 b;
+    u64 b, d;
     std::memcpy(&b, &k.sizePx, 8);
+    std::memcpy(&d, &k.dppx, 8);
     u64 h = 1469598103934665603ull;
-    for (u64 v : {(u64)k.family, b, (u64)k.weight, (u64)k.italic, (u64)k.caps}) h = (h ^ v) * 1099511628211ull;
+    for (u64 v : {(u64)k.family, k.faceDigest, b, (u64)k.weight, (u64)k.italic, (u64)k.caps, (u64)k.features,
+                  (u64)k.lang, d})
+      h = (h ^ v) * 1099511628211ull;
     return (size_t)h;
   }
 };
@@ -71,6 +82,11 @@ class FaceTable {
     // CJK italic is painted upright with emphasis marks (.tsr-cjk.tsr-i):
     // it is measured upright too (v2 §14)
     k.italic = (s.bits & CLS_EM) && script == Script::Latin ? 1 : 0;
+    // the phase-1 projection (design T9 M4): features for code runs, the
+    // run's language else the document's, the host's dppx
+    if ((s.bits & CLS_CODE) && !cfg_->codeFontFeatures.empty()) k.features = strs_->intern(cfg_->codeFontFeatures);
+    k.lang = s.lang ? s.lang : strs_->intern(cfg_->lang);
+    k.dppx = cfg_->dppx;
     FaceId f;
     auto it = index_.find(k);
     if (it != index_.end()) {

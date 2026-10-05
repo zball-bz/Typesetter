@@ -9,7 +9,9 @@
 
 namespace tsr {
 
-std::string renderSemantic(const ContentTree& tree, const Interner& strs,
-                           const StyleTable& styles);
+// rt: answered code tokens render as their styled runs (plan P1-19)
+class ResourceTable;
+std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& styles,
+                           const ResourceTable* rt = nullptr);
 
 }  // namespace tsr

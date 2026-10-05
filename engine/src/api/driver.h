@@ -11,45 +11,99 @@
 
 namespace tsr {
 
+// One provider per resource kind (design T9 A2); a provider that returns
+// false answers its row as failed (the engine degrades that quantity).
 struct ProviderSet {
-  std::function<void(Doc&)> tokens;  // answer every pending token request
-  std::function<void(Doc&)> images;  // answer every pending image request
-  std::function<void(Doc&, const MeasureRequest&)> metrics;  // words + vertical metrics
+  std::function<bool(std::string_view lang, std::string_view text, std::vector<CodeToken>& out)> tokens;
+  std::function<bool(std::string_view src, double& w, double& h)> images;
+  std::function<double(const WireMetricKey& mk, std::string_view text)> width;
+  std::function<void(const WireMetricKey& mk, double& asc, double& desc)> vmet;
 };
 
-// The golden/native providers: the normative mock measurer, the policy's
-// image answer, plain code (callers add a token provider, e.g. native
-// tree-sitter: provideNativeTokens).
+// The golden/native providers: the normative mock measurer (it depends only
+// on the key's size), the policy's image answer, plain code (callers add a
+// token provider, e.g. native tree-sitter: nativeTokens).
 inline ProviderSet mockProviders() {
   ProviderSet p;
-  p.tokens = [](Doc& doc) {
-    for (auto& r : doc.tokenReqs)
-      if (!r.provided) doc.provideTokens(r.id, nullptr, 0);
+  p.tokens = [](std::string_view, std::string_view, std::vector<CodeToken>& out) {
+    out.clear();
+    return true;
   };
-  p.images = [](Doc& doc) {
-    for (auto& r : doc.imageReqs)
-      if (!r.provided) doc.provideImage(r.id, kPolicyNativeImagePx[0], kPolicyNativeImagePx[1]);
+  p.images = [](std::string_view, double& w, double& h) {
+    w = kPolicyNativeImagePx[0];
+    h = kPolicyNativeImagePx[1];
+    return true;
   };
-  p.metrics = [](Doc& doc, const MeasureRequest& req) {
-    mockProvide(req, doc.metrics, doc.strs, doc.faces, doc.cfg);
+  p.width = [](const WireMetricKey& mk, std::string_view text) { return mockWordWidthPx(text, mk.sizePx); };
+  p.vmet = [](const WireMetricKey& mk, double& asc, double& desc) {
+    asc = 0.8 * mk.sizePx;
+    desc = 0.2 * mk.sizePx;
   };
   return p;
 }
 
-// Advances an ingested document to Layout; false when it does not converge
-// within maxRounds (a stalled provider, or a provider that answers nothing).
-inline bool driveToCompletion(Doc& doc, ProviderSet& p, u32 maxRounds = kPolicyMaxRounds) {
-  for (u32 round = 0; round < maxRounds; round++) {
-    if (p.tokens && doc.tokensPending()) p.tokens(doc);
-    if (p.images && doc.imagesPending()) p.images(doc);
-    if (doc.typeset() == Doc::Status::Ok) return true;
-    if (doc.tokensPending() || doc.imagesPending()) {
-      if (!p.tokens || !p.images) return false;
-      continue;
+// One round of the pull through the wire (plan P1-19): the document's
+// request batch, decoded and answered by the providers, encoded and
+// provided. false: nothing was asked.
+inline bool answerRound(Doc& doc, const ProviderSet& p) {
+  std::string req, ans, err;
+  doc.requests(req);
+  WireBatch q, a;
+  if (!decodeWire((const u8*)req.data(), req.size(), false, q, err) || q.kinds.empty()) return false;
+  a.batch = q.batch;
+  for (const WireKind& k : q.kinds) {
+    WireKind& out = a.kinds.emplace_back();
+    out.kind = k.kind;
+    for (const WireRow& r : k.rows) {
+      WireRow& o = out.rows.emplace_back();
+      o.resId = r.resId;
+      o.flags = 1;
+      bool ok = false;
+      switch ((ResKind)k.kind) {
+        case ResKind::textWidth:
+          if ((ok = (bool)p.width)) o.setF64(0, p.width(q.mks[r.col[0]], q.strings[r.col[1]]));
+          break;
+        case ResKind::fontVmet:
+          if ((ok = (bool)p.vmet)) {
+            double asc = 0, desc = 0;
+            p.vmet(q.mks[r.col[0]], asc, desc);
+            o.setF64(0, asc);
+            o.setF64(1, desc);
+          }
+          break;
+        case ResKind::codeTokens: {
+          std::vector<CodeToken> toks;
+          if ((ok = p.tokens && p.tokens(q.strings[r.col[0]], q.strings[r.col[1]], toks)))
+            for (const CodeToken& t : toks) o.list.insert(o.list.end(), {t.start, t.end, (u32)t.tag});
+          break;
+        }
+        case ResKind::boxInfo: {
+          double w = 0, h = 0;
+          if ((ok = p.images && p.images(q.strings[r.col[1]], w, h))) {
+            o.setF64(0, w);
+            o.setF64(1, h);
+            o.setF64(2, h);
+          }
+          break;
+        }
+        case ResKind::fontFace:  // the native mock: every declared face loads
+          o.col[0] = 0;
+          ok = true;
+          break;
+      }
+      o.status = ok ? 0 : 1;
     }
-    MeasureRequest req = doc.pendingRequests();
-    if (req.empty() || !p.metrics) return false;
-    p.metrics(doc, req);
+  }
+  encodeWire(a, true, ans);
+  return doc.provide((const u8*)ans.data(), ans.size());
+}
+
+// Advances an ingested document to Layout; false when it stalls: nothing
+// left to ask while not done, or not done within maxRounds.
+inline bool driveToCompletion(Doc& doc, const ProviderSet& p, u32 maxRounds = kPolicyMaxRounds) {
+  for (u32 round = 0; round < maxRounds; round++) {
+    if (doc.typeset() == Doc::Status::Ok) return true;
+    if (!answerRound(doc, p)) return false;
   }
   return false;
 }

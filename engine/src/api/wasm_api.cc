@@ -4,6 +4,8 @@
 // → tsr_provide_* per item → tsr_typeset again.
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
+
+#include <cstring>
 #define TSR_EXPORT extern "C" EMSCRIPTEN_KEEPALIVE
 #else
 #define TSR_EXPORT extern "C"
@@ -156,6 +158,25 @@ TSR_EXPORT int tsr_typeset(WasmDoc* d) {
   return d->doc.typeset() == Doc::Status::Ok ? 0 : 1;
 }
 
+// The resource pull (plan P1-19; docs/host-protocol-design.md §5): one
+// binary batch of every pending need of `kinds` (bit = resource kind id, 0 =
+// all) — [u32 byte length][TSRQ …] — and its answer [TSRA …]; 0 = applied,
+// 1 = rejected (not an answer to the open batch; the needs stay pending).
+TSR_EXPORT const u8* tsr2_requests(WasmDoc* d, u32 kinds) {
+  std::string body;
+  d->doc.requests(body, kinds);
+  d->reqOut.assign(4, '\0');
+  const u32 len = (u32)body.size();
+  std::memcpy(&d->reqOut[0], &len, 4);
+  d->reqOut += body;
+  return (const u8*)d->reqOut.data();
+}
+TSR_EXPORT int tsr2_provide(WasmDoc* d, const u8* buf, int len) {
+  return len >= 0 && d->doc.provide(buf, (size_t)len) ? 0 : 1;
+}
+
+// The JSON request and the per-kind provide exports below are shims of the
+// pull above (kept for existing hosts; the runtime uses tsr2_*).
 // JSON: {"styles":[{"id":0,"family":"...","sizePx":18,"weight":400,
 //   "italic":false,"needVmet":true,"words":["The","fox"]}]}
 // One entry per measurement face (plan P1-04): "id" is a FaceId, opaque to
@@ -199,28 +220,29 @@ TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
     out += "]}";
   }
   out += "]";
-  // NEED_TOKENS pull state (code-design.md §2): unanswered codeblocks
+  // pending code tokens and image sizes (their ids: need indices)
   out += ",\"tokens\":[";
   bool ft = true;
-  for (const Doc::TokenReq& r : d->doc.tokenReqs) {
-    if (r.provided) continue;
+  for (u32 i = 0; i < d->doc.rt.tokenNeeds.size(); i++) {
+    const TokenNeed& r = d->doc.rt.tokenNeeds[i];
+    if (r.st != ResState::Pending) continue;
     if (!ft) out += ",";
     ft = false;
-    appendf(out, "{\"id\":%u,\"lang\":\"", r.id);
+    appendf(out, "{\"id\":%u,\"lang\":\"", i);
     jsonEscapeInto(out, d->doc.strs.get(r.lang));
     out += "\",\"text\":\"";
     jsonEscapeInto(out, d->doc.strs.get(r.body));
     out += "\"}";
   }
   out += "]";
-  // NEED_IMAGES pull state (figure-design.md §2): unanswered image nodes
   out += ",\"images\":[";
   bool fi = true;
-  for (const Doc::ImageReq& r : d->doc.imageReqs) {
-    if (r.provided) continue;
+  for (u32 i = 0; i < d->doc.rt.boxNeeds.size(); i++) {
+    const BoxNeed& r = d->doc.rt.boxNeeds[i];
+    if (r.st != ResState::Pending) continue;
     if (!fi) out += ",";
     fi = false;
-    appendf(out, "{\"id\":%u,\"src\":\"", r.id);
+    appendf(out, "{\"id\":%u,\"src\":\"", i);
     jsonEscapeInto(out, d->doc.strs.get(r.src));
     out += "\"}";
   }
@@ -250,7 +272,7 @@ TSR_EXPORT void tsr_provide_tokens(WasmDoc* d, int id, const u32* triples, int n
 // is ignored (plan P0-11)
 TSR_EXPORT void tsr_provide_word(WasmDoc* d, const char* word, int faceId, double px) {
   if (faceId < 0 || (size_t)faceId >= d->doc.faces.count()) return;
-  d->doc.metrics.provideWord(d->doc.strs.intern(word), (FaceId)faceId, px, d->doc.cfg);
+  d->doc.metrics.provideWord(d->doc.strs.intern(word), (FaceId)faceId, px);
 }
 
 TSR_EXPORT void tsr_provide_vmet(WasmDoc* d, int faceId, double ascPx, double descPx) {
@@ -287,6 +309,7 @@ TSR_EXPORT const char* tsr_diags(WasmDoc* d) {
 }
 
 TSR_EXPORT double tsr_doc_height_px(WasmDoc* d) {
+  if (!d->doc.done(Stage::Layout)) return 0;  // no converged layout
   return (double)d->doc.layout.docHeightSu / 64.0;
 }
 
@@ -311,13 +334,15 @@ TSR_EXPORT const char* tsr_parse_json(const char* src) {
 
 // The one ABI handshake (plan P1-01, D-H06): the host checks it before it
 // writes a single op. Fields of subsystems that do not exist yet carry 0
-// (programAbi → P2-02, resVersion → P1-19); syntaxVersion is syntax.def's.
+// (programAbi → P2-02); resVersion is resources.def's, syntaxVersion
+// syntax.def's.
 TSR_EXPORT const char* tsr2_abi() {
   static std::string out;
   if (out.empty()) {
     out = "{\"opsWindow\":[" + std::to_string(OPS_MIN_COMPAT) + "," + std::to_string(OPS_VERSION) +
           "],\"schemaHash\":\"" + SCHEMA_HASH +
-          "\",\"programAbi\":0,\"resVersion\":0,\"renderVersion\":1,\"syntaxVersion\":" +
+          "\",\"programAbi\":0,\"resVersion\":" + std::to_string(RES_VERSION) +
+          ",\"renderVersion\":1,\"syntaxVersion\":" +
           std::to_string(SYNTAX_VERSION) + "}";
   }
   return out.c_str();

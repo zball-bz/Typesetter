@@ -1,7 +1,7 @@
-// Code token folding (code-design.md §2/§3): the engine never tokenizes —
-// tokens arrive from a provider (web-tree-sitter in the worker; statically
-// linked tree-sitter in native tests) through the NEED_TOKENS pull state,
-// and fold into the codeblock's structured-line form (CH1).
+// Code tokens (code-design.md §2/§3): the engine never tokenizes a host
+// language — tokens arrive from a provider (web-tree-sitter in the worker;
+// statically linked tree-sitter in native tests) as codeTokens resources
+// (resource/resources.def); 'tsm' is answered in-engine.
 #pragma once
 #include "../model/model.h"
 #include "../syntax/syntax.gen.h"
@@ -12,6 +12,8 @@ namespace tsr {
 // segment) is the TOKEN_TAGS row of syntax.def, shared with the worker's
 // providers through runtime/src/shared/syntax.gen.mjs.
 
+constexpr u8 kTokenTagComment = 3;  // kTokenTags[3] is "comment" (unitTokens checks)
+
 struct CodeToken {
   u32 start = 0, end = 0;  // byte range into the code body
   u8 tag = 0;              // index into kTokenTags
@@ -20,10 +22,23 @@ struct CodeToken {
 // capture name → tag index by first dotted segment (-1 = unknown, skip)
 int tokenTagFromCapture(std::string_view name);
 
-// Rewrites a plain-body codeblock (single text child) into per-line seq
-// children of styled text runs. Tokens must be sorted, non-overlapping.
-// Token color = "var(--tsr-tok-<tag>)" — theming lives entirely in CSS.
-void foldTokens(ContentNode* cb, const CodeToken* toks, size_t n,
-                Arena& arena, Interner& strs, StyleTable& styles);
+// A provider's tokens are acceptable (plan P1-19; design T9 A1): sorted,
+// disjoint, non-empty, inside the body, on UTF-8 boundaries, known tags.
+// Anything else fails the whole answer (plain code, provider-invalid).
+bool validTokens(std::string_view body, const CodeToken* toks, size_t n);
+
+// The token answer over a plain code body (code-design.md §2/§3; plan P1-19:
+// the answer lives in the ResourceTable and the tree is never rewritten):
+// per line, its runs — a token's style is the base style with the tag's
+// colour "var(--tsr-tok-<tag>)" (a comment also italic), interned once per
+// tag; untokenized stretches keep the base style. Emit and the semantic
+// product both read it.
+struct TokenRun {
+  std::string_view text;
+  StyleId style = 0;
+  bool comment = false;  // comment-aware hanging (verbatim-design §4)
+};
+void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size_t n, Interner& strs,
+                StyleTable& styles, std::vector<std::vector<TokenRun>>& lines);
 
 }  // namespace tsr

@@ -6,6 +6,8 @@
 import { execute } from '../worker/executor.mjs';
 import { tokenize } from '../worker/tokens.mjs';
 import { checkAbi } from '../shared/abi.mjs';
+import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
+import { RES_KINDS } from '../shared/resources.gen.mjs';
 import { settingsFromOptions } from '../shared/settings.gen.mjs';
 
 let modPromise = null;
@@ -43,13 +45,19 @@ export async function renderTsm(source, opts = {}) {
       return { html: '', diags: M.UTF8ToString(M._tsr_diags(doc)), ok: false };
     // answer NEED_TOKENS before the semantic render: foldTokens rewrites the
     // tree, so the static page carries the highlight spans
-    const req = JSON.parse(M.UTF8ToString(M._tsr_measure_requests(doc)));
-    for (const t of req.tokens ?? []) {
-      const tri = await tokenize(t.lang, t.text);
-      const ptr = M._malloc(Math.max(4, tri.length * 4));
-      M.HEAPU32.set(tri, ptr >> 2);
-      M._tsr_provide_tokens(doc, t.id, ptr, tri.length / 3);
-      M._free(ptr);
+    // (the resource pull, plan P1-19: only the code tokens are asked for)
+    const p = M._tsr2_requests(doc, 1 << RES_KINDS.codeTokens.id);
+    const len = new DataView(M.HEAPU8.buffer).getUint32(p, true);
+    const req = decodeRequest(M.HEAPU8.slice(p + 4, p + 4 + len));
+    const rows = req.kinds.codeTokens ?? [];
+    if (rows.length) {
+      const codeTokens = [];
+      for (const t of rows) codeTokens.push({ resId: t.resId, runs: await tokenize(t.lang, t.text) });
+      const bytes = encodeAnswer({ batch: req.batch, kinds: { codeTokens } });
+      const ap = M._malloc(bytes.length);
+      M.HEAPU8.set(bytes, ap);
+      M._tsr2_provide(doc, ap, bytes.length);
+      M._free(ap);
     }
     const html = M.UTF8ToString(M._tsr_render_semantic(doc));
     const diags = M.UTF8ToString(M._tsr_diags(doc));

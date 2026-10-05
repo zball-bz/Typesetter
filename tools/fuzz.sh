@@ -13,7 +13,7 @@ set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 BUILD=engine/build-fuzz
-TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings)
+TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer)
 
 if [ ! -f "$BUILD/CMakeCache.txt" ]; then
   GEN="Unix Makefiles"; command -v ninja >/dev/null && GEN=Ninja
@@ -27,6 +27,21 @@ seed() {
   mkdir -p "$dir" .fuzz/crashes
   local ext=tsm
   [ "$t" = fuzz_opreader ] && ext=ops
+  if [ "$t" = fuzz_resanswer ]; then
+    # well-formed answers (the JS codec): empty, a width row, a token row, a failed image
+    node --input-type=module -e "
+      import { encodeAnswer } from './runtime/src/shared/rescodec.mjs';
+      import { writeFileSync } from 'node:fs';
+      const seeds = {
+        empty: { batch: 1, kinds: {} },
+        width: { batch: 1, kinds: { textWidth: [{ resId: 0, px: 12.5 }], fontVmet: [{ resId: 0, asc: 14, desc: 4 }] } },
+        tokens: { batch: 1, kinds: { codeTokens: [{ resId: 0, runs: [0, 1, 9, 2, 7, 1] }] } },
+        image: { batch: 1, kinds: { boxInfo: [{ resId: 0, failed: true, msg: 'gone' }] } },
+      };
+      for (const [k, v] of Object.entries(seeds)) writeFileSync('$dir/seed-' + k + '.bin', encodeAnswer(v));
+    "
+    return
+  fi
   if [ "$t" = fuzz_settings ]; then
     # settings documents: the profiles, fixture settings and the full dump
     find test/profiles test/fixtures -name "*.json" -exec cp -n {} "$dir/" \; 2>/dev/null || true

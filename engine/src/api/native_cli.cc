@@ -161,7 +161,10 @@ int main(int argc, char** argv) {
     // ops) drives the pull loop to completion
     if (need >= Stage::BoxTree || stage == "diags") {
       ProviderSet p = mockProviders();
-      p.tokens = [](Doc& d) { provideNativeTokens(d); };
+      p.tokens = [](std::string_view lang, std::string_view text, std::vector<CodeToken>& out) {
+    out = nativeTokens(lang, text);
+    return true;
+  };
       if (!driveToCompletion(doc, p)) {
         fprintf(stderr, "typeset did not converge\n");
         return 1;
