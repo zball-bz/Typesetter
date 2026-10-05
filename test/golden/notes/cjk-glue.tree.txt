@@ -1,27 +1,27 @@
 doc @[0,364) [base]
   para @[0,276) [base]
     text @[0,24) [base] str="中文正文里的断言"
-    ref @[24,42) [basex0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
-      text @[24,42) [basex0.70] str="1"
+    ref @[24,42) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
+      text @[24,42) [SUPx0.70] str="1"
     text @[42,81) [base] str="之后继续排布，句末的脚注。"
-    ref @[81,108) [basex0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
-      text @[81,108) [basex0.70] str="2"
+    ref @[81,108) [SUPx0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
+      text @[81,108) [SUPx0.70] str="2"
     text @[108,255) [base] str="也应当粘在标点之后，绝不落到行首；再来一个很长的句子把标记推到行尾附近看它是否会孤立地掉到下一行去"
-    ref @[255,273) [basex0.70] target="fn-3" label="fnref-3" url="#tsr-fn-3"
-      text @[255,273) [basex0.70] str="3"
+    ref @[255,273) [SUPx0.70] target="fn-3" label="fnref-3" url="#tsr-fn-3"
+      text @[255,273) [SUPx0.70] str="3"
     text @[273,276) [base] str="。"
   list @[278,364) [base] ordered=false start=1
     item @[278,364) [base]
       para @[280,364) [base]
         text @[280,301) [base] str="列表项里的脚注"
-        ref @[301,331) [basex0.70] target="fn-4" label="fnref-4" url="#tsr-fn-4"
-          text @[301,331) [basex0.70] str="4"
+        ref @[301,331) [SUPx0.70] target="fn-4" label="fnref-4" url="#tsr-fn-4"
+          text @[301,331) [SUPx0.70] str="4"
         text @[331,364) [base] str="也进入同一个编号序列。"
     item @[365,420) [base]
       para @[367,420) [base]
         text @[367,379) [base] str="English word"
-        ref @[379,401) [basex0.70] target="fn-5" label="fnref-5" url="#tsr-fn-5"
-          text @[379,401) [basex0.70] str="5"
+        ref @[379,401) [SUPx0.70] target="fn-5" label="fnref-5" url="#tsr-fn-5"
+          text @[379,401) [SUPx0.70] str="5"
         text @[402,420) [base] str=" before the marker."
   group @[0,364) [base] role="notes"
     rule @[0,364) [base]

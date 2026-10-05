@@ -173,6 +173,7 @@ static void styleStr(std::string& out, const Styling& s, const Interner& strs) {
   f(CLS_UNDER, "U");
   f(CLS_OVER, "O");
   f(CLS_STRIKE, "S");
+  f(CLS_SUP, "SUP");  // appended (plan P0-09 j): today's spellings and order kept
   if (first) out += "base";
   if (s.sizeMul != 1.0f) appendf(out, "x%.2f", (double)s.sizeMul);
   if (s.fontFamily) {
