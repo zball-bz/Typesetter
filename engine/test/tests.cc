@@ -22,6 +22,7 @@
 #include "semantic_data.gen.h"
 #include "../src/math/mathfont.h"
 #include "../src/api/driver.h"
+#include "../src/render/html_writer.h"
 #include "../src/code/native_tokens.h"
 #include "../src/measure/mock.h"
 #include "contract.h"
@@ -554,6 +555,45 @@ static void unitTokenConformance(const fs::path& root) {
 // codepoint, the five classifiers it replaced (literal copies below, frozen
 // here); the mock measurer's wide ranges are pinned to the same literal; the
 // UCD columns read the pinned 17.0.0 data.
+// fmtPxBuf (perf, ahead of plan P1-12): the integer formatter is printf's "%.3f" with
+// trailing zeros trimmed — exact ties (k/16, k/1024), negatives that round
+// to zero, subnormals, large values, random doubles.
+static void unitFmtPx() {
+  auto ref = [](double px) {
+    char b[64];
+    int n = std::snprintf(b, sizeof b, "%.3f", px);
+    std::string s(b, (size_t)n);
+    while (!s.empty() && s.back() == '0') s.pop_back();
+    if (!s.empty() && s.back() == '.') s.pop_back();
+    return s + "px";
+  };
+  auto got = [](double px) {
+    char b[48];
+    return std::string(b, fmtPxBuf(b, px));
+  };
+  std::vector<double> vs = {0.0, -0.0, 1.0, -1.0, 0.0005, -0.0005, 0.0015, 0.0025, 1e-300, -1e-300,
+                            4.9e-324, 123456.789, 1e6, 0.1, 0.7, 2.675, 1.0005, 12.3456, -0.0004,
+                            4503599627370495.5, 9007199254740993.0, 1e20};
+  for (int k = -4096; k <= 4096; k++) {
+    vs.push_back(k / 16.0);
+    vs.push_back(k / 1024.0);
+    vs.push_back(k / 2048.0 + 0.0005);
+  }
+  u64 x = 0x9E3779B97F4A7C15ull;
+  for (int i = 0; i < 200000; i++) {
+    x ^= x << 13;
+    x ^= x >> 7;
+    x ^= x << 17;
+    vs.push_back(((double)(x % 20000000) - 10000000.0) / 997.0);
+    vs.push_back((double)(x >> 11) / 9007199254740992.0 * 2048.0 - 1024.0);
+  }
+  int bad = 0;
+  for (double v : vs)
+    if (ref(v) != got(v) && bad++ < 5)
+      printf("FAIL fmtPx %.17g: %s vs printf %s\n", v, got(v).c_str(), ref(v).c_str());
+  CHECK(bad == 0);
+}
+
 static void unitTextRules() {
   auto oldCjk = [](u32 cp) {
     return (cp >= 0x2E80 && cp <= 0x9FFF) || (cp >= 0xF900 && cp <= 0xFAFF) ||
@@ -1134,6 +1174,7 @@ int main(int argc, char** argv) {
   unitTokenConformance(fs::path(root));
   unitRegistry(fs::path(root));
   unitTextRules();
+  unitFmtPx();
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";
   fs::path golden = fs::path(root) / "test" / "golden";

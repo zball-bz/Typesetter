@@ -44,12 +44,55 @@ inline void escapeHtml(std::string& out, std::string_view s) {
   out.append(s.data() + from, s.size() - from);
 }
 
-// Stable px formatting: up to 3 decimals, trailing zeros trimmed.
+// Stable px formatting: up to 3 decimals, trailing zeros trimmed — exactly
+// printf's "%.3f" (correctly rounded, ties to even; "-0" for a negative that
+// rounds to zero), computed in integers: px = m·2^e, so px·1000 = (m·1000)·2^e
+// with m·1000 < 2^63. The paint path formats every position and width; the
+// printf machinery was ~1.5 ms of an 87K document update in WASM.
 inline size_t fmtPxBuf(char (&buf)[48], double px) {
-  int n = std::snprintf(buf, sizeof buf - 2, "%.3f", px);
-  size_t len = n > 0 ? (size_t)n : 0;
-  while (len > 0 && buf[len - 1] == '0') len--;
-  if (len > 0 && buf[len - 1] == '.') len--;
+  u64 bits;
+  std::memcpy(&bits, &px, 8);
+  const bool neg = bits >> 63;
+  const int bexp = (int)((bits >> 52) & 0x7FF);
+  const u64 mant = bits & ((1ull << 52) - 1);
+  size_t len = 0;
+  if (bexp == 0x7FF || bexp >= 1075) {  // inf, nan, or |px| >= 2^52: printf's own
+    int n = std::snprintf(buf, sizeof buf - 2, "%.3f", px);
+    len = n > 0 ? (size_t)n : 0;
+    if (len > sizeof buf - 3) len = sizeof buf - 3;
+    while (len > 0 && buf[len - 1] == '0') len--;
+    if (len > 0 && buf[len - 1] == '.') len--;
+  } else {
+    const u64 m = bexp ? (mant | (1ull << 52)) : mant;
+    const int shift = 1075 - (bexp ? bexp : 1);  // px = m / 2^shift
+    const u64 n = m * 1000;
+    u64 q = 0;
+    if (shift < 64) {
+      q = n >> shift;
+      const u64 r = n & ((1ull << shift) - 1), half = 1ull << (shift - 1);
+      if (r > half || (r == half && (q & 1))) q++;
+    }
+    if (neg) buf[len++] = '-';
+    char digits[24];
+    int nd = 0;
+    u64 ip = q / 1000;
+    do {
+      digits[nd++] = (char)('0' + ip % 10);
+      ip /= 10;
+    } while (ip);
+    while (nd) buf[len++] = digits[--nd];
+    u32 frac = (u32)(q % 1000);
+    if (frac) {
+      buf[len++] = '.';
+      buf[len++] = (char)('0' + frac / 100);
+      frac %= 100;
+      if (frac) {
+        buf[len++] = (char)('0' + frac / 10);
+        frac %= 10;
+        if (frac) buf[len++] = (char)('0' + frac);
+      }
+    }
+  }
   buf[len++] = 'p';
   buf[len++] = 'x';
   return len;
