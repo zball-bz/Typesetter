@@ -1,8 +1,0 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__p(__a(__t("The title "),0,9), __a(__i(__a(__t("Breaking Paragraphs into Lines"),11,41)),10,42), __a(__t(". Software: Practice and Experience — an italic run followed by a roman period and a space is shaped as separate runs, so no cross-space kern is budgeted at the boundary. Plain text s. A keeps its kern."),42,246)),0,246));
-})(__s);
-};
-//# sourceURL=tsm:doc
-//# tsm-units=636e591bd7c6df04;247;[]

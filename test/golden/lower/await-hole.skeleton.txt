@@ -1,0 +1,5 @@
+doc @[0,199)
+  code-let @[0,45) js=" later = await Promise.resolve(\"awaited\")"
+  para @[47,99) lines=1
+  code-block @[101,161) js=" await Promise.resolve(); $.style.push({ italic: true }) "
+  para @[163,198) lines=1

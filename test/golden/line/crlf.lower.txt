@@ -1,0 +1,13 @@
+lower v1 abi 3c18dc46 docEnd 136 holes 0 module none
+block 0 content [0,13)
+  CALL heading [0,13) level=1 label=null
+    TEXT "CRLF source" [2,13)
+block 1 content [17,70)
+  CALL para [17,70)
+    TEXT "A paragraph that spans two lines with " [17,55)
+    CALL mathinline [56,64) src="a +\nb"
+    TEXT " math." [65,70)
+block 2 content [74,101) async
+  FENCE async "js" body="let x = 1;\nx++" at=81 lines=null [74,101)
+block 3 content [105,134)
+  CALL comment [105,134) body=" a comment\nover lines "

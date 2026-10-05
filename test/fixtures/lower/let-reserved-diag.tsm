@@ -1,0 +1,7 @@
+#let class = 1
+
+Before the hoisting rule: reserved words stay verbatim.
+
+#{ function helper(x) { return "helped " + x } }
+
+#helper("text") after a declaring block.

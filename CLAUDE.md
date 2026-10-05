@@ -34,7 +34,8 @@ apps/playground    minimal engine host page
 
 ## Pipeline (docs/architecture.md)
 
-markup → linepass → inline → codegen (JS) → executor (ops v5) → ingest →
+markup → linepass → inline → codegen (LowerProgram + hole module) → executor
+(shared/lower.mjs, ops v7) → ingest →
 resolver → box tree → emit → layout (KP break inside) → paginate → paint →
 render. Measurement is a **pull loop**:
 `tsr_typeset()` returns NEED_MEASURE and the host answers word widths,

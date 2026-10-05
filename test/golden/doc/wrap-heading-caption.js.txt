@@ -1,12 +1,11 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__hd(1, null, __a(__t("A heading long enough that it has to wrap across two lines at the test measure"),2,80)),0,80));
-/*19dc1cddcf76762b[0*/{ const __h = __height(0); try {
-__emit(__a(__region("figure", ({src: "photos/wide.png", alt: "wide", w: 300, h: 100, label: "fig-wide"}), [[[__a(__t("A caption that is long enough to wrap onto a second line at the narrow measure, so copy must join its lines."),163,271)]]]),82,280));
-} catch (__e) { __fail(0, __e, __h); } }/*19dc1cddcf76762b]0*/
-__emit(__a(__p(__a(__t("Body text after the figure refers to "),282,318), __a(__rf("fig-wide"),319,328), __a(__t("."),328,329)),282,329));
-})(__s);
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+return (async () => {
+const __h = [
+() => ({src: "photos/wide.png", alt: "wide", w: 300, h: 100, label: "fig-wide"}),
+];
+await __rt.run(__h, 0);
+})();
 };
 //# sourceURL=tsm:doc
-//# tsm-units=19dc1cddcf76762b;330;[[82,280,2]]

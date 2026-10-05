@@ -81,6 +81,9 @@ inline JsScan scanJs(std::string_view src, u32 pos, bool balancedMode) {
     if (balancedMode && st.empty()) { r.ok = true; r.end = i; return r; }
     continue;
   }
+  // an escape at the very end skips past it: the scan ends at the text's end
+  // (fuzz_inline, plan P2-02: a statement's span ran one byte past the source)
+  if (i > src.size()) i = (u32)src.size();
   if (!balancedMode && st.empty()) { r.ok = true; r.end = i; return r; }
   r.err = "unterminated";
   r.end = i;
@@ -147,6 +150,79 @@ inline void jsTokens(std::string_view src, Fn&& fn) {
     if (c == ',' || c == '=') fn('p', i, i + 1, depth);
     i++;
   }
+}
+
+// Does `word` occur as an identifier token anywhere in s — outside strings
+// and comments, inside template ${…} holes too (plan P2-02: a hole whose
+// code mentions `await` is an async function). A property name (x.await)
+// counts as well: over-approximation only makes a hole async.
+inline bool jsMentions(std::string_view s, std::string_view word) {
+  std::vector<int> holes;  // brace depth at each open template ${ hole
+  int depth = 0;
+  bool lit = false;  // inside template literal text
+  const u32 n = (u32)s.size();
+  u32 i = 0;
+  while (i < n) {
+    char c = s[i];
+    if (lit) {
+      if (c == '\\') i += 2;
+      else if (c == '`') { lit = false; i++; }
+      else if (c == '$' && i + 1 < n && s[i + 1] == '{') { holes.push_back(depth++); lit = false; i += 2; }
+      else i++;
+      continue;
+    }
+    if (c == '\'' || c == '"') {
+      i++;
+      while (i < n && s[i] != c && s[i] != '\n') i += s[i] == '\\' ? 2 : 1;
+      i++;
+      continue;
+    }
+    if (c == '`') { lit = true; i++; continue; }
+    if (c == '/' && i + 1 < n && s[i + 1] == '/') {
+      while (i < n && s[i] != '\n') i++;
+      continue;
+    }
+    if (c == '/' && i + 1 < n && s[i + 1] == '*') {
+      i += 2;
+      while (i + 1 < n && !(s[i] == '*' && s[i + 1] == '/')) i++;
+      i += 2;
+      continue;
+    }
+    if (c == '{') { depth++; i++; continue; }
+    if (c == '}') {
+      depth--;
+      if (!holes.empty() && depth == holes.back()) { holes.pop_back(); lit = true; }
+      i++;
+      continue;
+    }
+    if (isIdentStart(c)) {
+      u32 a = i;
+      while (i < n && isIdentCont(s[i])) i++;
+      if (s.substr(a, i - a) == word) return true;
+      continue;
+    }
+    if (c >= '0' && c <= '9') {
+      while (i < n && (isIdentCont(s[i]) || s[i] == '.')) i++;
+      continue;
+    }
+    i++;
+  }
+  return false;
+}
+
+// An ECMAScript reserved word (strict mode and module code): never a
+// binding name, so a #let of one is not hoisted (plan P2-02).
+inline bool jsReservedWord(std::string_view w) {
+  static constexpr std::string_view kWords[] = {
+      "await", "break", "case", "catch", "class", "const", "continue", "debugger", "default",
+      "delete", "do", "else", "enum", "export", "extends", "false", "finally", "for",
+      "function", "if", "implements", "import", "in", "instanceof", "interface", "let", "new",
+      "null", "package", "private", "protected", "public", "return", "static", "super",
+      "switch", "this", "throw", "true", "try", "typeof", "var", "void", "while", "with",
+      "yield", "arguments", "eval"};
+  for (std::string_view k : kWords)
+    if (k == w) return true;
+  return false;
 }
 
 // `#let name = expr` with a single identifier and no top-level comma: returns

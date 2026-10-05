@@ -1,0 +1,13 @@
+lower v1 abi 3c18dc46 docEnd 75 holes 2 module 4120f4c737d36d13
+piece 0 hole 0 js [324,362)
+piece 1 hole 1 js [364,380)
+block 0 stmt [0,27) user framed holes 0..1
+  STMT 0
+block 1 content [28,74) user framed holes 1..2
+  CALL para [28,74)
+    TEXT "The mean is " [28,39)
+    HOLE 1 [40,49)
+    TEXT ", computed " [49,59)
+    CALL strong [60,68)
+      TEXT "inline" [61,67)
+    TEXT " here." [69,74)

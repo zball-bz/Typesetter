@@ -1,23 +1,18 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+return (async () => {
 let callout;
-/*dc6c0b6d7225a59c[0*/{ const __h = __height(0); try {
-callout = (
+const __h = [
+() => { callout = (
  (body) => quote(body)
-);
-} catch (__e) { __fail(0, __e, __h); } }/*dc6c0b6d7225a59c]0*/
-/*dc6c0b6d7225a59c[1*/{ const __h = __height(1); try {
-__emit(__a(__p(__v((callout)(__sq(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("first point"),50,61)),50,61)),48,61), __a(__it(__a(__p(__a(__t("second point"),64,76)),64,76)),62,76)),48,76), __a(__p(__a(__t("A paragraph after a blank line, with a "),78,116), __v((strong)(__a(__t("nested"),125,131))), __a(__t(" call."),133,138)),78,138))))),38,140));
-} catch (__e) { __fail(1, __e, __h); } }/*dc6c0b6d7225a59c]1*/
-/*dc6c0b6d7225a59c[2*/{ const __h = __height(2); try {
-__emit(__a(__p(__v((callout)(__sq(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("an indented body is dedented by its common indentation"),158,212)),158,212)),156,212), __a(__it(__a(__p(__a(__t("so this list starts at the body's left edge"),219,262)),219,262)),217,262)),156,262), __a(__p(__a(__t("and so does this paragraph"),268,294)),268,294))))),142,296));
-} catch (__e) { __fail(2, __e, __h); } }/*dc6c0b6d7225a59c]2*/
-__emit(__a(__p(__a(__t("A note with blocks"),298,316), __a(__nt(__a(__p(__a(__t("First paragraph of the note."),319,347)),319,347), __a(__l(false, 1, __a(__it(__a(__p(__a(__t("a listed point"),351,365)),351,365)),349,365)),349,365)),316,367), __a(__t(" continues the sentence."),368,391)),298,391));
-/*dc6c0b6d7225a59c[3*/{ const __h = __height(3); try {
-__emit(__a(__p(__v((quote)(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("a single-line body that is a list"),402,435)),402,435)),400,435)),400,435)))),393,436));
-} catch (__e) { __fail(3, __e, __h); } }/*dc6c0b6d7225a59c]3*/
-})(__s);
+); },
+(__k) => ((callout)(...__k())),
+(__k) => ((strong)(...__k())),
+(__k) => ((callout)(...__k())),
+(__k) => ((quote)(...__k())),
+];
+await __rt.run(__h, 0);
+})();
 };
 //# sourceURL=tsm:doc
-//# tsm-units=dc6c0b6d7225a59c;437;[[0,36,6],[38,140,2],[142,296,2],[393,436,2]]

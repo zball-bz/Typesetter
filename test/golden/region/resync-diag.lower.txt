@@ -1,0 +1,27 @@
+lower v1 abi 3c18dc46 docEnd 178 holes 0 module none
+block 0 content [0,47)
+  REGION "outer" [0,47)
+    ROWS
+      row
+        TEXT "Outer text." [8,19)
+    REGION "inner" [20,39)
+      ROWS
+        row
+          TEXT "Inner text." [28,39)
+block 1 content [49,67)
+  CALL para [49,67)
+    TEXT "After the regions." [49,67)
+block 2 content [69,97)
+  CALL quote [69,97)
+    REGION "aside" [71,97)
+      ROWS
+        row
+          TEXT "A quoted region." [81,97)
+block 3 content [98,144)
+  CALL para [98,144)
+    TEXT "Not quoted: the quote and its region end here." [98,144)
+block 4 content [146,177)
+  REGION "lonely" [146,177)
+    ROWS
+      row
+        TEXT "Text without a closer." [155,177)

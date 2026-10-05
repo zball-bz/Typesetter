@@ -1,0 +1,8 @@
+lower v1 abi 3c18dc46 docEnd 31 holes 1 module 3fdd953d78ed6a8d
+piece 0 hole 0 js [315,332)
+block 0 content [0,30) user framed holes 0..1
+  REGION "table" args=hole 0 [0,30)
+    ROWS
+      row
+        TEXT "A" [17,18)
+        TEXT "B" [21,22)

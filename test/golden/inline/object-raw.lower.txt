@@ -1,0 +1,4 @@
+lower v1 abi 3c18dc46 docEnd 144 holes 0 module none
+block 0 content [0,143)
+  CALL para [0,143)
+    TEXT "Raw ops fixture (object-raw.tree.json): an inline mark [svg] sits on the baseline of Latin text, and 中文[svg]中文 sits between ideographs." [0,143)

@@ -1,0 +1,41 @@
+lower v1 abi 3c18dc46 docEnd 360 holes 1 module 3c8afb1645b464a9
+piece 0 hole 0 js [315,360)
+block 0 content [0,113)
+  CALL para [0,113)
+    TEXT "A comment opened mid-line" [0,25)
+    CALL comment [26,86) body=" hides what follows\n= not a heading\n- not a list item\n"
+    TEXT " and the paragraph goes on." [87,113)
+block 1 content [115,147)
+  CALL para [115,147)
+    TEXT "A code span " [115,126)
+    CALL code [127,132) text="%--"
+    TEXT " hides nothing:" [133,147)
+block 2 content [148,171)
+  CALL heading [148,171) level=1 label=null
+    TEXT "This heading survives" [150,171)
+block 3 content [173,198)
+  CALL para [173,198)
+    TEXT "请注意" [173,182)
+    TEXT "*" [182,183)
+    TEXT "以下事项：" [183,198)
+block 4 content [199,230)
+  CALL list [199,230) ordered=false start=1
+    CALL item [199,218)
+      CALL para [201,218)
+        TEXT "第一项" [201,210)
+        CALL strong [210,218)
+          TEXT "重要" [211,217)
+    CALL item [219,230)
+      CALL para [221,230)
+        TEXT "第二项" [221,230)
+block 5 content [232,267)
+  CALL para [232,267)
+    TEXT "A stray $ sign at the end of a line" [232,267)
+block 6 content [268,299)
+  CALL heading [268,299) level=1 label=null
+    TEXT "The heading after it survives" [270,299)
+block 7 content [301,359) user framed holes 0..1
+  CALL para [301,359)
+    TEXT "A call " [301,307)
+    HOLE 0 [308,346)
+    TEXT " spans lines." [347,359)

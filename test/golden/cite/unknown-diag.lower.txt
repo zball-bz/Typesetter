@@ -1,0 +1,12 @@
+lower v1 abi 3c18dc46 docEnd 168 holes 1 module a27dfd0397299f65
+piece 0 hole 0 js [315,381)
+block 0 content [0,106)
+  CALL para [0,106)
+    TEXT "A key that exists nowhere, " [0,26)
+    CALL ref [27,34) target="nosuch"
+    TEXT ", stays unresolved with a warning; a real one, " [34,80)
+    CALL ref [81,89) target="liang83"
+    TEXT ", still resolves." [89,106)
+block 1 content [108,167) user framed holes 0..1
+  CALL para [108,167)
+    HOLE 0 [108,167)

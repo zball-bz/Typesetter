@@ -1,0 +1,19 @@
+lower v1 abi 3c18dc46 docEnd 199 holes 4 module ea61f15ef4bbb7ab
+piece 0 hole 0 js [326,388)
+piece 1 hole 1 js [390,403)
+piece 2 hole 2 js [405,446)
+piece 3 hole 3 js [448,521)
+block 0 stmt [0,45) user framed async holes 0..1
+  STMT async 0
+block 1 content [47,99) user framed async holes 1..3
+  CALL async para [47,99)
+    TEXT "Value: " [47,53)
+    HOLE 1 [54,60)
+    TEXT ". Inline: " [60,69)
+    HOLE async 2 [70,98)
+    TEXT "." [98,99)
+block 2 stmt [101,161) user framed async holes 3..4
+  STMT async 3
+block 3 content [163,198)
+  CALL para [163,198)
+    TEXT "Italic after an awaiting statement." [163,198)

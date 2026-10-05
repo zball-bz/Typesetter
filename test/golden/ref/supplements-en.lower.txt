@@ -1,0 +1,30 @@
+lower v1 abi 3c18dc46 docEnd 309 holes 2 module b805893e234dac2f
+piece 0 hole 0 js [315,385)
+piece 1 hole 1 js [387,420)
+block 0 content [0,14)
+  CALL heading [0,14) level=1 label="intro"
+    TEXT "Introduction" [2,14)
+block 1 content [24,147)
+  CALL para [24,147)
+    TEXT "An English document takes English supplements from the doc.lang setting (plan P1-03): see " [24,113)
+    CALL ref [114,120) target="intro"
+    TEXT ", " [120,121)
+    CALL ref [122,128) target="fig-a"
+    TEXT ", " [128,129)
+    CALL ref [130,136) target="tab-a"
+    TEXT " and " [137,140)
+    CALL ref [141,146) target="eq-a"
+    TEXT "." [146,147)
+block 2 content [149,238) user framed holes 0..1
+  REGION "figure" args=hole 0 [149,238)
+    ROWS
+      row
+        TEXT "A figure." [220,229)
+block 3 content [240,286) user framed holes 1..2
+  REGION "table" args=hole 1 [240,286)
+    ROWS
+      row
+        TEXT "x" [273,274)
+        TEXT "y" [277,278)
+block 4 content [288,308)
+  CALL mathblock [288,308) src="e = m c^2" label="eq-a"

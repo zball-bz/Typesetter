@@ -1,0 +1,26 @@
+lower v1 abi 3c18dc46 docEnd 701 holes 1 module ae22e640048cc9a7
+piece 0 hole 0 js [315,386)
+block 0 content [0,14)
+  CALL heading [0,14) level=1 label="top"
+    TEXT "分页样例" [2,14)
+block 1 content [22,304)
+  CALL para [22,304)
+    TEXT "分页是布局之上的后处理：内容按带切分，贪心装页，遇到孤行寡行、标题悬尾等违例时回退切点。这一段足够长，可以在窄页高下跨越页边界，从而测试寡行与孤行规则的实际效果，并让回退逻辑真正运行一次。" [22,304)
+block 2 content [306,321)
+  CALL heading [306,321) level=2 label=null
+    TEXT "保持规则" [309,321)
+block 3 content [323,383)
+  CALL para [323,383)
+    TEXT "标题不落页尾；下面的代码块按逻辑行切分：" [323,383)
+block 4 content [385,494) async
+  FENCE async "json" body="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}" at=393 lines=null [385,494)
+block 5 content [496,611) user framed holes 0..1
+  REGION "figure" args=hole 0 [496,611)
+    ROWS
+      row
+        TEXT "图与图注保持在同页。" [572,602)
+block 6 content [613,700)
+  CALL para [613,700)
+    TEXT "尾段：越过图之后继续排布，直至文档结束，引用" [613,679)
+    CALL ref [679,685) target="fig-p"
+    TEXT "照常解析。" [685,700)

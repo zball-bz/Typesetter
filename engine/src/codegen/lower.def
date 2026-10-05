@@ -1,0 +1,56 @@
+// The LowerProgram format (plan P2-02; design T2 S5; docs/lowering-design.md)
+// — the one source of its opcodes, constant tags, block kinds and flags.
+// tools/gen-lower.mjs generates engine/src/codegen/lower.gen.h (codegen, the
+// reader/validator, the fuzz target) and runtime/src/shared/lower.gen.mjs
+// (lower.mjs, the interpreter). PROGRAM_ABI is a hash of this file: every
+// program and every hole module carries it, tsr2_abi reports it, and the
+// runtime refuses a program or module of another ABI. Vocabulary (schema.json)
+// is not part of it — the schemaHash handshake covers that, so a new
+// constructor never touches a program or a hole module.
+//
+// LOWER_VERSION: the program's binary layout; LOWER_PROTOCOL: the hole-module
+// calling convention (__rt.std, __rt.run(__h, segment), __rt.syntax(block),
+// a hole is h[i](__k) with __k() its content arguments).
+LOWER_VERSION(1)
+LOWER_PROTOCOL(1)
+
+// LOP(name, code, operands) — body ops, preorder. The high bit of the op
+// byte (0x80) marks a subtree that awaits (a fence, an async hole).
+LOP(TEXT,     1, "str s e")
+LOP(CALL,     2, "flags ctor [s e] nAttrs (key const)* nKids value*")
+LOP(HOLE,     3, "hole s e nKids value*")
+LOP(FRAME,    4, "s e holeLo holeHi value")
+LOP(FENCE,    5, "lang args body bodyOffset lines:const s e")
+LOP(REGION,   6, "name args s e nItems (value | ROWS)*")
+LOP(ROWS,     7, "nRows (nCells value*)*")   // a REGION item (or a FRAME's, there)
+LOP(STMT,     8, "hole")
+LOP(VERBATIM, 9, "ordinal")
+// args (FENCE, REGION): 0 = none, else (hole + 1) << 1 | 1 when that hole
+// awaits. VERBATIM's ordinal k: the k-th verbatim block, piece holes + k;
+// the module runs segment k up to it.
+
+// CONST(name, tag) — a literal value (attrs, fence lines)
+CONST(Null,  0)
+CONST(False, 1)
+CONST(True,  2)
+CONST(Uint,  3)
+CONST(F64,   4)
+CONST(Str,   5)
+CONST(Array, 6)
+
+// BLOCK(name, code) — a top-level block's kind in the block table
+BLOCK(Content,  0)
+BLOCK(Stmt,     1)
+BLOCK(Verbatim, 2)
+
+// BFLAG(name, bit) — a top-level block's flags
+BFLAG(User,   1)   // runs user code: diagnostics of the run point at it
+BFLAG(Framed, 2)   // an error inside becomes an error block at its span
+BFLAG(Async,  4)   // its value awaits
+
+// PIECE(name, code) — a stretch of user code in the hole module (D-I11)
+PIECE(Hole,     0)
+PIECE(Verbatim, 1)
+
+// CALL flags
+CFLAG(Spanned, 1)

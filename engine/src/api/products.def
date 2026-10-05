@@ -3,10 +3,13 @@
 // runner. PRODUCT(name, stage): the stage that must have run first.
 // `semantic` is taken right after Resolve, before any host answer (the
 // golden runner's pre-token dump); `diags` and `settings` are available at
-// any stage.
+// any stage. `program` is the LowerProgram's bytes (binary: the recorder
+// runs it), `lower` its dump.
 PRODUCT(skeleton, Compile)
 PRODUCT(ast, Compile)
 PRODUCT(js, Compile)
+PRODUCT(lower, Compile)
+PRODUCT(program, Compile)
 PRODUCT(tokens, Compile)
 PRODUCT(outline, Compile)
 PRODUCT(astjson, Compile)

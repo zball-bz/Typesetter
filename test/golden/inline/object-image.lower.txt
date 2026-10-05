@@ -1,0 +1,13 @@
+lower v1 abi 3c18dc46 docEnd 227 holes 3 module fa0a4a1273757576
+piece 0 hole 0 js [315,353)
+piece 1 hole 1 js [355,393)
+piece 2 hole 2 js [395,445)
+block 0 content [0,226) user framed holes 0..3
+  CALL para [0,226)
+    TEXT "Text before " [0,11)
+    HOLE 0 [12,43)
+    TEXT " text after, and in CJK 中文" [44,73)
+    HOLE 1 [73,104)
+    TEXT "中文。An image with only its width declared " [104,150)
+    HOLE 2 [151,194)
+    TEXT " takes its height from the file." [195,226)

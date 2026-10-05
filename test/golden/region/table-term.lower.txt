@@ -1,0 +1,27 @@
+lower v1 abi 3c18dc46 docEnd 216 holes 2 module f12dead6ab4a3ed5
+piece 0 hole 0 js [315,348)
+piece 1 hole 1 js [350,377)
+block 0 content [0,80)
+  CALL para [0,80)
+    TEXT "A term defined inside a table cell keeps its anchor, so a reference to it lands." [0,80)
+block 1 content [82,192) user framed holes 0..2
+  REGION "table" args=hole 0 [82,192)
+    FRAME [115,184) holes 1..2
+      ROWS
+        row
+          TEXT "Part" [115,119)
+          TEXT "Note" [122,126)
+        row
+          TEXT "Gear" [127,131)
+          CALL seq
+            HOLE 1 [134,173)
+              TEXT "gizmo" [140,145)
+              TEXT "a small mechanical device" [147,172)
+            TEXT " in the box" [174,184)
+block 2 content [194,215)
+  CALL para [194,215)
+    TEXT "See " [194,197)
+    CALL ref [198,204) target="gizmo"
+    TEXT " in " [205,207)
+    CALL ref [208,214) target="parts"
+    TEXT "." [214,215)

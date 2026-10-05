@@ -1,8 +1,11 @@
-// Executes the compiled document program against an OpBuf (architecture §4.1).
+// Executes a compiled document — its LowerProgram (run by shared/lower.mjs)
+// and its hole module — against an OpBuf (architecture §4.1; plan P2-02).
 // Works in Node (temp-file import) and in browsers/workers (blob URL import).
 import { KIND } from '../shared/ops.gen.mjs';
 import { OpBuf, isNode } from '../shared/opbuf.mjs';
 import { STYLE_KEYS, STYLE_SUGAR } from '../shared/props.gen.mjs';
+import { decodeProgram, Lowering, STUB } from '../shared/lower.mjs';
+import { BFLAG, LPIECE, PROGRAM_ABI } from '../shared/lower.gen.mjs';
 
 // style patches from the schema's run properties (plan P1-02): boolean sugar
 // keys set flag bits, value keys map to styled/STYLE_PUSH attributes
@@ -76,10 +79,15 @@ async function loadResource(src, opts) {
 export const NULLARY = Symbol.for('tsm.nullary');
 export const CONTENT = Symbol.for('tsm.content');
 
-export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
-  let current = 0;  // the unit running (codegen's __cur): where a diagnostic points
+// prog: the decoded LowerProgram (its block table: where diagnostics point)
+export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
+  const blocks = prog.blocks;
+  const docEnd = prog.docEnd;
+  // the block whose user code runs: where a diagnostic of the run points
+  // (before any has run, the first that will)
+  let current = blocks.findIndex((b) => b.flags & BFLAG.User);
   const unitSpan = () => {
-    const u = units[current];
+    const u = blocks[current];
     return u ? [u.s, u.e] : [0, 0];
   };
   // toContent (plan P2-01): one conversion for every place a value becomes
@@ -132,8 +140,10 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
         for (const row of ch) rows.push(row.map((c) => toContent(c)));
       } else if (rows.length) {
         rows.at(-1).at(-1).push(...toContent(ch));  // continuation → last cell
+      } else if (isNode(ch) && ch.kind === KIND.error) {
+        rows.push([[ch]]);  // a failed first paragraph (its frame's error) stays visible
       }
-      // block content before the first row is dropped (documented limitation)
+      // other block content before the first row is dropped (documented limitation)
     }
     const cols = args.cols ?? rows.reduce((m, r) => Math.max(m, r.length), 1);
     const trows = rows.map((r) => {
@@ -332,7 +342,7 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
         try { inline = fmt(e, ctors); }
         catch (err) {  // invoke frame: the entry shows the failure, and says so
           const msg = `bibliography ${req.src}: entry ${e.id}: ${err?.message ?? err}`;
-          const u = units[req.unit];
+          const u = blocks[req.unit];
           ob.diag(1, 'bib-load', msg, u ? u.s : 0, u ? u.e : 0);
           inline = [ctors.text(`⚠ ${err?.message ?? err}`)];
         }
@@ -366,14 +376,16 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
       },
     },
   };
-  // --- execution containment (plan P0-05, D-I10/D-I11) ---------------------
-  // A framed unit that throws becomes an error node at its place; the style
-  // stack returns to the unit's entry height (v2 §12). An unframed statement
-  // that throws stops the program: the rest becomes one error block.
-  // an executor error: an error node at the unit and its diagnostic (the
+  // --- execution containment (plan P0-05 → P2-02, D-I10/D-I11) ------------
+  // A frame that throws becomes an error at its place — an error block at
+  // top level, an error node in its parent deeper down — and the style
+  // stack returns to the frame's entry height (v2 §12). An unframed
+  // (verbatim) statement that throws stops the program: the rest becomes
+  // one error block.
+  // an executor error: an error node at the block and its diagnostic (the
   // DIAG op, plan P2-01: the engine no longer scans error nodes for them)
   const errorAt = (i, code, message, toEnd = false) => {
-    const u = units[i];
+    const u = blocks[i];
     const n = ob.makeNode(KIND.error, { message, code }, []);
     const e = u ? (toEnd ? Math.max(docEnd, u.e) : u.e) : 0;
     if (u) ob.span(n, u.s, e);
@@ -381,89 +393,132 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     ob.emitNode(n);
   };
   const describe = (e) => `${e?.name ?? 'Error'}: ${e?.message ?? String(e)}`;
+  const SYNTAX_MSG = 'SyntaxError: invalid JavaScript in this block';
+  const failure = (err, h) => {
+    if (styleStack.length > h) dollar.style.popTo(h);
+    return err === STUB ? ['script-syntax', SYNTAX_MSG] : ['script-error', describe(err)];
+  };
+  // the interpreter's half (shared/lower.mjs)
+  const env = {
+    ob,
+    ctors,
+    height: () => styleStack.length,
+    setCurrent: (i) => { current = i; },
+    failBlock: (err, h, i) => errorAt(i, ...failure(err, h)),
+    fail: (err, h, s, e) => {
+      const [code, message] = failure(err, h);
+      const n = ob.makeNode(KIND.error, { message, code }, []);
+      ob.span(n, s, e);
+      ob.diag(2, code, message, s, e);
+      return n;
+    },
+  };
   const helpers = {
-    __height: (i) => {  // a framed unit starts: it is the one running
-      if (i !== undefined) current = i;
-      return styleStack.length;
-    },
-    __cur: (i) => { current = i; },
-    __fail: (i, e, h) => {
-      if (styleStack.length > h) dollar.style.popTo(h);
-      errorAt(i, 'script-error', describe(e));
-    },
-    __syntax: (i) => errorAt(i, 'script-syntax', 'SyntaxError: invalid JavaScript in this block'),
+    // a verbatim statement the SyntaxError isolation stubbed
+    syntax: (i) => errorAt(i, 'script-syntax', SYNTAX_MSG),
     failRest: (e) => {
       if (styleStack.length) dollar.style.popTo(0);
       errorAt(current, 'script-error',
               `${describe(e)} (the rest of the document was not executed)`, true);
     },
   };
-  return { ctors, dollar, finishBibliographies, helpers };
-}
-
-// Unit table written by codegen on the module's last line (D-I11):
-//   //# tsm-units=<nonce>;<doc end>;[[srcStart, srcEnd, flags], …]
-// Only units that run user code are listed; in the module text each is
-// bracketed by /*<nonce>[i*/ … /*<nonce>]i*/ (found on the failure path only).
-function parseUnits(jsText) {
-  const at = jsText.lastIndexOf('//# tsm-units=');
-  if (at < 0) return { units: [], docEnd: 0, nonce: '' };
-  try {
-    const [nonce, end, list] = jsText.slice(at + 14).trim().split(';');
-    const units = JSON.parse(list).map(([s, e, flags], i) => ({ i, s, e, flags }));
-    return { units, docEnd: Number(end), nonce };
-  } catch { return { units: [], docEnd: 0, nonce: '' }; }
+  return { ctors, dollar, finishBibliographies, helpers, env };
 }
 
 const isSyntaxError = (e) => e?.name === 'SyntaxError' || e instanceof SyntaxError;
 
-// SyntaxError isolation, failure path only (D-I11): stub every unit that
-// carries user code, then restore groups by bisection; units that still do
-// not compile stay stubbed as __syntax(i) error blocks.
-async function isolateSyntax(jsText, units, nonce) {
-  // locate every unit's text between its markers
-  for (const u of units) {
-    const a = jsText.indexOf(`/*${nonce}[${u.i}*/`);
-    const b = jsText.indexOf(`/*${nonce}]${u.i}*/`, a);
-    u.js0 = a;
-    u.js1 = b < 0 ? -1 : b;
+// --- the hole module (plan P2-02, D-I11) -------------------------------------
+// Modules are cached by the program's hash of their text: an edit that leaves
+// the user code alone (prose) imports nothing. Piece texts that compiled are
+// remembered, so a SyntaxError is first looked for among the changed pieces.
+const MODULE_CACHE = 16;
+const moduleCache = new Map();  // hash → module (insertion order = LRU)
+// imports attempted (the e2e checks that a cached or isolated module costs
+// what lowering-design.md §5 says)
+export const lowerStats = { imports: 0 };
+const knownGood = new Set();    // piece texts that compiled in some module
+const remember = (texts) => {
+  if (knownGood.size > 20000) knownGood.clear();
+  for (const t of texts) knownGood.add(t);
+};
+
+async function loadModule(prog, js) {
+  const hit = moduleCache.get(prog.hash);
+  if (hit) {
+    moduleCache.delete(prog.hash);
+    moduleCache.set(prog.hash, hit);
+    return hit;
   }
-  const cands = units.filter((u) => u.js0 >= 0 && u.js1 > u.js0).map((u) => u.i);
+  const text = typeof js === 'function' ? js() : js;
+  const pieces = prog.pieces.map((pc, i) => ({ ...pc, i, text: text.slice(pc.js0, pc.js1) }));
+  let mod;
+  try {
+    mod = await importModule(text);
+    remember(pieces.map((pc) => pc.text));
+  } catch (e) {
+    if (!isSyntaxError(e) || !pieces.length) throw e;
+    mod = await isolateSyntax(text, pieces);
+  }
+  if (mod.abi !== PROGRAM_ABI)
+    throw new Error(`hole module ABI ${Number(mod.abi).toString(16)} differs from the runtime's ${PROGRAM_ABI.toString(16)}`);
+  if (typeof mod.default !== 'function') throw new Error('hole module has no default export');
+  moduleCache.set(prog.hash, mod);
+  if (moduleCache.size > MODULE_CACHE) moduleCache.delete(moduleCache.keys().next().value);
+  return mod;
+}
+
+// SyntaxError isolation, failure path only (D-I11): stub the pieces not known
+// to compile (a hole → null, which its frame reports as script-syntax; a
+// verbatim statement → __rt.syntax(block)), then restore them by bisection;
+// what still does not compile stays stubbed. At most 2⌈log2 n⌉+4 imports
+// for n suspects.
+async function isolateSyntax(text, pieces) {
+  const stubText = (pc) => (pc.kind === LPIECE.Hole ? 'null' : `__rt.syntax(${pc.ref});`);
   const build = (stubbed) => {
-    let t = jsText;
-    for (const u of [...stubbed].map((i) => units[i]).sort((a, b) => b.js0 - a.js0))
-      t = t.slice(0, u.js0) + `__syntax(${u.i});\n` + t.slice(u.js1);
+    let t = text;
+    const order = [...stubbed].map((i) => pieces[i]).sort((a, b) => b.js0 - a.js0);
+    for (const pc of order) t = t.slice(0, pc.js0) + stubText(pc) + t.slice(pc.js1);
     return t;
   };
   const tryImport = async (stubbed) => {
     try { return await importModule(build(stubbed)); }
     catch (e) { if (isSyntaxError(e)) return null; throw e; }
   };
-  const stubbed = new Set(cands);
-  let mod = await tryImport(stubbed);
+  let suspects = pieces.filter((pc) => !knownGood.has(pc.text)).map((pc) => pc.i);
+  let stubbed = new Set(suspects);
+  let mod = suspects.length ? await tryImport(stubbed) : null;
+  if (!mod && suspects.length < pieces.length) {  // the fault is in an unchanged piece
+    suspects = pieces.map((pc) => pc.i);
+    stubbed = new Set(suspects);
+    mod = await tryImport(stubbed);
+  }
   if (!mod) throw new SyntaxError('document program is invalid outside user code');
-  let budget = 2 * Math.ceil(Math.log2(cands.length + 1)) + 4;
-  const visit = async (group) => {
-    if (!group.length) return;
-    if (budget <= 0) return;  // exhausted: the group stays stubbed
-    budget--;
-    const trial = new Set([...stubbed].filter((i) => !group.includes(i)));
-    const m = await tryImport(trial);
-    if (m) {
-      for (const i of group) stubbed.delete(i);
-      mod = m;
-      return;
+  let budget = 2 * Math.ceil(Math.log2(suspects.length + 1)) + 4;
+  // knownBad: this group, restored, is known not to compile
+  const visit = async (group, knownBad) => {
+    if (!group.length || budget <= 0) return;  // exhausted: the group stays stubbed
+    if (!knownBad) {
+      budget--;
+      const m = await tryImport(new Set([...stubbed].filter((i) => !group.includes(i))));
+      if (m) {
+        for (const i of group) stubbed.delete(i);
+        mod = m;
+        return;
+      }
     }
-    if (group.length === 1) return;  // this unit is the culprit: keep it stubbed
-    const mid = group.length >> 1;
-    await visit(group.slice(0, mid));
-    await visit(group.slice(mid));
+    if (group.length === 1) return;  // the culprit: it stays stubbed
+    const mid = group.length >> 1, a = group.slice(0, mid);
+    await visit(a, false);
+    // a restored cleanly: the fault is in the other half
+    await visit(group.slice(mid), a.every((i) => !stubbed.has(i)));
   };
-  await visit(cands);
+  await visit(suspects, true);  // all suspects restored = the module that failed
+  remember(pieces.filter((pc) => !stubbed.has(pc.i)).map((pc) => pc.text));
   return mod;
 }
 
 async function importModule(jsText) {
+  lowerStats.imports++;
   if (typeof URL !== 'undefined' && typeof Blob !== 'undefined' && typeof window !== 'undefined') {
     const url = URL.createObjectURL(new Blob([jsText], { type: 'text/javascript' }));
     try { return await import(/* @vite-ignore */ url); }
@@ -486,22 +541,25 @@ async function importModule(jsText) {
   finally { URL.revokeObjectURL(url); }
 }
 
-// opts: { baseUrl } (browser/worker) or { baseDir, rootDir } (Node) —
-// where #bibliography(src) and other document resources resolve
-export async function execute(jsText, opts = {}) {
+// compiled: { program: Uint8Array, js: string | () => string } — the
+// LowerProgram and its hole module (js is only read when the module is not
+// cached: a host passes a getter to skip copying it out of the engine).
+// opts: { baseUrl } (browser/worker) or { baseDir, rootDir } (Node) — where
+// #bibliography(src) and other document resources resolve.
+export async function execute(compiled, opts = {}) {
+  const prog = decodeProgram(compiled.program);
   const ob = new OpBuf();
-  const { units, docEnd, nonce } = parseUnits(jsText);
-  const { ctors, dollar, finishBibliographies, helpers } = buildContext(ob, opts, units, docEnd);
-  let mod;
+  const { ctors, dollar, finishBibliographies, helpers, env } = buildContext(ob, opts, prog);
+  const mod = prog.module ? await loadModule(prog, compiled.js) : null;
+  const lowering = new Lowering(prog, env);
+  const rt = {
+    std: ctors,
+    run: (h, seg) => lowering.run(h, seg),
+    syntax: helpers.syntax,
+  };
   try {
-    mod = await importModule(jsText);
-  } catch (e) {
-    if (!isSyntaxError(e) || !units.length) throw e;
-    mod = await isolateSyntax(jsText, units, nonce);
-  }
-  if (typeof mod.default !== 'function') throw new Error('document program has no default export');
-  try {
-    await mod.default({ ...ctors, ...helpers }, dollar);
+    if (mod) await mod.default(rt, dollar);
+    else await lowering.run([], 0);
   } catch (e) {
     helpers.failRest(e);  // an unframed statement threw (D-I10)
   }

@@ -1,0 +1,17 @@
+#let boom = () => { throw new Error("deep") }
+
+- first item stays
+- second #boom() fails alone
+- third item stays
+
+> quoted line stays
+>
+> quoted #boom() fails alone
+
+#!aside
+interior para stays
+
+interior #boom() fails alone
+#aside!
+
+After.

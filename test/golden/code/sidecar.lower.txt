@@ -1,0 +1,10 @@
+lower v1 abi 3c18dc46 docEnd 313 holes 1 module a5c5463794aade04
+piece 0 hole 0 js [315,350)
+block 0 content [0,51)
+  CALL para [0,51)
+    TEXT "三盒模型：行号、代码与结构化边注。" [0,51)
+block 1 content [53,289) user framed async holes 0..1
+  FENCE async "js" args=hole 0 body="const memo = new Map(); /// 记忆化容器，均摊 $O(1)$ 查询\nfunction fib(n) {\n  if (n <= 1) return n; /// *基例*：$n <= 1$ 时直接返回，详见 @base\n  return fib(n - 1) + fib(n - 2);\n}" at=86 lines=null [53,289)
+block 2 content [291,305)
+  CALL heading [291,305) level=1 label="base"
+    TEXT "基例说明" [293,305)

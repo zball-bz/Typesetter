@@ -1,0 +1,34 @@
+lower v1 abi 3c18dc46 docEnd 259 holes 3 module 6ba6cea1232db239
+piece 0 hole 0 js [315,339)
+piece 1 hole 1 js [341,365)
+piece 2 hole 2 js [367,392)
+block 0 content [0,14)
+  CALL heading [0,14) level=1 label="top"
+    TEXT "Anchor kinds" [2,14)
+block 1 content [22,77) user framed async holes 0..1
+  REGION async "listing" args=hole 0 [22,77)
+    FENCE async "python" body="x = 1" at=58 lines=null [48,67)
+block 2 content [79,161) user framed holes 1..2
+  REGION "aside" args=hole 1 [79,161)
+    CALL heading [103,119) level=2 label="sec-in"
+      TEXT "Inner heading" [106,119)
+    ROWS
+      row
+        TEXT "Body text of the aside." [130,153)
+block 3 content [163,216) user framed holes 2..3
+  REGION "aside" args=hole 2 [163,216)
+    CALL rule [188,191)
+    ROWS
+      row
+        TEXT "After the rule." [193,208)
+block 4 content [218,258)
+  CALL para [218,258)
+    TEXT "See " [218,221)
+    CALL ref [222,228) target="lst-a"
+    TEXT ", " [228,229)
+    CALL ref [230,236) target="box-b"
+    TEXT ", " [236,237)
+    CALL ref [238,245) target="sec-in"
+    TEXT " and " [246,249)
+    CALL ref [250,257) target="rule-c"
+    TEXT "." [257,258)

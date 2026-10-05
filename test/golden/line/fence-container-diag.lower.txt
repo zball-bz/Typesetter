@@ -1,0 +1,15 @@
+lower v1 abi 3c18dc46 docEnd 181 holes 0 module none
+block 0 content [0,88) async
+  CALL async list [0,88) ordered=false start=1
+    CALL async item [0,88)
+      CALL para [2,49)
+        TEXT "an item with a fence whose content is indented:" [2,49)
+      FENCE async "js" body="if (x) {\n  y();\n}" at=61 lines=[61,72,81] [53,88)
+block 1 content [90,136) async
+  CALL async quote [90,136)
+    CALL para [92,112)
+      TEXT "a quote with a fence" [92,112)
+    FENCE async "js" body="quoted(code);" at=123 lines=[123] [115,136)
+block 2 content [137,180)
+  CALL para [137,180)
+    TEXT "the quote ends here, and so does its fence." [137,180)

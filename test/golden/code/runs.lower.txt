@@ -1,0 +1,23 @@
+lower v1 abi 3c18dc46 docEnd 478 holes 4 module d435d2a9c858b71c
+piece 0 hole 0 js [315,619)
+piece 1 hole 1 js [621,671)
+piece 2 hole 2 js [673,720)
+piece 3 hole 3 js [722,771)
+block 0 content [0,48)
+  CALL para [0,48)
+    TEXT "结构化代码行、装饰位与网格参数：" [0,48)
+block 1 content [50,347) user framed holes 0..1
+  CALL para [50,347)
+    HOLE 0 [50,347)
+block 2 content [349,477) user framed holes 1..4
+  CALL para [349,477)
+    TEXT "行内装饰：" [349,364)
+    HOLE 1 [364,400)
+      TEXT "下划线" [390,399)
+    TEXT "、" [400,403)
+    HOLE 2 [403,436)
+      TEXT "删除线" [426,435)
+    TEXT "、" [436,439)
+    HOLE 3 [439,474)
+      TEXT "上划线" [464,473)
+    TEXT "。" [474,477)

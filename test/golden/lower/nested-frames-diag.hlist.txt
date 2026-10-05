@@ -1,0 +1,72 @@
+top pid=0 units=3
+ unit text indent=1536su marker="•"
+  box Other "first" w=2561su r0 @[49,65)
+  glue word w=257su x=1 cap=257su kern="t i" src r0 @[49,65)
+  box Other "item" w=2049su r0 @[49,65)
+  glue word w=257su x=1 cap=257su kern="m s" src r0 @[49,65)
+  box Other "stays" w=2561su r0 @[49,65)
+  run r0 plain
+ unit text indent=1536su
+  box Other "⚠" w=616su r0 @[68,94)
+  glue word w=257su x=1 cap=257su src r0 @[68,94)
+  box Other "Er" w=1025su r0 @[68,94)
+  disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[68,94)
+  box Other "ror:" w=2049su r0 @[68,94)
+  glue word w=257su x=1 cap=257su kern=": d" src r0 @[68,94)
+  box Other "deep" w=2049su r0 @[68,94)
+  run r0 plain CODE
+ unit text indent=1536su marker="•"
+  box Other "third" w=2561su r0 @[97,113)
+  glue word w=257su x=1 cap=257su kern="d i" src r0 @[97,113)
+  box Other "item" w=2049su r0 @[97,113)
+  glue word w=257su x=1 cap=257su kern="m s" src r0 @[97,113)
+  box Other "stays" w=2561su r0 @[97,113)
+  run r0 plain
+top pid=1 units=2
+ unit text indent=1024su
+  box Other "quot" w=2049su r0 @[117,134)
+  disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[117,134)
+  box Other "ed" w=1025su r0 @[117,134)
+  glue word w=257su x=1 cap=257su kern="d l" src r0 @[117,134)
+  box Other "line" w=2049su r0 @[117,134)
+  glue word w=257su x=1 cap=257su kern="e s" src r0 @[117,134)
+  box Other "stays" w=2561su r0 @[117,134)
+  run r0 plain
+ unit text indent=1024su
+  box Other "⚠" w=616su r0 @[139,165)
+  glue word w=257su x=1 cap=257su src r0 @[139,165)
+  box Other "Er" w=1025su r0 @[139,165)
+  disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[139,165)
+  box Other "ror:" w=2049su r0 @[139,165)
+  glue word w=257su x=1 cap=257su kern=": d" src r0 @[139,165)
+  box Other "deep" w=2049su r0 @[139,165)
+  run r0 plain CODE
+top pid=2 units=2
+ unit text indent=0su
+  box Other "in" w=1025su r0 @[175,194)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r0 @[175,194)
+  box Other "te" w=1025su r0 @[175,194)
+  disc pen=0.7 w=0su pre="-" 513su kern="er" r0 @[175,194)
+  box Other "ri" w=1025su r0 @[175,194)
+  disc pen=0.7 w=0su pre="-" 513su kern="io" r0 @[175,194)
+  box Other "or" w=1025su r0 @[175,194)
+  glue word w=257su x=1 cap=257su kern="r p" src r0 @[175,194)
+  box Other "para" w=2049su r0 @[175,194)
+  glue word w=257su x=1 cap=257su kern="a s" src r0 @[175,194)
+  box Other "stays" w=2561su r0 @[175,194)
+  run r0 plain
+ unit text indent=0su
+  box Other "⚠" w=616su r0 @[196,224)
+  glue word w=257su x=1 cap=257su src r0 @[196,224)
+  box Other "Er" w=1025su r0 @[196,224)
+  disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[196,224)
+  box Other "ror:" w=2049su r0 @[196,224)
+  glue word w=257su x=1 cap=257su kern=": d" src r0 @[196,224)
+  box Other "deep" w=2049su r0 @[196,224)
+  run r0 plain CODE
+top pid=3 units=1
+ unit text indent=0su
+  box Other "Af" w=1025su r0 @[234,240)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[234,240)
+  box Other "ter." w=2049su r0 @[234,240)
+  run r0 plain

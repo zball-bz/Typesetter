@@ -1,0 +1,27 @@
+lower v1 abi 3c18dc46 docEnd 446 holes 2 module 5f08853c494f109b
+piece 0 hole 0 js [315,413)
+piece 1 hole 1 js [415,494)
+block 0 content [0,66)
+  CALL para [0,66)
+    TEXT "图片作为一等内容：块级插图、编号图注与引用。" [0,66)
+block 1 content [68,237) user framed holes 0..1
+  REGION "figure" args=hole 0 [68,237)
+    ROWS
+      row
+        CALL seq
+          TEXT "排版管线示意图，" [175,199)
+          CALL strong [199,213)
+            TEXT "声明尺寸" [200,212)
+          TEXT "不经拉取。" [213,228)
+block 2 content [239,383) user framed holes 1..2
+  REGION "figure" args=hole 1 [239,383)
+    ROWS
+      row
+        TEXT "过宽的图片收敛到版心，按比例缩放。" [323,374)
+block 3 content [385,445)
+  CALL para [385,445)
+    TEXT "参见" [385,391)
+    CALL ref [391,400) target="fig-pipe"
+    TEXT "与" [400,403)
+    CALL ref [403,412) target="fig-wide"
+    TEXT "；前者宽度为版心之半。" [412,445)

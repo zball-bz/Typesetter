@@ -1,0 +1,9 @@
+lower v1 abi 3c18dc46 docEnd 25 holes 0 module none
+block 0 content [0,7)
+  CALL para [0,7)
+    TEXT "Before." [0,7)
+block 1 content [9,16)
+  CALL error [9,16) code="region-orphan" message="closer '#aside!' has no open region '#!aside'"
+block 2 content [18,24)
+  CALL para [18,24)
+    TEXT "After." [18,24)

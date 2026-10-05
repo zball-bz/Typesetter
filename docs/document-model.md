@@ -91,7 +91,7 @@ Notes:
   - a paragraph made only of empty text vanishes;
   - a paragraph whose only child is a block- or adaptive-level node is replaced by that node (for example a `#toc` splice alone on a line);
   - (P1-08) a `seq` holding a block — the value of a content body with several blocks, `#callout[⏎- a⏎⏎text⏎]` — takes its place among its siblings, and a paragraph that is only such a `seq` is those blocks. A block `seq` inside inline content (`#strong[⏎p1⏎⏎p2⏎]`) is not split yet (T2's level normalization).
-- Block boundaries snapshot the schedule stack height; block exit and error recovery pop to it.
+- Block boundaries snapshot the schedule stack height; error recovery pops to it (remediation P0-05/P2-02: a normal block exit does not — a `#{ $.style.push(…) }` statement styles the blocks after it; `docs/lowering-design.md` §4).
 
 ## 4. Ops (normative binary contract)
 

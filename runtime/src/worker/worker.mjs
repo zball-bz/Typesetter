@@ -9,7 +9,7 @@ import { execute } from './executor.mjs';
 import { CanvasMeasurer } from './canvas_measure.mjs';
 import { tokenize } from './tokens.mjs';
 import { sniffImageSize } from './image_sniff.mjs';
-import { checkAbi } from '../shared/abi.mjs';
+import { checkAbi, compiledOf } from '../shared/abi.mjs';
 import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
 import { POLICY } from '../shared/settings.gen.mjs';
 
@@ -302,6 +302,19 @@ async function pump(key, s) {
   if (s.disposed) sessions.delete(key);
 }
 
+// One turn of the worker's event loop (plan P0-11's mailbox, kept by P2-02):
+// a newer message for the document can arrive and supersede the job before
+// its expensive stages. Executing used to import a module on every update —
+// a turn for free; a document without user code now imports nothing, so the
+// job takes its turn explicitly (a MessagePort hop, not a clamped timer).
+const turn = new MessageChannel();
+const turnWaiters = [];
+turn.port1.onmessage = () => turnWaiters.shift()?.();
+const yieldTurn = () => new Promise((resolve) => {
+  turnWaiters.push(resolve);
+  turn.port2.postMessage(0);
+});
+
 // config + compile + execute + ingest + measure a fresh doc; it replaces the
 // session's doc only on success, so a failing edit keeps the last good
 // document alive for relayout/paginate
@@ -328,10 +341,10 @@ async function runTypeset(s, { ids, msg }, stale) {
     mark('compileMs', t0);
 
     t0 = performance.now();
-    const js = M.UTF8ToString(M._tsr_get_js(doc));
-    const ops = await execute(js, { baseUrl });
-    if (stale()) { M._tsr_doc_free(doc); return false; }
+    const ops = await execute(compiledOf(M, doc), { baseUrl });
     mark('executeMs', t0);
+    await yieldTurn();  // (counted in the edit's total, not in executeMs)
+    if (stale()) { M._tsr_doc_free(doc); return false; }
     t0 = performance.now();
     const opsPtr = M._malloc(ops.length);
     M.HEAPU8.set(ops, opsPtr);

@@ -1,0 +1,5 @@
+doc @[0,164)
+  code-let @[0,14) js=" class = 1"
+  para @[16,71) lines=1
+  code-block @[73,121) js=" function helper(x) { return \"helped \" + x } "
+  para @[123,163) lines=1

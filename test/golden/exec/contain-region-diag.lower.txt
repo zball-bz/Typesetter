@@ -1,0 +1,15 @@
+lower v1 abi 3c18dc46 docEnd 106 holes 1 module addb6db97477f3fd
+piece 0 hole 0 js [315,388)
+block 0 stmt [0,66) user framed holes 0..1
+  STMT 0
+block 1 content [68,75)
+  CALL para [68,75)
+    TEXT "Before." [68,75)
+block 2 content [77,97)
+  REGION "boom" [77,97)
+    ROWS
+      row
+        TEXT "inside" [84,90)
+block 3 content [99,105)
+  CALL para [99,105)
+    TEXT "After." [99,105)

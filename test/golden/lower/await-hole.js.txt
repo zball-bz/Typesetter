@@ -1,0 +1,19 @@
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+return (async () => {
+let later;
+const __h = [
+async () => { later = (
+ await Promise.resolve("awaited")
+); },
+() => (later),
+async () => ((await Promise.resolve(42))),
+async () => {
+ await Promise.resolve(); $.style.push({ italic: true }) 
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

@@ -1,0 +1,25 @@
+lower v1 abi 3c18dc46 docEnd 228 holes 1 module a7426c78a0de3d7c
+piece 0 hole 0 js [315,330)
+block 0 content [0,20)
+  CALL heading [0,20) level=1 label=null
+    TEXT "Explicit placement" [2,20)
+block 1 content [22,119)
+  CALL para [22,119)
+    TEXT "First note here" [22,37)
+    CALL note [37,44)
+      TEXT "One." [39,43)
+    TEXT " and another" [45,56)
+    CALL note [56,89)
+      TEXT "Two, with a reference to " [58,82)
+      CALL ref [83,87) target="top"
+      TEXT "." [87,88)
+    TEXT " before the section is placed." [90,119)
+block 2 content [121,129) user framed holes 0..1
+  CALL para [121,129)
+    HOLE 0 [121,129)
+block 3 content [131,141)
+  CALL heading [131,141) level=1 label="top"
+    TEXT "Appendix" [133,141)
+block 4 content [149,227)
+  CALL para [149,227)
+    TEXT "Text after the explicitly placed notes section: no second section is appended." [149,227)

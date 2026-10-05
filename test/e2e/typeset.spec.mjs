@@ -327,16 +327,18 @@ test('abi: handshake accepts this build and refuses mismatches', async ({ page }
     const { OPS_VERSION, SCHEMA_HASH } = await import('/runtime/src/shared/ops.gen.mjs');
     const { SYNTAX_VERSION } = await import('/runtime/src/shared/syntax.gen.mjs');
     const { RES_VERSION } = await import('/runtime/src/shared/resources.gen.mjs');
+    const { PROGRAM_ABI } = await import('/runtime/src/shared/lower.gen.mjs');
     const fake = (abi) => ({ _tsr2_abi: () => 0, UTF8ToString: () => JSON.stringify(abi) });
     const msg = (abi) => { try { checkAbi(fake(abi)); return 'ok'; } catch (e) { return e.message; } };
     const ok = { opsWindow: [6, OPS_VERSION], schemaHash: SCHEMA_HASH, syntaxVersion: SYNTAX_VERSION,
-                 resVersion: RES_VERSION };
+                 resVersion: RES_VERSION, programAbi: PROGRAM_ABI };
     return {
       same: msg(ok),
       hash: msg({ ...ok, schemaHash: 'deadbeef' }),
       window: msg({ ...ok, opsWindow: [6, OPS_VERSION - 1] }),
       syntax: msg({ ...ok, syntaxVersion: SYNTAX_VERSION + 1 }),
       res: msg({ ...ok, resVersion: RES_VERSION + 1 }),
+      program: msg({ ...ok, programAbi: PROGRAM_ABI ^ 1 }),
     };
   });
   expect(out.same).toBe('ok');
@@ -344,6 +346,55 @@ test('abi: handshake accepts this build and refuses mismatches', async ({ page }
   expect(out.window).toContain('the engine reads ops');
   expect(out.syntax).toContain('differs from runtime syntax');
   expect(out.res).toContain('differ from runtime resources');
+  expect(out.program).toContain('program ABI');
+});
+
+// --- plan P2-02: the LowerProgram and its hole module (Node executor) -------
+// A module is cached by the program's hash: an edit to prose imports nothing.
+// A SyntaxError is isolated among the pieces that changed, and an edit that
+// breaks one splice costs the failing import plus the stubbed one.
+test('lowering: module cache and incremental SyntaxError isolation', async () => {
+  test.skip(test.info().project.name !== 'chromium-dsf1', 'Node-side: one device scale is enough');
+  const { execFileSync } = await import('node:child_process');
+  const { writeFileSync, mkdtempSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+  const { execute, lowerStats } = await import(join(root, 'runtime/src/worker/executor.mjs'));
+  const tsrc = join(root, 'engine/build/tsrc');
+  const dir = mkdtempSync(join(tmpdir(), 'tsm-lower-'));
+  const file = join(dir, 'doc.tsm'), opsFile = join(dir, 'doc.ops');
+  const run = async (src) => {
+    writeFileSync(file, src);
+    const program = new Uint8Array(execFileSync(tsrc, ['--stage=program', file]));
+    const js = () => execFileSync(tsrc, ['--stage=js', file], { encoding: 'utf8' });
+    const before = lowerStats.imports;
+    writeFileSync(opsFile, await execute({ program, js }));
+    const diags = execFileSync(tsrc, ['--stage=diags', `--ops=${opsFile}`, file], { encoding: 'utf8' });
+    return { imports: lowerStats.imports - before, diags };
+  };
+  const doc = (prose, expr) =>
+    `#let a = 20\n\n${prose} #(a + 1).\n\nLater #(${expr}).\n\n${'More prose. '.repeat(3)}\n`;
+  try {
+    const first = await run(doc('Prose', 'a * 2'));
+    expect(first.imports).toBe(1);
+    expect(first.diags).toBe('');
+    // prose edit: the same module text, nothing imported
+    expect((await run(doc('Edited prose', 'a * 2'))).imports).toBe(0);
+    // one splice broken: its paragraph alone is an error block
+    const broken = await run(doc('Edited prose', 'a * '));
+    expect(broken.imports).toBe(2);
+    expect(broken.diags).toMatch(/^error script-syntax @\[\d+,\d+\) SyntaxError[^\n]*\n$/);
+    // the same broken text again: cached with its stub
+    expect((await run(doc('More edits', 'a * '))).imports).toBe(0);
+    // fixed: one import, no diagnostics
+    const fixed = await run(doc('More edits', 'a * 3'));
+    expect(fixed.imports).toBe(1);
+    expect(fixed.diags).toBe('');
+    // a document without user code imports nothing at all
+    expect((await run('Just prose.\n')).imports).toBe(0);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 // --- plan P0-12: breaker semantics -------------------------------------------

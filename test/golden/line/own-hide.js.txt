@@ -1,18 +1,12 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__p(__a(__t("A comment opened mid-line"),0,25), __a(__cm(" hides what follows\n= not a heading\n- not a list item\n"),26,86), __a(__t(" and the paragraph goes on."),87,113)),0,113));
-__emit(__a(__p(__a(__t("A code span "),115,126), __a(__cd("%--"),127,132), __a(__t(" hides nothing:"),133,147)),115,147));
-__emit(__a(__hd(1, null, __a(__t("This heading survives"),150,171)),148,171));
-__emit(__a(__p(__a(__t("请注意"),173,182), __a(__t("*"),182,183), __a(__t("以下事项："),183,198)),173,198));
-__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("第一项"),201,210), __a(__b(__a(__t("重要"),211,217)),210,218)),201,218)),199,218), __a(__it(__a(__p(__a(__t("第二项"),221,230)),221,230)),219,230)),199,230));
-__emit(__a(__p(__a(__t("A stray $ sign at the end of a line"),232,267)),232,267));
-__emit(__a(__hd(1, null, __a(__t("The heading after it survives"),270,299)),268,299));
-/*30e5b8ae01c74608[0*/{ const __h = __height(0); try {
-__emit(__a(__p(__a(__t("A call "),301,307), __v((strong(text("left" +
-- 1 + " right")))), __a(__t(" spans lines."),347,359)),301,359));
-} catch (__e) { __fail(0, __e, __h); } }/*30e5b8ae01c74608]0*/
-})(__s);
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+return (async () => {
+const __h = [
+() => (strong(text("left" +
+- 1 + " right"))),
+];
+await __rt.run(__h, 0);
+})();
 };
 //# sourceURL=tsm:doc
-//# tsm-units=30e5b8ae01c74608;360;[[301,359,2]]

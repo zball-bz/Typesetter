@@ -1,0 +1,23 @@
+doc @[106,273) [base]
+  para @[106,181) [base]
+    text @[106,112) [base] str="Empty: "
+    seq @[0,0) [base]
+      text @[118,120) [base] str="c1"
+    text @[121,138) [base] str=". Trailing comma: "
+    seq @[0,0) [base]
+      text @[0,0) [base] str="[a]"
+      text @[148,150) [base] str="c2"
+    text @[151,161) [base] str=". Comment: "
+    seq @[0,0) [base]
+      text @[177,179) [base] str="c3"
+    text @[180,181) [base] str="."
+  para @[183,211) [base]
+    text @[183,194) [base] str="Two bodies: "
+    seq @[0,0) [base]
+      text @[0,0) [base] str="[b]"
+      text @[203,205) [base] str="d1"
+      text @[207,209) [base] str="d2"
+    text @[210,211) [base] str="."
+  error @[213,265) [base] message="TypeError: Cannot read properties of null (reading 'g')" code="script-error"
+  para @[267,273) [base]
+    text @[267,273) [base] str="After."

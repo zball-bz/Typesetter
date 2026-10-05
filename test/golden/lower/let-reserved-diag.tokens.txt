@@ -1,0 +1,4 @@
+[0,14) function "#let class = 1"
+[73,121) function "#{ function helper(x) { return \"helped \" + x } }"
+[123,130) function "#helper"
+[130,138) embedded "(\"text\")"

@@ -1,0 +1,10 @@
+lower v1 abi 3c18dc46 docEnd 103 holes 1 module 5bc8e04ee4c917a4
+piece 0 hole 0 js [315,386)
+block 0 content [0,7)
+  CALL para [0,7)
+    TEXT "Before." [0,7)
+block 1 stmt [9,73) user framed holes 0..1
+  STMT 0
+block 2 content [75,102)
+  CALL para [75,102)
+    TEXT "This paragraph is not bold." [75,102)

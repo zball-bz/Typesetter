@@ -1,0 +1,55 @@
+lower v1 abi 3c18dc46 docEnd 437 holes 5 module 3fa43907d56c7ebc
+piece 0 hole 0 js [328,375)
+piece 1 hole 1 js [377,407)
+piece 2 hole 2 js [409,438)
+piece 3 hole 3 js [440,470)
+piece 4 hole 4 js [472,500)
+block 0 stmt [0,36) user framed holes 0..1
+  STMT 0
+block 1 content [38,140) user framed holes 1..3
+  CALL para [38,140)
+    HOLE 1 [38,140)
+      CALL seq
+        CALL list [48,76) ordered=false start=1
+          CALL item [48,61)
+            CALL para [50,61)
+              TEXT "first point" [50,61)
+          CALL item [62,76)
+            CALL para [64,76)
+              TEXT "second point" [64,76)
+        CALL para [78,138)
+          TEXT "A paragraph after a blank line, with a " [78,116)
+          HOLE 2 [117,132)
+            TEXT "nested" [125,131)
+          TEXT " call." [133,138)
+block 2 content [142,296) user framed holes 3..4
+  CALL para [142,296)
+    HOLE 3 [142,296)
+      CALL seq
+        CALL list [156,262) ordered=false start=1
+          CALL item [156,212)
+            CALL para [158,212)
+              TEXT "an indented body is dedented by its common indentation" [158,212)
+          CALL item [217,262)
+            CALL para [219,262)
+              TEXT "so this list starts at the body's left edge" [219,262)
+        CALL para [268,294)
+          TEXT "and so does this paragraph" [268,294)
+block 3 content [298,391)
+  CALL para [298,391)
+    TEXT "A note with blocks" [298,316)
+    CALL note [316,367)
+      CALL para [319,347)
+        TEXT "First paragraph of the note." [319,347)
+      CALL list [349,365) ordered=false start=1
+        CALL item [349,365)
+          CALL para [351,365)
+            TEXT "a listed point" [351,365)
+    TEXT " continues the sentence." [368,391)
+block 4 content [393,436) user framed holes 4..5
+  CALL para [393,436)
+    HOLE 4 [393,436)
+      CALL list [400,435) ordered=false start=1
+        CALL item [400,435)
+          CALL para [402,435)
+            TEXT "a single-line body that is a list" [402,435)

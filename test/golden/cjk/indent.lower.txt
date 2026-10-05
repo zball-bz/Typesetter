@@ -1,0 +1,7 @@
+lower v1 abi 3c18dc46 docEnd 258 holes 0 module none
+block 0 content [0,147)
+  CALL para [0,147)
+    TEXT "每个段落的首行都会缩进两个汉字的宽度，这是通过引擎内部的缩进块实现的，而不是样式表的文本缩进属性。" [0,147)
+block 1 content [149,257)
+  CALL para [149,257)
+    TEXT "第二个段落同样如此，缩进块参与断行计算，因此首行的可用宽度正确地减少了。" [149,257)

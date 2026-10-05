@@ -1,0 +1,27 @@
+lower v1 abi 3c18dc46 docEnd 169 holes 1 module 328e79f964bc9ba6
+piece 0 hole 0 js [315,360)
+block 0 content [0,6)
+  CALL heading [0,6) level=1 label="sec"
+    TEXT "Data" [2,6)
+block 1 content [14,136) user framed holes 0..1
+  REGION "table" args=hole 0 [14,136)
+    ROWS
+      row
+        TEXT "Name" [59,63)
+        TEXT "Qty" [66,69)
+        TEXT "Price" [72,77)
+      row
+        TEXT "Alpha widget" [78,90)
+        TEXT "2" [93,94)
+        TEXT "3.50" [97,101)
+      row
+        TEXT "中文条目" [102,114)
+        TEXT "三" [117,120)
+        TEXT "12.00" [123,128)
+block 2 content [138,168)
+  CALL para [138,168)
+    TEXT "Totals appear in " [138,154)
+    CALL ref [155,159) target="tbl"
+    TEXT " of " [160,162)
+    CALL ref [163,167) target="sec"
+    TEXT "." [167,168)

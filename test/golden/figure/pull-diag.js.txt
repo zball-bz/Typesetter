@@ -1,14 +1,12 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__p(__a(__t("拉取路径与占位框（原生桩提供 512×384；浏览器中加载失败也不会卡住）。"),0,99)),0,99));
-/*b47a9b411ee29cf9[0*/{ const __h = __height(0); try {
-__emit(__a(__region("figure", ({src: "photos/lighthouse.jpg", alt: "海边灯塔", label: "fig-light"}), [[[__sq(__a(__t("黄昏时分的灯塔，尺寸来自 NEED"),181,222), __a(__t("_"),222,223), __a(__t("IMAGES 拉取。"),223,239))]]]),101,248));
-} catch (__e) { __fail(0, __e, __h); } }/*b47a9b411ee29cf9]0*/
-/*b47a9b411ee29cf9[1*/{ const __h = __height(1); try {
-__emit(__a(__region("figure", ({src: "javascript:alert(1)", alt: "恶意来源"}), [[[__a(__t("这一条的来源被拒绝，渲染为占位框。"),308,359)]]]),250,368));
-} catch (__e) { __fail(1, __e, __h); } }/*b47a9b411ee29cf9]1*/
-})(__s);
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+return (async () => {
+const __h = [
+() => ({src: "photos/lighthouse.jpg", alt: "海边灯塔", label: "fig-light"}),
+() => ({src: "javascript:alert(1)", alt: "恶意来源"}),
+];
+await __rt.run(__h, 0);
+})();
 };
 //# sourceURL=tsm:doc
-//# tsm-units=b47a9b411ee29cf9;369;[[101,248,2],[250,368,2]]

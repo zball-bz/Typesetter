@@ -1,0 +1,13 @@
+lower v1 abi 3c18dc46 docEnd 54 holes 1 module f041cbfc8ee398da
+piece 0 hole 0 js [315,327)
+block 0 content [0,17)
+  CALL para [0,17)
+    TEXT "Before the error." [0,17)
+block 1 content [19,35) user framed holes 0..1
+  CALL para [19,35)
+    TEXT "issue " [19,24)
+    HOLE 0 [25,30)
+    TEXT " here" [31,35)
+block 2 content [37,53)
+  CALL para [37,53)
+    TEXT "After the error." [37,53)

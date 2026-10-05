@@ -1,0 +1,64 @@
+top pid=0 units=3
+ unit text indent=1536su marker="•"
+  word "first" w=2561su pen=INF @[49,65)
+  space w=257su stretch=1 @[49,65)
+  word "item" w=2049su pen=INF @[49,65)
+  space w=257su stretch=1 @[49,65)
+  word "stays" w=2561su pen=INF @[49,65)
+ unit text indent=1536su
+  word "⚠" w=616su pen=INF CODE @[68,94)
+  space w=257su stretch=1 CODE @[68,94)
+  word "Er" w=1025su pen=INF CODE @[68,94)
+  hyphen bw=513su pen=0.70 CODE @[68,94)
+  word "ror:" w=2049su pen=INF CODE @[68,94)
+  space w=257su stretch=1 CODE @[68,94)
+  word "deep" w=2049su pen=INF CODE @[68,94)
+ unit text indent=1536su marker="•"
+  word "third" w=2561su pen=INF @[97,113)
+  space w=257su stretch=1 @[97,113)
+  word "item" w=2049su pen=INF @[97,113)
+  space w=257su stretch=1 @[97,113)
+  word "stays" w=2561su pen=INF @[97,113)
+top pid=1 units=2
+ unit text indent=1024su
+  word "quot" w=2049su pen=INF @[117,134)
+  hyphen bw=513su pen=0.70 @[117,134)
+  word "ed" w=1025su pen=INF @[117,134)
+  space w=257su stretch=1 @[117,134)
+  word "line" w=2049su pen=INF @[117,134)
+  space w=257su stretch=1 @[117,134)
+  word "stays" w=2561su pen=INF @[117,134)
+ unit text indent=1024su
+  word "⚠" w=616su pen=INF CODE @[139,165)
+  space w=257su stretch=1 CODE @[139,165)
+  word "Er" w=1025su pen=INF CODE @[139,165)
+  hyphen bw=513su pen=0.70 CODE @[139,165)
+  word "ror:" w=2049su pen=INF CODE @[139,165)
+  space w=257su stretch=1 CODE @[139,165)
+  word "deep" w=2049su pen=INF CODE @[139,165)
+top pid=2 units=2
+ unit text indent=0su
+  word "in" w=1025su pen=INF @[175,194)
+  hyphen bw=513su pen=0.70 @[175,194)
+  word "te" w=1025su pen=INF @[175,194)
+  hyphen bw=513su pen=0.70 @[175,194)
+  word "ri" w=1025su pen=INF @[175,194)
+  hyphen bw=513su pen=0.70 @[175,194)
+  word "or" w=1025su pen=INF @[175,194)
+  space w=257su stretch=1 @[175,194)
+  word "para" w=2049su pen=INF @[175,194)
+  space w=257su stretch=1 @[175,194)
+  word "stays" w=2561su pen=INF @[175,194)
+ unit text indent=0su
+  word "⚠" w=616su pen=INF CODE @[196,224)
+  space w=257su stretch=1 CODE @[196,224)
+  word "Er" w=1025su pen=INF CODE @[196,224)
+  hyphen bw=513su pen=0.70 CODE @[196,224)
+  word "ror:" w=2049su pen=INF CODE @[196,224)
+  space w=257su stretch=1 CODE @[196,224)
+  word "deep" w=2049su pen=INF CODE @[196,224)
+top pid=3 units=1
+ unit text indent=0su
+  word "Af" w=1025su pen=INF @[234,240)
+  hyphen bw=513su pen=0.70 @[234,240)
+  word "ter." w=2049su pen=INF @[234,240)

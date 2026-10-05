@@ -1,10 +1,13 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-/*3fcaf5f4389c6316[0*/{ const __h = __height(0); try {
-__emit(__a(__p(__a(__t("Text before "),0,11), __v((image("x.png", {w: 20, h: 16}))), __a(__t(" text after, and in CJK 中文"),44,73), __v((image("y.png", {w: 16, h: 16}))), __a(__t("中文。An image with only its width declared "),104,150), __v((image("/test/e2e/img/w40h20.png", {w: 24}))), __a(__t(" takes its height from the file."),195,226)),0,226));
-} catch (__e) { __fail(0, __e, __h); } }/*3fcaf5f4389c6316]0*/
-})(__s);
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+return (async () => {
+const __h = [
+() => (image("x.png", {w: 20, h: 16})),
+() => (image("y.png", {w: 16, h: 16})),
+() => (image("/test/e2e/img/w40h20.png", {w: 24})),
+];
+await __rt.run(__h, 0);
+})();
 };
 //# sourceURL=tsm:doc
-//# tsm-units=3fcaf5f4389c6316;227;[[0,226,2]]

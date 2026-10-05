@@ -1,0 +1,15 @@
+lower v1 abi 3c18dc46 docEnd 164 holes 1 module 8c994b3eb4aa8eed
+piece 0 hole 0 js [315,337)
+piece 1 verbatim block 0 js [366,380)
+piece 2 verbatim block 2 js [405,450)
+block 0 verbatim [0,14) user
+  VERBATIM 0
+block 1 content [16,71)
+  CALL para [16,71)
+    TEXT "Before the hoisting rule: reserved words stay verbatim." [16,71)
+block 2 verbatim [73,121) user
+  VERBATIM 1
+block 3 content [123,163) user framed holes 0..1
+  CALL para [123,163)
+    HOLE 0 [123,138)
+    TEXT " after a declaring block." [139,163)

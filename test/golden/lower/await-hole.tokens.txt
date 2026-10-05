@@ -1,0 +1,5 @@
+[0,45) function "#let later = await Promise.resolve(\"awaited\")"
+[54,60) function "#later"
+[70,71) function "#"
+[71,98) embedded "(await Promise.resolve(42))"
+[101,161) function "#{ await Promise.resolve(); $.style.push({ italic: true }) }"

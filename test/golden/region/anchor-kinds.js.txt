@@ -1,18 +1,13 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__hd(1, "top", __a(__t("Anchor kinds"),2,14)),0,14));
-/*c16f6f3e10912b73[0*/{ const __h = __height(0); try {
-__emit(__a(__region("listing", ({label: "lst-a"}), [__a(__v(await __fence("python", ({}), "x = 1", 58)),48,67)]),22,77));
-} catch (__e) { __fail(0, __e, __h); } }/*c16f6f3e10912b73]0*/
-/*c16f6f3e10912b73[1*/{ const __h = __height(1); try {
-__emit(__a(__region("aside", ({label: "box-b"}), [__a(__hd(2, "sec-in", __a(__t("Inner heading"),106,119)),103,119), [[__a(__t("Body text of the aside."),130,153)]]]),79,161));
-} catch (__e) { __fail(1, __e, __h); } }/*c16f6f3e10912b73]1*/
-/*c16f6f3e10912b73[2*/{ const __h = __height(2); try {
-__emit(__a(__region("aside", ({label: "rule-c"}), [__a(__hr(),188,191), [[__a(__t("After the rule."),193,208)]]]),163,216));
-} catch (__e) { __fail(2, __e, __h); } }/*c16f6f3e10912b73]2*/
-__emit(__a(__p(__a(__t("See "),218,221), __a(__rf("lst-a"),222,228), __a(__t(", "),228,229), __a(__rf("box-b"),230,236), __a(__t(", "),236,237), __a(__rf("sec-in"),238,245), __a(__t(" and "),246,249), __a(__rf("rule-c"),250,257), __a(__t("."),257,258)),218,258));
-})(__s);
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+return (async () => {
+const __h = [
+() => ({label: "lst-a"}),
+() => ({label: "box-b"}),
+() => ({label: "rule-c"}),
+];
+await __rt.run(__h, 0);
+})();
 };
 //# sourceURL=tsm:doc
-//# tsm-units=c16f6f3e10912b73;259;[[22,77,2],[79,161,2],[163,216,2]]

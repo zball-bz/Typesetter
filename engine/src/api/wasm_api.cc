@@ -145,9 +145,20 @@ TSR_EXPORT int tsr_compile(WasmDoc* d, const char* src) {
   return 0;
 }
 
+// The compiled document (plan P2-02): the hole module (UTF-8, "" when the
+// document has no user code) and the LowerProgram, [u32 byte length][bytes].
+// The host reads the program first: its header names the module's hash, so
+// a cached module skips tsr_get_js.
 TSR_EXPORT const char* tsr_get_js(WasmDoc* d) {
-  d->jsOut = d->doc.js.text;
-  return d->jsOut.c_str();
+  return d->doc.js.js.c_str();
+}
+TSR_EXPORT const u8* tsr2_program(WasmDoc* d) {
+  const std::string& p = d->doc.js.program;
+  d->reqOut.assign(4, '\0');
+  const u32 len = (u32)p.size();
+  std::memcpy(&d->reqOut[0], &len, 4);
+  d->reqOut += p;
+  return (const u8*)d->reqOut.data();
 }
 
 TSR_EXPORT int tsr_ingest(WasmDoc* d, const u8* buf, int len) {
@@ -350,15 +361,15 @@ TSR_EXPORT const char* tsr_parse_json(const char* src) {
 }
 
 // The one ABI handshake (plan P1-01, D-H06): the host checks it before it
-// writes a single op. Fields of subsystems that do not exist yet carry 0
-// (programAbi → P2-02); resVersion is resources.def's, syntaxVersion
+// writes a single op. programAbi is lower.def's (the LowerProgram and the
+// hole module, plan P2-02), resVersion resources.def's, syntaxVersion
 // syntax.def's.
 TSR_EXPORT const char* tsr2_abi() {
   static std::string out;
   if (out.empty()) {
     out = "{\"opsWindow\":[" + std::to_string(OPS_MIN_COMPAT) + "," + std::to_string(OPS_VERSION) +
           "],\"schemaHash\":\"" + SCHEMA_HASH +
-          "\",\"programAbi\":0,\"resVersion\":" + std::to_string(RES_VERSION) +
+          "\",\"programAbi\":" + std::to_string(PROGRAM_ABI) + ",\"resVersion\":" + std::to_string(RES_VERSION) +
           ",\"renderVersion\":1,\"syntaxVersion\":" +
           std::to_string(SYNTAX_VERSION) + "}";
   }

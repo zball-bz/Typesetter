@@ -1,9 +1,0 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__p(__a(__t("JSON 高亮（native 静态链接 tree-sitter，与 web side module 同一份 parse table）："),0,95)),0,95));
-__emit(__a(__v(await __fence("json", ({}), "{\"name\": \"typesetter\", \"version\": 3, \"ok\": true, \"tags\": [null, 42]}", 105)),97,177));
-})(__s);
-};
-//# sourceURL=tsm:doc
-//# tsm-units=467b450a0e638e1f;178;[]

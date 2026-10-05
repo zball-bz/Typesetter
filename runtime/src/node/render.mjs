@@ -5,7 +5,7 @@
 // output is the resolver-complete semantic page with static token spans.
 import { execute } from '../worker/executor.mjs';
 import { tokenize } from '../worker/tokens.mjs';
-import { checkAbi } from '../shared/abi.mjs';
+import { checkAbi, compiledOf } from '../shared/abi.mjs';
 import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
 import { RES_KINDS } from '../shared/resources.gen.mjs';
 import { settingsFromOptions } from '../shared/settings.gen.mjs';
@@ -38,8 +38,7 @@ export async function renderTsm(source, opts = {}) {
     const srcPtr = M.stringToNewUTF8(String(source));
     M._tsr_compile(doc, srcPtr);
     M._free(srcPtr);
-    const js = M.UTF8ToString(M._tsr_get_js(doc));
-    const ops = await execute(js, { baseDir: opts.baseDir, rootDir: opts.rootDir });
+    const ops = await execute(compiledOf(M, doc), { baseDir: opts.baseDir, rootDir: opts.rootDir });
     const opsPtr = M._malloc(ops.length);
     M.HEAPU8.set(ops, opsPtr);
     const ingested = M._tsr_ingest(doc, opsPtr, ops.length) === 0;

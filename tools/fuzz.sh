@@ -13,7 +13,7 @@ set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 BUILD=engine/build-fuzz
-TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer)
+TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower)
 
 if [ ! -f "$BUILD/CMakeCache.txt" ]; then
   GEN="Unix Makefiles"; command -v ninja >/dev/null && GEN=Ninja
@@ -40,6 +40,14 @@ seed() {
       };
       for (const [k, v] of Object.entries(seeds)) writeFileSync('$dir/seed-' + k + '.bin', encodeAnswer(v));
     "
+    return
+  fi
+  if [ "$t" = fuzz_lower ]; then
+    # the fixtures' LowerPrograms (tsrc --stage=program)
+    local f
+    for f in $(find test/fixtures -name "*.tsm" | sort); do
+      engine/build/tsrc --stage=program "$f" > "$dir/$(echo "$f" | tr / _).bin" 2>/dev/null || true
+    done
     return
   fi
   if [ "$t" = fuzz_settings ]; then

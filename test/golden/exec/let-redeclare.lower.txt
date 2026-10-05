@@ -1,0 +1,19 @@
+lower v1 abi 3c18dc46 docEnd 48 holes 4 module b3cc6a77591ca4de
+piece 0 hole 0 js [322,343)
+piece 1 hole 1 js [345,354)
+piece 2 hole 2 js [356,377)
+piece 3 hole 3 js [379,388)
+block 0 stmt [0,10) user framed holes 0..1
+  STMT 0
+block 1 content [12,22) user framed holes 1..2
+  CALL para [12,22)
+    TEXT "First: " [12,18)
+    HOLE 1 [19,21)
+    TEXT "." [21,22)
+block 2 stmt [24,34) user framed holes 2..3
+  STMT 2
+block 3 content [36,47) user framed holes 3..4
+  CALL para [36,47)
+    TEXT "Second: " [36,43)
+    HOLE 3 [44,46)
+    TEXT "." [46,47)

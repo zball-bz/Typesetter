@@ -1,0 +1,35 @@
+lower v1 abi 3c18dc46 docEnd 244 holes 1 module 2f7105e6c238166f
+piece 0 hole 0 js [315,338)
+block 0 content [0,9)
+  CALL heading [0,9) level=1 label="top"
+    TEXT "Regions" [2,9)
+block 1 content [17,112) user framed holes 0..1
+  REGION "figure" args=hole 0 [17,112)
+    ROWS
+      row
+        TEXT "A pretend figure body line" [41,67)
+      row
+        TEXT "continuing on a second source line." [68,103)
+block 2 content [114,197)
+  REGION "aside" [114,197)
+    ROWS
+      row
+        CALL seq
+          TEXT "Side note with " [122,136)
+          CALL strong [137,147)
+            TEXT "emphasis" [138,146)
+          TEXT " inside" [148,154)
+    CALL list [155,189) ordered=false start=1
+      CALL item [155,172)
+        CALL para [157,172)
+          TEXT "a nested bullet" [157,172)
+      CALL item [173,189)
+        CALL para [175,189)
+          TEXT "another bullet" [175,189)
+block 3 content [199,243)
+  CALL para [199,243)
+    TEXT "The figure is " [199,212)
+    CALL ref [213,218) target="fig1"
+    TEXT " and the section is " [219,237)
+    CALL ref [238,242) target="top"
+    TEXT "." [242,243)

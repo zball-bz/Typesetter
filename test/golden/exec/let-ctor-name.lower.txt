@@ -1,0 +1,18 @@
+lower v1 abi 3c18dc46 docEnd 84 holes 2 module ca260521834d1cea
+piece 0 hole 0 js [325,349)
+piece 1 hole 1 js [351,363)
+block 0 stmt [0,13) user framed holes 0..1
+  STMT 0
+block 1 content [15,57)
+  CALL list [15,57) ordered=false start=1
+    CALL item [15,43)
+      CALL para [17,43)
+        TEXT "the list sugar still works" [17,43)
+    CALL item [44,57)
+      CALL para [46,57)
+        TEXT "second item" [46,57)
+block 2 content [59,83) user framed holes 1..2
+  CALL para [59,83)
+    TEXT "The user binding: " [59,76)
+    HOLE 1 [77,82)
+    TEXT "." [82,83)

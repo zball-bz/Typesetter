@@ -30,7 +30,7 @@ struct Doc {
   SourceText src;
   Skeleton skel;
   AstNode* ast = nullptr;
-  JsProgram js;
+  Lowered js;  // the LowerProgram and the hole module (plan P2-02)
 
   RawOps raw;
   StyleTable styles;
@@ -648,7 +648,9 @@ struct Doc {
   std::string product(std::string_view name) {
     if (name == "skeleton") return dumpSkeleton(skel, src);
     if (name == "ast") return dumpAst(ast, src, strs);
-    if (name == "js") return js.text;
+    if (name == "js") return js.js;
+    if (name == "lower") return dumpLowerProgram(js.program);
+    if (name == "program") return js.program;
     if (name == "tokens") return dumpTokens(syntaxTokens(ast, src, strs), src);
     if (name == "outline") return outlineJson(ast, src, strs, diags) + "\n";
     if (name == "astjson") return astJson(ast, src, strs) + "\n";

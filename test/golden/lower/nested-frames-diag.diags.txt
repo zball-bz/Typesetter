@@ -1,0 +1,3 @@
+error script-error @[68,94) Error: deep
+error script-error @[139,165) Error: deep
+error script-error @[196,224) Error: deep

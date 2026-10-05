@@ -1,0 +1,7 @@
+lower v1 abi 3c18dc46 docEnd 247 holes 0 module none
+block 0 content [0,246)
+  CALL para [0,246)
+    TEXT "The title " [0,9)
+    CALL em [10,42)
+      TEXT "Breaking Paragraphs into Lines" [11,41)
+    TEXT ". Software: Practice and Experience — an italic run followed by a roman period and a space is shaped as separate runs, so no cross-space kern is budgeted at the boundary. Plain text s. A keeps its kern." [42,246)

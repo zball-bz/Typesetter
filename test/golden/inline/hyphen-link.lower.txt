@@ -1,0 +1,7 @@
+lower v1 abi 3c18dc46 docEnd 217 holes 0 module none
+block 0 content [0,216)
+  CALL para [0,216)
+    TEXT "The demonstration paragraph exercises hyphenation inside links: " [0,63)
+    CALL link [64,149) url="https://example.org/hyphen"
+      TEXT "extraordinary representation of measurement terminology" [65,120)
+    TEXT " and justification arithmetic throughout typesetting documentation." [150,216)

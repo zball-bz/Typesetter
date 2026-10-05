@@ -991,7 +991,7 @@ Theme steps: — · findings: 1
 | `markup-language/reference-forms-closed` | adhoc | medium | P2-09 | |
 | `markup-language/footnote-sugar-oneoff` | adhoc | low | P4-07 | |
 | `markup-language/quote-context-heuristic` | adhoc | low | P3-30, P4-02 | |
-| `markup-language/no-execution-containment` | issue | high | P0-05, P2-02 | |
+| `markup-language/no-execution-containment` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `markup-language/spec-features-unimplemented` | issue | high | P0-05, P2-12, P3-31 | |
 | `markup-language/nested-code-statements-dropped` | issue | high | P0-05, P2-12 | |
 | `markup-language/inline-scanner-overrun` | issue | high | P1-06 | grep:plan P1-06 |
@@ -1028,7 +1028,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/contiguous-escapes-blocks` | issue | high | P1-06 | grep:plan P1-06 |
 | `parser-frontend/inline-comment-leaks-block-structure` | issue | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/unterminated-let-swallows-document` | issue | high | P0-04, P1-07 | grep:plan P1-07 |
-| `parser-frontend/ctor-names-are-reserved-words` | issue | high | P0-05, P2-02 | |
+| `parser-frontend/ctor-names-are-reserved-words` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `parser-frontend/trailing-text-after-block-closers-dropped` | issue | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/fence-double-dedent-in-containers` | issue | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/span-fidelity` | issue | medium | P1-07 | grep:plan P1-07 |
@@ -1063,7 +1063,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/collector-switch-and-fixed-counters` | adhoc | medium | P2-07 | |
 | `codegen-ops-model/occurrence-spans-unsound` | issue | high | P2-04 | |
 | `codegen-ops-model/exponential-instantiation` | issue | high | P0-07 | grep:plan P0-07 |
-| `codegen-ops-model/no-per-block-containment` | issue | high | P0-05, P2-02 | |
+| `codegen-ops-model/no-per-block-containment` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `codegen-ops-model/keyword-forms-uncompiled` | issue | high | P0-05, P2-12, P3-31 | |
 | `codegen-ops-model/css-injection-style-values` | issue | high | P0-06, P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/sizepx-ignored-in-emit` | issue | medium | P0-08 | grep:plan P0-08 |
@@ -1074,7 +1074,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/shadow-mutability-forgery` | issue | low | P2-01 | grep:plan P2-01 |
 | `codegen-ops-model/popto-stack-divergence` | issue | low | P0-08, P2-01 | grep:plan P2-01 |
 | `codegen-ops-model/contract-doc-drift` | issue | low | P0-06 | grep:plan P0-06 |
-| `codegen-ops-model/missed:0` | missed | high | P0-05, P2-02 | |
+| `codegen-ops-model/missed:0` | missed | high | P0-05, P2-02 | grep:plan P2-02 |
 | `codegen-ops-model/missed:1` | missed | high | P2-11 | |
 | `codegen-ops-model/missed:2` | missed | medium | P2-03 | |
 | `codegen-ops-model/missed:3` | missed | medium | P0-06 | grep:plan P0-06 |
@@ -1326,7 +1326,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/math-extensibility` | adhoc | medium | P3-29 | |
 | `real-world-evidence/no-cross-document-labels` | adhoc | high | P3-31 | |
 | `real-world-evidence/markup-reentry-missing` | adhoc | medium | P2-13 | |
-| `real-world-evidence/ctor-name-collision-fatal` | issue | high | P0-05, P2-02 | |
+| `real-world-evidence/ctor-name-collision-fatal` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `real-world-evidence/heading-numbers-invisible` | issue | medium | P3-03 | |
 | `real-world-evidence/labels-on-unsupported-nodes-silent` | issue | medium | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/span-loss-synthesized-nodes` | issue | medium | P2-04 | |
@@ -1335,7 +1335,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/converter-fidelity-unchecked` | issue | medium | P3-35 | |
 | `real-world-evidence/math-leniency-silent` | issue | low | P3-24 | |
 | `real-world-evidence/converter-code-duplication` | issue | low | P3-35 | |
-| `real-world-evidence/missed:0` | missed | high | P0-05, P2-02 | |
+| `real-world-evidence/missed:0` | missed | high | P0-05, P2-02 | grep:plan P2-02 |
 | `real-world-evidence/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/missed:2` | missed | medium | P2-06 | |
 | `real-world-evidence/missed:3` | missed | medium | P0-06, P2-08 | |

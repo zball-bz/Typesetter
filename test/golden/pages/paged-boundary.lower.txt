@@ -1,0 +1,13 @@
+lower v1 abi 3c18dc46 docEnd 385 holes 0 module none
+block 0 content [0,16)
+  CALL heading [0,16) level=1 label=null
+    TEXT "Sheet boundary" [2,16)
+block 1 content [18,155)
+  CALL para [18,155)
+    TEXT "Filler paragraph one fills most of the first sheet with ordinary running text so that the next paragraph starts close to the bottom edge." [18,155)
+block 2 content [157,250)
+  CALL para [157,250)
+    TEXT "Filler paragraph two continues to push the content down the page by a few more lines of text." [157,250)
+block 3 content [252,384)
+  CALL para [252,384)
+    TEXT "This three-line paragraph starts near the sheet boundary: its first line may fit, but widow and orphan rules decide where it breaks." [252,384)

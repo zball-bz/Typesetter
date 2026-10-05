@@ -1,0 +1,11 @@
+doc @[0,199)
+  code-let @[0,45) js=" later = await Promise.resolve(\"awaited\")"
+  para @[47,99)
+    text @[47,53) str="Value: "
+    splice @[54,60) expr="later"
+    text @[60,69) str=". Inline: "
+    splice @[70,98) expr="(await Promise.resolve(42))"
+    text @[98,99) str="."
+  code-block @[101,161) js=" await Promise.resolve(); $.style.push({ italic: true }) "
+  para @[163,198)
+    text @[163,198) str="Italic after an awaiting statement."

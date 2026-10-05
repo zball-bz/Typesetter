@@ -1,0 +1,30 @@
+lower v1 abi 3c18dc46 docEnd 314 holes 0 module none
+block 0 content [0,11)
+  CALL heading [0,11) level=1 label="top"
+    TEXT "Footnotes" [2,11)
+block 1 content [19,211)
+  CALL para [19,211)
+    TEXT "A claim in running text" [19,42)
+    CALL note [42,106)
+      TEXT "The note body carries " [44,65)
+      CALL strong [66,74)
+        TEXT "markup" [67,73)
+      TEXT ", " [74,75)
+      CALL code [76,82) text="code"
+      TEXT ", and math " [82,92)
+      CALL mathinline [93,104) src="x^2 + y^2"
+      TEXT "." [104,105)
+    TEXT " continues after the marker, and a second note" [107,152)
+    CALL note [152,174)
+      TEXT "Second note, short." [154,173)
+    TEXT " follows later in the same paragraph." [175,211)
+block 2 content [213,225)
+  CALL heading [213,225) level=2 label=null
+    TEXT "A section" [216,225)
+block 3 content [227,313)
+  CALL para [227,313)
+    TEXT "Notes may cite " [227,241)
+    CALL ref [242,246) target="top"
+    TEXT " and the text may cite a note back as " [247,283)
+    CALL ref [284,289) target="fn-1"
+    TEXT "; the section ends here." [289,313)

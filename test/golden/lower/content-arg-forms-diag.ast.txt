@@ -1,0 +1,33 @@
+doc @[0,274)
+  code-let @[0,90) js=" f = (...xs) => seq(...xs.map((x) => typeof x === \"string\" ? text(\"[\" + x + \"]\") : x))"
+  code-let @[91,104) js=" o = null"
+  para @[106,181)
+    text @[106,112) str="Empty: "
+    splice @[113,121) expr="f()"
+      arg @[118,120)
+        text @[118,120) str="c1"
+    text @[121,138) str=". Trailing comma: "
+    splice @[139,151) expr="f(\"a\",)"
+      arg @[148,150)
+        text @[148,150) str="c2"
+    text @[151,161) str=". Comment: "
+    splice @[162,180) expr="f(/* note */)"
+      arg @[177,179)
+        text @[177,179) str="c3"
+    text @[180,181) str="."
+  para @[183,211)
+    text @[183,194) str="Two bodies: "
+    splice @[195,210) expr="f(\"b\")"
+      arg @[203,205)
+        text @[203,205) str="d1"
+      arg @[207,209)
+        text @[207,209) str="d2"
+    text @[210,211) str="."
+  para @[213,265)
+    text @[213,243) str="An argument that throws first: "
+    splice @[244,264) expr="f(o.g)"
+      arg @[252,263)
+        text @[252,263) str="never built"
+    text @[264,265) str="."
+  para @[267,273)
+    text @[267,273) str="After."

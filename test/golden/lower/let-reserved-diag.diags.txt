@@ -1,0 +1,1 @@
+error script-syntax @[0,14) SyntaxError: invalid JavaScript in this block

@@ -1,0 +1,19 @@
+lower v1 abi 3c18dc46 docEnd 189 holes 2 module d4fd0ed5dff5b57b
+piece 0 hole 0 js [315,368)
+piece 1 hole 1 js [370,423)
+block 0 content [0,26)
+  CALL para [0,26)
+    TEXT "Cited: " [0,6)
+    CALL ref [7,12) target="kp81"
+    TEXT " and " [13,16)
+    CALL ref [17,25) target="liang83"
+    TEXT "." [25,26)
+block 1 content [28,74) user framed holes 0..1
+  CALL para [28,74)
+    HOLE 0 [28,74)
+block 2 content [76,140)
+  CALL para [76,140)
+    TEXT "The same bibliography placed again carries no duplicate anchors." [76,140)
+block 3 content [142,188) user framed holes 1..2
+  CALL para [142,188)
+    HOLE 1 [142,188)

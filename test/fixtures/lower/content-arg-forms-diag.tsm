@@ -1,0 +1,10 @@
+#let f = (...xs) => seq(...xs.map((x) => typeof x === "string" ? text("[" + x + "]") : x))
+#let o = null
+
+Empty: #f()[c1]. Trailing comma: #f("a",)[c2]. Comment: #f(/* note */)[c3].
+
+Two bodies: #f("b")[d1][d2].
+
+An argument that throws first: #f(o.g)[never built].
+
+After.

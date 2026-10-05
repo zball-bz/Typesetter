@@ -1,9 +1,0 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__p(__a(__t("Nested containers at a 16px base (vertical algebra guard, plan P0-01)."),0,70)),0,70));
-__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("Outer item"),74,84)),74,84), __a(__qt(__a(__p(__a(__t("A quote inside the item with two lines."),89,132)),89,132)),87,132), __a(__v(await __fence("js", ({}), "nested(code);", 144, [144])),136,163), __a(__l(false, 1, __a(__it(__a(__p(__a(__t("Inner item"),168,178)),168,178), __a(__qt(__a(__p(__a(__t("Deep quote"),185,195)),185,195)),183,195)),166,195)),166,195)),72,195), __a(__it(__a(__p(__a(__t("Last outer item"),198,213)),198,213)),196,213)),72,213));
-})(__s);
-};
-//# sourceURL=tsm:doc
-//# tsm-units=b7594db4b2edecd8;214;[]

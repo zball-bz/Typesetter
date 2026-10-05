@@ -1,0 +1,43 @@
+lower v1 abi 3c18dc46 docEnd 352 holes 4 module e281c7cedf48dcba
+piece 0 hole 0 js [315,340)
+piece 1 hole 1 js [342,366)
+piece 2 hole 2 js [368,392)
+piece 3 hole 3 js [394,418)
+block 0 content [0,8)
+  CALL heading [0,8) level=1 label="sec-a"
+    TEXT "Labels" [2,8)
+block 1 content [18,73) user framed holes 0..1
+  REGION "aside" args=hole 0 [18,73)
+    ROWS
+      row
+        TEXT "An aside with a label." [43,65)
+block 2 content [75,122) user framed holes 1..2
+  REGION "figure" args=hole 1 [75,122)
+    ROWS
+      row
+        TEXT "First figure." [100,113)
+block 3 content [124,202) user framed holes 2..3
+  REGION "figure" args=hole 2 [124,202)
+    ROWS
+      row
+        TEXT "Second figure reuses the label: it loses it." [149,193)
+block 4 content [204,220)
+  CALL mathblock [204,220) src="a = b" label="eq-1"
+block 5 content [222,238)
+  CALL mathblock [222,238) src="c = d" label="eq-1"
+block 6 content [240,311) user framed holes 3..4
+  REGION "figure" args=hole 3 [240,311)
+    ROWS
+      row
+        TEXT "A figure with a reserved label shape." [265,302)
+block 7 content [313,351)
+  CALL para [313,351)
+    TEXT "See " [313,316)
+    CALL ref [317,324) target="side-1"
+    TEXT ", " [324,325)
+    CALL ref [326,332) target="fig-x"
+    TEXT ", " [332,333)
+    CALL ref [334,339) target="eq-1"
+    TEXT " and " [340,343)
+    CALL ref [344,350) target="sec-a"
+    TEXT "." [350,351)

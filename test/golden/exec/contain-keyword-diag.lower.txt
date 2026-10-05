@@ -1,0 +1,12 @@
+lower v1 abi 3c18dc46 docEnd 51 holes 0 module none
+block 0 content [0,7)
+  CALL para [0,7)
+    TEXT "Before." [0,7)
+block 1 content [9,42)
+  CALL para [9,42)
+    TEXT "Status: " [9,16)
+    CALL error [17,20) code="keyword-unsupported" message="#if is not supported yet (keyword forms: plan P2-12)"
+    TEXT " (ok) [yes] else [no]." [21,42)
+block 2 content [44,50)
+  CALL para [44,50)
+    TEXT "After." [44,50)

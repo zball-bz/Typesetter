@@ -1,0 +1,33 @@
+lower v1 abi 3c18dc46 docEnd 207 holes 5 module 115e0f227a2bb3d6
+piece 0 hole 0 js [325,381)
+piece 1 hole 1 js [383,408)
+piece 2 hole 2 js [410,449)
+piece 3 hole 3 js [451,473)
+piece 4 hole 4 js [475,512)
+block 0 stmt [0,45) user framed holes 0..1
+  STMT 0
+block 1 content [47,135) user framed holes 1..3
+  CALL para [47,135)
+    TEXT "Content args: " [47,60)
+    HOLE 1 [61,90)
+      CALL seq
+        TEXT "emphasized " [65,75)
+        CALL strong [76,84)
+          TEXT "nested" [77,83)
+        TEXT " text" [85,89)
+    TEXT " and " [91,94)
+    HOLE 2 [95,129)
+      CALL seq
+        TEXT "boxed " [110,115)
+        CALL strong [116,122)
+          TEXT "bold" [117,121)
+        TEXT " words" [123,128)
+    TEXT " here." [130,135)
+block 2 content [137,206) user framed holes 3..5
+  CALL para [137,206)
+    TEXT "Deep JS brackets stay JS: " [137,162)
+    HOLE 3 [163,178)
+    TEXT " and " [179,182)
+    HOLE 4 [183,205)
+      TEXT "trailing" [196,204)
+    TEXT "." [205,206)

@@ -52,7 +52,7 @@ One directory per stage; a stage's input and output are named types with a debug
 ```
 support/    arena, string interning, utf8, span, Result, diagnostics sink
 source/     SourceText (raw bytes, line starts, CRLF cooking); no source-map
-            builder — codegen's unit table maps the program back to spans
+            builder — the LowerProgram's ops carry their source spans
 linepass/   SourceText → BlockSkeleton         (one container protocol — quote,
                                                 list item, region — verbatim carries,
                                                 statements; docs/syntax-design.md §6)
@@ -66,7 +66,7 @@ inline/     BlockSkeleton → AST                (inline parser over each leaf's
                                                 PackCC was planned and never adopted)
 ast/        CallAST: Call{slot}/Splice/Stmt/Error nodes, side records, generic
             dump (plan P1-05)
-codegen/    AST → JsProgram                    (text, source map, import list)
+codegen/    AST → LowerProgram + hole module   (lower.def opcodes; docs/lowering-design.md)
 ops/        generated vocabulary (ops.def, schema.gen.*), OpReader + value validation; writer lives in JS (§3)
 model/      ContentTree: node defs, instantiation from ops (EMIT walk with
             style-stack resolution §12), anchors, diagnostics, comment nodes
@@ -140,7 +140,8 @@ Small C ABI; buffers are length-prefixed regions in WASM memory that JS copies o
 ```
 tsr_version()
 tsr_doc_new(config_json) / tsr_doc_free(doc)
-tsr_compile(doc, src)            → status;  outputs: JS program text, source map
+tsr_compile(doc, src)            → status;  outputs: tsr2_program (LowerProgram bytes),
+                                    tsr_get_js (the hole module; "" without user code)
 tsr_ingest_ops(doc, buf)         → status   (decode ops → content tree → resolver)
 tsr_typeset(doc, params)         → NEED_MEASURE | OK      (params: width, dppx)
 tsr_measure_requests(doc)        → buffer
@@ -171,7 +172,7 @@ Layout: header (version, counts) · string table (UTF-8 blob + varint offsets) �
 ### 4.1 Worker (module worker — required for real ES imports)
 
 - **host.ts** — loads the WASM module (Emscripten `MODULARIZE` + `EXPORT_ES6`, `ENVIRONMENT=worker,node`), drives the pipeline: compile → execute → ingest → typeset-loop → render, and the upgrade re-loop when pending measurements settle.
-- **executor.ts** — turns the generated program into a **Blob-URL ES module** and `import()`s it. Consequence for codegen: `#use "./x.js"` compiles to a real static `import`, resolved against a caller-supplied base URL; after imports, generated `__reg(mod)` calls auto-register `fences` exports (document-order registration, §4.1 of v2). `//# sourceURL` + the source map make user code debuggable in devtools. The context argument is built here: constructors bound to an `OpBuf` instance, the `m` tag (calls `tsr_parse_fragment`, splices the returned ops, rebasing ids), and `$` (style stack ops, counters, fence registration). Constructors also maintain **shadow nodes** — lightweight JS mirrors of what they wrote — so user code can traverse and regroup content values (table cell splitting); see document-model §4.1.
+- **executor.ts** — *(as built, plan P2-02: `executor.mjs` decodes the LowerProgram and runs it with `shared/lower.mjs`; only the hole module — the user's code — is imported as a Blob-URL ES module, cached by hash; `docs/lowering-design.md`)* turns the generated program into a **Blob-URL ES module** and `import()`s it. Consequence for codegen: `#use "./x.js"` compiles to a real static `import`, resolved against a caller-supplied base URL; after imports, generated `__reg(mod)` calls auto-register `fences` exports (document-order registration, §4.1 of v2). `//# sourceURL` + the source map make user code debuggable in devtools. The context argument is built here: constructors bound to an `OpBuf` instance, the `m` tag (calls `tsr_parse_fragment`, splices the returned ops, rebasing ids), and `$` (style stack ops, counters, fence registration). Constructors also maintain **shadow nodes** — lightweight JS mirrors of what they wrote — so user code can traverse and regroup content values (table cell splitting); see document-model §4.1.
 - **measure/** — `canvas.ts` (OffscreenCanvas + `textRendering='geometricPrecision'`), `domproxy.ts` (batches forwarded to main), `fontfile.ts` (precompiled bundled-font metrics from `gen/`). All behind one `Measurer` interface; the cache (keyed string×style×dppx) sits above the backends.
 - **fences.ts** — tag → handler registry; wraps handler calls (async, try/catch → error block ops, `ctx` construction per v2 §4.1).
 - **opbuf.ts** — the writer half of §3.

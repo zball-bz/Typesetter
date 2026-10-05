@@ -1,0 +1,4 @@
+doc @[0,23) [base]
+  para @[0,7) [base]
+    text @[0,7) [base] str="Before."
+  error @[9,23) [base] message="SyntaxError: invalid JavaScript in this block" code="script-syntax"

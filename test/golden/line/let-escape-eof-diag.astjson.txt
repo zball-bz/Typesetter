@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,23],"kids":[{"kind":"call","sugar":"para","span":[0,7],"kids":[{"kind":"text","span":[0,7],"str":"Before."}]},{"kind":"stmt","span":[9,23],"let":true,"js":" s = \"abc\\"}]}

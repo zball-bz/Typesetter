@@ -1,0 +1,7 @@
+#let later = await Promise.resolve("awaited")
+
+Value: #later. Inline: #(await Promise.resolve(42)).
+
+#{ await Promise.resolve(); $.style.push({ italic: true }) }
+
+Italic after an awaiting statement.

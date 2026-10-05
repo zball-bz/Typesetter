@@ -1,8 +1,0 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__p(__a(__t("A link with a dollar: "),0,21), __a(__ln("u", __a(__t("price $5"),23,31)),22,35), __a(__t(" and a formula "),36,49), __a(__mi("x"),50,53), __a(__t(" after it."),54,63)),0,63));
-})(__s);
-};
-//# sourceURL=tsm:doc
-//# tsm-units=80134fc314746baf;64;[]

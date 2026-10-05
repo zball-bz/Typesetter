@@ -49,6 +49,8 @@ Why: v1's modified-Lua plan had already replaced Lua's entire surface syntax; wh
 
 **Compilation model (MDX-style): the C++ parser compiles the whole document into a single JS function.** Markup becomes content-constructor calls; code segments are spliced verbatim; content blocks compile to content-value expressions.
 
+> **Amended (remediation MD-04, step P2-02; `docs/lowering-design.md`).** The document now compiles to a **LowerProgram** — the markup as a binary program of constructor calls, run by one interpreter (`runtime/src/shared/lower.mjs`) — plus a **hole module** holding only the user's JavaScript (splices, `#let`, statements, header arguments), one small function per hole. Static markup is never JavaScript text: it cannot fail to parse, V8 never parses it, and generated names never meet user bindings. The semantics below — one document scope, `#let` as a binding visible to later code, content as values, per-block containment — are unchanged; the example's generated form is now the program `CALL para [TEXT "均值是 ", HOLE 1, …]` plus `const __h = [() => { avg = ((a,b) => (a+b)/2); }, () => (avg(3,5))]`.
+
 Source:
 
 ```
@@ -83,7 +85,7 @@ This one model settles:
 - **Syntax errors.** A JavaScript SyntaxError is isolated on the failure path only, by bisecting the units that carry user code; each culprit becomes a `script-syntax` error block. This uses the unit table on the module's last line.
 - **Repeated `#let`.** The simple form `#let x = e` is hoisted, and a repeated `#let x` is a reassignment of the same binding. Closures therefore see the latest value.
 - **Parse errors.** Keyword heads (`#if`, `#for`, …), positional region or fence arguments, nested statements and unclosed statements become error blocks with diagnostics instead of invalid JavaScript.
-- The plan's target (MD-04, step P2-02) replaces this printed-JS form with a LowerProgram executed by one interpreter.
+- **As built in P2-02 (MD-04):** the printed-JS form above is replaced by the LowerProgram and its hole module (`docs/lowering-design.md`). Frames now exist at every block depth (a list item's, quote's or region interior's paragraph that throws becomes an error node in its parent); the statement exception (declaring `#{…}`, pattern `#let`) is unchanged. A SyntaxError is isolated among the hole-module pieces that changed since the last module that compiled, and modules are cached by hash, so an edit to prose imports nothing.
 
 **Execution boundary**: constructors are thin JS wrappers that append opcodes to a flat op buffer (typed arrays + string table). The buffer crosses into WASM once per document and is reconstructed into the content tree in C++. (Rejected alternative: constructors as direct WASM exports — workable but chattier; the buffer keeps the one-crossing-per-stage discipline.)
 
@@ -261,7 +263,7 @@ The public API is designed on top of a full document model, specified before imp
 - Op-buffer level: `STYLE_PUSH(delta)` and `STYLE_POP_TO(height)`. Script level: `$.style.push({…})`, `$.style.height`, `$.style.popTo(h)` — save the height at any point, pop back to it later. Markup sugar (`*…*`, `_…_`) compiles to balanced push/pop pairs around its content ops.
 - Effective style at any op = fold of the stack: class bitsets OR together; inline properties override nearest-wins. This maps directly onto the v1 `TextStyling` bitset + inline-style model (§15).
 - **Binding time is emission-time (dynamic)**: a content value stored in a variable takes the styles active **where it is spliced/emitted**, not where it was constructed. The same value rendered in two places may look different — recorded as a deliberate feature (TeX-macro semantics), the natural consequence of the stack model.
-- Containment: every block boundary snapshots the stack height; error recovery and block exit pop to the entry height, so style leaks are bounded by the same containment structure as errors (§7, §11).
+- Containment: every block boundary snapshots the stack height; error recovery pops to the entry height, so style leaks are bounded by the same containment structure as errors (§7, §11). *Amended (remediation P0-05/P2-02): only error recovery pops — a normal block exit keeps the stack, because `#{ $.style.push({…}) }` is a statement whose whole point is to style the blocks after it. Statements are the documented exception to "a block's styles end with it".*
 - Typst-style set/show-rule sugar, if ever wanted, can be layered on this primitive later; the primitive itself is the commitment.
 
 ## 13. Math

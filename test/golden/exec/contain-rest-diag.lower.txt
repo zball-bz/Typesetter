@@ -1,0 +1,13 @@
+lower v1 abi 3c18dc46 docEnd 88 holes 1 module 113606123a20fef3
+piece 0 hole 0 js [322,375)
+piece 1 verbatim block 2 js [404,418)
+block 0 stmt [0,42) user framed holes 0..1
+  STMT 0
+block 1 content [44,51)
+  CALL para [44,51)
+    TEXT "Before." [44,51)
+block 2 verbatim [53,70) user
+  VERBATIM 0
+block 3 content [72,87)
+  CALL para [72,87)
+    TEXT "Never executed." [72,87)

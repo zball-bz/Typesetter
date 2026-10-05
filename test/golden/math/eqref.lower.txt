@@ -1,0 +1,22 @@
+lower v1 abi 3c18dc46 docEnd 261 holes 0 module none
+block 0 content [0,48)
+  CALL para [0,48)
+    TEXT "质能关系是狭义相对论的核心结论：" [0,48)
+block 1 content [50,69)
+  CALL mathblock [50,69) src="E = m c^2" label="emc"
+block 2 content [71,120)
+  CALL para [71,120)
+    TEXT "由" [71,74)
+    CALL ref [74,78) target="emc"
+    TEXT "可知能量与质量等价。高斯积分" [78,120)
+block 3 content [122,170)
+  CALL mathblock [122,170) src="int_(-oo)^oo e^(-x^2) d x = sqrt(pi)" label="gauss"
+block 4 content [172,260)
+  CALL para [172,260)
+    TEXT "的值见" [172,181)
+    CALL ref [181,187) target="gauss"
+    TEXT "；无标签公式不编号。设" [187,220)
+    CALL mathinline [220,223) src="x"
+    TEXT "为实数，则" [223,238)
+    CALL mathinline [238,248) src="x^2 >= 0"
+    TEXT "恒成立。" [248,260)

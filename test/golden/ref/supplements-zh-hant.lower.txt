@@ -1,0 +1,30 @@
+lower v1 abi 3c18dc46 docEnd 308 holes 2 module b805893e234dac2f
+piece 0 hole 0 js [315,385)
+piece 1 hole 1 js [387,420)
+block 0 content [0,14)
+  CALL heading [0,14) level=1 label="intro"
+    TEXT "Introduction" [2,14)
+block 1 content [24,146)
+  CALL para [24,146)
+    TEXT "A Traditional Chinese document takes 圖/表/式 from its locale terms (plan P1-10): see " [24,112)
+    CALL ref [113,119) target="intro"
+    TEXT ", " [119,120)
+    CALL ref [121,127) target="fig-a"
+    TEXT ", " [127,128)
+    CALL ref [129,135) target="tab-a"
+    TEXT " and " [136,139)
+    CALL ref [140,145) target="eq-a"
+    TEXT "." [145,146)
+block 2 content [148,237) user framed holes 0..1
+  REGION "figure" args=hole 0 [148,237)
+    ROWS
+      row
+        TEXT "A figure." [219,228)
+block 3 content [239,285) user framed holes 1..2
+  REGION "table" args=hole 1 [239,285)
+    ROWS
+      row
+        TEXT "x" [272,273)
+        TEXT "y" [276,277)
+block 4 content [287,307)
+  CALL mathblock [287,307) src="e = m c^2" label="eq-a"

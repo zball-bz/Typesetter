@@ -1,0 +1,41 @@
+lower v1 abi 3c18dc46 docEnd 439 holes 10 module 7a9e93708f805399
+piece 0 hole 0 js [331,360)
+piece 1 hole 1 js [362,412)
+piece 2 hole 2 js [414,425)
+piece 3 hole 3 js [427,447)
+piece 4 hole 4 js [449,467)
+piece 5 hole 5 js [469,488)
+piece 6 hole 6 js [490,504)
+piece 7 hole 7 js [506,517)
+piece 8 hole 8 js [519,530)
+piece 9 hole 9 js [532,561)
+piece 10 verbatim block 3 js [590,611)
+block 0 stmt [0,18) user framed holes 0..1
+  STMT 0
+block 1 stmt [19,58) user framed holes 1..2
+  STMT 1
+block 2 content [60,176) user framed holes 2..6
+  CALL para [60,176)
+    TEXT "Value splice: " [60,73)
+    HOLE 2 [74,78)
+    TEXT " and a call chain: " [79,96)
+    HOLE 3 [97,110)
+    TEXT ". Member access: " [110,126)
+    HOLE 4 [127,138)
+    TEXT " characters; expression: " [139,162)
+    HOLE 5 [163,175)
+    TEXT "." [175,176)
+block 3 verbatim [177,201) user
+  VERBATIM 0
+block 4 content [201,438) user framed holes 6..10
+  CALL para [201,438)
+    TEXT "Statement splice binds in document scope: " [201,242)
+    HOLE 6 [243,250)
+    TEXT ". A splice ends at punctuation: " [250,281)
+    HOLE 7 [282,286)
+    TEXT ". Semicolon terminator: " [286,309)
+    HOLE 8 [310,315)
+    TEXT "[not an argument]. Content argument desugars to a trailing argument: " [315,383)
+    HOLE 9 [384,402)
+      TEXT "bold text" [392,401)
+    TEXT ". Literal hash: #who stays literal." [402,438)

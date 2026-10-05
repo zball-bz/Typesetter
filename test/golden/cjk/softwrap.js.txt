@@ -1,8 +1,0 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__p(__a(__t("中文段落在源码里经常需要折行书写，两个汉字之间的换行必须无缝连接；但是 English words 之间的折行仍然是空格。"),0,155)),0,155));
-})(__s);
-};
-//# sourceURL=tsm:doc
-//# tsm-units=3dac54ee7ab9b588;156;[]

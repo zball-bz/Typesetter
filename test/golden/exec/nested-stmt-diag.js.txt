@@ -1,9 +1,0 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("item one"),2,10)),2,10), __a(__er("statement-nested-unsupported", "statements inside lists, quotes and regions are not supported yet (plan P2-12)"),13,23)),0,23), __a(__it(__a(__p(__a(__t("item two"),26,34)),26,34)),24,34)),0,34));
-__emit(__a(__p(__a(__t("After."),36,42)),36,42));
-})(__s);
-};
-//# sourceURL=tsm:doc
-//# tsm-units=396c609afccbbc16;43;[]

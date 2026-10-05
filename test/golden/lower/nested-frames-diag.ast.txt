@@ -1,0 +1,34 @@
+doc @[0,241)
+  code-let @[0,45) js=" boom = () => { throw new Error(\"deep\") }"
+  list @[47,113) bullet start=1
+    item @[47,65)
+      para @[49,65)
+        text @[49,65) str="first item stays"
+    item @[66,94)
+      para @[68,94)
+        text @[68,74) str="second "
+        splice @[75,82) expr="boom()"
+        text @[83,94) str=" fails alone"
+    item @[95,113)
+      para @[97,113)
+        text @[97,113) str="third item stays"
+  quote @[115,165)
+    para @[117,134)
+      text @[117,134) str="quoted line stays"
+    para @[139,165)
+      text @[139,145) str="quoted "
+      splice @[146,153) expr="boom()"
+      text @[154,165) str=" fails alone"
+  region @[167,232) name="aside"
+    para @[175,194)
+      row @[175,194)
+        cell @[175,194)
+          text @[175,194) str="interior para stays"
+    para @[196,224)
+      row @[196,224)
+        cell @[196,224)
+          text @[196,204) str="interior "
+          splice @[205,212) expr="boom()"
+          text @[213,224) str=" fails alone"
+  para @[234,240)
+    text @[234,240) str="After."

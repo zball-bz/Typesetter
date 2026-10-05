@@ -1,0 +1,8 @@
+doc @[0,164)
+  code-let @[0,14) js=" class = 1"
+  para @[16,71)
+    text @[16,71) str="Before the hoisting rule: reserved words stay verbatim."
+  code-block @[73,121) js=" function helper(x) { return \"helped \" + x } "
+  para @[123,163)
+    splice @[123,138) expr="helper(\"text\")"
+    text @[139,163) str=" after a declaring block."

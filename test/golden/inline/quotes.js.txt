@@ -1,9 +1,0 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__p(__a(__t("We treat these “spaces” as “homotopical” notions; don’t split at the apostrophe, and ‘single’ quotes behave the same."),0,131)),0,131));
-__emit(__a(__p(__a(__t("中文里的“引号”仍然是全角标点，前后带可压缩的半角空隙；混排时“English inside”也按中文引号处理。"),133,273)),133,273));
-})(__s);
-};
-//# sourceURL=tsm:doc
-//# tsm-units=68f1131f63d0328b;274;[]

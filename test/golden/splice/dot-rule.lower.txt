@@ -1,0 +1,13 @@
+lower v1 abi 3c18dc46 docEnd 64 holes 3 module 2befafa548611aba
+piece 0 hole 0 js [322,344)
+piece 1 hole 1 js [346,355)
+piece 2 hole 2 js [357,371)
+block 0 stmt [0,11) user framed holes 0..1
+  STMT 0
+block 1 content [12,63) user framed holes 1..3
+  CALL para [12,63)
+    TEXT "The value is " [12,24)
+    HOLE 1 [25,27)
+    TEXT ". Next sentence follows " [27,50)
+    HOLE 2 [51,58)
+    TEXT " too." [59,63)

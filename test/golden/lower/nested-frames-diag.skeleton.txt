@@ -1,0 +1,16 @@
+doc @[0,241)
+  code-let @[0,45) js=" boom = () => { throw new Error(\"deep\") }"
+  list bullet start=1 @[47,113)
+    item @[47,65)
+      para @[49,65) lines=1
+    item @[66,94)
+      para @[68,94) lines=1
+    item @[95,113)
+      para @[97,113) lines=1
+  quote @[115,165)
+    para @[117,134) lines=1
+    para @[139,165) lines=1
+  region @[167,232) name="aside"
+    para @[175,194) lines=1
+    para @[196,224) lines=1
+  para @[234,240) lines=1

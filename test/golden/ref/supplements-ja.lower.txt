@@ -1,0 +1,30 @@
+lower v1 abi 3c18dc46 docEnd 297 holes 2 module b805893e234dac2f
+piece 0 hole 0 js [315,385)
+piece 1 hole 1 js [387,420)
+block 0 content [0,14)
+  CALL heading [0,14) level=1 label="intro"
+    TEXT "Introduction" [2,14)
+block 1 content [24,135)
+  CALL para [24,135)
+    TEXT "A Japanese document takes 図/表/式 from its locale terms (plan P1-10): see " [24,101)
+    CALL ref [102,108) target="intro"
+    TEXT ", " [108,109)
+    CALL ref [110,116) target="fig-a"
+    TEXT ", " [116,117)
+    CALL ref [118,124) target="tab-a"
+    TEXT " and " [125,128)
+    CALL ref [129,134) target="eq-a"
+    TEXT "." [134,135)
+block 2 content [137,226) user framed holes 0..1
+  REGION "figure" args=hole 0 [137,226)
+    ROWS
+      row
+        TEXT "A figure." [208,217)
+block 3 content [228,274) user framed holes 1..2
+  REGION "table" args=hole 1 [228,274)
+    ROWS
+      row
+        TEXT "x" [261,262)
+        TEXT "y" [265,266)
+block 4 content [276,296)
+  CALL mathblock [276,296) src="e = m c^2" label="eq-a"

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Records .ops buffers for every fixture: native tsrc emits the compiled JS,
-// the real executor runs it (testing.md §1). `--check` fails on stale files.
+// Records .ops buffers for every fixture: native tsrc compiles (the
+// LowerProgram and its hole module, plan P2-02), the real executor runs it
+// (testing.md §1). `--check` fails on stale files.
 // A fixture for vocabulary without surface syntax (plan P1-13: a hard line
 // break, inline raw markup) declares its tree in X.tree.json instead —
 // {"emit": [node…]}, node = "text" | {"text", "span"} | {"kind", "args",
@@ -50,8 +51,9 @@ for (const tsm of walk(fixtures)) {
   if (existsSync(treePath)) {
     ops = Buffer.from(opsFromTree(JSON.parse(readFileSync(treePath, 'utf8'))));
   } else {
-    const js = execFileSync(tsrc, ['--stage=js', tsm], { encoding: 'utf8' });
-    ops = Buffer.from(await execute(js, { baseDir: dirname(tsm), rootDir: root }));
+    const program = new Uint8Array(execFileSync(tsrc, ['--stage=program', tsm]));
+    const js = () => execFileSync(tsrc, ['--stage=js', tsm], { encoding: 'utf8' });
+    ops = Buffer.from(await execute({ program, js }, { baseDir: dirname(tsm), rootDir: root }));
   }
   const opsPath = tsm.replace(/\.tsm$/, '.ops');
   const prev = existsSync(opsPath) ? readFileSync(opsPath) : null;

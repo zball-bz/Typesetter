@@ -1,0 +1,6 @@
+lower v1 abi 3c18dc46 docEnd 178 holes 0 module none
+block 0 content [0,95)
+  CALL para [0,95)
+    TEXT "JSON 高亮（native 静态链接 tree-sitter，与 web side module 同一份 parse table）：" [0,95)
+block 1 content [97,177) async
+  FENCE async "json" body="{\"name\": \"typesetter\", \"version\": 3, \"ok\": true, \"tags\": [null, 42]}" at=105 lines=null [97,177)

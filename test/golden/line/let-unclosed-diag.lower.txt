@@ -1,0 +1,9 @@
+lower v1 abi 3c18dc46 docEnd 68 holes 0 module none
+block 0 content [0,12)
+  CALL error [0,12) code="statement-unclosed" message="unterminated #let: dropped up to the next blank line"
+block 1 content [13,28)
+  CALL heading [13,28) level=1 label=null
+    TEXT "Heading after" [15,28)
+block 2 content [30,67)
+  CALL para [30,67)
+    TEXT "Paragraph after the heading survives." [30,67)

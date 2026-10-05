@@ -733,7 +733,8 @@ static void unitHostInputs(const fs::path& root) {
 // most of the text.
 static void unitTokenConformance(const fs::path& root) {
   // (engine tag, tree-sitter tag); "-" = no token. Reasons:
-  //   jslex     splice heads / JS arguments / statements (no JS lexer)
+  //   jslex     splice heads / JS arguments / statements (no JS lexer; a
+  //             /* comment */ in an argument list reads as a strong pair)
   //   pairs     strict pairs and footnotes (regex pairs, opaque ^[…])
   //   lines     islands, links and comments across lines or nested
   //   blocks    fences in containers, escaped markers, region bars
@@ -745,6 +746,7 @@ static void unitTokenConformance(const fs::path& root) {
       {"comment", "-", "lines"},           {"constant", "-", "pairs"},
       {"constant", "attribute", "pairs"},  {"embedded", "-", "jslex"},
       {"embedded", "function", "jslex"},   {"embedded", "keyword", "jslex"},
+      {"embedded", "attribute", "jslex"},
       {"function", "-", "jslex"},          {"function", "keyword", "jslex"},
       {"function", "label", "jslex"},      {"keyword", "-", "blocks"},
       {"keyword", "embedded", "blocks"},   {"label", "function", "lines"},
@@ -1465,7 +1467,7 @@ int main(int argc, char** argv) {
                       (rel.stem().string() + std::string(".") + stage + ".txt");
         return gp;
       };
-      for (const char* p : {"skeleton", "ast", "js", "tokens", "outline", "astjson"})
+      for (const char* p : {"skeleton", "ast", "lower", "js", "tokens", "outline", "astjson"})
         goldenCompare(g(p), doc.product(p), update, label + ":" + p);
 
       fs::path opsPath = entry.path();

@@ -47,7 +47,7 @@ A shared fixture asserts both implementations produce identical `.blocks` dumps 
 |---|---|---|
 | linepass | `.tsm` → skeleton dump | goldens; property: node spans partition the byte range; islands round-trip verbatim |
 | inline/splice | skeleton → AST dump | goldens; adversarial set above; every error path lands as `error` node + diagnostic, never abort |
-| codegen | AST → JS text | goldens; **syntactic validity of emitted JS** checked in the Node job (parse via `new Function`; imports stripped) |
+| codegen | AST → LowerProgram + hole module | goldens (`*.lower.txt` program dump, `*.js.txt` module); every program reads back valid (`fuzz_inline`); `.ops` recordings byte-identical across lowering changes (G3) |
 | ops reader | `.ops` → tree dump | goldens; validation-rejection tests (truncated, id-forward, bad kind, stack underflow) |
 | model/instantiate | `.ops` → tree dump | style resolution unit tests; dedicated fixture: one DAG value emitted twice under different stacks → two styled instances (emission-time binding, v2 §12) |
 | resolver | tree → tree dump | counter/label/collector goldens; `ref-unresolved` and `label-duplicate` fixtures assert diagnostics + "??" node |
@@ -113,6 +113,7 @@ webkit    default dsf                     audits only
 
 - `fuzz_linepass`, `fuzz_inline`: arbitrary bytes → must terminate without crash/ASan report; corpus seeded from fixtures.
 - `fuzz_opreader`: arbitrary buffers → must reject invalid input gracefully (it consumes JS-produced data; "trusted" does not extend to "well-formed").
+- `fuzz_lower` (plan P2-02): arbitrary bytes → the LowerProgram reader rejects with a reason or accepts a program whose every reference is in range; its dump is total. Seeds: the fixtures' programs.
 
 ## 7. CI pipeline
 

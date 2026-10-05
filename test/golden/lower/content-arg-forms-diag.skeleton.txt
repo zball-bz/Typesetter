@@ -1,0 +1,7 @@
+doc @[0,274)
+  code-let @[0,90) js=" f = (...xs) => seq(...xs.map((x) => typeof x === \"string\" ? text(\"[\" + x + \"]\") : x))"
+  code-let @[91,104) js=" o = null"
+  para @[106,181) lines=1
+  para @[183,211) lines=1
+  para @[213,265) lines=1
+  para @[267,273) lines=1

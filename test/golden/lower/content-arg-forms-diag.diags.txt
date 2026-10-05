@@ -1,0 +1,1 @@
+error script-error @[213,265) TypeError: Cannot read properties of null (reading 'g')

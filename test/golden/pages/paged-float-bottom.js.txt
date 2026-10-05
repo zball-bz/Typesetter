@@ -1,12 +1,11 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-__emit(__a(__p(__a(__t("Opening text that occupies the first part of the sheet so the following float begins roughly one hundred pixels above the sheet bottom."),0,135)),0,135));
-/*16c2d18aff2e8765[0*/{ const __h = __height(0); try {
-__emit(__a(__region("figure", ({src: "photos/box.png", alt: "box", w: 300, h: 300, scale: 0.4, float: "right", label: "fig-box"}), [[[__a(__t("Right float near the bottom."),243,271)]]]),137,280));
-} catch (__e) { __fail(0, __e, __h); } }/*16c2d18aff2e8765]0*/
-__emit(__a(__p(__a(__t("Text that wraps beside the float and continues onto the next sheet, where the float must not straddle the boundary."),282,397)),282,397));
-})(__s);
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+return (async () => {
+const __h = [
+() => ({src: "photos/box.png", alt: "box", w: 300, h: 300, scale: 0.4, float: "right", label: "fig-box"}),
+];
+await __rt.run(__h, 0);
+})();
 };
 //# sourceURL=tsm:doc
-//# tsm-units=16c2d18aff2e8765;398;[[137,280,2]]

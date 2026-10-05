@@ -1,0 +1,4 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="47" data-e="99">Value: awaited. Inline: 42.</p>
+<p data-pid="1" data-s="163" data-e="198"><em>Italic after an awaiting statement.</em></p>
+</div>

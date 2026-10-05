@@ -6,6 +6,7 @@
 import { OPS_VERSION, OPS_MIN_COMPAT, SCHEMA_HASH } from './ops.gen.mjs';
 import { SYNTAX_VERSION } from './syntax.gen.mjs';
 import { RES_VERSION } from './resources.gen.mjs';
+import { PROGRAM_ABI } from './lower.gen.mjs';
 
 export function checkAbi(M) {
   if (typeof M._tsr2_abi !== 'function') throw new Error('tsr: engine predates the ABI handshake (tsr2_abi)');
@@ -24,5 +25,19 @@ export function checkAbi(M) {
   if (abi.resVersion !== RES_VERSION)
     throw new Error(`tsr: engine resources ${abi.resVersion} differ from runtime resources ${RES_VERSION}` +
                     ' (rebuild the wasm or re-vendor the runtime)');
+  // the LowerProgram and hole-module convention (plan P2-02): lower.def
+  if (abi.programAbi !== PROGRAM_ABI)
+    throw new Error(`tsr: engine program ABI ${abi.programAbi} differs from runtime ${PROGRAM_ABI}` +
+                    ' (rebuild the wasm or re-vendor the runtime)');
   return abi;
+}
+
+// A compiled document as the executor takes it (plan P2-02): the
+// LowerProgram's bytes, copied out in one crossing, and the hole module as a
+// getter — the executor reads it only when the module is not cached.
+export function compiledOf(M, doc) {
+  const p = M._tsr2_program(doc);
+  const len = new DataView(M.HEAPU8.buffer).getUint32(p, true);
+  const program = M.HEAPU8.slice(p + 4, p + 4 + len);
+  return { program, js: () => M.UTF8ToString(M._tsr_get_js(doc)) };
 }

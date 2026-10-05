@@ -1,0 +1,35 @@
+lower v1 abi 3c18dc46 docEnd 170 holes 3 module 08e7940218e2f648
+piece 0 hole 0 js [315,344)
+piece 1 hole 1 js [346,371)
+piece 2 hole 2 js [373,388)
+block 0 content [0,77) user framed holes 0..1
+  CALL para [0,77)
+    TEXT "A " [0,1)
+    HOLE 0 [2,33)
+      TEXT "content over a join" [10,32)
+    TEXT " and " [34,37)
+    CALL link [38,55) url="u"
+      TEXT "a link text" [39,51)
+    TEXT " and " [56,59)
+    CALL code [60,72) text="code span"
+    TEXT " end." [73,77)
+block 1 content [79,126) user framed holes 1..2
+  CALL quote [79,126)
+    FRAME [81,126) holes 1..2
+      CALL para [81,126)
+        TEXT "quoted " [81,87)
+        CALL mathinline [88,99) src="a +\nb"
+        TEXT " math and " [100,108)
+        HOLE 1 [109,120)
+          TEXT "x y" [113,119)
+        TEXT " done." [121,126)
+block 2 content [128,169) user framed holes 2..3
+  CALL list [128,169) ordered=false start=1
+    CALL item [128,169)
+      FRAME [130,169) holes 2..3
+        CALL para [130,169)
+          TEXT "item " [130,134)
+          CALL mathinline [135,147) src="c +\nd"
+          TEXT " and " [148,151)
+          HOLE 2 [152,164)
+          TEXT " end." [165,169)

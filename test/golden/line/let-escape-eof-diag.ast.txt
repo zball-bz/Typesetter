@@ -1,0 +1,4 @@
+doc @[0,23)
+  para @[0,7)
+    text @[0,7) str="Before."
+  code-let @[9,23) js=" s = \"abc\\"

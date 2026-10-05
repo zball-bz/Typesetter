@@ -1,0 +1,46 @@
+lower v1 abi 3c18dc46 docEnd 482 holes 0 module none
+block 0 content [0,19)
+  CALL heading [0,19) level=1 label=null
+    TEXT "Typesetting Notes" [2,19)
+block 1 content [21,48)
+  CALL heading [21,48) level=2 label=null
+    TEXT "Structure and " [24,37)
+    CALL strong [38,48)
+      TEXT "emphasis" [39,47)
+block 2 content [50,170)
+  CALL para [50,170)
+    TEXT "An introductory paragraph with a " [50,82)
+    CALL link [83,117) url="https://example.org"
+      TEXT "useful link" [84,95)
+    TEXT " and some " [118,126)
+    CALL code [127,140) text="inline code"
+    TEXT " in it." [141,147)
+    CALL comment [148,170) body=" invisible note "
+block 3 content [172,296)
+  CALL list [172,296) ordered=false start=1
+    CALL item [172,228)
+      CALL para [174,228)
+        TEXT "First bullet item with enough words to wrap onto lines" [174,228)
+    CALL item [229,296)
+      CALL para [231,274)
+        TEXT "Second item continued on an indented line" [231,274)
+      CALL list [277,296) ordered=false start=1
+        CALL item [277,296)
+          CALL para [279,296)
+            TEXT "Nested child item" [279,296)
+block 4 content [297,334)
+  CALL list [297,334) ordered=true start=1
+    CALL item [297,318)
+      CALL para [299,318)
+        TEXT "Ordered starts here" [299,318)
+    CALL item [319,334)
+      CALL para [321,334)
+        TEXT "And continues" [321,334)
+block 5 content [336,430)
+  CALL quote [336,430)
+    CALL para [338,430)
+      TEXT "A quoted paragraph, indented by the engine rather than the browser, wrapping across lines." [338,430)
+block 6 content [432,435)
+  CALL rule [432,435)
+block 7 content [437,481) async
+  FENCE async "js" body="const x = compute(1, 2);\nreturn x;" at=443 lines=null [437,481)

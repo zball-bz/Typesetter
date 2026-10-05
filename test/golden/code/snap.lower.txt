@@ -1,0 +1,6 @@
+lower v1 abi 3c18dc46 docEnd 217 holes 0 module none
+block 0 content [0,78)
+  CALL para [0,78)
+    TEXT "Snap-kerning on a wrapping code block (guard fixture, plan P0-01; defect #21)." [0,78)
+block 1 content [80,216) async
+  FENCE async "js" body="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";\nemit(标题);" at=86 lines=null [80,216)

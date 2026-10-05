@@ -1,13 +1,13 @@
-export default async (__s, $) => {
-const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
-return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-/*7735d992c07ba65d[0*/{ const __h = __height(0); try {
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __rt.std;
+return (async () => {
+const __h = [
+() => {
  $.region("boom", () => { throw new Error("handler failed") }) 
-} catch (__e) { __fail(0, __e, __h); } }/*7735d992c07ba65d]0*/
-__emit(__a(__p(__a(__t("Before."),68,75)),68,75));
-__emit(__a(__region("boom", ({}), [[[__a(__t("inside"),84,90)]]]),77,97));
-__emit(__a(__p(__a(__t("After."),99,105)),99,105));
-})(__s);
+},
+];
+await __rt.run(__h, 0);
+})();
 };
 //# sourceURL=tsm:doc
-//# tsm-units=7735d992c07ba65d;106;[[0,66,6]]
