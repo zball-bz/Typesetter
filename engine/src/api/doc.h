@@ -380,13 +380,15 @@ struct Doc {
       fuseLegacy(tops);  // the legacy breaker's blocks (until P4-08)
       validThrough = (int)Stage::Measure;
     }
-    // Cached KP with the retry ladder folded in (break.cc): keyed by block
-    // geometry, shared across documents — the editing loop's fast path.
+    // Cached KP (break.cc): keyed by exactly the DP inputs, shared across
+    // documents — the editing loop's fast path.
     // a run wider than the line is set Overfull on a line of its own (the
     // final-pass rescue) and reported once per stream (plan P0-12)
     diags.begin(DiagOrigin::Layout);
     auto breakWithRetry = [&](const std::vector<BreakBlock>& blocks, const HList& h, LineWidths lw) {
-      BreakResult r = breakLinesRetry(blocks, lw, cfg.cost);
+      BreakParams bp;
+      bp.cost = cfg.cost;
+      BreakResult r = breakLinesCached(blocks, lw, bp);
       if (!r.overfullLines.empty()) {
         Span sp{};
         for (const ColdRec& c : h.cold)

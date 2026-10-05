@@ -950,9 +950,9 @@ static void unitBreakItems() {
   CHECK(penForbidden(BREAK_INF) && !penForbidden(1e17f) && penThousandths(0.95f) == 950);
 }
 
-// Breaker semantics (plan P0-12, design T6 S1).
+// Breaker semantics (plans P0-12, P1-14; design T6 S1/S2).
 static void unitBreakSemantics() {
-  CostParams cp;
+  BreakParams cp;
   auto word = [](Su w, float pen = BREAK_INF) {
     BreakBlock b;
     b.width = w;
@@ -975,13 +975,13 @@ static void unitBreakSemantics() {
      // overlong run on a line of its own instead of collapsing the paragraph
     std::vector<BreakBlock> bl = {word(3000), space(), word(30000), space(), word(3000),
                                       space(), word(30000), space(), word(3000)};
-    BreakResult r5 = breakLines(bl, LineWidths{19200}, cp);
-    CHECK(!r5.feasible);
-    BreakResult r = breakLinesRetry(bl, LineWidths{19200}, cp);
+    BreakResult r = breakLines(bl, LineWidths{19200}, cp);
     // the rescue breaks from the best active node (lowest demerits): the
     // short word joins its run rather than standing alone underfull
-    CHECK(r.feasible && (r.breakpoints == std::vector<u32>{4, 8, 9}));
+    CHECK(!r.feasible && r.pass == 3 && (r.breakpoints == std::vector<u32>{4, 8, 9}));
     CHECK((r.overfullLines == std::vector<u32>{0, 1}));
+    BreakResult c = breakLinesCached(bl, LineWidths{19200}, cp);
+    CHECK(c.breakpoints == r.breakpoints && c.overfullLines == r.overfullLines);
   }
   {  // the last line has fil stretch and normal shrink: slightly long is one line
     std::vector<BreakBlock> bl = {word(6000), space(), word(6000), space(), word(6800)};
@@ -1007,36 +1007,37 @@ static void unitBreakSemantics() {
     it[2].k = ItemKind::Box; it[2].w = 1000; it[2].block = 1;
     it[3].k = ItemKind::Glue; it[3].w = it[3].stretch = it[3].shrink = 256; it[3].block = 2;
     it[4].k = ItemKind::Box; it[4].w = 1000; it[4].block = 3;
-    BreakResult r = breakItems(it, 4, LineWidths{19200}, cp, 5, false);
+    BreakResult r = breakItems(it, 4, LineWidths{19200}, cp);
     CHECK((r.breakpoints == std::vector<u32>{1, 4}));
   }
   {  // cost is bounded and the power is an integer product
     std::vector<BreakBlock> bl = {word(100), space(), word(100)};
     BreakResult r = breakLines(bl, LineWidths{19200}, cp);
     CHECK(r.cost == 0);  // a short last line costs nothing (fil)
-    CostParams sq = cp;
-    sq.exponent = 2;
+    BreakParams sq = cp;
+    sq.cost.exponent = 2;
     std::vector<BreakBlock> two = {word(9000), space(), word(9000), space(), word(9000)};
     BreakResult a = breakLines(two, LineWidths{18432}, sq);
-    CHECK(a.cost >= 0 && a.cost <= sq.cap * 2);
+    CHECK(a.cost >= 0 && a.cost <= sq.cost.cap * 2);
   }
 }
 
-// The KP memo (plan P0-11) answers exactly what breakLines computes: keys
-// are verified on hit, and eviction under many distinct streams only costs
-// recomputation.
+// The KP memo (plans P0-11, P1-14) answers exactly what breakLines
+// computes: keys are validated on hit, and eviction under many distinct
+// streams only costs recomputation.
 static void unitBreakMemo() {
+  breakMemoBudget(20000);  // small: the second round must evict and recompute
   u64 seed = 12345;
   auto rnd = [&](u32 n) {
     seed = seed * 6364136223846793005ull + 1442695040888963407ull;
     return (u32)(seed >> 33) % n;
   };
-  CostParams cp;
+  BreakParams cp;
   int mismatches = 0;
   for (int round = 0; round < 2; round++) {  // round 2: hits (or recomputes after eviction)
     seed = 12345;
 #ifdef NDEBUG
-    const int kParas = 9000;  // ~4.4M key words: past the budget, so entries evict
+    const int kParas = 9000;
 #else
     const int kParas = 600;   // sanitizer builds: consistency only
 #endif
@@ -1051,13 +1052,14 @@ static void unitBreakMemo() {
       }
       bl.back().breakPenalty = 0;
       LineWidths lw{(Su)(64 * (300 + rnd(200)))};
-      BreakResult a = breakLinesRetry(bl, lw, cp);
+      BreakResult a = breakLinesCached(bl, lw, cp);
       BreakResult b = breakLines(bl, lw, cp);
-      if (b.feasible && (a.breakpoints != b.breakpoints || a.cost != b.cost)) mismatches++;
+      if (a.breakpoints != b.breakpoints || a.cost != b.cost || a.overfullLines != b.overfullLines) mismatches++;
       if (a.breakpoints.empty() || a.breakpoints.back() != bl.size()) mismatches++;
     }
   }
   CHECK(mismatches == 0);
+  breakMemoBudget(0);
 }
 
 // the shared HTML writer (plan P0-10): one style attribute, one escaper,

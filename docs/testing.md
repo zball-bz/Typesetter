@@ -52,7 +52,7 @@ A shared fixture asserts both implementations produce identical `.blocks` dumps 
 | model/instantiate | `.ops` → tree dump | style resolution unit tests; dedicated fixture: one DAG value emitted twice under different stacks → two styled instances (emission-time binding, v2 §12) |
 | resolver | tree → tree dump | counter/label/collector goldens; `ref-unresolved` and `label-duplicate` fixtures assert diagnostics + "??" node |
 | emit | tree → blocks dump | mock measurer; Appendix C rules one fixture each; hyphenation against a reference word list (en-US) |
-| break | blocks → breaks dump | goldens (port PoC bench cases); properties: every line width ≤ measure + ε·nwords; INF-cost retry ladder exercised |
+| break | blocks → breaks dump | goldens (port PoC bench cases); properties: every line width ≤ measure + ε·nwords; the final pass's rescue exercised (unitBreakSemantics); the memo equals the uncached DP under eviction (unitBreakMemo) |
 | layout | breaks → layout dump | goldens; invariants: no overlapping line rects, uniform grid unless an oversized box is present, k-rule arithmetic |
 | render | tree/layout → HTML | goldens both serializers; escaping fixture (`<script>` in prose stays escaped; `raw` passes through); DOM-shape assertions (§9 of the model spec) via a tiny HTML parser |
 

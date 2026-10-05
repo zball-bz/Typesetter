@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-14
+- 下一步：P1-15
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -39,7 +39,7 @@
 | P1-11 | TextRules 兼容表与单一分类器 | done | grep:plan P1-11 | 2026-10-06 | 0（全部 golden 字节不变） | vendor UCD 17.0.0 五个文件（engine/rules/ucd/17.0.0，ucdc --fetch 可重取）；engine/rules/classes.def（CC 类）+ locale/compat.def（RULES_VERSION 0：五个宽区间、clreq 标点、歧义类、列、kern 截断、App C 常量）→ tools/ucdc.mjs → engine/gen/textrules.h（类区间表 + UCD 列 GCB/ExtPict/EAW，约 3.4KB，入 gen-all/G9）；shape/textrules.h 唯一分类 API，emit/inline/layout/typeset_html/support 五处分类器全部改走它；mock.h 冻结 mockIsWide；unitTextRules 对全部码位钉住旧分类器的字面副本；tools/rules-diff.mjs（码位类/列差异与语料边界对比，供 P4）；docs/shaping-design.md |
 | P1-12 | HList 与 run 实例 | done | grep:plan P1-12 | 2026-10-06 | 结构性提交 0 变化（全部现有 golden 字节不变）；+111 个 hlist golden（每个排版用例一份） | engine/src/shape/hlist.{h,cc}：HItem 24B（IK Box/Glue/Penalty/Disc，GC Word/InterChar/Autospace/Blank/ObjectSpace，IA_* 属性，run，aux，w，x，cold）、ColdRec（源 span、rawPx、blank、迁移用 capSu、anchor）、AdvanceSpec 32B（Measured/Defined/Fixed/MeasuredMinusBlanks/KernCtx/Object）、DiscRec、RunRec（face/link/SynKind/copyText/RealizeClass/anchor）；TeX 合法性写在头文件，lintHList（每边界至多一个断点、开标点后与闭标点前无断点、run 连续且 BlankBearing/Pinned/Object 单盒、LetterSpaced 盒后有 InterChar）在每个 golden 上运行；emit 以旧逐节点逻辑直接产出 HItem（InlineSink 接口，块遍历共享），finish() 按今天的断行结构写成 TeX 形式并加 InterChar 胶，run 随项生成；resolveWidths 读 AdvanceSpec；fuseLegacy 为规定的降级表（模板化：生产只保留断行器读的 BreakBlock 五字段，完整 LinebreakBlock 只供 blocks dump 与校验）；emit/legacy.cc 原样保留旧行内发射器作为 CI 预言机（仅原生链接），黄金运行器与 tsrc --fuse-check 逐字段比较——111 个用例及真实/typst/博客语料共 650 篇全部相等；layout 四个行循环与 renderLineBox 改读 item 区间与 run 实例（blockStart 映射断点，块区间只用于 dump）；tsrc --stage=hlist（数值罚分、类、span，修复 dump-hides-finite-penalties）；性能：同时把词宽表改为按字符串下标的槽表（哈希查找占 WASM 引擎约五分之一）、px 格式化改为精确整数实现（render −2ms），87K update 29.5ms（同机交替测 HEAD 29.6–30.0）；docs/shaping-design.md §5 |
 | P1-13 | InlineObject 注册表与扁平化表 | done | grep:plan P1-13 | 2026-10-06 | 17 个含公式用例的 hlist golden（增加对象记录：object 盒带种类/部件/上下伸、对象表）；+4 用例（inline/object-image、inline/object-raw、inline/hardbreak、inline/object-unsupported-diag），其余全部字节不变 | 扁平化表 = schema 每个 kind 的 inline 列（text/container/code/object/break/error/skip/unsupported），gen-schema 强制每行都有并生成 KindInfo::inl，emit 行内遍历按它分派（封闭，无 default 递归）；shape/objects.{h,cc} 对象注册表（math/image/raw/error，边界类 firstCC/lastCC），HList 增加 parts（每部件 w/asc/desc）；数学成为对象：emit 时度量齐全即展开，否则留一个占位部件并标记 hasDeferred，resolveWidths 对该列表单独排版并拼接（不再整篇重 emit；显示公式保持至 P3-26），黄金流程中 Id_(A)、f(x) "if" x > 0 走拼接路径且 fuseCheck 相等；行内 image/raw 成为对象（声明或拉取的尺寸，基线上的盒；无尺寸/不安全为 1em 虚线占位并给 image-src），修复行内图片被静默丢弃；不支持的 kind 成为 error 对象（⚠ kind）并给 shape-unsupported，黄金运行器对非 unsupported 用例出现该诊断即失败（语料扫描为零）；hardbreak → Penalty(-INF)，经 fuseLegacy 成为块罚分 -BREAK_INF，适配器映射为 Penalty(Forced)，断行器对强制断点前的行用 fil、layout 视为段末（不两端对齐、复制为换行）；layout 三处高度副本已在 P1-12 合一，改走 objectPart 垫片；渲染按对象种类分派（公式盒、img、tsr-iraw、错误文本），语义渲染器同样绘出行内 image/raw；record-fixtures 支持 X.tree.json（无表层语法词汇的原始 ops 用例），contract 检查把 span.tsr-iraw 视为可信内容；docs/shaping-design.md §6 |
-| P1-14 | KP 正式化与校验缓存 | todo | | | | |
+| P1-14 | KP 正式化与校验缓存 | done | grep:plan P1-14 | 2026-10-06 | 0（全部 golden 字节不变，115 个用例） | break.cc 改为 TeX 活动表：节点的行一旦 Overfull 即失活，Forced 断点使之前所有节点失活，只在 parshape 前缀内按行数分开保存节点（之后每个断点一个，按全序取优），去掉 ±5 窗口、±1 行数剪枝与重试阶梯；救援并入末遍（所有活动节点在某断点都 Overfull 时按全序取最优者在此断开）；BreakParams{cost, tolerance, emergencyStretch}，默认只跑末遍（与今天一致），容差遍与应急伸展遍按设计实现并有单测；缓存键为条目字节 + 块数 + 行宽 + 参数的 128 位哈希（MurmurHash3 x64_128 的块步骤），命中时以条目数校验，LRU 预算按结果字计；i64 su 前缀和与 -ffp-contract=off 已在 P0-12；语料对比（真实文档/typst/博客 539 篇 × 300/640px）：133 个单元的断点变化，106 个代价更低，其余 27 个（24 篇）代价更高者全部是旧窗口搜索把内容挤进多条 Overfull 救援行（救援行不计代价），新结果 Overfull 行严格更少，无一例更差；性能：未缓存 KP 在 HoTT + 40 章 pbr-zh × 两种宽度上 50.0 → 38.0ms；bench 87K update 29.1ms、relayout 56.7ms，均在预算内，无需有界活动模式 |
 | P1-15 | 断行移入布局（ExclusionMap） | todo | | | | |
 | P1-16 | 与宽度无关的 emit（SizeSpec） | todo | | | | |
 | P1-17 | 统一行物化（materializeLines） | todo | | | | |
@@ -133,6 +133,7 @@
 | P0-11 后（relayout 新基准） | 3.70 | 11.60 | 27.80 | 1.3 / 4.0 / 0.3 / 6.8 / 6.2 | 50.8 / 71.2 / 112.8 | 6.10 / 23.00 / 57.30 | relayout 现在重新 emit（缺陷 #16），此行作为之后 relayout 门禁的基准 |
 | P0 结束 | 3.50 | 11.20 | 28.00 | 1.3 / 4.1 / 0.3 / 6.9 / 6.2 | 46.9 / 73.8 / 108.3 | 6.10 / 22.90 / 57.00 | 阶段门禁：update 均优于基线；relayout 按计划以 P0-11 记录为新基准（重新 emit），不劣于该基准 |
 | P1-12 后 | 3.50 | 12.00 | 29.50 | 1.8 / 4.1 / 0.4 / 8.9 / 4.1 | 51.9 / 74.3 / 114.9 | 6.10 / 22.50 / 58.60 | HList 使引擎 +0.8ms（87K），compile +0.4ms（上一文档更多分配的释放）；词宽槽表与整数 px 格式化抵消（render 6.1→4.1）。同机交替 A/B：P1-11 后 HEAD 29.6–30.0。P1 阶段门禁（P0 结束 ×1.05+0.3ms：3.98 / 12.06 / 29.70）当前满足，余量很小，P1-14 起须保持 |
+| P1-14 后 | 3.70 | 12.00 | 29.10 | 1.3 / 4.0 / 0.4 / 9.4 / 4.2 | 54.3 / 78.9 / 112.1 | 6.00 / 22.80 / 56.70 | 【性能】步：活动表 KP（无窗口）在缓存未命中时更快（HoTT+pbr-zh 未缓存 50.0→38.0ms）；relayout 87K 58.6→56.7；update 在 P1 阶段门限内（35K 12.00 ≤ 12.06，余量很小） |
 
 ## 偏差记录（MD-11）
 

@@ -31,12 +31,13 @@ provider round trips. Compile/execute/ingest are cheap (<6 ms combined).
   re-typesets new source under the same doc handle. The new doc replaces
   the old only on success — a failing edit keeps the last good document
   alive for relayout/paginate.
-- **Cross-document KP cache** (break.cc `breakLinesRetry`): the DP reads
-  only block geometry (width, spaceWidth, breakWidth, breakPenalty) plus
-  LineWidths and CostParams, so results are keyed by an FNV-1a content hash
-  and shared process-wide. An edit re-breaks only the paragraphs it
-  actually changed. The retry ladder is folded into the cached computation.
-  Any new field the DP starts reading MUST be added to `breakKey`.
+- **Cross-document KP cache** (break.cc `breakLinesCached`, plan P1-14):
+  the DP reads only its items (the bytes of the TeX item projection), the
+  LineWidths and the BreakParams, so a result is keyed by a 128-bit hash of
+  exactly those, validated on a hit by the item count, and shared
+  process-wide (LRU within a word budget). An edit re-breaks only the
+  paragraphs it actually changed. Any new input the DP starts reading MUST
+  be added to `breakKey`.
 - Phase timings ride on every result message (`timings`), so the bench and
   the preview can attribute latency without instrumented builds.
 

@@ -1169,7 +1169,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/paginator-in-serializer` | adhoc | high | P3-12 | |
 | `break-layout-pages/group-role-dispatch` | adhoc | high | P1-18, P3-14 | |
 | `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 | |
-| `break-layout-pages/kp-window-heuristics` | adhoc | low | P1-14 | |
+| `break-layout-pages/kp-window-heuristics` | adhoc | low | P1-14 | grep:plan P1-14 |
 | `break-layout-pages/overfull-collapses-paragraph` | issue | high | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/emit-reads-measure-stale-on-relayout` | issue | high | P1-16 | |
 | `break-layout-pages/wide-float-overprints-text` | issue | medium | P3-08 | |
@@ -1179,7 +1179,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/float-adds-paragraph-gap` | issue | low | P3-08 | |
 | `break-layout-pages/float-indent-geometry` | issue | low | P3-08 | |
 | `break-layout-pages/paged-atoms-clipped` | issue | medium | P3-12 | |
-| `break-layout-pages/break-cache-robustness` | issue | low | P0-11, P1-14 | |
+| `break-layout-pages/break-cache-robustness` | issue | low | P0-11, P1-14 | grep:plan P1-14 |
 | `break-layout-pages/api-hosts-layout-policy` | issue | medium | P1-03, P1-15 | |
 | `break-layout-pages/baseline-not-communicated` | issue | low | P1-18 | |
 | `break-layout-pages/doc-drift` | issue | low | P1-15, P3-12 | |
