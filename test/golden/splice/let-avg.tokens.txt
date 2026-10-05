@@ -1,0 +1,6 @@
+[0,27) function "#let avg = (a,b) => (a+b)/2"
+[40,44) function "#avg"
+[44,49) embedded "(3,5)"
+[60,61) attribute "*"
+[61,67) attribute "inline"
+[67,68) attribute "*"

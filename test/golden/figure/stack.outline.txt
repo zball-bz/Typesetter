@@ -1,0 +1,1 @@
+{"headings":[{"level":2,"title":"标题不清除浮动","label":null,"span":[387,411]}],"regions":[{"name":"figure","label":"fig-a","span":[110,236]},{"name":"figure","label":"fig-b","span":[238,385]}],"fences":[],"labels":[{"id":"fig-a","rule":"region","span":[110,211]},{"id":"fig-b","rule":"region","span":[238,339]}],"diagnostics":[]}

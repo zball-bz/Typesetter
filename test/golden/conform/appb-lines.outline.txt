@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Level one","label":null,"span":[0,11]},{"level":2,"title":"Level two","label":null,"span":[12,24]},{"level":3,"title":"Level three","label":null,"span":[25,40]}],"regions":[],"fences":[{"lang":"js","span":[273,300]}],"labels":[],"diagnostics":[]}

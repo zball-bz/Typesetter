@@ -1,0 +1,2 @@
+[137,242) function "#!figure(src: \"photos/box.png\", alt: \"box\", w: 300, h: 300, scale: 0.4, float: \"right\", label: \"fig-box\")"
+[272,280) function "#figure!"

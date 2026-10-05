@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,89],"kids":[{"kind":"call","sugar":"para","span":[0,7],"kids":[{"kind":"text","span":[0,7],"str":"Before."}]},{"kind":"error","span":[9,61],"str":"statement-unclosed","message":"unterminated #{ block: dropped up to the next blank line"},{"kind":"call","sugar":"para","span":[63,88],"kids":[{"kind":"text","span":[63,88],"str":"Paragraph after survives."}]}]}

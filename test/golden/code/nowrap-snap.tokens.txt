@@ -1,0 +1,3 @@
+[103,108) keyword "```js"
+[109,130) embedded "let 名 = \"a\"; // 注"
+[131,134) keyword "```"

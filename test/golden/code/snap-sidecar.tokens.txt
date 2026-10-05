@@ -1,0 +1,3 @@
+[126,158) keyword "```js(sidecar: \"///\", lineNo: 1)"
+[159,289) embedded "const 标题 = \"中文与 ASCII 混排\"; /// 中文边注 with Latin\nfor (let i = 0; i < 3; i++) emit(标题, i); /// 每行一个"
+[290,293) keyword "```"

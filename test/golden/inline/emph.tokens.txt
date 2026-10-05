@@ -1,0 +1,6 @@
+[6,7) attribute "*"
+[7,17) attribute "bold words"
+[17,18) attribute "*"
+[23,24) attribute "_"
+[24,30) attribute "italic"
+[30,31) attribute "_"

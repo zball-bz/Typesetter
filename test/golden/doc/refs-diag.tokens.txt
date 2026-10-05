@@ -1,0 +1,8 @@
+[0,1) keyword "="
+[2,7) function "First"
+[8,13) label "<dup>"
+[30,38) constant "@missing"
+[98,99) keyword "="
+[100,106) function "Second"
+[107,112) label "<dup>"
+[122,126) constant "@dup"

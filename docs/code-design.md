@@ -49,6 +49,13 @@ tsr_provide_tokens(doc, blockId, (start,end,tagId)*)  → resume
   async resources (NEED_MEASURE precedent).
 - Unknown lang / grammar failed to load → provide zero tokens: plain
   monochrome code, never an error (measure-fallback discipline).
+- **One exception: the engine tokenizes its own language** (plan P1-09).
+  A ```` ```tsm ```` block is answered inside the engine at Resolve with
+  the engine's own tokens (`syntaxTokens`, syntax/exports.h) — no
+  NEED_TOKENS round trip, the same tokens the editor shows. The
+  tree-sitter-tsm grammar remains the editor's cold-start fallback, held to
+  the engine by the native conformance check (tests.cc,
+  `unitTokenConformance`).
 - **Native goldens get stronger, not weaker**: tree-sitter is plain C, so
   the native test binary links the runtime + grammars STATICALLY — the
   same parse tables produce byte-identical tokens, and highlighting

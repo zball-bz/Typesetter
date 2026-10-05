@@ -1,0 +1,3 @@
+[97,104) keyword "```json"
+[105,173) embedded "{\"name\": \"typesetter\", \"version\": 3, \"ok\": true, \"tags\": [null, 42]}"
+[174,177) keyword "```"

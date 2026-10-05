@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"A heading long enough that it has to wrap across two lines at the test measure","label":null,"span":[0,80]}],"regions":[{"name":"figure","label":"fig-wide","span":[82,280]}],"fences":[],"labels":[{"id":"fig-wide","rule":"region","span":[82,162]}],"diagnostics":[]}

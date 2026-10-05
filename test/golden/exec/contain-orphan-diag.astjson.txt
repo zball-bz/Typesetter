@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,25],"kids":[{"kind":"call","sugar":"para","span":[0,7],"kids":[{"kind":"text","span":[0,7],"str":"Before."}]},{"kind":"error","span":[9,16],"str":"region-orphan","message":"closer '#aside!' has no open region '#!aside'"},{"kind":"call","sugar":"para","span":[18,24],"kids":[{"kind":"text","span":[18,24],"str":"After."}]}]}

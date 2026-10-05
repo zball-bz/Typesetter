@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"First","label":"dup","span":[0,7]},{"level":1,"title":"Second","label":"dup","span":[98,106]}],"regions":[],"fences":[],"labels":[{"id":"dup","rule":"heading","span":[8,13]},{"id":"dup","rule":"heading","span":[107,112]}],"diagnostics":[]}

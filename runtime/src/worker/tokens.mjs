@@ -21,7 +21,8 @@ function tagOf(name) {
 const LANGS = { json: 'json', js: 'javascript', javascript: 'javascript',
                 mjs: 'javascript', ts: 'typescript', typescript: 'typescript',
                 py: 'python', python: 'python', cpp: 'cpp', 'c++': 'cpp',
-                cc: 'cpp', rust: 'rust', rs: 'rust', tsm: 'tsm' };
+                cc: 'cpp', rust: 'rust', rs: 'rust' };
+// ('tsm' blocks are tokenized by the engine itself, plan P1-09)
 
 const HL_BASE = new URL('../../assets/hl/', import.meta.url);
 // Node (static export, pages-design.md §3): web-tree-sitter resolves asset

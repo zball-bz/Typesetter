@@ -9,12 +9,15 @@ Language support and live typeset preview for `.tsm` — the
   engine — Knuth–Plass justification, CJK punctuation compression, math,
   figures, code highlighting — re-typesets as you type. Incremental fast
   path: keystrokes patch only the damaged paragraphs.
-- **Precise highlighting** via the same tree-sitter grammar the engine
-  uses for `.tsm` code blocks (plus a coarse TextMate fallback).
+- **Precise highlighting** from the engine itself, running in the
+  extension host — the same tokens it uses for `.tsm` code blocks (a
+  tree-sitter grammar paints until it has loaded, plus a coarse TextMate
+  grammar).
 - **Diagnostics** from the engine mapped onto source lines.
 - **Jump to source**: double-click any line in the preview. Editor
   scrolling reveals the corresponding paragraph in the preview.
-- **Outline / folding / completion** for headings, regions, references.
+- **Outline / folding / completion** from the engine's outline: heading
+  sections, regions and fences; region names and the document's labels.
 - **Print / PDF** through the engine's paged renderer
   (`TSM: Print / Export PDF from Preview`).
 

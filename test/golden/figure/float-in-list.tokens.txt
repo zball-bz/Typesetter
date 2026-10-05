@@ -1,0 +1,5 @@
+[62,63) keyword "-"
+[93,94) keyword "-"
+[134,241) function "#!figure(src: \"photos/icon.png\", alt: \"icon\", w: 200, h: 200, scale: 0.4, float: \"left\", label: \"fig-icon\")"
+[268,276) function "#figure!"
+[420,421) keyword "-"

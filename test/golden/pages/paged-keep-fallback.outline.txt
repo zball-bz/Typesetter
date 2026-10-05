@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Heading before a tall figure","label":null,"span":[0,30]}],"regions":[{"name":"figure","label":"fig-tall","span":[32,158]}],"fences":[],"labels":[{"id":"fig-tall","rule":"region","span":[32,112]}],"diagnostics":[]}

@@ -1,0 +1,6 @@
+[110,211) function "#!figure(src: \"photos/a.jpg\", alt: \"甲\", w: 400, h: 300, scale: 0.4, float: \"right\", label: \"fig-a\")"
+[228,236) function "#figure!"
+[238,339) function "#!figure(src: \"photos/b.jpg\", alt: \"乙\", w: 400, h: 200, scale: 0.4, float: \"right\", label: \"fig-b\")"
+[377,385) function "#figure!"
+[387,389) keyword "=="
+[390,411) function "标题不清除浮动"

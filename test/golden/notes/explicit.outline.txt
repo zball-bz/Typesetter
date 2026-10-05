@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Explicit placement","label":null,"span":[0,20]},{"level":1,"title":"Appendix","label":"top","span":[131,141]}],"regions":[],"fences":[],"labels":[{"id":"top","rule":"heading","span":[142,147]}],"diagnostics":[]}

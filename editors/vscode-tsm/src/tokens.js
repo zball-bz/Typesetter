@@ -1,9 +1,9 @@
-// Semantic tokens from the SAME grammar the engine highlights .tsm with
-// (grammar/tree-sitter-tsm via runtime/assets/hl) — one grammar, two
-// consumers. Captures follow the engine's priority contract (start asc,
-// patternIndex asc, earlier pattern wins on overlap), so editor coloring
-// matches published pages. Indices here are UTF-16 code units (tree-sitter
-// node indices), which is exactly what VSCode wants.
+// Cold-start semantic tokens (plan P1-09): until the engine has loaded in the
+// extension host (src/engine.js, the authority), the tree-sitter grammar
+// (grammar/tree-sitter-tsm via runtime/assets/hl) colors the first paint.
+// Captures follow the engine's priority contract (start asc, patternIndex
+// asc, earlier pattern wins on overlap). Indices here are UTF-16 code units
+// (tree-sitter node indices), which is exactly what VSCode wants.
 const path = require('node:path');
 const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
@@ -61,4 +61,4 @@ async function tsmTokens(assetRoot, text) {
   return out;
 }
 
-module.exports = { tsmTokens, LEGEND };
+module.exports = { tsmTokens, LEGEND, TYPE_OF };

@@ -1,0 +1,2 @@
+[108,194) function "#!figure(src: \"/test/e2e/img/w40h20.png\", alt: \"只给宽度\", w: 120, label: \"fig-w\")"
+[254,262) function "#figure!"

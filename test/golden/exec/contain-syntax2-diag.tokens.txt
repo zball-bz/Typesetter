@@ -1,0 +1,6 @@
+[9,21) function "#{ let = 1 }"
+[30,31) function "#"
+[31,38) embedded "(1 + 2)"
+[41,55) function "#{ const = 2 }"
+[63,64) function "#"
+[64,71) embedded "(3 * 4)"

@@ -1,13 +1,15 @@
 // Typesetter (.tsm) language support + live typeset preview.
 // Design: docs/editor-design.md §5. No build step — plain CJS; the engine
 // assets are served from the repo checkout or from vendor/ when packaged.
+// Tokens, outline, folding and completion come from the engine running in
+// the extension host (src/engine.js, plan P1-09); until it has loaded, the
+// tree-sitter grammar colors the first paint.
 const vscode = require('vscode');
-const { tsmTokens, LEGEND } = require('./tokens');
+const engine = require('./engine');
+const { headingTree, foldingRanges, regionNames, labelNames } = require('./features');
+const { tsmTokens, LEGEND, TYPE_OF } = require('./tokens');
 const { assetRoot } = require('./paths');
 const { TsmPreview } = require('./preview');
-
-const HEADING = /^(={1,6}) (.*)$/;
-const FENCE = /^```/;
 
 function activate(context) {
   let root = null;
@@ -16,18 +18,35 @@ function activate(context) {
   } catch (e) {
     vscode.window.showWarningMessage(String(e.message ?? e));
   }
+  const tokensChanged = new vscode.EventEmitter();
+  context.subscriptions.push(tokensChanged);
+  const loaded = root
+    ? engine.load(root).then(() => tokensChanged.fire(), (e) => {
+      vscode.window.showWarningMessage(`tsm: engine unavailable (${e.message ?? e})`);
+    })
+    : Promise.resolve();
+  // the engine's outline of a document (null without an engine)
+  const outlineOf = async (doc) => {
+    await loaded;
+    return engine.ready() ? engine.outline(doc.getText()) : null;
+  };
+  const lineOf = (doc) => (i) => doc.positionAt(i).line;
 
-  // --- semantic tokens (tree-sitter-tsm; same grammar the engine uses) ---
+  // --- semantic tokens -------------------------------------------------------
   if (root) {
     const legend = new vscode.SemanticTokensLegend(LEGEND);
     context.subscriptions.push(
       vscode.languages.registerDocumentSemanticTokensProvider(
         { language: 'tsm' },
         {
+          onDidChangeSemanticTokens: tokensChanged.event,
           async provideDocumentSemanticTokens(doc) {
             const text = doc.getText();
+            const toks = engine.ready()
+              ? engine.tokens(text).map((t) => ({ s: t.s, e: t.e, type: TYPE_OF[t.tag] })).filter((t) => t.type)
+              : await tsmTokens(root, text);  // cold start
             const builder = new vscode.SemanticTokensBuilder(legend);
-            for (const t of await tsmTokens(root, text)) {
+            for (const t of toks) {
               // VSCode tokens must not cross lines — split multi-line spans
               let from = doc.positionAt(t.s);
               const to = doc.positionAt(t.e);
@@ -50,84 +69,45 @@ function activate(context) {
   // --- outline: heading tree ------------------------------------------------
   context.subscriptions.push(
     vscode.languages.registerDocumentSymbolProvider({ language: 'tsm' }, {
-      provideDocumentSymbols(doc) {
-        const flat = [];
-        for (let i = 0; i < doc.lineCount; i++) {
-          const m = HEADING.exec(doc.lineAt(i).text);
-          if (m) flat.push({ line: i, level: m[1].length, title: m[2].trim() || '(untitled)' });
-        }
-        const roots = [];
-        const stack = [];
-        for (const h of flat) {
-          const range = new vscode.Range(h.line, 0, h.line, doc.lineAt(h.line).text.length);
-          const sym = new vscode.DocumentSymbol(
-            h.title, '', vscode.SymbolKind.String, range, range);
-          sym._level = h.level;
-          while (stack.length && stack[stack.length - 1]._level >= h.level) stack.pop();
-          (stack.length ? stack[stack.length - 1].children : roots).push(sym);
-          stack.push(sym);
-        }
-        // extend each symbol's range to the next same-or-higher heading
-        const extend = (syms, endLine) => {
-          for (let i = 0; i < syms.length; i++) {
-            const stop = i + 1 < syms.length ? syms[i + 1].range.start.line - 1 : endLine;
-            const line = Math.max(syms[i].range.start.line, stop);
-            syms[i].range = new vscode.Range(
-              syms[i].range.start, new vscode.Position(line, doc.lineAt(line).text.length));
-            extend(syms[i].children, line);
-          }
+      async provideDocumentSymbols(doc) {
+        const o = await outlineOf(doc);
+        if (!o) return [];
+        const symbol = (h) => {
+          const range = new vscode.Range(h.line, 0, h.endLine, doc.lineAt(h.endLine).text.length);
+          const head = new vscode.Range(h.line, 0, h.line, doc.lineAt(h.line).text.length);
+          const sym = new vscode.DocumentSymbol(h.title, '', vscode.SymbolKind.String, range, head);
+          sym.children = h.children.map(symbol);
+          return sym;
         };
-        extend(roots, doc.lineCount - 1);
-        return roots;
+        return headingTree(o, lineOf(doc), doc.lineCount - 1).map(symbol);
       },
     }),
   );
 
-  // --- folding: heading sections + fenced blocks ---------------------------
+  // --- folding: heading sections, fences, regions ---------------------------
   context.subscriptions.push(
     vscode.languages.registerFoldingRangeProvider({ language: 'tsm' }, {
-      provideFoldingRanges(doc) {
-        const out = [];
-        const headings = [];
-        let fenceStart = -1;
-        for (let i = 0; i < doc.lineCount; i++) {
-          const text = doc.lineAt(i).text;
-          if (FENCE.test(text)) {
-            if (fenceStart < 0) fenceStart = i;
-            else {
-              out.push(new vscode.FoldingRange(fenceStart, i));
-              fenceStart = -1;
-            }
-            continue;
-          }
-          if (fenceStart >= 0) continue;
-          const m = HEADING.exec(text);
-          if (m) {
-            const level = m[1].length;
-            while (headings.length && headings[headings.length - 1].level >= level) {
-              const h = headings.pop();
-              if (i - 1 > h.line) out.push(new vscode.FoldingRange(h.line, i - 1));
-            }
-            headings.push({ line: i, level });
-          }
-        }
-        for (const h of headings)
-          if (doc.lineCount - 1 > h.line)
-            out.push(new vscode.FoldingRange(h.line, doc.lineCount - 1));
-        return out;
+      async provideFoldingRanges(doc) {
+        const o = await outlineOf(doc);
+        if (!o) return [];
+        return foldingRanges(o, lineOf(doc), doc.lineCount - 1)
+          .map((r) => new vscode.FoldingRange(r.start, r.end));
       },
     }),
   );
 
-  // --- completion: region builders + references ----------------------------
-  const BUILDERS = ['figure', 'table', 'quote', 'center', 'right', 'columns'];
+  // --- completion: region names + references --------------------------------
+  // Region names are the executor's built-in handlers and the document's own
+  // regions (handler names registered at execution arrive with plan P2-03).
   context.subscriptions.push(
     vscode.languages.registerCompletionItemProvider({ language: 'tsm' }, {
-      provideCompletionItems(doc, pos) {
+      async provideCompletionItems(doc, pos) {
         const prefix = doc.lineAt(pos.line).text.slice(0, pos.character);
+        const o = await outlineOf(doc);
+        if (!o) return [];
         const items = [];
         if (/#!?[A-Za-z_]*$/.test(prefix)) {
-          for (const b of BUILDERS) {
+          for (const b of regionNames(o)) {
             const it = new vscode.CompletionItem(`#!${b}`, vscode.CompletionItemKind.Module);
             it.insertText = new vscode.SnippetString(`!${b}\n$0\n#${b}!`);
             it.range = new vscode.Range(pos.translate(0, -1), pos);
@@ -135,13 +115,9 @@ function activate(context) {
             items.push(it);
           }
         }
-        if (/@[A-Za-z0-9_-]*$/.test(prefix)) {
-          const labels = new Set();
-          for (const m of doc.getText().matchAll(/<([A-Za-z][A-Za-z0-9_-]*)>/g))
-            labels.add(m[1]);
-          for (const l of labels)
+        if (/@\[?[^\s\]]*$/.test(prefix))
+          for (const l of labelNames(o))
             items.push(new vscode.CompletionItem(`@${l}`, vscode.CompletionItemKind.Reference));
-        }
         return items;
       },
     }, '#', '@'),

@@ -1,0 +1,1 @@
+[9,73) function "#{ $.style.push({ bold: true }); throw new Error(\"after push\") }"

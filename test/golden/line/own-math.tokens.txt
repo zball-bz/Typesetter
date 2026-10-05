@@ -1,0 +1,3 @@
+[0,1) keyword "-"
+[31,56) type "$ x = a\n    - b\n    + c $"
+[75,76) keyword "-"

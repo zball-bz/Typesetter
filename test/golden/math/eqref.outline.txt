@@ -1,0 +1,1 @@
+{"headings":[],"regions":[],"fences":[],"labels":[{"id":"emc","rule":"math","span":[64,69]},{"id":"gauss","rule":"math","span":[163,170]}],"diagnostics":[]}

@@ -1,0 +1,6 @@
+[7,12) constant "@kp81"
+[17,25) constant "@liang83"
+[28,41) function "#bibliography"
+[41,74) embedded "(\"/test/fixtures/cite/refs.json\")"
+[142,155) function "#bibliography"
+[155,188) embedded "(\"/test/fixtures/cite/refs.json\")"

@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Data","label":"sec","span":[0,6]}],"regions":[{"name":"table","label":"tbl","span":[14,136]}],"fences":[],"labels":[{"id":"sec","rule":"heading","span":[7,12]},{"id":"tbl","rule":"region","span":[14,58]}],"diagnostics":[]}

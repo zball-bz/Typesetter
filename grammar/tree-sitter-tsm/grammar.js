@@ -1,9 +1,14 @@
 // tree-sitter-tsm — highlighting grammar for the Typesetter markup language.
-// Deliberately line-oriented and approximate: it exists to color .tsm
-// sources in code blocks (code-design.md), not to re-implement the engine's
-// linepass/inline parser. Block markers lex as whole-line tokens; inline
-// tokens are regex approximations with a word rule keeping identifiers
-// (foo_bar) intact.
+// Deliberately line-oriented and approximate: the engine is the authority on
+// .tsm (its tokens highlight ```tsm blocks and the VS Code editor); this
+// grammar is the editor's cold-start fallback. Its delimiters, character
+// classes and limits come from the engine's syntax table through
+// syntax-regex.js (plan P1-09); regenerate with `node tools/gen-grammars.mjs`.
+// Block markers lex as whole-line tokens; inline tokens are regex
+// approximations with a word rule keeping identifiers (foo_bar) intact.
+const R = require('./syntax-regex.js');
+const re = (src) => new RegExp(src);
+
 module.exports = grammar({
   name: 'tsm',
 
@@ -32,17 +37,16 @@ module.exports = grammar({
       field('marker', $.heading_marker),
       repeat($._inline),
     )),
-    heading_marker: () => token(prec(3, /={1,6} /)),
+    heading_marker: () => token(prec(3, re(R.headingMarker))),
 
-    rule_line: () => token(prec(3, /-{3,}[ \t]*/)),
+    rule_line: () => token(prec(3, re(R.ruleLine))),
 
     // #!name(args…) — args may span lines; approximate as the rest of line
-    region_open: () => token(prec(3, /#![A-Za-z_][A-Za-z0-9_]*(\([^\n]*\))?[ \t]*/)),
-    region_close: () => token(prec(3, /#[A-Za-z_][A-Za-z0-9_]*![ \t]*/)),
+    region_open: () => token(prec(3, re(`${R.regionOpen}(${R.regionArgs})?[ \\t]*`))),
+    region_close: () => token(prec(3, re(`${R.regionClose}[ \\t]*`))),
 
-    // #let … / bare #statement lines (codegen CodeStmt); approximation:
-    // a line that IS a splice-with-call keeps inline handling instead
-    code_statement: () => token(prec(2, /#let [^\n]*/)),
+    // #let … statement lines
+    code_statement: () => token(prec(2, re(R.statement))),
 
     // ``` fences: opener with info, body lines opaque, closer
     fenced_block: ($) => seq(
@@ -51,21 +55,21 @@ module.exports = grammar({
       repeat(seq(optional($.fence_content), token(/\r?\n/))),
       field('close', $.fence_delim),
     ),
-    fence_delim: () => token(prec(4, /```[^\n]*/)),
+    fence_delim: () => token(prec(4, re(R.fenceDelim))),
     fence_content: () => token(prec(1, /[^`\n][^\n]*|`[^`][^\n]*|`/)),
 
-    block_comment: () => token(prec(4, /%--([^-]|-[^-]|--[^%])*--%/)),
+    block_comment: () => token(prec(4, re(R.comment))),
 
     list_line: ($) => prec.right(seq(
       field('marker', $.list_marker),
       repeat($._inline),
     )),
-    list_marker: () => token(prec(3, /([-+]|[0-9]+\.) /)),
+    list_marker: () => token(prec(3, re(R.listMarker))),
     quote_line: ($) => prec.right(seq(
       field('marker', $.quote_marker),
       repeat($._inline),
     )),
-    quote_marker: () => token(prec(3, /> ?/)),
+    quote_marker: () => token(prec(3, re(R.quoteMarker))),
 
     paragraph_line: ($) => prec.right(repeat1($._inline)),
 
@@ -84,17 +88,17 @@ module.exports = grammar({
       $.punct,
     ),
 
-    code_span: () => token(/`[^`\n]*`/),
-    math_span: () => token(/\$[^$\n]*\$/),
+    code_span: () => token(re(R.code)),
+    math_span: () => token(re(R.math)),
     // ^[…] footnote sugar (notes-design.md §1); body approximated as opaque
-    footnote: () => token(prec(1, /\^\[[^\]\n]*\]/)),
-    strong: () => token(/\*[^*\n]+\*/),
-    emphasis: () => token(/_[^_\n]+_/),
-    link: () => token(/\[[^\]\n]*\]\([^)\n]*\)/),
-    reference: () => token(/@([A-Za-z][A-Za-z0-9_-]*|\[[^\]\n]+\])/),
-    label: () => token(/<[A-Za-z][A-Za-z0-9_-]*>/),
+    footnote: () => token(prec(1, re(R.note))),
+    strong: () => token(re(R.strong)),
+    emphasis: () => token(re(R.em)),
+    link: () => token(re(R.linkText + R.linkUrl)),
+    reference: () => token(re(R.reference)),
+    label: () => token(re(R.label)),
     // #name.head(...)  #(expr)  #toc — args approximated to the call parens
-    splice: () => token(/#(\(|[A-Za-z_][A-Za-z0-9_.]*)/),
+    splice: () => token(re(R.splice)),
     cell_bar: () => token('|'),
 
     word: () => token(prec(-1, /[A-Za-z0-9_]+/)),

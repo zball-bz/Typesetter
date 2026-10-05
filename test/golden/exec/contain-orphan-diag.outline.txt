@@ -1,0 +1,1 @@
+{"headings":[],"regions":[],"fences":[],"labels":[],"diagnostics":[{"sev":"error","code":"region-orphan","span":[9,16],"message":"closer '#aside!' has no open region '#!aside'"}]}

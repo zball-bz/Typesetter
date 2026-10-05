@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,217],"kids":[{"kind":"call","sugar":"para","span":[0,78],"kids":[{"kind":"text","span":[0,78],"str":"Snap-kerning on a wrapping code block (guard fixture, plan P0-01; defect #21)."}]},{"kind":"call","sugar":"fence","span":[80,216],"str":"const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";\nemit(标题);","lang":"js","args":"","bodyOffset":86,"lines":""}]}

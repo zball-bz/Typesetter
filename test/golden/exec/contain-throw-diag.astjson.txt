@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,46],"kids":[{"kind":"call","sugar":"para","span":[0,7],"kids":[{"kind":"text","span":[0,7],"str":"Before."}]},{"kind":"stmt","span":[9,37],"let":false,"js":" throw new Error(\"boom\") "},{"kind":"call","sugar":"para","span":[39,45],"kids":[{"kind":"text","span":[39,45],"str":"After."}]}]}

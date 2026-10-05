@@ -91,6 +91,9 @@ std::vector<AstNode*> parseInlineSpans(const SourceText& src,
 // One node's dump line without indentation or newline (generated from the
 // syntax.def dump formats: syntax.gen.cc); dumpAst prints the tree.
 void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, const Interner& strs);
+// One node's JSON members (kind, sugar, span, str, payload; generated):
+// syntax/exports.h writes the tree.
+void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, const Interner& strs);
 std::string dumpAst(const AstNode* doc, const SourceText& src, const Interner& strs);
 
 }  // namespace tsr

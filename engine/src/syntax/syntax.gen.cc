@@ -1,5 +1,6 @@
 // GENERATED from engine/src/syntax/syntax.def by tools/gen-syntax.mjs — do not edit.
 #include "../ast/ast.h"
+#include "../support/json.h"
 
 namespace tsr {
 
@@ -187,6 +188,131 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       out += "\" msg=\"";
       appendEscaped(out, strs.get(side<ErrorP>(n).message));
       out += "\"";
+      break;
+    }
+  }
+}
+
+// one node's JSON members (no braces, no kids): kind, sugar, span, str and
+// its payload fields
+void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, const Interner& strs) {
+  static constexpr const char* kKind[] = {"doc", "text", "comment", "call", "splice", "stmt", "error"};
+  out += "\"kind\":\"";
+  out += kKind[(int)n->kind];
+  out += "\"";
+  if (n->kind == AstKind::Call) {
+    out += ",\"sugar\":\"";
+    out += kSugarName[(int)n->sugar];
+    out += "\"";
+  }
+  appendf(out, ",\"span\":[%u,%u]", n->span.start, n->span.end);
+  if (n->str) {
+    out += ",\"str\":";
+    jsonString(out, strs.get(n->str));
+  }
+  switch (n->kind) {
+    case AstKind::Doc:
+      break;
+    case AstKind::Text:
+      break;
+    case AstKind::Comment:
+      break;
+    case AstKind::Call:
+      switch (n->sugar) {
+        case SugarId::para:
+          break;
+        case SugarId::heading: {
+          const HeadingP& p = side<HeadingP>(n);
+          out += ",\"level\":";
+          appendf(out, "%d", (int)p.level);
+          out += ",\"label\":";
+          jsonString(out, strs.get(p.label));
+          break;
+        }
+        case SugarId::list: {
+          const ListP& p = side<ListP>(n);
+          out += ",\"ordered\":";
+          out += p.ordered ? "true" : "false";
+          out += ",\"start\":";
+          appendf(out, "%d", (int)p.start);
+          break;
+        }
+        case SugarId::item:
+          break;
+        case SugarId::quote:
+          break;
+        case SugarId::rule:
+          break;
+        case SugarId::fence: {
+          const FenceP& p = side<FenceP>(n);
+          out += ",\"lang\":";
+          jsonString(out, strs.get(p.lang));
+          out += ",\"args\":";
+          jsonString(out, src.slice(p.args));
+          out += ",\"bodyOffset\":";
+          appendf(out, "%u", (unsigned)p.bodyOffset);
+          out += ",\"lines\":";
+          jsonString(out, strs.get(p.lines));
+          break;
+        }
+        case SugarId::region: {
+          const RegionP& p = side<RegionP>(n);
+          out += ",\"args\":";
+          jsonString(out, src.slice(p.args));
+          break;
+        }
+        case SugarId::strong:
+          break;
+        case SugarId::em:
+          break;
+        case SugarId::code:
+          break;
+        case SugarId::link: {
+          const LinkP& p = side<LinkP>(n);
+          out += ",\"url\":";
+          jsonString(out, strs.get(p.url));
+          break;
+        }
+        case SugarId::note:
+          break;
+        case SugarId::ref:
+          break;
+        case SugarId::math: {
+          const MathP& p = side<MathP>(n);
+          out += ",\"display\":";
+          out += p.display ? "true" : "false";
+          out += ",\"label\":";
+          jsonString(out, strs.get(p.label));
+          break;
+        }
+        case SugarId::arg:
+          break;
+        case SugarId::row:
+          break;
+        case SugarId::cell:
+          break;
+      }
+      break;
+    case AstKind::Splice: {
+      const SpliceP& p = side<SpliceP>(n);
+      out += ",\"expr\":";
+      jsonString(out, strs.get(p.expr));
+      out += ",\"lastCall\":";
+      appendf(out, "%u", (unsigned)p.lastCall);
+      break;
+    }
+    case AstKind::Stmt: {
+      const StmtP& p = side<StmtP>(n);
+      out += ",\"let\":";
+      out += p.let ? "true" : "false";
+      out += ",\"js\":";
+      jsonString(out, src.slice(p.js));
+      break;
+    }
+    case AstKind::Error: {
+      const ErrorP& p = side<ErrorP>(n);
+      out += ",\"message\":";
+      jsonString(out, strs.get(p.message));
       break;
     }
   }

@@ -1,0 +1,3 @@
+[0,16) function "#!table(cols: 2)"
+[19,20) operator "|"
+[23,30) function "#table!"

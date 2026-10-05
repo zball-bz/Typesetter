@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Footnotes","label":"top","span":[0,11]},{"level":2,"title":"A section","label":null,"span":[213,225]}],"regions":[],"fences":[],"labels":[{"id":"top","rule":"heading","span":[12,17]}],"diagnostics":[]}

@@ -1,0 +1,4 @@
+[0,10) function "#let x = 1"
+[19,21) function "#x"
+[24,34) function "#let x = 2"
+[44,46) function "#x"

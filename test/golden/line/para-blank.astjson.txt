@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,59],"kids":[{"kind":"call","sugar":"para","span":[0,39],"kids":[{"kind":"text","span":[0,39],"str":"First paragraph spans two source lines."}]},{"kind":"call","sugar":"para","span":[41,58],"kids":[{"kind":"text","span":[41,58],"str":"Second paragraph."}]}]}

@@ -289,6 +289,25 @@ TSR_EXPORT double tsr_doc_height_px(WasmDoc* d) {
   return (double)d->doc.layout.docHeightSu / 64.0;
 }
 
+// Front-end exports (plan P1-09): stateless functions of a .tsm source
+// (UTF-8 in, JSON out; byte offsets), for editors and tools. The returned
+// buffer is valid until the next call of the same export.
+TSR_EXPORT const char* tsr_syntax_tokens(const char* src) {
+  static std::string out;
+  out = tokensJson(syntaxTokens(std::string_view(src ? src : "")));
+  return out.c_str();
+}
+TSR_EXPORT const char* tsr_outline(const char* src) {
+  static std::string out;
+  out = outlineJson(std::string_view(src ? src : ""));
+  return out.c_str();
+}
+TSR_EXPORT const char* tsr_parse_json(const char* src) {
+  static std::string out;
+  out = astJson(std::string_view(src ? src : ""));
+  return out.c_str();
+}
+
 // The one ABI handshake (plan P1-01, D-H06): the host checks it before it
 // writes a single op. Fields of subsystems that do not exist yet carry 0
 // (programAbi → P2-02, resVersion → P1-19); syntaxVersion is syntax.def's.

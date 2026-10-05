@@ -1,0 +1,8 @@
+[22,28) function "#style"
+[28,94) embedded "({color: \"red;letter-spacing:5px\", font: \"x}; body{display:none\"})"
+[94,95) punctuation "["
+[106,107) punctuation "]"
+[124,130) function "#style"
+[130,150) embedded "({color: \"#a8432a\"})"
+[150,151) punctuation "["
+[158,159) punctuation "]"

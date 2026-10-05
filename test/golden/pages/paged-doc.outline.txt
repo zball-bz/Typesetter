@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"分页样例","label":"top","span":[0,14]},{"level":2,"title":"保持规则","label":null,"span":[306,321]}],"regions":[{"name":"figure","label":"fig-p","span":[496,611]}],"fences":[{"lang":"json","span":[385,494]}],"labels":[{"id":"top","rule":"heading","span":[15,20]},{"id":"fig-p","rule":"region","span":[496,571]}],"diagnostics":[]}

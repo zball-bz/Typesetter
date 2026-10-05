@@ -35,9 +35,10 @@ const GRAMMARS = {
                nm('tree-sitter-cpp/queries/highlights.scm')] },
   rust: { srcDir: nm('tree-sitter-rust/src'), srcs: ['parser.c', 'scanner.c'],
           scm: [nm('tree-sitter-rust/queries/highlights.scm')] },
-  // our own markup (grammar/tree-sitter-tsm; generated parser vendored)
+  // our own markup: the editor's cold-start fallback (tools/gen-grammars.mjs
+  // vendors the parser; ```tsm blocks are tokenized by the engine itself)
   tsm: { srcDir: join(root, 'third_party/grammars/tsm'), srcs: ['parser.c'],
-         scm: [join(root, 'third_party/grammars/tsm/highlights.scm')] },
+         scm: [join(root, 'grammar/tree-sitter-tsm/highlights.scm')] },
 };
 
 for (const [name, g] of Object.entries(GRAMMARS)) {

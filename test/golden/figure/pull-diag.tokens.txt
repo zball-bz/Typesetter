@@ -1,0 +1,4 @@
+[101,180) function "#!figure(src: \"photos/lighthouse.jpg\", alt: \"海边灯塔\", label: \"fig-light\")"
+[240,248) function "#figure!"
+[250,307) function "#!figure(src: \"javascript:alert(1)\", alt: \"恶意来源\")"
+[360,368) function "#figure!"

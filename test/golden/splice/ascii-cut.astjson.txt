@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,61],"kids":[{"kind":"stmt","span":[0,12],"let":true,"js":" avg = 7"},{"kind":"call","sugar":"para","span":[13,60],"kids":[{"kind":"splice","span":[13,17],"expr":"avg","lastCall":0},{"kind":"text","span":[17,60],"str":"的结果 should cut at the ASCII boundary."}]}]}

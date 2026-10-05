@@ -1,0 +1,3 @@
+[0,11) function "#let x = 42"
+[25,27) function "#x"
+[51,58) function "#x.here"

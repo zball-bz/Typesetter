@@ -253,7 +253,41 @@ block (document-model §3, N3); footnotes keep block bodies as blocks.
 `@id[…]` supplements and `#let x = […]` content literals become content
 bodies with their owning steps (P2-06, P2-12).
 
-## 8. Next steps
+## 8. Front-end exports and grammars (as built from plan P1-09)
+
+`syntax/exports.{h,cc}` — pure functions of a source (a scratch parse) or of
+a parsed document:
+
+- `syntaxTokens`: the 14-tag tokens — markers keyword, splice heads and
+  statements function (call arguments embedded), code string, math type,
+  references constant, labels label, emphasis and notes attribute, links
+  property, cell bars operator, rules punctuation, fence bodies embedded,
+  comments comment.
+- `outlineJson`: headings (level, title, label), regions (name, `label:`
+  argument), fences (lang), labels (heading / region / math) and the
+  diagnostics, all with byte spans.
+- `astJson`: the CallAST, one object per node; its members come from the
+  generated `jsonAstNode` (the same payload rows as the dump).
+
+C ABI `tsr_syntax_tokens` / `tsr_outline` / `tsr_parse_json` (stateless,
+JSON out); `tsrc --stage=tokens|outline|astjson` and their goldens for
+every fixture. ```` ```tsm ```` blocks are tokenized by the engine at
+Resolve (code-design §2). The VS Code extension runs the engine in its host
+(editor-design §5).
+
+**Grammars.** `grammar/tree-sitter-tsm/syntax-regex.js` derives the regex
+sources of the hand-written grammars from `syntax.gen.json`;
+`tools/gen-grammars.mjs` (in gen-all) builds the TextMate grammar and
+vendors `tree-sitter generate`'s parser into `third_party/grammars/tsm`. The
+highlight query has one copy, `grammar/tree-sitter-tsm/highlights.scm`.
+Conformance (b): `unitTokenConformance` compares tree-sitter's and the
+engine's tags byte by byte over every fixture; differences are allowed only
+in listed classes (splice JS, strict pairs and opaque footnotes, multi-line
+islands, container-unaware fences) and agreement must stay ≥ 85% (88.9% at
+P1-09). Conformance (e): `fuzz_inline` runs the exports and checks token
+order.
+
+## 9. Next steps
 
 - P1-09: editor grammars from `syntax.gen.json`.
 - P2-11 / P2-13: region provenance and splice bodies delete the legacy

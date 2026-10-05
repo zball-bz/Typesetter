@@ -1,0 +1,1 @@
+[9,37) function "#{ throw new Error(\"boom\") }"

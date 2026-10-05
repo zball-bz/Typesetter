@@ -1,0 +1,6 @@
+[56,60) keyword "````"
+[61,83) embedded "```backticks inside```"
+[84,88) keyword "````"
+[165,170) keyword "```js"
+[174,271) embedded "const kept = \"indent stripped to the opener column\";\n     const deeper = \"extra indent survives\";"
+[275,278) keyword "```"

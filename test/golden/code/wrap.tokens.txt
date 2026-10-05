@@ -1,0 +1,2 @@
+[44,54) function "#codeblock"
+[54,274) embedded "(\"json\", \"{\\\"description\\\": \\\"a deliberately long single line that must wrap on the column grid\\\", \\\"值\\\": \\\"中文按两列宽度参与网格计算，行会在合适的边界断开\\\", \\\"n\\\": 42}\", {lineNo: 1, hl: \"1\"})"

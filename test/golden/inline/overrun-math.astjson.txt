@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,37],"kids":[{"kind":"call","sugar":"para","span":[0,11],"kids":[{"kind":"text","span":[0,11],"str":"para one $x"}]},{"kind":"call","sugar":"heading","span":[13,22],"level":1,"label":"","kids":[{"kind":"text","span":[15,22],"str":"Heading"}]},{"kind":"call","sugar":"para","span":[24,36],"kids":[{"kind":"text","span":[24,36],"str":"second $ end"}]}]}

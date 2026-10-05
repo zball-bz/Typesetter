@@ -1,0 +1,4 @@
+[22,23) property "["
+[23,31) property "price $5"
+[31,35) property "](u)"
+[50,53) type "$x$"

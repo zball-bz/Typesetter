@@ -1,0 +1,3 @@
+[60,67) keyword "````tsm"
+[68,297) embedded "= 标题与标签 <intro>\n\n正文有 *加粗*、`代码` 与 $a^2$；引用@intro，链接[站点](https://x.dev)。\n\n#!figure(src: \"a.png\", label: \"f\")\n图注 | 单元格\n#figure!\n\n```js\nconst x = 1;\n```\n\n- 列表项\n#let n = 42"
+[298,302) keyword "````"

@@ -1,0 +1,4 @@
+[0,1) keyword "-"
+[76,77) keyword "-"
+[84,85) keyword "-"
+[116,117) keyword ">"

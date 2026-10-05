@@ -1,0 +1,3 @@
+[0,66) function "#{ $.region(\"boom\", () => { throw new Error(\"handler failed\") }) }"
+[77,83) function "#!boom"
+[91,97) function "#boom!"

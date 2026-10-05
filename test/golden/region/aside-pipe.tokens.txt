@@ -1,0 +1,4 @@
+[0,23) function "#!aside(title: \"pipes\")"
+[34,39) type "$|x|$"
+[52,69) type "$|a b| = |a| |b|$"
+[73,80) function "#aside!"

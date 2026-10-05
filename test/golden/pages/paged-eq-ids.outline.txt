@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Labelled heading","label":"sec-a","span":[0,18]}],"regions":[],"fences":[],"labels":[{"id":"sec-a","rule":"heading","span":[19,26]},{"id":"eq-pyth","rule":"math","span":[121,130]},{"id":"eq-euler","rule":"math","span":[153,163]}],"diagnostics":[]}

@@ -1,0 +1,8 @@
+[50,63) type "$ E = m c^2 $"
+[64,69) label "<emc>"
+[74,78) constant "@emc"
+[122,162) type "$ int_(-oo)^oo e^(-x^2) d x = sqrt(pi) $"
+[163,170) label "<gauss>"
+[181,187) constant "@gauss"
+[220,223) type "$x$"
+[238,248) type "$x^2 >= 0$"

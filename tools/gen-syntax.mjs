@@ -187,7 +187,7 @@ function dumpCode(row, payloadExpr) {
   return compile(row.dump).replace(/^  out \+= "";\n/gm, '');
 }
 const indent = (code, n) => code.replace(/^(?=.)/gm, ' '.repeat(n));
-let cc = `// ${HDR}\n#include "../ast/ast.h"\n\nnamespace tsr {\n\n` +
+let cc = `// ${HDR}\n#include "../ast/ast.h"\n#include "../support/json.h"\n\nnamespace tsr {\n\n` +
   `// one node's line: "<name> @[s,e)<fields>" — the kind (or the sugar of a\n// Call) picks the row whose format prints it\n` +
   `void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, const Interner& strs) {\n` +
   `  auto spanOut = [&] { appendf(out, " @[%u,%u)", n->span.start, n->span.end); };\n` +
@@ -210,6 +210,55 @@ for (const k of ['Doc', 'Text', 'Comment', 'Call', 'Splice', 'Stmt', 'Error']) {
   }
   const row = nodes.find((n) => n.id === k);
   cc += rowCase(`AstKind::${k}`, row, payloadOf.has(k) ? `side<${payloadOf.get(k)}>(n)` : '', 4);
+}
+cc += `  }\n}\n\n`;
+
+// ---- the JSON AST (tsrc --stage=astjson, tsr_parse_json; plan P1-09): one
+// node's fields, from the same payload rows
+const KIND_NAMES = ['Doc', 'Text', 'Comment', 'Call', 'Splice', 'Stmt', 'Error'];
+const jsonField = (name, type, v) => {
+  const key = `out += ${JSON.stringify(`,"${name}":`)};\n`;
+  if (type === 'str') return `  ${key}  jsonString(out, strs.get(${v}));\n`;
+  if (type === 'src') return `  ${key}  jsonString(out, src.slice(${v}));\n`;
+  if (type === 'bool') return `  ${key}  out += ${v} ? "true" : "false";\n`;
+  if (type === 'u32') return `  ${key}  appendf(out, "%u", (unsigned)${v});\n`;
+  return `  ${key}  appendf(out, "%d", (int)${v});\n`;
+};
+// a case body: the payload's fields, then break
+const jsonCase = (label, row) => {
+  const f = fieldsOf(row.payload);
+  if (!f.length) return `case ${label}:\n  break;\n`;
+  const sn = payloadOf.get(row.id);
+  return `case ${label}: {\n  const ${sn}& p = side<${sn}>(n);\n` +
+    f.map(([name, t]) => jsonField(name, t, 'p.' + name)).join('') + `  break;\n}\n`;
+};
+cc += `// one node's JSON members (no braces, no kids): kind, sugar, span, str and
+// its payload fields
+void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, const Interner& strs) {
+  static constexpr const char* kKind[] = {${KIND_NAMES.map((k) => JSON.stringify(k.toLowerCase())).join(', ')}};
+  out += "\\"kind\\":\\"";
+  out += kKind[(int)n->kind];
+  out += "\\"";
+  if (n->kind == AstKind::Call) {
+    out += ",\\"sugar\\":\\"";
+    out += kSugarName[(int)n->sugar];
+    out += "\\"";
+  }
+  appendf(out, ",\\"span\\":[%u,%u]", n->span.start, n->span.end);
+  if (n->str) {
+    out += ",\\"str\\":";
+    jsonString(out, strs.get(n->str));
+  }
+  switch (n->kind) {
+`;
+for (const k of KIND_NAMES) {
+  if (k === 'Call') {
+    cc += `    case AstKind::Call:\n      switch (n->sugar) {\n`;
+    for (const sg of sugars) cc += indent(jsonCase(`SugarId::${sg.id}`, sg), 8);
+    cc += `      }\n      break;\n`;
+    continue;
+  }
+  cc += indent(jsonCase(`AstKind::${k}`, nodes.find((n) => n.id === k)), 4);
 }
 cc += `  }\n}\n\n}  // namespace tsr\n`;
 

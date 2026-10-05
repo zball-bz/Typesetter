@@ -1,0 +1,7 @@
+[0,1) keyword "="
+[2,13) function "CRLF source"
+[56,64) type "$a +\r\nb$"
+[74,79) keyword "```js"
+[81,97) embedded "let x = 1;\r\nx++\r"
+[98,101) keyword "```"
+[105,134) comment "%-- a comment\r\nover lines --%"

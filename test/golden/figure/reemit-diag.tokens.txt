@@ -1,0 +1,3 @@
+[65,82) type "$f(x) \"if\" x > 0$"
+[119,189) function "#!figure(src: \"javascript:alert(1)\", alt: \"refused\", label: \"fig-bad\")"
+[217,225) function "#figure!"

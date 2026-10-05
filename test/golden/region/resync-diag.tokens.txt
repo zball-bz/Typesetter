@@ -1,0 +1,7 @@
+[0,7) function "#!outer"
+[20,27) function "#!inner"
+[40,47) function "#outer!"
+[69,70) keyword ">"
+[71,78) function "#!aside"
+[79,80) keyword ">"
+[146,154) function "#!lonely"

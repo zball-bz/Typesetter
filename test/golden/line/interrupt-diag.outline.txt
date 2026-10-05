@@ -1,0 +1,1 @@
+{"headings":[],"regions":[],"fences":[],"labels":[],"diagnostics":[{"sev":"info","code":"list-number","span":[526,528],"message":"item 5 continues a list numbered from 1; it is shown as 3"}]}

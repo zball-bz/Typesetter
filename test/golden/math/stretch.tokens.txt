@@ -1,0 +1,7 @@
+[13,34) type "$a x^2 + b x + c = 0$"
+[55,94) type "$ x = (-b +- sqrt(b^2 - 4 a c))/(2 a) $"
+[106,136) type "$binom(n, k) = n!/(k! (n-k)!)$"
+[165,181) type "$root(3, 8) = 2$"
+[186,241) type "$ hat(f)(xi) = int_(-oo)^oo f(x) e^(-2 pi i x xi) d x $"
+[262,270) type "$vec(e)$"
+[286,294) type "$bar(x)$"

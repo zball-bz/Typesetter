@@ -1,0 +1,5 @@
+[0,1) keyword "="
+[2,80) function "A heading long enough that it has to wrap across two lines at the test measure"
+[82,162) function "#!figure(src: \"photos/wide.png\", alt: \"wide\", w: 300, h: 100, label: \"fig-wide\")"
+[272,280) function "#figure!"
+[319,328) constant "@fig-wide"

@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,216],"kids":[{"kind":"call","sugar":"para","span":[0,215],"kids":[{"kind":"text","span":[0,215],"str":"Two overlong addresses in one paragraph: https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere and https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure end."}]}]}

@@ -2,4 +2,48 @@ doc @[0,302) [base]
   para @[0,58) [base]
     text @[0,58) [base] str="内置 tsm 文法：Typesetter 标记语言自举高亮。"
   codeblock @[60,302) [base] lang="tsm"
-    text @[0,0) [base] str="= 标题与标签 <intro>\n\n正文有 *加粗*、`代码` 与 $a^2$；引用@intro，链接[站点](https://x.dev)。\n\n#!figure(src: \"a.png\", label: \"f\")\n图注 | 单元格\n#figure!\n\n```js\nconst x = 1;\n```\n\n- 列表项\n#let n = 42"
+    seq @[0,0) [base]
+      text @[0,0) [base color=var(--tsr-tok-keyword)] str="="
+      text @[0,0) [base] str=" "
+      text @[0,0) [base color=var(--tsr-tok-function)] str="标题与标签"
+      text @[0,0) [base] str=" "
+      text @[0,0) [base color=var(--tsr-tok-label)] str="<intro>"
+    seq @[0,0) [base]
+    seq @[0,0) [base]
+      text @[0,0) [base] str="正文有 "
+      text @[0,0) [base color=var(--tsr-tok-attribute)] str="*"
+      text @[0,0) [base color=var(--tsr-tok-attribute)] str="加粗"
+      text @[0,0) [base color=var(--tsr-tok-attribute)] str="*"
+      text @[0,0) [base] str="、"
+      text @[0,0) [base color=var(--tsr-tok-string)] str="`代码`"
+      text @[0,0) [base] str=" 与 "
+      text @[0,0) [base color=var(--tsr-tok-type)] str="$a^2$"
+      text @[0,0) [base] str="；引用"
+      text @[0,0) [base color=var(--tsr-tok-constant)] str="@intro"
+      text @[0,0) [base] str="，链接"
+      text @[0,0) [base color=var(--tsr-tok-property)] str="["
+      text @[0,0) [base color=var(--tsr-tok-property)] str="站点"
+      text @[0,0) [base color=var(--tsr-tok-property)] str="](https://x.dev)"
+      text @[0,0) [base] str="。"
+    seq @[0,0) [base]
+    seq @[0,0) [base]
+      text @[0,0) [base color=var(--tsr-tok-function)] str="#!figure(src: \"a.png\", label: \"f\")"
+    seq @[0,0) [base]
+      text @[0,0) [base] str="图注 "
+      text @[0,0) [base color=var(--tsr-tok-operator)] str="|"
+      text @[0,0) [base] str=" 单元格"
+    seq @[0,0) [base]
+      text @[0,0) [base color=var(--tsr-tok-function)] str="#figure!"
+    seq @[0,0) [base]
+    seq @[0,0) [base]
+      text @[0,0) [base color=var(--tsr-tok-keyword)] str="```js"
+    seq @[0,0) [base]
+      text @[0,0) [base color=var(--tsr-tok-embedded)] str="const x = 1;"
+    seq @[0,0) [base]
+      text @[0,0) [base color=var(--tsr-tok-keyword)] str="```"
+    seq @[0,0) [base]
+    seq @[0,0) [base]
+      text @[0,0) [base color=var(--tsr-tok-keyword)] str="-"
+      text @[0,0) [base] str=" 列表项"
+    seq @[0,0) [base]
+      text @[0,0) [base color=var(--tsr-tok-function)] str="#let n = 42"

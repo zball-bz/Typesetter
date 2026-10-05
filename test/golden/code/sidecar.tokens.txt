@@ -1,0 +1,6 @@
+[53,85) keyword "```js(sidecar: \"///\", lineNo: 1)"
+[86,285) embedded "const memo = new Map(); /// 记忆化容器，均摊 $O(1)$ 查询\nfunction fib(n) {\n  if (n <= 1) return n; /// *基例*：$n <= 1$ 时直接返回，详见 @base\n  return fib(n - 1) + fib(n - 2);\n}"
+[286,289) keyword "```"
+[291,292) keyword "="
+[293,305) function "基例说明"
+[306,312) label "<base>"

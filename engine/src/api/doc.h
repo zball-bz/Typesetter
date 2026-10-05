@@ -11,6 +11,7 @@
 #include "../render/html_writer.h"
 #include "../render/semantic_html.h"
 #include "../render/typeset_html.h"
+#include "../syntax/exports.h"
 
 namespace tsr {
 
@@ -190,6 +191,13 @@ struct Doc {
     resolveDoc(tree, arena, strs, styles, cfg, diags);
     tokenReqs.clear();
     scanTokenReqs(tree.root);
+    // the engine tokenizes its own language (plan P1-09; code-design §2):
+    // a 'tsm' code block never waits for the host
+    for (const TokenReq& r : std::vector<TokenReq>(tokenReqs))
+      if (strs.get(r.lang) == "tsm") {
+        std::vector<CodeToken> toks = syntaxTokens(strs.get(r.body));
+        provideTokens(r.id, toks.data(), toks.size());
+      }
     imageReqs.clear();
     scanImageReqs(tree.root);
     validThrough = (int)Stage::Resolve;
@@ -527,6 +535,9 @@ struct Doc {
     if (name == "skeleton") return dumpSkeleton(skel, src);
     if (name == "ast") return dumpAst(ast, src, strs);
     if (name == "js") return js.text;
+    if (name == "tokens") return dumpTokens(syntaxTokens(ast, src, strs), src);
+    if (name == "outline") return outlineJson(ast, src, strs, diags) + "\n";
+    if (name == "astjson") return astJson(ast, src, strs) + "\n";
     if (name == "ops") return dumpOps(raw);
     if (name == "tree") return dumpTree(tree, strs, styles);
     if (name == "semantic") return renderFallback();

@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Heading after","label":null,"span":[13,28]}],"regions":[],"fences":[],"labels":[],"diagnostics":[{"sev":"error","code":"statement-unclosed","span":[0,12],"message":"unterminated #let: dropped up to the next blank line"}]}

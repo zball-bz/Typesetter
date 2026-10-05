@@ -1,0 +1,4 @@
+[0,13) function "#let list = 1"
+[15,16) keyword "-"
+[44,45) keyword "-"
+[77,82) function "#list"

@@ -17,6 +17,7 @@
 #include "../src/code/grid.h"
 #include "../src/inline/fragment.h"
 #include "../src/syntax/lexer.h"
+#include "../src/syntax/exports.h"
 #include "../src/math/mathfont.h"
 #include "../src/api/driver.h"
 #include "../src/code/native_tokens.h"
@@ -483,6 +484,70 @@ static void unitHostInputs(const fs::path& root) {
 
 // The ops version window (plan P1-01): MIN_COMPAT..OPS_VERSION is read, the
 // buffer remembers its version, anything outside the window is refused.
+// Conformance (b) of plan P1-09: the tree-sitter grammar (the editor's
+// cold-start fallback) against the engine's tokens, byte by byte over every
+// fixture's non-blank bytes. The two may differ only in the listed ways —
+// the grammar is a line-oriented regex approximation — and must agree on
+// most of the text.
+static void unitTokenConformance(const fs::path& root) {
+  // (engine tag, tree-sitter tag); "-" = no token. Reasons:
+  //   jslex     splice heads / JS arguments / statements (no JS lexer)
+  //   pairs     strict pairs and footnotes (regex pairs, opaque ^[…])
+  //   lines     islands, links and comments across lines or nested
+  //   blocks    fences in containers, escaped markers, region bars
+  static const char* kAllowed[][3] = {
+      {"-", "attribute", "pairs"},         {"-", "embedded", "blocks"},
+      {"-", "function", "jslex"},          {"-", "keyword", "blocks"},
+      {"-", "operator", "blocks"},         {"-", "string", "lines"},
+      {"-", "type", "lines"},              {"attribute", "-", "pairs"},
+      {"comment", "-", "lines"},           {"constant", "-", "pairs"},
+      {"constant", "attribute", "pairs"},  {"embedded", "-", "jslex"},
+      {"embedded", "function", "jslex"},   {"embedded", "keyword", "jslex"},
+      {"function", "-", "jslex"},          {"function", "keyword", "jslex"},
+      {"function", "label", "jslex"},      {"keyword", "-", "blocks"},
+      {"keyword", "embedded", "blocks"},   {"label", "function", "lines"},
+      {"label", "keyword", "lines"},       {"property", "-", "lines"},
+      {"punctuation", "-", "jslex"},       {"punctuation", "type", "lines"},
+      {"string", "-", "lines"},            {"string", "attribute", "pairs"},
+      {"type", "-", "lines"},              {"type", "attribute", "pairs"},
+      {"type", "function", "lines"},       {"type", "keyword", "lines"},
+      {"type", "property", "lines"},
+  };
+  auto name = [](int t) { return t < 0 ? "-" : kTokenTags[t]; };
+  long bytes = 0, same = 0;
+  std::set<std::string> unknown;
+  for (auto& e : fs::recursive_directory_iterator(root / "test" / "fixtures")) {
+    if (!e.is_regular_file() || e.path().extension() != ".tsm") continue;
+    std::string text;
+    readFile(e.path(), text);
+    std::vector<int> eng(text.size(), -1), ts(text.size(), -1);
+    for (const CodeToken& t : syntaxTokens(text))
+      for (u32 k = t.start; k < t.end; k++) eng[k] = t.tag;
+    for (const CodeToken& t : nativeTokens("tsm", text))
+      for (u32 k = t.start; k < t.end; k++) ts[k] = t.tag;
+    for (size_t k = 0; k < text.size(); k++) {
+      char c = text[k];
+      if (c == ' ' || c == '\t' || c == '\n' || c == '\r') continue;
+      bytes++;
+      if (eng[k] == ts[k]) {
+        same++;
+        continue;
+      }
+      bool ok = false;
+      for (auto& a : kAllowed) ok = ok || (std::string_view(a[0]) == name(eng[k]) && std::string_view(a[1]) == name(ts[k]));
+      if (!ok) unknown.insert(std::string(name(eng[k])) + " / " + name(ts[k]) + " in " +
+                              fs::relative(e.path(), root).string());
+    }
+  }
+  for (const std::string& u : unknown) {
+    printf("FAIL token conformance: engine/tree-sitter %s\n", u.c_str());
+    failures++;
+  }
+  double pct = bytes ? 100.0 * same / bytes : 100;
+  CHECK(pct >= 85.0);
+  printf("unit: token conformance %.1f%% of %ld non-blank bytes\n", pct, bytes);
+}
+
 // AST bytes (plan P1-05 bench gate): node + side record + kid slot per
 // node, against what the pre-CallAST layout (a 64-byte node with an
 // std::vector of kid pointers) took for the same tree — over every fixture.
@@ -958,6 +1023,7 @@ int main(int argc, char** argv) {
   unitHostInputs(fs::path(root));
   unitOpsWindow(fs::path(root));
   unitAstBytes(fs::path(root));
+  unitTokenConformance(fs::path(root));
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";
   fs::path golden = fs::path(root) / "test" / "golden";
@@ -1004,7 +1070,7 @@ int main(int argc, char** argv) {
                       (rel.stem().string() + std::string(".") + stage + ".txt");
         return gp;
       };
-      for (const char* p : {"skeleton", "ast", "js"})
+      for (const char* p : {"skeleton", "ast", "js", "tokens", "outline", "astjson"})
         goldenCompare(g(p), doc.product(p), update, label + ":" + p);
 
       fs::path opsPath = entry.path();

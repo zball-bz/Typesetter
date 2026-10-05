@@ -1,0 +1,7 @@
+[97,209) function "#!figure(src: \"photos/tower.jpg\", alt: \"塔楼\", w: 400, h: 300, scale: 0.4, float: \"right\", label: \"fig-tower\")"
+[238,246) function "#figure!"
+[636,745) function "#!figure(src: \"photos/gate.jpg\", alt: \"山门\", w: 400, h: 240, scale: 0.4, float: \"left\", label: \"fig-gate\")"
+[768,776) function "#figure!"
+[835,845) constant "@fig-tower"
+[848,857) constant "@fig-gate"
+[880,883) punctuation "---"

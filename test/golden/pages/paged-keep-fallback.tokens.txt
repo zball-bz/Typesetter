@@ -1,0 +1,4 @@
+[0,1) keyword "="
+[2,30) function "Heading before a tall figure"
+[32,112) function "#!figure(src: \"photos/tall.png\", alt: \"tall\", w: 300, h: 200, label: \"fig-tall\")"
+[150,158) function "#figure!"

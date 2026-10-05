@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"A heading labelled like a key","label":"kp81","span":[0,31]}],"regions":[],"fences":[],"labels":[{"id":"kp81","rule":"heading","span":[32,38]}],"diagnostics":[]}

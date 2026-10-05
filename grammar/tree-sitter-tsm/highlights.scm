@@ -1,5 +1,6 @@
-; tree-sitter-tsm highlights — the 14-tag contract (code-design.md §5,
-; kTokenTags / tokens.mjs TAGS). Kept in sync by hand with the engine.
+; tree-sitter-tsm highlights — the 14-tag contract (syntax.def TOKEN_TAGS).
+; The one copy: the native conformance build and the editor's web assets
+; read it from here (plan P1-09). The engine's own tokens are authoritative.
 ; headings color per CHILD token rather than as one whole-line capture:
 ; the fold contract (start asc, patternIndex asc, earlier wins on overlap)
 ; cannot nest, so a whole-line capture would swallow inline labels and

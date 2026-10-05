@@ -1,0 +1,2 @@
+[38,48) function "#codeblock"
+[48,295) embedded "(\"\", [[\"    indented_call(alpha, beta, gamma, delta, epsilon, zeta_long_tail);\"], [\"value = 1; \", style({color: \"var(--tsr-tok-comment)\"}, \"// a very long inline comment that wraps and its continuation aligns to the comment content column\")]], {})"

@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,156],"kids":[{"kind":"call","sugar":"para","span":[0,155],"kids":[{"kind":"text","span":[0,155],"str":"中文段落在源码里经常需要折行书写，两个汉字之间的换行必须无缝连接；但是 English words 之间的折行仍然是空格。"}]}]}

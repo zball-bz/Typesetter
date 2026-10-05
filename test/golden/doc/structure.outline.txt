@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Typesetting Notes","label":null,"span":[0,19]},{"level":2,"title":"Structure and emphasis","label":null,"span":[21,48]}],"regions":[],"fences":[{"lang":"js","span":[437,481]}],"labels":[],"diagnostics":[]}

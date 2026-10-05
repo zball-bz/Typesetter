@@ -1,0 +1,4 @@
+[27,34) constant "@nosuch"
+[81,89) constant "@liang83"
+[108,121) function "#bibliography"
+[121,167) embedded "(\"/test/fixtures/cite/refs.json\", {all: true})"

@@ -1,0 +1,2 @@
+[0,12) function "#let avg = 7"
+[13,17) function "#avg"

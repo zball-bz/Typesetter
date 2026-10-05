@@ -983,7 +983,7 @@ Theme steps: — · findings: 1
 | `markup-language/region-builtin-privilege` | adhoc | medium | P2-03 | |
 | `markup-language/block-inline-placement` | adhoc | medium | P2-11, P3-17 | |
 | `markup-language/value-coercion` | adhoc | medium | P2-01 | |
-| `markup-language/surface-grammar-drift` | adhoc | medium | P1-09 | |
+| `markup-language/surface-grammar-drift` | adhoc | medium | P1-09 | grep:plan P1-09 |
 | `markup-language/sidecar-private-lowering` | adhoc | medium | P2-13 | |
 | `markup-language/collectors-closed` | adhoc | medium | P3-13 | |
 | `markup-language/style-surfaces` | adhoc | medium | P3-01 | |
@@ -1021,10 +1021,10 @@ Theme steps: — · findings: 1
 | `parser-frontend/fragment-parallel-lowering` | adhoc | high | P2-13 | |
 | `parser-frontend/region-fence-private-dispatch` | adhoc | medium | P2-03, P2-06 | |
 | `parser-frontend/region-container-special-case` | adhoc | medium | P1-07 | grep:plan P1-07 |
-| `parser-frontend/multiple-tsm-grammars` | adhoc | high | P1-09 | |
+| `parser-frontend/multiple-tsm-grammars` | adhoc | high | P1-09 | grep:plan P1-09 |
 | `parser-frontend/sigil-context-rules` | adhoc | medium | P3-33 | |
 | `parser-frontend/front-matter-editor-only` | adhoc | low | P3-35 | |
-| `parser-frontend/editor-region-builder-list` | adhoc | low | P1-09 | |
+| `parser-frontend/editor-region-builder-list` | adhoc | low | P1-09 | grep:plan P1-09 |
 | `parser-frontend/contiguous-escapes-blocks` | issue | high | P1-06 | grep:plan P1-06 |
 | `parser-frontend/inline-comment-leaks-block-structure` | issue | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/unterminated-let-swallows-document` | issue | high | P0-04, P1-07 | grep:plan P1-07 |
@@ -1033,7 +1033,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/fence-double-dedent-in-containers` | issue | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/span-fidelity` | issue | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/no-error-nodes` | issue | medium | P2-02, P2-12 | |
-| `parser-frontend/docs-drift` | issue | medium | P1-09 | |
+| `parser-frontend/docs-drift` | issue | medium | P1-09 | grep:plan P1-09 |
 | `parser-frontend/ast-dump-missing-note` | issue | low | P0-02 | grep:plan P0-02 |
 | `parser-frontend/missed:0` | missed | high | P0-04, P1-06 | grep:plan P1-06 |
 | `parser-frontend/missed:1` | missed | high | P1-06 | grep:plan P1-06 |
@@ -1310,7 +1310,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/open-arg-schema` | adhoc | high | P1-01, P2-05 | |
 | `real-world-evidence/sugar-dispatch-fixed` | adhoc | high | P2-03 | |
 | `real-world-evidence/no-tsm-printer` | adhoc | high | P3-35 | |
-| `real-world-evidence/lexical-syntax-copies` | adhoc | medium | P1-09 | |
+| `real-world-evidence/lexical-syntax-copies` | adhoc | medium | P1-09 | grep:plan P1-09 |
 | `real-world-evidence/literate-cpp-hack` | adhoc | medium | P3-22 | |
 | `real-world-evidence/ref-cite-format-in-cpp` | adhoc | medium | P2-09 | |
 | `real-world-evidence/locale-terms-switch` | adhoc | medium | P1-10, P3-30 | |

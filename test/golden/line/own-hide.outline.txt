@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"This heading survives","label":null,"span":[148,171]},{"level":1,"title":"The heading after it survives","label":null,"span":[268,299]}],"regions":[],"fences":[],"labels":[],"diagnostics":[]}

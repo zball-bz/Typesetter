@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,103],"kids":[{"kind":"call","sugar":"para","span":[0,7],"kids":[{"kind":"text","span":[0,7],"str":"Before."}]},{"kind":"stmt","span":[9,73],"let":false,"js":" $.style.push({ bold: true }); throw new Error(\"after push\") "},{"kind":"call","sugar":"para","span":[75,102],"kids":[{"kind":"text","span":[75,102],"str":"This paragraph is not bold."}]}]}

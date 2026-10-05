@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Regions","label":"top","span":[0,9]}],"regions":[{"name":"figure","label":"fig1","span":[17,112]},{"name":"aside","label":null,"span":[114,197]}],"fences":[],"labels":[{"id":"top","rule":"heading","span":[10,15]},{"id":"fig1","rule":"region","span":[17,40]}],"diagnostics":[]}
