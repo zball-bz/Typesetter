@@ -52,6 +52,8 @@ jobs:
         run: node tools/gen-all.mjs --check
       - name: recordings are current
         run: node tools/record-fixtures.mjs --check
+      - name: WASM breaks match the native goldens
+        run: node tools/wasm-goldens.mjs --check
       - name: architecture lint
         run: node tools/lint-arch.mjs
       - name: code highlighting assets

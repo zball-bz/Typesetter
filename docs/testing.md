@@ -116,7 +116,7 @@ webkit    default dsf                     audits only
 |---|---|---|
 | native-debug (ASan/UBSan) | ctest: §3 + §6 smoke (1k iters) | yes |
 | native-release | ctest + breaker perf bench (report only) | yes |
-| wasm + node | wasm build; §4 contract tests; codegen-JS-parses; `record-fixtures --check` (fails if `.ops` stale) | yes |
+| wasm + node | wasm build; §4 contract tests; codegen-JS-parses; `record-fixtures --check` (fails if `.ops` stale); `wasm-goldens --check` (the WASM build — libc++, Emscripten — breaks every fixture byte-identically to the native goldens, mock measurer; test-only `typesetter_debug.js`) | yes |
 | e2e-chromium | §5 audits + screenshots, dsf ×4 | yes |
 | e2e-ff-webkit | §5 audits | yes |
 | fuzz-nightly | §6, 30 min budget | no (files issues) |

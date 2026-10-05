@@ -27,6 +27,9 @@ add_library(tsr_core STATIC
   src/render/semantic_html.cc
 )
 target_compile_options(tsr_core PUBLIC -fno-exceptions -fno-rtti -Wall -Wextra -Werror=switch)
+# no fused multiply-add: layout numbers must not depend on the target's FMA
+# (native goldens vs the WASM build; plan P0-12, design T6 I9)
+target_compile_options(tsr_core PRIVATE -ffp-contract=off)
 # front end: every enumerator handled explicitly, no default: arms (plan P0-02)
 set_source_files_properties(
   src/linepass/linepass.cc src/inline/inline.cc src/inline/fragment.cc
@@ -44,6 +47,15 @@ if(EMSCRIPTEN)
     -sEXPORTED_RUNTIME_METHODS=HEAPU8,HEAPU32,stringToNewUTF8,UTF8ToString,lengthBytesUTF8
     -sEXPORT_NAME=createTypesetter)
   set_target_properties(typesetter PROPERTIES OUTPUT_NAME "typesetter")
+  # test-only build with the parity-check exports (tools/wasm-goldens.mjs)
+  add_executable(typesetter_debug src/api/wasm_debug.cc)
+  target_link_libraries(typesetter_debug tsr_core)
+  target_link_options(typesetter_debug PRIVATE
+    -sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=node
+    -sALLOW_MEMORY_GROWTH=1
+    -sEXPORTED_FUNCTIONS=_malloc,_free
+    -sEXPORTED_RUNTIME_METHODS=HEAPU8,HEAPU32,stringToNewUTF8,UTF8ToString,lengthBytesUTF8
+    -sEXPORT_NAME=createTypesetterDebug)
 else()
   # statically linked tree-sitter + grammars: the native token provider
   # (code-design.md §2 — same parse tables as the web side modules)

@@ -62,7 +62,10 @@ g2() {
   cmake --build engine/build-debug -j"$(nproc)" && ./engine/build-debug/tsr_tests .
 }
 g3() { node tools/record-fixtures.mjs --check; }
-g4() { cmake --build engine/build-wasm; }
+g4() {
+  cmake --build engine/build-wasm || return 1
+  node tools/wasm-goldens.mjs --check  # WASM breaks == native goldens (P0-12)
+}
 g5() {
   [ -d runtime/assets/hl ] || npm run hl-assets
   npx playwright test
@@ -75,7 +78,7 @@ g6() {
 run G1 "native build + goldens (+ contract checks G7)" g1
 run G2 "ASan/UBSan debug goldens" g2
 run G3 "recordings current" g3
-run G4 "wasm build" g4
+run G4 "wasm build + WASM/native parity" g4
 run G5 "playwright e2e" g5
 run G6 "corpus + review corpus" g6
 if [ -x tools/fuzz.sh ]; then run G8 "fuzz smoke" tools/fuzz.sh --smoke; else na G8 "fuzz smoke"; fi

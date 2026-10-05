@@ -51,6 +51,7 @@ tools/fuzz.sh --smoke|--long   # libFuzzer targets; findings go to test/fuzz/<ta
 tools/bench.sh                 # perf gate table (update/relayout at 7.8K/35K/87K)
 node tools/review-corpus.mjs --check   # real-world corpus: no new error diagnostics
 node tools/lint-arch.mjs       # architecture lint (baseline only shrinks)
+node tools/wasm-goldens.mjs --check    # WASM build breaks every fixture like the native goldens
 ```
 
 Audit remediation in progress: follow `docs/remediation/PLAN.md` and resume

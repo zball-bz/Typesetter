@@ -10,6 +10,7 @@
 #include <set>
 
 #include "../src/api/doc.h"
+#include "../src/break/items.h"
 #include "../src/hyphen/hyphen.h"
 #include "../src/inline/jslex.h"
 #include "../src/math/math.h"
@@ -560,6 +561,46 @@ static void unitInstLimits() {
   }
 }
 
+// The breaker's item adapter (plan P0-12): legal breaks, discardables and the
+// block each break consumes.
+static void unitBreakItems() {
+  auto blk = [](u16 flags, Su w, float pen, Su sw = 0, Su bw = 0) {
+    LinebreakBlock b;
+    b.flags = flags;
+    b.width = w;
+    b.breakPenalty = pen;
+    b.spaceWidth = sw;
+    b.breakWidth = bw;
+    return b;
+  };
+  std::vector<LinebreakBlock> bl = {
+      blk(0, 100, BREAK_INF),                            // 0 word piece
+      blk(BF_HYPHEN, -3, 0.7f, 0, 40),                   // 1 hyphen point
+      blk(0, 80, BREAK_INF),                             // 2 word piece
+      blk(BF_SPACE, 20, 0, 20),                          // 3 space
+      blk(BF_CJK, 1024, 0, 102),                         // 4 CJK char, breakable after
+      blk(BF_SPACE | BF_BOUND, 10, 0.8f),                // 5 math break glue, penalty
+      blk(BF_SPACE | BF_PUNCT_SP | BF_PUNCT_OPEN, 512, BREAK_INF),  // 6 rigid half
+      blk(0, 300, 1.2f),                                 // 7 URL piece
+  };
+  std::vector<BItem> it;
+  blocksToItems(bl, it);
+  auto kinds = [&] {
+    std::string s;
+    for (const BItem& x : it)
+      s += x.k == ItemKind::Box ? 'B' : x.k == ItemKind::Glue ? 'G'
+         : x.k == ItemKind::Disc ? 'D' : x.tag == PenTag::Forbidden ? 'f' : 'p';
+    return s;
+  };
+  CHECK(kinds() == "BDBGBfGppGfGBp");
+  CHECK(it[1].w == -3 && it[1].pre == 40 && it[1].pen == 700);
+  CHECK(it[5].k == ItemKind::Penalty && it[5].tag == PenTag::Forbidden && it[6].stretch == 102 &&
+        it[7].pen == 0 && it[7].block == 4);
+  CHECK(it[8].pen == 800 && it[8].block == 5 && it[9].w == 10);
+  CHECK(it[13].pen == 1200 && it[13].block == 7);
+  CHECK(penForbidden(BREAK_INF) && !penForbidden(1e17f) && penThousandths(0.95f) == 950);
+}
+
 // The KP memo (plan P0-11) answers exactly what breakLines computes: keys
 // are verified on hit, and eviction under many distinct streams only costs
 // recomputation.
@@ -665,6 +706,7 @@ int main(int argc, char** argv) {
   unitInstLimits();
   unitHtmlWriter();
   unitBreakMemo();
+  unitBreakItems();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");
