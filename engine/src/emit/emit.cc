@@ -17,6 +17,10 @@ struct Emitter {
   StrRef spaceRef, hyphenRef, bulletRef;
   StrRef pendingAnchor = 0;  // labeled container (group): first unit anchors
   int figDepth = 0;          // inside group{role:figure}: paras are captions
+  // innermost block with a source span: diagnostics on generated nodes
+  // without one (a figure's image) point at it instead of @[0,0)
+  Span blockSpan{};
+  Span diagSpan(const ContentNode* n) const { return n->span.empty() ? blockSpan : n->span; }
   StrRef takeAnchor() {
     StrRef a = pendingAnchor;
     pendingAnchor = 0;
@@ -454,6 +458,12 @@ struct Emitter {
 
   // ---- block walk ---------------------------------------------------------
   void blockWalk(const ContentNode* n, Su indent, StrRef marker, TopBlock& tb) {
+    struct SpanScope {
+      Span& at;
+      Span saved;
+      SpanScope(Span& a, Span s) : at(a), saved(a) { if (!s.empty()) at = s; }
+      ~SpanScope() { at = saved; }
+    } spanScope(blockSpan, n->span);
     switch (n->kind) {
       case Kind::para: {
         FlowUnit u;
@@ -688,7 +698,7 @@ struct Emitter {
         const double measurePx = cfg.widthPx - suToPx(indent);
         bool safe = srcRef && safeImageSrc(strs.get(srcRef));
         if (srcRef && !safe)
-          diags.add(Sev::Warning, "image-src", n->span,
+          diags.add(Sev::Warning, "image-src", diagSpan(n),
                     "image src scheme not allowed");
         double dw, dh;
         if (safe && iw > 0 && ih > 0) {

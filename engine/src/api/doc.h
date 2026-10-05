@@ -44,6 +44,7 @@ struct Doc {
     u32 id = 0;
     ContentNode* node = nullptr;
     StrRef src = 0;
+    Span span;  // the node's, else its innermost spanned ancestor's (diagnostics)
     bool provided = false;
   };
   std::vector<ImageReq> imageReqs;
@@ -199,8 +200,9 @@ struct Doc {
     return false;
   }
 
-  void scanImageReqs(ContentNode* n) {
+  void scanImageReqs(ContentNode* n, Span outer = {}) {
     if (!n) return;
+    if (!n->span.empty()) outer = n->span;
     if (n->kind == Kind::image) {
       double iw = 0, ih = 0;
       StrRef src = 0;
@@ -216,10 +218,11 @@ struct Doc {
         r.id = (u32)imageReqs.size();
         r.node = n;
         r.src = src;
+        r.span = outer;
         imageReqs.push_back(r);
       }
     }
-    for (ContentNode* k : n->kids) scanImageReqs(k);
+    for (ContentNode* k : n->kids) scanImageReqs(k, outer);
   }
 
   bool imagesPending() const {
@@ -263,7 +266,7 @@ struct Doc {
         setNum(ArgK::h, hPx);
       }
     } else {
-      diags.addAs(DiagOrigin::Provide, Sev::Warning, "image-load", r.node->span,
+      diags.addAs(DiagOrigin::Provide, Sev::Warning, "image-load", r.span,
                   "image failed to load: " + std::string(strs.get(r.src)));
     }
     emitted = false;

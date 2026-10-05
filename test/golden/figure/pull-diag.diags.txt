@@ -1,1 +1,1 @@
-warning image-src @[0,0) image src scheme not allowed
+warning image-src @[250,368) image src scheme not allowed
