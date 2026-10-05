@@ -183,7 +183,7 @@ struct Sem {
         out += "</p>\n";
         return;
       case Kind::heading: {
-        int level = (int)argN(n, ArgK::level, 1);
+        int level = attrInt(n, ArgK::level, 1);
         if (level < 1) level = 1;
         if (level > 6) level = 6;
         appendf(out, "<h%d", level);
@@ -196,7 +196,7 @@ struct Sem {
       case Kind::list: {
         const ArgVal* ord = arg(n, ArgK::ordered);
         bool ordered = ord && ord->num != 0;
-        int start = (int)argN(n, ArgK::start, 1);
+        int start = attrInt(n, ArgK::start, 1);
         if (ordered && start != 1) appendf(out, "<ol start=\"%d\"", start);
         else out += ordered ? "<ol" : "<ul";
         attrs(n, pid);

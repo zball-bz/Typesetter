@@ -1,0 +1,6 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px">
+<div class="tsr-line" data-s="0" data-e="123" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">Injected paint value: styled text and a</span></div>
+<div class="tsr-line" data-s="108" data-e="160" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="108">valid one </span><span class="tsr-r" data-s="151" style="color:#a8432a">colored</span><span class="tsr-r" data-s="159">.</span></div>
+</div>
+</div>

@@ -1,6 +1,5 @@
-// Single source of truth for the ops contract (document-model.md §4).
-// Consumed by: engine/src/ops/ops.h (X-macro), tools/gen-ops-ts.mjs (regex).
-// Changing any number is a protocol version bump: update OPS_VERSION.
+// GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
+// X-macro lists consumed by engine/src/ops/ops.h and ops.cc.
 //
 // OPS_VERSION(6)
 
@@ -71,5 +70,3 @@ ARGK(sidecar, 27)
 ARGK(scale, 28)
 ARGK(alt, 29)
 ARGK(side, 30)
-// style patches reuse ARGK(lang, 4): codeblock's language tag and the
-// InlineStyle BCP-47 tag are per-kind namespaces over one key

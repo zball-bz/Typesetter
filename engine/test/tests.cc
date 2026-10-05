@@ -544,6 +544,14 @@ int main(int argc, char** argv) {
           failures++;
           continue;
         }
+        // recorded fixtures are valid by construction (plan P0-06): the
+        // reader must not report value faults outside *diag* fixtures
+        if (rel.stem().string().find("diag") == std::string::npos)
+          for (const Diag& d : doc.diags.items)
+            if (std::string_view(d.code) == "ops-invalid" || std::string_view(d.code) == "ops-arg") {
+              printf("FAIL %s: %s %s\n", label.c_str(), d.code, d.msg.c_str());
+              failures++;
+            }
         goldenCompare(g("tree"), dumpTree(doc.tree, doc.strs, doc.styles), update, label + ":tree");
         std::string semantic = doc.renderFallback();
         goldenCompare(g("semantic"), semantic, update, label + ":semantic");

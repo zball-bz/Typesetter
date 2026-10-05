@@ -48,10 +48,8 @@ jobs:
           cmake --build engine/build-wasm -j
       - name: npm ci
         run: npm ci --no-audit --no-fund
-      - name: ops contract is regenerated
-        run: |
-          node tools/gen-ops-ts.mjs
-          git diff --exit-code runtime/src/shared/ops.gen.mjs
+      - name: generated vocabulary is current
+        run: node tools/gen-all.mjs --check
       - name: recordings are current
         run: node tools/record-fixtures.mjs --check
       - name: architecture lint

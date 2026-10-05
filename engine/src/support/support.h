@@ -122,6 +122,27 @@ class Interner {
   std::unordered_map<std::string_view, StrRef> map_;
 };
 
+// "3,5-7" → 1-based line numbers (validated by the ops reader; at most
+// 10000 lines per range keeps a hostile range bounded)
+inline void parseRangeSet(std::string_view h, std::vector<u32>& out) {
+  size_t p = 0;
+  auto num = [&](size_t& i) {
+    while (i < h.size() && h[i] == ' ') i++;
+    u64 v = 0;
+    while (i < h.size() && h[i] >= '0' && h[i] <= '9' && v < 100000000) v = v * 10 + (u64)(h[i++] - '0');
+    while (i < h.size() && h[i] == ' ') i++;
+    return v;
+  };
+  while (p < h.size()) {
+    u64 lo = num(p), hi = lo;
+    if (p < h.size() && h[p] == '-') { p++; hi = num(p); }
+    for (u64 k = lo; k <= hi && k - lo < 10000; k++)
+      if (k > 0) out.push_back((u32)k);
+    while (p < h.size() && h[p] != ',') p++;
+    p++;
+  }
+}
+
 // --- diagnostics (document-model §10) ---
 enum class Sev : u8 { Error, Warning, Info };
 struct Diag {

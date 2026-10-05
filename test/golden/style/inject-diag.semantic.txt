@@ -1,0 +1,3 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="160">Injected paint value: styled text and a valid one <span style="color:#a8432a">colored</span>.</p>
+</div>

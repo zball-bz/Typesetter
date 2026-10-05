@@ -1,0 +1,11 @@
+doc @[0,161)
+  para @[0,160)
+    text @[0,21) str="Injected paint value: "
+    splice @[22,107) expr="style({color: \"red;letter-spacing:5px\", font: \"x}; body{display:none\"})"
+      arg @[95,106)
+        text @[95,106) str="styled text"
+    text @[108,123) str=" and a valid one "
+    splice @[124,159) expr="style({color: \"#a8432a\"})"
+      arg @[151,158)
+        text @[151,158) str="colored"
+    text @[159,160) str="."

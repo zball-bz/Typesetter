@@ -31,6 +31,8 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 
 ### 2.1 Kind set
 
+> The authoritative, generated kind table (levels, body models, attributes and their value domains) is [`docs/schema-table.md`](schema-table.md), generated from `engine/schema/schema.json` (remediation P0-06). Where the prose below disagrees, the schema wins.
+
 | kind | level | args | children | from |
 |---|---|---|---|---|
 | `doc` | block | — | blocks | M1 |

@@ -21,7 +21,7 @@ Typesetter/
     src/shared/            worker↔main protocol types, generated ops.ts
     src/worker/            engine host, executor, measurers, fence registry, op writer
     src/main/              public API shell, DOM injection/upgrade, copy, observers
-  tools/                   build-time generators (Node): opdict, hyphc, fontmetrics, gen-ops-ts
+  tools/                   build-time generators (Node): opdict, hyphc, fontmetrics, gen-schema (gen-all)
   fonts/                   bundled fonts (Neo Euler, text faces)
   apps/playground/         dev editor page (successor of the PoC demo)
   test/
@@ -61,7 +61,7 @@ inline/     BlockSkeleton → AST                (PackCC driver + splice lexer;
                                                 grammar)
 ast/        AST node definitions + dump
 codegen/    AST → JsProgram                    (text, source map, import list)
-ops/        opcode definitions (ops.def), OpReader; writer lives in JS (§3)
+ops/        generated vocabulary (ops.def, schema.gen.*), OpReader + value validation; writer lives in JS (§3)
 model/      ContentTree: node defs, instantiation from ops (EMIT walk with
             style-stack resolution §12), anchors, diagnostics, comment nodes
 resolve/    resolver pass (§11.1): counters, label table, REF patching,
@@ -124,7 +124,7 @@ tsr_relayout(doc, params)        → NEED_MEASURE | OK   (reuses cached block st
 
 ## 3. The ops contract (the one shared artifact)
 
-The op buffer is the only data structure both languages must agree on, so it has a single source of truth: **`engine/src/ops/ops.def`** (X-macro list of opcodes, node kinds, and argument keys). The C++ side includes it directly; `tools/gen-ops-ts` generates `runtime/src/shared/ops.ts` from it at build time. The buffer header carries a protocol version byte; mismatch is a hard error.
+The op buffer is the only data structure both languages must agree on, so it has a single source of truth: **`engine/schema/schema.json`** (opcodes, node kinds with their level and body model, argument keys, and every kind's attributes with value domains). `tools/gen-schema.mjs` (run by `tools/gen-all.mjs`, checked by CI) generates `engine/src/ops/ops.def` (the X-macro lists the C++ side includes), `engine/src/ops/schema.gen.{h,cc}` (constants and the per-kind attribute tables the reader validates against), `runtime/src/shared/ops.gen.mjs` and `docs/schema-table.md`; `engine/schema/schema.lock.json` pins ids and since values. The reader validates every argument against its kind's domain at decode (out-of-domain values are dropped with an `ops-arg` warning; unknown vocabulary becomes an `error{ops-invalid}` node), so consumers never see unchecked values. The buffer header carries a protocol version byte; mismatch is a hard error (the version window arrives in remediation step P1-01).
 
 **Encoding: a value DAG plus an emission schedule.**
 
@@ -178,7 +178,7 @@ The `semantic` → `paragraphs` sequence *is* the native-fallback state machine 
   - `opdict` — MathML Core operator dictionary + codex-style names → compiled operator table (§13);
   - `hyphc` — TeX hyphenation patterns → compact trie;
   - `fontmetrics` — bundled fonts (Neo Euler MATH constants, advances) → binary metrics (§6 backend 3);
-  - `gen-ops-ts` — `ops.def` → `shared/ops.ts` (§3).
+  - `gen-schema` — `engine/schema/schema.json` → `ops.def`, `schema.gen.{h,cc}`, `shared/ops.gen.mjs`, `docs/schema-table.md` (§3).
 - **playground**: esbuild dev server; the page is also the e2e harness target.
 
 ## 6. Testing architecture

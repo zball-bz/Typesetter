@@ -22,3 +22,10 @@ Format: `- [step] what changed — migration (if any)`.
 - [P0-05] Region and fence arguments must be named (`#!table(cols: 3)`, ```` ```js(lineNo: 1) ````). A positional list such as `#!table(3)` is an error block (`header-positional`) instead of failing the document.
 - [P0-05] `#let` and `#{…}` inside a list item, quote or region show an error block (`statement-nested-unsupported`) instead of silently disappearing.
 - [P0-05] A throwing `$.region` handler becomes an error block (`region-error`), as a fence handler already did.
+- [P0-06] Style values are validated. Accepted values:
+  - `color`: `#hex`, a color name, `rgb()`/`hsl()`, or `var(--name)`;
+  - `font`: a comma-separated family list;
+  - `lang`: a BCP-47 tag;
+  - `sizePx`: 1–2000.
+
+  Anything else (for example `"red;letter-spacing:5px"`) is dropped with an `ops-arg` warning, so a value can no longer inject CSS. Other numeric arguments are clamped into their range: heading `level` is 1–6, table `cols` is 1–64.

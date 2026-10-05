@@ -4,15 +4,8 @@ namespace tsr {
 
 namespace {
 
-const ArgVal* findArg(const ContentNode* n, ArgK k) {
-  for (const ArgVal& a : n->args)
-    if (a.key == k) return &a;
-  return nullptr;
-}
-StrRef argStr(const ContentNode* n, ArgK k) {
-  const ArgVal* a = findArg(n, k);
-  return (a && a->tag == ArgTag::Str) ? a->ref : 0;
-}
+const ArgVal* findArg(const ContentNode* n, ArgK k) { return attr(n, k); }
+StrRef argStr(const ContentNode* n, ArgK k) { return attrStr(n, k); }
 
 void excerptInto(const ContentNode* n, const Interner& strs, std::string& out) {
   if (n->kind == Kind::comment) return;
@@ -131,8 +124,7 @@ struct Resolver {
     switch (n->kind) {
       case Kind::heading: {
         int level = 1;
-        const ArgVal* la = findArg(n, ArgK::level);
-        if (la && la->tag == ArgTag::Num) level = (int)la->num;
+        level = attrInt(n, ArgK::level, level);
         if (level < 1) level = 1;
         if (level > 6) level = 6;
         if ((int)secc.size() < level) secc.resize((size_t)level, 0);

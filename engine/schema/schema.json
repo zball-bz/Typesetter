@@ -1,0 +1,98 @@
+{
+  "$comment": [
+    "Single source of truth for the ops contract (plan P0-06; design T2 S1).",
+    "tools/gen-schema.mjs generates engine/src/ops/ops.def (X-macro), engine/src/ops/schema.gen.{h,cc},",
+    "runtime/src/shared/ops.gen.mjs and docs/schema-table.md. Ids and since values are immutable and",
+    "mirrored in schema.lock.json. A change of meaning or encoding of an existing row needs a",
+    "MIN_COMPAT bump; new vocabulary takes the next since (plan MD-03).",
+    "Domains: bool | int:LO:HI | num:LO:HI | str | token (may be empty) | ident | label | lang |",
+    "  enum:A|B|C | flags:NAME=BIT,... | rangeset | color | font | html | url.",
+    "Attribute order is the writer's order (today's constructor argument order)."
+  ],
+  "opsVersion": 6,
+  "minCompat": 6,
+  "ops": {
+    "MAKE_TEXT": {"id": 1, "since": 6},
+    "MAKE_NODE": {"id": 2, "since": 6},
+    "EMIT": {"id": 3, "since": 6},
+    "STYLE_PUSH": {"id": 4, "since": 6},
+    "STYLE_POP_TO": {"id": 5, "since": 6},
+    "SPAN": {"id": 6, "since": 6}
+  },
+  "keys": {
+    "label": 0, "level": 1, "ordered": 2, "start": 3, "lang": 4, "body": 5, "role": 6, "cols": 7,
+    "align": 8, "name": 9, "what": 10, "src": 11, "message": 12, "code": 13, "url": 14,
+    "target": 15, "form": 16, "html": 17, "w": 18, "h": 19, "bits": 20, "font": 21, "color": 22,
+    "sizePx": 23, "wrap": 24, "lineNo": 25, "hl": 26, "sidecar": 27, "scale": 28, "alt": 29,
+    "side": 30
+  },
+  "kinds": {
+    "doc": {"id": 0, "level": "block", "body": "blocks", "since": 6, "attrs": {}},
+    "para": {"id": 1, "level": "block", "body": "inline", "since": 6, "attrs": {}},
+    "heading": {"id": 2, "level": "block", "body": "inline", "since": 6, "attrs": {
+      "level": {"dom": "int:1:6", "def": 1},
+      "label": {"dom": "label"}}},
+    "list": {"id": 3, "level": "block", "body": "items", "since": 6, "attrs": {
+      "ordered": {"dom": "bool", "def": false},
+      "start": {"dom": "int:-1073741824:1073741824", "def": 1}}},
+    "item": {"id": 4, "level": "block", "body": "blocks", "since": 6, "attrs": {}},
+    "quote": {"id": 5, "level": "block", "body": "blocks", "since": 6, "attrs": {}},
+    "codeblock": {"id": 6, "level": "block", "body": "code", "since": 6, "attrs": {
+      "lang": {"dom": "token"},
+      "wrap": {"dom": "bool"},
+      "lineNo": {"dom": "int:0:1048576", "coerce": "boolAsInt"},
+      "hl": {"dom": "rangeset"},
+      "sidecar": {"dom": "str"}}},
+    "rule": {"id": 7, "level": "block", "body": "none", "since": 6, "attrs": {}},
+    "group": {"id": 8, "level": "adaptive", "body": "position", "since": 6, "attrs": {
+      "role": {"dom": "ident"},
+      "label": {"dom": "label"},
+      "name": {"dom": "str"}}},
+    "table": {"id": 9, "level": "block", "body": "rows", "since": 6, "attrs": {
+      "cols": {"dom": "int:1:64"},
+      "align": {"dom": "token"},
+      "label": {"dom": "label"}}},
+    "trow": {"id": 10, "level": "block", "body": "cells", "since": 6, "attrs": {}},
+    "tcell": {"id": 11, "level": "block", "body": "inline", "since": 6, "attrs": {}},
+    "term": {"id": 12, "level": "adaptive", "body": "inline", "since": 6, "attrs": {
+      "name": {"dom": "str"}}},
+    "collect": {"id": 13, "level": "block", "body": "data", "since": 6, "attrs": {
+      "what": {"dom": "enum:toc|glossary|notes|bibliography"},
+      "form": {"dom": "enum:all"}}},
+    "mathblock": {"id": 14, "level": "block", "body": "none", "since": 6, "attrs": {
+      "src": {"dom": "str"},
+      "label": {"dom": "label"}}},
+    "error": {"id": 15, "level": "adaptive", "body": "none", "since": 6, "attrs": {
+      "message": {"dom": "str"},
+      "code": {"dom": "ident"}}},
+    "comment": {"id": 16, "level": "trivia", "body": "text", "since": 6, "attrs": {}},
+    "text": {"id": 17, "level": "inline", "body": "none", "since": 6, "attrs": {}},
+    "styled": {"id": 18, "level": "transparent", "body": "position", "since": 6, "attrs": {
+      "bits": {"dom": "flags:EM=2,BOLD=3,UNDER=16,OVER=17,STRIKE=18", "def": 0},
+      "font": {"dom": "font"},
+      "lang": {"dom": "lang"},
+      "color": {"dom": "color"},
+      "sizePx": {"dom": "num:1:2000"}}},
+    "link": {"id": 19, "level": "inline", "body": "inline", "since": 6, "attrs": {
+      "url": {"dom": "url"}}},
+    "code": {"id": 20, "level": "inline", "body": "text", "since": 6, "attrs": {}},
+    "ref": {"id": 21, "level": "inline", "body": "none", "since": 6, "attrs": {
+      "target": {"dom": "str"}}},
+    "mathinline": {"id": 22, "level": "inline", "body": "none", "since": 6, "attrs": {
+      "src": {"dom": "str"}}},
+    "raw": {"id": 23, "level": "block", "body": "none", "since": 6, "attrs": {
+      "html": {"dom": "html"},
+      "w": {"dom": "num:0:100000"},
+      "h": {"dom": "num:0:100000"}}},
+    "hardbreak": {"id": 24, "level": "inline", "body": "none", "since": 6, "attrs": {}},
+    "seq": {"id": 25, "level": "transparent", "body": "position", "since": 6, "attrs": {}},
+    "image": {"id": 26, "level": "block", "body": "none", "since": 6, "attrs": {
+      "src": {"dom": "url"},
+      "alt": {"dom": "str"},
+      "w": {"dom": "num:0:100000"},
+      "h": {"dom": "num:0:100000"},
+      "scale": {"dom": "num:0:100"},
+      "side": {"dom": "enum:left|right"}}},
+    "note": {"id": 27, "level": "inline", "body": "blocks", "since": 6, "attrs": {}}
+  }
+}

@@ -55,7 +55,7 @@ A shared fixture asserts both implementations produce identical `.blocks` dumps 
 ## 4. Cross-language contract tests (Node, vitest)
 
 - `ops.ts` writer ↔ C++ `OpReader`: shared binary fixtures checked in; a generative test builds random DAGs+schedules in TS, decodes with the native `tsrc --stage=tree --from-ops`, compares dumps.
-- Protocol version: bumping `ops.def` without regenerating `ops.ts` fails a checksum test.
+- Protocol vocabulary: `node tools/gen-all.mjs --check` fails when a generated file (ops.def, schema.gen.*, ops.gen.mjs) is stale against `engine/schema/schema.json`.
 - Executor unit tests: context construction, `#use` import rebasing, fence registry (document-order, unknown-tag fallback, throwing handler → `fence-error` op sequence), shadow-node traversal/regroup (table cell split on the `#f("a|b")` fixture).
 - Measurement cache: keying by (string × style × dppx), invalidation on dppx event, estimate → exact upgrade transitions.
 

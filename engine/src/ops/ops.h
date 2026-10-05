@@ -1,10 +1,11 @@
 // Op buffer decoding (document-model §4). The writer lives in runtime JS.
 #pragma once
+#include <deque>
+
 #include "../support/support.h"
+#include "schema.gen.h"
 
 namespace tsr {
-
-constexpr u8 OPS_VERSION = 6;
 
 enum class Op : u8 {
 #define OP(n, c) n = c,
@@ -25,7 +26,6 @@ enum class Kind : u16 {
 #undef KIND
 #undef ARGK
 };
-constexpr u16 KIND_COUNT = 28;
 
 enum class ArgK : u16 {
 #define OP(n, c)
@@ -67,8 +67,9 @@ struct SchedItem {
 // Decoded, validated buffer. Strings live in the buffer's own table; the
 // model instantiation re-interns what it keeps.
 struct RawOps {
-  std::vector<std::string_view> strings;  // views into `blob`
+  std::vector<std::string_view> strings;  // views into `blob` (and `extra`)
   std::string blob;
+  std::deque<std::string> extra;          // strings the reader synthesizes (error messages)
   std::vector<RawNode> nodes;
   std::vector<SchedItem> sched;
   bool ok = false;

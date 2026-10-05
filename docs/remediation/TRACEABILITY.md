@@ -1053,7 +1053,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/resolver-fabricated-styles` | adhoc | medium | P3-01, P3-03 | |
 | `codegen-ops-model/token-class-as-color` | adhoc | medium | P3-01 | |
 | `codegen-ops-model/fixed-styling-fields` | adhoc | high | P1-02 | |
-| `codegen-ops-model/global-argk-namespace` | adhoc | high | P0-06 | |
+| `codegen-ops-model/global-argk-namespace` | adhoc | high | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/version-bump-per-vocabulary` | adhoc | medium | P1-01 | |
 | `codegen-ops-model/two-style-encodings-and-stack` | adhoc | medium | P0-06, P2-08 | |
 | `codegen-ops-model/val-coercion-adhoc` | adhoc | medium | P2-01 | |
@@ -1067,17 +1067,17 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/keyword-forms-uncompiled` | issue | high | P0-05, P2-12, P3-31 | |
 | `codegen-ops-model/css-injection-style-values` | issue | high | P0-06, P1-02 | |
 | `codegen-ops-model/sizepx-ignored-in-emit` | issue | medium | P0-08 | |
-| `codegen-ops-model/argtag-node-dangling` | issue | medium | P0-06 | |
+| `codegen-ops-model/argtag-node-dangling` | issue | medium | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/metric-key-fragmentation` | issue | medium | P0-08, P1-04 | |
 | `codegen-ops-model/tree-dump-omits-sup` | issue | low | P1-02 | |
 | `codegen-ops-model/executor-errors-not-diagnostics` | issue | low | P2-01 | |
 | `codegen-ops-model/shadow-mutability-forgery` | issue | low | P2-01 | |
 | `codegen-ops-model/popto-stack-divergence` | issue | low | P0-08, P2-01 | |
-| `codegen-ops-model/contract-doc-drift` | issue | low | P0-06 | |
+| `codegen-ops-model/contract-doc-drift` | issue | low | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/missed:0` | missed | high | P0-05, P2-02 | |
 | `codegen-ops-model/missed:1` | missed | high | P2-11 | |
 | `codegen-ops-model/missed:2` | missed | medium | P2-03 | |
-| `codegen-ops-model/missed:3` | missed | medium | P0-06 | |
+| `codegen-ops-model/missed:3` | missed | medium | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/missed:4` | missed | low | P2-01 | |
 | `resolver/fixed-counter-set` | adhoc | high | P1-10 | |
 | `resolver/figure-role-string` | adhoc | high | P3-03 | |

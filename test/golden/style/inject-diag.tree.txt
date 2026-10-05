@@ -1,0 +1,9 @@
+doc @[0,160) [base]
+  para @[0,160) [base]
+    text @[0,21) [base] str="Injected paint value: "
+    styled @[0,0) [base]
+      text @[95,106) [base] str="styled text"
+    text @[108,123) [base] str=" and a valid one "
+    styled @[0,0) [base color=#a8432a] color="#a8432a"
+      text @[151,158) [base color=#a8432a] str="colored"
+    text @[159,160) [base] str="."

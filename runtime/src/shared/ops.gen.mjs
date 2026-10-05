@@ -1,5 +1,6 @@
-// GENERATED from engine/src/ops/ops.def by tools/gen-ops-ts.mjs — do not edit.
+// GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 6;
+export const OPS_MIN_COMPAT = 6;
 export const OP = Object.freeze({
   "MAKE_TEXT": 1,
   "MAKE_NODE": 2,
@@ -70,4 +71,228 @@ export const ARGK = Object.freeze({
   "scale": 28,
   "alt": 29,
   "side": 30
+});
+export const SCHEMA = Object.freeze({
+  "doc": {
+    "id": 0,
+    "level": "block",
+    "body": "blocks",
+    "attrs": {}
+  },
+  "para": {
+    "id": 1,
+    "level": "block",
+    "body": "inline",
+    "attrs": {}
+  },
+  "heading": {
+    "id": 2,
+    "level": "block",
+    "body": "inline",
+    "attrs": {
+      "level": "int:1:6",
+      "label": "label"
+    }
+  },
+  "list": {
+    "id": 3,
+    "level": "block",
+    "body": "items",
+    "attrs": {
+      "ordered": "bool",
+      "start": "int:-1073741824:1073741824"
+    }
+  },
+  "item": {
+    "id": 4,
+    "level": "block",
+    "body": "blocks",
+    "attrs": {}
+  },
+  "quote": {
+    "id": 5,
+    "level": "block",
+    "body": "blocks",
+    "attrs": {}
+  },
+  "codeblock": {
+    "id": 6,
+    "level": "block",
+    "body": "code",
+    "attrs": {
+      "lang": "token",
+      "wrap": "bool",
+      "lineNo": "int:0:1048576",
+      "hl": "rangeset",
+      "sidecar": "str"
+    }
+  },
+  "rule": {
+    "id": 7,
+    "level": "block",
+    "body": "none",
+    "attrs": {}
+  },
+  "group": {
+    "id": 8,
+    "level": "adaptive",
+    "body": "position",
+    "attrs": {
+      "role": "ident",
+      "label": "label",
+      "name": "str"
+    }
+  },
+  "table": {
+    "id": 9,
+    "level": "block",
+    "body": "rows",
+    "attrs": {
+      "cols": "int:1:64",
+      "align": "token",
+      "label": "label"
+    }
+  },
+  "trow": {
+    "id": 10,
+    "level": "block",
+    "body": "cells",
+    "attrs": {}
+  },
+  "tcell": {
+    "id": 11,
+    "level": "block",
+    "body": "inline",
+    "attrs": {}
+  },
+  "term": {
+    "id": 12,
+    "level": "adaptive",
+    "body": "inline",
+    "attrs": {
+      "name": "str"
+    }
+  },
+  "collect": {
+    "id": 13,
+    "level": "block",
+    "body": "data",
+    "attrs": {
+      "what": "enum:toc|glossary|notes|bibliography",
+      "form": "enum:all"
+    }
+  },
+  "mathblock": {
+    "id": 14,
+    "level": "block",
+    "body": "none",
+    "attrs": {
+      "src": "str",
+      "label": "label"
+    }
+  },
+  "error": {
+    "id": 15,
+    "level": "adaptive",
+    "body": "none",
+    "attrs": {
+      "message": "str",
+      "code": "ident"
+    }
+  },
+  "comment": {
+    "id": 16,
+    "level": "trivia",
+    "body": "text",
+    "attrs": {}
+  },
+  "text": {
+    "id": 17,
+    "level": "inline",
+    "body": "none",
+    "attrs": {}
+  },
+  "styled": {
+    "id": 18,
+    "level": "transparent",
+    "body": "position",
+    "attrs": {
+      "bits": "flags:EM=2,BOLD=3,UNDER=16,OVER=17,STRIKE=18",
+      "font": "font",
+      "lang": "lang",
+      "color": "color",
+      "sizePx": "num:1:2000"
+    }
+  },
+  "link": {
+    "id": 19,
+    "level": "inline",
+    "body": "inline",
+    "attrs": {
+      "url": "url"
+    }
+  },
+  "code": {
+    "id": 20,
+    "level": "inline",
+    "body": "text",
+    "attrs": {}
+  },
+  "ref": {
+    "id": 21,
+    "level": "inline",
+    "body": "none",
+    "attrs": {
+      "target": "str"
+    }
+  },
+  "mathinline": {
+    "id": 22,
+    "level": "inline",
+    "body": "none",
+    "attrs": {
+      "src": "str"
+    }
+  },
+  "raw": {
+    "id": 23,
+    "level": "block",
+    "body": "none",
+    "attrs": {
+      "html": "html",
+      "w": "num:0:100000",
+      "h": "num:0:100000"
+    }
+  },
+  "hardbreak": {
+    "id": 24,
+    "level": "inline",
+    "body": "none",
+    "attrs": {}
+  },
+  "seq": {
+    "id": 25,
+    "level": "transparent",
+    "body": "position",
+    "attrs": {}
+  },
+  "image": {
+    "id": 26,
+    "level": "block",
+    "body": "none",
+    "attrs": {
+      "src": "url",
+      "alt": "str",
+      "w": "num:0:100000",
+      "h": "num:0:100000",
+      "scale": "num:0:100",
+      "side": "enum:left|right"
+    }
+  },
+  "note": {
+    "id": 27,
+    "level": "inline",
+    "body": "blocks",
+    "attrs": {}
+  }
 });

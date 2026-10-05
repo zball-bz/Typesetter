@@ -9,8 +9,8 @@ release).
 ## Layout
 
 ```
-engine/src/        C++ core: api/ (Doc, wasm_api.cc) · ops/ (ops.def = single
-                   source of truth) · markup/inline/codegen · resolve/ · emit/ ·
+engine/src/        C++ core: api/ (Doc, wasm_api.cc) · ops/ (generated from
+                   engine/schema/schema.json = single source of truth) · markup/inline/codegen · resolve/ · emit/ ·
                    break/ (Knuth–Plass) · layout/ · render/ (typeset + semantic +
                    paged serializers) · math/ · code/ (token fold)
 engine/test/       native runner (unit + goldens); engine/gen/ generated tables
@@ -20,7 +20,7 @@ grammar/           tree-sitter-tsm (highlighting grammar; vendored parser.c in
                    third_party/grammars/tsm)
 editors/vscode-tsm VSCode extension (no build step; vendor/ via scripts/vendor.mjs)
 tools/             serve, record-fixtures, corpus-run, codehl-assets, pack-dist,
-                   export-static, bench-edit, hyphc, gen-ops-ts
+                   export-static, bench-edit, hyphc, gen-schema/gen-all
 test/              fixtures/ (+ .ops recordings) · golden/ · e2e/ (Playwright) ·
                    corpus/ (typst-derived smoke corpus)
 docs/              architecture.md (stage map) + one *-design.md per feature
@@ -63,8 +63,9 @@ rolling `engine-dist` release.
 ## Conventions
 
 - Every engine change lands with goldens/e2e green; re-record goldens only
-  after inspecting the diff. Bumping OPS_VERSION requires gen-ops-ts + a
-  full fixture re-record.
+  after inspecting the diff. Vocabulary lives in engine/schema/schema.json:
+  edit it, run `node tools/gen-all.mjs`, never hand-edit ops.def or *.gen.*
+  (schema.lock.json pins ids). Bumping OPS_VERSION needs a full fixture re-record.
 - Design first: a `docs/<feature>-design.md` precedes implementation and is
   updated with as-built deltas.
 - Commit per milestone; messages end with

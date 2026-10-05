@@ -1,0 +1,216 @@
+{
+ "ops": {
+  "MAKE_TEXT": [
+   1,
+   6
+  ],
+  "MAKE_NODE": [
+   2,
+   6
+  ],
+  "EMIT": [
+   3,
+   6
+  ],
+  "STYLE_PUSH": [
+   4,
+   6
+  ],
+  "STYLE_POP_TO": [
+   5,
+   6
+  ],
+  "SPAN": [
+   6,
+   6
+  ]
+ },
+ "kinds": {
+  "doc": [
+   0,
+   6
+  ],
+  "para": [
+   1,
+   6
+  ],
+  "heading": [
+   2,
+   6
+  ],
+  "list": [
+   3,
+   6
+  ],
+  "item": [
+   4,
+   6
+  ],
+  "quote": [
+   5,
+   6
+  ],
+  "codeblock": [
+   6,
+   6
+  ],
+  "rule": [
+   7,
+   6
+  ],
+  "group": [
+   8,
+   6
+  ],
+  "table": [
+   9,
+   6
+  ],
+  "trow": [
+   10,
+   6
+  ],
+  "tcell": [
+   11,
+   6
+  ],
+  "term": [
+   12,
+   6
+  ],
+  "collect": [
+   13,
+   6
+  ],
+  "mathblock": [
+   14,
+   6
+  ],
+  "error": [
+   15,
+   6
+  ],
+  "comment": [
+   16,
+   6
+  ],
+  "text": [
+   17,
+   6
+  ],
+  "styled": [
+   18,
+   6
+  ],
+  "link": [
+   19,
+   6
+  ],
+  "code": [
+   20,
+   6
+  ],
+  "ref": [
+   21,
+   6
+  ],
+  "mathinline": [
+   22,
+   6
+  ],
+  "raw": [
+   23,
+   6
+  ],
+  "hardbreak": [
+   24,
+   6
+  ],
+  "seq": [
+   25,
+   6
+  ],
+  "image": [
+   26,
+   6
+  ],
+  "note": [
+   27,
+   6
+  ]
+ },
+ "keys": {
+  "label": 0,
+  "level": 1,
+  "ordered": 2,
+  "start": 3,
+  "lang": 4,
+  "body": 5,
+  "role": 6,
+  "cols": 7,
+  "align": 8,
+  "name": 9,
+  "what": 10,
+  "src": 11,
+  "message": 12,
+  "code": 13,
+  "url": 14,
+  "target": 15,
+  "form": 16,
+  "html": 17,
+  "w": 18,
+  "h": 19,
+  "bits": 20,
+  "font": 21,
+  "color": 22,
+  "sizePx": 23,
+  "wrap": 24,
+  "lineNo": 25,
+  "hl": 26,
+  "sidecar": 27,
+  "scale": 28,
+  "alt": 29,
+  "side": 30
+ },
+ "attrs": {
+  "heading.level": 6,
+  "heading.label": 6,
+  "list.ordered": 6,
+  "list.start": 6,
+  "codeblock.lang": 6,
+  "codeblock.wrap": 6,
+  "codeblock.lineNo": 6,
+  "codeblock.hl": 6,
+  "codeblock.sidecar": 6,
+  "group.role": 6,
+  "group.label": 6,
+  "group.name": 6,
+  "table.cols": 6,
+  "table.align": 6,
+  "table.label": 6,
+  "term.name": 6,
+  "collect.what": 6,
+  "collect.form": 6,
+  "mathblock.src": 6,
+  "mathblock.label": 6,
+  "error.message": 6,
+  "error.code": 6,
+  "styled.bits": 6,
+  "styled.font": 6,
+  "styled.lang": 6,
+  "styled.color": 6,
+  "styled.sizePx": 6,
+  "link.url": 6,
+  "ref.target": 6,
+  "mathinline.src": 6,
+  "raw.html": 6,
+  "raw.w": 6,
+  "raw.h": 6,
+  "image.src": 6,
+  "image.alt": 6,
+  "image.w": 6,
+  "image.h": 6,
+  "image.scale": 6,
+  "image.side": 6
+ }
+}

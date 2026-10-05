@@ -14,6 +14,7 @@ add_library(tsr_core STATIC
   src/inline/fragment.cc
   src/codegen/codegen.cc
   src/ops/ops.cc
+  src/ops/schema.gen.cc
   src/model/model.cc
   src/code/tokens.cc
   src/math/math.cc
@@ -24,7 +25,7 @@ add_library(tsr_core STATIC
   src/render/typeset_html.cc
   src/render/semantic_html.cc
 )
-target_compile_options(tsr_core PUBLIC -fno-exceptions -fno-rtti -Wall -Wextra)
+target_compile_options(tsr_core PUBLIC -fno-exceptions -fno-rtti -Wall -Wextra -Werror=switch)
 # front end: every enumerator handled explicitly, no default: arms (plan P0-02)
 set_source_files_properties(
   src/linepass/linepass.cc src/inline/inline.cc src/inline/fragment.cc

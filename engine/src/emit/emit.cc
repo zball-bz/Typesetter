@@ -483,10 +483,7 @@ struct Emitter {
         return;
       }
       case Kind::heading: {
-        int level = 1;
-        for (const ArgVal& a : n->args) {
-          if (a.key == ArgK::level && a.tag == ArgTag::Num) level = (int)a.num;
-        }
+        int level = attrInt(n, ArgK::level, 1);
         FlowUnit u;
         u.src = n;
         u.indent = indent;
@@ -505,12 +502,8 @@ struct Emitter {
         return;
       }
       case Kind::list: {
-        bool ordered = false;
-        int num = 1;
-        for (const ArgVal& a : n->args) {
-          if (a.key == ArgK::ordered && a.tag == ArgTag::Bool) ordered = a.num != 0;
-          if (a.key == ArgK::start && a.tag == ArgTag::Num) num = (int)a.num;
-        }
+        bool ordered = attrBool(n, ArgK::ordered, false);
+        int num = attrInt(n, ArgK::start, 1);
         Su childIndent = indent + suRoundPx(cfg.listIndentEm * cfg.baseSizePx);
         size_t listStart = tb.units.size();
         for (const ContentNode* item : n->kids) {
@@ -552,30 +545,11 @@ struct Emitter {
         u.markerStyle = u.codeStyle;
         u.chRef = strs.intern("0");
         u.cjkChRef = strs.intern("\xE4\xB8\xAD");
-        for (const ArgVal& a : n->args) {
-          if (a.key == ArgK::lang && a.tag == ArgTag::Str) u.codeLang = a.ref;
-          if (a.key == ArgK::wrap && a.tag == ArgTag::Bool) u.codeWrap = a.num != 0;
-          if (a.key == ArgK::lineNo && a.tag == ArgTag::Num) u.codeLineNo = (i32)a.num;
-          if (a.key == ArgK::lineNo && a.tag == ArgTag::Bool && a.num != 0) u.codeLineNo = 1;
-          if (a.key == ArgK::hl && a.tag == ArgTag::Str) {
-            // "3,5-7" → 1-based line set
-            std::string_view h = strs.get(a.ref);
-            size_t p = 0;
-            while (p < h.size()) {
-              size_t c = h.find(',', p);
-              if (c == std::string_view::npos) c = h.size();
-              std::string_view part = h.substr(p, c - p);
-              size_t dash = part.find('-');
-              int lo = atoi(std::string(part.substr(0, dash)).c_str());
-              int hi = dash == std::string_view::npos
-                           ? lo
-                           : atoi(std::string(part.substr(dash + 1)).c_str());
-              for (int k = lo; k <= hi && k - lo < 10000; k++)
-                if (k > 0) u.hlLines.push_back((u32)k);
-              p = c + 1;
-            }
-          }
-        }
+        if (StrRef lang = attrStr(n, ArgK::lang)) u.codeLang = lang;
+        u.codeWrap = attrBool(n, ArgK::wrap, u.codeWrap);
+        u.codeLineNo = attrInt(n, ArgK::lineNo, u.codeLineNo);
+        if (StrRef hl = attrStr(n, ArgK::hl))  // "3,5-7": validated by the reader
+          parseRangeSet(strs.get(hl), u.hlLines);
         // sidecar rows (verbatim-design §5): the trailing group becomes one
         // TableCell-shaped inline stream per logical line — the whole body
         // pipeline (KP, math, links) applies inside each
@@ -650,13 +624,9 @@ struct Emitter {
         u.src = n;
         u.indent = indent;
         u.anchor = takeAnchor();
-        int cols = 1;
-        StrRef alignRef = 0;
-        for (const ArgVal& a : n->args) {
-          if (a.key == ArgK::cols && a.tag == ArgTag::Num) cols = (int)a.num;
-          if (a.key == ArgK::align && a.tag == ArgTag::Str) alignRef = a.ref;
-          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) u.anchor = a.ref;
-        }
+        int cols = attrInt(n, ArgK::cols, 1);
+        StrRef alignRef = attrStr(n, ArgK::align);
+        if (StrRef lab = attrStr(n, ArgK::label)) u.anchor = lab;
         if (cols < 1) cols = 1;
         u.tCols = (u32)cols;
         std::string_view al = strs.get(alignRef);

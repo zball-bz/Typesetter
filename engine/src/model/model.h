@@ -82,6 +82,37 @@ struct ContentNode {
   std::vector<ContentNode*> kids;
 };
 
+// Typed attribute accessors (plan P0-06). Values that came through the ops
+// reader are already inside their schema domain; nodes the engine builds are
+// trusted. attrInt still clamps to i32, so no consumer ever converts an
+// unchecked double.
+inline const ArgVal* attr(const ContentNode* n, ArgK k) {
+  for (const ArgVal& a : n->args)
+    if (a.key == k) return &a;
+  return nullptr;
+}
+inline i32 attrInt(const ContentNode* n, ArgK k, i32 dflt) {
+  const ArgVal* a = attr(n, k);
+  if (!a) return dflt;
+  if (a->tag == ArgTag::Bool) return a->num != 0 ? 1 : 0;
+  if (a->tag != ArgTag::Num || !(a->num == a->num)) return dflt;
+  if (a->num <= -2147483648.0) return INT32_MIN;
+  if (a->num >= 2147483647.0) return INT32_MAX;
+  return (i32)a->num;
+}
+inline double attrNum(const ContentNode* n, ArgK k, double dflt) {
+  const ArgVal* a = attr(n, k);
+  return (a && a->tag == ArgTag::Num) ? a->num : dflt;
+}
+inline bool attrBool(const ContentNode* n, ArgK k, bool dflt) {
+  const ArgVal* a = attr(n, k);
+  return (a && a->tag == ArgTag::Bool) ? a->num != 0 : dflt;
+}
+inline StrRef attrStr(const ContentNode* n, ArgK k) {
+  const ArgVal* a = attr(n, k);
+  return (a && a->tag == ArgTag::Str) ? a->ref : 0;
+}
+
 struct ContentTree {
   ContentNode* root = nullptr;  // kind doc; children = pid-bearing blocks
 };
