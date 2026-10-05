@@ -59,6 +59,8 @@ test('editor: engine tokens and outline in UTF-16', async ({}, testInfo) => {
   expect(tree[0].children.map((h) => [h.title, h.line, h.endLine])).toEqual([['第二节', 8, last]]);
   expect(features.foldingRanges(o, lineOf, last)).toEqual([
     { start: 0, end: last }, { start: 4, end: 6 }, { start: 8, end: last }, { start: 10, end: 12 }]);
-  expect(features.regionNames(o)).toEqual(['figure', 'table']);
+  expect(features.regionNames(o)).toEqual(['figure']);  // no manifest: the document's own region
+  expect(features.regionNames(o, engine.manifest())).toEqual(['figure', 'table']);
+  expect(features.regionNames(o, engine.manifest(), '#{ $.region("callout", f) }')).toEqual(['figure', 'table', 'callout']);
   expect(features.labelNames(o)).toEqual(['intro', 'f1']);
 });

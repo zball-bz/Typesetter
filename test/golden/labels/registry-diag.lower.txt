@@ -6,18 +6,18 @@ piece 3 hole 3 js [182,206)
 block 0 content [0,8)
   CALL heading [0,8) level=1 label="sec-a"
     TEXT "Labels" [2,8)
-block 1 content [18,73) user framed holes 0..1
-  REGION "aside" args=hole 0 [18,73)
+block 1 content [18,73) user framed async holes 0..1
+  REGION async "aside" args=hole 0 [18,73)
     ROWS
       row
         TEXT "An aside with a label." [43,65)
-block 2 content [75,122) user framed holes 1..2
-  REGION "figure" args=hole 1 [75,122)
+block 2 content [75,122) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [75,122)
     ROWS
       row
         TEXT "First figure." [100,113)
-block 3 content [124,202) user framed holes 2..3
-  REGION "figure" args=hole 2 [124,202)
+block 3 content [124,202) user framed async holes 2..3
+  REGION async "figure" args=hole 2 [124,202)
     ROWS
       row
         TEXT "Second figure reuses the label: it loses it." [149,193)
@@ -25,8 +25,8 @@ block 4 content [204,220)
   CALL mathblock [204,220) src="a = b" label="eq-1"
 block 5 content [222,238)
   CALL mathblock [222,238) src="c = d" label="eq-1"
-block 6 content [240,311) user framed holes 3..4
-  REGION "figure" args=hole 3 [240,311)
+block 6 content [240,311) user framed async holes 3..4
+  REGION async "figure" args=hole 3 [240,311)
     ROWS
       row
         TEXT "A figure with a reserved label shape." [265,302)

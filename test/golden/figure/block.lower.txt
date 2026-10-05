@@ -4,8 +4,8 @@ piece 1 hole 1 js [203,282)
 block 0 content [0,66)
   CALL para [0,66)
     TEXT "图片作为一等内容：块级插图、编号图注与引用。" [0,66)
-block 1 content [68,237) user framed holes 0..1
-  REGION "figure" args=hole 0 [68,237)
+block 1 content [68,237) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [68,237)
     ROWS
       row
         CALL seq
@@ -13,8 +13,8 @@ block 1 content [68,237) user framed holes 0..1
           CALL strong [199,213)
             TEXT "声明尺寸" [200,212)
           TEXT "不经拉取。" [213,228)
-block 2 content [239,383) user framed holes 1..2
-  REGION "figure" args=hole 1 [239,383)
+block 2 content [239,383) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [239,383)
     ROWS
       row
         TEXT "过宽的图片收敛到版心，按比例缩放。" [323,374)

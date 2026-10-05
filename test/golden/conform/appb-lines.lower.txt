@@ -44,7 +44,7 @@ block 6 content [194,223)
       CALL para [211,223)
         TEXT "nested quote" [211,223)
 block 7 content [225,271)
-  CALL comment [225,271) body=" a comment %-- nested --% still comment "
+  CALL comment [225,271) text=" a comment %-- nested --% still comment "
 block 8 content [273,300) async
   FENCE async "js" body="verbatim(island);" at=279 lines=null [273,300)
 block 9 content [302,315)

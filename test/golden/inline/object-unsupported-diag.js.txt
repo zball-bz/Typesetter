@@ -1,6 +1,6 @@
 export const abi = 0x3c18dc46;
 export default async (__rt, $) => {
-const {rule, image} = __rt.std;
+const {image, rule} = __rt.std;
 return (async () => {
 const __h = [
 () => (rule()),

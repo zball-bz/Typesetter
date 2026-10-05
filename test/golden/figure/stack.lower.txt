@@ -4,13 +4,13 @@ piece 1 hole 1 js [204,303)
 block 0 content [0,108)
   CALL para [0,108)
     TEXT "两张同侧浮动图连续出现时应当堆叠，而不是把第二张清到第一张之下留出空白。" [0,108)
-block 1 content [110,236) user framed holes 0..1
-  REGION "figure" args=hole 0 [110,236)
+block 1 content [110,236) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [110,236)
     ROWS
       row
         TEXT "第一张图。" [212,227)
-block 2 content [238,385) user framed holes 1..2
-  REGION "figure" args=hole 1 [238,385)
+block 2 content [238,385) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [238,385)
     ROWS
       row
         TEXT "第二张图，紧接着第一张。" [340,376)

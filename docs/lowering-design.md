@@ -52,7 +52,8 @@ The block table makes every top-level block addressable: its kind
 left unframed, D-I10), its flags (`User`: runs user code; `Framed`;
 `Async`: awaits), its span, its holes and its first op.
 
-Body ops (the high bit of an op byte marks a subtree that awaits):
+Body ops (the high bit of an op byte marks a subtree that awaits; a FENCE
+and a REGION always do):
 
 | op | operands | runs as |
 |---|---|---|
@@ -61,7 +62,7 @@ Body ops (the high bit of an op byte marks a subtree that awaits):
 | HOLE | hole s e nKids value* | `val(h[hole](__k))` |
 | FRAME | s e holeLo holeHi value | the value inside a frame (§4) |
 | FENCE | lang args body bodyOffset lines s e | `span(val(await fence(lang, args, body, off, lines)))` |
-| REGION | name args s e nItems item* | `span(region(name, args, items))` |
+| REGION | name args s e nItems item* | `span(await region(name, args, items))` (always awaits: a handler may be async) |
 | ROWS | nRows (nCells value*)* | a table paragraph, as a region item |
 | STMT | hole | a statement hole (top-level block only) |
 | VERBATIM | ordinal | the module runs the statement (top-level block only) |

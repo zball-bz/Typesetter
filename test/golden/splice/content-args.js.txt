@@ -1,6 +1,6 @@
 export const abi = 0x3c18dc46;
 export default async (__rt, $) => {
-const {text, em, seq} = __rt.std;
+const {em, seq, text} = __rt.std;
 return (async () => {
 let wrap;
 const __h = [

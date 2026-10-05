@@ -3,8 +3,8 @@ piece 0 hole 0 js [103,183)
 block 0 content [0,80)
   CALL heading [0,80) level=1 label=null
     TEXT "A heading long enough that it has to wrap across two lines at the test measure" [2,80)
-block 1 content [82,280) user framed holes 0..1
-  REGION "figure" args=hole 0 [82,280)
+block 1 content [82,280) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [82,280)
     ROWS
       row
         TEXT "A caption that is long enough to wrap onto a second line at the narrow measure, so copy must join its lines." [163,271)

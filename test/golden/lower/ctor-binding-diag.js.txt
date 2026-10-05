@@ -1,0 +1,17 @@
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {cell, group, heading, image, item, list, node, para, raw, row, table} = __rt.std;
+return (async () => {
+const __h = [
+(__k) => (heading(...[2], ...__k())),
+() => (list(false, item(para("first")), item(para("second")))),
+() => (group({role: "aside", label: "a1"}, para("Inside a group."))),
+() => (table({cols: 2}, row(cell("a"), cell("b")), row(cell("c"), cell("d")))),
+() => (raw("&#9632;", {width: 40, height: 10})),
+() => (node("ref", {target: "a1"})),
+() => (image("x.png", {w: 10, h: 10, bogus: 1})),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

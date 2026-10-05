@@ -421,14 +421,67 @@ let setMd = `<!-- ${HDR} -->\n# Host settings (generated)\n\nThe settings docume
   '\n\n## Host policy\n\n| policy | default | meaning |\n|---|---|---|\n' +
   policy.map(([n, r]) => `| \`${n}\` | \`${JSON.stringify(r.def)}\` | ${r.doc} |`).join('\n') + '\n';
 
+// ---- constructor specs (plan P2-03; docs/ctor-design.md) ----------------------
+// A kind's "ctor" and the stdlib's derived constructors: parsed params, the
+// options (every attribute not bound positionally, or "raw"), the names the
+// hole module may bind (engine/src/codegen/stdnames.gen.h, sorted so that a
+// new name changes only the modules that mention it).
+const ctorErrors = [];
+const parseParam = (kindName, attrs, p) => {
+  const [k, name, dom] = p.split(':');
+  if (k === 'text' || k === 'lines' || k === 'body') return name === undefined ? { k } : (ctorErrors.push(`${kindName}: param ${p}`), null);
+  if (k !== 'attr' && k !== 'projected') return ctorErrors.push(`${kindName}: unknown param kind ${p}`), null;
+  const d = dom ?? attrs?.[name]?.dom;
+  if (!d) return ctorErrors.push(`${kindName}: param ${p} names no attribute of its kind`), null;
+  return { k, name, dom: d };
+};
+const ctorSpecs = {};
+const addCtor = (name, kindName, c, derived) => {
+  if (ctorSpecs[name]) ctorErrors.push(`ctor ${name} defined twice`);
+  const attrs = kindName ? S.kinds[kindName]?.attrs : null;
+  if (kindName && !attrs) ctorErrors.push(`ctor ${name}: unknown kind ${kindName}`);
+  const params = (c.params ?? []).map((p) => parseParam(name, attrs, p)).filter(Boolean);
+  const bound = new Set(params.map((p) => p.name).filter(Boolean));
+  const options = c.options === 'raw' ? 'raw'
+    : Object.keys(attrs ?? {}).filter((a) => !bound.has(a));
+  ctorSpecs[name] = { kind: kindName ?? null, params, options, nullary: !!c.nullary, sealed: !!c.sealed, derived };
+};
+for (const [n, k] of kinds) if (k.ctor) addCtor(k.ctor.name ?? n, n, k.ctor, false);
+for (const [n, c] of Object.entries(S.stdlib?.ctors ?? {})) addCtor(n, c.kind, c, true);
+const stdFunctions = S.stdlib?.functions ?? [];
+for (const f of stdFunctions) if (ctorSpecs[f]) ctorErrors.push(`std function ${f} is also a constructor`);
+const aliases = S.stdlib?.aliases ?? {};
+if (ctorErrors.length) { for (const e of ctorErrors) console.error('gen-schema: ' + e); process.exit(1); }
+const stdNames = [...Object.keys(ctorSpecs), ...stdFunctions].sort();
+const ctorsJs = `// ${HDR}\n// The constructor specs (plan P2-03; docs/ctor-design.md): kind constructors\n` +
+  `// and derived ones, as the binder (runtime/src/shared/stdlib.mjs) reads them.\n` +
+  emit('CTOR_SPECS', ctorSpecs) +
+  emit('STD_ALIASES', aliases) +
+  emit('STD_FUNCTIONS', stdFunctions) +
+  emit('STD_NAMES', stdNames);
+const stdNamesH = `// ${HDR}\n// The names a hole module may bind from __rt.std (plan P2-03): every\n` +
+  `// constructor and std function, sorted.\n#pragma once\n\nnamespace tsr {\n\n` +
+  `inline constexpr const char* kStdNames[] = {\n${stdNames.map((n) => `    "${n}",`).join('\n')}\n};\n\n}  // namespace tsr\n`;
+const ctorSig = (name) => {
+  const c = ctorSpecs[name];
+  const ps = c.params.map((p) => (p.k === 'attr' || p.k === 'projected' ? p.name : p.k));
+  if (c.options === 'raw' || c.options.length) ps.push('{options}');
+  if (!c.nullary || ps.length) ps.push('…');
+  return `\`${name}(${ps.join(', ')})\`${c.nullary ? ' (nullary)' : ''}${c.sealed ? ' (sealed)' : ''}`;
+};
+
 // ---- docs/schema-table.md --------------------------------------------------------
 let md = `<!-- ${HDR} -->\n# Ops vocabulary (generated)\n\nThe kind table of document-model §2.1, generated from ` +
   '`engine/schema/schema.json`. Ops version ' + S.opsVersion + ', min compat ' + S.minCompat + '.\n\n' +
-  '| id | kind | level | body | inline | attributes (writer order: domain) |\n|---|---|---|---|---|---|\n';
+  '| id | kind | level | body | inline | attributes (writer order: domain) | constructor |\n|---|---|---|---|---|---|---|\n';
 for (const [n, k] of kinds) {
   const at = Object.entries(k.attrs).map(([a, s]) => `\`${a}\`: ${s.dom.replace(/\|/g, '\\|')}`).join('; ') || '—';
-  md += `| ${k.id} | \`${n}\` | ${k.level} | ${k.body} | ${k.inline} | ${at} |\n`;
+  const ct = k.ctor ? ctorSig(k.ctor.name ?? n) : '—';
+  md += `| ${k.id} | \`${n}\` | ${k.level} | ${k.body} | ${k.inline} | ${at} | ${ct} |\n`;
 }
+md += '\nDerived constructors (`stdlib.ctors`): ' +
+  Object.keys(ctorSpecs).filter((c) => ctorSpecs[c].derived).map(ctorSig).join(', ') +
+  '. Std functions: ' + stdFunctions.map((f) => `\`${f}\``).join(', ') + '.\n';
 md += '\n| op | id |\n|---|---|\n' + ops.map(([n, o]) => `| ${n} | ${o.id} |`).join('\n') + '\n';
 
 // ---- write / check ---------------------------------------------------------------
@@ -447,6 +500,8 @@ const outputs = {
   'runtime/src/shared/settings.gen.mjs': settingsJs,
   'docs/settings-table.md': setMd,
   'docs/schema-table.md': md,
+  'runtime/src/shared/ctors.gen.mjs': ctorsJs,
+  'engine/src/codegen/stdnames.gen.h': stdNamesH,
 };
 let stale = 0;
 for (const [rel, text] of Object.entries(outputs)) {

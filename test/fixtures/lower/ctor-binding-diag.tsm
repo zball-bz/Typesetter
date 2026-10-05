@@ -1,0 +1,11 @@
+#heading(2)[A heading made by its constructor]
+
+#list(false, item(para("first")), item(para("second")))
+
+#group({role: "aside", label: "a1"}, para("Inside a group."))
+
+#table({cols: 2}, row(cell("a"), cell("b")), row(cell("c"), cell("d")))
+
+Raw #raw("&#9632;", {width: 40, height: 10}) and a node #node("ref", {target: "a1"}) here
+
+An image with an unknown option #image("x.png", {w: 10, h: 10, bogus: 1}) in a sentence

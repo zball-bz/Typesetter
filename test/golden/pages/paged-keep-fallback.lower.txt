@@ -3,8 +3,8 @@ piece 0 hole 0 js [103,183)
 block 0 content [0,30)
   CALL heading [0,30) level=1 label=null
     TEXT "Heading before a tall figure" [2,30)
-block 1 content [32,158) user framed holes 0..1
-  REGION "figure" args=hole 0 [32,158)
+block 1 content [32,158) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [32,158)
     ROWS
       row
         TEXT "A figure 200px tall on 240px sheets." [113,149)

@@ -1,6 +1,6 @@
 export const abi = 0x3c18dc46;
 export default async (__rt, $) => {
-const {strong, quote} = __rt.std;
+const {quote, strong} = __rt.std;
 return (async () => {
 let callout;
 const __h = [

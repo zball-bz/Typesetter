@@ -974,13 +974,13 @@ Theme steps: — · findings: 1
 |---|---|---|---|---|
 | `markup-language/region-pipe-segmentation` | adhoc | high | P0-04, P2-11 | |
 | `markup-language/inline-delimiter-scanners` | adhoc | high | P1-08 | grep:plan P1-08 |
-| `markup-language/closed-constructor-set` | adhoc | high | P2-03 | |
-| `markup-language/ctor-signature-vs-content-args` | adhoc | high | P2-03 | |
+| `markup-language/closed-constructor-set` | adhoc | high | P2-03 | grep:plan P2-03 |
+| `markup-language/ctor-signature-vs-content-args` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `markup-language/arg-grammar-unification` | adhoc | medium | P2-06 | |
 | `markup-language/numbered-env-hardcoding` | adhoc | high | P2-07 | |
 | `markup-language/universal-labels` | adhoc | high | P2-06 | |
 | `markup-language/label-namespace-collision` | adhoc | medium | P0-09, P3-04 | |
-| `markup-language/region-builtin-privilege` | adhoc | medium | P2-03 | |
+| `markup-language/region-builtin-privilege` | adhoc | medium | P2-03 | grep:plan P2-03 |
 | `markup-language/block-inline-placement` | adhoc | medium | P2-11, P3-17 | |
 | `markup-language/value-coercion` | adhoc | medium | P2-01 | grep:plan P2-01 |
 | `markup-language/surface-grammar-drift` | adhoc | medium | P1-09 | grep:plan P1-09 |
@@ -1041,8 +1041,8 @@ Theme steps: — · findings: 1
 | `parser-frontend/missed:3` | missed | medium | P2-02, P2-06 | |
 | `parser-frontend/missed:4` | missed | low | P1-06 | grep:plan P1-06 |
 | `parser-frontend/missed:5` | missed | low | P1-07 | grep:plan P1-07 |
-| `codegen-ops-model/ctor-signatures-break-sugar-equivalence` | adhoc | high | P2-03 | |
-| `codegen-ops-model/private-region-builders-and-missing-ctors` | adhoc | high | P2-03 | |
+| `codegen-ops-model/ctor-signatures-break-sugar-equivalence` | adhoc | high | P2-03 | grep:plan P2-03 |
+| `codegen-ops-model/private-region-builders-and-missing-ctors` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `codegen-ops-model/region-meta-args-hijack` | adhoc | medium | P2-03, P2-08 | |
 | `codegen-ops-model/parse-time-pipe-segmentation` | adhoc | medium | P2-11 | |
 | `codegen-ops-model/role-string-dispatch` | adhoc | high | P2-05 | |
@@ -1076,7 +1076,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/contract-doc-drift` | issue | low | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/missed:0` | missed | high | P0-05, P2-02 | grep:plan P2-02 |
 | `codegen-ops-model/missed:1` | missed | high | P2-11 | |
-| `codegen-ops-model/missed:2` | missed | medium | P2-03 | |
+| `codegen-ops-model/missed:2` | missed | medium | P2-03 | grep:plan P2-03 |
 | `codegen-ops-model/missed:3` | missed | medium | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/missed:4` | missed | low | P2-01 | grep:plan P2-01 |
 | `resolver/fixed-counter-set` | adhoc | high | P1-10 | grep:plan P1-10 |
@@ -1108,7 +1108,7 @@ Theme steps: — · findings: 1
 | `resolver/resolver-spans` | issue | low | P2-07 | |
 | `resolver/fragile-aggregate-init` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/untested-diagnostics` | issue | low | P0-09 | grep:plan P0-09 |
-| `resolver/missed:0` | missed | high | P2-03 | |
+| `resolver/missed:0` | missed | high | P2-03 | grep:plan P2-03 |
 | `resolver/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
 | `resolver/missed:2` | missed | medium | P3-04, P3-06 | |
 | `resolver/missed:3` | missed | medium | P3-03 | |
@@ -1308,7 +1308,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/role-figure-hardwired` | adhoc | high | P2-07 | |
 | `real-world-evidence/counters-fixed-fields` | adhoc | high | P2-07 | |
 | `real-world-evidence/open-arg-schema` | adhoc | high | P1-01, P2-05 | |
-| `real-world-evidence/sugar-dispatch-fixed` | adhoc | high | P2-03 | |
+| `real-world-evidence/sugar-dispatch-fixed` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `real-world-evidence/no-tsm-printer` | adhoc | high | P3-35 | |
 | `real-world-evidence/lexical-syntax-copies` | adhoc | medium | P1-09 | grep:plan P1-09 |
 | `real-world-evidence/literate-cpp-hack` | adhoc | medium | P3-22 | |

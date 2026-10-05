@@ -5,8 +5,8 @@ block 0 stmt [0,66) user framed holes 0..1
 block 1 content [68,75)
   CALL para [68,75)
     TEXT "Before." [68,75)
-block 2 content [77,97)
-  REGION "boom" [77,97)
+block 2 content [77,97) async
+  REGION async "boom" [77,97)
     ROWS
       row
         TEXT "inside" [84,90)

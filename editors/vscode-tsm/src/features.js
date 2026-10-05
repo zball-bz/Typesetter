@@ -2,8 +2,12 @@
 // extension.js turns them into vscode objects; test/e2e/editor.spec.mjs
 // checks them in Node. `lineOf(index)` maps a UTF-16 index to its line.
 
-// region handlers the executor builds (other names render as role groups)
-const BUILTIN_REGIONS = ['figure', 'table'];
+// built-in region handlers: the constructors that take a Body, from the
+// runtime's static manifest (plan P2-03); other names render as role groups
+const builtinRegions = (manifest = []) => manifest.filter((c) => c.body).map((c) => c.name).sort();
+// region handlers the document registers itself: $.region("name", …)
+const definedRegions = (text = '') =>
+  [...text.matchAll(/\$\.region\(\s*(["'])([A-Za-z_][\w-]*)\1/g)].map((m) => m[2]);
 
 // heading tree: [{ title, level, line, endLine, children }], each heading
 // extending to the line before the next heading of the same or higher level
@@ -44,13 +48,14 @@ function foldingRanges(outline, lineOf, lastLine) {
   return out.sort((a, b) => a.start - b.start || b.end - a.end);
 }
 
-// completion candidates: region names (built-in handlers + the document's
-// own regions) and the document's labels
-function regionNames(outline) {
-  return [...new Set([...BUILTIN_REGIONS, ...outline.regions.map((r) => r.name)])];
+// completion candidates: region names (the manifest's Body constructors,
+// the handlers the document registers, its own regions) and its labels
+function regionNames(outline, manifest = [], text = '') {
+  return [...new Set([...builtinRegions(manifest), ...definedRegions(text), ...outline.regions.map((r) => r.name)])];
 }
+
 function labelNames(outline) {
   return [...new Set(outline.labels.map((l) => l.id))];
 }
 
-module.exports = { headingTree, foldingRanges, regionNames, labelNames, BUILTIN_REGIONS };
+module.exports = { headingTree, foldingRanges, regionNames, labelNames };

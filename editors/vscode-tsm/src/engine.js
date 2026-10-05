@@ -18,7 +18,9 @@ function load(assetRoot) {
     const { checkAbi } = await import(at('runtime', 'src', 'shared', 'abi.mjs'));
     checkAbi(M);
     const { TOKEN_TAGS } = await import(at('runtime', 'src', 'shared', 'syntax.gen.mjs'));
-    engine = { M, TOKEN_TAGS };
+    // the constructor manifest (plan P2-03): names, params, Body
+    const { staticManifest } = await import(at('runtime', 'src', 'shared', 'stdlib.mjs'));
+    engine = { M, TOKEN_TAGS, manifest: staticManifest() };
     return engine;
   })());
 }
@@ -62,4 +64,7 @@ function outline(text) {
   return o;
 }
 
-module.exports = { load, ready, tokens, outline, byteToUtf16 };
+// the static constructor manifest ([] before the engine loaded)
+const manifest = () => engine?.manifest ?? [];
+
+module.exports = { load, ready, tokens, outline, byteToUtf16, manifest };

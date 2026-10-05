@@ -1,6 +1,6 @@
 export const abi = 0x3c18dc46;
 export default async (__rt, $) => {
-const {text, seq} = __rt.std;
+const {seq, text} = __rt.std;
 return (async () => {
 let f, o;
 const __h = [

@@ -82,8 +82,10 @@ export function decodeProgram(bytes) {
   return { abi, hash, module, docEnd, strs, ctors, blocks, holes, pieces, body: b.subarray(p) };
 }
 
-// env (the executor's half): ob (OpBuf), ctors (by name, plus __emit /
-// __at / __fence / __region / val), height() (the style stack),
+// env (the executor's half): ob (OpBuf), call(ctor, attrs, kids) (a bound
+// constructor call: shared/stdlib.mjs), region(name, args, items),
+// fence(tag, args, body, offset, lines), val(x), emit(node), at(node, s, e),
+// height() (the style stack),
 // setCurrent(block), fail(err, height, s, e) → an error node,
 // failBlock(err, height, block) (emits the error block), and here {s, e}:
 // the interpreter keeps it on the innermost splice, region, frame or block
@@ -96,9 +98,8 @@ export class Lowering {
     this.dv = new DataView(prog.body.buffer, prog.body.byteOffset, prog.body.byteLength);
     this.S = prog.strs;
     this.C = prog.ctors.map((name) => {
-      const f = env.ctors[name];
-      if (typeof f !== 'function') throw new Error(`LowerProgram: no constructor ${name}`);
-      return f;
+      if (typeof env.std[name] !== 'function') throw new Error(`LowerProgram: no constructor ${name}`);
+      return name;
     });
     this.p = 0;
     this.h = [];
@@ -141,6 +142,18 @@ export class Lowering {
     }
     throw new Error('LowerProgram: bad constant');
   }
+  // a CALL's attributes, bound by name (the constructor's params and
+  // options: shared/stdlib.mjs)
+  attrs() {
+    const n = this.u();
+    if (n === 0) return {};
+    const a = {};
+    for (let i = 0; i < n; i++) {
+      const key = this.S[this.u()];
+      a[key] = this.k();
+    }
+    return a;
+  }
   hole(i) {
     const f = this.h[i];
     if (typeof f !== 'function') throw STUB;
@@ -165,7 +178,7 @@ export class Lowering {
         env.here.e = blk.e;
         this.p = blk.pc;
         if (!(blk.flags & BFLAG.Framed)) {
-          env.ctors.__emit(async ? await this.va() : this.v());
+          env.emit(async ? await this.va() : this.v());
           continue;
         }
         const h0 = env.height();
@@ -175,7 +188,7 @@ export class Lowering {
             const r = this.hole(this.u())();
             if (async) await r;
           } else {
-            env.ctors.__emit(async ? await this.va() : this.v());
+            env.emit(async ? await this.va() : this.v());
           }
         } catch (err) {
           env.failBlock(err, h0, i);
@@ -203,11 +216,11 @@ export class Lowering {
         const fl = this.b[this.p++], f = this.C[this.u()];
         let s = 0, e = 0;
         if (fl & CFLAG.Spanned) { s = this.u(); e = this.u(); }
-        const args = [];
-        for (let n = this.u(); n > 0; n--) { this.u(); args.push(this.k()); }
-        for (let n = this.u(); n > 0; n--) args.push(this.v());
-        const node = f(...args);
-        return fl & CFLAG.Spanned ? env.ctors.__at(node, s, e) : node;
+        const attrs = this.attrs();
+        const kids = [];
+        for (let n = this.u(); n > 0; n--) kids.push(this.v());
+        const node = env.call(f, attrs, kids);
+        return fl & CFLAG.Spanned ? env.at(node, s, e) : node;
       }
       case LOP.HOLE: {
         const f = this.hole(this.u());
@@ -217,7 +230,7 @@ export class Lowering {
         here.s = s;
         here.e = e;
         try {
-          return env.ctors.val(nk ? this.callHole(f, nk, false) : f());
+          return env.val(nk ? this.callHole(f, nk, false) : f());
         } finally {
           here.s = ps;
           here.e = pe;
@@ -241,13 +254,6 @@ export class Lowering {
           here.e = pe;
         }
       }
-      case LOP.REGION: {
-        const name = this.S[this.u()], a = this.u(), s = this.u(), e = this.u();
-        const args = a ? this.hole((a >> 1) - 1)() : {};
-        const items = [];
-        for (let n = this.u(); n > 0; n--) items.push(this.v());
-        return env.ctors.__at(this.region(name, args, items, s, e), s, e);
-      }
       case LOP.ROWS: {  // a table paragraph (a region item): rows of cell values
         const rows = new Array(this.u());
         for (let r = 0; r < rows.length; r++) {
@@ -270,11 +276,11 @@ export class Lowering {
         const fl = this.b[this.p++], f = this.C[this.u()];
         let s = 0, e = 0;
         if (fl & CFLAG.Spanned) { s = this.u(); e = this.u(); }
-        const args = [];
-        for (let n = this.u(); n > 0; n--) { this.u(); args.push(this.k()); }
-        for (let n = this.u(); n > 0; n--) args.push(await this.va());
-        const node = f(...args);
-        return fl & CFLAG.Spanned ? env.ctors.__at(node, s, e) : node;
+        const attrs = this.attrs();
+        const kids = [];
+        for (let n = this.u(); n > 0; n--) kids.push(await this.va());
+        const node = env.call(f, attrs, kids);
+        return fl & CFLAG.Spanned ? env.at(node, s, e) : node;
       }
       case LOP.HOLE: {
         const f = this.hole(this.u());
@@ -284,7 +290,7 @@ export class Lowering {
         here.s = s;
         here.e = e;
         try {
-          return env.ctors.val(await (nk ? this.callHole(f, nk, true) : f()));
+          return env.val(await (nk ? this.callHole(f, nk, true) : f()));
         } finally {
           here.s = ps;
           here.e = pe;
@@ -313,7 +319,7 @@ export class Lowering {
         const lines = this.k(), s = this.u(), e = this.u();
         let args = a ? this.hole((a >> 1) - 1)() : {};
         if (a & 1) args = await args;
-        return env.ctors.__at(env.ctors.val(await env.ctors.__fence(lang, args, body, off, lines)), s, e);
+        return env.at(env.val(await env.fence(lang, args, body, off, lines)), s, e);
       }
       case LOP.REGION: {
         const name = this.S[this.u()], a = this.u(), s = this.u(), e = this.u();
@@ -321,7 +327,7 @@ export class Lowering {
         if (a & 1) args = await args;
         const items = [];
         for (let n = this.u(); n > 0; n--) items.push(await this.va());
-        return env.ctors.__at(this.region(name, args, items, s, e), s, e);
+        return env.at(await this.region(name, args, items, s, e), s, e);
       }
       case LOP.ROWS: {
         const rows = new Array(this.u());
@@ -335,13 +341,14 @@ export class Lowering {
     throw new Error(`LowerProgram: op ${op} at ${this.p - 1}`);
   }
 
-  // the region constructor (or a handler) runs at the region
-  region(name, args, items, s, e) {
+  // the region constructor (or a handler, which may be async) runs at the
+  // region
+  async region(name, args, items, s, e) {
     const { here } = this.env, ps = here.s, pe = here.e;
     here.s = s;
     here.e = e;
     try {
-      return this.env.ctors.__region(name, args, items);
+      return await this.env.region(name, args, items);
     } finally {
       here.s = ps;
       here.e = pe;

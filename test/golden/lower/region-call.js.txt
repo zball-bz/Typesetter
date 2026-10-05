@@ -1,0 +1,20 @@
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {group} = __rt.std;
+return (async () => {
+let callout;
+const __h = [
+() => { callout = (
+ $.region("callout", (body, ctx) => group({role: "callout", label: ctx.args.label}, ...body.blocks()))
+); },
+(__k) => ((callout)(...__k())),
+() => {
+ $.region("callout", (body, ctx) => group({role: "frame"}, ctx.next(body))) 
+},
+() => ({label: "c2"}),
+(__k) => (callout(...[{label: "c3"}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

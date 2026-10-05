@@ -97,8 +97,8 @@ function activate(context) {
   );
 
   // --- completion: region names + references --------------------------------
-  // Region names are the executor's built-in handlers and the document's own
-  // regions (handler names registered at execution arrive with plan P2-03).
+  // Region names are the manifest's Body constructors (plan P2-03), the
+  // handlers the document registers ($.region("name", …)) and its regions.
   context.subscriptions.push(
     vscode.languages.registerCompletionItemProvider({ language: 'tsm' }, {
       async provideCompletionItems(doc, pos) {
@@ -107,7 +107,7 @@ function activate(context) {
         if (!o) return [];
         const items = [];
         if (/#!?[A-Za-z_]*$/.test(prefix)) {
-          for (const b of regionNames(o)) {
+          for (const b of regionNames(o, engine.manifest(), doc.getText())) {
             const it = new vscode.CompletionItem(`#!${b}`, vscode.CompletionItemKind.Module);
             it.insertText = new vscode.SnippetString(`!${b}\n$0\n#${b}!`);
             it.range = new vscode.Range(pos.translate(0, -1), pos);

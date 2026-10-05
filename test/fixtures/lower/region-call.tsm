@@ -1,0 +1,21 @@
+#let callout = $.region("callout", (body, ctx) => group({role: "callout", label: ctx.args.label}, ...body.blocks()))
+
+#!callout
+First paragraph.
+
+Second paragraph.
+#callout!
+
+#callout[
+First paragraph.
+
+Second paragraph.
+]
+
+#{ $.region("callout", (body, ctx) => group({role: "frame"}, ctx.next(body))) }
+
+#!callout(label: "c2")
+Third.
+#callout!
+
+#callout({label: "c3"})[Third.]

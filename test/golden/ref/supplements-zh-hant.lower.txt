@@ -15,13 +15,13 @@ block 1 content [24,146)
     TEXT " and " [136,139)
     CALL ref [140,145) target="eq-a"
     TEXT "." [145,146)
-block 2 content [148,237) user framed holes 0..1
-  REGION "figure" args=hole 0 [148,237)
+block 2 content [148,237) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [148,237)
     ROWS
       row
         TEXT "A figure." [219,228)
-block 3 content [239,285) user framed holes 1..2
-  REGION "table" args=hole 1 [239,285)
+block 3 content [239,285) user framed async holes 1..2
+  REGION async "table" args=hole 1 [239,285)
     ROWS
       row
         TEXT "x" [272,273)

@@ -1,0 +1,36 @@
+top pid=0 units=2
+ unit text indent=0su
+  word "First" w=2561su pen=INF @[128,144)
+  space w=257su stretch=1 @[128,144)
+  word "para" w=2049su pen=INF @[128,144)
+  hyphen bw=513su pen=0.70 @[128,144)
+  word "graph." w=3073su pen=INF @[128,144)
+ unit text indent=0su
+  word "Sec" w=1537su pen=INF @[146,163)
+  hyphen bw=513su pen=0.70 @[146,163)
+  word "ond" w=1537su pen=INF @[146,163)
+  space w=257su stretch=1 @[146,163)
+  word "para" w=2049su pen=INF @[146,163)
+  hyphen bw=513su pen=0.70 @[146,163)
+  word "graph." w=3073su pen=INF @[146,163)
+top pid=1 units=2
+ unit text indent=0su
+  word "First" w=2561su pen=INF @[185,201)
+  space w=257su stretch=1 @[185,201)
+  word "para" w=2049su pen=INF @[185,201)
+  hyphen bw=513su pen=0.70 @[185,201)
+  word "graph." w=3073su pen=INF @[185,201)
+ unit text indent=0su
+  word "Sec" w=1537su pen=INF @[203,220)
+  hyphen bw=513su pen=0.70 @[203,220)
+  word "ond" w=1537su pen=INF @[203,220)
+  space w=257su stretch=1 @[203,220)
+  word "para" w=2049su pen=INF @[203,220)
+  hyphen bw=513su pen=0.70 @[203,220)
+  word "graph." w=3073su pen=INF @[203,220)
+top pid=2 units=1
+ unit text indent=0su anchor="c2"
+  word "Third." w=3073su pen=INF @[328,334)
+top pid=3 units=1
+ unit text indent=0su anchor="c3"
+  word "Third." w=3073su pen=INF @[370,376)

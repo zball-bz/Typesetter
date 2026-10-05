@@ -1,9 +1,9 @@
-lower v1 abi 3c18dc46 docEnd 360 holes 1 module 113bab1641b18e47
+lower v1 abi 3c18dc46 docEnd 360 holes 1 module 50e8112ba2b52497
 piece 0 hole 0 js [136,181)
 block 0 content [0,113)
   CALL para [0,113)
     TEXT "A comment opened mid-line" [0,25)
-    CALL comment [26,86) body=" hides what follows\n= not a heading\n- not a list item\n"
+    CALL comment [26,86) text=" hides what follows\n= not a heading\n- not a list item\n"
     TEXT " and the paragraph goes on." [87,113)
 block 1 content [115,147)
   CALL para [115,147)

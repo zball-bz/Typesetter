@@ -397,6 +397,41 @@ test('lowering: module cache and incremental SyntaxError isolation', async () =>
   }
 });
 
+// --- plan P2-03: one calling convention --------------------------------------
+// The sugar and the explicit call build the same tree, and so do a region and
+// the same constructor called with content — before and after an override
+// ($.ctor, a second $.region delegating through ctx.next). Shapes compare
+// without spans and labels (a splice's result is unspanned until P2-04).
+test('constructors: sugar ≡ call and region ≡ call, before and after an override', async () => {
+  test.skip(test.info().project.name !== 'chromium-dsf1', 'Node-side: one device scale is enough');
+  const { execFileSync } = await import('node:child_process');
+  const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+  const tsrc = join(root, 'engine/build/tsrc');
+  const shapes = (name) => {
+    const tsm = join(root, 'test/fixtures/lower', `${name}.tsm`);
+    const tree = execFileSync(tsrc, ['--stage=tree', `--ops=${tsm.replace(/\.tsm$/, '.ops')}`, tsm],
+                              { encoding: 'utf8' });
+    const out = [];
+    for (const line of tree.split('\n').slice(1)) {
+      if (!line.trim()) continue;
+      const shape = line.replace(/ @\[\d+,\d+\)/g, '').replace(/ label="[^"]*"/g, '');
+      if (/^  \S/.test(line)) out.push(shape);
+      else out[out.length - 1] += '\n' + shape;
+    }
+    return out;
+  };
+  const o = shapes('ctor-override');  // *x*, #strong[x]; then with strong overridden
+  expect(o.length).toBe(4);
+  expect(o[1]).toBe(o[0]);
+  expect(o[3]).toBe(o[2]);
+  expect(o[2]).toContain('role="key"');
+  const r = shapes('region-call');  // #!callout … #callout! and #callout[…], twice
+  expect(r.length).toBe(4);
+  expect(r[1]).toBe(r[0]);
+  expect(r[3]).toBe(r[2]);
+  expect(r[2]).toContain('role="frame"');
+});
+
 // --- plan P0-12: breaker semantics -------------------------------------------
 
 // defect #19: a run wider than the measure used to collapse the whole

@@ -24,8 +24,9 @@ side=30. As always: regen `ops.gen.mjs`, re-record every fixture.
 
 Authoring surface:
 
-- `#!figure(src: "x.png", alt: "…", label: "fig-x")` region — the default
-  builder (executor, next to `tableBuild`) makes
+- `#!figure(src: "x.png", alt: "…", label: "fig-x")` region — the `figure`
+  constructor (a Body constructor in runtime/src/shared/stdlib.mjs, plan
+  P2-03; `docs/ctor-design.md`) makes
   `group{role:"figure", label}` with an `image` node first and the region's
   paragraphs after it as the caption. `#!figure` keeps working with no `src`
   (a figure whose body is a table/code/math block — the caption is still

@@ -1,7 +1,7 @@
 lower v1 abi 3c18dc46 docEnd 31 holes 1 module 8fa20c8e6b201507
 piece 0 hole 0 js [103,120)
-block 0 content [0,30) user framed holes 0..1
-  REGION "table" args=hole 0 [0,30)
+block 0 content [0,30) user framed async holes 0..1
+  REGION async "table" args=hole 0 [0,30)
     ROWS
       row
         TEXT "A" [17,18)

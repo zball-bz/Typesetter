@@ -14,8 +14,8 @@ block 3 content [323,383)
     TEXT "标题不落页尾；下面的代码块按逻辑行切分：" [323,383)
 block 4 content [385,494) async
   FENCE async "json" body="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}" at=393 lines=null [385,494)
-block 5 content [496,611) user framed holes 0..1
-  REGION "figure" args=hole 0 [496,611)
+block 5 content [496,611) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [496,611)
     ROWS
       row
         TEXT "图与图注保持在同页。" [572,602)

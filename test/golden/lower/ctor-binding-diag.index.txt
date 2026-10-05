@@ -1,0 +1,4 @@
+instance heading 0.1 level=2 label=h-0.1 title="A heading made by its constructor" @[0,0)
+instance table 1 @[0,0)
+label h-0.1 -> heading 0.1 @[0,0)
+label a1 -> (unnumbered) @[0,0)

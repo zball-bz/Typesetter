@@ -1,0 +1,26 @@
+lower v1 abi 3c18dc46 docEnd 166 holes 3 module bf2edb0159529e7d
+piece 0 hole 0 js [137,166)
+piece 1 hole 1 js [168,260)
+piece 2 hole 2 js [262,291)
+block 0 content [0,15)
+  CALL para [0,15)
+    TEXT "Before " [0,6)
+    CALL strong [7,15)
+      TEXT "bold x" [8,14)
+block 1 content [17,39) user framed holes 0..1
+  CALL para [17,39)
+    TEXT "Before " [17,23)
+    HOLE 0 [24,39)
+      TEXT "bold x" [32,38)
+block 2 stmt [41,126) user framed holes 1..2
+  STMT 1
+block 3 content [128,142)
+  CALL para [128,142)
+    TEXT "After " [128,133)
+    CALL strong [134,142)
+      TEXT "bold x" [135,141)
+block 4 content [144,165) user framed holes 2..3
+  CALL para [144,165)
+    TEXT "After " [144,149)
+    HOLE 2 [150,165)
+      TEXT "bold x" [158,164)

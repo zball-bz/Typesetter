@@ -5,8 +5,8 @@ block 0 content [0,117)
     TEXT "A refused image scheme is reported once, even though the formula " [0,64)
     CALL mathinline [65,82) src="f(x) \"if\" x > 0"
     TEXT " makes emit run twice (plan P0-11)." [83,117)
-block 1 content [119,225) user framed holes 0..1
-  REGION "figure" args=hole 0 [119,225)
+block 1 content [119,225) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [119,225)
     ROWS
       row
         TEXT "The placeholder stands in." [190,216)

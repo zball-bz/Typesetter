@@ -1,0 +1,9 @@
+Before *bold x*
+
+Before #strong[bold x]
+
+#{ $.ctor("strong", (next) => (call, ctx) => group({role: "key"}, next(call, ctx))) }
+
+After *bold x*
+
+After #strong[bold x]

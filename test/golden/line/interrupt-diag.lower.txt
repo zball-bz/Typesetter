@@ -23,10 +23,10 @@ block 3 content [214,227)
 block 4 content [229,321)
   CALL para [229,321)
     TEXT "Comment lines inside a paragraph are invisible" [229,275)
-    CALL comment [276,292) body=" a remark "
+    CALL comment [276,292) text=" a remark "
     TEXT " and the paragraph continues." [293,321)
 block 5 content [323,346)
-  CALL comment [323,346) body=" a block comment "
+  CALL comment [323,346) text=" a block comment "
 block 6 content [347,377)
   CALL para [347,377)
     TEXT "Text after the closer is kept." [347,377)

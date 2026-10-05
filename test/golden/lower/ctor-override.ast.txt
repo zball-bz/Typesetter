@@ -1,0 +1,20 @@
+doc @[0,166)
+  para @[0,15)
+    text @[0,6) str="Before "
+    styled @[7,15) marker=*
+      text @[8,14) str="bold x"
+  para @[17,39)
+    text @[17,23) str="Before "
+    splice @[24,39) expr="strong"
+      arg @[32,38)
+        text @[32,38) str="bold x"
+  code-block @[41,126) js=" $.ctor(\"strong\", (next) => (call, ctx) => group({role: \"key\"}, next(call, ctx))) "
+  para @[128,142)
+    text @[128,133) str="After "
+    styled @[134,142) marker=*
+      text @[135,141) str="bold x"
+  para @[144,165)
+    text @[144,149) str="After "
+    splice @[150,165) expr="strong"
+      arg @[158,164)
+        text @[158,164) str="bold x"

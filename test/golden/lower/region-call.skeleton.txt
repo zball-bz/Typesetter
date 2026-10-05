@@ -1,0 +1,10 @@
+doc @[0,378)
+  code-let @[0,116) js=" callout = $.region(\"callout\", (body, ctx) => group({role: \"callout\", label: ctx.args.label}, ...body.blocks()))"
+  region @[118,173) name="callout"
+    para @[128,144) lines=1
+    para @[146,163) lines=1
+  para @[175,222) lines=5
+  code-block @[224,303) js=" $.region(\"callout\", (body, ctx) => group({role: \"frame\"}, ctx.next(body))) "
+  region @[305,344) name="callout"
+    para @[328,334) lines=1
+  para @[346,377) lines=1

@@ -28,8 +28,8 @@ block 2 content [115,165) user framed holes 2..3
         TEXT "quoted " [139,145)
         HOLE 2 [146,153)
         TEXT " fails alone" [154,165)
-block 3 content [167,232) user framed holes 3..4
-  REGION "aside" [167,232)
+block 3 content [167,232) user framed async holes 3..4
+  REGION async "aside" [167,232)
     ROWS
       row
         TEXT "interior para stays" [175,194)

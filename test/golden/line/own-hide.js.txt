@@ -1,6 +1,6 @@
 export const abi = 0x3c18dc46;
 export default async (__rt, $) => {
-const {text, strong} = __rt.std;
+const {strong, text} = __rt.std;
 return (async () => {
 const __h = [
 () => (strong(text("left" +

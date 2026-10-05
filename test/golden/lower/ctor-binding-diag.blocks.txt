@@ -1,0 +1,83 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-0.1"
+  word "A" w=693su pen=INF BOLD x1.35 @[12,45)
+  space w=347su stretch=1 BOLD x1.35 @[12,45)
+  word "heading" w=4840su pen=INF BOLD x1.35 @[12,45)
+  space w=347su stretch=1 BOLD x1.35 @[12,45)
+  word "made" w=2766su pen=INF BOLD x1.35 @[12,45)
+  space w=347su stretch=1 BOLD x1.35 @[12,45)
+  word "by" w=1384su pen=INF BOLD x1.35 @[12,45)
+  space w=347su stretch=1 BOLD x1.35 @[12,45)
+  word "its" w=2075su pen=INF BOLD x1.35 @[12,45)
+  space w=347su stretch=1 BOLD x1.35 @[12,45)
+  word "constructor" w=7605su pen=INF BOLD x1.35 @[12,45)
+top pid=1 units=2
+ unit text indent=1536su marker="•"
+  word "first" w=2561su pen=INF @[0,0)
+ unit text indent=1536su marker="•"
+  word "sec" w=1537su pen=INF @[0,0)
+  hyphen bw=513su pen=0.70 @[0,0)
+  word "ond" w=1537su pen=INF @[0,0)
+top pid=2 units=1
+ unit text indent=0su anchor="a1"
+  word "In" w=1025su pen=INF @[0,0)
+  hyphen bw=513su pen=0.70 @[0,0)
+  word "side" w=2049su pen=INF @[0,0)
+  space w=257su stretch=1 @[0,0)
+  word "a" w=513su pen=INF @[0,0)
+  space w=257su stretch=1 @[0,0)
+  word "group." w=3073su pen=INF @[0,0)
+top pid=3 units=1
+ unit table indent=0su cols=2 cells=4
+  cell 0
+  word "a" w=513su pen=INF @[0,0)
+  cell 1
+  word "b" w=513su pen=INF @[0,0)
+  cell 2
+  word "c" w=513su pen=INF @[0,0)
+  cell 3
+  word "d" w=513su pen=INF @[0,0)
+top pid=4 units=1
+ unit text indent=0su
+  word "Raw" w=1537su pen=INF @[241,244)
+  space w=257su stretch=1 @[241,244)
+  word "" w=2560su pen=0 @[0,0)
+  space w=257su stretch=1 @[286,296)
+  word "and" w=1537su pen=INF @[286,296)
+  space w=257su stretch=1 @[286,296)
+  word "a" w=513su pen=INF @[286,296)
+  space w=257su stretch=1 @[286,296)
+  word "node" w=2049su pen=INF @[286,296)
+  space w=257su stretch=1 @[286,296)
+  word "a1" w=1025su pen=INF LINK SYN @[0,0)
+  space w=257su stretch=1 @[326,330)
+  word "here" w=2049su pen=INF @[326,330)
+top pid=5 units=1
+ unit text indent=0su
+  word "An" w=1025su pen=INF @[332,363)
+  space w=257su stretch=1 @[332,363)
+  word "im" w=1025su pen=INF @[332,363)
+  hyphen bw=513su pen=0.70 @[332,363)
+  word "age" w=1537su pen=INF @[332,363)
+  space w=257su stretch=1 @[332,363)
+  word "with" w=2049su pen=INF @[332,363)
+  space w=257su stretch=1 @[332,363)
+  word "an" w=1025su pen=INF @[332,363)
+  space w=257su stretch=1 @[332,363)
+  word "un" w=1025su pen=INF @[332,363)
+  hyphen bw=513su pen=0.70 @[332,363)
+  word "known" w=2561su pen=INF @[332,363)
+  space w=257su stretch=1 @[332,363)
+  word "op" w=1025su pen=INF @[332,363)
+  hyphen bw=513su pen=0.70 @[332,363)
+  word "tion" w=2049su pen=INF @[332,363)
+  space w=257su stretch=1 @[332,363)
+  word "" w=640su pen=0 @[0,0)
+  space w=257su stretch=1 @[406,419)
+  word "in" w=1025su pen=INF @[406,419)
+  space w=257su stretch=1 @[406,419)
+  word "a" w=513su pen=INF @[406,419)
+  space w=257su stretch=1 @[406,419)
+  word "sen" w=1537su pen=INF @[406,419)
+  hyphen bw=513su pen=0.70 @[406,419)
+  word "tence" w=2561su pen=INF @[406,419)

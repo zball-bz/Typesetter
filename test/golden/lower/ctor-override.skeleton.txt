@@ -1,0 +1,6 @@
+doc @[0,166)
+  para @[0,15) lines=1
+  para @[17,39) lines=1
+  code-block @[41,126) js=" $.ctor(\"strong\", (next) => (call, ctx) => group({role: \"key\"}, next(call, ctx))) "
+  para @[128,142) lines=1
+  para @[144,165) lines=1

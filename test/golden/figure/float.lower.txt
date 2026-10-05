@@ -4,8 +4,8 @@ piece 1 hole 1 js [213,318)
 block 0 content [0,95)
   CALL para [0,95)
     TEXT "浮动插图与环绕（parshape）：右侧浮动，正文前若干行按收窄宽度断行。" [0,95)
-block 1 content [97,246) user framed holes 0..1
-  REGION "figure" args=hole 0 [97,246)
+block 1 content [97,246) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [97,246)
     ROWS
       row
         TEXT "右浮动的塔楼小图。" [210,237)
@@ -15,8 +15,8 @@ block 2 content [248,464)
 block 3 content [466,634)
   CALL para [466,634)
     TEXT "第二个段落若仍处于浮动高度之内，则继续以收窄宽度开始；此段足够长，尾部行应当已经回到整幅宽度，环绕由此自然结束。" [466,634)
-block 4 content [636,776) user framed holes 1..2
-  REGION "figure" args=hole 1 [636,776)
+block 4 content [636,776) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [636,776)
     ROWS
       row
         TEXT "左浮动的山门。" [746,767)

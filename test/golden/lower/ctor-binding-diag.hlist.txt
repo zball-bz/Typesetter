@@ -1,0 +1,103 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-0.1"
+  box Other "A" w=693su r0 @[12,45)
+  glue word w=347su x=1 cap=347su kern="A h" src r0 @[12,45)
+  box Other "heading" w=4840su r0 @[12,45)
+  glue word w=347su x=1 cap=347su kern="g m" src r0 @[12,45)
+  box Other "made" w=2766su r0 @[12,45)
+  glue word w=347su x=1 cap=347su kern="e b" src r0 @[12,45)
+  box Other "by" w=1384su r0 @[12,45)
+  glue word w=347su x=1 cap=347su kern="y i" src r0 @[12,45)
+  box Other "its" w=2075su r0 @[12,45)
+  glue word w=347su x=1 cap=347su kern="s c" src r0 @[12,45)
+  box Other "constructor" w=7605su r0 @[12,45)
+  run r0 plain BOLD x1.35
+top pid=1 units=2
+ unit text indent=1536su marker="•"
+  box Other "first" w=2561su r0 @[0,0)
+  run r0 plain
+ unit text indent=1536su marker="•"
+  box Other "sec" w=1537su r0 @[0,0)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r0 @[0,0)
+  box Other "ond" w=1537su r0 @[0,0)
+  run r0 plain
+top pid=2 units=1
+ unit text indent=0su anchor="a1"
+  box Other "In" w=1025su r0 @[0,0)
+  disc pen=0.7 w=0su pre="-" 513su kern="ns" r0 @[0,0)
+  box Other "side" w=2049su r0 @[0,0)
+  glue word w=257su x=1 cap=257su kern="e a" src r0 @[0,0)
+  box Other "a" w=513su r0 @[0,0)
+  glue word w=257su x=1 cap=257su kern="a g" src r0 @[0,0)
+  box Other "group." w=3073su r0 @[0,0)
+  run r0 plain
+top pid=3 units=1
+ unit table indent=0su cols=2 cells=4
+  cell 0
+   box Other "a" w=513su r0 @[0,0)
+   run r0 plain
+  cell 1
+   box Other "b" w=513su r0 @[0,0)
+   run r0 plain
+  cell 2
+   box Other "c" w=513su r0 @[0,0)
+   run r0 plain
+  cell 3
+   box Other "d" w=513su r0 @[0,0)
+   run r0 plain
+top pid=4 units=1
+ unit text indent=0su
+  box Other "Raw" w=1537su r0 @[241,244)
+  glue word w=257su x=1 cap=257su src r0 @[241,244)
+  box object o0 raw part=0 asc=640su desc=0su w=2560su r1 @[0,0)
+  pen 0 r1
+  glue word w=257su x=1 cap=257su src r2 @[286,296)
+  box Other "and" w=1537su r2 @[286,296)
+  glue word w=257su x=1 cap=257su kern="d a" src r2 @[286,296)
+  box Other "a" w=513su r2 @[286,296)
+  glue word w=257su x=1 cap=257su kern="a n" src r2 @[286,296)
+  box Other "node" w=2049su r2 @[286,296)
+  glue word w=257su x=1 cap=257su src r2 @[286,296)
+  box Other "a1" w=1025su r3 @[0,0)
+  glue word w=257su x=1 cap=257su src r4 @[326,330)
+  box Other "here" w=2049su r4 @[326,330)
+  obj o0 raw parts=1 edges=Ideo/Ideo src="&#9632;" [w=2560su asc=640su desc=0su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 plain ref LINK link="#tsr-a1"
+  run r4 plain
+top pid=5 units=1
+ unit text indent=0su
+  box Other "An" w=1025su r0 @[332,363)
+  glue word w=257su x=1 cap=257su kern="n i" src r0 @[332,363)
+  box Other "im" w=1025su r0 @[332,363)
+  disc pen=0.7 w=0su pre="-" 513su kern="ma" r0 @[332,363)
+  box Other "age" w=1537su r0 @[332,363)
+  glue word w=257su x=1 cap=257su kern="e w" src r0 @[332,363)
+  box Other "with" w=2049su r0 @[332,363)
+  glue word w=257su x=1 cap=257su kern="h a" src r0 @[332,363)
+  box Other "an" w=1025su r0 @[332,363)
+  glue word w=257su x=1 cap=257su kern="n u" src r0 @[332,363)
+  box Other "un" w=1025su r0 @[332,363)
+  disc pen=0.7 w=0su pre="-" 513su kern="nk" r0 @[332,363)
+  box Other "known" w=2561su r0 @[332,363)
+  glue word w=257su x=1 cap=257su kern="n o" src r0 @[332,363)
+  box Other "op" w=1025su r0 @[332,363)
+  disc pen=0.7 w=0su pre="-" 513su kern="pt" r0 @[332,363)
+  box Other "tion" w=2049su r0 @[332,363)
+  glue word w=257su x=1 cap=257su src r0 @[332,363)
+  box object o0 image part=0 asc=640su desc=0su w=640su r1 @[0,0)
+  pen 0 r1
+  glue word w=257su x=1 cap=257su src r2 @[406,419)
+  box Other "in" w=1025su r2 @[406,419)
+  glue word w=257su x=1 cap=257su kern="n a" src r2 @[406,419)
+  box Other "a" w=513su r2 @[406,419)
+  glue word w=257su x=1 cap=257su kern="a s" src r2 @[406,419)
+  box Other "sen" w=1537su r2 @[406,419)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r2 @[406,419)
+  box Other "tence" w=2561su r2 @[406,419)
+  obj o0 image parts=1 edges=Ideo/Ideo src="x.png" [w=640su asc=640su desc=0su]
+  run r0 plain
+  run r1 object
+  run r2 plain

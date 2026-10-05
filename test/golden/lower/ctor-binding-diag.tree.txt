@@ -1,0 +1,35 @@
+doc @[0,419) [base]
+  heading @[0,0) [base] level=2 label="h-0.1"
+    text @[12,45) [base] str="A heading made by its constructor"
+  list @[0,0) [base] ordered=false
+    item @[0,0) [base]
+      para @[0,0) [base]
+        text @[0,0) [base] str="first"
+    item @[0,0) [base]
+      para @[0,0) [base]
+        text @[0,0) [base] str="second"
+  group @[0,0) [base] role="aside" label="a1"
+    para @[0,0) [base]
+      text @[0,0) [base] str="Inside a group."
+  table @[0,0) [base] cols=2
+    trow @[0,0) [base]
+      tcell @[0,0) [base]
+        text @[0,0) [base] str="a"
+      tcell @[0,0) [base]
+        text @[0,0) [base] str="b"
+    trow @[0,0) [base]
+      tcell @[0,0) [base]
+        text @[0,0) [base] str="c"
+      tcell @[0,0) [base]
+        text @[0,0) [base] str="d"
+  para @[241,330) [base]
+    text @[241,244) [base] str="Raw "
+    raw @[0,0) [base] html="&#9632;" w=40 h=10
+    text @[286,296) [base] str=" and a node "
+    ref @[0,0) [base] target="a1" url="#tsr-a1"
+      text @[0,0) [base] str="a1"
+    text @[326,330) [base] str=" here"
+  para @[332,419) [base]
+    text @[332,363) [base] str="An image with an unknown option "
+    image @[0,0) [base] src="x.png" w=10 h=10
+    text @[406,419) [base] str=" in a sentence"

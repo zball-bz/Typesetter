@@ -27,8 +27,8 @@ block 3 content [216,429) user framed holes 2..5
     CALL strong [399,407)
       TEXT "粗体" [400,406)
     TEXT " 一起参与断行。" [408,429)
-block 4 content [431,570) user framed holes 5..6
-  REGION "aside" args=hole 5 [431,570)
+block 4 content [431,570) user framed async holes 5..6
+  REGION async "aside" args=hole 5 [431,570)
     ROWS
       row
         TEXT "區域級作用域：字體與語言一起換，內部照樣是普通標記。" [484,562)

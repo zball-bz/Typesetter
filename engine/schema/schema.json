@@ -29,73 +29,94 @@
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
-    "para": {"id": 1, "level": "block", "inline": "container", "body": "inline", "since": 6, "attrs": {}},
-    "heading": {"id": 2, "level": "block", "inline": "unsupported", "body": "inline", "since": 6, "attrs": {
+    "para": {"id": 1, "level": "block", "inline": "container", "body": "inline", "since": 6, "ctor": {}, "attrs": {}},
+    "heading": {"id": 2, "level": "block", "inline": "unsupported", "body": "inline", "since": 6, "ctor": {"params": ["attr:level", "attr:label"]}, "attrs": {
       "level": {"dom": "int:1:6", "def": 1},
       "label": {"dom": "label"}}},
-    "list": {"id": 3, "level": "block", "inline": "unsupported", "body": "items", "since": 6, "attrs": {
+    "list": {"id": 3, "level": "block", "inline": "unsupported", "body": "items", "since": 6, "ctor": {"params": ["attr:ordered", "attr:start"]}, "attrs": {
       "ordered": {"dom": "bool", "def": false},
       "start": {"dom": "int:-1073741824:1073741824", "def": 1}}},
-    "item": {"id": 4, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
-    "quote": {"id": 5, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
-    "codeblock": {"id": 6, "level": "block", "inline": "unsupported", "body": "code", "since": 6, "attrs": {
+    "item": {"id": 4, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "ctor": {}, "attrs": {}},
+    "quote": {"id": 5, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "ctor": {}, "attrs": {}},
+    "codeblock": {"id": 6, "level": "block", "inline": "unsupported", "body": "code", "since": 6, "ctor": {"params": ["attr:lang", "lines"]}, "attrs": {
       "lang": {"dom": "token"},
       "wrap": {"dom": "bool"},
       "lineNo": {"dom": "int:0:1048576", "coerce": "boolAsInt"},
       "hl": {"dom": "rangeset"},
       "sidecar": {"dom": "str"}}},
-    "rule": {"id": 7, "level": "block", "inline": "unsupported", "body": "none", "since": 6, "attrs": {}},
-    "group": {"id": 8, "level": "adaptive", "inline": "container", "body": "position", "since": 6, "attrs": {
+    "rule": {"id": 7, "level": "block", "inline": "unsupported", "body": "none", "since": 6, "ctor": {"nullary": true}, "attrs": {}},
+    "group": {"id": 8, "level": "adaptive", "inline": "container", "body": "position", "since": 6, "ctor": {}, "attrs": {
       "role": {"dom": "ident"},
       "label": {"dom": "label"},
       "name": {"dom": "str"}}},
-    "table": {"id": 9, "level": "block", "inline": "unsupported", "body": "rows", "since": 6, "attrs": {
+    "table": {"id": 9, "level": "block", "inline": "unsupported", "body": "rows", "since": 6, "ctor": {"params": ["body"]}, "attrs": {
       "cols": {"dom": "int:1:64"},
       "align": {"dom": "token"},
       "label": {"dom": "label"}}},
-    "trow": {"id": 10, "level": "block", "inline": "unsupported", "body": "cells", "since": 6, "attrs": {}},
-    "tcell": {"id": 11, "level": "block", "inline": "unsupported", "body": "inline", "since": 6, "attrs": {}},
-    "term": {"id": 12, "level": "adaptive", "inline": "unsupported", "body": "inline", "since": 6, "attrs": {
+    "trow": {"id": 10, "level": "block", "inline": "unsupported", "body": "cells", "since": 6, "ctor": {"name": "row"}, "attrs": {}},
+    "tcell": {"id": 11, "level": "block", "inline": "unsupported", "body": "inline", "since": 6, "ctor": {"name": "cell"}, "attrs": {}},
+    "term": {"id": 12, "level": "adaptive", "inline": "unsupported", "body": "inline", "since": 6, "ctor": {"params": ["projected:name"]}, "attrs": {
       "name": {"dom": "str"}}},
-    "collect": {"id": 13, "level": "block", "inline": "unsupported", "body": "data", "since": 6, "attrs": {
+    "collect": {"id": 13, "level": "block", "inline": "unsupported", "body": "data", "since": 6, "ctor": {}, "attrs": {
       "what": {"dom": "enum:toc|glossary|notes|bibliography"},
       "form": {"dom": "enum:all"}}},
-    "mathblock": {"id": 14, "level": "block", "inline": "unsupported", "body": "none", "since": 6, "attrs": {
+    "mathblock": {"id": 14, "level": "block", "inline": "unsupported", "body": "none", "since": 6, "ctor": {"params": ["attr:src", "attr:label"]}, "attrs": {
       "src": {"dom": "str"},
       "label": {"dom": "label"}}},
-    "error": {"id": 15, "level": "adaptive", "inline": "error", "body": "none", "since": 6, "attrs": {
+    "error": {"id": 15, "level": "adaptive", "inline": "error", "body": "none", "since": 6, "ctor": {"params": ["attr:code", "attr:message"], "sealed": true}, "attrs": {
       "message": {"dom": "str"},
       "code": {"dom": "ident"}}},
-    "comment": {"id": 16, "level": "trivia", "inline": "skip", "body": "text", "since": 6, "attrs": {}},
-    "text": {"id": 17, "level": "inline", "inline": "text", "body": "none", "since": 6, "attrs": {}},
-    "styled": {"id": 18, "level": "transparent", "inline": "container", "body": "position", "since": 6, "attrs": {
+    "comment": {"id": 16, "level": "trivia", "inline": "skip", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
+    "text": {"id": 17, "level": "inline", "inline": "text", "body": "none", "since": 6, "ctor": {"params": ["text"], "sealed": true}, "attrs": {}},
+    "styled": {"id": 18, "level": "transparent", "inline": "container", "body": "position", "since": 6, "ctor": {}, "attrs": {
       "bits": {"dom": "flags:EM=2,BOLD=3,UNDER=16,OVER=17,STRIKE=18", "def": 0},
       "font": {"dom": "font"},
       "lang": {"dom": "lang"},
       "color": {"dom": "color"},
       "sizePx": {"dom": "num:1:2000"}}},
-    "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "attrs": {
+    "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "ctor": {"params": ["attr:url"]}, "attrs": {
       "url": {"dom": "url"}}},
-    "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "attrs": {}},
-    "ref": {"id": 21, "level": "inline", "inline": "container", "body": "none", "since": 6, "attrs": {
+    "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
+    "ref": {"id": 21, "level": "inline", "inline": "container", "body": "none", "since": 6, "ctor": {"params": ["attr:target"]}, "attrs": {
       "target": {"dom": "str"}}},
-    "mathinline": {"id": 22, "level": "inline", "inline": "object", "body": "none", "since": 6, "attrs": {
+    "mathinline": {"id": 22, "level": "inline", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:src"]}, "attrs": {
       "src": {"dom": "str"}}},
-    "raw": {"id": 23, "level": "block", "inline": "object", "body": "none", "since": 6, "attrs": {
+    "raw": {"id": 23, "level": "block", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:html"]}, "attrs": {
       "html": {"dom": "html"},
       "w": {"dom": "num:0:100000"},
       "h": {"dom": "num:0:100000"}}},
     "hardbreak": {"id": 24, "level": "inline", "inline": "break", "body": "none", "since": 6, "attrs": {}},
-    "seq": {"id": 25, "level": "transparent", "inline": "container", "body": "position", "since": 6, "attrs": {}},
-    "image": {"id": 26, "level": "block", "inline": "object", "body": "none", "since": 6, "attrs": {
+    "seq": {"id": 25, "level": "transparent", "inline": "container", "body": "position", "since": 6, "ctor": {"sealed": true}, "attrs": {}},
+    "image": {"id": 26, "level": "block", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:src"]}, "attrs": {
       "src": {"dom": "url"},
       "alt": {"dom": "str"},
       "w": {"dom": "num:0:100000"},
       "h": {"dom": "num:0:100000"},
       "scale": {"dom": "num:0:100"},
       "side": {"dom": "enum:left|right"}}},
-    "note": {"id": 27, "level": "inline", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}}
+    "note": {"id": 27, "level": "inline", "inline": "unsupported", "body": "blocks", "since": 6, "ctor": {}, "attrs": {}}
   },
+  "stdlib": {
+    "$comment": [
+      "The constructor ABI (plan P2-03; docs/ctor-design.md). A kind's \"ctor\" is its public constructor:",
+      "name (default: the kind), params bound left to right (attr:NAME[:DOMAIN] | projected:NAME | text |",
+      "lines | body), nullary (a bare #name calls it), sealed (no override); every attribute not bound",
+      "positionally is an option. Here: the derived constructors (kind: the node they make; options \"raw\":",
+      "the options object reaches the implementation unvalidated), the std functions and the option aliases.",
+      "The names reach the hole module and the manifest from these tables; the implementations live in",
+      "runtime/src/shared/stdlib.mjs."],
+    "aliases": {"float": "side", "width": "w", "height": "h"},
+    "ctors": {
+      "strong": {"kind": "styled"},
+      "em": {"kind": "styled"},
+      "style": {"kind": "styled", "options": "raw"},
+      "figure": {"kind": "group", "params": ["body"], "options": "raw"},
+      "toc": {"kind": "collect", "nullary": true},
+      "glossary": {"kind": "collect", "nullary": true},
+      "notes": {"kind": "collect", "nullary": true},
+      "bibliography": {"kind": "collect", "params": ["attr:src:str"], "options": "raw"},
+      "node": {"params": ["attr:kind:ident"], "options": "raw", "sealed": true}},
+    "functions": ["val", "m", "plain"]},
   "domains": {
     "$comment": [
       "Textual value domains (plan P1-02): a byte-level regular expression (whole-string match) and a",

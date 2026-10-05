@@ -3,16 +3,16 @@ piece 0 hole 0 js [103,210)
 block 0 content [0,60)
   CALL para [0,60)
     TEXT "A left float inside a list item (guard fixture, plan P0-01)." [0,60)
-block 1 content [62,449) user framed holes 0..1
-  CALL list [62,449) ordered=false start=1
+block 1 content [62,449) user framed async holes 0..1
+  CALL async list [62,449) ordered=false start=1
     CALL item [62,92)
       CALL para [64,92)
         TEXT "First item before the float." [64,92)
-    CALL item [93,419)
+    CALL async item [93,419)
       CALL para [95,130)
         TEXT "Second item holds a floated figure." [95,130)
-      FRAME [134,276) holes 0..1
-        REGION "figure" args=hole 0 [134,276)
+      FRAME async [134,276) holes 0..1
+        REGION async "figure" args=hole 0 [134,276)
           ROWS
             row
               TEXT "A small floated icon." [244,265)

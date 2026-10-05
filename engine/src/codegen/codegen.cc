@@ -5,18 +5,12 @@
 #include <iterator>
 
 #include "../inline/jslex.h"
+#include "stdnames.gen.h"
 
 namespace tsr {
 
 namespace {
 
-// Names user code sees (the hole module's outer scope: a #let shadows them;
-// a module destructures those its code mentions).
-const char* kUserCtors[] = {"para", "text", "em", "strong", "val", "m", "heading",
-                            "list", "item", "quote", "codeblock", "rule", "comment",
-                            "link", "code", "seq", "ref", "term", "toc", "glossary",
-                            "notes", "note", "bibliography", "style", "mathinline",
-                            "mathblock", "image"};
 
 // The holes of a subtree — splices, fence and region argument lists: the
 // user code a block runs itself. A block without any cannot throw, so it
@@ -124,7 +118,7 @@ struct Gen {
         span(n->span);
         return false;
       case AstKind::Comment:
-        return strCall("comment", n, "body", n->str);
+        return strCall("comment", n, "text", n->str);
       case AstKind::Call:
         return call(n);
       case AstKind::Splice:
@@ -337,7 +331,8 @@ struct Gen {
             a |= block(k);
           }
         }
-        return done(at, a);
+        (void)a;  // a region always awaits: its handler may be async (P2-03)
+        return done(at, true);
       }
       case SugarId::rule:
         callHead("rule", &n->span, 0);
@@ -450,13 +445,14 @@ Lowered codegen(const AstNode* doc, const SourceText& src, const Interner& strs)
   if (module) {
     std::string& js = L.js;
     std::vector<size_t> marks;  // byte offsets of each piece's start and end
-    // the std names the user code mentions (a name it never mentions cannot
-    // be referenced; a new constructor therefore changes no module)
-    std::vector<bool> used(std::size(kUserCtors), false);
+    // the std names the user code mentions (schema.json's constructors and
+    // std functions: stdnames.gen.h) — a name it never mentions cannot be
+    // referenced, so a new constructor changes no module
+    std::vector<bool> used(std::size(kStdNames), false);
     auto mark = [&](std::string_view code) {
       jsIdentsDeep(code, [&](std::string_view id) {
-        for (size_t i = 0; i < std::size(kUserCtors); i++)
-          if (id == kUserCtors[i]) used[i] = true;
+        for (size_t i = 0; i < std::size(kStdNames); i++)
+          if (id == kStdNames[i]) used[i] = true;
         return true;
       });
     };
@@ -464,10 +460,10 @@ Lowered codegen(const AstNode* doc, const SourceText& src, const Interner& strs)
     for (const Verbatim& v : verbatims) mark(v.text);
     appendf(js, "export const abi = 0x%08x;\nexport default async (__rt, $) => {\n", PROGRAM_ABI);
     std::string names;
-    for (size_t i = 0; i < std::size(kUserCtors); i++) {
+    for (size_t i = 0; i < std::size(kStdNames); i++) {
       if (!used[i]) continue;
       if (!names.empty()) names += ", ";
-      names += kUserCtors[i];
+      names += kStdNames[i];
     }
     if (!names.empty()) js += "const {" + names + "} = __rt.std;\n";
     js += "return (async () => {\n";

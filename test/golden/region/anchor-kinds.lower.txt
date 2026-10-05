@@ -8,15 +8,15 @@ block 0 content [0,14)
 block 1 content [22,77) user framed async holes 0..1
   REGION async "listing" args=hole 0 [22,77)
     FENCE async "python" body="x = 1" at=58 lines=null [48,67)
-block 2 content [79,161) user framed holes 1..2
-  REGION "aside" args=hole 1 [79,161)
+block 2 content [79,161) user framed async holes 1..2
+  REGION async "aside" args=hole 1 [79,161)
     CALL heading [103,119) level=2 label="sec-in"
       TEXT "Inner heading" [106,119)
     ROWS
       row
         TEXT "Body text of the aside." [130,153)
-block 3 content [163,216) user framed holes 2..3
-  REGION "aside" args=hole 2 [163,216)
+block 3 content [163,216) user framed async holes 2..3
+  REGION async "aside" args=hole 2 [163,216)
     CALL rule [188,191)
     ROWS
       row

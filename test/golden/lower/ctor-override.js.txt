@@ -1,0 +1,15 @@
+export const abi = 0x3c18dc46;
+export default async (__rt, $) => {
+const {group, strong} = __rt.std;
+return (async () => {
+const __h = [
+(__k) => ((strong)(...__k())),
+() => {
+ $.ctor("strong", (next) => (call, ctx) => group({role: "key"}, next(call, ctx))) 
+},
+(__k) => ((strong)(...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

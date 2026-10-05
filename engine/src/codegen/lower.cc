@@ -392,8 +392,9 @@ struct Walker {
           if (!value(depth + 1, a, true)) return false;
           kidsAwait |= a;
         }
-        kidsAwait |= argsAwait;
-        break;
+        (void)argsAwait;
+        if (!async) return fail("REGION must await");
+        return true;
       }
       case Lop::ROWS: {
         if (!rows) return fail("ROWS outside a REGION");

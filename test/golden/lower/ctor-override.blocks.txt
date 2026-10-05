@@ -1,0 +1,36 @@
+top pid=0 units=1
+ unit text indent=0su
+  word "Be" w=1025su pen=INF @[0,6)
+  hyphen bw=513su pen=0.70 @[0,6)
+  word "fore" w=2049su pen=INF @[0,6)
+  space w=257su stretch=1 @[0,6)
+  word "bold" w=2049su pen=INF BOLD @[8,14)
+  space w=257su stretch=1 BOLD @[8,14)
+  word "x" w=513su pen=INF BOLD @[8,14)
+top pid=1 units=1
+ unit text indent=0su
+  word "Be" w=1025su pen=INF @[17,23)
+  hyphen bw=513su pen=0.70 @[17,23)
+  word "fore" w=2049su pen=INF @[17,23)
+  space w=257su stretch=1 @[17,23)
+  word "bold" w=2049su pen=INF BOLD @[32,38)
+  space w=257su stretch=1 BOLD @[32,38)
+  word "x" w=513su pen=INF BOLD @[32,38)
+top pid=2 units=1
+ unit text indent=0su
+  word "Af" w=1025su pen=INF @[128,133)
+  hyphen bw=513su pen=0.70 @[128,133)
+  word "ter" w=1537su pen=INF @[128,133)
+  space w=257su stretch=1 @[128,133)
+  word "bold" w=2049su pen=INF BOLD @[135,141)
+  space w=257su stretch=1 BOLD @[135,141)
+  word "x" w=513su pen=INF BOLD @[135,141)
+top pid=3 units=1
+ unit text indent=0su
+  word "Af" w=1025su pen=INF @[144,149)
+  hyphen bw=513su pen=0.70 @[144,149)
+  word "ter" w=1537su pen=INF @[144,149)
+  space w=257su stretch=1 @[144,149)
+  word "bold" w=2049su pen=INF BOLD @[158,164)
+  space w=257su stretch=1 BOLD @[158,164)
+  word "x" w=513su pen=INF BOLD @[158,164)

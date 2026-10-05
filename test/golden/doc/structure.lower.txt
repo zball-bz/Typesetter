@@ -15,7 +15,7 @@ block 2 content [50,170)
     TEXT " and some " [118,126)
     CALL code [127,140) text="inline code"
     TEXT " in it." [141,147)
-    CALL comment [148,170) body=" invisible note "
+    CALL comment [148,170) text=" invisible note "
 block 3 content [172,296)
   CALL list [172,296) ordered=false start=1
     CALL item [172,228)

@@ -10,4 +10,4 @@ block 1 content [17,70)
 block 2 content [74,101) async
   FENCE async "js" body="let x = 1;\nx++" at=81 lines=null [74,101)
 block 3 content [105,134)
-  CALL comment [105,134) body=" a comment\nover lines "
+  CALL comment [105,134) text=" a comment\nover lines "
