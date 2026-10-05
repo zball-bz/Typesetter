@@ -7,6 +7,7 @@
 //
 // Consumed by the blog repo (zball-bz/zball-io): its CI downloads the
 // rolling `engine-dist` release asset and unpacks it into vendor/.
+import { MATH_FONT } from '../runtime/src/shared/mathfont.gen.mjs';
 import { rm, mkdir, cp, writeFile, readFile, readdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -23,7 +24,7 @@ const parts = [
   ['engine/build-wasm/typesetter.wasm', 'engine/build-wasm/typesetter.wasm'],
   ['runtime/src', 'runtime/src'],
   ['runtime/assets/hl', 'runtime/assets/hl'],
-  ['fonts/euler-math.woff2', 'fonts/euler-math.woff2'],
+  [MATH_FONT.file, MATH_FONT.file],  // the math font manifest (P1-23)
 ];
 for (const [from, to] of parts) {
   await mkdir(dirname(join(stage, to)), { recursive: true });

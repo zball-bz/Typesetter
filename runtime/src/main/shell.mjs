@@ -3,6 +3,7 @@
 // (v2 §9): semantic flow HTML paints first; the typeset result swaps in
 // keyed by data-pid, reporting old/new rects — scroll anchoring is the
 // caller's responsibility (the engine provides the information).
+import { MATH_FONT } from '../shared/mathfont.gen.mjs';
 import { installCopy } from './copy.mjs';
 import { settingsFromOptions, settingOf } from '../shared/settings.gen.mjs';
 
@@ -64,7 +65,7 @@ export const TSR_CSS = `
    positioned glyph runs in the bundled font; rules are painted boxes */
 .tsr-math { position: relative; display: inline-block; }
 .tsr-math .tsr-mg { position: absolute; white-space: pre;
-                    font-family: 'Euler Math', 'STIX Two Math', serif; }
+                    font-family: ${JSON.stringify(MATH_FONT.family)}; font-kerning: none; }
 .tsr-math .tsr-mr { position: absolute; background: currentColor; }
 /* names / operators / "text" in formulas: upright, in the body font (the
    engine measured them there) — Euler stays for variables and symbols */
@@ -91,10 +92,14 @@ export const TSR_CSS = `
     --tsr-tok-attribute: #dfb27a; --tsr-tok-label: #b794f6; } }
 `;
 
-// Bundled math font: metrics are precompiled (engine/gen/euler_math.h), so
-// layout never waits on this file — only paint does (font-display: block).
-export const TSR_MATH_FONT_URL =
-  new URL('../../../fonts/euler-math.woff2', import.meta.url).href;
+// The bundled math font (plan P1-23; the manifest mathfont.gen.mjs, written
+// by tools/mathc.py with the metrics artifact): a declared webfont of role
+// 'math', installed like every other declared face. Metrics are
+// precompiled, so layout never waits on the file — only paint does
+// (font-display: block). No fallback family: a missing glyph is the
+// engine's math-coverage diagnostic, never another font's ink.
+export const TSR_MATH_FONT_URL = new URL(`../../../${MATH_FONT.file}`, import.meta.url).href;
+const MATH_FONT_FACE = { family: MATH_FONT.family, src: TSR_MATH_FONT_URL, role: MATH_FONT.role };
 
 // Declared webfonts (pages-design.md §1): one @font-face per entry on the
 // paint side; the worker loads the same files into its own FontFaceSet so
@@ -208,11 +213,10 @@ function ensureCss() {
   if (cssInjected) return;
   const style = document.createElement('style');
   style.dataset.tsr = '1';
-  style.textContent = TSR_CSS +
-    `\n@font-face { font-family: 'Euler Math'; src: url('${TSR_MATH_FONT_URL}')` +
-    ` format('woff2'); font-display: block; }`;
+  style.textContent = TSR_CSS;
   document.head.appendChild(style);
   cssInjected = true;
+  ensureFontFaces([MATH_FONT_FACE]);
 }
 
 export function createEngine(opts = {}) {

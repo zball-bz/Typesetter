@@ -30,6 +30,7 @@ add_library(tsr_core STATIC
   src/code/tokens.cc
   src/code/sidecars.cc
   src/math/math.cc
+  src/math/font.cc
   src/resolve/resolve.cc
   src/resource/codec.cc
   src/resource/resource_table.cc

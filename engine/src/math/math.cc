@@ -5,13 +5,13 @@
 #include "math.h"
 
 #include "dict.h"
-#include "mathfont.h"
+#include "font.h"
 
 namespace tsr {
 
 namespace {
 
-using namespace mathfont;
+using mathfont::kNoTopAccent;
 
 std::string cpToUtf8(u32 cp) {
   std::string s;
@@ -41,9 +41,18 @@ constexpr u8 kDenStyle[8] = {Tc, Tc, Sc, Sc, SSc, SSc, SSc, SSc};
 inline bool isCramped(u8 st) { return st & 1; }
 inline bool isScriptStyle(u8 st) { return st >= S; }
 inline bool isDisplay(u8 st) { return st <= Dc; }
+inline std::string hexCp(u32 cp) {
+  char buf[16];
+  std::snprintf(buf, sizeof buf, "%04X", cp);
+  return buf;
+}
+
+// the primary math font (plan P1-23: a runtime object; it supplies every
+// MATH constant)
+inline const MathFont& primaryFont() { return MathFontRegistry::get().primary(); }
 inline double styleScale(u8 st) {
-  if (st >= SS) return mathConst(C::ScriptScriptPercentScaleDown) / 100.0;
-  if (st >= S) return mathConst(C::ScriptPercentScaleDown) / 100.0;
+  if (st >= SS) return primaryFont().constant(C::ScriptScriptPercentScaleDown) / 100.0;
+  if (st >= S) return primaryFont().constant(C::ScriptPercentScaleDown) / 100.0;
   return 1.0;
 }
 
@@ -523,6 +532,7 @@ struct Layouter {
   double basePx;
   bool coverageWarned = false;
   const MeasureNeeds* text = nullptr;  // text-font runs (nullptr = Euler only)
+  const MathFont& F = primaryFont();
 
   MathBox* mkBox(MathKind k) {
     MathBox* b = arena.make<MathBox>();
@@ -530,15 +540,15 @@ struct Layouter {
     return b;
   }
 
-  Su toSu(double units, u8 st) { return mathSu(units, basePx * styleScale(st)); }
-  Su constSu(C c, u8 st) { return toSu(mathConst(c), st); }
+  Su toSu(double units, u8 st) { return F.su(units, basePx * styleScale(st)); }
+  Su constSu(C c, u8 st) { return toSu(F.constant(c), st); }
 
   const GlyphRec* rec(u32 cp) {
-    const GlyphRec* r = mathGlyph(cp);
+    const GlyphRec* r = F.glyph(cp);
     if (!r && !coverageWarned) {
       coverageWarned = true;
       diags.add(Sev::Warning, "math-coverage", span,
-                "symbol U+" + std::to_string(cp) + " not in math font");
+                "symbol U+" + hexCp(cp) + " not in math font");
     }
     return r;
   }
@@ -556,8 +566,8 @@ struct Layouter {
       b->topAccent = r->topAccent != kNoTopAccent ? toSu(r->topAccent, st)
                                                   : (b->w + b->italic) / 2;
     } else {
-      b->w = toSu(600, st);
-      b->asc = toSu(700, st);
+      b->w = toSu(kMathPolicy.missingAdvU, st);
+      b->asc = toSu(kMathPolicy.missingAscU, st);
       b->topAccent = b->w / 2;
     }
     return b;
@@ -579,7 +589,7 @@ struct Layouter {
     }
     const WordMet& wm = text->metrics->word(ref, sid);
     const VMet& vm = text->metrics->vmet(sid);
-    b->textFont = true;
+    b->font = kTextFont;
     b->w = suCeilPx(wm.px);
     b->asc = vm.ascent;
     b->desc = vm.descent;
@@ -602,12 +612,12 @@ struct Layouter {
       u32 cp = utf8Next(txt, i);
       // a text-font run measured on a later pass: the Euler stand-in must
       // not raise coverage warnings for glyphs it will never paint
-      if (const GlyphRec* r = textFont ? mathGlyph(cp) : rec(cp)) {
+      if (const GlyphRec* r = textFont ? F.glyph(cp) : rec(cp)) {
         advU += r->adv;
         if (r->asc > ascU) ascU = r->asc;
         if (r->desc > descU) descU = r->desc;
         italU = r->italic;
-      } else advU += 600;
+      } else advU += kMathPolicy.missingAdvU;
     }
     b->w = toSu(advU, st);
     b->asc = toSu(ascU, st);
@@ -629,23 +639,23 @@ struct Layouter {
   MathBox* stretchVert(u32 cp, u8 cls, u8 st, Su target) {
     MathBox* natural = glyphBox(cp, cls, st);
     if (natural->asc + natural->desc >= target) return natural;
-    const VarChain* ch = mathChain(cp);
+    const VarChain* ch = F.chain(cp);
     if (!ch) return natural;
     MathBox* best = natural;
     for (int k = 0; k < ch->n; k++) {
-      u32 vcp = kVariantCps[ch->off + k];
+      u32 vcp = F.variantCps[ch->off + k];
       MathBox* vb = glyphBox(vcp, cls, st);
       best = vb;
       if (vb->asc + vb->desc >= target) return vb;
     }
     if (ch->asmN == 0) return best;
     // assembly, font units first (bottom-to-top part order per OpenType)
-    const AsmPart* parts = &kAsmParts[ch->asmOff];
-    const int minOv = kMinConnectorOverlap;
-    double targetU = (double)target * kUpem /
+    const AsmPart* parts = &F.parts[ch->asmOff];
+    const int minOv = F.minConnectorOverlap;
+    double targetU = (double)target * F.upem /
                      (64.0 * basePx * styleScale(st));  // su → design units
     std::vector<const AsmPart*> list;
-    for (int r = 1; r <= 64; r++) {
+    for (int r = 1; r <= kMathPolicy.maxAssemblyRepeats; r++) {
       list.clear();
       for (int k = 0; k < ch->asmN; k++) {
         int copies = parts[k].isExtender ? r : 1;
@@ -708,7 +718,7 @@ struct Layouter {
     if ((v & 4) && isScriptStyle(st)) return 0;
     int mu = kMuOf[v & 3];
     if (mu == 0) return 0;
-    return toSu(mu * (double)kUpem / 18.0, st);
+    return toSu(mu * (double)F.upem / 18.0, st);
   }
 
   MathBox* layout(MNode* n, u8 st) {
@@ -920,7 +930,7 @@ struct Layouter {
     Su axis = constSu(C::AxisHeight, st);
     Su over = iAsc - axis, under = iDesc + axis;
     Su target = 2 * (over > under ? over : under);
-    target -= target / 10;  // short_fall
+    target = kMathPolicy.shortfall(target);  // short_fall
     auto delim = [&](u32 cp, u8 cls) {
       MathBox* g = glyphBox(cp, cls, st);
       if (g->asc + g->desc >= target) return g;  // natural glyph suffices
@@ -1033,7 +1043,7 @@ struct Layouter {
       Su kb = constSu(C::RadicalKernBeforeDegree, st);
       Su ka = constSu(C::RadicalKernAfterDegree, st);  // typically negative
       Su raise = (Su)((i64)surdH *
-                      mathConst(C::RadicalDegreeBottomRaisePercent) / 100);
+                      F.constant(C::RadicalDegreeBottomRaisePercent) / 100);
       Su degDy = -below + raise + deg->desc;
       out->kids.push_back({kb, degDy, deg});
       x = kb + deg->w + ka;
@@ -1064,7 +1074,7 @@ struct Layouter {
     // for f-like glyphs whose ink centre leads the advance centre)
     Su baseAttach = base->topAccent;
     if (baseN->kids.size() == 1 && baseN->kids[0]->k == MNode::Atom) {
-      if (const GlyphRec* r = mathGlyph(baseN->kids[0]->cp))
+      if (const GlyphRec* r = F.glyph(baseN->kids[0]->cp))
         if (r->topAccent != kNoTopAccent) baseAttach = toSu(r->topAccent, st);
     }
     MathBox* acc = glyphBox(accCp, kOrd, st);
@@ -1114,7 +1124,7 @@ struct Layouter {
     Su axis = constSu(C::AxisHeight, st);
     Su over = stack->asc - axis, under = stack->desc + axis;
     Su target = 2 * (over > under ? over : under);
-    target -= target / 10;
+    target = kMathPolicy.shortfall(target);
     MathBox* open = centerOnAxis(stretchVert('(', kOpen, st, target), kOpen, st);
     MathBox* close = centerOnAxis(stretchVert(')', kClose, st, target), kClose, st);
     MathBox* out = mkBox(MathKind::HBox);

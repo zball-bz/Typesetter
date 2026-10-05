@@ -261,8 +261,22 @@ down.**
   the box, `vertical-align: -descent` pins the engine baseline to the text
   baseline — the same trick as KaTeX's strut, but on one box, computed by
   us, not fought out of line-height.
+- The font is a runtime object (plan P1-23; `math/font.h`): a process-wide
+  `MathFontRegistry` holds `MathFont`s (Euler-Math, embedded, is id 0) and
+  the layouter reads every constant, glyph record and chain from it; a
+  glyph box records the font it is painted in (`MathBox::font`, or
+  `kTextFont` for names measured by the host), and the writer pins a glyph
+  span by that font's hhea line box from the registry. Today's literals are
+  `MathPolicy` (the short_fall 1/10 as an integer rational, the assembly
+  repeat cap, the uncovered glyph's stand-in box). `tools/mathc.py` also
+  writes the paint subset (`fonts/euler-math.woff2`: the glyph record set
+  plus U+0020) and its content hash into the header and the font manifest
+  `runtime/src/shared/mathfont.gen.mjs`, which the shell installs as a
+  declared face of role `math` (no second @font-face path, no fallback
+  family) and static export and packaging copy.
 - Children paint glyphs by **codepoint** (guaranteed addressable, §1) in
-  `@font-face` Euler-Math, one positioned span per glyph (coalescing
+  Euler-Math (`font-kerning: none`: the engine's advances are the layout),
+  one positioned span per glyph (coalescing
   same-style glyphs into runs was planned and not done) at our advances (`text-rendering: geometricPrecision`; the font
   is bundled, so browser advances == artifact advances — same file). Rules
   are background-colored divs.
@@ -328,7 +342,11 @@ decisions:
   diverges from Typst's, so translation is per-construct opt-in).
 - e2e: baseline-alignment audit (math box baseline vs adjacent text baseline
   within ε), plus the existing right-edge/line-integrity audits over
-  math-bearing fixtures; one visual specimen page per milestone.
+  math-bearing fixtures; one visual specimen page per milestone. As built
+  (plan P1-23): `math: font, glyph coverage and baseline audit` — the one
+  declared math face is loaded, every glyph span is set in it with kerning
+  off and covered by it, U+0020 is covered, and every inline formula's
+  baseline lies within 0.5px of its line's text baseline.
 
 ## 12. Milestones inside M7
 

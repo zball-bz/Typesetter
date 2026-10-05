@@ -12,6 +12,9 @@ inline constexpr int kAscender = 800;
 inline constexpr int kDescender = 200;
 inline constexpr int kMinConnectorOverlap = 20;
 inline constexpr int16_t kNoTopAccent = -32768;
+// the paint side: the family and the woff2 it paints with (fonts/euler-math.woff2)
+inline constexpr const char* kFamily = "Euler Math";
+inline constexpr uint64_t kContentHash = 0xB8A46FF5BB595211ull;
 
 // OpenType MATH constants, spec order.
 enum class C : uint8_t {

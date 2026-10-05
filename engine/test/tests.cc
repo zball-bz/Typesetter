@@ -21,7 +21,7 @@
 #include "../src/semantic/terms.h"
 #include "semantic_data.gen.h"
 #include "../src/math/dict.h"
-#include "../src/math/mathfont.h"
+#include "../src/math/font.h"
 #include "../src/api/driver.h"
 #include "../src/emit/legacy.h"
 #include "../src/render/html_writer.h"
@@ -114,19 +114,21 @@ static void unitMock() {
 }
 
 static void unitMathFont() {
-  using namespace mathfont;
+  // the MathFont object (plan P1-23): Euler-Math is the registry's id 0
+  const MathFont& F = MathFontRegistry::get().primary();
+  CHECK(F.id == 0 && F.family == "Euler Math" && F.contentHash != 0 && MathFontRegistry::get().byId(0) == &F);
   // constants sanity against fontTools-inspected values (Euler-Math 0.75)
-  CHECK(kUpem == 1000);
-  CHECK(mathConst(C::AxisHeight) == 250);
-  CHECK(mathConst(C::DisplayOperatorMinHeight) == 1130);
-  CHECK(mathConst(C::ScriptPercentScaleDown) > 0 &&
-        mathConst(C::ScriptPercentScaleDown) <= 100);
-  CHECK(kMinConnectorOverlap == 20);
+  CHECK(F.upem == 1000);
+  CHECK(F.constant(C::AxisHeight) == 250);
+  CHECK(F.constant(C::DisplayOperatorMinHeight) == 1130);
+  CHECK(F.constant(C::ScriptPercentScaleDown) > 0 &&
+        F.constant(C::ScriptPercentScaleDown) <= 100);
+  CHECK(F.minConnectorOverlap == 20);
   // glyph lookup
-  const GlyphRec* x = mathGlyph('x');
+  const GlyphRec* x = F.glyph('x');
   CHECK(x && x->adv > 0 && x->asc > 0);
-  CHECK(mathGlyph(0x2211) != nullptr);           // ∑
-  CHECK(mathGlyph(0x10FFFF) == nullptr);
+  CHECK(F.glyph(0x2211) != nullptr);           // ∑
+  CHECK(F.glyph(0x10FFFF) == nullptr);
   // the vocabulary (plan P1-22: MathDict, font-independent)
   const SymbolInfo* sum = MathDict::byName("sum");
   CHECK(sum && sum->cp == 0x2211 && sum->cls == kOp &&
@@ -155,18 +157,18 @@ static void unitMathFont() {
   }
 
   // variant chain: '(' has a growing chain plus a 3-part assembly
-  const VarChain* paren = mathChain('(');
+  const VarChain* paren = F.chain('(');
   CHECK(paren && paren->n >= 4 && paren->asmN == 3);
-  CHECK(mathChain('x') == nullptr);
+  CHECK(F.chain('x') == nullptr);
   // every chain/assembly cp has a glyph record (renderer paints by cp)
-  for (int i = 0; i < kVertChainCount; i++) {
-    const VarChain& c = kVertChains[i];
-    for (int k = 0; k < c.n; k++) CHECK(mathGlyph(kVariantCps[c.off + k]) != nullptr);
-    for (int k = 0; k < c.asmN; k++) CHECK(mathGlyph(kAsmParts[c.asmOff + k].cp) != nullptr);
+  for (int i = 0; i < F.vertCount; i++) {
+    const VarChain& c = F.vert[i];
+    for (int k = 0; k < c.n; k++) CHECK(F.glyph(F.variantCps[c.off + k]) != nullptr);
+    for (int k = 0; k < c.asmN; k++) CHECK(F.glyph(F.parts[c.asmOff + k].cp) != nullptr);
   }
   // su conversion: 1em at 16px = 1024 su
-  CHECK(mathSu(1000, 16) == 1024);
-  CHECK(mathSu(250, 16) == 256);  // axis height = 4px
+  CHECK(F.su(1000, 16) == 1024);
+  CHECK(F.su(250, 16) == 256);  // axis height = 4px
 }
 
 static std::string mathDump(const char* src) {
@@ -511,7 +513,7 @@ static void unitMathGlyphs(const fs::path& root) {
     at = nl == std::string::npos ? base.size() : nl + 1;
     if (line.empty() || line[0] == '#') continue;
     n++;
-    if (!mathGlyph((u32)std::stoul(line, nullptr, 16))) missing++;
+    if (!MathFontRegistry::get().primary().glyph((u32)std::stoul(line, nullptr, 16))) missing++;
   }
   CHECK(n > 2000 && missing == 0);
 }

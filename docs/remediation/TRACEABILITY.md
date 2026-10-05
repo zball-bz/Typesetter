@@ -1253,7 +1253,7 @@ Theme steps: — · findings: 1
 | `math/prime-then-script-degrades` | issue | medium | P1-24 | |
 | `math/bracket-shedding-any-group` | issue | medium | P3-24 | |
 | `math/call-arity-silent` | issue | medium | P1-24 | |
-| `math/exactness-gaps-paint` | issue | medium | P1-23 | |
+| `math/exactness-gaps-paint` | issue | medium | P1-23 | grep:plan P1-23 |
 | `math/spacing-edge-classes` | issue | low | P3-25 | |
 | `math/diag-quality` | issue | low | P1-24 | |
 | `math/dead-data-and-params` | issue | low | P1-22 | grep:plan P1-22 |

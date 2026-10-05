@@ -122,6 +122,51 @@ test('math copies as source text', async ({ page }) => {
   expect(text).toContain('面积为');
 });
 
+// plan P1-23 (math-design §11): the math font paints exactly what the engine
+// laid out — installed as a declared face of role 'math', every glyph span in
+// it (no fallback family), kerning off, the space present for degraded
+// formulas, and an inline formula's baseline on its line's text baseline
+test('math: font, glyph coverage and baseline audit', async ({ page }) => {
+  const source = '设 $x^2 + y_1 = z$ 且 $f(x) = sum_(i=1)^n a_i$ 成立，另有 $a +$ 与正文。';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, { widthPx: 400 }), { source });
+  const r = await page.evaluate(async () => {
+    await document.fonts.ready;
+    const glyphs = [...document.querySelectorAll('.tsr-math .tsr-mg:not(.tsr-mt)')];
+    const bad = [];
+    for (const g of glyphs) {
+      const cs = getComputedStyle(g);
+      if (cs.fontKerning !== 'none') bad.push('kerning ' + g.textContent);
+      if (!/Euler Math/.test(cs.fontFamily) || /STIX|serif/.test(cs.fontFamily)) bad.push('family ' + cs.fontFamily);
+      if (!document.fonts.check(`${cs.fontSize} "Euler Math"`, g.textContent)) bad.push('coverage ' + g.textContent);
+    }
+    // the baseline of an inline formula: its box bottom minus its depth
+    // (vertical-align: -depth) must sit on the text baseline (a zero-height
+    // inline-block's bottom) of its line
+    const drift = [];
+    for (const m of document.querySelectorAll('.tsr-line > .tsr-math, .tsr-line > span > .tsr-math')) {
+      if (m.style.position === 'absolute') continue;  // display formulas sit in their row
+      const probe = document.createElement('span');
+      probe.style.cssText = 'display:inline-block;width:0;height:0';
+      m.after(probe);
+      const depth = -parseFloat(m.style.verticalAlign || '0');
+      const mathBase = m.getBoundingClientRect().bottom - depth;
+      drift.push(Math.abs(mathBase - probe.getBoundingClientRect().bottom));
+      probe.remove();
+    }
+    const faces = [...document.fonts].filter((f) => f.family.replace(/"/g, '') === 'Euler Math');
+    return { glyphs: glyphs.length, bad, drift, loaded: faces.map((f) => f.status),
+             space: document.fonts.check('16px "Euler Math"', ' ') };
+  });
+  expect(r.glyphs).toBeGreaterThan(10);
+  expect(r.loaded).toEqual(['loaded']);  // one declared face (role 'math'), loaded
+  expect(r.bad).toEqual([]);
+  expect(r.space).toBe(true);
+  expect(r.drift.length).toBeGreaterThan(1);
+  for (const d of r.drift) expect(d).toBeLessThan(0.5);
+});
+
 test('code font features configurable per language', async ({ page }) => {
   const source = '```js\nconst a = 1;\n```\n\n```json\n{"k": 1}\n```';
   await page.goto('/test/e2e/harness.html');

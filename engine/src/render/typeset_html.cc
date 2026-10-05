@@ -2,7 +2,8 @@
 
 #include <cstring>
 
-#include "../math/mathfont.h"
+#include "../math/font.h"
+#include "../math/math.h"
 #include "html_writer.h"
 #include "style_css.gen.h"
 
@@ -47,14 +48,15 @@ static void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
       const double px = (double)b->px;
       // text-font run (names/operators): the box carries the body font's
       // ascent/descent from the host measurer; the span's line box equals
-      // the content area so the baseline lands exactly at `base`
-      const double fA = b->textFont ? suToPx(b->asc)
-                                    : (double)mathfont::kAscender * px / mathfont::kUpem;
-      const double fH = b->textFont
-          ? suToPx(b->asc + b->desc)
-          : (double)(mathfont::kAscender + mathfont::kDescender) * px / mathfont::kUpem;
+      // the content area so the baseline lands exactly at `base`. A math
+      // font's glyph is pinned by its hhea line box (the registry's)
+      const bool text = b->font == kTextFont;
+      const MathFont* mf = text ? nullptr : MathFontRegistry::get().byId(b->font);
+      if (!text && !mf) mf = &MathFontRegistry::get().primary();
+      const double fA = text ? suToPx(b->asc) : (double)mf->hheaAsc * px / mf->upem;
+      const double fH = text ? suToPx(b->asc + b->desc) : (double)(mf->hheaAsc + mf->hheaDesc) * px / mf->upem;
       Tag t(out, "span");
-      t.attrSafe("class", b->textFont ? "tsr-mg tsr-mt" : "tsr-mg");
+      t.attrSafe("class", text ? "tsr-mg tsr-mt" : "tsr-mg");
       t.px("left", suToPx(x)).px("top", suToPx(base) - fA).px("font-size", px).px("line-height", fH);
       t.open();
       escapeHtml(out, strs.get(b->text));

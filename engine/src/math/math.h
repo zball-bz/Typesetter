@@ -27,7 +27,8 @@ struct MathBox {
   Su topAccent = 0;           // top-accent attachment x (default w/2 at build)
   StrRef text = 0;            // Glyph: UTF-8 character(s) to paint
   float px = 0;               // Glyph: font-size for emission (style-scaled)
-  bool textFont = false;      // Glyph: painted in the TEXT font (names, operators)
+  u16 font = 0;               // Glyph: its MathFont id (math/font.h), or kTextFont:
+                              //   the document's text font (names, operators)
   std::vector<MathKid> kids;  // HBox children
 };
 

@@ -8,6 +8,7 @@
 //                                 [--settings site.json]
 // --settings: the settings document (docs/settings-table.md) — document
 // language, fonts, sizes — used for the static page and passed to hydration.
+import { MATH_FONT } from '../runtime/src/shared/mathfont.gen.mjs';
 import { readFile, writeFile, mkdir, cp, access } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -93,7 +94,7 @@ if (hydrate) {
   await mkdir(join(assets, 'engine/build-wasm'), { recursive: true });
   for (const f of ['typesetter.js', 'typesetter.wasm'])
     await cp(join(root, 'engine/build-wasm', f), join(assets, 'engine/build-wasm', f));
-  await cp(join(root, 'fonts/euler-math.woff2'), join(assets, 'fonts/euler-math.woff2'));
+  await cp(join(root, MATH_FONT.file), join(assets, MATH_FONT.file));  // the math font manifest (P1-23)
   try {
     await access(join(root, 'runtime/assets/hl'));
     await cp(join(root, 'runtime/assets/hl'), join(assets, 'runtime/assets/hl'),
