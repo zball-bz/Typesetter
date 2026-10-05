@@ -1,0 +1,37 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,66)
+    paragraph para unit=0 @[0,66)
+top pid=1 leaves=1
+  stack root gap=1/1 @[68,119)
+    paragraph para unit=0 @[68,119)
+top pid=2 leaves=1
+  stack root gap=1/1 @[121,184)
+    paragraph para unit=0 @[121,184)
+top pid=3 leaves=1
+  stack root gap=1/1 @[186,278)
+    paragraph para unit=0 @[186,278)
+top pid=4 leaves=1
+  stack root gap=1/1 @[280,345)
+    paragraph para unit=0 @[280,345)
+top pid=5 leaves=1
+  stack root gap=1/1 @[347,406)
+    paragraph para unit=0 @[347,406)
+top pid=6 leaves=1
+  stack root gap=1/1 @[408,495)
+    paragraph para unit=0 @[408,495)
+top pid=7 leaves=1
+  stack root gap=1/1 @[497,506)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="tgt" @[497,506)
+top pid=8 leaves=1
+  stack root gap=1/1 @[514,529)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="a]b" @[514,529)
+top pid=9 leaves=1
+  stack root gap=1/1 @[537,582)
+    paragraph para unit=0 @[537,582)
+top pid=10 leaves=2
+  stack root gap=1/1 @[0,582)
+    stack group @[0,582)
+      replaced rule rule unit=0 @[0,582)
+      stack list pad=1536su gap=1/3 @[0,582)
+        stack item x=1536su @[35,44)
+          paragraph para unit=1 x=1536su anchor="fn-1" marker="1." @[35,44)

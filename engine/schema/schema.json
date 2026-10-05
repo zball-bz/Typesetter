@@ -251,6 +251,7 @@
       "def": 18,
       "prec": "HostDefault",
       "affects": [
+        "BoxTree",
         "Emit",
         "Measure",
         "Layout",
@@ -348,6 +349,7 @@
       "def": 0,
       "prec": "HostDefault",
       "affects": [
+        "BoxTree",
         "Emit"
       ],
       "legacy": "paraIndentEm"
@@ -358,7 +360,7 @@
       "def": 1.5,
       "prec": "HostDefault",
       "affects": [
-        "Emit"
+        "BoxTree"
       ]
     },
     "quote.indent": {
@@ -367,7 +369,7 @@
       "def": 1.0,
       "prec": "HostDefault",
       "affects": [
-        "Emit"
+        "BoxTree"
       ]
     },
     "cjk.punctCompress": {
@@ -479,6 +481,7 @@
       "def": 0.85,
       "prec": "HostDefault",
       "affects": [
+        "BoxTree",
         "Emit",
         "Layout"
       ]

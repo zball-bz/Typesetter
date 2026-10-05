@@ -1,0 +1,7 @@
+instance heading 1 level=1 label=top title="Anchor kinds" @[0,14)
+instance heading 1.1 level=2 label=sec-in title="Inner heading" @[103,119)
+label top -> heading 1 @[0,14)
+label lst-a -> (unnumbered) @[22,77)
+label box-b -> (unnumbered) @[79,161)
+label sec-in -> heading 1.1 @[103,119)
+label rule-c -> (unnumbered) @[163,216)

@@ -1,0 +1,11 @@
+doc @[0,259)
+  heading1 @[0,14) label="top"
+  region @[22,77) name="listing"
+    fence @[48,67) lang="python" lines=1
+  region @[79,161) name="aside"
+    heading2 @[103,119) label="sec-in"
+    para @[130,153) lines=1
+  region @[163,216) name="aside"
+    rule @[188,191)
+    para @[193,208) lines=1
+  para @[218,258) lines=1

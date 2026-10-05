@@ -34,6 +34,8 @@ const AUDIT_XFAIL = new Map([
 const EXPECTED_DIAGS = new Map([
   ['doc/url-overlong', /^warning overfull-line [^\n]*\n$/],  // two 500px URL segments at 300px
   ['region/hott-row', /^warning overfull-line [^\n]*\n$/],   // a formula in a 47px table cell
+  // references to unnumbered regions show their label text (plan P1-18 anchors)
+  ['region/anchor-kinds', /^(info ref-unnumbered [^\n]*\n){3}$/],
 ]);
 
 for (const f of fixtures) {

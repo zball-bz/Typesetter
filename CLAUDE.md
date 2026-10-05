@@ -11,10 +11,12 @@ release).
 ```
 engine/src/        C++ core: api/ (Doc, wasm_api.cc) · ops/ (generated from
                    engine/schema/schema.json = single source of truth) · markup/inline/codegen · resolve/ ·
-                   shape/ (TextRules, HList item lists) · emit/ (HLists; legacy.cc =
-                   fuseLegacy's CI oracle until P4-02) ·
-                   break/ (Knuth–Plass) · layout/ · render/ (typeset + semantic +
-                   paged serializers) · math/ · code/ (token fold)
+                   shape/ (TextRules, HList item lists) · boxtree/ (LayoutBlocks,
+                   traits, roles, anchors) · emit/ (leaf content: HLists, payloads;
+                   legacy.cc = fuseLegacy's CI oracle until P4-02) ·
+                   break/ (Knuth–Plass) · layout/ (layouters → fragments,
+                   paginate) · paint/ (DisplayList) · render/ (stateless
+                   typeset/paged writer + semantic) · math/ · code/ (token fold)
 engine/test/       native runner (unit + goldens); engine/gen/ generated tables
 runtime/src/       worker/ (executor, canvas measure, tokens) · main/ (shell.mjs,
                    copy, audit) · node/render.mjs (renderTsm for SSGs) · shared/ops
@@ -33,7 +35,8 @@ apps/playground    minimal engine host page
 ## Pipeline (docs/architecture.md)
 
 markup → linepass → inline → codegen (JS) → executor (ops v5) → ingest →
-resolver → emit → KP break → layout → render. Measurement is a **pull loop**:
+resolver → box tree → emit → layout (KP break inside) → paginate → paint →
+render. Measurement is a **pull loop**:
 `tsr_typeset()` returns NEED_MEASURE and the host answers word widths,
 tokens, and image dims until it converges. Nothing in `engine/src` outside
 `api/` may assume a browser.

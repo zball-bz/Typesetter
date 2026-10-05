@@ -1,0 +1,20 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,108)
+    paragraph para unit=0 @[0,108)
+top pid=1 leaves=1
+  stack root gap=1/1 @[110,236)
+    stack figure anchor="fig-a" @[110,236)
+      replaced image float unit=0 float=right carry="fig-a" @[0,0)
+top pid=2 leaves=1
+  stack root gap=1/1 @[238,385)
+    stack figure anchor="fig-b" @[238,385)
+      replaced image float unit=0 float=right carry="fig-b" @[0,0)
+top pid=3 leaves=1
+  stack root gap=1/1 @[387,411)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-0.1" @[387,411)
+top pid=4 leaves=1
+  stack root gap=1/1 @[413,755)
+    paragraph para unit=0 @[413,755)
+top pid=5 leaves=1
+  stack root gap=1/1 @[757,901)
+    paragraph para unit=0 @[757,901)

@@ -4,11 +4,16 @@
 // M2: Latin words + spaces + hyphen points, links, inline/block code,
 // headings (size-composed styles), list markers, quote indents, rules.
 #pragma once
+#include <variant>
+
 #include "../math/math.h"
 #include "../measure/measure.h"
 #include "../shape/hlist.h"
 
 namespace tsr {
+
+struct ContentNode;
+struct ContentTree;
 
 enum : u16 {
   BF_SPACE = 1,        // trimmed at line edges; carries stretch (unless punct)
@@ -91,79 +96,87 @@ inline void resolveImageSize(const ImageSize& s, double measurePx, Su& w, Su& h)
   h = suRoundPx(dh);
 }
 
-// One table cell: its own miniature block stream, broken to the cell width
-// by the same KP breaker (document-model §6; alignment is layout-side).
-struct TableCell {
+// One shaped inline stream (plan P1-18): a paragraph's, a table cell's, a
+// float caption row's or a sidecar row's — the item list KP breaks and
+// layout materializes (document-model §6; alignment is layout-side).
+struct Flow {
   HList hl;
   StrRef anchor = 0;  // a label inside it (an inline labelled group): its first line's id
   std::vector<BreakBlock> blocks;  // fuseLegacy(hl), for the legacy breaker
   std::vector<u32> blockStart;     // block b = hl.items [blockStart[b], blockStart[b+1])
   std::vector<LinebreakBlock> legacy;  // MIGRATION: the legacy emitter's blocks (fuseCheck)
 };
+using TableCell = Flow;
 
-struct FlowUnit {
-  enum class K : u8 { Text, Code, Rule, Raw, Table, Math, Image } kind = K::Text;
-  const ContentNode* src = nullptr;
-  Su indent = 0;
-  bool tightAbove = false;  // list-item start: reduced inter-unit gap
-  bool ragged = false;      // display unit (heading): no justify, no hyphens
-  bool centered = false;    // figure caption: line slack split both sides
-  StrRef anchor = 0;  // label anchor: first line renders id="tsr-<label>"
-  StrRef marker = 0;  // list marker text (0 = none), rendered in the gutter
-  StyleId markerStyle = 0;
+// The typed payloads of a leaf (plan P1-18; findings
+// emitter/flowunit-kind-switch, break-layout-pages/unit-kind-switch): what
+// emit shapes besides inline streams, one type per kind of content. Which
+// layouter reads it is the box tree's (boxtree/block.h), never a kind switch.
+struct RuleData {};
+// one code line = a sequence of styled runs (CH1); plain code is a single
+// run per line
+struct CodeRun {
+  StrRef text = 0;
+  StyleId style = 0;
+  bool isComment = false;  // comment-aware hanging (verbatim-design §4)
+};
+struct GridData {  // a code block (verbatim-design.md)
   StyleId codeStyle = 0;
-  // one Code line = a sequence of styled runs (CH1); plain code is a
-  // single run per line. Replaces the old per-line StrRef list.
-  struct CodeRun {
-    StrRef text = 0;
-    StyleId style = 0;
-    bool isComment = false;  // comment-aware hanging (verbatim-design §4)
-  };
-  std::vector<std::vector<CodeRun>> codeRuns;
+  std::vector<std::vector<CodeRun>> lines;
   // CH4 grid: monospace is a METRIC CONTRACT — every char is 1ch (CJK 2ch),
   // the engine measures exactly one thing per code style: ch itself ("0").
-  bool codeWrap = true;      // absolute lines have no scroll container
+  bool wrap = true;          // absolute lines have no scroll container
   StrRef chRef = 0;          // interned "0" (the Latin ch probe)
   StrRef cjkChRef = 0;       // interned "中" (measured CJK width — no more
                              //   assumed 2:1; budget uses the real ratio)
-  StrRef codeLang = 0;       // language tag (font-feature selection)
-  bool sidecar = false;      // sidecar rows in `cells` (one per line); the
-                             //   column width is layout's (code.sidecarFrac)
-  i32 codeLineNo = 0;        // 0 = no numbers; else first line number
+  StrRef lang = 0;           // language tag (font-feature selection)
+  bool sidecar = false;      // sidecar rows in the unit's cells (one per
+                             //   line); the column width is layout's
+  i32 lineNo = 0;            // 0 = no numbers; else first line number
   std::vector<u32> hlLines;  // 1-based highlighted lines
-  StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup
-  double rawHpx = 0;    // Raw: declared height (px)
-  // Image (figure-design.md §3): src 0 = placeholder (unsafe scheme or
-  // failed load — the box carries the alt text); its display box is
-  // layout's (resolveImageSize at the measure, plan P1-16)
-  StrRef imgSrc = 0, imgAlt = 0;
-  ImageSize img;
-  u8 floatSide = 0;  // 0 = block; 1 = left float, 2 = right float (F2)
-  const MathBox* mathBox = nullptr;  // Math: display formula
-  StrRef eqTag = 0;                  // Math: "(n)" right-margin number
-  u32 tCols = 0;               // Table: column count
-  std::vector<u8> tAligns;     // Table: per-column 'l'/'c'/'r'
-  std::vector<TableCell> cells;  // Table: row-major cells
-  // the inline stream (Text units; plan P1-12), and its lowering for the
-  // legacy breaker: block b = hl.items [blockStart[b], blockStart[b+1])
-  HList hl;
-  std::vector<BreakBlock> blocks;
-  std::vector<u32> blockStart;
-  std::vector<LinebreakBlock> legacy;  // MIGRATION: the legacy emitter's blocks (fuseCheck)
+};
+struct TableData {
+  u32 cols = 0;
+  std::vector<u8> aligns;  // per column 'l'/'c'/'r'
+};
+struct RawData {  // handler-declared passthrough markup and its height
+  StrRef html = 0;
+  double hPx = 0;
+};
+// figure-design.md §3: src 0 = placeholder (unsafe scheme or failed load —
+// the box carries the alt text); its display box is layout's
+struct ImageData {
+  StrRef src = 0, alt = 0;
+  ImageSize size;
+};
+struct MathData {  // a display formula
+  const MathBox* box = nullptr;
+  StrRef tag = 0;  // "(n)" right-margin number
+  StrRef src = 0;  // its source (the copy contract)
+};
+using LeafData = std::variant<std::monostate, RuleData, GridData, TableData, RawData, ImageData, MathData>;
+
+// A leaf's shaped content: its inline stream (paragraphs), its other tracks
+// (`cells`: a table's cells, a float's caption rows, a code block's sidecar
+// rows — by the leaf's layouter) and its payload.
+struct FlowUnit : Flow {
+  std::vector<Flow> cells;
+  LeafData data;
 };
 
+struct TopTree;
 struct TopBlock {
   u32 pid = 0;
-  const ContentNode* node = nullptr;
-  std::vector<FlowUnit> units;
+  const TopTree* tree = nullptr;  // its box tree (Doc::boxtree)
+  std::vector<FlowUnit> units;    // per leaf
 };
 
-// mathText: text-font runs in formulas measure through the pull loop; the
-// emitter reports what is still missing (Doc re-emits once provided)
-std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena,
-                              Interner& strs, StyleTable& styles,
-                              const Config& cfg, DiagSink& diags,
-                              const MathTextCtx* mathText = nullptr);
+// Shapes the box tree's leaves. mathText: text-font runs in formulas measure
+// through the pull loop; the emitter reports what is still missing (Doc
+// re-emits once provided)
+struct BoxTree;
+std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
+                              const Config& cfg, DiagSink& diags, const MathTextCtx* mathText = nullptr);
 
 // the penalty before a formula part, by its break class (math.h MathSeg)
 inline double mathPenalty(const Config& cfg, u8 brkBefore) {

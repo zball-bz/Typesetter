@@ -114,6 +114,11 @@ class Interner {
     return r;
   }
   std::string_view get(StrRef r) const { return strs_[r]; }
+  // the ref of a string already interned, else 0 (nothing is added)
+  StrRef find(std::string_view s) const {
+    auto it = map_.find(s);
+    return it == map_.end() ? 0 : it->second;
+  }
   size_t count() const { return strs_.size(); }
 
  private:

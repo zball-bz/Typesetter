@@ -4,14 +4,14 @@
 #pragma once
 #include <cstring>
 
-#include "../measure/measure.h"
+#include "../model/style.h"
 #include "html_writer.h"
 
 namespace tsr {
 
-inline void runCss(Tag& t, const Styling& st, const Config& cfg, const Interner& strs) {
+inline void runCss(Tag& t, const Styling& st, double basePx, const Interner& strs) {
   if (st.lang) t.attr("lang", strs.get(st.lang));
-  if (st.sizeMul != 1.0f || st.sizePx > 0) t.px("font-size", emPx(cfg, st));
+  if (st.sizeMul != 1.0f || st.sizePx > 0) t.px("font-size", emPx(basePx, st));
   if (st.fontFamily) t.declEsc("font-family", strs.get(st.fontFamily));
   if (st.color) t.declEsc("color", strs.get(st.color));
   if (st.bits & ((1ull << 16) | (1ull << 17) | (1ull << 18))) {

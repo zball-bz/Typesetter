@@ -1,0 +1,14 @@
+top pid=0 leaves=2
+  stack root gap=1/1 @[0,88)
+    stack list pad=1536su gap=1/3 @[0,88)
+      stack item x=1536su @[0,88)
+        paragraph para unit=0 x=1536su marker="•" @[2,49)
+        grid code unit=1 x=1536su ragged nohyphen @[53,88)
+top pid=1 leaves=2
+  stack root gap=1/1 @[90,136)
+    stack quote pad=1024su @[90,136)
+      paragraph para unit=0 x=1024su @[92,112)
+      grid code unit=1 x=1024su ragged nohyphen @[115,136)
+top pid=2 leaves=1
+  stack root gap=1/1 @[137,180)
+    paragraph para unit=0 @[137,180)

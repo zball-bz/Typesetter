@@ -28,5 +28,6 @@ line/fence-container-diag.tsm:html:line-spans  # code rows lack spans (P3-07): a
 line/crlf.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 pages/paged-doc.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 pages/paged-doc.tsm:paged:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
-pages/paged-eq-ids.tsm:paged:anchor-closure  # paged output drops ids of labelled display math (P1-18)
 region/fence-handler.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
+region/anchor-kinds.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
+region/anchor-kinds.tsm:paged:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)

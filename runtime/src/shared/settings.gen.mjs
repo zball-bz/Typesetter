@@ -33,6 +33,7 @@ export const SETTINGS = Object.freeze({
     "def": 18,
     "prec": "HostDefault",
     "affects": [
+      "BoxTree",
       "Emit",
       "Measure",
       "Layout",
@@ -116,6 +117,7 @@ export const SETTINGS = Object.freeze({
     "def": 0,
     "prec": "HostDefault",
     "affects": [
+      "BoxTree",
       "Emit"
     ]
   },
@@ -124,7 +126,7 @@ export const SETTINGS = Object.freeze({
     "def": 1.5,
     "prec": "HostDefault",
     "affects": [
-      "Emit"
+      "BoxTree"
     ]
   },
   "quote.indent": {
@@ -132,7 +134,7 @@ export const SETTINGS = Object.freeze({
     "def": 1,
     "prec": "HostDefault",
     "affects": [
-      "Emit"
+      "BoxTree"
     ]
   },
   "cjk.punctCompress": {
@@ -228,6 +230,7 @@ export const SETTINGS = Object.freeze({
     "def": 0.85,
     "prec": "HostDefault",
     "affects": [
+      "BoxTree",
       "Emit",
       "Layout"
     ]
@@ -412,7 +415,7 @@ export const POLICY = Object.freeze({
     384
   ]
 });
-export const STAGES = Object.freeze(["Compile","Execute","Ingest","Resolve","Emit","Measure","Layout","Paginate","Paint"]);
+export const STAGES = Object.freeze(["Compile","Execute","Ingest","Resolve","BoxTree","Emit","Measure","Layout","Paginate","Paint"]);
 // the value of a dotted setting in a (partial) settings document, else its default
 export function settingOf(settings, path) {
   const [a, b] = path.split('.');

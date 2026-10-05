@@ -116,6 +116,7 @@ struct LinePolicy {
   StrRef marker = 0;    // on the first line
   StyleId markerStyle = 0;
   StrRef anchor = 0;    // the stream's anchor (a cell's, a caption's), on its first line
+  bool ragged = false;  // the lines say they are not justified (paint: data-ragged)
 };
 // a broken stream and where its lines go
 struct LineStream {
@@ -139,7 +140,7 @@ struct LineStream {
 // end or a forced break is a real boundary); Overfull lines set at the
 // shrink limit. Returns the cursor after the last line.
 i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricStore& metrics, const Config& cfg,
-                     Su baseLeading, i64 y, std::vector<LineBox>& out) {
+                     Su baseLeading, i64 y, std::vector<Fragment>& out) {
   u32 prev = 0;
   bool first = true;
   const BreakResult& br = s.br;
@@ -150,8 +151,9 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     prev = bp;
     if (!any) continue;
     const LineFill f = fillLine(s.h, r, metrics);
-    LineBox line;
+    Fragment line;
     line.unitIdx = s.unitIdx;
+    line.ragged = pol.ragged;
     line.cellIdx = s.cellIdx;
     line.blockBegin = r.lo;
     line.blockEnd = r.hi;
@@ -224,16 +226,12 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     Su advance = baseLeading;
     if (f.maxAsc + f.maxDesc > advance) advance = f.maxAsc + f.maxDesc;
     line.height = advance;
+    line.baseline = (advance - (f.maxAsc + f.maxDesc)) / 2 + f.maxAsc;
     line.y = (Su)y;
     y += advance;
     out.push_back(line);
   }
   return y;
-}
-
-// The gap before a unit: one rule for the cursor and the exclusions.
-Su gapBefore(u32 ui, const FlowUnit& u, bool firstBlock, Su paraGap) {
-  return ui > 0 ? (u.tightAbove ? paraGap / 3 : paraGap) : (firstBlock ? 0 : paraGap);
 }
 
 // The float exclusions of the flow (plan P1-15; design T6 "ExclusionMap"):
@@ -310,25 +308,73 @@ class ExclusionMap {
   u8 side_ = 0;
 };
 
-}  // namespace
+// The layouters (plan P1-18; design T6 "layouter registry"): one per
+// LayouterId, chosen by the box tree by content model. A Stack lays its
+// children out one below the other with its gap between them (the
+// effective gap of the deepest stack holding both: a list packs everything
+// inside it a third of a paragraph gap apart); the leaves' layouters turn
+// their content into fragments at the cursor, clearing or narrowing beside
+// the floats of the ExclusionMap.
+class DocLayout {
+ public:
+  DocLayout(const MetricStore& m, Interner& s, const Config& c, DiagSink& d, LayoutResult& r)
+      : metrics(m), strs(s), cfg(c), diags(d), lr(r), measure(suFloorPx(c.widthPx)),
+        baseLeading(suRoundPx(c.lineHeight * c.baseSizePx)), paraGap(suRoundPx(c.paraSpacingEm * c.baseSizePx)),
+        excl(baseLeading, paraGap, suRoundPx(c.baseSizePx)) {
+    bparams.cost = c.cost;
+  }
 
-LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
-                       Interner& strs, const Config& cfg, DiagSink& diags) {
-  LayoutResult lr;
-  const Su measure = suFloorPx(cfg.widthPx);
-  const Su baseLeading = suRoundPx(cfg.lineHeight * cfg.baseSizePx);
-  const Su paraGap = suRoundPx(cfg.paraSpacingEm * cfg.baseSizePx);
-  i64 y = 0;
+  void run(const std::vector<TopBlock>& tops) {
+    i64 y = 0;
+    for (size_t p = 0; p < tops.size(); p++) {
+      tb = &tops[p];
+      tree = tb->tree;
+      ParaFrame frame;
+      frame.pid = tb->pid;
+      frame.y = (Su)y;
+      frame.w = measure;
+      fr = &frame;
+      py = 0;
+      // the document's stack: a paragraph gap between tops
+      gapBefore = p > 0 ? paraGap : 0;
+      excl.advance(gapBefore);
+      block(0);
+      frame.h = (Su)py;
+      y += py;
+      if (p + 1 < tops.size()) y += paraGap;
+      lr.paras.push_back(std::move(frame));
+    }
+    if (floatBottomAbs > y) y = floatBottomAbs;  // a trailing float still shows
+    lr.docHeightSu = y;
+  }
+
+ private:
+  const MetricStore& metrics;
+  Interner& strs;
+  const Config& cfg;
+  DiagSink& diags;
+  LayoutResult& lr;
+  const Su measure, baseLeading, paraGap;
+  ExclusionMap excl;
+  BreakParams bparams;
   i64 floatBottomAbs = 0;  // doc-height watermark for a trailing float (F2)
-  ExclusionMap excl(baseLeading, paraGap, suRoundPx(cfg.baseSizePx));
-  bool firstBlock = true;
+  // the top being laid out
+  const TopBlock* tb = nullptr;
+  const TopTree* tree = nullptr;
+  ParaFrame* fr = nullptr;
+  i64 py = 0;                           // the cursor, from the frame's top
+  Su gapBefore = 0;                     // the gap before the next leaf (vlist)
+  std::vector<BreakResult> cellBreaks;  // the current leaf's other tracks
+
+  using Fn = void (DocLayout::*)(const LayoutBlock&);
+  static const Fn kLayouters[];  // the registry: one per LayouterId
+  void block(u32 b) { (this->*kLayouters[(size_t)tree->blocks[b].layouter])(tree->blocks[b]); }
+
   // Layout breaks its paragraphs (plan P1-15) with the cached KP (break.cc:
   // keyed by exactly the DP inputs, shared across documents — the editing
   // loop's fast path). A run wider than the line is set Overfull on a line
   // of its own (the final-pass rescue) and reported once per stream.
-  BreakParams bparams;
-  bparams.cost = cfg.cost;
-  auto breakStream = [&](const std::vector<BreakBlock>& blocks, const HList& h, LineWidths lw) {
+  BreakResult breakStream(const std::vector<BreakBlock>& blocks, const HList& h, LineWidths lw) {
     BreakResult r = breakLinesCached(blocks, lw, bparams);
     if (!r.overfullLines.empty()) {
       Span sp{};
@@ -342,424 +388,484 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
                 std::to_string(r.overfullLines.size()) + " line(s) hold a run wider than the measure");
     }
     return r;
+  }
+  // a leaf starts: an in-flow box that is not a paragraph clears the float
+  // beside it
+  struct Leaf {
+    size_t from;  // its first fragment
+    Su clear;
+    i64 top;
   };
-  std::vector<BreakResult> cellBreaks;  // the current unit's cells
-
-  for (size_t p = 0; p < tops.size(); p++) {
-    const TopBlock& tb = tops[p];
-    ParaFrame fr;
-    fr.pid = tb.pid;
-    fr.y = (Su)y;
-    fr.w = measure;
-
-    i64 py = 0;
-    for (u32 ui = 0; ui < tb.units.size(); ui++) {
-      const FlowUnit& u = tb.units[ui];
-      const Su gap = gapBefore(ui, u, firstBlock, paraGap);
-      if (ui > 0) py += gap;
-      excl.advance(gap);
-      Su floatShift = 0, clearSu = 0;
-      if (u.kind == FlowUnit::K::Image && u.floatSide != 0) excl.arrive(u.floatSide, floatShift, clearSu);
-      else if (u.kind != FlowUnit::K::Text) clearSu = excl.clear();  // every non-text unit clears the float
-      if (clearSu > 0) py += clearSu;
-      const Su lineWidth = measure - u.indent;
-      cellBreaks.clear();
-      // width-dependent sizes are layout's (plan P1-16): an image's display
-      // box at the measure, a code block's sidecar column
-      Su imgW = 0, imgH = 0;
-      if (u.kind == FlowUnit::K::Image) resolveImageSize(u.img, cfg.widthPx - suToPx(u.indent), imgW, imgH);
-      const Su sidebarW = u.sidecar ? suRoundPx(cfg.sidebarFrac * (cfg.widthPx - suToPx(u.indent))) : 0;
-
-      if (u.kind == FlowUnit::K::Image && u.floatSide != 0) {
-        // float box (figure-design.md §4): out of flow — zero advance; the
-        // image at the measure's edge, caption rows beneath at the float
-        // width; the units that flow beside it narrow by the exclusion
-        i64 captionH = 0;
-        for (const TableCell& c : u.cells) {  // the caption breaks to the float width
-          cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{imgW}));
-          lr.breaks.push_back({tb.pid, ui, (i32)cellBreaks.size() - 1, cellBreaks.back()});
-          captionH += (i64)cellBreaks.back().breakpoints.size() * baseLeading;
+  Leaf enter(bool clears) {
+    Leaf l{fr->lines.size(), 0, 0};
+    if (clears) l.clear = excl.clear();
+    py += l.clear;
+    l.top = py;
+    cellBreaks.clear();
+    return l;
+  }
+  // a leaf ends: its anchor on its first fragment (a table's on its first
+  // cell line, not its rule), and its box in the vertical list
+  void leave(const LayoutBlock& b, const Leaf& l, bool out = false) {
+    if (b.carry && l.from < fr->lines.size()) {
+      size_t at = l.from;
+      for (size_t k = l.from; k < fr->lines.size(); k++)
+        if (fr->lines[k].kind != FragKind::Rule) {
+          at = k;
+          break;
         }
-        excl.add(u.floatSide, floatShift, imgW, imgH, captionH);
-        const Su boxLeft = u.floatSide == 1 ? u.indent
-                                            : u.indent + lineWidth - imgW;
-        LineBox line;
-        line.unitIdx = ui;
-        line.special = 5;
-        line.left = boxLeft;
-        line.width = imgW;
-        line.height = imgH;
-        if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
-        line.y = (Su)(py + floatShift);  // stacked below an active float
-        fr.lines.push_back(line);
-        i64 cy = py + floatShift + imgH;
-        for (u32 ci = 0; ci < (u32)u.cells.size(); ci++) {
-          // caption rows: left-aligned at the float width; wrapped rows
-          // rejoin on copy (§9.3, unlike table cells)
-          const TableCell& cell = u.cells[ci];
-          LinePolicy pol;
-          pol.align = LinePolicy::Align::Ragged;
-          pol.widthPx = suToPx(imgW);
-          pol.anchor = cell.anchor;
-          cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[ci], LineWidths{imgW},
-                                 false, boxLeft, imgW, ui, (i32)ci},
-                                pol, metrics, cfg, baseLeading, cy, fr.lines);
-        }
-        if ((i64)fr.y + cy > floatBottomAbs) floatBottomAbs = (i64)fr.y + cy;
-        continue;  // no py advance: the float is out of flow
+      fr->lines[at].anchor = b.carry;  // (a paragraph's first line has it already)
+      fr->lines[at].anchor2 = b.carry2;
+    }
+    fr->vlist.push_back({b.unit, gapBefore, l.clear, (Su)l.top, (Su)(py - l.top), out});
+    gapBefore = 0;
+  }
+
+  void stack(const LayoutBlock& b) {
+    u8 num, den;
+    gapOf(*tree, (u32)(&b - tree->blocks.data()), num, den);
+    const Su gap = (Su)((i64)paraGap * num / den);
+    const u32 self = (u32)(&b - tree->blocks.data());
+    for (u32 k = self + 1; k < b.end; k = tree->blocks[k].end) {
+      if (k > self + 1) {
+        py += gap;
+        excl.advance(gap);
+        gapBefore = gap;
       }
+      block(k);
+    }
+  }
 
-      if (u.kind == FlowUnit::K::Rule) {
-        LineBox line;
-        line.unitIdx = ui;
-        line.special = 1;
-        line.left = u.indent;
-        line.width = lineWidth;
-        line.height = baseLeading;  // band extent (pagination); y is midline
-        line.y = (Su)(py + baseLeading / 2);
-        py += baseLeading;
-        fr.lines.push_back(line);
-        continue;
-      }
-      if (u.kind == FlowUnit::K::Raw) {
-        LineBox line;
-        line.unitIdx = ui;
-        line.special = 3;
-        line.left = u.indent;
-        line.width = lineWidth;
-        line.height = suRoundPx(u.rawHpx);
-        line.y = (Su)py;
-        py += suRoundPx(u.rawHpx);
-        fr.lines.push_back(line);
-        continue;
-      }
-      if (u.kind == FlowUnit::K::Code) {
-        Su adv = baseLeading;
-        if (metrics.hasVmet(u.codeStyle)) {
-          const VMet& v = metrics.vmet(u.codeStyle);
-          if (v.ascent + v.descent > adv) adv = v.ascent + v.descent;
-        }
-        // three-box partition (verbatim §5): the code measure stops before
-        // the sidecar column; the gutter stays out-of-flow (markers)
-        const bool hasSidecar = sidebarW > 0 && !u.cells.empty();
-        Su gapSu = 0;
-        Su lineWidthFull = lineWidth;
-        Su lineWidthCode = lineWidth;
-        if (hasSidecar) {
-          gapSu = suRoundPx(cfg.baseSizePx * cfg.codeScale);
-          lineWidthCode = lineWidth - sidebarW - gapSu;
-          if (lineWidthCode < 64) lineWidthCode = 64;
-          for (const TableCell& c : u.cells) {  // sidecar rows break to the sidebar
-            cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{sidebarW}));
-            lr.breaks.push_back({tb.pid, ui, (i32)cellBreaks.size() - 1, cellBreaks.back()});
-          }
-        }
-        (void)lineWidthFull;
-        // ch grid (CH4, code-design.md §4): monospace is a metric contract —
-        // 1ch per char, 2ch for CJK; wrap is a COLUMN computation, greedy
-        // with a token-boundary preference, continuation rows indent 2ch.
-        Su chSu = 0;
-        if (u.codeWrap && u.chRef && metrics.hasWord(u.chRef, u.codeStyle))
-          chSu = metrics.word(u.chRef, u.codeStyle).su;
-        // measured CJK width (verbatim-design §2): budget columns from the
-        // real ratio, conservatively ceiled — no assumed 2:1
-        i32 cjkCols = 2;
-        if (chSu > 0 && u.cjkChRef && metrics.hasWord(u.cjkChRef, u.codeStyle)) {
-          Su c = metrics.word(u.cjkChRef, u.codeStyle).su;
-          cjkCols = (i32)((c + chSu - 1) / chSu);
-          if (cjkCols < 1) cjkCols = 1;
-        }
-        i32 cols = chSu > 0 ? (i32)(lineWidthCode / chSu) : 0;
-        if (cols > 0 && cols < 8) cols = 8;
-        // snap-kerning (verbatim §3): solve the rational grid from RAW
-        // measurements; column budget switches to atom units — Latin = q,
-        // CJK = p atoms — with letter-spacing pulling advances onto it
-        GridSpec grid;
-        i32 latinAtoms = 1;
-        if (cfg.verbatimSnapKerning && chSu > 0 && u.cjkChRef &&
-            metrics.hasWord(u.chRef, u.codeStyle) &&
-            metrics.hasWord(u.cjkChRef, u.codeStyle)) {
-          double chLpx = metrics.word(u.chRef, u.codeStyle).px;
-          double chCpx = metrics.word(u.cjkChRef, u.codeStyle).px;
-          grid = solveGrid(chLpx, chCpx, cols);
-          if (grid.atomPx > 0 && grid.dLatinPx <= 0.1 * chLpx &&
-              grid.dCjkPx <= 0.1 * chCpx) {
-            Su atomSu = suCeilPx(grid.atomPx);
-            latinAtoms = grid.q;
-            cjkCols = grid.p;              // in atom units now
-            cols = (i32)(lineWidthCode / atomSu);  // the code column, not the measure
-            if (cols > 0 && cols < 8 * grid.q) cols = 8 * grid.q;
-          } else {
-            grid = GridSpec{};             // budget-only fallback
-          }
-        }
-        auto isBreakable = [](u32 cp) {
-          return cp == ' ' || cp == '\t' || cp == ',' || cp == ';' ||
-                 cp == ')' || cp == '}' || cp == ']' || cp == '>';
-        };
-        std::unordered_set<u32> hlSet(u.hlLines.begin(), u.hlLines.end());
-        bool first = true;
-        for (u32 li = 0; li < (u32)u.codeRuns.size(); li++) {
-          std::string joined;
-          std::vector<std::pair<u32, u32>> commentSpans;  // byte ranges
-          for (const FlowUnit::CodeRun& r : u.codeRuns[li]) {
-            u32 b0 = (u32)joined.size();
-            joined.append(strs.get(r.text));
-            if (r.isComment) commentSpans.push_back({b0, (u32)joined.size()});
-          }
-          // hanging base: the logical line's own leading whitespace columns
-          i32 leadChars = 0;
-          while ((size_t)leadChars < joined.size() &&
-                 (joined[leadChars] == ' ' || joined[leadChars] == '\t'))
-            leadChars++;
-          i32 leadCols = leadChars * latinAtoms;  // in atom units
-          auto contColsAt = [&](u32 breakByte) -> u16 {
-            i32 cc = leadCols / latinAtoms + cfg.verbatimContIndent;
-            // comment-aware (verbatim-design §4): a break inside a comment
-            // run aligns the continuation to the comment's CONTENT column
-            for (auto [cs, ce] : commentSpans) {
-              if (breakByte <= cs || breakByte > ce) continue;
-              // column of the comment start
-              i32 col = 0;
-              u32 pb = 0;
-              while (pb < cs) {
-                u32 cp2 = utf8Next(joined, pb);
-                col += isWide(cp2) ? cjkCols : latinAtoms;
-              }
-              // lead-in: opening punctuation streak + one space
-              u32 q2 = cs;
-              i32 lead = 0;
-              while (q2 < ce && joined[q2] != ' ' &&
-                     !((joined[q2] >= 'a' && joined[q2] <= 'z') ||
-                       (joined[q2] >= 'A' && joined[q2] <= 'Z') ||
-                       (joined[q2] >= '0' && joined[q2] <= '9')) &&
-                     (u8)joined[q2] < 0x80) {
-                q2++;
-                lead++;
-              }
-              if (q2 < ce && joined[q2] == ' ') lead++;
-              cc = col / latinAtoms + lead;
-              break;
-            }
-            i32 colCap = cols / latinAtoms;
-            if (cc > colCap - 8) cc = colCap > 8 ? colCap - 8 : 0;
-            if (cc < 0) cc = 0;
-            return (u16)cc;
-          };
-          struct Row { u32 lo, hi; };
-          std::vector<Row> rows;
-          std::vector<u16> rowContOut;
-          if (cols <= 0 || joined.empty()) {
-            rows.push_back({0, (u32)joined.size()});
-          } else {
-            u32 lo = 0;
-            u16 nextCont = 0;
-            std::vector<u16> rowCont;
-            while (lo < joined.size()) {
-              i32 avail = rows.empty() ? cols : cols - (i32)nextCont * latinAtoms;
-              if (avail < 8 * latinAtoms) avail = 8 * latinAtoms;
-              u32 p = lo;
-              i32 col = 0;
-              u32 lastBrk = 0;
-              while (p < joined.size()) {
-                u32 q = p;
-                u32 cp = utf8Next(joined, q);
-                i32 w = isWide(cp) ? cjkCols : latinAtoms;
-                if (col + w > avail) break;
-                col += w;
-                p = q;
-                if (isBreakable(cp)) {
-                  lastBrk = p;  // break AFTER the boundary
-                } else if (isWide(cp) && !isOpenPunct(cp)) {
-                  // CJK wraps between any two characters (clreq), except
-                  // before a closing punct / after an opening one (禁则)
-                  u32 r = q;
-                  u32 nx = q < joined.size() ? utf8Next(joined, r) : 0;
-                  if (!(nx && isClosePunct(nx))) lastBrk = p;
-                }
-              }
-              if (p >= joined.size()) {
-                rows.push_back({lo, (u32)joined.size()});
-                rowCont.push_back(nextCont);
-                break;
-              }
-              u32 cut = lastBrk > lo ? lastBrk : p;
-              if (cut <= lo) {  // guarantee progress on pathological input
-                u32 q = lo;
-                utf8Next(joined, q);
-                cut = q;
-              }
-              // trailing spaces stay in the ROW (not swallowed between
-              // slices): the copy rebuild must be byte-lossless, and pre
-              // whitespace at a ragged row's end is invisible anyway
-              u32 ext = cut;
-              while (ext < joined.size() && joined[ext] == ' ') ext++;
-              rows.push_back({lo, ext});
-              rowCont.push_back(nextCont);
-              nextCont = contColsAt(cut);  // the NEXT row's indent
-              lo = ext;
-            }
-            if (rows.empty()) {
-              rows.push_back({0, 0});
-              rowCont.push_back(0);
-            }
-            rowContOut = std::move(rowCont);
-          }
-          bool hl = hlSet.count(li + 1) != 0;
-          const i64 rowTop = py;
-          for (size_t ri = 0; ri < rows.size(); ri++) {
-            LineBox line;
-            line.unitIdx = ui;
-            line.special = 2;
-            line.codeLine = li;
-            line.cbLo = rows[ri].lo;
-            line.cbHi = rows[ri].hi;
-            line.codeCont = ri > 0;
-            line.contCols = ri < rowContOut.size() ? rowContOut[ri] : 0;
-            line.snapLatinPx = (float)grid.dLatinPx;
-            line.snapCjkPx = (float)grid.dCjkPx;
-            line.codeHl = hl;
-            line.height = adv;
-            line.left = u.indent;
-            line.width = lineWidthCode;
-            line.y = (Su)py;
-            if (ri == 0 && u.codeLineNo > 0) {
-              line.marker = strs.intern(std::to_string(u.codeLineNo + (i32)li));
-              line.markerStyle = u.codeStyle;
-            } else if (first && u.marker) {
-              line.marker = u.marker;
-              line.markerStyle = u.markerStyle;
-            }
-            first = false;
-            py += adv;
-            fr.lines.push_back(line);
-          }
-          // sidecar rows for this logical line (equal-height zip, §5):
-          // ordinary inline lines broken to the sidebar measure — math,
-          // links and refs land through the generic cell render path
-          if (hasSidecar && li < u.cells.size()) {
-            const TableCell& cell = u.cells[li];
-            LinePolicy pol;
-            pol.join = LinePolicy::Join::Never;
-            pol.align = LinePolicy::Align::Ragged;
-            pol.widthPx = suToPx(sidebarW);
-            pol.anchor = cell.anchor;
-            const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[li],
-                                             LineWidths{sidebarW}, false, (Su)(u.indent + lineWidthCode + gapSu),
-                                             sidebarW, ui, (i32)li},
-                                            pol, metrics, cfg, baseLeading, rowTop, fr.lines);
-            if (cy > py) py = cy;  // the equal-height constraint
-          }
-        }
-        continue;
-      }
+  void paragraph(const LayoutBlock& b) {
+    const FlowUnit& u = tb->units[b.unit];
+    Leaf l = enter(false);
+    const Su lineWidth = measure - b.x;
+    bool narrowLeft = false;
+    const LineWidths lw = excl.widths(lineWidth, narrowLeft);
+    lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, lw)});
+    excl.consume(lr.breaks.back().r.breakpoints.size());
+    const BlockTraits::Align a = traitsOf(b.traits).align;
+    LinePolicy pol;
+    pol.align = a == BlockTraits::Align::Center   ? LinePolicy::Align::Center
+                : a == BlockTraits::Align::Ragged ? LinePolicy::Align::Ragged
+                                                  : LinePolicy::Align::Justify;
+    pol.ragged = a != BlockTraits::Align::Justify;
+    pol.widthPx = cfg.widthPx - suToPx(b.x);
+    pol.marker = b.marker;
+    pol.markerStyle = b.markerStyle;
+    pol.anchor = b.carry ? b.carry : u.anchor;  // a block's label, else an inline one
+    py = materializeLines({u.hl, u.blockStart, (u32)u.blocks.size(), lr.breaks.back().r, lw, narrowLeft, b.x,
+                           lineWidth, b.unit, -1},
+                          pol, metrics, cfg, baseLeading, py, fr->lines);
+    leave(b, l);
+  }
 
-      if (u.kind == FlowUnit::K::Image) {
+  void replaced(const LayoutBlock& b) {
+    const FlowUnit& u = tb->units[b.unit];
+    if (b.painter == Painter::Image && b.floatSide) {
+      floatBox(b, u);
+      return;
+    }
+    Leaf l = enter(true);
+    const Su lineWidth = measure - b.x;
+    Fragment f;
+    f.unitIdx = b.unit;
+    f.y = (Su)py;
+    f.left = b.x;
+    f.width = lineWidth;
+    switch (b.painter) {
+      case Painter::Rule:
+        f.kind = FragKind::Rule;
+        f.height = baseLeading;  // its band: the rule at its middle
+        break;
+      case Painter::Raw:
+        f.kind = FragKind::Raw;
+        f.height = suRoundPx(std::get<RawData>(u.data).hPx);
+        break;
+      case Painter::Image: {
         // block figure image (figure-design.md §3): centred on the measure,
         // advance = display height (float placement is F2)
-        LineBox line;
-        line.unitIdx = ui;
-        line.special = 5;
+        Su imgW = 0, imgH = 0;
+        resolveImageSize(std::get<ImageData>(u.data).size, cfg.widthPx - suToPx(b.x), imgW, imgH);
+        f.kind = FragKind::Image;
         Su shift = (lineWidth - imgW) / 2;
         if (shift < 0) shift = 0;
-        line.left = u.indent + shift;
-        line.width = imgW;
-        line.height = imgH;
-        if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
-        line.y = (Su)py;
-        py += imgH;
-        fr.lines.push_back(line);
-        continue;
+        f.left = b.x + shift;
+        f.width = imgW;
+        f.height = imgH;
+        f.srcSpan = b.span;
+        break;
       }
-      if (u.kind == FlowUnit::K::Math && u.mathBox) {
+      case Painter::MathRow: {
         // display formula: centred on the measure, advance = box extents
-        const MathBox* mb = u.mathBox;
-        LineBox line;
-        line.unitIdx = ui;
-        line.special = 4;
+        const MathBox* mb = std::get<MathData>(u.data).box;
+        if (!mb) {
+          leave(b, l);
+          return;
+        }
+        f.kind = FragKind::Math;
         Su shift = (lineWidth - mb->w) / 2;
         if (shift < 0) shift = 0;
-        line.left = u.indent + shift;
-        line.width = mb->w;
-        if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
-        line.y = (Su)py;
-        Su adv = mb->asc + mb->desc;
-        if (adv < baseLeading) adv = baseLeading;
-        line.height = adv;
-        py += adv;
-        fr.lines.push_back(line);
-        continue;
+        f.left = b.x + shift;
+        f.width = mb->w;
+        f.srcSpan = b.span;
+        f.height = std::max(mb->asc + mb->desc, baseLeading);
+        f.baseline = (f.height - (mb->asc + mb->desc)) / 2 + mb->asc;
+        break;
       }
-      if (u.kind == FlowUnit::K::Table && u.tCols > 0) {
-        // three-line-flavoured grid: full-width rules above, between, and
-        // below rows; equal columns; ragged cells aligned per column
-        const Su colW = lineWidth / (Su)u.tCols;
-        const Su padX = suRoundPx(kTableCellPadEm * cfg.baseSizePx);
-        const Su padY = suRoundPx(kTableRowPadEm * cfg.baseSizePx);
-        Su cellW = colW - 2 * padX;
-        if (cellW < 64) cellW = 64;
-        for (const TableCell& c : u.cells) {  // each cell breaks to its content width
-          cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{cellW}));
-          lr.breaks.push_back({tb.pid, ui, (i32)cellBreaks.size() - 1, cellBreaks.back()});
-        }
-        const size_t nRows = u.cells.size() / u.tCols;
-        auto addRule = [&](i64 yy) {
-          LineBox rl;
-          rl.unitIdx = ui;
-          rl.special = 1;
-          rl.left = u.indent;
-          rl.width = lineWidth;
-          rl.y = (Su)yy;
-          fr.lines.push_back(rl);
-        };
-        addRule(py);
-        for (size_t r = 0; r < nRows; r++) {
-          i64 rowTop = py + padY;
-          i64 rowBottom = rowTop + baseLeading;
-          for (u32 c = 0; c < u.tCols; c++) {
-            const TableCell& cell = u.cells[r * u.tCols + c];
-            LinePolicy pol;
-            pol.join = LinePolicy::Join::Never;
-            pol.align = LinePolicy::Align::Cell;
-            pol.cellAlign = u.tAligns[c];
-            pol.widthPx = suToPx(cellW);
-            pol.anchor = cell.anchor;
-            const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(),
-                                             cellBreaks[r * u.tCols + c], LineWidths{cellW}, false,
-                                             (Su)(u.indent + (Su)c * colW + padX), cellW, ui,
-                                             (i32)(r * u.tCols + c)},
-                                            pol, metrics, cfg, baseLeading, rowTop, fr.lines);
-            if (cy > rowBottom) rowBottom = cy;
-          }
-          py = rowBottom + padY;
-          addRule(py);
-        }
-        continue;
-      }
-      // Text unit
-      bool narrowLeft = false;
-      const LineWidths lw = excl.widths(lineWidth, narrowLeft);
-      lr.breaks.push_back({tb.pid, ui, -1, breakStream(u.blocks, u.hl, lw)});
-      excl.consume(lr.breaks.back().r.breakpoints.size());
-      LinePolicy pol;
-      pol.align = u.centered ? LinePolicy::Align::Center
-                  : u.ragged ? LinePolicy::Align::Ragged
-                             : LinePolicy::Align::Justify;
-      pol.widthPx = cfg.widthPx - suToPx(u.indent);
-      pol.marker = u.marker;
-      pol.markerStyle = u.markerStyle;
-      py = materializeLines({u.hl, u.blockStart, (u32)u.blocks.size(), lr.breaks.back().r, lw, narrowLeft,
-                             u.indent, lineWidth, ui, -1},
-                            pol, metrics, cfg, baseLeading, py, fr.lines);
+      case Painter::None:
+        leave(b, l);
+        return;
     }
-    fr.h = (Su)py;
-    y += py;
-    if (p + 1 < tops.size()) y += paraGap;
-    lr.paras.push_back(std::move(fr));
-    firstBlock = false;
+    if (f.kind == FragKind::Image || f.kind == FragKind::Raw) f.baseline = f.height;  // on its bottom
+    if (f.kind == FragKind::Rule) f.baseline = f.height / 2;
+    py += f.height;
+    fr->lines.push_back(f);
+    leave(b, l);
   }
-  if (floatBottomAbs > y) y = floatBottomAbs;  // a trailing float still shows
-  lr.docHeightSu = y;
+
+  // float box (figure-design.md §4): out of flow — zero advance; the image
+  // at the measure's edge, caption rows beneath at the float width; the
+  // blocks that flow beside it narrow by the exclusion
+  void floatBox(const LayoutBlock& b, const FlowUnit& u) {
+    Leaf l = enter(false);
+    Su floatShift = 0, clearSu = 0;
+    excl.arrive(b.floatSide, floatShift, clearSu);
+    py += clearSu;
+    l.clear = clearSu;
+    l.top = py;
+    const Su lineWidth = measure - b.x;
+    Su imgW = 0, imgH = 0;
+    resolveImageSize(std::get<ImageData>(u.data).size, cfg.widthPx - suToPx(b.x), imgW, imgH);
+    i64 captionH = 0;
+    for (const Flow& c : u.cells) {  // the caption breaks to the float width
+      cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{imgW}));
+      lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
+      captionH += (i64)cellBreaks.back().breakpoints.size() * baseLeading;
+    }
+    excl.add(b.floatSide, floatShift, imgW, imgH, captionH);
+    const Su boxLeft = b.floatSide == 1 ? b.x : b.x + lineWidth - imgW;
+    Fragment f;
+    f.unitIdx = b.unit;
+    f.kind = FragKind::Image;
+    f.left = boxLeft;
+    f.width = imgW;
+    f.height = imgH;
+    f.baseline = imgH;
+    f.srcSpan = b.span;
+    f.y = (Su)(py + floatShift);  // stacked below an active float
+    fr->lines.push_back(f);
+    i64 cy = py + floatShift + imgH;
+    for (u32 ci = 0; ci < (u32)u.cells.size(); ci++) {
+      // caption rows: left-aligned at the float width; wrapped rows
+      // rejoin on copy (§9.3, unlike table cells)
+      const Flow& cell = u.cells[ci];
+      LinePolicy pol;
+      pol.align = LinePolicy::Align::Ragged;
+      pol.ragged = true;
+      pol.widthPx = suToPx(imgW);
+      pol.anchor = cell.anchor;
+      cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[ci], LineWidths{imgW},
+                             false, boxLeft, imgW, b.unit, (i32)ci},
+                            pol, metrics, cfg, baseLeading, cy, fr->lines);
+    }
+    if ((i64)fr->y + cy > floatBottomAbs) floatBottomAbs = (i64)fr->y + cy;
+    leave(b, l, /*out=*/true);  // no advance: the float is out of flow
+  }
+
+  void grid(const LayoutBlock& b) {
+    const FlowUnit& u = tb->units[b.unit];
+    const GridData& g = std::get<GridData>(u.data);
+    Leaf l = enter(true);
+    const Su lineWidth = measure - b.x;
+    // the sidecar column is layout's (plan P1-16: code.sidecarFrac)
+    const Su sidebarW = g.sidecar ? suRoundPx(cfg.sidebarFrac * (cfg.widthPx - suToPx(b.x))) : 0;
+    Su adv = baseLeading;
+    Su rowBase = adv / 2;  // a row's baseline, centred (its line-height is the row)
+    if (metrics.hasVmet(g.codeStyle)) {
+      const VMet& v = metrics.vmet(g.codeStyle);
+      if (v.ascent + v.descent > adv) adv = v.ascent + v.descent;
+      rowBase = (adv - (v.ascent + v.descent)) / 2 + v.ascent;
+    }
+    // three-box partition (verbatim §5): the code measure stops before
+    // the sidecar column; the gutter stays out-of-flow (markers)
+    const bool hasSidecar = sidebarW > 0 && !u.cells.empty();
+    Su gapSu = 0;
+    Su lineWidthFull = lineWidth;
+    Su lineWidthCode = lineWidth;
+    if (hasSidecar) {
+      gapSu = suRoundPx(cfg.baseSizePx * cfg.codeScale);
+      lineWidthCode = lineWidth - sidebarW - gapSu;
+      if (lineWidthCode < 64) lineWidthCode = 64;
+      for (const TableCell& c : u.cells) {  // sidecar rows break to the sidebar
+        cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{sidebarW}));
+        lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
+      }
+    }
+    (void)lineWidthFull;
+    // ch grid (CH4, code-design.md §4): monospace is a metric contract —
+    // 1ch per char, 2ch for CJK; wrap is a COLUMN computation, greedy
+    // with a token-boundary preference, continuation rows indent 2ch.
+    Su chSu = 0;
+    if (g.wrap && g.chRef && metrics.hasWord(g.chRef, g.codeStyle))
+      chSu = metrics.word(g.chRef, g.codeStyle).su;
+    // measured CJK width (verbatim-design §2): budget columns from the
+    // real ratio, conservatively ceiled — no assumed 2:1
+    i32 cjkCols = 2;
+    if (chSu > 0 && g.cjkChRef && metrics.hasWord(g.cjkChRef, g.codeStyle)) {
+      Su c = metrics.word(g.cjkChRef, g.codeStyle).su;
+      cjkCols = (i32)((c + chSu - 1) / chSu);
+      if (cjkCols < 1) cjkCols = 1;
+    }
+    i32 cols = chSu > 0 ? (i32)(lineWidthCode / chSu) : 0;
+    if (cols > 0 && cols < 8) cols = 8;
+    // snap-kerning (verbatim §3): solve the rational grid from RAW
+    // measurements; column budget switches to atom units — Latin = q,
+    // CJK = p atoms — with letter-spacing pulling advances onto it
+    GridSpec grid;
+    i32 latinAtoms = 1;
+    if (cfg.verbatimSnapKerning && chSu > 0 && g.cjkChRef &&
+        metrics.hasWord(g.chRef, g.codeStyle) &&
+        metrics.hasWord(g.cjkChRef, g.codeStyle)) {
+      double chLpx = metrics.word(g.chRef, g.codeStyle).px;
+      double chCpx = metrics.word(g.cjkChRef, g.codeStyle).px;
+      grid = solveGrid(chLpx, chCpx, cols);
+      if (grid.atomPx > 0 && grid.dLatinPx <= 0.1 * chLpx &&
+          grid.dCjkPx <= 0.1 * chCpx) {
+        Su atomSu = suCeilPx(grid.atomPx);
+        latinAtoms = grid.q;
+        cjkCols = grid.p;              // in atom units now
+        cols = (i32)(lineWidthCode / atomSu);  // the code column, not the measure
+        if (cols > 0 && cols < 8 * grid.q) cols = 8 * grid.q;
+      } else {
+        grid = GridSpec{};             // budget-only fallback
+      }
+    }
+    auto isBreakable = [](u32 cp) {
+      return cp == ' ' || cp == '\t' || cp == ',' || cp == ';' ||
+             cp == ')' || cp == '}' || cp == ']' || cp == '>';
+    };
+    std::unordered_set<u32> hlSet(g.hlLines.begin(), g.hlLines.end());
+    bool first = true;
+    for (u32 li = 0; li < (u32)g.lines.size(); li++) {
+      std::string joined;
+      std::vector<std::pair<u32, u32>> commentSpans;  // byte ranges
+      for (const CodeRun& r : g.lines[li]) {
+        u32 b0 = (u32)joined.size();
+        joined.append(strs.get(r.text));
+        if (r.isComment) commentSpans.push_back({b0, (u32)joined.size()});
+      }
+      // hanging base: the logical line's own leading whitespace columns
+      i32 leadChars = 0;
+      while ((size_t)leadChars < joined.size() &&
+             (joined[leadChars] == ' ' || joined[leadChars] == '\t'))
+        leadChars++;
+      i32 leadCols = leadChars * latinAtoms;  // in atom units
+      auto contColsAt = [&](u32 breakByte) -> u16 {
+        i32 cc = leadCols / latinAtoms + cfg.verbatimContIndent;
+        // comment-aware (verbatim-design §4): a break inside a comment
+        // run aligns the continuation to the comment's CONTENT column
+        for (auto [cs, ce] : commentSpans) {
+          if (breakByte <= cs || breakByte > ce) continue;
+          // column of the comment start
+          i32 col = 0;
+          u32 pb = 0;
+          while (pb < cs) {
+            u32 cp2 = utf8Next(joined, pb);
+            col += isWide(cp2) ? cjkCols : latinAtoms;
+          }
+          // lead-in: opening punctuation streak + one space
+          u32 q2 = cs;
+          i32 lead = 0;
+          while (q2 < ce && joined[q2] != ' ' &&
+                 !((joined[q2] >= 'a' && joined[q2] <= 'z') ||
+                   (joined[q2] >= 'A' && joined[q2] <= 'Z') ||
+                   (joined[q2] >= '0' && joined[q2] <= '9')) &&
+                 (u8)joined[q2] < 0x80) {
+            q2++;
+            lead++;
+          }
+          if (q2 < ce && joined[q2] == ' ') lead++;
+          cc = col / latinAtoms + lead;
+          break;
+        }
+        i32 colCap = cols / latinAtoms;
+        if (cc > colCap - 8) cc = colCap > 8 ? colCap - 8 : 0;
+        if (cc < 0) cc = 0;
+        return (u16)cc;
+      };
+      struct Row { u32 lo, hi; };
+      std::vector<Row> rows;
+      std::vector<u16> rowContOut;
+      if (cols <= 0 || joined.empty()) {
+        rows.push_back({0, (u32)joined.size()});
+      } else {
+        u32 lo = 0;
+        u16 nextCont = 0;
+        std::vector<u16> rowCont;
+        while (lo < joined.size()) {
+          i32 avail = rows.empty() ? cols : cols - (i32)nextCont * latinAtoms;
+          if (avail < 8 * latinAtoms) avail = 8 * latinAtoms;
+          u32 p = lo;
+          i32 col = 0;
+          u32 lastBrk = 0;
+          while (p < joined.size()) {
+            u32 q = p;
+            u32 cp = utf8Next(joined, q);
+            i32 w = isWide(cp) ? cjkCols : latinAtoms;
+            if (col + w > avail) break;
+            col += w;
+            p = q;
+            if (isBreakable(cp)) {
+              lastBrk = p;  // break AFTER the boundary
+            } else if (isWide(cp) && !isOpenPunct(cp)) {
+              // CJK wraps between any two characters (clreq), except
+              // before a closing punct / after an opening one (禁则)
+              u32 r = q;
+              u32 nx = q < joined.size() ? utf8Next(joined, r) : 0;
+              if (!(nx && isClosePunct(nx))) lastBrk = p;
+            }
+          }
+          if (p >= joined.size()) {
+            rows.push_back({lo, (u32)joined.size()});
+            rowCont.push_back(nextCont);
+            break;
+          }
+          u32 cut = lastBrk > lo ? lastBrk : p;
+          if (cut <= lo) {  // guarantee progress on pathological input
+            u32 q = lo;
+            utf8Next(joined, q);
+            cut = q;
+          }
+          // trailing spaces stay in the ROW (not swallowed between
+          // slices): the copy rebuild must be byte-lossless, and pre
+          // whitespace at a ragged row's end is invisible anyway
+          u32 ext = cut;
+          while (ext < joined.size() && joined[ext] == ' ') ext++;
+          rows.push_back({lo, ext});
+          rowCont.push_back(nextCont);
+          nextCont = contColsAt(cut);  // the NEXT row's indent
+          lo = ext;
+        }
+        if (rows.empty()) {
+          rows.push_back({0, 0});
+          rowCont.push_back(0);
+        }
+        rowContOut = std::move(rowCont);
+      }
+      bool hl = hlSet.count(li + 1) != 0;
+      const i64 rowTop = py;
+      for (size_t ri = 0; ri < rows.size(); ri++) {
+        Fragment line;
+        line.unitIdx = b.unit;
+        line.kind = FragKind::CodeRow;
+        line.codeLine = li;
+        line.cbLo = rows[ri].lo;
+        line.cbHi = rows[ri].hi;
+        line.codeCont = ri > 0;
+        line.contCols = ri < rowContOut.size() ? rowContOut[ri] : 0;
+        line.snapLatinPx = (float)grid.dLatinPx;
+        line.snapCjkPx = (float)grid.dCjkPx;
+        line.codeHl = hl;
+        line.height = adv;
+        line.baseline = rowBase;
+        line.left = b.x;
+        line.width = lineWidthCode;
+        line.y = (Su)py;
+        if (ri == 0 && g.lineNo > 0) {
+          line.marker = strs.intern(std::to_string(g.lineNo + (i32)li));
+          line.markerStyle = g.codeStyle;
+        } else if (first && b.marker) {
+          line.marker = b.marker;
+          line.markerStyle = b.markerStyle;
+        }
+        first = false;
+        py += adv;
+        fr->lines.push_back(line);
+      }
+      // sidecar rows for this logical line (equal-height zip, §5):
+      // ordinary inline lines broken to the sidebar measure — math,
+      // links and refs land through the generic cell render path
+      if (hasSidecar && li < u.cells.size()) {
+        const TableCell& cell = u.cells[li];
+        LinePolicy pol;
+        pol.join = LinePolicy::Join::Never;
+        pol.align = LinePolicy::Align::Ragged;
+        pol.widthPx = suToPx(sidebarW);
+        pol.anchor = cell.anchor;
+        const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[li],
+                                         LineWidths{sidebarW}, false, (Su)(b.x + lineWidthCode + gapSu),
+                                         sidebarW, b.unit, (i32)li},
+                                        pol, metrics, cfg, baseLeading, rowTop, fr->lines);
+        if (cy > py) py = cy;  // the equal-height constraint
+      }
+    }
+        leave(b, l);
+  }
+
+  void table(const LayoutBlock& b) {
+    const FlowUnit& u = tb->units[b.unit];
+    const TableData& td = std::get<TableData>(u.data);
+    Leaf l = enter(true);
+    const Su lineWidth = measure - b.x;
+    if (td.cols == 0) {
+      leave(b, l);
+      return;
+    }
+    // three-line-flavoured grid: full-width rules above, between, and
+    // below rows; equal columns; ragged cells aligned per column
+    const Su colW = lineWidth / (Su)td.cols;
+    const Su padX = suRoundPx(kTableCellPadEm * cfg.baseSizePx);
+    const Su padY = suRoundPx(kTableRowPadEm * cfg.baseSizePx);
+    Su cellW = colW - 2 * padX;
+    if (cellW < 64) cellW = 64;
+    for (const Flow& c : u.cells) {  // each cell breaks to its content width
+      cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{cellW}));
+      lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
+    }
+    const size_t nRows = u.cells.size() / td.cols;
+    auto addRule = [&](i64 yy) {
+      Fragment rl;
+      rl.unitIdx = b.unit;
+      rl.kind = FragKind::Rule;
+      rl.left = b.x;
+      rl.width = lineWidth;
+      rl.y = (Su)yy;
+      fr->lines.push_back(rl);
+    };
+    addRule(py);
+    for (size_t r = 0; r < nRows; r++) {
+      i64 rowTop = py + padY;
+      i64 rowBottom = rowTop + baseLeading;
+      for (u32 c = 0; c < td.cols; c++) {
+        const Flow& cell = u.cells[r * td.cols + c];
+        LinePolicy pol;
+        pol.join = LinePolicy::Join::Never;
+        pol.align = LinePolicy::Align::Cell;
+        pol.cellAlign = td.aligns[c];
+        pol.widthPx = suToPx(cellW);
+        pol.anchor = cell.anchor;
+        const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(),
+                                         cellBreaks[r * td.cols + c], LineWidths{cellW}, false,
+                                         (Su)(b.x + (Su)c * colW + padX), cellW, b.unit, (i32)(r * td.cols + c)},
+                                        pol, metrics, cfg, baseLeading, rowTop, fr->lines);
+        if (cy > rowBottom) rowBottom = cy;
+      }
+      py = rowBottom + padY;
+      addRule(py);
+    }
+    leave(b, l);
+  }
+};
+const DocLayout::Fn DocLayout::kLayouters[] = {&DocLayout::paragraph, &DocLayout::stack, &DocLayout::replaced,
+                                               &DocLayout::grid, &DocLayout::table};
+
+}  // namespace
+
+LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics, Interner& strs,
+                       const Config& cfg, DiagSink& diags) {
+  LayoutResult lr;
+  DocLayout(metrics, strs, cfg, diags, lr).run(tops);
   return lr;
 }
 
@@ -781,12 +887,12 @@ std::string dumpLayout(const LayoutResult& lr) {
   for (const ParaFrame& fr : lr.paras) {
     appendf(out, "para pid=%u y=%dsu w=%dsu h=%dsu\n", fr.pid, fr.y, fr.w, fr.h);
     for (size_t i = 0; i < fr.lines.size(); i++) {
-      const LineBox& l = fr.lines[i];
-      if (l.special == 1) {
-        appendf(out, "  L%zu rule y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
+      const Fragment& l = fr.lines[i];
+      if (l.kind == FragKind::Rule) {  // printed at its midline
+        appendf(out, "  L%zu rule y=%dsu left=%dsu w=%dsu\n", i, l.y + l.height / 2, l.left, l.width);
         continue;
       }
-      if (l.special == 2) {
+      if (l.kind == FragKind::CodeRow) {
         appendf(out, "  L%zu code y=%dsu left=%dsu line=%u [%u,%u)%s%s%s\n", i,
                 l.y, l.left, l.codeLine, l.cbLo, l.cbHi,
                 l.codeCont ? " cont" : "", l.codeHl ? " hl" : "",
@@ -795,15 +901,15 @@ std::string dumpLayout(const LayoutResult& lr) {
                                    " cc=" + std::to_string(l.contCols));
         continue;
       }
-      if (l.special == 3) {
+      if (l.kind == FragKind::Raw) {
         appendf(out, "  L%zu raw y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
         continue;
       }
-      if (l.special == 4) {
+      if (l.kind == FragKind::Math) {
         appendf(out, "  L%zu math y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
         continue;
       }
-      if (l.special == 5) {
+      if (l.kind == FragKind::Image) {
         appendf(out, "  L%zu img y=%dsu left=%dsu w=%dsu h=%dsu\n", i, l.y,
                 l.left, l.width, l.height);
         continue;
@@ -820,6 +926,23 @@ std::string dumpLayout(const LayoutResult& lr) {
               l.endsWithHyphen ? " hyphen" : "", l.marker ? " marker" : "",
               l.overfull ? " overfull" : "",
               l.blockBegin, l.blockEnd, l.srcSpan.start, l.srcSpan.end);
+    }
+  }
+  return out;
+}
+
+std::string dumpVList(const LayoutResult& lr, const std::vector<TopBlock>& tops) {
+  std::string out;
+  for (size_t p = 0; p < lr.paras.size() && p < tops.size(); p++) {
+    const ParaFrame& fr = lr.paras[p];
+    const TopTree& t = *tops[p].tree;
+    appendf(out, "vlist pid=%u y=%dsu h=%dsu\n", fr.pid, fr.y, fr.h);
+    for (const VEntry& v : fr.vlist) {
+      if (v.gap) appendf(out, "  glue %dsu\n", v.gap);
+      if (v.clear) appendf(out, "  clear %dsu\n", v.clear);
+      const LayoutBlock& b = t.blocks[t.leaves[v.unit]];
+      appendf(out, "  box unit=%u %s y=%dsu h=%dsu%s\n", v.unit, traitsOf(b.traits).name, v.y, v.h,
+              v.out ? " out-of-flow" : "");
     }
   }
   return out;

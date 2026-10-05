@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "../api/config.h"
-#include "../model/model.h"
+#include "../model/style.h"
 
 namespace tsr {
 
@@ -35,10 +35,7 @@ struct FaceKeyHash {
 
 // The one em of a style (plan P0-08): an absolute sizePx replaces the base,
 // sizeMul composes on top. Measurement, CSS and emit all use this formula.
-inline double emPx(const Config& cfg, const Styling& s) {
-  double base = s.sizePx > 0 ? (double)s.sizePx : cfg.baseSizePx;
-  return base * (double)s.sizeMul;
-}
+inline double emPx(const Config& cfg, const Styling& s) { return emPx(cfg.baseSizePx, s); }
 
 // Family resolution (plan P1-04): an explicit text.font wins; otherwise the
 // role (mono for CODE runs, body otherwise — T5 run roles select it from

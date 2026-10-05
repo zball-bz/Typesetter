@@ -1,0 +1,23 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,14)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="top" @[0,14)
+top pid=1 leaves=1
+  stack root gap=1/1 @[22,304)
+    paragraph para unit=0 @[22,304)
+top pid=2 leaves=1
+  stack root gap=1/1 @[306,321)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1.1" @[306,321)
+top pid=3 leaves=1
+  stack root gap=1/1 @[323,383)
+    paragraph para unit=0 @[323,383)
+top pid=4 leaves=1
+  stack root gap=1/1 @[385,494)
+    grid code unit=0 ragged nohyphen @[385,494)
+top pid=5 leaves=2
+  stack root gap=1/1 @[496,611)
+    stack figure anchor="fig-p" @[496,611)
+      replaced image image unit=0 ragged keep-with-next carry="fig-p" @[0,0)
+      paragraph caption unit=1 centered nohyphen @[0,0)
+top pid=6 leaves=1
+  stack root gap=1/1 @[613,700)
+    paragraph para unit=0 @[613,700)

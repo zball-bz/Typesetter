@@ -1,10 +1,11 @@
-// Emit internals shared by the block walk (emit.cc) and the legacy inline
+// Emit internals shared by the leaf shaper (emit.cc) and the legacy inline
 // emitter (legacy.cc, the CI equivalence check of plan P1-12; deleted with
-// the paragraph shaper, P4-02). The block walk is one; the inline stream of
-// a unit is written by an InlineSink: HList items in production, the old
-// LinebreakBlocks for the check.
+// the paragraph shaper, P4-02). The leaves are the box tree's (plan P1-18);
+// a leaf's inline stream is written by an InlineSink: HList items in
+// production, the old LinebreakBlocks for the check.
 #pragma once
 #include "emit.h"
+#include "../model/model.h"
 
 namespace tsr {
 
@@ -16,6 +17,8 @@ struct EmitEnv {
   const Config& cfg;
   const MathTextCtx* mathText = nullptr;  // text-font runs in formulas (math-design §10)
   StrRef spaceRef = 0, hyphenRef = 0, bulletRef = 0;
+  const Flow* leafFlow = nullptr;  // the leaf's own stream (not a cell's) and
+  Span leafSpan{};                 //   its node's span
 
   StyleId compose(StyleId base, u64 addBits, float mul) {
     return tsr::compose(styles, base, addBits, mul);
@@ -34,17 +37,19 @@ struct ICtx {
 
 struct InlineSink {
   virtual ~InlineSink() = default;
-  virtual void walk(const ContentNode* n, FlowUnit& u, ICtx ctx) = 0;
+  virtual void walk(const ContentNode* n, Flow& u, ICtx ctx) = 0;
   // the paragraph indent (首行缩进, App C): an unbreakable fixed-width box
-  virtual void indent(FlowUnit& u, StyleId st, Span span, double px) = 0;
+  virtual void indent(Flow& u, StyleId st, Span span, double px) = 0;
   // the unit's inline stream is complete
-  virtual void finish(FlowUnit& u) = 0;
+  virtual void finish(Flow& u) = 0;
   // a cell's stream (table cell, caption row, sidecar line) moves to its cell
-  virtual void toCell(FlowUnit& tmp, TableCell& tc) = 0;
+  virtual void toCell(Flow& tmp, Flow& tc) = 0;
   // the whole document is emitted (cross-unit passes)
   virtual void done(std::vector<TopBlock>& tops) = 0;
 };
 
-std::vector<TopBlock> emitWith(const ContentTree& tree, EmitEnv& env, InlineSink& sink);
+struct BoxTree;
+// shapes every leaf of the box tree through the sink
+std::vector<TopBlock> emitWith(const BoxTree& bt, EmitEnv& env, InlineSink& sink);
 
 }  // namespace tsr

@@ -32,16 +32,16 @@ const RULES = [
   {
     id: 'role-string-compare',
     why: 'P2: no layer compares role/kind/what strings (use generated ids / element registry)',
-    files: () => files(['engine/src/resolve', 'engine/src/emit', 'engine/src/layout',
-                        'engine/src/render', 'engine/src/break'], ['.cc', '.h']),
+    files: () => files(['engine/src/resolve', 'engine/src/emit', 'engine/src/boxtree', 'engine/src/layout',
+                        'engine/src/paint', 'engine/src/render', 'engine/src/break'], ['.cc', '.h']),
     re: /==\s*(std::string_view\()?"[a-z][a-z-]*"/,
   },
   {
     id: 'layout-includes-model',
-    why: 'P4: layout/break/render-typeset may not include model.h (read the box tree / fragments)',
-    files: () => files(['engine/src/layout', 'engine/src/break'], ['.cc', '.h'])
-      .concat(files(['engine/src/render'], ['typeset_html.cc'])),
-    re: /#include\s+"[^"]*model\/model\.h"/,
+    why: 'P4: layout/break/paint and the typeset writer may not see model.h, not even through another header (read the box tree, fragments and the DisplayList)',
+    files: () => files(['engine/src/layout', 'engine/src/break', 'engine/src/paint'], ['.cc', '.h'])
+      .concat(files(['engine/src/render'], ['typeset_html.cc', 'typeset_html.h'])),
+    closure: /model\/model\.h$/,
   },
   {
     id: 'shell-dom-scrape',
@@ -69,9 +69,10 @@ for (const [path, row] of Object.entries(schema.settings ?? {})) {
 }
 const STAGE_DIRS = {
   Resolve: ['engine/src/resolve'],
+  BoxTree: ['engine/src/boxtree'],
   Emit: ['engine/src/emit', 'engine/src/math', 'engine/src/code'],
   Layout: ['engine/src/layout', 'engine/src/break'],
-  Paint: ['engine/src/render'],
+  Paint: ['engine/src/render', 'engine/src/paint'],
 };
 for (const [stage, dirs] of Object.entries(STAGE_DIRS)) {
   RULES.push({
@@ -82,10 +83,36 @@ for (const [stage, dirs] of Object.entries(STAGE_DIRS)) {
   });
 }
 
+// the headers a file sees, transitively (quoted includes that resolve in the
+// tree; system and generated-at-build headers are leaves): the first chain
+// that reaches a header matching `target`
+function includeChain(file, target) {
+  const seen = new Set([file]);
+  const queue = [[file]];
+  while (queue.length) {
+    const chain = queue.shift();
+    const cur = chain[chain.length - 1];
+    for (const m of readFileSync(cur, 'utf8').matchAll(/^#include\s+"([^"]+)"/gm)) {
+      const next = join(dirname(cur), m[1]);
+      if (seen.has(next) || !existsSync(next)) continue;
+      seen.add(next);
+      const c = [...chain, next];
+      if (target.test(next)) return c;
+      queue.push(c);
+    }
+  }
+  return null;
+}
+
 const found = [];
 for (const r of RULES) {
   for (const f of r.files()) {
     const rel = relative(root, f);
+    if (r.closure) {
+      const chain = includeChain(f, r.closure);
+      if (chain) found.push({ rule: r.id, file: rel, line: 1, text: `sees ${chain.slice(1).map((p) => relative(join(root, 'engine/src'), p)).join(' → ')}` });
+      continue;
+    }
     readFileSync(f, 'utf8').split('\n').forEach((line, i) => {
       if (r.re.test(line)) found.push({ rule: r.id, file: rel, line: i + 1, text: line.trim() });
     });

@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstdlib>
 #include "../api/config.h"
-#include "../model/model.h"
+#include "../model/style.h"
 #include "face.h"
 
 namespace tsr {

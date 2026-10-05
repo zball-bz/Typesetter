@@ -1,0 +1,6 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,31)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="kp81" @[0,31)
+top pid=1 leaves=1
+  stack root gap=1/1 @[40,111)
+    paragraph para unit=0 @[40,111)

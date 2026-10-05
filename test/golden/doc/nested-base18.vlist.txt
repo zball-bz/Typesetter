@@ -1,0 +1,15 @@
+vlist pid=0 y=0su h=5184su
+  box unit=0 para y=0su h=5184su
+vlist pid=1 y=6566su h=14396su
+  glue 1382su
+  box unit=0 para y=0su h=1728su
+  glue 460su
+  box unit=1 para y=2188su h=3456su
+  glue 460su
+  box unit=2 code y=6104su h=1728su
+  glue 460su
+  box unit=3 para y=8292su h=1728su
+  glue 460su
+  box unit=4 para y=10480su h=1728su
+  glue 460su
+  box unit=5 para y=12668su h=1728su

@@ -1,0 +1,21 @@
+= Anchor kinds <top>
+
+#!listing(label: "lst-a")
+```python
+x = 1
+```
+#listing!
+
+#!aside(label: "box-b")
+== Inner heading <sec-in>
+
+Body text of the aside.
+#aside!
+
+#!aside(label: "rule-c")
+---
+
+After the rule.
+#aside!
+
+See @lst-a, @box-b, @sec-in and @rule-c.

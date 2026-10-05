@@ -4,7 +4,7 @@
 //        [--fixture=f.fixture.json] [--settings=f.json] [--set path=value]…
 //        [--fuse-check] <file.tsm>
 // Products are products.def (skeleton ast js tokens outline astjson ops tree
-// index semantic mathbox blocks hlist breaks layout paged html diags
+// index semantic blocktree mathbox blocks hlist breaks layout vlist paged html dl diags
 // settings); those after Ingest need --ops.
 // Settings layer in order: profile, fixture, --settings, --set. A profile
 // name resolves to test/profiles/<name>.json under the current directory.
@@ -159,7 +159,7 @@ int main(int argc, char** argv) {
     }
     // semantic is the pre-answer render; everything later (and diags with
     // ops) drives the pull loop to completion
-    if (need >= Stage::Emit || stage == "diags") {
+    if (need >= Stage::BoxTree || stage == "diags") {
       ProviderSet p = mockProviders();
       p.tokens = [](Doc& d) { provideNativeTokens(d); };
       if (!driveToCompletion(doc, p)) {
@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
       fprintf(stderr, "--fuse-check needs a typeset stage (and --ops=)\n");
       return 2;
     }
-    std::string d = fuseCheck(doc.tops, doc.tree, doc.arena, doc.strs, doc.styles, doc.cfg,
+    std::string d = fuseCheck(doc.tops, doc.boxtree, doc.arena, doc.strs, doc.styles, doc.cfg,
                               doc.metrics, doc.cfg.baseSizePx);
     for (const TopBlock& tb : doc.tops)
       for (const FlowUnit& u : tb.units) {

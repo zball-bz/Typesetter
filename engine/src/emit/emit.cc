@@ -2,6 +2,7 @@
 #include "emit_internal.h"
 #include "../shape/objects.h"
 #include "../shape/textrules.h"
+#include "../boxtree/build.h"
 
 #include <functional>
 #include <type_traits>
@@ -90,14 +91,14 @@ struct HlInline final : InlineSink {
   // the open unit's list is built here (inline streams never nest) and
   // copied to the unit, exactly sized, by finish(): the scratch keeps its
   // capacity from unit to unit
-  FlowUnit* cur = nullptr;
+  Flow* cur = nullptr;
   HList B;
   std::vector<float> pend;  // per carrier: the break penalty after it (kPenInf = none)
   std::vector<u8> gapKind;  // per carrier: 1 a CJK char, 2 a closing glyph, 0 other
   bool single = false;      // the open run admits no other carrier
   explicit HlInline(EmitEnv& e) : E(e), strs(e.strs), styles(e.styles), cfg(e.cfg) {}
 
-  void open(FlowUnit& u) {
+  void open(Flow& u) {
     if (cur == &u) return;
     cur = &u;
     B.items.clear();
@@ -126,7 +127,7 @@ struct HlInline final : InlineSink {
     u32 i = 0;
     return (u8)ccOf(utf8Next(s, i));
   }
-  u32 push(FlowUnit& u, IK k, u8 cls, u8 attrs, const RunRec& rk, const AdvanceSpec& spec, Span span,
+  u32 push(Flow& u, IK k, u8 cls, u8 attrs, const RunRec& rk, const AdvanceSpec& spec, Span span,
            float x, float pen) {
     open(u);
     HList& h = B;
@@ -191,7 +192,7 @@ struct HlInline final : InlineSink {
   }
   const RunRec& runOf(size_t i) const { return B.runs[B.items[i].run]; }
   // a synthetic or object item: its width is defined at emit
-  void fixWidth(FlowUnit&, u32 i, double px, Su w, Su cap) {
+  void fixWidth(Flow&, u32 i, double px, Su w, Su cap) {
     HItem& it = B.items[i];
     it.w = w;
     it.st |= IS_Resolved;
@@ -199,7 +200,7 @@ struct HlInline final : InlineSink {
     c.rawPx = px;
     c.capSu = cap;
   }
-  void pop(FlowUnit&) {  // the last carrier, a punctuation blank
+  void pop(Flow&) {  // the last carrier, a punctuation blank
     HList& h = B;
     h.items.pop_back();
     h.specs.pop_back();
@@ -207,7 +208,7 @@ struct HlInline final : InlineSink {
     pend.pop_back();
     gapKind.pop_back();
   }
-  size_t count(const FlowUnit& u) const { return cur == &u ? B.items.size() : 0; }
+  size_t count(const Flow& u) const { return cur == &u ? B.items.size() : 0; }
   // carrier predicates (the open unit)
   bool isCjkChar(size_t i) const { return gapKind[i] == 1; }  // a CJK char, pinned or letter-spaced
   bool isObject(size_t i) const { return B.items[i].k == IK::Box && runOf(i).rc == RealizeClass::Object; }
@@ -224,7 +225,7 @@ struct HlInline final : InlineSink {
   }
 
   // -- the item kinds ---------------------------------------------------------
-  void autospace(FlowUnit& u, StyleId st, const ICtx& ctx, Span span) {
+  void autospace(Flow& u, StyleId st, const ICtx& ctx, Span span) {
     double px = kCjkBoundaryEm * E.fontPx(st);
     AdvanceSpec sp;
     sp.k = AdvanceSpec::Fixed;
@@ -234,7 +235,7 @@ struct HlInline final : InlineSink {
                  sp, span, 1.0f, 0.0f);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(px));
   }
-  void blank(FlowUnit& u, StyleId st, const ICtx& ctx, Span span, double px, bool ownedByNext, float pen) {
+  void blank(Flow& u, StyleId st, const ICtx& ctx, Span span, double px, bool ownedByNext, float pen) {
     AdvanceSpec sp;
     sp.k = AdvanceSpec::Fixed;
     sp.em = kPunctHalfEm;
@@ -243,13 +244,13 @@ struct HlInline final : InlineSink {
                  key(st, ctx.url, ctx.addFlags, RealizeClass::Plain), sp, span, 0.0f, pen);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
   }
-  void word(std::string_view w, const ContentNode* n, FlowUnit& u, StyleId st, StrRef url, float pen,
+  void word(std::string_view w, const ContentNode* n, Flow& u, StyleId st, StrRef url, float pen,
             u16 addFlags) {
     AdvanceSpec sp;
     sp.str = strs.intern(w);
     push(u, IK::Box, firstCc(w), 0, key(st, url, addFlags, RealizeClass::Plain), sp, n->span, 0.0f, pen);
   }
-  void hyphenPoint(const ContentNode* n, FlowUnit& u, StyleId st, StrRef url, u16 addFlags) {
+  void hyphenPoint(const ContentNode* n, Flow& u, StyleId st, StrRef url, u16 addFlags) {
     open(u);
     HList& h = B;
     AdvanceSpec hs;
@@ -277,7 +278,7 @@ struct HlInline final : InlineSink {
 
   // -- the walk ---------------------------------------------------------------
   // -- the walk: the flatten table (schema `inline` column, plan P1-13) -------
-  void walk(const ContentNode* n, FlowUnit& u, ICtx ctx) override {
+  void walk(const ContentNode* n, Flow& u, ICtx ctx) override {
     switch (kKinds[(u16)n->kind].inl) {
       case InlineShape::Text:
         emitText(n, u, ctx);
@@ -309,15 +310,15 @@ struct HlInline final : InlineSink {
     }
   }
   // a generated node (no span of its own) reports at its unit
-  static Span diagSpan(const ContentNode* n, const FlowUnit& u) {
-    return n->span.empty() && u.src ? u.src->span : n->span;
+  Span diagSpan(const ContentNode* n, const Flow& u) const {
+    return n->span.empty() && &u == E.leafFlow ? E.leafSpan : n->span;
   }
   // the penalty after the last item: forbidden, unless a forced break
   void forbidLast() {
     if (!(pend.back() <= -kPenInf)) pend.back() = kPenInf;
   }
 
-  void container(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+  void container(const ContentNode* n, Flow& u, ICtx ctx) {
     if (n->kind == Kind::link) {
       for (const ArgVal& a : n->args)
         if (a.key == ArgK::url && a.tag == ArgTag::Str) ctx.url = a.ref;
@@ -334,7 +335,7 @@ struct HlInline final : InlineSink {
     for (const ContentNode* k : n->kids) walk(k, u, ctx);
   }
 
-  void code(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+  void code(const ContentNode* n, Flow& u, ICtx ctx) {
     // inline code: one unbreakable box, mono style
     if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
       StyleId st = E.compose(n->style, ctx.addBits | CLS_CODE, ctx.mul * (float)cfg.codeScale);
@@ -345,7 +346,7 @@ struct HlInline final : InlineSink {
     }
   }
 
-  void ref(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+  void ref(const ContentNode* n, Flow& u, ICtx ctx) {
     // resolver output: kids = display text, url arg = "#tsr-<label>"
     for (const ArgVal& a : n->args)
       if (a.key == ArgK::url && a.tag == ArgTag::Str) {
@@ -373,7 +374,7 @@ struct HlInline final : InlineSink {
     }
   }
 
-  void errorText(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+  void errorText(const ContentNode* n, Flow& u, ICtx ctx) {
     // an error node stays breakable CODE-style text (design T5 A22)
     std::string msg = "\xE2\x9A\xA0 ";  // ⚠
     for (const ArgVal& a : n->args)
@@ -388,7 +389,7 @@ struct HlInline final : InlineSink {
   }
 
   // -- objects (shape/objects.h) ------------------------------------------------
-  u32 addObject(FlowUnit& u, ObjKind k, const ContentNode* n, StyleId st) {
+  u32 addObject(Flow& u, ObjKind k, const ContentNode* n, StyleId st) {
     open(u);
     InlineObject ob;
     ob.kind = k;
@@ -400,7 +401,7 @@ struct HlInline final : InlineSink {
     return (u32)B.objs.size() - 1;
   }
   // one Box part with its extents; returns the item
-  u32 objectBox(FlowUnit& u, u32 obj, const ObjPart& part, StyleId st, const ICtx& ctx, Span span, StrRef str,
+  u32 objectBox(Flow& u, u32 obj, const ObjPart& part, StyleId st, const ICtx& ctx, Span span, StrRef str,
                 bool resolved) {
     InlineObject& ob = B.objs[obj];
     if (ob.nParts == 0) ob.part0 = (u32)B.parts.size();
@@ -418,7 +419,7 @@ struct HlInline final : InlineSink {
     return b;
   }
 
-  void object(const ContentNode* n, FlowUnit& u, ICtx ctx, ObjKind k) {
+  void object(const ContentNode* n, Flow& u, ICtx ctx, ObjKind k) {
     switch (k) {
       case ObjKind::Math:
         math(n, u, ctx);
@@ -484,7 +485,7 @@ struct HlInline final : InlineSink {
     }
   }
 
-  void math(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+  void math(const ContentNode* n, Flow& u, ICtx ctx) {
     StrRef srcRef = 0;
     for (const ArgVal& a : n->args)
       if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
@@ -539,7 +540,7 @@ struct HlInline final : InlineSink {
     }
   }
 
-  void emitWord(std::string_view w, const ContentNode* n, FlowUnit& u, StyleId st, StrRef url,
+  void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, StrRef url,
                 bool noHyphen, u16 addFlags) {
     // lead / core / trail split (ASCII letters core) for hyphenation
     u32 a = 0, b = (u32)w.size();
@@ -592,7 +593,7 @@ struct HlInline final : InlineSink {
     }
   }
 
-  void emitText(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+  void emitText(const ContentNode* n, Flow& u, ICtx ctx) {
     StyleId st = E.compose(n->style, ctx.addBits, ctx.mul);
     StyleId stCjk = E.compose(st, CLS_CJK, 1.0f);
     std::string_view s = strs.get(n->str);
@@ -754,7 +755,7 @@ struct HlInline final : InlineSink {
     flushWord();
   }
 
-  void indent(FlowUnit& u, StyleId st, Span span, double px) override {
+  void indent(Flow& u, StyleId st, Span span, double px) override {
     AdvanceSpec sp;
     sp.k = AdvanceSpec::Fixed;
     sp.em = cfg.paraIndentEm;
@@ -764,15 +765,18 @@ struct HlInline final : InlineSink {
     u32 i = push(u, IK::Box, 0, 0, rk, sp, span, 0.0f, kPenInf);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
   }
-  void finish(FlowUnit& u) override;
-  void toCell(FlowUnit& tmp, TableCell& tc) override {
+  void finish(Flow& u) override;
+  void toCell(Flow& tmp, Flow& tc) override {
     tc.hl = std::move(tmp.hl);
     tc.anchor = tmp.anchor;  // a label inside the cell, kept (plan P1-17)
   }
   void done(std::vector<TopBlock>&) override {}
 };
 
-// ---- the block walk (shared by the HList and the legacy inline sinks) -------
+// ---- the leaves (shared by the HList and the legacy inline sinks) ----------
+// The box tree (boxtree/build.cc) decided the structure, the anchors, the
+// markers and the indents; emit shapes each leaf's content: its inline
+// stream, cells and rows, and its typed payload (plan P1-18).
 struct Emitter {
   EmitEnv& E;
   InlineSink& sink;
@@ -782,151 +786,64 @@ struct Emitter {
   StyleTable& styles;
   const Config& cfg;
   const MathTextCtx* mathText;
-  StrRef pendingAnchor = 0;  // labeled container (group): first unit anchors
-  int figDepth = 0;          // inside group{role:figure}: paras are captions
-  // innermost block with a source span: diagnostics on generated nodes
-  // without one (a figure's image) point at it instead of @[0,0)
-  Span blockSpan{};
   Emitter(EmitEnv& e, InlineSink& s)
       : E(e), sink(s), arena(e.arena), diags(e.diags), strs(e.strs), styles(e.styles), cfg(e.cfg),
         mathText(e.mathText) {}
-  Span diagSpan(const ContentNode* n) const { return n->span.empty() ? blockSpan : n->span; }
-  StrRef takeAnchor() {
-    StrRef a = pendingAnchor;
-    pendingAnchor = 0;
-    return a;
-  }
   StyleId compose(StyleId base, u64 addBits, float mul) { return E.compose(base, addBits, mul); }
   double fontPx(StyleId st) { return E.fontPx(st); }
 
-  // ---- block walk ---------------------------------------------------------
-  void blockWalk(const ContentNode* n, Su indent, StrRef marker, TopBlock& tb) {
-    struct SpanScope {
-      Span& at;
-      Span saved;
-      SpanScope(Span& a, Span s) : at(a), saved(a) { if (!s.empty()) at = s; }
-      ~SpanScope() { at = saved; }
-    } spanScope(blockSpan, n->span);
-    switch (n->kind) {
-      case Kind::para: {
-        FlowUnit u;
-        u.src = n;
-        u.indent = indent;
-        u.marker = marker;
-        u.markerStyle = compose(n->style, 0, 1.0f);
-        u.anchor = takeAnchor();
-        for (const ArgVal& a : n->args)  // labelled paragraph (note bodies)
-          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) u.anchor = a.ref;
+  // an inline stream of `kids` into its own flow (a cell, a caption row, a
+  // sidecar line)
+  Flow cellOf(const std::vector<ContentNode*>& kids, ICtx ctx) {
+    Flow tmp, tc;
+    for (const ContentNode* k : kids) sink.walk(k, tmp, ctx);
+    sink.finish(tmp);
+    sink.toCell(tmp, tc);
+    return tc;
+  }
+
+  void leaf(const LayoutBlock& b, const LeafSource& ls, FlowUnit& u) {
+    const ContentNode* n = ls.node;
+    E.leafFlow = &u;  // a generated node without a span reports at its leaf
+    E.leafSpan = n->span;
+    const BlockTraits& tr = traitsOf(b.traits);
+    switch (b.layouter) {
+      case LayouterId::Paragraph: {
+        if (ls.role == LeafSource::Role::MarkerOnly) return;  // its marker alone
         ICtx ctx;
-        if (figDepth > 0) {
-          // figure caption (figure-design.md §3): centred ragged lines,
-          // no hyphenation, never indented
-          u.ragged = true;
-          u.centered = true;
-          ctx.noHyphen = true;
-        } else if (cfg.paraIndentEm > 0 && marker == 0) {  // 首行缩进 (App C)
-          double px = cfg.paraIndentEm * fontPx(n->style);
-          sink.indent(u, n->style, n->span, px);
-        }
-        for (const ContentNode* k : n->kids) sink.walk(k, u, ctx);  // the paragraph's content
-        sink.finish(u);
-        tb.units.push_back(std::move(u));
-        return;
-      }
-      case Kind::heading: {
-        int level = attrInt(n, ArgK::level, 1);
-        FlowUnit u;
-        u.src = n;
-        u.indent = indent;
-        u.marker = marker;
-        u.markerStyle = n->style;
-        u.anchor = takeAnchor();
-        for (const ArgVal& a : n->args)
-          if (a.key == ArgK::label && a.tag == ArgTag::Str) u.anchor = a.ref;
-        u.ragged = true;  // display line: ragged right, no hyphenation
-        ICtx ctx;
-        ctx.addBits = CLS_BOLD;
-        ctx.mul = (float)headingSizeMul(level);
-        ctx.noHyphen = true;
-        for (const ContentNode* k : n->kids) sink.walk(k, u, ctx);  // the heading's content
-        sink.finish(u);
-        tb.units.push_back(std::move(u));
-        return;
-      }
-      case Kind::list: {
-        bool ordered = attrBool(n, ArgK::ordered, false);
-        int num = attrInt(n, ArgK::start, 1);
-        Su childIndent = indent + suRoundPx(cfg.listIndentEm * cfg.baseSizePx);
-        size_t listStart = tb.units.size();
-        for (const ContentNode* item : n->kids) {
-          std::string m = ordered ? std::to_string(num++) + "." : "\xE2\x80\xA2";  // •
-          StrRef mref = strs.intern(m);
-          size_t before = tb.units.size();
-          bool first = true;
-          for (const ContentNode* k : item->kids) {
-            blockWalk(k, childIndent, first ? mref : 0, tb);
-            first = false;
+        ctx.noHyphen = !tr.hyphenate;
+        if (n->kind == Kind::error) {
+          sink.walk(n, u, ctx);  // error case renders ⚠ + message
+        } else {
+          if (n->kind == Kind::heading) {
+            ctx.addBits = CLS_BOLD;
+            ctx.mul = (float)headingSizeMul(attrInt(n, ArgK::level, 1));
           }
-          (void)before;
-          if (item->kids.empty()) {  // empty item still shows its marker
-            FlowUnit u;
-            u.src = item;
-            u.indent = childIndent;
-            u.marker = mref;
-            u.markerStyle = item->style;
-            tb.units.push_back(std::move(u));
-          }
+          if (ls.paraIndent) sink.indent(u, n->style, n->span, cfg.paraIndentEm * fontPx(n->style));
+          for (const ContentNode* k : n->kids) sink.walk(k, u, ctx);  // the block's content
         }
-        // everything inside a list after its first unit packs tighter
-        for (size_t k = listStart + 1; k < tb.units.size(); k++)
-          tb.units[k].tightAbove = true;
+        sink.finish(u);
         return;
       }
-      case Kind::quote: {
-        Su childIndent = indent + suRoundPx(cfg.quoteIndentEm * cfg.baseSizePx);
-        for (const ContentNode* k : n->kids) blockWalk(k, childIndent, 0, tb);
-        return;
-      }
-      case Kind::codeblock: {
-        FlowUnit u;
-        u.kind = FlowUnit::K::Code;
-        u.src = n;
-        u.indent = indent;
-        u.marker = marker;
-        u.codeStyle = compose(n->style, CLS_CODE, (float)cfg.codeScale);
-        u.markerStyle = u.codeStyle;
-        u.chRef = strs.intern("0");
-        u.cjkChRef = strs.intern("\xE4\xB8\xAD");
-        if (StrRef lang = attrStr(n, ArgK::lang)) u.codeLang = lang;
-        u.codeWrap = attrBool(n, ArgK::wrap, u.codeWrap);
-        u.codeLineNo = attrInt(n, ArgK::lineNo, u.codeLineNo);
+      case LayouterId::Grid: {
+        GridData& g = u.data.emplace<GridData>();
+        g.codeStyle = compose(n->style, CLS_CODE, (float)cfg.codeScale);
+        g.chRef = strs.intern("0");
+        g.cjkChRef = strs.intern("\xE4\xB8\xAD");
+        if (StrRef lang = attrStr(n, ArgK::lang)) g.lang = lang;
+        g.wrap = attrBool(n, ArgK::wrap, g.wrap);
+        g.lineNo = attrInt(n, ArgK::lineNo, g.lineNo);
         if (StrRef hl = attrStr(n, ArgK::hl))  // "3,5-7": validated by the reader
-          parseRangeSet(strs.get(hl), u.hlLines);
-        // sidecar rows (verbatim-design §5): the trailing group becomes one
-        // TableCell-shaped inline stream per logical line — the whole body
-        // pipeline (KP, math, links) applies inside each
-        std::vector<const ContentNode*> bodyKids;
-        for (const ContentNode* k : n->kids) {
-          bool isSidecar = false;
-          if (k->kind == Kind::group)
-            for (const ArgVal& a : k->args)
-              if (a.key == ArgK::role && a.tag == ArgTag::Str &&
-                  strs.get(a.ref) == std::string_view("sidecar-lines"))
-                isSidecar = true;
-          if (isSidecar) {
-            u.sidecar = true;
-            for (const ContentNode* lineNode : k->kids) {
-              TableCell tc;
-              FlowUnit tmp;
-              for (const ContentNode* c2 : lineNode->kids) sink.walk(c2, tmp, {});
-              sink.finish(tmp);
-              sink.toCell(tmp, tc);
-              u.cells.push_back(std::move(tc));
-            }
-          } else {
-            bodyKids.push_back(k);
-          }
+          parseRangeSet(strs.get(hl), g.hlLines);
+        // sidecar rows (verbatim-design §5): one inline stream per logical
+        // line — the whole body pipeline (KP, math, links) applies inside each
+        if (ls.sidecar) {
+          g.sidecar = true;
+          for (const ContentNode* lineNode : ls.rows) u.cells.push_back(cellOf(lineNode->kids, {}));
         }
+        std::vector<const ContentNode*> bodyKids;
+        for (const ContentNode* k : n->kids)
+          if (k != ls.sidecar) bodyKids.push_back(k);
         // Two body forms (CH1): a single text child = plain lines split on
         // \n; otherwise each child is one line (seq of styled runs — the
         // leaves' styles were already folded at instantiation).
@@ -936,206 +853,107 @@ struct Emitter {
           while (pos <= body.size()) {
             size_t eol = body.find('\n', pos);
             if (eol == std::string_view::npos) eol = body.size();
-            u.codeRuns.push_back(
-                {{strs.intern(body.substr(pos, eol - pos)), u.codeStyle}});
+            g.lines.push_back({{strs.intern(body.substr(pos, eol - pos)), g.codeStyle}});
             if (eol == body.size()) break;
             pos = eol + 1;
           }
         } else {
           const StrRef commentColor = strs.intern("var(--tsr-tok-comment)");
-          std::function<void(const ContentNode*, std::vector<FlowUnit::CodeRun>&)>
-              collect = [&](const ContentNode* k, std::vector<FlowUnit::CodeRun>& out) {
+          std::function<void(const ContentNode*, std::vector<CodeRun>&)> collect =
+              [&](const ContentNode* k, std::vector<CodeRun>& out) {
                 if (k->kind == Kind::text) {
                   bool cm = styles.get(k->style).color == commentColor;
-                  out.push_back(
-                      {k->str, compose(k->style, CLS_CODE, (float)cfg.codeScale), cm});
+                  out.push_back({k->str, compose(k->style, CLS_CODE, (float)cfg.codeScale), cm});
                   return;
                 }
                 if (k->kind == Kind::comment) return;
                 for (const ContentNode* c : k->kids) collect(c, out);
               };
           for (const ContentNode* lineNode : bodyKids) {
-            std::vector<FlowUnit::CodeRun> runs;
+            std::vector<CodeRun> runs;
             collect(lineNode, runs);
-            u.codeRuns.push_back(std::move(runs));
+            g.lines.push_back(std::move(runs));
           }
         }
-        tb.units.push_back(std::move(u));
         return;
       }
-      case Kind::rule: {
-        FlowUnit u;
-        u.kind = FlowUnit::K::Rule;
-        u.src = n;
-        u.indent = indent;
-        tb.units.push_back(std::move(u));
-        return;
-      }
-      case Kind::table: {
-        FlowUnit u;
-        u.kind = FlowUnit::K::Table;
-        u.src = n;
-        u.indent = indent;
-        u.anchor = takeAnchor();
+      case LayouterId::Table: {
+        TableData& t = u.data.emplace<TableData>();
         int cols = attrInt(n, ArgK::cols, 1);
-        StrRef alignRef = attrStr(n, ArgK::align);
-        if (StrRef lab = attrStr(n, ArgK::label)) u.anchor = lab;
         if (cols < 1) cols = 1;
-        u.tCols = (u32)cols;
-        std::string_view al = strs.get(alignRef);
-        for (int c = 0; c < cols; c++)
-          u.tAligns.push_back(c < (int)al.size() ? (u8)al[(size_t)c] : (u8)'l');
+        t.cols = (u32)cols;
+        std::string_view al = strs.get(attrStr(n, ArgK::align));
+        for (int c = 0; c < cols; c++) t.aligns.push_back(c < (int)al.size() ? (u8)al[(size_t)c] : (u8)'l');
         for (const ContentNode* row : n->kids) {
           if (row->kind != Kind::trow) continue;
           u32 c = 0;
           for (const ContentNode* cell : row->kids) {
-            if (cell->kind != Kind::tcell || c >= u.tCols) continue;
-            TableCell tc;
-            FlowUnit tmp;  // cell content flattens to one inline stream (v1)
-            for (const ContentNode* k : cell->kids) sink.walk(k, tmp, {});
-            sink.finish(tmp);
-            sink.toCell(tmp, tc);
-            u.cells.push_back(std::move(tc));
+            if (cell->kind != Kind::tcell || c >= t.cols) continue;
+            u.cells.push_back(cellOf(cell->kids, {}));  // cell content flattens to one inline stream (v1)
             c++;
           }
-          while (c < u.tCols) {
-            u.cells.push_back({});
-            c++;
-          }
+          for (; c < t.cols; c++) u.cells.push_back({});
         }
-        tb.units.push_back(std::move(u));
         return;
       }
-      case Kind::raw: {
-        // pre-rendered passthrough (v2 §4.1); height declared by the
-        // handler, defaulting to one leading
-        FlowUnit u;
-        u.kind = FlowUnit::K::Raw;
-        u.src = n;
-        u.indent = indent;
-        u.anchor = takeAnchor();
-        for (const ArgVal& a : n->args) {
-          if (a.key == ArgK::html && a.tag == ArgTag::Str) u.rawHtml = a.ref;
-          if (a.key == ArgK::h && a.tag == ArgTag::Num) u.rawHpx = a.num;
-        }
-        if (u.rawHpx <= 0) u.rawHpx = cfg.lineHeight * cfg.baseSizePx;
-        tb.units.push_back(std::move(u));
-        return;
-      }
-      case Kind::image: {
-        // figure-design.md §3: display box from intrinsic dims (author-
-        // declared or pull-provided) + optional scale; placeholder on an
-        // unsafe scheme or a failed load (0×0)
-        FlowUnit u;
-        u.kind = FlowUnit::K::Image;
-        u.src = n;
-        u.indent = indent;
-        u.ragged = true;
-        u.anchor = takeAnchor();
-        double iw = 0, ih = 0, scale = 0;
-        StrRef srcRef = 0, altRef = 0, sideRef = 0;
-        for (const ArgVal& a : n->args) {
-          if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
-          if (a.key == ArgK::alt && a.tag == ArgTag::Str) altRef = a.ref;
-          if (a.key == ArgK::side && a.tag == ArgTag::Str) sideRef = a.ref;
-          if (a.key == ArgK::w && a.tag == ArgTag::Num) iw = a.num;
-          if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
-          if (a.key == ArgK::scale && a.tag == ArgTag::Num) scale = a.num;
-        }
-        // an unsafe scheme is reported by the ingest scan (plan P1-16)
-        const bool safe = srcRef && safeImageSrc(strs.get(srcRef));
-        if (safe && iw > 0 && ih > 0) u.imgSrc = srcRef;
-        u.img.iw = iw;
-        u.img.ih = ih;
-        u.img.scale = scale;
-        u.img.placeholder = !u.imgSrc;
-        u.imgAlt = altRef;
-        std::string_view side = sideRef ? strs.get(sideRef) : std::string_view{};
-        u.floatSide = side == "left" ? 1 : side == "right" ? 2 : 0;
-        tb.units.push_back(std::move(u));
-        return;
-      }
-      case Kind::mathblock: {
-        FlowUnit u;
-        u.kind = FlowUnit::K::Math;
-        u.src = n;
-        u.indent = indent;
-        u.ragged = true;
-        u.anchor = takeAnchor();
-        StrRef srcRef = 0;
-        for (const ArgVal& a : n->args) {
-          if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
-          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) u.anchor = a.ref;
-          if (a.key == ArgK::name && a.tag == ArgTag::Str) u.eqTag = a.ref;
-        }
-        u.mathBox = layoutMathFormula(strs.get(srcRef), /*display=*/true,
-                                      fontPx(n->style), arena, strs, diags, n->span, mathText);
-        tb.units.push_back(std::move(u));
-        return;
-      }
-      case Kind::error: {
-        FlowUnit u;
-        u.src = n;
-        u.indent = indent;
-        u.ragged = true;
-        u.anchor = takeAnchor();
-        ICtx ctx;
-        sink.walk(n, u, ctx);  // error case renders ⚠ + message
-        sink.finish(u);
-        tb.units.push_back(std::move(u));
-        return;
-      }
-      case Kind::comment:
-        return;
-      case Kind::group: {
-        bool isFigure = false;
-        for (const ArgVal& a : n->args) {
-          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref)
-            pendingAnchor = a.ref;
-          if (a.key == ArgK::role && a.tag == ArgTag::Str &&
-              strs.get(a.ref) == std::string_view("figure"))
-            isFigure = true;
-        }
-        if (isFigure) {
-          // float form (figure-design.md §4): the caption breaks to the
-          // float's width and rides the image unit as cells — the float box
-          // is image + caption rows, placed out of flow by layout
-          const ContentNode* img = nullptr;
-          for (const ContentNode* k : n->kids)
-            if (k->kind == Kind::image) { img = k; break; }
-          bool floats = false;
-          if (img)
-            for (const ArgVal& a : img->args)
-              if (a.key == ArgK::side && a.tag == ArgTag::Str) {
-                std::string_view s = strs.get(a.ref);
-                floats = s == "left" || s == "right";
-              }
-          if (floats) {
-            blockWalk(img, indent, 0, tb);
-            FlowUnit& iu = tb.units.back();
-            for (const ContentNode* k : n->kids) {
-              if (k->kind != Kind::para) continue;
-              TableCell tc;
-              FlowUnit tmp;
-              ICtx cctx;
-              cctx.noHyphen = true;
-              for (const ContentNode* c2 : k->kids) sink.walk(c2, tmp, cctx);  // the caption's content
-              sink.finish(tmp);
-              sink.toCell(tmp, tc);
-              iu.cells.push_back(std::move(tc));
+      case LayouterId::Replaced:
+        switch (b.painter) {
+          case Painter::Rule:
+            u.data.emplace<RuleData>();
+            return;
+          case Painter::Raw: {
+            // pre-rendered passthrough (v2 §4.1); height declared by the
+            // handler, defaulting to one leading
+            RawData& r = u.data.emplace<RawData>();
+            for (const ArgVal& a : n->args) {
+              if (a.key == ArgK::html && a.tag == ArgTag::Str) r.html = a.ref;
+              if (a.key == ArgK::h && a.tag == ArgTag::Num) r.hPx = a.num;
             }
-            pendingAnchor = 0;
+            if (r.hPx <= 0) r.hPx = cfg.lineHeight * cfg.baseSizePx;
             return;
           }
+          case Painter::Image: {
+            // figure-design.md §3: the size spec (intrinsic dims, declared or
+            // pull-provided, and a scale); layout resolves the display box. An
+            // unsafe scheme (reported by the ingest scan, plan P1-16) or a
+            // failed load paints a placeholder
+            ImageData& im = u.data.emplace<ImageData>();
+            double iw = 0, ih = 0, scale = 0;
+            StrRef srcRef = 0;
+            for (const ArgVal& a : n->args) {
+              if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+              if (a.key == ArgK::alt && a.tag == ArgTag::Str) im.alt = a.ref;
+              if (a.key == ArgK::w && a.tag == ArgTag::Num) iw = a.num;
+              if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
+              if (a.key == ArgK::scale && a.tag == ArgTag::Num) scale = a.num;
+            }
+            const bool safe = srcRef && safeImageSrc(strs.get(srcRef));
+            if (safe && iw > 0 && ih > 0) im.src = srcRef;
+            im.size.iw = iw;
+            im.size.ih = ih;
+            im.size.scale = scale;
+            im.size.placeholder = !im.src;
+            // a float's caption rows break to its width
+            ICtx cctx;
+            cctx.noHyphen = true;
+            for (const ContentNode* k : ls.rows) u.cells.push_back(cellOf(k->kids, cctx));
+            return;
+          }
+          case Painter::MathRow: {
+            MathData& m = u.data.emplace<MathData>();
+            for (const ArgVal& a : n->args) {
+              if (a.key == ArgK::src && a.tag == ArgTag::Str) m.src = a.ref;
+              if (a.key == ArgK::name && a.tag == ArgTag::Str) m.tag = a.ref;
+            }
+            m.box = layoutMathFormula(strs.get(m.src), /*display=*/true, fontPx(n->style), arena, strs, diags,
+                                      n->span, mathText);
+            return;
+          }
+          case Painter::None:
+            return;
         }
-        if (isFigure) figDepth++;
-        for (const ContentNode* k : n->kids) blockWalk(k, indent, 0, tb);
-        if (isFigure) figDepth--;
-        pendingAnchor = 0;
         return;
-      }
-      default:
-        for (const ContentNode* k : n->kids) blockWalk(k, indent, 0, tb);
+      case LayouterId::Stack:
         return;
     }
   }
@@ -1143,31 +961,30 @@ struct Emitter {
 
 }  // namespace
 
-std::vector<TopBlock> emitWith(const ContentTree& tree, EmitEnv& env, InlineSink& sink) {
+std::vector<TopBlock> emitWith(const BoxTree& bt, EmitEnv& env, InlineSink& sink) {
   std::vector<TopBlock> tops;
-  if (!tree.root) return tops;
   env.spaceRef = env.strs.intern(" ");
   env.hyphenRef = env.strs.intern("-");
   env.bulletRef = env.strs.intern("\xE2\x80\xA2");
   Emitter e(env, sink);
-  u32 pid = 0;
-  for (const ContentNode* child : tree.root->kids) {
-    TopBlock tb;
-    tb.pid = pid++;
-    tb.node = child;
-    e.blockWalk(child, 0, 0, tb);
-    if (!tb.units.empty()) tops.push_back(std::move(tb));
+  tops.resize(bt.tops.size());
+  for (size_t t = 0; t < bt.tops.size(); t++) {
+    const TopTree& tt = bt.tops[t];
+    TopBlock& tb = tops[t];
+    tb.pid = tt.pid;
+    tb.tree = &tt;
+    tb.units.resize(tt.leaves.size());
+    for (size_t k = 0; k < tt.leaves.size(); k++) e.leaf(tt.blocks[tt.leaves[k]], bt.sources[t][k], tb.units[k]);
   }
   sink.done(tops);
   return tops;
 }
 
-std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena, Interner& strs,
-                              StyleTable& styles, const Config& cfg, DiagSink& diags,
-                              const MathTextCtx* mathText) {
+std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
+                              const Config& cfg, DiagSink& diags, const MathTextCtx* mathText) {
   EmitEnv env{arena, diags, strs, styles, cfg, mathText};
   HlInline sink(env);
-  return emitWith(tree, env, sink);
+  return emitWith(bt, env, sink);
 }
 
 // The unit's carriers → TeX form and run instances:
@@ -1183,7 +1000,7 @@ std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena, Interner& s
 // glue (autospace, object space) are runs of their own; a blank joins its
 // glyph's run (a leading one opens it); penalties and InterChar glue take
 // their owner's run.
-void HlInline::finish(FlowUnit& u) {
+void HlInline::finish(Flow& u) {
   if (cur != &u) return;
   HList& h = B;
   const size_t n = h.items.size();
@@ -1485,12 +1302,12 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
   };
   for (TopBlock& tb : tops) {
     for (FlowUnit& u : tb.units) {
-      if (u.kind == FlowUnit::K::Code) {
-        needStyle(u.codeStyle);
-        if (u.codeWrap) {
-          for (StrRef probe : {u.chRef, u.cjkChRef}) {
-            if (!probe || store.hasWord(probe, u.codeStyle)) continue;
-            ask(probe, u.codeStyle);
+      if (const GridData* g = std::get_if<GridData>(&u.data)) {
+        needStyle(g->codeStyle);
+        if (g->wrap) {
+          for (StrRef probe : {g->chRef, g->cjkChRef}) {
+            if (!probe || store.hasWord(probe, g->codeStyle)) continue;
+            ask(probe, g->codeStyle);
           }
         }
       }
@@ -1690,53 +1507,53 @@ void fuseLegacy(std::vector<TopBlock>& tops) {
     }
 }
 
-static void unitHeader(std::string& out, const FlowUnit& u, const Interner& strs) {
-  const char* k = u.kind == FlowUnit::K::Text ? "text"
-                  : u.kind == FlowUnit::K::Code ? "code"
-                  : u.kind == FlowUnit::K::Raw ? "raw"
-                  : u.kind == FlowUnit::K::Table ? "table"
-                  : u.kind == FlowUnit::K::Math ? "math"
-                  : u.kind == FlowUnit::K::Image ? "img" : "rule";
-  appendf(out, " unit %s indent=%dsu", k, u.indent);
-  if (u.anchor) {
+static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u, const Interner& strs) {
+  const char* k = "text";
+  if (b.layouter == LayouterId::Grid) k = "code";
+  else if (b.layouter == LayouterId::Table) k = "table";
+  else if (b.layouter == LayouterId::Replaced)
+    k = b.painter == Painter::Raw ? "raw" : b.painter == Painter::MathRow ? "math" : b.painter == Painter::Image ? "img" : "rule";
+  appendf(out, " unit %s indent=%dsu", k, b.x);
+  if (StrRef a = b.carry ? b.carry : u.anchor) {
     out += " anchor=\"";
-    appendEscaped(out, strs.get(u.anchor));
+    appendEscaped(out, strs.get(a));
     out += "\"";
   }
-  if (u.marker) {
+  if (b.marker) {
     out += " marker=\"";
-    appendEscaped(out, strs.get(u.marker));
+    appendEscaped(out, strs.get(b.marker));
     out += "\"";
   }
-  if (u.kind == FlowUnit::K::Code) {
-    appendf(out, " lines=%zu", u.codeRuns.size());
-    if (u.codeWrap) out += " wrap";
-    if (u.codeLineNo) appendf(out, " lineNo=%d", u.codeLineNo);
-    if (!u.hlLines.empty()) appendf(out, " hl=%zu", u.hlLines.size());
+  if (const GridData* g = std::get_if<GridData>(&u.data)) {
+    appendf(out, " lines=%zu", g->lines.size());
+    if (g->wrap) out += " wrap";
+    if (g->lineNo) appendf(out, " lineNo=%d", g->lineNo);
+    if (!g->hlLines.empty()) appendf(out, " hl=%zu", g->hlLines.size());
   }
-  if (u.kind == FlowUnit::K::Table) appendf(out, " cols=%u cells=%zu", u.tCols, u.cells.size());
-  if (u.kind == FlowUnit::K::Math && u.mathBox)
-    appendf(out, " w=%dsu asc=%dsu desc=%dsu", u.mathBox->w, u.mathBox->asc,
-            u.mathBox->desc);
-  if (u.kind == FlowUnit::K::Image) {
+  if (const TableData* t = std::get_if<TableData>(&u.data)) appendf(out, " cols=%u cells=%zu", t->cols, u.cells.size());
+  if (const MathData* m = std::get_if<MathData>(&u.data); m && m->box)
+    appendf(out, " w=%dsu asc=%dsu desc=%dsu", m->box->w, m->box->asc, m->box->desc);
+  if (const ImageData* im = std::get_if<ImageData>(&u.data)) {
     // the size spec layout resolves (plan P1-16)
-    if (u.img.iw > 0 || u.img.ih > 0) appendf(out, " intrinsic=%gx%gpx", u.img.iw, u.img.ih);
-    if (u.img.scale > 0) appendf(out, " scale=%g", u.img.scale);
-    if (u.img.placeholder) out += " placeholder";
-    if (u.floatSide) out += u.floatSide == 1 ? " float=left" : " float=right";
+    if (im->size.iw > 0 || im->size.ih > 0) appendf(out, " intrinsic=%gx%gpx", im->size.iw, im->size.ih);
+    if (im->size.scale > 0) appendf(out, " scale=%g", im->size.scale);
+    if (im->size.placeholder) out += " placeholder";
+    if (b.floatSide) out += b.floatSide == 1 ? " float=left" : " float=right";
   }
-  if (u.centered) out += " centered";
+  if (traitsOf(b.traits).align == BlockTraits::Align::Center) out += " centered";
   out += "\n";
 }
 
+static const LayoutBlock& leafOf(const TopBlock& tb, size_t k) { return tb.tree->blocks[tb.tree->leaves[k]]; }
 
 std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
                        const StyleTable& styles) {
   std::string out;
   for (const TopBlock& tb : tops) {
     appendf(out, "top pid=%u units=%zu\n", tb.pid, tb.units.size());
-    for (const FlowUnit& u : tb.units) {
-      unitHeader(out, u, strs);
+    for (size_t ui = 0; ui < tb.units.size(); ui++) {
+      const FlowUnit& u = tb.units[ui];
+      unitHeader(out, leafOf(tb, ui), u, strs);
       auto dumpBlock = [&](const LinebreakBlock& b) {
         out += "  ";
         if (b.math) {
@@ -1795,8 +1612,9 @@ std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
   std::string out;
   for (const TopBlock& tb : tops) {
     appendf(out, "top pid=%u units=%zu\n", tb.pid, tb.units.size());
-    for (const FlowUnit& u : tb.units) {
-      unitHeader(out, u, strs);
+    for (size_t ui = 0; ui < tb.units.size(); ui++) {
+      const FlowUnit& u = tb.units[ui];
+      unitHeader(out, leafOf(tb, ui), u, strs);
       dumpHList(out, u.hl, strs, styles, "  ");
       for (size_t ci = 0; ci < u.cells.size(); ci++) {
         appendf(out, "  cell %zu\n", ci);
@@ -1811,9 +1629,9 @@ std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& str
   std::string out;
   for (const TopBlock& tb : tops) {
     for (const FlowUnit& u : tb.units) {
-      if (u.kind == FlowUnit::K::Math && u.mathBox) {
+      if (const MathData* m = std::get_if<MathData>(&u.data); m && m->box) {
         appendf(out, "display pid=%u\n", tb.pid);
-        out += dumpMathBox(u.mathBox, strs);
+        out += dumpMathBox(m->box, strs);
       }
       for (const HItem& it : u.hl.items) {
         const ObjPart* pt = objectPart(u.hl, it);

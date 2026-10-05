@@ -30,15 +30,15 @@ struct LegacyInline final : InlineSink {
         mathText(e.mathText), spaceRef(e.spaceRef), hyphenRef(e.hyphenRef) {}
   StyleId compose(StyleId base, u64 addBits, float mul) { return E.compose(base, addBits, mul); }
 
-  void walk(const ContentNode* n, FlowUnit& u, ICtx ctx) override { inlineWalk(n, u, ctx); }
-  void indent(FlowUnit& u, StyleId st, Span span, double px) override {
+  void walk(const ContentNode* n, Flow& u, ICtx ctx) override { inlineWalk(n, u, ctx); }
+  void indent(Flow& u, StyleId st, Span span, double px) override {
     pushSynthetic(u, st, 0, span, px, BF_INDENT, 0.0f, BREAK_INF, 0.0);
   }
-  void finish(FlowUnit&) override {}
-  void toCell(FlowUnit& tmp, TableCell& tc) override { tc.legacy = std::move(tmp.legacy); }
+  void finish(Flow&) override {}
+  void toCell(Flow& tmp, Flow& tc) override { tc.legacy = std::move(tmp.legacy); }
   void done(std::vector<TopBlock>& tops) override;
 
-  void inlineWalk(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+  void inlineWalk(const ContentNode* n, Flow& u, ICtx ctx) {
     switch (n->kind) {
       case Kind::text:
         emitText(n, u, ctx);
@@ -171,7 +171,7 @@ struct LegacyInline final : InlineSink {
     }
   }
 
-  void pushWordBlock(std::string_view w, const ContentNode* n, FlowUnit& u, StyleId st,
+  void pushWordBlock(std::string_view w, const ContentNode* n, Flow& u, StyleId st,
                      StrRef url, float penalty, u16 extraFlags = 0) {
     LinebreakBlock b;
     b.breakPenalty = penalty;
@@ -183,7 +183,7 @@ struct LegacyInline final : InlineSink {
     u.legacy.push_back(b);
   }
 
-  void emitWord(std::string_view w, const ContentNode* n, FlowUnit& u, StyleId st, StrRef url,
+  void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, StrRef url,
                 bool noHyphen, u16 extraFlags) {
     // lead / core / trail split (ASCII letters core) for hyphenation
     u32 a = 0, b = (u32)w.size();
@@ -249,7 +249,7 @@ struct LegacyInline final : InlineSink {
   // the style's em (sizePx honoured): one formula with measurement (P0-08)
   double fontPx(StyleId st) { return emPx(cfg, styles.get(st)); }
 
-  void pushSynthetic(FlowUnit& u, StyleId st, StrRef url, Span span, double px, u16 flags,
+  void pushSynthetic(Flow& u, StyleId st, StrRef url, Span span, double px, u16 flags,
                      float weight, float penalty, double capacityPx) {
     LinebreakBlock b;
     b.flags = flags;
@@ -266,7 +266,7 @@ struct LegacyInline final : InlineSink {
     u.legacy.push_back(b);
   }
 
-  void emitText(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+  void emitText(const ContentNode* n, Flow& u, ICtx ctx) {
     StyleId st = compose(n->style, ctx.addBits, ctx.mul);
     StyleId stCjk = compose(st, CLS_CJK, 1.0f);
     std::string_view s = strs.get(n->str);
@@ -606,12 +606,12 @@ MeasureRequest resolveWidthsLegacy(std::vector<TopBlock>& tops, MetricStore& sto
   };
   for (TopBlock& tb : tops) {
     for (FlowUnit& u : tb.units) {
-      if (u.kind == FlowUnit::K::Code) {
-        needStyle(u.codeStyle);
-        if (u.codeWrap) {
-          for (StrRef probe : {u.chRef, u.cjkChRef}) {
-            if (!probe || store.hasWord(probe, u.codeStyle)) continue;
-            ask(probe, u.codeStyle);
+      if (const GridData* g = std::get_if<GridData>(&u.data)) {
+        needStyle(g->codeStyle);
+        if (g->wrap) {
+          for (StrRef probe : {g->chRef, g->cjkChRef}) {
+            if (!probe || store.hasWord(probe, g->codeStyle)) continue;
+            ask(probe, g->codeStyle);
           }
         }
       }
@@ -622,12 +622,12 @@ MeasureRequest resolveWidthsLegacy(std::vector<TopBlock>& tops, MetricStore& sto
   return req;
 }
 
-std::vector<TopBlock> emitDocLegacy(const ContentTree& tree, Arena& arena, Interner& strs,
+std::vector<TopBlock> emitDocLegacy(const BoxTree& bt, Arena& arena, Interner& strs,
                                     StyleTable& styles, const Config& cfg, DiagSink& diags,
                                     const MathTextCtx* mathText) {
   EmitEnv env{arena, diags, strs, styles, cfg, mathText};
   LegacyInline sink(env);
-  return emitWith(tree, env, sink);
+  return emitWith(bt, env, sink);
 }
 
 namespace {
@@ -679,13 +679,13 @@ void cmpBlocks(std::string& out, int& budget, const std::string& where,
 
 }  // namespace
 
-std::string fuseCheck(const std::vector<TopBlock>& tops, const ContentTree& tree, Arena& arena,
+std::string fuseCheck(const std::vector<TopBlock>& tops, const BoxTree& bt, Arena& arena,
                       Interner& strs, StyleTable& styles, const Config& cfg, MetricStore& metrics,
                       double baseSizePx) {
   DiagSink scratch;
   std::vector<MeasureItem> missing;
   MathTextCtx mt{&metrics, &styles, &strs, baseSizePx, &missing};
-  std::vector<TopBlock> old = emitDocLegacy(tree, arena, strs, styles, cfg, scratch, &mt);
+  std::vector<TopBlock> old = emitDocLegacy(bt, arena, strs, styles, cfg, scratch, &mt);
   MeasureRequest req = resolveWidthsLegacy(old, metrics, styles, cfg);
   std::string out;
   if (!req.empty()) out += "legacy path: widths unresolved\n";

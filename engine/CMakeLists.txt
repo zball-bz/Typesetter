@@ -36,7 +36,10 @@ add_library(tsr_core STATIC
   src/emit/emit.cc
   src/emit/legacy.cc
   src/break/break.cc
+  src/boxtree/build.cc
   src/layout/layout.cc
+  src/layout/paginate.cc
+  src/paint/paint.cc
   src/render/typeset_html.cc
   src/render/semantic_html.cc
 )

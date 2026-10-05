@@ -1,0 +1,15 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,48)
+    paragraph para unit=0 @[0,48)
+top pid=1 leaves=1
+  stack root gap=1/1 @[50,69)
+    replaced math math unit=0 ragged anchor="emc" @[50,69)
+top pid=2 leaves=1
+  stack root gap=1/1 @[71,120)
+    paragraph para unit=0 @[71,120)
+top pid=3 leaves=1
+  stack root gap=1/1 @[122,170)
+    replaced math math unit=0 ragged anchor="gauss" @[122,170)
+top pid=4 leaves=1
+  stack root gap=1/1 @[172,260)
+    paragraph para unit=0 @[172,260)

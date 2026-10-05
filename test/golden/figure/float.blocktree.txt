@@ -1,0 +1,26 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,95)
+    paragraph para unit=0 @[0,95)
+top pid=1 leaves=1
+  stack root gap=1/1 @[97,246)
+    stack figure anchor="fig-tower" @[97,246)
+      replaced image float unit=0 float=right carry="fig-tower" @[0,0)
+top pid=2 leaves=1
+  stack root gap=1/1 @[248,464)
+    paragraph para unit=0 @[248,464)
+top pid=3 leaves=1
+  stack root gap=1/1 @[466,634)
+    paragraph para unit=0 @[466,634)
+top pid=4 leaves=1
+  stack root gap=1/1 @[636,776)
+    stack figure anchor="fig-gate" @[636,776)
+      replaced image float unit=0 float=left carry="fig-gate" @[0,0)
+top pid=5 leaves=1
+  stack root gap=1/1 @[778,878)
+    paragraph para unit=0 @[778,878)
+top pid=6 leaves=1
+  stack root gap=1/1 @[880,883)
+    replaced rule rule unit=0 @[880,883)
+top pid=7 leaves=1
+  stack root gap=1/1 @[885,945)
+    paragraph para unit=0 @[885,945)

@@ -1,0 +1,20 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,14)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="top" @[0,14)
+top pid=1 leaves=1
+  stack root gap=1/1 @[22,77)
+    stack group anchor="lst-a" @[22,77)
+      grid code unit=0 ragged nohyphen carry="lst-a" @[48,67)
+top pid=2 leaves=2
+  stack root gap=1/1 @[79,161)
+    stack group anchor="box-b" @[79,161)
+      paragraph heading unit=0 ragged nohyphen keep-with-next anchor="sec-in" @[103,119)
+      paragraph para unit=1 @[0,0)
+top pid=3 leaves=2
+  stack root gap=1/1 @[163,216)
+    stack group anchor="rule-c" @[163,216)
+      replaced rule rule unit=0 carry="rule-c" @[188,191)
+      paragraph para unit=1 @[0,0)
+top pid=4 leaves=1
+  stack root gap=1/1 @[218,258)
+    paragraph para unit=0 @[218,258)

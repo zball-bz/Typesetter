@@ -1,0 +1,48 @@
+top pid=0 units=1
+ unit text indent=0su anchor="top"
+  word "Anchor" w=4917su pen=INF BOLD x1.60 @[2,14)
+  space w=411su stretch=1 BOLD x1.60 @[2,14)
+  word "kinds" w=4098su pen=INF BOLD x1.60 @[2,14)
+top pid=1 units=1
+ unit code indent=0su anchor="lst-a" lines=1 wrap
+top pid=2 units=2
+ unit text indent=0su anchor="sec-in"
+  word "Inner" w=3458su pen=INF BOLD x1.35 @[106,119)
+  space w=347su stretch=1 BOLD x1.35 @[106,119)
+  word "heading" w=4840su pen=INF BOLD x1.35 @[106,119)
+ unit text indent=0su
+  word "Body" w=2049su pen=INF @[130,153)
+  space w=257su stretch=1 @[130,153)
+  word "text" w=2049su pen=INF @[130,153)
+  space w=257su stretch=1 @[130,153)
+  word "of" w=1025su pen=INF @[130,153)
+  space w=257su stretch=1 @[130,153)
+  word "the" w=1537su pen=INF @[130,153)
+  space w=257su stretch=1 @[130,153)
+  word "aside." w=3073su pen=INF @[130,153)
+top pid=3 units=2
+ unit rule indent=0su anchor="rule-c"
+ unit text indent=0su
+  word "Af" w=1025su pen=INF @[193,208)
+  hyphen bw=513su pen=0.70 @[193,208)
+  word "ter" w=1537su pen=INF @[193,208)
+  space w=257su stretch=1 @[193,208)
+  word "the" w=1537su pen=INF @[193,208)
+  space w=257su stretch=1 @[193,208)
+  word "rule." w=2561su pen=INF @[193,208)
+top pid=4 units=1
+ unit text indent=0su
+  word "See" w=1537su pen=INF @[218,221)
+  space w=257su stretch=1 @[218,221)
+  word "lst-a" w=2561su pen=INF LINK SYN @[222,228)
+  word "," w=513su pen=INF @[228,229)
+  space w=257su stretch=1 @[228,229)
+  word "box-b" w=2561su pen=INF LINK SYN @[230,236)
+  word "," w=513su pen=INF @[236,237)
+  space w=257su stretch=1 @[236,237)
+  word "§1.1" w=2152su pen=INF LINK SYN @[238,245)
+  space w=257su stretch=1 @[246,249)
+  word "and" w=1537su pen=INF @[246,249)
+  space w=257su stretch=1 @[246,249)
+  word "rule-c" w=3073su pen=INF LINK SYN @[250,257)
+  word "." w=513su pen=INF @[257,258)

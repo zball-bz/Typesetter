@@ -1,0 +1,17 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[30,78)
+    paragraph para unit=0 @[30,78)
+top pid=1 leaves=3
+  stack root gap=1/1 @[80,136)
+    stack list pad=1536su gap=1/3 @[80,136)
+      stack item x=1536su @[80,124)
+        paragraph para unit=0 x=1536su marker="•" @[82,86)
+        paragraph error unit=1 x=1536su ragged @[89,124)
+      stack item x=1536su @[125,136)
+        paragraph para unit=2 x=1536su marker="•" @[127,136)
+top pid=2 leaves=3
+  stack root gap=1/1 @[138,192)
+    stack quote pad=1024su @[138,192)
+      paragraph para unit=0 x=1024su @[140,145)
+      paragraph error unit=1 x=1024su ragged @[148,184)
+      paragraph para unit=2 x=1024su @[187,192)

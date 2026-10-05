@@ -7,7 +7,9 @@
 #include "../inline/fragment.h"
 #include "../codegen/codegen.h"
 #include "../resolve/resolve.h"
+#include "../boxtree/build.h"
 #include "../layout/layout.h"
+#include "../layout/paginate.h"
 #include "../render/html_writer.h"
 #include "../render/semantic_html.h"
 #include "../render/typeset_html.h"
@@ -55,6 +57,7 @@ struct Doc {
   };
   std::vector<ImageReq> imageReqs;
 
+  BoxTree boxtree;  // the block structure (plan P1-18)
   std::vector<TopBlock> tops;
   // measurement faces (plan P1-04): the metric key; bound in the constructor
   FaceTable faces;
@@ -366,11 +369,15 @@ struct Doc {
     if (!done(Stage::Resolve)) return Status::NeedMeasure;
     if (tokensPending() || imagesPending()) return Status::NeedMeasure;
     if (done(Stage::Layout)) return Status::Ok;
+    if (!done(Stage::BoxTree)) {  // the block structure (plan P1-18): once per resolved tree
+      boxtree = buildBoxTree(tree, strs, styles, cfg);
+      validThrough = (int)Stage::BoxTree;
+    }
     if (!done(Stage::Emit)) {
       diags.begin(DiagOrigin::Emit);  // a re-emit replaces its diagnostics
       mathTextMissing.clear();
       MathTextCtx mt{&metrics, &styles, &strs, cfg.baseSizePx, &mathTextMissing};
-      tops = emitDoc(tree, arena, strs, styles, cfg, diags, &mt);
+      tops = emitDoc(boxtree, arena, strs, styles, cfg, diags, &mt);
       // formulas with unmeasured text-font names laid out with stand-ins:
       // ask for the metrics and emit again once they are here
       if (!mathTextMissing.empty()) return Status::NeedMeasure;
@@ -431,11 +438,14 @@ struct Doc {
     if (name == "tree") return dumpTree(tree, strs, styles);
     if (name == "index") return dumpIndex(index, *registry);
     if (name == "semantic") return renderFallback();
+    if (name == "blocktree") return dumpBlockTree(boxtree.tops, strs);
     if (name == "mathbox") return dumpMathBoxes(tops, strs);
     if (name == "blocks") return dumpBlocks(tops, strs, styles);
     if (name == "hlist") return dumpHLists(tops, strs, styles);
     if (name == "breaks") return dumpBreaks(layout);
     if (name == "layout") return dumpLayout(layout);
+    if (name == "vlist") return dumpVList(layout, tops);
+    if (name == "dl") return dumpDisplayList(layout, tops, styles, strs, cfg);
     if (name == "paged") return renderPaged(cfg.pageHeightPx);
     if (name == "html") return render();
     if (name == "diags") return dumpDiags();
@@ -446,7 +456,16 @@ struct Doc {
   std::string render() {
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
-    std::string html = renderTypeset(tops, layout, styles, strs, cfg);
+    // paint (plan P1-18): each block's DisplayList, written by the
+    // stateless typeset backend
+    std::string html;
+    writeRoot(html, "tsr-doc", paintRoot(cfg));
+    DLBlock b;
+    for (size_t p = 0; p < layout.paras.size(); p++) {
+      paintBlock(layout, p, tops, strs, cfg, b);
+      writeBlock(html, b, styles, strs, cfg.baseSizePx);
+    }
+    html += "</div>\n";
     reportWriterDefects();
     return html;
   }
@@ -455,7 +474,27 @@ struct Doc {
   std::string renderPaged(double pageHeightPx) {
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
-    std::string html = renderPages(tops, layout, styles, strs, cfg, pageHeightPx);
+    // the sheets (layout/paginate.cc), each band's nodes rebased into its
+    // sheet by the same stateless writer
+    const PageResult pr = paginate(layout, tops, pageHeightPx);
+    std::vector<DLBlock> dl(layout.paras.size());
+    for (size_t p = 0; p < layout.paras.size(); p++) paintBlock(layout, p, tops, strs, cfg, dl[p]);
+    std::string html;
+    writeRoot(html, "tsr-doc tsr-paged", paintRoot(cfg));
+    for (const Page& pg : pr.pages) {
+      {
+        Tag t(html, "div");
+        t.attrSafe("class", "tsr-sheet");
+        t.decl("position", "relative").decl("overflow", "hidden").px("height", suToPx(pr.height));
+        t.open();
+        html += "\n";
+      }
+      for (const PageBand& band : pg.bands)
+        writeNodes(html, dl[band.para], band.lo, band.hi, (Su)((i64)layout.paras[band.para].y - pg.top), styles,
+                   strs, cfg.baseSizePx);
+      html += "</div>\n";
+    }
+    html += "</div>\n";
     reportWriterDefects();
     return html;
   }

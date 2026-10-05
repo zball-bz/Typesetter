@@ -260,14 +260,14 @@ for (const [, r] of props) {
 ph += `}\n\n}  // namespace tsr\n`;
 
 // the typeset serializer's run attributes and declarations
-let css = `// ${HDR}\n// A typeset run's attributes and style declarations (schema "props"; plan\n// P1-02). Values were validated at decode; text values are attribute-escaped.\n#pragma once\n#include <cstring>\n\n#include "../measure/measure.h"\n#include "html_writer.h"\n\nnamespace tsr {\n\n` +
-  `inline void runCss(Tag& t, const Styling& st, const Config& cfg, const Interner& strs) {\n`;
+let css = `// ${HDR}\n// A typeset run's attributes and style declarations (schema "props"; plan\n// P1-02). Values were validated at decode; text values are attribute-escaped.\n#pragma once\n#include <cstring>\n\n#include "../model/style.h"\n#include "html_writer.h"\n\nnamespace tsr {\n\n` +
+  `inline void runCss(Tag& t, const Styling& st, double basePx, const Interner& strs) {\n`;
 for (const [, r] of props) if (r.html) css += `  if (st.${r.field}) t.attr("${r.html}", strs.get(st.${r.field}));\n`;
 for (const [, r] of props.filter(([, r]) => r.css).sort((a, b) => a[1].cssOrder - b[1].cssOrder)) {
   if (r.cssValue === 'emPx') {
     const conds = props.filter(([, x]) => x.type === 'mul' || x.type === 'px')
       .map(([, x]) => (x.type === 'mul' ? `st.${x.field} != 1.0f` : `st.${x.field} > 0`));
-    css += `  if (${conds.join(' || ')}) t.px("${r.css}", emPx(cfg, st));\n`;
+    css += `  if (${conds.join(' || ')}) t.px("${r.css}", emPx(basePx, st));\n`;
   } else if (r.cssFlags) {
     const bits = Object.entries(r.cssFlags).map(([f, kw]) => [`(1ull << ${bitsFlags[f]})`, kw]);
     css += `  if (st.${r.field} & (${bits.map((b) => b[0]).join(' | ')})) {\n    char buf[64];\n    size_t n = 0;\n` +

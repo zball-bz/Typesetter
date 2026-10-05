@@ -1,0 +1,29 @@
+vlist pid=0 y=0su h=1639su
+  box unit=0 heading y=0su h=1639su
+vlist pid=1 y=2868su h=1536su
+  glue 1229su
+  box unit=0 heading y=0su h=1536su
+vlist pid=2 y=5633su h=3072su
+  glue 1229su
+  box unit=0 para y=0su h=3072su
+vlist pid=3 y=9934su h=8498su
+  glue 1229su
+  box unit=0 para y=0su h=3072su
+  glue 409su
+  box unit=1 para y=3481su h=3072su
+  glue 409su
+  box unit=2 para y=6962su h=1536su
+vlist pid=4 y=19661su h=3481su
+  glue 1229su
+  box unit=0 para y=0su h=1536su
+  glue 409su
+  box unit=1 para y=1945su h=1536su
+vlist pid=5 y=24371su h=4608su
+  glue 1229su
+  box unit=0 para y=0su h=4608su
+vlist pid=6 y=30208su h=1536su
+  glue 1229su
+  box unit=0 rule y=0su h=1536su
+vlist pid=7 y=32973su h=3072su
+  glue 1229su
+  box unit=0 code y=0su h=3072su

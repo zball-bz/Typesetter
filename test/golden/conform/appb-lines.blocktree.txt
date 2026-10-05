@@ -1,0 +1,51 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,11)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1" @[0,11)
+top pid=1 leaves=1
+  stack root gap=1/1 @[12,24)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1.1" @[12,24)
+top pid=2 leaves=1
+  stack root gap=1/1 @[25,40)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1.1.1" @[25,40)
+top pid=3 leaves=3
+  stack root gap=1/1 @[42,132)
+    stack list pad=1536su gap=1/3 @[42,132)
+      stack item x=1536su @[42,58)
+        paragraph para unit=0 x=1536su marker="•" @[44,58)
+      stack item x=1536su @[59,132)
+        paragraph para unit=1 x=1536su marker="•" @[61,116)
+        stack list x=1536su pad=1536su gap=1/3 @[119,132)
+          stack item x=3072su @[119,132)
+            paragraph para unit=2 x=3072su marker="•" @[121,132)
+top pid=4 leaves=2
+  stack root gap=1/1 @[133,166)
+    stack list pad=1536su gap=1/3 @[133,166)
+      stack item x=1536su @[133,147)
+        paragraph para unit=0 x=1536su marker="1." @[135,147)
+      stack item x=1536su @[148,166)
+        paragraph para unit=1 x=1536su marker="2." @[150,166)
+top pid=5 leaves=2
+  stack root gap=1/1 @[167,192)
+    stack list pad=1536su gap=1/3 @[167,192)
+      stack item x=1536su @[167,184)
+        paragraph para unit=0 x=1536su marker="3." @[170,184)
+      stack item x=1536su @[185,192)
+        paragraph para unit=1 x=1536su marker="4." @[188,192)
+top pid=6 leaves=2
+  stack root gap=1/1 @[194,223)
+    stack quote pad=1024su @[194,223)
+      paragraph para unit=0 x=1024su @[196,206)
+      stack quote x=1024su pad=1024su @[209,223)
+        paragraph para unit=1 x=2048su @[211,223)
+top pid=8 leaves=1
+  stack root gap=1/1 @[273,300)
+    grid code unit=0 ragged nohyphen @[273,300)
+top pid=9 leaves=1
+  stack root gap=1/1 @[302,315)
+    replaced math math unit=0 ragged @[302,315)
+top pid=10 leaves=1
+  stack root gap=1/1 @[317,320)
+    replaced rule rule unit=0 @[317,320)
+top pid=11 leaves=1
+  stack root gap=1/1 @[322,370)
+    paragraph para unit=0 @[322,370)

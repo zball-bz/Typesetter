@@ -469,8 +469,8 @@ static void unitHostInputs(const fs::path& root) {
       for (int i = 0; i < 64 && doc.typeset() != Doc::Status::Ok; i++)
         mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces, doc.cfg);
       for (const ParaFrame& fr : doc.layout.paras)
-        for (const LineBox& l : fr.lines)
-          if (l.special == 5) return suToPx(l.width);
+        for (const Fragment& l : fr.lines)
+          if (l.kind == FragKind::Image) return suToPx(l.width);
       return -1.0;
     };
     CHECK(imgW() == 120);  // the author's w (defect #24), h from the ratio
@@ -1257,13 +1257,15 @@ int main(int argc, char** argv) {
           failures++;
           continue;
         }
-        for (const char* p : {"blocks", "hlist", "breaks", "layout"})
+        for (const char* p : {"blocktree", "blocks", "hlist", "breaks", "layout", "vlist"})
           goldenCompare(g(p), doc.product(p), update, label + ":" + p);
+        // the DisplayList dump (plan P1-18; a debug product): on request
+        if (hasProduct("dl")) goldenCompare(g("dl"), doc.product("dl"), update, label + ":dl");
         // the HList contract (plan P1-12): fuseLegacy equals, field by
         // field, what the legacy emitter makes of the same document, and
         // every list passes the legality lint
         {
-          std::string d = fuseCheck(doc.tops, doc.tree, doc.arena, doc.strs, doc.styles, doc.cfg,
+          std::string d = fuseCheck(doc.tops, doc.boxtree, doc.arena, doc.strs, doc.styles, doc.cfg,
                                     doc.metrics, doc.cfg.baseSizePx);
           if (!d.empty()) {
             printf("FAIL %s: fuseLegacy differs from the legacy blocks\n%s", label.c_str(), d.c_str());

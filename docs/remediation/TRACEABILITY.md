@@ -1119,8 +1119,8 @@ Theme steps: — · findings: 1
 | `emitter/punct-compression-control-flow` | adhoc | high | P4-04 | |
 | `emitter/hyphenation-en-us-only` | adhoc | high | P4-06 | |
 | `emitter/math-only-inline-box` | adhoc | high | P1-13, P3-26 | |
-| `emitter/flowunit-kind-switch` | adhoc | high | P1-18 | |
-| `emitter/figure-role-string-dispatch` | adhoc | high | P1-18 | |
+| `emitter/flowunit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
+| `emitter/figure-role-string-dispatch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `emitter/measure-dependent-geometry-in-emit` | adhoc | high | P1-16, P3-32 | |
 | `emitter/bf-flag-overload-and-rederivation` | adhoc | medium | P1-12 | grep:plan P1-12 |
 | `emitter/url-break-special-path` | adhoc | medium | P4-06 | |
@@ -1134,7 +1134,7 @@ Theme steps: — · findings: 1
 | `emitter/kind-presentation-in-emit` | adhoc | medium | P3-01 | |
 | `emitter/global-typography-config` | adhoc | medium | P3-02 | |
 | `emitter/codeblock-args-in-emit` | adhoc | low | P0-06, P3-02, P3-11 | |
-| `emitter/anchor-opt-in-per-kind` | adhoc | low | P1-18 | |
+| `emitter/anchor-opt-in-per-kind` | adhoc | low | P1-18 | grep:plan P1-18 |
 | `emitter/scattered-magic-constants` | adhoc | low | P3-02, P4-04 | |
 | `emitter/stale-emit-on-relayout` | issue | high | P1-16 | grep:plan P1-16 |
 | `emitter/sizepx-em-mismatch` | issue | high | P0-08 | grep:plan P0-08 |
@@ -1158,7 +1158,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/parshape-prefix-form` | adhoc | high | P3-08 | |
 | `break-layout-pages/float-tracker-replay` | adhoc | high | P1-15 | grep:plan P1-15 |
 | `break-layout-pages/float-model-closed` | adhoc | high | P3-15 | |
-| `break-layout-pages/unit-kind-switch` | adhoc | high | P1-18 | |
+| `break-layout-pages/unit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `break-layout-pages/nested-stream-copies` | adhoc | high | P1-17 | grep:plan P1-17 |
 | `break-layout-pages/table-closed` | adhoc | high | P3-10, P3-14 | |
 | `break-layout-pages/alignment-flags` | adhoc | medium | P3-09 | |
@@ -1181,7 +1181,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/paged-atoms-clipped` | issue | medium | P3-12 | |
 | `break-layout-pages/break-cache-robustness` | issue | low | P0-11, P1-14 | grep:plan P1-14 |
 | `break-layout-pages/api-hosts-layout-policy` | issue | medium | P1-03, P1-15 | grep:plan P1-15 |
-| `break-layout-pages/baseline-not-communicated` | issue | low | P1-18 | |
+| `break-layout-pages/baseline-not-communicated` | issue | low | P1-18 | grep:plan P1-18 |
 | `break-layout-pages/doc-drift` | issue | low | P1-15, P3-12 | |
 | `break-layout-pages/missed:0` | missed | medium | P1-18, P3-12 | |
 | `break-layout-pages/missed:1` | missed | medium | P0-10 | grep:plan P0-10 |
@@ -1191,8 +1191,8 @@ Theme steps: — · findings: 1
 | `break-layout-pages/missed:5` | missed | low | P0-12 | grep:plan P0-12 |
 | `render-runtime/semantic-role-switch` | adhoc | high | P3-23 | |
 | `render-runtime/typeset-role-blind` | adhoc | high | P3-23 | |
-| `render-runtime/linebox-special-dispatch` | adhoc | high | P1-18 | |
-| `render-runtime/render-layout-decisions` | adhoc | high | P1-18 | |
+| `render-runtime/linebox-special-dispatch` | adhoc | high | P1-18 | grep:plan P1-18 |
+| `render-runtime/render-layout-decisions` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `render-runtime/paged-keep-rules-by-kind` | adhoc | medium | P3-12 | |
 | `render-runtime/copy-syn-policy` | adhoc | medium | P3-07 | |
 | `render-runtime/copy-line-separators` | adhoc | medium | P3-07 | |
@@ -1224,7 +1224,7 @@ Theme steps: — · findings: 1
 | `render-runtime/normative-doc-drift` | issue | low | P3-07 | |
 | `render-runtime/swap-whole-container` | issue | low | P3-05 | |
 | `render-runtime/missed:0` | missed | high | P0-10, P4-01 | |
-| `render-runtime/missed:1` | missed | medium | P1-18 | |
+| `render-runtime/missed:1` | missed | medium | P1-18 | grep:plan P1-18 |
 | `render-runtime/missed:2` | missed | medium | P1-02 | grep:plan P1-02 |
 | `render-runtime/missed:3` | missed | medium | P4-03 | |
 | `render-runtime/missed:4` | missed | low | P3-05 | |

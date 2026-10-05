@@ -25,9 +25,11 @@
 #include <string>
 #include <vector>
 
-#include "../model/model.h"
+#include "../model/style.h"
 
 namespace tsr {
+
+struct ContentNode;
 
 struct MathBox;
 

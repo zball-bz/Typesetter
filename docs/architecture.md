@@ -43,7 +43,7 @@ Source extension: `.tsm`. C++ namespace: `tsr`.
 
 Why: golden tests and fuzzing run natively in CI with gdb/ASan/UBSan available; iteration speed does not pay the emcc tax; the WASM glue stays a thin adapter that cannot accumulate logic.
 
-`tsrc` is the inspectability tool (v2's "every stage inspectable"): `tsrc --stage=skeleton|ast|js|tree|blocks|hlist|breaks|layout|semantic|typeset input.tsm` prints that stage's dump. Stages after ops ingestion read recorded `.ops` fixtures (see §6 for why).
+`tsrc` is the inspectability tool (v2's "every stage inspectable"): `tsrc --stage=skeleton|ast|js|tree|blocktree|blocks|hlist|breaks|layout|vlist|dl|semantic|html|paged input.tsm` prints that stage's dump. Stages after ops ingestion read recorded `.ops` fixtures (see §6 for why).
 
 ### 2.2 Module map
 
@@ -81,19 +81,30 @@ shape/      TextRules: the one character classifier (classes from
             hlist.h: the horizontal item list (Box/Glue/Penalty/Disc, run
             instances, cold records) and its legality lint; objects.h: the
             inline object registry (formula, image, raw, error box)
-emit/       ContentTree → flow units of HLists (script segmentation, CJK rules
-                                                App C, hyphenation, run instances);
+boxtree/    ContentTree → the box tree (plan P1-18; docs/layout-design.md):
+            LayoutBlocks with a layouter by content model (Paragraph, Stack,
+            Replaced, Grid, Table), traits (TraitTable), indents, markers and
+            anchors; roles are data (the role table), never compared downstream
+emit/       the box tree's leaves → their shaped content: HLists (script
+                                                segmentation, CJK rules App C,
+                                                hyphenation, run instances), code
+                                                lines, cells and typed payloads;
             fuseLegacy lowers each list to the legacy breaker's blocks (until
             P4-08); legacy.cc keeps the pre-HList emitter as its CI oracle
 hyphen/     Liang runtime over compiled patterns (gen/)
 measure/    MeasureRequest batching, per-doc metric store, exact/pending/invalid
             states (§9), ε policy (§7)
 break/      Knuth–Plass DP (port of PoC linebreak.ts, cost fn + parshape widths)
-layout/     Breaks + vertical metrics → Frames (paragraph rects, line ys,
-                                                per-line spacing values, k-rule §8);
-            lines are item ranges of the unit's HList
-render/     semantic.cc (flow HTML §9) and typeset.cc (line-level HTML §8),
-            HTML escaping, data-s/e anchors
+layout/     the box tree + shaped leaves → frames of fragments (a layouter
+                                                per LayouterId; breaks, vertical
+                                                metrics, spacing values, k-rule §8,
+                                                anchors); paginate.cc cuts sheets;
+            never sees model.h (architecture lint, transitively)
+paint/      fragments → the DisplayList (runs, inline payloads, the px values
+            the HTML prints; docs/render-design.md)
+render/     semantic_html.cc (flow HTML §9, a tree walk) and typeset_html.cc
+            (the stateless DisplayList writer for flowing and paged output),
+            html_writer.h (escaping, the attribute allowlist, AnchorNamer)
 api/        wasm_api.cc (C ABI, EMSCRIPTEN_KEEPALIVE), native_cli.cc (tsrc)
 ```
 

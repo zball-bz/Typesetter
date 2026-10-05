@@ -215,26 +215,36 @@ MetricStore entries per (strRef × StyleId): `exact | pending(estimate) | invali
 
 ## 8. Layout result
 
+As built (plan P1-18; docs/layout-design.md): layout walks the box tree
+(`engine/src/boxtree/`) with one layouter per `LayouterId` and produces, per
+top-level block, a frame of **fragments** in paint order and its vertical
+list.
+
 ```
 LayoutResult {
   docHeight : i64 su
-  paras: [{
+  paras: [{                                  // one per top-level block (pid)
     pid, rect: {x,y,w,h: su},
-    estimated: bool,
-    lines: [{
-      y, left, width       : su          // width = measure for this line (parshape)
-      blockRange           : [i, j)       // into the paragraph's block stream
-      wordDeltaPx, cjkDeltaPx : f64       // raw-px spacing (what the serializer emits)
-      wordDeltaSu, cjkDeltaSu : i32       // rounded, for dumps/goldens
-      endsWithHyphen       : bool
-      join                 : space | none // whether the break consumed a space (copy rule §9.3)
+    lines: [Fragment {                       // engine/src/layout/layout.h
+      kind                 : Line | Rule | CodeRow | Raw | Math | Image
+      y, left, width, height : su            // y = the top (a rule's too)
+      unit, cell           : the leaf, and its other track (a cell, a caption row, a sidecar row)
+      items                : [i, j)          // into the stream's HList (blocks [i, j) for dumps)
+      wordDeltaPx, cjkDeltaPx : f64          // raw-px spacing (what paint copies)
+      wordDeltaSu, cjkDeltaSu : i32          // rounded, for dumps/goldens
+      endsWithHyphen, ragged, noGlue, overfull : bool
+      join                 : space | none    // whether the break consumed a space (copy rule §9.3)
+      anchor, anchor2      : the ids it carries (exactly one fragment per anchored block)
+      marker               : a list marker / line number in the gutter
       srcSpan              : [s, e)
-    }]
+    }],
+    vlist: [{unit, gap, clear, y, h, outOfFlow}]   // tsrc --stage=vlist
   }]
+  breaks: [{pid, unit, cell, breakpoints, cost}]  // tsrc --stage=breaks
 }
 ```
 
-Leading: line advance `= max(baseLeading, ascent + descent)` where `baseLeading = round(lineHeight × fontSizePx × 64)` from the paragraph style and ascent/descent are the line's max run metrics — mixed CJK/Latin prose stays on the uniform grid (both fit under baseLeading); only oversized inline boxes (math, dropcap-adjacent) grow a line. Baseline of line i sits at `top_i + ascent_i`.
+Leading: line advance `= max(baseLeading, ascent + descent)` where `baseLeading = round(lineHeight × fontSizePx × 64)` from the paragraph style and ascent/descent are the line's max run metrics — mixed CJK/Latin prose stays on the uniform grid (both fit under baseLeading); only oversized inline boxes (math, dropcap-adjacent) grow a line. The baseline of line i is communicated as `Fragment::baseline` (plan P1-18): the CSS inline formula, half the leading above the extents — `top_i + (advance_i − (ascent_i + descent_i))/2 + ascent_i`; a code row centres its style's extents in the row, a display formula its box. Pinning it in the HTML (a line-height the host cannot override) is P3's (T7 S11).
 
 The upgrade payload (v2 §9) is `paras[]` plus per-paragraph HTML.
 
@@ -245,6 +255,15 @@ Class prefix `tsr-`. Both serializers escape all text (`& < > " '`); the only un
 Both serializers build start tags through `render/html_writer.h` (plan P0-10): attribute names come from the explicit allowlist `kHtmlAttrs` (checked at compile time — an unlisted name does not build), every element has at most ONE `style` attribute (declarations merge into it), ids are spelled by `AnchorNamer` (`tsr-` + the escaped label), and a repeated attribute is a serializer defect — debug builds assert, release keeps the first value and reports `render-attr`.
 
 ### 9.1 Typeset HTML
+
+As built (plan P1-18; docs/render-design.md): paint (`engine/src/paint/`)
+turns each frame's fragments into a DisplayList block — runs formed at run
+instance boundaries, typed inline payloads, every px value the HTML prints —
+and the typeset writer (`render/typeset_html.cc`) is a stateless walk of it:
+it reads no Config, no emit unit and no content tree. Ids are the fragments'
+anchors (each anchored block's first fragment; an enclosing label sharing it
+is an empty `<span id data-syn="anchor">` first inside it), so the flowing
+and the paged output carry the same ids.
 
 ```html
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:…;--tsr-font-cjk:…;--tsr-font-mono:…;--tsr-font-mono-cjk:…;font-size:18px">  <!-- P1-04: the measured fonts; text-rendering:geometricPrecision -->
@@ -296,8 +315,9 @@ Copy produces **content text**, not markup source: walk selected `.tsr-r` runs i
 
 - A formula renders as one `<span class="tsr-math" data-syn="math"
   data-src="$…$">` inline box (width/height/vertical-align from the MathBox;
-  display formulas sit in a `special` centred line with an explicit height
-  and an optional `.tsr-eqno` right-margin number, `data-syn="eqno"`).
+  display formulas are a `Math` fragment: a centred row with an explicit
+  height, the formula placed in it by paint, and an optional `.tsr-eqno`
+  right-margin number, `data-syn="eqno"`, its offset computed by paint).
   Inside: absolutely positioned `.tsr-mg` glyph runs (baseline pinned by
   line-height == hhea height) and `.tsr-mr` rule boxes. Glyphs are painted
   BY CODEPOINT in the bundled font — the artifact's gating check guarantees

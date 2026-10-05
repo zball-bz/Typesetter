@@ -1,0 +1,16 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,66)
+    paragraph para unit=0 @[0,66)
+top pid=1 leaves=2
+  stack root gap=1/1 @[68,237)
+    stack figure anchor="fig-pipe" @[68,237)
+      replaced image image unit=0 ragged keep-with-next carry="fig-pipe" @[0,0)
+      paragraph caption unit=1 centered nohyphen @[0,0)
+top pid=2 leaves=2
+  stack root gap=1/1 @[239,383)
+    stack figure anchor="fig-wide" @[239,383)
+      replaced image image unit=0 ragged keep-with-next carry="fig-wide" @[0,0)
+      paragraph caption unit=1 centered nohyphen @[0,0)
+top pid=3 leaves=1
+  stack root gap=1/1 @[385,445)
+    paragraph para unit=0 @[385,445)

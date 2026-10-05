@@ -1,0 +1,9 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[68,75)
+    paragraph para unit=0 @[68,75)
+top pid=1 leaves=1
+  stack root gap=1/1 @[77,97)
+    paragraph error unit=0 ragged @[77,97)
+top pid=2 leaves=1
+  stack root gap=1/1 @[99,105)
+    paragraph para unit=0 @[99,105)

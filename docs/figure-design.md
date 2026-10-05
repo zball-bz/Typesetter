@@ -79,13 +79,15 @@ ordinary Text units marked `ragged` + a new `centered` flag: layout shifts
 each line right by slack/2 and never justifies. Caption styling: body size ×
 0.92, no paragraph indent.
 
-Emit: new `FlowUnit::K::Image` with `imgSrc, imgAlt, img (ImageSize: the
-intrinsic px, the scale, placeholder), floatSide (0/1/2)`. Since plan P1-16
-emit reads no width: layout resolves the display box at the measure
-(`resolveImageSize`, the rule above) and an unsafe scheme is reported once,
-by the image-request scan. The group walk already flattens the figure group; the
-caption keeps the figure's label anchor on its first line via the existing
-`pendingAnchor` path.
+As built (plan P1-18; docs/layout-design.md): the box tree makes the image a
+`Replaced` leaf (painter `Image`, `floatSide` 0/1/2 from its side) and emit
+gives it an `ImageData` payload (`src, alt, ImageSize`: the intrinsic px, the
+scale, placeholder). Since plan P1-16 emit reads no width: layout resolves
+the display box at the measure (`resolveImageSize`, the rule above) and an
+unsafe scheme is reported once, by the image-request scan. The figure group
+is a stack block carrying the label; its first fragment (the image) carries
+the id. Its paragraphs are captions because the role table says so (`figure`
+→ captions), not by a role-string compare.
 
 ## 4. Float wrap (环绕)
 
@@ -179,10 +181,10 @@ narrowed units get `left += occlW` when the float is on the left.
 - The KP breaker needed **zero changes** for parshape: the DP always carried
   the line index and called `widths.at(e.line)` — only the `LineWidths`
   struct grew the prefix form.
-- The float exclusions live in layout's unit walk (plan P1-15; they used to
+- The float exclusions live at layout's cursor (plan P1-15; they used to
   run in `Doc::typeset()` and replay through `u.narrow/narrowK/narrowLeft/
-  floatClearSu`) and share layout's gap rule (`gapBefore`: tightAbove
-  paraGap/3, inter-block paraGap). Float registration charges image +
+  floatClearSu`) and advance with the stacks' gaps (plan P1-18: the gap of
+  the deepest stack holding both blocks — a list's paraGap/3, else paraGap). Float registration charges image +
   caption rows + one paraGap of clearance; narrowing engages only when
   `occl < measure − 1px`.
 - Float caption rows advance at `baseLeading` flat (no vmet/math extents) —

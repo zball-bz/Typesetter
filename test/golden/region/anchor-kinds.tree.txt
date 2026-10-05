@@ -1,0 +1,29 @@
+doc @[0,258) [base]
+  heading @[0,14) [base] level=1 label="top"
+    text @[2,14) [base] str="Anchor kinds"
+  group @[22,77) [base] role="listing" label="lst-a"
+    codeblock @[48,67) [base] lang="python"
+      text @[0,0) [base] str="x = 1"
+  group @[79,161) [base] role="aside" label="box-b"
+    heading @[103,119) [base] level=2 label="sec-in"
+      text @[106,119) [base] str="Inner heading"
+    para @[0,0) [base]
+      text @[130,153) [base] str="Body text of the aside."
+  group @[163,216) [base] role="aside" label="rule-c"
+    rule @[188,191) [base]
+    para @[0,0) [base]
+      text @[193,208) [base] str="After the rule."
+  para @[218,258) [base]
+    text @[218,221) [base] str="See "
+    ref @[222,228) [base] target="lst-a" url="#tsr-lst-a"
+      text @[222,228) [base] str="lst-a"
+    text @[228,229) [base] str=", "
+    ref @[230,236) [base] target="box-b" url="#tsr-box-b"
+      text @[230,236) [base] str="box-b"
+    text @[236,237) [base] str=", "
+    ref @[238,245) [base] target="sec-in" url="#tsr-sec-in"
+      text @[238,245) [base] str="§1.1"
+    text @[246,249) [base] str=" and "
+    ref @[250,257) [base] target="rule-c" url="#tsr-rule-c"
+      text @[250,257) [base] str="rule-c"
+    text @[257,258) [base] str="."
