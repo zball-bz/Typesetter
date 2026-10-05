@@ -1,5 +1,6 @@
 // Foundations: fixed-point su units, arena, string interner, diagnostics, utf8.
 #pragma once
+#include <algorithm>
 #include <cstdarg>
 #include <cstddef>
 #include <cstdint>
@@ -160,12 +161,14 @@ struct Diag {
   Span span;
   std::string msg;
   DiagOrigin origin = DiagOrigin::Compile;
+  u32 pid = ~0u;  // a per-pid pass's block (Emit), else ~0u
 };
 struct DiagSink {
   std::vector<Diag> items;
   DiagOrigin origin = DiagOrigin::Compile;  // stamped on every add
+  u32 pid = ~0u;                            // and the top-level block, in a per-pid pass
   void add(Sev s, const char* code, Span sp, std::string msg) {
-    items.push_back({s, code, sp, std::move(msg), origin});
+    items.push_back({s, code, sp, std::move(msg), origin, pid});
   }
   void addAs(DiagOrigin o, Sev s, const char* code, Span sp, std::string msg) {
     items.push_back({s, code, sp, std::move(msg), o});
@@ -173,7 +176,27 @@ struct DiagSink {
   // starts pass `o`: drops what an earlier run of it reported
   void begin(DiagOrigin o) {
     origin = o;
+    pid = ~0u;
     std::erase_if(items, [o](const Diag& d) { return d.origin == o; });
+  }
+  // starts pass `o` for one top-level block (plan P1-20: Emit runs per
+  // pid): drops what an earlier run of it reported for that block
+  void beginPid(DiagOrigin o, u32 p) {
+    origin = o;
+    pid = p;
+    std::erase_if(items, [o, p](const Diag& d) { return d.origin == o && d.pid == p; });
+  }
+  // a per-pid pass's slice in block order, wherever a retry appended it
+  void sortPids(DiagOrigin o) {
+    std::vector<size_t> at;
+    std::vector<Diag> slice;
+    for (size_t i = 0; i < items.size(); i++)
+      if (items[i].origin == o) {
+        at.push_back(i);
+        slice.push_back(std::move(items[i]));
+      }
+    std::stable_sort(slice.begin(), slice.end(), [](const Diag& a, const Diag& b) { return a.pid < b.pid; });
+    for (size_t k = 0; k < at.size(); k++) items[at[k]] = std::move(slice[k]);
   }
 };
 

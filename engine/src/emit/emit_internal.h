@@ -16,7 +16,7 @@ struct EmitEnv {
   Interner& strs;
   StyleTable& styles;
   const Config& cfg;
-  const MathTextCtx* mathText = nullptr;  // text-font runs in formulas (math-design §10)
+  const MeasureNeeds* mathText = nullptr;  // text-font runs in formulas (math-design §10)
   const ResourceTable* rt = nullptr;      // answered code tokens and image sizes
   StrRef spaceRef = 0, hyphenRef = 0, bulletRef = 0;
   const Flow* leafFlow = nullptr;  // the leaf's own stream (not a cell's) and

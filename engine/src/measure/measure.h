@@ -96,6 +96,17 @@ struct MeasureRequest {
   bool empty() const { return vmetFaces.empty() && words.empty(); }
 };
 
+// What a pass that needs text metrics before Measure reads them through
+// (plan P1-20; design T9 A1 need()): the store, and where to record what is
+// still missing — the pass defers on it, nothing re-runs the document.
+struct MeasureNeeds {
+  const MetricStore* metrics = nullptr;
+  StyleTable* styles = nullptr;
+  Interner* strs = nullptr;
+  double docBasePx = 0;                 // Config::baseSizePx (style ids scale on it)
+  std::vector<MeasureItem>* missing = nullptr;
+};
+
 // The measurement description of a face (for the JS measurer and the mock).
 struct StyleDesc {
   std::string family;

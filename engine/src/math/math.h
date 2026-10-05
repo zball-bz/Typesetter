@@ -31,26 +31,19 @@ struct MathBox {
   std::vector<MathKid> kids;  // HBox children
 };
 
-// Text-font runs inside formulas (math-design.md §10): multi-letter names
-// (Id, Equiv), named operators (sin, lim) and "quoted text" are set upright
-// in the document's body font — the Concrete-Mathematics contract (Euler
-// variables, roman names). Their widths come from the host measurer through
-// the ordinary pull loop: the layouter looks them up here and records what
-// is missing; the doc re-emits once they arrive.
-struct MathTextCtx {
-  const MetricStore* metrics = nullptr;
-  StyleTable* styles = nullptr;
-  Interner* strs = nullptr;
-  double docBasePx = 0;                 // Config::baseSizePx (style ids scale on it)
-  std::vector<MeasureItem>* missing = nullptr;
-};
+// Text-font runs inside formulas (names, \text{…}) are set in the document's
+// body font — the Concrete-Mathematics contract (Euler variables, roman
+// names). Their widths are textWidth resources (plan P1-20): the layouter
+// reads them through a MeasureNeeds; what is missing is a need of the pass
+// that laid the formula out, which then defers (an inline formula: its
+// object, resolved in Measure; a display formula: its top-level block).
 
 // Parses + lays out one formula. Errors/diags are non-fatal: the returned box
 // degrades to an upright text rendering of the source. `display` selects
 // display style (mathblock); inline formulas use text style.
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
-                           Span span, const MathTextCtx* text = nullptr);
+                           Span span, const MeasureNeeds* text = nullptr);
 
 // Inline-formula line breaking (math-design.md §9): the formula splits into
 // unbreakable segments at top-level relations (a break point BEFORE and
@@ -67,7 +60,7 @@ struct MathSeg {
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         double sizePx, Arena& arena,
                                         Interner& strs, DiagSink& diags,
-                                        Span span, const MathTextCtx* text = nullptr);
+                                        Span span, const MeasureNeeds* text = nullptr);
 
 std::string dumpMathBox(const MathBox* box, const Interner& strs);
 

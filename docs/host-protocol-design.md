@@ -140,6 +140,13 @@ code-point em bound × 1.2, vertical metrics 1em / 0.3em, tokens plain code
 the whole row fails), an image a placeholder with an `image-load` warning.
 One diagnostic per kind and cause, in the Provide slice.
 
+**Per-block deferral** (plan P1-20; design T9 M5): Emit runs per top-level
+block. A block waits while one of its code blocks or images waits for its
+answer; a block whose display formula lacks text metrics defers (the attempt
+and its Emit diagnostics are discarded, what it lacked rides the next
+request). Every other block is emitted meanwhile, and its widths join the
+same round — there is no whole-document barrier and no document re-emit.
+
 Answers never touch the authored tree: emit folds code tokens and fills an
 image's missing dims from the table (an author's lone `w` or `h` stays, the
 other follows the aspect ratio), and the semantic product reads the same

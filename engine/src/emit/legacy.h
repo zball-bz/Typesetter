@@ -10,7 +10,7 @@ namespace tsr {
 
 std::vector<TopBlock> emitDocLegacy(const BoxTree& bt, Arena& arena, Interner& strs,
                                     StyleTable& styles, const Config& cfg, DiagSink& diags,
-                                    const MathTextCtx* mathText);
+                                    const MeasureNeeds* mathText);
 MeasureRequest resolveWidthsLegacy(std::vector<TopBlock>& tops, MetricStore& store,
                                    const StyleTable& styles, const Config& cfg);
 // "" when fuseLegacy of every unit's and cell's HList equals, field by field,

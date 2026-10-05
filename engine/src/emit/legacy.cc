@@ -22,7 +22,7 @@ struct LegacyInline final : InlineSink {
   Interner& strs;
   StyleTable& styles;
   const Config& cfg;
-  const MathTextCtx* mathText;
+  const MeasureNeeds* mathText;
   StrRef& spaceRef;  // interned by emitWith
   StrRef& hyphenRef;
   explicit LegacyInline(EmitEnv& e)
@@ -624,7 +624,7 @@ MeasureRequest resolveWidthsLegacy(std::vector<TopBlock>& tops, MetricStore& sto
 
 std::vector<TopBlock> emitDocLegacy(const BoxTree& bt, Arena& arena, Interner& strs,
                                     StyleTable& styles, const Config& cfg, DiagSink& diags,
-                                    const MathTextCtx* mathText) {
+                                    const MeasureNeeds* mathText) {
   EmitEnv env{arena, diags, strs, styles, cfg, mathText};
   LegacyInline sink(env);
   return emitWith(bt, env, sink);
@@ -684,7 +684,7 @@ std::string fuseCheck(const std::vector<TopBlock>& tops, const BoxTree& bt, Aren
                       double baseSizePx) {
   DiagSink scratch;
   std::vector<MeasureItem> missing;
-  MathTextCtx mt{&metrics, &styles, &strs, baseSizePx, &missing};
+  MeasureNeeds mt{&metrics, &styles, &strs, baseSizePx, &missing};
   std::vector<TopBlock> old = emitDocLegacy(bt, arena, strs, styles, cfg, scratch, &mt);
   MeasureRequest req = resolveWidthsLegacy(old, metrics, styles, cfg);
   std::string out;

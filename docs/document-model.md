@@ -337,7 +337,7 @@ Copy produces **content text**, not markup source: walk selected `.tsr-r` runs i
 
 ## 10. Diagnostics
 
-As built (plan P0-11): `DiagSink` stamps every diagnostic with the pass that reported it, and `begin(origin)` drops that pass's earlier slice, so a re-emit (late math-text metrics, `tsr_set_width`) never duplicates its warnings. A diagnostic about a generated node without a span (a figure's image) points at its innermost spanned block. The wire format is still the text dump until the JSON form below lands.
+As built (plan P0-11): `DiagSink` stamps every diagnostic with the pass that reported it, and `begin(origin)` drops that pass's earlier slice, so a re-run never duplicates its warnings; Emit runs per top-level block (plan P1-20) and `beginPid` replaces one block's slice when it is emitted again (a deferred display formula), the slice kept in block order. A diagnostic about a generated node without a span (a figure's image) points at its innermost spanned block. The wire format is still the text dump until the JSON form below lands.
 
 `{ severity: error|warning|info, code, span, message, related?: span[] }`, JSON via `tsr_diagnostics`. Initial code table:
 

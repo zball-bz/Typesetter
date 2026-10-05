@@ -55,8 +55,8 @@ class ResourceTable {
     auto it = boxIndex_.find(src);
     return it == boxIndex_.end() ? nullptr : &boxNeeds[it->second];
   }
-  // a token or box need still pending: Emit waits (the whole-document
-  // barrier of design T9 M4; per-pid deferral is P1-20)
+  // a token or box need still pending (the blocks that wait on one are
+  // Doc::topWaits'; plan P1-20)
   bool barrierPending() const {
     for (const TokenNeed& t : tokenNeeds)
       if (t.st == ResState::Pending) return true;

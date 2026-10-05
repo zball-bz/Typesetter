@@ -497,7 +497,7 @@ struct HlInline final : InlineSink {
     // measured yet is deferred — one placeholder part that resolveWidths
     // lays out and splices for this list alone (no document re-emit)
     std::vector<MeasureItem> missing;
-    MathTextCtx mt;
+    MeasureNeeds mt;
     if (E.mathText) {
       mt = *E.mathText;
       mt.missing = &missing;
@@ -786,7 +786,7 @@ struct Emitter {
   Interner& strs;
   StyleTable& styles;
   const Config& cfg;
-  const MathTextCtx* mathText;
+  const MeasureNeeds* mathText;
   Emitter(EmitEnv& e, InlineSink& s)
       : E(e), sink(s), arena(e.arena), diags(e.diags), strs(e.strs), styles(e.styles), cfg(e.cfg),
         mathText(e.mathText) {}
@@ -980,27 +980,56 @@ struct Emitter {
 
 }  // namespace
 
-std::vector<TopBlock> emitWith(const BoxTree& bt, EmitEnv& env, InlineSink& sink) {
-  std::vector<TopBlock> tops;
+static void prepareEnv(EmitEnv& env) {
   env.spaceRef = env.strs.intern(" ");
   env.hyphenRef = env.strs.intern("-");
   env.bulletRef = env.strs.intern("\xE2\x80\xA2");
+}
+static void shapeTop(const BoxTree& bt, size_t t, Emitter& e, TopBlock& tb) {
+  const TopTree& tt = bt.tops[t];
+  tb.pid = tt.pid;
+  tb.tree = &tt;
+  tb.units.assign(tt.leaves.size(), {});
+  for (size_t k = 0; k < tt.leaves.size(); k++) e.leaf(tt.blocks[tt.leaves[k]], bt.sources[t][k], tb.units[k]);
+}
+
+std::vector<TopBlock> emitWith(const BoxTree& bt, EmitEnv& env, InlineSink& sink) {
+  std::vector<TopBlock> tops(bt.tops.size());
+  prepareEnv(env);
   Emitter e(env, sink);
-  tops.resize(bt.tops.size());
-  for (size_t t = 0; t < bt.tops.size(); t++) {
-    const TopTree& tt = bt.tops[t];
-    TopBlock& tb = tops[t];
-    tb.pid = tt.pid;
-    tb.tree = &tt;
-    tb.units.resize(tt.leaves.size());
-    for (size_t k = 0; k < tt.leaves.size(); k++) e.leaf(tt.blocks[tt.leaves[k]], bt.sources[t][k], tb.units[k]);
-  }
+  for (size_t t = 0; t < bt.tops.size(); t++) shapeTop(bt, t, e, tops[t]);
   sink.done(tops);
   return tops;
 }
 
+struct EmitPass::State {
+  std::vector<MeasureItem> missing;
+  MeasureNeeds needs;
+  EmitEnv env;
+  HlInline sink;
+  Emitter e;  // (reads env.mathText at construction)
+  State(EmitEnv en, const MetricStore* metrics)
+      : needs{metrics, &en.styles, &en.strs, en.cfg.baseSizePx, &missing}, env(en), sink(env), e(prepared(), sink) {
+  }
+  EmitEnv& prepared() {
+    prepareEnv(env);
+    if (needs.metrics) env.mathText = &needs;
+    return env;
+  }
+};
+EmitPass::EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const Config& cfg,
+                   DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt)
+    : bt_(bt), st_(std::make_unique<State>(EmitEnv{arena, diags, strs, styles, cfg, nullptr, rt}, metrics)) {}
+EmitPass::~EmitPass() = default;
+bool EmitPass::top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing) {
+  st_->missing.clear();
+  shapeTop(bt_, t, st_->e, out);
+  missing = st_->missing;
+  return missing.empty();
+}
+
 std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
-                              const Config& cfg, DiagSink& diags, const MathTextCtx* mathText,
+                              const Config& cfg, DiagSink& diags, const MeasureNeeds* mathText,
                               const ResourceTable* rt) {
   EmitEnv env{arena, diags, strs, styles, cfg, mathText, rt};
   HlInline sink(env);
@@ -1106,7 +1135,7 @@ static void resolveDeferred(HList& h, MetricStore& store, const Config& cfg, Obj
     InlineObject& ob = h.objs[objIdx];
     if (!ob.deferred) continue;
     std::vector<MeasureItem> missing;
-    MathTextCtx mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
+    MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
     DiagSink scratch;  // the emit-time layout reported its diagnostics
     std::vector<MathSeg> segs =
         layoutMathSegments(env.strs.get(ob.src), /*display=*/false, emPx(cfg, env.styles.get(ob.style)),

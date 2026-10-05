@@ -532,7 +532,7 @@ struct Layouter {
   Span span;
   double basePx;
   bool coverageWarned = false;
-  const MathTextCtx* text = nullptr;  // text-font runs (nullptr = Euler only)
+  const MeasureNeeds* text = nullptr;  // text-font runs (nullptr = Euler only)
 
   MathBox* mkBox(MathKind k) {
     MathBox* b = arena.make<MathBox>();
@@ -1244,7 +1244,7 @@ static void effClsOf(const MNode* n, u8& f, u8& l) {
 
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
-                           Span span, const MathTextCtx* text) {
+                           Span span, const MeasureNeeds* text) {
   Parser p{Lexer{src}, arena, diags, span, {}, 0};
   p.advance();
   MNode* run = p.parseRun();
@@ -1260,7 +1260,7 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         double sizePx, Arena& arena,
                                         Interner& strs, DiagSink& diags,
-                                        Span span, const MathTextCtx* text) {
+                                        Span span, const MeasureNeeds* text) {
   std::vector<MathSeg> out;
   Parser p{Lexer{src}, arena, diags, span, {}, 0};
   p.advance();

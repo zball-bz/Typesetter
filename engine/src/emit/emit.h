@@ -4,6 +4,7 @@
 // M2: Latin words + spaces + hyphen points, links, inline/block code,
 // headings (size-composed styles), list markers, quote indents, rules.
 #pragma once
+#include <memory>
 #include <variant>
 
 #include "../math/math.h"
@@ -177,8 +178,25 @@ struct TopBlock {
 // rt: the answered resources (code tokens, image sizes; plan P1-19)
 struct BoxTree;
 class ResourceTable;
+
+// One Emit pass, top-level block by block (plan P1-20; design T9 M5): the
+// shaping scratch is shared across the pass. A block whose display formula
+// lacks text metrics is incomplete: top() returns false with what it lacked
+// (the caller discards it and its diagnostics, and retries once measured).
+class EmitPass {
+ public:
+  EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const Config& cfg,
+           DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt);
+  ~EmitPass();
+  bool top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing);
+
+ private:
+  struct State;
+  const BoxTree& bt_;
+  std::unique_ptr<State> st_;
+};
 std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
-                              const Config& cfg, DiagSink& diags, const MathTextCtx* mathText = nullptr,
+                              const Config& cfg, DiagSink& diags, const MeasureNeeds* mathText = nullptr,
                               const ResourceTable* rt = nullptr);
 
 // the penalty before a formula part, by its break class (math.h MathSeg)

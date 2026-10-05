@@ -188,8 +188,8 @@ the document's arena and styles) lays the formula out for that list alone,
 adds still-missing runs to the request, and on success splices the parts in
 place of the placeholder — the same items emit would have written, with the
 runs renumbered (the fuse check covers both paths: the golden fixtures
-defer and splice `Id_(A)` and `f(x) "if" x > 0`). Display formulas keep
-the document re-emit until T8 (P3-26).
+defer and splice `Id_(A)` and `f(x) "if" x > 0`). A display formula defers
+its top-level block instead (plan P1-20) until T8 (P3-26).
 
 **Hard breaks.** A `hardbreak` node (no surface syntax yet) makes the break
 after the preceding item forced. The lowering keeps it as a block penalty of

@@ -47,10 +47,13 @@ struct Doc {
   // measurement faces (plan P1-04): the metric key; bound in the constructor
   FaceTable faces;
   MetricStore metrics;
-  // text-font runs inside formulas (math-design.md §10): emit reports the
-  // words whose body-font metrics are still missing; they ride the next
-  // measure request and the document re-emits when they arrive
-  std::vector<MeasureItem> mathTextMissing;
+  // Emit per top-level block (plan P1-20; design T9 M5): a block waits while
+  // a code block or image of it waits for its answer, and defers while a
+  // display formula of it lacks text metrics (what it lacked rides the next
+  // request); the others are emitted, and measured, meanwhile
+  std::vector<u8> emitted;                    // per top
+  std::vector<std::vector<MeasureItem>> topNeeds;  // per top: its last attempt lacked
+  std::vector<std::vector<u32>> waitTokens, waitBoxes;  // per pid: its needs
   LayoutResult layout;
 
   // ---- stage model (plan P1-03; stages.def, docs/host-protocol-design.md) --
@@ -183,8 +186,16 @@ struct Doc {
     extractSidecars(tree.root, arena, strs, styles, diags);
     resolveDoc(tree, arena, strs, styles, cfg, diags, *registry, index);
     rt.clear();
-    scanTokenNeeds(tree.root);
-    scanImageNeeds(tree.root);
+    waitTokens.clear();
+    waitBoxes.clear();
+    if (tree.root) {
+      waitTokens.resize(tree.root->kids.size());
+      waitBoxes.resize(tree.root->kids.size());
+      for (u32 pid = 0; pid < tree.root->kids.size(); pid++) {
+        scanTokenNeeds(tree.root->kids[pid], pid);
+        scanImageNeeds(tree.root->kids[pid], pid);
+      }
+    }
     validThrough = (int)Stage::Resolve;
   }
 
@@ -212,24 +223,25 @@ struct Doc {
 
   // a code block with a language and a plain body needs its tokens; the
   // engine answers its own language (plan P1-09; code-design §2): 'tsm'
-  void scanTokenNeeds(const ContentNode* n) {
+  void scanTokenNeeds(const ContentNode* n, u32 pid) {
     if (!n) return;
     if (n->kind == Kind::codeblock && !n->kids.empty() && n->kids[0]->kind == Kind::text) {
       const StrRef lang = attrStr(n, ArgK::lang);
       if (lang && !strs.get(lang).empty()) {
         const u32 i = rt.needTokens(lang, n->kids[0]->str);
+        waitTokens[pid].push_back(i);
         if (rt.tokenNeeds[i].st == ResState::Pending && strs.get(lang) == "tsm") {
           std::vector<CodeToken> toks = syntaxTokens(strs.get(n->kids[0]->str));
           settleTokens(i, toks.data(), toks.size(), ResState::Ready);
         }
       }
     }
-    for (const ContentNode* k : n->kids) scanTokenNeeds(k);
+    for (const ContentNode* k : n->kids) scanTokenNeeds(k, pid);
   }
 
   // an image without both declared dims needs its intrinsic size
   // (figure-design.md §2): the engine wants CSS px, not pixels
-  void scanImageNeeds(const ContentNode* n, Span outer = {}) {
+  void scanImageNeeds(const ContentNode* n, u32 pid, Span outer = {}) {
     if (!n) return;
     if (!n->span.empty()) outer = n->span;
     if (n->kind == Kind::image) {
@@ -240,9 +252,9 @@ struct Doc {
       if (src && !safeImageSrc(strs.get(src)))
         diags.add(Sev::Warning, "image-src", n->span.empty() ? outer : n->span, "image src scheme not allowed");
       else if (src && !(iw > 0 && ih > 0))
-        rt.needBox(src, outer);
+        waitBoxes[pid].push_back(rt.needBox(src, outer));
     }
-    for (const ContentNode* k : n->kids) scanImageNeeds(k, outer);
+    for (const ContentNode* k : n->kids) scanImageNeeds(k, pid, outer);
   }
 
   // ---- settling needs (the wire's rows and the old per-kind shims) --------
@@ -302,7 +314,7 @@ struct Doc {
     b = {};
     b.id = rt.nextBatch++;
     b.open = true;
-    if (!rt.barrierPending() && (want(ResKind::textWidth) || want(ResKind::fontVmet))) {
+    if (want(ResKind::textWidth) || want(ResKind::fontVmet)) {
       MeasureRequest mr = pendingRequests();
       if (want(ResKind::textWidth)) b.words = std::move(mr.words);
       if (want(ResKind::fontVmet)) b.vmets = std::move(mr.vmetFaces);
@@ -484,20 +496,41 @@ struct Doc {
   // caller's (compile, execute, ingest).
   Status typeset() {
     if (!done(Stage::Resolve)) return Status::NeedMeasure;
-    if (rt.barrierPending()) return Status::NeedMeasure;
     if (done(Stage::Layout)) return Status::Ok;
     if (!done(Stage::BoxTree)) {  // the block structure (plan P1-18): once per resolved tree
       boxtree = buildBoxTree(tree, strs, styles, cfg);
       validThrough = (int)Stage::BoxTree;
     }
     if (!done(Stage::Emit)) {
-      diags.begin(DiagOrigin::Emit);  // a re-emit replaces its diagnostics
-      mathTextMissing.clear();
-      MathTextCtx mt{&metrics, &styles, &strs, cfg.baseSizePx, &mathTextMissing};
-      tops = emitDoc(boxtree, arena, strs, styles, cfg, diags, &mt, &rt);
-      // formulas with unmeasured text-font names laid out with stand-ins:
-      // ask for the metrics and emit again once they are here
-      if (!mathTextMissing.empty()) return Status::NeedMeasure;
+      const size_t n = boxtree.tops.size();
+      if (tops.size() != n || emitted.size() != n) {
+        tops.assign(n, {});
+        emitted.assign(n, 0);
+        topNeeds.assign(n, {});
+      }
+      EmitPass pass(boxtree, arena, strs, styles, cfg, diags, &metrics, &rt);
+      bool waiting = false;
+      for (size_t t = 0; t < n; t++) {
+        if (emitted[t]) continue;
+        const u32 pid = boxtree.tops[t].pid;
+        if (topWaits(pid)) {  // a token or image answer of this block is pending
+          waiting = true;
+          continue;
+        }
+        diags.beginPid(DiagOrigin::Emit, pid);  // a retry replaces its diagnostics
+        if (!pass.top(t, tops[t], topNeeds[t])) {
+          // a display formula lacked text metrics: discard the attempt
+          diags.beginPid(DiagOrigin::Emit, pid);
+          tops[t] = {};
+          waiting = true;
+          continue;
+        }
+        emitted[t] = 1;
+      }
+      diags.origin = DiagOrigin::Emit;
+      diags.pid = ~0u;
+      diags.sortPids(DiagOrigin::Emit);
+      if (waiting) return Status::NeedMeasure;
       validThrough = (int)Stage::Emit;
     }
     if (!done(Stage::Measure)) {
@@ -516,15 +549,36 @@ struct Doc {
     return Status::Ok;
   }
 
+  // a top-level block waits while one of its code or image answers is pending
+  bool topWaits(u32 pid) const {
+    if (pid < waitTokens.size())
+      for (u32 i : waitTokens[pid])
+        if (rt.tokenNeeds[i].st == ResState::Pending) return true;
+    if (pid < waitBoxes.size())
+      for (u32 i : waitBoxes[pid])
+        if (rt.boxNeeds[i].st == ResState::Pending) return true;
+    return false;
+  }
+
+  // the widths and vertical metrics still missing: the emitted blocks' (they
+  // join the same round as the deferred blocks' needs, plan P1-20) and what
+  // the deferred blocks' last attempts lacked
   MeasureRequest pendingRequests() {
     ObjectEnv oe{arena, strs, styles, cfg.baseSizePx};
     MeasureRequest r = resolveWidths(tops, metrics, styles, cfg, &oe);
-    for (const MeasureItem& it : mathTextMissing) {
-      if (!metrics.hasFaceWord(it.str, it.face)) r.words.push_back(it);
-      if (!metrics.hasFaceVmet(it.face)) {
-        bool have = false;
-        for (FaceId f : r.vmetFaces) have = have || f == it.face;
-        if (!have) r.vmetFaces.push_back(it.face);
+    for (size_t t = 0; t < topNeeds.size(); t++) {
+      if (t < emitted.size() && emitted[t]) continue;
+      for (const MeasureItem& it : topNeeds[t]) {
+        if (!metrics.hasFaceWord(it.str, it.face)) {
+          bool have = false;
+          for (const MeasureItem& w : r.words) have = have || (w.str == it.str && w.face == it.face);
+          if (!have) r.words.push_back(it);
+        }
+        if (!metrics.hasFaceVmet(it.face)) {
+          bool have = false;
+          for (FaceId f : r.vmetFaces) have = have || f == it.face;
+          if (!have) r.vmetFaces.push_back(it.face);
+        }
       }
     }
     return r;

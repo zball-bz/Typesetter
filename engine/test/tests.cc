@@ -426,6 +426,23 @@ static void unitResources(const fs::path& root) {
     CHECK(doc.render().find("tsr-imgph") != std::string::npos);  // the failed image: a placeholder
   }
   {
+    // per-block deferral (plan P1-20): the paragraph is emitted while the
+    // figure waits for its image, and its widths join the image's round
+    Doc doc;
+    CHECK(fresh(doc) && doc.typeset() == Doc::Status::NeedMeasure);
+    CHECK(doc.emitted.size() == 2 && doc.emitted[0] && !doc.emitted[1]);
+    std::string req, err;
+    doc.requests(req);
+    WireBatch q;
+    CHECK(decodeWire((const u8*)req.data(), req.size(), false, q, err));
+    bool box = false, width = false;
+    for (const WireKind& k : q.kinds) {
+      box = box || k.kind == (u16)ResKind::boxInfo;
+      width = width || k.kind == (u16)ResKind::textWidth;
+    }
+    CHECK(box && width);
+  }
+  {
     // the author's lone w survives the host's size (defect #24), and the
     // tree keeps the author's args (finding image-dims-in-author-args)
     Doc doc;
