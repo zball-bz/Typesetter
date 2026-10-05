@@ -1245,7 +1245,7 @@ Theme steps: — · findings: 1
 | `math/closed-vocabulary` | adhoc | high | P2-15 | |
 | `math/compiled-in-font` | adhoc | high | P1-23, P5-01 | |
 | `math/fence-pairs-ascii-only` | adhoc | medium | P3-24 | |
-| `math/math-leaves-bypass-style` | adhoc | medium | P1-25 | |
+| `math/math-leaves-bypass-style` | adhoc | medium | P1-25 | grep:plan P1-25 |
 | `math/math-text-pull-channel` | adhoc | medium | P1-25 | grep:plan P1-25 |
 | `math/math-span-lexer-triplication` | adhoc | medium | P2-11 | |
 | `math/missing-glyph-fallback` | adhoc | low | P1-25, P5-01 | |

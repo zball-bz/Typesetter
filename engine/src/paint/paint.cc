@@ -58,6 +58,8 @@ void lineRuns(const Fragment& l, const HList& h, std::vector<DLRun>& out) {
           d.k = DLRun::K::Math;
           d.math = pt.math;
           d.src = sp.str;
+          d.face = h.runs[it.run].face;  // its paint style: colour, link (plan P1-25)
+          d.link = h.runs[it.run].link;
           break;
         case ObjKind::Image:  // on the baseline; a dashed placeholder when unsized
           d.k = DLRun::K::Image;
@@ -286,6 +288,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         const MathData& m = std::get<MathData>(u.data);
         n.math = m.box;
         n.mathSrc = m.src;
+        n.markerStyle = m.style;  // its paint style (colour)
         n.eqTag = m.tag;
         n.heightPx = suToPx(l.height);
         n.mathTopPx = suToPx(l.height - (m.box->asc + m.box->desc)) / 2.0;

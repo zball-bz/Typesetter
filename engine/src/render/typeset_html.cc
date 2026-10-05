@@ -86,7 +86,7 @@ static void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
 // data-syn="math" + data-src carry the copy contract (§9.3: source text).
 static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
                      bool display, const Interner& strs, Span span,
-                     double displayTop = 0, u32 srcBase = 0) {
+                     double displayTop = 0, u32 srcBase = 0, StrRef color = 0) {
   Tag t(out, "span");
   t.attrSafe("class", "tsr-math");
   t.attrSafe("data-syn", "math");
@@ -101,6 +101,7 @@ static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
   t.px("width", suToPx(mb->w)).px("height", suToPx(mb->asc + mb->desc));
   if (display) t.decl("position", "absolute").decl("left", "0").px("top", displayTop);
   else t.px("vertical-align", -suToPx(mb->desc));
+  if (color) t.declEsc("color", strs.get(color));  // the formula's paint style (plan P1-25)
   t.open();
   mathLeaves(out, mb, strs, 0, mb->asc);
   out += "</span>";
@@ -173,7 +174,8 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
         escapeHtml(out, strs.get(n.eqTag));
         out += "</span>";
       }
-      mathSpan(out, n.math, n.mathSrc, /*display=*/true, strs, {}, n.mathTopPx);
+      mathSpan(out, n.math, n.mathSrc, /*display=*/true, strs, {}, n.mathTopPx, 0,
+               n.markerStyle ? styles.get(n.markerStyle).color : 0);
       out += "</div>\n";
       return;
     }
@@ -246,9 +248,17 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
   for (u32 ri = n.runBegin; ri < n.runEnd; ri++) {
     const DLRun& d = blk.runs[ri];
     switch (d.k) {
-      case DLRun::K::Math:  // one box, baseline via vertical-align
-        mathSpan(out, d.math, d.src, /*display=*/false, strs, d.span, 0, srcBase);
+      case DLRun::K::Math: {  // one box, baseline via vertical-align; in its run's link
+        if (d.link) {
+          Tag t(out, "a");
+          t.attrSafe("class", "tsr-r");
+          t.attr("href", strs.get(d.link));
+          t.open();
+        }
+        mathSpan(out, d.math, d.src, /*display=*/false, strs, d.span, 0, srcBase, styles.get(d.face).color);
+        if (d.link) out += "</a>";
         continue;
+      }
       case DLRun::K::Image: {  // on the baseline; a dashed placeholder when unsized
         Tag t(out, d.src ? "img" : "span");
         t.attrSafe("class", d.src ? "tsr-iimg" : "tsr-iimg tsr-iimgph");
