@@ -3,6 +3,7 @@
 #pragma once
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include "../api/config.h"
 #include "../model/model.h"
 #include "face.h"
@@ -27,15 +28,26 @@ class MetricStore {
   // 32 bits each: no aliasing below 4G strings / faces
   static u64 key(StrRef s, FaceId f) { return ((u64)s << 32) | f; }
   FaceId faceOf(StyleId st) const { return faces_->faceOf(st); }
-  bool hasFaceWord(StrRef s, FaceId f) const { return words_.count(key(s, f)) != 0; }
+  bool hasFaceWord(StrRef s, FaceId f) const { return find(s, f) != nullptr; }
   bool hasWord(StrRef s, StyleId st) const { return hasFaceWord(s, faceOf(st)); }
-  const WordMet& word(StrRef s, StyleId st) const { return words_.at(key(s, faceOf(st))); }
+  const WordMet& word(StrRef s, StyleId st) const {
+    const WordMet* w = find(s, faceOf(st));
+    if (!w) std::abort();  // precondition: hasWord
+    return *w;
+  }
   // host metrics are clamped to a finite, representable range (plan P0-11):
   // NaN or 1e300 would overflow the su conversion
   static double hostPx(double px) { return std::isfinite(px) ? std::clamp(px, 0.0, 1e6) : 0.0; }
   void provideWord(StrRef s, FaceId f, double px, const Config& cfg) {
     px = hostPx(px);
-    words_[key(s, f)] = {suCeilPx(px) + (Su)cfg.epsilonPerWordSu, px};
+    const WordMet m{suCeilPx(px) + (Su)cfg.epsilonPerWordSu, px};
+    if (WordMet* w = const_cast<WordMet*>(find(s, f))) {
+      *w = m;
+      return;
+    }
+    if (s >= head_.size()) head_.resize((size_t)s + 1, 0);
+    slots_.push_back({f, head_[s], m});
+    head_[s] = (u32)slots_.size();
   }
   bool hasFaceVmet(FaceId f) const { return f < vmets_.size() && vmets_[f].have; }
   bool hasVmet(StyleId st) const { return hasFaceVmet(faceOf(st)); }
@@ -45,13 +57,29 @@ class MetricStore {
     vmets_[f] = {suRoundPx(hostPx(ascentPx)), suRoundPx(hostPx(descentPx)), true};
   }
   void invalidate() {
-    words_.clear();
+    head_.clear();
+    slots_.clear();
     vmets_.clear();
   }
 
  private:
+  // words by string: StrRefs are dense interner ids (host answers are
+  // interned engine-side), and a string is measured in few faces — a slot
+  // chain per string replaces a hash lookup on the measure loop's hot path
+  struct Slot {
+    FaceId face;
+    u32 next;  // 1 + the next slot of this string, 0 = none
+    WordMet met;
+  };
+  const WordMet* find(StrRef s, FaceId f) const {
+    if (s >= head_.size()) return nullptr;
+    for (u32 i = head_[s]; i; i = slots_[i - 1].next)
+      if (slots_[i - 1].face == f) return &slots_[i - 1].met;
+    return nullptr;
+  }
   FaceTable* faces_ = nullptr;
-  std::unordered_map<u64, WordMet> words_;
+  std::vector<u32> head_;  // per string: 1 + its first slot, 0 = none
+  std::vector<Slot> slots_;
   std::vector<VMet> vmets_;
 };
 
