@@ -18,7 +18,8 @@ struct WordMet {
 
 class MetricStore {
  public:
-  static u64 key(StrRef s, StyleId st) { return ((u64)s << 24) | st; }
+  // 32 bits each: a document with more than 16M styles no longer aliases keys
+  static u64 key(StrRef s, StyleId st) { return ((u64)s << 32) | st; }
   bool hasWord(StrRef s, StyleId st) const { return words_.count(key(s, st)) != 0; }
   const WordMet& word(StrRef s, StyleId st) const { return words_.at(key(s, st)); }
   void provideWord(StrRef s, StyleId st, double px, const Config& cfg) {
@@ -50,6 +51,13 @@ struct MeasureRequest {
   bool empty() const { return vmetStyles.empty() && words.empty(); }
 };
 
+// The one em of a style (plan P0-08): an absolute sizePx replaces the base,
+// sizeMul composes on top. Measurement, CSS and emit all use this formula.
+inline double emPx(const Config& cfg, const Styling& s) {
+  double base = s.sizePx > 0 ? (double)s.sizePx : cfg.baseSizePx;
+  return base * (double)s.sizeMul;
+}
+
 // CSS-facing description of a style (for the JS measurer and the renderer).
 struct StyleDesc {
   std::string family;
@@ -63,8 +71,7 @@ inline StyleDesc describeStyle(const Config& cfg, const Styling& s, const Intern
              : (s.bits & CLS_CODE) ? cfg.monoFont
              : (s.bits & CLS_CJK)  ? cfg.cjkFont
                                    : cfg.bodyFont;
-  double base = s.sizePx > 0 ? (double)s.sizePx : cfg.baseSizePx;
-  d.sizePx = base * (double)s.sizeMul;
+  d.sizePx = emPx(cfg, s);
   d.weight = (s.bits & CLS_BOLD) ? 700 : 400;
   d.italic = (s.bits & CLS_EM) != 0;
   return d;

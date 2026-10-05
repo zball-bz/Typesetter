@@ -1066,7 +1066,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/no-per-block-containment` | issue | high | P0-05, P2-02 | |
 | `codegen-ops-model/keyword-forms-uncompiled` | issue | high | P0-05, P2-12, P3-31 | |
 | `codegen-ops-model/css-injection-style-values` | issue | high | P0-06, P1-02 | |
-| `codegen-ops-model/sizepx-ignored-in-emit` | issue | medium | P0-08 | |
+| `codegen-ops-model/sizepx-ignored-in-emit` | issue | medium | P0-08 | grep:plan P0-08 |
 | `codegen-ops-model/argtag-node-dangling` | issue | medium | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/metric-key-fragmentation` | issue | medium | P0-08, P1-04 | |
 | `codegen-ops-model/tree-dump-omits-sup` | issue | low | P1-02 | |
@@ -1137,7 +1137,7 @@ Theme steps: — · findings: 1
 | `emitter/anchor-opt-in-per-kind` | adhoc | low | P1-18 | |
 | `emitter/scattered-magic-constants` | adhoc | low | P3-02, P4-04 | |
 | `emitter/stale-emit-on-relayout` | issue | high | P1-16 | |
-| `emitter/sizepx-em-mismatch` | issue | high | P0-08 | |
+| `emitter/sizepx-em-mismatch` | issue | high | P0-08 | grep:plan P0-08 |
 | `emitter/kp-counts-discardable-glue` | issue | medium | P0-12 | |
 | `emitter/kp-ignores-stretch-weight` | issue | medium | P4-08 | |
 | `emitter/negative-wordspacing-overfull` | issue | medium | P0-12 | |

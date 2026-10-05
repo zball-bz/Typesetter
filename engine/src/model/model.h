@@ -44,6 +44,12 @@ class StyleTable {
  public:
   StyleTable() { idOf(Styling{}); }  // id 0 = base
   StyleId idOf(Styling s) {
+    // canonical floats (plan P0-08): -0 → +0 and NaN → the default, so equal
+    // styles hash equally (the hash reads the bit patterns)
+    if (!(s.sizeMul == s.sizeMul)) s.sizeMul = 1.0f;
+    if (!(s.sizePx == s.sizePx) || s.sizePx < 0) s.sizePx = 0;
+    if (s.sizeMul == 0) s.sizeMul = 0.0f;
+    if (s.sizePx == 0) s.sizePx = 0.0f;
     auto it = map_.find(s);
     if (it != map_.end()) return it->second;
     StyleId id = (StyleId)styles_.size();

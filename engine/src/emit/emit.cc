@@ -248,7 +248,8 @@ struct Emitter {
     }
   }
 
-  double fontPx(StyleId st) { return cfg.baseSizePx * (double)styles.get(st).sizeMul; }
+  // the style's em (sizePx honoured): one formula with measurement (P0-08)
+  double fontPx(StyleId st) { return emPx(cfg, styles.get(st)); }
 
   void pushSynthetic(FlowUnit& u, StyleId st, StrRef url, Span span, double px, u16 flags,
                      float weight, float penalty, double capacityPx) {
@@ -475,7 +476,7 @@ struct Emitter {
           u.centered = true;
           ctx.noHyphen = true;
         } else if (cfg.paraIndentEm > 0 && marker == 0) {  // 首行缩进 (App C)
-          double px = cfg.paraIndentEm * cfg.baseSizePx;
+          double px = cfg.paraIndentEm * fontPx(n->style);
           pushSynthetic(u, n->style, 0, n->span, px, BF_INDENT, 0.0f, BREAK_INF, 0.0);
         }
         inlineWalk(n, u, ctx);
@@ -925,7 +926,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
           } else if (b.isPunctGlyph()) {
             // glyph advance minus its compressible half (App C): the half
             // lives in the adjacent BF_PUNCT_SP block (or was compressed away)
-            double halfPx = kPunctHalfEm * cfg.baseSizePx * (double)styles.get(b.style).sizeMul;
+            double halfPx = kPunctHalfEm * emPx(cfg, styles.get(b.style));
             double gpx = w.px - halfPx;
             if (gpx < 0) gpx = 0;
             b.width = suCeilPx(gpx);

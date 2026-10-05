@@ -289,7 +289,13 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
         });
       },
       get height() { return styleStack.length; },
-      popTo(h) { styleStack.length = Math.max(0, h); ob.stylePopTo(h); },
+      // a pop above the current height is clamped here and diagnosed by the
+      // reader (style-underflow) — it used to grow the stack with holes
+      popTo(h) {
+        const t = Math.min(Math.max(0, Math.trunc(Number(h)) || 0), styleStack.length);
+        styleStack.length = t;
+        ob.stylePopTo(Number(h) > styleStack.length ? Math.trunc(Number(h)) : t);
+      },
     },
   };
   // --- execution containment (plan P0-05, D-I10/D-I11) ---------------------
