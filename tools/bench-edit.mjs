@@ -6,10 +6,16 @@
 //
 //   node tools/bench-edit.mjs [--edits 24] [--sections 18]
 //                             [--mode typeset|update|relayout] [--runs 1] [--json]
+//                             [--variant plain|splice|region|let|syntax]
 //
 // mode typeset  = the pre-incremental path (fresh doc per edit);
 // mode update   = handle.update() (session doc, warm caches);
 // mode relayout = handle.relayout() alternating between two measures.
+// variant (plan P2-02; MD-04): the document's user code — plain (none),
+// splice (splices and content arguments in every section), region (an
+// argument-carrying region per section, a table every third), let (#let
+// statements and their uses), syntax (the splice document, each edit typing
+// inside one splice so every other keystroke leaves it a SyntaxError).
 // --runs N repeats the whole session N times and reports the minimum of the
 // per-run medians (the remediation plan's perf gate, PLAN.md §4.5).
 import { spawn } from 'node:child_process';
@@ -28,6 +34,8 @@ const SECTIONS = Number(opt('sections', 18));
 const MODE = opt('mode', 'typeset');
 const RUNS = Number(opt('runs', 1));
 const JSON_OUT = args.includes('--json');
+const VARIANT = opt('variant', 'plain');
+if (!['plain', 'splice', 'region', 'let', 'syntax'].includes(VARIANT)) throw new Error(`unknown variant ${VARIANT}`);
 const PORT = 8177;
 
 // ---- synthetic document: CJK + Latin paragraphs, code, math, a table ----
@@ -52,14 +60,36 @@ function makeDoc() {
   const math = '设 $f(x) = \\sum_{k=0}^n a_k x^k$，则其导数为 ' +
     '$f\'(x) = \\sum_{k=1}^n k a_k x^{k-1}$，逐项求导即可。';
   const parts = ['# 编辑延迟基准文档', ''];
+  const splices = VARIANT === 'splice' || VARIANT === 'syntax';
+  if (splices) parts.push('#let f = (a, c) => seq(text(a), c)', '');
   for (let i = 0; i < SECTIONS; i++) {
     parts.push(`## 小节 ${i + 1}`, '');
     parts.push(zh + `（第 ${i + 1} 节）`, '');
     parts.push(en, '');
     if (i % 3 === 0) parts.push(code, '');
     if (i % 4 === 1) parts.push(math, '');
+    if (splices) {
+      parts.push(`#let n${i} = ${i + 1}`, '');
+      parts.push(`第 #n${i} 节的数值是 #(n${i} * 2)，另有 #em[强调的 *嵌套* 文字] 与 #f("前缀")[内容 _参数_ 第 ${i} 号]。`, '');
+    }
+    if (VARIANT === 'region') {
+      parts.push('#!aside(lang: "zh")', `区域内的第 ${i + 1} 段，带参数的区域。`, '#aside!', '');
+      if (i % 3 === 0) parts.push('#!table(cols: 2)', 'a | b', `c ${i} | d`, '#table!', '');
+    }
+    if (VARIANT === 'let') {
+      parts.push(`#let a${i} = ${i}`, `#let b${i} = a${i} + 1`, `#let s${i} = "第" + b${i} + "项"`, '');
+      parts.push(`变量 #a${i}、#b${i} 与 #s${i} 在此使用。`, '');
+    }
   }
   return parts.join('\n');
+}
+// one edit: a keystroke in prose, or (syntax) inside one section's splice —
+// odd keystrokes leave it a SyntaxError
+function editDoc(doc, i) {
+  const k = i % SECTIONS;
+  if (VARIANT === 'syntax')
+    return doc.replace(`#(n${k} * 2)`, i % 2 ? `#(n${k} * )` : `#(n${k} * ${i + 3})`);
+  return doc.replace(`（第 ${1 + k} 节）`, `（第 ${1 + k} 节，改${i}）`);
 }
 
 const server = spawn(process.execPath, [join(root, 'tools/serve.mjs'), String(PORT)],
@@ -70,13 +100,14 @@ try {
   const page = await browser.newPage();
   await page.goto(`http://localhost:${PORT}/test/e2e/harness.html`);
   const doc = makeDoc();
-  if (!JSON_OUT) console.log(`doc: ${doc.length} chars, mode: ${MODE}, edits: ${EDITS}, runs: ${RUNS}`);
+  if (!JSON_OUT) console.log(`doc: ${doc.length} chars, mode: ${MODE}, variant: ${VARIANT}, edits: ${EDITS}, runs: ${RUNS}`);
 
   const runs = [];
   for (let run = 0; run < RUNS; run++) {
     await page.reload();
     await page.waitForFunction(() => window.__tsrReady === true);
-    const res = await page.evaluate(async ({ doc, edits, mode, sections }) => {
+    const editsDocs = Array.from({ length: EDITS }, (_, i) => editDoc(doc, i));
+    const res = await page.evaluate(async ({ doc, edits, mode, editsDocs }) => {
       const t0 = performance.now();
       const first = await window.__tsr.typeset(doc, { widthPx: 680, progressive: false });
       const cold = performance.now() - t0;
@@ -89,9 +120,8 @@ try {
           // alternate between two measures: every call is a real width change
           r = await window.__tsr.relayout(i % 2 ? 680 : 520);
         } else {
-          // mutate one paragraph mid-document: the minimal realistic keystroke
-          const edited = doc.replace(`（第 ${1 + (i % sections)} 节）`,
-                                     `（第 ${1 + (i % sections)} 节，改${i}）`);
+          // one keystroke (made by editDoc): prose, or inside a splice
+          const edited = editsDocs[i];
           r = mode === 'update'
             ? await window.__tsr.update(edited)
             : await window.__tsr.typeset(edited, { widthPx: 680, progressive: false });
@@ -100,7 +130,7 @@ try {
         if (r && r.timings) timings.push(r.timings);
       }
       return { cold, times, timings, diags: first.diags };
-    }, { doc, edits: EDITS, mode: MODE, sections: SECTIONS });
+    }, { doc, edits: EDITS, mode: MODE, editsDocs });
     runs.push(res);
   }
 
@@ -122,7 +152,7 @@ try {
   });
   const best = perRun.reduce((a, b) => (b.median < a.median ? b : a));
   const summary = {
-    chars: doc.length, mode: MODE, edits: EDITS, runs: RUNS,
+    chars: doc.length, mode: MODE, variant: VARIANT, edits: EDITS, runs: RUNS,
     median: best.median, p90: best.p90, max: best.max,
     cold: Math.min(...perRun.map((r) => r.cold)),
     medians: perRun.map((r) => r.median), phases: best.phases,
@@ -134,7 +164,7 @@ try {
     console.log(`edit latency: median ${summary.median.toFixed(2)} ms ` +
                 `(min of ${RUNS} run medians: ${summary.medians.map((m) => m.toFixed(2)).join(' / ')}), ` +
                 `p90 ${summary.p90.toFixed(2)} ms, max ${summary.max.toFixed(2)} ms`);
-    const keys = Object.keys(summary.phases);
+    const keys = Object.keys(summary.phases).filter((k) => typeof summary.phases[k] === 'number');
     if (keys.length) {
       console.log('worker phase medians: ' +
         keys.map((k) => `${k} ${summary.phases[k].toFixed(2)}ms`).join(', '));
