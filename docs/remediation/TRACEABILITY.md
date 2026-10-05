@@ -1068,7 +1068,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/css-injection-style-values` | issue | high | P0-06, P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/sizepx-ignored-in-emit` | issue | medium | P0-08 | grep:plan P0-08 |
 | `codegen-ops-model/argtag-node-dangling` | issue | medium | P0-06 | grep:plan P0-06 |
-| `codegen-ops-model/metric-key-fragmentation` | issue | medium | P0-08, P1-04 | |
+| `codegen-ops-model/metric-key-fragmentation` | issue | medium | P0-08, P1-04 | grep:plan P1-04 |
 | `codegen-ops-model/tree-dump-omits-sup` | issue | low | P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/executor-errors-not-diagnostics` | issue | low | P2-01 | |
 | `codegen-ops-model/shadow-mutability-forgery` | issue | low | P2-01 | |
@@ -1151,7 +1151,7 @@ Theme steps: — · findings: 1
 | `emitter/missed:2` | missed | medium | P4-05 | |
 | `emitter/missed:3` | missed | medium | P1-17 | |
 | `emitter/missed:4` | missed | medium | P4-02 | |
-| `emitter/missed:5` | missed | medium | P1-04 | |
+| `emitter/missed:5` | missed | medium | P1-04 | grep:plan P1-04 |
 | `break-layout-pages/glue-semantics-split` | adhoc | high | P4-08 | |
 | `break-layout-pages/hyphen-url-not-discretionary` | adhoc | medium | P4-08 | |
 | `break-layout-pages/break-policy-config-knobs` | adhoc | medium | P4-06, P4-08 | |
@@ -1272,7 +1272,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/config-plumbing-per-knob` | adhoc | high | P1-03 | grep:plan P1-03 |
 | `api-measure-code/global-feature-knobs-no-cascade` | adhoc | high | P3-02 | |
 | `api-measure-code/supplements-and-lang` | adhoc | medium | P1-10, P3-30 | |
-| `api-measure-code/font-role-split` | adhoc | medium | P1-04 | |
+| `api-measure-code/font-role-split` | adhoc | medium | P1-04 | grep:plan P1-04 |
 | `api-measure-code/token-tag-table-copies` | adhoc | medium | P3-22 | |
 | `api-measure-code/token-class-as-color-string` | adhoc | high | P2-08 | |
 | `api-measure-code/language-registry-scattered` | adhoc | medium | P3-22 | |

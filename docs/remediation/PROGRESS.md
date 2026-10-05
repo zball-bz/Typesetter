@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-04
+- 下一步：P1-05
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -29,7 +29,7 @@
 | P1-01 | 版本窗口与 ABI 握手 | done | grep:plan P1-01 | 2026-10-06 | 0（所有缓冲区仍为 v6，字节不变） | 写入器按所用词汇行的 since 定版本（≥MIN_COMPAT）；读取器接受 6..OPS_VERSION 窗口、拒绝新于缓冲区的 op/kind/attr；tsr2_abi() 握手 {opsWindow, schemaHash(FNV-1a 规范 JSON), programAbi/resVersion/syntaxVersion 占位 0, renderVersion 1}，worker 与 Node 渲染器核对；since 表生成到 ops.gen.mjs / kOpSince；CLAUDE.md 与 architecture §3 修订 |
 | P1-02 | 属性注册表（props 行进入共享模式） | done | grep:plan P1-02 | 2026-10-06 | +1 用例（notes/sup-emphasis）；其余字节不变 | schema.json 新增 props（运行属性行）与 domains（正则→DFA）两节；生成 Styling/==/哈希/规范化/applyStyleArg/转储字段（props.gen.h）、typeset 的 runCss（style_css.gen.h）、executor 键表 STYLE_KEYS/STYLE_SUGAR、C++ matchDomain DFA（domains.gen.*）与 JS validDomain；删除 values.h（300 万随机串与旧实现 0 差异）；check-domains（JS↔C++ 一致）入 G4/CI；语义页 sup 内嵌 strong/em；docs/style-design.md |
 | P1-03 | 设置文档 ABI、阶段模型、驱动循环、用例配置 | done | grep:plan P1-03 | 2026-10-06 | code/snap-sidecar layout+html（原 golden 错：代码行伸进边注栏）；+2 用例（code/nowrap-snap、ref/supplements-en） | 设置文档（schema settings/policy 行生成 Config、编解码、JS 默认值与旧选项映射；tsr2_set_config，旧 setter 为包装）；stages.def/products.def、validThrough、Resolve 独立；configure 的原地/REBUILD/REEXECUTE 规则；tsr2_doc_fork（克隆字符串/样式表、复制度量、重放 token/图片答案），worker relayout/paginate 用 fork；driver.h + ProviderSet，原生 token provider 移入 engine/src/code（查询嵌入构建）；profiles/golden.json + X.fixture.json 取代文件名约定；tsrc --profile/--fixture/--settings/--set，check-tsrc 928 个 golden 全部复现；每个用例 fork==fresh 差分；fuzz_settings；视图以 lint 检查（偏差）；docs/host-protocol-design.md |
-| P1-04 | 字体面与根契约 | todo | | | | |
+| P1-04 | 字体面与根契约 | done | grep:plan P1-04 | 2026-10-06 | 103 个 html/paged 的根行（tools/golden-diff/root-line-only.mjs 核对只有根行变化） | FaceTable/faceOf/FaceKey；度量、vmet、resolveWidths、请求按 FaceId；族解析顺序含 mono×cjk（fonts.monoCjk）；CJK 斜体按直立测量；.tsr-doc 输出 lang、字体角色变量、基础字号；CSS 契约从变量绘制；shell chunkParas 解析根开标签（e2e 补丁测试）；数学文字经 faceOf |
 | P1-05 | syntax.def 与 CallAST | todo | | | | |
 | P1-06 | SurfaceLexer | todo | | | | |
 | P1-07 | BlockAutomaton | todo | | | | |

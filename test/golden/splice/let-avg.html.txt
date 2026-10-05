@@ -1,4 +1,4 @@
-<div class="tsr-doc">
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="28" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="46" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The mean is 4, computed </span><span class="tsr-r tsr-b" data-s="33">inline</span><span class="tsr-r" data-s="41"> here.</span></div>
 </div>

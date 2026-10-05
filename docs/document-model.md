@@ -245,7 +245,7 @@ Both serializers build start tags through `render/html_writer.h` (plan P0-10): a
 ### 9.1 Typeset HTML
 
 ```html
-<div class="tsr-doc">                                  <!-- text-rendering:geometricPrecision -->
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:…;--tsr-font-cjk:…;--tsr-font-mono:…;--tsr-font-mono-cjk:…;font-size:18px">  <!-- P1-04: the measured fonts; text-rendering:geometricPrecision -->
   <div class="tsr-para" data-pid="7" style="position:relative;height:{h}px">
     <div class="tsr-line" data-s="120" data-e="181" data-join="space"
          style="top:{y}px;left:{x}px;width:{w}px;word-spacing:{d}px">

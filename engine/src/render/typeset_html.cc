@@ -463,11 +463,28 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
   out += "</div>\n";
 }
 
+// The root render contract (plan P1-04): the document root carries its
+// language, base size and every font role resolved engine-side — the same
+// families the faces measured — so measurement and paint never diverge and
+// the HTML needs no host CSS for its fonts.
+static void rootTag(std::string& out, const char* cls, const Config& cfg) {
+  Tag t(out, "div");
+  t.attrSafe("class", cls);
+  t.attr("lang", cfg.lang);
+  t.declEsc("--tsr-font-body", familyFor(cfg, false, Script::Latin));
+  t.declEsc("--tsr-font-cjk", familyFor(cfg, false, Script::Cjk));
+  t.declEsc("--tsr-font-mono", familyFor(cfg, true, Script::Latin));
+  t.declEsc("--tsr-font-mono-cjk", familyFor(cfg, true, Script::Cjk));
+  t.px("font-size", cfg.baseSizePx);
+  t.open();
+  out += "\n";
+}
+
 std::string renderTypeset(const std::vector<TopBlock>& tops, const LayoutResult& lr,
                           const StyleTable& styles, const Interner& strs,
                           const Config& cfg) {
   std::string out;
-  out += "<div class=\"tsr-doc\">\n";
+  rootTag(out, "tsr-doc", cfg);
   for (size_t p = 0; p < lr.paras.size(); p++) {
     const ParaFrame& fr = lr.paras[p];
     const TopBlock& tb = tops[p];
@@ -605,7 +622,7 @@ std::string renderPages(const std::vector<TopBlock>& tops, const LayoutResult& l
   }
 
   std::string out;
-  out += "<div class=\"tsr-doc tsr-paged\">\n";
+  rootTag(out, "tsr-doc tsr-paged", cfg);
   for (size_t pg = 0; pg < starts.size(); pg++) {
     size_t lo = starts[pg];
     size_t hi = pg + 1 < starts.size() ? starts[pg + 1] : bands.size();

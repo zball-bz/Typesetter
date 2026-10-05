@@ -26,8 +26,10 @@ export const TSR_CSS = `
    outside the line box — paint containment would clip them */
 .tsr-b { font-weight: 700; }
 .tsr-i { font-style: italic; }
-.tsr-code { font-family: monospace; white-space: pre; }
-.tsr-cjk { font-family: var(--tsr-cjk-font, inherit); }
+.tsr-doc { font-family: var(--tsr-font-body); }
+.tsr-code { font-family: var(--tsr-font-mono, monospace); white-space: pre; }
+.tsr-cjk { font-family: var(--tsr-font-cjk, var(--tsr-cjk-font, inherit)); }
+.tsr-code.tsr-cjk { font-family: var(--tsr-font-mono-cjk, var(--tsr-cjk-font, inherit)); }
 .tsr-marker { position: absolute; right: 100%; padding-right: 0.55em;
               user-select: none; -webkit-user-select: none; }
 .tsr-doc [data-syn="cont"] { user-select: none; -webkit-user-select: none; }
@@ -253,7 +255,9 @@ export function createEngine(opts = {}) {
   // one node, and the browser reflows the tail by normal-flow shifting.
   const chunkParas = (html) => {
     const open = html.indexOf('<div class="tsr-para"');
-    if (open < 0 || !html.startsWith('<div class="tsr-doc">')) return null;
+    // the root open tag carries lang, base size and font roles (plan P1-04);
+    // it is part of `head`, so a changed root falls back to a full swap
+    if (open < 0 || !/^<div class="tsr-doc"[ >]/.test(html)) return null;
     const head = html.slice(0, open);
     const chunks = [];
     const s0 = [];

@@ -206,6 +206,30 @@ test('snap-kerning: one style attribute carrying letter-spacing', async ({ page 
   expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
 });
 
+// plan P1-04: the document root carries its language, base size and the
+// resolved font roles; a CJK run inside code paints with the mono×CJK face it
+// was measured with; patching keeps working under the richer root tag
+test('root contract: lang, font roles, mono×cjk paint, patching', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const source = 'First paragraph.\n\n#{ throw new Error("出错了 here") }\n\nLast paragraph.';
+  await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, { widthPx: 300,
+    settings: { doc: { lang: 'en' }, fonts: { monoCjk: '"Mono CJK Probe", monospace' } } }), { source });
+  const root = await page.evaluate(() => {
+    const r = document.querySelector('#out .tsr-doc');
+    const cjkCode = document.querySelector('#out .tsr-code.tsr-cjk');
+    return { lang: r.getAttribute('lang'), mono: r.style.getPropertyValue('--tsr-font-mono-cjk').trim(),
+             size: r.style.fontSize, painted: cjkCode && getComputedStyle(cjkCode).fontFamily };
+  });
+  expect(root.lang).toBe('en');
+  expect(root.mono).toBe('"Mono CJK Probe", monospace');
+  expect(root.size).toBe('18px');
+  expect(root.painted).toBe('"Mono CJK Probe", monospace');
+  const r = await page.evaluate(async () => await window.__tsr.update(
+    'First paragraph.\n\n#{ throw new Error("出错了 here") }\n\nLast paragraph, edited.'));
+  expect(r.patched).toBe(true);
+});
+
 // plan P1-03: one settings document replaces the per-knob options (which
 // stay as sugar); unknown paths and bad values are diagnostics
 test('settings: one document, legacy options as sugar, diagnostics', async ({ page }) => {
