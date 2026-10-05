@@ -550,6 +550,56 @@ static void unitTokenConformance(const fs::path& root) {
   printf("unit: token conformance %.1f%% of %ld non-blank bytes\n", pct, bytes);
 }
 
+// TextRules (plan P1-11): the one classifier reproduces, over every
+// codepoint, the five classifiers it replaced (literal copies below, frozen
+// here); the mock measurer's wide ranges are pinned to the same literal; the
+// UCD columns read the pinned 17.0.0 data.
+static void unitTextRules() {
+  auto oldCjk = [](u32 cp) {
+    return (cp >= 0x2E80 && cp <= 0x9FFF) || (cp >= 0xF900 && cp <= 0xFAFF) ||
+           (cp >= 0x3000 && cp <= 0x303F) || (cp >= 0xFF00 && cp <= 0xFFEF) ||
+           (cp >= 0x20000 && cp <= 0x2FA1F);
+  };
+  auto oldOpen = [](u32 cp) {
+    switch (cp) {
+      case 0xFF08: case 0x3014: case 0xFF3B: case 0xFF5B: case 0x300A: case 0x3008:
+      case 0x300C: case 0x300E: case 0x3010: case 0x201C: case 0x2018:
+        return true;
+      default:
+        return false;
+    }
+  };
+  auto oldClose = [](u32 cp) {
+    switch (cp) {
+      case 0xFF09: case 0x3015: case 0xFF3D: case 0xFF5D: case 0x300B: case 0x3009:
+      case 0x300D: case 0x300F: case 0x3011: case 0x201D: case 0x2019: case 0x3002:
+      case 0xFF0E: case 0xFF0C: case 0x3001: case 0xFF1B: case 0xFF1A: case 0xFF01:
+      case 0xFF1F:
+        return true;
+      default:
+        return false;
+    }
+  };
+  u32 bad = 0;
+  for (u32 cp = 0; cp < 0x110000; cp++) {
+    bool cjk = oldCjk(cp), op = oldOpen(cp), cl = oldClose(cp);
+    bool ok = isWide(cp) == cjk && isOpenPunct(cp) == op && isClosePunct(cp) == cl &&
+              isIdeo(cp) == (cjk && !op && !cl) &&
+              joinsWide(cp) == (cjk || cp == 0x2014 || cp == 0x2026) &&
+              kernEligible(cp) == !(cjk || cp >= 0x2000) &&
+              isAmbDashOrEllipsis(cp) == (cp == 0x2014 || cp == 0x2026) &&
+              isAmbQuote(cp) == (cp == 0x2018 || cp == 0x2019 || cp == 0x201C || cp == 0x201D) &&
+              mockIsWide(cp) == cjk;
+    if (!ok && bad++ < 5) printf("FAIL textrules: U+%04X classifies differently\n", cp);
+  }
+  CHECK(bad == 0);
+  CHECK(RULES_VERSION == 0 && std::string_view(UNICODE_VERSION) == "17.0.0");
+  CHECK(cpInfo(0x1F600).extPict && cpInfo(0x4E00).eaw == EAW::W && cpInfo(0x41).eaw == EAW::Na);
+  CHECK(cpInfo(0x0301).gcb == GCB::Extend && cpInfo(0x1F1E6).gcb == GCB::Regional_Indicator &&
+        cpInfo(0x1100).gcb == GCB::L && cpInfo(0x0D).gcb == GCB::CR && cpInfo(0x200D).gcb == GCB::ZWJ);
+  CHECK(cpInfo(0x4E00).cc == CC::Ideo && cpInfo(0x3002).cc == CC::FullStopW && cpInfo(0x41).cc == CC::Other);
+}
+
 // The element registry and locale terms (plan P1-10): the built-in rows
 // load, the terms language falls back exact → script → language → root, and
 // a registry whose figure row has another name produces the same document
@@ -1083,6 +1133,7 @@ int main(int argc, char** argv) {
   unitAstBytes(fs::path(root));
   unitTokenConformance(fs::path(root));
   unitRegistry(fs::path(root));
+  unitTextRules();
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";
   fs::path golden = fs::path(root) / "test" / "golden";

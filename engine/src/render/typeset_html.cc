@@ -6,6 +6,7 @@
 #include "../math/mathfont.h"
 #include "html_writer.h"
 #include "style_css.gen.h"
+#include "../shape/textrules.h"
 
 namespace tsr {
 
@@ -294,10 +295,10 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
         bool cjk = false;
         if (snap) {
           u32 probe = s0;
-          cjk = isCjk(utf8Next(seg, probe));
+          cjk = isWide(utf8Next(seg, probe));
           while (s1 < seg.size()) {
             u32 nx = s1;
-            if (isCjk(utf8Next(seg, nx)) != cjk) break;
+            if (isWide(utf8Next(seg, nx)) != cjk) break;
             s1 = nx;
           }
         } else {

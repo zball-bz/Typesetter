@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-11
+- 下一步：P1-12
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -36,7 +36,7 @@
 | P1-08 | 行所有权与内容体 | done | grep:plan P1-08 | 2026-10-06 | 0（现有用例全部字节不变）；+3 用例（line/own-body、line/own-hide、line/own-math） | 行所有权：段落行用 phase 2 原语扫描，未闭合构造一次性前瞻到结构边界（Leaf：代码 span/数学/splice JS/行内形式体，界=空行或容器退出；Container：行内注释/块形式体，界=容器退出），闭合则其间各行归段落、不起块，否则开符为字面（literalAt + RevertedWindow）；块形式体以 ']' 行（列 ≤ 开行缩进）闭合，记 SkelNode::bodies，']' 后续行与 '][' 续参；内容体（#f[、^[）以 Blocks 模式重入行扫描（linepassLines，公共缩进去除），单段落解包；模型 N3 拼接含块的 seq；多块脚注按块渲染；fuzz_linepass 180s、fuzz_inline 120s 无发现；SYNTAX_VERSION 4；偏差见偏差表 |
 | P1-09 | 前端导出与工具链 | done | grep:plan P1-09 | 2026-10-06 | +327 个 tokens/outline/astjson golden（每个用例三份）；code/tsm-hl 的 tree/semantic/html（tsm 块改由引擎着色） | syntax/exports：syntaxTokens（14 标签）、outlineJson（标题/区域/fence/标签/诊断）、astJson（gen-syntax 生成 jsonAstNode）；C ABI tsr_syntax_tokens/tsr_outline/tsr_parse_json，tsrc --stage=tokens|outline|astjson（check-tsrc 1362 个 golden）；tsm 代码块在 Resolve 内由引擎着色，无 NEED_TOKENS 往返；grammar.js 与 TextMate 由 syntax-regex.js（读 syntax.gen.json）生成，tools/gen-grammars.mjs 入 gen-all 并 vendor parser.c，highlights.scm 只留一份；VS Code 扩展宿主内跑引擎 wasm（ABI 校验、UTF-8→UTF-16），token/大纲/折叠/补全来自引擎，tree-sitter 作冷启动回退，删除硬编码区域列表；一致性 (b) 逐字节 88.9%（允许类别表，≥85%），(e) fuzz_inline 覆盖导出（120s 无发现）；code-design §2、editor-design §5 修订 |
 | P1-10 | 元素注册表、索引与分阶段解析器 | done | grep:plan P1-10 | 2026-10-06 | 结构性提交 0 变化（全部 tree/blocks/breaks/layout/html/semantic/diags 字节不变）；+111 个 index golden；+2 用例（ref/supplements-ja、ref/supplements-zh-hant）；另见 f93d611（golden 有误：非 figure group 的引用） | engine/src/elements（Registry：selector 成员关系于 instantiate 写入 ContentNode::cls，最具体者胜）；engine/src/semantic（numbering 计数自动机、terms 区域词包 en/zh-Hans/zh-Hant/ja 与回退链、index LOCATE/BIND、materialize 模板/引用/site/收集器/flow，输入不变、输出替换 tree.root）；engine/data/elements.json 内建 heading/table/figure/equation/footnote/term 与 toc/glossary/notes/bibliography 预设；resolve.cc 只剩阶段驱动；删除 applyLang，terms.* 改为逐词覆盖；tsrc --stage=index；替代 elements.json（figure 改名）输出除 index 名外相同（unitRegistry）；lint 基线 15→8；87K update 29.4ms；docs/semantics-design.md |
-| P1-11 | TextRules 兼容表与单一分类器 | todo | | | | |
+| P1-11 | TextRules 兼容表与单一分类器 | done | grep:plan P1-11 | 2026-10-06 | 0（全部 golden 字节不变） | vendor UCD 17.0.0 五个文件（engine/rules/ucd/17.0.0，ucdc --fetch 可重取）；engine/rules/classes.def（CC 类）+ locale/compat.def（RULES_VERSION 0：五个宽区间、clreq 标点、歧义类、列、kern 截断、App C 常量）→ tools/ucdc.mjs → engine/gen/textrules.h（类区间表 + UCD 列 GCB/ExtPict/EAW，约 3.4KB，入 gen-all/G9）；shape/textrules.h 唯一分类 API，emit/inline/layout/typeset_html/support 五处分类器全部改走它；mock.h 冻结 mockIsWide；unitTextRules 对全部码位钉住旧分类器的字面副本；tools/rules-diff.mjs（码位类/列差异与语料边界对比，供 P4）；docs/shaping-design.md |
 | P1-12 | HList 与 run 实例 | todo | | | | |
 | P1-13 | InlineObject 注册表与扁平化表 | todo | | | | |
 | P1-14 | KP 正式化与校验缓存 | todo | | | | |

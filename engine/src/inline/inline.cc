@@ -8,6 +8,7 @@
 #include "../syntax/cursor.h"
 #include "../syntax/lexer.h"
 #include "jslex.h"
+#include "../shape/textrules.h"
 
 namespace tsr {
 
@@ -173,9 +174,8 @@ struct InlineParser {
   // A line join: a soft space — except between two CJK-class codepoints,
   // which join seamlessly (clreq).
   void join() {
-    auto cjkish = [](u32 cp) { return isCjk(cp) || cp == 0x2014 || cp == 0x2026; };
     u32 next = i + 1;
-    bool cjkJoin = next < t.size() && cjkish(utf8PrevCp(t, i)) && cjkish(utf8Next(t, next));
+    bool cjkJoin = next < t.size() && joinsWide(utf8PrevCp(t, i)) && joinsWide(utf8Next(t, next));
     if (!cjkJoin) {
       pendingSpace = true;
       prevGlyph = false;

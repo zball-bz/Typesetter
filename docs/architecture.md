@@ -76,6 +76,8 @@ semantic/   counters, locale terms, the Index (LOCATE, BIND) and MATERIALIZE
             (templates, references, sites, collectors, flows)
 resolve/    the phase driver (§11.1): LOCATE → BIND → MATERIALIZE; the input
             tree is not changed, the output replaces it (plan P1-10)
+shape/      TextRules: the one character classifier (classes from
+            engine/rules + the pinned UCD via tools/ucdc.mjs; docs/shaping-design.md)
 emit/       ContentTree → BlockStream          (script segmentation, CJK rules
                                                 App C, hyphenation, style runs)
 hyphen/     Liang runtime over compiled patterns (gen/)

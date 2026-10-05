@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 
+#include "../shape/textrules.h"
 #include "../support/support.h"
 #include "settings.gen.h"
 
@@ -9,9 +10,10 @@ namespace tsr {
 // Config (every host setting), CostParams and PunctCompress are generated
 // from the schema's "settings" rows (plan P1-03): settings.gen.h.
 
-// App C constants (em): punct compressible half, CJK–Latin boundary glue.
-constexpr double kPunctHalfEm = 0.5;
-constexpr double kCjkBoundaryEm = 0.25;
+// App C constants (em): punct compressible half, CJK–Latin boundary glue —
+// the rules' constants (engine/rules/locale/compat.def, plan P1-11).
+constexpr double kPunctHalfEm = kRule_punctHalfEm;
+constexpr double kCjkBoundaryEm = kRule_cjkBoundaryEm;
 // Table geometry (em): horizontal cell padding, vertical row padding.
 constexpr double kTableCellPadEm = 0.4;
 constexpr double kTableRowPadEm = 0.3;

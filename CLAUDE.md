@@ -20,7 +20,8 @@ grammar/           tree-sitter-tsm (highlighting grammar; vendored parser.c in
                    third_party/grammars/tsm)
 editors/vscode-tsm VSCode extension (no build step; vendor/ via scripts/vendor.mjs)
 tools/             serve, record-fixtures, corpus-run, codehl-assets, pack-dist,
-                   export-static, bench-edit, hyphc, gen-schema/gen-syntax/gen-all
+                   export-static, bench-edit, hyphc, gen-schema/gen-syntax/gen-all,
+                   ucdc (TextRules tables) / rules-diff
 test/              fixtures/ (+ .ops recordings) · golden/ · e2e/ (Playwright) ·
                    corpus/ (typst-derived smoke corpus)
 docs/              architecture.md (stage map) + one *-design.md per feature

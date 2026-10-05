@@ -1,0 +1,15 @@
+// The character classes of TextRules (plan P1-11; design T5 TextRules): ONE
+// class per cluster base. Every rules version assigns codepoints to these;
+// break classes, blanks, autospace, font role and kern eligibility are
+// columns of a class (later rules versions, P4-04/P4-05). Read by
+// tools/ucdc.mjs; the enum is generated into engine/gen/textrules.h.
+// Letters and numbers
+CC(Alpha) CC(Digit) CC(Apostrophe) CC(Hangul) CC(Ideo) CC(Kana) CC(SmallKana) CC(IterMark) CC(Prolonged) CC(IdeoSpace) CC(Emoji)
+// Wide punctuation (jlreq cl-01..08 analogues)
+CC(OpenW) CC(CloseW) CC(FullStopW) CC(CommaW) CC(ColonW) CC(ExclW) CC(MiddleDotW) CC(DashW) CC(EllipsisW)
+// Narrow punctuation (UAX #14 OP CL QU IS SY HY EX PR PO BA BB)
+CC(OpenN) CC(CloseN) CC(QuoteN) CC(Infix) CC(Solidus) CC(HyphenMinus) CC(Excl) CC(PrefixNum) CC(PostfixNum) CC(BreakAfter) CC(BreakBefore)
+// Ambiguous: resolved to a wide or narrow class by context (the shaper)
+CC(AmbOpenQuote) CC(AmbCloseQuote) CC(AmbDash) CC(AmbEllipsis) CC(AmbMiddleDot)
+// Spaces and controls
+CC(Space) CC(NbSpace) CC(NbRigid) CC(ZwSpace) CC(WordJoiner) CC(SoftHyphen) CC(NewLine) CC(Other)

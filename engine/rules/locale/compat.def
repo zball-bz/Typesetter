@@ -1,0 +1,40 @@
+// RULES_VERSION 0 'compat' (plan P1-11; design T5 step 1): today's
+// classification, bit for bit — the five isCjk ranges, the clreq
+// punctuation sets, the em dash / ellipsis and curly-quote rules and the
+// kern cutoff that support.h, emit.cc, inline.cc, layout.cc and
+// typeset_html.cc each used to encode. tools/ucdc.mjs turns it (with the
+// pinned UCD columns) into engine/gen/textrules.h; engine/test pins the
+// result against a literal copy of the old predicates.
+RULES_VERSION(0)
+
+// the wide ranges (today's isCjk); a class used inside them is wide
+WIDE(2E80..9FFF F900..FAFF 3000..303F FF00..FFEF 20000..2FA1F)
+// wide codepoints not named below
+WIDE_DEFAULT(Ideo)
+DEFAULT(Other)
+
+// clreq punctuation (SC horizontal; v2 App C)
+CLASS(OpenW, FF08 3014 FF3B FF5B 300A 3008 300C 300E 3010)
+CLASS(CloseW, FF09 3015 FF3D FF5D 300B 3009 300D 300F 3011)
+CLASS(FullStopW, 3002 FF0E)
+CLASS(CommaW, FF0C 3001)
+CLASS(ColonW, FF1B FF1A)
+CLASS(ExclW, FF01 FF1F)
+// curly quotes: punctuation next to CJK, Latin glyphs in Latin context
+CLASS(AmbOpenQuote, 201C 2018)
+CLASS(AmbCloseQuote, 201D 2019)
+// em dash / ellipsis: defined-width CJK blocks in CJK context
+CLASS(AmbDash, 2014)
+CLASS(AmbEllipsis, 2026)
+
+// columns (compat predicates)
+COLUMN(open, OpenW AmbOpenQuote)
+COLUMN(close, CloseW FullStopW CommaW ColonW ExclW AmbCloseQuote)
+// a source line break between two of these joins without a space
+COLUMN(joins, Ideo OpenW CloseW FullStopW CommaW ColonW ExclW AmbDash AmbEllipsis)
+// codepoints at or above the cutoff, and wide ones, never kern across a space
+KERN_CUTOFF(2000)
+
+// App C constants (em)
+CONST(punctHalfEm, 0.5)
+CONST(cjkBoundaryEm, 0.25)

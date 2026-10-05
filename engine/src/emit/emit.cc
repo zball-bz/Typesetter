@@ -1,4 +1,5 @@
 #include "emit.h"
+#include "../shape/textrules.h"
 
 #include <functional>
 
@@ -295,7 +296,7 @@ struct Emitter {
       if (!u.blocks.empty() && u.blocks.back().math && !s.empty()) {
         u32 j0 = 0;
         u32 first = utf8Next(s, j0);
-        if (isCjkIdeo(first)) boundary();
+        if (isIdeo(first)) boundary();
       }
     }
     auto lastIsCloseSp = [&] {  // a closing/dot punct's trailing half
@@ -391,21 +392,21 @@ struct Emitter {
         prev = Prev::None;
         continue;
       }
-      // U+2014/U+2026 sit outside the CJK ranges but are CJK-class here
-      // (em-dash/ellipsis pairs, App C) — without this they would take the
-      // Latin path and grow spurious boundary glue on both sides.
-      if (isCjkIdeo(cp) || cp == 0x2014 || cp == 0x2026) {
+      // the em dash and ellipsis (ambiguous classes) sit outside the wide
+      // ranges but are CJK-class here (em-dash/ellipsis pairs, App C) —
+      // without this they would take the Latin path and grow spurious
+      // boundary glue on both sides.
+      if (isIdeo(cp) || isAmbDashOrEllipsis(cp)) {
         // em-dash / ellipsis: defined-width pinned blocks — 2em as a pair,
         // 1em alone (App C; advance is unmeasurable, see pushCjkChar).
         // BUT an English em dash / ellipsis — single, with no CJK on either
         // side — is ordinary text: it measures in the Latin face, where the
         // 1em convention would over-budget it (blog EN pages showed ~2px).
-        if (cp == 0x2014 || cp == 0x2026) {
+        if (isAmbDashOrEllipsis(cp)) {
           u32 j = i;
           u32 cp2 = (i < s.size()) ? utf8Next(s, j) : 0;
           const bool pair = cp2 == cp;
-          const bool cjkAfter =
-              cp2 != 0 && (isCjk(cp2) || cp2 == 0x2014 || cp2 == 0x2026);
+          const bool cjkAfter = cp2 != 0 && (isWide(cp2) || isAmbDashOrEllipsis(cp2));
           if (!pair && prev != Prev::Cjk && !cjkAfter) {
             word.append(s.data() + start, i - start);
             prev = Prev::Latin;
@@ -428,15 +429,14 @@ struct Emitter {
         prev = Prev::Cjk;
         continue;
       }
-      if (isPunctOpen(cp) || isPunctClose(cp)) {
+      if (isOpenPunct(cp) || isClosePunct(cp)) {
         // Latin-context curly quotes / apostrophes (real-world-report.md):
         // “…” and don’t between Latin text are ordinary Latin glyphs, not
         // full-width CJK punctuation with half-em compressible spaces
-        if ((cp == 0x2018 || cp == 0x2019 || cp == 0x201C || cp == 0x201D) &&
-            prev != Prev::Cjk) {
+        if (isAmbQuote(cp) && prev != Prev::Cjk) {
           u32 j = i;
           u32 cp2 = (i < s.size()) ? utf8Next(s, j) : 0;
-          if (cp2 == 0 || !(isCjk(cp2) || isPunctOpen(cp2) || isPunctClose(cp2))) {
+          if (cp2 == 0 || !(isWide(cp2) || isOpenPunct(cp2) || isClosePunct(cp2))) {
             word.append(s.data() + start, i - start);
             prev = Prev::Latin;
             continue;
@@ -445,7 +445,7 @@ struct Emitter {
         flushWord();
         // no CJK–Latin boundary glue next to full-width punctuation: （1322
         // 年） sets solid (GB/T 15834; real-world-report.md)
-        pushPunct(s.substr(start, i - start), isPunctOpen(cp));
+        pushPunct(s.substr(start, i - start), isOpenPunct(cp));
         prev = Prev::Punct;
         continue;
       }
@@ -815,7 +815,7 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
     std::string_view t = strs.get(b.text);
     if (t.empty()) return {};
     u32 cp = utf8PrevCp(t, (u32)t.size());
-    if (isCjk(cp) || cp >= 0x2000) return {};  // no cross-space kern vs CJK
+    if (!kernEligible(cp)) return {};  // no cross-space kern vs CJK or symbols
     u32 i = (u32)t.size();
     while (i > 0 && ((u8)t[i - 1] & 0xC0) == 0x80) i--;
     if (i > 0) i--;
@@ -826,7 +826,7 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
     if (t.empty()) return {};
     u32 i = 0;
     u32 cp = utf8Next(t, i);
-    if (isCjk(cp) || cp >= 0x2000) return {};
+    if (!kernEligible(cp)) return {};
     return std::string(t.substr(0, i));
   };
   auto isWord = [](const LinebreakBlock& b) {

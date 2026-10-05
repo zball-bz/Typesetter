@@ -190,39 +190,7 @@ inline u32 utf8Next(std::string_view s, u32& i) {
   return cp;
 }
 
-inline bool isCjk(u32 cp) {
-  return (cp >= 0x2E80 && cp <= 0x9FFF) || (cp >= 0xF900 && cp <= 0xFAFF) ||
-         (cp >= 0x3000 && cp <= 0x303F) || (cp >= 0xFF00 && cp <= 0xFFEF) ||
-         (cp >= 0x20000 && cp <= 0x2FA1F);
-}
-
-// clreq punctuation classes (SC horizontal; v2 App C).
-inline bool isPunctOpen(u32 cp) {
-  switch (cp) {
-    case 0xFF08: case 0x3014: case 0xFF3B: case 0xFF5B:  // （〔［｛
-    case 0x300A: case 0x3008: case 0x300C: case 0x300E:  // 《〈「『
-    case 0x3010: case 0x201C: case 0x2018:               // 【“‘
-      return true;
-    default:
-      return false;
-  }
-}
-inline bool isPunctClose(u32 cp) {
-  switch (cp) {
-    case 0xFF09: case 0x3015: case 0xFF3D: case 0xFF5D:  // ）〕］｝
-    case 0x300B: case 0x3009: case 0x300D: case 0x300F:  // 》〉」』
-    case 0x3011: case 0x201D: case 0x2019:               // 】”’
-    case 0x3002: case 0xFF0E: case 0xFF0C: case 0x3001:  // 。．，、
-    case 0xFF1B: case 0xFF1A: case 0xFF01: case 0xFF1F:  // ；：！？
-      return true;
-    default:
-      return false;
-  }
-}
-// Ideograph/kana — CJK glyphs that set solid at 1em with stretchable glue.
-inline bool isCjkIdeo(u32 cp) {
-  return isCjk(cp) && !isPunctOpen(cp) && !isPunctClose(cp);
-}
+// (Character classes: shape/textrules.h, plan P1-11.)
 
 // Decodes the codepoint ENDING at byte offset `end` (exclusive).
 inline u32 utf8PrevCp(std::string_view s, u32 end) {

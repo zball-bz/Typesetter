@@ -1,4 +1,5 @@
 #include "layout.h"
+#include "../shape/textrules.h"
 
 #include <unordered_set>
 
@@ -196,7 +197,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               u32 pb = 0;
               while (pb < cs) {
                 u32 cp2 = utf8Next(joined, pb);
-                col += isCjk(cp2) ? cjkCols : latinAtoms;
+                col += isWide(cp2) ? cjkCols : latinAtoms;
               }
               // lead-in: opening punctuation streak + one space
               u32 q2 = cs;
@@ -236,18 +237,18 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               while (p < joined.size()) {
                 u32 q = p;
                 u32 cp = utf8Next(joined, q);
-                i32 w = isCjk(cp) ? cjkCols : latinAtoms;
+                i32 w = isWide(cp) ? cjkCols : latinAtoms;
                 if (col + w > avail) break;
                 col += w;
                 p = q;
                 if (isBreakable(cp)) {
                   lastBrk = p;  // break AFTER the boundary
-                } else if (isCjk(cp) && !isPunctOpen(cp)) {
+                } else if (isWide(cp) && !isOpenPunct(cp)) {
                   // CJK wraps between any two characters (clreq), except
                   // before a closing punct / after an opening one (禁则)
                   u32 r = q;
                   u32 nx = q < joined.size() ? utf8Next(joined, r) : 0;
-                  if (!(nx && isPunctClose(nx))) lastBrk = p;
+                  if (!(nx && isClosePunct(nx))) lastBrk = p;
                 }
               }
               if (p >= joined.size()) {
