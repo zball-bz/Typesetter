@@ -83,6 +83,7 @@ struct Resolver {
   std::unordered_map<std::string, int> citeNo;
   std::vector<std::string> citeOrder;
   int bibBuilt = 0;  // bibliography collectors built so far (rows clone after the first)
+  int collecting = 0;  // collectors being built (no collector nests in built content)
 
   // ---- node fabrication ---------------------------------------------------
   ContentNode* mkNode(Kind k, Span span, StyleId style = 0) {
@@ -511,6 +512,17 @@ struct Resolver {
   }
 
   ContentNode* buildCollect(ContentNode* c) {
+    // a collector inside built content (a #bibliography in a bib entry,
+    // which buildBibliography rewrites) would rebuild itself forever
+    if (collecting) {
+      diags.add(Sev::Warning, "collect-nested", c->span, "a collector cannot appear inside collected content");
+      return mkNode(Kind::group, c->span);
+    }
+    struct Scope {
+      int& d;
+      explicit Scope(int& d_) : d(d_) { d++; }
+      ~Scope() { d--; }
+    } scope(collecting);
     std::string what(strs.get(argStr(c, ArgK::what)));
     if (what == "toc") return buildToc(c);
     if (what == "glossary") return buildGlossary(c);
