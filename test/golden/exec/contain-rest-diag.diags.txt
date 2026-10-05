@@ -1,0 +1,1 @@
+error script-error @[53,88) Error: boom (the rest of the document was not executed)

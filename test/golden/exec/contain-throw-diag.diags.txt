@@ -1,0 +1,1 @@
+error script-error @[9,37) Error: boom

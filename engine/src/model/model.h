@@ -88,6 +88,17 @@ struct ContentNode {
   std::vector<ContentNode*> kids;
 };
 
+// A style derived from `base` (plan P0-09, T3 S0 f): generated text — caption
+// prefixes, term names, links — composes on its site's style instead of an
+// absolute Styling, so font, language and color scopes carry into it.
+inline StyleId compose(StyleTable& styles, StyleId base, u64 addBits, float mul = 1.0f) {
+  if (addBits == 0 && mul == 1.0f) return base;
+  Styling s = styles.get(base);
+  s.bits |= addBits;
+  s.sizeMul *= mul;
+  return styles.idOf(s);
+}
+
 // Typed attribute accessors (plan P0-06). Values that came through the ops
 // reader are already inside their schema domain; nodes the engine builds are
 // trusted. attrInt still clamps to i32, so no consumer ever converts an

@@ -1,0 +1,34 @@
+doc @[0,351) [base]
+  heading @[0,8) [base] level=1 label="sec-a"
+    text @[2,8) [base] str="Labels"
+  group @[18,73) [base] role="aside" label="side-1"
+    para @[0,0) [base]
+      text @[43,65) [base] str="An aside with a label."
+  group @[75,122) [base] role="figure" label="fig-x"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 1："
+      text @[100,113) [base] str="First figure."
+  group @[124,202) [base] role="figure"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 2："
+      text @[149,193) [base] str="Second figure reuses the label: it loses it."
+  mathblock @[204,220) [base] src="a = b" label="eq-1" name="(1)"
+  mathblock @[222,238) [base] src="c = d"
+  group @[240,311) [base] role="figure"
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="图 3："
+      text @[265,302) [base] str="A figure with a reserved label shape."
+  para @[313,351) [base]
+    text @[313,316) [base] str="See "
+    ref @[317,324) [base] target="side-1" url="#tsr-side-1"
+      text @[317,324) [base] str="图 "
+    text @[324,325) [base] str=", "
+    ref @[326,332) [base] target="fig-x" url="#tsr-fig-x"
+      text @[326,332) [base] str="图 1"
+    text @[332,333) [base] str=", "
+    ref @[334,339) [base] target="eq-1" url="#tsr-eq-1"
+      text @[334,339) [base] str="式 (1)"
+    text @[340,343) [base] str=" and "
+    ref @[344,350) [base] target="sec-a" url="#tsr-sec-a"
+      text @[344,350) [base] str="§1"
+    text @[350,351) [base] str="."

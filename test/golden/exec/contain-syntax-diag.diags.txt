@@ -1,0 +1,1 @@
+error script-syntax @[9,21) SyntaxError: invalid JavaScript in this block

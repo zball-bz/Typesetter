@@ -1,0 +1,23 @@
+= Labels <sec-a>
+
+#!aside(label: "side-1")
+An aside with a label.
+#aside!
+
+#!figure(label: "fig-x")
+First figure.
+#figure!
+
+#!figure(label: "fig-x")
+Second figure reuses the label: it loses it.
+#figure!
+
+$ a = b $ <eq-1>
+
+$ c = d $ <eq-1>
+
+#!figure(label: "h-2.1")
+A figure with a reserved label shape.
+#figure!
+
+See @side-1, @fig-x, @eq-1 and @sec-a.

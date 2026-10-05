@@ -1,0 +1,13 @@
+doc @[0,189)
+  para @[0,26)
+    text @[0,6) str="Cited: "
+    ref @[7,12) target="kp81"
+    text @[13,16) str=" and "
+    ref @[17,25) target="liang83"
+    text @[25,26) str="."
+  para @[28,74)
+    splice @[28,74) expr="bibliography(\"/test/fixtures/cite/refs.json\")"
+  para @[76,140)
+    text @[76,140) str="The same bibliography placed again carries no duplicate anchors."
+  para @[142,188)
+    splice @[142,188) expr="bibliography(\"/test/fixtures/cite/refs.json\")"

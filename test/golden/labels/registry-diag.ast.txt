@@ -1,0 +1,37 @@
+doc @[0,352)
+  heading @[0,8) level=1 label="sec-a"
+    text @[2,8) str="Labels"
+  region @[18,73) name="aside"
+    para @[43,65)
+      row @[43,65)
+        cell @[43,65)
+          text @[43,65) str="An aside with a label."
+  region @[75,122) name="figure"
+    para @[100,113)
+      row @[100,113)
+        cell @[100,113)
+          text @[100,113) str="First figure."
+  region @[124,202) name="figure"
+    para @[149,193)
+      row @[149,193)
+        cell @[149,193)
+          text @[149,193) str="Second figure reuses the label: it loses it."
+  para @[204,220)
+    math @[204,220) display=1 src="a = b" label="eq-1"
+  para @[222,238)
+    math @[222,238) display=1 src="c = d" label="eq-1"
+  region @[240,311) name="figure"
+    para @[265,302)
+      row @[265,302)
+        cell @[265,302)
+          text @[265,302) str="A figure with a reserved label shape."
+  para @[313,351)
+    text @[313,316) str="See "
+    ref @[317,324) target="side-1"
+    text @[324,325) str=", "
+    ref @[326,332) target="fig-x"
+    text @[332,333) str=", "
+    ref @[334,339) target="eq-1"
+    text @[340,343) str=" and "
+    ref @[344,350) target="sec-a"
+    text @[350,351) str="."

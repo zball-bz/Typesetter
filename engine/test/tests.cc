@@ -625,6 +625,9 @@ int main(int argc, char** argv) {
           goldenCompare(g("mathbox"), mbx, update, label + ":mathbox");
         std::string html = doc.render();
         goldenCompare(g("html"), html, update, label + ":html");
+        // *diag* fixtures golden every diagnostic of the full pipeline (P0-09 m)
+        if (rel.stem().string().find("diag") != std::string::npos)
+          goldenCompare(g("diags"), doc.dumpDiags(), update, label + ":diags");
         contractCheck(label, "html", html, true);
         // *paged* fixtures additionally golden the print pagination
         // (pages-design.md §2) at 240px sheets

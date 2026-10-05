@@ -20,7 +20,33 @@ struct Entry {
   Kind kind;
   std::string number;   // heading "2.1"; table/figure ordinal
   std::string excerpt;  // heading text / term name
+  bool numbered = true; // false: a classless target (displays its label)
 };
+
+// Label shapes the engine mints (plan P0-09 e): h-<digits(.digits)*>,
+// fn-<digits>, fnref-<digits>, bib-<anything>. A user label of such a shape
+// would collide with a generated anchor, so it is reserved. h-index is legal.
+bool reservedShape(std::string_view l) {
+  auto digitsDots = [](std::string_view t, bool dots) {
+    if (t.empty()) return false;
+    bool prevDot = true;
+    for (char c : t) {
+      if (c >= '0' && c <= '9') { prevDot = false; continue; }
+      if (dots && c == '.' && !prevDot) { prevDot = true; continue; }
+      return false;
+    }
+    return !prevDot;
+  };
+  // the alias rules the resolver mints: prefix, and the shape of the rest
+  // (0 = anything, 1 = digits, 2 = dotted digits); data until P3-04's
+  // AliasRule rows generate them
+  static const struct { std::string_view prefix; int shape; } kShapes[] = {
+      {"bib-", 0}, {"h-", 2}, {"fn-", 1}, {"fnref-", 1}};
+  for (const auto& sh : kShapes)
+    if (l.substr(0, sh.prefix.size()) == sh.prefix)
+      return sh.shape == 0 || digitsDots(l.substr(sh.prefix.size()), sh.shape == 2);
+  return false;
+}
 
 struct Resolver {
   Arena& arena;
@@ -56,6 +82,7 @@ struct Resolver {
   std::unordered_map<std::string, ContentNode*> bib;
   std::unordered_map<std::string, int> citeNo;
   std::vector<std::string> citeOrder;
+  int bibBuilt = 0;  // bibliography collectors built so far (rows clone after the first)
 
   // ---- node fabrication ---------------------------------------------------
   ContentNode* mkNode(Kind k, Span span, StyleId style = 0) {
@@ -90,11 +117,26 @@ struct Resolver {
     a.num = v ? 1 : 0;
     n->args.push_back(a);
   }
-  ContentNode* mkLink(std::string_view anchor, std::string_view text, Span span) {
-    ContentNode* l = mkNode(Kind::link, span);
+  void dropArg(ContentNode* n, ArgK k) {
+    for (size_t i = 0; i < n->args.size(); i++)
+      if (n->args[i].key == k) {
+        n->args.erase(n->args.begin() + (long)i);
+        return;
+      }
+  }
+  // generated links take their site's style (no absolute styling, P0-09 f)
+  ContentNode* mkLink(std::string_view anchor, std::string_view text, Span span,
+                      StyleId style = 0) {
+    ContentNode* l = mkNode(Kind::link, span, style);
     setArgStr(l, ArgK::url, "#tsr-" + std::string(anchor));
-    l->kids.push_back(mkText(text, span));
+    l->kids.push_back(mkText(text, span, style));
     return l;
+  }
+  ContentNode* clone(const ContentNode* n) {
+    ContentNode* c = arena.make<ContentNode>();
+    *c = *n;
+    for (ContentNode*& k : c->kids) k = clone(k);
+    return c;
   }
 
   // ---- pass 1: counters + label table -------------------------------------
@@ -107,6 +149,24 @@ struct Resolver {
     }
     labels.emplace(label, std::move(e));
     return true;
+  }
+  // A user label on node n (plan P0-09 c/d/e): reserved shapes and losing
+  // duplicates are dropped from the node, so no DOM id is emitted twice.
+  // Returns the registered label, or "" when none.
+  std::string registerUserLabel(ContentNode* n, Entry e) {
+    std::string label(strs.get(argStr(n, ArgK::label)));
+    if (label.empty()) return "";
+    if (reservedShape(label)) {
+      diags.add(Sev::Warning, "label-reserved", n->span,
+                "label '" + label + "' has the shape of a generated anchor and is ignored");
+      dropArg(n, ArgK::label);
+      return "";
+    }
+    if (!addLabel(label, std::move(e), n->span)) {
+      dropArg(n, ArgK::label);
+      return "";
+    }
+    return label;
   }
 
   void scan(ContentNode* n) {
@@ -126,10 +186,9 @@ struct Resolver {
         }
         std::string text;
         excerptInto(n, strs, text);
-        std::string label(strs.get(argStr(n, ArgK::label)));
-        std::string autoLabel = "h-" + num;  // every heading is a TOC anchor
-        if (label.empty() || !addLabel(label, {Kind::heading, num, text}, n->span)) {
-          label = autoLabel;
+        std::string label = registerUserLabel(n, {Kind::heading, num, text});
+        if (label.empty()) {  // every heading is a TOC anchor: h-<number>
+          label = "h-" + num;
           setArgStr(n, ArgK::label, label);
           addLabel(label, {Kind::heading, num, text}, n->span);
         }
@@ -138,40 +197,33 @@ struct Resolver {
       }
       case Kind::table: {
         tableNo++;
-        std::string label(strs.get(argStr(n, ArgK::label)));
-        if (!label.empty())
-          addLabel(label, {Kind::table, std::to_string(tableNo), ""}, n->span);
+        registerUserLabel(n, {Kind::table, std::to_string(tableNo), ""});
         break;
       }
       case Kind::group: {
         if (std::string_view(strs.get(argStr(n, ArgK::role))) == "figure") {
           figNo++;
-          std::string label(strs.get(argStr(n, ArgK::label)));
-          if (!label.empty())
-            addLabel(label, {Kind::group, std::to_string(figNo), ""}, n->span);
+          registerUserLabel(n, {Kind::group, std::to_string(figNo), ""});
           // caption prefix (figure-design.md §1): 图 n： bolded into the
           // first paragraph child; captionless figures keep just the number
           for (ContentNode* k : n->kids) {
             if (k->kind != Kind::para) continue;
-            ContentNode* t =
-                mkText(cfg.supFigure + std::to_string(figNo) + cfg.capSep,
-                       k->span, styles.idOf(Styling{CLS_BOLD, 1.0f}));
+            ContentNode* t = mkText(cfg.supFigure + std::to_string(figNo) + cfg.capSep,
+                                    k->span, compose(styles, k->style, CLS_BOLD));
             k->kids.insert(k->kids.begin(), t);
             break;
           }
+        } else {
+          registerUserLabel(n, {Kind::group, "", "", /*numbered=*/false});
         }
         break;
       }
       case Kind::mathblock: {
         // labelled display formulas number sequentially; the tag renders at
         // the right margin (emit reads ArgK::name)
-        StrRef label = argStr(n, ArgK::label);
-        if (label) {
+        if (!registerUserLabel(n, {Kind::mathblock, std::to_string(eqNo + 1), ""}).empty()) {
           eqNo++;
-          std::string num = std::to_string(eqNo);
-          addLabel(std::string(strs.get(label)), {Kind::mathblock, num, ""},
-                   n->span);
-          setArgStr(n, ArgK::name, "(" + num + ")");
+          setArgStr(n, ArgK::name, "(" + std::to_string(eqNo) + ")");
         }
         break;
       }
@@ -205,10 +257,44 @@ struct Resolver {
         }
         break;
       }
-      default:
+      case Kind::doc: case Kind::para: case Kind::list: case Kind::item: case Kind::quote:
+      case Kind::codeblock: case Kind::rule: case Kind::trow: case Kind::tcell:
+      case Kind::error: case Kind::comment: case Kind::text: case Kind::styled:
+      case Kind::link: case Kind::code: case Kind::ref: case Kind::mathinline:
+      case Kind::raw: case Kind::hardbreak: case Kind::seq: case Kind::image:
+        // every labelled node registers (P0-09 d): a classless target
+        // displays its label text (ref-unnumbered)
+        registerUserLabel(n, {n->kind, "", "", /*numbered=*/false});
         break;
     }
     for (ContentNode* k : n->kids) scan(k);
+  }
+
+  // Citation ordinals in document order, note bodies counted at their
+  // markers (P0-09 a): a walk over the tree before rewrite lifts any note.
+  void orderCites(const ContentNode* n) {
+    if (n->kind == Kind::ref) {
+      std::string target(strs.get(argStr(n, ArgK::target)));
+      if (!labels.count(target))
+        for (const std::string& k : splitKeys(target))
+          if (bib.count(k)) citeOrdinal(k);
+    }
+    if (n->kind == Kind::collect) return;  // entries are not citations
+    for (const ContentNode* k : n->kids) orderCites(k);
+  }
+  static std::vector<std::string> splitKeys(const std::string& target) {
+    std::vector<std::string> keys;
+    size_t at = 0;
+    while (at <= target.size()) {
+      size_t comma = target.find(',', at);
+      if (comma == std::string::npos) comma = target.size();
+      std::string k = target.substr(at, comma - at);
+      while (!k.empty() && k.front() == ' ') k.erase(k.begin());
+      while (!k.empty() && k.back() == ' ') k.pop_back();
+      if (!k.empty()) keys.push_back(k);
+      at = comma + 1;
+    }
+    return keys;
   }
 
   // ---- pass 2: REF rewriting + collector/term expansion -------------------
@@ -222,24 +308,22 @@ struct Resolver {
   }
   // @key / @[k1, k2] against the bibliography: numeric style "[1]" /
   // "[1, 2]", each number linking to its entry (bib-<key>)
+  // grouped citations resolve per key (P0-09 b): an unknown key shows ?? in
+  // its own slot and is diagnosed by name; the others still link
   bool resolveCite(ContentNode* r, const std::string& target) {
-    std::vector<std::string> keys;
-    size_t at = 0;
-    while (at <= target.size()) {
-      size_t comma = target.find(',', at);
-      if (comma == std::string::npos) comma = target.size();
-      std::string k = target.substr(at, comma - at);
-      while (!k.empty() && k.front() == ' ') k.erase(k.begin());
-      while (!k.empty() && k.back() == ' ') k.pop_back();
-      if (!k.empty()) keys.push_back(k);
-      at = comma + 1;
-    }
-    if (keys.empty()) return false;
-    for (const std::string& k : keys)
-      if (!bib.count(k)) return false;
+    std::vector<std::string> keys = splitKeys(target);
+    bool any = false;
+    for (const std::string& k : keys) any = any || bib.count(k);
+    if (!any) return false;
     r->kids.push_back(mkText("[", r->span, r->style));
     for (size_t i = 0; i < keys.size(); i++) {
       if (i) r->kids.push_back(mkText(", ", r->span, r->style));
+      if (!bib.count(keys[i])) {
+        diags.add(Sev::Warning, "ref-unresolved", r->span,
+                  "citation key '" + keys[i] + "' has no bibliography entry");
+        r->kids.push_back(mkText("??", r->span, r->style));
+        continue;
+      }
       ContentNode* l = mkNode(Kind::link, r->span, r->style);
       setArgStr(l, ArgK::url, "#tsr-bib-" + keys[i]);
       l->kids.push_back(mkText(std::to_string(citeOrdinal(keys[i])), r->span, r->style));
@@ -261,6 +345,12 @@ struct Resolver {
       return;
     }
     const Entry& e = it->second;
+    if (bib.count(target))
+      diags.add(Sev::Warning, "ref-shadowed", r->span,
+                "'" + target + "' is both a label and a bibliography key (the label wins)");
+    if (!e.numbered)
+      diags.add(Sev::Info, "ref-unnumbered", r->span,
+                "'" + target + "' names an unnumbered element; its label text is shown");
     std::string disp;
     switch (e.kind) {
       case Kind::heading: disp = cfg.supHeading + e.number; break;
@@ -295,7 +385,7 @@ struct Resolver {
       }
       ContentNode* item = mkNode(Kind::item, c->span);
       ContentNode* para = mkNode(Kind::para, c->span);
-      para->kids.push_back(mkLink(t.anchor, t.number + " " + t.text, c->span));
+      para->kids.push_back(mkLink(t.anchor, t.number + " " + t.text, c->span, c->style));
       item->kids.push_back(para);
       stack.back()->kids.push_back(item);
     }
@@ -308,8 +398,9 @@ struct Resolver {
     for (const GlossItem& g : gloss) {
       ContentNode* item = mkNode(Kind::item, c->span);
       ContentNode* para = mkNode(Kind::para, c->span);
-      para->kids.push_back(mkLink(g.name, g.name, c->span));
-      if (!g.desc.empty()) para->kids.push_back(mkText(" \xE2\x80\x94 " + g.desc, c->span));
+      para->kids.push_back(mkLink(g.name, g.name, c->span, c->style));
+      if (!g.desc.empty())
+        para->kids.push_back(mkText(" \xE2\x80\x94 " + g.desc, c->span, c->style));
       item->kids.push_back(para);
       list->kids.push_back(item);
     }
@@ -341,9 +432,14 @@ struct Resolver {
   // bodies at 0.85× with a ↩ back-link. Built once: explicitly at
   // #notes(), else appended to the document by resolveDoc.
   ContentNode* buildNotes(Span span) {
-    notesPlaced = true;
     ContentNode* g = mkNode(Kind::group, span);
     setArgStr(g, ArgK::role, "notes");
+    if (notesPlaced) {  // P0-09 g: the flow is placed once; aliasing the
+                        // same note nodes twice duplicated ids and content
+      diags.add(Sev::Info, "flow-already-placed", span, "notes were already placed");
+      return g;
+    }
+    notesPlaced = true;
     if (notes.empty()) return g;
     g->kids.push_back(mkNode(Kind::rule, span));
     ContentNode* list = mkNode(Kind::list, span);
@@ -395,16 +491,19 @@ struct Resolver {
         }
       }
     if (keys.empty()) return g;
+    bool first = bibBuilt++ == 0;
     g->kids.push_back(mkNode(Kind::rule, c->span));
     for (const std::string& key : keys) {
       auto it = bib.find(key);
       if (it == bib.end() || !it->second) continue;  // cited key without entry (fuzz: bib-missing-entry)
       ContentNode* e = it->second;
       ContentNode* para = mkNode(Kind::para, e->span, e->style);
-      setArgStr(para, ArgK::label, "bib-" + key);
+      // P0-09 g: a second bibliography clones its rows and carries no
+      // anchors (one id per entry)
+      if (first) setArgStr(para, ArgK::label, "bib-" + key);
       para->kids.push_back(
           mkText("[" + std::to_string(citeNo[key]) + "] ", e->span, e->style));
-      for (ContentNode* k : e->kids) para->kids.push_back(k);
+      for (ContentNode* k : e->kids) para->kids.push_back(first ? k : clone(k));
       rewrite(para);  // entries may carry links/refs of their own
       g->kids.push_back(para);
     }
@@ -432,7 +531,7 @@ struct Resolver {
     if (label) setArgStr(g, ArgK::label, strs.get(label));
     ContentNode* namePara = mkNode(Kind::para, t->span, t->style);
     namePara->kids.push_back(
-        mkText(name, t->span, styles.idOf(Styling{CLS_BOLD, 1.0f})));
+        mkText(name, t->span, compose(styles, t->style, CLS_BOLD)));
     bool sep = false;
     for (ContentNode* k : t->kids) {
       if (isInlineLevel(k->kind)) {
@@ -484,8 +583,9 @@ struct Resolver {
 void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs,
                 StyleTable& styles, const Config& cfg, DiagSink& diags) {
   if (!tree.root) return;
-  Resolver r{arena, strs, styles, cfg, diags, {}, {}, {}, {}, 0, 0};
+  Resolver r{.arena = arena, .strs = strs, .styles = styles, .cfg = cfg, .diags = diags};
   r.scan(tree.root);
+  r.orderCites(tree.root);
   r.rewrite(tree.root);
   // implicit notes section (notes-design.md §1): at document end unless
   // the author placed #notes() themselves

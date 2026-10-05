@@ -1,0 +1,13 @@
+doc @[0,352)
+  heading1 @[0,8) label="sec-a"
+  region @[18,73) name="aside"
+    para @[43,65) lines=1
+  region @[75,122) name="figure"
+    para @[100,113) lines=1
+  region @[124,202) name="figure"
+    para @[149,193) lines=1
+  para @[204,220) lines=1
+  para @[222,238) lines=1
+  region @[240,311) name="figure"
+    para @[265,302) lines=1
+  para @[313,351) lines=1

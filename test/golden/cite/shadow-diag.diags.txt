@@ -1,0 +1,1 @@
+warning ref-shadowed @[54,59) 'kp81' is both a label and a bibliography key (the label wins)

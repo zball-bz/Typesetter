@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
   if (stage == "skeleton") out = dumpSkeleton(doc.skel, doc.src);
   else if (stage == "ast") out = dumpAst(doc.ast, doc.src, doc.strs);
   else if (stage == "js") out = doc.js.text;
-  else if (stage == "diags") out = doc.dumpDiags();
+  else if (stage == "diags" && opsPath.empty()) out = doc.dumpDiags();
   else {
     if (opsPath.empty()) {
       fprintf(stderr, "stage %s needs --ops=\n", stage.c_str());
@@ -105,6 +105,7 @@ int main(int argc, char** argv) {
       else if (stage == "layout") out = dumpLayout(doc.layout);
       else if (stage == "mathbox") out = dumpMathBoxes(doc.tops, doc.strs);
       else if (stage == "html") out = doc.render();
+      else if (stage == "diags") out = doc.dumpDiags();  // with --ops: the whole pipeline
       else if (stage == "paged") out = doc.renderPaged(pageHeight);
       else {
         fprintf(stderr, "unknown stage %s\n", stage.c_str());

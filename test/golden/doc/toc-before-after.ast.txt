@@ -1,0 +1,11 @@
+doc @[0,43)
+  para @[0,4)
+    splice @[0,4) expr="toc"
+  heading @[6,11) level=1
+    text @[8,11) str="One"
+  heading @[13,29) level=2
+    text @[16,29) str="One point one"
+  heading @[31,36) level=1
+    text @[33,36) str="Two"
+  para @[38,42)
+    splice @[38,42) expr="toc"

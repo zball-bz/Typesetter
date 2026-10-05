@@ -1095,21 +1095,21 @@ Theme steps: — · findings: 1
 | `resolver/anchor-namespace` | adhoc | medium | P3-04 | |
 | `resolver/argk-overloading` | adhoc | medium | P0-06, P2-05, P2-07 | |
 | `resolver/rewrite-normalizations` | adhoc | low | P0-07, P2-07 | |
-| `resolver/cite-ordinal-pass-order` | issue | high | P0-09 | |
+| `resolver/cite-ordinal-pass-order` | issue | high | P0-09 | grep:plan P0-09 |
 | `resolver/extensibility-matrix` | issue | high | P2-07 | |
 | `resolver/invariant-declares-decides` | issue | high | P1-10 | |
-| `resolver/collector-aliasing` | issue | medium | P0-09 | |
-| `resolver/reserved-label-collision` | issue | medium | P0-09 | |
-| `resolver/absolute-style-loss` | issue | medium | P0-09 | |
-| `resolver/semantic-tight-item-anchor` | issue | medium | P0-09 | |
-| `resolver/duplicate-label-dom-ids` | issue | low | P0-09 | |
+| `resolver/collector-aliasing` | issue | medium | P0-09 | grep:plan P0-09 |
+| `resolver/reserved-label-collision` | issue | medium | P0-09 | grep:plan P0-09 |
+| `resolver/absolute-style-loss` | issue | medium | P0-09 | grep:plan P0-09 |
+| `resolver/semantic-tight-item-anchor` | issue | medium | P0-09 | grep:plan P0-09 |
+| `resolver/duplicate-label-dom-ids` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/spec-drift` | issue | medium | P1-10 | |
-| `resolver/grouped-cite-all-or-nothing` | issue | low | P0-09 | |
+| `resolver/grouped-cite-all-or-nothing` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/resolver-spans` | issue | low | P2-07 | |
-| `resolver/fragile-aggregate-init` | issue | low | P0-09 | |
-| `resolver/untested-diagnostics` | issue | low | P0-09 | |
+| `resolver/fragile-aggregate-init` | issue | low | P0-09 | grep:plan P0-09 |
+| `resolver/untested-diagnostics` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/missed:0` | missed | high | P2-03 | |
-| `resolver/missed:1` | missed | medium | P0-09 | |
+| `resolver/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
 | `resolver/missed:2` | missed | medium | P3-04, P3-06 | |
 | `resolver/missed:3` | missed | medium | P3-03 | |
 | `resolver/missed:4` | missed | low | P3-03 | |
@@ -1328,15 +1328,15 @@ Theme steps: — · findings: 1
 | `real-world-evidence/markup-reentry-missing` | adhoc | medium | P2-13 | |
 | `real-world-evidence/ctor-name-collision-fatal` | issue | high | P0-05, P2-02 | |
 | `real-world-evidence/heading-numbers-invisible` | issue | medium | P3-03 | |
-| `real-world-evidence/labels-on-unsupported-nodes-silent` | issue | medium | P0-09 | |
+| `real-world-evidence/labels-on-unsupported-nodes-silent` | issue | medium | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/span-loss-synthesized-nodes` | issue | medium | P2-04 | |
-| `real-world-evidence/grouped-cite-all-or-nothing` | issue | low | P0-09 | |
+| `real-world-evidence/grouped-cite-all-or-nothing` | issue | low | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/spec-drift` | issue | medium | P3-37, P5-02 | |
 | `real-world-evidence/converter-fidelity-unchecked` | issue | medium | P3-35 | |
 | `real-world-evidence/math-leniency-silent` | issue | low | P3-24 | |
 | `real-world-evidence/converter-code-duplication` | issue | low | P3-35 | |
 | `real-world-evidence/missed:0` | missed | high | P0-05, P2-02 | |
-| `real-world-evidence/missed:1` | missed | medium | P0-09 | |
+| `real-world-evidence/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/missed:2` | missed | medium | P2-06 | |
 | `real-world-evidence/missed:3` | missed | medium | P0-06, P2-08 | |
 | `real-world-evidence/missed:4` | missed | medium | P3-27 | |

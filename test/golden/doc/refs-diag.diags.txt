@@ -1,0 +1,2 @@
+warning label-duplicate @[98,106) label 'dup' declared twice (first wins)
+warning ref-unresolved @[30,38) reference 'missing' has no label

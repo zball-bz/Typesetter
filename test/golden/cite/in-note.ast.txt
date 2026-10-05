@@ -1,0 +1,16 @@
+doc @[0,220)
+  heading @[0,20) level=1
+    text @[2,20) str="Citations in notes"
+  para @[22,171)
+    text @[22,38) str="Liang's patterns "
+    ref @[39,47) target="liang83"
+    text @[48,71) str=" come first in the text."
+    note @[71,126)
+      text @[73,84) str="The TeXbook "
+      ref @[85,93) target="knuth84"
+      text @[94,125) str=" is cited only inside this note."
+    text @[127,142) str=" Knuth and Plass "
+    ref @[143,148) target="kp81"
+    text @[149,171) str=" follow after the note."
+  para @[173,219)
+    splice @[173,219) expr="bibliography(\"/test/fixtures/cite/refs.json\")"

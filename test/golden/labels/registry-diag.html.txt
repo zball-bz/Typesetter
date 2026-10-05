@@ -1,0 +1,28 @@
+<div class="tsr-doc">
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-sec-a" data-s="0" data-e="6" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Labels</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="43" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-side-1" data-s="0" data-e="22" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">An aside with a label.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="100" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-fig-x" data-s="0" data-e="13" data-ragged="1" style="top:0px;left:78px;width:222px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">First figure.</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="149" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="44" data-ragged="1" style="top:0px;left:2px;width:298px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">Second figure reuses the label: it</span></div>
+<div class="tsr-line" data-s="0" data-e="44" data-ragged="1" style="top:24px;left:116px;width:184px"><span class="tsr-r" data-s="0">loses it.</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="204" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-eq-1" data-s="0" data-e="16" data-ragged="1" style="top:0px;left:129.938px;width:40.125px;height:24px"><span class="tsr-eqno" data-syn="eqno" style="right:-129.938px">(1)</span><span class="tsr-math" data-syn="math" data-src="$ a = b $" style="width:40.125px;height:11.125px;position:absolute;left:0;top:6.438px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:14.188px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:30.719px;top:-1.863px;font-size:16px;line-height:16px">b</span></span></div>
+</div>
+<div class="tsr-para" data-pid="5" data-s0="222" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="16" data-ragged="1" style="top:0px;left:130.797px;width:38.391px;height:24px"><span class="tsr-math" data-syn="math" data-src="$ c = d $" style="width:38.391px;height:11.234px;position:absolute;left:0;top:6.383px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:12.219px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:28.75px;top:-1.863px;font-size:16px;line-height:16px">d</span></span></div>
+</div>
+<div class="tsr-para" data-pid="6" data-s0="265" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="37" data-ragged="1" style="top:0px;left:18px;width:282px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 3</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">A figure with a reserved label</span></div>
+<div class="tsr-line" data-s="0" data-e="37" data-ragged="1" style="top:24px;left:126px;width:174px"><span class="tsr-r" data-s="0">shape.</span></div>
+</div>
+<div class="tsr-para" data-pid="7" data-s0="313" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="38" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r tsr-cjk" href="#tsr-side-1" data-syn="ref">图</a><a class="tsr-r" href="#tsr-side-1" data-syn="ref"> </a><span class="tsr-r" data-s="11">, </span><a class="tsr-r tsr-cjk" href="#tsr-fig-x" data-syn="ref">图</a><a class="tsr-r" href="#tsr-fig-x" data-syn="ref"> 1</a><span class="tsr-r" data-s="19">, </span><a class="tsr-r tsr-cjk" href="#tsr-eq-1" data-syn="ref">式</a><a class="tsr-r" href="#tsr-eq-1" data-syn="ref"> (1)</a><span class="tsr-r" data-s="27"> and </span><a class="tsr-r" href="#tsr-sec-a" data-syn="ref">§1</a><span class="tsr-r" data-s="37">.</span></div>
+</div>
+</div>

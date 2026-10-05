@@ -1,0 +1,12 @@
+doc @[0,72)
+  para @[0,51)
+    text @[0,7) str="A note."
+    note @[7,27)
+      text @[9,26) str="Body of the note."
+    text @[28,36) str=" Another."
+    note @[36,51)
+      text @[38,50) str="Second body."
+  para @[53,61)
+    splice @[53,61) expr="notes()"
+  para @[63,71)
+    splice @[63,71) expr="notes()"

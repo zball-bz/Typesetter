@@ -1,0 +1,5 @@
+= Citations in notes
+
+Liang's patterns @liang83 come first in the text.^[The TeXbook @knuth84 is cited only inside this note.] Knuth and Plass @kp81 follow after the note.
+
+#bibliography("/test/fixtures/cite/refs.json")

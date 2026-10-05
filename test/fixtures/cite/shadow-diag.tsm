@@ -1,0 +1,5 @@
+= A heading labelled like a key <kp81>
+
+The reference @kp81 resolves to the heading, and the clash is reported.
+
+#bibliography("/test/fixtures/cite/refs.json")

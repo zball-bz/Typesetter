@@ -1,0 +1,7 @@
+doc @[0,144)
+  para @[0,95)
+    text @[0,39) str="A grouped citation with one unknown key "
+    ref @[40,67) target="kp81, nosuchkey, liang83"
+    text @[68,95) str=" still links the known keys."
+  para @[97,143)
+    splice @[97,143) expr="bibliography(\"/test/fixtures/cite/refs.json\")"

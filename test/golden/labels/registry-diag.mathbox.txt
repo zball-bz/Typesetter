@@ -1,0 +1,14 @@
+display pid=4
+hbox Ord w=2568 asc=700 desc=12
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+  glue w=284 @(624,0)
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(908,0)
+  glue w=284 @(1682,0)
+  glyph "b" Ord w=602 asc=700 desc=10 px=16 @(1966,0)
+display pid=5
+hbox Ord w=2457 asc=700 desc=19
+  glyph "c" Ord w=498 asc=486 desc=19 px=16
+  glue w=284 @(498,0)
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(782,0)
+  glue w=284 @(1556,0)
+  glyph "d" Ord w=617 asc=700 desc=19 px=16 @(1840,0)

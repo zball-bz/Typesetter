@@ -1,0 +1,3 @@
+A grouped citation with one unknown key @[kp81, nosuchkey, liang83] still links the known keys.
+
+#bibliography("/test/fixtures/cite/refs.json")

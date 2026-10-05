@@ -1,0 +1,4 @@
+warning label-duplicate @[124,202) label 'fig-x' declared twice (first wins)
+warning label-duplicate @[222,238) label 'eq-1' declared twice (first wins)
+warning label-reserved @[240,311) label 'h-2.1' has the shape of a generated anchor and is ignored
+info ref-unnumbered @[317,324) 'side-1' names an unnumbered element; its label text is shown

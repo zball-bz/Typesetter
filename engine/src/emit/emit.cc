@@ -24,11 +24,7 @@ struct Emitter {
   }
 
   StyleId compose(StyleId base, u64 addBits, float mul) {
-    if (addBits == 0 && mul == 1.0f) return base;
-    Styling s = styles.get(base);
-    s.bits |= addBits;
-    s.sizeMul *= mul;
-    return styles.idOf(s);
+    return tsr::compose(styles, base, addBits, mul);
   }
 
   // ---- inline walk --------------------------------------------------------

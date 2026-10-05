@@ -1,0 +1,7 @@
+Cited: @kp81 and @liang83.
+
+#bibliography("/test/fixtures/cite/refs.json")
+
+The same bibliography placed again carries no duplicate anchors.
+
+#bibliography("/test/fixtures/cite/refs.json")

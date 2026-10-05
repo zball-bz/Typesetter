@@ -1,0 +1,9 @@
+doc @[0,160)
+  heading @[0,31) level=1 label="kp81"
+    text @[2,31) str="A heading labelled like a key"
+  para @[40,111)
+    text @[40,53) str="The reference "
+    ref @[54,59) target="kp81"
+    text @[60,111) str=" resolves to the heading, and the clash is reported."
+  para @[113,159)
+    splice @[113,159) expr="bibliography(\"/test/fixtures/cite/refs.json\")"
