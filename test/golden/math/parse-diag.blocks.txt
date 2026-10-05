@@ -4,7 +4,7 @@ top pid=0 units=1
   cjk "公" w=1025su glue=102su wt=0.6 pen=0 @[0,9)
   cjk "式" w=1025su glue=102su wt=0.6 pen=0 @[0,9)
   space w=257su stretch=1 @[0,9)
-  math "x^^2" w=2072su asc=753su desc=12su @[10,16)
+  math "x^^2" w=1307su asc=1034su desc=12su @[10,16)
   space w=257su stretch=1 @[17,59)
   cjk "会" w=1025su glue=102su wt=0.6 pen=0 @[17,59)
   cjk "退" w=1025su glue=102su wt=0.6 pen=0 @[17,59)

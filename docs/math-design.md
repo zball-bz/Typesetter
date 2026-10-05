@@ -331,6 +331,35 @@ decisions:
   stretchy/largeOp) at parse; unknown name → `error` box + diagnostic, never
   a crash.
 
+### 10.1 As built: the IR and the row registry (plan P1-24)
+
+`engine/src/math/ir.{h,cc}`: a formula parses to one tree of a closed node
+set (`Sym Num Text Run Attach Frac Group BigOp Call Param Error`), with every
+construct a `Call` of a **MathRow**: the C++ primitives `frac`, `stack`,
+`radical`, `lr` (fenced, stretched to its body), `accent`, `rule`, and the
+template rows of `engine/data/math/stdlib.tsv` (`sqrt root abs norm floor
+ceil binom overline underline bar` and the accents), written in the template
+language a document will use (`abs(x) = lr(|, #x, |)`; a symbol slot takes
+one token) and expanded at bind. One validator, `checkRow`, checks them (the
+unit tests run it over every row). Layout switches over the primitives only:
+no family name is known below the parser.
+
+- A call binds only on an adjacent `name(`; otherwise a row's `bare`
+  meaning applies (`dot` → ⋅ Bin, `hat` → ˆ), else the dictionary, else the
+  implicit-name rule (`sqrt x`, `abs` are names). `not` stays ¬.
+- Arity comes from the row's slots: a missing argument is an empty Error
+  leaf, extra ones one Error leaf after the call, both `math-arity`
+  warnings.
+- Errors are local: a malformed stretch (`^2` with no operand, a stray
+  `)`) is an **Error leaf** — its source slice, resynchronised at `,` `)`
+  `;` a relation or the end, set in the text font (measured like names) —
+  and the rest of the formula lays out. Each problem is a diagnostic on its
+  sub-span (at most 8 per formula); `math-coverage` names each uncovered
+  code point once, in hex.
+- Primes and an explicit superscript merge: `f'^2` = f^{′2}.
+- `tsrc --stage=mathir` prints the tree and each formula's diagnostics
+  (goldened for every math-bearing fixture).
+
 ## 11. Testing
 
 - **Native goldens carry the whole weight**: `--stage=mathbox` (indented box

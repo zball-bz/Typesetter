@@ -4,7 +4,7 @@
 //        [--fixture=f.fixture.json] [--settings=f.json] [--set path=value]…
 //        [--fuse-check] <file.tsm>
 // Products are products.def (skeleton ast js tokens outline astjson ops tree
-// index semantic blocktree mathbox blocks hlist breaks layout vlist paged html dl diags
+// index semantic blocktree mathir mathbox blocks hlist breaks layout vlist paged html dl diags
 // settings); those after Ingest need --ops.
 // Settings layer in order: profile, fixture, --settings, --set. A profile
 // name resolves to test/profiles/<name>.json under the current directory.

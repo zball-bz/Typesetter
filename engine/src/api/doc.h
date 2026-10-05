@@ -697,6 +697,7 @@ struct Doc {
     if (name == "index") return dumpIndex(index, *registry);
     if (name == "semantic") return renderFallback();
     if (name == "blocktree") return dumpBlockTree(boxtree.tops, strs);
+    if (name == "mathir") return dumpMathIRs(tops, strs);
     if (name == "mathbox") return dumpMathBoxes(tops, strs);
     if (name == "blocks") return dumpBlocks(tops, strs, styles);
     if (name == "hlist") return dumpHLists(tops, strs, styles);

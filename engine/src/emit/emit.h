@@ -236,5 +236,6 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
 std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
                        const StyleTable& styles);
 std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& strs);
+std::string dumpMathIRs(const std::vector<TopBlock>& tops, const Interner& strs);
 
 }  // namespace tsr

@@ -1,0 +1,9 @@
+inline pid=4 "x^2 + y^2"
+  run [0,9)
+    attach [0,4)
+      base: sym U+0078 ord [0,1)
+      sup: num "2" [2,3)
+    sym U+002B bin [4,5)
+    attach [6,9)
+      base: sym U+0079 ord [6,7)
+      sup: num "2" [8,9)

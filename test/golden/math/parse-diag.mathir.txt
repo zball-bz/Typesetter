@@ -1,0 +1,6 @@
+inline pid=0 "x^^2"
+  run [0,4)
+    attach [0,4)
+      base: sym U+0078 ord [0,1)
+      sup: error "^2" [2,4)
+  diag error math-parse [2,4) operator without operand

@@ -21,6 +21,7 @@
 #include "../src/semantic/terms.h"
 #include "semantic_data.gen.h"
 #include "../src/math/dict.h"
+#include "../src/math/ir.h"
 #include "../src/math/font.h"
 #include "../src/api/driver.h"
 #include "../src/emit/legacy.h"
@@ -500,6 +501,57 @@ static void unitResources(const fs::path& root) {
   }
 }
 
+
+// The math IR (plan P1-24): every built-in row passes the one validator;
+// calls bind only on an adjacent `name(`, a bare accent or function word is
+// a symbol or a name, arity is checked, and errors stay local.
+static void unitMathIR() {
+  std::string why;
+  for (const MathRow& r : mathRows()) {
+    const bool ok = checkRow(r, why);
+    if (!ok) printf("FAIL math row: %s\n", why.c_str());
+    CHECK(ok);
+  }
+  Arena arena;
+  auto ir = [&](std::string_view src) { return parseMath(src, arena); };
+  auto has = [](const MathIR& m, const char* code) {
+    for (const MathDiag& d : m.diags)
+      if (std::string_view(d.code) == code) return true;
+    return false;
+  };
+  MathIR dot = ir("p dot q");  // defect #23: a bare dot is ⋅, the formula stays whole
+  CHECK(dot.diags.empty() && dot.root->kids.size() == 3 && dot.root->kids[1]->k == MNode::Sym &&
+        dot.root->kids[1]->cp == 0x22C5 && dot.root->kids[1]->cls == kBin);
+  MathIR hat = ir("hat(x) + hat");
+  CHECK(hat.diags.empty() && hat.root->kids[0]->k == MNode::Call && hat.root->kids[0]->prim == Prim::Accent &&
+        hat.root->kids[2]->k == MNode::Sym);
+  MathIR sq = ir("sqrt x");  // no '(' : a name, not an error
+  CHECK(sq.diags.empty() && sq.root->kids[0]->k == MNode::Text);
+  MathIR spaced = ir("abs (x)");  // not adjacent: a name and a group
+  CHECK(spaced.root->kids[0]->k == MNode::Text && spaced.root->kids[1]->k == MNode::Group);
+  MathIR prime = ir("f'^2");  // primes and ^ merge: f^{′2}
+  CHECK(prime.diags.empty() && prime.root->kids[0]->k == MNode::Attach &&
+        prime.root->kids[0]->sup->kids.size() == 2);
+  MathIR extra = ir("abs(x, y) = 1");
+  CHECK(has(extra, "math-arity") && !has(extra, "math-parse"));
+  MathIR missing = ir("frac(a)");
+  CHECK(has(missing, "math-arity") && missing.root->kids[0]->k == MNode::Call &&
+        missing.root->kids[0]->kids.size() == 2 && missing.root->kids[0]->kids[1]->k == MNode::Error);
+  MathIR bad = ir("^2 + a = b");  // the error leaf covers its stretch, the relation survives
+  CHECK(bad.diags.size() == 1 && bad.diags[0].lo == 0 && bad.diags[0].hi == 7 && bad.root->kids.size() == 3 &&
+        bad.root->kids[0]->k == MNode::Error && bad.root->kids[0]->txt == "^2 + a" && bad.root->kids[1]->cls == kRel);
+  std::string deep(5000, '(');  // the nesting bound: no stack overflow
+  MathIR nested = ir(deep);
+  std::string calls;
+  for (int i = 0; i < 3000; i++) calls += "abs(";
+  MathIR nestedCalls = ir(calls);
+  CHECK(!nested.diags.empty() && !nestedCalls.diags.empty());
+  MathIR notA = ir("not A");  // `not` stays ¬
+  CHECK(notA.root->kids[0]->k == MNode::Sym && notA.root->kids[0]->cp == 0xAC);
+  DiagSink ds;
+  reportMathDiags(bad, "^2 + a = b", Span{10, 22}, ds);  // $…$ around it: bytes map inside
+  CHECK(ds.items.size() == 1 && ds.items[0].span.start == 11 && ds.items[0].span.end == 18);
+}
 
 // the font artifact keeps every glyph it shipped before the vocabulary left
 // it (plan P1-22 gate: the record set is a superset of the baseline)
@@ -1360,6 +1412,7 @@ int main(int argc, char** argv) {
   unitHostInputs(fs::path(root));
   unitResources(fs::path(root));
   unitMathGlyphs(fs::path(root));
+  unitMathIR();
   unitOpsWindow(fs::path(root));
   unitAstBytes(fs::path(root));
   unitTokenConformance(fs::path(root));
@@ -1476,6 +1529,9 @@ int main(int argc, char** argv) {
                 failures++;
               }
         }
+        std::string mir = doc.product("mathir");  // plan P1-24: the IR of every formula
+        if (!mir.empty() || fs::exists(g("mathir")))
+          goldenCompare(g("mathir"), mir, update, label + ":mathir");
         std::string mbx = doc.product("mathbox");
         if (!mbx.empty() || fs::exists(g("mathbox")))
           goldenCompare(g("mathbox"), mbx, update, label + ":mathbox");

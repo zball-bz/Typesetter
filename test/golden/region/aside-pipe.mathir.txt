@@ -1,0 +1,18 @@
+inline pid=0 "|x|"
+  run [0,3)
+    sym U+007C ord [0,1)
+    sym U+0078 ord [1,2)
+    sym U+007C ord [2,3)
+inline pid=0 "|a b| = |a| |b|"
+  run [0,15)
+    sym U+007C ord [0,1)
+    sym U+0061 ord [1,2)
+    sym U+0062 ord [3,4)
+    sym U+007C ord [4,5)
+    sym U+003D rel [6,7)
+    sym U+007C ord [8,9)
+    sym U+0061 ord [9,10)
+    sym U+007C ord [10,11)
+    sym U+007C ord [12,13)
+    sym U+0062 ord [13,14)
+    sym U+007C ord [14,15)

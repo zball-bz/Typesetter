@@ -1,0 +1,10 @@
+inline pid=0 "f(x) \"if\" x > 0"
+  run [0,15)
+    sym U+0066 ord [0,1)
+    group U+0028 U+0029 [1,5)
+      run [2,3)
+        sym U+0078 ord [2,3)
+    text "if" ord textfont [5,9)
+    sym U+0078 ord [10,11)
+    sym U+003E rel [12,13)
+    num "0" [14,15)

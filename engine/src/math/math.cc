@@ -6,6 +6,7 @@
 
 #include "dict.h"
 #include "font.h"
+#include "ir.h"
 
 namespace tsr {
 
@@ -72,457 +73,6 @@ constexpr u8 kSpaceTab[8][8] = {
 };
 constexpr int kMuOf[4] = {0, 3, 4, 5};
 
-// ---- parse tree ------------------------------------------------------------
-struct MNode {
-  enum K : u8 { Run, Atom, Text, Script, Frac, Group, BigOp, Call } k = Atom;
-  u32 cp = 0;
-  u8 cls = kOrd, flags = 0;
-  std::string txt;            // Text: literal glyph run; Call: function name
-  bool textFont = false;      // Text: set in the document's text font (names)
-  MNode* a = nullptr;         // Script/BigOp: base; Frac: numerator
-  MNode* sub = nullptr;       // Script/BigOp
-  MNode* sup = nullptr;       // Script/BigOp
-  MNode* b = nullptr;         // Frac: denominator; BigOp: body
-  u32 openCp = 0, closeCp = 0;  // Group
-  std::vector<MNode*> kids;   // Run; Call: arguments
-};
-
-// ---- tokenizer -------------------------------------------------------------
-struct Tok {
-  enum K : u8 { End, Num, Word, Op, Chr, Sup, Sub, Slash, Open, Close, Prime, Quote } k = End;
-  std::string text;               // Num/Word
-  const SymbolInfo* op = nullptr;  // Op (dictionary hit)
-  u32 cp = 0;                     // Chr (direct char) / Open / Close
-  u8 cls = kOrd;                  // Chr fallback class
-  u32 pos = 0;                    // token start offset (for re-lexing)
-};
-
-inline bool isLetter(char c) {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-inline bool isDigit(char c) { return c >= '0' && c <= '9'; }
-// characters that participate in operator-sequence maximal munch
-inline bool isOpChar(char c) {
-  switch (c) {
-    case '+': case '-': case '*': case '=': case '<': case '>': case '|':
-    case '~': case ':': case ';': case '.': case ',': case '!': case '@':
-    case '&': case '?': case '%':
-      return true;
-    default:
-      return false;
-  }
-}
-
-struct Lexer {
-  std::string_view s;
-  u32 i = 0;
-
-  Tok next() {
-    while (i < s.size() && (s[i] == ' ' || s[i] == '\t' || s[i] == '\n' || s[i] == '\r')) i++;
-    if (i >= s.size()) return {};
-    char c = s[i];
-    Tok t;
-    t.pos = i;
-    if (isDigit(c)) {
-      u32 j = i;
-      while (j < s.size() && isDigit(s[j])) j++;
-      if (j + 1 < s.size() && s[j] == '.' && isDigit(s[j + 1])) {
-        j++;
-        while (j < s.size() && isDigit(s[j])) j++;
-      }
-      t.k = Tok::Num;
-      t.text = std::string(s.substr(i, j - i));
-      i = j;
-      return t;
-    }
-    if (isLetter(c)) {
-      u32 j = i;
-      while (j < s.size() && isLetter(s[j])) j++;
-      t.k = Tok::Word;
-      t.text = std::string(s.substr(i, j - i));
-      i = j;
-      return t;
-    }
-    if (c == '"') {  // "quoted text": an upright text-font run (Ord)
-      u32 j = i + 1;
-      while (j < s.size() && s[j] != '"') j++;
-      t.k = Tok::Quote;
-      t.text = std::string(s.substr(i + 1, j - (i + 1)));
-      i = j < s.size() ? j + 1 : j;
-      return t;
-    }
-    switch (c) {
-      case '^': i++; t.k = Tok::Sup; return t;
-      case '_':
-        // _|_ is ⊥ — let the munch see it first
-        break;
-      case '/': i++; t.k = Tok::Slash; return t;
-      case '\'': i++; t.k = Tok::Prime; return t;
-      case '(': case '[': case '{':
-        i++;
-        t.k = Tok::Open;
-        t.cp = (u8)c;
-        return t;
-      case ')': case ']': case '}':
-        i++;
-        t.k = Tok::Close;
-        t.cp = (u8)c;
-        return t;
-      default:
-        break;
-    }
-    if (c == '_') {
-      // maximal munch may claim _|_ ; otherwise structural subscript
-      if (i + 2 < s.size() && s[i + 1] == '|' && s[i + 2] == '_') {
-        if (const SymbolInfo* e = MathDict::byName("_|_")) {
-          i += 3;
-          t.k = Tok::Op;
-          t.op = e;
-          return t;
-        }
-      }
-      i++;
-      t.k = Tok::Sub;
-      return t;
-    }
-    if (c == '!' && i + 1 < s.size() && isLetter(s[i + 1])) {
-      // negated name: !in, !exists, …
-      u32 j = i + 1;
-      while (j < s.size() && isLetter(s[j])) j++;
-      std::string name(s.substr(i, j - i));
-      if (const SymbolInfo* e = MathDict::byName(name)) {
-        i = j;
-        t.k = Tok::Op;
-        t.op = e;
-        return t;
-      }
-      // unknown negation: emit '!' alone, the word lexes next round
-      i++;
-      t.k = Tok::Chr;
-      t.cp = '!';
-      t.cls = kOrd;
-      return t;
-    }
-    if (isOpChar(c)) {
-      // maximal munch over the operator-key trie (operator characters only)
-      u32 len = 0;
-      if (const SymbolInfo* e = MathDict::matchOp(s, i, len)) {
-        i += len;
-        t.k = Tok::Op;
-        t.op = e;
-        return t;
-      }
-      i++;
-      t.k = Tok::Chr;
-      t.cp = (u8)c;
-      t.cls = kOrd;
-      return t;
-    }
-    // direct Unicode character: the class of its default dictionary row,
-    // Ord otherwise
-    u32 cp = utf8Next(s, i);
-    t.k = Tok::Chr;
-    t.cp = cp;
-    t.cls = MathDict::classOfCp(cp);
-    return t;
-  }
-};
-
-// structural function names (call-syntax constructs beyond the dictionary)
-inline bool isCallName(const std::string& w) {
-  return w == "sqrt" || w == "root" || w == "frac" || w == "binom" ||
-         w == "abs" || w == "norm" || w == "floor" || w == "ceil" ||
-         w == "overline" || w == "underline";
-}
-
-// ---- parser ----------------------------------------------------------------
-struct Parser {
-  Lexer lex;
-  Arena& arena;
-  DiagSink& diags;
-  Span span;
-  Tok tok;
-  int errors = 0;
-
-  void advance() { tok = lex.next(); }
-  void err(const char* msg) {
-    if (errors++ == 0) diags.add(Sev::Error, "math-parse", span, msg);
-  }
-
-  MNode* mk(MNode::K k) {
-    MNode* n = arena.make<MNode>();
-    n->k = k;
-    return n;
-  }
-  MNode* atom(u32 cp, u8 cls, u8 flags = 0) {
-    MNode* n = mk(MNode::Atom);
-    n->cp = cp;
-    n->cls = cls;
-    n->flags = flags;
-    return n;
-  }
-
-  bool atRel() const { return tok.k == Tok::Op && tok.op->cls == kRel; }
-  bool runEnds() const { return tok.k == Tok::End || tok.k == Tok::Close; }
-
-  // one full expression run; stops at End / Close (caller consumes)
-  MNode* parseRun(bool stopAtRel = false) {
-    MNode* run = mk(MNode::Run);
-    while (!runEnds()) {
-      if (stopAtRel && atRel()) break;
-      parseMolecule(run->kids);
-    }
-    return run;
-  }
-
-  // factor + postfix scripts/primes + fraction chaining; visible unscripted
-  // groups splice their atoms into the run (TeX: '(' is an Open atom)
-  void parseMolecule(std::vector<MNode*>& items) {
-    MNode* f = parseFactor(&items);
-    if (!f) return;
-    f = attachPostfix(f);
-    while (tok.k == Tok::Slash) {
-      advance();
-      MNode* rhs = parseFactor(nullptr);
-      if (!rhs) {
-        err("missing denominator");
-        break;
-      }
-      rhs = attachPostfix(rhs);
-      MNode* fr = mk(MNode::Frac);
-      fr->a = shed(f);
-      fr->b = shed(rhs);
-      fr->cls = kOrd;
-      f = fr;
-    }
-    items.push_back(f);
-  }
-
-  // group consumed as a script/fraction argument sheds its parens
-  MNode* shed(MNode* f) { return f->k == MNode::Group ? f->a : f; }
-
-  MNode* attachPostfix(MNode* f) {
-    for (;;) {
-      if (tok.k == Tok::Sup || tok.k == Tok::Sub) {
-        bool isSup = tok.k == Tok::Sup;
-        advance();
-        MNode* arg = parseFactor(nullptr);
-        if (!arg) {
-          err("missing script argument");
-          return f;
-        }
-        arg = shed(arg);
-        if (f->k != MNode::Script && f->k != MNode::BigOp) {
-          MNode* sc = mk(MNode::Script);
-          sc->a = f;
-          sc->cls = f->cls;
-          f = sc;
-        }
-        MNode*& slot = isSup ? f->sup : f->sub;
-        if (slot) err("double script");
-        else slot = arg;
-        continue;
-      }
-      if (tok.k == Tok::Chr && tok.cp == '!') {
-        // postfix factorial: fold into the base so fractions/scripts see n!
-        // as one atom ("!=", "!in" were already claimed by the lexer)
-        advance();
-        MNode* r = mk(MNode::Run);
-        r->kids.push_back(f);
-        r->kids.push_back(atom('!', kOrd));
-        r->cls = kOrd;
-        f = r;
-        continue;
-      }
-      if (tok.k == Tok::Prime) {
-        advance();
-        if (f->k != MNode::Script && f->k != MNode::BigOp) {
-          MNode* sc = mk(MNode::Script);
-          sc->a = f;
-          sc->cls = f->cls;
-          f = sc;
-        }
-        if (!f->sup) {
-          f->sup = mk(MNode::Run);
-        } else if (f->sup->k != MNode::Run) {
-          MNode* r = mk(MNode::Run);
-          r->kids.push_back(f->sup);
-          f->sup = r;
-        }
-        f->sup->kids.push_back(atom(0x2032, kOrd));
-        continue;
-      }
-      break;
-    }
-    return f;
-  }
-
-  // items == nullptr: single-token context (script/fraction argument; no
-  // splicing target — single-token semantics: x^ab = x^a · b)
-  MNode* parseFactor(std::vector<MNode*>* items) {
-    switch (tok.k) {
-      case Tok::Num: {
-        MNode* n = mk(MNode::Text);
-        n->txt = tok.text;
-        n->cls = kOrd;
-        advance();
-        return n;
-      }
-      case Tok::Word:
-        return parseWord(items);
-      case Tok::Quote: {
-        MNode* n = mk(MNode::Text);
-        n->txt = tok.text;
-        n->cls = kOrd;
-        n->textFont = true;
-        advance();
-        return n;
-      }
-      case Tok::Op: {
-        const SymbolInfo* e = tok.op;
-        advance();
-        if (e->flags & kFlagLarge) return parseBigOp(e);
-        return atom(e->cp, e->cls, e->flags);
-      }
-      case Tok::Chr: {
-        MNode* n = atom(tok.cp, tok.cls);
-        advance();
-        return n;
-      }
-      case Tok::Open: {
-        u32 open = tok.cp;
-        u32 close = open == '(' ? ')' : open == '[' ? ']' : '}';
-        advance();
-        MNode* inner = parseRun();
-        if (tok.k == Tok::Close) {
-          close = tok.cp;  // mixed delimiters are fine: [0, 1) intervals
-          advance();
-        } else {
-          err("unclosed bracket");
-        }
-        MNode* g = mk(MNode::Group);
-        g->a = inner;
-        g->openCp = open;
-        g->closeCp = close;
-        g->cls = kOrd;
-        return g;
-      }
-      case Tok::Prime: {
-        // stray prime with no base
-        advance();
-        return atom(0x2032, kOrd);
-      }
-      case Tok::Slash: {
-        // dangling / is an ordinary slash, as in TeX (formulas split across
-        // sources routinely end mid-expression)
-        advance();
-        return atom('/', kOrd);
-      }
-      case Tok::Sup:
-      case Tok::Sub: {
-        err("operator without operand");
-        advance();
-        return nullptr;
-      }
-      default:
-        return nullptr;
-    }
-  }
-
-  MNode* parseWord(std::vector<MNode*>* items) {
-    std::string w = tok.text;
-    u32 wpos = tok.pos;
-    advance();
-    if (isCallName(w)) return parseCall(w);
-    if (const SymbolInfo* e = MathDict::byName(w)) {
-      if (e->flags & kFlagAccent) return parseCall(w, e);
-      if (e->flags & kFlagTextOp) {
-        MNode* n = mk(MNode::Text);
-        n->txt = w;
-        n->cls = kOp;
-        n->flags = e->flags;
-        n->textFont = true;
-        return n;
-      }
-      if (e->flags & kFlagLarge) return parseBigOp(e);
-      return atom(e->cp, e->cls, e->flags);
-    }
-    // Single-token contexts consume only the first letter (x^ab == x^a b):
-    // rewind the lexer to just past it and re-lex the remainder.
-    if (w.size() > 1 && !items) {
-      lex.i = wpos + 1;
-      advance();
-      return atom((u8)w[0], kOrd);
-    }
-    // unknown multi-letter word = a NAME (Typst rule): one upright text-font
-    // box with TeX's \operatorname spacing (Op: thin space before an Ord,
-    // none before an opening paren) — Id(A,B), Equiv, eqv. Scripts bind to
-    // the whole name. Single letters stay variables in the math font.
-    if (w.size() > 1) {
-      MNode* n = mk(MNode::Text);
-      n->txt = w;
-      n->cls = kOp;
-      n->textFont = true;
-      return n;
-    }
-    return atom((u8)w[0], kOrd);
-  }
-
-  // sqrt(x) root(n, x) frac(a, b) binom(n, k) abs(x) … and accents hat(x)
-  MNode* parseCall(const std::string& name, const SymbolInfo* accent = nullptr) {
-    MNode* call = mk(MNode::Call);
-    call->txt = name;
-    if (accent) {
-      call->cp = accent->cp;
-      call->flags = accent->flags;
-    }
-    if (tok.k != Tok::Open || tok.cp != '(') {
-      err("function needs (…) argument");
-      return call;
-    }
-    advance();
-    for (;;) {
-      MNode* arg = mk(MNode::Run);
-      while (!runEnds() && !(tok.k == Tok::Op && tok.op->cls == kPunct &&
-                             tok.op->cp == ','))
-        parseMolecule(arg->kids);
-      call->kids.push_back(arg);
-      if (tok.k == Tok::Op && tok.op->cls == kPunct && tok.op->cp == ',') {
-        advance();
-        continue;
-      }
-      break;
-    }
-    if (tok.k == Tok::Close && tok.cp == ')') advance();
-    else err("unclosed call");
-    return call;
-  }
-
-  // big operator: optional scripts in either order, then greedy body until a
-  // relation, a closing bracket, or end (v2 §13)
-  MNode* parseBigOp(const SymbolInfo* e) {
-    MNode* op = mk(MNode::BigOp);
-    op->cp = e->cp;
-    op->cls = kOp;
-    op->flags = e->flags;
-    while (tok.k == Tok::Sup || tok.k == Tok::Sub) {
-      bool isSup = tok.k == Tok::Sup;
-      advance();
-      MNode* arg = parseFactor(nullptr);
-      if (!arg) {
-        err("missing script argument");
-        break;
-      }
-      arg = shed(arg);
-      MNode*& slot = isSup ? op->sup : op->sub;
-      if (slot) err("double script");
-      else slot = arg;
-    }
-    op->b = parseRun(/*stopAtRel=*/true);
-    return op;
-  }
-};
-
 // ---- layout ----------------------------------------------------------------
 struct Layouter {
   Arena& arena;
@@ -530,8 +80,8 @@ struct Layouter {
   DiagSink& diags;
   Span span;
   double basePx;
-  bool coverageWarned = false;
   const MeasureNeeds* text = nullptr;  // text-font runs (nullptr = Euler only)
+  std::vector<u32> uncovered;          // the code points warned about
   const MathFont& F = primaryFont();
 
   MathBox* mkBox(MathKind k) {
@@ -543,12 +93,12 @@ struct Layouter {
   Su toSu(double units, u8 st) { return F.su(units, basePx * styleScale(st)); }
   Su constSu(C c, u8 st) { return toSu(F.constant(c), st); }
 
+  // one warning per uncovered code point of the formula (at most 8)
   const GlyphRec* rec(u32 cp) {
     const GlyphRec* r = F.glyph(cp);
-    if (!r && !coverageWarned) {
-      coverageWarned = true;
-      diags.add(Sev::Warning, "math-coverage", span,
-                "symbol U+" + hexCp(cp) + " not in math font");
+    if (!r && std::find(uncovered.begin(), uncovered.end(), cp) == uncovered.end() && uncovered.size() < 8) {
+      uncovered.push_back(cp);
+      diags.add(Sev::Warning, "math-coverage", span, "symbol U+" + hexCp(cp) + " not in math font");
     }
     return r;
   }
@@ -724,13 +274,17 @@ struct Layouter {
   MathBox* layout(MNode* n, u8 st) {
     switch (n->k) {
       case MNode::Run: return layoutRun(n, st);
-      case MNode::Atom: return glyphBox(n->cp, n->cls, st);
+      case MNode::Sym: return glyphBox(n->cp, n->cls, st);
+      case MNode::Num: return textBox(n->txt, n->cls, st, false);
       case MNode::Text: return textBox(n->txt, n->cls, st, n->textFont);
-      case MNode::Script: return layoutScript(n, st);
+      case MNode::Attach: return layoutScript(n, st);
       case MNode::Frac: return layoutFrac(n, st);
       case MNode::Group: return layoutGroup(n, st);
       case MNode::BigOp: return layoutBigOp(n, st);
       case MNode::Call: return layoutCall(n, st);
+      case MNode::Error:  // its source slice, set in the text font (measured like names)
+        return textBox(n->txt, kOrd, st, /*textFont=*/true);
+      case MNode::Param: break;
     }
     return mkBox(MathKind::HBox);
   }
@@ -809,7 +363,7 @@ struct Layouter {
     }
     MathBox* base = layout(n->a, st);
     return attachScripts(base, n->sub, n->sup, st,
-                         /*isChar=*/n->a->k == MNode::Atom);
+                         /*isChar=*/n->a->k == MNode::Sym);
   }
 
   MathBox* attachScripts(MathBox* base, MNode* subN, MNode* supN, u8 st,
@@ -1073,7 +627,7 @@ struct Layouter {
     // (the run wrapper only knows w/2 — same for Euler's x, off by ~0.04em
     // for f-like glyphs whose ink centre leads the advance centre)
     Su baseAttach = base->topAccent;
-    if (baseN->kids.size() == 1 && baseN->kids[0]->k == MNode::Atom) {
+    if (baseN->kids.size() == 1 && baseN->kids[0]->k == MNode::Sym) {
       if (const GlyphRec* r = F.glyph(baseN->kids[0]->cp))
         if (r->topAccent != kNoTopAccent) baseAttach = toSu(r->topAccent, st);
     }
@@ -1095,7 +649,9 @@ struct Layouter {
   }
 
   // binomial: barless stack (Stack* MATH constants) fenced in parens
-  MathBox* layoutBinom(MNode* topN, MNode* botN, u8 st) {
+  // stack(top, bottom): two rows about the axis, no rule (MATH Stack*
+  // constants; binom = lr((, stack(n, k), )) in stdlib.tsv)
+  MathBox* layoutStack(MNode* topN, MNode* botN, u8 st) {
     bool disp = isDisplay(st);
     MathBox* top = layout(topN, kNumStyle[st]);
     MathBox* bot = layout(botN, kDenStyle[st]);
@@ -1120,25 +676,7 @@ struct Layouter {
     stack->desc = down + bot->desc;
     stack->kids.push_back({(w - top->w) / 2, up, top});
     stack->kids.push_back({(w - bot->w) / 2, -down, bot});
-    // fence in stretched parens
-    Su axis = constSu(C::AxisHeight, st);
-    Su over = stack->asc - axis, under = stack->desc + axis;
-    Su target = 2 * (over > under ? over : under);
-    target = kMathPolicy.shortfall(target);
-    MathBox* open = centerOnAxis(stretchVert('(', kOpen, st, target), kOpen, st);
-    MathBox* close = centerOnAxis(stretchVert(')', kClose, st, target), kClose, st);
-    MathBox* out = mkBox(MathKind::HBox);
-    out->cls = kOrd;
-    out->firstCls = kOpen;
-    out->lastCls = kClose;
-    out->kids.push_back({0, 0, open});
-    out->kids.push_back({open->w, 0, stack});
-    out->kids.push_back({open->w + stack->w, 0, close});
-    out->w = open->w + stack->w + close->w;
-    out->asc = stack->asc > open->asc ? stack->asc : open->asc;
-    out->desc = stack->desc > open->desc ? stack->desc : open->desc;
-    out->topAccent = out->w / 2;
-    return out;
+    return stack;
   }
 
   // over/underline: MATH Overbar*/Underbar* rule constructs. `bar` routes
@@ -1170,37 +708,44 @@ struct Layouter {
     return out;
   }
 
+  // a primitive call (plan P1-24): the closed set; template rows were
+  // expanded at bind, so nothing here knows a family name
   MathBox* layoutCall(MNode* n, u8 st) {
-    auto arg = [&](size_t i) -> MNode* {
-      static MNode empty;
-      return i < n->kids.size() ? n->kids[i] : &empty;
+    auto arg = [&](size_t i) -> MNode* { return i < n->kids.size() ? n->kids[i] : nullptr; };
+    auto run = [&](MNode* a) -> std::vector<MNode*> {
+      if (!a) return {};
+      if (a->k == MNode::Run) return a->kids;
+      return {a};
     };
-    if (n->txt == "overline" || n->txt == "bar")
-      return layoutHRule(arg(0), st, /*over=*/true);
-    if (n->txt == "underline") return layoutHRule(arg(0), st, /*over=*/false);
-    if (n->flags & kFlagAccent) return layoutAccent(n->cp, arg(0), st);
-    if (n->txt == "sqrt") return layoutRadical(nullptr, arg(0), st);
-    if (n->txt == "root") return layoutRadical(arg(0), arg(1), st);
-    if (n->txt == "abs") return fencedRun(arg(0)->kids, '|', '|', st);
-    if (n->txt == "norm") return fencedRun(arg(0)->kids, 0x2016, 0x2016, st);
-    if (n->txt == "floor") return fencedRun(arg(0)->kids, 0x230A, 0x230B, st);
-    if (n->txt == "ceil") return fencedRun(arg(0)->kids, 0x2308, 0x2309, st);
-    if (n->txt == "frac" && n->kids.size() >= 2) {
-      MNode fr;
-      fr.k = MNode::Frac;
-      fr.a = arg(0);
-      fr.b = arg(1);
-      return layoutFrac(&fr, st);
+    auto content = [&](size_t i) -> MNode* {
+      if (MNode* a = arg(i)) return a;
+      static MNode empty;
+      empty.k = MNode::Run;
+      return &empty;
+    };
+    switch (n->prim) {
+      case Prim::Frac: {
+        MNode fr;
+        fr.k = MNode::Frac;
+        fr.a = content(0);
+        fr.b = content(1);
+        return layoutFrac(&fr, st);
+      }
+      case Prim::Stack: return layoutStack(content(0), content(1), st);
+      case Prim::Radical: return layoutRadical(arg(1), content(0), st);
+      case Prim::Lr: {
+        const u32 open = arg(0) && arg(0)->k == MNode::Sym ? arg(0)->cp : 0;
+        const u32 close = arg(2) && arg(2)->k == MNode::Sym ? arg(2)->cp : 0;
+        return fencedRun(run(arg(1)), open, close, st);
+      }
+      case Prim::Accent:
+        return layoutAccent(arg(1) && arg(1)->k == MNode::Sym ? arg(1)->cp : 0, content(0), st);
+      case Prim::Rule:
+        return layoutHRule(content(0), st, /*over=*/!(arg(1) && arg(1)->txt == "under"));
+      case Prim::None: break;
     }
-    if (n->txt == "binom" && n->kids.size() >= 2)
-      return layoutBinom(arg(0), arg(1), st);
-    diags.add(Sev::Warning, "math-unknown-call", span,
-              "unknown construct '" + n->txt + "'");
-    std::vector<MathBox*> boxes;
-    boxes.push_back(textBox(n->txt, kOrd, st));
-    for (size_t i = 0; i < n->kids.size(); i++)
-      for (MNode* k : n->kids[i]->kids) boxes.push_back(layout(k, st));
-    return assemble(boxes, st);
+    std::vector<MathBox*> none;
+    return assemble(none, st);
   }
 };
 
@@ -1210,11 +755,12 @@ struct Layouter {
 // preview (mirrors what layout will produce)
 static void effClsOf(const MNode* n, u8& f, u8& l) {
   switch (n->k) {
-    case MNode::Atom:
+    case MNode::Sym:
+    case MNode::Num:
     case MNode::Text:
       f = l = n->cls;
       return;
-    case MNode::Script:
+    case MNode::Attach:
       effClsOf(n->a, f, l);
       l = f;
       return;
@@ -1240,16 +786,11 @@ static void effClsOf(const MNode* n, u8& f, u8& l) {
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
                            Span span, const MeasureNeeds* text) {
-  Parser p{Lexer{src}, arena, diags, span, {}, 0};
-  p.advance();
-  MNode* run = p.parseRun();
-  if (p.tok.k != Tok::End) p.err("unexpected closing bracket");
-  Layouter L{arena, strs, diags, span, sizePx, false, text};
-  if (p.errors) {
-    // degrade: the raw source as an upright text box (still one formula box)
-    return L.textBox(src, kOrd, display ? D : T);
-  }
-  return L.layout(run, display ? D : T);
+  // errors are local (plan P1-24): an Error leaf lays out in place
+  MathIR ir = parseMath(src, arena);
+  reportMathDiags(ir, src, span, diags);
+  Layouter L{arena, strs, diags, span, sizePx, text};
+  return L.layout(ir.root, display ? D : T);
 }
 
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
@@ -1257,16 +798,11 @@ std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         Interner& strs, DiagSink& diags,
                                         Span span, const MeasureNeeds* text) {
   std::vector<MathSeg> out;
-  Parser p{Lexer{src}, arena, diags, span, {}, 0};
-  p.advance();
-  MNode* run = p.parseRun();
-  if (p.tok.k != Tok::End) p.err("unexpected closing bracket");
-  Layouter L{arena, strs, diags, span, sizePx, false, text};
+  MathIR ir = parseMath(src, arena);
+  reportMathDiags(ir, src, span, diags);
+  MNode* run = ir.root;
+  Layouter L{arena, strs, diags, span, sizePx, text};
   u8 st = display ? D : T;
-  if (p.errors) {
-    out.push_back({L.textBox(src, kOrd, st), 0, 0});
-    return out;
-  }
   const std::vector<MNode*>& kids = run->kids;
   size_t n = kids.size();
   if (display || n == 0) {
@@ -1296,8 +832,8 @@ std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
   size_t cur = 0;
   u8 pending = 0;
   for (size_t i = 0; i < n; i++) {
-    bool relAtom = kids[i]->k == MNode::Atom && f[i] == kRel;
-    bool binAtom = kids[i]->k == MNode::Atom && f[i] == kBin && l[i] == kBin;
+    bool relAtom = kids[i]->k == MNode::Sym && f[i] == kRel;
+    bool binAtom = kids[i]->k == MNode::Sym && f[i] == kBin && l[i] == kBin;
     if (relAtom) {
       if (i > cur) {
         cuts.push_back({cur, i, pending});

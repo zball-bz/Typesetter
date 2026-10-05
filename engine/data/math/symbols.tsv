@@ -4,7 +4,7 @@
 # runtime/src/shared/math-vocab.gen.mjs.
 #   name: the spelling (a word, an operator key, !word, AA..ZZ)
 #   cp: the code point (0: a text operator, set in letters)
-#   class: TeX atom class; flags: large limits textop accent
+#   class: TeX atom class; flags: large limits textop
 #   negation: the UCD precomposed negation (cp + U+0338), or -
 #   alias_of: the row that owns this code point, or -
 #   tex: the TeX spelling (converters only; filled by plan P3-24), or -
@@ -113,7 +113,6 @@ Xi	039E	ord	-	-	-	-	y	mathml
 YY	1D550	ord	-	-	-	-	y	mathml
 ZZ	2124	ord	-	-	-	-	y	mathml
 _|_	22A5	rel	-	-	-	-	y	override
-acute	00B4	ord	accent	-	-	-	n	mathml
 aleph	2135	ord	-	-	-	-	y	mathml
 alpha	03B1	ord	-	-	-	-	y	mathml
 amalg	2A3F	bin	-	-	-	-	y	override
@@ -126,7 +125,6 @@ arg	0000	op	textop	-	-	-	n	override
 argmax	0000	op	limits,textop	-	-	-	n	override
 argmin	0000	op	limits,textop	-	-	-	n	override
 ast	2217	bin	-	-	*	-	n	override
-bar	0000	ord	accent	-	-	-	n	mathml
 because	2235	ord	-	-	-	-	y	mathml
 beta	03B2	ord	-	-	-	-	y	mathml
 bigcap	22C2	op	large,limits	-	-	-	y	mathml
@@ -139,12 +137,10 @@ biguplus	2A04	op	large,limits	-	-	-	y	mathml
 bigvee	22C1	op	large,limits	-	-	-	y	mathml
 bigwedge	22C0	op	large,limits	-	-	-	y	mathml
 bot	22A5	ord	-	-	_|_	-	n	mathml
-breve	02D8	ord	accent	-	-	-	n	mathml
 bullet	2219	bin	-	-	-	-	y	override
 cap	2229	bin	-	-	-	-	y	mathml
 cdot	22C5	bin	-	-	-	-	y	override
 cdots	22EF	ord	-	-	-	-	y	mathml
-check	02C7	ord	accent	-	-	-	n	mathml
 chi	03C7	ord	-	-	-	-	y	mathml
 circ	2218	bin	-	-	-	-	y	override
 cong	2245	rel	-	2247	-	-	y	mathml
@@ -156,7 +152,6 @@ coth	0000	op	textop	-	-	-	n	override
 csc	0000	op	textop	-	-	-	n	override
 cup	222A	bin	-	-	-	-	y	mathml
 dashv	22A3	rel	-	-	--|	-	n	mathml
-ddot	00A8	ord	accent	-	-	-	n	mathml
 ddots	22F1	ord	-	-	-	-	y	mathml
 deg	0000	op	textop	-	-	-	n	override
 degree	00B0	ord	-	-	-	-	y	mathml
@@ -164,7 +159,6 @@ delta	03B4	ord	-	-	-	-	y	mathml
 det	0000	op	limits,textop	-	-	-	n	override
 dim	0000	op	textop	-	-	-	n	override
 div	00F7	bin	-	-	-	-	y	mathml
-dot	02D9	ord	accent	-	-	-	n	mathml
 downarrow	2193	rel	-	-	-	-	y	mathml
 ell	2113	ord	-	-	-	-	y	mathml
 empty	2205	ord	-	-	-	-	y	mathml
@@ -181,8 +175,6 @@ geq	2265	rel	-	2271	>=	-	n	mathml
 gets	2190	rel	-	219A	<-	-	n	mathml
 gg	226B	rel	-	-	>>	-	n	mathml
 grad	2207	ord	-	-	-	-	y	mathml
-grave	0060	ord	accent	-	-	-	n	mathml
-hat	02C6	ord	accent	-	-	-	n	mathml
 hbar	210F	ord	-	-	-	-	y	mathml
 hom	0000	op	textop	-	-	-	n	override
 hookleftarrow	21A9	rel	-	-	-	-	y	mathml
@@ -259,7 +251,6 @@ rfloor	230B	close	-	-	-	-	y	mathml
 rho	03C1	ord	-	-	-	-	y	mathml
 rightharpoonup	21C0	rel	-	-	-	-	y	mathml
 rightleftharpoons	21CC	rel	-	-	-	-	y	mathml
-ring	02DA	ord	accent	-	-	-	n	mathml
 searrow	2198	rel	-	-	-	-	y	mathml
 sec	0000	op	textop	-	-	-	n	override
 setminus	2216	bin	-	-	-	-	y	mathml
@@ -288,7 +279,6 @@ tanh	0000	op	textop	-	-	-	n	override
 tau	03C4	ord	-	-	-	-	y	mathml
 therefore	2234	ord	-	-	:.	-	n	mathml
 theta	03B8	ord	-	-	-	-	y	mathml
-tilde	02DC	ord	accent	-	-	-	n	mathml
 times	00D7	bin	-	-	-	-	y	override
 to	2192	rel	-	219B	->	-	n	mathml
 top	22A4	ord	-	-	-	-	y	mathml
@@ -303,7 +293,6 @@ varpi	03D6	ord	-	-	-	-	y	mathml
 vartheta	03D1	ord	-	-	-	-	y	mathml
 vdash	22A2	rel	-	22AC	-	-	y	mathml
 vdots	22EE	ord	-	-	-	-	y	mathml
-vec	20D7	ord	accent	-	-	-	n	mathml
 vee	2228	bin	-	-	-	-	y	mathml
 wedge	2227	bin	-	-	-	-	y	mathml
 wp	2118	ord	-	-	-	-	y	mathml

@@ -1,2 +1,5 @@
 inline pid=0 "x^^2"
-glyph "x^^2" Ord w=2072 asc=753 desc=12 px=16
+hbox Ord w=1307 asc=1034 desc=12
+  hbox Ord w=1307 asc=1034 desc=12
+    glyph "x" Ord w=539 asc=475 desc=12 px=16
+    glyph "^2" Ord w=717 asc=573 desc=143 px=11.2 @(539,461)

@@ -1,0 +1,7 @@
+display pid=9 "a + b = c"
+  run [0,9)
+    sym U+0061 ord [0,1)
+    sym U+002B bin [2,3)
+    sym U+0062 ord [4,5)
+    sym U+003D rel [6,7)
+    sym U+0063 ord [8,9)

@@ -1229,7 +1229,7 @@ Theme steps: — · findings: 1
 | `render-runtime/missed:3` | missed | medium | P4-03 | |
 | `render-runtime/missed:4` | missed | low | P3-05 | |
 | `render-runtime/missed:5` | missed | low | P3-07 | |
-| `math/call-construct-string-dispatch` | adhoc | high | P1-24 | |
+| `math/call-construct-string-dispatch` | adhoc | high | P1-24 | grep:plan P1-24 |
 | `math/vocabulary-in-font-artifact` | adhoc | high | P1-22, P3-24 | |
 | `math/lexer-hardcoded-alphabet` | adhoc | medium | P3-24 | |
 | `math/negation-enumerated` | adhoc | medium | P3-24 | |
@@ -1250,22 +1250,22 @@ Theme steps: — · findings: 1
 | `math/math-span-lexer-triplication` | adhoc | medium | P2-11 | |
 | `math/missing-glyph-fallback` | adhoc | low | P1-25, P5-01 | |
 | `math/island-scan-escapes-block` | issue | high | P0-04 | grep:plan P0-04 |
-| `math/prime-then-script-degrades` | issue | medium | P1-24 | |
+| `math/prime-then-script-degrades` | issue | medium | P1-24 | grep:plan P1-24 |
 | `math/bracket-shedding-any-group` | issue | medium | P3-24 | |
-| `math/call-arity-silent` | issue | medium | P1-24 | |
+| `math/call-arity-silent` | issue | medium | P1-24 | grep:plan P1-24 |
 | `math/exactness-gaps-paint` | issue | medium | P1-23 | grep:plan P1-23 |
 | `math/spacing-edge-classes` | issue | low | P3-25 | |
-| `math/diag-quality` | issue | low | P1-24 | |
+| `math/diag-quality` | issue | low | P1-24 | grep:plan P1-24 |
 | `math/dead-data-and-params` | issue | low | P1-22 | grep:plan P1-22 |
 | `math/doc-drift` | issue | low | P1-22 | grep:plan P1-22 |
 | `math/fallback-and-a11y` | issue | low | P3-26, P3-27 | |
 | `math/toc-excerpt-drops-math` | issue | low | P2-15 | |
 | `math/missed:0` | missed | high | P0-04, P2-11 | |
-| `math/missed:1` | missed | high | P1-24 | |
+| `math/missed:1` | missed | high | P1-24 | grep:plan P1-24 |
 | `math/missed:2` | missed | medium | P3-24 | |
 | `math/missed:3` | missed | medium | P3-24 | |
 | `math/missed:4` | missed | medium | P3-24 | |
-| `math/missed:5` | missed | medium | P1-24 | |
+| `math/missed:5` | missed | medium | P1-24 | grep:plan P1-24 |
 | `api-measure-code/per-resource-pull-plumbing` | adhoc | high | P1-19 | grep:plan P1-19 |
 | `api-measure-code/image-dims-in-author-args` | adhoc | high | P1-19 | grep:plan P1-19 |
 | `api-measure-code/math-text-measure-side-channel` | adhoc | medium | P1-20, P1-25 | |

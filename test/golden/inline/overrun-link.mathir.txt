@@ -1,0 +1,3 @@
+inline pid=0 "x"
+  run [0,1)
+    sym U+0078 ord [0,1)

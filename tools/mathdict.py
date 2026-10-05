@@ -26,7 +26,7 @@ CHECK = '--check' in sys.argv
 UCD_VERSION = '17.0.0'
 MATHML_VERSION = 'b07c0b3ecf985e3a7654439651c61fc8744fc8f4'
 CLASSES = ['ord', 'op', 'bin', 'rel', 'open', 'close', 'punct', 'inner']
-FLAGS = {'large': 1, 'limits': 4, 'textop': 8, 'accent': 16}
+FLAGS = {'large': 1, 'limits': 4, 'textop': 8}
 OP_CHARS = set('+-*=<>|~:;.,!@&?%')  # the lexer's operator characters (math.cc isOpChar)
 MAX_OP_KEY = 4
 
@@ -105,7 +105,7 @@ if len(names) != len(set(names)):
     fail('duplicate names: ' + ' '.join(sorted({x for x in names if names.count(x) > 1})))
 by_cp = {}
 for r in rows:
-    if r['cp'] and not (r['bits'] & FLAGS['accent']): by_cp.setdefault(r['cp'], []).append(r)
+    if r['cp']: by_cp.setdefault(r['cp'], []).append(r)
 for cp, rs in by_cp.items():
     d = [r for r in rs if r['default_for_cp'] == 'y']
     if len(d) != 1: fail('U+%04X: %d rows, %d default_for_cp rows' % (cp, len(rs), len(d)))
@@ -174,7 +174,7 @@ h = ['// ' + HDR,
 for r in srt:
     h.append('  {%s,0x%X,%d,%d},' % (cstr(r['name']), r['cp'], CLASSES.index(r['class']), r['bits']))
 h += ['};', 'inline constexpr int kSymbolCount = %d;' % len(srt), '',
-      '// a bare code point\'s class: its default_for_cp row (accents excluded)',
+      '// a bare code point\'s class: its default_for_cp row',
       'struct CpClass {', '  uint32_t cp;', '  uint8_t cls;', '};',
       'inline constexpr CpClass kCpClasses[] = {  // sorted by cp']
 for cp in sorted(by_cp):
@@ -202,7 +202,6 @@ atom = ['// ' + HDR.replace('engine/data/math/symbols.tsv', 'the class and flag 
         '  kFlagLarge = 1,    // a large operator (display size)',
         '  kFlagLimits = 4,   // limits above/below in display style',
         '  kFlagTextOp = 8,   // a multi-letter operator set upright in text',
-        '  kFlagAccent = 16,  // an accent: call syntax hat(x)',
         '};', '', '}  // namespace tsr', '']
 
 js = ['// ' + HDR, '// name → [code point, class] for tools (converters, the editor).',
@@ -210,7 +209,33 @@ js = ['// ' + HDR, '// name → [code point, class] for tools (converters, the e
 js += ['  %s: [0x%X, %s],' % (cstr(r['name']), r['cp'], cstr(r['class'])) for r in srt]
 js += ['};', '']
 
+# ---- stdlib.tsv: the template rows (parsed and checked by the engine) --------
+rows_h = ['// ' + HDR.replace('symbols.tsv', 'stdlib.tsv'),
+          '// The built-in math function rows (engine/src/math/ir.cc parses and checks',
+          '// them at start-up: checkRow).',
+          '#pragma once', '', 'namespace tsr { namespace mathrows {', '',
+          'struct StdRow {', '  const char* signature;', '  const char* body;',
+          '  const char* bare;  // "" = none', '};', 'inline constexpr StdRow kStdlib[] = {']
+seen = set()
+header2 = None
+for n, line in enumerate(open(rel('engine/data/math/stdlib.tsv'), encoding='utf-8'), 1):
+    line = line.rstrip('\n')
+    if line.startswith('#') or not line: continue
+    cols = line.split('\t')
+    if header2 is None:
+        header2 = cols
+        continue
+    if len(cols) != 3: fail('stdlib.tsv:%d: %d columns, expected 3' % (n, len(cols)))
+    sig, body, bare = cols
+    name = sig.split('(')[0]
+    if name in seen: fail('stdlib.tsv:%d: duplicate row %s' % (n, name))
+    seen.add(name)
+    if bare != '-' and len(bare) > 1 and bare not in names: fail('stdlib.tsv:%d: bare %s is not a symbol' % (n, bare))
+    rows_h.append('  {%s, %s, %s},' % (cstr(sig), cstr(body), cstr('' if bare == '-' else bare)))
+rows_h += ['};', '', '}}  // namespace tsr::mathrows', '']
+
 outputs = {
+    'engine/gen/math_rows.h': '\n'.join(rows_h),
     'engine/gen/math_dict.h': '\n'.join(h),
     'engine/src/math/atom.h': '\n'.join(atom),
     'runtime/src/shared/math-vocab.gen.mjs': '\n'.join(js),

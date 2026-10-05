@@ -11,7 +11,6 @@ enum SymFlag : uint8_t {
   kFlagLarge = 1,    // a large operator (display size)
   kFlagLimits = 4,   // limits above/below in display style
   kFlagTextOp = 8,   // a multi-letter operator set upright in text
-  kFlagAccent = 16,  // an accent: call syntax hat(x)
 };
 
 }  // namespace tsr

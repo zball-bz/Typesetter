@@ -3,6 +3,7 @@
 #include "../shape/objects.h"
 #include "../shape/textrules.h"
 #include "../boxtree/build.h"
+#include "../math/ir.h"
 
 #include <functional>
 #include <type_traits>
@@ -1671,6 +1672,26 @@ std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
       }
     }
   }
+  return out;
+}
+
+// tsrc --stage=mathir (plan P1-24): each formula's IR and diagnostics, in
+// document order
+std::string dumpMathIRs(const std::vector<TopBlock>& tops, const Interner& strs) {
+  std::string out;
+  Arena scratch;
+  auto one = [&](const char* kind, u32 pid, std::string_view src) {
+    appendf(out, "%s pid=%u \"", kind, pid);
+    appendEscaped(out, src);
+    out += "\"\n";
+    out += dumpMathIR(parseMath(src, scratch), src);
+  };
+  for (const TopBlock& tb : tops)
+    for (const FlowUnit& u : tb.units) {
+      if (const MathData* m = std::get_if<MathData>(&u.data); m && m->src) one("display", tb.pid, strs.get(m->src));
+      for (const InlineObject& ob : u.hl.objs)
+        if (ob.kind == ObjKind::Math && ob.src) one("inline", tb.pid, strs.get(ob.src));
+    }
   return out;
 }
 

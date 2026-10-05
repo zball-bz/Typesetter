@@ -1,0 +1,8 @@
+display pid=4 "e = m c^2"
+  run [0,9)
+    sym U+0065 ord [0,1)
+    sym U+003D rel [2,3)
+    sym U+006D ord [4,5)
+    attach [6,9)
+      base: sym U+0063 ord [6,7)
+      sup: num "2" [8,9)
