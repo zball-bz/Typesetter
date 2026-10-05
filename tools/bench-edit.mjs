@@ -4,10 +4,14 @@
 // typeset, repeat — and reports cold/warm latency plus the worker's phase
 // breakdown when available.
 //
-//   node tools/bench-edit.mjs [--edits 24] [--mode typeset|update]
+//   node tools/bench-edit.mjs [--edits 24] [--sections 18]
+//                             [--mode typeset|update|relayout] [--runs 1] [--json]
 //
-// mode typeset = the pre-incremental path (fresh doc per edit);
-// mode update  = handle.update() (session doc, warm caches).
+// mode typeset  = the pre-incremental path (fresh doc per edit);
+// mode update   = handle.update() (session doc, warm caches);
+// mode relayout = handle.relayout() alternating between two measures.
+// --runs N repeats the whole session N times and reports the minimum of the
+// per-run medians (the remediation plan's perf gate, PLAN.md §4.5).
 import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,6 +26,8 @@ const opt = (name, dflt) => {
 const EDITS = Number(opt('edits', 24));
 const SECTIONS = Number(opt('sections', 18));
 const MODE = opt('mode', 'typeset');
+const RUNS = Number(opt('runs', 1));
+const JSON_OUT = args.includes('--json');
 const PORT = 8177;
 
 // ---- synthetic document: CJK + Latin paragraphs, code, math, a table ----
@@ -64,42 +70,77 @@ try {
   const page = await browser.newPage();
   await page.goto(`http://localhost:${PORT}/test/e2e/harness.html`);
   const doc = makeDoc();
-  console.log(`doc: ${doc.length} chars, mode: ${MODE}, edits: ${EDITS}`);
+  if (!JSON_OUT) console.log(`doc: ${doc.length} chars, mode: ${MODE}, edits: ${EDITS}, runs: ${RUNS}`);
 
-  const res = await page.evaluate(async ({ doc, edits, mode, sections }) => {
-    const t0 = performance.now();
-    const first = await window.__tsr.typeset(doc, { widthPx: 680, progressive: false });
-    const cold = performance.now() - t0;
-    const times = [];
-    const timings = [];
-    for (let i = 0; i < edits; i++) {
-      // mutate one paragraph mid-document: the minimal realistic keystroke
-      const edited = doc.replace(`（第 ${1 + (i % sections)} 节）`, `（第 ${1 + (i % sections)} 节，改${i}）`);
-      const t = performance.now();
-      const r = mode === 'update'
-        ? await window.__tsr.update(edited)
-        : await window.__tsr.typeset(edited, { widthPx: 680, progressive: false });
-      times.push(performance.now() - t);
-      if (r && r.timings) timings.push(r.timings);
-    }
-    return { cold, times, timings, diags: first.diags };
-  }, { doc, edits: EDITS, mode: MODE, sections: SECTIONS });
-
-  const sorted = [...res.times].sort((a, b) => a - b);
-  const pick = (q) => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))];
-  console.log(`cold first typeset: ${res.cold.toFixed(1)} ms`);
-  console.log(`edit latency: median ${pick(0.5).toFixed(1)} ms, ` +
-              `p90 ${pick(0.9).toFixed(1)} ms, max ${sorted[sorted.length - 1].toFixed(1)} ms`);
-  if (res.timings.length) {
-    const keys = Object.keys(res.timings[0]);
-    const med = (k) => {
-      const v = res.timings.map((t) => t[k]).sort((a, b) => a - b);
-      return v[Math.floor(v.length / 2)];
-    };
-    console.log('worker phase medians: ' +
-      keys.map((k) => `${k} ${med(k).toFixed(1)}ms`).join(', '));
+  const runs = [];
+  for (let run = 0; run < RUNS; run++) {
+    await page.reload();
+    await page.waitForFunction(() => window.__tsrReady === true);
+    const res = await page.evaluate(async ({ doc, edits, mode, sections }) => {
+      const t0 = performance.now();
+      const first = await window.__tsr.typeset(doc, { widthPx: 680, progressive: false });
+      const cold = performance.now() - t0;
+      const times = [];
+      const timings = [];
+      for (let i = 0; i < edits; i++) {
+        const t = performance.now();
+        let r;
+        if (mode === 'relayout') {
+          // alternate between two measures: every call is a real width change
+          r = await window.__tsr.relayout(i % 2 ? 680 : 520);
+        } else {
+          // mutate one paragraph mid-document: the minimal realistic keystroke
+          const edited = doc.replace(`（第 ${1 + (i % sections)} 节）`,
+                                     `（第 ${1 + (i % sections)} 节，改${i}）`);
+          r = mode === 'update'
+            ? await window.__tsr.update(edited)
+            : await window.__tsr.typeset(edited, { widthPx: 680, progressive: false });
+        }
+        times.push(performance.now() - t);
+        if (r && r.timings) timings.push(r.timings);
+      }
+      return { cold, times, timings, diags: first.diags };
+    }, { doc, edits: EDITS, mode: MODE, sections: SECTIONS });
+    runs.push(res);
   }
-  if (res.diags.trim()) console.log('diags:', res.diags.trim());
+
+  const median = (v) => {
+    const s = [...v].sort((a, b) => a - b);
+    return s[Math.floor(s.length / 2)];
+  };
+  const quant = (v, q) => {
+    const s = [...v].sort((a, b) => a - b);
+    return s[Math.min(s.length - 1, Math.floor(q * s.length))];
+  };
+  const perRun = runs.map((res) => {
+    const phases = {};
+    if (res.timings.length) {
+      for (const k of Object.keys(res.timings[0])) phases[k] = median(res.timings.map((t) => t[k]));
+    }
+    return { cold: res.cold, median: median(res.times), p90: quant(res.times, 0.9),
+             max: Math.max(...res.times), phases };
+  });
+  const best = perRun.reduce((a, b) => (b.median < a.median ? b : a));
+  const summary = {
+    chars: doc.length, mode: MODE, edits: EDITS, runs: RUNS,
+    median: best.median, p90: best.p90, max: best.max,
+    cold: Math.min(...perRun.map((r) => r.cold)),
+    medians: perRun.map((r) => r.median), phases: best.phases,
+  };
+  if (JSON_OUT) {
+    console.log(JSON.stringify(summary));
+  } else {
+    console.log(`cold first typeset: ${summary.cold.toFixed(1)} ms`);
+    console.log(`edit latency: median ${summary.median.toFixed(2)} ms ` +
+                `(min of ${RUNS} run medians: ${summary.medians.map((m) => m.toFixed(2)).join(' / ')}), ` +
+                `p90 ${summary.p90.toFixed(2)} ms, max ${summary.max.toFixed(2)} ms`);
+    const keys = Object.keys(summary.phases);
+    if (keys.length) {
+      console.log('worker phase medians: ' +
+        keys.map((k) => `${k} ${summary.phases[k].toFixed(2)}ms`).join(', '));
+    }
+  }
+  if (runs[0].diags.trim() && !JSON_OUT) console.log('diags:', runs[0].diags.trim());
   await browser.close();
 } finally {
   server.kill();

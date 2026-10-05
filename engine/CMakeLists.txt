@@ -67,8 +67,10 @@ else()
   add_test(NAME engine COMMAND tsr_tests ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(tsr_core PUBLIC -fsanitize=address,undefined -g)
-    target_link_options(tsrc PRIVATE -fsanitize=address,undefined)
-    target_link_options(tsr_tests PRIVATE -fsanitize=address,undefined)
+    # -fno-sanitize-recover: a UBSan report must fail the test run (gate G2)
+    target_compile_options(tsr_core PUBLIC -fsanitize=address,undefined
+                           -fno-sanitize-recover=all -g)
+    target_link_options(tsrc PRIVATE -fsanitize=address,undefined -fno-sanitize-recover=all)
+    target_link_options(tsr_tests PRIVATE -fsanitize=address,undefined -fno-sanitize-recover=all)
   endif()
 endif()
