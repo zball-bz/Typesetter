@@ -1,0 +1,99 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,130)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,130)
+  box Ideo "与" w=1025su wt=0.6 cap=102su r0 @[0,130)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[0,130)
+  box Other "Eng" w=1537su r1 @[0,130)
+  disc pen=0.7 w=0su pre="-" 513su kern="gl" r1 @[0,130)
+  box Other "lish" w=2049su r1 @[0,130)
+  glue word w=257su x=1 cap=257su kern="h w" src r1 @[0,130)
+  box Other "words" w=2561su r1 @[0,130)
+  glue word w=257su x=1 cap=257su src r1 @[0,130)
+  box Ideo "混" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "排" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "时" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "引" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "擎" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "会" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "插" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "入" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "边" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "界" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box Ideo "胶" w=1025su wt=0.6 cap=102su r2 @[0,130)
+  pen INF r2
+  glue inter w=0su x=0.6 cap=102su r2 @[0,130)
+  box CommaW "，" w=512su blank=R r3 @[0,130)
+  glue blank w=512su x=0 cap=0su r3 @[0,130)
+  box Ideo "比" w=1025su wt=0.6 cap=102su r4 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r4 @[0,130)
+  box Ideo "如" w=1025su wt=0.6 cap=102su r4 @[0,130)
+  pen 0 r4
+  glue word w=257su x=1 cap=257su src r5 @[0,130)
+  box Other "CJK" w=1537su r5 @[0,130)
+  glue word w=257su x=1 cap=257su src r5 @[0,130)
+  box Ideo "和" w=1025su wt=0.6 cap=102su r6 @[0,130)
+  pen 0 r6
+  glue word w=257su x=1 cap=257su src r7 @[0,130)
+  box Other "Latin" w=2561su r7 @[0,130)
+  glue word w=257su x=1 cap=257su src r7 @[0,130)
+  box Ideo "之" w=1025su wt=0.6 cap=102su r8 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r8 @[0,130)
+  box Ideo "间" w=1025su wt=0.6 cap=102su r8 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r8 @[0,130)
+  box Ideo "的" w=1025su wt=0.6 cap=102su r8 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r8 @[0,130)
+  box Ideo "间" w=1025su wt=0.6 cap=102su r8 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r8 @[0,130)
+  box Ideo "隙" w=1025su wt=0.6 cap=102su r8 @[0,130)
+  pen INF r8
+  glue inter w=0su x=0.6 cap=102su r8 @[0,130)
+  box CommaW "，" w=512su blank=R r9 @[0,130)
+  glue blank w=512su x=0 cap=0su r9 @[0,130)
+  box Other "K-P" w=1537su r10 @[0,130)
+  glue word w=257su x=1 cap=257su src r10 @[0,130)
+  box Ideo "算" w=1025su wt=0.6 cap=102su r11 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r11 @[0,130)
+  box Ideo "法" w=1025su wt=0.6 cap=102su r11 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r11 @[0,130)
+  box Ideo "照" w=1025su wt=0.6 cap=102su r11 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r11 @[0,130)
+  box Ideo "常" w=1025su wt=0.6 cap=102su r11 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r11 @[0,130)
+  box Ideo "选" w=1025su wt=0.6 cap=102su r11 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r11 @[0,130)
+  box Ideo "取" w=1025su wt=0.6 cap=102su r11 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r11 @[0,130)
+  box Ideo "断" w=1025su wt=0.6 cap=102su r11 @[0,130)
+  glue inter w=0su x=0.6 cap=102su r11 @[0,130)
+  box Ideo "点" w=1025su wt=0.6 cap=102su r11 @[0,130)
+  pen INF r11
+  glue inter w=0su x=0.6 cap=102su r11 @[0,130)
+  box FullStopW "。" w=512su blank=R r12 @[0,130)
+  glue blank w=512su x=0 cap=0su r12 @[0,130)
+  run r0 letter-spaced CJK
+  run r1 plain
+  run r2 letter-spaced CJK
+  run r3 blank-bearing CJK
+  run r4 letter-spaced CJK
+  run r5 plain
+  run r6 letter-spaced CJK
+  run r7 plain
+  run r8 letter-spaced CJK
+  run r9 blank-bearing CJK
+  run r10 plain
+  run r11 letter-spaced CJK
+  run r12 blank-bearing CJK

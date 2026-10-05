@@ -1,11 +1,103 @@
 #include "layout.h"
 #include "../shape/textrules.h"
 
+#include <algorithm>
 #include <unordered_set>
 
 #include "../code/grid.h"
 
 namespace tsr {
+
+namespace {
+
+// A line between block breakpoints [prevBp, bp), read as items (plan
+// P1-12): leading and trailing glue and penalties dropped — TeX's discard,
+// as the legacy blocks' space trim — plus its block range for the dumps.
+struct LineItems {
+  u32 ilo = 0, ihi = 0;  // items
+  u32 lo = 0, hi = 0;    // blocks
+};
+u32 blockOf(const std::vector<u32>& bs, u32 item) {
+  return (u32)(std::upper_bound(bs.begin(), bs.end(), item) - bs.begin()) - 1;
+}
+bool lineItems(const HList& h, const std::vector<u32>& bs, u32 prevBp, u32 bp, LineItems& r) {
+  u32 a = bs[prevBp], b = bs[bp];
+  while (a < b && !isBoxOrDisc(h.items[a])) a++;
+  while (b > a && !isBoxOrDisc(h.items[b - 1])) b--;
+  if (a >= b) return false;
+  r.ilo = a;
+  r.ihi = b;
+  r.lo = blockOf(bs, a);
+  r.hi = blockOf(bs, b - 1) + 1;
+  return true;
+}
+// what a line holds: its natural width (a hyphen point adds its junction
+// kern mid-line, its hyphen at the line end), the stretch the renderer will
+// realize (glue weights; a CJK char's InterChar gap), the vertical extents
+// and the source span
+struct LineFill {
+  double naturalPx = 0;
+  double totalWeight = 0;  // stretch positions the renderer will realize
+  double capacityPx = 0;   // their glue capacity (the shrink limit's base)
+  bool anyCjkGap = false;
+  bool endsHyphen = false;
+  Su maxAsc = 0, maxDesc = 0;
+  Span span{};
+};
+LineFill fillLine(const HList& h, const LineItems& r, const MetricStore& metrics) {
+  LineFill f;
+  bool spanSet = false;
+  for (u32 i = r.ilo; i < r.ihi; i++) {
+    const HItem& it = h.items[i];
+    if (it.k == IK::Penalty) continue;
+    const ColdRec& c = h.cold[it.cold];
+    if (it.k == IK::Disc) {
+      if (i != r.ihi - 1) f.naturalPx += c.rawPx;  // junction kern
+    } else if (!(it.k == IK::Glue && it.cls == (u8)GC::InterChar)) {
+      f.naturalPx += c.rawPx;
+    }
+    if (it.k == IK::Glue && (it.x > 0 || it.cls == (u8)GC::InterChar)) {
+      f.totalWeight += it.x;
+      f.capacityPx += suToPx(c.capSu);
+      if (it.cls == (u8)GC::InterChar) f.anyCjkGap = true;
+    }
+    const StyleId st = h.runs[it.run].face;
+    if (metrics.hasVmet(st)) {
+      const VMet& v = metrics.vmet(st);
+      if (v.ascent > f.maxAsc) f.maxAsc = v.ascent;
+      if (v.descent > f.maxDesc) f.maxDesc = v.descent;
+    }
+    if (it.k == IK::Box && h.runs[it.run].rc == RealizeClass::Object) {
+      const MathBox* mb = h.objs[h.specs[it.aux].obj].math;
+      if (mb->asc > f.maxAsc) f.maxAsc = mb->asc;
+      if (mb->desc > f.maxDesc) f.maxDesc = mb->desc;
+    }
+    if (c.srcEnd > c.srcStart) {
+      if (!spanSet) {
+        f.span = Span{c.srcStart, c.srcEnd};
+        spanSet = true;
+      } else {
+        if (c.srcStart < f.span.start) f.span.start = c.srcStart;
+        if (c.srcEnd > f.span.end) f.span.end = c.srcEnd;
+      }
+    }
+  }
+  f.endsHyphen = h.items[r.ihi - 1].k == IK::Disc;
+  if (f.endsHyphen) {
+    const HItem& d = h.items[r.ihi - 1];
+    f.naturalPx += h.cold[h.side[h.discs[d.aux].pre].cold].rawPx;
+  }
+  return f;
+}
+// did the break after item ihi consume a real source space? (copy contract
+// §9.3 — synthetic glue: autospace, punctuation blanks, indents don't count)
+bool joinsSpace(const HList& h, u32 ihi) {
+  for (u32 k = ihi; k < (u32)h.items.size() && !isBoxOrDisc(h.items[k]); k++)
+    if (h.items[k].k == IK::Glue && (h.items[k].attrs & IA_SourceSpace)) return true;
+  return false;
+}
+
+}  // namespace
 
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
                        Interner& strs, const Config& cfg) {
@@ -51,32 +143,23 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           const TableCell& cell = u.cells[ci];
           u32 prevBp = 0;
           for (u32 bp : cell.breakpoints) {
-            u32 lo = prevBp, hi = bp;
-            while (lo < hi && cell.blocks[lo].isSpace()) lo++;
-            while (hi > lo && cell.blocks[hi - 1].isSpace()) hi--;
+            LineItems r;
+            const bool any = lineItems(cell.hl, cell.blockStart, prevBp, bp, r);
             prevBp = bp;
-            if (lo >= hi) continue;
+            if (!any) continue;
             LineBox cl;
             cl.unitIdx = ui;
             cl.cellIdx = (i32)ci;
-            cl.blockBegin = lo;
-            cl.blockEnd = hi;
+            cl.blockBegin = r.lo;
+            cl.blockEnd = r.hi;
+            cl.itemBegin = r.ilo;
+            cl.itemEnd = r.ihi;
             cl.left = boxLeft;
             cl.width = u.imgW;
             cl.y = (Su)cy;
             // §9.3: wrapped caption rows rejoin on copy (unlike table cells,
             // whose row boundaries are content)
-            if (bp != (u32)cell.blocks.size()) {
-              bool joinSpace = false;
-              for (u32 j = hi; j < (u32)cell.blocks.size() &&
-                              cell.blocks[j].isSpace(); j++)
-                if (!(cell.blocks[j].flags &
-                      (BF_BOUND | BF_PUNCT_SP | BF_INDENT))) {
-                  joinSpace = true;
-                  break;
-                }
-              cl.join = joinSpace ? 1 : 2;
-            }
+            if (bp != (u32)cell.blocks.size()) cl.join = joinsSpace(cell.hl, r.ihi) ? 1 : 2;
             cl.height = baseLeading;
             cy += baseLeading;
             fr.lines.push_back(cl);
@@ -315,44 +398,24 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             i64 cy = rowTop;
             u32 prevBp = 0;
             for (u32 bp : cell.breakpoints) {
-              u32 lo2 = prevBp, hi2 = bp;
-              while (lo2 < hi2 && cell.blocks[lo2].isSpace()) lo2++;
-              while (hi2 > lo2 && cell.blocks[hi2 - 1].isSpace()) hi2--;
+              LineItems r;
+              const bool any = lineItems(cell.hl, cell.blockStart, prevBp, bp, r);
               prevBp = bp;
-              if (lo2 >= hi2) continue;
-              Su maxAsc = 0, maxDesc = 0;
-              Span span{};
-              bool spanSet = false;
-              for (u32 i2 = lo2; i2 < hi2; i2++) {
-                const LinebreakBlock& b = cell.blocks[i2];
-                if (metrics.hasVmet(b.style)) {
-                  const VMet& v = metrics.vmet(b.style);
-                  if (v.ascent > maxAsc) maxAsc = v.ascent;
-                  if (v.descent > maxDesc) maxDesc = v.descent;
-                }
-                if (b.math) {
-                  if (b.math->asc > maxAsc) maxAsc = b.math->asc;
-                  if (b.math->desc > maxDesc) maxDesc = b.math->desc;
-                }
-                if (!b.span.empty()) {
-                  if (!spanSet) { span = b.span; spanSet = true; }
-                  else {
-                    if (b.span.start < span.start) span.start = b.span.start;
-                    if (b.span.end > span.end) span.end = b.span.end;
-                  }
-                }
-              }
+              if (!any) continue;
+              const LineFill f = fillLine(cell.hl, r, metrics);
               LineBox sl;
               sl.unitIdx = ui;
               sl.cellIdx = (i32)li;
-              sl.blockBegin = lo2;
-              sl.blockEnd = hi2;
+              sl.blockBegin = r.lo;
+              sl.blockEnd = r.hi;
+              sl.itemBegin = r.ilo;
+              sl.itemEnd = r.ihi;
               sl.left = (Su)(u.indent + lineWidthCode + gapSu);
               sl.width = u.sidebarW;
-              sl.srcSpan = span;
+              sl.srcSpan = f.span;
               sl.y = (Su)cy;
               Su sadv = baseLeading;
-              if (maxAsc + maxDesc > sadv) sadv = maxAsc + maxDesc;
+              if (f.maxAsc + f.maxDesc > sadv) sadv = f.maxAsc + f.maxDesc;
               sl.height = sadv;
               cy += sadv;
               fr.lines.push_back(sl);
@@ -427,40 +490,13 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             u32 prevBp = 0;
             for (size_t cli = 0; cli < cell.breakpoints.size(); cli++) {
               const u32 bp = cell.breakpoints[cli];
-              u32 lo = prevBp, hi = bp;
-              while (lo < hi && cell.blocks[lo].isSpace()) lo++;
-              while (hi > lo && cell.blocks[hi - 1].isSpace()) hi--;
+              LineItems lr;
+              const bool any = lineItems(cell.hl, cell.blockStart, prevBp, bp, lr);
               prevBp = bp;
-              if (lo >= hi) continue;
-              double naturalPx = 0;
-              Su maxAsc = 0, maxDesc = 0;
-              Span span{};
-              bool spanSet = false;
-              for (u32 i2 = lo; i2 < hi; i2++) {
-                const LinebreakBlock& b = cell.blocks[i2];
-                if (!b.isHyphen()) naturalPx += b.rawPx;
-                else if (i2 != hi - 1) naturalPx += b.kernPx;  // junction kern
-                if (metrics.hasVmet(b.style)) {
-                  const VMet& v = metrics.vmet(b.style);
-                  if (v.ascent > maxAsc) maxAsc = v.ascent;
-                  if (v.descent > maxDesc) maxDesc = v.descent;
-                }
-                if (b.math) {
-                  if (b.math->asc > maxAsc) maxAsc = b.math->asc;
-                  if (b.math->desc > maxDesc) maxDesc = b.math->desc;
-                }
-                if (!b.span.empty()) {
-                  if (!spanSet) { span = b.span; spanSet = true; }
-                  else {
-                    if (b.span.start < span.start) span.start = b.span.start;
-                    if (b.span.end > span.end) span.end = b.span.end;
-                  }
-                }
-              }
-              const bool endsHyphen = cell.blocks[hi - 1].isHyphen();
-              if (endsHyphen) naturalPx += cell.blocks[hi - 1].rawPx;
+              if (!any) continue;
+              const LineFill f = fillLine(cell.hl, lr, metrics);
               Su shift = 0;
-              Su slack = cellW - suCeilPx(naturalPx);
+              Su slack = cellW - suCeilPx(f.naturalPx);
               if (slack > 0) {
                 u8 al = u.tAligns[c];
                 if (al == 'c') shift = slack / 2;
@@ -471,16 +507,18 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               line.cellIdx = (i32)(r * u.tCols + c);
               line.overfull = std::binary_search(cell.overfullLines.begin(),
                                                  cell.overfullLines.end(), (u32)cli);
-              line.blockBegin = lo;
-              line.blockEnd = hi;
+              line.blockBegin = lr.lo;
+              line.blockEnd = lr.hi;
+              line.itemBegin = lr.ilo;
+              line.itemEnd = lr.ihi;
               line.left = (Su)(u.indent + (Su)c * colW + padX + shift);
               line.width = cellW - shift;  // right edge stays at the column
                                            // content edge (audit: no overflow)
-              line.srcSpan = span;
-              line.endsWithHyphen = endsHyphen;
+              line.srcSpan = f.span;
+              line.endsWithHyphen = f.endsHyphen;
               line.y = (Su)cy;
               Su advance = baseLeading;
-              if (maxAsc + maxDesc > advance) advance = maxAsc + maxDesc;
+              if (f.maxAsc + f.maxDesc > advance) advance = f.maxAsc + f.maxDesc;
               line.height = advance;
               cy += advance;
               fr.lines.push_back(line);
@@ -493,75 +531,28 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         continue;
       }
       // Text unit
-      const std::vector<LinebreakBlock>& bl = u.blocks;
+      const HList& h = u.hl;
       u32 prev = 0;
       bool firstLine = true;
       for (size_t li = 0; li < u.breakpoints.size(); li++) {
         u32 bp = u.breakpoints[li];
-        u32 lo = prev, hi = bp;
-        while (lo < hi && bl[lo].isSpace()) lo++;
-        while (hi > lo && bl[hi - 1].isSpace()) hi--;
+        LineItems r;
+        const bool any = lineItems(h, u.blockStart, prev, bp, r);
         prev = bp;
-        if (lo >= hi) continue;
-
-        double naturalPx = 0;
-        double totalWeight = 0;  // stretch positions the renderer will realize
-        double capacityPx = 0;   // their glue capacity (the shrink limit's base)
-        bool anyCjkGap = false;
-        Su maxAsc = 0, maxDesc = 0;
-        Span span{};
-        bool spanSet = false;
-        for (u32 i = lo; i < hi; i++) {
-          const LinebreakBlock& b = bl[i];
-          if (!b.isHyphen()) naturalPx += b.rawPx;
-          else if (i != hi - 1) naturalPx += b.kernPx;  // junction kern
-          if (b.isSpace() && b.stretchWeight > 0) {
-            totalWeight += b.stretchWeight;
-            capacityPx += suToPx(b.spaceWidth);
-          }
-          if (b.isCjkChar() && i + 1 < hi) {
-            // a CJK char stretches (letter-spacing) only when the rendered gap
-            // after it is CJK: next char, or a closing punct glyph
-            const LinebreakBlock& nx = bl[i + 1];
-            if (nx.isCjkChar() || (nx.isPunctGlyph() && !(nx.flags & BF_PUNCT_OPEN))) {
-              totalWeight += b.stretchWeight;
-              capacityPx += suToPx(b.spaceWidth);
-              anyCjkGap = true;
-            }
-          }
-          if (metrics.hasVmet(b.style)) {
-            const VMet& v = metrics.vmet(b.style);
-            if (v.ascent > maxAsc) maxAsc = v.ascent;
-            if (v.descent > maxDesc) maxDesc = v.descent;
-          }
-          if (b.math) {
-            if (b.math->asc > maxAsc) maxAsc = b.math->asc;
-            if (b.math->desc > maxDesc) maxDesc = b.math->desc;
-          }
-          if (!b.span.empty()) {
-            if (!spanSet) { span = b.span; spanSet = true; }
-            else {
-              if (b.span.start < span.start) span.start = b.span.start;
-              if (b.span.end > span.end) span.end = b.span.end;
-            }
-          }
-        }
-        const bool endsHyphen = bl[hi - 1].isHyphen();
-        if (endsHyphen) naturalPx += bl[hi - 1].rawPx;
-        // did this break consume a real source space? (copy contract §9.3 —
-        // synthetic glue: CJK boundary, punct halves, indents don't count)
-        bool joinSpace = false;
-        for (u32 j = hi; j < (u32)bl.size() && bl[j].isSpace(); j++) {
-          if (!(bl[j].flags & (BF_BOUND | BF_PUNCT_SP | BF_INDENT))) {
-            joinSpace = true;
-            break;
-          }
-        }
+        if (!any) continue;
+        const LineFill f = fillLine(h, r, metrics);
+        const double naturalPx = f.naturalPx;
+        const double totalWeight = f.totalWeight;
+        const double capacityPx = f.capacityPx;
+        const bool endsHyphen = f.endsHyphen;
+        const bool joinSpace = joinsSpace(h, r.ihi);
 
         LineBox line;
         line.unitIdx = ui;
-        line.blockBegin = lo;
-        line.blockEnd = hi;
+        line.blockBegin = r.lo;
+        line.blockEnd = r.hi;
+        line.itemBegin = r.ilo;
+        line.itemEnd = r.ihi;
         line.left = u.indent;
         line.width = lineWidth;
         // F2 parshape replay: the first narrowK lines run beside the float
@@ -570,12 +561,12 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           line.width = u.narrow;
           if (u.narrowLeft) line.left += lineWidth - u.narrow;
         }
-        line.srcSpan = span;
+        line.srcSpan = f.span;
         line.endsWithHyphen = endsHyphen;
         if (firstLine && u.marker) { line.marker = u.marker; line.markerStyle = u.markerStyle; }
         firstLine = false;
 
-        const bool isLast = (bp == bl.size()) || u.ragged;
+        const bool isLast = (bp == u.blocks.size()) || u.ragged;
         const bool overfull =
             std::binary_search(u.overfullLines.begin(), u.overfullLines.end(), (u32)li);
         line.overfull = overfull;
@@ -598,7 +589,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           }
           line.wordDeltaPx = d;
           line.wordDeltaSu = (i32)std::llround(d * 64.0);
-          if (anyCjkGap) {
+          if (f.anyCjkGap) {
             line.cjkDeltaPx = d * cfg.cjkJustifyK;
             line.cjkDeltaSu = (i32)std::llround(line.cjkDeltaPx * 64.0);
           }
@@ -613,7 +604,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         }
 
         Su advance = baseLeading;
-        if (maxAsc + maxDesc > advance) advance = maxAsc + maxDesc;
+        if (f.maxAsc + f.maxDesc > advance) advance = f.maxAsc + f.maxDesc;
         line.height = advance;
         line.y = (Su)py;
         py += advance;

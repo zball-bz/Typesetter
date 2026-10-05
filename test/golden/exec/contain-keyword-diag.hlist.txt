@@ -1,0 +1,54 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Be" w=1025su r0 @[0,7)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[0,7)
+  box Other "fore." w=2561su r0 @[0,7)
+  run r0 plain
+top pid=1 units=1
+ unit text indent=0su
+  box Other "Sta" w=1537su r0 @[9,16)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[9,16)
+  box Other "tus:" w=2049su r0 @[9,16)
+  glue word w=257su x=1 cap=257su src r0 @[9,16)
+  box Other "⚠" w=616su r1 @[17,20)
+  glue word w=257su x=1 cap=257su src r1 @[17,20)
+  box Other "#if" w=1537su r1 @[17,20)
+  glue word w=257su x=1 cap=257su kern="f i" src r1 @[17,20)
+  box Other "is" w=1025su r1 @[17,20)
+  glue word w=257su x=1 cap=257su kern="s n" src r1 @[17,20)
+  box Other "not" w=1537su r1 @[17,20)
+  glue word w=257su x=1 cap=257su kern="t s" src r1 @[17,20)
+  box Other "sup" w=1537su r1 @[17,20)
+  disc pen=0.7 w=0su pre="-" 513su kern="pp" r1 @[17,20)
+  box Other "port" w=2049su r1 @[17,20)
+  disc pen=0.7 w=0su pre="-" 513su kern="te" r1 @[17,20)
+  box Other "ed" w=1025su r1 @[17,20)
+  glue word w=257su x=1 cap=257su kern="d y" src r1 @[17,20)
+  box Other "yet" w=1537su r1 @[17,20)
+  glue word w=257su x=1 cap=257su kern="t (" src r1 @[17,20)
+  box Other "(key" w=2049su r1 @[17,20)
+  disc pen=0.7 w=0su pre="-" 513su kern="yw" r1 @[17,20)
+  box Other "word" w=2049su r1 @[17,20)
+  glue word w=257su x=1 cap=257su kern="d f" src r1 @[17,20)
+  box Other "forms:" w=3073su r1 @[17,20)
+  glue word w=257su x=1 cap=257su kern=": p" src r1 @[17,20)
+  box Other "plan" w=2049su r1 @[17,20)
+  glue word w=257su x=1 cap=257su kern="n P" src r1 @[17,20)
+  box Other "P2-12)" w=3073su r1 @[17,20)
+  glue word w=257su x=1 cap=257su src r2 @[21,42)
+  box Other "(ok)" w=2049su r2 @[21,42)
+  glue word w=257su x=1 cap=257su kern=") [" src r2 @[21,42)
+  box Other "[yes]" w=2561su r2 @[21,42)
+  glue word w=257su x=1 cap=257su kern="] e" src r2 @[21,42)
+  box Other "else" w=2049su r2 @[21,42)
+  glue word w=257su x=1 cap=257su kern="e [" src r2 @[21,42)
+  box Other "[no]." w=2561su r2 @[21,42)
+  run r0 plain
+  run r1 plain CODE
+  run r2 plain
+top pid=2 units=1
+ unit text indent=0su
+  box Other "Af" w=1025su r0 @[44,50)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[44,50)
+  box Other "ter." w=2049su r0 @[44,50)
+  run r0 plain

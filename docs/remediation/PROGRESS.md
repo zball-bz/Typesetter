@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-12
+- 下一步：P1-13
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -37,7 +37,7 @@
 | P1-09 | 前端导出与工具链 | done | grep:plan P1-09 | 2026-10-06 | +327 个 tokens/outline/astjson golden（每个用例三份）；code/tsm-hl 的 tree/semantic/html（tsm 块改由引擎着色） | syntax/exports：syntaxTokens（14 标签）、outlineJson（标题/区域/fence/标签/诊断）、astJson（gen-syntax 生成 jsonAstNode）；C ABI tsr_syntax_tokens/tsr_outline/tsr_parse_json，tsrc --stage=tokens|outline|astjson（check-tsrc 1362 个 golden）；tsm 代码块在 Resolve 内由引擎着色，无 NEED_TOKENS 往返；grammar.js 与 TextMate 由 syntax-regex.js（读 syntax.gen.json）生成，tools/gen-grammars.mjs 入 gen-all 并 vendor parser.c，highlights.scm 只留一份；VS Code 扩展宿主内跑引擎 wasm（ABI 校验、UTF-8→UTF-16），token/大纲/折叠/补全来自引擎，tree-sitter 作冷启动回退，删除硬编码区域列表；一致性 (b) 逐字节 88.9%（允许类别表，≥85%），(e) fuzz_inline 覆盖导出（120s 无发现）；code-design §2、editor-design §5 修订 |
 | P1-10 | 元素注册表、索引与分阶段解析器 | done | grep:plan P1-10 | 2026-10-06 | 结构性提交 0 变化（全部 tree/blocks/breaks/layout/html/semantic/diags 字节不变）；+111 个 index golden；+2 用例（ref/supplements-ja、ref/supplements-zh-hant）；另见 f93d611（golden 有误：非 figure group 的引用） | engine/src/elements（Registry：selector 成员关系于 instantiate 写入 ContentNode::cls，最具体者胜）；engine/src/semantic（numbering 计数自动机、terms 区域词包 en/zh-Hans/zh-Hant/ja 与回退链、index LOCATE/BIND、materialize 模板/引用/site/收集器/flow，输入不变、输出替换 tree.root）；engine/data/elements.json 内建 heading/table/figure/equation/footnote/term 与 toc/glossary/notes/bibliography 预设；resolve.cc 只剩阶段驱动；删除 applyLang，terms.* 改为逐词覆盖；tsrc --stage=index；替代 elements.json（figure 改名）输出除 index 名外相同（unitRegistry）；lint 基线 15→8；87K update 29.4ms；docs/semantics-design.md |
 | P1-11 | TextRules 兼容表与单一分类器 | done | grep:plan P1-11 | 2026-10-06 | 0（全部 golden 字节不变） | vendor UCD 17.0.0 五个文件（engine/rules/ucd/17.0.0，ucdc --fetch 可重取）；engine/rules/classes.def（CC 类）+ locale/compat.def（RULES_VERSION 0：五个宽区间、clreq 标点、歧义类、列、kern 截断、App C 常量）→ tools/ucdc.mjs → engine/gen/textrules.h（类区间表 + UCD 列 GCB/ExtPict/EAW，约 3.4KB，入 gen-all/G9）；shape/textrules.h 唯一分类 API，emit/inline/layout/typeset_html/support 五处分类器全部改走它；mock.h 冻结 mockIsWide；unitTextRules 对全部码位钉住旧分类器的字面副本；tools/rules-diff.mjs（码位类/列差异与语料边界对比，供 P4）；docs/shaping-design.md |
-| P1-12 | HList 与 run 实例 | todo | | | | |
+| P1-12 | HList 与 run 实例 | done | grep:plan P1-12 | 2026-10-06 | 结构性提交 0 变化（全部现有 golden 字节不变）；+111 个 hlist golden（每个排版用例一份） | engine/src/shape/hlist.{h,cc}：HItem 24B（IK Box/Glue/Penalty/Disc，GC Word/InterChar/Autospace/Blank/ObjectSpace，IA_* 属性，run，aux，w，x，cold）、ColdRec（源 span、rawPx、blank、迁移用 capSu、anchor）、AdvanceSpec 32B（Measured/Defined/Fixed/MeasuredMinusBlanks/KernCtx/Object）、DiscRec、RunRec（face/link/SynKind/copyText/RealizeClass/anchor）；TeX 合法性写在头文件，lintHList（每边界至多一个断点、开标点后与闭标点前无断点、run 连续且 BlankBearing/Pinned/Object 单盒、LetterSpaced 盒后有 InterChar）在每个 golden 上运行；emit 以旧逐节点逻辑直接产出 HItem（InlineSink 接口，块遍历共享），finish() 按今天的断行结构写成 TeX 形式并加 InterChar 胶，run 随项生成；resolveWidths 读 AdvanceSpec；fuseLegacy 为规定的降级表（模板化：生产只保留断行器读的 BreakBlock 五字段，完整 LinebreakBlock 只供 blocks dump 与校验）；emit/legacy.cc 原样保留旧行内发射器作为 CI 预言机（仅原生链接），黄金运行器与 tsrc --fuse-check 逐字段比较——111 个用例及真实/typst/博客语料共 650 篇全部相等；layout 四个行循环与 renderLineBox 改读 item 区间与 run 实例（blockStart 映射断点，块区间只用于 dump）；tsrc --stage=hlist（数值罚分、类、span，修复 dump-hides-finite-penalties）；性能：同时把词宽表改为按字符串下标的槽表（哈希查找占 WASM 引擎约五分之一）、px 格式化改为精确整数实现（render −2ms），87K update 29.5ms（同机交替测 HEAD 29.6–30.0）；docs/shaping-design.md §5 |
 | P1-13 | InlineObject 注册表与扁平化表 | todo | | | | |
 | P1-14 | KP 正式化与校验缓存 | todo | | | | |
 | P1-15 | 断行移入布局（ExclusionMap） | todo | | | | |
@@ -132,6 +132,7 @@
 | P0-10 后 | 3.50 | 10.90 | 27.90 | 1.4 / 4.0 / 0.3 / 6.5 / 6.2 | 47.8 / 70.3 / 108.0 | 5.80 / 21.80 / 56.70 | HtmlWriter 流式写出：87K 原生渲染 2.09→1.97ms |
 | P0-11 后（relayout 新基准） | 3.70 | 11.60 | 27.80 | 1.3 / 4.0 / 0.3 / 6.8 / 6.2 | 50.8 / 71.2 / 112.8 | 6.10 / 23.00 / 57.30 | relayout 现在重新 emit（缺陷 #16），此行作为之后 relayout 门禁的基准 |
 | P0 结束 | 3.50 | 11.20 | 28.00 | 1.3 / 4.1 / 0.3 / 6.9 / 6.2 | 46.9 / 73.8 / 108.3 | 6.10 / 22.90 / 57.00 | 阶段门禁：update 均优于基线；relayout 按计划以 P0-11 记录为新基准（重新 emit），不劣于该基准 |
+| P1-12 后 | 3.50 | 12.00 | 29.50 | 1.8 / 4.1 / 0.4 / 8.9 / 4.1 | 51.9 / 74.3 / 114.9 | 6.10 / 22.50 / 58.60 | HList 使引擎 +0.8ms（87K），compile +0.4ms（上一文档更多分配的释放）；词宽槽表与整数 px 格式化抵消（render 6.1→4.1）。同机交替 A/B：P1-11 后 HEAD 29.6–30.0。P1 阶段门禁（P0 结束 ×1.05+0.3ms：3.98 / 12.06 / 29.70）当前满足，余量很小，P1-14 起须保持 |
 
 ## 偏差记录（MD-11）
 
@@ -153,6 +154,12 @@
 | P1-10 | 内建行以 JSON 嵌入（configure 时生成 semantic_data.gen.h，运行时解析一次并由 unitRegistry 校验），而非生成 gen/elements_defaults.h 的 C++ 表；模板语言只实现内建行用到的子集（text/term/slot/node/styled/when/each 及 paras 体放置），Query 只有 outline/table/flow 三种 | 文档声明（P2-07）同样走 JSON 运行时加载，一条路径；其余模板与查询形式随 P2-07/P3-03/P3-13 的新行加入 | P2-07、P3-13 |
 | P1-10 | Resolve 的重跑类别仍为 Once：resolver 本身不再修改输入（输出树替换 tree.root，未变子树共享），但同阶段的 sidecar 抽取仍改写实例化树 | D-S13 要求的"不修改输入"已对 resolver 成立；把 Resolve 改为可重入需先把 sidecar 抽取移出（P2-13 起 sidecar 归 codeblock 构造器） | P2-13 后改 stages.def |
 | P1-10 | 旧 resolver 的一处错误（引用非 figure 的带标签 group 显示"图 "）先在旧代码上单独修正并更新 golden（f93d611），再提交结构性重写 | 守则：golden 有误的修正单独提交；结构性提交保持字节不变 | 无 |
+| P1-12 | hlist golden 为 111 个而非计划的 49 个 | 计划写于用例增加之前；每个排版用例一份 | 无 |
+| P1-12 | 发射形式按今天的断行结构写成 TeX 形式（可断的盒后紧跟 Penalty，胶自身的非零罚分在其前；如 CJK 字后的 autospace 前有 pen 0），而非设计中整形器的规范形式（"Direct 且有胶 ⇒ 不加 Penalty"） | 发射逻辑仍是旧逐节点逻辑；这样 fuseLegacy 无歧义且与旧块逐字段相同；lint 是性质检查，全部通过 | P4-02 整形器改为规范形式，hlist golden 随之变化 |
+| P1-12 | 表示上的落地差异：AdvanceSpec 增加 tri（KernCtx 测量串）并排成 32B；Disc 的未断宽度即 HItem.w，DiscRec 以 spec 指向接缝 KernCtx（无 nobrW 字段）；InterChar 胶无 spec、与其字共用 ColdRec；CJK 盒的 x 存其间隙权重（迁移用，与 capSu 同在 P4-08 删除）；ColdRec 增加 anchor（DOM run 在 P4-01 前保持今天的锚点规则，锚点不切分 run）；InlineObject 只有数学分段（P1-13 建注册表）；SynKind 先只有 Content/Ref/Indent；行内代码暂为 Plain（Rigid 与 word-spacing:0 在 P4-01） | 保持全部现有 golden 字节不变，同时让 HItem 保持 24B、每个 CJK 字不多一条 spec/cold | P1-13、P4-01、P4-08 |
+| P1-12 | 生产路径只保留断行器读取的 BreakBlock（宽、断行宽、容量、罚分、类别位），完整 LinebreakBlock 只在 blocks dump 与 fuseCheck 中由同一降级模板生成 | 性能（WASM 引擎）；同一模板保证两种投影一致，fuseCheck 另行逐块比较 | P1-14（缓存键改为 DP 输入）、P4-08 删除 |
+| P1-12 | 步骤外的两项性能修改：MetricStore 词宽表改为按 StrRef 下标的槽表；HtmlWriter 的 px 格式化改为精确的整数实现（与 printf "%.3f" 相同，unitFmtPx 对约 40 万值钉住） | 不带 HList 开销的成本进入 P1 阶段门禁：HEAD 已贴近 29.7ms 的 87K 门限；两项均输出不变，单独提交 | 无 |
+| P1-12 | lint 在 typst 语料中发现 2 篇（layout-inline-cjk--cjk-punctuation-adjustment-1/-2：`！ ？` 中间有键入空格）存在闭标点前的断点 | 旧行为：空格前的盒可断（UAX #14 LB13"即使隔着空格"未实现）；结构性步骤不改变断行；用例层面 lint 全部通过 | P4-02（Section.pair 带 spacesBetween）修正，届时把这两篇纳入 lint 检查 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

@@ -22,6 +22,7 @@
 #include "semantic_data.gen.h"
 #include "../src/math/mathfont.h"
 #include "../src/api/driver.h"
+#include "../src/emit/legacy.h"
 #include "../src/render/html_writer.h"
 #include "../src/code/native_tokens.h"
 #include "../src/measure/mock.h"
@@ -913,7 +914,7 @@ static void unitSettings() {
 // block each break consumes.
 static void unitBreakItems() {
   auto blk = [](u16 flags, Su w, float pen, Su sw = 0, Su bw = 0) {
-    LinebreakBlock b;
+    BreakBlock b;
     b.flags = flags;
     b.width = w;
     b.breakPenalty = pen;
@@ -921,7 +922,7 @@ static void unitBreakItems() {
     b.breakWidth = bw;
     return b;
   };
-  std::vector<LinebreakBlock> bl = {
+  std::vector<BreakBlock> bl = {
       blk(0, 100, BREAK_INF),                            // 0 word piece
       blk(BF_HYPHEN, -3, 0.7f, 0, 40),                   // 1 hyphen point
       blk(0, 80, BREAK_INF),                             // 2 word piece
@@ -953,27 +954,26 @@ static void unitBreakItems() {
 static void unitBreakSemantics() {
   CostParams cp;
   auto word = [](Su w, float pen = BREAK_INF) {
-    LinebreakBlock b;
+    BreakBlock b;
     b.width = w;
     b.breakPenalty = pen;
     return b;
   };
   auto space = [](Su w = 256) {
-    LinebreakBlock b;
+    BreakBlock b;
     b.flags = BF_SPACE;
     b.width = b.spaceWidth = w;
-    b.stretchWeight = 1;
     return b;
   };
   {  // discard: the space at the break is not in the line — an exact fit is free
-    std::vector<LinebreakBlock> bl = {word(4000), space(), word(4000), space(), word(4000),
+    std::vector<BreakBlock> bl = {word(4000), space(), word(4000), space(), word(4000),
                                       space(), word(9000)};
     BreakResult r = breakLines(bl, LineWidths{4000 + 256 + 4000 + 256 + 4000}, cp);
     CHECK((r.breakpoints == std::vector<u32>{6, 7}) && r.cost == 0);
   }
   {  // a Forbidden (BREAK_INF) block is never a break; the rescue keeps the
      // overlong run on a line of its own instead of collapsing the paragraph
-    std::vector<LinebreakBlock> bl = {word(3000), space(), word(30000), space(), word(3000),
+    std::vector<BreakBlock> bl = {word(3000), space(), word(30000), space(), word(3000),
                                       space(), word(30000), space(), word(3000)};
     BreakResult r5 = breakLines(bl, LineWidths{19200}, cp);
     CHECK(!r5.feasible);
@@ -984,16 +984,16 @@ static void unitBreakSemantics() {
     CHECK((r.overfullLines == std::vector<u32>{0, 1}));
   }
   {  // the last line has fil stretch and normal shrink: slightly long is one line
-    std::vector<LinebreakBlock> bl = {word(6000), space(), word(6000), space(), word(6800)};
+    std::vector<BreakBlock> bl = {word(6000), space(), word(6000), space(), word(6800)};
     BreakResult r = breakLines(bl, LineWidths{19200}, cp);  // 19312 > 19200, shrink 512
     CHECK((r.breakpoints == std::vector<u32>{5}));
   }
   {  // identical lines after discard report the latest break (the next line's
      // first block): CJK char, then a space — layout's trimmed range
-    LinebreakBlock cjk = word(1024, 0);
+    BreakBlock cjk = word(1024, 0);
     cjk.flags = BF_CJK;
     cjk.spaceWidth = 102;
-    std::vector<LinebreakBlock> bl;
+    std::vector<BreakBlock> bl;
     for (int k = 0; k < 18; k++) bl.push_back(cjk);
     bl.push_back(space());
     bl.push_back(word(4000));
@@ -1011,12 +1011,12 @@ static void unitBreakSemantics() {
     CHECK((r.breakpoints == std::vector<u32>{1, 4}));
   }
   {  // cost is bounded and the power is an integer product
-    std::vector<LinebreakBlock> bl = {word(100), space(), word(100)};
+    std::vector<BreakBlock> bl = {word(100), space(), word(100)};
     BreakResult r = breakLines(bl, LineWidths{19200}, cp);
     CHECK(r.cost == 0);  // a short last line costs nothing (fil)
     CostParams sq = cp;
     sq.exponent = 2;
-    std::vector<LinebreakBlock> two = {word(9000), space(), word(9000), space(), word(9000)};
+    std::vector<BreakBlock> two = {word(9000), space(), word(9000), space(), word(9000)};
     BreakResult a = breakLines(two, LineWidths{18432}, sq);
     CHECK(a.cost >= 0 && a.cost <= sq.cap * 2);
   }
@@ -1041,9 +1041,9 @@ static void unitBreakMemo() {
     const int kParas = 600;   // sanitizer builds: consistency only
 #endif
     for (int p = 0; p < kParas; p++) {
-      std::vector<LinebreakBlock> bl(40 + rnd(160));
+      std::vector<BreakBlock> bl(40 + rnd(160));
       for (size_t i = 0; i < bl.size(); i++) {
-        LinebreakBlock& b = bl[i];
+        BreakBlock& b = bl[i];
         b.width = (Su)(64 * (2 + rnd(60)));
         b.spaceWidth = (i % 2) ? (Su)(64 * 4) : 0;
         b.breakWidth = 0;
@@ -1252,8 +1252,29 @@ int main(int argc, char** argv) {
           failures++;
           continue;
         }
-        for (const char* p : {"blocks", "breaks", "layout"})
+        for (const char* p : {"blocks", "hlist", "breaks", "layout"})
           goldenCompare(g(p), doc.product(p), update, label + ":" + p);
+        // the HList contract (plan P1-12): fuseLegacy equals, field by
+        // field, what the legacy emitter makes of the same document, and
+        // every list passes the legality lint
+        {
+          std::string d = fuseCheck(doc.tops, doc.tree, doc.arena, doc.strs, doc.styles, doc.cfg,
+                                    doc.metrics, doc.cfg.baseSizePx);
+          if (!d.empty()) {
+            printf("FAIL %s: fuseLegacy differs from the legacy blocks\n%s", label.c_str(), d.c_str());
+            failures++;
+          }
+          std::string lint;
+          for (const TopBlock& tb : doc.tops)
+            for (const FlowUnit& u : tb.units) {
+              lint += lintHList(u.hl);
+              for (const TableCell& c : u.cells) lint += lintHList(c.hl);
+            }
+          if (!lint.empty()) {
+            printf("FAIL %s: hlist lint\n%s", label.c_str(), lint.c_str());
+            failures++;
+          }
+        }
         std::string mbx = doc.product("mathbox");
         if (!mbx.empty() || fs::exists(g("mathbox")))
           goldenCompare(g("mathbox"), mbx, update, label + ":mathbox");

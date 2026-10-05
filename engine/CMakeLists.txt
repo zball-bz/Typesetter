@@ -31,7 +31,9 @@ add_library(tsr_core STATIC
   src/code/sidecars.cc
   src/math/math.cc
   src/resolve/resolve.cc
+  src/shape/hlist.cc
   src/emit/emit.cc
+  src/emit/legacy.cc
   src/break/break.cc
   src/layout/layout.cc
   src/render/typeset_html.cc

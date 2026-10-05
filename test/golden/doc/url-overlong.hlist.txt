@@ -1,0 +1,42 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Two" w=1537su r0 @[0,215)
+  glue word w=257su x=1 cap=257su kern="o o" src r0 @[0,215)
+  box Other "over" w=2049su r0 @[0,215)
+  disc pen=0.7 w=0su pre="-" 513su kern="rl" r0 @[0,215)
+  box Other "long" w=2049su r0 @[0,215)
+  glue word w=257su x=1 cap=257su kern="g a" src r0 @[0,215)
+  box Other "ad" w=1025su r0 @[0,215)
+  disc pen=0.7 w=0su pre="-" 513su kern="dd" r0 @[0,215)
+  box Other "dress" w=2561su r0 @[0,215)
+  disc pen=0.7 w=0su pre="-" 513su kern="se" r0 @[0,215)
+  box Other "es" w=1025su r0 @[0,215)
+  glue word w=257su x=1 cap=257su kern="s i" src r0 @[0,215)
+  box Other "in" w=1025su r0 @[0,215)
+  glue word w=257su x=1 cap=257su kern="n o" src r0 @[0,215)
+  box Other "one" w=1537su r0 @[0,215)
+  glue word w=257su x=1 cap=257su kern="e p" src r0 @[0,215)
+  box Other "para" w=2049su r0 @[0,215)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[0,215)
+  box Other "graph:" w=3073su r0 @[0,215)
+  glue word w=257su x=1 cap=257su kern=": h" src r0 @[0,215)
+  box Other "https:/" w=3585su r0 @[0,215)
+  pen 1.2 r0
+  box Other "/example." w=4609su r0 @[0,215)
+  pen 1.2 r0
+  box Other "org/" w=2049su r0 @[0,215)
+  pen 1.2 r0
+  box Other "aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere" w=32257su r0 @[0,215)
+  glue word w=257su x=1 cap=257su kern="e a" src r0 @[0,215)
+  box Other "and" w=1537su r0 @[0,215)
+  glue word w=257su x=1 cap=257su kern="d h" src r0 @[0,215)
+  box Other "https:/" w=3585su r0 @[0,215)
+  pen 1.2 r0
+  box Other "/example." w=4609su r0 @[0,215)
+  pen 1.2 r0
+  box Other "org/" w=2049su r0 @[0,215)
+  pen 1.2 r0
+  box Other "anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure" w=31233su r0 @[0,215)
+  glue word w=257su x=1 cap=257su kern="e e" src r0 @[0,215)
+  box Other "end." w=2049su r0 @[0,215)
+  run r0 plain

@@ -1,0 +1,99 @@
+top pid=0 units=1
+ unit text indent=0su anchor="intro"
+  box Other "Introduction" w=9832su r0 @[2,14)
+  run r0 plain BOLD x1.60
+top pid=1 units=1
+ unit text indent=0su
+  box Other "An" w=1025su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="n E" src r0 @[24,113)
+  box Other "Eng" w=1537su r0 @[24,113)
+  disc pen=0.7 w=0su pre="-" 513su kern="gl" r0 @[24,113)
+  box Other "lish" w=2049su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="h d" src r0 @[24,113)
+  box Other "doc" w=1537su r0 @[24,113)
+  disc pen=0.7 w=0su pre="-" 513su kern="cu" r0 @[24,113)
+  box Other "u" w=513su r0 @[24,113)
+  disc pen=0.7 w=0su pre="-" 513su kern="um" r0 @[24,113)
+  box Other "ment" w=2049su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="t t" src r0 @[24,113)
+  box Other "takes" w=2561su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="s E" src r0 @[24,113)
+  box Other "Eng" w=1537su r0 @[24,113)
+  disc pen=0.7 w=0su pre="-" 513su kern="gl" r0 @[24,113)
+  box Other "lish" w=2049su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="h s" src r0 @[24,113)
+  box Other "sup" w=1537su r0 @[24,113)
+  disc pen=0.7 w=0su pre="-" 513su kern="pp" r0 @[24,113)
+  box Other "ple" w=1537su r0 @[24,113)
+  disc pen=0.7 w=0su pre="-" 513su kern="em" r0 @[24,113)
+  box Other "ments" w=2561su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="s f" src r0 @[24,113)
+  box Other "from" w=2049su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="m t" src r0 @[24,113)
+  box Other "the" w=1537su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="e d" src r0 @[24,113)
+  box Other "doc.lang" w=4097su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="g s" src r0 @[24,113)
+  box Other "set" w=1537su r0 @[24,113)
+  disc pen=0.7 w=0su pre="-" 513su kern="tt" r0 @[24,113)
+  box Other "ting" w=2049su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="g (" src r0 @[24,113)
+  box Other "(plan" w=2561su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern="n P" src r0 @[24,113)
+  box Other "P1-03):" w=3585su r0 @[24,113)
+  glue word w=257su x=1 cap=257su kern=": s" src r0 @[24,113)
+  box Other "see" w=1537su r0 @[24,113)
+  glue word w=257su x=1 cap=257su src r0 @[24,113)
+  box Other "§1" w=1128su r1 @[114,120)
+  box Other "," w=513su r2 @[120,121)
+  glue word w=257su x=1 cap=257su src r2 @[120,121)
+  box Other "Fig" w=1537su r3 @[122,128)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[122,128)
+  box Other "ure" w=1537su r3 @[122,128)
+  glue word w=257su x=1 cap=257su kern="e 1" src r3 @[122,128)
+  box Other "1" w=513su r3 @[122,128)
+  box Other "," w=513su r4 @[128,129)
+  glue word w=257su x=1 cap=257su src r4 @[128,129)
+  box Other "Ta" w=1025su r5 @[130,136)
+  disc pen=0.7 w=0su pre="-" 513su kern="ab" r5 @[130,136)
+  box Other "ble" w=1537su r5 @[130,136)
+  glue word w=257su x=1 cap=257su kern="e 1" src r5 @[130,136)
+  box Other "1" w=513su r5 @[130,136)
+  glue word w=257su x=1 cap=257su src r6 @[137,140)
+  box Other "and" w=1537su r6 @[137,140)
+  glue word w=257su x=1 cap=257su src r6 @[137,140)
+  box Other "Eq." w=1537su r7 @[141,146)
+  glue word w=257su x=1 cap=257su kern=". (" src r7 @[141,146)
+  box Other "(1)" w=1537su r7 @[141,146)
+  box Other "." w=513su r8 @[146,147)
+  run r0 plain
+  run r1 plain ref LINK link="#tsr-intro"
+  run r2 plain
+  run r3 plain ref LINK link="#tsr-fig-a"
+  run r4 plain
+  run r5 plain ref LINK link="#tsr-tab-a"
+  run r6 plain
+  run r7 plain ref LINK link="#tsr-eq-a"
+  run r8 plain
+top pid=2 units=2
+ unit img indent=0su anchor="fig-a" w=7680su h=3840su
+ unit text indent=0su centered
+  box Other "Figure" w=3073su r0 @[0,0)
+  glue word w=257su x=1 cap=257su kern="e 1" src r0 @[0,0)
+  box Other "1:" w=1025su r0 @[0,0)
+  glue word w=257su x=1 cap=257su src r0 @[0,0)
+  box Other "A" w=513su r1 @[220,229)
+  glue word w=257su x=1 cap=257su kern="A f" src r1 @[220,229)
+  box Other "figure." w=3585su r1 @[220,229)
+  run r0 plain BOLD
+  run r1 plain
+top pid=3 units=1
+ unit table indent=0su anchor="tab-a" cols=2 cells=2
+  cell 0
+   box Other "x" w=513su r0 @[273,274)
+   run r0 plain
+  cell 1
+   box Other "y" w=513su r0 @[277,278)
+   run r0 plain
+top pid=4 units=1
+ unit math indent=0su anchor="eq-a" w=3697su asc=967su desc=19su

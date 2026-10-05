@@ -1,0 +1,38 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Ideo "窄" w=1025su wt=0.6 cap=102su r0 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,42)
+  box Ideo "栏" w=1025su wt=0.6 cap=102su r0 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,42)
+  box Ideo "网" w=1025su wt=0.6 cap=102su r0 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,42)
+  box Ideo "格" w=1025su wt=0.6 cap=102su r0 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,42)
+  box Ideo "换" w=1025su wt=0.6 cap=102su r0 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,42)
+  box Ideo "行" w=1025su wt=0.6 cap=102su r0 @[0,42)
+  pen INF r0
+  glue inter w=0su x=0.6 cap=102su r0 @[0,42)
+  box CommaW "、" w=512su blank=R r1 @[0,42)
+  glue blank w=512su x=0 cap=0su r1 @[0,42)
+  box Ideo "行" w=1025su wt=0.6 cap=102su r2 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,42)
+  box Ideo "号" w=1025su wt=0.6 cap=102su r2 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,42)
+  box Ideo "与" w=1025su wt=0.6 cap=102su r2 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,42)
+  box Ideo "行" w=1025su wt=0.6 cap=102su r2 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,42)
+  box Ideo "高" w=1025su wt=0.6 cap=102su r2 @[0,42)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,42)
+  box Ideo "亮" w=1025su wt=0.6 cap=102su r2 @[0,42)
+  pen INF r2
+  glue inter w=0su x=0.6 cap=102su r2 @[0,42)
+  box ColonW "：" w=512su blank=R r3 @[0,42)
+  glue blank w=512su x=0 cap=0su r3 @[0,42)
+  run r0 letter-spaced CJK
+  run r1 blank-bearing CJK
+  run r2 letter-spaced CJK
+  run r3 blank-bearing CJK
+top pid=1 units=1
+ unit code indent=0su lines=1 wrap lineNo=1 hl=1

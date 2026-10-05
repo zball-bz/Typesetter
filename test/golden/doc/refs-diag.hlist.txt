@@ -1,0 +1,76 @@
+top pid=0 units=1
+ unit text indent=0su anchor="dup"
+  box Other "First" w=4098su r0 @[2,7)
+  run r0 plain BOLD x1.60
+top pid=1 units=1
+ unit text indent=0su
+  box Other "A" w=513su r0 @[15,29)
+  glue word w=257su x=1 cap=257su kern="A r" src r0 @[15,29)
+  box Other "ref" w=1537su r0 @[15,29)
+  disc pen=0.7 w=0su pre="-" 513su kern="fe" r0 @[15,29)
+  box Other "er" w=1025su r0 @[15,29)
+  disc pen=0.7 w=0su pre="-" 513su kern="re" r0 @[15,29)
+  box Other "ence" w=2049su r0 @[15,29)
+  glue word w=257su x=1 cap=257su kern="e t" src r0 @[15,29)
+  box Other "to" w=1025su r0 @[15,29)
+  glue word w=257su x=1 cap=257su kern="o ?" src r0 @[15,29)
+  box Other "??" w=1025su r1 @[30,38)
+  glue word w=257su x=1 cap=257su kern="? s" src r2 @[39,96)
+  box Other "stays" w=2561su r2 @[39,96)
+  glue word w=257su x=1 cap=257su kern="s u" src r2 @[39,96)
+  box Other "un" w=1025su r2 @[39,96)
+  disc pen=0.7 w=0su pre="-" 513su kern="nr" r2 @[39,96)
+  box Other "re" w=1025su r2 @[39,96)
+  disc pen=0.7 w=0su pre="-" 513su kern="es" r2 @[39,96)
+  box Other "solved" w=3073su r2 @[39,96)
+  glue word w=257su x=1 cap=257su kern="d a" src r2 @[39,96)
+  box Other "and" w=1537su r2 @[39,96)
+  glue word w=257su x=1 cap=257su kern="d a" src r2 @[39,96)
+  box Other "a" w=513su r2 @[39,96)
+  glue word w=257su x=1 cap=257su kern="a s" src r2 @[39,96)
+  box Other "sec" w=1537su r2 @[39,96)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r2 @[39,96)
+  box Other "ond" w=1537su r2 @[39,96)
+  glue word w=257su x=1 cap=257su kern="d l" src r2 @[39,96)
+  box Other "la" w=1025su r2 @[39,96)
+  disc pen=0.7 w=0su pre="-" 513su kern="ab" r2 @[39,96)
+  box Other "bel" w=1537su r2 @[39,96)
+  glue word w=257su x=1 cap=257su kern="l r" src r2 @[39,96)
+  box Other "reuses" w=3073su r2 @[39,96)
+  glue word w=257su x=1 cap=257su kern="s t" src r2 @[39,96)
+  box Other "the" w=1537su r2 @[39,96)
+  glue word w=257su x=1 cap=257su kern="e f" src r2 @[39,96)
+  box Other "first" w=2561su r2 @[39,96)
+  glue word w=257su x=1 cap=257su kern="t o" src r2 @[39,96)
+  box Other "one." w=2049su r2 @[39,96)
+  run r0 plain
+  run r1 plain ref
+  run r2 plain
+top pid=2 units=1
+ unit text indent=0su anchor="h-2"
+  box Other "Second" w=4917su r0 @[100,106)
+  run r0 plain BOLD x1.60
+top pid=3 units=1
+ unit text indent=0su
+  box Other "Back" w=2049su r0 @[114,121)
+  glue word w=257su x=1 cap=257su kern="k t" src r0 @[114,121)
+  box Other "to" w=1025su r0 @[114,121)
+  glue word w=257su x=1 cap=257su src r0 @[114,121)
+  box Other "§1" w=1128su r1 @[122,126)
+  glue word w=257su x=1 cap=257su src r2 @[127,157)
+  box Other "re" w=1025su r2 @[127,157)
+  disc pen=0.7 w=0su pre="-" 513su kern="es" r2 @[127,157)
+  box Other "solves" w=3073su r2 @[127,157)
+  glue word w=257su x=1 cap=257su kern="s t" src r2 @[127,157)
+  box Other "to" w=1025su r2 @[127,157)
+  glue word w=257su x=1 cap=257su kern="o t" src r2 @[127,157)
+  box Other "the" w=1537su r2 @[127,157)
+  glue word w=257su x=1 cap=257su kern="e f" src r2 @[127,157)
+  box Other "first" w=2561su r2 @[127,157)
+  glue word w=257su x=1 cap=257su kern="t h" src r2 @[127,157)
+  box Other "head" w=2049su r2 @[127,157)
+  disc pen=0.7 w=0su pre="-" 513su kern="di" r2 @[127,157)
+  box Other "ing." w=2049su r2 @[127,157)
+  run r0 plain
+  run r1 plain ref LINK link="#tsr-dup"
+  run r2 plain

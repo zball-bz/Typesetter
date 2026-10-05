@@ -1,0 +1,148 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Ideo "勾" w=1025su wt=0.6 cap=102su r0 @[0,12)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,12)
+  box Ideo "股" w=1025su wt=0.6 cap=102su r0 @[0,12)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,12)
+  box Ideo "定" w=1025su wt=0.6 cap=102su r0 @[0,12)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,12)
+  box Ideo "理" w=1025su wt=0.6 cap=102su r0 @[0,12)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[0,12)
+  box object part=0 "x^2 + y^2 = z^2" w=1949su r2 @[13,30)
+  pen 0.95 r3
+  glue objspace w=228su x=0 cap=0su r3 @[13,30)
+  box object part=1 w=1016su r4 @[13,30)
+  pen 0.85 r5
+  glue objspace w=284su x=0 cap=0su r5 @[13,30)
+  box object part=2 w=774su r6 @[13,30)
+  pen 0.8 r7
+  glue objspace w=284su x=0 cap=0su r7 @[13,30)
+  box object part=3 w=890su r8 @[13,30)
+  pen 0 r8
+  glue word w=257su x=1 cap=257su src r9 @[31,76)
+  box Ideo "对" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box Ideo "一" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box Ideo "切" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box Ideo "直" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box Ideo "角" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box Ideo "三" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box Ideo "角" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box Ideo "形" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box Ideo "成" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box Ideo "立" w=1025su wt=0.6 cap=102su r10 @[31,76)
+  pen INF r10
+  glue inter w=0su x=0.6 cap=102su r10 @[31,76)
+  box ColonW "；" w=512su blank=R r11 @[31,76)
+  glue blank w=512su x=0 cap=0su r11 @[31,76)
+  box Ideo "调" w=1025su wt=0.6 cap=102su r12 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r12 @[31,76)
+  box Ideo "和" w=1025su wt=0.6 cap=102su r12 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r12 @[31,76)
+  box Ideo "平" w=1025su wt=0.6 cap=102su r12 @[31,76)
+  glue inter w=0su x=0.6 cap=102su r12 @[31,76)
+  box Ideo "均" w=1025su wt=0.6 cap=102su r12 @[31,76)
+  pen 0 r12
+  glue word w=257su x=1 cap=257su src r13 @[31,76)
+  box object part=0 "2/(1/a + 1/b)" w=1154su r14 @[77,92)
+  pen 0 r14
+  glue word w=257su x=1 cap=257su src r15 @[93,117)
+  box Ideo "不" w=1025su wt=0.6 cap=102su r16 @[93,117)
+  glue inter w=0su x=0.6 cap=102su r16 @[93,117)
+  box Ideo "超" w=1025su wt=0.6 cap=102su r16 @[93,117)
+  glue inter w=0su x=0.6 cap=102su r16 @[93,117)
+  box Ideo "过" w=1025su wt=0.6 cap=102su r16 @[93,117)
+  glue inter w=0su x=0.6 cap=102su r16 @[93,117)
+  box Ideo "几" w=1025su wt=0.6 cap=102su r16 @[93,117)
+  glue inter w=0su x=0.6 cap=102su r16 @[93,117)
+  box Ideo "何" w=1025su wt=0.6 cap=102su r16 @[93,117)
+  glue inter w=0su x=0.6 cap=102su r16 @[93,117)
+  box Ideo "平" w=1025su wt=0.6 cap=102su r16 @[93,117)
+  glue inter w=0su x=0.6 cap=102su r16 @[93,117)
+  box Ideo "均" w=1025su wt=0.6 cap=102su r16 @[93,117)
+  pen INF r16
+  glue inter w=0su x=0.6 cap=102su r16 @[93,117)
+  box FullStopW "。" w=512su blank=R r17 @[93,117)
+  glue blank w=512su x=0 cap=0su r17 @[93,117)
+  run r0 letter-spaced CJK
+  run r1 plain
+  run r2 object
+  run r3 plain
+  run r4 object
+  run r5 plain
+  run r6 object
+  run r7 plain
+  run r8 object
+  run r9 plain
+  run r10 letter-spaced CJK
+  run r11 blank-bearing CJK
+  run r12 letter-spaced CJK
+  run r13 plain
+  run r14 object
+  run r15 plain
+  run r16 letter-spaced CJK
+  run r17 blank-bearing CJK
+top pid=1 units=1
+ unit text indent=0su
+  box Other "Euler's" w=3585su r0 @[119,141)
+  glue word w=257su x=1 cap=257su kern="s i" src r0 @[119,141)
+  box Other "iden" w=2049su r0 @[119,141)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r0 @[119,141)
+  box Other "ti" w=1025su r0 @[119,141)
+  disc pen=0.7 w=0su pre="-" 513su kern="it" r0 @[119,141)
+  box Other "ty" w=1025su r0 @[119,141)
+  glue word w=257su x=1 cap=257su kern="y l" src r0 @[119,141)
+  box Other "links" w=2561su r0 @[119,141)
+  glue word w=257su x=1 cap=257su src r0 @[119,141)
+  box object part=0 "e^(i pi) + 1 = 0" w=2258su r1 @[142,160)
+  pen 0.95 r2
+  glue objspace w=228su x=0 cap=0su r2 @[142,160)
+  box object part=1 w=511su r3 @[142,160)
+  pen 0.85 r4
+  glue objspace w=284su x=0 cap=0su r4 @[142,160)
+  box object part=2 w=774su r5 @[142,160)
+  pen 0.8 r6
+  glue objspace w=284su x=0 cap=0su r6 @[142,160)
+  box object part=3 w=511su r7 @[142,160)
+  pen 0 r7
+  glue word w=257su x=1 cap=257su src r8 @[161,165)
+  box Other "with" w=2049su r8 @[161,165)
+  glue word w=257su x=1 cap=257su src r8 @[161,165)
+  box object part=0 "phi = (1 + 5^(1/2))/2" w=781su r9 @[166,189)
+  pen 0.85 r10
+  glue objspace w=284su x=0 cap=0su r10 @[166,189)
+  box object part=1 w=774su r11 @[166,189)
+  pen 0.8 r12
+  glue objspace w=284su x=0 cap=0su r12 @[166,189)
+  box object part=2 w=1548su r13 @[166,189)
+  pen 0 r13
+  glue word w=257su x=1 cap=257su src r14 @[190,202)
+  box Other "in" w=1025su r14 @[190,202)
+  glue word w=257su x=1 cap=257su kern="n o" src r14 @[190,202)
+  box Other "one" w=1537su r14 @[190,202)
+  glue word w=257su x=1 cap=257su kern="e l" src r14 @[190,202)
+  box Other "line." w=2561su r14 @[190,202)
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 object
+  run r4 plain
+  run r5 object
+  run r6 plain
+  run r7 object
+  run r8 plain
+  run r9 object
+  run r10 plain
+  run r11 object
+  run r12 plain
+  run r13 object
+  run r14 plain

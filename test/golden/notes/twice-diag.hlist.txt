@@ -1,0 +1,41 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "A" w=513su r0 @[0,7)
+  glue word w=257su x=1 cap=257su kern="A n" src r0 @[0,7)
+  box Other "note." w=2561su r0 @[0,7)
+  box Other "1" w=360su anchor="fnref-1" r1 @[7,27)
+  glue word w=257su x=1 cap=257su src r2 @[28,36)
+  box Other "An" w=1025su r2 @[28,36)
+  disc pen=0.7 w=0su pre="-" 513su kern="no" r2 @[28,36)
+  box Other "oth" w=1537su r2 @[28,36)
+  disc pen=0.7 w=0su pre="-" 513su kern="he" r2 @[28,36)
+  box Other "er." w=1537su r2 @[28,36)
+  box Other "2" w=360su anchor="fnref-2" r3 @[36,51)
+  run r0 plain
+  run r1 plain ref LINK x0.70 link="#tsr-fn-1" anchor="fnref-1"
+  run r2 plain
+  run r3 plain ref LINK x0.70 link="#tsr-fn-2" anchor="fnref-2"
+top pid=1 units=3
+ unit rule indent=0su
+ unit text indent=1536su anchor="fn-1" marker="1."
+  box Other "Body" w=1742su r0 @[9,26)
+  glue word w=219su x=1 cap=219su kern="y o" src r0 @[9,26)
+  box Other "of" w=872su r0 @[9,26)
+  glue word w=219su x=1 cap=219su kern="f t" src r0 @[9,26)
+  box Other "the" w=1307su r0 @[9,26)
+  glue word w=219su x=1 cap=219su kern="e n" src r0 @[9,26)
+  box Other "note." w=2178su r0 @[9,26)
+  glue word w=219su x=1 cap=219su src r0 @[7,27)
+  box Other "↩" w=524su r1 @[7,27)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-1"
+ unit text indent=1536su anchor="fn-2" marker="2."
+  box Other "Sec" w=1307su r0 @[38,50)
+  disc pen=0.7 w=0su pre="-" 437su kern="co" r0 @[38,50)
+  box Other "ond" w=1307su r0 @[38,50)
+  glue word w=219su x=1 cap=219su kern="d b" src r0 @[38,50)
+  box Other "body." w=2178su r0 @[38,50)
+  glue word w=219su x=1 cap=219su src r0 @[36,51)
+  box Other "↩" w=524su r1 @[36,51)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-2"

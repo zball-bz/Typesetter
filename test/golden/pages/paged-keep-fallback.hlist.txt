@@ -1,0 +1,52 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  box Other "Heading" w=5736su r0 @[2,30)
+  glue word w=411su x=1 cap=411su kern="g b" src r0 @[2,30)
+  box Other "before" w=4917su r0 @[2,30)
+  glue word w=411su x=1 cap=411su kern="e a" src r0 @[2,30)
+  box Other "a" w=821su r0 @[2,30)
+  glue word w=411su x=1 cap=411su kern="a t" src r0 @[2,30)
+  box Other "tall" w=3278su r0 @[2,30)
+  glue word w=411su x=1 cap=411su kern="l f" src r0 @[2,30)
+  box Other "figure" w=4917su r0 @[2,30)
+  run r0 plain BOLD x1.60
+top pid=1 units=2
+ unit img indent=0su anchor="fig-tall" w=19200su h=12800su
+ unit text indent=0su centered
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[0,0)
+  box Other "1" w=513su r1 @[0,0)
+  box ColonW "：" w=512su blank=R r2 @[0,0)
+  glue blank w=512su x=0 cap=0su r2 @[0,0)
+  box Other "A" w=513su r3 @[113,149)
+  glue word w=257su x=1 cap=257su kern="A f" src r3 @[113,149)
+  box Other "figure" w=3073su r3 @[113,149)
+  glue word w=257su x=1 cap=257su kern="e 2" src r3 @[113,149)
+  box Other "200px" w=2561su r3 @[113,149)
+  glue word w=257su x=1 cap=257su kern="x t" src r3 @[113,149)
+  box Other "tall" w=2049su r3 @[113,149)
+  glue word w=257su x=1 cap=257su kern="l o" src r3 @[113,149)
+  box Other "on" w=1025su r3 @[113,149)
+  glue word w=257su x=1 cap=257su kern="n 2" src r3 @[113,149)
+  box Other "240px" w=2561su r3 @[113,149)
+  glue word w=257su x=1 cap=257su kern="x s" src r3 @[113,149)
+  box Other "sheets." w=3585su r3 @[113,149)
+  run r0 letter-spaced BOLD CJK
+  run r1 plain BOLD
+  run r2 blank-bearing BOLD CJK
+  run r3 plain
+top pid=2 units=1
+ unit text indent=0su
+  box Other "Text" w=2049su r0 @[160,182)
+  glue word w=257su x=1 cap=257su kern="t a" src r0 @[160,182)
+  box Other "af" w=1025su r0 @[160,182)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[160,182)
+  box Other "ter" w=1537su r0 @[160,182)
+  glue word w=257su x=1 cap=257su kern="r t" src r0 @[160,182)
+  box Other "the" w=1537su r0 @[160,182)
+  glue word w=257su x=1 cap=257su kern="e f" src r0 @[160,182)
+  box Other "fig" w=1537su r0 @[160,182)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r0 @[160,182)
+  box Other "ure." w=2049su r0 @[160,182)
+  run r0 plain

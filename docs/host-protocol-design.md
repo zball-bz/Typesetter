@@ -52,7 +52,8 @@ Resolve is its own stage (`stageResolve`: sidecars, references, numbering,
 then the token/image needs), though `ingest()` runs both for hosts.
 
 `engine/src/api/products.def` lists what can be inspected — `skeleton ast js
-ops tree semantic mathbox blocks breaks layout paged html diags settings` —
+tokens outline astjson ops tree index semantic mathbox blocks hlist breaks
+layout paged html diags settings` —
 with the stage each needs. `Doc::product(name)` serves `tsrc --stage=<name>`
 and the golden runner alike.
 

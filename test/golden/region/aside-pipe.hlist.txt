@@ -1,0 +1,42 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Ideo "绝" w=1025su wt=0.6 cap=102su r0 @[24,33)
+  glue inter w=0su x=0.6 cap=102su r0 @[24,33)
+  box Ideo "对" w=1025su wt=0.6 cap=102su r0 @[24,33)
+  glue inter w=0su x=0.6 cap=102su r0 @[24,33)
+  box Ideo "值" w=1025su wt=0.6 cap=102su r0 @[24,33)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[24,33)
+  box object part=0 "|x|" w=975su r2 @[34,39)
+  pen 0 r2
+  glue word w=257su x=1 cap=257su src r3 @[40,52)
+  box Ideo "的" w=1025su wt=0.6 cap=102su r4 @[40,52)
+  glue inter w=0su x=0.6 cap=102su r4 @[40,52)
+  box Ideo "性" w=1025su wt=0.6 cap=102su r4 @[40,52)
+  glue inter w=0su x=0.6 cap=102su r4 @[40,52)
+  box Ideo "质" w=1025su wt=0.6 cap=102su r4 @[40,52)
+  pen INF r4
+  glue inter w=0su x=0.6 cap=102su r4 @[40,52)
+  box ColonW "：" w=512su blank=R r5 @[40,52)
+  glue blank w=512su x=0 cap=0su r5 @[40,52)
+  box object part=0 "|a b| = |a| |b|" w=1662su r6 @[52,69)
+  pen 0.85 r7
+  glue objspace w=284su x=0 cap=0su r7 @[52,69)
+  box object part=1 w=774su r8 @[52,69)
+  pen 0.8 r9
+  glue objspace w=284su x=0 cap=0su r9 @[52,69)
+  box object part=2 w=2098su r10 @[52,69)
+  box FullStopW "。" w=512su blank=R r11 @[69,72)
+  glue blank w=512su x=0 cap=0su r11 @[69,72)
+  run r0 letter-spaced CJK
+  run r1 plain
+  run r2 object
+  run r3 plain
+  run r4 letter-spaced CJK
+  run r5 blank-bearing CJK
+  run r6 object
+  run r7 plain
+  run r8 object
+  run r9 plain
+  run r10 object
+  run r11 blank-bearing CJK

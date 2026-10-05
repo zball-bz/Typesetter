@@ -1,0 +1,72 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Be" w=1025su r0 @[0,7)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[0,7)
+  box Other "fore." w=2561su r0 @[0,7)
+  run r0 plain
+top pid=1 units=1
+ unit text indent=0su
+  box Other "⚠" w=616su r0 @[9,21)
+  glue word w=257su x=1 cap=257su src r0 @[9,21)
+  box Other "Syn" w=1537su r0 @[9,21)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r0 @[9,21)
+  box Other "tax" w=1537su r0 @[9,21)
+  disc pen=0.7 w=0su pre="-" 513su kern="xE" r0 @[9,21)
+  box Other "Er" w=1025su r0 @[9,21)
+  disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[9,21)
+  box Other "ror:" w=2049su r0 @[9,21)
+  glue word w=257su x=1 cap=257su kern=": i" src r0 @[9,21)
+  box Other "in" w=1025su r0 @[9,21)
+  disc pen=0.7 w=0su pre="-" 513su kern="nv" r0 @[9,21)
+  box Other "valid" w=2561su r0 @[9,21)
+  glue word w=257su x=1 cap=257su kern="d J" src r0 @[9,21)
+  box Other "JavaScript" w=5121su r0 @[9,21)
+  glue word w=257su x=1 cap=257su kern="t i" src r0 @[9,21)
+  box Other "in" w=1025su r0 @[9,21)
+  glue word w=257su x=1 cap=257su kern="n t" src r0 @[9,21)
+  box Other "this" w=2049su r0 @[9,21)
+  glue word w=257su x=1 cap=257su kern="s b" src r0 @[9,21)
+  box Other "block" w=2561su r0 @[9,21)
+  run r0 plain CODE
+top pid=2 units=1
+ unit text indent=0su
+  box Other "Mid" w=1537su r0 @[23,29)
+  disc pen=0.7 w=0su pre="-" 513su kern="dd" r0 @[23,29)
+  box Other "dle" w=1537su r0 @[23,29)
+  glue word w=257su x=1 cap=257su kern="e 3" src r0 @[23,29)
+  box Other "3" w=513su r0 @[0,0)
+  box Other "." w=513su r0 @[38,39)
+  run r0 plain
+top pid=3 units=1
+ unit text indent=0su
+  box Other "⚠" w=616su r0 @[41,55)
+  glue word w=257su x=1 cap=257su src r0 @[41,55)
+  box Other "Syn" w=1537su r0 @[41,55)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r0 @[41,55)
+  box Other "tax" w=1537su r0 @[41,55)
+  disc pen=0.7 w=0su pre="-" 513su kern="xE" r0 @[41,55)
+  box Other "Er" w=1025su r0 @[41,55)
+  disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[41,55)
+  box Other "ror:" w=2049su r0 @[41,55)
+  glue word w=257su x=1 cap=257su kern=": i" src r0 @[41,55)
+  box Other "in" w=1025su r0 @[41,55)
+  disc pen=0.7 w=0su pre="-" 513su kern="nv" r0 @[41,55)
+  box Other "valid" w=2561su r0 @[41,55)
+  glue word w=257su x=1 cap=257su kern="d J" src r0 @[41,55)
+  box Other "JavaScript" w=5121su r0 @[41,55)
+  glue word w=257su x=1 cap=257su kern="t i" src r0 @[41,55)
+  box Other "in" w=1025su r0 @[41,55)
+  glue word w=257su x=1 cap=257su kern="n t" src r0 @[41,55)
+  box Other "this" w=2049su r0 @[41,55)
+  glue word w=257su x=1 cap=257su kern="s b" src r0 @[41,55)
+  box Other "block" w=2561su r0 @[41,55)
+  run r0 plain CODE
+top pid=4 units=1
+ unit text indent=0su
+  box Other "Af" w=1025su r0 @[57,62)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[57,62)
+  box Other "ter" w=1537su r0 @[57,62)
+  glue word w=257su x=1 cap=257su kern="r 1" src r0 @[57,62)
+  box Other "12" w=1025su r0 @[0,0)
+  box Other "." w=513su r0 @[71,72)
+  run r0 plain

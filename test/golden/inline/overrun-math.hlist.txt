@@ -1,0 +1,22 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "para" w=2049su r0 @[0,11)
+  glue word w=257su x=1 cap=257su kern="a o" src r0 @[0,11)
+  box Other "one" w=1537su r0 @[0,11)
+  glue word w=257su x=1 cap=257su kern="e $" src r0 @[0,11)
+  box Other "$x" w=1025su r0 @[0,11)
+  run r0 plain
+top pid=1 units=1
+ unit text indent=0su anchor="h-1"
+  box Other "Heading" w=5736su r0 @[15,22)
+  run r0 plain BOLD x1.60
+top pid=2 units=1
+ unit text indent=0su
+  box Other "sec" w=1537su r0 @[24,36)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r0 @[24,36)
+  box Other "ond" w=1537su r0 @[24,36)
+  glue word w=257su x=1 cap=257su kern="d $" src r0 @[24,36)
+  box Other "$" w=513su r0 @[24,36)
+  glue word w=257su x=1 cap=257su kern="$ e" src r0 @[24,36)
+  box Other "end" w=1537su r0 @[24,36)
+  run r0 plain

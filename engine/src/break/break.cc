@@ -260,7 +260,7 @@ BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, LineWidths wid
   return res;
 }
 
-BreakResult breakLines(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
+BreakResult breakLines(const std::vector<BreakBlock>& blocks, LineWidths widths,
                        const CostParams& params, u32 cursorSearchRange, bool finalPass) {
   std::vector<BItem> items;
   blocksToItems(blocks, items);
@@ -276,7 +276,7 @@ BreakResult breakLines(const std::vector<LinebreakBlock>& blocks, LineWidths wid
 // the budget (it used to wipe itself whole at 16384 entries).
 namespace {
 
-void breakKey(std::vector<u32>& k, const std::vector<LinebreakBlock>& blocks, LineWidths widths,
+void breakKey(std::vector<u32>& k, const std::vector<BreakBlock>& blocks, LineWidths widths,
               const CostParams& params) {
   k.clear();
   k.reserve(12 + blocks.size() * 5);
@@ -294,7 +294,7 @@ void breakKey(std::vector<u32>& k, const std::vector<LinebreakBlock>& blocks, Li
   k.push_back((u32)widths.narrow);
   k.push_back(widths.narrowK);
   k.push_back((u32)blocks.size());
-  for (const LinebreakBlock& b : blocks) {
+  for (const BreakBlock& b : blocks) {
     k.push_back((u32)b.width);
     k.push_back((u32)b.spaceWidth);
     k.push_back((u32)b.breakWidth);
@@ -356,7 +356,7 @@ class BreakMemo {
 
 }  // namespace
 
-BreakResult breakLinesRetry(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
+BreakResult breakLinesRetry(const std::vector<BreakBlock>& blocks, LineWidths widths,
                             const CostParams& params) {
   static BreakMemo memo;
   static std::vector<u32> key;  // scratch: rebuilt per call

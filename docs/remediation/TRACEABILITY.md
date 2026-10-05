@@ -1122,7 +1122,7 @@ Theme steps: — · findings: 1
 | `emitter/flowunit-kind-switch` | adhoc | high | P1-18 | |
 | `emitter/figure-role-string-dispatch` | adhoc | high | P1-18 | |
 | `emitter/measure-dependent-geometry-in-emit` | adhoc | high | P1-16, P3-32 | |
-| `emitter/bf-flag-overload-and-rederivation` | adhoc | medium | P1-12 | |
+| `emitter/bf-flag-overload-and-rederivation` | adhoc | medium | P1-12 | grep:plan P1-12 |
 | `emitter/url-break-special-path` | adhoc | medium | P4-06 | |
 | `emitter/boundary-glue-constant` | adhoc | medium | P4-02 | |
 | `emitter/defined-width-dash-ellipsis` | adhoc | medium | P4-04 | |
@@ -1145,7 +1145,7 @@ Theme steps: — · findings: 1
 | `emitter/silent-drops-of-unhandled-kinds` | issue | medium | P1-13, P2-11 | |
 | `emitter/coarse-source-spans` | issue | low | P4-03 | |
 | `emitter/full-reemit-for-math-text` | issue | low | P1-20, P1-25 | |
-| `emitter/dump-hides-finite-penalties` | issue | low | P1-12 | |
+| `emitter/dump-hides-finite-penalties` | issue | low | P1-12 | grep:plan P1-12 |
 | `emitter/missed:0` | missed | high | P0-10, P4-01 | |
 | `emitter/missed:1` | missed | medium | P4-02 | |
 | `emitter/missed:2` | missed | medium | P4-05 | |

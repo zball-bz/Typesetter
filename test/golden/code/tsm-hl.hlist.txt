@@ -1,0 +1,50 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Ideo "内" w=1025su wt=0.6 cap=102su r0 @[0,58)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,58)
+  box Ideo "置" w=1025su wt=0.6 cap=102su r0 @[0,58)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[0,58)
+  box Other "tsm" w=1537su r1 @[0,58)
+  glue word w=257su x=1 cap=257su src r1 @[0,58)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r2 @[0,58)
+  glue inter w=0su x=0.6 cap=102su r2 @[0,58)
+  box Ideo "法" w=1025su wt=0.6 cap=102su r2 @[0,58)
+  pen INF r2
+  glue inter w=0su x=0.6 cap=102su r2 @[0,58)
+  box ColonW "：" w=512su blank=R r3 @[0,58)
+  glue blank w=512su x=0 cap=0su r3 @[0,58)
+  box Other "Type" w=2049su r4 @[0,58)
+  disc pen=0.7 w=0su pre="-" 513su kern="es" r4 @[0,58)
+  box Other "set" w=1537su r4 @[0,58)
+  disc pen=0.7 w=0su pre="-" 513su kern="tt" r4 @[0,58)
+  box Other "ter" w=1537su r4 @[0,58)
+  glue word w=257su x=1 cap=257su src r4 @[0,58)
+  box Ideo "标" w=1025su wt=0.6 cap=102su r5 @[0,58)
+  glue inter w=0su x=0.6 cap=102su r5 @[0,58)
+  box Ideo "记" w=1025su wt=0.6 cap=102su r5 @[0,58)
+  glue inter w=0su x=0.6 cap=102su r5 @[0,58)
+  box Ideo "语" w=1025su wt=0.6 cap=102su r5 @[0,58)
+  glue inter w=0su x=0.6 cap=102su r5 @[0,58)
+  box Ideo "言" w=1025su wt=0.6 cap=102su r5 @[0,58)
+  glue inter w=0su x=0.6 cap=102su r5 @[0,58)
+  box Ideo "自" w=1025su wt=0.6 cap=102su r5 @[0,58)
+  glue inter w=0su x=0.6 cap=102su r5 @[0,58)
+  box Ideo "举" w=1025su wt=0.6 cap=102su r5 @[0,58)
+  glue inter w=0su x=0.6 cap=102su r5 @[0,58)
+  box Ideo "高" w=1025su wt=0.6 cap=102su r5 @[0,58)
+  glue inter w=0su x=0.6 cap=102su r5 @[0,58)
+  box Ideo "亮" w=1025su wt=0.6 cap=102su r5 @[0,58)
+  pen INF r5
+  glue inter w=0su x=0.6 cap=102su r5 @[0,58)
+  box FullStopW "。" w=512su blank=R r6 @[0,58)
+  glue blank w=512su x=0 cap=0su r6 @[0,58)
+  run r0 letter-spaced CJK
+  run r1 plain
+  run r2 letter-spaced CJK
+  run r3 blank-bearing CJK
+  run r4 plain
+  run r5 letter-spaced CJK
+  run r6 blank-bearing CJK
+top pid=1 units=1
+ unit code indent=0su lines=14 wrap

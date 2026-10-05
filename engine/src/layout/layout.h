@@ -10,6 +10,8 @@ struct LineBox {
   i32 cellIdx = -1;                  // >=0: index into the unit's table cells
   u32 blockBegin = 0, blockEnd = 0;  // trimmed range into the unit's blocks
                                      //   (or the cell's blocks, cellIdx >= 0)
+  u32 itemBegin = 0, itemEnd = 0;    // the same line in the unit's (cell's)
+                                     //   HList items: what layout and paint read
   double wordDeltaPx = 0;            // raw-px justification value (render uses this)
   double cjkDeltaPx = 0;             // k × wordDeltaPx (v2 §8), letter-spacing value
   i32 wordDeltaSu = 0;               // rounded, for dumps

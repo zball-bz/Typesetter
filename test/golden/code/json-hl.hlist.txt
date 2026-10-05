@@ -1,0 +1,67 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "JSON" w=2049su r0 @[0,95)
+  glue word w=257su x=1 cap=257su src r0 @[0,95)
+  box Ideo "高" w=1025su wt=0.6 cap=102su r1 @[0,95)
+  glue inter w=0su x=0.6 cap=102su r1 @[0,95)
+  box Ideo "亮" w=1025su wt=0.6 cap=102su r1 @[0,95)
+  pen 0 r1
+  glue blank w=512su x=0 cap=0su owned-by-next r2 @[0,95)
+  box OpenW "（" w=512su blank=L r2 @[0,95)
+  box Other "na" w=1025su r3 @[0,95)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r3 @[0,95)
+  box Other "tive" w=2049su r3 @[0,95)
+  glue word w=257su x=1 cap=257su src r3 @[0,95)
+  box Ideo "静" w=1025su wt=0.6 cap=102su r4 @[0,95)
+  glue inter w=0su x=0.6 cap=102su r4 @[0,95)
+  box Ideo "态" w=1025su wt=0.6 cap=102su r4 @[0,95)
+  glue inter w=0su x=0.6 cap=102su r4 @[0,95)
+  box Ideo "链" w=1025su wt=0.6 cap=102su r4 @[0,95)
+  glue inter w=0su x=0.6 cap=102su r4 @[0,95)
+  box Ideo "接" w=1025su wt=0.6 cap=102su r4 @[0,95)
+  pen 0 r4
+  glue word w=257su x=1 cap=257su src r5 @[0,95)
+  box Other "tree-sitter" w=5633su r5 @[0,95)
+  box CommaW "，" w=512su blank=R r6 @[0,95)
+  glue blank w=512su x=0 cap=0su r6 @[0,95)
+  box Ideo "与" w=1025su wt=0.6 cap=102su r7 @[0,95)
+  pen 0 r7
+  glue word w=257su x=1 cap=257su src r8 @[0,95)
+  box Other "web" w=1537su r8 @[0,95)
+  glue word w=257su x=1 cap=257su kern="b s" src r8 @[0,95)
+  box Other "side" w=2049su r8 @[0,95)
+  glue word w=257su x=1 cap=257su kern="e m" src r8 @[0,95)
+  box Other "mod" w=1537su r8 @[0,95)
+  disc pen=0.7 w=0su pre="-" 513su kern="du" r8 @[0,95)
+  box Other "ule" w=1537su r8 @[0,95)
+  glue word w=257su x=1 cap=257su src r8 @[0,95)
+  box Ideo "同" w=1025su wt=0.6 cap=102su r9 @[0,95)
+  glue inter w=0su x=0.6 cap=102su r9 @[0,95)
+  box Ideo "一" w=1025su wt=0.6 cap=102su r9 @[0,95)
+  glue inter w=0su x=0.6 cap=102su r9 @[0,95)
+  box Ideo "份" w=1025su wt=0.6 cap=102su r9 @[0,95)
+  pen 0 r9
+  glue word w=257su x=1 cap=257su src r10 @[0,95)
+  box Other "parse" w=2561su r10 @[0,95)
+  glue word w=257su x=1 cap=257su kern="e t" src r10 @[0,95)
+  box Other "ta" w=1025su r10 @[0,95)
+  disc pen=0.7 w=0su pre="-" 513su kern="ab" r10 @[0,95)
+  box Other "ble" w=1537su r10 @[0,95)
+  box CloseW "）" w=512su blank=R r11 @[0,95)
+  box ColonW "：" w=512su blank=R r12 @[0,95)
+  glue blank w=512su x=0 cap=0su r12 @[0,95)
+  run r0 plain
+  run r1 letter-spaced CJK
+  run r2 blank-bearing CJK
+  run r3 plain
+  run r4 letter-spaced CJK
+  run r5 plain
+  run r6 blank-bearing CJK
+  run r7 letter-spaced CJK
+  run r8 plain
+  run r9 letter-spaced CJK
+  run r10 plain
+  run r11 blank-bearing CJK
+  run r12 blank-bearing CJK
+top pid=1 units=1
+ unit code indent=0su lines=1 wrap

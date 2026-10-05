@@ -376,6 +376,7 @@ struct Doc {
     if (!done(Stage::Measure)) {
       MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg);
       if (!missing.empty()) return Status::NeedMeasure;
+      fuseLegacy(tops);  // the legacy breaker's blocks (until P4-08)
       validThrough = (int)Stage::Measure;
     }
     // Cached KP with the retry ladder folded in (break.cc): keyed by block
@@ -383,15 +384,15 @@ struct Doc {
     // a run wider than the line is set Overfull on a line of its own (the
     // final-pass rescue) and reported once per stream (plan P0-12)
     diags.begin(DiagOrigin::Layout);
-    auto breakWithRetry = [&](const std::vector<LinebreakBlock>& blocks, LineWidths lw) {
+    auto breakWithRetry = [&](const std::vector<BreakBlock>& blocks, const HList& h, LineWidths lw) {
       BreakResult r = breakLinesRetry(blocks, lw, cfg.cost);
       if (!r.overfullLines.empty()) {
         Span sp{};
-        for (const LinebreakBlock& b : blocks)
-          if (!b.span.empty()) {
-            if (sp.empty()) sp = b.span;
-            sp.start = std::min(sp.start, b.span.start);
-            sp.end = std::max(sp.end, b.span.end);
+        for (const ColdRec& c : h.cold)
+          if (c.srcEnd > c.srcStart) {
+            if (sp.empty()) sp = Span{c.srcStart, c.srcEnd};
+            sp.start = std::min(sp.start, c.srcStart);
+            sp.end = std::max(sp.end, c.srcEnd);
           }
         diags.add(Sev::Warning, "overfull-line", sp,
                   std::to_string(r.overfullLines.size()) +
@@ -439,7 +440,7 @@ struct Doc {
             flOccl = 0;
           }
           for (TableCell& c : u.cells) {  // caption breaks to the float width
-            BreakResult r = breakWithRetry(c.blocks, LineWidths{u.imgW});
+            BreakResult r = breakWithRetry(c.blocks, c.hl, LineWidths{u.imgW});
             c.breakpoints = std::move(r.breakpoints);
             c.breakCost = r.cost;
             c.overfullLines = std::move(r.overfullLines);
@@ -466,7 +467,7 @@ struct Doc {
           Su cellW = colW - 2 * pad;
           if (cellW < 64) cellW = 64;
           for (TableCell& c : u.cells) {
-            BreakResult r = breakWithRetry(c.blocks, LineWidths{cellW});
+            BreakResult r = breakWithRetry(c.blocks, c.hl, LineWidths{cellW});
             c.breakpoints = std::move(r.breakpoints);
             c.breakCost = r.cost;
             c.overfullLines = std::move(r.overfullLines);
@@ -475,7 +476,7 @@ struct Doc {
         }
         if (u.kind == FlowUnit::K::Code && !u.cells.empty() && u.sidebarW > 0) {
           for (TableCell& c : u.cells) {
-            BreakResult r = breakWithRetry(c.blocks, LineWidths{u.sidebarW});
+            BreakResult r = breakWithRetry(c.blocks, c.hl, LineWidths{u.sidebarW});
             c.breakpoints = std::move(r.breakpoints);
             c.breakCost = r.cost;
             c.overfullLines = std::move(r.overfullLines);
@@ -491,7 +492,7 @@ struct Doc {
           u.narrowK = lw.narrowK;
           u.narrowLeft = flSide == 1;
         }
-        BreakResult r = breakWithRetry(u.blocks, lw);
+        BreakResult r = breakWithRetry(u.blocks, u.hl, lw);
         u.breakpoints = std::move(r.breakpoints);
         u.breakCost = r.cost;
         u.overfullLines = std::move(r.overfullLines);
@@ -548,6 +549,7 @@ struct Doc {
     if (name == "semantic") return renderFallback();
     if (name == "mathbox") return dumpMathBoxes(tops, strs);
     if (name == "blocks") return dumpBlocks(tops, strs, styles);
+    if (name == "hlist") return dumpHLists(tops, strs, styles);
     if (name == "breaks") return dumpBreaks(tops);
     if (name == "layout") return dumpLayout(layout);
     if (name == "paged") return renderPaged(cfg.pageHeightPx);

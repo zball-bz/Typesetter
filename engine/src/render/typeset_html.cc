@@ -106,12 +106,6 @@ static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
   out += "</span>";
 }
 
-// is the next rendered gap after a CJK run CJK (a char run of another style,
-// or a closing punct glyph)? then its trailing letter-space is real
-static bool cjkGapFollows(const LinebreakBlock* nx) {
-  return nx && (nx->isCjkChar() || (nx->isPunctGlyph() && !(nx->flags & BF_PUNCT_OPEN)));
-}
-
 // One line box (any kind) at an optional vertical rebase — shared by the
 // flowing serializer (yShift 0, lines inside their para frame) and the
 // paged serializer (yShift rebases into the sheet).
@@ -326,22 +320,41 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
   }
 
   const FlowUnit& u = tb.units[l.unitIdx];
-  const std::vector<LinebreakBlock>& bl =
-      l.cellIdx >= 0 ? u.cells[(size_t)l.cellIdx].blocks : u.blocks;
-  u32 i = l.blockBegin;
-  // opens a run; `extraStyle(t)` adds declarations after the run's own, and
-  // `syn` (e.g. "hyphen") follows the style; returns whether it is a link
-  auto openRun = [&](const Styling& sty, StrRef url, const LinebreakBlock& first,
-                     const char* extraCls, const char* syn, auto&& extraStyle) {
-    const bool isLink = url != 0;
+  const HList& h = l.cellIdx >= 0 ? u.cells[(size_t)l.cellIdx].hl : u.hl;
+  const std::vector<HItem>& v = h.items;
+  // paint reads the items and their run instances (plan P1-12): a DOM run
+  // opens where the run changes; a punctuation glyph, a pinned box and a
+  // formula are runs of their own; spacer glue and the indent paint as
+  // spacers, blanks fold into their glyph's squeeze
+  auto run = [&](const HItem& it) -> const RunRec& { return h.runs[it.run]; };
+  auto cold = [&](const HItem& it) -> const ColdRec& { return h.cold[it.cold]; };
+  // the carrier next to i on this line (penalties skipped), or -1
+  auto nextOnLine = [&](u32 i) -> i64 {
+    for (u32 k = i + 1; k < l.itemEnd; k++)
+      if (v[k].k != IK::Penalty) return k;
+    return -1;
+  };
+  auto prevOnLine = [&](u32 i) -> i64 {
+    for (u32 k = i; k-- > l.itemBegin;)
+      if (v[k].k != IK::Penalty) return k;
+    return -1;
+  };
+  auto isGap = [&](i64 k) { return k >= 0 && v[k].k == IK::Glue && v[k].cls == (u8)GC::InterChar; };
+  // opens a run at its first carrier; `extraStyle(t)` adds declarations
+  // after the run's own, and `syn` (e.g. "hyphen") follows the style;
+  // returns whether it is a link
+  auto openRun = [&](const HItem& first, const char* extraCls, const char* syn, auto&& extraStyle) {
+    const RunRec& r = run(first);
+    const Styling& sty = styles.get(r.face);
+    const bool isLink = r.link != 0;
     Tag t(out, isLink ? "a" : "span");
     t.attrSafe("class", RunClasses(sty, nullptr, extraCls).sv());
-    if (isLink) t.attr("href", strs.get(url));
-    if (first.anchorId) t.id(strs.get(first.anchorId));  // inline anchor (footnote marker)
-    if (first.flags & BF_REF) {  // §9.3: copy skips (a ref's hyphen is "hyphen")
+    if (isLink) t.attr("href", strs.get(r.link));
+    if (first.attrs & IA_Anchor) t.id(strs.get(cold(first).anchor));  // inline anchor (footnote marker)
+    if (r.syn == SynKind::Ref) {  // §9.3: copy skips (a ref's hyphen is "hyphen")
       if (!syn) t.attrSafe("data-syn", "ref");
-    } else if (!first.span.empty()) {
-      t.num("data-s", first.span.start - srcBase);
+    } else if (cold(first).srcEnd > cold(first).srcStart) {
+      t.num("data-s", cold(first).srcStart - srcBase);
     }
     runCss(t, sty, cfg, strs);
     extraStyle(t);
@@ -350,113 +363,119 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
     return isLink;
   };
   auto noStyle = [](Tag&) {};
-  // run identity (interim run key, design T7 S6; T5's runId replaces it in
-  // P4-01): generated reference text never merges with authored prose
-  auto sameRun = [&](const LinebreakBlock& a, const LinebreakBlock& b) {
-    return a.style == b.style && a.linkUrl == b.linkUrl &&
-           (a.flags & BF_REF) == (b.flags & BF_REF);
-  };
-  while (i < l.blockEnd) {
-    const LinebreakBlock& b = bl[i];
-    if (b.math) {  // inline formula: one box, baseline via vertical-align
-      mathSpan(out, b.math, b.text, /*display=*/false, strs, b.span, 0, srcBase);
+  u32 i = l.itemBegin;
+  while (i < l.itemEnd) {
+    const HItem& it = v[i];
+    if (it.k == IK::Penalty) {
+      i++;
+      continue;
+    }
+    const RunRec& r = run(it);
+    if (it.k == IK::Box && r.rc == RealizeClass::Object) {  // inline formula: one box, baseline via vertical-align
+      const AdvanceSpec& sp = h.specs[it.aux];
+      mathSpan(out, h.objs[sp.obj].math, sp.str, /*display=*/false, strs,
+               Span{cold(it).srcStart, cold(it).srcEnd}, 0, srcBase);
       i++;
       continue;
     }
     // final hyphen glyph: inside its word's link (it used to close the link
     // and add an unlinked '-')
-    if (b.isHyphen()) {
-      if (i == l.blockEnd - 1 && l.endsWithHyphen) {
-        bool link = openRun(styles.get(b.style), b.linkUrl, b, nullptr, "hyphen", noStyle);
+    if (it.k == IK::Disc) {
+      if (i == l.itemEnd - 1 && l.endsWithHyphen) {
+        bool link = openRun(it, nullptr, "hyphen", noStyle);
         out += "-";
         out += link ? "</a>" : "</span>";
       }
       i++;
       continue;
     }
-    if (b.flags & (BF_INDENT | BF_BOUND)) {
-      double w = b.rawPx;
-      if (b.flags & BF_BOUND) w += l.wordDeltaPx * (double)b.stretchWeight;
+    const bool indentBox = it.k == IK::Box && r.syn == SynKind::Indent;
+    const bool spacer = it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace);
+    if (indentBox || spacer) {
+      double w = cold(it).rawPx;
+      if (spacer) w += l.wordDeltaPx * (double)it.x;
       Tag t(out, "span");
       t.attrSafe("class", "tsr-sp");
-      t.attrSafe("data-syn", (b.flags & BF_INDENT) ? "indent" : "boundary");
+      t.attrSafe("data-syn", indentBox ? "indent" : "boundary");
       t.px("width", w);
       t.open();
       out += "</span>";
       i++;
       continue;
     }
-    if (b.flags & BF_PUNCT_SP) { i++; continue; }  // absorbed by glyph advance
-    if (b.isPunctGlyph()) {
-      const bool open = b.flags & BF_PUNCT_OPEN;
-      const bool halfPresent =
-          open ? (i > l.blockBegin && (bl[i - 1].flags & BF_PUNCT_SP) &&
-                  (bl[i - 1].flags & BF_PUNCT_OPEN))
-               : (i + 1 < l.blockEnd && (bl[i + 1].flags & BF_PUNCT_SP) &&
-                  !(bl[i + 1].flags & BF_PUNCT_OPEN));
+    if (it.k == IK::Glue && (it.cls == (u8)GC::Blank || it.cls == (u8)GC::InterChar)) {
+      i++;  // a blank: absorbed by its glyph's advance; a gap: the run's letter-spacing
+      continue;
+    }
+    if (it.k == IK::Box && r.rc == RealizeClass::BlankBearing) {
+      // the glyph's own blank (its half em) on this line, else squeezed away
+      const bool open = kCCFlags[it.cls] & kCC_open;
+      const i64 k = open ? prevOnLine(i) : nextOnLine(i);
+      const bool halfPresent = k >= 0 && v[k].k == IK::Glue && v[k].cls == (u8)GC::Blank &&
+                               ((v[k].attrs & IA_OwnedByNext) != 0) == open;
       const char* squeeze = halfPresent ? nullptr : (open ? "tsr-sqL" : "tsr-sqR");
-      bool link = openRun(styles.get(b.style), b.linkUrl, b, squeeze, nullptr, noStyle);
-      escapeHtml(out, strs.get(b.text));
+      bool link = openRun(it, squeeze, nullptr, noStyle);
+      escapeHtml(out, strs.get(h.specs[it.aux].str));
       out += link ? "</a>" : "</span>";
       i++;
       continue;
     }
-    // —/…… defined-width block (1em single, 2em pair — App C): the engine
+    // —/…… defined-width box (1em single, 2em pair — App C): the engine
     // ASSUMES the defined advance instead of measuring (canvas cannot
     // predict DOM's full-width-ization of these), and the DOM — under
     // text-spacing-trim — shapes them to exactly that advance with
     // connected ink. Own span so no letter-spacing splits the pair; its
     // stretch gap becomes a margin.
-    if (b.flags & BF_PAIR) {
+    if (it.k == IK::Box && r.rc == RealizeClass::Pinned) {
       // the assumed advance is ENFORCED as an inline-block width: Blink
       // full-width-izes CJK dashes to exactly this budget, Gecko does not
       // (Noto's em dash is ~0.89em) and would leave every line with a ——
       // visibly short of the measure. No overflow:hidden — that would move
       // the baseline to the box bottom.
-      const bool keep = l.cjkDeltaPx != 0 && cjkGapFollows(i + 1 < l.blockEnd ? &bl[i + 1] : nullptr);
-      bool link = openRun(styles.get(b.style), b.linkUrl, b, nullptr, nullptr, [&](Tag& t) {
-        t.decl("display", "inline-block").decl("text-align", "center").px("width", b.rawPx);
+      const bool keep = l.cjkDeltaPx != 0 && isGap(nextOnLine(i));
+      const double wPx = cold(it).rawPx;
+      bool link = openRun(it, nullptr, nullptr, [&](Tag& t) {
+        t.decl("display", "inline-block").decl("text-align", "center").px("width", wPx);
         if (keep) t.px("margin-right", l.cjkDeltaPx);
       });
-      escapeHtml(out, strs.get(b.text));
+      escapeHtml(out, strs.get(h.specs[it.aux].str));
       out += link ? "</a>" : "</span>";
       i++;
       continue;
     }
-    if (b.isCjkChar()) {
-      u32 j = i;
-      while (j < l.blockEnd && bl[j].isCjkChar() && !(bl[j].flags & BF_PAIR) && sameRun(bl[j], b))
-        j++;
-      bool link = openRun(styles.get(b.style), b.linkUrl, b, nullptr, nullptr, [&](Tag& t) {
+    // the rest of this run on this line (a line-final hyphen point ends it:
+    // the hyphen glyph is a run of its own)
+    u32 j = i;
+    while (j < l.itemEnd && v[j].run == it.run && !(v[j].k == IK::Disc && j + 1 == l.itemEnd)) j++;
+    if (r.rc == RealizeClass::LetterSpaced) {
+      // a CJK run: letter-spacing realizes its InterChar gaps; the last one
+      // is real only when the run's last char has a gap after it on this
+      // line (the next char, or a closing glyph)
+      i64 last = -1;
+      for (u32 k = i; k < j; k++)
+        if (v[k].k != IK::Penalty) last = k;
+      const bool gapFollows = isGap(last);
+      bool link = openRun(it, nullptr, nullptr, [&](Tag& t) {
         if (l.cjkDeltaPx == 0) return;
         t.px("letter-spacing", l.cjkDeltaPx);
         // negate via the value, never by prepending '-': a negative delta
         // would otherwise render "--Npx" (invalid, dropped)
-        if (!cjkGapFollows(j < l.blockEnd ? &bl[j] : nullptr))
-          t.px("margin-right", -l.cjkDeltaPx);
+        if (!gapFollows) t.px("margin-right", -l.cjkDeltaPx);
       });
-      for (u32 k = i; k < j; k++) escapeHtml(out, strs.get(bl[k].text));
+      for (u32 k = i; k < j; k++)
+        if (v[k].k == IK::Box) escapeHtml(out, strs.get(h.specs[v[k].aux].str));
       out += link ? "</a>" : "</span>";
       i = j;
       continue;
     }
-    // Latin run: words and spaces. Mid-line hyphen points are absorbed (they
-    // render nothing) so the pieces sit in ONE text node and the browser
-    // kerns across the junction — the widths modelled it
-    // (LinebreakBlock::kernPx); a line-final hyphen still terminates the run
-    // to get its glyph.
-    u32 j = i;
-    while (j < l.blockEnd && sameRun(bl[j], b) &&
-           (!bl[j].isHyphen() || j + 1 < l.blockEnd) &&
-           !bl[j].isCjkChar() && !bl[j].math &&
-           !bl[j].isPunctGlyph() && !(bl[j].flags & (BF_INDENT | BF_BOUND)) &&
-           !(bl[j].flags & BF_PUNCT_SP))
-      j++;
-    bool link = openRun(styles.get(b.style), b.linkUrl, b, nullptr, nullptr, noStyle);
+    // a Latin run: words and spaces. Mid-line hyphen points paint nothing,
+    // so the pieces sit in ONE text node and the browser kerns across the
+    // junction — the Disc's unbroken width modelled it
+    bool link = openRun(it, nullptr, nullptr, noStyle);
     for (u32 k = i; k < j; k++) {
-      if (bl[k].isHyphen()) continue;
-      if (bl[k].isSpace()) out += ' ';
-      else escapeHtml(out, strs.get(bl[k].text));
+      const HItem& x = v[k];
+      if (x.k == IK::Box) escapeHtml(out, strs.get(h.specs[x.aux].str));
+      else if (x.k == IK::Glue) out += ' ';
     }
     out += link ? "</a>" : "</span>";
     i = j;

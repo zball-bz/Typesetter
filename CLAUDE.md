@@ -10,7 +10,9 @@ release).
 
 ```
 engine/src/        C++ core: api/ (Doc, wasm_api.cc) · ops/ (generated from
-                   engine/schema/schema.json = single source of truth) · markup/inline/codegen · resolve/ · emit/ ·
+                   engine/schema/schema.json = single source of truth) · markup/inline/codegen · resolve/ ·
+                   shape/ (TextRules, HList item lists) · emit/ (HLists; legacy.cc =
+                   fuseLegacy's CI oracle until P4-02) ·
                    break/ (Knuth–Plass) · layout/ · render/ (typeset + semantic +
                    paged serializers) · math/ · code/ (token fold)
 engine/test/       native runner (unit + goldens); engine/gen/ generated tables

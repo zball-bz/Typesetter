@@ -1,9 +1,12 @@
-// Content tree → flow units of linebreak blocks (document-model §6).
+// Content tree → flow units whose inline streams are HLists (plan P1-12;
+// shape/hlist.h), lowered to linebreak blocks for the legacy breaker
+// (document-model §6).
 // M2: Latin words + spaces + hyphen points, links, inline/block code,
 // headings (size-composed styles), list markers, quote indents, rules.
 #pragma once
 #include "../math/math.h"
 #include "../measure/measure.h"
+#include "../shape/hlist.h"
 
 namespace tsr {
 
@@ -50,12 +53,26 @@ struct LinebreakBlock {
   bool isSynthetic() const { return flags & (BF_BOUND | BF_INDENT); }
 };
 
-constexpr float BREAK_INF = 1e18f;
+constexpr float BREAK_INF = kPenInf;
+
+// What the legacy breaker reads of a block (plan P1-12): production lowers
+// each HList to these (fuseLegacy); the full LinebreakBlock is built only for
+// the blocks dump and the equivalence check (fuseCheck, legacy.h).
+struct BreakBlock {
+  Su width = 0, breakWidth = 0, spaceWidth = 0;
+  float breakPenalty = 0;  // INF = unbreakable after this block
+  u16 flags = 0;           // the BF_ kind bits
+  bool isSpace() const { return flags & BF_SPACE; }
+  bool isHyphen() const { return flags & BF_HYPHEN; }
+};
 
 // One table cell: its own miniature block stream, broken to the cell width
 // by the same KP breaker (document-model §6; alignment is layout-side).
 struct TableCell {
-  std::vector<LinebreakBlock> blocks;
+  HList hl;
+  std::vector<BreakBlock> blocks;  // fuseLegacy(hl), for the legacy breaker
+  std::vector<u32> blockStart;     // block b = hl.items [blockStart[b], blockStart[b+1])
+  std::vector<LinebreakBlock> legacy;  // MIGRATION: the legacy emitter's blocks (fuseCheck)
   std::vector<u32> breakpoints;
   double breakCost = 0;
   std::vector<u32> overfullLines;  // lines the breaker had to set Overfull
@@ -110,7 +127,12 @@ struct FlowUnit {
   u32 tCols = 0;               // Table: column count
   std::vector<u8> tAligns;     // Table: per-column 'l'/'c'/'r'
   std::vector<TableCell> cells;  // Table: row-major cells
-  std::vector<LinebreakBlock> blocks;
+  // the inline stream (Text units; plan P1-12), and its lowering for the
+  // legacy breaker: block b = hl.items [blockStart[b], blockStart[b+1])
+  HList hl;
+  std::vector<BreakBlock> blocks;
+  std::vector<u32> blockStart;
+  std::vector<LinebreakBlock> legacy;  // MIGRATION: the legacy emitter's blocks (fuseCheck)
   // filled by the typeset loop (Text units)
   std::vector<u32> breakpoints;
   double breakCost = 0;
@@ -135,7 +157,18 @@ std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena,
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
                              const StyleTable& styles, const Config& cfg);
 
+// The lowering of an HList to today's blocks (plan P1-12; the legacy breaker
+// reads them until P4-08): a specified table per item and glue class, equal
+// field by field to what the pre-HList emitter produced (fuseCheck, legacy.h).
+// The full form feeds the dumps and the check; production keeps only what
+// the breaker reads.
+void fuseLegacy(const HList& h, std::vector<LinebreakBlock>& blocks, std::vector<u32>& blockStart);
+void fuseLegacy(const HList& h, std::vector<BreakBlock>& blocks, std::vector<u32>& blockStart);
+void fuseLegacy(std::vector<TopBlock>& tops);  // every unit and cell, the breaker's form
+
 std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
+                       const StyleTable& styles);
+std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
                        const StyleTable& styles);
 std::string dumpBreaks(const std::vector<TopBlock>& tops);
 std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& strs);

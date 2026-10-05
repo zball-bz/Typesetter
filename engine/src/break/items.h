@@ -1,8 +1,9 @@
 // The breaker's item projection (plan P0-12; design T6 S1, TeX semantics).
 //
-// LinebreakBlock fuses box width, glue capacity, paint weight and penalty
-// under BF_* flags; every layer used to re-derive what a break discards. The
-// breaker reads TeX items instead:
+// The legacy block (BreakBlock: fuseLegacy's lowering of an HList, plan
+// P1-12) fuses box width, glue capacity and penalty under BF_* flags; every
+// layer used to re-derive what a break discards. The breaker reads TeX items
+// instead:
 //   Box      w                       (a word, glyph, formula, indent)
 //   Glue     w, stretch, shrink      (discarded at a break and at a line start)
 //   Penalty  pen | Forbidden | Forced (a break here keeps what precedes it)
@@ -11,7 +12,8 @@
 // Forbidden; a Disc whose penalty is not Forbidden. A Forced penalty must
 // break, wherever it appears; the paragraph end is an implicit Forced break.
 //
-// Until T5 produces items (S16), blocksToItems is the adapter:
+// Until the item-native breaker reads the HList (P4-08), blocksToItems is
+// the adapter:
 //   space / boundary / punct half   -> [Penalty(pen) if pen != 0] Glue(w, cap, cap)
 //   CJK char                        -> Box, Penalty(Forbidden), Glue(0, cap, cap), Penalty(pen)
 //   hyphen point                    -> Disc{w = junction kern, pre = hyphen width}
@@ -48,7 +50,7 @@ static_assert(std::has_unique_object_representations_v<BItem>);
 inline bool penForbidden(float p) { return !(p < BREAK_INF); }
 inline i32 penThousandths(float p) { return (i32)std::lround((double)p * 1000.0); }
 
-inline void blocksToItems(const std::vector<LinebreakBlock>& blocks, std::vector<BItem>& out) {
+inline void blocksToItems(const std::vector<BreakBlock>& blocks, std::vector<BItem>& out) {
   out.clear();
   out.reserve(blocks.size() * 2);
   auto penalty = [&](u32 bi, float p) {
@@ -60,7 +62,7 @@ inline void blocksToItems(const std::vector<LinebreakBlock>& blocks, std::vector
     out.push_back(it);
   };
   for (u32 bi = 0; bi < (u32)blocks.size(); bi++) {
-    const LinebreakBlock& b = blocks[bi];
+    const BreakBlock& b = blocks[bi];
     if (b.isHyphen()) {
       BItem it;
       it.k = ItemKind::Disc;

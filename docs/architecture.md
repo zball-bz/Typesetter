@@ -43,7 +43,7 @@ Source extension: `.tsm`. C++ namespace: `tsr`.
 
 Why: golden tests and fuzzing run natively in CI with gdb/ASan/UBSan available; iteration speed does not pay the emcc tax; the WASM glue stays a thin adapter that cannot accumulate logic.
 
-`tsrc` is the inspectability tool (v2's "every stage inspectable"): `tsrc --stage=skeleton|ast|js|tree|blocks|breaks|layout|semantic|typeset input.tsm` prints that stage's dump. Stages after ops ingestion read recorded `.ops` fixtures (see §6 for why).
+`tsrc` is the inspectability tool (v2's "every stage inspectable"): `tsrc --stage=skeleton|ast|js|tree|blocks|hlist|breaks|layout|semantic|typeset input.tsm` prints that stage's dump. Stages after ops ingestion read recorded `.ops` fixtures (see §6 for why).
 
 ### 2.2 Module map
 
@@ -77,15 +77,20 @@ semantic/   counters, locale terms, the Index (LOCATE, BIND) and MATERIALIZE
 resolve/    the phase driver (§11.1): LOCATE → BIND → MATERIALIZE; the input
             tree is not changed, the output replaces it (plan P1-10)
 shape/      TextRules: the one character classifier (classes from
-            engine/rules + the pinned UCD via tools/ucdc.mjs; docs/shaping-design.md)
-emit/       ContentTree → BlockStream          (script segmentation, CJK rules
-                                                App C, hyphenation, style runs)
+            engine/rules + the pinned UCD via tools/ucdc.mjs; docs/shaping-design.md);
+            hlist.h: the horizontal item list (Box/Glue/Penalty/Disc, run
+            instances, cold records) and its legality lint
+emit/       ContentTree → flow units of HLists (script segmentation, CJK rules
+                                                App C, hyphenation, run instances);
+            fuseLegacy lowers each list to the legacy breaker's blocks (until
+            P4-08); legacy.cc keeps the pre-HList emitter as its CI oracle
 hyphen/     Liang runtime over compiled patterns (gen/)
 measure/    MeasureRequest batching, per-doc metric store, exact/pending/invalid
             states (§9), ε policy (§7)
 break/      Knuth–Plass DP (port of PoC linebreak.ts, cost fn + parshape widths)
 layout/     Breaks + vertical metrics → Frames (paragraph rects, line ys,
-                                                per-line spacing values, k-rule §8)
+                                                per-line spacing values, k-rule §8);
+            lines are item ranges of the unit's HList
 render/     semantic.cc (flow HTML §9) and typeset.cc (line-level HTML §8),
             HTML escaping, data-s/e anchors
 api/        wasm_api.cc (C ABI, EMSCRIPTEN_KEEPALIVE), native_cli.cc (tsrc)

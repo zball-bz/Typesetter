@@ -24,7 +24,7 @@ struct LineWidths {
   Su at(u32 i) const { return (i < narrowK && narrow > 0) ? narrow : constant; }
 };
 
-BreakResult breakLines(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
+BreakResult breakLines(const std::vector<BreakBlock>& blocks, LineWidths widths,
                        const CostParams& params, u32 cursorSearchRange = 5,
                        bool finalPass = false);
 BreakResult breakItems(const std::vector<BItem>& items, u32 nBlocks, LineWidths widths,
@@ -37,7 +37,7 @@ BreakResult breakItems(const std::vector<BItem>& items, u32 nBlocks, LineWidths 
 // and cost params, so results are keyed by that and shared process-wide
 // across documents — an editing session re-breaks only the paragraphs a
 // keystroke actually changed.
-BreakResult breakLinesRetry(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
+BreakResult breakLinesRetry(const std::vector<BreakBlock>& blocks, LineWidths widths,
                             const CostParams& params);
 
 }  // namespace tsr

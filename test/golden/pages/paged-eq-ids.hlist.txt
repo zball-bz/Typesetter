@@ -1,0 +1,74 @@
+top pid=0 units=1
+ unit text indent=0su anchor="sec-a"
+  box Other "Labelled" w=6555su r0 @[2,18)
+  glue word w=411su x=1 cap=411su kern="d h" src r0 @[2,18)
+  box Other "heading" w=5736su r0 @[2,18)
+  run r0 plain BOLD x1.60
+top pid=1 units=1
+ unit text indent=0su
+  box Other "A" w=513su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="A s" src r0 @[28,99)
+  box Other "short" w=2561su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="t p" src r0 @[28,99)
+  box Other "para" w=2049su r0 @[28,99)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[28,99)
+  box Other "graph" w=2561su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="h b" src r0 @[28,99)
+  box Other "be" w=1025su r0 @[28,99)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[28,99)
+  box Other "fore" w=2049su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="e a" src r0 @[28,99)
+  box Other "a" w=513su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="a l" src r0 @[28,99)
+  box Other "la" w=1025su r0 @[28,99)
+  disc pen=0.7 w=0su pre="-" 513su kern="ab" r0 @[28,99)
+  box Other "belled" w=3073su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="d d" src r0 @[28,99)
+  box Other "dis" w=1537su r0 @[28,99)
+  disc pen=0.7 w=0su pre="-" 513su kern="sp" r0 @[28,99)
+  box Other "play" w=2049su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="y e" src r0 @[28,99)
+  box Other "equa" w=2049su r0 @[28,99)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[28,99)
+  box Other "tion" w=2049su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="n o" src r0 @[28,99)
+  box Other "on" w=1025su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="n t" src r0 @[28,99)
+  box Other "the" w=1537su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="e s" src r0 @[28,99)
+  box Other "same" w=2049su r0 @[28,99)
+  glue word w=257su x=1 cap=257su kern="e s" src r0 @[28,99)
+  box Other "sheet." w=3073su r0 @[28,99)
+  run r0 plain
+top pid=2 units=1
+ unit math indent=0su anchor="eq-pyth" w=5522su asc=967su desc=76su
+top pid=3 units=1
+ unit math indent=0su anchor="eq-euler" w=4850su asc=951su desc=76su
+top pid=4 units=1
+ unit text indent=0su
+  box Other "See" w=1537su r0 @[165,168)
+  glue word w=257su x=1 cap=257su src r0 @[165,168)
+  box Other "§1" w=1128su r1 @[169,175)
+  box Other "," w=513su r2 @[175,176)
+  glue word w=257su x=1 cap=257su src r2 @[175,176)
+  box Ideo "式" w=1025su wt=0.6 cap=102su r3 @[177,185)
+  pen 0 r3
+  glue word w=257su x=1 cap=257su src r4 @[177,185)
+  box Other "(1)" w=1537su r4 @[177,185)
+  glue word w=257su x=1 cap=257su src r5 @[186,189)
+  box Other "and" w=1537su r5 @[186,189)
+  glue word w=257su x=1 cap=257su src r5 @[186,189)
+  box Ideo "式" w=1025su wt=0.6 cap=102su r6 @[190,199)
+  pen 0 r6
+  glue word w=257su x=1 cap=257su src r7 @[190,199)
+  box Other "(2)" w=1537su r7 @[190,199)
+  box Other "." w=513su r8 @[199,200)
+  run r0 plain
+  run r1 plain ref LINK link="#tsr-sec-a"
+  run r2 plain
+  run r3 letter-spaced ref LINK CJK link="#tsr-eq-pyth"
+  run r4 plain ref LINK link="#tsr-eq-pyth"
+  run r5 plain
+  run r6 letter-spaced ref LINK CJK link="#tsr-eq-euler"
+  run r7 plain ref LINK link="#tsr-eq-euler"
+  run r8 plain
