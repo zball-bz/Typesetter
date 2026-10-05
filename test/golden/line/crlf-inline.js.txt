@@ -1,0 +1,17 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+/*0b64b1de83b7f73b[0*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("A "),0,1), __v((strong)(__a(__t("content over a join"),10,30))), __a(__t(" and "),32,35), __a(__ln("u", __a(__t("a link text"),37,49)),36,53), __a(__t(" and "),54,57), __a(__cd("code span"),58,70), __a(__t(" end."),71,75)),0,75));
+} catch (__e) { __fail(0, __e, __h); } }/*0b64b1de83b7f73b]0*/
+/*0b64b1de83b7f73b[1*/{ const __h = __height(); try {
+__emit(__a(__qt(__a(__p(__a(__t("quoted "),81,87), __a(__mi("a +\nb"),88,98), __a(__t(" math and "),99,107), __v((em)(__a(__t("x y"),112,118))), __a(__t(" done."),120,125)),81,125)),79,92));
+} catch (__e) { __fail(1, __e, __h); } }/*0b64b1de83b7f73b]1*/
+/*0b64b1de83b7f73b[2*/{ const __h = __height(); try {
+__emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("item "),131,135), __a(__mi("c +\nd"),136,146), __a(__t(" and "),147,150), __v(((1 +
+2))), __a(__t(" end."),163,167)),131,167)),129,140)),129,140));
+} catch (__e) { __fail(2, __e, __h); } }/*0b64b1de83b7f73b]2*/
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=0b64b1de83b7f73b;169;[[0,75,2],[79,92,2],[129,140,2]]

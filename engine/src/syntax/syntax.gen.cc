@@ -167,7 +167,7 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       out += "splice";
       spanOut();
       out += " expr=\"";
-      appendEscaped(out, src.slice(side<SpliceP>(n).expr));
+      appendEscaped(out, strs.get(side<SpliceP>(n).expr));
       out += "\"";
       break;
     }

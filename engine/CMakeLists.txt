@@ -13,6 +13,7 @@ add_library(tsr_core STATIC
   src/inline/inline.cc
   src/inline/fragment.cc
   src/syntax/syntax.gen.cc
+  src/syntax/lexer.cc
   src/codegen/codegen.cc
   src/ops/ops.cc
   src/ops/schema.gen.cc
@@ -37,7 +38,7 @@ target_compile_options(tsr_core PRIVATE -ffp-contract=off)
 # front end: every enumerator handled explicitly, no default: arms (plan P0-02)
 set_source_files_properties(
   src/linepass/linepass.cc src/inline/inline.cc src/inline/fragment.cc
-  src/syntax/syntax.gen.cc src/codegen/codegen.cc
+  src/syntax/syntax.gen.cc src/syntax/lexer.cc src/codegen/codegen.cc
   PROPERTIES COMPILE_OPTIONS "-Wswitch-enum;-Werror=switch-enum")
 target_include_directories(tsr_core PUBLIC src)
 

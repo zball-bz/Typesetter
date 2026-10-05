@@ -51,17 +51,17 @@ struct Gen {
         break;
       case AstKind::Splice: {
         const SpliceP& sp = side<SpliceP>(n);
+        std::string_view expr = strs.get(sp.expr);
         out += "__v(";
         if (n->nkids == 0) {
           out += "(";
-          out += src.slice(sp.expr);
+          out += expr;
           out += ")";
-        } else if (sp.lastCallStart > 0) {
+        } else if (sp.lastCall > 0) {
           // trailing content args desugar into the final call: f(a)[c] → f(a, c)
-          out += src.view().substr(sp.expr.start, sp.lastCallStart - sp.expr.start);
+          out += expr.substr(0, sp.lastCall);
           out += "(";
-          std::string_view inner =
-              src.view().substr(sp.lastCallStart + 1, sp.expr.end - 1 - (sp.lastCallStart + 1));
+          std::string_view inner = expr.substr(sp.lastCall + 1, expr.size() - 1 - (sp.lastCall + 1));
           bool innerEmpty = true;
           for (char c : inner)
             if (c != ' ' && c != '\t' && c != '\n' && c != '\r') { innerEmpty = false; break; }
@@ -70,7 +70,7 @@ struct Gen {
           out += ")";
         } else {
           out += "(";
-          out += src.slice(sp.expr);
+          out += expr;
           out += ")(";
           children(n->kids(), false);
           out += ")";

@@ -92,29 +92,6 @@ inline bool isIdentStart(char c) {
 }
 inline bool isIdentCont(char c) { return isIdentStart(c) || (c >= '0' && c <= '9'); }
 
-// Scans a bare-splice head chain starting after '#': ident (.ident | (...))*
-// (content args [] arrive in M2). Returns end, or start if not a valid head.
-inline u32 scanSpliceHead(std::string_view src, u32 pos) {
-  u32 i = pos;
-  if (i >= src.size() || !isIdentStart(src[i])) return pos;
-  while (i < src.size() && isIdentCont(src[i])) i++;
-  for (;;) {
-    if (i + 1 < src.size() && src[i] == '.' && isIdentStart(src[i + 1])) {
-      i += 2;
-      while (i < src.size() && isIdentCont(src[i])) i++;
-      continue;
-    }
-    if (i < src.size() && src[i] == '(') {
-      JsScan s = scanJs(src, i, /*balanced=*/true);
-      if (!s.ok) return i;  // truncate at the broken call — caller reports
-      i = s.end;
-      continue;
-    }
-    break;
-  }
-  return i;
-}
-
 // --- top-level token helpers (plan P0-05: statement framing and hygiene) ---
 // Walks `src`, skipping strings, templates and comments, and calls
 // fn(kind, start, end, depth) for every identifier ('i') and every ',' / '='

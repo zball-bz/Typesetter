@@ -1,0 +1,18 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="66">Notes close at their own bracket: a<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> and the text goes on.</p>
+<p data-pid="1" data-s="68" data-e="119">A link around math: <a href="u">range <code class="tsr-mathsrc">$[0,1)$</code></a> is one link.</p>
+<p data-pid="2" data-s="121" data-e="184"><strong>code </strong><code>a]b</code><strong> here</strong> and the body ends after the code span.</p>
+<p data-pid="3" data-s="186" data-e="278">Code spans by run length: <code>a`b</code>, <code>`tick`</code> and <code>x</code>; an unclosed `` run stays literal.</p>
+<p data-pid="4" data-s="280" data-e="345">Pairs skip stray brackets: <strong>range [0, 1) only</strong> and <em>see [sic</em> ok.</p>
+<p data-pid="5" data-s="347" data-e="406">Math decodes only the dollar escape: <code class="tsr-mathsrc">$a $ b$</code> and <code class="tsr-mathsrc">$x \, y$</code>.</p>
+<p data-pid="6" data-s="408" data-e="495">Islands that would swallow a closer: <a href="u">price $5</a> and <strong>cost $3</strong> then <code class="tsr-mathsrc">$x$</code> after.</p>
+<h1 data-pid="7" data-s="497" data-e="506" id="tsr-tgt">Targets</h1>
+<h2 data-pid="8" data-s="514" data-e="529" id="tsr-a]b">An odd label</h2>
+<p data-pid="9" data-s="537" data-e="582">References: <a href="#tsr-tgt">§1</a> and <a href="#tsr-a]b">§1.1</a> in brackets.</p>
+<div data-role="notes" data-pid="10" data-s="0" data-e="582">
+<hr data-s="0" data-e="582">
+<ol data-s="0" data-e="582">
+<li id="tsr-fn-1">a ] b <a href="#tsr-fnref-1">↩</a></li>
+</ol>
+</div>
+</div>

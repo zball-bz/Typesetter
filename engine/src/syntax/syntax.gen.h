@@ -6,7 +6,7 @@
 
 namespace tsr {
 
-constexpr u32 SYNTAX_VERSION = 1;
+constexpr u32 SYNTAX_VERSION = 2;
 
 // character classes
 inline bool isSpliceHead(char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == '$'; }
@@ -46,8 +46,8 @@ struct MathP {
   StrRef label = 0;
 };
 struct SpliceP {
-  Span expr{};
-  u32 lastCallStart = 0;
+  StrRef expr = 0;
+  u32 lastCall = 0;
 };
 struct StmtP {
   bool let = 0;
@@ -55,6 +55,61 @@ struct StmtP {
 };
 struct ErrorP {
   StrRef message = 0;
+};
+
+// inline rules (INLINE rows): precedence and body mode per rule
+enum class InlineRule : u8 { none, code, math, comment, splice, strong, em, link, note, ref, refs };
+enum class InlinePrec : u8 { Island, Comment, Markup };
+enum class InlineBody : u8 { Verbatim, CallChain, Pair, LinkText, Content, Ident, IdList };
+constexpr InlinePrec kInlinePrec[] = {InlinePrec::Markup, InlinePrec::Island, InlinePrec::Island, InlinePrec::Comment, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup};
+constexpr InlineBody kInlineBody[] = {InlineBody::Pair, InlineBody::Verbatim, InlineBody::Verbatim, InlineBody::Verbatim, InlineBody::CallChain, InlineBody::Pair, InlineBody::Pair, InlineBody::LinkText, InlineBody::Content, InlineBody::Ident, InlineBody::IdList};
+// the rule whose literal opener starts at t[i] (longest first)
+inline InlineRule inlineOpener(std::string_view t, u32 i) {
+  switch (t[i]) {
+    case '`':
+      return InlineRule::code;
+    case '$':
+      return InlineRule::math;
+    case '%':
+      if (t.substr(i, 3) == "%--") return InlineRule::comment;
+      break;
+    case '#':
+      return InlineRule::splice;
+    case '*':
+      return InlineRule::strong;
+    case '_':
+      return InlineRule::em;
+    case '[':
+      return InlineRule::link;
+    case '^':
+      if (t.substr(i, 2) == "^[") return InlineRule::note;
+      break;
+    case '@':
+      if (t.substr(i, 2) == "@[") return InlineRule::refs;
+      return InlineRule::ref;
+    default:
+      break;
+  }
+  return InlineRule::none;
+}
+// bytes that may start an inline rule (everything else is plain text)
+constexpr bool kInlineOpenerByte[256] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 // a bare splice head that cannot start a JS expression (plan P0-05)

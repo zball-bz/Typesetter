@@ -57,10 +57,12 @@ linepass/   SourceText → BlockSkeleton         (containers, regions, islands,
                                                 per-line provenance §4.1)
 syntax/     syntax.def → syntax.gen.{h,cc}     (character classes, delimiters,
                                                 blocks, sugar slots + payloads,
-                                                token tags; docs/syntax-design.md)
-inline/     BlockSkeleton → AST                (hand-written inline parser + splice
-                                                lexer; PackCC was planned and never
-                                                adopted)
+                                                token tags; docs/syntax-design.md);
+            cursor.h (a leaf's joined text) and lexer.h (atoms, brackets)
+inline/     BlockSkeleton → AST                (inline parser over each leaf's joined
+                                                text, dispatched by the INLINE rows;
+                                                atoms and brackets from syntax/lexer.h;
+                                                PackCC was planned and never adopted)
 ast/        CallAST: Call{slot}/Splice/Stmt/Error nodes, side records, generic
             dump (plan P1-05)
 codegen/    AST → JsProgram                    (text, source map, import list)

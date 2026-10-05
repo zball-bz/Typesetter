@@ -1,0 +1,62 @@
+doc @[0,583)
+  para @[0,66)
+    text @[0,35) str="Notes close at their own bracket: a"
+    note @[35,44)
+      text @[37,43) str="a ] b"
+    text @[45,66) str=" and the text goes on."
+  para @[68,119)
+    text @[68,87) str="A link around math: "
+    link @[88,106) url="u"
+      text @[89,94) str="range "
+      math @[95,102) display=0 src="[0,1)"
+    text @[107,119) str=" is one link."
+  para @[121,184)
+    splice @[121,145) expr="strong"
+      arg @[129,144)
+        text @[129,133) str="code "
+        code @[134,139) str="a]b"
+        text @[140,144) str=" here"
+    text @[146,184) str=" and the body ends after the code span."
+  para @[186,278)
+    text @[186,211) str="Code spans by run length: "
+    code @[212,219) str="a`b"
+    text @[219,220) str=", "
+    code @[221,233) str="`tick`"
+    text @[234,237) str=" and "
+    code @[238,243) str="x"
+    text @[243,278) str="; an unclosed `` run stays literal."
+  para @[280,345)
+    text @[280,306) str="Pairs skip stray brackets: "
+    styled @[307,326) marker=*
+      text @[308,325) str="range [0, 1) only"
+    text @[327,330) str=" and "
+    styled @[331,341) marker=_
+      text @[332,340) str="see [sic"
+    text @[342,345) str=" ok."
+  para @[347,406)
+    text @[347,383) str="Math decodes only the dollar escape: "
+    math @[384,392) display=0 src="a $ b"
+    text @[393,396) str=" and "
+    math @[397,405) display=0 src="x \\, y"
+    text @[405,406) str="."
+  para @[408,495)
+    text @[408,444) str="Islands that would swallow a closer: "
+    link @[445,458) url="u"
+      text @[446,454) str="price $5"
+    text @[459,462) str=" and "
+    splice @[463,479) expr="strong"
+      arg @[471,478)
+        text @[471,478) str="cost $3"
+    text @[480,484) str=" then "
+    math @[485,488) display=0 src="x"
+    text @[489,495) str=" after."
+  heading @[497,506) level=1 label="tgt"
+    text @[499,506) str="Targets"
+  heading @[514,529) level=2 label="a]b"
+    text @[517,529) str="An odd label"
+  para @[537,582)
+    text @[537,548) str="References: "
+    ref @[549,557) target="tgt"
+    text @[558,561) str=" and "
+    ref @[562,569) target="a]b"
+    text @[570,582) str=" in brackets."

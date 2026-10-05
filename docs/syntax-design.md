@@ -20,12 +20,14 @@ CallAST, step S2). Generated reference: `docs/syntax-table.md`.
 
 Rows are data; behaviour is a closed set implemented in code. The row kinds:
 
-- `SYNTAX_VERSION(n)` — raised whenever a row changes what a document means
+- `SYNTAX_VERSION(n)` (2 since P1-06) — raised whenever a row changes what a document means
   or how the AST prints. It is part of the ABI handshake (`tsr2_abi()` →
   `syntaxVersion`; `runtime/src/shared/abi.mjs` refuses an engine whose
   version differs from the runtime's generated one).
-- `CLASS(name, ranges)` — byte classes. Generated as predicates; the
-  table-driven lexer (plan P1-06) consumes them.
+- `CLASS(name, ranges)` — byte classes, generated as predicates.
+  `isSpliceHead`/`isSpliceCont` drive the splice and reference lexers (P1-06);
+  the id and escape classes take over with the unified label grammar (P2-06)
+  and the escape rule (P3-33).
 - `INLINE(id, open, close, body, params, guard, prec, slot, capture)` — inline
   delimiters. The body mode (`Verbatim`, `Pair`, `CallChain`, `LinkText`,
   `Content`, `Ident`, `IdList`), the guard (`Intraword`, `PrevIdent`) and the
@@ -68,7 +70,7 @@ struct AstNode {            // 32 bytes native (static_assert), 28 in wasm32
 
 A node's typed payload — `HeadingP{level, label}`, `ListP{ordered, start}`,
 `FenceP{lang, args, bodyOffset}`, `RegionP{args}`, `LinkP{url}`,
-`MathP{display, label}`, `SpliceP{expr, lastCallStart}`,
+`MathP{display, label}`, `SpliceP{expr, lastCall}` (the joined JS text and the offset of its trailing call),
 `StmtP{let, js}`, `ErrorP{message}` — is a **side record** allocated in
 the same arena allocation right behind the node (`AstAlloc::node<P>`), read
 with `side<P>(n)`. Nodes whose slot has no payload (para, item, quote, rule,
@@ -118,9 +120,52 @@ exactly one display formula still prints `__mb` (the interim L1 rule; T2's
 normalisation retires it). `fragment.cc` (inline fragments: sidecars,
 `m.parse`) converts the same tree to content nodes.
 
-## 5. Next steps
+## 5. The inline lexer (as built from plan P1-06)
 
-- P1-06: the table-driven lexer reads `CLASS` and `INLINE`.
+`inline/inline.cc` parses a leaf (a paragraph, heading or table cell)
+over its **joined text** (`syntax/cursor.h`, `LeafText`): the leaf's line
+slices joined by one `\n`. A join is structural — CRLF, trailing blanks and
+container prefixes (`> `, list indentation) between the lines never reach the
+lexer — and every scan runs over this view (or a prefix of it), so no scan can
+leave its leaf. When the lines are adjacent in the source the view is the raw
+text itself; offsets map back to raw offsets for every span.
+
+Dispatch is the INLINE rows: `inlineOpener(t, i)` (generated) names the rule
+whose literal opener starts at `i`, longest first, and `kInlineOpenerByte`
+marks the bytes that can start one — runs of other bytes are copied as plain
+text in one step (87K bench: parse 0.43 → 0.19 ms). Rule behaviour is code:
+
+| rule | behaviour |
+|---|---|
+| `code` | a run of N backticks closes at the next run of exactly N; joins read as spaces; one leading and one trailing space are stripped when both are present; an unclosed run is literal as a whole |
+| `math` | to the next unescaped `$` within the bound; `\$` is decoded, every other `\x` passes to the math parser; padded is display; a ` <id>` right after the closer is the label |
+| `comment` | `%--` … `--%`, nesting, within the bound; unclosed is literal with `parse-inline` |
+| `splice` | `#(` JS `)` or a head chain `ident ('.' ident \| '(' JS ')')*` (JS scanned by `jslex.h` across joins); directly adjacent `[…]` are content arguments; `;` ends it. The payload keeps the joined JS text (`SpliceP.expr`), so a splice in a quote compiles without the `> ` prefixes |
+| `strong`, `em` | strict pairs: an opener needs a glyph after it, a closer a glyph before it and an open frame of its marker on top |
+| `link` | `[text](url)`, see brackets below; the URL is a plain paren match on its line |
+| `note` | `^[…]` content body |
+| `ref`, `refs` | `@id` (not after an identifier character); `@[a, b]` an id list on one line (`\]` escapes; ids trimmed and joined by `, `) |
+
+**Atoms and brackets.** `syntax/lexer.h` holds the primitives the parser,
+the bracket counter and the region cell splitter share: `lexCodeSpan`,
+`lexMath`, `lexComment`, `lexSplice` and `atomEnd` (escape, code span, math,
+comment, splice head with its JS). A bracket body — link text, a content
+argument, a note — closes at the `]` its **island-aware** match finds (atoms
+skipped: `` #strong[code `a]b` here] ``, `[range $[0,1)$](u)`). When an
+island would swallow that closer, the body falls back to the **plain** match
+(escapes only) and the islands inside it are bounded by it, so
+`[price $5](u) and $x$` stays a link followed by a formula (the plan P0-04
+acceptance). `BracketMatcher` memoises one scan per opener and records every
+bracket it passes, so matching is linear. (The design's weak `[` frames on
+the inline stack were not adopted: they lose that acceptance case, let
+emphasis win over links — `*a [b* c](u)` — and change today's text node
+boundaries; see PROGRESS, deviations.)
+
+**Cells.** `splitCells` cuts a region line at `|` outside atoms and outside a
+splice's content arguments.
+
+## 6. Next steps
+
 - P1-07: the block automaton reads `BLOCK`.
 - P1-09: editor grammars from `syntax.gen.json`.
 - P2-11 / P2-13: region provenance and splice bodies delete the legacy

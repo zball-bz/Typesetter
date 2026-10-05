@@ -1,0 +1,24 @@
+inline pid=1 "[0,1)"
+hbox Ord w=2110 asc=727 desc=215
+  hbox Ord w=2110 asc=727 desc=215
+    glyph "[" Open w=297 asc=721 desc=209 px=16
+    glyph "0" Ord w=511 asc=721 desc=14 px=16 @(297,0)
+    glyph "," Punct w=284 asc=141 desc=215 px=16 @(808,0)
+    glue w=171 @(1092,0)
+    glyph "1" Ord w=511 asc=727 desc=7 px=16 @(1263,0)
+    glyph ")" Close w=336 asc=721 desc=209 px=16 @(1774,0)
+inline pid=5 "a $ b"
+hbox Ord w=1796 asc=725 desc=110
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+  glyph "$" Ord w=570 asc=725 desc=110 px=16 @(624,0)
+  glyph "b" Ord w=602 asc=700 desc=10 px=16 @(1194,0)
+inline pid=5 "x \\, y"
+hbox Ord w=2114 asc=721 desc=239
+  glyph "x" Ord w=539 asc=475 desc=12 px=16
+  glyph "\\" Ord w=513 asc=721 desc=209 px=16 @(539,0)
+  glyph "," Punct w=284 asc=141 desc=215 px=16 @(1052,0)
+  glue w=171 @(1336,0)
+  glyph "y" Ord w=607 asc=479 desc=239 px=16 @(1507,0)
+inline pid=6 "x"
+hbox Ord w=539 asc=475 desc=12
+  glyph "x" Ord w=539 asc=475 desc=12 px=16

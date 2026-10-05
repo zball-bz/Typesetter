@@ -1,7 +1,12 @@
-// Inline parser (M2): text, strict-pair emphasis, escapes, splices (with
-// content arguments), links, code spans, inline comments. Hand-rolled to the
-// v2 §3/§5 spec; multi-span input (paragraph lines join with soft spaces).
+// Inline parser (plan P1-06; design T1 SurfaceLexer, phase 2): text,
+// strict-pair emphasis, escapes, splices with content arguments, links, code
+// spans, math islands, inline comments, notes and references over a leaf's
+// joined text (syntax/cursor.h). Dispatch is the INLINE rows' opener table
+// (syntax.gen.h); atoms and bracket bodies come from the shared lexer
+// primitives (syntax/lexer.h), so no scan leaves its leaf or its body.
 #include "../ast/ast.h"
+#include "../syntax/cursor.h"
+#include "../syntax/lexer.h"
 #include "jslex.h"
 
 namespace tsr {
@@ -14,81 +19,30 @@ struct Frame {
   std::vector<AstNode*> items;
 };
 
+// One parse of the range [from, to) of a leaf's text. Content bodies (link
+// text, content arguments, notes) are sub-parses bounded by their closer.
 struct InlineParser {
-  const SourceText& src;
+  const LeafText& L;
+  const u32 from, to;
   Arena& arena;
   Interner& strs;
   DiagSink& diags;
-  std::string_view all;
-
-  std::vector<Span> spans;
-  size_t sp = 0;  // current span index
-  u32 i = 0;      // current byte position (within spans[sp])
+  const std::string_view t;  // the leaf's text up to `to`: every scan stops there
+  BracketMatcher brackets;
+  AstAlloc A;
 
   std::vector<Frame> stack;
   std::string buf;
-  u32 bufStart = 0, bufEnd = 0;
+  u32 bufStart = 0, bufEnd = 0;  // view offsets
   bool pendingSpace = false;
   bool prevGlyph = false;
+  u32 i = 0;
 
-  AstAlloc A{arena};
+  InlineParser(const LeafText& leaf, u32 a, u32 b, Arena& ar, Interner& st, DiagSink& dg)
+      : L(leaf), from(a), to(b), arena(ar), strs(st), diags(dg), t(leaf.text().substr(0, b)),
+        brackets(t), A{ar} {}
 
-  u32 spanEnd() const { return spans[sp].end; }
-  bool atEnd() const { return sp >= spans.size(); }
-  void advanceSpanIfNeeded() {
-    while (sp < spans.size() && i >= spans[sp].end) {
-      u32 prevEnd = spans[sp].end;
-      sp++;
-      if (sp < spans.size()) {
-        // Line join = soft space — EXCEPT between two CJK-class codepoints:
-        // a source line break inside CJK prose joins seamlessly (clreq).
-        auto cjkish = [](u32 c) { return isCjk(c) || c == 0x2014 || c == 0x2026; };
-        bool cjkJoin = false;
-        if (prevEnd > 0 && spans[sp].start < all.size()) {
-          u32 tmp = spans[sp].start;
-          cjkJoin = cjkish(utf8PrevCp(all, prevEnd)) && cjkish(utf8Next(all, tmp));
-        }
-        if (!cjkJoin) {
-          pendingSpace = true;
-          prevGlyph = false;
-        }
-        i = spans[sp].start;
-      }
-    }
-  }
-
-  // The bytes between two line spans of this leaf are a plain line break:
-  // trailing/leading blanks and exactly one \n (\r\n included) — no container
-  // prefix was stripped in between.
-  bool plainGap(u32 a, u32 b) const {
-    int nl = 0;
-    for (u32 p = a; p < b; p++) {
-      char c = all[p];
-      if (c == '\n') {
-        if (++nl > 1) return false;
-      } else if (c != ' ' && c != '\t' && c != '\r') {
-        return false;
-      }
-    }
-    return nl == 1;
-  }
-  // True if a raw scan from the cursor to the exclusive end `to` stays inside
-  // this leaf and crosses only plain line breaks — cross-line raw scans are
-  // only sound then. A scan that would end past the leaf's last span never
-  // is: islands and splices cannot escape their block (plan P0-04).
-  bool contiguous(u32 to) const {
-    if (spans.empty() || to > spans.back().end) return false;
-    for (size_t k = sp; k + 1 < spans.size() && spans[k].end < to; k++)
-      if (!plainGap(spans[k].end, spans[k + 1].start)) return false;
-    return true;
-  }
-  // exclusive end of this leaf's text
-  u32 leafEnd() const { return spans.empty() ? 0 : spans.back().end; }
-  // Move the cursor to raw offset `to`.
-  void seekTo(u32 to) {
-    while (sp < spans.size() && spans[sp].end < to) sp++;
-    i = to;
-  }
+  Span span(u32 a, u32 b) const { return L.rawSpan(a, b); }
 
   void put(char c, u32 pos, u32 len = 1) {
     if (buf.empty()) bufStart = pos;
@@ -103,9 +57,9 @@ struct InlineParser {
 
   void flushText() {
     if (buf.empty()) return;
-    AstNode* t = A.node(AstKind::Text, {bufStart, bufEnd});
-    t->str = strs.intern(buf);
-    stack.back().items.push_back(t);
+    AstNode* n = A.node(AstKind::Text, span(bufStart, bufEnd));
+    n->str = strs.intern(buf);
+    stack.back().items.push_back(n);
     buf.clear();
   }
 
@@ -119,366 +73,363 @@ struct InlineParser {
     }
   }
 
+  // put(t[k], k) for every k in [a, b): a run of plain text
+  void putRun(u32 a, u32 b) {
+    put(t[a], a);
+    buf.append(t.data() + a + 1, b - a - 1);
+    bufEnd = b;
+  }
+
   void pushItem(AstNode* n) {
     stack.back().items.push_back(n);
     prevGlyph = true;
   }
 
-  // find matching ']' from position `from` (which is at '['), single span
-  i32 matchBracket(u32 from, u32 lim) const {
-    int depth = 0;
-    for (u32 p = from; p < lim; p++) {
-      char c = all[p];
-      if (c == '\\') { p++; continue; }
-      if (c == '[') depth++;
-      else if (c == ']') {
-        depth--;
-        if (depth == 0) return (i32)p;
-      }
-    }
-    return -1;
-  }
-
-  // matching ')' for a URL — plain depth scan, NOT the JS lexer ('//' in
-  // https:// is not a comment here).
-  i32 matchParen(u32 from, u32 lim) const {
-    int depth = 0;
-    for (u32 p = from; p < lim; p++) {
-      char c = all[p];
-      if (c == '\\') { p++; continue; }
-      if (c == '(') depth++;
-      else if (c == ')') {
-        depth--;
-        if (depth == 0) return (i32)p;
-      }
-    }
-    return -1;
-  }
-
-  // a content body: an inline parse of one span
-  std::vector<AstNode*> parseSub(Span s) {
-    InlineParser p{src, arena, strs, diags, all};
-    p.spans = {s};
+  std::vector<AstNode*> parseSub(u32 a, u32 b) {
+    InlineParser p(L, a, b, arena, strs, diags);
     p.run();
     return std::move(p.stack.back().items);
   }
 
-  void handleSplice(u32 hashPos) {
-    const u32 lim = spanEnd();
-    u32 exprStart = hashPos + 1;
-    u32 exprEnd = exprStart;
-    u32 lastCall = 0;
-    if (exprStart < lim && all[exprStart] == '(') {
-      JsScan s = scanJs(all, exprStart, true);
-      bool ok = s.ok && (s.end <= lim || contiguous(s.end));
-      if (!ok) {
-        diags.add(Sev::Error, "splice-js", {hashPos, s.end}, "unbalanced #(...)");
-        put('#', hashPos);
-        i = hashPos + 1;
-        return;
-      }
-      exprEnd = s.end;
-    } else {
-      // head chain; track trailing call for content-arg desugaring
-      u32 p = exprStart;
-      if (p >= lim || !isIdentStart(all[p])) {
-        put('#', hashPos);
-        i = hashPos + 1;
-        return;
-      }
-      while (p < lim && isIdentCont(all[p])) p++;
-      for (;;) {
-        if (p + 1 < lim && all[p] == '.' && isIdentStart(all[p + 1])) {
-          p += 2;
-          while (p < lim && isIdentCont(all[p])) p++;
-          lastCall = 0;
-          continue;
-        }
-        if (p < lim && all[p] == '(') {
-          JsScan s = scanJs(all, p, true);
-          if (!s.ok || (s.end > lim && !contiguous(s.end))) break;
-          lastCall = p;
-          p = s.end;
-          continue;
-        }
-        break;
-      }
-      exprEnd = p;
+  // A line join: a soft space — except between two CJK-class codepoints,
+  // which join seamlessly (clreq).
+  void join() {
+    auto cjkish = [](u32 cp) { return isCjk(cp) || cp == 0x2014 || cp == 0x2026; };
+    u32 next = i + 1;
+    bool cjkJoin = next < t.size() && cjkish(utf8PrevCp(t, i)) && cjkish(utf8Next(t, next));
+    if (!cjkJoin) {
+      pendingSpace = true;
+      prevGlyph = false;
     }
+    i++;
+  }
 
+  // inline comment: invisible to the text around it (spacing state unchanged)
+  void comment() {
+    u32 end;
+    if (!lexComment(t, i, end)) {
+      // unclosed in its leaf: literal text, the error stays visible
+      diags.add(Sev::Error, "parse-inline", span(i, i + 3), "unterminated comment");
+      put('%', i);
+      put('-', i + 1);
+      put('-', i + 2);
+      i += 3;
+      return;
+    }
+    flushText();
+    AstNode* cm = A.node(AstKind::Comment, span(i, end));
+    cm->str = strs.intern(t.substr(i + 3, end - 3 - (i + 3)));
+    stack.back().items.push_back(cm);  // does not set prevGlyph
+    i = end;
+  }
+
+  // math island (v2 §5): verbatim to the closing '$' within the leaf; '\$'
+  // is the one escape it decodes
+  void math() {
+    u32 close;
+    if (!lexMath(t, i, close)) {
+      put('$', i);
+      i++;
+      return;
+    }
+    spaceBeforeItem();
+    flushText();
+    std::string body = mathText(t.substr(i + 1, close - (i + 1)));
+    // $ x $ (whitespace inside both fences) is display math (Typst rule)
+    auto isWs = [](char ch) { return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'; };
+    bool display = body.size() >= 2 && isWs(body.front()) && isWs(body.back());
+    size_t b0 = 0, b1 = body.size();
+    while (b0 < b1 && isWs(body[b0])) b0++;
+    while (b1 > b0 && isWs(body[b1 - 1])) b1--;
+    AstNode* mn = A.call<MathP>(SugarId::math, span(i, close + 1));
+    mn->str = strs.intern(std::string_view(body).substr(b0, b1 - b0));
+    side<MathP>(mn).display = display;
+    pushItem(mn);
+    // equation label: ` <id>` directly after the closing $ (v2 §11.1
+    // heading-label form); labelled display formulas get numbers
+    u32 after = close + 1;
+    if (after + 1 < to && t[after] == ' ' && t[after + 1] == '<') {
+      u32 lb = after + 2, le = lb;
+      while (le < to && t[le] != '>' && t[le] != '<' && t[le] != '\n') le++;
+      if (le < to && t[le] == '>' && le > lb) {
+        side<MathP>(mn).label = strs.intern(t.substr(lb, le - lb));
+        mn->span.end = L.raw(le + 1);
+        i = le + 1;
+        return;
+      }
+    }
+    i = after;
+  }
+
+  // code span: a run of N backticks to the next run of exactly N
+  void code() {
+    CodeSpanLex cs;
+    if (!lexCodeSpan(t, i, cs)) {  // an unclosed run is literal as a whole
+      for (u32 k = 0; k < cs.run; k++) put('`', i + k);
+      i += cs.run;
+      return;
+    }
+    spaceBeforeItem();
+    flushText();
+    AstNode* n = A.call(SugarId::code, span(i, cs.end));
+    n->str = strs.intern(codeSpanText(t.substr(cs.bodyStart, cs.bodyEnd - cs.bodyStart)));
+    pushItem(n);
+    i = cs.end;
+  }
+
+  // `(url)` right after a link's ']': a plain paren match on its line ('//'
+  // in https:// is not a comment here)
+  bool url(i32 close, u32& pclose) const {
+    u32 p = (u32)close + 1;
+    if (p >= to || t[p] != '(') return false;
+    int depth = 0;
+    for (; p < to && t[p] != '\n'; p++) {
+      char c = t[p];
+      if (c == '\\' && p + 1 < to && t[p + 1] != '\n') {
+        p++;
+        continue;
+      }
+      if (c == '(') depth++;
+      else if (c == ')' && --depth == 0) {
+        pclose = p;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // [text](url): the link text closes at its island-aware match, or — when
+  // an island would swallow that closer — at its plain match, which then
+  // bounds the islands inside it
+  void link() {
+    u32 pclose = 0;
+    i32 close = brackets.match(i, BracketMatcher::IslandAware);
+    bool ok = close >= 0 && url(close, pclose);
+    if (!ok) {
+      close = brackets.match(i, BracketMatcher::Plain);
+      ok = close >= 0 && url(close, pclose);
+    }
+    if (!ok) {
+      put('[', i);
+      i++;
+      return;
+    }
+    spaceBeforeItem();
+    flushText();
+    AstNode* n = A.call<LinkP>(SugarId::link, span(i, pclose + 1));
+    A.setKids(n, parseSub(i + 1, (u32)close));
+    side<LinkP>(n).url = strs.intern(t.substr(close + 2, pclose - (close + 2)));
+    pushItem(n);
+    i = pclose + 1;
+  }
+
+  // strict pairs: an opener needs a glyph after it, a closer a glyph before it
+  void pair(char c) {
+    bool canClose = prevGlyph && !pendingSpace && stack.size() > 1 && stack.back().marker == (u8)c;
+    if (canClose) {
+      flushText();
+      Frame f = std::move(stack.back());
+      stack.pop_back();
+      AstNode* n = A.call(c == '*' ? SugarId::strong : SugarId::em, span(f.markerPos, i + 1));
+      A.setKids(n, f.items);
+      stack.back().items.push_back(n);
+      prevGlyph = true;
+      i++;
+      return;
+    }
+    bool nextGlyph = i + 1 < to && t[i + 1] != ' ' && t[i + 1] != '\t' && t[i + 1] != '\r' &&
+                     t[i + 1] != '\n';
+    if (nextGlyph) {
+      spaceBeforeItem();
+      flushText();
+      stack.push_back({(u8)c, i});
+      prevGlyph = false;
+      i++;
+      return;
+    }
+    put(c, i);
+    i++;
+  }
+
+  // #head.chain(args)[content]…; or #(expr)[content]…
+  void splice() {
+    const u32 hash = i;
+    SpliceLex s;
+    if (!lexSplice(t, hash, s)) {
+      if (s.paren) diags.add(Sev::Error, "splice-js", span(hash, s.jsEnd), "unbalanced #(...)");
+      put('#', hash);
+      i = hash + 1;
+      return;
+    }
+    const u32 exprStart = hash + 1, exprEnd = s.end;
     spaceBeforeItem();
     flushText();
     // a keyword as a bare head (#if, #for, #new …) would paste invalid JS
     // and fail the whole document: it becomes an error node (plan P0-05)
-    if (exprStart < lim && all[exprStart] != '(') {
+    if (!s.paren) {
       u32 h = exprStart;
-      while (h < exprEnd && isIdentCont(all[h])) h++;
-      std::string_view head = all.substr(exprStart, h - exprStart);
-      const char* code = reservedSpliceHead(head);
-      if (code) {
+      while (h < exprEnd && isSpliceCont(t[h])) h++;
+      std::string_view head = t.substr(exprStart, h - exprStart);
+      if (const char* code = reservedSpliceHead(head)) {
         u32 after = exprEnd;
-        while (after < lim && all[after] == '[') {
-          i32 close = matchBracket(after, lim);
+        while (after < to && t[after] == '[') {
+          i32 close = brackets.body(after);
           if (close < 0) break;
           after = (u32)close + 1;
         }
         std::string msg = std::string(code) == "keyword-unsupported"
             ? "#" + std::string(head) + " is not supported yet (keyword forms: plan P2-12)"
             : "'" + std::string(head) + "' is a reserved word and cannot start a splice";
-        diags.add(Sev::Error, code, {hashPos, after}, msg);
-        AstNode* e = A.node<ErrorP>(AstKind::Error, {hashPos, after});
+        diags.add(Sev::Error, code, span(hash, after), msg);
+        AstNode* e = A.node<ErrorP>(AstKind::Error, span(hash, after));
         e->str = strs.intern(code);
         side<ErrorP>(e).message = strs.intern(msg);
         pushItem(e);
-        seekTo(after);
+        i = after;
         return;
       }
     }
-    AstNode* spl = A.node<SpliceP>(AstKind::Splice, {hashPos, exprEnd});
-    side<SpliceP>(spl) = {{exprStart, exprEnd}, lastCall};
-
-    // content arguments: directly adjacent [ ... ], repeatable (single span)
+    AstNode* spl = A.node<SpliceP>(AstKind::Splice, span(hash, exprEnd));
+    side<SpliceP>(spl).expr = strs.intern(t.substr(exprStart, exprEnd - exprStart));
+    side<SpliceP>(spl).lastCall = s.lastCall ? s.lastCall - exprStart : 0;
+    // content arguments: directly adjacent [ … ], repeatable
     std::vector<AstNode*> args;
     u32 after = exprEnd;
-    while (after < lim && all[after] == '[') {
-      i32 close = matchBracket(after, lim);
+    while (after < to && t[after] == '[') {
+      i32 close = brackets.body(after);
       if (close < 0) {
-        diags.add(Sev::Error, "parse-inline", {after, lim}, "unclosed content argument");
+        diags.add(Sev::Error, "parse-inline", span(after, to), "unclosed content argument");
         break;
       }
-      AstNode* arg = A.call(SugarId::arg, {after + 1, (u32)close});
-      A.setKids(arg, parseSub({after + 1, (u32)close}));
+      AstNode* arg = A.call(SugarId::arg, span(after + 1, (u32)close));
+      A.setKids(arg, parseSub(after + 1, (u32)close));
       args.push_back(arg);
       after = (u32)close + 1;
     }
     A.setKids(spl, args);
-    if (after < lim && all[after] == ';') after++;  // hard terminator
-    spl->span.end = after;
+    if (after < to && t[after] == ';') after++;  // hard terminator
+    spl->span.end = L.raw(after);
     pushItem(spl);
-    seekTo(after);
+    i = after;
+  }
+
+  // footnote sugar (notes-design.md §1): ^[inline body]; an unclosed form
+  // stays literal text. A space before it moves after the note (until P4-07).
+  void note() {
+    i32 close = brackets.body(i + 1);
+    if (close < 0) {
+      put('^', i);
+      i++;
+      return;
+    }
+    flushText();
+    AstNode* n = A.call(SugarId::note, span(i, (u32)close + 1));
+    A.setKids(n, parseSub(i + 2, (u32)close));
+    pushItem(n);
+    i = (u32)close + 1;
+  }
+
+  // @[k1, k2] on one line: ids separated by ',' (a backslash escapes ']'),
+  // trimmed; target = the ids joined by ", "
+  bool idList(u32 p, std::string& target, u32& end) const {
+    std::vector<std::string> ids(1);
+    for (; p < to && t[p] != '\n'; p++) {
+      char c = t[p];
+      if (c == '\\' && p + 1 < to && t[p + 1] != '\n') {
+        ids.back() += t[++p];
+        continue;
+      }
+      if (c == ']') break;
+      if (c == ',') ids.emplace_back();
+      else ids.back() += c;
+    }
+    if (p >= to || t[p] != ']') return false;
+    for (std::string& id : ids) {
+      size_t a = 0, b = id.size();
+      while (a < b && (id[a] == ' ' || id[a] == '\t')) a++;
+      while (b > a && (id[b - 1] == ' ' || id[b - 1] == '\t')) b--;
+      if (b == a) continue;
+      if (!target.empty()) target += ", ";
+      target.append(id, a, b - a);
+    }
+    end = p + 1;
+    return !target.empty();
+  }
+
+  // reference sugar (v2 §11.1): literal when preceded by an identifier
+  // character (user@domain); bare form ASCII, CJK labels use @[…]
+  void ref(InlineRule rule) {
+    bool prevIdent = i > 0 && isSpliceCont(t[i - 1]);
+    std::string target;
+    u32 end = 0;
+    if (!prevIdent) {
+      if (rule == InlineRule::refs) {
+        if (!idList(i + 2, target, end)) target.clear();
+      } else if (i + 1 < to && isSpliceHead(t[i + 1])) {
+        u32 p = i + 1;
+        while (p < to && (isSpliceCont(t[p]) || t[p] == '-')) p++;
+        target = t.substr(i + 1, p - (i + 1));
+        end = p;
+      }
+    }
+    if (target.empty()) {
+      put('@', i);
+      i++;
+      return;
+    }
+    spaceBeforeItem();
+    flushText();
+    AstNode* n = A.call(SugarId::ref, span(i, end));
+    n->str = strs.intern(target);
+    pushItem(n);
+    i = end;
   }
 
   void run() {
     stack.push_back({0});
-    if (spans.empty()) return;
-    i = spans[0].start;
-    while (true) {
-      advanceSpanIfNeeded();
-      if (atEnd()) break;
-      const u32 lim = spanEnd();
-      char c = all[i];
-
+    i = from;
+    // bytes the loop must look at: rule openers, blanks, joins, escapes
+    auto special = [](char ch) {
+      return kInlineOpenerByte[(u8)ch] || ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' ||
+             ch == '\\';
+    };
+    while (i < to) {
+      const char c = t[i];
+      if (!special(c)) {
+        u32 j = i + 1;
+        while (j < to && !special(t[j])) j++;
+        putRun(i, j);
+        i = j;
+        continue;
+      }
+      if (c == '\n') {
+        join();
+        continue;
+      }
       if (c == ' ' || c == '\t' || c == '\r') {
         pendingSpace = true;
         prevGlyph = false;
         i++;
         continue;
       }
-      if (c == '\\' && i + 1 < lim) {
-        put(all[i + 1], i, 2);
+      if (c == '\\' && i + 1 < to && t[i + 1] != '\n') {
+        put(t[i + 1], i, 2);
         i += 2;
         continue;
       }
-      if (c == '%' && i + 2 < lim && all[i + 1] == '-' && all[i + 2] == '-') {
-        // inline comment — lexically dumb, may span lines; spacing state is
-        // unaffected (a comment is invisible to the text around it).
-        u32 p = i + 3;
-        int depth = 1;
-        u32 hardEnd = leafEnd();  // a comment never escapes its block
-        while (p < hardEnd) {
-          if (p + 2 < hardEnd && all[p] == '%' && all[p + 1] == '-' && all[p + 2] == '-') { depth++; p += 3; continue; }
-          if (p + 2 < hardEnd && all[p] == '-' && all[p + 1] == '-' && all[p + 2] == '%') {
-            depth--;
-            p += 3;
-            if (depth == 0) break;
-            continue;
-          }
-          p++;
-        }
-        if (depth != 0) {
-          // unclosed inside its block: literal text, the error stays visible
-          diags.add(Sev::Error, "parse-inline", {i, i + 3}, "unterminated comment");
-          put('%', i);
-          put('-', i + 1);
-          put('-', i + 2);
-          i += 3;
-          continue;
-        }
-        flushText();
-        AstNode* cm = A.node(AstKind::Comment, {i, p});
-        std::string body = crlfToLf(all.substr(i + 3, p - 3 - (i + 3)));
-        cm->str = strs.intern(body);
-        stack.back().items.push_back(cm);  // does not set prevGlyph
-        seekTo(p);
-        continue;
-      }
-      if (c == '$') {
-        // math island (v2 §5): verbatim to the closing '$'; may cross source
-        // lines when only plain newlines intervene (same rule as splices)
-        u32 hardEnd = leafEnd();  // an island never escapes its block
-        u32 p = i + 1;
-        while (p < hardEnd && all[p] != '$') {
-          if (all[p] == '\\' && p + 1 < hardEnd) p++;
-          p++;
-        }
-        // a '$' not closed within its block stays literal text (it used to
-        // take a closer from a later block, duplicating the blocks between)
-        bool ok = p < hardEnd && (p < lim || contiguous(p + 1));
-        if (ok && p > i + 1) {
-          spaceBeforeItem();
-          flushText();
-          std::string body = crlfToLf(all.substr(i + 1, p - (i + 1)));
-          // $ x $ (whitespace inside both fences) is display math (Typst rule)
-          auto isWs = [](char ch) {
-            return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
-          };
-          bool display = body.size() >= 2 && isWs(body.front()) && isWs(body.back());
-          size_t b0 = 0, b1 = body.size();
-          while (b0 < b1 && isWs(body[b0])) b0++;
-          while (b1 > b0 && isWs(body[b1 - 1])) b1--;
-          AstNode* mn = A.call<MathP>(SugarId::math, {i, p + 1});
-          mn->str = strs.intern(body.substr(b0, b1 - b0));
-          side<MathP>(mn).display = display;
-          pushItem(mn);
-          // equation label: ` <id>` directly after the closing $ (v2 §11.1
-          // heading-label form); labelled display formulas get numbers
-          u32 after = p + 1;
-          u32 lim2 = spanEnd();
-          if (after < lim2 && all[after] == ' ' && after + 1 < lim2 &&
-              all[after + 1] == '<') {
-            u32 lb = after + 2, le2 = lb;
-            while (le2 < lim2 && all[le2] != '>' && all[le2] != '<') le2++;
-            if (le2 < lim2 && all[le2] == '>' && le2 > lb) {
-              side<MathP>(mn).label = strs.intern(all.substr(lb, le2 - lb));
-              mn->span.end = le2 + 1;
-              seekTo(le2 + 1);
-              continue;
-            }
-          }
-          seekTo(p + 1);
-          continue;
-        }
-        put(c, i);
-        i++;
-        continue;
-      }
-      if (c == '`') {
-        u32 close = i + 1;
-        while (close < lim && all[close] != '`') close++;
-        if (close < lim) {
-          spaceBeforeItem();
-          flushText();
-          AstNode* code = A.call(SugarId::code, {i, close + 1});
-          std::string body(all.substr(i + 1, close - (i + 1)));
-          code->str = strs.intern(body);
-          pushItem(code);
-          i = close + 1;
-          continue;
-        }
-        put(c, i);
-        i++;
-        continue;
-      }
-      if (c == '[') {
-        i32 close = matchBracket(i, lim);
-        if (close >= 0 && (u32)close + 1 < lim && all[close + 1] == '(') {
-          i32 pclose = matchParen((u32)close + 1, lim);
-          if (pclose >= 0) {
-            spaceBeforeItem();
-            flushText();
-            AstNode* link = A.call<LinkP>(SugarId::link, {i, (u32)pclose + 1});
-            A.setKids(link, parseSub({i + 1, (u32)close}));
-            std::string url(all.substr((u32)close + 2, (u32)pclose - ((u32)close + 2)));
-            side<LinkP>(link).url = strs.intern(url);
-            pushItem(link);
-            i = (u32)pclose + 1;
-            continue;
-          }
-        }
-        put(c, i);
-        i++;
-        continue;
-      }
-      if (c == '*' || c == '_') {
-        bool canClose = prevGlyph && !pendingSpace && stack.size() > 1 &&
-                        stack.back().marker == (u8)c;
-        if (canClose) {
-          flushText();
-          Frame f = std::move(stack.back());
-          stack.pop_back();
-          AstNode* s = A.call(c == '*' ? SugarId::strong : SugarId::em, {f.markerPos, i + 1});
-          A.setKids(s, f.items);
-          stack.back().items.push_back(s);
-          prevGlyph = true;
-          i++;
-          continue;
-        }
-        bool nextGlyph = (i + 1 < lim) && all[i + 1] != ' ' && all[i + 1] != '\t' &&
-                         all[i + 1] != '\r';
-        if (nextGlyph) {
-          spaceBeforeItem();
-          flushText();
-          stack.push_back({(u8)c, i});
-          prevGlyph = false;
-          i++;
-          continue;
-        }
-        put(c, i);
-        i++;
-        continue;
-      }
-      if (c == '#') {
-        handleSplice(i);
-        continue;
-      }
-      if (c == '^' && i + 1 < lim && all[i + 1] == '[') {
-        // footnote sugar (notes-design.md §1): ^[inline body]; brackets
-        // nest; an unclosed form stays literal text
-        u32 depth = 0, close = i + 1;
-        for (; close < lim; close++) {
-          if (all[close] == '[') depth++;
-          else if (all[close] == ']' && --depth == 0) break;
-        }
-        if (close < lim && all[close] == ']') {
-          flushText();
-          AstNode* nt = A.call(SugarId::note, {i, close + 1});
-          A.setKids(nt, parseSub({i + 2, close}));
-          pushItem(nt);
-          i = close + 1;
-          continue;
-        }
-        put(c, i);
-        i++;
-        continue;
-      }
-      if (c == '@') {
-        // reference sugar (v2 §11.1): literal when preceded by an identifier
-        // character (user@domain); bare form ASCII, CJK labels use @[…]
-        bool prevIdent = i > 0 && isIdentCont(all[i - 1]);
-        u32 tStart = 0, tEnd = 0, end = 0;
-        if (!prevIdent) {
-          if (i + 1 < lim && all[i + 1] == '[') {
-            u32 close = i + 2;
-            while (close < lim && all[close] != ']') close++;
-            if (close < lim && close > i + 2) { tStart = i + 2; tEnd = close; end = close + 1; }
-          } else if (i + 1 < lim && isIdentStart(all[i + 1])) {
-            u32 p = i + 1;
-            while (p < lim && (isIdentCont(all[p]) || all[p] == '-')) p++;
-            tStart = i + 1; tEnd = p; end = p;
-          }
-        }
-        if (tEnd > tStart) {
-          spaceBeforeItem();
-          flushText();
-          AstNode* r = A.call(SugarId::ref, {i, end});
-          r->str = strs.intern(all.substr(tStart, tEnd - tStart));
-          pushItem(r);
-          i = end;
-          continue;
-        }
-        put(c, i);
-        i++;
-        continue;
+      const InlineRule rule = inlineOpener(t, i);
+      switch (rule) {
+        case InlineRule::comment: comment(); continue;
+        case InlineRule::math: math(); continue;
+        case InlineRule::code: code(); continue;
+        case InlineRule::link: link(); continue;
+        case InlineRule::strong:
+        case InlineRule::em: pair(c); continue;
+        case InlineRule::splice: splice(); continue;
+        case InlineRule::note: note(); continue;
+        case InlineRule::ref:
+        case InlineRule::refs: ref(rule); continue;
+        case InlineRule::none: break;
       }
       put(c, i);
       i++;
@@ -487,7 +438,7 @@ struct InlineParser {
     while (stack.size() > 1) {
       Frame f = std::move(stack.back());
       stack.pop_back();
-      AstNode* lit = A.node(AstKind::Text, {f.markerPos, f.markerPos + 1});
+      AstNode* lit = A.node(AstKind::Text, span(f.markerPos, f.markerPos + 1));
       char m = (char)f.marker;
       lit->str = strs.intern(std::string_view(&m, 1));
       auto& parent = stack.back().items;
@@ -497,58 +448,42 @@ struct InlineParser {
   }
 };
 
-// Top-level segmentation of a region line at unescaped '|' (v2 §4.1):
-// code spans and splices (head chains, #(…), content args) are opaque, so
-// `a|b` in a code span or #f("a|b") never splits. \| escapes; || is an
-// empty cell; leading/trailing empty segments from |-framed lines drop.
+std::vector<AstNode*> parseLeaf(std::string_view all, const std::vector<Span>& spans, Arena& arena,
+                                Interner& strs, DiagSink& diags) {
+  LeafText L(all, spans);
+  InlineParser p(L, 0, L.size(), arena, strs, diags);
+  p.run();
+  return std::move(p.stack.back().items);
+}
+
+// Top-level segmentation of a region line at unescaped '|' (v2 §4.1): atoms
+// (escapes, code spans, math islands, comments, splices and their content
+// arguments) are opaque, so `a|b` in a code span, `$|x|$` or #f("a|b")[c|d]
+// never splits. '||' is an empty cell; leading and trailing empty segments
+// of a '|'-framed line drop.
 static void splitCells(std::string_view all, Span line, std::vector<Span>& cells) {
+  LeafText L(all, {line});
+  const std::string_view t = L.text();
+  const u32 n = (u32)t.size();
+  BracketMatcher brackets(t);
   std::vector<u32> cuts;
-  u32 p = line.start;
-  std::string_view clipped = all.substr(0, line.end);
-  while (p < line.end) {
-    char c = all[p];
-    if (c == '\\') { p += 2; continue; }
-    if (c == '`') {  // code span is opaque; an unclosed backtick is literal
-      u32 q = p + 1;
-      while (q < line.end && all[q] != '`') q++;
-      p = (q < line.end) ? q + 1 : p + 1;
+  for (u32 p = 0; p < n;) {
+    u32 e = atomEnd(t, p);
+    if (e > p) {
+      bool spliced = t[p] == '#';
+      p = e;
+      while (spliced && p < n && t[p] == '[') {  // content arguments
+        i32 close = brackets.body(p);
+        if (close < 0) break;
+        p = (u32)close + 1;
+      }
       continue;
     }
-    if (c == '$') {  // math island is opaque: `$|x|$` is one formula (plan P0-04)
-      u32 q = p + 1;
-      while (q < line.end && all[q] != '$') {
-        if (all[q] == '\\') q++;
-        q++;
-      }
-      p = (q < line.end) ? q + 1 : p + 1;
+    if (t[p] == '`') {  // an unclosed backtick run is literal
+      while (p < n && t[p] == '`') p++;
       continue;
     }
-    if (c == '#') {
-      u32 q = p + 1;
-      if (q < line.end && all[q] == '(') {
-        JsScan js = scanJs(clipped, q, true);
-        p = js.ok ? js.end : line.end;
-        continue;
-      }
-      u32 h = scanSpliceHead(clipped, q);
-      if (h > q) {
-        p = h;
-        while (p < line.end && all[p] == '[') {  // content args
-          int depth = 0;
-          u32 r = p;
-          for (; r < line.end; r++) {
-            if (all[r] == '\\') { r++; continue; }
-            if (all[r] == '[') depth++;
-            else if (all[r] == ']' && --depth == 0) break;
-          }
-          p = (r < line.end) ? r + 1 : line.end;
-        }
-        continue;
-      }
-      p++;
-      continue;
-    }
-    if (c == '|') cuts.push_back(p);
+    if (t[p] == '|') cuts.push_back(line.start + p);
     p++;
   }
   u32 prev = line.start;
@@ -558,8 +493,8 @@ static void splitCells(std::string_view all, Span line, std::vector<Span>& cells
   }
   cells.push_back({prev, line.end});
   auto blank = [&](Span sp) {
-    for (u32 i = sp.start; i < sp.end; i++)
-      if (all[i] != ' ' && all[i] != '\t' && all[i] != '\r') return false;
+    for (u32 k = sp.start; k < sp.end; k++)
+      if (all[k] != ' ' && all[k] != '\t' && all[k] != '\r') return false;
     return true;
   };
   if (cells.size() > 1 && blank(cells.front())) cells.erase(cells.begin());
@@ -575,10 +510,7 @@ struct AstBuilder {
   AstAlloc A{arena};
 
   std::vector<AstNode*> inlineParse(const std::vector<Span>& spans) {
-    InlineParser p{src, arena, strs, diags, src.view()};
-    p.spans = spans;
-    p.run();
-    return std::move(p.stack.back().items);
+    return parseLeaf(src.view(), spans, arena, strs, diags);
   }
 
   AstNode* errorNode(Span sp, const char* code, const std::string& msg, bool report = true) {
@@ -742,10 +674,7 @@ std::vector<AstNode*> parseInlineSpans(const SourceText& src,
                                        const std::vector<Span>& spans,
                                        Arena& arena, Interner& strs,
                                        DiagSink& diags) {
-  InlineParser p{src, arena, strs, diags, src.view()};
-  p.spans = spans;
-  p.run();
-  return std::move(p.stack.back().items);
+  return parseLeaf(src.view(), spans, arena, strs, diags);
 }
 
 static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,

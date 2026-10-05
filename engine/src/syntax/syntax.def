@@ -4,7 +4,7 @@
 // and docs/syntax-table.md. Rows are data; behaviour (body modes, ownership,
 // block shapes) is a closed set implemented in code. Never hand-edit the
 // generated files.
-SYNTAX_VERSION(1)
+SYNTAX_VERSION(2)
 
 // ---- character classes ----------------------------------------------------
 CLASS(SpliceHead, "A-Za-z_$")
@@ -76,7 +76,7 @@ SUGAR(row,     Block,  "",                                  "row")
 SUGAR(cell,    Inline, "",                                  "cell")
 
 // non-sugar node payloads (Splice, Stmt, Error)
-NODE(Splice, "expr:src lastCallStart:u32",                  "splice expr=\"{expr}\"")
+NODE(Splice, "expr:str lastCall:u32",                       "splice expr=\"{expr}\"")
 NODE(Stmt,   "let:bool js:src",                             "{let?code-let:code-block} js=\"{js}\"")
 NODE(Error,  "message:str",                                 "error code=\"{$str}\" msg=\"{message}\"")
 NODE(Text,   "",                                            "text str=\"{$str}\"")

@@ -1,0 +1,21 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("Notes close at their own bracket: a"),0,35), __a(__nt(__a(__t("a ] b"),37,43)),35,44), __a(__t(" and the text goes on."),45,66)),0,66));
+__emit(__a(__p(__a(__t("A link around math: "),68,87), __a(__ln("u", __a(__t("range "),89,94), __a(__mi("[0,1)"),95,102)),88,106), __a(__t(" is one link."),107,119)),68,119));
+/*1b6edc266eb9760e[0*/{ const __h = __height(); try {
+__emit(__a(__p(__v((strong)(__sq(__a(__t("code "),129,133), __a(__cd("a]b"),134,139), __a(__t(" here"),140,144)))), __a(__t(" and the body ends after the code span."),146,184)),121,184));
+} catch (__e) { __fail(0, __e, __h); } }/*1b6edc266eb9760e]0*/
+__emit(__a(__p(__a(__t("Code spans by run length: "),186,211), __a(__cd("a`b"),212,219), __a(__t(", "),219,220), __a(__cd("`tick`"),221,233), __a(__t(" and "),234,237), __a(__cd("x"),238,243), __a(__t("; an unclosed `` run stays literal."),243,278)),186,278));
+__emit(__a(__p(__a(__t("Pairs skip stray brackets: "),280,306), __a(__b(__a(__t("range [0, 1) only"),308,325)),307,326), __a(__t(" and "),327,330), __a(__i(__a(__t("see [sic"),332,340)),331,341), __a(__t(" ok."),342,345)),280,345));
+__emit(__a(__p(__a(__t("Math decodes only the dollar escape: "),347,383), __a(__mi("a $ b"),384,392), __a(__t(" and "),393,396), __a(__mi("x \\, y"),397,405), __a(__t("."),405,406)),347,406));
+/*1b6edc266eb9760e[1*/{ const __h = __height(); try {
+__emit(__a(__p(__a(__t("Islands that would swallow a closer: "),408,444), __a(__ln("u", __a(__t("price $5"),446,454)),445,458), __a(__t(" and "),459,462), __v((strong)(__a(__t("cost $3"),471,478))), __a(__t(" then "),480,484), __a(__mi("x"),485,488), __a(__t(" after."),489,495)),408,495));
+} catch (__e) { __fail(1, __e, __h); } }/*1b6edc266eb9760e]1*/
+__emit(__a(__hd(1, "tgt", __a(__t("Targets"),499,506)),497,506));
+__emit(__a(__hd(2, "a]b", __a(__t("An odd label"),517,529)),514,529));
+__emit(__a(__p(__a(__t("References: "),537,548), __a(__rf("tgt"),549,557), __a(__t(" and "),558,561), __a(__rf("a]b"),562,569), __a(__t(" in brackets."),570,582)),537,582));
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=1b6edc266eb9760e;583;[[121,184,2],[408,495,2]]

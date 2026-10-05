@@ -1,7 +1,7 @@
 <!-- GENERATED from engine/src/syntax/syntax.def by tools/gen-syntax.mjs — do not edit. -->
 # Surface syntax (generated)
 
-From `engine/src/syntax/syntax.def`, syntax version 1. Behaviour for each body mode, ownership class and block shape: `docs/syntax-design.md`.
+From `engine/src/syntax/syntax.def`, syntax version 2. Behaviour for each body mode, ownership class and block shape: `docs/syntax-design.md`.
 
 ## Inline delimiters
 

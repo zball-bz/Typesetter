@@ -85,6 +85,45 @@ for (const s of [...sugars, ...nodes]) {
   payloadOf.set(s.id, sn);
   h += `struct ${sn} {\n${f.map(([n, t]) => `  ${CT[t]} ${n}${t === 'src' ? '{}' : ' = 0'};\n`).join('')}};\n`;
 }
+// ---- inline rules: the opener dispatch (first byte, longest literal opener
+// first; placeholders such as HEAD / BARE_ID are the lexer's to check)
+const ruleIds = inlines.map((r) => r[0]);
+const literalOf = (open) => open.replace(/[A-Z][A-Z_]+$/, '');
+const precs = [...new Set(inlines.map((r) => r[6]))];
+const bodies = [...new Set(inlines.map((r) => r[3]))];
+const byFirst = new Map();
+for (const r of inlines) {
+  const lit = literalOf(r[1]);
+  if (!byFirst.has(lit[0])) byFirst.set(lit[0], []);
+  byFirst.get(lit[0]).push([lit, r[0]]);
+}
+const cch = (c) => (c === "'" ? "\\'" : c === '\\' ? '\\\\' : c);
+h += `\n// inline rules (INLINE rows): precedence and body mode per rule\n` +
+  `enum class InlineRule : u8 { none, ${ruleIds.join(', ')} };\n` +
+  `enum class InlinePrec : u8 { ${precs.join(', ')} };\n` +
+  `enum class InlineBody : u8 { ${bodies.join(', ')} };\n` +
+  `constexpr InlinePrec kInlinePrec[] = {InlinePrec::Markup, ${inlines.map((r) => `InlinePrec::${r[6]}`).join(', ')}};\n` +
+  `constexpr InlineBody kInlineBody[] = {InlineBody::Pair, ${inlines.map((r) => `InlineBody::${r[3]}`).join(', ')}};\n` +
+  `// the rule whose literal opener starts at t[i] (longest first)\n` +
+  `inline InlineRule inlineOpener(std::string_view t, u32 i) {\n  switch (t[i]) {\n`;
+for (const [c, list] of byFirst) {
+  list.sort((x, y) => y[0].length - x[0].length);
+  h += `    case '${cch(c)}':\n`;
+  for (const [lit, id] of list)
+    h += lit.length > 1
+      ? `      if (t.substr(i, ${lit.length}) == ${JSON.stringify(lit)}) return InlineRule::${id};\n`
+      : `      return InlineRule::${id};\n`;
+  if (list[list.length - 1][0].length > 1) h += `      break;\n`;
+}
+h += `    default:\n      break;\n  }\n  return InlineRule::none;\n}\n`;
+{
+  const firsts = [...byFirst.keys()].map((c) => c.charCodeAt(0));
+  const row = Array.from({ length: 256 }, (_, k) => (firsts.includes(k) ? 1 : 0));
+  h += `// bytes that may start an inline rule (everything else is plain text)\n` +
+    `constexpr bool kInlineOpenerByte[256] = {\n` +
+    Array.from({ length: 16 }, (_, r) => '    ' + row.slice(r * 16, r * 16 + 16).join(', ') + ',').join('\n') + '\n};\n';
+}
+
 h += `\n// a bare splice head that cannot start a JS expression (plan P0-05)\n` +
   `inline const char* reservedSpliceHead(std::string_view w) {\n` +
   `  static constexpr std::string_view kUnsupported[] = {${unsupported.map((w) => JSON.stringify(w)).join(', ')}};\n` +

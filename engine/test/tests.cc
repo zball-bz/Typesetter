@@ -16,6 +16,7 @@
 #include "../src/math/math.h"
 #include "../src/code/grid.h"
 #include "../src/inline/fragment.h"
+#include "../src/syntax/lexer.h"
 #include "../src/math/mathfont.h"
 #include "../src/api/driver.h"
 #include "../src/code/native_tokens.h"
@@ -65,12 +66,32 @@ static void unitJslex() {
 }
 
 static void unitSpliceHead() {
-  std::string s = "avg(3,5)\xE7\x9A\x84";  // avg(3,5)的
-  CHECK(scanSpliceHead(s, 0) == 8);       // ASCII cut before 的
-  std::string dot = "x. next";
-  CHECK(scanSpliceHead(dot, 0) == 1);  // '.' not followed by ident start
-  std::string chain = "a.b.c(1).d";
-  CHECK(scanSpliceHead(chain, 0) == chain.size());
+  auto end = [](std::string s) {
+    SpliceLex l;
+    return lexSplice(s, 0, l) ? l.end : 0u;
+  };
+  CHECK(end("#avg(3,5)\xE7\x9A\x84") == 9);  // ASCII cut before 的
+  CHECK(end("#x. next") == 2);                 // '.' not followed by ident start
+  CHECK(end("#a.b.c(1).d") == 11);
+  SpliceLex l;
+  CHECK(lexSplice("#f(1)(2)[x]", 0, l) && l.end == 8 && l.lastCall == 5);
+  CHECK(lexSplice("#f(1).g", 0, l) && l.lastCall == 0);
+  CHECK(!lexSplice("#(1 + ", 0, l) && l.paren);
+  // atoms and bracket bodies (plan P1-06)
+  CodeSpanLex c;
+  CHECK(lexCodeSpan("``a`b`` x", 0, c) && c.end == 7 && codeSpanText("a`b") == "a`b");
+  CHECK(!lexCodeSpan("``a`", 0, c) && c.run == 2);
+  CHECK(codeSpanText(" `x` ") == "`x`" && codeSpanText("  ") == "  ");
+  CHECK(mathText("a \\$ b \\, c") == "a $ b \\, c");
+  std::string body = "[code `a]b` here] tail";
+  BracketMatcher bm(body);
+  CHECK(bm.body(0) == 16);
+  std::string price = "[price $5](u) and $x$";
+  BracketMatcher pm(price);
+  CHECK(pm.match(0, BracketMatcher::IslandAware) < 0 && pm.match(0, BracketMatcher::Plain) == 9);
+  std::string deep(20000, '[');
+  BracketMatcher dm(deep);
+  for (u32 k = 0; k < deep.size(); k++) CHECK(dm.body(k) < 0);  // linear: one scan
 }
 
 static void unitSu() {

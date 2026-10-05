@@ -1,0 +1,19 @@
+Notes close at their own bracket: a^[a \] b] and the text goes on.
+
+A link around math: [range $[0,1)$](u) is one link.
+
+#strong[code `a]b` here] and the body ends after the code span.
+
+Code spans by run length: ``a`b``, `` `tick` `` and ` x `; an unclosed `` run stays literal.
+
+Pairs skip stray brackets: *range [0, 1) only* and _see [sic_ ok.
+
+Math decodes only the dollar escape: $a \$ b$ and $x \, y$.
+
+Islands that would swallow a closer: [price $5](u) and #strong[cost $3] then $x$ after.
+
+= Targets <tgt>
+
+== An odd label <a]b>
+
+References: @[ tgt ] and @[a\]b] in brackets.
