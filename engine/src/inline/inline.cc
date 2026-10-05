@@ -751,6 +751,7 @@ static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,
       break;
     case AstKind::Row: hdr("row"); break;
     case AstKind::Cell: hdr("cell"); break;
+    case AstKind::Note: hdr("note"); break;
   }
   out += "\n";
   for (const AstNode* k : n->kids) dumpNode(out, k, src, strs, depth + 1);
