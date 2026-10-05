@@ -38,9 +38,12 @@ function* walk(dir) {
 
 function corpus() {
   const docs = [];
-  for (const p of walk(join(root, 'examples/real-world'))) docs.push({ path: p, key: relative(root, p) });
+  for (const p of walk(join(root, 'examples/real-world'))) docs.push({ path: p, key: relative(root, p), rootDir: root });
+  // the blog's /site-root paths (#bibliography("/examples/…")) resolve
+  // against its public/ folder, as its static export does
   const blog = join(root, '../zball-io/src');
-  for (const p of walk(blog)) docs.push({ path: p, key: 'zball-io/' + relative(blog, p) });
+  for (const p of walk(blog))
+    docs.push({ path: p, key: 'zball-io/' + relative(blog, p), rootDir: join(root, '../zball-io/public') });
   return docs;
 }
 
@@ -54,7 +57,7 @@ async function renderAll() {
     const src = readFileSync(d.path, 'utf8');
     let r;
     try {
-      r = await renderTsm(src, { baseDir: dirname(d.path), rootDir: root });
+      r = await renderTsm(src, { baseDir: dirname(d.path), rootDir: d.rootDir });
     } catch (e) {
       r = { html: '', diags: `error render-crash ${String(e && e.message || e).split('\n')[0]}`, ok: false };
     }
