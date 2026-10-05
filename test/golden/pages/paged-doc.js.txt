@@ -6,7 +6,7 @@ __emit(__a(__p(__a(__t("分页是布局之上的后处理：内容按带切分�
 __emit(__a(__hd(2, null, __a(__t("保持规则"),309,321)),306,321));
 __emit(__a(__p(__a(__t("标题不落页尾；下面的代码块按逻辑行切分："),323,383)),323,383));
 __emit(__a(__v(await __fence("json", ({}), "{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}", 393)),385,494));
-/*79aac75c08ce336a[0*/{ const __h = __height(); try {
+/*79aac75c08ce336a[0*/{ const __h = __height(0); try {
 __emit(__a(__region("figure", ({src: "photos/x.png", alt: "样图", w: 200, h: 80, label: "fig-p"}), [[[__a(__t("图与图注保持在同页。"),572,602)]]]),496,611));
 } catch (__e) { __fail(0, __e, __h); } }/*79aac75c08ce336a]0*/
 __emit(__a(__p(__a(__t("尾段：越过图之后继续排布，直至文档结束，引用"),613,679), __a(__rf("fig-p"),679,685), __a(__t("照常解析。"),685,700)),613,700));

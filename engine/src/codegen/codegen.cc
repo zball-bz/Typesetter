@@ -340,7 +340,9 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
   Gen g{src, strs, out};
   auto open = [&](u32 i) { appendf(out, "/*%s[%u*/", nonce, i); };
   auto closeU = [&](u32 i) { appendf(out, "/*%s]%u*/\n", nonce, i); };
-  auto framedOpen = [&]() { out += "{ const __h = __height(); try {\n"; };
+  // __height(i) also names the running unit: a diagnostic of what it
+  // splices (DIAG, plan P2-01) points at it
+  auto framedOpen = [&](u32 unit) { appendf(out, "{ const __h = __height(%u); try {\n", unit); };
   auto framedClose = [&](u32 i) { appendf(out, "\n} catch (__e) { __fail(%u, __e, __h); } }", i); };
 
   for (const AstNode* n : doc->kids()) {
@@ -354,7 +356,7 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
         JsSimpleLet sl = jsSimpleLet(inner);
         if (sl.ok) {  // #let x = e  →  framed assignment to the hoisted binding
           flags |= kFramed;
-          framedOpen();
+          framedOpen(i);
           out += inner.substr(sl.identStart, sl.identEnd - sl.identStart);
           out += " = (\n";
           out += inner.substr(sl.exprStart);
@@ -367,7 +369,7 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
         }
       } else if (!jsDeclares(inner)) {  // declaration-free #{…}: framed
         flags |= kFramed;
-        framedOpen();
+        framedOpen(i);
         out += inner;
         framedClose(i);
       } else {  // declaring #{…}: bindings must stay visible (D-I10)
@@ -379,7 +381,7 @@ JsProgram codegen(const AstNode* doc, const SourceText& src, const Interner& str
     } else if (hasUserCode(n)) {
       flags = kFramed;
       open(i);
-      framedOpen();
+      framedOpen(i);
       out += "__emit(";
       g.value(n);
       out += ");";

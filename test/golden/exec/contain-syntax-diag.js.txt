@@ -7,12 +7,12 @@ __emit(__a(__p(__a(__t("Before."),0,7)),0,7));
  let = 1 
 /*a9e317cfc222d747]0*/
 __emit(__a(__p(__a(__t("Middle."),23,30)),23,30));
-/*a9e317cfc222d747[1*/{ const __h = __height(); try {
+/*a9e317cfc222d747[1*/{ const __h = __height(1); try {
 ok = (
  "fine"
 );
 } catch (__e) { __fail(1, __e, __h); } }/*a9e317cfc222d747]1*/
-/*a9e317cfc222d747[2*/{ const __h = __height(); try {
+/*a9e317cfc222d747[2*/{ const __h = __height(2); try {
 __emit(__a(__p(__a(__t("After: "),50,56), __v((ok)), __a(__t("."),60,61)),50,61));
 } catch (__e) { __fail(2, __e, __h); } }/*a9e317cfc222d747]2*/
 })(__s);

@@ -2,12 +2,12 @@ export default async (__s, $) => {
 const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 __emit(__a(__p(__a(__t("浮动插图与环绕（parshape）：右侧浮动，正文前若干行按收窄宽度断行。"),0,95)),0,95));
-/*6fdabe109e9a4f6a[0*/{ const __h = __height(); try {
+/*6fdabe109e9a4f6a[0*/{ const __h = __height(0); try {
 __emit(__a(__region("figure", ({src: "photos/tower.jpg", alt: "塔楼", w: 400, h: 300, scale: 0.4, float: "right", label: "fig-tower"}), [[[__a(__t("右浮动的塔楼小图。"),210,237)]]]),97,246));
 } catch (__e) { __fail(0, __e, __h); } }/*6fdabe109e9a4f6a]0*/
 __emit(__a(__p(__a(__t("正文围绕浮动图排布：前几行的断行宽度收窄为版心减去浮动框与间隙，越过浮动框底部之后恢复整幅版心宽度继续排布，段落之间的间距也计入占用高度的消耗。"),248,464)),248,464));
 __emit(__a(__p(__a(__t("第二个段落若仍处于浮动高度之内，则继续以收窄宽度开始；此段足够长，尾部行应当已经回到整幅宽度，环绕由此自然结束。"),466,634)),466,634));
-/*6fdabe109e9a4f6a[1*/{ const __h = __height(); try {
+/*6fdabe109e9a4f6a[1*/{ const __h = __height(1); try {
 __emit(__a(__region("figure", ({src: "photos/gate.jpg", alt: "山门", w: 400, h: 240, scale: 0.4, float: "left", label: "fig-gate"}), [[[__a(__t("左浮动的山门。"),746,767)]]]),636,776));
 } catch (__e) { __fail(1, __e, __h); } }/*6fdabe109e9a4f6a]1*/
 __emit(__a(__p(__a(__t("左侧浮动时行盒整体右移，宽度同样收窄；"),778,835), __a(__rf("fig-tower"),835,845), __a(__t("与"),845,848), __a(__rf("fig-gate"),848,857), __a(__t("都可以被引用。"),857,878)),778,878));

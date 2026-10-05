@@ -982,7 +982,7 @@ Theme steps: — · findings: 1
 | `markup-language/label-namespace-collision` | adhoc | medium | P0-09, P3-04 | |
 | `markup-language/region-builtin-privilege` | adhoc | medium | P2-03 | |
 | `markup-language/block-inline-placement` | adhoc | medium | P2-11, P3-17 | |
-| `markup-language/value-coercion` | adhoc | medium | P2-01 | |
+| `markup-language/value-coercion` | adhoc | medium | P2-01 | grep:plan P2-01 |
 | `markup-language/surface-grammar-drift` | adhoc | medium | P1-09 | grep:plan P1-09 |
 | `markup-language/sidecar-private-lowering` | adhoc | medium | P2-13 | |
 | `markup-language/collectors-closed` | adhoc | medium | P3-13 | |
@@ -1056,7 +1056,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/global-argk-namespace` | adhoc | high | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/version-bump-per-vocabulary` | adhoc | medium | P1-01 | grep:plan P1-01 |
 | `codegen-ops-model/two-style-encodings-and-stack` | adhoc | medium | P0-06, P2-08 | |
-| `codegen-ops-model/val-coercion-adhoc` | adhoc | medium | P2-01 | |
+| `codegen-ops-model/val-coercion-adhoc` | adhoc | medium | P2-01 | grep:plan P2-01 |
 | `codegen-ops-model/block-promotion-peepholes` | adhoc | medium | P2-11 | |
 | `codegen-ops-model/duplicate-lowering-fragment` | adhoc | medium | P2-13 | |
 | `codegen-ops-model/note-kind-and-lift` | adhoc | medium | P3-01, P3-13 | |
@@ -1070,15 +1070,15 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/argtag-node-dangling` | issue | medium | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/metric-key-fragmentation` | issue | medium | P0-08, P1-04 | grep:plan P1-04 |
 | `codegen-ops-model/tree-dump-omits-sup` | issue | low | P1-02 | grep:plan P1-02 |
-| `codegen-ops-model/executor-errors-not-diagnostics` | issue | low | P2-01 | |
-| `codegen-ops-model/shadow-mutability-forgery` | issue | low | P2-01 | |
-| `codegen-ops-model/popto-stack-divergence` | issue | low | P0-08, P2-01 | |
+| `codegen-ops-model/executor-errors-not-diagnostics` | issue | low | P2-01 | grep:plan P2-01 |
+| `codegen-ops-model/shadow-mutability-forgery` | issue | low | P2-01 | grep:plan P2-01 |
+| `codegen-ops-model/popto-stack-divergence` | issue | low | P0-08, P2-01 | grep:plan P2-01 |
 | `codegen-ops-model/contract-doc-drift` | issue | low | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/missed:0` | missed | high | P0-05, P2-02 | |
 | `codegen-ops-model/missed:1` | missed | high | P2-11 | |
 | `codegen-ops-model/missed:2` | missed | medium | P2-03 | |
 | `codegen-ops-model/missed:3` | missed | medium | P0-06 | grep:plan P0-06 |
-| `codegen-ops-model/missed:4` | missed | low | P2-01 | |
+| `codegen-ops-model/missed:4` | missed | low | P2-01 | grep:plan P2-01 |
 | `resolver/fixed-counter-set` | adhoc | high | P1-10 | grep:plan P1-10 |
 | `resolver/figure-role-string` | adhoc | high | P3-03 | |
 | `resolver/label-registration-per-kind` | adhoc | high | P1-10 | grep:plan P1-10 |

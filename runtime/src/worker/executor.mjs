@@ -1,7 +1,7 @@
 // Executes the compiled document program against an OpBuf (architecture §4.1).
 // Works in Node (temp-file import) and in browsers/workers (blob URL import).
 import { KIND } from '../shared/ops.gen.mjs';
-import { OpBuf } from '../shared/opbuf.mjs';
+import { OpBuf, isNode } from '../shared/opbuf.mjs';
 import { STYLE_KEYS, STYLE_SUGAR } from '../shared/props.gen.mjs';
 
 // style patches from the schema's run properties (plan P1-02): boolean sugar
@@ -71,20 +71,56 @@ async function loadResource(src, opts) {
   return await res.text();
 }
 
+// The content protocol's markers (plan P2-01; design T2 S4): a function a
+// bare splice may call (#toc), and an object's own conversion to content
+export const NULLARY = Symbol.for('tsm.nullary');
+export const CONTENT = Symbol.for('tsm.content');
+
 export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
-  const toShadow = (x) => {
-    if (typeof x === 'function') x = x();  // bare #toc / #glossary splices
-    return x && typeof x === 'object' && 'opId' in x ? x : ob.makeText(String(x));
+  let current = 0;  // the unit running (codegen's __cur): where a diagnostic points
+  const unitSpan = () => {
+    const u = units[current];
+    return u ? [u.s, u.e] : [0, 0];
   };
-  const styled = (bits) => (...kids) =>
-    ob.makeNode(KIND.styled, { bits }, kids.map(toShadow));
-  const node = (kind, args = {}) => (...kids) =>
-    ob.makeNode(kind, args, kids.map(toShadow));
+  // toContent (plan P2-01): one conversion for every place a value becomes
+  // content — splices, constructor children, handler returns, m`…`:
+  //   a node value → itself; string/number/bigint → text; null, undefined,
+  //   false → nothing; arrays and iterables → their items, flattened; an
+  //   object with [CONTENT]() → its result; a NULLARY function → its call;
+  //   any other function → an error node (splice-function); anything else →
+  //   its String() with an info diagnostic (splice-object)
+  const toContent = (x, out = []) => {
+    if (isNode(x)) out.push(x);
+    else if (typeof x === 'string' || typeof x === 'number' || typeof x === 'bigint') out.push(ob.makeText(String(x)));
+    else if (x === null || x === undefined || x === false) { /* nothing */ }
+    else if (Array.isArray(x)) for (const v of x) toContent(v, out);
+    else if (typeof x === 'function') {
+      if (x[NULLARY]) toContent(x(), out);
+      else {
+        const msg = `a function is not content${x.name ? ` (${x.name})` : ''}: call it`;
+        out.push(ob.makeNode(KIND.error, { message: msg, code: 'splice-function' }, []));
+        ob.diag(2, 'splice-function', msg, ...unitSpan());
+      }
+    } else if (typeof x === 'object' && typeof x[CONTENT] === 'function') toContent(x[CONTENT](), out);
+    else if (typeof x === 'object' && typeof x[Symbol.iterator] === 'function') for (const v of x) toContent(v, out);
+    else {
+      ob.diag(0, 'splice-object', `an object spliced as text: ${String(x)}`, ...unitSpan());
+      out.push(ob.makeText(String(x)));
+    }
+    return out;
+  };
+  // one node: a single value itself, several as a seq, none as an empty seq
+  const one = (x) => {
+    const xs = toContent(x);
+    return xs.length === 1 ? xs[0] : ob.makeNode(KIND.seq, {}, xs);
+  };
+  const kidsOf = (kids) => kids.flatMap((k) => toContent(k));
+  const styled = (bits) => (...kids) => ob.makeNode(KIND.styled, { bits }, kidsOf(kids));
+  const node = (kind, args = {}) => (...kids) => ob.makeNode(kind, args, kidsOf(kids));
   // plain-text projection of a content value (term names → label strings)
   const shadowText = (x) =>
-    x && typeof x === 'object' && 'opId' in x
-      ? (x.text !== undefined ? x.text : x.children.map(shadowText).join(''))
-      : String(x);
+    isNode(x) ? (x.text !== undefined ? x.text : x.children.map(shadowText).join(''))
+      : toContent(x).map(shadowText).join('');
   // --- region constructors (v2 §4.1) ---------------------------------------
   // children: an Array element is one source paragraph (array of rows, each
   // an array of cell values from top-level '|' segmentation); anything else
@@ -93,9 +129,9 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     const rows = [];  // per row: array of per-cell shadow lists
     for (const ch of children) {
       if (Array.isArray(ch)) {
-        for (const row of ch) rows.push(row.map((c) => [toShadow(c)]));
+        for (const row of ch) rows.push(row.map((c) => toContent(c)));
       } else if (rows.length) {
-        rows.at(-1).at(-1).push(toShadow(ch));  // continuation → last cell
+        rows.at(-1).at(-1).push(...toContent(ch));  // continuation → last cell
       }
       // block content before the first row is dropped (documented limitation)
     }
@@ -119,11 +155,11 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
           if (ri) acc.push(ob.makeText(' '));
           row.forEach((cell, ci) => {
             if (ci) acc.push(ob.makeText(' | '));
-            acc.push(toShadow(cell));
+            acc.push(...toContent(cell));
           });
         });
         out.push(ob.makeNode(KIND.para, {}, acc));
-      } else out.push(toShadow(ch));
+      } else out.push(...toContent(ch));
     }
     return out;
   };
@@ -141,9 +177,11 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     let node;
     if (h) {
       // a throwing handler is contained here, like a fence handler (P0-05)
-      try { node = toShadow(h(args, children)); }
-      catch (e) {
-        return ob.makeNode(KIND.error, { message: String(e?.message ?? e), code: 'region-error' }, []);
+      try { node = one(h(args, children)); }
+      catch (e) {  // invoke frame: an error node and its diagnostic (P2-01)
+        const msg = String(e?.message ?? e);
+        ob.diag(2, 'region-error', msg, ...unitSpan());
+        return ob.makeNode(KIND.error, { message: msg, code: 'region-error' }, []);
       }
     }
     else if (name === 'table') node = tableBuild(args, children);
@@ -163,8 +201,13 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     const h = fenceHandlers[tag];
     // default path: the fence info args ARE codeblock grid options
     if (!h) return ctors.codeblock(tag, body, args);
-    const mkErr = (msg) =>
-      ob.makeNode(KIND.error, { message: String(msg), code: 'fence-error' }, []);
+    // invoke frame (P2-01): a handler's error is an error node and a
+    // diagnostic at the body (ctx.error's localOffset into it)
+    const mkErr = (msg, localOffset = 0) => {
+      const at = offset + Math.max(0, Math.floor(Number(localOffset) || 0));
+      ob.diag(2, 'fence-error', String(msg), at, at + 1);
+      return ob.makeNode(KIND.error, { message: String(msg), code: 'fence-error' }, []);
+    };
     const ctx = {
       args,
       offset,
@@ -175,29 +218,29 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
         ob.makeNode(KIND.raw, { html: String(html), w: width, h: height }, []),
     };
     try {
-      return toShadow(await h(body, ctx));
+      return one(await h(body, ctx));
     } catch (e) {
       return mkErr(e?.message || e);
     }
   };
   const ctors = {
-    __emit: (n) => ob.emitNode(toShadow(n)),
+    __emit: (n) => { for (const x of toContent(n)) ob.emitNode(x); },
     __region,
     __fence,
-    __at: (n, s, e) => { ob.span(n, s, e); return n; },
+    __at: (n, s, e) => { if (isNode(n)) ob.span(n, s, e); return n; },
     text: (s) => ob.makeText(String(s)),
     para: node(KIND.para),
     em: styled(STYLE_SUGAR.italic),
     strong: styled(STYLE_SUGAR.bold),
     heading: (level, label, ...kids) =>
-      ob.makeNode(KIND.heading, { level, label: label ?? undefined }, kids.map(toShadow)),
+      ob.makeNode(KIND.heading, { level, label: label ?? undefined }, kidsOf(kids)),
     ref: (target) => ob.makeNode(KIND.ref, { target: String(target) }, []),
     term: (name, ...desc) =>
-      ob.makeNode(KIND.term, { name: shadowText(name) }, desc.map(toShadow)),
-    toc: () => ob.makeNode(KIND.collect, { what: 'toc' }, []),
+      ob.makeNode(KIND.term, { name: shadowText(name) }, kidsOf(desc)),
+    toc: Object.assign(() => ob.makeNode(KIND.collect, { what: 'toc' }, []), { [NULLARY]: true }),
     // footnotes (notes-design.md §1): ^[…] sugar → note; #notes() places
     // the collector explicitly (implicit at document end otherwise)
-    notes: () => ob.makeNode(KIND.collect, { what: 'notes' }, []),
+    notes: Object.assign(() => ob.makeNode(KIND.collect, { what: 'notes' }, []), { [NULLARY]: true }),
     note: node(KIND.note),
     // citations (notes-design.md §2): the data loads after the program
     // ran (splices are synchronous); the collector is then emitted at
@@ -207,9 +250,9 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
       bibRequests.push({ src: String(src), all: !!o.all, unit: current });
       return ob.makeText('');
     },
-    glossary: () => ob.makeNode(KIND.collect, { what: 'glossary' }, []),
+    glossary: Object.assign(() => ob.makeNode(KIND.collect, { what: 'glossary' }, []), { [NULLARY]: true }),
     list: (ordered, start, ...items) =>
-      ob.makeNode(KIND.list, { ordered, start }, items.map(toShadow)),
+      ob.makeNode(KIND.list, { ordered, start }, kidsOf(items)),
     item: node(KIND.item),
     quote: node(KIND.quote),
     // body: string (plain, split on \n at emit) OR array of lines, each a
@@ -220,14 +263,14 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
                      hl: opts.hl, sidecar: opts.sidecar };
       if (Array.isArray(body)) {
         const lines = body.map((line) => ob.makeNode(KIND.seq, {},
-          (Array.isArray(line) ? line : [line]).map(toShadow)));
+          kidsOf(Array.isArray(line) ? line : [line])));
         return ob.makeNode(KIND.codeblock, args, lines);
       }
       return ob.makeNode(KIND.codeblock, args, [ob.makeText(String(body))]);
     },
-    rule: node(KIND.rule),
+    rule: Object.assign(node(KIND.rule), { [NULLARY]: true }),
     comment: (body) => ob.makeNode(KIND.comment, {}, [ob.makeText(String(body))]),
-    link: (url, ...kids) => ob.makeNode(KIND.link, { url: String(url) }, kids.map(toShadow)),
+    link: (url, ...kids) => ob.makeNode(KIND.link, { url: String(url) }, kidsOf(kids)),
     code: (s) => ob.makeNode(KIND.code, {}, [ob.makeText(String(s))]),
     seq: node(KIND.seq),
     // opts: alt, scale (fraction of measure), w/h (intrinsic CSS px —
@@ -245,16 +288,26 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     // strike sugar (decorations are CH1 bits, metric-neutral)
     style: (patch = {}, ...kids) =>
       ob.makeNode(KIND.styled, { bits: styleBits(patch), ...styleValues(patch) },
-                  kids.map(toShadow)),
-    val: (x) => toShadow(x),
+                  kidsOf(kids)),
+    // a splice (#x): undefined / null render nothing and say so (D-I05)
+    val: (x) => {
+      if (x === undefined || x === null) ob.diag(1, 'splice-undefined', `#… is ${x}: nothing rendered`, ...unitSpan());
+      return one(x);
+    },
+    plain: (x) => shadowText(x),
     // block-granular error (plan P0-05): parse errors lowered by codegen
     error: (code, message) =>
       ob.makeNode(KIND.error, { message: String(message), code: String(code) }, []),
-    // M1: cooked-text tag; runtime markup re-entry (m.parse via WASM) is M2.
+    // m`…` (interim, plan P2-01): the cooked strings as text and every
+    // interpolation through toContent — a content value stays content;
+    // markup re-entry (m.parse via WASM) comes later
     m: (strings, ...vals) => {
-      let s = strings[0];
-      for (let i = 0; i < vals.length; i++) s += String(vals[i]) + strings[i + 1];
-      return ob.makeText(s);
+      const parts = [];
+      for (let i = 0; i < strings.length; i++) {
+        if (strings[i]) parts.push(ob.makeText(strings[i]));
+        if (i < vals.length) toContent(vals[i], parts);
+      }
+      return parts.length === 1 ? parts[0] : ob.makeNode(KIND.seq, {}, parts);
     },
   };
   const styleStack = [];
@@ -277,9 +330,13 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
         if (!e || !e.id) continue;
         let inline;
         try { inline = fmt(e, ctors); }
-        catch (err) { inline = [ctors.text(`⚠ ${err?.message ?? err}`)]; }
-        kids.push(ob.makeNode(KIND.group, { role: 'bibentry', name: String(e.id) },
-                              (Array.isArray(inline) ? inline : [inline]).map(toShadow)));
+        catch (err) {  // invoke frame: the entry shows the failure, and says so
+          const msg = `bibliography ${req.src}: entry ${e.id}: ${err?.message ?? err}`;
+          const u = units[req.unit];
+          ob.diag(1, 'bib-load', msg, u ? u.s : 0, u ? u.e : 0);
+          inline = [ctors.text(`⚠ ${err?.message ?? err}`)];
+        }
+        kids.push(ob.makeNode(KIND.group, { role: 'bibentry', name: String(e.id) }, kidsOf([inline])));
       }
       ob.emitNode(ob.makeNode(KIND.collect,
         { what: 'bibliography', form: req.all ? 'all' : undefined }, kids));
@@ -293,10 +350,11 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
       get format() { return bibHooks.format ?? formatEntryDefault; },
     },
     style: {
+      // a patch object only (plan P2-01: the raw bit-number form is gone)
       push(x) {
+        if (x === null || typeof x !== 'object') throw new TypeError('$.style.push takes a style patch object');
         styleStack.push(x);
-        if (typeof x === 'number') ob.stylePush(x, {});
-        else ob.stylePush(styleBits(x) || 0, styleValues(x));
+        ob.stylePush(styleBits(x) || 0, styleValues(x));
       },
       get height() { return styleStack.length; },
       // a pop above the current height is clamped here and diagnosed by the
@@ -312,16 +370,22 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
   // A framed unit that throws becomes an error node at its place; the style
   // stack returns to the unit's entry height (v2 §12). An unframed statement
   // that throws stops the program: the rest becomes one error block.
-  let current = 0;
+  // an executor error: an error node at the unit and its diagnostic (the
+  // DIAG op, plan P2-01: the engine no longer scans error nodes for them)
   const errorAt = (i, code, message, toEnd = false) => {
     const u = units[i];
     const n = ob.makeNode(KIND.error, { message, code }, []);
-    if (u) ob.span(n, u.s, toEnd ? Math.max(docEnd, u.e) : u.e);
+    const e = u ? (toEnd ? Math.max(docEnd, u.e) : u.e) : 0;
+    if (u) ob.span(n, u.s, e);
+    ob.diag(2, code, message, u ? u.s : 0, e);
     ob.emitNode(n);
   };
   const describe = (e) => `${e?.name ?? 'Error'}: ${e?.message ?? String(e)}`;
   const helpers = {
-    __height: () => styleStack.length,
+    __height: (i) => {  // a framed unit starts: it is the one running
+      if (i !== undefined) current = i;
+      return styleStack.length;
+    },
     __cur: (i) => { current = i; },
     __fail: (i, e, h) => {
       if (styleStack.length > h) dollar.style.popTo(h);

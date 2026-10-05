@@ -5,13 +5,13 @@ __emit(__a(__p(__a(__t("Before."),0,7)),0,7));
 /*f05a2223b733d12b[0*/__cur(0);
  let = 1 
 /*f05a2223b733d12b]0*/
-/*f05a2223b733d12b[1*/{ const __h = __height(); try {
+/*f05a2223b733d12b[1*/{ const __h = __height(1); try {
 __emit(__a(__p(__a(__t("Middle "),23,29), __v(((1 + 2))), __a(__t("."),38,39)),23,39));
 } catch (__e) { __fail(1, __e, __h); } }/*f05a2223b733d12b]1*/
 /*f05a2223b733d12b[2*/__cur(2);
  const = 2 
 /*f05a2223b733d12b]2*/
-/*f05a2223b733d12b[3*/{ const __h = __height(); try {
+/*f05a2223b733d12b[3*/{ const __h = __height(3); try {
 __emit(__a(__p(__a(__t("After "),57,62), __v(((3 * 4))), __a(__t("."),71,72)),57,72));
 } catch (__e) { __fail(3, __e, __h); } }/*f05a2223b733d12b]3*/
 })(__s);

@@ -117,7 +117,30 @@ ops      op stream (all ints varint/LEB128 unless noted)
 0x05 STYLE_POP_TO height
 0x06 SPAN        id start end       (post-hoc span attach; codegen wraps
                                      constructor calls in __at(node, s, e))
+0x07 DIAG        sev(u8) codeRef msgRef start end   (since 7, plan P2-01:
+                                     an execution diagnostic — 0 info,
+                                     1 warning, 2 error; a stable code)
 ```
+
+As built (plan P2-01; design T2 S4): **node values** are frozen and branded
+with a module-private symbol (`runtime/src/shared/opbuf.mjs`): node-ness is
+the brand, never a duck-typed field, and a value cannot change after its op
+was written (spans live in the buffer's side table). **One content
+protocol**, `toContent` (`runtime/src/worker/executor.mjs`), serves splices,
+constructor children, handler returns and m`…`: a node is itself;
+string/number/bigint are text; `null`, `undefined`, `false` are nothing (a
+splice of `undefined`/`null` says so: `splice-undefined`); arrays and
+iterables flatten; an object with `[Symbol.for('tsm.content')]()` converts
+itself; a function marked `[Symbol.for('tsm.nullary')]` (`toc`, `notes`,
+`glossary`, `rule`) is called, any other is an error node
+(`splice-function`); anything else is its `String()` with `splice-object`.
+`m`…`` keeps interpolated content. **One diagnostic channel**: every error
+the executor builds (`script-error`, `script-syntax`, `region-error`,
+`fence-error` — at `ctx.error`'s offset into the body — `bib-load`) and
+every execution warning is a DIAG op; the engine no longer scans error
+nodes. Codegen's `__height(i)` names the running unit, so a diagnostic
+about a splice points at its block. `$.style.push` takes a patch object
+only.
 
 - Ids are implicit: each MAKE op takes the next sequence number. Post-order by construction (JS evaluation order), so every referenced child id < the referencing op's id.
 - `argVal` is tag-prefixed: `0=null, 1=bool, 2=f64 (8 bytes LE), 3=strRef, 4=nodeId`.
@@ -348,7 +371,13 @@ splice-js            error    splice lexing failure (unbalanced, regex literal, 
 region-unclosed      error    #!name without matching closer
 region-mismatch      error    closer name does not match innermost open region
 script-error         error    document program threw (per top-level block)
-fence-error          error    fence handler threw / ctx.error(...)
+script-syntax        error    a block's JavaScript does not compile
+region-error         error    a region handler threw
+fence-error          error    fence handler threw / ctx.error(msg, offset)
+bib-load             error    a bibliography could not be loaded (warning: an entry failed to format)
+splice-undefined     warning  #x where x is undefined or null: nothing rendered
+splice-function      error    a function spliced as content (call it; #toc-like nullary ctors excepted)
+splice-object        info     a plain object spliced as its String()
 ops-invalid          error    op buffer failed validation
 ref-unresolved       warning  @id with no label
 label-duplicate      warning  same label declared twice (first wins)

@@ -2,7 +2,7 @@ export default async (__s, $) => {
 const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 __emit(__a(__p(__a(__t("作者只声明宽度时，高度按图片的宽高比推出，宽度保持作者的值（缺陷 #24）。"),0,106)),0,106));
-/*120d1e9b63381f9d[0*/{ const __h = __height(); try {
+/*120d1e9b63381f9d[0*/{ const __h = __height(0); try {
 __emit(__a(__region("figure", ({src: "/test/e2e/img/w40h20.png", alt: "只给宽度", w: 120, label: "fig-w"}), [[[__a(__t("宽 120px 的插图，高度来自拉取到的宽高比。"),195,253)]]]),108,262));
 } catch (__e) { __fail(0, __e, __h); } }/*120d1e9b63381f9d]0*/
 })(__s);

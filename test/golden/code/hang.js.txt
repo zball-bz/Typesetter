@@ -2,7 +2,7 @@ export default async (__s, $) => {
 const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 __emit(__a(__p(__a(__t("悬挂缩进与注释感知续行："),0,36)),0,36));
-/*47d280676581ad85[0*/{ const __h = __height(); try {
+/*47d280676581ad85[0*/{ const __h = __height(0); try {
 __emit(__a(__p(__v((codeblock("", [["    indented_call(alpha, beta, gamma, delta, epsilon, zeta_long_tail);"], ["value = 1; ", style({color: "var(--tsr-tok-comment)"}, "// a very long inline comment that wraps and its continuation aligns to the comment content column")]], {})))),38,295));
 } catch (__e) { __fail(0, __e, __h); } }/*47d280676581ad85]0*/
 })(__s);

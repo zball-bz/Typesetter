@@ -246,7 +246,6 @@ struct Doc {
     validThrough = std::min(validThrough, (int)Stage::Execute);
     if (!raw.ok) return false;
     tree = instantiate(raw, arena, strs, styles, diags, *registry);
-    scanScriptErrors(tree.root);
     validThrough = (int)Stage::Ingest;
     return true;
   }
@@ -269,28 +268,6 @@ struct Doc {
     }
     validThrough = (int)Stage::Resolve;
   }
-
-  // Execution errors arrive as error nodes (plan P0-05): report the ones the
-  // executor produced (script-error / script-syntax) as diagnostics at their
-  // block span. Parse errors were reported at compile time. Interim until
-  // the DIAG op carries executor diagnostics (plan P2-01).
-  void scanScriptErrors(const ContentNode* n) {
-    if (!n) return;
-    if (n->kind == Kind::error) {
-      std::string_view code, msg;
-      for (const ArgVal& a : n->args) {
-        if (a.tag != ArgTag::Str) continue;
-        if (a.key == ArgK::code) code = strs.get(a.ref);
-        if (a.key == ArgK::message) msg = strs.get(a.ref);
-      }
-      if (code == "script-error")
-        diags.add(Sev::Error, "script-error", n->span, std::string(msg));
-      else if (code == "script-syntax")
-        diags.add(Sev::Error, "script-syntax", n->span, std::string(msg));
-    }
-    for (const ContentNode* k : n->kids) scanScriptErrors(k);
-  }
-
 
   // a code block with a language and a plain body needs its tokens; the
   // engine answers its own language (plan P1-09; code-design §2): 'tsm'

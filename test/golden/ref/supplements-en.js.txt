@@ -3,10 +3,10 @@ const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, ru
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 __emit(__a(__hd(1, "intro", __a(__t("Introduction"),2,14)),0,14));
 __emit(__a(__p(__a(__t("An English document takes English supplements from the doc.lang setting (plan P1-03): see "),24,113), __a(__rf("intro"),114,120), __a(__t(", "),120,121), __a(__rf("fig-a"),122,128), __a(__t(", "),128,129), __a(__rf("tab-a"),130,136), __a(__t(" and "),137,140), __a(__rf("eq-a"),141,146), __a(__t("."),146,147)),24,147));
-/*3718999dd51bce66[0*/{ const __h = __height(); try {
+/*3718999dd51bce66[0*/{ const __h = __height(0); try {
 __emit(__a(__region("figure", ({src: "a.png", alt: "a figure", w: 120, h: 60, label: "fig-a"}), [[[__a(__t("A figure."),220,229)]]]),149,238));
 } catch (__e) { __fail(0, __e, __h); } }/*3718999dd51bce66]0*/
-/*3718999dd51bce66[1*/{ const __h = __height(); try {
+/*3718999dd51bce66[1*/{ const __h = __height(1); try {
 __emit(__a(__region("table", ({cols: 2, label: "tab-a"}), [[[__a(__t("x"),273,274), __a(__t("y"),277,278)]]]),240,286));
 } catch (__e) { __fail(1, __e, __h); } }/*3718999dd51bce66]1*/
 __emit(__a(__mb("e = m c^2", "eq-a"),288,308));

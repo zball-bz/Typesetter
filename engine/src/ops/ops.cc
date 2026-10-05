@@ -177,6 +177,16 @@ static u32 addString(RawOps& r, std::string s) {
   return (u32)(r.strings.size() - 1);
 }
 
+// the executor's diagnostic codes (plan P2-01: stable; a DIAG op names one
+// of them, anything else reads as script-diag)
+static const char* execDiagCode(std::string_view code) {
+  static const char* const kCodes[] = {"splice-undefined", "splice-function", "splice-object", "script-error",
+                                       "script-syntax", "region-error", "fence-error", "bib-load"};
+  for (const char* c : kCodes)
+    if (code == c) return c;
+  return "script-diag";
+}
+
 void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
   out = RawOps{};  // reset before any views exist — safe to move-assign empty
   RawOps& r = out;
@@ -193,6 +203,13 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
   Reader rd{buf + 5, buf + len};
   struct Pending { u32 node; std::string msg; };
   std::vector<Pending> pendingWarn, pendingErr;
+  struct ExecDiag {
+    Sev sev;
+    const char* code;
+    Span span;
+    std::string msg;
+  };
+  std::vector<ExecDiag> pendingDiag;
   u64 nStrings = rd.varint();
   u64 stringBytes = rd.varint();
   u64 nOps = rd.varint();
@@ -322,11 +339,29 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
         r.nodes[id].span = {(u32)s, (u32)e};
         break;
       }
+      case Op::DIAG: {
+        // an executor diagnostic (plan P2-01, D-I04): severity, stable code,
+        // message, source span — the one channel for execution warnings and
+        // the errors of executor-built error nodes
+        u8 sev = rd.byte();
+        u64 code = rd.varint();
+        u64 msg = rd.varint();
+        u64 s = rd.varint();
+        u64 e = rd.varint();
+        if (rd.fail || code >= r.strings.size() || msg >= r.strings.size() || s > e || e > 0xFFFFFFFFull) {
+          bad("DIAG malformed");
+          return;
+        }
+        pendingDiag.push_back({sev == 2 ? Sev::Error : sev == 0 ? Sev::Info : Sev::Warning,
+                               execDiagCode(r.strings[code]), Span{(u32)s, (u32)e}, std::string(r.strings[msg])});
+        break;
+      }
       default:
         { bad("unknown op"); return; }
     }
   }
   if (rd.p != rd.end) { bad("trailing bytes"); return; }
+  for (const ExecDiag& d : pendingDiag) diags.add(d.sev, d.code, d.span, d.msg);
   // value diagnostics carry the node's span (SPAN ops follow MAKE_NODE)
   for (const Pending& p : pendingErr)
     diags.add(Sev::Error, "ops-invalid", r.nodes[p.node].span, p.msg);

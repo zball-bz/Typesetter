@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
-export const OPS_VERSION = 6;
+export const OPS_VERSION = 7;
 export const OPS_MIN_COMPAT = 6;
-export const SCHEMA_HASH = 'accf561c';
+export const SCHEMA_HASH = 'dca14f17';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -9,7 +9,8 @@ export const SINCE = Object.freeze({
     "3": 6,
     "4": 6,
     "5": 6,
-    "6": 6
+    "6": 6,
+    "7": 7
   },
   "kind": {
     "0": 6,
@@ -132,7 +133,8 @@ export const OP = Object.freeze({
   "EMIT": 3,
   "STYLE_PUSH": 4,
   "STYLE_POP_TO": 5,
-  "SPAN": 6
+  "SPAN": 6,
+  "DIAG": 7
 });
 export const KIND = Object.freeze({
   "doc": 0,

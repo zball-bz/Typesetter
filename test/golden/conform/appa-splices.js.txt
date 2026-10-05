@@ -2,23 +2,23 @@ export default async (__s, $) => {
 const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 let who, greet;
-/*8a63b5117b0fe68c[0*/{ const __h = __height(); try {
+/*8a63b5117b0fe68c[0*/{ const __h = __height(0); try {
 who = (
  "world"
 );
 } catch (__e) { __fail(0, __e, __h); } }/*8a63b5117b0fe68c]0*/
-/*8a63b5117b0fe68c[1*/{ const __h = __height(); try {
+/*8a63b5117b0fe68c[1*/{ const __h = __height(1); try {
 greet = (
  (name) => "Hello, " + name
 );
 } catch (__e) { __fail(1, __e, __h); } }/*8a63b5117b0fe68c]1*/
-/*8a63b5117b0fe68c[2*/{ const __h = __height(); try {
+/*8a63b5117b0fe68c[2*/{ const __h = __height(2); try {
 __emit(__a(__p(__a(__t("Value splice: "),60,73), __v((who)), __a(__t(" and a call chain: "),79,96), __v((greet("tsm"))), __a(__t(". Member access: "),110,126), __v((who.length)), __a(__t(" characters; expression: "),139,162), __v(((1 + 2 * 3))), __a(__t("."),175,176)),60,176));
 } catch (__e) { __fail(2, __e, __h); } }/*8a63b5117b0fe68c]2*/
 /*8a63b5117b0fe68c[3*/__cur(3);
  let hidden = 40 + 2 
 /*8a63b5117b0fe68c]3*/
-/*8a63b5117b0fe68c[4*/{ const __h = __height(); try {
+/*8a63b5117b0fe68c[4*/{ const __h = __height(4); try {
 __emit(__a(__p(__a(__t("Statement splice binds in document scope: "),201,242), __v((hidden)), __a(__t(". A splice ends at punctuation: "),250,281), __v((who)), __a(__t(". Semicolon terminator: "),286,309), __v((who)), __a(__t("[not an argument]. Content argument desugars to a trailing argument: "),315,383), __v((strong)(__a(__t("bold text"),392,401))), __a(__t(". Literal hash: #who stays literal."),402,438)),201,438));
 } catch (__e) { __fail(4, __e, __h); } }/*8a63b5117b0fe68c]4*/
 })(__s);

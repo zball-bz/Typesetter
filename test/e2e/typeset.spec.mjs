@@ -36,6 +36,8 @@ const EXPECTED_DIAGS = new Map([
   ['region/hott-row', /^warning overfull-line [^\n]*\n$/],   // a formula in a 47px table cell
   // references to unnumbered regions show their label text (plan P1-18 anchors)
   ['region/anchor-kinds', /^(info ref-unnumbered [^\n]*\n){3}$/],
+  // a splice of undefined renders nothing and says so (plan P2-01, D-I05)
+  ['splice/dot-rule', /^warning splice-undefined [^\n]*\n$/],
 ]);
 
 for (const f of fixtures) {
@@ -126,6 +128,24 @@ test('math copies as source text', async ({ page }) => {
 // laid out — installed as a declared face of role 'math', every glyph span in
 // it (no fallback family), kerning off, the space present for degraded
 // formulas, and an inline formula's baseline on its line's text baseline
+// plan P2-01 (design T2 S4): one content protocol — arrays flatten, null
+// renders nothing (splice-undefined), a function is an error unless nullary
+// (#toc), m`…` keeps content values
+test('toContent: arrays, null, functions, m interpolation', async ({ page }) => {
+  const source = '#let xs = ["a", em("b"), 3]\n\nA #xs B #(null) C #(x => 1) D #(m`p ${strong("q")} r`) E\n';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, { widthPx: 600 }),
+                                  { source });
+  const text = await page.evaluate(() => document.querySelector('.tsr-doc').textContent);
+  expect(text).toContain('A ab3 B');
+  expect(text).toContain('p q r');
+  expect(text).not.toContain('[object Object]');
+  expect(text).not.toContain('null');
+  expect(res.diags).toMatch(/warning splice-undefined/);
+  expect(res.diags).toMatch(/error splice-function/);
+});
+
 test('math: font, glyph coverage and baseline audit', async ({ page }) => {
   const source = '设 $x^2 + y_1 = z$ 且 $f(x) = sum_(i=1)^n a_i$ 成立，另有 $a +$ 与正文。';
   await page.goto('/test/e2e/harness.html');

@@ -9,18 +9,18 @@ __emit(__a(__l(true, 1, __a(__it(__a(__p(__a(__t("one"),217,220)),217,220)),214,
 __emit(__a(__p(__a(__t("Comment lines inside a paragraph are invisible"),229,275), __a(__cm(" a remark "),276,292), __a(__t(" and the paragraph continues."),293,321)),229,321));
 __emit(__a(__cm(" a block comment "),323,346));
 __emit(__a(__p(__a(__t("Text after the closer is kept."),347,377)),347,377));
-/*8de5e42d54af7085[0*/{ const __h = __height(); try {
+/*8de5e42d54af7085[0*/{ const __h = __height(0); try {
 y = (
  2
 );
 } catch (__e) { __fail(0, __e, __h); } }/*8de5e42d54af7085]0*/
-/*8de5e42d54af7085[1*/{ const __h = __height(); try {
+/*8de5e42d54af7085[1*/{ const __h = __height(1); try {
 __emit(__a(__p(__a(__t("and after a let statement: "),390,416), __v((y)), __a(__t("."),419,420)),390,420));
 } catch (__e) { __fail(1, __e, __h); } }/*8de5e42d54af7085]1*/
 /*8de5e42d54af7085[2*/__cur(2);
  let z = 3 
 /*8de5e42d54af7085]2*/
-/*8de5e42d54af7085[3*/{ const __h = __height(); try {
+/*8de5e42d54af7085[3*/{ const __h = __height(3); try {
 __emit(__a(__p(__a(__t("and after a block: "),436,454), __v((z)), __a(__t("."),457,458)),436,458));
 } catch (__e) { __fail(3, __e, __h); } }/*8de5e42d54af7085]3*/
 __emit(__a(__l(true, 1, __a(__it(__a(__p(__a(__t("auto one"),462,470)),462,470)),460,470), __a(__it(__a(__p(__a(__t("auto two"),473,481)),473,481)),471,481)),460,481));

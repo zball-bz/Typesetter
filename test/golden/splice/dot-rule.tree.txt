@@ -3,5 +3,5 @@ doc @[12,63) [base]
     text @[12,24) [base] str="The value is "
     text @[0,0) [base] str="42"
     text @[27,50) [base] str=". Next sentence follows "
-    text @[0,0) [base] str="undefined"
+    seq @[0,0) [base]
     text @[59,63) [base] str=" too."

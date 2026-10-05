@@ -3,7 +3,7 @@ const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, ru
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 __emit(__a(__hd(1, null, __a(__t("Citations"),2,11)),0,11));
 __emit(__a(__p(__a(__t("Optimal line breaking is due to Knuth and Plass "),13,60), __a(__rf("kp81"),61,66), __a(__t("; hyphenation patterns follow Liang "),66,101), __a(__rf("liang83"),102,110), __a(__t(", and the pair is cited again as "),110,142), __a(__rf("kp81, liang83"),143,159), __a(__t(". The TeXbook "),159,172), __a(__rf("knuth84"),173,181), __a(__t(" comes last in citation order even though it is first in the data. Citing "),182,254), __a(__rf("kp81"),255,260), __a(__t(" once more keeps its number; the uncited entry is omitted."),261,318)),13,318));
-/*f6c0c125dc256270[0*/{ const __h = __height(); try {
+/*f6c0c125dc256270[0*/{ const __h = __height(0); try {
 __emit(__a(__p(__v((bibliography("/test/fixtures/cite/refs.json")))),320,366));
 } catch (__e) { __fail(0, __e, __h); } }/*f6c0c125dc256270]0*/
 })(__s);

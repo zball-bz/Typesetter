@@ -2,18 +2,18 @@ export default async (__s, $) => {
 const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 __emit(__a(__hd(1, "sec-a", __a(__t("Labels"),2,8)),0,8));
-/*7501c0f7fff78a11[0*/{ const __h = __height(); try {
+/*7501c0f7fff78a11[0*/{ const __h = __height(0); try {
 __emit(__a(__region("aside", ({label: "side-1"}), [[[__a(__t("An aside with a label."),43,65)]]]),18,73));
 } catch (__e) { __fail(0, __e, __h); } }/*7501c0f7fff78a11]0*/
-/*7501c0f7fff78a11[1*/{ const __h = __height(); try {
+/*7501c0f7fff78a11[1*/{ const __h = __height(1); try {
 __emit(__a(__region("figure", ({label: "fig-x"}), [[[__a(__t("First figure."),100,113)]]]),75,122));
 } catch (__e) { __fail(1, __e, __h); } }/*7501c0f7fff78a11]1*/
-/*7501c0f7fff78a11[2*/{ const __h = __height(); try {
+/*7501c0f7fff78a11[2*/{ const __h = __height(2); try {
 __emit(__a(__region("figure", ({label: "fig-x"}), [[[__a(__t("Second figure reuses the label: it loses it."),149,193)]]]),124,202));
 } catch (__e) { __fail(2, __e, __h); } }/*7501c0f7fff78a11]2*/
 __emit(__a(__mb("a = b", "eq-1"),204,220));
 __emit(__a(__mb("c = d", "eq-1"),222,238));
-/*7501c0f7fff78a11[3*/{ const __h = __height(); try {
+/*7501c0f7fff78a11[3*/{ const __h = __height(3); try {
 __emit(__a(__region("figure", ({label: "h-2.1"}), [[[__a(__t("A figure with a reserved label shape."),265,302)]]]),240,311));
 } catch (__e) { __fail(3, __e, __h); } }/*7501c0f7fff78a11]3*/
 __emit(__a(__p(__a(__t("See "),313,316), __a(__rf("side-1"),317,324), __a(__t(", "),324,325), __a(__rf("fig-x"),326,332), __a(__t(", "),332,333), __a(__rf("eq-1"),334,339), __a(__t(" and "),340,343), __a(__rf("sec-a"),344,350), __a(__t("."),350,351)),313,351));

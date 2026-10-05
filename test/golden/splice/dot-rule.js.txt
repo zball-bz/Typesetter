@@ -2,12 +2,12 @@ export default async (__s, $) => {
 const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 let x;
-/*0c7bb21778c3d89d[0*/{ const __h = __height(); try {
+/*0c7bb21778c3d89d[0*/{ const __h = __height(0); try {
 x = (
  42
 );
 } catch (__e) { __fail(0, __e, __h); } }/*0c7bb21778c3d89d]0*/
-/*0c7bb21778c3d89d[1*/{ const __h = __height(); try {
+/*0c7bb21778c3d89d[1*/{ const __h = __height(1); try {
 __emit(__a(__p(__a(__t("The value is "),12,24), __v((x)), __a(__t(". Next sentence follows "),27,50), __v((x.here)), __a(__t(" too."),59,63)),12,63));
 } catch (__e) { __fail(1, __e, __h); } }/*0c7bb21778c3d89d]1*/
 })(__s);

@@ -2,13 +2,13 @@ export default async (__s, $) => {
 const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 let list;
-/*c17b83cd9c90be7f[0*/{ const __h = __height(); try {
+/*c17b83cd9c90be7f[0*/{ const __h = __height(0); try {
 list = (
  1
 );
 } catch (__e) { __fail(0, __e, __h); } }/*c17b83cd9c90be7f]0*/
 __emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("the list sugar still works"),17,43)),17,43)),15,43), __a(__it(__a(__p(__a(__t("second item"),46,57)),46,57)),44,57)),15,57));
-/*c17b83cd9c90be7f[1*/{ const __h = __height(); try {
+/*c17b83cd9c90be7f[1*/{ const __h = __height(1); try {
 __emit(__a(__p(__a(__t("The user binding: "),59,76), __v((list)), __a(__t("."),82,83)),59,83));
 } catch (__e) { __fail(1, __e, __h); } }/*c17b83cd9c90be7f]1*/
 })(__s);

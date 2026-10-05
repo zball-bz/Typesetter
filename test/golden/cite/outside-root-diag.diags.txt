@@ -1,1 +1,2 @@
+error bib-load @[76,114) bibliography ../../../../refs.json: resource outside the document root
 warning ref-unresolved @[71,73) reference 'k' has no label

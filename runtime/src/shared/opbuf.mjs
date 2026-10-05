@@ -4,6 +4,14 @@ import { OP, OPS_MIN_COMPAT, ARGK, SINCE } from './ops.gen.mjs';
 
 const ARG_NULL = 0, ARG_BOOL = 1, ARG_NUM = 2, ARG_STR = 3, ARG_NODE = 4;
 
+// Node values (plan P2-01; design T2 S4): frozen, branded with a
+// module-private symbol — node-ness is the brand, never a duck-typed field,
+// and a value cannot be changed after its op was written (spans live in the
+// buffer's side table)
+const BRAND = Symbol('tsm.node');
+export const isNode = (x) => x !== null && typeof x === 'object' && x[BRAND] === true;
+const nodeValue = (fields) => Object.freeze(Object.assign(Object.create(null), fields, { [BRAND]: true }));
+
 export class OpBuf {
   constructor() {
     this.ops = [];            // raw bytes of the op stream
@@ -11,6 +19,7 @@ export class OpBuf {
     this.strList = [];
     this.nextId = 0;
     this.opCount = 0;
+    this.spans = new Map();   // opId → [start, end] (node values are frozen)
     // per-buffer version (plan P1-01): the newest vocabulary row used, at
     // least MIN_COMPAT — a buffer readable by every engine that knows it
     this.version = OPS_MIN_COMPAT;
@@ -50,7 +59,7 @@ export class OpBuf {
     this.ops.push(OP.MAKE_TEXT);
     this.vint(this.strRef(str));
     const id = this.nextId++;
-    return { kind: 17 /* text */, args: {}, children: [], opId: id, text: str, span: null };
+    return nodeValue({ kind: 17 /* text */, args: Object.freeze({}), children: Object.freeze([]), opId: id, text: str });
   }
 
   makeNode(kind, args = {}, children = []) {
@@ -71,13 +80,16 @@ export class OpBuf {
       else if (typeof v === 'boolean') { this.ops.push(ARG_BOOL, v ? 1 : 0); }
       else if (typeof v === 'number') { this.ops.push(ARG_NUM); this.f64(v); }
       else if (typeof v === 'string') { this.ops.push(ARG_STR); this.vint(this.strRef(v)); }
-      else if (v && typeof v === 'object' && 'opId' in v) { this.ops.push(ARG_NODE); this.vint(v.opId); }
+      else if (isNode(v)) { this.ops.push(ARG_NODE); this.vint(v.opId); }
       else throw new Error(`bad arg value for ${k}`);
     }
     this.vint(children.length);
-    for (const c of children) this.vint(c.opId);
+    for (const c of children) {
+      if (!isNode(c)) throw new Error('a child is not a node value');
+      this.vint(c.opId);
+    }
     const id = this.nextId++;
-    return { kind, args, children, opId: id, span: null };
+    return nodeValue({ kind, args: Object.freeze({ ...args }), children: Object.freeze([...children]), opId: id });
   }
 
   emitNode(shadow) {
@@ -113,7 +125,18 @@ export class OpBuf {
     this.vint(shadow.opId);
     this.vint(s);
     this.vint(e);
-    shadow.span = [s, e];
+    this.spans.set(shadow.opId, [s, e]);
+  }
+  // an execution diagnostic (plan P2-01, DIAG since 7): severity 0 info,
+  // 1 warning, 2 error; a stable code; the source span it is about
+  diag(sev, code, message, s = 0, e = s) {
+    this.opCount++;
+    this.uses(SINCE.op[OP.DIAG]);
+    this.ops.push(OP.DIAG, sev);
+    this.vint(this.strRef(String(code)));
+    this.vint(this.strRef(String(message)));
+    this.vint(Math.max(0, Math.floor(s)));
+    this.vint(Math.max(Math.floor(s), Math.floor(e)));
   }
 
   finalize() {

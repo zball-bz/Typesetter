@@ -8,7 +8,7 @@ __emit(__a(__p(__a(__t("请注意"),173,182), __a(__t("*"),182,183), __a(__t("�
 __emit(__a(__l(false, 1, __a(__it(__a(__p(__a(__t("第一项"),201,210), __a(__b(__a(__t("重要"),211,217)),210,218)),201,218)),199,218), __a(__it(__a(__p(__a(__t("第二项"),221,230)),221,230)),219,230)),199,230));
 __emit(__a(__p(__a(__t("A stray $ sign at the end of a line"),232,267)),232,267));
 __emit(__a(__hd(1, null, __a(__t("The heading after it survives"),270,299)),268,299));
-/*30e5b8ae01c74608[0*/{ const __h = __height(); try {
+/*30e5b8ae01c74608[0*/{ const __h = __height(0); try {
 __emit(__a(__p(__a(__t("A call "),301,307), __v((strong(text("left" +
 - 1 + " right")))), __a(__t(" spans lines."),347,359)),301,359));
 } catch (__e) { __fail(0, __e, __h); } }/*30e5b8ae01c74608]0*/

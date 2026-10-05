@@ -3,7 +3,7 @@ const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, ru
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 __emit(__a(__hd(1, null, __a(__t("Citations in notes"),2,20)),0,20));
 __emit(__a(__p(__a(__t("Liang's patterns "),22,38), __a(__rf("liang83"),39,47), __a(__t(" come first in the text."),48,71), __a(__nt(__a(__t("The TeXbook "),73,84), __a(__rf("knuth84"),85,93), __a(__t(" is cited only inside this note."),94,125)),71,126), __a(__t(" Knuth and Plass "),127,142), __a(__rf("kp81"),143,148), __a(__t(" follow after the note."),149,171)),22,171));
-/*d867a0972bc2586d[0*/{ const __h = __height(); try {
+/*d867a0972bc2586d[0*/{ const __h = __height(0); try {
 __emit(__a(__p(__v((bibliography("/test/fixtures/cite/refs.json")))),173,219));
 } catch (__e) { __fail(0, __e, __h); } }/*d867a0972bc2586d]0*/
 })(__s);

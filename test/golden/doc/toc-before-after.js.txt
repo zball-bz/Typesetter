@@ -1,13 +1,13 @@
 export default async (__s, $) => {
 const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
-/*fb5d93d362885752[0*/{ const __h = __height(); try {
+/*fb5d93d362885752[0*/{ const __h = __height(0); try {
 __emit(__a(__p(__v((toc))),0,4));
 } catch (__e) { __fail(0, __e, __h); } }/*fb5d93d362885752]0*/
 __emit(__a(__hd(1, null, __a(__t("One"),8,11)),6,11));
 __emit(__a(__hd(2, null, __a(__t("One point one"),16,29)),13,29));
 __emit(__a(__hd(1, null, __a(__t("Two"),33,36)),31,36));
-/*fb5d93d362885752[1*/{ const __h = __height(); try {
+/*fb5d93d362885752[1*/{ const __h = __height(1); try {
 __emit(__a(__p(__v((toc))),38,42));
 } catch (__e) { __fail(1, __e, __h); } }/*fb5d93d362885752]1*/
 })(__s);

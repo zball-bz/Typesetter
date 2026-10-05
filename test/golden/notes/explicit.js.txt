@@ -3,7 +3,7 @@ const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, ru
 return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
 __emit(__a(__hd(1, null, __a(__t("Explicit placement"),2,20)),0,20));
 __emit(__a(__p(__a(__t("First note here"),22,37), __a(__nt(__a(__t("One."),39,43)),37,44), __a(__t(" and another"),45,56), __a(__nt(__a(__t("Two, with a reference to "),58,82), __a(__rf("top"),83,87), __a(__t("."),87,88)),56,89), __a(__t(" before the section is placed."),90,119)),22,119));
-/*61c4563d65713cce[0*/{ const __h = __height(); try {
+/*61c4563d65713cce[0*/{ const __h = __height(0); try {
 __emit(__a(__p(__v((notes()))),121,129));
 } catch (__e) { __fail(0, __e, __h); } }/*61c4563d65713cce]0*/
 __emit(__a(__hd(1, "top", __a(__t("Appendix"),133,141)),131,141));
