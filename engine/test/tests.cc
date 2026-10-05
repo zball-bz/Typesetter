@@ -601,6 +601,79 @@ static void unitBreakItems() {
   CHECK(penForbidden(BREAK_INF) && !penForbidden(1e17f) && penThousandths(0.95f) == 950);
 }
 
+// Breaker semantics (plan P0-12, design T6 S1).
+static void unitBreakSemantics() {
+  CostParams cp;
+  auto word = [](Su w, float pen = BREAK_INF) {
+    LinebreakBlock b;
+    b.width = w;
+    b.breakPenalty = pen;
+    return b;
+  };
+  auto space = [](Su w = 256) {
+    LinebreakBlock b;
+    b.flags = BF_SPACE;
+    b.width = b.spaceWidth = w;
+    b.stretchWeight = 1;
+    return b;
+  };
+  {  // discard: the space at the break is not in the line — an exact fit is free
+    std::vector<LinebreakBlock> bl = {word(4000), space(), word(4000), space(), word(4000),
+                                      space(), word(9000)};
+    BreakResult r = breakLines(bl, LineWidths{4000 + 256 + 4000 + 256 + 4000}, cp);
+    CHECK((r.breakpoints == std::vector<u32>{6, 7}) && r.cost == 0);
+  }
+  {  // a Forbidden (BREAK_INF) block is never a break; the rescue keeps the
+     // overlong run on a line of its own instead of collapsing the paragraph
+    std::vector<LinebreakBlock> bl = {word(3000), space(), word(30000), space(), word(3000),
+                                      space(), word(30000), space(), word(3000)};
+    BreakResult r5 = breakLines(bl, LineWidths{19200}, cp);
+    CHECK(!r5.feasible);
+    BreakResult r = breakLinesRetry(bl, LineWidths{19200}, cp);
+    // the rescue breaks from the best active node (lowest demerits): the
+    // short word joins its run rather than standing alone underfull
+    CHECK(r.feasible && (r.breakpoints == std::vector<u32>{4, 8, 9}));
+    CHECK((r.overfullLines == std::vector<u32>{0, 1}));
+  }
+  {  // the last line has fil stretch and normal shrink: slightly long is one line
+    std::vector<LinebreakBlock> bl = {word(6000), space(), word(6000), space(), word(6800)};
+    BreakResult r = breakLines(bl, LineWidths{19200}, cp);  // 19312 > 19200, shrink 512
+    CHECK((r.breakpoints == std::vector<u32>{5}));
+  }
+  {  // identical lines after discard report the latest break (the next line's
+     // first block): CJK char, then a space — layout's trimmed range
+    LinebreakBlock cjk = word(1024, 0);
+    cjk.flags = BF_CJK;
+    cjk.spaceWidth = 102;
+    std::vector<LinebreakBlock> bl;
+    for (int k = 0; k < 18; k++) bl.push_back(cjk);
+    bl.push_back(space());
+    bl.push_back(word(4000));
+    BreakResult r = breakLines(bl, LineWidths{18432}, cp);
+    CHECK((r.breakpoints == std::vector<u32>{19, 20}));
+  }
+  {  // a Forced penalty breaks wherever it appears
+    std::vector<BItem> it(5);
+    it[0].k = ItemKind::Box; it[0].w = 1000; it[0].block = 0;
+    it[1].k = ItemKind::Penalty; it[1].tag = PenTag::Forced; it[1].block = 0;
+    it[2].k = ItemKind::Box; it[2].w = 1000; it[2].block = 1;
+    it[3].k = ItemKind::Glue; it[3].w = it[3].stretch = it[3].shrink = 256; it[3].block = 2;
+    it[4].k = ItemKind::Box; it[4].w = 1000; it[4].block = 3;
+    BreakResult r = breakItems(it, 4, LineWidths{19200}, cp, 5, false);
+    CHECK((r.breakpoints == std::vector<u32>{1, 4}));
+  }
+  {  // cost is bounded and the power is an integer product
+    std::vector<LinebreakBlock> bl = {word(100), space(), word(100)};
+    BreakResult r = breakLines(bl, LineWidths{19200}, cp);
+    CHECK(r.cost == 0);  // a short last line costs nothing (fil)
+    CostParams sq = cp;
+    sq.exponent = 2;
+    std::vector<LinebreakBlock> two = {word(9000), space(), word(9000), space(), word(9000)};
+    BreakResult a = breakLines(two, LineWidths{18432}, sq);
+    CHECK(a.cost >= 0 && a.cost <= sq.cap * 2);
+  }
+}
+
 // The KP memo (plan P0-11) answers exactly what breakLines computes: keys
 // are verified on hit, and eviction under many distinct streams only costs
 // recomputation.
@@ -632,7 +705,7 @@ static void unitBreakMemo() {
       LineWidths lw{(Su)(64 * (300 + rnd(200)))};
       BreakResult a = breakLinesRetry(bl, lw, cp);
       BreakResult b = breakLines(bl, lw, cp);
-      if (b.cost < 1e17 && (a.breakpoints != b.breakpoints || a.cost != b.cost)) mismatches++;
+      if (b.feasible && (a.breakpoints != b.breakpoints || a.cost != b.cost)) mismatches++;
       if (a.breakpoints.empty() || a.breakpoints.back() != bl.size()) mismatches++;
     }
   }
@@ -707,6 +780,7 @@ int main(int argc, char** argv) {
   unitHtmlWriter();
   unitBreakMemo();
   unitBreakItems();
+  unitBreakSemantics();
 
   if (root.empty()) {
     printf("%s\n", failures ? "UNIT FAILURES" : "unit ok (no fixture root given)");

@@ -253,6 +253,7 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
     if (join) t.attrSafe("data-join", join);
     if (!ragged && (tb.units[l.unitIdx].ragged || l.noGlue)) t.attrSafe("data-ragged", "1");
     if (l.cellIdx >= 0) t.attrSafe("data-cell", "1");
+    if (l.overfull) t.attrSafe("data-overfull", "1");  // deliberate overflow (audit)
     pos3(t);
     if (l.special == 2) {
       const std::string* feats = &cfg.codeFontFeatures;

@@ -1,0 +1,60 @@
+# 排版性 golden 变化审阅记录（PLAN.md §4.4）
+
+每条记录写明：步骤、变化范围、逐段结论。机械性变化（只改数值格式、属性拼写）不在此列。
+
+## P0-12 断行语义包（T6 S1）
+
+**语义（同一提交落地）：** 断点上的 Glue 丢弃、行首（含段首）Glue/Penalty 丢弃到第一个 Box/Disc；BREAK_INF → Forbidden，不再是候选断点；连字符是 Disc（断开时只加 `pre`，不再同时计入接合字距）；段末是 Forced 断点，末行 fil 拉伸、正常收缩；代价 `min(mapped(x)^3, 1e4)`，Overfull 是独立类别；罚分 i32 千分位；平局按（demerits，行数，更晚的父节点）；最终一遍救援：所有活跃节点到某合法断点都 Overfull 时，按总序最优的活跃节点在此断开、不加 demerits，该行标 Overfull（布局把它放在收缩极限处，HTML 带 `data-overfull`，诊断 `overfull-line`）。断点下标取"下一行第一个块"（丢弃之后），所以丢弃后相同的行报告同一个（最晚的）位置，与布局裁剪后的范围一致。
+
+**范围：** 95 个用例中 64 个 `breaks.txt` 变化（其中多数只有代价数值变化：旧代价计入了断点处的尾随空格、用 float 罚分），29 个用例共 34 个段落断点变化。WASM 与 native 断点逐字节一致（`tools/wasm-goldens.mjs --check`，95/95）。
+
+### A. 计划列出的 12 段（11 个用例）——全部出现，结论：改进
+
+| 用例 | 段 | 旧 → 新 | 结论 |
+|---|---|---|---|
+| cite/basic | pid 2 | 16,31,49,… → 14,28,49,… | 旧解为了把尾随空格算进宽度，在第 3 行留下 ws=16px 的极松行；新解三行 14.4/11/−1px，消除极松行 |
+| cite/unknown-diag | pid 1 | 同上（同一条目） | 同上 |
+| cjk/punct | pid 0 | 22,46,65,73 → 25,49,67,73 | 行首「的半宽不再计入（与布局裁剪一致）；行末收缩落在句读上：三行 ±0.48px，旧解首行 +3.9px |
+| cjk/softwrap | pid 0 | 19,38,56 → 20,40,56 | 旧第 2 行 ws=3.1px；新解 −0.39/+0.85px，代价因语义变化（尾随字距不再计入）略高但最大松紧明显下降 |
+| code/json-hl | pid 0 | 15,32,40 → 18,40 | 旧首行 ws=22.7px（灾难级）；新解首行以「，」结尾，半宽丢弃后恰好排满，2 行 |
+| doc/refs | pid 6 | 17,35,50 → 19,39,50 | 4.4/4.6px → −1.4/1.1px |
+| doc/refs | pid 10 | 18,27 → 20,27 | 改为连字符断开（sin-gle），松紧 4.4px → −1.4px |
+| doc/refs-diag | pid 3 | 18,19 → 19 | 末行收缩：两行（末行只剩 "ing."）→ 一行（−0.23px） |
+| inline/emph | pid 0 | 16,31 → 18,31 | 4.7px → −1.1px（在 *es-caped* 处断开） |
+| inline/quotes | pid 0 | 16,32,50,51 → 18,36,51 | 4 行（末行 "same."）→ 3 行，最大 ws 3.8 → 1.3px |
+| splice/ascii-cut | pid 0 | 17,18 → 18 | 末行收缩：孤字 "ary." 消失 |
+| style/kern-boundary | pid 0 | 7 行 → 6 行 | 去掉尾随空格偏置后少一行；最大 ws 11px 不变（同一行），其余 ≤2.3px |
+
+### B. 计划测量之后新增的用例里的同一段落
+
+cite/group-unknown-diag pid 1、cite/in-note pid 2、cite/two-bibs pid 2 与 pid 3：都是 A 中同一条参考文献条目（P0-09 新增的用例），变化与 cite/basic 完全相同。
+
+### C. P0-01…P0-10 新增的守护用例
+
+| 用例 | 变化 | 结论 |
+|---|---|---|
+| doc/url-overlong | 1 行（ws=−154px，单词重叠）→ 4 行：正文一行、两条超长 URL 各占一行（Overfull，`data-overfull`，第二行收缩到极限 −95su）、末行 | 缺陷 #19 的预期救援；e2e AUDIT_XFAIL 清空 |
+| code/snap, code/snap-sidecar | 孤立的 "#21)." 并回上一行；sidecar 段末行收缩 | 改进 |
+| conform/appa-splices | 两处连字符断开代替 4.7px 松行 | 符合语义（罚分 0.7 < 松行代价） |
+| doc/wrap-heading-caption | 标题 4 行 → 3 行；图注 3 行不变但断点后移；正文孤字 "1." 并回 | 改进 |
+| exec/contain-fence-header-diag, line/block-unclosed-diag | 错误块文字改为连字符断开、去掉松行 | 改进 |
+| inline/hyphen-link | 首行改在 exercis-es 处断开（8px/1px 代替 5.3px/8px） | 代价按新语义更低 |
+| line/crlf | 在行内公式 `a +` 之后断开（mathBinAfterPenalty 0.95），代替 4.7px 松行 | 符合 TeX（二元运算符后可断）；两者代价相差 0.05，属配置的罚分取舍 |
+| pages/paged-keep-fallback | 图注两行（孤词 "sheets."）→ 一行 | 末行收缩，改进 |
+
+### D. 计划列表外、已存在的用例（逐个审阅）
+
+| 用例 | 变化 | 结论 |
+|---|---|---|
+| figure/block pid 1、pid 2；figure/pull-diag pid 2 | 居中图注两行（末行只剩「取。」/「放。」/「框。」）→ 一行，收缩 −0.8px | 末行收缩的直接结果，消除孤字。计划的测量把这些居中图注算作"中性"，是因为它针对的是后续居中预设（LineEnds）下的行为；在 S1 的两端对齐语义下单行更优。偏差已记入 PROGRESS |
+| notes/cjk-glue pid 1 | 列表项两行（末行「列。」）→ 一行（−1px） | 同上，改进 |
+| math/parse-diag pid 0 | 两行（末行「断。」）→ 一行 | 计划要求审阅的 math/*：改进 |
+| math/inline pid 1 | 在 `φ` 与 `=` 之间（关系符前，罚分 0.85）断开，代替 4.1px 松行；新行 ws=0.003px | 计划要求审阅的 math/*：符合 TeX 的关系符断行，罚分取舍同 line/crlf |
+
+### E. 计划要求审阅、断点未变的用例
+
+figure/float、figure/stack、region/table-tiny 的正文与图注、math/* 其余用例、全部表格单元格与浮动图注（cell 流）：断点不变（只有代价数值变化）。figure/pull-diag pid 1 的 [19,27] → 若按块下标取断点会变成 18，取"下一行第一个块"后保持 19（计划所说的"更晚父节点"平局）。
+
+### 需要救援的用例
+
+只有 doc/url-overlong（预期）与 region/hott-row（五栏表在 300px 下单元格 47px，公式单元格过宽，旧版同样溢出但整格塌成一行）。两者都给 `overfull-line` 警告，e2e 在 `EXPECTED_DIAGS` 中声明。

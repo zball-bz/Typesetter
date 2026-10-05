@@ -8,10 +8,11 @@ para pid=0 y=0su w=19200su h=8908su
   L5 cell=4 y=1843su left=15770su w=3020su blocks=[4,5)
   L6 rule y=3686su left=0su w=19200su
   L7 cell=5 y=3993su left=410su w=3020su blocks=[0,1)
-  L8 cell=7 y=3993su left=8090su w=3020su blocks=[0,7)
-  L9 cell=8 y=3993su left=11930su w=3020su blocks=[0,1)
-  L10 cell=8 y=5529su left=11930su w=3020su blocks=[2,5)
-  L11 cell=9 y=3993su left=15770su w=3020su blocks=[0,1)
-  L12 cell=9 y=5529su left=15770su w=3020su blocks=[2,3)
-  L13 cell=9 y=7065su left=15770su w=3020su blocks=[4,5)
-  L14 rule y=8908su left=0su w=19200su
+  L8 cell=7 y=3993su left=8090su w=3020su blocks=[0,2) overfull
+  L9 cell=7 y=5529su left=8090su w=3020su blocks=[2,7)
+  L10 cell=8 y=3993su left=11930su w=3020su blocks=[0,1)
+  L11 cell=8 y=5529su left=11930su w=3020su blocks=[2,5)
+  L12 cell=9 y=3993su left=15770su w=3020su blocks=[0,1)
+  L13 cell=9 y=5529su left=15770su w=3020su blocks=[2,3)
+  L14 cell=9 y=7065su left=15770su w=3020su blocks=[4,5)
+  L15 rule y=8908su left=0su w=19200su

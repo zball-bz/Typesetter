@@ -1,8 +1,8 @@
 <div class="tsr-doc">
 <div class="tsr-para" data-pid="0" data-s0="60" style="position:relative;height:72px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="36" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.667px"><span class="tsr-r" data-s="0">Value splice: world and a call chain:</span></div>
-<div class="tsr-line" data-s="50" data-e="102" data-join="space" style="top:24px;left:0px;width:300px"><span class="tsr-r">Hello, tsm. Member access: 5 characters;</span></div>
-<div class="tsr-line" data-s="79" data-e="116" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="79">expression: 7.</span></div>
+<div class="tsr-line" data-s="0" data-e="36" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="0">Value splice: world and a call chain: Hel</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="50" data-e="102" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r">lo, tsm. Member access: 5 characters; ex</span><span class="tsr-r" data-s="79" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="79" data-e="116" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="79">pression: 7.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="252" style="position:relative;height:120px">
 <div class="tsr-line" data-s="0" data-e="57" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6.4px"><span class="tsr-r" data-s="0">A splice ends at punctuation: world.</span></div>

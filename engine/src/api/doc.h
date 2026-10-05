@@ -316,8 +316,24 @@ struct Doc {
     if (!missing.empty()) return Status::NeedMeasure;
     // Cached KP with the retry ladder folded in (break.cc): keyed by block
     // geometry, shared across documents — the editing loop's fast path.
+    // a run wider than the line is set Overfull on a line of its own (the
+    // final-pass rescue) and reported once per stream (plan P0-12)
+    diags.begin(DiagOrigin::Layout);
     auto breakWithRetry = [&](const std::vector<LinebreakBlock>& blocks, LineWidths lw) {
-      return breakLinesRetry(blocks, lw, cfg.cost);
+      BreakResult r = breakLinesRetry(blocks, lw, cfg.cost);
+      if (!r.overfullLines.empty()) {
+        Span sp{};
+        for (const LinebreakBlock& b : blocks)
+          if (!b.span.empty()) {
+            if (sp.empty()) sp = b.span;
+            sp.start = std::min(sp.start, b.span.start);
+            sp.end = std::max(sp.end, b.span.end);
+          }
+        diags.add(Sev::Warning, "overfull-line", sp,
+                  std::to_string(r.overfullLines.size()) +
+                      " line(s) hold a run wider than the measure");
+      }
+      return r;
     };
     // F2 float tracker (figure-design.md §4): walks units in reading order,
     // mirroring layout's gap accounting; decisions are STORED on the units
@@ -362,6 +378,7 @@ struct Doc {
             BreakResult r = breakWithRetry(c.blocks, LineWidths{u.imgW});
             c.breakpoints = std::move(r.breakpoints);
             c.breakCost = r.cost;
+            c.overfullLines = std::move(r.overfullLines);
           }
           i64 capH = 0;
           for (const TableCell& c : u.cells)
@@ -388,6 +405,7 @@ struct Doc {
             BreakResult r = breakWithRetry(c.blocks, LineWidths{cellW});
             c.breakpoints = std::move(r.breakpoints);
             c.breakCost = r.cost;
+            c.overfullLines = std::move(r.overfullLines);
           }
           continue;
         }
@@ -396,6 +414,7 @@ struct Doc {
             BreakResult r = breakWithRetry(c.blocks, LineWidths{u.sidebarW});
             c.breakpoints = std::move(r.breakpoints);
             c.breakCost = r.cost;
+            c.overfullLines = std::move(r.overfullLines);
           }
           continue;
         }
@@ -411,6 +430,7 @@ struct Doc {
         BreakResult r = breakWithRetry(u.blocks, lw);
         u.breakpoints = std::move(r.breakpoints);
         u.breakCost = r.cost;
+        u.overfullLines = std::move(r.overfullLines);
         if (flRemain > 0) {
           flRemain -= (i64)u.breakpoints.size() * baseLeading;
           if (flRemain < 0) flRemain = 0;

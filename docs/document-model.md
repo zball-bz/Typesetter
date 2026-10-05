@@ -179,6 +179,8 @@ LinebreakBlock {
 
 `stretchWeight` carries the v2 §8 k-rule into the breaker: line stretchability = Σ weights; the renderer distributes `Δword` per unit weight, so cost model and rendering agree by construction. Emission rules per Appendix C of v2.
 
+**Breaking semantics (as built, plan P0-12; rules at the top of `break/break.cc`).** The breaker reads the TeX item projection of the blocks (`break/items.h`: Box / Glue / Penalty{Normal, Forbidden, Forced} / Disc{pre}): `BREAK_INF` is Forbidden — never a candidate; glue at a break and at a line start (paragraph start included) is discarded, so the optimizer measures exactly the range layout renders; a hyphen point adds its glyph only when broken; the paragraph end is a Forced break whose line has fil stretch and normal shrink. Line cost is `min(mapped(x)^exponent, 1e4)` (an integer power by multiplication), Overfull (x < −shrinkThreshold) is a class, penalties are i32 thousandths; ties go to lower demerits, then fewer lines, then the later parent. When no path exists, the final pass rescues: the best active node breaks at the first legal break after the run, the line is Overfull — set at the shrink limit by layout, marked `data-overfull` in HTML, reported as `overfull-line`. A breakpoint is the index of the next line's first block after discard. Native and WASM builds produce identical breaks (`tools/wasm-goldens.mjs`).
+
 ### 6.3 Table cells (M6 v1)
 
 Each `tcell` flattens to its own miniature block stream (`TableCell`), broken
@@ -257,6 +259,7 @@ Both serializers build start tags through `render/html_writer.h` (plan P0-10): a
 
 - CSS contract: `.tsr-line { position:absolute; white-space:nowrap; contain:layout style paint; }` — the v2 §7 rules are *serializer output*, not page-author responsibility.
 - Runs carry `data-s` when they map 1:1 to a source slice; synthetic runs (hyphens, resolved refs, escapes-containing runs) carry `data-syn` instead.
+- A line holding a run wider than the measure carries `data-overfull="1"` (plan P0-12): it is set at the shrink limit and overflows on purpose; the audit skips its right edge and the paragraph's overflow check.
 - Run boundary (interim key until P4-01's run instances): style, link and the generated-reference flag — a resolved ref's text (`[1]`, `??`) is never merged with the authored prose or punctuation beside it. A line-final hyphen opens inside its word's link (`<a … data-syn="hyphen">-</a>`).
 - `comment` nodes are not rendered here; `error` renders as `<span|div class="tsr-err" title="{message}">`.
 
@@ -331,7 +334,7 @@ measure-fallback     info     glyphs measured via fallback font
   "epsilon": { "perWordSu": 1 },
   "supplements": { "heading": "§", "figure": "图 ", "equation": "式 " },
   "counters": { "figure": { "resetAt": "none" } },
-  "breaker": { "exponent": 3, "hyphenPenalty": 0.7, "shrinkThreshold": 0.37, "shrinkCoeff": 0.6 }
+  "breaker": { "exponent": 3, "hyphenPenalty": 0.7, "shrinkThreshold": 0.37, "shrinkCoeff": 0.6, "cap": 1e4 }   // exponent: integer 1..4
 }
 ```
 

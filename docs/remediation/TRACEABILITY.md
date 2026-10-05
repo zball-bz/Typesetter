@@ -1138,9 +1138,9 @@ Theme steps: — · findings: 1
 | `emitter/scattered-magic-constants` | adhoc | low | P3-02, P4-04 | |
 | `emitter/stale-emit-on-relayout` | issue | high | P1-16 | |
 | `emitter/sizepx-em-mismatch` | issue | high | P0-08 | grep:plan P0-08 |
-| `emitter/kp-counts-discardable-glue` | issue | medium | P0-12 | |
+| `emitter/kp-counts-discardable-glue` | issue | medium | P0-12 | grep:plan P0-12 |
 | `emitter/kp-ignores-stretch-weight` | issue | medium | P4-08 | |
-| `emitter/negative-wordspacing-overfull` | issue | medium | P0-12 | |
+| `emitter/negative-wordspacing-overfull` | issue | medium | P0-12 | grep:plan P0-12 |
 | `emitter/duplicate-diagnostics-on-reemit` | issue | medium | P0-11 | grep:plan P0-11 |
 | `emitter/silent-drops-of-unhandled-kinds` | issue | medium | P1-13, P2-11 | |
 | `emitter/coarse-source-spans` | issue | low | P4-03 | |
@@ -1170,11 +1170,11 @@ Theme steps: — · findings: 1
 | `break-layout-pages/group-role-dispatch` | adhoc | high | P1-18, P3-14 | |
 | `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 | |
 | `break-layout-pages/kp-window-heuristics` | adhoc | low | P1-14 | |
-| `break-layout-pages/overfull-collapses-paragraph` | issue | high | P0-12 | |
+| `break-layout-pages/overfull-collapses-paragraph` | issue | high | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/emit-reads-measure-stale-on-relayout` | issue | high | P1-16 | |
 | `break-layout-pages/wide-float-overprints-text` | issue | medium | P3-08 | |
-| `break-layout-pages/break-inf-float-vs-double` | issue | medium | P0-12 | |
-| `break-layout-pages/trailing-glue-in-break-cost` | issue | medium | P0-12 | |
+| `break-layout-pages/break-inf-float-vs-double` | issue | medium | P0-12 | grep:plan P0-12 |
+| `break-layout-pages/trailing-glue-in-break-cost` | issue | medium | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/snap-kerning-ignores-sidecar` | issue | medium | P3-11 | |
 | `break-layout-pages/float-adds-paragraph-gap` | issue | low | P3-08 | |
 | `break-layout-pages/float-indent-geometry` | issue | low | P3-08 | |
@@ -1186,9 +1186,9 @@ Theme steps: — · findings: 1
 | `break-layout-pages/missed:0` | missed | medium | P1-18, P3-12 | |
 | `break-layout-pages/missed:1` | missed | medium | P0-10 | grep:plan P0-10 |
 | `break-layout-pages/missed:2` | missed | medium | P1-17, P3-07 | |
-| `break-layout-pages/missed:3` | missed | medium | P0-12 | |
+| `break-layout-pages/missed:3` | missed | medium | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/missed:4` | missed | medium | P3-28 | |
-| `break-layout-pages/missed:5` | missed | low | P0-12 | |
+| `break-layout-pages/missed:5` | missed | low | P0-12 | grep:plan P0-12 |
 | `render-runtime/semantic-role-switch` | adhoc | high | P3-23 | |
 | `render-runtime/typeset-role-blind` | adhoc | high | P3-23 | |
 | `render-runtime/linebox-special-dispatch` | adhoc | high | P1-18 | |

@@ -5,10 +5,15 @@
 
 namespace tsr {
 
+// Line cost (document-model §11, TeX-bounded since plan P0-12): the ratio x
+// of slack to the line's glue maps to cost = mapped(x)^exponent (an integer
+// power by repeated multiplication), capped at `cap`; x below
+// -shrinkThreshold is Overfull, a class of its own, never a magnitude.
 struct CostParams {
-  double exponent = 3;
+  u8 exponent = 3;  // 1..4
   double shrinkThreshold = 0.37;
   double shrinkCoeff = 0.6;
+  double cap = 1e4;
 };
 
 // Adjacent-punctuation compression style (clreq; v2 App C).

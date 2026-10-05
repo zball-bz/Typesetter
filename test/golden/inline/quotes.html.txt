@@ -1,9 +1,8 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="131" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.84px"><span class="tsr-r" data-s="0">We treat these “spaces” as “homotopi</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="131" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:2.8px"><span class="tsr-r" data-s="0">cal” notions; don’t split at the apos</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="131" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:2.56px"><span class="tsr-r" data-s="0">trophe, and ‘single’ quotes behave the</span></div>
-<div class="tsr-line" data-s="0" data-e="131" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">same.</span></div>
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="131" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1.28px"><span class="tsr-r" data-s="0">We treat these “spaces” as “homotopical”</span></div>
+<div class="tsr-line" data-s="0" data-e="131" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:1.28px"><span class="tsr-r" data-s="0">notions; don’t split at the apostrophe,</span></div>
+<div class="tsr-line" data-s="0" data-e="131" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">and ‘single’ quotes behave the same.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="133" style="position:relative;height:72px">
 <div class="tsr-line" data-s="0" data-e="140" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.8px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.48px;margin-right:0.48px">中文里的</span><span class="tsr-r tsr-cjk" data-s="0">“</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.48px">引号</span><span class="tsr-r tsr-cjk" data-s="0">”</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.48px">仍然是全角标点</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.48px;margin-right:0.48px">前后带可</span></div>

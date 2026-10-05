@@ -1,5 +1,20 @@
 // In-page invariant audits (testing.md §5.3). One implementation: dev
 // diagnostic in the runtime AND the assertion body of the Playwright tests.
+// the advance of one space in a CSS font shorthand (canvas: same shaping
+// as the DOM for a lone space)
+const spaceCache = new Map();
+function spaceAdvance(font) {
+  if (!font) return 0;
+  let w = spaceCache.get(font);
+  if (w === undefined) {
+    const ctx = document.createElement('canvas').getContext('2d');
+    ctx.font = font;
+    w = ctx.measureText(' ').width;
+    spaceCache.set(font, w);
+  }
+  return w;
+}
+
 export function auditTypeset(root) {
   const report = {
     lines: 0,
@@ -49,7 +64,10 @@ export function auditTypeset(root) {
     // end within 1px of the measure. Measured as the flow edge of the last
     // child element (rect.right + margin-right) so letter-spacing overhangs
     // and punct-squeeze margins are accounted exactly.
-    if (line.dataset.join !== undefined && line.dataset.ragged === undefined && rects.length) {
+    // (a data-overfull line holds a run wider than the measure — set at the
+    // shrink limit and reported as overfull-line, plan P0-12 — not a defect)
+    if (line.dataset.join !== undefined && line.dataset.ragged === undefined &&
+        line.dataset.overfull === undefined && rects.length) {
       const lineRect = line.getBoundingClientRect();
       let contentRight = -Infinity;
       for (const el of line.children) {
@@ -76,7 +94,7 @@ export function auditTypeset(root) {
 
   // overflow: nothing escapes the paragraph box horizontally
   for (const para of root.querySelectorAll('.tsr-para')) {
-    if (para.scrollWidth > para.clientWidth + 1) {
+    if (para.scrollWidth > para.clientWidth + 1 && !para.querySelector('[data-overfull]')) {
       report.failures.push({
         audit: 'overflow',
         by: para.scrollWidth - para.clientWidth,
@@ -96,11 +114,17 @@ export function auditTypeset(root) {
       }
       prevTop = top;
     }
-    // and no absurd compression: word-spacing beyond -2px means an
-    // infeasible line was force-fitted
+    // and no absurd compression: a line shrinks at most to the breaker's
+    // limit (shrinkThreshold 0.37 of its spaces, plan P0-12); beyond that an
+    // infeasible line was force-fitted. The bound is relative to the line's
+    // space advance (a monospace space is twice a serif one), never stricter
+    // than the old absolute -2.5px.
     for (const l of para.querySelectorAll('.tsr-line')) {
       const ws = parseFloat(l.style.wordSpacing || '0');
-      if (ws < -2.5) {
+      if (!(ws < -2.5)) continue;
+      const first = l.querySelector('span');
+      const limit = -0.37 * spaceAdvance(first ? getComputedStyle(first).font : '') - 0.5;
+      if (ws < Math.min(-2.5, limit)) {
         report.failures.push({ audit: 'compression', pid: para.dataset.pid, ws });
         break;
       }

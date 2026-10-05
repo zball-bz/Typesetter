@@ -17,6 +17,8 @@ struct LineBox {
   u8 join = 0;                       // 0 last (no attr), 1 space, 2 none (hyphen)
   bool endsWithHyphen = false;
   bool noGlue = false;               // no stretchable glue (URL-only line): set ragged
+  bool overfull = false;             // holds a run wider than the line (breaker's
+                                     // rescue, plan P0-12): set at the shrink limit
   u8 special = 0;                    // 0 text, 1 rule, 2 code, 3 raw, 4 math
   u32 codeLine = 0;                  // special==2: index into unit codeRuns
   u32 cbLo = 0, cbHi = 0;            // special==2: byte slice of the joined line

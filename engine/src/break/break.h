@@ -1,14 +1,18 @@
-// Knuth–Plass DP — faithful port of the PoC (src/linebreak.ts) plus the
-// zero-break endpoint fix; operates on su-quantized blocks, cost math in
-// double px as in the PoC.
+// Knuth–Plass line breaking with TeX item semantics (plan P0-12; the rules
+// are at the top of break.cc, the item projection in items.h). su inputs,
+// bounded double costs.
 #pragma once
 #include "../emit/emit.h"
 
 namespace tsr {
 
+struct BItem;
+
 struct BreakResult {
-  std::vector<u32> breakpoints;  // counts of blocks consumed per line, ascending
-  double cost = 0;
+  std::vector<u32> breakpoints;    // counts of blocks consumed per line, ascending
+  double cost = 0;                 // demerits
+  std::vector<u32> overfullLines;  // rescued lines (final pass): content wider than the line
+  bool feasible = true;            // false: no path without the final-pass rescue
 };
 
 // Prefix form (figure-design.md §4, TeX parshape-in-lines): the first
@@ -21,13 +25,18 @@ struct LineWidths {
 };
 
 BreakResult breakLines(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
-                       const CostParams& params, u32 cursorSearchRange = 5);
+                       const CostParams& params, u32 cursorSearchRange = 5,
+                       bool finalPass = false);
+BreakResult breakItems(const std::vector<BItem>& items, u32 nBlocks, LineWidths widths,
+                       const CostParams& params, u32 cursorSearchRange, bool finalPass);
 
-// Cached form with the PoC retry ladder folded in (editor-design.md §2).
-// KP reads ONLY block geometry (width, spaceWidth, breakWidth,
-// breakPenalty) plus the line widths and cost params, so results are keyed
-// by a content hash and shared process-wide across documents — an editing
-// session re-breaks only the paragraphs a keystroke actually changed.
+// Cached form with the retry ladder folded in (editor-design.md §2): ±5,
+// then wider windows while no feasible path exists, then the unbounded
+// final pass with the Overfull rescue. KP reads ONLY block geometry (width,
+// spaceWidth, breakWidth, breakPenalty, kind flags) plus the line widths
+// and cost params, so results are keyed by that and shared process-wide
+// across documents — an editing session re-breaks only the paragraphs a
+// keystroke actually changed.
 BreakResult breakLinesRetry(const std::vector<LinebreakBlock>& blocks, LineWidths widths,
                             const CostParams& params);
 

@@ -80,6 +80,7 @@ inline constexpr std::string_view kHtmlAttrs[] = {
     "alt",       "class",     "draggable", "href",    "id",       "lang",      "src",
     "start",     "title",     "data-s",    "data-e",  "data-syn", "data-join", "data-ragged",
     "data-cell", "data-snap", "data-pid",  "data-s0", "data-src", "data-role",
+    "data-overfull",
 };
 static_assert(std::size(kHtmlAttrs) <= 32);
 constexpr int htmlAttrIndex(std::string_view name) {

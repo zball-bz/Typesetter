@@ -1,18 +1,16 @@
 <div class="tsr-doc">
-<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:102.438px;margin-bottom:19.2px">
-<div class="tsr-line" id="tsr-h-1" data-s="0" data-e="78" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">A heading long enough</span></div>
-<div class="tsr-line" data-s="0" data-e="78" data-ragged="1" style="top:25.609px;left:0px;width:300px;word-spacing:-0.16px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">that it has to wrap across</span></div>
-<div class="tsr-line" data-s="0" data-e="78" data-ragged="1" style="top:51.219px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">two lines at the test</span></div>
-<div class="tsr-line" data-s="0" data-e="78" data-ragged="1" style="top:76.828px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">measure</span></div>
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:76.828px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-1" data-s="0" data-e="78" data-ragged="1" style="top:0px;left:0px;width:300px;word-spacing:-1.8px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">A heading long enough that</span></div>
+<div class="tsr-line" data-s="0" data-e="78" data-ragged="1" style="top:25.609px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">it has to wrap across two</span></div>
+<div class="tsr-line" data-s="0" data-e="78" data-ragged="1" style="top:51.219px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">lines at the test measure</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="163" style="position:relative;height:191.203px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-wide" src="photos/wide.png" alt="wide" style="top:0px;left:0px;width:300px;height:100px">
-<div class="tsr-line" data-s="0" data-e="108" data-ragged="1" style="top:119.203px;left:12px;width:288px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">A caption that is long enough to</span></div>
-<div class="tsr-line" data-s="0" data-e="108" data-ragged="1" style="top:143.203px;left:16px;width:284px"><span class="tsr-r" data-s="0">wrap onto a second line at the narrow</span></div>
-<div class="tsr-line" data-s="0" data-e="108" data-ragged="1" style="top:167.203px;left:14px;width:286px"><span class="tsr-r" data-s="0">measure, so copy must join its lines.</span></div>
+<div class="tsr-line" data-s="0" data-e="108" data-ragged="1" style="top:119.203px;left:0px;width:300px;word-spacing:-1.5px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">A caption that is long enough to wrap</span></div>
+<div class="tsr-line" data-s="0" data-e="108" data-ragged="1" style="top:143.203px;left:0px;width:300px"><span class="tsr-r" data-s="0">onto a second line at the narrow measure,</span></div>
+<div class="tsr-line" data-s="0" data-e="108" data-ragged="1" style="top:167.203px;left:48px;width:252px"><span class="tsr-r" data-s="0">so copy must join its lines.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="282" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="0">Body text after the figure refers to </span><a class="tsr-r tsr-cjk" href="#tsr-fig-wide" data-syn="ref">图</a></div>
-<div class="tsr-line" data-s="37" data-e="47" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="#tsr-fig-wide" data-syn="ref">1</a><span class="tsr-r" data-s="46">.</span></div>
+<div class="tsr-para" data-pid="2" data-s0="282" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="47" style="top:0px;left:0px;width:300px;word-spacing:-0.5px"><span class="tsr-r" data-s="0">Body text after the figure refers to </span><a class="tsr-r tsr-cjk" href="#tsr-fig-wide" data-syn="ref">图</a><a class="tsr-r" href="#tsr-fig-wide" data-syn="ref"> 1</a><span class="tsr-r" data-s="46">.</span></div>
 </div>
 </div>

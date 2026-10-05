@@ -49,7 +49,7 @@ the finished `LayoutResult` (no re-break, no new layout mode):
     table rows (rule-to-rule), and each code logical line (its wrapped rows
     + zipped sidecar rows share rowTop — cut only between logical lines);
   - a cut that cannot satisfy the rules (oversized atom) falls back to the
-    greedy cut — never an infinite loop, matching KP's hard-cut fallback.
+    greedy cut — never an infinite loop, matching KP's final-pass Overfull rescue (plan P0-12).
 - Output: `<div class="tsr-sheet">` per page, fixed height, containing the
   page's line boxes re-based to the page top. `data-pid` is NOT emitted
   (print markup never participates in progressive swap); source spans are.
@@ -120,7 +120,7 @@ plus optional hydration that upgrades to the typeset rendering client-side.
   strings through fs there, not fetch). No global fetch polyfill.
 - Table units paginate atomically (whole table, not rule-to-rule rows) —
   simpler, and blog tables are small; oversized atoms overflow their sheet
-  (clipped) exactly like KP's hard-cut fallback.
+  (clipped) exactly like KP's Overfull rescue (plan P0-12): one overlong run per line, never a collapsed paragraph.
 - A float box separated from its wrapped text by a sheet cut keeps the
   narrowed lines (cosmetic under-fill beside no float) — accepted; floats
   near page boundaries are an authoring concern in print.

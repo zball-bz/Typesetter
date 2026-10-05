@@ -22,7 +22,13 @@ const fixtures = [...walk(fixturesDir)].map((p) => ({
 // a defect before the step that fixes it. A listed fixture whose audit passes
 // fails the run, so the list can only shrink. Mirrors test/golden/XFAIL.
 const AUDIT_XFAIL = new Map([
-  ['doc/url-overlong', 'compression: overfull paragraph collapses to one line (defect #19, P0-12)'],
+]);
+
+// Content wider than its measure is set Overfull on a line of its own and
+// reported (plan P0-12): these fixtures expect exactly that warning.
+const EXPECTED_DIAGS = new Map([
+  ['doc/url-overlong', /^warning overfull-line [^\n]*\n$/],  // two 500px URL segments at 300px
+  ['region/hott-row', /^warning overfull-line [^\n]*\n$/],   // a formula in a 47px table cell
 ]);
 
 for (const f of fixtures) {
@@ -41,8 +47,10 @@ for (const f of fixtures) {
       async ({ source, opts }) => await window.__tsr.typeset(source, opts),
       { source: f.source, opts },
     );
-    // *diag* fixtures exist to golden-test diagnostics (e.g. unresolved refs)
-    if (!f.name.includes('diag')) expect(res.diags).toBe('');
+    // *diag* fixtures exist to golden-test diagnostics (e.g. unresolved refs);
+    // a few fixtures carry content wider than their measure on purpose
+    if (EXPECTED_DIAGS.has(f.name)) expect(res.diags).toMatch(EXPECTED_DIAGS.get(f.name));
+    else if (!f.name.includes('diag')) expect(res.diags).toBe('');
     const report = await page.evaluate(() => window.__tsr.audit());
     expect(report.lines).toBeGreaterThan(0);
     if (AUDIT_XFAIL.has(f.name)) {
@@ -198,6 +206,30 @@ test('snap-kerning: one style attribute carrying letter-spacing', async ({ page 
   expect(spacing.length).toBe(tags.length);
   for (const v of spacing) expect(v).not.toBe('');
   expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
+});
+
+// --- plan P0-12: breaker semantics -------------------------------------------
+
+// defect #19: a run wider than the measure used to collapse the whole
+// paragraph onto one line with ~-150px word spacing; now each such run is set
+// Overfull on its own line at the shrink limit, everything else breaks normally
+test('overfull: one unbreakable run per line, no collapse', async ({ page }) => {
+  const source = readFileSync(join(fixturesDir, 'doc', 'url-overlong.tsm'), 'utf8');
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(async ({ source }) =>
+    await window.__tsr.typeset(source, { widthPx: 300 }), { source });
+  expect(res.diags).toMatch(/overfull-line/);
+  expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
+  const lines = await page.evaluate(() => [...document.querySelectorAll('#out .tsr-line')]
+    .map((l) => ({ text: l.textContent, ws: parseFloat(l.style.wordSpacing || '0') })));
+  expect(lines.length).toBeGreaterThanOrEqual(4);
+  for (const l of lines) expect(l.ws).toBeGreaterThan(-2.5);  // never past the shrink limit
+  const runs = lines.filter((l) => /SegmentWithout|ExtremelyLong/.test(l.text));
+  expect(runs.length).toBe(2);  // each long segment on its own line
+  expect(await page.evaluate(() =>
+    document.querySelectorAll('#out .tsr-line[data-overfull]').length)).toBe(2);
+  expect(lines[0].text).toContain('Two overlong addresses');
 });
 
 // --- plan P0-11: host hygiene ------------------------------------------------

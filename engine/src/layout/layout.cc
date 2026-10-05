@@ -424,7 +424,8 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             const TableCell& cell = u.cells[r * u.tCols + c];
             i64 cy = rowTop;
             u32 prevBp = 0;
-            for (u32 bp : cell.breakpoints) {
+            for (size_t cli = 0; cli < cell.breakpoints.size(); cli++) {
+              const u32 bp = cell.breakpoints[cli];
               u32 lo = prevBp, hi = bp;
               while (lo < hi && cell.blocks[lo].isSpace()) lo++;
               while (hi > lo && cell.blocks[hi - 1].isSpace()) hi--;
@@ -467,6 +468,8 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               LineBox line;
               line.unitIdx = ui;
               line.cellIdx = (i32)(r * u.tCols + c);
+              line.overfull = std::binary_search(cell.overfullLines.begin(),
+                                                 cell.overfullLines.end(), (u32)cli);
               line.blockBegin = lo;
               line.blockEnd = hi;
               line.left = (Su)(u.indent + (Su)c * colW + padX + shift);
@@ -502,6 +505,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
 
         double naturalPx = 0;
         double totalWeight = 0;  // stretch positions the renderer will realize
+        double capacityPx = 0;   // their glue capacity (the shrink limit's base)
         bool anyCjkGap = false;
         Su maxAsc = 0, maxDesc = 0;
         Span span{};
@@ -510,13 +514,17 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           const LinebreakBlock& b = bl[i];
           if (!b.isHyphen()) naturalPx += b.rawPx;
           else if (i != hi - 1) naturalPx += b.kernPx;  // junction kern
-          if (b.isSpace() && b.stretchWeight > 0) totalWeight += b.stretchWeight;
+          if (b.isSpace() && b.stretchWeight > 0) {
+            totalWeight += b.stretchWeight;
+            capacityPx += suToPx(b.spaceWidth);
+          }
           if (b.isCjkChar() && i + 1 < hi) {
             // a CJK char stretches (letter-spacing) only when the rendered gap
             // after it is CJK: next char, or a closing punct glyph
             const LinebreakBlock& nx = bl[i + 1];
             if (nx.isCjkChar() || (nx.isPunctGlyph() && !(nx.flags & BF_PUNCT_OPEN))) {
               totalWeight += b.stretchWeight;
+              capacityPx += suToPx(b.spaceWidth);
               anyCjkGap = true;
             }
           }
@@ -567,6 +575,9 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         firstLine = false;
 
         const bool isLast = (bp == bl.size()) || u.ragged;
+        const bool overfull =
+            std::binary_search(u.overfullLines.begin(), u.overfullLines.end(), (u32)li);
+        line.overfull = overfull;
         double slackPx = narrowed
                              ? suToPx(u.narrow) - naturalPx
                              : (cfg.widthPx - suToPx(u.indent)) - naturalPx;
@@ -577,6 +588,13 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         if (totalWeight > 0) {
           double d = slackPx / totalWeight;  // per unit weight (v2 §8)
           if (isLast && slackPx > 0) d = 0;
+          // an Overfull line (a run wider than the measure, plan P0-12) is
+          // set at the shrink limit and overflows; it never spreads
+          // unbounded negative spacing over its glue
+          if (overfull && slackPx < 0) {
+            const double minD = -cfg.cost.shrinkThreshold * capacityPx / totalWeight;
+            if (d < minD) d = minD;
+          }
           line.wordDeltaPx = d;
           line.wordDeltaSu = (i32)std::llround(d * 64.0);
           if (anyCjkGap) {
@@ -645,14 +663,16 @@ std::string dumpLayout(const LayoutResult& lr) {
         continue;
       }
       if (l.cellIdx >= 0) {
-        appendf(out, "  L%zu cell=%d y=%dsu left=%dsu w=%dsu blocks=[%u,%u)\n",
-                i, l.cellIdx, l.y, l.left, l.width, l.blockBegin, l.blockEnd);
+        appendf(out, "  L%zu cell=%d y=%dsu left=%dsu w=%dsu blocks=[%u,%u)%s\n",
+                i, l.cellIdx, l.y, l.left, l.width, l.blockBegin, l.blockEnd,
+                l.overfull ? " overfull" : "");
         continue;
       }
-      appendf(out, "  L%zu y=%dsu left=%dsu w=%dsu dw=%dsu dc=%dsu join=%s%s%s blocks=[%u,%u) @[%u,%u)\n",
+      appendf(out, "  L%zu y=%dsu left=%dsu w=%dsu dw=%dsu dc=%dsu join=%s%s%s%s blocks=[%u,%u) @[%u,%u)\n",
               i, l.y, l.left, l.width, l.wordDeltaSu, l.cjkDeltaSu,
               l.join == 0 ? "last" : l.join == 1 ? "space" : "none",
               l.endsWithHyphen ? " hyphen" : "", l.marker ? " marker" : "",
+              l.overfull ? " overfull" : "",
               l.blockBegin, l.blockEnd, l.srcSpan.start, l.srcSpan.end);
     }
   }

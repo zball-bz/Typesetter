@@ -1,7 +1,7 @@
 doc h=7680su
 para pid=0 y=0su w=19200su h=7680su
-  L0 y=0su left=0su w=19200su dw=341su dc=0su join=space blocks=[0,19) @[0,63)
-  L1 y=1536su left=0su w=19200su dw=512su dc=0su join=none hyphen blocks=[20,40) @[0,120)
+  L0 y=0su left=0su w=19200su dw=512su dc=0su join=none hyphen blocks=[0,18) @[0,63)
+  L1 y=1536su left=0su w=19200su dw=64su dc=0su join=none hyphen blocks=[18,40) @[0,120)
   L2 y=3072su left=0su w=19200su dw=64su dc=0su join=none hyphen blocks=[40,62) @[65,120)
   L3 y=4608su left=0su w=19200su dw=341su dc=0su join=space blocks=[62,85) @[65,216)
   L4 y=6144su left=0su w=19200su dw=0su dc=0su join=last blocks=[86,105) @[150,216)

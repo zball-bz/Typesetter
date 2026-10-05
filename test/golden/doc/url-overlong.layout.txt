@@ -1,3 +1,6 @@
-doc h=1536su
-para pid=0 y=0su w=19200su h=1536su
-  L0 y=0su left=0su w=19200su dw=-9842su dc=0su join=last blocks=[0,33) @[0,215)
+doc h=6144su
+para pid=0 y=0su w=19200su h=6144su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=space blocks=[0,19) @[0,215)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=space overfull blocks=[20,24) @[0,215)
+  L2 y=3072su left=0su w=19200su dw=-95su dc=0su join=space overfull blocks=[25,31) @[0,215)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[32,33) @[0,215)

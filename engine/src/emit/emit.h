@@ -58,6 +58,7 @@ struct TableCell {
   std::vector<LinebreakBlock> blocks;
   std::vector<u32> breakpoints;
   double breakCost = 0;
+  std::vector<u32> overfullLines;  // lines the breaker had to set Overfull
 };
 
 struct FlowUnit {
@@ -113,6 +114,8 @@ struct FlowUnit {
   // filled by the typeset loop (Text units)
   std::vector<u32> breakpoints;
   double breakCost = 0;
+  std::vector<u32> overfullLines;  // lines the breaker had to set Overfull (layout
+                                   // shrinks them to the limit, never past it)
 };
 
 struct TopBlock {
