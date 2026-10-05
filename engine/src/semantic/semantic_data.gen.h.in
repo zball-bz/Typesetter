@@ -1,0 +1,21 @@
+// GENERATED at configure time from engine/data (engine/CMakeLists.txt) — do not edit.
+// The built-in element rows and locale packs (plan P1-10), embedded so the
+// engine needs no data files at run time.
+#pragma once
+#include <string_view>
+
+namespace tsr {
+
+constexpr std::string_view kElementsJson = R"tsrdata(@ELEMENTS_JSON@)tsrdata";
+
+struct LocaleSource {
+  std::string_view lang, json;
+};
+constexpr LocaleSource kLocalePacks[] = {
+    {"en", R"tsrdata(@LOCALE_EN@)tsrdata"},
+    {"zh-Hans", R"tsrdata(@LOCALE_ZH_HANS@)tsrdata"},
+    {"zh-Hant", R"tsrdata(@LOCALE_ZH_HANT@)tsrdata"},
+    {"ja", R"tsrdata(@LOCALE_JA@)tsrdata"},
+};
+
+}  // namespace tsr

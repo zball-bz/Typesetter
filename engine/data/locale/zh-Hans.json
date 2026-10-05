@@ -1,0 +1,10 @@
+{
+  "lang": "zh-Hans",
+  "terms": {
+    "section": "§",
+    "figure": "图 ",
+    "table": "表 ",
+    "equation": "式 ",
+    "caption-sep": "："
+  }
+}

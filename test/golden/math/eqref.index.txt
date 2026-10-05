@@ -1,0 +1,4 @@
+instance equation 1 label=emc @[50,69)
+instance equation 2 label=gauss @[122,170)
+label emc -> equation 1 @[50,69)
+label gauss -> equation 2 @[122,170)

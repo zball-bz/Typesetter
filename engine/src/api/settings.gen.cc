@@ -101,7 +101,6 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
     case 2: {  // doc.lang
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Lang, v.str))) return type(why, "lang");
       c.lang = v.str;
-      applyLang(c, c.lang);
       return true;
     }
     case 3: {  // doc.baseSize

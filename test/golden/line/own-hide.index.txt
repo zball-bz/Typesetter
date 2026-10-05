@@ -1,0 +1,4 @@
+instance heading 1 level=1 label=h-1 title="This heading survives" @[148,171)
+instance heading 2 level=1 label=h-2 title="The heading after it survives" @[268,299)
+label h-1 -> heading 1 @[148,171)
+label h-2 -> heading 2 @[268,299)

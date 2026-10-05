@@ -1,0 +1,6 @@
+instance heading 1 level=1 label=top title="分页样例" @[0,14)
+instance heading 1.1 level=2 label=h-1.1 title="保持规则" @[306,321)
+instance figure 1 label=fig-p @[496,611)
+label top -> heading 1 @[0,14)
+label h-1.1 -> heading 1.1 @[306,321)
+label fig-p -> figure 1 @[496,611)

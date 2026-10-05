@@ -1,0 +1,4 @@
+instance heading 1 level=1 label=h-1 title="Heading before a tall figure" @[0,30)
+instance figure 1 label=fig-tall @[32,158)
+label h-1 -> heading 1 @[0,30)
+label fig-tall -> figure 1 @[32,158)

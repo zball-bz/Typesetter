@@ -1,0 +1,4 @@
+instance heading 1 level=1 label=h-1 title="A heading long enough that it has to wrap across two lines at the test measure" @[0,80)
+instance figure 1 label=fig-wide @[82,280)
+label h-1 -> heading 1 @[0,80)
+label fig-wide -> figure 1 @[82,280)

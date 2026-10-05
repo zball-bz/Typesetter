@@ -1,0 +1,11 @@
+instance heading 1 level=1 label=top title="Footnotes" @[0,11)
+instance footnote 1 label=fn-1 marker=fnref-1 @[42,106)
+instance footnote 2 label=fn-2 marker=fnref-2 @[152,174)
+instance heading 1.1 level=2 label=h-1.1 title="A section" @[213,225)
+label top -> heading 1 @[0,11)
+label fn-1 -> footnote 1 @[42,106)
+label fnref-1 -> footnote 1 (marker) @[42,106)
+label fn-2 -> footnote 2 @[152,174)
+label fnref-2 -> footnote 2 (marker) @[152,174)
+label h-1.1 -> heading 1.1 @[213,225)
+flow notes: fn-1 fn-2

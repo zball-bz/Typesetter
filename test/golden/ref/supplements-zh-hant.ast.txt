@@ -1,0 +1,27 @@
+doc @[0,308)
+  heading @[0,14) level=1 label="intro"
+    text @[2,14) str="Introduction"
+  para @[24,146)
+    text @[24,112) str="A Traditional Chinese document takes 圖/表/式 from its locale terms (plan P1-10): see "
+    ref @[113,119) target="intro"
+    text @[119,120) str=", "
+    ref @[121,127) target="fig-a"
+    text @[127,128) str=", "
+    ref @[129,135) target="tab-a"
+    text @[136,139) str=" and "
+    ref @[140,145) target="eq-a"
+    text @[145,146) str="."
+  region @[148,237) name="figure"
+    para @[219,228)
+      row @[219,228)
+        cell @[219,228)
+          text @[219,228) str="A figure."
+  region @[239,285) name="table"
+    para @[272,277)
+      row @[272,277)
+        cell @[272,274)
+          text @[272,273) str="x"
+        cell @[275,277)
+          text @[276,277) str="y"
+  para @[287,307)
+    math @[287,307) display=1 src="e = m c^2" label="eq-a"

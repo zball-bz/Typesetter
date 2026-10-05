@@ -1,0 +1,3 @@
+instance figure 1 label=fig-light @[101,248)
+instance figure 2 @[250,368)
+label fig-light -> figure 1 @[101,248)

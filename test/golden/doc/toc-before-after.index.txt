@@ -1,0 +1,6 @@
+instance heading 1 level=1 label=h-1 title="One" @[6,11)
+instance heading 1.1 level=2 label=h-1.1 title="One point one" @[13,29)
+instance heading 2 level=1 label=h-2 title="Two" @[31,36)
+label h-1 -> heading 1 @[6,11)
+label h-1.1 -> heading 1.1 @[13,29)
+label h-2 -> heading 2 @[31,36)

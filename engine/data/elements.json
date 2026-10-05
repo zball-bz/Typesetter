@@ -1,0 +1,214 @@
+{
+  "$comment": [
+    "Built-in element rows (plan P1-10; design T3 Element registry), written in the form a document or host will use to declare its own (P2-07).",
+    "counters: flat or by-level automata. classes: what a node is (select), how it is numbered, labelled, referenced, titled and what is attached to it (sites); flows lift items into a collector; tables hold keyed rows.",
+    "collectors: the #toc / #glossary / #notes / #bibliography presets — a query plus wrap / entry / empty templates.",
+    "Templates are generated, style-neutral content: strings and term/slot items concatenate into one text; node items build nodes (inline kinds take the site's style, block kinds style 0 unless style:site); styled items are deltas applied to everything inside, inserted content included.",
+    "Words come from the locale packs (engine/data/locale) through term items; docs/semantics-design.md has the full reference."
+  ],
+  "counters": {
+    "heading": { "shape": "by-level", "level-arg": "level", "depth": 6, "gap": "zero" },
+    "table": {},
+    "figure": {},
+    "equation": {},
+    "footnote": {},
+    "cite": { "keyed": true }
+  },
+  "unresolved": [{ "term": "unresolved" }],
+  "unnumbered": [{ "slot": "label" }],
+  "classes": {
+    "heading": {
+      "select": [{ "node": "heading" }],
+      "counter": "heading",
+      "numbering": "always",
+      "title": "text",
+      "outline": true,
+      "alias": { "prefix": "h-", "body": "number" },
+      "ref": [{ "term": "section" }, { "slot": "number" }]
+    },
+    "table": {
+      "select": [{ "node": "table" }],
+      "counter": "table",
+      "numbering": "always",
+      "supplement": "table",
+      "ref": [{ "slot": "supplement" }, { "slot": "number" }]
+    },
+    "figure": {
+      "select": [{ "node": "group", "role": "figure" }],
+      "counter": "figure",
+      "numbering": "always",
+      "supplement": "figure",
+      "sites": [
+        {
+          "where": "prepend",
+          "at": "first-para",
+          "template": [
+            { "styled": { "bits": ["bold"] }, "kids": [{ "slot": "supplement" }, { "slot": "number" }, { "term": "caption-sep" }] }
+          ]
+        }
+      ],
+      "ref": [{ "slot": "supplement" }, { "slot": "number" }]
+    },
+    "equation": {
+      "select": [{ "node": "mathblock" }],
+      "counter": "equation",
+      "numbering": "labelled",
+      "supplement": "equation",
+      "sites": [{ "where": "arg", "arg": "name", "template": ["(", { "slot": "number" }, ")"] }],
+      "ref": [{ "slot": "supplement" }, "(", { "slot": "number" }, ")"]
+    },
+    "footnote": {
+      "select": [{ "node": "note" }],
+      "counter": "footnote",
+      "numbering": "always",
+      "labels": "none",
+      "alias": { "prefix": "fn-", "body": "number" },
+      "ref": [{ "slot": "number" }],
+      "flow": {
+        "name": "notes",
+        "placement": "end",
+        "marker-alias": { "prefix": "fnref-", "body": "number", "ref": [{ "term": "backref" }] },
+        "marker": [
+          {
+            "styled": { "bits": ["sup"], "size": 0.7 },
+            "kids": [{ "node": "ref", "args": { "target": { "slot": "alias" }, "label": { "slot": "marker-alias" } } }]
+          }
+        ]
+      }
+    },
+    "term": {
+      "select": [{ "node": "term" }],
+      "labels": { "arg": "name" },
+      "title": { "arg": "name" },
+      "table": "glossary",
+      "sites": [
+        {
+          "where": "replace",
+          "template": [
+            {
+              "node": "group",
+              "style": "site",
+              "args": { "role": "term", "label": { "slot": "label" } },
+              "kids": [
+                {
+                  "node": "para",
+                  "style": "site",
+                  "kids": [
+                    { "styled": { "bits": ["bold"] }, "kids": [{ "slot": "title" }] },
+                    { "when": "inline-body", "kids": [{ "term": "term-sep" }, { "slot": "inline-body" }] }
+                  ]
+                },
+                { "slot": "block-body" }
+              ]
+            }
+          ]
+        }
+      ],
+      "ref": [{ "slot": "title" }]
+    }
+  },
+  "collectors": {
+    "toc": {
+      "query": { "classes": "outline", "nest": "depth" },
+      "context": "collector",
+      "wrap": [{ "node": "list", "args": { "ordered": false }, "kids": [{ "each": "items" }] }],
+      "entry": [
+        {
+          "node": "item",
+          "kids": [
+            {
+              "node": "para",
+              "kids": [
+                {
+                  "node": "link",
+                  "args": { "url": { "anchor": "anchor" } },
+                  "kids": [{ "slot": "number" }, " ", { "slot": "title" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "glossary": {
+      "query": { "table": "glossary" },
+      "context": "collector",
+      "wrap": [{ "node": "list", "args": { "ordered": false }, "kids": [{ "each": "items" }] }],
+      "entry": [
+        {
+          "node": "item",
+          "kids": [
+            {
+              "node": "para",
+              "kids": [
+                { "node": "link", "args": { "url": { "anchor": "anchor" } }, "kids": [{ "slot": "title" }] },
+                { "when": "body-text", "kids": [{ "term": "term-sep" }, { "slot": "body-text" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": {
+      "query": { "flow": "notes" },
+      "context": "instance",
+      "wrap": [
+        {
+          "node": "group",
+          "args": { "role": "notes" },
+          "kids": [{ "node": "rule" }, { "node": "list", "args": { "ordered": true }, "kids": [{ "each": "items" }] }]
+        }
+      ],
+      "empty": [{ "node": "group", "args": { "role": "notes" } }],
+      "entry": [
+        {
+          "node": "item",
+          "kids": [
+            {
+              "paras": {
+                "anchor": { "slot": "alias" },
+                "scale": 0.85,
+                "tail": [
+                  {
+                    "styled": { "size": 0.85 },
+                    "kids": [" ", { "node": "ref", "args": { "target": { "slot": "marker-alias" } } }]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "bibliography": {
+      "query": { "table": "bib", "cited": "cited", "all-arg": { "arg": "form", "value": "all" } },
+      "rows": { "from": "kids", "key": "name", "counter": "cite", "anchor": { "prefix": "bib-", "body": "key" } },
+      "context": "row",
+      "cite": [
+        "[",
+        {
+          "each": "keys",
+          "sep": [{ "term": "ref-sep" }],
+          "kids": [
+            {
+              "when": "row",
+              "kids": [{ "node": "link", "args": { "url": { "anchor": "anchor" } }, "kids": [{ "slot": "ordinal" }] }],
+              "else": [{ "term": "unresolved" }]
+            }
+          ]
+        },
+        "]"
+      ],
+      "wrap": [{ "node": "group", "style": "site", "args": { "role": "bibliography" }, "kids": [{ "node": "rule" }, { "each": "items" }] }],
+      "empty": [{ "node": "group", "style": "site", "args": { "role": "bibliography" } }],
+      "entry": [
+        {
+          "node": "para",
+          "style": "site",
+          "args": { "label": { "slot": "anchor" } },
+          "kids": ["[", { "slot": "ordinal" }, "] ", { "slot": "body" }]
+        }
+      ]
+    }
+  }
+}

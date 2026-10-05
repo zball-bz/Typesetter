@@ -1,0 +1,7 @@
+instance heading 1 level=1 label=h-1 title="Level one" @[0,11)
+instance heading 1.1 level=2 label=h-1.1 title="Level two" @[12,24)
+instance heading 1.1.1 level=3 label=h-1.1.1 title="Level three" @[25,40)
+instance equation @[302,315)
+label h-1 -> heading 1 @[0,11)
+label h-1.1 -> heading 1.1 @[12,24)
+label h-1.1.1 -> heading 1.1.1 @[25,40)

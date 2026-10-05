@@ -1,0 +1,13 @@
+= Introduction <intro>
+
+A Japanese document takes 図/表/式 from its locale terms (plan P1-10): see @intro, @fig-a, @tab-a and @eq-a.
+
+#!figure(src: "a.png", alt: "a figure", w: 120, h: 60, label: "fig-a")
+A figure.
+#figure!
+
+#!table(cols: 2, label: "tab-a")
+x | y
+#table!
+
+$ e = m c^2 $ <eq-a>

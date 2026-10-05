@@ -1,5 +1,7 @@
 #include "model.h"
 
+#include "../elements/registry.h"
+
 #include <algorithm>
 
 namespace tsr {
@@ -11,6 +13,7 @@ struct Inst {
   Interner& strs;
   StyleTable& styles;
   DiagSink& diags;
+  const Registry& reg;
 
   // fold one delta (bits + InlineStyle patch args) onto an effective style
   void applyPatch(Styling& st, const ArgVal& a) {
@@ -39,9 +42,9 @@ struct Inst {
   }
 
   ContentNode* copy(u32 rootId, const Styling& inherited) {
-    struct Pending { ContentNode* parent; u32 id; Styling inh; u32 depth; };
+    struct Pending { ContentNode* parent; u32 id; Styling inh; u32 depth; u16 inside; };
     std::vector<Pending> work;
-    work.push_back({nullptr, rootId, inherited, 0});
+    work.push_back({nullptr, rootId, inherited, 0, 0});
     ContentNode* result = nullptr;
     while (!work.empty()) {
       Pending p = std::move(work.back());
@@ -69,13 +72,14 @@ struct Inst {
           n->args.push_back(v);
         }
         n->kids.reserve(rn.children.size());
+        n->cls = reg.classify(n, p.inside, strs);  // membership, once (plan P1-10)
         descend = true;
       }
       if (p.parent) p.parent->kids.push_back(n);
       else result = n;
       if (descend)  // reversed, so children pop (and append) in order
         for (size_t c = rn.children.size(); c-- > 0;)
-          work.push_back({n, rn.children[c], own, p.depth + 1});
+          work.push_back({n, rn.children[c], own, p.depth + 1, n->cls ? n->cls : p.inside});
     }
     return result;
   }
@@ -83,14 +87,14 @@ struct Inst {
 }  // namespace
 
 ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
-                        StyleTable& styles, DiagSink& diags) {
+                        StyleTable& styles, DiagSink& diags, const Registry& reg) {
   ContentTree t;
   ContentNode* root = arena.make<ContentNode>();
   root->kind = Kind::doc;
   t.root = root;
   if (!raw.ok) return t;
 
-  Inst inst{raw, arena, strs, styles, diags};
+  Inst inst{raw, arena, strs, styles, diags, reg};
   inst.budget = std::max<size_t>(kInstMinBudget, kInstPerRawNode * raw.nodes.size());
   std::vector<const SchedItem*> stack;  // schedule deltas (bits + patches)
   auto refold = [&] {

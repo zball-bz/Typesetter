@@ -14,7 +14,7 @@ struct JsScan {
 };
 
 namespace jslex_detail {
-enum Frame : u8 { Paren, Bracket, Brace, TemplateExpr, Template };
+enum Frame : u8 { Paren, Bracket, Brace, TmplHole, TmplLit };
 }
 
 // mode Balanced: src[pos] must be one of ( [ { — scans to the matching closer.
@@ -31,10 +31,10 @@ inline JsScan scanJs(std::string_view src, u32 pos, bool balancedMode) {
   while (i < src.size()) {
     char c = src[i];
     // template-literal scanning state
-    if (!st.empty() && st.back() == Template) {
+    if (!st.empty() && st.back() == TmplLit) {
       if (c == '\\') { i += 2; continue; }
       if (c == '`') { st.pop_back(); i++; goto after; }
-      if (c == '$' && i + 1 < src.size() && src[i + 1] == '{') { st.push_back(TemplateExpr); i += 2; continue; }
+      if (c == '$' && i + 1 < src.size() && src[i + 1] == '{') { st.push_back(TmplHole); i += 2; continue; }
       i++;
       continue;
     }
@@ -49,7 +49,7 @@ inline JsScan scanJs(std::string_view src, u32 pos, bool balancedMode) {
       }
       goto after;
     }
-    if (c == '`') { st.push_back(Template); i++; continue; }
+    if (c == '`') { st.push_back(TmplLit); i++; continue; }
     if (c == '/' && i + 1 < src.size() && src[i + 1] == '/') {
       while (i < src.size() && src[i] != '\n') i++;
       continue;  // newline handled below
@@ -66,7 +66,7 @@ inline JsScan scanJs(std::string_view src, u32 pos, bool balancedMode) {
     if (c == ')' || c == ']' || c == '}') {
       u8 want = c == ')' ? Paren : c == ']' ? Bracket : Brace;
       if (!st.empty() && st.back() == want) st.pop_back();
-      else if (!st.empty() && st.back() == TemplateExpr && c == '}') st.pop_back();  // back into template
+      else if (!st.empty() && st.back() == TmplHole && c == '}') st.pop_back();  // back into template
       else { r.err = "unbalanced bracket"; r.end = i; return r; }
       i++;
       goto after;

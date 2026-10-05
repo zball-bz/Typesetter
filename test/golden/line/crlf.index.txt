@@ -1,0 +1,2 @@
+instance heading 1 level=1 label=h-1 title="CRLF source" @[0,13)
+label h-1 -> heading 1 @[0,13)

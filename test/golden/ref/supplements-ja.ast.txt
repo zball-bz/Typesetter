@@ -1,0 +1,27 @@
+doc @[0,297)
+  heading @[0,14) level=1 label="intro"
+    text @[2,14) str="Introduction"
+  para @[24,135)
+    text @[24,101) str="A Japanese document takes 図/表/式 from its locale terms (plan P1-10): see "
+    ref @[102,108) target="intro"
+    text @[108,109) str=", "
+    ref @[110,116) target="fig-a"
+    text @[116,117) str=", "
+    ref @[118,124) target="tab-a"
+    text @[125,128) str=" and "
+    ref @[129,134) target="eq-a"
+    text @[134,135) str="."
+  region @[137,226) name="figure"
+    para @[208,217)
+      row @[208,217)
+        cell @[208,217)
+          text @[208,217) str="A figure."
+  region @[228,274) name="table"
+    para @[261,266)
+      row @[261,266)
+        cell @[261,263)
+          text @[261,262) str="x"
+        cell @[264,266)
+          text @[265,266) str="y"
+  para @[276,296)
+    math @[276,296) display=1 src="e = m c^2" label="eq-a"

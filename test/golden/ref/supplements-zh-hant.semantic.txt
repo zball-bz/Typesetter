@@ -1,0 +1,12 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="14" id="tsr-intro">Introduction</h1>
+<p data-pid="1" data-s="24" data-e="146">A Traditional Chinese document takes 圖/表/式 from its locale terms (plan P1-10): see <a href="#tsr-intro">§1</a>, <a href="#tsr-fig-a">圖 1</a>, <a href="#tsr-tab-a">表 1</a> and <a href="#tsr-eq-a">式 (1)</a>.</p>
+<figure data-pid="2" data-s="148" data-e="237" id="tsr-fig-a">
+<img src="a.png" alt="a figure" style="max-width:100%">
+<figcaption><strong>圖 1：</strong>A figure.</figcaption>
+</figure>
+<table data-pid="3" data-s="239" data-e="285" id="tsr-tab-a">
+<tr><td>x</td><td>y</td></tr>
+</table>
+<p class="tsr-mathblock" data-pid="4" data-s="287" data-e="307" id="tsr-eq-a"><code class="tsr-mathsrc">$ e = m c^2 $</code> <span class="tsr-eqno">(1)</span></p>
+</div>

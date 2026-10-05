@@ -53,6 +53,8 @@ struct ContentNode {
   Kind kind;
   Span span;
   StyleId style = 0;
+  u16 cls = 0;     // SemInfo: its element class (elements/registry.h), set at
+                   // instantiate; 0 = none. Not an argument; dumps omit it.
   StrRef str = 0;  // text: interned string
   std::vector<ArgVal> args;         // Str args re-pointed to doc interner
   std::vector<ContentNode*> kids;
@@ -112,8 +114,10 @@ constexpr size_t kInstPerRawNode = 64;
 
 // EMIT walk with emission-time style resolution; DAG values are copied per
 // emission (document-model §3).
+class Registry;
+// `reg` decides each node's class (its nearest classed ancestor included).
 ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
-                        StyleTable& styles, DiagSink& diags);
+                        StyleTable& styles, DiagSink& diags, const Registry& reg);
 
 std::string dumpTree(const ContentTree& t, const Interner& strs, const StyleTable& styles);
 

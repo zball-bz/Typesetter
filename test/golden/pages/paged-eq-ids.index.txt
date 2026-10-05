@@ -1,0 +1,6 @@
+instance heading 1 level=1 label=sec-a title="Labelled heading" @[0,18)
+instance equation 1 label=eq-pyth @[101,130)
+instance equation 2 label=eq-euler @[132,163)
+label sec-a -> heading 1 @[0,18)
+label eq-pyth -> equation 1 @[101,130)
+label eq-euler -> equation 2 @[132,163)

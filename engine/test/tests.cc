@@ -18,6 +18,8 @@
 #include "../src/inline/fragment.h"
 #include "../src/syntax/lexer.h"
 #include "../src/syntax/exports.h"
+#include "../src/semantic/terms.h"
+#include "semantic_data.gen.h"
 #include "../src/math/mathfont.h"
 #include "../src/api/driver.h"
 #include "../src/code/native_tokens.h"
@@ -548,6 +550,61 @@ static void unitTokenConformance(const fs::path& root) {
   printf("unit: token conformance %.1f%% of %ld non-blank bytes\n", pct, bytes);
 }
 
+// The element registry and locale terms (plan P1-10): the built-in rows
+// load, the terms language falls back exact → script → language → root, and
+// a registry whose figure row has another name produces the same document
+// (built-in rows have no privilege: only the index names the class).
+static void unitRegistry(const fs::path& root) {
+  const Registry& reg = Registry::builtin();
+  CHECK(reg.classes.size() > 6 && reg.collector("toc") && reg.collector("bibliography"));
+  CHECK(reg.reservedShape("h-1.2") && reg.reservedShape("fn-3") && reg.reservedShape("bib-x") &&
+        !reg.reservedShape("h-index") && !reg.reservedShape("fig-1"));
+  CHECK(localePackFor("ja-JP") == "ja" && localePackFor("zh-TW") == "zh-Hant" &&
+        localePackFor("zh-Hant-HK") == "zh-Hant" && localePackFor("zh-CN") == "zh-Hans" &&
+        localePackFor("zh") == "zh-Hans" && localePackFor("de") == "en" && localePackFor("en-GB") == "en");
+  {
+    Config c;
+    c.lang = "zh-HK";
+    CHECK(Terms(c).get("figure") == "\xE5\x9C\x96 " && Terms(c).get("backref") == "\xE2\x86\xA9");
+  }
+  std::string err;
+  CHECK(!Registry::fromJson(R"({"classes":{"x":{"counter":"nope"}}})", err) && !err.empty());
+
+  std::string json(kElementsJson);
+  size_t cls = json.find("\"classes\"");
+  size_t fig = json.find("\"figure\": {", cls);
+  CHECK(cls != std::string::npos && fig != std::string::npos);
+  json.replace(fig, 8, "\"illustration\"");
+  std::unique_ptr<Registry> renamed = Registry::fromJson(json, err);
+  CHECK(renamed != nullptr);
+  if (!renamed) return;
+  for (const char* rel : {"region/figure", "figure/block", "labels/registry-diag", "ref/supplements-en"}) {
+    fs::path tsm = root / "test" / "fixtures" / (std::string(rel) + ".tsm");
+    fs::path ops = tsm;
+    ops.replace_extension(".ops");
+    std::string src, buf, profile;
+    if (!readFile(tsm, src) || !readFile(ops, buf)) continue;
+    readFile(root / "test" / "profiles" / "golden.json", profile);
+    auto run = [&](const Registry* r, std::string& index) {
+      Doc d;
+      d.registry = r;
+      d.configure(profile);
+      d.compile(src);
+      d.ingest((const u8*)buf.data(), buf.size());
+      ProviderSet p = mockProviders();
+      driveToCompletion(d, p);
+      index = d.product("index");
+      return d.product("tree") + d.product("html") + d.product("diags");
+    };
+    std::string i1, i2;
+    std::string a = run(&reg, i1), b = run(renamed.get(), i2);
+    CHECK(a == b);
+    size_t at;
+    while ((at = i2.find("illustration")) != std::string::npos) i2.replace(at, 12, "figure");
+    CHECK(i1 == i2 && i1.find("instance figure") != std::string::npos);
+  }
+}
+
 // AST bytes (plan P1-05 bench gate): node + side record + kid slot per
 // node, against what the pre-CallAST layout (a 64-byte node with an
 // std::vector of kid pointers) took for the same tree — over every fixture.
@@ -731,8 +788,9 @@ static void unitSettings() {
     CHECK(p.ok && p.applied == 6);
     CHECK(c.widthPx == 420 && c.cost.exponent == 2 && c.punctCompress == PunctCompress::Full);
     CHECK(c.codeFontFeaturesByLang.at("js") == "\"liga\" 1");
-    // doc.lang (English supplements) applies before terms.*, which wins
-    CHECK(c.lang == "en" && c.supFigure == "Fig. " && c.supTable == "Table ");
+    // terms.* override single words of the document language's locale pack
+    Terms t(c);
+    CHECK(c.lang == "en" && t.get("figure") == "Fig. " && t.get("table") == "Table ");
     CHECK(p.affects & stageBit(Stage::Emit));
     CHECK(d.items.size() == 1 && std::string_view(d.items[0].code) == "setting-unknown");
   }
@@ -1024,6 +1082,7 @@ int main(int argc, char** argv) {
   unitOpsWindow(fs::path(root));
   unitAstBytes(fs::path(root));
   unitTokenConformance(fs::path(root));
+  unitRegistry(fs::path(root));
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";
   fs::path golden = fs::path(root) / "test" / "golden";
@@ -1092,6 +1151,7 @@ int main(int argc, char** argv) {
               failures++;
             }
         goldenCompare(g("tree"), doc.product("tree"), update, label + ":tree");
+        goldenCompare(g("index"), doc.product("index"), update, label + ":index");
         std::string semantic = doc.product("semantic");
         goldenCompare(g("semantic"), semantic, update, label + ":semantic");
         contractCheck(label, "semantic", semantic, false);

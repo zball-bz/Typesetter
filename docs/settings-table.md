@@ -37,11 +37,11 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `code.snapKerning` | bool | `false` | HostDefault | Layout, Paint | `verbatimSnapKerning` |
 | `code.fontFeatures` | features | `""` | HostDefault | Paint | `codeFontFeatures` |
 | `code.fontFeaturesByLang` | map:features | `{}` | HostDefault | Paint | `codeFontFeaturesByLang` |
-| `terms.heading` | str | `"§"` | HostDefault | Resolve |  |
-| `terms.table` | str | `"表 "` | HostDefault | Resolve |  |
-| `terms.figure` | str | `"图 "` | HostDefault | Resolve |  |
-| `terms.equation` | str | `"式 "` | HostDefault | Resolve |  |
-| `terms.captionSep` | str | `"："` | HostDefault | Resolve |  |
+| `terms.heading` | str | `""` | HostDefault | Resolve |  |
+| `terms.table` | str | `""` | HostDefault | Resolve |  |
+| `terms.figure` | str | `""` | HostDefault | Resolve |  |
+| `terms.equation` | str | `""` | HostDefault | Resolve |  |
+| `terms.captionSep` | str | `""` | HostDefault | Resolve |  |
 | `page.height` | num:16:100000 | `995` | HostDefault | Paginate |  |
 
 ## Host policy

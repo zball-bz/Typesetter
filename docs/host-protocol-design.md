@@ -14,8 +14,10 @@ a value domain, a default, a precedence and the stages it **affects**.
 (`api/settings.gen.{h,cc}`) and the JS side (`shared/settings.gen.mjs`:
 defaults, rows, the legacy option map, `settingsFromOptions`).
 
-- `tsr2_set_config(doc, json)` applies a document in row order (so `doc.lang`,
-  which resets the `terms.*` supplements, precedes them). Unknown paths are
+- `tsr2_set_config(doc, json)` applies a document in row order. `doc.lang` is
+  the host default document language: it picks the locale terms (supplement
+  words, docs/semantics-design.md §3), which `terms.*` override word by word
+  (plan P1-10). Unknown paths are
   `setting-unknown`, values outside their domain `setting-type` (the row keeps
   its value), malformed JSON `setting-json`; these form the Settings slice of
   the diagnostics, replaced by the next document.

@@ -29,6 +29,10 @@ struct Doc {
   RawOps raw;
   StyleTable styles;
   ContentTree tree;
+  // the element registry (plan P1-10): the built-in rows unless a host or a
+  // test swaps in another before ingest; the Index resolve leaves behind
+  const Registry* registry = &Registry::builtin();
+  Index index;
 
   // NEED_TOKENS pull state (code-design.md §2): codeblocks with a language
   // and a plain body wait for a token provider before emit.
@@ -178,7 +182,7 @@ struct Doc {
     decodeOps((const u8*)opsBytes.data(), opsBytes.size(), raw, diags);  // raw views raw.blob
     validThrough = std::min(validThrough, (int)Stage::Execute);
     if (!raw.ok) return false;
-    tree = instantiate(raw, arena, strs, styles, diags);
+    tree = instantiate(raw, arena, strs, styles, diags, *registry);
     scanScriptErrors(tree.root);
     validThrough = (int)Stage::Ingest;
     return true;
@@ -188,7 +192,7 @@ struct Doc {
   void stageResolve() {
     diags.begin(DiagOrigin::Resolve);
     extractSidecars(tree.root, arena, strs, styles, diags);
-    resolveDoc(tree, arena, strs, styles, cfg, diags);
+    resolveDoc(tree, arena, strs, styles, cfg, diags, *registry, index);
     tokenReqs.clear();
     scanTokenReqs(tree.root);
     // the engine tokenizes its own language (plan P1-09; code-design §2):
@@ -540,6 +544,7 @@ struct Doc {
     if (name == "astjson") return astJson(ast, src, strs) + "\n";
     if (name == "ops") return dumpOps(raw);
     if (name == "tree") return dumpTree(tree, strs, styles);
+    if (name == "index") return dumpIndex(index, *registry);
     if (name == "semantic") return renderFallback();
     if (name == "mathbox") return dumpMathBoxes(tops, strs);
     if (name == "blocks") return dumpBlocks(tops, strs, styles);

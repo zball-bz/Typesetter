@@ -1,0 +1,29 @@
+doc @[0,307) [base]
+  heading @[0,14) [base] level=1 label="intro"
+    text @[2,14) [base] str="Introduction"
+  para @[24,146) [base]
+    text @[24,112) [base] str="A Traditional Chinese document takes 圖/表/式 from its locale terms (plan P1-10): see "
+    ref @[113,119) [base] target="intro" url="#tsr-intro"
+      text @[113,119) [base] str="§1"
+    text @[119,120) [base] str=", "
+    ref @[121,127) [base] target="fig-a" url="#tsr-fig-a"
+      text @[121,127) [base] str="圖 1"
+    text @[127,128) [base] str=", "
+    ref @[129,135) [base] target="tab-a" url="#tsr-tab-a"
+      text @[129,135) [base] str="表 1"
+    text @[136,139) [base] str=" and "
+    ref @[140,145) [base] target="eq-a" url="#tsr-eq-a"
+      text @[140,145) [base] str="式 (1)"
+    text @[145,146) [base] str="."
+  group @[148,237) [base] role="figure" label="fig-a"
+    image @[0,0) [base] src="a.png" alt="a figure" w=120 h=60
+    para @[0,0) [base]
+      text @[0,0) [BOLD] str="圖 1："
+      text @[219,228) [base] str="A figure."
+  table @[239,285) [base] cols=2 label="tab-a"
+    trow @[0,0) [base]
+      tcell @[0,0) [base]
+        text @[272,273) [base] str="x"
+      tcell @[0,0) [base]
+        text @[276,277) [base] str="y"
+  mathblock @[287,307) [base] src="e = m c^2" label="eq-a" name="(1)"

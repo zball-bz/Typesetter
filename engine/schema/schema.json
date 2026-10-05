@@ -210,7 +210,7 @@
       "enum:A|B, str, map); def: default; prec: HostOnly | HostDefault | HostForce | DocOnly (no document layer before P3);",
       "affects: the stages (stages.def) whose products the setting changes — the first one decides whether a patch",
       "applies in place or the document is rebuilt; legacy: the createEngine/tsr_* option it replaces (MD-06).",
-      "Rows apply in this order, so doc.lang (which resets terms.*) precedes terms.*.",
+      "terms.* override single locale words (semantic/terms.h, plan P1-10); unset, the document language's locale pack decides.",
       "optional: an empty string is accepted (the row is unset and resolution falls through)."
     ],
     "host.width": {
@@ -245,8 +245,7 @@
         "Resolve",
         "Paint"
       ],
-      "legacy": "lang",
-      "apply": "applyLang"
+      "legacy": "lang"
     },
     "doc.baseSize": {
       "field": "baseSizePx",
@@ -543,7 +542,8 @@
     "terms.heading": {
       "field": "supHeading",
       "dom": "str",
-      "def": "§",
+      "def": "",
+      "optional": true,
       "prec": "HostDefault",
       "affects": [
         "Resolve"
@@ -552,7 +552,8 @@
     "terms.table": {
       "field": "supTable",
       "dom": "str",
-      "def": "表 ",
+      "def": "",
+      "optional": true,
       "prec": "HostDefault",
       "affects": [
         "Resolve"
@@ -561,7 +562,8 @@
     "terms.figure": {
       "field": "supFigure",
       "dom": "str",
-      "def": "图 ",
+      "def": "",
+      "optional": true,
       "prec": "HostDefault",
       "affects": [
         "Resolve"
@@ -570,7 +572,8 @@
     "terms.equation": {
       "field": "supEquation",
       "dom": "str",
-      "def": "式 ",
+      "def": "",
+      "optional": true,
       "prec": "HostDefault",
       "affects": [
         "Resolve"
@@ -579,7 +582,8 @@
     "terms.captionSep": {
       "field": "capSep",
       "dom": "str",
-      "def": "：",
+      "def": "",
+      "optional": true,
       "prec": "HostDefault",
       "affects": [
         "Resolve"

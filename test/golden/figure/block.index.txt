@@ -1,0 +1,4 @@
+instance figure 1 label=fig-pipe @[68,237)
+instance figure 2 label=fig-wide @[239,383)
+label fig-pipe -> figure 1 @[68,237)
+label fig-wide -> figure 2 @[239,383)

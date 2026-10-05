@@ -105,7 +105,8 @@ TSR_EXPORT void tsr_set_cjk_font(WasmDoc* d, const char* family) {
   configure1(d, "fonts", "cjk", jstr(family));
 }
 
-// BCP-47 tag → supplement words (Figure/图 …); default is zh
+// the host default document language (doc.lang): it picks the locale terms
+// (supplement words, plan P1-10) and the lang attribute; default zh-CN
 TSR_EXPORT void tsr_set_lang(WasmDoc* d, const char* lang) {
   if (lang && *lang) configure1(d, "doc", "lang", jstr(lang));
 }

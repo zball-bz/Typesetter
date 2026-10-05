@@ -1,0 +1,2 @@
+instance figure 1 label=fig-bad @[119,225)
+label fig-bad -> figure 1 @[119,225)

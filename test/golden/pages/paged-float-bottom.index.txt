@@ -1,0 +1,2 @@
+instance figure 1 label=fig-box @[137,280)
+label fig-box -> figure 1 @[137,280)

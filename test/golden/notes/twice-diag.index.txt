@@ -1,0 +1,7 @@
+instance footnote 1 label=fn-1 marker=fnref-1 @[7,27)
+instance footnote 2 label=fn-2 marker=fnref-2 @[36,51)
+label fn-1 -> footnote 1 @[7,27)
+label fnref-1 -> footnote 1 (marker) @[7,27)
+label fn-2 -> footnote 2 @[36,51)
+label fnref-2 -> footnote 2 (marker) @[36,51)
+flow notes: fn-1 fn-2

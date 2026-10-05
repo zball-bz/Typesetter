@@ -70,8 +70,12 @@ codegen/    AST → JsProgram                    (text, source map, import list)
 ops/        generated vocabulary (ops.def, schema.gen.*), OpReader + value validation; writer lives in JS (§3)
 model/      ContentTree: node defs, instantiation from ops (EMIT walk with
             style-stack resolution §12), anchors, diagnostics, comment nodes
-resolve/    resolver pass (§11.1): counters, label table, REF patching,
-            collector expansion
+elements/   the element registry: one data row per class of node
+            (engine/data/elements.json; docs/semantics-design.md)
+semantic/   counters, locale terms, the Index (LOCATE, BIND) and MATERIALIZE
+            (templates, references, sites, collectors, flows)
+resolve/    the phase driver (§11.1): LOCATE → BIND → MATERIALIZE; the input
+            tree is not changed, the output replaces it (plan P1-10)
 emit/       ContentTree → BlockStream          (script segmentation, CJK rules
                                                 App C, hyphenation, style runs)
 hyphen/     Liang runtime over compiled patterns (gen/)

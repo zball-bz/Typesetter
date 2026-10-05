@@ -1,0 +1,6 @@
+instance figure 1 label=fig-a @[110,236)
+instance figure 2 label=fig-b @[238,385)
+instance heading 0.1 level=2 label=h-0.1 title="标题不清除浮动" @[387,411)
+label fig-a -> figure 1 @[110,236)
+label fig-b -> figure 2 @[238,385)
+label h-0.1 -> heading 0.1 @[387,411)

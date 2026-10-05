@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-10
+- 下一步：P1-11
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -35,7 +35,7 @@
 | P1-07 | BlockAutomaton | done | grep:plan P1-07 | 2026-10-06 | 容器 span：doc/structure、notes/cjk-glue、region/figure、doc/nested-base16/18、figure/float-in-list、exec/let-ctor-name、exec/nested-stmt-diag、line/crlf-inline、line/trailing-blank（skeleton/ast/js/tree/semantic/html/.ops）；行为：conform/appa-splices、conform/appb-lines、exec/contain-orphan-diag；+5 用例（line/tabs、line/interrupt-diag、line/fence-container-diag、line/blankblock-diag、region/resync-diag） | 容器协议 Prefix/Column/Explicit（tab 宽 4，span 随每个归属行扩展，空行结束引用）；fence/块注释/段内注释为 verbatim carry，容器退出即结束；fence 按内容列相对缩进去缩进，容器内 fence 传 ctx.lineOffsets；区域按名闭合，内层与随容器结束的区域报 region-unclosed，孤立闭合行为 region-orphan 错误块；段落打断逐条规则（空项、N≠1 不打断）；列表身份（标记类别、列）+ list-number 信息诊断；语句平衡到容器退出（结构连接、倍增窗口，线性），失败恢复到空行/块起始/容器退出；--%、}、; 后的行余部重新进入；SYNTAX_VERSION 3；偏差见偏差表 |
 | P1-08 | 行所有权与内容体 | done | grep:plan P1-08 | 2026-10-06 | 0（现有用例全部字节不变）；+3 用例（line/own-body、line/own-hide、line/own-math） | 行所有权：段落行用 phase 2 原语扫描，未闭合构造一次性前瞻到结构边界（Leaf：代码 span/数学/splice JS/行内形式体，界=空行或容器退出；Container：行内注释/块形式体，界=容器退出），闭合则其间各行归段落、不起块，否则开符为字面（literalAt + RevertedWindow）；块形式体以 ']' 行（列 ≤ 开行缩进）闭合，记 SkelNode::bodies，']' 后续行与 '][' 续参；内容体（#f[、^[）以 Blocks 模式重入行扫描（linepassLines，公共缩进去除），单段落解包；模型 N3 拼接含块的 seq；多块脚注按块渲染；fuzz_linepass 180s、fuzz_inline 120s 无发现；SYNTAX_VERSION 4；偏差见偏差表 |
 | P1-09 | 前端导出与工具链 | done | grep:plan P1-09 | 2026-10-06 | +327 个 tokens/outline/astjson golden（每个用例三份）；code/tsm-hl 的 tree/semantic/html（tsm 块改由引擎着色） | syntax/exports：syntaxTokens（14 标签）、outlineJson（标题/区域/fence/标签/诊断）、astJson（gen-syntax 生成 jsonAstNode）；C ABI tsr_syntax_tokens/tsr_outline/tsr_parse_json，tsrc --stage=tokens|outline|astjson（check-tsrc 1362 个 golden）；tsm 代码块在 Resolve 内由引擎着色，无 NEED_TOKENS 往返；grammar.js 与 TextMate 由 syntax-regex.js（读 syntax.gen.json）生成，tools/gen-grammars.mjs 入 gen-all 并 vendor parser.c，highlights.scm 只留一份；VS Code 扩展宿主内跑引擎 wasm（ABI 校验、UTF-8→UTF-16），token/大纲/折叠/补全来自引擎，tree-sitter 作冷启动回退，删除硬编码区域列表；一致性 (b) 逐字节 88.9%（允许类别表，≥85%），(e) fuzz_inline 覆盖导出（120s 无发现）；code-design §2、editor-design §5 修订 |
-| P1-10 | 元素注册表、索引与分阶段解析器 | todo | | | | |
+| P1-10 | 元素注册表、索引与分阶段解析器 | done | grep:plan P1-10 | 2026-10-06 | 结构性提交 0 变化（全部 tree/blocks/breaks/layout/html/semantic/diags 字节不变）；+111 个 index golden；+2 用例（ref/supplements-ja、ref/supplements-zh-hant）；另见 f93d611（golden 有误：非 figure group 的引用） | engine/src/elements（Registry：selector 成员关系于 instantiate 写入 ContentNode::cls，最具体者胜）；engine/src/semantic（numbering 计数自动机、terms 区域词包 en/zh-Hans/zh-Hant/ja 与回退链、index LOCATE/BIND、materialize 模板/引用/site/收集器/flow，输入不变、输出替换 tree.root）；engine/data/elements.json 内建 heading/table/figure/equation/footnote/term 与 toc/glossary/notes/bibliography 预设；resolve.cc 只剩阶段驱动；删除 applyLang，terms.* 改为逐词覆盖；tsrc --stage=index；替代 elements.json（figure 改名）输出除 index 名外相同（unitRegistry）；lint 基线 15→8；87K update 29.4ms；docs/semantics-design.md |
 | P1-11 | TextRules 兼容表与单一分类器 | todo | | | | |
 | P1-12 | HList 与 run 实例 | todo | | | | |
 | P1-13 | InlineObject 注册表与扁平化表 | todo | | | | |
@@ -150,6 +150,9 @@
 | P1-08 | Phase 1 不存 AtomTape：段落行用与 phase 2 相同的原子/括号原语扫描，遇到未闭合的构造就一次性前瞻到其结构边界（加倍窗口），而不是"暂定提交、到界回退再重读"；RevertedWindows 照记，回退的开符记在 SkelNode::literalAt 供 phase 2 遵从，块形式内容体的闭合行记在 SkelNode::bodies | 先提交后回退在"每行一个永不闭合的开符"时会级联成 O(n³)（3000 行 >120s）；前瞻结果相同且每行只处理一次（同输入 0.9s，4KB 32ms）；存储的 tape 还须与 phase 2 的普通匹配回退保持一致，收益只在增量编辑（T9） | P3-21 等增量重排若需要 tape，从同一原语生成 |
 | P1-08 | `@id[` 与 `#let x = [` 的内容体未在本步启用 | 设计把 `@id[…]` 门控在 T3 的 ref 构造器（P2-06），`#let x = [..]` 内容字面量属于 S8（P2-12）；本步只有 `#f[`、`^[` 两种内容体 | P2-06、P2-12 启用时复用 parseBody |
 | P1-08 | 多块脚注体按块渲染（resolve.cc 的 notes 节）；模型增加 N3（含块的 seq 并入兄弟/替换段落） | Blocks 模式使 `^[…]`、`#f[…]` 可以产生多块值，不处理则被压成一行 | T2 的层级规范化（行内位置的块）在 P2 阶段 |
+| P1-10 | 内建行以 JSON 嵌入（configure 时生成 semantic_data.gen.h，运行时解析一次并由 unitRegistry 校验），而非生成 gen/elements_defaults.h 的 C++ 表；模板语言只实现内建行用到的子集（text/term/slot/node/styled/when/each 及 paras 体放置），Query 只有 outline/table/flow 三种 | 文档声明（P2-07）同样走 JSON 运行时加载，一条路径；其余模板与查询形式随 P2-07/P3-03/P3-13 的新行加入 | P2-07、P3-13 |
+| P1-10 | Resolve 的重跑类别仍为 Once：resolver 本身不再修改输入（输出树替换 tree.root，未变子树共享），但同阶段的 sidecar 抽取仍改写实例化树 | D-S13 要求的"不修改输入"已对 resolver 成立；把 Resolve 改为可重入需先把 sidecar 抽取移出（P2-13 起 sidecar 归 codeblock 构造器） | P2-13 后改 stages.def |
+| P1-10 | 旧 resolver 的一处错误（引用非 figure 的带标签 group 显示"图 "）先在旧代码上单独修正并更新 golden（f93d611），再提交结构性重写 | 守则：golden 有误的修正单独提交；结构性提交保持字节不变 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

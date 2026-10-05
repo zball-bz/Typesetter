@@ -1,0 +1,8 @@
+instance heading 1 level=1 label=intro title="Introduction" @[0,14)
+instance figure 1 label=fig-a @[148,237)
+instance table 1 label=tab-a @[239,285)
+instance equation 1 label=eq-a @[287,307)
+label intro -> heading 1 @[0,14)
+label fig-a -> figure 1 @[148,237)
+label tab-a -> table 1 @[239,285)
+label eq-a -> equation 1 @[287,307)

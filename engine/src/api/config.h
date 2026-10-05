@@ -20,22 +20,7 @@ inline double headingSizeMul(int level) {
   return level == 1 ? 1.6 : level == 2 ? 1.35 : level == 3 ? 1.15 : 1.0;
 }
 
-// Document language → supplement words (real-world-report.md): CJK
-// documents keep 图/表/式 and the full-width colon; everything else gets
-// English supplements. Heading refs stay "§" in both.
-inline void applyLang(Config& c, std::string_view lang) {
-  std::string_view p = lang.substr(0, 2);
-  if (p == "zh" || p == "ja") {
-    c.supTable = "\xE8\xA1\xA8 ";
-    c.supFigure = "\xE5\x9B\xBE ";
-    c.supEquation = "\xE5\xBC\x8F ";
-    c.capSep = "\xEF\xBC\x9A";
-  } else {
-    c.supTable = "Table ";
-    c.supFigure = "Figure ";
-    c.supEquation = "Eq. ";
-    c.capSep = ": ";
-  }
-}
+// (Supplement words are locale terms since plan P1-10: semantic/terms.h,
+// engine/data/locale; doc.lang is the host default document language.)
 
 }  // namespace tsr

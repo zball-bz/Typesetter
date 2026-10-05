@@ -281,7 +281,7 @@ export const SETTINGS = Object.freeze({
   },
   "terms.heading": {
     "dom": "str",
-    "def": "§",
+    "def": "",
     "prec": "HostDefault",
     "affects": [
       "Resolve"
@@ -289,7 +289,7 @@ export const SETTINGS = Object.freeze({
   },
   "terms.table": {
     "dom": "str",
-    "def": "表 ",
+    "def": "",
     "prec": "HostDefault",
     "affects": [
       "Resolve"
@@ -297,7 +297,7 @@ export const SETTINGS = Object.freeze({
   },
   "terms.figure": {
     "dom": "str",
-    "def": "图 ",
+    "def": "",
     "prec": "HostDefault",
     "affects": [
       "Resolve"
@@ -305,7 +305,7 @@ export const SETTINGS = Object.freeze({
   },
   "terms.equation": {
     "dom": "str",
-    "def": "式 ",
+    "def": "",
     "prec": "HostDefault",
     "affects": [
       "Resolve"
@@ -313,7 +313,7 @@ export const SETTINGS = Object.freeze({
   },
   "terms.captionSep": {
     "dom": "str",
-    "def": "：",
+    "def": "",
     "prec": "HostDefault",
     "affects": [
       "Resolve"
@@ -382,11 +382,11 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "fontFeaturesByLang": {}
   },
   "terms": {
-    "heading": "§",
-    "table": "表 ",
-    "figure": "图 ",
-    "equation": "式 ",
-    "captionSep": "："
+    "heading": "",
+    "table": "",
+    "figure": "",
+    "equation": "",
+    "captionSep": ""
   },
   "page": {
     "height": 995

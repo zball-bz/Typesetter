@@ -1,0 +1,4 @@
+instance heading 1 level=1 label=sec title="Data" @[0,6)
+instance table 1 label=tbl @[14,136)
+label sec -> heading 1 @[0,6)
+label tbl -> table 1 @[14,136)

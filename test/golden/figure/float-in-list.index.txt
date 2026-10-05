@@ -1,0 +1,2 @@
+instance figure 1 label=fig-icon @[134,276)
+label fig-icon -> figure 1 @[134,276)

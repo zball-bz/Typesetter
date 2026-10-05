@@ -1,0 +1,4 @@
+instance heading 1 level=1 label=dup title="First" @[0,7)
+instance heading 2 level=1 label=h-2 title="Second" @[98,106)
+label dup -> heading 1 @[0,7)
+label h-2 -> heading 2 @[98,106)

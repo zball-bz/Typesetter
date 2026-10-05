@@ -1079,31 +1079,31 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/missed:2` | missed | medium | P2-03 | |
 | `codegen-ops-model/missed:3` | missed | medium | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/missed:4` | missed | low | P2-01 | |
-| `resolver/fixed-counter-set` | adhoc | high | P1-10 | |
+| `resolver/fixed-counter-set` | adhoc | high | P1-10 | grep:plan P1-10 |
 | `resolver/figure-role-string` | adhoc | high | P3-03 | |
-| `resolver/label-registration-per-kind` | adhoc | high | P1-10 | |
-| `resolver/ref-display-switch` | adhoc | high | P1-10 | |
-| `resolver/collector-what-dispatch` | adhoc | high | P1-10 | |
-| `resolver/footnote-pipeline` | adhoc | high | P1-10 | |
+| `resolver/label-registration-per-kind` | adhoc | high | P1-10 | grep:plan P1-10 |
+| `resolver/ref-display-switch` | adhoc | high | P1-10 | grep:plan P1-10 |
+| `resolver/collector-what-dispatch` | adhoc | high | P1-10 | grep:plan P1-10 |
+| `resolver/footnote-pipeline` | adhoc | high | P1-10 | grep:plan P1-10 |
 | `resolver/citation-path` | adhoc | high | P2-09 | |
-| `resolver/supplement-config` | adhoc | medium | P1-10 | |
-| `resolver/numbering-format-hardcoded` | adhoc | medium | P1-10 | |
+| `resolver/supplement-config` | adhoc | medium | P1-10 | grep:plan P1-10 |
+| `resolver/numbering-format-hardcoded` | adhoc | medium | P1-10 | grep:plan P1-10 |
 | `resolver/site-display-injection` | adhoc | medium | P3-03, P3-26 | |
-| `resolver/term-rewrite` | adhoc | medium | P1-10 | |
+| `resolver/term-rewrite` | adhoc | medium | P1-10 | grep:plan P1-10 |
 | `resolver/excerpt-strings` | adhoc | medium | P3-03 | |
-| `resolver/presentation-constants` | adhoc | medium | P1-10 | |
+| `resolver/presentation-constants` | adhoc | medium | P1-10 | grep:plan P1-10 |
 | `resolver/anchor-namespace` | adhoc | medium | P3-04 | |
 | `resolver/argk-overloading` | adhoc | medium | P0-06, P2-05, P2-07 | |
 | `resolver/rewrite-normalizations` | adhoc | low | P0-07, P2-07 | |
 | `resolver/cite-ordinal-pass-order` | issue | high | P0-09 | grep:plan P0-09 |
 | `resolver/extensibility-matrix` | issue | high | P2-07 | |
-| `resolver/invariant-declares-decides` | issue | high | P1-10 | |
+| `resolver/invariant-declares-decides` | issue | high | P1-10 | grep:plan P1-10 |
 | `resolver/collector-aliasing` | issue | medium | P0-09 | grep:plan P0-09 |
 | `resolver/reserved-label-collision` | issue | medium | P0-09 | grep:plan P0-09 |
 | `resolver/absolute-style-loss` | issue | medium | P0-09 | grep:plan P0-09 |
 | `resolver/semantic-tight-item-anchor` | issue | medium | P0-09 | grep:plan P0-09 |
 | `resolver/duplicate-label-dom-ids` | issue | low | P0-09 | grep:plan P0-09 |
-| `resolver/spec-drift` | issue | medium | P1-10 | |
+| `resolver/spec-drift` | issue | medium | P1-10 | grep:plan P1-10 |
 | `resolver/grouped-cite-all-or-nothing` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/resolver-spans` | issue | low | P2-07 | |
 | `resolver/fragile-aggregate-init` | issue | low | P0-09 | grep:plan P0-09 |
@@ -1113,7 +1113,7 @@ Theme steps: — · findings: 1
 | `resolver/missed:2` | missed | medium | P3-04, P3-06 | |
 | `resolver/missed:3` | missed | medium | P3-03 | |
 | `resolver/missed:4` | missed | low | P3-03 | |
-| `resolver/missed:5` | missed | low | P0-09, P1-03, P1-10 | |
+| `resolver/missed:5` | missed | low | P0-09, P1-03, P1-10 | grep:plan P1-10 |
 | `emitter/paragraph-blind-script-context` | adhoc | high | P4-02 | |
 | `emitter/hardcoded-script-class-tables` | adhoc | high | P4-05 | |
 | `emitter/punct-compression-control-flow` | adhoc | high | P4-04 | |

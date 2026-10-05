@@ -57,11 +57,11 @@ struct Config {
   bool verbatimSnapKerning = false;  // code.snapKerning
   std::string codeFontFeatures = "";  // code.fontFeatures
   std::map<std::string, std::string> codeFontFeaturesByLang = {};  // code.fontFeaturesByLang
-  std::string supHeading = "§";  // terms.heading
-  std::string supTable = "表 ";  // terms.table
-  std::string supFigure = "图 ";  // terms.figure
-  std::string supEquation = "式 ";  // terms.equation
-  std::string capSep = "：";  // terms.captionSep
+  std::string supHeading = "";  // terms.heading
+  std::string supTable = "";  // terms.table
+  std::string supFigure = "";  // terms.figure
+  std::string supEquation = "";  // terms.equation
+  std::string capSep = "";  // terms.captionSep
   double pageHeightPx = 995;  // page.height
   CostParams cost;
 };

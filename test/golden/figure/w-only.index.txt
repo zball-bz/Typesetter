@@ -1,0 +1,2 @@
+instance figure 1 label=fig-w @[108,262)
+label fig-w -> figure 1 @[108,262)

@@ -1,0 +1,10 @@
+display pid=4
+hbox Ord w=3697 asc=967 desc=19
+  glyph "e" Ord w=511 asc=489 desc=12 px=16
+  glue w=284 @(511,0)
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(795,0)
+  glue w=284 @(1569,0)
+  glyph "m" Ord w=937 asc=482 desc=18 px=16 @(1853,0)
+  hbox Ord w=907 asc=967 desc=19 @(2790,0)
+    glyph "c" Ord w=498 asc=486 desc=19 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(498,461)

@@ -1,0 +1,15 @@
+{
+  "$comment": "Locale pack (plan P1-10; design T3 LocaleTerms over T4 LocalePack): the words the semantic layer generates. en is the root: every language without its own pack falls back to it.",
+  "lang": "en",
+  "terms": {
+    "section": "§",
+    "figure": "Figure ",
+    "table": "Table ",
+    "equation": "Eq. ",
+    "caption-sep": ": ",
+    "ref-sep": ", ",
+    "unresolved": "??",
+    "backref": "↩",
+    "term-sep": " — "
+  }
+}

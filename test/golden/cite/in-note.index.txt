@@ -1,0 +1,10 @@
+instance heading 1 level=1 label=h-1 title="Citations in notes" @[0,20)
+instance footnote 1 label=fn-1 marker=fnref-1 @[71,126)
+label h-1 -> heading 1 @[0,20)
+label fn-1 -> footnote 1 @[71,126)
+label fnref-1 -> footnote 1 (marker) @[71,126)
+row bib knuth84 ordinal=2 @[0,0)
+row bib liang83 ordinal=1 @[0,0)
+row bib kp81 ordinal=3 @[0,0)
+row bib uncited @[0,0)
+flow notes: fn-1

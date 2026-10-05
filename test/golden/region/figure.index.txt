@@ -1,0 +1,4 @@
+instance heading 1 level=1 label=top title="Regions" @[0,9)
+instance figure 1 label=fig1 @[17,112)
+label top -> heading 1 @[0,9)
+label fig1 -> figure 1 @[17,112)

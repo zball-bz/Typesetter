@@ -63,7 +63,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 
 Notes:
 - **Labelable kinds** (accept `label`): `heading`, `group`, `table`, `term`, `mathblock`. Labels are args, not nodes.
-- **Figure is a convention, not a kind**: `group{role:"figure", label}` with a caption paragraph — keeps the engine kind set minimal.
+- **Figure is a declared class, not a kind**: `group{role:"figure", label}` with a caption paragraph is selected by the figure row of the element registry (docs/semantics-design.md; plan P1-10) — keeps the engine kind set minimal, and a document can declare classes the same way.
 - `val(x)` is not a kind: primitives splice as `text`; content values splice as themselves.
 - **User constructors compose engine kinds.** There is no user-defined kind; custom constructs are built from `group`/`styled`/`raw` plus the rest. This is what keeps layout closed under the kind table.
 

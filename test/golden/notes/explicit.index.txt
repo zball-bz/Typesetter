@@ -1,0 +1,11 @@
+instance heading 1 level=1 label=h-1 title="Explicit placement" @[0,20)
+instance footnote 1 label=fn-1 marker=fnref-1 @[37,44)
+instance footnote 2 label=fn-2 marker=fnref-2 @[56,89)
+instance heading 2 level=1 label=top title="Appendix" @[131,141)
+label h-1 -> heading 1 @[0,20)
+label fn-1 -> footnote 1 @[37,44)
+label fnref-1 -> footnote 1 (marker) @[37,44)
+label fn-2 -> footnote 2 @[56,89)
+label fnref-2 -> footnote 2 (marker) @[56,89)
+label top -> heading 2 @[131,141)
+flow notes: fn-1 fn-2

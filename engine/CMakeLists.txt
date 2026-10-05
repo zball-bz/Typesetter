@@ -15,6 +15,11 @@ add_library(tsr_core STATIC
   src/syntax/syntax.gen.cc
   src/syntax/lexer.cc
   src/syntax/exports.cc
+  src/elements/registry.cc
+  src/semantic/terms.cc
+  src/semantic/numbering.cc
+  src/semantic/index.cc
+  src/semantic/materialize.cc
   src/codegen/codegen.cc
   src/ops/ops.cc
   src/ops/schema.gen.cc
@@ -32,6 +37,18 @@ add_library(tsr_core STATIC
   src/render/typeset_html.cc
   src/render/semantic_html.cc
 )
+# built-in element rows and locale packs, embedded (plan P1-10)
+set(TSR_DATA data/elements.json data/locale/en.json data/locale/zh-Hans.json
+    data/locale/zh-Hant.json data/locale/ja.json)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${TSR_DATA})
+file(READ data/elements.json ELEMENTS_JSON)
+file(READ data/locale/en.json LOCALE_EN)
+file(READ data/locale/zh-Hans.json LOCALE_ZH_HANS)
+file(READ data/locale/zh-Hant.json LOCALE_ZH_HANT)
+file(READ data/locale/ja.json LOCALE_JA)
+configure_file(src/semantic/semantic_data.gen.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/gen/semantic_data.gen.h @ONLY)
+target_include_directories(tsr_core PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/gen)
 target_compile_options(tsr_core PUBLIC -fno-exceptions -fno-rtti -Wall -Wextra -Werror=switch)
 # no fused multiply-add: layout numbers must not depend on the target's FMA
 # (native goldens vs the WASM build; plan P0-12, design T6 I9)

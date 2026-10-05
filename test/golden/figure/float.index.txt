@@ -1,0 +1,4 @@
+instance figure 1 label=fig-tower @[97,246)
+instance figure 2 label=fig-gate @[636,776)
+label fig-tower -> figure 1 @[97,246)
+label fig-gate -> figure 2 @[636,776)
