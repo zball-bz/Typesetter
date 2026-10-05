@@ -79,7 +79,7 @@ top pid=0 units=1
   run r2 letter-spaced CJK
   run r3 blank-bearing CJK
 top pid=1 units=1
- unit img indent=0su anchor="fig-a" w=7680su h=5760su float=right
+ unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4 float=right
   cell 0
    box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
    pen 0 r0
@@ -104,7 +104,7 @@ top pid=1 units=1
    run r3 letter-spaced CJK
    run r4 blank-bearing CJK
 top pid=2 units=1
- unit img indent=0su anchor="fig-b" w=7680su h=3840su float=right
+ unit img indent=0su anchor="fig-b" intrinsic=400x200px scale=0.4 float=right
   cell 0
    box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
    pen 0 r0

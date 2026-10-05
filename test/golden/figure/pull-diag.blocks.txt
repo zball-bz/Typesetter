@@ -36,7 +36,7 @@ top pid=0 units=1
   punct-close "。" w=512su @[0,99)
   punct-sp w=512su @[0,99)
 top pid=1 units=2
- unit img indent=0su anchor="fig-light" w=19200su h=14400su
+ unit img indent=0su anchor="fig-light" intrinsic=512x384px
  unit text indent=0su centered
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)
@@ -66,7 +66,7 @@ top pid=1 units=2
   punct-close "。" w=512su @[223,239)
   punct-sp w=512su @[223,239)
 top pid=2 units=2
- unit img indent=0su w=19200su h=6400su placeholder
+ unit img indent=0su placeholder
  unit text indent=0su centered
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)

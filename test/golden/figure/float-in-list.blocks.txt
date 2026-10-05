@@ -56,7 +56,7 @@ top pid=1 units=5
   word "fig" w=1537su pen=INF @[95,130)
   hyphen bw=513su pen=0.70 @[95,130)
   word "ure." w=2049su pen=INF @[95,130)
- unit img indent=1536su anchor="fig-icon" w=7066su h=7066su float=left
+ unit img indent=1536su anchor="fig-icon" intrinsic=200x200px scale=0.4 float=left
   cell 0
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)

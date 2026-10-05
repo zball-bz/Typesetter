@@ -1136,7 +1136,7 @@ Theme steps: — · findings: 1
 | `emitter/codeblock-args-in-emit` | adhoc | low | P0-06, P3-02, P3-11 | |
 | `emitter/anchor-opt-in-per-kind` | adhoc | low | P1-18 | |
 | `emitter/scattered-magic-constants` | adhoc | low | P3-02, P4-04 | |
-| `emitter/stale-emit-on-relayout` | issue | high | P1-16 | |
+| `emitter/stale-emit-on-relayout` | issue | high | P1-16 | grep:plan P1-16 |
 | `emitter/sizepx-em-mismatch` | issue | high | P0-08 | grep:plan P0-08 |
 | `emitter/kp-counts-discardable-glue` | issue | medium | P0-12 | grep:plan P0-12 |
 | `emitter/kp-ignores-stretch-weight` | issue | medium | P4-08 | |
@@ -1171,7 +1171,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 | |
 | `break-layout-pages/kp-window-heuristics` | adhoc | low | P1-14 | grep:plan P1-14 |
 | `break-layout-pages/overfull-collapses-paragraph` | issue | high | P0-12 | grep:plan P0-12 |
-| `break-layout-pages/emit-reads-measure-stale-on-relayout` | issue | high | P1-16 | |
+| `break-layout-pages/emit-reads-measure-stale-on-relayout` | issue | high | P1-16 | grep:plan P1-16 |
 | `break-layout-pages/wide-float-overprints-text` | issue | medium | P3-08 | |
 | `break-layout-pages/break-inf-float-vs-double` | issue | medium | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/trailing-glue-in-break-cost` | issue | medium | P0-12 | grep:plan P0-12 |
@@ -1287,7 +1287,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/resource-io-paths` | adhoc | medium | P3-21 | |
 | `api-measure-code/magic-policy-constants` | adhoc | low | P1-03, P3-02 | |
 | `api-measure-code/snap-kerning-duplicate-style-attr` | issue | high | P0-10, P1-03 | grep:plan P1-03 |
-| `api-measure-code/relayout-stale-emit` | issue | high | P0-11, P1-16 | |
+| `api-measure-code/relayout-stale-emit` | issue | high | P0-11, P1-16 | grep:plan P1-16 |
 | `api-measure-code/image-w-only-overwritten` | issue | high | P0-11, P1-19 | |
 | `api-measure-code/snap-ignores-sidecar-partition` | issue | medium | P1-03, P3-11 | |
 | `api-measure-code/late-font-stale-measure-cache` | issue | medium | P0-11 | grep:plan P0-11 |

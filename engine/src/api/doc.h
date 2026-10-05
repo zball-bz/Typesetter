@@ -265,8 +265,11 @@ struct Doc {
         if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
         if (a.key == ArgK::src && a.tag == ArgTag::Str) src = a.ref;
       }
-      // author-declared dims (or an empty/unsafe src) skip the pull; the
-      // unsafe case renders the placeholder without ever fetching
+      // an unsafe scheme is reported here, once (plan P1-16: not by emit,
+      // which re-runs), and renders the placeholder without ever fetching
+      if (src && !safeImageSrc(strs.get(src)))
+        diags.add(Sev::Warning, "image-src", n->span.empty() ? outer : n->span, "image src scheme not allowed");
+      // author-declared dims (or an empty/unsafe src) skip the pull
       if (src && !(iw > 0 && ih > 0) && safeImageSrc(strs.get(src))) {
         ImageReq r;
         r.id = (u32)imageReqs.size();
@@ -475,15 +478,14 @@ struct Doc {
                 std::to_string(d.count) + " attribute defect(s), first: " + d.first);
   }
 
-  // relayout (architecture §2.4): metrics persist; emit bakes width-
-  // dependent products (image display boxes, sidecar columns), so the next
-  // typeset() re-emits, re-breaks and re-lays out at the new measure
-  // (defect #16; P1-16 takes width out of emit)
-  // (deprecated: hosts fork with a host.width patch instead — tsr2_doc_fork)
+  // relayout (architecture §2.4): emit reads no width (plan P1-16: image
+  // boxes and sidecar columns are layout's), so a width change re-enters
+  // Layout in place — the structural fix of defect #16. Hosts send a
+  // host.width settings patch (tsr2_set_config); this is its shorthand.
   void setWidth(double widthPx) {
     if (widthPx == cfg.widthPx) return;
     cfg.widthPx = widthPx;
-    invalidateFrom(Stage::Emit);
+    invalidateFrom(Stage::Layout);
   }
 
   std::string dumpDiags() const {

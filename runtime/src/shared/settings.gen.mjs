@@ -6,7 +6,6 @@ export const SETTINGS = Object.freeze({
     "def": 300,
     "prec": "HostOnly",
     "affects": [
-      "Emit",
       "Layout",
       "Paint"
     ]
@@ -246,7 +245,7 @@ export const SETTINGS = Object.freeze({
     "def": 0.4,
     "prec": "HostDefault",
     "affects": [
-      "Emit"
+      "Layout"
     ]
   },
   "code.snapKerning": {

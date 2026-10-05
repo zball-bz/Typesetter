@@ -67,7 +67,7 @@ top pid=0 units=1
   box Other "tom." w=2049su r0 @[0,135)
   run r0 plain
 top pid=1 units=1
- unit img indent=0su anchor="fig-box" w=7680su h=7680su float=right
+ unit img indent=0su anchor="fig-box" intrinsic=300x300px scale=0.4 float=right
   cell 0
    box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
    pen 0 r0

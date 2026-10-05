@@ -66,7 +66,7 @@ top pid=1 units=1
   word "(1)" w=1537su pen=INF LINK SYN @[141,146)
   word "." w=513su pen=INF @[146,147)
 top pid=2 units=2
- unit img indent=0su anchor="fig-a" w=7680su h=3840su
+ unit img indent=0su anchor="fig-a" intrinsic=120x60px
  unit text indent=0su centered
   word "Figure" w=3073su pen=INF BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)

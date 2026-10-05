@@ -435,8 +435,7 @@ struct HlInline final : InlineSink {
           if (a.key == ArgK::w && a.tag == ArgTag::Num) iw = a.num;
           if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
         }
-        const bool safe = src && safeImageSrc(strs.get(src));
-        if (src && !safe) E.diags.add(Sev::Warning, "image-src", diagSpan(n, u), "image src scheme not allowed");
+        const bool safe = src && safeImageSrc(strs.get(src));  // unsafe: reported at ingest
         const bool sized = safe && iw > 0 && ih > 0;
         const double em = E.fontPx(st);
         u32 obj = addObject(u, ObjKind::Image, n, st);
@@ -912,7 +911,7 @@ struct Emitter {
                   strs.get(a.ref) == std::string_view("sidecar-lines"))
                 isSidecar = true;
           if (isSidecar) {
-            u.sidebarW = suRoundPx(cfg.sidebarFrac * (cfg.widthPx - suToPx(indent)));
+            u.sidecar = true;
             for (const ContentNode* lineNode : k->kids) {
               TableCell tc;
               FlowUnit tmp;
@@ -1040,25 +1039,14 @@ struct Emitter {
           if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
           if (a.key == ArgK::scale && a.tag == ArgTag::Num) scale = a.num;
         }
-        const double measurePx = cfg.widthPx - suToPx(indent);
-        bool safe = srcRef && safeImageSrc(strs.get(srcRef));
-        if (srcRef && !safe)
-          diags.add(Sev::Warning, "image-src", diagSpan(n),
-                    "image src scheme not allowed");
-        double dw, dh;
-        if (safe && iw > 0 && ih > 0) {
-          dw = scale > 0 ? scale * measurePx : iw;
-          if (dw > measurePx) dw = measurePx;
-          if (dw < 1) dw = 1;
-          dh = dw * ih / iw;
-          u.imgSrc = srcRef;
-        } else {
-          dw = measurePx;
-          dh = measurePx / 3;
-        }
+        // an unsafe scheme is reported by the ingest scan (plan P1-16)
+        const bool safe = srcRef && safeImageSrc(strs.get(srcRef));
+        if (safe && iw > 0 && ih > 0) u.imgSrc = srcRef;
+        u.img.iw = iw;
+        u.img.ih = ih;
+        u.img.scale = scale;
+        u.img.placeholder = !u.imgSrc;
         u.imgAlt = altRef;
-        u.imgW = suRoundPx(dw);
-        u.imgH = suRoundPx(dh);
         std::string_view side = sideRef ? strs.get(sideRef) : std::string_view{};
         u.floatSide = side == "left" ? 1 : side == "right" ? 2 : 0;
         tb.units.push_back(std::move(u));
@@ -1728,8 +1716,10 @@ static void unitHeader(std::string& out, const FlowUnit& u, const Interner& strs
     appendf(out, " w=%dsu asc=%dsu desc=%dsu", u.mathBox->w, u.mathBox->asc,
             u.mathBox->desc);
   if (u.kind == FlowUnit::K::Image) {
-    appendf(out, " w=%dsu h=%dsu%s", u.imgW, u.imgH,
-            u.imgSrc ? "" : " placeholder");
+    // the size spec layout resolves (plan P1-16)
+    if (u.img.iw > 0 || u.img.ih > 0) appendf(out, " intrinsic=%gx%gpx", u.img.iw, u.img.ih);
+    if (u.img.scale > 0) appendf(out, " scale=%g", u.img.scale);
+    if (u.img.placeholder) out += " placeholder";
     if (u.floatSide) out += u.floatSide == 1 ? " float=left" : " float=right";
   }
   if (u.centered) out += " centered";

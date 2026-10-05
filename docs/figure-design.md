@@ -79,8 +79,11 @@ ordinary Text units marked `ragged` + a new `centered` flag: layout shifts
 each line right by slack/2 and never justifies. Caption styling: body size ×
 0.92, no paragraph indent.
 
-Emit: new `FlowUnit::K::Image` with `imgSrc, imgAlt, imgW, imgH (Su),
-floatSide (0/1/2)`. The group walk already flattens the figure group; the
+Emit: new `FlowUnit::K::Image` with `imgSrc, imgAlt, img (ImageSize: the
+intrinsic px, the scale, placeholder), floatSide (0/1/2)`. Since plan P1-16
+emit reads no width: layout resolves the display box at the measure
+(`resolveImageSize`, the rule above) and an unsafe scheme is reported once,
+by the image-request scan. The group walk already flattens the figure group; the
 caption keeps the figure's label anchor on its first line via the existing
 `pendingAnchor` path.
 

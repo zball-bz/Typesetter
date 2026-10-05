@@ -219,7 +219,6 @@
       "def": 300,
       "prec": "HostOnly",
       "affects": [
-        "Emit",
         "Layout",
         "Paint"
       ],
@@ -500,7 +499,7 @@
       "def": 0.4,
       "prec": "HostDefault",
       "affects": [
-        "Emit"
+        "Layout"
       ]
     },
     "code.snapKerning": {

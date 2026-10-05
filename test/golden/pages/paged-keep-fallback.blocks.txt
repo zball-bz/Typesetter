@@ -10,7 +10,7 @@ top pid=0 units=1
   space w=411su stretch=1 BOLD x1.60 @[2,30)
   word "figure" w=4917su pen=INF BOLD x1.60 @[2,30)
 top pid=1 units=2
- unit img indent=0su anchor="fig-tall" w=19200su h=12800su
+ unit img indent=0su anchor="fig-tall" intrinsic=300x200px
  unit text indent=0su centered
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)

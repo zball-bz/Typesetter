@@ -69,13 +69,15 @@ or **REEXECUTE** (5) when the first affected stage is Execute or earlier.
 the patch applied. It clones the string and style tables first so ids — and
 with them the metric answers, copied unless the patch affects Measure (fonts,
 base size, epsilon) — mean the same; token and image answers replay; Compile
-diagnostics carry over. The fork converges without asking the host again. The
-worker's relayout and paginate are forks: the live document's products are
-never mutated (paginate forks at the page width and height and discards the
-fork; relayout replaces the live document once its fork has converged). The
-golden runner checks, for every fixture, that a fork without a patch
-reproduces the document and that a width fork equals a fresh build at that
-width (warm metrics included).
+diagnostics carry over. The fork converges without asking the host again.
+The worker's paginate is a fork (at the page width and height, discarded
+afterwards). Relayout is not (plan P1-16): emit reads no width, so
+`host.width` affects only Layout and Paint and its patch applies to the
+live document in place — it breaks and lays out again, nothing earlier
+re-runs (a patch that answered REBUILD would still fork). The golden runner
+checks, for every fixture, that a fork without a patch reproduces the
+document, that a width fork equals a fresh build at that width (warm
+metrics included), and that the in-place width patch equals it too.
 
 ## 4. One drive loop
 

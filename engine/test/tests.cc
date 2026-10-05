@@ -468,21 +468,24 @@ static void unitHostInputs(const fs::path& root) {
     auto imgW = [&] {
       for (int i = 0; i < 64 && doc.typeset() != Doc::Status::Ok; i++)
         mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces, doc.cfg);
-      for (const TopBlock& tb : doc.tops)
-        for (const FlowUnit& u : tb.units)
-          if (u.kind == FlowUnit::K::Image) return suToPx(u.imgW);
+      for (const ParaFrame& fr : doc.layout.paras)
+        for (const LineBox& l : fr.lines)
+          if (l.special == 5) return suToPx(l.width);
       return -1.0;
     };
     CHECK(imgW() == 120);  // the author's w (defect #24), h from the ratio
     doc.cfg.widthPx = 600;
     doc.setWidth(100);
+    CHECK(!doc.done(Stage::Layout) && doc.done(Stage::Measure));  // emit reads no width (plan P1-16)
     CHECK(imgW() == 100);  // clamped to the NEW measure (defect #16)
     doc.setWidth(600);
     CHECK(imgW() == 120);
     size_t n = doc.diags.items.size();
     doc.setWidth(100);
     (void)imgW();
-    CHECK(doc.diags.items.size() == n);  // a re-emit replaces, never repeats
+    CHECK(doc.diags.items.size() == n);  // a relayout replaces, never repeats
+    CHECK(doc.configure("{\"host\":{\"width\":300}}") == Doc::kApplied && !doc.done(Stage::Layout) &&
+          doc.done(Stage::Measure));  // the settings patch applies in place
   }
 }
 
@@ -1326,6 +1329,17 @@ int main(int argc, char** argv) {
           if (!ok || narrow.product("html") != fresh.product("html") ||
               narrow.product("diags") != fresh.product("diags")) {
             printf("FAIL %s: fork at 260px differs from a fresh build\n", label.c_str());
+            failures++;
+          }
+          // relayout in place (plan P1-16): a width patch on a typeset
+          // document re-enters Layout only and equals the fresh build
+          Doc live;
+          bool inPlace = doc.forkInto(live, "{}") && typesetWithMock(live) &&
+                         live.configure("{\"host\":{\"width\":260}}") == Doc::kApplied &&
+                         live.done(Stage::Measure) && typesetWithMock(live);
+          if (!inPlace || live.product("html") != fresh.product("html") ||
+              live.product("diags") != fresh.product("diags")) {
+            printf("FAIL %s: relayout in place at 260px differs from a fresh build\n", label.c_str());
             failures++;
           }
         }

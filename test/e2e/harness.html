@@ -36,7 +36,7 @@ window.__tsr = {
   async relayout(widthPx) {
     out.style.width = widthPx + 'px';
     const r = await handle.relayout(widthPx);
-    return { heightPx: r.heightPx, upgrades: r.upgrades.length, html: r.html };
+    return { heightPx: r.heightPx, upgrades: r.upgrades.length, html: r.html, timings: r.timings };
   },
   async paginate(opts) {
     return await handle.paginate(opts);

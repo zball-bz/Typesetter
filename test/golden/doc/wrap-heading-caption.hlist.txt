@@ -33,7 +33,7 @@ top pid=0 units=1
   box Other "measure" w=5736su r0 @[2,80)
   run r0 plain BOLD x1.60
 top pid=1 units=2
- unit img indent=0su anchor="fig-wide" w=19200su h=6400su
+ unit img indent=0su anchor="fig-wide" intrinsic=300x100px
  unit text indent=0su centered
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
   pen 0 r0

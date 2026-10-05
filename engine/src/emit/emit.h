@@ -66,6 +66,31 @@ struct BreakBlock {
   bool isHyphen() const { return flags & BF_HYPHEN; }
 };
 
+// An image's size as emit knows it (plan P1-16; design T6 S4): intrinsic
+// px (declared, or pulled from the host) and the scale; layout resolves the
+// display box against its measure — emit reads no width.
+struct ImageSize {
+  double iw = 0, ih = 0;     // intrinsic px
+  double scale = 0;          // a fraction of the measure (0 = the intrinsic width)
+  bool placeholder = false;  // unsized or unsafe: measure × measure/3
+};
+// the display box: the scaled or intrinsic width, never wider than the
+// measure, the height from the aspect ratio
+inline void resolveImageSize(const ImageSize& s, double measurePx, Su& w, Su& h) {
+  double dw, dh;
+  if (!s.placeholder) {
+    dw = s.scale > 0 ? s.scale * measurePx : s.iw;
+    if (dw > measurePx) dw = measurePx;
+    if (dw < 1) dw = 1;
+    dh = dw * s.ih / s.iw;
+  } else {
+    dw = measurePx;
+    dh = measurePx / 3;
+  }
+  w = suRoundPx(dw);
+  h = suRoundPx(dh);
+}
+
 // One table cell: its own miniature block stream, broken to the cell width
 // by the same KP breaker (document-model §6; alignment is layout-side).
 struct TableCell {
@@ -101,16 +126,17 @@ struct FlowUnit {
   StrRef cjkChRef = 0;       // interned "中" (measured CJK width — no more
                              //   assumed 2:1; budget uses the real ratio)
   StrRef codeLang = 0;       // language tag (font-feature selection)
-  Su sidebarW = 0;           // sidecar column width (0 = no sidecar);
-                             //   sidecar rows reuse `cells` (one per line)
+  bool sidecar = false;      // sidecar rows in `cells` (one per line); the
+                             //   column width is layout's (code.sidecarFrac)
   i32 codeLineNo = 0;        // 0 = no numbers; else first line number
   std::vector<u32> hlLines;  // 1-based highlighted lines
   StrRef rawHtml = 0;   // Raw: handler-declared passthrough markup
   double rawHpx = 0;    // Raw: declared height (px)
-  // Image (figure-design.md §3): display box in su; src 0 = placeholder
-  // (unsafe scheme or failed load — the box carries the alt text)
+  // Image (figure-design.md §3): src 0 = placeholder (unsafe scheme or
+  // failed load — the box carries the alt text); its display box is
+  // layout's (resolveImageSize at the measure, plan P1-16)
   StrRef imgSrc = 0, imgAlt = 0;
-  Su imgW = 0, imgH = 0;
+  ImageSize img;
   u8 floatSide = 0;  // 0 = block; 1 = left float, 2 = right float (F2)
   const MathBox* mathBox = nullptr;  // Math: display formula
   StrRef eqTag = 0;                  // Math: "(n)" right-margin number

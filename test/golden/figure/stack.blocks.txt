@@ -39,7 +39,7 @@ top pid=0 units=1
   punct-close "。" w=512su @[0,108)
   punct-sp w=512su @[0,108)
 top pid=1 units=1
- unit img indent=0su anchor="fig-a" w=7680su h=5760su float=right
+ unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4 float=right
   cell 0
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)
@@ -53,7 +53,7 @@ top pid=1 units=1
   punct-close "。" w=512su @[212,227)
   punct-sp w=512su @[212,227)
 top pid=2 units=1
- unit img indent=0su anchor="fig-b" w=7680su h=3840su float=right
+ unit img indent=0su anchor="fig-b" intrinsic=400x200px scale=0.4 float=right
   cell 0
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)

@@ -429,7 +429,7 @@ export function createEngine(opts = {}) {
           const ups = swapIn(container, r.html);
           paraChunks = chunkParas(r.html);
           onUpgrade?.(ups);
-          return { html: r.html, diags: r.diags, heightPx: r.heightPx, upgrades: ups };
+          return { html: r.html, diags: r.diags, heightPx: r.heightPx, upgrades: ups, timings: r.timings };
         },
         // P1 (pages-design.md §2): sheets at the page measure; the live
         // document is restored to its screen width before this resolves

@@ -70,7 +70,7 @@ top pid=1 units=1
   word "(1)" w=1537su pen=INF LINK SYN @[140,145)
   word "." w=513su pen=INF @[145,146)
 top pid=2 units=2
- unit img indent=0su anchor="fig-a" w=7680su h=3840su
+ unit img indent=0su anchor="fig-a" intrinsic=120x60px
  unit text indent=0su centered
   cjk "圖" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)

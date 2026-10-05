@@ -91,7 +91,7 @@ top pid=1 units=1
   run r20 plain ref LINK link="#tsr-eq-a"
   run r21 plain
 top pid=2 units=2
- unit img indent=0su anchor="fig-a" w=7680su h=3840su
+ unit img indent=0su anchor="fig-a" intrinsic=120x60px
  unit text indent=0su centered
   box Ideo "図" w=1025su wt=0.6 cap=102su r0 @[0,0)
   pen 0 r0

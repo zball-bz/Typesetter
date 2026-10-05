@@ -18,7 +18,7 @@ struct Row {
   bool group;   // the value is an object (map rows)
 };
 const Row kRows[] = {
-    {"host.width", stageBit(Stage::Emit) | stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
+    {"host.width", stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
     {"host.epsilonSu", stageBit(Stage::Emit) | stageBit(Stage::Measure), false},
     {"doc.lang", stageBit(Stage::Resolve) | stageBit(Stage::Paint), false},
     {"doc.baseSize", stageBit(Stage::Emit) | stageBit(Stage::Measure) | stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
@@ -46,7 +46,7 @@ const Row kRows[] = {
     {"cost.cap", stageBit(Stage::Layout), false},
     {"code.scale", stageBit(Stage::Emit) | stageBit(Stage::Layout), false},
     {"code.contIndent", stageBit(Stage::Layout), false},
-    {"code.sidecarFrac", stageBit(Stage::Emit), false},
+    {"code.sidecarFrac", stageBit(Stage::Layout), false},
     {"code.snapKerning", stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
     {"code.fontFeatures", stageBit(Stage::Paint), false},
     {"code.fontFeaturesByLang", stageBit(Stage::Paint), true},

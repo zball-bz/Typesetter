@@ -237,6 +237,11 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
       if (clearSu > 0) py += clearSu;
       const Su lineWidth = measure - u.indent;
       cellBreaks.clear();
+      // width-dependent sizes are layout's (plan P1-16): an image's display
+      // box at the measure, a code block's sidecar column
+      Su imgW = 0, imgH = 0;
+      if (u.kind == FlowUnit::K::Image) resolveImageSize(u.img, cfg.widthPx - suToPx(u.indent), imgW, imgH);
+      const Su sidebarW = u.sidecar ? suRoundPx(cfg.sidebarFrac * (cfg.widthPx - suToPx(u.indent))) : 0;
 
       if (u.kind == FlowUnit::K::Image && u.floatSide != 0) {
         // float box (figure-design.md §4): out of flow — zero advance; the
@@ -244,22 +249,22 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         // width; the units that flow beside it narrow by the exclusion
         i64 captionH = 0;
         for (const TableCell& c : u.cells) {  // the caption breaks to the float width
-          cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{u.imgW}));
+          cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{imgW}));
           captionH += (i64)cellBreaks.back().breakpoints.size() * baseLeading;
         }
-        excl.add(u.floatSide, floatShift, u.imgW, u.imgH, captionH);
+        excl.add(u.floatSide, floatShift, imgW, imgH, captionH);
         const Su boxLeft = u.floatSide == 1 ? u.indent
-                                            : u.indent + lineWidth - u.imgW;
+                                            : u.indent + lineWidth - imgW;
         LineBox line;
         line.unitIdx = ui;
         line.special = 5;
         line.left = boxLeft;
-        line.width = u.imgW;
-        line.height = u.imgH;
+        line.width = imgW;
+        line.height = imgH;
         if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
         line.y = (Su)(py + floatShift);  // stacked below an active float
         fr.lines.push_back(line);
-        i64 cy = py + floatShift + u.imgH;
+        i64 cy = py + floatShift + imgH;
         for (u32 ci = 0; ci < (u32)u.cells.size(); ci++) {
           const TableCell& cell = u.cells[ci];
           u32 prevBp = 0;
@@ -276,7 +281,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             cl.itemBegin = r.ilo;
             cl.itemEnd = r.ihi;
             cl.left = boxLeft;
-            cl.width = u.imgW;
+            cl.width = imgW;
             cl.y = (Su)cy;
             // §9.3: wrapped caption rows rejoin on copy (unlike table cells,
             // whose row boundaries are content)
@@ -322,16 +327,16 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         }
         // three-box partition (verbatim §5): the code measure stops before
         // the sidecar column; the gutter stays out-of-flow (markers)
-        const bool hasSidecar = u.sidebarW > 0 && !u.cells.empty();
+        const bool hasSidecar = sidebarW > 0 && !u.cells.empty();
         Su gapSu = 0;
         Su lineWidthFull = lineWidth;
         Su lineWidthCode = lineWidth;
         if (hasSidecar) {
           gapSu = suRoundPx(cfg.baseSizePx * cfg.codeScale);
-          lineWidthCode = lineWidth - u.sidebarW - gapSu;
+          lineWidthCode = lineWidth - sidebarW - gapSu;
           if (lineWidthCode < 64) lineWidthCode = 64;
           for (const TableCell& c : u.cells)  // sidecar rows break to the sidebar
-            cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{u.sidebarW}));
+            cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{sidebarW}));
         }
         (void)lineWidthFull;
         // ch grid (CH4, code-design.md §4): monospace is a metric contract —
@@ -534,7 +539,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
               sl.itemBegin = r.ilo;
               sl.itemEnd = r.ihi;
               sl.left = (Su)(u.indent + lineWidthCode + gapSu);
-              sl.width = u.sidebarW;
+              sl.width = sidebarW;
               sl.srcSpan = f.span;
               sl.y = (Su)cy;
               Su sadv = baseLeading;
@@ -555,14 +560,14 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         LineBox line;
         line.unitIdx = ui;
         line.special = 5;
-        Su shift = (lineWidth - u.imgW) / 2;
+        Su shift = (lineWidth - imgW) / 2;
         if (shift < 0) shift = 0;
         line.left = u.indent + shift;
-        line.width = u.imgW;
-        line.height = u.imgH;
+        line.width = imgW;
+        line.height = imgH;
         if (u.src && !u.src->span.empty()) line.srcSpan = u.src->span;
         line.y = (Su)py;
-        py += u.imgH;
+        py += imgH;
         fr.lines.push_back(line);
         continue;
       }

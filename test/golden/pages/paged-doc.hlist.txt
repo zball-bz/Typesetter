@@ -288,7 +288,7 @@ top pid=3 units=1
 top pid=4 units=1
  unit code indent=0su lines=5 wrap
 top pid=5 units=2
- unit img indent=0su anchor="fig-p" w=12800su h=5120su
+ unit img indent=0su anchor="fig-p" intrinsic=200x80px
  unit text indent=0su centered
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
   pen 0 r0

@@ -52,7 +52,7 @@ top pid=0 units=1
   space w=257su stretch=1 @[83,117)
   word "P0-11)." w=3585su pen=INF @[83,117)
 top pid=1 units=2
- unit img indent=0su anchor="fig-bad" w=19200su h=6400su placeholder
+ unit img indent=0su anchor="fig-bad" placeholder
  unit text indent=0su centered
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
   space w=257su stretch=1 BOLD @[0,0)

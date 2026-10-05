@@ -345,13 +345,26 @@ async function runPaginate(s, { ids, msg }) {
   }
 }
 
-// a width change rebuilds from the retained ops (emit bakes width-dependent
-// products until P1-16): the fork replaces the live doc only once it has
-// converged
+// a width change re-enters Layout in place (plan P1-16: emit reads no
+// width, so host.width affects only Layout and Paint): the settings patch
+// applies to the live doc, which breaks and lays out again — no fork, no
+// re-emit. A patch that would need more (never for host.width) rebuilds
+// from the retained ops as before; a superseded relayout leaves the live
+// doc at a width the next one overrides.
 async function runRelayout(s, { ids, msg }, stale) {
   const M = await getMod();
   if (s.doc === undefined) return postError(ids, 'relayout: doc disposed');
-  const doc = forkDoc(M, s.doc, { host: { width: msg.widthPx } });
+  const patch = { host: { width: msg.widthPx } };
+  const p = M.stringToNewUTF8(JSON.stringify(patch));
+  const rc = M._tsr2_set_config(s.doc, p);
+  M._free(p);
+  if (rc === 0) {
+    const tm = {};
+    if (!(await measureLoop(M, s.doc, { tm, baseUrl: msg.baseUrl, stale }))) return false;
+    postResult(M, s.doc, ids, tm);
+    return;
+  }
+  const doc = forkDoc(M, s.doc, patch);
   if (doc === undefined) return postError(ids, 'relayout: cannot fork the document');
   let ok = false;
   try {
