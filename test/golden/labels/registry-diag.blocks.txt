@@ -74,8 +74,7 @@ top pid=7 units=1
  unit text indent=0su
   word "See" w=1537su pen=INF @[313,316)
   space w=257su stretch=1 @[313,316)
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 LINK SYN @[317,324)
-  space w=257su stretch=1 LINK SYN @[317,324)
+  word "side-1" w=3073su pen=INF LINK SYN @[317,324)
   word "," w=513su pen=INF @[324,325)
   space w=257su stretch=1 @[324,325)
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 LINK SYN @[326,332)

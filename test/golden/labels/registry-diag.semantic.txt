@@ -14,5 +14,5 @@
 <figure data-pid="6" data-s="240" data-e="311">
 <figcaption><strong>图 3：</strong>A figure with a reserved label shape.</figcaption>
 </figure>
-<p data-pid="7" data-s="313" data-e="351">See <a href="#tsr-side-1">图 </a>, <a href="#tsr-fig-x">图 1</a>, <a href="#tsr-eq-1">式 (1)</a> and <a href="#tsr-sec-a">§1</a>.</p>
+<p data-pid="7" data-s="313" data-e="351">See <a href="#tsr-side-1">side-1</a>, <a href="#tsr-fig-x">图 1</a>, <a href="#tsr-eq-1">式 (1)</a> and <a href="#tsr-sec-a">§1</a>.</p>
 </div>

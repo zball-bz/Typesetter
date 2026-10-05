@@ -21,7 +21,7 @@ doc @[0,351) [base]
   para @[313,351) [base]
     text @[313,316) [base] str="See "
     ref @[317,324) [base] target="side-1" url="#tsr-side-1"
-      text @[317,324) [base] str="图 "
+      text @[317,324) [base] str="side-1"
     text @[324,325) [base] str=", "
     ref @[326,332) [base] target="fig-x" url="#tsr-fig-x"
       text @[326,332) [base] str="图 1"

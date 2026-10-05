@@ -356,7 +356,8 @@ struct Resolver {
     switch (e.kind) {
       case Kind::heading: disp = cfg.supHeading + e.number; break;
       case Kind::table: disp = cfg.supTable + e.number; break;
-      case Kind::group: disp = cfg.supFigure + e.number; break;
+      // a figure; any other labelled group is unnumbered: its label text
+      case Kind::group: disp = e.numbered ? cfg.supFigure + e.number : target; break;
       case Kind::mathblock: disp = cfg.supEquation + "(" + e.number + ")"; break;
       case Kind::note: disp = e.number; break;  // bare digit (marker / @fn-n)
       default: disp = e.excerpt.empty() ? target : e.excerpt; break;

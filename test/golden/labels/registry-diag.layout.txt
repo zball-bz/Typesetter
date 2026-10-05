@@ -16,4 +16,4 @@ para pid=6 y=18229su w=19200su h=3072su
   L0 y=0su left=1152su w=18048su dw=0su dc=0su join=last blocks=[0,16) @[265,302)
   L1 y=1536su left=8064su w=11136su dw=0su dc=0su join=last blocks=[17,18) @[265,302)
 para pid=7 y=22530su w=19200su h=1536su
-  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,19) @[313,351)
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,18) @[313,351)
