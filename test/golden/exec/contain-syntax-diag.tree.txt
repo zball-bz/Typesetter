@@ -6,5 +6,5 @@ doc @[0,61) [base]
     text @[23,30) [base] str="Middle."
   para @[50,61) [base]
     text @[50,56) [base] str="After: "
-    text @[0,0) [base] str="fine"
+    text @[57,60) [base] str="fine"
     text @[60,61) [base] str="."

@@ -1,9 +1,9 @@
 doc @[47,198) [base]
   para @[47,99) [base]
     text @[47,53) [base] str="Value: "
-    text @[0,0) [base] str="awaited"
+    text @[54,60) [base] str="awaited"
     text @[60,69) [base] str=". Inline: "
-    text @[0,0) [base] str="42"
+    text @[70,98) [base] str="42"
     text @[98,99) [base] str="."
   para @[163,198) [EM]
     text @[163,198) [EM] str="Italic after an awaiting statement."

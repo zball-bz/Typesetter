@@ -1,4 +1,4 @@
-lower v1 abi 3c18dc46 docEnd 216 holes 0 module none
+lower v1 abi 7f64f38d docEnd 216 holes 0 module none
 block 0 content [0,215)
   CALL para [0,215)
     TEXT "Two overlong addresses in one paragraph: https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere and https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure end." [0,215)

@@ -2,9 +2,9 @@ doc @[0,397) [base]
   para @[0,135) [base]
     text @[0,135) [base] str="Opening text that occupies the first part of the sheet so the following float begins roughly one hundred pixels above the sheet bottom."
   group @[137,280) [base] role="figure" label="fig-box"
-    image @[0,0) [base] src="photos/box.png" alt="box" w=300 h=300 scale=0.4 side="right"
-    para @[0,0) [base]
-      text @[0,0) [BOLD] str="图 1："
+    image @[137,280) [base] src="photos/box.png" alt="box" w=300 h=300 scale=0.4 side="right"
+    para @[137,280) [base]
+      text @[137,280) [BOLD] str="图 1："
       text @[243,271) [base] str="Right float near the bottom."
   para @[282,397) [base]
     text @[282,397) [base] str="Text that wraps beside the float and continues onto the next sheet, where the float must not straddle the boundary."

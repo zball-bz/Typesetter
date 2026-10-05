@@ -1,7 +1,7 @@
 doc @[0,137) [base]
   para @[0,137) [base]
     text @[0,6) [base] str="A rule "
-    rule @[0,0) [base]
+    rule @[7,14) [base]
     text @[15,70) [base] str=" in a sentence, and an image whose source is not allowed "
-    image @[0,0) [base] src="javascript:alert(1)" w=12 h=12
+    image @[71,116) [base] src="javascript:alert(1)" w=12 h=12
     text @[117,137) [base] str=" stays a placeholder."

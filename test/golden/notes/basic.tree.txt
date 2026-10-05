@@ -29,7 +29,7 @@ doc @[0,313) [base]
             text @[67,73) [BOLDx0.85] str="markup"
           text @[74,75) [basex0.85] str=", "
           code @[76,82) [basex0.85]
-            text @[0,0) [basex0.85] str="code"
+            text @[76,82) [basex0.85] str="code"
           text @[82,92) [basex0.85] str=", and math "
           mathinline @[93,104) [basex0.85] src="x^2 + y^2"
           text @[104,105) [basex0.85] str="."

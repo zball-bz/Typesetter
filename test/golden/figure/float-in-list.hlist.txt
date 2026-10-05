@@ -61,12 +61,12 @@ top pid=1 units=5
   run r0 plain
  unit img indent=1536su anchor="fig-icon" intrinsic=200x200px scale=0.4 float=left
   cell 0
-   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[134,276)
    pen 0 r0
-   glue word w=257su x=1 cap=257su src r1 @[0,0)
-   box Other "1" w=513su r1 @[0,0)
-   box ColonW "：" w=512su blank=R r2 @[0,0)
-   glue blank w=512su x=0 cap=0su r2 @[0,0)
+   glue word w=257su x=1 cap=257su src r1 @[134,276)
+   box Other "1" w=513su r1 @[134,276)
+   box ColonW "：" w=512su blank=R r2 @[134,276)
+   glue blank w=512su x=0 cap=0su r2 @[134,276)
    box Other "A" w=513su r3 @[244,265)
    glue word w=257su x=1 cap=257su kern="A s" src r3 @[244,265)
    box Other "small" w=2561su r3 @[244,265)

@@ -1,35 +1,35 @@
 doc @[0,42) [base]
-  list @[0,0) [base] ordered=false
-    item @[0,0) [base]
-      para @[0,0) [base]
-        link @[0,0) [base] url="#tsr-h-1"
-          text @[0,0) [base] str="1 One"
-      list @[0,0) [base] ordered=false
-        item @[0,0) [base]
-          para @[0,0) [base]
-            link @[0,0) [base] url="#tsr-h-1.1"
-              text @[0,0) [base] str="1.1 One point one"
-    item @[0,0) [base]
-      para @[0,0) [base]
-        link @[0,0) [base] url="#tsr-h-2"
-          text @[0,0) [base] str="2 Two"
+  list @[0,4) [base] ordered=false
+    item @[0,4) [base]
+      para @[0,4) [base]
+        link @[0,4) [base] url="#tsr-h-1"
+          text @[0,4) [base] str="1 One"
+      list @[0,4) [base] ordered=false
+        item @[0,4) [base]
+          para @[0,4) [base]
+            link @[0,4) [base] url="#tsr-h-1.1"
+              text @[0,4) [base] str="1.1 One point one"
+    item @[0,4) [base]
+      para @[0,4) [base]
+        link @[0,4) [base] url="#tsr-h-2"
+          text @[0,4) [base] str="2 Two"
   heading @[6,11) [base] level=1 label="h-1"
     text @[8,11) [base] str="One"
   heading @[13,29) [base] level=2 label="h-1.1"
     text @[16,29) [base] str="One point one"
   heading @[31,36) [base] level=1 label="h-2"
     text @[33,36) [base] str="Two"
-  list @[0,0) [base] ordered=false
-    item @[0,0) [base]
-      para @[0,0) [base]
-        link @[0,0) [base] url="#tsr-h-1"
-          text @[0,0) [base] str="1 One"
-      list @[0,0) [base] ordered=false
-        item @[0,0) [base]
-          para @[0,0) [base]
-            link @[0,0) [base] url="#tsr-h-1.1"
-              text @[0,0) [base] str="1.1 One point one"
-    item @[0,0) [base]
-      para @[0,0) [base]
-        link @[0,0) [base] url="#tsr-h-2"
-          text @[0,0) [base] str="2 Two"
+  list @[38,42) [base] ordered=false
+    item @[38,42) [base]
+      para @[38,42) [base]
+        link @[38,42) [base] url="#tsr-h-1"
+          text @[38,42) [base] str="1 One"
+      list @[38,42) [base] ordered=false
+        item @[38,42) [base]
+          para @[38,42) [base]
+            link @[38,42) [base] url="#tsr-h-1.1"
+              text @[38,42) [base] str="1.1 One point one"
+    item @[38,42) [base]
+      para @[38,42) [base]
+        link @[38,42) [base] url="#tsr-h-2"
+          text @[38,42) [base] str="2 Two"

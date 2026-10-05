@@ -1,4 +1,4 @@
-export const abi = 0x3c18dc46;
+export const abi = 0x7f64f38d;
 export default async (__rt, $) => {
 return (async () => {
 let avg;

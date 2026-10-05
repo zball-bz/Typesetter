@@ -430,9 +430,17 @@ export function createStd(host) {
   // with the info arguments as the block's options. offset: the body's source
   // offset; lines: each body line's offset when the fence sits in a quote
   // or list item (its lines are not contiguous)
-  const fence = async (tag, args = {}, body = '', offset = 0, lines = null) => {
+  const fence = async (tag, args = {}, body = '', offset = 0, lines = null, end = offset) => {
     const entry = registry.get('fence', tag);
-    if (!entry) return std.codeblock(tag, body, args);
+    if (!entry) {
+      // the default: a code block whose text carries the body's span
+      // (plan P2-04; its lines inside a quote or list item are not
+      // contiguous, so the span covers them from the first to the last)
+      const cb = std.codeblock(tag, body, args);
+      const t = cb.children?.[0];
+      if (cb.kind === KIND.codeblock && t?.text !== undefined && !ob.spans.has(t.opId)) ob.span(t, offset, end);
+      return cb;
+    }
     // invoke frame (P2-01): a handler's error is an error node and a
     // diagnostic at the body (ctx.error's localOffset into it)
     const mkErr = (msg, localOffset = 0) => {

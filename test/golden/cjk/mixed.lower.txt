@@ -1,4 +1,4 @@
-lower v1 abi 3c18dc46 docEnd 131 holes 0 module none
+lower v1 abi 7f64f38d docEnd 131 holes 0 module none
 block 0 content [0,130)
   CALL para [0,130)
     TEXT "中文与 English words 混排时引擎会插入边界胶，比如 CJK 和 Latin 之间的间隙，K-P 算法照常选取断点。" [0,130)

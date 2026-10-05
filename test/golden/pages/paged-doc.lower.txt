@@ -1,4 +1,4 @@
-lower v1 abi 3c18dc46 docEnd 701 holes 1 module 9aeec201c97abcbd
+lower v1 abi 7f64f38d docEnd 701 holes 1 module 1d82994db0d7b88d
 piece 0 hole 0 js [103,174)
 block 0 content [0,14)
   CALL heading [0,14) level=1 label="top"
@@ -13,7 +13,7 @@ block 3 content [323,383)
   CALL para [323,383)
     TEXT "标题不落页尾；下面的代码块按逻辑行切分：" [323,383)
 block 4 content [385,494) async
-  FENCE async "json" body="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}" at=393 lines=null [385,494)
+  FENCE async "json" body="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}" at=[393,490) lines=null [385,494)
 block 5 content [496,611) user framed async holes 0..1
   REGION async "figure" args=hole 0 [496,611)
     ROWS

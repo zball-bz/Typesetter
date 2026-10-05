@@ -1,19 +1,19 @@
 doc @[118,377) [base]
   group @[118,173) [base] role="callout"
-    para @[0,0) [base]
+    para @[118,173) [base]
       text @[128,144) [base] str="First paragraph."
-    para @[0,0) [base]
+    para @[118,173) [base]
       text @[146,163) [base] str="Second paragraph."
-  group @[0,0) [base] role="callout"
+  group @[175,222) [base] role="callout"
     para @[185,201) [base]
       text @[185,201) [base] str="First paragraph."
     para @[203,220) [base]
       text @[203,220) [base] str="Second paragraph."
   group @[305,344) [base] role="frame"
-    group @[0,0) [base] role="callout" label="c2"
-      para @[0,0) [base]
+    group @[305,344) [base] role="callout" label="c2"
+      para @[305,344) [base]
         text @[328,334) [base] str="Third."
-  group @[0,0) [base] role="frame"
-    group @[0,0) [base] role="callout" label="c3"
-      para @[0,0) [base]
+  group @[346,377) [base] role="frame"
+    group @[346,377) [base] role="callout" label="c3"
+      para @[346,377) [base]
         text @[370,376) [base] str="Third."

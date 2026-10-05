@@ -54,6 +54,6 @@ top pid=2 units=1
   space w=257su stretch=1 @[147,150)
   word "and" w=1537su pen=INF @[147,150)
   space w=257su stretch=1 @[147,150)
-  word "3" w=513su pen=INF @[0,0)
+  word "3" w=513su pen=INF @[151,162)
   space w=257su stretch=1 @[163,167)
   word "end." w=2049su pen=INF @[163,167)

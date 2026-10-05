@@ -16,7 +16,7 @@ top pid=0 units=1
   space w=257su stretch=1 @[30,68)
   word "lines:" w=3073su pen=INF @[30,68)
   space w=257su stretch=1 @[30,68)
-  word "3" w=513su pen=INF @[0,0)
+  word "3" w=513su pen=INF @[69,77)
   word "." w=513su pen=INF @[77,78)
 top pid=1 units=3
  unit text indent=1536su marker="•"

@@ -1,7 +1,7 @@
-lower v1 abi 3c18dc46 docEnd 194 holes 1 module 9c349639ce5ee026
+lower v1 abi 7f64f38d docEnd 194 holes 1 module e89d9fabd071dfd6
 piece 0 hole 0 js [103,127)
 block 0 content [0,74)
   CALL para [0,74)
     TEXT "A sidecar note narrow enough to hyphenate keeps its hyphen at the row end." [0,74)
 block 1 content [76,193) user framed async holes 0..1
-  FENCE async "js" args=hole 0 body="let total = 0; /// accumulates the incomprehensibilities of everything measured\ntotal += 1;" at=98 lines=null [76,193)
+  FENCE async "js" args=hole 0 body="let total = 0; /// accumulates the incomprehensibilities of everything measured\ntotal += 1;" at=[98,189) lines=null [76,193)

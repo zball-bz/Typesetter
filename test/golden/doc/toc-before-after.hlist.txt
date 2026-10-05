@@ -1,22 +1,22 @@
 top pid=0 units=3
  unit text indent=1536su marker="•"
-  box Other "1" w=513su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[0,0)
-  box Other "One" w=1537su r0 @[0,0)
+  box Other "1" w=513su r0 @[0,4)
+  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[0,4)
+  box Other "One" w=1537su r0 @[0,4)
   run r0 plain LINK link="#tsr-h-1"
  unit text indent=3072su marker="•"
-  box Other "1.1" w=1537su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[0,0)
-  box Other "One" w=1537su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="e p" src r0 @[0,0)
-  box Other "point" w=2561su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="t o" src r0 @[0,0)
-  box Other "one" w=1537su r0 @[0,0)
+  box Other "1.1" w=1537su r0 @[0,4)
+  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[0,4)
+  box Other "One" w=1537su r0 @[0,4)
+  glue word w=257su x=1 cap=257su kern="e p" src r0 @[0,4)
+  box Other "point" w=2561su r0 @[0,4)
+  glue word w=257su x=1 cap=257su kern="t o" src r0 @[0,4)
+  box Other "one" w=1537su r0 @[0,4)
   run r0 plain LINK link="#tsr-h-1.1"
  unit text indent=1536su marker="•"
-  box Other "2" w=513su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="2 T" src r0 @[0,0)
-  box Other "Two" w=1537su r0 @[0,0)
+  box Other "2" w=513su r0 @[0,4)
+  glue word w=257su x=1 cap=257su kern="2 T" src r0 @[0,4)
+  box Other "Two" w=1537su r0 @[0,4)
   run r0 plain LINK link="#tsr-h-2"
 top pid=1 units=1
  unit text indent=0su anchor="h-1"
@@ -36,21 +36,21 @@ top pid=3 units=1
   run r0 plain BOLD x1.60
 top pid=4 units=3
  unit text indent=1536su marker="•"
-  box Other "1" w=513su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[0,0)
-  box Other "One" w=1537su r0 @[0,0)
+  box Other "1" w=513su r0 @[38,42)
+  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[38,42)
+  box Other "One" w=1537su r0 @[38,42)
   run r0 plain LINK link="#tsr-h-1"
  unit text indent=3072su marker="•"
-  box Other "1.1" w=1537su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[0,0)
-  box Other "One" w=1537su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="e p" src r0 @[0,0)
-  box Other "point" w=2561su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="t o" src r0 @[0,0)
-  box Other "one" w=1537su r0 @[0,0)
+  box Other "1.1" w=1537su r0 @[38,42)
+  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[38,42)
+  box Other "One" w=1537su r0 @[38,42)
+  glue word w=257su x=1 cap=257su kern="e p" src r0 @[38,42)
+  box Other "point" w=2561su r0 @[38,42)
+  glue word w=257su x=1 cap=257su kern="t o" src r0 @[38,42)
+  box Other "one" w=1537su r0 @[38,42)
   run r0 plain LINK link="#tsr-h-1.1"
  unit text indent=1536su marker="•"
-  box Other "2" w=513su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="2 T" src r0 @[0,0)
-  box Other "Two" w=1537su r0 @[0,0)
+  box Other "2" w=513su r0 @[38,42)
+  glue word w=257su x=1 cap=257su kern="2 T" src r0 @[38,42)
+  box Other "Two" w=1537su r0 @[38,42)
   run r0 plain LINK link="#tsr-h-2"

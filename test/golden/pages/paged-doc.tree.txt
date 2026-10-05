@@ -8,11 +8,11 @@ doc @[0,700) [base]
   para @[323,383) [base]
     text @[323,383) [base] str="标题不落页尾；下面的代码块按逻辑行切分："
   codeblock @[385,494) [base] lang="json"
-    text @[0,0) [base] str="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}"
+    text @[393,490) [base] str="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}"
   group @[496,611) [base] role="figure" label="fig-p"
-    image @[0,0) [base] src="photos/x.png" alt="样图" w=200 h=80
-    para @[0,0) [base]
-      text @[0,0) [BOLD] str="图 1："
+    image @[496,611) [base] src="photos/x.png" alt="样图" w=200 h=80
+    para @[496,611) [base]
+      text @[496,611) [BOLD] str="图 1："
       text @[572,602) [base] str="图与图注保持在同页。"
   para @[613,700) [base]
     text @[613,679) [base] str="尾段：越过图之后继续排布，直至文档结束，引用"

@@ -1,2 +1,2 @@
 warning ctor-arg @[364,405) image: unknown option bogus
-info ref-unnumbered @[0,0) 'a1' names an unnumbered element; its label text is shown
+info ref-unnumbered @[297,325) 'a1' names an unnumbered element; its label text is shown

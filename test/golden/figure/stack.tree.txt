@@ -2,14 +2,14 @@ doc @[0,901) [base]
   para @[0,108) [base]
     text @[0,108) [base] str="两张同侧浮动图连续出现时应当堆叠，而不是把第二张清到第一张之下留出空白。"
   group @[110,236) [base] role="figure" label="fig-a"
-    image @[0,0) [base] src="photos/a.jpg" alt="甲" w=400 h=300 scale=0.4 side="right"
-    para @[0,0) [base]
-      text @[0,0) [BOLD] str="图 1："
+    image @[110,236) [base] src="photos/a.jpg" alt="甲" w=400 h=300 scale=0.4 side="right"
+    para @[110,236) [base]
+      text @[110,236) [BOLD] str="图 1："
       text @[212,227) [base] str="第一张图。"
   group @[238,385) [base] role="figure" label="fig-b"
-    image @[0,0) [base] src="photos/b.jpg" alt="乙" w=400 h=200 scale=0.4 side="right"
-    para @[0,0) [base]
-      text @[0,0) [BOLD] str="图 2："
+    image @[238,385) [base] src="photos/b.jpg" alt="乙" w=400 h=200 scale=0.4 side="right"
+    para @[238,385) [base]
+      text @[238,385) [BOLD] str="图 2："
       text @[340,376) [base] str="第二张图，紧接着第一张。"
   heading @[387,411) [base] level=2 label="h-0.1"
     text @[390,411) [base] str="标题不清除浮动"

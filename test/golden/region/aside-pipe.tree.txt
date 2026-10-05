@@ -1,7 +1,7 @@
 doc @[0,80) [base]
   group @[0,80) [base] role="aside"
-    para @[0,0) [base]
-      seq @[0,0) [base]
+    para @[0,80) [base]
+      seq @[0,80) [base]
         text @[24,33) [base] str="绝对值 "
         mathinline @[34,39) [base] src="|x|"
         text @[40,52) [base] str=" 的性质："

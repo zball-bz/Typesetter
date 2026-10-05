@@ -272,6 +272,7 @@ struct Gen {
         w.u(args);
         w.u(w.str(strs.get(n->str)));
         w.u(f.bodyOffset);
+        w.u(f.bodyEnd);
         if (f.lines) {  // per-line offsets (contained): "[o1,o2,…]"
           std::string_view l = strs.get(f.lines);
           std::vector<u32> offs;

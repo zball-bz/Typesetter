@@ -1,6 +1,6 @@
 top pid=0 units=1
  unit text indent=0su
-  box Other "7" w=513su r0 @[0,0)
+  box Other "7" w=513su r0 @[13,17)
   box Ideo "的" w=1025su wt=0.6 cap=102su r1 @[17,60)
   glue inter w=0su x=0.6 cap=102su r1 @[17,60)
   box Ideo "结" w=1025su wt=0.6 cap=102su r1 @[17,60)

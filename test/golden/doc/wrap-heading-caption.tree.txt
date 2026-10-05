@@ -2,9 +2,9 @@ doc @[0,329) [base]
   heading @[0,80) [base] level=1 label="h-1"
     text @[2,80) [base] str="A heading long enough that it has to wrap across two lines at the test measure"
   group @[82,280) [base] role="figure" label="fig-wide"
-    image @[0,0) [base] src="photos/wide.png" alt="wide" w=300 h=100
-    para @[0,0) [base]
-      text @[0,0) [BOLD] str="图 1："
+    image @[82,280) [base] src="photos/wide.png" alt="wide" w=300 h=100
+    para @[82,280) [base]
+      text @[82,280) [BOLD] str="图 1："
       text @[163,271) [base] str="A caption that is long enough to wrap onto a second line at the narrow measure, so copy must join its lines."
   para @[282,329) [base]
     text @[282,318) [base] str="Body text after the figure refers to "

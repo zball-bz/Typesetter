@@ -1,11 +1,11 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="108">两张同侧浮动图连续出现时应当堆叠，而不是把第二张清到第一张之下留出空白。</p>
 <figure data-pid="1" data-s="110" data-e="236" id="tsr-fig-a">
-<img src="photos/a.jpg" alt="甲" style="max-width:100%">
+<img data-s="110" data-e="236" src="photos/a.jpg" alt="甲" style="max-width:100%">
 <figcaption><strong>图 1：</strong>第一张图。</figcaption>
 </figure>
 <figure data-pid="2" data-s="238" data-e="385" id="tsr-fig-b">
-<img src="photos/b.jpg" alt="乙" style="max-width:100%">
+<img data-s="238" data-e="385" src="photos/b.jpg" alt="乙" style="max-width:100%">
 <figcaption><strong>图 2：</strong>第二张图，紧接着第一张。</figcaption>
 </figure>
 <h2 data-pid="3" data-s="387" data-e="411" id="tsr-h-0.1">标题不清除浮动</h2>

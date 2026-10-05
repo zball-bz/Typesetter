@@ -4,12 +4,12 @@ top pid=0 units=1
   run r0 plain BOLD x1.60
 top pid=1 units=1
  unit text indent=0su anchor="fig1" centered
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[17,112)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[0,0)
-  box Other "1" w=513su r1 @[0,0)
-  box ColonW "：" w=512su blank=R r2 @[0,0)
-  glue blank w=512su x=0 cap=0su r2 @[0,0)
+  glue word w=257su x=1 cap=257su src r1 @[17,112)
+  box Other "1" w=513su r1 @[17,112)
+  box ColonW "：" w=512su blank=R r2 @[17,112)
+  glue blank w=512su x=0 cap=0su r2 @[17,112)
   box Other "A" w=513su r3 @[41,67)
   glue word w=257su x=1 cap=257su kern="A p" src r3 @[41,67)
   box Other "pretend" w=3585su r3 @[41,67)
@@ -19,7 +19,7 @@ top pid=1 units=1
   box Other "body" w=2049su r3 @[41,67)
   glue word w=257su x=1 cap=257su kern="y l" src r3 @[41,67)
   box Other "line" w=2049su r3 @[41,67)
-  glue word w=257su x=1 cap=257su kern="e c" src r3 @[0,0)
+  glue word w=257su x=1 cap=257su kern="e c" src r3 @[17,112)
   box Other "continuing" w=5121su r3 @[68,103)
   glue word w=257su x=1 cap=257su kern="g o" src r3 @[68,103)
   box Other "on" w=1025su r3 @[68,103)

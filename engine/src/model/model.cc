@@ -49,21 +49,30 @@ struct Inst {
     while (!work.empty()) {
       Pending p = std::move(work.back());
       work.pop_back();
-      const RawNode& rn = raw.nodes[p.id];
+      // an AT alias (plan P2-04) is its target at the alias's span
+      const RawNode& an = raw.nodes[p.id];
+      const RawNode& rn = an.alias != kNoAlias ? raw.nodes[an.alias] : an;
+      // span containment (design T2 S7, document-model §1): a node whose span
+      // is empty or outside its parent's takes the parent's, so a value made
+      // or defined elsewhere stays inside the paragraph that splices it
+      Span sp = an.span;
+      if (p.parent && !p.parent->span.empty() &&
+          (sp.empty() || sp.start < p.parent->span.start || sp.end > p.parent->span.end))
+        sp = p.parent->span;
       ContentNode* n;
       bool descend = false;
       Styling own = p.inh;
       if (budget == 0) {
-        n = limitNode(rn.span, "instantiation node budget");
+        n = limitNode(sp, "instantiation node budget");
       } else if (p.depth > kMaxDepth) {
-        n = limitNode(rn.span, "maximum nesting depth");
+        n = limitNode(sp, "maximum nesting depth");
       } else {
         budget--;
         if (rn.kind == Kind::styled)
           for (const ArgVal& a : rn.args) applyPatch(own, a);
         n = arena.make<ContentNode>();
         n->kind = rn.kind;
-        n->span = rn.span;
+        n->span = sp;
         n->style = styles.idOf(own);
         if (rn.isText) n->str = strs.intern(raw.strings[rn.str]);
         for (const ArgVal& a : rn.args) {

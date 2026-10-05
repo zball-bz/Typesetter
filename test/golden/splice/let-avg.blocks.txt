@@ -6,7 +6,7 @@ top pid=0 units=1
   space w=257su stretch=1 @[28,39)
   word "is" w=1025su pen=INF @[28,39)
   space w=257su stretch=1 @[28,39)
-  word "4" w=513su pen=INF @[0,0)
+  word "4" w=513su pen=INF @[40,49)
   word "," w=513su pen=INF @[49,59)
   space w=257su stretch=1 @[49,59)
   word "com" w=1537su pen=INF @[49,59)

@@ -1,10 +1,10 @@
-lower v1 abi 3c18dc46 docEnd 237 holes 1 module 875ad264dd56423a
+lower v1 abi 7f64f38d docEnd 237 holes 1 module 96ac8fa00b50b74a
 piece 0 hole 0 js [147,323)
 block 0 stmt [0,169) user framed holes 0..1
   STMT 0
 block 1 content [171,193) async
-  FENCE async "shout" body="loud text" at=180 lines=null [171,193)
+  FENCE async "shout" body="loud text" at=[180,189) lines=null [171,193)
 block 2 content [195,211) async
-  FENCE async "box" body="boxed" at=202 lines=null [195,211)
+  FENCE async "box" body="boxed" at=[202,207) lines=null [195,211)
 block 3 content [213,236) async
-  FENCE async "js" body="plain(fence);" at=219 lines=null [213,236)
+  FENCE async "js" body="plain(fence);" at=[219,232) lines=null [213,236)

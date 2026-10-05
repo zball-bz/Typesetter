@@ -101,12 +101,12 @@ top pid=1 units=1
 top pid=2 units=2
  unit img indent=0su anchor="fig-a" intrinsic=120x60px
  unit text indent=0su centered
-  box Ideo "圖" w=1025su wt=0.6 cap=102su r0 @[0,0)
+  box Ideo "圖" w=1025su wt=0.6 cap=102su r0 @[148,237)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[0,0)
-  box Other "1" w=513su r1 @[0,0)
-  box ColonW "：" w=512su blank=R r2 @[0,0)
-  glue blank w=512su x=0 cap=0su r2 @[0,0)
+  glue word w=257su x=1 cap=257su src r1 @[148,237)
+  box Other "1" w=513su r1 @[148,237)
+  box ColonW "：" w=512su blank=R r2 @[148,237)
+  glue blank w=512su x=0 cap=0su r2 @[148,237)
   box Other "A" w=513su r3 @[219,228)
   glue word w=257su x=1 cap=257su kern="A f" src r3 @[219,228)
   box Other "figure." w=3585su r3 @[219,228)

@@ -9,7 +9,7 @@ doc @[0,213) [base]
         para @[89,132) [base]
           text @[89,132) [base] str="A quote inside the item with two lines."
       codeblock @[136,163) [base] lang="js"
-        text @[0,0) [base] str="nested(code);"
+        text @[144,157) [base] str="nested(code);"
       list @[166,195) [base] ordered=false start=1
         item @[166,195) [base]
           para @[168,178) [base]

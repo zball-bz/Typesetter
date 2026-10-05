@@ -9,9 +9,9 @@ doc @[0,227) [base]
     ref @[56,89) [SUPx0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
       text @[56,89) [SUPx0.70] str="2"
     text @[90,119) [base] str=" before the section is placed."
-  group @[0,0) [base] role="notes"
-    rule @[0,0) [base]
-    list @[0,0) [base] ordered=true
+  group @[121,129) [base] role="notes"
+    rule @[121,129) [base]
+    list @[121,129) [base] ordered=true
       item @[37,44) [base]
         para @[37,44) [base] label="fn-1"
           text @[39,43) [basex0.85] str="One."

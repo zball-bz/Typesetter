@@ -23,7 +23,7 @@ Persistence of the middle products is what makes the pull-loop resumable and `re
 
 - **NodeId**: `u32` arena index. Document-scoped, stable for the handle lifetime, **not** stable across recompiles — continuity across edits is by source offsets, never by id.
 - **pid** (paragraph id): the NodeId of each direct child of `doc`. The unit of upgrade swaps and of `tsr_render_typeset(range)`. DOM: `data-pid`.
-- **Spans**: byte offsets `[start, end)` into the UTF-8 source. Every node carries one. Synthetic content takes the span of its generating construct: splice-produced nodes get the splice span; fence-handler nodes get the fence body span unless the handler passed a narrower offset (two-tier fidelity, v2 §4.1); resolver-produced content (ref text, collector expansions) gets the span of the `REF`/`COLLECT` site.
+- **Spans**: byte offsets `[start, end)` into the UTF-8 source. Every node carries one. Synthetic content takes the span of its generating construct: splice-produced nodes get the splice span; fence-handler nodes get the fence body span unless the handler passed a narrower offset (two-tier fidelity, v2 §4.1); resolver-produced content (ref text, collector expansions) gets the span of the `REF`/`COLLECT` site. As built (plan P2-04): the splice/region/fence rule is the SPAN/AT occurrence rule of §4.3, and instantiation's containment gives a span-less or out-of-parent node its parent's span.
 
 ## 2. Content tree
 
@@ -120,7 +120,22 @@ ops      op stream (all ints varint/LEB128 unless noted)
 0x07 DIAG        sev(u8) codeRef msgRef start end   (since 7, plan P2-01:
                                      an execution diagnostic — 0 info,
                                      1 warning, 2 error; a stable code)
+0x08 AT          id start end                       → id   (since 8, plan
+                                     P2-04: an occurrence alias — the value
+                                     `id` spliced again, instantiated with
+                                     this span at its root)
 ```
+
+As built (plan P2-04; design T2 S7): **occurrence spans**. Every construct
+the interpreter runs — a markup call, a splice, a fence, a region — gives its
+result the construct's span: a node made during the construct gets SPAN
+(unless it already has one), a value made earlier and spliced here gets an
+AT alias, so a value spliced twice has two occurrences with their own spans
+and is never re-spanned. Instantiation applies **span containment**: a node
+whose span is empty or outside its parent's takes the parent's, so content
+built by code, region interiors and spliced values stay inside the paragraph
+that holds them (editing elsewhere never moves a paragraph's source range).
+A default fence's code text carries the body's span.
 
 As built (plan P2-01; design T2 S4): **node values** are frozen and branded
 with a module-private symbol (`runtime/src/shared/opbuf.mjs`): node-ness is

@@ -20,9 +20,7 @@ code/wrap.tsm:html:line-spans  # code rows / cells / captions / generated lines 
 conform/appb-lines.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 doc/nested-base16.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 doc/nested-base18.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
-doc/refs.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 doc/structure.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
-doc/toc-before-after.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 inline/fence-edge.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 line/fence-container-diag.tsm:html:line-spans  # code rows lack spans (P3-07): a P1-07 fixture of the existing class
 line/crlf.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
@@ -31,4 +29,3 @@ pages/paged-doc.tsm:paged:line-spans  # code rows / cells / captions / generated
 region/fence-handler.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 region/anchor-kinds.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 region/anchor-kinds.tsm:paged:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
-lower/ctor-binding-diag.tsm:html:line-spans  # generated lines lack spans (P2-04: a splice's fresh result gets SPAN): a P2-03 fixture of the existing class

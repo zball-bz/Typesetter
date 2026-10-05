@@ -78,10 +78,10 @@ top pid=1 units=1
 top pid=2 units=2
  unit img indent=0su anchor="fig-a" intrinsic=120x60px
  unit text indent=0su centered
-  box Other "Figure" w=3073su r0 @[0,0)
-  glue word w=257su x=1 cap=257su kern="e 1" src r0 @[0,0)
-  box Other "1:" w=1025su r0 @[0,0)
-  glue word w=257su x=1 cap=257su src r0 @[0,0)
+  box Other "Figure" w=3073su r0 @[149,238)
+  glue word w=257su x=1 cap=257su kern="e 1" src r0 @[149,238)
+  box Other "1:" w=1025su r0 @[149,238)
+  glue word w=257su x=1 cap=257su src r0 @[149,238)
   box Other "A" w=513su r1 @[220,229)
   glue word w=257su x=1 cap=257su kern="A f" src r1 @[220,229)
   box Other "figure." w=3585su r1 @[220,229)

@@ -9,12 +9,12 @@ top pid=2 leaves=2
   stack root gap=1/1 @[79,161)
     stack group anchor="box-b" @[79,161)
       paragraph heading unit=0 ragged nohyphen keep-with-next anchor="sec-in" @[103,119)
-      paragraph para unit=1 @[0,0)
+      paragraph para unit=1 @[79,161)
 top pid=3 leaves=2
   stack root gap=1/1 @[163,216)
     stack group anchor="rule-c" @[163,216)
       replaced rule rule unit=0 carry="rule-c" @[188,191)
-      paragraph para unit=1 @[0,0)
+      paragraph para unit=1 @[163,216)
 top pid=4 leaves=1
   stack root gap=1/1 @[218,258)
     paragraph para unit=0 @[218,258)

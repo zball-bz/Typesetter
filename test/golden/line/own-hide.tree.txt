@@ -2,12 +2,12 @@ doc @[0,359) [base]
   para @[0,113) [base]
     text @[0,25) [base] str="A comment opened mid-line"
     comment @[26,86) [base]
-      text @[0,0) [base] str=" hides what follows\n= not a heading\n- not a list item\n"
+      text @[26,86) [base] str=" hides what follows\n= not a heading\n- not a list item\n"
     text @[87,113) [base] str=" and the paragraph goes on."
   para @[115,147) [base]
     text @[115,126) [base] str="A code span "
     code @[127,132) [base]
-      text @[0,0) [base] str="%--"
+      text @[127,132) [base] str="%--"
     text @[133,147) [base] str=" hides nothing:"
   heading @[148,171) [base] level=1 label="h-1"
     text @[150,171) [base] str="This heading survives"
@@ -30,6 +30,6 @@ doc @[0,359) [base]
     text @[270,299) [base] str="The heading after it survives"
   para @[301,359) [base]
     text @[301,307) [base] str="A call "
-    styled @[0,0) [BOLD]
-      text @[0,0) [BOLD] str="left-1 right"
+    styled @[308,346) [BOLD]
+      text @[308,346) [BOLD] str="left-1 right"
     text @[347,359) [base] str=" spans lines."

@@ -6,7 +6,7 @@ namespace tsr {
 
 constexpr u32 LOWER_VERSION = 1;
 constexpr u32 LOWER_PROTOCOL = 1;
-constexpr u32 PROGRAM_ABI = 0x3c18dc46u;
+constexpr u32 PROGRAM_ABI = 0x7f64f38du;
 constexpr u8 kLopAsync = 0x80;
 
 enum class Lop : u8 {

@@ -16,14 +16,14 @@ doc @[0,296) [base]
       text @[129,134) [base] str="式 (1)"
     text @[134,135) [base] str="."
   group @[137,226) [base] role="figure" label="fig-a"
-    image @[0,0) [base] src="a.png" alt="a figure" w=120 h=60
-    para @[0,0) [base]
-      text @[0,0) [BOLD] str="図 1："
+    image @[137,226) [base] src="a.png" alt="a figure" w=120 h=60
+    para @[137,226) [base]
+      text @[137,226) [BOLD] str="図 1："
       text @[208,217) [base] str="A figure."
   table @[228,274) [base] cols=2 label="tab-a"
-    trow @[0,0) [base]
-      tcell @[0,0) [base]
+    trow @[228,274) [base]
+      tcell @[228,274) [base]
         text @[261,262) [base] str="x"
-      tcell @[0,0) [base]
+      tcell @[228,274) [base]
         text @[265,266) [base] str="y"
   mathblock @[276,296) [base] src="e = m c^2" label="eq-a" name="(1)"

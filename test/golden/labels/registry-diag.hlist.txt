@@ -18,12 +18,12 @@ top pid=1 units=1
   run r0 plain
 top pid=2 units=1
  unit text indent=0su anchor="fig-x" centered
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[75,122)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[0,0)
-  box Other "1" w=513su r1 @[0,0)
-  box ColonW "：" w=512su blank=R r2 @[0,0)
-  glue blank w=512su x=0 cap=0su r2 @[0,0)
+  glue word w=257su x=1 cap=257su src r1 @[75,122)
+  box Other "1" w=513su r1 @[75,122)
+  box ColonW "：" w=512su blank=R r2 @[75,122)
+  glue blank w=512su x=0 cap=0su r2 @[75,122)
   box Other "First" w=2561su r3 @[100,113)
   glue word w=257su x=1 cap=257su kern="t f" src r3 @[100,113)
   box Other "figure." w=3585su r3 @[100,113)
@@ -33,12 +33,12 @@ top pid=2 units=1
   run r3 plain
 top pid=3 units=1
  unit text indent=0su centered
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[124,202)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[0,0)
-  box Other "2" w=513su r1 @[0,0)
-  box ColonW "：" w=512su blank=R r2 @[0,0)
-  glue blank w=512su x=0 cap=0su r2 @[0,0)
+  glue word w=257su x=1 cap=257su src r1 @[124,202)
+  box Other "2" w=513su r1 @[124,202)
+  box ColonW "：" w=512su blank=R r2 @[124,202)
+  glue blank w=512su x=0 cap=0su r2 @[124,202)
   box Other "Second" w=3073su r3 @[149,193)
   glue word w=257su x=1 cap=257su kern="d f" src r3 @[149,193)
   box Other "figure" w=3073su r3 @[149,193)
@@ -64,12 +64,12 @@ top pid=5 units=1
  unit math indent=0su w=2457su asc=700su desc=19su
 top pid=6 units=1
  unit text indent=0su centered
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[240,311)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[0,0)
-  box Other "3" w=513su r1 @[0,0)
-  box ColonW "：" w=512su blank=R r2 @[0,0)
-  glue blank w=512su x=0 cap=0su r2 @[0,0)
+  glue word w=257su x=1 cap=257su src r1 @[240,311)
+  box Other "3" w=513su r1 @[240,311)
+  box ColonW "：" w=512su blank=R r2 @[240,311)
+  glue blank w=512su x=0 cap=0su r2 @[240,311)
   box Other "A" w=513su r3 @[265,302)
   glue word w=257su x=1 cap=257su kern="A f" src r3 @[265,302)
   box Other "figure" w=3073su r3 @[265,302)

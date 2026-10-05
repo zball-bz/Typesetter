@@ -1,20 +1,20 @@
 <div class="tsr-flow">
 <div data-role="callout" data-pid="0" data-s="118" data-e="173">
-<p>First paragraph.</p>
-<p>Second paragraph.</p>
+<p data-s="118" data-e="173">First paragraph.</p>
+<p data-s="118" data-e="173">Second paragraph.</p>
 </div>
-<div data-role="callout" data-pid="1">
+<div data-role="callout" data-pid="1" data-s="175" data-e="222">
 <p data-s="185" data-e="201">First paragraph.</p>
 <p data-s="203" data-e="220">Second paragraph.</p>
 </div>
 <div data-role="frame" data-pid="2" data-s="305" data-e="344">
-<div data-role="callout" id="tsr-c2">
-<p>Third.</p>
+<div data-role="callout" data-s="305" data-e="344" id="tsr-c2">
+<p data-s="305" data-e="344">Third.</p>
 </div>
 </div>
-<div data-role="frame" data-pid="3">
-<div data-role="callout" id="tsr-c3">
-<p>Third.</p>
+<div data-role="frame" data-pid="3" data-s="346" data-e="377">
+<div data-role="callout" data-s="346" data-e="377" id="tsr-c3">
+<p data-s="346" data-e="377">Third.</p>
 </div>
 </div>
 </div>

@@ -1,21 +1,21 @@
 doc @[0,167) [base]
   para @[0,75) [base]
     text @[0,1) [base] str="A "
-    styled @[0,0) [BOLD]
+    styled @[2,31) [BOLD]
       text @[10,30) [BOLD] str="content over a join"
     text @[32,35) [base] str=" and "
     link @[36,53) [base] url="u"
       text @[37,49) [base] str="a link text"
     text @[54,57) [base] str=" and "
     code @[58,70) [base]
-      text @[0,0) [base] str="code span"
+      text @[58,70) [base] str="code span"
     text @[71,75) [base] str=" end."
   quote @[79,125) [base]
     para @[81,125) [base]
       text @[81,87) [base] str="quoted "
       mathinline @[88,98) [base] src="a +\nb"
       text @[99,107) [base] str=" math and "
-      styled @[0,0) [EM]
+      styled @[108,119) [EM]
         text @[112,118) [EM] str="x y"
       text @[120,125) [base] str=" done."
   list @[129,167) [base] ordered=false start=1
@@ -24,5 +24,5 @@ doc @[0,167) [base]
         text @[131,135) [base] str="item "
         mathinline @[136,146) [base] src="c +\nd"
         text @[147,150) [base] str=" and "
-        text @[0,0) [base] str="3"
+        text @[151,162) [base] str="3"
         text @[163,167) [base] str=" end."

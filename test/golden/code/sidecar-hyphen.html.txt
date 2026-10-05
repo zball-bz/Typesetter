@@ -3,13 +3,13 @@
 <div class="tsr-line" data-s="0" data-e="74" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">A sidecar note narrow enough to hyphenate</span></div>
 <div class="tsr-line" data-s="0" data-e="74" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">keeps its hyphen at the row end.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:144px">
+<div class="tsr-para" data-pid="1" data-s0="98" style="position:relative;height:144px">
 <div class="tsr-line" data-ragged="1" style="top:0px;left:0px;width:166.406px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">let total = 0;</span></div>
-<div class="tsr-line" data-cell="1" style="top:0px;left:180px;width:120px"><span class="tsr-r">accumulates the</span></div>
-<div class="tsr-line" data-cell="1" style="top:24px;left:180px;width:120px"><span class="tsr-r">incomprehen</span><span class="tsr-r" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-cell="1" style="top:48px;left:180px;width:120px"><span class="tsr-r">sibilities of</span></div>
-<div class="tsr-line" data-cell="1" style="top:72px;left:180px;width:120px"><span class="tsr-r">everything mea</span><span class="tsr-r" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-cell="1" style="top:96px;left:180px;width:120px"><span class="tsr-r">sured</span></div>
+<div class="tsr-line" data-s="0" data-e="91" data-cell="1" style="top:0px;left:180px;width:120px"><span class="tsr-r" data-s="0">accumulates the</span></div>
+<div class="tsr-line" data-s="0" data-e="91" data-cell="1" style="top:24px;left:180px;width:120px"><span class="tsr-r" data-s="0">incomprehen</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="91" data-cell="1" style="top:48px;left:180px;width:120px"><span class="tsr-r" data-s="0">sibilities of</span></div>
+<div class="tsr-line" data-s="0" data-e="91" data-cell="1" style="top:72px;left:180px;width:120px"><span class="tsr-r" data-s="0">everything mea</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="91" data-cell="1" style="top:96px;left:180px;width:120px"><span class="tsr-r" data-s="0">sured</span></div>
 <div class="tsr-line" data-ragged="1" style="top:120px;left:0px;width:166.406px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">total += 1;</span></div>
 </div>
 </div>

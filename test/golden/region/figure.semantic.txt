@@ -4,7 +4,7 @@
 <figcaption><strong>图 1：</strong>A pretend figure body line continuing on a second source line.</figcaption>
 </figure>
 <div data-role="aside" data-pid="2" data-s="114" data-e="197">
-<p>Side note with <strong>emphasis</strong> inside</p>
+<p data-s="114" data-e="197">Side note with <strong>emphasis</strong> inside</p>
 <ul data-s="155" data-e="189">
 <li>a nested bullet</li>
 <li>another bullet</li>

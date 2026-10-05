@@ -53,27 +53,27 @@ top pid=0 units=1
 top pid=1 units=1
  unit code indent=0su lines=2 wrap lineNo=1
   cell 0
-   box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[0,0)
-   glue inter w=0su x=0.6 cap=102su r0 @[0,0)
-   box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[0,0)
-   glue inter w=0su x=0.6 cap=102su r0 @[0,0)
-   box Ideo "边" w=1025su wt=0.6 cap=102su r0 @[0,0)
-   glue inter w=0su x=0.6 cap=102su r0 @[0,0)
-   box Ideo "注" w=1025su wt=0.6 cap=102su r0 @[0,0)
+   box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[159,289)
+   glue inter w=0su x=0.6 cap=102su r0 @[159,289)
+   box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[159,289)
+   glue inter w=0su x=0.6 cap=102su r0 @[159,289)
+   box Ideo "边" w=1025su wt=0.6 cap=102su r0 @[159,289)
+   glue inter w=0su x=0.6 cap=102su r0 @[159,289)
+   box Ideo "注" w=1025su wt=0.6 cap=102su r0 @[159,289)
    pen 0 r0
-   glue word w=257su x=1 cap=257su src r1 @[0,0)
-   box Other "with" w=2049su r1 @[0,0)
-   glue word w=257su x=1 cap=257su kern="h L" src r1 @[0,0)
-   box Other "Latin" w=2561su r1 @[0,0)
+   glue word w=257su x=1 cap=257su src r1 @[159,289)
+   box Other "with" w=2049su r1 @[159,289)
+   glue word w=257su x=1 cap=257su kern="h L" src r1 @[159,289)
+   box Other "Latin" w=2561su r1 @[159,289)
    run r0 letter-spaced CJK
    run r1 plain
   cell 1
-   box Ideo "每" w=1025su wt=0.6 cap=102su r0 @[0,0)
-   glue inter w=0su x=0.6 cap=102su r0 @[0,0)
-   box Ideo "行" w=1025su wt=0.6 cap=102su r0 @[0,0)
-   glue inter w=0su x=0.6 cap=102su r0 @[0,0)
-   box Ideo "一" w=1025su wt=0.6 cap=102su r0 @[0,0)
-   glue inter w=0su x=0.6 cap=102su r0 @[0,0)
-   box Ideo "个" w=1025su wt=0.6 cap=102su r0 @[0,0)
+   box Ideo "每" w=1025su wt=0.6 cap=102su r0 @[159,289)
+   glue inter w=0su x=0.6 cap=102su r0 @[159,289)
+   box Ideo "行" w=1025su wt=0.6 cap=102su r0 @[159,289)
+   glue inter w=0su x=0.6 cap=102su r0 @[159,289)
+   box Ideo "一" w=1025su wt=0.6 cap=102su r0 @[159,289)
+   glue inter w=0su x=0.6 cap=102su r0 @[159,289)
+   box Ideo "个" w=1025su wt=0.6 cap=102su r0 @[159,289)
    pen 0 r0
    run r0 letter-spaced CJK

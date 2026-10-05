@@ -1,4 +1,4 @@
-lower v1 abi 3c18dc46 docEnd 259 holes 3 module 3e84e662cadcbe9f
+lower v1 abi 7f64f38d docEnd 259 holes 3 module 294ab7a5e89e6a0f
 piece 0 hole 0 js [103,127)
 piece 1 hole 1 js [129,153)
 piece 2 hole 2 js [155,180)
@@ -7,7 +7,7 @@ block 0 content [0,14)
     TEXT "Anchor kinds" [2,14)
 block 1 content [22,77) user framed async holes 0..1
   REGION async "listing" args=hole 0 [22,77)
-    FENCE async "python" body="x = 1" at=58 lines=null [48,67)
+    FENCE async "python" body="x = 1" at=[58,63) lines=null [48,67)
 block 2 content [79,161) user framed async holes 1..2
   REGION async "aside" args=hole 1 [79,161)
     CALL heading [103,119) level=2 label="sec-in"

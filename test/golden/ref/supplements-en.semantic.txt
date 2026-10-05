@@ -2,7 +2,7 @@
 <h1 data-pid="0" data-s="0" data-e="14" id="tsr-intro">Introduction</h1>
 <p data-pid="1" data-s="24" data-e="147">An English document takes English supplements from the doc.lang setting (plan P1-03): see <a href="#tsr-intro">§1</a>, <a href="#tsr-fig-a">Figure 1</a>, <a href="#tsr-tab-a">Table 1</a> and <a href="#tsr-eq-a">Eq. (1)</a>.</p>
 <figure data-pid="2" data-s="149" data-e="238" id="tsr-fig-a">
-<img src="a.png" alt="a figure" style="max-width:100%">
+<img data-s="149" data-e="238" src="a.png" alt="a figure" style="max-width:100%">
 <figcaption><strong>Figure 1: </strong>A figure.</figcaption>
 </figure>
 <table data-pid="3" data-s="240" data-e="286" id="tsr-tab-a">

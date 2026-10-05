@@ -9,7 +9,7 @@ top pid=1 leaves=5
       stack item x=1536su @[93,419)
         paragraph para unit=1 x=1536su marker="•" @[95,130)
         stack figure x=1536su anchor="fig-icon" @[134,276)
-          replaced image float unit=2 x=1536su float=left carry="fig-icon" @[0,0)
+          replaced image float unit=2 x=1536su float=left carry="fig-icon" @[134,276)
         paragraph para unit=3 x=1536su @[280,419)
       stack item x=1536su @[420,449)
         paragraph para unit=4 x=1536su marker="•" @[422,449)

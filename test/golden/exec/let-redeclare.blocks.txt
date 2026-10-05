@@ -2,7 +2,7 @@ top pid=0 units=1
  unit text indent=0su
   word "First:" w=3073su pen=INF @[12,18)
   space w=257su stretch=1 @[12,18)
-  word "1" w=513su pen=INF @[0,0)
+  word "1" w=513su pen=INF @[19,21)
   word "." w=513su pen=INF @[21,22)
 top pid=1 units=1
  unit text indent=0su
@@ -10,5 +10,5 @@ top pid=1 units=1
   hyphen bw=513su pen=0.70 @[36,43)
   word "ond:" w=2049su pen=INF @[36,43)
   space w=257su stretch=1 @[36,43)
-  word "2" w=513su pen=INF @[0,0)
+  word "2" w=513su pen=INF @[44,46)
   word "." w=513su pen=INF @[46,47)

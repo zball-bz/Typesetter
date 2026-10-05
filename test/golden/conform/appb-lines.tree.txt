@@ -37,9 +37,9 @@ doc @[0,370) [base]
       para @[211,223) [base]
         text @[211,223) [base] str="nested quote"
   comment @[225,271) [base]
-    text @[0,0) [base] str=" a comment %-- nested --% still comment "
+    text @[225,271) [base] str=" a comment %-- nested --% still comment "
   codeblock @[273,300) [base] lang="js"
-    text @[0,0) [base] str="verbatim(island);"
+    text @[279,296) [base] str="verbatim(island);"
   mathblock @[302,315) [base] src="a + b = c"
   rule @[317,320) [base]
   para @[322,370) [base]

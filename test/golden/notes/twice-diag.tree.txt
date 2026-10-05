@@ -6,9 +6,9 @@ doc @[0,71) [base]
     text @[28,36) [base] str=" Another."
     ref @[36,51) [SUPx0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
       text @[36,51) [SUPx0.70] str="2"
-  group @[0,0) [base] role="notes"
-    rule @[0,0) [base]
-    list @[0,0) [base] ordered=true
+  group @[53,61) [base] role="notes"
+    rule @[53,61) [base]
+    list @[53,61) [base] ordered=true
       item @[7,27) [base]
         para @[7,27) [base] label="fn-1"
           text @[9,26) [basex0.85] str="Body of the note."
@@ -21,4 +21,4 @@ doc @[0,71) [base]
           text @[36,51) [basex0.85] str=" "
           ref @[36,51) [basex0.85] target="fnref-2" url="#tsr-fnref-2"
             text @[36,51) [basex0.85] str="↩"
-  group @[0,0) [base] role="notes"
+  group @[63,71) [base] role="notes"

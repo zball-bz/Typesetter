@@ -359,17 +359,18 @@ struct Walker {
         break;
       }
       case Lop::FENCE: {
-        u32 lang, args, body, off;
+        u32 lang, args, body, off, bend;
         bool argsAwait;
-        if (!strRef(lang) || !argsRef(args, argsAwait) || !strRef(body) || !c.u(off)) return fail("truncated FENCE");
-        if (off > P.docEnd) return fail("FENCE body offset out of range");
+        if (!strRef(lang) || !argsRef(args, argsAwait) || !strRef(body) || !c.u(off) || !c.u(bend))
+          return fail("truncated FENCE");
+        if (off > bend || bend > P.docEnd) return fail("FENCE body range out of range");
         if (out) {
           *out += " ";
           quoted(lang);
           if (args) appendf(*out, " args=hole %u%s", (args >> 1) - 1, argsAwait ? " async" : "");
           *out += " body=";
           quoted(body);
-          appendf(*out, " at=%u lines=", off);
+          appendf(*out, " at=[%u,%u) lines=", off, bend);
         }
         if (!constant(0) || !span(s, e)) return false;
         if (out) *out += "\n";

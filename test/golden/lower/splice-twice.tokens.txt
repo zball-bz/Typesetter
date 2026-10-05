@@ -1,0 +1,4 @@
+[0,19) function "#let w = em(\"word\")"
+[27,29) function "#w"
+[40,42) function "#w"
+[70,72) function "#w"

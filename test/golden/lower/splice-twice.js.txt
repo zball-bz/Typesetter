@@ -1,0 +1,17 @@
+export const abi = 0x7f64f38d;
+export default async (__rt, $) => {
+const {em} = __rt.std;
+return (async () => {
+let w;
+const __h = [
+() => { w = (
+ em("word")
+); },
+() => (w),
+() => (w),
+() => (w),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

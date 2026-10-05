@@ -6,6 +6,6 @@ doc @[0,134) [base]
     mathinline @[56,64) [base] src="a +\nb"
     text @[65,70) [base] str=" math."
   codeblock @[74,101) [base] lang="js"
-    text @[0,0) [base] str="let x = 1;\nx++"
+    text @[81,96) [base] str="let x = 1;\nx++"
   comment @[105,134) [base]
-    text @[0,0) [base] str=" a comment\nover lines "
+    text @[105,134) [base] str=" a comment\nover lines "

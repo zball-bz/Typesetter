@@ -1,0 +1,4 @@
+doc @[0,74)
+  code-let @[0,19) js=" w = em(\"word\")"
+  para @[21,49) lines=1
+  para @[51,73) lines=1

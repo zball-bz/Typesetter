@@ -1,9 +1,9 @@
 top pid=0 leaves=2
   stack root gap=1/1 @[0,47)
     stack group @[0,47)
-      paragraph para unit=0 @[0,0)
+      paragraph para unit=0 @[0,47)
       stack group @[20,39)
-        paragraph para unit=1 @[0,0)
+        paragraph para unit=1 @[20,39)
 top pid=1 leaves=1
   stack root gap=1/1 @[49,67)
     paragraph para unit=0 @[49,67)
@@ -11,11 +11,11 @@ top pid=2 leaves=1
   stack root gap=1/1 @[69,97)
     stack quote pad=1024su @[69,97)
       stack group x=1024su @[71,97)
-        paragraph para unit=0 x=1024su @[0,0)
+        paragraph para unit=0 x=1024su @[71,97)
 top pid=3 leaves=1
   stack root gap=1/1 @[98,144)
     paragraph para unit=0 @[98,144)
 top pid=4 leaves=1
   stack root gap=1/1 @[146,177)
     stack group @[146,177)
-      paragraph para unit=0 @[0,0)
+      paragraph para unit=0 @[146,177)

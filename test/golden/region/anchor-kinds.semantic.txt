@@ -5,11 +5,11 @@
 </div>
 <div data-role="aside" data-pid="2" data-s="79" data-e="161" id="tsr-box-b">
 <h2 data-s="103" data-e="119" id="tsr-sec-in">Inner heading</h2>
-<p>Body text of the aside.</p>
+<p data-s="79" data-e="161">Body text of the aside.</p>
 </div>
 <div data-role="aside" data-pid="3" data-s="163" data-e="216" id="tsr-rule-c">
 <hr data-s="188" data-e="191">
-<p>After the rule.</p>
+<p data-s="163" data-e="216">After the rule.</p>
 </div>
 <p data-pid="4" data-s="218" data-e="258">See <a href="#tsr-lst-a">lst-a</a>, <a href="#tsr-box-b">box-b</a>, <a href="#tsr-sec-in">§1.1</a> and <a href="#tsr-rule-c">rule-c</a>.</p>
 </div>

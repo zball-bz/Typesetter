@@ -1,4 +1,4 @@
-lower v1 abi 3c18dc46 docEnd 132 holes 0 module none
+lower v1 abi 7f64f38d docEnd 132 holes 0 module none
 block 0 content [0,131)
   CALL para [0,131)
     TEXT "Emphasis carries into its footnote markers: " [0,43)

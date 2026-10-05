@@ -13,10 +13,10 @@ doc @[0,436) [base]
     text @[126,132) [base] str="Method"
   para @[134,183) [base]
     text @[134,183) [base] str="Terms are definition sites with automatic labels."
-  group @[0,0) [base] role="term" label="measure"
-    para @[0,0) [base]
-      text @[0,0) [BOLD] str="measure"
-      text @[0,0) [base] str=" — "
+  group @[185,246) [base] role="term" label="measure"
+    para @[185,246) [base]
+      text @[185,246) [BOLD] str="measure"
+      text @[185,246) [base] str=" — "
       text @[200,245) [base] str="The width available to a single typeset line."
   heading @[248,257) [base] level=1 label="results"
     text @[250,257) [base] str="Results"
@@ -30,34 +30,34 @@ doc @[0,436) [base]
     text @[358,380) [base] str=" without a second pass."
   heading @[382,402) [base] level=2 label="h-2.1"
     text @[385,402) [base] str="Table of contents"
-  list @[0,0) [base] ordered=false
-    item @[0,0) [base]
-      para @[0,0) [base]
-        link @[0,0) [base] url="#tsr-intro"
-          text @[0,0) [base] str="1 Introduction"
-      list @[0,0) [base] ordered=false
-        item @[0,0) [base]
-          para @[0,0) [base]
-            link @[0,0) [base] url="#tsr-h-1.1"
-              text @[0,0) [base] str="1.1 Method"
-    item @[0,0) [base]
-      para @[0,0) [base]
-        link @[0,0) [base] url="#tsr-results"
-          text @[0,0) [base] str="2 Results"
-      list @[0,0) [base] ordered=false
-        item @[0,0) [base]
-          para @[0,0) [base]
-            link @[0,0) [base] url="#tsr-h-2.1"
-              text @[0,0) [base] str="2.1 Table of contents"
-        item @[0,0) [base]
-          para @[0,0) [base]
-            link @[0,0) [base] url="#tsr-h-2.2"
-              text @[0,0) [base] str="2.2 Glossary"
+  list @[404,410) [base] ordered=false
+    item @[404,410) [base]
+      para @[404,410) [base]
+        link @[404,410) [base] url="#tsr-intro"
+          text @[404,410) [base] str="1 Introduction"
+      list @[404,410) [base] ordered=false
+        item @[404,410) [base]
+          para @[404,410) [base]
+            link @[404,410) [base] url="#tsr-h-1.1"
+              text @[404,410) [base] str="1.1 Method"
+    item @[404,410) [base]
+      para @[404,410) [base]
+        link @[404,410) [base] url="#tsr-results"
+          text @[404,410) [base] str="2 Results"
+      list @[404,410) [base] ordered=false
+        item @[404,410) [base]
+          para @[404,410) [base]
+            link @[404,410) [base] url="#tsr-h-2.1"
+              text @[404,410) [base] str="2.1 Table of contents"
+        item @[404,410) [base]
+          para @[404,410) [base]
+            link @[404,410) [base] url="#tsr-h-2.2"
+              text @[404,410) [base] str="2.2 Glossary"
   heading @[412,423) [base] level=2 label="h-2.2"
     text @[415,423) [base] str="Glossary"
-  list @[0,0) [base] ordered=false
-    item @[0,0) [base]
-      para @[0,0) [base]
-        link @[0,0) [base] url="#tsr-measure"
-          text @[0,0) [base] str="measure"
-        text @[0,0) [base] str=" — The width available to a single typeset line."
+  list @[425,436) [base] ordered=false
+    item @[425,436) [base]
+      para @[425,436) [base]
+        link @[425,436) [base] url="#tsr-measure"
+          text @[425,436) [base] str="measure"
+        text @[425,436) [base] str=" — The width available to a single typeset line."

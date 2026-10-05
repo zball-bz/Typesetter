@@ -341,6 +341,22 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
         r.nodes[id].span = {(u32)s, (u32)e};
         break;
       }
+      case Op::AT: {
+        // an occurrence alias (plan P2-04; design T2 S7): a value spliced
+        // again gets a new id that stands for it with this occurrence's span
+        u64 id = rd.varint();
+        u64 s = rd.varint();
+        u64 e = rd.varint();
+        if (rd.fail || id >= r.nodes.size()) { bad("AT bad id"); return; }
+        RawNode n;
+        const RawNode& t = r.nodes[id];
+        n.kind = t.kind;
+        n.isText = t.isText;
+        n.alias = t.alias != kNoAlias ? t.alias : (u32)id;  // aliases never chain
+        n.span = {(u32)s, (u32)e};
+        r.nodes.push_back(std::move(n));
+        break;
+      }
       case Op::DIAG: {
         // an executor diagnostic (plan P2-01, D-I04): severity, stable code,
         // message, source span — the one channel for execution warnings and
@@ -376,6 +392,10 @@ std::string dumpOps(const RawOps& r) {
   std::string out;
   for (size_t i = 0; i < r.nodes.size(); i++) {
     const RawNode& n = r.nodes[i];
+    if (n.alias != kNoAlias) {
+      appendf(out, "%%%zu = AT %%%u @[%u,%u)\n", i, n.alias, n.span.start, n.span.end);
+      continue;
+    }
     appendf(out, "%%%zu = %s", i, n.isText ? "MAKE_TEXT" : "MAKE_NODE");
     if (n.isText) {
       out += " \"";

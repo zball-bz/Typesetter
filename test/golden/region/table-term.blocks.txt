@@ -52,12 +52,12 @@ top pid=1 units=1
   cell 2
   word "Gear" w=2049su pen=INF @[127,131)
   cell 3
-  word "giz" w=1537su pen=INF BOLD @[0,0)
-  hyphen bw=513su pen=0.70 BOLD @[0,0)
-  word "mo" w=1025su pen=INF BOLD @[0,0)
-  space w=257su stretch=1 @[0,0)
-  word "—" w=616su pen=INF @[0,0)
-  space w=257su stretch=1 @[0,0)
+  word "giz" w=1537su pen=INF BOLD @[134,173)
+  hyphen bw=513su pen=0.70 BOLD @[134,173)
+  word "mo" w=1025su pen=INF BOLD @[134,173)
+  space w=257su stretch=1 @[134,173)
+  word "—" w=616su pen=INF @[134,173)
+  space w=257su stretch=1 @[134,173)
   word "a" w=513su pen=INF @[147,172)
   space w=257su stretch=1 @[147,172)
   word "small" w=2561su pen=INF @[147,172)

@@ -2,7 +2,7 @@
 <h1 data-pid="0" data-s="0" data-e="14" id="tsr-intro">Introduction</h1>
 <p data-pid="1" data-s="24" data-e="135">A Japanese document takes 図/表/式 from its locale terms (plan P1-10): see <a href="#tsr-intro">§1</a>, <a href="#tsr-fig-a">図 1</a>, <a href="#tsr-tab-a">表 1</a> and <a href="#tsr-eq-a">式 (1)</a>.</p>
 <figure data-pid="2" data-s="137" data-e="226" id="tsr-fig-a">
-<img src="a.png" alt="a figure" style="max-width:100%">
+<img data-s="137" data-e="226" src="a.png" alt="a figure" style="max-width:100%">
 <figcaption><strong>図 1：</strong>A figure.</figcaption>
 </figure>
 <table data-pid="3" data-s="228" data-e="274" id="tsr-tab-a">

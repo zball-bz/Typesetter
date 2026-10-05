@@ -1,4 +1,4 @@
-lower v1 abi 3c18dc46 docEnd 371 holes 0 module none
+lower v1 abi 7f64f38d docEnd 371 holes 0 module none
 block 0 content [0,11)
   CALL heading [0,11) level=1 label=null
     TEXT "Level one" [2,11)
@@ -46,7 +46,7 @@ block 6 content [194,223)
 block 7 content [225,271)
   CALL comment [225,271) text=" a comment %-- nested --% still comment "
 block 8 content [273,300) async
-  FENCE async "js" body="verbatim(island);" at=279 lines=null [273,300)
+  FENCE async "js" body="verbatim(island);" at=[279,296) lines=null [273,300)
 block 9 content [302,315)
   CALL mathblock [302,315) src="a + b = c"
 block 10 content [317,320)

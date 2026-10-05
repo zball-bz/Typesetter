@@ -2,4 +2,4 @@ doc @[0,216) [base]
   para @[0,78) [base]
     text @[0,78) [base] str="Snap-kerning on a wrapping code block (guard fixture, plan P0-01; defect #21)."
   codeblock @[80,216) [base] lang="js"
-    text @[0,0) [base] str="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";\nemit(标题);"
+    text @[86,212) [base] str="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";\nemit(标题);"

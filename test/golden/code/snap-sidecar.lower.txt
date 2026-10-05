@@ -1,7 +1,7 @@
-lower v1 abi 3c18dc46 docEnd 294 holes 1 module 5ff3b9bf0a44166e
+lower v1 abi 7f64f38d docEnd 294 holes 1 module f647ad49519d2b7e
 piece 0 hole 0 js [103,138)
 block 0 content [0,124)
   CALL para [0,124)
     TEXT "Snap-kerning with a sidecar column (guard fixture, plan P0-01): the code track and the sidecar track must share the measure." [0,124)
 block 1 content [126,293) user framed async holes 0..1
-  FENCE async "js" args=hole 0 body="const 标题 = \"中文与 ASCII 混排\"; /// 中文边注 with Latin\nfor (let i = 0; i < 3; i++) emit(标题, i); /// 每行一个" at=159 lines=null [126,293)
+  FENCE async "js" args=hole 0 body="const 标题 = \"中文与 ASCII 混排\"; /// 中文边注 with Latin\nfor (let i = 0; i < 3; i++) emit(标题, i); /// 每行一个" at=[159,289) lines=null [126,293)

@@ -9,7 +9,7 @@
     "  enum:A|B|C | flags:NAME=BIT,... | rangeset | color | font | html | url.",
     "Attribute order is the writer's order (today's constructor argument order)."
   ],
-  "opsVersion": 7,
+  "opsVersion": 8,
   "minCompat": 6,
   "ops": {
     "MAKE_TEXT": {"id": 1, "since": 6},
@@ -18,7 +18,8 @@
     "STYLE_PUSH": {"id": 4, "since": 6},
     "STYLE_POP_TO": {"id": 5, "since": 6},
     "SPAN": {"id": 6, "since": 6},
-    "DIAG": {"id": 7, "since": 7}
+    "DIAG": {"id": 7, "since": 7},
+    "AT": {"id": 8, "since": 8}
   },
   "keys": {
     "label": 0, "level": 1, "ordered": 2, "start": 3, "lang": 4, "body": 5, "role": 6, "cols": 7,

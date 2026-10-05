@@ -37,5 +37,5 @@ top pid=3 units=1
   hyphen bw=513su pen=0.70 @[50,56)
   word "ter:" w=2049su pen=INF @[50,56)
   space w=257su stretch=1 @[50,56)
-  word "fine" w=2049su pen=INF @[0,0)
+  word "fine" w=2049su pen=INF @[57,60)
   word "." w=513su pen=INF @[60,61)

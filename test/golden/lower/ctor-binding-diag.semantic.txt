@@ -1,13 +1,13 @@
 <div class="tsr-flow">
-<h2 data-pid="0" id="tsr-h-0.1">A heading made by its constructor</h2>
-<ul data-pid="1">
+<h2 data-pid="0" data-s="0" data-e="46" id="tsr-h-0.1">A heading made by its constructor</h2>
+<ul data-pid="1" data-s="48" data-e="103">
 <li>first</li>
 <li>second</li>
 </ul>
-<div data-role="aside" data-pid="2" id="tsr-a1">
-<p>Inside a group.</p>
+<div data-role="aside" data-pid="2" data-s="105" data-e="166" id="tsr-a1">
+<p data-s="105" data-e="166">Inside a group.</p>
 </div>
-<table data-pid="3">
+<table data-pid="3" data-s="168" data-e="239">
 <tr><td>a</td><td>b</td></tr>
 <tr><td>c</td><td>d</td></tr>
 </table>

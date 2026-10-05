@@ -11,10 +11,10 @@ doc @[0,481) [base]
       text @[84,95) [base] str="useful link"
     text @[118,126) [base] str=" and some "
     code @[127,140) [base]
-      text @[0,0) [base] str="inline code"
+      text @[127,140) [base] str="inline code"
     text @[141,147) [base] str=" in it."
     comment @[148,170) [base]
-      text @[0,0) [base] str=" invisible note "
+      text @[148,170) [base] str=" invisible note "
   list @[172,296) [base] ordered=false start=1
     item @[172,228) [base]
       para @[174,228) [base]
@@ -38,4 +38,4 @@ doc @[0,481) [base]
       text @[338,430) [base] str="A quoted paragraph, indented by the engine rather than the browser, wrapping across lines."
   rule @[432,435) [base]
   codeblock @[437,481) [base] lang="js"
-    text @[0,0) [base] str="const x = compute(1, 2);\nreturn x;"
+    text @[443,477) [base] str="const x = compute(1, 2);\nreturn x;"

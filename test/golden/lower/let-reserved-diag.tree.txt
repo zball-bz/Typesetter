@@ -3,5 +3,5 @@ doc @[0,163) [base]
   para @[16,71) [base]
     text @[16,71) [base] str="Before the hoisting rule: reserved words stay verbatim."
   para @[123,163) [base]
-    text @[0,0) [base] str="helped text"
+    text @[123,138) [base] str="helped text"
     text @[139,163) [base] str=" after a declaring block."

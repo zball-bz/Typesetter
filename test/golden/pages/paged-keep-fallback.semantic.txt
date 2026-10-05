@@ -1,7 +1,7 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="0" data-e="30" id="tsr-h-1">Heading before a tall figure</h1>
 <figure data-pid="1" data-s="32" data-e="158" id="tsr-fig-tall">
-<img src="photos/tall.png" alt="tall" style="max-width:100%">
+<img data-s="32" data-e="158" src="photos/tall.png" alt="tall" style="max-width:100%">
 <figcaption><strong>图 1：</strong>A figure 200px tall on 240px sheets.</figcaption>
 </figure>
 <p data-pid="2" data-s="160" data-e="182">Text after the figure.</p>

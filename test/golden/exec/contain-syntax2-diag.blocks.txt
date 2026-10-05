@@ -32,7 +32,7 @@ top pid=2 units=1
   hyphen bw=513su pen=0.70 @[23,29)
   word "dle" w=1537su pen=INF @[23,29)
   space w=257su stretch=1 @[23,29)
-  word "3" w=513su pen=INF @[0,0)
+  word "3" w=513su pen=INF @[30,38)
   word "." w=513su pen=INF @[38,39)
 top pid=3 units=1
  unit text indent=0su
@@ -63,5 +63,5 @@ top pid=4 units=1
   hyphen bw=513su pen=0.70 @[57,62)
   word "ter" w=1537su pen=INF @[57,62)
   space w=257su stretch=1 @[57,62)
-  word "12" w=1025su pen=INF @[0,0)
+  word "12" w=1025su pen=INF @[63,71)
   word "." w=513su pen=INF @[71,72)

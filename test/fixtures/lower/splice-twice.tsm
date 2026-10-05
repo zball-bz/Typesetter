@@ -1,0 +1,5 @@
+#let w = em("word")
+
+First #w here, and #w again.
+
+A later paragraph: #w.

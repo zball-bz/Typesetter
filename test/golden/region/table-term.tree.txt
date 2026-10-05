@@ -2,19 +2,19 @@ doc @[0,215) [base]
   para @[0,80) [base]
     text @[0,80) [base] str="A term defined inside a table cell keeps its anchor, so a reference to it lands."
   table @[82,192) [base] cols=2 label="parts"
-    trow @[0,0) [base]
-      tcell @[0,0) [base]
+    trow @[82,192) [base]
+      tcell @[82,192) [base]
         text @[115,119) [base] str="Part"
-      tcell @[0,0) [base]
+      tcell @[82,192) [base]
         text @[122,126) [base] str="Note"
-    trow @[0,0) [base]
-      tcell @[0,0) [base]
+    trow @[82,192) [base]
+      tcell @[82,192) [base]
         text @[127,131) [base] str="Gear"
-      tcell @[0,0) [base]
-        group @[0,0) [base] role="term" label="gizmo"
-          para @[0,0) [base]
-            text @[0,0) [BOLD] str="gizmo"
-            text @[0,0) [base] str=" — "
+      tcell @[82,192) [base]
+        group @[134,173) [base] role="term" label="gizmo"
+          para @[134,173) [base]
+            text @[134,173) [BOLD] str="gizmo"
+            text @[134,173) [base] str=" — "
             text @[147,172) [base] str="a small mechanical device"
         text @[174,184) [base] str=" in the box"
   para @[194,215) [base]

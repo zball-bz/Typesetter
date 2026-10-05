@@ -16,7 +16,7 @@ top pid=0 units=1
   glue word w=257su x=1 cap=257su kern="k l" src r0 @[30,68)
   box Other "lines:" w=3073su r0 @[30,68)
   glue word w=257su x=1 cap=257su kern=": 3" src r0 @[30,68)
-  box Other "3" w=513su r0 @[0,0)
+  box Other "3" w=513su r0 @[69,77)
   box Other "." w=513su r0 @[77,78)
   run r0 plain
 top pid=1 units=3

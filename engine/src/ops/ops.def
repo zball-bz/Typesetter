@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 // X-macro lists consumed by engine/src/ops/ops.h and ops.cc.
 //
-// OPS_VERSION(7)
+// OPS_VERSION(8)
 
 OP(MAKE_TEXT, 1)
 OP(MAKE_NODE, 2)
@@ -10,6 +10,7 @@ OP(STYLE_PUSH, 4)
 OP(STYLE_POP_TO, 5)
 OP(SPAN, 6)
 OP(DIAG, 7)
+OP(AT, 8)
 
 KIND(doc, 0)
 KIND(para, 1)

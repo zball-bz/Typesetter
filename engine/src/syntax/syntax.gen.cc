@@ -251,6 +251,8 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
           jsonString(out, src.slice(p.args));
           out += ",\"bodyOffset\":";
           appendf(out, "%u", (unsigned)p.bodyOffset);
+          out += ",\"bodyEnd\":";
+          appendf(out, "%u", (unsigned)p.bodyEnd);
           out += ",\"lines\":";
           jsonString(out, strs.get(p.lines));
           break;

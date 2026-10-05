@@ -27,5 +27,5 @@ top pid=1 units=1
   hyphen bw=513su pen=0.70 @[59,76)
   word "ing:" w=2049su pen=INF @[59,76)
   space w=257su stretch=1 @[59,76)
-  word "1" w=513su pen=INF @[0,0)
+  word "1" w=513su pen=INF @[77,82)
   word "." w=513su pen=INF @[82,83)

@@ -56,12 +56,12 @@ top pid=0 units=1
 top pid=1 units=2
  unit img indent=0su anchor="fig-pipe" intrinsic=300x150px scale=0.5
  unit text indent=0su centered
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[68,237)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[0,0)
-  box Other "1" w=513su r1 @[0,0)
-  box ColonW "：" w=512su blank=R r2 @[0,0)
-  glue blank w=512su x=0 cap=0su r2 @[0,0)
+  glue word w=257su x=1 cap=257su src r1 @[68,237)
+  box Other "1" w=513su r1 @[68,237)
+  box ColonW "：" w=512su blank=R r2 @[68,237)
+  glue blank w=512su x=0 cap=0su r2 @[68,237)
   box Ideo "排" w=1025su wt=0.6 cap=102su r3 @[175,199)
   glue inter w=0su x=0.6 cap=102su r3 @[175,199)
   box Ideo "版" w=1025su wt=0.6 cap=102su r3 @[175,199)
@@ -109,12 +109,12 @@ top pid=1 units=2
 top pid=2 units=2
  unit img indent=0su anchor="fig-wide" intrinsic=1200x300px
  unit text indent=0su centered
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[239,383)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[0,0)
-  box Other "2" w=513su r1 @[0,0)
-  box ColonW "：" w=512su blank=R r2 @[0,0)
-  glue blank w=512su x=0 cap=0su r2 @[0,0)
+  glue word w=257su x=1 cap=257su src r1 @[239,383)
+  box Other "2" w=513su r1 @[239,383)
+  box ColonW "：" w=512su blank=R r2 @[239,383)
+  glue blank w=512su x=0 cap=0su r2 @[239,383)
   box Ideo "过" w=1025su wt=0.6 cap=102su r3 @[323,374)
   glue inter w=0su x=0.6 cap=102su r3 @[323,374)
   box Ideo "宽" w=1025su wt=0.6 cap=102su r3 @[323,374)

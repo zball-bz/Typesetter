@@ -1,6 +1,6 @@
 top pid=0 leaves=3
-  stack root gap=1/1 @[0,0)
-    stack quote pad=1024su @[0,0)
+  stack root gap=1/1 @[38,140)
+    stack quote pad=1024su @[38,140)
       stack list x=1024su pad=1536su gap=1/3 @[48,76)
         stack item x=2560su @[48,61)
           paragraph para unit=0 x=2560su marker="•" @[50,61)
@@ -8,8 +8,8 @@ top pid=0 leaves=3
           paragraph para unit=1 x=2560su marker="•" @[64,76)
       paragraph para unit=2 x=1024su @[78,138)
 top pid=1 leaves=3
-  stack root gap=1/1 @[0,0)
-    stack quote pad=1024su @[0,0)
+  stack root gap=1/1 @[142,296)
+    stack quote pad=1024su @[142,296)
       stack list x=1024su pad=1536su gap=1/3 @[156,262)
         stack item x=2560su @[156,212)
           paragraph para unit=0 x=2560su marker="•" @[158,212)
@@ -20,8 +20,8 @@ top pid=2 leaves=1
   stack root gap=1/1 @[298,391)
     paragraph para unit=0 @[298,391)
 top pid=3 leaves=1
-  stack root gap=1/1 @[0,0)
-    stack quote pad=1024su @[0,0)
+  stack root gap=1/1 @[393,436)
+    stack quote pad=1024su @[393,436)
       stack list x=1024su pad=1536su gap=1/3 @[400,435)
         stack item x=2560su @[400,435)
           paragraph para unit=0 x=2560su marker="•" @[402,435)

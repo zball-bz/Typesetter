@@ -4,11 +4,11 @@ doc @[0,180) [base]
       para @[2,49) [base]
         text @[2,49) [base] str="an item with a fence whose content is indented:"
       codeblock @[53,88) [base] lang="js"
-        text @[0,0) [base] str="if (x) {\n  y();\n}"
+        text @[61,82) [base] str="if (x) {\n  y();\n}"
   quote @[90,136) [base]
     para @[92,112) [base]
       text @[92,112) [base] str="a quote with a fence"
     codeblock @[115,136) [base] lang="js"
-      text @[0,0) [base] str="quoted(code);"
+      text @[123,136) [base] str="quoted(code);"
   para @[137,180) [base]
     text @[137,180) [base] str="the quote ends here, and so does its fence."

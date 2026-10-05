@@ -678,6 +678,8 @@ struct AstBuilder {
         fp.lang = strs.intern(lang);
         fp.args = args;
         fp.bodyOffset = s->lineSpans.empty() ? s->span.end : s->lineSpans[0].start;
+        // the body's raw end: its source span is [bodyOffset, bodyEnd) (plan P2-04)
+        fp.bodyEnd = s->lineSpans.empty() ? fp.bodyOffset : s->lineSpans.back().end;
         // inside a quote or list item the body lines are not contiguous in
         // the source: each line's offset goes to the handler
         if (s->contained) {

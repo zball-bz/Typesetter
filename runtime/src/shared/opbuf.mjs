@@ -127,6 +127,22 @@ export class OpBuf {
     this.vint(e);
     this.spans.set(shadow.opId, [s, e]);
   }
+  // an occurrence alias (plan P2-04, AT since 8): a value spliced again is a
+  // new id standing for it, with this occurrence's span (the value itself
+  // never changes; the engine instantiates the target at the alias span)
+  at(target, s, e) {
+    this.opCount++;
+    this.uses(SINCE.op[OP.AT]);
+    this.ops.push(OP.AT);
+    this.vint(target.opId);
+    this.vint(s);
+    this.vint(e);
+    const id = this.nextId++;
+    this.spans.set(id, [s, e]);
+    const alias = { kind: target.kind, args: target.args, children: target.children, opId: id };
+    if (target.text !== undefined) alias.text = target.text;
+    return nodeValue(alias);
+  }
   // an execution diagnostic (plan P2-01, DIAG since 7): severity 0 info,
   // 1 warning, 2 error; a stable code; the source span it is about
   diag(sev, code, message, s = 0, e = s) {

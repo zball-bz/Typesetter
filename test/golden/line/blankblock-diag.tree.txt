@@ -1,7 +1,7 @@
 doc @[30,192) [base]
   para @[30,78) [base]
     text @[30,68) [base] str="A root statement may hold blank lines: "
-    text @[0,0) [base] str="3"
+    text @[69,77) [base] str="3"
     text @[77,78) [base] str="."
   list @[80,136) [base] ordered=false start=1
     item @[80,124) [base]

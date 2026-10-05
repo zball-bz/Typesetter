@@ -84,7 +84,9 @@ export function decodeProgram(bytes) {
 
 // env (the executor's half): ob (OpBuf), call(ctor, attrs, kids) (a bound
 // constructor call: shared/stdlib.mjs), region(name, args, items),
-// fence(tag, args, body, offset, lines), val(x), emit(node), at(node, s, e),
+// fence(tag, args, body, offset, lines), val(x), emit(node), at(node, s, e,
+// fresh) (a result at its occurrence: SPAN if made since id `fresh`, else
+// an AT alias),
 // height() (the style stack),
 // setCurrent(block), fail(err, height, s, e) → an error node,
 // failBlock(err, height, block) (emits the error block), and here {s, e}:
@@ -217,10 +219,11 @@ export class Lowering {
         let s = 0, e = 0;
         if (fl & CFLAG.Spanned) { s = this.u(); e = this.u(); }
         const attrs = this.attrs();
+        const fresh = env.ob.nextId;
         const kids = [];
         for (let n = this.u(); n > 0; n--) kids.push(this.v());
         const node = env.call(f, attrs, kids);
-        return fl & CFLAG.Spanned ? env.at(node, s, e) : node;
+        return fl & CFLAG.Spanned ? env.at(node, s, e, fresh) : node;
       }
       case LOP.HOLE: {
         const f = this.hole(this.u());
@@ -229,8 +232,9 @@ export class Lowering {
         const { here } = env, ps = here.s, pe = here.e;
         here.s = s;
         here.e = e;
+        const fresh = env.ob.nextId;
         try {
-          return env.val(nk ? this.callHole(f, nk, false) : f());
+          return env.at(env.val(nk ? this.callHole(f, nk, false) : f()), s, e, fresh);
         } finally {
           here.s = ps;
           here.e = pe;
@@ -277,10 +281,11 @@ export class Lowering {
         let s = 0, e = 0;
         if (fl & CFLAG.Spanned) { s = this.u(); e = this.u(); }
         const attrs = this.attrs();
+        const fresh = env.ob.nextId;
         const kids = [];
         for (let n = this.u(); n > 0; n--) kids.push(await this.va());
         const node = env.call(f, attrs, kids);
-        return fl & CFLAG.Spanned ? env.at(node, s, e) : node;
+        return fl & CFLAG.Spanned ? env.at(node, s, e, fresh) : node;
       }
       case LOP.HOLE: {
         const f = this.hole(this.u());
@@ -289,8 +294,9 @@ export class Lowering {
         const { here } = env, ps = here.s, pe = here.e;
         here.s = s;
         here.e = e;
+        const fresh = env.ob.nextId;
         try {
-          return env.val(await (nk ? this.callHole(f, nk, true) : f()));
+          return env.at(env.val(await (nk ? this.callHole(f, nk, true) : f())), s, e, fresh);
         } finally {
           here.s = ps;
           here.e = pe;
@@ -315,19 +321,21 @@ export class Lowering {
         }
       }
       case LOP.FENCE: {
-        const lang = this.S[this.u()], a = this.u(), body = this.S[this.u()], off = this.u();
+        const lang = this.S[this.u()], a = this.u(), body = this.S[this.u()], off = this.u(), end = this.u();
         const lines = this.k(), s = this.u(), e = this.u();
+        const fresh = env.ob.nextId;
         let args = a ? this.hole((a >> 1) - 1)() : {};
         if (a & 1) args = await args;
-        return env.at(env.val(await env.fence(lang, args, body, off, lines)), s, e);
+        return env.at(env.val(await env.fence(lang, args, body, off, lines, end)), s, e, fresh);
       }
       case LOP.REGION: {
         const name = this.S[this.u()], a = this.u(), s = this.u(), e = this.u();
+        const fresh = env.ob.nextId;
         let args = a ? this.hole((a >> 1) - 1)() : {};
         if (a & 1) args = await args;
         const items = [];
         for (let n = this.u(); n > 0; n--) items.push(await this.va());
-        return env.at(await this.region(name, args, items, s, e), s, e);
+        return env.at(await this.region(name, args, items, s, e), s, e, fresh);
       }
       case LOP.ROWS: {
         const rows = new Array(this.u());
@@ -417,7 +425,7 @@ export class Lowering {
         return;
       }
       case LOP.FRAME: this.u(); this.u(); this.u(); this.u(); this.skipValue(); return;
-      case LOP.FENCE: this.u(); this.u(); this.u(); this.u(); this.k(); this.u(); this.u(); return;
+      case LOP.FENCE: this.u(); this.u(); this.u(); this.u(); this.u(); this.k(); this.u(); this.u(); return;
       case LOP.REGION:
         this.u(); this.u(); this.u(); this.u();
         for (let n = this.u(); n > 0; n--) this.skipValue();

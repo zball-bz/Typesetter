@@ -50,9 +50,9 @@ top pid=1 units=1
   word "tim." w=2049su pen=INF @[16,71)
 top pid=2 units=1
  unit text indent=0su
-  word "helped" w=3073su pen=INF @[0,0)
-  space w=257su stretch=1 @[0,0)
-  word "text" w=2049su pen=INF @[0,0)
+  word "helped" w=3073su pen=INF @[123,138)
+  space w=257su stretch=1 @[123,138)
+  word "text" w=2049su pen=INF @[123,138)
   space w=257su stretch=1 @[139,163)
   word "af" w=1025su pen=INF @[139,163)
   hyphen bw=513su pen=0.70 @[139,163)

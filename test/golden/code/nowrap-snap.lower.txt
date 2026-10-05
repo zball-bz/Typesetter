@@ -1,6 +1,6 @@
-lower v1 abi 3c18dc46 docEnd 135 holes 0 module none
+lower v1 abi 7f64f38d docEnd 135 holes 0 module none
 block 0 content [0,101)
   CALL para [0,101)
     TEXT "Snap-kerning on code that fits the measure (plan P1-03): both scripts snap to the grid, no row wraps." [0,101)
 block 1 content [103,134) async
-  FENCE async "js" body="let 名 = \"a\"; // 注" at=109 lines=null [103,134)
+  FENCE async "js" body="let 名 = \"a\"; // 注" at=[109,130) lines=null [103,134)

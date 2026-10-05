@@ -1,4 +1,4 @@
-lower v1 abi 3c18dc46 docEnd 303 holes 0 module none
+lower v1 abi 7f64f38d docEnd 303 holes 0 module none
 block 0 content [0,219)
   CALL para [0,219)
     TEXT "The quick brown fox jumps over the lazy dog while the typesetting engine measures every word and chooses optimal break points for a narrow measure so that interword spacing stays even across all lines of this paragraph." [0,219)

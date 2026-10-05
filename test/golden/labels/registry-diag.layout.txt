@@ -4,16 +4,16 @@ para pid=0 y=0su w=19200su h=1639su
 para pid=1 y=2868su w=19200su h=1536su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,11) @[43,65)
 para pid=2 y=5633su w=19200su h=1536su
-  L0 y=0su left=4992su w=14208su dw=0su dc=0su join=last blocks=[0,8) @[100,113)
+  L0 y=0su left=4992su w=14208su dw=0su dc=0su join=last blocks=[0,8) @[75,122)
 para pid=3 y=8398su w=19200su h=3072su
-  L0 y=0su left=128su w=19072su dw=0su dc=0su join=space blocks=[0,16) @[149,193)
+  L0 y=0su left=128su w=19072su dw=0su dc=0su join=space blocks=[0,16) @[124,202)
   L1 y=1536su left=7424su w=11776su dw=0su dc=0su join=last blocks=[17,20) @[149,193)
 para pid=4 y=12699su w=19200su h=1536su
   L0 math y=0su left=8316su w=2568su
 para pid=5 y=15464su w=19200su h=1536su
   L0 math y=0su left=8371su w=2457su
 para pid=6 y=18229su w=19200su h=3072su
-  L0 y=0su left=1152su w=18048su dw=0su dc=0su join=space blocks=[0,16) @[265,302)
+  L0 y=0su left=1152su w=18048su dw=0su dc=0su join=space blocks=[0,16) @[240,311)
   L1 y=1536su left=8064su w=11136su dw=0su dc=0su join=last blocks=[17,18) @[265,302)
 para pid=7 y=22530su w=19200su h=1536su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,18) @[313,351)

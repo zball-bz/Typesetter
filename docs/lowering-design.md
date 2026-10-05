@@ -168,8 +168,11 @@ error was reported at the statement that registered the handler.)
 
 The interpreter calls the executor's constructors in the order the printed
 JavaScript of P0-05 evaluated them (arguments left to right, children before
-parents), and a hole's result stays unspanned, as `val()` left it — so every
-recording was byte-identical across the change (G3).
+parents), and in P2-02 a hole's result stayed unspanned, as `val()` left it
+— so every recording was byte-identical across that change (G3). Since
+P2-04 every construct's result is placed at its occurrence: a result made
+during the construct gets SPAN, an earlier value spliced again an AT alias
+(document-model §4.3).
 
 ## 5. The module cache and SyntaxError isolation (D-I11)
 

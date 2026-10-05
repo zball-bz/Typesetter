@@ -34,6 +34,7 @@ struct FenceP {
   StrRef lang = 0;
   Span args{};
   u32 bodyOffset = 0;
+  u32 bodyEnd = 0;
   StrRef lines = 0;
 };
 struct RegionP {

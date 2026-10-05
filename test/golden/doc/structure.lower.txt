@@ -1,4 +1,4 @@
-lower v1 abi 3c18dc46 docEnd 482 holes 0 module none
+lower v1 abi 7f64f38d docEnd 482 holes 0 module none
 block 0 content [0,19)
   CALL heading [0,19) level=1 label=null
     TEXT "Typesetting Notes" [2,19)
@@ -43,4 +43,4 @@ block 5 content [336,430)
 block 6 content [432,435)
   CALL rule [432,435)
 block 7 content [437,481) async
-  FENCE async "js" body="const x = compute(1, 2);\nreturn x;" at=443 lines=null [437,481)
+  FENCE async "js" body="const x = compute(1, 2);\nreturn x;" at=[443,477) lines=null [437,481)

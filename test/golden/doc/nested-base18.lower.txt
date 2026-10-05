@@ -1,4 +1,4 @@
-lower v1 abi 3c18dc46 docEnd 214 holes 0 module none
+lower v1 abi 7f64f38d docEnd 214 holes 0 module none
 block 0 content [0,70)
   CALL para [0,70)
     TEXT "Nested containers at a 18px base (vertical algebra guard, plan P0-01)." [0,70)
@@ -10,7 +10,7 @@ block 1 content [72,213) async
       CALL quote [87,132)
         CALL para [89,132)
           TEXT "A quote inside the item with two lines." [89,132)
-      FENCE async "js" body="nested(code);" at=144 lines=[144] [136,163)
+      FENCE async "js" body="nested(code);" at=[144,157) lines=[144] [136,163)
       CALL list [166,195) ordered=false start=1
         CALL item [166,195)
           CALL para [168,178)

@@ -5,11 +5,11 @@
 <div class="tsr-line" data-s="0" data-e="135" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">gins roughly one hundred pixels above the</span></div>
 <div class="tsr-line" data-s="0" data-e="135" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">sheet bottom.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="243" style="position:relative;height:0px;margin-bottom:19.2px">
-<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-box" src="photos/box.png" alt="box" style="top:0px;left:180px;width:120px;height:120px">
-<div class="tsr-line" data-s="0" data-e="28" data-join="space" data-ragged="1" data-cell="1" style="top:120px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">Right</span></div>
-<div class="tsr-line" data-s="0" data-e="28" data-join="space" data-ragged="1" data-cell="1" style="top:144px;left:180px;width:120px"><span class="tsr-r" data-s="0">float near the</span></div>
-<div class="tsr-line" data-s="0" data-e="28" data-ragged="1" data-cell="1" style="top:168px;left:180px;width:120px"><span class="tsr-r" data-s="0">bottom.</span></div>
+<div class="tsr-para" data-pid="1" data-s0="137" style="position:relative;height:0px;margin-bottom:19.2px">
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-box" data-s="0" data-e="143" src="photos/box.png" alt="box" style="top:0px;left:180px;width:120px;height:120px">
+<div class="tsr-line" data-s="0" data-e="143" data-join="space" data-ragged="1" data-cell="1" style="top:120px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk" data-s="0">图</span><span class="tsr-r tsr-b" data-s="0"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="0">：</span><span class="tsr-r" data-s="106">Right</span></div>
+<div class="tsr-line" data-s="106" data-e="134" data-join="space" data-ragged="1" data-cell="1" style="top:144px;left:180px;width:120px"><span class="tsr-r" data-s="106">float near the</span></div>
+<div class="tsr-line" data-s="106" data-e="134" data-ragged="1" data-cell="1" style="top:168px;left:180px;width:120px"><span class="tsr-r" data-s="106">bottom.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="282" style="position:relative;height:144px">
 <div class="tsr-line" data-s="0" data-e="115" data-join="none" style="top:0px;left:0px;width:164px;word-spacing:8px"><span class="tsr-r" data-s="0">Text that wraps be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>

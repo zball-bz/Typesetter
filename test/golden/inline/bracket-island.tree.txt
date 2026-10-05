@@ -11,23 +11,23 @@ doc @[0,582) [base]
       mathinline @[95,102) [base] src="[0,1)"
     text @[107,119) [base] str=" is one link."
   para @[121,184) [base]
-    styled @[0,0) [BOLD]
-      seq @[0,0) [BOLD]
+    styled @[121,145) [BOLD]
+      seq @[121,145) [BOLD]
         text @[129,133) [BOLD] str="code "
         code @[134,139) [BOLD]
-          text @[0,0) [BOLD] str="a]b"
+          text @[134,139) [BOLD] str="a]b"
         text @[140,144) [BOLD] str=" here"
     text @[146,184) [base] str=" and the body ends after the code span."
   para @[186,278) [base]
     text @[186,211) [base] str="Code spans by run length: "
     code @[212,219) [base]
-      text @[0,0) [base] str="a`b"
+      text @[212,219) [base] str="a`b"
     text @[219,220) [base] str=", "
     code @[221,233) [base]
-      text @[0,0) [base] str="`tick`"
+      text @[221,233) [base] str="`tick`"
     text @[234,237) [base] str=" and "
     code @[238,243) [base]
-      text @[0,0) [base] str="x"
+      text @[238,243) [base] str="x"
     text @[243,278) [base] str="; an unclosed `` run stays literal."
   para @[280,345) [base]
     text @[280,306) [base] str="Pairs skip stray brackets: "
@@ -48,7 +48,7 @@ doc @[0,582) [base]
     link @[445,458) [base] url="u"
       text @[446,454) [base] str="price $5"
     text @[459,462) [base] str=" and "
-    styled @[0,0) [BOLD]
+    styled @[463,479) [BOLD]
       text @[471,478) [BOLD] str="cost $3"
     text @[480,484) [base] str=" then "
     mathinline @[485,488) [base] src="x"

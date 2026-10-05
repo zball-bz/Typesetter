@@ -6,5 +6,5 @@ top pid=1 leaves=1
     paragraph para unit=0 @[216,429)
 top pid=2 leaves=1
   stack root gap=1/1 @[431,570)
-    stack group @[0,0)
-      paragraph para unit=0 @[0,0)
+    stack group @[431,570)
+      paragraph para unit=0 @[431,570)

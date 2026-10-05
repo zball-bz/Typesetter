@@ -73,7 +73,7 @@ top pid=2 units=1
   glue word w=257su x=1 cap=257su src r4 @[147,150)
   box Other "and" w=1537su r4 @[147,150)
   glue word w=257su x=1 cap=257su kern="d 3" src r4 @[147,150)
-  box Other "3" w=513su r4 @[0,0)
+  box Other "3" w=513su r4 @[151,162)
   glue word w=257su x=1 cap=257su kern="3 e" src r4 @[163,167)
   box Other "end." w=2049su r4 @[163,167)
   obj o0 math parts=2 edges=Alpha/Alpha src="c +\nd" [w=1499su asc=600su desc=76su] [w=617su asc=700su desc=19su glue=228su]

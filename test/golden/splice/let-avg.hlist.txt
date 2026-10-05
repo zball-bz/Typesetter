@@ -6,7 +6,7 @@ top pid=0 units=1
   glue word w=257su x=1 cap=257su kern="n i" src r0 @[28,39)
   box Other "is" w=1025su r0 @[28,39)
   glue word w=257su x=1 cap=257su kern="s 4" src r0 @[28,39)
-  box Other "4" w=513su r0 @[0,0)
+  box Other "4" w=513su r0 @[40,49)
   box Other "," w=513su r0 @[49,59)
   glue word w=257su x=1 cap=257su kern=", c" src r0 @[49,59)
   box Other "com" w=1537su r0 @[49,59)

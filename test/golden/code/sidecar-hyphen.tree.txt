@@ -2,8 +2,8 @@ doc @[0,193) [base]
   para @[0,74) [base]
     text @[0,74) [base] str="A sidecar note narrow enough to hyphenate keeps its hyphen at the row end."
   codeblock @[76,193) [base] lang="js" sidecar="///"
-    text @[0,0) [base] str="let total = 0;\ntotal += 1;"
-    group @[0,0) [base] role="sidecar-lines"
-      seq @[0,0) [base]
-        text @[0,0) [base] str="accumulates the incomprehensibilities of everything measured"
-      seq @[0,0) [base]
+    text @[98,189) [base] str="let total = 0;\ntotal += 1;"
+    group @[98,189) [base] role="sidecar-lines"
+      seq @[98,189) [base]
+        text @[98,189) [base] str="accumulates the incomprehensibilities of everything measured"
+      seq @[98,189) [base]

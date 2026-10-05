@@ -188,7 +188,7 @@ top pid=7 units=1
   hyphen bw=513su pen=0.70 @[390,416)
   word "ment:" w=2561su pen=INF @[390,416)
   space w=257su stretch=1 @[390,416)
-  word "2" w=513su pen=INF @[0,0)
+  word "2" w=513su pen=INF @[417,419)
   word "." w=513su pen=INF @[419,420)
 top pid=8 units=1
  unit text indent=0su
@@ -202,7 +202,7 @@ top pid=8 units=1
   space w=257su stretch=1 @[436,454)
   word "block:" w=3073su pen=INF @[436,454)
   space w=257su stretch=1 @[436,454)
-  word "3" w=513su pen=INF @[0,0)
+  word "3" w=513su pen=INF @[455,457)
   word "." w=513su pen=INF @[457,458)
 top pid=9 units=2
  unit text indent=1536su marker="1."

@@ -185,7 +185,17 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     fence: S.fence,
     val: std.val,
     emit: (n) => { for (const x of S.toContent(n)) ob.emitNode(x); },
-    at: (n, s, e) => { if (isNode(n)) ob.span(n, s, e); return n; },
+    // a construct's result at its occurrence (plan P2-04): made during the
+    // construct (id ≥ fresh) → SPAN unless it has one; an earlier value
+    // spliced here → an AT alias
+    at: (n, s, e, fresh) => {
+      if (!isNode(n)) return n;
+      if (n.opId >= fresh) {
+        if (!ob.spans.has(n.opId)) ob.span(n, s, e);
+        return n;
+      }
+      return ob.at(n, s, e);
+    },
     height: () => styleStack.length,
     setCurrent: (i) => { current = i; },
     failBlock: (err, h, i) => errorAt(i, ...failure(err, h)),

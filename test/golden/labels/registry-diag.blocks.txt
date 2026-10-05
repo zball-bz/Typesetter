@@ -16,21 +16,21 @@ top pid=1 units=1
   word "bel." w=2049su pen=INF @[43,65)
 top pid=2 units=1
  unit text indent=0su anchor="fig-x" centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
-  space w=257su stretch=1 BOLD @[0,0)
-  word "1" w=513su pen=INF BOLD @[0,0)
-  punct-close "：" w=512su BOLD @[0,0)
-  punct-sp w=512su BOLD @[0,0)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[75,122)
+  space w=257su stretch=1 BOLD @[75,122)
+  word "1" w=513su pen=INF BOLD @[75,122)
+  punct-close "：" w=512su BOLD @[75,122)
+  punct-sp w=512su BOLD @[75,122)
   word "First" w=2561su pen=INF @[100,113)
   space w=257su stretch=1 @[100,113)
   word "figure." w=3585su pen=INF @[100,113)
 top pid=3 units=1
  unit text indent=0su centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
-  space w=257su stretch=1 BOLD @[0,0)
-  word "2" w=513su pen=INF BOLD @[0,0)
-  punct-close "：" w=512su BOLD @[0,0)
-  punct-sp w=512su BOLD @[0,0)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[124,202)
+  space w=257su stretch=1 BOLD @[124,202)
+  word "2" w=513su pen=INF BOLD @[124,202)
+  punct-close "：" w=512su BOLD @[124,202)
+  punct-sp w=512su BOLD @[124,202)
   word "Second" w=3073su pen=INF @[149,193)
   space w=257su stretch=1 @[149,193)
   word "figure" w=3073su pen=INF @[149,193)
@@ -52,11 +52,11 @@ top pid=5 units=1
  unit math indent=0su w=2457su asc=700su desc=19su
 top pid=6 units=1
  unit text indent=0su centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
-  space w=257su stretch=1 BOLD @[0,0)
-  word "3" w=513su pen=INF BOLD @[0,0)
-  punct-close "：" w=512su BOLD @[0,0)
-  punct-sp w=512su BOLD @[0,0)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[240,311)
+  space w=257su stretch=1 BOLD @[240,311)
+  word "3" w=513su pen=INF BOLD @[240,311)
+  punct-close "：" w=512su BOLD @[240,311)
+  punct-sp w=512su BOLD @[240,311)
   word "A" w=513su pen=INF @[265,302)
   space w=257su stretch=1 @[265,302)
   word "figure" w=3073su pen=INF @[265,302)

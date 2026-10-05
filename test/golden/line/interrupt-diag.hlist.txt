@@ -195,7 +195,7 @@ top pid=7 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="em" r0 @[390,416)
   box Other "ment:" w=2561su r0 @[390,416)
   glue word w=257su x=1 cap=257su kern=": 2" src r0 @[390,416)
-  box Other "2" w=513su r0 @[0,0)
+  box Other "2" w=513su r0 @[417,419)
   box Other "." w=513su r0 @[419,420)
   run r0 plain
 top pid=8 units=1
@@ -210,7 +210,7 @@ top pid=8 units=1
   glue word w=257su x=1 cap=257su kern="a b" src r0 @[436,454)
   box Other "block:" w=3073su r0 @[436,454)
   glue word w=257su x=1 cap=257su kern=": 3" src r0 @[436,454)
-  box Other "3" w=513su r0 @[0,0)
+  box Other "3" w=513su r0 @[455,457)
   box Other "." w=513su r0 @[457,458)
   run r0 plain
 top pid=9 units=2

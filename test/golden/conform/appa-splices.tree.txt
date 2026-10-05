@@ -1,22 +1,22 @@
 doc @[60,438) [base]
   para @[60,176) [base]
     text @[60,73) [base] str="Value splice: "
-    text @[0,0) [base] str="world"
+    text @[74,78) [base] str="world"
     text @[79,96) [base] str=" and a call chain: "
-    text @[0,0) [base] str="Hello, tsm"
+    text @[97,110) [base] str="Hello, tsm"
     text @[110,126) [base] str=". Member access: "
-    text @[0,0) [base] str="5"
+    text @[127,138) [base] str="5"
     text @[139,162) [base] str=" characters; expression: "
-    text @[0,0) [base] str="7"
+    text @[163,175) [base] str="7"
     text @[175,176) [base] str="."
   para @[201,438) [base]
     text @[201,242) [base] str="Statement splice binds in document scope: "
-    text @[0,0) [base] str="42"
+    text @[243,250) [base] str="42"
     text @[250,281) [base] str=". A splice ends at punctuation: "
-    text @[0,0) [base] str="world"
+    text @[282,286) [base] str="world"
     text @[286,309) [base] str=". Semicolon terminator: "
-    text @[0,0) [base] str="world"
+    text @[310,315) [base] str="world"
     text @[315,383) [base] str="[not an argument]. Content argument desugars to a trailing argument: "
-    styled @[0,0) [BOLD]
+    styled @[384,402) [BOLD]
       text @[392,401) [BOLD] str="bold text"
     text @[402,438) [base] str=". Literal hash: #who stays literal."

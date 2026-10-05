@@ -1,7 +1,7 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="0" data-e="8" id="tsr-sec-a">Labels</h1>
 <div data-role="aside" data-pid="1" data-s="18" data-e="73" id="tsr-side-1">
-<p>An aside with a label.</p>
+<p data-s="18" data-e="73">An aside with a label.</p>
 </div>
 <figure data-pid="2" data-s="75" data-e="122" id="tsr-fig-x">
 <figcaption><strong>图 1：</strong>First figure.</figcaption>

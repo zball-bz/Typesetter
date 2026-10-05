@@ -1,14 +1,14 @@
-lower v1 abi 3c18dc46 docEnd 286 holes 0 module none
+lower v1 abi 7f64f38d docEnd 286 holes 0 module none
 block 0 content [0,54)
   CALL para [0,54)
     TEXT "Four backticks fence the corpus edge cases from Typst:" [0,54)
 block 1 content [56,88) async
-  FENCE async "" body="```backticks inside```" at=61 lines=null [56,88)
+  FENCE async "" body="```backticks inside```" at=[61,83) lines=null [56,88)
 block 2 content [90,160)
   CALL para [90,160)
     TEXT "An indented opener dedents its content and accepts an indented closer:" [90,160)
 block 3 content [165,278) async
-  FENCE async "js" body="const kept = \"indent stripped to the opener column\";\n  const deeper = \"extra indent survives\";" at=174 lines=null [165,278)
+  FENCE async "js" body="const kept = \"indent stripped to the opener column\";\n  const deeper = \"extra indent survives\";" at=[174,271) lines=null [165,278)
 block 4 content [280,285)
   CALL para [280,285)
     TEXT "Done." [280,285)

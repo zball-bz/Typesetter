@@ -8,7 +8,7 @@ top pid=0 units=1
   glue word w=257su x=1 cap=257su kern="e i" src r0 @[12,24)
   box Other "is" w=1025su r0 @[12,24)
   glue word w=257su x=1 cap=257su kern="s 4" src r0 @[12,24)
-  box Other "42" w=1025su r0 @[0,0)
+  box Other "42" w=1025su r0 @[25,27)
   box Other "." w=513su r0 @[27,50)
   glue word w=257su x=1 cap=257su kern=". N" src r0 @[27,50)
   box Other "Next" w=2049su r0 @[27,50)

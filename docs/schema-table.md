@@ -1,7 +1,7 @@
 <!-- GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit. -->
 # Ops vocabulary (generated)
 
-The kind table of document-model §2.1, generated from `engine/schema/schema.json`. Ops version 7, min compat 6.
+The kind table of document-model §2.1, generated from `engine/schema/schema.json`. Ops version 8, min compat 6.
 
 | id | kind | level | body | inline | attributes (writer order: domain) | constructor |
 |---|---|---|---|---|---|---|
@@ -45,3 +45,4 @@ Derived constructors (`stdlib.ctors`): `strong({options}, …)`, `em({options}, 
 | STYLE_POP_TO | 5 |
 | SPAN | 6 |
 | DIAG | 7 |
+| AT | 8 |

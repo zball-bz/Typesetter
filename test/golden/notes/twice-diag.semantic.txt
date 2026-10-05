@@ -1,12 +1,12 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="51">A note.<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> Another.<a href="#tsr-fn-2" id="tsr-fnref-2"><sup>2</sup></a></p>
-<div data-role="notes" data-pid="1">
-<hr>
-<ol>
+<div data-role="notes" data-pid="1" data-s="53" data-e="61">
+<hr data-s="53" data-e="61">
+<ol data-s="53" data-e="61">
 <li id="tsr-fn-1">Body of the note. <a href="#tsr-fnref-1">↩</a></li>
 <li id="tsr-fn-2">Second body. <a href="#tsr-fnref-2">↩</a></li>
 </ol>
 </div>
-<div data-role="notes" data-pid="2">
+<div data-role="notes" data-pid="2" data-s="63" data-e="71">
 </div>
 </div>

@@ -4,7 +4,7 @@
 <li>First item before the float.</li>
 <li><p data-s="95" data-e="130">Second item holds a floated figure.</p>
 <figure data-s="134" data-e="276" id="tsr-fig-icon">
-<img src="photos/icon.png" alt="icon" style="max-width:100%">
+<img data-s="134" data-e="276" src="photos/icon.png" alt="icon" style="max-width:100%">
 <figcaption><strong>图 1：</strong>A small floated icon.</figcaption>
 </figure>
 <p data-s="280" data-e="419">The item text continues beside the float and should narrow around it for a few lines before returning to the full measure of the list body.</p>

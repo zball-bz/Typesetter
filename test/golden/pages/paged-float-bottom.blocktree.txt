@@ -4,7 +4,7 @@ top pid=0 leaves=1
 top pid=1 leaves=1
   stack root gap=1/1 @[137,280)
     stack figure anchor="fig-box" @[137,280)
-      replaced image float unit=0 float=right carry="fig-box" @[0,0)
+      replaced image float unit=0 float=right carry="fig-box" @[137,280)
 top pid=2 leaves=1
   stack root gap=1/1 @[282,397)
     paragraph para unit=0 @[282,397)

@@ -1,28 +1,28 @@
 doc @[0,125) [base]
   table @[0,125) [base] cols=5
-    trow @[0,0) [base]
-      tcell @[0,0) [base]
+    trow @[0,125) [base]
+      tcell @[0,125) [base]
         text @[17,22) [base] str="Types"
-      tcell @[0,0) [base]
-        seq @[0,0) [base]
-      tcell @[0,0) [base]
+      tcell @[0,125) [base]
+        seq @[0,125) [base]
+      tcell @[0,125) [base]
         text @[28,33) [base] str="Logic"
-      tcell @[0,0) [base]
+      tcell @[0,125) [base]
         text @[36,40) [base] str="Sets"
-      tcell @[0,0) [base]
+      tcell @[0,125) [base]
         text @[43,51) [base] str="Homotopy"
-    trow @[0,0) [base]
-      tcell @[0,0) [base]
+    trow @[0,125) [base]
+      tcell @[0,125) [base]
         mathinline @[52,60) [base] src="Id_(A)"
-      tcell @[0,0) [base]
-        seq @[0,0) [base]
-      tcell @[0,0) [base]
-        seq @[0,0) [base]
+      tcell @[0,125) [base]
+        seq @[0,125) [base]
+      tcell @[0,125) [base]
+        seq @[0,125) [base]
           text @[66,74) [base] str="equality "
           mathinline @[75,78) [base] src="="
-      tcell @[0,0) [base]
+      tcell @[0,125) [base]
         mathinline @[81,98) [base] src="(x,x) | x ∈ A"
-      tcell @[0,0) [base]
-        seq @[0,0) [base]
+      tcell @[0,125) [base]
+        seq @[0,125) [base]
           text @[101,111) [base] str="path space "
           mathinline @[112,117) [base] src="A^I"

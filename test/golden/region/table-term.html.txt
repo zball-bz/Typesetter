@@ -9,7 +9,7 @@
 <div class="tsr-line" data-s="7" data-e="11" data-cell="1" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="7">Note</span></div>
 <div class="tsr-rule" style="top:33.594px;left:0px;width:300px"></div>
 <div class="tsr-line" data-s="12" data-e="16" data-cell="1" style="top:38.391px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="12">Gear</span></div>
-<div class="tsr-line" id="tsr-gizmo" data-s="32" data-e="57" data-cell="1" style="top:38.391px;left:156.406px;width:137.188px;word-spacing:-0.103px"><span class="tsr-r tsr-b">gizmo</span><span class="tsr-r"> — a small me</span><span class="tsr-r" data-s="32" data-syn="hyphen">-</span></div>
+<div class="tsr-line" id="tsr-gizmo" data-s="19" data-e="58" data-cell="1" style="top:38.391px;left:156.406px;width:137.188px;word-spacing:-0.103px"><span class="tsr-r tsr-b" data-s="19">gizmo</span><span class="tsr-r" data-s="19"> — a small me</span><span class="tsr-r" data-s="32" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="32" data-e="69" data-cell="1" style="top:62.391px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="32">chanical device in</span></div>
 <div class="tsr-line" data-s="59" data-e="69" data-cell="1" style="top:86.391px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="59">the box</span></div>
 <div class="tsr-rule" style="top:115.188px;left:0px;width:300px"></div>

@@ -40,6 +40,6 @@ top pid=3 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[50,56)
   box Other "ter:" w=2049su r0 @[50,56)
   glue word w=257su x=1 cap=257su kern=": f" src r0 @[50,56)
-  box Other "fine" w=2049su r0 @[0,0)
+  box Other "fine" w=2049su r0 @[57,60)
   box Other "." w=513su r0 @[60,61)
   run r0 plain

@@ -81,12 +81,12 @@ top pid=0 units=1
 top pid=1 units=1
  unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4 float=right
   cell 0
-   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[110,236)
    pen 0 r0
-   glue word w=257su x=1 cap=257su src r1 @[0,0)
-   box Other "1" w=513su r1 @[0,0)
-   box ColonW "：" w=512su blank=R r2 @[0,0)
-   glue blank w=512su x=0 cap=0su r2 @[0,0)
+   glue word w=257su x=1 cap=257su src r1 @[110,236)
+   box Other "1" w=513su r1 @[110,236)
+   box ColonW "：" w=512su blank=R r2 @[110,236)
+   glue blank w=512su x=0 cap=0su r2 @[110,236)
    box Ideo "第" w=1025su wt=0.6 cap=102su r3 @[212,227)
    glue inter w=0su x=0.6 cap=102su r3 @[212,227)
    box Ideo "一" w=1025su wt=0.6 cap=102su r3 @[212,227)
@@ -106,12 +106,12 @@ top pid=1 units=1
 top pid=2 units=1
  unit img indent=0su anchor="fig-b" intrinsic=400x200px scale=0.4 float=right
   cell 0
-   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[0,0)
+   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[238,385)
    pen 0 r0
-   glue word w=257su x=1 cap=257su src r1 @[0,0)
-   box Other "2" w=513su r1 @[0,0)
-   box ColonW "：" w=512su blank=R r2 @[0,0)
-   glue blank w=512su x=0 cap=0su r2 @[0,0)
+   glue word w=257su x=1 cap=257su src r1 @[238,385)
+   box Other "2" w=513su r1 @[238,385)
+   box ColonW "：" w=512su blank=R r2 @[238,385)
+   glue blank w=512su x=0 cap=0su r2 @[238,385)
    box Ideo "第" w=1025su wt=0.6 cap=102su r3 @[340,376)
    glue inter w=0su x=0.6 cap=102su r3 @[340,376)
    box Ideo "二" w=1025su wt=0.6 cap=102su r3 @[340,376)

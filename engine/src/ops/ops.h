@@ -48,9 +48,13 @@ struct ArgVal {
   u32 ref = 0;      // Str: StrRef (raw-buffer index); Node: node id
 };
 
+constexpr u32 kNoAlias = 0xFFFFFFFFu;
+
 struct RawNode {
   Kind kind;
   Span span;                 // set by SPAN ops; default empty (synthetic)
+  u32 alias = kNoAlias;      // AT (plan P2-04): an occurrence of node `alias`,
+                             // instantiated with this node's span at its root
   StrRef str = 0;            // MAKE_TEXT payload (raw-buffer string index)
   bool isText = false;
   std::vector<ArgVal> args;

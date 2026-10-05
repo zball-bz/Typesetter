@@ -1,0 +1,19 @@
+lower v1 abi 7f64f38d docEnd 74 holes 4 module 01f99f88caacbaf7
+piece 0 hole 0 js [133,163)
+piece 1 hole 1 js [165,174)
+piece 2 hole 2 js [176,185)
+piece 3 hole 3 js [187,196)
+block 0 stmt [0,19) user framed holes 0..1
+  STMT 0
+block 1 content [21,49) user framed holes 1..3
+  CALL para [21,49)
+    TEXT "First " [21,26)
+    HOLE 1 [27,29)
+    TEXT " here, and " [30,39)
+    HOLE 2 [40,42)
+    TEXT " again." [43,49)
+block 2 content [51,73) user framed holes 3..4
+  CALL para [51,73)
+    TEXT "A later paragraph: " [51,69)
+    HOLE 3 [70,72)
+    TEXT "." [72,73)

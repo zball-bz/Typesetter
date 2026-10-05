@@ -15,7 +15,7 @@ top pid=1 leaves=2
 top pid=2 leaves=2
   stack root gap=1/1 @[167,232)
     stack group @[167,232)
-      paragraph para unit=0 @[0,0)
+      paragraph para unit=0 @[167,232)
       paragraph error unit=1 ragged @[196,224)
 top pid=3 leaves=1
   stack root gap=1/1 @[234,240)

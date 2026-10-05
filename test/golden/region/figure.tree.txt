@@ -2,14 +2,14 @@ doc @[0,243) [base]
   heading @[0,9) [base] level=1 label="top"
     text @[2,9) [base] str="Regions"
   group @[17,112) [base] role="figure" label="fig1"
-    para @[0,0) [base]
-      text @[0,0) [BOLD] str="图 1："
+    para @[17,112) [base]
+      text @[17,112) [BOLD] str="图 1："
       text @[41,67) [base] str="A pretend figure body line"
-      text @[0,0) [base] str=" "
+      text @[17,112) [base] str=" "
       text @[68,103) [base] str="continuing on a second source line."
   group @[114,197) [base] role="aside"
-    para @[0,0) [base]
-      seq @[0,0) [base]
+    para @[114,197) [base]
+      seq @[114,197) [base]
         text @[122,136) [base] str="Side note with "
         styled @[137,147) [BOLD]
           text @[138,146) [BOLD] str="emphasis"

@@ -68,11 +68,11 @@ top pid=0 units=1
 top pid=1 units=1
  unit img indent=0su anchor="fig-box" intrinsic=300x300px scale=0.4 float=right
   cell 0
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[0,0)
-  space w=257su stretch=1 BOLD @[0,0)
-  word "1" w=513su pen=INF BOLD @[0,0)
-  punct-close "：" w=512su BOLD @[0,0)
-  punct-sp w=512su BOLD @[0,0)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[137,280)
+  space w=257su stretch=1 BOLD @[137,280)
+  word "1" w=513su pen=INF BOLD @[137,280)
+  punct-close "：" w=512su BOLD @[137,280)
+  punct-sp w=512su BOLD @[137,280)
   word "Right" w=2561su pen=INF @[243,271)
   space w=257su stretch=1 @[243,271)
   word "float" w=2561su pen=INF @[243,271)

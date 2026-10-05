@@ -4,11 +4,11 @@ top pid=0 leaves=1
 top pid=1 leaves=1
   stack root gap=1/1 @[17,112)
     stack figure anchor="fig1" @[17,112)
-      paragraph caption unit=0 centered nohyphen carry="fig1" @[0,0)
+      paragraph caption unit=0 centered nohyphen carry="fig1" @[17,112)
 top pid=2 leaves=3
   stack root gap=1/1 @[114,197)
     stack group @[114,197)
-      paragraph para unit=0 @[0,0)
+      paragraph para unit=0 @[114,197)
       stack list pad=1536su gap=1/3 @[155,189)
         stack item x=1536su @[155,172)
           paragraph para unit=1 x=1536su marker="•" @[157,172)
