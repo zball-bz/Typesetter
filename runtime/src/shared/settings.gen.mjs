@@ -26,7 +26,8 @@ export const SETTINGS = Object.freeze({
     "def": "zh-CN",
     "prec": "HostDefault",
     "affects": [
-      "Resolve"
+      "Resolve",
+      "Paint"
     ]
   },
   "doc.baseSize": {
@@ -84,7 +85,8 @@ export const SETTINGS = Object.freeze({
     "def": "\"Crimson Text\", Georgia, serif",
     "prec": "HostDefault",
     "affects": [
-      "Measure"
+      "Measure",
+      "Paint"
     ]
   },
   "fonts.cjk": {
@@ -92,7 +94,8 @@ export const SETTINGS = Object.freeze({
     "def": "\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif",
     "prec": "HostDefault",
     "affects": [
-      "Measure"
+      "Measure",
+      "Paint"
     ]
   },
   "fonts.mono": {
@@ -100,7 +103,17 @@ export const SETTINGS = Object.freeze({
     "def": "monospace",
     "prec": "HostDefault",
     "affects": [
-      "Measure"
+      "Measure",
+      "Paint"
+    ]
+  },
+  "fonts.monoCjk": {
+    "dom": "font",
+    "def": "",
+    "prec": "HostDefault",
+    "affects": [
+      "Measure",
+      "Paint"
     ]
   },
   "par.indent": {
@@ -331,7 +344,8 @@ export const SETTINGS_DEFAULTS = Object.freeze({
   "fonts": {
     "body": "\"Crimson Text\", Georgia, serif",
     "cjk": "\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif",
-    "mono": "monospace"
+    "mono": "monospace",
+    "monoCjk": ""
   },
   "par": {
     "indent": 0

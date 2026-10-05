@@ -51,7 +51,30 @@ differential test against the WASM build in gate G4). A value outside its
 domain is dropped with an `ops-arg` warning; CSS injection
 (`red;letter-spacing:9px`) cannot reach a style attribute.
 
-## 3. Not yet
+## 3. Faces (plan P1-04)
+
+Widths are measured in a **face** — `FaceKey {family (resolved list), px size,
+weight, italic}` (`engine/src/measure/face.h`) — and the metric store keys on
+`(string, FaceId)`. A style resolves to its face once (`FaceTable::faceOf`,
+memoised): styles that differ in paint only (color, link, decoration, lang)
+share a face and therefore their metrics. Measurement requests are per face
+(the request's `id` is a FaceId).
+
+Family resolution: an explicit `text.font` wins; otherwise the role (mono for
+code runs, body otherwise — run roles select it from P2-08) and the script:
+Latin → `role.latin`; CJK → `role.cjk` → `body.cjk` → `role.latin` (CJK glyphs
+never fall into a Latin face). Settings: `fonts.body`, `fonts.cjk`,
+`fonts.mono`, `fonts.monoCjk`. CJK italic is measured upright, as it is
+painted (upright with emphasis marks).
+
+The typeset root carries what was measured: `<div class="tsr-doc" lang
+style="--tsr-font-body;--tsr-font-cjk;--tsr-font-mono;--tsr-font-mono-cjk;font-size">`,
+all resolved engine-side; the CSS contract paints `.tsr-doc`, `.tsr-cjk`,
+`.tsr-code` and `.tsr-code.tsr-cjk` from these variables, so measurement and
+paint name the same family. `lang` is not part of the face: the residual
+'locl'/generic-fallback exposure (document-model §3) remains documented.
+
+## 4. Not yet
 
 The cascade, block/extent properties, document properties and the settings
 codec arrive with plan P1-03 (settings), P3-01 (cascade) and P3-02 (scoped

@@ -51,6 +51,8 @@ struct Doc {
   std::vector<ImageReq> imageReqs;
 
   std::vector<TopBlock> tops;
+  // measurement faces (plan P1-04): the metric key; bound in the constructor
+  FaceTable faces;
   MetricStore metrics;
   // text-font runs inside formulas (math-design.md §10): emit reports the
   // words whose body-font metrics are still missing; they ride the next
@@ -77,6 +79,13 @@ struct Doc {
   std::vector<std::pair<std::string, std::pair<double, double>>> imageAnswers;  // src → w, h
 
   enum class Status { Ok, NeedMeasure };
+
+  Doc() {
+    faces.bind(&cfg, &styles, &strs);
+    metrics.bind(&faces);
+  }
+  Doc(const Doc&) = delete;
+  Doc& operator=(const Doc&) = delete;
 
   // Host settings (plan P1-03): one JSON document, applied in row order;
   // unknown paths and bad values are diagnostics of the Settings slice
@@ -119,7 +128,12 @@ struct Doc {
       if (d.origin == DiagOrigin::Compile) f.diags.items.push_back(d);
     for (StrRef r = 1; r < (StrRef)strs.count(); r++) f.strs.intern(strs.get(r));
     f.styles = styles;
-    if (!(p.affects & stageBit(Stage::Measure))) f.metrics = metrics;
+    if (!(p.affects & stageBit(Stage::Measure))) {  // faces and answers stay valid
+      f.faces = faces;
+      f.faces.bind(&f.cfg, &f.styles, &f.strs);
+      f.metrics = metrics;
+      f.metrics.bind(&f.faces);
+    }
     f.validThrough = (int)Stage::Execute;
     if (!f.ingest((const u8*)opsBytes.data(), opsBytes.size())) return true;
     for (const TokenReq& r : f.tokenReqs) {
@@ -484,11 +498,11 @@ struct Doc {
   MeasureRequest pendingRequests() {
     MeasureRequest r = resolveWidths(tops, metrics, styles, cfg);
     for (const MeasureItem& it : mathTextMissing) {
-      if (!metrics.hasWord(it.str, it.style)) r.words.push_back(it);
-      if (!metrics.hasVmet(it.style)) {
+      if (!metrics.hasFaceWord(it.str, it.face)) r.words.push_back(it);
+      if (!metrics.hasFaceVmet(it.face)) {
         bool have = false;
-        for (StyleId s : r.vmetStyles) have = have || s == it.style;
-        if (!have) r.vmetStyles.push_back(it.style);
+        for (FaceId f : r.vmetFaces) have = have || f == it.face;
+        if (!have) r.vmetFaces.push_back(it.face);
       }
     }
     return r;

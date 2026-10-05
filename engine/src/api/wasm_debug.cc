@@ -12,7 +12,7 @@ std::string debugOut;
 // answers the pending word/vmet requests with the normative mock measurer
 TSR_EXPORT void tsr_debug_mock_measure(WasmDoc* d) {
   Doc& doc = d->doc;
-  mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.styles, doc.cfg);
+  mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces, doc.cfg);
 }
 
 // stage dumps in the golden formats: "breaks", "layout", "html"

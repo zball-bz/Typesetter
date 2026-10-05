@@ -40,6 +40,7 @@ struct Config {
   std::string bodyFont = "\"Crimson Text\", Georgia, serif";  // fonts.body
   std::string cjkFont = "\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif";  // fonts.cjk
   std::string monoFont = "monospace";  // fonts.mono
+  std::string monoCjkFont = "";  // fonts.monoCjk
   double paraIndentEm = 0;  // par.indent
   double listIndentEm = 1.5;  // list.indent
   double quoteIndentEm = 1;  // quote.indent

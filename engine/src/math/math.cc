@@ -584,7 +584,7 @@ struct Layouter {
     StyleId sid = text->styles->idOf(sty);
     StrRef ref = text->strs->intern(txt);
     if (!text->metrics->hasWord(ref, sid) || !text->metrics->hasVmet(sid)) {
-      if (text->missing) text->missing->push_back({ref, sid});
+      if (text->missing) text->missing->push_back({ref, text->metrics->faceOf(sid)});
       return false;
     }
     const WordMet& wm = text->metrics->word(ref, sid);

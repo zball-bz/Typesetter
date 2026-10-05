@@ -336,7 +336,7 @@ const rowCase = ([n, r], k) => {
     const vd = rest[0];
     body = `if (v.t != JsonValue::T::Obj) return type(why, "an object of strings");\n      std::map<std::string, std::string> mm;\n` +
       `      for (size_t mi = 0; mi < v.keys.size(); mi++) {\n        const JsonValue& mv = v.vals[mi];\n        if (mv.t != JsonValue::T::Str${vd ? ` || !matchDomain(TextDomain::${domEnum(vd)}, mv.str)` : ''}) return type(why, "${vd ?? 'string'} values");\n        mm[v.keys[mi]] = mv.str;\n      }\n      ${f} = std::move(mm);`;
-  } else if (textDomains.includes(dom)) body = `if (v.t != JsonValue::T::Str || !matchDomain(TextDomain::${domEnum(dom)}, v.str)) return type(why, "${dom}");\n      ${f} = v.str;`;
+  } else if (textDomains.includes(dom)) body = `if (v.t != JsonValue::T::Str || (${r.optional ? '!v.str.empty() && ' : ''}!matchDomain(TextDomain::${domEnum(dom)}, v.str))) return type(why, "${dom}${r.optional ? ' or empty' : ''}");\n      ${f} = v.str;`;
   else if (dom === 'str') body = `if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");\n      ${f} = v.str;`;
   else { console.error(`gen-schema: settings.${n}: unknown domain ${r.dom}`); process.exit(1); }
   if (r.apply) body += `\n      ${r.apply}(c, ${f});`;

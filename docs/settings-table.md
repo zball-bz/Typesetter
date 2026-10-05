@@ -7,15 +7,16 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 |---|---|---|---|---|---|
 | `host.width` | num:1:100000 | `300` | HostOnly | Emit, Break, Layout, Paint | `widthPx` |
 | `host.epsilonSu` | num:0:64 | `1` | HostOnly | Emit, Measure |  |
-| `doc.lang` | lang | `"zh-CN"` | HostDefault | Resolve | `lang` |
+| `doc.lang` | lang | `"zh-CN"` | HostDefault | Resolve, Paint | `lang` |
 | `doc.baseSize` | num:4:96 | `18` | HostDefault | Emit, Measure, Break, Layout, Paint | `baseSizePx` |
 | `doc.leading` | num:0.5:4 | `1.5` | HostDefault | Emit, Break, Layout, Paint | `lineHeight` |
 | `doc.parGap` | num:0:10 | `1.2` | HostDefault | Break, Layout, Paint |  |
 | `doc.cjkJustify` | num:0:4 | `0.6` | HostDefault | Emit, Layout |  |
 | `doc.cjkGlue` | num:0:1 | `0.1` | HostDefault | Emit |  |
-| `fonts.body` | font | `"\"Crimson Text\", Georgia, serif"` | HostDefault | Measure | `fontFamily` |
-| `fonts.cjk` | font | `"\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif"` | HostDefault | Measure | `cjkFontFamily` |
-| `fonts.mono` | font | `"monospace"` | HostDefault | Measure |  |
+| `fonts.body` | font | `"\"Crimson Text\", Georgia, serif"` | HostDefault | Measure, Paint | `fontFamily` |
+| `fonts.cjk` | font | `"\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif"` | HostDefault | Measure, Paint | `cjkFontFamily` |
+| `fonts.mono` | font | `"monospace"` | HostDefault | Measure, Paint |  |
+| `fonts.monoCjk` | font | `""` | HostDefault | Measure, Paint |  |
 | `par.indent` | num:0:20 | `0` | HostDefault | Emit | `paraIndentEm` |
 | `list.indent` | num:0:20 | `1.5` | HostDefault | Emit |  |
 | `quote.indent` | num:0:20 | `1` | HostDefault | Emit |  |

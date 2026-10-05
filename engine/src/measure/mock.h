@@ -19,17 +19,15 @@ inline double mockWordWidthPx(std::string_view word, double sizePx) {
   return em * sizePx;
 }
 
-inline void mockProvide(const MeasureRequest& req, MetricStore& store,
-                        const Interner& strs, const StyleTable& styles,
-                        const Config& cfg) {
-  for (StyleId st : req.vmetStyles) {
-    StyleDesc d = describeStyle(cfg, styles.get(st), strs);
-    store.provideVmet(st, 0.8 * d.sizePx, 0.2 * d.sizePx);
+// widths and vertical metrics depend only on the face's px size
+inline void mockProvide(const MeasureRequest& req, MetricStore& store, const Interner& strs,
+                        const FaceTable& faces, const Config& cfg) {
+  for (FaceId f : req.vmetFaces) {
+    double px = faces.get(f).sizePx;
+    store.provideVmet(f, 0.8 * px, 0.2 * px);
   }
-  for (const MeasureItem& it : req.words) {
-    StyleDesc d = describeStyle(cfg, styles.get(it.style), strs);
-    store.provideWord(it.str, it.style, mockWordWidthPx(strs.get(it.str), d.sizePx), cfg);
-  }
+  for (const MeasureItem& it : req.words)
+    store.provideWord(it.str, it.face, mockWordWidthPx(strs.get(it.str), faces.get(it.face).sizePx), cfg);
 }
 
 }  // namespace tsr

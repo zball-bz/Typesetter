@@ -418,11 +418,12 @@ static void unitHostInputs(const fs::path& root) {
     doc.provideTokens(0, bad, std::size(bad));
     for (size_t i = 1; i < doc.tokenReqs.size(); i++) doc.provideTokens((u32)i, nullptr, 0);
     for (int i = 0; i < 64 && doc.typeset() != Doc::Status::Ok; i++)
-      mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.styles, doc.cfg);
+      mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces, doc.cfg);
     std::string html = doc.render();
     CHECK(html.find("\xE6\xAD\xA3") != std::string::npos);  // 正 survives whole
-    doc.metrics.provideWord(doc.strs.intern("nan"), 0, std::nan(""), doc.cfg);
-    doc.metrics.provideWord(doc.strs.intern("big"), 0, 1e300, doc.cfg);
+    const FaceId f0 = doc.metrics.faceOf(0);
+    doc.metrics.provideWord(doc.strs.intern("nan"), f0, std::nan(""), doc.cfg);
+    doc.metrics.provideWord(doc.strs.intern("big"), f0, 1e300, doc.cfg);
     CHECK(doc.metrics.word(doc.strs.intern("nan"), 0).px == 0);
     CHECK(doc.metrics.word(doc.strs.intern("big"), 0).px == 1e6);
   }
@@ -440,7 +441,7 @@ static void unitHostInputs(const fs::path& root) {
     for (auto& ir : doc.imageReqs) doc.provideImage(ir.id, 1000, 500);
     auto imgW = [&] {
       for (int i = 0; i < 64 && doc.typeset() != Doc::Status::Ok; i++)
-        mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.styles, doc.cfg);
+        mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces, doc.cfg);
       for (const TopBlock& tb : doc.tops)
         for (const FlowUnit& u : tb.units)
           if (u.kind == FlowUnit::K::Image) return suToPx(u.imgW);
@@ -576,6 +577,37 @@ static void unitInstLimits() {
     CHECK(countNodes(doc.tree.root) <= kInstMinBudget + 1024);  // + error placeholders
     if (!chain) printf("unit: exponential DAG instantiated in %.1f ms\n", ms);
   }
+}
+
+// Measurement faces (plan P1-04): paint-only variants share a face (and so
+// their metrics), CJK italic measures upright, mono×CJK resolves through
+// fonts.monoCjk → fonts.cjk.
+static void unitFaces() {
+  Doc doc;
+  Styling base;
+  StyleId plain = doc.styles.idOf(base);
+  Styling red = base;
+  red.color = doc.strs.intern("red");
+  red.bits |= CLS_LINK | CLS_UNDER;
+  CHECK(doc.faces.faceOf(doc.styles.idOf(red)) == doc.faces.faceOf(plain));
+  Styling bold = base;
+  bold.bits |= CLS_BOLD;
+  CHECK(doc.faces.faceOf(doc.styles.idOf(bold)) != doc.faces.faceOf(plain));
+  Styling cjkItalic = base;
+  cjkItalic.bits |= CLS_CJK | CLS_EM;
+  Styling cjk = base;
+  cjk.bits |= CLS_CJK;
+  CHECK(doc.faces.faceOf(doc.styles.idOf(cjkItalic)) == doc.faces.faceOf(doc.styles.idOf(cjk)));
+  Styling monoCjk = base;
+  monoCjk.bits |= CLS_CODE | CLS_CJK;
+  FaceId mc = doc.faces.faceOf(doc.styles.idOf(monoCjk));
+  CHECK(doc.faces.family(mc) == doc.cfg.cjkFont);  // no monoCjk set: body CJK
+  Doc d2;
+  d2.configure(R"({"fonts":{"monoCjk":"\"Sarasa Mono SC\""}})");
+  CHECK(d2.faces.family(d2.faces.faceOf(d2.styles.idOf(monoCjk))) == "\"Sarasa Mono SC\"");
+  // one metric answer serves every style of the face
+  doc.metrics.provideWord(doc.strs.intern("word"), doc.faces.faceOf(plain), 40, doc.cfg);
+  CHECK(doc.metrics.hasWord(doc.strs.intern("word"), doc.styles.idOf(red)));
 }
 
 // The settings codec (plan P1-03): one JSON document, rows applied in
@@ -840,6 +872,7 @@ int main(int argc, char** argv) {
   unitBreakMemo();
   unitBreakItems();
   unitSettings();
+  unitFaces();
   unitBreakSemantics();
 
   if (root.empty()) {

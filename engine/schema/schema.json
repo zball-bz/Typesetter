@@ -210,7 +210,8 @@
       "enum:A|B, str, map); def: default; prec: HostOnly | HostDefault | HostForce | DocOnly (no document layer before P3);",
       "affects: the stages (stages.def) whose products the setting changes — the first one decides whether a patch",
       "applies in place or the document is rebuilt; legacy: the createEngine/tsr_* option it replaces (MD-06).",
-      "Rows apply in this order, so doc.lang (which resets terms.*) precedes terms.*."
+      "Rows apply in this order, so doc.lang (which resets terms.*) precedes terms.*.",
+      "optional: an empty string is accepted (the row is unset and resolution falls through)."
     ],
     "host.width": {
       "field": "widthPx",
@@ -241,7 +242,8 @@
       "def": "zh-CN",
       "prec": "HostDefault",
       "affects": [
-        "Resolve"
+        "Resolve",
+        "Paint"
       ],
       "legacy": "lang",
       "apply": "applyLang"
@@ -309,7 +311,8 @@
       "def": "\"Crimson Text\", Georgia, serif",
       "prec": "HostDefault",
       "affects": [
-        "Measure"
+        "Measure",
+        "Paint"
       ],
       "legacy": "fontFamily"
     },
@@ -319,7 +322,8 @@
       "def": "\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif",
       "prec": "HostDefault",
       "affects": [
-        "Measure"
+        "Measure",
+        "Paint"
       ],
       "legacy": "cjkFontFamily"
     },
@@ -329,8 +333,20 @@
       "def": "monospace",
       "prec": "HostDefault",
       "affects": [
-        "Measure"
+        "Measure",
+        "Paint"
       ]
+    },
+    "fonts.monoCjk": {
+      "field": "monoCjkFont",
+      "dom": "font",
+      "def": "",
+      "prec": "HostDefault",
+      "affects": [
+        "Measure",
+        "Paint"
+      ],
+      "optional": true
     },
     "par.indent": {
       "field": "paraIndentEm",

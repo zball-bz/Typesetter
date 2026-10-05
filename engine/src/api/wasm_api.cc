@@ -157,33 +157,38 @@ TSR_EXPORT int tsr_typeset(WasmDoc* d) {
 
 // JSON: {"styles":[{"id":0,"family":"...","sizePx":18,"weight":400,
 //   "italic":false,"needVmet":true,"words":["The","fox"]}]}
+// One entry per measurement face (plan P1-04): "id" is a FaceId, opaque to
+// the host, which echoes it in tsr_provide_word / tsr_provide_vmet.
 TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
   MeasureRequest req = d->doc.pendingRequests();
-  // group words by style
-  std::unordered_map<u32, std::vector<StrRef>> byStyle;
-  for (const MeasureItem& it : req.words) byStyle[it.style].push_back(it.str);
-  std::vector<u32> styleIds;
-  for (StyleId s : req.vmetStyles)
-    if (!byStyle.count(s)) byStyle[s] = {};
-  for (auto& [s, _] : byStyle) styleIds.push_back(s);
+  std::vector<FaceId> order;  // first-request order (deterministic)
+  std::unordered_map<u32, std::vector<StrRef>> byFace;
   std::unordered_map<u32, bool> needVmet;
-  for (StyleId s : req.vmetStyles) needVmet[s] = true;
+  for (FaceId f : req.vmetFaces) {
+    if (!byFace.count(f)) order.push_back(f);
+    byFace[f];
+    needVmet[f] = true;
+  }
+  for (const MeasureItem& it : req.words) {
+    if (!byFace.count(it.face)) order.push_back(it.face);
+    byFace[it.face].push_back(it.str);
+  }
 
   std::string& out = d->reqOut;
   out.clear();
   out += "{\"styles\":[";  // NOLINT
   bool first = true;
-  for (u32 sid : styleIds) {
-    StyleDesc desc = describeStyle(d->doc.cfg, d->doc.styles.get(sid), d->doc.strs);
+  for (FaceId f : order) {
+    StyleDesc desc = describeFace(d->doc.faces, f);
     if (!first) out += ",";
     first = false;
-    appendf(out, "{\"id\":%u,\"family\":\"", sid);
+    appendf(out, "{\"id\":%u,\"family\":\"", f);
     jsonEscapeInto(out, desc.family);
     appendf(out, "\",\"sizePx\":%g,\"weight\":%d,\"italic\":%s,\"needVmet\":%s,\"words\":[",
             desc.sizePx, desc.weight, desc.italic ? "true" : "false",
-            needVmet.count(sid) ? "true" : "false");
+            needVmet.count(f) ? "true" : "false");
     bool fw = true;
-    for (StrRef w : byStyle[sid]) {
+    for (StrRef w : byFace[f]) {
       if (!fw) out += ",";
       fw = false;
       out += "\"";
@@ -240,15 +245,16 @@ TSR_EXPORT void tsr_provide_tokens(WasmDoc* d, int id, const u32* triples, int n
   d->doc.provideTokens((u32)id, toks.data(), toks.size());
 }
 
-// a style id the document never issued is ignored (plan P0-11)
-TSR_EXPORT void tsr_provide_word(WasmDoc* d, const char* word, int styleId, double px) {
-  if (styleId < 0 || (size_t)styleId >= d->doc.styles.count()) return;
-  d->doc.metrics.provideWord(d->doc.strs.intern(word), (StyleId)styleId, px, d->doc.cfg);
+// faceId: the "id" of a measurement request; one the document never issued
+// is ignored (plan P0-11)
+TSR_EXPORT void tsr_provide_word(WasmDoc* d, const char* word, int faceId, double px) {
+  if (faceId < 0 || (size_t)faceId >= d->doc.faces.count()) return;
+  d->doc.metrics.provideWord(d->doc.strs.intern(word), (FaceId)faceId, px, d->doc.cfg);
 }
 
-TSR_EXPORT void tsr_provide_vmet(WasmDoc* d, int styleId, double ascPx, double descPx) {
-  if (styleId < 0 || (size_t)styleId >= d->doc.styles.count()) return;
-  d->doc.metrics.provideVmet((StyleId)styleId, ascPx, descPx);
+TSR_EXPORT void tsr_provide_vmet(WasmDoc* d, int faceId, double ascPx, double descPx) {
+  if (faceId < 0 || (size_t)faceId >= d->doc.faces.count()) return;
+  d->doc.metrics.provideVmet((FaceId)faceId, ascPx, descPx);
 }
 
 TSR_EXPORT const char* tsr_render(WasmDoc* d) {

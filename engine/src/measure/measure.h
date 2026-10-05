@@ -5,6 +5,7 @@
 #include <cmath>
 #include "../api/config.h"
 #include "../model/model.h"
+#include "face.h"
 
 namespace tsr {
 
@@ -18,24 +19,30 @@ struct WordMet {
   double px;  // raw — feeds justification arithmetic (document-model §6.1)
 };
 
+// Answers keyed by (string, face): a style query resolves its face first
+// (plan P1-04), so paint-only variants of a style never re-request widths.
 class MetricStore {
  public:
-  // 32 bits each: a document with more than 16M styles no longer aliases keys
-  static u64 key(StrRef s, StyleId st) { return ((u64)s << 32) | st; }
-  bool hasWord(StrRef s, StyleId st) const { return words_.count(key(s, st)) != 0; }
-  const WordMet& word(StrRef s, StyleId st) const { return words_.at(key(s, st)); }
+  void bind(FaceTable* faces) { faces_ = faces; }
+  // 32 bits each: no aliasing below 4G strings / faces
+  static u64 key(StrRef s, FaceId f) { return ((u64)s << 32) | f; }
+  FaceId faceOf(StyleId st) const { return faces_->faceOf(st); }
+  bool hasFaceWord(StrRef s, FaceId f) const { return words_.count(key(s, f)) != 0; }
+  bool hasWord(StrRef s, StyleId st) const { return hasFaceWord(s, faceOf(st)); }
+  const WordMet& word(StrRef s, StyleId st) const { return words_.at(key(s, faceOf(st))); }
   // host metrics are clamped to a finite, representable range (plan P0-11):
   // NaN or 1e300 would overflow the su conversion
   static double hostPx(double px) { return std::isfinite(px) ? std::clamp(px, 0.0, 1e6) : 0.0; }
-  void provideWord(StrRef s, StyleId st, double px, const Config& cfg) {
+  void provideWord(StrRef s, FaceId f, double px, const Config& cfg) {
     px = hostPx(px);
-    words_[key(s, st)] = {suCeilPx(px) + (Su)cfg.epsilonPerWordSu, px};
+    words_[key(s, f)] = {suCeilPx(px) + (Su)cfg.epsilonPerWordSu, px};
   }
-  bool hasVmet(StyleId st) const { return st < vmets_.size() && vmets_[st].have; }
-  const VMet& vmet(StyleId st) const { return vmets_[st]; }
-  void provideVmet(StyleId st, double ascentPx, double descentPx) {
-    if (vmets_.size() <= st) vmets_.resize(st + 1);
-    vmets_[st] = {suRoundPx(hostPx(ascentPx)), suRoundPx(hostPx(descentPx)), true};
+  bool hasFaceVmet(FaceId f) const { return f < vmets_.size() && vmets_[f].have; }
+  bool hasVmet(StyleId st) const { return hasFaceVmet(faceOf(st)); }
+  const VMet& vmet(StyleId st) const { return vmets_[faceOf(st)]; }
+  void provideVmet(FaceId f, double ascentPx, double descentPx) {
+    if (vmets_.size() <= f) vmets_.resize(f + 1);
+    vmets_[f] = {suRoundPx(hostPx(ascentPx)), suRoundPx(hostPx(descentPx)), true};
   }
   void invalidate() {
     words_.clear();
@@ -43,44 +50,31 @@ class MetricStore {
   }
 
  private:
+  FaceTable* faces_ = nullptr;
   std::unordered_map<u64, WordMet> words_;
   std::vector<VMet> vmets_;
 };
 
 struct MeasureItem {
   StrRef str;
-  StyleId style;
+  FaceId face;
 };
 struct MeasureRequest {
-  std::vector<StyleId> vmetStyles;
+  std::vector<FaceId> vmetFaces;
   std::vector<MeasureItem> words;
-  bool empty() const { return vmetStyles.empty() && words.empty(); }
+  bool empty() const { return vmetFaces.empty() && words.empty(); }
 };
 
-// The one em of a style (plan P0-08): an absolute sizePx replaces the base,
-// sizeMul composes on top. Measurement, CSS and emit all use this formula.
-inline double emPx(const Config& cfg, const Styling& s) {
-  double base = s.sizePx > 0 ? (double)s.sizePx : cfg.baseSizePx;
-  return base * (double)s.sizeMul;
-}
-
-// CSS-facing description of a style (for the JS measurer and the renderer).
+// The measurement description of a face (for the JS measurer and the mock).
 struct StyleDesc {
   std::string family;
   double sizePx;
   int weight;
   bool italic;
 };
-inline StyleDesc describeStyle(const Config& cfg, const Styling& s, const Interner& strs) {
-  StyleDesc d;
-  d.family = s.fontFamily ? std::string(strs.get(s.fontFamily))
-             : (s.bits & CLS_CODE) ? cfg.monoFont
-             : (s.bits & CLS_CJK)  ? cfg.cjkFont
-                                   : cfg.bodyFont;
-  d.sizePx = emPx(cfg, s);
-  d.weight = (s.bits & CLS_BOLD) ? 700 : 400;
-  d.italic = (s.bits & CLS_EM) != 0;
-  return d;
+inline StyleDesc describeFace(const FaceTable& faces, FaceId f) {
+  const FaceKey& k = faces.get(f);
+  return {std::string(faces.family(f)), k.sizePx, k.weight, k.italic != 0};
 }
 
 }  // namespace tsr

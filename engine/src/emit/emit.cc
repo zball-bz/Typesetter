@@ -889,12 +889,28 @@ std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena,
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
                              const StyleTable& styles, const Config& cfg) {
   MeasureRequest req;
+  // requests are per measurement face (plan P1-04): paint-only variants of
+  // a style share one face and are asked for once
   std::unordered_map<u64, bool> seenWord;
   std::vector<bool> seenStyle(styles.count(), false);
+  std::vector<bool> seenFace;
   auto needStyle = [&](StyleId st) {
     if (st < seenStyle.size() && !seenStyle[st]) {
       seenStyle[st] = true;
-      if (!store.hasVmet(st)) req.vmetStyles.push_back(st);
+      FaceId f = store.faceOf(st);
+      if (seenFace.size() <= f) seenFace.resize(f + 1, false);
+      if (!seenFace[f]) {
+        seenFace[f] = true;
+        if (!store.hasFaceVmet(f)) req.vmetFaces.push_back(f);
+      }
+    }
+  };
+  auto ask = [&](StrRef r, StyleId st) {
+    FaceId f = store.faceOf(st);
+    u64 k = MetricStore::key(r, f);
+    if (!seenWord.count(k)) {
+      seenWord[k] = true;
+      req.words.push_back({r, f});
     }
   };
   auto resolveBlocks = [&](std::vector<LinebreakBlock>& blocks) {
@@ -906,11 +922,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
           for (StrRef r : {b.ctxTrigram, b.ctxPrev, b.ctxNext}) {
             if (!store.hasWord(r, b.style)) {
               ctxReady = false;
-              u64 k = MetricStore::key(r, b.style);
-              if (!seenWord.count(k)) {
-                seenWord[k] = true;
-                req.words.push_back({r, b.style});
-              }
+              ask(r, b.style);
             }
           }
         }
@@ -957,11 +969,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
           }
           b.widthResolved = true;
         } else {
-          u64 k = MetricStore::key(b.text, b.style);
-          if (!seenWord.count(k)) {
-            seenWord[k] = true;
-            req.words.push_back({b.text, b.style});
-          }
+          ask(b.text, b.style);
         }
       }
   };
@@ -972,11 +980,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
         if (u.codeWrap) {
           for (StrRef probe : {u.chRef, u.cjkChRef}) {
             if (!probe || store.hasWord(probe, u.codeStyle)) continue;
-            u64 k = MetricStore::key(probe, u.codeStyle);
-            if (!seenWord.count(k)) {
-              seenWord[k] = true;
-              req.words.push_back({probe, u.codeStyle});
-            }
+            ask(probe, u.codeStyle);
           }
         }
       }

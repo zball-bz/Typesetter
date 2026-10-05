@@ -31,7 +31,7 @@ inline ProviderSet mockProviders() {
       if (!r.provided) doc.provideImage(r.id, kPolicyNativeImagePx[0], kPolicyNativeImagePx[1]);
   };
   p.metrics = [](Doc& doc, const MeasureRequest& req) {
-    mockProvide(req, doc.metrics, doc.strs, doc.styles, doc.cfg);
+    mockProvide(req, doc.metrics, doc.strs, doc.faces, doc.cfg);
   };
   return p;
 }
