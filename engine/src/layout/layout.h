@@ -87,8 +87,9 @@ struct LayoutResult {
 
 // Breaks and lays out (plan P1-15: breaking is layout's; the float
 // exclusions live at its cursor); overfull streams are reported to diags.
+// memo: the Session's KP memo (plan P1-21), or none (uncached)
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
-                       Interner& strs, const Config& cfg, DiagSink& diags);
+                       Interner& strs, const Config& cfg, DiagSink& diags, BreakMemo* memo = nullptr);
 
 std::string dumpBreaks(const LayoutResult& lr);
 std::string dumpLayout(const LayoutResult& lr);

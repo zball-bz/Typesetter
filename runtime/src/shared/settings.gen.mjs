@@ -18,6 +18,14 @@ export const SETTINGS = Object.freeze({
       "Measure"
     ]
   },
+  "host.loadedFaces": {
+    "dom": "str",
+    "def": "",
+    "prec": "HostOnly",
+    "affects": [
+      "Measure"
+    ]
+  },
   "host.epsilonSu": {
     "dom": "num:0:64",
     "def": 1,
@@ -338,6 +346,7 @@ export const SETTINGS_DEFAULTS = Object.freeze({
   "host": {
     "width": 300,
     "dppx": 1,
+    "loadedFaces": "",
     "epsilonSu": 1
   },
   "doc": {
@@ -418,8 +427,7 @@ export const POLICY = Object.freeze({
   "fontRetryMs": 30000,
   "grammarRetryMs": 30000,
   "imageTimeoutMs": 15000,
-  "tokenCacheEntries": 400,
-  "measureCacheWords": 200000,
+  "sessionBudgetBytes": 67108864,
   "nativeImagePx": [
     512,
     384

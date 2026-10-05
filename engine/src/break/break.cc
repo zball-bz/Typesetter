@@ -371,68 +371,63 @@ Key128 breakKey(const std::vector<BItem>& items, u32 nBlocks, LineWidths widths,
   return h.done();
 }
 
-class BreakMemo {
- public:
-  static constexpr size_t kBudgetWords = size_t(1) << 20;  // 4 MB of result words
-
-  const BreakResult* find(const Key128& k, u32 nItems) {
-    auto it = map_.find(k.lo);
-    if (it == map_.end() || it->second.hi != k.hi || it->second.nItems != nItems) return nullptr;
-    lru_.splice(lru_.begin(), lru_, it->second.lru);  // most recent first
-    return &it->second.result;
-  }
-  void put(const Key128& k, u32 nItems, const BreakResult& r) {
-    auto it = map_.find(k.lo);
-    if (it != map_.end()) erase(it);  // a colliding key replaces the old one
-    lru_.push_front(k.lo);
-    Entry& e = map_[k.lo];
-    e.hi = k.hi;
-    e.nItems = nItems;
-    e.result = r;
-    e.lru = lru_.begin();
-    words_ += cost(e);
-    while (words_ > budget_ && lru_.size() > 1) erase(map_.find(lru_.back()));
-  }
-  void setBudget(size_t words) { budget_ = words; }
-
- private:
-  struct Entry {
-    u64 hi = 0;
-    u32 nItems = 0;
-    BreakResult result;
-    std::list<u64>::iterator lru;
-  };
-  static size_t cost(const Entry& e) {
-    return e.result.breakpoints.size() + e.result.overfullLines.size() + 16;
-  }
-  void erase(std::unordered_map<u64, Entry>::iterator it) {
-    words_ -= cost(it->second);
-    lru_.erase(it->second.lru);
-    map_.erase(it);
-  }
-  std::unordered_map<u64, Entry> map_;
-  std::list<u64> lru_;
-  size_t words_ = 0;
-  size_t budget_ = kBudgetWords;
-};
-
-BreakMemo& memo() {
-  static BreakMemo m;
-  return m;
-}
-
 }  // namespace
 
-void breakMemoBudget(size_t words) { memo().setBudget(words ? words : BreakMemo::kBudgetWords); }
+// The KP memo (editor-design.md §2; plan P1-21: a Session's memo slot, no
+// process-global state): keyed by the complete break input — the items'
+// bytes, the line widths and the params — whose bytes are stored and
+// compared on a hit, so a hash collision can never return another
+// paragraph's breaks. LRU within a byte budget.
+const BreakResult* BreakMemo::find(u64 hash, std::string_view key) {
+  auto it = map_.find(hash);
+  if (it == map_.end() || it->second.key != key) return nullptr;
+  lru_.splice(lru_.begin(), lru_, it->second.lru);  // most recent first
+  return &it->second.result;
+}
+void BreakMemo::put(u64 hash, std::string_view key, const BreakResult& r) {
+  auto it = map_.find(hash);
+  if (it != map_.end()) erase(it);  // a colliding key replaces the old one
+  lru_.push_front(hash);
+  Entry& e = map_[hash];
+  e.key.assign(key);
+  e.result = r;
+  e.lru = lru_.begin();
+  bytes_ += cost(e);
+  while (bytes_ > budget_ && lru_.size() > 1) erase(map_.find(lru_.back()));
+}
+size_t BreakMemo::cost(const Entry& e) {
+  return e.key.size() + 4 * (e.result.breakpoints.size() + e.result.overfullLines.size()) + 64;
+}
+void BreakMemo::erase(std::unordered_map<u64, Entry>::iterator it) {
+  bytes_ -= cost(it->second);
+  lru_.erase(it->second.lru);
+  map_.erase(it);
+}
 
-BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, LineWidths widths,
-                             const BreakParams& params) {
+BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, LineWidths widths, const BreakParams& params,
+                             BreakMemo* memo) {
   static std::vector<BItem> items;  // scratch: rebuilt per call
   blocksToItems(blocks, items);
-  const Key128 k = breakKey(items, (u32)blocks.size(), widths, params);
-  if (const BreakResult* hit = memo().find(k, (u32)items.size())) return *hit;
-  BreakResult r = breakItems(items, (u32)blocks.size(), widths, params);
-  memo().put(k, (u32)items.size(), r);
+  if (!memo) return breakItems(items, (u32)blocks.size(), widths, params);
+  // the complete input, serialized: the key bytes compared on a hit
+  static std::string key;
+  key.assign((const char*)items.data(), items.size() * sizeof(BItem));  // no padding (items.h static_assert)
+  auto put = [&](const void* p, size_t n) { key.append((const char*)p, n); };
+  const u32 nBlocks = (u32)blocks.size();
+  put(&nBlocks, 4);
+  put(&widths.constant, sizeof widths.constant);
+  put(&widths.narrow, sizeof widths.narrow);
+  put(&widths.narrowK, sizeof widths.narrowK);
+  put(&params.cost.exponent, sizeof params.cost.exponent);
+  put(&params.cost.shrinkThreshold, sizeof params.cost.shrinkThreshold);
+  put(&params.cost.shrinkCoeff, sizeof params.cost.shrinkCoeff);
+  put(&params.cost.cap, sizeof params.cost.cap);
+  put(&params.tolerance, sizeof params.tolerance);
+  put(&params.emergencyStretch, sizeof params.emergencyStretch);
+  const Key128 k = breakKey(items, nBlocks, widths, params);
+  if (const BreakResult* hit = memo->find(k.lo ^ k.hi, key)) return *hit;
+  BreakResult r = breakItems(items, nBlocks, widths, params);
+  memo->put(k.lo ^ k.hi, key, r);
   return r;
 }
 

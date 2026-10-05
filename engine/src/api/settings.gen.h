@@ -31,6 +31,7 @@ struct CostParams {
 struct Config {
   double widthPx = 300;  // host.width
   double dppx = 1;  // host.dppx
+  std::string loadedFaces = "";  // host.loadedFaces
   double epsilonPerWordSu = 1;  // host.epsilonSu
   std::string lang = "zh-CN";  // doc.lang
   double baseSizePx = 18;  // doc.baseSize
@@ -73,8 +74,7 @@ constexpr u32 kPolicyFontDeadlineMs = 4000;  // declared fonts measure as their 
 constexpr u32 kPolicyFontRetryMs = 30000;  // a failed font load is retried after this
 constexpr u32 kPolicyGrammarRetryMs = 30000;  // a failed highlight grammar load is retried after this
 constexpr u32 kPolicyImageTimeoutMs = 15000;  // main-thread image size fallback timeout
-constexpr u32 kPolicyTokenCacheEntries = 400;  // worker token cache capacity
-constexpr u32 kPolicyMeasureCacheWords = 200000;  // measurer word cache capacity
+constexpr u32 kPolicySessionBudgetBytes = 67108864;  // the worker Session's answer cache and memo budget (content-keyed: widths, vertical metrics, code tokens, KP results)
 constexpr double kPolicyNativeImagePx[] = {512, 384};  // the native/golden image provider's answer
 
 // the result of a settings document: which stages its applied rows affect

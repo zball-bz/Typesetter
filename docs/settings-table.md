@@ -7,6 +7,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 |---|---|---|---|---|---|
 | `host.width` | num:1:100000 | `300` | HostOnly | Layout, Paint | `widthPx` |
 | `host.dppx` | num:0.25:16 | `1` | HostOnly | Measure |  |
+| `host.loadedFaces` | str | `""` | HostOnly | Measure |  |
 | `host.epsilonSu` | num:0:64 | `1` | HostOnly | Emit, Measure |  |
 | `doc.lang` | lang | `"zh-CN"` | HostDefault | Resolve, Paint | `lang` |
 | `doc.baseSize` | num:4:96 | `18` | HostDefault | BoxTree, Emit, Measure, Layout, Paint | `baseSizePx` |
@@ -54,6 +55,5 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `fontRetryMs` | `30000` | a failed font load is retried after this |
 | `grammarRetryMs` | `30000` | a failed highlight grammar load is retried after this |
 | `imageTimeoutMs` | `15000` | main-thread image size fallback timeout |
-| `tokenCacheEntries` | `400` | worker token cache capacity |
-| `measureCacheWords` | `200000` | measurer word cache capacity |
+| `sessionBudgetBytes` | `67108864` | the worker Session's answer cache and memo budget (content-keyed: widths, vertical metrics, code tokens, KP results) |
 | `nativeImagePx` | `[512,384]` | the native/golden image provider's answer |

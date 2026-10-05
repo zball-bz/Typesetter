@@ -426,6 +426,31 @@ static void unitResources(const fs::path& root) {
     CHECK(doc.render().find("tsr-imgph") != std::string::npos);  // the failed image: a placeholder
   }
   {
+    // the Session (plan P1-21): a second document on a warm Session asks
+    // its host for nothing it already answered — widths, vertical metrics,
+    // the image's size aside (a Host-cached kind) — and breaks from the memo
+    Session sess;
+    ProviderSet p = mockProviders();
+    Doc a, b;
+    a.attach(&sess);
+    b.attach(&sess);
+    CHECK(fresh(a) && driveToCompletion(a, p) && sess.refs == 2);
+    CHECK(fresh(b) && b.typeset() == Doc::Status::NeedMeasure);
+    std::string req, err;
+    b.requests(req);
+    WireBatch q;
+    CHECK(decodeWire((const u8*)req.data(), req.size(), false, q, err));
+    for (const WireKind& k : q.kinds) CHECK(k.kind == (u16)ResKind::boxInfo);
+    const size_t memoBytes = sess.breakMemo.bytes();
+    CHECK(driveToCompletion(b, p) && b.render() == a.render() && sess.breakMemo.bytes() == memoBytes);
+    CHECK(sess.stats.widthHits > 0);
+    // an answerer the host disables leaves the kind to the host
+    Session own;
+    CHECK(own.configure(R"({"answerers":{"codeTokens.tsm":false}})"));
+    std::vector<CodeToken> toks;
+    CHECK(!own.answerTokens("tsm", "= a", toks) && sess.answerTokens("tsm", "= a", toks) && !toks.empty());
+  }
+  {
     // per-block deferral (plan P1-20): the paragraph is emitted while the
     // figure waits for its image, and its widths join the image's round
     Doc doc;
@@ -1104,7 +1129,8 @@ static void unitBreakSemantics() {
     // short word joins its run rather than standing alone underfull
     CHECK(!r.feasible && r.pass == 3 && (r.breakpoints == std::vector<u32>{4, 8, 9}));
     CHECK((r.overfullLines == std::vector<u32>{0, 1}));
-    BreakResult c = breakLinesCached(bl, LineWidths{19200}, cp);
+    BreakMemo memo;
+    BreakResult c = breakLinesCached(bl, LineWidths{19200}, cp, &memo);
     CHECK(c.breakpoints == r.breakpoints && c.overfullLines == r.overfullLines);
   }
   {  // the last line has fil stretch and normal shrink: slightly long is one line
@@ -1150,7 +1176,8 @@ static void unitBreakSemantics() {
 // computes: keys are validated on hit, and eviction under many distinct
 // streams only costs recomputation.
 static void unitBreakMemo() {
-  breakMemoBudget(20000);  // small: the second round must evict and recompute
+  BreakMemo memo;
+  memo.setBudget(20000 * 4);  // small: the second round must evict and recompute
   u64 seed = 12345;
   auto rnd = [&](u32 n) {
     seed = seed * 6364136223846793005ull + 1442695040888963407ull;
@@ -1176,14 +1203,13 @@ static void unitBreakMemo() {
       }
       bl.back().breakPenalty = 0;
       LineWidths lw{(Su)(64 * (300 + rnd(200)))};
-      BreakResult a = breakLinesCached(bl, lw, cp);
+      BreakResult a = breakLinesCached(bl, lw, cp, &memo);
       BreakResult b = breakLines(bl, lw, cp);
       if (a.breakpoints != b.breakpoints || a.cost != b.cost || a.overfullLines != b.overfullLines) mismatches++;
       if (a.breakpoints.empty() || a.breakpoints.back() != bl.size()) mismatches++;
     }
   }
   CHECK(mismatches == 0);
-  breakMemoBudget(0);
 }
 
 // the shared HTML writer (plan P0-10): one style attribute, one escaper,
@@ -1433,6 +1459,22 @@ int main(int argc, char** argv) {
             printf("FAIL %s: %s %s\n", label.c_str(), d.code, d.msg.c_str());
             failures++;
           }
+        // warm == fresh (plan P1-21): the same document on a Session warmed
+        // by every fixture before it reproduces the fresh build exactly
+        {
+          static Session warmSession;
+          Doc warm;
+          warm.attach(&warmSession);
+          warm.configure(profile);
+          warm.configure(fx.settings);
+          warm.compile(source);
+          if (!warm.ingest((const u8*)ops.data(), ops.size()) || !typesetWithMock(warm) ||
+              warm.product("html") != html || warm.product("diags") != doc.product("diags") ||
+              warm.product("breaks") != doc.product("breaks")) {
+            printf("FAIL %s: a warm Session differs from a fresh build\n", label.c_str());
+            failures++;
+          }
+        }
         // fork == fresh (plan P1-03): a fork without a patch reproduces the
         // document, and a width patch equals a fresh build at that width
         // (with a warm metric store: the copy must be transparent)

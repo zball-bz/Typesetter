@@ -33,6 +33,7 @@ add_library(tsr_core STATIC
   src/resolve/resolve.cc
   src/resource/codec.cc
   src/resource/resource_table.cc
+  src/resource/session.cc
   src/shape/hlist.cc
   src/shape/objects.cc
   src/emit/emit.cc

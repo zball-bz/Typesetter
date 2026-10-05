@@ -175,6 +175,23 @@ TSR_EXPORT int tsr2_provide(WasmDoc* d, const u8* buf, int len) {
   return len >= 0 && d->doc.provide(buf, (size_t)len) ? 0 : 1;
 }
 
+// The Session (plan P1-21; design T9 A5): one per host (a worker, a Node
+// process), shared by the documents attached to it — content-keyed answers
+// and the KP memo. Free refuses (1) while a document is attached.
+// json: {"budgetBytes": n, "answerers": {"codeTokens.tsm": bool}} (or null)
+TSR_EXPORT Session* tsr2_session_new(const char* json) {
+  Session* s = new Session((size_t)kPolicySessionBudgetBytes);
+  if (json && *json) s->configure(json);
+  return s;
+}
+TSR_EXPORT int tsr2_session_free(Session* s) {
+  if (!s || s->refs > 0) return 1;
+  delete s;
+  return 0;
+}
+// before the document measures anything (right after tsr_doc_new)
+TSR_EXPORT void tsr2_doc_attach(WasmDoc* d, Session* s) { d->doc.attach(s); }
+
 // The JSON request and the per-kind provide exports below are shims of the
 // pull above (kept for existing hosts; the runtime uses tsr2_*).
 // JSON: {"styles":[{"id":0,"family":"...","sizePx":18,"weight":400,

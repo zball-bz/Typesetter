@@ -20,6 +20,7 @@ struct Row {
 const Row kRows[] = {
     {"host.width", stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
     {"host.dppx", stageBit(Stage::Measure), false},
+    {"host.loadedFaces", stageBit(Stage::Measure), false},
     {"host.epsilonSu", stageBit(Stage::Emit) | stageBit(Stage::Measure), false},
     {"doc.lang", stageBit(Stage::Resolve) | stageBit(Stage::Paint), false},
     {"doc.baseSize", stageBit(Stage::BoxTree) | stageBit(Stage::Emit) | stageBit(Stage::Measure) | stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
@@ -99,181 +100,186 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.dppx = x;
       return true;
     }
-    case 2: {  // host.epsilonSu
+    case 2: {  // host.loadedFaces
+      if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
+      c.loadedFaces = v.str;
+      return true;
+    }
+    case 3: {  // host.epsilonSu
       double x;
       if (!num(v, 0, 64, false, x, why)) return false;
       c.epsilonPerWordSu = x;
       return true;
     }
-    case 3: {  // doc.lang
+    case 4: {  // doc.lang
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Lang, v.str))) return type(why, "lang");
       c.lang = v.str;
       return true;
     }
-    case 4: {  // doc.baseSize
+    case 5: {  // doc.baseSize
       double x;
       if (!num(v, 4, 96, false, x, why)) return false;
       c.baseSizePx = x;
       return true;
     }
-    case 5: {  // doc.leading
+    case 6: {  // doc.leading
       double x;
       if (!num(v, 0.5, 4, false, x, why)) return false;
       c.lineHeight = x;
       return true;
     }
-    case 6: {  // doc.parGap
+    case 7: {  // doc.parGap
       double x;
       if (!num(v, 0, 10, false, x, why)) return false;
       c.paraSpacingEm = x;
       return true;
     }
-    case 7: {  // doc.cjkJustify
+    case 8: {  // doc.cjkJustify
       double x;
       if (!num(v, 0, 4, false, x, why)) return false;
       c.cjkJustifyK = x;
       return true;
     }
-    case 8: {  // doc.cjkGlue
+    case 9: {  // doc.cjkGlue
       double x;
       if (!num(v, 0, 1, false, x, why)) return false;
       c.cjkGlueEm = x;
       return true;
     }
-    case 9: {  // fonts.body
+    case 10: {  // fonts.body
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Font, v.str))) return type(why, "font");
       c.bodyFont = v.str;
       return true;
     }
-    case 10: {  // fonts.cjk
+    case 11: {  // fonts.cjk
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Font, v.str))) return type(why, "font");
       c.cjkFont = v.str;
       return true;
     }
-    case 11: {  // fonts.mono
+    case 12: {  // fonts.mono
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Font, v.str))) return type(why, "font");
       c.monoFont = v.str;
       return true;
     }
-    case 12: {  // fonts.monoCjk
+    case 13: {  // fonts.monoCjk
       if (v.t != JsonValue::T::Str || (!v.str.empty() && !matchDomain(TextDomain::Font, v.str))) return type(why, "font or empty");
       c.monoCjkFont = v.str;
       return true;
     }
-    case 13: {  // par.indent
+    case 14: {  // par.indent
       double x;
       if (!num(v, 0, 20, false, x, why)) return false;
       c.paraIndentEm = x;
       return true;
     }
-    case 14: {  // list.indent
+    case 15: {  // list.indent
       double x;
       if (!num(v, 0, 20, false, x, why)) return false;
       c.listIndentEm = x;
       return true;
     }
-    case 15: {  // quote.indent
+    case 16: {  // quote.indent
       double x;
       if (!num(v, 0, 20, false, x, why)) return false;
       c.quoteIndentEm = x;
       return true;
     }
-    case 16: {  // cjk.punctCompress
+    case 17: {  // cjk.punctCompress
       static const char* const kM[] = {"full", "book", "none"};
       int m = member(v, kM, 3, why);
       if (m < 0) return false;
       c.punctCompress = (PunctCompress)m;
       return true;
     }
-    case 17: {  // break.hyphenPenalty
+    case 18: {  // break.hyphenPenalty
       double x;
       if (!num(v, 0, 1e18, false, x, why)) return false;
       c.hyphenPenalty = x;
       return true;
     }
-    case 18: {  // break.urlPenalty
+    case 19: {  // break.urlPenalty
       double x;
       if (!num(v, 0, 1e18, false, x, why)) return false;
       c.urlBreakPenalty = x;
       return true;
     }
-    case 19: {  // break.urlMinLen
+    case 20: {  // break.urlMinLen
       double x;
       if (!num(v, 1, 100000, true, x, why)) return false;
       c.urlBreakMinLen = (u32)x;
       return true;
     }
-    case 20: {  // break.mathRelAfter
+    case 21: {  // break.mathRelAfter
       double x;
       if (!num(v, 0, 1e18, false, x, why)) return false;
       c.mathRelAfterPenalty = x;
       return true;
     }
-    case 21: {  // break.mathRelBefore
+    case 22: {  // break.mathRelBefore
       double x;
       if (!num(v, 0, 1e18, false, x, why)) return false;
       c.mathRelBeforePenalty = x;
       return true;
     }
-    case 22: {  // break.mathBinAfter
+    case 23: {  // break.mathBinAfter
       double x;
       if (!num(v, 0, 1e18, false, x, why)) return false;
       c.mathBinAfterPenalty = x;
       return true;
     }
-    case 23: {  // cost.exponent
+    case 24: {  // cost.exponent
       double x;
       if (!num(v, 1, 4, true, x, why)) return false;
       c.cost.exponent = (u8)x;
       return true;
     }
-    case 24: {  // cost.shrinkThreshold
+    case 25: {  // cost.shrinkThreshold
       double x;
       if (!num(v, 0, 1, false, x, why)) return false;
       c.cost.shrinkThreshold = x;
       return true;
     }
-    case 25: {  // cost.shrinkCoeff
+    case 26: {  // cost.shrinkCoeff
       double x;
       if (!num(v, 0, 100, false, x, why)) return false;
       c.cost.shrinkCoeff = x;
       return true;
     }
-    case 26: {  // cost.cap
+    case 27: {  // cost.cap
       double x;
       if (!num(v, 1, 1e12, false, x, why)) return false;
       c.cost.cap = x;
       return true;
     }
-    case 27: {  // code.scale
+    case 28: {  // code.scale
       double x;
       if (!num(v, 0.1, 4, false, x, why)) return false;
       c.codeScale = x;
       return true;
     }
-    case 28: {  // code.contIndent
+    case 29: {  // code.contIndent
       double x;
       if (!num(v, 0, 40, true, x, why)) return false;
       c.verbatimContIndent = (int)x;
       return true;
     }
-    case 29: {  // code.sidecarFrac
+    case 30: {  // code.sidecarFrac
       double x;
       if (!num(v, 0.1, 0.9, false, x, why)) return false;
       c.sidebarFrac = x;
       return true;
     }
-    case 30: {  // code.snapKerning
+    case 31: {  // code.snapKerning
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.verbatimSnapKerning = v.b;
       return true;
     }
-    case 31: {  // code.fontFeatures
+    case 32: {  // code.fontFeatures
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Features, v.str))) return type(why, "features");
       c.codeFontFeatures = v.str;
       return true;
     }
-    case 32: {  // code.fontFeaturesByLang
+    case 33: {  // code.fontFeaturesByLang
       if (v.t != JsonValue::T::Obj) return type(why, "an object of strings");
       std::map<std::string, std::string> mm;
       for (size_t mi = 0; mi < v.keys.size(); mi++) {
@@ -284,32 +290,32 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.codeFontFeaturesByLang = std::move(mm);
       return true;
     }
-    case 33: {  // terms.heading
+    case 34: {  // terms.heading
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supHeading = v.str;
       return true;
     }
-    case 34: {  // terms.table
+    case 35: {  // terms.table
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supTable = v.str;
       return true;
     }
-    case 35: {  // terms.figure
+    case 36: {  // terms.figure
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supFigure = v.str;
       return true;
     }
-    case 36: {  // terms.equation
+    case 37: {  // terms.equation
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supEquation = v.str;
       return true;
     }
-    case 37: {  // terms.captionSep
+    case 38: {  // terms.captionSep
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.capSep = v.str;
       return true;
     }
-    case 38: {  // page.height
+    case 39: {  // page.height
       double x;
       if (!num(v, 16, 100000, false, x, why)) return false;
       c.pageHeightPx = x;
@@ -393,6 +399,8 @@ std::string settingsJson(const Config& c) {
   num(out, (double)c.widthPx);
   out += ", \"dppx\": ";
   num(out, (double)c.dppx);
+  out += ", \"loadedFaces\": ";
+  jsonString(out, c.loadedFaces);
   out += ", \"epsilonSu\": ";
   num(out, (double)c.epsilonPerWordSu);
   out += "}, \"doc\": {\"lang\": ";

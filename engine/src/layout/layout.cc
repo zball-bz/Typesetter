@@ -317,8 +317,8 @@ class ExclusionMap {
 // the floats of the ExclusionMap.
 class DocLayout {
  public:
-  DocLayout(const MetricStore& m, Interner& s, const Config& c, DiagSink& d, LayoutResult& r)
-      : metrics(m), strs(s), cfg(c), diags(d), lr(r), measure(suFloorPx(c.widthPx)),
+  DocLayout(const MetricStore& m, Interner& s, const Config& c, DiagSink& d, LayoutResult& r, BreakMemo* memo)
+      : metrics(m), strs(s), cfg(c), diags(d), lr(r), memo_(memo), measure(suFloorPx(c.widthPx)),
         baseLeading(suRoundPx(c.lineHeight * c.baseSizePx)), paraGap(suRoundPx(c.paraSpacingEm * c.baseSizePx)),
         excl(baseLeading, paraGap, suRoundPx(c.baseSizePx)) {
     bparams.cost = c.cost;
@@ -354,6 +354,7 @@ class DocLayout {
   const Config& cfg;
   DiagSink& diags;
   LayoutResult& lr;
+  BreakMemo* memo_;  // the Session's KP memo (plan P1-21), or none
   const Su measure, baseLeading, paraGap;
   ExclusionMap excl;
   BreakParams bparams;
@@ -375,7 +376,7 @@ class DocLayout {
   // loop's fast path). A run wider than the line is set Overfull on a line
   // of its own (the final-pass rescue) and reported once per stream.
   BreakResult breakStream(const std::vector<BreakBlock>& blocks, const HList& h, LineWidths lw) {
-    BreakResult r = breakLinesCached(blocks, lw, bparams);
+    BreakResult r = breakLinesCached(blocks, lw, bparams, memo_);
     if (!r.overfullLines.empty()) {
       Span sp{};
       for (const ColdRec& c : h.cold)
@@ -863,9 +864,9 @@ const DocLayout::Fn DocLayout::kLayouters[] = {&DocLayout::paragraph, &DocLayout
 }  // namespace
 
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics, Interner& strs,
-                       const Config& cfg, DiagSink& diags) {
+                       const Config& cfg, DiagSink& diags, BreakMemo* memo) {
   LayoutResult lr;
-  DocLayout(metrics, strs, cfg, diags, lr).run(tops);
+  DocLayout(metrics, strs, cfg, diags, lr, memo).run(tops);
   return lr;
 }
 

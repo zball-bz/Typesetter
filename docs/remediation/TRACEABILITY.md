@@ -1281,7 +1281,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/sidecar-api-layer-rewrite` | adhoc | high | P2-13 | |
 | `api-measure-code/doc-typeset-hosts-layout-logic` | adhoc | medium | P1-15 | grep:plan P1-15 |
 | `api-measure-code/adhoc-invalidation-flags` | adhoc | high | P1-03 | grep:plan P1-03 |
-| `api-measure-code/adhoc-caches` | adhoc | high | P1-21 | |
+| `api-measure-code/adhoc-caches` | adhoc | high | P1-21 | grep:plan P1-21 |
 | `api-measure-code/per-feature-api-entry-points` | adhoc | medium | P3-37 | |
 | `api-measure-code/native-driver-config-divergence` | adhoc | medium | P1-03 | grep:plan P1-03 |
 | `api-measure-code/resource-io-paths` | adhoc | medium | P3-21 | |

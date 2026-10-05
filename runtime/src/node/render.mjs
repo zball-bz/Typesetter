@@ -11,6 +11,7 @@ import { RES_KINDS } from '../shared/resources.gen.mjs';
 import { settingsFromOptions } from '../shared/settings.gen.mjs';
 
 let modPromise = null;
+let session = 0;
 function getMod() {
   modPromise ??= import('../../../engine/build-wasm/typesetter.js')
     .then((m) => m.default())
@@ -26,6 +27,8 @@ function getMod() {
 export async function renderTsm(source, opts = {}) {
   const M = await getMod();
   const doc = M._tsr_doc_new();
+  // one Session per process (plan P1-21): code tokens answered once are reused
+  M._tsr2_doc_attach(doc, (session ||= M._tsr2_session_new(0)));  // (null: the default budget)
   try {
     // one settings document (plan P1-03); opts.lang stays as sugar for doc.lang
     const settings = settingsFromOptions(opts);

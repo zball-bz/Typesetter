@@ -25,26 +25,41 @@ const getMod = () => (modPromise ??= createTypesetter().then((M) => { checkAbi(M
 const imageDims = new Map(); // url → Promise<{w, h}>
 
 // Editing sessions (editor-design.md §2) re-typeset the whole document per
-// keystroke; the measurer and token results persist across docs so repeat
-// requests are pure map hits. The measurer cache is invalidated whenever a
-// new font lands (widths measured against a fallback face are stale).
+// keystroke. Answers persist across documents in the engine's Session (plan
+// P1-21; content-keyed widths, vertical metrics, code tokens and the KP
+// memo): a new document asks only for what no earlier one was answered, so
+// the measurer keeps no cache of its own (a round's rows are already unique).
 const measurer = new CanvasMeasurer();
-const tokenCache = new Map(); // `${lang}\0${text}` → Uint32Array
-async function tokenizeCached(lang, text) {
-  const key = lang + '\0' + text;
-  const hit = tokenCache.get(key);
-  if (hit) return hit;
-  const tri = await tokenize(lang, text);
-  if (tokenCache.size >= policy.tokenCacheEntries) tokenCache.clear();
-  tokenCache.set(key, tri);
-  return tri;
+let session = 0;
+function sessionOf(M) {
+  if (!session) {
+    const p = M.stringToNewUTF8(JSON.stringify({ budgetBytes: policy.sessionBudgetBytes }));
+    session = M._tsr2_session_new(p);
+    M._free(p);
+  }
+  return session;
+}
+
+// the faces this worker has loaded, as the engine keys widths by them
+// (host.loadedFaces): a font landing changes the metric key, so nothing
+// measured against its fallback is reused
+function loadedFaces() {
+  const out = [];
+  for (const [key, st] of fontState) {
+    if (!st.loaded) continue;
+    const [family, weight, style, src] = key.split('|');
+    let h = 2166136261;
+    for (let i = 0; i < src.length; i++) h = Math.imul(h ^ src.charCodeAt(i), 16777619) >>> 0;
+    out.push(`${family}|${weight}|${style}|${h.toString(16)}`);
+  }
+  return out.join('\n');
 }
 
 // W (pages-design.md §1): fonts are DECLARED, not discovered — the worker
 // loads them into its own FontFaceSet before measuring, so metrics are
 // right on the first pass and no settle re-typeset can exist. A font that
 // misses the 4s deadline measures as its fallback until it lands; landing
-// clears the measurer (later typesets use the real face). A face counts as
+// changes later documents' metric keys (host.loadedFaces). A face counts as
 // loaded only on success; a failed one is retried after policy.fontRetryMs.
 const fontState = new Map(); // key → {loaded} | {loading: Promise} | {failedAt}
 function loadFont(key, f) {
@@ -57,8 +72,7 @@ function loadFont(key, f) {
       });
       await ff.load();
       self.fonts.add(ff);
-      fontState.set(key, { loaded: true });
-      measurer.clearCache();  // widths measured against the fallback are stale
+      fontState.set(key, { loaded: true });  // later documents key their widths by it
     } catch (e) {
       fontState.set(key, { failedAt: performance.now() });
       console.warn(`tsr: font failed to load: ${f.family}`, e);
@@ -200,7 +214,7 @@ async function measureLoop(M, doc, { tm = {}, baseUrl, stale = () => false } = {
     t0 = performance.now();
     ans.kinds.codeTokens = [];
     for (const t of req.kinds.codeTokens ?? []) {
-      const runs = await tokenizeCached(t.lang, t.text);
+      const runs = await tokenize(t.lang, t.text);
       if (stale()) return false;
       ans.kinds.codeTokens.push({ resId: t.resId, runs });
     }
@@ -212,9 +226,13 @@ async function measureLoop(M, doc, { tm = {}, baseUrl, stale = () => false } = {
       return { resId: r.resId, asc: ascent, desc: descent };
     });
     const words = req.kinds.textWidth ?? [];
+    const seen = new Map();  // per round: keys that share a canvas font
     ans.kinds.textWidth = words.map((r) => {
       measurer.setStyle(styleOf(req.mks[r.mk]));
-      return { resId: r.resId, px: measurer.width(r.text) };
+      const k = measurer.fontKey + '\0' + r.text;
+      let px = seen.get(k);
+      if (px === undefined) seen.set(k, (px = measurer.width(r.text)));
+      return { resId: r.resId, px };
     });
     tm.words = (tm.words ?? 0) + words.length;
     mark('wordsMs', t0);
@@ -297,8 +315,10 @@ async function runTypeset(s, { ids, msg }, stale) {
   await loadFonts(fontFaces);
   if (stale()) return false;
   const doc = M._tsr_doc_new();
+  M._tsr2_doc_attach(doc, sessionOf(M));
   try {
-    const cfg = M.stringToNewUTF8(JSON.stringify(settings ?? {}));
+    const host = { ...(settings?.host ?? {}), loadedFaces: loadedFaces() };
+    const cfg = M.stringToNewUTF8(JSON.stringify({ ...(settings ?? {}), host }));
     M._tsr2_set_config(doc, cfg);
     M._free(cfg);
     let t0 = performance.now();

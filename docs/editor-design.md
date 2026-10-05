@@ -23,21 +23,24 @@ provider round trips. Compile/execute/ingest are cheap (<6 ms combined).
 
 ## 2. Worker fast path (`update`)
 
-- **Persistent measurer** (canvas_measure.mjs): word widths and vmets are
-  memoized per font across documents. Invalidated when a new FontFace lands
-  (widths measured against a fallback are stale). Token results
-  (tree-sitter) are cached per (lang, body) the same way (worker.mjs).
+- **The Session** (plan P1-21; resource/session.h, host-protocol §4a): the
+  worker keeps one engine Session and attaches every document to it. Widths,
+  vertical metrics and code tokens are cached there by their complete key
+  (the metric key includes the loaded faces, `host.loadedFaces`, so a font
+  landing never reuses a width measured against its fallback), so a new
+  document asks the host only for what no earlier one was answered. The
+  canvas measurer keeps no cache; a round dedups its own rows.
 - **Session update** (worker `update` message, shell `handle.update(src)`):
   re-typesets new source under the same doc handle. The new doc replaces
   the old only on success — a failing edit keeps the last good document
   alive for relayout/paginate.
-- **Cross-document KP cache** (break.cc `breakLinesCached`, plan P1-14):
-  the DP reads only its items (the bytes of the TeX item projection), the
-  LineWidths and the BreakParams, so a result is keyed by a 128-bit hash of
-  exactly those, validated on a hit by the item count, and shared
-  process-wide (LRU within a word budget). An edit re-breaks only the
+- **Cross-document KP cache** (break.cc `breakLinesCached`, plans P1-14,
+  P1-21): the DP reads only its items (the bytes of the TeX item
+  projection), the LineWidths and the BreakParams, so a result is keyed by
+  exactly those — their bytes are stored and compared on a hit — in the
+  Session's memo slot (LRU within a byte budget). An edit re-breaks only the
   paragraphs it actually changed. Any new input the DP starts reading MUST
-  be added to `breakKey`.
+  be added to the key.
 - Phase timings ride on every result message (`timings`), so the bench and
   the preview can attribute latency without instrumented builds.
 

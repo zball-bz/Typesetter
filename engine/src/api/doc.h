@@ -1,6 +1,8 @@
 // Document handle: owns all stage products; resumable typeset loop
 // (architecture §2.4). Single-threaded; one pipeline state per handle.
 #pragma once
+#include <limits>
+#include <memory>
 #include "../ast/ast.h"
 #include "../code/sidecars.h"
 #include "../code/tokens.h"
@@ -9,6 +11,7 @@
 #include "../resolve/resolve.h"
 #include "../boxtree/build.h"
 #include "../resource/resource_table.h"
+#include "../resource/session.h"
 #include "../layout/layout.h"
 #include "../layout/paginate.h"
 #include "../render/html_writer.h"
@@ -42,6 +45,9 @@ struct Doc {
   // vertical metrics in the MetricStore
   ResourceTable rt;
 
+  Session* session_ = nullptr;
+  std::unique_ptr<Session> own_;
+  std::vector<u32> sessionMk_;  // per FaceId: its session metric key, ~0u = not yet
   BoxTree boxtree;  // the block structure (plan P1-18)
   std::vector<TopBlock> tops;
   // measurement faces (plan P1-04): the metric key; bound in the constructor
@@ -68,9 +74,73 @@ struct Doc {
   std::string opsBytes;
   enum class Status { Ok, NeedMeasure };
 
+  // ---- the Session (plan P1-21; design T9 A5) -----------------------------
+  // The host's content-keyed answer cache and memo slots, shared by its
+  // documents; a document nobody attached to one gets its own.
+  Session& session() {
+    if (!session_) {
+      own_ = std::make_unique<Session>();
+      session_ = own_.get();
+      session_->refs++;
+    }
+    return *session_;
+  }
+  // before the document measures anything
+  void attach(Session* s) {
+    if (!s || s == session_) return;
+    if (session_) session_->refs--;
+    own_.reset();
+    session_ = s;
+    s->refs++;
+    sessionMk_.clear();
+  }
+  // a face's metric key in the session: its canonical bytes (design T9 A1:
+  // strings, f64 bit patterns with -0 and NaN normalised, fixed-width ints)
+  u32 sessionMk(FaceId f) {
+    if (f < sessionMk_.size() && sessionMk_[f] != ~0u) return sessionMk_[f];
+    const FaceKey& k = faces.get(f);
+    std::string b;
+    auto str = [&](StrRef r) {
+      std::string_view v = strs.get(r);
+      const u32 n = (u32)v.size();
+      b.append((const char*)&n, 4);
+      b.append(v);
+    };
+    auto f64 = [&](double v) {
+      if (v == 0) v = 0;  // -0
+      if (v != v) v = std::numeric_limits<double>::quiet_NaN();
+      b.append((const char*)&v, 8);
+    };
+    str(k.family);
+    b.append((const char*)&k.faceDigest, 8);
+    f64(k.sizePx);
+    b.append((const char*)&k.weight, 2);
+    b += (char)k.italic;
+    b += (char)k.caps;
+    str(k.features);
+    str(k.lang);
+    f64(k.dppx);
+    if (sessionMk_.size() <= f) sessionMk_.resize((size_t)f + 1, ~0u);
+    return sessionMk_[f] = session().metricKey(b);
+  }
+  struct Backing : MetricBacking {
+    Doc* d;
+    explicit Backing(Doc* doc) : d(doc) {}
+    bool width(FaceId f, StrRef s, double& px) const override {
+      return d->session().width(d->sessionMk(f), d->strs.get(s), px);
+    }
+    bool vmet(FaceId f, double& asc, double& desc) const override {
+      return d->session().vmet(d->sessionMk(f), asc, desc);
+    }
+  } backing{this};
+
   Doc() {
     faces.bind(&cfg, &styles, &strs);
     metrics.bind(&faces);
+    metrics.bindBacking(&backing);
+  }
+  ~Doc() {
+    if (session_) session_->refs--;
   }
   Doc(const Doc&) = delete;
   Doc& operator=(const Doc&) = delete;
@@ -116,11 +186,13 @@ struct Doc {
       if (d.origin == DiagOrigin::Compile) f.diags.items.push_back(d);
     for (StrRef r = 1; r < (StrRef)strs.count(); r++) f.strs.intern(strs.get(r));
     f.styles = styles;
+    f.attach(session_);  // the fork shares its source's Session (plan P1-21)
     if (!(p.affects & stageBit(Stage::Measure))) {  // faces and answers stay valid
       f.faces = faces;
       f.faces.bind(&f.cfg, &f.styles, &f.strs);
       f.metrics = metrics;
       f.metrics.bind(&f.faces);
+      f.metrics.bindBacking(&f.backing);
     }
     f.validThrough = (int)Stage::Execute;
     if (!f.ingest((const u8*)opsBytes.data(), opsBytes.size())) return true;
@@ -230,10 +302,12 @@ struct Doc {
       if (lang && !strs.get(lang).empty()) {
         const u32 i = rt.needTokens(lang, n->kids[0]->str);
         waitTokens[pid].push_back(i);
-        if (rt.tokenNeeds[i].st == ResState::Pending && strs.get(lang) == "tsm") {
-          std::vector<CodeToken> toks = syntaxTokens(strs.get(n->kids[0]->str));
+        // an in-engine answerer, else the Session (plan P1-21), else the host
+        std::vector<CodeToken> toks;
+        if (rt.tokenNeeds[i].st == ResState::Pending &&
+            (session().answerTokens(strs.get(lang), strs.get(n->kids[0]->str), toks) ||
+             session().tokens(strs.get(lang), strs.get(n->kids[0]->str), toks)))
           settleTokens(i, toks.data(), toks.size(), ResState::Ready);
-        }
       }
     }
     for (const ContentNode* k : n->kids) scanTokenNeeds(k, pid);
@@ -419,13 +493,22 @@ struct Doc {
         switch ((ResKind)k.kind) {
           case ResKind::textWidth:
             if (!fresh(seenWords, r.resId, t)) break;
-            if (ok && okNum(r.f64(0))) metrics.provideWord(b.words[r.resId].str, b.words[r.resId].face, r.f64(0));
-            else failWord(b.words[r.resId], ok ? t.invalid : t.failed);
+            if (ok && okNum(r.f64(0))) {
+              const MeasureItem& w = b.words[r.resId];
+              metrics.provideWord(w.str, w.face, r.f64(0));
+              if (r.flags & 1) session().putWidth(sessionMk(w.face), strs.get(w.str), r.f64(0));  // write-through
+            } else {
+              failWord(b.words[r.resId], ok ? t.invalid : t.failed);
+            }
             break;
           case ResKind::fontVmet:
             if (!fresh(seenVmets, r.resId, t)) break;
-            if (ok && okNum(r.f64(0)) && okNum(r.f64(1))) metrics.provideVmet(b.vmets[r.resId], r.f64(0), r.f64(1));
-            else failVmet(b.vmets[r.resId], ok ? t.invalid : t.failed);
+            if (ok && okNum(r.f64(0)) && okNum(r.f64(1))) {
+              metrics.provideVmet(b.vmets[r.resId], r.f64(0), r.f64(1));
+              if (r.flags & 1) session().putVmet(sessionMk(b.vmets[r.resId]), r.f64(0), r.f64(1));
+            } else {
+              failVmet(b.vmets[r.resId], ok ? t.invalid : t.failed);
+            }
             break;
           case ResKind::codeTokens: {
             if (!fresh(seenTokens, r.resId, t)) break;
@@ -434,8 +517,11 @@ struct Doc {
             for (size_t i = 0; shaped && i + 2 < r.list.size(); i += 3)
               toks.push_back({r.list[i], r.list[i + 1], (u8)std::min<u32>(r.list[i + 2], 255)});
             if (!ok) t.failed++;
-            settleTokens(b.tokens[r.resId], toks.data(), toks.size(),
-                         ok && shaped ? ResState::Ready : ResState::Failed);
+            const u32 ti = b.tokens[r.resId];
+            settleTokens(ti, toks.data(), toks.size(), ok && shaped ? ResState::Ready : ResState::Failed);
+            const TokenNeed& tn = rt.tokenNeeds[ti];
+            if ((r.flags & 1) && tn.st == ResState::Ready)  // write-through
+              session().putTokens(strs.get(tn.lang), strs.get(tn.body), tn.toks);
             break;
           }
           case ResKind::boxInfo:
@@ -544,7 +630,7 @@ struct Doc {
     // layout breaks the paragraphs (plan P1-15): overfull streams report
     // under the Layout origin
     diags.begin(DiagOrigin::Layout);
-    layout = layoutDoc(tops, metrics, strs, cfg, diags);
+    layout = layoutDoc(tops, metrics, strs, cfg, diags, &session().breakMemo);
     validThrough = (int)Stage::Layout;
     return Status::Ok;
   }

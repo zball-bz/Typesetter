@@ -233,6 +233,15 @@
         "Measure"
       ]
     },
+    "host.loadedFaces": {
+      "field": "loadedFaces",
+      "dom": "str",
+      "def": "",
+      "prec": "HostOnly",
+      "affects": [
+        "Measure"
+      ]
+    },
     "host.epsilonSu": {
       "field": "epsilonPerWordSu",
       "dom": "num:0:64",
@@ -631,13 +640,9 @@
       "def": 15000,
       "doc": "main-thread image size fallback timeout"
     },
-    "tokenCacheEntries": {
-      "def": 400,
-      "doc": "worker token cache capacity"
-    },
-    "measureCacheWords": {
-      "def": 200000,
-      "doc": "measurer word cache capacity"
+    "sessionBudgetBytes": {
+      "def": 67108864,
+      "doc": "the worker Session's answer cache and memo budget (content-keyed: widths, vertical metrics, code tokens, KP results)"
     },
     "nativeImagePx": {
       "def": [

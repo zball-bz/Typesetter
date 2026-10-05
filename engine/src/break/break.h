@@ -2,6 +2,9 @@
 // the rules are at the top of break.cc, the item projection in items.h). su
 // inputs, bounded double costs, an exact active-list search.
 #pragma once
+#include <list>
+#include <unordered_map>
+
 #include "../emit/emit.h"
 
 namespace tsr {
@@ -42,12 +45,32 @@ BreakResult breakLines(const std::vector<BreakBlock>& blocks, LineWidths widths,
                        const BreakParams& params);
 
 // The cached form (editor-design.md §2): KP reads only the items, the line
-// widths and the params, so a result is keyed by a 128-bit hash of exactly
-// those, validated on a hit, and shared process-wide across documents — an
-// editing session re-breaks only the paragraphs a keystroke changed.
-BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, LineWidths widths,
-                             const BreakParams& params);
-// tests: the memo's budget in result words (0 = the default)
-void breakMemoBudget(size_t words);
+// widths and the params, so a result is keyed by exactly those — the
+// complete input's bytes, compared on a hit — and kept in the Session's
+// memo slot (plan P1-21): an editing session re-breaks only the paragraphs
+// a keystroke changed. No memo: break uncached.
+class BreakMemo {
+ public:
+  static constexpr size_t kBudgetBytes = size_t(16) << 20;
+  const BreakResult* find(u64 hash, std::string_view key);
+  void put(u64 hash, std::string_view key, const BreakResult& r);
+  void setBudget(size_t bytes) { budget_ = bytes ? bytes : kBudgetBytes; }
+  size_t bytes() const { return bytes_; }
+
+ private:
+  struct Entry {
+    std::string key;
+    BreakResult result;
+    std::list<u64>::iterator lru;
+  };
+  static size_t cost(const Entry& e);
+  void erase(std::unordered_map<u64, Entry>::iterator it);
+  std::unordered_map<u64, Entry> map_;
+  std::list<u64> lru_;
+  size_t bytes_ = 0;
+  size_t budget_ = kBudgetBytes;
+};
+BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, LineWidths widths, const BreakParams& params,
+                             BreakMemo* memo);
 
 }  // namespace tsr

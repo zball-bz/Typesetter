@@ -87,6 +87,7 @@ class FaceTable {
     if ((s.bits & CLS_CODE) && !cfg_->codeFontFeatures.empty()) k.features = strs_->intern(cfg_->codeFontFeatures);
     k.lang = s.lang ? s.lang : strs_->intern(cfg_->lang);
     k.dppx = cfg_->dppx;
+    k.faceDigest = loadedDigest(strs_->get(k.family));
     FaceId f;
     auto it = index_.find(k);
     if (it != index_.end()) {
@@ -101,6 +102,24 @@ class FaceTable {
     return f;
   }
   const FaceKey& get(FaceId f) const { return keys_[f]; }
+  // the faces the host has loaded that the stack names (host.loadedFaces:
+  // one "family|weight|style|src" per line): a font landing changes the
+  // key, so nothing measured against its fallback is ever reused
+  u64 loadedDigest(std::string_view stack) const {
+    u64 h = 0;
+    std::string_view all = cfg_->loadedFaces;
+    while (!all.empty()) {
+      const size_t nl = all.find('\n');
+      const std::string_view line = all.substr(0, nl);
+      all = nl == std::string_view::npos ? std::string_view{} : all.substr(nl + 1);
+      const std::string_view family = line.substr(0, line.find('|'));
+      if (family.empty() || stack.find(family) == std::string_view::npos) continue;
+      u64 x = 1469598103934665603ull;
+      for (char c : line) x = (x ^ (u8)c) * 1099511628211ull;
+      h ^= x;
+    }
+    return h;
+  }
   std::string_view family(FaceId f) const { return strs_->get(keys_[f].family); }
   size_t count() const { return keys_.size(); }
 

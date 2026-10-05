@@ -140,6 +140,20 @@ code-point em bound × 1.2, vertical metrics 1em / 0.3em, tokens plain code
 the whole row fails), an image a placeholder with an `image-load` warning.
 One diagnostic per kind and cause, in the Provide slice.
 
+**The Session** (plan P1-21; design T9 A5; `resource/session.h`): a host's
+documents share one (`tsr2_session_new(json)` — `{"budgetBytes", "answerers":
+{"codeTokens.tsm": bool}}`, `tsr2_doc_attach(doc, session)` before the
+document measures, `tsr2_session_free` refuses while a document is
+attached; forks share their source's). A need is looked up in the
+document's own table, then an in-engine answerer (the answerer registry:
+`codeTokens.tsm`), then the Session (copied in), then the host. Answers of
+Content kinds the host marks `store` are written through; Host kinds (image
+sizes) stay in the host's cache. There are no generations and no
+invalidation: keys are complete, so an entry can only be unused. The KP memo
+is a Session memo slot. A document nobody attached gets a private Session
+(each golden fixture; the runner also replays every fixture on one warm
+Session and requires the same bytes).
+
 **Per-block deferral** (plan P1-20; design T9 M5): Emit runs per top-level
 block. A block waits while one of its code blocks or images waits for its
 answer; a block whose display formula lacks text metrics defers (the attempt
