@@ -85,7 +85,9 @@ export function decodeProgram(bytes) {
 // env (the executor's half): ob (OpBuf), ctors (by name, plus __emit /
 // __at / __fence / __region / val), height() (the style stack),
 // setCurrent(block), fail(err, height, s, e) → an error node,
-// failBlock(err, height, block) (emits the error block)
+// failBlock(err, height, block) (emits the error block), and here {s, e}:
+// the interpreter keeps it on the innermost splice, region, frame or block
+// it runs, which is where a diagnostic of the run points.
 export class Lowering {
   constructor(prog, env) {
     this.prog = prog;
@@ -159,6 +161,8 @@ export class Lowering {
         const blk = blocks[i];
         const async = blk.flags & BFLAG.Async;
         if (blk.flags & BFLAG.User) env.setCurrent(i);
+        env.here.s = blk.s;
+        env.here.e = blk.e;
         this.p = blk.pc;
         if (!(blk.flags & BFLAG.Framed)) {
           env.ctors.__emit(async ? await this.va() : this.v());
@@ -207,20 +211,34 @@ export class Lowering {
       }
       case LOP.HOLE: {
         const f = this.hole(this.u());
-        this.u(); this.u();  // its span (S5: a hole's result is unspanned)
+        const s = this.u(), e = this.u();  // (S5: a hole's result is unspanned)
         const nk = this.u();
-        return env.ctors.val(nk ? this.callHole(f, nk, false) : f());
+        const { here } = env, ps = here.s, pe = here.e;
+        here.s = s;
+        here.e = e;
+        try {
+          return env.ctors.val(nk ? this.callHole(f, nk, false) : f());
+        } finally {
+          here.s = ps;
+          here.e = pe;
+        }
       }
       case LOP.FRAME: {
         const s = this.u(), e = this.u();
         this.u(); this.u();
         const h0 = env.height(), p0 = this.p;
+        const { here } = env, ps = here.s, pe = here.e;
+        here.s = s;
+        here.e = e;
         try {
           return this.v();
         } catch (err) {
           this.p = p0;
           this.skipValue();
           return env.fail(err, h0, s, e);
+        } finally {
+          here.s = ps;
+          here.e = pe;
         }
       }
       case LOP.REGION: {
@@ -228,7 +246,7 @@ export class Lowering {
         const args = a ? this.hole((a >> 1) - 1)() : {};
         const items = [];
         for (let n = this.u(); n > 0; n--) items.push(this.v());
-        return env.ctors.__at(env.ctors.__region(name, args, items), s, e);
+        return env.ctors.__at(this.region(name, args, items, s, e), s, e);
       }
       case LOP.ROWS: {  // a table paragraph (a region item): rows of cell values
         const rows = new Array(this.u());
@@ -260,20 +278,34 @@ export class Lowering {
       }
       case LOP.HOLE: {
         const f = this.hole(this.u());
-        this.u(); this.u();
+        const s = this.u(), e = this.u();
         const nk = this.u();
-        return env.ctors.val(await (nk ? this.callHole(f, nk, true) : f()));
+        const { here } = env, ps = here.s, pe = here.e;
+        here.s = s;
+        here.e = e;
+        try {
+          return env.ctors.val(await (nk ? this.callHole(f, nk, true) : f()));
+        } finally {
+          here.s = ps;
+          here.e = pe;
+        }
       }
       case LOP.FRAME: {
         const s = this.u(), e = this.u();
         this.u(); this.u();
         const h0 = env.height(), p0 = this.p;
+        const { here } = env, ps = here.s, pe = here.e;
+        here.s = s;
+        here.e = e;
         try {
           return await this.va();
         } catch (err) {
           this.p = p0;
           this.skipValue();
           return env.fail(err, h0, s, e);
+        } finally {
+          here.s = ps;
+          here.e = pe;
         }
       }
       case LOP.FENCE: {
@@ -289,7 +321,7 @@ export class Lowering {
         if (a & 1) args = await args;
         const items = [];
         for (let n = this.u(); n > 0; n--) items.push(await this.va());
-        return env.ctors.__at(env.ctors.__region(name, args, items), s, e);
+        return env.ctors.__at(this.region(name, args, items, s, e), s, e);
       }
       case LOP.ROWS: {
         const rows = new Array(this.u());
@@ -301,6 +333,19 @@ export class Lowering {
       }
     }
     throw new Error(`LowerProgram: op ${op} at ${this.p - 1}`);
+  }
+
+  // the region constructor (or a handler) runs at the region
+  region(name, args, items, s, e) {
+    const { here } = this.env, ps = here.s, pe = here.e;
+    here.s = s;
+    here.e = e;
+    try {
+      return this.env.ctors.__region(name, args, items);
+    } finally {
+      here.s = ps;
+      here.e = pe;
+    }
   }
 
   // A hole with content arguments: f(__k), where __k() evaluates them — once,

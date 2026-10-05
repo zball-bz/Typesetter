@@ -83,13 +83,14 @@ export const CONTENT = Symbol.for('tsm.content');
 export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
   const blocks = prog.blocks;
   const docEnd = prog.docEnd;
-  // the block whose user code runs: where a diagnostic of the run points
-  // (before any has run, the first that will)
+  // the top-level block whose user code runs (an unframed statement's
+  // failure covers the rest of the document from it)
   let current = blocks.findIndex((b) => b.flags & BFLAG.User);
-  const unitSpan = () => {
-    const u = blocks[current];
-    return u ? [u.s, u.e] : [0, 0];
-  };
+  // where the interpreter is: the innermost splice, region, frame or block
+  // it runs — what a diagnostic of the run points at (shared/lower.mjs
+  // keeps it current)
+  const here = { s: 0, e: 0 };
+  const unitSpan = () => [here.s, here.e];
   // toContent (plan P2-01): one conversion for every place a value becomes
   // content — splices, constructor children, handler returns, m`…`:
   //   a node value → itself; string/number/bigint → text; null, undefined,
@@ -257,7 +258,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     // document end with one formatted entry per key — the resolver
     // numbers cited keys and rebuilds the section in citation order
     bibliography: (src, o = {}) => {
-      bibRequests.push({ src: String(src), all: !!o.all, unit: current });
+      bibRequests.push({ src: String(src), all: !!o.all, s: here.s, e: here.e });
       return ob.makeText('');
     },
     glossary: Object.assign(() => ob.makeNode(KIND.collect, { what: 'glossary' }, []), { [NULLARY]: true }),
@@ -331,7 +332,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
         entries = JSON.parse(await loadResource(req.src, opts));
         if (!Array.isArray(entries)) throw new Error('CSL-JSON array expected');
       } catch (e) {  // reported at the #bibliography call
-        errorAt(req.unit, 'bib-load', `bibliography ${req.src}: ${e?.message ?? e}`);
+        errorSpan(req.s, req.e, 'bib-load', `bibliography ${req.src}: ${e?.message ?? e}`);
         continue;
       }
       const fmt = bibHooks.format ?? formatEntryDefault;
@@ -342,8 +343,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
         try { inline = fmt(e, ctors); }
         catch (err) {  // invoke frame: the entry shows the failure, and says so
           const msg = `bibliography ${req.src}: entry ${e.id}: ${err?.message ?? err}`;
-          const u = blocks[req.unit];
-          ob.diag(1, 'bib-load', msg, u ? u.s : 0, u ? u.e : 0);
+          ob.diag(1, 'bib-load', msg, req.s, req.e);
           inline = [ctors.text(`⚠ ${err?.message ?? err}`)];
         }
         kids.push(ob.makeNode(KIND.group, { role: 'bibentry', name: String(e.id) }, kidsOf([inline])));
@@ -384,13 +384,16 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
   // one error block.
   // an executor error: an error node at the block and its diagnostic (the
   // DIAG op, plan P2-01: the engine no longer scans error nodes for them)
+  const errorSpan = (s, e, code, message) => {
+    const n = ob.makeNode(KIND.error, { message, code }, []);
+    ob.span(n, s, e);
+    ob.diag(2, code, message, s, e);
+    ob.emitNode(n);
+  };
   const errorAt = (i, code, message, toEnd = false) => {
     const u = blocks[i];
-    const n = ob.makeNode(KIND.error, { message, code }, []);
-    const e = u ? (toEnd ? Math.max(docEnd, u.e) : u.e) : 0;
-    if (u) ob.span(n, u.s, e);
-    ob.diag(2, code, message, u ? u.s : 0, e);
-    ob.emitNode(n);
+    if (!u) return errorSpan(0, 0, code, message);
+    errorSpan(u.s, toEnd ? Math.max(docEnd, u.e) : u.e, code, message);
   };
   const describe = (e) => `${e?.name ?? 'Error'}: ${e?.message ?? String(e)}`;
   const SYNTAX_MSG = 'SyntaxError: invalid JavaScript in this block';
@@ -402,6 +405,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
   const env = {
     ob,
     ctors,
+    here,
     height: () => styleStack.length,
     setCurrent: (i) => { current = i; },
     failBlock: (err, h, i) => errorAt(i, ...failure(err, h)),

@@ -156,9 +156,12 @@ A verbatim statement runs outside any frame (its bindings must reach later
 code). If it throws, the module function fails: the ops written so far stay,
 and one error block covers the rest of the document (D-I10).
 
-Diagnostics of a running block (`splice-undefined`, `splice-object`,
-`region-error`, `bib-load`) point at the *current* block: the last top-level
-block with user code that started.
+Diagnostics of the run (`splice-undefined`, `splice-object`,
+`splice-function`, `region-error`, `bib-load`) point at the innermost
+construct the interpreter is running — the splice, the region, else the
+frame or block. (Until the follow-up commit of P2-02 they pointed at the
+last top-level block with user code that started, so a region handler's
+error was reported at the statement that registered the handler.)
 
 The interpreter calls the executor's constructors in the order the printed
 JavaScript of P0-05 evaluated them (arguments left to right, children before
