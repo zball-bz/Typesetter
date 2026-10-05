@@ -1,0 +1,4 @@
+doc @[0,194)
+  para @[0,74)
+    text @[0,74) str="A sidecar note narrow enough to hyphenate keeps its hyphen at the row end."
+  codeblock @[76,193) lang="js" body="let total = 0; /// accumulates the incomprehensibilities of everything measured\ntotal += 1;"

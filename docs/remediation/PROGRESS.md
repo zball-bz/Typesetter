@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-17
+- 下一步：P1-18
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -42,7 +42,7 @@
 | P1-14 | KP 正式化与校验缓存 | done | grep:plan P1-14 | 2026-10-06 | 0（全部 golden 字节不变，115 个用例） | break.cc 改为 TeX 活动表：节点的行一旦 Overfull 即失活，Forced 断点使之前所有节点失活，只在 parshape 前缀内按行数分开保存节点（之后每个断点一个，按全序取优），去掉 ±5 窗口、±1 行数剪枝与重试阶梯；救援并入末遍（所有活动节点在某断点都 Overfull 时按全序取最优者在此断开）；BreakParams{cost, tolerance, emergencyStretch}，默认只跑末遍（与今天一致），容差遍与应急伸展遍按设计实现并有单测；缓存键为条目字节 + 块数 + 行宽 + 参数的 128 位哈希（MurmurHash3 x64_128 的块步骤），命中时以条目数校验，LRU 预算按结果字计；i64 su 前缀和与 -ffp-contract=off 已在 P0-12；语料对比（真实文档/typst/博客 539 篇 × 300/640px）：133 个单元的断点变化，106 个代价更低，其余 27 个（24 篇）代价更高者全部是旧窗口搜索把内容挤进多条 Overfull 救援行（救援行不计代价），新结果 Overfull 行严格更少，无一例更差；性能：未缓存 KP 在 HoTT + 40 章 pbr-zh × 两种宽度上 50.0 → 38.0ms；bench 87K update 29.1ms、relayout 56.7ms，均在预算内，无需有界活动模式 |
 | P1-15 | 断行移入布局（ExclusionMap） | done | grep:plan P1-15 | 2026-10-06 | 0（全部 golden 字节不变） | layoutDoc 自己断行（breakLinesCached，overfull-line 诊断随之移入 layout，顺序不变）：段落、浮动题注（按图宽）、表格格（同一 colW 公式）、sidecar 行（按 sidebarW）；浮动追踪器改为 layout.cc 中的 ExclusionMap，在 layout 自己的游标处计算，与游标共用一个 gapBefore()，按今天的前缀 ParShape 规则（以 baseLeading 计遮挡、同侧堆叠取最宽、异侧与非文本单元清除）逐位复现；删除 Doc::typeset 的逐 kind 循环、FlowUnit 的五个重放字段（narrow/narrowK/narrowLeft/floatShiftSu/floatClearSu）与断点三字段（FlowUnit 与 TableCell），断点结果记录在 LayoutResult::breaks（dumpBreaks 读它）；stages.def 删除 Break（并入 Layout），schema 设置行 affects 中的 Break 改为 Layout（8 行），products breaks→Layout，lint-arch 把 break/ 归入 Layout；figure-design 的 "under-clears" 更正为 "over-clears" 并改写追踪器说明 |
 | P1-16 | 与宽度无关的 emit（SizeSpec） | done | grep:plan P1-16 | 2026-10-06 | 14 个图片用例的 blocks 与 hlist 单元头（改为打印尺寸 spec：intrinsic=WxHpx、scale、placeholder）；inline/object-unsupported-diag 的 diags 次序（image-src 先于 shape-unsupported）；其余全部字节不变 | emit 不再读宽度：图片记录 ImageSize（固有 px、scale、placeholder），代码块只记 sidecar 标志，layout 用同一公式解析（resolveImageSize，sidecar 列宽 code.sidecarFrac）；image-src 诊断移到图片请求扫描（每文档一次，不再随 emit 重复）；host.width 的 affects 改为 Layout+Paint，code.sidecarFrac 改为 Layout；setWidth 只使 Layout 失效；worker 的 relayout 以 host.width 补丁原位重进 Layout（不再 fork；得到 REBUILD 时才回退到 fork），并带回阶段计时；黄金运行器新增"原位宽度补丁 == 新建"检查（全部用例）；验收：87K relayout 的引擎+渲染（node，同一构建）fork 路径 10.1ms → 原位 4.3ms；浏览器端到端 relayout 中位数 57.3（P0-11 记录）→ 55.2ms，主要耗时是整页 DOM 替换（worker 内 engine 2.9 + render 5.0ms） |
-| P1-17 | 统一行物化（materializeLines） | todo | | | | |
+| P1-17 | 统一行物化（materializeLines） | done | grep:plan P1-17 | 2026-10-06 | 12 个 breaks.txt 增加格/题注/sidecar 流记录（cell=）；20 个 layout 与 24 个 html、2 个 paged：折行的标题、题注与 error 块获得 join（仅 join 变化，逐行分类核对）；浮动题注行获得源 span（所在段的 data-s 随之变为段相对）并移除 5 条 XFAIL；figure/float 的 2 行紧题注按断行器的假设收缩；+2 用例（region/table-term、code/sidecar-hyphen） | layout.cc 一个 materializeLines（LinePolicy：Join FromBreak|Never，Align Justify|Ragged|Center|Cell）取代段落、表格格、浮动题注、sidecar 行四个循环与 P1-13 的高度垫片：丢弃后的条目区间、自然宽与伸展、行高取 vmet 与对象部件、连字符取自 Disc（修复 sidecar 断字丢连字符）、join 由断点处被丢弃的 run 决定（不再由对齐决定：段末与硬换行才是真正的行界）、表格格与 sidecar 用 Join::Never、非两端对齐的紧行一律收缩到断行器假设的宽度（Overfull 设在收缩极限）；TableCell 保留锚点（格内行内 term 的 id 落在格的首行，修复悬空的 @gizmo），typeset 渲染器输出行锚点，语义渲染器为行内带标签 group 输出 span id；dumpBreaks 覆盖每个流；docs/document-model.md §6.3/§9 更新 |
 | P1-18 | 盒树、布局器注册表、Fragment、DisplayList | todo | | | | |
 | P1-19 | 资源表（ResourceTable） | todo | | | | |
 | P1-20 | 按段延迟（per-pid deferral） | todo | | | | |
@@ -171,6 +171,9 @@
 | P1-16 | golden 变化多于计划（计划 5 个 blocks）：14 个图片用例的 blocks 与 hlist（两者共用单元头，hlist 在 P1-12 新增），外加 P1-13 新用例的 diags 次序 | 计划之后新增了带图片的用例（ref/supplements-*、figure/*、doc/wrap-heading-caption）；image-src 改由图片请求扫描报告后排在 emit 诊断之前 | 无 |
 | P1-16 | image-src 诊断放在图片请求扫描（Resolve 阶段末，与 NEED_IMAGES 同一遍）而非 ingest 扫描 | resolver 物化的内容也可能含图片；同一遍里报一次，re-emit 不再重复 | 无 |
 | P1-16 | "relayout 明显更快"以引擎侧计时验收：87K 的 fork 路径 10.1ms → 原位 4.3ms；浏览器端到端只从 57.3 降到 55.2ms | 端到端耗时主要是宿主替换整页 DOM（每行都随宽度变化），不在引擎内 | 宿主侧的增量 DOM 替换不在本计划范围 |
+| P1-17 | golden 变化多于计划：breaks 12 个（计划 5 个；之后新增的表格/浮动用例同样增加流记录）；join 的变化不只题注，还有折行的标题与 error 块（同一规则，审计 break-layout-pages/missed:2 正指此类）；浮动题注行获得源 span 后 5 条 line-spans XFAIL 转为通过并移除；figure/float 两行紧题注收缩 | 统一行物化后各流遵循同一规则；题注过去比断行器假设的更宽而溢出浮动框 | 无 |
+| P1-17 | XFAIL 增加 1 条：新用例 code/sidecar-hyphen 的 html line-spans（代码行缺 span，属已有的 P3-07 类） | 计划要求修复 sidecar 断字丢连字符，需要回归用例；代码行的 span 由 P3-07 统一补齐 | P3-07 |
+| P1-17 | 语义渲染器同时为行内带标签 group 输出 span id | 新回归用例 region/table-term 的语义输出同样出现悬空锚点（同一缺陷的另一输出） | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

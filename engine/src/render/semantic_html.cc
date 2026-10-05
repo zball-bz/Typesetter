@@ -156,6 +156,23 @@ struct Sem {
         return;
       case Kind::comment:
         return;  // document-model nodes, excluded from output
+      case Kind::group: {
+        // an inline labelled group (a term used inline, also inside a table
+        // cell — plan P1-17) is a link target: its anchor wraps its content
+        std::string_view id = argS(n, ArgK::label);
+        if (id.empty()) {
+          inlineKids(n);
+          return;
+        }
+        {
+          Tag t(out, "span");
+          t.id(id);
+          t.open();
+        }
+        inlineKids(n);
+        out += "</span>";
+        return;
+      }
       default:
         // an inline object of the shaper's flatten table (plan P1-13) is
         // painted, never dropped; other kinds keep their content (block

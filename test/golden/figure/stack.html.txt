@@ -3,14 +3,14 @@
 <div class="tsr-line" data-s="0" data-e="108" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.392px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px">两张同侧浮动图连续出现时应当堆叠</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px;margin-right:0.235px">而不</span></div>
 <div class="tsr-line" data-s="0" data-e="108" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">是把第二张清到第一张之下留出空白</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:0px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="212" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" src="photos/a.jpg" alt="甲" style="top:0px;left:180px;width:120px;height:90px">
-<div class="tsr-line" data-ragged="1" data-cell="1" style="top:90px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="212">第一张图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="212">。</span></div>
+<div class="tsr-line" data-s="0" data-e="15" data-ragged="1" data-cell="1" style="top:90px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">第一张图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="0" style="position:relative;height:0px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="2" data-s0="340" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-b" src="photos/b.jpg" alt="乙" style="top:114px;left:180px;width:120px;height:60px">
-<div class="tsr-line" data-join="none" data-ragged="1" data-cell="1" style="top:174px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="340">第二张图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="340">，</span></div>
-<div class="tsr-line" data-ragged="1" data-cell="1" style="top:198px;left:180px;width:120px"><span class="tsr-r tsr-cjk" data-s="340">紧接着第一张</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="340">。</span></div>
+<div class="tsr-line" data-s="0" data-e="36" data-join="none" data-ragged="1" data-cell="1" style="top:174px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">第二张图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">，</span></div>
+<div class="tsr-line" data-s="0" data-e="36" data-ragged="1" data-cell="1" style="top:198px;left:180px;width:120px"><span class="tsr-r tsr-cjk" data-s="0">紧接着第一张</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="390" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" id="tsr-h-0.1" data-s="0" data-e="21" data-ragged="1" style="top:0px;left:0px;width:164px"><span class="tsr-r tsr-b tsr-cjk" data-s="0" style="font-size:21.6px">标题不清除浮动</span></div>

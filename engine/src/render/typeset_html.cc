@@ -123,6 +123,8 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
     if (u.anchor && l.unitIdx != lastAnchored) {
       lastAnchored = l.unitIdx;
       t.id(strs.get(u.anchor));
+    } else if (l.anchor) {  // a cell's / caption's own anchor (plan P1-17)
+      t.id(strs.get(l.anchor));
     }
   };
   auto lineSpan = [&](Tag& t) {

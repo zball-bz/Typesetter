@@ -1,0 +1,8 @@
+A term defined inside a table cell keeps its anchor, so a reference to it lands.
+
+#!table(cols: 2, label: "parts")
+Part | Note
+Gear | #term[gizmo][a small mechanical device] in the box
+#table!
+
+See @gizmo in @parts.

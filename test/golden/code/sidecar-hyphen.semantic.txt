@@ -1,0 +1,5 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="74">A sidecar note narrow enough to hyphenate keeps its hyphen at the row end.</p>
+<pre data-pid="1" data-s="76" data-e="193"><code class="language-js">let total = 0;
+total += 1;</code></pre>
+</div>

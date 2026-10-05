@@ -1,0 +1,3 @@
+[76,97) keyword "```js(sidecar: \"///\")"
+[98,189) embedded "let total = 0; /// accumulates the incomprehensibilities of everything measured\ntotal += 1;"
+[190,193) keyword "```"

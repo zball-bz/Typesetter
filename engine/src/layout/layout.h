@@ -31,6 +31,7 @@ struct LineBox {
   bool codeHl = false;               // hl-range line (background)
   Su height = 0;                     // row advance (hl background needs it)
   StrRef marker = 0;                 // list marker on the unit's first line
+  StrRef anchor = 0;                 // a cell's / caption's anchor, on its first line
   StyleId markerStyle = 0;
   Span srcSpan;
 };
@@ -41,16 +42,17 @@ struct ParaFrame {
   std::vector<LineBox> lines;
 };
 
-// the breaks layout made for a text unit (tsrc --stage=breaks)
+// the breaks layout made for a stream (tsrc --stage=breaks)
 struct UnitBreaks {
   u32 pid = 0, unit = 0;
+  i32 cell = -1;  // >= 0: the unit's cell / caption / sidecar row stream
   BreakResult r;
 };
 
 struct LayoutResult {
   i64 docHeightSu = 0;
   std::vector<ParaFrame> paras;
-  std::vector<UnitBreaks> breaks;  // text units, in order
+  std::vector<UnitBreaks> breaks;  // every stream, in order
 };
 
 // Breaks and lays out (plan P1-15: breaking is layout's; the float

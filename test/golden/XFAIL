@@ -13,6 +13,7 @@ code/runs.tsm:html:line-spans  # code rows / cells / captions / generated lines 
 code/sidecar.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 code/snap-sidecar.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 code/nowrap-snap.tsm:html:line-spans  # code rows lack spans (P3-07): a P1-03 fixture of the existing class
+code/sidecar-hyphen.tsm:html:line-spans  # code rows lack spans (P3-07): a P1-17 fixture of the existing class
 code/snap.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 code/tsm-hl.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 code/wrap.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
@@ -22,15 +23,10 @@ doc/nested-base18.tsm:html:line-spans  # code rows / cells / captions / generate
 doc/refs.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 doc/structure.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 doc/toc-before-after.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
-figure/float-in-list.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
-figure/float.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
-figure/stack.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 inline/fence-edge.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 line/fence-container-diag.tsm:html:line-spans  # code rows lack spans (P3-07): a P1-07 fixture of the existing class
 line/crlf.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 pages/paged-doc.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 pages/paged-doc.tsm:paged:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 pages/paged-eq-ids.tsm:paged:anchor-closure  # paged output drops ids of labelled display math (P1-18)
-pages/paged-float-bottom.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
-pages/paged-float-bottom.tsm:paged:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 region/fence-handler.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)

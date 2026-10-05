@@ -191,7 +191,8 @@ row padding 0.3em, full-width rules above/between/below rows. Cells are
 **ragged** (never justified); the `align` string ('l'/'c'/'r' per column)
 shifts whole lines at layout time. Cell lines carry `data-cell="1"`, no
 `data-join`, and reference the cell's block stream via `cellIdx` in the
-layout result. Region provenance is materialized at codegen: each source
+layout result; a label inside a cell (an inline term) anchors the cell's
+first line, and the cell's breaks appear in the breaks dump (`cell=`). Region provenance is materialized at codegen: each source
 line of a region paragraph is a row, segmented at top-level unescaped `|`
 (code spans and splices are opaque; `\|` escapes; `||` is an empty cell;
 leading/trailing empties of |-framed lines drop). Non-tabular regions rejoin
@@ -277,7 +278,14 @@ per paragraph to the caller (`onUpgrade`), scroll anchoring stays caller-side
 persisted metrics. The `data-join` attribute reflects whether the break
 consumed a REAL source space: CJK inter-character breaks and synthetic glue
 (boundary, punct halves, indents) render `data-join="none"`, so the §9.3
-rebuild reproduces source text exactly. Deferred: `pending(estimate)` states
+rebuild reproduces source text exactly. It is decided by the break, not by
+alignment (plan P1-17): a wrapped heading, caption or error block joins
+like a paragraph; only the paragraph end and a hard line break are real
+line boundaries (no attribute), and table cells and sidecar rows never
+carry one. Every stream's lines come from one `materializeLines` (layout),
+so paragraphs, cells, float captions and sidecar rows share the hyphen,
+height, span and spacing rules — a tight ragged line shrinks to fit, as the
+breaker assumed. Deferred: `pending(estimate)` states
 and webfont-settle re-typesets, `size-adjust` fallback descriptors.
 
 ### 9.3 Copy (normative for `runtime/main/copy.mjs`)

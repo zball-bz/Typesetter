@@ -95,6 +95,7 @@ inline void resolveImageSize(const ImageSize& s, double measurePx, Su& w, Su& h)
 // by the same KP breaker (document-model §6; alignment is layout-side).
 struct TableCell {
   HList hl;
+  StrRef anchor = 0;  // a label inside it (an inline labelled group): its first line's id
   std::vector<BreakBlock> blocks;  // fuseLegacy(hl), for the legacy breaker
   std::vector<u32> blockStart;     // block b = hl.items [blockStart[b], blockStart[b+1])
   std::vector<LinebreakBlock> legacy;  // MIGRATION: the legacy emitter's blocks (fuseCheck)

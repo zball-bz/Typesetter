@@ -3,5 +3,5 @@ para pid=0 y=0su w=19200su h=3072su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=space blocks=[0,25) @[0,70)
   L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[26,40) @[0,74)
 para pid=1 y=4301su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,17) @[76,114)
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=space blocks=[0,17) @[76,114)
   L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[18,35) @[76,114)

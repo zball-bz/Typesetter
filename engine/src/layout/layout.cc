@@ -104,6 +104,133 @@ bool joinsSpace(const HList& h, u32 ihi) {
   return false;
 }
 
+// How a stream's lines sit and join (plan P1-17; design T6 LinePolicy).
+struct LinePolicy {
+  enum class Join : u8 { FromBreak, Never } join = Join::FromBreak;  // cells: Never (document-model §6.3)
+  // Justify: the measure is filled; Ragged: it is not (tight lines still
+  // shrink); Center: ragged, the slack split both sides; Cell: ragged, set
+  // left, centre or right within the cell's content width
+  enum class Align : u8 { Justify, Ragged, Center, Cell } align = Align::Justify;
+  u8 cellAlign = 'l';
+  double widthPx = 0;   // the measure in px (justification and centring slack)
+  StrRef marker = 0;    // on the first line
+  StyleId markerStyle = 0;
+  StrRef anchor = 0;    // the stream's anchor (a cell's, a caption's), on its first line
+};
+// a broken stream and where its lines go
+struct LineStream {
+  const HList& h;
+  const std::vector<u32>& blockStart;
+  u32 nBlocks;
+  const BreakResult& br;
+  LineWidths widths;   // the prefix beside a float, then the content width
+  bool narrowLeft;     // the float is on the left: narrowed lines shift right
+  Su left, width;      // the content box
+  u32 unitIdx;
+  i32 cellIdx;
+};
+
+// One function turns every broken stream — a paragraph, a table cell, a
+// float caption, a sidecar row — into lines (plan P1-17; it replaces four
+// loops and P1-13's height shim): the item range after discard; the natural
+// width and stretch; heights from vmet and object parts; the hyphen from the
+// Disc; the join from the discarded run at the break (a source space joins
+// with a space, a Disc, synthetic glue or nothing with none, the paragraph
+// end or a forced break is a real boundary); Overfull lines set at the
+// shrink limit. Returns the cursor after the last line.
+i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricStore& metrics, const Config& cfg,
+                     Su baseLeading, i64 y, std::vector<LineBox>& out) {
+  u32 prev = 0;
+  bool first = true;
+  const BreakResult& br = s.br;
+  for (size_t li = 0; li < br.breakpoints.size(); li++) {
+    const u32 bp = br.breakpoints[li];
+    LineItems r;
+    const bool any = lineItems(s.h, s.blockStart, prev, bp, r);
+    prev = bp;
+    if (!any) continue;
+    const LineFill f = fillLine(s.h, r, metrics);
+    LineBox line;
+    line.unitIdx = s.unitIdx;
+    line.cellIdx = s.cellIdx;
+    line.blockBegin = r.lo;
+    line.blockEnd = r.hi;
+    line.itemBegin = r.ilo;
+    line.itemEnd = r.ihi;
+    line.left = s.left;
+    line.width = s.width;
+    // the prefix beside a float
+    const bool narrowed = li < (size_t)s.widths.narrowK && s.widths.narrow > 0;
+    if (narrowed) {
+      line.width = s.widths.narrow;
+      if (s.narrowLeft) line.left += s.width - s.widths.narrow;
+    }
+    line.srcSpan = f.span;
+    line.endsWithHyphen = f.endsHyphen;
+    if (first) {
+      line.marker = pol.marker;
+      line.markerStyle = pol.markerStyle;
+      line.anchor = pol.anchor;
+      first = false;
+    }
+    // a hard line break ends a line like the paragraph end: unjustified, a
+    // real line boundary for copy
+    const bool last = bp == s.nBlocks || endsForced(s.h, r.ihi, s.blockStart[bp]);
+    line.overfull = std::binary_search(br.overfullLines.begin(), br.overfullLines.end(), (u32)li);
+    // the spacing: justified lines fill the measure, every other line only
+    // shrinks when tight (the breaker counted on it) — one rule for every
+    // stream
+    const bool rigid = last || pol.align != LinePolicy::Align::Justify;
+    const double slackPx = (narrowed ? suToPx(s.widths.narrow) : pol.widthPx) - f.naturalPx;
+    // a line without stretchable glue (all URL pieces / one unbreakable
+    // token) cannot be justified — TeX's underfull box; it sets ragged
+    // rather than pretending (real-world-report.md)
+    if (f.totalWeight <= 0 && !rigid && slackPx != 0) line.noGlue = true;
+    if (f.totalWeight > 0) {
+      double d = slackPx / f.totalWeight;  // per unit weight (v2 §8)
+      if (rigid && slackPx > 0) d = 0;
+      // an Overfull line (a run wider than the measure, plan P0-12) is set
+      // at the shrink limit and overflows; it never spreads unbounded
+      // negative spacing over its glue
+      if (line.overfull && slackPx < 0) {
+        const double minD = -cfg.cost.shrinkThreshold * f.capacityPx / f.totalWeight;
+        if (d < minD) d = minD;
+      }
+      line.wordDeltaPx = d;
+      line.wordDeltaSu = (i32)std::llround(d * 64.0);
+      if (f.anyCjkGap) {
+        line.cjkDeltaPx = d * cfg.cjkJustifyK;
+        line.cjkDeltaSu = (i32)std::llround(line.cjkDeltaPx * 64.0);
+      }
+    }
+    if (pol.align == LinePolicy::Align::Center && slackPx > 0) {
+      // caption centring: slack splits both sides; the right edge stays
+      // inside the measure (width shrinks by the shift)
+      Su cs = suRoundPx(slackPx / 2);
+      line.left += cs;
+      line.width -= cs;
+    } else if (pol.align == LinePolicy::Align::Cell) {
+      Su slack = s.width - suCeilPx(f.naturalPx);
+      Su shift = 0;
+      if (slack > 0) {
+        if (pol.cellAlign == 'c') shift = slack / 2;
+        else if (pol.cellAlign == 'r') shift = slack;
+      }
+      line.left += shift;
+      line.width -= shift;  // the right edge stays at the content edge (audit: no overflow)
+    }
+    if (pol.join == LinePolicy::Join::FromBreak && !last)
+      line.join = (f.endsHyphen || !joinsSpace(s.h, r.ihi)) ? 2 : 1;
+    Su advance = baseLeading;
+    if (f.maxAsc + f.maxDesc > advance) advance = f.maxAsc + f.maxDesc;
+    line.height = advance;
+    line.y = (Su)y;
+    y += advance;
+    out.push_back(line);
+  }
+  return y;
+}
+
 // The gap before a unit: one rule for the cursor and the exclusions.
 Su gapBefore(u32 ui, const FlowUnit& u, bool firstBlock, Su paraGap) {
   return ui > 0 ? (u.tightAbove ? paraGap / 3 : paraGap) : (firstBlock ? 0 : paraGap);
@@ -250,6 +377,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         i64 captionH = 0;
         for (const TableCell& c : u.cells) {  // the caption breaks to the float width
           cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{imgW}));
+          lr.breaks.push_back({tb.pid, ui, (i32)cellBreaks.size() - 1, cellBreaks.back()});
           captionH += (i64)cellBreaks.back().breakpoints.size() * baseLeading;
         }
         excl.add(u.floatSide, floatShift, imgW, imgH, captionH);
@@ -266,30 +394,16 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         fr.lines.push_back(line);
         i64 cy = py + floatShift + imgH;
         for (u32 ci = 0; ci < (u32)u.cells.size(); ci++) {
+          // caption rows: left-aligned at the float width; wrapped rows
+          // rejoin on copy (§9.3, unlike table cells)
           const TableCell& cell = u.cells[ci];
-          u32 prevBp = 0;
-          for (u32 bp : cellBreaks[ci].breakpoints) {
-            LineItems r;
-            const bool any = lineItems(cell.hl, cell.blockStart, prevBp, bp, r);
-            prevBp = bp;
-            if (!any) continue;
-            LineBox cl;
-            cl.unitIdx = ui;
-            cl.cellIdx = (i32)ci;
-            cl.blockBegin = r.lo;
-            cl.blockEnd = r.hi;
-            cl.itemBegin = r.ilo;
-            cl.itemEnd = r.ihi;
-            cl.left = boxLeft;
-            cl.width = imgW;
-            cl.y = (Su)cy;
-            // §9.3: wrapped caption rows rejoin on copy (unlike table cells,
-            // whose row boundaries are content)
-            if (bp != (u32)cell.blocks.size()) cl.join = joinsSpace(cell.hl, r.ihi) ? 1 : 2;
-            cl.height = baseLeading;
-            cy += baseLeading;
-            fr.lines.push_back(cl);
-          }
+          LinePolicy pol;
+          pol.align = LinePolicy::Align::Ragged;
+          pol.widthPx = suToPx(imgW);
+          pol.anchor = cell.anchor;
+          cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[ci], LineWidths{imgW},
+                                 false, boxLeft, imgW, ui, (i32)ci},
+                                pol, metrics, cfg, baseLeading, cy, fr.lines);
         }
         if ((i64)fr.y + cy > floatBottomAbs) floatBottomAbs = (i64)fr.y + cy;
         continue;  // no py advance: the float is out of flow
@@ -335,8 +449,10 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           gapSu = suRoundPx(cfg.baseSizePx * cfg.codeScale);
           lineWidthCode = lineWidth - sidebarW - gapSu;
           if (lineWidthCode < 64) lineWidthCode = 64;
-          for (const TableCell& c : u.cells)  // sidecar rows break to the sidebar
+          for (const TableCell& c : u.cells) {  // sidecar rows break to the sidebar
             cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{sidebarW}));
+            lr.breaks.push_back({tb.pid, ui, (i32)cellBreaks.size() - 1, cellBreaks.back()});
+          }
         }
         (void)lineWidthFull;
         // ch grid (CH4, code-design.md §4): monospace is a metric contract —
@@ -523,31 +639,15 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           // links and refs land through the generic cell render path
           if (hasSidecar && li < u.cells.size()) {
             const TableCell& cell = u.cells[li];
-            i64 cy = rowTop;
-            u32 prevBp = 0;
-            for (u32 bp : cellBreaks[li].breakpoints) {
-              LineItems r;
-              const bool any = lineItems(cell.hl, cell.blockStart, prevBp, bp, r);
-              prevBp = bp;
-              if (!any) continue;
-              const LineFill f = fillLine(cell.hl, r, metrics);
-              LineBox sl;
-              sl.unitIdx = ui;
-              sl.cellIdx = (i32)li;
-              sl.blockBegin = r.lo;
-              sl.blockEnd = r.hi;
-              sl.itemBegin = r.ilo;
-              sl.itemEnd = r.ihi;
-              sl.left = (Su)(u.indent + lineWidthCode + gapSu);
-              sl.width = sidebarW;
-              sl.srcSpan = f.span;
-              sl.y = (Su)cy;
-              Su sadv = baseLeading;
-              if (f.maxAsc + f.maxDesc > sadv) sadv = f.maxAsc + f.maxDesc;
-              sl.height = sadv;
-              cy += sadv;
-              fr.lines.push_back(sl);
-            }
+            LinePolicy pol;
+            pol.join = LinePolicy::Join::Never;
+            pol.align = LinePolicy::Align::Ragged;
+            pol.widthPx = suToPx(sidebarW);
+            pol.anchor = cell.anchor;
+            const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[li],
+                                             LineWidths{sidebarW}, false, (Su)(u.indent + lineWidthCode + gapSu),
+                                             sidebarW, ui, (i32)li},
+                                            pol, metrics, cfg, baseLeading, rowTop, fr.lines);
             if (cy > py) py = cy;  // the equal-height constraint
           }
         }
@@ -598,8 +698,10 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         const Su padY = suRoundPx(kTableRowPadEm * cfg.baseSizePx);
         Su cellW = colW - 2 * padX;
         if (cellW < 64) cellW = 64;
-        for (const TableCell& c : u.cells)  // each cell breaks to its content width
+        for (const TableCell& c : u.cells) {  // each cell breaks to its content width
           cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{cellW}));
+          lr.breaks.push_back({tb.pid, ui, (i32)cellBreaks.size() - 1, cellBreaks.back()});
+        }
         const size_t nRows = u.cells.size() / u.tCols;
         auto addRule = [&](i64 yy) {
           LineBox rl;
@@ -616,44 +718,17 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
           i64 rowBottom = rowTop + baseLeading;
           for (u32 c = 0; c < u.tCols; c++) {
             const TableCell& cell = u.cells[r * u.tCols + c];
-            const BreakResult& cb = cellBreaks[r * u.tCols + c];
-            i64 cy = rowTop;
-            u32 prevBp = 0;
-            for (size_t cli = 0; cli < cb.breakpoints.size(); cli++) {
-              const u32 bp = cb.breakpoints[cli];
-              LineItems lr;
-              const bool any = lineItems(cell.hl, cell.blockStart, prevBp, bp, lr);
-              prevBp = bp;
-              if (!any) continue;
-              const LineFill f = fillLine(cell.hl, lr, metrics);
-              Su shift = 0;
-              Su slack = cellW - suCeilPx(f.naturalPx);
-              if (slack > 0) {
-                u8 al = u.tAligns[c];
-                if (al == 'c') shift = slack / 2;
-                else if (al == 'r') shift = slack;
-              }
-              LineBox line;
-              line.unitIdx = ui;
-              line.cellIdx = (i32)(r * u.tCols + c);
-              line.overfull = std::binary_search(cb.overfullLines.begin(),
-                                                 cb.overfullLines.end(), (u32)cli);
-              line.blockBegin = lr.lo;
-              line.blockEnd = lr.hi;
-              line.itemBegin = lr.ilo;
-              line.itemEnd = lr.ihi;
-              line.left = (Su)(u.indent + (Su)c * colW + padX + shift);
-              line.width = cellW - shift;  // right edge stays at the column
-                                           // content edge (audit: no overflow)
-              line.srcSpan = f.span;
-              line.endsWithHyphen = f.endsHyphen;
-              line.y = (Su)cy;
-              Su advance = baseLeading;
-              if (f.maxAsc + f.maxDesc > advance) advance = f.maxAsc + f.maxDesc;
-              line.height = advance;
-              cy += advance;
-              fr.lines.push_back(line);
-            }
+            LinePolicy pol;
+            pol.join = LinePolicy::Join::Never;
+            pol.align = LinePolicy::Align::Cell;
+            pol.cellAlign = u.tAligns[c];
+            pol.widthPx = suToPx(cellW);
+            pol.anchor = cell.anchor;
+            const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(),
+                                             cellBreaks[r * u.tCols + c], LineWidths{cellW}, false,
+                                             (Su)(u.indent + (Su)c * colW + padX), cellW, ui,
+                                             (i32)(r * u.tCols + c)},
+                                            pol, metrics, cfg, baseLeading, rowTop, fr.lines);
             if (cy > rowBottom) rowBottom = cy;
           }
           py = rowBottom + padY;
@@ -662,92 +737,20 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         continue;
       }
       // Text unit
-      const HList& h = u.hl;
-      u32 prev = 0;
-      bool firstLine = true;
       bool narrowLeft = false;
       const LineWidths lw = excl.widths(lineWidth, narrowLeft);
-      lr.breaks.push_back({tb.pid, ui, breakStream(u.blocks, u.hl, lw)});
-      const BreakResult& br = lr.breaks.back().r;
-      excl.consume(br.breakpoints.size());
-      for (size_t li = 0; li < br.breakpoints.size(); li++) {
-        u32 bp = br.breakpoints[li];
-        LineItems r;
-        const bool any = lineItems(h, u.blockStart, prev, bp, r);
-        prev = bp;
-        if (!any) continue;
-        const LineFill f = fillLine(h, r, metrics);
-        const double naturalPx = f.naturalPx;
-        const double totalWeight = f.totalWeight;
-        const double capacityPx = f.capacityPx;
-        const bool endsHyphen = f.endsHyphen;
-        const bool joinSpace = joinsSpace(h, r.ihi);
-
-        LineBox line;
-        line.unitIdx = ui;
-        line.blockBegin = r.lo;
-        line.blockEnd = r.hi;
-        line.itemBegin = r.ilo;
-        line.itemEnd = r.ihi;
-        line.left = u.indent;
-        line.width = lineWidth;
-        // F2 parshape replay: the first narrowK lines run beside the float
-        const bool narrowed = li < (size_t)lw.narrowK && lw.narrow > 0;
-        if (narrowed) {
-          line.width = lw.narrow;
-          if (narrowLeft) line.left += lineWidth - lw.narrow;
-        }
-        line.srcSpan = f.span;
-        line.endsWithHyphen = endsHyphen;
-        if (firstLine && u.marker) { line.marker = u.marker; line.markerStyle = u.markerStyle; }
-        firstLine = false;
-
-        // a hard line break ends a line like the paragraph end: ragged, a
-        // real line boundary for copy
-        const bool isLast = (bp == u.blocks.size()) || u.ragged || endsForced(h, r.ihi, u.blockStart[bp]);
-        const bool overfull =
-            std::binary_search(br.overfullLines.begin(), br.overfullLines.end(), (u32)li);
-        line.overfull = overfull;
-        double slackPx = narrowed
-                             ? suToPx(lw.narrow) - naturalPx
-                             : (cfg.widthPx - suToPx(u.indent)) - naturalPx;
-        // a line without stretchable glue (all URL pieces / one unbreakable
-        // token) cannot be justified — TeX's underfull box; it sets ragged
-        // rather than pretending (real-world-report.md)
-        if (totalWeight <= 0 && !isLast && slackPx != 0) line.noGlue = true;
-        if (totalWeight > 0) {
-          double d = slackPx / totalWeight;  // per unit weight (v2 §8)
-          if (isLast && slackPx > 0) d = 0;
-          // an Overfull line (a run wider than the measure, plan P0-12) is
-          // set at the shrink limit and overflows; it never spreads
-          // unbounded negative spacing over its glue
-          if (overfull && slackPx < 0) {
-            const double minD = -cfg.cost.shrinkThreshold * capacityPx / totalWeight;
-            if (d < minD) d = minD;
-          }
-          line.wordDeltaPx = d;
-          line.wordDeltaSu = (i32)std::llround(d * 64.0);
-          if (f.anyCjkGap) {
-            line.cjkDeltaPx = d * cfg.cjkJustifyK;
-            line.cjkDeltaSu = (i32)std::llround(line.cjkDeltaPx * 64.0);
-          }
-        }
-        line.join = isLast ? 0 : (endsHyphen || !joinSpace) ? 2 : 1;
-        if (u.centered && slackPx > 0) {
-          // caption centring: slack splits both sides; the right edge stays
-          // inside the measure (width shrinks by the shift)
-          Su cs = suRoundPx(slackPx / 2);
-          line.left += cs;
-          line.width -= cs;
-        }
-
-        Su advance = baseLeading;
-        if (f.maxAsc + f.maxDesc > advance) advance = f.maxAsc + f.maxDesc;
-        line.height = advance;
-        line.y = (Su)py;
-        py += advance;
-        fr.lines.push_back(line);
-      }
+      lr.breaks.push_back({tb.pid, ui, -1, breakStream(u.blocks, u.hl, lw)});
+      excl.consume(lr.breaks.back().r.breakpoints.size());
+      LinePolicy pol;
+      pol.align = u.centered ? LinePolicy::Align::Center
+                  : u.ragged ? LinePolicy::Align::Ragged
+                             : LinePolicy::Align::Justify;
+      pol.widthPx = cfg.widthPx - suToPx(u.indent);
+      pol.marker = u.marker;
+      pol.markerStyle = u.markerStyle;
+      py = materializeLines({u.hl, u.blockStart, (u32)u.blocks.size(), lr.breaks.back().r, lw, narrowLeft,
+                             u.indent, lineWidth, ui, -1},
+                            pol, metrics, cfg, baseLeading, py, fr.lines);
     }
     fr.h = (Su)py;
     y += py;
@@ -763,8 +766,9 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
 std::string dumpBreaks(const LayoutResult& lr) {
   std::string out;
   for (const UnitBreaks& b : lr.breaks) {
-    appendf(out, "top pid=%u unit=%u lines=%zu cost=%.4f breakpoints=[", b.pid, b.unit, b.r.breakpoints.size(),
-            b.r.cost);
+    appendf(out, "top pid=%u unit=%u", b.pid, b.unit);
+    if (b.cell >= 0) appendf(out, " cell=%d", b.cell);  // a cell's, caption's or sidecar row's stream
+    appendf(out, " lines=%zu cost=%.4f breakpoints=[", b.r.breakpoints.size(), b.r.cost);
     for (size_t k = 0; k < b.r.breakpoints.size(); k++) appendf(out, "%s%u", k ? "," : "", b.r.breakpoints[k]);
     out += "]\n";
   }

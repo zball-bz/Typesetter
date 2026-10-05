@@ -9,7 +9,7 @@
 <div class="tsr-line" id="tsr-fig-x" data-s="0" data-e="13" data-ragged="1" style="top:0px;left:78px;width:222px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">First figure.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="149" style="position:relative;height:48px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="44" data-ragged="1" style="top:0px;left:2px;width:298px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">Second figure reuses the label: it</span></div>
+<div class="tsr-line" data-s="0" data-e="44" data-join="space" data-ragged="1" style="top:0px;left:2px;width:298px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 2</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">Second figure reuses the label: it</span></div>
 <div class="tsr-line" data-s="0" data-e="44" data-ragged="1" style="top:24px;left:116px;width:184px"><span class="tsr-r" data-s="0">loses it.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="204" style="position:relative;height:24px;margin-bottom:19.2px">
@@ -19,7 +19,7 @@
 <div class="tsr-line" data-s="0" data-e="16" data-ragged="1" style="top:0px;left:130.797px;width:38.391px;height:24px"><span class="tsr-math" data-syn="math" data-src="$ c = d $" style="width:38.391px;height:11.234px;position:absolute;left:0;top:6.383px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:12.219px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:28.75px;top:-1.863px;font-size:16px;line-height:16px">d</span></span></div>
 </div>
 <div class="tsr-para" data-pid="6" data-s0="265" style="position:relative;height:48px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="37" data-ragged="1" style="top:0px;left:18px;width:282px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 3</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">A figure with a reserved label</span></div>
+<div class="tsr-line" data-s="0" data-e="37" data-join="space" data-ragged="1" style="top:0px;left:18px;width:282px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 3</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="0">A figure with a reserved label</span></div>
 <div class="tsr-line" data-s="0" data-e="37" data-ragged="1" style="top:24px;left:126px;width:174px"><span class="tsr-r" data-s="0">shape.</span></div>
 </div>
 <div class="tsr-para" data-pid="7" data-s0="313" style="position:relative;height:24px">

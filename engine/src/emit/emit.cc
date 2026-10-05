@@ -765,7 +765,10 @@ struct HlInline final : InlineSink {
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
   }
   void finish(FlowUnit& u) override;
-  void toCell(FlowUnit& tmp, TableCell& tc) override { tc.hl = std::move(tmp.hl); }
+  void toCell(FlowUnit& tmp, TableCell& tc) override {
+    tc.hl = std::move(tmp.hl);
+    tc.anchor = tmp.anchor;  // a label inside the cell, kept (plan P1-17)
+  }
   void done(std::vector<TopBlock>&) override {}
 };
 

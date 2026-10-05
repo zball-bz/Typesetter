@@ -1,0 +1,26 @@
+doc @[0,216)
+  para @[0,80)
+    text @[0,80) str="A term defined inside a table cell keeps its anchor, so a reference to it lands."
+  region @[82,192) name="table"
+    para @[115,184)
+      row @[115,126)
+        cell @[115,120)
+          text @[115,119) str="Part"
+        cell @[121,126)
+          text @[122,126) str="Note"
+      row @[127,184)
+        cell @[127,132)
+          text @[127,131) str="Gear"
+        cell @[133,184)
+          splice @[134,173) expr="term"
+            arg @[140,145)
+              text @[140,145) str="gizmo"
+            arg @[147,172)
+              text @[147,172) str="a small mechanical device"
+          text @[174,184) str=" in the box"
+  para @[194,215)
+    text @[194,197) str="See "
+    ref @[198,204) target="gizmo"
+    text @[205,207) str=" in "
+    ref @[208,214) target="parts"
+    text @[214,215) str="."

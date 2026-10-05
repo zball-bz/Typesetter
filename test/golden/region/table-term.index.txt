@@ -1,0 +1,5 @@
+instance table 1 label=parts @[82,192)
+instance term label=gizmo title="gizmo" @[0,0)
+label parts -> table 1 @[82,192)
+label gizmo -> term @[0,0)
+row glossary gizmo @[0,0)

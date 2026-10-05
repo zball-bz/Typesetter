@@ -5,7 +5,7 @@
 </div>
 <div class="tsr-para" data-pid="1" data-s0="181" style="position:relative;height:292.203px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-light" src="photos/lighthouse.jpg" alt="海边灯塔" style="top:0px;left:0px;width:300px;height:225px">
-<div class="tsr-line" data-s="0" data-e="41" data-ragged="1" style="top:244.203px;left:32px;width:268px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">黄昏时分的灯塔</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0">尺寸来自</span></div>
+<div class="tsr-line" data-s="0" data-e="41" data-join="space" data-ragged="1" style="top:244.203px;left:32px;width:268px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r tsr-cjk" data-s="0">黄昏时分的灯塔</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0">尺寸来自</span></div>
 <div class="tsr-line" data-s="0" data-e="58" data-ragged="1" style="top:268.203px;left:84px;width:216px"><span class="tsr-r" data-s="0">NEED_IMAGES </span><span class="tsr-r tsr-cjk" data-s="42">拉取</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="42">。</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="308" style="position:relative;height:143.203px">

@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="80">A term defined inside a table cell keeps its anchor, so a reference to it lands.</p>
+<table data-pid="1" data-s="82" data-e="192" id="tsr-parts">
+<tr><td>Part</td><td>Note</td></tr>
+<tr><td>Gear</td><td><span id="tsr-gizmo"><strong>gizmo</strong> — a small mechanical device</span> in the box</td></tr>
+</table>
+<p data-pid="2" data-s="194" data-e="215">See <a href="#tsr-gizmo">gizmo</a> in <a href="#tsr-parts">表 1</a>.</p>
+</div>

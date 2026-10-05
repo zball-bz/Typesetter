@@ -1149,7 +1149,7 @@ Theme steps: — · findings: 1
 | `emitter/missed:0` | missed | high | P0-10, P4-01 | |
 | `emitter/missed:1` | missed | medium | P4-02 | |
 | `emitter/missed:2` | missed | medium | P4-05 | |
-| `emitter/missed:3` | missed | medium | P1-17 | |
+| `emitter/missed:3` | missed | medium | P1-17 | grep:plan P1-17 |
 | `emitter/missed:4` | missed | medium | P4-02 | |
 | `emitter/missed:5` | missed | medium | P1-04 | grep:plan P1-04 |
 | `break-layout-pages/glue-semantics-split` | adhoc | high | P4-08 | |
@@ -1159,7 +1159,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/float-tracker-replay` | adhoc | high | P1-15 | grep:plan P1-15 |
 | `break-layout-pages/float-model-closed` | adhoc | high | P3-15 | |
 | `break-layout-pages/unit-kind-switch` | adhoc | high | P1-18 | |
-| `break-layout-pages/nested-stream-copies` | adhoc | high | P1-17 | |
+| `break-layout-pages/nested-stream-copies` | adhoc | high | P1-17 | grep:plan P1-17 |
 | `break-layout-pages/table-closed` | adhoc | high | P3-10, P3-14 | |
 | `break-layout-pages/alignment-flags` | adhoc | medium | P3-09 | |
 | `break-layout-pages/vertical-spacing-constants` | adhoc | medium | P1-18, P3-01 | |
@@ -1212,7 +1212,7 @@ Theme steps: — · findings: 1
 | `render-runtime/snap-kerning-duplicate-style` | issue | high | P0-10 | grep:plan P0-10 |
 | `render-runtime/semantic-footnote-ids-dangle` | issue | high | P0-09, P0-10 | grep:plan P0-10 |
 | `render-runtime/copy-drops-blank-code-lines` | issue | medium | P3-07 | |
-| `render-runtime/sidecar-hyphen-missing` | issue | medium | P1-17 | |
+| `render-runtime/sidecar-hyphen-missing` | issue | medium | P1-17 | grep:plan P1-17 |
 | `render-runtime/sidecar-dropped-in-semantic` | issue | medium | P3-23 | |
 | `render-runtime/popup-breaks-patch` | issue | low | P3-06 | |
 | `render-runtime/host-line-height-leak` | issue | medium | P3-19 | |

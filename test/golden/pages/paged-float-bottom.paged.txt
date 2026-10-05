@@ -7,9 +7,9 @@
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-box" src="photos/box.png" alt="box" style="top:0px;left:180px;width:120px;height:120px">
-<div class="tsr-line" data-join="space" data-ragged="1" data-cell="1" style="top:120px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="243">Right</span></div>
-<div class="tsr-line" data-join="space" data-ragged="1" data-cell="1" style="top:144px;left:180px;width:120px"><span class="tsr-r" data-s="243">float near the</span></div>
-<div class="tsr-line" data-ragged="1" data-cell="1" style="top:168px;left:180px;width:120px"><span class="tsr-r" data-s="243">bottom.</span></div>
+<div class="tsr-line" data-s="243" data-e="271" data-join="space" data-ragged="1" data-cell="1" style="top:120px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk">图</span><span class="tsr-r tsr-b"> 1</span><span class="tsr-r tsr-b tsr-cjk">：</span><span class="tsr-r" data-s="243">Right</span></div>
+<div class="tsr-line" data-s="243" data-e="271" data-join="space" data-ragged="1" data-cell="1" style="top:144px;left:180px;width:120px"><span class="tsr-r" data-s="243">float near the</span></div>
+<div class="tsr-line" data-s="243" data-e="271" data-ragged="1" data-cell="1" style="top:168px;left:180px;width:120px"><span class="tsr-r" data-s="243">bottom.</span></div>
 <div class="tsr-line" data-s="282" data-e="397" data-join="none" style="top:19.203px;left:0px;width:164px;word-spacing:8px"><span class="tsr-r" data-s="282">Text that wraps be</span><span class="tsr-r" data-s="282" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="282" data-e="397" data-join="none" style="top:43.203px;left:0px;width:164px;word-spacing:-1px"><span class="tsr-r" data-s="282">side the float and con</span><span class="tsr-r" data-s="282" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="282" data-e="397" data-join="space" style="top:67.203px;left:0px;width:164px;word-spacing:5.333px"><span class="tsr-r" data-s="282">tinues onto the next</span></div>

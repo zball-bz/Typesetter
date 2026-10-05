@@ -1,0 +1,6 @@
+A sidecar note narrow enough to hyphenate keeps its hyphen at the row end.
+
+```js(sidecar: "///")
+let total = 0; /// accumulates the incomprehensibilities of everything measured
+total += 1;
+```
