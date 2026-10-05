@@ -1,8 +1,8 @@
 <div class="tsr-doc">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:120px">
 <div class="tsr-line" data-s="0" data-e="63" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:5.333px"><span class="tsr-r" data-s="0">The demonstration paragraph exercises</span></div>
-<div class="tsr-line" data-s="0" data-e="120" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:8px"><span class="tsr-r" data-s="0">hyphenation inside links: </span><a class="tsr-r" href="https://example.org/hyphen" data-s="65">extraordi</a><span class="tsr-r" data-s="65" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="65" data-e="120" data-join="none" style="top:48px;left:0px;width:300px;word-spacing:1px"><a class="tsr-r" href="https://example.org/hyphen" data-s="65">nary representation of measurement ter</a><span class="tsr-r" data-s="65" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="120" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:8px"><span class="tsr-r" data-s="0">hyphenation inside links: </span><a class="tsr-r" href="https://example.org/hyphen" data-s="65">extraordi</a><a class="tsr-r" href="https://example.org/hyphen" data-s="65" data-syn="hyphen">-</a></div>
+<div class="tsr-line" data-s="65" data-e="120" data-join="none" style="top:48px;left:0px;width:300px;word-spacing:1px"><a class="tsr-r" href="https://example.org/hyphen" data-s="65">nary representation of measurement ter</a><a class="tsr-r" href="https://example.org/hyphen" data-s="65" data-syn="hyphen">-</a></div>
 <div class="tsr-line" data-s="65" data-e="216" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:5.333px"><a class="tsr-r" href="https://example.org/hyphen" data-s="65">minology</a><span class="tsr-r" data-s="150"> and justification arithmetic</span></div>
 <div class="tsr-line" data-s="150" data-e="216" style="top:96px;left:0px;width:300px"><span class="tsr-r" data-s="150">throughout typesetting documentation.</span></div>
 </div>

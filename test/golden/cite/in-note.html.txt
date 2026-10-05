@@ -3,8 +3,8 @@
 <div class="tsr-line" id="tsr-h-1" data-s="0" data-e="18" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Citations in notes</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="22" style="position:relative;height:72px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="49" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">Liang&#39;s patterns [</span><a class="tsr-r" href="#tsr-bib-liang83" data-syn="ref">1</a><span class="tsr-r" data-syn="ref">] come first in the</span></div>
-<div class="tsr-line" data-s="26" data-e="149" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.4px"><span class="tsr-r" data-s="26">text.</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="ref" style="font-size:11.2px">1</a><span class="tsr-r" data-s="105"> Knuth and Plass [</span><a class="tsr-r" href="#tsr-bib-kp81" data-syn="ref">3</a><span class="tsr-r" data-syn="ref">] follow after</span></div>
+<div class="tsr-line" data-s="0" data-e="49" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">Liang&#39;s patterns </span><span class="tsr-r" data-syn="ref">[</span><a class="tsr-r" href="#tsr-bib-liang83" data-syn="ref">1</a><span class="tsr-r" data-syn="ref">]</span><span class="tsr-r" data-s="26"> come first in the</span></div>
+<div class="tsr-line" data-s="26" data-e="149" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.4px"><span class="tsr-r" data-s="26">text.</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="ref" style="font-size:11.2px">1</a><span class="tsr-r" data-s="105"> Knuth and Plass </span><span class="tsr-r" data-syn="ref">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-syn="ref">3</a><span class="tsr-r" data-syn="ref">]</span><span class="tsr-r" data-s="127"> follow after</span></div>
 <div class="tsr-line" data-s="127" data-e="149" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="127">the note.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="0" style="position:relative;height:369.609px;margin-bottom:19.2px">
@@ -24,7 +24,7 @@
 </div>
 <div class="tsr-para" data-pid="3" data-s0="71" style="position:relative;height:91.203px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-fn-1" data-s="2" data-e="54" data-join="space" style="top:43.203px;left:24px;width:276px;word-spacing:3px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="2" style="font-size:13.6px">The TeXbook [</span><a class="tsr-r" href="#tsr-bib-knuth84" data-syn="ref" style="font-size:13.6px">2</a><span class="tsr-r" data-syn="ref" style="font-size:13.6px">] is cited only inside this</span></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="2" data-e="54" data-join="space" style="top:43.203px;left:24px;width:276px;word-spacing:3px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="2" style="font-size:13.6px">The TeXbook </span><span class="tsr-r" data-syn="ref" style="font-size:13.6px">[</span><a class="tsr-r" href="#tsr-bib-knuth84" data-syn="ref" style="font-size:13.6px">2</a><span class="tsr-r" data-syn="ref" style="font-size:13.6px">]</span><span class="tsr-r" data-s="23" style="font-size:13.6px"> is cited only inside this</span></div>
 <div class="tsr-line" data-s="0" data-e="55" style="top:67.203px;left:24px;width:276px"><span class="tsr-r" data-s="23" style="font-size:13.6px">note. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="ref" style="font-size:13.6px">↩</a></div>
 </div>
 </div>

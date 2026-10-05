@@ -160,6 +160,46 @@ test('copy joins CJK line breaks seamlessly and skips resolved refs', async ({ p
   expect(text).toContain('见');
 });
 
+// plan P0-10 (design T7 S6): a citation's generated text is its own run, so
+// the prose and punctuation beside it survive copy (they used to merge into
+// the data-syn="ref" run and vanish, while the bracket leaked into prose)
+test('copy keeps the prose next to citations', async ({ page }) => {
+  const source = readFileSync(join(fixturesDir, 'cite', 'basic.tsm'), 'utf8');
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 300 }),
+    { source },
+  );
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text).toContain('Knuth and Plass ; hyphenation patterns follow Liang , and the pair');
+  expect(text).toContain('keeps its number; the uncited entry');
+  expect(text).not.toMatch(/Plass \[|Liang \[/);  // the bracket is generated text
+});
+
+// plan P0-10 (defect #21): a snap-kerned code run carries its letter-spacing
+// in its one style attribute (a second style="" was dropped by the parser)
+test('snap-kerning: one style attribute carrying letter-spacing', async ({ page }) => {
+  const source = '```text\nlet 名前 = "値"; // 注释 mixed\nASCII only line here\n```';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 400, verbatimSnapKerning: true }),
+    { source },
+  );
+  const tags = res.html.match(/<span[^>]*data-snap="1"[^>]*>/g) ?? [];
+  expect(tags.length).toBeGreaterThan(0);
+  for (const t of tags) {
+    expect(t.match(/ style="/g)?.length, t).toBe(1);
+    expect(t, t).toMatch(/style="[^"]*letter-spacing:/);
+  }
+  const spacing = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-snap]')].map((e) => e.style.letterSpacing));
+  expect(spacing.length).toBe(tags.length);
+  for (const v of spacing) expect(v).not.toBe('');
+  expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
+});
+
 test('block figure: pulled dims, centred image, caption prefix, copy skips', async ({ page }) => {
   await page.goto('/test/e2e/harness.html');
   await page.waitForFunction(() => window.__tsrReady);

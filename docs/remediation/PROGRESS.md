@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P0
-- 下一步：P0-10
+- 下一步：P0-11
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -23,7 +23,7 @@
 | P0-07 | 实例化加固（显式栈 + InstLimits） | done | grep:plan P0-07 | 2026-10-06 | 0 | 显式栈 copy + InstLimits（下限 256K，见偏差）；normalize.cc（N1/N2，按 schema level）；删除 isInlineKind；炸弹单测 25.8ms，峰值 35MB |
 | P0-08 | 样式卫生与统一 em | done | grep:plan P0-08 | 2026-10-06 | style/patch blocks+breaks | emPx 统一（emit/measure/CSS 同一公式）；MetricStore 键 <<32；Styling 浮点规范化；JS popTo 钳制。$.style.push(number) 的弃用诊断推迟到 P2-01（届时删除该入口） |
 | P0-09 | 语义正确性修复 | done | grep:plan P0-09 | 2026-10-06 | notes tree（SUP）、notes/eqref semantic、+7 用例 | 引文按文档序（脚注体在标记处）；分组引用逐键；ref-shadowed/ref-unnumbered；所有带标签节点注册；保留形状；重复标签丢弃；compose 取代绝对样式；#notes() 重复不放置；第二个参考文献克隆无锚；designated init；diags golden 阶段 |
-| P0-10 | 渲染正确性修复（HtmlWriter/AnchorNamer、run 键、列表锚点） | todo | | | | |
+| P0-10 | 渲染正确性修复（HtmlWriter/AnchorNamer、run 键、列表锚点） | done | grep:plan P0-10 | 2026-10-06 | cite/* ×5 + doc/refs-diag html（原 golden 错）；+1 用例（inline/hyphen-link） | html_writer.h：编译期属性白名单、单一 style、流式写出（87K 原生渲染 2.09→1.97ms）；BF_REF 过渡 run 键；连字符在链接内；render-attr 诊断；e2e 引文旁复制、snap 单 style；fuzz 发现（参考文献嵌套收集器无限递归）单独修复 |
 | P0-11 | 宿主卫生（worker 串行化、fork 重排、引擎卫生） | todo | | | | |
 | P0-12 | 断行语义包 | todo | | | | |
 | P1-01 | 版本窗口与 ABI 握手 | todo | | | | |

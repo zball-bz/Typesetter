@@ -238,6 +238,8 @@ The upgrade payload (v2 §9) is `paras[]` plus per-paragraph HTML.
 
 Class prefix `tsr-`. Both serializers escape all text (`& < > " '`); the only unescaped path is `raw.html` (trusted, handler-declared).
 
+Both serializers build start tags through `render/html_writer.h` (plan P0-10): attribute names come from the explicit allowlist `kHtmlAttrs` (checked at compile time — an unlisted name does not build), every element has at most ONE `style` attribute (declarations merge into it), ids are spelled by `AnchorNamer` (`tsr-` + the escaped label), and a repeated attribute is a serializer defect — debug builds assert, release keeps the first value and reports `render-attr`.
+
 ### 9.1 Typeset HTML
 
 ```html
@@ -255,6 +257,7 @@ Class prefix `tsr-`. Both serializers escape all text (`& < > " '`); the only un
 
 - CSS contract: `.tsr-line { position:absolute; white-space:nowrap; contain:layout style paint; }` — the v2 §7 rules are *serializer output*, not page-author responsibility.
 - Runs carry `data-s` when they map 1:1 to a source slice; synthetic runs (hyphens, resolved refs, escapes-containing runs) carry `data-syn` instead.
+- Run boundary (interim key until P4-01's run instances): style, link and the generated-reference flag — a resolved ref's text (`[1]`, `??`) is never merged with the authored prose or punctuation beside it. A line-final hyphen opens inside its word's link (`<a … data-syn="hyphen">-</a>`).
 - `comment` nodes are not rendered here; `error` renders as `<span|div class="tsr-err" title="{message}">`.
 
 ### 9.2 Semantic HTML

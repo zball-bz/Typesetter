@@ -1184,7 +1184,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/baseline-not-communicated` | issue | low | P1-18 | |
 | `break-layout-pages/doc-drift` | issue | low | P1-15, P3-12 | |
 | `break-layout-pages/missed:0` | missed | medium | P1-18, P3-12 | |
-| `break-layout-pages/missed:1` | missed | medium | P0-10 | |
+| `break-layout-pages/missed:1` | missed | medium | P0-10 | grep:plan P0-10 |
 | `break-layout-pages/missed:2` | missed | medium | P1-17, P3-07 | |
 | `break-layout-pages/missed:3` | missed | medium | P0-12 | |
 | `break-layout-pages/missed:4` | missed | medium | P3-28 | |
@@ -1209,8 +1209,8 @@ Theme steps: — · findings: 1
 | `render-runtime/audit-hint-attributes` | adhoc | low | P3-07 | |
 | `render-runtime/duplicate-serializer-primitives` | adhoc | low | P0-10, P1-02 | |
 | `render-runtime/shell-feature-inventory` | adhoc | medium | P3-06 | |
-| `render-runtime/snap-kerning-duplicate-style` | issue | high | P0-10 | |
-| `render-runtime/semantic-footnote-ids-dangle` | issue | high | P0-09, P0-10 | |
+| `render-runtime/snap-kerning-duplicate-style` | issue | high | P0-10 | grep:plan P0-10 |
+| `render-runtime/semantic-footnote-ids-dangle` | issue | high | P0-09, P0-10 | grep:plan P0-10 |
 | `render-runtime/copy-drops-blank-code-lines` | issue | medium | P3-07 | |
 | `render-runtime/sidecar-hyphen-missing` | issue | medium | P1-17 | |
 | `render-runtime/sidecar-dropped-in-semantic` | issue | medium | P3-23 | |
@@ -1220,7 +1220,7 @@ Theme steps: — · findings: 1
 | `render-runtime/trailing-float-and-gap-drift` | issue | low | P3-16 | |
 | `render-runtime/typeset-a11y` | issue | medium | P3-27 | |
 | `render-runtime/error-render-divergence` | issue | low | P3-16 | |
-| `render-runtime/hyphen-in-link-or-ref` | issue | low | P0-10 | |
+| `render-runtime/hyphen-in-link-or-ref` | issue | low | P0-10 | grep:plan P0-10 |
 | `render-runtime/normative-doc-drift` | issue | low | P3-07 | |
 | `render-runtime/swap-whole-container` | issue | low | P3-05 | |
 | `render-runtime/missed:0` | missed | high | P0-10, P4-01 | |

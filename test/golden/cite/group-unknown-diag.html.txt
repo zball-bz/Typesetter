@@ -1,7 +1,7 @@
 <div class="tsr-doc">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="39" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">A grouped citation with one unknown key</span></div>
-<div class="tsr-line" data-s="40" data-e="95" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-syn="ref">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-syn="ref">1</a><span class="tsr-r" data-syn="ref">, ??, </span><a class="tsr-r" href="#tsr-bib-liang83" data-syn="ref">2</a><span class="tsr-r" data-syn="ref">] still links the known keys.</span></div>
+<div class="tsr-line" data-s="40" data-e="95" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-syn="ref">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-syn="ref">1</a><span class="tsr-r" data-syn="ref">, ??, </span><a class="tsr-r" href="#tsr-bib-liang83" data-syn="ref">2</a><span class="tsr-r" data-syn="ref">]</span><span class="tsr-r" data-s="68"> still links the known keys.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:278.406px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>

@@ -24,7 +24,8 @@ window.__tsr = {
     if (opts.widthPx) out.style.width = opts.widthPx + 'px';
     handle = await engine.typeset(source, out, opts);
     return { diags: handle.diags, heightPx: handle.heightPx, dpr: devicePixelRatio,
-             hasSemantic: !!handle.semanticHtml, upgrades: handle.upgrades.length };
+             hasSemantic: !!handle.semanticHtml, upgrades: handle.upgrades.length,
+             html: handle.html };
   },
   async update(source) {
     const r = await handle.update(source);

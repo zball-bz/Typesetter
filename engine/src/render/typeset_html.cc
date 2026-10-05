@@ -370,8 +370,11 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
     return isLink;
   };
   auto noStyle = [](Tag&) {};
+  // run identity (interim run key, design T7 S6; T5's runId replaces it in
+  // P4-01): generated reference text never merges with authored prose
   auto sameRun = [&](const LinebreakBlock& a, const LinebreakBlock& b) {
-    return a.style == b.style && a.linkUrl == b.linkUrl;
+    return a.style == b.style && a.linkUrl == b.linkUrl &&
+           (a.flags & BF_REF) == (b.flags & BF_REF);
   };
   while (i < l.blockEnd) {
     const LinebreakBlock& b = bl[i];
@@ -380,9 +383,11 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
       i++;
       continue;
     }
+    // final hyphen glyph: inside its word's link (it used to close the link
+    // and add an unlinked '-')
     if (b.isHyphen()) {
       if (i == l.blockEnd - 1 && l.endsWithHyphen) {
-        bool link = openRun(styles.get(b.style), 0, b, nullptr, "hyphen", noStyle);
+        bool link = openRun(styles.get(b.style), b.linkUrl, b, nullptr, "hyphen", noStyle);
         out += "-";
         out += link ? "</a>" : "</span>";
       }
