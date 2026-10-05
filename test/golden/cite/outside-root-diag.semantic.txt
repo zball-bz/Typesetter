@@ -1,0 +1,4 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="74">A bibliography file outside the document root is refused (plan P0-11): ??.</p>
+<div class="tsr-err" data-pid="1" data-s="76" data-e="114" title="bibliography ../../../../refs.json: resource outside the document root">&#9888; bibliography ../../../../refs.json: resource outside the document root</div>
+</div>

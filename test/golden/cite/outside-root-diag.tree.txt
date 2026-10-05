@@ -1,0 +1,7 @@
+doc @[0,114) [base]
+  para @[0,74) [base]
+    text @[0,70) [base] str="A bibliography file outside the document root is refused (plan P0-11): "
+    ref @[71,73) [base] target="k"
+      text @[71,73) [base] str="??"
+    text @[73,74) [base] str="."
+  error @[76,114) [base] message="bibliography ../../../../refs.json: resource outside the document root" code="bib-load"

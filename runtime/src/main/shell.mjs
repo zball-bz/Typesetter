@@ -217,16 +217,16 @@ export function createEngine(opts = {}) {
   const pending = new Map(); // id → {resolve, reject, onSemantic}
   // NEED_IMAGES fallback (figure-design.md §2): the worker could not read
   // the image (cross-origin, no CORS); an <img> here still yields its size
-  const answerDims = (src) => {
+  const answerDims = (rid, src) => {
     const img = new Image();
-    const reply = (w, h) => worker.postMessage({ type: 'image-dims', src, w, h });
+    const reply = (w, h) => worker.postMessage({ type: 'image-dims', rid, w, h });
     img.onload = () => reply(img.naturalWidth, img.naturalHeight);
     img.onerror = () => reply(0, 0);
     img.src = src;
   };
   worker.onmessage = (ev) => {
     const { id, type } = ev.data;
-    if (type === 'image-dims?') { answerDims(ev.data.src); return; }
+    if (type === 'image-dims?') { answerDims(ev.data.rid, ev.data.src); return; }
     const p = pending.get(id);
     if (!p) return;
     if (type === 'semantic') {
@@ -411,8 +411,10 @@ export function createEngine(opts = {}) {
         // width-only re-typeset: metrics persist in the worker-held doc
         async relayout(newWidthPx) {
           const rid = nextId++;
-          const r = await request({ type: 'relayout', id: rid, docId: id, widthPx: newWidthPx });
+          // the session measure moves now: an update() issued before this
+          // resolves is queued behind it in the worker and must follow it
           width = newWidthPx;
+          const r = await request({ type: 'relayout', id: rid, docId: id, widthPx: newWidthPx });
           const ups = swapIn(container, r.html);
           paraChunks = chunkParas(r.html);
           onUpgrade?.(ups);

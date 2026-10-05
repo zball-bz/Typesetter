@@ -1,0 +1,11 @@
+export default async (__s, $) => {
+const {para, text, em, strong, val, m, heading, list, item, quote, codeblock, rule, comment, link, code, seq, ref, term, toc, glossary, notes, note, bibliography, style, mathinline, mathblock, image} = __s;
+return (async ({__emit, __at: __a, __region, __fence, __fail, __height, __cur, __syntax, text: __t, para: __p, em: __i, strong: __b, val: __v, heading: __hd, list: __l, item: __it, quote: __qt, rule: __hr, comment: __cm, link: __ln, code: __cd, seq: __sq, ref: __rf, note: __nt, mathinline: __mi, mathblock: __mb, error: __er}) => {
+__emit(__a(__p(__a(__t("A bibliography file outside the document root is refused (plan P0-11): "),0,70), __a(__rf("k"),71,73), __a(__t("."),73,74)),0,74));
+/*9466c3aeef8c56fc[0*/{ const __h = __height(); try {
+__emit(__a(__p(__v((bibliography("../../../../refs.json")))),76,114));
+} catch (__e) { __fail(0, __e, __h); } }/*9466c3aeef8c56fc]0*/
+})(__s);
+};
+//# sourceURL=tsm:doc
+//# tsm-units=9466c3aeef8c56fc;115;[[76,114,2]]

@@ -1,0 +1,7 @@
+doc @[0,115)
+  para @[0,74)
+    text @[0,70) str="A bibliography file outside the document root is refused (plan P0-11): "
+    ref @[71,73) target="k"
+    text @[73,74) str="."
+  para @[76,114)
+    splice @[76,114) expr="bibliography(\"../../../../refs.json\")"

@@ -1,0 +1,3 @@
+A bibliography file outside the document root is refused (plan P0-11): @k.
+
+#bibliography("../../../../refs.json")

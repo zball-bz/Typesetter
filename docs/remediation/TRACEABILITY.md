@@ -1141,7 +1141,7 @@ Theme steps: — · findings: 1
 | `emitter/kp-counts-discardable-glue` | issue | medium | P0-12 | |
 | `emitter/kp-ignores-stretch-weight` | issue | medium | P4-08 | |
 | `emitter/negative-wordspacing-overfull` | issue | medium | P0-12 | |
-| `emitter/duplicate-diagnostics-on-reemit` | issue | medium | P0-11 | |
+| `emitter/duplicate-diagnostics-on-reemit` | issue | medium | P0-11 | grep:plan P0-11 |
 | `emitter/silent-drops-of-unhandled-kinds` | issue | medium | P1-13, P2-11 | |
 | `emitter/coarse-source-spans` | issue | low | P4-03 | |
 | `emitter/full-reemit-for-math-text` | issue | low | P1-20, P1-25 | |
@@ -1290,17 +1290,17 @@ Theme steps: — · findings: 1
 | `api-measure-code/relayout-stale-emit` | issue | high | P0-11, P1-16 | |
 | `api-measure-code/image-w-only-overwritten` | issue | high | P0-11, P1-19 | |
 | `api-measure-code/snap-ignores-sidecar-partition` | issue | medium | P1-03, P3-11 | |
-| `api-measure-code/late-font-stale-measure-cache` | issue | medium | P0-11 | |
-| `api-measure-code/main-dims-rpc-race` | issue | medium | P0-11 | |
-| `api-measure-code/worker-no-per-doc-serialization` | issue | medium | P0-11 | |
-| `api-measure-code/image-fetch-serial-and-decode` | issue | medium | P0-11 | |
+| `api-measure-code/late-font-stale-measure-cache` | issue | medium | P0-11 | grep:plan P0-11 |
+| `api-measure-code/main-dims-rpc-race` | issue | medium | P0-11 | grep:plan P0-11 |
+| `api-measure-code/worker-no-per-doc-serialization` | issue | medium | P0-11 | grep:plan P0-11 |
+| `api-measure-code/image-fetch-serial-and-decode` | issue | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/per-word-boundary-marshalling` | issue | medium | P1-19 | |
-| `api-measure-code/kp-cache-unverified-hash` | issue | low | P0-11 | |
-| `api-measure-code/diag-format-and-duplication` | issue | low | P0-11 | |
-| `api-measure-code/nul-byte-in-worker-source` | issue | low | P0-11 | |
+| `api-measure-code/kp-cache-unverified-hash` | issue | low | P0-11 | grep:plan P0-11 |
+| `api-measure-code/diag-format-and-duplication` | issue | low | P0-11 | grep:plan P0-11 |
+| `api-measure-code/nul-byte-in-worker-source` | issue | low | P0-11 | grep:plan P0-11 |
 | `api-measure-code/unchecked-boundary-invariants` | issue | low | P1-19 | |
 | `api-measure-code/doc-drift-api-subsystem` | issue | low | P3-37 | |
-| `api-measure-code/missed:0` | missed | medium | P0-11 | |
+| `api-measure-code/missed:0` | missed | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/missed:1` | missed | medium | P1-19 | |
 | `api-measure-code/missed:2` | missed | medium | P3-23 | |
 | `api-measure-code/missed:3` | missed | medium | P1-04, P1-19 | |

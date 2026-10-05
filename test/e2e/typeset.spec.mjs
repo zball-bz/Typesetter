@@ -200,6 +200,125 @@ test('snap-kerning: one style attribute carrying letter-spacing', async ({ page 
   expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
 });
 
+// --- plan P0-11: host hygiene ------------------------------------------------
+
+// defect #16: a width change re-emits, so image boxes follow the new measure
+// (they were baked at the old width and overflowed after a narrowing resize)
+test('relayout: an image follows the new measure (resize-image)', async ({ page }) => {
+  const source = '#!figure(src: "x.png", alt: "wide", w: 1000, h: 500)\nA wide figure.\n#figure!';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, { widthPx: 600 }),
+                      { source });
+  const imgWidth = () => page.evaluate(() =>
+    Math.round(document.querySelector('#out .tsr-img').getBoundingClientRect().width));
+  expect(await imgWidth()).toBe(600);
+  await page.evaluate(async () => await window.__tsr.relayout(300));
+  expect(await imgWidth()).toBe(300);
+  expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
+});
+
+// defect #25: messages for one document run in order in the worker; a newer
+// update supersedes an older one instead of being overwritten by it (the
+// slow older edit used to install its document last — and free the newer)
+test('mailbox: back-to-back updates, the newest source wins (two-docs)', async ({ page }) => {
+  const para = 'The quick brown fox jumps over the lazy dog, again and again. ';
+  const big = Array.from({ length: 240 }, (_, i) => `BIG-${i} ` + para.repeat(3)).join('\n\n');
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async () => await window.__tsr.typeset('first version', { widthPx: 300 }));
+  const res = await page.evaluate(async ({ big }) => {
+    const a = window.__tsr.update(big);
+    const b = window.__tsr.update('NEWEST version wins');
+    const [ra, rb] = await Promise.all([a, b]);
+    const html = document.getElementById('out').innerHTML;
+    const rl = await window.__tsr.relayout(260);
+    return { a: ra.html.includes('NEWEST'), b: rb.html.includes('NEWEST'),
+             dom: html.includes('NEWEST') && !html.includes('BIG-'),
+             relayout: document.getElementById('out').innerHTML.includes('NEWEST'), h: rl.heightPx };
+  }, { big });
+  expect(res).toEqual({ a: true, b: true, dom: true, relayout: true, h: res.h });
+});
+
+// tokens.mjs: literate fragment names are blanked for the grammar, but the
+// byte offsets come from the ORIGINAL text — a CJK name used to shift every
+// later token into the middle of a UTF-8 sequence
+test('tokens: a CJK literate fragment name keeps its UTF-8', async ({ page }) => {
+  const source = '```cpp\n<<初始化>>=\nint x = 1; // 计数\n```';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(async ({ source }) =>
+    await window.__tsr.typeset(source, { widthPx: 400 }), { source });
+  expect(res.html).not.toContain('\ufffd');
+  expect(res.html).toContain('&lt;&lt;初始化&gt;&gt;=');
+  expect(res.html).toContain('计数');
+  expect(res.html).toMatch(/var\(--tsr-tok-type\)">int</);  // later tokens still land
+});
+
+// image dims: a relative src resolves against the PAGE (it was fetched
+// relative to the worker script and always fell back to the main thread),
+// and the size comes from the file header
+test('images: relative src resolves against the page, header-sniffed', async ({ page }) => {
+  const urls = [];
+  page.on('request', (r) => { if (r.url().includes('w40h20.png')) urls.push(new URL(r.url()).pathname); });
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(async () => await window.__tsr.typeset(
+    '#!figure(src: "img/w40h20.png", alt: "small")\nA small figure.\n#figure!', { widthPx: 300 }));
+  expect(res.diags).toBe('');
+  const box = await page.evaluate(() => {
+    const r = document.querySelector('#out .tsr-img').getBoundingClientRect();
+    return [Math.round(r.width), Math.round(r.height)];
+  });
+  expect(box).toEqual([40, 20]);
+  expect(urls.length).toBeGreaterThan(0);
+  for (const u of urls) expect(u).toBe('/test/e2e/img/w40h20.png');
+});
+
+// defect #24: an author-declared w without h keeps the author's width; the
+// height follows the pulled aspect ratio (40×20 → 120×60)
+test('images: a w-only figure keeps the author width (w-only)', async ({ page }) => {
+  const source = readFileSync(join(fixturesDir, 'figure', 'w-only.tsm'), 'utf8');
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const res = await page.evaluate(async ({ source }) =>
+    await window.__tsr.typeset(source, { widthPx: 300 }), { source });
+  expect(res.diags).toBe('');
+  const box = await page.evaluate(() => {
+    const r = document.querySelector('#out .tsr-img').getBoundingClientRect();
+    return [Math.round(r.width), Math.round(r.height)];
+  });
+  expect(box).toEqual([120, 60]);
+});
+
+test('images: header sniffer reads PNG, GIF, WebP and oriented JPEG', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  const out = await page.evaluate(async () => {
+    const { sniffImageSize } = await import('/runtime/src/worker/image_sniff.mjs');
+    const b = (...xs) => new Uint8Array(xs.flatMap((x) =>
+      typeof x === 'string' ? [...x].map((c) => c.charCodeAt(0)) : x));
+    const png = b([0x89], 'PNG\r\n\x1a\n', [0, 0, 0, 13], 'IHDR', [0, 0, 1, 44, 0, 0, 0, 200]);
+    const gif = b('GIF89a', [0x2c, 1, 0xc8, 0]);
+    const webp = b('RIFF', [0, 0, 0, 0], 'WEBPVP8X', [10, 0, 0, 0, 0, 0, 0, 0],
+                   [43, 1, 0], [199, 0, 0]);
+    const exif = b('Exif', [0, 0], 'II', [42, 0, 8, 0, 0, 0], [1, 0],
+                   [0x12, 1, 3, 0, 1, 0, 0, 0, 6, 0, 0, 0], [0, 0, 0, 0]);
+    const jpeg = b([0xff, 0xd8, 0xff, 0xe1, 0, exif.length + 2], [...exif],
+                   [0xff, 0xc0, 0, 17, 8, 0, 200, 1, 44, 3]);
+    return {
+      png: sniffImageSize(png), gif: sniffImageSize(gif), webp: sniffImageSize(webp),
+      jpeg: sniffImageSize(jpeg), short: sniffImageSize(png.slice(0, 12)),
+      svg: sniffImageSize(b('<svg xmlns="http://www.w3.org/2000/svg">')),
+    };
+  });
+  expect(out.png).toEqual({ w: 300, h: 200 });
+  expect(out.gif).toEqual({ w: 300, h: 200 });
+  expect(out.webp).toEqual({ w: 300, h: 200 });
+  expect(out.jpeg).toEqual({ w: 200, h: 300 });  // orientation 6: axes swap
+  expect(out.short).toEqual({ more: true });
+  expect(out.svg).toBeNull();
+});
+
 test('block figure: pulled dims, centred image, caption prefix, copy skips', async ({ page }) => {
   await page.goto('/test/e2e/harness.html');
   await page.waitForFunction(() => window.__tsrReady);

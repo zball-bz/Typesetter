@@ -170,6 +170,8 @@ worker → main : ready
 
 The `semantic` → `paragraphs` sequence *is* the native-fallback state machine as seen from the DOM: inject flow HTML immediately, swap paragraphs as they arrive.
 
+As built (plan P0-11, `runtime/src/worker/worker.mjs`): the worker keeps one **mailbox per docId** — messages for a document run strictly in order (an older update can no longer install its document over a newer one, and paginate's width round trip cannot interleave with a relayout). A newer `update` or `relayout` supersedes the running one of its kind: the running job checks its generation after every await and stops, queued jobs of the same kind coalesce, and superseded requests are answered with the newer result. The main-thread image-size fallback is an RPC with per-request ids (`image-dims?{rid, src}` → `image-dims{rid, w, h}`). Image sizes are resolved against the page's base URL, looked up in parallel, and read from the file header (PNG/GIF/WebP/JPEG with EXIF orientation) before falling back to a decode. A width change re-emits (image boxes and sidecar columns are width-dependent until P1-16).
+
 ## 5. Build and generated artifacts
 
 - **engine**: CMake presets `native-debug` (ASan/UBSan), `native-release`, `wasm-release` (emcmake). C++20, `-fno-exceptions -fno-rtti` (errors are diagnostics, not exceptions — WASM size and the §11 error-block model both want this). PackCC runs at build time: `grammar/*.peg → build/gen_parser.c`.

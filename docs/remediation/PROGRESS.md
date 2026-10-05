@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P0
-- 下一步：P0-11
+- 下一步：P0-12
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -24,7 +24,7 @@
 | P0-08 | 样式卫生与统一 em | done | grep:plan P0-08 | 2026-10-06 | style/patch blocks+breaks | emPx 统一（emit/measure/CSS 同一公式）；MetricStore 键 <<32；Styling 浮点规范化；JS popTo 钳制。$.style.push(number) 的弃用诊断推迟到 P2-01（届时删除该入口） |
 | P0-09 | 语义正确性修复 | done | grep:plan P0-09 | 2026-10-06 | notes tree（SUP）、notes/eqref semantic、+7 用例 | 引文按文档序（脚注体在标记处）；分组引用逐键；ref-shadowed/ref-unnumbered；所有带标签节点注册；保留形状；重复标签丢弃；compose 取代绝对样式；#notes() 重复不放置；第二个参考文献克隆无锚；designated init；diags golden 阶段 |
 | P0-10 | 渲染正确性修复（HtmlWriter/AnchorNamer、run 键、列表锚点） | done | grep:plan P0-10 | 2026-10-06 | cite/* ×5 + doc/refs-diag html（原 golden 错）；+1 用例（inline/hyphen-link） | html_writer.h：编译期属性白名单、单一 style、流式写出（87K 原生渲染 2.09→1.97ms）；BF_REF 过渡 run 键；连字符在链接内；render-attr 诊断；e2e 引文旁复制、snap 单 style；fuzz 发现（参考文献嵌套收集器无限递归）单独修复 |
-| P0-11 | 宿主卫生（worker 串行化、fork 重排、引擎卫生） | todo | | | | |
+| P0-11 | 宿主卫生（worker 串行化、fork 重排、引擎卫生） | done | grep:plan P0-11 | 2026-10-06 | figure/pull-diag diags span（原 golden 错）；+3 用例（figure/w-only、figure/reemit-diag、cite/outside-root-diag） | worker 按 docId 信箱（顺序执行、同类合并、每次 await 后查 generation）；dims RPC 带 rid；图片尺寸并行、按页面 baseUrl 解析、文件头嗅探（含 EXIF 方向）；字体成功才算已加载、迟到清缓存、失败 30s 重试；tokens 语法加载失败重试、literate 偏移用原文；loadResource 限定 rootDir/baseDir；DiagSink 来源切片；setWidth 重新 emit；KP 备忘录校验键 + LRU；provider 边界检查；w-only 按比例。relayout 新基准 6.1/23.0/57.3ms |
 | P0-12 | 断行语义包 | todo | | | | |
 | P1-01 | 版本窗口与 ABI 握手 | todo | | | | |
 | P1-02 | 属性注册表（props 行进入共享模式） | todo | | | | |
@@ -128,6 +128,8 @@
 |---|---|---|---|---|---|---|---|
 | 基线（审计时） | 3.8 | 11.9 | 28.1 | 1.3 / 4.0 / 0.3 / 6.5 / 6.9 | 83 / 110 / 151 | — | 2026-10-05，单次测量 |
 | 基线（P0-00 重录，门禁用） | 3.60 | 12.00 | 28.90 | 1.4 / 4.0 / 0.3 / 6.5 / 7.2 | 47.9 / 71.3 / 111.7 | 5.50 / 22.20 / 58.00 | `tools/bench.sh`，3 次取最小；阶段计时分辨率 0.1ms（worker 中浏览器计时器粗化） |
+| P0-10 后 | 3.50 | 10.90 | 27.90 | 1.4 / 4.0 / 0.3 / 6.5 / 6.2 | 47.8 / 70.3 / 108.0 | 5.80 / 21.80 / 56.70 | HtmlWriter 流式写出：87K 原生渲染 2.09→1.97ms |
+| P0-11 后（relayout 新基准） | 3.70 | 11.60 | 27.80 | 1.3 / 4.0 / 0.3 / 6.8 / 6.2 | 50.8 / 71.2 / 112.8 | 6.10 / 23.00 / 57.30 | relayout 现在重新 emit（缺陷 #16），此行作为之后 relayout 门禁的基准 |
 
 ## 偏差记录（MD-11）
 

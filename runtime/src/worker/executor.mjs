@@ -38,16 +38,25 @@ export function formatEntryDefault(e, c) {
 }
 
 // resource loader for #bibliography(src): browser/worker fetch against the
-// page's base URL; Node reads the file — absolute paths against rootDir
-// (the site/repo root), relative ones against the document's folder
+// page's base URL; Node reads the file — /site-root paths against rootDir
+// (the site/repo root), relative ones against the document's folder. A
+// document reads only below rootDir or its own folder (plan P0-11): no
+// `../../..` walk and no OS-absolute path reaches the rest of the disk.
 async function loadResource(src, opts) {
   const s = String(src);
   if (typeof process !== 'undefined' && process.versions?.node && !/^https?:/.test(s)) {
-    const { readFile } = await import('node:fs/promises');
-    const { join, isAbsolute } = await import('node:path');
-    const file = s.startsWith('/') ? join(opts.rootDir ?? process.cwd(), s)
-      : isAbsolute(s) ? s : join(opts.baseDir ?? process.cwd(), s);
-    return await readFile(file, 'utf8');
+    const { readFile, realpath } = await import('node:fs/promises');
+    const { join, resolve, sep } = await import('node:path');
+    const rootDir = resolve(opts.rootDir ?? process.cwd());
+    const baseDir = resolve(opts.baseDir ?? rootDir);
+    const file = s.startsWith('/') ? join(rootDir, s) : resolve(baseDir, s);
+    const within = (p, d) => p === d || p.startsWith(d.endsWith(sep) ? d : d + sep);
+    const allowed = (p, roots) => roots.some((d) => within(p, d));
+    if (!allowed(file, [rootDir, baseDir])) throw new Error('resource outside the document root');
+    const real = await realpath(file);  // a symlink may not lead out either
+    const realRoots = await Promise.all([rootDir, baseDir].map((d) => realpath(d).catch(() => d)));
+    if (!allowed(real, realRoots)) throw new Error('resource outside the document root');
+    return await readFile(real, 'utf8');
   }
   const url = opts.baseUrl ? new URL(s, opts.baseUrl) : s;
   const res = await fetch(url);
@@ -189,7 +198,7 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     // document end with one formatted entry per key — the resolver
     // numbers cited keys and rebuilds the section in citation order
     bibliography: (src, o = {}) => {
-      bibRequests.push({ src: String(src), all: !!o.all });
+      bibRequests.push({ src: String(src), all: !!o.all, unit: current });
       return ob.makeText('');
     },
     glossary: () => ob.makeNode(KIND.collect, { what: 'glossary' }, []),
@@ -254,9 +263,8 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
       try {
         entries = JSON.parse(await loadResource(req.src, opts));
         if (!Array.isArray(entries)) throw new Error('CSL-JSON array expected');
-      } catch (e) {
-        ob.emitNode(ob.makeNode(KIND.error, {
-          message: `bibliography ${req.src}: ${e?.message ?? e}`, code: 'bib-load' }, []));
+      } catch (e) {  // reported at the #bibliography call
+        errorAt(req.unit, 'bib-load', `bibliography ${req.src}: ${e?.message ?? e}`);
         continue;
       }
       const fmt = bibHooks.format ?? formatEntryDefault;

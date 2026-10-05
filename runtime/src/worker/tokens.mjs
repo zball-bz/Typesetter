@@ -29,10 +29,16 @@ const HL_BASE = new URL('../../assets/hl/', import.meta.url);
 const IS_NODE = typeof process !== 'undefined' && !!process.versions?.node;
 let tsMod = null;   // web-tree-sitter module (lazy)
 let initDone = null;
-const langs = new Map();   // name → {lang, query} | null (failed/unknown)
+// name → {lang, query} | {failedAt}: a failed grammar load (missing asset,
+// network) is retried after LOAD_RETRY_MS instead of never (plan P0-11)
+const langs = new Map();
+const LOAD_RETRY_MS = 30000;
+const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
 async function load(name) {
-  if (langs.has(name)) return langs.get(name);
+  const known = langs.get(name);
+  if (known && !('failedAt' in known)) return known;
+  if (known && now() - known.failedAt < LOAD_RETRY_MS) return null;
   let entry = null;
   try {
     const asRef = IS_NODE
@@ -41,7 +47,7 @@ async function load(name) {
     if (!tsMod) tsMod = await import(new URL('../../assets/hl/web-tree-sitter.js', import.meta.url));
     if (!initDone) initDone = tsMod.Parser.init({
       locateFile: () => asRef(new URL('web-tree-sitter.wasm', HL_BASE)),
-    });
+    }).catch((e) => { initDone = null; throw e; });  // a failed init retries too
     await initDone;
     const lang = await tsMod.Language.load(asRef(new URL(`tree-sitter-${name}.wasm`, HL_BASE)));
     const scmUrl = new URL(`${name}.scm`, HL_BASE);
@@ -50,7 +56,9 @@ async function load(name) {
       : await (await fetch(scmUrl)).text();
     entry = { lang, query: new tsMod.Query(lang, scm) };
   } catch {
-    entry = null;  // missing asset / load failure → plain code, never a stall
+    // missing asset / load failure → plain code, never a stall
+    langs.set(name, { failedAt: now() });
+    return null;
   }
   langs.set(name, entry);
   return entry;
@@ -82,7 +90,9 @@ function u16ToU8Map(text) {
 // grammar (530K-line parser.c, and a lexical fight with `<<` shifts),
 // the provider recognizes them itself: each fragment span becomes one
 // `label` token, and the text handed to tree-sitter has those spans
-// blanked (same length, so offsets need no mapping).
+// blanked with one space per UTF-16 unit (same JS length). The byte map is
+// built from the ORIGINAL text: blanking a non-ASCII name (中文 fragment
+// names are the expected case) changes the UTF-8 length.
 const FRAGMENT_RE = /<<[^<>\n]+>>(?:\+?=)?/g;
 const LABEL_TAG = TAGS.indexOf('label');
 
@@ -98,6 +108,7 @@ export async function tokenize(langTag, text) {
   if (!name) return new Uint32Array(0);
   const entry = await load(name);
   if (!entry) return new Uint32Array(0);
+  const u8 = u16ToU8Map(text);  // original-text coordinates (see above)
   let fragments = [];
   if (name === 'cpp') {
     fragments = literateSpans(text);
@@ -108,7 +119,6 @@ export async function tokenize(langTag, text) {
       text = masked + text.slice(pos);
     }
   }
-  const u8 = u16ToU8Map(text);
   const parser = new tsMod.Parser();
   parser.setLanguage(entry.lang);
   const tree = parser.parse(text);
