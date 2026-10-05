@@ -94,5 +94,109 @@
       "scale": {"dom": "num:0:100"},
       "side": {"dom": "enum:left|right"}}},
     "note": {"id": 27, "level": "inline", "body": "blocks", "since": 6, "attrs": {}}
+  },
+  "domains": {
+    "$comment": [
+      "Textual value domains (plan P1-02): a byte-level regular expression (whole-string match) and a",
+      "maximum UTF-8 length (0 = none). tools/gen-schema.mjs compiles each to a DFA for C++ (the ops",
+      "reader's authoritative check) and to a RegExp for JS; \\x80-\\xff means any non-ASCII character."
+    ],
+    "ident": {
+      "max": 64,
+      "re": "[A-Za-z_][A-Za-z0-9_\\-]*"
+    },
+    "label": {
+      "max": 512,
+      "re": "[^\\x00-\\x1f\\x7f]+"
+    },
+    "lang": {
+      "max": 64,
+      "re": "[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*"
+    },
+    "rangeset": {
+      "max": 0,
+      "re": " *[0-9]{1,7} *(- *[0-9]{1,7} *)?(, *[0-9]{1,7} *(- *[0-9]{1,7} *)?)*"
+    },
+    "color": {
+      "max": 64,
+      "re": "#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})|var\\(--[A-Za-z0-9_\\-]+\\)|(rgb|rgba|hsl|hsla)\\([0-9.,/ %deg\\-]*\\)|[A-Za-z]+"
+    },
+    "font": {
+      "max": 512,
+      "re": " *(\"[^\"'\\\\\\x00-\\x1f\\x7f]+\" *|'[^\"'\\\\\\x00-\\x1f\\x7f]+' *|[A-Za-z0-9_\\-\\x80-\\xff][A-Za-z0-9 _\\-\\x80-\\xff]*)(, *(\"[^\"'\\\\\\x00-\\x1f\\x7f]+\" *|'[^\"'\\\\\\x00-\\x1f\\x7f]+' *|[A-Za-z0-9_\\-\\x80-\\xff][A-Za-z0-9 _\\-\\x80-\\xff]*))*"
+    }
+  },
+  "props": {
+    "$comment": [
+      "Run properties (plan P1-02; design T4 M2): one row per Styling field, in field order.",
+      "type: bits (a flag set, ORed) | mul (size multiplier, composed by the engine) | str (an interned string) | px (absolute px).",
+      "attr: the styled/STYLE_PUSH attribute that patches it (domain: that attribute's); sugar: boolean $.style.push keys setting one flag;",
+      "dump: the label in the tree/block dumps; html: an attribute the typeset serializer writes;",
+      "css + cssOrder: the declaration it writes (cssFlags: flag → keyword list; cssValue emPx: the run's em in px)."
+    ],
+    "text.bits": {
+      "field": "bits",
+      "type": "bits",
+      "attr": "bits",
+      "sugar": {
+        "bold": "BOLD",
+        "italic": "EM",
+        "underline": "UNDER",
+        "overline": "OVER",
+        "strike": "STRIKE"
+      },
+      "css": "text-decoration",
+      "cssOrder": 4,
+      "cssFlags": {
+        "UNDER": "underline",
+        "OVER": "overline",
+        "STRIKE": "line-through"
+      }
+    },
+    "text.sizeMul": {
+      "field": "sizeMul",
+      "type": "mul"
+    },
+    "text.font": {
+      "field": "fontFamily",
+      "type": "str",
+      "attr": "font",
+      "dump": {
+        "label": "font",
+        "quoted": true
+      },
+      "css": "font-family",
+      "cssOrder": 2
+    },
+    "text.lang": {
+      "field": "lang",
+      "type": "str",
+      "attr": "lang",
+      "dump": {
+        "label": "lang"
+      },
+      "html": "lang"
+    },
+    "text.color": {
+      "field": "color",
+      "type": "str",
+      "attr": "color",
+      "dump": {
+        "label": "color"
+      },
+      "css": "color",
+      "cssOrder": 3
+    },
+    "text.size": {
+      "field": "sizePx",
+      "type": "px",
+      "attr": "sizePx",
+      "dump": {
+        "label": "size"
+      },
+      "css": "font-size",
+      "cssOrder": 1,
+      "cssValue": "emPx"
+    }
   }
 }

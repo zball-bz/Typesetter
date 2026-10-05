@@ -5,6 +5,7 @@
 
 #include "../math/mathfont.h"
 #include "html_writer.h"
+#include "style_css.gen.h"
 
 namespace tsr {
 
@@ -29,29 +30,6 @@ struct RunClasses {
   }
   std::string_view sv() const { return {buf, n}; }
 };
-
-// lang + the inline-style overrides a run carries beyond its classes
-// (document-model §3): explicit font-family wins over the .tsr-cjk var rule
-// by specificity. Values were validated at decode (P0-06).
-static void runAttrs(Tag& t, const Styling& st, const Config& cfg, const Interner& strs) {
-  if (st.lang) t.attr("lang", strs.get(st.lang));
-  if (st.sizeMul != 1.0f || st.sizePx > 0) t.px("font-size", emPx(cfg, st));
-  if (st.fontFamily) t.declEsc("font-family", strs.get(st.fontFamily));
-  if (st.color) t.declEsc("color", strs.get(st.color));
-  if (st.bits & (CLS_UNDER | CLS_OVER | CLS_STRIKE)) {
-    char buf[40];
-    size_t n = 0;
-    auto add = [&](std::string_view s) {
-      if (n) buf[n++] = ' ';
-      std::memcpy(buf + n, s.data(), s.size());
-      n += s.size();
-    };
-    if (st.bits & CLS_UNDER) add("underline");
-    if (st.bits & CLS_OVER) add("overline");
-    if (st.bits & CLS_STRIKE) add("line-through");
-    t.decl("text-decoration", std::string_view(buf, n));
-  }
-}
 
 // data-s/data-e of a source span, relative to the paragraph base
 static void spanAttrs(Tag& t, Span sp, u32 base) {
@@ -279,7 +257,7 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
     Tag t(out, "span");
     t.attrSafe("class", RunClasses(mst, "tsr-marker").sv());
     t.attrSafe("data-syn", "marker");
-    runAttrs(t, mst, cfg, strs);
+    runCss(t, mst, cfg, strs);
     t.open();
     escapeHtml(out, strs.get(l.marker));
     out += "</span>";
@@ -294,7 +272,7 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
       Tag t(out, "span");
       t.attrSafe("class", RunClasses(cst).sv());
       t.attrSafe("data-syn", "cont");
-      runAttrs(t, cst, cfg, strs);
+      runCss(t, cst, cfg, strs);
       t.open();
       out.append(l.contCols, ' ');
       out += "</span>";
@@ -328,7 +306,7 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
         const Styling& cst = styles.get(r.style);
         Tag t(out, "span");
         t.attrSafe("class", RunClasses(cst).sv());
-        runAttrs(t, cst, cfg, strs);
+        runCss(t, cst, cfg, strs);
         double d = snap ? (cjk ? l.snapCjkPx : l.snapLatinPx) : 0;
         if (d > 0) {
           // ONE style attribute: the letter-spacing joins the run's own
@@ -364,7 +342,7 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
     } else if (!first.span.empty()) {
       t.num("data-s", first.span.start - srcBase);
     }
-    runAttrs(t, sty, cfg, strs);
+    runCss(t, sty, cfg, strs);
     extraStyle(t);
     if (syn) t.attrSafe("data-syn", syn);
     t.open();

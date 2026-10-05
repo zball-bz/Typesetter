@@ -1,0 +1,10 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="131">Emphasis carries into its footnote markers: <strong>bold text</strong><a href="#tsr-fn-1" id="tsr-fnref-1"><sup><strong>1</strong></sup></a> and <em>italic text</em><a href="#tsr-fn-2" id="tsr-fnref-2"><sup><em>2</em></sup></a> (plan P1-02).</p>
+<div data-role="notes" data-pid="1" data-s="0" data-e="131">
+<hr data-s="0" data-e="131">
+<ol data-s="0" data-e="131">
+<li id="tsr-fn-1"><strong>A note in bold context.</strong><strong> </strong><a href="#tsr-fnref-1"><strong>↩</strong></a></li>
+<li id="tsr-fn-2"><em>One in italics.</em><em> </em><a href="#tsr-fnref-2"><em>↩</em></a></li>
+</ol>
+</div>
+</div>

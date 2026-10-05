@@ -64,7 +64,8 @@ g2() {
 g3() { node tools/record-fixtures.mjs --check; }
 g4() {
   cmake --build engine/build-wasm || return 1
-  node tools/wasm-goldens.mjs --check  # WASM breaks == native goldens (P0-12)
+  node tools/wasm-goldens.mjs --check || return 1  # WASM breaks == native goldens (P0-12)
+  node tools/check-domains.mjs --check               # JS value validators == C++ (P1-02)
 }
 g5() {
   [ -d runtime/assets/hl ] || npm run hl-assets

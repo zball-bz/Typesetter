@@ -1,0 +1,32 @@
+// GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
+// A typeset run's attributes and style declarations (schema "props"; plan
+// P1-02). Values were validated at decode; text values are attribute-escaped.
+#pragma once
+#include <cstring>
+
+#include "../measure/measure.h"
+#include "html_writer.h"
+
+namespace tsr {
+
+inline void runCss(Tag& t, const Styling& st, const Config& cfg, const Interner& strs) {
+  if (st.lang) t.attr("lang", strs.get(st.lang));
+  if (st.sizeMul != 1.0f || st.sizePx > 0) t.px("font-size", emPx(cfg, st));
+  if (st.fontFamily) t.declEsc("font-family", strs.get(st.fontFamily));
+  if (st.color) t.declEsc("color", strs.get(st.color));
+  if (st.bits & ((1ull << 16) | (1ull << 17) | (1ull << 18))) {
+    char buf[64];
+    size_t n = 0;
+    auto add = [&](const char* w) {
+      if (n) buf[n++] = ' ';
+      std::memcpy(buf + n, w, std::strlen(w));
+      n += std::strlen(w);
+    };
+    if (st.bits & (1ull << 16)) add("underline");
+    if (st.bits & (1ull << 17)) add("overline");
+    if (st.bits & (1ull << 18)) add("line-through");
+    t.decl("text-decoration", std::string_view(buf, n));
+  }
+}
+
+}  // namespace tsr

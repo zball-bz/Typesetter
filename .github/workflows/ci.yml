@@ -54,6 +54,8 @@ jobs:
         run: node tools/record-fixtures.mjs --check
       - name: WASM breaks match the native goldens
         run: node tools/wasm-goldens.mjs --check
+      - name: JS value validators match the C++ reader
+        run: node tools/check-domains.mjs --check
       - name: architecture lint
         run: node tools/lint-arch.mjs
       - name: code highlighting assets

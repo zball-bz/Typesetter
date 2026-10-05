@@ -1,6 +1,7 @@
 // Content tree + style table + instantiation (document-model §2–§4).
 #pragma once
 #include "../ops/ops.h"
+#include "props.gen.h"
 
 namespace tsr {
 
@@ -22,34 +23,17 @@ enum : u64 {
   CLS_SUP = 1ull << 19,
 };
 
-// Effective style: class bits + relative size + InlineStyle overrides
-// (document-model §3; implemented subset: fontFamily, lang, color, sizePx —
-// weight/italic ride the bits, letterSpacing is engine-owned justification).
-// StrRef 0 / 0.0 = "not set" (inherit the class-based default).
-struct Styling {
-  u64 bits = 0;
-  float sizeMul = 1.0f;
-  StrRef fontFamily = 0;  // CSS font-family list (overrides body/cjk/mono)
-  StrRef lang = 0;        // BCP-47 tag → per-run lang attr ('locl' forms)
-  StrRef color = 0;       // CSS color
-  float sizePx = 0;       // absolute base size (sizeMul still composes on top)
-  bool operator==(const Styling& o) const {
-    return bits == o.bits && sizeMul == o.sizeMul && fontFamily == o.fontFamily &&
-           lang == o.lang && color == o.color && sizePx == o.sizePx;
-  }
-};
+// Effective style (document-model §3): `Styling` is generated from the run
+// properties of the schema's "props" section (props.gen.h) — class bits,
+// relative size, font family, lang, color, absolute size. Weight/italic ride
+// the bits; letterSpacing is engine-owned justification, never a property.
 
 using StyleId = u32;
 class StyleTable {
  public:
   StyleTable() { idOf(Styling{}); }  // id 0 = base
   StyleId idOf(Styling s) {
-    // canonical floats (plan P0-08): -0 → +0 and NaN → the default, so equal
-    // styles hash equally (the hash reads the bit patterns)
-    if (!(s.sizeMul == s.sizeMul)) s.sizeMul = 1.0f;
-    if (!(s.sizePx == s.sizePx) || s.sizePx < 0) s.sizePx = 0;
-    if (s.sizeMul == 0) s.sizeMul = 0.0f;
-    if (s.sizePx == 0) s.sizePx = 0.0f;
+    canonicalize(s);  // equal styles hash equally (the hash reads the bit patterns)
     auto it = map_.find(s);
     if (it != map_.end()) return it->second;
     StyleId id = (StyleId)styles_.size();
@@ -61,22 +45,8 @@ class StyleTable {
   size_t count() const { return styles_.size(); }
 
  private:
-  struct Hash {
-    size_t operator()(const Styling& s) const {
-      u32 mulBits, pxBits;
-      std::memcpy(&mulBits, &s.sizeMul, 4);
-      std::memcpy(&pxBits, &s.sizePx, 4);
-      u64 h = s.bits;
-      h = h * 1099511628211ull ^ mulBits;
-      h = h * 1099511628211ull ^ s.fontFamily;
-      h = h * 1099511628211ull ^ s.lang;
-      h = h * 1099511628211ull ^ s.color;
-      h = h * 1099511628211ull ^ pxBits;
-      return (size_t)h;
-    }
-  };
   std::vector<Styling> styles_;
-  std::unordered_map<Styling, StyleId, Hash> map_;
+  std::unordered_map<Styling, StyleId, StylingHash> map_;
 };
 
 struct ContentNode {

@@ -14,26 +14,7 @@ struct Inst {
 
   // fold one delta (bits + InlineStyle patch args) onto an effective style
   void applyPatch(Styling& st, const ArgVal& a) {
-    switch (a.key) {
-      case ArgK::bits:
-        // a bit set is a non-negative integer (fuzz: negative-bits)
-        if (a.tag == ArgTag::Num && a.num >= 0) st.bits |= (u64)a.num;
-        break;
-      case ArgK::font:
-        if (a.tag == ArgTag::Str) st.fontFamily = strs.intern(raw.strings[a.ref]);
-        break;
-      case ArgK::lang:
-        if (a.tag == ArgTag::Str) st.lang = strs.intern(raw.strings[a.ref]);
-        break;
-      case ArgK::color:
-        if (a.tag == ArgTag::Str) st.color = strs.intern(raw.strings[a.ref]);
-        break;
-      case ArgK::sizePx:
-        if (a.tag == ArgTag::Num) st.sizePx = (float)a.num;
-        break;
-      default:
-        break;
-    }
+    applyStyleArg(st, a, [&](u32 ref) { return strs.intern(raw.strings[ref]); });
   }
 
   // InstLimits (plan P0-07, D-I03): a DAG value emitted many times is copied
@@ -176,20 +157,7 @@ static void styleStr(std::string& out, const Styling& s, const Interner& strs) {
   f(CLS_SUP, "SUP");  // appended (plan P0-09 j): today's spellings and order kept
   if (first) out += "base";
   if (s.sizeMul != 1.0f) appendf(out, "x%.2f", (double)s.sizeMul);
-  if (s.fontFamily) {
-    out += " font=\"";
-    appendEscaped(out, strs.get(s.fontFamily));
-    out += "\"";
-  }
-  if (s.lang) {
-    out += " lang=";
-    out += strs.get(s.lang);
-  }
-  if (s.color) {
-    out += " color=";
-    out += strs.get(s.color);
-  }
-  if (s.sizePx > 0) appendf(out, " size=%gpx", (double)s.sizePx);
+  appendStyleFields(out, s, strs);
   out += "]";
 }
 

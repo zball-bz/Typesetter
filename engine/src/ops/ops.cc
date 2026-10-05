@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "values.h"
+#include "domains.gen.h"
 
 namespace tsr {
 
@@ -154,13 +154,13 @@ static bool validateArg(ArgVal& a, const AttrSpec& sp, const RawOps& r, std::str
     case Dom::Html:
     case Dom::Url:
     case Dom::Token: return wantStr(true, "string");
-    case Dom::Ident: return wantStr(a.tag == ArgTag::Str && values::isIdent(str()), "identifier");
-    case Dom::Label: return wantStr(a.tag == ArgTag::Str && values::isLabel(str()), "label");
-    case Dom::Lang: return wantStr(a.tag == ArgTag::Str && values::isLang(str()), "language tag");
+    case Dom::Ident: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Ident, str()), "identifier");
+    case Dom::Label: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Label, str()), "label");
+    case Dom::Lang: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Lang, str()), "language tag");
     case Dom::RangeSet:
-      return wantStr(a.tag == ArgTag::Str && values::isRangeSet(str()), "line range set");
-    case Dom::Color: return wantStr(a.tag == ArgTag::Str && values::isColor(str()), "color");
-    case Dom::Font: return wantStr(a.tag == ArgTag::Str && values::isFontList(str()), "font family list");
+      return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::RangeSet, str()), "line range set");
+    case Dom::Color: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Color, str()), "color");
+    case Dom::Font: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Font, str()), "font family list");
     case Dom::Enum: {
       bool ok = false;
       if (a.tag == ArgTag::Str)

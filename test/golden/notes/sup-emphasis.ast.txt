@@ -1,0 +1,13 @@
+doc @[0,132)
+  para @[0,131)
+    text @[0,43) str="Emphasis carries into its footnote markers: "
+    styled @[44,81) marker=*
+      text @[45,54) str="bold text"
+      note @[54,80)
+        text @[56,79) str="A note in bold context."
+    text @[82,85) str=" and "
+    styled @[86,117) marker=_
+      text @[87,98) str="italic text"
+      note @[98,116)
+        text @[100,115) str="One in italics."
+    text @[118,131) str=" (plan P1-02)."

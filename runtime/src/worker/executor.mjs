@@ -2,13 +2,20 @@
 // Works in Node (temp-file import) and in browsers/workers (blob URL import).
 import { KIND } from '../shared/ops.gen.mjs';
 import { OpBuf } from '../shared/opbuf.mjs';
+import { STYLE_KEYS, STYLE_SUGAR } from '../shared/props.gen.mjs';
 
-const CLS_EM = 1 << 2, CLS_BOLD = 1 << 3;  // frozen bits (document-model §3)
-const CLS_UNDER = 1 << 16, CLS_OVER = 1 << 17, CLS_STRIKE = 1 << 18;
-const styleBits = (p) =>
-  ((p.bold ? CLS_BOLD : 0) | (p.italic ? CLS_EM : 0) |
-   (p.underline ? CLS_UNDER : 0) | (p.overline ? CLS_OVER : 0) |
-   (p.strike ? CLS_STRIKE : 0)) || undefined;
+// style patches from the schema's run properties (plan P1-02): boolean sugar
+// keys set flag bits, value keys map to styled/STYLE_PUSH attributes
+const styleBits = (p) => {
+  let bits = 0;
+  for (const [k, bit] of Object.entries(STYLE_SUGAR)) if (p[k]) bits |= bit;
+  return bits || undefined;
+};
+const styleValues = (p) => {
+  const out = {};
+  for (const [k, attr] of Object.entries(STYLE_KEYS)) if (p[k] !== undefined) out[attr] = p[k];
+  return out;
+};
 
 // Default numeric bibliography formatter over CSL-JSON (notes-design.md §2):
 // "Author, Author, and Author. Title. Container vol(issue), pages.
@@ -144,12 +151,8 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     // generic region → role-tagged group (#!figure, #!aside, …)
     else node = ob.makeNode(KIND.group, { role: name, label: args.label }, regionJoin(children));
     // region-level style scope: #!aside(font: '…', lang: "zh-TW")
-    if (args.font !== undefined || args.lang !== undefined ||
-        args.color !== undefined || args.sizePx !== undefined) {
-      node = ob.makeNode(KIND.styled, {
-        font: args.font, lang: args.lang, color: args.color, sizePx: args.sizePx,
-      }, [node]);
-    }
+    const scope = styleValues(args);
+    if (Object.keys(scope).length) node = ob.makeNode(KIND.styled, scope, [node]);
     return node;
   };
   // --- fence dispatcher (v2 §4.1) ------------------------------------------
@@ -181,8 +184,8 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     __at: (n, s, e) => { ob.span(n, s, e); return n; },
     text: (s) => ob.makeText(String(s)),
     para: node(KIND.para),
-    em: styled(CLS_EM),
-    strong: styled(CLS_BOLD),
+    em: styled(STYLE_SUGAR.italic),
+    strong: styled(STYLE_SUGAR.bold),
     heading: (level, label, ...kids) =>
       ob.makeNode(KIND.heading, { level, label: label ?? undefined }, kids.map(toShadow)),
     ref: (target) => ob.makeNode(KIND.ref, { target: String(target) }, []),
@@ -238,10 +241,8 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
     // patch keys: font/lang/color/sizePx + bold/italic/underline/overline/
     // strike sugar (decorations are CH1 bits, metric-neutral)
     style: (patch = {}, ...kids) =>
-      ob.makeNode(KIND.styled, {
-        bits: styleBits(patch),
-        font: patch.font, lang: patch.lang, color: patch.color, sizePx: patch.sizePx,
-      }, kids.map(toShadow)),
+      ob.makeNode(KIND.styled, { bits: styleBits(patch), ...styleValues(patch) },
+                  kids.map(toShadow)),
     val: (x) => toShadow(x),
     // block-granular error (plan P0-05): parse errors lowered by codegen
     error: (code, message) =>
@@ -292,9 +293,7 @@ export function buildContext(ob, opts = {}, units = [], docEnd = 0) {
       push(x) {
         styleStack.push(x);
         if (typeof x === 'number') ob.stylePush(x, {});
-        else ob.stylePush(styleBits(x) || 0, {
-          font: x.font, lang: x.lang, color: x.color, sizePx: x.sizePx,
-        });
+        else ob.stylePush(styleBits(x) || 0, styleValues(x));
       },
       get height() { return styleStack.length; },
       // a pop above the current height is clamped here and diagnosed by the

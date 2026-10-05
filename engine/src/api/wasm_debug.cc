@@ -3,6 +3,7 @@
 // (libstdc++) do. Linked into typesetter_debug.js only — never shipped.
 #include "../measure/mock.h"
 #include "wasm_api.cc"
+#include "../ops/domains.gen.h"
 
 namespace {
 std::string debugOut;
@@ -23,4 +24,9 @@ TSR_EXPORT const char* tsr_debug_dump(WasmDoc* d, const char* stage) {
   else if (s == "html") debugOut = doc.render();
   else debugOut.clear();
   return debugOut.c_str();
+}
+
+// the C++ value-domain matcher, for the JS parity check (tools/check-domains.mjs)
+TSR_EXPORT int tsr_debug_match_domain(int domain, const char* s) {
+  return matchDomain((TextDomain)domain, s) ? 1 : 0;
 }

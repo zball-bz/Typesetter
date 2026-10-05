@@ -15,6 +15,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { compile as compileDfa } from './lib/redfa.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -175,6 +176,108 @@ const js = `// ${HDR}\n` +
   emit('ARGK', obj(keys.map(([n, id]) => [n, id]))) +
   emit('SCHEMA', schemaJs);
 
+// ---- textual value domains (plan P1-02): one regex → C++ DFA + JS RegExp --------
+const domains = Object.entries(S.domains ?? {}).filter(([n]) => n !== '$comment');
+const domEnum = (n) => (n === 'rangeset' ? 'RangeSet' : cap(n));
+let domH = `// ${HDR}\n#pragma once\n#include <cstdint>\n#include <string_view>\n\nnamespace tsr {\n\n` +
+  `// textual attribute domains (schema "domains"); whole-string match on bytes\n` +
+  `enum class TextDomain : std::uint8_t { ${domains.map(([n]) => domEnum(n)).join(', ')} };\n` +
+  `bool matchDomain(TextDomain d, std::string_view s);\n\n}  // namespace tsr\n`;
+let domCc = `// ${HDR}\n#include "domains.gen.h"\n\nnamespace tsr {\nnamespace {\n\n`;
+const dfaRows = [];
+for (const [n, d] of domains) {
+  const dfa = compileDfa(d.re);
+  if (dfa.states >= 255) { console.error(`gen-schema: domain ${n}: ${dfa.states} DFA states`); process.exit(1); }
+  domCc += `// ${n}: ${d.re.replace(/\*\//g, '*\\/')}  (max ${d.max || 'none'})\n`;
+  domCc += `const std::uint8_t kCls_${n}[256] = {${dfa.byteClass.join(',')}};\n`;
+  domCc += `const std::uint8_t kT_${n}[${dfa.states * dfa.classes}] = {${dfa.table.flat().map((t) => (t < 0 ? 255 : t)).join(',')}};\n`;
+  domCc += `const bool kAcc_${n}[${dfa.states}] = {${dfa.accept.map((a) => (a ? 'true' : 'false')).join(',')}};\n\n`;
+  dfaRows.push(`{kCls_${n}, kT_${n}, kAcc_${n}, ${dfa.classes}, ${d.max | 0}}`);
+}
+domCc += `struct Dfa {\n  const std::uint8_t* cls;\n  const std::uint8_t* next;  // [state * classes + class], 255 = dead\n` +
+  `  const bool* accept;\n  std::uint8_t classes;\n  std::uint32_t max;  // UTF-8 bytes, 0 = none\n};\n` +
+  `const Dfa kDfas[] = {\n    ${dfaRows.join(',\n    ')}};\n\n}  // namespace\n\n` +
+  `bool matchDomain(TextDomain d, std::string_view s) {\n  const Dfa& f = kDfas[(int)d];\n` +
+  `  if (f.max && s.size() > f.max) return false;\n  unsigned q = 0;\n` +
+  `  for (unsigned char c : s) {\n    q = f.next[q * f.classes + f.cls[c]];\n    if (q == 255) return false;\n  }\n` +
+  `  return f.accept[q];\n}\n\n}  // namespace tsr\n`;
+// JS: the byte classes \x80-\xff mean any non-ASCII character (u flag)
+const jsRe = (re) => re.replace(/\\x80-\\xff/g, '\\u0080-\\u{10ffff}');
+const domJs = `export const DOMAINS = Object.freeze({\n${domains.map(([n, d]) =>
+  `  ${n}: Object.freeze({ max: ${d.max | 0}, re: /^(?:${jsRe(d.re)})$/u }),`).join('\n')}\n});\n` +
+  `const utf8Length = (s) => { let n = 0; for (const c of s) { const cp = c.codePointAt(0); ` +
+  `n += cp < 0x80 ? 1 : cp < 0x800 ? 2 : cp < 0x10000 ? 3 : 4; } return n; };\n` +
+  `// the JS twin of the C++ matchDomain (early diagnostics; the reader decides)\n` +
+  `export function validDomain(name, s) {\n  const d = DOMAINS[name];\n  if (!d || typeof s !== 'string') return false;\n` +
+  `  return (!d.max || utf8Length(s) <= d.max) && d.re.test(s);\n}\n`;
+
+// ---- run properties (plan P1-02): Styling, its ops, dumps and CSS ----------------
+const props = Object.entries(S.props ?? {}).filter(([n]) => n !== '$comment');
+const flagsOf = (attrDom) => Object.fromEntries(attrDom.split(':').slice(1).join(':').split(',').map((x) => x.split('=')).map(([k, v]) => [k, +v]));
+const bitsRow = props.find(([, r]) => r.type === 'bits');
+const bitsFlags = bitsRow ? flagsOf(S.kinds.styled.attrs[bitsRow[1].attr].dom) : {};
+const CT = { bits: 'u64', mul: 'float', str: 'StrRef', px: 'float' };
+const INIT = { bits: '0', mul: '1.0f', str: '0', px: '0' };
+let ph = `// ${HDR}\n// Run style properties (schema "props"; plan P1-02, design T4 M2).\n#pragma once\n#include <cstring>\n\n#include "../ops/ops.h"\n\nnamespace tsr {\n\n` +
+  `// The effective run style: one field per property row, in row order. StrRef 0 /\n// 0.0 = not set.\nstruct Styling {\n`;
+for (const [n, r] of props) ph += `  ${CT[r.type]} ${r.field} = ${INIT[r.type]};  // ${n}\n`;
+ph += `  bool operator==(const Styling& o) const {\n    return ${props.map(([, r]) => `${r.field} == o.${r.field}`).join(' &&\n           ')};\n  }\n};\n\n`;
+ph += `// a hash over the canonical bits of every field\nstruct StylingHash {\n  size_t operator()(const Styling& s) const {\n` +
+  `    u64 h = 1469598103934665603ull;\n    auto mix = [&](u64 v) { h = (h ^ v) * 1099511628211ull; };\n`;
+for (const [, r] of props)
+  ph += (r.type === 'mul' || r.type === 'px')
+    ? `    {\n      u32 b;\n      std::memcpy(&b, &s.${r.field}, 4);\n      mix(b);\n    }\n`
+    : `    mix((u64)s.${r.field});\n`;
+ph += `    return (size_t)h;\n  }\n};\n\n`;
+ph += `// canonical floats (plan P0-08): -0 → +0, NaN (and a negative px) → the initial value\ninline void canonicalize(Styling& s) {\n`;
+for (const [, r] of props) {
+  if (r.type === 'mul') ph += `  if (!(s.${r.field} == s.${r.field})) s.${r.field} = 1.0f;\n  if (s.${r.field} == 0) s.${r.field} = 0.0f;\n`;
+  if (r.type === 'px') ph += `  if (!(s.${r.field} == s.${r.field}) || s.${r.field} < 0) s.${r.field} = 0;\n  if (s.${r.field} == 0) s.${r.field} = 0.0f;\n`;
+}
+ph += `}\n\n// folds one styled attribute or STYLE_PUSH patch value onto a style (values\n// were validated at decode); intern(ref) maps a buffer string to a StrRef\n` +
+  `template <class Intern>\ninline void applyStyleArg(Styling& st, const ArgVal& a, Intern intern) {\n`;
+for (const [, r] of props) {
+  if (!r.attr) continue;
+  if (r.type === 'bits') ph += `  if (a.key == ArgK::${r.attr} && a.tag == ArgTag::Num && a.num >= 0) st.${r.field} |= (u64)a.num;  // flags OR in\n`;
+  if (r.type === 'str') ph += `  if (a.key == ArgK::${r.attr} && a.tag == ArgTag::Str) st.${r.field} = intern(a.ref);\n`;
+  if (r.type === 'px') ph += `  if (a.key == ArgK::${r.attr} && a.tag == ArgTag::Num) st.${r.field} = (float)a.num;\n`;
+}
+ph += `}\n\n// the value part of the tree and block dumps, in row order (each dump keeps\n// its own flag tokens and size-multiplier spelling)\n` +
+  `inline void appendStyleFields(std::string& out, const Styling& s, const Interner& strs) {\n`;
+for (const [, r] of props) {
+  if (!r.dump) continue;
+  if (r.type === 'str' && r.dump.quoted) ph += `  if (s.${r.field}) {\n    out += " ${r.dump.label}=\\"";\n    appendEscaped(out, strs.get(s.${r.field}));\n    out += "\\"";\n  }\n`;
+  else if (r.type === 'str') ph += `  if (s.${r.field}) {\n    out += " ${r.dump.label}=";\n    out += strs.get(s.${r.field});\n  }\n`;
+  else if (r.type === 'px') ph += `  if (s.${r.field} > 0) appendf(out, " ${r.dump.label}=%gpx", (double)s.${r.field});\n`;
+}
+ph += `}\n\n}  // namespace tsr\n`;
+
+// the typeset serializer's run attributes and declarations
+let css = `// ${HDR}\n// A typeset run's attributes and style declarations (schema "props"; plan\n// P1-02). Values were validated at decode; text values are attribute-escaped.\n#pragma once\n#include <cstring>\n\n#include "../measure/measure.h"\n#include "html_writer.h"\n\nnamespace tsr {\n\n` +
+  `inline void runCss(Tag& t, const Styling& st, const Config& cfg, const Interner& strs) {\n`;
+for (const [, r] of props) if (r.html) css += `  if (st.${r.field}) t.attr("${r.html}", strs.get(st.${r.field}));\n`;
+for (const [, r] of props.filter(([, r]) => r.css).sort((a, b) => a[1].cssOrder - b[1].cssOrder)) {
+  if (r.cssValue === 'emPx') {
+    const conds = props.filter(([, x]) => x.type === 'mul' || x.type === 'px')
+      .map(([, x]) => (x.type === 'mul' ? `st.${x.field} != 1.0f` : `st.${x.field} > 0`));
+    css += `  if (${conds.join(' || ')}) t.px("${r.css}", emPx(cfg, st));\n`;
+  } else if (r.cssFlags) {
+    const bits = Object.entries(r.cssFlags).map(([f, kw]) => [`(1ull << ${bitsFlags[f]})`, kw]);
+    css += `  if (st.${r.field} & (${bits.map((b) => b[0]).join(' | ')})) {\n    char buf[64];\n    size_t n = 0;\n` +
+      `    auto add = [&](const char* w) {\n      if (n) buf[n++] = ' ';\n      std::memcpy(buf + n, w, std::strlen(w));\n      n += std::strlen(w);\n    };\n` +
+      bits.map(([b, kw]) => `    if (st.${r.field} & ${b}) add("${kw}");\n`).join('') +
+      `    t.decl("${r.css}", std::string_view(buf, n));\n  }\n`;
+  } else if (r.type === 'str') {
+    css += `  if (st.${r.field}) t.declEsc("${r.css}", strs.get(st.${r.field}));\n`;
+  }
+}
+css += `}\n\n}  // namespace tsr\n`;
+
+const sugar = bitsRow ? Object.fromEntries(Object.entries(bitsRow[1].sugar ?? {}).map(([k, f]) => [k, 2 ** bitsFlags[f]])) : {};
+const propsJs = `// ${HDR}\n// Run style properties (plan P1-02): the $.style.push / #style / region keys\n// and their value domains.\n` +
+  `export const STYLE_KEYS = Object.freeze(${JSON.stringify(Object.fromEntries(props.filter(([, r]) => r.attr && r.type !== 'bits').map(([, r]) => [r.key ?? r.attr, r.attr])))});\n` +
+  `export const STYLE_SUGAR = Object.freeze(${JSON.stringify(sugar)});\n` + domJs;
+
 // ---- docs/schema-table.md --------------------------------------------------------
 let md = `<!-- ${HDR} -->\n# Ops vocabulary (generated)\n\nThe kind table of document-model §2.1, generated from ` +
   '`engine/schema/schema.json`. Ops version ' + S.opsVersion + ', min compat ' + S.minCompat + '.\n\n' +
@@ -191,6 +294,11 @@ const outputs = {
   'engine/src/ops/schema.gen.h': h,
   'engine/src/ops/schema.gen.cc': cc,
   'runtime/src/shared/ops.gen.mjs': js,
+  'engine/src/ops/domains.gen.h': domH,
+  'engine/src/ops/domains.gen.cc': domCc,
+  'engine/src/model/props.gen.h': ph,
+  'engine/src/render/style_css.gen.h': css,
+  'runtime/src/shared/props.gen.mjs': propsJs,
   'docs/schema-table.md': md,
 };
 let stale = 0;

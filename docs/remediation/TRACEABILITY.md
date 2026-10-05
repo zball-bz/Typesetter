@@ -1052,7 +1052,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/kind-default-styles-in-emit` | adhoc | medium | P3-01 | |
 | `codegen-ops-model/resolver-fabricated-styles` | adhoc | medium | P3-01, P3-03 | |
 | `codegen-ops-model/token-class-as-color` | adhoc | medium | P3-01 | |
-| `codegen-ops-model/fixed-styling-fields` | adhoc | high | P1-02 | |
+| `codegen-ops-model/fixed-styling-fields` | adhoc | high | P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/global-argk-namespace` | adhoc | high | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/version-bump-per-vocabulary` | adhoc | medium | P1-01 | grep:plan P1-01 |
 | `codegen-ops-model/two-style-encodings-and-stack` | adhoc | medium | P0-06, P2-08 | |
@@ -1065,11 +1065,11 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/exponential-instantiation` | issue | high | P0-07 | grep:plan P0-07 |
 | `codegen-ops-model/no-per-block-containment` | issue | high | P0-05, P2-02 | |
 | `codegen-ops-model/keyword-forms-uncompiled` | issue | high | P0-05, P2-12, P3-31 | |
-| `codegen-ops-model/css-injection-style-values` | issue | high | P0-06, P1-02 | |
+| `codegen-ops-model/css-injection-style-values` | issue | high | P0-06, P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/sizepx-ignored-in-emit` | issue | medium | P0-08 | grep:plan P0-08 |
 | `codegen-ops-model/argtag-node-dangling` | issue | medium | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/metric-key-fragmentation` | issue | medium | P0-08, P1-04 | |
-| `codegen-ops-model/tree-dump-omits-sup` | issue | low | P1-02 | |
+| `codegen-ops-model/tree-dump-omits-sup` | issue | low | P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/executor-errors-not-diagnostics` | issue | low | P2-01 | |
 | `codegen-ops-model/shadow-mutability-forgery` | issue | low | P2-01 | |
 | `codegen-ops-model/popto-stack-divergence` | issue | low | P0-08, P2-01 | |
@@ -1207,7 +1207,7 @@ Theme steps: — · findings: 1
 | `render-runtime/static-export-template` | adhoc | medium | P3-21, P3-36 | |
 | `render-runtime/anchor-decode-duplication` | adhoc | medium | P3-05 | |
 | `render-runtime/audit-hint-attributes` | adhoc | low | P3-07 | |
-| `render-runtime/duplicate-serializer-primitives` | adhoc | low | P0-10, P1-02 | |
+| `render-runtime/duplicate-serializer-primitives` | adhoc | low | P0-10, P1-02 | grep:plan P1-02 |
 | `render-runtime/shell-feature-inventory` | adhoc | medium | P3-06 | |
 | `render-runtime/snap-kerning-duplicate-style` | issue | high | P0-10 | grep:plan P0-10 |
 | `render-runtime/semantic-footnote-ids-dangle` | issue | high | P0-09, P0-10 | grep:plan P0-10 |
@@ -1225,7 +1225,7 @@ Theme steps: — · findings: 1
 | `render-runtime/swap-whole-container` | issue | low | P3-05 | |
 | `render-runtime/missed:0` | missed | high | P0-10, P4-01 | |
 | `render-runtime/missed:1` | missed | medium | P1-18 | |
-| `render-runtime/missed:2` | missed | medium | P1-02 | |
+| `render-runtime/missed:2` | missed | medium | P1-02 | grep:plan P1-02 |
 | `render-runtime/missed:3` | missed | medium | P4-03 | |
 | `render-runtime/missed:4` | missed | low | P3-05 | |
 | `render-runtime/missed:5` | missed | low | P3-07 | |

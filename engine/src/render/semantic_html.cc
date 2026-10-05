@@ -57,9 +57,12 @@ struct Sem {
         // token colors, resolver-fabricated bold, and patch styles all
         // reach the no-JS page. Kind::styled is transparent below.
         const Styling& st = styles.get(n->style);
-        const char* tag = (st.bits & CLS_SUP) ? "sup"
-                          : (st.bits & CLS_BOLD) ? "strong"
-                          : (st.bits & CLS_EM) ? "em" : nullptr;
+        // a superscript nests its emphasis (sup > strong|em): it used to
+        // drop the bold/italic of a marker inside emphasis (plan P1-02)
+        const char* outer = (st.bits & CLS_SUP) ? "sup" : nullptr;
+        const char* inner = (st.bits & CLS_BOLD) ? "strong" : (st.bits & CLS_EM) ? "em" : nullptr;
+        const char* tag = inner ? inner : outer;
+        if (inner && outer) out += "<sup>";
         std::string style;
         if (st.fontFamily) {
           style += "font-family:";
@@ -100,6 +103,7 @@ struct Sem {
           out += tag ? tag : "span";
           out += ">";
         }
+        if (inner && outer) out += "</sup>";
         return;
       }
       case Kind::styled:

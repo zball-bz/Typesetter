@@ -15,6 +15,7 @@ add_library(tsr_core STATIC
   src/codegen/codegen.cc
   src/ops/ops.cc
   src/ops/schema.gen.cc
+  src/ops/domains.gen.cc
   src/model/model.cc
   src/model/normalize.cc
   src/code/tokens.cc
