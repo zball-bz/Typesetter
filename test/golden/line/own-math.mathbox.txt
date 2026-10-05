@@ -1,0 +1,19 @@
+inline pid=0 "x = a\n- b\n+ c"
+hbox Ord w=539 asc=475 desc=12
+  glyph "x" Ord w=539 asc=475 desc=12 px=16
+inline pid=0 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=0 ""
+hbox Ord w=1626 asc=477 desc=12
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+  glue w=228 @(624,0)
+  glyph "−" Bin w=774 asc=276 desc=-236 px=16 @(852,0)
+inline pid=0 ""
+hbox Ord w=1603 asc=700 desc=76
+  glyph "b" Ord w=602 asc=700 desc=10 px=16
+  glue w=228 @(602,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(830,0)
+inline pid=0 ""
+hbox Ord w=498 asc=486 desc=19
+  glyph "c" Ord w=498 asc=486 desc=19 px=16

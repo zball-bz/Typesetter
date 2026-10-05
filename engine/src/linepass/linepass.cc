@@ -1,7 +1,10 @@
 #include "linepass.h"
 
+#include <algorithm>
+
 #include "../inline/jslex.h"
 #include "../syntax/cursor.h"
+#include "../syntax/lexer.h"
 
 namespace tsr {
 
@@ -30,6 +33,7 @@ bool isLet(std::string_view r) {
 
 struct LinePass {
   const SourceText& src;
+  const std::vector<Span>& lines;  // the physical lines (raw, terminators excluded)
   Arena& arena;
   DiagSink& diags;
   std::string_view all;
@@ -38,11 +42,12 @@ struct LinePass {
   SkelNode* root = nullptr;
   std::vector<OpenC> open;   // container stack, outermost first
   SkelNode* leaf = nullptr;  // open paragraph (always in the innermost container)
+  std::vector<RevertedWindow> windows;
 
-  // A verbatim carry — a fence, a block comment, or a comment owned by the
-  // open paragraph — continues over the following lines while the containers
-  // it opened in continue; container exit ends it.
-  enum class Carry : u8 { None, Fence, Comment, LeafComment };
+  // A verbatim carry — a fence or a block comment — continues over the
+  // following lines while the containers it opened in continue; container
+  // exit ends it.
+  enum class Carry : u8 { None, Fence, Comment };
   Carry carry = Carry::None;
   SkelNode* carryNode = nullptr;
   size_t carryDepth = 0;
@@ -55,7 +60,30 @@ struct LinePass {
     return n;
   }
   SkelNode* parent() { return open.empty() ? root : open.back().node; }
-  void closeLeaf() { leaf = nullptr; }
+  void closeLeaf() {
+    leaf = nullptr;
+    owning = false;
+  }
+
+  // Line ownership (plan P1-08; design T1 BlockAutomaton steps 2, 4, 5):
+  // when a paragraph line leaves a construct open, the pass looks ahead once
+  // to the construct's structural bound — a blank line or container exit for
+  // Leaf-owned constructs (code spans, math, splice JS, inline-form content
+  // bodies), container exit for Container-owned ones (comments, block-form
+  // bodies). If it closes there, the lines up to its closer belong to the
+  // paragraph and no block starts on them; otherwise its opener is literal
+  // text (a RevertedWindow records the lines it could not own) and the scan
+  // goes on after it. No line is processed twice.
+  bool owning = false;
+  bool ownBlock = false;    // the owned lines are a block-form body
+  u32 ownUntil = 0;         // the last owned line
+  u32 ownResume = 0;        // raw offset on it where the scan resumes
+  bool resumeAtBody = false;  // ... at a splice's block-form '['
+  Span blockBody;           // the block-form body: its '[' and ']'
+  std::vector<u32> leafLines, leafCols;  // per paragraph line: line, indent
+
+  u32 lineStart(u32 l) const { return lines[l].start; }
+  u32 lineEnd(u32 l) const { return lines[l].end; }
 
   static u32 advance(char c, u32 col) { return c == '\t' ? (col / kTabStop + 1) * kTabStop : col + 1; }
   // skip spaces and tabs while the column is below `limit`
@@ -265,7 +293,7 @@ struct LinePass {
   u32 recoverStatement(u32 ln) const {
     u32 last = ln;
     for (u32 l = ln + 1; l < nlines; l++) {
-      u32 ls = src.lineStart(l), le = src.lineEnd(l), p = ls, c = 0;
+      u32 ls = lineStart(l), le = lineEnd(l), p = ls, c = 0;
       bool blank = isBlank(ls, le);
       if (blank || matchContainers(le, p, c, blank) < open.size()) break;
       skipBlanks(le, p, c);
@@ -276,17 +304,286 @@ struct LinePass {
   }
 
   // --- leaves ----------------------------------------------------------------
-  void addParaLine(u32 pos, u32 le) {
-    u32 e = le;  // strip trailing blanks
-    while (e > pos && (all[e - 1] == ' ' || all[e - 1] == '\t' || all[e - 1] == '\r')) e--;
+  u32 trimEnd(u32 pos, u32 le) const {
+    while (le > pos && (all[le - 1] == ' ' || all[le - 1] == '\t' || all[le - 1] == '\r')) le--;
+    return le;
+  }
+  void addParaLine(u32 ln, u32 pos, u32 col, u32 le) {
+    const u32 e = trimEnd(pos, le);
     if (e <= pos) return;
     if (!leaf) {
       leaf = mk(SkelKind::Para);
       leaf->span = {pos, e};
       parent()->kids.push_back(leaf);
+      leafLines.clear();
+      leafCols.clear();
     }
-    leaf->span.end = e;
-    leaf->lineSpans.push_back({pos, e});
+    pushLeafLine(ln, {pos, e}, col);
+    scanLine(ln, pos, e);
+  }
+  void pushLeafLine(u32 ln, Span sp, u32 col) {
+    leaf->lineSpans.push_back(sp);
+    if (sp.end > leaf->span.end) leaf->span.end = sp.end;
+    leafLines.push_back(ln);
+    leafCols.push_back(col);
+  }
+
+  // --- line ownership --------------------------------------------------------
+  bool reverted(u32 raw) const {
+    return std::find(leaf->literalAt.begin(), leaf->literalAt.end(), raw) != leaf->literalAt.end();
+  }
+  void makeLiteral(u32 raw, u32 line, u32 bound) {
+    leaf->literalAt.push_back(raw);
+    windows.push_back({line, bound});
+  }
+  // only blanks, or a comment closed on the line, up to the end of the line
+  static bool endsLine(std::string_view t, u32 p) {
+    auto blanks = [&] {
+      while (p < t.size() && (t[p] == ' ' || t[p] == '\t' || t[p] == '\r')) p++;
+    };
+    blanks();
+    if (p + 2 < t.size() && t[p] == '%' && t[p + 1] == '-' && t[p + 2] == '-') {
+      u32 end;
+      if (!lexComment(t, p, end) || t.substr(p, end - p).find('\n') != std::string_view::npos) return false;
+      p = end;
+      blanks();
+    }
+    return p >= t.size() || t[p] == '\n';
+  }
+
+  // The construct starting at t[i] read with the inline lexer's primitives:
+  // one past its end, or kNone. When it is left open, `opener` is the
+  // unclosed opener (a code run, '$', '%--', a call's '(', a body's '['),
+  // `container` marks a comment and `block` a block-form body (a '[' that
+  // ends its line) — whose closer is a line, not a bracket.
+  struct Left {
+    u32 opener = kNone;
+    bool container = false, block = false;
+  };
+  // (`args`: t[i] continues a splice's argument list, after a body's ']')
+  template <class RawOf>
+  u32 constructEnd(std::string_view t, u32 i, RawOf rawOf, Left& left, bool args = false) const {
+    const u32 n = (u32)t.size();
+    auto bodyEnd = [&](u32 p) -> u32 {  // a content body's '[' at p
+      if (reverted(rawOf(p))) return kNone;
+      if (endsLine(t, p + 1)) {
+        left = {p, true, true};
+        return kNone;
+      }
+      BracketMatcher bm(t);
+      i32 close = bm.body(p);
+      if (close < 0) {
+        left = {p, false, false};
+        return kNone;
+      }
+      return (u32)close + 1;
+    };
+    auto argList = [&](u32 p) -> u32 {
+      while (p < n && t[p] == '[') {
+        u32 e = bodyEnd(p);
+        if (e == kNone) return left.opener == kNone ? p : kNone;  // a reverted '[' ends the args
+        p = e;
+      }
+      return p;
+    };
+    if (args) return argList(i);
+    switch (inlineOpener(t, i)) {
+      case InlineRule::code: {
+        CodeSpanLex cs;
+        if (lexCodeSpan(t, i, cs)) return cs.end;
+        left = {i, false, false};
+        return kNone;
+      }
+      case InlineRule::math: {
+        u32 close;
+        if (lexMath(t, i, close)) return close + 1;
+        if (i + 1 >= n || t[i + 1] != '$') left = {i, false, false};  // "$$" is literal
+        return kNone;
+      }
+      case InlineRule::comment: {
+        u32 end;
+        if (lexComment(t, i, end)) return end;
+        left = {i, true, false};
+        return kNone;
+      }
+      case InlineRule::splice: {
+        SpliceLex sl;
+        bool ok = lexSplice(t, i, sl);
+        if (sl.openAt != kNoPos && !reverted(rawOf(sl.openAt))) {
+          left = {sl.openAt, false, false};
+          return kNone;
+        }
+        if (!ok) return kNone;
+        return argList(sl.end);
+      }
+      case InlineRule::note: {
+        u32 e = bodyEnd(i + 1);
+        return e == kNone && left.opener == kNone ? i + 1 : e;
+      }
+      case InlineRule::strong:
+      case InlineRule::em:
+      case InlineRule::link:
+      case InlineRule::ref:
+      case InlineRule::refs:
+      case InlineRule::none:
+        break;
+    }
+    return kNone;
+  }
+
+  // Scan a paragraph line's text [from, e) for constructs it leaves open
+  // (`args`: `from` continues a splice's argument list).
+  void scanLine(u32 ln, u32 from, u32 e, bool args = false) {
+    const std::string_view t = all.substr(0, e);  // offsets are raw
+    auto rawOf = [](u32 v) { return v; };
+    u32 i = from;
+    if (resumeAtBody) {  // a splice's block-form body opens here
+      resumeAtBody = false;
+      if (ownBodyLines(ln, i)) return;
+      i++;
+    }
+    while (args && i < e && all[i] == '[') {  // more arguments after a body's ']'
+      Left left;
+      u32 end = constructEnd(t, i, rawOf, left, true);
+      if (end != kNone) {
+        i = end;
+        break;
+      }
+      if (left.block ? ownBodyLines(ln, left.opener) : ownLines(ln, i, e, left, true)) return;
+    }
+    while (i < e) {
+      const char c = all[i];
+      if (c == '\\') {
+        i += i + 1 < e ? 2 : 1;
+        continue;
+      }
+      if (!kInlineOpenerByte[(u8)c]) {
+        i++;
+        continue;
+      }
+      if (reverted(i)) {  // a literal opener (a code run is literal as a whole)
+        do i++;
+        while (c == '`' && i < e && all[i] == '`');
+        continue;
+      }
+      Left left;
+      u32 end = constructEnd(t, i, rawOf, left);
+      if (end != kNone) {
+        i = std::max(end, i + 1);
+        continue;
+      }
+      if (left.opener == kNone) {
+        i++;
+        continue;
+      }
+      if (left.block ? ownBodyLines(ln, left.opener) : ownLines(ln, i, e, left)) return;
+      // the opener is literal now: read the construct again
+    }
+  }
+
+  // Look ahead from the construct at `start` on line L (left open at
+  // `left.opener`) over the following lines up to its bound, in doubling
+  // windows. True when it closes: the lines up to its closer are owned.
+  bool ownLines(u32 L, u32 start, u32 e, const Left& left, bool args = false) {
+    std::vector<Span> slices{{start, e}};
+    std::vector<u32> sliceLine{L};
+    u32 next = L + 1;
+    bool bound = false;
+    u32 unclosed = left.opener;  // what the widest window still left open
+    for (size_t want = 2;; want *= 2) {
+      while (slices.size() < want && !bound) {
+        if (next >= nlines) {
+          bound = true;
+          break;
+        }
+        u32 ls = lineStart(next), le = lineEnd(next), p = ls, c = 0;
+        bool blank = isBlank(ls, le);
+        if (matchContainers(le, p, c, blank) < open.size() || (blank && !left.container)) {
+          bound = true;
+          break;
+        }
+        if (!blank) {
+          skipBlanks(le, p, c);
+          slices.push_back({p, trimEnd(p, le)});
+          sliceLine.push_back(next);
+        }
+        next++;
+      }
+      LeafText view(all, slices);
+      Left l2;
+      u32 end = constructEnd(view.text(), 0, [&](u32 v) { return view.raw(v); }, l2, args);
+      if (end != kNone || l2.block) {
+        // closed — or its call closed and a block-form body opens: own the
+        // lines up to there and resume the scan on the last of them
+        const u32 at = end != kNone ? end : l2.opener;
+        const u32 raw = view.raw(at);
+        size_t k = 0;
+        while (k + 1 < slices.size() && slices[k + 1].start <= raw) k++;
+        if (sliceLine[k] == L) break;  // cannot happen: it did not close on its own line
+        owning = true;
+        ownBlock = false;
+        ownUntil = sliceLine[k];
+        ownResume = raw;
+        resumeAtBody = end == kNone;
+        return true;
+      }
+      if (l2.opener != kNone) unclosed = view.raw(l2.opener);
+      if (bound) break;
+    }
+    makeLiteral(unclosed, L, next);
+    return false;
+  }
+
+  // A block-form body opened by the '[' at `open` (ending line L): it closes
+  // at the first line whose first non-blank character is ']' at or left of
+  // line L's indent, before container exit.
+  bool ownBodyLines(u32 L, u32 openRaw) {
+    u32 indent = 0;
+    for (size_t k = 0; k < leafLines.size(); k++)
+      if (leafLines[k] == L) indent = leafCols[k];
+    u32 l = L + 1;
+    for (; l < nlines; l++) {
+      u32 ls = lineStart(l), le = lineEnd(l), p = ls, c = 0;
+      bool blank = isBlank(ls, le);
+      if (matchContainers(le, p, c, blank) < open.size()) break;
+      skipBlanks(le, p, c);
+      if (p < le && all[p] == ']' && c <= indent) {
+        owning = true;
+        ownBlock = true;
+        ownUntil = l;
+        blockBody = {openRaw, p};
+        return true;
+      }
+    }
+    makeLiteral(openRaw, L, l);
+    return false;
+  }
+
+  // A line the paragraph owns: appended, no block starts on it.
+  u32 continueLeaf(u32 ln, u32 pos, u32 col, u32 le, bool blank) {
+    if (!blank) extend(le);
+    const bool last = ln == ownUntil;
+    if (ownBlock) {
+      if (!last) {
+        pushLeafLine(ln, {pos, le}, col);  // a body line keeps its indentation
+        return ln + 1;
+      }
+      owning = false;
+      leaf->bodies.push_back(blockBody);
+      const u32 e = trimEnd(pos, le);
+      pushLeafLine(ln, {pos, e}, col);
+      scanLine(ln, blockBody.end + 1, e, /*args=*/true);
+      return ln + 1;
+    }
+    if (blank) return ln + 1;  // a comment owns blank lines; they add nothing
+    skipBlanks(le, pos, col);
+    const u32 e = trimEnd(pos, le);
+    pushLeafLine(ln, {pos, e}, col);
+    if (last) {
+      owning = false;
+      scanLine(ln, ownResume, e);
+    }
+    return ln + 1;
   }
 
   // nesting-aware scan for the '--%' that closes a comment: one past it, or
@@ -377,8 +674,6 @@ struct LinePass {
       diags.add(Sev::Error, "parse-block", carryNode->span, "unterminated fence");
     else if (carry == Carry::Comment)
       diags.add(Sev::Error, "parse-block", carryNode->span, "unterminated comment");
-    // LeafComment: the paragraph keeps its lines; the inline lexer reports
-    // the unclosed '%--'
     carry = Carry::None;
   }
 
@@ -395,12 +690,6 @@ struct LinePass {
         carryNode->span.end = le;
         carryNode->inner.end = le;
         commentDepth = depth;
-        return ln + 1;
-      }
-      case Carry::LeafComment: {
-        skipBlanks(le, pos, col);
-        if (scanComment(pos, le, commentDepth) != kNone) carry = Carry::None;
-        addParaLine(pos, le);
         return ln + 1;
       }
       case Carry::None:
@@ -427,7 +716,7 @@ struct LinePass {
           exhausted = true;
           break;
         }
-        u32 ls = src.lineStart(next), le2 = src.lineEnd(next), p = ls, c = 0;
+        u32 ls = lineStart(next), le2 = lineEnd(next), p = ls, c = 0;
         bool blank = isBlank(ls, le2);
         if (matchContainers(le2, p, c, blank) < open.size()) {
           exhausted = true;
@@ -449,8 +738,8 @@ struct LinePass {
         bool ranOut = s.err && std::string_view(s.err) == "unterminated";
         if (ranOut && !exhausted) continue;
         u32 last = recoverStatement(ln);
-        for (u32 l = ln + 1; l <= last; l++) extend(src.lineEnd(l));
-        errorBlock({pos, src.lineEnd(last)}, "statement-unclosed",
+        for (u32 l = ln + 1; l <= last; l++) extend(lineEnd(l));
+        errorBlock({pos, lineEnd(last)}, "statement-unclosed",
                    let ? "unterminated #let: dropped up to the next blank line"
                        : "unterminated #{ block: dropped up to the next blank line");
         return last + 1;
@@ -468,7 +757,7 @@ struct LinePass {
       else c->inner = {pos + 2, view.raw(s.end - 1)};
       parent()->kids.push_back(c);
       for (size_t l = 1; l <= k; l++) extend(slices[l].end);
-      return remainder(sliceLine[k], end, src.lineEnd(sliceLine[k]));
+      return remainder(sliceLine[k], end, lineEnd(sliceLine[k]));
     }
   }
 
@@ -482,7 +771,7 @@ struct LinePass {
     if (starts(rest, "%--")) return blockComment(ln, p, le);
     if (isLet(rest)) return statement(ln, p, le, true);
     if (starts(rest, "#{")) return statement(ln, p, le, false);
-    addParaLine(p, le);
+    addParaLine(ln, p, c, le);
     return ln + 1;
   }
 
@@ -502,15 +791,10 @@ struct LinePass {
       return ln + 1;
     }
     if (starts(rest, "%--")) {
-      if (leaf) {  // a comment line inside a paragraph is part of it (inline)
-        int depth = 1;
-        if (scanComment(pos + 3, le, depth) == kNone) {
-          carry = Carry::LeafComment;
-          carryNode = leaf;
-          carryDepth = open.size();
-          commentDepth = depth;
-        }
-        addParaLine(pos, le);
+      // a comment line inside a paragraph is part of it: an inline comment,
+      // which owns the following lines until its closer
+      if (leaf) {
+        addParaLine(ln, pos, col, le);
         return ln + 1;
       }
       return blockComment(ln, pos, le);
@@ -589,12 +873,12 @@ struct LinePass {
     }
     if (isLet(rest)) return statement(ln, pos, le, true);
     if (starts(rest, "#{")) return statement(ln, pos, le, false);
-    addParaLine(pos, le);
+    addParaLine(ln, pos, col, le);
     return ln + 1;
   }
 
   u32 processLine(u32 ln) {
-    const u32 ls = src.lineStart(ln), le = src.lineEnd(ln);
+    const u32 ls = lineStart(ln), le = lineEnd(ln);
     const bool blank = isBlank(ls, le);
     u32 pos = ls, col = 0;
     const size_t matched = matchContainers(le, pos, col, blank);
@@ -605,6 +889,7 @@ struct LinePass {
       }
       endCarry();
     }
+    if (leaf && owning) return continueLeaf(ln, pos, col, le, blank);  // owned: see ownLines
     if (matched < open.size()) closeTo(matched);  // a blank line ends a quote
     if (blank) {
       closeLeaf();
@@ -630,8 +915,8 @@ struct LinePass {
 
   void run() {
     root = mk(SkelKind::Doc);
-    root->span = {0, src.size()};
-    nlines = src.lineCount();
+    root->span = lines.empty() ? Span{0, 0} : Span{lines.front().start, lines.back().end};
+    nlines = (u32)lines.size();
     for (u32 ln = 0; ln < nlines;) ln = processLine(ln);
     if (carry != Carry::None) endCarry();
     for (const OpenC& c : open)
@@ -641,10 +926,19 @@ struct LinePass {
 
 }  // namespace
 
-Skeleton linepass(const SourceText& src, Arena& arena, DiagSink& diags) {
-  LinePass lp{src, arena, diags, src.view()};
+Skeleton linepassLines(const SourceText& src, const std::vector<Span>& lines, Arena& arena,
+                       DiagSink& diags) {
+  LinePass lp{src, lines, arena, diags, src.view()};
   lp.run();
-  return {lp.root};
+  return {lp.root, std::move(lp.windows)};
+}
+
+Skeleton linepass(const SourceText& src, Arena& arena, DiagSink& diags) {
+  std::vector<Span> lines(src.lineCount());
+  for (u32 l = 0; l < src.lineCount(); l++) lines[l] = {src.lineStart(l), src.lineEnd(l)};
+  Skeleton sk = linepassLines(src, lines, arena, diags);
+  sk.root->span = {0, src.size()};
+  return sk;
 }
 
 static void dumpNode(std::string& out, const SkelNode* n, const SourceText& src, int depth) {

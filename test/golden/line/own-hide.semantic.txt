@@ -1,0 +1,13 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="113">A comment opened mid-line and the paragraph goes on.</p>
+<p data-pid="1" data-s="115" data-e="147">A code span <code>%--</code> hides nothing:</p>
+<h1 data-pid="2" data-s="148" data-e="171" id="tsr-h-1">This heading survives</h1>
+<p data-pid="3" data-s="173" data-e="198">请注意*以下事项：</p>
+<ul data-pid="4" data-s="199" data-e="230">
+<li>第一项<strong>重要</strong></li>
+<li>第二项</li>
+</ul>
+<p data-pid="5" data-s="232" data-e="267">A stray $ sign at the end of a line</p>
+<h1 data-pid="6" data-s="268" data-e="299" id="tsr-h-2">The heading after it survives</h1>
+<p data-pid="7" data-s="301" data-e="359">A call <strong>left-1 right</strong> spans lines.</p>
+</div>

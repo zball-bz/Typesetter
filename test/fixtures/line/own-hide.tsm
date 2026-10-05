@@ -1,0 +1,17 @@
+A comment opened mid-line %-- hides what follows
+= not a heading
+- not a list item
+--% and the paragraph goes on.
+
+A code span `%--` hides nothing:
+= This heading survives
+
+请注意*以下事项：
+- 第一项*重要*
+- 第二项
+
+A stray $ sign at the end of a line
+= The heading after it survives
+
+A call #strong(text("left" +
+- 1 + " right")) spans lines.

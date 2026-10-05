@@ -1,0 +1,6 @@
+- An item with display math:
+  $ x = a
+    - b
+    + c $
+  and text after.
+- Next item.

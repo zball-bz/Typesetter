@@ -1,0 +1,6 @@
+doc @[0,437)
+  code-let @[0,36) js=" callout = (body) => quote(body)"
+  para @[38,140) lines=6
+  para @[142,296) lines=6
+  para @[298,391) lines=5
+  para @[393,436) lines=1

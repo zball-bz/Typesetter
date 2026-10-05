@@ -1,0 +1,47 @@
+doc @[0,437)
+  code-let @[0,36) js=" callout = (body) => quote(body)"
+  para @[38,140)
+    splice @[38,140) expr="callout"
+      arg @[47,139)
+        list @[48,76) bullet start=1
+          item @[48,61)
+            para @[50,61)
+              text @[50,61) str="first point"
+          item @[62,76)
+            para @[64,76)
+              text @[64,76) str="second point"
+        para @[78,138)
+          text @[78,116) str="A paragraph after a blank line, with a "
+          splice @[117,132) expr="strong"
+            arg @[125,131)
+              text @[125,131) str="nested"
+          text @[133,138) str=" call."
+  para @[142,296)
+    splice @[142,296) expr="callout"
+      arg @[151,295)
+        list @[156,262) bullet start=1
+          item @[156,212)
+            para @[158,212)
+              text @[158,212) str="an indented body is dedented by its common indentation"
+          item @[217,262)
+            para @[219,262)
+              text @[219,262) str="so this list starts at the body's left edge"
+        para @[268,294)
+          text @[268,294) str="and so does this paragraph"
+  para @[298,391)
+    text @[298,316) str="A note with blocks"
+    note @[316,367)
+      para @[319,347)
+        text @[319,347) str="First paragraph of the note."
+      list @[349,365) bullet start=1
+        item @[349,365)
+          para @[351,365)
+            text @[351,365) str="a listed point"
+    text @[368,391) str=" continues the sentence."
+  para @[393,436)
+    splice @[393,436) expr="quote"
+      arg @[400,435)
+        list @[400,435) bullet start=1
+          item @[400,435)
+            para @[402,435)
+              text @[402,435) str="a single-line body that is a list"

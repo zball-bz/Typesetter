@@ -1,0 +1,13 @@
+doc @[0,360)
+  para @[0,113) lines=4
+  para @[115,147) lines=1
+  heading1 @[148,171)
+  para @[173,198) lines=1
+  list bullet start=1 @[199,230)
+    item @[199,218)
+      para @[201,218) lines=1
+    item @[219,230)
+      para @[221,230) lines=1
+  para @[232,267) lines=1
+  heading1 @[268,299)
+  para @[301,359) lines=2

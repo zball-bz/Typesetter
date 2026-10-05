@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<ul data-pid="0" data-s="0" data-e="87">
+<li>An item with display math: <code class="tsr-mathsrc">$x = a
+- b
++ c$</code> and text after.</li>
+<li>Next item.</li>
+</ul>
+</div>

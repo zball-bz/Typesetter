@@ -20,7 +20,7 @@ CallAST, step S2). Generated reference: `docs/syntax-table.md`.
 
 Rows are data; behaviour is a closed set implemented in code. The row kinds:
 
-- `SYNTAX_VERSION(n)` (2 since P1-06) — raised whenever a row changes what a document means
+- `SYNTAX_VERSION(n)` (4 since P1-08) — raised whenever a row changes what a document means
   or how the AST prints. It is part of the ABI handshake (`tsr2_abi()` →
   `syntaxVersion`; `runtime/src/shared/abi.mjs` refuses an engine whose
   version differs from the runtime's generated one).
@@ -210,7 +210,50 @@ inside it end unclosed — and the starters and the leaf rules run:
 - **Orphan closers.** A `#name!` line with no open region of that name is an
   Error block (`region-orphan`), never a splice.
 
-## 7. Next steps
+## 7. Line ownership and content bodies (as built from plan P1-08)
+
+**Ownership.** Each paragraph line is scanned with the inline lexer's
+primitives (`atomEnd`'s rules, `lexSplice`, the bracket counter). When the
+line leaves a construct open, the line pass looks ahead once to the
+construct's structural bound:
+
+| owner | constructs | bound |
+|---|---|---|
+| Leaf | code spans, math islands, splice JS (`#(`, `#f(`), inline-form content bodies (`#f[x…`, `^[x…`) | a blank line or container exit |
+| Container | inline comments (`%--`), block-form content bodies (`#f[` ending its line) | container exit (EOF at the root) |
+| none | emphasis pairs, link text | — |
+
+If the construct closes before its bound, the lines up to its closer belong to
+the paragraph and no block starts on them: a formula over `- b` and `+ c`
+lines, a call whose arguments wrap onto a `- 1` line, a comment opened
+mid-line that hides `= …` and `- …` lines. Otherwise the opener is literal
+text — the skeleton records it (`SkelNode::literalAt`, which phase 2 honours)
+and a `RevertedWindow` {opener line, bound line} for incremental re-lexing —
+and the scan continues after it, so `A stray $ sign⏎= Heading` keeps its
+heading. Lookahead runs in doubling windows; no line is processed twice. A
+paragraph of n lines whose openers never close costs O(n²) in the worst case
+(32 ms for a 4 KB adversarial input), real documents nothing measurable.
+
+**Block-form bodies.** A content body whose `[` ends its line (blanks or a
+comment after it) closes at the first line whose first non-blank character is
+`]` at or left of the opener line's indent — a `]` in prose never closes it,
+and nested block bodies must be indented. Its lines keep their indentation;
+the remainder of the closer line continues the paragraph (`][` starts another
+argument). The skeleton records the body (`SkelNode::bodies`) and phase 2
+uses that closer instead of the bracket counter.
+
+**Blocks mode.** Every content body — `#f[…]` arguments and `^[…]` notes,
+inline or block form — re-enters the line pass (`linepassLines` over the
+body's lines, common indentation stripped: App B rule 4) and the AST builder.
+A body that is one paragraph unwraps to its inline content, so single-line
+bodies keep their old shape; `#quote[- x]` is a list. Several blocks lower to
+a `seq` of blocks, which the model's normal form splices into the enclosing
+block (document-model §3, N3); footnotes keep block bodies as blocks.
+
+`@id[…]` supplements and `#let x = […]` content literals become content
+bodies with their owning steps (P2-06, P2-12).
+
+## 8. Next steps
 
 - P1-09: editor grammars from `syntax.gen.json`.
 - P2-11 / P2-13: region provenance and splice bodies delete the legacy

@@ -1,0 +1,33 @@
+<div class="tsr-flow">
+<blockquote data-pid="0">
+<ul data-s="48" data-e="76">
+<li>first point</li>
+<li>second point</li>
+</ul>
+<p data-s="78" data-e="138">A paragraph after a blank line, with a <strong>nested</strong> call.</p>
+</blockquote>
+<blockquote data-pid="1">
+<ul data-s="156" data-e="262">
+<li>an indented body is dedented by its common indentation</li>
+<li>so this list starts at the body&#39;s left edge</li>
+</ul>
+<p data-s="268" data-e="294">and so does this paragraph</p>
+</blockquote>
+<p data-pid="2" data-s="298" data-e="391">A note with blocks<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> continues the sentence.</p>
+<blockquote data-pid="3">
+<ul data-s="400" data-e="435">
+<li>a single-line body that is a list</li>
+</ul>
+</blockquote>
+<div data-role="notes" data-pid="4" data-s="38" data-e="436">
+<hr data-s="38" data-e="436">
+<ol data-s="38" data-e="436">
+<li><p data-s="319" data-e="347" id="tsr-fn-1">First paragraph of the note.</p>
+<ul data-s="349" data-e="365">
+<li>a listed point</li>
+</ul>
+<p data-s="316" data-e="367"> <a href="#tsr-fnref-1">↩</a></p>
+</li>
+</ol>
+</div>
+</div>

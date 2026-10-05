@@ -46,6 +46,12 @@ class LeafText {
     return raws_[k] + (c - starts_[k]);
   }
   Span rawSpan(u32 a, u32 b) const { return {raw(a), raw(b)}; }
+  // view offset of raw offset r (r inside one of the lines)
+  u32 view(u32 r) const {
+    if (starts_.empty()) return r - base_;
+    size_t k = (size_t)(std::upper_bound(raws_.begin(), raws_.end(), r) - raws_.begin()) - 1;
+    return starts_[k] + (r - raws_[k]);
+  }
 
  private:
   std::string_view t_;

@@ -132,6 +132,9 @@ inline bool isInlineLevel(Kind k) {
 //   N1 empty-para: a paragraph of only empty text vanishes (placeholder splices)
 //   N2 unwrap:     a paragraph whose only child is block/adaptive-level IS that
 //                  block (a #term / #toc / #codeblock(…) splice alone on a line)
+//   N3 blocks:     a seq holding a block (a multi-block content body, plan
+//                  P1-08) takes its place among its siblings; a paragraph that
+//                  is only such a seq is those blocks
 void normalize(ContentNode* n, const Interner& strs);
 
 }  // namespace tsr

@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-08
+- 下一步：P1-09
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -33,7 +33,7 @@
 | P1-05 | syntax.def 与 CallAST | done | grep:plan P1-05 | 2026-10-06 | 0（skeleton/ast/js/tree 全部字节不变） | syntax.def（CLASS/INLINE/BLOCK/KEYWORD/RESERVED/TOKEN_TAGS/SUGAR/NODE 行）+ tools/gen-syntax.mjs 生成 syntax.gen.{h,cc}、shared/syntax.gen.{mjs,json}、docs/syntax-table.md（入 gen-all/G9）；CallAST：AstKind {Doc,Text,Comment,Call,Splice,Stmt,Error} + SugarId，节点 32 字节（static_assert），载荷为紧随节点的旁路记录，kids 为 arena 切片；通用 dump 由模板生成；codegen/fragment 按 slot 分派（Para→mathblock 窥孔保留）；reservedSpliceHead、kTokenTags/TOKEN_TAGS 由表生成；tsr2_abi syntaxVersion=1，abi.mjs 核对；AST 字节 87K 116680→64664（−45%），unitAstBytes 守住；原生 parse 0.428→0.405ms；docs/syntax-design.md，PackCC/SourceMap 文档漂移更正 |
 | P1-06 | SurfaceLexer | done | grep:plan P1-06 | 2026-10-06 | 0（现有用例全部字节不变）；+3 用例（inline/bracket-island、line/crlf-inline、line/trailing-blank） | LeafText：叶子各行以单个 \n 结构性连接（CRLF/行尾空白/容器前缀不进入词法器），所有扫描以叶子或体为界，偏移映射回原始 span；按 INLINE 行生成的 inlineOpener/kInlineOpenerByte 分派（纯文本成段追加，87K parse 0.43→0.19ms）；syntax/lexer.{h,cc}：lexCodeSpan（多反引号游程）、lexMath（只解码 \$）、lexComment、lexSplice、atomEnd、BracketMatcher（岛感知 + 普通回退，单次扫描记忆化，线性）；内容体/脚注/链接文字跨行；@[ 为 IdList；splitCells 用同一原子；SpliceP 存连接后的 JS 文本；删除 contiguous/plainGap/seekTo/scanSpliceHead；SYNTAX_VERSION 2；链接匹配方式偏差见偏差表 |
 | P1-07 | BlockAutomaton | done | grep:plan P1-07 | 2026-10-06 | 容器 span：doc/structure、notes/cjk-glue、region/figure、doc/nested-base16/18、figure/float-in-list、exec/let-ctor-name、exec/nested-stmt-diag、line/crlf-inline、line/trailing-blank（skeleton/ast/js/tree/semantic/html/.ops）；行为：conform/appa-splices、conform/appb-lines、exec/contain-orphan-diag；+5 用例（line/tabs、line/interrupt-diag、line/fence-container-diag、line/blankblock-diag、region/resync-diag） | 容器协议 Prefix/Column/Explicit（tab 宽 4，span 随每个归属行扩展，空行结束引用）；fence/块注释/段内注释为 verbatim carry，容器退出即结束；fence 按内容列相对缩进去缩进，容器内 fence 传 ctx.lineOffsets；区域按名闭合，内层与随容器结束的区域报 region-unclosed，孤立闭合行为 region-orphan 错误块；段落打断逐条规则（空项、N≠1 不打断）；列表身份（标记类别、列）+ list-number 信息诊断；语句平衡到容器退出（结构连接、倍增窗口，线性），失败恢复到空行/块起始/容器退出；--%、}、; 后的行余部重新进入；SYNTAX_VERSION 3；偏差见偏差表 |
-| P1-08 | 行所有权与内容体 | todo | | | | |
+| P1-08 | 行所有权与内容体 | done | grep:plan P1-08 | 2026-10-06 | 0（现有用例全部字节不变）；+3 用例（line/own-body、line/own-hide、line/own-math） | 行所有权：段落行用 phase 2 原语扫描，未闭合构造一次性前瞻到结构边界（Leaf：代码 span/数学/splice JS/行内形式体，界=空行或容器退出；Container：行内注释/块形式体，界=容器退出），闭合则其间各行归段落、不起块，否则开符为字面（literalAt + RevertedWindow）；块形式体以 ']' 行（列 ≤ 开行缩进）闭合，记 SkelNode::bodies，']' 后续行与 '][' 续参；内容体（#f[、^[）以 Blocks 模式重入行扫描（linepassLines，公共缩进去除），单段落解包；模型 N3 拼接含块的 seq；多块脚注按块渲染；fuzz_linepass 180s、fuzz_inline 120s 无发现；SYNTAX_VERSION 4；偏差见偏差表 |
 | P1-09 | 前端导出与工具链 | todo | | | | |
 | P1-10 | 元素注册表、索引与分阶段解析器 | todo | | | | |
 | P1-11 | TextRules 兼容表与单一分类器 | todo | | | | |
@@ -147,6 +147,9 @@
 | P1-07 | 语句失败的恢复界保留 P0-04 的"块起始行"停止条件（不只第一个空行），并扩展到容器内 | line/let-unclosed-diag 的验收要求 `#let x = f(1` 下一行的标题保留；只按空行恢复会吞掉它 | P1-08 的试探性 carry 沿用同一恢复界 |
 | P1-07 | 被迫闭合的区域只给 `region-unclosed` 诊断，不包成 Error 块；容器内多行语句的 JS 仍记原始 span，不拆成 JsText 片段 | 计划条目只要求诊断；容器内语句在 AST 中仍是 statement-nested-unsupported 错误，JS 文本无人使用 | P2-12 让容器内语句可执行时改为 JsText 片段 |
 | P1-07 | 空行结束引用（`> a⏎⏎> b` 为两个引用）；XFAIL +1（line/fence-container-diag：代码行缺 line-spans 的既有类别） | 前缀容器的继续规则（与 CommonMark 一致）；新用例必须含容器内 fence | P3-07 修复代码行 span 后整类移除 |
+| P1-08 | Phase 1 不存 AtomTape：段落行用与 phase 2 相同的原子/括号原语扫描，遇到未闭合的构造就一次性前瞻到其结构边界（加倍窗口），而不是"暂定提交、到界回退再重读"；RevertedWindows 照记，回退的开符记在 SkelNode::literalAt 供 phase 2 遵从，块形式内容体的闭合行记在 SkelNode::bodies | 先提交后回退在"每行一个永不闭合的开符"时会级联成 O(n³)（3000 行 >120s）；前瞻结果相同且每行只处理一次（同输入 0.9s，4KB 32ms）；存储的 tape 还须与 phase 2 的普通匹配回退保持一致，收益只在增量编辑（T9） | P3-21 等增量重排若需要 tape，从同一原语生成 |
+| P1-08 | `@id[` 与 `#let x = [` 的内容体未在本步启用 | 设计把 `@id[…]` 门控在 T3 的 ref 构造器（P2-06），`#let x = [..]` 内容字面量属于 S8（P2-12）；本步只有 `#f[`、`^[` 两种内容体 | P2-06、P2-12 启用时复用 parseBody |
+| P1-08 | 多块脚注体按块渲染（resolve.cc 的 notes 节）；模型增加 N3（含块的 seq 并入兄弟/替换段落） | Blocks 模式使 `^[…]`、`#f[…]` 可以产生多块值，不处理则被压成一行 | T2 的层级规范化（行内位置的块）在 P2 阶段 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

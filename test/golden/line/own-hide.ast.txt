@@ -1,0 +1,32 @@
+doc @[0,360)
+  para @[0,113)
+    text @[0,25) str="A comment opened mid-line"
+    comment @[26,86) body=" hides what follows\n= not a heading\n- not a list item\n"
+    text @[87,113) str=" and the paragraph goes on."
+  para @[115,147)
+    text @[115,126) str="A code span "
+    code @[127,132) str="%--"
+    text @[133,147) str=" hides nothing:"
+  heading @[148,171) level=1
+    text @[150,171) str="This heading survives"
+  para @[173,198)
+    text @[173,182) str="请注意"
+    text @[182,183) str="*"
+    text @[183,198) str="以下事项："
+  list @[199,230) bullet start=1
+    item @[199,218)
+      para @[201,218)
+        text @[201,210) str="第一项"
+        styled @[210,218) marker=*
+          text @[211,217) str="重要"
+    item @[219,230)
+      para @[221,230)
+        text @[221,230) str="第二项"
+  para @[232,267)
+    text @[232,267) str="A stray $ sign at the end of a line"
+  heading @[268,299) level=1
+    text @[270,299) str="The heading after it survives"
+  para @[301,359)
+    text @[301,307) str="A call "
+    splice @[308,346) expr="strong(text(\"left\" +\n- 1 + \" right\"))"
+    text @[347,359) str=" spans lines."

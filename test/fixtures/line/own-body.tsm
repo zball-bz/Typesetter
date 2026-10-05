@@ -1,0 +1,23 @@
+#let callout = (body) => quote(body)
+
+#callout[
+- first point
+- second point
+
+A paragraph after a blank line, with a #strong[nested] call.
+]
+
+#callout[
+    - an indented body is dedented by its common indentation
+    - so this list starts at the body's left edge
+
+    and so does this paragraph
+]
+
+A note with blocks^[
+First paragraph of the note.
+
+- a listed point
+] continues the sentence.
+
+#quote[- a single-line body that is a list]

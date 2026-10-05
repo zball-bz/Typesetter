@@ -19,10 +19,23 @@ struct Frame {
   std::vector<AstNode*> items;
 };
 
+// What the line pass decided for a paragraph (plan P1-08): block-form content
+// bodies close at their ']' line, and reverted openers are literal text.
+struct LeafHints {
+  const std::vector<Span>* bodies = nullptr;
+  const std::vector<u32>* literal = nullptr;
+};
+
+// A content body re-enters the line pass (Blocks mode): defined below.
+std::vector<AstNode*> parseBlocks(const SourceText& src, const std::vector<Span>& lines, Arena& arena,
+                                  Interner& strs, DiagSink& diags);
+
 // One parse of the range [from, to) of a leaf's text. Content bodies (link
 // text, content arguments, notes) are sub-parses bounded by their closer.
 struct InlineParser {
+  const SourceText& src;
   const LeafText& L;
+  const LeafHints hints;
   const u32 from, to;
   Arena& arena;
   Interner& strs;
@@ -38,9 +51,10 @@ struct InlineParser {
   bool prevGlyph = false;
   u32 i = 0;
 
-  InlineParser(const LeafText& leaf, u32 a, u32 b, Arena& ar, Interner& st, DiagSink& dg)
-      : L(leaf), from(a), to(b), arena(ar), strs(st), diags(dg), t(leaf.text().substr(0, b)),
-        brackets(t), A{ar} {}
+  InlineParser(const SourceText& sr, const LeafText& leaf, LeafHints h, u32 a, u32 b, Arena& ar,
+               Interner& st, DiagSink& dg)
+      : src(sr), L(leaf), hints(h), from(a), to(b), arena(ar), strs(st), diags(dg),
+        t(leaf.text().substr(0, b)), brackets(t), A{ar} {}
 
   Span span(u32 a, u32 b) const { return L.rawSpan(a, b); }
 
@@ -86,9 +100,74 @@ struct InlineParser {
   }
 
   std::vector<AstNode*> parseSub(u32 a, u32 b) {
-    InlineParser p(L, a, b, arena, strs, diags);
+    InlineParser p(src, L, hints, a, b, arena, strs, diags);
     p.run();
     return std::move(p.stack.back().items);
+  }
+
+  // an opener the line pass reverted to literal text
+  bool reverted(u32 at) const {
+    if (!hints.literal || hints.literal->empty()) return false;
+    u32 r = L.raw(at);
+    for (u32 x : *hints.literal)
+      if (x == r) return true;
+    return false;
+  }
+  // a content body's closer: the line pass's for a block-form body, else the
+  // bracket counter's; -1 when there is none
+  i32 bodyClose(u32 open) {
+    if (reverted(open)) return -1;
+    if (hints.bodies) {
+      u32 r = L.raw(open);
+      for (const Span& b : *hints.bodies)
+        if (b.start == r) {
+          u32 v = L.view(b.end);
+          return v < to ? (i32)v : -1;
+        }
+    }
+    return brackets.body(open);
+  }
+  // A content body (plan P1-08): its lines re-enter the line pass after the
+  // common indentation is stripped (App B rule 4); a body that is one
+  // paragraph unwraps to its inline content.
+  std::vector<AstNode*> parseBody(u32 a, u32 b) {
+    std::vector<Span> lines;
+    for (u32 s0 = a; s0 <= b;) {
+      u32 e = s0;
+      while (e < b && t[e] != '\n') e++;
+      lines.push_back({L.raw(s0), L.raw(e)});
+      s0 = e + 1;
+    }
+    const std::string_view all = src.view();
+    auto blankLine = [&](Span sp) {
+      for (u32 k = sp.start; k < sp.end; k++)
+        if (all[k] != ' ' && all[k] != '\t' && all[k] != '\r') return false;
+      return true;
+    };
+    auto indentOf = [&](Span sp, u32 limit, u32* pos) {
+      u32 col = 0, p = sp.start;
+      while (p < sp.end && (all[p] == ' ' || all[p] == '\t') && col < limit) {
+        col = all[p] == '\t' ? (col / 4 + 1) * 4 : col + 1;
+        p++;
+      }
+      if (pos) *pos = p;
+      return col;
+    };
+    u32 common = ~0u;
+    for (size_t k = 1; k < lines.size(); k++)
+      if (!blankLine(lines[k])) common = std::min(common, indentOf(lines[k], ~0u, nullptr));
+    if (common != ~0u && common > 0)
+      for (size_t k = 1; k < lines.size(); k++) {
+        u32 p;
+        indentOf(lines[k], common, &p);
+        lines[k].start = p;
+      }
+    std::vector<AstNode*> kids = parseBlocks(src, lines, arena, strs, diags);
+    if (kids.size() == 1 && kids[0]->isCall(SugarId::para)) {
+      std::span<AstNode* const> inl = kids[0]->kids();
+      return {inl.begin(), inl.end()};
+    }
+    return kids;
   }
 
   // A line join: a soft space — except between two CJK-class codepoints,
@@ -107,7 +186,7 @@ struct InlineParser {
   // inline comment: invisible to the text around it (spacing state unchanged)
   void comment() {
     u32 end;
-    if (!lexComment(t, i, end)) {
+    if (reverted(i) || !lexComment(t, i, end)) {
       // unclosed in its leaf: literal text, the error stays visible
       diags.add(Sev::Error, "parse-inline", span(i, i + 3), "unterminated comment");
       put('%', i);
@@ -127,7 +206,7 @@ struct InlineParser {
   // is the one escape it decodes
   void math() {
     u32 close;
-    if (!lexMath(t, i, close)) {
+    if (reverted(i) || !lexMath(t, i, close)) {
       put('$', i);
       i++;
       return;
@@ -164,7 +243,7 @@ struct InlineParser {
   // code span: a run of N backticks to the next run of exactly N
   void code() {
     CodeSpanLex cs;
-    if (!lexCodeSpan(t, i, cs)) {  // an unclosed run is literal as a whole
+    if (!lexCodeSpan(t, i, cs) || reverted(i)) {  // an unclosed run is literal as a whole
       for (u32 k = 0; k < cs.run; k++) put('`', i + k);
       i += cs.run;
       return;
@@ -255,7 +334,7 @@ struct InlineParser {
   void splice() {
     const u32 hash = i;
     SpliceLex s;
-    if (!lexSplice(t, hash, s)) {
+    if (!lexSplice(t, hash, s) || (s.paren && reverted(hash + 1))) {
       if (s.paren) diags.add(Sev::Error, "splice-js", span(hash, s.jsEnd), "unbalanced #(...)");
       put('#', hash);
       i = hash + 1;
@@ -273,7 +352,7 @@ struct InlineParser {
       if (const char* code = reservedSpliceHead(head)) {
         u32 after = exprEnd;
         while (after < to && t[after] == '[') {
-          i32 close = brackets.body(after);
+          i32 close = bodyClose(after);
           if (close < 0) break;
           after = (u32)close + 1;
         }
@@ -296,13 +375,13 @@ struct InlineParser {
     std::vector<AstNode*> args;
     u32 after = exprEnd;
     while (after < to && t[after] == '[') {
-      i32 close = brackets.body(after);
+      i32 close = bodyClose(after);
       if (close < 0) {
         diags.add(Sev::Error, "parse-inline", span(after, to), "unclosed content argument");
         break;
       }
       AstNode* arg = A.call(SugarId::arg, span(after + 1, (u32)close));
-      A.setKids(arg, parseSub(after + 1, (u32)close));
+      A.setKids(arg, parseBody(after + 1, (u32)close));
       args.push_back(arg);
       after = (u32)close + 1;
     }
@@ -316,7 +395,7 @@ struct InlineParser {
   // footnote sugar (notes-design.md §1): ^[inline body]; an unclosed form
   // stays literal text. A space before it moves after the note (until P4-07).
   void note() {
-    i32 close = brackets.body(i + 1);
+    i32 close = bodyClose(i + 1);
     if (close < 0) {
       put('^', i);
       i++;
@@ -324,7 +403,7 @@ struct InlineParser {
     }
     flushText();
     AstNode* n = A.call(SugarId::note, span(i, (u32)close + 1));
-    A.setKids(n, parseSub(i + 2, (u32)close));
+    A.setKids(n, parseBody(i + 2, (u32)close));
     pushItem(n);
     i = (u32)close + 1;
   }
@@ -448,10 +527,10 @@ struct InlineParser {
   }
 };
 
-std::vector<AstNode*> parseLeaf(std::string_view all, const std::vector<Span>& spans, Arena& arena,
-                                Interner& strs, DiagSink& diags) {
-  LeafText L(all, spans);
-  InlineParser p(L, 0, L.size(), arena, strs, diags);
+std::vector<AstNode*> parseLeaf(const SourceText& src, const std::vector<Span>& spans, Arena& arena,
+                                Interner& strs, DiagSink& diags, LeafHints hints = {}) {
+  LeafText L(src.view(), spans);
+  InlineParser p(src, L, hints, 0, L.size(), arena, strs, diags);
   p.run();
   return std::move(p.stack.back().items);
 }
@@ -519,8 +598,8 @@ struct AstBuilder {
     return body;
   }
 
-  std::vector<AstNode*> inlineParse(const std::vector<Span>& spans) {
-    return parseLeaf(src.view(), spans, arena, strs, diags);
+  std::vector<AstNode*> inlineParse(const std::vector<Span>& spans, LeafHints hints = {}) {
+    return parseLeaf(src, spans, arena, strs, diags, hints);
   }
 
   AstNode* errorNode(Span sp, const char* code, const std::string& msg, bool report = true) {
@@ -549,7 +628,7 @@ struct AstBuilder {
         return errorNode(s->span, s->errCode, s->errMsg, /*report=*/false);
       case SkelKind::Para: {
         AstNode* p = A.call(SugarId::para, s->span);
-        A.setKids(p, inlineParse(s->lineSpans));
+        A.setKids(p, inlineParse(s->lineSpans, {&s->bodies, &s->literalAt}));
         return p;
       }
       case SkelKind::Heading: {
@@ -674,6 +753,15 @@ struct AstBuilder {
   }
 };
 
+std::vector<AstNode*> parseBlocks(const SourceText& src, const std::vector<Span>& lines, Arena& arena,
+                                  Interner& strs, DiagSink& diags) {
+  Skeleton sk = linepassLines(src, lines, arena, diags);
+  AstBuilder b{src, arena, strs, diags};
+  std::vector<AstNode*> kids;
+  for (const SkelNode* k : sk.root->kids) kids.push_back(b.build(k));
+  return kids;
+}
+
 }  // namespace
 
 AstNode* parseDoc(const SourceText& src, const Skeleton& sk, Arena& arena,
@@ -686,7 +774,7 @@ std::vector<AstNode*> parseInlineSpans(const SourceText& src,
                                        const std::vector<Span>& spans,
                                        Arena& arena, Interner& strs,
                                        DiagSink& diags) {
-  return parseLeaf(src.view(), spans, arena, strs, diags);
+  return parseLeaf(src, spans, arena, strs, diags);
 }
 
 static void dumpNode(std::string& out, const AstNode* n, const SourceText& src,

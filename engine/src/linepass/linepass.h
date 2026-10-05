@@ -29,16 +29,30 @@ struct SkelNode {
   int start = 1;                // List (ordered)
   bool contained = false;       // Fence: inside a quote or list item (its
                                 // lines are not contiguous in the source)
+  std::vector<Span> bodies;     // Para: block-form content bodies, from the
+                                // '[' to the ']' of their closer line
+  std::vector<u32> literalAt;   // Para: openers that reached their bound
+                                // without a closer (reverted: literal text)
   std::vector<SkelNode*> kids;  // Doc/List/Item/Quote
   const char* errCode = nullptr;  // Error
   std::string errMsg;             // Error
 };
 
+// A reverted carry: the opener's line and the line where it hit its bound
+// (for incremental re-lexing, design T1 I8).
+struct RevertedWindow {
+  u32 openerLine = 0, boundLine = 0;
+};
+
 struct Skeleton {
   SkelNode* root = nullptr;
+  std::vector<RevertedWindow> windows;
 };
 
 Skeleton linepass(const SourceText& src, Arena& arena, DiagSink& diags);
+// The same pass over any list of raw line slices (a content body, plan P1-08).
+Skeleton linepassLines(const SourceText& src, const std::vector<Span>& lines, Arena& arena,
+                       DiagSink& diags);
 std::string dumpSkeleton(const Skeleton& sk, const SourceText& src);
 
 }  // namespace tsr

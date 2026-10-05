@@ -6,7 +6,7 @@
 
 namespace tsr {
 
-constexpr u32 SYNTAX_VERSION = 3;
+constexpr u32 SYNTAX_VERSION = 4;
 
 // character classes
 inline bool isSpliceHead(char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == '$'; }

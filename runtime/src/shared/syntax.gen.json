@@ -1,5 +1,5 @@
 {
- "version": 3,
+ "version": 4,
  "classes": {
   "SpliceHead": "A-Za-z_$",
   "SpliceCont": "A-Za-z0-9_$",

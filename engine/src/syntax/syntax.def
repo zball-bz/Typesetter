@@ -4,7 +4,7 @@
 // and docs/syntax-table.md. Rows are data; behaviour (body modes, ownership,
 // block shapes) is a closed set implemented in code. Never hand-edit the
 // generated files.
-SYNTAX_VERSION(3)
+SYNTAX_VERSION(4)
 
 // ---- character classes ----------------------------------------------------
 CLASS(SpliceHead, "A-Za-z_$")

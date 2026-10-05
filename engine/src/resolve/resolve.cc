@@ -450,21 +450,48 @@ struct Resolver {
       rewrite(nd);  // refs inside the body resolve like anywhere else
       std::string num = std::to_string(i + 1);
       ContentNode* item = mkNode(Kind::item, nd->span);
-      ContentNode* para = mkNode(Kind::para, nd->span);
-      setArgStr(para, ArgK::label, "fn-" + num);
+      // an inline body is one paragraph; a body of blocks (a multi-paragraph
+      // ^[…], plan P1-08) keeps them: the label goes on the first paragraph,
+      // the back link ends the last one
+      bool blocks = false;
+      for (const ContentNode* k : nd->kids) blocks = blocks || !isInlineLevel(k->kind);
+      ContentNode* para = nullptr;
       for (ContentNode* k : nd->kids) {
         rescale(k, 0.85f);
+        if (blocks) {
+          item->kids.push_back(k);
+          continue;
+        }
+        if (!para) para = mkNode(Kind::para, nd->span);
         para->kids.push_back(k);
+      }
+      if (!blocks && !para) para = mkNode(Kind::para, nd->span);
+      if (para) item->kids.push_back(para);
+      ContentNode* first = nullptr;
+      ContentNode* last = nullptr;
+      for (ContentNode* k : item->kids)
+        if (k->kind == Kind::para) {
+          if (!first) first = k;
+          last = k;
+        }
+      if (!first || item->kids.front() != first) {  // a body opening with a list, …
+        first = mkNode(Kind::para, nd->span);
+        item->kids.insert(item->kids.begin(), first);
+        if (!last) last = first;
+      }
+      setArgStr(first, ArgK::label, "fn-" + num);
+      if (item->kids.back() != last) {
+        last = mkNode(Kind::para, nd->span);
+        item->kids.push_back(last);
       }
       Styling small = styles.get(nd->style);
       small.sizeMul *= 0.85f;
       StyleId smallId = styles.idOf(small);
-      para->kids.push_back(mkText(" ", nd->span, smallId));
+      last->kids.push_back(mkText(" ", nd->span, smallId));
       ContentNode* back = mkNode(Kind::ref, nd->span, smallId);
       setArgStr(back, ArgK::target, "fnref-" + num);
       resolveRef(back);
-      para->kids.push_back(back);
-      item->kids.push_back(para);
+      last->kids.push_back(back);
       list->kids.push_back(item);
     }
     g->kids.push_back(list);

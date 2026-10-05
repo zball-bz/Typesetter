@@ -1,0 +1,35 @@
+doc @[0,359) [base]
+  para @[0,113) [base]
+    text @[0,25) [base] str="A comment opened mid-line"
+    comment @[26,86) [base]
+      text @[0,0) [base] str=" hides what follows\n= not a heading\n- not a list item\n"
+    text @[87,113) [base] str=" and the paragraph goes on."
+  para @[115,147) [base]
+    text @[115,126) [base] str="A code span "
+    code @[127,132) [base]
+      text @[0,0) [base] str="%--"
+    text @[133,147) [base] str=" hides nothing:"
+  heading @[148,171) [base] level=1 label="h-1"
+    text @[150,171) [base] str="This heading survives"
+  para @[173,198) [base]
+    text @[173,182) [base] str="请注意"
+    text @[182,183) [base] str="*"
+    text @[183,198) [base] str="以下事项："
+  list @[199,230) [base] ordered=false start=1
+    item @[199,218) [base]
+      para @[201,218) [base]
+        text @[201,210) [base] str="第一项"
+        styled @[210,218) [BOLD]
+          text @[211,217) [BOLD] str="重要"
+    item @[219,230) [base]
+      para @[221,230) [base]
+        text @[221,230) [base] str="第二项"
+  para @[232,267) [base]
+    text @[232,267) [base] str="A stray $ sign at the end of a line"
+  heading @[268,299) [base] level=1 label="h-2"
+    text @[270,299) [base] str="The heading after it survives"
+  para @[301,359) [base]
+    text @[301,307) [base] str="A call "
+    styled @[0,0) [BOLD]
+      text @[0,0) [BOLD] str="left-1 right"
+    text @[347,359) [base] str=" spans lines."

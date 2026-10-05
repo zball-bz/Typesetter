@@ -30,13 +30,17 @@ std::string mathText(std::string_view body);
 // '%--' … '--%', nesting; `end` is one past the closer
 bool lexComment(std::string_view t, u32 i, u32& end);
 
+constexpr u32 kNoPos = ~0u;
+
 // A splice after '#': '(' JS ')' or a head chain
 //   SpliceHead SpliceCont* ('.' SpliceHead SpliceCont* | '(' JS ')')*
 // `lastCall` is the '(' of a trailing call (0 = none); `jsEnd` is where a
-// failed JS scan stopped (for the diagnostic).
+// failed JS scan stopped (for the diagnostic); `openAt` is a '(' whose JS
+// ran out of text before it balanced (the line pass treats it as an open
+// construct, plan P1-08), else kNoPos.
 struct SpliceLex {
   bool paren = false;
-  u32 end = 0, lastCall = 0, jsEnd = 0;
+  u32 end = 0, lastCall = 0, jsEnd = 0, openAt = kNoPos;
 };
 bool lexSplice(std::string_view t, u32 hash, SpliceLex& out);
 

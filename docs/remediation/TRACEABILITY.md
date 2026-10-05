@@ -973,7 +973,7 @@ Theme steps: — · findings: 1
 | finding | kind | sev | plan steps | status |
 |---|---|---|---|---|
 | `markup-language/region-pipe-segmentation` | adhoc | high | P0-04, P2-11 | |
-| `markup-language/inline-delimiter-scanners` | adhoc | high | P1-08 | |
+| `markup-language/inline-delimiter-scanners` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `markup-language/closed-constructor-set` | adhoc | high | P2-03 | |
 | `markup-language/ctor-signature-vs-content-args` | adhoc | high | P2-03 | |
 | `markup-language/arg-grammar-unification` | adhoc | medium | P2-06 | |
@@ -1011,8 +1011,8 @@ Theme steps: — · findings: 1
 | `parser-frontend/per-feature-ast-kinds` | adhoc | high | P1-05 | grep:plan P1-05 |
 | `parser-frontend/inline-recognizer-cascade` | adhoc | high | P1-06 | grep:plan P1-06 |
 | `parser-frontend/region-pipe-segmentation-in-parser` | adhoc | high | P2-11 | |
-| `parser-frontend/cross-line-raw-scans` | adhoc | high | P1-08 | |
-| `parser-frontend/content-args-inline-only` | adhoc | high | P1-08 | |
+| `parser-frontend/cross-line-raw-scans` | adhoc | high | P1-08 | grep:plan P1-08 |
+| `parser-frontend/content-args-inline-only` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/keyword-forms-closed-set-missing` | adhoc | high | P2-12, P3-31 | |
 | `parser-frontend/code-statements-top-level-only` | adhoc | high | P2-12 | |
 | `parser-frontend/label-and-id-lexing-scattered` | adhoc | medium | P2-06 | |
@@ -1026,7 +1026,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/front-matter-editor-only` | adhoc | low | P3-35 | |
 | `parser-frontend/editor-region-builder-list` | adhoc | low | P1-09 | |
 | `parser-frontend/contiguous-escapes-blocks` | issue | high | P1-06 | grep:plan P1-06 |
-| `parser-frontend/inline-comment-leaks-block-structure` | issue | high | P1-08 | |
+| `parser-frontend/inline-comment-leaks-block-structure` | issue | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/unterminated-let-swallows-document` | issue | high | P0-04, P1-07 | grep:plan P1-07 |
 | `parser-frontend/ctor-names-are-reserved-words` | issue | high | P0-05, P2-02 | |
 | `parser-frontend/trailing-text-after-block-closers-dropped` | issue | medium | P1-07 | grep:plan P1-07 |

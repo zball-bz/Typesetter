@@ -94,7 +94,10 @@ bool lexSplice(std::string_view t, u32 hash, SpliceLex& out) {
     JsScan s = scanJs(t, p, true);
     out.paren = true;
     out.jsEnd = std::min(s.end, n);
-    if (!s.ok) return false;
+    if (!s.ok) {
+      if (s.err && std::string_view(s.err) == "unterminated") out.openAt = p;
+      return false;
+    }
     out.end = s.end;
     return true;
   }
@@ -109,7 +112,10 @@ bool lexSplice(std::string_view t, u32 hash, SpliceLex& out) {
     }
     if (p < n && t[p] == '(') {
       JsScan s = scanJs(t, p, true);
-      if (!s.ok) break;  // the chain ends before a broken call
+      if (!s.ok) {  // the chain ends before a broken call
+        if (s.err && std::string_view(s.err) == "unterminated") out.openAt = p;
+        break;
+      }
       out.lastCall = p;
       p = s.end;
       continue;

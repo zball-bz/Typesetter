@@ -1,0 +1,10 @@
+doc @[0,88)
+  list @[0,87) bullet start=1
+    item @[0,74)
+      para @[2,74)
+        text @[2,28) str="An item with display math: "
+        math @[31,56) display=1 src="x = a\n- b\n+ c"
+        text @[59,74) str=" and text after."
+    item @[75,87)
+      para @[77,87)
+        text @[77,87) str="Next item."

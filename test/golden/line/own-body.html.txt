@@ -1,0 +1,28 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="50" style="position:relative;height:121.594px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="11" style="top:0px;left:40px;width:260px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">first point</span></div>
+<div class="tsr-line" data-s="14" data-e="26" style="top:30.391px;left:40px;width:260px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="14">second point</span></div>
+<div class="tsr-line" data-s="28" data-e="66" data-join="space" style="top:73.594px;left:16px;width:284px;word-spacing:1.143px"><span class="tsr-r" data-s="28">A paragraph after a blank line, with a</span></div>
+<div class="tsr-line" data-s="75" data-e="88" style="top:97.594px;left:16px;width:284px"><span class="tsr-r tsr-b" data-s="75">nested</span><span class="tsr-r" data-s="83"> call.</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="158" style="position:relative;height:145.594px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="54" data-join="space" style="top:0px;left:40px;width:260px;word-spacing:0.667px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">an indented body is dedented by its</span></div>
+<div class="tsr-line" data-s="0" data-e="54" style="top:24px;left:40px;width:260px"><span class="tsr-r" data-s="0">common indentation</span></div>
+<div class="tsr-line" data-s="61" data-e="104" data-join="space" style="top:54.391px;left:40px;width:260px;word-spacing:3.333px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="61">so this list starts at the body&#39;s</span></div>
+<div class="tsr-line" data-s="61" data-e="104" style="top:78.391px;left:40px;width:260px"><span class="tsr-r" data-s="61">left edge</span></div>
+<div class="tsr-line" data-s="110" data-e="136" style="top:121.594px;left:16px;width:284px"><span class="tsr-r" data-s="110">and so does this paragraph</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="298" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="93" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.733px"><span class="tsr-r" data-s="0">A note with blocks</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="ref" style="font-size:11.2px">1</a><span class="tsr-r" data-s="70"> continues the sen</span><span class="tsr-r" data-s="70" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="70" data-e="93" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="70">tence.</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="402" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="33" style="top:0px;left:40px;width:260px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">a single-line body that is a list</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="316" style="position:relative;height:127.984px">
+<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="3" data-e="31" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker" style="font-size:13.6px">1.</span><span class="tsr-r" data-s="3" style="font-size:13.6px">First paragraph of the note.</span></div>
+<div class="tsr-line" data-s="35" data-e="49" style="top:73.594px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker" style="font-size:13.6px">•</span><span class="tsr-r" data-s="35" style="font-size:13.6px">a listed point</span></div>
+<div class="tsr-line" data-s="0" data-e="51" style="top:103.984px;left:24px;width:276px"><a class="tsr-r" href="#tsr-fnref-1" data-syn="ref" style="font-size:13.6px">↩</a></div>
+</div>
+</div>
