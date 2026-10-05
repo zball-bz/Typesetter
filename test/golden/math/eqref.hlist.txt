@@ -118,7 +118,7 @@ top pid=4 units=1
   box Ideo "设" w=1025su wt=0.6 cap=102su r6 @[187,220)
   pen 0 r6
   glue autospace w=256su x=1 cap=256su r7 @[220,223)
-  box object part=0 "x" w=539su r8 @[220,223)
+  box object o0 math part=0 asc=475su desc=12su "x" w=539su r8 @[220,223)
   pen 0 r8
   glue autospace w=256su x=1 cap=256su r9 @[223,238)
   box Ideo "为" w=1025su wt=0.6 cap=102su r10 @[223,238)
@@ -133,13 +133,13 @@ top pid=4 units=1
   box Ideo "则" w=1025su wt=0.6 cap=102su r12 @[223,238)
   pen 0 r12
   glue autospace w=256su x=1 cap=256su r13 @[238,248)
-  box object part=0 "x^2 >= 0" w=948su r14 @[238,248)
+  box object o1 math part=0 asc=967su desc=12su "x^2 >= 0" w=948su r14 @[238,248)
   pen 0.85 r15
   glue objspace w=284su x=0 cap=0su r15 @[238,248)
-  box object part=1 w=819su r16 @[238,248)
+  box object o1 math part=1 asc=665su desc=153su w=819su r16 @[238,248)
   pen 0.8 r17
   glue objspace w=284su x=0 cap=0su r17 @[238,248)
-  box object part=2 w=511su r18 @[238,248)
+  box object o1 math part=2 asc=721su desc=14su w=511su r18 @[238,248)
   pen 0 r18
   glue autospace w=256su x=1 cap=256su r19 @[248,260)
   box Ideo "恒" w=1025su wt=0.6 cap=102su r20 @[248,260)
@@ -151,6 +151,8 @@ top pid=4 units=1
   glue inter w=0su x=0.6 cap=102su r20 @[248,260)
   box FullStopW "。" w=512su blank=R r21 @[248,260)
   glue blank w=512su x=0 cap=0su r21 @[248,260)
+  obj o0 math parts=1 edges=Alpha/Alpha src="x" [w=539su asc=475su desc=12su]
+  obj o1 math parts=3 edges=Alpha/Alpha src="x^2 >= 0" [w=948su asc=967su desc=12su] [w=819su asc=665su desc=153su glue=284su] [w=511su asc=721su desc=14su glue=284su]
   run r0 letter-spaced CJK
   run r1 letter-spaced ref LINK CJK link="#tsr-gauss"
   run r2 plain ref LINK link="#tsr-gauss"

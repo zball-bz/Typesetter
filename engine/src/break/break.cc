@@ -17,7 +17,8 @@ namespace tsr {
 //   the paragraph start, matching layout's trim) Glue and Penalty items are
 //   dropped up to the first Box or Disc; a final Glue is dropped (\unskip);
 // - a Disc adds its `pre` when broken, its own width otherwise;
-// - the last line (Forced end) has fil stretch and normal shrink;
+// - the last line (Forced end) has fil stretch and normal shrink, as has
+//   every line ending at a Forced penalty (a hard line break);
 // - cost: x = slack / stretch (or / shrink when tight); Overfull below
 //   -shrinkThreshold, a class of its own; cost = min(mapped(x)^exponent, cap)
 //   with the power by multiplication; demerits = sum(cost) + sum(pen) / 1000;
@@ -86,13 +87,16 @@ struct Para {
     u32 s = nextBox[(u32)(from + 1)];
     u32 e = to;
     i64 extra = 0;
+    // the paragraph end and a forced break (a hard line break, plan P1-13:
+    // TeX's \hfil\break) end a ragged line: fil stretch
+    const bool fil = to == n || (it[to].k == ItemKind::Penalty && it[to].tag == PenTag::Forced);
     if (to == n) {
       while (e > s && it[e - 1].k == ItemKind::Glue) e--;  // \unskip
     } else if (it[to].k == ItemKind::Disc) {
       extra = it[to].pre;
     }
     if (e < s) e = s;
-    return fitLine(w[e] - w[s] + extra, st[e] - st[s], sh[e] - sh[s], to == n, width, p);
+    return fitLine(w[e] - w[s] + extra, st[e] - st[s], sh[e] - sh[s], fil, width, p);
   }
 };
 

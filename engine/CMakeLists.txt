@@ -32,6 +32,7 @@ add_library(tsr_core STATIC
   src/math/math.cc
   src/resolve/resolve.cc
   src/shape/hlist.cc
+  src/shape/objects.cc
   src/emit/emit.cc
   src/emit/legacy.cc
   src/break/break.cc

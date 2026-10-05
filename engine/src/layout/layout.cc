@@ -1,4 +1,5 @@
 #include "layout.h"
+#include "../shape/objects.h"
 #include "../shape/textrules.h"
 
 #include <algorithm>
@@ -67,10 +68,9 @@ LineFill fillLine(const HList& h, const LineItems& r, const MetricStore& metrics
       if (v.ascent > f.maxAsc) f.maxAsc = v.ascent;
       if (v.descent > f.maxDesc) f.maxDesc = v.descent;
     }
-    if (it.k == IK::Box && h.runs[it.run].rc == RealizeClass::Object) {
-      const MathBox* mb = h.objs[h.specs[it.aux].obj].math;
-      if (mb->asc > f.maxAsc) f.maxAsc = mb->asc;
-      if (mb->desc > f.maxDesc) f.maxDesc = mb->desc;
+    if (const ObjPart* pt = objectPart(h, it)) {  // an inline object's part
+      if (pt->asc > f.maxAsc) f.maxAsc = pt->asc;
+      if (pt->desc > f.maxDesc) f.maxDesc = pt->desc;
     }
     if (c.srcEnd > c.srcStart) {
       if (!spanSet) {
@@ -88,6 +88,13 @@ LineFill fillLine(const HList& h, const LineItems& r, const MetricStore& metrics
     f.naturalPx += h.cold[h.side[h.discs[d.aux].pre].cold].rawPx;
   }
   return f;
+}
+// does the line end at a forced break (a hard line break, plan P1-13)? It
+// sits after the line's last box, inside the blocks the break consumed
+bool endsForced(const HList& h, u32 ihi, u32 consumedEnd) {
+  for (u32 k = ihi; k < consumedEnd; k++)
+    if (h.items[k].k == IK::Penalty && h.items[k].x <= -kPenInf) return true;
+  return false;
 }
 // did the break after item ihi consume a real source space? (copy contract
 // §9.3 — synthetic glue: autospace, punctuation blanks, indents don't count)
@@ -566,7 +573,9 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
         if (firstLine && u.marker) { line.marker = u.marker; line.markerStyle = u.markerStyle; }
         firstLine = false;
 
-        const bool isLast = (bp == u.blocks.size()) || u.ragged;
+        // a hard line break ends a line like the paragraph end: ragged, a
+        // real line boundary for copy
+        const bool isLast = (bp == u.blocks.size()) || u.ragged || endsForced(h, r.ihi, u.blockStart[bp]);
         const bool overfull =
             std::binary_search(u.overfullLines.begin(), u.overfullLines.end(), (u32)li);
         line.overfull = overfull;

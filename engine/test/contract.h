@@ -5,7 +5,8 @@
 //   id-unique       every id value occurs once per output
 //   anchor-closure  every internal href="#x" resolves to exactly one id="x"
 //   allowlist       only allowlisted elements appear (trusted raw content,
-//                   <div class="tsr-raw">…</div>, is skipped)
+//                   <div class="tsr-raw">…</div> and the inline form
+//                   <span class="tsr-iraw">…</span>, is skipped)
 //   line-spans      every non-synthetic .tsr-line carries data-s and data-e
 //                   (typeset/paged outputs only)
 //
@@ -124,15 +125,18 @@ inline std::map<std::string, std::string> check(std::string_view html, bool type
   std::vector<Tag> ts = tags(html);
   std::map<std::string, int> ids;
   std::vector<std::string> hrefs;
-  int rawDepth = 0;  // >0 while inside <div class="tsr-raw">
+  int rawDepth = 0;  // >0 while inside trusted raw content
+  std::string rawTag;  // its container: div.tsr-raw or span.tsr-iraw
   for (const Tag& t : ts) {
     if (rawDepth > 0) {
-      if (t.name == "div") rawDepth += t.closing ? -1 : (t.selfClose ? 0 : 1);
+      if (t.name == rawTag) rawDepth += t.closing ? -1 : (t.selfClose ? 0 : 1);
       continue;
     }
     if (t.closing) continue;
-    if (t.name == "div" && hasClass(t, "tsr-raw") && !t.selfClose) {
+    if (((t.name == "div" && hasClass(t, "tsr-raw")) || (t.name == "span" && hasClass(t, "tsr-iraw"))) &&
+        !t.selfClose) {
       rawDepth = 1;
+      rawTag = t.name;
     }
     std::set<std::string> seen;
     for (auto& [k, v] : t.attrs)

@@ -39,6 +39,10 @@ export const TSR_CSS = `
              display: flex; align-items: center; justify-content: center;
              font-size: 0.85em; box-sizing: border-box; }
 .tsr-raw { position: absolute; overflow: hidden; }
+/* inline objects (plan P1-13): boxes on the baseline, of the engine's size */
+.tsr-iimg { vertical-align: baseline; }
+.tsr-iimgph { display: inline-block; border: 1px dashed currentColor; opacity: 0.5; box-sizing: border-box; }
+.tsr-iraw { display: inline-block; overflow: hidden; vertical-align: baseline; }
 .tsr-doc a { color: #1a5276; text-decoration: underline; text-underline-offset: 2px; }
 .tsr-sp { display: inline-block; }
 .tsr-sqL { margin-left: -0.5em; }   /* punct half squeezed at line start / pair */

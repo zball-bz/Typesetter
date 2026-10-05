@@ -24,31 +24,31 @@ top pid=0 units=1
   box Ideo "链" w=1025su wt=0.6 cap=102su r2 @[0,33)
   pen 0 r2
   glue word w=257su x=1 cap=257su src r3 @[0,33)
-  box object part=0 "a_1 + a_2 + a_3 = b_1 + b_2 <= c^2 + d^2" w=2034su r4 @[34,76)
+  box object o0 math part=0 asc=600su desc=162su "a_1 + a_2 + a_3 = b_1 + b_2 <= c^2 + d^2" w=2034su r4 @[34,76)
   pen 0.95 r5
   glue objspace w=228su x=0 cap=0su r5 @[34,76)
-  box object part=1 w=2034su r6 @[34,76)
+  box object o0 math part=1 asc=600su desc=154su w=2034su r6 @[34,76)
   pen 0.95 r7
   glue objspace w=228su x=0 cap=0su r7 @[34,76)
-  box object part=2 w=1033su r8 @[34,76)
+  box object o0 math part=2 asc=477su desc=166su w=1033su r8 @[34,76)
   pen 0.85 r9
   glue objspace w=284su x=0 cap=0su r9 @[34,76)
-  box object part=3 w=774su r10 @[34,76)
+  box object o0 math part=3 asc=377su desc=0su w=774su r10 @[34,76)
   pen 0.8 r11
   glue objspace w=284su x=0 cap=0su r11 @[34,76)
-  box object part=4 w=2012su r12 @[34,76)
+  box object o0 math part=4 asc=700su desc=162su w=2012su r12 @[34,76)
   pen 0.95 r13
   glue objspace w=228su x=0 cap=0su r13 @[34,76)
-  box object part=5 w=1011su r14 @[34,76)
+  box object o0 math part=5 asc=700su desc=154su w=1011su r14 @[34,76)
   pen 0.85 r15
   glue objspace w=284su x=0 cap=0su r15 @[34,76)
-  box object part=6 w=819su r16 @[34,76)
+  box object o0 math part=6 asc=665su desc=153su w=819su r16 @[34,76)
   pen 0.8 r17
   glue objspace w=284su x=0 cap=0su r17 @[34,76)
-  box object part=7 w=1908su r18 @[34,76)
+  box object o0 math part=7 asc=967su desc=76su w=1908su r18 @[34,76)
   pen 0.95 r19
   glue objspace w=228su x=0 cap=0su r19 @[34,76)
-  box object part=8 w=1026su r20 @[34,76)
+  box object o0 math part=8 asc=967su desc=19su w=1026su r20 @[34,76)
   pen 0 r20
   glue word w=257su x=1 cap=257su src r21 @[77,164)
   box Ideo "必" w=1025su wt=0.6 cap=102su r22 @[77,164)
@@ -111,6 +111,7 @@ top pid=0 units=1
   glue inter w=0su x=0.6 cap=102su r24 @[77,164)
   box FullStopW "。" w=512su blank=R r25 @[77,164)
   glue blank w=512su x=0 cap=0su r25 @[77,164)
+  obj o0 math parts=9 edges=Alpha/Alpha src="a_1 + a_2 + a_3 = b_1 + b_2 <= c^2 + d^2" [w=2034su asc=600su desc=162su] [w=2034su asc=600su desc=154su glue=228su] [w=1033su asc=477su desc=166su glue=228su] [w=774su asc=377su desc=0su glue=284su] [w=2012su asc=700su desc=162su glue=284su] [w=1011su asc=700su desc=154su glue=228su] [w=819su asc=665su desc=153su glue=284su] [w=1908su asc=967su desc=76su glue=284su] [w=1026su asc=967su desc=19su glue=228su]
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
   run r2 letter-spaced CJK

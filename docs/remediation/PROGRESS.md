@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-13
+- 下一步：P1-14
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -38,7 +38,7 @@
 | P1-10 | 元素注册表、索引与分阶段解析器 | done | grep:plan P1-10 | 2026-10-06 | 结构性提交 0 变化（全部 tree/blocks/breaks/layout/html/semantic/diags 字节不变）；+111 个 index golden；+2 用例（ref/supplements-ja、ref/supplements-zh-hant）；另见 f93d611（golden 有误：非 figure group 的引用） | engine/src/elements（Registry：selector 成员关系于 instantiate 写入 ContentNode::cls，最具体者胜）；engine/src/semantic（numbering 计数自动机、terms 区域词包 en/zh-Hans/zh-Hant/ja 与回退链、index LOCATE/BIND、materialize 模板/引用/site/收集器/flow，输入不变、输出替换 tree.root）；engine/data/elements.json 内建 heading/table/figure/equation/footnote/term 与 toc/glossary/notes/bibliography 预设；resolve.cc 只剩阶段驱动；删除 applyLang，terms.* 改为逐词覆盖；tsrc --stage=index；替代 elements.json（figure 改名）输出除 index 名外相同（unitRegistry）；lint 基线 15→8；87K update 29.4ms；docs/semantics-design.md |
 | P1-11 | TextRules 兼容表与单一分类器 | done | grep:plan P1-11 | 2026-10-06 | 0（全部 golden 字节不变） | vendor UCD 17.0.0 五个文件（engine/rules/ucd/17.0.0，ucdc --fetch 可重取）；engine/rules/classes.def（CC 类）+ locale/compat.def（RULES_VERSION 0：五个宽区间、clreq 标点、歧义类、列、kern 截断、App C 常量）→ tools/ucdc.mjs → engine/gen/textrules.h（类区间表 + UCD 列 GCB/ExtPict/EAW，约 3.4KB，入 gen-all/G9）；shape/textrules.h 唯一分类 API，emit/inline/layout/typeset_html/support 五处分类器全部改走它；mock.h 冻结 mockIsWide；unitTextRules 对全部码位钉住旧分类器的字面副本；tools/rules-diff.mjs（码位类/列差异与语料边界对比，供 P4）；docs/shaping-design.md |
 | P1-12 | HList 与 run 实例 | done | grep:plan P1-12 | 2026-10-06 | 结构性提交 0 变化（全部现有 golden 字节不变）；+111 个 hlist golden（每个排版用例一份） | engine/src/shape/hlist.{h,cc}：HItem 24B（IK Box/Glue/Penalty/Disc，GC Word/InterChar/Autospace/Blank/ObjectSpace，IA_* 属性，run，aux，w，x，cold）、ColdRec（源 span、rawPx、blank、迁移用 capSu、anchor）、AdvanceSpec 32B（Measured/Defined/Fixed/MeasuredMinusBlanks/KernCtx/Object）、DiscRec、RunRec（face/link/SynKind/copyText/RealizeClass/anchor）；TeX 合法性写在头文件，lintHList（每边界至多一个断点、开标点后与闭标点前无断点、run 连续且 BlankBearing/Pinned/Object 单盒、LetterSpaced 盒后有 InterChar）在每个 golden 上运行；emit 以旧逐节点逻辑直接产出 HItem（InlineSink 接口，块遍历共享），finish() 按今天的断行结构写成 TeX 形式并加 InterChar 胶，run 随项生成；resolveWidths 读 AdvanceSpec；fuseLegacy 为规定的降级表（模板化：生产只保留断行器读的 BreakBlock 五字段，完整 LinebreakBlock 只供 blocks dump 与校验）；emit/legacy.cc 原样保留旧行内发射器作为 CI 预言机（仅原生链接），黄金运行器与 tsrc --fuse-check 逐字段比较——111 个用例及真实/typst/博客语料共 650 篇全部相等；layout 四个行循环与 renderLineBox 改读 item 区间与 run 实例（blockStart 映射断点，块区间只用于 dump）；tsrc --stage=hlist（数值罚分、类、span，修复 dump-hides-finite-penalties）；性能：同时把词宽表改为按字符串下标的槽表（哈希查找占 WASM 引擎约五分之一）、px 格式化改为精确整数实现（render −2ms），87K update 29.5ms（同机交替测 HEAD 29.6–30.0）；docs/shaping-design.md §5 |
-| P1-13 | InlineObject 注册表与扁平化表 | todo | | | | |
+| P1-13 | InlineObject 注册表与扁平化表 | done | grep:plan P1-13 | 2026-10-06 | 17 个含公式用例的 hlist golden（增加对象记录：object 盒带种类/部件/上下伸、对象表）；+4 用例（inline/object-image、inline/object-raw、inline/hardbreak、inline/object-unsupported-diag），其余全部字节不变 | 扁平化表 = schema 每个 kind 的 inline 列（text/container/code/object/break/error/skip/unsupported），gen-schema 强制每行都有并生成 KindInfo::inl，emit 行内遍历按它分派（封闭，无 default 递归）；shape/objects.{h,cc} 对象注册表（math/image/raw/error，边界类 firstCC/lastCC），HList 增加 parts（每部件 w/asc/desc）；数学成为对象：emit 时度量齐全即展开，否则留一个占位部件并标记 hasDeferred，resolveWidths 对该列表单独排版并拼接（不再整篇重 emit；显示公式保持至 P3-26），黄金流程中 Id_(A)、f(x) "if" x > 0 走拼接路径且 fuseCheck 相等；行内 image/raw 成为对象（声明或拉取的尺寸，基线上的盒；无尺寸/不安全为 1em 虚线占位并给 image-src），修复行内图片被静默丢弃；不支持的 kind 成为 error 对象（⚠ kind）并给 shape-unsupported，黄金运行器对非 unsupported 用例出现该诊断即失败（语料扫描为零）；hardbreak → Penalty(-INF)，经 fuseLegacy 成为块罚分 -BREAK_INF，适配器映射为 Penalty(Forced)，断行器对强制断点前的行用 fil、layout 视为段末（不两端对齐、复制为换行）；layout 三处高度副本已在 P1-12 合一，改走 objectPart 垫片；渲染按对象种类分派（公式盒、img、tsr-iraw、错误文本），语义渲染器同样绘出行内 image/raw；record-fixtures 支持 X.tree.json（无表层语法词汇的原始 ops 用例），contract 检查把 span.tsr-iraw 视为可信内容；docs/shaping-design.md §6 |
 | P1-14 | KP 正式化与校验缓存 | todo | | | | |
 | P1-15 | 断行移入布局（ExclusionMap） | todo | | | | |
 | P1-16 | 与宽度无关的 emit（SizeSpec） | todo | | | | |
@@ -160,6 +160,11 @@
 | P1-12 | 生产路径只保留断行器读取的 BreakBlock（宽、断行宽、容量、罚分、类别位），完整 LinebreakBlock 只在 blocks dump 与 fuseCheck 中由同一降级模板生成 | 性能（WASM 引擎）；同一模板保证两种投影一致，fuseCheck 另行逐块比较 | P1-14（缓存键改为 DP 输入）、P4-08 删除 |
 | P1-12 | 步骤外的两项性能修改：MetricStore 词宽表改为按 StrRef 下标的槽表；HtmlWriter 的 px 格式化改为精确的整数实现（与 printf "%.3f" 相同，unitFmtPx 对约 40 万值钉住） | 不带 HList 开销的成本进入 P1 阶段门禁：HEAD 已贴近 29.7ms 的 87K 门限；两项均输出不变，单独提交 | 无 |
 | P1-12 | lint 在 typst 语料中发现 2 篇（layout-inline-cjk--cjk-punctuation-adjustment-1/-2：`！ ？` 中间有键入空格）存在闭标点前的断点 | 旧行为：空格前的盒可断（UAX #14 LB13"即使隔着空格"未实现）；结构性步骤不改变断行；用例层面 lint 全部通过 | P4-02（Section.pair 带 spacesBetween）修正，届时把这两篇纳入 lint 检查 |
+| P1-13 | hardbreak 按计划（复核 R4）映射为 Penalty(Forced) 而非设计的"Penalty(0) + 警告"；另外断行器对以 Forced 罚分结束的行使用 fil，layout 把该行视为段末 | TeX `\hfil\break` / CommonMark 硬换行的语义：断点前的行左齐，不被拉伸；现有用例没有 Forced 罚分，结果不变 | P1-14 正式化 KP 时保留此规则；P4-08 物品原生断行器 |
+| P1-13 | para 的扁平化行为 container（其内容流入行内）而非 unsupported | resolver 物化的行内 term 是 group{role:term}[para[…]]，typst 语料 model-terms 三篇依赖它；块级进入行内的拆分由 P2-11（N4–N6 诊断）与 P3-17（拆分）负责 | P2-11、P3-17 |
+| P1-13 | 对象的边界类只记录、暂不参与边界判断：对象沿用公式规则（其后可断、其后紧接闭标点则禁断），只有公式产生 CJK autospace；行内图片忽略 scale（只用 w/h） | 边界类由整形器的成对规则读取（P4-02）；scale 依赖版心宽度，宽度无关的 emit 在 P1-16 | P1-16、P4-02 |
+| P1-13 | 语义渲染器（静态导出）也改为绘出行内 image/raw（对象行），其余 kind 保持原有递归 | 同一缺陷的另一条输出路径（博客静态页走它）；块级进入行内的处理留给 P2-11/P3-17 | P2-11、P3-17 |
+| P1-13 | hardbreak 与行内 raw 的用例用 X.tree.json 构造原始 ops（record-fixtures 用运行时 OpBuf 编码，G3 照常校验） | 两者都没有表层语法（hardbreak 语法保留未开放；raw 只在区域处理器中可得） | 语法开放后可改为普通用例 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

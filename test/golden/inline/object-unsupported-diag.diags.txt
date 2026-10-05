@@ -1,0 +1,2 @@
+warning shape-unsupported @[0,137) rule cannot appear inline
+warning image-src @[0,137) image src scheme not allowed

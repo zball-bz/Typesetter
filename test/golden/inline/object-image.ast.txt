@@ -1,0 +1,9 @@
+doc @[0,227)
+  para @[0,226)
+    text @[0,11) str="Text before "
+    splice @[12,43) expr="image(\"x.png\", {w: 20, h: 16})"
+    text @[44,73) str=" text after, and in CJK 中文"
+    splice @[73,104) expr="image(\"y.png\", {w: 16, h: 16})"
+    text @[104,150) str="中文。An image with only its width declared "
+    splice @[151,194) expr="image(\"/test/e2e/img/w40h20.png\", {w: 24})"
+    text @[195,226) str=" takes its height from the file."

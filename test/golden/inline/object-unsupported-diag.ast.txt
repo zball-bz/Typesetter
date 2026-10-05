@@ -1,0 +1,7 @@
+doc @[0,138)
+  para @[0,137)
+    text @[0,6) str="A rule "
+    splice @[7,14) expr="rule()"
+    text @[15,70) str=" in a sentence, and an image whose source is not allowed "
+    splice @[71,116) expr="image(\"javascript:alert(1)\", {w: 12, h: 12})"
+    text @[117,137) str=" stays a placeholder."

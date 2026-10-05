@@ -388,9 +388,14 @@ Rules (math.cc `parseWord`, Typst's convention):
 Layout: `MathTextCtx` (metrics, style table, interner, base size) rides
 into `layoutMathSegments`/`layoutMathFormula`. A text run needs the body
 font's width and vertical metrics at the style's size (`Styling{sizeMul}`
-→ StyleId); missing ones are recorded in `Doc::mathTextMissing`, the
-document answers `NeedMeasure` with them appended to the request, and
-emits again once they arrive — the second emit finds every metric. Boxes
+→ StyleId). An inline formula whose runs are not measured yet is
+**deferred** (plan P1-13): emit keeps one placeholder part of its object,
+the runs join the measure request, and `resolveWidths` lays the formula out
+and splices its parts into that list once they arrive — no document
+re-emit. A display formula still records them in `Doc::mathTextMissing`;
+the document answers `NeedMeasure` with them appended to the request and
+emits again once they arrive (until T8 splits structure from widths,
+P3-26). Boxes
 carry `textFont`; the renderer paints them as `.tsr-mg.tsr-mt`
 (`font-family: inherit; font-style: normal`) with the line box sized from
 the measured ascent/descent so the baseline lands exactly. Native goldens

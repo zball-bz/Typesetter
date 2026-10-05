@@ -1,0 +1,76 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Raw" w=1537su r0 @[0,55)
+  glue word w=257su x=1 cap=257su kern="w o" src r0 @[0,55)
+  box Other "ops" w=1537su r0 @[0,55)
+  glue word w=257su x=1 cap=257su kern="s f" src r0 @[0,55)
+  box Other "fix" w=1537su r0 @[0,55)
+  disc pen=0.7 w=0su pre="-" 513su kern="xt" r0 @[0,55)
+  box Other "ture" w=2049su r0 @[0,55)
+  glue word w=257su x=1 cap=257su kern="e (" src r0 @[0,55)
+  box Other "(object-" w=4097su r0 @[0,55)
+  pen 1.2 r0
+  box Other "raw." w=2049su r0 @[0,55)
+  pen 1.2 r0
+  box Other "tree." w=2561su r0 @[0,55)
+  pen 1.2 r0
+  box Other "json):" w=3073su r0 @[0,55)
+  glue word w=257su x=1 cap=257su kern=": a" src r0 @[0,55)
+  box Other "an" w=1025su r0 @[0,55)
+  glue word w=257su x=1 cap=257su kern="n i" src r0 @[0,55)
+  box Other "in" w=1025su r0 @[0,55)
+  disc pen=0.7 w=0su pre="-" 513su kern="nl" r0 @[0,55)
+  box Other "line" w=2049su r0 @[0,55)
+  glue word w=257su x=1 cap=257su kern="e m" src r0 @[0,55)
+  box Other "mark" w=2049su r0 @[0,55)
+  glue word w=257su x=1 cap=257su src r0 @[0,55)
+  box object o0 raw part=0 asc=768su desc=0su w=896su r1 @[55,60)
+  pen 0 r1
+  glue word w=257su x=1 cap=257su src r2 @[60,107)
+  box Other "sits" w=2049su r2 @[60,107)
+  glue word w=257su x=1 cap=257su kern="s o" src r2 @[60,107)
+  box Other "on" w=1025su r2 @[60,107)
+  glue word w=257su x=1 cap=257su kern="n t" src r2 @[60,107)
+  box Other "the" w=1537su r2 @[60,107)
+  glue word w=257su x=1 cap=257su kern="e b" src r2 @[60,107)
+  box Other "base" w=2049su r2 @[60,107)
+  disc pen=0.7 w=0su pre="-" 513su kern="el" r2 @[60,107)
+  box Other "line" w=2049su r2 @[60,107)
+  glue word w=257su x=1 cap=257su kern="e o" src r2 @[60,107)
+  box Other "of" w=1025su r2 @[60,107)
+  glue word w=257su x=1 cap=257su kern="f L" src r2 @[60,107)
+  box Other "Latin" w=2561su r2 @[60,107)
+  glue word w=257su x=1 cap=257su kern="n t" src r2 @[60,107)
+  box Other "text," w=2561su r2 @[60,107)
+  glue word w=257su x=1 cap=257su kern=", a" src r2 @[60,107)
+  box Other "and" w=1537su r2 @[60,107)
+  glue word w=257su x=1 cap=257su src r2 @[60,107)
+  box Ideo "中" w=1025su wt=0.6 cap=102su r3 @[60,107)
+  glue inter w=0su x=0.6 cap=102su r3 @[60,107)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r3 @[60,107)
+  pen 0 r3
+  box object o1 raw part=0 asc=768su desc=0su w=896su r4 @[107,112)
+  pen 0 r4
+  box Ideo "中" w=1025su wt=0.6 cap=102su r5 @[112,143)
+  glue inter w=0su x=0.6 cap=102su r5 @[112,143)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r5 @[112,143)
+  pen 0 r5
+  glue word w=257su x=1 cap=257su src r6 @[112,143)
+  box Other "sits" w=2049su r6 @[112,143)
+  glue word w=257su x=1 cap=257su kern="s b" src r6 @[112,143)
+  box Other "be" w=1025su r6 @[112,143)
+  disc pen=0.7 w=0su pre="-" 513su kern="et" r6 @[112,143)
+  box Other "tween" w=2561su r6 @[112,143)
+  glue word w=257su x=1 cap=257su kern="n i" src r6 @[112,143)
+  box Other "ideo" w=2049su r6 @[112,143)
+  disc pen=0.7 w=0su pre="-" 513su kern="og" r6 @[112,143)
+  box Other "graphs." w=3585su r6 @[112,143)
+  obj o0 raw parts=1 edges=Ideo/Ideo src="<svg width=\"14\" height=\"12\" viewBox=\"0 0 14 12\"><circle cx=\"7\" cy=\"6\" r=\"5\" fill=\"currentColor\"/></svg>" [w=896su asc=768su desc=0su]
+  obj o1 raw parts=1 edges=Ideo/Ideo src="<svg width=\"14\" height=\"12\" viewBox=\"0 0 14 12\"><circle cx=\"7\" cy=\"6\" r=\"5\" fill=\"currentColor\"/></svg>" [w=896su asc=768su desc=0su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 letter-spaced CJK
+  run r4 object
+  run r5 letter-spaced CJK
+  run r6 plain

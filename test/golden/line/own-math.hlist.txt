@@ -12,19 +12,19 @@ top pid=0 units=2
   glue word w=257su x=1 cap=257su kern="y m" src r0 @[2,28)
   box Other "math:" w=2561su r0 @[2,28)
   glue word w=257su x=1 cap=257su src r0 @[2,28)
-  box object part=0 "x = a\n- b\n+ c" w=539su r1 @[31,56)
+  box object o0 math part=0 asc=475su desc=12su "x = a\n- b\n+ c" w=539su r1 @[31,56)
   pen 0.85 r2
   glue objspace w=284su x=0 cap=0su r2 @[31,56)
-  box object part=1 w=774su r3 @[31,56)
+  box object o0 math part=1 asc=377su desc=0su w=774su r3 @[31,56)
   pen 0.8 r4
   glue objspace w=284su x=0 cap=0su r4 @[31,56)
-  box object part=2 w=1626su r5 @[31,56)
+  box object o0 math part=2 asc=477su desc=12su w=1626su r5 @[31,56)
   pen 0.95 r6
   glue objspace w=228su x=0 cap=0su r6 @[31,56)
-  box object part=3 w=1603su r7 @[31,56)
+  box object o0 math part=3 asc=700su desc=76su w=1603su r7 @[31,56)
   pen 0.95 r8
   glue objspace w=228su x=0 cap=0su r8 @[31,56)
-  box object part=4 w=498su r9 @[31,56)
+  box object o0 math part=4 asc=486su desc=19su w=498su r9 @[31,56)
   pen 0 r9
   glue word w=257su x=1 cap=257su src r10 @[59,74)
   box Other "and" w=1537su r10 @[59,74)
@@ -34,6 +34,7 @@ top pid=0 units=2
   box Other "af" w=1025su r10 @[59,74)
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r10 @[59,74)
   box Other "ter." w=2049su r10 @[59,74)
+  obj o0 math parts=5 edges=Alpha/Alpha src="x = a\n- b\n+ c" [w=539su asc=475su desc=12su] [w=774su asc=377su desc=0su glue=284su] [w=1626su asc=477su desc=12su glue=284su] [w=1603su asc=700su desc=76su glue=228su] [w=498su asc=486su desc=19su glue=228su]
   run r0 plain
   run r1 object
   run r2 plain

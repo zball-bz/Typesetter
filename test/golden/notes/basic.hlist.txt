@@ -140,14 +140,15 @@ top pid=4 units=3
   glue word w=219su x=1 cap=219su kern="d m" src r4 @[82,92)
   box Other "math" w=1742su r4 @[82,92)
   glue word w=219su x=1 cap=219su src r4 @[82,92)
-  box object part=0 "x^2 + y^2" w=1656su r5 @[93,104)
+  box object o0 math part=0 asc=822su desc=64su "x^2 + y^2" w=1656su r5 @[93,104)
   pen 0.95 r6
   glue objspace w=193su x=0 cap=0su r6 @[93,104)
-  box object part=1 w=864su r7 @[93,104)
+  box object o0 math part=1 asc=822su desc=203su w=864su r7 @[93,104)
   pen 0 r7
   box Other "." w=437su r8 @[104,105)
   glue word w=219su x=1 cap=219su src r8 @[42,106)
   box Other "↩" w=524su r9 @[42,106)
+  obj o0 math parts=2 edges=Alpha/Alpha src="x^2 + y^2" [w=1656su asc=822su desc=64su] [w=864su asc=822su desc=203su glue=193su]
   run r0 plain x0.85
   run r1 plain BOLD x0.85
   run r2 plain x0.85

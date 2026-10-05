@@ -38,13 +38,13 @@ top pid=2 units=1
   box Ideo "在" w=1025su wt=0.6 cap=102su r0 @[65,86)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[65,86)
-  box object part=0 "s = 1" w=466su r2 @[87,94)
+  box object o0 math part=0 asc=477su desc=17su "s = 1" w=466su r2 @[87,94)
   pen 0.85 r3
   glue objspace w=284su x=0 cap=0su r3 @[87,94)
-  box object part=1 w=774su r4 @[87,94)
+  box object o0 math part=1 asc=377su desc=0su w=774su r4 @[87,94)
   pen 0.8 r5
   glue objspace w=284su x=0 cap=0su r5 @[87,94)
-  box object part=2 w=511su r6 @[87,94)
+  box object o0 math part=2 asc=727su desc=7su w=511su r6 @[87,94)
   pen 0 r6
   glue word w=257su x=1 cap=257su src r7 @[95,107)
   box Ideo "处" w=1025su wt=0.6 cap=102su r8 @[95,107)
@@ -56,6 +56,7 @@ top pid=2 units=1
   glue inter w=0su x=0.6 cap=102su r8 @[95,107)
   box FullStopW "。" w=512su blank=R r9 @[95,107)
   glue blank w=512su x=0 cap=0su r9 @[95,107)
+  obj o0 math parts=3 edges=Alpha/Alpha src="s = 1" [w=466su asc=477su desc=17su] [w=774su asc=377su desc=0su glue=284su] [w=511su asc=727su desc=7su glue=284su]
   run r0 letter-spaced CJK
   run r1 plain
   run r2 object

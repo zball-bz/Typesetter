@@ -706,6 +706,12 @@ std::string fuseCheck(const std::vector<TopBlock>& tops, const ContentTree& tree
       // (what production keeps) against the full lowering
       auto check = [&](const std::string& at, const HList& h, const std::vector<BreakBlock>& slim,
                        const std::vector<LinebreakBlock>& want) {
+        // what the legacy emitter never produced (plan P1-13: inline image,
+        // raw and error objects, hard line breaks) has no oracle
+        for (const InlineObject& o : h.objs)
+          if (o.kind != ObjKind::Math) return;
+        for (const HItem& it : h.items)
+          if (it.k == IK::Penalty && it.x <= -kPenInf) return;
         std::vector<LinebreakBlock> full;
         std::vector<u32> start;
         fuseLegacy(h, full, start);

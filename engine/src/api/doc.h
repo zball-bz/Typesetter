@@ -374,7 +374,8 @@ struct Doc {
       validThrough = (int)Stage::Emit;
     }
     if (!done(Stage::Measure)) {
-      MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg);
+      ObjectEnv oe{arena, strs, styles, cfg.baseSizePx};
+      MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg, &oe);
       if (!missing.empty()) return Status::NeedMeasure;
       fuseLegacy(tops);  // the legacy breaker's blocks (until P4-08)
       validThrough = (int)Stage::Measure;
@@ -509,7 +510,8 @@ struct Doc {
   }
 
   MeasureRequest pendingRequests() {
-    MeasureRequest r = resolveWidths(tops, metrics, styles, cfg);
+    ObjectEnv oe{arena, strs, styles, cfg.baseSizePx};
+    MeasureRequest r = resolveWidths(tops, metrics, styles, cfg, &oe);
     for (const MeasureItem& it : mathTextMissing) {
       if (!metrics.hasFaceWord(it.str, it.face)) r.words.push_back(it);
       if (!metrics.hasFaceVmet(it.face)) {

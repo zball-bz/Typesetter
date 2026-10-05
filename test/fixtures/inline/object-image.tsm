@@ -1,0 +1,1 @@
+Text before #image("x.png", {w: 20, h: 16}) text after, and in CJK 中文#image("y.png", {w: 16, h: 16})中文。An image with only its width declared #image("/test/e2e/img/w40h20.png", {w: 24}) takes its height from the file.

@@ -157,9 +157,45 @@ struct Sem {
       case Kind::comment:
         return;  // document-model nodes, excluded from output
       default:
-        inlineKids(n);
+        // an inline object of the shaper's flatten table (plan P1-13) is
+        // painted, never dropped; other kinds keep their content (block
+        // kinds in inline position are the placement rules', P2-11/P3-17)
+        if (kKinds[(u16)n->kind].inl == InlineShape::Object) inlineObject(n);
+        else inlineKids(n);
         return;
     }
+  }
+
+  // an inline image or raw mark (a formula has its own case above)
+  void inlineObject(const ContentNode* n) {
+    if (n->kind == Kind::raw) {
+      out += "<span class=\"tsr-iraw\">";
+      out += argS(n, ArgK::html);  // trusted, handler-declared passthrough (§9)
+      out += "</span>";
+      return;
+    }
+    std::string_view src = argS(n, ArgK::src);
+    if (n->kind != Kind::image || !safeImageSrc(src)) {
+      out += "<span class=\"tsr-imgph\">";
+      esc(out, argS(n, ArgK::alt));
+      out += "</span>";
+      return;
+    }
+    Tag t(out, "img");
+    t.attr("src", src);
+    t.attr("alt", argS(n, ArgK::alt));
+    std::string style;
+    for (const ArgVal& a : n->args)
+      if (a.tag == ArgTag::Num && (a.key == ArgK::w || a.key == ArgK::h) && a.num > 0) {
+        style += a.key == ArgK::w ? "width:" : "height:";
+        fmtPx(style, a.num);
+        style += ";";
+      }
+    if (!style.empty()) {
+      style.pop_back();
+      t.style(style);
+    }
+    t.open();
   }
 
   void block(const ContentNode* n, int pid) {

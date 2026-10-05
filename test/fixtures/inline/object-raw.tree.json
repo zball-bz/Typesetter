@@ -1,0 +1,58 @@
+{
+ "emit": [
+  {
+   "kind": "para",
+   "span": [
+    0,
+    143
+   ],
+   "kids": [
+    {
+     "text": "Raw ops fixture (object-raw.tree.json): an inline mark ",
+     "span": [
+      0,
+      55
+     ]
+    },
+    {
+     "kind": "raw",
+     "span": [
+      55,
+      60
+     ],
+     "args": {
+      "html": "<svg width=\"14\" height=\"12\" viewBox=\"0 0 14 12\"><circle cx=\"7\" cy=\"6\" r=\"5\" fill=\"currentColor\"/></svg>",
+      "w": 14,
+      "h": 12
+     }
+    },
+    {
+     "text": " sits on the baseline of Latin text, and 中文",
+     "span": [
+      60,
+      107
+     ]
+    },
+    {
+     "kind": "raw",
+     "span": [
+      107,
+      112
+     ],
+     "args": {
+      "html": "<svg width=\"14\" height=\"12\" viewBox=\"0 0 14 12\"><circle cx=\"7\" cy=\"6\" r=\"5\" fill=\"currentColor\"/></svg>",
+      "w": 14,
+      "h": 12
+     }
+    },
+    {
+     "text": "中文 sits between ideographs.",
+     "span": [
+      112,
+      143
+     ]
+    }
+   ]
+  }
+ ]
+}

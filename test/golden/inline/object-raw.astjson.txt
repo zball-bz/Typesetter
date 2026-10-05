@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,144],"kids":[{"kind":"call","sugar":"para","span":[0,143],"kids":[{"kind":"text","span":[0,143],"str":"Raw ops fixture (object-raw.tree.json): an inline mark [svg] sits on the baseline of Latin text, and 中文[svg]中文 sits between ideographs."}]}]}

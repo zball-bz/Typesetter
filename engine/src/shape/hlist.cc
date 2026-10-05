@@ -1,5 +1,6 @@
 #include "hlist.h"
 
+#include "objects.h"
 #include "textrules.h"
 
 namespace tsr {
@@ -31,6 +32,7 @@ const char* gcName(u8 gc) {
 
 void pen(std::string& out, float x) {
   if (!(x < kPenInf)) out += "INF";
+  else if (x <= -kPenInf) out += "-INF";  // forced (a hard line break)
   else appendf(out, "%g", (double)x);
 }
 
@@ -63,7 +65,11 @@ void dumpHList(std::string& out, const HList& h, const Interner& strs, const Sty
         const RunRec& r = h.runs[it.run];
         const AdvanceSpec& sp = h.specs[it.aux];
         if (r.rc == RealizeClass::Object) {
-          appendf(out, "box object part=%u", h.objs[sp.obj].part);
+          const ObjPart& pt = h.parts[sp.obj];
+          const InlineObject& ob = h.objs[pt.obj];
+          appendf(out, "box object o%u %s", pt.obj, objectKind(ob.kind).name);
+          if (ob.deferred) out += " placeholder";
+          else appendf(out, " part=%u asc=%dsu desc=%dsu", sp.obj - ob.part0, pt.asc, pt.desc);
           if (sp.str) {
             out += ' ';
             quoted(out, strs, sp.str);
@@ -114,6 +120,7 @@ void dumpHList(std::string& out, const HList& h, const Interner& strs, const Sty
     }
     tail(it);
   }
+  dumpObjects(out, h, strs, indent);
   for (size_t i = 0; i < h.runs.size(); i++) {
     const RunRec& r = h.runs[i];
     appendf(out, "%srun r%zu %s", indent, i, rcName(r.rc));

@@ -38,10 +38,10 @@ top pid=1 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[81,87)
   box Other "ed" w=1025su r0 @[81,87)
   glue word w=257su x=1 cap=257su src r0 @[81,87)
-  box object part=0 "a +\nb" w=1625su r1 @[88,98)
+  box object o0 math part=0 asc=600su desc=76su "a +\nb" w=1625su r1 @[88,98)
   pen 0.95 r2
   glue objspace w=228su x=0 cap=0su r2 @[88,98)
-  box object part=1 w=602su r3 @[88,98)
+  box object o0 math part=1 asc=700su desc=10su w=602su r3 @[88,98)
   pen 0 r3
   glue word w=257su x=1 cap=257su src r4 @[99,107)
   box Other "math" w=2049su r4 @[99,107)
@@ -53,6 +53,7 @@ top pid=1 units=1
   box Other "y" w=513su r5 @[112,118)
   glue word w=257su x=1 cap=257su src r6 @[120,125)
   box Other "done." w=2561su r6 @[120,125)
+  obj o0 math parts=2 edges=Alpha/Alpha src="a +\nb" [w=1625su asc=600su desc=76su] [w=602su asc=700su desc=10su glue=228su]
   run r0 plain
   run r1 object
   run r2 plain
@@ -64,10 +65,10 @@ top pid=2 units=1
  unit text indent=1536su marker="•"
   box Other "item" w=2049su r0 @[131,135)
   glue word w=257su x=1 cap=257su src r0 @[131,135)
-  box object part=0 "c +\nd" w=1499su r1 @[136,146)
+  box object o0 math part=0 asc=600su desc=76su "c +\nd" w=1499su r1 @[136,146)
   pen 0.95 r2
   glue objspace w=228su x=0 cap=0su r2 @[136,146)
-  box object part=1 w=617su r3 @[136,146)
+  box object o0 math part=1 asc=700su desc=19su w=617su r3 @[136,146)
   pen 0 r3
   glue word w=257su x=1 cap=257su src r4 @[147,150)
   box Other "and" w=1537su r4 @[147,150)
@@ -75,6 +76,7 @@ top pid=2 units=1
   box Other "3" w=513su r4 @[0,0)
   glue word w=257su x=1 cap=257su kern="3 e" src r4 @[163,167)
   box Other "end." w=2049su r4 @[163,167)
+  obj o0 math parts=2 edges=Alpha/Alpha src="c +\nd" [w=1499su asc=600su desc=76su] [w=617su asc=700su desc=19su glue=228su]
   run r0 plain
   run r1 object
   run r2 plain

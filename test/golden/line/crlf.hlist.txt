@@ -22,13 +22,14 @@ top pid=1 units=1
   glue word w=257su x=1 cap=257su kern="s w" src r0 @[17,55)
   box Other "with" w=2049su r0 @[17,55)
   glue word w=257su x=1 cap=257su src r0 @[17,55)
-  box object part=0 "a +\nb" w=1625su r1 @[56,64)
+  box object o0 math part=0 asc=600su desc=76su "a +\nb" w=1625su r1 @[56,64)
   pen 0.95 r2
   glue objspace w=228su x=0 cap=0su r2 @[56,64)
-  box object part=1 w=602su r3 @[56,64)
+  box object o0 math part=1 asc=700su desc=10su w=602su r3 @[56,64)
   pen 0 r3
   glue word w=257su x=1 cap=257su src r4 @[65,70)
   box Other "math." w=2561su r4 @[65,70)
+  obj o0 math parts=2 edges=Alpha/Alpha src="a +\nb" [w=1625su asc=600su desc=76su] [w=602su asc=700su desc=10su glue=228su]
   run r0 plain
   run r1 object
   run r2 plain

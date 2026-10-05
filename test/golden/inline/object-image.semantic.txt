@@ -1,0 +1,3 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="226">Text before <img src="x.png" alt="" style="width:20px;height:16px"> text after, and in CJK 中文<img src="y.png" alt="" style="width:16px;height:16px">中文。An image with only its width declared <img src="/test/e2e/img/w40h20.png" alt="" style="width:24px"> takes its height from the file.</p>
+</div>

@@ -1,0 +1,4 @@
+[7,12) function "#rule"
+[12,14) embedded "()"
+[71,77) function "#image"
+[77,116) embedded "(\"javascript:alert(1)\", {w: 12, h: 12})"

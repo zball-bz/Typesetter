@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 6;
 export const OPS_MIN_COMPAT = 6;
-export const SCHEMA_HASH = '826478ae';
+export const SCHEMA_HASH = 'eb5ad23f';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -202,18 +202,21 @@ export const SCHEMA = Object.freeze({
     "id": 0,
     "level": "block",
     "body": "blocks",
+    "inline": "unsupported",
     "attrs": {}
   },
   "para": {
     "id": 1,
     "level": "block",
     "body": "inline",
+    "inline": "container",
     "attrs": {}
   },
   "heading": {
     "id": 2,
     "level": "block",
     "body": "inline",
+    "inline": "unsupported",
     "attrs": {
       "level": "int:1:6",
       "label": "label"
@@ -223,6 +226,7 @@ export const SCHEMA = Object.freeze({
     "id": 3,
     "level": "block",
     "body": "items",
+    "inline": "unsupported",
     "attrs": {
       "ordered": "bool",
       "start": "int:-1073741824:1073741824"
@@ -232,18 +236,21 @@ export const SCHEMA = Object.freeze({
     "id": 4,
     "level": "block",
     "body": "blocks",
+    "inline": "unsupported",
     "attrs": {}
   },
   "quote": {
     "id": 5,
     "level": "block",
     "body": "blocks",
+    "inline": "unsupported",
     "attrs": {}
   },
   "codeblock": {
     "id": 6,
     "level": "block",
     "body": "code",
+    "inline": "unsupported",
     "attrs": {
       "lang": "token",
       "wrap": "bool",
@@ -256,12 +263,14 @@ export const SCHEMA = Object.freeze({
     "id": 7,
     "level": "block",
     "body": "none",
+    "inline": "unsupported",
     "attrs": {}
   },
   "group": {
     "id": 8,
     "level": "adaptive",
     "body": "position",
+    "inline": "container",
     "attrs": {
       "role": "ident",
       "label": "label",
@@ -272,6 +281,7 @@ export const SCHEMA = Object.freeze({
     "id": 9,
     "level": "block",
     "body": "rows",
+    "inline": "unsupported",
     "attrs": {
       "cols": "int:1:64",
       "align": "token",
@@ -282,18 +292,21 @@ export const SCHEMA = Object.freeze({
     "id": 10,
     "level": "block",
     "body": "cells",
+    "inline": "unsupported",
     "attrs": {}
   },
   "tcell": {
     "id": 11,
     "level": "block",
     "body": "inline",
+    "inline": "unsupported",
     "attrs": {}
   },
   "term": {
     "id": 12,
     "level": "adaptive",
     "body": "inline",
+    "inline": "unsupported",
     "attrs": {
       "name": "str"
     }
@@ -302,6 +315,7 @@ export const SCHEMA = Object.freeze({
     "id": 13,
     "level": "block",
     "body": "data",
+    "inline": "unsupported",
     "attrs": {
       "what": "enum:toc|glossary|notes|bibliography",
       "form": "enum:all"
@@ -311,6 +325,7 @@ export const SCHEMA = Object.freeze({
     "id": 14,
     "level": "block",
     "body": "none",
+    "inline": "unsupported",
     "attrs": {
       "src": "str",
       "label": "label"
@@ -320,6 +335,7 @@ export const SCHEMA = Object.freeze({
     "id": 15,
     "level": "adaptive",
     "body": "none",
+    "inline": "error",
     "attrs": {
       "message": "str",
       "code": "ident"
@@ -329,18 +345,21 @@ export const SCHEMA = Object.freeze({
     "id": 16,
     "level": "trivia",
     "body": "text",
+    "inline": "skip",
     "attrs": {}
   },
   "text": {
     "id": 17,
     "level": "inline",
     "body": "none",
+    "inline": "text",
     "attrs": {}
   },
   "styled": {
     "id": 18,
     "level": "transparent",
     "body": "position",
+    "inline": "container",
     "attrs": {
       "bits": "flags:EM=2,BOLD=3,UNDER=16,OVER=17,STRIKE=18",
       "font": "font",
@@ -353,6 +372,7 @@ export const SCHEMA = Object.freeze({
     "id": 19,
     "level": "inline",
     "body": "inline",
+    "inline": "container",
     "attrs": {
       "url": "url"
     }
@@ -361,12 +381,14 @@ export const SCHEMA = Object.freeze({
     "id": 20,
     "level": "inline",
     "body": "text",
+    "inline": "code",
     "attrs": {}
   },
   "ref": {
     "id": 21,
     "level": "inline",
     "body": "none",
+    "inline": "container",
     "attrs": {
       "target": "str"
     }
@@ -375,6 +397,7 @@ export const SCHEMA = Object.freeze({
     "id": 22,
     "level": "inline",
     "body": "none",
+    "inline": "object",
     "attrs": {
       "src": "str"
     }
@@ -383,6 +406,7 @@ export const SCHEMA = Object.freeze({
     "id": 23,
     "level": "block",
     "body": "none",
+    "inline": "object",
     "attrs": {
       "html": "html",
       "w": "num:0:100000",
@@ -393,18 +417,21 @@ export const SCHEMA = Object.freeze({
     "id": 24,
     "level": "inline",
     "body": "none",
+    "inline": "break",
     "attrs": {}
   },
   "seq": {
     "id": 25,
     "level": "transparent",
     "body": "position",
+    "inline": "container",
     "attrs": {}
   },
   "image": {
     "id": 26,
     "level": "block",
     "body": "none",
+    "inline": "object",
     "attrs": {
       "src": "url",
       "alt": "str",
@@ -418,6 +445,7 @@ export const SCHEMA = Object.freeze({
     "id": 27,
     "level": "inline",
     "body": "blocks",
+    "inline": "unsupported",
     "attrs": {}
   }
 });

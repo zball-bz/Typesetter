@@ -1,5 +1,6 @@
 #include "emit.h"
 #include "emit_internal.h"
+#include "../shape/objects.h"
 #include "../shape/textrules.h"
 
 #include <functional>
@@ -106,6 +107,8 @@ struct HlInline final : InlineSink {
     B.discs.clear();
     B.runs.clear();
     B.objs.clear();
+    B.parts.clear();
+    B.hasDeferred = false;
     pend.clear();
     gapKind.clear();
     single = false;
@@ -208,6 +211,7 @@ struct HlInline final : InlineSink {
   // carrier predicates (the open unit)
   bool isCjkChar(size_t i) const { return gapKind[i] == 1; }  // a CJK char, pinned or letter-spaced
   bool isObject(size_t i) const { return B.items[i].k == IK::Box && runOf(i).rc == RealizeClass::Object; }
+  const InlineObject& objectOf(size_t i) const { return B.objs[B.parts[B.specs[B.items[i].aux].obj].obj]; }
   bool isGlyph(size_t i, bool open) const {
     const HItem& it = B.items[i];
     return it.k == IK::Box && runOf(i).rc == RealizeClass::BlankBearing &&
@@ -272,131 +276,267 @@ struct HlInline final : InlineSink {
   }
 
   // -- the walk ---------------------------------------------------------------
+  // -- the walk: the flatten table (schema `inline` column, plan P1-13) -------
   void walk(const ContentNode* n, FlowUnit& u, ICtx ctx) override {
-    switch (n->kind) {
-      case Kind::text:
+    switch (kKinds[(u16)n->kind].inl) {
+      case InlineShape::Text:
         emitText(n, u, ctx);
         return;
-      case Kind::link: {
-        ICtx c2 = ctx;
-        for (const ArgVal& a : n->args)
-          if (a.key == ArgK::url && a.tag == ArgTag::Str) c2.url = a.ref;
-        c2.addBits |= CLS_LINK;
-        for (const ContentNode* k : n->kids) walk(k, u, c2);
+      case InlineShape::Container:
+        container(n, u, ctx);
         return;
+      case InlineShape::Code:
+        code(n, u, ctx);
+        return;
+      case InlineShape::Object:
+        object(n, u, ctx, objectKindOf(n->kind));
+        return;
+      case InlineShape::Break:
+        // a forced break after what precedes it (none at the stream start)
+        if (count(u) > 0) pend.back() = -kPenInf;
+        return;
+      case InlineShape::Error:
+        errorText(n, u, ctx);
+        return;
+      case InlineShape::Skip:
+        return;
+      case InlineShape::Unsupported:
+        // a kind that cannot appear inline: an error box, never a silent drop
+        E.diags.add(Sev::Warning, "shape-unsupported", diagSpan(n, u),
+                    std::string(kKinds[(u16)n->kind].name) + " cannot appear inline");
+        object(n, u, ctx, ObjKind::Error);
+        return;
+    }
+  }
+  // a generated node (no span of its own) reports at its unit
+  static Span diagSpan(const ContentNode* n, const FlowUnit& u) {
+    return n->span.empty() && u.src ? u.src->span : n->span;
+  }
+  // the penalty after the last item: forbidden, unless a forced break
+  void forbidLast() {
+    if (!(pend.back() <= -kPenInf)) pend.back() = kPenInf;
+  }
+
+  void container(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+    if (n->kind == Kind::link) {
+      for (const ArgVal& a : n->args)
+        if (a.key == ArgK::url && a.tag == ArgTag::Str) ctx.url = a.ref;
+      ctx.addBits |= CLS_LINK;
+    } else if (n->kind == Kind::ref) {
+      ref(n, u, ctx);
+      return;
+    } else if (n->kind == Kind::group) {
+      // inline-embedded labeled group (e.g. a term spliced mid-paragraph):
+      // the containing unit carries the anchor so refs still land
+      for (const ArgVal& a : n->args)
+        if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref && !u.anchor) u.anchor = a.ref;
+    }
+    for (const ContentNode* k : n->kids) walk(k, u, ctx);
+  }
+
+  void code(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+    // inline code: one unbreakable box, mono style
+    if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
+      StyleId st = E.compose(n->style, ctx.addBits | CLS_CODE, ctx.mul * (float)cfg.codeScale);
+      AdvanceSpec sp;
+      sp.str = n->kids[0]->str;
+      push(u, IK::Box, firstCc(strs.get(sp.str)), 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Plain),
+           sp, n->span, 0.0f, kPenInf);
+    }
+  }
+
+  void ref(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+    // resolver output: kids = display text, url arg = "#tsr-<label>"
+    for (const ArgVal& a : n->args)
+      if (a.key == ArgK::url && a.tag == ArgTag::Str) {
+        ctx.url = a.ref;
+        ctx.addBits |= CLS_LINK;
       }
-      case Kind::code: {
-        // inline code: one unbreakable box, mono style
-        if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
-          StyleId st = E.compose(n->style, ctx.addBits | CLS_CODE, ctx.mul * (float)cfg.codeScale);
-          AdvanceSpec sp;
-          sp.str = n->kids[0]->str;
-          push(u, IK::Box, firstCc(strs.get(sp.str)), 0,
-               key(st, ctx.url, ctx.addFlags, RealizeClass::Plain), sp, n->span, 0.0f, kPenInf);
+    ctx.addFlags |= BF_REF;
+    const size_t before = count(u);
+    for (const ContentNode* k : n->kids) walk(k, u, ctx);
+    if (count(u) > before) {
+      // labelled ref = inline anchor (footnote marker, notes-design.md
+      // §1); a superscript marker also glues to what precedes it —
+      // never a line start, like a closing punct
+      HList& h = B;
+      HItem& first = h.items[before];
+      const bool startsRun = before == 0 || h.items[before - 1].run != first.run;
+      for (const ArgVal& a : n->args)
+        if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) {
+          first.attrs |= IA_Anchor;
+          h.cold[first.cold].anchor = a.ref;
+          if (startsRun) h.runs[first.run].anchor = a.ref;  // the run's first item
         }
+      if ((styles.get(runOf(before).face).bits & CLS_SUP) && before > 0 && !(pend[before - 1] <= -kPenInf))
+        pend[before - 1] = kPenInf;
+    }
+  }
+
+  void errorText(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+    // an error node stays breakable CODE-style text (design T5 A22)
+    std::string msg = "\xE2\x9A\xA0 ";  // ⚠
+    for (const ArgVal& a : n->args)
+      if (a.key == ArgK::message && a.tag == ArgTag::Str) msg += strs.get(a.ref);
+    ContentNode tmp;
+    tmp.kind = Kind::text;
+    tmp.span = n->span;
+    tmp.style = n->style;
+    tmp.str = strs.intern(msg);
+    ctx.addBits |= CLS_CODE;
+    emitText(&tmp, u, ctx);
+  }
+
+  // -- objects (shape/objects.h) ------------------------------------------------
+  u32 addObject(FlowUnit& u, ObjKind k, const ContentNode* n, StyleId st) {
+    open(u);
+    InlineObject ob;
+    ob.kind = k;
+    ob.firstCC = (u8)objectKind(k).firstCC;
+    ob.lastCC = (u8)objectKind(k).lastCC;
+    ob.node = n;
+    ob.style = st;
+    B.objs.push_back(ob);
+    return (u32)B.objs.size() - 1;
+  }
+  // one Box part with its extents; returns the item
+  u32 objectBox(FlowUnit& u, u32 obj, const ObjPart& part, StyleId st, const ICtx& ctx, Span span, StrRef str,
+                bool resolved) {
+    InlineObject& ob = B.objs[obj];
+    if (ob.nParts == 0) ob.part0 = (u32)B.parts.size();
+    ob.nParts++;
+    B.parts.push_back(part);
+    AdvanceSpec bs;
+    bs.k = AdvanceSpec::Object;
+    bs.obj = (u32)B.parts.size() - 1;
+    bs.str = str;
+    // a break after an object is legal (as after a formula); the boundary
+    // pass that reads its edge classes is the paragraph shaper's (P4-02)
+    u32 b = push(u, IK::Box, ob.firstCC, 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Object), bs, span,
+                 0.0f, 0.0f);
+    if (resolved) fixWidth(u, b, suToPx(part.w), part.w, 0);
+    return b;
+  }
+
+  void object(const ContentNode* n, FlowUnit& u, ICtx ctx, ObjKind k) {
+    switch (k) {
+      case ObjKind::Math:
+        math(n, u, ctx);
         return;
-      }
-      case Kind::ref: {
-        // resolver output: kids = display text, url arg = "#tsr-<label>"
-        ICtx c2 = ctx;
-        for (const ArgVal& a : n->args)
-          if (a.key == ArgK::url && a.tag == ArgTag::Str) {
-            c2.url = a.ref;
-            c2.addBits |= CLS_LINK;
-          }
-        c2.addFlags |= BF_REF;
-        const size_t before = count(u);
-        for (const ContentNode* k : n->kids) walk(k, u, c2);
-        if (count(u) > before) {
-          // labelled ref = inline anchor (footnote marker, notes-design.md
-          // §1); a superscript marker also glues to what precedes it —
-          // never a line start, like a closing punct
-          HList& h = B;
-          HItem& first = h.items[before];
-          const bool startsRun = before == 0 || h.items[before - 1].run != first.run;
-          for (const ArgVal& a : n->args)
-            if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) {
-              first.attrs |= IA_Anchor;
-              h.cold[first.cold].anchor = a.ref;
-              if (startsRun) h.runs[first.run].anchor = a.ref;  // the run's first item
-            }
-          if ((styles.get(runOf(before).face).bits & CLS_SUP) && before > 0) pend[before - 1] = kPenInf;
-        }
-        return;
-      }
-      case Kind::error: {
-        std::string msg = "\xE2\x9A\xA0 ";  // ⚠
-        for (const ArgVal& a : n->args)
-          if (a.key == ArgK::message && a.tag == ArgTag::Str) msg += strs.get(a.ref);
-        ContentNode tmp;
-        tmp.kind = Kind::text;
-        tmp.span = n->span;
-        tmp.style = n->style;
-        tmp.str = strs.intern(msg);
-        ICtx c2 = ctx;
-        c2.addBits |= CLS_CODE;
-        emitText(&tmp, u, c2);
-        return;
-      }
-      case Kind::mathinline: {
-        StrRef srcRef = 0;
-        for (const ArgVal& a : n->args)
-          if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+      case ObjKind::Image: {
+        // one box from the declared or intrinsic dims (the image pull fills
+        // them), sitting on the baseline; a 1em placeholder otherwise
         StyleId st = E.compose(n->style, ctx.addBits, ctx.mul);
-        // CJK–formula boundary glue (App C: formulas are Latin-class)
-        if (count(u) > 0 && isCjkChar(count(u) - 1)) autospace(u, st, ctx, n->span);
-        std::vector<MathSeg> segs = layoutMathSegments(strs.get(srcRef), /*display=*/false,
-                                                       E.fontPx(st), E.arena, strs, E.diags,
-                                                       n->span, E.mathText);
-        for (size_t k = 0; k < segs.size(); k++) {
-          InlineObject ob;
-          ob.math = segs[k].box;
-          ob.src = srcRef;
-          ob.part = (u32)k;
-          ob.glueBefore = segs[k].glueBefore;
-          open(u);
-          const u32 obj = (u32)B.objs.size();
-          B.objs.push_back(ob);
-          if (k) {
-            // the break-point glue: discardable at a break, rigid otherwise;
-            // synthetic for copy (§9.3); the previous part is unbreakable-after
-            double pen = segs[k].brkBefore == 1 ? cfg.mathRelAfterPenalty
-                         : segs[k].brkBefore == 2 ? cfg.mathRelBeforePenalty
-                                                  : cfg.mathBinAfterPenalty;
-            pend.back() = kPenInf;
-            AdvanceSpec gs;
-            gs.k = AdvanceSpec::Object;
-            gs.obj = obj;
-            gs.str = E.spaceRef;
-            u32 g = push(u, IK::Glue, (u8)GC::ObjectSpace, 0,
-                         key(st, ctx.url, ctx.addFlags, RealizeClass::Plain), gs, n->span, 0.0f,
-                         (float)pen);
-            fixWidth(u, g, suToPx(segs[k].glueBefore), segs[k].glueBefore, 0);
-          }
-          AdvanceSpec bs;
-          bs.k = AdvanceSpec::Object;
-          bs.obj = obj;
-          bs.str = k == 0 ? srcRef : 0;  // copy: the source rides the first part
-          // a CJK-context break after a formula is legal
-          u32 b = push(u, IK::Box, 0, 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Object), bs,
-                       n->span, 0.0f, 0.0f);
-          fixWidth(u, b, suToPx(segs[k].box->w), segs[k].box->w, 0);
+        double iw = 0, ih = 0;
+        StrRef src = 0, alt = 0;
+        for (const ArgVal& a : n->args) {
+          if (a.key == ArgK::src && a.tag == ArgTag::Str) src = a.ref;
+          if (a.key == ArgK::alt && a.tag == ArgTag::Str) alt = a.ref;
+          if (a.key == ArgK::w && a.tag == ArgTag::Num) iw = a.num;
+          if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
         }
+        const bool safe = src && safeImageSrc(strs.get(src));
+        if (src && !safe) E.diags.add(Sev::Warning, "image-src", diagSpan(n, u), "image src scheme not allowed");
+        const bool sized = safe && iw > 0 && ih > 0;
+        const double em = E.fontPx(st);
+        u32 obj = addObject(u, ObjKind::Image, n, st);
+        B.objs[obj].src = sized ? src : 0;
+        B.objs[obj].alt = alt;
+        ObjPart pt;
+        pt.obj = obj;
+        pt.w = suRoundPx(sized ? iw : em);
+        pt.asc = suRoundPx(sized ? ih : em);
+        objectBox(u, obj, pt, st, ctx, n->span, 0, true);
         return;
       }
-      case Kind::comment:
-        return;
-      case Kind::group: {
-        // inline-embedded labeled group (e.g. a term spliced mid-paragraph):
-        // the containing unit carries the anchor so refs still land
-        for (const ArgVal& a : n->args)
-          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref && !u.anchor) u.anchor = a.ref;
-        for (const ContentNode* k : n->kids) walk(k, u, ctx);
+      case ObjKind::Raw: {
+        // handler-declared markup: one box of its declared size (1em when
+        // undeclared), sitting on the baseline
+        StyleId st = E.compose(n->style, ctx.addBits, ctx.mul);
+        double w = 0, hh = 0;
+        StrRef html = 0;
+        for (const ArgVal& a : n->args) {
+          if (a.key == ArgK::html && a.tag == ArgTag::Str) html = a.ref;
+          if (a.key == ArgK::w && a.tag == ArgTag::Num) w = a.num;
+          if (a.key == ArgK::h && a.tag == ArgTag::Num) hh = a.num;
+        }
+        const double em = E.fontPx(st);
+        u32 obj = addObject(u, ObjKind::Raw, n, st);
+        B.objs[obj].src = html;
+        ObjPart pt;
+        pt.obj = obj;
+        pt.w = suRoundPx(w > 0 ? w : em);
+        pt.asc = suRoundPx(hh > 0 ? hh : em);
+        objectBox(u, obj, pt, st, ctx, n->span, 0, true);
         return;
       }
-      default:
-        for (const ContentNode* k : n->kids) walk(k, u, ctx);
+      case ObjKind::Error: {
+        // the error box of a kind that cannot appear inline: its name,
+        // measured in the CODE face, unbreakable
+        StyleId st = E.compose(n->style, ctx.addBits | CLS_CODE, ctx.mul);
+        u32 obj = addObject(u, ObjKind::Error, n, st);
+        const StrRef text = strs.intern(std::string("\xE2\x9A\xA0 ") + kKinds[(u16)n->kind].name);  // ⚠
+        B.objs[obj].src = text;
+        ObjPart pt;
+        pt.obj = obj;
+        objectBox(u, obj, pt, st, ctx, n->span, text, false);
         return;
+      }
+    }
+  }
+
+  void math(const ContentNode* n, FlowUnit& u, ICtx ctx) {
+    StrRef srcRef = 0;
+    for (const ArgVal& a : n->args)
+      if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+    StyleId st = E.compose(n->style, ctx.addBits, ctx.mul);
+    // CJK–formula boundary glue (App C: formulas are Latin-class)
+    if (count(u) > 0 && isCjkChar(count(u) - 1)) autospace(u, st, ctx, n->span);
+    // the structure is laid out now; a formula whose text-font runs are not
+    // measured yet is deferred — one placeholder part that resolveWidths
+    // lays out and splices for this list alone (no document re-emit)
+    std::vector<MeasureItem> missing;
+    MathTextCtx mt;
+    if (E.mathText) {
+      mt = *E.mathText;
+      mt.missing = &missing;
+    }
+    std::vector<MathSeg> segs = layoutMathSegments(strs.get(srcRef), /*display=*/false, E.fontPx(st),
+                                                   E.arena, strs, E.diags, n->span,
+                                                   E.mathText ? &mt : nullptr);
+    u32 obj = addObject(u, ObjKind::Math, n, st);
+    B.objs[obj].src = srcRef;
+    if (!missing.empty()) {
+      B.objs[obj].deferred = true;
+      B.hasDeferred = true;
+      ObjPart pt;
+      pt.obj = obj;
+      objectBox(u, obj, pt, st, ctx, n->span, srcRef, false);
+      return;
+    }
+    for (size_t k = 0; k < segs.size(); k++) {
+      if (k) {
+        // the break-point glue: discardable at a break, rigid otherwise;
+        // synthetic for copy (§9.3); the previous part is unbreakable-after
+        pend.back() = kPenInf;
+        AdvanceSpec gs;
+        gs.k = AdvanceSpec::Object;
+        gs.obj = (u32)B.parts.size();  // the part it precedes
+        gs.str = E.spaceRef;
+        u32 g = push(u, IK::Glue, (u8)GC::ObjectSpace, 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Plain),
+                     gs, n->span, 0.0f, (float)mathPenalty(cfg, segs[k].brkBefore));
+        fixWidth(u, g, suToPx(segs[k].glueBefore), segs[k].glueBefore, 0);
+      }
+      ObjPart pt;
+      pt.obj = obj;
+      pt.math = segs[k].box;
+      pt.w = segs[k].box->w;
+      pt.asc = segs[k].box->asc;
+      pt.desc = segs[k].box->desc;
+      pt.glueBefore = k ? segs[k].glueBefore : 0;
+      // copy: the source rides the first part; a CJK-context break after a
+      // formula is legal
+      objectBox(u, obj, pt, st, ctx, n->span, k == 0 ? srcRef : 0, true);
     }
   }
 
@@ -473,7 +613,7 @@ struct HlInline final : InlineSink {
     };
     auto boundary = [&] { autospace(u, st, ctx, n->span); };
     {  // formula → CJK boundary: the previous inline item was a formula
-      if (count(u) > 0 && isObject(count(u) - 1) && !s.empty()) {
+      if (count(u) > 0 && isObject(count(u) - 1) && objectOf(count(u) - 1).kind == ObjKind::Math && !s.empty()) {
         u32 j0 = 0;
         u32 first = utf8Next(s, j0);
         if (isIdeo(first)) boundary();
@@ -523,12 +663,11 @@ struct HlInline final : InlineSink {
         }
       } else {
         // 禁则: no break before a closing punct (inline formulas included)
-        if (count(u) > 0 && (isCjkChar(count(u) - 1) || isObject(count(u) - 1)))
-          pend.back() = kPenInf;
+        if (count(u) > 0 && (isCjkChar(count(u) - 1) || isObject(count(u) - 1))) forbidLast();
         if (lastIsCloseSp()) {
           // closing + closing: solid; None keeps the half but rigid (a break
           // would put the second closer at a line start — 禁则)
-          if (mode == PunctCompress::None) pend.back() = kPenInf;
+          if (mode == PunctCompress::None) forbidLast();
           else pop(u);
         }
       }
@@ -687,7 +826,7 @@ struct Emitter {
           double px = cfg.paraIndentEm * fontPx(n->style);
           sink.indent(u, n->style, n->span, px);
         }
-        sink.walk(n, u, ctx);
+        for (const ContentNode* k : n->kids) sink.walk(k, u, ctx);  // the paragraph's content
         sink.finish(u);
         tb.units.push_back(std::move(u));
         return;
@@ -707,7 +846,7 @@ struct Emitter {
         ctx.addBits = CLS_BOLD;
         ctx.mul = (float)headingSizeMul(level);
         ctx.noHyphen = true;
-        sink.walk(n, u, ctx);
+        for (const ContentNode* k : n->kids) sink.walk(k, u, ctx);  // the heading's content
         sink.finish(u);
         tb.units.push_back(std::move(u));
         return;
@@ -989,7 +1128,7 @@ struct Emitter {
               FlowUnit tmp;
               ICtx cctx;
               cctx.noHyphen = true;
-              sink.walk(k, tmp, cctx);
+              for (const ContentNode* c2 : k->kids) sink.walk(c2, tmp, cctx);  // the caption's content
               sink.finish(tmp);
               sink.toCell(tmp, tc);
               iu.cells.push_back(std::move(tc));
@@ -1118,11 +1257,132 @@ void HlInline::finish(FlowUnit& u) {
   dst.discs.assign(h.discs.begin(), h.discs.end());
   dst.runs.assign(h.runs.begin(), h.runs.end());
   dst.objs.assign(h.objs.begin(), h.objs.end());
+  dst.parts.assign(h.parts.begin(), h.parts.end());
+  dst.hasDeferred = h.hasDeferred;
   cur = nullptr;
 }
 
+// A deferred formula (plan P1-13): lay it out now that the store may know
+// its text-font runs. Still missing → those join `need`; complete → its parts
+// replace the placeholder: Box, then [Penalty(p)] Glue(ObjectSpace) Box per
+// part — exactly what emit writes for a formula it could lay out at once —
+// each part and glue a run of its own; the placeholder's run, anchor and
+// trailing penalty stay with the first / last part.
+static void resolveDeferred(HList& h, MetricStore& store, const Config& cfg, ObjectEnv& env,
+                            std::vector<MeasureItem>& need) {
+  bool still = false;
+  for (size_t at = 0; at < h.items.size(); at++) {
+    const HItem ph = h.items[at];
+    if (ph.k != IK::Box || h.runs[ph.run].rc != RealizeClass::Object) continue;
+    const u32 objIdx = h.parts[h.specs[ph.aux].obj].obj;
+    InlineObject& ob = h.objs[objIdx];
+    if (!ob.deferred) continue;
+    std::vector<MeasureItem> missing;
+    MathTextCtx mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
+    DiagSink scratch;  // the emit-time layout reported its diagnostics
+    std::vector<MathSeg> segs =
+        layoutMathSegments(env.strs.get(ob.src), /*display=*/false, emPx(cfg, env.styles.get(ob.style)),
+                           env.arena, env.strs, scratch, Span{h.cold[ph.cold].srcStart, h.cold[ph.cold].srcEnd},
+                           &mt);
+    if (!missing.empty()) {
+      need.insert(need.end(), missing.begin(), missing.end());
+      still = true;
+      continue;
+    }
+    ob.deferred = false;
+    const u32 r = ph.run;
+    RunRec boxKey = h.runs[r];
+    boxKey.anchor = 0;
+    RunRec glueKey = boxKey;
+    glueKey.rc = RealizeClass::Plain;
+    const StrRef spaceRef = env.strs.intern(" ");
+    std::vector<HItem> ins;
+    std::vector<RunRec> newRuns;  // after r
+    ob.part0 = (u32)h.parts.size();
+    ob.nParts = (u32)segs.size();
+    for (size_t k = 0; k < segs.size(); k++) {
+      ObjPart pt;
+      pt.obj = objIdx;
+      pt.math = segs[k].box;
+      pt.w = segs[k].box->w;
+      pt.asc = segs[k].box->asc;
+      pt.desc = segs[k].box->desc;
+      pt.glueBefore = k ? segs[k].glueBefore : 0;
+      h.parts.push_back(pt);
+      if (k) {
+        newRuns.push_back(glueKey);
+        const u32 gr = r + (u32)newRuns.size();
+        AdvanceSpec gs;
+        gs.k = AdvanceSpec::Object;
+        gs.obj = (u32)h.parts.size() - 1;
+        gs.str = spaceRef;
+        ColdRec gc;
+        gc.srcStart = h.cold[ph.cold].srcStart;
+        gc.srcEnd = h.cold[ph.cold].srcEnd;
+        gc.rawPx = suToPx(segs[k].glueBefore);
+        HItem pen;
+        pen.k = IK::Penalty;
+        pen.st = IS_Resolved;
+        pen.x = (float)mathPenalty(cfg, segs[k].brkBefore);
+        pen.run = gr;
+        pen.cold = (u32)h.cold.size();
+        if (pen.x != 0) ins.push_back(pen);
+        HItem g;
+        g.k = IK::Glue;
+        g.cls = (u8)GC::ObjectSpace;
+        g.st = IS_Resolved;
+        g.run = gr;
+        g.aux = (u32)h.specs.size();
+        h.specs.push_back(gs);
+        g.cold = (u32)h.cold.size();
+        h.cold.push_back(gc);
+        g.w = segs[k].glueBefore;
+        ins.push_back(g);
+      }
+      HItem b = ph;
+      b.attrs = k == 0 ? ph.attrs : 0;
+      b.st = IS_Resolved;
+      b.w = segs[k].box->w;
+      AdvanceSpec bs;
+      bs.k = AdvanceSpec::Object;
+      bs.obj = (u32)h.parts.size() - 1;
+      bs.str = k == 0 ? ob.src : 0;
+      b.aux = (u32)h.specs.size();
+      h.specs.push_back(bs);
+      ColdRec bc = h.cold[ph.cold];
+      bc.rawPx = suToPx(segs[k].box->w);
+      if (k == 0) {
+        h.cold[ph.cold] = bc;
+        b.cold = ph.cold;
+      } else {
+        bc.anchor = 0;
+        b.cold = (u32)h.cold.size();
+        h.cold.push_back(bc);
+        newRuns.push_back(boxKey);
+        b.run = r + (u32)newRuns.size();
+      }
+      ins.push_back(b);
+    }
+    // renumber: the runs after r shift; the placeholder's own trailing
+    // penalties now follow the last part
+    const u32 shift = (u32)newRuns.size();
+    for (size_t j = at + 1; j < h.items.size(); j++) {
+      HItem& it = h.items[j];
+      if (it.run == r && it.k == IK::Penalty && shift) it.run = r + shift;
+      else if (it.run > r) it.run += shift;
+    }
+    for (HItem& sd : h.side)
+      if (sd.run > r) sd.run += shift;
+    h.runs.insert(h.runs.begin() + r + 1, newRuns.begin(), newRuns.end());
+    h.items.erase(h.items.begin() + (long)at);
+    h.items.insert(h.items.begin() + (long)at, ins.begin(), ins.end());
+    at += ins.size() - 1;
+  }
+  h.hasDeferred = still;
+}
+
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
-                             const StyleTable& styles, const Config& cfg) {
+                             const StyleTable& styles, const Config& cfg, ObjectEnv* objects) {
   MeasureRequest req;
   // requests are per measurement face (plan P1-04): paint-only variants of
   // a style share one face and are asked for once
@@ -1162,7 +1422,9 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
   auto ctxPx = [&](const AdvanceSpec& ks, StyleId st) {
     return store.word(ks.tri, st).px - store.word(ks.prev, st).px - store.word(ks.next, st).px;
   };
+  std::vector<MeasureItem> need;  // deferred formulas' text-font runs
   auto resolveItems = [&](HList& h) {
+    if (h.hasDeferred && objects) resolveDeferred(h, store, cfg, *objects, need);
     for (HItem& it : h.items) {
       if (it.k == IK::Penalty || (it.k == IK::Glue && it.cls == (u8)GC::InterChar)) continue;
       const StyleId st = h.runs[it.run].face;
@@ -1194,6 +1456,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
         continue;
       }
       const AdvanceSpec& sp = h.specs[it.aux];
+      if (sp.k == AdvanceSpec::Object && h.objs[h.parts[sp.obj].obj].deferred) continue;  // resolveDeferred's
       const bool ready = ctxReady(sp.k == AdvanceSpec::KernCtx ? &sp : nullptr, st);
       if (store.hasWord(sp.str, st) && ready) {
         const WordMet& w = store.word(sp.str, st);
@@ -1221,6 +1484,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
         } else {
           it.w = w.su;
           c.rawPx = w.px;
+          if (sp.k == AdvanceSpec::Object) h.parts[sp.obj].w = w.su;  // an error box
         }
         it.st |= IS_Resolved;
       } else {
@@ -1241,6 +1505,18 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
       }
       resolveItems(u.hl);
       for (TableCell& c : u.cells) resolveItems(c.hl);
+    }
+  }
+  for (const MeasureItem& m : need) {
+    u64 k = MetricStore::key(m.str, m.face);
+    if (!seenWord.count(k) && !store.hasFaceWord(m.str, m.face)) {
+      seenWord[k] = true;
+      req.words.push_back(m);
+    }
+    if (m.face < seenFace.size() ? !seenFace[m.face] : true) {
+      if (seenFace.size() <= m.face) seenFace.resize(m.face + 1, false);
+      seenFace[m.face] = true;
+      if (!store.hasFaceVmet(m.face)) req.vmetFaces.push_back(m.face);
     }
   }
   return req;
@@ -1336,7 +1612,7 @@ void lowerHList(const HList& h, std::vector<Block>& out, std::vector<u32>& start
             break;
           case RealizeClass::Object:
             b.flags = ref;
-            if constexpr (kFull) b.math = h.objs[sp.obj].math;
+            if constexpr (kFull) b.math = h.parts[sp.obj].math;
             break;
           case RealizeClass::Plain:
           case RealizeClass::Rigid:
@@ -1547,12 +1823,12 @@ std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& str
         out += dumpMathBox(u.mathBox, strs);
       }
       for (const HItem& it : u.hl.items) {
-        if (it.k != IK::Box || u.hl.runs[it.run].rc != RealizeClass::Object) continue;
-        const AdvanceSpec& sp = u.hl.specs[it.aux];
+        const ObjPart* pt = objectPart(u.hl, it);
+        if (!pt || !pt->math) continue;
         appendf(out, "inline pid=%u \"", tb.pid);
-        appendEscaped(out, strs.get(sp.str));
+        appendEscaped(out, strs.get(u.hl.specs[it.aux].str));
         out += "\"\n";
-        out += dumpMathBox(u.hl.objs[sp.obj].math, strs);
+        out += dumpMathBox(pt->math, strs);
       }
     }
   }

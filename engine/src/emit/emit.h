@@ -153,9 +153,28 @@ std::vector<TopBlock> emitDoc(const ContentTree& tree, Arena& arena,
                               const Config& cfg, DiagSink& diags,
                               const MathTextCtx* mathText = nullptr);
 
+// the penalty before a formula part, by its break class (math.h MathSeg)
+inline double mathPenalty(const Config& cfg, u8 brkBefore) {
+  return brkBefore == 1 ? cfg.mathRelAfterPenalty
+         : brkBefore == 2 ? cfg.mathRelBeforePenalty
+                          : cfg.mathBinAfterPenalty;
+}
+
+// What resolveWidths needs to lay out a deferred formula (plan P1-13): the
+// document's arena, strings and styles.
+struct ObjectEnv {
+  Arena& arena;
+  Interner& strs;
+  StyleTable& styles;
+  double docBasePx;
+};
+
 // Fills widths from the store; returns what is still missing (deduped).
+// With an ObjectEnv, deferred formulas are laid out and spliced once their
+// text-font runs are measured (their misses join the request).
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
-                             const StyleTable& styles, const Config& cfg);
+                             const StyleTable& styles, const Config& cfg,
+                             ObjectEnv* objects = nullptr);
 
 // The lowering of an HList to today's blocks (plan P1-12; the legacy breaker
 // reads them until P4-08): a specified table per item and glue class, equal

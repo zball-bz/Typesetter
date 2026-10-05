@@ -1,8 +1,8 @@
-# Text shaping: TextRules, the item list and the shaping pipeline (design; as built from plans P1-11, P1-12)
+# Text shaping: TextRules, the item list, inline objects and the shaping pipeline (design; as built from plans P1-11…P1-13)
 
 How the engine decides what a character *is* for line breaking, spacing,
 fonts and kerning. Design source: `docs/remediation/design/T5-text-shaping.md`
-(TextRules, HList; steps 1 → P1-11, 2 → P1-12, 3 → P1-13, 4–11 → P4-01…P4-08).
+(TextRules, HList, InlineObject; steps 1 → P1-11, 2 → P1-12, 3 → P1-13, 4–11 → P4-01…P4-08).
 Decision D-X04: Unicode is pinned at 17.0.0 (Node's ICU 78 has the same
 version, so the JS side classifies alike); `RULES_VERSION` rises only on
 purpose, with the goldens re-recorded.
@@ -144,9 +144,66 @@ indexed by string (the hash lookups were a fifth of the engine) and px
 formatting to integer arithmetic (render −2 ms), so the update stays at
 29.5 ms.
 
-## 6. Next steps
+## 6. Inline objects and the flatten table (plan P1-13)
 
-P1-13 (inline objects), then P4-01…P4-08:
-run formation, the paragraph shaper, per-item spans, TextProps and locale
-sections (punctuation, blanks, autospace as data), UCD-derived classes,
-hyphenation registry, attach edges and the item-native breaker.
+**The flatten table** is the `inline` column of each kind in
+`engine/schema/schema.json` (gen-schema rejects a kind without one; it is
+generated into `KindInfo::inl`), and the emitter's inline walk switches on
+it — closed, so no node vanishes silently:
+
+| row | kinds | becomes |
+|---|---|---|
+| text | text | shaped text |
+| container | styled, seq, group, link, ref, para | its children (link/ref set the run's link and syn; a para reaches an inline stream through a materialized term) |
+| code | code | one rigid box |
+| object | mathinline, image, raw | an inline object |
+| break | hardbreak | a forced break (`Penalty(-INF)`) |
+| error | error | breakable CODE-style text, as before |
+| skip | comment | nothing |
+| unsupported | every other kind | an Error object (`⚠ <kind>`) and a `shape-unsupported` warning |
+
+The golden runner fails any fixture (other than one named for it) that
+reports `shape-unsupported`, and the corpora were scanned clean when the
+step landed. The semantic serializer paints inline images and raw marks the
+same way instead of dropping them.
+
+**The registry** (`engine/src/shape/objects.{h,cc}`): an `InlineObject` has
+a kind, its node, edge classes (`firstCC`, `lastCC`: math and the error box
+Alpha, images and raw marks Ideo), its source (formula TeX, image src, raw
+markup) and its parts in `HList::parts` — each part a Box with
+`AdvanceSpec::Object{part}` and extents (w, asc, desc); formula parts are
+separated by ObjectSpace glue with the formula's break penalties. Layout
+reads a part's asc/desc (`objectPart`, the shim over the three former
+copies until P1-17); paint dispatches on the kind (formula box, `<img>`, a
+`tsr-iraw` inline-block with the markup, or the error text); the hlist dump
+lists the object table. Until the paragraph shaper reads the edge classes
+(P4-02), objects keep the formula rules: a break is legal after one, a
+closing glyph after it is kinsoku-protected, and only a formula gets
+CJK autospace.
+
+**Two phases for formulas.** Emit lays a formula out at once when the
+store already has its text-font runs; otherwise it keeps a single
+placeholder part and flags the list (`hasDeferred`). `resolveWidths` (given
+the document's arena and styles) lays the formula out for that list alone,
+adds still-missing runs to the request, and on success splices the parts in
+place of the placeholder — the same items emit would have written, with the
+runs renumbered (the fuse check covers both paths: the golden fixtures
+defer and splice `Id_(A)` and `f(x) "if" x > 0`). Display formulas keep
+the document re-emit until T8 (P3-26).
+
+**Hard breaks.** A `hardbreak` node (no surface syntax yet) makes the break
+after the preceding item forced. The lowering keeps it as a block penalty of
+`-BREAK_INF`, the breaker adapter turns that into `Penalty(Forced)`, and the
+line before it ends ragged — fil stretch in the breaker (TeX's
+`\hfil\break`), no justification and a real line boundary for copy in
+layout. Fixtures for vocabulary without syntax declare their tree in
+`X.tree.json`, which `tools/record-fixtures.mjs` encodes with the runtime's
+OpBuf.
+
+## 7. Next steps
+
+P4-01…P4-08:
+run formation, the paragraph shaper (the boundary pass reading object edge
+classes), per-item spans, TextProps and locale sections (punctuation,
+blanks, autospace as data), UCD-derived classes, hyphenation registry,
+attach edges and the item-native breaker.

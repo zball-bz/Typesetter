@@ -7,7 +7,7 @@ top pid=0 units=1
   box Ideo "值" w=1025su wt=0.6 cap=102su r0 @[24,33)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[24,33)
-  box object part=0 "|x|" w=975su r2 @[34,39)
+  box object o0 math part=0 asc=721su desc=209su "|x|" w=975su r2 @[34,39)
   pen 0 r2
   glue word w=257su x=1 cap=257su src r3 @[40,52)
   box Ideo "的" w=1025su wt=0.6 cap=102su r4 @[40,52)
@@ -19,15 +19,17 @@ top pid=0 units=1
   glue inter w=0su x=0.6 cap=102su r4 @[40,52)
   box ColonW "：" w=512su blank=R r5 @[40,52)
   glue blank w=512su x=0 cap=0su r5 @[40,52)
-  box object part=0 "|a b| = |a| |b|" w=1662su r6 @[52,69)
+  box object o1 math part=0 asc=721su desc=209su "|a b| = |a| |b|" w=1662su r6 @[52,69)
   pen 0.85 r7
   glue objspace w=284su x=0 cap=0su r7 @[52,69)
-  box object part=1 w=774su r8 @[52,69)
+  box object o1 math part=1 asc=377su desc=0su w=774su r8 @[52,69)
   pen 0.8 r9
   glue objspace w=284su x=0 cap=0su r9 @[52,69)
-  box object part=2 w=2098su r10 @[52,69)
+  box object o1 math part=2 asc=721su desc=209su w=2098su r10 @[52,69)
   box FullStopW "。" w=512su blank=R r11 @[69,72)
   glue blank w=512su x=0 cap=0su r11 @[69,72)
+  obj o0 math parts=1 edges=Alpha/Alpha src="|x|" [w=975su asc=721su desc=209su]
+  obj o1 math parts=3 edges=Alpha/Alpha src="|a b| = |a| |b|" [w=1662su asc=721su desc=209su] [w=774su asc=377su desc=0su glue=284su] [w=2098su asc=721su desc=209su glue=284su]
   run r0 letter-spaced CJK
   run r1 plain
   run r2 object

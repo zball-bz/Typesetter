@@ -18,6 +18,7 @@
 //   CJK char                        -> Box, Penalty(Forbidden), Glue(0, cap, cap), Penalty(pen)
 //   hyphen point                    -> Disc{w = junction kern, pre = hyphen width}
 //   anything else                   -> Box [, Penalty(pen) when breakable]
+// a penalty of -BREAK_INF becomes Penalty(Forced) (a hard line break)
 // "cap" is the block's spaceWidth (today's stretch = shrink capacity). Each
 // item records its source block: a break at an item consumes the blocks up to
 // and including `block` (breakpoints count blocks, as layout reads them).
@@ -46,8 +47,10 @@ struct BItem {
 // integral fields, no padding: the bytes are an exact cache-key domain
 static_assert(std::has_unique_object_representations_v<BItem>);
 
-// The one conversion from the emit-side float penalty (BREAK_INF = never).
+// The one conversion from the emit-side float penalty (BREAK_INF = never,
+// -BREAK_INF = a forced break: a hard line break, plan P1-13).
 inline bool penForbidden(float p) { return !(p < BREAK_INF); }
+inline bool penForced(float p) { return p <= -BREAK_INF; }
 inline i32 penThousandths(float p) { return (i32)std::lround((double)p * 1000.0); }
 
 inline void blocksToItems(const std::vector<BreakBlock>& blocks, std::vector<BItem>& out) {
@@ -58,6 +61,7 @@ inline void blocksToItems(const std::vector<BreakBlock>& blocks, std::vector<BIt
     it.k = ItemKind::Penalty;
     it.block = bi;
     if (penForbidden(p)) it.tag = PenTag::Forbidden;
+    else if (penForced(p)) it.tag = PenTag::Forced;
     else it.pen = penThousandths(p);
     out.push_back(it);
   };

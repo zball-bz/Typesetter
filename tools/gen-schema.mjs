@@ -65,6 +65,11 @@ dupes(S.keys, (v) => v);
 for (const [n, k] of Object.entries(S.kinds))
   for (const a of Object.keys(k.attrs))
     if (!(a in S.keys)) errors.push(`kinds.${n}.attrs.${a}: no such key`);
+// the shaper's flatten table (plan P1-13): what every kind becomes in an
+// inline stream — closed, so a new kind cannot be dropped silently
+const INLINES = ['text', 'container', 'code', 'object', 'break', 'error', 'skip', 'unsupported'];
+for (const [n, k] of Object.entries(S.kinds))
+  if (!INLINES.includes(k.inline)) errors.push(`kinds.${n}.inline: one of ${INLINES.join(', ')}`);
 
 if (errors.length) {
   for (const e of errors) console.error('gen-schema: ' + e);
@@ -112,13 +117,15 @@ let h = `// ${HDR}\n#pragma once\n#include <cstdint>\n\nnamespace tsr {\n\n` +
   `constexpr std::uint16_t ARGK_COUNT = ${keys.length};\n\n` +
   `enum class Level : std::uint8_t { ${LEVELS.map(cap).join(', ')} };\n` +
   `enum class Body : std::uint8_t { ${BODIES.map(cap).join(', ')} };\n` +
+  `// what a kind becomes in an inline stream (the shaper's flatten table, plan P1-13)\n` +
+  `enum class InlineShape : std::uint8_t { ${INLINES.map(cap).join(', ')} };\n` +
   `enum class Dom : std::uint8_t { ${DOMS.map((d) => d === 'rangeset' ? 'RangeSet' : cap(d)).join(', ')} };\n\n` +
   `// One attribute of one kind: its wire key, value domain and default.\n` +
   `struct AttrSpec {\n  std::uint16_t key;\n  const char* name;\n  Dom dom;\n  double lo, hi;   // Int / Num\n` +
   `  const char* const* members;  // Enum names, Flags names\n  const std::uint8_t* bits;     // Flags bit positions\n` +
   `  std::uint8_t nMembers;\n  bool boolAsInt;  // Int accepting true/false (lineNo)\n  bool hasDef;\n  double def;\n` +
   `  std::uint8_t since;\n};\n\n` +
-  `struct KindInfo {\n  const char* name;\n  Level level;\n  Body body;\n  std::uint8_t since;\n` +
+  `struct KindInfo {\n  const char* name;\n  Level level;\n  Body body;\n  InlineShape inl;\n  std::uint8_t since;\n` +
   `  const AttrSpec* attrs;  // writer order\n  std::uint8_t nAttrs;\n};\n\n` +
   `extern const KindInfo kKinds[KIND_COUNT];  // indexed by Kind id\n` +
   `// the version an opcode first appeared in (0 = no such opcode)\n` +
@@ -150,7 +157,7 @@ for (const [n, k] of kinds) {
               `${members}, ${bits}, ${nm}, ${spec.coerce === 'boolAsInt'}, ${hasDef}, ${defv}, ${spec.since ?? k.since}}`);
   }
   if (rows.length) cc += `const AttrSpec kA_${n}[] = {\n    ${rows.join(',\n    ')}};\n`;
-  kindRows.push(`{${cstr(n)}, Level::${cap(k.level)}, Body::${cap(k.body)}, ${k.since}, ` +
+  kindRows.push(`{${cstr(n)}, Level::${cap(k.level)}, Body::${cap(k.body)}, InlineShape::${cap(k.inline)}, ${k.since}, ` +
                 `${rows.length ? `kA_${n}` : 'nullptr'}, ${rows.length}}`);
 }
 cc += `}  // namespace\n\nconst KindInfo kKinds[KIND_COUNT] = {\n    ${kindRows.join(',\n    ')}};\n\n}  // namespace tsr\n`;
@@ -158,7 +165,7 @@ cc += `}  // namespace\n\nconst KindInfo kKinds[KIND_COUNT] = {\n    ${kindRows.
 // ---- ops.gen.mjs -----------------------------------------------------------------
 const obj = (pairs) => Object.fromEntries(pairs);
 const emit = (name, o) => `export const ${name} = Object.freeze(${JSON.stringify(o, null, 2)});\n`;
-const schemaJs = obj(kinds.map(([n, k]) => [n, { id: k.id, level: k.level, body: k.body,
+const schemaJs = obj(kinds.map(([n, k]) => [n, { id: k.id, level: k.level, body: k.body, inline: k.inline,
   attrs: Object.fromEntries(Object.entries(k.attrs).map(([a, s]) => [a, s.dom])) }]));
 // since tables for the writer's per-buffer version (plan P1-01)
 const sinceJs = {
@@ -417,10 +424,10 @@ let setMd = `<!-- ${HDR} -->\n# Host settings (generated)\n\nThe settings docume
 // ---- docs/schema-table.md --------------------------------------------------------
 let md = `<!-- ${HDR} -->\n# Ops vocabulary (generated)\n\nThe kind table of document-model §2.1, generated from ` +
   '`engine/schema/schema.json`. Ops version ' + S.opsVersion + ', min compat ' + S.minCompat + '.\n\n' +
-  '| id | kind | level | body | attributes (writer order: domain) |\n|---|---|---|---|---|\n';
+  '| id | kind | level | body | inline | attributes (writer order: domain) |\n|---|---|---|---|---|---|\n';
 for (const [n, k] of kinds) {
   const at = Object.entries(k.attrs).map(([a, s]) => `\`${a}\`: ${s.dom.replace(/\|/g, '\\|')}`).join('; ') || '—';
-  md += `| ${k.id} | \`${n}\` | ${k.level} | ${k.body} | ${at} |\n`;
+  md += `| ${k.id} | \`${n}\` | ${k.level} | ${k.body} | ${k.inline} | ${at} |\n`;
 }
 md += '\n| op | id |\n|---|---|\n' + ops.map(([n, o]) => `| ${n} | ${o.id} |`).join('\n') + '\n';
 

@@ -1,0 +1,6 @@
+[12,18) function "#image"
+[18,43) embedded "(\"x.png\", {w: 20, h: 16})"
+[73,79) function "#image"
+[79,104) embedded "(\"y.png\", {w: 16, h: 16})"
+[151,157) function "#image"
+[157,194) embedded "(\"/test/e2e/img/w40h20.png\", {w: 24})"

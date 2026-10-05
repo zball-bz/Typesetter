@@ -75,12 +75,13 @@ struct AdvanceSpec {
   // Fixed: em of the face, synthetic (indent, autospace, blanks);
   // MeasuredMinusBlanks: m(str) less the glyph's blank; KernCtx: m(str)
   // corrected by the context, m(tri) - m(prev) - m(next); Object: a part of
-  // HList::objs (its box, or the glue before it)
+  // HList::parts (its box, or the glue before it; a deferred object's one
+  // placeholder part has no extents until resolveWidths splices the parts)
   enum K : u8 { Measured, Defined, Fixed, MeasuredMinusBlanks, KernCtx, Object };
   double em = 0;
   StrRef str = 0;  // the codepoints painted (and copied)
   StrRef prev = 0, next = 0, tri = 0;  // KernCtx: tri = prev + str + next
-  u32 obj = 0;
+  u32 obj = 0;  // Object: the HList::parts index
   K k = Measured;
 };
 static_assert(sizeof(AdvanceSpec) == 32);
@@ -105,13 +106,27 @@ struct RunRec {
   StrRef anchor = 0;    // the anchor of the run's first item
 };
 
-// an inline object part (P1-13 makes objects a registry): today one segment
-// of an inline formula; part 0 carries the formula source for copy
+// Inline objects (plan P1-13; shape/objects.h is the registry): every atomic
+// inline thing — a formula, an image, raw markup, the error box of a kind
+// that cannot appear inline — enters the list the same way: Box parts with
+// AdvanceSpec::Object{part}, ObjectSpace glue between parts, per-part
+// extents. Layout, paint and copy never test for a kind; they ask the part.
+enum class ObjKind : u8 { Math, Image, Raw, Error };
 struct InlineObject {
-  const MathBox* math = nullptr;
-  StrRef src = 0;
-  u32 part = 0;
-  Su glueBefore = 0;  // the ObjectSpace glue before this part (part > 0)
+  ObjKind kind = ObjKind::Math;
+  u8 firstCC = 0, lastCC = 0;  // edge classes (CC): what pair rules see at its edges
+  bool deferred = false;       // structure still needs metrics (math until T8)
+  const ContentNode* node = nullptr;
+  StyleId style = 0;
+  StrRef src = 0;   // math: TeX source (copy); image: src; raw: markup
+  StrRef alt = 0;   // image: alt text
+  u32 part0 = 0, nParts = 0;  // HList::parts
+};
+struct ObjPart {
+  u32 obj = 0;
+  const MathBox* math = nullptr;  // a formula segment
+  Su w = 0, asc = 0, desc = 0;    // extents (above / below the baseline)
+  Su glueBefore = 0;              // the ObjectSpace glue before it (part > 0)
 };
 
 struct HList {
@@ -121,6 +136,8 @@ struct HList {
   std::vector<DiscRec> discs;
   std::vector<RunRec> runs;
   std::vector<InlineObject> objs;
+  std::vector<ObjPart> parts;
+  bool hasDeferred = false;  // an object waits for metrics (resolveWidths splices it)
   bool empty() const { return items.empty(); }
 };
 

@@ -59,7 +59,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `ref` | inline | `target`, `form?` (+resolved fields) | — | M4 |
 | `mathinline` | inline | `src` | — (MathBox segments at emit) | M7 ✓ |
 | `raw` | inline | `html`, `w?`, `h?` | — | M6 |
-| `hardbreak` | inline | — (syntax reserved, not yet granted) | — | — |
+| `hardbreak` | inline | — (syntax reserved, not yet granted; the engine sets it as a forced line break, plan P1-13) | — | — |
 
 Notes:
 - **Labelable kinds** (accept `label`): `heading`, `group`, `table`, `term`, `mathblock`. Labels are args, not nodes.

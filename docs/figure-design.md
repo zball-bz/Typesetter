@@ -31,7 +31,11 @@ Authoring surface:
   (a figure whose body is a table/code/math block — the caption is still
   numbered).
 - `#image("x.png", {scale: 0.5})` splice for inline/handler use (a bare
-  image block without figure numbering).
+  image block without figure numbering). Inside a paragraph it is an
+  inline object (plan P1-13, docs/shaping-design.md §6): a box of its
+  declared or intrinsic size on the baseline (`scale` applies to the block
+  form only), a dashed 1em placeholder when unsized or unsafe — it used to
+  vanish.
 
 Resolver: `group{role:"figure"}` already increments `figNo` and feeds
 `@label` → `图 n`. New: the scan pass prepends **`图 n：`** (bold, via

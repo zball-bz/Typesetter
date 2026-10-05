@@ -79,7 +79,8 @@ resolve/    the phase driver (§11.1): LOCATE → BIND → MATERIALIZE; the inpu
 shape/      TextRules: the one character classifier (classes from
             engine/rules + the pinned UCD via tools/ucdc.mjs; docs/shaping-design.md);
             hlist.h: the horizontal item list (Box/Glue/Penalty/Disc, run
-            instances, cold records) and its legality lint
+            instances, cold records) and its legality lint; objects.h: the
+            inline object registry (formula, image, raw, error box)
 emit/       ContentTree → flow units of HLists (script segmentation, CJK rules
                                                 App C, hyphenation, run instances);
             fuseLegacy lowers each list to the legacy breaker's blocks (until

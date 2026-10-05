@@ -1274,6 +1274,14 @@ int main(int argc, char** argv) {
             printf("FAIL %s: hlist lint\n%s", label.c_str(), lint.c_str());
             failures++;
           }
+          // the flatten table is closed (plan P1-13): no kind reaches an
+          // inline stream unhandled — only a fixture about it may see one
+          if (rel.stem().string().find("unsupported") == std::string::npos)
+            for (const Diag& d : doc.diags.items)
+              if (std::string_view(d.code) == "shape-unsupported") {
+                printf("FAIL %s: %s %s\n", label.c_str(), d.code, d.msg.c_str());
+                failures++;
+              }
         }
         std::string mbx = doc.product("mathbox");
         if (!mbx.empty() || fs::exists(g("mathbox")))

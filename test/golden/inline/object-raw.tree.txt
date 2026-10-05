@@ -1,0 +1,7 @@
+doc @[0,143) [base]
+  para @[0,143) [base]
+    text @[0,55) [base] str="Raw ops fixture (object-raw.tree.json): an inline mark "
+    raw @[55,60) [base] html="<svg width=\"14\" height=\"12\" viewBox=\"0 0 14 12\"><circle cx=\"7\" cy=\"6\" r=\"5\" fill=\"currentColor\"/></svg>" w=14 h=12
+    text @[60,107) [base] str=" sits on the baseline of Latin text, and 中文"
+    raw @[107,112) [base] html="<svg width=\"14\" height=\"12\" viewBox=\"0 0 14 12\"><circle cx=\"7\" cy=\"6\" r=\"5\" fill=\"currentColor\"/></svg>" w=14 h=12
+    text @[112,143) [base] str="中文 sits between ideographs."

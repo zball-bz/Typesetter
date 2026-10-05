@@ -6,6 +6,7 @@
 #include "../math/mathfont.h"
 #include "html_writer.h"
 #include "style_css.gen.h"
+#include "../shape/objects.h"
 #include "../shape/textrules.h"
 
 namespace tsr {
@@ -371,10 +372,48 @@ static void renderLineBox(std::string& out, const TopBlock& tb, const ParaFrame&
       continue;
     }
     const RunRec& r = run(it);
-    if (it.k == IK::Box && r.rc == RealizeClass::Object) {  // inline formula: one box, baseline via vertical-align
+    if (it.k == IK::Box && r.rc == RealizeClass::Object) {  // an inline object part: its painter
       const AdvanceSpec& sp = h.specs[it.aux];
-      mathSpan(out, h.objs[sp.obj].math, sp.str, /*display=*/false, strs,
-               Span{cold(it).srcStart, cold(it).srcEnd}, 0, srcBase);
+      const ObjPart& pt = h.parts[sp.obj];
+      const InlineObject& ob = h.objs[pt.obj];
+      const Span span{cold(it).srcStart, cold(it).srcEnd};
+      switch (ob.kind) {
+        case ObjKind::Math:  // one box, baseline via vertical-align
+          mathSpan(out, pt.math, sp.str, /*display=*/false, strs, span, 0, srcBase);
+          break;
+        case ObjKind::Image: {  // on the baseline; a dashed placeholder when unsized
+          Tag t(out, ob.src ? "img" : "span");
+          t.attrSafe("class", ob.src ? "tsr-iimg" : "tsr-iimg tsr-iimgph");
+          t.attrSafe("data-syn", "image");
+          if (!span.empty()) t.num("data-s", span.start - srcBase);
+          if (ob.src) {
+            t.attrSafe("draggable", "false");
+            t.attr("src", strs.get(ob.src));
+            t.attr("alt", ob.alt ? strs.get(ob.alt) : std::string_view{});
+          }
+          t.px("width", suToPx(pt.w)).px("height", suToPx(pt.asc));
+          t.open();
+          if (!ob.src) out += "</span>";
+          break;
+        }
+        case ObjKind::Raw: {  // handler-declared markup in a box of its size
+          Tag t(out, "span");
+          t.attrSafe("class", "tsr-iraw");
+          t.attrSafe("data-syn", "raw");
+          if (!span.empty()) t.num("data-s", span.start - srcBase);
+          t.px("width", suToPx(pt.w)).px("height", suToPx(pt.asc));
+          t.open();
+          out += strs.get(ob.src);  // trusted passthrough, as the block form (§9)
+          out += "</span>";
+          break;
+        }
+        case ObjKind::Error: {  // its text, in its run's style
+          bool link = openRun(it, nullptr, nullptr, noStyle);
+          escapeHtml(out, strs.get(sp.str));
+          out += link ? "</a>" : "</span>";
+          break;
+        }
+      }
       i++;
       continue;
     }
