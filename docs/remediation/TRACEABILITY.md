@@ -1203,7 +1203,7 @@ Theme steps: — · findings: 1
 | `render-runtime/no-class-channel` | adhoc | high | P3-18 | |
 | `render-runtime/token-theme-sniffing` | adhoc | medium | P3-18 | |
 | `render-runtime/marker-gutter` | adhoc | low | P1-18, P3-16 | |
-| `render-runtime/config-plumbing` | adhoc | medium | P1-03 | |
+| `render-runtime/config-plumbing` | adhoc | medium | P1-03 | grep:plan P1-03 |
 | `render-runtime/static-export-template` | adhoc | medium | P3-21, P3-36 | |
 | `render-runtime/anchor-decode-duplication` | adhoc | medium | P3-05 | |
 | `render-runtime/audit-hint-attributes` | adhoc | low | P3-07 | |
@@ -1269,7 +1269,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/per-resource-pull-plumbing` | adhoc | high | P1-19 | |
 | `api-measure-code/image-dims-in-author-args` | adhoc | high | P1-19 | |
 | `api-measure-code/math-text-measure-side-channel` | adhoc | medium | P1-20, P1-25 | |
-| `api-measure-code/config-plumbing-per-knob` | adhoc | high | P1-03 | |
+| `api-measure-code/config-plumbing-per-knob` | adhoc | high | P1-03 | grep:plan P1-03 |
 | `api-measure-code/global-feature-knobs-no-cascade` | adhoc | high | P3-02 | |
 | `api-measure-code/supplements-and-lang` | adhoc | medium | P1-10, P3-30 | |
 | `api-measure-code/font-role-split` | adhoc | medium | P1-04 | |
@@ -1280,13 +1280,13 @@ Theme steps: — · findings: 1
 | `api-measure-code/grid-is-codeblock-only` | adhoc | medium | P3-11 | |
 | `api-measure-code/sidecar-api-layer-rewrite` | adhoc | high | P2-13 | |
 | `api-measure-code/doc-typeset-hosts-layout-logic` | adhoc | medium | P1-15 | |
-| `api-measure-code/adhoc-invalidation-flags` | adhoc | high | P1-03 | |
+| `api-measure-code/adhoc-invalidation-flags` | adhoc | high | P1-03 | grep:plan P1-03 |
 | `api-measure-code/adhoc-caches` | adhoc | high | P1-21 | |
 | `api-measure-code/per-feature-api-entry-points` | adhoc | medium | P3-37 | |
-| `api-measure-code/native-driver-config-divergence` | adhoc | medium | P1-03 | |
+| `api-measure-code/native-driver-config-divergence` | adhoc | medium | P1-03 | grep:plan P1-03 |
 | `api-measure-code/resource-io-paths` | adhoc | medium | P3-21 | |
 | `api-measure-code/magic-policy-constants` | adhoc | low | P1-03, P3-02 | |
-| `api-measure-code/snap-kerning-duplicate-style-attr` | issue | high | P0-10, P1-03 | |
+| `api-measure-code/snap-kerning-duplicate-style-attr` | issue | high | P0-10, P1-03 | grep:plan P1-03 |
 | `api-measure-code/relayout-stale-emit` | issue | high | P0-11, P1-16 | |
 | `api-measure-code/image-w-only-overwritten` | issue | high | P0-11, P1-19 | |
 | `api-measure-code/snap-ignores-sidecar-partition` | issue | medium | P1-03, P3-11 | |

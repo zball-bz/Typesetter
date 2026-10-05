@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P1
-- 下一步：P1-03
+- 下一步：P1-04
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -28,7 +28,7 @@
 | P0-12 | 断行语义包 | done | grep:plan P0-12 | 2026-10-06 | 34 段断点（29 用例，审阅见 REPORT.md）；64 个 breaks.txt 代价数值 | 提交 1：items.h 适配器、-ffp-contract=off、WASM/native 断点一致门禁（95/95）。提交 2：TeX 丢弃、Forbidden、Disc、Forced 段末（末行 fil + 收缩）、代价上限 1e4、i32 千分位罚分、总序平局、最终一遍救援 + overfull-line + data-overfull、布局收缩极限；断点下标取下一行首块；审计 compression 阈值按空格宽度；AUDIT_XFAIL 清空 |
 | P1-01 | 版本窗口与 ABI 握手 | done | grep:plan P1-01 | 2026-10-06 | 0（所有缓冲区仍为 v6，字节不变） | 写入器按所用词汇行的 since 定版本（≥MIN_COMPAT）；读取器接受 6..OPS_VERSION 窗口、拒绝新于缓冲区的 op/kind/attr；tsr2_abi() 握手 {opsWindow, schemaHash(FNV-1a 规范 JSON), programAbi/resVersion/syntaxVersion 占位 0, renderVersion 1}，worker 与 Node 渲染器核对；since 表生成到 ops.gen.mjs / kOpSince；CLAUDE.md 与 architecture §3 修订 |
 | P1-02 | 属性注册表（props 行进入共享模式） | done | grep:plan P1-02 | 2026-10-06 | +1 用例（notes/sup-emphasis）；其余字节不变 | schema.json 新增 props（运行属性行）与 domains（正则→DFA）两节；生成 Styling/==/哈希/规范化/applyStyleArg/转储字段（props.gen.h）、typeset 的 runCss（style_css.gen.h）、executor 键表 STYLE_KEYS/STYLE_SUGAR、C++ matchDomain DFA（domains.gen.*）与 JS validDomain；删除 values.h（300 万随机串与旧实现 0 差异）；check-domains（JS↔C++ 一致）入 G4/CI；语义页 sup 内嵌 strong/em；docs/style-design.md |
-| P1-03 | 设置文档 ABI、阶段模型、驱动循环、用例配置 | doing | | | | |
+| P1-03 | 设置文档 ABI、阶段模型、驱动循环、用例配置 | done | grep:plan P1-03 | 2026-10-06 | code/snap-sidecar layout+html（原 golden 错：代码行伸进边注栏）；+2 用例（code/nowrap-snap、ref/supplements-en） | 设置文档（schema settings/policy 行生成 Config、编解码、JS 默认值与旧选项映射；tsr2_set_config，旧 setter 为包装）；stages.def/products.def、validThrough、Resolve 独立；configure 的原地/REBUILD/REEXECUTE 规则；tsr2_doc_fork（克隆字符串/样式表、复制度量、重放 token/图片答案），worker relayout/paginate 用 fork；driver.h + ProviderSet，原生 token provider 移入 engine/src/code（查询嵌入构建）；profiles/golden.json + X.fixture.json 取代文件名约定；tsrc --profile/--fixture/--settings/--set，check-tsrc 928 个 golden 全部复现；每个用例 fork==fresh 差分；fuzz_settings；视图以 lint 检查（偏差）；docs/host-protocol-design.md |
 | P1-04 | 字体面与根契约 | todo | | | | |
 | P1-05 | syntax.def 与 CallAST | todo | | | | |
 | P1-06 | SurfaceLexer | todo | | | | |

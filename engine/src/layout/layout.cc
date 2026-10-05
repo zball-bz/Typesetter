@@ -159,7 +159,7 @@ LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& met
             Su atomSu = suCeilPx(grid.atomPx);
             latinAtoms = grid.q;
             cjkCols = grid.p;              // in atom units now
-            cols = (i32)(lineWidth / atomSu);
+            cols = (i32)(lineWidthCode / atomSu);  // the code column, not the measure
             if (cols > 0 && cols < 8 * grid.q) cols = 8 * grid.q;
           } else {
             grid = GridSpec{};             // budget-only fallback
