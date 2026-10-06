@@ -1,0 +1,9 @@
+doc @[0,657)
+  code-block @[0,60) js=" $.math.fn('sys', ['r: rows'], 'lr({, grid(rl, #r), .)') "
+  para @[62,158) lines=1
+  para @[160,211) lines=1
+  para @[213,258) lines=1
+  para @[260,291) lines=1
+  para @[293,427) lines=1
+  para @[429,518) lines=1
+  para @[520,656) lines=1

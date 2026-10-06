@@ -1,0 +1,20 @@
+vlist pid=0 y=0su h=4916su
+  box unit=0 para y=0su h=4916su
+vlist pid=1 y=6145su h=2458su
+  glue 1229su
+  box unit=0 math y=0su h=2458su
+vlist pid=2 y=9832su h=2970su
+  glue 1229su
+  box unit=0 math y=0su h=2970su
+vlist pid=3 y=14031su h=3072su
+  glue 1229su
+  box unit=0 math y=0su h=3072su
+vlist pid=4 y=18332su h=4333su
+  glue 1229su
+  box unit=0 para y=0su h=4333su
+vlist pid=5 y=23894su h=3072su
+  glue 1229su
+  box unit=0 math y=0su h=3072su
+vlist pid=6 y=28195su h=4608su
+  glue 1229su
+  box unit=0 para y=0su h=4608su

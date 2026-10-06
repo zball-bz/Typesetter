@@ -214,6 +214,7 @@ def main():
             rows.append((rev[base], vcps, parts, aital))
         return rows
     vrows = cp_chains(vert)
+    hrows = cp_chains(horiz)  # (plan P3-29) wide accents, braces, arrows
 
     # ------------------------------------------------------------------ woff2
     # the paint-side subset (plan P1-23): exactly the record set, plus U+0020
@@ -224,11 +225,15 @@ def main():
     opts.flavor = "woff2"
     opts.name_IDs = ["*"]
     opts.notdef_outline = True
-    sub = TTFont(args.font)
+    sub = TTFont(args.font, recalcTimestamp=False)
     sb = subset.Subsetter(opts)
     sb.populate(unicodes=sorted(cps | {0x20}))
     sb.subset(sub)
     sub.flavor = "woff2"
+    # reproducible bytes (plan P3-29): the subsetter stamps head.modified
+    # with the time of the run; the source font's stamp keeps the woff2 — and
+    # its content hash, the blog's URL — a function of the inputs
+    sub["head"].modified = font["head"].modified
     sub.save(args.woff2)
     blob = open(args.woff2, "rb").read()
     h = 0xCBF29CE484222325
@@ -300,6 +305,7 @@ def main():
             out.append((base, off, len(vcps), aoff, len(parts)))
         return out
     vflat = flatten(vrows)
+    hflat = flatten(hrows)
     o.append("inline constexpr uint32_t kVariantCps[] = {")
     o.append("  " + ",".join("0x%X" % c for c in var_cps) + ",")
     o.append("};")
@@ -312,6 +318,12 @@ def main():
         o.append("  {0x%X,%d,%d,%d,%d}," % (base, off, n, aoff, an))
     o.append("};")
     o.append("inline constexpr int kVertChainCount = %d;" % len(vflat))
+    o.append("// (plan P3-29) horizontal constructions: a variant's or part's advance is its width")
+    o.append("inline constexpr VarChain kHorizChains[] = {  // sorted by baseCp")
+    for base, off, n, aoff, an in hflat:
+        o.append("  {0x%X,%d,%d,%d,%d}," % (base, off, n, aoff, an))
+    o.append("};")
+    o.append("inline constexpr int kHorizChainCount = %d;" % len(hflat))
     o.append("")
     o.append("}}  // namespace tsr::mathfont")
     out = "\n".join(o) + "\n"
@@ -324,8 +336,8 @@ def main():
         f.write("// declared webfont with role 'math'), static export and packaging read it.\n")
         f.write("export const MATH_FONT = { family: '%s', file: '%s', hash: '%016x', role: 'math' };\n"
                 % (args.family, args.woff2, h))
-    print("wrote %s: %d constants, %d glyph records, %d vertical chains, %d asm parts"
-          % (args.out, len(constants), len(recs), len(vflat), len(parts_flat)))
+    print("wrote %s: %d constants, %d glyph records, %d vertical and %d horizontal chains, %d asm parts"
+          % (args.out, len(constants), len(recs), len(vflat), len(hflat), len(parts_flat)))
 
 if __name__ == "__main__":
     main()

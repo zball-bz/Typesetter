@@ -1,0 +1,62 @@
+lower v1 abi 3d3ccfbb docEnd 657 holes 1 module 78608c6a7e608c70
+piece 0 hole 0 js [128,195)
+block 0 stmt [0,60) user framed holes 0..1
+  STMT 0
+block 1 content [62,158)
+  CALL para [62,158)
+    TEXT "Matrices and cases (plan P3-29): " [62,94) raw=0:0,33:32
+    CALL math [95,112)
+      CALL mathsrc [96,111) src="mat(1, 2; 3, 4)"
+    TEXT ", " [112,113) raw=0:0,2:1
+    CALL math [114,132)
+      CALL mathsrc [115,131) src="bmat(a, b; c, d)"
+    TEXT " and " [133,136) raw=0:0,1:0,5:3
+    CALL math [137,157)
+      CALL mathsrc [138,156) src="vmat(x & y; z & w)"
+    TEXT "." [157,158)
+block 2 content [160,211)
+  CALL para [160,211)
+    CALL math [160,211) display=true
+      CALL mathsrc [162,209) src="f(x) = cases(x & \"if\" x >= 0; -x & \"otherwise\")"
+block 3 content [213,258)
+  CALL para [213,258)
+    CALL math [213,258) display=true
+      CALL mathsrc [215,256) src="aligned(f(x) &= (x+1)^2; &= x^2 + 2x + 1)"
+block 4 content [260,291)
+  CALL para [260,291)
+    CALL math [260,291) display=true
+      CALL mathsrc [262,289) src="sys(a + b &= 1; a - b &= 0)"
+block 5 content [293,427)
+  CALL para [293,427)
+    TEXT "Braces and stretches: " [293,314) raw=0:0,22:21
+    CALL math [315,340)
+      CALL mathsrc [316,339) src="overbrace(a + b + c, n)"
+    TEXT " and " [341,344) raw=0:0,1:0,5:3
+    CALL math [345,379)
+      CALL mathsrc [346,378) src="underbrace(x_1 + cdots + x_k, k)"
+    TEXT ", a wide " [379,387) raw=0:0,9:8
+    CALL math [388,400)
+      CALL mathsrc [389,399) src="hat(x y z)"
+    TEXT " and a long " [401,411) raw=0:0,1:0,12:10
+    CALL math [412,426)
+      CALL mathsrc [413,425) src="vec(A B C D)"
+    TEXT "." [426,427)
+block 6 content [429,518)
+  CALL para [429,518)
+    CALL math [429,518) display=true
+      CALL mathsrc [431,516) src="attach(Pi, t: alpha, b: beta, tl: 1, tr: 2, bl: 4, br: 6) + big(() x big()) + Bigg(|)"
+block 7 content [520,656)
+  CALL para [520,656)
+    TEXT "Room without ink: " [520,537) raw=0:0,18:17
+    CALL math [538,554)
+      CALL mathsrc [539,553) src="x phantom(y) z"
+    TEXT ", " [554,555) raw=0:0,2:1
+    CALL math [556,575)
+      CALL mathsrc [557,574) src="a hphantom(b c) d"
+    TEXT " and " [576,579) raw=0:0,1:0,5:3
+    CALL math [580,598)
+      CALL mathsrc [581,597) src="smash(y_1^2) + 1"
+    TEXT "; an alignment point outside a grid sets nothing: " [598,647) raw=0:0,50:49
+    CALL math [648,655)
+      CALL mathsrc [649,654) src="a & b"
+    TEXT "." [655,656)

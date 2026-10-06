@@ -30,11 +30,23 @@ enum class Prim : u8 {
   Limits,   // mlimits(body, mode: limits|scripts): where an operator's scripts go
   Variant,  // variant(body, alphabet: bb|cal|frak|bold|italic|sans|mono): its letters and digits
   Class,    // class(class: ord|op|bin|rel|open|close|punct|inner, body): its atom class
+  // (plan P3-29; design T8 S9)
+  Grid,      // grid(align, rows): rows of cells, columns aligned by the align word (l c r, cycled)
+  Attach,    // attach(base, t, b, tl, bl, tr, br): bound to an Attach node (a bind-time rewrite)
+  HStretch,  // hstretch(base, glyph: sym, side: over|under): the glyph stretched to the base's width
+  Delim,     // delim(d: sym, size): one delimiter at least size em tall, on the axis (big)
+  Phantom,   // phantom(body, mode: full|h|v|smash): its room without its ink (smash: its ink without its room)
 };
-enum class SlotKind : u8 { Content, Sym, Ident };
+// a parameter's kind: content, one symbol token, a bare word, or (plan
+// P3-29) rows — `;` between rows, `&` between cells, and `,` too when the
+// slot takes cells (mat); a rows slot is the last, it reads to the `)`
+enum class SlotKind : u8 { Content, Sym, Ident, Rows };
 
+// (plan P3-29) Align: an alignment point (`&`) — a cell boundary in rows,
+// a column boundary of a display's rows; Rows: a rows argument, its kids the
+// rows, each a Run of cells (each a Run)
 struct MNode {
-  enum K : u8 { Sym, Num, Text, Run, Attach, Frac, Group, Call, Param, Error } k = Sym;
+  enum K : u8 { Sym, Num, Text, Run, Attach, Frac, Group, Call, Param, Error, Align, Rows } k = Sym;
   u32 cp = 0;
   u8 cls = kOrd, flags = 0;
   std::string txt;            // Num/Text: the glyphs; Call: the row; Param: its name;
@@ -47,6 +59,9 @@ struct MNode {
   MNode* a = nullptr;         // Attach: base; Frac: numerator; Group: inner run
   MNode* sub = nullptr;       // Attach
   MNode* sup = nullptr;       // Attach
+  MNode* tl = nullptr;        // Attach (plan P3-29): the pre-scripts, top and bottom left
+  MNode* bl = nullptr;
+  bool limits = false;        // Attach (plan P3-29): its scripts above and below, whatever its base
   MNode* b = nullptr;         // Frac: denominator
   // (plan P3-25) a large operator's scope (v2 §13: up to a relation, a
   // closing bracket or the end) — the source byte it ends at; a reading
@@ -94,7 +109,11 @@ struct SlotSpec {
   std::string name;
   SlotKind kind = SlotKind::Content;
   bool optional = false;
+  bool cells = false;  // Rows: `,` separates cells too
 };
+// one parameter of a signature (stdlib.tsv, $.math.fn): `name`, `name?`
+// (optional), `name: rows`, `name: cells`, `name: sym` (plan P3-29)
+SlotSpec parseSlotSpec(std::string_view p);
 struct MathRow {
   std::string name;
   Prim prim = Prim::None;       // set only by the C++ primitive table

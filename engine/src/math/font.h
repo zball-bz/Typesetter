@@ -31,6 +31,8 @@ struct MathFont {
   int glyphCount = 0;
   const VarChain* vert = nullptr;
   int vertCount = 0;
+  const VarChain* horiz = nullptr;  // (plan P3-29) widths: wide accents, braces, arrows
+  int horizCount = 0;
   const u32* variantCps = nullptr;
   const AsmPart* parts = nullptr;
   std::string_view family;  // the paint-side family (the font manifest's)
@@ -48,15 +50,17 @@ struct MathFont {
     }
     return lo < glyphCount && glyphs[lo].cp == cp ? &glyphs[lo] : nullptr;
   }
-  // a vertical variant chain (horizontal stretch is a recorded deferral)
-  const VarChain* chain(u32 cp) const {
-    int lo = 0, hi = vertCount;
+  // a vertical variant chain, or (plan P3-29) a horizontal one
+  const VarChain* chain(u32 cp) const { return find(vert, vertCount, cp); }
+  const VarChain* hchain(u32 cp) const { return find(horiz, horizCount, cp); }
+  static const VarChain* find(const VarChain* t, int n, u32 cp) {
+    int lo = 0, hi = n;
     while (lo < hi) {
       const int mid = (lo + hi) / 2;
-      if (vert[mid].baseCp < cp) lo = mid + 1;
+      if (t[mid].baseCp < cp) lo = mid + 1;
       else hi = mid;
     }
-    return lo < vertCount && vert[lo].baseCp == cp ? &vert[lo] : nullptr;
+    return lo < n && t[lo].baseCp == cp ? &t[lo] : nullptr;
   }
 };
 

@@ -1,0 +1,4 @@
+instance equation @[160,211)
+instance equation @[213,258)
+instance equation @[260,291)
+instance equation @[429,518)

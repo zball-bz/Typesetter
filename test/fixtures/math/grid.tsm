@@ -1,0 +1,15 @@
+#{ $.math.fn('sys', ['r: rows'], 'lr({, grid(rl, #r), .)') }
+
+Matrices and cases (plan P3-29): $mat(1, 2; 3, 4)$, $bmat(a, b; c, d)$ and $vmat(x & y; z & w)$.
+
+$ f(x) = cases(x & "if" x >= 0; -x & "otherwise") $
+
+$ aligned(f(x) &= (x+1)^2; &= x^2 + 2x + 1) $
+
+$ sys(a + b &= 1; a - b &= 0) $
+
+Braces and stretches: $overbrace(a + b + c, n)$ and $underbrace(x_1 + cdots + x_k, k)$, a wide $hat(x y z)$ and a long $vec(A B C D)$.
+
+$ attach(Pi, t: alpha, b: beta, tl: 1, tr: 2, bl: 4, br: 6) + big(() x big()) + Bigg(|) $
+
+Room without ink: $x phantom(y) z$, $a hphantom(b c) d$ and $smash(y_1^2) + 1$; an alignment point outside a grid sets nothing: $a & b$.

@@ -1,0 +1,162 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Ma" w=1025su r0 @[62,94)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[62,94)
+  box Other "tri" w=1537su r0 @[62,94)
+  disc pen=0.7 w=0su pre="-" 513su kern="ic" r0 @[62,94)
+  box Other "ces" w=1537su r0 @[62,94)
+  glue word w=257su x=1 cap=257su kern="s a" src r0 @[62,94)
+  box Other "and" w=1537su r0 @[62,94)
+  glue word w=257su x=1 cap=257su kern="d c" src r0 @[62,94)
+  box Other "cas" w=1537su r0 @[62,94)
+  disc pen=0.7 w=0su pre="-" 513su kern="se" r0 @[62,94)
+  box Other "es" w=1025su r0 @[62,94)
+  glue word w=257su x=1 cap=257su kern="s (" src r0 @[62,94)
+  box Other "(plan" w=2561su r0 @[62,94)
+  glue word w=257su x=1 cap=257su kern="n P" src r0 @[62,94)
+  box Other "P3-29):" w=3585su r0 @[62,94)
+  glue word w=257su x=1 cap=257su src r0 @[62,94)
+  box object o0 math part=0 asc=1485su desc=973su "mat(1, 2; 3, 4)" w=3246su r1 @[95,112)
+  pen 0 r1
+  box Other "," w=513su r2 @[112,113)
+  glue word w=257su x=1 cap=257su src r2 @[112,113)
+  box object o1 math part=0 asc=1484su desc=973su "bmat(a, b; c, d)" w=3345su r3 @[114,132)
+  pen 0 r3
+  glue word w=257su x=1 cap=257su src r4 @[133,136)
+  box Other "and" w=1537su r4 @[133,136)
+  glue word w=257su x=1 cap=257su src r4 @[133,136)
+  box object o2 math part=0 asc=1485su desc=973su "vmat(x & y; z & w)" w=2906su r5 @[137,157)
+  pen 0 r5
+  box Other "." w=513su r6 @[157,158)
+  obj o0 math parts=1 edges=Alpha/Alpha src="mat(1, 2; 3, 4)" [w=3246su asc=1485su desc=973su]
+  obj o1 math parts=1 edges=Alpha/Alpha src="bmat(a, b; c, d)" [w=3345su asc=1484su desc=973su]
+  obj o2 math parts=1 edges=Alpha/Alpha src="vmat(x & y; z & w)" [w=2906su asc=1485su desc=973su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 object
+  run r4 plain
+  run r5 object
+  run r6 plain
+top pid=1 units=1
+ unit math indent=0su w=10618su asc=1485su desc=973su
+top pid=2 units=1
+ unit math indent=0su w=7949su asc=1741su desc=1229su
+top pid=3 units=1
+ unit math indent=0su w=5118su asc=1792su desc=1280su
+top pid=4 units=1
+ unit text indent=0su
+  box Other "Braces" w=3073su r0 @[293,314)
+  glue word w=257su x=1 cap=257su kern="s a" src r0 @[293,314)
+  box Other "and" w=1537su r0 @[293,314)
+  glue word w=257su x=1 cap=257su kern="d s" src r0 @[293,314)
+  box Other "stretch" w=3585su r0 @[293,314)
+  disc pen=0.7 w=0su pre="-" 513su kern="he" r0 @[293,314)
+  box Other "es:" w=1537su r0 @[293,314)
+  glue word w=257su x=1 cap=257su src r0 @[293,314)
+  box object o0 math part=0 asc=1711su desc=76su "overbrace(a + b + c, n)" w=4182su r1 @[315,340)
+  pen 0 r1
+  glue word w=257su x=1 cap=257su src r2 @[341,344)
+  box Other "and" w=1537su r2 @[341,344)
+  glue word w=257su x=1 cap=257su src r2 @[341,344)
+  box object o1 math part=0 asc=600su desc=1356su "underbrace(x_1 + cdots + x_k, k)" w=5180su r3 @[345,379)
+  pen 0 r3
+  box Other "," w=513su r4 @[379,387)
+  glue word w=257su x=1 cap=257su kern=", a" src r4 @[379,387)
+  box Other "a" w=513su r4 @[379,387)
+  glue word w=257su x=1 cap=257su kern="a w" src r4 @[379,387)
+  box Other "wide" w=2049su r4 @[379,387)
+  glue word w=257su x=1 cap=257su src r4 @[379,387)
+  box object o2 math part=0 asc=840su desc=239su "hat(x y z)" w=1627su r5 @[388,400)
+  pen 0 r5
+  glue word w=257su x=1 cap=257su src r6 @[401,411)
+  box Other "and" w=1537su r6 @[401,411)
+  glue word w=257su x=1 cap=257su kern="d a" src r6 @[401,411)
+  box Other "a" w=513su r6 @[401,411)
+  glue word w=257su x=1 cap=257su kern="a l" src r6 @[401,411)
+  box Other "long" w=2049su r6 @[401,411)
+  glue word w=257su x=1 cap=257su src r6 @[401,411)
+  box object o3 math part=0 asc=1061su desc=15su "vec(A B C D)" w=3038su r7 @[412,426)
+  pen 0 r7
+  box Other "." w=513su r8 @[426,427)
+  obj o0 math parts=1 edges=Alpha/Alpha src="overbrace(a + b + c, n)" [w=4182su asc=1711su desc=76su]
+  obj o1 math parts=1 edges=Alpha/Alpha src="underbrace(x_1 + cdots + x_k, k)" [w=5180su asc=600su desc=1356su]
+  obj o2 math parts=1 edges=Alpha/Alpha src="hat(x y z)" [w=1627su asc=840su desc=239su]
+  obj o3 math parts=1 edges=Alpha/Alpha src="vec(A B C D)" [w=3038su asc=1061su desc=15su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 object
+  run r4 plain
+  run r5 object
+  run r6 plain
+  run r7 object
+  run r8 plain
+top pid=5 units=1
+ unit math indent=0su w=5818su asc=1792su desc=1280su
+top pid=6 units=1
+ unit text indent=0su
+  box Other "Room" w=2049su r0 @[520,537)
+  glue word w=257su x=1 cap=257su kern="m w" src r0 @[520,537)
+  box Other "with" w=2049su r0 @[520,537)
+  disc pen=0.7 w=0su pre="-" 513su kern="ho" r0 @[520,537)
+  box Other "out" w=1537su r0 @[520,537)
+  glue word w=257su x=1 cap=257su kern="t i" src r0 @[520,537)
+  box Other "ink:" w=2049su r0 @[520,537)
+  glue word w=257su x=1 cap=257su src r0 @[520,537)
+  box object o0 math part=0 asc=479su desc=239su "x phantom(y) z" w=1627su r1 @[538,554)
+  pen 0 r1
+  box Other "," w=513su r2 @[554,555)
+  glue word w=257su x=1 cap=257su src r2 @[554,555)
+  box object o1 math part=0 asc=700su desc=19su "a hphantom(b c) d" w=2341su r3 @[556,575)
+  pen 0 r3
+  glue word w=257su x=1 cap=257su src r4 @[576,579)
+  box Other "and" w=1537su r4 @[576,579)
+  glue word w=257su x=1 cap=257su src r4 @[576,579)
+  box object o2 math part=0 asc=600su desc=76su "smash(y_1^2) + 1" w=2017su r5 @[580,598)
+  pen 0.95 r6
+  glue objspace w=228su x=0 cap=0su r6 @[580,598)
+  box object o2 math part=1 asc=727su desc=7su w=511su r7 @[580,598)
+  pen 0 r7
+  box Other ";" w=513su r8 @[598,647)
+  glue word w=257su x=1 cap=257su kern="; a" src r8 @[598,647)
+  box Other "an" w=1025su r8 @[598,647)
+  glue word w=257su x=1 cap=257su kern="n a" src r8 @[598,647)
+  box Other "align" w=2561su r8 @[598,647)
+  disc pen=0.7 w=0su pre="-" 513su kern="nm" r8 @[598,647)
+  box Other "ment" w=2049su r8 @[598,647)
+  glue word w=257su x=1 cap=257su kern="t p" src r8 @[598,647)
+  box Other "point" w=2561su r8 @[598,647)
+  glue word w=257su x=1 cap=257su kern="t o" src r8 @[598,647)
+  box Other "out" w=1537su r8 @[598,647)
+  disc pen=0.7 w=0su pre="-" 513su kern="ts" r8 @[598,647)
+  box Other "side" w=2049su r8 @[598,647)
+  glue word w=257su x=1 cap=257su kern="e a" src r8 @[598,647)
+  box Other "a" w=513su r8 @[598,647)
+  glue word w=257su x=1 cap=257su kern="a g" src r8 @[598,647)
+  box Other "grid" w=2049su r8 @[598,647)
+  glue word w=257su x=1 cap=257su kern="d s" src r8 @[598,647)
+  box Other "sets" w=2049su r8 @[598,647)
+  glue word w=257su x=1 cap=257su kern="s n" src r8 @[598,647)
+  box Other "noth" w=2049su r8 @[598,647)
+  disc pen=0.7 w=0su pre="-" 513su kern="hi" r8 @[598,647)
+  box Other "ing:" w=2049su r8 @[598,647)
+  glue word w=257su x=1 cap=257su src r8 @[598,647)
+  box object o3 math part=0 asc=700su desc=12su "a & b" w=1226su r9 @[648,655)
+  pen 0 r9
+  box Other "." w=513su r10 @[655,656)
+  obj o0 math parts=1 edges=Alpha/Alpha src="x phantom(y) z" [w=1627su asc=479su desc=239su]
+  obj o1 math parts=1 edges=Alpha/Alpha src="a hphantom(b c) d" [w=2341su asc=700su desc=19su]
+  obj o2 math parts=2 edges=Alpha/Alpha src="smash(y_1^2) + 1" [w=2017su asc=600su desc=76su] [w=511su asc=727su desc=7su glue=228su]
+  obj o3 math parts=1 edges=Alpha/Alpha src="a & b" [w=1226su asc=700su desc=12su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 object
+  run r4 plain
+  run r5 object
+  run r6 plain
+  run r7 object
+  run r8 plain
+  run r9 object
+  run r10 plain

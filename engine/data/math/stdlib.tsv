@@ -1,12 +1,15 @@
 # The built-in math function rows (plan P1-24; design T8 MathRow): each a
 # template over the closed primitive set (frac, stack, radical, lr, accent,
-# rule; plan P3-24: space, mstyle, mlimits, variant, class; engine/src/math/
-# ir.cc), written in the template language a document will use — #name is a
-# parameter, a symbol slot takes one token. A row without parameters is a
+# rule; plan P3-24: space, mstyle, mlimits, variant, class; plan P3-29:
+# grid, attach, hstretch, delim, phantom; engine/src/math/ir.cc), written
+# in the template language a document will use — #name is a parameter, a
+# symbol slot takes one token. A row without parameters is a
 # constant, used bare (thin, quad). Compiled
 # by tools/mathdict.py into engine/gen/math_rows.h; checked by checkRow at
 # start-up and by the unit tests.
-#   signature: name(params); `p?` is optional
+#   signature: name(params); `p?` is optional; `p: sym` one symbol token;
+#              `p: rows` rows (`;` between rows, `&` between cells; plan
+#              P3-29), `p: cells` rows whose cells `,` separates too (mat)
 #   body: the expansion
 #   bare: the meaning without an adjacent '(' — a symbol name of
 #         symbols.tsv or one character; - = none (the word is then a name)
@@ -49,3 +52,24 @@ bold(x)	variant(#x, bold)	-
 italic(x)	variant(#x, italic)	-
 sans(x)	variant(#x, sans)	-
 mono(x)	variant(#x, mono)	-
+mat(r: cells)	inline(lr((, grid(c, #r), )))	-
+pmat(r: cells)	inline(lr((, grid(c, #r), )))	-
+bmat(r: cells)	inline(lr([, grid(c, #r), ]))	-
+Bmat(r: cells)	inline(lr({, grid(c, #r), }))	-
+vmat(r: cells)	inline(lr(|, grid(c, #r), |))	-
+Vmat(r: cells)	inline(lr(‖, grid(c, #r), ‖))	-
+cases(r: rows)	inline(lr({, grid(l, #r), .))	-
+aligned(r: rows)	grid(rl, #r)	-
+overbrace(x, t?)	attach(hstretch(#x, ⏞, over), t: #t)	-
+underbrace(x, b?)	attach(hstretch(#x, ⏟, under), b: #b)	-
+overbracket(x, t?)	attach(hstretch(#x, ⎴, over), t: #t)	-
+underbracket(x, b?)	attach(hstretch(#x, ⎵, under), b: #b)	-
+overparen(x, t?)	attach(hstretch(#x, ⏜, over), t: #t)	-
+underparen(x, b?)	attach(hstretch(#x, ⏝, under), b: #b)	-
+big(d: sym)	delim(#d, 1.2)	-
+Big(d: sym)	delim(#d, 1.8)	-
+bigg(d: sym)	delim(#d, 2.4)	-
+Bigg(d: sym)	delim(#d, 3)	-
+hphantom(x)	phantom(#x, h)	-
+vphantom(x)	phantom(#x, v)	-
+smash(x)	phantom(#x, smash)	-

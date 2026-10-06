@@ -16,7 +16,7 @@ namespace {
 struct Tok {
   // Hole / TextHole / ErrorHole (plan P2-15): a formula's hole units
   enum K : u8 { End, Num, Word, Op, Chr, Sup, Sub, Slash, Open, Close, Prime, Quote, Param, Hole, TextHole,
-                ErrorHole } k = End;
+                ErrorHole, Amp } k = End;
   std::string text;                // Num/Word/Quote/Param
   const SymbolInfo* op = nullptr;  // Op (dictionary hit)
   u32 cp = 0;                      // Chr (direct char) / Open / Close
@@ -136,6 +136,7 @@ struct Lexer {
     }
     switch (c) {
       case '^': i++; t.k = Tok::Sup; return t;
+      case '&': i++; t.k = Tok::Amp; return t;  // (plan P3-29) an alignment point, never a symbol
       case '/': i++; t.k = Tok::Slash; return t;
       case '\'': i++; t.k = Tok::Prime; return t;
       case '(': case '[': case '{':
@@ -575,6 +576,9 @@ struct Parser {
       case Tok::Prime:  // a stray prime with no base
         advance();
         return atom(0x2032, kOrd, 0, lo, hi);
+      case Tok::Amp:  // (plan P3-29) an alignment point: rows split at it; elsewhere it sets nothing
+        advance();
+        return mk(MNode::Align, lo, hi);
       case Tok::Slash:
         // a dangling / is an ordinary slash, as in TeX (formulas split across
         // sources routinely end mid-expression)
@@ -682,11 +686,67 @@ struct Parser {
     return atom((u8)w[0], kOrd, 0, wpos, wend);
   }
 
+  bool atSemicolon() const { return tok.k == Tok::Op && tok.op->cp == ';'; }
+  // (plan P3-29; design T8 Rows slots) rows to the closing `)`: `;` ends a
+  // row, `&` a cell — `,` too when the slot takes cells (mat). A template's
+  // #r standing alone is the rows it will be given.
+  MNode* parseRows(bool cells) {
+    if (tok.k == Tok::Param) {
+      Lexer la = lex;
+      const Tok nt = la.next();
+      if (nt.k == Tok::Close || nt.k == Tok::End) {
+        MNode* p = mk(MNode::Param, tok.pos, tok.end);
+        p->txt = tok.text;
+        advance();
+        return p;
+      }
+    }
+    MNode* rows = mk(MNode::Rows, tok.pos);
+    MNode* row = mk(MNode::Run, tok.pos);
+    MNode* cell = mk(MNode::Run, tok.pos);
+    auto endCell = [&] {
+      cell->hi = tok.pos;
+      scopes(cell);
+      row->kids.push_back(cell);
+      cell = mk(MNode::Run, tok.pos);
+    };
+    auto endRow = [&] {
+      endCell();
+      row->hi = tok.pos;
+      rows->kids.push_back(row);
+      row = mk(MNode::Run, tok.pos);
+    };
+    while (!runEnds()) {
+      if (atSemicolon()) {
+        endRow();
+        advance();
+        cell->lo = row->lo = tok.pos;
+      } else if (tok.k == Tok::Amp || (cells && atComma())) {
+        endCell();
+        advance();
+        cell->lo = tok.pos;
+      } else {
+        parseMolecule(cell->kids);
+      }
+    }
+    // a last row with nothing in it (a trailing `;`) is no row
+    if (!cell->kids.empty() || !row->kids.empty() || rows->kids.empty()) endRow();
+    rows->hi = tok.pos;
+    return rows;
+  }
+
   // one argument of a slot kind
-  MNode* parseArg(SlotKind kind) {
+  MNode* parseArg(SlotKind kind, bool cells = false) {
+    if (kind == SlotKind::Rows) return parseRows(cells);
     if (kind == SlotKind::Sym) {  // exactly one symbol token
       const u32 lo = tok.pos, hi = tok.end;
       MNode* n = nullptr;
+      if (tok.k == Tok::Param) {  // a template's #d: the symbol it will be given (plan P3-29)
+        n = mk(MNode::Param, lo, hi);
+        n->txt = tok.text;
+        advance();
+        return n;
+      }
       if (tok.k == Tok::Open || tok.k == Tok::Close || tok.k == Tok::Chr) n = atom(tok.cp, kOrd, 0, lo, hi);
       else if (tok.k == Tok::Op) n = atom(tok.op->cp, tok.op->cls, 0, lo, hi);
       else if (tok.k == Tok::Word) {
@@ -709,29 +769,57 @@ struct Parser {
     return arg;
   }
 
-  // name(args…): arity from the row's slots; a missing argument is an
-  // empty error leaf, extra ones one error leaf after the call
+  // (plan P3-29; design T8) a named argument ahead — `name:` naming one of
+  // the row's slots (any other `x:` keeps ':' as a relation): its slot
+  int namedSlot(const MathRow& row) const {
+    if (tok.k != Tok::Word) return -1;
+    Lexer la = lex;
+    const Tok nt = la.next();
+    if (nt.pos >= lex.s.size() || lex.s[nt.pos] != ':' || nt.end != nt.pos + 1) return -1;
+    for (size_t i = 0; i < row.params.size(); i++)
+      if (row.params[i].name == tok.text) return (int)i;
+    return -1;
+  }
+
+  // name(args…): arity from the row's slots, filled in order or by name
+  // (`t: a`); a missing argument is an empty error leaf, extra ones one
+  // error leaf after the call. The call's kids are its slots, in order (an
+  // optional one not given: null).
   MNode* parseCall(const MathRow& row, u32 lo) {
     advance();  // '('
     MNode* call = mk(MNode::Call, lo);
     call->txt = row.name;
     call->prim = row.prim;
-    std::vector<MNode*> args;
+    std::vector<MNode*> args(row.params.size(), nullptr);
+    size_t next = 0;  // the next positional slot
     size_t extraLo = 0;
     bool extra = false;
-    for (size_t i = 0;; i++) {
-      if (i == row.params.size() && !extra) {
-        extra = true;
-        extraLo = tok.pos;
+    for (;;) {
+      int slot = namedSlot(row);
+      if (slot >= 0) {
+        advance();  // the name
+        advance();  // ':'
+      } else {
+        while (next < args.size() && args[next]) next++;
+        if (next == args.size() && !extra) {
+          extra = true;
+          extraLo = tok.pos;
+        }
+        slot = next < args.size() ? (int)next : -1;
       }
-      MNode* arg = parseArg(i < row.params.size() ? row.params[i].kind : SlotKind::Content);
+      const u32 at = tok.pos;
+      MNode* arg = slot >= 0 ? parseArg(row.params[slot].kind, row.params[slot].cells) : parseArg(SlotKind::Content);
       if (!arg) {  // a symbol slot without a symbol: skip to the next argument
-        const u32 at = tok.pos;
         const u32 end = resync();
         err(at, end > at ? end : at + 1, "'" + row.name + "' expects a symbol here");
         arg = error(at, end);
       }
-      if (!extra) args.push_back(arg);
+      if (slot >= 0 && args[slot]) {
+        err(at, tok.pos > at ? tok.pos : at + 1, "'" + row.name + "': '" + row.params[slot].name + "' given twice",
+            Sev::Warning, "math-arity");
+      } else if (slot >= 0) {
+        args[slot] = arg;
+      }
       if (atComma()) {
         advance();
         continue;
@@ -742,14 +830,16 @@ struct Parser {
     if (tok.k == Tok::Close && tok.cp == ')') advance();
     else err(lo, tok.pos, "unclosed call '" + row.name + "'");
     call->hi = tok.pos;
-    for (size_t i = args.size(); i < row.params.size(); i++)
-      if (!row.params[i].optional) {
+    for (size_t i = 0; i < row.params.size(); i++)
+      if (!args[i] && !row.params[i].optional) {
         err(lo, call->hi, "'" + row.name + "' is missing its argument '" + row.params[i].name + "'", Sev::Warning,
             "math-arity");
-        args.push_back(error(call->hi, call->hi));
+        args[i] = error(call->hi, call->hi);
       }
+    while (!args.empty() && !args.back()) args.pop_back();
     call->kids = args;
-    if (row.prim == Prim::Lr && call->kids.size() > 1 && call->kids[1]->k == MNode::Run) midOf(call->kids[1]);
+    if (row.prim == Prim::Lr && call->kids.size() > 1 && call->kids[1] && call->kids[1]->k == MNode::Run)
+      midOf(call->kids[1]);
     MNode* bound = expand(row, call);
     if (!lex.templ) bound = bind(bound);  // (a template's prims bind when it is called)
     if (!extra) return bound;
@@ -784,9 +874,15 @@ struct Parser {
       n->sub = copy(t->sub);
       n->sup = copy(t->sup);
       n->b = copy(t->b);
+      n->tl = copy(t->tl);
+      n->bl = copy(t->bl);
       n->kids.clear();
-      for (const MNode* k : t->kids)
-        if (MNode* c = copy(k)) n->kids.push_back(c);
+      for (const MNode* k : t->kids) {
+        MNode* c = copy(k);
+        if (c || t->k == MNode::Call) n->kids.push_back(c);  // (a call's slots keep their places)
+      }
+      if (n->k == MNode::Call)
+        while (!n->kids.empty() && !n->kids.back()) n->kids.pop_back();
       return n;
     };
     MNode* out = copy(row.body);
@@ -831,14 +927,14 @@ struct Parser {
         return;
       }
       default:
-        for (MNode* k : {n->a, n->b, n->sub, n->sup}) mapLetters(k, alphabet, arena);
+        for (MNode* k : {n->a, n->b, n->sub, n->sup, n->tl, n->bl}) mapLetters(k, alphabet, arena);
         for (MNode* k : n->kids) mapLetters(k, alphabet, arena);
         return;
     }
   }
   MNode* bind(MNode* n) {
     if (!n) return n;
-    for (MNode** k : {&n->a, &n->b, &n->sub, &n->sup}) *k = bind(*k);
+    for (MNode** k : {&n->a, &n->b, &n->sub, &n->sup, &n->tl, &n->bl}) *k = bind(*k);
     for (MNode*& k : n->kids) k = bind(k);
     if (n->k != MNode::Call) return n;
     auto bad = [&](std::string_view what, std::string_view v) {
@@ -874,6 +970,52 @@ struct Parser {
         if (st != "display" && st != "text" && st != "script" && st != "sscript") bad("style", st);
         return n;
       }
+      case Prim::Grid: {  // (plan P3-29) an align word of l, c, r
+        const std::string_view a = identOf(n->kids.empty() ? nullptr : n->kids[0]);
+        if (a.empty() || a.find_first_not_of("lcr") != std::string_view::npos) bad("alignment", a);
+        return n;
+      }
+      case Prim::Attach: {
+        // (plan P3-29; design T8) the one attach: t and b where the base's
+        // limits mode puts them (above and below, or its scripts), tr and
+        // br its scripts — when both pairs are given, t and b go above and
+        // below —, tl and bl before it
+        auto slot = [&](size_t i) { return i < n->kids.size() ? n->kids[i] : nullptr; };
+        MNode* base = slot(0) ? slot(0) : mk(MNode::Run, n->lo, n->lo);
+        if (base->k == MNode::Run && base->kids.size() == 1) base = base->kids[0];  // (its limits mode is its own)
+        MNode *t = slot(1), *b = slot(2), *tr = slot(5), *br = slot(6);
+        MNode* at = mk(MNode::Attach, n->lo, n->hi);
+        at->a = base;
+        if ((t || b) && (tr || br)) {
+          MNode* lim = mk(MNode::Attach, n->lo, n->hi);
+          lim->a = base;
+          lim->sup = t;
+          lim->sub = b;
+          lim->limits = true;
+          lim->cls = base->cls;
+          at->a = lim;
+          at->sup = tr;
+          at->sub = br;
+        } else {
+          at->sup = t ? t : tr;
+          at->sub = b ? b : br;
+        }
+        at->tl = slot(3);
+        at->bl = slot(4);
+        at->cls = base->cls;
+        return at;
+      }
+      case Prim::HStretch: {  // its annotations go above and below it (overbrace(x, n))
+        const std::string_view side = n->kids.size() > 2 ? identOf(n->kids[2]) : std::string_view{};
+        if (side != "over" && side != "under") bad("side", side);
+        n->flags |= kFlagLimitsAlways;
+        return n;
+      }
+      case Prim::Phantom: {
+        const std::string_view m = n->kids.size() > 1 && n->kids[1] ? identOf(n->kids[1]) : std::string_view{"full"};
+        if (m != "full" && m != "h" && m != "v" && m != "smash") bad("mode", m);
+        return n;
+      }
       default: return n;
     }
   }
@@ -906,6 +1048,14 @@ struct Registry {
     prim("mlimits", Prim::Limits, {{"body", S::Content}, {"mode", S::Ident}});
     prim("variant", Prim::Variant, {{"body", S::Content}, {"alphabet", S::Ident}});
     prim("class", Prim::Class, {{"class", S::Ident}, {"body", S::Content}});
+    // (plan P3-29) grid(align, rows): its rows are cells (`,` too)
+    prim("grid", Prim::Grid, {{"align", S::Ident}, {"rows", S::Rows, false, true}});
+    prim("attach", Prim::Attach,
+         {{"base", S::Content}, {"t", S::Content, true}, {"b", S::Content, true}, {"tl", S::Content, true},
+          {"bl", S::Content, true}, {"tr", S::Content, true}, {"br", S::Content, true}});
+    prim("hstretch", Prim::HStretch, {{"base", S::Content}, {"glyph", S::Sym}, {"side", S::Ident}});
+    prim("delim", Prim::Delim, {{"d", S::Sym}, {"size", S::Content}});
+    prim("phantom", Prim::Phantom, {{"body", S::Content}, {"mode", S::Ident, true}});
     for (const mathrows::StdRow& sr : mathrows::kStdlib) {
       MathRow r;
       std::string_view sig = sr.signature;
@@ -914,13 +1064,7 @@ struct Registry {
       std::string_view ps = sig.substr(open + 1, sig.size() - open - 2);
       while (!ps.empty()) {
         const size_t comma = ps.find(',');
-        std::string_view p = ps.substr(0, comma);
-        while (!p.empty() && p.front() == ' ') p.remove_prefix(1);
-        SlotSpec spec;
-        spec.optional = !p.empty() && p.back() == '?';
-        if (spec.optional) p.remove_suffix(1);
-        spec.name = std::string(p);
-        r.params.push_back(spec);
+        r.params.push_back(parseSlotSpec(ps.substr(0, comma)));
         ps = comma == std::string_view::npos ? std::string_view{} : ps.substr(comma + 1);
       }
       std::string_view bare = sr.bare;
@@ -967,18 +1111,22 @@ void dumpNode(std::string& out, const MNode* n, int depth, const char* role = nu
     case MNode::Num: appendf(out, "num \"%s\"", n->txt.c_str()); break;
     case MNode::Text: appendf(out, "text \"%s\" %s%s", n->txt.c_str(), cls, n->textFont ? " textfont" : ""); break;
     case MNode::Run: out += "run"; break;
-    case MNode::Attach: out += "attach"; break;
+    case MNode::Attach: out += n->limits ? "attach limits" : "attach"; break;
     case MNode::Frac: out += "frac"; break;
     case MNode::Group: appendf(out, "group U+%04X U+%04X", n->openCp, n->closeCp); break;
     case MNode::Call: appendf(out, "call %s", n->txt.c_str()); break;
     case MNode::Param: appendf(out, "param #%s", n->txt.c_str()); break;
     case MNode::Error: out += "error \"" + n->txt + "\""; break;
+    case MNode::Align: out += "align"; break;
+    case MNode::Rows: out += "rows"; break;
   }
   if (n->k != MNode::Run || n->hi > n->lo) appendf(out, " [%u,%u)", n->lo, n->hi);
   out += "\n";
   dumpNode(out, n->a, depth + 1, n->k == MNode::Frac ? "num" : n->k == MNode::Group ? nullptr : "base");
   dumpNode(out, n->sub, depth + 1, "sub");
   dumpNode(out, n->sup, depth + 1, "sup");
+  dumpNode(out, n->tl, depth + 1, "tl");
+  dumpNode(out, n->bl, depth + 1, "bl");
   dumpNode(out, n->b, depth + 1, "den");
   for (const MNode* k : n->kids) dumpNode(out, k, depth + 1);
 }
@@ -993,7 +1141,39 @@ const MathRow* mathRow(std::string_view name) {
   return nullptr;
 }
 
+SlotSpec parseSlotSpec(std::string_view p) {
+  auto trim = [](std::string_view v) {
+    while (!v.empty() && v.front() == ' ') v.remove_prefix(1);
+    while (!v.empty() && v.back() == ' ') v.remove_suffix(1);
+    return v;
+  };
+  SlotSpec spec;
+  std::string_view kind;
+  if (const size_t colon = p.find(':'); colon != std::string_view::npos) {
+    kind = trim(p.substr(colon + 1));
+    p = p.substr(0, colon);
+  }
+  p = trim(p);
+  spec.optional = !p.empty() && p.back() == '?';
+  if (spec.optional) p.remove_suffix(1);
+  spec.name = std::string(p);
+  if (kind == "rows" || kind == "cells") {
+    spec.kind = SlotKind::Rows;
+    spec.cells = kind == "cells";
+  } else if (kind == "sym") {
+    spec.kind = SlotKind::Sym;
+  } else if (!kind.empty()) {
+    spec.name += ":";  // an unknown kind: a name checkRow refuses
+  }
+  return spec;
+}
+
 bool checkRow(const MathRow& row, std::string& why) {
+  for (size_t i = 0; i < row.params.size(); i++)
+    if (row.params[i].kind == SlotKind::Rows && i + 1 < row.params.size()) {
+      why = row.name + ": rows parameter '" + row.params[i].name + "' is not the last";
+      return false;
+    }
   for (size_t i = 0; i < row.params.size(); i++)
     for (size_t j = i + 1; j < row.params.size(); j++)
       if (row.params[i].name == row.params[j].name) {
@@ -1021,7 +1201,7 @@ bool checkRow(const MathRow& row, std::string& why) {
         return false;
       }
     }
-    return ok(n->a) && ok(n->sub) && ok(n->sup) && ok(n->b) &&
+    return ok(n->a) && ok(n->sub) && ok(n->sup) && ok(n->b) && ok(n->tl) && ok(n->bl) &&
            std::all_of(n->kids.begin(), n->kids.end(), [&](const MNode* k) { return ok(k); });
   };
   return ok(row.body);

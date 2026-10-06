@@ -1,0 +1,308 @@
+inline pid=0 "mat(1, 2; 3, 4)"
+hbox Ord w=3246 asc=1485 desc=973
+  hbox Ord w=3246 asc=1485 desc=973
+    hbox Ord w=3246 asc=1485 desc=973
+      hbox Open w=600 asc=1485 desc=973
+        glyph "" Open w=600 asc=1485 desc=973 px=16
+      hbox Ord w=2046 asc=1484 desc=972 @(600,0)
+        hbox Ord w=511 asc=727 desc=7 @(0,614)
+          glyph "1" Ord w=511 asc=727 desc=7 px=16
+        hbox Ord w=511 asc=723 desc=0 @(1535,614)
+          glyph "2" Ord w=511 asc=723 desc=0 px=16
+        hbox Ord w=511 asc=719 desc=17 @(0,-614)
+          glyph "3" Ord w=511 asc=719 desc=17 px=16
+        hbox Ord w=511 asc=719 desc=7 @(1535,-614)
+          glyph "4" Ord w=511 asc=719 desc=7 px=16
+      hbox Close w=600 asc=1485 desc=973 @(2646,0)
+        glyph "" Close w=600 asc=1485 desc=973 px=16
+inline pid=0 "bmat(a, b; c, d)"
+hbox Ord w=3345 asc=1484 desc=973
+  hbox Ord w=3345 asc=1484 desc=973
+    hbox Ord w=3345 asc=1484 desc=973
+      hbox Open w=540 asc=1484 desc=973
+        glyph "" Open w=540 asc=1485 desc=972 px=16 @(0,-1)
+      hbox Ord w=2265 asc=1484 desc=972 @(540,0)
+        hbox Ord w=624 asc=477 desc=12 @(0,614)
+          glyph "a" Ord w=624 asc=477 desc=12 px=16
+        hbox Ord w=602 asc=700 desc=10 @(1655,614)
+          glyph "b" Ord w=602 asc=700 desc=10 px=16
+        hbox Ord w=498 asc=486 desc=19 @(63,-614)
+          glyph "c" Ord w=498 asc=486 desc=19 px=16
+        hbox Ord w=617 asc=700 desc=19 @(1648,-614)
+          glyph "d" Ord w=617 asc=700 desc=19 px=16
+      hbox Close w=540 asc=1484 desc=973 @(2805,0)
+        glyph "" Close w=540 asc=1485 desc=972 px=16 @(0,-1)
+inline pid=0 "vmat(x & y; z & w)"
+hbox Ord w=2906 asc=1485 desc=973
+  hbox Ord w=2906 asc=1485 desc=973
+    hbox Ord w=2906 asc=1485 desc=973
+      hbox Open w=256 asc=1485 desc=973
+        glyph "" Open w=256 asc=1485 desc=973 px=16
+      hbox Ord w=2394 asc=1484 desc=972 @(256,0)
+        hbox Ord w=539 asc=475 desc=12 @(0,614)
+          glyph "x" Ord w=539 asc=475 desc=12 px=16
+        hbox Ord w=607 asc=479 desc=239 @(1675,614)
+          glyph "y" Ord w=607 asc=479 desc=239 px=16
+        hbox Ord w=481 asc=473 desc=28 @(29,-614)
+          glyph "z" Ord w=481 asc=473 desc=28 px=16
+        hbox Ord w=831 asc=480 desc=8 @(1563,-614)
+          glyph "w" Ord w=831 asc=480 desc=8 px=16
+      hbox Close w=256 asc=1485 desc=973 @(2650,0)
+        glyph "" Close w=256 asc=1485 desc=973 px=16
+display pid=1
+hbox Ord w=10618 asc=1485 desc=973
+  glyph "f" Ord w=429 asc=685 desc=12 px=16
+  hbox Ord w=1211 asc=721 desc=209 @(429,0)
+    glyph "(" Open w=336 asc=721 desc=209 px=16
+    glyph "x" Ord w=539 asc=475 desc=12 px=16 @(336,0)
+    glyph ")" Close w=336 asc=721 desc=209 px=16 @(875,0)
+  glue w=284 @(1640,0)
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(1924,0)
+  glue w=284 @(2698,0)
+  hbox Ord w=7636 asc=1485 desc=973 @(2982,0)
+    hbox Ord w=7636 asc=1485 desc=973
+      hbox Open w=568 asc=1485 desc=973
+        glyph "" Open w=568 asc=1485 desc=973 px=16
+      hbox Ord w=6945 asc=1484 desc=972 @(568,0)
+        hbox Ord w=539 asc=475 desc=12 @(0,614)
+          glyph "x" Ord w=539 asc=475 desc=12 px=16
+        hbox Ord w=3461 asc=819 desc=205 @(2337,614)
+          glyph "if" Ord w=1024 asc=819 desc=205 px=16
+          glyph "x" Ord w=539 asc=475 desc=12 px=16 @(1024,0)
+          glue w=284 @(1563,0)
+          glyph "≥" Rel w=819 asc=665 desc=153 px=16 @(1847,0)
+          glue w=284 @(2666,0)
+          glyph "0" Ord w=511 asc=721 desc=14 px=16 @(2950,0)
+        hbox Ord w=1313 asc=475 desc=12 @(0,-614)
+          glyph "−" Ord w=774 asc=276 desc=-236 px=16
+          glyph "x" Ord w=539 asc=475 desc=12 px=16 @(774,0)
+        hbox Ord w=4608 asc=819 desc=205 @(2337,-614)
+          glyph "otherwise" Ord w=4608 asc=819 desc=205 px=16
+      glue w=123 @(7513,0)
+display pid=2
+hbox Ord w=7949 asc=1741 desc=1229
+  hbox Ord w=7949 asc=1741 desc=1229
+    hbox Ord w=1640 asc=721 desc=209 @(0,761)
+      glyph "f" Ord w=429 asc=685 desc=12 px=16
+      hbox Ord w=1211 asc=721 desc=209 @(429,0)
+        glyph "(" Open w=336 asc=721 desc=209 px=16
+        glyph "x" Ord w=539 asc=475 desc=12 px=16 @(336,0)
+        glyph ")" Close w=336 asc=721 desc=209 px=16 @(875,0)
+    hbox Ord w=4418 asc=980 desc=209 @(1924,761)
+      glyph "=" Rel w=774 asc=377 desc=-135 px=16
+      glue w=284 @(774,0)
+      hbox Ord w=3360 asc=980 desc=209 @(1058,0)
+        hbox Ord w=2951 asc=727 desc=209
+          glyph "(" Open w=336 asc=721 desc=209 px=16
+          glyph "x" Ord w=539 asc=475 desc=12 px=16 @(336,0)
+          glue w=228 @(875,0)
+          glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1103,0)
+          glue w=228 @(1876,0)
+          glyph "1" Ord w=511 asc=727 desc=7 px=16 @(2104,0)
+          glyph ")" Close w=336 asc=721 desc=209 px=16 @(2615,0)
+        glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(2951,474)
+    hbox Ord w=0 asc=0 desc=0 @(1640,-871)
+    hbox Ord w=6025 asc=967 desc=76 @(1924,-871)
+      glyph "=" Rel w=774 asc=377 desc=-135 px=16
+      glue w=284 @(774,0)
+      hbox Ord w=948 asc=967 desc=12 @(1058,0)
+        glyph "x" Ord w=539 asc=475 desc=12 px=16
+        glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(539,461)
+      glue w=228 @(2006,0)
+      glyph "+" Bin w=773 asc=600 desc=76 px=16 @(2234,0)
+      glue w=228 @(3007,0)
+      glyph "2" Ord w=511 asc=723 desc=0 px=16 @(3235,0)
+      glyph "x" Ord w=539 asc=475 desc=12 px=16 @(3746,0)
+      glue w=228 @(4285,0)
+      glyph "+" Bin w=773 asc=600 desc=76 px=16 @(4513,0)
+      glue w=228 @(5286,0)
+      glyph "1" Ord w=511 asc=727 desc=7 px=16 @(5514,0)
+display pid=3
+hbox Ord w=5118 asc=1792 desc=1280
+  hbox Ord w=5118 asc=1792 desc=1280
+    hbox Open w=686 asc=1792 desc=1280
+      glyph "" Open w=686 asc=1792 desc=1280 px=16
+    hbox Ord w=4309 asc=1637 desc=1126 @(686,0)
+      hbox Ord w=2455 asc=700 desc=76 @(1,767)
+        glyph "a" Ord w=624 asc=477 desc=12 px=16
+        glue w=228 @(624,0)
+        glyph "+" Bin w=773 asc=600 desc=76 px=16 @(852,0)
+        glue w=228 @(1625,0)
+        glyph "b" Ord w=602 asc=700 desc=10 px=16 @(1853,0)
+      hbox Ord w=1569 asc=727 desc=7 @(2740,767)
+        glyph "=" Rel w=774 asc=377 desc=-135 px=16
+        glue w=284 @(774,0)
+        glyph "1" Ord w=511 asc=727 desc=7 px=16 @(1058,0)
+      hbox Ord w=2456 asc=700 desc=12 @(0,-768)
+        glyph "a" Ord w=624 asc=477 desc=12 px=16
+        glue w=228 @(624,0)
+        glyph "−" Bin w=774 asc=276 desc=-236 px=16 @(852,0)
+        glue w=228 @(1626,0)
+        glyph "b" Ord w=602 asc=700 desc=10 px=16 @(1854,0)
+      hbox Ord w=1569 asc=721 desc=14 @(2740,-768)
+        glyph "=" Rel w=774 asc=377 desc=-135 px=16
+        glue w=284 @(774,0)
+        glyph "0" Ord w=511 asc=721 desc=14 px=16 @(1058,0)
+    glue w=123 @(4995,0)
+inline pid=4 "overbrace(a + b + c, n)"
+hbox Ord w=4182 asc=1711 desc=76
+  hbox Ord w=4182 asc=1711 desc=76
+    hbox Ord w=4182 asc=1168 desc=76
+      hbox Ord w=4182 asc=700 desc=76
+        glyph "a" Ord w=624 asc=477 desc=12 px=16
+        glue w=228 @(624,0)
+        glyph "+" Bin w=773 asc=600 desc=76 px=16 @(852,0)
+        glue w=228 @(1625,0)
+        glyph "b" Ord w=602 asc=700 desc=10 px=16 @(1853,0)
+        glue w=228 @(2455,0)
+        glyph "+" Bin w=773 asc=600 desc=76 px=16 @(2683,0)
+        glue w=228 @(3456,0)
+        glyph "c" Ord w=498 asc=486 desc=19 px=16 @(3684,0)
+      hbox Ord w=4182 asc=895 desc=-541 @(0,273)
+        glyph "" Ord w=633 asc=739 desc=-541 px=16
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(589,0)
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(750,0)
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(910,0)
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(1071,0)
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(1232,0)
+        glyph "" Ord w=1397 asc=895 desc=-678 px=16 @(1393,0)
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(2745,0)
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(2906,0)
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(3067,0)
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(3228,0)
+        glyph "" Ord w=205 asc=739 desc=-678 px=16 @(3388,0)
+        glyph "" Ord w=633 asc=739 desc=-541 px=16 @(3549,0)
+    hbox Ord w=476 asc=338 desc=7 @(1853,1373)
+      glyph "n" Ord w=476 asc=338 desc=7 px=11.2
+inline pid=4 "underbrace(x_1 + cdots + x_k, k)"
+hbox Ord w=5180 asc=600 desc=1356
+  hbox Ord w=5180 asc=600 desc=1356
+    hbox Ord w=5180 asc=600 desc=688
+      hbox Ord w=5180 asc=600 desc=162
+        hbox Ord w=948 asc=475 desc=162
+          glyph "x" Ord w=539 asc=475 desc=12 px=16
+          glyph "1" Ord w=358 asc=509 desc=5 px=11.2 @(539,-157)
+        glue w=228 @(948,0)
+        glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1176,0)
+        glue w=228 @(1949,0)
+        glyph "⋯" Ord w=786 asc=327 desc=-189 px=16 @(2177,0)
+        glue w=228 @(2963,0)
+        glyph "+" Bin w=773 asc=600 desc=76 px=16 @(3191,0)
+        glue w=228 @(3964,0)
+        hbox Ord w=988 asc=475 desc=159 @(4192,0)
+          glyph "x" Ord w=539 asc=475 desc=12 px=16
+          glyph "k" Ord w=398 asc=492 desc=5 px=11.2 @(539,-154)
+      hbox Ord w=5180 asc=-98 desc=453 @(0,-235)
+        glyph "" Ord w=633 asc=-98 desc=297 px=16
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(611,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(794,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(977,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(1160,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(1343,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(1526,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(1709,0)
+        glyph "" Ord w=1397 asc=-236 desc=453 px=16 @(1892,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(3267,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(3449,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(3632,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(3815,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(3998,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(4181,0)
+        glyph "" Ord w=205 asc=-236 desc=297 px=16 @(4364,0)
+        glyph "" Ord w=633 asc=-98 desc=297 px=16 @(4547,0)
+    hbox Ord w=398 asc=492 desc=5 @(2391,-1351)
+      glyph "k" Ord w=398 asc=492 desc=5 px=11.2
+inline pid=4 "hat(x y z)"
+hbox Ord w=1627 asc=840 desc=239
+  hbox Ord w=1627 asc=840 desc=239
+    hbox Ord w=1627 asc=479 desc=239
+      glyph "x" Ord w=539 asc=475 desc=12 px=16
+      glyph "y" Ord w=607 asc=479 desc=239 px=16 @(539,0)
+      glyph "z" Ord w=481 asc=473 desc=28 px=16 @(1146,0)
+    glyph "" Ord w=1248 asc=784 desc=-515 px=16 @(189,56)
+inline pid=4 "vec(A B C D)"
+hbox Ord w=3038 asc=1061 desc=15
+  hbox Ord w=3038 asc=1061 desc=15
+    hbox Ord w=3038 asc=716 desc=15
+      glyph "A" Ord w=788 asc=696 desc=10 px=16
+      glyph "B" Ord w=671 asc=702 desc=1 px=16 @(788,0)
+      glyph "C" Ord w=731 asc=716 desc=15 px=16 @(1459,0)
+      glyph "D" Ord w=848 asc=702 desc=-2 px=16 @(2190,0)
+    hbox Ord w=3038 asc=768 desc=-490 @(0,293)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(126,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(252,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(378,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(504,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(631,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(757,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(883,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(1009,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(1135,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(1261,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(1387,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(1513,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(1639,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(1766,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(1892,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(2018,0)
+      glyph "" Ord w=154 asc=650 desc=-609 px=16 @(2144,0)
+      glyph "" Ord w=768 asc=768 desc=-490 px=16 @(2270,0)
+display pid=5
+hbox Ord w=5818 asc=1792 desc=1280
+  hbox Ord w=1506 asc=1503 desc=890
+    hbox Ord w=358 asc=509 desc=5 @(0,994)
+      glyph "1" Ord w=358 asc=509 desc=5 px=11.2
+    hbox Ord w=358 asc=503 desc=5 @(0,-881)
+      glyph "4" Ord w=358 asc=503 desc=5 px=11.2
+    hbox Ord w=1148 asc=1500 desc=890 @(358,0)
+      hbox Ord w=739 asc=1247 desc=830
+        glyph "Π" Ord w=739 asc=707 desc=14 px=16
+        hbox Ord w=472 asc=335 desc=14 @(133,912)
+          glyph "α" Ord w=472 asc=335 desc=14 px=11.2
+        hbox Ord w=475 asc=500 desc=145 @(132,-685)
+          glyph "β" Ord w=475 asc=500 desc=145 px=11.2
+      hbox Ord w=358 asc=506 desc=0 @(739,994)
+        glyph "2" Ord w=358 asc=506 desc=0 px=11.2
+      hbox Ord w=358 asc=502 desc=9 @(739,-881)
+        glyph "6" Ord w=358 asc=502 desc=9 px=11.2
+  glue w=228 @(1506,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1734,0)
+  glue w=228 @(2507,0)
+  hbox Ord w=504 asc=1178 desc=666 @(2735,0)
+    glyph "" Ord w=504 asc=1178 desc=666 px=16
+  glyph "x" Ord w=539 asc=475 desc=12 px=16 @(3239,0)
+  hbox Ord w=504 asc=1178 desc=666 @(3778,0)
+    glyph "" Ord w=504 asc=1178 desc=666 px=16
+  glue w=228 @(4282,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(4510,0)
+  glue w=228 @(5283,0)
+  hbox Ord w=307 asc=1792 desc=1280 @(5511,0)
+    glyph "" Ord w=307 asc=1792 desc=1280 px=16
+inline pid=6 "x phantom(y) z"
+hbox Ord w=1627 asc=479 desc=239
+  glyph "x" Ord w=539 asc=475 desc=12 px=16
+  hbox Ord w=607 asc=479 desc=239 @(539,0)
+  glyph "z" Ord w=481 asc=473 desc=28 px=16 @(1146,0)
+inline pid=6 "a hphantom(b c) d"
+hbox Ord w=2341 asc=700 desc=19
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+  hbox Ord w=1100 asc=0 desc=0 @(624,0)
+  glyph "d" Ord w=617 asc=700 desc=19 px=16 @(1724,0)
+inline pid=6 "smash(y_1^2) + 1"
+hbox Ord w=2017 asc=600 desc=76
+  hbox Ord w=1016 asc=0 desc=0
+    hbox Ord w=1016 asc=967 desc=239
+      hbox Ord w=1016 asc=967 desc=239
+        glyph "y" Ord w=607 asc=479 desc=239 px=16
+        glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(607,461)
+        glyph "1" Ord w=358 asc=509 desc=5 px=11.2 @(607,-212)
+  glue w=228 @(1016,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1244,0)
+inline pid=6 ""
+hbox Ord w=511 asc=727 desc=7
+  glyph "1" Ord w=511 asc=727 desc=7 px=16
+inline pid=6 "a & b"
+hbox Ord w=1226 asc=700 desc=12
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+  glyph "b" Ord w=602 asc=700 desc=10 px=16 @(624,0)

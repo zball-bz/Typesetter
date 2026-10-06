@@ -100,12 +100,7 @@ void MathEnv::build(const std::vector<Decl>& decls, const Interner& strs, DiagSi
         std::string_view ps = extStr(d, strs, "params");
         while (!ps.empty()) {
           const size_t comma = ps.find(',');
-          std::string_view p = ps.substr(0, comma);
-          SlotSpec spec;
-          spec.optional = !p.empty() && p.back() == '?';
-          if (spec.optional) p.remove_suffix(1);
-          spec.name = std::string(p);
-          r.row.params.push_back(spec);
+          r.row.params.push_back(parseSlotSpec(ps.substr(0, comma)));  // (plan P3-29: `r: rows`, `r: cells`)
           ps = comma == std::string_view::npos ? std::string_view{} : ps.substr(comma + 1);
         }
         bool paramsOk = r.row.params.size() <= 9;

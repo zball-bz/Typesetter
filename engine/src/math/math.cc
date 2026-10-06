@@ -262,6 +262,69 @@ struct Layouter {
     return best;
   }
 
+  // (plan P3-29) horizontal stretching (MathHorizGlyphConstruction): the
+  // widest variant no wider than `target` when `fit` (an accent, TeX's rule:
+  // a variant too wide keeps the one before, the natural glyph first), else
+  // the first at least as wide; when every variant falls short, the
+  // assembly at the target width (braces, arrows) — left to right, uniform
+  // overlaps
+  MathBox* stretchHoriz(u32 cp, u8 cls, u8 st, Su target, bool fit) {
+    MathBox* natural = glyphBox(cp, cls, st);
+    const VarChain* ch = F.hchain(cp);
+    if (!ch || natural->w >= target) return natural;
+    MathBox* best = natural;
+    for (int k = 0; k < ch->n; k++) {
+      MathBox* vb = glyphBox(F.variantCps[ch->off + k], cls, st);
+      if (fit && vb->w > target) return best;
+      best = vb;
+      if (vb->w >= target) return vb;
+    }
+    if (ch->asmN == 0) return best;
+    const AsmPart* parts = &F.parts[ch->asmOff];
+    const int minOv = F.minConnectorOverlap;
+    const double targetU = (double)target * F.upem / (64.0 * basePx * styleScale(st));
+    std::vector<const AsmPart*> list;
+    for (int r = 1; r <= kMathPolicy.maxAssemblyRepeats; r++) {
+      list.clear();
+      for (int k = 0; k < ch->asmN; k++)
+        for (int c = 0, copies = parts[k].isExtender ? r : 1; c < copies; c++) list.push_back(&parts[k]);
+      if (list.size() < 2) continue;
+      double full = 0;
+      for (const AsmPart* pp : list) full += pp->fullAdv;
+      if (full - (double)minOv * (double)(list.size() - 1) < targetU && r < kMathPolicy.maxAssemblyRepeats) continue;
+      int maxOv = INT32_MAX;
+      for (size_t k = 0; k + 1 < list.size(); k++)
+        maxOv = std::min(maxOv, std::min<int>(list[k]->endOverlap, list[k + 1]->startOverlap));
+      if (maxOv < minOv) maxOv = minOv;
+      double o = std::clamp((full - targetU) / (double)(list.size() - 1), (double)minOv, (double)maxOv);
+      MathBox* out = mkBox(MathKind::HBox);
+      out->cls = out->firstCls = out->lastCls = cls;
+      double cursor = 0;
+      for (const AsmPart* pp : list) {
+        MathBox* g = glyphBox(pp->cp, cls, st);
+        // its ink extents (a brace's lies above the baseline: a negative depth)
+        out->asc = out->kids.empty() ? g->asc : std::max(out->asc, g->asc);
+        out->desc = out->kids.empty() ? g->desc : std::max(out->desc, g->desc);
+        out->kids.push_back({toSu(cursor, st), 0, g});
+        cursor += pp->fullAdv - o;
+      }
+      out->w = toSu(cursor + o, st);
+      out->topAccent = out->w / 2;
+      return out;
+    }
+    return best;
+  }
+  // a spacing accent's combining form, which carries the wide variants
+  static u32 combiningAccent(u32 cp) {
+    switch (cp) {
+      case 0x02C6: return 0x0302;  // ˆ hat
+      case 0x02DC: return 0x0303;  // ˜ tilde
+      case 0x02C7: return 0x030C;  // ˇ check
+      case 0x02D8: return 0x0306;  // ˘ breve
+      default: return cp;
+    }
+  }
+
   // wrap a stretched glyph so its box is centred on the math axis
   MathBox* centerOnAxis(MathBox* b, u8 cls, u8 st) {
     Su axis = constSu(C::AxisHeight, st);
@@ -300,6 +363,8 @@ struct Layouter {
       case MNode::Call: return layoutCall(n, st);
       case MNode::Error:  // its source slice, set in the text font (measured like names)
         return textBox(n->txt, kOrd, st, /*textFont=*/true);
+      case MNode::Rows: return layoutGrid(n, "c", st);  // (rows outside a grid: centred cells)
+      case MNode::Align:  // (an alignment point no grid or display takes: nothing; runs skip it)
       case MNode::Param: break;
     }
     return mkBox(MathKind::HBox);
@@ -313,8 +378,82 @@ struct Layouter {
                        u8 st, bool startEdge, bool endEdge) {
     std::vector<MathBox*> boxes;
     boxes.reserve(hi - lo);
-    for (size_t k = lo; k < hi; k++) boxes.push_back(layout(kids[k], st));
+    for (size_t k = lo; k < hi; k++)
+      if (kids[k]->k != MNode::Align) boxes.push_back(layout(kids[k], st));
     return assemble(boxes, st, startEdge, endEdge);
+  }
+
+  // (plan P3-29; design T8 Grid) rows of cells. A column is as wide as its
+  // widest cell, each cell set at its column's alignment — the align word's
+  // letters (l, c, r) cycled over the columns; an `rl` pair (aligned) joins
+  // without a gap and its right cell opens as after an Ord (TeX's `&={}`: a
+  // relation keeps its space). Columns stand 1em apart (TeX's 2×\arraycolsep,
+  // cases' \quad); rows are at least a strut tall (TeX's 8.5pt + 3.5pt at
+  // 10pt: 0.85em + 0.35em), with a jot (0.3em) between them when the grid
+  // has pairs (aligned). The grid is centred on the axis (TeX \vcenter).
+  MathBox* layoutGrid(const MNode* rows, std::string_view align, u8 st) {
+    if (align.empty()) align = "c";
+    const Su em = toSu(F.upem, st);
+    auto alignOf = [&](size_t c) { return align[c % align.size()]; };
+    auto pairRight = [&](size_t c) { return c > 0 && alignOf(c - 1) == 'r' && alignOf(c) == 'l'; };
+    bool pairs = false;
+    for (size_t c = 1; c < 2 * align.size() && !pairs; c++) pairs = pairRight(c);
+    struct Cell {
+      MathBox* box;
+      Su lead;
+    };
+    std::vector<std::vector<Cell>> grid;
+    std::vector<Su> colW;
+    for (const MNode* row : rows ? rows->kids : std::vector<MNode*>{}) {
+      std::vector<Cell>& r = grid.emplace_back();
+      for (size_t c = 0; c < row->kids.size(); c++) {
+        MathBox* b = layout(row->kids[c], st);
+        const Su lead = pairRight(c) && !b->kids.empty() ? pairGlue(kOrd, b->firstCls, st) : 0;
+        r.push_back({b, lead});
+        if (colW.size() <= c) colW.resize(c + 1, 0);
+        colW[c] = std::max(colW[c], lead + b->w);
+      }
+    }
+    std::vector<Su> colX(colW.size(), 0);
+    Su x = 0;
+    for (size_t c = 0; c < colW.size(); c++) {
+      if (c) x += pairRight(c) ? 0 : em;
+      colX[c] = x;
+      x += colW[c];
+    }
+    const Su strutAsc = em * 85 / 100, strutDesc = em * 35 / 100, jot = pairs ? em * 3 / 10 : 0;
+    std::vector<Su> asc(grid.size()), desc(grid.size());
+    Su h = 0;
+    for (size_t i = 0; i < grid.size(); i++) {
+      asc[i] = strutAsc;
+      desc[i] = strutDesc;
+      for (const Cell& c : grid[i]) {
+        asc[i] = std::max(asc[i], c.box->asc);
+        desc[i] = std::max(desc[i], c.box->desc);
+      }
+      h += asc[i] + desc[i] + (i ? jot : 0);
+    }
+    MathBox* out = mkBox(MathKind::HBox);
+    out->cls = out->firstCls = out->lastCls = kOrd;
+    out->w = x;
+    out->topAccent = x / 2;
+    const Su axis = constSu(C::AxisHeight, st);
+    out->asc = h / 2 + axis;
+    out->desc = h - out->asc;
+    Su top = 0;  // from the grid's top down to the row's top
+    for (size_t i = 0; i < grid.size(); i++) {
+      if (i) top += jot;
+      const Su dy = out->asc - (top + asc[i]);
+      for (size_t c = 0; c < grid[i].size(); c++) {
+        const Cell& cell = grid[i][c];
+        const Su w = cell.lead + cell.box->w, room = colW[c] - w;
+        const char a = alignOf(c);
+        const Su dx = colX[c] + cell.lead + (a == 'l' ? 0 : a == 'r' ? room : room / 2);
+        out->kids.push_back({dx, dy, cell.box});
+      }
+      top += asc[i] + desc[i];
+    }
+    return out;
   }
 
   // Rules 5–6 (TeXbook): a Bin with no operand on its left — at the start,
@@ -378,24 +517,29 @@ struct Layouter {
   // (plan P3-25) one attach for every base: an operator's limits mode — a
   // large operator's (sum), a text operator's (lim), limits() — sets its
   // scripts above and below; else they are scripts
+  // (plan P3-29) an attach node's limits flag (attach(…, t, b, tr, br): t
+  // and b above and below) forces them too; its pre-scripts (tl, bl) stand
+  // before the base, shifted as its scripts are
   MathBox* layoutScript(MNode* n, u8 st) {
     const u8 fl = n->a->flags;
-    if ((fl & kFlagLimitsAlways) || ((fl & kFlagLimits) && isDisplay(st))) {
-      MathBox* base = n->a->k == MNode::Text ? textBox(n->a->txt, kOp, st, n->a->textFont) : layout(n->a, st);
-      return attachLimits(base, n->sub, n->sup, st);
+    const bool isChar = n->a->k == MNode::Sym && !(fl & kFlagLarge);
+    MathBox* base;
+    MathBox* out;
+    if (n->limits || (fl & kFlagLimitsAlways) || ((fl & kFlagLimits) && isDisplay(st))) {
+      base = n->a->k == MNode::Text ? textBox(n->a->txt, kOp, st, n->a->textFont) : layout(n->a, st);
+      out = attachLimits(base, n->sub, n->sup, st);
+    } else {
+      base = layout(n->a, st);
+      out = attachScripts(base, n->sub, n->sup, st, isChar);
     }
-    MathBox* base = layout(n->a, st);
-    return attachScripts(base, n->sub, n->sup, st,
-                         /*isChar=*/n->a->k == MNode::Sym && !(fl & kFlagLarge));
+    return n->tl || n->bl ? attachPre(out, base, n->tl, n->bl, st, isChar) : out;
   }
 
-  MathBox* attachScripts(MathBox* base, MNode* subN, MNode* supN, u8 st,
-                         bool isChar) {
-    if (!subN && !supN) return base;
-    MathBox* sup = supN ? layout(supN, kSupStyle[st]) : nullptr;
-    MathBox* sub = subN ? layout(subN, kSubStyle[st]) : nullptr;
-
-    Su shiftUp = 0, shiftDown = 0;
+  // a script pair's shifts against a base (MATH constants, the TeX 18a
+  // character-base refinement and Typst's joint collision resolution)
+  void scriptShifts(const MathBox* base, const MathBox* sup, const MathBox* sub, u8 st, bool isChar, Su& shiftUp,
+                    Su& shiftDown) {
+    shiftUp = shiftDown = 0;
     if (sup) {
       Su u0 = isChar ? 0 : base->asc - constSu(C::SuperscriptBaselineDropMax, st);
       Su su1 = constSu(isCramped(st) ? C::SuperscriptShiftUpCramped
@@ -425,6 +569,15 @@ struct Layouter {
         shiftDown += deficit - up;
       }
     }
+  }
+
+  MathBox* attachScripts(MathBox* base, MNode* subN, MNode* supN, u8 st,
+                         bool isChar) {
+    if (!subN && !supN) return base;
+    MathBox* sup = supN ? layout(supN, kSupStyle[st]) : nullptr;
+    MathBox* sub = subN ? layout(subN, kSubStyle[st]) : nullptr;
+    Su shiftUp = 0, shiftDown = 0;
+    scriptShifts(base, sup, sub, st, isChar, shiftUp, shiftDown);
 
     MathBox* out = mkBox(MathKind::HBox);
     // (plan P3-25) its edges are its base's: (a+b)^2 opens with an Open
@@ -454,6 +607,37 @@ struct Layouter {
     }
     out->w = right + constSu(C::SpaceAfterScript, st);
     out->lastCls = base->lastCls;
+    return out;
+  }
+
+  // (plan P3-29) pre-scripts (attach's tl, bl): shifted as scripts of the
+  // base are, right-aligned against the body (the base with its own
+  // attachments), which follows them
+  MathBox* attachPre(MathBox* body, const MathBox* base, MNode* tlN, MNode* blN, u8 st, bool isChar) {
+    MathBox* sup = tlN ? layout(tlN, kSupStyle[st]) : nullptr;
+    MathBox* sub = blN ? layout(blN, kSubStyle[st]) : nullptr;
+    Su shiftUp = 0, shiftDown = 0;
+    scriptShifts(base, sup, sub, st, isChar, shiftUp, shiftDown);
+    const Su preW = std::max(sup ? sup->w : 0, sub ? sub->w : 0);
+    MathBox* out = mkBox(MathKind::HBox);
+    out->cls = body->cls;
+    out->firstCls = body->firstCls;
+    out->lastCls = body->lastCls;
+    out->italic = body->italic;
+    out->w = preW + body->w;
+    out->asc = body->asc;
+    out->desc = body->desc;
+    if (sup) {
+      out->kids.push_back({preW - sup->w, shiftUp, sup});
+      out->asc = std::max(out->asc, shiftUp + sup->asc);
+      out->desc = std::max(out->desc, sup->desc - shiftUp);
+    }
+    if (sub) {
+      out->kids.push_back({preW - sub->w, -shiftDown, sub});
+      out->desc = std::max(out->desc, shiftDown + sub->desc);
+      out->asc = std::max(out->asc, sub->asc - shiftDown);
+    }
+    out->kids.push_back({preW, 0, body});
     return out;
   }
 
@@ -516,6 +700,13 @@ struct Layouter {
     Su target = 2 * (over > under ? over : under);
     target = kMathPolicy.shortfall(target);  // short_fall
     auto delim = [&](u32 cp, u8 cls) {
+      // (plan P3-29) `.`: no delimiter (TeX's \right.), its null space
+      // (\nulldelimiterspace: 1.2pt at 10pt)
+      if (cp == '.') {
+        MathBox* sp = spacer(toSu(0.12 * F.upem, st));
+        sp->cls = sp->firstCls = sp->lastCls = cls;
+        return sp;
+      }
       MathBox* g = glyphBox(cp, cls, st);
       if (g->asc + g->desc >= target) return g;  // natural glyph suffices
       MathBox* sg = stretchVert(cp, cls, st, target);
@@ -637,9 +828,21 @@ struct Layouter {
     // passes a lone atom's on, plan P3-25)
     const Su baseAttach = base->topAccent;
     MathBox* acc = glyphBox(accCp, kOrd, st);
+    // (plan P3-29) a base wider than the accent takes a wide one — the
+    // widest variant that fits (hat, tilde), or an assembly as wide as the
+    // base (an arrow) — centred over it
+    bool wide = false;
+    if (base->w > acc->w)
+      if (const u32 wc = F.hchain(accCp) ? accCp : combiningAccent(accCp); F.hchain(wc)) {
+        MathBox* w = stretchHoriz(wc, kOrd, st, base->w, /*fit=*/true);
+        if (w->w > acc->w) {
+          acc = w;
+          wide = true;
+        }
+      }
     Su dy = base->asc - constSu(C::AccentBaseHeight, st);
     if (dy < 0) dy = 0;
-    Su x = baseAttach - acc->topAccent;
+    Su x = wide ? (base->w - acc->w) / 2 : baseAttach - acc->topAccent;
     MathBox* out = mkBox(MathKind::HBox);
     out->cls = out->firstCls = out->lastCls = kOrd;
     out->w = base->w;
@@ -713,6 +916,38 @@ struct Layouter {
     return out;
   }
 
+  // (plan P3-29; design T8 HStretch) a brace, bracket, paren or arrow
+  // stretched to the base's width, over or under it: a stretch stack (its
+  // gap to the base StretchStackGapBelowMin over, …AboveMin under); its
+  // annotations are attach's, above and below (hstretch's limits)
+  MathBox* layoutHStretch(MNode* baseN, u32 cp, bool over, u8 st) {
+    MathBox* base = layout(baseN, st);
+    MathBox* out = mkBox(MathKind::HBox);
+    out->cls = out->firstCls = out->lastCls = kOrd;
+    out->kids.push_back({0, 0, base});
+    out->w = base->w;
+    out->asc = base->asc;
+    out->desc = base->desc;
+    if (!cp) return out;
+    MathBox* g = stretchHoriz(cp, kOrd, st, base->w, /*fit=*/false);
+    const Su dx = (base->w - g->w) / 2;
+    if (dx < 0) {  // a glyph wider than its base: the base centred under it
+      out->kids[0].dx = -dx;
+      out->w = g->w;
+    }
+    if (over) {
+      const Su dy = base->asc + constSu(C::StretchStackGapBelowMin, st) + g->desc;
+      out->kids.push_back({std::max<Su>(dx, 0), dy, g});
+      out->asc = dy + g->asc;
+    } else {
+      const Su dy = base->desc + constSu(C::StretchStackGapAboveMin, st) + g->asc;
+      out->kids.push_back({std::max<Su>(dx, 0), -dy, g});
+      out->desc = dy + g->desc;
+    }
+    out->topAccent = out->w / 2;
+    return out;
+  }
+
   // a primitive call (plan P1-24): the closed set; template rows were
   // expanded at bind, so nothing here knows a family name
   static std::string_view identText(const MNode* n) {
@@ -775,7 +1010,47 @@ struct Layouter {
       }
       case Prim::Limits:
       case Prim::Variant:
+      case Prim::Attach:  // (bound to an Attach node)
         return layout(content(0), st);
+      case Prim::Grid: {
+        const MNode* rows = arg(1);
+        return layoutGrid(rows && rows->k == MNode::Rows ? rows : nullptr, arg(0) ? identText(arg(0)) : "c", st);
+      }
+      case Prim::HStretch:
+        return layoutHStretch(content(0), arg(1) && arg(1)->k == MNode::Sym ? arg(1)->cp : 0,
+                              !(arg(2) && identText(arg(2)) == "under"), st);
+      case Prim::Delim: {
+        const MNode* m = arg(1);
+        if (m && m->k == MNode::Run && m->kids.size() == 1) m = m->kids[0];
+        const double em = m && m->k == MNode::Num ? std::strtod(m->txt.c_str(), nullptr) : 0;
+        const MNode* d = arg(0);
+        if (!d || d->k != MNode::Sym) {
+          std::vector<MathBox*> none;
+          return assemble(none, st);
+        }
+        // the delimiter at least `em` tall, on the axis (TeX's \big: amsmath's
+        // 1.2em steps); its class the symbol's
+        MathBox* g = stretchVert(d->cp, d->cls, st, toSu(em * F.upem, st));
+        return centerOnAxis(g, d->cls, st);
+      }
+      case Prim::Phantom: {
+        const std::string_view m = arg(1) ? identText(arg(1)) : std::string_view{"full"};
+        MathBox* body = layout(content(0), st);
+        MathBox* out = mkBox(MathKind::HBox);
+        out->cls = body->cls;
+        out->firstCls = body->firstCls;
+        out->lastCls = body->lastCls;
+        if (m == "smash") {  // its ink, without height or depth
+          out->w = body->w;
+          out->kids.push_back({0, 0, body});
+          return out;
+        }
+        // its room, without ink: full, width only (h), height only (v)
+        out->w = m == "v" ? 0 : body->w;
+        out->asc = m == "h" ? 0 : body->asc;
+        out->desc = m == "h" ? 0 : body->desc;
+        return out;
+      }
       case Prim::None: break;
     }
     std::vector<MathBox*> none;
@@ -818,7 +1093,8 @@ std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
   }
   std::vector<MathBox*> boxes;
   boxes.reserve(kids.size());
-  for (MNode* k : kids) boxes.push_back(L.layout(k, st));
+  for (MNode* k : kids)
+    if (k->k != MNode::Align) boxes.push_back(L.layout(k, st));
   L.demote(boxes, /*startEdge=*/true, /*endEdge=*/true);
   std::vector<size_t> cuts{0};
   std::vector<float> pens{0};

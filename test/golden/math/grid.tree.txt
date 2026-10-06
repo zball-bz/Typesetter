@@ -1,0 +1,49 @@
+doc @[62,656) [base]
+  para @[62,158) [base]
+    text @[62,94) [base] str="Matrices and cases (plan P3-29): " raw=0:0,33:32
+    mathinline @[95,112) [base]
+      mathsrc @[96,111) [base] src="mat(1, 2; 3, 4)"
+    text @[112,113) [base] str=", " raw=0:0,2:1
+    mathinline @[114,132) [base]
+      mathsrc @[115,131) [base] src="bmat(a, b; c, d)"
+    text @[133,136) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[137,157) [base]
+      mathsrc @[138,156) [base] src="vmat(x & y; z & w)"
+    text @[157,158) [base] str="."
+  mathblock @[160,211) [base]
+    mathsrc @[162,209) [base] src="f(x) = cases(x & \"if\" x >= 0; -x & \"otherwise\")"
+  mathblock @[213,258) [base]
+    mathsrc @[215,256) [base] src="aligned(f(x) &= (x+1)^2; &= x^2 + 2x + 1)"
+  mathblock @[260,291) [base]
+    mathsrc @[262,289) [base] src="sys(a + b &= 1; a - b &= 0)"
+  para @[293,427) [base]
+    text @[293,314) [base] str="Braces and stretches: " raw=0:0,22:21
+    mathinline @[315,340) [base]
+      mathsrc @[316,339) [base] src="overbrace(a + b + c, n)"
+    text @[341,344) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[345,379) [base]
+      mathsrc @[346,378) [base] src="underbrace(x_1 + cdots + x_k, k)"
+    text @[379,387) [base] str=", a wide " raw=0:0,9:8
+    mathinline @[388,400) [base]
+      mathsrc @[389,399) [base] src="hat(x y z)"
+    text @[401,411) [base] str=" and a long " raw=0:0,1:0,12:10
+    mathinline @[412,426) [base]
+      mathsrc @[413,425) [base] src="vec(A B C D)"
+    text @[426,427) [base] str="."
+  mathblock @[429,518) [base]
+    mathsrc @[431,516) [base] src="attach(Pi, t: alpha, b: beta, tl: 1, tr: 2, bl: 4, br: 6) + big(() x big()) + Bigg(|)"
+  para @[520,656) [base]
+    text @[520,537) [base] str="Room without ink: " raw=0:0,18:17
+    mathinline @[538,554) [base]
+      mathsrc @[539,553) [base] src="x phantom(y) z"
+    text @[554,555) [base] str=", " raw=0:0,2:1
+    mathinline @[556,575) [base]
+      mathsrc @[557,574) [base] src="a hphantom(b c) d"
+    text @[576,579) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[580,598) [base]
+      mathsrc @[581,597) [base] src="smash(y_1^2) + 1"
+    text @[598,647) [base] str="; an alignment point outside a grid sets nothing: " raw=0:0,50:49
+    mathinline @[648,655) [base]
+      mathsrc @[649,654) [base] src="a & b"
+    text @[655,656) [base] str="."
+decl math.fn name="sys" flow=0 @[0,60) ext.params="r: rows" ext.body="lr({, grid(rl, #r), .)"

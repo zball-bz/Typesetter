@@ -496,6 +496,40 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
   - The single-token operand rule: an unknown word as a script or a
     fraction operand is its letters (`x^ab` = x^{ab}, `a/bc` = a/(bc),
     `ab/c`: italic ab over c).
+- **Plan P3-29 (grids and the remaining primitives; design T8 S9)**:
+  - `&` is an alignment point (`MNode::Align`), never a symbol (it was an
+    Ord; the corpus has none in formulas). A rows parameter (`r: rows`,
+    `r: cells` in a signature — stdlib.tsv or `$.math.fn`) reads to the
+    call's `)`: `;` ends a row, `&` a cell, and `,` too for cells. The
+    `grid(align, rows)` primitive sets columns as wide as their widest
+    cell, each at its column's letter of the align word (l, c, r, cycled);
+    an `rl` pair (aligned) joins without a gap and its right cell opens as
+    after an Ord (TeX's `&={}`); columns 1em apart; rows at least a strut
+    (0.85em + 0.35em) with a jot (0.3em) between when the grid has pairs;
+    the grid on the axis. Templates: `mat`/`pmat`/`bmat`/`Bmat`/`vmat`/
+    `Vmat` (cells, text style), `cases` (rows, `l`, a brace and the `.`
+    null delimiter — TeX's `\right.`, 0.12em), `aligned` (rows, `rl`). An
+    `&` no grid takes sets nothing.
+  - Named arguments: `name:` naming one of the row's slots binds it (any
+    other `x:` keeps ':' a relation); a call's kids are its slots in order.
+  - `attach(base, t, b, tl, bl, tr, br)` binds to the one Attach node: `t`
+    and `b` where the base's limits mode puts them, `tr`/`br` its scripts
+    (both pairs given: `t`/`b` above and below), `tl`/`bl` pre-scripts,
+    shifted as scripts are and right-aligned before the base.
+  - Horizontal constructions are compiled (mathc.py `kHorizChains`, 52
+    chains; the woff2 subset is now reproducible: the source font's
+    timestamp). A wide accent takes the widest variant no wider than its
+    base (TeX's rule; a spacing accent reads its combining form's chain:
+    ˆ → U+0302), or, when every variant falls short, the assembly (an
+    arrow: `vec(A B C D)`), centred. `hstretch(base, glyph, over|under)`
+    stretches a brace, bracket, paren or arrow to its base as a stretch
+    stack (StretchStackGap*Min); its annotations go above and below:
+    `overbrace(x, t?)`, `underbrace`, `overbracket`, `underbracket`,
+    `overparen`, `underparen`.
+  - `delim(d: sym, size)`: one delimiter at least `size` em, on the axis —
+    `big`, `Big`, `bigg`, `Bigg` at amsmath's 1.2, 1.8, 2.4, 3.0em, the
+    symbol's class. `phantom(body, full|h|v|smash)`: its room without ink
+    (`phantom`, `hphantom`, `vphantom`) or its ink without room (`smash`).
 - **`inf`** is the infimum text operator; ∞ is `oo`/`infty`/`infinity`
   (v1 listed `inf` as ∞ — collision, recorded deviation).
 - **v2 §13's dotted codex names** (`arrow.r`, `subset.eq`) are not
@@ -535,9 +569,9 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
   font swap needs either a font with encoded variants or a build step that
   injects PUA cmap entries for the referenced glyphs (fontTools can; noted
   as the designated escape hatch).
-- **Deferred**: cut-in kerning (MathKernInfo absent in Euler-Math), wide
-  horizontal accents/over-braces (52 horiz chains unused so far), corpus
-  math opt-ins, MathML/a11y output (semantic fallback emits source text).
+- **Deferred**: cut-in kerning (MathKernInfo absent in Euler-Math), corpus
+  math opt-ins, MathML output (the semantic page sets the formula's boxes,
+  plan P3-27). Wide accents and over-braces landed in plan P3-29.
 
 ### As built: the equation number as content (plan P3-03)
 
