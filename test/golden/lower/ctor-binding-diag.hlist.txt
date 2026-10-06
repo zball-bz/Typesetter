@@ -56,9 +56,9 @@ top pid=4 units=1
   box Other "a" w=513su r2 @[286,296)
   glue word w=257su x=1 cap=257su kern="a n" src r2 @[286,296)
   box Other "node" w=2049su r2 @[286,296)
-  glue word w=257su x=1 cap=257su src r2 @[286,296)
+  glue word w=257su x=1 cap=257su kern="e a" src r2 @[286,296)
   box Other "a1" w=1025su r3 @[297,325)
-  glue word w=257su x=1 cap=257su src r4 @[326,330)
+  glue word w=257su x=1 cap=257su kern="1 h" src r4 @[326,330)
   box Other "here" w=2049su r4 @[326,330)
   obj o0 raw parts=1 edges=Ideo/Ideo src="&#9632;" [w=2560su asc=640su desc=0su]
   run r0 plain

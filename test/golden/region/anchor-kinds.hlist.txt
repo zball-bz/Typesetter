@@ -37,17 +37,17 @@ top pid=3 units=2
 top pid=4 units=1
  unit text indent=0su
   box Other "See" w=1537su r0 @[218,221)
-  glue word w=257su x=1 cap=257su src r0 @[218,221)
+  glue word w=257su x=1 cap=257su kern="e l" src r0 @[218,221)
   box Other "lst-a" w=2561su r1 @[222,228)
   box Other "," w=513su r2 @[228,229)
-  glue word w=257su x=1 cap=257su src r2 @[228,229)
+  glue word w=257su x=1 cap=257su kern=", b" src r2 @[228,229)
   box Other "box-b" w=2561su r3 @[230,236)
   box Other "," w=513su r4 @[236,237)
-  glue word w=257su x=1 cap=257su src r4 @[236,237)
+  glue word w=257su x=1 cap=257su kern=", §" src r4 @[236,237)
   box Other "§1.1" w=2152su r5 @[238,245)
-  glue word w=257su x=1 cap=257su src r6 @[246,249)
+  glue word w=257su x=1 cap=257su kern="1 a" src r6 @[246,249)
   box Other "and" w=1537su r6 @[246,249)
-  glue word w=257su x=1 cap=257su src r6 @[246,249)
+  glue word w=257su x=1 cap=257su kern="d r" src r6 @[246,249)
   box Other "rule-c" w=3073su r7 @[250,257)
   box Other "." w=513su r8 @[257,258)
   run r0 plain

@@ -33,10 +33,8 @@ const fixtures = [...walk(fixturesDir)].map((p) => {
 // a defect before the step that fixes it. A listed fixture whose audit passes
 // fails the run, so the list can only shrink. Mirrors test/golden/XFAIL.
 const AUDIT_XFAIL = new Map([
-  // a link's last letter kerns with the space or comma after it in the
-  // browser (one face across </a>); the engine's KernCtx stops at the run
-  // boundary — "Appendix A, …" refs (P4-01: KernCtx over the paint runs)
-  ['semantics/appendix', 'P4-01'],
+  // (empty since plan P4-01: semantics/appendix — a link's last letter
+  // kerning with the space after it — passes with KernCtx over shaping runs)
 ]);
 
 // Content wider than its measure is set Overfull on a line of its own and

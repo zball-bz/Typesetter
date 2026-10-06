@@ -29,12 +29,21 @@ namespace {
 
 // Word spaces absorb cross-space kerning (e.g. Georgia "s. A"): sum-of-words
 // measurement misses it, leaving every justified line systematically short.
-// Each plain space between two words of one run (style and link) gets the
-// neighbouring codepoints as its KernCtx — resolveWidths turns that into gap =
-// m(prev+' '+next) - m(prev) - m(next) — and a hyphen point gets its JUNCTION
-// bigram: the pieces shape as one run when the break is not taken, and the
-// browser kerns across the boundary.
-void kernContexts(HList& h, Interner& strs) {  // the carriers, before the TeX form
+// Each space between two words the browser shapes as one run gets the
+// neighbouring codepoints as its KernCtx — resolveWidths turns that into gap
+// = m(prev+' '+next) - m(prev) - m(next) — and a hyphen point gets its
+// JUNCTION bigram: the pieces shape as one run when the break is not taken,
+// and the browser kerns across the boundary.
+//
+// (plan P4-01; design T5 run instances) "one shaped run" is the browser's:
+// text runs (Plain, Rigid) in one face — FaceStyle, the face's style share.
+// A DOM run boundary is not a shaping boundary: Chromium and Firefox kern
+// across a link, a reference or a colour change in the same font, and never
+// across a font change (italic → roman, real-world-report #1), letter-
+// spacing (LetterSpaced) or an inline block (Pinned, Object, a spacer), none
+// of which is a text run of the same face. Eligibility stays compat
+// (kernEligible: cp < U+2000) until the classes decide it (plan P4-05).
+void kernContexts(HList& h, Interner& strs, const StyleTable& styles) {  // the carriers, before the TeX form
   const u32 n = (u32)h.items.size();
   auto text = [&](const HItem& it) { return strs.get(h.specs[it.aux].str); };
   auto isWord = [&](const HItem& it) {
@@ -42,6 +51,7 @@ void kernContexts(HList& h, Interner& strs) {  // the carriers, before the TeX f
     const RunRec& r = h.runs[it.run];
     return (r.rc == RealizeClass::Plain || r.rc == RealizeClass::Rigid) && h.specs[it.aux].str != 0;
   };
+  auto faceOf = [&](const HItem& it) { return faceStyleOf(styles.get(h.runs[it.run].face)); };
   auto lastCp = [&](std::string_view t) -> std::string {
     if (t.empty()) return {};
     u32 cp = utf8PrevCp(t, (u32)t.size());
@@ -66,12 +76,9 @@ void kernContexts(HList& h, Interner& strs) {  // the carriers, before the TeX f
     const HItem& a = h.items[before];
     const HItem& b = h.items[after];
     if (!isWord(a) || !isWord(b)) continue;
-    // the browser only kerns INSIDE one shaped run: a style or link
-    // boundary (italic title → roman period, real-world-report.md) splits
-    // the run, so no cross-space kern exists there to budget for
-    const RunRec& ra = h.runs[a.run];
-    const RunRec& rb = h.runs[b.run];
-    if (ra.face != rb.face || ra.face != h.runs[it.run].face || ra.link != rb.link) continue;
+    // one shaped run: the words and the space between them in one face
+    const FaceStyle fa = faceOf(a);
+    if (!(fa == faceOf(b)) || !(fa == faceOf(it))) continue;
     std::string prev = lastCp(text(a));
     std::string next = firstCp(text(b));
     if (prev.empty() || next.empty()) continue;
@@ -110,6 +117,7 @@ struct HlInline final : InlineSink {
   std::vector<float> pend;  // per carrier: the break penalty after it (kPenInf = none)
   std::vector<u8> gapKind;  // per carrier: 1 a CJK char, 2 a closing glyph, 0 other
   bool single = false;      // the open run admits no other carrier
+  StrRef anchorNext = 0;    // an anchor for the next Box or Disc (a labelled ref's first)
   explicit HlInline(EmitEnv& e) : E(e), strs(e.strs), styles(e.styles), cfg(e.cfg) {}
 
   void open(Flow& u) {
@@ -132,7 +140,7 @@ struct HlInline final : InlineSink {
     RunRec r;
     r.face = face;
     r.link = ctx.url;
-    r.syn = (ctx.addFlags & BF_REF) ? SynKind::Ref : SynKind::Content;
+    r.syn = ctx.synKind;
     r.copy = ctx.copy;
     r.synName = ctx.syn;
     r.copyText = ctx.copyText;
@@ -161,6 +169,11 @@ struct HlInline final : InlineSink {
     ColdRec c;
     c.srcStart = span.start;
     c.srcEnd = span.end;
+    if (anchorNext && (k == IK::Box || k == IK::Disc)) {
+      it.attrs |= IA_Anchor;
+      c.anchor = anchorNext;
+      anchorNext = 0;
+    }
     h.cold.push_back(c);
     joinRun(it, rk);
     h.items.push_back(it);
@@ -176,14 +189,17 @@ struct HlInline final : InlineSink {
     return (u32)h.items.size() - 1;
   }
   // Run instances, formed as the carriers arrive: consecutive carriers share
-  // a run while (face, link, syn, copyText, rc) agree; punctuation glyphs,
-  // pinned boxes, objects, indents and spacer glue (autospace, object space)
-  // are runs of their own; a blank joins its glyph's run (an opening glyph's
-  // leading blank opens it); penalties and InterChar glue take their
-  // owner's run (finish).
+  // a run while (face, link, syn, copy, rc, error) agree; punctuation
+  // glyphs, pinned boxes, objects, indents and spacer glue (autospace,
+  // object space) are runs of their own; a blank joins its glyph's run (an
+  // opening glyph's leading blank opens it); penalties and InterChar glue
+  // take their owner's run (finish). (plan P4-01; design T5) An anchor is a
+  // point: its item opens a run — the run's anchor, its id painted once,
+  // where the run starts — and what follows may join it.
   void joinRun(HItem& it, const RunRec& rk) {
     HList& h = B;
     const size_t i = h.items.size();
+    const bool anchored = it.attrs & IA_Anchor;
     const bool isBlankGlue = it.k == IK::Glue && it.cls == (u8)GC::Blank;
     const bool leadingBlank = isBlankGlue && (it.attrs & IA_OwnedByNext);
     const bool joins = (isBlankGlue && !leadingBlank) ||
@@ -191,16 +207,18 @@ struct HlInline final : InlineSink {
                         isBlank(i - 1, /*ownedByNext=*/true));
     if (joins && !h.runs.empty()) {
       it.run = (u32)h.runs.size() - 1;
+      if (anchored) h.runs.back().anchor = B.cold[it.cold].anchor;  // its glyph's run opened at its blank
       return;
     }
     RunRec k = rk;
     if (leadingBlank) k.rc = RealizeClass::BlankBearing;  // its glyph's run
+    k.anchor = anchored ? B.cold[it.cold].anchor : 0;
     const bool alone = leadingBlank ||
-                       (it.k == IK::Box && (k.rc == RealizeClass::BlankBearing || (it.attrs & IA_Anchor) ||
-                                            k.rc == RealizeClass::Pinned || k.rc == RealizeClass::Object)) ||
+                       (it.k == IK::Box && (k.rc == RealizeClass::BlankBearing || k.rc == RealizeClass::Pinned ||
+                                            k.rc == RealizeClass::Object)) ||
                        (it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace ||
                                               it.cls == (u8)GC::Fill));
-    if (h.runs.empty() || alone || single || !sameRunKey(h.runs.back(), k)) {
+    if (h.runs.empty() || alone || single || anchored || !sameRunKey(h.runs.back(), k)) {
       h.runs.push_back(k);
       single = alone;
     }
@@ -385,10 +403,12 @@ struct HlInline final : InlineSink {
           AdvanceSpec sp;
           sp.k = AdvanceSpec::Fixed;
           sp.str = E.emptyRef;
-          RunRec rk = key(E.compose(n->style, ctx.add, ctx.mul), ctx, RealizeClass::Plain);
-          rk.anchor = label;
-          const u32 i = push(u, IK::Box, 0, IA_Anchor, rk, sp, n->span, 0.0f, kPenInf);
-          B.cold[B.items[i].cold].anchor = label;
+          const StrRef outer = anchorNext;
+          anchorNext = label;
+          const u32 i = push(u, IK::Box, 0, 0, key(E.compose(n->style, ctx.add, ctx.mul), ctx, RealizeClass::Plain),
+                             sp, n->span, 0.0f, kPenInf);
+          anchorNext = outer;
+          single = true;  // nothing joins it: the entry shows nothing
           fixWidth(u, i, 0.0, 0, 0);
         }
         return;
@@ -430,12 +450,14 @@ struct HlInline final : InlineSink {
   }
 
   void code(const ContentNode* n, Flow& u, ICtx ctx) {
-    // inline code: one unbreakable box, mono style
+    // inline code: one unbreakable box, mono style — Rigid (plan P4-01): its
+    // spaces are inside the box, measured as written, so paint keeps the
+    // line's justification off them (word-spacing: 0)
     if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
       StyleId st = E.compose(n->style, ctx.add, ctx.mul);  // mono and its size: rules (plan P3-01)
       AdvanceSpec sp;
       sp.str = n->kids[0]->str;
-      push(u, IK::Box, firstCc(strs.get(sp.str)), 0, key(st, ctx, RealizeClass::Plain),
+      push(u, IK::Box, firstCc(strs.get(sp.str)), 0, key(st, ctx, RealizeClass::Rigid),
            sp, n->span, 0.0f, kPenInf);
     }
   }
@@ -444,23 +466,15 @@ struct HlInline final : InlineSink {
     // resolver output: kids = display text; a resolved one links to its
     // target's anchor (plan P3-04: SemInfo.targetAnchor)
     if (n->anchorTo) ctx.url = {n->anchorTo, true, n->anchorDoc};
-    ctx.addFlags |= BF_REF;
-    const size_t before = count(u);
+    ctx.synKind = SynKind::Ref;
+    // labelled ref = inline anchor (footnote marker, notes-design.md §1):
+    // its first carrier takes the anchor and opens a run (push); the
+    // marker glues to what precedes it through its attach (walk), never a
+    // line start, like a closing punct
+    const StrRef outer = anchorNext;
+    if (StrRef label = attrStr(n, ArgK::label)) anchorNext = label;
     for (const ContentNode* k : n->kids) walk(k, u, ctx);
-    if (count(u) > before) {
-      // labelled ref = inline anchor (footnote marker, notes-design.md
-      // §1); the marker glues to what precedes it through its attach
-      // (walk), never a line start, like a closing punct
-      HList& h = B;
-      HItem& first = h.items[before];
-      const bool startsRun = before == 0 || h.items[before - 1].run != first.run;
-      for (const ArgVal& a : n->args)
-        if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) {
-          first.attrs |= IA_Anchor;
-          h.cold[first.cold].anchor = a.ref;
-          if (startsRun) h.runs[first.run].anchor = a.ref;  // the run's first item
-        }
-    }
+    anchorNext = outer;
   }
 
   void errorText(const ContentNode* n, Flow& u, ICtx ctx) {
@@ -1244,7 +1258,7 @@ void HlInline::finish(Flow& u) {
   if (cur != &u) return;
   HList& h = B;
   const size_t n = h.items.size();
-  kernContexts(h, strs);
+  kernContexts(h, strs, styles);
   // the TeX form, written exactly sized into the unit
   // the rendered gap after a CJK char is CJK: the next item is a CJK char
   // or a closing glyph

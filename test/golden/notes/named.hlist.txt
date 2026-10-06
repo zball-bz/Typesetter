@@ -120,7 +120,7 @@ top pid=2 units=1
   box Other "self" w=2049su r0 @[340,361)
   glue word w=257su x=1 cap=257su kern="f r" src r0 @[340,361)
   box Other "reads" w=2561su r0 @[340,361)
-  glue word w=257su x=1 cap=257su src r0 @[340,361)
+  glue word w=257su x=1 cap=257su kern="s 2" src r0 @[340,361)
   box Other "2" w=513su r1 @[362,366)
   box Other ";" w=513su r2 @[366,385)
   glue word w=257su x=1 cap=257su kern="; i" src r2 @[366,385)
@@ -170,9 +170,9 @@ top pid=3 units=3
   box Other "↩" w=524su r3 @[188,240)
   glue word w=219su x=1 cap=219su src r4 @[188,240)
   box Other "a" w=437su r5 @[188,240)
-  glue word w=219su x=1 cap=219su src r6 @[188,240)
+  glue word w=219su x=1 cap=219su kern="a b" src r6 @[188,240)
   box Other "b" w=437su r7 @[188,240)
-  glue word w=219su x=1 cap=219su src r8 @[188,240)
+  glue word w=219su x=1 cap=219su kern="b c" src r8 @[188,240)
   box Other "c" w=437su r9 @[188,240)
   run r0 plain x0.85
   run r1 plain EM x0.85

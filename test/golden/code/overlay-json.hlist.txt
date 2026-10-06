@@ -114,7 +114,7 @@ top pid=2 units=1
   glue word w=257su x=1 cap=257su kern="s c" src r2 @[304,341)
   box Other "code:" w=2561su r2 @[304,341)
   run r0 plain
-  run r1 plain CODE x0.85
+  run r1 rigid CODE x0.85
   run r2 plain
 top pid=3 units=1
  unit code indent=0su lines=2 wrap

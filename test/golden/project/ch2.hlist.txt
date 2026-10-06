@@ -27,14 +27,14 @@ top pid=3 units=1
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[82,88)
   box Other "1" w=513su r2 @[82,88)
-  glue word w=257su x=1 cap=257su src r3 @[89,92)
+  glue word w=257su x=1 cap=257su kern="1 a" src r3 @[89,92)
   box Other "and" w=1537su r3 @[89,92)
   glue word w=257su x=1 cap=257su src r3 @[89,92)
   box Ideo "式" w=1025su wt=0.6 cap=102su r4 @[93,98)
   pen 0 r4
   glue word w=257su x=1 cap=257su src r5 @[93,98)
   box Other "(1)" w=1537su r5 @[93,98)
-  glue word w=257su x=1 cap=257su src r6 @[99,170)
+  glue word w=257su x=1 cap=257su kern=") f" src r6 @[99,170)
   box Other "from" w=2049su r6 @[99,170)
   glue word w=257su x=1 cap=257su kern="m t" src r6 @[99,170)
   box Other "the" w=1537su r6 @[99,170)
@@ -71,7 +71,7 @@ top pid=3 units=1
   pen 0 r7
   glue word w=257su x=1 cap=257su src r8 @[171,176)
   box Other "(2)" w=1537su r8 @[171,176)
-  glue word w=257su x=1 cap=257su src r9 @[177,197)
+  glue word w=257su x=1 cap=257su kern=") c" src r9 @[177,197)
   box Other "con" w=1537su r9 @[177,197)
   disc pen=0.7 w=0su pre="-" 513su kern="nt" r9 @[177,197)
   box Other "tin" w=1537su r9 @[177,197)

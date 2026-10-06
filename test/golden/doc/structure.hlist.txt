@@ -33,13 +33,13 @@ top pid=2 units=1
   box Other "with" w=2049su r0 @[50,82)
   glue word w=257su x=1 cap=257su kern="h a" src r0 @[50,82)
   box Other "a" w=513su r0 @[50,82)
-  glue word w=257su x=1 cap=257su src r0 @[50,82)
+  glue word w=257su x=1 cap=257su kern="a u" src r0 @[50,82)
   box Other "use" w=1537su r1 @[84,95)
   disc pen=0.7 w=0su pre="-" 513su kern="ef" r1 @[84,95)
   box Other "ful" w=1537su r1 @[84,95)
   glue word w=257su x=1 cap=257su kern="l l" src r1 @[84,95)
   box Other "link" w=2049su r1 @[84,95)
-  glue word w=257su x=1 cap=257su src r2 @[118,126)
+  glue word w=257su x=1 cap=257su kern="k a" src r2 @[118,126)
   box Other "and" w=1537su r2 @[118,126)
   glue word w=257su x=1 cap=257su kern="d s" src r2 @[118,126)
   box Other "some" w=2049su r2 @[118,126)
@@ -52,7 +52,7 @@ top pid=2 units=1
   run r0 plain
   run r1 plain LINK link="https://example.org"
   run r2 plain
-  run r3 plain CODE x0.85
+  run r3 rigid CODE x0.85
   run r4 plain
 top pid=3 units=3
  unit text indent=1536su marker="•"

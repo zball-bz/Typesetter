@@ -185,7 +185,7 @@ top pid=4 units=1
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[588,596)
   box Other "1" w=513su r2 @[588,596)
-  glue word w=257su x=1 cap=257su src r3 @[597,601)
+  glue word w=257su x=1 cap=257su kern="1 (" src r3 @[597,601)
   box Other "(and" w=2049su r3 @[597,601)
   glue word w=257su x=1 cap=257su src r3 @[597,601)
   box Ideo "表" w=1025su wt=0.6 cap=102su r4 @[602,609)
@@ -216,7 +216,7 @@ top pid=4 units=1
   pen 0 r13
   glue word w=257su x=1 cap=257su src r14 @[645,651)
   box Other "2(a)" w=2049su r14 @[645,651)
-  glue word w=257su x=1 cap=257su src r15 @[652,655)
+  glue word w=257su x=1 cap=257su kern=") a" src r15 @[652,655)
   box Other "and" w=1537su r15 @[652,655)
   glue word w=257su x=1 cap=257su src r15 @[652,655)
   box Ideo "图" w=1025su wt=0.6 cap=102su r16 @[656,662)

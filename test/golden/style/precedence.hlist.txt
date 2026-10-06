@@ -44,7 +44,7 @@ top pid=1 units=1
   glue word w=257su x=1 cap=257su kern="t r" src r2 @[87,115)
   box Other "rule." w=2561su r2 @[87,115)
   run r0 plain
-  run r1 plain CODE x0.85 color=#0000aa
+  run r1 rigid CODE x0.85 color=#0000aa
   run r2 plain
 top pid=2 units=1
  unit text indent=0su
@@ -79,9 +79,9 @@ top pid=2 units=1
   box Other "teal" w=1742su r3 @[229,271)
   box Other "." w=513su r4 @[271,272)
   run r0 plain
-  run r1 plain CODE x0.85 color=#aa0000
+  run r1 rigid CODE x0.85 color=#aa0000
   run r2 plain
-  run r3 plain CODE x0.85 color=#00aaaa
+  run r3 rigid CODE x0.85 color=#00aaaa
   run r4 plain
 top pid=3 units=1
  unit text indent=0su

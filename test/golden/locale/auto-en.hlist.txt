@@ -76,7 +76,7 @@ top pid=1 units=1
   glue word w=257su x=1 cap=257su kern="h w" src r2 @[64,181)
   box Other "words." w=3073su r2 @[64,181)
   run r0 plain
-  run r1 plain CODE x0.85
+  run r1 rigid CODE x0.85
   run r2 plain
 top pid=2 units=2
  unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4
@@ -102,15 +102,15 @@ top pid=3 units=1
 top pid=4 units=1
  unit text indent=0su
   box Other "See" w=1537su r0 @[322,325)
-  glue word w=257su x=1 cap=257su src r0 @[322,325)
+  glue word w=257su x=1 cap=257su kern="e F" src r0 @[322,325)
   box Other "Fig" w=1537su r1 @[326,332)
   disc pen=0.7 w=0su pre="-" 513su kern="gu" r1 @[326,332)
   box Other "ure" w=1537su r1 @[326,332)
   glue word w=257su x=1 cap=257su kern="e 1" src r1 @[326,332)
   box Other "1" w=513su r1 @[326,332)
-  glue word w=257su x=1 cap=257su src r2 @[333,336)
+  glue word w=257su x=1 cap=257su kern="1 a" src r2 @[333,336)
   box Other "and" w=1537su r2 @[333,336)
-  glue word w=257su x=1 cap=257su src r2 @[333,336)
+  glue word w=257su x=1 cap=257su kern="d E" src r2 @[333,336)
   box Other "Eq." w=1537su r3 @[337,342)
   glue word w=257su x=1 cap=257su kern=". (" src r3 @[337,342)
   box Other "(1)" w=1537su r3 @[337,342)

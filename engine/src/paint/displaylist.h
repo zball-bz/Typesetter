@@ -47,6 +47,7 @@ struct DLRun {
   enum class Fit : u8 { None, LetterSpacing, Pinned } fit = Fit::None;
   double letterPx = 0, marginRightPx = 0, widthPx = 0;
   bool marginRight = false;
+  bool rigid = false;           // (plan P4-01) a Rigid run with spaces on a justified line: word-spacing 0
   StrRef text = 0;              // Glyph: its text
   std::string_view seg;         // CodeText: its text
   u32 n = 0;                    // CodeCont: the column count

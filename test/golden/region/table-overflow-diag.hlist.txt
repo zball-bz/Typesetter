@@ -69,13 +69,13 @@ top pid=0 units=1
 top pid=1 units=6
  unit text indent=0su
   box Other "pneumonoultramicroscopic" w=10446su r0 @[199,225)
-  run r0 plain CODE x0.85
+  run r0 rigid CODE x0.85
  unit text indent=0su
   box Other "silicovolcanoconiosis_long" w=11317su r0 @[228,256)
-  run r0 plain CODE x0.85
+  run r0 rigid CODE x0.85
  unit text indent=0su
   box Other "antidisestablishmentarian" w=10882su r0 @[259,286)
-  run r0 plain CODE x0.85
+  run r0 rigid CODE x0.85
  unit text indent=0su
   box Other "a" w=513su r0 @[287,288)
   run r0 plain

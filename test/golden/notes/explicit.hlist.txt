@@ -62,7 +62,7 @@ top pid=2 units=3
   box Other "ence" w=1742su r0 @[58,82)
   glue word w=219su x=1 cap=219su kern="e t" src r0 @[58,82)
   box Other "to" w=872su r0 @[58,82)
-  glue word w=219su x=1 cap=219su src r0 @[58,82)
+  glue word w=219su x=1 cap=219su kern="o §" src r0 @[58,82)
   box Other "§2" w=959su r1 @[83,87)
   box Other "." w=437su r2 @[87,88)
   glue word w=219su x=1 cap=219su src r2 @[56,89)

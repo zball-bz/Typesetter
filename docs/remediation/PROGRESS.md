@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P4
-- 下一步：P4-01
+- 下一步：P4-02
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -104,7 +104,7 @@
 | P3-35 | 打印器、转换器套件、front matter、语料重转 | done | grep:plan P3-35 | 2026-10-07 | 引擎 golden 无变化；+1 用例 line/front-matter（fixture 设置 source.frontMatter）；examples/real-world 的 wiki-typesetting、wiki-huozi、hott-introduction 重新转换并审阅 | 打印器 runtime/src/shared/tsm-print.mjs：print(ast, {src}) 由 AST JSON 写回 .tsm（容器前缀与缩进、相邻有序列表交替标记类、围栏与代码段的反引号串、显示公式、能读回的裸 URL、splice 的 `;`、含块或语句的内容体用块形式），escapeTsm(text, ctx) 按语法表转义（Intraword/PrevIdent 守卫、行首块开头、标签形、URL 协议的冒号、表格单元切点；私用区占位符视为未知邻字）；syntax.gen.mjs 导出整张语法表。一致性 (c)：tools/check-print.mjs 进 G6，553 篇（用例、真实语料、博客）parse(print(parse(x))) 相等，并对 600 个随机文本验证 escapeTsm。转换器套件 tools/convert/kit.mjs：WHATWG 实体表（entities.gen.mjs，gen-entities.mjs 生成）、标记以占位符构造并在 escapeTsm 之后放入（Markup：em/strong/code/link/note/raw）、强调按最终邻字取标记或函数形式、描述项；四个转换器迁移（实体全解、文本统一转义、wiki 脚注不再断裂、pbr 头注释改为 `%--`）。translate-tsm：以引擎 AST 的 span 屏蔽原子并原位回填，按 AST（去文本）校验；--check 发现既有 162 篇译文中 11 篇结构不符。front matter：host 选项 source.frontMatter（FrontEndOptions），行扫描把偏移 0 的 `---`…`---`/`...` 作为注释块（AST comment front），三个无状态导出以设置文档为第二参数，outline 报告 frontMatter；VS Code 预览不再逐行清空，改传选项。文档：syntax-design §12、tsm-changes、testing、CLAUDE.md |
 | P3-36 | 导出包 | done | grep:plan P3-36 | 2026-10-07 | 无（引擎 golden 不变）；Node 导出冒烟测试 tools/check-export.mjs 扩充 | renderTsm 返回导出包：在原字段之外增加 result（语义 RenderResult：head {lang, title, idPrefix, profile}、html、由 labels 产品得出的 anchors）、resources（清单）、styles（contract、theme、rules）与 profile；opts.profile 'feed' 令公式为源码（render.math: source，设置另有规定时从之）。runtime/src/node/export.mjs exportStatic(bundle, {template, hydrate, source, inputs, title, embedResources, docDir, assets})：纯函数，返回 {html, parts, copy, embedded, math, hydrate}；template(parts) 包装页面（默认裸页面，feed 只出文章）；水合原样传回包的解析后设置（去掉 host.* 行）；embedResources 把文档图片内联为 data: URI，其余资源进复制清单（真实路径受限于文档目录）。tools/export-static.mjs（--profile、--template、--embed）与 tools/tsm-project.mjs 经 tools/lib/static-page.mjs 的 writePage 写页面。博客侧配合改动写入 REPORT.md。文档：pages-design §3 |
 | P3-37 | ABI 收尾与文档修订 | done | grep:plan P3-37 | 2026-10-07 | 无（golden 不变）；golden 运行器对全部 213 个用例核对诊断 JSON 与 diags 文本逐行一致；e2e +1（诊断 JSON 与文本并列） | tsr2_get(doc, product, opts)：products.def 的全部产品按名读取（u32 长度 + 字节；未知产品或其阶段未跑时为空；diags、diagnostics、settings 任何阶段可取；opts 预留），tsr2_product 留作文本形式的兼容层。新产品 diagnostics：[{sev, code, span:[s,e], message, origin, pid?}]，origin 为 DiagSink 的阶段名；tsrc --stage=diagnostics。worker 经 tsr2_get 取产品，每个结果（含失败路径）带 diagnostics，shell 句柄与 update/relayout 结果暴露之；VS Code 预览页与 preview.js 读结构化诊断，删去解析文本的正则。文档修订：architecture §2.1（产品表）、§2.4（无估计态，relayout 原位重进）、§2.5（as-built ABI 与兼容层清单）、§4.1（as-built 文件名、模块缓存键）；document-model §6.4、§7、§10、§11；v2 §6、§9、§11.1；code-design §3、§5；figure-design §3（注明被 §8 取代）与 §8（captions 盒特性、P3-32 的图像尺寸）；testing §2；host-protocol §6；CLAUDE.md 的 ops 版本改为指向 schema.json opsVersion；wasm_api.cc 头注释改为二进制拉取 |
-| P4-01 | 按 run 实例成 run | todo | | | | |
+| P4-01 | 按 run 实例成 run | done | grep:plan P4-01 | 2026-10-07 | 69 个 hlist（178 处词间胶加 kern 上下文：链接/引用/颜色边界两侧同字体；36 个行内代码 run plain→rigid）；1 个 html（locale/auto-en：两端对齐行上的行内代码加 word-spacing:0）；breaks/blocks/layout 不变，WASM 213/213；e2e AUDIT_XFAIL 1→0（semantics/appendix 通过） | 接合字距按成形 run：measure/face.h 新增 FaceStyle/faceStyleOf（字体由之决定的样式字段），FaceTable::faceOf 经它取值；kernContexts 的条件改为两侧是文字盒（Plain/Rigid）且两词与空格的 FaceStyle 相同，不再看链接（Chromium/Firefox 实测：同字体跨 span/a/颜色成形与配对字距，跨字体、letter-spacing、inline-block 不跨），旧发射器预言机同步，fuseCheck 全部相等。锚点是点：带标签引用的锚点在发射其文字之前给出，第一个 Box/Disc 取 IA_Anchor 并开启携带它的 run（RunRec.anchor），后续同键项可并入；索引条目的空锚点盒仍独占 run。行内代码为 Rigid，paint 在两端对齐且文字含词分隔符（CSS Text §8.1）时写 word-spacing:0（DLRun.rigid，dl dump 记 rigid）。ICtx 的 BF_REF 标志位换成 SynKind（P0-10 的过渡键），预言机映射回去。lintHList 新增：锚点开启其 run 且 run 携带它；KernCtx 只在两个文字盒之间。验收：87K 基准文档 DOM 节点 15,178→15,178；真实语料与用例 553 篇 733,686→733,686（增长 0%，D-X08 ≤10%），75 篇字节变化全部是 151 个 word-spacing:0；review-corpus 340 篇不变；rules-diff 0 变化。文档：shaping-design §5、document-model §9.1、render-design §2、REPORT.md |
 | P4-02 | 段落级成形器 | todo | | | | |
 | P4-03 | 逐项源 span | todo | | | | |
 | P4-04 | TextProps v1；标点/空白/autospace 数据化 | todo | | | | |
@@ -183,6 +183,7 @@
 | P3-36 后 | 3.70 | 11.40 | 27.70 | 1.7 / 3.1 / 0.9 / 10.3 / 3.4 | 74.5 / 109.5 / 152.7 | 1.80 / 22.50 / 57.50 | 均在 P3 门限内；本步不触及编辑路径；35K update 3 轮 14.00（噪声），6 轮 11.40 取之 |
 | P3-37 后 | 3.50 | 11.80 | 27.70 | 1.7 / 3.1 / 0.9 / 10.5 / 3.5 | 77.3 / 105.3 / 150.9 | 1.80 / 22.20 / 57.80 | 均在 P3 门限内；35K update 3 轮 13.90（机器负载 2.4），6 轮 12.20；同机 A/B 各 6 轮：HEAD 11.80、本步 11.80，取之（每次结果多解析一份诊断 JSON，量不出差别） |
 | P3 结束 | 3.70 | 11.60 | 27.90 | 1.8 / 3.0 / 0.9 / 10.4 / 3.5 | 70.9 / 108.8 / 153.5 | 1.80 / 21.70 / 58.80 | 阶段门禁满足：update ≤ P3 门限（3.98 / 12.27 / 29.91），relayout ≤（5.87 / 23.40 / 63.30）；4adfe84 上一次 bench.sh（机器负载 3.9） |
+| P4-01 后 | 3.90 | 11.70 | 28.00 | 1.6 / 3.2 / 0.9 / 10.6 / 3.4 | 74.2 / 106.7 / 149.1 | 1.70 / 22.70 / 58.10 | 均在 P4 阶段门限内（P3 结束 ×1.05+0.3：update 4.19 / 12.48 / 29.60，relayout 2.19 / 23.09 / 62.04）；kernContexts 每个词间胶多两次样式比较，量不出差别 |
 
 ## 偏差记录（MD-11）
 
@@ -457,6 +458,11 @@
 | P3-37 | tsr_* 兼容层保留（tsr_config、tsr_set_*、tsr_measure_requests、tsr_provide_word/_vmet/_image/_tokens、tsr_render、tsr_diags、tsr2_product） | 设计让兼容层在一次 engine-dist 发布后删除；本次整改不发布 engine-dist（MD-07），博客按内容哈希用旧包 | 无（随下一次 engine-dist 发布删除） |
 | P3-37 | 诊断 JSON 不含 related 跨度；字段名为 sev（不是 severity），另加 origin 与 pid | DiagSink 不记录关联位置；sev 与文本 dump 同名；origin、pid 供宿主按阶段与块归属 | 无 |
 | P3-37 | mock.h:1-2 无改动 | P1-11 已把头注释改为“规范的 mock 测量器（testing.md §2）” | 无 |
+| P4-01 | KernCtx 的条件是"同一成形 run"（两侧文字盒、FaceStyle 相同），而非设计的"同一 run 实例" | Chromium 与 Firefox 实测：同字体时跨 `<span>`、`<a>`、颜色边界照样配对字距（DejaVu Serif "AV" 56.0px，分开 58.0px），只有字体变化、letter-spacing、inline-block 打断成形；按 run 实例会在链接、引用边界漏计真实字距（P2-07 的 XFAIL 正是此例） | 无 |
+| P4-01 | emitter/kern-context-postpass 本步未打勾：kern 资格仍为 compat（cp < U+2000），URL 断点（盒、罚分、盒）仍无接合字距 | 设计步骤 4 写明资格在本步保持 compat、由类判定属步骤 8（P4-05）；URL 断点在 P4-06 改为独立的断点项（Chicago 规则、紧急断行），接合字距随之加上，现在改成空 Disc 会与预言机和 BF_HYPHEN 语义冲突 | P4-05、P4-06 |
+| P4-01 | Rigid run 只在文字含词分隔符时写 word-spacing:0 | word-spacing 只作用于词分隔符（CSS Text §8.1），无空格的行内代码写了也无效果，只增加 HTML 字节 | 无 |
+| P4-01 | golden 变化与计划所列不同：计划预计 cite/*、notes/*、doc/structure、inline/fence-edge、pages/paged-doc 的 html；实际 html 只有 locale/auto-en，另有 69 个 hlist | cite/* 的 data-syn 修正已在 P0-10/P3-07 落地；notes/* 的锚点标记都是单盒、本来就开启 run；doc/structure 等用例的行内代码所在行不两端对齐（行无 word-spacing）；hlist 变化是 kern 上下文与 rigid run 列 | 无 |
+| P4-01 | 行内代码之外 `text.space: pre` 的文字仍按普通词间胶排（可拉伸），而契约类 tsr-pre 的 word-spacing:0 使其在两端对齐行上不拉伸 | whiteSpace 成为 TextProps 属性属 P4-04（设计 T5 步骤 7）；当前语料与用例无此用法 | P4-04 |
 
 ## 阻塞记录（§4.7）
 

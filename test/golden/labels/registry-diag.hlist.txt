@@ -109,7 +109,7 @@ top pid=6 units=1
 top pid=7 units=1
  unit text indent=0su
   box Other "See" w=1537su r0 @[313,316)
-  glue word w=257su x=1 cap=257su src r0 @[313,316)
+  glue word w=257su x=1 cap=257su kern="e s" src r0 @[313,316)
   box Other "side-1" w=3073su r1 @[317,324)
   box Other "," w=513su r2 @[324,325)
   glue word w=257su x=1 cap=257su src r2 @[324,325)
@@ -123,9 +123,9 @@ top pid=7 units=1
   pen 0 r6
   glue word w=257su x=1 cap=257su src r7 @[334,339)
   box Other "(1)" w=1537su r7 @[334,339)
-  glue word w=257su x=1 cap=257su src r8 @[340,343)
+  glue word w=257su x=1 cap=257su kern=") a" src r8 @[340,343)
   box Other "and" w=1537su r8 @[340,343)
-  glue word w=257su x=1 cap=257su src r8 @[340,343)
+  glue word w=257su x=1 cap=257su kern="d §" src r8 @[340,343)
   box Other "§1" w=1128su r9 @[344,350)
   box Other "." w=513su r10 @[350,351)
   run r0 plain

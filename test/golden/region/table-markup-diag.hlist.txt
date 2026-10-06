@@ -11,7 +11,7 @@ top pid=0 units=6
   run r0 plain
  unit text indent=0su
   box Other "x | y" w=1742su r0 @[29,36)
-  run r0 plain CODE x0.85
+  run r0 rigid CODE x0.85
  unit text indent=0su
   box Other "|" w=513su r0 @[39,49)
   glue word w=257su x=1 cap=257su kern="| l" src r0 @[39,49)

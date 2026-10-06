@@ -68,7 +68,7 @@ instances that say how their boxes paint, and side records.
 | item | what | today from |
 |---|---|---|
 | Box | a word, inline code, a CJK char (LetterSpaced), a defined-width dash/ellipsis (Pinned), a punctuation glyph (BlankBearing), a formula part (Object), the paragraph indent (Pinned, syn indent) | `cls` = the CC of its first codepoint |
-| Glue Word | a typed space (`IA_SourceSpace`), KernCtx when it sits between two words of one run | weight 1, capacity = width |
+| Glue Word | a typed space (`IA_SourceSpace`), KernCtx when it sits between two words of one shaping run (below) | weight 1, capacity = width |
 | Glue InterChar | the gap after a CJK char whose next item is a CJK char or a closing glyph (the topology layout and paint used) | weight `cjk.justifyK`; shares its char's cold record |
 | Glue Autospace | CJK–Latin and CJK–formula boundary space | weight 1 |
 | Glue Blank | a punctuation glyph's half em (`IA_OwnedByNext` for an opening glyph's leading half) | weight 0 |
@@ -100,12 +100,40 @@ today's emitter allows a break before the closing glyph — the UAX #14 LB13
 "even after spaces" case; P4-02's pair table with `spacesBetween` closes it.
 
 **Run instances** form as the items arrive: consecutive boxes share a run
-while (face, link, SynKind, copyText, RealizeClass) agree; glyphs, pinned
+while (face, link, SynKind, copy policy, RealizeClass, error) agree; glyphs, pinned
 boxes, objects, the indent and spacer glue are runs of their own; a blank
 joins its glyph's run (a leading blank opens it); penalties and InterChar
 glue take their owner's. Paint opens a DOM run exactly where the run
-changes; anchors are `IA_Anchor` items. Until P4-01 the key reproduces
-today's DOM (inline code stays Plain; an anchor does not split a run).
+changes.
+
+As built (plan P4-01; design T5 step 4):
+- **Anchors are points.** A labelled reference (a footnote marker) names
+  its anchor before its text is emitted; its first Box (or Disc) takes
+  `IA_Anchor` and opens a run that carries it (`RunRec::anchor`), and what
+  follows with the same key joins it — paint writes the id once, where the
+  run starts, never on a later line's fragment. An index entry's empty
+  anchor box stays a run of its own. `lintHList` checks that an anchor
+  opens its run and that the run carries it.
+- **Inline code is Rigid**: its spaces are inside its one box, measured as
+  written, so paint writes `word-spacing:0` on the run when the line is
+  justified and the text has a word separator (CSS Text §8.1) — whatever
+  class the theme gives code.
+- **Junction kerns follow shaping runs, not DOM runs.** A KernCtx (word
+  glue, a hyphen point's junction) sits between two text boxes (Plain or
+  Rigid) whose styles — and the space's — have one `FaceStyle`
+  (`measure/face.h`: the Styling fields the face is made of, which
+  `FaceTable::faceOf` reads through the same function). Measured in
+  Chromium and Firefox (DejaVu Serif, "AV" 56.0px vs 58.0px apart): both
+  kern across `<span>`, `<a>` and colour boundaries in one font, and
+  neither across a font change, letter-spacing or an inline block. So a
+  link's last letter and the space after it kern (the P2-07 audit XFAIL
+  semantics/appendix passes), a citation's `[1, 2]` kerns like prose; an
+  italic title against roman text still does not (real-world-report #1).
+  Eligibility stays `kernEligible` (cp < U+2000) until P4-05. URL break
+  points (a Box, a Penalty, a Box) still carry no junction kern: P4-06
+  makes them breaks of their own.
+- `ICtx::synKind` (SynKind::Ref inside a resolver reference) replaces the
+  `BF_REF` flag bit the run key read; the legacy oracle maps it back.
 
 **Layout and paint read the items.** A line is an item range: the breaker's
 block breakpoints map through `blockStart`, leading and trailing glue and

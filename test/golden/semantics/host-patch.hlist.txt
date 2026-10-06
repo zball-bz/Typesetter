@@ -30,11 +30,11 @@ top pid=2 units=1
 top pid=3 units=1
  unit text indent=0su
   box Other "See" w=1537su r0 @[83,86)
-  glue word w=257su x=1 cap=257su src r0 @[83,86)
+  glue word w=257su x=1 cap=257su kern="e §" src r0 @[83,86)
   box Other "§1.1.1" w=3176su r1 @[87,92)
-  glue word w=257su x=1 cap=257su src r2 @[93,96)
+  glue word w=257su x=1 cap=257su kern="1 a" src r2 @[93,96)
   box Other "and" w=1537su r2 @[93,96)
-  glue word w=257su x=1 cap=257su src r2 @[93,96)
+  glue word w=257su x=1 cap=257su kern="d F" src r2 @[93,96)
   box Other "Fig." w=2049su r3 @[97,100)
   glue word w=257su x=1 cap=257su kern=". 1" src r3 @[97,100)
   box Other "1" w=513su r3 @[97,100)

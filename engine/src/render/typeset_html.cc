@@ -336,6 +336,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
         t.px("letter-spacing", d.letterPx);
         if (d.marginRight) t.px("margin-right", d.marginRightPx);
       }
+      if (d.rigid) t.decl("word-spacing", "0");  // (plan P4-01) its spaces are its boxes'
       if (d.syn) t.attrSafe("data-syn", d.syn);
       t.open();
     }

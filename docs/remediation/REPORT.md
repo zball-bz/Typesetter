@@ -59,6 +59,21 @@ figure/float、figure/stack、region/table-tiny 的正文与图注、math/* 其�
 
 只有 doc/url-overlong（预期）与 region/hott-row（五栏表在 300px 下单元格 47px，公式单元格过宽，旧版同样溢出但整格塌成一行）。两者都给 `overfull-line` 警告，e2e 在 `EXPECTED_DIAGS` 中声明。
 
+## P4-01 按 run 实例成 run（T5 步骤 4）
+
+**变化：**
+1. 接合字距（KernCtx）的条件从"同一 StyleId 且同一链接"改为"同一成形 run"：两侧是文字盒（Plain/Rigid），且两词与其间空格的 FaceStyle（字体由之决定的样式字段：族、角色、文字体系、字号、字重、拉丁斜体、特性、语言）相同。依据：Chromium 与 Firefox 实测（DejaVu Serif，"AV" 连写 56.0px、分开 58.0px），两者都跨 `<span>`、`<a>`、颜色边界成形与配对字距，字体变化、letter-spacing、inline-block 处不跨。
+2. 行内代码为 Rigid：两端对齐的行上，含词分隔符的行内代码 run 写 `word-spacing:0`（其空格在盒内按原样测量）。
+3. 锚点是点：带标签的引用（脚注标记）的第一个盒开启并携带锚点 run，后续同键项可并入；id 只在 run 起点写一次。
+
+**范围：** 引擎 golden（mock 测量器的宽度可加，接合字距为 0）：69 个 hlist golden（178 处词间胶新增 kern 上下文，均在链接/引用/颜色边界两侧同字体处；36 个行内代码 run 由 plain 变为 rigid），1 个 html（locale/auto-en：`doc.lang: auto` 在两端对齐行上加 `word-spacing:0`）；breaks/blocks/layout 与 WASM 断点不变（213/213）。真实语料与用例 553 篇的排版 HTML：DOM 节点数 733,686 → 733,686（87K 基准文档 15,178 → 15,178，增长 0%，D-X08 门限 ≤10%）；75 篇有字节变化，全部只是 151 个行内代码 run 加 `word-spacing:0`。语义页（review-corpus）340 篇不变。
+
+**审阅结论：改进。**
+- 浏览器中，链接末字母与其后空格/逗号、引文编号之间的字距此前未计入，两端对齐行因此有亚像素到 1px 的右缘误差；e2e 审计 semantics/appendix（"Appendix A, …"）由此前的预期失败（P2-07 记入 AUDIT_XFAIL）变为通过，AUDIT_XFAIL 清空。
+- 默认契约 CSS 中行内代码带 `tsr-pre`（`word-spacing: 0`），视觉不变；新属性让 Rigid 的实现不依赖主题给代码的类。
+- 斜体标题与正体之间仍不计接合字距（字体不同，real-world-report #1 的修正保持）。
+- 锚点规则在现有用例与语料中没有可见变化（带标签的引用都是单盒标记）。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。

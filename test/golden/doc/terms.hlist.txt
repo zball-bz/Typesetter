@@ -128,7 +128,7 @@ top pid=1 units=6
   glue word w=257su x=1 cap=257su kern="n l" src r2 @[247,273)
   box Other "lines." w=3073su r2 @[247,273)
   run r0 plain BOLD
-  run r1 plain BOLD CODE x0.85
+  run r1 rigid BOLD CODE x0.85
   run r2 plain
  unit text indent=0su
   box Ideo "字" w=1025su wt=0.6 cap=102su r0 @[276,282)
@@ -317,7 +317,7 @@ top pid=4 units=1
   box Other "row:" w=2049su r0 @[645,682)
   glue word w=257su x=1 cap=257su kern=": s" src r0 @[645,682)
   box Other "see" w=1537su r0 @[645,682)
-  glue word w=257su x=1 cap=257su src r0 @[645,682)
+  glue word w=257su x=1 cap=257su kern="e T" src r0 @[645,682)
   box Other "Track" w=2561su r1 @[683,692)
   disc pen=0.7 w=0su pre="-" 513su kern="ki" r1 @[683,692)
   box Other "ing" w=1537su r1 @[683,692)

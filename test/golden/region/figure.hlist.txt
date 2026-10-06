@@ -103,7 +103,7 @@ top pid=3 units=1
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[213,218)
   box Other "1" w=513su r2 @[213,218)
-  glue word w=257su x=1 cap=257su src r3 @[219,237)
+  glue word w=257su x=1 cap=257su kern="1 a" src r3 @[219,237)
   box Other "and" w=1537su r3 @[219,237)
   glue word w=257su x=1 cap=257su kern="d t" src r3 @[219,237)
   box Other "the" w=1537su r3 @[219,237)
@@ -113,7 +113,7 @@ top pid=3 units=1
   box Other "tion" w=2049su r3 @[219,237)
   glue word w=257su x=1 cap=257su kern="n i" src r3 @[219,237)
   box Other "is" w=1025su r3 @[219,237)
-  glue word w=257su x=1 cap=257su src r3 @[219,237)
+  glue word w=257su x=1 cap=257su kern="s §" src r3 @[219,237)
   box Other "§1" w=1128su r4 @[238,242)
   box Other "." w=513su r5 @[242,243)
   run r0 plain

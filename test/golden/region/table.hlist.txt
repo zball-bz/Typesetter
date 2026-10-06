@@ -60,9 +60,9 @@ top pid=2 units=1
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[155,159)
   box Other "1" w=513su r2 @[155,159)
-  glue word w=257su x=1 cap=257su src r3 @[160,162)
+  glue word w=257su x=1 cap=257su kern="1 o" src r3 @[160,162)
   box Other "of" w=1025su r3 @[160,162)
-  glue word w=257su x=1 cap=257su src r3 @[160,162)
+  glue word w=257su x=1 cap=257su kern="f §" src r3 @[160,162)
   box Other "§1" w=1128su r4 @[163,167)
   box Other "." w=513su r5 @[167,168)
   run r0 plain

@@ -51,7 +51,7 @@ struct EmitEnv {
 
 struct ICtx {
   StyleDelta add;  // what enclosing kinds put on the text (inline code: mono)
-  u16 addFlags = 0;  // BF_REF: resolver-synthesized content
+  SynKind synKind = SynKind::Content;  // (plan P4-01) Ref: a resolver reference's text
   float mul = 1.0f;
   LinkTarget url;  // the link the text is in
   bool noHyphen = false;  // display context (headings)

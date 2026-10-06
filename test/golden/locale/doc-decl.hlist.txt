@@ -54,9 +54,9 @@ top pid=0 units=1
   box Other "$.locale" w=3483su r3 @[180,190)
   box Other ")." w=1025su r4 @[190,192)
   run r0 plain
-  run r1 plain CODE x0.85
+  run r1 rigid CODE x0.85
   run r2 plain
-  run r3 plain CODE x0.85
+  run r3 rigid CODE x0.85
   run r4 plain
 top pid=1 units=2
  unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4
@@ -80,13 +80,13 @@ top pid=2 units=1
 top pid=3 units=1
  unit text indent=0su
   box Other "See" w=1537su r0 @[323,326)
-  glue word w=257su x=1 cap=257su src r0 @[323,326)
+  glue word w=257su x=1 cap=257su kern="e F" src r0 @[323,326)
   box Other "Fig." w=2049su r1 @[327,333)
   glue word w=257su x=1 cap=257su kern=". 1" src r1 @[327,333)
   box Other "1" w=513su r1 @[327,333)
-  glue word w=257su x=1 cap=257su src r2 @[334,337)
+  glue word w=257su x=1 cap=257su kern="1 a" src r2 @[334,337)
   box Other "and" w=1537su r2 @[334,337)
-  glue word w=257su x=1 cap=257su src r2 @[334,337)
+  glue word w=257su x=1 cap=257su kern="d E" src r2 @[334,337)
   box Other "Eq." w=1537su r3 @[338,343)
   glue word w=257su x=1 cap=257su kern=". (" src r3 @[338,343)
   box Other "(1)" w=1537su r3 @[338,343)

@@ -8,11 +8,22 @@ namespace tsr {
 
 namespace {
 
+// CSS Text 3 §8.1 word-separator characters: what word-spacing widens
+bool hasWordSeparator(std::string_view t) {
+  for (u32 i = 0; i < t.size();) {
+    const u32 cp = utf8Next(t, i);
+    if (cp == 0x20 || cp == 0xA0 || cp == 0x1361 || cp == 0x10100 || cp == 0x10101 || cp == 0x1039F ||
+        cp == 0x1091F)
+      return true;
+  }
+  return false;
+}
+
 // A line's runs (plan P1-12 run instances): a DOM run opens where the run
 // changes; a punctuation glyph, a pinned box and an inline object are runs
 // of their own; spacer glue and the indent paint as spacers; blanks fold
 // into their glyph's squeeze and InterChar gaps into letter-spacing.
-void lineRuns(const Fragment& l, const HList& h, std::vector<DLRun>& out) {
+void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vector<DLRun>& out) {
   const std::vector<HItem>& v = h.items;
   auto nextOnLine = [&](u32 i) -> i64 {
     for (u32 k = i + 1; k < l.itemEnd; k++)
@@ -172,10 +183,15 @@ void lineRuns(const Fragment& l, const HList& h, std::vector<DLRun>& out) {
     }
     // a Latin run: words and spaces. Mid-line hyphen points paint nothing,
     // so the pieces sit in ONE text node and the browser kerns across the
-    // junction — the Disc's unbroken width modelled it
+    // junction — the Disc's unbroken width modelled it. A Rigid run's
+    // spaces are inside its boxes, measured as written: the line's
+    // word-spacing stays off them (plan P4-01)
     DLRun d = run(it, DLRun::K::Words);
     d.i = i;
     d.j = j;
+    if (r.rc == RealizeClass::Rigid && l.wordDeltaPx != 0)
+      for (u32 k = i; k < j && !d.rigid; k++)
+        d.rigid = v[k].k == IK::Box && hasWordSeparator(strs.get(h.specs[v[k].aux].str));
     out.push_back(d);
     i = j;
   }
@@ -371,7 +387,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.markerRole = l.markerRole;
         n.markerStyle = l.markerStyle;
         n.h = l.cellIdx >= 0 ? &u.cells[(size_t)l.cellIdx].hl : &u.hl;
-        lineRuns(l, *n.h, out.runs);
+        lineRuns(l, *n.h, strs, out.runs);
         // (plan P3-27, D-R04) its formulas' accessible names
         if (cfg.a11yMathLabel)
           for (size_t k = n.runBegin; k < out.runs.size(); k++)
@@ -447,6 +463,7 @@ std::string dumpDisplayList(const LayoutResult& lr, const std::vector<TopBlock>&
         if (d.syn) appendf(out, " syn=%s", d.syn);
         if (d.fit == DLRun::Fit::LetterSpacing) out += " letter-spaced";
         if (d.fit == DLRun::Fit::Pinned) out += " pinned";
+        if (d.rigid) out += " rigid";
         out += "\n";
       }
     }

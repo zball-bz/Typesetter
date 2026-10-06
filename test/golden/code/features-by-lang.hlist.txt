@@ -72,13 +72,13 @@ top pid=0 units=1
   glue word w=257su x=1 cap=257su kern="s o" src r8 @[129,168)
   box Other "own." w=2049su r8 @[129,168)
   run r0 plain
-  run r1 plain CODE x0.85
+  run r1 rigid CODE x0.85
   run r2 plain
-  run r3 plain CODE x0.85
+  run r3 rigid CODE x0.85
   run r4 plain
-  run r5 plain CODE x0.85
+  run r5 rigid CODE x0.85
   run r6 plain
-  run r7 plain CODE x0.85
+  run r7 rigid CODE x0.85
   run r8 plain
 top pid=1 units=1
  unit code indent=0su lines=1 wrap

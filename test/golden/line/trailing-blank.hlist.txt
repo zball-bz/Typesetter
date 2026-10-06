@@ -13,13 +13,13 @@ top pid=0 units=1
   box Other "join" w=2049su r1 @[10,32)
   glue word w=257su x=1 cap=257su src r2 @[34,37)
   box Other "and" w=1537su r2 @[34,37)
-  glue word w=257su x=1 cap=257su src r2 @[34,37)
+  glue word w=257su x=1 cap=257su kern="d a" src r2 @[34,37)
   box Other "a" w=513su r3 @[39,51)
   glue word w=257su x=1 cap=257su kern="a l" src r3 @[39,51)
   box Other "link" w=2049su r3 @[39,51)
   glue word w=257su x=1 cap=257su kern="k t" src r3 @[39,51)
   box Other "text" w=2049su r3 @[39,51)
-  glue word w=257su x=1 cap=257su src r4 @[56,59)
+  glue word w=257su x=1 cap=257su kern="t a" src r4 @[56,59)
   box Other "and" w=1537su r4 @[56,59)
   glue word w=257su x=1 cap=257su src r4 @[56,59)
   box Other "code span" w=3701su r5 @[60,72)
@@ -30,7 +30,7 @@ top pid=0 units=1
   run r2 plain
   run r3 plain LINK link="u"
   run r4 plain
-  run r5 plain CODE x0.85
+  run r5 rigid CODE x0.85
   run r6 plain
 top pid=1 units=1
  unit text indent=1024su

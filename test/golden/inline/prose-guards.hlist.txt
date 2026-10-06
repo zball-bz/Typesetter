@@ -164,7 +164,7 @@ top pid=3 units=1
   box Other "ba" w=1025su r0 @[336,363)
   disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[336,363)
   box Other "tim:" w=2049su r0 @[336,363)
-  glue word w=257su x=1 cap=257su src r0 @[336,363)
+  glue word w=257su x=1 cap=257su kern=": h" src r0 @[336,363)
   box Other "https:/" w=3585su r1 @[363,403)
   pen 1.2 r1
   box Other "/example." w=4609su r1 @[363,403)
@@ -269,7 +269,7 @@ top pid=4 units=1
   box Other "is" w=1025su r0 @[560,600)
   glue word w=257su x=1 cap=257su kern="s h" src r0 @[560,600)
   box Other "https://example.com" w=9729su r0 @[560,600)
-  glue word w=257su x=1 cap=257su src r1 @[623,636)
+  glue word w=257su x=1 cap=257su kern="m h" src r1 @[623,636)
   box Other "has" w=1537su r1 @[623,636)
   glue word w=257su x=1 cap=257su kern="s o" src r1 @[623,636)
   box Other "one" w=1537su r1 @[623,636)

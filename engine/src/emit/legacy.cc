@@ -15,6 +15,9 @@ namespace tsr {
 
 namespace {
 
+// the legacy blocks' synthesized-run flag (plan P4-01: ICtx says SynKind)
+u16 refFlags(const ICtx& ctx) { return ctx.synKind == SynKind::Ref ? (u16)BF_REF : (u16)0; }
+
 struct LegacyInline final : InlineSink {
   EmitEnv& E;
   Arena& arena;
@@ -78,7 +81,7 @@ struct LegacyInline final : InlineSink {
         if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
           LinebreakBlock b;
           b.breakPenalty = BREAK_INF;
-          b.flags = ctx.addFlags;
+          b.flags = refFlags(ctx);
           b.style = compose(n->style, ctx.add, ctx.mul);  // mono and its size: rules (plan P3-01)
           b.text = n->kids[0]->str;
           b.linkUrl = ctx.url.ref;
@@ -91,7 +94,7 @@ struct LegacyInline final : InlineSink {
         // resolver output: kids = display text, url arg = "#tsr-<label>"
         ICtx c2 = ctx;
         if (n->anchorTo) c2.url = {n->anchorTo, true, n->anchorDoc};  // its target's anchor (plan P3-04)
-        c2.addFlags |= BF_REF;
+        c2.synKind = SynKind::Ref;
         const size_t before = u.legacy.size();
         for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);
         if (u.legacy.size() > before) {
@@ -125,7 +128,7 @@ struct LegacyInline final : InlineSink {
         if (!u.legacy.empty() && u.legacy.back().isCjkChar()) {
           double px = kCjkBoundaryEm * fontPx(st);
           pushSynthetic(u, st, ctx.url.ref, n->span, px,
-                        (u16)(BF_SPACE | BF_BOUND | ctx.addFlags), 1.0f, 0.0f, px);
+                        (u16)(BF_SPACE | BF_BOUND | refFlags(ctx)), 1.0f, 0.0f, px);
         }
         std::vector<MathSeg> segs = layoutMathSegments(
             ms.text, /*display=*/false, fontPx(st), arena, strs,
@@ -136,7 +139,7 @@ struct LegacyInline final : InlineSink {
             // at line edges), rigid otherwise; synthetic for copy (§9.3)
             const double pen = segs[k].penalty;
             LinebreakBlock g;
-            g.flags = (u16)(BF_SPACE | BF_SYNTH | ctx.addFlags);
+            g.flags = (u16)(BF_SPACE | BF_SYNTH | refFlags(ctx));
             g.breakPenalty = (float)pen;
             g.style = st;
             g.text = spaceRef;
@@ -155,7 +158,7 @@ struct LegacyInline final : InlineSink {
           b.style = st;
           b.text = k == 0 ? srcRef : 0;  // copy: source rides the first segment
           b.linkUrl = ctx.url.ref;
-          b.flags = ctx.addFlags;
+          b.flags = refFlags(ctx);
           b.span = n->span;
           b.obj = true;
           b.objKind = ObjKind::Math;
@@ -179,7 +182,7 @@ struct LegacyInline final : InlineSink {
             b.style = compose(n->style, ctx.add, ctx.mul);
             b.text = strs.intern("");
             b.linkUrl = ctx.url.ref;
-            b.flags = ctx.addFlags;
+            b.flags = refFlags(ctx);
             b.span = n->span;
             b.anchorId = a.ref;
             b.widthResolved = true;
@@ -188,7 +191,7 @@ struct LegacyInline final : InlineSink {
         return;
       case Kind::fill:  // fil glue (plan P2-16), as emit lowers it
         pushSynthetic(u, compose(n->style, ctx.add, ctx.mul), ctx.url.ref, n->span, 0.0,
-                      (u16)(BF_SPACE | BF_FIL | ctx.addFlags), 0.0f, 0.0f, 0.0);
+                      (u16)(BF_SPACE | BF_FIL | refFlags(ctx)), 0.0f, 0.0f, 0.0);
         return;
       case Kind::group: {
         // inline-embedded labeled group (e.g. a term spliced mid-paragraph):
@@ -316,13 +319,13 @@ struct LegacyInline final : InlineSink {
 
     auto flushWord = [&] {
       if (!word.empty()) {
-        emitWord(word, n, u, st, ctx.url.ref, ctx.noHyphen, ctx.addFlags);
+        emitWord(word, n, u, st, ctx.url.ref, ctx.noHyphen, refFlags(ctx));
         word.clear();
       }
     };
     auto boundary = [&] {
       double px = kCjkBoundaryEm * fontPx(st);
-      pushSynthetic(u, st, ctx.url.ref, n->span, px, (u16)(BF_SPACE | BF_BOUND | ctx.addFlags),
+      pushSynthetic(u, st, ctx.url.ref, n->span, px, (u16)(BF_SPACE | BF_BOUND | refFlags(ctx)),
                     1.0f, 0.0f, px);
     };
     {  // formula → CJK boundary: the previous inline block was math
@@ -347,7 +350,7 @@ struct LegacyInline final : InlineSink {
     // cannot predict rendering for them.
     auto pushCjkChar = [&](std::string_view chars, double definedEm = 0) {
       LinebreakBlock b;
-      b.flags = (u16)((definedEm > 0 ? (BF_CJK | BF_PAIR) : BF_CJK) | ctx.addFlags);
+      b.flags = (u16)((definedEm > 0 ? (BF_CJK | BF_PAIR) : BF_CJK) | refFlags(ctx));
       b.breakPenalty = 0;
       b.stretchWeight = (float)cfg.cjkJustifyK;
       b.spaceWidth = glueSu;  // stretch capacity for the cost fn (App C)
@@ -368,7 +371,7 @@ struct LegacyInline final : InlineSink {
       const PunctCompress mode = runPunct ? (PunctCompress)(runPunct - 1) : cfg.punctCompress;
       // BF_PUNCT_OPEN on a half-space marks it as an OPENING punct's leading
       // half — the renderer squeezes a glyph only when its OWN half is absent.
-      const u16 openSpFlags = (u16)(BF_SPACE | BF_PUNCT_SP | BF_PUNCT_OPEN | ctx.addFlags);
+      const u16 openSpFlags = (u16)(BF_SPACE | BF_PUNCT_SP | BF_PUNCT_OPEN | refFlags(ctx));
       if (open) {
         if (lastIsCloseSp()) {
           // closing/dot + opening
@@ -397,7 +400,7 @@ struct LegacyInline final : InlineSink {
         }
       }
       LinebreakBlock g;
-      g.flags = (u16)(BF_CJK | BF_PUNCT_GLYPH | (open ? BF_PUNCT_OPEN : 0) | ctx.addFlags);
+      g.flags = (u16)(BF_CJK | BF_PUNCT_GLYPH | (open ? BF_PUNCT_OPEN : 0) | refFlags(ctx));
       g.breakPenalty = BREAK_INF;
       g.style = stCjk;
       g.text = strs.intern(ch);
@@ -406,7 +409,7 @@ struct LegacyInline final : InlineSink {
       u.legacy.push_back(g);
       if (!open)
         pushSynthetic(u, stCjk, ctx.url.ref, n->span, halfPx,
-                      (u16)(BF_SPACE | BF_PUNCT_SP | ctx.addFlags), 0.0f, 0.0f, 0.0);
+                      (u16)(BF_SPACE | BF_PUNCT_SP | refFlags(ctx)), 0.0f, 0.0f, 0.0);
     };
 
     while (i < s.size()) {
@@ -422,7 +425,7 @@ struct LegacyInline final : InlineSink {
         }
         atomsAtSpace = atoms;
         LinebreakBlock b;
-        b.flags = (u16)(BF_SPACE | ctx.addFlags);
+        b.flags = (u16)(BF_SPACE | refFlags(ctx));
         b.breakPenalty = 0;
         b.stretchWeight = 1;
         b.style = st;
@@ -502,7 +505,7 @@ struct LegacyInline final : InlineSink {
 // measurement misses it, leaving every justified line systematically short.
 // Tag each plain space with its neighbouring codepoints; resolveWidths turns
 // that into gap = m(prev+' '+next) - m(prev) - m(next).
-static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
+static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs, const StyleTable& styles) {
   auto lastCp = [&](const LinebreakBlock& b) -> std::string {
     std::string_view t = strs.get(b.text);
     if (t.empty()) return {};
@@ -533,11 +536,10 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
         continue;
       if (i == 0 || i + 1 >= blocks.size()) continue;
       if (!isWord(blocks[i - 1]) || !isWord(blocks[i + 1])) continue;
-      // the browser only kerns INSIDE one shaped run: a style or link
-      // boundary (italic title → roman period, real-world-report.md) splits
-      // the run, so no cross-space kern exists there to budget for
-      if (blocks[i - 1].style != blocks[i + 1].style || blocks[i - 1].style != b.style ||
-          blocks[i - 1].linkUrl != blocks[i + 1].linkUrl)
+      // the browser only kerns INSIDE one shaped run: one face (plan P4-01:
+      // the oracle follows the HList's rule, emit.cc kernContexts)
+      const FaceStyle fa = faceStyleOf(styles.get(blocks[i - 1].style));
+      if (!(fa == faceStyleOf(styles.get(blocks[i + 1].style))) || !(fa == faceStyleOf(styles.get(b.style))))
         continue;
       std::string prev = lastCp(blocks[i - 1]);
       std::string next = firstCp(blocks[i + 1]);
@@ -557,7 +559,7 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
   }
 }
 
-void LegacyInline::done(std::vector<TopBlock>& tops) { fillSpaceContexts(tops, strs); }
+void LegacyInline::done(std::vector<TopBlock>& tops) { fillSpaceContexts(tops, strs, styles); }
 
 }  // namespace
 

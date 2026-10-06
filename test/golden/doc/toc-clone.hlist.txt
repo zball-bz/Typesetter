@@ -58,7 +58,7 @@ top pid=1 units=1
   box Other "1" w=575su anchor="fnref-1" r3 @[44,59)
   glue word w=411su x=1 cap=411su src r4 @[60,63)
   box Other "and" w=2459su r4 @[60,63)
-  glue word w=411su x=1 cap=411su src r4 @[60,63)
+  glue word w=411su x=1 cap=411su kern="d §" src r4 @[60,63)
   box Other "§1.1" w=3442su r5 @[64,70)
   obj o0 math parts=1 edges=Alpha/Alpha src="x^2" [w=1516su asc=1547su desc=20su]
   run r0 plain BOLD x1.60

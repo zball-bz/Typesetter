@@ -84,11 +84,11 @@ top pid=3 units=1
   box Other "Memo" w=2049su r0 @[461,488)
   glue word w=257su x=1 cap=257su kern="o 1" src r0 @[461,488)
   box Other "1" w=513su r0 @[461,488)
-  glue word w=257su x=1 cap=257su src r1 @[489,492)
+  glue word w=257su x=1 cap=257su kern="1 a" src r1 @[489,492)
   box Other "and" w=1537su r1 @[489,492)
-  glue word w=257su x=1 cap=257su src r1 @[489,492)
+  glue word w=257su x=1 cap=257su kern="d M" src r1 @[489,492)
   box Other "Memo" w=2049su r2 @[493,525)
-  glue word w=257su x=1 cap=257su src r2 @[493,525)
+  glue word w=257su x=1 cap=257su kern="o ." src r2 @[493,525)
   box Other "." w=513su r3 @[525,526)
   run r0 plain ref LINK link="#tsr-m1"
   run r1 plain

@@ -79,9 +79,9 @@ top pid=3 units=1
   box Other "may" w=1537su r0 @[227,241)
   glue word w=257su x=1 cap=257su kern="y c" src r0 @[227,241)
   box Other "cite" w=2049su r0 @[227,241)
-  glue word w=257su x=1 cap=257su src r0 @[227,241)
+  glue word w=257su x=1 cap=257su kern="e §" src r0 @[227,241)
   box Other "§1" w=1128su r1 @[242,246)
-  glue word w=257su x=1 cap=257su src r2 @[247,283)
+  glue word w=257su x=1 cap=257su kern="1 a" src r2 @[247,283)
   box Other "and" w=1537su r2 @[247,283)
   glue word w=257su x=1 cap=257su kern="d t" src r2 @[247,283)
   box Other "the" w=1537su r2 @[247,283)
@@ -99,7 +99,7 @@ top pid=3 units=1
   box Other "back" w=2049su r2 @[247,283)
   glue word w=257su x=1 cap=257su kern="k a" src r2 @[247,283)
   box Other "as" w=1025su r2 @[247,283)
-  glue word w=257su x=1 cap=257su src r2 @[247,283)
+  glue word w=257su x=1 cap=257su kern="s 1" src r2 @[247,283)
   box Other "1" w=513su r3 @[284,289)
   box Other ";" w=513su r4 @[289,313)
   glue word w=257su x=1 cap=257su kern="; t" src r4 @[289,313)
@@ -152,7 +152,7 @@ top pid=4 units=3
   run r0 plain x0.85
   run r1 plain BOLD x0.85
   run r2 plain x0.85
-  run r3 plain CODE x0.72
+  run r3 rigid CODE x0.72
   run r4 plain x0.85
   run r5 object x0.85
   run r6 plain x0.85

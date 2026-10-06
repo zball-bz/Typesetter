@@ -79,9 +79,9 @@ top pid=2 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="mm" r4 @[221,256)
   box Other "ment." w=2561su r4 @[221,256)
   run r0 plain
-  run r1 plain CODE x0.85
+  run r1 rigid CODE x0.85
   run r2 plain
-  run r3 plain CODE x0.85
+  run r3 rigid CODE x0.85
   run r4 plain
 top pid=3 units=1
  unit rule indent=0su

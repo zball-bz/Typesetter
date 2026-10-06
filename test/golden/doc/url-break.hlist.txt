@@ -11,7 +11,7 @@ top pid=0 units=1
   box Other "such" w=2049su r0 @[0,23)
   glue word w=257su x=1 cap=257su kern="h a" src r0 @[0,23)
   box Other "as" w=1025su r0 @[0,23)
-  glue word w=257su x=1 cap=257su src r0 @[0,23)
+  glue word w=257su x=1 cap=257su kern="s h" src r0 @[0,23)
   box Other "https:/" w=3585su r1 @[23,107)
   pen 1.2 r1
   box Other "/commons." w=4609su r1 @[23,107)
@@ -35,7 +35,7 @@ top pid=0 units=1
   box Other "width=" w=3073su r1 @[23,107)
   pen 1.2 r1
   box Other "800" w=1537su r1 @[23,107)
-  glue word w=257su x=1 cap=257su src r2 @[108,206)
+  glue word w=257su x=1 cap=257su kern="0 m" src r2 @[108,206)
   box Other "must" w=2049su r2 @[108,206)
   glue word w=257su x=1 cap=257su kern="t b" src r2 @[108,206)
   box Other "be" w=1025su r2 @[108,206)

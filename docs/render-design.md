@@ -43,7 +43,9 @@ Config, no FlowUnit, no content tree, no state carried between nodes.
 
 Runs open where the run instance changes (plan P1-12): style, link,
 synthetic kind, a punctuation glyph, a pinned box or an object — the writer
-never re-derives a boundary.
+never re-derives a boundary. (Plan P4-01) an inline anchor opens its run,
+whose first DLRun carries the id; a Rigid run with spaces on a justified
+line is `rigid` (`word-spacing:0`; the dl dump says `rigid`).
 
 `tsrc --stage=dl` prints the DisplayList (a debug product; fixtures may
 request its golden with `"products": ["dl"]`).

@@ -46,7 +46,7 @@ top pid=1 units=1
   box Other "P1-10):" w=3585su r10 @[24,101)
   glue word w=257su x=1 cap=257su kern=": s" src r10 @[24,101)
   box Other "see" w=1537su r10 @[24,101)
-  glue word w=257su x=1 cap=257su src r10 @[24,101)
+  glue word w=257su x=1 cap=257su kern="e §" src r10 @[24,101)
   box Other "§1" w=1128su r11 @[102,108)
   box Other "," w=513su r12 @[108,109)
   glue word w=257su x=1 cap=257su src r12 @[108,109)
@@ -60,7 +60,7 @@ top pid=1 units=1
   pen 0 r16
   glue word w=257su x=1 cap=257su src r17 @[118,124)
   box Other "1" w=513su r17 @[118,124)
-  glue word w=257su x=1 cap=257su src r18 @[125,128)
+  glue word w=257su x=1 cap=257su kern="1 a" src r18 @[125,128)
   box Other "and" w=1537su r18 @[125,128)
   glue word w=257su x=1 cap=257su src r18 @[125,128)
   box Ideo "式" w=1025su wt=0.6 cap=102su r19 @[129,134)

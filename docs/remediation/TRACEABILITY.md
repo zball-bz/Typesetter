@@ -1146,7 +1146,7 @@ Theme steps: — · findings: 1
 | `emitter/coarse-source-spans` | issue | low | P4-03 | |
 | `emitter/full-reemit-for-math-text` | issue | low | P1-20, P1-25 | grep:plan P1-25 |
 | `emitter/dump-hides-finite-penalties` | issue | low | P1-12 | grep:plan P1-12 |
-| `emitter/missed:0` | missed | high | P0-10, P4-01 | |
+| `emitter/missed:0` | missed | high | P0-10, P4-01 | grep:plan P4-01 |
 | `emitter/missed:1` | missed | medium | P4-02 | |
 | `emitter/missed:2` | missed | medium | P4-05 | |
 | `emitter/missed:3` | missed | medium | P1-17 | grep:plan P1-17 |
@@ -1223,7 +1223,7 @@ Theme steps: — · findings: 1
 | `render-runtime/hyphen-in-link-or-ref` | issue | low | P0-10 | grep:plan P0-10 |
 | `render-runtime/normative-doc-drift` | issue | low | P3-07 || grep:plan P3-07 |
 | `render-runtime/swap-whole-container` | issue | low | P3-05 | grep:plan P3-05 |
-| `render-runtime/missed:0` | missed | high | P0-10, P4-01 | |
+| `render-runtime/missed:0` | missed | high | P0-10, P4-01 | grep:plan P4-01 |
 | `render-runtime/missed:1` | missed | medium | P1-18 | grep:plan P1-18 |
 | `render-runtime/missed:2` | missed | medium | P1-02 | grep:plan P1-02 |
 | `render-runtime/missed:3` | missed | medium | P4-03 | |

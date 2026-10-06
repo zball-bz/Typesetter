@@ -190,6 +190,34 @@ std::string lintHList(const HList& h) {
     if (v[k].run >= h.runs.size()) appendf(out, "item %zu: run r%u out of range\n", k, v[k].run);
   }
   if (n && v[n - 1].run + 1 != h.runs.size()) appendf(out, "%zu runs, last used r%u\n", h.runs.size(), v[n - 1].run);
+  // (plan P4-01) an anchor opens its run (after its glyph's leading blank
+  // at most), which carries it: paint writes its id once, where the run starts
+  for (size_t k = 0; k < n; k++) {
+    if (!(v[k].attrs & IA_Anchor) || v[k].run >= h.runs.size()) continue;
+    size_t first = k;
+    while (first > 0 && v[first - 1].run == v[k].run) first--;
+    bool opens = true;
+    for (size_t m = first; m < k; m++) opens = opens && v[m].k == IK::Glue && v[m].cls == (u8)GC::Blank;
+    if (!opens) appendf(out, "item %zu: an anchor inside run r%u\n", k, v[k].run);
+    else if (h.runs[v[k].run].anchor != h.cold[v[k].cold].anchor)
+      appendf(out, "item %zu: run r%u does not carry its anchor\n", k, v[k].run);
+  }
+  // (plan P4-01) a junction kern (KernCtx) only between two text boxes: the
+  // browser kerns inside a text run, never at an inline block
+  for (size_t k = 0; k < n; k++) {
+    const bool ctx = (v[k].k == IK::Glue && v[k].cls != (u8)GC::InterChar && v[k].aux < h.specs.size() &&
+                      h.specs[v[k].aux].k == AdvanceSpec::KernCtx) ||
+                     (v[k].k == IK::Disc && h.discs[v[k].aux].spec != ~0u);
+    if (!ctx) continue;
+    auto textBox = [&](i64 m, int dir) {
+      while (m >= 0 && m < (i64)n && v[m].k == IK::Penalty) m += dir;
+      if (m < 0 || m >= (i64)n || v[m].k != IK::Box) return false;
+      const RealizeClass rc = h.runs[v[m].run].rc;
+      return rc == RealizeClass::Plain || rc == RealizeClass::Rigid;
+    };
+    if (!textBox((i64)k - 1, -1) || !textBox((i64)k + 1, 1))
+      appendf(out, "item %zu: a junction kern beside no text box\n", k);
+  }
   // run homogeneity
   for (size_t k = 0; k < n;) {
     size_t e = k;

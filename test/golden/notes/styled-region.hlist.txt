@@ -134,7 +134,7 @@ top pid=4 units=4
   glue word w=219su x=1 cap=219su src r2 @[272,323)
   box Other "↩" w=524su r3 @[272,323)
   run r0 plain x0.85 color=#555555
-  run r1 plain CODE x0.72 color=#2f5d8a
+  run r1 rigid CODE x0.72 color=#2f5d8a
   run r2 plain x0.85 color=#555555
   run r3 plain ref LINK x0.85 color=#555555 link="#tsr-fnref-2"
  unit text indent=1536su anchor="fn-3" marker="3."

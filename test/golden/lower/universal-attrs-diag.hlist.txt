@@ -109,7 +109,7 @@ top pid=4 units=1
   box Other "the" w=1537su r0 @[615,640)
   glue word w=257su x=1 cap=257su kern="e q" src r0 @[615,640)
   box Other "quote:" w=3073su r0 @[615,640)
-  glue word w=257su x=1 cap=257su src r0 @[615,640)
+  glue word w=257su x=1 cap=257su kern=": p" src r0 @[615,640)
   box Other "p1" w=1025su r1 @[641,644)
   box Other "." w=513su r2 @[644,645)
   run r0 plain

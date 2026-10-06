@@ -247,7 +247,7 @@ top pid=3 units=1
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[589,599)
   box Other "1" w=513su r2 @[589,599)
-  glue word w=257su x=1 cap=257su src r3 @[600,623)
+  glue word w=257su x=1 cap=257su kern="1 i" src r3 @[600,623)
   box Other "is" w=1025su r3 @[600,623)
   glue word w=257su x=1 cap=257su kern="s r" src r3 @[600,623)
   box Other "ref" w=1537su r3 @[600,623)

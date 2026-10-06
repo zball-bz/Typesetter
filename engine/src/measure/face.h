@@ -50,6 +50,39 @@ struct FaceKeyHash {
 template <class S>  // a stage view with doc.baseSize
 inline double emPx(const S& cfg, const Styling& s) { return emPx(cfg.baseSizePx, s); }
 
+// The style's share of its face (plan P4-01): every Styling field the face
+// is made of, as FaceTable::faceOf reads them — the settings (families,
+// base size, language, dppx, loaded faces) supply the rest of the key, the
+// same for every style. Two styles with equal FaceStyles measure in one face,
+// and a browser shapes them as one run however many elements the text is
+// split into (a link, a reference, a colour: Chromium and Firefox kern
+// across those, never across a font change, letter-spacing or an inline
+// block). Emit, which sees no face, compares these.
+struct FaceStyle {
+  StrRef family = 0;  // text.font; else the role and script pick it
+  bool mono = false;
+  bool cjk = false;
+  float sizePx = 0, sizeMul = 1.0f;
+  u16 weight = 400;
+  bool italic = false;  // a CJK run is measured upright (v2 §14)
+  StrRef features = 0;
+  StrRef lang = 0;  // 0: the document's
+  bool operator==(const FaceStyle&) const = default;
+};
+inline FaceStyle faceStyleOf(const Styling& s) {
+  FaceStyle f;
+  f.family = s.fontFamily;
+  f.mono = s.fontRole == FONTROLE_MONO;
+  f.cjk = s.script == SCRIPT_CJK;
+  f.sizePx = s.sizePx;
+  f.sizeMul = s.sizeMul;
+  f.weight = s.weight ? s.weight : 400;
+  f.italic = s.italic && !f.cjk;
+  f.features = s.features;
+  f.lang = s.lang;
+  return f;
+}
+
 // Family resolution (plan P1-04): an explicit text.font wins; otherwise the
 // font role (text.fontRole, plan P2-08: body or mono) and the script
 // decide:
@@ -91,21 +124,22 @@ class FaceTable {
   // (engine.script, plan P2-08)
   FaceId faceOf(StyleId st) {
     if (st < memo_.size() && memo_[st] != kNone) return memo_[st];
+    // the style's share (faceStyleOf), completed by the settings
     const Styling& s = styles_->get(st);
-    const Script script = s.script == SCRIPT_CJK ? Script::Cjk : Script::Latin;
-    const bool mono = s.fontRole == FONTROLE_MONO;
+    const FaceStyle fs = faceStyleOf(s);
     FaceKey k;
-    k.family = s.fontFamily ? s.fontFamily : strs_->intern(familyFor(*cfg_, mono, script));
-    k.sizePx = emPx(*cfg_, s);
-    k.weight = s.weight ? s.weight : 400;
+    k.family = fs.family ? fs.family
+                         : strs_->intern(familyFor(*cfg_, fs.mono, fs.cjk ? Script::Cjk : Script::Latin));
+    k.sizePx = emPx(*cfg_, s);  // (fs.sizePx, fs.sizeMul)
+    k.weight = fs.weight;
     // CJK italic is painted upright with emphasis marks (.tsr-cjk.tsr-i):
     // it is measured upright too (v2 §14)
-    k.italic = s.italic && script == Script::Latin ? 1 : 0;
+    k.italic = fs.italic ? 1 : 0;
     // the phase-1 projection (design T9 M4): features for code runs, the
     // run's language else the document's, the host's dppx
     // (plan P3-02: the run's text.features — code's by the default rules)
-    k.features = s.features;
-    k.lang = s.lang ? s.lang : strs_->intern(cfg_->lang);
+    k.features = fs.features;
+    k.lang = fs.lang ? fs.lang : strs_->intern(cfg_->lang);
     k.dppx = cfg_->dppx;
     k.faceDigest = loadedDigest(strs_->get(k.family));
     FaceId f;

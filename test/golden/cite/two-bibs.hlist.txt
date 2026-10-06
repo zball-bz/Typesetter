@@ -80,7 +80,7 @@ top pid=1 units=3
   box Other "1119-1184." w=5121su r2 @[0,0)
   glue word w=257su x=1 cap=257su kern=". 1" src r2 @[0,0)
   box Other "1981." w=2561su r2 @[0,0)
-  glue word w=257su x=1 cap=257su src r2 @[0,0)
+  glue word w=257su x=1 cap=257su kern=". d" src r2 @[0,0)
   box Other "doi:10." w=3585su r3 @[0,0)
   pen 1.2 r3
   box Other "1002/" w=2561su r3 @[0,0)
@@ -123,7 +123,7 @@ top pid=1 units=3
   box Other "ty," w=1537su r2 @[0,0)
   glue word w=257su x=1 cap=257su kern=", 1" src r2 @[0,0)
   box Other "1983." w=2561su r2 @[0,0)
-  glue word w=257su x=1 cap=257su src r2 @[0,0)
+  glue word w=257su x=1 cap=257su kern=". h" src r2 @[0,0)
   box Other "https:/" w=3585su r3 @[0,0)
   pen 1.2 r3
   box Other "/tug." w=2561su r3 @[0,0)
@@ -230,7 +230,7 @@ top pid=3 units=3
   box Other "1119-1184." w=5121su r2 @[0,0)
   glue word w=257su x=1 cap=257su kern=". 1" src r2 @[0,0)
   box Other "1981." w=2561su r2 @[0,0)
-  glue word w=257su x=1 cap=257su src r2 @[0,0)
+  glue word w=257su x=1 cap=257su kern=". d" src r2 @[0,0)
   box Other "doi:10." w=3585su r3 @[0,0)
   pen 1.2 r3
   box Other "1002/" w=2561su r3 @[0,0)
@@ -273,7 +273,7 @@ top pid=3 units=3
   box Other "ty," w=1537su r2 @[0,0)
   glue word w=257su x=1 cap=257su kern=", 1" src r2 @[0,0)
   box Other "1983." w=2561su r2 @[0,0)
-  glue word w=257su x=1 cap=257su src r2 @[0,0)
+  glue word w=257su x=1 cap=257su kern=". h" src r2 @[0,0)
   box Other "https:/" w=3585su r3 @[0,0)
   pen 1.2 r3
   box Other "/tug." w=2561su r3 @[0,0)
