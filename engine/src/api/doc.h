@@ -748,7 +748,7 @@ struct Doc {
     writeRoot(html, "tsr-doc", paintRoot(cfg, &layout));
     DLBlock b;
     for (size_t p = 0; p < layout.paras.size(); p++) {
-      paintBlock(layout, p, tops, strs, cfg, b);
+      paintBlock(layout, p, tops, strs, cfg, b, &styles, &metrics);
       writeBlock(html, b, styles, strs, cfg.baseSizePx);
     }
     html += "</div>\n";
@@ -812,7 +812,7 @@ struct Doc {
     put32(n);
     DLBlock b;
     for (size_t p = 0; p < layout.paras.size(); p++) {
-      paintBlock(layout, p, tops, strs, cfg, b);
+      paintBlock(layout, p, tops, strs, cfg, b, &styles, &metrics);
       // its key: its open tag without the positional attributes, then its
       // nodes (written in place after its legacy open tag; kept unless held)
       std::string open;
@@ -859,6 +859,7 @@ struct Doc {
     jsonString(head, cfg.idPrefix);
     head += ",\"root\":";
     jsonString(head, root);
+    head += ",\"container\":" + containerJson();
     head += ",\"anchors\":[" + anchors + "],\"gaps\":[" + gaps + "]}";
     std::string out = "TSRR";
     const u32 hl = (u32)head.size();
@@ -867,6 +868,35 @@ struct Doc {
     out += table;
     out += html;
     reportWriterDefects();
+    return out;
+  }
+
+  // (plan P3-19; design T7 S11) what the container applies: each font
+  // role's content-height factor — (ascent + descent) / em of a regular
+  // face of it the document measured — as the line-height its runs take
+  // (the contract's --tsr-lh-*), so a run's line box is its content area
+  // and a line's baseline sits at its top plus its tallest ascent, whatever
+  // the host's line-height
+  std::string containerJson() const {
+    double f[4] = {0, 0, 0, 0};  // body, cjk, mono, monoCjk
+    for (StyleId id = 0; id < (StyleId)styles.count(); id++) {
+      const Styling& st = styles.get(id);
+      if (st.fontFamily || st.weight > 500 || st.italic || !metrics.hasVmet(id)) continue;
+      const int r = (st.fontRole == FONTROLE_MONO ? 2 : 0) + (st.script == SCRIPT_CJK ? 1 : 0);
+      if (f[r] > 0) continue;
+      const VMet& v = metrics.vmet(id);
+      const double em = emPx(cfg.baseSizePx, st);
+      if (em > 0) f[r] = suToPx(v.ascent + v.descent) / em;
+    }
+    static const char* const kRole[] = {"body", "cjk", "mono", "monoCjk"};
+    std::string out = "{\"lh\":{";
+    bool first = true;
+    for (int r = 0; r < 4; r++) {
+      if (f[r] <= 0) continue;
+      appendf(out, "%s\"%s\":%.4f", first ? "" : ",", kRole[r], f[r]);
+      first = false;
+    }
+    out += "}}";
     return out;
   }
 
@@ -897,7 +927,7 @@ struct Doc {
     const LayoutResult& lay = media ? own : layout;
     const PageResult pr = paginate(lay, spec, &diags);
     std::vector<DLBlock> dl(lay.paras.size());
-    for (size_t p = 0; p < lay.paras.size(); p++) paintBlock(lay, p, tops, strs, cfg, dl[p]);
+    for (size_t p = 0; p < lay.paras.size(); p++) paintBlock(lay, p, tops, strs, cfg, dl[p], &styles, &metrics);
     std::string html;
     writeRoot(html, "tsr-doc tsr-paged", paintRoot(cfg));
     for (const Page& pg : pr.pages) {

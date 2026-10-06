@@ -17,4 +17,7 @@ export const AUDIT = Object.freeze({
   shrinkShare: SETTINGS['cost.shrinkThreshold'].def,
   shrinkSlackPx: 0.5,
   wordSpacingFloorPx: -2.5,
+  // (plan P3-19; design T7 S11) baseline: a line's baseline lies within this
+  // of the engine's model (top + tallest ascent; a code row centred)
+  baselinePx: 1,
 });

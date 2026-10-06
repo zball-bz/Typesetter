@@ -251,7 +251,10 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     Su advance = baseLeading;
     if (f.maxAsc + f.maxDesc > advance) advance = f.maxAsc + f.maxDesc;
     line.height = advance;
-    line.baseline = (advance - (f.maxAsc + f.maxDesc)) / 2 + f.maxAsc;
+    // (plan P3-19; design T7 S11) the baseline the contract pins: a run's
+    // line box is its content area (its face's content-height line-height),
+    // so the line's baseline is its top plus its tallest ascent
+    line.baseline = f.maxAsc;
     line.y = (Su)y;
     y += advance;
     out.push_back(line);

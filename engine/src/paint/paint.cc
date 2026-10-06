@@ -255,7 +255,7 @@ DLRoot paintRoot(const PaintSettings& cfg, const LayoutResult* lr) {
 }
 
 void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& tops, const Interner& strs,
-                const PaintSettings& cfg, DLBlock& out) {
+                const PaintSettings& cfg, DLBlock& out, const StyleTable* styles, const MetricStore* metrics) {
   const ParaFrame& fr = lr.paras[p];
   const TopBlock& tb = tops[p];
   const TopTree& tree = *tb.tree;
@@ -341,6 +341,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
           n.lineHeightPx = suToPx(l.height);
           if (l.codeHl) n.heightPx = suToPx(l.height);
         }
+        n.rowStyle = g.codeStyle;  // (plan P3-19) its strut: the code face
         n.marker = l.marker;
         n.markerRole = l.markerRole;
         n.markerStyle = l.markerStyle;
@@ -366,6 +367,18 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.markerStyle = l.markerStyle;
         n.h = l.cellIdx >= 0 ? &u.cells[(size_t)l.cellIdx].hl : &u.hl;
         lineRuns(l, *n.h, out.runs);
+        // (plan P3-19; design T7 S11) a run in a user font family: its
+        // face's content height as its line-height (the contract gives the
+        // roles theirs), so its line box is its content area
+        if (styles && metrics)
+          for (size_t r = n.runBegin; r < out.runs.size(); r++) {
+            DLRun& d = out.runs[r];
+            const Styling& st = styles->get(d.face);
+            if (!st.fontFamily || !metrics->hasVmet(d.face)) continue;
+            const VMet& v = metrics->vmet(d.face);
+            const double em = emPx(cfg.baseSizePx, st);
+            if (em > 0) d.lh = (float)(suToPx(v.ascent + v.descent) / em);
+          }
         break;
       }
     }

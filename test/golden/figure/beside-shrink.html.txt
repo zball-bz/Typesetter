@@ -10,9 +10,9 @@
 <div class="tsr-line" data-s="112" data-e="126" data-track="caption" style="top:114px;left:180px;width:120px"><span class="tsr-r" data-s="112">float.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="304" style="position:relative;height:24px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="10" data-ragged="1" style="top:0px;left:0px;width:164px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let x = 1;</span></div>
+<div class="tsr-line tsr-row" data-s="0" data-e="10" data-ragged="1" style="top:0px;left:0px;width:164px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let x = 1;</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="352" style="position:relative;height:138px">
-<div class="tsr-line" data-s="0" data-e="10" data-ragged="1" style="top:114px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let y = 2;</span></div>
+<div class="tsr-line tsr-row" data-s="0" data-e="10" data-ragged="1" style="top:114px;left:0px;width:300px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let y = 2;</span></div>
 </div>
 </div>

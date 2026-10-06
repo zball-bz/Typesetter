@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-19
+- 下一步：P3-20
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -85,7 +85,7 @@
 | P3-16 | 几何权威 | done | grep:plan P3-16 | 2026-10-06 | 161 个 html golden 变化，脚本核对：除 margin-bottom 19.2px→19.203px、.tsr-doc 的 min-height、错误 run 的 tsr-err 与 title 外，其余 11 个逐一检查均为预期（浮动块的间距 0、theorem 的 1.5em 空间 24px、18px 基准的 21.594px、media 块后 0）；paged golden 不变；新用例 pages/paged-gutter（行号在版心左侧时纸张按 gutter 扩展裁切） | 段间 margin-bottom 取 layout 的 su（下一块 y 减本块底），浮动块为 0，space.* 生效；文档超出末块时 .tsr-doc 写 min-height；片段与 DL 节点带标记角色（列表标记/行号）与过渡放置（end 边在行首，拼写不变）；layout 计算行号在版心左侧的 gutter（位数×代码 ch＋0.55em 间隔），分页纸张按其扩展 clip-path 裁切（无此情况时 overflow:hidden 不变）；错误 run 带 class tsr-err 与 title（错误信息），复制省略；默认 .tsr-err 着色。文档：render-design §4、tsm-changes |
 | P3-17 | 块入行内的拆分策略 | done | grep:plan P3-17 | 2026-10-06 | 声明的 golden 变化：inline/object-unsupported-diag（句中 #rule() 由原地警告改为拆分段落，diags 去掉 block-in-inline 警告）与 line/own-math（列表项段落中的显示公式由行内退化改为拆出公式块，续段无缩进、无段前距）；新用例 inline/block-split-diag（拆分、带标签的段中显示公式编号保留、标题中的块成为 error） | normalize N5：Blocks 位置的段落内出现块时拆成 [para, block, para{cont}]，首段保留原段（标签、属性），续段为同一段落（样式、规则环境、属性、作用域同原段），只含空白的片段不成段；其它行内位置（标题、链接、行内组）的块包上 error{block-in-inline}；删除 N1（显示数学在段内退化为行内并丢标签）。para 的 cont 属性由引擎设置（resolved，输入中丢弃）；盒树：续段不加首行缩进、BlockTraits.cont；layout：续段前间距为 0（栈内与顶层）；语义页续段 margin-top:0;text-indent:0。文档：document-model 正规形、tsm-changes |
 | P3-18 | 类名渲染与主题拆分 | done | grep:plan P3-18 | 2026-10-06 | 42 个 golden 变化（脚本核对：token run 去掉内联 color:var(--tsr-tok-*) 换成 tsr-c-tok-*、代码 run（含行号）加 tsr-pre；另 4 个逐一检查：code/hang、code/runs 只有 tsr-pre（作者写的颜色保留），lower/universal-attrs-diag 的 class 渲染为 tsr-c-note tsr-c-wide，typeset 与语义页均是）；e2e：token 断言改为类名 | 类通道：节点的 class 进入 run 行 text.classes（引擎设置、排序、去重、度量中性、向下继承），代码 token 携带 tok-<tag> 而非颜色串；typeset run 写 tsr-c-*，语义页文字 span 写 tsr-c-*；text.space（normal/pre）新行，默认规则给 code/codeblock 设 pre → tsr-pre。CSS 拆分：schema contract 段生成渲染契约（C++ contractClasses 供序列化器、contract.gen.mjs 的 CONTRACT_CSS，挤压量取 T5 compat.def 的 punctHalfEm），shell 只留 T7 布局模块（TSR_CSS = 契约 + 布局），新建 runtime/src/main/theme.css（只含着色：链接、错误、高亮行、行号色、token 调色板与 .tsr-c-tok-* 规则）生成 theme.gen.mjs 的 THEME_CSS，shell 另注入（data-tsr-theme）、export-static 一并写出；删除死规则 .tsr-marker.tsr-code 的 font-size。devAudit 增加契约检查（tsr-b/tsr-i/tsr-pre 的计算样式）。文档：style-design §4、tsm-changes |
-| P3-19 | 基线权威 | todo | | | | |
+| P3-19 | 基线权威 | done | grep:plan P3-19 | 2026-10-06 | 31 个 golden 变化（脚本核对：代码行 class 加 tsr-row 与 font-size（代码字号）、用户字体族 run 加内联 line-height；dl 调试产物的行基线数值随模型变化）；e2e：所有用例的 devAudit 新增基线检查（≤1px，四种 DPR 全过），新增"宿主 line-height 3 下基线不动"用例 | 文本行基线 = 行顶 + 最高 run 的 ascent（Fragment.baseline 改为内容高公式）；契约 CSS：.tsr-line line-height 0（strut 不抬高），.tsr-r/.tsr-cjk/.tsr-code/mono-cjk 的 line-height 取 --tsr-lh-* 变量（fallback normal）；RenderResult head 带 container.lh（各字体角色的 (ascent+descent)/em，取文档测过的常规字面），shell 每次 commit 后设到根元素；用户字体族的 run 由 paint 按其字面度量写内联 line-height；代码行 tsr-row：内联代码字号、契约令 strut 为等宽字面，行内居中与 layout 一致。devAudit 基线检查（文字行 = 最高 ascent；代码行 = 居中）。文档：render-design §5、document-model §8、tsm-changes |
 | P3-20 | 安全评审检查点 | todo | | | | |
 | P3-21 | ResourceHost、定位器、引用清单、静态导出 | todo | | | | |
 | P3-22 | 代码高亮清单与引擎侧 overlay | todo | | | | |
@@ -162,6 +162,7 @@
 | P3-16 后 | 3.60 | 10.30 | 25.60 | 1.8 / 3.1 / 0.8 / 9.9 / 2.9 | 64.6 / 106.5 / 144.0 | 1.50 / 21.30 / 58.00 | 均在 P3 门限内 |
 | P3-17 后 | 3.40 | 10.50 | 26.50 | 1.6 / 3.2 / 0.8 / 10.2 / 3.0 | 69.5 / 105.1 / 151.5 | 1.60 / 22.30 / 58.40 | 均在 P3 门限内 |
 | P3-18 后 | 3.30 | 11.00 | 26.40 | 1.5 / 3.1 / 0.7 / 9.8 / 3.2 | 69.9 / 102.8 / 147.7 | 1.70 / 21.50 / 57.80 | 均在 P3 门限内 |
+| P3-19 后 | 3.20 | 10.70 | 26.70 | 1.9 / 3.1 / 0.8 / 9.9 / 3.2 | 69.1 / 105.1 / 148.2 | 1.70 / 22.90 / 59.40 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -352,6 +353,7 @@
 | P3-17 | 计划写"只新增用例"，但 inline/object-unsupported-diag 与 line/own-math 含段内块，按 D-I02 改变（声明的行为变化） | 设计 S8b 认为现有用例没有段内块，实际有两个；按决定 D-I02 执行 | 无 |
 | P3-17 | 拆分不报诊断（只有无法拆分的行内位置报 block-in-inline） | 拆分是 D-I02 规定的正常行为，与 Typst 一致 | 无 |
 | P3-18 | golden 变化 42 个（设计时估计 6+2+11）；token 标签表仍在 syntax.def 一处，theme.css 的 .tsr-c-tok-* 规则手写（14 个标签） | 设计之后新增了代码用例；标签集稳定，主题是可替换的样式表 | P3-22（语言清单）可生成 |
+| P3-19 | 文本行基线采用内容高模型（行顶＋最高 ascent，与 §8 原表述一致），而非 P1-18 文档里的"半行距在上"公式；字面的内容高因子按角色取常规字面（粗体/斜体共用） | 契约钉住 run 的行框为其内容区才能与宿主无关；同族粗斜体的纵向度量一致 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

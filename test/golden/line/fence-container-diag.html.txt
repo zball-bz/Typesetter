@@ -2,13 +2,13 @@
 <div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:126.391px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="47" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:1.143px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">an item with a fence whose content is</span></div>
 <div class="tsr-line" data-s="0" data-e="47" data-join="para" style="top:24px;left:24px;width:276px"><span class="tsr-r" data-s="0">indented:</span></div>
-<div class="tsr-line" data-s="59" data-e="80" data-ragged="1" style="top:54.391px;left:24px;width:276px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">if (x) {</span></div>
-<div class="tsr-line" data-s="59" data-e="80" data-ragged="1" style="top:78.391px;left:24px;width:276px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">  y();</span></div>
-<div class="tsr-line" data-s="59" data-e="80" data-ragged="1" style="top:102.391px;left:24px;width:276px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">}</span></div>
+<div class="tsr-line tsr-row" data-s="59" data-e="80" data-ragged="1" style="top:54.391px;left:24px;width:276px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">if (x) {</span></div>
+<div class="tsr-line tsr-row" data-s="59" data-e="80" data-ragged="1" style="top:78.391px;left:24px;width:276px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">  y();</span></div>
+<div class="tsr-line tsr-row" data-s="59" data-e="80" data-ragged="1" style="top:102.391px;left:24px;width:276px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">}</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="92" style="position:relative;height:67.203px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="20" data-join="para" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">a quote with a fence</span></div>
-<div class="tsr-line" data-s="31" data-e="44" data-ragged="1" style="top:43.203px;left:16px;width:284px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">quoted(code);</span></div>
+<div class="tsr-line tsr-row" data-s="31" data-e="44" data-ragged="1" style="top:43.203px;left:16px;width:284px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">quoted(code);</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="137" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="43" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:5.714px"><span class="tsr-r" data-s="0">the quote ends here, and so does its</span></div>

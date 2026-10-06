@@ -113,7 +113,22 @@ export class StaleKeys extends Error {}
 // commit(session, result) → { ranges: [{ oldPids, newPids }], kept, rebuilt,
 // ignored }. An older generation than the last committed is ignored (a
 // coalesced request answered twice).
+// (plan P3-19; design T7 S11) the container's content-height factors on the
+// root: the contract's --tsr-lh-* (a run's line box is its content area)
+const LH_VARS = { body: '--tsr-lh-body', cjk: '--tsr-lh-cjk', mono: '--tsr-lh-mono', monoCjk: '--tsr-lh-monocjk' };
+function applyContainer(session, head) {
+  const lh = head?.container?.lh;
+  if (!lh || !session.root) return;
+  for (const [k, v] of Object.entries(LH_VARS))
+    if (typeof lh[k] === 'number') session.root.style.setProperty(v, String(lh[k]));
+}
+
 export function commit(session, result) {
+  const r = commitFrame(session, result);
+  if (!r.ignored) applyContainer(session, session.head);
+  return r;
+}
+function commitFrame(session, result) {
   const { head, blocks } = result;
   if (head.generation <= session.generation)
     return { ranges: [], kept: session.blocks.length, rebuilt: false, ignored: true };

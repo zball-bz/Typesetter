@@ -1068,6 +1068,13 @@
       "tsr-sup": {"when": "st.baseline == BASELINE_SUPER", "css": "position: relative; top: -0.45em; text-decoration: none"}
     },
     "rules": [
+      "/* (plan P3-19, T7 S11) a line's box is its runs' content areas: a run's line-height is its face's content height (the container's factors); a code row's strut is the code face, centred in its row */",
+      ".tsr-line { line-height: 0; }",
+      ".tsr-r { line-height: var(--tsr-lh-body, normal); }",
+      ".tsr-r.tsr-cjk { line-height: var(--tsr-lh-cjk, normal); }",
+      ".tsr-r.tsr-code { line-height: var(--tsr-lh-mono, normal); }",
+      ".tsr-r.tsr-code.tsr-cjk { line-height: var(--tsr-lh-monocjk, normal); }",
+      ".tsr-row { font-family: var(--tsr-font-mono, monospace); }",
       ".tsr-code.tsr-cjk { font-family: var(--tsr-font-mono-cjk, var(--tsr-cjk-font, inherit)); }",
       ".tsr-cjk.tsr-i { font-style: normal; text-emphasis: filled dot; text-emphasis-position: under right; }",
       ".tsr-doc a.tsr-sup { position: relative; top: -0.45em; text-decoration: none; }"

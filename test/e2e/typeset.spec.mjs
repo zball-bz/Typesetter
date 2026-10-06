@@ -81,6 +81,19 @@ test('wide measure long doc', async ({ page }) => {
   expect(report.failures).toEqual([]);
 });
 
+// (plan P3-19; design T7 S11) the host's line-height no longer moves a
+// baseline: the contract pins each run's line box to its content area
+test('baseline: a host line-height leaves every baseline where the engine set it', async ({ page }) => {
+  const source = fixtures.find((f) => f.name === 'code/runs').source + '\n\nA paragraph of prose under a host line-height of 3.\n';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(() => { document.querySelector('#out').style.lineHeight = '3'; });
+  await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, { widthPx: 400 }), { source });
+  const report = await page.evaluate(() => window.__tsr.audit());
+  expect(report.failures.filter((f) => f.audit === 'baseline')).toEqual([]);
+  expect(report.lines).toBeGreaterThan(0);
+});
+
 // --- M5: progressive upgrade, relayout, copy contract (§9.2/§9.3) ---------
 
 test('progressive semantic phase, upgrade records, relayout', async ({ page }) => {

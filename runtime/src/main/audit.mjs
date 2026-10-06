@@ -143,6 +143,39 @@ export function auditTypeset(root) {
     }
   }
 
+  // (plan P3-19; design T7 S11) the baseline: a text line's sits at its top
+  // plus its tallest run's ascent — the contract gives each run its face's
+  // content height as line-height — and a code row's centres its face's
+  // extents in the row; within a pixel, whatever the host's line-height.
+  // Lines of text runs only (objects size their own boxes).
+  const g = document.createElement('canvas').getContext('2d');
+  const extents = (el) => {
+    g.font = getComputedStyle(el).font;
+    const m = g.measureText('Hg');
+    return [m.fontBoundingBoxAscent, m.fontBoundingBoxDescent];
+  };
+  for (const line of root.querySelectorAll('.tsr-line')) {
+    const kids = [...line.children].filter((e) => !e.classList.contains('tsr-marker') && e.dataset.syn !== 'anchor');
+    if (!kids.length || !kids.every((e) => e.classList.contains('tsr-r') && !e.classList.contains('tsr-sp'))) continue;
+    const probe = document.createElement('span');
+    probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
+    line.insertBefore(probe, line.firstChild);
+    const actual = probe.getBoundingClientRect().bottom - line.getBoundingClientRect().top;
+    probe.remove();
+    let expected;
+    if (line.classList.contains('tsr-row')) {
+      const [a, d] = extents(line);
+      expected = (parseFloat(line.style.lineHeight) - (a + d)) / 2 + a;
+    } else {
+      expected = Math.max(...kids.map((e) => extents(e)[0]));
+    }
+    if (Math.abs(actual - expected) > AUDIT.baselinePx) {
+      report.failures.push({ audit: 'baseline', actual: Math.round(actual * 100) / 100,
+                             expected: Math.round(expected * 100) / 100, text: (line.textContent || '').slice(0, 32) });
+      break;
+    }
+  }
+
   // (plan P3-18; design T4 M8) the render contract: the classes that carry
   // metrics paint as the engine measured them — a theme overriding one
   // (bold that is not 700, italic that is upright, code that wraps its

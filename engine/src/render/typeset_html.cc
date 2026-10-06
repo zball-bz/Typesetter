@@ -253,7 +253,9 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
   const bool code = n.kind == FragKind::CodeRow;
   {
     Tag t(out, "div");
-    t.attrSafe("class", code && n.hl ? "tsr-line tsr-hlline" : "tsr-line");
+    // (plan P3-19) a code row: its strut is the code face (tsr-row), so its
+    // centring line-height centres the code's own extents
+    t.attrSafe("class", code ? (n.hl ? "tsr-line tsr-row tsr-hlline" : "tsr-line tsr-row") : "tsr-line");
     anchor(t);
     lineSpan(t);
     if (n.join) t.attrSafe("data-join", n.join);
@@ -263,6 +265,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
     pos3(t);
     if (code) {
       if (!n.features.empty()) t.declEsc("font-feature-settings", n.features);
+      t.px("font-size", emPx(basePx, styles.get(n.rowStyle)));
       if (n.lineHeightPx > 0) t.px("line-height", n.lineHeightPx);
       if (n.heightPx > 0) t.px("height", n.heightPx);
     }
@@ -362,6 +365,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       t.attrSafe("class", RunClasses(sty, strs, nullptr, d.error ? "tsr-err" : d.cls).sv());
       if (isLink) t.attr("href", hrefOf(d.link, strs));
       if (d.error) t.attr("title", strs.get(d.error));  // (plan P3-16, document-model §9.1)
+
       if (d.id) t.id(strs.get(d.id));
       // (plan P3-07, §9.3) what copy takes: an omitted or replaced run says
       // its kind (a hyphen glyph says "hyphen" below), a replaced one its
@@ -376,6 +380,11 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
         t.num("data-s", d.dataS - srcBase);
       }
       runCss(t, sty, basePx, strs);
+      if (d.lh > 0) {  // (plan P3-19) a user family's content height
+        char buf[32];
+        const int len = std::snprintf(buf, sizeof buf, "%.4f", (double)d.lh);
+        t.decl("line-height", std::string_view(buf, (size_t)len));
+      }
       if (d.fit == DLRun::Fit::Pinned) {
         t.decl("display", "inline-block").decl("text-align", "center").px("width", d.widthPx);
         if (d.marginRight) t.px("margin-right", d.marginRightPx);

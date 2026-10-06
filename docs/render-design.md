@@ -90,3 +90,24 @@ Errors follow document-model §9.1 in the typeset page too. An error's text
 runs are `class="… tsr-err"` with the error message as `title`, and copy
 omits them (`data-syn="error"`). The default rule colours `.tsr-err`.
 
+## 5. Baseline authority (plan P3-19; design T7 S11)
+
+A text line's baseline is its top plus its tallest run's ascent
+(document-model §8), and the HTML pins it whatever the host's line-height.
+- The render contract (schema `contract`) sets `.tsr-line { line-height: 0 }`,
+  so the strut lifts nothing.
+- Each run takes its face's content height as its line-height:
+  `.tsr-r`, `.tsr-cjk`, `.tsr-code` and the mono-CJK combination read
+  `--tsr-lh-body/-cjk/-mono/-monocjk`. The RenderResult head carries them as
+  `container.lh`: each role's `(ascent + descent)/em` from a regular face the
+  document measured. The shell sets them on the root after every commit.
+- A run in a user font family carries the factor inline
+  (`DLRun::lh`, from the face's metrics).
+
+So a line box is its runs' content areas. A code row (`tsr-row`) keeps its
+centring line-height, and its strut is the code face at the code size
+(`font-size` inline, `.tsr-row` font-family mono), so it centres the
+code's own extents as layout does. Without the factors (a page rendered
+without the shell) the runs fall back to `line-height: normal`. The dev
+audit checks every text line's baseline against this model, within 1px.
+

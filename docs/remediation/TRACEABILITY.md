@@ -1215,7 +1215,7 @@ Theme steps: — · findings: 1
 | `render-runtime/sidecar-hyphen-missing` | issue | medium | P1-17 | grep:plan P1-17 |
 | `render-runtime/sidecar-dropped-in-semantic` | issue | medium | P3-23 | |
 | `render-runtime/popup-breaks-patch` | issue | low | P3-06 || grep:plan P3-06 |
-| `render-runtime/host-line-height-leak` | issue | medium | P3-19 | |
+| `render-runtime/host-line-height-leak` | issue | medium | P3-19 | grep:plan P3-19 |
 | `render-runtime/paged-gutter-clipping` | issue | medium | P3-16 | grep:plan P3-16 |
 | `render-runtime/trailing-float-and-gap-drift` | issue | low | P3-16 | grep:plan P3-16 |
 | `render-runtime/typeset-a11y` | issue | medium | P3-27 | |

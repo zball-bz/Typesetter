@@ -5,16 +5,16 @@ block pid=1 s0=58 h=1536su
   code y=0su left=0su w=19200su base=1029su id="lst-a" ragged
     code "x = 1"
 block pid=2 s0=106 h=4301su
-  line y=0su left=0su w=19200su base=1183su id="sec-in" join=para ragged
+  line y=0su left=0su w=19200su base=1106su id="sec-in" join=para ragged
     words "Inner heading"
-  line y=2765su left=0su w=19200su base=1075su
+  line y=2765su left=0su w=19200su base=819su
     words "Body text of the aside."
 block pid=3 s0=193 h=4301su
   rule y=768su left=0su w=19200su base=768su id="rule-c"
-  line y=2765su left=0su w=19200su base=1075su
+  line y=2765su left=0su w=19200su base=819su
     words "After the rule."
 block pid=4 s0=218 h=1536su
-  line y=0su left=0su w=19200su base=1075su
+  line y=0su left=0su w=19200su base=819su
     words "See "
     words "lst-a" link ref
     words ", "
