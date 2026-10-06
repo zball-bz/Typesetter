@@ -91,6 +91,7 @@ class ResourceJob {
         shares.get(entry).push(r);
       }
       ans.kinds[kind] = [];
+      const t0 = ctx.tm ? performance.now() : 0;
       for (const [entry, mine] of shares) {
         try {
           const out = await entry.provider.resolve(mine, { ...ctx, req, job: this, host: this.host });
@@ -102,6 +103,8 @@ class ResourceJob {
         }
         if (ctx.stale?.()) return null;
       }
+      // (bench-edit.mjs) each kind's provider time, beside providersMs
+      if (ctx.tm) ctx.tm[`${kind}Ms`] = (ctx.tm[`${kind}Ms`] ?? 0) + performance.now() - t0;
     }
     return ans;
   }

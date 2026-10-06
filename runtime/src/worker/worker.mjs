@@ -10,7 +10,7 @@ import { CanvasMeasurer } from './canvas_measure.mjs';
 import { checkAbi, compiledOf, fragmentsOf } from '../shared/abi.mjs';
 import { ResourceHost } from '../shared/resources/host.mjs';
 import { canvasProviders } from '../shared/resources/providers/canvas.mjs';
-import { tokenProvider } from '../shared/resources/providers/tokens.mjs';
+import { threadedTokenProvider as tokenProvider, attachHighlighter, detachHighlighter } from './hl-thread.mjs';
 import { hyphProvider } from '../shared/resources/providers/hyph.mjs';
 import { imageProvider } from '../shared/resources/providers/images.mjs';
 import { htmlBoxProvider } from '../shared/resources/providers/html-boxes.mjs';
@@ -21,7 +21,19 @@ import { POLICY } from '../shared/settings.gen.mjs';
 const policy = { ...POLICY };
 
 let modPromise = null;
-const getMod = () => (modPromise ??= createTypesetter().then((M) => { checkAbi(M); return M; }));
+// (plan P5-02) the shell compiles the wasm while this worker starts and
+// hands the module over ('wasm-pending', then 'wasm'); without it (another
+// host, a failed compile) the module loads itself
+let handed = null;  // Promise<WebAssembly.Module | null> once the shell said it would
+let handOver = null;
+const instantiateWasm = (imports, done) => {
+  handed.then((module) => module
+    ? WebAssembly.instantiate(module, imports).then((inst) => done(inst, module))
+    : WebAssembly.instantiateStreaming(fetch(new URL('../../../engine/build-wasm/typesetter.wasm', import.meta.url)), imports)
+      .then((r) => done(r.instance, r.module)));
+  return {};
+};
+const getMod = () => (modPromise ??= createTypesetter(handed ? { instantiateWasm } : {}).then((M) => { checkAbi(M); return M; }));
 
 // Editing sessions (editor-design.md §2) re-typeset the whole document per
 // keystroke. Answers persist across documents in the engine's Session (plan
@@ -348,8 +360,12 @@ async function runTypeset(s, { ids, msg }, stale) {
   const { source, settings, progressive, fontFaces, baseUrl, inputs } = msg;
   const tm = {};
   const mark = (k, t0) => { tm[k] = performance.now() - t0; };
+  let t0 = performance.now();
   const M = await getMod();
+  mark('moduleMs', t0);  // (bench-edit.mjs) the engine module's creation, on a cold start
+  t0 = performance.now();
   await loadFonts(fontFaces);
+  mark('fontsMs', t0);
   if (stale()) return false;
   const doc = M._tsr_doc_new();
   M._tsr2_doc_attach(doc, sessionOf(M));
@@ -358,11 +374,14 @@ async function runTypeset(s, { ids, msg }, stale) {
     const cfg = M.stringToNewUTF8(JSON.stringify({ ...(settings ?? {}), host }));
     M._tsr2_set_config(doc, cfg);
     M._free(cfg);
-    let t0 = performance.now();
+    t0 = performance.now();
     const srcPtr = M.stringToNewUTF8(source);
     M._tsr_compile(doc, srcPtr);
     M._free(srcPtr);
     mark('compileMs', t0);
+    // (plan P5-02) the highlighters its code fences name start loading now,
+    // while it executes and is laid out, not when the engine asks for tokens
+    for (const tag of JSON.parse(productOf(M, doc, 'codelangs') || '[]')) tokenProvider.prefetch(tag);
 
     t0 = performance.now();
     const job = jobOf(baseUrl);  // (plan P3-21) its loads and its needs: one locator, one manifest
@@ -511,6 +530,22 @@ const RUN = { update: runTypeset, paginate: runPaginate, relayout: runRelayout,
 let providersReady = Promise.resolve();
 onmessage = (ev) => {
   const m = ev.data;
+  if (m?.type === 'wasm-pending') {
+    handed = new Promise((resolve) => { handOver = resolve; });
+    return;
+  }
+  if (m?.type === 'wasm') {
+    handOver?.(m.module ?? null);
+    return;
+  }
+  if (m?.type === 'hl-port') {  // (plan P5-02) the highlighter's thread
+    attachHighlighter(m.port);
+    return;
+  }
+  if (m?.type === 'hl-failed') {
+    detachHighlighter();
+    return;
+  }
   if (m?.type === 'policy') {  // createEngine({policy}): host policy overrides
     for (const [k, v] of Object.entries(m.policy ?? {})) if (k in policy) policy[k] = v;
     return;

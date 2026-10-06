@@ -1072,6 +1072,28 @@ struct Doc {
     return r;
   }
 
+  // (plan P5-02) the language tags of the source's code fences, distinct, in
+  // order: what a host may start loading highlighters for while the
+  // document executes (a fence a handler takes is listed too: a hint)
+  std::string codeLangsJson() const {
+    std::vector<StrRef> seen;
+    auto walk = [&](const AstNode* n, auto&& self) -> void {
+      if (!n) return;
+      if (n->isCall(SugarId::fence)) {
+        const StrRef l = side<FenceP>(n).lang;
+        if (l && std::find(seen.begin(), seen.end(), l) == seen.end()) seen.push_back(l);
+      }
+      for (const AstNode* k : n->kids()) self(k, self);
+    };
+    walk(ast, walk);
+    std::string out = "[";
+    for (StrRef l : seen) {
+      if (out.size() > 1) out += ',';
+      jsonString(out, strs.get(l));
+    }
+    return out + "]";
+  }
+
   // ---- products (products.def) ------------------------------------------
   // The stage a product needs; false = unknown product.
   static bool productStage(std::string_view name, Stage& st) {
@@ -1095,6 +1117,7 @@ struct Doc {
     if (name == "program") return js.program;
     if (name == "tokens") return dumpTokens(syntaxTokens(ast, src, strs), src);
     if (name == "outline") return outlineJson(ast, src, strs, diags) + "\n";
+    if (name == "codelangs") return codeLangsJson() + "\n";
     if (name == "astjson") return astJson(ast, src, strs) + "\n";
     if (name == "ops") return dumpOps(raw);
     if (name == "tree") return dumpTree(tree, strs, styles);

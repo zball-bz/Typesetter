@@ -236,6 +236,21 @@ function applyContract(el, settings) {
 export function createEngine(opts = {}) {
   const workerUrl = new URL('../worker/worker.mjs', import.meta.url);
   const worker = new Worker(workerUrl, { type: 'module' });
+  // (plan P5-02) the engine's wasm compiles here while the worker loads its
+  // module graph, and is handed over compiled (a failure hands over nothing:
+  // the worker loads it itself)
+  worker.postMessage({ type: 'wasm-pending' });
+  WebAssembly.compileStreaming(fetch(new URL('../../../engine/build-wasm/typesetter.wasm', import.meta.url)))
+    .then((module) => worker.postMessage({ type: 'wasm', module }), () => worker.postMessage({ type: 'wasm', module: null }));
+  // (plan P5-02) the highlighter's own thread, started with the engine's:
+  // code tokens are made there (the worker asks it over a channel)
+  const hl = new MessageChannel();
+  try {
+    const hlWorker = new Worker(new URL('../worker/hl-worker.mjs', import.meta.url), { type: 'module' });
+    hlWorker.onerror = () => worker.postMessage({ type: 'hl-failed' });
+    hlWorker.postMessage({ type: 'port', port: hl.port1 }, [hl.port1]);
+    worker.postMessage({ type: 'hl-port', port: hl.port2 }, [hl.port2]);
+  } catch { /* no thread: the worker makes its tokens itself */ }
   // host policy (schema "policy": round cap, font deadline, caches, …)
   if (opts.policy) worker.postMessage({ type: 'policy', policy: opts.policy });
   if (opts.providers?.length)

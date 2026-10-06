@@ -51,6 +51,20 @@ both apply it (`tokenLines`, code/tokens.h). An unacceptable answer
 (unsorted, overlapping, off a UTF-8 boundary, past the body, an unknown
 tag) fails whole: plain code and a `provider-invalid` warning.
 
+As built (plan P5-02, the cold start): in the browser the tokenizer runs on
+its own thread. `runtime/src/worker/hl-worker.mjs` loads web-tree-sitter, the
+grammars and queries, and tokenizes there. The shell starts it beside the
+engine's worker and joins the two with a MessageChannel. The engine worker's
+`codeTokens` provider (`hl-thread.mjs`) asks over that channel and falls back
+to tokenizing in-process when no thread can start. Right after compile, the
+worker reads the engine's `codelangs` product (the source's fence language
+tags) and asks the thread to load those languages. The highlighter's
+startup (import, wasm, grammar, query compile: about 20 ms) then runs
+alongside the document's execution and first passes, instead of after them.
+Within one load, the grammar and query fetches start together with the
+runtime's. Node (`renderTsm`, the static export) tokenizes in-process, as
+before.
+
 - Why not linking in: it would force MAIN_MODULE/dlopen on the engine
   module (size, call overhead, build complexity) for zero layout benefit.
   The engine stays the layout authority; the tokenizer is an async

@@ -86,11 +86,21 @@ bool HyphenDict::compile(std::string_view tag, std::string_view patterns, std::s
   out.leftmin = leftmin;
   out.rightmin = rightmin;
   if (!hyphenChar.empty()) out.hyphenChar = std::string(hyphenChar);
-  // the trie under construction: per node its (codepoint, child) edges
-  std::vector<std::vector<std::pair<u32, u32>>> kids(1);
+  // the trie under construction, flat (no allocation per node): a node's
+  // edges are a list through `next` from first[node]; the alphabet below
+  // U+0080 as bits, the rest a short list (plan P5-02: the resident
+  // dictionary is compiled on the first typeset's critical path)
+  struct Edge {
+    u32 cp, child, next;
+  };
+  std::vector<Edge> edges;
+  std::vector<u32> first(1, ~0u);
   std::vector<i32> row(1, -1);
-  std::vector<u32> letters;
+  std::vector<u32> letters, wide;
   std::vector<u8> lv;
+  edges.reserve(patterns.size() / 2);
+  first.reserve(patterns.size() / 2);
+  row.reserve(patterns.size() / 2);
   for (size_t i = 0; i < patterns.size();) {
     while (i < patterns.size() && space(patterns[i])) i++;
     if (i >= patterns.size()) break;
@@ -114,14 +124,22 @@ bool HyphenDict::compile(std::string_view tag, std::string_view patterns, std::s
     }
     u32 node = 0;
     for (u32 cp : letters) {
-      if (cp != '.') out.alphabet_.push_back(cp);
+      if (cp < 128) {
+        if (cp != '.') out.asciiAlpha_[cp >> 6] |= 1ull << (cp & 63);
+      } else if (std::find(wide.begin(), wide.end(), cp) == wide.end()) {
+        wide.push_back(cp);
+      }
       u32 next = ~0u;
-      for (const auto& [c, k] : kids[node])
-        if (c == cp) next = k;
+      for (u32 e = first[node]; e != ~0u; e = edges[e].next)
+        if (edges[e].cp == cp) {
+          next = edges[e].child;
+          break;
+        }
       if (next == ~0u) {
-        next = (u32)kids.size();
-        kids[node].push_back({cp, next});
-        kids.emplace_back();
+        next = (u32)first.size();
+        edges.push_back({cp, next, first[node]});
+        first[node] = (u32)edges.size() - 1;
+        first.push_back(~0u);
         row.push_back(-1);
       }
       node = next;
@@ -136,15 +154,24 @@ bool HyphenDict::compile(std::string_view tag, std::string_view patterns, std::s
     return false;
   }
   out.rowStart_.push_back((u32)out.levels_.size());
-  // rows by the order they were written; nodes keep their ids
-  out.nodeRow_ = row;
-  out.edgeStart_.reserve(kids.size() + 1);
-  for (auto& k : kids) {
-    std::sort(k.begin(), k.end());
-    out.edgeStart_.push_back((u32)out.edgeCp_.size());
-    for (const auto& [c, n] : k) {
-      out.edgeCp_.push_back(c);
-      out.edgeChild_.push_back(n);
+  // rows by the order they were written; nodes keep their ids; a node's
+  // edges by codepoint (few: an insertion sort)
+  out.nodeRow_ = std::move(row);
+  const u32 nodes = (u32)first.size();
+  out.edgeStart_.reserve(nodes + 1);
+  out.edgeCp_.reserve(edges.size());
+  out.edgeChild_.reserve(edges.size());
+  for (u32 k = 0; k < nodes; k++) {
+    const u32 at = (u32)out.edgeCp_.size();
+    out.edgeStart_.push_back(at);
+    for (u32 e = first[k]; e != ~0u; e = edges[e].next) {
+      u32 i = (u32)out.edgeCp_.size();
+      out.edgeCp_.push_back(edges[e].cp);
+      out.edgeChild_.push_back(edges[e].child);
+      for (; i > at && out.edgeCp_[i - 1] > out.edgeCp_[i]; i--) {
+        std::swap(out.edgeCp_[i - 1], out.edgeCp_[i]);
+        std::swap(out.edgeChild_[i - 1], out.edgeChild_[i]);
+      }
     }
   }
   out.edgeStart_.push_back((u32)out.edgeCp_.size());
@@ -159,15 +186,18 @@ bool HyphenDict::compile(std::string_view tag, std::string_view patterns, std::s
       else word.push_back(lowerOf(cp));
     }
     i = j;
-    out.alphabet_.insert(out.alphabet_.end(), word.begin(), word.end());
+    for (u32 cp : word)
+      if (cp < 128) out.asciiAlpha_[cp >> 6] |= 1ull << (cp & 63);
+      else if (std::find(wide.begin(), wide.end(), cp) == wide.end()) wide.push_back(cp);
     out.exceptions_.push_back({std::move(word), std::move(pts)});
   }
   std::sort(out.exceptions_.begin(), out.exceptions_.end(),
             [](const auto& a, const auto& b) { return a.first < b.first; });
-  std::sort(out.alphabet_.begin(), out.alphabet_.end());
-  out.alphabet_.erase(std::unique(out.alphabet_.begin(), out.alphabet_.end()), out.alphabet_.end());
-  for (u32 cp : out.alphabet_)
-    if (cp < 128) out.asciiAlpha_[cp >> 6] |= 1ull << (cp & 63);
+  // the alphabet: the ASCII bits, then the rest, sorted
+  for (u32 cp = 0; cp < 128; cp++)
+    if ((out.asciiAlpha_[cp >> 6] >> (cp & 63)) & 1) out.alphabet_.push_back(cp);
+  std::sort(wide.begin(), wide.end());
+  out.alphabet_.insert(out.alphabet_.end(), wide.begin(), wide.end());
   std::fill(std::begin(out.rootAscii_), std::end(out.rootAscii_), -1);
   for (u32 e = out.edgeStart_[0]; e < out.edgeStart_[1]; e++)
     if (out.edgeCp_[e] < 128) out.rootAscii_[out.edgeCp_[e]] = (i32)out.edgeChild_[e];

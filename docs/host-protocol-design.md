@@ -226,6 +226,9 @@ in one place, `runtime/src/shared/resources/`:
   Last-Modified, files by mtime and size.
 
 Providers in the worker: canvas `textWidth`, `fontVmet` and `fontInk`, `codeTokens`
+(plan P5-02: answered on the highlighter's own thread, `hl-worker.mjs`, which
+the worker tells which languages to load as soon as the engine's
+`codelangs` product, available after compile, names them)
 (the highlighter), `hyphPatterns` (plan P4-06, `providers/hyph.mjs`: the
 dictionary assets of `runtime/assets/hyph` — tools/hyphc.mjs --assets —
 by tag, then by its shorter prefixes; Emit waits for the answers, a

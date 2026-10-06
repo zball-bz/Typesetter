@@ -13,6 +13,7 @@ PRODUCT(lower, Compile)
 PRODUCT(program, Compile)
 PRODUCT(tokens, Compile)
 PRODUCT(outline, Compile)
+PRODUCT(codelangs, Compile)  // (plan P5-02) its code fences' language tags: the host loads their highlighters early
 PRODUCT(astjson, Compile)
 PRODUCT(ops, Ingest)
 PRODUCT(tree, Resolve)

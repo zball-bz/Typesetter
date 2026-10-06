@@ -21,26 +21,43 @@ const langs = new Map();
 const LOAD_RETRY_MS = POLICY.grammarRetryMs;
 const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
-async function load(name) {
+// (plan P5-02) one load per language at a time: the provider and a
+// prefetch share it
+const inflight = new Map();
+function load(name) {
   const known = langs.get(name);
-  if (known && !('failedAt' in known)) return known;
-  if (known && now() - known.failedAt < LOAD_RETRY_MS) return null;
+  if (known && !('failedAt' in known)) return Promise.resolve(known);
+  if (known && now() - known.failedAt < LOAD_RETRY_MS) return Promise.resolve(null);
+  if (!inflight.has(name)) inflight.set(name, loadNow(name).finally(() => inflight.delete(name)));
+  return inflight.get(name);
+}
+async function loadNow(name) {
   let entry = null;
   try {
     const asRef = IS_NODE
       ? (await import('node:url')).fileURLToPath
       : (u) => u.href;
+    const langUrl = new URL(`tree-sitter-${name}.wasm`, HL_BASE);
+    const scmUrl = new URL(`${name}.scm`, HL_BASE);
+    // (plan P5-02) the language's grammar and query are fetched while the
+    // runtime starts, not after it (a browser: three requests at once)
+    const fetched = (u, as) => fetch(u).then((r) => {
+      if (!r.ok) throw new Error(`${u}: ${r.status}`);
+      return as === 'text' ? r.text() : r.arrayBuffer().then((b) => new Uint8Array(b));
+    });
+    const grammar = IS_NODE ? null : fetched(langUrl, 'bytes');
+    const query = IS_NODE
+      ? (await import('node:fs/promises')).readFile(asRef(scmUrl), 'utf8')
+      : fetched(scmUrl, 'text');
+    grammar?.catch(() => {});  // (awaited below; a failure surfaces there)
+    query.catch(() => {});
     if (!tsMod) tsMod = await import(new URL('../../assets/hl/web-tree-sitter.js', import.meta.url));
     if (!initDone) initDone = tsMod.Parser.init({
       locateFile: () => asRef(new URL('web-tree-sitter.wasm', HL_BASE)),
     }).catch((e) => { initDone = null; throw e; });  // a failed init retries too
     await initDone;
-    const lang = await tsMod.Language.load(asRef(new URL(`tree-sitter-${name}.wasm`, HL_BASE)));
-    const scmUrl = new URL(`${name}.scm`, HL_BASE);
-    const scm = IS_NODE
-      ? await (await import('node:fs/promises')).readFile(asRef(scmUrl), 'utf8')
-      : await (await fetch(scmUrl)).text();
-    entry = { lang, query: new tsMod.Query(lang, scm) };
+    const lang = await tsMod.Language.load(grammar ? await grammar : asRef(langUrl));
+    entry = { lang, query: new tsMod.Query(lang, await query) };
   } catch {
     // missing asset / load failure → plain code, never a stall
     langs.set(name, { failedAt: now() });
@@ -48,6 +65,15 @@ async function load(name) {
   }
   langs.set(name, entry);
   return entry;
+}
+
+// (plan P5-02) a language a document's fences name, loaded ahead of the
+// provider's request (worker.mjs: right after compile, from the engine's
+// codelangs product) — the highlighter's start overlaps the document's
+// execution and first passes; an unknown tag is nothing
+export function prefetch(langTag) {
+  const name = languageOf(langTag);
+  if (name && name in LANGUAGES) load(LANGUAGES[name].asset).catch(() => {});
 }
 
 // web-tree-sitter node indices are UTF-16 code units (JS string offsets);
