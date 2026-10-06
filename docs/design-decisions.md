@@ -115,6 +115,19 @@ Example: `$sum_(i=0)^n i/n ~> (n+1)/2$`
 
 **Negation pattern:** `!` prefix negates: `!=`, `!in`, `!exists`, `!|`, `!||`.
 
+**As built (plan P3-24; the deltas from Typst and from the tiers above):**
+- *One identity per symbol.* A typed symbol is its name: `∑` is `sum` (large, limits), `≤` is `<=` (a relation: it ends a sum's body), `⟨` is `langle` (it opens a stretching group). The vocabulary is `engine/data/math/symbols.tsv`; the TeX converters' map is generated from it.
+- *Negation is a rule, not a list.* A `!` touching a symbol negates it by the Unicode data (`!=` ≠, `!in` ∉, `!models` ⊭, `!|` ∤, `!||` ∦). A relation with no negation is an error leaf (`!<<`). A `!` before anything else, or with a space, is a factorial (`n! = n (n-1)!`).
+- *ASCII keys are operator characters only.* `_|_` and `o+`-style keys are gone; ⊥ is `perp` or `bot`, ⊕ is `oplus`.
+- *Only parentheses disappear (D-M01).* `x^(a b)` sets a b as the exponent without brackets; `x^{a b}` and `x^[a]` keep theirs. `class(ord, …)` makes an atom without brackets.
+- *One token is an operand.* `x^ab` is x^a·b and `a/bc` is (a/b)·c; a name is one token (`x^pi`).
+- *A call needs its parenthesis adjacent.* `abs(x)` is a call; `abs (x)` is the name abs and a group.
+- *A bar alone in a group is its middle.* `{x | x > 0}` and `P(A | B)` stretch the bar with the group and space it as a relation; two bars (`|x|`, `||v||`) stay as they are.
+- *Alphabets are rows.* `bb(R)`, `cal(A)`, `frak(g)`, `bold(v)`, `italic(h)`, `sans(x)`, `mono(x)`; `AA`..`ZZ` stay the blackboard shorthand.
+- *Spacing, style and limits are rows.* `thin`, `med`, `thick`, `quad`, `wide`; `display(…)`, `inline(…)`, `script(…)`, `sscript(…)`; `limits(…)` and `scripts(…)` choose where an operator's scripts go.
+- *An unknown word says so.* It is still set upright as an operator name (Typst's rule), with an info diagnostic `math-implicit-name` (D-M04).
+- `vec` stays an accent (Typst draws an arrow over); `cases` rows are separated by `;`; `#` starts a hole (plan P2-15).
+
 ## Type System
 
 **Class-oriented styling with inline style escape hatch.**

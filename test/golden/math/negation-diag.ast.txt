@@ -1,0 +1,9 @@
+doc @[0,164)
+  para @[0,163)
+    text @[0,134) str="A relation without a negation is an error where it stands, and an unknown word says it is set as an operator name (plan P3-24, D-M04): "
+    math @[135,144) display=0 src="a !<< b"
+      text @[136,143) str="a !<< b"
+    text @[145,148) str=" and "
+    math @[149,162) display=0 src="Equiv(A, B)"
+      text @[150,161) str="Equiv(A, B)"
+    text @[162,163) str="."

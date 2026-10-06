@@ -14,11 +14,15 @@
 #   - duplicate names; a malformed row;
 #   - a code point with more than one (non-accent) row and not exactly one
 #     default_for_cp row;
-#   - a key mixing ASCII letters and operator characters, outside the
-#     allowlist (the !word rows; plan step S4 removes them);
+#   - a key mixing ASCII letters and operator characters (plan P3-24: no
+#     allowlist — a negation is the `!` rule, ⊥ is `perp`/`bot`);
 #   - an operator key longer than the lexer's 4-character munch;
 #   - a class that differs from what MathML Core derives, unless the row
-#     says class_source=override.
+#     says class_source=override;
+#   - a negation the UCD contradicts (a row may name one only where the
+#     UCD has none: | → ∤);
+#   - a TeX spelling claimed twice, or a converter target that names no
+#     symbol (the engine's lexer gate, tests.cc unitMathDict, lexes each).
 import os, sys
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
@@ -26,8 +30,11 @@ CHECK = '--check' in sys.argv
 UCD_VERSION = '17.0.0'
 MATHML_VERSION = 'b07c0b3ecf985e3a7654439651c61fc8744fc8f4'
 CLASSES = ['ord', 'op', 'bin', 'rel', 'open', 'close', 'punct', 'inner']
-FLAGS = {'large': 1, 'limits': 4, 'textop': 8}
-OP_CHARS = set('+-*=<>|~:;.,!@&?%')  # the lexer's operator characters (math.cc isOpChar)
+FLAGS = {'large': 1, 'limits': 4, 'textop': 8, 'fence': 16}
+# operator characters: ASCII punctuation the lexer does not reserve for
+# syntax (brackets, scripts, fractions, primes, quotes, holes, escapes); the
+# lexer munches the ones some key uses (kOpChars, generated)
+OP_CHARS = set('!%&*+,-.:;<=>?@|~')
 MAX_OP_KEY = 4
 
 def fail(msg):
@@ -40,11 +47,13 @@ def rel(*p): return os.path.join(ROOT, *p)
 ucd = rel('engine/rules/ucd', UCD_VERSION, 'UnicodeData.txt')
 if not os.path.exists(ucd): fail('missing ' + ucd + ' (node tools/ucdc.mjs --fetch)')
 negation = {}
+ucd_name = {}  # name → code point (the alphabets, plan P3-24)
 for line in open(ucd, encoding='utf-8'):
     f = line.split(';')
     d = f[5].split()
     if len(d) == 2 and d[1] == '0338' and not d[0].startswith('<'):
         negation[int(d[0], 16)] = int(f[0], 16)
+    ucd_name[f[1]] = int(f[0], 16)
 
 mml = {}
 version = None
@@ -113,7 +122,7 @@ for r in rows:
     k = r['name']
     letters = any(c.isascii() and c.isalpha() for c in k)
     ops = any(c in OP_CHARS for c in k)
-    if letters and ops and not (k.startswith('!') and k[1:].isalpha()):
+    if letters and ops:
         fail('symbols.tsv:%d: key %r mixes letters and operator characters' % (r['line'], k))
     if ops and not letters and all(c in OP_CHARS for c in k) and len(k) > MAX_OP_KEY:
         fail('symbols.tsv:%d: operator key %r is longer than the %d-character munch' % (r['line'], k, MAX_OP_KEY))
@@ -121,8 +130,59 @@ for r in rows:
         fail('symbols.tsv:%d: %s is %s, MathML Core derives %s (mark class_source=override)'
              % (r['line'], k, r['class'], mathml_class(r['cp'])))
     want = negation.get(r['cp'])
-    if r['negation'] != ('%04X' % want if want else '-'):
-        fail('symbols.tsv:%d: negation %s, the UCD gives %s' % (r['line'], r['negation'], '%04X' % want if want else '-'))
+    if want and r['negation'] != '%04X' % want:
+        fail('symbols.tsv:%d: negation %s, the UCD gives %04X' % (r['line'], r['negation'], want))
+    if not want and r['negation'] != '-':  # an override: only where the UCD has none
+        if not r['cp']: fail('symbols.tsv:%d: a text operator has no negation' % r['line'])
+        negation[r['cp']] = int(r['negation'], 16)
+
+# ---- the alphabets (plan P3-24): A–Z, a–z, 0–9 in each math alphabet, from
+# the UCD's names; the letterlike holes of the Mathematical Alphanumeric
+# Symbols block (ℂ, ℎ, ℬ, ℭ, …) by their older names
+ALPHABETS = [  # (row name, the UCD style word, its letterlike fallback)
+    ('bb', 'DOUBLE-STRUCK', 'DOUBLE-STRUCK'), ('cal', 'SCRIPT', 'SCRIPT'), ('frak', 'FRAKTUR', 'BLACK-LETTER'),
+    ('bold', 'BOLD', None), ('italic', 'ITALIC', None), ('sans', 'SANS-SERIF', None), ('mono', 'MONOSPACE', None)]
+DIGIT_NAMES = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE']
+def letterlike(style, case, ch):
+    if style == 'ITALIC' and case == 'SMALL' and ch == 'H': return ucd_name.get('PLANCK CONSTANT')
+    return ucd_name.get('%s %s %s' % (style, case, ch)) if style else None
+variants = []  # [alphabet][62]: the code point, 0 = none
+for name, style, older in ALPHABETS:
+    row = []
+    for case in ('CAPITAL', 'SMALL'):
+        for i in range(26):
+            ch = chr(65 + i)
+            cp = ucd_name.get('MATHEMATICAL %s %s %s' % (style, case, ch)) or letterlike(older, case, ch) \
+                or (letterlike('ITALIC', case, ch) if style == 'ITALIC' else None)
+            row.append(cp or 0)
+    for d in DIGIT_NAMES:
+        row.append(ucd_name.get('MATHEMATICAL %s DIGIT %s' % (style, d), 0))
+    variants.append((name, row))
+for name, row in variants:
+    if not all(row[:52]): fail('alphabet %s: a letter has no code point' % name)
+
+# ---- TeX spellings (plan P3-24): the converters' one map (tools/convert),
+# from the tex column (default: an alphabetic name's \name), the negations
+# (\neq → !=) and the alphabets; every target must lex to its symbol
+tex = {}
+def claim(t, target, line):
+    if t in tex: fail('symbols.tsv:%s: TeX \\%s is already %s' % (line, t, tex[t]))
+    tex[t] = target
+for r in rows:  # the tex column first: a spelling given wins over a name's default
+    for t in ([] if r['tex'] == '-' else r['tex'].split()): claim(t.lstrip('\\'), r['name'], r['line'])
+for r in rows:
+    k = r['name']
+    if r['tex'] == '-' and k.isalpha() and k.isascii() and not (len(k) == 2 and k[0] == k[1] and k.isupper()) \
+            and k not in tex:
+        claim(k, k, r['line'])
+TEX_NEGATED = {'ne': '=', 'nleq': '<=', 'ngeq': '>=', 'nless': '<',
+               'ngtr': '>', 'nsubseteq': 'subseteq', 'nsupseteq': 'supseteq', 'nparallel': 'parallel', 'nsim': 'sim',
+               'ncong': 'cong', 'nmid': 'mid', 'nrightarrow': '->', 'nleftarrow': '<-', 'nRightarrow': '=>'}
+by_name = {r['name']: r for r in rows}
+for t, base in TEX_NEGATED.items():
+    b = by_name.get(base)
+    if not b or not negation.get(b['cp']): fail('TeX \\%s: %s has no negation' % (t, base))
+    claim(t, '!' + base, 'TEX_NEGATED')
 
 # ---- outputs -----------------------------------------------------------------
 HDR = 'GENERATED from engine/data/math/symbols.tsv by tools/mathdict.py — do not edit.'
@@ -174,13 +234,24 @@ h = ['// ' + HDR,
 for r in srt:
     h.append('  {%s,0x%X,%d,%d},' % (cstr(r['name']), r['cp'], CLASSES.index(r['class']), r['bits']))
 h += ['};', 'inline constexpr int kSymbolCount = %d;' % len(srt), '',
-      '// a bare code point\'s class: its default_for_cp row',
-      'struct CpClass {', '  uint32_t cp;', '  uint8_t cls;', '};',
+      '// a bare code point: its default_for_cp row (sym), else (a negated code',
+      '// point the table has no row for, plan P3-24) the class of what it negates',
+      'struct CpClass {', '  uint32_t cp;', '  int16_t sym;  // into kSymbols, -1 = none', '  uint8_t cls;', '};',
       'inline constexpr CpClass kCpClasses[] = {  // sorted by cp']
+sym_index = {r['name']: i for i, r in enumerate(srt)}
+cp_rows = {}
 for cp in sorted(by_cp):
     d = [r for r in by_cp[cp] if r['default_for_cp'] == 'y'][0]
-    h.append('  {0x%X,%d},' % (cp, CLASSES.index(d['class'])))
-h += ['};', 'inline constexpr int kCpClassCount = %d;' % len(by_cp), '',
+    cp_rows[cp] = (sym_index[d['name']], CLASSES.index(d['class']))
+for base, neg in sorted(negation.items()):  # its own MathML class (∤ is a relation), else its base's
+    if neg not in cp_rows and base in cp_rows:
+        cp_rows[neg] = (-1, CLASSES.index(mathml_class(neg)) if neg in mml else cp_rows[base][1])
+for cp in sorted(cp_rows):
+    h.append('  {0x%X,%d,%d},' % (cp, cp_rows[cp][0], cp_rows[cp][1]))
+h += ['};', 'inline constexpr int kCpClassCount = %d;' % len(cp_rows), '',
+      '// the characters operator keys use (the lexer\'s maximal munch)',
+      'inline constexpr const char kOpChars[] = %s;' % cstr(''.join(sorted({c for r in rows for c in r['name'] if all(x in OP_CHARS for x in r['name'])}))),
+      '',
       '// operator keys (operator characters only, at most %d): node 0 is the' % MAX_OP_KEY,
       '// root; a node\'s kids are contiguous from `kid`, in character order',
       'struct TrieNode {', '  char c;', '  uint16_t kid, nKids;', '  int16_t sym;  // into kSymbols, -1 = not a key', '};',
@@ -191,7 +262,18 @@ neg = sorted(negation.items())
 h += ['};', '', '// the UCD negations: a code point and its precomposed form with U+0338',
       'struct Negation {', '  uint32_t cp, neg;', '};', 'inline constexpr Negation kNegations[] = {']
 h += ['  {0x%X,0x%X},' % (a, b) for a, b in neg]
-h += ['};', 'inline constexpr int kNegationCount = %d;' % len(neg), '', '}}  // namespace tsr::mathdict', '']
+h += ['};', 'inline constexpr int kNegationCount = %d;' % len(neg), '',
+      '// the math alphabets (plan P3-24): A–Z, a–z, 0–9 (0 = none)',
+      'struct Alphabet {', '  const char* name;', '  uint32_t cps[62];', '};',
+      'inline constexpr Alphabet kAlphabets[] = {']
+for name, row in variants:
+    h.append('  {%s, {%s}},' % (cstr(name), ','.join('0x%X' % c for c in row)))
+h += ['};', 'inline constexpr int kAlphabetCount = %d;' % len(variants), '',
+      '// the converters\' TeX map (tools/convert; tests.cc lexes every target)',
+      'struct TexName {', '  const char* tex;', '  const char* target;', '};',
+      'inline constexpr TexName kTexNames[] = {']
+h += ['  {%s, %s},' % (cstr(t), cstr(tex[t])) for t in sorted(tex)]
+h += ['};', 'inline constexpr int kTexNameCount = %d;' % len(tex), '', '}}  // namespace tsr::mathdict', '']
 
 atom = ['// ' + HDR.replace('engine/data/math/symbols.tsv', 'the class and flag columns of symbols.tsv'),
         '// TeX atom classes and symbol flags (plan P1-22: the vocabulary is the',
@@ -200,14 +282,21 @@ atom = ['// ' + HDR.replace('engine/data/math/symbols.tsv', 'the class and flag 
         'enum AtomClass : uint8_t { ' + ', '.join('k' + c.capitalize() for c in CLASSES) + ' };',
         'enum SymFlag : uint8_t {',
         '  kFlagLarge = 1,    // a large operator (display size)',
+        '  kFlagLimitsAlways = 2,  // limits above/below in every style (limits(), plan P3-24)',
         '  kFlagLimits = 4,   // limits above/below in display style',
         '  kFlagTextOp = 8,   // a multi-letter operator set upright in text',
+        '  kFlagFence = 16,   // a symmetric delimiter: alone in a group, its middle (plan P3-24)',
         '};', '', '}  // namespace tsr', '']
 
 js = ['// ' + HDR, '// name → [code point, class] for tools (converters, the editor).',
       'export const MATH_SYMBOLS = {']
 js += ['  %s: [0x%X, %s],' % (cstr(r['name']), r['cp'], cstr(r['class'])) for r in srt]
-js += ['};', '']
+js += ['};', '',
+       '// TeX command (no backslash) → its spelling here (plan P3-24: the converters\' one map)',
+       'export const TEX_MATH = {']
+js += ['  %s: %s,' % (cstr(t), cstr(tex[t])) for t in sorted(tex)]
+js += ['};', '// the math alphabets\' row names (\\mathbb → bb, …)',
+       'export const MATH_ALPHABETS = %s;' % ('[' + ', '.join(cstr(n) for n, _ in variants) + ']'), '']
 
 # ---- stdlib.tsv: the template rows (parsed and checked by the engine) --------
 rows_h = ['// ' + HDR.replace('symbols.tsv', 'stdlib.tsv'),

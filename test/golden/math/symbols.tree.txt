@@ -1,0 +1,110 @@
+doc @[0,840) [base]
+  para @[0,141) [base]
+    text @[0,43) [base] str="Typed symbols are their names (plan P3-24): " raw=0:0,44:43
+    mathinline @[44,67) [base]
+      mathsrc @[45,66) [base] src="∑_(i=1)^n a_i ≤ b"
+    text @[68,77) [base] str=" sums like " raw=0:0,1:0,11:9
+    mathinline @[78,100) [base]
+      mathsrc @[79,99) [base] src="sum_(i=1)^n a_i <= b"
+    text @[100,141) [base] str=", and the sum ends at the typed relation."
+  mathblock @[143,176) [base]
+    mathsrc @[145,174) [base] src="∑_(i=1)^n a_i ≤ ∫_0^1 f"
+  para @[178,305) [base]
+    text @[178,199) [base] str="Negation is one rule: " raw=0:0,22:21
+    mathinline @[200,208) [base]
+      mathsrc @[201,207) [base] src="a != b"
+    text @[208,209) [base] str=", " raw=0:0,2:1
+    mathinline @[210,219) [base]
+      mathsrc @[211,218) [base] src="x !in A"
+    text @[219,220) [base] str=", " raw=0:0,2:1
+    mathinline @[221,232) [base]
+      mathsrc @[222,231) [base] src="!exists y"
+    text @[232,233) [base] str=", " raw=0:0,2:1
+    mathinline @[234,242) [base]
+      mathsrc @[235,241) [base] src="p !| q"
+    text @[242,243) [base] str=", " raw=0:0,2:1
+    mathinline @[244,253) [base]
+      mathsrc @[245,252) [base] src="u !|| v"
+    text @[253,254) [base] str=", " raw=0:0,2:1
+    mathinline @[255,264) [base]
+      mathsrc @[256,263) [base] src="a !<= b"
+    text @[264,288) [base] str="; a factorial stays one: " raw=0:0,25:24
+    mathinline @[289,304) [base]
+      mathsrc @[290,303) [base] src="n! = n (n-1)!"
+    text @[304,305) [base] str="."
+  para @[307,411) [base]
+    text @[307,317) [base] str="Alphabets: " raw=0:0,11:10
+    mathinline @[318,325) [base]
+      mathsrc @[319,324) [base] src="bb(R)"
+    text @[325,326) [base] str=", " raw=0:0,2:1
+    mathinline @[327,331) [base]
+      mathsrc @[328,330) [base] src="NN"
+    text @[331,332) [base] str=", " raw=0:0,2:1
+    mathinline @[333,340) [base]
+      mathsrc @[334,339) [base] src="bb(1)"
+    text @[340,341) [base] str=", " raw=0:0,2:1
+    mathinline @[342,350) [base]
+      mathsrc @[343,349) [base] src="cal(A)"
+    text @[350,351) [base] str=", " raw=0:0,2:1
+    mathinline @[352,361) [base]
+      mathsrc @[353,360) [base] src="frak(g)"
+    text @[361,362) [base] str=", " raw=0:0,2:1
+    mathinline @[363,372) [base]
+      mathsrc @[364,371) [base] src="bold(v)"
+    text @[372,373) [base] str=", " raw=0:0,2:1
+    mathinline @[374,383) [base]
+      mathsrc @[375,382) [base] src="sans(x)"
+    text @[383,384) [base] str=", " raw=0:0,2:1
+    mathinline @[385,394) [base]
+      mathsrc @[386,393) [base] src="mono(x)"
+    text @[395,398) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[399,410) [base]
+      mathsrc @[400,409) [base] src="italic(h)"
+    text @[410,411) [base] str="."
+  para @[413,466) [base]
+    text @[413,435) [base] str="Only parentheses shed: " raw=0:0,23:22
+    mathinline @[436,445) [base]
+      mathsrc @[437,444) [base] src="x^(a b)"
+    text @[445,446) [base] str=", " raw=0:0,2:1
+    mathinline @[447,456) [base]
+      mathsrc @[448,455) [base] src="x^{a b}"
+    text @[456,457) [base] str=", " raw=0:0,2:1
+    mathinline @[458,465) [base]
+      mathsrc @[459,464) [base] src="x^[a]"
+    text @[465,466) [base] str="."
+  para @[468,675) [base]
+    text @[468,511) [base] str="Delimiters stretch whatever their spelling: " raw=0:0,44:43
+    mathinline @[512,526) [base]
+      mathsrc @[513,525) [base] src="⟨x/y, z⟩"
+    text @[526,527) [base] str=", " raw=0:0,2:1
+    mathinline @[528,547) [base]
+      mathsrc @[529,546) [base] src="langle x/y rangle"
+    text @[547,548) [base] str=", " raw=0:0,2:1
+    mathinline @[549,568) [base]
+      mathsrc @[550,567) [base] src="lfloor x/2 rfloor"
+    text @[568,607) [base] str="; a bar alone in a group is its middle, " raw=0:0,40:39
+    mathinline @[608,621) [base]
+      mathsrc @[609,620) [base] src="{x | x > 0}"
+    text @[622,625) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[626,636) [base]
+      mathsrc @[627,635) [base] src="P(A | B)"
+    text @[636,643) [base] str=", while " raw=0:0,8:7
+    mathinline @[644,657) [base]
+      mathsrc @[645,656) [base] src="|x| + ||v||"
+    text @[658,675) [base] str=" stay as they are." raw=0:0,1:0
+  para @[677,810) [base]
+    text @[677,695) [base] str="Spaces and styles: " raw=0:0,19:18
+    mathinline @[696,734) [base]
+      mathsrc @[697,733) [base] src="a thin b med c thick d quad e wide f"
+    text @[734,735) [base] str=", " raw=0:0,2:1
+    mathinline @[736,756) [base]
+      mathsrc @[737,755) [base] src="display(sum_i x_i)"
+    text @[757,764) [base] str=" inline, " raw=0:0,1:0,9:7
+    mathinline @[765,787) [base]
+      mathsrc @[766,786) [base] src="limits(lim)_(x -> 0)"
+    text @[788,791) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[792,809) [base]
+      mathsrc @[793,808) [base] src="class(rel, A) B"
+    text @[809,810) [base] str="."
+  mathblock @[812,840) [base]
+    mathsrc @[814,838) [base] src="scripts(sum)_(i=1)^n x_i"

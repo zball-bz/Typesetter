@@ -2,73 +2,49 @@
 # font-independent. tools/mathdict.py reads it with the pinned UCD and MathML
 # Core files and generates engine/gen/math_dict.h, engine/src/math/atom.h and
 # runtime/src/shared/math-vocab.gen.mjs.
-#   name: the spelling (a word, an operator key, !word, AA..ZZ)
+#   name: the spelling (a word, an operator key, AA..ZZ); a negation is the
+#         `!` rule (plan P3-24: `!` before a relation), never a row
 #   cp: the code point (0: a text operator, set in letters)
-#   class: TeX atom class; flags: large limits textop
-#   negation: the UCD precomposed negation (cp + U+0338), or -
+#   class: TeX atom class; flags: large limits textop fence (a symmetric
+#         delimiter: one alone in a group is its middle, plan P3-24)
+#   negation: the UCD precomposed negation (cp + U+0338), or - ; a row whose
+#         code point the UCD does not negate may name one (| → ∤, ‖ → ∦)
 #   alias_of: the row that owns this code point, or -
-#   tex: the TeX spelling (converters only; filled by plan P3-24), or -
+#   tex: the TeX spellings, space-separated (converters only, plan P3-24);
+#         - = the name itself for an alphabetic name (\alpha), else none
 #   default_for_cp: y = the row a bare code point takes its class from
 #   class_source: mathml (as MathML Core derives it) or override
 name	cp	class	flags	negation	alias_of	tex	default_for_cp	class_source
-!-=	2262	rel	-	-	-	-	y	mathml
-!->	219B	rel	-	-	-	-	y	mathml
-!<	226E	rel	-	-	-	-	y	mathml
-!<=	2270	rel	-	-	-	-	y	mathml
-!=	2260	rel	-	-	-	-	y	mathml
-!=>	21CF	rel	-	-	-	-	y	mathml
-!>	226F	rel	-	-	-	-	y	mathml
-!>=	2271	rel	-	-	-	-	y	mathml
-!approx	2249	rel	-	-	-	-	y	mathml
-!cong	2247	rel	-	-	-	-	y	mathml
-!equiv	2262	rel	-	-	!-=	-	n	mathml
-!exists	2204	rel	-	-	-	-	y	override
-!geq	2271	rel	-	-	!>=	-	n	mathml
-!in	2209	rel	-	-	-	-	y	mathml
-!leq	2270	rel	-	-	!<=	-	n	mathml
-!ni	220C	rel	-	-	-	-	y	mathml
-!parallel	2226	rel	-	-	-	-	y	mathml
-!prec	2280	rel	-	-	-	-	y	mathml
-!sim	2241	rel	-	-	-	-	y	mathml
-!subset	2284	rel	-	-	-	-	y	mathml
-!subseteq	2288	rel	-	-	-	-	y	mathml
-!succ	2281	rel	-	-	-	-	y	mathml
-!supset	2285	rel	-	-	-	-	y	mathml
-!supseteq	2289	rel	-	-	-	-	y	mathml
-!|	2224	rel	-	-	-	-	y	mathml
-!||	2226	rel	-	-	!parallel	-	n	mathml
-!~	2241	rel	-	-	!sim	-	n	mathml
-!~~	2249	rel	-	-	!approx	-	n	mathml
 *	2217	bin	-	-	-	-	y	override
 +	002B	bin	-	-	-	-	y	mathml
-+-	00B1	bin	-	-	-	-	y	mathml
++-	00B1	bin	-	-	-	\pm	y	mathml
 ,	002C	punct	-	-	-	-	y	mathml
 -	2212	bin	-	-	-	-	y	mathml
--+	2213	bin	-	-	-	-	y	mathml
--->	27F6	rel	-	-	-	-	y	mathml
+-+	2213	bin	-	-	-	\mp	y	mathml
+-->	27F6	rel	-	-	-	\longrightarrow	y	mathml
 --|	22A3	rel	-	-	-	-	y	mathml
 -=	2261	rel	-	2262	-	-	y	mathml
-->	2192	rel	-	219B	-	-	y	mathml
-...	2026	ord	-	-	-	-	y	mathml
+->	2192	rel	-	219B	-	\to \rightarrow	y	mathml
+...	2026	ord	-	-	-	\ldots \dots	y	mathml
 :	2236	rel	-	-	-	-	y	override
 :.	2234	ord	-	-	-	-	y	mathml
-:=	2254	rel	-	-	-	-	y	mathml
+:=	2254	rel	-	-	-	\coloneqq	y	mathml
 ;	003B	punct	-	-	-	-	y	mathml
 <	003C	rel	-	226E	-	-	y	mathml
-<-	2190	rel	-	219A	-	-	y	mathml
-<--	27F5	rel	-	-	-	-	y	mathml
-<->	2194	rel	-	21AE	-	-	y	mathml
-<<	226A	rel	-	-	-	-	y	mathml
-<=	2264	rel	-	2270	-	-	y	mathml
-<==	27F8	rel	-	-	-	-	y	mathml
-<=>	21D4	rel	-	21CE	-	-	y	mathml
+<-	2190	rel	-	219A	-	\leftarrow \gets	y	mathml
+<--	27F5	rel	-	-	-	\longleftarrow	y	mathml
+<->	2194	rel	-	21AE	-	\leftrightarrow	y	mathml
+<<	226A	rel	-	-	-	\ll	y	mathml
+<=	2264	rel	-	2270	-	\leq \le	y	mathml
+<==	27F8	rel	-	-	-	\Longleftarrow	y	mathml
+<=>	21D4	rel	-	21CE	-	\Leftrightarrow \iff	y	mathml
 =	003D	rel	-	2260	-	-	y	mathml
-=:	2255	rel	-	-	-	-	y	mathml
-==>	27F9	rel	-	-	-	-	y	mathml
-=>	21D2	rel	-	21CF	-	-	y	mathml
+=:	2255	rel	-	-	-	\eqqcolon	y	mathml
+==>	27F9	rel	-	-	-	\Longrightarrow	y	mathml
+=>	21D2	rel	-	21CF	-	\Rightarrow \implies	y	mathml
 >	003E	rel	-	226F	-	-	y	mathml
->=	2265	rel	-	2271	-	-	y	mathml
->>	226B	rel	-	-	-	-	y	mathml
+>=	2265	rel	-	2271	-	\geq \ge	y	mathml
+>>	226B	rel	-	-	-	\gg	y	mathml
 AA	1D538	ord	-	-	-	-	y	mathml
 BB	1D539	ord	-	-	-	-	y	mathml
 CC	2102	ord	-	-	-	-	y	mathml
@@ -112,7 +88,6 @@ XX	1D54F	ord	-	-	-	-	y	mathml
 Xi	039E	ord	-	-	-	-	y	mathml
 YY	1D550	ord	-	-	-	-	y	mathml
 ZZ	2124	ord	-	-	-	-	y	mathml
-_|_	22A5	rel	-	-	-	-	y	override
 aleph	2135	ord	-	-	-	-	y	mathml
 alpha	03B1	ord	-	-	-	-	y	mathml
 amalg	2A3F	bin	-	-	-	-	y	override
@@ -136,7 +111,7 @@ bigsqcup	2A06	op	large,limits	-	-	-	y	mathml
 biguplus	2A04	op	large,limits	-	-	-	y	mathml
 bigvee	22C1	op	large,limits	-	-	-	y	mathml
 bigwedge	22C0	op	large,limits	-	-	-	y	mathml
-bot	22A5	ord	-	-	_|_	-	n	mathml
+bot	22A5	ord	-	-	perp	-	n	mathml
 bullet	2219	bin	-	-	-	-	y	override
 cap	2229	bin	-	-	-	-	y	mathml
 cdot	22C5	bin	-	-	-	-	y	override
@@ -215,11 +190,11 @@ mu	03BC	ord	-	-	-	-	y	mathml
 nabla	2207	ord	-	-	grad	-	n	mathml
 nearrow	2197	rel	-	-	-	-	y	mathml
 neg	00AC	ord	-	-	-	-	y	mathml
-neq	2260	rel	-	-	!=	-	n	mathml
-nexists	2204	ord	-	-	!exists	-	n	mathml
+neq	2260	rel	-	-	-	-	y	mathml
+nexists	2204	ord	-	-	-	-	y	mathml
 ni	220B	rel	-	220C	-	-	y	mathml
 not	00AC	ord	-	-	neg	-	n	mathml
-notin	2209	rel	-	-	!in	-	n	mathml
+notin	2209	rel	-	-	-	-	y	mathml
 nu	03BD	ord	-	-	-	-	y	mathml
 nwarrow	2196	rel	-	-	-	-	y	mathml
 odot	2299	bin	-	-	-	-	y	override
@@ -234,7 +209,7 @@ otimes	2297	bin	-	-	-	-	y	override
 ox	2297	bin	-	-	otimes	-	n	override
 parallel	2225	rel	-	2226	-	-	y	mathml
 partial	2202	ord	-	-	-	-	y	mathml
-perp	22A5	rel	-	-	_|_	-	n	override
+perp	22A5	rel	-	-	-	-	y	override
 phi	03C6	ord	-	-	-	-	y	mathml
 pi	03C0	ord	-	-	-	-	y	mathml
 pm	00B1	bin	-	-	+-	-	n	mathml
@@ -299,14 +274,14 @@ wp	2118	ord	-	-	-	-	y	mathml
 xi	03BE	ord	-	-	-	-	y	mathml
 xx	00D7	bin	-	-	times	-	n	override
 zeta	03B6	ord	-	-	-	-	y	mathml
-|	007C	ord	-	-	-	-	y	override
+|	007C	ord	fence	2224	-	\vert	y	override
 |-	22A2	rel	-	22AC	vdash	-	n	mathml
 |--	22A2	rel	-	22AC	vdash	-	n	mathml
 |-->	27FC	rel	-	-	-	-	y	mathml
 |->	21A6	rel	-	-	mapsto	-	n	mathml
 |=	22A8	rel	-	22AD	models	-	n	mathml
 |==	22A8	rel	-	22AD	models	-	n	mathml
-||	2016	ord	-	-	-	-	y	override
+||	2016	ord	fence	2226	-	\Vert	y	override
 ~	223C	rel	-	2241	sim	-	n	mathml
 ~=	2245	rel	-	2247	cong	-	n	mathml
 ~>	21DD	rel	-	-	-	-	y	mathml

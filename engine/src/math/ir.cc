@@ -27,17 +27,6 @@ struct Tok {
 
 inline bool isLetter(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 inline bool isDigit(char c) { return c >= '0' && c <= '9'; }
-// characters that participate in operator-sequence maximal munch
-inline bool isOpChar(char c) {
-  switch (c) {
-    case '+': case '-': case '*': case '=': case '<': case '>': case '|':
-    case '~': case ':': case ';': case '.': case ',': case '!': case '@':
-    case '&': case '?': case '%':
-      return true;
-    default:
-      return false;
-  }
-}
 
 struct Lexer {
   std::string_view s;
@@ -118,6 +107,15 @@ struct Lexer {
       t.text = std::string(s.substr(i, j - i));
       t.adjOpen = j < s.size() && s[j] == '(';
       i = j;
+      // (plan P3-24) a name of an opening or closing delimiter (langle,
+      // rceil) opens or closes a group as its character does — unless the
+      // document's declarations or a row of that name say otherwise
+      // (a stdlib template parses while the rows are being built: no row is a delimiter's name)
+      if (!(scope && scope->env && scope->env->find(t.text, scope->epoch)) && (templ || !mathRow(t.text)))
+        if (const SymbolInfo* e = MathDict::byName(t.text); e && (e->cls == kOpen || e->cls == kClose)) {
+          t.k = e->cls == kOpen ? Tok::Open : Tok::Close;
+          t.cp = e->cp;
+        }
       return t;
     }
     if (templ && c == '#' && i + 1 < s.size() && isLetter(s[i + 1])) {
@@ -154,36 +152,13 @@ struct Lexer {
         break;
     }
     if (c == '_') {
-      // _|_ is ⊥ (a key outside the operator munch); otherwise a subscript
-      if (i + 2 < s.size() && s[i + 1] == '|' && s[i + 2] == '_') {
-        if (const SymbolInfo* e = MathDict::byName("_|_")) {
-          i += 3;
-          t.k = Tok::Op;
-          t.op = e;
-          return t;
-        }
-      }
       i++;
       t.k = Tok::Sub;
       return t;
     }
-    if (c == '!' && i + 1 < s.size() && isLetter(s[i + 1])) {
-      // negated name: !in, !exists, …
-      u32 j = i + 1;
-      while (j < s.size() && isLetter(s[j])) j++;
-      if (const SymbolInfo* e = MathDict::byName(s.substr(i, j - i))) {
-        i = j;
-        t.k = Tok::Op;
-        t.op = e;
-        return t;
-      }
-      // unknown negation: '!' alone, the word lexes next round
-      i++;
-      t.k = Tok::Chr;
-      t.cp = '!';
-      return t;
-    }
-    if (isOpChar(c)) {
+    // (a `!` is a character: before a relation the parser negates it, plan
+    // P3-24 — != is ≠, !in is ∉ — else it is a factorial)
+    if (MathDict::isOpChar(c)) {
       // maximal munch over the operator-key trie (operator characters only)
       u32 len = 0;
       if (const SymbolInfo* e = MathDict::matchOp(s, i, len)) {
@@ -197,14 +172,26 @@ struct Lexer {
       t.cp = (u8)c;
       return t;
     }
-    // a direct Unicode character: the class of its default dictionary row,
-    // or of a declaration that claims it (plan P2-15)
+    // a direct Unicode character: a declaration that claims it (plan
+    // P2-15), else its default dictionary row — the same symbol as its name
+    // (plan P3-24: ∑ is sum, ≤ a relation, ⟨ an opening delimiter)
     u32 cp = utf8Next(s, i);
     t.k = Tok::Chr;
     t.cp = cp;
     t.cls = MathDict::classOfCp(cp);
     if (scope && scope->env)
-      if (const MathDeclRow* r = scope->env->claimed(cp, scope->epoch)) t.cls = r->cls;
+      if (const MathDeclRow* r = scope->env->claimed(cp, scope->epoch)) {
+        t.cls = r->cls;
+        return t;
+      }
+    if (const SymbolInfo* e = MathDict::byCp(cp)) {
+      if (e->cls == kOpen || e->cls == kClose) {
+        t.k = e->cls == kOpen ? Tok::Open : Tok::Close;
+      } else {
+        t.k = Tok::Op;
+        t.op = e;
+      }
+    }
     return t;
   }
 };
@@ -299,7 +286,61 @@ struct Parser {
     n->textFont = true;
     return n;
   }
-  bool atRel() const { return tok.k == Tok::Op && tok.op->cls == kRel; }
+  // a relation ahead: an operator or a typed or claimed character of class
+  // Rel (plan P3-24: predicates read the symbol, not the token kind), or a
+  // `!` negating one
+  bool atRel() const {
+    if (tok.k == Tok::Op) return tok.op->cls == kRel;
+    if (tok.k != Tok::Chr) return false;
+    if (tok.cls == kRel) return true;
+    u32 cp = 0, end = 0;
+    u8 cls = kOrd;
+    return tok.cp == '!' && negatable(cp, cls, end) && cls == kRel;
+  }
+  // (plan P3-24; the `!` rule) the symbol a `!` touches — an operator, a
+  // typed or named symbol: its code point and class; false when the next
+  // token is none of these or stands apart
+  bool negatable(u32& cp, u8& cls, u32& end) const {
+    Lexer la = lex;
+    const Tok nt = la.next();
+    if (nt.pos != tok.end) return false;
+    end = nt.end;
+    switch (nt.k) {
+      case Tok::Op:
+        cp = nt.op->cp;
+        cls = nt.op->cls;
+        return cp != 0;
+      case Tok::Chr:
+        cp = nt.cp;
+        cls = nt.cls;
+        return true;
+      case Tok::Word: return symbolOf(nt.text, cp, cls);
+      default: return false;
+    }
+  }
+  // whether the `!` at hand negates: a symbol with a negation (the UCD's,
+  // | → ∤, ‖ → ∦), or a relation without one (an error)
+  bool negates() const {
+    u32 cp = 0, end = 0;
+    u8 cls = kOrd;
+    return tok.k == Tok::Chr && tok.cp == '!' && negatable(cp, cls, end) && (MathDict::negate(cp) || cls == kRel);
+  }
+  // a `!` that negates: the negated symbol (!= is ≠, !in ∉), an error leaf
+  // when the relation has no negation
+  MNode* negation() {
+    u32 cp = 0, end = 0;
+    u8 cls = kOrd;
+    if (!negates() || !negatable(cp, cls, end)) return nullptr;
+    const u32 lo = tok.pos;
+    const u32 neg = MathDict::negate(cp);
+    advance();  // the '!'
+    advance();  // the symbol
+    if (!neg) {
+      err(lo, end, "'" + std::string(lex.s.substr(lo + 1, end - lo - 1)) + "' has no negation");
+      return error(lo, end);
+    }
+    return atom(neg, MathDict::classOfCp(neg), 0, lo, end);
+  }
   bool atComma() const { return tok.k == Tok::Op && tok.op->cls == kPunct && tok.op->cp == ','; }
   bool runEnds() const { return tok.k == Tok::End || tok.k == Tok::Close; }
   // error resynchronisation: skip to `,` `)` `;` a relation or the end
@@ -348,8 +389,9 @@ struct Parser {
     items.push_back(f);
   }
 
-  // group consumed as a script/fraction argument sheds its parens
-  MNode* shed(MNode* f) { return f->k == MNode::Group ? f->a : f; }
+  // a group consumed as a script, fraction or argument operand sheds its
+  // parentheses — only those (D-M01, plan P3-24): {…} and […] stay visible
+  MNode* shed(MNode* f) { return f->k == MNode::Group && f->openCp == '(' && f->closeCp == ')' ? f->a : f; }
 
   MNode* attachPostfix(MNode* f) {
     for (;;) {
@@ -390,9 +432,9 @@ struct Parser {
         f->hi = tok.pos;
         continue;
       }
-      if (tok.k == Tok::Chr && tok.cp == '!') {
+      if (tok.k == Tok::Chr && tok.cp == '!' && !negates()) {
         // postfix factorial: fold into the base so fractions/scripts see n!
-        // as one atom ("!=", "!in" were already claimed by the lexer)
+        // as one atom (a `!` touching a relation negates it instead: !=)
         MNode* bang = atom('!', kOrd, 0, tok.pos, tok.end);
         advance();
         MNode* r = mk(MNode::Run, f->lo, bang->hi);
@@ -494,6 +536,7 @@ struct Parser {
         return atom(e->cp, e->cls, e->flags, lo, hi);
       }
       case Tok::Chr: {
+        if (MNode* neg = negation()) return neg;
         MNode* n = atom(tok.cp, tok.cls, 0, lo, hi);
         advance();
         return n;
@@ -509,6 +552,7 @@ struct Parser {
         } else {
           err(lo, lo + 1, "unclosed bracket");
         }
+        midOf(inner);
         MNode* g = mk(MNode::Group, lo, tok.pos);
         g->a = inner;
         g->openCp = open;
@@ -537,6 +581,23 @@ struct Parser {
     }
   }
 
+  // (plan P3-24) a fence alone in its group — one | or ‖ among its atoms —
+  // is its middle: stretched with the group and spaced as a relation
+  // ({x | x > 0}, P(A | B)); two of them (|x|, ‖v‖) stay as they are
+  static void midOf(MNode* run) {
+    MNode* lone = nullptr;
+    int fences = 0;
+    for (MNode* k : run->kids)
+      if (k->k == MNode::Sym && (k->flags & kFlagFence)) {
+        fences++;
+        lone = k;
+      }
+    if (fences == 1) {
+      lone->mid = true;
+      lone->cls = kRel;
+    }
+  }
+
   MNode* parseWord(std::vector<MNode*>* items) {
     const std::string w = tok.text;
     const u32 wpos = tok.pos, wend = tok.end;
@@ -558,6 +619,12 @@ struct Parser {
     // a call binds only on an adjacent `name(` (design T8 S3)
     if (row && call) return parseCall(*row, wpos);
     if (row && row->bareCp) return atom(row->bareCp, row->bareCls, 0, wpos, wend);  // dot → ⋅
+    // (plan P3-24) a row without parameters is a constant: thin, quad
+    if (row && row->params.empty() && row->prim == Prim::None && row->body) {
+      MNode* c = mk(MNode::Call, wpos, wend);
+      c->txt = row->name;
+      return bind(expand(*row, c));
+    }
     if (const SymbolInfo* e = MathDict::byName(builtin(w))) {
       if (e->flags & kFlagTextOp) {
         MNode* n = mk(MNode::Text, wpos, wend);
@@ -581,8 +648,13 @@ struct Parser {
     // a NAME (Typst rule): one upright text-font box with TeX's
     // \operatorname spacing (Op: thin space before an Ord, none before an
     // opening paren) — Id(A,B), Equiv, eqv, abs. Scripts bind to the whole
-    // name. Single letters stay variables in the math font.
+    // name. Single letters stay variables in the math font. (Plan P3-24,
+    // D-M04: it says so, as info — a converter's slip, a function nobody
+    // declared, without interrupting the writing.)
     if (w.size() > 1) {
+      if (!row && !lex.templ)
+        err(wpos, wend, "'" + w + "' is no known name: set upright as an operator name (declare it with $.math.op, or quote it)",
+            Sev::Info, "math-implicit-name");
       MNode* n = mk(MNode::Text, wpos, wend);
       n->txt = w;
       n->cls = kOp;
@@ -659,7 +731,9 @@ struct Parser {
         args.push_back(error(call->hi, call->hi));
       }
     call->kids = args;
+    if (row.prim == Prim::Lr && call->kids.size() > 1 && call->kids[1]->k == MNode::Run) midOf(call->kids[1]);
     MNode* bound = expand(row, call);
+    if (!lex.templ) bound = bind(bound);  // (a template's prims bind when it is called)
     if (!extra) return bound;
     err((u32)extraLo, extraHi, "'" + row.name + "' takes " + std::to_string(row.params.size()) + " argument(s)",
         Sev::Warning, "math-arity");
@@ -703,6 +777,87 @@ struct Parser {
     if (!out) return call;
     if (out->k == MNode::Call) out->txt += " (" + row.name + ")";  // the family it came from (dumps)
     return out;
+  }
+
+  // (plan P3-24) the bind-time rewrites over a bound call's tree: an
+  // alphabet maps its letters and digits, limits/scripts set where an
+  // operator's scripts go, a class sets the atom class; their argument is
+  // checked here (an unknown one is an error)
+  static std::string_view identOf(const MNode* n) {
+    if (n && n->k == MNode::Text) return n->txt;
+    if (n && n->k == MNode::Run && n->kids.size() == 1 && n->kids[0]->k == MNode::Text) return n->kids[0]->txt;
+    return {};
+  }
+  static void mapLetters(MNode* n, int alphabet, Arena& arena) {
+    if (!n) return;
+    switch (n->k) {
+      case MNode::Sym: n->cp = MathDict::variant(alphabet, n->cp); return;
+      case MNode::Num:
+      case MNode::Text: {
+        if (n->k == MNode::Text && (n->flags & kFlagTextOp)) return;  // sin, lim: operators keep their face
+        std::vector<MNode*> kids;
+        for (u32 i = 0; i < n->txt.size();) {
+          const u32 cp = utf8Next(n->txt, i);
+          MNode* k = arena.make<MNode>();
+          k->k = MNode::Sym;
+          k->cp = MathDict::variant(alphabet, cp);
+          k->cls = MathDict::classOfCp(cp);
+          k->lo = n->lo;
+          k->hi = n->hi;
+          kids.push_back(k);
+        }
+        n->k = MNode::Run;
+        n->txt.clear();
+        n->textFont = false;
+        n->kids = std::move(kids);
+        return;
+      }
+      default:
+        for (MNode* k : {n->a, n->b, n->sub, n->sup}) mapLetters(k, alphabet, arena);
+        for (MNode* k : n->kids) mapLetters(k, alphabet, arena);
+        return;
+    }
+  }
+  MNode* bind(MNode* n) {
+    if (!n) return n;
+    for (MNode** k : {&n->a, &n->b, &n->sub, &n->sup}) *k = bind(*k);
+    for (MNode*& k : n->kids) k = bind(k);
+    if (n->k != MNode::Call) return n;
+    auto bad = [&](std::string_view what, std::string_view v) {
+      err(n->lo, n->hi, "'" + n->txt + "': no " + std::string(what) + " '" + std::string(v) + "'");
+    };
+    MNode* body = n->kids.empty() ? nullptr : n->kids[0];
+    switch (n->prim) {
+      case Prim::Variant: {
+        const std::string_view a = n->kids.size() > 1 ? identOf(n->kids[1]) : std::string_view{};
+        const int alphabet = MathDict::alphabet(a);
+        if (alphabet < 0) bad("alphabet", a);
+        else mapLetters(body, alphabet, arena);
+        return body ? body : n;
+      }
+      case Prim::Limits: {
+        const std::string_view m = n->kids.size() > 1 ? identOf(n->kids[1]) : std::string_view{};
+        MNode* op = body && body->k == MNode::Run && body->kids.size() == 1 ? body->kids[0] : body;
+        if (m != "limits" && m != "scripts") bad("mode", m);
+        else if (op && m == "limits") op->flags |= kFlagLimitsAlways | kFlagLimits;
+        else if (op) op->flags &= (u8)~(kFlagLimitsAlways | kFlagLimits);
+        return body ? body : n;
+      }
+      case Prim::Class: {
+        static constexpr std::string_view kNames[] = {"ord", "op", "bin", "rel", "open", "close", "punct", "inner"};
+        const std::string_view c = identOf(n->kids.empty() ? nullptr : n->kids[0]);
+        const auto at = std::find(std::begin(kNames), std::end(kNames), c);
+        if (at == std::end(kNames)) bad("class", c);
+        else n->cls = (u8)(at - std::begin(kNames));
+        return n;
+      }
+      case Prim::Style: {
+        const std::string_view st = n->kids.size() > 1 ? identOf(n->kids[1]) : std::string_view{};
+        if (st != "display" && st != "text" && st != "script" && st != "sscript") bad("style", st);
+        return n;
+      }
+      default: return n;
+    }
   }
 
   // big operator: optional scripts in either order, then greedy body until a
@@ -751,6 +906,13 @@ struct Registry {
     prim("lr", Prim::Lr, {{"open", S::Sym}, {"body", S::Content}, {"close", S::Sym}});
     prim("accent", Prim::Accent, {{"base", S::Content}, {"mark", S::Sym}});
     prim("rule", Prim::Rule, {{"base", S::Content}, {"side", S::Ident}});
+    // (plan P3-24) spacing, style and the bind-time rewrites (stdlib.tsv
+    // rows name them: thin, display, limits, bb, …; class is called as is)
+    prim("space", Prim::Space, {{"mu", S::Content}});
+    prim("mstyle", Prim::Style, {{"body", S::Content}, {"style", S::Ident}});
+    prim("mlimits", Prim::Limits, {{"body", S::Content}, {"mode", S::Ident}});
+    prim("variant", Prim::Variant, {{"body", S::Content}, {"alphabet", S::Ident}});
+    prim("class", Prim::Class, {{"class", S::Ident}, {"body", S::Content}});
     for (const mathrows::StdRow& sr : mathrows::kStdlib) {
       MathRow r;
       std::string_view sig = sr.signature;

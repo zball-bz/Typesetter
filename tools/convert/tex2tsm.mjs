@@ -9,6 +9,7 @@
 //
 //   node tools/convert/tex2tsm.mjs chapter.tex [--bib refs.bib --bib-out refs.json]
 import { readFileSync, writeFileSync } from 'node:fs';
+import { TEX_MATH } from '../../runtime/src/shared/math-vocab.gen.mjs';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
@@ -112,33 +113,36 @@ const expandMacros = (s) => {
   return s;
 };
 
-// ---- LaTeX math → Typst-ish math -----------------------------------------
+// ---- LaTeX math → .tsm math ---------------------------------------------------
+// (plan P3-24) the symbols are the engine's one map (TEX_MATH, generated from
+// engine/data/math/symbols.tsv; tests.cc lexes every target), the alphabets
+// its rows (bb, cal, frak, bold, sans, mono, italic), the spaces its rows
+// (thin, med, thick, quad, wide). A macro with no symbol is kept as its
+// name — the engine says so (info math-implicit-name) — and listed on stderr.
+const TEX_ALPHABET = { mathbb: 'bb', mathcal: 'cal', mathscr: 'cal', mathfrak: 'frak', mathbf: 'bold',
+                       boldsymbol: 'bold', mathsf: 'sans', mathtt: 'mono', mathit: 'italic' };
+const TEX_SPACE = { quad: 'quad', qquad: 'wide', ',': 'thin', ':': 'med', '>': 'med', ';': 'thick', '!': '', ' ': '' };
+const unknownMath = new Set();
 const MATH = [
-  [/\\infty/g, 'oo'], [/\\to\b/g, ' -> '], [/\\rightarrow/g, ' -> '], [/\\leftarrow/g, ' <- '],
-  [/\\times/g, ' times '], [/\\cdot/g, ' dot '], [/\\circ/g, ' compose '],
-  [/\\lambda/g, 'lambda'], [/\\alpha/g, 'alpha'], [/\\beta/g, 'beta'], [/\\gamma/g, 'gamma'],
-  [/\\pi/g, 'pi'], [/\\sigma/g, 'sigma'], [/\\omega/g, 'omega'], [/\\epsilon/g, 'epsilon'],
-  [/\\Pi/g, 'Pi'], [/\\Sigma/g, 'Sigma'],
-  [/\\simeq/g, ' simeq '], [/\\equiv/g, ' equiv '], [/\\leq/g, '<='], [/\\geq/g, '>='], [/\\neq/g, '!='],
-  [/\\in\b/g, ' ∈ '], [/\\wedge/g, ' ∧ '], [/\\vee/g, ' ∨ '], [/\\neg/g, '¬'],
-  [/\\emptyset/g, '∅'], [/\\forall/g, 'forall'], [/\\exists/g, 'exists'],
-  [/\\mathcal\{([A-Za-z])\}/g, '$1'],
-  [/\\mathbf\{([A-Za-z0-9]+)\}/g, '$1'],
-  [/\\mathsf\{([A-Za-z]+)\}/g, '$1'], [/\\mathrm\{([A-Za-z]+)\}/g, '$1'],
-  [/\\mathbb\{([A-Z])\}/g, '$1$1'], [/\\operatorname\{([A-Za-z]+)\}/g, '$1'],
-  [/\\setof\{([^{}]*)\}/g, '{$1}'], [/\\mid\b/g, ' ∣ '], [/\\bot\b/g, '⊥'], [/\\top\b/g, '⊤'],
-  [/\\Rightarrow/g, ' ⇒ '],
-  [/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)'], [/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '($1)/($2)'],
-  [/\\left\(/g, '('], [/\\right\)/g, ')'], [/\\left\[/g, '['], [/\\right\]/g, ']'],
-  [/\\big\b|\\Big\b|\\bigl|\\bigr|\\Bigl|\\Bigr/g, ''],
-  [/\\langle/g, 'angle.l'], [/\\rangle/g, 'angle.r'], [/\\ldots|\\cdots|\\dots/g, '...'],
-  [/\\quad|\\qquad|\\,|\\;|\\!|\\ /g, ' '], [/\\mathopen\{\}|\\mathclose\{\}/g, ''],
-  [/\\text\{([^{}]*)\}/g, '"$1"'], [/\\textrm\{([^{}]*)\}/g, '"$1"'],
-  [/\^\{([^{}]*)\}/g, '^($1)'], [/_\{([^{}]*)\}/g, '_($1)'],
   [/\\defeq/g, ' := '], [/\\jdeq/g, ' equiv '], [/\\narrowbreak|\\allowbreak/g, ' '],
   [/\\prd\{([^{}]*)\}/g, 'Pi_($1)'], [/\\sm\{([^{}]*)\}/g, 'Sigma_($1)'],
-  [/\\([A-Za-z]+)/g, '$1'],  // unknown math macro → its name as an identifier
+  [/\\setof\{([^{}]*)\}/g, '\u0002$1\u0003'],
+  [/\\(mathbb|mathcal|mathscr|mathfrak|mathbf|boldsymbol|mathsf|mathtt|mathit)\{([A-Za-z0-9]+)\}/g,
+    (m, c, x) => (x.length > 1 && /^[A-Za-z]+$/.test(x) && (c === 'mathsf' || c === 'mathrm')
+      ? ` class(op, "${x}") ` : ` ${TEX_ALPHABET[c]}(${x}) `)],
+  [/\\(?:operatorname|mathrm)\{([A-Za-z]+)\}/g, (m, x) => (x.length > 1 ? ` class(op, "${x}") ` : ` "${x}" `)],
+  [/\\(?:text|textrm|mbox)\{([^{}]*)\}/g, '"$1"'],
+  [/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)'], [/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, 'frac($1, $2)'],
+  [/\\(?:left|right)\s*\./g, ''], [/\\left|\\right|\\(?:big|Big|bigg|Bigg)[lrm]?\b/g, ''],
+  [/\\mathopen\{\}|\\mathclose\{\}/g, ''],
+  [/\\(quad|qquad)\b|\\([,:;>! ])/g, (m, w, c) => ` ${TEX_SPACE[w ?? c]} `],
+  [/\^\{([^{}]*)\}/g, '^($1)'], [/_\{([^{}]*)\}/g, '_($1)'],
   [/\\\{/g, '\u0002'], [/\\\}/g, '\u0003'],  // set braces survive the grouping-brace strip
+  [/\\([A-Za-z]+)/g, (m, name) => {
+    if (TEX_MATH[name]) return ` ${TEX_MATH[name]} `;
+    unknownMath.add(name);
+    return ` ${name} `;
+  }],
   [/[{}]/g, ''],
 ];
 const mathToTsm = (m) => {
@@ -209,3 +213,4 @@ src = src.split(/\n\s*\n/).map((p) => {
 // bibliography: --bib-ref is the path the DOCUMENT will use for the CSL-JSON
 if (opt('--bib-ref')) src += `\n\n#bibliography(${JSON.stringify(opt('--bib-ref'))})\n`;
 process.stdout.write(src.replace(/\n{3,}/g, '\n\n').trim() + '\n');
+if (unknownMath.size) console.error(`tex2tsm: math macros with no symbol, kept as names: ${[...unknownMath].sort().join(' ')}`);

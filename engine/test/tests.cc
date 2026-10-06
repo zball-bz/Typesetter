@@ -514,6 +514,66 @@ static void unitResources(const fs::path& root) {
 // The math IR (plan P1-24): every built-in row passes the one validator;
 // calls bind only on an adjacent `name(`, a bare accent or function word is
 // a symbol or a name, arity is checked, and errors stay local.
+// (plan P3-24; design T8 MathDict test gates) the lexer gate: every key of
+// the dictionary parses back to its own symbol — a name, an operator key, a
+// delimiter in a symbol slot — and every TeX target the converters emit
+// (tools/convert, kTexNames) to the symbol it means
+static void unitMathDict() {
+  Arena arena;
+  auto means = [&](std::string_view src, const SymbolInfo& e) {
+    const bool delim = e.cls == kOpen || e.cls == kClose;
+    const std::string text = delim ? "lr(" + std::string(src) + ", x, " + std::string(src) + ")" : std::string(src);
+    MathIR m = parseMath(text, arena);
+    if (!m.root || m.root->kids.size() != 1) return false;
+    const MNode* n = m.root->kids[0];
+    if (delim) return n->k == MNode::Call && !n->kids.empty() && n->kids[0]->cp == e.cp;
+    if (!e.cp) return n->k == MNode::Text && n->txt == src;  // a text operator
+    return (n->k == MNode::Sym || n->k == MNode::BigOp) && n->cp == e.cp;
+  };
+  for (int i = 0; i < mathdict::kSymbolCount; i++) {
+    const SymbolInfo& e = mathdict::kSymbols[i];
+    const bool ok = means(e.name, e);
+    if (!ok) printf("FAIL math key '%s' does not parse to its symbol\n", e.name);
+    CHECK(ok);
+  }
+  for (int i = 0; i < mathdict::kTexNameCount; i++) {
+    const mathdict::TexName& t = mathdict::kTexNames[i];
+    const std::string_view target = t.target;
+    bool ok = false;
+    if (target[0] == '!') {  // a negation: !base is the base's negation
+      const SymbolInfo* b = MathDict::byName(target.substr(1));
+      MathIR m = parseMath(target, arena);
+      ok = b && m.diags.empty() && m.root->kids.size() == 1 && m.root->kids[0]->cp == MathDict::negate(b->cp);
+    } else if (const SymbolInfo* e = MathDict::byName(target)) {
+      ok = means(target, *e);
+    }
+    if (!ok) printf("FAIL TeX \\%s → '%s' does not parse to its symbol\n", t.tex, t.target);
+    CHECK(ok);
+  }
+  // (plan P3-24) the `!` rule, (…)-only shedding, a lone bar a middle, the
+  // alphabets, typed symbols as their names
+  auto one = [&](std::string_view src) { return parseMath(src, arena); };
+  MathIR neq = one("a != b");
+  CHECK(neq.diags.empty() && neq.root->kids.size() == 3 && neq.root->kids[1]->cp == 0x2260 && neq.root->kids[1]->cls == kRel);
+  MathIR fact = one("n! / 2");
+  CHECK(fact.diags.empty() && fact.root->kids.size() == 1 && fact.root->kids[0]->k == MNode::Frac);
+  MathIR none = one("a !<< b");
+  CHECK(!none.diags.empty() && none.root->kids[1]->k == MNode::Error);
+  MathIR braces = one("x^{a b}");
+  CHECK(braces.root->kids[0]->k == MNode::Attach && braces.root->kids[0]->sup->k == MNode::Group);
+  MathIR parens = one("x^(a b)");
+  CHECK(parens.root->kids[0]->sup->k == MNode::Run);
+  MathIR set = one("{x | x > 0}");
+  CHECK(set.root->kids[0]->k == MNode::Group && set.root->kids[0]->a->kids[1]->mid);
+  MathIR abs = one("(|x| + 1)");
+  CHECK(!abs.root->kids[0]->a->kids[0]->mid && !abs.root->kids[0]->a->kids[2]->mid);
+  MathIR bb = one("bb(R) cal(A) bb(1)");
+  CHECK(bb.diags.empty() && bb.root->kids.size() == 3 && bb.root->kids[0]->kids[0]->cp == 0x211D &&
+        bb.root->kids[1]->kids[0]->cp == 0x1D49C && bb.root->kids[2]->kids[0]->kids[0]->cp == 0x1D7D9);
+  MathIR typed = one("∑_i a_i ≤ b");
+  CHECK(typed.root->kids.size() == 3 && typed.root->kids[0]->k == MNode::BigOp && typed.root->kids[1]->cls == kRel);
+}
+
 static void unitMathIR() {
   std::string why;
   for (const MathRow& r : mathRows()) {
@@ -2035,6 +2095,7 @@ int main(int argc, char** argv) {
   unitRegistry(fs::path(root));
   unitTextRules();
   unitOverlays();
+  unitMathDict();
   unitFmtPx();
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";

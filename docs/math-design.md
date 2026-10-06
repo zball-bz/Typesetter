@@ -444,7 +444,36 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
 ## 13. As-built deltas (M7 completion)
 
 - **Factorial**: postfix `!` folds into the preceding atom (`n!/2` has an
-  `n!` numerator); `!=`-style negations stay lexer sequences.
+  `n!` numerator). Since plan P3-24 a `!` touching a symbol negates it
+  instead (the `!` rule below).
+- **Plan P3-24 (SymbolInfo identity; design T8 S4)**:
+  - Predicates read the symbol, never the token kind: a typed character
+    lexes as its default row (`∑` is `sum`, large with limits; `≤` a
+    relation that ends a big operator's body). Opening and closing
+    delimiters, typed or named (`⟨`, `langle`, `lceil`), open and close
+    stretching groups.
+  - The `!` rule: before a symbol (no space between), the negation the UCD
+    gives (cp + U+0338), or a row's override where the UCD has none (`|` →
+    ∤, `‖` → ∦). A relation without one is an error leaf. The 28 `!x` rows
+    and the `!word` and `_|_` lexer branches are gone; the build gate
+    refuses any key mixing letters and operator characters, and the lexer's
+    operator characters are generated (`kOpChars`).
+  - Only `(…)` sheds as a script, fraction or argument operand (D-M01).
+  - A fence (`|`, `‖`: flag `fence`) alone in its group is its middle:
+    stretched with the delimiters, class Rel. Two of them stay Ord.
+  - Rows over new primitives: `space(mu)` (thin 3, med 4, thick 5, quad 18,
+    wide 36), `mstyle` (display, inline, script, sscript), `mlimits` (limits,
+    scripts; limits() sets `kFlagLimitsAlways`), `variant` (bb, cal, frak,
+    bold, italic, sans, mono; maps generated from the UCD names, the
+    letterlike holes included) and `class(cls, body)`. Variant, limits and
+    class are bind-time rewrites. A row without parameters is a constant,
+    used bare.
+  - An implicit name (an unknown multi-letter word) is reported as info
+    `math-implicit-name` (D-M04).
+  - The converters share one TeX map (`kTexNames`, `TEX_MATH`), generated
+    from the tex column. `unitMathDict` parses every key and every target
+    back to its symbol. `pbr2tsm` checks its MathSpeak map against the
+    vocabulary when it loads.
 - **`inf`** is the infimum text operator; ∞ is `oo`/`infty`/`infinity`
   (v1 listed `inf` as ∞ — collision, recorded deviation).
 - **v2 §13's dotted codex names** (`arrow.r`, `subset.eq`) are not

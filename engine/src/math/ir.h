@@ -24,6 +24,12 @@ enum class Prim : u8 {
   Lr,       // lr(open: sym, body, close: sym): fenced, stretched to the body
   Accent,   // accent(base, mark: sym)
   Rule,     // rule(base, side: over|under)
+  // (plan P3-24) spacing, style and the bind-time rewrites
+  Space,    // space(mu): a fixed space of mu/18 em
+  Style,    // mstyle(body, style: display|text|script|sscript)
+  Limits,   // mlimits(body, mode: limits|scripts): where an operator's scripts go
+  Variant,  // variant(body, alphabet: bb|cal|frak|bold|italic|sans|mono): its letters and digits
+  Class,    // class(class: ord|op|bin|rel|open|close|punct|inner, body): its atom class
 };
 enum class SlotKind : u8 { Content, Sym, Ident };
 
@@ -35,6 +41,7 @@ struct MNode {
                               //   Error: the source slice
   bool textFont = false;      // Text/Error: set in the document's text font
   bool primeSup = false;      // Attach: the sup holds only primes so far
+  bool mid = false;           // Sym (plan P3-24): a fence alone in its group — its middle, stretched
   Prim prim = Prim::None;     // Call
   u32 lo = 0, hi = 0;         // the source bytes it came from
   MNode* a = nullptr;         // Attach/BigOp: base; Frac: numerator; Group: inner run

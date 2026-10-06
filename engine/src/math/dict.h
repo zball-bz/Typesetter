@@ -14,7 +14,7 @@ namespace tsr {
 using SymbolInfo = mathdict::Symbol;
 
 struct MathDict {
-  // a name, an operator key, !word, AA..ZZ (binary search, strcmp order)
+  // a name, an operator key, AA..ZZ (binary search, strcmp order)
   static const SymbolInfo* byName(std::string_view name) {
     int lo = 0, hi = mathdict::kSymbolCount;
     while (lo < hi) {
@@ -26,16 +26,47 @@ struct MathDict {
       return &mathdict::kSymbols[lo];
     return nullptr;
   }
-  // the class a bare code point takes (its default row); Ord when unknown
-  static u8 classOfCp(u32 cp) {
+  // a bare code point's entry: its default row, or (a negated code point
+  // without a row of its own) the class of what it negates
+  static const mathdict::CpClass* cpEntry(u32 cp) {
     int lo = 0, hi = mathdict::kCpClassCount;
     while (lo < hi) {
       const int mid = (lo + hi) / 2;
       if (mathdict::kCpClasses[mid].cp < cp) lo = mid + 1;
       else hi = mid;
     }
-    return lo < mathdict::kCpClassCount && mathdict::kCpClasses[lo].cp == cp ? mathdict::kCpClasses[lo].cls
-                                                                             : (u8)kOrd;
+    return lo < mathdict::kCpClassCount && mathdict::kCpClasses[lo].cp == cp ? &mathdict::kCpClasses[lo] : nullptr;
+  }
+  // the class a bare code point takes; Ord when unknown
+  static u8 classOfCp(u32 cp) {
+    const mathdict::CpClass* e = cpEntry(cp);
+    return e ? e->cls : (u8)kOrd;
+  }
+  // (plan P3-24; design T8: predicates read only SymbolInfo) a typed code
+  // point's symbol — the same as its name's (∑ is sum: large, limits)
+  static const SymbolInfo* byCp(u32 cp) {
+    const mathdict::CpClass* e = cpEntry(cp);
+    return e && e->sym >= 0 ? &mathdict::kSymbols[e->sym] : nullptr;
+  }
+  // a character some operator key uses (the lexer's maximal munch)
+  static bool isOpChar(char c) {
+    for (const char* k = mathdict::kOpChars; *k; k++)
+      if (*k == c) return true;
+    return false;
+  }
+  // (plan P3-24) a letter or digit in a math alphabet (bb, cal, frak, bold,
+  // italic, sans, mono), else the code point itself
+  static int alphabet(std::string_view name) {
+    for (int a = 0; a < mathdict::kAlphabetCount; a++)
+      if (name == mathdict::kAlphabets[a].name) return a;
+    return -1;
+  }
+  static u32 variant(int alphabet, u32 cp) {
+    if (alphabet < 0 || alphabet >= mathdict::kAlphabetCount) return cp;
+    const int i = cp >= 'A' && cp <= 'Z' ? (int)(cp - 'A') : cp >= 'a' && cp <= 'z' ? 26 + (int)(cp - 'a')
+                  : cp >= '0' && cp <= '9' ? 52 + (int)(cp - '0') : -1;
+    const u32 v = i >= 0 ? mathdict::kAlphabets[alphabet].cps[i] : 0;
+    return v ? v : cp;
   }
   // the longest operator key at `pos` (the lexer's maximal munch over
   // operator characters); its length in `len`, nullptr when none

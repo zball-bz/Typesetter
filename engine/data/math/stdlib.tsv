@@ -1,7 +1,9 @@
 # The built-in math function rows (plan P1-24; design T8 MathRow): each a
 # template over the closed primitive set (frac, stack, radical, lr, accent,
-# rule; engine/src/math/ir.cc), written in the template language a document
-# will use — #name is a parameter, a symbol slot takes one token. Compiled
+# rule; plan P3-24: space, mstyle, mlimits, variant, class; engine/src/math/
+# ir.cc), written in the template language a document will use — #name is a
+# parameter, a symbol slot takes one token. A row without parameters is a
+# constant, used bare (thin, quad). Compiled
 # by tools/mathdict.py into engine/gen/math_rows.h; checked by checkRow at
 # start-up and by the unit tests.
 #   signature: name(params); `p?` is optional
@@ -29,3 +31,21 @@ check(x)	accent(#x, ˇ)	ˇ
 ring(x)	accent(#x, ˚)	˚
 acute(x)	accent(#x, ´)	´
 grave(x)	accent(#x, `)	`
+thin()	space(3)	-
+med()	space(4)	-
+thick()	space(5)	-
+quad()	space(18)	-
+wide()	space(36)	-
+display(x)	mstyle(#x, display)	-
+inline(x)	mstyle(#x, text)	-
+script(x)	mstyle(#x, script)	-
+sscript(x)	mstyle(#x, sscript)	-
+limits(x)	mlimits(#x, limits)	-
+scripts(x)	mlimits(#x, scripts)	-
+bb(x)	variant(#x, bb)	-
+cal(x)	variant(#x, cal)	-
+frak(x)	variant(#x, frak)	-
+bold(x)	variant(#x, bold)	-
+italic(x)	variant(#x, italic)	-
+sans(x)	variant(#x, sans)	-
+mono(x)	variant(#x, mono)	-

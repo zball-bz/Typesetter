@@ -1,0 +1,2 @@
+error math-parse @[138,141) '<<' has no negation
+info math-implicit-name @[150,155) 'Equiv' is no known name: set upright as an operator name (declare it with $.math.op, or quote it)

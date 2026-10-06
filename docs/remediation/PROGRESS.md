@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-24
+- 下一步：P3-25
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -90,7 +90,7 @@
 | P3-21 | ResourceHost、定位器、引用清单、静态导出 | done | grep:plan P3-21 | 2026-10-06 | 0（录制器经 ResourceHost 复现全部 .ops，含 cite/*）；e2e 新增宿主 provider 模块用例 | runtime/src/shared/resources/：ResourceHost（provider 注册表，文档 provider 只限 resources.def docProviders 的 codeTokens/boxInfo，行带 store:false；provider 抛错只令本类行失败）、ResourceJob（拉取循环的 answer、执行期 load、清单）、ResourceLocator（按来源的 base、请求方类别 exec/image/input、url_policy.def 的用途，Node 文件限于根目录且读时按真实路径复查）、LruCache（条目、字节、TTL、失败 TTL 为 policy 四行）；内建 provider：canvas 宽度与纵向度量、代码 token、图片尺寸（嗅探→解码→主线程能力）。`$.load`/`ctx.load`（{as: text|json|bytes}）与 #bibliography 走同一 job.load。createEngine({providers:[{kind,module}]}) 由 worker 导入并注册；renderTsm({providers}|{host})。产品 references、docinfo 与 tsr2_product；renderTsm 返回 {html, css, diagnostics, ok, manifest, settings, docinfo}。export-static：docinfo 的 lang 与标题、按清单复制文档目录内的资源（真实路径复查）、按 shell.mjs 的模块图复制水合资源（tools/lib/module-graph.mjs）；tools/check-export.mjs 入 G6。文档：host-protocol-design §4b、pages-design §3、ctor-design、security-review 补遗、tsm-changes |
 | P3-22 | 代码高亮清单与引擎侧 overlay | done | grep:plan P3-22 | 2026-10-06 | 0 变化；+3 用例（code/overlay-json、code/overlay-unknown-diag、code/features-by-lang，仅新增）；native json-hl/tsm-hl 字节不变（stable_sort 无并列换序） | engine/schema/languages.json 为唯一清单（类别→编辑器类型、捕获别名、语言与别名、TextMate 作用域、语法源与查询、native、overlay、profile）；tools/gen-languages.mjs 生成 languages.gen.mjs（worker/编辑器/stdlib）、editors/vscode-tsm/src/hl.gen.js、engine/src/code/languages.gen.h、engine/native_grammars.gen.cmake（CMake 据此编译语法并嵌入查询）；gen-grammars 的 TextMate 围栏与 overlay 注入、codehl-assets 的语法表均读清单；生成器拒绝类别≠TOKEN_TAGS、主题缺类、native 语法用 #match?。hl-core.mjs（tagOf、resolveCaptures：稳定排序）供 worker 与编辑器共用；native 孪生 stable_sort 并求值 #eq?/#not-eq?/#any-of?/#not-any-of?。引擎侧 overlay（code/overlay.{h,cc}）：codeblock.overlays 属性（键 107，since 14，域 names），围栏参数、规则或 profile 默认规则（cpp-literate）开启；Resolve 时找区间、按字节置空格后请求、Emit 与语义页把区间合并为 label 词元；需求键 (语言, 正文, overlay)。去掉 worker 中只对 cpp 全局生效的正则；pbr2tsm 输出 cpp-literate。资源宿主一个种类可有多个 provider（match(row)），宿主可在运行时增加语言。code.fontFeaturesByLang 作用于内建语言的所有围栏标签。文档：code-design §8、host-protocol §4a/§4b、tsm-changes |
 | P3-23 | PresentationMap（元素行的 html 段） | done | grep:plan P3-23 | 2026-10-06 | 185 个 golden 变化（脚本 check323.py 核对：89 个 html/paged 只多 data-role，其一 semantics/lists 另因收集器成组；64 个 semantic、2 个 css、13 个 tree、12 个 blocktree 为下列有意修复）；+3 用例（figure/caption-paras、semantics/presentation、style/weight-size） | 中性移植：elements.json 新增 html 段（种类、生成角色、类的展示行，like 继承；吸收 P3-01 的 roles 映射与类的 html: figure），语义页按行取元素，字节不变后再做有意修复。有意修复：图注按 caption 部件写一个 figcaption（多段各为 p，块不再落入 figcaption，不再按首段猜测）；定义术语 dl/dt/dd（term 投影，模板给描述包一层 term-def 角色）；收集器输出外包一层以收集器名为角色的组（toc/lof/lot/index→nav，glossary/notes/bibliography→section，带 DPUB-ARIA 角色）；代码边注在语义页行内投影（行尾、按声明的标记、data-syn 使复制只取代码）；data-role：语义页与排版页 .tsr-para/.tsr-band 上的组角色（D-R02）；typeset.frame 声明的类得到 .tsr-frame[data-role] 框（D-Y11，内建无）；白名单：块/行内元素、slot 元素、ARIA 角色、projection，非法行拒绝注册表；kHtmlAttrs 增加 role。样式分歧：排版页写出 700 以外的 font-weight，语义页写出 sizeMul（em）与 sizePx×sizeMul；规则样式表按展示行取种类元素，角色选择器→[data-role]（仅限页面上带钩子的组），类选择器→.tsr-c-*。通道：semantics.html 宿主设置、$.element(name, {html})。文档：document-model §9.2、semantics-design、security-review 补遗、tsm-changes |
-| P3-24 | SymbolInfo 身份与数据驱动的数学族 | todo | | | | |
+| P3-24 | SymbolInfo 身份与数据驱动的数学族 | done | grep:plan P3-24 | 2026-10-06 | 2 个 mathir dump 多出 info math-implicit-name（math/decl 的 defeq 先于声明、region/hott-row 的 Id），其余 golden 不变（已验证）；+2 用例（math/symbols、math/negation-diag）；e2e 声明这两个用例的 info 诊断 | 谓词只读 SymbolInfo：直接输入的字符按其默认行成为 Op/Open/Close 记号（∑ 带 limits、≤ 结束大算子体、⟨⟩ 成组伸缩），具名定界符（langle、lceil…）同样开/闭组；! 规则：紧贴的符号取 UCD 否定或行内覆盖（| → ∤、‖ → ∦），无否定的关系为错误叶，其余为阶乘；删除 28 个 !x 行、_|_ 行与 !word/_|_ 词法分支，生成器拒绝字母与运算符字符混合的键，运算符字符集 kOpChars 生成；只剥圆括号（D-M01）；组内唯一的 | 或 ‖ 成为中间符（Rel，随组伸缩）；新原语 space/mstyle/mlimits/variant/class 与行 thin med thick quad wide、display inline script sscript、limits scripts、bb cal frak bold italic sans mono（字母表由 UCD 名称生成，含 letterlike 空位），无参数行裸用即常量；隐式名字报 info math-implicit-name（D-M04）；tex 列生成转换器映射（kTexNames/TEX_MATH），unitMathDict 把每个键与每个 TeX 目标解析回其符号（词法门禁）；tex2tsm 改用生成映射、字母表行、class(op, "X") 与空白行，并列出无符号的宏；pbr2tsm 加载时核对 MathSpeak 映射，粗体/手写/哥特字母用字母表。语料：review-corpus 340 篇 0 个新错误、typst 语料 199 篇通过。文档：design-decisions、math-design §13、tsm-changes |
 | P3-25 | 运算符原子与单一 mlist→item 转换 | todo | | | | |
 | P3-26 | 数学采用通用协议；公式编号由布局测量 | todo | | | | |
 | P3-27 | 语义页数学盒与无障碍 | todo | | | | |
@@ -167,6 +167,7 @@
 | P3-21 后 | 3.50 | 10.40 | 27.10 | 1.8 / 3.2 / 0.8 / 10.1 / 3.3 | 66.7 / 102.3 / 147.6 | 1.70 / 22.60 / 55.80 | 均在 P3 门限内（拉取循环的各类行经 provider 注册表分派） |
 | P3-22 后 | 3.50 | 11.00 | 26.80 | 1.8 / 3.4 / 0.8 / 9.9 / 3.3 | 68.7 / 99.3 / 145.1 | 1.70 / 22.30 / 54.70 | 均在 P3 门限内 |
 | P3-23 后 | 3.40 | 10.90 | 26.70 | 1.8 / 3.0 / 0.8 / 9.9 / 3.2 | 69.6 / 99.1 / 147.4 | 1.70 / 23.10 / 55.60 | 均在 P3 门限内 |
+| P3-24 后 | 3.60 | 10.80 | 27.20 | 1.7 / 3.2 / 0.8 / 10.2 / 3.2 | 70.1 / 105.1 / 149.2 | 1.70 / 22.20 / 57.90 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -376,6 +377,11 @@
 | P3-23 | data-role 只写在顶层块（.tsr-para/.tsr-band）与语义页的组元素上，未写到行；行内角色（caption、fn-marker 等段落与样式节点）不带 data-role，规则样式表对这些角色仍不输出 CSS | 顶层组（图、注释、目录、定理）是主题需要的钩子；段落级角色已由默认规则在两页同样生效 | 无 |
 | P3-23 | 收集器输出外包一层组（角色为收集器名）：带静态 head 的收集器（semantics/lists 的 theorems）其 head 与列表成为同一顶层块，pid 编号随之变化（排版位置不变） | nav/section 必须包住收集器的全部输出；为 head 另开块会把 nav 拆开 | 无 |
 | P3-23 | parity 单元测试不再比较语义页：文档声明的 #!sketch 区域没有 caption 部件（内建 figure 构造器才有），旧语义页靠"首段即图注"的猜测才与内建一致 | 去掉猜测正是本步修复 | 无 |
+| P3-24 | 带点的 codex 内建名（arrow.r、subset.eq）未加：内建名仍是 symbols.tsv 的扁平名字 | 计划注明带点名字机制已在 P2-15 完成（文档声明的带点名字可用）；为内建补 codex 名属词汇扩充，不在本步发现之内 | 无 |
+| P3-24 | 隐式名字仍按 Op 类（运算符名间距，Typst 规则），只加 info 诊断；单记号操作数规则（x^ab、a/bc）保留并写入语言差异 | 发现 implicit-names-op-class 的问题在于静默：诊断让转换器错误可见；class(…) 可改类 | 无 |
+| P3-24 | 组内"唯一"的 | 或 ‖ 才成为中间符（两条及以上保持 Ord），设计写作围栏配对 | 规则确定、不需要猜测配对；与设计预估一致：集合与条件概率的竖线获得 Rel 间距，范数不变 | 无 |
+| P3-24 | 空白行 space 的盒按 Ord 参与相邻间距（TeX 的 \quad 是 glue，不是原子） | 与相邻原子的间距只在 Bin 降级等边缘情形不同；够用 | 无 |
+| P3-24 | ⊥ 的默认行改为 perp（Rel，与原 _|_ 行同类），bot 为其别名（Ord） | 保持直接输入 ⊥ 的现有间距 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

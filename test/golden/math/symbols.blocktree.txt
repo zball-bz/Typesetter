@@ -1,0 +1,24 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,141)
+    paragraph para unit=0 @[0,141)
+top pid=1 leaves=1
+  stack root gap=1/1 @[143,176)
+    replaced math math unit=0 ragged @[143,176)
+top pid=2 leaves=1
+  stack root gap=1/1 @[178,305)
+    paragraph para unit=0 @[178,305)
+top pid=3 leaves=1
+  stack root gap=1/1 @[307,411)
+    paragraph para unit=0 @[307,411)
+top pid=4 leaves=1
+  stack root gap=1/1 @[413,466)
+    paragraph para unit=0 @[413,466)
+top pid=5 leaves=1
+  stack root gap=1/1 @[468,675)
+    paragraph para unit=0 @[468,675)
+top pid=6 leaves=1
+  stack root gap=1/1 @[677,810)
+    paragraph para unit=0 @[677,810)
+top pid=7 leaves=1
+  stack root gap=1/1 @[812,840)
+    replaced math math unit=0 ragged @[812,840)

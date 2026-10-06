@@ -1,0 +1,3 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="163">A relation without a negation is an error where it stands, and an unknown word says it is set as an operator name (plan P3-24, D-M04): <code class="tsr-mathsrc">$a !&lt;&lt; b$</code> and <code class="tsr-mathsrc">$Equiv(A, B)$</code>.</p>
+</div>

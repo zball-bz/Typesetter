@@ -10,6 +10,7 @@
 //
 // pbr-book.org content is CC BY-NC-ND 4.0: adapted output is for LOCAL,
 // PRIVATE use only and must not be shared/committed (see .gitignore).
+import { MATH_SYMBOLS } from '../../runtime/src/shared/math-vocab.gen.mjs';
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, statSync } from 'node:fs';
 import { join, basename } from 'node:path';
 
@@ -54,11 +55,20 @@ const WORD_MAP = {
   'one-sixth': '1/6', 'one-eighth': '1/8', 'one-sixteenth': '1/16',
   'three-halves': '3/2', 'tilde': '~',
   'ring': 'ring', 'overTilde': 'tilde',
-  'and': 'and', 'if': 'if', 'then': 'then', 'otherwise': 'otherwise',
-  'for': 'for', 'where': 'where', 'with': 'with', 'while': 'while',
-  'forever': 'forever', 'return': 'return', 'loop': 'loop',
+  // (plan P3-24) prose words of pseudo-code: upright, spaced as operator
+  // names, and named so (the engine reports an undeclared word)
+  ...Object.fromEntries(['and', 'if', 'then', 'otherwise', 'for', 'where', 'with', 'while', 'forever', 'return', 'loop']
+    .map((w) => [w, `class(op, "${w}")`])),
   'Blank': '', 'Enlarged': '', 'Determinant': '', 'sup': 'sup',
 };
+// (plan P3-24) the map names only what the engine has: a symbol of its
+// vocabulary (engine/data/math/symbols.tsv), a row, a character, a number
+{
+  const ROWS = new Set(['floor', 'ring', 'tilde', 'sqrt']);
+  for (const [k, v] of Object.entries(WORD_MAP))
+    if (/^[A-Za-z]+$/.test(v) && !(v in MATH_SYMBOLS) && !ROWS.has(v))
+      throw new Error(`pbr2tsm: MathSpeak ${k} maps to ${v}, which the engine does not know`);
+}
 const unknownTokens = new Map();  // token → count (for --mathdebug + report)
 
 function mathspeakToTsm(title) {
@@ -325,8 +335,9 @@ function mathspeakToTsm(title) {
         return scripts(/^[A-Za-z]$/.test(l) ? `"${l}"` : l, stops);
       }
       case 'bold': case 'italic': case 'script': case 'fraktur': {
-        // no bold/cal/frak math alphabets yet (documented gap) — plain letter
-        return atom(stops);
+        // (plan P3-24) the math alphabets
+        const row = { bold: 'bold', italic: 'italic', script: 'cal', fraktur: 'frak' }[t];
+        return `${row}(${atom(stops)})`;
       }
       case 'arc': {
         const f = atom(stops);

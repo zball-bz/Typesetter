@@ -1,0 +1,15 @@
+Typed symbols are their names (plan P3-24): $∑_(i=1)^n a_i ≤ b$ sums like $sum_(i=1)^n a_i <= b$, and the sum ends at the typed relation.
+
+$ ∑_(i=1)^n a_i ≤ ∫_0^1 f $
+
+Negation is one rule: $a != b$, $x !in A$, $!exists y$, $p !| q$, $u !|| v$, $a !<= b$; a factorial stays one: $n! = n (n-1)!$.
+
+Alphabets: $bb(R)$, $NN$, $bb(1)$, $cal(A)$, $frak(g)$, $bold(v)$, $sans(x)$, $mono(x)$ and $italic(h)$.
+
+Only parentheses shed: $x^(a b)$, $x^{a b}$, $x^[a]$.
+
+Delimiters stretch whatever their spelling: $⟨x/y, z⟩$, $langle x/y rangle$, $lfloor x/2 rfloor$; a bar alone in a group is its middle, ${x | x > 0}$ and $P(A | B)$, while $|x| + ||v||$ stay as they are.
+
+Spaces and styles: $a thin b med c thick d quad e wide f$, $display(sum_i x_i)$ inline, $limits(lim)_(x -> 0)$ and $class(rel, A) B$.
+
+$ scripts(sum)_(i=1)^n x_i $

@@ -4,6 +4,7 @@ inline pid=0 "Id_(A)"
       base: text "Id" op textfont [0,2)
       sub: run [4,5)
         sym U+0041 ord [4,5)
+  diag info math-implicit-name [0,2) 'Id' is no known name: set upright as an operator name (declare it with $.math.op, or quote it)
 inline pid=0 "="
   run [0,1)
     sym U+003D rel [0,1)

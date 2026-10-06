@@ -369,10 +369,12 @@ struct Layouter {
   // Typst's joint collision resolution (scripts.rs::compute_script_shifts)
   MathBox* layoutScript(MNode* n, u8 st) {
     // lim_(n->oo) in display style: text operators with the limits flag
-    // take their scripts above/below (TeXbook \\op limits convention)
-    if (n->a->k == MNode::Text && (n->a->flags & kFlagLimits) &&
-        (n->a->flags & kFlagTextOp) && isDisplay(st)) {
-      MathBox* base = textBox(n->a->txt, kOp, st, n->a->textFont);
+    // take their scripts above/below (TeXbook \\op limits convention); a
+    // base limits() marked takes them so in every style (plan P3-24)
+    const u8 fl = n->a->flags;
+    if ((fl & kFlagLimitsAlways) ||
+        (n->a->k == MNode::Text && (fl & kFlagLimits) && (fl & kFlagTextOp) && isDisplay(st))) {
+      MathBox* base = n->a->k == MNode::Text ? textBox(n->a->txt, kOp, st, n->a->textFont) : layout(n->a, st);
       return attachLimits(base, n->sub, n->sup, st);
     }
     MathBox* base = layout(n->a, st);
@@ -490,6 +492,10 @@ struct Layouter {
     inner.reserve(kidsN.size());
     Su iAsc = 0, iDesc = 0;
     for (MNode* k : kidsN) {
+      if (k->k == MNode::Sym && k->mid) {  // (plan P3-24) its middle: stretched below, with the delimiters
+        inner.push_back(nullptr);
+        continue;
+      }
       MathBox* b = layout(k, st);
       if (b->asc > iAsc) iAsc = b->asc;
       if (b->desc > iDesc) iDesc = b->desc;
@@ -505,6 +511,8 @@ struct Layouter {
       MathBox* sg = stretchVert(cp, cls, st, target);
       return centerOnAxis(sg, cls, st);
     };
+    for (size_t i = 0; i < inner.size(); i++)
+      if (!inner[i]) inner[i] = delim(kidsN[i]->cp, kRel);
     std::vector<MathBox*> boxes;
     boxes.reserve(inner.size() + 2);
     boxes.push_back(delim(openCp, kOpen));
@@ -563,7 +571,7 @@ struct Layouter {
       if (op->asc + op->desc < minH)
         op = centerOnAxis(stretchVert(n->cp, kOp, st, minH), kOp, st);
     }
-    bool limits = (n->flags & kFlagLimits) && isDisplay(st);
+    bool limits = (n->flags & kFlagLimitsAlways) || ((n->flags & kFlagLimits) && isDisplay(st));
     MathBox* scripted = limits ? attachLimits(op, n->sub, n->sup, st)
                                : attachScripts(op, n->sub, n->sup, st,
                                                /*isChar=*/false);
@@ -724,6 +732,11 @@ struct Layouter {
 
   // a primitive call (plan P1-24): the closed set; template rows were
   // expanded at bind, so nothing here knows a family name
+  static std::string_view identText(const MNode* n) {
+    if (n->k == MNode::Text) return n->txt;
+    if (n->k == MNode::Run && n->kids.size() == 1 && n->kids[0]->k == MNode::Text) return n->kids[0]->txt;
+    return {};
+  }
   MathBox* layoutCall(MNode* n, u8 st) {
     auto arg = [&](size_t i) -> MNode* { return i < n->kids.size() ? n->kids[i] : nullptr; };
     auto run = [&](MNode* a) -> std::vector<MNode*> {
@@ -756,6 +769,30 @@ struct Layouter {
         return layoutAccent(arg(1) && arg(1)->k == MNode::Sym ? arg(1)->cp : 0, content(0), st);
       case Prim::Rule:
         return layoutHRule(content(0), st, /*over=*/!(arg(1) && arg(1)->txt == "under"));
+      // (plan P3-24) a fixed space of mu/18 em; a style for its body; a class
+      // for its box (the rewrites were bound at parse: what reaches here is
+      // their content)
+      case Prim::Space: {
+        const MNode* m = arg(0);
+        if (m && m->k == MNode::Run && m->kids.size() == 1) m = m->kids[0];
+        const double mu = m && m->k == MNode::Num ? std::strtod(m->txt.c_str(), nullptr) : 0;
+        MathBox* b = spacer(toSu(mu * F.upem / 18.0, st));
+        b->cls = b->firstCls = b->lastCls = kOrd;
+        return b;
+      }
+      case Prim::Style: {
+        const std::string_view s = arg(1) ? identText(arg(1)) : std::string_view{};
+        const u8 base = s == "display" ? D : s == "script" ? S : s == "sscript" ? SS : s == "text" ? T : (u8)(st & ~1);
+        return layout(content(0), (u8)(base | (st & 1)));
+      }
+      case Prim::Class: {
+        MathBox* b = layout(content(1), st);
+        b->cls = b->firstCls = b->lastCls = n->cls;
+        return b;
+      }
+      case Prim::Limits:
+      case Prim::Variant:
+        return layout(content(0), st);
       case Prim::None: break;
     }
     std::vector<MathBox*> none;
@@ -781,6 +818,9 @@ static void effClsOf(const MNode* n, u8& f, u8& l) {
     case MNode::Group:
       f = kOpen;
       l = kClose;
+      return;
+    case MNode::Call:  // (plan P3-24) class(…) is its class; other calls are Ord
+      f = l = n->prim == Prim::Class ? n->cls : (u8)kOrd;
       return;
     case MNode::BigOp: {
       f = kOp;

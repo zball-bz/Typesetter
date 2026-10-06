@@ -9,8 +9,10 @@ namespace tsr {
 enum AtomClass : uint8_t { kOrd, kOp, kBin, kRel, kOpen, kClose, kPunct, kInner };
 enum SymFlag : uint8_t {
   kFlagLarge = 1,    // a large operator (display size)
+  kFlagLimitsAlways = 2,  // limits above/below in every style (limits(), plan P3-24)
   kFlagLimits = 4,   // limits above/below in display style
   kFlagTextOp = 8,   // a multi-letter operator set upright in text
+  kFlagFence = 16,   // a symmetric delimiter: alone in a group, its middle (plan P3-24)
 };
 
 }  // namespace tsr

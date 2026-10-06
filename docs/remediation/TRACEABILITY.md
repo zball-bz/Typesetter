@@ -1230,11 +1230,11 @@ Theme steps: — · findings: 1
 | `render-runtime/missed:4` | missed | low | P3-05 | grep:plan P3-05 |
 | `render-runtime/missed:5` | missed | low | P3-07 || grep:plan P3-07 |
 | `math/call-construct-string-dispatch` | adhoc | high | P1-24 | grep:plan P1-24 |
-| `math/vocabulary-in-font-artifact` | adhoc | high | P1-22, P3-24 | |
-| `math/lexer-hardcoded-alphabet` | adhoc | medium | P3-24 | |
-| `math/negation-enumerated` | adhoc | medium | P3-24 | |
-| `math/alphabet-variants` | adhoc | medium | P3-24 | |
-| `math/implicit-names-op-class` | adhoc | medium | P3-24 | |
+| `math/vocabulary-in-font-artifact` | adhoc | high | P1-22, P3-24 | grep:plan P3-24 |
+| `math/lexer-hardcoded-alphabet` | adhoc | medium | P3-24 | grep:plan P3-24 |
+| `math/negation-enumerated` | adhoc | medium | P3-24 | grep:plan P3-24 |
+| `math/alphabet-variants` | adhoc | medium | P3-24 | grep:plan P3-24 |
+| `math/implicit-names-op-class` | adhoc | medium | P3-24 | grep:plan P3-24 |
 | `math/bigop-greedy-body` | adhoc | medium | P3-25 | |
 | `math/segmentation-class-preview` | adhoc | medium | P3-25 | |
 | `math/inline-math-special-block` | adhoc | medium | P1-13, P3-26 | |
@@ -1244,14 +1244,14 @@ Theme steps: — · findings: 1
 | `math/math-opaque-string` | adhoc | high | P2-15 | grep:plan P2-15 |
 | `math/closed-vocabulary` | adhoc | high | P2-15 | grep:plan P2-15 |
 | `math/compiled-in-font` | adhoc | high | P1-23, P5-01 | |
-| `math/fence-pairs-ascii-only` | adhoc | medium | P3-24 | |
+| `math/fence-pairs-ascii-only` | adhoc | medium | P3-24 | grep:plan P3-24 |
 | `math/math-leaves-bypass-style` | adhoc | medium | P1-25 | grep:plan P1-25 |
 | `math/math-text-pull-channel` | adhoc | medium | P1-25 | grep:plan P1-25 |
 | `math/math-span-lexer-triplication` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `math/missing-glyph-fallback` | adhoc | low | P1-25, P5-01 | |
 | `math/island-scan-escapes-block` | issue | high | P0-04 | grep:plan P0-04 |
 | `math/prime-then-script-degrades` | issue | medium | P1-24 | grep:plan P1-24 |
-| `math/bracket-shedding-any-group` | issue | medium | P3-24 | |
+| `math/bracket-shedding-any-group` | issue | medium | P3-24 | grep:plan P3-24 |
 | `math/call-arity-silent` | issue | medium | P1-24 | grep:plan P1-24 |
 | `math/exactness-gaps-paint` | issue | medium | P1-23 | grep:plan P1-23 |
 | `math/spacing-edge-classes` | issue | low | P3-25 | |
@@ -1262,9 +1262,9 @@ Theme steps: — · findings: 1
 | `math/toc-excerpt-drops-math` | issue | low | P2-15 | grep:plan P2-15 |
 | `math/missed:0` | missed | high | P0-04, P2-11 | grep:plan P2-11 |
 | `math/missed:1` | missed | high | P1-24 | grep:plan P1-24 |
-| `math/missed:2` | missed | medium | P3-24 | |
-| `math/missed:3` | missed | medium | P3-24 | |
-| `math/missed:4` | missed | medium | P3-24 | |
+| `math/missed:2` | missed | medium | P3-24 | grep:plan P3-24 |
+| `math/missed:3` | missed | medium | P3-24 | grep:plan P3-24 |
+| `math/missed:4` | missed | medium | P3-24 | grep:plan P3-24 |
 | `math/missed:5` | missed | medium | P1-24 | grep:plan P1-24 |
 | `api-measure-code/per-resource-pull-plumbing` | adhoc | high | P1-19 | grep:plan P1-19 |
 | `api-measure-code/image-dims-in-author-args` | adhoc | high | P1-19 | grep:plan P1-19 |
@@ -1333,7 +1333,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/grouped-cite-all-or-nothing` | issue | low | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/spec-drift` | issue | medium | P3-37, P5-02 | |
 | `real-world-evidence/converter-fidelity-unchecked` | issue | medium | P3-35 | |
-| `real-world-evidence/math-leniency-silent` | issue | low | P3-24 | |
+| `real-world-evidence/math-leniency-silent` | issue | low | P3-24 | grep:plan P3-24 |
 | `real-world-evidence/converter-code-duplication` | issue | low | P3-35 | |
 | `real-world-evidence/missed:0` | missed | high | P0-05, P2-02 | grep:plan P2-02 |
 | `real-world-evidence/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
