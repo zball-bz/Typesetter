@@ -450,7 +450,7 @@ export function createStd(host) {
   // with the info arguments as the block's options. offset: the body's source
   // offset; lines: each body line's offset when the fence sits in a quote
   // or list item (its lines are not contiguous)
-  const fence = async (tag, args = {}, body = '', offset = 0, lines = null, end = offset) => {
+  const fence = async (tag, args = {}, body = '', offset = 0, lines = null, end = offset, info = '') => {
     const entry = registry.get('fence', tag);
     if (!entry) {
       // the default: a code block whose text carries the body's span
@@ -470,6 +470,8 @@ export function createStd(host) {
     };
     const ctx = {
       args,
+      label: args.label,
+      info,  // the opener's free words after the tag (plan P2-06)
       offset,
       lineOffsets: lines,
       m: (...a) => std.m(...a),  // m.parse (WASM re-entry) is P2-13

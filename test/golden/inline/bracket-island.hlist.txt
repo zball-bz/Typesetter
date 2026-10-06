@@ -248,31 +248,31 @@ top pid=7 units=1
   run r0 plain BOLD x1.60
 top pid=8 units=1
  unit text indent=0su anchor="a]b"
-  box Other "An" w=1384su r0 @[517,529)
-  glue word w=347su x=1 cap=347su kern="n o" src r0 @[517,529)
-  box Other "odd" w=2075su r0 @[517,529)
-  glue word w=347su x=1 cap=347su kern="d l" src r0 @[517,529)
-  box Other "label" w=3458su r0 @[517,529)
+  box Other "An" w=1384su r0 @[533,545)
+  glue word w=347su x=1 cap=347su kern="n o" src r0 @[533,545)
+  box Other "odd" w=2075su r0 @[533,545)
+  glue word w=347su x=1 cap=347su kern="d l" src r0 @[533,545)
+  box Other "label" w=3458su r0 @[533,545)
   run r0 plain BOLD x1.35
 top pid=9 units=1
  unit text indent=0su
-  box Other "Ref" w=1537su r0 @[537,548)
-  disc pen=0.7 w=0su pre="-" 513su kern="fe" r0 @[537,548)
-  box Other "er" w=1025su r0 @[537,548)
-  disc pen=0.7 w=0su pre="-" 513su kern="re" r0 @[537,548)
-  box Other "ences:" w=3073su r0 @[537,548)
-  glue word w=257su x=1 cap=257su src r0 @[537,548)
-  box Other "§1" w=1128su r1 @[549,557)
-  glue word w=257su x=1 cap=257su src r2 @[558,561)
-  box Other "and" w=1537su r2 @[558,561)
-  glue word w=257su x=1 cap=257su src r2 @[558,561)
-  box Other "§1.1" w=2152su r3 @[562,569)
-  glue word w=257su x=1 cap=257su src r4 @[570,582)
-  box Other "in" w=1025su r4 @[570,582)
-  glue word w=257su x=1 cap=257su kern="n b" src r4 @[570,582)
-  box Other "brack" w=2561su r4 @[570,582)
-  disc pen=0.7 w=0su pre="-" 513su kern="ke" r4 @[570,582)
-  box Other "ets." w=2049su r4 @[570,582)
+  box Other "Ref" w=1537su r0 @[548,559)
+  disc pen=0.7 w=0su pre="-" 513su kern="fe" r0 @[548,559)
+  box Other "er" w=1025su r0 @[548,559)
+  disc pen=0.7 w=0su pre="-" 513su kern="re" r0 @[548,559)
+  box Other "ences:" w=3073su r0 @[548,559)
+  glue word w=257su x=1 cap=257su src r0 @[548,559)
+  box Other "§1" w=1128su r1 @[560,568)
+  glue word w=257su x=1 cap=257su src r2 @[569,572)
+  box Other "and" w=1537su r2 @[569,572)
+  glue word w=257su x=1 cap=257su src r2 @[569,572)
+  box Other "§1.1" w=2152su r3 @[573,580)
+  glue word w=257su x=1 cap=257su src r4 @[581,593)
+  box Other "in" w=1025su r4 @[581,593)
+  glue word w=257su x=1 cap=257su kern="n b" src r4 @[581,593)
+  box Other "brack" w=2561su r4 @[581,593)
+  disc pen=0.7 w=0su pre="-" 513su kern="ke" r4 @[581,593)
+  box Other "ets." w=2049su r4 @[581,593)
   run r0 plain
   run r1 plain ref LINK link="#tsr-tgt"
   run r2 plain

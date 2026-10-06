@@ -14,6 +14,7 @@ inline bool isSpliceCont(char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' &&
 inline bool isIdStart(char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_'; }
 inline bool isIdCont(char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_'; }
 inline bool isIdJoin(char c) { return c == '-' || c == '.' || c == ':'; }
+inline bool isLabelChar(char c) { return !((unsigned char)c < 0x20 || c == 0x7f || c == ' ' || c == '<' || c == '>' || c == '[' || c == ']' || c == '@' || c == ',' || c == ';' || c == '\\'); }
 inline bool isEscapable(char c) { return (c >= '!' && c <= '/') || (c >= ':' && c <= '@') || (c >= '[' && c <= '`') || (c >= '{' && c <= '~'); }
 
 // sugar: a built-in Call's slot (its meaning); the payload struct follows
@@ -36,9 +37,12 @@ struct FenceP {
   u32 bodyOffset = 0;
   u32 bodyEnd = 0;
   StrRef lines = 0;
+  StrRef info = 0;
+  StrRef label = 0;
 };
 struct RegionP {
   Span args{};
+  StrRef label = 0;
 };
 struct LinkP {
   StrRef url = 0;
@@ -50,6 +54,7 @@ struct MathP {
 struct SpliceP {
   StrRef expr = 0;
   u32 lastCall = 0;
+  bool named = 0;
 };
 struct StmtP {
   bool let = 0;

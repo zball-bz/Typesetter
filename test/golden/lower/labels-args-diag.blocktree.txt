@@ -1,0 +1,36 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[181,244)
+    stack group anchor="b1" @[181,244)
+      paragraph para unit=0 carry="b1" @[181,244)
+top pid=1 leaves=1
+  stack root gap=1/1 @[246,330)
+    stack group anchor="a1" @[246,330)
+      paragraph para unit=0 carry="a1" @[246,330)
+top pid=2 leaves=1
+  stack root gap=1/1 @[332,382)
+    grid code unit=0 ragged nohyphen anchor="code1" @[332,382)
+top pid=3 leaves=1
+  stack root gap=1/1 @[384,456)
+    paragraph para unit=0 @[384,456)
+top pid=4 leaves=1
+  stack root gap=1/1 @[458,477)
+    replaced math math unit=0 ragged anchor="emc" @[458,477)
+top pid=5 leaves=1
+  stack root gap=1/1 @[479,557)
+    stack group anchor="c1" @[479,557)
+      paragraph para unit=0 carry="c1" @[479,557)
+top pid=6 leaves=1
+  stack root gap=1/1 @[559,645)
+    paragraph para unit=0 @[559,645)
+top pid=7 leaves=1
+  stack root gap=1/1 @[647,661)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="sec:intro" @[647,661)
+top pid=8 leaves=1
+  stack root gap=1/1 @[675,738)
+    paragraph para unit=0 @[675,738)
+top pid=9 leaves=1
+  stack root gap=1/1 @[740,784)
+    paragraph para unit=0 @[740,784)
+top pid=10 leaves=1
+  stack root gap=1/1 @[786,832)
+    paragraph error unit=0 ragged @[786,832)

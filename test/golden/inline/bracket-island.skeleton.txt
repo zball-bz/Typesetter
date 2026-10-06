@@ -1,4 +1,4 @@
-doc @[0,583)
+doc @[0,594)
   para @[0,66) lines=1
   para @[68,119) lines=1
   para @[121,184) lines=1
@@ -7,5 +7,5 @@ doc @[0,583)
   para @[347,406) lines=1
   para @[408,495) lines=1
   heading1 @[497,506) label="tgt"
-  heading2 @[514,529) label="a]b"
-  para @[537,582) lines=1
+  para @[514,546) lines=1
+  para @[548,593) lines=1

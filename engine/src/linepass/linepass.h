@@ -21,7 +21,7 @@ struct SkelNode {
   std::vector<Span> lineSpans;  // Para/Heading/Fence/Comment: per-line content
                                 // spans (container prefixes stripped)
   Span langSpan;                // Fence: info string; Region: name
-  Span labelSpan;               // Heading: trailing <id> label (empty = none)
+  Span labelSpan;               // Heading / Region: trailing <id> label (empty = none)
   u8 level = 0;                 // Heading
   bool ordered = false;         // List: marker != '-'
   char marker = 0;              // List: marker class '-', '+' or '.' (N.)

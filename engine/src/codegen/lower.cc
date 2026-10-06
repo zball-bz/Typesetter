@@ -202,6 +202,12 @@ struct Walker {
     if (out) appendf(*out, " [%u,%u)", s, e);
     return true;
   }
+  // an optional string: 0 = none, else its ref + 1
+  bool optStr(u32& r) {
+    if (!c.u(r)) return fail("truncated string ref");
+    if (r > P.strs.size()) return fail("string ref out of range");
+    return true;
+  }
   bool strRef(u32& r) {
     if (!c.u(r)) return fail("truncated string ref");
     if (r >= P.strs.size()) return fail("string ref out of range");
@@ -370,15 +376,24 @@ struct Walker {
         break;
       }
       case Lop::FENCE: {
-        u32 lang, args, body, off, bend;
+        u32 lang, args, label, info, body, off, bend;
         bool argsAwait;
-        if (!strRef(lang) || !argsRef(args, argsAwait) || !strRef(body) || !c.u(off) || !c.u(bend))
+        if (!strRef(lang) || !argsRef(args, argsAwait) || !optStr(label) || !optStr(info) || !strRef(body) ||
+            !c.u(off) || !c.u(bend))
           return fail("truncated FENCE");
         if (off > bend || bend > P.docEnd) return fail("FENCE body range out of range");
         if (out) {
           *out += " ";
           quoted(lang);
           if (args) appendf(*out, " args=hole %u%s", (args >> 1) - 1, argsAwait ? " async" : "");
+          if (label) {
+            *out += " label=";
+            quoted(label - 1);
+          }
+          if (info) {
+            *out += " info=";
+            quoted(info - 1);
+          }
           *out += " body=";
           quoted(body);
           appendf(*out, " at=[%u,%u) lines=", off, bend);
@@ -389,13 +404,17 @@ struct Walker {
         return true;
       }
       case Lop::REGION: {
-        u32 name, args, n;
+        u32 name, args, label, n;
         bool argsAwait;
-        if (!strRef(name) || !argsRef(args, argsAwait)) return fail("truncated REGION");
+        if (!strRef(name) || !argsRef(args, argsAwait) || !optStr(label)) return fail("truncated REGION");
         if (out) {
           *out += " ";
           quoted(name);
           if (args) appendf(*out, " args=hole %u%s", (args >> 1) - 1, argsAwait ? " async" : "");
+          if (label) {
+            *out += " label=";
+            quoted(label - 1);
+          }
         }
         if (!span(s, e) || !count(n)) return false;
         if (out) *out += "\n";

@@ -1,0 +1,68 @@
+lower v1 abi 9bdc5985 docEnd 833 holes 6 module a302d9bce1180b23
+piece 0 hole 0 js [150,265)
+piece 1 hole 1 js [267,352)
+piece 2 hole 2 js [354,376)
+piece 3 hole 3 js [378,399)
+piece 4 hole 4 js [401,423)
+piece 5 hole 5 js [425,481)
+block 0 stmt [0,104) user framed holes 0..1
+  STMT 0
+block 1 stmt [105,179) user framed holes 1..2
+  STMT 1
+block 2 content [181,244) user framed async holes 2..3
+  REGION async "box" args=hole 2 label="b1" [181,244)
+    ROWS
+      row
+        TEXT "A region labelled by its opener." [206,238)
+block 3 content [246,330) user framed async holes 3..4
+  REGION async "aside" args=hole 3 label="a2" [246,330)
+    ROWS
+      row
+        TEXT "A label: argument and a suffix: the argument wins." [272,322)
+block 4 content [332,382) user framed async holes 4..5
+  FENCE async "js" args=hole 4 label="code1" info="a title" body="let x = 1;" at=[368,378) lines=null [332,382)
+block 5 content [384,456)
+  CALL para [384,456)
+    TEXT "An inline formula " [384,401) raw=0:0,18:17
+    CALL mathinline [402,416) src="x^2"
+    TEXT " keeps no label; a display formula does:" [417,456) raw=0:0,1:0
+block 6 content [458,477)
+  CALL mathblock [458,477) src="E = m c^2" label="emc"
+block 7 content [479,557) user framed holes 5..6
+  CALL para [479,557)
+    HOLE 5 [479,557)
+      TEXT "A named argument list is one options object." [512,556)
+block 8 content [559,645)
+  CALL para [559,645)
+    TEXT "References: " [559,570) raw=0:0,12:11
+    CALL ref [571,574) target="b1"
+    TEXT ", " [574,575) raw=0:0,2:1
+    CALL ref [576,579) target="a1"
+    TEXT ", " [579,580) raw=0:0,2:1
+    CALL ref [581,587) target="code1"
+    TEXT ", " [587,588) raw=0:0,2:1
+    CALL ref [589,593) target="emc"
+    TEXT ", " [593,594) raw=0:0,2:1
+    CALL ref [595,598) target="c1"
+    TEXT " and " [599,602) raw=0:0,1:0,5:3
+    CALL ref [603,613) target="sec:intro"
+    TEXT ". With a supplement: " [613,633) raw=0:0,21:20
+    CALL seq
+      CALL ref [634,644) target="emc"
+      CALL text text="["
+      TEXT "p. 5" [639,643)
+      CALL text text="]"
+    TEXT "." [644,645)
+block 9 content [647,661)
+  CALL heading [647,661) level=1 label="sec:intro"
+    TEXT "Introduction" [649,661)
+block 10 content [675,738)
+  CALL para [675,738)
+    TEXT "A paragraph ending in something label-like <looks-like-a-label>" [675,738)
+block 11 content [740,784)
+  CALL para [740,784)
+    TEXT "Mixed arguments: " [740,756) raw=0:0,17:16
+    CALL error [757,783) code="mixed-args" message="named and positional arguments mixed: name every one, card(label: \"x\", name: 3)"
+    TEXT "." [783,784)
+block 12 content [786,832)
+  CALL error [786,832) code="header-positional" message="region arguments must be named (key: value): write #!aside(cols: cols)"

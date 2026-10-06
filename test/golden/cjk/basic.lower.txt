@@ -1,4 +1,4 @@
-lower v1 abi a42c4357 docEnd 184 holes 0 module none
+lower v1 abi 9bdc5985 docEnd 184 holes 0 module none
 block 0 content [0,183)
   CALL para [0,183)
     TEXT "这是一个中文排版引擎的演示段落，它会把每个汉字作为独立的块来处理，并通过字距的微小伸缩实现两端对齐，这正是传统排版的做法。" [0,183)

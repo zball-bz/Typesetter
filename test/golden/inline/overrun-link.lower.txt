@@ -1,4 +1,4 @@
-lower v1 abi a42c4357 docEnd 64 holes 0 module none
+lower v1 abi 9bdc5985 docEnd 64 holes 0 module none
 block 0 content [0,63)
   CALL para [0,63)
     TEXT "A link with a dollar: " [0,21) raw=0:0,22:21

@@ -8,6 +8,7 @@
 #include "../syntax/cursor.h"
 #include "../syntax/lexer.h"
 #include "jslex.h"
+#include "../syntax/labels.h"
 #include "../shape/textrules.h"
 
 namespace tsr {
@@ -262,16 +263,18 @@ struct InlineParser {
     mn->str = strs.intern(std::string_view(body).substr(b0, b1 - b0));
     side<MathP>(mn).display = display;
     pushItem(mn);
-    // equation label: ` <id>` directly after the closing $ (v2 §11.1
-    // heading-label form); labelled display formulas get numbers
+    // a label: ` <id>` directly after the closing $ (the one label grammar,
+    // plan P2-06); a labelled display formula is numbered, an inline one has
+    // no anchor yet (label-orphan)
     u32 after = close + 1;
-    if (after + 1 < to && t[after] == ' ' && t[after + 1] == '<') {
-      u32 lb = after + 2, le = lb;
-      while (le < to && t[le] != '>' && t[le] != '<' && t[le] != '\n') le++;
-      if (le < to && t[le] == '>' && le > lb) {
-        side<MathP>(mn).label = strs.intern(t.substr(lb, le - lb));
-        mn->span.end = L.raw(le + 1);
-        i = le + 1;
+    if (after + 1 < to && t[after] == ' ') {
+      if (u32 le = lexLabel(t, after + 1, to)) {
+        if (display) side<MathP>(mn).label = strs.intern(t.substr(after + 2, le - 1 - (after + 2)));
+        else
+          diags.add(Sev::Info, "label-orphan", span(after + 1, le),
+                    "an inline formula takes no label yet: it is dropped (display formulas, $ … $ on its own, do)");
+        mn->span.end = L.raw(le);
+        i = le;
         return;
       }
     }
@@ -406,9 +409,35 @@ struct InlineParser {
         return;
       }
     }
+    // the final call's argument list (plan P2-06): a named list is one
+    // options object; named next to positional is an error with a fix-it
+    bool named = false;
+    if (s.lastCall && exprEnd > s.lastCall + 1 && t[exprEnd - 1] == ')') {
+      std::string_view args = t.substr(s.lastCall + 1, exprEnd - 1 - (s.lastCall + 1));
+      const JsArgList al = jsArgList(args);
+      if (al.form == JsArgList::Mixed) {
+        u32 after = exprEnd;
+        while (after < to && t[after] == '[') {
+          i32 close = bodyClose(after);
+          if (close < 0) break;
+          after = (u32)close + 1;
+        }
+        std::string msg = "named and positional arguments mixed: name every one, " +
+                          std::string(t.substr(exprStart, s.lastCall - exprStart)) + jsNamedFixit(args, al);
+        diags.add(Sev::Error, "mixed-args", span(hash, after), msg);
+        AstNode* e = A.node<ErrorP>(AstKind::Error, span(hash, after));
+        e->str = strs.intern("mixed-args");
+        side<ErrorP>(e).message = strs.intern(msg);
+        pushItem(e);
+        i = after;
+        return;
+      }
+      named = al.form == JsArgList::Named;
+    }
     AstNode* spl = A.node<SpliceP>(AstKind::Splice, span(hash, exprEnd));
     side<SpliceP>(spl).expr = strs.intern(t.substr(exprStart, exprEnd - exprStart));
     side<SpliceP>(spl).lastCall = s.lastCall ? s.lastCall - exprStart : 0;
+    side<SpliceP>(spl).named = named;
     // content arguments: directly adjacent [ … ], repeatable
     std::vector<AstNode*> args;
     u32 after = exprEnd;
@@ -482,9 +511,7 @@ struct InlineParser {
     if (!prevIdent) {
       if (rule == InlineRule::refs) {
         if (!idList(i + 2, target, end)) target.clear();
-      } else if (i + 1 < to && isSpliceHead(t[i + 1])) {
-        u32 p = i + 1;
-        while (p < to && (isSpliceCont(t[p]) || t[p] == '-')) p++;
+      } else if (u32 p = lexBareId(t, i + 1, to); p > i + 1) {  // IdStart IdCont* (IdJoin IdCont+)*
         target = t.substr(i + 1, p - (i + 1));
         end = p;
       }
@@ -498,6 +525,16 @@ struct InlineParser {
     flushText();
     AstNode* n = A.call(SugarId::ref, span(i, end));
     n->str = strs.intern(target);
+    // a supplement (D-L01): `[…]` right after the id is the reference's
+    // extra content — parsed now, read by the reference template from P2-09
+    if (end < to && t[end] == '[' && !reverted(end)) {
+      i32 close = bodyClose(end);
+      if (close >= 0) {
+        A.setKids(n, parseSub(end + 1, (u32)close));
+        end = (u32)close + 1;
+        n->span.end = L.raw(end);
+      }
+    }
     pushItem(n);
     i = end;
   }
@@ -667,6 +704,18 @@ struct AstBuilder {
       case SkelKind::Para: {
         AstNode* p = A.call(SugarId::para, s->span);
         A.setKids(p, inlineParse(s->lineSpans, {&s->bodies, &s->literalAt}));
+        // a ` <id>` closing a paragraph as literal text (not a formula's
+        // label): say so (plan P2-06)
+        if (!s->lineSpans.empty() && p->nkids) {
+          const Span last = s->lineSpans.back();
+          const LabelSuffix ls = trailingLabel(src.view(), last.start, last.end);
+          const AstNode* tail = p->kids()[p->nkids - 1];
+          if (ls.ok && tail->kind == AstKind::Text && tail->span.end >= ls.labelEnd + 1)
+            diags.add(Sev::Info, "label-like-text", {ls.labelStart - 1, ls.labelEnd + 1},
+                      "<" + std::string(src.slice({ls.labelStart, ls.labelEnd})) +
+                          "> at the end of a paragraph is text: a paragraph takes a label through "
+                          "#para({label: …})[…]; write \\< to keep it as text quietly");
+        }
         return p;
       }
       case SkelKind::Heading: {
@@ -693,28 +742,42 @@ struct AstBuilder {
         return q;
       }
       case SkelKind::Fence: {
-        // info string "tag(args)": args reuse the splice argument lexer and
-        // compile to a JS object literal for the fence dispatcher (v2 §4.1)
-        Span tagSpan = s->langSpan, args;
-        u32 lp = tagSpan.start;
+        // the info string, Markdown-style (plan P2-06): a tag, its argument
+        // list (one grammar with splices and region headers: named entries,
+        // the handler's options), then free info words, then an optional
+        // ` <id>` label
+        const Span info = s->langSpan;
         std::string_view all = src.view();
-        while (lp < tagSpan.end && all[lp] != '(') lp++;
-        if (lp < tagSpan.end) {
-          JsScan js = scanJs(all.substr(0, tagSpan.end), lp, true);
+        u32 p = info.start;
+        while (p < info.end && (all[p] == ' ' || all[p] == '\t')) p++;
+        u32 te = p;
+        while (te < info.end && all[te] != ' ' && all[te] != '\t' && all[te] != '(' && all[te] != '\r') te++;
+        Span args;
+        u32 after = te;
+        if (after < info.end && all[after] == '(') {
+          JsScan js = scanJs(all.substr(0, info.end), after, true);
           if (js.ok) {
-            args = {lp + 1, js.end - 1};
-            tagSpan.end = lp;
+            args = {after + 1, js.end - 1};
+            after = js.end;
           }
         }
-        if (!args.empty() && !jsNamedArgList(src.slice(args)))
-          return errorNode(s->span, "header-positional",
-                           "fence arguments must be named (key: value)");
+        if (!args.empty()) {
+          const JsArgList al = jsArgList(src.slice(args));
+          if (al.form == JsArgList::Positional || al.form == JsArgList::Mixed)
+            return errorNode(s->span, "header-positional",
+                             "fence arguments must be named (key: value): write " +
+                                 std::string(src.slice({p, te})) + jsNamedFixit(src.slice(args), al));
+        }
+        const LabelSuffix ls = trailingLabel(all, after, info.end);
+        u32 ie = ls.ok ? ls.textEnd : info.end, ib = after;
+        while (ib < ie && (all[ib] == ' ' || all[ib] == '\t')) ib++;
+        while (ie > ib && (all[ie - 1] == ' ' || all[ie - 1] == '\t' || all[ie - 1] == '\r')) ie--;
         AstNode* f = A.call<FenceP>(SugarId::fence, s->span);
-        std::string lang(src.slice(tagSpan));
-        while (!lang.empty() && (lang.back() == ' ' || lang.back() == '\r')) lang.pop_back();
         FenceP& fp = side<FenceP>(f);
-        fp.lang = strs.intern(lang);
+        fp.lang = strs.intern(src.slice({p, te}));
         fp.args = args;
+        if (ie > ib) fp.info = strs.intern(src.slice({ib, ie}));
+        if (ls.ok) fp.label = strs.intern(src.slice({ls.labelStart, ls.labelEnd}));
         fp.bodyOffset = s->lineSpans.empty() ? s->span.end : s->lineSpans[0].start;
         // the body's raw end: its source span is [bodyOffset, bodyEnd) (plan P2-04)
         fp.bodyEnd = s->lineSpans.empty() ? fp.bodyOffset : s->lineSpans.back().end;
@@ -737,12 +800,31 @@ struct AstBuilder {
         return c;
       }
       case SkelKind::Region: {
-        if (!s->inner.empty() && !jsNamedArgList(src.slice(s->inner)))
-          return errorNode(s->span, "header-positional",
-                           "region arguments must be named (key: value)");
+        // the header: one argument grammar (plan P2-06) — named entries are
+        // the options; anything else is an error with a fix-it
+        bool labelArg = false;
+        if (!s->inner.empty()) {
+          const JsArgList al = jsArgList(src.slice(s->inner));
+          if (al.form == JsArgList::Positional || al.form == JsArgList::Mixed)
+            return errorNode(s->span, "header-positional",
+                             "region arguments must be named (key: value): write #!" +
+                                 std::string(src.slice(s->langSpan)) + jsNamedFixit(src.slice(s->inner), al));
+          for (const JsArgItem& it : al.items) {
+            std::string_view t = src.slice({s->inner.start + it.start, s->inner.start + it.end});
+            labelArg = labelArg || (it.k == JsArgItem::Named && (t.substr(0, 5) == "label" &&
+                                                                 (t.size() == 5 || !isIdentCont(t[5]))));
+          }
+        }
         AstNode* r = A.call<RegionP>(SugarId::region, s->span);
         r->str = strs.intern(src.slice(s->langSpan));
         side<RegionP>(r).args = s->inner;  // opener args (inside parens; empty span = none)
+        if (!s->labelSpan.empty()) {  // ` <id>` (plan P2-06): the options' label; an explicit label: wins
+          side<RegionP>(r).label = strs.intern(src.slice(s->labelSpan));
+          if (labelArg)
+            diags.add(Sev::Warning, "label-conflict", s->labelSpan,
+                      "the region has a label: argument and a <" + std::string(src.slice(s->labelSpan)) +
+                          "> suffix: the label: argument wins");
+        }
         std::vector<AstNode*> kids;
         for (const SkelNode* k : s->kids) {
           if (k->kind == SkelKind::Para) {

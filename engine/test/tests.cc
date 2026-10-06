@@ -804,7 +804,8 @@ static void unitTokenConformance(const fs::path& root) {
   //   jslex     splice heads / JS arguments / statements (no JS lexer; a
   //             /* comment */ in an argument list reads as a strong pair)
   //   pairs     strict pairs and footnotes (regex pairs, opaque ^[…])
-  //   lines     islands, links and comments across lines or nested
+  //   lines     islands, links and comments across lines or nested; a
+  //             paragraph's trailing ` <x>` (text: label-like-text, P2-06)
   //   blocks    fences in containers, escaped markers, region bars
   static const char* kAllowed[][3] = {
       {"-", "attribute", "pairs"},         {"-", "embedded", "blocks"},
@@ -814,7 +815,7 @@ static void unitTokenConformance(const fs::path& root) {
       {"comment", "-", "lines"},           {"constant", "-", "pairs"},
       {"constant", "attribute", "pairs"},  {"embedded", "-", "jslex"},
       {"embedded", "function", "jslex"},   {"embedded", "keyword", "jslex"},
-      {"embedded", "attribute", "jslex"},
+      {"embedded", "attribute", "jslex"},  {"-", "label", "lines"},
       {"function", "-", "jslex"},          {"function", "keyword", "jslex"},
       {"function", "label", "jslex"},      {"keyword", "-", "blocks"},
       {"keyword", "embedded", "blocks"},   {"label", "function", "lines"},

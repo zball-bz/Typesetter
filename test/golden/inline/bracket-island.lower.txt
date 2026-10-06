@@ -1,6 +1,7 @@
-lower v1 abi a42c4357 docEnd 583 holes 2 module 3a965b69ae143277
-piece 0 hole 0 js [130,159)
-piece 1 hole 1 js [161,190)
+lower v1 abi 9bdc5985 docEnd 594 holes 3 module e439ed901ee86d64
+piece 0 hole 0 js [139,168)
+piece 1 hole 1 js [170,199)
+piece 2 hole 2 js [201,244)
 block 0 content [0,66)
   CALL para [0,66)
     TEXT "Notes close at their own bracket: a" [0,35)
@@ -61,13 +62,14 @@ block 6 content [408,495) user framed holes 1..2
 block 7 content [497,506)
   CALL heading [497,506) level=1 label="tgt"
     TEXT "Targets" [499,506)
-block 8 content [514,529)
-  CALL heading [514,529) level=2 label="a]b"
-    TEXT "An odd label" [517,529)
-block 9 content [537,582)
-  CALL para [537,582)
-    TEXT "References: " [537,548) raw=0:0,12:11
-    CALL ref [549,557) target="tgt"
-    TEXT " and " [558,561) raw=0:0,1:0,5:3
-    CALL ref [562,569) target="a]b"
-    TEXT " in brackets." [570,582) raw=0:0,1:0
+block 8 content [514,546) user framed holes 2..3
+  CALL para [514,546)
+    HOLE 2 [514,546)
+      TEXT "An odd label" [533,545)
+block 9 content [548,593)
+  CALL para [548,593)
+    TEXT "References: " [548,559) raw=0:0,12:11
+    CALL ref [560,568) target="tgt"
+    TEXT " and " [569,572) raw=0:0,1:0,5:3
+    CALL ref [573,580) target="a]b"
+    TEXT " in brackets." [581,593) raw=0:0,1:0

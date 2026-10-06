@@ -30,10 +30,10 @@
 <div class="tsr-para" data-pid="7" data-s0="499" style="position:relative;height:25.609px;margin-bottom:19.2px">
 <div class="tsr-line" id="tsr-tgt" data-s="0" data-e="7" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Targets</span></div>
 </div>
-<div class="tsr-para" data-pid="8" data-s0="517" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="8" data-s0="533" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" id="tsr-a]b" data-s="0" data-e="12" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">An odd label</span></div>
 </div>
-<div class="tsr-para" data-pid="9" data-s0="537" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="9" data-s0="548" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="45" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">References: </span><a class="tsr-r" href="#tsr-tgt" data-syn="ref">§1</a><span class="tsr-r" data-s="21"> and </span><a class="tsr-r" href="#tsr-a]b" data-syn="ref">§1.1</a><span class="tsr-r" data-s="33"> in brackets.</span></div>
 </div>
 <div class="tsr-para" data-pid="10" data-s0="35" style="position:relative;height:67.203px">

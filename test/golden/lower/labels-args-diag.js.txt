@@ -1,0 +1,21 @@
+export const abi = 0x9bdc5985;
+export default async (__rt, $) => {
+const {group, para} = __rt.std;
+return (async () => {
+let box, card;
+const __h = [
+() => { box = (
+ $.region("box", (body, ctx) => group({role: "box", label: ctx.args.label}, ...body.blocks()))
+); },
+() => { card = (
+ (o, ...c) => group({role: "card", label: o.label}, para(...c))
+); },
+() => ({tone: "warm"}),
+() => ({label: "a1"}),
+() => ({lineNo: true}),
+(__k) => (card(({label: "c1", tone: "cool"}), ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

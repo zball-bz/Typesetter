@@ -1,5 +1,5 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="7">Before.</p>
-<div class="tsr-err" data-pid="1" data-s="9" data-e="33" title="region arguments must be named (key: value)">&#9888; region arguments must be named (key: value)</div>
+<div class="tsr-err" data-pid="1" data-s="9" data-e="33" title="region arguments must be named (key: value): write #!table(name: 3)">&#9888; region arguments must be named (key: value): write #!table(name: 3)</div>
 <p data-pid="2" data-s="35" data-e="41">After.</p>
 </div>

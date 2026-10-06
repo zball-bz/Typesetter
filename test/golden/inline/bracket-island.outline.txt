@@ -1,1 +1,1 @@
-{"headings":[{"level":1,"title":"Targets","label":"tgt","span":[497,506]},{"level":2,"title":"An odd label","label":"a]b","span":[514,529]}],"regions":[],"fences":[],"labels":[{"id":"tgt","rule":"heading","span":[507,512]},{"id":"a]b","rule":"heading","span":[530,535]}],"diagnostics":[]}
+{"headings":[{"level":1,"title":"Targets","label":"tgt","span":[497,506]}],"regions":[],"fences":[],"labels":[{"id":"tgt","rule":"heading","span":[507,512]}],"diagnostics":[]}

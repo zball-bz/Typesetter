@@ -1,9 +1,9 @@
-lower v1 abi a42c4357 docEnd 38 holes 0 module none
+lower v1 abi 9bdc5985 docEnd 38 holes 0 module none
 block 0 content [0,7)
   CALL para [0,7)
     TEXT "Before." [0,7)
 block 1 content [9,29)
-  CALL error [9,29) code="header-positional" message="fence arguments must be named (key: value)"
+  CALL error [9,29) code="header-positional" message="fence arguments must be named (key: value): write js(name: 3)"
 block 2 content [31,37)
   CALL para [31,37)
     TEXT "After." [31,37)

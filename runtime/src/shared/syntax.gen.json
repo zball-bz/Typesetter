@@ -6,6 +6,7 @@
   "IdStart": "A-Za-z_",
   "IdCont": "A-Za-z0-9_",
   "IdJoin": "-.:",
+  "LabelChar": "^ <>[]@,;\\",
   "Escapable": "!-/:-@[-`{-~"
  },
  "inline": [
@@ -348,6 +349,14 @@
     [
      "lines",
      "str"
+    ],
+    [
+     "info",
+     "str"
+    ],
+    [
+     "label",
+     "str"
     ]
    ]
   },
@@ -358,6 +367,10 @@
     [
      "args",
      "src"
+    ],
+    [
+     "label",
+     "str"
     ]
    ]
   },

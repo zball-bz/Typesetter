@@ -96,10 +96,10 @@ struct Gen {
     size_t at = callHead("seq", nullptr, 0);
     return done(at, kids(n->kids()));
   }
-  void emptyText() {
+  void emptyText(std::string_view s = "") {
     callHead("text", nullptr, 1);
     key("text");
-    w.constStr("");
+    w.constStr(s);
     w.u(0);
   }
   bool strCall(std::string_view ctor, const AstNode* n, std::string_view k, StrRef v) {
@@ -172,7 +172,19 @@ struct Gen {
     const bool kidsAwait = kids(n->kids());
     const bool async = kidsAwait || jsMentions(expr, "await");
     std::string t = async ? "async " : "";
-    if (n->nkids == 0) {
+    // a named argument list (plan P2-06) is one options object
+    auto args = [&](std::string& o) {
+      std::string_view a = expr.substr(sp.lastCall + 1, expr.size() - 1 - (sp.lastCall + 1));
+      o += sp.named ? "(({" : "(...[";
+      appendJs(o, a);
+      o += sp.named ? "})" : "]";
+    };
+    if (n->nkids == 0 && sp.named) {
+      t += "() => (";
+      appendJs(t, expr.substr(0, sp.lastCall));
+      args(t);
+      t += "))";
+    } else if (n->nkids == 0) {
       t += "() => (";
       appendJs(t, expr);
       t += ")";
@@ -181,9 +193,8 @@ struct Gen {
       t += "(__k) => (";
       if (sp.lastCall > 0) {
         appendJs(t, expr.substr(0, sp.lastCall));
-        t += "(...[";
-        appendJs(t, expr.substr(sp.lastCall + 1, expr.size() - 1 - (sp.lastCall + 1)));
-        t += "], ";
+        args(t);
+        t += ", ";
       } else {
         t += "(";
         appendJs(t, expr);
@@ -264,8 +275,20 @@ struct Gen {
         else w.constNull();
         return done(at, kids(n->kids()));
       }
-      case SugarId::ref:
-        return strCall("ref", n, "target", n->str);
+      case SugarId::ref: {
+        if (!n->nkids) return strCall("ref", n, "target", n->str);
+        // a supplement (D-L01, parsed since P2-06): read by the reference
+        // template from P2-09; until then it shows as today, in brackets
+        // after the reference
+        size_t at = callHead("seq", nullptr, 0);
+        w.u(n->nkids + 3);
+        strCall("ref", n, "target", n->str);
+        emptyText("[");
+        bool a = false;
+        for (const AstNode* k : n->kids()) a |= value(k);
+        emptyText("]");
+        return done(at, a);
+      }
       case SugarId::list: {
         const ListP& l = side<ListP>(n);
         size_t at = callHead("list", &n->span, 2);
@@ -289,6 +312,8 @@ struct Gen {
         size_t at = w.op(Lop::FENCE);
         w.u(w.str(strs.get(f.lang)));
         w.u(args);
+        w.u(f.label ? w.str(strs.get(f.label)) + 1 : 0);  // ` <id>` (plan P2-06): 0 = none
+        w.u(f.info ? w.str(strs.get(f.info)) + 1 : 0);    // the info words
         w.u(w.str(strs.get(n->str)));
         w.u(f.bodyOffset);
         w.u(f.bodyEnd);
@@ -322,6 +347,7 @@ struct Gen {
         size_t at = w.op(Lop::REGION);
         w.u(w.str(strs.get(n->str)));
         w.u(args);
+        w.u(r.label ? w.str(strs.get(r.label)) + 1 : 0);  // ` <id>` (plan P2-06): 0 = none
         span(n->span);
         std::span<AstNode* const> ks = n->kids();
         w.u((u32)ks.size());

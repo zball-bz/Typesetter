@@ -976,9 +976,9 @@ Theme steps: — · findings: 1
 | `markup-language/inline-delimiter-scanners` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `markup-language/closed-constructor-set` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `markup-language/ctor-signature-vs-content-args` | adhoc | high | P2-03 | grep:plan P2-03 |
-| `markup-language/arg-grammar-unification` | adhoc | medium | P2-06 | |
+| `markup-language/arg-grammar-unification` | adhoc | medium | P2-06 | grep:plan P2-06 |
 | `markup-language/numbered-env-hardcoding` | adhoc | high | P2-07 | |
-| `markup-language/universal-labels` | adhoc | high | P2-06 | |
+| `markup-language/universal-labels` | adhoc | high | P2-06 | grep:plan P2-06 |
 | `markup-language/label-namespace-collision` | adhoc | medium | P0-09, P3-04 | |
 | `markup-language/region-builtin-privilege` | adhoc | medium | P2-03 | grep:plan P2-03 |
 | `markup-language/block-inline-placement` | adhoc | medium | P2-11, P3-17 | |
@@ -1015,11 +1015,11 @@ Theme steps: — · findings: 1
 | `parser-frontend/content-args-inline-only` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/keyword-forms-closed-set-missing` | adhoc | high | P2-12, P3-31 | |
 | `parser-frontend/code-statements-top-level-only` | adhoc | high | P2-12 | |
-| `parser-frontend/label-and-id-lexing-scattered` | adhoc | medium | P2-06 | |
+| `parser-frontend/label-and-id-lexing-scattered` | adhoc | medium | P2-06 | grep:plan P2-06 |
 | `parser-frontend/display-math-by-ast-shape` | adhoc | medium | P2-11 | |
 | `parser-frontend/parser-owned-cjk-line-join` | adhoc | medium | P2-10, P4-02 | |
 | `parser-frontend/fragment-parallel-lowering` | adhoc | high | P2-13 | |
-| `parser-frontend/region-fence-private-dispatch` | adhoc | medium | P2-03, P2-06 | |
+| `parser-frontend/region-fence-private-dispatch` | adhoc | medium | P2-03, P2-06 | grep:plan P2-06 |
 | `parser-frontend/region-container-special-case` | adhoc | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/multiple-tsm-grammars` | adhoc | high | P1-09 | grep:plan P1-09 |
 | `parser-frontend/sigil-context-rules` | adhoc | medium | P3-33 | |
@@ -1038,7 +1038,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/missed:0` | missed | high | P0-04, P1-06 | grep:plan P1-06 |
 | `parser-frontend/missed:1` | missed | high | P1-06 | grep:plan P1-06 |
 | `parser-frontend/missed:2` | missed | medium | P1-07 | grep:plan P1-07 |
-| `parser-frontend/missed:3` | missed | medium | P2-02, P2-06 | |
+| `parser-frontend/missed:3` | missed | medium | P2-02, P2-06 | grep:plan P2-06 |
 | `parser-frontend/missed:4` | missed | low | P1-06 | grep:plan P1-06 |
 | `parser-frontend/missed:5` | missed | low | P1-07 | grep:plan P1-07 |
 | `codegen-ops-model/ctor-signatures-break-sugar-equivalence` | adhoc | high | P2-03 | grep:plan P2-03 |
@@ -1337,7 +1337,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/converter-code-duplication` | issue | low | P3-35 | |
 | `real-world-evidence/missed:0` | missed | high | P0-05, P2-02 | grep:plan P2-02 |
 | `real-world-evidence/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
-| `real-world-evidence/missed:2` | missed | medium | P2-06 | |
+| `real-world-evidence/missed:2` | missed | medium | P2-06 | grep:plan P2-06 |
 | `real-world-evidence/missed:3` | missed | medium | P0-06, P2-08 | |
 | `real-world-evidence/missed:4` | missed | medium | P3-27 | |
 | `real-world-evidence/missed:5` | missed | low | P3-23 | |

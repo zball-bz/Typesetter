@@ -43,8 +43,8 @@ From `engine/src/syntax/syntax.def`, syntax version 4. Behaviour for each body m
 | `item` | Block | — | `item` |
 | `quote` | Block | — | `quote` |
 | `rule` | Block | — | `rule` |
-| `fence` | Block | lang:str args:src bodyOffset:u32 bodyEnd:u32 lines:str | `codeblock lang="{lang}" body="{$str}"` |
-| `region` | Block | args:src | `region name="{$str}"` |
+| `fence` | Block | lang:str args:src bodyOffset:u32 bodyEnd:u32 lines:str info:str? label:str? | `codeblock lang="{lang}"{?info info="{info}"}{?label label="{label}"} body="{$str}"` |
+| `region` | Block | args:src label:str? | `region name="{$str}"{?label label="{label}"}` |
 | `strong` | Inline | — | `styled marker=*` |
 | `em` | Inline | — | `styled marker=_` |
 | `code` | Inline | — | `code str="{$str}"` |
@@ -63,6 +63,7 @@ From `engine/src/syntax/syntax.def`, syntax version 4. Behaviour for each body m
 - `IdStart`: `A-Za-z_`
 - `IdCont`: `A-Za-z0-9_`
 - `IdJoin`: `-.:`
+- `LabelChar`: `^ <>[]@,;\`
 - `Escapable`: `` !-/:-@[-`{-~ ``
 
 ## Keywords and reserved splice heads

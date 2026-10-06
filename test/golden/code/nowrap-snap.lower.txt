@@ -1,4 +1,4 @@
-lower v1 abi a42c4357 docEnd 135 holes 0 module none
+lower v1 abi 9bdc5985 docEnd 135 holes 0 module none
 block 0 content [0,101)
   CALL para [0,101)
     TEXT "Snap-kerning on code that fits the measure (plan P1-03): both scripts snap to the grid, no row wraps." [0,101)

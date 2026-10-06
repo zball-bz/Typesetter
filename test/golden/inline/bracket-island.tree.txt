@@ -1,4 +1,4 @@
-doc @[0,582) [base]
+doc @[0,593) [base]
   para @[0,66) [base]
     text @[0,35) [base] str="Notes close at their own bracket: a"
     ref @[35,44) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
@@ -55,19 +55,19 @@ doc @[0,582) [base]
     text @[489,495) [base] str=" after." raw=0:0,1:0
   heading @[497,506) [base] level=1 label="tgt"
     text @[499,506) [base] str="Targets"
-  heading @[514,529) [base] level=2 label="a]b"
-    text @[517,529) [base] str="An odd label"
-  para @[537,582) [base]
-    text @[537,548) [base] str="References: " raw=0:0,12:11
-    ref @[549,557) [base] target="tgt" url="#tsr-tgt"
-      text @[549,557) [base] str="§1"
-    text @[558,561) [base] str=" and " raw=0:0,1:0,5:3
-    ref @[562,569) [base] target="a]b" url="#tsr-a]b"
-      text @[562,569) [base] str="§1.1"
-    text @[570,582) [base] str=" in brackets." raw=0:0,1:0
-  group @[0,582) [base] role="notes"
-    rule @[0,582) [base]
-    list @[0,582) [base] ordered=true
+  heading @[514,546) [base] level=2 label="a]b"
+    text @[533,545) [base] str="An odd label"
+  para @[548,593) [base]
+    text @[548,559) [base] str="References: " raw=0:0,12:11
+    ref @[560,568) [base] target="tgt" url="#tsr-tgt"
+      text @[560,568) [base] str="§1"
+    text @[569,572) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[573,580) [base] target="a]b" url="#tsr-a]b"
+      text @[573,580) [base] str="§1.1"
+    text @[581,593) [base] str=" in brackets." raw=0:0,1:0
+  group @[0,593) [base] role="notes"
+    rule @[0,593) [base]
+    list @[0,593) [base] ordered=true
       item @[35,44) [base]
         para @[35,44) [base] label="fn-1"
           text @[37,43) [basex0.85] str="a ] b" raw=0:0,3:4

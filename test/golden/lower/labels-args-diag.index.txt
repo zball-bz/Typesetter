@@ -1,0 +1,8 @@
+instance equation 1 label=emc @[458,477)
+instance heading 1 level=1 label=sec:intro title="Introduction" @[647,661)
+label b1 -> (unnumbered) @[181,244)
+label a1 -> (unnumbered) @[246,330)
+label code1 -> (unnumbered) @[332,382)
+label emc -> equation 1 @[458,477)
+label c1 -> (unnumbered) @[479,557)
+label sec:intro -> heading 1 @[647,661)

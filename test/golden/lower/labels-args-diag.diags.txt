@@ -1,0 +1,9 @@
+warning label-conflict @[268,270) the region has a label: argument and a <a2> suffix: the label: argument wins
+info label-orphan @[408,416) an inline formula takes no label yet: it is dropped (display formulas, $ … $ on its own, do)
+info label-like-text @[718,738) <looks-like-a-label> at the end of a paragraph is text: a paragraph takes a label through #para({label: …})[…]; write \< to keep it as text quietly
+error mixed-args @[757,783) named and positional arguments mixed: name every one, card(label: "x", name: 3)
+error header-positional @[786,832) region arguments must be named (key: value): write #!aside(cols: cols)
+info ref-unnumbered @[571,574) 'b1' names an unnumbered element; its label text is shown
+info ref-unnumbered @[576,579) 'a1' names an unnumbered element; its label text is shown
+info ref-unnumbered @[581,587) 'code1' names an unnumbered element; its label text is shown
+info ref-unnumbered @[595,598) 'c1' names an unnumbered element; its label text is shown

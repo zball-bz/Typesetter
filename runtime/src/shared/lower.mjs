@@ -327,18 +327,22 @@ export class Lowering {
         }
       }
       case LOP.FENCE: {
-        const lang = this.S[this.u()], a = this.u(), body = this.S[this.u()], off = this.u(), end = this.u();
+        const lang = this.S[this.u()], a = this.u(), lb = this.u(), inf = this.u();
+        const body = this.S[this.u()], off = this.u(), end = this.u();
         const lines = this.k(), s = this.u(), e = this.u();
         const fresh = env.ob.nextId;
         let args = a ? this.hole((a >> 1) - 1)() : {};
         if (a & 1) args = await args;
-        return env.at(env.val(await env.fence(lang, args, body, off, lines, end)), s, e, fresh);
+        if (lb) args = { label: this.S[lb - 1], ...args };  // ` <id>`: an explicit label: wins
+        const info = inf ? this.S[inf - 1] : '';
+        return env.at(env.val(await env.fence(lang, args, body, off, lines, end, info)), s, e, fresh);
       }
       case LOP.REGION: {
-        const name = this.S[this.u()], a = this.u(), s = this.u(), e = this.u();
+        const name = this.S[this.u()], a = this.u(), lb = this.u(), s = this.u(), e = this.u();
         const fresh = env.ob.nextId;
         let args = a ? this.hole((a >> 1) - 1)() : {};
         if (a & 1) args = await args;
+        if (lb) args = { label: this.S[lb - 1], ...args };  // ` <id>`: an explicit label: wins
         const items = [];
         for (let n = this.u(); n > 0; n--) items.push(await this.va());
         return env.at(await this.region(name, args, items, s, e), s, e, fresh);
@@ -435,9 +439,11 @@ export class Lowering {
         return;
       }
       case LOP.FRAME: this.u(); this.u(); this.u(); this.u(); this.skipValue(); return;
-      case LOP.FENCE: this.u(); this.u(); this.u(); this.u(); this.u(); this.k(); this.u(); this.u(); return;
+      case LOP.FENCE:
+        this.u(); this.u(); this.u(); this.u(); this.u(); this.u(); this.u(); this.k(); this.u(); this.u();
+        return;
       case LOP.REGION:
-        this.u(); this.u(); this.u(); this.u();
+        this.u(); this.u(); this.u(); this.u(); this.u();
         for (let n = this.u(); n > 0; n--) this.skipValue();
         return;
       case LOP.ROWS:

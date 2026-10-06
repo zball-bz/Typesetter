@@ -1,6 +1,6 @@
 doc @[0,38)
   para @[0,7)
     text @[0,7) str="Before."
-  error @[9,29) code="header-positional" msg="fence arguments must be named (key: value)"
+  error @[9,29) code="header-positional" msg="fence arguments must be named (key: value): write js(name: 3)"
   para @[31,37)
     text @[31,37) str="After."

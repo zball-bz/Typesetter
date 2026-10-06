@@ -1,0 +1,32 @@
+#let box = $.region("box", (body, ctx) => group({role: "box", label: ctx.args.label}, ...body.blocks()))
+#let card = (o, ...c) => group({role: "card", label: o.label}, para(...c))
+
+#!box(tone: "warm") <b1>
+A region labelled by its opener.
+#box!
+
+#!aside(label: "a1") <a2>
+A label: argument and a suffix: the argument wins.
+#aside!
+
+```js(lineNo: true) a title <code1>
+let x = 1;
+```
+
+An inline formula $x^2$ <orphan> keeps no label; a display formula does:
+
+$ E = m c^2 $ <emc>
+
+#card(label: "c1", tone: "cool")[A named argument list is one options object.]
+
+References: @b1, @a1, @code1, @emc, @c1 and @sec:intro. With a supplement: @emc[p. 5].
+
+= Introduction <sec:intro>
+
+A paragraph ending in something label-like <looks-like-a-label>
+
+Mixed arguments: #card(label: "x", 3)[oops].
+
+#!aside(cols)
+A shorthand-only header.
+#aside!

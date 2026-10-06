@@ -1,4 +1,4 @@
-export const abi = 0xa42c4357;
+export const abi = 0x9bdc5985;
 export default async (__rt, $) => {
 const {glossary, term, toc} = __rt.std;
 return (async () => {

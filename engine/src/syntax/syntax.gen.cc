@@ -78,7 +78,18 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
           spanOut();
           out += " lang=\"";
           appendEscaped(out, strs.get(side<FenceP>(n).lang));
-          out += "\" body=\"";
+          out += "\"";
+          if (side<FenceP>(n).info != 0) {
+            out += " info=\"";
+            appendEscaped(out, strs.get(side<FenceP>(n).info));
+            out += "\"";
+          }
+          if (side<FenceP>(n).label != 0) {
+            out += " label=\"";
+            appendEscaped(out, strs.get(side<FenceP>(n).label));
+            out += "\"";
+          }
+          out += " body=\"";
           appendEscaped(out, strs.get(n->str));
           out += "\"";
           break;
@@ -89,6 +100,11 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
           out += " name=\"";
           appendEscaped(out, strs.get(n->str));
           out += "\"";
+          if (side<RegionP>(n).label != 0) {
+            out += " label=\"";
+            appendEscaped(out, strs.get(side<RegionP>(n).label));
+            out += "\"";
+          }
           break;
         }
         case SugarId::strong: {
@@ -170,6 +186,7 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       out += " expr=\"";
       appendEscaped(out, strs.get(side<SpliceP>(n).expr));
       out += "\"";
+      out += side<SpliceP>(n).named ? " named" : "";
       break;
     }
     case AstKind::Stmt: {
@@ -261,12 +278,24 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
           appendf(out, "%u", (unsigned)p.bodyEnd);
           out += ",\"lines\":";
           jsonString(out, strs.get(p.lines));
+          if (p.info) {
+          out += ",\"info\":";
+          jsonString(out, strs.get(p.info));
+          }
+          if (p.label) {
+          out += ",\"label\":";
+          jsonString(out, strs.get(p.label));
+          }
           break;
         }
         case SugarId::region: {
           const RegionP& p = side<RegionP>(n);
           out += ",\"args\":";
           jsonString(out, src.slice(p.args));
+          if (p.label) {
+          out += ",\"label\":";
+          jsonString(out, strs.get(p.label));
+          }
           break;
         }
         case SugarId::strong:
@@ -307,6 +336,10 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       jsonString(out, strs.get(p.expr));
       out += ",\"lastCall\":";
       appendf(out, "%u", (unsigned)p.lastCall);
+      if (p.named) {
+      out += ",\"named\":";
+      out += "true";
+      }
       break;
     }
     case AstKind::Stmt: {

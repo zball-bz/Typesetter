@@ -1,0 +1,17 @@
+doc @[0,833)
+  code-let @[0,104) js=" box = $.region(\"box\", (body, ctx) => group({role: \"box\", label: ctx.args.label}, ...body.blocks()))"
+  code-let @[105,179) js=" card = (o, ...c) => group({role: \"card\", label: o.label}, para(...c))"
+  region @[181,244) name="box"
+    para @[206,238) lines=1
+  region @[246,330) name="aside"
+    para @[272,322) lines=1
+  fence @[332,382) lang="js(lineNo: true) a title <code1>" lines=1
+  para @[384,456) lines=1
+  para @[458,477) lines=1
+  para @[479,557) lines=1
+  para @[559,645) lines=1
+  heading1 @[647,661) label="sec:intro"
+  para @[675,738) lines=1
+  para @[740,784) lines=1
+  region @[786,832) name="aside"
+    para @[800,824) lines=1

@@ -1,4 +1,5 @@
 #include "linepass.h"
+#include "../syntax/labels.h"
 
 #include <algorithm>
 
@@ -809,15 +810,10 @@ struct LinePass {
         u32 cs = pos + n + 1;
         u32 e = le;
         while (e > cs && (all[e - 1] == ' ' || all[e - 1] == '\r')) e--;
-        // trailing "<id>" label (v2 §11.1): space + <…> at line end
-        if (e > cs + 2 && all[e - 1] == '>') {
-          u32 lb = e - 1;
-          while (lb > cs && all[lb - 1] != '<' && all[lb - 1] != '>' && all[lb - 1] != ' ') lb--;
-          if (lb >= cs + 2 && all[lb - 1] == '<' && lb < e - 1 && all[lb - 2] == ' ') {
-            h->labelSpan = {lb, e - 1};
-            e = lb - 2;
-            while (e > cs && all[e - 1] == ' ') e--;
-          }
+        // a trailing ` <id>` label (v2 §11.1; the one label grammar, plan P2-06)
+        if (const LabelSuffix ls = trailingLabel(all, cs, e); ls.ok) {
+          h->labelSpan = {ls.labelStart, ls.labelEnd};
+          e = ls.textEnd;
         }
         h->span = {pos, e};
         h->lineSpans.push_back({cs, e});
@@ -852,17 +848,24 @@ struct LinePass {
           ok = false;
         }
       }
-      if (ok && isBlank(after, le)) {
+      // ` <id>` may close the opener line (plan P2-06)
+      const LabelSuffix ls = ok ? trailingLabel(all, after, le) : LabelSuffix{};
+      if (ok && isBlank(after, ls.ok ? ls.textEnd : le)) {
         closeLeaf();
         SkelNode* rg = mk(SkelKind::Region);
         rg->span = {pos, le};
         rg->langSpan = {pos + 2, np};
         rg->inner = argsSpan;
+        if (ls.ok) rg->labelSpan = {ls.labelStart, ls.labelEnd};
         parent()->kids.push_back(rg);
         open.push_back({rg, Shape::Explicit});
         return ln + 1;
       }
-      // fall through: not a region opener, plain paragraph text
+      // fall through: not a region opener, plain paragraph text — say why
+      if (ok && after < le)
+        diags.add(Sev::Warning, "header-trailing", {after, le},
+                  "text after '#!" + std::string(all.substr(pos + 2, np - pos - 2)) +
+                      "(…)' makes this line a paragraph, not a region opener (a label is ' <id>')");
     }
     // a region closer with no open region of its name is an error block,
     // never a splice (App B rule 5; matched closers: processLine)

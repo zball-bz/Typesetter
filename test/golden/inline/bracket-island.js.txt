@@ -1,10 +1,11 @@
-export const abi = 0xa42c4357;
+export const abi = 0x9bdc5985;
 export default async (__rt, $) => {
-const {strong} = __rt.std;
+const {heading, strong} = __rt.std;
 return (async () => {
 const __h = [
 (__k) => ((strong)(...__k())),
 (__k) => ((strong)(...__k())),
+(__k) => (heading(...[2, "a]b"], ...__k())),
 ];
 await __rt.run(__h, 0);
 })();

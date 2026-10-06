@@ -1,8 +1,8 @@
 instance footnote 1 label=fn-1 marker=fnref-1 @[35,44)
 instance heading 1 level=1 label=tgt title="Targets" @[497,506)
-instance heading 1.1 level=2 label=a]b title="An odd label" @[514,529)
+instance heading 1.1 level=2 label=a]b title="An odd label" @[514,546)
 label fn-1 -> footnote 1 @[35,44)
 label fnref-1 -> footnote 1 (marker) @[35,44)
 label tgt -> heading 1 @[497,506)
-label a]b -> heading 1.1 @[514,529)
+label a]b -> heading 1.1 @[514,546)
 flow notes: fn-1

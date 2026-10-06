@@ -1,9 +1,9 @@
-lower v1 abi a42c4357 docEnd 42 holes 0 module none
+lower v1 abi 9bdc5985 docEnd 42 holes 0 module none
 block 0 content [0,7)
   CALL para [0,7)
     TEXT "Before." [0,7)
 block 1 content [9,33)
-  CALL error [9,33) code="header-positional" message="region arguments must be named (key: value)"
+  CALL error [9,33) code="header-positional" message="region arguments must be named (key: value): write #!table(name: 3)"
 block 2 content [35,41)
   CALL para [35,41)
     TEXT "After." [35,41)

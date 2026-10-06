@@ -1,4 +1,4 @@
-lower v1 abi a42c4357 docEnd 203 holes 0 module none
+lower v1 abi 9bdc5985 docEnd 203 holes 0 module none
 block 0 content [0,202)
   CALL para [0,202)
     TEXT "The demonstration paragraph exercises hyphenation with extraordinary representation of measurement terminology, justification arithmetic and quantization boundaries throughout typesetting documentation." [0,202)

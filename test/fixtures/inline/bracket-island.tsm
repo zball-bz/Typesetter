@@ -14,6 +14,6 @@ Islands that would swallow a closer: [price $5](u) and #strong[cost $3] then $x$
 
 = Targets <tgt>
 
-== An odd label <a]b>
+#heading(2, "a]b")[An odd label]
 
 References: @[ tgt ] and @[a\]b] in brackets.

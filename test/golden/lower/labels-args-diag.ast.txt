@@ -1,0 +1,50 @@
+doc @[0,833)
+  code-let @[0,104) js=" box = $.region(\"box\", (body, ctx) => group({role: \"box\", label: ctx.args.label}, ...body.blocks()))"
+  code-let @[105,179) js=" card = (o, ...c) => group({role: \"card\", label: o.label}, para(...c))"
+  region @[181,244) name="box" label="b1"
+    para @[206,238)
+      row @[206,238)
+        cell @[206,238)
+          text @[206,238) str="A region labelled by its opener."
+  region @[246,330) name="aside" label="a2"
+    para @[272,322)
+      row @[272,322)
+        cell @[272,322)
+          text @[272,322) str="A label: argument and a suffix: the argument wins."
+  codeblock @[332,382) lang="js" info="a title" label="code1" body="let x = 1;"
+  para @[384,456)
+    text @[384,401) str="An inline formula "
+    math @[402,416) display=0 src="x^2"
+    text @[417,456) str=" keeps no label; a display formula does:"
+  para @[458,477)
+    math @[458,477) display=1 src="E = m c^2" label="emc"
+  para @[479,557)
+    splice @[479,557) expr="card(label: \"c1\", tone: \"cool\")" named
+      arg @[512,556)
+        text @[512,556) str="A named argument list is one options object."
+  para @[559,645)
+    text @[559,570) str="References: "
+    ref @[571,574) target="b1"
+    text @[574,575) str=", "
+    ref @[576,579) target="a1"
+    text @[579,580) str=", "
+    ref @[581,587) target="code1"
+    text @[587,588) str=", "
+    ref @[589,593) target="emc"
+    text @[593,594) str=", "
+    ref @[595,598) target="c1"
+    text @[599,602) str=" and "
+    ref @[603,613) target="sec:intro"
+    text @[613,633) str=". With a supplement: "
+    ref @[634,644) target="emc"
+      text @[639,643) str="p. 5"
+    text @[644,645) str="."
+  heading @[647,661) level=1 label="sec:intro"
+    text @[649,661) str="Introduction"
+  para @[675,738)
+    text @[675,738) str="A paragraph ending in something label-like <looks-like-a-label>"
+  para @[740,784)
+    text @[740,756) str="Mixed arguments: "
+    error @[757,783) code="mixed-args" msg="named and positional arguments mixed: name every one, card(label: \"x\", name: 3)"
+    text @[783,784) str="."
+  error @[786,832) code="header-positional" msg="region arguments must be named (key: value): write #!aside(cols: cols)"

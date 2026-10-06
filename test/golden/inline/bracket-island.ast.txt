@@ -1,4 +1,4 @@
-doc @[0,583)
+doc @[0,594)
   para @[0,66)
     text @[0,35) str="Notes close at their own bracket: a"
     note @[35,44)
@@ -52,11 +52,13 @@ doc @[0,583)
     text @[489,495) str=" after."
   heading @[497,506) level=1 label="tgt"
     text @[499,506) str="Targets"
-  heading @[514,529) level=2 label="a]b"
-    text @[517,529) str="An odd label"
-  para @[537,582)
-    text @[537,548) str="References: "
-    ref @[549,557) target="tgt"
-    text @[558,561) str=" and "
-    ref @[562,569) target="a]b"
-    text @[570,582) str=" in brackets."
+  para @[514,546)
+    splice @[514,546) expr="heading(2, \"a]b\")"
+      arg @[533,545)
+        text @[533,545) str="An odd label"
+  para @[548,593)
+    text @[548,559) str="References: "
+    ref @[560,568) target="tgt"
+    text @[569,572) str=" and "
+    ref @[573,580) target="a]b"
+    text @[581,593) str=" in brackets."

@@ -63,7 +63,12 @@ const cap = (s) => s[0].toUpperCase() + s.slice(1);
 const structName = (id) => `${cap(id)}P`;
 
 // ---- character classes: "A-Za-z_$" → a byte predicate
+// "^…" is a negated class (plan P2-06: LabelChar): any byte that is not a
+// listed one, an ASCII control or DEL — bytes from 0x80 belong to it (the
+// lexer checks code points for Unicode whitespace)
 function classPred(name, spec) {
+  const negated = spec[0] === '^';
+  if (negated) spec = spec.slice(1);
   const parts = [];
   for (let i = 0; i < spec.length; i++) {
     if (spec[i + 1] === '-' && i + 2 < spec.length) {
@@ -73,6 +78,8 @@ function classPred(name, spec) {
       parts.push(`c == '${spec[i] === "'" ? "\\'" : spec[i] === '\\' ? '\\\\' : spec[i]}'`);
     }
   }
+  if (negated)
+    return `inline bool is${name}(char c) { return !((unsigned char)c < 0x20 || c == 0x7f || ${parts.join(' || ')}); }\n`;
   return `inline bool is${name}(char c) { return ${parts.join(' || ')}; }\n`;
 }
 
@@ -224,6 +231,7 @@ const KIND_NAMES = ['Doc', 'Text', 'Comment', 'Call', 'Splice', 'Stmt', 'Error']
 const jsonField = (name, type, v, optional) => {
   const key = `out += ${JSON.stringify(`,"${name}":`)};\n`;
   if (optional && type === 'str') return `  if (${v}) {\n  ${key}  jsonString(out, strs.get(${v}));\n  }\n`;
+  if (optional && type === 'bool') return `  if (${v}) {\n  ${key}  out += "true";\n  }\n`;
   if (type === 'str') return `  ${key}  jsonString(out, strs.get(${v}));\n`;
   if (type === 'src') return `  ${key}  jsonString(out, src.slice(${v}));\n`;
   if (type === 'bool') return `  ${key}  out += ${v} ? "true" : "false";\n`;

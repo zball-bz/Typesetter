@@ -1,0 +1,53 @@
+doc @[181,832) [base]
+  group @[181,244) [base] role="box" label="b1"
+    para @[181,244) [base]
+      text @[206,238) [base] str="A region labelled by its opener."
+  group @[246,330) [base] role="aside" label="a1"
+    para @[246,330) [base]
+      text @[272,322) [base] str="A label: argument and a suffix: the argument wins."
+  codeblock @[332,382) [base] lang="js" lineNo=1 label="code1"
+    text @[368,378) [base] str="let x = 1;"
+  para @[384,456) [base]
+    text @[384,401) [base] str="An inline formula " raw=0:0,18:17
+    mathinline @[402,416) [base] src="x^2"
+    text @[417,456) [base] str=" keeps no label; a display formula does:" raw=0:0,1:0
+  mathblock @[458,477) [base] src="E = m c^2" label="emc" name="(1)"
+  group @[479,557) [base] role="card" label="c1"
+    para @[479,557) [base]
+      text @[512,556) [base] str="A named argument list is one options object."
+  para @[559,645) [base]
+    text @[559,570) [base] str="References: " raw=0:0,12:11
+    ref @[571,574) [base] target="b1" url="#tsr-b1"
+      text @[571,574) [base] str="b1"
+    text @[574,575) [base] str=", " raw=0:0,2:1
+    ref @[576,579) [base] target="a1" url="#tsr-a1"
+      text @[576,579) [base] str="a1"
+    text @[579,580) [base] str=", " raw=0:0,2:1
+    ref @[581,587) [base] target="code1" url="#tsr-code1"
+      text @[581,587) [base] str="code1"
+    text @[587,588) [base] str=", " raw=0:0,2:1
+    ref @[589,593) [base] target="emc" url="#tsr-emc"
+      text @[589,593) [base] str="式 (1)"
+    text @[593,594) [base] str=", " raw=0:0,2:1
+    ref @[595,598) [base] target="c1" url="#tsr-c1"
+      text @[595,598) [base] str="c1"
+    text @[599,602) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[603,613) [base] target="sec:intro" url="#tsr-sec:intro"
+      text @[603,613) [base] str="§1"
+    text @[613,633) [base] str=". With a supplement: " raw=0:0,21:20
+    seq @[559,645) [base]
+      ref @[634,644) [base] target="emc" url="#tsr-emc"
+        text @[634,644) [base] str="式 (1)"
+      text @[559,645) [base] str="["
+      text @[639,643) [base] str="p. 5"
+      text @[559,645) [base] str="]"
+    text @[644,645) [base] str="."
+  heading @[647,661) [base] level=1 label="sec:intro"
+    text @[649,661) [base] str="Introduction"
+  para @[675,738) [base]
+    text @[675,738) [base] str="A paragraph ending in something label-like <looks-like-a-label>"
+  para @[740,784) [base]
+    text @[740,756) [base] str="Mixed arguments: " raw=0:0,17:16
+    error @[757,783) [base] message="named and positional arguments mixed: name every one, card(label: \"x\", name: 3)" code="mixed-args"
+    text @[783,784) [base] str="."
+  error @[786,832) [base] message="region arguments must be named (key: value): write #!aside(cols: cols)" code="header-positional"

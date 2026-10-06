@@ -2,6 +2,9 @@
 // Pure state machine — strings, templates (${} nesting), comments, brackets.
 // Regex literals are forbidden by the language spec, so '/' is an ordinary char.
 #pragma once
+#include <algorithm>
+#include <string>
+#include <vector>
 #include "../support/support.h"
 
 namespace tsr {
@@ -298,44 +301,106 @@ inline std::string_view jsReservedBinding(std::string_view s, bool isLet) {
   return found;
 }
 
-// A region header / fence info argument list must be named entries only:
-// `key: value`, "key": value, shorthand `key`, or ...spread (plan P0-05).
-// Returns false for positional entries such as `3` or `a b`.
-inline bool jsNamedArgList(std::string_view s) {
-  // split at top-level commas
+// The one argument-list grammar (plan P2-06; design T1 ArgList), for splice
+// calls, region headers and fence info alike: the depth-0 items of a list
+// (between its parentheses) and its form. An item is
+//   Named      PropertyName ':' expr (PropertyName: identifier, string,
+//              number or [computed])
+//   Spread     '...' expr
+//   Shorthand  a lone identifier
+//   Positional anything else
+// The list is Empty (no item but comments), Named (named, shorthand and
+// spread items with at least one named), Mixed (named next to positional),
+// else Positional. A named item is never a valid JS argument, so treating a
+// named list as one options object keeps every valid JS call's meaning.
+struct JsArgItem {
+  enum K : u8 { Positional, Named, Shorthand, Spread } k = Positional;
+  u32 start = 0, end = 0;  // the item, blanks and comments trimmed
+};
+struct JsArgList {
+  enum Form : u8 { Empty, Positional, Named, Mixed } form = Empty;
+  std::vector<JsArgItem> items;
+};
+inline JsArgList jsArgList(std::string_view s) {
+  JsArgList r;
   std::vector<std::pair<u32, u32>> parts;
   u32 start = 0;
   jsTokens(s, [&](char k, u32 a, u32, int depth) {
-    if (k == 'p' && depth == 0 && s[a] == ',') { parts.push_back({start, a}); start = a + 1; }
+    if (k == 'p' && depth == 0 && s[a] == ',') {
+      parts.push_back({start, a});
+      start = a + 1;
+    }
   });
   parts.push_back({start, (u32)s.size()});
+  // past blanks and comments
+  auto skip = [&](u32 p, u32 e) {
+    while (p < e) {
+      if (s[p] == ' ' || s[p] == '\t' || s[p] == '\n' || s[p] == '\r') p++;
+      else if (p + 1 < e && s[p] == '/' && s[p + 1] == '*') {
+        p += 2;
+        while (p + 1 < e && !(s[p] == '*' && s[p + 1] == '/')) p++;
+        p = std::min(e, p + 2);
+      } else if (p + 1 < e && s[p] == '/' && s[p + 1] == '/') {
+        while (p < e && s[p] != '\n') p++;
+      } else break;
+    }
+    return p;
+  };
+  bool named = false, positional = false;
   for (auto [a, b] : parts) {
-    std::string_view e = s.substr(a, b - a);
-    size_t x = 0, y = e.size();
-    while (x < y && (e[x] == ' ' || e[x] == '\t' || e[x] == '\n' || e[x] == '\r')) x++;
-    while (y > x && (e[y - 1] == ' ' || e[y - 1] == '\t' || e[y - 1] == '\n' || e[y - 1] == '\r')) y--;
-    e = e.substr(x, y - x);
-    if (e.empty()) continue;  // trailing comma / empty list
-    if (e.substr(0, 3) == "...") continue;
-    size_t p = 0;
-    if (e[0] == '"' || e[0] == '\'') {
-      char q = e[0];
-      p = 1;
-      while (p < e.size() && e[p] != q) p += e[p] == '\\' ? 2 : 1;
-      p++;
-    } else if (isIdentStart(e[0])) {
-      while (p < e.size() && isIdentCont(e[p])) p++;
+    u32 p = skip(a, b), e = b;
+    if (p >= e) continue;  // an empty item: a trailing comma, a comment
+    while (e > p && (s[e - 1] == ' ' || s[e - 1] == '\t' || s[e - 1] == '\n' || s[e - 1] == '\r')) e--;
+    JsArgItem it;
+    it.start = p;
+    it.end = e;
+    // the property name, if the item opens with one
+    u32 q = p;
+    if (s.substr(p, 3) == "...") {
+      it.k = JsArgItem::Spread;
     } else {
-      return false;
+      if (isIdentStart(s[q])) {
+        while (q < e && isIdentCont(s[q])) q++;
+      } else if (s[q] == '"' || s[q] == '\'') {
+        const char quote = s[q++];
+        while (q < e && s[q] != quote) q += s[q] == '\\' ? 2 : 1;
+        q = std::min(e, q + 1);
+      } else if (s[q] >= '0' && s[q] <= '9') {
+        while (q < e && (isIdentCont(s[q]) || s[q] == '.')) q++;
+      } else if (s[q] == '[') {
+        JsScan c = scanJs(s.substr(0, e), q, true);
+        q = c.ok ? c.end : q;
+      }
+      u32 c = q;
+      while (c < e && (s[c] == ' ' || s[c] == '\t')) c++;
+      if (q > p && c < e && s[c] == ':' && !(c + 1 < e && s[c + 1] == ':')) it.k = JsArgItem::Named;
+      else if (q == e && isIdentStart(s[p])) it.k = JsArgItem::Shorthand;
+      else it.k = JsArgItem::Positional;
     }
-    while (p < e.size() && (e[p] == ' ' || e[p] == '\t')) p++;
-    if (p == e.size()) {
-      if (e[0] == '"' || e[0] == '\'') return false;  // "x" alone is positional
-      continue;                                     // shorthand
-    }
-    if (e[p] != ':') return false;
+    named = named || it.k == JsArgItem::Named;
+    positional = positional || it.k == JsArgItem::Positional;
+    r.items.push_back(it);
   }
-  return true;
+  r.form = r.items.empty() ? JsArgList::Empty
+           : named && positional ? JsArgList::Mixed
+           : named ? JsArgList::Named
+                   : JsArgList::Positional;
+  return r;
+}
+
+// a header that is not a named list: the fix-it — every item named (a
+// shorthand x as x: x, a positional value under a name to choose)
+inline std::string jsNamedFixit(std::string_view s, const JsArgList& l) {
+  std::string out = "(";
+  for (size_t k = 0; k < l.items.size(); k++) {
+    const JsArgItem& it = l.items[k];
+    std::string_view t = s.substr(it.start, it.end - it.start);
+    if (k) out += ", ";
+    if (it.k == JsArgItem::Shorthand) out += std::string(t) + ": " + std::string(t);
+    else if (it.k == JsArgItem::Positional) out += "name: " + std::string(t);
+    else out += t;
+  }
+  return out + ")";
 }
 
 }  // namespace tsr

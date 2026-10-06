@@ -1,4 +1,5 @@
 #include "exports.h"
+#include "labels.h"
 
 #include <algorithm>
 
@@ -133,7 +134,7 @@ struct TokenWalk : Lines {
   void fence(const AstNode* n) {
     const FenceP& f = side<FenceP>(n);
     const Span sp = n->span;
-    tok(sp.start, endAt(sp.start), kKeyword);
+    opener(sp.start, kKeyword);
     // the closer: the last line of the span when it is a backtick run
     u32 bodyEnd = sp.end;
     u32 ls = startAt(sp.end);
@@ -165,9 +166,21 @@ struct TokenWalk : Lines {
     }
   }
 
+  // an opener line: its token, and its ` <id>` suffix as a label (plan P2-06)
+  void opener(u32 s, u8 tag) {
+    const u32 e = endAt(s);
+    const LabelSuffix ls = trailingLabel(all, s, e);
+    if (!ls.ok) {
+      tok(s, e, tag);
+      return;
+    }
+    tok(s, ls.textEnd, tag);
+    tok(ls.labelStart - 1, ls.labelEnd + 1, kLabel);
+  }
+
   void region(const AstNode* n, u32 qd) {
     const Span sp = n->span;
-    tok(sp.start, endAt(sp.start), kFunction);
+    opener(sp.start, kFunction);
     u32 ls = startAt(sp.end);
     if (ls > sp.start) {
       u32 p = ls;
@@ -273,7 +286,15 @@ struct TokenWalk : Lines {
       case SugarId::math: {
         const MathP& m = side<MathP>(n);
         if (!m.label) {
-          tok(sp.start, sp.end, kType);
+          // an inline formula's ` <id>` is still a label token (dropped with
+          // label-orphan, plan P2-06)
+          const LabelSuffix ls = all[sp.end - 1] == '>' ? trailingLabel(all, sp.start, sp.end) : LabelSuffix{};
+          if (!ls.ok) {
+            tok(sp.start, sp.end, kType);
+            return;
+          }
+          tok(sp.start, ls.textEnd, kType);
+          tok(ls.labelStart - 1, ls.labelEnd + 1, kLabel);
           return;
         }
         u32 ls = sp.end - (u32)strs.get(m.label).size() - 2;  // " <label>"
@@ -386,7 +407,9 @@ struct OutlineWalk : Lines {
         label(strs.get(h.label), "heading", p, p + (u32)strs.get(h.label).size() + 2);
       }
     } else if (n->isCall(SugarId::region)) {
+      // a label: argument wins over the opener's ` <id>` (plan P2-06)
       std::string lbl = argLabel(src.slice(side<RegionP>(n).args));
+      if (lbl.empty() && side<RegionP>(n).label) lbl = strs.get(side<RegionP>(n).label);
       sep(regions);
       regions += "{\"name\":";
       jsonString(regions, strs.get(n->str));
@@ -401,9 +424,14 @@ struct OutlineWalk : Lines {
       sep(fences);
       fences += "{\"lang\":";
       jsonString(fences, strs.get(side<FenceP>(n).lang));
+      if (side<FenceP>(n).label) {  // ` <id>` (plan P2-06)
+        fences += ",\"label\":";
+        jsonString(fences, strs.get(side<FenceP>(n).label));
+      }
       fences += ",";
       spanJson(fences, sp.start, sp.end);
       fences += "}";
+      if (side<FenceP>(n).label) label(strs.get(side<FenceP>(n).label), "fence", sp.start, endAt(sp.start));
     } else if (n->isCall(SugarId::math) && side<MathP>(n).label) {
       std::string_view id = strs.get(side<MathP>(n).label);
       label(id, "math", sp.end - (u32)id.size() - 2, sp.end);

@@ -296,7 +296,48 @@ islands, container-unaware fences) and agreement must stay ≥ 85% (88.9% at
 P1-09). Conformance (e): `fuzz_inline` runs the exports and checks token
 order.
 
-## 9. Next steps
+## 9. Arguments, labels and references (as built from plan P2-06)
+
+**One argument grammar** (`jslex.h` `jsArgList`) serves splice calls, region
+headers and fence info. The depth-0 items of a list are Named (`key: value`,
+the key an identifier, string, number or `[computed]`), Spread (`...x`),
+Shorthand (a lone identifier) or Positional; the list is Empty, Named (at
+least one named item, the rest named, shorthand or spread), Mixed or
+Positional. A named item is never a valid JS argument, so:
+
+- a splice whose final call has a named list passes it as one options
+  object — `#card(label: "c1", tone: "cool")[…]` is `card(({label: "c1",
+  tone: "cool"}), …content)`; a Mixed list is an error (`mixed-args`) with a
+  fix-it naming every item; anything else is verbatim JS;
+- a region header or fence info must be Named (or empty): anything else —
+  positional, mixed, shorthand-only, spread-only — is an error block
+  (`header-positional`) whose message is the fix-it (`write
+  #!table(name: 3)`, `(cols: cols)`).
+
+**Fence openers** read Markdown-style: ```` ```tag(args) free info <id> ````
+— the tag (to the first blank or `(`), the argument list, the info words
+(the handler's `ctx.info`) and an optional label.
+
+**One label grammar** (`syntax/labels.h`): a label is `<` LabelChar+ `>`,
+LabelChar being any character but whitespace (ASCII and Unicode) and
+`<>[]@,;\` — `<标签>` is a label, `<my eq>` and `<a]b>` are not (such names
+are set through `label:` and referenced as `@[a\]b]`). The ` <id>` suffix
+labels headings, region openers (`#!box(tone: "warm") <b1>`: the options'
+label — an explicit `label:` wins, `label-conflict`), fence openers (the
+code block's label) and display formulas; an inline formula's label has no
+anchor yet and is dropped (`label-orphan`). A paragraph whose last line ends
+in a literal ` <x>` gets the `label-like-text` lint (`\<` silences it), and
+text after a region opener that keeps it from being one gets
+`header-trailing`.
+
+**References**: a bare id is IdStart IdCont* (IdJoin IdCont+)* with IdJoin
+`-.:`, so `@sec:intro` names `sec:intro` and `@x.` leaves the period to the
+prose; `@[a, b]` is an id list. A `[…]` right after the id (`@fig[p. 5]`,
+`@[label][…]`) is the reference's supplement (D-L01): parsed into the ref's
+content now, read by the reference templates from P2-09 — until then it
+renders as before, the reference followed by the bracketed text.
+
+## 10. Next steps
 
 - P1-09: editor grammars from `syntax.gen.json`.
 - P2-11 / P2-13: region provenance and splice bodies delete the legacy

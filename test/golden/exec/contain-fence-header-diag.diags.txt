@@ -1,1 +1,1 @@
-error header-positional @[9,29) fence arguments must be named (key: value)
+error header-positional @[9,29) fence arguments must be named (key: value): write js(name: 3)
