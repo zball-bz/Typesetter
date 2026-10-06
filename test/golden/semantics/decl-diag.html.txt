@@ -1,14 +1,14 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
-<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="30" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A memo before its declaration:</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="52" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="52" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-m1" data-s="0" data-e="6" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Noted.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="344" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="2" data-s0="344" style="position:relative;height:72px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="98" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">A counter that does not exist: and a slot</span></div>
-<div class="tsr-line" data-s="68" data-e="114" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.057px"><span class="tsr-r" data-s="68">outside a template: </span><span class="tsr-r tsr-code" data-syn="error">⚠ slot belongs in a</span></div>
-<div class="tsr-line" data-s="99" data-e="115" style="top:48px;left:0px;width:300px"><span class="tsr-r tsr-code" data-syn="error">declaration&#39;s template</span><span class="tsr-r" data-s="114">.</span></div>
+<div class="tsr-line" data-s="68" data-e="114" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.057px"><span class="tsr-r" data-s="68">outside a template: </span><span class="tsr-r tsr-code tsr-err" title="slot belongs in a declaration&#39;s template" data-syn="error">⚠ slot belongs in a</span></div>
+<div class="tsr-line" data-s="99" data-e="115" style="top:48px;left:0px;width:300px"><span class="tsr-r tsr-code tsr-err" title="slot belongs in a declaration&#39;s template" data-syn="error">declaration&#39;s template</span><span class="tsr-r" data-s="114">.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="461" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="65" style="top:0px;left:0px;width:300px"><a class="tsr-r" href="#tsr-m1" data-s="0">Memo 1</a><span class="tsr-r" data-s="28"> and </span><a class="tsr-r" href="#tsr-m1" data-s="32">Memo </a><span class="tsr-r" data-s="64">.</span></div>

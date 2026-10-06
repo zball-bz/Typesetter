@@ -66,3 +66,27 @@ is gone; `pages/paged-eq-ids` guards it.
 
 The HTML is byte-identical to the pre-P1-18 serializer for every fixture
 except where anchors used to be dropped.
+
+## 4. Geometry authority (plan P3-16; design T7 S10, D-Y08)
+
+Layout's su is the one vertical authority:
+- A block's `margin-bottom` is the distance layout left to the next block,
+  `next.y − (y + h)` in su (19.203px for the 1229su paragraph gap, not the
+  unrounded 19.2px). A float's block, which takes no room, has 0, and a
+  block's `space.*` is honoured.
+- `.tsr-doc` carries `min-height` when the document extends past its last
+  block (a trailing float).
+
+Markers: a fragment's gutter marker says what it is (`markerRole`: a list
+marker or a line number) and where it stands. That is the transitional
+`Placement{edge=End}`: its end edge at the line's start, spelled with CSS
+`right:100%` as before and still unmeasured; P3-26 measures it. Layout
+computes how far line numbers stand left of the measure (`gutterSu`: their
+digits in code ch plus the 0.55em separator). A paged sheet then clips at
+the measure extended by that gutter (`clip-path: inset(0 0 0 −gutter)`);
+without line numbers left of the measure it stays `overflow: hidden`.
+
+Errors follow document-model §9.1 in the typeset page too. An error's text
+runs are `class="… tsr-err"` with the error message as `title`, and copy
+omits them (`data-syn="error"`). The default rule colours `.tsr-err`.
+

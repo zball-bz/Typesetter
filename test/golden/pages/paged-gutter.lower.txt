@@ -1,0 +1,7 @@
+lower v1 abi 3d3ccfbb docEnd 207 holes 1 module 90a6148094a470f0
+piece 0 hole 0 js [103,122)
+block 0 content [0,147)
+  CALL para [0,147)
+    TEXT "A listing with line numbers at the measure's left edge (plan P3-16): its sheet keeps the numbers, clipping at the measure extended by their gutter." [0,147)
+block 1 content [149,206) user framed async holes 0..1
+  FENCE async "js" args=hole 0 body="let a = 1;\nlet b = 2;\nlet c = a + b;" at=[166,202) lines=null [149,206)

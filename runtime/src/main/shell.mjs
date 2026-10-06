@@ -56,6 +56,8 @@ export const TSR_CSS = `
               user-select: none; -webkit-user-select: none; }
 .tsr-doc [data-syn="cont"] { user-select: none; -webkit-user-select: none; }
 .tsr-rule { position: absolute; height: 0; border-top: 1px solid currentColor; opacity: 0.35; }
+/* (plan P3-16, document-model §9.1) an error's text: themeable, its message in its title */
+.tsr-err { color: #b3261e; }
 /* (plan P3-14) a framed block's border and background, under its lines */
 .tsr-frame { position: absolute; box-sizing: border-box; border: 0 solid currentColor;
              pointer-events: none; user-select: none; -webkit-user-select: none; }

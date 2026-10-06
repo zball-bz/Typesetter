@@ -40,6 +40,7 @@ struct DLRun {
   u32 copyGroup = 0;
   u32 dataS = ~0u;       // its source start (absolute), ~0u = none
   const char* cls = nullptr;  // an extra class (a squeezed glyph's tsr-sqL / tsr-sqR)
+  StrRef error = 0;          // (plan P3-16) an error's run: tsr-err, its message as title
   const char* syn = nullptr;  // its data-syn (hyphen, indent, boundary, …)
   // the run's own spacing (copied from layout's line values)
   enum class Fit : u8 { None, LetterSpacing, Pinned } fit = Fit::None;
@@ -75,6 +76,7 @@ struct DLNode {
   double lineHeightPx = 0;      // a code row's line-height (centred baseline)
   StrRef marker = 0;            // the gutter (a list marker, a line number)
   StyleId markerStyle = 0;
+  Fragment::Marker markerRole = Fragment::Marker::List;  // (plan P3-16) its placement: end edge at the line's start
   // Math: the formula, its source, its number, where it sits in the row
   const MathBox* math = nullptr;
   StrRef mathSrc = 0, eqTag = 0;
@@ -101,6 +103,7 @@ struct DLRoot {
   std::string_view lang;
   std::string_view fontBody, fontCjk, fontMono, fontMonoCjk;
   double basePx = 0;
+  double minHeightPx = 0;  // (plan P3-16) > 0: the document's extent (a trailing float past its last block)
 };
 
 struct TopBlock;
@@ -110,7 +113,7 @@ class StyleTable;
 // Paint (design T7 paintBlock): block p of the layout into `out` (reused).
 void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& tops, const Interner& strs,
                 const PaintSettings& cfg, DLBlock& out);
-DLRoot paintRoot(const PaintSettings& cfg);
+DLRoot paintRoot(const PaintSettings& cfg, const LayoutResult* lr = nullptr);
 // tsrc --stage=dl (debug)
 std::string dumpDisplayList(const LayoutResult& lr, const std::vector<TopBlock>& tops, const StyleTable& styles,
                             const Interner& strs, const PaintSettings& cfg);

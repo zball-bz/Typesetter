@@ -39,6 +39,7 @@ void lineRuns(const Fragment& l, const HList& h, std::vector<DLRun>& out) {
     d.synName = r.synName;
     d.copyText = r.copyText;
     d.copyGroup = r.copyGroup;
+    d.error = r.error;
     if (c.srcEnd > c.srcStart) d.dataS = c.srcStart;
     return d;
   };
@@ -236,8 +237,14 @@ void codeRuns(const Fragment& l, const GridData& g, const Interner& strs, std::v
 
 }  // namespace
 
-DLRoot paintRoot(const PaintSettings& cfg) {
+DLRoot paintRoot(const PaintSettings& cfg, const LayoutResult* lr) {
   DLRoot r;
+  // (plan P3-16) the document's extent past its last block (a trailing
+  // float): its min-height
+  if (lr && !lr->paras.empty()) {
+    const ParaFrame& last = lr->paras.back();
+    if (lr->docHeightSu > (i64)last.y + last.h) r.minHeightPx = suToPx((Su)lr->docHeightSu);
+  }
   r.lang = cfg.lang;
   r.fontBody = familyFor(cfg, false, Script::Latin);
   r.fontCjk = familyFor(cfg, false, Script::Cjk);
@@ -254,7 +261,9 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
   const TopTree& tree = *tb.tree;
   out.pid = fr.pid;
   out.h = fr.h;
-  out.gapAfterPx = p + 1 < lr.paras.size() ? cfg.paraSpacingEm * cfg.baseSizePx : -1;
+  // (plan P3-16; D-Y08) the gap to the next block: layout's, in su — the one
+  // vertical authority (a float's block takes none)
+  out.gapAfterPx = p + 1 < lr.paras.size() ? suToPx((Su)((i64)lr.paras[p + 1].y - ((i64)fr.y + fr.h))) : -1;
   out.nodes.clear();
   out.runs.clear();
   // Source anchors are PARA-RELATIVE (base in data-s0 on the container): an
@@ -333,6 +342,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
           if (l.codeHl) n.heightPx = suToPx(l.height);
         }
         n.marker = l.marker;
+        n.markerRole = l.markerRole;
         n.markerStyle = l.markerStyle;
         codeRuns(l, g, strs, out.runs);
         break;
@@ -352,6 +362,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.overfull = l.overfull;
         n.wordSpacingPx = l.wordDeltaPx;
         n.marker = l.marker;
+        n.markerRole = l.markerRole;
         n.markerStyle = l.markerStyle;
         n.h = l.cellIdx >= 0 ? &u.cells[(size_t)l.cellIdx].hl : &u.hl;
         lineRuns(l, *n.h, out.runs);

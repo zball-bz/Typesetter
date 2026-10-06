@@ -1,39 +1,39 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
-<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="66" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.486px"><span class="tsr-r" data-s="0">Notes close at their own bracket: a</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px">1</a><span class="tsr-r" data-s="45"> and</span></div>
 <div class="tsr-line" data-s="45" data-e="66" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="45">the text goes on.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="68" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="68" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="51" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.433px"><span class="tsr-r" data-s="0">A link around math: </span><a class="tsr-r" href="u" data-s="21">range </a><a class="tsr-r" href="u"><span class="tsr-math" data-syn="math" data-src="$[0,1)$" data-s="27" data-e="34" style="width:32.969px;height:14.719px;vertical-align:-3.359px"><span class="tsr-mg" style="left:0px;top:-1.441px;font-size:16px;line-height:16px">[</span><span class="tsr-mg" style="left:4.641px;top:-1.441px;font-size:16px;line-height:16px">0</span><span class="tsr-mg" style="left:12.625px;top:-1.441px;font-size:16px;line-height:16px">,</span><span class="tsr-mg" style="left:19.734px;top:-1.441px;font-size:16px;line-height:16px">1</span><span class="tsr-mg" style="left:27.719px;top:-1.441px;font-size:16px;line-height:16px">)</span></span></a><span class="tsr-r" data-s="39"> is one</span></div>
 <div class="tsr-line" data-s="39" data-e="51" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="39">link.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="129" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="2" data-s0="129" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="55" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.95px"><span class="tsr-r tsr-b" data-s="0">code </span><span class="tsr-r tsr-b tsr-code" data-s="5" style="font-size:13.6px">a]b</span><span class="tsr-r tsr-b" data-s="11"> here</span><span class="tsr-r" data-s="17"> and the body ends after the</span></div>
 <div class="tsr-line" data-s="17" data-e="55" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="17">code span.</span></div>
 </div>
-<div class="tsr-para" data-pid="3" data-s0="186" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="3" data-s0="186" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="92" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r" data-s="0">Code spans by run length: </span><span class="tsr-r tsr-code" data-s="26" style="font-size:13.6px">a`b</span><span class="tsr-r" data-s="33">, </span><span class="tsr-r tsr-code" data-s="35" style="font-size:13.6px">`tick`</span><span class="tsr-r" data-s="48"> and </span><span class="tsr-r tsr-code" data-s="52" style="font-size:13.6px">x</span><span class="tsr-r" data-s="57">;</span></div>
 <div class="tsr-line" data-s="57" data-e="92" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="57">an unclosed `` run stays literal.</span></div>
 </div>
-<div class="tsr-para" data-pid="4" data-s0="280" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="4" data-s0="280" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="45" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">Pairs skip stray brackets: </span><span class="tsr-r tsr-b" data-s="28">range [0, 1)</span></div>
 <div class="tsr-line" data-s="28" data-e="65" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="28">only</span><span class="tsr-r" data-s="47"> and </span><span class="tsr-r tsr-i" data-s="52">see [sic</span><span class="tsr-r" data-s="62"> ok.</span></div>
 </div>
-<div class="tsr-para" data-pid="5" data-s0="347" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="5" data-s0="347" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="45" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.01px"><span class="tsr-r" data-s="0">Math decodes only the dollar escape: </span><span class="tsr-math" data-syn="math" data-src="$a \$ b$" data-s="37" data-e="45" style="width:28.062px;height:13.047px;vertical-align:-1.719px"><span class="tsr-mg" style="left:0px;top:-1.472px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:9.75px;top:-1.472px;font-size:16px;line-height:16px">$</span><span class="tsr-mg" style="left:18.656px;top:-1.472px;font-size:16px;line-height:16px">b</span></span></div>
 <div class="tsr-line" data-s="46" data-e="59" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="46">and </span><span class="tsr-math" data-syn="math" data-src="$x \, y$" data-s="50" data-e="58" style="width:33.031px;height:15px;vertical-align:-3.734px"><span class="tsr-mg" style="left:0px;top:-1.534px;font-size:16px;line-height:16px">x</span><span class="tsr-mg" style="left:8.422px;top:-1.534px;font-size:16px;line-height:16px">\</span><span class="tsr-mg" style="left:16.438px;top:-1.534px;font-size:16px;line-height:16px">,</span><span class="tsr-mg" style="left:23.547px;top:-1.534px;font-size:16px;line-height:16px">y</span></span><span class="tsr-r" data-s="58">.</span></div>
 </div>
-<div class="tsr-para" data-pid="6" data-s0="408" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="6" data-s0="408" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="36" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6.4px"><span class="tsr-r" data-s="0">Islands that would swallow a closer:</span></div>
 <div class="tsr-line" data-s="38" data-e="87" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="u" data-s="38">price $5</a><span class="tsr-r" data-s="51"> and </span><span class="tsr-r tsr-b" data-s="63">cost $3</span><span class="tsr-r" data-s="72"> then </span><span class="tsr-math" data-syn="math" data-src="$x$" data-s="77" data-e="80" style="width:8.422px;height:7.609px;vertical-align:-0.188px"><span class="tsr-mg" style="left:0px;top:-5.378px;font-size:16px;line-height:16px">x</span></span><span class="tsr-r" data-s="81"> after.</span></div>
 </div>
-<div class="tsr-para" data-pid="7" data-s0="499" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="7" data-s0="499" style="position:relative;height:25.609px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-tgt" data-s="0" data-e="7" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Targets</span></div>
 </div>
-<div class="tsr-para" data-pid="8" data-s0="533" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="8" data-s0="533" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-a]b" data-s="0" data-e="12" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">An odd label</span></div>
 </div>
-<div class="tsr-para" data-pid="9" data-s0="548" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="9" data-s0="548" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="45" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">References: </span><a class="tsr-r" href="#tsr-tgt" data-s="12">§1</a><span class="tsr-r" data-s="21"> and </span><a class="tsr-r" href="#tsr-a]b" data-s="25">§1.1</a><span class="tsr-r" data-s="33"> in brackets.</span></div>
 </div>
 <div class="tsr-para" data-pid="10" data-s0="35" style="position:relative;height:67.203px">

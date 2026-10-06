@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="147">A listing with line numbers at the measure&#39;s left edge (plan P3-16): its sheet keeps the numbers, clipping at the measure extended by their gutter.</p>
+<pre data-pid="1" data-s="149" data-e="206"><code class="language-js">let a = 1;
+let b = 2;
+let c = a + b;</code></pre>
+</div>

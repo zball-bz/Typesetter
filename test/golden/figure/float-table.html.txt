@@ -1,11 +1,11 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
-<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="150" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">Any block floats (plan P3-15): a figure</span></div>
 <div class="tsr-line" data-s="0" data-e="150" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">whose body is a table floats right at 45%</span></div>
 <div class="tsr-line" data-s="0" data-e="150" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">of the measure, its caption beneath it,</span></div>
 <div class="tsr-line" data-s="0" data-e="150" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">the text beside it narrowed.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="246" style="position:relative;height:0px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="246" style="position:relative;height:0px;margin-bottom:0px">
 <div class="tsr-rule" style="top:0px;left:165.016px;width:134.984px"></div>
 <div class="tsr-line" id="tsr-tbl-float" data-s="0" data-e="4" data-join="tab" data-ragged="1" data-track="cell" style="top:4.797px;left:171.422px;width:54.672px"><span class="tsr-r" data-s="0">Name</span></div>
 <div class="tsr-line" data-s="7" data-e="10" data-join="row" data-ragged="1" data-track="cell" style="top:4.797px;left:238.906px;width:54.672px"><span class="tsr-r" data-s="7">Qty</span></div>
@@ -19,7 +19,7 @@
 <div class="tsr-line" data-s="38" data-e="54" data-join="space" style="top:119.984px;left:165.016px;width:134.984px;word-spacing:11.492px"><span class="tsr-r tsr-b tsr-cjk" data-s="38">表</span><span class="tsr-r tsr-b" data-s="38"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="38">：</span><span class="tsr-r" data-s="38">A floated</span></div>
 <div class="tsr-line" data-s="38" data-e="54" style="top:143.984px;left:165.016px;width:134.984px"><span class="tsr-r" data-s="38">table.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="311" style="position:relative;height:264px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="2" data-s0="311" style="position:relative;height:264px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="259" data-join="none" style="top:0px;left:0px;width:149.016px;word-spacing:10.508px"><span class="tsr-r" data-s="0">The paragraph be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="0" data-e="259" data-join="none" style="top:24px;left:0px;width:149.016px;word-spacing:0.339px"><span class="tsr-r" data-s="0">side the floated ta</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="0" data-e="259" data-join="space" style="top:48px;left:0px;width:149.016px;word-spacing:14.508px"><span class="tsr-r" data-s="0">ble wraps around</span></div>

@@ -1,15 +1,15 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
-<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:72px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="94" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.5px"><span class="tsr-r" data-s="0">A left and a right float start at the</span></div>
 <div class="tsr-line" data-s="0" data-e="94" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="0">same place, and the text runs between them</span></div>
 <div class="tsr-line" data-s="0" data-e="94" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">(plan P3-08).</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="96" style="position:relative;height:0px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="96" style="position:relative;height:0px;margin-bottom:0px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-l" data-s="0" data-e="116" src="photos/l.png" alt="left" style="top:0px;left:0px;width:60px;height:60px">
 <div class="tsr-line" data-s="102" data-e="107" data-join="none" data-track="caption" style="top:60px;left:0px;width:60px;word-spacing:24px"><span class="tsr-r tsr-b tsr-cjk" data-s="102">图</span><span class="tsr-r tsr-b" data-s="102"> 1</span><span class="tsr-r tsr-b tsr-cjk tsr-sqR" data-s="102">：</span></div>
 <div class="tsr-line" data-s="102" data-e="107" data-track="caption" style="top:84px;left:0px;width:60px"><span class="tsr-r" data-s="102">Left.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="214" style="position:relative;height:0px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="2" data-s0="214" style="position:relative;height:0px;margin-bottom:0px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-r" data-s="0" data-e="119" src="photos/r.png" alt="right" style="top:0px;left:240px;width:60px;height:90px">
 <div class="tsr-line" data-s="104" data-e="110" data-join="none" data-track="caption" style="top:90px;left:240px;width:60px;word-spacing:24px"><span class="tsr-r tsr-b tsr-cjk" data-s="104">图</span><span class="tsr-r tsr-b" data-s="104"> 2</span><span class="tsr-r tsr-b tsr-cjk tsr-sqR" data-s="104">：</span></div>
 <div class="tsr-line" data-s="104" data-e="110" data-track="caption" style="top:114px;left:240px;width:60px"><span class="tsr-r" data-s="104">Right.</span></div>

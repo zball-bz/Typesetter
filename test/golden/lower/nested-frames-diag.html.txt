@@ -1,16 +1,16 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
-<div class="tsr-para" data-pid="0" data-s0="49" style="position:relative;height:84.781px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="49" style="position:relative;height:84.781px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="16" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">first item stays</span></div>
-<div class="tsr-line" data-s="19" data-e="45" data-join="para" data-ragged="1" style="top:30.391px;left:24px;width:276px"><span class="tsr-r tsr-code" data-syn="error">⚠ Error: deep</span></div>
+<div class="tsr-line" data-s="19" data-e="45" data-join="para" data-ragged="1" style="top:30.391px;left:24px;width:276px"><span class="tsr-r tsr-code tsr-err" title="Error: deep" data-syn="error">⚠ Error: deep</span></div>
 <div class="tsr-line" data-s="48" data-e="64" style="top:60.781px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="48">third item stays</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="117" style="position:relative;height:67.203px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="117" style="position:relative;height:67.203px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="17" data-join="para" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">quoted line stays</span></div>
-<div class="tsr-line" data-s="22" data-e="48" data-ragged="1" style="top:43.203px;left:16px;width:284px"><span class="tsr-r tsr-code" data-syn="error">⚠ Error: deep</span></div>
+<div class="tsr-line" data-s="22" data-e="48" data-ragged="1" style="top:43.203px;left:16px;width:284px"><span class="tsr-r tsr-code tsr-err" title="Error: deep" data-syn="error">⚠ Error: deep</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="175" style="position:relative;height:67.203px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="2" data-s0="175" style="position:relative;height:67.203px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="19" data-join="para" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">interior para stays</span></div>
-<div class="tsr-line" data-s="21" data-e="49" data-ragged="1" style="top:43.203px;left:0px;width:300px"><span class="tsr-r tsr-code" data-syn="error">⚠ Error: deep</span></div>
+<div class="tsr-line" data-s="21" data-e="49" data-ragged="1" style="top:43.203px;left:0px;width:300px"><span class="tsr-r tsr-code tsr-err" title="Error: deep" data-syn="error">⚠ Error: deep</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="234" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="6" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">After.</span></div>

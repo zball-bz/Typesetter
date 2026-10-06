@@ -1202,7 +1202,7 @@ Theme steps: — · findings: 1
 | `render-runtime/css-contract-monolith` | adhoc | medium | P3-18 | |
 | `render-runtime/no-class-channel` | adhoc | high | P3-18 | |
 | `render-runtime/token-theme-sniffing` | adhoc | medium | P3-18 | |
-| `render-runtime/marker-gutter` | adhoc | low | P1-18, P3-16 | |
+| `render-runtime/marker-gutter` | adhoc | low | P1-18, P3-16 | grep:plan P3-16 |
 | `render-runtime/config-plumbing` | adhoc | medium | P1-03 | grep:plan P1-03 |
 | `render-runtime/static-export-template` | adhoc | medium | P3-21, P3-36 | |
 | `render-runtime/anchor-decode-duplication` | adhoc | medium | P3-05 || grep:plan P3-07 |
@@ -1216,10 +1216,10 @@ Theme steps: — · findings: 1
 | `render-runtime/sidecar-dropped-in-semantic` | issue | medium | P3-23 | |
 | `render-runtime/popup-breaks-patch` | issue | low | P3-06 || grep:plan P3-06 |
 | `render-runtime/host-line-height-leak` | issue | medium | P3-19 | |
-| `render-runtime/paged-gutter-clipping` | issue | medium | P3-16 | |
-| `render-runtime/trailing-float-and-gap-drift` | issue | low | P3-16 | |
+| `render-runtime/paged-gutter-clipping` | issue | medium | P3-16 | grep:plan P3-16 |
+| `render-runtime/trailing-float-and-gap-drift` | issue | low | P3-16 | grep:plan P3-16 |
 | `render-runtime/typeset-a11y` | issue | medium | P3-27 | |
-| `render-runtime/error-render-divergence` | issue | low | P3-16 | |
+| `render-runtime/error-render-divergence` | issue | low | P3-16 | grep:plan P3-16 |
 | `render-runtime/hyphen-in-link-or-ref` | issue | low | P0-10 | grep:plan P0-10 |
 | `render-runtime/normative-doc-drift` | issue | low | P3-07 || grep:plan P3-07 |
 | `render-runtime/swap-whole-container` | issue | low | P3-05 | grep:plan P3-05 |

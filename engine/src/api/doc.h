@@ -745,7 +745,7 @@ struct Doc {
     // paint (plan P1-18): each block's DisplayList, written by the
     // stateless typeset backend
     std::string html;
-    writeRoot(html, "tsr-doc", paintRoot(cfg));
+    writeRoot(html, "tsr-doc", paintRoot(cfg, &layout));
     DLBlock b;
     for (size_t p = 0; p < layout.paras.size(); p++) {
       paintBlock(layout, p, tops, strs, cfg, b);
@@ -777,7 +777,7 @@ struct Doc {
     AnchorScope ids(cfg.idPrefix);
     std::unordered_set<Key128, Key128Hash> have(held, held + nHeld);
     std::string root;
-    writeRoot(root, "tsr-doc", paintRoot(cfg));
+    writeRoot(root, "tsr-doc", paintRoot(cfg, &layout));
     while (!root.empty() && root.back() == '\n') root.pop_back();
     std::string table, html, anchors, gaps;
     u32 html16 = 0;  // the HTML so far, in UTF-16 units
@@ -909,8 +909,17 @@ struct Doc {
         bool wide = false;
         for (const PageBand& band : pg.bands) wide = wide || lay.paras[band.para].overflowR > lay.paras[band.para].w;
         t.decl("position", "relative")
-            .decl("overflow", pg.overflow > 0 || wide ? "visible" : "hidden")
+            .decl("overflow", pg.overflow > 0 || wide || lay.gutterSu > 0 ? "visible" : "hidden")
             .px("height", suToPx(pr.height));
+        // (plan P3-16) line numbers left of the measure: the sheet clips at
+        // the measure extended by their gutter
+        if (lay.gutterSu > 0 && pg.overflow <= 0 && !wide) {
+          char buf[48];
+          std::string clip = "inset(0px 0px 0px -";
+          clip.append(buf, fmtPxBuf(buf, suToPx(lay.gutterSu)));
+          clip += ")";
+          t.decl("clip-path", clip);
+        }
         t.open();
         html += "\n";
       }

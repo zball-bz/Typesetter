@@ -138,6 +138,7 @@ struct HlInline final : InlineSink {
     r.copyText = ctx.copyText;
     r.copyGroup = ctx.copyGroup;
     r.rc = rc;
+    r.error = ctx.error;
     return r;
   }
   static u8 firstCc(std::string_view s) {
@@ -207,7 +208,7 @@ struct HlInline final : InlineSink {
   }
   static bool sameRunKey(const RunRec& a, const RunRec& b) {
     return a.face == b.face && a.link == b.link && a.syn == b.syn && a.copy == b.copy && a.synName == b.synName &&
-           a.copyText == b.copyText && a.copyGroup == b.copyGroup && a.rc == b.rc;
+           a.copyText == b.copyText && a.copyGroup == b.copyGroup && a.rc == b.rc && a.error == b.error;
   }
   const RunRec& runOf(size_t i) const { return B.runs[B.items[i].run]; }
   // a synthetic or object item: its width is defined at emit
@@ -463,11 +464,15 @@ struct HlInline final : InlineSink {
   }
 
   void errorText(const ContentNode* n, Flow& u, ICtx ctx) {
-    // an error node stays breakable CODE-style text (design T5 A22)
+    // an error node stays breakable CODE-style text (design T5 A22): tsr-err
+    // runs titled with its message (plan P3-16, document-model §9.1)
     omitAsError(ctx);
     std::string msg = "\xE2\x9A\xA0 ";  // ⚠
     for (const ArgVal& a : n->args)
-      if (a.key == ArgK::message && a.tag == ArgTag::Str) msg += strs.get(a.ref);
+      if (a.key == ArgK::message && a.tag == ArgTag::Str) {
+        msg += strs.get(a.ref);
+        ctx.error = a.ref;
+      }
     ContentNode tmp;
     tmp.kind = Kind::text;
     tmp.span = n->span;
@@ -564,8 +569,9 @@ struct HlInline final : InlineSink {
         // measured in the CODE face, unbreakable
         StyleId st = E.compose(n->style, ctx.add + E.mono, ctx.mul);
         omitAsError(ctx);
-        u32 obj = addObject(u, ObjKind::Error, n, st);
         const StrRef text = strs.intern(std::string("\xE2\x9A\xA0 ") + kKinds[(u16)n->kind].name);  // ⚠
+        ctx.error = strs.intern(std::string(kKinds[(u16)n->kind].name) + " cannot appear inline");
+        u32 obj = addObject(u, ObjKind::Error, n, st);
         B.objs[obj].src = text;
         ObjPart pt;
         pt.obj = obj;

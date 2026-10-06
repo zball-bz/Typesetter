@@ -1,16 +1,16 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
-<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-h-1" data-s="0" data-e="25" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">A note in a styled region</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="29" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="29" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="59" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6.88px"><span class="tsr-r" data-s="0">Outside, a marker</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px">1</a><span class="tsr-r" data-s="35"> takes the default</span></div>
 <div class="tsr-line" data-s="35" data-e="59" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="35">rules.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="216" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="2" data-s0="216" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="56" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6px"><span class="tsr-r" data-s="0" style="color:#555555">Inside the grey region a scoped rule</span></div>
 <div class="tsr-line" data-s="0" data-e="112" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0" style="color:#555555">colours its markers</span><a class="tsr-r tsr-sup" href="#tsr-fn-2" id="tsr-fnref-2" data-syn="fn-marker" style="font-size:11.2px;color:#a8432a">2</a><span class="tsr-r" data-s="108" style="color:#555555"> red.</span></div>
 </div>
-<div class="tsr-para" data-pid="3" data-s0="338" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="3" data-s0="338" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="58" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6.4px"><span class="tsr-r" data-s="0">After the region, a marker</span><a class="tsr-r tsr-sup" href="#tsr-fn-3" id="tsr-fnref-3" data-syn="fn-marker" style="font-size:11.2px">3</a><span class="tsr-r" data-s="43"> is plain</span></div>
 <div class="tsr-line" data-s="43" data-e="58" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="43">again.</span></div>
 </div>

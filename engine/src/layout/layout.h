@@ -78,6 +78,10 @@ struct Fragment {
   bool codeHl = false;               // hl-range line (background)
   StrRef marker = 0;                 // a list marker / line number in the gutter
   StyleId markerStyle = 0;
+  // (plan P3-16; design T7 Placement) what the marker is, and where it
+  // stands: a transitional encoding — its end edge at the line's start (CSS
+  // right:100%, unmeasured; P3-26 measures it)
+  enum class Marker : u8 { List, LineNumber } markerRole = Marker::List;
   StrRef anchor = 0;                 // the id it carries: exactly one fragment per
                                      //   anchored block (stateless, plan P1-18)
   StrRef anchor2 = 0;                // an enclosing block's label sharing it
@@ -111,6 +115,7 @@ struct UnitBreaks {
 
 struct LayoutResult {
   i64 docHeightSu = 0;
+  Su gutterSu = 0;  // (plan P3-16) how far the line numbers stand left of the measure (paged sheets show it)
   std::vector<ParaFrame> paras;
   std::vector<UnitBreaks> breaks;  // every stream, in order
 };

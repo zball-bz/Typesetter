@@ -128,6 +128,7 @@ struct RunRec {
   u32 copyGroup = 0;    // Replace: the node it replaces (taken once), per unit
   RealizeClass rc = RealizeClass::Plain;
   StrRef anchor = 0;    // the anchor of the run's first item
+  StrRef error = 0;     // (plan P3-16, document-model §9.1) an error's text: its message (tsr-err, title)
 };
 
 // Inline objects (plan P1-13; shape/objects.h is the registry): every atomic

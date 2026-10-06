@@ -1,11 +1,11 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
-<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="154" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="0">Subfigures side by side (plan P3-15):</span></div>
 <div class="tsr-line" data-s="0" data-e="154" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-0.5px"><span class="tsr-r" data-s="0">each an inline block at 45% of the figure,</span></div>
 <div class="tsr-line" data-s="0" data-e="154" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">laid out on its own; they wrap like words</span></div>
 <div class="tsr-line" data-s="0" data-e="154" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">when the measure is too narrow.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="184" style="position:relative;height:218.406px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="184" style="position:relative;height:218.406px;margin-bottom:19.203px">
 <span id="tsr-fig-pair" data-syn="anchor"></span><img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" data-s="0" data-e="126" src="a.png" alt="" style="top:0px;left:24.5px;width:100px;height:50px">
 <div class="tsr-line" data-s="103" data-e="117" data-join="space" style="top:69.203px;left:7.016px;width:134.984px;word-spacing:19.492px"><span class="tsr-r tsr-b" data-s="103">1(a) </span><span class="tsr-r" data-s="103">The left</span></div>
 <div class="tsr-line" data-s="103" data-e="117" data-join="para" style="top:93.203px;left:7.016px;width:134.984px"><span class="tsr-r" data-s="103">view.</span></div>

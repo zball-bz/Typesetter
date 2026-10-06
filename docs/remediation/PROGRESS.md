@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-16
+- 下一步：P3-17
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -82,7 +82,7 @@
 | P3-13 | 新集合、flow 与计数器 | done | grep:plan P3-13 | 2026-10-06 | 只新增用例，既有 golden 字节不变：semantics/hott-book（部/章/节按层级类、罗马数字加法计数系统、章跨部连续、附录、方程按章）、semantics/gap-zero 与 gap-one（[1,3]、[1,2,2,1,2]、[1,3,2]）、semantics/lists（lof/lot/用户定理列表与静态 head）、semantics/index（多行表按 key 分组、sortKey 排序、出现处锚点）、notes/named（三标记具名脚注 ↩ a b c）、notes/per-chapter（按章重置圈码、节末放置、序号锚点唯一）、notes/chapter-endnotes（用户 endnote flow、section 作用域 collector、like）、notes/styled-region（样式区域内脚注与作用域标记规则）、cite/refsection（refsection 内引文重新编号、各自文献表、作用域锚点）、pages/paged-inserts（deferred 脚注成为分页插入物，分隔线每页重复）；单测 unitRegistry（placement 校验、class like 打补丁 flow、collector like/scope、保留形状）、unitPaginate（分隔线代替脚注间距、每页重复） | collector 查询：classes 列表（lof/lot/用户列表）、head、group:key + order:sort-key（索引）、scope:section + depth、like；each{of:'occurrences'} 提供 anchor/ordinal/letter。索引条目是多行表 index 的行，出现处留空锚点（emit 零宽锚盒；legacy 预言机同步）。flow.placement：collector-only/end/section-end(depth)/deferred；每项只放一次（首个覆盖它的 collector 或放置）；deferred 在屏幕上同 end，条目带 insertAt（标记源位置，ContentNode→LayoutBlock→Fragment.paged=kPagedInsert），wrap 其余部分（分隔线）为 kPagedInsert|kPagedHeader，paginate 把条目放到标记所在页底、分隔线代替 footnoteSkip 并每页重复；layout dump 标注 insert@n/insert-sep。具名脚注：带 label 的 note 有名，ref(label,{form:'marker'}) 是其另一个标记（BIND 绑定，锚点 fnref-n.2…），条目回链全部标记。计数器：within.prefix:false（只重置不加前缀）、别名 body:ordinal（footnote 改用，fn-n 在重置时仍唯一）、键控计数器按 scope 类实例分段（内建 cite 作用域 refsection；行锚点 bib-<序>-key，每个作用域首次渲染拥有锚点）、按层级的大纲类取节点 level（TOC 嵌套）、加法计数系统。声明：类的 flow 补丁按字段合并；alias 补丁不给 ref 时保留原引用形式；stdlib $.collector 支持 like/scope/depth，$.counter 支持 scope。文档：semantics-design §9、notes-design、pages-design §5、tsm-changes |
 | P3-14 | 作者面特征（traits）与表格扩展 | done | grep:plan P3-14 | 2026-10-06 | 既有 golden 字节不变；新用例：style/theorem（框、keep together、space，含分页）、style/refs-hang（悬挂缩进参考文献）、pages/paged-lemma-keep、pages/paged-pagebreak（#pagebreak、break.before、media）、figure/beside-shrink、line/breaker-traits、region/table-booktabs（auto/fr/fixed 轨道、booktabs、表头、跨列/跨行、valign、格 align）、region/table-overflow-diag（D-Y09）、region/table-extra-cells-diag、region/table-raw-min-diag、pages/paged-table-header（续页重复表头）；单测不变 | T4 属性行（块粒度）：keep、space.before/after、break.before/after、par.hang/hangAfter、box.padding/border/borderColor/background、media、beside、breaker.tolerance/emergencyStretch、place.float（与既有 par.align/hyphenate、block.gap 同组）。box tree 读成 BlockTraits/BoxModel（xr、内容盒内缩）；layout 的 block() 统一包裹：媒体过滤、Forced 分页（#pagebreak 为空组，其 break 落到下一块）、Frame 片段（kPagedFrame，分页时各页裁切绘制，盒的 extTop/extBot 带上框的内边距）、shrink 收窄、keep together/with-next；栈间距 = max(gap, after*, before*)（未加框容器向首/末子塌缩）；段落 hang 改 ParShape、breaker 进 BreakParams；分页仅在有 media 块时另做一次 paged 布局。声明式别名：schema 属性 aliasOf（image side → placeFloat），由 propAlias 生成。表格：tracks（fr/固定/百分比/auto/min/max）、rules 预设 grid/booktabs/none、header 行（kPagedHeader，续页重复并保留原间距，与首行 keep）、HTML 表格模型的格放置（colspan/rowspan，空位补空格，行超列时加宽并由执行器报告 table-cells）、按内容的轨道求解（min/max-content 取自格内叶子）、valign、超宽 table-overflow（屏幕横向滚动、分页可见溢出，audit 放过滚动容器）；语义页 th/colspan/rowspan/vertical-align。raw 的 minWidth（内容适配列的下限）与 measure（host 时 info，P3-28 实现）。made 节点在其所在位置的规则环境里结算块属性（settleMade 修正）。lint：枚举属性按 schema 位次读（model.h attrEnum），轨道串由 model.h parseTracks 解析。文档：style-design §4、layout-design §4–5、tsm-changes |
 | P3-15 | 通用放置与独立布局（InlineBlock/子图） | done | grep:plan P3-15 | 2026-10-06 | 既有 golden 字节不变；新用例：figure/float-table（表格 figure 右浮 45%）、figure/float-pair（左右异侧浮动：FitBody 的 aside 与 9em 的代码块）、figure/subfigures（子图并排的 InlineBlock）、pages/paged-page-floats（top/bottom/page 页浮动）；单测 unitPaginate：浮动顺延时版面合拢、底部浮动与浮动页 | layoutDetached（一个块作为独立 flow root 在给定宽度下布局，取出其片段）供侧浮与行内块使用；任意块（非图片浮动）的 place.float left/right：按 place.width（长度/百分比；缺省 FitBody＝非题注内容的 max-content，不超过可用宽度）独立布局，按图片浮动同一规则（ExclusionMap::place）放置，排除带自身间距 place.gap；place.float top/bottom/page：屏幕上原位，分页时为可移动盒（kPagedMovable + kPagedBottom/kPagedPage）；分页：可移动盒在版面中留下的空洞被合拢，底部浮动置于页脚注之上，浮动页紧随其所在页；原子（浮动、可移动盒）的框随之移动；place.float inline：栈中连续的行内块各自独立布局并排、放不下换行、行居中（或按容器 par.align）、顶对齐；表格的固有宽度按列相加（tableIntrinsic）。语义页 CSS：inline-block、width。文档：figure-design §8、layout-design §4、pages-design §5、style-design、tsm-changes |
-| P3-16 | 几何权威 | todo | | | | |
+| P3-16 | 几何权威 | done | grep:plan P3-16 | 2026-10-06 | 161 个 html golden 变化，脚本核对：除 margin-bottom 19.2px→19.203px、.tsr-doc 的 min-height、错误 run 的 tsr-err 与 title 外，其余 11 个逐一检查均为预期（浮动块的间距 0、theorem 的 1.5em 空间 24px、18px 基准的 21.594px、media 块后 0）；paged golden 不变；新用例 pages/paged-gutter（行号在版心左侧时纸张按 gutter 扩展裁切） | 段间 margin-bottom 取 layout 的 su（下一块 y 减本块底），浮动块为 0，space.* 生效；文档超出末块时 .tsr-doc 写 min-height；片段与 DL 节点带标记角色（列表标记/行号）与过渡放置（end 边在行首，拼写不变）；layout 计算行号在版心左侧的 gutter（位数×代码 ch＋0.55em 间隔），分页纸张按其扩展 clip-path 裁切（无此情况时 overflow:hidden 不变）；错误 run 带 class tsr-err 与 title（错误信息），复制省略；默认 .tsr-err 着色。文档：render-design §4、tsm-changes |
 | P3-17 | 块入行内的拆分策略 | todo | | | | |
 | P3-18 | 类名渲染与主题拆分 | todo | | | | |
 | P3-19 | 基线权威 | todo | | | | |
@@ -159,6 +159,7 @@
 | P3-13 后 | 3.60 | 10.70 | 26.10 | 1.7 / 3.3 / 0.7 / 9.9 / 2.9 | 65.1 / 100.9 / 148.7 | 1.60 / 21.60 / 55.60 | 均在 P3 门限内 |
 | P3-14 后 | 3.40 | 10.70 | 25.70 | 1.8 / 3.2 / 0.7 / 9.7 / 2.8 | 65.0 / 101.6 / 141.7 | 1.60 / 21.70 / 56.00 | 均在 P3 门限内 |
 | P3-15 后 | 3.70 | 10.50 | 26.20 | 1.8 / 3.2 / 0.8 / 9.9 / 2.9 | 66.3 / 103.4 / 146.0 | 1.60 / 21.60 / 58.60 | 均在 P3 门限内 |
+| P3-16 后 | 3.60 | 10.30 | 25.60 | 1.8 / 3.1 / 0.8 / 9.9 / 2.9 | 64.6 / 106.5 / 144.0 | 1.50 / 21.30 / 58.00 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -344,6 +345,8 @@
 | P3-15 | 图片浮动（图片＋题注行的浮动叶子）保留原有专门路径，未改走 layoutDetached；表格单元格仍按原地切换上下文布局（同为 flow root） | 两者的几何与 golden 字节不变；FitBody 对图片浮动即图片宽度，结果相同 | 无 |
 | P3-15 | InlineBlock 实现为栈中连续行内块组成的盒行（并排、换行），而非段落 HList 内的对象（不与文字同行混排） | 子图与并排块是实际用例；与文字同行混排需要 T5 的 InlineObject 成员与绘制嵌套，留待需要时 | 无 |
 | P3-15 | 子图并排需显式 place.float inline（内建的嵌套 figure 仍竖排） | 改默认会改变 figure/kinds 等既有 golden；本步只新增用例 | 无 |
+| P3-16 | html golden 变化 161 个（设计时估计 33 个）；纸张的 gutter 裁切只在行号伸出版心左侧时写出，paged-doc 等不变（设计预计 paged-doc 变化） | 设计之后新增了大量用例；无伸出时裁切边界就是版心，写出 clip-path 无意义 | 无 |
+| P3-16 | 列表标记仍不测量（D-Y10），不计入 gutter；只有行号按 ch 计入 | 列表标记在列表缩进内；精确位置属 P3-26 | P3-26 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

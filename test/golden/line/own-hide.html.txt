@@ -1,25 +1,25 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
-<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="113" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">A comment opened mid-line and the para</span><span class="tsr-r" data-s="87" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="87" data-e="113" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="87">graph goes on.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="115" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="115" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="32" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A code span </span><span class="tsr-r tsr-code" data-s="12" style="font-size:13.6px">%--</span><span class="tsr-r" data-s="18"> hides nothing:</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="150" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="2" data-s0="150" style="position:relative;height:25.609px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-h-1" data-s="0" data-e="21" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">This heading survives</span></div>
 </div>
-<div class="tsr-para" data-pid="3" data-s0="173" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="3" data-s0="173" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="25" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">请注意</span><span class="tsr-r" data-s="9">*</span><span class="tsr-r tsr-cjk" data-s="10">以下事项</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="10">：</span></div>
 </div>
-<div class="tsr-para" data-pid="4" data-s0="201" style="position:relative;height:54.391px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="4" data-s0="201" style="position:relative;height:54.391px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="16" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r tsr-cjk" data-s="0">第一项</span><span class="tsr-r tsr-b tsr-cjk" data-s="10">重要</span></div>
 <div class="tsr-line" data-s="20" data-e="29" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r tsr-cjk" data-s="20">第二项</span></div>
 </div>
-<div class="tsr-para" data-pid="5" data-s0="232" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="5" data-s0="232" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="35" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A stray $ sign at the end of a line</span></div>
 </div>
-<div class="tsr-para" data-pid="6" data-s0="270" style="position:relative;height:51.219px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="6" data-s0="270" style="position:relative;height:51.219px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-h-2" data-s="0" data-e="29" data-join="space" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">The heading after it</span></div>
 <div class="tsr-line" data-s="0" data-e="29" data-ragged="1" style="top:25.609px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">survives</span></div>
 </div>

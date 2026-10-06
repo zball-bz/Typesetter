@@ -1,0 +1,7 @@
+A listing with line numbers at the measure's left edge (plan P3-16): its sheet keeps the numbers, clipping at the measure extended by their gutter.
+
+```js(lineNo: 1)
+let a = 1;
+let b = 2;
+let c = a + b;
+```

@@ -59,6 +59,7 @@ struct ICtx {
   StrRef syn = 0;
   StrRef copyText = 0;
   u32 copyGroup = 0;
+  StrRef error = 0;  // (plan P3-16) inside an error node: its message
 };
 
 struct InlineSink {

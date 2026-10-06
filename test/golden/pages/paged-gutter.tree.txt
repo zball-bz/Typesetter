@@ -1,0 +1,5 @@
+doc @[0,206) [base]
+  para @[0,147) [base]
+    text @[0,147) [base] str="A listing with line numbers at the measure's left edge (plan P3-16): its sheet keeps the numbers, clipping at the measure extended by their gutter."
+  codeblock @[149,206) [CODEx0.85] lang="js" lineNo=1
+    text @[166,202) [CODEx0.85] str="let a = 1;\nlet b = 2;\nlet c = a + b;"

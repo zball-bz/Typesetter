@@ -340,6 +340,9 @@ class ExclusionMap {
   std::vector<Box> v_;
 };
 
+// the gutter's separator, in the marker's em (the CSS .tsr-marker padding)
+constexpr double kMarkerSepEm = 0.55;
+
 // the tallest line a stream can make: the conservative band's maxAdv
 Su streamAdvance(const HList& h, const MetricStore& metrics, Su baseLeading) {
   Su asc = 0, desc = 0;
@@ -1142,8 +1145,17 @@ class DocLayout {
         line.width = lineWidthCode;
         line.y = (Su)py;
         if (ri == 0 && g.lineNo > 0) {
-          line.marker = strs.intern(std::to_string(g.lineNo + (i32)at));
+          const std::string num = std::to_string(g.lineNo + (i32)at);
+          line.marker = strs.intern(num);
           line.markerStyle = g.codeStyle;
+          line.markerRole = Fragment::Marker::LineNumber;
+          // (plan P3-16) its extent left of the line: its digits and the
+          // gutter's separator (0.55 code em, the marker's CSS padding)
+          if (chSu > 0) {
+            const Su codeEm = suRoundPx(cfg.baseSizePx * cfg.codeScale);
+            const Su need = (Su)num.size() * chSu + (Su)(codeEm * kMarkerSepEm) - line.left;
+            if (need > lr.gutterSu) lr.gutterSu = need;
+          }
         } else if (first && b.marker) {
           line.marker = b.marker;
           line.markerStyle = b.markerStyle;

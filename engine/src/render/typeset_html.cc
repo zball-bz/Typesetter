@@ -351,8 +351,9 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
     const bool isLink = (bool)d.link;
     {
       Tag t(out, isLink ? "a" : "span");
-      t.attrSafe("class", RunClasses(sty, strs, nullptr, d.cls).sv());
+      t.attrSafe("class", RunClasses(sty, strs, nullptr, d.error ? "tsr-err" : d.cls).sv());
       if (isLink) t.attr("href", hrefOf(d.link, strs));
+      if (d.error) t.attr("title", strs.get(d.error));  // (plan P3-16, document-model §9.1)
       if (d.id) t.id(strs.get(d.id));
       // (plan P3-07, §9.3) what copy takes: an omitted or replaced run says
       // its kind (a hyphen glyph says "hyphen" below), a replaced one its
@@ -407,6 +408,7 @@ void writeRoot(std::string& out, const char* cls, const DLRoot& r) {
   t.declEsc("--tsr-font-mono", r.fontMono);
   t.declEsc("--tsr-font-mono-cjk", r.fontMonoCjk);
   t.px("font-size", r.basePx);
+  if (r.minHeightPx > 0) t.px("min-height", r.minHeightPx);
   t.open();
   out += "\n";
 }

@@ -1,10 +1,10 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
-<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:76.828px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:76.828px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-h-1" data-s="0" data-e="78" data-join="space" data-ragged="1" style="top:0px;left:0px;width:300px;word-spacing:-1.8px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">A heading long enough that</span></div>
 <div class="tsr-line" data-s="0" data-e="78" data-join="space" data-ragged="1" style="top:25.609px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">it has to wrap across two</span></div>
 <div class="tsr-line" data-s="0" data-e="78" data-ragged="1" style="top:51.219px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">lines at the test measure</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="82" style="position:relative;height:191.203px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="82" style="position:relative;height:191.203px;margin-bottom:19.203px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-wide" data-s="0" data-e="198" src="photos/wide.png" alt="wide" style="top:0px;left:0px;width:300px;height:100px">
 <div class="tsr-line" data-s="81" data-e="189" data-join="space" style="top:119.203px;left:0px;width:300px;word-spacing:-1.5px"><span class="tsr-r tsr-b tsr-cjk" data-s="81">图</span><span class="tsr-r tsr-b" data-s="81"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="81">：</span><span class="tsr-r" data-s="81">A caption that is long enough to wrap</span></div>
 <div class="tsr-line" data-s="81" data-e="189" data-join="space" style="top:143.203px;left:0px;width:300px"><span class="tsr-r" data-s="81">onto a second line at the narrow measure,</span></div>
