@@ -3,13 +3,13 @@ doc @[0,188) [base]
     text @[0,6) [base] str="Cited: " raw=0:0,7:6
     ref @[7,12) [base] target="kp81"
       text @[7,12) [base] str="["
-      link @[7,12) [base] url="#tsr-bib-kp81"
+      link @[7,12) [base] target="bib-kp81"
         text @[7,12) [base] str="1"
       text @[7,12) [base] str="]"
     text @[13,16) [base] str=" and " raw=0:0,1:0,5:3
     ref @[17,25) [base] target="liang83"
       text @[17,25) [base] str="["
-      link @[17,25) [base] url="#tsr-bib-liang83"
+      link @[17,25) [base] target="bib-liang83"
         text @[17,25) [base] str="2"
       text @[17,25) [base] str="]"
     text @[25,26) [base] str="."

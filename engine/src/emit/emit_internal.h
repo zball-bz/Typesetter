@@ -49,7 +49,7 @@ struct ICtx {
   StyleDelta add;  // what enclosing kinds put on the text (inline code: mono)
   u16 addFlags = 0;  // BF_REF: resolver-synthesized content
   float mul = 1.0f;
-  StrRef url = 0;
+  LinkTarget url;  // the link the text is in
   bool noHyphen = false;  // display context (headings)
 };
 

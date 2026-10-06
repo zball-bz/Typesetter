@@ -179,14 +179,16 @@ struct Sem {
         return;
       case Kind::link:
       case Kind::ref: {
-        std::string_view url = argS(n, ArgK::url);
-        if (url.empty()) {  // unresolved ref / grouped citation container
+        // its href: a resolved target's anchor (AnchorNamer, plan P3-04),
+        // else a link's URL
+        const std::string href = n->anchorTo ? AnchorNamer::href(strs.get(n->anchorTo)) : std::string(argS(n, ArgK::url));
+        if (href.empty()) {  // unresolved ref / grouped citation container
           roleKids(n);
           return;
         }
         {
           Tag t(out, "a");
-          t.attr("href", url);
+          t.attr("href", href);
           std::string_view id = argS(n, ArgK::label);  // inline anchor (marker)
           if (!id.empty()) t.id(id);
           t.open();
@@ -501,7 +503,15 @@ struct Sem {
         return;
       }
       case Kind::raw:
-        // trusted, handler-declared passthrough — the ONE unescaped path (§9)
+        // trusted, handler-declared passthrough — the ONE unescaped path (§9);
+        // a labelled one sits in a division that carries its anchor (plan
+        // P3-04, S9b)
+        if (!argS(n, ArgK::label).empty()) {
+          open("div", n, pid);
+          out += argS(n, ArgK::html);
+          out += "</div>\n";
+          return;
+        }
         out += argS(n, ArgK::html);
         out += "\n";
         return;

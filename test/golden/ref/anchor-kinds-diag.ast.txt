@@ -1,0 +1,21 @@
+doc @[0,257)
+  para @[0,72)
+    text @[0,72) str="A labelled rule and a labelled raw block take anchors (plan P3-04, S9b)."
+  para @[74,95)
+    splice @[74,95) expr="rule({label: \"sep\"})"
+  para @[97,144)
+    splice @[97,144) expr="raw({label: \"box\", h: 24}, \"<span>raw</span>\")"
+  para @[146,256)
+    text @[146,149) str="See "
+    ref @[150,154) target="sep"
+    text @[155,158) str=" and "
+    ref @[159,163) target="box"
+    text @[163,164) str="; "
+    splice @[165,207) expr="link({target: \"sep\"})"
+      arg @[188,206)
+        text @[188,206) str="a link to the rule"
+    text @[208,211) str=" and "
+    splice @[212,255) expr="link({target: \"nowhere\"})"
+      arg @[239,254)
+        text @[239,254) str="one to no label"
+    text @[255,256) str="."

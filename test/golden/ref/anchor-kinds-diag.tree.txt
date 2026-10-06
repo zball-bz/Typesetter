@@ -1,0 +1,20 @@
+doc @[0,256) [base]
+  para @[0,72) [base]
+    text @[0,72) [base] str="A labelled rule and a labelled raw block take anchors (plan P3-04, S9b)."
+  rule @[74,95) [base] label="sep"
+  raw @[97,144) [base] h=24 label="box"
+    text @[97,144) [base] str="<span>raw</span>"
+  para @[146,256) [base]
+    text @[146,149) [base] str="See " raw=0:0,4:3
+    ref @[150,154) [base] target="sep"
+      text @[150,154) [base] str="sep"
+    text @[155,158) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[159,163) [base] target="box"
+      text @[159,163) [base] str="box"
+    text @[163,164) [base] str="; " raw=0:0,2:1
+    link @[165,207) [base] target="sep"
+      text @[188,206) [base] str="a link to the rule"
+    text @[208,211) [base] str=" and " raw=0:0,1:0,5:3
+    link @[212,255) [base] target="nowhere"
+      text @[239,254) [base] str="one to no label"
+    text @[255,256) [base] str="."

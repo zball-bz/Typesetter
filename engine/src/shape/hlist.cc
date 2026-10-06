@@ -135,9 +135,14 @@ void dumpHList(std::string& out, const HList& h, const Interner& strs, const Sty
     if (st.script == SCRIPT_CJK) out += " CJK";
     if (st.sizeMul != 1.0f) appendf(out, " x%.2f", (double)st.sizeMul);
     appendStyleFields(out, st, strs);
-    if (r.link) {
-      out += " link=";
-      quoted(out, strs, r.link);
+    if (r.link) {  // (an anchor as its href: plan P3-04)
+      out += " link=\"";
+      if (r.link.anchor) {
+        out += '#';
+        out += kAnchorPrefix;
+      }
+      appendEscaped(out, strs.get(r.link.ref));
+      out += "\"";
     }
     if (r.anchor) {
       out += " anchor=";

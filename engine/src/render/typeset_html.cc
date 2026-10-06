@@ -34,6 +34,12 @@ struct RunClasses {
 };
 
 // data-s/data-e of a source span, relative to the paragraph base
+// a link run's href (plan P3-04): an anchor through the AnchorNamer, else
+// the URL as written
+static std::string hrefOf(const LinkTarget& l, const Interner& strs) {
+  return l.anchor ? AnchorNamer::href(strs.get(l.ref)) : std::string(strs.get(l.ref));
+}
+
 static void spanAttrs(Tag& t, Span sp, u32 base) {
   t.num("data-s", sp.start - base);
   t.num("data-e", sp.end - base);
@@ -254,7 +260,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
         if (d.link) {
           Tag t(out, "a");
           t.attrSafe("class", "tsr-r");
-          t.attr("href", strs.get(d.link));
+          t.attr("href", hrefOf(d.link, strs));
           t.open();
         }
         mathSpan(out, d.math, d.src, /*display=*/false, strs, d.span, 0, srcBase, styles.get(d.face).color);
@@ -323,11 +329,11 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
     }
     // a text run: style, link, inline anchor, source, its own spacing
     const Styling& sty = styles.get(d.face);
-    const bool isLink = d.link != 0;
+    const bool isLink = (bool)d.link;
     {
       Tag t(out, isLink ? "a" : "span");
       t.attrSafe("class", RunClasses(sty, strs, nullptr, d.cls).sv());
-      if (isLink) t.attr("href", strs.get(d.link));
+      if (isLink) t.attr("href", hrefOf(d.link, strs));
       if (d.id) t.id(strs.get(d.id));
       if (d.synRef) {  // §9.3: copy skips (a ref's hyphen is "hyphen")
         if (!d.syn) t.attrSafe("data-syn", "ref");

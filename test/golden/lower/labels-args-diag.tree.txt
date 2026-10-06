@@ -21,25 +21,25 @@ doc @[181,832) [base]
       text @[512,556) [base] str="A named argument list is one options object."
   para @[559,645) [base]
     text @[559,570) [base] str="References: " raw=0:0,12:11
-    ref @[571,574) [base] target="b1" url="#tsr-b1"
+    ref @[571,574) [base] target="b1"
       text @[571,574) [base] str="b1"
     text @[574,575) [base] str=", " raw=0:0,2:1
-    ref @[576,579) [base] target="a1" url="#tsr-a1"
+    ref @[576,579) [base] target="a1"
       text @[576,579) [base] str="a1"
     text @[579,580) [base] str=", " raw=0:0,2:1
-    ref @[581,587) [base] target="code1" url="#tsr-code1"
+    ref @[581,587) [base] target="code1"
       text @[581,587) [base] str="code1"
     text @[587,588) [base] str=", " raw=0:0,2:1
-    ref @[589,593) [base] target="emc" url="#tsr-emc"
+    ref @[589,593) [base] target="emc"
       text @[589,593) [base] str="式 (1)"
     text @[593,594) [base] str=", " raw=0:0,2:1
-    ref @[595,598) [base] target="c1" url="#tsr-c1"
+    ref @[595,598) [base] target="c1"
       text @[595,598) [base] str="c1"
     text @[599,602) [base] str=" and " raw=0:0,1:0,5:3
-    ref @[603,613) [base] target="sec:intro" url="#tsr-sec:intro"
+    ref @[603,613) [base] target="sec:intro"
       text @[603,613) [base] str="§1"
     text @[613,633) [base] str=". With a supplement: " raw=0:0,21:20
-    ref @[634,644) [base] target="emc" url="#tsr-emc"
+    ref @[634,644) [base] target="emc"
       text @[639,643) [base] str="p. 5"
       text @[634,644) [base] str=" (1)"
     text @[644,645) [base] str="."

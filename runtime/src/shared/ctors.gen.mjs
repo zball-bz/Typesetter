@@ -458,6 +458,7 @@ export const CTOR_SPECS = Object.freeze({
       }
     ],
     "options": [
+      "target",
       "label",
       "role",
       "slot",

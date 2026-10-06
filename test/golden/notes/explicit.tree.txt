@@ -3,10 +3,10 @@ doc @[0,227) [base]
     text @[2,20) [BOLDx1.60] str="Explicit placement"
   para @[22,119) [base]
     text @[22,37) [base] str="First note here"
-    ref @[37,44) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[37,44) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
       text @[37,44) [SUPx0.70] str="1"
     text @[45,56) [base] str=" and another" raw=0:0,1:0
-    ref @[56,89) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" url="#tsr-fn-2"
+    ref @[56,89) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2"
       text @[56,89) [SUPx0.70] str="2"
     text @[90,119) [base] str=" before the section is placed." raw=0:0,1:0
   group @[121,129) [base] role="notes"
@@ -17,17 +17,17 @@ doc @[0,227) [base]
           styled @[37,44) [basex0.85] role="note-body"
             text @[39,43) [basex0.85] str="One."
             text @[37,44) [basex0.85] str=" "
-            ref @[37,44) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+            ref @[37,44) [basex0.85] target="fnref-1"
               text @[37,44) [basex0.85] str="↩"
       item @[56,89) [base]
         para @[56,89) [base] label="fn-2"
           styled @[56,89) [basex0.85] role="note-body"
             text @[58,82) [basex0.85] str="Two, with a reference to " raw=0:0,25:24
-            ref @[83,87) [basex0.85] target="top" url="#tsr-top"
+            ref @[83,87) [basex0.85] target="top"
               text @[83,87) [basex0.85] str="§2"
             text @[87,88) [basex0.85] str="."
             text @[56,89) [basex0.85] str=" "
-            ref @[56,89) [basex0.85] target="fnref-2" url="#tsr-fnref-2"
+            ref @[56,89) [basex0.85] target="fnref-2"
               text @[56,89) [basex0.85] str="↩"
   heading @[131,141) [BOLDx1.60] level=1 label="top"
     text @[133,141) [BOLDx1.60] str="Appendix"

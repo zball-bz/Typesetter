@@ -110,10 +110,18 @@ inline std::string pxStr(double px) {
 // AnchorNamer (D-S06): prefix + label, escaped for an attribute. The prefix is
 // fixed until render.idPrefix (plan P3-06).
 struct AnchorNamer {
-  static constexpr std::string_view kPrefix = "tsr-";
+  static constexpr std::string_view kPrefix = kAnchorPrefix;
   static void id(std::string& out, std::string_view label) {
     out += kPrefix;
     escapeHtml(out, label);
+  }
+  // (plan P3-04) a reference to a label's anchor: "#" + its id, unescaped
+  // (the attribute writer escapes)
+  static std::string href(std::string_view label) {
+    std::string h = "#";
+    h += kPrefix;
+    h += label;
+    return h;
   }
 };
 

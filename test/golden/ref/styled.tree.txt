@@ -6,15 +6,15 @@ doc @[0,135) [base]
     styled @[63,80) [BOLD]
       seq @[63,80) [BOLD]
         text @[71,74) [BOLD] str="see " raw=0:0,4:3
-        ref @[75,79) [BOLD] target="top" url="#tsr-top"
+        ref @[75,79) [BOLD] target="top"
           text @[75,79) [BOLD] str="§1"
     text @[80,81) [base] str=", " raw=0:0,2:1
     styled @[82,118) [base color=#a8432a] color="#a8432a"
       seq @[82,118) [base color=#a8432a]
         text @[109,112) [base color=#a8432a] str="see " raw=0:0,4:3
-        ref @[113,117) [base color=#a8432a] target="top" url="#tsr-top"
+        ref @[113,117) [base color=#a8432a] target="top"
           text @[113,117) [base color=#a8432a] str="§1"
     text @[118,129) [base] str=", and plain " raw=0:0,12:11
-    ref @[130,134) [base] target="top" url="#tsr-top"
+    ref @[130,134) [base] target="top"
       text @[130,134) [base] str="§1"
     text @[134,135) [base] str="."

@@ -1,0 +1,14 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {link, raw, rule} = __rt.std;
+return (async () => {
+const __h = [
+() => (rule({label: "sep"})),
+() => (raw({label: "box", h: 24}, "<span>raw</span>")),
+(__k) => (link(...[{target: "sep"}], ...__k())),
+(__k) => (link(...[{target: "nowhere"}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

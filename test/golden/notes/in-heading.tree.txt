@@ -1,7 +1,7 @@
 doc @[0,250) [base]
   heading @[0,95) [BOLDx1.60] level=1 label="h-1"
     text @[2,23) [BOLDx1.60] str="A heading with a note"
-    ref @[23,95) [BOLD+SUPx1.12] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[23,95) [BOLD+SUPx1.12] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
       text @[23,95) [BOLD+SUPx1.12] str="1"
   para @[97,250) [base]
     text @[97,250) [base] str="The marker takes the heading's style; the note's body takes the place it is set in (D-S09): its own emphasis travels with it, the heading's rules do not."
@@ -16,5 +16,5 @@ doc @[0,250) [base]
               text @[67,70) [BOLDx0.85] str="not"
             text @[72,94) [basex0.85] str=" in the heading's bold." raw=0:0,1:0
             text @[23,95) [basex0.85] str=" "
-            ref @[23,95) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+            ref @[23,95) [basex0.85] target="fnref-1"
               text @[23,95) [basex0.85] str="↩"

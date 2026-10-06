@@ -18,9 +18,9 @@ doc @[0,445) [base]
       text @[323,374) [base] str="过宽的图片收敛到版心，按比例缩放。"
   para @[385,445) [base]
     text @[385,391) [base] str="参见"
-    ref @[391,400) [base] target="fig-pipe" url="#tsr-fig-pipe"
+    ref @[391,400) [base] target="fig-pipe"
       text @[391,400) [base] str="图 1"
     text @[400,403) [base] str="与"
-    ref @[403,412) [base] target="fig-wide" url="#tsr-fig-wide"
+    ref @[403,412) [base] target="fig-wide"
       text @[403,412) [base] str="图 2"
     text @[412,445) [base] str="；前者宽度为版心之半。"

@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-04
+- 下一步：P3-05
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -289,6 +289,7 @@
 | P3-03 | D-S05 的"声明 numbering 则 display 为 true"扩展到"声明 numbering 或 sites" | semantics/appendix 为标题声明了显示编号的 site 却未声明 numbering，按原规则编号会消失 | 无 |
 | P3-03 | 公式 tag 部件由布局测量与放置未做，屏幕仍按 name 放置编号；lof/lot 收集器未加；dterm 用 role 为 dterm 的 group（尚无描述列表语法） | 计划写明 tag 由 P3-26 放置；新收集器属 P3-13；描述列表表层语法属 T1 | P3-26、P3-13 |
 | P3-03 | 解析器造的块节点样式仍为 0（P3-01 偏差）不变；cloneTitle 只用于大纲（TOC），术语表条目仍用名字与正文摘录 | 术语表的标题本是参数文字；正文摘录的结构化留给集合步骤 | P3-13 |
+| P3-04 | 设计 S5 中 data-ref-class/data-flow 来自 SemInfo、壳的脚注弹出改为 refPreview 行为未做；SemInfo 只落地 targetAnchor（anchorTo），anchor/targetCls/flow 未单独存 | 计划 P3-04 要点只列 anchor/url 与 AnchorNamer；refPreview 与 render.idPrefix 属 P3-06 | P3-06 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

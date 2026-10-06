@@ -10,6 +10,6 @@ doc @[0,134) [base]
       text @[88,114) [base] str="and the paragraph goes on."
   para @[124,134) [base]
     text @[124,127) [base] str="See " raw=0:0,4:3
-    ref @[128,133) [base] target="eq-r" url="#tsr-eq-r"
+    ref @[128,133) [base] target="eq-r"
       text @[128,133) [base] str="式 (1)"
     text @[133,134) [base] str="."

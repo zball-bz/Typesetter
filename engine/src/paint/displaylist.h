@@ -30,7 +30,7 @@ struct DLRun {
   } k = K::Words;
   u32 i = 0, j = 0;      // Words / Chars: the line's item range
   StyleId face = 0;      // the run's style
-  StrRef link = 0;       // a link run is an <a>
+  LinkTarget link;       // a link run is an <a> (an anchor: the AnchorNamer spells it)
   StrRef id = 0;         // an inline anchor (a footnote marker)
   bool synRef = false;   // a resolver-synthesized run (copy skips it)
   u32 dataS = ~0u;       // its source start (absolute), ~0u = none

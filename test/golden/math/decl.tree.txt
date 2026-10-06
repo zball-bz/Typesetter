@@ -4,7 +4,7 @@ doc @[0,621) [base]
     mathinline @[24,35) [base]
       mathsrc @[25,34) [base] src="a defeq b"
     text @[36,68) [base] str=" is a name between two variables." raw=0:0,1:0
-    ref @[68,127) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[68,127) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
       text @[68,127) [SUPx0.70] str="1"
   para @[407,547) [base]
     text @[407,416) [base] str="After it, " raw=0:0,10:9
@@ -41,7 +41,7 @@ doc @[0,621) [base]
               mathsrc @[115,124) [basex0.85] src="x defeq y"
             text @[125,126) [basex0.85] str="."
             text @[68,127) [basex0.85] str=" "
-            ref @[68,127) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+            ref @[68,127) [basex0.85] target="fnref-1"
               text @[68,127) [basex0.85] str="↩"
 decl math.symbol name="defeq" flow=1 @[129,405) ext.char="≝" ext.class="rel" ext.claim-cp=true
 decl math.fn name="eqv" flow=1 @[129,405) ext.params="a,b" ext.body="#a simeq #b"

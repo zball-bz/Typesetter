@@ -7,7 +7,7 @@ doc @[0,260) [base]
       text @[50,69) [base] str="(1)"
   para @[71,120) [base]
     text @[71,74) [base] str="由"
-    ref @[74,78) [base] target="emc" url="#tsr-emc"
+    ref @[74,78) [base] target="emc"
       text @[74,78) [base] str="式 (1)"
     text @[78,120) [base] str="可知能量与质量等价。高斯积分"
   mathblock @[122,170) [base] label="gauss" name="(2)"
@@ -16,7 +16,7 @@ doc @[0,260) [base]
       text @[122,170) [base] str="(2)"
   para @[172,260) [base]
     text @[172,181) [base] str="的值见"
-    ref @[181,187) [base] target="gauss" url="#tsr-gauss"
+    ref @[181,187) [base] target="gauss"
       text @[181,187) [base] str="式 (2)"
     text @[187,220) [base] str="；无标签公式不编号。设"
     mathinline @[220,223) [base]

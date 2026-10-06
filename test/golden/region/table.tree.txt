@@ -25,9 +25,9 @@ doc @[0,168) [base]
         text @[123,128) [base] str="12.00"
   para @[138,168) [base]
     text @[138,154) [base] str="Totals appear in " raw=0:0,17:16
-    ref @[155,159) [base] target="tbl" url="#tsr-tbl"
+    ref @[155,159) [base] target="tbl"
       text @[155,159) [base] str="表 1"
     text @[160,162) [base] str=" of " raw=0:0,1:0,4:2
-    ref @[163,167) [base] target="sec" url="#tsr-sec"
+    ref @[163,167) [base] target="sec"
       text @[163,167) [base] str="§1"
     text @[167,168) [base] str="."

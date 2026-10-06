@@ -1,10 +1,10 @@
 doc @[0,145) [base]
   para @[0,37) [base]
     text @[0,24) [base] str="Parity (plan P2-07): see " raw=0:0,25:24
-    ref @[25,28) [base] target="f1" url="#tsr-f1"
+    ref @[25,28) [base] target="f1"
       text @[25,28) [base] str="图 1"
     text @[29,32) [base] str=" and " raw=0:0,1:0,5:3
-    ref @[33,36) [base] target="f2" url="#tsr-f2"
+    ref @[33,36) [base] target="f2"
       text @[33,36) [base] str="图 2"
     text @[36,37) [base] str="."
   group @[39,92) [base] role="figure" label="f1"

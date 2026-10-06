@@ -19,10 +19,10 @@ doc @[0,945) [base]
       text @[746,767) [base] str="左浮动的山门。"
   para @[778,878) [base]
     text @[778,835) [base] str="左侧浮动时行盒整体右移，宽度同样收窄；"
-    ref @[835,845) [base] target="fig-tower" url="#tsr-fig-tower"
+    ref @[835,845) [base] target="fig-tower"
       text @[835,845) [base] str="图 1"
     text @[845,848) [base] str="与"
-    ref @[848,857) [base] target="fig-gate" url="#tsr-fig-gate"
+    ref @[848,857) [base] target="fig-gate"
       text @[848,857) [base] str="图 2"
     text @[857,878) [base] str="都可以被引用。"
   rule @[880,883) [base]

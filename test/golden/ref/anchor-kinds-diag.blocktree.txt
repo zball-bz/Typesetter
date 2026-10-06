@@ -1,0 +1,12 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,72)
+    paragraph para unit=0 @[0,72)
+top pid=1 leaves=1
+  stack root gap=1/1 @[74,95)
+    replaced rule rule unit=0 anchor="sep" @[74,95)
+top pid=2 leaves=1
+  stack root gap=1/1 @[97,144)
+    replaced raw raw unit=0 anchor="box" @[97,144)
+top pid=3 leaves=1
+  stack root gap=1/1 @[146,256)
+    paragraph para unit=0 @[146,256)

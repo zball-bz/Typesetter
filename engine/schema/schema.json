@@ -121,7 +121,7 @@
       "contIndent": {"dom": "int:0:40", "since": 13}, "features": {"dom": "features", "since": 13},
       "punct": {"dom": "enum:full|book|none", "since": 13}}},
     "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "ctor": {"params": ["attr:url"]}, "attrs": {
-      "url": {"dom": "url"}}},
+      "url": {"dom": "url"}, "target": {"dom": "str", "since": 13}}},
     "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
     "ref": {"id": 21, "level": "inline", "inline": "container", "body": "none", "since": 6, "ctor": {"params": ["attr:target"]}, "attrs": {
       "target": {"dom": "str"},

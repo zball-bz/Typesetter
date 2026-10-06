@@ -126,7 +126,7 @@ struct HlInline final : InlineSink {
     gapKind.clear();
     single = false;
   }
-  static RunRec key(StyleId face, StrRef url, u16 addFlags, RealizeClass rc) {
+  static RunRec key(StyleId face, LinkTarget url, u16 addFlags, RealizeClass rc) {
     RunRec r;
     r.face = face;
     r.link = url;
@@ -257,13 +257,13 @@ struct HlInline final : InlineSink {
                  key(st, ctx.url, ctx.addFlags, RealizeClass::Plain), sp, span, 0.0f, pen);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
   }
-  void word(std::string_view w, const ContentNode* n, Flow& u, StyleId st, StrRef url, float pen,
+  void word(std::string_view w, const ContentNode* n, Flow& u, StyleId st, LinkTarget url, float pen,
             u16 addFlags) {
     AdvanceSpec sp;
     sp.str = strs.intern(w);
     push(u, IK::Box, firstCc(w), 0, key(st, url, addFlags, RealizeClass::Plain), sp, n->span, 0.0f, pen);
   }
-  void hyphenPoint(const ContentNode* n, Flow& u, StyleId st, StrRef url, u16 addFlags) {
+  void hyphenPoint(const ContentNode* n, Flow& u, StyleId st, LinkTarget url, u16 addFlags) {
     open(u);
     HList& h = B;
     AdvanceSpec hs;
@@ -358,9 +358,11 @@ struct HlInline final : InlineSink {
   }
 
   void container(const ContentNode* n, Flow& u, ICtx ctx) {
-    if (n->kind == Kind::link) {
-      for (const ArgVal& a : n->args)
-        if (a.key == ArgK::url && a.tag == ArgTag::Str) ctx.url = a.ref;
+    if (n->kind == Kind::link) {  // an internal target (plan P3-04: the resolver's anchor), else its URL
+      if (n->anchorTo) ctx.url = {n->anchorTo, true};
+      else
+        for (const ArgVal& a : n->args)
+          if (a.key == ArgK::url && a.tag == ArgTag::Str) ctx.url = {a.ref, false};
     } else if (n->kind == Kind::ref) {
       ref(n, u, ctx);
       return;
@@ -385,9 +387,9 @@ struct HlInline final : InlineSink {
   }
 
   void ref(const ContentNode* n, Flow& u, ICtx ctx) {
-    // resolver output: kids = display text, url arg = "#tsr-<label>"
-    for (const ArgVal& a : n->args)
-      if (a.key == ArgK::url && a.tag == ArgTag::Str) ctx.url = a.ref;
+    // resolver output: kids = display text; a resolved one links to its
+    // target's anchor (plan P3-04: SemInfo.targetAnchor)
+    if (n->anchorTo) ctx.url = {n->anchorTo, true};
     ctx.addFlags |= BF_REF;
     const size_t before = count(u);
     for (const ContentNode* k : n->kids) walk(k, u, ctx);
@@ -548,7 +550,7 @@ struct HlInline final : InlineSink {
     objectBox(u, obj, pt, st, ctx, n->span, srcRef, false);
   }
 
-  void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, StrRef url,
+  void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, LinkTarget url,
                 bool noHyphen, u16 addFlags) {
     // lead / core / trail split (ASCII letters core) for hyphenation
     u32 a = 0, b = (u32)w.size();
@@ -779,7 +781,7 @@ struct HlInline final : InlineSink {
     sp.k = AdvanceSpec::Fixed;
     sp.em = em;
     sp.str = E.spaceRef;
-    RunRec rk = key(st, 0, 0, RealizeClass::Pinned);
+    RunRec rk = key(st, LinkTarget{}, 0, RealizeClass::Pinned);
     rk.syn = SynKind::Indent;
     u32 i = push(u, IK::Box, 0, 0, rk, sp, span, 0.0f, kPenInf);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
@@ -1546,7 +1548,7 @@ void lowerHList(const HList& h, std::vector<Block>& out, std::vector<u32>& start
     if constexpr (kFull) {
       b.rawPx = c.rawPx;
       b.style = r.face;
-      b.linkUrl = r.link;
+      b.linkUrl = r.link.ref;
       b.anchorId = (it.attrs & IA_Anchor) ? c.anchor : 0;
       b.widthResolved = (it.st & IS_Resolved) != 0;
       b.span = Span{c.srcStart, c.srcEnd};

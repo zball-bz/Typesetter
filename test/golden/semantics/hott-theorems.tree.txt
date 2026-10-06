@@ -18,22 +18,22 @@ doc @[568,981) [base]
       text @[760,801) [base] str="Transport along a path is an equivalence."
   para @[811,981) [base]
     text @[811,813) [base] str="By " raw=0:0,3:2
-    ref @[814,821) [base] target="thm-ua" url="#tsr-thm-ua"
+    ref @[814,821) [base] target="thm-ua"
       text @[814,821) [base] str="Theorem 2.10"
     text @[822,825) [base] str=" and " raw=0:0,1:0,5:3
-    ref @[826,840) [base] target="lem-transport" url="#tsr-lem-transport"
+    ref @[826,840) [base] target="lem-transport"
       text @[826,840) [base] str="Lemma 2.11"
     text @[841,843) [base] str=" in " raw=0:0,1:0,4:2
-    ref @[844,850) [base] target="ch-ua" url="#tsr-ch-ua"
+    ref @[844,850) [base] target="ch-ua"
       text @[844,850) [base] str="§2"
     text @[850,851) [base] str="; " raw=0:0,2:1
-    ref @[852,883) [base] target="thm-ua" form="title" url="#tsr-thm-ua"
+    ref @[852,883) [base] target="thm-ua" form="title"
       text @[852,883) [base] str="Univalence"
     text @[884,886) [base] str=" is " raw=0:0,1:0,4:2
-    ref @[887,919) [base] target="thm-ua" form="number" url="#tsr-thm-ua"
+    ref @[887,919) [base] target="thm-ua" form="number"
       text @[887,919) [base] str="2.10"
     text @[919,924) [base] str=", and " raw=0:0,6:5
-    ref @[925,969) [base] target="lem-transport" supplement="Lem. " url="#tsr-lem-transport"
+    ref @[925,969) [base] target="lem-transport" supplement="Lem. "
       text @[925,969) [base] str="Lem. 2.11"
     text @[970,981) [base] str=" follows it." raw=0:0,1:0
 decl counter name="thm" flow=0 @[0,0) ext.row="{\"within\":{\"counter\":\"heading\",\"depth\":1}}"

@@ -1092,7 +1092,7 @@ Theme steps: — · findings: 1
 | `resolver/term-rewrite` | adhoc | medium | P1-10 | grep:plan P1-10 |
 | `resolver/excerpt-strings` | adhoc | medium | P3-03 | grep:plan P3-03 |
 | `resolver/presentation-constants` | adhoc | medium | P1-10 | grep:plan P1-10 |
-| `resolver/anchor-namespace` | adhoc | medium | P3-04 | |
+| `resolver/anchor-namespace` | adhoc | medium | P3-04 | grep:plan P3-04 |
 | `resolver/argk-overloading` | adhoc | medium | P0-06, P2-05, P2-07 | grep:plan P2-07 |
 | `resolver/rewrite-normalizations` | adhoc | low | P0-07, P2-07 | grep:plan P2-07 |
 | `resolver/cite-ordinal-pass-order` | issue | high | P0-09 | grep:plan P0-09 |
@@ -1198,7 +1198,7 @@ Theme steps: — · findings: 1
 | `render-runtime/copy-line-separators` | adhoc | medium | P3-07 | |
 | `render-runtime/shell-note-popups` | adhoc | high | P3-04, P3-06 | |
 | `render-runtime/shell-chunk-byte-coupling` | adhoc | medium | P3-05 | |
-| `render-runtime/anchor-namespace` | adhoc | medium | P3-04 | |
+| `render-runtime/anchor-namespace` | adhoc | medium | P3-04 | grep:plan P3-04 |
 | `render-runtime/css-contract-monolith` | adhoc | medium | P3-18 | |
 | `render-runtime/no-class-channel` | adhoc | high | P3-18 | |
 | `render-runtime/token-theme-sniffing` | adhoc | medium | P3-18 | |

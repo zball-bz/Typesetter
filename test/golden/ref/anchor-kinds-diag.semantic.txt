@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="72">A labelled rule and a labelled raw block take anchors (plan P3-04, S9b).</p>
+<hr data-pid="1" data-s="74" data-e="95" id="tsr-sep">
+<div data-pid="2" data-s="97" data-e="144" id="tsr-box"></div>
+<p data-pid="3" data-s="146" data-e="256">See <a href="#tsr-sep">sep</a> and <a href="#tsr-box">box</a>; <a href="#tsr-sep">a link to the rule</a> and one to no label.</p>
+</div>

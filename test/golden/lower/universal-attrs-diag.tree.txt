@@ -17,7 +17,7 @@ doc @[0,645) [base]
     text @[388,428) [base] str=" stays empty until the resolver fills it." raw=0:0,1:0
   para @[615,645) [base]
     text @[615,640) [base] str="A reference to the quote: " raw=0:0,26:25
-    ref @[641,644) [base] target="p1" url="#tsr-p1"
+    ref @[641,644) [base] target="p1"
       text @[641,644) [base] str="p1"
     text @[644,645) [base] str="."
 decl element name="theorem" flow=4 @[430,526) superseded ext.counter="thm" ext.numbered=true

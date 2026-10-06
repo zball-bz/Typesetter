@@ -1,0 +1,16 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="72" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="0">A labelled rule and a labelled raw block</span></div>
+<div class="tsr-line" data-s="0" data-e="72" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">take anchors (plan P3-04, S9b).</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-rule" id="tsr-sep" style="top:12px;left:0px;width:300px"></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-raw" id="tsr-box" style="top:0px;left:0px;width:300px;height:24px"></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="146" style="position:relative;height:48px">
+<div class="tsr-line" data-s="0" data-e="108" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.4px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-sep" data-syn="ref">sep</a><span class="tsr-r" data-s="9"> and </span><a class="tsr-r" href="#tsr-box" data-syn="ref">box</a><span class="tsr-r" data-s="17">; </span><a class="tsr-r" href="#tsr-sep" data-s="42">a link to the rule</a><span class="tsr-r" data-s="62"> and one</span></div>
+<div class="tsr-line" data-s="93" data-e="110" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="93">to no label.</span></div>
+</div>
+</div>

@@ -52,21 +52,21 @@ doc @[0,663) [base]
       text @[550,573) [base] str="Two views of one thing."
   para @[584,663) [base]
     text @[584,587) [base] str="See " raw=0:0,4:3
-    ref @[588,596) [base] target="fig-tab" url="#tsr-fig-tab"
+    ref @[588,596) [base] target="fig-tab"
       text @[588,596) [base] str="表 1"
     text @[597,601) [base] str=" (and " raw=0:0,1:0,6:4
-    ref @[602,609) [base] target="tab-in" url="#tsr-tab-in"
+    ref @[602,609) [base] target="tab-in"
       text @[602,609) [base] str="表 1"
     text @[609,622) [base] str=", its table), " raw=0:0,14:13
-    ref @[623,632) [base] target="fig-kept" url="#tsr-fig-kept"
+    ref @[623,632) [base] target="fig-kept"
       text @[623,632) [base] str="图 1"
     text @[632,633) [base] str=", " raw=0:0,2:1
-    ref @[634,643) [base] target="fig-pair" url="#tsr-fig-pair"
+    ref @[634,643) [base] target="fig-pair"
       text @[634,643) [base] str="图 2"
     text @[643,644) [base] str=", " raw=0:0,2:1
-    ref @[645,651) [base] target="fig-a" url="#tsr-fig-a"
+    ref @[645,651) [base] target="fig-a"
       text @[645,651) [base] str="图 2(a)"
     text @[652,655) [base] str=" and " raw=0:0,1:0,5:3
-    ref @[656,662) [base] target="fig-b" url="#tsr-fig-b"
+    ref @[656,662) [base] target="fig-b"
       text @[656,662) [base] str="图 2(b)"
     text @[662,663) [base] str="."

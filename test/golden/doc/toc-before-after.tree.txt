@@ -2,18 +2,18 @@ doc @[0,42) [base]
   list @[0,4) [base] ordered=false
     item @[0,4) [base]
       para @[0,4) [base]
-        link @[0,4) [base] url="#tsr-h-1"
+        link @[0,4) [base] target="h-1"
           text @[0,4) [base] str="1 "
           text @[0,4) [base] str="One"
       list @[0,4) [base] ordered=false
         item @[0,4) [base]
           para @[0,4) [base]
-            link @[0,4) [base] url="#tsr-h-1.1"
+            link @[0,4) [base] target="h-1.1"
               text @[0,4) [base] str="1.1 "
               text @[0,4) [base] str="One point one"
     item @[0,4) [base]
       para @[0,4) [base]
-        link @[0,4) [base] url="#tsr-h-2"
+        link @[0,4) [base] target="h-2"
           text @[0,4) [base] str="2 "
           text @[0,4) [base] str="Two"
   heading @[6,11) [BOLDx1.60] level=1 label="h-1"
@@ -25,17 +25,17 @@ doc @[0,42) [base]
   list @[38,42) [base] ordered=false
     item @[38,42) [base]
       para @[38,42) [base]
-        link @[38,42) [base] url="#tsr-h-1"
+        link @[38,42) [base] target="h-1"
           text @[38,42) [base] str="1 "
           text @[38,42) [base] str="One"
       list @[38,42) [base] ordered=false
         item @[38,42) [base]
           para @[38,42) [base]
-            link @[38,42) [base] url="#tsr-h-1.1"
+            link @[38,42) [base] target="h-1.1"
               text @[38,42) [base] str="1.1 "
               text @[38,42) [base] str="One point one"
     item @[38,42) [base]
       para @[38,42) [base]
-        link @[38,42) [base] url="#tsr-h-2"
+        link @[38,42) [base] target="h-2"
           text @[38,42) [base] str="2 "
           text @[38,42) [base] str="Two"

@@ -3,12 +3,12 @@ doc @[0,143) [base]
     text @[0,39) [base] str="A grouped citation with one unknown key " raw=0:0,40:39
     ref @[40,67) [base] target="kp81, nosuchkey, liang83"
       text @[40,67) [base] str="["
-      link @[40,67) [base] url="#tsr-bib-kp81"
+      link @[40,67) [base] target="bib-kp81"
         text @[40,67) [base] str="1"
       text @[40,67) [base] str=", "
       text @[40,67) [base] str="??"
       text @[40,67) [base] str=", "
-      link @[40,67) [base] url="#tsr-bib-liang83"
+      link @[40,67) [base] target="bib-liang83"
         text @[40,67) [base] str="2"
       text @[40,67) [base] str="]"
     text @[68,95) [base] str=" still links the known keys." raw=0:0,1:0

@@ -257,6 +257,7 @@ const AttrSpec kA_styled[] = {
 const char* const kM_link_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_link[] = {
     {14, "url", Dom::Url, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
+    {15, "target", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -520,7 +521,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"comment", Level::Trivia, Body::Text, InlineShape::Skip, 6, kA_comment, 9},
     {"text", Level::Inline, Body::None, InlineShape::Text, 6, nullptr, 0},
     {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 38},
-    {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 10},
+    {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 11},
     {"code", Level::Inline, Body::Text, InlineShape::Code, 6, kA_code, 9},
     {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 13},
     {"mathinline", Level::Inline, Body::None, InlineShape::Object, 6, kA_mathinline, 10},

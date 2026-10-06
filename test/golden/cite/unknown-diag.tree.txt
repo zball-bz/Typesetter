@@ -6,7 +6,7 @@ doc @[0,167) [base]
     text @[34,80) [base] str=", stays unresolved with a warning; a real one, " raw=0:0,47:46
     ref @[81,89) [base] target="liang83"
       text @[81,89) [base] str="["
-      link @[81,89) [base] url="#tsr-bib-liang83"
+      link @[81,89) [base] target="bib-liang83"
         text @[81,89) [base] str="1"
       text @[81,89) [base] str="]"
     text @[89,106) [base] str=", still resolves."

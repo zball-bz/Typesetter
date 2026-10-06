@@ -16,27 +16,27 @@ doc @[0,289) [base]
   para @[128,289) [base]
     text @[128,146) [base] str="A group of labels: " raw=0:0,19:18
     ref @[147,162) [base] target="fig-a, fig-b"
-      ref @[147,162) [base] target="fig-a" url="#tsr-fig-a"
+      ref @[147,162) [base] target="fig-a"
         text @[147,162) [base] str="Figure 1"
       text @[147,162) [base] str=", "
-      ref @[147,162) [base] target="fig-b" url="#tsr-fig-b"
+      ref @[147,162) [base] target="fig-b"
         text @[147,162) [base] str="Figure 2"
     text @[163,166) [base] str=" and " raw=0:0,1:0,5:3
     ref @[167,182) [base] target="sec-a, sec-b"
-      ref @[167,182) [base] target="sec-a" url="#tsr-sec-a"
+      ref @[167,182) [base] target="sec-a"
         text @[167,182) [base] str="§1"
       text @[167,182) [base] str=", "
-      ref @[167,182) [base] target="sec-b" url="#tsr-sec-b"
+      ref @[167,182) [base] target="sec-b"
         text @[167,182) [base] str="§1.1"
     text @[182,212) [base] str=". A bracket replaces the word: " raw=0:0,31:30
-    ref @[213,225) [base] target="fig-a" url="#tsr-fig-a"
+    ref @[213,225) [base] target="fig-a"
       text @[220,224) [base] str="Fig."
       text @[213,225) [base] str=" 1"
     text @[226,229) [base] str=" and " raw=0:0,1:0,5:3
-    ref @[230,247) [base] target="sec-b" url="#tsr-sec-b"
+    ref @[230,247) [base] target="sec-b"
       text @[239,246) [base] str="Section"
       text @[230,247) [base] str=" 1.1"
     text @[247,256) [base] str=". A form: " raw=0:0,10:9
-    ref @[257,288) [base] target="fig-b" form="number" url="#tsr-fig-b"
+    ref @[257,288) [base] target="fig-b" form="number"
       text @[257,288) [base] str="2"
     text @[288,289) [base] str="."

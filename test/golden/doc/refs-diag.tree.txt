@@ -10,6 +10,6 @@ doc @[0,157) [base]
     text @[100,106) [BOLDx1.60] str="Second"
   para @[114,157) [base]
     text @[114,121) [base] str="Back to " raw=0:0,8:7
-    ref @[122,126) [base] target="dup" url="#tsr-dup"
+    ref @[122,126) [base] target="dup"
       text @[122,126) [base] str="§1"
     text @[127,157) [base] str=" resolves to the first heading." raw=0:0,1:0

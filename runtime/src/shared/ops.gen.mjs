@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 13;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = 'f53e75a2';
+export const SCHEMA_HASH = 'ae31650a';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -303,6 +303,7 @@ export const SINCE = Object.freeze({
       "0": 9,
       "6": 9,
       "14": 6,
+      "15": 13,
       "31": 9,
       "32": 9,
       "33": 9,
@@ -1057,6 +1058,7 @@ export const SCHEMA = Object.freeze({
     "inline": "container",
     "attrs": {
       "url": "url",
+      "target": "str",
       "label": "label",
       "role": "ident",
       "slot": "ident",

@@ -2,7 +2,7 @@ doc @[0,116) [base]
   list @[0,4) [base] ordered=false
     item @[0,4) [base]
       para @[0,4) [base]
-        link @[0,4) [base] url="#tsr-sec-a"
+        link @[0,4) [base] target="sec-a"
           text @[0,4) [base] str="1 "
           text @[0,4) [base] str="Title with "
           styled @[0,4) [BOLD]
@@ -16,7 +16,7 @@ doc @[0,116) [base]
       list @[0,4) [base] ordered=false
         item @[0,4) [base]
           para @[0,4) [base]
-            link @[0,4) [base] url="#tsr-sec-b"
+            link @[0,4) [base] target="sec-b"
               text @[0,4) [base] str="1.1 "
               text @[0,4) [base] str="Second"
   heading @[6,70) [BOLDx1.60] level=1 label="sec-a"
@@ -27,10 +27,10 @@ doc @[0,116) [base]
     mathinline @[31,36) [BOLDx1.60]
       mathsrc @[32,35) [BOLDx1.60] src="x^2"
     text @[36,44) [BOLDx1.60] str=", a note"
-    ref @[44,59) [BOLD+SUPx1.12] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[44,59) [BOLD+SUPx1.12] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
       text @[44,59) [BOLD+SUPx1.12] str="1"
     text @[60,63) [BOLDx1.60] str=" and " raw=0:0,1:0,5:3
-    ref @[64,70) [BOLDx1.60] target="sec-b" url="#tsr-sec-b"
+    ref @[64,70) [BOLDx1.60] target="sec-b"
       text @[64,70) [BOLDx1.60] str="§1.1"
   para @[80,85) [base]
     text @[80,85) [base] str="Text."
@@ -46,5 +46,5 @@ doc @[0,116) [base]
           styled @[44,59) [basex0.85] role="note-body"
             text @[46,58) [basex0.85] str="A note body."
             text @[44,59) [basex0.85] str=" "
-            ref @[44,59) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+            ref @[44,59) [basex0.85] target="fnref-1"
               text @[44,59) [basex0.85] str="↩"

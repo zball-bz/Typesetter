@@ -149,6 +149,11 @@ inline void parseRangeSet(std::string_view h, std::vector<u32>& out, u32 maxLine
   }
 }
 
+// (plan P3-04; design T7 AnchorNamer) the id namespace of document labels:
+// a label's anchor id is this prefix + the label (render/html_writer.h
+// AnchorNamer spells it; dumps print an internal link as its href)
+constexpr std::string_view kAnchorPrefix = "tsr-";
+
 // --- diagnostics (document-model §10) ---
 enum class Sev : u8 { Error, Warning, Info };
 // The pass that reported a diagnostic (plan P0-11, design T9 M1). A pass

@@ -483,6 +483,7 @@
   "styled.style": 11,
   "styled.attach": 11,
   "link.url": 6,
+  "link.target": 13,
   "link.label": 9,
   "link.role": 9,
   "link.slot": 9,

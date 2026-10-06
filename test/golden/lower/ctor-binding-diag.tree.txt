@@ -26,7 +26,7 @@ doc @[0,419) [base]
     text @[241,244) [base] str="Raw " raw=0:0,4:3
     raw @[245,285) [base] html="&#9632;" w=40 h=10
     text @[286,296) [base] str=" and a node " raw=0:0,1:0,12:10
-    ref @[297,325) [base] target="a1" url="#tsr-a1"
+    ref @[297,325) [base] target="a1"
       text @[297,325) [base] str="a1"
     text @[326,330) [base] str=" here" raw=0:0,1:0
   para @[332,419) [base]

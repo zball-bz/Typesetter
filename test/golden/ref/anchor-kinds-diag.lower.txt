@@ -1,0 +1,27 @@
+lower v1 abi 3d3ccfbb docEnd 257 holes 4 module cb30f5242dd423fb
+piece 0 hole 0 js [139,167)
+piece 1 hole 1 js [169,223)
+piece 2 hole 2 js [225,272)
+piece 3 hole 3 js [274,325)
+block 0 content [0,72)
+  CALL para [0,72)
+    TEXT "A labelled rule and a labelled raw block take anchors (plan P3-04, S9b)." [0,72)
+block 1 content [74,95) user framed holes 0..1
+  CALL para [74,95)
+    HOLE 0 [74,95)
+block 2 content [97,144) user framed holes 1..2
+  CALL para [97,144)
+    HOLE 1 [97,144)
+block 3 content [146,256) user framed holes 2..4
+  CALL para [146,256)
+    TEXT "See " [146,149) raw=0:0,4:3
+    CALL ref [150,154) target="sep"
+    TEXT " and " [155,158) raw=0:0,1:0,5:3
+    CALL ref [159,163) target="box"
+    TEXT "; " [163,164) raw=0:0,2:1
+    HOLE 2 [165,207)
+      TEXT "a link to the rule" [188,206)
+    TEXT " and " [208,211) raw=0:0,1:0,5:3
+    HOLE 3 [212,255)
+      TEXT "one to no label" [239,254)
+    TEXT "." [255,256)

@@ -41,6 +41,10 @@ struct ContentNode {
   // it — an ordered list item's counter-backed number, a notes entry's —
   // which the box tree draws; 0: none (dumps omit it)
   StrRef number = 0;
+  // (plan P3-04; design T3 SemInfo.targetAnchor) the label whose anchor a
+  // resolved reference or an internal link points at — the serializers
+  // spell its href (AnchorNamer); 0: none (unresolved, or an external URL)
+  StrRef anchorTo = 0;
 };
 
 // Typed attribute accessors (plan P0-06). Values that came through the ops

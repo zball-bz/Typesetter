@@ -21,9 +21,9 @@ doc @[0,243) [base]
           text @[175,189) [base] str="another bullet"
   para @[199,243) [base]
     text @[199,212) [base] str="The figure is " raw=0:0,14:13
-    ref @[213,218) [base] target="fig1" url="#tsr-fig1"
+    ref @[213,218) [base] target="fig1"
       text @[213,218) [base] str="图 1"
     text @[219,237) [base] str=" and the section is " raw=0:0,1:0,20:18
-    ref @[238,242) [base] target="top" url="#tsr-top"
+    ref @[238,242) [base] target="top"
       text @[238,242) [base] str="§1"
     text @[242,243) [base] str="."

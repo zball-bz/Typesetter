@@ -18,19 +18,19 @@ doc @[383,540) [base]
       text @[474,490) [base] str="(A.1)"
   para @[492,540) [base]
     text @[492,495) [base] str="See " raw=0:0,4:3
-    ref @[496,504) [base] target="methods" url="#tsr-methods"
+    ref @[496,504) [base] target="methods"
       text @[496,504) [base] str="§1"
     text @[504,505) [base] str=", " raw=0:0,2:1
-    ref @[506,513) [base] target="proofs" url="#tsr-proofs"
+    ref @[506,513) [base] target="proofs"
       text @[506,513) [base] str="Appendix A"
     text @[513,514) [base] str=", " raw=0:0,2:1
-    ref @[515,522) [base] target="lemmas" url="#tsr-lemmas"
+    ref @[515,522) [base] target="lemmas"
       text @[515,522) [base] str="Appendix A.1"
     text @[522,523) [base] str=", " raw=0:0,2:1
-    ref @[524,529) [base] target="eq-m" url="#tsr-eq-m"
+    ref @[524,529) [base] target="eq-m"
       text @[524,529) [base] str="Eq. (1.1)"
     text @[530,533) [base] str=" and " raw=0:0,1:0,5:3
-    ref @[534,539) [base] target="eq-p" url="#tsr-eq-p"
+    ref @[534,539) [base] target="eq-p"
       text @[534,539) [base] str="Eq. (A.1)"
     text @[539,540) [base] str="."
 decl counter name="equation" flow=0 @[0,272) ext.row="{\"within\":{\"counter\":\"heading\",\"depth\":1}}"

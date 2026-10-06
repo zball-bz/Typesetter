@@ -101,9 +101,19 @@ enum class RealizeClass : u8 { Plain, LetterSpaced, BlankBearing, Pinned, Rigid,
 // content, resolver-generated reference text, a paragraph indent
 enum class SynKind : u8 { Content, Ref, Indent };
 
+// (plan P3-04; design T7 AnchorNamer) where a link run points: an
+// internal target is a label — its anchor, which the serializer spells —
+// an external one the URL as written
+struct LinkTarget {
+  StrRef ref = 0;
+  bool anchor = false;
+  explicit operator bool() const { return ref != 0; }
+  bool operator==(const LinkTarget&) const = default;
+};
+
 struct RunRec {
   StyleId face = 0;  // style (paint projection)
-  StrRef link = 0;
+  LinkTarget link;
   SynKind syn = SynKind::Content;
   StrRef copyText = 0;  // Replace (T3/T7; unused yet)
   RealizeClass rc = RealizeClass::Plain;

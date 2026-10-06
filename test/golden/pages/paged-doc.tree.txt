@@ -17,6 +17,6 @@ doc @[0,700) [base]
       text @[572,602) [base] str="图与图注保持在同页。"
   para @[613,700) [base]
     text @[613,679) [base] str="尾段：越过图之后继续排布，直至文档结束，引用"
-    ref @[679,685) [base] target="fig-p" url="#tsr-fig-p"
+    ref @[679,685) [base] target="fig-p"
       text @[679,685) [base] str="图 1"
     text @[685,700) [base] str="照常解析。"

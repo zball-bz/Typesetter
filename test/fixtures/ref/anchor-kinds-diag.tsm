@@ -1,0 +1,7 @@
+A labelled rule and a labelled raw block take anchors (plan P3-04, S9b).
+
+#rule({label: "sep"})
+
+#raw({label: "box", h: 24}, "<span>raw</span>")
+
+See @sep and @box; #link({target: "sep"})[a link to the rule] and #link({target: "nowhere"})[one to no label].

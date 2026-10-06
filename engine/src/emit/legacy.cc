@@ -64,8 +64,10 @@ struct LegacyInline final : InlineSink {
         return;
       case Kind::link: {
         ICtx c2 = ctx;
-        for (const ArgVal& a : n->args)
-          if (a.key == ArgK::url && a.tag == ArgTag::Str) c2.url = a.ref;
+        if (n->anchorTo) c2.url = {n->anchorTo, true};  // (plan P3-04)
+        else
+          for (const ArgVal& a : n->args)
+            if (a.key == ArgK::url && a.tag == ArgTag::Str) c2.url = {a.ref, false};
         for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);
         return;
       }
@@ -77,7 +79,7 @@ struct LegacyInline final : InlineSink {
           b.flags = ctx.addFlags;
           b.style = compose(n->style, ctx.add, ctx.mul);  // mono and its size: rules (plan P3-01)
           b.text = n->kids[0]->str;
-          b.linkUrl = ctx.url;
+          b.linkUrl = ctx.url.ref;
           b.span = n->span;
           u.legacy.push_back(b);
         }
@@ -86,10 +88,7 @@ struct LegacyInline final : InlineSink {
       case Kind::ref: {
         // resolver output: kids = display text, url arg = "#tsr-<label>"
         ICtx c2 = ctx;
-        for (const ArgVal& a : n->args)
-          if (a.key == ArgK::url && a.tag == ArgTag::Str) {
-            c2.url = a.ref;
-              }
+        if (n->anchorTo) c2.url = {n->anchorTo, true};  // its target's anchor (plan P3-04)
         c2.addFlags |= BF_REF;
         const size_t before = u.legacy.size();
         for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);
@@ -123,7 +122,7 @@ struct LegacyInline final : InlineSink {
         // CJK–formula boundary glue (App C: formulas are Latin-class)
         if (!u.legacy.empty() && u.legacy.back().isCjkChar()) {
           double px = kCjkBoundaryEm * fontPx(st);
-          pushSynthetic(u, st, ctx.url, n->span, px,
+          pushSynthetic(u, st, ctx.url.ref, n->span, px,
                         (u16)(BF_SPACE | BF_BOUND | ctx.addFlags), 1.0f, 0.0f, px);
         }
         std::vector<MathSeg> segs = layoutMathSegments(
@@ -141,7 +140,7 @@ struct LegacyInline final : InlineSink {
             g.breakPenalty = (float)pen;
             g.style = st;
             g.text = spaceRef;
-            g.linkUrl = ctx.url;
+            g.linkUrl = ctx.url.ref;
             g.span = n->span;
             g.width = segs[k].glueBefore;
             g.spaceWidth = 0;
@@ -155,7 +154,7 @@ struct LegacyInline final : InlineSink {
           b.breakPenalty = 0;  // CJK-context break after a formula is legal
           b.style = st;
           b.text = k == 0 ? srcRef : 0;  // copy: source rides the first segment
-          b.linkUrl = ctx.url;
+          b.linkUrl = ctx.url.ref;
           b.flags = ctx.addFlags;
           b.span = n->span;
           b.math = segs[k].box;
@@ -169,7 +168,7 @@ struct LegacyInline final : InlineSink {
       case Kind::comment:
         return;
       case Kind::fill:  // fil glue (plan P2-16), as emit lowers it
-        pushSynthetic(u, compose(n->style, ctx.add, ctx.mul), ctx.url, n->span, 0.0,
+        pushSynthetic(u, compose(n->style, ctx.add, ctx.mul), ctx.url.ref, n->span, 0.0,
                       (u16)(BF_SPACE | BF_FIL | ctx.addFlags), 0.0f, 0.0f, 0.0);
         return;
       case Kind::group: {
@@ -296,13 +295,13 @@ struct LegacyInline final : InlineSink {
 
     auto flushWord = [&] {
       if (!word.empty()) {
-        emitWord(word, n, u, st, ctx.url, ctx.noHyphen, ctx.addFlags);
+        emitWord(word, n, u, st, ctx.url.ref, ctx.noHyphen, ctx.addFlags);
         word.clear();
       }
     };
     auto boundary = [&] {
       double px = kCjkBoundaryEm * fontPx(st);
-      pushSynthetic(u, st, ctx.url, n->span, px, (u16)(BF_SPACE | BF_BOUND | ctx.addFlags),
+      pushSynthetic(u, st, ctx.url.ref, n->span, px, (u16)(BF_SPACE | BF_BOUND | ctx.addFlags),
                     1.0f, 0.0f, px);
     };
     {  // formula → CJK boundary: the previous inline block was math
@@ -333,7 +332,7 @@ struct LegacyInline final : InlineSink {
       b.spaceWidth = glueSu;  // stretch capacity for the cost fn (App C)
       b.style = stCjk;
       b.text = strs.intern(chars);
-      b.linkUrl = ctx.url;
+      b.linkUrl = ctx.url.ref;
       b.span = n->span;
       if (definedEm > 0) {
         double px = definedEm * fontPx(stCjk);
@@ -354,15 +353,15 @@ struct LegacyInline final : InlineSink {
           // closing/dot + opening
           if (mode == PunctCompress::Full) u.legacy.pop_back();  // set solid
           else if (mode == PunctCompress::None)
-            pushSynthetic(u, stCjk, ctx.url, n->span, halfPx, openSpFlags, 0.0f, 0.0f, 0.0);
+            pushSynthetic(u, stCjk, ctx.url.ref, n->span, halfPx, openSpFlags, 0.0f, 0.0f, 0.0);
           // Book: the closer's breakable half stays as the breathing space
         } else if (lastIsOpenGlyph()) {
           // opening + opening: solid (a breakable gap here would let the
           // first opener dangle at a line end — 禁则); None keeps a RIGID half
           if (mode == PunctCompress::None)
-            pushSynthetic(u, stCjk, ctx.url, n->span, halfPx, openSpFlags, 0.0f, BREAK_INF, 0.0);
+            pushSynthetic(u, stCjk, ctx.url.ref, n->span, halfPx, openSpFlags, 0.0f, BREAK_INF, 0.0);
         } else {
-          pushSynthetic(u, stCjk, ctx.url, n->span, halfPx, openSpFlags,
+          pushSynthetic(u, stCjk, ctx.url.ref, n->span, halfPx, openSpFlags,
                         0.0f, 0.0f, 0.0);  // leading half — breakable, NOT stretchable
         }
       } else {
@@ -381,11 +380,11 @@ struct LegacyInline final : InlineSink {
       g.breakPenalty = BREAK_INF;
       g.style = stCjk;
       g.text = strs.intern(ch);
-      g.linkUrl = ctx.url;
+      g.linkUrl = ctx.url.ref;
       g.span = n->span;
       u.legacy.push_back(g);
       if (!open)
-        pushSynthetic(u, stCjk, ctx.url, n->span, halfPx,
+        pushSynthetic(u, stCjk, ctx.url.ref, n->span, halfPx,
                       (u16)(BF_SPACE | BF_PUNCT_SP | ctx.addFlags), 0.0f, 0.0f, 0.0);
     };
 
@@ -407,7 +406,7 @@ struct LegacyInline final : InlineSink {
         b.stretchWeight = 1;
         b.style = st;
         b.text = spaceRef;
-        b.linkUrl = ctx.url;
+        b.linkUrl = ctx.url.ref;
         b.span = n->span;
         u.legacy.push_back(b);
         prev = Prev::None;

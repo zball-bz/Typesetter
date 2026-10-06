@@ -221,7 +221,7 @@ struct Mat {
     const std::string* v = s.textOf(a.s);
     if (a.k == TArg::K::Text) return a.s;
     if (!v || v->empty()) return {};
-    return a.k == TArg::K::Anchor ? "#tsr-" + *v : *v;
+    return *v;  // (an anchor: a label, which node() makes the link's target)
   }
   ContentNode* node(const TItem& it, const Ctx& c, const Slots& s) {
     bool inline_ = isInlineLevel(it.kind);
@@ -233,6 +233,13 @@ struct Mat {
         continue;
       }
       std::string val = argValue(v, s);
+      if (v.k == TArg::K::Anchor) {  // (plan P3-04) an internal link: its target label, spelled by the serializers
+        if (!val.empty()) {
+          setArg(n, ArgK::target, val);
+          n->anchorTo = e.strs.intern(val);
+        }
+        continue;
+      }
       if (!val.empty() || v.k == TArg::K::Text) setArg(n, k, val);  // an empty slot: no argument
     }
     // an inline node (or a block taking the site's style) is made at the
@@ -342,7 +349,7 @@ struct Mat {
                   "'" + target + "' names an unnumbered element; its label text is shown");
       form = &e.reg.unnumbered;
     }
-    setArg(r, ArgK::url, "#tsr-" + target);
+    r->anchorTo = e.strs.intern(target);  // its target's anchor (plan P3-04; the serializers spell it)
     inst(*form, c, s, r, r->kids);
     return r;
   }
@@ -500,6 +507,16 @@ struct Mat {
     }
     if (k->kind == Kind::ref) {
       out.push_back(resolveRef(clone1(k)));
+      return;
+    }
+    if (k->kind == Kind::link && attrStr(k, ArgK::target)) {  // a link to a label (plan P3-04)
+      std::string target(e.strs.get(attrStr(k, ArgK::target)));
+      ContentNode* l = clone1(k);
+      if (e.ix.labels.count(target)) l->anchorTo = e.strs.intern(target);
+      else e.diags.add(Sev::Warning, "ref-unresolved", k->span, "link target '" + target + "' has no label");
+      l->kids.clear();  // its content, walked like any other
+      kidsOf(k, l->kids);
+      out.push_back(own(k, l));
       return;
     }
     if (k->kind == Kind::field) {  // (plan P2-05, P2-07) a slot of the enclosing instance, or of `of`'s

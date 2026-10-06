@@ -1,0 +1,3 @@
+info ref-unnumbered @[150,154) 'sep' names an unnumbered element; its label text is shown
+info ref-unnumbered @[159,163) 'box' names an unnumbered element; its label text is shown
+warning ref-unresolved @[212,255) link target 'nowhere' has no label
