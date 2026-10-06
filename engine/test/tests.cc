@@ -856,8 +856,10 @@ static void unitTokenConformance(const fs::path& root) {
     printf("FAIL token conformance: engine/tree-sitter %s\n", u.c_str());
     failures++;
   }
+  // P1-09 set 85%; P2-07 gave the grammar statement blocks and splice
+  // arguments (97%), so the floor rises with it
   double pct = bytes ? 100.0 * same / bytes : 100;
-  CHECK(pct >= 85.0);
+  CHECK(pct >= 95.0);
   printf("unit: token conformance %.1f%% of %ld non-blank bytes\n", pct, bytes);
 }
 

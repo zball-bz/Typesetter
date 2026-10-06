@@ -27,6 +27,7 @@ module.exports = grammar({
       $.list_line,
       $.quote_line,
       $.code_statement,
+      $.code_block,
       $.paragraph_line,
     ),
 
@@ -47,6 +48,8 @@ module.exports = grammar({
 
     // #let … statement lines
     code_statement: () => token(prec(2, re(R.statement))),
+    // #{ … } statement blocks (one token, as the engine colors them)
+    code_block: () => token(prec(2, re(R.stmtBlock))),
 
     // ``` fences: opener with info, body lines opaque, closer
     fenced_block: ($) => seq(
@@ -97,8 +100,11 @@ module.exports = grammar({
     link: () => token(re(R.linkText + R.linkUrl)),
     reference: () => token(re(R.reference)),
     label: () => token(re(R.label)),
-    // #name.head(...)  #(expr)  #toc — args approximated to the call parens
-    splice: () => token(re(R.splice)),
+    // #name.head(...)  #(expr)  #toc — the head, then its JS arguments
+    // (approximated to one line, parentheses nested two deep)
+    splice: ($) => prec.right(seq($.splice_head, optional($.splice_args))),
+    splice_head: () => token(re(R.splice)),
+    splice_args: () => token.immediate(re(R.spliceArgs)),
     cell_bar: () => token('|'),
 
     word: () => token(prec(-1, /[A-Za-z0-9_]+/)),

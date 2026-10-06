@@ -41,6 +41,9 @@
       "include": "#code-statement"
     },
     {
+      "include": "#code-block"
+    },
+    {
       "include": "#rule"
     },
     {
@@ -94,6 +97,34 @@
     "code-statement": {
       "name": "keyword.control.let.tsm",
       "match": "^#let [^\\n]*$"
+    },
+    "code-block": {
+      "patterns": [
+        {
+          "name": "meta.embedded.block.javascript",
+          "match": "^#\\{.*\\}\\s*$"
+        },
+        {
+          "begin": "^(#\\{)(?!.*\\}\\s*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.section.embedded.begin.tsm"
+            }
+          },
+          "end": "^(\\})",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.section.embedded.end.tsm"
+            }
+          },
+          "contentName": "meta.embedded.block.javascript",
+          "patterns": [
+            {
+              "include": "source.js"
+            }
+          ]
+        }
+      ]
     },
     "rule": {
       "name": "meta.separator.tsm",

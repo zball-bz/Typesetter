@@ -32,6 +32,10 @@ module.exports = {
   regionClose: `#${ident}!`,  // an Explicit container's named closer
   regionArgs: '\\([^\\n]*\\)',
   statement: `${esc(block.let.starter.trimEnd())} [^\\n]*`,
+  stmtOpen: esc(block.stmt.starter),
+  // #{ … }: closed on its own line, or up to the first line that starts
+  // with '}' (a JS block's body is indented)
+  stmtBlock: `${esc(block.stmt.starter)}([^\\n]*\\}[ \\t]*|([^\\n]*[^}\\n \\t])?[ \\t]*(\\n([^}\\n][^\\n]*)?)*\\n\\}[ \\t]*)`,
   fenceDelim: `${esc(word(block.fence.starter))}[^\\n]*`,
   fenceRun: `${esc(word(block.fence.starter)[0])}{${word(block.fence.starter).length},}`,
   quoteMarker: `${esc(block.quote.starter.trimEnd())} ?`,
@@ -52,4 +56,6 @@ module.exports = {
     `${esc(inline.refs.open.slice(inline.ref.open.length))}[^\\]\\n]+\\])`,
   label: `<[${cls('IdStart')}][${cls('IdCont')}-]*>`,
   splice: `${esc(literal(inline.splice.open))}(\\(|[${cls('SpliceHead')}][${cls('SpliceCont')}.]*)`,
+  // a splice's JS arguments, on one line, parentheses nested two deep
+  spliceArgs: '\\(([^()\\n]|\\(([^()\\n]|\\([^()\\n]*\\))*\\))*\\)',
 };

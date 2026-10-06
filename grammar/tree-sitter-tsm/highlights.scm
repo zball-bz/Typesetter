@@ -17,7 +17,9 @@
 (region_open) @function
 (region_close) @function
 (code_statement) @function
-(splice) @function
+(code_block) @function
+(splice_head) @function
+(splice_args) @embedded
 (reference) @constant
 (label) @label
 (code_span) @string

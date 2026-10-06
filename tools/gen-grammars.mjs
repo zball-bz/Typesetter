@@ -69,6 +69,7 @@ const tm = {
     { include: '#heading' },
     { include: '#region' },
     { include: '#code-statement' },
+    { include: '#code-block' },
     { include: '#rule' },
     { include: '#inline' },
   ],
@@ -91,6 +92,20 @@ const tm = {
       captures: { 1: delim('keyword.control.region.tsm'), 2: delim('meta.function-call.arguments.tsm') },
     },
     'code-statement': { name: 'keyword.control.let.tsm', match: `^${R.statement}$` },
+    // #{ … }: JavaScript, closed on its own line or by a line starting '}'
+    'code-block': {
+      patterns: [
+        { name: 'meta.embedded.block.javascript', match: `^${R.stmtOpen}.*\\}\\s*$` },
+        {
+          begin: `^(${R.stmtOpen})(?!.*\\}\\s*$)`,
+          beginCaptures: { 1: delim('punctuation.section.embedded.begin.tsm') },
+          end: '^(\\})',
+          endCaptures: { 1: delim('punctuation.section.embedded.end.tsm') },
+          contentName: 'meta.embedded.block.javascript',
+          patterns: [{ include: 'source.js' }],
+        },
+      ],
+    },
     rule: { name: 'meta.separator.tsm', match: `^${R.ruleLine}$` },
     inline: {
       patterns: [
