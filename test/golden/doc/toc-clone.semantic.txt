@@ -6,14 +6,14 @@
 </ul>
 </li>
 </ul>
-<h1 data-pid="1" data-s="6" data-e="70" id="tsr-sec-a">Title with <strong>emphasis</strong>, <code class="tsr-mathsrc">$x^2$</code>, a note<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> and <a href="#tsr-sec-b">§1.1</a></h1>
+<h1 data-pid="1" data-s="6" data-e="70" id="tsr-sec-a">Title with <strong>emphasis</strong>, <code class="tsr-mathsrc">$x^2$</code>, a note<a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a> and <a href="#tsr-sec-b">§1.1</a></h1>
 <p data-pid="2" data-s="80" data-e="85">Text.</p>
 <h2 data-pid="3" data-s="87" data-e="96" id="tsr-sec-b">Second</h2>
 <p data-pid="4" data-s="106" data-e="116">More text.</p>
 <div data-role="notes" data-pid="5" data-s="0" data-e="116">
 <hr data-s="0" data-e="116">
 <ol data-s="0" data-e="116">
-<li id="tsr-fn-1">A note body. <a href="#tsr-fnref-1">↩</a></li>
+<li id="tsr-fn-1">A note body. <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
 </ol>
 </div>
 </div>

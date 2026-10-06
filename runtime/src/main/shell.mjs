@@ -15,7 +15,7 @@
 // devAudit). Main-thread work the worker needs is a named capability.
 import { commit, createSession, decodeResult, elementsAt, heldKeys, offsetAt, sessionHtml, StaleKeys } from './commit.mjs';
 import { MATH_FONT } from '../shared/mathfont.gen.mjs';
-import { installCopy } from './copy.mjs';
+import { contentTextFromRange, installCopy } from './copy.mjs';
 import { settingsFromOptions, settingOf } from '../shared/settings.gen.mjs';
 import { refPreview } from './behaviors/ref-preview.mjs';
 import { print } from './behaviors/print.mjs';
@@ -385,6 +385,7 @@ export function createEngine(opts = {}) {
           paginate: (spec) => paginateOf(s, spec),
           offsetAt: (node) => offsetAt(s.view, node),
           elementsAt: (byte) => elementsAt(s.view, byte),
+          contentText: (range) => contentTextFromRange(range, s.view.root ?? s.container),  // (plan P3-07)
         },
         // a method the handle forwards (handle.print → print's)
         expose(name, fn) {
@@ -437,6 +438,9 @@ export function createEngine(opts = {}) {
       let width = opts.widthPx ?? base.host?.width ?? container.getBoundingClientRect().width;
       const settingsAt = (w) => ({ ...base, host: { ...(base.host ?? {}), width: w } });
       applyContract(container, base);
+      // the copy contract from the first paint on (the semantic page marks
+      // its generated text too: D-R06)
+      s.uninstallCopy = copy(container) ?? null;
       let semanticHtml = null;
       const res = await request(
         { type: 'typeset', id, source, settings: settingsAt(width), progressive,
@@ -456,7 +460,6 @@ export function createEngine(opts = {}) {
       await commitTo(s, res);
       const upgrades = upgradeRecords(s.view, before);
       onUpgrade?.(upgrades);
-      s.uninstallCopy = copy(container) ?? null;
       installBehaviors(s);
       const view = s.view;
       const handle = {
@@ -471,6 +474,8 @@ export function createEngine(opts = {}) {
         // show a source byte (the VS Code preview's jump and reveal)
         offsetAt: (node) => offsetAt(view, node),
         elementsAt: (byte) => elementsAt(view, byte),
+        // (plan P3-07) what copy takes of a range of the view (null: no line)
+        contentText: (range) => contentTextFromRange(range, view.root ?? container),
         // the commit session (the blocks held, their keys and elements):
         // read-only, for hosts' diagnostics and tests
         session: view,

@@ -1,6 +1,6 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="26" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Cited: </span><span class="tsr-r" data-syn="ref">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-syn="ref">1</a><span class="tsr-r" data-syn="ref">]</span><span class="tsr-r" data-s="13"> and </span><span class="tsr-r" data-syn="ref">[</span><a class="tsr-r" href="#tsr-bib-liang83" data-syn="ref">2</a><span class="tsr-r" data-syn="ref">]</span><span class="tsr-r" data-s="25">.</span></div>
+<div class="tsr-line" data-s="0" data-e="26" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Cited: </span><span class="tsr-r" data-s="7">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-s="7">1</a><span class="tsr-r" data-s="7">]</span><span class="tsr-r" data-s="13"> and </span><span class="tsr-r" data-s="17">[</span><a class="tsr-r" href="#tsr-bib-liang83" data-s="17">2</a><span class="tsr-r" data-s="17">]</span><span class="tsr-r" data-s="25">.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:278.406px;margin-bottom:19.2px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
@@ -8,7 +8,7 @@
 <div class="tsr-line" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r">F. Plass. </span><span class="tsr-r tsr-i">Breaking Paragraphs into</span></div>
 <div class="tsr-line" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r tsr-i">Lines</span><span class="tsr-r">. Software: Practice and Experience</span></div>
 <div class="tsr-line" data-join="none" style="top:115.203px;left:0px;width:300px;word-spacing:5.333px"><span class="tsr-r">11(11), 1119-1184. 1981. </span><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">doi:10.1002/</a></div>
-<div class="tsr-line" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">spe.4380111102</a></div>
+<div class="tsr-line" data-join="para" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">spe.4380111102</a></div>
 <div class="tsr-line" id="tsr-bib-liang83" data-join="space" style="top:182.406px;left:0px;width:300px;word-spacing:21px"><span class="tsr-r">[2] Franklin Mark Liang. </span><span class="tsr-r tsr-i">Word</span></div>
 <div class="tsr-line" data-join="none" style="top:206.406px;left:0px;width:300px;word-spacing:10.667px"><span class="tsr-r tsr-i">Hy-phen-a-tion by Com-put-er</span><span class="tsr-r">. Stan</span><span class="tsr-r" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-join="none" style="top:230.406px;left:0px;width:300px"><span class="tsr-r">ford University, 1983. </span><a class="tsr-r" href="https://tug.org/docs/liang/">https://tug.org/</a></div>
@@ -24,7 +24,7 @@
 <div class="tsr-line" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r">F. Plass. </span><span class="tsr-r tsr-i">Breaking Paragraphs into</span></div>
 <div class="tsr-line" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r tsr-i">Lines</span><span class="tsr-r">. Software: Practice and Experience</span></div>
 <div class="tsr-line" data-join="none" style="top:115.203px;left:0px;width:300px;word-spacing:5.333px"><span class="tsr-r">11(11), 1119-1184. 1981. </span><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">doi:10.1002/</a></div>
-<div class="tsr-line" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">spe.4380111102</a></div>
+<div class="tsr-line" data-join="para" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">spe.4380111102</a></div>
 <div class="tsr-line" data-join="space" style="top:182.406px;left:0px;width:300px;word-spacing:21px"><span class="tsr-r">[2] Franklin Mark Liang. </span><span class="tsr-r tsr-i">Word</span></div>
 <div class="tsr-line" data-join="none" style="top:206.406px;left:0px;width:300px;word-spacing:10.667px"><span class="tsr-r tsr-i">Hy-phen-a-tion by Com-put-er</span><span class="tsr-r">. Stan</span><span class="tsr-r" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-join="none" style="top:230.406px;left:0px;width:300px"><span class="tsr-r">ford University, 1983. </span><a class="tsr-r" href="https://tug.org/docs/liang/">https://tug.org/</a></div>

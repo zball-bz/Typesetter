@@ -3,10 +3,10 @@ doc @[0,313) [base]
     text @[2,11) [BOLDx1.60] str="Footnotes"
   para @[19,211) [base]
     text @[19,42) [base] str="A claim in running text"
-    ref @[42,106) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
+    ref @[42,106) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
       text @[42,106) [SUPx0.70] str="1"
     text @[107,152) [base] str=" continues after the marker, and a second note" raw=0:0,1:0
-    ref @[152,174) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2"
+    ref @[152,174) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" syn="fn-marker" copy="omit"
       text @[152,174) [SUPx0.70] str="2"
     text @[175,211) [base] str=" follows later in the same paragraph." raw=0:0,1:0
   heading @[213,225) [BOLDx1.35] level=2 label="h-1.1"
@@ -36,12 +36,12 @@ doc @[0,313) [base]
               mathsrc @[94,103) [basex0.85] src="x^2 + y^2"
             text @[104,105) [basex0.85] str="."
             text @[42,106) [basex0.85] str=" "
-            ref @[42,106) [basex0.85] target="fnref-1"
+            ref @[42,106) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
               text @[42,106) [basex0.85] str="↩"
       item @[152,174) [base]
         para @[152,174) [base] label="fn-2"
           styled @[152,174) [basex0.85] role="note-body"
             text @[154,173) [basex0.85] str="Second note, short."
             text @[152,174) [basex0.85] str=" "
-            ref @[152,174) [basex0.85] target="fnref-2"
+            ref @[152,174) [basex0.85] target="fnref-2" syn="backlink" copy="omit"
               text @[152,174) [basex0.85] str="↩"

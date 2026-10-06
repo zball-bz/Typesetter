@@ -85,6 +85,34 @@ inline const ArgVal* extAttr(const ContentNode* n, StrRef name) {
   return nullptr;
 }
 
+// (plan P3-07; design T7 CopyPolicy) what copy takes of a node, from its
+// universal `copy` / `syn` attributes (domain "copy": text | omit |
+// replace:<text>); marked: it has either. A `syn` alone is synthetic text:
+// omitted. syn: the data-syn kind (its `syn`, else its kind's name)
+struct CopyAttr {
+  enum class Mode : u8 { Text, Omit, Replace } mode = Mode::Text;
+  bool marked = false;
+  std::string_view replace;
+  std::string_view syn;
+};
+inline CopyAttr copyAttr(const ContentNode* n, const Interner& strs) {
+  CopyAttr c;
+  const StrRef cp = attrStr(n, ArgK::copy), sy = attrStr(n, ArgK::syn);
+  if (!cp && !sy) return c;
+  c.marked = true;
+  const std::string_view v = cp ? strs.get(cp) : std::string_view{};
+  constexpr std::string_view kReplace = "replace:", kText = "text";
+  if (v == kText) return c;
+  c.syn = sy ? strs.get(sy) : std::string_view(kKinds[(u16)n->kind].name);
+  if (v.substr(0, kReplace.size()) == kReplace) {
+    c.mode = CopyAttr::Mode::Replace;
+    c.replace = v.substr(kReplace.size());
+  } else {
+    c.mode = CopyAttr::Mode::Omit;
+  }
+  return c;
+}
+
 // The slot a node fills in its parent (plan P2-16; schema "slots"): None
 // when its slot attribute names none; slotOn: whether a kind takes it
 inline SlotId slotOf(const ContentNode* n, const Interner& strs) {

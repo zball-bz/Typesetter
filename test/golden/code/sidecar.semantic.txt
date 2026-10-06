@@ -7,13 +7,13 @@ function fib(n) {
 }</code></pre>
 <aside class="tsr-margin">
 <p data-line="1">记忆化容器，均摊 <code class="tsr-mathsrc">$O(1)$</code> 查询</p>
-<p data-line="3"><strong>基例</strong>：<code class="tsr-mathsrc">$n &lt;= 1$</code> 时直接返回，详见 <a href="#tsr-base">§1</a><a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a></p>
+<p data-line="3"><strong>基例</strong>：<code class="tsr-mathsrc">$n &lt;= 1$</code> 时直接返回，详见 <a href="#tsr-base">§1</a><a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a></p>
 </aside>
 <h1 data-pid="2" data-s="333" data-e="347" id="tsr-base">基例说明</h1>
 <div data-role="notes" data-pid="3" data-s="0" data-e="347">
 <hr data-s="0" data-e="347">
 <ol data-s="0" data-e="347">
-<li id="tsr-fn-1">边注里的脚注是真正的脚注。 <a href="#tsr-fnref-1">↩</a></li>
+<li id="tsr-fn-1">边注里的脚注是真正的脚注。 <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
 </ol>
 </div>
 </div>

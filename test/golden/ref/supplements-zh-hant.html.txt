@@ -5,7 +5,7 @@
 <div class="tsr-para" data-pid="1" data-s0="24" style="position:relative;height:72px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="88" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">A Traditional Chinese document takes </span><span class="tsr-r tsr-cjk" data-s="0">圖</span><span class="tsr-sp" data-syn="boundary" style="width:3.333px"></span><span class="tsr-r" data-s="0">/</span></div>
 <div class="tsr-line" data-s="0" data-e="88" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-1.5px"><span class="tsr-r tsr-cjk" data-s="0">表</span><span class="tsr-sp" data-syn="boundary" style="width:2.5px"></span><span class="tsr-r" data-s="0">/</span><span class="tsr-sp" data-syn="boundary" style="width:2.5px"></span><span class="tsr-r tsr-cjk" data-s="0">式</span><span class="tsr-r" data-s="0"> from its locale terms (plan P1-10):</span></div>
-<div class="tsr-line" data-s="0" data-e="122" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">see </span><a class="tsr-r" href="#tsr-intro" data-syn="ref">§1</a><span class="tsr-r" data-s="95">, </span><a class="tsr-r tsr-cjk" href="#tsr-fig-a" data-syn="ref">圖</a><a class="tsr-r" href="#tsr-fig-a" data-syn="ref"> 1</a><span class="tsr-r" data-s="103">, </span><a class="tsr-r tsr-cjk" href="#tsr-tab-a" data-syn="ref">表</a><a class="tsr-r" href="#tsr-tab-a" data-syn="ref"> 1</a><span class="tsr-r" data-s="112"> and </span><a class="tsr-r tsr-cjk" href="#tsr-eq-a" data-syn="ref">式</a><a class="tsr-r" href="#tsr-eq-a" data-syn="ref"> (1)</a><span class="tsr-r" data-s="121">.</span></div>
+<div class="tsr-line" data-s="0" data-e="122" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">see </span><a class="tsr-r" href="#tsr-intro" data-s="89">§1</a><span class="tsr-r" data-s="95">, </span><a class="tsr-r tsr-cjk" href="#tsr-fig-a" data-s="97">圖</a><a class="tsr-r" href="#tsr-fig-a" data-s="97"> 1</a><span class="tsr-r" data-s="103">, </span><a class="tsr-r tsr-cjk" href="#tsr-tab-a" data-s="105">表</a><a class="tsr-r" href="#tsr-tab-a" data-s="105"> 1</a><span class="tsr-r" data-s="112"> and </span><a class="tsr-r tsr-cjk" href="#tsr-eq-a" data-s="116">式</a><a class="tsr-r" href="#tsr-eq-a" data-s="116"> (1)</a><span class="tsr-r" data-s="121">.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="148" style="position:relative;height:103.203px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" data-s="0" data-e="89" src="a.png" alt="a figure" style="top:0px;left:90px;width:120px;height:60px">
@@ -13,8 +13,8 @@
 </div>
 <div class="tsr-para" data-pid="3" data-s0="272" style="position:relative;height:33.594px;margin-bottom:19.2px">
 <div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-tab-a" data-s="0" data-e="1" data-cell="1" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">x</span></div>
-<div class="tsr-line" data-s="4" data-e="5" data-cell="1" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="4">y</span></div>
+<div class="tsr-line" id="tsr-tab-a" data-s="0" data-e="1" data-join="tab" data-ragged="1" data-track="cell" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">x</span></div>
+<div class="tsr-line" data-s="4" data-e="5" data-ragged="1" data-track="cell" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="4">y</span></div>
 <div class="tsr-rule" style="top:33.594px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="287" style="position:relative;height:24px">

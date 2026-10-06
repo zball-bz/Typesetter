@@ -8,7 +8,7 @@ doc @[97,448) [base]
       styled @[97,103) [EM]
         text @[97,103) [EM] str="markup"
       text @[97,103) [base] str=" in a template."
-      ref @[97,103) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
+      ref @[97,103) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
         text @[97,103) [SUPx0.70] str="1"
     text @[104,110) [base] str=" Again: " raw=0:0,1:0,8:6
     seq @[111,117) [base]
@@ -19,7 +19,7 @@ doc @[97,448) [base]
       styled @[111,117) [EM]
         text @[111,117) [EM] str="markup"
       text @[111,117) [base] str=" in a template."
-      ref @[111,117) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2"
+      ref @[111,117) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" syn="fn-marker" copy="omit"
         text @[111,117) [SUPx0.70] str="2"
   para @[119,229) [base]
     seq @[119,229) [base]
@@ -50,12 +50,12 @@ doc @[97,448) [base]
           styled @[97,103) [basex0.85] role="note-body"
             text @[97,103) [basex0.85] str="A note made by m."
             text @[97,103) [basex0.85] str=" "
-            ref @[97,103) [basex0.85] target="fnref-1"
+            ref @[97,103) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
               text @[97,103) [basex0.85] str="↩"
       item @[111,117) [base]
         para @[111,117) [base] label="fn-2"
           styled @[111,117) [basex0.85] role="note-body"
             text @[111,117) [basex0.85] str="A note made by m."
             text @[111,117) [basex0.85] str=" "
-            ref @[111,117) [basex0.85] target="fnref-2"
+            ref @[111,117) [basex0.85] target="fnref-2" syn="backlink" copy="omit"
               text @[111,117) [basex0.85] str="↩"

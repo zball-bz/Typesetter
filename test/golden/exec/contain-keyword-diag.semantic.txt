@@ -1,5 +1,5 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="7">Before.</p>
-<div class="tsr-err" data-pid="1" data-s="9" data-e="42" title="ReferenceError: ok is not defined">&#9888; ReferenceError: ok is not defined</div>
+<div class="tsr-err" data-pid="1" data-s="9" data-e="42" title="ReferenceError: ok is not defined" data-syn="error">&#9888; ReferenceError: ok is not defined</div>
 <p data-pid="2" data-s="44" data-e="50">After.</p>
 </div>

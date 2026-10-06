@@ -28,6 +28,8 @@ struct LegacyInline final : InlineSink {
   explicit LegacyInline(EmitEnv& e)
       : E(e), arena(e.arena), diags(e.diags), strs(e.strs), styles(e.styles), cfg(e.cfg),
         mathText(e.mathText), spaceRef(e.spaceRef), hyphenRef(e.hyphenRef) {}
+  // the copy policy (plan P3-07) is no field the oracle compares
+  void copyPolicy(const ContentNode*, Flow&, ICtx&) override {}
   StyleId compose(StyleId base, const StyleDelta& d, float mul) { return E.compose(base, d, mul); }
 
   void walk(const ContentNode* n, Flow& u, ICtx ctx) override { inlineWalk(n, u, ctx); }

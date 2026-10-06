@@ -14,6 +14,6 @@
 <p data-pid="6" data-s="559" data-e="645">References: <a href="#tsr-b1">b1</a>, <a href="#tsr-a1">a1</a>, <a href="#tsr-code1">code1</a>, <a href="#tsr-emc">式 (1)</a>, <a href="#tsr-c1">c1</a> and <a href="#tsr-sec:intro">§1</a>. With a supplement: <a href="#tsr-emc">p. 5 (1)</a>.</p>
 <h1 data-pid="7" data-s="647" data-e="661" id="tsr-sec:intro">Introduction</h1>
 <p data-pid="8" data-s="675" data-e="738">A paragraph ending in something label-like &lt;looks-like-a-label&gt;</p>
-<p data-pid="9" data-s="740" data-e="784">Mixed arguments: <span class="tsr-err" title="named and positional arguments mixed: name every one, card(label: &quot;x&quot;, name: 3)">&#9888; named and positional arguments mixed: name every one, card(label: &quot;x&quot;, name: 3)</span>.</p>
-<div class="tsr-err" data-pid="10" data-s="786" data-e="832" title="region arguments must be named (key: value): write #!aside(cols: cols)">&#9888; region arguments must be named (key: value): write #!aside(cols: cols)</div>
+<p data-pid="9" data-s="740" data-e="784">Mixed arguments: <span class="tsr-err" title="named and positional arguments mixed: name every one, card(label: &quot;x&quot;, name: 3)" data-syn="error">&#9888; named and positional arguments mixed: name every one, card(label: &quot;x&quot;, name: 3)</span>.</p>
+<div class="tsr-err" data-pid="10" data-s="786" data-e="832" title="region arguments must be named (key: value): write #!aside(cols: cols)" data-syn="error">&#9888; region arguments must be named (key: value): write #!aside(cols: cols)</div>
 </div>

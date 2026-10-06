@@ -1,4 +1,4 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="44" data-e="51">Before.</p>
-<div class="tsr-err" data-pid="1" data-s="53" data-e="88" title="Error: boom (the rest of the document was not executed)">&#9888; Error: boom (the rest of the document was not executed)</div>
+<div class="tsr-err" data-pid="1" data-s="53" data-e="88" title="Error: boom (the rest of the document was not executed)" data-syn="error">&#9888; Error: boom (the rest of the document was not executed)</div>
 </div>

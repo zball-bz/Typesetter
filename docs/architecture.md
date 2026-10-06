@@ -179,9 +179,11 @@ Layout: header (version, counts) · string table (UTF-8 blob + varint offsets) �
 
 ### 4.2 Main thread (thin by design)
 
-- **shell.ts** — public API: `typeset(source, container, opts) → handle { relayout, on, destroy }`. Owns the source string (copy rebuilds from it — no worker round-trip on copy).
+The module list below is the original design; as built the main thread is `shell.mjs` (the core, below), `commit.mjs` (the one DOM mutation path), `copy.mjs`, `audit.mjs` and `behaviors/*.mjs` — there is no dom.ts or observe.ts (resizing is the host's call to `relayout`).
+
+- **shell.ts** — public API: `typeset(source, container, opts) → handle { relayout, on, destroy }`.
 - **dom.ts** — semantic HTML injection, per-paragraph atomic swaps, anchor bookkeeping, `size-adjust` fallback font setup (§9).
-- **copy.ts** — clipboard listener: selection → `data-s/e` offsets → clean source text (strips `\n`, hyphen artifacts, comments).
+- **copy.ts** — clipboard listener. As built (`copy.mjs`, document-model §9.3, plan P3-07): CONTENT text from the typeset DOM — the engine encodes what copy takes of each run (`data-syn`, `data-copy`) and line (`data-join`), the DOM side concatenates; source offsets are never used for copy.
 - **observe.ts** — ResizeObserver + dppx `matchMedia` one-shots; forwards events to the worker.
 
 As built (plan P3-05; design T7 RenderResult + commit): `runtime/src/main/commit.mjs` is the one path that changes the typeset view. A result names every block by a 128-bit key of its body (the block without its positional attributes `data-pid`, `data-s0`, `margin-bottom`) and carries only the blocks the shell does not hold; `commit()` keeps the blocks it holds by element reference (checked still in place), matches an order-preserving prefix and suffix on key, replaces only the middle (one Range deletion and one insert; nothing kept — a relayout — is one swap of the view) and writes the positional attributes of kept blocks in place. A frame naming a key the shell dropped is asked for again holding nothing (`StaleKeys`). Upgrade records (old/new rects by pid) are read for a typeset, and on an update or relayout only for an `onUpgrade` listener. `handle.html` is the legacy concatenation, built on demand; `handle.offsetAt(node)` and `handle.elementsAt(byte)` answer source positions from the blocks' source ranges (the VS Code preview's jump and reveal).
@@ -210,7 +212,7 @@ worker → main : ready
                 fatal{docId, error}
 ```
 
-The `semantic` → `paragraphs` sequence *is* the native-fallback state machine as seen from the DOM: inject flow HTML immediately, swap paragraphs as they arrive.
+The `semantic` → `paragraphs` sequence *is* the native-fallback state machine as seen from the DOM: inject flow HTML immediately, swap paragraphs as they arrive. (The message list above is the original design: as built there is no `init`/`ready`/`paragraphs`/`needMainMeasure` — the worker answers `semantic` then `result` frames, below.)
 
 As built (plan P3-05): a typeset, update, relayout or render request carries the keys the shell holds (`held`, 16 bytes each); the result is `result{id, frame, html, diags, heightPx, timings}` — `frame` (transferred) holds the head (generation, height, `idPrefix` (P3-06), the root's open tag, the anchors `[label, pid, class, preview]` — `preview` (P3-06): `"block"` for a target whose class previews, `""` otherwise, never on a marker's own label —, each block's gap as the writer spells it) and the block table (pid, source range, state, height, gap, key, offset and length into `html` in UTF-16 units; length 0: held), `html` the blocks the shell lacks, decoded in the worker (`tsr2_render_result`, `Doc::renderResult`).
 

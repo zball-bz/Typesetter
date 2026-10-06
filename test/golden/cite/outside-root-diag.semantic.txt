@@ -2,5 +2,5 @@
 <p data-pid="0" data-s="0" data-e="74">A bibliography file outside the document root is refused (plan P0-11): ??.</p>
 <div data-role="bibliography" data-pid="1" data-s="76" data-e="114">
 </div>
-<div class="tsr-err" data-pid="2" data-s="76" data-e="114" title="bibliography ../../../../refs.json: resource outside the document root">&#9888; bibliography ../../../../refs.json: resource outside the document root</div>
+<div class="tsr-err" data-pid="2" data-s="76" data-e="114" title="bibliography ../../../../refs.json: resource outside the document root" data-syn="error">&#9888; bibliography ../../../../refs.json: resource outside the document root</div>
 </div>

@@ -32,7 +32,12 @@ struct DLRun {
   StyleId face = 0;      // the run's style
   LinkTarget link;       // a link run is an <a> (an anchor: the AnchorNamer spells it)
   StrRef id = 0;         // an inline anchor (a footnote marker)
-  bool synRef = false;   // a resolver-synthesized run (copy skips it)
+  bool synRef = false;   // a resolver-synthesized run (the dump's "ref")
+  // (plan P3-07) what copy takes of it: Text, or Omit / Replace spelled
+  // data-syn=<synName> (+ data-copy=<copyText>, data-copy-group)
+  CopyMode copy = CopyMode::Text;
+  StrRef synName = 0, copyText = 0;
+  u32 copyGroup = 0;
   u32 dataS = ~0u;       // its source start (absolute), ~0u = none
   const char* cls = nullptr;  // an extra class (a squeezed glyph's tsr-sqL / tsr-sqR)
   const char* syn = nullptr;  // its data-syn (hyphen, indent, boundary, …)
@@ -61,7 +66,8 @@ struct DLNode {
   Span span;                    // data-s / data-e
   const char* join = nullptr;   // data-join
   bool ragged = false;          // data-ragged
-  bool cell = false;            // data-cell
+  const char* track = nullptr;  // data-track (plan P3-07): cell, sidecar or caption
+  bool spanned = false;         // data-s / data-e even for an empty span (a blank code row)
   bool overfull = false;        // data-overfull
   bool hl = false;              // a highlighted code row
   double wordSpacingPx = 0;

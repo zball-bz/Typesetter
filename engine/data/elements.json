@@ -127,7 +127,8 @@
         "marker": [
           {
             "node": "ref",
-            "args": { "role": "fn-marker", "attach": "prev", "target": { "slot": "alias" }, "label": { "slot": "marker-alias" } }
+            "args": { "role": "fn-marker", "attach": "prev", "target": { "slot": "alias" }, "label": { "slot": "marker-alias" },
+                      "syn": "fn-marker", "copy": "omit" }
           }
         ]
       }
@@ -239,7 +240,7 @@
               "paras": {
                 "anchor": { "slot": "alias" },
                 "role": "note-body",
-                "tail": [" ", { "node": "ref", "args": { "target": { "slot": "marker-alias" } } }]
+                "tail": [" ", { "node": "ref", "args": { "target": { "slot": "marker-alias" }, "syn": "backlink", "copy": "omit" } }]
               }
             }
           ]

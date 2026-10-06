@@ -1,6 +1,6 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:72px">
-<div class="tsr-line" data-s="0" data-e="70" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.8px"><span class="tsr-r" data-s="0">A rule </span><span class="tsr-r tsr-code" data-s="7">⚠ rule</span><span class="tsr-r" data-s="15"> in a sentence, and an image</span></div>
+<div class="tsr-line" data-s="0" data-e="70" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.8px"><span class="tsr-r" data-s="0">A rule </span><span class="tsr-r tsr-code" data-syn="error">⚠ rule</span><span class="tsr-r" data-s="15"> in a sentence, and an image</span></div>
 <div class="tsr-line" data-s="15" data-e="137" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.429px"><span class="tsr-r" data-s="15">whose source is not allowed </span><span class="tsr-iimg tsr-iimgph" data-syn="image" data-s="71" style="width:16px;height:16px"></span><span class="tsr-r" data-s="117"> stays a</span></div>
 <div class="tsr-line" data-s="117" data-e="137" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="117">placeholder.</span></div>
 </div>

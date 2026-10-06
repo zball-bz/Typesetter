@@ -1,5 +1,5 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="68" data-e="75">Before.</p>
-<div class="tsr-err" data-pid="1" data-s="77" data-e="97" title="handler failed">&#9888; handler failed</div>
+<div class="tsr-err" data-pid="1" data-s="77" data-e="97" title="handler failed" data-syn="error">&#9888; handler failed</div>
 <p data-pid="2" data-s="99" data-e="105">After.</p>
 </div>

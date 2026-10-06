@@ -1,11 +1,21 @@
 <div class="tsr-doc tsr-paged" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:995px">
+<div class="tsr-band" data-b="0">
 <div class="tsr-line" id="tsr-top" data-s="2" data-e="14" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Anchor kinds</span></div>
-<div class="tsr-line" data-ragged="1" id="tsr-lst-a" style="top:44.812px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">x = 1</span></div>
-<div class="tsr-line" id="tsr-sec-in" data-s="106" data-e="119" data-ragged="1" style="top:88.016px;left:0px;width:300px"><span id="tsr-box-b" data-syn="anchor"></span><span class="tsr-r tsr-b" data-s="106" style="font-size:21.6px">Inner heading</span></div>
+</div>
+<div class="tsr-band" data-b="1">
+<div class="tsr-line" id="tsr-lst-a" data-s="58" data-e="63" data-ragged="1" style="top:44.812px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">x = 1</span></div>
+</div>
+<div class="tsr-band" data-b="2">
+<div class="tsr-line" id="tsr-sec-in" data-s="106" data-e="119" data-join="para" data-ragged="1" style="top:88.016px;left:0px;width:300px"><span id="tsr-box-b" data-syn="anchor"></span><span class="tsr-r tsr-b" data-s="106" style="font-size:21.6px">Inner heading</span></div>
 <div class="tsr-line" data-s="130" data-e="153" style="top:131.219px;left:0px;width:300px"><span class="tsr-r" data-s="130">Body text of the aside.</span></div>
+</div>
+<div class="tsr-band" data-b="3">
 <div class="tsr-rule" id="tsr-rule-c" style="top:186.422px;left:0px;width:300px"></div>
 <div class="tsr-line" data-s="193" data-e="208" style="top:217.625px;left:0px;width:300px"><span class="tsr-r" data-s="193">After the rule.</span></div>
-<div class="tsr-line" data-s="218" data-e="258" style="top:260.828px;left:0px;width:300px"><span class="tsr-r" data-s="218">See </span><a class="tsr-r" href="#tsr-lst-a" data-syn="ref">lst-a</a><span class="tsr-r" data-s="228">, </span><a class="tsr-r" href="#tsr-box-b" data-syn="ref">box-b</a><span class="tsr-r" data-s="236">, </span><a class="tsr-r" href="#tsr-sec-in" data-syn="ref">§1.1</a><span class="tsr-r" data-s="246"> and </span><a class="tsr-r" href="#tsr-rule-c" data-syn="ref">rule-c</a><span class="tsr-r" data-s="257">.</span></div>
+</div>
+<div class="tsr-band" data-b="4">
+<div class="tsr-line" data-s="218" data-e="258" style="top:260.828px;left:0px;width:300px"><span class="tsr-r" data-s="218">See </span><a class="tsr-r" href="#tsr-lst-a" data-s="222">lst-a</a><span class="tsr-r" data-s="228">, </span><a class="tsr-r" href="#tsr-box-b" data-s="230">box-b</a><span class="tsr-r" data-s="236">, </span><a class="tsr-r" href="#tsr-sec-in" data-s="238">§1.1</a><span class="tsr-r" data-s="246"> and </span><a class="tsr-r" href="#tsr-rule-c" data-s="250">rule-c</a><span class="tsr-r" data-s="257">.</span></div>
+</div>
 </div>
 </div>

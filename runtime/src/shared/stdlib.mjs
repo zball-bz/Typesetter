@@ -479,7 +479,8 @@ export function createStd(host) {
     const kind = KIND[spec.kind];
     return (call) => ob.makeNode(kind, ordered(spec.order, call.attrs), call.kids);
   };
-  const styledBy = (attrs) => (call) => ob.makeNode(KIND.styled, attrs, call.kids);
+  // (its universal attributes — label, role, copy, … — kept: plan P3-07)
+  const styledBy = (attrs) => (call) => ob.makeNode(KIND.styled, { ...attrs, ...call.attrs }, call.kids);
   const styleKeyDiag = (who) => (k) => diag(1, 'ctor-arg', `${who}: unknown style key ${k}`);
   // a node again with more attributes (its span kept): a caption paragraph's
   // role, a node's own style (plan P2-08)

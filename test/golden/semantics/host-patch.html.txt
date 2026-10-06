@@ -9,6 +9,6 @@
 <div class="tsr-line" id="tsr-f1" data-s="0" data-e="26" data-ragged="1" style="top:0px;left:26px;width:274px"><span class="tsr-r tsr-b" data-s="0">Fig. 1: </span><span class="tsr-r" data-s="0">A figure the host renamed.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="83" style="position:relative;height:24px">
-<div class="tsr-line" data-s="0" data-e="18" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-deep" data-syn="ref">§1.1.1</a><span class="tsr-r" data-s="10"> and </span><a class="tsr-r" href="#tsr-f1" data-syn="ref">Fig. 1</a><span class="tsr-r" data-s="17">.</span></div>
+<div class="tsr-line" data-s="0" data-e="18" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-deep" data-s="4">§1.1.1</a><span class="tsr-r" data-s="10"> and </span><a class="tsr-r" href="#tsr-f1" data-s="14">Fig. 1</a><span class="tsr-r" data-s="17">.</span></div>
 </div>
 </div>

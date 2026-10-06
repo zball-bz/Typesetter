@@ -1,5 +1,5 @@
 <div class="tsr-flow">
-<div class="tsr-err" data-pid="0" data-s="0" data-e="14" title="SyntaxError: invalid JavaScript in this block">&#9888; SyntaxError: invalid JavaScript in this block</div>
+<div class="tsr-err" data-pid="0" data-s="0" data-e="14" title="SyntaxError: invalid JavaScript in this block" data-syn="error">&#9888; SyntaxError: invalid JavaScript in this block</div>
 <p data-pid="1" data-s="16" data-e="71">Before the hoisting rule: reserved words stay verbatim.</p>
 <p data-pid="2" data-s="123" data-e="163">helped text after a declaring block.</p>
 </div>

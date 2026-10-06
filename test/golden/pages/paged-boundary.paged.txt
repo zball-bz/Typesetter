@@ -1,18 +1,26 @@
 <div class="tsr-doc tsr-paged" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
+<div class="tsr-band" data-b="0">
 <div class="tsr-line" id="tsr-h-1" data-s="2" data-e="16" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Sheet boundary</span></div>
+</div>
+<div class="tsr-band" data-b="1">
 <div class="tsr-line" data-s="18" data-e="155" data-join="space" style="top:44.812px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="18">Filler paragraph one fills most of the</span></div>
 <div class="tsr-line" data-s="18" data-e="155" data-join="space" style="top:68.812px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="18">first sheet with ordinary running text so</span></div>
 <div class="tsr-line" data-s="18" data-e="155" data-join="space" style="top:92.812px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="18">that the next paragraph starts close to</span></div>
 <div class="tsr-line" data-s="18" data-e="155" style="top:116.812px;left:0px;width:300px"><span class="tsr-r" data-s="18">the bottom edge.</span></div>
+</div>
+<div class="tsr-band" data-b="2">
 <div class="tsr-line" data-s="157" data-e="250" data-join="space" style="top:160.016px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="157">Filler paragraph two continues to push</span></div>
 <div class="tsr-line" data-s="157" data-e="250" data-join="space" style="top:184.016px;left:0px;width:300px;word-spacing:2.5px"><span class="tsr-r" data-s="157">the content down the page by a few more</span></div>
 <div class="tsr-line" data-s="157" data-e="250" style="top:208.016px;left:0px;width:300px"><span class="tsr-r" data-s="157">lines of text.</span></div>
 </div>
+</div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
+<div class="tsr-band" data-b="3">
 <div class="tsr-line" data-s="252" data-e="384" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:5px"><span class="tsr-r" data-s="252">This three-line paragraph starts near</span></div>
 <div class="tsr-line" data-s="252" data-e="384" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="252">the sheet boundary: its first line may</span></div>
 <div class="tsr-line" data-s="252" data-e="384" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="252">fit, but widow and orphan rules decide</span></div>
 <div class="tsr-line" data-s="252" data-e="384" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="252">where it breaks.</span></div>
+</div>
 </div>
 </div>

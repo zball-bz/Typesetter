@@ -3,12 +3,12 @@ doc @[0,131) [base]
     text @[0,43) [base] str="Emphasis carries into its footnote markers: " raw=0:0,44:43
     styled @[44,81) [BOLD]
       text @[45,54) [BOLD] str="bold text"
-      ref @[54,80) [BOLD+SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
+      ref @[54,80) [BOLD+SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
         text @[54,80) [BOLD+SUPx0.70] str="1"
     text @[82,85) [base] str=" and " raw=0:0,1:0,5:3
     styled @[86,117) [EM]
       text @[87,98) [EM] str="italic text"
-      ref @[98,116) [EM+SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2"
+      ref @[98,116) [EM+SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" syn="fn-marker" copy="omit"
         text @[98,116) [EM+SUPx0.70] str="2"
     text @[118,131) [base] str=" (plan P1-02)." raw=0:0,1:0
   group @[0,131) [base] role="notes"
@@ -19,12 +19,12 @@ doc @[0,131) [base]
           styled @[54,80) [BOLDx0.85] role="note-body"
             text @[56,79) [BOLDx0.85] str="A note in bold context."
             text @[54,80) [BOLDx0.85] str=" "
-            ref @[54,80) [BOLDx0.85] target="fnref-1"
+            ref @[54,80) [BOLDx0.85] target="fnref-1" syn="backlink" copy="omit"
               text @[54,80) [BOLDx0.85] str="↩"
       item @[98,116) [base]
         para @[98,116) [base] label="fn-2"
           styled @[98,116) [EMx0.85] role="note-body"
             text @[100,115) [EMx0.85] str="One in italics."
             text @[98,116) [EMx0.85] str=" "
-            ref @[98,116) [EMx0.85] target="fnref-2"
+            ref @[98,116) [EMx0.85] target="fnref-2" syn="backlink" copy="omit"
               text @[98,116) [EMx0.85] str="↩"

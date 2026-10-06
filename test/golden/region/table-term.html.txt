@@ -5,16 +5,16 @@
 </div>
 <div class="tsr-para" data-pid="1" data-s0="115" style="position:relative;height:115.188px;margin-bottom:19.2px">
 <div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-parts" data-s="0" data-e="4" data-cell="1" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">Part</span></div>
-<div class="tsr-line" data-s="7" data-e="11" data-cell="1" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="7">Note</span></div>
+<div class="tsr-line" id="tsr-parts" data-s="0" data-e="4" data-join="tab" data-ragged="1" data-track="cell" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">Part</span></div>
+<div class="tsr-line" data-s="7" data-e="11" data-join="row" data-ragged="1" data-track="cell" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="7">Note</span></div>
 <div class="tsr-rule" style="top:33.594px;left:0px;width:300px"></div>
-<div class="tsr-line" data-s="12" data-e="16" data-cell="1" style="top:38.391px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="12">Gear</span></div>
-<div class="tsr-line" id="tsr-gizmo" data-s="19" data-e="58" data-cell="1" style="top:38.391px;left:156.406px;width:137.188px;word-spacing:-0.103px"><span class="tsr-r tsr-b" data-s="19">gizmo</span><span class="tsr-r" data-s="19"> — a small me</span><span class="tsr-r" data-s="32" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="32" data-e="69" data-cell="1" style="top:62.391px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="32">chanical device in</span></div>
-<div class="tsr-line" data-s="59" data-e="69" data-cell="1" style="top:86.391px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="59">the box</span></div>
+<div class="tsr-line" data-s="12" data-e="16" data-join="tab" data-ragged="1" data-track="cell" style="top:38.391px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="12">Gear</span></div>
+<div class="tsr-line" id="tsr-gizmo" data-s="19" data-e="58" data-join="none" data-ragged="1" data-track="cell" style="top:38.391px;left:156.406px;width:137.188px;word-spacing:-0.103px"><span class="tsr-r tsr-b" data-s="19">gizmo</span><span class="tsr-r" data-s="19"> — a small me</span><span class="tsr-r" data-s="32" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="32" data-e="69" data-join="space" data-ragged="1" data-track="cell" style="top:62.391px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="32">chanical device in</span></div>
+<div class="tsr-line" data-s="59" data-e="69" data-ragged="1" data-track="cell" style="top:86.391px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="59">the box</span></div>
 <div class="tsr-rule" style="top:115.188px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="194" style="position:relative;height:24px">
-<div class="tsr-line" data-s="0" data-e="21" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-gizmo" data-syn="ref">gizmo</a><span class="tsr-r" data-s="11"> in </span><a class="tsr-r tsr-cjk" href="#tsr-parts" data-syn="ref">表</a><a class="tsr-r" href="#tsr-parts" data-syn="ref"> 1</a><span class="tsr-r" data-s="20">.</span></div>
+<div class="tsr-line" data-s="0" data-e="21" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-gizmo" data-s="4">gizmo</a><span class="tsr-r" data-s="11"> in </span><a class="tsr-r tsr-cjk" href="#tsr-parts" data-s="14">表</a><a class="tsr-r" href="#tsr-parts" data-s="14"> 1</a><span class="tsr-r" data-s="20">.</span></div>
 </div>
 </div>

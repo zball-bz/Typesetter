@@ -4,7 +4,7 @@
 <div class="tsr-line" data-s="0" data-e="29" data-ragged="1" style="top:25.609px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">key</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="40" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="71" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.933px"><span class="tsr-r" data-s="0">The reference </span><a class="tsr-r" href="#tsr-kp81" data-syn="ref">§1</a><span class="tsr-r" data-s="20"> resolves to the heading,</span></div>
+<div class="tsr-line" data-s="0" data-e="71" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.933px"><span class="tsr-r" data-s="0">The reference </span><a class="tsr-r" href="#tsr-kp81" data-s="14">§1</a><span class="tsr-r" data-s="20"> resolves to the heading,</span></div>
 <div class="tsr-line" data-s="20" data-e="71" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="20">and the clash is reported.</span></div>
 </div>
 </div>

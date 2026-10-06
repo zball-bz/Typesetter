@@ -94,6 +94,11 @@ selects the glyph set at emit time; the counter is unchanged.
 - Highlighting: `footnote` token in tree-sitter-tsm (`@attribute`).
 - Print: notes currently print as endnotes (the section is ordinary flow);
   bottom-of-sheet inserts remain as designed above.
+- Copy (as built, plan P3-07, D-R01): the marker and the `↩` backlink are
+  decorative generated text — the footnote row's marker template and the
+  notes collector's backlink carry `syn: "fn-marker"` / `syn: "backlink"`
+  with `copy: "omit"`, so both pages mark them `data-syn` and copy leaves
+  them out; a note's body and a `@fn-n` reference copy as text.
 - Hover popup (as built, plan P3-06): the shell's `refPreview` behaviour
   (architecture §4.2). The footnote row declares `preview: "block"`, so the
   RenderResult's anchors table marks `fn-n` (not the marker's `fnref-n`)

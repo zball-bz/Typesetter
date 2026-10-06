@@ -63,13 +63,16 @@ export function auditTypeset(root) {
       }
     }
 
-    // right-edge: justified lines (any data-join — space or hyphen breaks)
+    // right-edge: justified lines (a break's data-join: space or none)
     // end within 1px of the measure. Measured as the flow edge of the last
     // child element (rect.right + margin-right) so letter-spacing overhangs
     // and punct-squeeze margins are accounted exactly.
     // (a data-overfull line holds a run wider than the measure — set at the
     // shrink limit and reported as overfull-line, plan P0-12 — not a defect)
-    if (line.dataset.join !== undefined && line.dataset.ragged === undefined &&
+    // (plan P3-07) a break inside a stream joins with a space or nothing;
+    // tab / row / para are stream ends, never justified
+    const join = line.dataset.join;
+    if ((join === 'space' || join === 'none') && line.dataset.ragged === undefined &&
         line.dataset.overfull === undefined && rects.length) {
       const lineRect = line.getBoundingClientRect();
       let contentRight = -Infinity;
@@ -107,15 +110,19 @@ export function auditTypeset(root) {
     // line stacking: tops strictly increase — a failed break plan collapses
     // a whole paragraph onto one line (the audit blind spot behind the
     // overprinted-specimen bug)
-    let prevTop = -Infinity;
+    // per track (plan P3-07: data-track): the main flow, sidecar rows and
+    // caption rows each stack; table cells share their row's top
+    const prevTop = new Map();
     for (const l of para.querySelectorAll('.tsr-line')) {
-      if (l.dataset.cell !== undefined) continue;  // table cells share row tops
+      const track = l.dataset.track ?? '';
+      if (track === 'cell') continue;
       const top = parseFloat(l.style.top);
-      if (!(top > prevTop || prevTop === -Infinity)) {
-        report.failures.push({ audit: 'line-stacking', pid: para.dataset.pid, top });
+      const prev = prevTop.get(track);
+      if (prev !== undefined && !(top > prev)) {
+        report.failures.push({ audit: 'line-stacking', pid: para.dataset.pid, track, top });
         break;
       }
-      prevTop = top;
+      prevTop.set(track, top);
     }
     // and no absurd compression: a line shrinks at most to the breaker's
     // limit (shrinkThreshold 0.37 of its spaces, plan P0-12); beyond that an

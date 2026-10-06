@@ -22,9 +22,9 @@ para pid=6 y=22940su w=19200su h=4608su
 para pid=7 y=28777su w=19200su h=1536su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,5) @[385,402)
 para pid=8 y=31542su w=19200su h=9316su
-  L0 y=0su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,9) @[404,410)
+  L0 y=0su left=1536su w=17664su dw=0su dc=0su join=para marker blocks=[0,9) @[404,410)
   L1 y=1945su left=3072su w=16128su dw=0su dc=0su join=last marker blocks=[0,3) @[404,410)
-  L2 y=3890su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,5) @[404,410)
+  L2 y=3890su left=1536su w=17664su dw=0su dc=0su join=para marker blocks=[0,5) @[404,410)
   L3 y=5835su left=3072su w=16128su dw=0su dc=0su join=last marker blocks=[0,11) @[404,410)
   L4 y=7780su left=3072su w=16128su dw=0su dc=0su join=last marker blocks=[0,5) @[404,410)
 para pid=9 y=42087su w=19200su h=1536su

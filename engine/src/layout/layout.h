@@ -36,8 +36,9 @@ struct Fragment {
   i32 wordDeltaSu = 0;               // rounded, for dumps
   i32 cjkDeltaSu = 0;
   Sep sep = Sep::Newline;            // what joins it to the next line in content text
+  bool spanned = false;              // srcSpan holds even when empty (a blank code row)
   bool endsWithHyphen = false;
-  bool ragged = false;               // a line that is not justified (its stream's policy)
+  bool ragged = false;               // a line that is not justified (its stream's alignment)
   bool noGlue = false;               // no stretchable glue (URL-only line): set ragged
   double fillPx = 0;                 // each fill's share of the slack (plan P2-16)
   bool overfull = false;             // holds a run wider than the line (breaker's

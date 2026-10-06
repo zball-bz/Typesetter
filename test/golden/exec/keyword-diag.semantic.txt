@@ -1,15 +1,15 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="7">Before.</p>
-<div class="tsr-err" data-pid="1" data-s="9" data-e="54" title="ReferenceError: missing is not defined">&#9888; ReferenceError: missing is not defined</div>
+<div class="tsr-err" data-pid="1" data-s="9" data-e="54" title="ReferenceError: missing is not defined" data-syn="error">&#9888; ReferenceError: missing is not defined</div>
 <ul data-pid="2" data-s="56" data-e="125">
 <li>item 1</li>
-<li><div class="tsr-err" data-s="90" data-e="123" title="TypeError: Cannot read properties of undefined (reading &#39;y&#39;)">&#9888; TypeError: Cannot read properties of undefined (reading &#39;y&#39;)</div>
+<li><div class="tsr-err" data-s="90" data-e="123" title="TypeError: Cannot read properties of undefined (reading &#39;y&#39;)" data-syn="error">&#9888; TypeError: Cannot read properties of undefined (reading &#39;y&#39;)</div>
 </li>
 <li>item 3</li>
 </ul>
-<p data-pid="3" data-s="127" data-e="154"><span class="tsr-err" title="#while needs (…) and a body: #while (condition) [ … ]">&#9888; #while needs (…) and a body: #while (condition) [ … ]</span> (( [ broken head ]</p>
-<p data-pid="4" data-s="156" data-e="174"><span class="tsr-err" title="#if needs (…) and a body: #if (condition) [ … ]">&#9888; #if needs (…) and a body: #if (condition) [ … ]</span> [no condition]</p>
-<p data-pid="5" data-s="176" data-e="190"><span class="tsr-err" title="#else follows a body: #if (c) [ … ] else [ … ]">&#9888; #else follows a body: #if (c) [ … ] else [ … ]</span> [orphan]</p>
+<p data-pid="3" data-s="127" data-e="154"><span class="tsr-err" title="#while needs (…) and a body: #while (condition) [ … ]" data-syn="error">&#9888; #while needs (…) and a body: #while (condition) [ … ]</span> (( [ broken head ]</p>
+<p data-pid="4" data-s="156" data-e="174"><span class="tsr-err" title="#if needs (…) and a body: #if (condition) [ … ]" data-syn="error">&#9888; #if needs (…) and a body: #if (condition) [ … ]</span> [no condition]</p>
+<p data-pid="5" data-s="176" data-e="190"><span class="tsr-err" title="#else follows a body: #if (c) [ … ] else [ … ]" data-syn="error">&#9888; #else follows a body: #if (c) [ … ] else [ … ]</span> [orphan]</p>
 <ul data-pid="6" data-s="192" data-e="274">
 <li><p data-s="194" data-e="213">a nested style push</p>
 <p data-s="251" data-e="274">ends with its statement</p>

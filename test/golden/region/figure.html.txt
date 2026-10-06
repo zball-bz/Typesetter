@@ -7,11 +7,11 @@
 <div class="tsr-line" data-s="0" data-e="62" data-ragged="1" style="top:24px;left:20px;width:280px"><span class="tsr-r" data-s="0">continuing on a second source line.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="122" style="position:relative;height:97.594px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="32" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Side note with </span><span class="tsr-r tsr-b" data-s="16">emphasis</span><span class="tsr-r" data-s="26"> inside</span></div>
+<div class="tsr-line" data-s="0" data-e="32" data-join="para" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Side note with </span><span class="tsr-r tsr-b" data-s="16">emphasis</span><span class="tsr-r" data-s="26"> inside</span></div>
 <div class="tsr-line" data-s="35" data-e="50" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="35">a nested bullet</span></div>
 <div class="tsr-line" data-s="53" data-e="67" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="53">another bullet</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="199" style="position:relative;height:24px">
-<div class="tsr-line" data-s="0" data-e="44" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The figure is </span><a class="tsr-r tsr-cjk" href="#tsr-fig1" data-syn="ref">图</a><a class="tsr-r" href="#tsr-fig1" data-syn="ref"> 1</a><span class="tsr-r" data-s="20"> and the section is </span><a class="tsr-r" href="#tsr-top" data-syn="ref">§1</a><span class="tsr-r" data-s="43">.</span></div>
+<div class="tsr-line" data-s="0" data-e="44" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The figure is </span><a class="tsr-r tsr-cjk" href="#tsr-fig1" data-s="14">图</a><a class="tsr-r" href="#tsr-fig1" data-s="14"> 1</a><span class="tsr-r" data-s="20"> and the section is </span><a class="tsr-r" href="#tsr-top" data-s="39">§1</a><span class="tsr-r" data-s="43">.</span></div>
 </div>
 </div>

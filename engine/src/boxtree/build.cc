@@ -59,6 +59,23 @@ class Builder {
         break;
       }
     }
+    // (plan P3-07; design T6 Sep) what follows each leaf in content text:
+    // what native copy of the semantic page gives — a paragraph, heading,
+    // code block, table or formula is set apart (Para), the one paragraph
+    // of a tight item is inlined in its <li> (Newline: the next item starts
+    // a line); the top's last leaf ends the block
+    for (size_t k = 0; k < tt.leaves.size(); k++) {
+      const u32 i = tt.leaves[k];
+      LayoutBlock& l = tt.blocks[i];
+      if (k + 1 == tt.leaves.size()) {
+        l.sepAfter = Sep::Newline;
+        continue;
+      }
+      const LayoutBlock* p = l.parent != ~0u ? &tt.blocks[l.parent] : nullptr;
+      const bool tightItem = p && p->traits == TraitsId::Item && l.parent + 1 == i && p->end == i + 1 &&
+                             (l.traits == TraitsId::Para || l.traits == TraitsId::Marker);
+      l.sepAfter = tightItem ? Sep::Newline : Sep::Para;
+    }
   }
 
  private:

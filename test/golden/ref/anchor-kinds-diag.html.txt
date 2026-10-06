@@ -10,7 +10,7 @@
 <div class="tsr-raw" id="tsr-box" style="top:0px;left:0px;width:300px;height:24px"></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="146" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="108" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.4px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-sep" data-syn="ref">sep</a><span class="tsr-r" data-s="9"> and </span><a class="tsr-r" href="#tsr-box" data-syn="ref">box</a><span class="tsr-r" data-s="17">; </span><a class="tsr-r" href="#tsr-sep" data-s="42">a link to the rule</a><span class="tsr-r" data-s="62"> and one</span></div>
+<div class="tsr-line" data-s="0" data-e="108" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.4px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-sep" data-s="4">sep</a><span class="tsr-r" data-s="9"> and </span><a class="tsr-r" href="#tsr-box" data-s="13">box</a><span class="tsr-r" data-s="17">; </span><a class="tsr-r" href="#tsr-sep" data-s="42">a link to the rule</a><span class="tsr-r" data-s="62"> and one</span></div>
 <div class="tsr-line" data-s="93" data-e="110" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="93">to no label.</span></div>
 </div>
 </div>

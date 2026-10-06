@@ -7,7 +7,7 @@
 <div class="tsr-line" data-s="45" data-e="54" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="45">next item</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="140" style="position:relative;height:67.203px">
-<div class="tsr-line" data-s="0" data-e="5" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">quote</span></div>
+<div class="tsr-line" data-s="0" data-e="5" data-join="para" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">quote</span></div>
 <div class="tsr-line" data-s="47" data-e="52" style="top:43.203px;left:16px;width:284px"><span class="tsr-r" data-s="47">after</span></div>
 </div>
 </div>

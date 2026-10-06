@@ -4,7 +4,7 @@ doc @[0,160) [base]
     styled @[16,84) [SUP]
       seq @[16,84) [SUP]
         text @[44,45) [SUP] str="2"
-        ref @[45,83) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
+        ref @[45,83) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
           text @[45,83) [SUPx0.70] str="1"
     text @[84,160) [base] str=", a marker inside raised text keeps the raise and is scaled from its parent."
   group @[0,160) [base] role="notes"
@@ -15,5 +15,5 @@ doc @[0,160) [base]
           styled @[45,83) [SUPx0.85] role="note-body"
             text @[47,82) [SUPx0.85] str="A note marked inside a superscript."
             text @[45,83) [SUPx0.85] str=" "
-            ref @[45,83) [SUPx0.85] target="fnref-1"
+            ref @[45,83) [SUPx0.85] target="fnref-1" syn="backlink" copy="omit"
               text @[45,83) [SUPx0.85] str="↩"

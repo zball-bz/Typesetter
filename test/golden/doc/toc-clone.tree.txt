@@ -27,7 +27,7 @@ doc @[0,116) [base]
     mathinline @[31,36) [BOLDx1.60]
       mathsrc @[32,35) [BOLDx1.60] src="x^2"
     text @[36,44) [BOLDx1.60] str=", a note"
-    ref @[44,59) [BOLD+SUPx1.12] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
+    ref @[44,59) [BOLD+SUPx1.12] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
       text @[44,59) [BOLD+SUPx1.12] str="1"
     text @[60,63) [BOLDx1.60] str=" and " raw=0:0,1:0,5:3
     ref @[64,70) [BOLDx1.60] target="sec-b"
@@ -46,5 +46,5 @@ doc @[0,116) [base]
           styled @[44,59) [basex0.85] role="note-body"
             text @[46,58) [basex0.85] str="A note body."
             text @[44,59) [basex0.85] str=" "
-            ref @[44,59) [basex0.85] target="fnref-1"
+            ref @[44,59) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
               text @[44,59) [basex0.85] str="↩"

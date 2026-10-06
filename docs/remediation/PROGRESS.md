@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-07
+- 下一步：P3-08
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -73,7 +73,7 @@
 | P3-04 | 身份与 DOM 拼写解耦（AnchorId） | todo | | | | |
 | P3-05 | RenderResult 与提交路径 | done | grep:plan P3-05 | 2026-10-06 | 无 golden 变化；e2e 新增段落插入/删除只替换该段并保留其余元素、更新时的 upgrade 记录只含改动块、宿主丢弃的键触发重取（过期键防护），共 4×3 项 | 引擎：Doc::renderResult/tsr2_render_result——每块按正文（去掉 data-pid、data-s0、margin-bottom 的块）取 128 位键（MurmurHash3 x64_128，挪到 support/hash128.h，断行缓存共用），只发送宿主未持有的块（按旧写法带位置属性，全部发送时即旧正文），表含 pid、源范围、高度、间距、键与 UTF-16 偏移，头含 generation（Session 单调）、根开标签、anchors [label, pid, class]、各块间距的写法；writeBlockOpen/writeBlockNodes/writeBlockBody 拆分；unitRenderResult 校验全部发送等于旧 render、去位置后重放位置逐字节相等、持有键不再发送、generation 递增。worker：带 held 的请求、帧传输、HTML 在 worker 解码、render 请求（重取）。壳：commit.mjs（decodeResult、commit、heldKeys、sessionHtml、offsetAt、elementsAt、StaleKeys），删除 chunkParas/patchIn/swapIn；typeset/update/relayout 走 commit；update 与 relayout 仅在有 onUpgrade 监听时读 rect；handle.html 按需拼接；handle.offsetAt/elementsAt，VS Code 预览改用；文档：architecture §4.2/§4.3 |
 | P3-06 | shell 核心与 Behavior 注册表 | done | grep:plan P3-06 | 2026-10-06 | 无 golden 变化；e2e 新增 7 项 ×4 dpr：脚注弹窗内容（引擎片段、无 id、无 ↩、@fn 引用同样预览、回链不预览）、CJK 与连字符脚注照原文、弹窗打开时视图照常打补丁、更新进行中悬停显示新内容、一个引擎两个文档（各自 idPrefix，非默认前缀弹窗正常，单独 dispose）、打印根无 id 且 id 用派生前缀不与视图重复、宿主行为注册表（devAudit 每次提交报告、抛错的行为被停用、宿主 capability 应答图片尺寸）；单测 unitRenderFragment | 引擎：设置行 render.idPrefix（Paint；AnchorNamer 的前缀由 AnchorScope 在每次渲染期间设置，片段可整体抑制 id）；类特性 preview（elements.json 脚注行为 block，声明可用）；RenderResult 的 head 带 idPrefix，anchors 行增加第 4 列 preview（仅实例自身标签）；Doc::generation 记最后一次结果的 generation；Doc::renderFragment/tsr2_render_fragment——语义页中该标签所指元素的内容（列表项首块的标签取整个列表项），去掉指回流标记的引用（脚注 ↩），返回 {generation, html}。worker：fragment 请求进文档信箱；paginate 接受 idPrefix；主线程能力 RPC cap?/cap（按名、按请求 id、超时），image-dims 改为内建 capability imageDims。壳：每容器一个会话（Map container→session，typeset 只替换该容器的会话，handle.dispose 单独释放，engine.sessionOf）；Behavior {name, css, install(ctx)}，按会话在首次提交后安装，CSS 只注入一次，安装或 ctx.listen/onCommit 回调抛错即停用；ctx：container、root()、overlay（容器内、提交根外，整体替换时保留 data-tsr-shell 节点）、settings/setting、applyContract、onCommit、listen、anchors.byLabel/byId、refAt、ops.fragment/paginate/offsetAt/elementsAt、expose；behaviors/ref-preview.mjs（取代 installNotePopups）、behaviors/print.mjs（handle.print 转发；派生前缀 tsrp-；print root 用 data-tsr-print，无 id）、behaviors/audit.mjs（devAudit，可选）；shared/audit-constants.mjs 供 audit.mjs 与测试共用；TSR_CSS 只留契约 CSS（链接色 --tsr-link），弹窗 CSS 归 refPreview（.tsr-refpop）；commit 的整体替换改为移除旧根再插入（保留壳节点）；lint 基线 2→0（shell-dom-scrape）。文档：architecture §4.2/§4.3、document-model §5/§9、semantics-design §1、notes-design、tsm-changes |
-| P3-07 | 分隔符与复制契约 | todo | | | | |
+| P3-07 | 分隔符与复制契约 | done | grep:plan P3-07 | 2026-10-06 | 192 个 golden（runner 清单）：html 103、semantic 37、layout 30、tree 14、paged 6、dl 1 及 XFAIL；XFAIL 30→6（24 个代码行 line-spans 通过，余下 6 个是 cite 生成书目行，属 P4-03）。html：引用/引文 run 去掉 data-syn="ref" 改带 data-s（D-R01 复制为文本），脚注标记 data-syn="fn-marker"、回链 "backlink"、错误文字 "error"；表格行 data-join tab/row、单元内断行 space/none，data-track="cell" 取代 data-cell，单元与 sidecar 行加 data-ragged；段落型单元在块内的末行 data-join="para"；代码行带 data-s/data-e，属性顺序与普通行统一；空单元格输出空行。semantic：标记/回链 data-syn、错误 data-syn="error"。layout：join=para/tab/row 与空单元格行。tree：脚注模板的 syn/copy 参数。paged：.tsr-band[data-b] 包裹。e2e 新增 7 项 ×4 dpr（表格制表符与空单元格、sidecar 只复制代码/在边注内复制注释并保留空代码行、块内段落与列表项及省略标记/回链/错误、分页跨页块身份、语义页复制、作者的 copy 属性 replace/omit 跨行只取一次），改 2 项断言（引用与引文按 D-R01 复制） | 两个提交：结构（Fragment::join → Sep、续行 join 移入 layout，golden 不变）+ 行为。layout：唯一 Sep 生产者 materializeLines——流内取断点（space/none），强制换行 newline，流末取 LinePolicy.endSep；表格单元末 tab、行末 row、表末取单元 sepAfter；sidecar 行流末 newline；浮动题注各段 newline、末段 sepAfter；代码行续行 none、逻辑行末 newline、块末 sepAfter；公式行 sepAfter；ragged 由对齐派生（不再按 Join::Never 去掉单元与 sidecar 的 join）；空单元格生成空行。box tree：叶子 sepAfter——块末 newline，紧凑列表项的唯一段落 newline，其余 para（与语义页原生复制一致）。emit：run 的复制策略 CopyMode（Text/Omit/Replace）+ synName + copyText + copyGroup，来自节点的通用属性 copy/syn（model.h copyAttr 一处解析）、叶子自身的 copy/syn，错误文字 omit；引用 run 默认 Text；GridData.lineSpans（逐字源码取行切片，CRLF 源码按行偏移，否则整行/整体）；Flow.span。paint/serializer：data-join 统一、data-track、spanned（空代码行也写 data-s/e）、data-copy/data-copy-group、分页 .tsr-band[data-b]（每页每块一个）；白名单加 data-copy、data-copy-group、data-track、data-b。semantic：copy/syn 节点写 data-syn/data-copy（D-R06）。elements.json：脚注标记 syn fn-marker、回链 syn backlink，均 copy omit。stdlib：strong/em 保留通用属性（此前丢弃）。runtime：copy.mjs 重写（行所有权、空行与全省略行区分、data-copy 按组一次、同组跨行不加分隔、块身份含 .tsr-band、D-R03 sidecar、语义页按 data-syn 复制）；copy 从首次绘制起安装；handle.contentText 与 ctx.ops.contentText；audit.mjs 右缘只查 space/none，叠放按 data-track 分组。文档：document-model §9.1/§9.2/§9.3、pages-design §2、architecture §4.2/§4.3、v2 附录 D、notes-design、tsm-changes |
 | P3-08 | ParShape 与侧向排除区 | todo | | | | |
 | P3-09 | LineEnds 取代对齐标志 | todo | | | | |
 | P3-10 | 表格布局器 | todo | | | | |
@@ -150,6 +150,7 @@
 | P3-02 后 | 3.90 | 11.90 | 28.40 | 1.5 / 3.4 / 0.6 / 9.6 / 4.3 | 64.0 / 97.0 / 140.3 | 5.70 / 22.20 / 61.00 | 均在 P3 门限内；87K relayout 61.0（P2 以来的噪声带 57.5–62.5）。变体 splice 40.3、region 35.4、let 33.8、syntax 45.9 |
 | P3-05 后 | 3.40 | 10.70 | 25.50 | 1.6 / 3.1 / 0.7 / 9.6 / 2.8 | 62.8 / 103.5 / 142.4 | 1.50 / 13.90 / 55.40 | update 的 render 从 4.3 降到 2.8（不再整篇解码与比较字符串，只发未持有的块）；relayout 不再在测量窗口内强制同步布局（rect 只为 onUpgrade 监听读取，按设计），所以与先前行不完全可比——布局改在下一帧；两次 bench 的 relayout 35K 为 22.0 与 13.9、87K 为 55.4 与 58.1，均在 P3 门限内 |
 | P3-06 后 | 3.50 | 10.10 | 25.20 | 1.7 / 3.2 / 0.6 / 9.6 / 2.8 | 60.0 / 96.2 / 142.0 | 1.50 / 21.50 / 51.50 | 整体替换由容器 innerHTML 改为移除旧根再 insertAdjacentHTML（保留壳的 overlay），relayout 87K 51.5；提交后通知行为（无监听时为空集合）；均在 P3 门限内 |
+| P3-07 后 | 3.30 | 10.20 | 25.00 | 1.5 / 3.1 / 0.7 / 9.9 / 2.9 | 63.3 / 99.6 / 142.0 | 1.50 / 21.30 / 55.80 | 每个 run 多 copy/syn 字段、每行一个 Sep；均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -300,6 +301,12 @@
 | P3-06 | anchors 的 preview 来自注册表类特性 preview（elements.json 与声明），而非 PresentationMap 的 render.classes.*.ref.preview | PresentationMap 是 P3-23；先用唯一的声明通道（注册表行）承载，P3-23 移入 html 段 | P3-23 |
 | P3-06 | 弹窗片段里的公式仍是源码（code.tsr-mathsrc），与语义页一致；旧弹窗读排版 DOM 的字形文字 | 语义页输出数学字形属 P3-27（T7 S13） | P3-27 |
 | P3-06 | 片段 generation 与已提交视图不符时 ops.fragment 返回 null（不重试）；能力 RPC 逐次调用，未按轮批量 | 消息有序，正常路径下结果总先于片段到达并已提交，只有 StaleKeys 重取期间可能不符，refPreview 在下一次提交时刷新；按轮批量属 T9 ResourceHost（P3-21） | P3-21 |
+| P3-07 | 未做 Sep::Custom 与 data-copy-sep：没有生产者（D-R03 让 sidecar 不带标记复制；类声明 sepAfter 属 PresentationMap） | 生产者出现前不加死代码 | P3-23 |
+| P3-07 | 单元的 sepAfter 由 box tree 按语义页规则推出（紧凑列表项的唯一段落 newline，其余 para），而非逐类声明；复制策略来自节点 copy/syn 属性与内建模板，未加 copy.policy 设置（按 syn 种类的映射）与 render.classes.*.ref.copy | 声明通道属 PresentationMap；现有通用属性已能表达逐节点策略，内建模板用同一机制 | P3-23 |
+| P3-07 | 原生 ContentText 投影（paint/content_text.h）与 tsrc --stage=text 的精选 golden 未做；复制契约只有 DOM 一侧（copy.mjs），由 e2e 覆盖 | 原生投影的第一个使用者是 a11y 文字层（T7 S13） | P3-27 |
+| P3-07 | 由代码生成的代码行（fence handler、字符串字面量的 #codeblock）只有粗粒度 span（整行节点或整体）：与源码不逐字对应时无法切片 | 精确子 span 需要 T5 的子 span | P4-03 |
+| P3-07 | 混合选区中的非行部分（overlay、宿主内容）不贡献文字（设计为按文档顺序取其原生文字） | 选区跨出容器时 copy 事件不在容器上触发；overlay 的弹窗与正文同时被选中的情形少见 | 无 |
+| P3-07 | 修复（本步发现）：stdlib 的 strong/em 丢弃通用属性（label、role、copy……），P2-05 所称"所有构造器接受通用属性"对它们不成立 | 作者的 copy 属性需要它 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

@@ -1,5 +1,5 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="7">Before.</p>
-<div class="tsr-err" data-pid="1" data-s="9" data-e="16" title="closer &#39;#aside!&#39; has no open region &#39;#!aside&#39;">&#9888; closer &#39;#aside!&#39; has no open region &#39;#!aside&#39;</div>
+<div class="tsr-err" data-pid="1" data-s="9" data-e="16" title="closer &#39;#aside!&#39; has no open region &#39;#!aside&#39;" data-syn="error">&#9888; closer &#39;#aside!&#39; has no open region &#39;#!aside&#39;</div>
 <p data-pid="2" data-s="18" data-e="24">After.</p>
 </div>

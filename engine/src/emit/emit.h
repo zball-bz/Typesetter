@@ -104,6 +104,7 @@ inline void resolveImageSize(const ImageSize& s, double measurePx, Su& w, Su& h)
 struct Flow {
   HList hl;
   StrRef anchor = 0;  // a label inside it (an inline labelled group): its first line's id
+  Span span;          // (plan P3-07) a cell's or sidecar row's node: an empty cell's line
   std::vector<BreakBlock> blocks;  // fuseLegacy(hl), for the legacy breaker
   std::vector<u32> blockStart;     // block b = hl.items [blockStart[b], blockStart[b+1])
   std::vector<LinebreakBlock> legacy;  // MIGRATION: the legacy emitter's blocks (fuseCheck)
@@ -139,6 +140,10 @@ struct GridData {  // a code block (verbatim-design.md)
                              //   line); the column width is layout's
   i32 lineNo = 0;            // 0 = no numbers; else first line number
   std::vector<u32> hlLines;  // 1-based highlighted lines
+  // (plan P3-07) each logical line's source: exact when its length is the
+  // line's (a verbatim body: a row is its slice), else the line's node
+  // (or the body) as a whole; empty when the code has no source
+  std::vector<Span> lineSpans;
 };
 struct TableData {
   u32 cols = 0;

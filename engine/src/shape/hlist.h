@@ -100,6 +100,13 @@ enum class RealizeClass : u8 { Plain, LetterSpaced, BlankBearing, Pinned, Rigid,
 // what a run is for copy and paint (the vocabulary is T7's): authored
 // content, resolver-generated reference text, a paragraph indent
 enum class SynKind : u8 { Content, Ref, Indent };
+// (plan P3-07; design T7 CopyPolicy, D-R01) what copy takes of a run: its
+// text, nothing (data-syn=<kind>), or a replacement (data-copy, once per
+// group). Decided at emit from the nodes' `copy` and `syn` attributes — the
+// built-in templates mark the decorative generated text (a footnote
+// marker, a backlink), errors are omitted —, never by the code path that
+// made the run; references and citations copy as text.
+enum class CopyMode : u8 { Text, Omit, Replace };
 
 // (plan P3-04; design T7 AnchorNamer) where a link run points: an
 // internal target is a label — its anchor, which the serializer spells —
@@ -115,7 +122,10 @@ struct RunRec {
   StyleId face = 0;  // style (paint projection)
   LinkTarget link;
   SynKind syn = SynKind::Content;
-  StrRef copyText = 0;  // Replace (T3/T7; unused yet)
+  CopyMode copy = CopyMode::Text;
+  StrRef synName = 0;   // its data-syn when not Text
+  StrRef copyText = 0;  // Replace: what copy takes instead
+  u32 copyGroup = 0;    // Replace: the node it replaces (taken once), per unit
   RealizeClass rc = RealizeClass::Plain;
   StrRef anchor = 0;    // the anchor of the run's first item
 };

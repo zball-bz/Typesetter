@@ -13,7 +13,7 @@
 </ul>
 <p data-s="268" data-e="294">and so does this paragraph</p>
 </blockquote>
-<p data-pid="2" data-s="298" data-e="391">A note with blocks<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> continues the sentence.</p>
+<p data-pid="2" data-s="298" data-e="391">A note with blocks<a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a> continues the sentence.</p>
 <blockquote data-pid="3" data-s="393" data-e="436">
 <ul data-s="400" data-e="435">
 <li>a single-line body that is a list</li>
@@ -26,7 +26,7 @@
 <ul data-s="349" data-e="365">
 <li>a listed point</li>
 </ul>
-<p data-s="316" data-e="367"> <a href="#tsr-fnref-1">↩</a></p>
+<p data-s="316" data-e="367"> <a href="#tsr-fnref-1" data-syn="backlink">↩</a></p>
 </li>
 </ol>
 </div>

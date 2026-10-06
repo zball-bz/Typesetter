@@ -126,11 +126,15 @@ struct HlInline final : InlineSink {
     gapKind.clear();
     single = false;
   }
-  static RunRec key(StyleId face, LinkTarget url, u16 addFlags, RealizeClass rc) {
+  static RunRec key(StyleId face, const ICtx& ctx, RealizeClass rc) {
     RunRec r;
     r.face = face;
-    r.link = url;
-    r.syn = (addFlags & BF_REF) ? SynKind::Ref : SynKind::Content;
+    r.link = ctx.url;
+    r.syn = (ctx.addFlags & BF_REF) ? SynKind::Ref : SynKind::Content;
+    r.copy = ctx.copy;
+    r.synName = ctx.syn;
+    r.copyText = ctx.copyText;
+    r.copyGroup = ctx.copyGroup;
     r.rc = rc;
     return r;
   }
@@ -200,8 +204,8 @@ struct HlInline final : InlineSink {
     it.run = (u32)h.runs.size() - 1;
   }
   static bool sameRunKey(const RunRec& a, const RunRec& b) {
-    return a.face == b.face && a.link == b.link && a.syn == b.syn && a.copyText == b.copyText &&
-           a.rc == b.rc;
+    return a.face == b.face && a.link == b.link && a.syn == b.syn && a.copy == b.copy && a.synName == b.synName &&
+           a.copyText == b.copyText && a.copyGroup == b.copyGroup && a.rc == b.rc;
   }
   const RunRec& runOf(size_t i) const { return B.runs[B.items[i].run]; }
   // a synthetic or object item: its width is defined at emit
@@ -244,7 +248,7 @@ struct HlInline final : InlineSink {
     sp.k = AdvanceSpec::Fixed;
     sp.em = kCjkBoundaryEm;
     sp.str = E.spaceRef;
-    u32 i = push(u, IK::Glue, (u8)GC::Autospace, 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Plain),
+    u32 i = push(u, IK::Glue, (u8)GC::Autospace, 0, key(st, ctx, RealizeClass::Plain),
                  sp, span, 1.0f, 0.0f);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(px));
   }
@@ -254,16 +258,15 @@ struct HlInline final : InlineSink {
     sp.em = kPunctHalfEm;
     sp.str = E.spaceRef;
     u32 i = push(u, IK::Glue, (u8)GC::Blank, ownedByNext ? IA_OwnedByNext : 0,
-                 key(st, ctx.url, ctx.addFlags, RealizeClass::Plain), sp, span, 0.0f, pen);
+                 key(st, ctx, RealizeClass::Plain), sp, span, 0.0f, pen);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
   }
-  void word(std::string_view w, const ContentNode* n, Flow& u, StyleId st, LinkTarget url, float pen,
-            u16 addFlags) {
+  void word(std::string_view w, const ContentNode* n, Flow& u, StyleId st, float pen, const ICtx& ctx) {
     AdvanceSpec sp;
     sp.str = strs.intern(w);
-    push(u, IK::Box, firstCc(w), 0, key(st, url, addFlags, RealizeClass::Plain), sp, n->span, 0.0f, pen);
+    push(u, IK::Box, firstCc(w), 0, key(st, ctx, RealizeClass::Plain), sp, n->span, 0.0f, pen);
   }
-  void hyphenPoint(const ContentNode* n, Flow& u, StyleId st, LinkTarget url, u16 addFlags) {
+  void hyphenPoint(const ContentNode* n, Flow& u, StyleId st, const ICtx& ctx) {
     open(u);
     HList& h = B;
     AdvanceSpec hs;
@@ -282,7 +285,7 @@ struct HlInline final : InlineSink {
     d.preN = 1;
     h.side.push_back(pre);
     const float pen = (float)cfg.hyphenPenalty;
-    u32 i = push(u, IK::Disc, 0, 0, key(st, url, addFlags, RealizeClass::Plain), AdvanceSpec{}, n->span,
+    u32 i = push(u, IK::Disc, 0, 0, key(st, ctx, RealizeClass::Plain), AdvanceSpec{}, n->span,
                  pen, pen);
     h.specs.pop_back();  // a Disc's aux is its DiscRec
     h.items[i].aux = (u32)h.discs.size();
@@ -295,6 +298,7 @@ struct HlInline final : InlineSink {
   // inline extent and the item before it (prev) or after it (next) — a
   // footnote marker glues to its word, never a line start
   void walk(const ContentNode* n, Flow& u, ICtx ctx) override {
+    copyPolicy(n, u, ctx);
     const ArgVal* at = attr(n, ArgK::attach);
     if (!at || at->tag != ArgTag::Str) return shape(n, u, ctx);
     const size_t before = count(u);
@@ -303,6 +307,40 @@ struct HlInline final : InlineSink {
     const std::string_view a = strs.get(at->ref);
     if (a != "next" && before > 0 && !(pend[before - 1] <= -kPenInf)) pend[before - 1] = kPenInf;
     if (a != "prev") forbidLast();
+  }
+  // (plan P3-07; design T7 CopyPolicy) a node's `copy` / `syn` attributes
+  // set its text's copy policy, the innermost winning: copy "text",
+  // "omit" or "replace:<text>" (taken once for the node, however many runs
+  // and lines it spans); a `syn` alone marks synthetic text, which copy
+  // omits. data-syn names the kind: the `syn`, else the node's kind.
+  u32 replaceSeq = 0;
+  void copyPolicy(const ContentNode* n, Flow& u, ICtx& ctx) override {
+    const CopyAttr c = copyAttr(n, strs);
+    if (!c.marked) return;
+    if (c.mode == CopyAttr::Mode::Text) {
+      ctx.copy = CopyMode::Text;
+      ctx.syn = ctx.copyText = 0;
+      ctx.copyGroup = 0;
+      return;
+    }
+    ctx.syn = strs.intern(c.syn);
+    if (c.mode == CopyAttr::Mode::Replace) {
+      open(u);
+      ctx.copy = CopyMode::Replace;
+      ctx.copyText = strs.intern(c.replace);
+      ctx.copyGroup = ++replaceSeq;  // unique within the top block (one emit pass)
+    } else {
+      ctx.copy = CopyMode::Omit;
+      ctx.copyText = 0;
+      ctx.copyGroup = 0;
+    }
+  }
+  // error text is no content (D-R01): copy omits it
+  void omitAsError(ICtx& ctx) {
+    ctx.copy = CopyMode::Omit;
+    ctx.syn = E.errorSyn;
+    ctx.copyText = 0;
+    ctx.copyGroup = 0;
   }
   void shape(const ContentNode* n, Flow& u, ICtx ctx) {
     switch (kKinds[(u16)n->kind].inl) {
@@ -328,7 +366,7 @@ struct HlInline final : InlineSink {
         sp.k = AdvanceSpec::Fixed;
         sp.str = E.spaceRef;
         u32 i = push(u, IK::Glue, (u8)GC::Fill, 0,
-                     key(E.compose(n->style, ctx.add, ctx.mul), ctx.url, ctx.addFlags, RealizeClass::Plain), sp,
+                     key(E.compose(n->style, ctx.add, ctx.mul), ctx, RealizeClass::Plain), sp,
                      n->span, 0.0f, 0.0f);
         fixWidth(u, i, 0.0, 0, 0);
         return;
@@ -381,7 +419,7 @@ struct HlInline final : InlineSink {
       StyleId st = E.compose(n->style, ctx.add, ctx.mul);  // mono and its size: rules (plan P3-01)
       AdvanceSpec sp;
       sp.str = n->kids[0]->str;
-      push(u, IK::Box, firstCc(strs.get(sp.str)), 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Plain),
+      push(u, IK::Box, firstCc(strs.get(sp.str)), 0, key(st, ctx, RealizeClass::Plain),
            sp, n->span, 0.0f, kPenInf);
     }
   }
@@ -411,6 +449,7 @@ struct HlInline final : InlineSink {
 
   void errorText(const ContentNode* n, Flow& u, ICtx ctx) {
     // an error node stays breakable CODE-style text (design T5 A22)
+    omitAsError(ctx);
     std::string msg = "\xE2\x9A\xA0 ";  // ⚠
     for (const ArgVal& a : n->args)
       if (a.key == ArgK::message && a.tag == ArgTag::Str) msg += strs.get(a.ref);
@@ -447,7 +486,7 @@ struct HlInline final : InlineSink {
     bs.str = str;
     // a break after an object is legal (as after a formula); the boundary
     // pass that reads its edge classes is the paragraph shaper's (P4-02)
-    u32 b = push(u, IK::Box, ob.firstCC, 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Object), bs, span,
+    u32 b = push(u, IK::Box, ob.firstCC, 0, key(st, ctx, RealizeClass::Object), bs, span,
                  0.0f, 0.0f);
     if (resolved) fixWidth(u, b, suToPx(part.w), part.w, 0);
     return b;
@@ -509,6 +548,7 @@ struct HlInline final : InlineSink {
         // the error box of a kind that cannot appear inline: its name,
         // measured in the CODE face, unbreakable
         StyleId st = E.compose(n->style, ctx.add + E.mono, ctx.mul);
+        omitAsError(ctx);
         u32 obj = addObject(u, ObjKind::Error, n, st);
         const StrRef text = strs.intern(std::string("\xE2\x9A\xA0 ") + kKinds[(u16)n->kind].name);  // ⚠
         B.objs[obj].src = text;
@@ -550,8 +590,8 @@ struct HlInline final : InlineSink {
     objectBox(u, obj, pt, st, ctx, n->span, srcRef, false);
   }
 
-  void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, LinkTarget url,
-                bool noHyphen, u16 addFlags) {
+  void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, const ICtx& ctx) {
+    const bool noHyphen = ctx.noHyphen;
     // lead / core / trail split (ASCII letters core) for hyphenation
     u32 a = 0, b = (u32)w.size();
     auto isL = [](char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); };
@@ -580,14 +620,14 @@ struct HlInline final : InlineSink {
         if (!cuts.empty()) {
           u32 from = 0;
           for (u32 cut : cuts) {
-            word(w.substr(from, cut - from), n, u, st, url, (float)cfg.urlBreakPenalty, addFlags);
+            word(w.substr(from, cut - from), n, u, st, (float)cfg.urlBreakPenalty, ctx);
             from = cut;
           }
-          word(w.substr(from), n, u, st, url, kPenInf, addFlags);
+          word(w.substr(from), n, u, st, kPenInf, ctx);
           return;
         }
       }
-      word(w, n, u, st, url, kPenInf, addFlags);
+      word(w, n, u, st, kPenInf, ctx);
       return;
     }
     u32 prev = 0;  // within core
@@ -597,8 +637,8 @@ struct HlInline final : InlineSink {
       if (k == 0) seg += w.substr(0, a);  // lead
       seg += w.substr(a + prev, end - prev);
       if (k == pts.size()) seg += w.substr(e);  // trail
-      word(seg, n, u, st, url, kPenInf, addFlags);
-      if (k < pts.size()) hyphenPoint(n, u, st, url, addFlags);
+      word(seg, n, u, st, kPenInf, ctx);
+      if (k < pts.size()) hyphenPoint(n, u, st, ctx);
       prev = end;
     }
   }
@@ -617,7 +657,7 @@ struct HlInline final : InlineSink {
 
     auto flushWord = [&] {
       if (!wordBuf.empty()) {
-        emitWord(wordBuf, n, u, st, ctx.url, ctx.noHyphen, ctx.addFlags);
+        emitWord(wordBuf, n, u, st, ctx);
         wordBuf.clear();
       }
     };
@@ -646,7 +686,7 @@ struct HlInline final : InlineSink {
         sp.em = definedEm;
       }
       const RealizeClass rc = definedEm > 0 ? RealizeClass::Pinned : RealizeClass::LetterSpaced;
-      u32 b = push(u, IK::Box, firstCc(chars), 0, key(stCjk, ctx.url, ctx.addFlags, rc), sp, n->span,
+      u32 b = push(u, IK::Box, firstCc(chars), 0, key(stCjk, ctx, rc), sp, n->span,
                    (float)cfg.cjkJustifyK, 0.0f);
       B.cold[B.items[b].cold].capSu = glueSu;  // stretch capacity for the cost fn (App C)
       if (definedEm > 0) {
@@ -686,7 +726,7 @@ struct HlInline final : InlineSink {
       AdvanceSpec sp;
       sp.k = AdvanceSpec::MeasuredMinusBlanks;
       sp.str = strs.intern(ch);
-      push(u, IK::Box, firstCc(ch), 0, key(stCjk, ctx.url, ctx.addFlags, RealizeClass::BlankBearing), sp,
+      push(u, IK::Box, firstCc(ch), 0, key(stCjk, ctx, RealizeClass::BlankBearing), sp,
            n->span, 0.0f, kPenInf);
       if (!open) blank(u, stCjk, ctx, n->span, halfPx, false, 0.0f);
     };
@@ -707,7 +747,7 @@ struct HlInline final : InlineSink {
         }
         AdvanceSpec sp;
         sp.str = E.spaceRef;
-        push(u, IK::Glue, (u8)GC::Word, IA_SourceSpace, key(st, ctx.url, ctx.addFlags, RealizeClass::Plain),
+        push(u, IK::Glue, (u8)GC::Word, IA_SourceSpace, key(st, ctx, RealizeClass::Plain),
              sp, n->span, 1.0f, 0.0f);
         prev = Prev::None;
         continue;
@@ -781,7 +821,7 @@ struct HlInline final : InlineSink {
     sp.k = AdvanceSpec::Fixed;
     sp.em = em;
     sp.str = E.spaceRef;
-    RunRec rk = key(st, LinkTarget{}, 0, RealizeClass::Pinned);
+    RunRec rk = key(st, ICtx{}, RealizeClass::Pinned);
     rk.syn = SynKind::Indent;
     u32 i = push(u, IK::Box, 0, 0, rk, sp, span, 0.0f, kPenInf);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
@@ -833,6 +873,7 @@ struct Emitter {
         if (ls.role == LeafSource::Role::MarkerOnly) return;  // its marker alone
         ICtx ctx;
         ctx.noHyphen = !tr.hyphenate;
+        sink.copyPolicy(n, u, ctx);
         if (n->kind == Kind::error) {
           sink.walk(n, u, ctx);  // error case renders ⚠ + message
         } else {
@@ -863,7 +904,10 @@ struct Emitter {
         // line — the whole body pipeline (KP, math, links) applies inside each
         if (ls.sidecar) {
           g.sidecar = true;
-          for (const ContentNode* lineNode : ls.rows) u.cells.push_back(cellOf(lineNode->kids, {}));
+          for (const ContentNode* lineNode : ls.rows) {
+            u.cells.push_back(cellOf(lineNode->kids, {}));
+            u.cells.back().span = lineNode->span;
+          }
         }
         std::vector<const ContentNode*> bodyKids;
         for (const ContentNode* k : n->kids)
@@ -915,7 +959,34 @@ struct Emitter {
             std::vector<CodeRun> runs;
             collect(lineNode, runs);
             g.lines.push_back(std::move(runs));
+            g.lineSpans.push_back(lineNode->span.empty() ? n->span : lineNode->span);
           }
+          if (n->span.empty()) g.lineSpans.clear();  // generated code: no source
+        }
+        // (plan P3-07) a body's lines: its slices when it is the source as
+        // written (its length is its span's), else the body as a whole
+        if (g.lineSpans.empty() && bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text && !n->span.empty()) {
+          const ContentNode* t = bodyKids[0];
+          const std::string_view body = strs.get(t->str);
+          // the source as written, or with every line ending CRLF (the reader
+          // keeps LF only): a line's start moves by one per line before it
+          const size_t nl = (size_t)std::count(body.begin(), body.end(), '\n');
+          const u32 len = t->span.end - t->span.start;
+          const bool verbatim = len == body.size() && (!t->span.empty() || body.empty());
+          const bool crlf = !verbatim && nl > 0 && len == body.size() + nl;
+          const Span whole = t->span.empty() ? n->span : t->span;
+          size_t pos = 0;
+          u32 line = 0;
+          while (pos <= body.size()) {
+            size_t eol = body.find('\n', pos);
+            if (eol == std::string_view::npos) eol = body.size();
+            const u32 at = t->span.start + (u32)pos + (crlf ? line : 0);
+            g.lineSpans.push_back(verbatim || crlf ? Span{at, at + (u32)(eol - pos)} : whole);
+            line++;
+            if (eol == body.size()) break;
+            pos = eol + 1;
+          }
+          if (g.lineSpans.size() != g.lines.size()) g.lineSpans.assign(g.lines.size(), whole);
         }
         return;
       }
@@ -932,6 +1003,7 @@ struct Emitter {
           for (const ContentNode* cell : row->kids) {
             if (cell->kind != Kind::tcell || c >= t.cols) continue;
             u.cells.push_back(cellOf(cell->kids, {}));  // cell content flattens to one inline stream (v1)
+            u.cells.back().span = cell->span;
             c++;
           }
           for (; c < t.cols; c++) u.cells.push_back({});
@@ -1024,6 +1096,7 @@ static void prepareEnv(EmitEnv& env) {
   env.cjk.script = SCRIPT_CJK;
   env.spaceRef = env.strs.intern(" ");
   env.hyphenRef = env.strs.intern("-");
+  env.errorSyn = env.strs.intern("error");
   env.bulletRef = env.strs.intern("\xE2\x80\xA2");
 }
 static void shapeTop(const BoxTree& bt, size_t t, Emitter& e, TopBlock& tb) {

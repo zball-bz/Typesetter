@@ -154,6 +154,9 @@ inline constexpr std::string_view kHtmlAttrs[] = {
     "start",     "title",     "data-s",    "data-e",  "data-syn", "data-join", "data-ragged",
     "data-cell", "data-snap", "data-pid",  "data-s0", "data-src", "data-role",
     "data-overfull", "data-tsr-env",
+    // (plan P3-07) the copy contract: replaced text and its group, a line's
+    // track (data-cell retired), a paged band's block
+    "data-copy", "data-copy-group", "data-track", "data-b",
 };
 static_assert(std::size(kHtmlAttrs) <= 32);
 constexpr int htmlAttrIndex(std::string_view name) {

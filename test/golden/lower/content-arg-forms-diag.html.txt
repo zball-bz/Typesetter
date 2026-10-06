@@ -7,8 +7,8 @@
 <div class="tsr-line" data-s="0" data-e="28" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Two bodies: [b]d1d2.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="213" style="position:relative;height:48px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="52" data-join="space" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code" data-s="0">⚠ TypeError: Cannot read properties of</span></div>
-<div class="tsr-line" data-s="0" data-e="52" data-ragged="1" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-code" data-s="0">null (reading &#39;g&#39;)</span></div>
+<div class="tsr-line" data-s="0" data-e="52" data-join="space" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-code" data-syn="error">⚠ TypeError: Cannot read properties of</span></div>
+<div class="tsr-line" data-s="0" data-e="52" data-ragged="1" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-code" data-syn="error">null (reading &#39;g&#39;)</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="267" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="6" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">After.</span></div>

@@ -110,8 +110,10 @@ bool joinsSpace(const HList& h, u32 ihi) {
 
 // How a stream's lines sit and join (plan P1-17; design T6 LinePolicy).
 struct LinePolicy {
-  enum class Join : u8 { FromBreak, Never } join = Join::FromBreak;  // cells: Never (document-model §6.3)
-  Sep endSep = Sep::Newline;  // the stream's last line's separator
+  // (plan P3-07) the stream's last line's separator: its unit's (a
+  // paragraph's sepAfter) or its track's (a cell's tab or row); inside the
+  // stream every line takes its break's — whatever the alignment
+  Sep endSep = Sep::Newline;
   // Justify: the measure is filled; Ragged: it is not (tight lines still
   // shrink); Center: ragged, the slack split both sides; Cell: ragged, set
   // left, centre or right within the cell's content width
@@ -121,7 +123,6 @@ struct LinePolicy {
   StrRef marker = 0;    // on the first line
   StyleId markerStyle = 0;
   StrRef anchor = 0;    // the stream's anchor (a cell's, a caption's), on its first line
-  bool ragged = false;  // the lines say they are not justified (paint: data-ragged)
 };
 // a broken stream and where its lines go
 struct LineStream {
@@ -158,7 +159,9 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     const LineFill f = fillLine(s.h, r, metrics);
     Fragment line;
     line.unitIdx = s.unitIdx;
-    line.ragged = pol.ragged;
+    // not justified: the lines say so (paint: data-ragged; the audit's right
+    // edge skips them)
+    line.ragged = pol.align != LinePolicy::Align::Justify;
     line.cellIdx = s.cellIdx;
     line.blockBegin = r.lo;
     line.blockEnd = r.hi;
@@ -232,7 +235,7 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     }
     // its separator (plan P3-07): the break's inside the stream, a forced
     // break's newline, the stream's own at its end
-    if (pol.join == LinePolicy::Join::FromBreak && !last)
+    if (!last)
       line.sep = (f.endsHyphen || !joinsSpace(s.h, r.ihi)) ? Sep::None : Sep::Space;
     else if (bp == s.nBlocks)
       line.sep = pol.endSep;
@@ -466,7 +469,7 @@ class DocLayout {
                 : a == BlockTraits::Align::End    ? LinePolicy::Align::Cell
                                                   : LinePolicy::Align::Justify;
     if (a == BlockTraits::Align::End) pol.cellAlign = 'r';  // set at the end (plan P3-01: par.align end)
-    pol.ragged = a != BlockTraits::Align::Justify;
+    pol.endSep = b.sepAfter;
     pol.widthPx = cfg.widthPx - suToPx(b.x);
     pol.marker = b.marker;
     pol.markerStyle = b.markerStyle;
@@ -528,6 +531,7 @@ class DocLayout {
         f.srcSpan = b.span;
         f.height = std::max(mb->asc + mb->desc, baseLeading);
         f.baseline = (f.height - (mb->asc + mb->desc)) / 2 + mb->asc;
+        f.sep = b.sepAfter;  // a formula is copied (its source) like a paragraph
         break;
       }
       case Painter::None:
@@ -574,12 +578,12 @@ class DocLayout {
     fr->lines.push_back(f);
     i64 cy = py + floatShift + imgH;
     for (u32 ci = 0; ci < (u32)u.cells.size(); ci++) {
-      // caption rows: left-aligned at the float width; wrapped rows
-      // rejoin on copy (§9.3, unlike table cells)
+      // caption rows: left-aligned at the float width; wrapped rows rejoin
+      // on copy (§9.3), each caption paragraph ends a line, the last the unit
       const Flow& cell = u.cells[ci];
       LinePolicy pol;
       pol.align = LinePolicy::Align::Ragged;
-      pol.ragged = true;
+      pol.endSep = ci + 1 < (u32)u.cells.size() ? Sep::Newline : b.sepAfter;
       pol.widthPx = suToPx(imgW);
       pol.anchor = cell.anchor;
       cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[ci], LineWidths{imgW},
@@ -665,6 +669,7 @@ class DocLayout {
     };
     std::unordered_set<u32> hlSet(g.hlLines.begin(), g.hlLines.end());
     bool first = true;
+    size_t lastRow = ~size_t(0);  // the block's last code row: its unit's separator
     for (u32 li = 0; li < (u32)g.lines.size(); li++) {
       std::string joined;
       std::vector<std::pair<u32, u32>> commentSpans;  // byte ranges
@@ -773,6 +778,10 @@ class DocLayout {
       }
       bool hl = hlSet.count(li + 1) != 0;
       const i64 rowTop = py;
+      // (plan P3-07) its source: a row is its slice of an exact line, else
+      // the line as a whole
+      const Span ls = li < g.lineSpans.size() ? g.lineSpans[li] : Span{};
+      const bool exact = li < g.lineSpans.size() && ls.end - ls.start == joined.size();
       for (size_t ri = 0; ri < rows.size(); ri++) {
         Fragment line;
         line.unitIdx = b.unit;
@@ -782,8 +791,12 @@ class DocLayout {
         line.cbHi = rows[ri].hi;
         line.codeCont = ri > 0;
         // a wrapped row rejoins its continuation (§9.3); a code line ends
-        // with a newline
+        // with a newline, the block with its unit's separator (below)
         if (ri + 1 < rows.size()) line.sep = Sep::None;
+        if (li < g.lineSpans.size()) {
+          line.srcSpan = exact ? Span{ls.start + rows[ri].lo, ls.start + rows[ri].hi} : ls;
+          line.spanned = true;
+        }
         line.contCols = ri < rowContOut.size() ? rowContOut[ri] : 0;
         line.snapLatinPx = (float)grid.dLatinPx;
         line.snapCjkPx = (float)grid.dCjkPx;
@@ -802,6 +815,7 @@ class DocLayout {
         }
         first = false;
         py += adv;
+        lastRow = fr->lines.size();
         fr->lines.push_back(line);
       }
       // sidecar rows for this logical line (equal-height zip, §5):
@@ -809,8 +823,7 @@ class DocLayout {
       // links and refs land through the generic cell render path
       if (hasSidecar && li < u.cells.size()) {
         const TableCell& cell = u.cells[li];
-        LinePolicy pol;
-        pol.join = LinePolicy::Join::Never;
+        LinePolicy pol;  // a row's note: one stream, ending a line (D-R03)
         pol.align = LinePolicy::Align::Ragged;
         pol.widthPx = suToPx(sidebarW);
         pol.anchor = cell.anchor;
@@ -821,7 +834,8 @@ class DocLayout {
         if (cy > py) py = cy;  // the equal-height constraint
       }
     }
-        leave(b, l);
+    if (lastRow != ~size_t(0)) fr->lines[lastRow].sep = b.sepAfter;
+    leave(b, l);
   }
 
   void table(const LayoutBlock& b) {
@@ -861,15 +875,37 @@ class DocLayout {
       for (u32 c = 0; c < td.cols; c++) {
         const Flow& cell = u.cells[r * td.cols + c];
         LinePolicy pol;
-        pol.join = LinePolicy::Join::Never;
         pol.align = LinePolicy::Align::Cell;
         pol.cellAlign = td.aligns[c];
         pol.widthPx = suToPx(cellW);
         pol.anchor = cell.anchor;
+        // (plan P3-07) a cell ends with a tab, a row with a row; the table
+        // with its unit's separator
+        pol.endSep = c + 1 < td.cols ? Sep::Tab : r + 1 < nRows ? Sep::Row : b.sepAfter;
+        const Su cellX = (Su)(b.x + (Su)c * colW + padX);
+        const size_t before = fr->lines.size();
         const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(),
-                                         cellBreaks[r * td.cols + c], LineWidths{cellW}, false,
-                                         (Su)(b.x + (Su)c * colW + padX), cellW, b.unit, (i32)(r * td.cols + c)},
+                                         cellBreaks[r * td.cols + c], LineWidths{cellW}, false, cellX, cellW,
+                                         b.unit, (i32)(r * td.cols + c)},
                                         pol, metrics, cfg, baseLeading, rowTop, fr->lines);
+        if (fr->lines.size() == before) {
+          // an empty cell still holds its place in content text: an empty
+          // line carrying its separator (no items, no height of its own)
+          Fragment e;
+          e.unitIdx = b.unit;
+          e.cellIdx = (i32)(r * td.cols + c);
+          e.y = (Su)rowTop;
+          e.left = cellX;
+          e.width = cellW;
+          e.height = baseLeading;
+          e.baseline = baseLeading / 2;
+          e.ragged = true;
+          e.sep = pol.endSep;
+          e.anchor = cell.anchor;
+          e.srcSpan = cell.span.empty() ? Span{b.span.start, b.span.start} : cell.span;
+          e.spanned = true;
+          fr->lines.push_back(e);
+        }
         if (cy > rowBottom) rowBottom = cy;
       }
       py = rowBottom + padY;

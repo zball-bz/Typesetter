@@ -129,7 +129,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
     if (n.anchor) t.id(strs.get(n.anchor));
   };
   auto lineSpan = [&](Tag& t) {
-    if (!n.span.empty()) spanAttrs(t, n.span, srcBase);
+    if (!n.span.empty() || n.spanned) spanAttrs(t, n.span, srcBase);
   };
   // an enclosing block's label that shares this node: an empty target
   auto anchor2 = [&] {
@@ -223,15 +223,11 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
   {
     Tag t(out, "div");
     t.attrSafe("class", code && n.hl ? "tsr-line tsr-hlline" : "tsr-line");
-    if (code) {
-      t.attrSafe("data-ragged", "1");
-      if (n.join) t.attrSafe("data-join", n.join);
-    }
     anchor(t);
     lineSpan(t);
-    if (!code && n.join) t.attrSafe("data-join", n.join);
-    if (!code && n.ragged) t.attrSafe("data-ragged", "1");
-    if (n.cell) t.attrSafe("data-cell", "1");
+    if (n.join) t.attrSafe("data-join", n.join);
+    if (n.ragged) t.attrSafe("data-ragged", "1");  // (code rows are ragged by nature)
+    if (n.track) t.attrSafe("data-track", n.track);
     if (n.overfull) t.attrSafe("data-overfull", "1");  // deliberate overflow (audit)
     pos3(t);
     if (code) {
@@ -335,8 +331,15 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       t.attrSafe("class", RunClasses(sty, strs, nullptr, d.cls).sv());
       if (isLink) t.attr("href", hrefOf(d.link, strs));
       if (d.id) t.id(strs.get(d.id));
-      if (d.synRef) {  // §9.3: copy skips (a ref's hyphen is "hyphen")
-        if (!d.syn) t.attrSafe("data-syn", "ref");
+      // (plan P3-07, §9.3) what copy takes: an omitted or replaced run says
+      // its kind (a hyphen glyph says "hyphen" below), a replaced one its
+      // text, once per group; a content run its source
+      if (d.copy != CopyMode::Text) {
+        if (!d.syn) t.attr("data-syn", strs.get(d.synName));
+        if (d.copy == CopyMode::Replace) {
+          t.attr("data-copy", strs.get(d.copyText));
+          t.num("data-copy-group", d.copyGroup);
+        }
       } else if (d.dataS != ~0u) {
         t.num("data-s", d.dataS - srcBase);
       }

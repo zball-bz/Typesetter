@@ -1,13 +1,13 @@
 <div class="tsr-flow">
-<p data-pid="0" data-s="97" data-e="117">Hello, <strong>world</strong>: <em>markup</em> in a template.<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> Again: Hello, <strong>world</strong>: <em>markup</em> in a template.<a href="#tsr-fn-2" id="tsr-fnref-2"><sup>2</sup></a></p>
+<p data-pid="0" data-s="97" data-e="117">Hello, <strong>world</strong>: <em>markup</em> in a template.<a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a> Again: Hello, <strong>world</strong>: <em>markup</em> in a template.<a href="#tsr-fn-2" id="tsr-fnref-2" data-syn="fn-marker"><sup>2</sup></a></p>
 <p data-pid="1" data-s="119" data-e="229">Parsed with a scope value and <strong>content</strong> — but #f(1) stays text.</p>
 <p data-pid="2" data-s="330" data-e="363">SAY <strong>THIS</strong> WITH <code class="tsr-mathsrc">$X^2$</code></p>
 <p data-pid="3" data-s="365" data-e="448">Broken markup is diagnosed where it was parsed: an unclosed %-- comment</p>
 <div data-role="notes" data-pid="4" data-s="97" data-e="448">
 <hr data-s="97" data-e="448">
 <ol data-s="97" data-e="448">
-<li id="tsr-fn-1">A note made by m. <a href="#tsr-fnref-1">↩</a></li>
-<li id="tsr-fn-2">A note made by m. <a href="#tsr-fnref-2">↩</a></li>
+<li id="tsr-fn-1">A note made by m. <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
+<li id="tsr-fn-2">A note made by m. <a href="#tsr-fnref-2" data-syn="backlink">↩</a></li>
 </ol>
 </div>
 </div>

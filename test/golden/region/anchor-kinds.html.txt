@@ -2,11 +2,11 @@
 <div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.2px">
 <div class="tsr-line" id="tsr-top" data-s="0" data-e="12" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Anchor kinds</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:24px;margin-bottom:19.2px">
-<div class="tsr-line" data-ragged="1" id="tsr-lst-a" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">x = 1</span></div>
+<div class="tsr-para" data-pid="1" data-s0="58" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-lst-a" data-s="0" data-e="5" data-ragged="1" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">x = 1</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="106" style="position:relative;height:67.203px;margin-bottom:19.2px">
-<div class="tsr-line" id="tsr-sec-in" data-s="0" data-e="13" data-ragged="1" style="top:0px;left:0px;width:300px"><span id="tsr-box-b" data-syn="anchor"></span><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">Inner heading</span></div>
+<div class="tsr-line" id="tsr-sec-in" data-s="0" data-e="13" data-join="para" data-ragged="1" style="top:0px;left:0px;width:300px"><span id="tsr-box-b" data-syn="anchor"></span><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">Inner heading</span></div>
 <div class="tsr-line" data-s="24" data-e="47" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="24">Body text of the aside.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="193" style="position:relative;height:67.203px;margin-bottom:19.2px">
@@ -14,6 +14,6 @@
 <div class="tsr-line" data-s="0" data-e="15" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="0">After the rule.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="218" style="position:relative;height:24px">
-<div class="tsr-line" data-s="0" data-e="40" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-lst-a" data-syn="ref">lst-a</a><span class="tsr-r" data-s="10">, </span><a class="tsr-r" href="#tsr-box-b" data-syn="ref">box-b</a><span class="tsr-r" data-s="18">, </span><a class="tsr-r" href="#tsr-sec-in" data-syn="ref">§1.1</a><span class="tsr-r" data-s="28"> and </span><a class="tsr-r" href="#tsr-rule-c" data-syn="ref">rule-c</a><span class="tsr-r" data-s="39">.</span></div>
+<div class="tsr-line" data-s="0" data-e="40" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-lst-a" data-s="4">lst-a</a><span class="tsr-r" data-s="10">, </span><a class="tsr-r" href="#tsr-box-b" data-s="12">box-b</a><span class="tsr-r" data-s="18">, </span><a class="tsr-r" href="#tsr-sec-in" data-s="20">§1.1</a><span class="tsr-r" data-s="28"> and </span><a class="tsr-r" href="#tsr-rule-c" data-s="32">rule-c</a><span class="tsr-r" data-s="39">.</span></div>
 </div>
 </div>

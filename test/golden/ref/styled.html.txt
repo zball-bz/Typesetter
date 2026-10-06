@@ -4,6 +4,6 @@
 </div>
 <div class="tsr-para" data-pid="1" data-s0="27" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="47" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">A reference takes its site&#39;s style: </span><span class="tsr-r tsr-b" data-s="44">see</span></div>
-<div class="tsr-line" data-s="48" data-e="108" style="top:24px;left:0px;width:300px"><a class="tsr-r tsr-b" href="#tsr-top" data-syn="ref">§1</a><span class="tsr-r" data-s="53">, </span><span class="tsr-r" data-s="82" style="color:#a8432a">see </span><a class="tsr-r" href="#tsr-top" data-syn="ref" style="color:#a8432a">§1</a><span class="tsr-r" data-s="91">, and plain </span><a class="tsr-r" href="#tsr-top" data-syn="ref">§1</a><span class="tsr-r" data-s="107">.</span></div>
+<div class="tsr-line" data-s="48" data-e="108" style="top:24px;left:0px;width:300px"><a class="tsr-r tsr-b" href="#tsr-top" data-s="48">§1</a><span class="tsr-r" data-s="53">, </span><span class="tsr-r" data-s="82" style="color:#a8432a">see </span><a class="tsr-r" href="#tsr-top" data-s="86" style="color:#a8432a">§1</a><span class="tsr-r" data-s="91">, and plain </span><a class="tsr-r" href="#tsr-top" data-s="103">§1</a><span class="tsr-r" data-s="107">.</span></div>
 </div>
 </div>

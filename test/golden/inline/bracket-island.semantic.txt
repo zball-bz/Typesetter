@@ -1,5 +1,5 @@
 <div class="tsr-flow">
-<p data-pid="0" data-s="0" data-e="66">Notes close at their own bracket: a<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> and the text goes on.</p>
+<p data-pid="0" data-s="0" data-e="66">Notes close at their own bracket: a<a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a> and the text goes on.</p>
 <p data-pid="1" data-s="68" data-e="119">A link around math: <a href="u">range <code class="tsr-mathsrc">$[0,1)$</code></a> is one link.</p>
 <p data-pid="2" data-s="121" data-e="184"><strong>code </strong><code>a]b</code><strong> here</strong> and the body ends after the code span.</p>
 <p data-pid="3" data-s="186" data-e="278">Code spans by run length: <code>a`b</code>, <code>`tick`</code> and <code>x</code>; an unclosed `` run stays literal.</p>
@@ -12,7 +12,7 @@
 <div data-role="notes" data-pid="10" data-s="0" data-e="593">
 <hr data-s="0" data-e="593">
 <ol data-s="0" data-e="593">
-<li id="tsr-fn-1">a ] b <a href="#tsr-fnref-1">↩</a></li>
+<li id="tsr-fn-1">a ] b <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
 </ol>
 </div>
 </div>

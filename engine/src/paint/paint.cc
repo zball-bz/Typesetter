@@ -34,7 +34,11 @@ void lineRuns(const Fragment& l, const HList& h, std::vector<DLRun>& out) {
     d.face = r.face;
     d.link = r.link;
     if (first.attrs & IA_Anchor) d.id = c.anchor;  // inline anchor (footnote marker)
-    d.synRef = r.syn == SynKind::Ref;              // §9.3: copy skips (a ref's hyphen is "hyphen")
+    d.synRef = r.syn == SynKind::Ref;
+    d.copy = r.copy;  // (plan P3-07) its copy policy, decided at emit
+    d.synName = r.synName;
+    d.copyText = r.copyText;
+    d.copyGroup = r.copyGroup;
     if (c.srcEnd > c.srcStart) d.dataS = c.srcStart;
     return d;
   };
@@ -257,7 +261,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
   // (shell.mjs patchIn). Paged output keeps absolute offsets.
   u32 srcBase = 0xFFFFFFFFu;
   for (const Fragment& l : fr.lines)
-    if (!l.srcSpan.empty() && l.srcSpan.start < srcBase) srcBase = l.srcSpan.start;
+    if ((!l.srcSpan.empty() || l.spanned) && l.srcSpan.start < srcBase) srcBase = l.srcSpan.start;
   out.srcBase = srcBase == 0xFFFFFFFFu ? 0 : srcBase;
   const Su measureR = suFloorPx(cfg.widthPx);
   for (size_t li = 0; li < fr.lines.size(); li++) {
@@ -273,6 +277,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
     n.anchor2 = l.anchor2;
     n.baseline = l.baseline;
     n.span = l.srcSpan;
+    n.spanned = l.spanned;
     n.runBegin = n.runEnd = (u32)out.runs.size();
     switch (l.kind) {
       case FragKind::Rule:
@@ -328,7 +333,12 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
       case FragKind::Line: {
         n.join = sepName(l.sep);
         n.ragged = l.ragged || l.noGlue;
-        n.cell = l.cellIdx >= 0;
+        // (plan P3-07) a second track's line: a table cell, a code block's
+        // sidecar row, a float's caption row (data-cell retired)
+        if (l.cellIdx >= 0)
+          n.track = b.layouter == LayouterId::Table  ? "cell"
+                    : b.layouter == LayouterId::Grid ? "sidecar"
+                                                     : "caption";
         n.overfull = l.overfull;
         n.wordSpacingPx = l.wordDeltaPx;
         n.marker = l.marker;
@@ -364,7 +374,7 @@ std::string dumpDisplayList(const LayoutResult& lr, const std::vector<TopBlock>&
       }
       if (n.join) appendf(out, " join=%s", n.join);
       if (n.ragged) out += " ragged";
-      if (n.cell) out += " cell";
+      if (n.track) appendf(out, " track=%s", n.track);
       if (n.marker) {
         out += " marker=\"";
         appendEscaped(out, strs.get(n.marker));

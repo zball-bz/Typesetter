@@ -93,6 +93,18 @@ window.__tsr = {
     seen.leftover = !!document.querySelector('[data-tsr-print]');
     return seen;
   },
+  // (plan P3-07) what copy takes of an element's contents (a selector), or
+  // of the given HTML put into #out2
+  copyOf(selector, html) {
+    const el = html === undefined ? document.querySelector(selector) : document.getElementById('out2');
+    if (html !== undefined) el.innerHTML = html;
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    return contentTextFromRange(range, html === undefined ? out : el);
+  },
+  semanticHtml() {
+    return handle.semanticHtml;
+  },
   copyText() {
     const range = document.createRange();
     range.selectNodeContents(out);

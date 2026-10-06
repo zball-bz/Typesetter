@@ -398,15 +398,16 @@ and the paged output carry the same ids.
 </div>
 ```
 
-- CSS contract: `.tsr-line { position:absolute; white-space:nowrap; contain:layout style paint; }` — the v2 §7 rules are *serializer output*, not page-author responsibility.
-- Runs carry `data-s` when they map 1:1 to a source slice; synthetic runs (hyphens, resolved refs, escapes-containing runs) carry `data-syn` instead.
+- CSS contract: `.tsr-line { position:absolute; white-space:nowrap; contain:layout style; }` — the v2 §7 rules are *serializer output*, not page-author responsibility. (No `paint` containment: list markers and line numbers render in the gutter, outside the line box, and paint containment would clip them.)
+- Runs carry `data-s` when they map 1:1 to a source slice. As built (plan P3-07, D-R01): what copy takes of a run is decided at emit and encoded here — a text run (authored text, and class-body generated text: references, citations, caption prefixes, shown numbers) carries no `data-syn`; an omitted run carries `data-syn="<kind>"` (`hyphen`, `marker` (a gutter marker or line number), `cont`, `indent`, `boundary`, `fill`, `eqno`, `image`, `raw`, `fn-marker`, `backlink`, `error`, or a node's own `syn`); a replaced one also `data-copy="<text>"` and `data-copy-group` (taken once per group in a block); `data-syn="math"` keeps `data-src` as its replacement. Nodes say it with the universal `copy` (`text` | `omit` | `replace:<text>`) and `syn` attributes; the built-in templates mark the footnote marker and the notes' backlink.
+- Lines (plan P3-07): `data-join` is the line's separator — `space`, `none` (a break inside a stream), `tab` (after a table cell), `row` (after a row's last cell), `para` (after a unit the semantic page sets apart: a paragraph, heading, code block, table or formula not in a tight list item); absent: a line boundary (a forced break, a code line's end, a block's last line). `data-ragged="1"` marks every line its stream does not justify (centred, ragged, cell-aligned lines, code rows); `data-track` names a second track's line — `cell`, `sidecar` (a code block's notes) or `caption` (a float's caption rows) — and replaces `data-cell`. Code rows carry `data-s`/`data-e`: their slice of an exact source line, else the line (or body) as a whole. An empty table cell is an empty line carrying its separator. Paged sheets wrap each block's bands in `<div class="tsr-band" data-b="{pid}">`, one per block per sheet.
 - A line holding a run wider than the measure carries `data-overfull="1"` (plan P0-12): it is set at the shrink limit and overflows on purpose; the audit skips its right edge and the paragraph's overflow check.
-- Run boundary (interim key until P4-01's run instances): style, link and the generated-reference flag — a resolved ref's text (`[1]`, `??`) is never merged with the authored prose or punctuation beside it. A line-final hyphen opens inside its word's link (`<a … data-syn="hyphen">-</a>`).
-- `comment` nodes are not rendered here; `error` renders as `<span|div class="tsr-err" title="{message}">`.
+- Run boundary (interim key until P4-01's run instances): style, link, the generated-reference flag and the copy policy — a resolved ref's text (`[1]`, `??`) is never merged with the authored prose or punctuation beside it. A line-final hyphen opens inside its word's link (`<a … data-syn="hyphen">-</a>`).
+- `comment` nodes are not rendered here; error text is a run of `data-syn="error"` (the semantic page: `<span|div class="tsr-err" title="{message}" data-syn="error">`).
 
 ### 9.2 Semantic HTML
 
-Element mapping: `para→p, heading→h1..h6, list→ul|ol, item→li, quote→blockquote, codeblock→pre>code, rule→hr, group→div[data-role], table→table/tr/td, term→dl>dt+dd, collect→nav|section, styled→em|strong|span[class], link/ref→a, code→code, raw→passthrough`. Paragraph-level elements carry the same `data-pid` (the upgrade swap keys on it) and `data-s/e`. No positioning, no spacing styles — the browser flows it (v2 §9).
+Element mapping: `para→p, heading→h1..h6, list→ul|ol, item→li, quote→blockquote, codeblock→pre>code, rule→hr, group→div[data-role], table→table/tr/td, link/ref→a, code→code, raw→passthrough`. Not built yet (PresentationMap, plan P3-23): `term→dl>dt+dd`, `collect→nav|section`, `styled→em|strong|span[class]` — a term and a collector render as their groups, a styled run as its scope. As built (plan P3-07, D-R06): generated text the typeset view omits or replaces says so here too — an `<a>` of a footnote marker or a backlink carries `data-syn`, error text `data-syn="error"`, a node with `copy`/`syn` attributes its `data-syn`/`data-copy` (on its element, or a `<span>`) — so one copy contract serves both phases. Paragraph-level elements carry the same `data-pid` (the upgrade swap keys on it) and `data-s/e`. No positioning, no spacing styles — the browser flows it (v2 §9).
 
 As built (plan P3-01): runs are written in their **scope** (the rule-free style, §3); what the rules add is the page's stylesheet, `rulesToCss` (`render/rules_css.{h,cc}`; the `css` product, `tsr2_render_css`, `renderTsm(…).css`, inlined by `tools/export-static.mjs`). Every rule is `:where(…)` (specificity 0, so order decides as in the cascade); a forced host rule is `!important`; a kind maps to the element above; a document env that begins mid-document is compiled under `[data-tsr-env="<hash of its rule chain>"]`, which the page sets on the top-level blocks in that env and on a `style.where` wrapper (`div` around blocks, `span` inline). Role and class selectors wait for the page's hooks (P3-18 `tsr-c-*`, P3-23 `data-role`); until then the generated roles read through the registry's role map (`elements.json` `roles`: fn-marker → `sup`, caption-label / term-name → `strong`, skipped where the run's own style already says it). A selector with no CSS form (depth, other attributes) is left out with `rule-no-css`.
 
@@ -421,9 +422,10 @@ consumed a REAL source space: CJK inter-character breaks and synthetic glue
 (boundary, punct halves, indents) render `data-join="none"`, so the §9.3
 rebuild reproduces source text exactly. It is decided by the break, not by
 alignment (plan P1-17): a wrapped heading, caption or error block joins
-like a paragraph; only the paragraph end and a hard line break are real
-line boundaries (no attribute), and table cells and sidecar rows never
-carry one. Every stream's lines come from one `materializeLines` (layout),
+like a paragraph. As built (plan P3-07): every line of every stream carries
+layout's separator (`Sep`) — a table cell's and a sidecar row's lines join
+by their breaks too, a cell ends with `tab`/`row`, a unit with its
+`sepAfter`. Every stream's lines come from one `materializeLines` (layout),
 so paragraphs, cells, float captions and sidecar rows share the hyphen,
 height, span and spacing rules — a tight ragged line shrinks to fit, as the
 breaker assumed. Deferred: `pending(estimate)` states
@@ -431,7 +433,15 @@ and webfont-settle re-typesets, `size-adjust` fallback descriptors.
 
 ### 9.3 Copy (normative for `runtime/main/copy.mjs`)
 
-Copy produces **content text**, not markup source: walk selected `.tsr-r` runs in DOM order — skip `data-syn` runs; take runs' text (partial at the selection endpoints, character-offset within the run); between consecutive lines insert `" "` or `""` per the line's `data-join`; between paragraphs insert `"\n\n"`. Source offsets (`data-s`) are for anchoring and diagnostics, not for copy.
+Copy produces **content text**, not markup source. As built (plan P3-07; design T7 "ContentText projection + CopyPolicy"): the engine decides what copy takes of every run and line (§9.1) and `copy.mjs` concatenates:
+
+- Ownership: the core copy handler owns the clipboard iff the range intersects at least one `.tsr-line` (even if the result is empty); otherwise native copy applies — except on the semantic page, where a range holding `data-syn`/`data-copy` elements is copied as the browser would copy it without the omitted ones (D-R06).
+- Runs, in DOM order: a run without `data-syn` contributes its selected text (partial at the selection endpoints); `data-copy` (math: `data-src`) contributes its replacement once per `data-copy-group` in a block; any other `data-syn` run nothing.
+- Lines, in order: a line without items (a blank code row, an empty cell) contributes `""` and its separator; a line whose items are all omitted contributes nothing, not even its separator; otherwise its text, then its separator.
+- Separator: `data-join` — `space` `" "`, `none` `""`, `tab` `"\t"`, `row` `"\n"`, `para` `"\n\n"`; absent `"\n"` — except between two lines of one replaced node (the same `data-copy-group` ends one and starts the next): nothing. A change of block identity — a `.tsr-para`, or on paged sheets a `.tsr-band`'s `data-b` (a block cut across sheets keeps one) — is `"\n\n"`.
+- Sidecars (D-R03): across code rows only the code is copied; a selection entirely inside the sidecar track (`data-track="sidecar"`) copies the notes, without their marker.
+
+`handle.contentText(range)` (and a behaviour's `ctx.ops.contentText`) is the same projection. Source offsets (`data-s`) are for anchoring and diagnostics, never for copy.
 
 ### 9.4 Math runs (M7)
 

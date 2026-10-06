@@ -1,7 +1,7 @@
 doc @[0,593) [base]
   para @[0,66) [base]
     text @[0,35) [base] str="Notes close at their own bracket: a"
-    ref @[35,44) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
+    ref @[35,44) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
       text @[35,44) [SUPx0.70] str="1"
     text @[45,66) [base] str=" and the text goes on." raw=0:0,1:0
   para @[68,119) [base]
@@ -77,5 +77,5 @@ doc @[0,593) [base]
           styled @[35,44) [basex0.85] role="note-body"
             text @[37,43) [basex0.85] str="a ] b" raw=0:0,3:4
             text @[35,44) [basex0.85] str=" "
-            ref @[35,44) [basex0.85] target="fnref-1"
+            ref @[35,44) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
               text @[35,44) [basex0.85] str="↩"

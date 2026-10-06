@@ -22,6 +22,7 @@ struct EmitEnv {
   const MathEnv* math = nullptr;          // the document's math declarations (plan P2-15)
   const Cascade* cascade = nullptr;       // the rules, for code tokens (plan P3-01)
   StrRef spaceRef = 0, hyphenRef = 0, bulletRef = 0;
+  StrRef errorSyn = 0;  // "error": error text's data-syn (plan P3-07)
   // the presentation kinds put on their text (plan P2-08): the mono font role,
   // bold, a CJK run
   StyleDelta mono, bold, cjk;
@@ -51,11 +52,19 @@ struct ICtx {
   float mul = 1.0f;
   LinkTarget url;  // the link the text is in
   bool noHyphen = false;  // display context (headings)
+  // (plan P3-07) the copy policy of the text: the innermost node's
+  // `copy` / `syn` attributes
+  CopyMode copy = CopyMode::Text;
+  StrRef syn = 0;
+  StrRef copyText = 0;
+  u32 copyGroup = 0;
 };
 
 struct InlineSink {
   virtual ~InlineSink() = default;
   virtual void walk(const ContentNode* n, Flow& u, ICtx ctx) = 0;
+  // (plan P3-07) a block's own `copy` / `syn` attributes: its text's policy
+  virtual void copyPolicy(const ContentNode* n, Flow& u, ICtx& ctx) = 0;
   // the paragraph indent (首行缩进, App C): an unbreakable fixed-width box
   virtual void indent(Flow& u, StyleId st, Span span, double px, double em) = 0;
   // the unit's inline stream is complete

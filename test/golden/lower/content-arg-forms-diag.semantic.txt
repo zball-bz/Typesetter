@@ -1,6 +1,6 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="106" data-e="181">Empty: c1. Trailing comma: [a]c2. Comment: c3.</p>
 <p data-pid="1" data-s="183" data-e="211">Two bodies: [b]d1d2.</p>
-<div class="tsr-err" data-pid="2" data-s="213" data-e="265" title="TypeError: Cannot read properties of null (reading &#39;g&#39;)">&#9888; TypeError: Cannot read properties of null (reading &#39;g&#39;)</div>
+<div class="tsr-err" data-pid="2" data-s="213" data-e="265" title="TypeError: Cannot read properties of null (reading &#39;g&#39;)" data-syn="error">&#9888; TypeError: Cannot read properties of null (reading &#39;g&#39;)</div>
 <p data-pid="3" data-s="267" data-e="273">After.</p>
 </div>

@@ -12,15 +12,15 @@
 </div>
 <div class="tsr-para" data-pid="3" data-s0="168" style="position:relative;height:67.188px;margin-bottom:19.2px">
 <div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
-<div class="tsr-line" data-s="0" data-e="71" data-cell="1" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">a</span></div>
-<div class="tsr-line" data-s="0" data-e="71" data-cell="1" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="0">b</span></div>
+<div class="tsr-line" data-s="0" data-e="71" data-join="tab" data-ragged="1" data-track="cell" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">a</span></div>
+<div class="tsr-line" data-s="0" data-e="71" data-join="row" data-ragged="1" data-track="cell" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="0">b</span></div>
 <div class="tsr-rule" style="top:33.594px;left:0px;width:300px"></div>
-<div class="tsr-line" data-s="0" data-e="71" data-cell="1" style="top:38.391px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">c</span></div>
-<div class="tsr-line" data-s="0" data-e="71" data-cell="1" style="top:38.391px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="0">d</span></div>
+<div class="tsr-line" data-s="0" data-e="71" data-join="tab" data-ragged="1" data-track="cell" style="top:38.391px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">c</span></div>
+<div class="tsr-line" data-s="0" data-e="71" data-ragged="1" data-track="cell" style="top:38.391px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="0">d</span></div>
 <div class="tsr-rule" style="top:67.188px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="241" style="position:relative;height:24px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="89" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Raw </span><span class="tsr-iraw" data-syn="raw" data-s="4" style="width:40px;height:10px">&#9632;</span><span class="tsr-r" data-s="45"> and a node </span><a class="tsr-r" href="#tsr-a1" data-syn="ref">a1</a><span class="tsr-r" data-s="85"> here</span></div>
+<div class="tsr-line" data-s="0" data-e="89" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Raw </span><span class="tsr-iraw" data-syn="raw" data-s="4" style="width:40px;height:10px">&#9632;</span><span class="tsr-r" data-s="45"> and a node </span><a class="tsr-r" href="#tsr-a1" data-s="56">a1</a><span class="tsr-r" data-s="85"> here</span></div>
 </div>
 <div class="tsr-para" data-pid="5" data-s0="332" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="87" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.25px"><span class="tsr-r" data-s="0">An image with an unknown option </span><img class="tsr-iimg" data-syn="image" data-s="32" draggable="false" src="x.png" alt="" style="width:10px;height:10px"><span class="tsr-r" data-s="74"> in a</span></div>

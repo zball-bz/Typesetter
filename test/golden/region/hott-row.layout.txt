@@ -2,17 +2,19 @@ doc h=8908su
 para pid=0 y=0su w=19200su h=8908su
   L0 rule y=0su left=0su w=19200su
   L1 cell=0 y=307su left=410su w=3020su blocks=[0,1)
-  L2 cell=2 y=307su left=8090su w=3020su blocks=[0,3)
-  L3 cell=3 y=307su left=11930su w=3020su blocks=[0,1)
-  L4 cell=4 y=307su left=15770su w=3020su blocks=[0,4)
-  L5 cell=4 y=1843su left=15770su w=3020su blocks=[4,5)
-  L6 rule y=3686su left=0su w=19200su
-  L7 cell=5 y=3993su left=410su w=3020su blocks=[0,1)
-  L8 cell=7 y=3993su left=8090su w=3020su blocks=[0,2) overfull
-  L9 cell=7 y=5529su left=8090su w=3020su blocks=[2,7)
-  L10 cell=8 y=3993su left=11930su w=3020su blocks=[0,1)
-  L11 cell=8 y=5529su left=11930su w=3020su blocks=[2,5)
-  L12 cell=9 y=3993su left=15770su w=3020su blocks=[0,1)
-  L13 cell=9 y=5529su left=15770su w=3020su blocks=[2,3)
-  L14 cell=9 y=7065su left=15770su w=3020su blocks=[4,5)
-  L15 rule y=8908su left=0su w=19200su
+  L2 cell=1 y=307su left=4250su w=3020su blocks=[0,0)
+  L3 cell=2 y=307su left=8090su w=3020su blocks=[0,3)
+  L4 cell=3 y=307su left=11930su w=3020su blocks=[0,1)
+  L5 cell=4 y=307su left=15770su w=3020su blocks=[0,4)
+  L6 cell=4 y=1843su left=15770su w=3020su blocks=[4,5)
+  L7 rule y=3686su left=0su w=19200su
+  L8 cell=5 y=3993su left=410su w=3020su blocks=[0,1)
+  L9 cell=6 y=3993su left=4250su w=3020su blocks=[0,0)
+  L10 cell=7 y=3993su left=8090su w=3020su blocks=[0,2) overfull
+  L11 cell=7 y=5529su left=8090su w=3020su blocks=[2,7)
+  L12 cell=8 y=3993su left=11930su w=3020su blocks=[0,1)
+  L13 cell=8 y=5529su left=11930su w=3020su blocks=[2,5)
+  L14 cell=9 y=3993su left=15770su w=3020su blocks=[0,1)
+  L15 cell=9 y=5529su left=15770su w=3020su blocks=[2,3)
+  L16 cell=9 y=7065su left=15770su w=3020su blocks=[4,5)
+  L17 rule y=8908su left=0su w=19200su

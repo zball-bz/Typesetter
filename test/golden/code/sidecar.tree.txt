@@ -19,7 +19,7 @@ doc @[0,347) [base]
         text @[219,243) [base] str=" 时直接返回，详见 " raw=0:0,1:0,26:24
         ref @[244,249) [base] target="base"
           text @[244,249) [base] str="§1"
-        ref @[249,291) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1"
+        ref @[249,291) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
           text @[249,291) [SUPx0.70] str="1"
       seq @[53,331) [base]
       seq @[53,331) [base]
@@ -33,5 +33,5 @@ doc @[0,347) [base]
           styled @[249,291) [basex0.85] role="note-body"
             text @[251,290) [basex0.85] str="边注里的脚注是真正的脚注。"
             text @[249,291) [basex0.85] str=" "
-            ref @[249,291) [basex0.85] target="fnref-1"
+            ref @[249,291) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
               text @[249,291) [basex0.85] str="↩"

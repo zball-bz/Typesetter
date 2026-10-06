@@ -43,8 +43,9 @@ the finished `LayoutResult` (no re-break, no new layout mode):
   fitting line boundary, then back the cut up until all keep-rules hold:
   - **widow/orphan**: ≥2 lines of a paragraph on each side of a cut
     (1-2-line paragraphs are atomic);
-  - **keep-with-next**: a heading frame sticks to ≥2 lines of the next
-    frame;
+  - **keep-with-next**: a heading frame sticks to the next frame (as
+    built: a frame whose block says `keepWithNext` never ends a sheet; the
+    "≥2 lines of the next frame" refinement is not implemented);
   - **atomic**: display math, rules, raw units, figures (image+caption),
     table rows (rule-to-rule), and each code logical line (its wrapped rows
     + zipped sidecar rows share rowTop — cut only between logical lines);
@@ -53,17 +54,23 @@ the finished `LayoutResult` (no re-break, no new layout mode):
 - Output: `<div class="tsr-sheet">` per page, fixed height, containing the
   page's line boxes re-based to the page top. `data-pid` is NOT emitted
   (print markup never participates in progressive swap); source spans are.
+  As built (plan P3-07): a sheet wraps each block's bands in
+  `<div class="tsr-band" data-b="{pid}">` (one per block per sheet) — copy's
+  block identity on paged output, so paragraph breaks survive and a block
+  cut across sheets joins its lines with their own separators.
 
 ### Shell
 
-`engine.print({pageWidthPx, pageHeightPx, marginPx})`:
-
-1. worker: `set_width(pageWidthPx)` → typeset → `render_pages` → HTML;
-2. shell: hidden print iframe — `@page { size: A4; margin: 0 }`, body
-   margin = `marginPx`, `.tsr-sheet { page-break-after: always; }`, same
-   TSR_CSS + fonts; `iframe.contentWindow.print()`;
-3. worker: `set_width(screenWidth)` → typeset (metrics persist, fast) so
-   the live document is untouched.
+`engine.print({pageWidthPx, pageHeightPx, marginPx})` — as originally
+designed (a hidden print iframe; `set_width` there and back). As built:
+`handle.print()` is the print behaviour (plan P3-06,
+`runtime/src/main/behaviors/print.mjs`): the worker paginates a **fork** of
+the document at the page measure (`tsr2_doc_fork` with a `host.width` /
+`page.height` patch and a derived `render.idPrefix`), so the live document
+is never touched; the shell injects the sheets under a print root in the
+PARENT document (`[data-tsr-print="root"]`, shown alone by `@media print`)
+— the iframe printed blank pages in some browsers (focus and removal
+races) — with Gecko's fractional-px margin clamp.
 
 Default geometry: A4 at 96 dpi — 794×1123 css px, 64 px margins → content
 666×995. All numbers are options.

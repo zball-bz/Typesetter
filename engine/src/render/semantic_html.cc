@@ -37,6 +37,17 @@ struct Sem {
     return (a && a->tag == ArgTag::Num) ? a->num : dflt;
   }
 
+  // (plan P3-07, D-R06) what copy takes of a node, as the typeset view
+  // says it: an omitted or replaced node's kind (its `syn`, else its kind)
+  // and replacement — so both phases share one copy contract
+  bool copyMarked(const ContentNode* n) const { return copyAttr(n, strs).marked; }
+  void copyAttrs(Tag& t, const ContentNode* n) {
+    const CopyAttr c = copyAttr(n, strs);
+    if (c.mode == CopyAttr::Mode::Text) return;
+    t.attr("data-syn", c.syn);
+    if (c.mode == CopyAttr::Mode::Replace) t.attr("data-copy", c.replace);
+  }
+
   // shared attributes: span anchoring + optional pid + label anchor
   void attrs(Tag& t, const ContentNode* n, int pid) {
     if (pid >= 0) t.num("data-pid", (unsigned)pid);
@@ -47,6 +58,7 @@ struct Sem {
     }
     std::string_view label = argS(n, ArgK::label);
     if (!label.empty()) t.id(label);
+    copyAttrs(t, n);
   }
   // <name …shared attributes…>
   void open(std::string_view name, const ContentNode* n, int pid, const char* cls = nullptr) {
@@ -159,6 +171,20 @@ struct Sem {
   }
 
   void inl(const ContentNode* n) {
+    // a marked node without an element of its own says it on a span
+    if (copyMarked(n) && n->kind != Kind::link && n->kind != Kind::ref && n->kind != Kind::error) {
+      {
+        Tag t(out, "span");
+        copyAttrs(t, n);
+        t.open();
+      }
+      inlNode(n);
+      out += "</span>";
+      return;
+    }
+    inlNode(n);
+  }
+  void inlNode(const ContentNode* n) {
     switch (n->kind) {
       case Kind::text:
         textRun(n->scope, strs.get(n->str));
@@ -194,6 +220,7 @@ struct Sem {
           t.attr("href", href);
           std::string_view id = argS(n, ArgK::label);  // inline anchor (marker)
           if (!id.empty()) t.id(id);
+          copyAttrs(t, n);
           t.open();
         }
         roleKids(n);
@@ -221,6 +248,7 @@ struct Sem {
           Tag t(out, "span");
           t.attrSafe("class", "tsr-err");
           t.attr("title", argS(n, ArgK::message));
+          t.attrSafe("data-syn", "error");  // copy omits it (D-R01)
           t.open();
         }
         out += "&#9888; ";
@@ -524,6 +552,7 @@ struct Sem {
           t.attrSafe("class", "tsr-err");
           attrs(t, n, pid);
           t.attr("title", argS(n, ArgK::message));
+          if (!copyMarked(n)) t.attrSafe("data-syn", "error");  // copy omits it (D-R01)
           t.open();
         }
         out += "&#9888; ";

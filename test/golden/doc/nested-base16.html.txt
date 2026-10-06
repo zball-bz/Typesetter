@@ -4,12 +4,12 @@
 <div class="tsr-line" data-s="0" data-e="70" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">cal algebra guard, plan P0-01).</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="74" style="position:relative;height:199.953px">
-<div class="tsr-line" data-s="0" data-e="10" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">Outer item</span></div>
+<div class="tsr-line" data-s="0" data-e="10" data-join="para" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">Outer item</span></div>
 <div class="tsr-line" data-s="15" data-e="58" data-join="space" style="top:30.391px;left:40px;width:260px;word-spacing:4.667px"><span class="tsr-r" data-s="15">A quote inside the item with two</span></div>
-<div class="tsr-line" data-s="15" data-e="58" style="top:54.391px;left:40px;width:260px"><span class="tsr-r" data-s="15">lines.</span></div>
-<div class="tsr-line" data-ragged="1" style="top:84.781px;left:24px;width:276px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">nested(code);</span></div>
-<div class="tsr-line" data-s="94" data-e="104" style="top:115.172px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="94">Inner item</span></div>
-<div class="tsr-line" data-s="111" data-e="121" style="top:145.562px;left:64px;width:236px"><span class="tsr-r" data-s="111">Deep quote</span></div>
+<div class="tsr-line" data-s="15" data-e="58" data-join="para" style="top:54.391px;left:40px;width:260px"><span class="tsr-r" data-s="15">lines.</span></div>
+<div class="tsr-line" data-s="70" data-e="83" data-join="para" data-ragged="1" style="top:84.781px;left:24px;width:276px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">nested(code);</span></div>
+<div class="tsr-line" data-s="94" data-e="104" data-join="para" style="top:115.172px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="94">Inner item</span></div>
+<div class="tsr-line" data-s="111" data-e="121" data-join="para" style="top:145.562px;left:64px;width:236px"><span class="tsr-r" data-s="111">Deep quote</span></div>
 <div class="tsr-line" data-s="124" data-e="139" style="top:175.953px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="124">Last outer item</span></div>
 </div>
 </div>

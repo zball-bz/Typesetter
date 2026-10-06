@@ -1,12 +1,12 @@
 <div class="tsr-flow">
-<p data-pid="0" data-s="0" data-e="127">Before any declaration, <code class="tsr-mathsrc">$a defeq b$</code> is a name between two variables.<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a></p>
+<p data-pid="0" data-s="0" data-e="127">Before any declaration, <code class="tsr-mathsrc">$a defeq b$</code> is a name between two variables.<a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a></p>
 <p data-pid="1" data-s="407" data-e="547">After it, <code class="tsr-mathsrc">$a defeq b$</code> and a typed <code class="tsr-mathsrc">$a ≝ b$</code> are relations, and the HoTT macros expand: <code class="tsr-mathsrc">$eqv(A, B)$</code>, <code class="tsr-mathsrc">$idtype(U, a, b)$</code> and <code class="tsr-mathsrc">$prd(x, A, B(x))$</code>.</p>
 <p class="tsr-mathblock" data-pid="2" data-s="549" data-e="572"><code class="tsr-mathsrc">$ colim_(i in I) F(i) $</code></p>
 <p data-pid="3" data-s="574" data-e="621">The built-in stays reachable: <code class="tsr-mathsrc">$std.frac(1, 2)$</code>.</p>
 <div data-role="notes" data-pid="4" data-s="0" data-e="621">
 <hr data-s="0" data-e="621">
 <ol data-s="0" data-e="621">
-<li id="tsr-fn-1">A footnote written here keeps that reading: <code class="tsr-mathsrc">$x defeq y$</code>. <a href="#tsr-fnref-1">↩</a></li>
+<li id="tsr-fn-1">A footnote written here keeps that reading: <code class="tsr-mathsrc">$x defeq y$</code>. <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
 </ol>
 </div>
 </div>

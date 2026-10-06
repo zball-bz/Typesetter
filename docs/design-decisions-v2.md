@@ -409,5 +409,5 @@ Notes:
 - [ ] Explicit per-line `word-spacing` / per-run `letter-spacing` (mixed-line rule `Δcjk = k·Δword`); no `text-align: justify`.
 - [ ] Measurement cache keyed by dppx; `matchMedia('(resolution: …dppx)')` invalidation, re-armed per fire.
 - [ ] `text-rendering: geometricPrecision` on output; `ctx.textRendering = 'geometricPrecision'` on the canvas measurer (where supported).
-- [ ] `copy` listener rebuilding clean text from source offsets (strips per-line `\n`, hyphenation artifacts, comment nodes).
+- [x] `copy` listener rebuilding clean CONTENT text (as built, document-model §9.3, plan P3-07: from the engine's copy encoding — `data-syn`/`data-copy` runs, `data-join` separators — never from source offsets; strips line breaks, hyphenation artifacts and decorative generated text).
 - [ ] Dev-mode audit only — no runtime repair: batch-read rendered line widths, assert deviation ≤ ε; same code backs the §16 render tests.

@@ -891,9 +891,22 @@ struct Doc {
         t.open();
         html += "\n";
       }
-      for (const PageBand& band : pg.bands)
+      // (plan P3-07) a sheet's bands in their block's wrapper, one per block
+      // per sheet: copy's block identity on paged sheets (a block cut across
+      // sheets keeps one)
+      for (size_t k = 0; k < pg.bands.size(); k++) {
+        const PageBand& band = pg.bands[k];
+        if (k == 0 || pg.bands[k - 1].para != band.para) {
+          Tag t(html, "div");
+          t.attrSafe("class", "tsr-band");
+          t.num("data-b", dl[band.para].pid);
+          t.open();
+          html += "\n";
+        }
         writeNodes(html, dl[band.para], band.lo, band.hi, (Su)((i64)layout.paras[band.para].y - pg.top), styles,
                    strs, cfg.baseSizePx);
+        if (k + 1 == pg.bands.size() || pg.bands[k + 1].para != band.para) html += "</div>\n";
+      }
       html += "</div>\n";
     }
     html += "</div>\n";

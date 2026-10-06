@@ -4,12 +4,12 @@
 <div class="tsr-line" data-s="6" data-e="23" style="top:24px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="6">again: </span><span class="tsr-r tsr-b" data-s="18">Card:</span><span class="tsr-r" data-s="18"> a reusable piece of content.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="83" style="position:relative;height:84.781px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="10" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">first item</span></div>
-<div class="tsr-line" data-s="30" data-e="49" style="top:30.391px;left:24px;width:276px"><span class="tsr-r" data-s="30">holds 2 things</span></div>
+<div class="tsr-line" data-s="0" data-e="10" data-join="para" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">first item</span></div>
+<div class="tsr-line" data-s="30" data-e="49" data-join="para" style="top:30.391px;left:24px;width:276px"><span class="tsr-r" data-s="30">holds 2 things</span></div>
 <div class="tsr-line" data-s="52" data-e="75" style="top:60.781px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="52">second item sees 2</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="162" style="position:relative;height:67.203px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="7" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">A quote</span></div>
+<div class="tsr-line" data-s="0" data-e="7" data-join="para" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">A quote</span></div>
 <div class="tsr-line" data-s="36" data-e="44" style="top:43.203px;left:16px;width:284px"><span class="tsr-r" data-s="36">by the author.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="249" style="position:relative;height:24px;margin-bottom:19.2px">

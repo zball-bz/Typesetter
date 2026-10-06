@@ -1,11 +1,11 @@
 block pid=0 s0=2 h=1639su
   line y=0su left=0su w=19200su base=1311su id="top" ragged
     words "Anchor kinds"
-block pid=1 s0=0 h=1536su
+block pid=1 s0=58 h=1536su
   code y=0su left=0su w=19200su base=1029su id="lst-a" ragged
     code "x = 1"
 block pid=2 s0=106 h=4301su
-  line y=0su left=0su w=19200su base=1183su id="sec-in" ragged
+  line y=0su left=0su w=19200su base=1183su id="sec-in" join=para ragged
     words "Inner heading"
   line y=2765su left=0su w=19200su base=1075su
     words "Body text of the aside."

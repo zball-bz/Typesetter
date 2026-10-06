@@ -5,8 +5,8 @@
 <div class="tsr-para" data-pid="1" data-s0="24" style="position:relative;height:96px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="89" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">An English document takes English sup</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="0" data-e="89" data-join="space" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">plements from the doc.lang setting (plan</span></div>
-<div class="tsr-line" data-s="0" data-e="122" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:0.3px"><span class="tsr-r" data-s="0">P1-03): see </span><a class="tsr-r" href="#tsr-intro" data-syn="ref">§1</a><span class="tsr-r" data-s="96">, </span><a class="tsr-r" href="#tsr-fig-a" data-syn="ref">Figure 1</a><span class="tsr-r" data-s="104">, </span><a class="tsr-r" href="#tsr-tab-a" data-syn="ref">Table 1</a><span class="tsr-r" data-s="113"> and </span><a class="tsr-r" href="#tsr-eq-a" data-syn="ref">Eq.</a></div>
-<div class="tsr-line" data-s="117" data-e="123" style="top:72px;left:0px;width:300px"><a class="tsr-r" href="#tsr-eq-a" data-syn="ref">(1)</a><span class="tsr-r" data-s="122">.</span></div>
+<div class="tsr-line" data-s="0" data-e="122" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:0.3px"><span class="tsr-r" data-s="0">P1-03): see </span><a class="tsr-r" href="#tsr-intro" data-s="90">§1</a><span class="tsr-r" data-s="96">, </span><a class="tsr-r" href="#tsr-fig-a" data-s="98">Figure 1</a><span class="tsr-r" data-s="104">, </span><a class="tsr-r" href="#tsr-tab-a" data-s="106">Table 1</a><span class="tsr-r" data-s="113"> and </span><a class="tsr-r" href="#tsr-eq-a" data-s="117">Eq.</a></div>
+<div class="tsr-line" data-s="117" data-e="123" style="top:72px;left:0px;width:300px"><a class="tsr-r" href="#tsr-eq-a" data-s="117">(1)</a><span class="tsr-r" data-s="122">.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="149" style="position:relative;height:103.203px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" data-s="0" data-e="89" src="a.png" alt="a figure" style="top:0px;left:90px;width:120px;height:60px">
@@ -14,8 +14,8 @@
 </div>
 <div class="tsr-para" data-pid="3" data-s0="273" style="position:relative;height:33.594px;margin-bottom:19.2px">
 <div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-tab-a" data-s="0" data-e="1" data-cell="1" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">x</span></div>
-<div class="tsr-line" data-s="4" data-e="5" data-cell="1" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="4">y</span></div>
+<div class="tsr-line" id="tsr-tab-a" data-s="0" data-e="1" data-join="tab" data-ragged="1" data-track="cell" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">x</span></div>
+<div class="tsr-line" data-s="4" data-e="5" data-ragged="1" data-track="cell" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="4">y</span></div>
 <div class="tsr-rule" style="top:33.594px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="288" style="position:relative;height:24px">

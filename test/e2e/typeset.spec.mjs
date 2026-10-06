@@ -224,7 +224,7 @@ test('wrapped code copies as its logical lines', async ({ page }) => {
   expect(text).toContain('short();');
 });
 
-test('copy joins CJK line breaks seamlessly and skips resolved refs', async ({ page }) => {
+test('copy joins CJK line breaks seamlessly; references copy as text (D-R01)', async ({ page }) => {
   const cjk = '排版引擎在断行处不引入空格，标点挤压后的文本也保持原样，复制即内容。';
   const source = '= 引言 <s>\n\n' + cjk + '\n\n见 @s 一节。';
   await page.goto('/test/e2e/harness.html');
@@ -235,8 +235,7 @@ test('copy joins CJK line breaks seamlessly and skips resolved refs', async ({ p
   );
   const text = await page.evaluate(() => window.__tsr.copyText());
   expect(text).toContain(cjk);          // rejoined with no inserted characters
-  expect(text).not.toContain('§');      // resolved ref runs are synthetic
-  expect(text).toContain('见');
+  expect(text).toContain('见 §1 一节');  // a reference is class-body text: copied (D-R01)
 });
 
 // plan P0-10 (design T7 S6): a citation's generated text is its own run, so
@@ -251,9 +250,9 @@ test('copy keeps the prose next to citations', async ({ page }) => {
     { source },
   );
   const text = await page.evaluate(() => window.__tsr.copyText());
-  expect(text).toContain('Knuth and Plass ; hyphenation patterns follow Liang , and the pair');
+  // a citation is class-body generated text: copied as shown (D-R01)
+  expect(text).toContain('Knuth and Plass [1]; hyphenation patterns follow Liang [2], and the pair');
   expect(text).toContain('keeps its number; the uncited entry');
-  expect(text).not.toMatch(/Plass \[|Liang \[/);  // the bracket is generated text
 });
 
 // plan P0-10 (defect #21): a snap-kerned code run carries its letter-spacing
@@ -1014,4 +1013,78 @@ test('behaviours: a host registry, devAudit on every commit, a failing one disab
   expect(r.patched).toBe(true);                   // the throwing behaviour broke nothing
   expect(warnings.some((w) => w.includes('behavior boom failed'))).toBe(true);
   expect(r.img).toEqual([120, 40]);               // the host's capability answered
+});
+
+// ---- separators and the copy contract (plan P3-07) -----------------------
+
+test('copy: a table is tab-separated rows; an empty cell keeps its column', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const source = '#!table(cols: 3)\nName | Qty | Price\nAn extraordinarily wide widget | | 3.50\n#table!';
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }), source);
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text).toBe('Name\tQty\tPrice\nAn extraordinarily wide widget\t\t3.50');
+  const audit = await page.evaluate(() => window.__tsr.audit());
+  expect(audit.failures).toEqual([]);
+});
+
+test('copy: code with a sidecar copies the code; inside the sidecar, the note (D-R03)', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const source = '```js(sidecar: "///")\nconst a = 1; /// the first note\n\nlet b = 2;\n```';
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }), source);
+  // a blank code line survives; the sidecar is left out
+  expect(await page.evaluate(() => window.__tsr.copyText())).toBe('const a = 1;\n\nlet b = 2;');
+  const note = await page.evaluate(() => window.__tsr.copyOf('#out [data-track="sidecar"]'));
+  expect(note).toBe('the first note');
+  expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
+});
+
+test('copy: paragraphs set apart, items not; markers, backlinks and errors omitted', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const source = '#!aside\nA side note^[Its note.] here.\n- one\n- two\n#aside!\n\nAfter #nosuch() it.';
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }), source);
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text).toContain('A side note here.\n\none\ntwo');  // the paragraph set apart, the items not
+  expect(text).toContain('Its note.');
+  expect(text).not.toContain('↩');
+  expect(text).not.toMatch(/note1|⚠/);
+});
+
+test('copy: paged sheets keep block identity across a sheet cut', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const long = 'This paragraph is long enough to be cut between two sheets of a small page, ' +
+    'so the copy rebuild must join its lines across the cut with spaces and never with a blank line.';
+  const source = `First paragraph.\n\n${long}\n\nLast paragraph.`;
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }), source);
+  const { html } = await page.evaluate(async () => await window.__tsr.paginate({ pageWidthPx: 300, pageHeightPx: 120 }));
+  expect((html.match(/class="tsr-sheet"/g) ?? []).length).toBeGreaterThan(1);
+  const text = await page.evaluate((h) => window.__tsr.copyOf(null, h), html);
+  expect(text).toBe(`First paragraph.\n\n${long}\n\nLast paragraph.`);
+});
+
+test('copy: the semantic page omits what the typeset view omits (D-R06)', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async () => await window.__tsr.typeset('A claim^[The note.] continues.', { widthPx: 300 }));
+  const sem = await page.evaluate(() => window.__tsr.semanticHtml());
+  expect(sem).toContain('data-syn="fn-marker"');
+  expect(sem).toContain('data-syn="backlink"');
+  const text = await page.evaluate((h) => window.__tsr.copyOf(null, h), sem);
+  expect(text).toContain('A claim continues.');
+  expect(text).toContain('The note.');
+  expect(text).not.toContain('↩');
+});
+
+test('copy: an author\'s copy attribute replaces or omits, once per node', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const source = 'Keep #strong({copy: "replace:[R]"})[this rather long emphasised phrase that wraps over lines] ' +
+    'and #em({copy: "omit"})[hidden] here.';
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 160, progressive: false }), source);
+  const lines = await page.evaluate(() => document.querySelectorAll('#out [data-copy]').length);
+  expect(lines).toBeGreaterThan(1);  // the node spans runs on several lines
+  expect(await page.evaluate(() => window.__tsr.copyText())).toBe('Keep [R] and  here.');
 });

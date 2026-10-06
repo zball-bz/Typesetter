@@ -88,6 +88,10 @@ struct LayoutBlock {
   StrRef marker = 0;
   StyleId markerStyle = 0;
   Span span;
+  // (plan P3-07) a leaf: the separator after its last line in content text
+  // — Para where the semantic page sets it apart, Newline in a tight list
+  // item and at the top's end (a new block is a new paragraph anyway)
+  Sep sepAfter = Sep::Newline;
   bool leaf() const { return unit != ~0u; }
 };
 

@@ -6,7 +6,7 @@
 <div class="tsr-line" id="tsr-intro" data-s="0" data-e="14" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">1 Introduction</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="327" style="position:relative;height:67.203px;margin-bottom:19.2px">
-<div class="tsr-line" data-s="0" data-e="13" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">By induction.</span></div>
+<div class="tsr-line" data-s="0" data-e="13" data-join="para" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">By induction.</span></div>
 <div class="tsr-line" data-s="15" data-e="37" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="15">The step is immediate.</span><span class="tsr-sp" data-syn="fill" style="width:126.4px"></span><span class="tsr-r" data-s="15">∎</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="413" style="position:relative;height:48px;margin-bottom:19.2px">
@@ -18,6 +18,6 @@
 <div class="tsr-line" data-s="0" data-e="9" style="top:24px;left:24px;width:276px"><span class="tsr-r" data-s="0">on the way to a larger one.</span></div>
 </div>
 <div class="tsr-para" data-pid="5" data-s0="486" style="position:relative;height:24px">
-<div class="tsr-line" data-s="0" data-e="22" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-intro" data-syn="ref">§1</a><span class="tsr-r" data-s="11"> and </span><a class="tsr-r" href="#tsr-lemma" data-syn="ref">lemma</a><span class="tsr-r" data-s="21">.</span></div>
+<div class="tsr-line" data-s="0" data-e="22" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-intro" data-s="4">§1</a><span class="tsr-r" data-s="11"> and </span><a class="tsr-r" href="#tsr-lemma" data-s="15">lemma</a><span class="tsr-r" data-s="21">.</span></div>
 </div>
 </div>
