@@ -1,0 +1,4 @@
+instance equation 1 label=eq-mid @[322,344)
+instance heading 1 level=1 label=h-1 title="A heading cannot split  so the block is an error" @[394,451)
+label eq-mid -> equation 1 @[322,344)
+label h-1 -> heading 1 @[394,451)

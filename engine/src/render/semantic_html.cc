@@ -329,7 +329,14 @@ struct Sem {
   void block(const ContentNode* n, int pid) {
     switch (n->kind) {
       case Kind::para:
-        open("p", n, pid);
+        if (attrBool(n, ArgK::cont, false)) {  // (plan P3-17) a continuation: no indent, no space above
+          Tag t(out, "p");
+          attrs(t, n, pid);
+          t.decl("margin-top", "0").decl("text-indent", "0");
+          t.open();
+        } else {
+          open("p", n, pid);
+        }
         inlineKids(n);
         out += "</p>\n";
         return;

@@ -4,7 +4,10 @@ top pid=0 units=1
   space w=257su stretch=1 @[0,6)
   word "rule" w=2049su pen=INF @[0,6)
   space w=257su stretch=1 @[0,6)
-  word "⚠ rule" w=2920su pen=0 CODE @[7,14)
+top pid=1 units=1
+ unit rule indent=0su
+top pid=2 units=1
+ unit text indent=0su
   space w=257su stretch=1 @[15,70)
   word "in" w=1025su pen=INF @[15,70)
   space w=257su stretch=1 @[15,70)

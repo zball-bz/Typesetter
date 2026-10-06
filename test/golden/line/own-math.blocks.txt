@@ -1,4 +1,4 @@
-top pid=0 units=2
+top pid=0 units=4
  unit text indent=1536su marker="•"
   word "An" w=1025su pen=INF @[2,28)
   space w=257su stretch=1 @[2,28)
@@ -12,15 +12,8 @@ top pid=0 units=2
   space w=257su stretch=1 @[2,28)
   word "math:" w=2561su pen=INF @[2,28)
   space w=257su stretch=1 @[2,28)
-  math "x = a\n- b\n+ c" w=539su asc=475su desc=12su @[31,56)
-  boundary w=284su stretch=0 @[31,56)
-  math "" w=774su asc=377su desc=0su @[31,56)
-  boundary w=284su stretch=0 @[31,56)
-  math "" w=1626su asc=477su desc=12su @[31,56)
-  boundary w=228su stretch=0 @[31,56)
-  math "" w=1603su asc=700su desc=76su @[31,56)
-  boundary w=228su stretch=0 @[31,56)
-  math "" w=498su asc=486su desc=19su @[31,56)
+ unit math indent=1536su w=6064su asc=700su desc=76su
+ unit text indent=1536su
   space w=257su stretch=1 @[59,74)
   word "and" w=1537su pen=INF @[59,74)
   space w=257su stretch=1 @[59,74)

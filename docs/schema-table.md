@@ -6,7 +6,7 @@ The kind table of document-model §2.1, generated from `engine/schema/schema.jso
 | id | kind | level | body | inline | attributes (writer order: domain) | constructor |
 |---|---|---|---|---|---|---|
 | 0 | `doc` | block | blocks | unsupported | — | — |
-| 1 | `para` | block | inline | container | `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `para({options}, …)` |
+| 1 | `para` | block | inline | container | `cont`: bool; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `para({options}, …)` |
 | 2 | `heading` | block | inline | unsupported | `level`: int:1:6; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `heading(level, label, {options}, …)` |
 | 3 | `list` | block | items | unsupported | `ordered`: bool; `start`: int:-1073741824:1073741824; `numbering`: str; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `list(ordered, start, {options}, …)` |
 | 4 | `item` | block | blocks | unsupported | `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `item({options}, …)` |

@@ -1,8 +1,11 @@
 <div class="tsr-flow">
 <ul data-pid="0" data-s="0" data-e="87">
-<li>An item with display math: <code class="tsr-mathsrc">$x = a
+<li><p data-s="2" data-e="74">An item with display math: </p>
+<p class="tsr-mathblock" data-s="31" data-e="56"><code class="tsr-mathsrc">$ x = a
 - b
-+ c$</code> and text after.</li>
++ c $</code></p>
+<p data-s="59" data-e="74" style="margin-top:0;text-indent:0"> and text after.</p>
+</li>
 <li>Next item.</li>
 </ul>
 </div>

@@ -358,13 +358,16 @@ class Builder {
       case Kind::para: {
         const bool caption = figDepth > 0;
         if (caption) s.role = LeafSource::Role::Caption;
-        // 首行缩进 (App C): its par.indent (plan P3-01), never on a marker's line
+        // 首行缩进 (App C): its par.indent (plan P3-01), never on a marker's
+        // line nor a paragraph's continuation after a block (plan P3-17)
         const Len ind = props.get(n->props).parIndent;
-        if (ind.unit && ind.v > 0 && marker == 0) s.paraIndent = ind;
+        const bool cont = attrBool(n, ArgK::cont, false);
+        if (ind.unit && ind.v > 0 && marker == 0 && !cont) s.paraIndent = ind;
         LayoutBlock& b = leaf(LayouterId::Paragraph, Painter::None, caption ? TraitsId::Caption : TraitsId::Para,
                               n, parent, x, std::move(s));
         b.marker = marker;
         b.markerStyle = n->style;
+        b.tr.cont = cont;
         return;
       }
       case Kind::heading: {
@@ -625,6 +628,7 @@ std::string dumpBlockTree(const std::vector<TopTree>& tops, const Interner& strs
       // (plan P3-14) the trait group, where set
       if (b.xr) appendf(out, " xr=%dsu", b.xr);
       if (tr.keepTogether) out += " keep-together";
+      if (tr.cont) out += " cont";
       if (tr.spaceBefore || tr.spaceAfter) appendf(out, " space=%dsu/%dsu", tr.spaceBefore, tr.spaceAfter);
       if (tr.breakBefore) out += " break-before";
       if (tr.breakAfter) out += " break-after";

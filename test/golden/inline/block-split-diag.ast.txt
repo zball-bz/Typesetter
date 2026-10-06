@@ -1,0 +1,17 @@
+doc @[0,452)
+  code-block @[0,42) js=" $.set('para', {par: {indent: '2em'}}) "
+  para @[44,240)
+    text @[44,171) str="A paragraph holding a block splits around it (plan P3-17, D-I02): the text before, the block, then the paragraph's continuation "
+    splice @[172,179) expr="rule()"
+    text @[180,240) str=" without a first-line indent or the space before a paragraph."
+  para @[242,392)
+    text @[242,321) str="A display formula in the middle of a paragraph is set apart and keeps its label "
+    math @[322,344) display=1 src="E = m c^2" label="eq-mid"
+      text @[324,333) str="E = m c^2"
+    text @[345,383) str=" and the sentence goes on below it; see "
+    ref @[384,391) target="eq-mid"
+    text @[391,392) str="."
+  heading @[394,451) level=1
+    text @[396,418) str="A heading cannot split "
+    splice @[419,426) expr="rule()"
+    text @[427,451) str=" so the block is an error"

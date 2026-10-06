@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"A heading cannot split  so the block is an error","label":null,"span":[394,451]}],"regions":[],"fences":[],"labels":[{"id":"eq-mid","rule":"math","span":[336,344]}],"diagnostics":[]}

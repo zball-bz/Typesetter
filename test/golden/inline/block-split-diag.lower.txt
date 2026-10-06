@@ -1,0 +1,24 @@
+lower v1 abi 3d3ccfbb docEnd 452 holes 3 module 8dc6ce726af9f8bf
+piece 0 hole 0 js [128,177)
+piece 1 hole 1 js [179,193)
+piece 2 hole 2 js [195,209)
+block 0 stmt [0,42) user framed holes 0..1
+  STMT 0
+block 1 content [44,240) user framed holes 1..2
+  CALL para [44,240)
+    TEXT "A paragraph holding a block splits around it (plan P3-17, D-I02): the text before, the block, then the paragraph's continuation " [44,171) raw=0:0,128:127
+    HOLE 1 [172,179)
+    TEXT " without a first-line indent or the space before a paragraph." [180,240) raw=0:0,1:0
+block 2 content [242,392)
+  CALL para [242,392)
+    TEXT "A display formula in the middle of a paragraph is set apart and keeps its label " [242,321) raw=0:0,80:79
+    CALL math [322,344) display=true label="eq-mid"
+      CALL mathsrc [324,333) src="E = m c^2"
+    TEXT " and the sentence goes on below it; see " [345,383) raw=0:0,1:0,40:38
+    CALL ref [384,391) target="eq-mid"
+    TEXT "." [391,392)
+block 3 content [394,451) user framed holes 2..3
+  CALL heading [394,451) level=1 label=null
+    TEXT "A heading cannot split " [396,418) raw=0:0,23:22
+    HOLE 2 [419,426)
+    TEXT " so the block is an error" [427,451) raw=0:0,1:0

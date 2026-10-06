@@ -68,6 +68,7 @@ struct BlockTraits {
   // clearing it, its breaker's tolerance and emergency stretch
   bool keepTogether = false;
   Su spaceBefore = 0, spaceAfter = 0;
+  bool cont = false;  // (plan P3-17, D-I02) a paragraph's continuation after a block: no space before
   bool breakBefore = false, breakAfter = false;
   Su hang = 0;
   u16 hangAfter = 1;

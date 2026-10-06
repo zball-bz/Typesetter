@@ -1,0 +1,1 @@
+warning block-in-inline @[419,426) a rule cannot stand inside a heading (only a paragraph splits around a block)

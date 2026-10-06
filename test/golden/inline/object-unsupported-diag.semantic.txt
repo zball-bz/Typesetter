@@ -1,3 +1,5 @@
 <div class="tsr-flow">
-<p data-pid="0" data-s="0" data-e="137">A rule  in a sentence, and an image whose source is not allowed <span class="tsr-imgph"></span> stays a placeholder.</p>
+<p data-pid="0" data-s="0" data-e="137">A rule </p>
+<hr data-pid="1" data-s="7" data-e="14">
+<p data-pid="2" data-s="15" data-e="137" style="margin-top:0;text-indent:0"> in a sentence, and an image whose source is not allowed <span class="tsr-imgph"></span> stays a placeholder.</p>
 </div>

@@ -1,2 +1,1 @@
-warning block-in-inline @[7,14) rule inside a paragraph stays where it is
 warning image-src @[71,116) image src scheme not allowed

@@ -1,0 +1,33 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="44" style="position:relative;height:96px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="196" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-sp" data-syn="indent" style="width:32px"></span><span class="tsr-r" data-s="0">A paragraph holding a block splits</span></div>
+<div class="tsr-line" data-s="0" data-e="127" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">around it (plan P3-17, D-I02): the text</span></div>
+<div class="tsr-line" data-s="0" data-e="127" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">before, the block, then the paragraph&#39;s</span></div>
+<div class="tsr-line" data-s="0" data-e="127" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">continuation</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:24px;margin-bottom:0px">
+<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="180" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="60" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">without a first-line indent or the space</span></div>
+<div class="tsr-line" data-s="0" data-e="60" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">before a paragraph.</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="242" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="150" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-sp" data-syn="indent" style="width:32px"></span><span class="tsr-r" data-s="0">A display formula in the middle of a</span></div>
+<div class="tsr-line" data-s="0" data-e="79" style="top:24px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="0">paragraph is set apart and keeps its label</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="322" style="position:relative;height:24px;margin-bottom:0px">
+<div class="tsr-line" id="tsr-eq-mid" data-s="0" data-e="22" data-ragged="1" style="top:0px;left:120.281px;width:59.438px;height:24px"><span class="tsr-eqno" data-syn="eqno" style="right:-120.281px">(1)</span><span class="tsr-math" data-syn="math" data-src="$ E = m c^2 $" style="width:59.438px;height:15.406px;position:absolute;left:0;top:4.297px"><span class="tsr-mg" style="left:0px;top:2.309px;font-size:16px;line-height:16px">E</span><span class="tsr-mg" style="left:14.094px;top:2.309px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:30.625px;top:2.309px;font-size:16px;line-height:16px">m</span><span class="tsr-mg" style="left:45.266px;top:2.309px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:53.047px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span></span></div>
+</div>
+<div class="tsr-para" data-pid="5" data-s0="345" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">and the sentence goes on below it; see </span><a class="tsr-r tsr-cjk" href="#tsr-eq-mid" data-s="39">式</a></div>
+<div class="tsr-line" data-s="39" data-e="47" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="#tsr-eq-mid" data-s="39">(1)</a><span class="tsr-r" data-s="46">.</span></div>
+</div>
+<div class="tsr-para" data-pid="6" data-s0="396" style="position:relative;height:128.047px">
+<div class="tsr-line" id="tsr-h-1" data-s="0" data-e="30" data-join="space" data-ragged="1" style="top:0px;left:0px;width:300px;word-spacing:-0.672px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">A heading cannot split </span><span class="tsr-r tsr-b tsr-err" title="a rule cannot stand inside a heading (only a paragraph splits around a block)" data-syn="error" style="font-size:25.6px">⚠ a</span></div>
+<div class="tsr-line" data-s="23" data-e="30" data-join="space" data-ragged="1" style="top:25.609px;left:0px;width:300px;word-spacing:-1.8px"><span class="tsr-r tsr-b tsr-err" title="a rule cannot stand inside a heading (only a paragraph splits around a block)" data-syn="error" style="font-size:25.6px">rule cannot stand inside a</span></div>
+<div class="tsr-line" data-s="23" data-e="30" data-join="space" data-ragged="1" style="top:51.219px;left:0px;width:300px;word-spacing:-0.267px"><span class="tsr-r tsr-b tsr-err" title="a rule cannot stand inside a heading (only a paragraph splits around a block)" data-syn="error" style="font-size:25.6px">heading (only a paragraph</span></div>
+<div class="tsr-line" data-s="23" data-e="55" data-join="space" data-ragged="1" style="top:76.828px;left:0px;width:300px"><span class="tsr-r tsr-b tsr-err" title="a rule cannot stand inside a heading (only a paragraph splits around a block)" data-syn="error" style="font-size:25.6px">splits around a block)</span><span class="tsr-r tsr-b" data-s="31" style="font-size:25.6px"> so</span></div>
+<div class="tsr-line" data-s="31" data-e="55" data-ragged="1" style="top:102.438px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="31" style="font-size:25.6px">the block is an error</span></div>
+</div>
+</div>

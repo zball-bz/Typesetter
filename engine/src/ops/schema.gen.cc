@@ -5,6 +5,7 @@ namespace tsr {
 namespace {
 const char* const kM_para_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_para[] = {
+    {105, "cont", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 0, true},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -544,7 +545,7 @@ const std::uint16_t kS_caption[] = {8};
 
 const KindInfo kKinds[KIND_COUNT] = {
     {"doc", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, nullptr, 0},
-    {"para", Level::Block, Body::Inline, InlineShape::Container, 6, kA_para, 9},
+    {"para", Level::Block, Body::Inline, InlineShape::Container, 6, kA_para, 10},
     {"heading", Level::Block, Body::Inline, InlineShape::Unsupported, 6, kA_heading, 10},
     {"list", Level::Block, Body::Items, InlineShape::Unsupported, 6, kA_list, 12},
     {"item", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_item, 9},

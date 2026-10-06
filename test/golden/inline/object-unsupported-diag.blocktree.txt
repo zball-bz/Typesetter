@@ -1,3 +1,9 @@
 top pid=0 leaves=1
   stack root gap=1/1 @[0,137)
     paragraph para unit=0 @[0,137)
+top pid=1 leaves=1
+  stack root gap=1/1 @[7,14)
+    replaced rule rule unit=0 @[7,14)
+top pid=2 leaves=1
+  stack root gap=1/1 @[15,137)
+    paragraph para unit=0 cont @[15,137)

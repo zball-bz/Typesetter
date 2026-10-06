@@ -1,0 +1,9 @@
+<div class="tsr-flow">
+<p data-pid="0" data-tsr-env="2270a6cf8c126f24" data-s="44" data-e="240">A paragraph holding a block splits around it (plan P3-17, D-I02): the text before, the block, then the paragraph&#39;s continuation </p>
+<hr data-pid="1" data-tsr-env="2270a6cf8c126f24" data-s="172" data-e="179">
+<p data-pid="2" data-tsr-env="2270a6cf8c126f24" data-s="180" data-e="240" style="margin-top:0;text-indent:0"> without a first-line indent or the space before a paragraph.</p>
+<p data-pid="3" data-tsr-env="2270a6cf8c126f24" data-s="242" data-e="392">A display formula in the middle of a paragraph is set apart and keeps its label </p>
+<p class="tsr-mathblock" data-pid="4" data-tsr-env="2270a6cf8c126f24" data-s="322" data-e="344" id="tsr-eq-mid"><code class="tsr-mathsrc">$ E = m c^2 $</code> <span class="tsr-eqno">(1)</span></p>
+<p data-pid="5" data-tsr-env="2270a6cf8c126f24" data-s="345" data-e="392" style="margin-top:0;text-indent:0"> and the sentence goes on below it; see <a href="#tsr-eq-mid">式 (1)</a>.</p>
+<h1 data-pid="6" data-tsr-env="2270a6cf8c126f24" data-s="394" data-e="451" id="tsr-h-1">A heading cannot split <span class="tsr-err" title="a rule cannot stand inside a heading (only a paragraph splits around a block)" data-syn="error">&#9888; a rule cannot stand inside a heading (only a paragraph splits around a block)</span> so the block is an error</h1>
+</div>

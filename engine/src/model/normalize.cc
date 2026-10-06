@@ -9,9 +9,8 @@
 // kinds (styled, seq) take their kids' (block when one of them is), Adaptive
 // kinds (group, term, error, raw, image) fit either position, Trivia never
 // counts.
-//   N1 fallback:   a mathblock in an Inline position is a mathinline (its
-//                  label dropped: label-dropped) — display math lowers to
-//                  mathblock everywhere and lands here (plan P2-11)
+//   (N1, the display-math fallback to inline, is gone: plan P3-17 — display
+//                  math splits a paragraph as any block does, D-I02)
 //   N2 unwrap:     a paragraph whose only child is block/adaptive-level IS
 //                  that block (a #toc / #codeblock(…) splice, a display
 //                  formula alone)
@@ -22,8 +21,12 @@
 //   N4 anon para:  at a Blocks position a maximal run of inline-level kids
 //                  is one paragraph (an inline group at block level, a
 //                  splice of text among blocks)
-//   N5 diagnose:   a block in an Inline position stays where it is and says
-//                  so (block-in-inline; the split policy is P3-17)
+//   N5 split:      (plan P3-17, D-I02) a paragraph at a Blocks position
+//                  holding a block splits around it: [para, block,
+//                  para{cont}] — the continuation without a first-line
+//                  indent or the space before a paragraph; a block in any
+//                  other Inline position (a heading, a link, an inline
+//                  group) is an error{block-in-inline} around it
 //   N6 models:     a list's kids are items, a table's rows, a row's cells,
 //                  an equations block's display formulas (plan P2-16): any
 //                  other child is an error{content-model} around it
@@ -127,6 +130,56 @@ struct Norm {
     }
   }
 
+  // N5 (plan P3-17, D-I02): a paragraph holding blocks among its inline
+  // kids, as its runs and the blocks in order: the first run is the
+  // paragraph itself (its label, its props), the runs after a block its
+  // continuations (cont: no indent, no space before); a run of only empty
+  // text is no paragraph. false: no block in it
+  bool splitPara(ContentNode* p, std::vector<ContentNode*>& out) {
+    bool any = false;
+    for (const ContentNode* k : p->kids) any = any || (effLevel(k) == Level::Block && !part(k, p));
+    if (!any) return false;
+    std::vector<ContentNode*> run;
+    bool first = true;
+    auto flush = [&] {
+      bool content = false;
+      for (const ContentNode* k : run)
+        content = content || (levelOf(k->kind) != Level::Trivia &&
+                              (k->kind != Kind::text || strs.get(k->str).find_first_not_of(" \t\n") != std::string_view::npos));
+      if (content) {
+        ContentNode* q = p;
+        if (!first) {  // the same paragraph, continued: its style, rules and properties
+          q = mk(Kind::para, {run.front()->span.start, run.back()->span.end});
+          q->style = p->style;
+          q->scope = p->scope;
+          q->env = p->env;
+          q->props = p->props;
+          q->declEpoch = p->declEpoch;
+          q->args.push_back({ArgK::cont, ArgTag::Bool, 1, 0});
+        }
+        q->kids = run;
+        out.push_back(q);
+        first = false;
+      } else {
+        for (ContentNode* k : run)  // (trivia keep their place)
+          if (levelOf(k->kind) == Level::Trivia) out.push_back(k);
+      }
+      run.clear();
+    };
+    std::vector<ContentNode*> kids = p->kids;
+    for (ContentNode* k : kids) {
+      if (effLevel(k) == Level::Block && !part(k, p)) {
+        flush();
+        out.push_back(k);
+        first = false;  // (what follows continues the paragraph)
+      } else {
+        run.push_back(k);
+      }
+    }
+    flush();
+    return true;
+  }
+
   // a part of its parent: a child in a slot the parent takes
   bool part(const ContentNode* k, const ContentNode* parent) const { return slotOn(slotOf(k, strs), parent->kind); }
 
@@ -154,24 +207,22 @@ struct Norm {
       if (k->kind == Kind::para && k->kids.size() == 1 && !isInlineLevel(k->kids[0]->kind) &&
           k->kids[0]->kind != Kind::para)
         k = k->kids[0];  // N2
+      if (kp == Pos::Blocks && k->kind == Kind::para && splitPara(k, kids)) continue;  // N5
       kids.push_back(k);
     }
     if (kp == Pos::Inline) {
-      for (ContentNode* k : kids) {
-        if (part(k, cur)) continue;
-        if (k->kind == Kind::mathblock) {  // N1
-          if (attrStr(k, ArgK::label))
-            diags.add(Sev::Info, "label-dropped", k->span,
-                      "a display formula inside a paragraph is set inline: its label is dropped");
-          k->kind = Kind::mathinline;
-          std::vector<ArgVal> args;
-          for (const ArgVal& a : k->args)
-            if (a.key == ArgK::src) args.push_back(a);
-          k->args = std::move(args);
-        } else if (effLevel(k) == Level::Block) {  // N5
-          diags.add(Sev::Warning, "block-in-inline", k->span,
-                    std::string(kindName(k->kind)) + " inside a paragraph stays where it is");
-        }
+      for (ContentNode*& k : kids) {
+        if (part(k, cur) || effLevel(k) != Level::Block) continue;
+        // N5: no paragraph to split here — an error around the block
+        const std::string msg = std::string("a ") + kindName(k->kind) + " cannot stand inside a " +
+                                kindName(cur->kind) + " (only a paragraph splits around a block)";
+        diags.add(Sev::Warning, "block-in-inline", k->span, msg);
+        ContentNode* e = mk(Kind::error, k->span);
+        e->style = k->style;
+        e->args.push_back({ArgK::message, ArgTag::Str, 0, strs.intern(msg)});
+        e->args.push_back({ArgK::code, ArgTag::Str, 0, strs.intern("block-in-inline")});
+        e->kids.push_back(k);
+        k = e;
       }
     } else if (!checked(cur->kind)) {
       // N4: a run of inline-level kids at a Blocks position is a paragraph

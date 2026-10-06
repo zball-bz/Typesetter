@@ -1,4 +1,4 @@
-inline pid=0 "x = a\n- b\n+ c"
+display pid=0 "x = a\n- b\n+ c"
   run [0,13)
     sym U+0078 ord [0,1)
     sym U+003D rel [2,3)

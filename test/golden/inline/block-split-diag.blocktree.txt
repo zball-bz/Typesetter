@@ -1,0 +1,21 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[44,240)
+    paragraph para unit=0 @[44,240)
+top pid=1 leaves=1
+  stack root gap=1/1 @[172,179)
+    replaced rule rule unit=0 @[172,179)
+top pid=2 leaves=1
+  stack root gap=1/1 @[180,240)
+    paragraph para unit=0 cont @[180,240)
+top pid=3 leaves=1
+  stack root gap=1/1 @[242,392)
+    paragraph para unit=0 @[242,392)
+top pid=4 leaves=1
+  stack root gap=1/1 @[322,344)
+    replaced math math unit=0 ragged anchor="eq-mid" @[322,344)
+top pid=5 leaves=1
+  stack root gap=1/1 @[345,392)
+    paragraph para unit=0 cont @[345,392)
+top pid=6 leaves=1
+  stack root gap=1/1 @[394,451)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1" @[394,451)

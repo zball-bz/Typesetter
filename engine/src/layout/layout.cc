@@ -394,6 +394,7 @@ class DocLayout {
       // top that is only out of flow (a float: zero advance, plan P3-08) —
       // or the space either side asks for (plan P3-14)
       Su topGap = gap ? std::max({paraGap, prevAfter, spaceBefore(0)}) : 0;
+      if (tree->blocks.size() > 1 && tree->blocks[1].tr.cont) topGap = 0;  // (plan P3-17) a continuation
       if (!shows(tree->blocks[0]) || (tree->blocks.size() > 1 && !shows(tree->blocks[1]))) topGap = 0;
       gapBefore = topGap;
       y += topGap;
@@ -847,8 +848,9 @@ class DocLayout {
         continue;
       }
       if (prev != ~0u && !prevOut) {
-        // the gap, or more when either side asks for more space
-        const Su g = std::max({gap, spaceAfter(prev), spaceBefore(k)});
+        // the gap, or more when either side asks for more space; none
+        // before a paragraph's continuation (plan P3-17)
+        const Su g = kb.tr.cont ? 0 : std::max({gap, spaceAfter(prev), spaceBefore(k)});
         py += g;
         gapBefore = g;
       }

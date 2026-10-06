@@ -1,0 +1,15 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {rule} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+ $.set('para', {par: {indent: '2em'}}) 
+},
+() => (rule()),
+() => (rule()),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

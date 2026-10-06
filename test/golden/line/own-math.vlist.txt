@@ -1,4 +1,7 @@
-vlist pid=0 y=0su h=5017su
-  box unit=0 para y=0su h=3072su
+vlist pid=0 y=0su h=6962su
+  box unit=0 para y=0su h=1536su
   glue 409su
-  box unit=1 para y=3481su h=1536su
+  box unit=1 math y=1945su h=1536su
+  box unit=2 para y=3481su h=1536su
+  glue 409su
+  box unit=3 para y=5426su h=1536su

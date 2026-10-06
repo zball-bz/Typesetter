@@ -1,0 +1,22 @@
+doc @[44,451) [base]
+  para @[44,240) [base]
+    text @[44,171) [base] str="A paragraph holding a block splits around it (plan P3-17, D-I02): the text before, the block, then the paragraph's continuation " raw=0:0,128:127
+  rule @[172,179) [base]
+  para @[180,240) [base] cont=true
+    text @[180,240) [base] str=" without a first-line indent or the space before a paragraph." raw=0:0,1:0
+  para @[242,392) [base]
+    text @[242,321) [base] str="A display formula in the middle of a paragraph is set apart and keeps its label " raw=0:0,80:79
+  mathblock @[322,344) [base] label="eq-mid" name="(1)"
+    mathsrc @[324,333) [base] src="E = m c^2"
+    seq @[322,344) [base] slot="tag"
+      text @[322,344) [base] str="(1)"
+  para @[345,392) [base] cont=true
+    text @[345,383) [base] str=" and the sentence goes on below it; see " raw=0:0,1:0,40:38
+    ref @[384,391) [base] target="eq-mid"
+      text @[384,391) [base] str="式 (1)"
+    text @[391,392) [base] str="."
+  heading @[394,451) [BOLDx1.60] level=1 label="h-1"
+    text @[396,418) [BOLDx1.60] str="A heading cannot split " raw=0:0,23:22
+    error @[419,426) [BOLDx1.60] message="a rule cannot stand inside a heading (only a paragraph splits around a block)" code="block-in-inline"
+      rule @[419,426) [BOLDx1.60]
+    text @[427,451) [BOLDx1.60] str=" so the block is an error" raw=0:0,1:0

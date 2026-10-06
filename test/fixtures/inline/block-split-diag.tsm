@@ -1,0 +1,7 @@
+#{ $.set('para', {par: {indent: '2em'}}) }
+
+A paragraph holding a block splits around it (plan P3-17, D-I02): the text before, the block, then the paragraph's continuation #rule() without a first-line indent or the space before a paragraph.
+
+A display formula in the middle of a paragraph is set apart and keeps its label $ E = m c^2 $ <eq-mid> and the sentence goes on below it; see @eq-mid.
+
+= A heading cannot split #rule() so the block is an error

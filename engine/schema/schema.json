@@ -45,11 +45,12 @@
     "parHangAfter": 85, "boxPadding": 86, "boxBorder": 87, "boxBorderColor": 88, "boxBackground": 89, "media": 90,
     "beside": 91, "breakerTolerance": 92, "breakerStretch": 93, "placeFloat": 94,
     "tracks": 95, "rules": 96, "header": 97, "colspan": 98, "rowspan": 99, "valign": 100,
-    "measure": 101, "minWidth": 102, "placeWidth": 103, "placeGap": 104
+    "measure": 101, "minWidth": 102, "placeWidth": 103, "placeGap": 104, "cont": 105
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
-    "para": {"id": 1, "level": "block", "inline": "container", "body": "inline", "since": 6, "ctor": {}, "attrs": {}},
+    "para": {"id": 1, "level": "block", "inline": "container", "body": "inline", "since": 6, "ctor": {}, "attrs": {
+      "cont": {"dom": "bool", "since": 14, "flags": ["resolved"]}}},
     "heading": {"id": 2, "level": "block", "inline": "unsupported", "body": "inline", "since": 6, "ctor": {"params": ["attr:level", "attr:label"]}, "attrs": {
       "level": {"dom": "int:1:6", "def": 1},
       "label": {"dom": "label"}}},

@@ -1,5 +1,6 @@
-doc h=5017su
-para pid=0 y=0su w=19200su h=5017su
-  L0 y=0su left=1536su w=17664su dw=-44su dc=0su join=none marker blocks=[0,19) @[2,56)
-  L1 y=1536su left=1536su w=17664su dw=0su dc=0su join=last blocks=[20,29) @[31,74)
-  L2 y=3481su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,3) @[77,87)
+doc h=6962su
+para pid=0 y=0su w=19200su h=6962su
+  L0 y=0su left=1536su w=17664su dw=0su dc=0su join=para marker blocks=[0,11) @[2,28)
+  L1 math y=1945su left=7336su w=6064su
+  L2 y=3481su left=1536su w=17664su dw=0su dc=0su join=para blocks=[1,8) @[59,74)
+  L3 y=5426su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,3) @[77,87)

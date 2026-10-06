@@ -981,7 +981,7 @@ Theme steps: — · findings: 1
 | `markup-language/universal-labels` | adhoc | high | P2-06 | grep:plan P2-06 |
 | `markup-language/label-namespace-collision` | adhoc | medium | P0-09, P3-04 | |
 | `markup-language/region-builtin-privilege` | adhoc | medium | P2-03 | grep:plan P2-03 |
-| `markup-language/block-inline-placement` | adhoc | medium | P2-11, P3-17 | |
+| `markup-language/block-inline-placement` | adhoc | medium | P2-11, P3-17 | grep:plan P3-17 |
 | `markup-language/value-coercion` | adhoc | medium | P2-01 | grep:plan P2-01 |
 | `markup-language/surface-grammar-drift` | adhoc | medium | P1-09 | grep:plan P1-09 |
 | `markup-language/sidecar-private-lowering` | adhoc | medium | P2-13 | grep:plan P2-13 |

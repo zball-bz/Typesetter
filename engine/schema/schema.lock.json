@@ -300,9 +300,11 @@
   "measure": 101,
   "minWidth": 102,
   "placeWidth": 103,
-  "placeGap": 104
+  "placeGap": 104,
+  "cont": 105
  },
  "attrs": {
+  "para.cont": 14,
   "para.label": 9,
   "para.role": 9,
   "para.slot": 9,
