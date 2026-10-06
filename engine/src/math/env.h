@@ -62,5 +62,9 @@ struct MathSource {
   std::vector<u32> map;
 };
 MathSource mathSource(const ContentNode* n, const Interner& strs, DiagSink* diags = nullptr);
+// the common case without building anything: a formula that is its old src
+// attribute or one clean fragment (no hole, no control byte) is that string,
+// already interned (its source and its copy text alike)
+StrRef mathSourceRef(const ContentNode* n, const Interner& strs);
 
 }  // namespace tsr

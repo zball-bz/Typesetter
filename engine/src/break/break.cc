@@ -73,18 +73,18 @@ LineFit fitLine(i64 natural, i64 stretch, i64 shrink, bool fil, i64 width, const
 struct Para {
   const std::vector<BItem>& it;
   std::vector<i64> w, st, sh;  // prefix sums over items (i64 su)
-  std::vector<u32> fl;         // prefix counts of fil glue (plan P2-16)
+  std::vector<u32> fl;         // prefix counts of fil glue (plan P2-16; empty: none)
   std::vector<u32> nextBox;    // first Box/Disc at or after k (it.size() if none)
   explicit Para(const std::vector<BItem>& items) : it(items) {
     const u32 n = (u32)it.size();
     w.assign(n + 1, 0);
     st.assign(n + 1, 0);
     sh.assign(n + 1, 0);
-    fl.assign(n + 1, 0);
     for (u32 k = 0; k < n; k++) {
       const BItem& x = it[k];
       const bool sized = x.k != ItemKind::Penalty;
-      fl[k + 1] = fl[k] + (x.k == ItemKind::Glue && x.order > 0 ? 1 : 0);
+      if (x.k == ItemKind::Glue && x.order > 0 && fl.empty()) fl.assign(n + 1, 0);
+      if (!fl.empty()) fl[k + 1] = fl[k] + (x.k == ItemKind::Glue && x.order > 0 ? 1 : 0);
       w[k + 1] = w[k] + (sized ? x.w : 0);
       st[k + 1] = st[k] + (x.k == ItemKind::Glue ? x.stretch : 0);
       sh[k + 1] = sh[k] + (x.k == ItemKind::Glue ? x.shrink : 0);
@@ -110,7 +110,7 @@ struct Para {
       extra = it[to].pre;
     }
     if (e < s) e = s;
-    return fitLine(w[e] - w[s] + extra, st[e] - st[s] + extraStretch, sh[e] - sh[s], fil || fl[e] > fl[s], width, p);
+    return fitLine(w[e] - w[s] + extra, st[e] - st[s] + extraStretch, sh[e] - sh[s], fil || (!fl.empty() && fl[e] > fl[s]), width, p);
   }
 };
 

@@ -228,6 +228,17 @@ void build(const ContentNode* n, const Interner& strs, DiagSink* diags, MathSour
 }
 }  // namespace
 
+StrRef mathSourceRef(const ContentNode* n, const Interner& strs) {
+  StrRef r = attrStr(n, ArgK::src);
+  if (!r) {
+    if (n->kids.size() != 1 || n->kids[0]->kind != Kind::mathsrc) return 0;
+    r = attrStr(n->kids[0], ArgK::src);
+  }
+  for (char c : strs.get(r))
+    if ((u8)c < 0x07) return 0;
+  return r;
+}
+
 MathSource mathSource(const ContentNode* n, const Interner& strs, DiagSink* diags) {
   MathSource m;
   build(n, strs, diags, m, 0);

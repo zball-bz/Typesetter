@@ -13,6 +13,9 @@
 
 namespace tsr {
 
+void reportFormula(const ContentNode* n, StrRef formula, const MathScope& scope, const Interner& strs,
+                   DiagSink& diags, Arena& arena);
+
 namespace {
 
 // Word spaces absorb cross-space kerning (e.g. Georgia "s. A"): sum-of-words
@@ -511,8 +514,13 @@ struct HlInline final : InlineSink {
 
   void math(const ContentNode* n, Flow& u, ICtx ctx) {
     // its source (plan P2-15): fragments and holes, bound as of its epoch
-    const MathSource ms = mathSource(n, strs, &E.diags);
-    const StrRef srcRef = strs.intern(ms.copy);
+    // (one clean fragment, the common case, is its interned string)
+    StrRef srcRef = mathSourceRef(n, strs), formula = srcRef;
+    if (!srcRef) {
+      const MathSource ms = mathSource(n, strs, &E.diags);
+      srcRef = strs.intern(ms.copy);
+      formula = strs.intern(ms.text);
+    }
     const MathScope scope{E.math, n->declEpoch};
     StyleId st = E.compose(n->style, ctx.add, ctx.mul);
     // CJK–formula boundary glue (App C: formulas are Latin-class)
@@ -522,10 +530,10 @@ struct HlInline final : InlineSink {
     // needs are measured: a pending object with one placeholder part, which
     // resolveWidths finalizes through the object table (no layer below emit
     // reads metrics, no block re-emits)
-    reportMathDiags(parseMath(ms.text, E.arena, &scope), ms.text, n->span, E.diags, &ms.map);
+    reportFormula(n, formula, scope, strs, E.diags, E.arena);
     u32 obj = addObject(u, ObjKind::Math, n, st);
     B.objs[obj].src = srcRef;
-    B.objs[obj].formula = strs.intern(ms.text);
+    B.objs[obj].formula = formula;
     B.objs[obj].epoch = n->declEpoch;
     B.objs[obj].deferred = true;
     B.hasDeferred = true;
@@ -966,18 +974,22 @@ struct Emitter {
             MathData& m = u.data.emplace<MathData>();
             for (const ArgVal& a : n->args)
               if (a.key == ArgK::name && a.tag == ArgTag::Str) m.tag = a.ref;
-            const MathSource ms = mathSource(n, strs, &diags);  // (plan P2-15)
+            // (plan P2-15) its source; one clean fragment is its interned string
             const MathScope scope{E.math, n->declEpoch};
-            m.src = strs.intern(ms.copy);
-            m.formula = strs.intern(ms.text);
+            m.src = m.formula = mathSourceRef(n, strs);
+            if (!m.src) {
+              const MathSource ms = mathSource(n, strs, &diags);
+              m.src = strs.intern(ms.copy);
+              m.formula = strs.intern(ms.text);
+            }
             m.epoch = n->declEpoch;
             m.sizePx = fontPx(n->style);
             m.span = n->span;
             m.style = n->style;
-            reportMathDiags(parseMath(ms.text, arena, &scope), ms.text, n->span, diags, &ms.map);
+            reportFormula(n, m.formula, scope, strs, diags, arena);
             if (mathText) {  // the legacy oracle lays out at emit (MIGRATION, until P4-02)
-              m.box = layoutMathFormula(ms.text, /*display=*/true, m.sizePx, arena, strs, diags, n->span,
-                                        mathText, true, &scope);
+              m.box = layoutMathFormula(strs.get(m.formula), /*display=*/true, m.sizePx, arena, strs, diags,
+                                        n->span, mathText, true, &scope);
             }
             return;
           }
@@ -1448,6 +1460,17 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
     }
   }
   return req;
+}
+
+// a formula's parse diagnostics (plan P2-15), against its scope: the map
+// placing them in its fragments is assembled only when there are some
+void reportFormula(const ContentNode* n, StrRef formula, const MathScope& scope, const Interner& strs,
+                   DiagSink& diags, Arena& arena) {
+  const std::string_view text = strs.get(formula);
+  const MathIR ir = parseMath(text, arena, &scope);
+  if (ir.diags.empty()) return;
+  const MathSource ms = mathSource(n, strs);
+  reportMathDiags(ir, text, n->span, diags, &ms.map);
 }
 
 // ---- fuseLegacy: the specified lowering HList → LinebreakBlocks -------------
