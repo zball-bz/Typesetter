@@ -325,7 +325,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
       }
       case FragKind::Image: {
         const ImageData& im = std::get<ImageData>(u.data);
-        n.src = im.src;
+        n.src = l.placeholder ? 0 : im.src;  // (plan P3-32) layout's: a failed image is its alt box
         n.alt = im.alt;
         n.heightPx = suToPx(l.height);
         break;

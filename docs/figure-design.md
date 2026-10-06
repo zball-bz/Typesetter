@@ -62,6 +62,10 @@ engine wants *intrinsic CSS dimensions*, never pixels.
   (docs/host-protocol-design.md §4a), one need per distinct src, scanned
   after resolve for every `image` node without both author dims. The answer
   stays in the table: emit fills only the dims the author left out.
+  (Plan P3-32: emit reads no answer. An inline image's box is settled in
+  Measure, a block or floated image's size spec in Layout — host-protocol-design
+  §1 "Image sizes after Emit"; the failed one's placeholder is layout's
+  `Fragment::placeholder`.)
 - `typeset()` returns `NeedMeasure` while any request is unanswered.
 - `tsr_measure_requests` JSON gains `"images": [{id, src}]`;
   `tsr_provide_image(doc, id, wPx, hPx)` answers one.

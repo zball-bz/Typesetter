@@ -161,16 +161,27 @@ is a Session memo slot. A document nobody attached gets a private Session
 Session and requires the same bytes).
 
 **Per-block deferral** (plan P1-20; design T9 M5): Emit runs per top-level
-block. A block waits while one of its code blocks or images waits for its
-answer; a block whose display formula lacks text metrics defers (the attempt
-and its Emit diagnostics are discarded, what it lacked rides the next
-request). Every other block is emitted meanwhile, and its widths join the
-same round — there is no whole-document barrier and no document re-emit.
+block. A block waits while one of its code blocks (or, plan P3-28, an
+inline `raw(measure: 'host')` box) waits for its answer; a block whose
+display formula lacks text metrics defers (the attempt and its Emit
+diagnostics are discarded, what it lacked rides the next request). Every
+other block is emitted meanwhile, and its widths join the same round —
+there is no whole-document barrier and no document re-emit.
 
-Answers never touch the authored tree: emit folds code tokens and fills an
-image's missing dims from the table (an author's lone `w` or `h` stays, the
-other follows the aspect ratio), and the semantic product reads the same
-token answers. The JSON `tsr_measure_requests` and the per-kind
+**Image sizes after Emit** (plan P3-32; design T9 M12): no block waits to
+emit for an image. The Resolve scan files every image's `boxInfo` need, so
+the first round asks for it beside the widths; its consumers come later.
+An inline image is a pending object that Measure settles (the object
+table's image finalizer: Measure waits while the answer is pending); a
+block or floated image is a `Provided` size spec that Layout asks for
+through the same `BoxAsker` as P3-28's host boxes (pending: a provisional
+layout; failed: the placeholder). Emit reads no answer and no width — the
+second by construction (stage views, `config-closure` lint).
+
+Answers never touch the authored tree: emit folds code tokens, Measure and
+Layout fill an image's missing dims from the table (an author's lone `w` or
+`h` stays, the other follows the aspect ratio), and the semantic product
+reads the same token answers. The JSON `tsr_measure_requests` and the per-kind
 `tsr_provide_*` exports remain as shims over the same table.
 
 ## 4b. The resource host (plan P3-21; design T9 A2, M7; D-I09)

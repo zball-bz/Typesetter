@@ -1121,7 +1121,7 @@ Theme steps: — · findings: 1
 | `emitter/math-only-inline-box` | adhoc | high | P1-13, P3-26 | grep:plan P3-26 |
 | `emitter/flowunit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `emitter/figure-role-string-dispatch` | adhoc | high | P1-18 | grep:plan P1-18 |
-| `emitter/measure-dependent-geometry-in-emit` | adhoc | high | P1-16, P3-32 | |
+| `emitter/measure-dependent-geometry-in-emit` | adhoc | high | P1-16, P3-32 | grep:plan P3-32 |
 | `emitter/bf-flag-overload-and-rederivation` | adhoc | medium | P1-12 | grep:plan P1-12 |
 | `emitter/url-break-special-path` | adhoc | medium | P4-06 | |
 | `emitter/boundary-glue-constant` | adhoc | medium | P4-02 | |

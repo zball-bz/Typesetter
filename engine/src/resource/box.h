@@ -21,12 +21,14 @@ BoxKind boxKindOf(std::string_view markup);
 bool svgBoxPx(std::string_view markup, double widthPx, double& h, double& baseline);
 
 // A stage's way to a host box's size (plan P3-28; design T6 S14): the
-// answer at a width, or not ready — a need filed (the stage's run is then
-// provisional: the pull goes on) or one that failed (the caller's
-// fallback; the failure was reported). Doc implements it per run.
+// answer at a width, or not ready — a need still pending (filed: the
+// stage's run is then provisional, the pull goes on) or one that failed
+// (the caller's fallback; the failure was reported). Doc implements it per
+// run. An image's (plan P3-32) is its intrinsic size, asked at width 0.
 struct BoxAnswer {
   bool ready = false;
-  double h = 0, baseline = 0;  // px; baseline from the top
+  bool pending = false;  // not ready and not failed: its answer is still to come
+  double w = 0, h = 0, baseline = 0;  // px (w: an image's intrinsic width); baseline from the top
 };
 class BoxAsker {
  public:

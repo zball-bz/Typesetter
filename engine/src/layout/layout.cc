@@ -926,6 +926,19 @@ class DocLayout {
     leave(b, l);
   }
 
+  // (plan P3-32; design T9 M12) an image's size spec at this layout: a
+  // Provided one takes the host's intrinsic size (boxInfo at width 0; the
+  // author's one dim keeps the aspect ratio). Unanswered — pending (filed:
+  // this layout is provisional) or failed — it is the placeholder
+  IntrinsicSize imageSize(const ImageData& im, Span span) const {
+    IntrinsicSize s = im.size;
+    if (s.source != SizeSource::Provided) return s;
+    const BoxAnswer a = boxes_ && im.src ? boxes_->ask(BoxKind::Image, im.src, 0, span) : BoxAnswer{};
+    if (a.ready) intrinsicDims(s.w, s.h, a.w, a.h);
+    else s.source = SizeSource::Placeholder;
+    return s;
+  }
+
   void replaced(const LayoutBlock& b) {
     const FlowUnit& u = tb->units[b.unit];
     if (b.painter == Painter::Image && b.floatSide) {
@@ -961,8 +974,10 @@ class DocLayout {
         // block figure image (figure-design.md §3): centred on the measure,
         // advance = display height (float placement is F2)
         Su imgW = 0, imgH = 0;
-        resolveImageSize(std::get<ImageData>(u.data).size, widthPx(b), imgW, imgH);
+        const IntrinsicSize size = imageSize(std::get<ImageData>(u.data), b.span);
+        resolveImageSize(size, widthPx(b), imgW, imgH);
         f.kind = FragKind::Image;
+        f.placeholder = size.placeholder();
         Su shift = (lineWidth - imgW) / 2;
         if (shift < 0) shift = 0;
         f.left = left(b) + shift;
@@ -1065,7 +1080,8 @@ class DocLayout {
     Leaf l = enter(false, b);
     const Su lineWidth = width(b);
     Su imgW = 0, imgH = 0;
-    resolveImageSize(std::get<ImageData>(u.data).size, widthPx(b), imgW, imgH);
+    const IntrinsicSize size = imageSize(std::get<ImageData>(u.data), b.span);
+    resolveImageSize(size, widthPx(b), imgW, imgH);
     i64 captionH = 0;
     // its caption rows: aligned as caption paragraphs say (D-Y05: as a
     // block figure's)
@@ -1085,6 +1101,7 @@ class DocLayout {
     Fragment f;
     f.unitIdx = b.unit;
     f.kind = FragKind::Image;
+    f.placeholder = size.placeholder();
     f.left = boxLeft;
     f.width = imgW;
     f.height = imgH;
@@ -1291,7 +1308,7 @@ class DocLayout {
         case LayouterId::Replaced:
           if (b.painter == Painter::Image) {
             Su w = 0, h = 0;
-            resolveImageSize(std::get<ImageData>(u.data).size, 1e6, w, h);
+            resolveImageSize(imageSize(std::get<ImageData>(u.data), b.span), 1e6, w, h);
             lmn = lmx = w;
           } else if (b.painter == Painter::Raw) {
             const RawData& r = std::get<RawData>(u.data);

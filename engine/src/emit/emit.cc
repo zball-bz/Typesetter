@@ -518,8 +518,10 @@ struct HlInline final : InlineSink {
         math(n, u, ctx);
         return;
       case ObjKind::Image: {
-        // one box from the declared or intrinsic dims (the image pull fills
-        // them), sitting on the baseline; a 1em placeholder otherwise
+        // one box sitting on the baseline: the author's w × h, else (plan
+        // P3-32; design T9 M12) the host's intrinsic size — a pending
+        // object that Measure settles (the object table's image finalizer:
+        // emit reads no answer); a 1em placeholder when its src is unsafe
         StyleId st = E.compose(n->style, ctx.add, ctx.mul);
         double iw = 0, ih = 0;
         StrRef src = 0, alt = 0;
@@ -529,17 +531,22 @@ struct HlInline final : InlineSink {
           if (a.key == ArgK::w && a.tag == ArgTag::Num) iw = a.num;
           if (a.key == ArgK::h && a.tag == ArgTag::Num) ih = a.num;
         }
-        const bool safe = src && safeImageSrc(strs.get(src));  // unsafe: reported at ingest
-        if (safe) E.imageDims(src, iw, ih);
-        const bool sized = safe && iw > 0 && ih > 0;
-        const double em = E.fontPx(st);
+        const bool safe = src && safeImageSrc(strs.get(src));  // unsafe: reported at Resolve
+        const bool declared = iw > 0 && ih > 0;
         u32 obj = addObject(u, ObjKind::Image, n, st);
-        B.objs[obj].src = sized ? src : 0;
+        B.objs[obj].src = safe ? src : 0;
         B.objs[obj].alt = alt;
         ObjPart pt;
         pt.obj = obj;
-        pt.w = suRoundPx(sized ? iw : em);
-        pt.asc = suRoundPx(sized ? ih : em);
+        if (safe && !declared) {
+          B.objs[obj].deferred = true;
+          B.hasDeferred = true;
+          objectBox(u, obj, pt, st, ctx, n->span, 0, false);
+          return;
+        }
+        const double em = E.fontPx(st);
+        pt.w = suRoundPx(safe ? iw : em);
+        pt.asc = suRoundPx(safe ? ih : em);
         objectBox(u, obj, pt, st, ctx, n->span, 0, true);
         return;
       }
@@ -1075,10 +1082,11 @@ struct Emitter {
             return;
           }
           case Painter::Image: {
-            // figure-design.md §3: the size spec (intrinsic dims, declared or
-            // pull-provided, and a scale); layout resolves the display box. An
-            // unsafe scheme (reported by the ingest scan, plan P1-16) or a
-            // failed load paints a placeholder
+            // figure-design.md §3: the size spec (the author's dims or, plan
+            // P3-32, the host's intrinsic size — Provided, which Layout asks
+            // for: emit reads no answer — and a scale); layout resolves the
+            // display box. An unsafe scheme (reported by the Resolve scan,
+            // plan P1-16) or a failed load paints a placeholder
             ImageData& im = u.data.emplace<ImageData>();
             double iw = 0, ih = 0, scale = 0;
             StrRef srcRef = 0;
@@ -1091,12 +1099,11 @@ struct Emitter {
             }
             const bool safe = srcRef && safeImageSrc(strs.get(srcRef));
             const bool declared = iw > 0 && ih > 0;
-            if (safe) E.imageDims(srcRef, iw, ih);
-            if (safe && iw > 0 && ih > 0) im.src = srcRef;
-            im.size.w = iw;
+            if (safe) im.src = srcRef;
+            im.size.w = iw;  // (Provided: the author's one dim, if any)
             im.size.h = ih;
             im.size.scale = scale;
-            im.size.source = !im.src ? SizeSource::Placeholder : declared ? SizeSource::Declared : SizeSource::Provided;
+            im.size.source = !safe ? SizeSource::Placeholder : declared ? SizeSource::Declared : SizeSource::Provided;
             // a float's caption rows break to its width
             ICtx cctx;
             cctx.noHyphen = true;
@@ -1425,13 +1432,44 @@ static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const Emit
   return true;
 }
 
+// The image finalizer (plan P3-32; design T9 M12): an inline image's box from
+// its intrinsic size (boxInfo at width 0; the author's one dim keeps the
+// aspect ratio) once the host answered; a failed one is a 1em placeholder
+// (its src cleared: paint writes the alt box). Unanswered, it stays pending
+// and Measure with it (the image was asked for at Resolve).
+static bool finalizeImage(HList& h, size_t& at, MetricStore&, const EmitSettings& cfg, ObjectEnv& env,
+                          std::vector<MeasureItem>&) {
+  if (!env.boxes) return false;
+  HItem& it = h.items[at];
+  ObjPart& part = h.parts[h.specs[it.aux].obj];
+  InlineObject& ob = h.objs[part.obj];
+  ColdRec& c = h.cold[it.cold];
+  const BoxAnswer a = env.boxes->ask(BoxKind::Image, ob.src, 0, Span{c.srcStart, c.srcEnd});
+  if (a.pending) return false;
+  double iw = attrNum(ob.node, ArgK::w, 0), ih = attrNum(ob.node, ArgK::h, 0);
+  if (a.ready) {
+    intrinsicDims(iw, ih, a.w, a.h);
+  } else {
+    iw = ih = emPx(cfg, env.styles.get(ob.style));
+    ob.src = 0;
+  }
+  part.w = suRoundPx(iw);
+  part.asc = suRoundPx(ih);
+  it.w = part.w;
+  it.st |= IS_Resolved;
+  c.rawPx = suToPx(part.w);
+  c.capSu = 0;
+  ob.deferred = false;
+  return true;
+}
+
 // The pending-object hook (plan P1-25; design T8 S6, T5 owns it later): a
 // pending object of a kind with a finalizer is finalized by it in Measure;
 // resolveWidths never names a kind.
 using ObjectFinalizer = bool (*)(HList& h, size_t& at, MetricStore& store, const EmitSettings& cfg, ObjectEnv& env,
                                  std::vector<MeasureItem>& need);
 static constexpr ObjectFinalizer kFinalizers[] = {
-    /*Math*/ finalizeFormula, /*Image*/ nullptr, /*Raw*/ nullptr, /*Error*/ nullptr};
+    /*Math*/ finalizeFormula, /*Image*/ finalizeImage, /*Raw*/ nullptr, /*Error*/ nullptr};
 static void finalizePending(HList& h, MetricStore& store, const EmitSettings& cfg, ObjectEnv& env,
                             std::vector<MeasureItem>& need) {
   bool still = false;
@@ -1859,7 +1897,8 @@ void fuseLegacy(std::vector<TopBlock>& tops) {
     }
 }
 
-static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u, const Interner& strs) {
+static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u, const Interner& strs,
+                       BoxAsker* boxes) {
   const char* k = "text";
   if (b.layouter == LayouterId::Grid) k = "code";
   else if (b.layouter == LayouterId::Replaced)
@@ -1884,10 +1923,17 @@ static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u
   if (const MathData* m = std::get_if<MathData>(&u.data); m && m->box)
     appendf(out, " w=%dsu asc=%dsu desc=%dsu", m->box->w, m->box->asc, m->box->desc);
   if (const ImageData* im = std::get_if<ImageData>(&u.data)) {
-    // the size spec layout resolves (plan P1-16)
-    if (im->size.w > 0 || im->size.h > 0) appendf(out, " intrinsic=%gx%gpx", im->size.w, im->size.h);
-    if (im->size.scale > 0) appendf(out, " scale=%g", im->size.scale);
-    if (im->size.placeholder()) out += " placeholder";
+    // the size spec layout resolves (plan P1-16), with the host's intrinsic
+    // size as layout takes it (plan P3-32: an answer, never emit's)
+    IntrinsicSize s = im->size;
+    if (s.source == SizeSource::Provided) {
+      const BoxAnswer a = boxes && im->src ? boxes->ask(BoxKind::Image, im->src, 0, b.span) : BoxAnswer{};
+      if (a.ready) intrinsicDims(s.w, s.h, a.w, a.h);
+      else s.source = SizeSource::Placeholder;
+    }
+    if (s.w > 0 || s.h > 0) appendf(out, " intrinsic=%gx%gpx", s.w, s.h);
+    if (s.scale > 0) appendf(out, " scale=%g", s.scale);
+    if (s.placeholder()) out += " placeholder";
     if (b.floatSide) out += b.floatSide == 1 ? " float=left" : " float=right";
   }
   if (b.tr.align == BlockTraits::Align::Center) out += " centered";
@@ -1898,13 +1944,13 @@ static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u
 static const LayoutBlock& leafOf(const TopBlock& tb, size_t k) { return tb.tree->blocks[tb.tree->leaves[k]]; }
 
 std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
-                       const StyleTable& styles) {
+                       const StyleTable& styles, BoxAsker* boxes) {
   std::string out;
   for (const TopBlock& tb : tops) {
     appendf(out, "top pid=%u units=%zu\n", tb.pid, tb.units.size());
     for (size_t ui = 0; ui < tb.units.size(); ui++) {
       const FlowUnit& u = tb.units[ui];
-      unitHeader(out, leafOf(tb, ui), u, strs);
+      unitHeader(out, leafOf(tb, ui), u, strs, boxes);
       auto dumpBlock = [&](const LinebreakBlock& b) {
         out += "  ";
         if (b.obj) {  // (plan P3-26) an inline object's part, whatever its kind
@@ -1961,13 +2007,13 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
 }
 
 std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
-                       const StyleTable& styles) {
+                       const StyleTable& styles, BoxAsker* boxes) {
   std::string out;
   for (const TopBlock& tb : tops) {
     appendf(out, "top pid=%u units=%zu\n", tb.pid, tb.units.size());
     for (size_t ui = 0; ui < tb.units.size(); ui++) {
       const FlowUnit& u = tb.units[ui];
-      unitHeader(out, leafOf(tb, ui), u, strs);
+      unitHeader(out, leafOf(tb, ui), u, strs, boxes);
       dumpHList(out, u.hl, strs, styles, "  ");
       for (size_t ci = 0; ci < u.cells.size(); ci++) {
         appendf(out, "  cell %zu\n", ci);

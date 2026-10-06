@@ -31,7 +31,7 @@ struct EmitEnv {
   StyleTable& styles;
   EmitSettings cfg;
   const MeasureNeeds* mathText = nullptr;  // text-font runs in formulas (math-design §14)
-  const ResourceTable* rt = nullptr;      // answered code tokens and image sizes
+  const ResourceTable* rt = nullptr;      // answered code tokens (image sizes: Measure's and Layout's, plan P3-32)
   const MathEnv* math = nullptr;          // the document's math declarations (plan P2-15)
   const Cascade* cascade = nullptr;       // the rules, for code tokens (plan P3-01)
   BoxAsker* boxes = nullptr;              // (plan P3-28) inline host boxes: answers, or a need filed
@@ -45,18 +45,6 @@ struct EmitEnv {
   Span leafSpan{};                 //   its node's span
 
   StyleId compose(StyleId base, const StyleDelta& d, float mul) { return tsr::compose(styles, base, d, mul); }
-  // an image's size: the host's intrinsic size fills only what the author
-  // left out (defect #24; plan P1-19: the answer lives in the resource
-  // table, never in the author's args) — a declared w (or h) stays, the
-  // other side follows the image's aspect ratio
-  void imageDims(StrRef src, double& iw, double& ih) const {
-    if ((iw > 0 && ih > 0) || !rt) return;
-    const BoxNeed* bx = rt->box(BoxKind::Image, src);
-    if (!bx || bx->st != ResState::Ready) return;
-    if (iw > 0) ih = iw * bx->h / bx->w;
-    else if (ih > 0) iw = ih * bx->w / bx->h;
-    else iw = bx->w, ih = bx->h;
-  }
   // the style's em (sizePx honoured): one formula with measurement (P0-08)
   double fontPx(StyleId st) const { return emPx(cfg, styles.get(st)); }
 };

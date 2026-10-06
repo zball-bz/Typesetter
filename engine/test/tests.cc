@@ -446,14 +446,8 @@ static void unitResources(const fs::path& root) {
     encodeWire(stale, true, ans);
     CHECK(!doc.provide((const u8*)ans.data(), ans.size()) && has(doc, "provider-invalid"));
     CHECK(doc.rt.boxNeeds[0].st == ResState::Pending);  // refused whole: still pending
-    WireBatch empty;
-    empty.batch = doc.rt.batch.id;
-    encodeWire(empty, true, ans);
-    CHECK(doc.provide((const u8*)ans.data(), ans.size()));
-    CHECK(doc.rt.boxNeeds[0].st == ResState::Failed && has(doc, "provider-missing") && has(doc, "image-load"));
-    // the measure batch: one width answered NaN, the rest missing
-    CHECK(doc.typeset() == Doc::Status::NeedMeasure);
-    doc.requests(req);
+    // (plan P3-32) one batch: the image's size beside every width — one
+    // width answered NaN, the rest and the image missing
     WireBatch q, a;
     std::string err;
     CHECK(decodeWire((const u8*)req.data(), req.size(), false, q, err));
@@ -467,6 +461,7 @@ static void unitResources(const fs::path& root) {
       }
     encodeWire(a, true, ans);
     CHECK(doc.provide((const u8*)ans.data(), ans.size()));
+    CHECK(doc.rt.boxNeeds[0].st == ResState::Failed && has(doc, "provider-missing") && has(doc, "image-load"));
     CHECK(doc.typeset() == Doc::Status::Ok);  // degraded, never stuck
     CHECK(has(doc, "measure-failed") || has(doc, "provider-invalid"));
     CHECK(doc.render().find("tsr-imgph") != std::string::npos);  // the failed image: a placeholder
@@ -497,11 +492,12 @@ static void unitResources(const fs::path& root) {
     CHECK(!own.answerTokens("tsm", "= a", toks) && sess.answerTokens("tsm", "= a", toks) && !toks.empty());
   }
   {
-    // per-block deferral (plan P1-20): the paragraph is emitted while the
-    // figure waits for its image, and its widths join the image's round
+    // (plan P3-32; design T9 M12) no block waits to emit for an image: its
+    // size is Layout's (a figure's) or Measure's (an inline image's), asked
+    // for in the first round beside every width
     Doc doc;
     CHECK(fresh(doc) && doc.typeset() == Doc::Status::NeedMeasure);
-    CHECK(doc.emitted.size() == 2 && doc.emitted[0] && !doc.emitted[1]);
+    CHECK(doc.emitted.size() == 2 && doc.emitted[0] && doc.emitted[1]);
     std::string req, err;
     doc.requests(req);
     WireBatch q;

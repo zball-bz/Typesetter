@@ -109,6 +109,16 @@ struct IntrinsicSize {
   SizeSource source = SizeSource::Declared;
   bool placeholder() const { return source == SizeSource::Placeholder; }
 };
+// an image's dims from its intrinsic size bw × bh: the host's size fills only
+// what the author left out (defect #24; plan P1-19: the answer lives in the
+// resource table, never in the author's args) — a declared w (or h) stays,
+// the other side follows the aspect ratio. (Plan P3-32: Measure's and
+// Layout's, never Emit's.)
+inline void intrinsicDims(double& w, double& h, double bw, double bh) {
+  if (w > 0) h = w * bh / bw;
+  else if (h > 0) w = h * bw / bh;
+  else w = bw, h = bh;
+}
 // an image's display box: the scaled or intrinsic width, never wider than
 // the measure, the height from the aspect ratio
 inline void resolveImageSize(const IntrinsicSize& s, double measurePx, Su& w, Su& h) {
@@ -262,6 +272,7 @@ struct ObjectEnv {
   double docBasePx;
   DiagSink* diags = nullptr;  // a finalized layout's own diagnostics (coverage)
   const MathEnv* math = nullptr;  // the document's math declarations (plan P2-15)
+  BoxAsker* boxes = nullptr;      // (plan P3-32) an inline image's intrinsic size (none: it stays pending)
 };
 
 // Fills widths from the store; returns what is still missing (deduped).
@@ -280,10 +291,12 @@ void fuseLegacy(const HList& h, std::vector<LinebreakBlock>& blocks, std::vector
 void fuseLegacy(const HList& h, std::vector<BreakBlock>& blocks, std::vector<u32>& blockStart);
 void fuseLegacy(std::vector<TopBlock>& tops);  // every unit and cell, the breaker's form
 
+// (boxes: the answers an image's header shows, as layout takes them; none:
+// a Provided image shows as its placeholder)
 std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
-                       const StyleTable& styles);
+                       const StyleTable& styles, BoxAsker* boxes = nullptr);
 std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
-                       const StyleTable& styles);
+                       const StyleTable& styles, BoxAsker* boxes = nullptr);
 std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& strs);
 std::string dumpMathIRs(const std::vector<TopBlock>& tops, const Interner& strs, const MathEnv* math = nullptr);
 

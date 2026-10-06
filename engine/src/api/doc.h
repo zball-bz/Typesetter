@@ -418,7 +418,7 @@ struct Doc {
       waitBoxes.resize(tree.root->kids.size());
       for (u32 pid = 0; pid < tree.root->kids.size(); pid++) {
         scanTokenNeeds(tree.root->kids[pid], pid);
-        scanImageNeeds(tree.root->kids[pid], pid);
+        scanImageNeeds(tree.root->kids[pid]);
       }
     }
     validThrough = (int)Stage::Resolve;
@@ -459,8 +459,11 @@ struct Doc {
   }
 
   // an image without both declared dims needs its intrinsic size
-  // (figure-design.md §2): the engine wants CSS px, not pixels
-  void scanImageNeeds(const ContentNode* n, u32 pid, Span outer = {}) {
+  // (figure-design.md §2): the engine wants CSS px, not pixels. (Plan P3-32,
+  // design T9 M12) filed here so the first batch asks for it beside the
+  // words; its consumers come after Emit — Measure (an inline image's box),
+  // Layout (a block's) — so no block waits to emit
+  void scanImageNeeds(const ContentNode* n, Span outer = {}) {
     if (!n) return;
     if (!n->span.empty()) outer = n->span;
     if (n->kind == Kind::image) {
@@ -471,13 +474,9 @@ struct Doc {
       if (src && !safeImageSrc(strs.get(src)))
         diags.add(Sev::Warning, "image-src", n->span.empty() ? outer : n->span, "image src scheme not allowed");
       else if (src && !(iw > 0 && ih > 0))
-      {
-        const u32 i = rt.needBox(BoxKind::Image, src, 0, outer);
-        rt.boxNeeds[i].emit = true;
-        waitBoxes[pid].push_back(i);
-      }
+        rt.needBox(BoxKind::Image, src, 0, outer);
     }
-    for (const ContentNode* k : n->kids) scanImageNeeds(k, pid, outer);
+    for (const ContentNode* k : n->kids) scanImageNeeds(k, outer);
   }
 
   // ---- settling needs (the wire's rows and the old per-kind shims) --------
@@ -535,10 +534,17 @@ struct Doc {
     bool emit;               // its consumer is Emit (an inline box)
     std::vector<u32> filed;  // the needs this run filed
     BoxPull(Doc& doc, Mode m, bool atEmit) : d(doc), mode(m), emit(atEmit) {}
+    static BoxAnswer answerOf(const BoxNeed& b) {
+      BoxAnswer a;
+      a.ready = b.st == ResState::Ready;
+      a.pending = b.st == ResState::Pending;
+      if (a.ready) a.w = b.w, a.h = b.h, a.baseline = b.baseline;
+      return a;
+    }
     BoxAnswer ask(BoxKind kind, StrRef ref, double widthPx, Span span) override {
       if (mode == Mode::Lookup) {
         const BoxNeed* b = d.rt.box(kind, ref, widthPx);
-        return b && b->st == ResState::Ready ? BoxAnswer{true, b->h, b->baseline} : BoxAnswer{};
+        return b ? answerOf(*b) : BoxAnswer{};
       }
       bool fresh = false;
       const u32 i = d.rt.needBox(kind, ref, widthPx, span, &fresh);
@@ -553,11 +559,14 @@ struct Doc {
         } else {
           b.st = ResState::Failed;
           d.diags.add(Sev::Warning, "box-unsettled", b.span,
-                      "a raw(measure: 'host') box was still unmeasured after " + std::to_string(kLayoutAsks) +
-                          " rounds (its width kept changing): its declared size is used");
+                      kind == BoxKind::Image
+                          ? "an image's size was still unanswered after " + std::to_string(kLayoutAsks) +
+                                " rounds: its placeholder is used"
+                          : "a raw(measure: 'host') box was still unmeasured after " + std::to_string(kLayoutAsks) +
+                                " rounds (its width kept changing): its declared size is used");
         }
       }
-      return b.st == ResState::Ready ? BoxAnswer{true, b.h, b.baseline} : BoxAnswer{};
+      return answerOf(b);
     }
   };
   // the old per-kind provide exports (shims of tsr2_provide): an answer to
@@ -827,12 +836,14 @@ struct Doc {
     if (!done(Stage::Measure)) {
       metrics.setEpsilon((Su)cfg.epsilonPerWordSu);  // Measure quantizes (plan P1-19)
       // formulas finalize here (plan P1-25): their layout diagnostics are
-      // their block's Emit slice
-      ObjectEnv oe{arena, strs, styles, cfg.baseSizePx, &diags, &mathEnv};
+      // their block's Emit slice; (plan P3-32) inline images take their
+      // intrinsic size here — an unanswered one keeps Measure waiting
+      BoxPull images(*this, BoxPull::Mode::Ask, /*atEmit=*/false);
+      ObjectEnv oe{arena, strs, styles, cfg.baseSizePx, &diags, &mathEnv, &images};
       diags.origin = DiagOrigin::Emit;
       MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg, &oe);
       diags.pid = ~0u;
-      if (!missing.empty()) return Status::NeedMeasure;
+      if (!missing.empty() || !images.filed.empty()) return Status::NeedMeasure;
       fuseLegacy(tops);  // the legacy breaker's blocks (until P4-08)
       validThrough = (int)Stage::Measure;
     }
@@ -903,8 +914,14 @@ struct Doc {
     if (name == "blocktree") return dumpBlockTree(boxtree.tops, strs);
     if (name == "mathir") return dumpMathIRs(tops, strs, &mathEnv);
     if (name == "mathbox") return dumpMathBoxes(tops, strs);
-    if (name == "blocks") return dumpBlocks(tops, strs, styles);
-    if (name == "hlist") return dumpHLists(tops, strs, styles);
+    if (name == "blocks") {
+      BoxPull answers(*this, BoxPull::Mode::Lookup, false);
+      return dumpBlocks(tops, strs, styles, &answers);
+    }
+    if (name == "hlist") {
+      BoxPull answers(*this, BoxPull::Mode::Lookup, false);
+      return dumpHLists(tops, strs, styles, &answers);
+    }
     if (name == "breaks") return dumpBreaks(layout);
     if (name == "layout") return dumpLayout(layout);
     if (name == "vlist") return dumpVList(layout, tops);

@@ -78,6 +78,7 @@ struct Fragment {
   float snapCjkPx = 0;
   bool codeHl = false;               // hl-range line (background)
   bool hostBox = false;              // (plan P3-28) a raw box the host measures at its width
+  bool placeholder = false;          // (plan P3-32) an image without its size (failed): paint writes its alt box
   u16 mathRow = 0;                   // (plan P3-29) Math: which row of its formula
   StrRef marker = 0;                 // a list marker / line number in the gutter
   StyleId markerStyle = 0;
