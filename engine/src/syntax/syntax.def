@@ -45,7 +45,7 @@ BLOCK(para,    Leaf,     "DEFAULT",             -,         None,      para)
 KEYWORD(if, elseChain)
 KEYWORD(for)
 KEYWORD(while)
-RESERVED_UNSUPPORTED(if, else, for, while, use, let)
+RESERVED_UNSUPPORTED(if, else, for, while, let)
 RESERVED(break, case, catch, class, const, continue, debugger, default, delete, do, export, extends, finally, function, import, in, instanceof, new, return, switch, throw, try, typeof, var, void, with, yield, static, enum, await)
 
 // ---- highlight token tags (shared by the engine fold, the token providers

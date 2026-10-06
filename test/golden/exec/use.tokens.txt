@@ -1,0 +1,6 @@
+[0,4) function "#use"
+[4,21) embedded "(\"./use-lib.mjs\")"
+[82,90) keyword "```shout"
+[91,100) embedded "loud text"
+[101,104) keyword "```"
+[106,131) type "$ sq(a) + sq(b) = sq(c) $"

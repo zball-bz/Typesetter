@@ -73,7 +73,7 @@ This one model settles:
 - **Scope**: `#let` compiles to `let`. The whole document shares one lexical scope; definitions flow top-to-bottom by plain JS scoping. No state-threading machinery.
 - **Content is first-class**: `[...]` compiles to an expression producing a content value — storable, passable, composable. The v1 attachment/arity ambiguity (`#if c [a] [b]`) dissolves because JS syntax carries its own structure.
 - **Errors**: execution is wrapped per top-level block; exceptions become error blocks in the document model (§11), with source positions via the codegen's JS-offset ↔ source-offset map.
-- **Libraries**: `#use("./helpers.js")` hoists to a top-level `await import()`; the document function is async.
+- **Libraries**: `#use("./helpers.js")` hoists to a top-level `await import()`; the document function is async. *(As built, plan P3-31; D-I08: not hoisted — a call of the async std function `use` in document order, imported by URL + content hash through the host; host-protocol-design §5b.)*
 - **Dynamic markup in deep code**: tagged template `` m`*bold* ${x}` `` — standard JS; the tag re-enters the WASM parser at runtime (also exposed as `m.parse(string)` for fence handlers, §4).
 
 **As built (remediation P0-05, 2026-10):**
@@ -337,7 +337,7 @@ The TS PoC in `src/` is frozen as reference. The grammar can mature in parallel 
                            (a repeated #let name is a reassignment — remediation D-L02)
 #if (c) […] else […]     keyword form; 'else' continues only before '[' or 'if ('
 #for (const x of xs) […] keyword form; loop vars bind inside the content block
-#use("./mod.js")         hoisted to top-level await import(); document fn is async
+#use("./mod.js")         the host imports it (URL + content hash), in document order (P3-31)
 #x;                      ';' hard-terminates a splice (blocks accidental […] attachment)
 \#                       literal '#'
 ```

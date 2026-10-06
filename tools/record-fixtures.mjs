@@ -48,7 +48,7 @@ function* walk(dir) {
 }
 
 const resources = new ResourceHost();
-let stale = 0, wrote = 0;
+let stale = 0, wrote = 0, nondeterministic = 0;
 for (const tsm of walk(fixtures)) {
   const treePath = tsm.replace(/\.tsm$/, '.tree.json');
   let ops;
@@ -61,6 +61,15 @@ for (const tsm of walk(fixtures)) {
     // as its base, the repository as its root
     const job = resources.job({ bases: { doc: resolve(dirname(tsm)) }, root: resolve(root) });
     ops = Buffer.from(await execute({ program, js }, { host: job, parse }));
+    // (plan P3-31; D-I08) the determinism check: a second execution in the
+    // same process — modules (#use) and the cache warm — writes the same
+    // bytes, or a module kept state across executions
+    const again = Buffer.from(await execute({ program, js }, {
+      host: resources.job({ bases: { doc: resolve(dirname(tsm)) }, root: resolve(root) }), parse }));
+    if (!again.equals(ops)) {
+      console.error(`NONDETERMINISTIC ${tsm}: a second execution wrote other ops`);
+      nondeterministic++;
+    }
   }
   const opsPath = tsm.replace(/\.tsm$/, '.ops');
   const prev = existsSync(opsPath) ? readFileSync(opsPath) : null;
@@ -74,5 +83,5 @@ for (const tsm of walk(fixtures)) {
     wrote++;
   }
 }
-if (check && stale) process.exit(1);
+if ((check && stale) || nondeterministic) process.exit(1);
 console.log(check ? 'all recordings current' : `${wrote} recording(s) updated`);

@@ -129,7 +129,7 @@ constexpr bool kInlineOpenerByte[256] = {
 
 // a bare splice head that cannot start a JS expression (plan P0-05)
 inline const char* reservedSpliceHead(std::string_view w) {
-  static constexpr std::string_view kUnsupported[] = {"if", "else", "for", "while", "use", "let"};
+  static constexpr std::string_view kUnsupported[] = {"if", "else", "for", "while", "let"};
   static constexpr std::string_view kReserved[] = {"break", "case", "catch", "class", "const", "continue", "debugger", "default", "delete", "do", "export", "extends", "finally", "function", "import", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "with", "yield", "static", "enum", "await"};
   for (std::string_view k : kUnsupported)
     if (w == k) return "keyword-unsupported";

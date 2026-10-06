@@ -59,9 +59,12 @@ export async function renderTsm(source, opts = {}) {
       for (const { kind, provider } of opts.providers) own.register(kind, provider);
       host = own;
     }
-    const job = host.job({ bases: { doc: resolve(opts.baseDir ?? rootDir) }, root: rootDir });
+    const jobOf = () => host.job({ bases: { doc: resolve(opts.baseDir ?? rootDir) }, root: rootDir });
+    const job = jobOf();
     const imported = {};  // (plan P3-31) the inputs the document asked for ($.labels.import)
-    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M), inputs: imported });
+    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M), inputs: imported,
+      // (plan P3-31; D-I08) dev mode (policy.checkExecution): a second execution writes the same ops
+      check: opts.policy?.checkExecution ? jobOf : null });
     const inputs = { ...(opts.inputs ?? {}) };
     if (imported.labels?.length) {
       const inner = (inputs.labels ?? '').trim().replace(/^\[|\]$/g, '').trim();

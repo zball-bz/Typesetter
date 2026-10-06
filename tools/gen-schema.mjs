@@ -721,11 +721,13 @@ const ctorsJs = `// ${HDR}\n// The constructor specs (plan P2-03; docs/ctor-desi
   emit('STD_ALIASES', aliases) +
   emit('STD_FUNCTIONS', stdFunctions) +
   emit('STD_NAMES', stdNames);
-const stdAsync = Object.keys(ctorSpecs).filter((n) => ctorSpecs[n].async).sort();
+const stdAsync = [...Object.keys(ctorSpecs).filter((n) => ctorSpecs[n].async),
+                  ...(S.stdlib?.asyncFunctions ?? []).filter((f) => stdFunctions.includes(f))].sort();
 const stdNamesH = `// ${HDR}\n// The names a hole module may bind from __rt.std (plan P2-03): every\n` +
   `// constructor and std function, sorted.\n#pragma once\n\nnamespace tsr {\n\n` +
   `inline constexpr const char* kStdNames[] = {\n${stdNames.map((n) => `    "${n}",`).join('\n')}\n};\n\n` +
-  `// the constructors whose result is a promise (plan P2-14: they load): a\n` +
+  `// the constructors and functions whose result is a promise (plan P2-14:\n` +
+  `// they load; P3-31: use): a\n` +
   `// splice that names one awaits it\n` +
   `inline constexpr const char* kStdAsync[] = {\n${stdAsync.map((n) => `    "${n}",`).join('\n')}\n};\n\n}  // namespace tsr\n`;
 const ctorSig = (name) => {

@@ -323,7 +323,9 @@ async function runTypeset(s, { ids, msg }, stale) {
     t0 = performance.now();
     const job = jobOf(baseUrl);  // (plan P3-21) its loads and its needs: one locator, one manifest
     const imported = {};  // (plan P3-31) the inputs the document asked for ($.labels.import)
-    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M), inputs: imported });
+    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M), inputs: imported,
+      // (plan P3-31; D-I08) dev mode: a second execution with a fresh job writes the same ops
+      check: policy.checkExecution ? () => jobOf(baseUrl) : null });
     mark('executeMs', t0);
     await yieldTurn();  // (counted in the edit's total, not in executeMs)
     if (stale()) { M._tsr_doc_free(doc); return false; }

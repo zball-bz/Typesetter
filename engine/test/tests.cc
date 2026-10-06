@@ -1797,6 +1797,16 @@ static void unitRenderFragment(const fs::path& root) {
   CHECK(headOf(doc.renderResult(nullptr, 0), h) && h.get("idPrefix")->str == "a2-");
   // a render's prefix ends with it
   CHECK(AnchorNamer::current().prefix == kAnchorPrefix && !AnchorNamer::current().suppress);
+  // (plan P3-31) another document's page is a link's URL: one outside the
+  // policy (a project.urls value, a manifest's doc key) is none
+  const std::unordered_map<std::string, std::string> urls{{"ch2", "ch2.html"}, {"bad", "javascript:alert(1)"}};
+  {
+    AnchorScope scope("p-", false, &urls);
+    CHECK(AnchorNamer::href("ch2", "fig") == "ch2.html#p-fig");
+    CHECK(AnchorNamer::href("ch3", "fig") == "ch3#p-fig");
+    CHECK(AnchorNamer::href("bad", "fig") == "#p-fig");
+    CHECK(AnchorNamer::href("vbscript:x", "fig") == "#p-fig");
+  }
 }
 
 static void unitRenderResult(const fs::path& root) {

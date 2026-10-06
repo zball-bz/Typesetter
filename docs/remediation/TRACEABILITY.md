@@ -992,7 +992,7 @@ Theme steps: — · findings: 1
 | `markup-language/footnote-sugar-oneoff` | adhoc | low | P4-07 | |
 | `markup-language/quote-context-heuristic` | adhoc | low | P3-30, P4-02 | |
 | `markup-language/no-execution-containment` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
-| `markup-language/spec-features-unimplemented` | issue | high | P0-05, P2-12, P3-31 | |
+| `markup-language/spec-features-unimplemented` | issue | high | P0-05, P2-12, P3-31 | grep:plan P3-31 |
 | `markup-language/nested-code-statements-dropped` | issue | high | P0-05, P2-12 | grep:plan P2-12 |
 | `markup-language/inline-scanner-overrun` | issue | high | P1-06 | grep:plan P1-06 |
 | `markup-language/same-line-trailing-text-dropped` | issue | medium | P1-07 | grep:plan P1-07 |
@@ -1013,7 +1013,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/region-pipe-segmentation-in-parser` | adhoc | high | P2-11 | grep:plan P2-11 |
 | `parser-frontend/cross-line-raw-scans` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/content-args-inline-only` | adhoc | high | P1-08 | grep:plan P1-08 |
-| `parser-frontend/keyword-forms-closed-set-missing` | adhoc | high | P2-12, P3-31 | |
+| `parser-frontend/keyword-forms-closed-set-missing` | adhoc | high | P2-12, P3-31 | grep:plan P3-31 |
 | `parser-frontend/code-statements-top-level-only` | adhoc | high | P2-12 | grep:plan P2-12 |
 | `parser-frontend/label-and-id-lexing-scattered` | adhoc | medium | P2-06 | grep:plan P2-06 |
 | `parser-frontend/display-math-by-ast-shape` | adhoc | medium | P2-11 | grep:plan P2-11 |
@@ -1064,7 +1064,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/occurrence-spans-unsound` | issue | high | P2-04 | grep:plan P2-04 |
 | `codegen-ops-model/exponential-instantiation` | issue | high | P0-07 | grep:plan P0-07 |
 | `codegen-ops-model/no-per-block-containment` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
-| `codegen-ops-model/keyword-forms-uncompiled` | issue | high | P0-05, P2-12, P3-31 | |
+| `codegen-ops-model/keyword-forms-uncompiled` | issue | high | P0-05, P2-12, P3-31 | grep:plan P3-31 |
 | `codegen-ops-model/css-injection-style-values` | issue | high | P0-06, P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/sizepx-ignored-in-emit` | issue | medium | P0-08 | grep:plan P0-08 |
 | `codegen-ops-model/argtag-node-dangling` | issue | medium | P0-06 | grep:plan P0-06 |
@@ -1324,7 +1324,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 || grep:plan P3-06 |
 | `real-world-evidence/presentation-constants` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `real-world-evidence/math-extensibility` | adhoc | medium | P3-29 | grep:plan P3-29 |
-| `real-world-evidence/no-cross-document-labels` | adhoc | high | P3-31 | |
+| `real-world-evidence/no-cross-document-labels` | adhoc | high | P3-31 | grep:plan P3-31 |
 | `real-world-evidence/markup-reentry-missing` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `real-world-evidence/ctor-name-collision-fatal` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `real-world-evidence/heading-numbers-invisible` | issue | medium | P3-03 | grep:plan P3-03 |

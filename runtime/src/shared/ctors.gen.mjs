@@ -1250,7 +1250,8 @@ export const STD_ALIASES = Object.freeze({
 export const STD_FUNCTIONS = Object.freeze([
   "val",
   "m",
-  "plain"
+  "plain",
+  "use"
 ]);
 export const STD_NAMES = Object.freeze([
   "bibliography",
@@ -1303,6 +1304,7 @@ export const STD_NAMES = Object.freeze([
   "term",
   "text",
   "toc",
+  "use",
   "val",
   "when"
 ]);

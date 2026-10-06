@@ -372,8 +372,9 @@ content keeps its edge whitespace — a space, or a line break as a soft
 break — so `#for (const x of xs) [#x, ]` separates its iterations. A
 keyword without its parentheses and body (`#if [x]`), a lone `#else` and a
 bare `#let` mid-line are `keyword-form` / `keyword-unsupported` error nodes
-with the form's shape in the message; `#use` stays `keyword-unsupported`
-until P3-31.
+with the form's shape in the message. `#use(spec)` (plan P3-31) is no
+keyword form: `use` left the reserved words and is a std function
+(host-protocol-design §5b).
 
 **Statements anywhere.** `#let …` and `#{…}` lines are statements in any
 container — a list item, a quote, a region, a content body, a keyword body.

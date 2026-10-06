@@ -1,0 +1,5 @@
+doc @[0,132)
+  para @[0,21) lines=1
+  para @[23,80) lines=1
+  fence @[82,104) lang="shout" lines=1
+  para @[106,131) lines=1

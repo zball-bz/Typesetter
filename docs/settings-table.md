@@ -81,3 +81,4 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `resourceCacheBytes` | `33554432` | the resource host's LRU cache: bytes of loaded resources kept |
 | `resourceTtlMs` | `300000` | a cached resource is revalidated (ETag, Last-Modified; a file's mtime and size) after this |
 | `resourceFailureTtlMs` | `10000` | a failed resource (an image that did not load, a missing file) is retried after this |
+| `checkExecution` | `false` | dev mode (plan P3-31, D-I08): each execution runs again with a fresh resource job; other ops (a #use module that kept state) are an exec-nondeterministic warning |

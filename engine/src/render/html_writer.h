@@ -24,6 +24,8 @@
 #include <string>
 #include <string_view>
 
+#include "../support/url_policy.gen.h"
+
 namespace tsr {
 
 inline void escapeHtml(std::string& out, std::string_view s) {
@@ -138,11 +140,14 @@ struct AnchorNamer {
     return h;
   }
   // (plan P3-31) a label of another document of the project: its page
-  // (project.urls; none: its key) and its id there
+  // (project.urls; none: its key) and its id there. The page is a link's
+  // URL (url_policy.def): one outside the policy is none (the security
+  // review's P3-31 addendum)
   static std::string href(std::string_view doc, std::string_view label) {
     const auto* urls = current().urls;
     auto it = urls ? urls->find(std::string(doc)) : decltype(urls->end()){};
     std::string h = urls && it != urls->end() ? it->second : std::string(doc);
+    if (!urlAllowed(h, UrlUse::Link)) h.clear();
     return h + href(label);
   }
 };

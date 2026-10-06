@@ -1,0 +1,14 @@
+lower v1 abi 3d3ccfbb docEnd 132 holes 1 module fa487b9976edb377
+piece 0 hole 0 js [127,161)
+block 0 content [0,21) user framed async holes 0..1
+  CALL async para [0,21)
+    HOLE async 0 [0,21)
+block 1 content [23,80)
+  CALL para [23,80)
+    TEXT "A module brings a fence and a math function (plan P3-31):" [23,80)
+block 2 content [82,104) async
+  FENCE async "shout" body="loud text" at=[91,100) lines=null [82,104)
+block 3 content [106,131)
+  CALL para [106,131)
+    CALL math [106,131) display=true
+      CALL mathsrc [108,129) src="sq(a) + sq(b) = sq(c)"

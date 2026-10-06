@@ -316,7 +316,8 @@ fall back to plain code blocks; handlers (registered `#{ $.fence(tag, fn) }`
 before use) may be async, get `{args, offset, m, error, raw}`, and a thrown
 handler becomes a renderable error node. `raw` nodes are block units with
 handler-declared height (default one leading). Deferred: `m.parse` WASM
-re-entry, the indented cell-continuation rule, `#use`.
+re-entry, the indented cell-continuation rule, `#use` (as built since: P2-13
+`m.parse`; P3-31 `#use`, host-protocol-design §5b).
 
 As built (plan P3-28; design T6 S14, T9 M11): `raw(html, {measure: 'host'})`
 (and a handler's `ctx.raw(html, opts)`, which takes the raw constructor's

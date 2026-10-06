@@ -346,7 +346,7 @@ export function createEngine(opts = {}) {
   const paginateOf = async (s, { pageWidthPx = settingOf(s.settings, 'page.width'),
                                  pageHeightPx = settingOf(s.settings, 'page.height'), idPrefix } = {}) => {
     const r = await request({ type: 'paginate', id: nextId++, docId: s.docId, pageWidthPx, pageHeightPx,
-                              idPrefix, baseUrl: document.baseURI });
+                              idPrefix, baseUrl: s.baseUrl });
     return { html: r.html, diags: r.diags };
   };
 
@@ -476,6 +476,9 @@ export function createEngine(opts = {}) {
         docId: id, container, settings: base, view: createSession(container), disposed: false,
         onCommit: new Set(), uninstalls: [], exposed: {}, overlay: null, uninstallCopy: null,
         anchorsHead: undefined, anchors: new Map(), idPrefix: settingOf(base, 'render.idPrefix'),
+        // what the document's relative paths (images, #use modules, inputs)
+        // resolve against: the page, unless the host names the document's own
+        baseUrl: opts.baseUrl ? String(new URL(opts.baseUrl, document.baseURI)) : document.baseURI,
       };
       sessions.set(container, s);
       // the session measure: relayout() moves it so later update()s follow
@@ -488,7 +491,7 @@ export function createEngine(opts = {}) {
       let semanticHtml = null;
       const res = await request(
         { type: 'typeset', id, source, settings: settingsAt(width), progressive,
-          fontFaces: fonts, baseUrl: document.baseURI, inputs: opts.inputs },
+          fontFaces: fonts, baseUrl: s.baseUrl, inputs: opts.inputs },
         (html, info) => {
           if (s.disposed) return;
           semanticHtml = html;
@@ -534,7 +537,7 @@ export function createEngine(opts = {}) {
           const rid = nextId++;
           const r = await request({ type: 'update', id: rid, docId: id,
             source: newSource, settings: settingsAt(width), progressive: false,
-            fontFaces: fonts, baseUrl: document.baseURI, held: heldKeys(view), inputs: opts.inputs });
+            fontFaces: fonts, baseUrl: s.baseUrl, held: heldKeys(view), inputs: opts.inputs });
           if (s.disposed) throw superseded('update');
           docLang(container, r.lang);  // (an edit may change it: $.doc, or detection)
           // rects only for a listener (an edit's commit reads no layout)

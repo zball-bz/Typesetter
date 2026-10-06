@@ -267,7 +267,8 @@
       "name (default: the kind), params bound left to right (attr:NAME[:DOMAIN] | projected:NAME | text |",
       "lines | body), nullary (a bare #name calls it), sealed (no override); every attribute not bound",
       "positionally is an option. Here: the derived constructors (kind: the node they make; options \"raw\":",
-      "the options object reaches the implementation unvalidated), the std functions and the option aliases.",
+      "the options object reaches the implementation unvalidated), the std functions (asyncFunctions: those",
+      "that return a promise — a splice naming one awaits it; plan P3-31: use) and the option aliases.",
       "The names reach the hole module and the manifest from these tables; the implementations live in",
       "runtime/src/shared/stdlib.mjs."],
     "aliases": {"float": "side", "width": "w", "height": "h"},
@@ -286,7 +287,8 @@
       "bibliography": {"kind": "collect", "params": ["attr:src:str"], "options": "raw", "async": true},
       "counterUpdate": {"kind": "event", "params": ["attr:counter:ident"], "options": "raw"},
       "node": {"params": ["attr:kind:ident"], "options": "raw", "sealed": true}},
-    "functions": ["val", "m", "plain"]},
+    "functions": ["val", "m", "plain", "use"],
+    "asyncFunctions": ["use"]},
   "domains": {
     "$comment": [
       "Textual value domains (plan P1-02): a byte-level regular expression (whole-string match) and a",
@@ -1203,6 +1205,10 @@
     "resourceFailureTtlMs": {
       "def": 10000,
       "doc": "a failed resource (an image that did not load, a missing file) is retried after this"
+    },
+    "checkExecution": {
+      "def": false,
+      "doc": "dev mode (plan P3-31, D-I08): each execution runs again with a fresh resource job; other ops (a #use module that kept state) are an exec-nondeterministic warning"
     }
   }
 }

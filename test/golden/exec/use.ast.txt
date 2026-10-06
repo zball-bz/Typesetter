@@ -1,0 +1,9 @@
+doc @[0,132)
+  para @[0,21)
+    splice @[0,21) expr="use(\"./use-lib.mjs\")"
+  para @[23,80)
+    text @[23,80) str="A module brings a fence and a math function (plan P3-31):"
+  codeblock @[82,104) lang="shout" body="loud text"
+  para @[106,131)
+    math @[106,131) display=1 src="sq(a) + sq(b) = sq(c)"
+      text @[108,129) str="sq(a) + sq(b) = sq(c)"

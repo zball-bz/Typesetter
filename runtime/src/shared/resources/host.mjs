@@ -10,6 +10,8 @@
 //   const job = host.job({ bases: { doc }, root })    // one document's locator and manifest
 //   await job.answer(request, { stale, capability }) // the pull loop's batch → its answer
 //   await job.load(src, { as: 'text' | 'json' | 'bytes' })   // $.load, ctx.load, #bibliography
+//   await job.module(src)                            // #use (plan P3-31): the module, imported by URL + content hash
+//   job.register(kind, provider)                     // a document's own provider (#use's providers)
 //   job.manifest()                                   // [{ url, role, source, status, requester }]
 //
 // A kind may have several providers (plan P3-22): a row goes to the latest
@@ -77,7 +79,8 @@ class ResourceJob {
     const ans = { batch: req.batch, kinds: {} };
     for (const [kind, rows] of Object.entries(req.kinds)) {
       if (!rows.length) continue;
-      const entries = this.host.providers.get(kind);
+      // (plan P3-31) the document's own providers first, then the host's
+      const entries = [...(this.own?.get(kind) ?? []), ...(this.host.providers.get(kind) ?? [])];
       if (!entries?.length) throw new Error(`resource host: no provider for ${kind}`);
       // each row to the first provider that takes it (none: the oldest)
       const shares = new Map();
@@ -100,6 +103,42 @@ class ResourceJob {
       }
     }
     return ans;
+  }
+
+  // (plan P3-31; D-I08) a module (#use): resolved and read as a load (the
+  // same locator, policy, cache and manifest, role 'module'), then imported
+  // by its URL with its content's hash — ?h=… — so a changed module is a new
+  // URL (no stale instance) and its own relative imports resolve against it;
+  // an unchanged one is the same instance (shared by the worker's documents:
+  // a module keeps no state across executions)
+  async module(src, { source = 'doc' } = {}) {
+    const where = this.locator.resolve(src, { source, requester: 'exec', use: 'load' });
+    if (where.denied) {
+      this.note({ url: String(src), role: 'module', source, requester: 'exec', status: 'denied' });
+      throw new Error(`module ${where.denied}`);
+    }
+    const key = where.url ?? where.file;
+    let bytes;
+    try {
+      bytes = await this.read(where);
+    } catch (e) {
+      this.note({ url: key, role: 'module', source, requester: 'exec', status: 'failed' });
+      throw e;
+    }
+    this.note({ url: key, role: 'module', source, requester: 'exec', status: 'ok' });
+    let url = where.url;
+    if (!url) url = (await import('node:url')).pathToFileURL(where.file).href;
+    return import(/* @vite-ignore */ `${url}${url.includes('?') ? '&' : '?'}h=${contentHash(bytes)}`);
+  }
+  // (plan P3-31) a provider a document registers (a #use module's
+  // providers): this job's only, for the kinds of authored content
+  // (resources.def docProviders); its rows are not stored in the Session
+  register(kind, provider) {
+    const k = RES_KINDS[kind];
+    if (!k) throw new TypeError(`resource provider: no kind ${kind}`);
+    if (!k.docProviders) throw new TypeError(`resource provider: a document may not answer ${kind} (only kinds of authored content)`);
+    (this.own ??= new Map()).set(kind, [{ provider, document: true }, ...(this.own.get(kind) ?? [])]);
+    return this;
   }
 
   // an execute-time load (requester 'exec'): resolved by the locator, read
@@ -145,6 +184,12 @@ class ResourceJob {
 }
 
 const utf8 = (b) => new TextDecoder().decode(b);
+// (plan P3-31) a module's content hash (FNV-1a 64, hex): its import URL's ?h=
+const contentHash = (bytes) => {
+  let h = 0xcbf29ce484222325n;
+  for (const b of bytes) h = ((h ^ BigInt(b)) * 0x100000001b3n) & 0xffffffffffffffffn;
+  return h.toString(16).padStart(16, '0');
+};
 const toBytes = (v) => (v instanceof Uint8Array ? v : new TextEncoder().encode(typeof v === 'string' ? v : JSON.stringify(v)));
 
 // http(s): a conditional request when the entry has a validator

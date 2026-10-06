@@ -24,6 +24,8 @@ const fixtures = [...walk(fixturesDir)].map((p) => {
     // the fixture's own settings (plan P1-03; its golden profile is native-only)
     settings: cfg.settings ?? {},
     inputs: labels ? { labels: `[${labels.join(',')}]` } : undefined,
+    // its relative paths (#use modules, images) resolve beside it
+    baseUrl: `/test/fixtures/${relative(fixturesDir, dirname(p))}/`,
   };
 });
 
@@ -57,7 +59,7 @@ for (const f of fixtures) {
   test(`audit ${f.name}`, async ({ page }) => {
     await page.goto('/test/e2e/harness.html');
     await page.waitForFunction(() => window.__tsrReady);
-    const opts = { widthPx: 300, settings: f.settings, inputs: f.inputs };
+    const opts = { widthPx: 300, settings: f.settings, inputs: f.inputs, baseUrl: f.baseUrl };
     const res = await page.evaluate(
       async ({ source, opts }) => await window.__tsr.typeset(source, opts),
       { source: f.source, opts },

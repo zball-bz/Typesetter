@@ -5,8 +5,10 @@ T2-constructor-ir.md`; decision MD-04, which amends v2 §2), with P2-03 (the
 bound constructor ABI and the registry: CALL attributes bind by key), P2-04
 (SPAN/AT on hole results), P2-12 (statements anywhere, keyword forms,
 content literals: IF/SCOPE/LOOP/LET, §3.1) and P2-13 (fragments: `m```,
-`m.parse`, `ctx.m.parse`, sidecar notes, §5.1). Later step: S10 (`#use`
-prologue frames).
+`m.parse`, `ctx.m.parse`, sidecar notes, §5.1). S10 (`#use` prologue
+frames) was not needed: P3-31 made `#use(spec)` a call of the async std
+function `use`, run in document order like any statement
+(host-protocol-design §5b).
 
 ## 1. Shape
 

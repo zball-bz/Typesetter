@@ -43,10 +43,19 @@ namespace tsr {
 namespace {
 enum class Pos : u8 { Blocks, Inline, Opaque };
 
+// nothing in it: empty text, or a sequence of nothing (a splice that
+// rendered nothing — #use(…), plan P3-31)
+bool emptyContent(const ContentNode* k, const Interner& strs) {
+  if (k->kind == Kind::text) return strs.get(k->str).empty();
+  if (k->kind != Kind::seq) return false;
+  for (const ContentNode* c : k->kids)
+    if (!emptyContent(c, strs)) return false;
+  return true;
+}
 bool emptyPara(const ContentNode* p, const Interner& strs) {
   if (p->kind != Kind::para) return false;
   for (const ContentNode* k : p->kids)
-    if (k->kind != Kind::text || !strs.get(k->str).empty()) return false;
+    if (!emptyContent(k, strs)) return false;
   return true;
 }
 

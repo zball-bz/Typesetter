@@ -66,7 +66,7 @@ From `engine/src/syntax/syntax.def`, syntax version 4. Behaviour for each body m
 
 ## Keywords and reserved splice heads
 
-Keyword forms (P2-12): `if`, `for`, `while`. Not yet supported as heads: `if`, `else`, `for`, `while`, `use`, `let`. Reserved: `break`, `case`, `catch`, `class`, `const`, `continue`, `debugger`, `default`, `delete`, `do`, `export`, `extends`, `finally`, `function`, `import`, `in`, `instanceof`, `new`, `return`, `switch`, `throw`, `try`, `typeof`, `var`, `void`, `with`, `yield`, `static`, `enum`, `await`.
+Keyword forms (P2-12): `if`, `for`, `while`. Not yet supported as heads: `if`, `else`, `for`, `while`, `let`. Reserved: `break`, `case`, `catch`, `class`, `const`, `continue`, `debugger`, `default`, `delete`, `do`, `export`, `extends`, `finally`, `function`, `import`, `in`, `instanceof`, `new`, `return`, `switch`, `throw`, `try`, `typeof`, `var`, `void`, `with`, `yield`, `static`, `enum`, `await`.
 
 ## Token tags
 

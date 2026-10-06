@@ -1,0 +1,34 @@
+top pid=0 units=1
+ unit text indent=0su
+  word "A" w=513su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "mod" w=1537su pen=INF @[23,80)
+  hyphen bw=513su pen=0.70 @[23,80)
+  word "ule" w=1537su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "brings" w=3073su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "a" w=513su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "fence" w=2561su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "and" w=1537su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "a" w=513su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "math" w=2049su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "func" w=2049su pen=INF @[23,80)
+  hyphen bw=513su pen=0.70 @[23,80)
+  word "tion" w=2049su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "(plan" w=2561su pen=INF @[23,80)
+  space w=257su stretch=1 @[23,80)
+  word "P3-31):" w=3585su pen=INF @[23,80)
+top pid=1 units=1
+ unit text indent=0su
+  word "LOUD" w=2049su pen=INF BOLD @[82,104)
+  space w=257su stretch=1 BOLD @[82,104)
+  word "TEXT" w=2049su pen=INF BOLD @[82,104)
+top pid=2 units=1
+ unit math indent=0su w=5522su asc=967su desc=76su

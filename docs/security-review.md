@@ -199,3 +199,71 @@ written through the same escaping inline writer as any paragraph, and the
 fence's marker is escaped text.
 
 **Conclusion: closed.**
+
+## Addendum P3-31: declared inputs, the project driver, `#use`
+
+**Surfaces.**
+- The declared input `labels` (`inputs.def`): other documents' label
+  manifests, given by the host (`tsr2_set_input`, `{inputs}`, the project
+  driver) or read for the document by `$.labels.import(src)`.
+- The settings `project.doc`, `project.starts`, `project.urls`.
+- `#use(spec)`: a JavaScript module the host imports for the document, and
+  the providers it registers.
+
+**Inputs.** A manifest is untrusted data even when the host passes it: it
+is another document's output, possibly stale or hand-edited. The decoder
+(`semantic/manifest.cc`) validates before anything is kept:
+- the shape (`{v: 1, doc, totals, labels}`, each label's fields typed);
+- sizes: at most 4096 manifests, 2^20 labels each, labels and anchors of
+  256 bytes, 16 number groups of 16 components;
+- integers within ±10^9.
+
+A malformed blob is refused whole (`input-labels`, warning) and nothing is
+imported. Fuzz target `fuzz_inputs` runs the decoder and the resolver on
+arbitrary blobs. A manifest's strings reach the page only as text (a title,
+a number: escaped by the writers) or as an id after `#` (the attribute
+writer escapes it). The page of another document is a link's URL: the
+`project.urls` value, or the doc key when there is none. Until this step it
+was written as the href's head unchecked, so a manifest whose `doc` was
+`javascript:…` would have made every reference into it a script link.
+`AnchorNamer::href(doc, label)` now applies the link policy
+(`url_policy.def`, as `#link`'s URL at ingest), and a page outside it is
+none, so the reference points into this page. Test: `unitRenderFragment`.
+
+`$.labels.import(src)` reads through the document's resource job, with the
+locator and confinement of `$.load` (requester `input`). The script gets
+nothing back, so a document cannot read files through it that `$.load`
+could not.
+
+**`#use` modules.** A module is the document's code (§0) and is trusted as
+the document is: in Node it runs in the exporting process with that
+process's rights; in a browser it runs in the session's worker. The review
+guards what a trusted author can get wrong by accident:
+- **Resolution.** The spec resolves like a load (use `load`). In a browser
+  that means http(s) only, so no `data:`, `blob:` or `javascript:`. In Node
+  the file must lie below the document root or the document's folder, by
+  path and by real path (`readFileConfined`), so a symbolic link may not
+  lead out. A denied or failed module is a `use-module` warning and a
+  `denied` or `failed` row (role `module`) in the manifest.
+- **The import.** The module is imported from its URL with `?h=<hash of the
+  bytes read>`. The hash keys the module instance; it is not an integrity
+  check. In a browser the import fetches the URL again, so a server that
+  answers differently the second time is imported as it answers then (the
+  same trust as any script the page loads). The module's own imports are
+  its code, not a document reference, so they are not confined (by §0).
+- **Registration.** The module registers only through this execution's `$`
+  and `std`. Its providers are this job's, for `docProviders` kinds only
+  (`codeTokens`, `boxInfo`; `ResourceJob.register` refuses the others),
+  and answered `store: false`, so nothing it answers reaches another
+  document through the Session.
+- **Retention.** Each distinct module content is a new instance that the
+  worker (or the Node process) keeps until it ends. An editing session that
+  changes a module often keeps its old instances. **Accepted**: the cost is
+  bounded by the edits, and a host recycles its worker.
+
+**Determinism** is a correctness property, not a security one (D-I08). The
+recorder executes every fixture twice in one process; the `checkExecution`
+policy does the same for a host in dev mode (`exec-nondeterministic`).
+
+**Conclusion: closed.** One defect was fixed: the unchecked page of another
+document.

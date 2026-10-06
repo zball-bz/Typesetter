@@ -213,13 +213,14 @@ static u32 addString(RawOps& r, std::string s) {
 // ABI's: ctor-arg, ctor-error, hook-recursion; P2-13 a fragment's:
 // fragment-splice, fragment-parse — its parser's, "code: message"; P3-14
 // table-cells: a row longer than its table's columns; P3-31 labels-import,
-// use-module: a declared input or a module the host could not read)
+// use-module: a declared input or a module the host could not read;
+// exec-nondeterministic: a dev-mode second execution wrote other ops)
 static const char* execDiagCode(std::string_view code) {
   static const char* const kCodes[] = {"splice-undefined", "splice-function", "splice-object", "script-error",
                                        "script-syntax", "region-error", "fence-error", "bib-load",
                                        "ctor-arg", "ctor-error", "hook-recursion", "row-spans-markup",
                                        "style-in-value", "fragment-splice", "fragment-parse", "table-cells",
-                                       "labels-import", "use-module"};
+                                       "labels-import", "use-module", "exec-nondeterministic"};
   for (const char* c : kCodes)
     if (code == c) return c;
   return "script-diag";

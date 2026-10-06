@@ -281,7 +281,8 @@ As built (design T9 A7, T3 S7; INTEGRATION: T9's transport, T3's semantics):
 - Settings: `project.doc` (its key), `project.starts` ({doc: {counter: n}}:
   its own row offsets its counters; the others' are added to the numbers of
   their labels), `project.urls` ({doc: url}: an external reference links to
-  `url#<id>`, the doc key when unset).
+  `url#<id>`, the doc key when unset; a page outside the link policy,
+  `url_policy.def`, is none — the security review's P3-31 addendum).
 - Resolve: a reference finds a local label first, then a citation key, then
   another document's label (`ref-shadowed`, info, when a local one hides
   it); an external label is formatted with this document's class templates,
@@ -304,6 +305,36 @@ As built (design T9 A7, T3 S7; INTEGRATION: T9's transport, T3's semantics):
   (requester `input`) and adds it to the labels input before Ingest; the
   script gets nothing back; a failure is `labels-import`. A recorded
   fixture declares the same file in its `inputs`.
+
+## 5b. Modules: `#use` (plan P3-31; D-I08)
+
+As built:
+- `#use(spec)` is the async std function `use` (schema `stdlib.asyncFunctions`):
+  a statement-position splice whose value is nothing. The executor's
+  `host.use(spec)` asks the document's resource job for the module —
+  `ResourceJob.module(src)` resolves it with the one locator (use `load`:
+  http(s) in a browser; in Node a file below the document root or folder,
+  by real path), reads it through the cache, records a `module` row in the
+  manifest, and `import()`s its URL with `?h=<FNV-1a 64 of its bytes>`. A
+  changed module is a new URL; an unchanged one is the same instance,
+  shared by the worker's documents; its own relative imports resolve
+  against it as usual.
+- Registration, with the `$` of this execution: the default export is
+  called as `default($, std)` (may be async); `fences` → `$.fence`,
+  `regions` → `$.region`, `providers: [{kind, provider}]` →
+  `job.register(kind, provider)`: a document provider of this job only,
+  for `docProviders` kinds, consulted before the host's. A module that
+  cannot be read, is denied, or throws is `use-module` (warning) at the
+  `#use`, and the document goes on without it.
+- Determinism (D-I08): a module keeps no mutable state across executions —
+  each execution passes a fresh `$`. The recorder (`tools/record-fixtures.mjs`)
+  executes every fixture twice in one process and fails on other bytes
+  (`NONDETERMINISTIC`); the policy row `checkExecution` (createEngine's
+  `policy`, renderTsm's `policy`) makes the worker or Node renderer execute
+  again with a fresh job and report other ops as `exec-nondeterministic`.
+- Base: a session's relative paths resolve against `opts.baseUrl` of
+  `typeset` (default `document.baseURI`); the e2e audit gives each fixture
+  its folder.
 
 ## 6. ABI
 

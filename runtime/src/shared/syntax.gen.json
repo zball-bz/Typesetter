@@ -225,7 +225,6 @@
    "else",
    "for",
    "while",
-   "use",
    "let"
   ],
   "reserved": [

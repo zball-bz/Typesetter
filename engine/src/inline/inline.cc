@@ -597,7 +597,6 @@ struct InlineParser {
         const bool form = keywordIndex(head) >= 0;
         std::string msg = form ? "#" + std::string(head) + " needs (…) and a body: #" + std::string(head) +
                                      (head == "for" ? " (const x of xs) [ … ]" : " (condition) [ … ]")
-                          : head == "use"  ? std::string("#use is not supported yet (plan P3-31)")
                           : head == "else" ? std::string("#else follows a body: #if (c) [ … ] else [ … ]")
                           : head == "let"  ? std::string("#let starts a line: #let name = value")
                           : "'" + std::string(head) + "' is a reserved word and cannot start a splice";

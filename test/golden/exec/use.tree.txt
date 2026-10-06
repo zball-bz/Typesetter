@@ -1,0 +1,9 @@
+doc @[0,131) [base]
+  para @[23,80) [base]
+    text @[23,80) [base] str="A module brings a fence and a math function (plan P3-31):"
+  para @[82,104) [base]
+    styled @[82,104) [BOLD]
+      text @[82,104) [BOLD] str="LOUD TEXT"
+  mathblock @[106,131) [base]
+    mathsrc @[108,129) [base] src="sq(a) + sq(b) = sq(c)"
+decl math.fn name="sq" flow=0 @[0,21) ext.params="x" ext.body="#x^2"

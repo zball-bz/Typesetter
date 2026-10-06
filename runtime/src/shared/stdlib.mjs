@@ -862,6 +862,23 @@ export function createStd(host) {
     return one(x);
   };
   std.plain = plain;
+  // #use(spec) (plan P3-31; D-I08): a module's fences, regions, providers and
+  // declarations from here on — the host imports it (the document's base;
+  // by URL and content hash); it renders nothing. A module that cannot be
+  // read or that throws is use-module, and the document goes on without it
+  std.use = Object.defineProperty(async (spec) => {
+    const at = { s: here.s, e: here.e };
+    if (!host.use) {
+      ob.diag(1, 'use-module', `#use(${JSON.stringify(String(spec))}): this host loads no modules`, at.s, at.e);
+      return [];
+    }
+    try {
+      await host.use(spec);
+    } catch (e) {
+      ob.diag(1, 'use-module', `#use(${JSON.stringify(String(spec))}): ${e?.message ?? e}`, at.s, at.e);
+    }
+    return [];
+  }, 'name', { value: 'use' });
   // m`…` (plan P2-13): markup, parsed by the engine and run on the
   // interpreter — the template's raw strings (a backslash is markup's
   // escape), each interpolation a value in place (`#(__mK);` in the text,

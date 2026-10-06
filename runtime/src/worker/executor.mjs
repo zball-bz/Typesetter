@@ -89,6 +89,18 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
       if (opts.inputs) (opts.inputs[name] ??= []).push(text);
     },
     wait: (p) => pendingInputs.push(p),  // (what execute settles before it finishes)
+    // (plan P3-31; D-I08) #use(spec): the module the host resolves and
+    // imports (ResourceJob.module: by URL and content hash); it registers
+    // with the $ of this execution — its default export called as ($, std),
+    // its fences and regions declared, its providers this document's
+    use: async (spec) => {
+      const job = await jobOf(opts);
+      const mod = await job.module(String(spec));
+      if (typeof mod.default === 'function') await mod.default(dollar, S.std);
+      for (const [tag, fn] of Object.entries(mod.fences ?? {})) dollar.fence(tag, fn);
+      for (const [name, fn] of Object.entries(mod.regions ?? {})) dollar.region(name, fn);
+      for (const { kind, provider } of mod.providers ?? []) job.register?.(kind, provider);
+    },
     // citations (notes-design.md §2; plans P2-07, P2-14): #bibliography(src)
     // loads its data — once per source: another collector naming it lists
     // the same rows —, formats each entry with the 'bib' format entry, each
@@ -462,7 +474,10 @@ async function importModule(jsText) {
 // LowerProgram and its hole module (js is only read when the module is not
 // cached: a host passes a getter to skip copying it out of the engine).
 // opts: { baseUrl } (browser/worker) or { baseDir, rootDir } (Node) — where
-// #bibliography(src) and other document resources resolve.
+// #bibliography(src) and other document resources resolve. opts.check
+// (plan P3-31; D-I08, a host's dev mode): a fresh host for a second
+// execution; other ops from it — a #use module that kept state across
+// executions — are an exec-nondeterministic warning.
 export async function execute(compiled, opts = {}) {
   const prog = decodeProgram(compiled.program);
   const ob = new OpBuf();
@@ -481,5 +496,13 @@ export async function execute(compiled, opts = {}) {
     helpers.failRest(e);  // an unframed statement threw (D-I10)
   }
   await Promise.all(pendingInputs);  // (plan P3-31) its declared inputs, all read
+  if (!opts.check) return ob.finalize();
+  const first = ob.finalize();
+  const again = await execute(compiled, { ...opts, host: opts.check(), inputs: {}, check: null });
+  if (sameBytes(first, again)) return first;
+  ob.diag(1, 'exec-nondeterministic',
+          'a second execution wrote other ops: a #use module keeps state across executions, or the document reads a clock');
   return ob.finalize();
 }
+
+const sameBytes = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);

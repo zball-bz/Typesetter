@@ -1,0 +1,9 @@
+#use("./use-lib.mjs")
+
+A module brings a fence and a math function (plan P3-31):
+
+```shout
+loud text
+```
+
+$ sq(a) + sq(b) = sq(c) $
