@@ -130,9 +130,8 @@ struct LineStream {
   const std::vector<u32>& blockStart;
   u32 nBlocks;
   const BreakResult& br;
-  LineWidths widths;   // the prefix beside a float, then the content width
-  bool narrowLeft;     // the float is on the left: narrowed lines shift right
-  Su left, width;      // the content box
+  const ParShape& shape;  // each line's slot in the content box
+  Su left;                // the content box's start
   u32 unitIdx;
   i32 cellIdx;
 };
@@ -167,14 +166,11 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     line.blockEnd = r.hi;
     line.itemBegin = r.ilo;
     line.itemEnd = r.ihi;
-    line.left = s.left;
-    line.width = s.width;
-    // the prefix beside a float
-    const bool narrowed = li < (size_t)s.widths.narrowK && s.widths.narrow > 0;
-    if (narrowed) {
-      line.width = s.widths.narrow;
-      if (s.narrowLeft) line.left += s.width - s.widths.narrow;
-    }
+    // its slot (plan P3-08: the paragraph's shape)
+    const LineSlot& slot = s.shape.at((u32)li);
+    line.left = s.left + slot.left;
+    line.width = slot.width;
+    const bool narrowed = li < s.shape.lines.size();
     line.srcSpan = f.span;
     line.endsWithHyphen = f.endsHyphen;
     if (first) {
@@ -191,7 +187,7 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     // shrinks when tight (the breaker counted on it) — one rule for every
     // stream
     const bool rigid = last || pol.align != LinePolicy::Align::Justify;
-    const double slackPx = (narrowed ? suToPx(s.widths.narrow) : pol.widthPx) - f.naturalPx;
+    const double slackPx = (narrowed ? suToPx(slot.width) : pol.widthPx) - f.naturalPx;
     // a line without stretchable glue (all URL pieces / one unbreakable
     // token) cannot be justified — TeX's underfull box; it sets ragged
     // rather than pretending (real-world-report.md)
@@ -224,7 +220,7 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
       line.left += cs;
       line.width -= cs;
     } else if (pol.align == LinePolicy::Align::Cell) {
-      Su slack = s.width - suCeilPx(f.naturalPx);
+      Su slack = slot.width - suCeilPx(f.naturalPx);
       Su shift = 0;
       if (slack > 0) {
         if (pol.cellAlign == 'c') shift = slack / 2;
@@ -299,15 +295,13 @@ class ExclusionMap {
   }
   // the line widths of a paragraph starting here: the prefix beside the
   // float, then the measure
-  LineWidths widths(Su lineWidth, bool& fromLeft) const {
-    LineWidths lw{lineWidth};
-    fromLeft = false;
-    if (remain_ > 0 && occl_ > 0 && occl_ < lw.constant - kRailMinLineSu) {
-      lw.narrow = lw.constant - occl_;
-      lw.narrowK = (u32)((remain_ + lead_ - 1) / lead_);
-      fromLeft = side_ == 1;
+  ParShape widths(Su lineWidth) const {
+    ParShape ps(lineWidth);
+    if (remain_ > 0 && occl_ > 0 && occl_ < lineWidth - kRailMinLineSu) {
+      const Su narrow = lineWidth - occl_;
+      ps.lines.assign((size_t)((remain_ + lead_ - 1) / lead_), LineSlot{side_ == 1 ? lineWidth - narrow : 0, narrow});
     }
-    return lw;
+    return ps;
   }
   // the paragraph's lines, counted in baseLeading
   void consume(size_t lines) {
@@ -391,8 +385,8 @@ class DocLayout {
   // keyed by exactly the DP inputs, shared across documents — the editing
   // loop's fast path). A run wider than the line is set Overfull on a line
   // of its own (the final-pass rescue) and reported once per stream.
-  BreakResult breakStream(const std::vector<BreakBlock>& blocks, const HList& h, LineWidths lw) {
-    BreakResult r = breakLinesCached(blocks, lw, bparams, memo_);
+  BreakResult breakStream(const std::vector<BreakBlock>& blocks, const HList& h, const ParShape& shape) {
+    BreakResult r = breakLinesCached(blocks, shape, bparams, memo_);
     if (!r.overfullLines.empty()) {
       Span sp{};
       for (const ColdRec& c : h.cold)
@@ -458,9 +452,8 @@ class DocLayout {
     const FlowUnit& u = tb->units[b.unit];
     Leaf l = enter(false);
     const Su lineWidth = measure - b.x;
-    bool narrowLeft = false;
-    const LineWidths lw = excl.widths(lineWidth, narrowLeft);
-    lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, lw)});
+    const ParShape shape = excl.widths(lineWidth);
+    lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, shape)});
     excl.consume(lr.breaks.back().r.breakpoints.size());
     const BlockTraits::Align a = b.tr.align;
     LinePolicy pol;
@@ -474,8 +467,7 @@ class DocLayout {
     pol.marker = b.marker;
     pol.markerStyle = b.markerStyle;
     pol.anchor = b.carry ? b.carry : u.anchor;  // a block's label, else an inline one
-    py = materializeLines({u.hl, u.blockStart, (u32)u.blocks.size(), lr.breaks.back().r, lw, narrowLeft, b.x,
-                           lineWidth, b.unit, -1},
+    py = materializeLines({u.hl, u.blockStart, (u32)u.blocks.size(), lr.breaks.back().r, shape, b.x, b.unit, -1},
                           pol, metrics, cfg, baseLeading, py, fr->lines);
     leave(b, l);
   }
@@ -560,7 +552,7 @@ class DocLayout {
     resolveImageSize(std::get<ImageData>(u.data).size, cfg.widthPx - suToPx(b.x), imgW, imgH);
     i64 captionH = 0;
     for (const Flow& c : u.cells) {  // the caption breaks to the float width
-      cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{imgW}));
+      cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(imgW)));
       lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
       captionH += (i64)cellBreaks.back().breakpoints.size() * baseLeading;
     }
@@ -586,8 +578,9 @@ class DocLayout {
       pol.endSep = ci + 1 < (u32)u.cells.size() ? Sep::Newline : b.sepAfter;
       pol.widthPx = suToPx(imgW);
       pol.anchor = cell.anchor;
-      cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[ci], LineWidths{imgW},
-                             false, boxLeft, imgW, b.unit, (i32)ci},
+      const ParShape shape(imgW);
+      cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[ci], shape, boxLeft,
+                             b.unit, (i32)ci},
                             pol, metrics, cfg, baseLeading, cy, fr->lines);
     }
     if ((i64)fr->y + cy > floatBottomAbs) floatBottomAbs = (i64)fr->y + cy;
@@ -619,7 +612,7 @@ class DocLayout {
       lineWidthCode = lineWidth - sidebarW - gapSu;
       if (lineWidthCode < kRailMinLineSu) lineWidthCode = kRailMinLineSu;
       for (const TableCell& c : u.cells) {  // sidecar rows break to the sidebar
-        cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{sidebarW}));
+        cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(sidebarW)));
         lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
       }
     }
@@ -827,9 +820,9 @@ class DocLayout {
         pol.align = LinePolicy::Align::Ragged;
         pol.widthPx = suToPx(sidebarW);
         pol.anchor = cell.anchor;
-        const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[li],
-                                         LineWidths{sidebarW}, false, (Su)(b.x + lineWidthCode + gapSu),
-                                         sidebarW, b.unit, (i32)li},
+        const ParShape shape(sidebarW);
+        const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[li], shape,
+                                         (Su)(b.x + lineWidthCode + gapSu), b.unit, (i32)li},
                                         pol, metrics, cfg, baseLeading, rowTop, fr->lines);
         if (cy > py) py = cy;  // the equal-height constraint
       }
@@ -855,7 +848,7 @@ class DocLayout {
     Su cellW = colW - 2 * padX;
     if (cellW < kRailMinLineSu) cellW = kRailMinLineSu;
     for (const Flow& c : u.cells) {  // each cell breaks to its content width
-      cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{cellW}));
+      cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(cellW)));
       lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
     }
     const size_t nRows = u.cells.size() / td.cols;
@@ -884,9 +877,9 @@ class DocLayout {
         pol.endSep = c + 1 < td.cols ? Sep::Tab : r + 1 < nRows ? Sep::Row : b.sepAfter;
         const Su cellX = (Su)(b.x + (Su)c * colW + padX);
         const size_t before = fr->lines.size();
+        const ParShape shape(cellW);
         const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(),
-                                         cellBreaks[r * td.cols + c], LineWidths{cellW}, false, cellX, cellW,
-                                         b.unit, (i32)(r * td.cols + c)},
+                                         cellBreaks[r * td.cols + c], shape, cellX, b.unit, (i32)(r * td.cols + c)},
                                         pol, metrics, cfg, baseLeading, rowTop, fr->lines);
         if (fr->lines.size() == before) {
           // an empty cell still holds its place in content text: an empty

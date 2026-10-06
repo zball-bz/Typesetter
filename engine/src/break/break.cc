@@ -135,7 +135,7 @@ struct Search {
   const std::vector<BItem>& it;
   const Para& para;
   const std::vector<i64>& bk;  // legal breaks; bk[0] = -1 (the start)
-  LineWidths widths;
+  const ParShape& shape;
   const CostParams& cp;
   std::vector<Node> pool;
 
@@ -148,7 +148,7 @@ struct Search {
     std::vector<u32> active{0}, next;
     // line classes: below `merged` the next line's width depends on the line
     // count; from `merged` on it does not
-    const u32 merged = widths.narrow > 0 ? widths.narrowK : 0;
+    const u32 merged = (u32)shape.lines.size();
     struct Slot {
       bool used = false;
       u32 line = 0;
@@ -170,7 +170,7 @@ struct Search {
       next.clear();
       for (u32 a : active) {
         const Node& nd = pool[a];
-        const LineFit f = para.fit(bk[nd.bi], to, widths.at(nd.line), cp, extraStretch);
+        const LineFit f = para.fit(bk[nd.bi], to, shape.at(nd.line).width, cp, extraStretch);
         if (f.overfull) {
           if (rescueFrom == ~0u ||
               better(nd.val, nd.line, a, pool[rescueFrom].val, pool[rescueFrom].line, rescueFrom))
@@ -219,7 +219,7 @@ struct Search {
 
 }  // namespace
 
-BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, LineWidths widths,
+BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, const ParShape& shape,
                        const BreakParams& params) {
   BreakResult res;
   const u32 n = (u32)it.size();
@@ -236,7 +236,7 @@ BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, LineWidths wid
     if (legal) bk.push_back(k);
   }
 
-  Search search{it, para, bk, widths, params.cost, {}};
+  Search search{it, para, bk, shape, params.cost, {}};
   u32 best = ~0u;
   const bool tol = params.tolerance >= 0;
   if (tol) {
@@ -283,11 +283,11 @@ BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, LineWidths wid
   return res;
 }
 
-BreakResult breakLines(const std::vector<BreakBlock>& blocks, LineWidths widths,
+BreakResult breakLines(const std::vector<BreakBlock>& blocks, const ParShape& shape,
                        const BreakParams& params) {
   std::vector<BItem> items;
   blocksToItems(blocks, items);
-  return breakItems(items, (u32)blocks.size(), widths, params);
+  return breakItems(items, (u32)blocks.size(), shape, params);
 }
 
 // The process-wide KP memo (plans P0-11, P1-14; shared across documents —
@@ -298,12 +298,13 @@ BreakResult breakLines(const std::vector<BreakBlock>& blocks, LineWidths widths,
 // stored words exceed the budget.
 namespace {
 
-Key128 breakKey(const std::vector<BItem>& items, u32 nBlocks, LineWidths widths, const BreakParams& params) {
+Key128 breakKey(const std::vector<BItem>& items, u32 nBlocks, const ParShape& shape, const BreakParams& params) {
   Hasher h;
   h.bytes(items.data(), items.size() * sizeof(BItem));  // no padding (items.h static_assert)
   h.word(((u64)nBlocks << 32) | (u32)items.size());
-  h.word(((u64)(u32)widths.constant << 32) | (u32)widths.narrow);
-  h.word(widths.narrowK);
+  // the widths (the offsets break nothing)
+  h.word(((u64)(u32)shape.rest.width << 32) | (u32)shape.lines.size());
+  for (const LineSlot& l : shape.lines) h.word((u32)l.width);
   h.word(params.cost.exponent);
   h.dbl(params.cost.shrinkThreshold);
   h.dbl(params.cost.shrinkCoeff);
@@ -346,29 +347,30 @@ void BreakMemo::erase(std::unordered_map<u64, Entry>::iterator it) {
   map_.erase(it);
 }
 
-BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, LineWidths widths, const BreakParams& params,
+BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, const ParShape& shape, const BreakParams& params,
                              BreakMemo* memo) {
   static std::vector<BItem> items;  // scratch: rebuilt per call
   blocksToItems(blocks, items);
-  if (!memo) return breakItems(items, (u32)blocks.size(), widths, params);
+  if (!memo) return breakItems(items, (u32)blocks.size(), shape, params);
   // the complete input, serialized: the key bytes compared on a hit
   static std::string key;
   key.assign((const char*)items.data(), items.size() * sizeof(BItem));  // no padding (items.h static_assert)
   auto put = [&](const void* p, size_t n) { key.append((const char*)p, n); };
   const u32 nBlocks = (u32)blocks.size();
   put(&nBlocks, 4);
-  put(&widths.constant, sizeof widths.constant);
-  put(&widths.narrow, sizeof widths.narrow);
-  put(&widths.narrowK, sizeof widths.narrowK);
+  put(&shape.rest.width, sizeof shape.rest.width);
+  const u32 nLines = (u32)shape.lines.size();
+  put(&nLines, 4);
+  for (const LineSlot& l : shape.lines) put(&l.width, sizeof l.width);
   put(&params.cost.exponent, sizeof params.cost.exponent);
   put(&params.cost.shrinkThreshold, sizeof params.cost.shrinkThreshold);
   put(&params.cost.shrinkCoeff, sizeof params.cost.shrinkCoeff);
   put(&params.cost.cap, sizeof params.cost.cap);
   put(&params.tolerance, sizeof params.tolerance);
   put(&params.emergencyStretch, sizeof params.emergencyStretch);
-  const Key128 k = breakKey(items, nBlocks, widths, params);
+  const Key128 k = breakKey(items, nBlocks, shape, params);
   if (const BreakResult* hit = memo->find(k.lo ^ k.hi, key)) return *hit;
-  BreakResult r = breakItems(items, nBlocks, widths, params);
+  BreakResult r = breakItems(items, nBlocks, shape, params);
   memo->put(k.lo ^ k.hi, key, r);
   return r;
 }

@@ -19,13 +19,21 @@ struct BreakResult {
   u8 pass = 3;                     // the pass that found it (1 tolerance, 2 emergency, 3 final)
 };
 
-// Prefix form (figure-design.md §4, TeX parshape-in-lines): the first
-// `narrowK` lines run beside a float at the narrowed width.
-struct LineWidths {
-  Su constant;
-  Su narrow = 0;
-  u32 narrowK = 0;
-  Su at(u32 i) const { return (i < narrowK && narrow > 0) ? narrow : constant; }
+// A paragraph's shape (plan P3-08; design T6 ParShape, TeX's \parshape):
+// line i's slot in its container's content box — its start offset and its
+// width, `rest` after the explicit ones (floats on either side, stacked
+// floats of any widths, a float starting mid-paragraph, a hanging indent).
+// The breaker reads the widths, layout the offsets; the slot width is the
+// one definition of the measure.
+struct LineSlot {
+  Su left = 0, width = 0;
+};
+struct ParShape {
+  std::vector<LineSlot> lines;
+  LineSlot rest;
+  ParShape() = default;
+  explicit ParShape(Su width) : rest{0, width} {}
+  const LineSlot& at(u32 i) const { return i < lines.size() ? lines[i] : rest; }
 };
 
 // What the search reads besides the items (design T6 S2), defaults = today:
@@ -39,9 +47,9 @@ struct BreakParams {
   Su emergencyStretch = 0;
 };
 
-BreakResult breakItems(const std::vector<BItem>& items, u32 nBlocks, LineWidths widths,
+BreakResult breakItems(const std::vector<BItem>& items, u32 nBlocks, const ParShape& shape,
                        const BreakParams& params);
-BreakResult breakLines(const std::vector<BreakBlock>& blocks, LineWidths widths,
+BreakResult breakLines(const std::vector<BreakBlock>& blocks, const ParShape& shape,
                        const BreakParams& params);
 
 // The cached form (editor-design.md §2): KP reads only the items, the line
@@ -70,7 +78,7 @@ class BreakMemo {
   size_t bytes_ = 0;
   size_t budget_ = kBudgetBytes;
 };
-BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, LineWidths widths, const BreakParams& params,
+BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, const ParShape& shape, const BreakParams& params,
                              BreakMemo* memo);
 
 }  // namespace tsr

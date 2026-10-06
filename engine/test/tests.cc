@@ -1580,25 +1580,25 @@ static void unitBreakSemantics() {
   {  // discard: the space at the break is not in the line — an exact fit is free
     std::vector<BreakBlock> bl = {word(4000), space(), word(4000), space(), word(4000),
                                       space(), word(9000)};
-    BreakResult r = breakLines(bl, LineWidths{4000 + 256 + 4000 + 256 + 4000}, cp);
+    BreakResult r = breakLines(bl, ParShape{4000 + 256 + 4000 + 256 + 4000}, cp);
     CHECK((r.breakpoints == std::vector<u32>{6, 7}) && r.cost == 0);
   }
   {  // a Forbidden (BREAK_INF) block is never a break; the rescue keeps the
      // overlong run on a line of its own instead of collapsing the paragraph
     std::vector<BreakBlock> bl = {word(3000), space(), word(30000), space(), word(3000),
                                       space(), word(30000), space(), word(3000)};
-    BreakResult r = breakLines(bl, LineWidths{19200}, cp);
+    BreakResult r = breakLines(bl, ParShape{19200}, cp);
     // the rescue breaks from the best active node (lowest demerits): the
     // short word joins its run rather than standing alone underfull
     CHECK(!r.feasible && r.pass == 3 && (r.breakpoints == std::vector<u32>{4, 8, 9}));
     CHECK((r.overfullLines == std::vector<u32>{0, 1}));
     BreakMemo memo;
-    BreakResult c = breakLinesCached(bl, LineWidths{19200}, cp, &memo);
+    BreakResult c = breakLinesCached(bl, ParShape{19200}, cp, &memo);
     CHECK(c.breakpoints == r.breakpoints && c.overfullLines == r.overfullLines);
   }
   {  // the last line has fil stretch and normal shrink: slightly long is one line
     std::vector<BreakBlock> bl = {word(6000), space(), word(6000), space(), word(6800)};
-    BreakResult r = breakLines(bl, LineWidths{19200}, cp);  // 19312 > 19200, shrink 512
+    BreakResult r = breakLines(bl, ParShape{19200}, cp);  // 19312 > 19200, shrink 512
     CHECK((r.breakpoints == std::vector<u32>{5}));
   }
   {  // identical lines after discard report the latest break (the next line's
@@ -1610,7 +1610,7 @@ static void unitBreakSemantics() {
     for (int k = 0; k < 18; k++) bl.push_back(cjk);
     bl.push_back(space());
     bl.push_back(word(4000));
-    BreakResult r = breakLines(bl, LineWidths{18432}, cp);
+    BreakResult r = breakLines(bl, ParShape{18432}, cp);
     CHECK((r.breakpoints == std::vector<u32>{19, 20}));
   }
   {  // a Forced penalty breaks wherever it appears
@@ -1620,17 +1620,17 @@ static void unitBreakSemantics() {
     it[2].k = ItemKind::Box; it[2].w = 1000; it[2].block = 1;
     it[3].k = ItemKind::Glue; it[3].w = it[3].stretch = it[3].shrink = 256; it[3].block = 2;
     it[4].k = ItemKind::Box; it[4].w = 1000; it[4].block = 3;
-    BreakResult r = breakItems(it, 4, LineWidths{19200}, cp);
+    BreakResult r = breakItems(it, 4, ParShape{19200}, cp);
     CHECK((r.breakpoints == std::vector<u32>{1, 4}));
   }
   {  // cost is bounded and the power is an integer product
     std::vector<BreakBlock> bl = {word(100), space(), word(100)};
-    BreakResult r = breakLines(bl, LineWidths{19200}, cp);
+    BreakResult r = breakLines(bl, ParShape{19200}, cp);
     CHECK(r.cost == 0);  // a short last line costs nothing (fil)
     BreakParams sq = cp;
     sq.cost.exponent = 2;
     std::vector<BreakBlock> two = {word(9000), space(), word(9000), space(), word(9000)};
-    BreakResult a = breakLines(two, LineWidths{18432}, sq);
+    BreakResult a = breakLines(two, ParShape{18432}, sq);
     CHECK(a.cost >= 0 && a.cost <= sq.cost.cap * 2);
   }
 }
@@ -1665,7 +1665,7 @@ static void unitBreakMemo() {
         b.breakPenalty = (i % 2) ? 0.f : 1e9f;  // break at spaces only
       }
       bl.back().breakPenalty = 0;
-      LineWidths lw{(Su)(64 * (300 + rnd(200)))};
+      ParShape lw{(Su)(64 * (300 + rnd(200)))};
       BreakResult a = breakLinesCached(bl, lw, cp, &memo);
       BreakResult b = breakLines(bl, lw, cp);
       if (a.breakpoints != b.breakpoints || a.cost != b.cost || a.overfullLines != b.overfullLines) mismatches++;
