@@ -155,7 +155,9 @@ struct ImageData {
 struct MathData {  // a display formula
   const MathBox* box = nullptr;  // laid out in Measure (plan P1-25), once its text runs are measured
   StrRef tag = 0;  // "(n)" right-margin number
-  StrRef src = 0;  // its source (the copy contract)
+  StrRef src = 0;  // its source as written (the copy contract)
+  StrRef formula = 0;  // (plan P2-15) its source as the lexer reads it
+  u32 epoch = 0;       // its declaration epoch
   double sizePx = 0;
   Span span;
   StyleId style = 0;  // its context style (paint: colour)
@@ -213,12 +215,14 @@ inline double mathPenalty(const Config& cfg, u8 brkBefore) {
 
 // What resolveWidths needs to lay out a deferred formula (plan P1-13): the
 // document's arena, strings and styles.
+class MathEnv;
 struct ObjectEnv {
   Arena& arena;
   Interner& strs;
   StyleTable& styles;
   double docBasePx;
   DiagSink* diags = nullptr;  // a finalized layout's own diagnostics (coverage)
+  const MathEnv* math = nullptr;  // the document's math declarations (plan P2-15)
 };
 
 // Fills widths from the store; returns what is still missing (deduped).
@@ -242,6 +246,6 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
 std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
                        const StyleTable& styles);
 std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& strs);
-std::string dumpMathIRs(const std::vector<TopBlock>& tops, const Interner& strs);
+std::string dumpMathIRs(const std::vector<TopBlock>& tops, const Interner& strs, const MathEnv* math = nullptr);
 
 }  // namespace tsr

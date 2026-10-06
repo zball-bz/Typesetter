@@ -4,7 +4,8 @@ block 0 content [0,122) async
     CALL para [8,64)
       TEXT "A display formula inside a region is a block of its own:" [8,64)
     CALL para [66,86)
-      CALL mathblock [66,86) src="e = m c^2" label="eq-r"
+      CALL math [66,86) display=true label="eq-r"
+        CALL mathsrc [68,77) src="e = m c^2"
     CALL para [88,114)
       TEXT "and the paragraph goes on." [88,114)
 block 1 content [124,134)

@@ -20,6 +20,11 @@ struct ContentNode {
   u32 nrawmap = 0;
   std::vector<ArgVal> args;         // Str args re-pointed to doc interner
   std::vector<ContentNode*> kids;
+  // (plan P2-15; design T8 MathEnv) the positional declarations in force
+  // where it was emitted: those whose flow index is at most its EMIT's —
+  // a moved or cloned node keeps it, so a formula binds names as of its
+  // place in the flow
+  u32 declEpoch = 0;
 };
 
 // Typed attribute accessors (plan P0-06). Values that came through the ops

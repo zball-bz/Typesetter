@@ -4,6 +4,9 @@ doc @[0,88)
       para @[2,74)
         text @[2,28) str="An item with display math:\n"
         math @[31,56) display=1 src="x = a\n- b\n+ c"
+          text @[33,38) str="x = a"
+          text @[43,46) str="- b"
+          text @[51,54) str="+ c"
         text @[59,74) str="\nand text after."
     item @[75,87)
       para @[77,87)

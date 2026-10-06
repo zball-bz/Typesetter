@@ -11,9 +11,11 @@ doc @[0,833)
   para @[384,456)
     text @[384,401) str="An inline formula "
     math @[402,416) display=0 src="x^2"
+      text @[403,406) str="x^2"
     text @[417,456) str=" keeps no label; a display formula does:"
   para @[458,477)
     math @[458,477) display=1 src="E = m c^2" label="emc"
+      text @[460,469) str="E = m c^2"
   para @[479,557)
     splice @[479,557) expr="card(label: \"c1\", tone: \"cool\")" named
       arg @[512,556)

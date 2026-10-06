@@ -1,4 +1,5 @@
 #include "index.h"
+#include "../math/env.h"
 
 namespace tsr {
 
@@ -40,6 +41,12 @@ std::vector<std::string> splitKeys(std::string_view target) {
 
 void excerptInto(const ContentNode* n, const Interner& strs, std::string& out) {
   if (n->kind == Kind::comment) return;
+  // a formula is its source (plan P2-15, interim: TOC and reference text
+  // keep it; structured excerpts that clone it are T3's)
+  if (n->kind == Kind::mathinline || n->kind == Kind::mathblock) {
+    out += mathSource(n, strs).copy;
+    return;
+  }
   if (n->kind == Kind::text) {
     out += strs.get(n->str);
     return;

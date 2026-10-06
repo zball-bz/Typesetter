@@ -40,7 +40,8 @@ doc @[0,370) [base]
     text @[225,271) [base] str=" a comment %-- nested --% still comment "
   codeblock @[273,300) [base] lang="js"
     text @[279,296) [base] str="verbatim(island);"
-  mathblock @[302,315) [base] src="a + b = c"
+  mathblock @[302,315) [base]
+    mathsrc @[304,313) [base] src="a + b = c"
   rule @[317,320) [base]
   para @[322,370) [base]
     text @[322,370) [base] str="= not a heading, - not a list, > not a quote." raw=0:0,1:2,18:20,32:35

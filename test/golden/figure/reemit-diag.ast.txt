@@ -2,6 +2,7 @@ doc @[0,226)
   para @[0,117)
     text @[0,64) str="A refused image scheme is reported once, even though the formula "
     math @[65,82) display=0 src="f(x) \"if\" x > 0"
+      text @[66,81) str="f(x) \"if\" x > 0"
     text @[83,117) str=" makes emit run twice (plan P0-11)."
   region @[119,225) name="figure"
     para @[190,216)

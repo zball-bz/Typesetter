@@ -1239,10 +1239,10 @@ Theme steps: — · findings: 1
 | `math/segmentation-class-preview` | adhoc | medium | P3-25 | |
 | `math/inline-math-special-block` | adhoc | medium | P1-13, P3-26 | |
 | `math/display-math-unit` | adhoc | medium | P1-18, P3-26, P3-29 | |
-| `math/equation-numbering` | adhoc | low | P2-07, P2-15 | |
-| `math/math-island-oneoff-syntax` | adhoc | low | P2-06, P2-15 | |
-| `math/math-opaque-string` | adhoc | high | P2-15 | |
-| `math/closed-vocabulary` | adhoc | high | P2-15 | |
+| `math/equation-numbering` | adhoc | low | P2-07, P2-15 | grep:plan P2-15 |
+| `math/math-island-oneoff-syntax` | adhoc | low | P2-06, P2-15 | grep:plan P2-15 |
+| `math/math-opaque-string` | adhoc | high | P2-15 | grep:plan P2-15 |
+| `math/closed-vocabulary` | adhoc | high | P2-15 | grep:plan P2-15 |
 | `math/compiled-in-font` | adhoc | high | P1-23, P5-01 | |
 | `math/fence-pairs-ascii-only` | adhoc | medium | P3-24 | |
 | `math/math-leaves-bypass-style` | adhoc | medium | P1-25 | grep:plan P1-25 |
@@ -1259,7 +1259,7 @@ Theme steps: — · findings: 1
 | `math/dead-data-and-params` | issue | low | P1-22 | grep:plan P1-22 |
 | `math/doc-drift` | issue | low | P1-22 | grep:plan P1-22 |
 | `math/fallback-and-a11y` | issue | low | P3-26, P3-27 | |
-| `math/toc-excerpt-drops-math` | issue | low | P2-15 | |
+| `math/toc-excerpt-drops-math` | issue | low | P2-15 | grep:plan P2-15 |
 | `math/missed:0` | missed | high | P0-04, P2-11 | grep:plan P2-11 |
 | `math/missed:1` | missed | high | P1-24 | grep:plan P1-24 |
 | `math/missed:2` | missed | medium | P3-24 | |

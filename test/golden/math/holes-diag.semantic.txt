@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="49" data-e="126">Holes: <code class="tsr-mathsrc">$x^-3$</code>, <code class="tsr-mathsrc">$e^(4 pi i)$</code>, <code class="tsr-mathsrc">$2.5 + 1$</code> and <code class="tsr-mathsrc">$a + &quot;text&quot; + b$</code>.</p>
+<p data-pid="1" data-s="128" data-e="192">A failing hole stays in its formula: <code class="tsr-mathsrc">$y = ⚠ + 1$</code>.</p>
+<p data-pid="2" data-s="194" data-e="288">Values from code: <code class="tsr-mathsrc">$p^2 + -3$</code>, <code class="tsr-mathsrc">$alpha$</code> and <code class="tsr-mathsrc">$frac(1, 2)$</code>.</p>
+<p data-pid="3" data-s="290" data-e="334">A literal hash: <code class="tsr-mathsrc">$\#A$</code>; a stray one: <code class="tsr-mathsrc">$a # b$</code>.</p>
+</div>

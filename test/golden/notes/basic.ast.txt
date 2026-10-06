@@ -11,6 +11,7 @@ doc @[0,314)
       code @[76,82) str="code"
       text @[82,92) str=", and math "
       math @[93,104) display=0 src="x^2 + y^2"
+        text @[94,103) str="x^2 + y^2"
       text @[104,105) str="."
     text @[107,152) str=" continues after the marker, and a second note"
     note @[152,174)

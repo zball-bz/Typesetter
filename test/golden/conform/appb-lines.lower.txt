@@ -49,7 +49,8 @@ block 8 content [273,300) async
   FENCE async "js" body="verbatim(island);" at=[279,296) lines=null [273,300)
 block 9 content [302,315)
   CALL para [302,315)
-    CALL mathblock [302,315) src="a + b = c"
+    CALL math [302,315) display=true
+      CALL mathsrc [304,313) src="a + b = c"
 block 10 content [317,320)
   CALL rule [317,320)
 block 11 content [322,370)

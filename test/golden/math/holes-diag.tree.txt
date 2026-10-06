@@ -1,0 +1,61 @@
+doc @[49,334) [base]
+  para @[49,126) [base]
+    text @[49,55) [base] str="Holes: " raw=0:0,7:6
+    mathinline @[56,62) [base]
+      mathsrc @[57,59) [base] src="x^"
+      mathinline @[59,61) [base]
+        mathsrc @[59,61) [base] src="-3"
+    text @[62,63) [base] str=", " raw=0:0,2:1
+    mathinline @[64,83) [base]
+      mathsrc @[65,68) [base] src="e^("
+      mathinline @[68,76) [base]
+        mathsrc @[68,76) [base] src="4"
+      mathsrc @[76,82) [base] src=" pi i)"
+    text @[83,84) [base] str=", " raw=0:0,2:1
+    mathinline @[85,101) [base]
+      mathinline @[86,96) [base]
+        mathsrc @[86,96) [base] src="2.5"
+      mathsrc @[96,100) [base] src=" + 1"
+    text @[102,105) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[106,125) [base]
+      mathsrc @[107,111) [base] src="a + "
+      text @[111,120) [base] str="text"
+      mathsrc @[120,124) [base] src=" + b"
+    text @[125,126) [base] str="."
+  para @[128,192) [base]
+    text @[128,164) [base] str="A failing hole stays in its formula: " raw=0:0,37:36
+    mathinline @[165,191) [base]
+      mathsrc @[166,170) [base] src="y = "
+      error @[170,186) [base] message="ReferenceError: missing is not defined" code="script-error"
+      mathsrc @[186,190) [base] src=" + 1"
+    text @[191,192) [base] str="."
+  para @[194,288) [base]
+    text @[194,211) [base] str="Values from code: " raw=0:0,18:17
+    mathinline @[212,234) [base]
+      mathsrc @[212,234) [base] src="p^"
+      mathinline @[212,234) [base]
+        mathsrc @[212,234) [base] src="2"
+      mathsrc @[212,234) [base] src=" + "
+      mathinline @[212,234) [base]
+        mathsrc @[212,234) [base] src="-3"
+    text @[234,235) [base] str=", " raw=0:0,2:1
+    mathinline @[236,256) [base]
+      mathsrc @[236,256) [base] src="alpha"
+    text @[257,260) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[261,287) [base]
+      mathsrc @[261,287) [base] src="frac("
+      mathinline @[261,287) [base]
+        mathsrc @[261,287) [base] src="1"
+      mathsrc @[261,287) [base] src=", "
+      mathinline @[261,287) [base]
+        mathsrc @[261,287) [base] src="2"
+      mathsrc @[261,287) [base] src=")"
+    text @[287,288) [base] str="."
+  para @[290,334) [base]
+    text @[290,305) [base] str="A literal hash: " raw=0:0,16:15
+    mathinline @[306,311) [base]
+      mathsrc @[307,310) [base] src="\\#A"
+    text @[311,325) [base] str="; a stray one: " raw=0:0,15:14
+    mathinline @[326,333) [base]
+      mathsrc @[327,332) [base] src="a # b"
+    text @[333,334) [base] str="."

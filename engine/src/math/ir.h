@@ -58,13 +58,22 @@ struct MathIR {
   std::vector<MathDiag> diags;
 };
 
+struct MathScope;  // env.h: a document's declarations as of an epoch
+
 // Parses and binds one formula (calls expanded, rows checked). Never fails:
-// what does not parse is an Error leaf.
-MathIR parseMath(std::string_view src, Arena& arena);
+// what does not parse is an Error leaf. `scope` (plan P2-15): the document's
+// declarations in force (null: the built-ins only); `std.name` always means
+// the built-in. A formula's holes arrive as delimited units (env.h
+// MathSource): \x01…\x02 a parse-isolated math value, \x03…\x04 a string,
+// \x05…\x06 an error.
+MathIR parseMath(std::string_view src, Arena& arena, const MathScope* scope = nullptr);
 
 // the formula's diagnostics into the document's sink, at sub-spans of the
-// formula's span (at most 8, the rest summarized)
-void reportMathDiags(const MathIR& ir, std::string_view src, Span span, DiagSink& diags);
+// formula's span (at most 8, the rest summarized). `map` (plan P2-15,
+// env.h MathSource): (offset, source start, source end) triples placing an
+// offset in its fragment; empty: the span and its delimiters
+void reportMathDiags(const MathIR& ir, std::string_view src, Span span, DiagSink& diags,
+                     const std::vector<u32>* map = nullptr);
 
 // tsrc --stage=mathir: the tree and its diagnostics
 std::string dumpMathIR(const MathIR& ir, std::string_view src);
@@ -88,5 +97,8 @@ const MathRow* mathRow(std::string_view name);
 // the one validator (stdlib rows at start-up; the unit test asserts all pass)
 bool checkRow(const MathRow& row, std::string& why);
 const std::vector<MathRow>& mathRows();
+// a template body (stdlib.tsv rows, $.math.fn): #name is a parameter
+MNode* parseTemplateBody(std::string_view body, const std::vector<SlotSpec>& params, Arena& arena,
+                         const MathScope* scope, std::vector<MathDiag>* diags);
 
 }  // namespace tsr

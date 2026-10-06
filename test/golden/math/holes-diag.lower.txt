@@ -1,0 +1,70 @@
+lower v1 abi 3d3ccfbb docEnd 335 holes 11 module ccd2778bcdda991f
+piece 0 hole 0 js [144,166)
+piece 1 hole 1 js [168,189)
+piece 2 hole 2 js [191,226)
+piece 3 hole 3 js [228,256)
+piece 4 hole 4 js [258,292)
+piece 5 hole 5 js [294,330)
+piece 6 hole 6 js [332,367)
+piece 7 hole 7 js [369,411)
+piece 8 hole 8 js [413,442)
+piece 9 hole 9 js [444,471)
+piece 10 hole 10 js [473,506)
+block 0 stmt [0,11) user framed holes 0..1
+  STMT 0
+block 1 stmt [12,22) user framed holes 1..2
+  STMT 1
+block 2 stmt [23,47) user framed holes 2..3
+  STMT 2
+block 3 content [49,126) user framed holes 3..7
+  CALL para [49,126)
+    TEXT "Holes: " [49,55) raw=0:0,7:6
+    CALL math [56,62)
+      CALL mathsrc [57,59) src="x^"
+      FRAME [59,61) holes 3..4
+        HOLE 3 [59,61)
+    TEXT ", " [62,63) raw=0:0,2:1
+    CALL math [64,83)
+      CALL mathsrc [65,68) src="e^("
+      FRAME [68,76) holes 4..5
+        HOLE 4 [68,76)
+      CALL mathsrc [76,82) src=" pi i)"
+    TEXT ", " [83,84) raw=0:0,2:1
+    CALL math [85,101)
+      FRAME [86,96) holes 5..6
+        HOLE 5 [86,96)
+      CALL mathsrc [96,100) src=" + 1"
+    TEXT " and " [102,105) raw=0:0,1:0,5:3
+    CALL math [106,125)
+      CALL mathsrc [107,111) src="a + "
+      FRAME [111,120) holes 6..7
+        HOLE 6 [111,120)
+      CALL mathsrc [120,124) src=" + b"
+    TEXT "." [125,126)
+block 4 content [128,192) user framed holes 7..8
+  CALL para [128,192)
+    TEXT "A failing hole stays in its formula: " [128,164) raw=0:0,37:36
+    CALL math [165,191)
+      CALL mathsrc [166,170) src="y = "
+      FRAME [170,186) holes 7..8
+        HOLE 7 [170,186)
+      CALL mathsrc [186,190) src=" + 1"
+    TEXT "." [191,192)
+block 5 content [194,288) user framed holes 8..11
+  CALL para [194,288)
+    TEXT "Values from code: " [194,211) raw=0:0,18:17
+    HOLE 8 [212,234)
+    TEXT ", " [234,235) raw=0:0,2:1
+    HOLE 9 [236,256)
+    TEXT " and " [257,260) raw=0:0,1:0,5:3
+    HOLE 10 [261,287)
+    TEXT "." [287,288)
+block 6 content [290,334)
+  CALL para [290,334)
+    TEXT "A literal hash: " [290,305) raw=0:0,16:15
+    CALL math [306,311)
+      CALL mathsrc [307,310) src="\\#A"
+    TEXT "; a stray one: " [311,325) raw=0:0,15:14
+    CALL math [326,333)
+      CALL mathsrc [327,332) src="a # b"
+    TEXT "." [333,334)

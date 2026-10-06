@@ -3,7 +3,9 @@ doc @[0,134) [base]
     text @[2,13) [base] str="CRLF source"
   para @[17,70) [base]
     text @[17,55) [base] str="A paragraph that spans two lines with " raw=0:0,23:24,38:38
-    mathinline @[56,64) [base] src="a +\nb"
+    mathinline @[56,64) [base]
+      mathsrc @[57,60) [base] src="a +"
+      mathsrc @[62,63) [base] src="b"
     text @[65,70) [base] str=" math." raw=0:0,1:0
   codeblock @[74,101) [base] lang="js"
     text @[81,96) [base] str="let x = 1;\nx++"

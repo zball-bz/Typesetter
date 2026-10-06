@@ -7,10 +7,12 @@ block 1 content [28,99)
     TEXT "A short paragraph before a labelled display equation on the same sheet." [28,99)
 block 2 content [101,130)
   CALL para [101,130)
-    CALL mathblock [101,130) src="a^2 + b^2 = c^2" label="eq-pyth"
+    CALL math [101,130) display=true label="eq-pyth"
+      CALL mathsrc [103,118) src="a^2 + b^2 = c^2"
 block 3 content [132,163)
   CALL para [132,163)
-    CALL mathblock [132,163) src="e^(i pi) + 1 = 0" label="eq-euler"
+    CALL math [132,163) display=true label="eq-euler"
+      CALL mathsrc [134,150) src="e^(i pi) + 1 = 0"
 block 4 content [165,200)
   CALL para [165,200)
     TEXT "See " [165,168) raw=0:0,4:3

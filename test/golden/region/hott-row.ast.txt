@@ -3,9 +3,13 @@ doc @[0,126)
     para @[17,117)
       text @[17,51) str="Types | | Logic | Sets | Homotopy\n"
       math @[52,60) display=0 src="Id_(A)"
+        text @[53,59) str="Id_(A)"
       text @[61,74) str=" | | equality "
       math @[75,78) display=0 src="="
+        text @[76,77) str="="
       text @[79,80) str=" | "
       math @[81,98) display=0 src="(x,x) | x ∈ A"
+        text @[82,97) str="(x,x) | x ∈ A"
       text @[99,111) str=" | path space "
       math @[112,117) display=0 src="A^I"
+        text @[113,116) str="A^I"

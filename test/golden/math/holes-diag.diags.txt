@@ -1,0 +1,3 @@
+info math-hash @[329,330) a formula's # starts a hole (#name, #(expr)): this one is a literal (write \#)
+error script-error @[170,186) ReferenceError: missing is not defined
+warning overfull-line @[128,192) 1 line(s) hold a run wider than the measure

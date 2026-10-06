@@ -118,9 +118,9 @@ struct LegacyInline final : InlineSink {
         return;
       }
       case Kind::mathinline: {
-        StrRef srcRef = 0;
-        for (const ArgVal& a : n->args)
-          if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+        const MathSource ms = mathSource(n, strs);  // (plan P2-15)
+        const StrRef srcRef = strs.intern(ms.copy);
+        const MathScope scope{E.math, n->declEpoch};
         StyleId st = compose(n->style, ctx.add, ctx.mul);
         // CJK–formula boundary glue (App C: formulas are Latin-class)
         if (!u.legacy.empty() && u.legacy.back().isCjkChar()) {
@@ -129,8 +129,8 @@ struct LegacyInline final : InlineSink {
                         (u16)(BF_SPACE | BF_BOUND | ctx.addFlags), 1.0f, 0.0f, px);
         }
         std::vector<MathSeg> segs = layoutMathSegments(
-            strs.get(srcRef), /*display=*/false, fontPx(st), arena, strs,
-            diags, n->span, mathText);
+            ms.text, /*display=*/false, fontPx(st), arena, strs,
+            diags, n->span, mathText, true, &scope);
         for (size_t k = 0; k < segs.size(); k++) {
           if (k) {
             // the break-point glue: discardable at a break (BF_SPACE trims
@@ -646,7 +646,7 @@ MeasureRequest resolveWidthsLegacy(std::vector<TopBlock>& tops, MetricStore& sto
 std::vector<TopBlock> emitDocLegacy(const BoxTree& bt, Arena& arena, Interner& strs,
                                     StyleTable& styles, const Config& cfg, DiagSink& diags,
                                     const MeasureNeeds* mathText) {
-  EmitEnv env{arena, diags, strs, styles, cfg, mathText};
+  EmitEnv env{arena, diags, strs, styles, cfg, mathText, nullptr, bt.math};
   LegacyInline sink(env);
   return emitWith(bt, env, sink);
 }

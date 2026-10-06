@@ -1,0 +1,11 @@
+#let n = -3
+#let k = 2
+#let half = (x) => x / 2
+
+Holes: $x^#n$, $e^(#(2 * k) pi i)$, $#(half(5)) + 1$ and $a + #("text") + b$.
+
+A failing hole stays in its formula: $y = #(missing.value) + 1$.
+
+Values from code: #(math`p^${k} + ${n}`), #(math.sym("alpha")) and #(math.call("frac", 1, k)).
+
+A literal hash: $\#A$; a stray one: $a # b$.

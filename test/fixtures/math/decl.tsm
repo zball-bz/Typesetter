@@ -1,0 +1,16 @@
+Before any declaration, $a defeq b$ is a name between two variables.^[A footnote written here keeps that reading: $x defeq y$.]
+
+#{
+  $.math.symbol('defeq', {char: '≝', class: 'rel', claimCp: true})
+  $.math.fn('eqv', ['a', 'b'], '#a simeq #b')
+  $.math.fn('idtype', ['A', 'a', 'b'], 'Id_(#A)(#a, #b)')
+  $.math.fn('prd', ['x', 'A', 'B'], 'prod_(#x : #A) #B')
+  $.math.op('colim', {limits: 'display'})
+}
+
+After it, $a defeq b$ and a typed $a ≝ b$ are relations, and the HoTT
+macros expand: $eqv(A, B)$, $idtype(U, a, b)$ and $prd(x, A, B(x))$.
+
+$ colim_(i in I) F(i) $
+
+The built-in stays reachable: $std.frac(1, 2)$.

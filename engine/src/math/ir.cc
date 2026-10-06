@@ -1,10 +1,12 @@
 #include "ir.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <functional>
 
 #include "../../gen/math_rows.h"
 #include "dict.h"
+#include "env.h"
 
 namespace tsr {
 
@@ -12,7 +14,9 @@ namespace {
 
 // ---- tokenizer -------------------------------------------------------------
 struct Tok {
-  enum K : u8 { End, Num, Word, Op, Chr, Sup, Sub, Slash, Open, Close, Prime, Quote, Param } k = End;
+  // Hole / TextHole / ErrorHole (plan P2-15): a formula's hole units
+  enum K : u8 { End, Num, Word, Op, Chr, Sup, Sub, Slash, Open, Close, Prime, Quote, Param, Hole, TextHole,
+                ErrorHole } k = End;
   std::string text;                // Num/Word/Quote/Param
   const SymbolInfo* op = nullptr;  // Op (dictionary hit)
   u32 cp = 0;                      // Chr (direct char) / Open / Close
@@ -39,6 +43,28 @@ struct Lexer {
   std::string_view s;
   u32 i = 0;
   bool templ = false;  // a stdlib template: #name is a parameter
+  const MathScope* scope = nullptr;  // the document's declarations (plan P2-15)
+
+  // a dotted name is one word when it names something: a declared row, or
+  // a built-in reached as std.name (plan P2-15; `.` is otherwise a
+  // decimal point or punctuation, D-L13)
+  bool known(std::string_view name) const {
+    if (name.rfind("std.", 0) == 0) {
+      const std::string_view base = name.substr(4);
+      return base.find('.') == std::string_view::npos && (mathRow(base) || MathDict::byName(base));
+    }
+    return scope && scope->env && scope->env->find(name, scope->epoch);
+  }
+  // the end of the delimited unit opening at i (its closer's position, or
+  // the end of the source)
+  u32 unitEnd(char open, char close) const {
+    int depth = 0;
+    for (u32 j = i; j < s.size(); j++) {
+      if (s[j] == open) depth++;
+      else if (s[j] == close && --depth == 0) return j;
+    }
+    return (u32)s.size();
+  }
 
   Tok next() {
     Tok t = scan();
@@ -63,9 +89,31 @@ struct Lexer {
       i = j;
       return t;
     }
+    if (c == '\x01' || c == '\x03' || c == '\x05') {  // a hole unit (plan P2-15)
+      const char close = c == '\x01' ? '\x02' : c == '\x03' ? '\x04' : '\x06';
+      const u32 e = unitEnd(c, close);
+      t.k = c == '\x01' ? Tok::Hole : c == '\x03' ? Tok::TextHole : Tok::ErrorHole;
+      t.text = std::string(s.substr(i + 1, e - (i + 1)));
+      i = e < s.size() ? e + 1 : e;
+      return t;
+    }
+    if (c == '\\' && i + 1 < s.size() && (s[i + 1] == '$' || s[i + 1] == '#')) {  // \$ and \#: themselves
+      t.k = Tok::Chr;
+      t.cp = (u8)s[i + 1];
+      t.cls = kOrd;
+      i += 2;
+      return t;
+    }
     if (isLetter(c)) {
       u32 j = i;
       while (j < s.size() && isLetter(s[j])) j++;
+      // a dotted name (std.frac, a declared arrow.long): the longest that names something
+      for (u32 k = j, best = j; k < s.size() && s[k] == '.' && k + 1 < s.size() && isLetter(s[k + 1]);) {
+        k++;
+        while (k < s.size() && isLetter(s[k])) k++;
+        if (known(s.substr(i, k - i))) best = k;
+        j = best;
+      }
       t.k = Tok::Word;
       t.text = std::string(s.substr(i, j - i));
       t.adjOpen = j < s.size() && s[j] == '(';
@@ -149,11 +197,14 @@ struct Lexer {
       t.cp = (u8)c;
       return t;
     }
-    // a direct Unicode character: the class of its default dictionary row
+    // a direct Unicode character: the class of its default dictionary row,
+    // or of a declaration that claims it (plan P2-15)
     u32 cp = utf8Next(s, i);
     t.k = Tok::Chr;
     t.cp = cp;
     t.cls = MathDict::classOfCp(cp);
+    if (scope && scope->env)
+      if (const MathDeclRow* r = scope->env->claimed(cp, scope->epoch)) t.cls = r->cls;
     return t;
   }
 };
@@ -166,12 +217,59 @@ struct Parser {
   std::vector<MathDiag>* diags;
   const std::vector<SlotSpec>* params = nullptr;  // a template's (Param leaves)
   const std::vector<MathRow>* rows = nullptr;     // the registry being built, else the registry
+  const MathScope* scope = nullptr;               // the document's declarations (plan P2-15)
 
+  // a declared row of a name in force (std.-qualified names skip them)
+  const MathDeclRow* declared(std::string_view name) const {
+    if (!scope || !scope->env || name.rfind("std.", 0) == 0) return nullptr;
+    return scope->env->find(name, scope->epoch);
+  }
+  // a built-in's spelling: std.name is name
+  static std::string_view builtin(std::string_view name) {
+    return name.rfind("std.", 0) == 0 ? name.substr(4) : name;
+  }
   const MathRow* rowOf(std::string_view name) const {
+    if (const MathDeclRow* d = declared(name)) return d->k == MathDeclRow::Fn ? &d->row : nullptr;
+    name = builtin(name);
     if (!rows) return mathRow(name);
     for (const MathRow& r : *rows)
       if (r.name == name) return &r;
     return nullptr;
+  }
+  // a symbol name: a declared symbol, else the dictionary's
+  bool symbolOf(std::string_view name, u32& cp, u8& cls) const {
+    if (const MathDeclRow* d = declared(name)) {
+      if (d->k != MathDeclRow::Symbol) return false;
+      cp = d->cp;
+      cls = d->cls;
+      return true;
+    }
+    if (const SymbolInfo* e = MathDict::byName(builtin(name))) {
+      cp = e->cp;
+      cls = e->cls;
+      return true;
+    }
+    return false;
+  }
+
+  // a hole's math value (plan P2-15): the source between its delimiters,
+  // parsed on its own — its brackets and names cannot reach the formula
+  MNode* isolated(u32 a, u32 b) {
+    Parser sub{Lexer{lex.s.substr(0, b), a, false, lex.scope}, arena, {}, diags, nullptr, rows, scope};
+    sub.depth = depth;
+    sub.advance();
+    MNode* run = sub.parseRun();
+    while (sub.tok.k != Tok::End) {
+      const u32 at = sub.tok.pos;
+      sub.err(at, at + 1, "unexpected closing bracket");
+      run->kids.push_back(sub.error(at, at + 1));
+      sub.advance();
+      MNode* more = sub.parseRun();
+      for (MNode* k : more->kids) run->kids.push_back(k);
+    }
+    run->lo = a;
+    run->hi = b;
+    return run;
   }
 
   void advance() { tok = lex.next(); }
@@ -361,13 +459,33 @@ struct Parser {
         advance();
         return n;
       }
-      case Tok::Quote: {
+      case Tok::Quote:
+      case Tok::TextHole: {  // a string hole is quoted text (plan P2-15)
         MNode* n = mk(MNode::Text, lo, hi);
         n->txt = tok.text;
         n->cls = kOrd;
         n->textFont = true;
         advance();
         return n;
+      }
+      case Tok::ErrorHole: {  // a failed hole: its message, set as text
+        MNode* n = mk(MNode::Error, lo, hi);
+        n->txt = "\xE2\x9A\xA0 " + tok.text;
+        n->textFont = true;
+        advance();
+        return n;
+      }
+      case Tok::Hole: {
+        // a math hole: one unit as an operand or a script's base; in a run
+        // otherwise its atoms join the run (TeX macro semantics)
+        advance();
+        MNode* run = isolated(lo + 1, hi > lo + 1 ? hi - 1 : lo + 1);
+        if (items && tok.k != Tok::Sup && tok.k != Tok::Sub && tok.k != Tok::Prime && tok.k != Tok::Slash &&
+            !run->kids.empty()) {
+          for (size_t i = 0; i + 1 < run->kids.size(); i++) items->push_back(run->kids[i]);
+          return run->kids.back();
+        }
+        return run;
       }
       case Tok::Op: {
         const SymbolInfo* e = tok.op;
@@ -424,11 +542,23 @@ struct Parser {
     const u32 wpos = tok.pos, wend = tok.end;
     const bool call = tok.adjOpen;
     advance();
+    // a declared symbol or operator (plan P2-15): its row, as of the epoch
+    if (const MathDeclRow* d = declared(w)) {
+      if (d->k == MathDeclRow::Symbol) return atom(d->cp, d->cls, 0, wpos, wend);
+      if (d->k == MathDeclRow::Op) {
+        MNode* n = mk(MNode::Text, wpos, wend);
+        n->txt = w;
+        n->cls = kOp;
+        n->flags = d->flags;
+        n->textFont = true;
+        return n;
+      }
+    }
     const MathRow* row = rowOf(w);
     // a call binds only on an adjacent `name(` (design T8 S3)
     if (row && call) return parseCall(*row, wpos);
     if (row && row->bareCp) return atom(row->bareCp, row->bareCls, 0, wpos, wend);  // dot → ⋅
-    if (const SymbolInfo* e = MathDict::byName(w)) {
+    if (const SymbolInfo* e = MathDict::byName(builtin(w))) {
       if (e->flags & kFlagTextOp) {
         MNode* n = mk(MNode::Text, wpos, wend);
         n->txt = w;
@@ -469,8 +599,11 @@ struct Parser {
       MNode* n = nullptr;
       if (tok.k == Tok::Open || tok.k == Tok::Close || tok.k == Tok::Chr) n = atom(tok.cp, kOrd, 0, lo, hi);
       else if (tok.k == Tok::Op) n = atom(tok.op->cp, tok.op->cls, 0, lo, hi);
-      else if (tok.k == Tok::Word)
-        if (const SymbolInfo* e = MathDict::byName(tok.text)) n = atom(e->cp, e->cls, 0, lo, hi);
+      else if (tok.k == Tok::Word) {
+        u32 cp;
+        u8 cls;
+        if (symbolOf(tok.text, cp, cls)) n = atom(cp, cls, 0, lo, hi);
+      }
       if (n) advance();
       return n;
     }
@@ -736,9 +869,16 @@ bool checkRow(const MathRow& row, std::string& why) {
   return ok(row.body);
 }
 
-MathIR parseMath(std::string_view src, Arena& arena) {
+MNode* parseTemplateBody(std::string_view body, const std::vector<SlotSpec>& params, Arena& arena,
+                         const MathScope* scope, std::vector<MathDiag>* diags) {
+  Parser p{Lexer{body, 0, true, scope}, arena, {}, diags, &params, nullptr, scope};
+  p.advance();
+  return p.parseRun();
+}
+
+MathIR parseMath(std::string_view src, Arena& arena, const MathScope* scope) {
   MathIR ir;
-  Parser p{Lexer{src}, arena, {}, &ir.diags};
+  Parser p{Lexer{src, 0, false, scope}, arena, {}, &ir.diags, nullptr, nullptr, scope};
   p.advance();
   ir.root = p.parseRun();
   // a stray closing bracket at the top: an error leaf, then go on
@@ -755,19 +895,34 @@ MathIR parseMath(std::string_view src, Arena& arena) {
   return ir;
 }
 
-void reportMathDiags(const MathIR& ir, std::string_view src, Span span, DiagSink& diags) {
+void reportMathDiags(const MathIR& ir, std::string_view src, Span span, DiagSink& diags, const std::vector<u32>* map) {
   // the source sits inside its delimiters ($…$, $ … $): map bytes into the
-  // formula's span when the delimiters are the usual ones, else the span
-  const u32 extra = span.end > span.start ? span.end - span.start - (u32)src.size() : 0;
+  // formula's span when the delimiters are the usual ones, else the span;
+  // a fragmented formula (plan P2-15) maps through its fragments' spans
+  const u32 extra = span.end > span.start && span.end - span.start >= (u32)src.size()
+                        ? span.end - span.start - (u32)src.size() : 0;
   const bool mapped = extra > 0 && extra <= 4 && extra % 2 == 0;
   const u32 off = span.start + extra / 2;
+  auto at = [&](u32 x) -> u32 {
+    size_t k = 0;
+    for (size_t i = 0; i + 2 < map->size(); i += 3)
+      if ((*map)[i] <= x) k = i;
+    const u32 p = (*map)[k + 1] + (x - (*map)[k]);
+    return std::min(p, (*map)[k + 2]);
+  };
   size_t n = 0;
   for (const MathDiag& d : ir.diags) {
     if (n++ == 8) {
       diags.add(Sev::Info, "math-parse", span, std::to_string(ir.diags.size() - 8) + " more problem(s) in this formula");
       break;
     }
-    const Span sub = mapped ? Span{off + d.lo, off + (d.hi > d.lo ? d.hi : d.lo + 1)} : span;
+    Span sub = span;
+    if (map && !map->empty()) {
+      sub = {at(d.lo), at(d.hi > d.lo ? d.hi : d.lo + 1)};
+      if (sub.end <= sub.start) sub.end = sub.start + 1;
+    } else if (mapped) {
+      sub = {off + d.lo, off + (d.hi > d.lo ? d.hi : d.lo + 1)};
+    }
     diags.add(d.sev, d.code, sub, d.msg);
   }
 }

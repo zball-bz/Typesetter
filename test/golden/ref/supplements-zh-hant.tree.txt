@@ -26,4 +26,5 @@ doc @[0,307) [base]
         text @[272,273) [base] str="x"
       tcell @[239,285) [base]
         text @[276,277) [base] str="y"
-  mathblock @[287,307) [base] src="e = m c^2" label="eq-a" name="(1)"
+  mathblock @[287,307) [base] label="eq-a" name="(1)"
+    mathsrc @[289,298) [base] src="e = m c^2"

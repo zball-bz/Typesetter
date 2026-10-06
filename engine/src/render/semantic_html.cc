@@ -3,6 +3,7 @@
 #include "html_writer.h"
 #include "../resource/resource_table.h"
 #include "../elements/registry.h"
+#include "../math/env.h"
 
 namespace tsr {
 
@@ -161,8 +162,9 @@ struct Sem {
         return;
       case Kind::mathinline:
         // §9.2: source-text fallback until the semantic phase learns boxes
+        // (its source as written: fragments and holes, plan P2-15)
         out += "<code class=\"tsr-mathsrc\">$";
-        esc(out, argS(n, ArgK::src));
+        esc(out, mathSource(n, strs).copy);
         out += "$</code>";
         return;
       case Kind::error:
@@ -354,7 +356,7 @@ struct Sem {
       case Kind::mathblock:
         open("p", n, pid, "tsr-mathblock");
         out += "<code class=\"tsr-mathsrc\">$ ";
-        esc(out, argS(n, ArgK::src));
+        esc(out, mathSource(n, strs).copy);
         out += " $</code>";
         if (std::string_view tag = argS(n, ArgK::name); !tag.empty()) {
           // the equation number on the no-JS page too (P0-09 k)

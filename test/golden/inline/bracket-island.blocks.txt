@@ -156,7 +156,7 @@ top pid=5 units=1
   hyphen bw=513su pen=0.70 @[347,383)
   word "cape:" w=2561su pen=INF @[347,383)
   space w=257su stretch=1 @[347,383)
-  math "a $ b" w=1796su asc=725su desc=110su @[384,392)
+  math "a \\$ b" w=1796su asc=725su desc=110su @[384,392)
   space w=257su stretch=1 @[393,396)
   word "and" w=1537su pen=INF @[393,396)
   space w=257su stretch=1 @[393,396)

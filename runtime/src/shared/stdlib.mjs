@@ -795,6 +795,72 @@ export function createStd(host) {
   std.m.parseMany = (srcs, o = {}) =>
     host.fragments([...srcs].map(String), { scope: o.scope, bases: o.offsets });
 
+  // ---- math (plan P2-15; design T8 MathValue) -----------------------------------
+  // A formula is math{display?, label?} of mathsrc fragments and holes; the
+  // engine parses it, binding names as of where it is emitted. A hole's
+  // value: a number is a math value (its digits; an exponent as m times
+  // 10^(e)), a string text, content itself.
+  const mathNode = (kids, o = {}) => {
+    const attrs = {};
+    if (o.display) attrs.display = true;
+    if (o.label !== undefined && o.label !== null) attrs.label = String(o.label);
+    return ob.makeNode(KIND.math, attrs, kids);
+  };
+  const mathsrc = (src) => ob.makeNode(KIND.mathsrc, { src: String(src) }, []);
+  const mathNum = (n) => {
+    const t = String(n), e = t.indexOf('e');
+    return mathNode([mathsrc(e < 0 ? t : `${t.slice(0, e)} times 10^(${t.slice(e + 1).replace(/^\+/, '')})`)]);
+  };
+  std.mathHole = (x) => {
+    if (typeof x === 'number') {
+      if (!Number.isFinite(x)) throw new RangeError(`a formula's number is not finite: ${x}`);
+      return mathNum(x);
+    }
+    if (typeof x === 'bigint') return mathNum(x);
+    if (typeof x === 'string') return ob.makeText(x);
+    return x;
+  };
+  // a value as one hole (nothing for null/undefined)
+  const holeKids = (x) => {
+    const v = std.mathHole(x);
+    if (v === undefined || v === null) return [];
+    const xs = toContent(v);
+    return xs.length <= 1 ? xs : [ob.makeNode(KIND.seq, {}, xs)];
+  };
+  const mathName = /^(?:std\.)?[A-Za-z]+(?:\.[A-Za-z]+)*$/;
+  // math`x^${n}` (the literal parts fragments, as written; each ${} a hole),
+  // math(src, {display, label}); math.sym('⟨' | 'alpha') a symbol;
+  // math.call(name, ...args) a declared or built-in function, its arguments
+  // holes (bound as of the formula's place)
+  std.math = Object.assign((first, ...rest) => {
+    if (first && Array.isArray(first.raw)) {
+      const kids = [];
+      first.raw.forEach((part, i) => {
+        if (part) kids.push(mathsrc(part));
+        if (i < rest.length) kids.push(...holeKids(rest[i]));
+      });
+      return mathNode(kids);
+    }
+    if (typeof first === 'string') return mathNode([mathsrc(first)], isPlainObject(rest[0]) ? rest[0] : {});
+    throw new TypeError('math`…` or math(source, {display, label})');
+  }, {
+    sym: (x) => {
+      const t = String(x);
+      if (!mathName.test(t) && [...t].length !== 1) throw new TypeError(`math.sym: a symbol name or one character, not ${t}`);
+      return mathNode([mathsrc(t)]);
+    },
+    call: (name, ...args) => {
+      if (typeof name !== 'string' || !mathName.test(name)) throw new TypeError(`math.call: a function name, not ${name}`);
+      const kids = [mathsrc(`${name}(`)];
+      args.forEach((a, i) => {
+        if (i) kids.push(mathsrc(', '));
+        kids.push(...holeKids(a));
+      });
+      kids.push(mathsrc(')'));
+      return mathNode(kids);
+    },
+  });
+
   // ---- semantic declarations: canonical rows ----------------------------------
   // The JS sugar ends here: rows reach the engine in elements.json's form
   // (one DECL each, EXT `row` = its JSON); a template is content, carried as
@@ -979,7 +1045,41 @@ export function createStd(host) {
 
   // ---- $.ctor / $.region / $.fence / $.bib.format / $.std -------------------
   const missingNext = (name) => () => { throw new TypeError(`${name} has no previous definition to delegate to`); };
+  // $.math.symbol / op / fn (plan P2-15; design T8 MathEnv): math
+  // declarations, in force from here on — a formula binds names as of its
+  // place in the flow (positional DECLs math.symbol / math.op / math.fn)
+  const declName = (who, name) => {
+    if (typeof name !== 'string' || !/^[A-Za-z]+(?:\.[A-Za-z]+)*$/.test(name))
+      throw new TypeError(`$.math.${who}: a name is letters, or dotted words of letters`);
+  };
+  const mathApi = Object.freeze({
+    symbol(name, spec = {}) {
+      declName('symbol', name);
+      if (!isPlainObject(spec) || typeof spec.char !== 'string') throw new TypeError("$.math.symbol(name, {char, class, claimCp})");
+      const ext = { char: spec.char };
+      if (spec.class !== undefined) ext.class = String(spec.class);
+      if (spec.claimCp) ext['claim-cp'] = true;
+      ob.decl(DECLS['math.symbol'].id, here.s, here.e, name, ext, []);
+    },
+    op(name, spec = {}) {
+      declName('op', name);
+      const ext = {};
+      if (isPlainObject(spec) && spec.limits !== undefined) ext.limits = String(spec.limits);
+      ob.decl(DECLS['math.op'].id, here.s, here.e, name, ext, []);
+    },
+    fn(name, params, body, spec = {}) {
+      declName('fn', name);
+      if (!Array.isArray(params) || params.some((p) => typeof p !== 'string'))
+        throw new TypeError('$.math.fn(name, [params], body): params are names');
+      if (typeof body === 'function') throw new TypeError('$.math.fn: a body is data — a source string —, not a function');
+      if (typeof body !== 'string') throw new TypeError('$.math.fn(name, [params], body): body is a source string');
+      const ext = { params: params.join(','), body };
+      if (isPlainObject(spec) && spec.bare !== undefined) ext.bare = String(spec.bare);
+      ob.decl(DECLS['math.fn'].id, here.s, here.e, name, ext, []);
+    },
+  });
   const api = {
+    math: mathApi,
     // $.ctor(name, next => (call, ctx) => content): an override of a
     // constructor (or a new one); returns its trampoline
     ctor(name, factory) {

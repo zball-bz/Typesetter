@@ -1,0 +1,28 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {math} = __rt.std;
+return (async () => {
+let n, k, half;
+const __h = [
+() => { n = (
+ -3
+); },
+() => { k = (
+ 2
+); },
+() => { half = (
+ (x) => x / 2
+); },
+() => (__rt.std.mathHole(n)),
+() => (__rt.std.mathHole((2 * k))),
+() => (__rt.std.mathHole((half(5)))),
+() => (__rt.std.mathHole(("text"))),
+() => (__rt.std.mathHole((missing.value))),
+() => ((math`p^${k} + ${n}`)),
+() => ((math.sym("alpha"))),
+() => ((math.call("frac", 1, k))),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

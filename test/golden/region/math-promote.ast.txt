@@ -4,6 +4,7 @@ doc @[0,135)
       text @[8,64) str="A display formula inside a region is a block of its own:"
     para @[66,86)
       math @[66,86) display=1 src="e = m c^2" label="eq-r"
+        text @[68,77) str="e = m c^2"
     para @[88,114)
       text @[88,114) str="and the paragraph goes on."
   para @[124,134)

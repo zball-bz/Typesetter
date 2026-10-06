@@ -1,13 +1,17 @@
 doc @[0,202) [base]
   para @[0,117) [base]
     text @[0,12) [base] str="勾股定理 " raw=0:0,13:12
-    mathinline @[13,30) [base] src="x^2 + y^2 = z^2"
+    mathinline @[13,30) [base]
+      mathsrc @[14,29) [base] src="x^2 + y^2 = z^2"
     text @[31,76) [base] str=" 对一切直角三角形成立；调和平均 " raw=0:0,1:0,47:45
-    mathinline @[77,92) [base] src="2/(1/a + 1/b)"
+    mathinline @[77,92) [base]
+      mathsrc @[78,91) [base] src="2/(1/a + 1/b)"
     text @[93,117) [base] str=" 不超过几何平均。" raw=0:0,1:0
   para @[119,202) [base]
     text @[119,141) [base] str="Euler's identity links " raw=0:0,23:22
-    mathinline @[142,160) [base] src="e^(i pi) + 1 = 0"
+    mathinline @[142,160) [base]
+      mathsrc @[143,159) [base] src="e^(i pi) + 1 = 0"
     text @[161,165) [base] str=" with " raw=0:0,1:0,6:4
-    mathinline @[166,189) [base] src="phi = (1 + 5^(1/2))/2"
+    mathinline @[166,189) [base]
+      mathsrc @[167,188) [base] src="phi = (1 + 5^(1/2))/2"
     text @[190,202) [base] str=" in one line." raw=0:0,1:0

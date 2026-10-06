@@ -37,7 +37,8 @@ doc @[97,448) [base]
       styled @[342,348) [BOLD]
         text @[343,347) [BOLD] str="THIS"
       text @[349,353) [base] str=" WITH " raw=0:0,1:0,6:4
-      mathinline @[354,359) [base] src="X^2"
+      mathinline @[354,359) [base]
+        mathsrc @[355,358) [base] src="X^2"
   para @[365,448) [base]
     text @[365,412) [base] str="Broken markup is diagnosed where it was parsed: " raw=0:0,48:47
     text @[413,448) [base] str="an unclosed %-- comment"

@@ -4,6 +4,8 @@ doc @[0,136)
   para @[17,70)
     text @[17,55) str="A paragraph that spans\ntwo lines with "
     math @[56,64) display=0 src="a +\nb"
+      text @[57,60) str="a +"
+      text @[62,63) str="b"
     text @[65,70) str=" math."
   codeblock @[74,101) lang="js" body="let x = 1;\nx++"
   comment @[105,134) body=" a comment\nover lines "

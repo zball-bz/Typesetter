@@ -19,3 +19,4 @@ doc @[0,297)
       text @[261,266) str="x | y"
   para @[276,296)
     math @[276,296) display=1 src="e = m c^2" label="eq-a"
+      text @[278,287) str="e = m c^2"

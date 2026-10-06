@@ -333,7 +333,7 @@ static void unitFragment() {
   std::string why;
   CHECK(readLowerProgram(L.program, p, why));
   const std::string dump = dumpLowerProgram(L.program);
-  for (const char* k : {"CALL strong", "mathinline", "CALL ref", "CALL link", "CALL code", "HOLE 0", "HOLE 2"})
+  for (const char* k : {"CALL strong", "CALL math", "CALL mathsrc", "CALL ref", "CALL link", "CALL code", "HOLE 0", "HOLE 2"})
     CHECK(dump.find(k) != std::string::npos);
   CHECK(dump.find("TEXT \"#f(1)\"") != std::string::npos);  // JavaScript stays text
   CHECK(dump.find("[5,") != std::string::npos);              // spans moved by the base
@@ -807,7 +807,8 @@ static void unitTokenConformance(const fs::path& root) {
   // (engine tag, tree-sitter tag); "-" = no token. Reasons:
   //   jslex     splice heads / JS arguments / statements (no JS lexer; a
   //             /* comment */ in an argument list reads as a strong pair;
-  //             a one-line content literal is one statement token)
+  //             a one-line content literal is one statement token; a
+  //             template literal in an argument list reads as a code span)
   //   pairs     strict pairs and footnotes (regex pairs, opaque ^[…])
   //   lines     islands, links and comments across lines or nested; a
   //             paragraph's trailing ` <x>` (text: label-like-text, P2-06)
@@ -820,7 +821,8 @@ static void unitTokenConformance(const fs::path& root) {
       {"comment", "-", "lines"},           {"constant", "-", "pairs"},
       {"constant", "attribute", "pairs"},  {"embedded", "-", "jslex"},
       {"embedded", "function", "jslex"},   {"embedded", "keyword", "jslex"},
-      {"embedded", "attribute", "jslex"},  {"-", "label", "lines"},
+      {"embedded", "attribute", "jslex"},  {"embedded", "string", "jslex"},
+      {"-", "label", "lines"},
       {"function", "-", "jslex"},          {"function", "keyword", "jslex"},
       {"function", "label", "jslex"},      {"keyword", "-", "blocks"},
       {"keyword", "embedded", "blocks"},   {"label", "function", "lines"},

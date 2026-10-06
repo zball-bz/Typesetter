@@ -1,0 +1,1 @@
+{"headings":[],"regions":[],"fences":[],"labels":[],"diagnostics":[{"sev":"info","code":"math-hash","span":[329,330],"message":"a formula's # starts a hole (#name, #(expr)): this one is a literal (write \\#)"}]}

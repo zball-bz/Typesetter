@@ -2,14 +2,16 @@ doc @[383,540) [base]
   heading @[383,392) [base] level=1 label="methods"
     text @[383,392) [base] str="1 "
     text @[385,392) [base] str="Methods"
-  mathblock @[404,420) [base] src="a = b" label="eq-m" name="(1.1)"
+  mathblock @[404,420) [base] label="eq-m" name="(1.1)"
+    mathsrc @[406,411) [base] src="a = b"
   heading @[435,443) [base] level=1 label="proofs"
     text @[435,443) [base] str="A "
     text @[437,443) [base] str="Proofs"
   heading @[454,463) [base] level=2 label="lemmas"
     text @[454,463) [base] str="A.1 "
     text @[457,463) [base] str="Lemmas"
-  mathblock @[474,490) [base] src="c = d" label="eq-p" name="(A.1)"
+  mathblock @[474,490) [base] label="eq-p" name="(A.1)"
+    mathsrc @[476,481) [base] src="c = d"
   para @[492,540) [base]
     text @[492,495) [base] str="See " raw=0:0,4:3
     ref @[496,504) [base] target="methods" url="#tsr-methods"

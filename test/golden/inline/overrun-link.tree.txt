@@ -4,5 +4,6 @@ doc @[0,63) [base]
     link @[22,35) [base] url="u"
       text @[23,31) [base] str="price $5"
     text @[36,49) [base] str=" and a formula " raw=0:0,1:0,15:13
-    mathinline @[50,53) [base] src="x"
+    mathinline @[50,53) [base]
+      mathsrc @[51,52) [base] src="x"
     text @[54,63) [base] str=" after it." raw=0:0,1:0

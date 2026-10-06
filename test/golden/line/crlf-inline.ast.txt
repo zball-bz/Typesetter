@@ -14,6 +14,8 @@ doc @[0,169)
     para @[81,125)
       text @[81,87) str="quoted "
       math @[88,98) display=0 src="a +\nb"
+        text @[89,92) str="a +"
+        text @[96,97) str="b"
       text @[99,107) str=" math and "
       splice @[108,119) expr="em"
         arg @[112,118)
@@ -24,6 +26,8 @@ doc @[0,169)
       para @[131,167)
         text @[131,135) str="item "
         math @[136,146) display=0 src="c +\nd"
+          text @[137,140) str="c +"
+          text @[144,145) str="d"
         text @[147,150) str=" and "
         splice @[151,162) expr="(1 +\n2)"
         text @[163,167) str=" end."

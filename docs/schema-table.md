@@ -1,7 +1,7 @@
 <!-- GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit. -->
 # Ops vocabulary (generated)
 
-The kind table of document-model §2.1, generated from `engine/schema/schema.json`. Ops version 11, min compat 11.
+The kind table of document-model §2.1, generated from `engine/schema/schema.json`. Ops version 12, min compat 11.
 
 | id | kind | level | body | inline | attributes (writer order: domain) | constructor |
 |---|---|---|---|---|---|---|
@@ -39,6 +39,8 @@ The kind table of document-model §2.1, generated from `engine/schema/schema.jso
 | 31 | `slot` | inline | none | skip | `name`: str; `or`: str; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `slot(name, {options}, …)` |
 | 32 | `when` | transparent | position | container | `of`: str; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `when(of, {options}, …)` |
 | 33 | `each` | transparent | position | container | `of`: str; `sep`: str; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `each(of, {options}, …)` |
+| 34 | `math` | inline | data | object | `display`: bool; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `math({options}, …)` |
+| 35 | `mathsrc` | trivia | none | skip | `src`: str; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `mathsrc(src, {options}, …)` (sealed) |
 
 Derived constructors (`stdlib.ctors`): `strong({options}, …)`, `em({options}, …)`, `style({options}, …)`, `figure(body, {options}, …)`, `toc({options}, …)` (nullary), `glossary({options}, …)` (nullary), `notes({options}, …)` (nullary), `bibliography(src, {options}, …)`, `counterUpdate(counter, {options}, …)`, `node(kind, {options}, …)` (sealed). Std functions: `val`, `m`, `plain`.
 

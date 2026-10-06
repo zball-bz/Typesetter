@@ -12,13 +12,17 @@ doc @[0,125) [base]
         text @[43,51) [base] str="Homotopy"
     trow @[0,125) [base]
       tcell @[0,125) [base]
-        mathinline @[52,60) [base] src="Id_(A)"
+        mathinline @[52,60) [base]
+          mathsrc @[53,59) [base] src="Id_(A)"
       tcell @[0,125) [base]
       tcell @[0,125) [base]
         text @[66,74) [base] str="equality " raw=0:0,9:8
-        mathinline @[75,78) [base] src="="
+        mathinline @[75,78) [base]
+          mathsrc @[76,77) [base] src="="
       tcell @[0,125) [base]
-        mathinline @[81,98) [base] src="(x,x) | x ∈ A"
+        mathinline @[81,98) [base]
+          mathsrc @[82,97) [base] src="(x,x) | x ∈ A"
       tcell @[0,125) [base]
         text @[101,111) [base] str="path space " raw=0:0,11:10
-        mathinline @[112,117) [base] src="A^I"
+        mathinline @[112,117) [base]
+          mathsrc @[113,116) [base] src="A^I"

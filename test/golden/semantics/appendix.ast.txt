@@ -5,6 +5,7 @@ doc @[0,541)
     text @[385,392) str="Methods"
   para @[404,420)
     math @[404,420) display=1 src="a = b" label="eq-m"
+      text @[406,411) str="a = b"
   para @[422,433)
     splice @[422,433) expr="appendix()"
   heading @[435,443) level=1 label="proofs"
@@ -13,6 +14,7 @@ doc @[0,541)
     text @[457,463) str="Lemmas"
   para @[474,490)
     math @[474,490) display=1 src="c = d" label="eq-p"
+      text @[476,481) str="c = d"
   para @[492,540)
     text @[492,495) str="See "
     ref @[496,504) target="methods"

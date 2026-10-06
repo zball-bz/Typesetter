@@ -13,7 +13,8 @@ block 1 content [68,119)
     TEXT "A link around math: " [68,87) raw=0:0,20:19
     CALL link [88,106) url="u"
       TEXT "range " [89,94) raw=0:0,6:5
-      CALL mathinline [95,102) src="[0,1)"
+      CALL math [95,102)
+        CALL mathsrc [96,101) src="[0,1)"
     TEXT " is one link." [107,119) raw=0:0,1:0
 block 2 content [121,184) user framed holes 0..1
   CALL para [121,184)
@@ -44,9 +45,11 @@ block 4 content [280,345)
 block 5 content [347,406)
   CALL para [347,406)
     TEXT "Math decodes only the dollar escape: " [347,383) raw=0:0,37:36
-    CALL mathinline [384,392) src="a $ b"
+    CALL math [384,392)
+      CALL mathsrc [385,391) src="a \\$ b"
     TEXT " and " [393,396) raw=0:0,1:0,5:3
-    CALL mathinline [397,405) src="x \\, y"
+    CALL math [397,405)
+      CALL mathsrc [398,404) src="x \\, y"
     TEXT "." [405,406)
 block 6 content [408,495) user framed holes 1..2
   CALL para [408,495)
@@ -57,7 +60,8 @@ block 6 content [408,495) user framed holes 1..2
     HOLE 1 [463,479)
       TEXT "cost $3" [471,478)
     TEXT " then " [480,484) raw=0:0,1:0,6:4
-    CALL mathinline [485,488) src="x"
+    CALL math [485,488)
+      CALL mathsrc [486,487) src="x"
     TEXT " after." [489,495) raw=0:0,1:0
 block 7 content [497,506)
   CALL heading [497,506) level=1 label="tgt"

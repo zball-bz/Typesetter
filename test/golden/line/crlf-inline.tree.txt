@@ -13,7 +13,9 @@ doc @[0,167) [base]
   quote @[79,125) [base]
     para @[81,125) [base]
       text @[81,87) [base] str="quoted " raw=0:0,7:6
-      mathinline @[88,98) [base] src="a +\nb"
+      mathinline @[88,98) [base]
+        mathsrc @[89,92) [base] src="a +"
+        mathsrc @[96,97) [base] src="b"
       text @[99,107) [base] str=" math and " raw=0:0,1:0,10:8
       styled @[108,119) [EM]
         text @[112,118) [EM] str="x y" raw=0:0,2:5
@@ -22,7 +24,9 @@ doc @[0,167) [base]
     item @[129,167) [base]
       para @[131,167) [base]
         text @[131,135) [base] str="item " raw=0:0,5:4
-        mathinline @[136,146) [base] src="c +\nd"
+        mathinline @[136,146) [base]
+          mathsrc @[137,140) [base] src="c +"
+          mathsrc @[144,145) [base] src="d"
         text @[147,150) [base] str=" and " raw=0:0,1:0,5:3
         text @[151,162) [base] str="3"
         text @[163,167) [base] str=" end." raw=0:0,1:0

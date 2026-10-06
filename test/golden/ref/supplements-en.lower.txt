@@ -25,4 +25,5 @@ block 3 content [240,286) user framed async holes 1..2
       TEXT "x | y" [273,278) seps=2
 block 4 content [288,308)
   CALL para [288,308)
-    CALL mathblock [288,308) src="e = m c^2" label="eq-a"
+    CALL math [288,308) display=true label="eq-a"
+      CALL mathsrc [290,299) src="e = m c^2"

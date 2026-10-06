@@ -14,7 +14,7 @@
     "resolved at instantiation — a space, or nothing between two wide characters (TextRules joinsWide);",
     "code and verbatim bodies (body code / text) keep their newlines."
   ],
-  "opsVersion": 11,
+  "opsVersion": 12,
   "minCompat": 11,
   "ops": {
     "MAKE_TEXT": {"id": 1, "since": 6},
@@ -36,7 +36,7 @@
     "side": 30, "slot": 31, "syn": 32, "copy": 33, "class": 34, "ext": 35, "of": 36,
     "counter": 37, "set": 38, "step": 39, "add": 40, "numbering": 41, "supplement": 42, "key": 43,
     "sep": 44, "or": 45, "cited": 46, "weight": 47, "italic": 48, "decoration": 49, "fontRole": 50,
-    "baseline": 51, "size": 52, "hang": 53, "style": 54, "attach": 55
+    "baseline": 51, "size": 52, "hang": 53, "style": 54, "attach": 55, "display": 56
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -137,7 +137,11 @@
       "of": {"dom": "str"}}},
     "each": {"id": 33, "level": "transparent", "inline": "container", "body": "position", "since": 10, "ctor": {"params": ["attr:of"]}, "attrs": {
       "of": {"dom": "str"},
-      "sep": {"dom": "str"}}}
+      "sep": {"dom": "str"}}},
+    "math": {"id": 34, "level": "inline", "inline": "object", "body": "data", "since": 12, "ctor": {}, "attrs": {
+      "display": {"dom": "bool"}}},
+    "mathsrc": {"id": 35, "level": "trivia", "inline": "skip", "body": "none", "since": 12, "ctor": {"params": ["attr:src"], "sealed": true}, "attrs": {
+      "src": {"dom": "str"}}}
   },
   "universal": {
     "$comment": [

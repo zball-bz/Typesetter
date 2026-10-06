@@ -2,5 +2,6 @@ lower v1 abi 3d3ccfbb docEnd 60 holes 0 module none
 block 0 content [0,59)
   CALL para [0,59)
     TEXT "坏公式 " [0,9) raw=0:0,10:9
-    CALL mathinline [10,16) src="x^^2"
+    CALL math [10,16)
+      CALL mathsrc [11,15) src="x^^2"
     TEXT " 会退化为原样文本并携带诊断。" [17,59) raw=0:0,1:0

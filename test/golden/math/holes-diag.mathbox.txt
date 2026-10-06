@@ -1,0 +1,83 @@
+inline pid=0 "x^-3"
+hbox Ord w=1490 asc=964 desc=12
+  hbox Ord w=1490 asc=964 desc=12
+    glyph "x" Ord w=539 asc=475 desc=12 px=16
+    hbox Ord w=900 asc=503 desc=12 @(539,461)
+      glyph "−" Ord w=542 asc=194 desc=-165 px=11.2
+      glyph "3" Ord w=358 asc=503 desc=12 px=11.2 @(542,0)
+inline pid=0 "e^(4 pi i)"
+hbox Ord w=1615 asc=964 desc=12
+  hbox Ord w=1615 asc=964 desc=12
+    glyph "e" Ord w=511 asc=489 desc=12 px=16
+    hbox Ord w=1053 asc=503 desc=6 @(511,461)
+      glyph "4" Ord w=358 asc=503 desc=5 px=11.2
+      glyph "π" Ord w=437 asc=350 desc=4 px=11.2 @(358,0)
+      glyph "i" Ord w=258 asc=490 desc=6 px=11.2 @(795,0)
+inline pid=0 "2.5 + 1"
+hbox Ord w=2307 asc=723 desc=76
+  glyph "2.5" Ord w=1306 asc=723 desc=15 px=16
+  glue w=228 @(1306,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1534,0)
+inline pid=0 ""
+hbox Ord w=511 asc=727 desc=7
+  glyph "1" Ord w=511 asc=727 desc=7 px=16
+inline pid=0 "a + \"text\" + b"
+hbox Ord w=1625 asc=600 desc=76
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+  glue w=228 @(624,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(852,0)
+inline pid=0 ""
+hbox Ord w=3049 asc=819 desc=205
+  glyph "text" Ord w=2048 asc=819 desc=205 px=16
+  glue w=228 @(2048,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(2276,0)
+inline pid=0 ""
+hbox Ord w=602 asc=700 desc=10
+  glyph "b" Ord w=602 asc=700 desc=10 px=16
+inline pid=1 "y = ⚠ + 1"
+hbox Ord w=607 asc=479 desc=239
+  glyph "y" Ord w=607 asc=479 desc=239 px=16
+inline pid=1 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=1 ""
+hbox Ord w=20304 asc=819 desc=205
+  glyph "⚠ ReferenceError: missing is not defined" Ord w=19303 asc=819 desc=205 px=16
+  glue w=228 @(19303,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(19531,0)
+inline pid=1 ""
+hbox Ord w=511 asc=727 desc=7
+  glyph "1" Ord w=511 asc=727 desc=7 px=16
+inline pid=2 "p^2 + -3"
+hbox Ord w=2013 asc=967 desc=243
+  hbox Ord w=1012 asc=967 desc=243
+    glyph "p" Ord w=603 asc=481 desc=243 px=16
+    hbox Ord w=358 asc=506 desc=0 @(603,461)
+      glyph "2" Ord w=358 asc=506 desc=0 px=11.2
+  glue w=228 @(1012,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1240,0)
+inline pid=2 ""
+hbox Ord w=1513 asc=719 desc=17
+  glyph "−" Bin w=774 asc=276 desc=-236 px=16
+  glue w=228 @(774,0)
+  glyph "3" Ord w=511 asc=719 desc=17 px=16 @(1002,0)
+inline pid=2 "alpha"
+hbox Ord w=674 asc=479 desc=20
+  glyph "α" Ord w=674 asc=479 desc=20 px=16
+inline pid=2 "frac(1, 2)"
+hbox Ord w=358 asc=912 desc=353
+  hbox Ord w=358 asc=912 desc=353
+    hbox Ord w=358 asc=509 desc=5 @(0,403)
+      glyph "1" Ord w=358 asc=509 desc=5 px=11.2
+    rule w=358 h=41 @(0,236)
+    hbox Ord w=358 asc=506 desc=0 @(0,-353)
+      glyph "2" Ord w=358 asc=506 desc=0 px=11.2
+inline pid=3 "\\#A"
+hbox Ord w=1300 asc=707 desc=10
+  glyph "#" Ord w=512 asc=707 desc=0 px=16
+  glyph "A" Ord w=788 asc=696 desc=10 px=16 @(512,0)
+inline pid=3 "a # b"
+hbox Ord w=1738 asc=707 desc=12
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+  glyph "#" Ord w=512 asc=707 desc=0 px=16 @(624,0)
+  glyph "b" Ord w=602 asc=700 desc=10 px=16 @(1136,0)

@@ -4,7 +4,8 @@ block 0 content [0,48)
     TEXT "质能关系是狭义相对论的核心结论：" [0,48)
 block 1 content [50,69)
   CALL para [50,69)
-    CALL mathblock [50,69) src="E = m c^2" label="emc"
+    CALL math [50,69) display=true label="emc"
+      CALL mathsrc [52,61) src="E = m c^2"
 block 2 content [71,120)
   CALL para [71,120)
     TEXT "由" [71,74)
@@ -12,13 +13,16 @@ block 2 content [71,120)
     TEXT "可知能量与质量等价。高斯积分" [78,120)
 block 3 content [122,170)
   CALL para [122,170)
-    CALL mathblock [122,170) src="int_(-oo)^oo e^(-x^2) d x = sqrt(pi)" label="gauss"
+    CALL math [122,170) display=true label="gauss"
+      CALL mathsrc [124,160) src="int_(-oo)^oo e^(-x^2) d x = sqrt(pi)"
 block 4 content [172,260)
   CALL para [172,260)
     TEXT "的值见" [172,181)
     CALL ref [181,187) target="gauss"
     TEXT "；无标签公式不编号。设" [187,220)
-    CALL mathinline [220,223) src="x"
+    CALL math [220,223)
+      CALL mathsrc [221,222) src="x"
     TEXT "为实数，则" [223,238)
-    CALL mathinline [238,248) src="x^2 >= 0"
+    CALL math [238,248)
+      CALL mathsrc [239,247) src="x^2 >= 0"
     TEXT "恒成立。" [248,260)

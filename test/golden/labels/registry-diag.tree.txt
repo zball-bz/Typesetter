@@ -12,8 +12,10 @@ doc @[0,351) [base]
     para @[149,193) [base] role="caption"
       text @[149,193) [BOLD] str="图 2："
       text @[149,193) [base] str="Second figure reuses the label: it loses it."
-  mathblock @[204,220) [base] src="a = b" label="eq-1" name="(1)"
-  mathblock @[222,238) [base] src="c = d"
+  mathblock @[204,220) [base] label="eq-1" name="(1)"
+    mathsrc @[206,211) [base] src="a = b"
+  mathblock @[222,238) [base]
+    mathsrc @[224,229) [base] src="c = d"
   group @[240,311) [base] role="figure"
     para @[265,302) [base] role="caption"
       text @[265,302) [BOLD] str="图 3："

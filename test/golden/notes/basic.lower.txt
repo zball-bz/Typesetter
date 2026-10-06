@@ -12,7 +12,8 @@ block 1 content [19,211)
       TEXT ", " [74,75) raw=0:0,2:1
       CALL code [76,82) text="code"
       TEXT ", and math " [82,92) raw=0:0,11:10
-      CALL mathinline [93,104) src="x^2 + y^2"
+      CALL math [93,104)
+        CALL mathsrc [94,103) src="x^2 + y^2"
       TEXT "." [104,105)
     TEXT " continues after the marker, and a second note" [107,152) raw=0:0,1:0
     CALL note [152,174)

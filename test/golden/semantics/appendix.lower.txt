@@ -11,7 +11,8 @@ block 2 content [383,392)
     TEXT "Methods" [385,392)
 block 3 content [404,420)
   CALL para [404,420)
-    CALL mathblock [404,420) src="a = b" label="eq-m"
+    CALL math [404,420) display=true label="eq-m"
+      CALL mathsrc [406,411) src="a = b"
 block 4 content [422,433) user framed holes 2..3
   CALL para [422,433)
     HOLE 2 [422,433)
@@ -23,7 +24,8 @@ block 6 content [454,463)
     TEXT "Lemmas" [457,463)
 block 7 content [474,490)
   CALL para [474,490)
-    CALL mathblock [474,490) src="c = d" label="eq-p"
+    CALL math [474,490) display=true label="eq-p"
+      CALL mathsrc [476,481) src="c = d"
 block 8 content [492,540)
   CALL para [492,540)
     TEXT "See " [492,495) raw=0:0,4:3

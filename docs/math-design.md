@@ -360,6 +360,58 @@ no family name is known below the parser.
 - `tsrc --stage=mathir` prints the tree and each formula's diagnostics
   (goldened for every math-bearing fixture).
 
+### 10.2 As built: formulas as values, holes, declarations (plan P2-15)
+
+Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
+
+- **On the wire** a formula is one kind, `math{display?, label?}` (since
+  12), whose kids are `mathsrc{src}` fragments — one per source line,
+  container prefixes stripped, each with its own SPAN, its text as written
+  (the math lexer decodes `\$` and `\#`) — and **holes**. Instantiation
+  maps it to the engine's two level forms, `mathblock` (display) and
+  `mathinline`, keeping the kids: the level system stays per kind, and an
+  old buffer's `mathinline{src}` / `mathblock{src}` still reads.
+- **Holes** in a `$…$` island (D-L13): `#ident` (letters, then letters or
+  digits; a `.`, `(`, `[` or `;` after it is formula text) and `#(expr)`.
+  Each is a splice in its own frame: a throw is an error hole, an error leaf
+  `⚠ message` inside the formula. Its value (`__rt.std.mathHole`): a number
+  is a math value (its digits; an exponent as `m times 10^(e)`), a string
+  text, content itself. A `#` that starts neither is itself (info
+  `math-hash`; write `\#`).
+- **The formula source** (`math/env.h` `mathSource`): the fragments joined
+  with `\n` where adjacent, each hole a delimited unit — a math value
+  `\x01…\x02`, a string `\x03…\x04`, an error `\x05…\x06` — with a map
+  placing every offset in its fragment (sub-span diagnostics of a
+  multi-line island in a quote land on its line) and the copy text (the
+  source as written: data-src, the semantic page). A math value is
+  **parse-isolated**: its brackets and names cannot reach the formula; it is
+  one unit as an operand or a script's base (`x^#n` with n = −3 is
+  x^{−3}), otherwise its atoms join the run (TeX macro semantics). Other
+  inline content in a hole is set as its text (info `math-hole-kind`;
+  content in formulas is P4's), a block an error leaf.
+- **Declarations** (MathEnv, D-M02): `$.math.symbol(name, {char, class,
+  claimCp})`, `$.math.op(name, {limits})`, `$.math.fn(name, [params],
+  body, {bare})` are positional DECLs (math.symbol / op / fn). Instantiation
+  stamps every node with its **declEpoch** — the positional declarations
+  whose flow index is at most its EMIT's — and a formula binds names against
+  the rows in force at that epoch, so a footnote's formula, moved to the end
+  by the resolver, binds as of where it was written. A symbol row is a
+  name for its character and class; `claimCp` gives a typed character that
+  class too. An op row is an upright name (`limits: display` puts scripts
+  under and over in display style). A fn row is a template in the template
+  language (`'#a simeq #b'`; the body is data — a JS function is a
+  TypeError), checked by `checkRow` and bound against the declarations
+  before it. Shadowing a built-in is info `math-shadow`; `std.name` always
+  reaches the built-in (`std.` names are reserved); a malformed declaration
+  is `math-decl` and ignored.
+- **Names**: a dotted name (`std.frac`, a declared `arrow.long`) is one word
+  when it names something; otherwise `.` is a decimal point or punctuation.
+- **JS**: `` math`x^${n}` `` (the raw literal parts are fragments, each
+  `${}` a hole), `math(src, {display, label})`, `math.sym('⟨' | 'alpha')`,
+  `math.call(name, ...args)` (the arguments are holes). `mathinline(src)`
+  and `mathblock(src, label)` remain as deprecated forms. `math.equations`
+  is P3-29.
+
 ## 11. Testing
 
 - **Native goldens carry the whole weight**: `--stage=mathbox` (indented box

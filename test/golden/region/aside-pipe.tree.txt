@@ -2,7 +2,9 @@ doc @[0,80) [base]
   group @[0,80) [base] role="aside" ext.title="pipes"
     para @[24,72) [base]
       text @[24,33) [base] str="绝对值 " raw=0:0,10:9
-      mathinline @[34,39) [base] src="|x|"
+      mathinline @[34,39) [base]
+        mathsrc @[35,38) [base] src="|x|"
       text @[40,52) [base] str=" 的性质：" raw=0:0,1:0
-      mathinline @[52,69) [base] src="|a b| = |a| |b|"
+      mathinline @[52,69) [base]
+        mathsrc @[53,68) [base] src="|a b| = |a| |b|"
       text @[69,72) [base] str="。"

@@ -40,6 +40,7 @@ struct Gen {
   // text with no place in the source); its holes are descriptors, never
   // JavaScript
   bool frag = false;
+  bool inMath = false;  // lowering a formula's hole (plan P2-15)
   u32 base = 0;
   const Span* clamp = nullptr;
   DiagSink* fdiags = nullptr;
@@ -478,6 +479,12 @@ struct Gen {
       appendJs(t, expr.substr(0, sp.lastCall));
       args(t);
       t += "))";
+    } else if (n->nkids == 0 && inMath) {
+      // a formula's hole (plan P2-15): a number is a math value, a string
+      // text, content itself
+      t += "() => (__rt.std.mathHole(";
+      appendJs(t, expr);
+      t += "))";
     } else if (n->nkids == 0) {
       t += "() => (";
       appendJs(t, expr);
@@ -571,20 +578,37 @@ struct Gen {
         return done(at, kids(n->kids()));
       }
       case SugarId::math: {
-        if (!side<MathP>(n).display) return strCall("mathinline", n, "src", n->str);
-        // display math is a mathblock wherever it is (plan P2-11): the
-        // normal form places it — alone in its paragraph it is that block,
-        // inside one it falls back to inline (N1)
+        // one formula (plan P2-15): math{display, label} of its per-line
+        // fragments (mathsrc, each at its source) and holes, each in a
+        // frame — a failing hole is an error inside the formula. Display
+        // math is a block wherever it is (plan P2-11): the normal form places
+        // it (alone in its paragraph that block, inside one inline: N1)
+        const bool display = side<MathP>(n).display;
         const StrRef label = side<MathP>(n).label;
-        callHead("mathblock", &n->span, label ? 2 : 1);
-        key("src");
-        w.constStr(strs.get(n->str));
+        size_t at = callHead("math", &n->span, (display ? 1 : 0) + (label ? 1 : 0));
+        if (display) {
+          key("display");
+          w.constBool(true);
+        }
         if (label) {
           key("label");
           w.constStr(strs.get(label));
         }
-        w.u(0);
-        return false;
+        w.u(n->nkids);
+        bool a = false;
+        for (const AstNode* k : n->kids()) {
+          if (k->kind == AstKind::Text) {
+            callHead("mathsrc", &k->span, 1);
+            key("src");
+            w.constStr(strs.get(k->str));
+            w.u(0);
+            continue;
+          }
+          inMath = true;
+          a |= block(k);
+          inMath = false;
+        }
+        return done(at, a);
       }
       case SugarId::heading: {
         const HeadingP& h = side<HeadingP>(n);

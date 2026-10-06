@@ -2,14 +2,18 @@ lower v1 abi 3d3ccfbb docEnd 203 holes 0 module none
 block 0 content [0,117)
   CALL para [0,117)
     TEXT "勾股定理 " [0,12) raw=0:0,13:12
-    CALL mathinline [13,30) src="x^2 + y^2 = z^2"
+    CALL math [13,30)
+      CALL mathsrc [14,29) src="x^2 + y^2 = z^2"
     TEXT " 对一切直角三角形成立；调和平均 " [31,76) raw=0:0,1:0,47:45
-    CALL mathinline [77,92) src="2/(1/a + 1/b)"
+    CALL math [77,92)
+      CALL mathsrc [78,91) src="2/(1/a + 1/b)"
     TEXT " 不超过几何平均。" [93,117) raw=0:0,1:0
 block 1 content [119,202)
   CALL para [119,202)
     TEXT "Euler's identity links " [119,141) raw=0:0,23:22
-    CALL mathinline [142,160) src="e^(i pi) + 1 = 0"
+    CALL math [142,160)
+      CALL mathsrc [143,159) src="e^(i pi) + 1 = 0"
     TEXT " with " [161,165) raw=0:0,1:0,6:4
-    CALL mathinline [166,189) src="phi = (1 + 5^(1/2))/2"
+    CALL math [166,189)
+      CALL mathsrc [167,188) src="phi = (1 + 5^(1/2))/2"
     TEXT " in one line." [190,202) raw=0:0,1:0

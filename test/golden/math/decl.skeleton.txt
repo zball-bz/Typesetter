@@ -1,0 +1,6 @@
+doc @[0,622)
+  para @[0,127) lines=1
+  code-block @[129,405) js="\n  $.math.symbol('defeq', {char: '≝', class: 'rel', claimCp: true})\n  $.math.fn('eqv', ['a', 'b'], '#a simeq #b')\n  $.math.fn('idtype', ['A', 'a', 'b'], 'Id_(#A)(#a, #b)')\n  $.math.fn('prd', ['x', 'A', 'B'], 'prod_(#x : #A) #B')\n  $.math.op('colim', {limits: 'display'})\n"
+  para @[407,547) lines=2
+  para @[549,572) lines=1
+  para @[574,621) lines=1

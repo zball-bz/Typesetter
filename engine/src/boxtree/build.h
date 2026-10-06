@@ -26,9 +26,11 @@ struct LeafSource {
   const ContentNode* sidecar = nullptr;  // a code block's sidecar group: not body
 };
 
+class MathEnv;
 struct BoxTree {
   std::vector<TopTree> tops;
   std::vector<std::vector<LeafSource>> sources;  // per top, per unit
+  const MathEnv* math = nullptr;  // the document's math declarations (plan P2-15)
 };
 
 class Registry;

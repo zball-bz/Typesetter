@@ -277,6 +277,74 @@ struct InlineParser {
     i = end;
   }
 
+  // A formula's pieces (plan P2-15; design T8 MathValue; D-L13): one
+  // fragment per line of [a, b) — its text as written (the math lexer
+  // decodes \$ and \#), at its own source span — and its holes: #ident
+  // (letters then letters or digits; a `.`, `(`, `[` or `;` after it is
+  // formula text) and #(expr), each a splice. A `#` that starts neither is
+  // itself (info math-hash); one in quoted text is text.
+  std::vector<AstNode*> mathPieces(u32 a, u32 b) {
+    auto isWs = [](char ch) { return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'; };
+    while (a < b && isWs(t[a])) a++;
+    while (b > a && isWs(t[b - 1])) b--;
+    std::vector<AstNode*> out;
+    auto fragment = [&](u32 x, u32 y) {
+      if (y <= x) return;
+      AstNode* f = A.node<TextP>(AstKind::Text, span(x, y));
+      f->str = strs.intern(t.substr(x, y - x));
+      out.push_back(f);
+    };
+    auto letter = [](char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); };
+    u32 fs = a;
+    for (u32 p = a; p < b;) {
+      const char c = t[p];
+      if (c == '\n') {
+        fragment(fs, p);
+        fs = ++p;
+        continue;
+      }
+      if (c == '\\') {
+        p += 2;
+        continue;
+      }
+      if (c == '"') {  // quoted text
+        p++;
+        while (p < b && t[p] != '"' && t[p] != '\n') p++;
+        if (p < b && t[p] == '"') p++;
+        continue;
+      }
+      if (c != '#') {
+        p++;
+        continue;
+      }
+      u32 e = p + 1;
+      std::string expr;
+      if (e < b && letter(t[e])) {
+        while (e < b && (letter(t[e]) || (t[e] >= '0' && t[e] <= '9'))) e++;
+        expr = std::string(t.substr(p + 1, e - (p + 1)));
+      } else if (e < b && t[e] == '(') {
+        const JsScan js = scanJs(t.substr(0, b), e, true);
+        if (js.ok) {
+          e = js.end;
+          expr = std::string(t.substr(p + 1, e - (p + 1)));
+        }
+      }
+      if (expr.empty()) {
+        diags.add(Sev::Info, "math-hash", span(p, p + 1),
+                  "a formula's # starts a hole (#name, #(expr)): this one is a literal (write \\#)");
+        p++;
+        continue;
+      }
+      fragment(fs, p);
+      AstNode* h = A.node<SpliceP>(AstKind::Splice, span(p, e));
+      side<SpliceP>(h).expr = strs.intern(expr);
+      out.push_back(h);
+      p = fs = e;
+    }
+    fragment(fs, b);
+    return out;
+  }
+
   // math island (v2 §5): verbatim to the closing '$' within the leaf; '\$'
   // is the one escape it decodes
   void math() {
@@ -298,6 +366,7 @@ struct InlineParser {
     AstNode* mn = A.call<MathP>(SugarId::math, span(i, close + 1));
     mn->str = strs.intern(std::string_view(body).substr(b0, b1 - b0));
     side<MathP>(mn).display = display;
+    A.setKids(mn, mathPieces(i + 1, close));
     pushItem(mn);
     // a label: ` <id>` directly after the closing $ (the one label grammar,
     // plan P2-06); a labelled display formula is numbered, an inline one has

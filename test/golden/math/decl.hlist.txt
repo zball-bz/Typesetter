@@ -1,0 +1,184 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Be" w=1025su r0 @[0,23)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[0,23)
+  box Other "fore" w=2049su r0 @[0,23)
+  glue word w=257su x=1 cap=257su kern="e a" src r0 @[0,23)
+  box Other "any" w=1537su r0 @[0,23)
+  glue word w=257su x=1 cap=257su kern="y d" src r0 @[0,23)
+  box Other "de" w=1025su r0 @[0,23)
+  disc pen=0.7 w=0su pre="-" 513su kern="ec" r0 @[0,23)
+  box Other "c" w=513su r0 @[0,23)
+  disc pen=0.7 w=0su pre="-" 513su kern="cl" r0 @[0,23)
+  box Other "la" w=1025su r0 @[0,23)
+  disc pen=0.7 w=0su pre="-" 513su kern="ar" r0 @[0,23)
+  box Other "ra" w=1025su r0 @[0,23)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[0,23)
+  box Other "tion," w=2561su r0 @[0,23)
+  glue word w=257su x=1 cap=257su src r0 @[0,23)
+  box object o0 math part=0 asc=819su desc=205su "a defeq b" w=4128su r1 @[24,35)
+  pen 0 r1
+  glue word w=257su x=1 cap=257su src r2 @[36,68)
+  box Other "is" w=1025su r2 @[36,68)
+  glue word w=257su x=1 cap=257su kern="s a" src r2 @[36,68)
+  box Other "a" w=513su r2 @[36,68)
+  glue word w=257su x=1 cap=257su kern="a n" src r2 @[36,68)
+  box Other "name" w=2049su r2 @[36,68)
+  glue word w=257su x=1 cap=257su kern="e b" src r2 @[36,68)
+  box Other "be" w=1025su r2 @[36,68)
+  disc pen=0.7 w=0su pre="-" 513su kern="et" r2 @[36,68)
+  box Other "tween" w=2561su r2 @[36,68)
+  glue word w=257su x=1 cap=257su kern="n t" src r2 @[36,68)
+  box Other "two" w=1537su r2 @[36,68)
+  glue word w=257su x=1 cap=257su kern="o v" src r2 @[36,68)
+  box Other "vari" w=2049su r2 @[36,68)
+  disc pen=0.7 w=0su pre="-" 513su kern="ia" r2 @[36,68)
+  box Other "ables." w=3073su r2 @[36,68)
+  box Other "1" w=360su anchor="fnref-1" r3 @[68,127)
+  obj o0 math parts=1 edges=Alpha/Alpha src="a defeq b" [w=4128su asc=819su desc=205su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 plain ref LINK x0.70 link="#tsr-fn-1" anchor="fnref-1"
+top pid=1 units=1
+ unit text indent=0su
+  box Other "Af" w=1025su r0 @[407,416)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[407,416)
+  box Other "ter" w=1537su r0 @[407,416)
+  glue word w=257su x=1 cap=257su kern="r i" src r0 @[407,416)
+  box Other "it," w=1537su r0 @[407,416)
+  glue word w=257su x=1 cap=257su src r0 @[407,416)
+  box object o0 math part=0 asc=477su desc=12su "a defeq b" w=624su r1 @[417,428)
+  pen 0.85 r2
+  glue objspace w=284su x=0 cap=0su r2 @[417,428)
+  box object o0 math part=1 asc=771su desc=0su w=796su r3 @[417,428)
+  pen 0.8 r4
+  glue objspace w=284su x=0 cap=0su r4 @[417,428)
+  box object o0 math part=2 asc=700su desc=10su w=602su r5 @[417,428)
+  pen 0 r5
+  glue word w=257su x=1 cap=257su src r6 @[429,440)
+  box Other "and" w=1537su r6 @[429,440)
+  glue word w=257su x=1 cap=257su kern="d a" src r6 @[429,440)
+  box Other "a" w=513su r6 @[429,440)
+  glue word w=257su x=1 cap=257su kern="a t" src r6 @[429,440)
+  box Other "typed" w=2561su r6 @[429,440)
+  glue word w=257su x=1 cap=257su src r6 @[429,440)
+  box object o1 math part=0 asc=477su desc=12su "a ≝ b" w=624su r7 @[441,450)
+  pen 0.85 r8
+  glue objspace w=284su x=0 cap=0su r8 @[441,450)
+  box object o1 math part=1 asc=771su desc=0su w=796su r9 @[441,450)
+  pen 0.8 r10
+  glue objspace w=284su x=0 cap=0su r10 @[441,450)
+  box object o1 math part=2 asc=700su desc=10su w=602su r11 @[441,450)
+  pen 0 r11
+  glue word w=257su x=1 cap=257su src r12 @[451,493)
+  box Other "are" w=1537su r12 @[451,493)
+  glue word w=257su x=1 cap=257su kern="e r" src r12 @[451,493)
+  box Other "re" w=1025su r12 @[451,493)
+  disc pen=0.7 w=0su pre="-" 513su kern="el" r12 @[451,493)
+  box Other "la" w=1025su r12 @[451,493)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r12 @[451,493)
+  box Other "tions," w=3073su r12 @[451,493)
+  glue word w=257su x=1 cap=257su kern=", a" src r12 @[451,493)
+  box Other "and" w=1537su r12 @[451,493)
+  glue word w=257su x=1 cap=257su kern="d t" src r12 @[451,493)
+  box Other "the" w=1537su r12 @[451,493)
+  glue word w=257su x=1 cap=257su kern="e H" src r12 @[451,493)
+  box Other "HoTT" w=2049su r12 @[451,493)
+  glue word w=257su x=1 cap=257su kern="T m" src r12 @[451,493)
+  box Other "macros" w=3073su r12 @[451,493)
+  glue word w=257su x=1 cap=257su kern="s e" src r12 @[451,493)
+  box Other "ex" w=1025su r12 @[451,493)
+  disc pen=0.7 w=0su pre="-" 513su kern="xp" r12 @[451,493)
+  box Other "pand:" w=2561su r12 @[451,493)
+  glue word w=257su x=1 cap=257su src r12 @[451,493)
+  box object o2 math part=0 asc=702su desc=10su "eqv(A, B)" w=2638su r13 @[494,505)
+  pen 0 r13
+  box Other "," w=513su r14 @[505,506)
+  glue word w=257su x=1 cap=257su src r14 @[505,506)
+  box object o3 math part=0 asc=819su desc=262su "idtype(U, a, b)" w=3983su r15 @[507,524)
+  pen 0 r15
+  glue word w=257su x=1 cap=257su src r16 @[525,528)
+  box Other "and" w=1537su r16 @[525,528)
+  glue word w=257su x=1 cap=257su src r16 @[525,528)
+  box object o4 math part=0 asc=768su desc=316su "prd(x, A, B(x))" w=4269su r17 @[529,546)
+  pen 0 r17
+  box Other "." w=513su r18 @[546,547)
+  obj o0 math parts=3 edges=Alpha/Alpha src="a defeq b" [w=624su asc=477su desc=12su] [w=796su asc=771su desc=0su glue=284su] [w=602su asc=700su desc=10su glue=284su]
+  obj o1 math parts=3 edges=Alpha/Alpha src="a ≝ b" [w=624su asc=477su desc=12su] [w=796su asc=771su desc=0su glue=284su] [w=602su asc=700su desc=10su glue=284su]
+  obj o2 math parts=1 edges=Alpha/Alpha src="eqv(A, B)" [w=2638su asc=702su desc=10su]
+  obj o3 math parts=1 edges=Alpha/Alpha src="idtype(U, a, b)" [w=3983su asc=819su desc=262su]
+  obj o4 math parts=1 edges=Alpha/Alpha src="prd(x, A, B(x))" [w=4269su asc=768su desc=316su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 object
+  run r4 plain
+  run r5 object
+  run r6 plain
+  run r7 object
+  run r8 plain
+  run r9 object
+  run r10 plain
+  run r11 object
+  run r12 plain
+  run r13 object
+  run r14 plain
+  run r15 object
+  run r16 plain
+  run r17 object
+  run r18 plain
+top pid=2 units=1
+ unit math indent=0su w=4283su asc=819su desc=895su
+top pid=3 units=1
+ unit text indent=0su
+  box Other "The" w=1537su r0 @[574,603)
+  glue word w=257su x=1 cap=257su kern="e b" src r0 @[574,603)
+  box Other "built-in" w=4097su r0 @[574,603)
+  glue word w=257su x=1 cap=257su kern="n s" src r0 @[574,603)
+  box Other "stays" w=2561su r0 @[574,603)
+  glue word w=257su x=1 cap=257su kern="s r" src r0 @[574,603)
+  box Other "reach" w=2561su r0 @[574,603)
+  disc pen=0.7 w=0su pre="-" 513su kern="ha" r0 @[574,603)
+  box Other "able:" w=2561su r0 @[574,603)
+  glue word w=257su x=1 cap=257su src r0 @[574,603)
+  box object o0 math part=0 asc=912su desc=353su "std.frac(1, 2)" w=358su r1 @[604,620)
+  pen 0 r1
+  box Other "." w=513su r2 @[620,621)
+  obj o0 math parts=1 edges=Alpha/Alpha src="std.frac(1, 2)" [w=358su asc=912su desc=353su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+top pid=4 units=2
+ unit rule indent=0su
+ unit text indent=1536su anchor="fn-1" marker="1."
+  box Other "A" w=437su r0 @[70,113)
+  glue word w=219su x=1 cap=219su kern="A f" src r0 @[70,113)
+  box Other "foot" w=1742su r0 @[70,113)
+  disc pen=0.7 w=0su pre="-" 437su kern="tn" r0 @[70,113)
+  box Other "note" w=1742su r0 @[70,113)
+  glue word w=219su x=1 cap=219su kern="e w" src r0 @[70,113)
+  box Other "writ" w=1742su r0 @[70,113)
+  disc pen=0.7 w=0su pre="-" 437su kern="tt" r0 @[70,113)
+  box Other "ten" w=1307su r0 @[70,113)
+  glue word w=219su x=1 cap=219su kern="n h" src r0 @[70,113)
+  box Other "here" w=1742su r0 @[70,113)
+  glue word w=219su x=1 cap=219su kern="e k" src r0 @[70,113)
+  box Other "keeps" w=2178su r0 @[70,113)
+  glue word w=219su x=1 cap=219su kern="s t" src r0 @[70,113)
+  box Other "that" w=1742su r0 @[70,113)
+  glue word w=219su x=1 cap=219su kern="t r" src r0 @[70,113)
+  box Other "read" w=1742su r0 @[70,113)
+  disc pen=0.7 w=0su pre="-" 437su kern="di" r0 @[70,113)
+  box Other "ing:" w=1742su r0 @[70,113)
+  glue word w=219su x=1 cap=219su src r0 @[70,113)
+  box object o0 math part=0 asc=696su desc=203su "x defeq y" w=3441su r1 @[114,125)
+  pen 0 r1
+  box Other "." w=437su r2 @[125,126)
+  glue word w=219su x=1 cap=219su src r2 @[68,127)
+  box Other "↩" w=524su r3 @[68,127)
+  obj o0 math parts=1 edges=Alpha/Alpha src="x defeq y" [w=3441su asc=696su desc=203su]
+  run r0 plain x0.85
+  run r1 object x0.85
+  run r2 plain x0.85
+  run r3 plain ref LINK x0.85 link="#tsr-fnref-1"

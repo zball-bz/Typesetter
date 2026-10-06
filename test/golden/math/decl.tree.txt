@@ -1,0 +1,49 @@
+doc @[0,621) [base]
+  para @[0,127) [base]
+    text @[0,23) [base] str="Before any declaration, " raw=0:0,24:23
+    mathinline @[24,35) [base]
+      mathsrc @[25,34) [base] src="a defeq b"
+    text @[36,68) [base] str=" is a name between two variables." raw=0:0,1:0
+    ref @[68,127) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
+      text @[68,127) [SUPx0.70] str="1"
+  para @[407,547) [base]
+    text @[407,416) [base] str="After it, " raw=0:0,10:9
+    mathinline @[417,428) [base]
+      mathsrc @[418,427) [base] src="a defeq b"
+    text @[429,440) [base] str=" and a typed " raw=0:0,1:0,13:11
+    mathinline @[441,450) [base]
+      mathsrc @[442,449) [base] src="a ≝ b"
+    text @[451,493) [base] str=" are relations, and the HoTT macros expand: " raw=0:0,1:0,44:42
+    mathinline @[494,505) [base]
+      mathsrc @[495,504) [base] src="eqv(A, B)"
+    text @[505,506) [base] str=", " raw=0:0,2:1
+    mathinline @[507,524) [base]
+      mathsrc @[508,523) [base] src="idtype(U, a, b)"
+    text @[525,528) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[529,546) [base]
+      mathsrc @[530,545) [base] src="prd(x, A, B(x))"
+    text @[546,547) [base] str="."
+  mathblock @[549,572) [base]
+    mathsrc @[551,570) [base] src="colim_(i in I) F(i)"
+  para @[574,621) [base]
+    text @[574,603) [base] str="The built-in stays reachable: " raw=0:0,30:29
+    mathinline @[604,620) [base]
+      mathsrc @[605,619) [base] src="std.frac(1, 2)"
+    text @[620,621) [base] str="."
+  group @[0,621) [base] role="notes"
+    rule @[0,621) [base]
+    list @[0,621) [base] ordered=true
+      item @[68,127) [base]
+        para @[68,127) [base] label="fn-1"
+          text @[70,113) [basex0.85] str="A footnote written here keeps that reading: " raw=0:0,44:43
+          mathinline @[114,125) [basex0.85]
+            mathsrc @[115,124) [basex0.85] src="x defeq y"
+          text @[125,126) [basex0.85] str="."
+          text @[68,127) [basex0.85] str=" "
+          ref @[68,127) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+            text @[68,127) [basex0.85] str="↩"
+decl math.symbol name="defeq" flow=1 @[129,405) ext.char="≝" ext.class="rel" ext.claim-cp=true
+decl math.fn name="eqv" flow=1 @[129,405) ext.params="a,b" ext.body="#a simeq #b"
+decl math.fn name="idtype" flow=1 @[129,405) ext.params="A,a,b" ext.body="Id_(#A)(#a, #b)"
+decl math.fn name="prd" flow=1 @[129,405) ext.params="x,A,B" ext.body="prod_(#x : #A) #B"
+decl math.op name="colim" flow=1 @[129,405) ext.limits="display"

@@ -3,8 +3,10 @@ doc @[0,200) [base]
     text @[2,18) [base] str="Labelled heading"
   para @[28,99) [base]
     text @[28,99) [base] str="A short paragraph before a labelled display equation on the same sheet."
-  mathblock @[101,130) [base] src="a^2 + b^2 = c^2" label="eq-pyth" name="(1)"
-  mathblock @[132,163) [base] src="e^(i pi) + 1 = 0" label="eq-euler" name="(2)"
+  mathblock @[101,130) [base] label="eq-pyth" name="(1)"
+    mathsrc @[103,118) [base] src="a^2 + b^2 = c^2"
+  mathblock @[132,163) [base] label="eq-euler" name="(2)"
+    mathsrc @[134,150) [base] src="e^(i pi) + 1 = 0"
   para @[165,200) [base]
     text @[165,168) [base] str="See " raw=0:0,4:3
     ref @[169,175) [base] target="sec-a" url="#tsr-sec-a"

@@ -4,6 +4,7 @@
 #include "../shape/textrules.h"
 #include "../boxtree/build.h"
 #include "../math/ir.h"
+#include "../math/env.h"
 
 #include <functional>
 #include <type_traits>
@@ -497,9 +498,10 @@ struct HlInline final : InlineSink {
   }
 
   void math(const ContentNode* n, Flow& u, ICtx ctx) {
-    StrRef srcRef = 0;
-    for (const ArgVal& a : n->args)
-      if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
+    // its source (plan P2-15): fragments and holes, bound as of its epoch
+    const MathSource ms = mathSource(n, strs, &E.diags);
+    const StrRef srcRef = strs.intern(ms.copy);
+    const MathScope scope{E.math, n->declEpoch};
     StyleId st = E.compose(n->style, ctx.add, ctx.mul);
     // CJK–formula boundary glue (App C: formulas are Latin-class)
     if (count(u) > 0 && isCjkChar(count(u) - 1)) autospace(u, st, ctx, n->span);
@@ -508,9 +510,11 @@ struct HlInline final : InlineSink {
     // needs are measured: a pending object with one placeholder part, which
     // resolveWidths finalizes through the object table (no layer below emit
     // reads metrics, no block re-emits)
-    reportMathDiags(parseMath(strs.get(srcRef), E.arena), strs.get(srcRef), n->span, E.diags);
+    reportMathDiags(parseMath(ms.text, E.arena, &scope), ms.text, n->span, E.diags, &ms.map);
     u32 obj = addObject(u, ObjKind::Math, n, st);
     B.objs[obj].src = srcRef;
+    B.objs[obj].formula = strs.intern(ms.text);
+    B.objs[obj].epoch = n->declEpoch;
     B.objs[obj].deferred = true;
     B.hasDeferred = true;
     ObjPart pt;
@@ -948,17 +952,20 @@ struct Emitter {
           case Painter::MathRow: {
             // prepared here, laid out in Measure (plan P1-25): see math()
             MathData& m = u.data.emplace<MathData>();
-            for (const ArgVal& a : n->args) {
-              if (a.key == ArgK::src && a.tag == ArgTag::Str) m.src = a.ref;
+            for (const ArgVal& a : n->args)
               if (a.key == ArgK::name && a.tag == ArgTag::Str) m.tag = a.ref;
-            }
+            const MathSource ms = mathSource(n, strs, &diags);  // (plan P2-15)
+            const MathScope scope{E.math, n->declEpoch};
+            m.src = strs.intern(ms.copy);
+            m.formula = strs.intern(ms.text);
+            m.epoch = n->declEpoch;
             m.sizePx = fontPx(n->style);
             m.span = n->span;
             m.style = n->style;
-            reportMathDiags(parseMath(strs.get(m.src), arena), strs.get(m.src), n->span, diags);
+            reportMathDiags(parseMath(ms.text, arena, &scope), ms.text, n->span, diags, &ms.map);
             if (mathText) {  // the legacy oracle lays out at emit (MIGRATION, until P4-02)
-              m.box = layoutMathFormula(strs.get(m.src), /*display=*/true, m.sizePx, arena, strs, diags, n->span,
-                                        mathText);
+              m.box = layoutMathFormula(ms.text, /*display=*/true, m.sizePx, arena, strs, diags, n->span,
+                                        mathText, true, &scope);
             }
             return;
           }
@@ -1016,7 +1023,7 @@ struct EmitPass::State {
 };
 EmitPass::EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const Config& cfg,
                    DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt)
-    : bt_(bt), st_(std::make_unique<State>(EmitEnv{arena, diags, strs, styles, cfg, nullptr, rt}, metrics)) {}
+    : bt_(bt), st_(std::make_unique<State>(EmitEnv{arena, diags, strs, styles, cfg, nullptr, rt, bt.math}, metrics)) {}
 EmitPass::~EmitPass() = default;
 bool EmitPass::top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing) {
   st_->missing.clear();
@@ -1028,7 +1035,7 @@ bool EmitPass::top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing) {
 std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
                               const Config& cfg, DiagSink& diags, const MeasureNeeds* mathText,
                               const ResourceTable* rt) {
-  EmitEnv env{arena, diags, strs, styles, cfg, mathText, rt};
+  EmitEnv env{arena, diags, strs, styles, cfg, mathText, rt, bt.math};
   HlInline sink(env);
   return emitWith(bt, env, sink);
 }
@@ -1145,10 +1152,11 @@ static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const Conf
     std::vector<MeasureItem> missing;
     MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
     DiagSink scratch;
+    const MathScope scope{env.math, ob.epoch};
     std::vector<MathSeg> segs =
-        layoutMathSegments(env.strs.get(ob.src), /*display=*/false, emPx(cfg, env.styles.get(ob.style)),
+        layoutMathSegments(env.strs.get(ob.formula), /*display=*/false, emPx(cfg, env.styles.get(ob.style)),
                            env.arena, env.strs, scratch, Span{h.cold[ph.cold].srcStart, h.cold[ph.cold].srcEnd},
-                           &mt, /*parseDiags=*/false);
+                           &mt, /*parseDiags=*/false, &scope);
     if (!missing.empty()) {
       need.insert(need.end(), missing.begin(), missing.end());
       return false;
@@ -1275,8 +1283,9 @@ static void finalizeDisplay(MathData& m, MetricStore& store, const Config& cfg, 
   std::vector<MeasureItem> missing;
   MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
   DiagSink scratch;
-  MathBox* box = layoutMathFormula(env.strs.get(m.src), /*display=*/true, m.sizePx, env.arena, env.strs, scratch,
-                                   m.span, &mt, /*parseDiags=*/false);
+  const MathScope scope{env.math, m.epoch};
+  MathBox* box = layoutMathFormula(env.strs.get(m.formula), /*display=*/true, m.sizePx, env.arena, env.strs, scratch,
+                                   m.span, &mt, /*parseDiags=*/false, &scope);
   if (!missing.empty()) {
     need.insert(need.end(), missing.begin(), missing.end());
     return;
@@ -1726,20 +1735,22 @@ std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
 
 // tsrc --stage=mathir (plan P1-24): each formula's IR and diagnostics, in
 // document order
-std::string dumpMathIRs(const std::vector<TopBlock>& tops, const Interner& strs) {
+std::string dumpMathIRs(const std::vector<TopBlock>& tops, const Interner& strs, const MathEnv* math) {
   std::string out;
   Arena scratch;
-  auto one = [&](const char* kind, u32 pid, std::string_view src) {
+  auto one = [&](const char* kind, u32 pid, std::string_view src, u32 epoch) {
     appendf(out, "%s pid=%u \"", kind, pid);
     appendEscaped(out, src);
     out += "\"\n";
-    out += dumpMathIR(parseMath(src, scratch), src);
+    const MathScope scope{math, epoch};
+    out += dumpMathIR(parseMath(src, scratch, &scope), src);
   };
   for (const TopBlock& tb : tops)
     for (const FlowUnit& u : tb.units) {
-      if (const MathData* m = std::get_if<MathData>(&u.data); m && m->src) one("display", tb.pid, strs.get(m->src));
+      if (const MathData* m = std::get_if<MathData>(&u.data); m && m->formula)
+        one("display", tb.pid, strs.get(m->formula), m->epoch);
       for (const InlineObject& ob : u.hl.objs)
-        if (ob.kind == ObjKind::Math && ob.src) one("inline", tb.pid, strs.get(ob.src));
+        if (ob.kind == ObjKind::Math && ob.formula) one("inline", tb.pid, strs.get(ob.formula), ob.epoch);
     }
   return out;
 }

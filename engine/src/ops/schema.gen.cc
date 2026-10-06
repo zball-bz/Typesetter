@@ -422,6 +422,30 @@ const AttrSpec kA_each[] = {
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {54, "style", Dom::Delta, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 0, false},
     {55, "attach", Dom::Enum, 0, 0, kM_each_attach, nullptr, 3, false, false, 0, 11, 0, false}};
+const char* const kM_math_attach[] = {"prev", "next", "both"};
+const AttrSpec kA_math[] = {
+    {56, "display", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
+    {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 9, false},
+    {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {54, "style", Dom::Delta, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 0, false},
+    {55, "attach", Dom::Enum, 0, 0, kM_math_attach, nullptr, 3, false, false, 0, 11, 0, false}};
+const char* const kM_mathsrc_attach[] = {"prev", "next", "both"};
+const AttrSpec kA_mathsrc[] = {
+    {11, "src", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
+    {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 9, false},
+    {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {54, "style", Dom::Delta, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 0, false},
+    {55, "attach", Dom::Enum, 0, 0, kM_mathsrc_attach, nullptr, 3, false, false, 0, 11, 0, false}};
 }  // namespace
 
 const KindInfo kKinds[KIND_COUNT] = {
@@ -458,7 +482,9 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"entry", Level::Trivia, Body::Inline, InlineShape::Skip, 10, kA_entry, 10},
     {"slot", Level::Inline, Body::None, InlineShape::Skip, 10, kA_slot, 11},
     {"when", Level::Transparent, Body::Position, InlineShape::Container, 10, kA_when, 10},
-    {"each", Level::Transparent, Body::Position, InlineShape::Container, 10, kA_each, 11}};
+    {"each", Level::Transparent, Body::Position, InlineShape::Container, 10, kA_each, 11},
+    {"math", Level::Inline, Body::Data, InlineShape::Object, 12, kA_math, 10},
+    {"mathsrc", Level::Trivia, Body::None, InlineShape::Skip, 12, kA_mathsrc, 10}};
 
 const DeclInfo kDecls[DECL_COUNT] = {
     {nullptr, false, 0},

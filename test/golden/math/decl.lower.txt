@@ -1,0 +1,43 @@
+lower v1 abi 3d3ccfbb docEnd 622 holes 1 module 42e9573b8786c169
+piece 0 hole 0 js [128,409)
+block 0 content [0,127)
+  CALL para [0,127)
+    TEXT "Before any declaration, " [0,23) raw=0:0,24:23
+    CALL math [24,35)
+      CALL mathsrc [25,34) src="a defeq b"
+    TEXT " is a name between two variables." [36,68) raw=0:0,1:0
+    CALL note [68,127)
+      TEXT "A footnote written here keeps that reading: " [70,113) raw=0:0,44:43
+      CALL math [114,125)
+        CALL mathsrc [115,124) src="x defeq y"
+      TEXT "." [125,126)
+block 1 stmt [129,405) user framed holes 0..1
+  STMT 0
+block 2 content [407,547)
+  CALL para [407,547)
+    TEXT "After it, " [407,416) raw=0:0,10:9
+    CALL math [417,428)
+      CALL mathsrc [418,427) src="a defeq b"
+    TEXT " and a typed " [429,440) raw=0:0,1:0,13:11
+    CALL math [441,450)
+      CALL mathsrc [442,449) src="a ≝ b"
+    TEXT " are relations, and the HoTT\nmacros expand: " [451,493) raw=0:0,1:0,44:42
+    CALL math [494,505)
+      CALL mathsrc [495,504) src="eqv(A, B)"
+    TEXT ", " [505,506) raw=0:0,2:1
+    CALL math [507,524)
+      CALL mathsrc [508,523) src="idtype(U, a, b)"
+    TEXT " and " [525,528) raw=0:0,1:0,5:3
+    CALL math [529,546)
+      CALL mathsrc [530,545) src="prd(x, A, B(x))"
+    TEXT "." [546,547)
+block 3 content [549,572)
+  CALL para [549,572)
+    CALL math [549,572) display=true
+      CALL mathsrc [551,570) src="colim_(i in I) F(i)"
+block 4 content [574,621)
+  CALL para [574,621)
+    TEXT "The built-in stays reachable: " [574,603) raw=0:0,30:29
+    CALL math [604,620)
+      CALL mathsrc [605,619) src="std.frac(1, 2)"
+    TEXT "." [620,621)

@@ -18,7 +18,9 @@ block 1 content [79,125) user framed holes 1..2
     FRAME [81,125) holes 1..2
       CALL para [81,125)
         TEXT "quoted " [81,87) raw=0:0,7:6
-        CALL mathinline [88,98) src="a +\nb"
+        CALL math [88,98)
+          CALL mathsrc [89,92) src="a +"
+          CALL mathsrc [96,97) src="b"
         TEXT " math and " [99,107) raw=0:0,1:0,10:8
         HOLE 1 [108,119)
           TEXT "x\ny" [112,118) raw=0:0,2:5
@@ -29,7 +31,9 @@ block 2 content [129,167) user framed holes 2..3
       FRAME [131,167) holes 2..3
         CALL para [131,167)
           TEXT "item " [131,135) raw=0:0,5:4
-          CALL mathinline [136,146) src="c +\nd"
+          CALL math [136,146)
+            CALL mathsrc [137,140) src="c +"
+            CALL mathsrc [144,145) src="d"
           TEXT " and " [147,150) raw=0:0,1:0,5:3
           HOLE 2 [151,162)
           TEXT " end." [163,167) raw=0:0,1:0

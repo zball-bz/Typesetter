@@ -1,0 +1,8 @@
+doc @[0,335)
+  code-let @[0,11) js=" n = -3"
+  code-let @[12,22) js=" k = 2"
+  code-let @[23,47) js=" half = (x) => x / 2"
+  para @[49,126) lines=1
+  para @[128,192) lines=1
+  para @[194,288) lines=1
+  para @[290,334) lines=1

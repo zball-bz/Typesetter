@@ -12,8 +12,10 @@ doc @[0,352)
       text @[149,193) str="Second figure reuses the label: it loses it."
   para @[204,220)
     math @[204,220) display=1 src="a = b" label="eq-1"
+      text @[206,211) str="a = b"
   para @[222,238)
     math @[222,238) display=1 src="c = d" label="eq-1"
+      text @[224,229) str="c = d"
   region @[240,311) name="figure"
     para @[265,302)
       text @[265,302) str="A figure with a reserved label shape."

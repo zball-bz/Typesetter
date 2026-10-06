@@ -5,7 +5,9 @@ block 0 content [0,13)
 block 1 content [17,70)
   CALL para [17,70)
     TEXT "A paragraph that spans\ntwo lines with " [17,55) raw=0:0,23:24,38:38
-    CALL mathinline [56,64) src="a +\nb"
+    CALL math [56,64)
+      CALL mathsrc [57,60) src="a +"
+      CALL mathsrc [62,63) src="b"
     TEXT " math." [65,70) raw=0:0,1:0
 block 2 content [74,101) async
   FENCE async "js" body="let x = 1;\nx++" at=[81,96) lines=[81,93] [74,101)

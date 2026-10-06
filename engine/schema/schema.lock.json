@@ -177,6 +177,14 @@
   "each": [
    33,
    10
+  ],
+  "math": [
+   34,
+   12
+  ],
+  "mathsrc": [
+   35,
+   12
   ]
  },
  "keys": {
@@ -235,7 +243,8 @@
   "size": 52,
   "hang": 53,
   "style": 54,
-  "attach": 55
+  "attach": 55,
+  "display": 56
  },
  "attrs": {
   "para.label": 9,
@@ -585,7 +594,27 @@
   "each.class": 9,
   "each.ext": 9,
   "each.style": 11,
-  "each.attach": 11
+  "each.attach": 11,
+  "math.display": 12,
+  "math.label": 9,
+  "math.role": 9,
+  "math.slot": 9,
+  "math.syn": 9,
+  "math.copy": 9,
+  "math.class": 9,
+  "math.ext": 9,
+  "math.style": 11,
+  "math.attach": 11,
+  "mathsrc.src": 12,
+  "mathsrc.label": 9,
+  "mathsrc.role": 9,
+  "mathsrc.slot": 9,
+  "mathsrc.syn": 9,
+  "mathsrc.copy": 9,
+  "mathsrc.class": 9,
+  "mathsrc.ext": 9,
+  "mathsrc.style": 11,
+  "mathsrc.attach": 11
  },
  "decls": {
   "element": [

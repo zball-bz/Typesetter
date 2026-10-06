@@ -15,6 +15,7 @@ struct Inst {
   StyleTable& styles;
   DiagSink& diags;
   const Registry& reg;
+  u32 epoch = 0;  // the positional declarations before the EMIT being copied
 
   // fold one style attribute onto an effective style
   void applyPatch(Styling& st, const ArgVal& a) {
@@ -86,6 +87,7 @@ struct Inst {
         n->kind = rn.kind;
         n->span = sp;
         n->style = styles.idOf(ownStyle);
+        n->declEpoch = epoch;
         const bool own = an.alias == kNoAlias && sp.start == rn.span.start && sp.end == rn.span.end;
         const std::vector<u32>* map = own && !rn.rawmap.empty() ? &rn.rawmap : nullptr;
         std::vector<u32> resolved;
@@ -109,8 +111,27 @@ struct Inst {
           n->rawmap = m;
           n->nrawmap = (u32)map->size();
         }
+        // a formula (plan P2-15): `math` on the wire, the engine's level
+        // forms inside — display is a block (mathblock), else inline
+        // (mathinline) —, its mathsrc fragments and holes as kids
+        bool display = false;
+        if (rn.kind == Kind::math) {
+          for (const ArgVal& a : rn.args) display = display || (a.key == ArgK::display && a.tag == ArgTag::Bool && a.num != 0);
+          n->kind = display ? Kind::mathblock : Kind::mathinline;
+        }
+        if (rn.kind == Kind::mathsrc && (!p.parent || (p.parent->kind != Kind::mathinline &&
+                                                       p.parent->kind != Kind::mathblock))) {
+          diags.add(Sev::Warning, "content-model", sp, "a mathsrc fragment outside a formula is dropped");
+          n->kind = Kind::error;
+          n->args.push_back({ArgK::message, ArgTag::Str, 0, strs.intern("a mathsrc fragment outside a formula")});
+          n->args.push_back({ArgK::code, ArgTag::Str, 0, strs.intern("content-model")});
+          if (p.parent) p.parent->kids.push_back(n);
+          else result = n;
+          continue;
+        }
         for (const ArgVal& a : rn.args) {
           if (a.key == ArgK::style) continue;  // folded into n->style
+          if (rn.kind == Kind::math && a.key == ArgK::display) continue;  // its kind says it
           ArgVal v = a;
           if (a.tag == ArgTag::Str) v.ref = strs.intern(raw.strings[a.ref]);
           if (a.key == ArgK::ext) v.name = strs.intern(raw.strings[a.name]);
@@ -142,6 +163,13 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
 
   Inst inst{raw, arena, strs, styles, diags, reg};
   inst.budget = std::max<size_t>(kInstMinBudget, kInstPerRawNode * raw.nodes.size());
+  // the positional declarations' flow indices, in order (plan P2-15): EMIT k
+  // copies with epoch = how many have a flow index at most k
+  std::vector<u32> positional;
+  for (const RawDecl& rd : raw.decls)
+    if (rd.type && !kDecls[rd.type].hoisted) positional.push_back(rd.flowIndex);
+  std::stable_sort(positional.begin(), positional.end());
+  u32 emits = 0;
   std::vector<const SchedItem*> stack;  // schedule deltas (delta nodes)
   auto refold = [&] {
     Styling st{};
@@ -166,7 +194,9 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
         break;
       }
       case Op::EMIT:
+        while (inst.epoch < positional.size() && positional[inst.epoch] <= emits) inst.epoch++;
         root->kids.push_back(inst.copy(s.a, cur));
+        emits++;
         break;
       default:
         break;

@@ -742,6 +742,51 @@ export const CTOR_SPECS = Object.freeze({
     "derived": false,
     "async": false
   },
+  "math": {
+    "kind": "math",
+    "params": [],
+    "options": [
+      "display",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext",
+      "style",
+      "attach"
+    ],
+    "nullary": false,
+    "sealed": false,
+    "derived": false,
+    "async": false
+  },
+  "mathsrc": {
+    "kind": "mathsrc",
+    "params": [
+      {
+        "k": "attr",
+        "name": "src",
+        "dom": "str"
+      }
+    ],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext",
+      "style",
+      "attach"
+    ],
+    "nullary": false,
+    "sealed": true,
+    "derived": false,
+    "async": false
+  },
   "strong": {
     "kind": "styled",
     "params": [],
@@ -968,8 +1013,10 @@ export const STD_NAMES = Object.freeze([
   "link",
   "list",
   "m",
+  "math",
   "mathblock",
   "mathinline",
+  "mathsrc",
   "node",
   "note",
   "notes",

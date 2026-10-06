@@ -133,6 +133,10 @@ await __rt.run(__h, 1);
   them (after the call's own arguments, as written). An empty list, a
   trailing comma or a comment needs no text surgery. If the call never gets
   there (an argument threw), the content is skipped.
+- **Formula holes** (plan P2-15): a `$…$` island lowers to `CALL math`
+  of `CALL mathsrc` fragments (one per line, each spanned) and its holes —
+  `#ident`, `#(expr)` — each a framed HOLE whose code is
+  `__rt.std.mathHole(expr)` (a number becomes a math value, a string text).
 - **Awaiting.** A hole whose code mentions `await` (a token scan that also
   sees template `${…}` holes), or names a constructor that loads (plan
   P2-14: `kStdAsync`, `bibliography`), is an `async` function and its op

@@ -6,6 +6,7 @@
 #include "../ast/ast.h"
 #include "../code/tokens.h"
 #include "../codegen/codegen.h"
+#include "../math/env.h"
 #include "../resolve/resolve.h"
 #include "../semantic/declare.h"
 #include "../boxtree/build.h"
@@ -52,6 +53,7 @@ struct Doc {
   std::unique_ptr<Session> own_;
   std::vector<u32> sessionMk_;  // per FaceId: its session metric key, ~0u = not yet
   BoxTree boxtree;  // the block structure (plan P1-18)
+  MathEnv mathEnv;  // the document's math declarations, by epoch (plan P2-15)
   std::vector<TopBlock> tops;
   // measurement faces (plan P1-04): the metric key; bound in the constructor
   FaceTable faces;
@@ -252,6 +254,7 @@ struct Doc {
     registry = registryOwn.get();
     tree = instantiate(raw, arena, strs, styles, diags, *registry);
     checkDeclarations(raw, tree, *registry, strs, diags);
+    mathEnv.build(tree.decls, strs, diags);
     validThrough = (int)Stage::Ingest;
     return true;
   }
@@ -567,6 +570,7 @@ struct Doc {
     if (done(Stage::Layout)) return Status::Ok;
     if (!done(Stage::BoxTree)) {  // the block structure (plan P1-18): once per resolved tree
       boxtree = buildBoxTree(tree, strs, styles, cfg, *registry);
+      boxtree.math = &mathEnv;
       validThrough = (int)Stage::BoxTree;
     }
     if (!done(Stage::Emit)) {
@@ -599,7 +603,7 @@ struct Doc {
       metrics.setEpsilon((Su)cfg.epsilonPerWordSu);  // Measure quantizes (plan P1-19)
       // formulas finalize here (plan P1-25): their layout diagnostics are
       // their block's Emit slice
-      ObjectEnv oe{arena, strs, styles, cfg.baseSizePx, &diags};
+      ObjectEnv oe{arena, strs, styles, cfg.baseSizePx, &diags, &mathEnv};
       diags.origin = DiagOrigin::Emit;
       MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg, &oe);
       diags.pid = ~0u;
@@ -629,7 +633,7 @@ struct Doc {
   // the widths and vertical metrics still missing (the emitted blocks'; a
   // pending formula's text runs among them)
   MeasureRequest pendingRequests() {
-    ObjectEnv oe{arena, strs, styles, cfg.baseSizePx, &diags};
+    ObjectEnv oe{arena, strs, styles, cfg.baseSizePx, &diags, &mathEnv};
     diags.origin = DiagOrigin::Emit;
     MeasureRequest r = resolveWidths(tops, metrics, styles, cfg, &oe);
     diags.pid = ~0u;
@@ -665,7 +669,7 @@ struct Doc {
     if (name == "index") return dumpIndex(index, *registry);
     if (name == "semantic") return renderFallback();
     if (name == "blocktree") return dumpBlockTree(boxtree.tops, strs);
-    if (name == "mathir") return dumpMathIRs(tops, strs);
+    if (name == "mathir") return dumpMathIRs(tops, strs, &mathEnv);
     if (name == "mathbox") return dumpMathBoxes(tops, strs);
     if (name == "blocks") return dumpBlocks(tops, strs, styles);
     if (name == "hlist") return dumpHLists(tops, strs, styles);

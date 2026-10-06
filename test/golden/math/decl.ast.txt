@@ -1,0 +1,37 @@
+doc @[0,622)
+  para @[0,127)
+    text @[0,23) str="Before any declaration, "
+    math @[24,35) display=0 src="a defeq b"
+      text @[25,34) str="a defeq b"
+    text @[36,68) str=" is a name between two variables."
+    note @[68,127)
+      text @[70,113) str="A footnote written here keeps that reading: "
+      math @[114,125) display=0 src="x defeq y"
+        text @[115,124) str="x defeq y"
+      text @[125,126) str="."
+  code-block @[129,405) js="\n  $.math.symbol('defeq', {char: '≝', class: 'rel', claimCp: true})\n  $.math.fn('eqv', ['a', 'b'], '#a simeq #b')\n  $.math.fn('idtype', ['A', 'a', 'b'], 'Id_(#A)(#a, #b)')\n  $.math.fn('prd', ['x', 'A', 'B'], 'prod_(#x : #A) #B')\n  $.math.op('colim', {limits: 'display'})\n"
+  para @[407,547)
+    text @[407,416) str="After it, "
+    math @[417,428) display=0 src="a defeq b"
+      text @[418,427) str="a defeq b"
+    text @[429,440) str=" and a typed "
+    math @[441,450) display=0 src="a ≝ b"
+      text @[442,449) str="a ≝ b"
+    text @[451,493) str=" are relations, and the HoTT\nmacros expand: "
+    math @[494,505) display=0 src="eqv(A, B)"
+      text @[495,504) str="eqv(A, B)"
+    text @[505,506) str=", "
+    math @[507,524) display=0 src="idtype(U, a, b)"
+      text @[508,523) str="idtype(U, a, b)"
+    text @[525,528) str=" and "
+    math @[529,546) display=0 src="prd(x, A, B(x))"
+      text @[530,545) str="prd(x, A, B(x))"
+    text @[546,547) str="."
+  para @[549,572)
+    math @[549,572) display=1 src="colim_(i in I) F(i)"
+      text @[551,570) str="colim_(i in I) F(i)"
+  para @[574,621)
+    text @[574,603) str="The built-in stays reachable: "
+    math @[604,620) display=0 src="std.frac(1, 2)"
+      text @[605,619) str="std.frac(1, 2)"
+    text @[620,621) str="."

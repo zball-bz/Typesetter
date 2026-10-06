@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
-export const OPS_VERSION = 11;
+export const OPS_VERSION = 12;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '98436bd6';
+export const SCHEMA_HASH = 'e8be850f';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -49,7 +49,9 @@ export const SINCE = Object.freeze({
     "30": 10,
     "31": 10,
     "32": 10,
-    "33": 10
+    "33": 10,
+    "34": 12,
+    "35": 12
   },
   "attr": {
     "0": {},
@@ -464,6 +466,30 @@ export const SINCE = Object.freeze({
       "44": 10,
       "54": 11,
       "55": 11
+    },
+    "34": {
+      "0": 9,
+      "6": 9,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "54": 11,
+      "55": 11,
+      "56": 12
+    },
+    "35": {
+      "0": 9,
+      "6": 9,
+      "11": 12,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "54": 11,
+      "55": 11
     }
   }
 });
@@ -513,7 +539,9 @@ export const KIND = Object.freeze({
   "entry": 30,
   "slot": 31,
   "when": 32,
-  "each": 33
+  "each": 33,
+  "math": 34,
+  "mathsrc": 35
 });
 export const ARGK = Object.freeze({
   "label": 0,
@@ -571,7 +599,8 @@ export const ARGK = Object.freeze({
   "size": 52,
   "hang": 53,
   "style": 54,
-  "attach": 55
+  "attach": 55,
+  "display": 56
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -1217,6 +1246,44 @@ export const SCHEMA = Object.freeze({
     "attrs": {
       "of": "str",
       "sep": "str",
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
+    },
+    "resolved": []
+  },
+  "math": {
+    "id": 34,
+    "level": "inline",
+    "body": "data",
+    "inline": "object",
+    "attrs": {
+      "display": "bool",
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
+    },
+    "resolved": []
+  },
+  "mathsrc": {
+    "id": 35,
+    "level": "trivia",
+    "body": "none",
+    "inline": "skip",
+    "attrs": {
+      "src": "str",
       "label": "label",
       "role": "ident",
       "slot": "ident",

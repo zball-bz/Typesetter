@@ -6,14 +6,16 @@ doc @[0,347) [base]
     group @[53,331) [base] slot="margin"
       seq @[114,152) [base]
         text @[114,138) [base] str="记忆化容器，均摊 " raw=0:0,25:24
-        mathinline @[139,145) [base] src="O(1)"
+        mathinline @[139,145) [base]
+          mathsrc @[140,144) [base] src="O(1)"
         text @[146,152) [base] str=" 查询" raw=0:0,1:0
       seq @[53,331) [base]
       seq @[199,291) [base]
         styled @[199,207) [BOLD]
           text @[200,206) [BOLD] str="基例"
         text @[207,210) [base] str="："
-        mathinline @[210,218) [base] src="n <= 1"
+        mathinline @[210,218) [base]
+          mathsrc @[211,217) [base] src="n <= 1"
         text @[219,243) [base] str=" 时直接返回，详见 " raw=0:0,1:0,26:24
         ref @[244,249) [base] target="base" url="#tsr-base"
           text @[244,249) [base] str="§1"

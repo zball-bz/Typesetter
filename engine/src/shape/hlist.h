@@ -120,7 +120,9 @@ struct InlineObject {
   bool deferred = false;       // structure still needs metrics (math until T8)
   const ContentNode* node = nullptr;
   StyleId style = 0;
-  StrRef src = 0;   // math: TeX source (copy); image: src; raw: markup
+  StrRef src = 0;   // math: its source as written (copy); image: src; raw: markup
+  StrRef formula = 0;  // math (plan P2-15): its source as the lexer reads it (holes as units)
+  u32 epoch = 0;       // math: its declaration epoch (what its names bind to)
   StrRef alt = 0;   // image: alt text
   u32 part0 = 0, nParts = 0;  // HList::parts
 };

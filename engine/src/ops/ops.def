@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 // X-macro lists consumed by engine/src/ops/ops.h and ops.cc.
 //
-// OPS_VERSION(11)
+// OPS_VERSION(12)
 
 OP(MAKE_TEXT, 1)
 OP(MAKE_NODE, 2)
@@ -48,6 +48,8 @@ KIND(entry, 30)
 KIND(slot, 31)
 KIND(when, 32)
 KIND(each, 33)
+KIND(math, 34)
+KIND(mathsrc, 35)
 
 ARGK(label, label, 0)
 ARGK(level, level, 1)
@@ -105,3 +107,4 @@ ARGK(size, size, 52)
 ARGK(hang, hang, 53)
 ARGK(style, style, 54)
 ARGK(attach, attach, 55)
+ARGK(display, display, 56)

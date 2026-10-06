@@ -1,0 +1,97 @@
+inline pid=0 "a defeq b"
+hbox Ord w=4128 asc=819 desc=205
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+  glue w=171 @(624,0)
+  glyph "defeq" Op w=2560 asc=819 desc=205 px=16 @(795,0)
+  glue w=171 @(3355,0)
+  glyph "b" Ord w=602 asc=700 desc=10 px=16 @(3526,0)
+inline pid=1 "a defeq b"
+hbox Ord w=624 asc=477 desc=12
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+inline pid=1 ""
+hbox Ord w=796 asc=771 desc=0
+  glyph "≝" Rel w=796 asc=771 desc=-135 px=16
+inline pid=1 ""
+hbox Ord w=602 asc=700 desc=10
+  glyph "b" Ord w=602 asc=700 desc=10 px=16
+inline pid=1 "a ≝ b"
+hbox Ord w=624 asc=477 desc=12
+  glyph "a" Ord w=624 asc=477 desc=12 px=16
+inline pid=1 ""
+hbox Ord w=796 asc=771 desc=0
+  glyph "≝" Rel w=796 asc=771 desc=-135 px=16
+inline pid=1 ""
+hbox Ord w=602 asc=700 desc=10
+  glyph "b" Ord w=602 asc=700 desc=10 px=16
+inline pid=1 "eqv(A, B)"
+hbox Ord w=2638 asc=702 desc=10
+  hbox Ord w=2638 asc=702 desc=10
+    hbox Ord w=788 asc=696 desc=10
+      glyph "A" Ord w=788 asc=696 desc=10 px=16
+    glue w=284 @(788,0)
+    glyph "≃" Rel w=611 asc=406 desc=-103 px=16 @(1072,0)
+    glue w=284 @(1683,0)
+    hbox Ord w=671 asc=702 desc=1 @(1967,0)
+      glyph "B" Ord w=671 asc=702 desc=1 px=16
+inline pid=1 "idtype(U, a, b)"
+hbox Ord w=3983 asc=819 desc=262
+  hbox Ord w=3983 asc=819 desc=262
+    hbox Op w=1630 asc=819 desc=262
+      glyph "Id" Op w=1024 asc=819 desc=205 px=16
+      hbox Ord w=555 asc=497 desc=6 @(1024,-256)
+        glyph "U" Ord w=555 asc=497 desc=6 px=11.2
+    hbox Ord w=2353 asc=721 desc=215 @(1630,0)
+      glyph "(" Open w=336 asc=721 desc=209 px=16
+      hbox Ord w=624 asc=477 desc=12 @(336,0)
+        glyph "a" Ord w=624 asc=477 desc=12 px=16
+      glyph "," Punct w=284 asc=141 desc=215 px=16 @(960,0)
+      glue w=171 @(1244,0)
+      hbox Ord w=602 asc=700 desc=10 @(1415,0)
+        glyph "b" Ord w=602 asc=700 desc=10 px=16
+      glyph ")" Close w=336 asc=721 desc=209 px=16 @(2017,0)
+inline pid=1 "prd(x, A, B(x))"
+hbox Ord w=4269 asc=768 desc=316
+  hbox Op w=4269 asc=768 desc=316
+    hbox Op w=2216 asc=768 desc=316
+      glyph "∏" Op w=1081 asc=768 desc=256 px=16
+      hbox Ord w=1084 asc=487 desc=9 @(1081,-307)
+        hbox Ord w=377 asc=333 desc=9
+          glyph "x" Ord w=377 asc=333 desc=9 px=11.2
+        glyph "∶" Rel w=155 asc=326 desc=9 px=11.2 @(377,0)
+        hbox Ord w=552 asc=487 desc=7 @(532,0)
+          glyph "A" Ord w=552 asc=487 desc=7 px=11.2
+    hbox Ord w=1882 asc=721 desc=209 @(2387,0)
+      glyph "B" Ord w=671 asc=702 desc=1 px=16
+      hbox Ord w=1211 asc=721 desc=209 @(671,0)
+        glyph "(" Open w=336 asc=721 desc=209 px=16
+        glyph "x" Ord w=539 asc=475 desc=12 px=16 @(336,0)
+        glyph ")" Close w=336 asc=721 desc=209 px=16 @(875,0)
+display pid=2
+hbox Ord w=4283 asc=819 desc=895
+  hbox Op w=2560 asc=819 desc=895
+    glyph "colim" Op w=2560 asc=819 desc=205 px=16
+    hbox Ord w=1017 asc=490 desc=29 @(772,-866)
+      glyph "i" Ord w=258 asc=490 desc=6 px=11.2
+      glyph "∈" Rel w=477 asc=388 desc=29 px=11.2 @(258,0)
+      glyph "I" Ord w=282 asc=490 desc=1 px=11.2 @(735,0)
+  glue w=171 @(2560,0)
+  glyph "F" Ord w=511 asc=707 desc=2 px=16 @(2731,0)
+  hbox Ord w=1041 asc=721 desc=209 @(3242,0)
+    glyph "(" Open w=336 asc=721 desc=209 px=16
+    glyph "i" Ord w=369 asc=699 desc=8 px=16 @(336,0)
+    glyph ")" Close w=336 asc=721 desc=209 px=16 @(705,0)
+inline pid=3 "std.frac(1, 2)"
+hbox Ord w=358 asc=912 desc=353
+  hbox Ord w=358 asc=912 desc=353
+    hbox Ord w=358 asc=509 desc=5 @(0,403)
+      glyph "1" Ord w=358 asc=509 desc=5 px=11.2
+    rule w=358 h=41 @(0,236)
+    hbox Ord w=358 asc=506 desc=0 @(0,-353)
+      glyph "2" Ord w=358 asc=506 desc=0 px=11.2
+inline pid=4 "x defeq y"
+hbox Ord w=3441 asc=696 desc=203
+  glyph "x" Ord w=458 asc=404 desc=10 px=13.6
+  glue w=145 @(458,0)
+  glyph "defeq" Op w=2177 asc=696 desc=174 px=13.6 @(603,0)
+  glue w=145 @(2780,0)
+  glyph "y" Ord w=516 asc=407 desc=203 px=13.6 @(2925,0)

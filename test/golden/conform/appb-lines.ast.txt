@@ -40,6 +40,7 @@ doc @[0,371)
   codeblock @[273,300) lang="js" body="verbatim(island);"
   para @[302,315)
     math @[302,315) display=1 src="a + b = c"
+      text @[304,313) str="a + b = c"
   rule @[317,320)
   para @[322,370)
     text @[322,370) str="= not a heading, - not a list, > not a quote."

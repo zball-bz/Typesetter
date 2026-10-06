@@ -9,6 +9,7 @@ doc @[0,594)
     link @[88,106) url="u"
       text @[89,94) str="range "
       math @[95,102) display=0 src="[0,1)"
+        text @[96,101) str="[0,1)"
     text @[107,119) str=" is one link."
   para @[121,184)
     splice @[121,145) expr="strong"
@@ -36,8 +37,10 @@ doc @[0,594)
   para @[347,406)
     text @[347,383) str="Math decodes only the dollar escape: "
     math @[384,392) display=0 src="a $ b"
+      text @[385,391) str="a \\$ b"
     text @[393,396) str=" and "
     math @[397,405) display=0 src="x \\, y"
+      text @[398,404) str="x \\, y"
     text @[405,406) str="."
   para @[408,495)
     text @[408,444) str="Islands that would swallow a closer: "
@@ -49,6 +52,7 @@ doc @[0,594)
         text @[471,478) str="cost $3"
     text @[480,484) str=" then "
     math @[485,488) display=0 src="x"
+      text @[486,487) str="x"
     text @[489,495) str=" after."
   heading @[497,506) level=1 label="tgt"
     text @[499,506) str="Targets"

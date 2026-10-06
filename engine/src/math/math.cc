@@ -793,9 +793,9 @@ static void effClsOf(const MNode* n, u8& f, u8& l) {
 
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
-                           Span span, const MeasureNeeds* text, bool parseDiags) {
+                           Span span, const MeasureNeeds* text, bool parseDiags, const MathScope* scope) {
   // errors are local (plan P1-24): an Error leaf lays out in place
-  MathIR ir = parseMath(src, arena);
+  MathIR ir = parseMath(src, arena, scope);
   if (parseDiags) reportMathDiags(ir, src, span, diags);
   Layouter L{arena, strs, diags, span, sizePx, text};
   return L.layout(ir.root, display ? D : T);
@@ -804,9 +804,10 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         double sizePx, Arena& arena,
                                         Interner& strs, DiagSink& diags,
-                                        Span span, const MeasureNeeds* text, bool parseDiags) {
+                                        Span span, const MeasureNeeds* text, bool parseDiags,
+                                        const MathScope* scope) {
   std::vector<MathSeg> out;
-  MathIR ir = parseMath(src, arena);
+  MathIR ir = parseMath(src, arena, scope);
   if (parseDiags) reportMathDiags(ir, src, span, diags);
   MNode* run = ir.root;
   Layouter L{arena, strs, diags, span, sizePx, text};

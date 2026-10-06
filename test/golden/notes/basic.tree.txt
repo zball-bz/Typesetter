@@ -31,7 +31,8 @@ doc @[0,313) [base]
           code @[76,82) [basex0.85]
             text @[76,82) [basex0.85] str="code"
           text @[82,92) [basex0.85] str=", and math " raw=0:0,11:10
-          mathinline @[93,104) [basex0.85] src="x^2 + y^2"
+          mathinline @[93,104) [basex0.85]
+            mathsrc @[94,103) [basex0.85] src="x^2 + y^2"
           text @[104,105) [basex0.85] str="."
           text @[42,106) [basex0.85] str=" "
           ref @[42,106) [basex0.85] target="fnref-1" url="#tsr-fnref-1"

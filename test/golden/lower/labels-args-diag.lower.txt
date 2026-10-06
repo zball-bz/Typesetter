@@ -22,11 +22,13 @@ block 4 content [332,382) user framed async holes 4..5
 block 5 content [384,456)
   CALL para [384,456)
     TEXT "An inline formula " [384,401) raw=0:0,18:17
-    CALL mathinline [402,416) src="x^2"
+    CALL math [402,416)
+      CALL mathsrc [403,406) src="x^2"
     TEXT " keeps no label; a display formula does:" [417,456) raw=0:0,1:0
 block 6 content [458,477)
   CALL para [458,477)
-    CALL mathblock [458,477) src="E = m c^2" label="emc"
+    CALL math [458,477) display=true label="emc"
+      CALL mathsrc [460,469) src="E = m c^2"
 block 7 content [479,557) user framed holes 5..6
   CALL para [479,557)
     HOLE 5 [479,557)

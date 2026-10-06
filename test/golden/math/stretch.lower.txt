@@ -2,25 +2,32 @@ lower v1 abi 3d3ccfbb docEnd 298 holes 0 module none
 block 0 content [0,53)
   CALL para [0,53)
     TEXT "二次方程 " [0,12) raw=0:0,13:12
-    CALL mathinline [13,34) src="a x^2 + b x + c = 0"
+    CALL math [13,34)
+      CALL mathsrc [14,33) src="a x^2 + b x + c = 0"
     TEXT " 的求根公式：" [35,53) raw=0:0,1:0
 block 1 content [55,94)
   CALL para [55,94)
-    CALL mathblock [55,94) src="x = (-b +- sqrt(b^2 - 4 a c))/(2 a)"
+    CALL math [55,94) display=true
+      CALL mathsrc [57,92) src="x = (-b +- sqrt(b^2 - 4 a c))/(2 a)"
 block 2 content [96,184)
   CALL para [96,184)
     TEXT "组合数 " [96,105) raw=0:0,10:9
-    CALL mathinline [106,136) src="binom(n, k) = n!/(k! (n-k)!)"
+    CALL math [106,136)
+      CALL mathsrc [107,135) src="binom(n, k) = n!/(k! (n-k)!)"
     TEXT " 满足对称性；立方根 " [137,164) raw=0:0,1:0,29:27
-    CALL mathinline [165,181) src="root(3, 8) = 2"
+    CALL math [165,181)
+      CALL mathsrc [166,180) src="root(3, 8) = 2"
     TEXT "。" [181,184)
 block 3 content [186,241)
   CALL para [186,241)
-    CALL mathblock [186,241) src="hat(f)(xi) = int_(-oo)^oo f(x) e^(-2 pi i x xi) d x"
+    CALL math [186,241) display=true
+      CALL mathsrc [188,239) src="hat(f)(xi) = int_(-oo)^oo f(x) e^(-2 pi i x xi) d x"
 block 4 content [243,297)
   CALL para [243,297)
     TEXT "单位向量记作 " [243,261) raw=0:0,19:18
-    CALL mathinline [262,270) src="vec(e)"
+    CALL math [262,270)
+      CALL mathsrc [263,269) src="vec(e)"
     TEXT "，均值记作 " [270,285) raw=0:0,16:15
-    CALL mathinline [286,294) src="bar(x)"
+    CALL math [286,294)
+      CALL mathsrc [287,293) src="bar(x)"
     TEXT "。" [294,297)

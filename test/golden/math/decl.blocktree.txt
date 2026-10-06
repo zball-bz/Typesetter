@@ -1,0 +1,19 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,127)
+    paragraph para unit=0 @[0,127)
+top pid=1 leaves=1
+  stack root gap=1/1 @[407,547)
+    paragraph para unit=0 @[407,547)
+top pid=2 leaves=1
+  stack root gap=1/1 @[549,572)
+    replaced math math unit=0 ragged @[549,572)
+top pid=3 leaves=1
+  stack root gap=1/1 @[574,621)
+    paragraph para unit=0 @[574,621)
+top pid=4 leaves=2
+  stack root gap=1/1 @[0,621)
+    stack group @[0,621)
+      replaced rule rule unit=0 @[0,621)
+      stack list pad=1536su gap=1/3 @[0,621)
+        stack item x=1536su @[68,127)
+          paragraph para unit=1 x=1536su anchor="fn-1" marker="1." @[68,127)

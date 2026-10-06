@@ -20,10 +20,12 @@ block 3 content [124,202) user framed async holes 2..3
       TEXT "Second figure reuses the label: it loses it." [149,193)
 block 4 content [204,220)
   CALL para [204,220)
-    CALL mathblock [204,220) src="a = b" label="eq-1"
+    CALL math [204,220) display=true label="eq-1"
+      CALL mathsrc [206,211) src="a = b"
 block 5 content [222,238)
   CALL para [222,238)
-    CALL mathblock [222,238) src="c = d" label="eq-1"
+    CALL math [222,238) display=true label="eq-1"
+      CALL mathsrc [224,229) src="c = d"
 block 6 content [240,311) user framed async holes 3..4
   REGION async "figure" args=hole 3 [240,311)
     CALL para [265,302)

@@ -58,6 +58,8 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `code` | inline | `str` | — | M2 |
 | `ref` | inline | `target`, `form?`, `supplement?` (P2-07; +resolved fields) | child refs (a group, `@[a, b]`) and an `extra` seq (slot `extra`: the bracket of `@x[…]`) — P2-09 | M4 |
 | `mathinline` | inline | `src` | — (MathBox segments at emit) | M7 ✓ |
+| `math` | — (wire only) | `display?`, `label?`; kids: `mathsrc` fragments and holes (plan P2-15) | instantiated as `mathblock` (display) or `mathinline`, kids kept; its source assembled at emit (math-design §10.2) | P2-15 |
+| `mathsrc` | trivia | `src` (one line of a formula, as written; its own span) | only under a formula | P2-15 |
 | `raw` | inline | `html`, `w?`, `h?` | — | M6 |
 | `hardbreak` | inline | — (syntax reserved, not yet granted; the engine sets it as a forced line break, plan P1-13) | — | — |
 | `field` | inline | `name`, `of?` | — (the enclosing instance's slot, or `of`'s; P2-05/P2-07) | P2-05 |
@@ -67,6 +69,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 
 Notes:
 - **Labelable kinds** (accept `label`): `heading`, `group`, `table`, `term`, `mathblock`. Labels are args, not nodes.
+- **Declaration epoch** (plan P2-15): instantiation stamps every node with `declEpoch`, the positional declarations (math.symbol / op / fn, rule) whose flow index is at most its EMIT's; a moved or cloned node keeps it, so what a formula's names mean is fixed where it was emitted.
 - **Figure is a declared class, not a kind**: `group{role:"figure", label}` with a caption paragraph is selected by the figure row of the element registry (docs/semantics-design.md; plan P1-10) — keeps the engine kind set minimal, and a document declares classes the same way (P2-07: `$.element(name, spec)` writes a registry row; a `#!name` region builds `group{role: name}` with its options as EXT data, which the row's default selector `{role: name}` picks up).
 - **Positional semantics are nodes** (P2-07): a counter event (`counterUpdate`) and a table row (`entry`, e.g. a bibliography entry) are level-neutral nodes that render nothing where they stand; template-only kinds (`slot`, `when`, `each`) are content of declarations.
 - `val(x)` is not a kind: primitives splice as `text`; content values splice as themselves.

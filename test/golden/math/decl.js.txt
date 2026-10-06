@@ -1,0 +1,19 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {math} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+
+  $.math.symbol('defeq', {char: '≝', class: 'rel', claimCp: true})
+  $.math.fn('eqv', ['a', 'b'], '#a simeq #b')
+  $.math.fn('idtype', ['A', 'a', 'b'], 'Id_(#A)(#a, #b)')
+  $.math.fn('prd', ['x', 'A', 'B'], 'prod_(#x : #A) #B')
+  $.math.op('colim', {limits: 'display'})
+
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

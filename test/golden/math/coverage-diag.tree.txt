@@ -1,7 +1,9 @@
 doc @[0,126) [base]
   para @[0,126) [base]
     text @[0,60) [base] str="数学字体没有的码位排成测量过的文字叶子："
-    mathinline @[60,85) [base] src="varrho + 中 = varsigma"
+    mathinline @[60,85) [base]
+      mathsrc @[61,84) [base] src="varrho + 中 = varsigma"
     text @[85,115) [base] str="，诊断每个码位一次："
-    mathinline @[115,123) [base] src="varrho"
+    mathinline @[115,123) [base]
+      mathsrc @[116,122) [base] src="varrho"
     text @[123,126) [base] str="。"
