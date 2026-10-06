@@ -15,20 +15,20 @@ doc @[0,593) [base]
     styled @[121,145) [BOLD]
       seq @[121,145) [BOLD]
         text @[129,133) [BOLD] str="code " raw=0:0,5:4
-        code @[134,139) [BOLD]
-          text @[134,139) [BOLD] str="a]b"
+        code @[134,139) [BOLD+CODEx0.85]
+          text @[134,139) [BOLD+CODEx0.85] str="a]b"
         text @[140,144) [BOLD] str=" here" raw=0:0,1:0
     text @[146,184) [base] str=" and the body ends after the code span." raw=0:0,1:0
   para @[186,278) [base]
     text @[186,211) [base] str="Code spans by run length: " raw=0:0,26:25
-    code @[212,219) [base]
-      text @[212,219) [base] str="a`b"
+    code @[212,219) [CODEx0.85]
+      text @[212,219) [CODEx0.85] str="a`b"
     text @[219,220) [base] str=", " raw=0:0,2:1
-    code @[221,233) [base]
-      text @[221,233) [base] str="`tick`"
+    code @[221,233) [CODEx0.85]
+      text @[221,233) [CODEx0.85] str="`tick`"
     text @[234,237) [base] str=" and " raw=0:0,1:0,5:3
-    code @[238,243) [base]
-      text @[238,243) [base] str="x"
+    code @[238,243) [CODEx0.85]
+      text @[238,243) [CODEx0.85] str="x"
     text @[243,278) [base] str="; an unclosed `` run stays literal."
   para @[280,345) [base]
     text @[280,306) [base] str="Pairs skip stray brackets: " raw=0:0,27:26
@@ -57,10 +57,10 @@ doc @[0,593) [base]
     mathinline @[485,488) [base]
       mathsrc @[486,487) [base] src="x"
     text @[489,495) [base] str=" after." raw=0:0,1:0
-  heading @[497,506) [base] level=1 label="tgt"
-    text @[499,506) [base] str="Targets"
-  heading @[514,546) [base] level=2 label="a]b"
-    text @[533,545) [base] str="An odd label"
+  heading @[497,506) [BOLDx1.60] level=1 label="tgt"
+    text @[499,506) [BOLDx1.60] str="Targets"
+  heading @[514,546) [BOLDx1.35] level=2 label="a]b"
+    text @[533,545) [BOLDx1.35] str="An odd label"
   para @[548,593) [base]
     text @[548,559) [base] str="References: " raw=0:0,12:11
     ref @[560,568) [base] target="tgt" url="#tsr-tgt"

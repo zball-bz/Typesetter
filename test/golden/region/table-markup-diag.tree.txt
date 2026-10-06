@@ -8,8 +8,8 @@ doc @[0,79) [base]
         text @[27,28) [base] str="c"
     trow @[0,79) [base]
       tcell @[0,79) [base]
-        code @[29,36) [base]
-          text @[29,36) [base] str="x | y"
+        code @[29,36) [CODEx0.85]
+          text @[29,36) [CODEx0.85] str="x | y"
       tcell @[0,79) [base]
         text @[39,49) [base] str="| literal" raw=0:0,1:2
     trow @[0,79) [base]

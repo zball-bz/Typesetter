@@ -31,7 +31,8 @@ struct LegacyInline final : InlineSink {
   StyleId compose(StyleId base, const StyleDelta& d, float mul) { return E.compose(base, d, mul); }
 
   void walk(const ContentNode* n, Flow& u, ICtx ctx) override { inlineWalk(n, u, ctx); }
-  void indent(Flow& u, StyleId st, Span span, double px) override {
+  void indent(Flow& u, StyleId st, Span span, double px, double em) override {
+    (void)em;
     pushSynthetic(u, st, 0, span, px, BF_INDENT, 0.0f, BREAK_INF, 0.0);
   }
   void finish(Flow&) override {}
@@ -74,8 +75,7 @@ struct LegacyInline final : InlineSink {
           LinebreakBlock b;
           b.breakPenalty = BREAK_INF;
           b.flags = ctx.addFlags;
-          b.style = compose(n->style, ctx.add + E.mono,
-                            ctx.mul * (float)cfg.codeScale);
+          b.style = compose(n->style, ctx.add, ctx.mul);  // mono and its size: rules (plan P3-01)
           b.text = n->kids[0]->str;
           b.linkUrl = ctx.url;
           b.span = n->span;

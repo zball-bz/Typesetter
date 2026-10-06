@@ -56,7 +56,7 @@ struct InlineSink {
   virtual ~InlineSink() = default;
   virtual void walk(const ContentNode* n, Flow& u, ICtx ctx) = 0;
   // the paragraph indent (首行缩进, App C): an unbreakable fixed-width box
-  virtual void indent(Flow& u, StyleId st, Span span, double px) = 0;
+  virtual void indent(Flow& u, StyleId st, Span span, double px, double em) = 0;
   // the unit's inline stream is complete
   virtual void finish(Flow& u) = 0;
   // a cell's stream (table cell, caption row, sidecar line) moves to its cell

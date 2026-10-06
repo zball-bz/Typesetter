@@ -290,7 +290,7 @@ struct Doc {
   // block's sidecars arrive split, from the default fence: plan P2-13.)
   void stageResolve() {
     diags.begin(DiagOrigin::Resolve);
-    resolveDoc(tree, arena, strs, styles, cfg, diags, *registry, index);
+    resolveDoc(tree, arena, strs, styles, nodeProps, cascade, cfg, diags, *registry, index);
     rt.clear();
     waitTokens.clear();
     waitBoxes.clear();
@@ -596,7 +596,7 @@ struct Doc {
     if (!done(Stage::Resolve)) return Status::NeedMeasure;
     if (done(Stage::Layout)) return Status::Ok;
     if (!done(Stage::BoxTree)) {  // the block structure (plan P1-18): once per resolved tree
-      boxtree = buildBoxTree(tree, strs, styles, cfg, *registry);
+      boxtree = buildBoxTree(tree, strs, styles, nodeProps, cfg, *registry);
       boxtree.math = &mathEnv;
       validThrough = (int)Stage::BoxTree;
     }

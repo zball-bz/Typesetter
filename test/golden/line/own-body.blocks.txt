@@ -151,7 +151,7 @@ top pid=4 units=4
   word "the" w=1307su pen=INF x0.85 @[319,347)
   space w=219su stretch=1 x0.85 @[319,347)
   word "note." w=2178su pen=INF x0.85 @[319,347)
- unit text indent=3072su marker="•"
+ unit text indent=2842su marker="•"
   word "a" w=437su pen=INF x0.85 @[351,365)
   space w=219su stretch=1 x0.85 @[351,365)
   word "list" w=1742su pen=INF x0.85 @[351,365)

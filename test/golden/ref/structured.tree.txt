@@ -1,8 +1,8 @@
 doc @[0,289) [base]
-  heading @[0,9) [base] level=1 label="sec-a"
-    text @[2,9) [base] str="Methods"
-  heading @[19,29) [base] level=2 label="sec-b"
-    text @[22,29) [base] str="Details"
+  heading @[0,9) [BOLDx1.60] level=1 label="sec-a"
+    text @[2,9) [BOLDx1.60] str="Methods"
+  heading @[19,29) [BOLDx1.35] level=2 label="sec-b"
+    text @[22,29) [BOLDx1.35] str="Details"
   group @[39,82) [base] role="figure" label="fig-a"
     para @[64,73) [base] role="caption"
       text @[64,73) [BOLD] str="Figure 1: "

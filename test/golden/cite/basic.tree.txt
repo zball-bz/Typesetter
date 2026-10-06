@@ -1,6 +1,6 @@
 doc @[0,366) [base]
-  heading @[0,11) [base] level=1 label="h-1"
-    text @[2,11) [base] str="Citations"
+  heading @[0,11) [BOLDx1.60] level=1 label="h-1"
+    text @[2,11) [BOLDx1.60] str="Citations"
   para @[13,318) [base]
     text @[13,60) [base] str="Optimal line breaking is due to Knuth and Plass " raw=0:0,48:47
     ref @[61,66) [base] target="kp81"

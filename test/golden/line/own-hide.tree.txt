@@ -6,11 +6,11 @@ doc @[0,359) [base]
     text @[87,113) [base] str=" and the paragraph goes on." raw=0:0,1:0
   para @[115,147) [base]
     text @[115,126) [base] str="A code span " raw=0:0,12:11
-    code @[127,132) [base]
-      text @[127,132) [base] str="%--"
+    code @[127,132) [CODEx0.85]
+      text @[127,132) [CODEx0.85] str="%--"
     text @[133,147) [base] str=" hides nothing:" raw=0:0,1:0
-  heading @[148,171) [base] level=1 label="h-1"
-    text @[150,171) [base] str="This heading survives"
+  heading @[148,171) [BOLDx1.60] level=1 label="h-1"
+    text @[150,171) [BOLDx1.60] str="This heading survives"
   para @[173,198) [base]
     text @[173,182) [base] str="请注意"
     text @[182,183) [base] str="*"
@@ -26,8 +26,8 @@ doc @[0,359) [base]
         text @[221,230) [base] str="第二项"
   para @[232,267) [base]
     text @[232,267) [base] str="A stray $ sign at the end of a line"
-  heading @[268,299) [base] level=1 label="h-2"
-    text @[270,299) [base] str="The heading after it survives"
+  heading @[268,299) [BOLDx1.60] level=1 label="h-2"
+    text @[270,299) [BOLDx1.60] str="The heading after it survives"
   para @[301,359) [base]
     text @[301,307) [base] str="A call " raw=0:0,7:6
     styled @[308,346) [BOLD]

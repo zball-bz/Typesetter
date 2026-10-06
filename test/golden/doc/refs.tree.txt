@@ -1,6 +1,6 @@
 doc @[0,436) [base]
-  heading @[0,14) [base] level=1 label="intro"
-    text @[2,14) [base] str="Introduction"
+  heading @[0,14) [BOLDx1.60] level=1 label="intro"
+    text @[2,14) [BOLDx1.60] str="Introduction"
   para @[24,121) [base]
     text @[24,71) [base] str="The typesetting engine resolves references like " raw=0:0,48:47
     ref @[72,78) [base] target="intro" url="#tsr-intro"
@@ -9,8 +9,8 @@ doc @[0,436) [base]
     ref @[83,91) [base] target="results" url="#tsr-results"
       text @[83,91) [base] str="§2"
     text @[92,121) [base] str=" before any rendering happens." raw=0:0,1:0
-  heading @[123,132) [base] level=2 label="h-1.1"
-    text @[126,132) [base] str="Method"
+  heading @[123,132) [BOLDx1.35] level=2 label="h-1.1"
+    text @[126,132) [BOLDx1.35] str="Method"
   para @[134,183) [base]
     text @[134,183) [base] str="Terms are definition sites with automatic labels."
   group @[185,246) [base] role="term" label="measure"
@@ -18,8 +18,8 @@ doc @[0,436) [base]
       text @[185,246) [BOLD] str="measure"
       text @[185,246) [base] str=" — "
       text @[200,245) [base] str="The width available to a single typeset line."
-  heading @[248,257) [base] level=1 label="results"
-    text @[250,257) [base] str="Results"
+  heading @[248,257) [BOLDx1.60] level=1 label="results"
+    text @[250,257) [BOLDx1.60] str="Results"
   para @[269,380) [base]
     text @[269,283) [base] str="As promised in " raw=0:0,15:14
     ref @[284,290) [base] target="intro" url="#tsr-intro"
@@ -28,8 +28,8 @@ doc @[0,436) [base]
     ref @[349,357) [base] target="measure" url="#tsr-measure"
       text @[349,357) [base] str="measure"
     text @[358,380) [base] str=" without a second pass." raw=0:0,1:0
-  heading @[382,402) [base] level=2 label="h-2.1"
-    text @[385,402) [base] str="Table of contents"
+  heading @[382,402) [BOLDx1.35] level=2 label="h-2.1"
+    text @[385,402) [BOLDx1.35] str="Table of contents"
   list @[404,410) [base] ordered=false
     item @[404,410) [base]
       para @[404,410) [base]
@@ -53,8 +53,8 @@ doc @[0,436) [base]
           para @[404,410) [base]
             link @[404,410) [base] url="#tsr-h-2.2"
               text @[404,410) [base] str="2.2 Glossary"
-  heading @[412,423) [base] level=2 label="h-2.2"
-    text @[415,423) [base] str="Glossary"
+  heading @[412,423) [BOLDx1.35] level=2 label="h-2.2"
+    text @[415,423) [BOLDx1.35] str="Glossary"
   list @[425,436) [base] ordered=false
     item @[425,436) [base]
       para @[425,436) [base]

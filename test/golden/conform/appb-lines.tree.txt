@@ -1,10 +1,10 @@
 doc @[0,370) [base]
-  heading @[0,11) [base] level=1 label="h-1"
-    text @[2,11) [base] str="Level one"
-  heading @[12,24) [base] level=2 label="h-1.1"
-    text @[15,24) [base] str="Level two"
-  heading @[25,40) [base] level=3 label="h-1.1.1"
-    text @[29,40) [base] str="Level three"
+  heading @[0,11) [BOLDx1.60] level=1 label="h-1"
+    text @[2,11) [BOLDx1.60] str="Level one"
+  heading @[12,24) [BOLDx1.35] level=2 label="h-1.1"
+    text @[15,24) [BOLDx1.35] str="Level two"
+  heading @[25,40) [BOLDx1.15] level=3 label="h-1.1.1"
+    text @[29,40) [BOLDx1.15] str="Level three"
   list @[42,132) [base] ordered=false start=1
     item @[42,58) [base]
       para @[44,58) [base]
@@ -38,8 +38,8 @@ doc @[0,370) [base]
         text @[211,223) [base] str="nested quote"
   comment @[225,271) [base]
     text @[225,271) [base] str=" a comment %-- nested --% still comment "
-  codeblock @[273,300) [base] lang="js"
-    text @[279,296) [base] str="verbatim(island);"
+  codeblock @[273,300) [CODEx0.85] lang="js"
+    text @[279,296) [CODEx0.85] str="verbatim(island);"
   mathblock @[302,315) [base]
     mathsrc @[304,313) [base] src="a + b = c"
   rule @[317,320) [base]

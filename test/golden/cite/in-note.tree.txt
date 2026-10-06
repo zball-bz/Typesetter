@@ -1,6 +1,6 @@
 doc @[0,219) [base]
-  heading @[0,20) [base] level=1 label="h-1"
-    text @[2,20) [base] str="Citations in notes"
+  heading @[0,20) [BOLDx1.60] level=1 label="h-1"
+    text @[2,20) [BOLDx1.60] str="Citations in notes"
   para @[22,171) [base]
     text @[22,38) [base] str="Liang's patterns " raw=0:0,17:16
     ref @[39,47) [base] target="liang83"

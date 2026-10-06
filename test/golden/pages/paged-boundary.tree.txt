@@ -1,6 +1,6 @@
 doc @[0,384) [base]
-  heading @[0,16) [base] level=1 label="h-1"
-    text @[2,16) [base] str="Sheet boundary"
+  heading @[0,16) [BOLDx1.60] level=1 label="h-1"
+    text @[2,16) [BOLDx1.60] str="Sheet boundary"
   para @[18,155) [base]
     text @[18,155) [base] str="Filler paragraph one fills most of the first sheet with ordinary running text so that the next paragraph starts close to the bottom edge."
   para @[157,250) [base]

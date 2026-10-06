@@ -1,14 +1,14 @@
 doc @[0,700) [base]
-  heading @[0,14) [base] level=1 label="top"
-    text @[2,14) [base] str="分页样例"
+  heading @[0,14) [BOLDx1.60] level=1 label="top"
+    text @[2,14) [BOLDx1.60] str="分页样例"
   para @[22,304) [base]
     text @[22,304) [base] str="分页是布局之上的后处理：内容按带切分，贪心装页，遇到孤行寡行、标题悬尾等违例时回退切点。这一段足够长，可以在窄页高下跨越页边界，从而测试寡行与孤行规则的实际效果，并让回退逻辑真正运行一次。"
-  heading @[306,321) [base] level=2 label="h-1.1"
-    text @[309,321) [base] str="保持规则"
+  heading @[306,321) [BOLDx1.35] level=2 label="h-1.1"
+    text @[309,321) [BOLDx1.35] str="保持规则"
   para @[323,383) [base]
     text @[323,383) [base] str="标题不落页尾；下面的代码块按逻辑行切分："
-  codeblock @[385,494) [base] lang="json"
-    text @[393,490) [base] str="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}"
+  codeblock @[385,494) [CODEx0.85] lang="json"
+    text @[393,490) [CODEx0.85] str="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}"
   group @[496,611) [base] role="figure" label="fig-p"
     image @[496,611) [base] src="photos/x.png" alt="样图" w=200 h=80
     para @[572,602) [base] role="caption"

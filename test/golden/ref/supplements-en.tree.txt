@@ -1,6 +1,6 @@
 doc @[0,308) [base]
-  heading @[0,14) [base] level=1 label="intro"
-    text @[2,14) [base] str="Introduction"
+  heading @[0,14) [BOLDx1.60] level=1 label="intro"
+    text @[2,14) [BOLDx1.60] str="Introduction"
   para @[24,147) [base]
     text @[24,113) [base] str="An English document takes English supplements from the doc.lang setting (plan P1-03): see " raw=0:0,90:89
     ref @[114,120) [base] target="intro" url="#tsr-intro"

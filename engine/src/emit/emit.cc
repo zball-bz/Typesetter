@@ -369,7 +369,7 @@ struct HlInline final : InlineSink {
   void code(const ContentNode* n, Flow& u, ICtx ctx) {
     // inline code: one unbreakable box, mono style
     if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
-      StyleId st = E.compose(n->style, ctx.add + E.mono, ctx.mul * (float)cfg.codeScale);
+      StyleId st = E.compose(n->style, ctx.add, ctx.mul);  // mono and its size: rules (plan P3-01)
       AdvanceSpec sp;
       sp.str = n->kids[0]->str;
       push(u, IK::Box, firstCc(strs.get(sp.str)), 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Plain),
@@ -766,10 +766,10 @@ struct HlInline final : InlineSink {
     flushWord();
   }
 
-  void indent(Flow& u, StyleId st, Span span, double px) override {
+  void indent(Flow& u, StyleId st, Span span, double px, double em) override {
     AdvanceSpec sp;
     sp.k = AdvanceSpec::Fixed;
-    sp.em = cfg.paraIndentEm;
+    sp.em = em;
     sp.str = E.spaceRef;
     RunRec rk = key(st, 0, 0, RealizeClass::Pinned);
     rk.syn = SynKind::Indent;
@@ -817,7 +817,7 @@ struct Emitter {
     const ContentNode* n = ls.node;
     E.leafFlow = &u;  // a generated node without a span reports at its leaf
     E.leafSpan = n->span;
-    const BlockTraits& tr = traitsOf(b.traits);
+    const BlockTraits& tr = b.tr;
     switch (b.layouter) {
       case LayouterId::Paragraph: {
         if (ls.role == LeafSource::Role::MarkerOnly) return;  // its marker alone
@@ -826,11 +826,13 @@ struct Emitter {
         if (n->kind == Kind::error) {
           sink.walk(n, u, ctx);  // error case renders ⚠ + message
         } else {
-          if (n->kind == Kind::heading) {
-            ctx.add = E.bold;
-            ctx.mul = (float)headingSizeMul(attrInt(n, ArgK::level, 1));
+          // (a heading's weight and size, its paragraphs' indent: the
+          // cascade's, plan P3-01)
+          if (ls.paraIndent.unit) {
+            const double em = fontPx(n->style);
+            const double px = ls.paraIndent.unit == 2 ? (double)ls.paraIndent.v : ls.paraIndent.v * em;
+            sink.indent(u, n->style, n->span, px, ls.paraIndent.unit == 2 ? px / em : (double)ls.paraIndent.v);
           }
-          if (ls.paraIndent) sink.indent(u, n->style, n->span, cfg.paraIndentEm * fontPx(n->style));
           for (const ContentNode* k : n->kids) sink.walk(k, u, ctx);  // the block's content
         }
         sink.finish(u);
@@ -838,7 +840,7 @@ struct Emitter {
       }
       case LayouterId::Grid: {
         GridData& g = u.data.emplace<GridData>();
-        g.codeStyle = compose(n->style, E.mono, (float)cfg.codeScale);
+        g.codeStyle = n->style;  // mono at its size: the cascade's (plan P3-01)
         g.chRef = strs.intern("0");
         g.cjkChRef = strs.intern("\xE4\xB8\xAD");
         if (StrRef lang = attrStr(n, ArgK::lang)) g.lang = lang;
@@ -871,7 +873,7 @@ struct Emitter {
           for (const std::vector<TokenRun>& line : lines) {
             std::vector<CodeRun>& runs = g.lines.emplace_back();
             for (const TokenRun& r : line)
-              runs.push_back({strs.intern(r.text), compose(r.style, E.mono, (float)cfg.codeScale),
+              runs.push_back({strs.intern(r.text), r.style,
                               styles.get(r.style).hang == HANG_CONTENT,
                               r.tag >= 0 ? strs.intern(std::string("tok-") + kTokenTags[r.tag]) : 0});
           }
@@ -891,7 +893,7 @@ struct Emitter {
           std::function<void(const ContentNode*, std::vector<CodeRun>&)> collect =
               [&](const ContentNode* k, std::vector<CodeRun>& out) {
                 if (k->kind == Kind::text) {
-                  out.push_back({k->str, compose(k->style, E.mono, (float)cfg.codeScale),
+                  out.push_back({k->str, k->style,
                                  styles.get(k->style).hang == HANG_CONTENT});
                   return;
                 }
@@ -1687,7 +1689,7 @@ static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u
     if (im->size.placeholder) out += " placeholder";
     if (b.floatSide) out += b.floatSide == 1 ? " float=left" : " float=right";
   }
-  if (traitsOf(b.traits).align == BlockTraits::Align::Center) out += " centered";
+  if (b.tr.align == BlockTraits::Align::Center) out += " centered";
   out += "\n";
 }
 

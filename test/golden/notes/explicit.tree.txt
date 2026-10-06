@@ -1,6 +1,6 @@
 doc @[0,227) [base]
-  heading @[0,20) [base] level=1 label="h-1"
-    text @[2,20) [base] str="Explicit placement"
+  heading @[0,20) [BOLDx1.60] level=1 label="h-1"
+    text @[2,20) [BOLDx1.60] str="Explicit placement"
   para @[22,119) [base]
     text @[22,37) [base] str="First note here"
     ref @[37,44) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
@@ -27,7 +27,7 @@ doc @[0,227) [base]
           text @[56,89) [basex0.85] str=" "
           ref @[56,89) [basex0.85] target="fnref-2" url="#tsr-fnref-2"
             text @[56,89) [basex0.85] str="↩"
-  heading @[131,141) [base] level=1 label="top"
-    text @[133,141) [base] str="Appendix"
+  heading @[131,141) [BOLDx1.60] level=1 label="top"
+    text @[133,141) [BOLDx1.60] str="Appendix"
   para @[149,227) [base]
     text @[149,227) [base] str="Text after the explicitly placed notes section: no second section is appended."

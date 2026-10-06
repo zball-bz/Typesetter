@@ -1,6 +1,6 @@
 doc @[0,200) [base]
-  heading @[0,18) [base] level=1 label="sec-a"
-    text @[2,18) [base] str="Labelled heading"
+  heading @[0,18) [BOLDx1.60] level=1 label="sec-a"
+    text @[2,18) [BOLDx1.60] str="Labelled heading"
   para @[28,99) [base]
     text @[28,99) [base] str="A short paragraph before a labelled display equation on the same sheet."
   mathblock @[101,130) [base] label="eq-pyth" name="(1)"

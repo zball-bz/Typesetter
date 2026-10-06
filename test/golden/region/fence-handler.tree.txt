@@ -3,5 +3,5 @@ doc @[171,236) [base]
     styled @[171,193) [BOLD]
       text @[171,193) [BOLD] str="LOUD TEXT"
   raw @[195,211) [base] html="<b>boxed</b>" h=30
-  codeblock @[213,236) [base] lang="js"
-    text @[219,232) [base] str="plain(fence);"
+  codeblock @[213,236) [CODEx0.85] lang="js"
+    text @[219,232) [CODEx0.85] str="plain(fence);"

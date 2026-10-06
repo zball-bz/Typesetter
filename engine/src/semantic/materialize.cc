@@ -6,14 +6,24 @@ namespace tsr {
 
 namespace {
 
-// A template's site: the span and style its nodes take, plus the style
-// deltas of the `styled` items around the current one.
+// A template's site: the span and style its nodes take (computed and
+// authored: model.h), plus the style deltas of the `styled` items around
+// the current one.
 struct Ctx {
   Span span;
   StyleId style = 0;
   StyleDelta d;
   float size = 1.0f;
+  StyleId authored = 0;
 };
+// the site at a node
+Ctx siteAt(const ContentNode* k) {
+  Ctx c;
+  c.span = k->span;
+  c.style = k->style;
+  c.authored = k->authored;
+  return c;
+}
 
 // The slots one template instantiation reads.
 struct Slots {
@@ -62,11 +72,26 @@ struct Mat {
   }
 
   // --- nodes ------------------------------------------------------------------
-  ContentNode* mk(Kind k, Span span, StyleId style = 0) {
+  ContentNode* mk(Kind k, Span span) {
     ContentNode* n = e.arena.make<ContentNode>();
     n->kind = k;
     n->span = span;
-    n->style = style;
+    n->props = ~0u;  // kPropsUnset: settled at its place after materialize
+    e.made++;
+    return n;
+  }
+  // in a site's style
+  ContentNode* mk(Kind k, Span span, const Ctx& c) {
+    ContentNode* n = mk(k, span);
+    n->style = styleOf(c);
+    n->authored = compose(e.styles, c.authored, c.d, c.size);
+    return n;
+  }
+  // in a node's style
+  ContentNode* mk(Kind k, Span span, const ContentNode* like) {
+    ContentNode* n = mk(k, span);
+    n->style = like->style;
+    n->authored = like->authored;
     return n;
   }
   ContentNode* clone1(const ContentNode* n) {
@@ -101,6 +126,7 @@ struct Mat {
     if (c.d.empty() && c.size == 1.0f) return n;
     ContentNode* d = clone1(n);
     d->style = compose(e.styles, n->style, c.d, c.size);
+    d->authored = compose(e.styles, n->authored, c.d, c.size);
     for (ContentNode*& k : d->kids) k = delta(k, c);
     return d;
   }
@@ -126,7 +152,7 @@ struct Mat {
     }
     void flush(Mat& m) {
       if (!open) return;
-      ContentNode* tx = m.mk(Kind::text, c.span, m.styleOf(c));
+      ContentNode* tx = m.mk(Kind::text, c.span, c);
       tx->str = m.e.strs.intern(text);
       out.push_back(tx);
       text.clear();
@@ -185,7 +211,7 @@ struct Mat {
   }
   ContentNode* node(const TItem& it, const Ctx& c, const Slots& s) {
     bool inline_ = isInlineLevel(it.kind);
-    ContentNode* n = mk(it.kind, c.span, inline_ || it.siteStyle ? styleOf(c) : 0);
+    ContentNode* n = inline_ || it.siteStyle ? mk(it.kind, c.span, c) : mk(it.kind, c.span);
     for (const auto& [k, v] : it.args) {
       if (v.k == TArg::K::Bool || v.k == TArg::K::Num) {
         n->args.push_back({k, v.k == TArg::K::Bool ? ArgTag::Bool : ArgTag::Num, v.k == TArg::K::Bool ? (v.b ? 1.0 : 0.0) : v.num, 0});
@@ -251,7 +277,7 @@ struct Mat {
     }
     r->kids.clear();
     std::string target(e.strs.get(attrStr(r, ArgK::target)));
-    Ctx c{r->span, r->style};
+    Ctx c = siteAt(r);
     if (!members.empty()) return group(r, members, extra, c);
     auto it = e.ix.labels.find(target);
     if (it == e.ix.labels.end()) {
@@ -310,11 +336,11 @@ struct Mat {
     }
     for (size_t i = 0; i < members.size(); i++) {
       if (i) {
-        ContentNode* tx = mk(Kind::text, c.span, styleOf(c));
+        ContentNode* tx = mk(Kind::text, c.span, c);
         tx->str = e.strs.intern(e.terms.get("ref-sep"));
         r->kids.push_back(tx);
       }
-      ContentNode* m = mk(Kind::ref, r->span, r->style);
+      ContentNode* m = mk(Kind::ref, r->span, r);
       setArg(m, ArgK::target, members[i]);
       for (ArgK k : {ArgK::form, ArgK::supplement})
         if (StrRef v = attrStr(r, k)) setArg(m, k, e.strs.get(v));
@@ -382,7 +408,7 @@ struct Mat {
           while (j + 1 < keys.size() && ord[j + 1] == ord[j] + 1) j++;
         if (j - i >= 2) {  // a run of three or more
           item(i);
-          ContentNode* tx = mk(Kind::text, ec.span, styleOf(ec));
+          ContentNode* tx = mk(Kind::text, ec.span, ec);
           tx->str = e.strs.intern(e.terms.get("range-sep"));
           out.push_back(tx);
           item(j);
@@ -440,7 +466,7 @@ struct Mat {
     if (k->kind == Kind::slot || k->kind == Kind::when || k->kind == Kind::each) {
       std::string msg = std::string(kindName(k->kind)) + " belongs in a declaration's template";
       e.diags.add(Sev::Warning, "template-only", k->span, msg);
-      ContentNode* x = mk(Kind::error, k->span, k->style);
+      ContentNode* x = mk(Kind::error, k->span, k);
       x->args.push_back({ArgK::message, ArgTag::Str, 0, e.strs.intern(msg)});
       x->args.push_back({ArgK::code, ArgTag::Str, 0, e.strs.intern("template-only")});
       out.push_back(x);
@@ -466,7 +492,7 @@ struct Mat {
         instanceSlots(*in, s);
         s.set("label", in->label);
         if (const std::string* v = s.textOf(name)) {
-          ContentNode* tx = mk(Kind::text, k->span, k->style);
+          ContentNode* tx = mk(Kind::text, k->span, k);
           tx->str = e.strs.intern(*v);
           out.push_back(tx);
           return;
@@ -475,7 +501,7 @@ struct Mat {
       e.diags.add(Sev::Warning, "field-unresolved", k->span, "field '" + name + "' has no value");
       Slots s;
       s.set("label", name);
-      inst(e.reg.unresolved, Ctx{k->span, k->style}, s, nullptr, out);
+      inst(e.reg.unresolved, siteAt(k), s, nullptr, out);
       return;
     }
     if (k->cls) {
@@ -490,7 +516,7 @@ struct Mat {
         const Instance* in = instanceOf(k);
         Slots s;
         instanceSlots(*in, s);
-        inst(C.flow->marker, Ctx{k->span, k->style}, s, nullptr, out);
+        inst(C.flow->marker, siteAt(k), s, nullptr, out);
         return;
       }
     }
@@ -509,7 +535,7 @@ struct Mat {
     s.nodes.push_back({"inline-body", inl});
     s.nodes.push_back({"block-body", blk});
     for (const SiteDef& site : C.sites)
-      if (site.where == SiteDef::Where::Replace) inst(site.tmpl, Ctx{k->span, k->style}, s, nullptr, out);
+      if (site.where == SiteDef::Where::Replace) inst(site.tmpl, siteAt(k), s, nullptr, out);
   }
 
   // B2: a classed node's own changes — its refused label dropped, its alias
@@ -547,7 +573,7 @@ struct Mat {
           }
           if (!at) break;  // nothing to attach to (a captionless figure)
           std::vector<ContentNode*> gen;
-          inst(site.tmpl, Ctx{at->span, at->style}, s, at, gen);
+          inst(site.tmpl, siteAt(at), s, at, gen);
           at->kids.insert(at->kids.begin(), gen.begin(), gen.end());
           break;
         }
@@ -577,7 +603,7 @@ struct Mat {
       out.push_back(mk(Kind::group, k->span));
       return;
     }
-    Ctx cc{k->span, k->style};
+    Ctx cc = siteAt(k);
     switch (C->src) {
       case CollectorDef::Src::Outline: outline(*C, cc, out); return;
       case CollectorDef::Src::Table: table(*C, k, cc, out); return;
@@ -683,7 +709,7 @@ struct Mat {
         for (ContentNode* x : r->node->kids) body.push_back(first ? x : deepClone(x));
         s.nodes.push_back({"body", body});
         std::vector<ContentNode*> entry;
-        inst(C.entry, Ctx{r->node->span, r->node->style}, s, container, entry);
+        inst(C.entry, siteAt(r->node), s, container, entry);
         for (ContentNode* x : entry) o.push_back(walk(x));  // rows may carry references
       }
     };
@@ -714,7 +740,7 @@ struct Mat {
         instanceSlots(in, s);
         s.nodes.push_back({"body", body});
         s.paras = [&](const TItem& it, const Ctx& c, std::vector<ContentNode*>& po) { paras(it, c, body, s, po); };
-        inst(C.entry, Ctx{in.node->span, in.node->style}, s, container, o);
+        inst(C.entry, siteAt(in.node), s, container, o);
       }
     };
     inst(C.wrap, cc, ws, nullptr, out);
@@ -777,7 +803,7 @@ struct Mat {
       const std::vector<u32>* items = e.ix.flowItems(C.flow->name);
       const CollectorDef* fc = e.reg.flowCollector(C.flow->name);
       if (items && !items->empty() && fc && !contains(flowPlaced, C.flow->name))
-        flow(*fc, Ctx{root->span, root->style}, o->kids);
+        flow(*fc, siteAt(root), o->kids);
     }
     return o;
   }

@@ -61,7 +61,7 @@ PageResult paginate(const LayoutResult& lr, const std::vector<TopBlock>& tops, d
       }
       band.hi = (u32)j;
       // a keep-with-next leaf's last band sticks to what follows
-      if (traitsOf(b.traits).keepWithNext && !sameUnit(j)) band.stickAfter = true;
+      if (b.tr.keepWithNext && !sameUnit(j)) band.stickAfter = true;
       if (paraLine(l)) {
         band.count = unitLines[l.unitIdx];
         band.ordinal = unitSeen[l.unitIdx]++;

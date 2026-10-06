@@ -1,11 +1,12 @@
 #include "resolve.h"
 
+#include "../model/cascade.h"
 #include "../semantic/materialize.h"
 
 namespace tsr {
 
-void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs, StyleTable& styles,
-                const Config& cfg, DiagSink& diags, const Registry& reg, Index& index) {
+void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs, StyleTable& styles, NodePropsTable& props,
+                const Cascade& cascade, const Config& cfg, DiagSink& diags, const Registry& reg, Index& index) {
   index = Index{};
   if (!tree.root) return;
   Counters counters(reg);
@@ -14,6 +15,7 @@ void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs, StyleTable& sty
   bindCites(tree.root, reg, counters, strs, index);
   MaterializeEnv env{arena, strs, styles, diags, reg, terms, counters, index};
   tree.root = materialize(tree.root, env);
+  if (env.made) settleMade(tree.root, cascade, props, styles);
   // what tools read after resolve: ordinals (spans, not nodes, outlive it)
   for (Row& r : index.rows)
     for (const CollectorDef& c : reg.collectors)

@@ -134,6 +134,47 @@ void Cascade::fold(Styling& st, NodeProps& props, const NodeView& n, RuleEnvId e
   if (decoSet) st.decoration |= deco;
 }
 
+size_t settleMade(ContentNode* root, const Cascade& cascade, NodePropsTable& props, const StyleTable& styles) {
+  if (!root) return 0;
+  size_t settled = 0;
+  // (node, its parent) in preorder; `up`: the ancestors' kinds when a
+  // depth selector needs them
+  struct At {
+    ContentNode* n;
+    const ContentNode* parent;
+    u32 depth;  // its index in `up`
+  };
+  const bool depth = cascade.usesDepth();
+  std::vector<u16> up;
+  std::vector<At> work{{root, nullptr, 0}};
+  while (!work.empty()) {
+    At a = work.back();
+    work.pop_back();
+    ContentNode* n = a.n;
+    if (depth) up.resize(a.depth);
+    if (n->props == kPropsUnset) {
+      const NodeProps& from = a.parent && a.parent->props != kPropsUnset ? props.get(a.parent->props) : props.get(0);
+      NodeProps np = inheritProps(from);
+      Styling st = styles.get(n->style);  // the maker's, kept
+      Cascade::NodeView view{n->kind};
+      view.args = &n->args;
+      view.role = attrStr(n, ArgK::role);
+      view.cls = attrStr(n, ArgK::class_);
+      view.lang = st.lang;
+      if (depth)
+        for (u16 k : up) view.depth += k == (u16)n->kind;
+      const RuleEnvId env = a.parent ? a.parent->env : 0;
+      cascade.fold(st, np, view, env, {});
+      n->props = props.idOf(np);
+      n->env = env;
+      settled++;
+    }
+    if (depth) up.push_back((u16)n->kind);
+    for (size_t k = n->kids.size(); k-- > 0;) work.push_back({n->kids[k], n, a.depth + 1});
+  }
+  return settled;
+}
+
 // ---- rules in JSON ------------------------------------------------------------
 
 std::string_view defaultRulesJson() { return kDefaultsJson; }

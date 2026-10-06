@@ -19,7 +19,7 @@ struct LeafSource {
     MarkerOnly,  // an empty list item: its marker alone
   } role = Role::Content;
   const ContentNode* node = nullptr;
-  bool paraIndent = false;  // 首行缩进 applies (App C)
+  Len paraIndent;  // 首行缩进 (App C): its par.indent (plan P3-01); unset = none
   // a float figure's caption paragraphs (the image leaf's caption rows), or
   // a code block's sidecar lines (its sidecar track)
   std::vector<const ContentNode*> rows;
@@ -27,6 +27,7 @@ struct LeafSource {
 };
 
 class MathEnv;
+class NodePropsTable;
 struct BoxTree {
   std::vector<TopTree> tops;
   std::vector<std::vector<LeafSource>> sources;  // per top, per unit
@@ -34,7 +35,7 @@ struct BoxTree {
 };
 
 class Registry;
-BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const Config& cfg,
-                     const Registry& reg);
+BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const NodePropsTable& props,
+                     const Config& cfg, const Registry& reg);
 
 }  // namespace tsr

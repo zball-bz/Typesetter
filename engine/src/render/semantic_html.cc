@@ -50,12 +50,14 @@ struct Sem {
     t.open();
   }
 
-  // a text leaf in its effective style
+  // a text leaf in its authored style
   void textRun(StyleId sid, std::string_view text) {
-    // leaf styles are the effective styles (instantiation folds styled
-    // deltas onto leaves — document-model §3); render from them so
-    // token colors, resolver-fabricated bold, and patch styles all
-    // reach the no-JS page. Kind::styled is transparent below.
+    // leaf styles are the authored styles (instantiation folds styled
+    // deltas and the document's rules onto leaves — document-model §3,
+    // plan P3-01); render from them so token colors, resolver-fabricated
+    // bold, and patch styles all reach the no-JS page — the engine's
+    // defaults and the host's rules are the page's CSS. Kind::styled is
+    // transparent below.
     const Styling& st = styles.get(sid);
     // a superscript nests its emphasis (sup > strong|em): it used to
     // drop the bold/italic of a marker inside emphasis (plan P1-02)
@@ -127,7 +129,7 @@ struct Sem {
   void inl(const ContentNode* n) {
     switch (n->kind) {
       case Kind::text:
-        textRun(n->style, strs.get(n->str));
+        textRun(n->authored, strs.get(n->str));
         return;
       case Kind::styled:
         // transparent: the leaves carry the folded styles (above)
@@ -311,7 +313,7 @@ struct Sem {
         if (tok && tok->st == ResState::Ready) {
           // its code tokens, folded here (the tree is never rewritten)
           std::vector<std::vector<TokenRun>> lines;
-          tokenLines(strs.get(body->str), body->style, tok->toks.data(), tok->toks.size(), strs, styles, lines);
+          tokenLines(strs.get(body->str), body->authored, tok->toks.data(), tok->toks.size(), strs, styles, lines);
           for (size_t li = 0; li < lines.size(); li++) {
             if (li) out += "\n";
             for (const TokenRun& r : lines[li]) textRun(r.style, r.text);

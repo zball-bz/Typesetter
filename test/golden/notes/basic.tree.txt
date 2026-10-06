@@ -1,6 +1,6 @@
 doc @[0,313) [base]
-  heading @[0,11) [base] level=1 label="top"
-    text @[2,11) [base] str="Footnotes"
+  heading @[0,11) [BOLDx1.60] level=1 label="top"
+    text @[2,11) [BOLDx1.60] str="Footnotes"
   para @[19,211) [base]
     text @[19,42) [base] str="A claim in running text"
     ref @[42,106) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
@@ -9,8 +9,8 @@ doc @[0,313) [base]
     ref @[152,174) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" url="#tsr-fn-2"
       text @[152,174) [SUPx0.70] str="2"
     text @[175,211) [base] str=" follows later in the same paragraph." raw=0:0,1:0
-  heading @[213,225) [base] level=2 label="h-1.1"
-    text @[216,225) [base] str="A section"
+  heading @[213,225) [BOLDx1.35] level=2 label="h-1.1"
+    text @[216,225) [BOLDx1.35] str="A section"
   para @[227,313) [base]
     text @[227,241) [base] str="Notes may cite " raw=0:0,15:14
     ref @[242,246) [base] target="top" url="#tsr-top"
@@ -28,8 +28,8 @@ doc @[0,313) [base]
           styled @[66,74) [BOLDx0.85]
             text @[67,73) [BOLDx0.85] str="markup"
           text @[74,75) [basex0.85] str=", " raw=0:0,2:1
-          code @[76,82) [basex0.85]
-            text @[76,82) [basex0.85] str="code"
+          code @[76,82) [CODEx0.72]
+            text @[76,82) [CODEx0.72] str="code"
           text @[82,92) [basex0.85] str=", and math " raw=0:0,11:10
           mathinline @[93,104) [basex0.85]
             mathsrc @[94,103) [basex0.85] src="x^2 + y^2"

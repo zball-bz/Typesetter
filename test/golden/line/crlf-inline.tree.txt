@@ -7,8 +7,8 @@ doc @[0,167) [base]
     link @[36,53) [base] url="u"
       text @[37,49) [base] str="a link text" raw=0:0,7:8
     text @[54,57) [base] str=" and " raw=0:0,1:0,5:3
-    code @[58,70) [base]
-      text @[58,70) [base] str="code span"
+    code @[58,70) [CODEx0.85]
+      text @[58,70) [CODEx0.85] str="code span"
     text @[71,75) [base] str=" end." raw=0:0,1:0
   quote @[79,125) [base]
     para @[81,125) [base]

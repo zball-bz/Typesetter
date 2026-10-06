@@ -23,22 +23,23 @@ enum class LayouterId : u8 { Paragraph, Stack, Replaced, Grid, Table };
 enum class Painter : u8 { None, Rule, Image, Raw, MathRow };
 
 // A block's traits (design T6 BlockTraits, the subset today's layout uses):
-// a handwritten table reproducing today's defaults until P3-01 compiles it
-// from NodeProps.
+// a view compiled from its node's block properties (plan P3-01: NodeProps;
+// the default stylesheet, engine/data/defaults.json, gives today's values).
 struct BlockTraits {
-  const char* name = "";
   // the gap between this block's children, in paragraph gaps (num/den,
-  // integer division); 0/0 inherits the parent's
+  // integer division) or a length (gapSu); 0/0 and 0 inherit the parent's
   u8 gapNum = 0, gapDen = 0;
-  enum class Align : u8 { Justify, Ragged, Center } align = Align::Justify;
+  Su gapSu = 0;
+  enum class Align : u8 { Justify, Ragged, Center, End } align = Align::Justify;
   bool hyphenate = true;
   bool keepWithNext = false;  // paged: never the last block on a sheet
 };
+// what a block is (its layouter's case; the dumps' name)
 enum class TraitsId : u8 {
   Root, Para, Caption, Heading, List, Item, Quote, Group, Figure, Code, Table, Image, Float, Math, Raw,
   Rule, Error, Marker, N
 };
-const BlockTraits& traitsOf(TraitsId t);
+const char* traitsName(TraitsId t);
 
 // One block, in pre-order: blocks[0] is the top's root; a block's subtree is
 // [its index, end), its kids are i+1, then each kid's end.
@@ -46,6 +47,7 @@ struct LayoutBlock {
   LayouterId layouter = LayouterId::Stack;
   Painter painter = Painter::None;
   TraitsId traits = TraitsId::Group;
+  BlockTraits tr;  // its node's block properties (plan P3-01)
   u8 floatSide = 0;  // Replaced image: 1 left, 2 right (F2 float)
   u32 parent = ~0u;
   u32 end = 0;       // one past the subtree's last block
@@ -73,12 +75,15 @@ struct TopTree {
 };
 
 // the effective gap between a stack's children, in paragraph gaps
-inline void gapOf(const TopTree& t, u32 b, u8& num, u8& den) {
+// (a length gap: num = 0, den = 0, su set)
+inline void gapOf(const TopTree& t, u32 b, u8& num, u8& den, Su& su) {
+  su = 0;
   for (u32 i = b; i != ~0u; i = t.blocks[i].parent) {
-    const BlockTraits& tr = traitsOf(t.blocks[i].traits);
-    if (tr.gapDen) {
+    const BlockTraits& tr = t.blocks[i].tr;
+    if (tr.gapDen || tr.gapSu) {
       num = tr.gapNum;
       den = tr.gapDen;
+      su = tr.gapSu;
       return;
     }
   }

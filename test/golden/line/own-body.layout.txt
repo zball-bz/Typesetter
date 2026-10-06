@@ -18,5 +18,5 @@ para pid=3 y=23859su w=19200su h=1536su
 para pid=4 y=26624su w=19200su h=8191su
   L0 rule y=768su left=0su w=19200su
   L1 y=2765su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,11) @[319,347)
-  L2 y=4710su left=3072su w=16128su dw=0su dc=0su join=last marker blocks=[0,7) @[351,365)
+  L2 y=4710su left=2842su w=16358su dw=0su dc=0su join=last marker blocks=[0,7) @[351,365)
   L3 y=6655su left=1536su w=17664su dw=0su dc=0su join=last blocks=[1,2) @[316,367)

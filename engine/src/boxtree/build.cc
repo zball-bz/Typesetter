@@ -1,38 +1,21 @@
 #include "build.h"
 
 #include "../elements/registry.h"
+#include "../model/cascade.h"
 
 namespace tsr {
 
 namespace {
 
 using Align = BlockTraits::Align;
-// The TraitTable (design T6 BlockTraits): today's defaults — the root's gap
-// is one paragraph gap, a list's a third of one (integer division, so
-// everything inside a list after its first block packs tighter); display
-// lines are ragged and unhyphenated; a caption is centred; a heading and a
-// block image keep with what follows on a sheet.
-constexpr BlockTraits kTraits[] = {
-    {"root", 1, 1},
-    {"para"},
-    {"caption", 0, 0, Align::Center, false},
-    {"heading", 0, 0, Align::Ragged, false, true},
-    {"list", 1, 3},
-    {"item"},
-    {"quote"},
-    {"group"},
-    {"figure"},
-    {"code", 0, 0, Align::Ragged, false},
-    {"table"},
-    {"image", 0, 0, Align::Ragged, true, true},
-    {"float"},
-    {"math", 0, 0, Align::Ragged},
-    {"raw"},
-    {"rule"},
-    {"error", 0, 0, Align::Ragged},
-    {"marker"},
-};
-static_assert(sizeof kTraits / sizeof kTraits[0] == (size_t)TraitsId::N, "one row per TraitsId");
+// what a block is: its name in the dumps (its traits are its node's block
+// properties since plan P3-01: engine/data/defaults.json gives a list's
+// child gap of a third, display blocks set ragged and unhyphenated, a
+// caption centred, a heading and a block image keeping with what follows)
+constexpr const char* kTraitNames[] = {"root",  "para",  "caption", "heading", "list",  "item",
+                                       "quote", "group", "figure",  "code",    "table", "image",
+                                       "float", "math",  "raw",     "rule",    "error", "marker"};
+static_assert(sizeof kTraitNames / sizeof kTraitNames[0] == (size_t)TraitsId::N, "one name per TraitsId");
 
 // What a group means to the box tree (finding emitter/figure-role-string-
 // dispatch): its element class's box trait (plan P2-05) — no role is read
@@ -48,7 +31,8 @@ constexpr const char* kSides[] = {"left", "right"};
 
 class Builder {
  public:
-  Builder(Interner& s, StyleTable& st, const Config& c, const Registry& r) : strs(s), styles(st), cfg(c), reg(r) {
+  Builder(Interner& s, StyleTable& st, const NodePropsTable& np, const Config& c, const Registry& r)
+      : strs(s), styles(st), cfg(c), reg(r), props(np) {
     for (const char* side : kSides) sideRefs.push_back(s.find(side));
   }
 
@@ -82,10 +66,17 @@ class Builder {
   StyleTable& styles;
   const Config& cfg;
   const Registry& reg;
+  const NodePropsTable& props;
   std::vector<StrRef> sideRefs;
   TopTree* t = nullptr;
   std::vector<LeafSource>* leaves = nullptr;
   int figDepth = 0;  // inside a captions role: paragraphs are captions
+
+  // a block length (plan P3-01): em of the block's own size
+  Su lenSu(const Len& l, const ContentNode* n) const {
+    if (!l.unit) return 0;
+    return suRoundPx(l.unit == 2 ? (double)l.v : (double)l.v * emPx(cfg.baseSizePx, styles.get(n->style)));
+  }
 
   const RoleInfo* roleOf(const ContentNode* n) const {
     if (n->cls && reg.cls(n->cls).box == ElementClass::Box::Figure) return &kFigureRole;
@@ -112,6 +103,22 @@ class Builder {
       // a label is universal (plan P2-05): any block a node opens carries it
       // — not the top-level wrapper, which only borrows its child's span
       if (tr != TraitsId::Root) b.anchor = labelOf(n);
+    }
+    // its traits: its node's block properties (plan P3-01); the top-level
+    // wrapper's gap is one paragraph gap
+    if (tr == TraitsId::Root) {
+      b.tr.gapNum = b.tr.gapDen = 1;
+    } else if (n) {
+      const NodeProps& np = props.get(n->props);
+      b.tr.gapNum = np.blockGap.num;
+      b.tr.gapDen = np.blockGap.den;
+      if (np.blockGap.len.unit) b.tr.gapSu = lenSu(np.blockGap.len, n);
+      b.tr.align = np.parAlign == PARALIGN_START    ? Align::Ragged
+                   : np.parAlign == PARALIGN_CENTER ? Align::Center
+                   : np.parAlign == PARALIGN_END    ? Align::End
+                                                    : Align::Justify;
+      b.tr.hyphenate = np.parHyphenate != PARHYPHENATE_FALSE;
+      b.tr.keepWithNext = np.keepWithNext;
     }
     t->blocks.push_back(b);
     return (u32)t->blocks.size() - 1;
@@ -141,7 +148,9 @@ class Builder {
       case Kind::para: {
         const bool caption = figDepth > 0;
         if (caption) s.role = LeafSource::Role::Caption;
-        else s.paraIndent = cfg.paraIndentEm > 0 && marker == 0;  // 首行缩进 (App C)
+        // 首行缩进 (App C): its par.indent (plan P3-01), never on a marker's line
+        const Len ind = props.get(n->props).parIndent;
+        if (ind.unit && ind.v > 0 && marker == 0) s.paraIndent = ind;
         LayoutBlock& b = leaf(LayouterId::Paragraph, Painter::None, caption ? TraitsId::Caption : TraitsId::Para,
                               n, parent, x, std::move(s));
         b.marker = marker;
@@ -158,7 +167,7 @@ class Builder {
         const bool ordered = attrBool(n, ArgK::ordered, false);
         int num = attrInt(n, ArgK::start, 1);
         u32 list = open(LayouterId::Stack, Painter::None, TraitsId::List, n, parent, x);
-        const Su pad = suRoundPx(cfg.listIndentEm * cfg.baseSizePx);
+        const Su pad = lenSu(props.get(n->props).blockIndent, n);  // its block.indent (plan P3-01)
         t->blocks[list].pad = pad;
         for (const ContentNode* item : n->kids) {
           std::string m = ordered ? std::to_string(num++) + "." : "\xE2\x80\xA2";  // •
@@ -185,7 +194,7 @@ class Builder {
       }
       case Kind::quote: {
         u32 q = open(LayouterId::Stack, Painter::None, TraitsId::Quote, n, parent, x);
-        const Su pad = suRoundPx(cfg.quoteIndentEm * cfg.baseSizePx);
+        const Su pad = lenSu(props.get(n->props).blockIndent, n);  // its block.indent (plan P3-01)
         t->blocks[q].pad = pad;
         for (const ContentNode* k : n->kids) walk(k, q, x + pad, 0);
         close(q);
@@ -273,13 +282,13 @@ class Builder {
 
 }  // namespace
 
-const BlockTraits& traitsOf(TraitsId t) { return kTraits[(size_t)t]; }
+const char* traitsName(TraitsId t) { return kTraitNames[(size_t)t]; }
 
-BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const Config& cfg,
-                     const Registry& reg) {
+BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const NodePropsTable& props,
+                     const Config& cfg, const Registry& reg) {
   BoxTree bt;
   if (!tree.root) return bt;
-  Builder b(strs, styles, cfg, reg);
+  Builder b(strs, styles, props, cfg, reg);
   u32 pid = 0;
   for (const ContentNode* child : tree.root->kids) {
     TopTree t;
@@ -304,14 +313,16 @@ std::string dumpBlockTree(const std::vector<TopTree>& tops, const Interner& strs
       u32 depth = 0;
       for (u32 p = b.parent; p != ~0u; p = t.blocks[p].parent) depth++;
       out.append(2 + 2 * depth, ' ');
-      const BlockTraits& tr = traitsOf(b.traits);
-      appendf(out, "%s%s %s", kLayouter[(size_t)b.layouter], kPainter[(size_t)b.painter], tr.name);
+      const BlockTraits& tr = b.tr;
+      appendf(out, "%s%s %s", kLayouter[(size_t)b.layouter], kPainter[(size_t)b.painter], traitsName(b.traits));
       if (b.leaf()) appendf(out, " unit=%u", b.unit);
       if (b.x) appendf(out, " x=%dsu", b.x);
       if (b.pad) appendf(out, " pad=%dsu", b.pad);
       if (tr.gapDen) appendf(out, " gap=%u/%u", tr.gapNum, tr.gapDen);
       if (tr.align == BlockTraits::Align::Ragged) out += " ragged";
       if (tr.align == BlockTraits::Align::Center) out += " centered";
+      if (tr.align == BlockTraits::Align::End) out += " end";
+      if (tr.gapSu) appendf(out, " gap=%dsu", tr.gapSu);
       if (!tr.hyphenate) out += " nohyphen";
       if (tr.keepWithNext) out += " keep-with-next";
       if (b.floatSide) out += b.floatSide == 1 ? " float=left" : " float=right";

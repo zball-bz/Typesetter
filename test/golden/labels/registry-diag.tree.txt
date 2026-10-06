@@ -1,6 +1,6 @@
 doc @[0,351) [base]
-  heading @[0,8) [base] level=1 label="sec-a"
-    text @[2,8) [base] str="Labels"
+  heading @[0,8) [BOLDx1.60] level=1 label="sec-a"
+    text @[2,8) [BOLDx1.60] str="Labels"
   group @[18,73) [base] role="aside" label="side-1"
     para @[43,65) [base]
       text @[43,65) [base] str="An aside with a label."

@@ -25,6 +25,7 @@ struct Inst {
     u32 up;  // ~0u: none
   };
   std::vector<PathRec> paths;
+  StrRef captionRole = strs.intern("caption");
 
   // an attribute with its strings in the document's interner
   ArgVal interned(const ArgVal& a) const {
@@ -36,6 +37,16 @@ struct Inst {
   static bool isMatch(ArgK k) {
     return k == ArgK::matchKind || k == ArgK::matchRole || k == ArgK::matchClass || k == ArgK::matchLang ||
            k == ArgK::matchDepth || k == ArgK::matchWhere;
+  }
+  // a node in a slot of `parent` whose model is data (schema "slots": a
+  // code block's margin)
+  bool dataPart(const RawNode& c, Kind parent) const {
+    for (const ArgVal& a : c.args)
+      if (a.key == ArgK::slot && a.tag == ArgTag::Str)
+        for (u8 i = 1; i < SLOT_COUNT; i++)
+          if (raw.strings[a.ref] == kSlots[i].name)
+            return kSlots[i].model == Body::Data && slotOn((SlotId)i, parent);
+    return false;
   }
   // a styled node with match attributes is a rule (plan P3-01: $.set,
   // style.where), its other attributes the patch
@@ -119,6 +130,7 @@ struct Inst {
       ContentNode* parent;
       u32 id;
       Styling inh;
+      StyleId auth;  // the parent's authored style
       u32 depth;
       u16 inside;
       bool verb;
@@ -127,7 +139,7 @@ struct Inst {
       u32 path;
     };
     std::vector<Pending> work;
-    work.push_back({nullptr, rootId, inherited, 0, 0, false, 0, env0, ~0u});
+    work.push_back({nullptr, rootId, inherited, styles.idOf(inherited), 0, 0, false, 0, env0, ~0u});
     ContentNode* result = nullptr;
     while (!work.empty()) {
       Pending p = std::move(work.back());
@@ -224,6 +236,11 @@ struct Inst {
         Cascade::NodeView view{n->kind};
         view.args = &n->args;
         view.role = attrStr(n, ArgK::role);
+        // a paragraph of a figure-box element reads as its caption (T4: the
+        // class's slot role, as the figure constructor tags its own)
+        if (!view.role && n->kind == Kind::para && p.inside &&
+            reg.cls(p.inside).box == ElementClass::Box::Figure)
+          view.role = captionRole;
         view.cls = attrStr(n, ArgK::class_);
         view.lang = ownStyle.lang;
         for (const ArgVal& a : delta)
@@ -236,16 +253,30 @@ struct Inst {
         }
         cascade.fold(ownStyle, np, view, rules ? p.env : 0, delta, rules);
         n->style = styles.idOf(ownStyle);
+        if (delta.empty() && (!rules || !p.env)) {
+          n->authored = p.auth;
+        } else {  // the same fold without the base rules
+          Styling a = styles.get(p.auth);
+          NodeProps unused;
+          cascade.fold(a, unused, view, rules ? p.env : 0, delta, false);
+          n->authored = styles.idOf(a);
+        }
         n->props = propsTable.idOf(np);
         n->kids.reserve(rn.children.size());
         n->cls = reg.classify(n, p.inside, strs);  // membership, once (plan P1-10)
         descend = true;
         if (descend)  // reversed, so children pop (and append) in order
-          for (size_t c = rn.children.size(); c-- > 0;)
-            work.push_back({n, rn.children[c], ownStyle, p.depth + 1, n->cls ? n->cls : p.inside,
+          for (size_t c = rn.children.size(); c-- > 0;) {
+            // a part in a data slot of this node (a code block's margin,
+            // plan P3-01) is beside its content, not in it: it takes the
+            // node's own context, not its computed style
+            const bool beside = dataPart(raw.nodes[rn.children[c]], n->kind);
+            work.push_back({n, rn.children[c], beside ? p.inh : ownStyle, beside ? p.auth : n->authored, p.depth + 1,
+                            n->cls ? n->cls : p.inside,
                             p.verb || kKinds[(u16)n->kind].body == Body::Code ||
                                 kKinds[(u16)n->kind].body == Body::Text,
-                            n->props, kidsEnv, path});
+                            beside ? p.props : n->props, beside ? p.env : kidsEnv, path});
+          }
       }
       if (p.parent) p.parent->kids.push_back(n);
       else result = n;
@@ -357,7 +388,9 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs, StyleTa
   root->span = root->kids.empty()
                    ? Span{}
                    : Span{root->kids.front()->span.start, root->kids.back()->span.end};
-  normalize(root, arena, strs, diags);  // after the root span: an unwrapped block keeps its span
+  // after the root span: an unwrapped block keeps its span; its wrappers
+  // take the cascade at their place (plan P3-01)
+  if (normalize(root, arena, strs, diags)) settleMade(root, cascade, props, styles);
   return t;
 }
 

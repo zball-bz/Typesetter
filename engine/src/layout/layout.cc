@@ -430,8 +430,9 @@ class DocLayout {
 
   void stack(const LayoutBlock& b) {
     u8 num, den;
-    gapOf(*tree, (u32)(&b - tree->blocks.data()), num, den);
-    const Su gap = (Su)((i64)paraGap * num / den);
+    Su su;
+    gapOf(*tree, (u32)(&b - tree->blocks.data()), num, den, su);
+    const Su gap = den ? (Su)((i64)paraGap * num / den) : su;
     const u32 self = (u32)(&b - tree->blocks.data());
     for (u32 k = self + 1; k < b.end; k = tree->blocks[k].end) {
       if (k > self + 1) {
@@ -451,11 +452,13 @@ class DocLayout {
     const LineWidths lw = excl.widths(lineWidth, narrowLeft);
     lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, lw)});
     excl.consume(lr.breaks.back().r.breakpoints.size());
-    const BlockTraits::Align a = traitsOf(b.traits).align;
+    const BlockTraits::Align a = b.tr.align;
     LinePolicy pol;
     pol.align = a == BlockTraits::Align::Center   ? LinePolicy::Align::Center
                 : a == BlockTraits::Align::Ragged ? LinePolicy::Align::Ragged
+                : a == BlockTraits::Align::End    ? LinePolicy::Align::Cell
                                                   : LinePolicy::Align::Justify;
+    if (a == BlockTraits::Align::End) pol.cellAlign = 'r';  // set at the end (plan P3-01: par.align end)
     pol.ragged = a != BlockTraits::Align::Justify;
     pol.widthPx = cfg.widthPx - suToPx(b.x);
     pol.marker = b.marker;
@@ -948,7 +951,7 @@ std::string dumpVList(const LayoutResult& lr, const std::vector<TopBlock>& tops)
       if (v.gap) appendf(out, "  glue %dsu\n", v.gap);
       if (v.clear) appendf(out, "  clear %dsu\n", v.clear);
       const LayoutBlock& b = t.blocks[t.leaves[v.unit]];
-      appendf(out, "  box unit=%u %s y=%dsu h=%dsu%s\n", v.unit, traitsOf(b.traits).name, v.y, v.h,
+      appendf(out, "  box unit=%u %s y=%dsu h=%dsu%s\n", v.unit, traitsName(b.traits), v.y, v.h,
               v.out ? " out-of-flow" : "");
     }
   }

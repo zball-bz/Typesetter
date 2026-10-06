@@ -1,12 +1,12 @@
 doc @[0,258) [base]
-  heading @[0,14) [base] level=1 label="top"
-    text @[2,14) [base] str="Anchor kinds"
+  heading @[0,14) [BOLDx1.60] level=1 label="top"
+    text @[2,14) [BOLDx1.60] str="Anchor kinds"
   group @[22,77) [base] role="listing" label="lst-a"
-    codeblock @[48,67) [base] lang="python"
-      text @[58,63) [base] str="x = 1"
+    codeblock @[48,67) [CODEx0.85] lang="python"
+      text @[58,63) [CODEx0.85] str="x = 1"
   group @[79,161) [base] role="aside" label="box-b"
-    heading @[103,119) [base] level=2 label="sec-in"
-      text @[106,119) [base] str="Inner heading"
+    heading @[103,119) [BOLDx1.35] level=2 label="sec-in"
+      text @[106,119) [BOLDx1.35] str="Inner heading"
     para @[130,153) [base]
       text @[130,153) [base] str="Body text of the aside."
   group @[163,216) [base] role="aside" label="rule-c"

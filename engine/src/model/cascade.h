@@ -100,6 +100,15 @@ class Cascade {
   bool depthRules_ = false;
 };
 
+// Cascade.make (plan P3-01): a node made after instantiation — normalize's
+// wrappers, the resolver's generated content — is marked kPropsUnset; then
+// settleMade gives each one its block properties and rule env at its place
+// in the tree: its parent's inheriting values, then the rules of its
+// parent's env that match it. Its run style stays its maker's. Returns how
+// many it settled (none marked: no walk past a cheap check).
+constexpr u32 kPropsUnset = ~0u;
+size_t settleMade(ContentNode* root, const Cascade& cascade, NodePropsTable& props, const StyleTable& styles);
+
 // a host setting's value as patch text ("" = unknown): the defaults name
 // some ({"setting": "code.scale", "unit": "em"} → "0.85em")
 using SettingText = std::function<std::string(std::string_view)>;

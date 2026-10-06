@@ -1,8 +1,8 @@
 doc @[0,347) [base]
   para @[0,51) [base]
     text @[0,51) [base] str="三盒模型：行号、代码与结构化边注。"
-  codeblock @[53,331) [base] lang="js" lineNo=1 sidecar="///"
-    text @[86,327) [base] str="const memo = new Map();\nfunction fib(n) {\n  if (n <= 1) return n;\n  return fib(n - 1) + fib(n - 2);\n}" raw=0:0,24:67,42:85,66:206,100:240
+  codeblock @[53,331) [CODEx0.85] lang="js" lineNo=1 sidecar="///"
+    text @[86,327) [CODEx0.85] str="const memo = new Map();\nfunction fib(n) {\n  if (n <= 1) return n;\n  return fib(n - 1) + fib(n - 2);\n}" raw=0:0,24:67,42:85,66:206,100:240
     group @[53,331) [base] slot="margin"
       seq @[114,152) [base]
         text @[114,138) [base] str="记忆化容器，均摊 " raw=0:0,25:24
@@ -23,8 +23,8 @@ doc @[0,347) [base]
           text @[249,291) [SUPx0.70] str="1"
       seq @[53,331) [base]
       seq @[53,331) [base]
-  heading @[333,347) [base] level=1 label="base"
-    text @[335,347) [base] str="基例说明"
+  heading @[333,347) [BOLDx1.60] level=1 label="base"
+    text @[335,347) [BOLDx1.60] str="基例说明"
   group @[0,347) [base] role="notes"
     rule @[0,347) [base]
     list @[0,347) [base] ordered=true

@@ -5,8 +5,8 @@ doc @[181,832) [base]
   group @[246,330) [base] role="aside" label="a1"
     para @[272,322) [base]
       text @[272,322) [base] str="A label: argument and a suffix: the argument wins."
-  codeblock @[332,382) [base] lang="js" lineNo=1 label="code1"
-    text @[368,378) [base] str="let x = 1;"
+  codeblock @[332,382) [CODEx0.85] lang="js" lineNo=1 label="code1"
+    text @[368,378) [CODEx0.85] str="let x = 1;"
   para @[384,456) [base]
     text @[384,401) [base] str="An inline formula " raw=0:0,18:17
     mathinline @[402,416) [base]
@@ -41,8 +41,8 @@ doc @[181,832) [base]
       text @[639,643) [base] str="p. 5"
       text @[634,644) [base] str=" (1)"
     text @[644,645) [base] str="."
-  heading @[647,661) [base] level=1 label="sec:intro"
-    text @[649,661) [base] str="Introduction"
+  heading @[647,661) [BOLDx1.60] level=1 label="sec:intro"
+    text @[649,661) [BOLDx1.60] str="Introduction"
   para @[675,738) [base]
     text @[675,738) [base] str="A paragraph ending in something label-like <looks-like-a-label>"
   para @[740,784) [base]

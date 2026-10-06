@@ -1,7 +1,7 @@
 doc @[0,36) [base]
   para @[0,11) [base]
     text @[0,11) [base] str="para one $x"
-  heading @[13,22) [base] level=1 label="h-1"
-    text @[15,22) [base] str="Heading"
+  heading @[13,22) [BOLDx1.60] level=1 label="h-1"
+    text @[15,22) [BOLDx1.60] str="Heading"
   para @[24,36) [base]
     text @[24,36) [base] str="second $ end"

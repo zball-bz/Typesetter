@@ -1,6 +1,6 @@
 doc @[0,419) [base]
-  heading @[0,46) [base] level=2 label="h-0.1"
-    text @[12,45) [base] str="A heading made by its constructor"
+  heading @[0,46) [BOLDx1.35] level=2 label="h-0.1"
+    text @[12,45) [BOLDx1.35] str="A heading made by its constructor"
   list @[48,103) [base] ordered=false
     item @[48,103) [base]
       para @[48,103) [base]

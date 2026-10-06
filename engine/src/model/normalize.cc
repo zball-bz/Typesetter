@@ -102,10 +102,14 @@ struct Norm {
   Interner& strs;
   DiagSink& diags;
 
+  size_t made = 0;
+  // a wrapper it makes takes the cascade at its place (settleMade, plan P3-01)
   ContentNode* mk(Kind k, Span sp) {
     ContentNode* n = arena.make<ContentNode>();
     n->kind = k;
     n->span = sp;
+    n->props = ~0u;  // kPropsUnset (model/cascade.h)
+    made++;
     return n;
   }
   static bool checked(Kind k) {
@@ -226,7 +230,7 @@ struct Norm {
 };
 }  // namespace
 
-void normalize(ContentNode* n, Arena& arena, Interner& strs, DiagSink& diags) {
+size_t normalize(ContentNode* n, Arena& arena, Interner& strs, DiagSink& diags) {
   Norm N{arena, strs, diags};
   std::vector<std::pair<ContentNode*, Pos>> work{{n, Pos::Blocks}};
   while (!work.empty()) {
@@ -234,6 +238,7 @@ void normalize(ContentNode* n, Arena& arena, Interner& strs, DiagSink& diags) {
     work.pop_back();
     N.kids(cur, pos, work);
   }
+  return N.made;
 }
 
 }  // namespace tsr

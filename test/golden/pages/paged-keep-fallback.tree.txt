@@ -1,6 +1,6 @@
 doc @[0,182) [base]
-  heading @[0,30) [base] level=1 label="h-1"
-    text @[2,30) [base] str="Heading before a tall figure"
+  heading @[0,30) [BOLDx1.60] level=1 label="h-1"
+    text @[2,30) [BOLDx1.60] str="Heading before a tall figure"
   group @[32,158) [base] role="figure" label="fig-tall"
     image @[32,158) [base] src="photos/tall.png" alt="tall" w=300 h=200
     para @[113,149) [base] role="caption"

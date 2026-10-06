@@ -20,6 +20,7 @@ struct MaterializeEnv {
   const Terms& terms;
   Counters& counters;
   const Index& ix;
+  size_t made = 0;  // the nodes it made (unfolded: model/cascade.h settleMade)
 };
 
 // the output root for the input root

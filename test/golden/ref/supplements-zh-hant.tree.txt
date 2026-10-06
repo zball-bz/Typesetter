@@ -1,6 +1,6 @@
 doc @[0,307) [base]
-  heading @[0,14) [base] level=1 label="intro"
-    text @[2,14) [base] str="Introduction"
+  heading @[0,14) [BOLDx1.60] level=1 label="intro"
+    text @[2,14) [BOLDx1.60] str="Introduction"
   para @[24,146) [base]
     text @[24,112) [base] str="A Traditional Chinese document takes 圖/表/式 from its locale terms (plan P1-10): see " raw=0:0,89:88
     ref @[113,119) [base] target="intro" url="#tsr-intro"

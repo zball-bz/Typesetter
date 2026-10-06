@@ -1,6 +1,6 @@
 doc @[0,329) [base]
-  heading @[0,80) [base] level=1 label="h-1"
-    text @[2,80) [base] str="A heading long enough that it has to wrap across two lines at the test measure"
+  heading @[0,80) [BOLDx1.60] level=1 label="h-1"
+    text @[2,80) [BOLDx1.60] str="A heading long enough that it has to wrap across two lines at the test measure"
   group @[82,280) [base] role="figure" label="fig-wide"
     image @[82,280) [base] src="photos/wide.png" alt="wide" w=300 h=100
     para @[163,271) [base] role="caption"

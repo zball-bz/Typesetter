@@ -1,8 +1,8 @@
 doc @[0,101) [base]
-  heading @[0,5) [base] level=1 label="h-1"
-    text @[2,5) [base] str="Top"
-  heading @[7,15) [base] level=3 label="deep"
-    text @[11,15) [base] str="Deep"
+  heading @[0,5) [BOLDx1.60] level=1 label="h-1"
+    text @[2,5) [BOLDx1.60] str="Top"
+  heading @[7,15) [BOLDx1.15] level=3 label="deep"
+    text @[11,15) [BOLDx1.15] str="Deep"
   group @[24,81) [base] role="figure" label="f1"
     para @[46,72) [base] role="caption"
       text @[46,72) [BOLD] str="Fig. 1: "

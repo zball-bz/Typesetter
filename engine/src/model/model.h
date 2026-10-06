@@ -29,6 +29,11 @@ struct ContentNode {
   // id: model/cascade.h) and the rules in force for its children (a RuleEnvId)
   u32 props = 0;
   u32 env = 0;
+  // (plan P3-01) its authored style: the document's own styling — style
+  // deltas and the document's rules ($.set, style.where), not the engine's
+  // defaults nor the host's rules, which reach the semantic page as its CSS.
+  // The semantic page writes it; everything else reads `style`.
+  StyleId authored = 0;
 };
 
 // Typed attribute accessors (plan P0-06). Values that came through the ops
@@ -138,7 +143,8 @@ inline bool isInlineLevel(Kind k) {
 
 // Normal form (plans P0-07, P2-11; normalize.cc has the rules N1–N6): run on
 // the instantiated tree — positions, fallbacks, anonymous paragraphs, model
-// checks; diagnoses block-in-inline without splitting it
-void normalize(ContentNode* n, Arena& arena, Interner& strs, DiagSink& diags);
+// checks; diagnoses block-in-inline without splitting it. Returns how many
+// nodes it made (unfolded: model/cascade.h settleMade)
+size_t normalize(ContentNode* n, Arena& arena, Interner& strs, DiagSink& diags);
 
 }  // namespace tsr

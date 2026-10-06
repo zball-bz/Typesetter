@@ -1,6 +1,6 @@
 doc @[0,168) [base]
-  heading @[0,6) [base] level=1 label="sec"
-    text @[2,6) [base] str="Data"
+  heading @[0,6) [BOLDx1.60] level=1 label="sec"
+    text @[2,6) [BOLDx1.60] str="Data"
   table @[14,136) [base] cols=3 align="lcr" label="tbl"
     trow @[14,136) [base]
       tcell @[14,136) [base]
