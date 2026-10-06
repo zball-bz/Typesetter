@@ -314,6 +314,14 @@ export const SETTINGS = Object.freeze({
       "Ingest"
     ]
   },
+  "layout.minWrapWidth": {
+    "dom": "num:0:100",
+    "def": 8,
+    "prec": "HostDefault",
+    "affects": [
+      "Layout"
+    ]
+  },
   "table.cellPad": {
     "dom": "num:0:10",
     "def": 0.4,
@@ -484,6 +492,9 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "snapMaxQ": 7,
     "fontFeatures": "",
     "fontFeaturesByLang": {}
+  },
+  "layout": {
+    "minWrapWidth": 8
   },
   "table": {
     "cellPad": 0.4,

@@ -1,0 +1,17 @@
+doc @[0,580) [base]
+  para @[0,94) [base]
+    text @[0,94) [base] str="A left and a right float start at the same place, and the text runs between them (plan P3-08)."
+  group @[96,212) [base] role="figure" label="fig-l"
+    image @[96,212) [base] src="photos/l.png" alt="left" w=200 h=200 scale=0.2 side="left"
+    para @[198,203) [base] role="caption" slot="caption"
+      styled @[198,203) [BOLD] role="caption-label"
+        text @[198,203) [BOLD] str="图 1："
+      text @[198,203) [base] str="Left."
+  group @[214,333) [base] role="figure" label="fig-r"
+    image @[214,333) [base] src="photos/r.png" alt="right" w=200 h=300 scale=0.2 side="right"
+    para @[318,324) [base] role="caption" slot="caption"
+      styled @[318,324) [BOLD] role="caption-label"
+        text @[318,324) [BOLD] str="图 2："
+      text @[318,324) [base] str="Right."
+  para @[335,580) [base]
+    text @[335,580) [base] str="The paragraph between the floats narrows from both sides while its lines meet either of them, from the start side only once the shorter float has ended, and returns to the full measure below the taller one; it runs long enough to show all three."

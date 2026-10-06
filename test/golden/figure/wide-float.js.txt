@@ -1,0 +1,10 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => ({src: "photos/wide.png", alt: "wide", w: 800, h: 200, scale: 0.8, float: "right", label: "fig-w"}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

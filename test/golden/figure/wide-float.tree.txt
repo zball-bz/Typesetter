@@ -1,0 +1,11 @@
+doc @[0,329) [base]
+  para @[0,86) [base]
+    text @[0,86) [base] str="A float nearly as wide as the measure leaves no column worth wrapping in (plan P3-08)."
+  group @[88,216) [base] role="figure" label="fig-w"
+    image @[88,216) [base] src="photos/wide.png" alt="wide" w=800 h=200 scale=0.8 side="right"
+    para @[194,207) [base] role="caption" slot="caption"
+      styled @[194,207) [BOLD] role="caption-label"
+        text @[194,207) [BOLD] str="图 1："
+      text @[194,207) [base] str="A wide float."
+  para @[218,329) [base]
+    text @[218,329) [base] str="This paragraph would wrap in a sliver beside the float; it starts below the float instead, at the full measure."

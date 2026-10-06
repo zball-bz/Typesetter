@@ -1,6 +1,6 @@
 vlist pid=0 y=0su h=3072su
   box unit=0 para y=0su h=3072su
-vlist pid=1 y=4301su h=18532su
+vlist pid=1 y=4301su h=18123su
   glue 1229su
   box unit=0 para y=0su h=1536su
   glue 409su
@@ -8,6 +8,6 @@ vlist pid=1 y=4301su h=18532su
   glue 409su
   box unit=2 float y=3890su h=0su out-of-flow
   glue 409su
-  box unit=3 para y=4299su h=12288su
+  box unit=3 para y=3890su h=12288su
   glue 409su
-  box unit=4 para y=16996su h=1536su
+  box unit=4 para y=16587su h=1536su

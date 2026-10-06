@@ -1,0 +1,14 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,94)
+    paragraph para unit=0 @[0,94)
+top pid=1 leaves=1
+  stack root gap=1/1 @[96,212)
+    stack figure anchor="fig-l" @[96,212)
+      replaced image float unit=0 float=left carry="fig-l" @[96,212)
+top pid=2 leaves=1
+  stack root gap=1/1 @[214,333)
+    stack figure anchor="fig-r" @[214,333)
+      replaced image float unit=0 float=right carry="fig-r" @[214,333)
+top pid=3 leaves=1
+  stack root gap=1/1 @[335,580)
+    paragraph para unit=0 @[335,580)

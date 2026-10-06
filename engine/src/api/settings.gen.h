@@ -62,6 +62,7 @@ struct Config {
   int verbatimSnapMaxQ = 7;  // code.snapMaxQ
   std::string codeFontFeatures = "";  // code.fontFeatures
   std::map<std::string, std::string> codeFontFeaturesByLang = {};  // code.fontFeaturesByLang
+  double minWrapWidthEm = 8;  // layout.minWrapWidth
   double tableCellPadEm = 0.4;  // table.cellPad
   double tableRowPadEm = 0.3;  // table.rowPad
   std::string supHeading = "";  // terms.heading
@@ -192,6 +193,7 @@ struct LayoutSettings {
   const int& verbatimMinCols;  // code.minCols
   const double& verbatimSnapTolerance;  // code.snapTolerance
   const int& verbatimSnapMaxQ;  // code.snapMaxQ
+  const double& minWrapWidthEm;  // layout.minWrapWidth
   const double& tableCellPadEm;  // table.cellPad
   const double& tableRowPadEm;  // table.rowPad
   const CostParams& cost;  // cost.*
@@ -205,6 +207,7 @@ struct LayoutSettings {
         verbatimMinCols(c.verbatimMinCols),
         verbatimSnapTolerance(c.verbatimSnapTolerance),
         verbatimSnapMaxQ(c.verbatimSnapMaxQ),
+        minWrapWidthEm(c.minWrapWidthEm),
         tableCellPadEm(c.tableCellPadEm),
         tableRowPadEm(c.tableRowPadEm),
         cost(c.cost) {}

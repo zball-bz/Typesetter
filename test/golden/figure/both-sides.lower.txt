@@ -1,0 +1,17 @@
+lower v1 abi 3d3ccfbb docEnd 581 holes 2 module 199ae1280e26cb5e
+piece 0 hole 0 js [103,204)
+piece 1 hole 1 js [206,309)
+block 0 content [0,94)
+  CALL para [0,94)
+    TEXT "A left and a right float start at the same place, and the text runs between them (plan P3-08)." [0,94)
+block 1 content [96,212) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [96,212)
+    CALL para [198,203)
+      TEXT "Left." [198,203)
+block 2 content [214,333) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [214,333)
+    CALL para [318,324)
+      TEXT "Right." [318,324)
+block 3 content [335,580)
+  CALL para [335,580)
+    TEXT "The paragraph between the floats narrows from both sides while its lines meet either of them, from the start side only once the shorter float has ended, and returns to the full measure below the taller one; it runs long enough to show all three." [335,580)

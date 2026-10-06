@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="86">A float nearly as wide as the measure leaves no column worth wrapping in (plan P3-08).</p>
+<figure data-pid="1" data-s="88" data-e="216" id="tsr-fig-w">
+<img data-s="88" data-e="216" src="photos/wide.png" alt="wide" style="max-width:100%">
+<figcaption><strong>图 1：</strong>A wide float.</figcaption>
+</figure>
+<p data-pid="2" data-s="218" data-e="329">This paragraph would wrap in a sliver beside the float; it starts below the float instead, at the full measure.</p>
+</div>

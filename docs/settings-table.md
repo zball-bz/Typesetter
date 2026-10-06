@@ -42,6 +42,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `code.snapMaxQ` | int:1:64 | `7` | HostDefault | Layout |  |
 | `code.fontFeatures` | features | `""` | HostDefault | Ingest | `codeFontFeatures` |
 | `code.fontFeaturesByLang` | map:features | `{}` | HostDefault | Ingest | `codeFontFeaturesByLang` |
+| `layout.minWrapWidth` | num:0:100 | `8` | HostDefault | Layout |  |
 | `table.cellPad` | num:0:10 | `0.4` | HostDefault | Layout |  |
 | `table.rowPad` | num:0:10 | `0.3` | HostDefault | Layout |  |
 | `terms.heading` | str | `""` | HostDefault | Resolve |  |

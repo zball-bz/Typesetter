@@ -1,0 +1,11 @@
+doc @[0,581)
+  para @[0,94)
+    text @[0,94) str="A left and a right float start at the same place, and the text runs between them (plan P3-08)."
+  region @[96,212) name="figure"
+    para @[198,203)
+      text @[198,203) str="Left."
+  region @[214,333) name="figure"
+    para @[318,324)
+      text @[318,324) str="Right."
+  para @[335,580)
+    text @[335,580) str="The paragraph between the floats narrows from both sides while its lines meet either of them, from the start side only once the shorter float has ended, and returns to the full measure below the taller one; it runs long enough to show all three."

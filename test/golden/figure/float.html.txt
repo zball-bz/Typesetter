@@ -32,8 +32,8 @@
 <div class="tsr-line" data-s="0" data-e="67" data-join="space" style="top:24px;left:136px;width:164px;word-spacing:0.952px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.571px">移</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.571px">宽度同样收窄</span><span class="tsr-r tsr-cjk" data-s="0">；</span><a class="tsr-r tsr-cjk" href="#tsr-fig-tower" data-s="57" style="letter-spacing:0.571px;margin-right:-0.571px">图</a></div>
 <div class="tsr-line" data-s="57" data-e="100" style="top:48px;left:136px;width:164px"><a class="tsr-r" href="#tsr-fig-tower" data-s="57">1</a><span class="tsr-r tsr-cjk" data-s="67">与</span><a class="tsr-r tsr-cjk" href="#tsr-fig-gate" data-s="70">图</a><a class="tsr-r" href="#tsr-fig-gate" data-s="70"> 2</a><span class="tsr-r tsr-cjk" data-s="79">都可以被引用</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="79">。</span></div>
 </div>
-<div class="tsr-para" data-pid="6" data-s0="0" style="position:relative;height:52.797px;margin-bottom:19.2px">
-<div class="tsr-rule" style="top:40.797px;left:0px;width:300px"></div>
+<div class="tsr-para" data-pid="6" data-s0="0" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-rule" style="top:60px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="7" data-s0="885" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="60" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.176px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.706px;margin-right:-0.706px">分隔线等非文本单元会先越过浮动框再排</span></div>

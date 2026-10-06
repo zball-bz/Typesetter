@@ -1339,6 +1339,50 @@ static void unitCascade() {
 // the bodies with their positional attributes put back (as the shell does)
 // are the legacy render byte for byte; held keys are not sent; keys are
 // stable across renders and generations increase.
+// (plan P3-08; design T6 conservative bands) no line overlaps a float: every
+// in-flow line of the float fixtures, in document coordinates, stays clear
+// of every float box (image and caption rows), at any measure
+static void unitFloatsNeverOverlap(const fs::path& root) {
+  for (const char* name : {"float", "stack", "float-in-list", "both-sides", "wide-float"})
+    for (double width : {300.0, 240.0, 180.0, 420.0}) {
+      Doc doc;
+      std::string ops, profile, src;
+      readFile(root / "test" / "fixtures" / "figure" / (std::string(name) + ".ops"), ops);
+      readFile(root / "test" / "profiles" / "golden.json", profile);
+      readFile(root / "test" / "fixtures" / "figure" / (std::string(name) + ".tsm"), src);
+      doc.configure(profile);
+      doc.configure(R"({"host": {"width": )" + std::to_string(width) + "}}");
+      doc.compile(src);
+      CHECK(doc.ingest((const u8*)ops.data(), ops.size()) && typesetWithMock(doc));
+      struct Box { i64 y0, y1; Su x0, x1; };
+      std::vector<Box> floats;
+      for (const ParaFrame& f : doc.layout.paras)
+        for (const VEntry& e : f.vlist) {
+          if (!e.out) continue;  // a float: its unit's fragments (image, caption rows)
+          Box b{INT64_MAX, INT64_MIN, INT32_MAX, INT32_MIN};
+          for (const Fragment& l : f.lines) {
+            if (l.unitIdx != e.unit) continue;
+            b.y0 = std::min(b.y0, (i64)f.y + l.y);
+            b.y1 = std::max(b.y1, (i64)f.y + l.y + l.height);
+            b.x0 = std::min(b.x0, l.left);
+            b.x1 = std::max(b.x1, l.left + l.width);
+          }
+          floats.push_back(b);
+        }
+      CHECK(!floats.empty());
+      for (const ParaFrame& f : doc.layout.paras)
+        for (const Fragment& l : f.lines) {
+          if (l.kind != FragKind::Line || l.cellIdx >= 0) continue;
+          const i64 y0 = (i64)f.y + l.y, y1 = y0 + l.height;
+          for (const Box& b : floats) {
+            const bool meets = y0 < b.y1 && b.y0 < y1 && l.left < b.x1 && b.x0 < l.left + l.width;
+            if (meets) printf("FAIL float overlap: %s at %gpx, line y=%lld\n", name, width, (long long)y0);
+            CHECK(!meets);
+          }
+        }
+    }
+}
+
 // (plan P3-06) a preview fragment, the anchors' preview policy and a
 // document's own id prefix
 static void unitRenderFragment(const fs::path& root) {
@@ -1743,6 +1787,7 @@ int main(int argc, char** argv) {
   unitCascade();
   unitRenderResult(fs::path(root));
   unitRenderFragment(fs::path(root));
+  unitFloatsNeverOverlap(fs::path(root));
   unitInstLimits();
   unitHtmlWriter();
   unitBreakMemo();

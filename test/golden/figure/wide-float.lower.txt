@@ -1,0 +1,12 @@
+lower v1 abi 3d3ccfbb docEnd 330 holes 1 module 83e1a641694b1039
+piece 0 hole 0 js [103,208)
+block 0 content [0,86)
+  CALL para [0,86)
+    TEXT "A float nearly as wide as the measure leaves no column worth wrapping in (plan P3-08)." [0,86)
+block 1 content [88,216) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [88,216)
+    CALL para [194,207)
+      TEXT "A wide float." [194,207)
+block 2 content [218,329)
+  CALL para [218,329)
+    TEXT "This paragraph would wrap in a sliver beside the float; it starts below the float instead, at the full measure." [218,329)

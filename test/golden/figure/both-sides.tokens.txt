@@ -1,0 +1,4 @@
+[96,197) function "#!figure(src: \"photos/l.png\", alt: \"left\", w: 200, h: 200, scale: 0.2, float: \"left\", label: \"fig-l\")"
+[204,212) function "#figure!"
+[214,317) function "#!figure(src: \"photos/r.png\", alt: \"right\", w: 200, h: 300, scale: 0.2, float: \"right\", label: \"fig-r\")"
+[325,333) function "#figure!"

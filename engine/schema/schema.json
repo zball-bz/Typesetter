@@ -814,6 +814,16 @@
       ],
       "legacy": "codeFontFeaturesByLang"
     },
+    "layout.minWrapWidth": {
+      "$comment": "The narrowest column text wraps in beside floats, in em of doc.baseSize (plan P3-08; design T6 ParShape): a paragraph whose line would be narrower clears the floats instead.",
+      "field": "minWrapWidthEm",
+      "dom": "num:0:100",
+      "def": 8,
+      "prec": "HostDefault",
+      "affects": [
+        "Layout"
+      ]
+    },
     "table.cellPad": {
       "$comment": "A table cell's horizontal padding, in em of doc.baseSize (plan P3-02).",
       "field": "tableCellPadEm",

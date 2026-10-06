@@ -148,6 +148,32 @@ Layout: the float image unit contributes **zero advance** (out of flow); it
 renders at the measure's left or right edge at the current y. Text lines of
 narrowed units get `left += occlW` when the float is on the left.
 
+As built (plan P3-08; design T6 "ParShape + ExclusionMap") — this replaces
+the prefix model above:
+
+- A paragraph's shape is a `ParShape` (break.h): a slot `{left, width}` per
+  explicit line and a `rest` — TeX's `\parshape`. The breaker reads the
+  widths, layout the offsets; the slot width is the one definition of the
+  measure (justification and centring slack come from it).
+- Floats are side-tagged boxes in document coordinates (y from the top, x
+  from the measure's start; a float in a list stands at its indent and
+  pushes outer text from there). Line i of a paragraph starting at yTop is
+  narrowed by every float meeting its **conservative band**
+  `[yTop + i·minAdv, yTop + (i+1)·maxAdv)` — minAdv = baseLeading, maxAdv
+  = the stream's tallest possible line — so no line overlaps a float
+  whatever advances the lines realize (unitFloatsNeverOverlap checks it),
+  in one pass. A float leaves 1em beside the text; a list item's text
+  beside a start float keeps its marker's room.
+- A float takes **zero advance and no gap after it** (the next block stands
+  at the float's top). A float of the same side it would overlap stacks
+  below it (a paragraph gap apart); one of the other side coexists unless
+  the column between them would be narrower than `layout.minWrapWidth`
+  (8em), then it goes below.
+- A paragraph whose column beside the floats is narrower than
+  `layout.minWrapWidth` clears them (never a sliver, never text over a
+  float); a non-paragraph block clears every float its whole box meets
+  (D-Y02), standing its gap below them.
+
 ## 5. Rendering, copy, semantics, safety
 
 - Typeset serializer: `<img class="tsr-img" src alt draggable="false">`
@@ -209,7 +235,8 @@ narrowed units get `left += occlW` when the float is on the left.
   in layout (the box must not clip at the document edge).
 - The layout replay keeps the historical justification formula for full
   lines (`cfg.widthPx − indent`, unfloored) and uses `suToPx(narrow)` only
-  for narrowed lines — zero golden churn on non-figure fixtures.
+  for narrowed lines — zero golden churn on non-figure fixtures. (Retired
+  in P3-08: every line's slack is its slot's width.)
 
 - (plan P2-08) The figure constructor tags its paragraphs `role: caption`
   (the layout still finds captions by figure depth until P3-01 reads the

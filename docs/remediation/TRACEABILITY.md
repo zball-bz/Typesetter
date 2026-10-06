@@ -1155,7 +1155,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/glue-semantics-split` | adhoc | high | P4-08 | |
 | `break-layout-pages/hyphen-url-not-discretionary` | adhoc | medium | P4-08 | |
 | `break-layout-pages/break-policy-config-knobs` | adhoc | medium | P4-06, P4-08 | |
-| `break-layout-pages/parshape-prefix-form` | adhoc | high | P3-08 | |
+| `break-layout-pages/parshape-prefix-form` | adhoc | high | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/float-tracker-replay` | adhoc | high | P1-15 | grep:plan P1-15 |
 | `break-layout-pages/float-model-closed` | adhoc | high | P3-15 | |
 | `break-layout-pages/unit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
@@ -1168,16 +1168,16 @@ Theme steps: — · findings: 1
 | `break-layout-pages/comment-role-by-color` | adhoc | low | P2-08 | grep:plan P2-08 |
 | `break-layout-pages/paginator-in-serializer` | adhoc | high | P3-12 | |
 | `break-layout-pages/group-role-dispatch` | adhoc | high | P1-18, P3-14 | |
-| `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 | |
+| `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/kp-window-heuristics` | adhoc | low | P1-14 | grep:plan P1-14 |
 | `break-layout-pages/overfull-collapses-paragraph` | issue | high | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/emit-reads-measure-stale-on-relayout` | issue | high | P1-16 | grep:plan P1-16 |
-| `break-layout-pages/wide-float-overprints-text` | issue | medium | P3-08 | |
+| `break-layout-pages/wide-float-overprints-text` | issue | medium | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/break-inf-float-vs-double` | issue | medium | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/trailing-glue-in-break-cost` | issue | medium | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/snap-kerning-ignores-sidecar` | issue | medium | P3-11 | |
-| `break-layout-pages/float-adds-paragraph-gap` | issue | low | P3-08 | |
-| `break-layout-pages/float-indent-geometry` | issue | low | P3-08 | |
+| `break-layout-pages/float-adds-paragraph-gap` | issue | low | P3-08 || grep:plan P3-08 |
+| `break-layout-pages/float-indent-geometry` | issue | low | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/paged-atoms-clipped` | issue | medium | P3-12 | |
 | `break-layout-pages/break-cache-robustness` | issue | low | P0-11, P1-14 | grep:plan P1-14 |
 | `break-layout-pages/api-hosts-layout-policy` | issue | medium | P1-03, P1-15 | grep:plan P1-15 |
@@ -1319,7 +1319,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/description-list-missing` | adhoc | medium | P3-34 | |
 | `real-world-evidence/table-model-v1` | adhoc | medium | P3-14 | |
 | `real-world-evidence/figure-model-single-image` | adhoc | medium | P3-15 | |
-| `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 | |
+| `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 || grep:plan P3-08 |
 | `real-world-evidence/resource-and-config-plumbing` | adhoc | medium | P3-21 | |
 | `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 || grep:plan P3-06 |
 | `real-world-evidence/presentation-constants` | adhoc | medium | P3-01 | grep:plan P3-01 |

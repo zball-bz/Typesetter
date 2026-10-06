@@ -55,6 +55,7 @@ const Row kRows[] = {
     {"code.snapMaxQ", stageBit(Stage::Layout), false},
     {"code.fontFeatures", stageBit(Stage::Ingest), false},
     {"code.fontFeaturesByLang", stageBit(Stage::Ingest), true},
+    {"layout.minWrapWidth", stageBit(Stage::Layout), false},
     {"table.cellPad", stageBit(Stage::Layout), false},
     {"table.rowPad", stageBit(Stage::Layout), false},
     {"terms.heading", stageBit(Stage::Resolve), false},
@@ -319,79 +320,85 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.codeFontFeaturesByLang = std::move(mm);
       return true;
     }
-    case 37: {  // table.cellPad
+    case 37: {  // layout.minWrapWidth
+      double x;
+      if (!num(v, 0, 100, false, x, why)) return false;
+      c.minWrapWidthEm = x;
+      return true;
+    }
+    case 38: {  // table.cellPad
       double x;
       if (!num(v, 0, 10, false, x, why)) return false;
       c.tableCellPadEm = x;
       return true;
     }
-    case 38: {  // table.rowPad
+    case 39: {  // table.rowPad
       double x;
       if (!num(v, 0, 10, false, x, why)) return false;
       c.tableRowPadEm = x;
       return true;
     }
-    case 39: {  // terms.heading
+    case 40: {  // terms.heading
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supHeading = v.str;
       return true;
     }
-    case 40: {  // terms.table
+    case 41: {  // terms.table
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supTable = v.str;
       return true;
     }
-    case 41: {  // terms.figure
+    case 42: {  // terms.figure
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supFigure = v.str;
       return true;
     }
-    case 42: {  // terms.equation
+    case 43: {  // terms.equation
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supEquation = v.str;
       return true;
     }
-    case 43: {  // terms.captionSep
+    case 44: {  // terms.captionSep
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.capSep = v.str;
       return true;
     }
-    case 44: {  // page.height
+    case 45: {  // page.height
       double x;
       if (!num(v, 16, 100000, false, x, why)) return false;
       c.pageHeightPx = x;
       return true;
     }
-    case 45: {  // semantics.elements
+    case 46: {  // semantics.elements
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semElements.clear();
       if (!v.keys.empty()) jsonDump(c.semElements, v);
       return true;
     }
-    case 46: {  // semantics.counters
+    case 47: {  // semantics.counters
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semCounters.clear();
       if (!v.keys.empty()) jsonDump(c.semCounters, v);
       return true;
     }
-    case 47: {  // semantics.collectors
+    case 48: {  // semantics.collectors
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semCollectors.clear();
       if (!v.keys.empty()) jsonDump(c.semCollectors, v);
       return true;
     }
-    case 48: {  // semantics.systems
+    case 49: {  // semantics.systems
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semSystems.clear();
       if (!v.keys.empty()) jsonDump(c.semSystems, v);
       return true;
     }
-    case 49: {  // render.idPrefix
+    case 50: {  // render.idPrefix
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Ident, v.str))) return type(why, "ident");
       c.idPrefix = v.str;
       return true;
     }
-    case 50: {  // style.rules
+    case 51: {  // style.rules
       if (v.t != JsonValue::T::Arr) return type(why, "an array");
       c.styleRules.clear();
       if (!v.arr.empty()) jsonDump(c.styleRules, v);
@@ -547,6 +554,8 @@ std::string settingsJson(const Config& c) {
   out += '{';
   { bool first = true; for (const auto& [mk, mv] : c.codeFontFeaturesByLang) { if (!first) out += ", "; first = false; jsonString(out, mk); out += ": "; jsonString(out, mv); } }
   out += '}';
+  out += "}, \"layout\": {\"minWrapWidth\": ";
+  num(out, (double)c.minWrapWidthEm);
   out += "}, \"table\": {\"cellPad\": ";
   num(out, (double)c.tableCellPadEm);
   out += ", \"rowPad\": ";

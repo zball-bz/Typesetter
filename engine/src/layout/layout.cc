@@ -119,7 +119,6 @@ struct LinePolicy {
   // left, centre or right within the cell's content width
   enum class Align : u8 { Justify, Ragged, Center, Cell } align = Align::Justify;
   u8 cellAlign = 'l';
-  double widthPx = 0;   // the measure in px (justification and centring slack)
   StrRef marker = 0;    // on the first line
   StyleId markerStyle = 0;
   StrRef anchor = 0;    // the stream's anchor (a cell's, a caption's), on its first line
@@ -170,7 +169,7 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     const LineSlot& slot = s.shape.at((u32)li);
     line.left = s.left + slot.left;
     line.width = slot.width;
-    const bool narrowed = li < s.shape.lines.size();
+
     line.srcSpan = f.span;
     line.endsWithHyphen = f.endsHyphen;
     if (first) {
@@ -187,7 +186,9 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     // shrinks when tight (the breaker counted on it) — one rule for every
     // stream
     const bool rigid = last || pol.align != LinePolicy::Align::Justify;
-    const double slackPx = (narrowed ? suToPx(slot.width) : pol.widthPx) - f.naturalPx;
+    // (plan P3-08) the slot width is the one definition of the measure:
+    // justification and centring slack come from it
+    const double slackPx = suToPx(slot.width) - f.naturalPx;
     // a line without stretchable glue (all URL pieces / one unbreakable
     // token) cannot be justified — TeX's underfull box; it sets ragged
     // rather than pretending (real-world-report.md)
@@ -246,77 +247,103 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
   return y;
 }
 
-// The float exclusions of the flow (plan P1-15; design T6 "ExclusionMap"):
-// the F2 tracker (figure-design.md §4) that Doc::typeset used to run ahead
-// of layout and replay through five fields on the units, now at layout's
-// own cursor. It reproduces today's prefix ParShape exactly — occlusion
-// counted from the float's top in baseLeading lines, a same-side float
-// stacked below (the widest of the stack occludes), an opposite-side float
-// and every non-text unit clearing — so breaks and lines are unchanged;
-// conservative bands over real line heights come with ParShape (T6).
+// The floats of the document flow (plan P3-08; design T6 "ParShape +
+// ExclusionMap"): side-tagged boxes in flow-root coordinates — y from the
+// document's top, x from the measure's start — each pushing text from its
+// own side (a float in a list pushes from its indent). A paragraph's line i
+// is shaped by every float its conservative band [yTop + i·minAdv,
+// yTop + (i+1)·maxAdv) meets: whatever advances the lines realize, line i
+// lies inside its band, so no line overlaps a float it was not shaped for —
+// one pass, no re-break. Floats on both sides coexist and stacks may have
+// any widths.
 class ExclusionMap {
  public:
-  ExclusionMap(Su baseLeading, Su paraGap, Su emGap) : lead_(baseLeading), paraGap_(paraGap), emGap_(emGap) {}
-  // the cursor moves down by a gap
-  void advance(Su gap) {
-    if (remain_ > 0) {
-      remain_ -= gap;
-      if (remain_ < 0) remain_ = 0;
+  struct Box {
+    i64 y0, y1;
+    Su x0, x1;
+    bool start;  // on the start side: pushes text from the start
+  };
+  explicit ExclusionMap(Su gap) : gap_(gap) {}
+  bool empty() const { return v_.empty(); }
+  void add(const Box& b) { v_.push_back(b); }
+  // [x0, x1) narrowed by the floats meeting [y0, y1) (`push`: more room a
+  // start float leaves — a list marker's, beside it)
+  void available(i64 y0, i64 y1, Su& x0, Su& x1, Su push = 0) const {
+    for (const Box& f : v_) {
+      if (f.y1 <= y0 || f.y0 >= y1) continue;
+      if (f.start) x0 = std::max(x0, f.x1 + gap_ + push);
+      else x1 = std::min(x1, f.x0 - gap_);
     }
   }
-  // a float arriving while one is active: same side → stacked below the
-  // active one (`shift`); the other side → the active one is cleared first
-  // (`clear`) — real-world-report.md: Wikipedia opens with two thumbnails
-  void arrive(u8 side, Su& shift, Su& clear) {
-    shift = clear = 0;
-    if (remain_ > 0 && side_ == side) {
-      shift = (Su)remain_;
-    } else if (remain_ > 0) {
-      clear = (Su)remain_;
-      remain_ = 0;
-      occl_ = 0;
-    }
-  }
-  // the float placed: image + caption + one gap of clearance, beside the
-  // measure's edge
-  void add(u8 side, Su shift, Su imgW, Su imgH, i64 captionH) {
-    remain_ = shift + (i64)imgH + captionH + paraGap_;
-    Su occl = imgW + emGap_;
-    occl_ = shift > 0 && occl_ > occl ? occl_ : occl;
-    side_ = side;
-  }
-  // a non-text unit clears the float: the advance that does it
-  Su clear() {
-    if (remain_ <= 0) return 0;
-    Su c = (Su)remain_;
-    remain_ = 0;
-    occl_ = 0;
+  // the first y at or below `y` clear of the floats that meet [x0, x1)
+  // horizontally (the whole box, D-Y02)
+  i64 clearY(i64 y, Su x0, Su x1) const {
+    i64 c = y;
+    for (const Box& f : v_)
+      if (f.y1 > y && f.x1 > x0 && f.x0 < x1) c = std::max(c, f.y1);
     return c;
   }
-  // the line widths of a paragraph starting here: the prefix beside the
-  // float, then the measure
-  ParShape widths(Su lineWidth) const {
-    ParShape ps(lineWidth);
-    if (remain_ > 0 && occl_ > 0 && occl_ < lineWidth - kRailMinLineSu) {
-      const Su narrow = lineWidth - occl_;
-      ps.lines.assign((size_t)((remain_ + lead_ - 1) / lead_), LineSlot{side_ == 1 ? lineWidth - narrow : 0, narrow});
+  // the lowest float bottom below y (y: none)
+  i64 bottom(i64 y) const {
+    i64 c = y;
+    for (const Box& f : v_) c = std::max(c, f.y1);
+    return c;
+  }
+  // a paragraph's shape in the content box [x0, x1) from yTop
+  ParShape shape(i64 yTop, Su x0, Su x1, Su minAdv, Su maxAdv, Su push) const {
+    ParShape ps(x1 - x0);
+    const i64 last = bottom(yTop);
+    for (i64 i = 0; yTop + i * minAdv < last; i++) {
+      Su a = x0, b = x1;
+      available(yTop + i * minAdv, yTop + (i + 1) * maxAdv, a, b, push);
+      ps.lines.push_back(LineSlot{a - x0, b > a ? b - a : 0});
     }
+    while (!ps.lines.empty() && ps.lines.back().left == 0 && ps.lines.back().width == ps.rest.width)
+      ps.lines.pop_back();
     return ps;
   }
-  // the paragraph's lines, counted in baseLeading
-  void consume(size_t lines) {
-    if (remain_ > 0) {
-      remain_ -= (i64)lines * lead_;
-      if (remain_ < 0) remain_ = 0;
+  // where a float box of height h, spanning [x0, x1), may stand from y: below
+  // a float of its side it would overlap (a stack) and below one of the
+  // other side when the column left between them is narrower than minWrap
+  i64 place(i64 y, i64 h, bool start, Su x0, Su x1, Su minWrap, Su vgap) const {
+    for (bool moved = true; moved;) {
+      moved = false;
+      for (const Box& f : v_) {
+        if (f.y1 <= y || f.y0 >= y + h) continue;
+        const bool blocks = f.start == start ? (f.x1 > x0 && f.x0 < x1)
+                                             : (start ? f.x0 - gap_ - (x1 + gap_) : x0 - gap_ - (f.x1 + gap_)) < minWrap;
+        if (blocks) {
+          y = f.y1 + vgap;
+          moved = true;
+        }
+      }
     }
+    return y;
   }
 
  private:
-  Su lead_, paraGap_, emGap_;
-  i64 remain_ = 0;  // occlusion height left, measured from the cursor
-  Su occl_ = 0;     // the occluded width
-  u8 side_ = 0;
+  Su gap_;  // between a float and the text beside it
+  std::vector<Box> v_;
 };
+
+// the tallest line a stream can make: the conservative band's maxAdv
+Su streamAdvance(const HList& h, const MetricStore& metrics, Su baseLeading) {
+  Su asc = 0, desc = 0;
+  for (const HItem& it : h.items) {
+    if (it.k == IK::Penalty) continue;
+    const StyleId st = h.runs[it.run].face;
+    if (metrics.hasVmet(st)) {
+      const VMet& v = metrics.vmet(st);
+      asc = std::max(asc, v.ascent);
+      desc = std::max(desc, v.descent);
+    }
+    if (const ObjPart* pt = objectPart(h, it)) {
+      asc = std::max(asc, pt->asc);
+      desc = std::max(desc, pt->desc);
+    }
+  }
+  return std::max(baseLeading, (Su)(asc + desc));
+}
 
 // The layouters (plan P1-18; design T6 "layouter registry"): one per
 // LayouterId, chosen by the box tree by content model. A Stack lays its
@@ -330,28 +357,34 @@ class DocLayout {
   DocLayout(const MetricStore& m, Interner& s, const LayoutSettings& c, DiagSink& d, LayoutResult& r, BreakMemo* memo)
       : metrics(m), strs(s), cfg(c), diags(d), lr(r), memo_(memo), measure(suFloorPx(c.widthPx)),
         baseLeading(suRoundPx(c.lineHeight * c.baseSizePx)), paraGap(suRoundPx(c.paraSpacingEm * c.baseSizePx)),
-        excl(baseLeading, paraGap, suRoundPx(c.baseSizePx)) {
+        minWrap(suRoundPx(c.minWrapWidthEm * c.baseSizePx)), excl(suRoundPx(c.baseSizePx)) {
     bparams.cost = c.cost;
   }
 
   void run(const std::vector<TopBlock>& tops) {
     i64 y = 0;
+    bool gap = false;  // a gap before the next top: an in-flow one came before
     for (size_t p = 0; p < tops.size(); p++) {
       tb = &tops[p];
       tree = tb->tree;
       ParaFrame frame;
       frame.pid = tb->pid;
-      frame.y = (Su)y;
       frame.w = measure;
+      // the document's stack: a paragraph gap between tops — none after a
+      // top that is only out of flow (a float: zero advance, plan P3-08)
+      const Su topGap = gap ? paraGap : 0;
+      gapBefore = topGap;
+      y += topGap;
+      frame.y = (Su)y;
       fr = &frame;
       py = 0;
-      // the document's stack: a paragraph gap between tops
-      gapBefore = p > 0 ? paraGap : 0;
-      excl.advance(gapBefore);
       block(0);
       frame.h = (Su)py;
       y += py;
-      if (p + 1 < tops.size()) y += paraGap;
+      bool outOnly = !frame.vlist.empty();
+      for (const VEntry& e : frame.vlist) outOnly = outOnly && e.out;
+      if (!outOnly) gap = true;
+      else y -= topGap;  // the float took no room: the next top stands where it would have
       lr.paras.push_back(std::move(frame));
     }
     if (floatBottomAbs > y) y = floatBottomAbs;  // a trailing float still shows
@@ -366,6 +399,7 @@ class DocLayout {
   LayoutResult& lr;
   BreakMemo* memo_;  // the Session's KP memo (plan P1-21), or none
   const Su measure, baseLeading, paraGap;
+  const Su minWrap;  // layout.minWrapWidth: narrower beside floats, text clears them
   ExclusionMap excl;
   BreakParams bparams;
   i64 floatBottomAbs = 0;  // doc-height watermark for a trailing float (F2)
@@ -400,20 +434,27 @@ class DocLayout {
     }
     return r;
   }
-  // a leaf starts: an in-flow box that is not a paragraph clears the float
-  // beside it
+  // a leaf starts: an in-flow box that is not a paragraph clears the floats
+  // its whole box meets (D-Y02), standing its gap below them
   struct Leaf {
     size_t from;  // its first fragment
     Su clear;
     i64 top;
   };
-  Leaf enter(bool clears) {
+  Leaf enter(bool clears, const LayoutBlock& b) {
     Leaf l{fr->lines.size(), 0, 0};
-    if (clears) l.clear = excl.clear();
+    if (clears) l.clear = clearance(b);
     py += l.clear;
     l.top = py;
     cellBreaks.clear();
     return l;
+  }
+  // how far down a block at the cursor moves to clear the floats its box
+  // meets: to their bottom, plus the gap it stands below what precedes it
+  Su clearance(const LayoutBlock& b) const {
+    const i64 at = (i64)fr->y + py;
+    const i64 c = excl.clearY(at, b.x, measure);
+    return c > at ? (Su)(c + gapBefore - at) : 0;
   }
   // a leaf ends: its anchor on its first fragment (a table's on its first
   // cell line, not its rule), and its box in the vertical list
@@ -438,23 +479,46 @@ class DocLayout {
     gapOf(*tree, (u32)(&b - tree->blocks.data()), num, den, su);
     const Su gap = den ? (Su)((i64)paraGap * num / den) : su;
     const u32 self = (u32)(&b - tree->blocks.data());
+    bool prevOut = false;  // the child before was only out of flow (a float)
     for (u32 k = self + 1; k < b.end; k = tree->blocks[k].end) {
-      if (k > self + 1) {
+      if (k > self + 1 && !prevOut) {
         py += gap;
-        excl.advance(gap);
         gapBefore = gap;
       }
+      const size_t v0 = fr->vlist.size();
       block(k);
+      prevOut = fr->vlist.size() > v0;
+      for (size_t e = v0; e < fr->vlist.size(); e++) prevOut = prevOut && fr->vlist[e].out;
+      if (prevOut) gapBefore = k > self + 1 ? gap : gapBefore;  // what follows takes the float's gap
     }
   }
 
   void paragraph(const LayoutBlock& b) {
     const FlowUnit& u = tb->units[b.unit];
-    Leaf l = enter(false);
+    Leaf l = enter(false, b);
     const Su lineWidth = measure - b.x;
-    const ParShape shape = excl.widths(lineWidth);
+    // (plan P3-08) its shape beside the floats its lines' bands meet; a
+    // list marker's line keeps its marker's room beside a start float; a
+    // column narrower than minWrapWidth: the paragraph clears the floats
+    ParShape shape(lineWidth);
+    if (!excl.empty()) {
+      const Su adv = streamAdvance(u.hl, metrics, baseLeading);
+      const Su push = b.marker && b.parent != ~0u && tree->blocks[b.parent].parent != ~0u
+                          ? tree->blocks[tree->blocks[b.parent].parent].pad
+                          : 0;
+      for (int tries = 0; tries < 64; tries++) {
+        shape = excl.shape((i64)fr->y + py, b.x, measure, baseLeading, adv, push);
+        bool narrow = false;
+        for (const LineSlot& s : shape.lines) narrow = narrow || s.width < std::min(minWrap, lineWidth);
+        if (!narrow) break;
+        const Su c = clearance(b);
+        if (c <= 0) break;
+        py += c;
+        l.clear += c;
+        l.top = py;
+      }
+    }
     lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, shape)});
-    excl.consume(lr.breaks.back().r.breakpoints.size());
     const BlockTraits::Align a = b.tr.align;
     LinePolicy pol;
     pol.align = a == BlockTraits::Align::Center   ? LinePolicy::Align::Center
@@ -463,7 +527,6 @@ class DocLayout {
                                                   : LinePolicy::Align::Justify;
     if (a == BlockTraits::Align::End) pol.cellAlign = 'r';  // set at the end (plan P3-01: par.align end)
     pol.endSep = b.sepAfter;
-    pol.widthPx = cfg.widthPx - suToPx(b.x);
     pol.marker = b.marker;
     pol.markerStyle = b.markerStyle;
     pol.anchor = b.carry ? b.carry : u.anchor;  // a block's label, else an inline one
@@ -478,7 +541,7 @@ class DocLayout {
       floatBox(b, u);
       return;
     }
-    Leaf l = enter(true);
+    Leaf l = enter(true, b);
     const Su lineWidth = measure - b.x;
     Fragment f;
     f.unitIdx = b.unit;
@@ -541,12 +604,7 @@ class DocLayout {
   // at the measure's edge, caption rows beneath at the float width; the
   // blocks that flow beside it narrow by the exclusion
   void floatBox(const LayoutBlock& b, const FlowUnit& u) {
-    Leaf l = enter(false);
-    Su floatShift = 0, clearSu = 0;
-    excl.arrive(b.floatSide, floatShift, clearSu);
-    py += clearSu;
-    l.clear = clearSu;
-    l.top = py;
+    Leaf l = enter(false, b);
     const Su lineWidth = measure - b.x;
     Su imgW = 0, imgH = 0;
     resolveImageSize(std::get<ImageData>(u.data).size, cfg.widthPx - suToPx(b.x), imgW, imgH);
@@ -556,8 +614,13 @@ class DocLayout {
       lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
       captionH += (i64)cellBreaks.back().breakpoints.size() * baseLeading;
     }
-    excl.add(b.floatSide, floatShift, imgW, imgH, captionH);
-    const Su boxLeft = b.floatSide == 1 ? b.x : b.x + lineWidth - imgW;
+    // (plan P3-08) at the cursor, beside the floats already there: below one
+    // of its side it would overlap, below one of the other side when the
+    // column between them would be narrower than minWrapWidth
+    const bool start = b.floatSide == 1;
+    const Su boxLeft = start ? b.x : b.x + lineWidth - imgW;
+    const i64 top = excl.place((i64)fr->y + py, (i64)imgH + captionH, start, boxLeft, boxLeft + imgW, minWrap,
+                               paraGap);
     Fragment f;
     f.unitIdx = b.unit;
     f.kind = FragKind::Image;
@@ -566,9 +629,9 @@ class DocLayout {
     f.height = imgH;
     f.baseline = imgH;
     f.srcSpan = b.span;
-    f.y = (Su)(py + floatShift);  // stacked below an active float
+    f.y = (Su)(top - fr->y);
     fr->lines.push_back(f);
-    i64 cy = py + floatShift + imgH;
+    i64 cy = top - fr->y + imgH;
     for (u32 ci = 0; ci < (u32)u.cells.size(); ci++) {
       // caption rows: left-aligned at the float width; wrapped rows rejoin
       // on copy (§9.3), each caption paragraph ends a line, the last the unit
@@ -576,13 +639,13 @@ class DocLayout {
       LinePolicy pol;
       pol.align = LinePolicy::Align::Ragged;
       pol.endSep = ci + 1 < (u32)u.cells.size() ? Sep::Newline : b.sepAfter;
-      pol.widthPx = suToPx(imgW);
       pol.anchor = cell.anchor;
       const ParShape shape(imgW);
       cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[ci], shape, boxLeft,
                              b.unit, (i32)ci},
                             pol, metrics, cfg, baseLeading, cy, fr->lines);
     }
+    excl.add({top, (i64)fr->y + cy, boxLeft, boxLeft + imgW, start});
     if ((i64)fr->y + cy > floatBottomAbs) floatBottomAbs = (i64)fr->y + cy;
     leave(b, l, /*out=*/true);  // no advance: the float is out of flow
   }
@@ -590,7 +653,7 @@ class DocLayout {
   void grid(const LayoutBlock& b) {
     const FlowUnit& u = tb->units[b.unit];
     const GridData& g = std::get<GridData>(u.data);
-    Leaf l = enter(true);
+    Leaf l = enter(true, b);
     const Su lineWidth = measure - b.x;
     // the sidecar column is layout's (plan P1-16: code.sidecarFrac)
     const Su sidebarW = g.sidecar ? suRoundPx(b.tr.sidecarFrac * (cfg.widthPx - suToPx(b.x))) : 0;
@@ -818,7 +881,6 @@ class DocLayout {
         const TableCell& cell = u.cells[li];
         LinePolicy pol;  // a row's note: one stream, ending a line (D-R03)
         pol.align = LinePolicy::Align::Ragged;
-        pol.widthPx = suToPx(sidebarW);
         pol.anchor = cell.anchor;
         const ParShape shape(sidebarW);
         const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[li], shape,
@@ -834,7 +896,7 @@ class DocLayout {
   void table(const LayoutBlock& b) {
     const FlowUnit& u = tb->units[b.unit];
     const TableData& td = std::get<TableData>(u.data);
-    Leaf l = enter(true);
+    Leaf l = enter(true, b);
     const Su lineWidth = measure - b.x;
     if (td.cols == 0) {
       leave(b, l);
@@ -870,7 +932,6 @@ class DocLayout {
         LinePolicy pol;
         pol.align = LinePolicy::Align::Cell;
         pol.cellAlign = td.aligns[c];
-        pol.widthPx = suToPx(cellW);
         pol.anchor = cell.anchor;
         // (plan P3-07) a cell ends with a tab, a row with a row; the table
         // with its unit's separator

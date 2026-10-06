@@ -1,0 +1,12 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="94">A left and a right float start at the same place, and the text runs between them (plan P3-08).</p>
+<figure data-pid="1" data-s="96" data-e="212" id="tsr-fig-l">
+<img data-s="96" data-e="212" src="photos/l.png" alt="left" style="max-width:100%">
+<figcaption><strong>图 1：</strong>Left.</figcaption>
+</figure>
+<figure data-pid="2" data-s="214" data-e="333" id="tsr-fig-r">
+<img data-s="214" data-e="333" src="photos/r.png" alt="right" style="max-width:100%">
+<figcaption><strong>图 2：</strong>Right.</figcaption>
+</figure>
+<p data-pid="3" data-s="335" data-e="580">The paragraph between the floats narrows from both sides while its lines meet either of them, from the start side only once the shorter float has ended, and returns to the full measure below the taller one; it runs long enough to show all three.</p>
+</div>

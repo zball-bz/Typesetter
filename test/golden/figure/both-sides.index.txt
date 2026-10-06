@@ -1,0 +1,4 @@
+instance figure 1 label=fig-l @[96,212)
+instance figure 2 label=fig-r @[214,333)
+label fig-l -> figure 1 @[96,212)
+label fig-r -> figure 2 @[214,333)

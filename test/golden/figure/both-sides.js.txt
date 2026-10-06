@@ -1,0 +1,11 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => ({src: "photos/l.png", alt: "left", w: 200, h: 200, scale: 0.2, float: "left", label: "fig-l"}),
+() => ({src: "photos/r.png", alt: "right", w: 200, h: 300, scale: 0.2, float: "right", label: "fig-r"}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

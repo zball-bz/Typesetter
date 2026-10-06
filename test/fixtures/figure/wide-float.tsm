@@ -1,0 +1,7 @@
+A float nearly as wide as the measure leaves no column worth wrapping in (plan P3-08).
+
+#!figure(src: "photos/wide.png", alt: "wide", w: 800, h: 200, scale: 0.8, float: "right", label: "fig-w")
+A wide float.
+#figure!
+
+This paragraph would wrap in a sliver beside the float; it starts below the float instead, at the full measure.

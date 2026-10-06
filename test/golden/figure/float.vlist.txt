@@ -3,22 +3,22 @@ vlist pid=0 y=0su h=3072su
 vlist pid=1 y=4301su h=0su
   glue 1229su
   box unit=0 float y=0su h=0su out-of-flow
-vlist pid=2 y=5530su h=10752su
+vlist pid=2 y=4301su h=10752su
   glue 1229su
   box unit=0 para y=0su h=10752su
-vlist pid=3 y=17511su h=4608su
+vlist pid=3 y=16282su h=4608su
   glue 1229su
   box unit=0 para y=0su h=4608su
-vlist pid=4 y=23348su h=0su
+vlist pid=4 y=22119su h=0su
   glue 1229su
   box unit=0 float y=0su h=0su out-of-flow
-vlist pid=5 y=24577su h=4608su
+vlist pid=5 y=22119su h=4608su
   glue 1229su
   box unit=0 para y=0su h=4608su
-vlist pid=6 y=30414su h=3379su
+vlist pid=6 y=27956su h=4608su
   glue 1229su
-  clear 1843su
-  box unit=0 rule y=1843su h=1536su
-vlist pid=7 y=35022su h=3072su
+  clear 3072su
+  box unit=0 rule y=3072su h=1536su
+vlist pid=7 y=33793su h=3072su
   glue 1229su
   box unit=0 para y=0su h=3072su

@@ -1,0 +1,8 @@
+doc @[0,330)
+  para @[0,86)
+    text @[0,86) str="A float nearly as wide as the measure leaves no column worth wrapping in (plan P3-08)."
+  region @[88,216) name="figure"
+    para @[194,207)
+      text @[194,207) str="A wide float."
+  para @[218,329)
+    text @[218,329) str="This paragraph would wrap in a sliver beside the float; it starts below the float instead, at the full measure."
