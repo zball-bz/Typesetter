@@ -1115,6 +1115,51 @@ static void fuzzRegressions(const fs::path& root) {
   }
 }
 
+// The front end's nesting bound (kMaxNesting, fuzz finding): containers,
+// content bodies and inline pairs past it are text or cut, said once
+// (nest-limit); the AST stays shallow and codegen's program reads back.
+static void unitNestLimit() {
+  auto rep = [](const std::string& open, const std::string& close, int n) {
+    std::string s;
+    for (int i = 0; i < n; i++) s += open;
+    s += "x";
+    for (int i = 0; i < n; i++) s += close;
+    return s + "\n";
+  };
+  const std::string srcs[] = {
+      rep(">", "", 100000),            // quotes: one per level
+      rep("- ", "", 5000),             // list items
+      rep("*_", "_*", 20000),          // inline pairs
+      rep("#emph[", "]", 20000),       // content arguments
+      rep("^[", "]", 20000),           // notes
+      rep("[", "](u)", 20000),         // link text
+      rep("#strong[#emph[", "]]", 5000),
+      rep("#!r\n", "#r!\n", 3000),     // regions
+  };
+  for (const std::string& src : srcs) {
+    Doc doc;
+    doc.compile(src);
+    u32 depth = 0;
+    std::function<void(const AstNode*, u32)> walk = [&](const AstNode* n, u32 d) {
+      depth = std::max(depth, d);
+      for (const AstNode* k : n->kids()) walk(k, d + 1);
+    };
+    walk(doc.ast, 0);
+    CHECK(depth <= 3 * kMaxNesting);
+    LowerProgram prog;
+    std::string why;
+    CHECK(readLowerProgram(doc.js.program, prog, why));
+    u32 said = 0;
+    for (const Diag& d : doc.diags.items) said += std::string_view(d.code) == "nest-limit";
+    CHECK(said >= 1);
+  }
+  {  // within the bound nothing is cut
+    Doc doc;
+    doc.compile(rep("> ", "", 40) + rep("#emph[", "]", 40));
+    for (const Diag& d : doc.diags.items) CHECK(std::string_view(d.code) != "nest-limit");
+  }
+}
+
 // CRLF line terminators read as LF (plan P0-04): a CRLF source and its LF
 // twin produce the same AST, spans aside.
 static void unitCrlf() {
@@ -1486,6 +1531,7 @@ int main(int argc, char** argv) {
   unitFragment();
   unitImageSrc();
   unitCrlf();
+  unitNestLimit();
   unitInstLimits();
   unitHtmlWriter();
   unitBreakMemo();

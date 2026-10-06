@@ -2,6 +2,7 @@
 #include "../syntax/labels.h"
 
 #include <algorithm>
+#include <optional>
 
 #include "../inline/jslex.h"
 #include "../syntax/cursor.h"
@@ -38,6 +39,7 @@ struct LinePass {
   Arena& arena;
   DiagSink& diags;
   std::string_view all;
+  u32 depth = 0;  // the levels around these lines (a content body's)
   u32 nlines = 0;
 
   SkelNode* root = nullptr;
@@ -173,6 +175,10 @@ struct LinePass {
       if (p >= le) return;
       char c = all[p];
       if (c == '>') {
+        if (nestFull()) {
+          nestLimit({p, p + 1});
+          return;
+        }
         closeLeaf();
         SkelNode* q = mk(SkelKind::Quote);
         q->span = {p, le};
@@ -204,6 +210,10 @@ struct LinePass {
       }
       if (!marker) return;
       if (leaf && (isBlank(p + markerLen, le) || (marker == '.' && num != 1))) return;
+      if (nestFull()) {
+        nestLimit({p, p + markerLen});
+        return;
+      }
       closeLeaf();
       const u32 markerCol = cl;
       u32 after = p + markerLen, acol = cl + markerLen;
@@ -250,6 +260,17 @@ struct LinePass {
     e->errCode = code;
     e->errMsg = std::move(msg);
     parent()->kids.push_back(e);
+  }
+
+  // a container opened here would nest too deeply (kMaxNesting): its
+  // marker stays text, said once per pass
+  bool nestFull() const { return depth + open.size() >= kMaxNesting; }
+  bool nestReported = false;
+  void nestLimit(Span sp) {
+    if (nestReported) return;
+    nestReported = true;
+    diags.add(Sev::Error, "nest-limit", sp,
+              "containers nest more than " + std::to_string(kMaxNesting) + " deep: the rest is text");
   }
 
   // '#name!' alone on its line: the region name, else empty
@@ -332,10 +353,11 @@ struct LinePass {
 
   // --- line ownership --------------------------------------------------------
   bool reverted(u32 raw) const {
-    return std::find(leaf->literalAt.begin(), leaf->literalAt.end(), raw) != leaf->literalAt.end();
+    return std::binary_search(leaf->literalAt.begin(), leaf->literalAt.end(), raw);
   }
-  void makeLiteral(u32 raw, u32 line, u32 bound) {
-    leaf->literalAt.push_back(raw);
+  void makeLiteral(u32 raw, u32 line, u32 bound) {  // literalAt stays sorted
+    std::vector<u32>& la = leaf->literalAt;
+    la.insert(std::lower_bound(la.begin(), la.end(), raw), raw);
     windows.push_back({line, bound});
   }
   // only blanks, or a comment closed on the line, up to the end of the line
@@ -365,18 +387,21 @@ struct LinePass {
   };
   // (`args`: t[i] continues a splice's argument list, after a body's ']';
   // `elseLink`: t[i] may continue an #if after a body's ']', plan P2-12)
+  // (`bm`: a matcher over `t` shared by the calls of one scan, so a line
+  // of unclosed bodies costs one bracket scan, not one per opener)
   template <class RawOf>
   u32 constructEnd(std::string_view t, u32 i, RawOf rawOf, Left& left, bool args = false,
-                   bool elseLink = false) const {
+                   bool elseLink = false, BracketMatcher* bm = nullptr) const {
     const u32 n = (u32)t.size();
+    std::optional<BracketMatcher> own;
     auto bodyEnd = [&](u32 p) -> u32 {  // a content body's '[' at p
       if (reverted(rawOf(p))) return kNone;
       if (endsLine(t, p + 1)) {
         left = {p, true, true};
         return kNone;
       }
-      BracketMatcher bm(t);
-      i32 close = bm.body(p);
+      if (!bm) bm = &own.emplace(t);
+      i32 close = bm->body(p);
       if (close < 0) {
         left = {p, false, false};
         return kNone;
@@ -465,6 +490,7 @@ struct LinePass {
   void scanLine(u32 ln, u32 from, u32 e, bool args = false) {
     const std::string_view t = all.substr(0, e);  // offsets are raw
     auto rawOf = [](u32 v) { return v; };
+    BracketMatcher bm(t);
     u32 i = from;
     if (resumeAtBody) {  // a splice's block-form body opens here
       resumeAtBody = false;
@@ -474,7 +500,7 @@ struct LinePass {
     if (args && chainNext) {  // an #if's body closed: `else [ … ]` may follow (plan P2-12)
       chainNext = false;
       Left left;
-      u32 end = constructEnd(t, i, rawOf, left, false, true);
+      u32 end = constructEnd(t, i, rawOf, left, false, true, &bm);
       if (end != kNone) {
         i = end;
         args = false;
@@ -485,7 +511,7 @@ struct LinePass {
     }
     while (args && i < e && all[i] == '[') {  // more arguments after a body's ']'
       Left left;
-      u32 end = constructEnd(t, i, rawOf, left, true);
+      u32 end = constructEnd(t, i, rawOf, left, true, false, &bm);
       if (end != kNone) {
         i = end;
         break;
@@ -509,7 +535,7 @@ struct LinePass {
         continue;
       }
       Left left;
-      u32 end = constructEnd(t, i, rawOf, left);
+      u32 end = constructEnd(t, i, rawOf, left, false, false, &bm);
       if (end != kNone) {
         i = std::max(end, i + 1);
         continue;
@@ -552,6 +578,7 @@ struct LinePass {
         }
         next++;
       }
+      if (slices.size() == 1) break;  // bound at its own line: the line scan's reading stands
       LeafText view(all, slices);
       Left l2;
       u32 end = constructEnd(view.text(), 0, [&](u32 v) { return view.raw(v); }, l2, args);
@@ -933,6 +960,11 @@ struct LinePass {
       }
       // ` <id>` may close the opener line (plan P2-06)
       const LabelSuffix ls = ok ? trailingLabel(all, after, le) : LabelSuffix{};
+      if (ok && isBlank(after, ls.ok ? ls.textEnd : le) && nestFull()) {
+        errorBlock({pos, le}, "nest-limit",
+                   "regions nest more than " + std::to_string(kMaxNesting) + " deep: this one is not opened");
+        return ln + 1;
+      }
       if (ok && isBlank(after, ls.ok ? ls.textEnd : le)) {
         closeLeaf();
         SkelNode* rg = mk(SkelKind::Region);
@@ -1013,8 +1045,8 @@ struct LinePass {
 }  // namespace
 
 Skeleton linepassLines(const SourceText& src, const std::vector<Span>& lines, Arena& arena,
-                       DiagSink& diags) {
-  LinePass lp{src, lines, arena, diags, src.view()};
+                       DiagSink& diags, u32 depth) {
+  LinePass lp{src, lines, arena, diags, src.view(), depth};
   lp.run();
   return {lp.root, std::move(lp.windows)};
 }

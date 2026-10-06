@@ -35,7 +35,8 @@ struct SkelNode {
   std::vector<Span> bodies;     // Para: block-form content bodies, from the
                                 // '[' to the ']' of their closer line
   std::vector<u32> literalAt;   // Para: openers that reached their bound
-                                // without a closer (reverted: literal text)
+                                // without a closer (reverted: literal text),
+                                // ascending
   std::vector<SkelNode*> kids;  // Doc/List/Item/Quote
   const char* errCode = nullptr;  // Error
   std::string errMsg;             // Error
@@ -52,10 +53,18 @@ struct Skeleton {
   std::vector<RevertedWindow> windows;
 };
 
+// The syntactic nesting the front end builds (the parse's InstLimits, plan
+// P0-07): containers, content bodies and inline pairs nest at most
+// kMaxNesting deep along any path. A deeper container marker is text, a
+// deeper body is cut to an error node (nest-limit), so every walk of the
+// tree stays shallow and codegen's program stays inside its reader's bound.
+constexpr u32 kMaxNesting = 128;
+
 Skeleton linepass(const SourceText& src, Arena& arena, DiagSink& diags);
-// The same pass over any list of raw line slices (a content body, plan P1-08).
+// The same pass over any list of raw line slices (a content body, plan P1-08)
+// `depth` levels deep.
 Skeleton linepassLines(const SourceText& src, const std::vector<Span>& lines, Arena& arena,
-                       DiagSink& diags);
+                       DiagSink& diags, u32 depth = 0);
 std::string dumpSkeleton(const Skeleton& sk, const SourceText& src);
 
 }  // namespace tsr

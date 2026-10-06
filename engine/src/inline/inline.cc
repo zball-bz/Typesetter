@@ -5,6 +5,9 @@
 // (syntax.gen.h); atoms and bracket bodies come from the shared lexer
 // primitives (syntax/lexer.h), so no scan leaves its leaf or its body.
 #include "../ast/ast.h"
+
+#include <algorithm>
+
 #include "../syntax/cursor.h"
 #include "../syntax/lexer.h"
 #include "jslex.h"
@@ -32,14 +35,14 @@ struct LeafHints {
 
 // A content body re-enters the line pass (Blocks mode): defined below.
 std::vector<AstNode*> parseBlocks(const SourceText& src, const std::vector<Span>& lines, Arena& arena,
-                                  Interner& strs, DiagSink& diags);
+                                  Interner& strs, DiagSink& diags, u32 depth);
 
 // A content body's lines (the first starts after its '['): the common
 // indentation of the lines after the first stripped (App B rule 4), parsed
 // as blocks; a body that is one paragraph unwraps to its inline content
-// (plan P1-08; content literals, plan P2-12)
+// (plan P1-08; content literals, plan P2-12), `depth` levels deep
 std::vector<AstNode*> parseContentLines(const SourceText& src, std::vector<Span> lines, Arena& arena,
-                                        Interner& strs, DiagSink& diags) {
+                                        Interner& strs, DiagSink& diags, u32 depth) {
   const std::string_view all = src.view();
   auto blankLine = [&](Span sp) {
     for (u32 k = sp.start; k < sp.end; k++)
@@ -64,7 +67,7 @@ std::vector<AstNode*> parseContentLines(const SourceText& src, std::vector<Span>
       indentOf(lines[k], common, &p);
       lines[k].start = p;
     }
-  std::vector<AstNode*> kids = parseBlocks(src, lines, arena, strs, diags);
+  std::vector<AstNode*> kids = parseBlocks(src, lines, arena, strs, diags, depth);
   // one paragraph — statements aside, which are no content (plan P2-12) —
   // is its inline content, the statements where they stand
   size_t paras = 0, other = 0;
@@ -94,6 +97,7 @@ struct InlineParser {
   const LeafText& L;
   const LeafHints hints;
   const u32 from, to;
+  const u32 depth;  // the levels above its items (kMaxNesting: linepass.h)
   Arena& arena;
   Interner& strs;
   DiagSink& diags;
@@ -119,9 +123,9 @@ struct InlineParser {
   bool prevGlyph = false;
   u32 i = 0;
 
-  InlineParser(const SourceText& sr, const LeafText& leaf, LeafHints h, u32 a, u32 b, Arena& ar,
+  InlineParser(const SourceText& sr, const LeafText& leaf, LeafHints h, u32 a, u32 b, u32 d, Arena& ar,
                Interner& st, DiagSink& dg)
-      : src(sr), L(leaf), hints(h), from(a), to(b), arena(ar), strs(st), diags(dg),
+      : src(sr), L(leaf), hints(h), from(a), to(b), depth(d), arena(ar), strs(st), diags(dg),
         t(leaf.text().substr(0, b)), brackets(t), A{ar} {}
 
   Span span(u32 a, u32 b) const { return L.rawSpan(a, b); }
@@ -208,8 +212,23 @@ struct InlineParser {
     prevGlyph = true;
   }
 
+  // the levels above a body opened here: its call's, inside the open pairs
+  u32 nest() const { return depth + (u32)stack.size(); }
+  bool tooDeep() const { return nest() >= kMaxNesting; }
+  bool nestSaid = false;
+  // a body past kMaxNesting: one error node in its place, its text unread
+  std::vector<AstNode*> nestCut(u32 a, u32 b) {
+    const std::string msg = "content nests more than " + std::to_string(kMaxNesting) + " deep: this body is cut";
+    diags.add(Sev::Error, "nest-limit", span(a, b), msg);
+    AstNode* e = A.node<ErrorP>(AstKind::Error, span(a, b));
+    e->str = strs.intern("nest-limit");
+    side<ErrorP>(e).message = strs.intern(msg);
+    return {e};
+  }
+
   std::vector<AstNode*> parseSub(u32 a, u32 b) {
-    InlineParser p(src, L, hints, a, b, arena, strs, diags);
+    if (tooDeep()) return nestCut(a, b);
+    InlineParser p(src, L, hints, a, b, nest(), arena, strs, diags);
     p.run();
     return std::move(p.stack.back().items);
   }
@@ -217,10 +236,7 @@ struct InlineParser {
   // an opener the line pass reverted to literal text
   bool reverted(u32 at) const {
     if (!hints.literal || hints.literal->empty()) return false;
-    u32 r = L.raw(at);
-    for (u32 x : *hints.literal)
-      if (x == r) return true;
-    return false;
+    return std::binary_search(hints.literal->begin(), hints.literal->end(), L.raw(at));  // ascending
   }
   // a content body's closer: the line pass's for a block-form body, else the
   // bracket counter's; -1 when there is none
@@ -240,6 +256,7 @@ struct InlineParser {
   // common indentation is stripped (App B rule 4); a body that is one
   // paragraph unwraps to its inline content.
   std::vector<AstNode*> parseBody(u32 a, u32 b) {
+    if (tooDeep()) return nestCut(a, b);
     std::vector<Span> lines;
     for (u32 s0 = a; s0 <= b;) {
       u32 e = s0;
@@ -247,7 +264,7 @@ struct InlineParser {
       lines.push_back({L.raw(s0), L.raw(e)});
       s0 = e + 1;
     }
-    return parseContentLines(src, std::move(lines), arena, strs, diags);
+    return parseContentLines(src, std::move(lines), arena, strs, diags, nest());
   }
 
   // A line join: a soft break (plan P2-10; U+000A in the text, resolved at
@@ -464,7 +481,12 @@ struct InlineParser {
     }
     bool nextGlyph = i + 1 < to && t[i + 1] != ' ' && t[i + 1] != '\t' && t[i + 1] != '\r' &&
                      t[i + 1] != '\n';
-    if (nextGlyph) {
+    if (nextGlyph && tooDeep() && !nestSaid) {
+      nestSaid = true;
+      diags.add(Sev::Error, "nest-limit", span(i, i + 1),
+                "content nests more than " + std::to_string(kMaxNesting) + " deep: this marker is text");
+    }
+    if (nextGlyph && !tooDeep()) {
       spaceBeforeItem();
       flushText();
       stack.push_back({(u8)c, i});
@@ -787,9 +809,9 @@ struct InlineParser {
 };
 
 std::vector<AstNode*> parseLeaf(const SourceText& src, const std::vector<Span>& spans, Arena& arena,
-                                Interner& strs, DiagSink& diags, LeafHints hints = {}) {
+                                Interner& strs, DiagSink& diags, LeafHints hints = {}, u32 depth = 0) {
   LeafText L(src.view(), spans);
-  InlineParser p(src, L, hints, 0, L.size(), arena, strs, diags);
+  InlineParser p(src, L, hints, 0, L.size(), depth, arena, strs, diags);
   p.run();
   return std::move(p.stack.back().items);
 }
@@ -802,6 +824,7 @@ struct AstBuilder {
   DiagSink& diags;
 
   AstAlloc A{arena};
+  u32 depth = 0;  // the levels above the node being built
 
   // a verbatim body: its line slices (container prefixes stripped) joined
   std::string joinLines(const std::vector<Span>& lines) const {
@@ -814,8 +837,9 @@ struct AstBuilder {
   }
 
   bool cellsNext = false;  // the next paragraph is a region's: it records cell cuts
+  // a leaf's inline content, under its call
   std::vector<AstNode*> inlineParse(const std::vector<Span>& spans, LeafHints hints = {}) {
-    return parseLeaf(src, spans, arena, strs, diags, hints);
+    return parseLeaf(src, spans, arena, strs, diags, hints, depth + 1);
   }
 
   AstNode* errorNode(Span sp, const char* code, const std::string& msg, bool report = true) {
@@ -829,7 +853,9 @@ struct AstBuilder {
   std::vector<AstNode*> buildKids(const SkelNode* s, bool top = false) {
     std::vector<AstNode*> kids;
     kids.reserve(s->kids.size());
+    depth += s->kind != SkelKind::Doc;
     for (const SkelNode* k : s->kids) kids.push_back(build(k, top));
+    depth -= s->kind != SkelKind::Doc;
     return kids;
   }
 
@@ -976,10 +1002,12 @@ struct AstBuilder {
         // its interior lowers like any blocks (plan P2-11); a paragraph
         // records its cell cuts for body.rows()
         std::vector<AstNode*> kids;
+        depth++;
         for (const SkelNode* k : s->kids) {
           cellsNext = k->kind == SkelKind::Para;
           kids.push_back(build(k));
         }
+        depth--;
         A.setKids(r, kids);
         return r;
       }
@@ -1005,7 +1033,7 @@ struct AstBuilder {
         AstNode* c = A.node<StmtP>(AstKind::Stmt, s->span);
         side<StmtP>(c) = {let, strs.intern(js), s->content};
         // `#let x = [ … ]` (plan P2-12): its body is content
-        if (s->content) A.setKids(c, parseContentLines(src, s->lineSpans, arena, strs, diags));
+        if (s->content) A.setKids(c, parseContentLines(src, s->lineSpans, arena, strs, diags, depth + 1));
         // a statement anywhere (plan P2-12) runs where it stands; one nested
         // in a block that declares (a #{…} with let/const/function, a #let of
         // a pattern) keeps those bindings to itself
@@ -1030,9 +1058,10 @@ struct AstBuilder {
 };
 
 std::vector<AstNode*> parseBlocks(const SourceText& src, const std::vector<Span>& lines, Arena& arena,
-                                  Interner& strs, DiagSink& diags) {
-  Skeleton sk = linepassLines(src, lines, arena, diags);
+                                  Interner& strs, DiagSink& diags, u32 depth) {
+  Skeleton sk = linepassLines(src, lines, arena, diags, depth);
   AstBuilder b{src, arena, strs, diags};
+  b.depth = depth;
   std::vector<AstNode*> kids;
   for (const SkelNode* k : sk.root->kids) kids.push_back(b.build(k));
   return kids;
