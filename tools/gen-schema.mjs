@@ -476,7 +476,28 @@ let sh = `// ${HDR}\n// Host settings (schema "settings"; plan P1-03, design T4 
 for (const [n, r] of costRows) sh += `  ${ctypeOf(r)} ${r.field.slice(5)} = ${cLit(r, r.def)};  // ${n}\n`;
 sh += `};\n\n// Every host setting, one member per row (defaults = the registry's).\nstruct Config {\n`;
 for (const [n, r] of cfgRows) sh += `  ${ctypeOf(r)} ${r.field} = ${cLit(r, r.def)};  // ${n}\n`;
-sh += `  CostParams cost;\n};\n\n` +
+sh += `  CostParams cost;\n};\n\n`;
+// (plan P3-02) the settings a stage reads: a view of Config with only the
+// rows whose `affects` names the stage — a read of any other row does not
+// compile, so `affects` (what a settings patch reruns) cannot drift from
+// what the code reads
+const VIEW_STAGES = ['Ingest', 'Resolve', 'BoxTree', 'Emit', 'Measure', 'Layout', 'Paginate', 'Paint'];
+sh += `// The settings each stage reads (plan P3-02): a view of Config holding only the\n` +
+  `// rows whose \`affects\` names the stage, so reading any other row is a compile\n` +
+  `// error and a settings patch reruns every stage that reads a row. Views hold\n` +
+  `// references: the Config outlives them (the Doc owns it).\n`;
+for (const st of VIEW_STAGES) {
+  const rows = cfgRows.filter(([, r]) => r.affects.includes(st));
+  const cost = costRows.some(([, r]) => r.affects.includes(st));
+  if (!rows.length && !cost) continue;
+  sh += `struct ${st}Settings {\n`;
+  for (const [n, r] of rows) sh += `  const ${ctypeOf(r)}& ${r.field};  // ${n}\n`;
+  if (cost) sh += `  const CostParams& cost;  // cost.*\n`;
+  const inits = rows.map(([, r]) => `${r.field}(c.${r.field})`);
+  if (cost) inits.push('cost(c.cost)');
+  sh += `  ${st}Settings(const Config& c)  // NOLINT: a Config is its view\n      : ${inits.join(',\n        ')} {}\n};\n`;
+}
+sh += `\n` +
   `// host policy (schema "policy"): how hosts drive the engine\n` +
   policy.filter(([, r]) => typeof r.def === 'number').map(([n, r]) => `constexpr u32 kPolicy${cap(n)} = ${r.def};  // ${r.doc}\n`).join('') +
   policy.filter(([, r]) => Array.isArray(r.def)).map(([n, r]) => `constexpr double kPolicy${cap(n)}[] = {${r.def.join(', ')}};  // ${r.doc}\n`).join('') +

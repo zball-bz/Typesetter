@@ -22,7 +22,7 @@ const Row kRows[] = {
     {"host.dppx", stageBit(Stage::Measure), false},
     {"host.loadedFaces", stageBit(Stage::Measure), false},
     {"host.epsilonSu", stageBit(Stage::Emit) | stageBit(Stage::Measure), false},
-    {"doc.lang", stageBit(Stage::Resolve) | stageBit(Stage::Paint), false},
+    {"doc.lang", stageBit(Stage::Resolve) | stageBit(Stage::Measure) | stageBit(Stage::Paint), false},
     {"doc.baseSize", stageBit(Stage::BoxTree) | stageBit(Stage::Emit) | stageBit(Stage::Measure) | stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
     {"doc.leading", stageBit(Stage::Emit) | stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
     {"doc.parGap", stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
@@ -32,9 +32,9 @@ const Row kRows[] = {
     {"fonts.cjk", stageBit(Stage::Measure) | stageBit(Stage::Paint), false},
     {"fonts.mono", stageBit(Stage::Measure) | stageBit(Stage::Paint), false},
     {"fonts.monoCjk", stageBit(Stage::Measure) | stageBit(Stage::Paint), false},
-    {"par.indent", stageBit(Stage::BoxTree) | stageBit(Stage::Emit), false},
-    {"list.indent", stageBit(Stage::BoxTree), false},
-    {"quote.indent", stageBit(Stage::BoxTree), false},
+    {"par.indent", stageBit(Stage::Ingest), false},
+    {"list.indent", stageBit(Stage::Ingest), false},
+    {"quote.indent", stageBit(Stage::Ingest), false},
     {"cjk.punctCompress", stageBit(Stage::Emit), false},
     {"break.hyphenPenalty", stageBit(Stage::Emit), false},
     {"break.urlPenalty", stageBit(Stage::Emit), false},
@@ -46,12 +46,17 @@ const Row kRows[] = {
     {"cost.shrinkThreshold", stageBit(Stage::Layout), false},
     {"cost.shrinkCoeff", stageBit(Stage::Layout), false},
     {"cost.cap", stageBit(Stage::Layout), false},
-    {"code.scale", stageBit(Stage::BoxTree) | stageBit(Stage::Emit) | stageBit(Stage::Layout), false},
+    {"code.scale", stageBit(Stage::Ingest) | stageBit(Stage::Layout), false},
     {"code.contIndent", stageBit(Stage::Layout), false},
     {"code.sidecarFrac", stageBit(Stage::Layout), false},
     {"code.snapKerning", stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
+    {"code.minCols", stageBit(Stage::Layout), false},
+    {"code.snapTolerance", stageBit(Stage::Layout), false},
+    {"code.snapMaxQ", stageBit(Stage::Layout), false},
     {"code.fontFeatures", stageBit(Stage::Measure) | stageBit(Stage::Paint), false},
     {"code.fontFeaturesByLang", stageBit(Stage::Paint), true},
+    {"table.cellPad", stageBit(Stage::Layout), false},
+    {"table.rowPad", stageBit(Stage::Layout), false},
     {"terms.heading", stageBit(Stage::Resolve), false},
     {"terms.table", stageBit(Stage::Resolve), false},
     {"terms.figure", stageBit(Stage::Resolve), false},
@@ -279,12 +284,30 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.verbatimSnapKerning = v.b;
       return true;
     }
-    case 32: {  // code.fontFeatures
+    case 32: {  // code.minCols
+      double x;
+      if (!num(v, 1, 1000, true, x, why)) return false;
+      c.verbatimMinCols = (int)x;
+      return true;
+    }
+    case 33: {  // code.snapTolerance
+      double x;
+      if (!num(v, 0, 1, false, x, why)) return false;
+      c.verbatimSnapTolerance = x;
+      return true;
+    }
+    case 34: {  // code.snapMaxQ
+      double x;
+      if (!num(v, 1, 64, true, x, why)) return false;
+      c.verbatimSnapMaxQ = (int)x;
+      return true;
+    }
+    case 35: {  // code.fontFeatures
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Features, v.str))) return type(why, "features");
       c.codeFontFeatures = v.str;
       return true;
     }
-    case 33: {  // code.fontFeaturesByLang
+    case 36: {  // code.fontFeaturesByLang
       if (v.t != JsonValue::T::Obj) return type(why, "an object of strings");
       std::map<std::string, std::string> mm;
       for (size_t mi = 0; mi < v.keys.size(); mi++) {
@@ -295,62 +318,74 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.codeFontFeaturesByLang = std::move(mm);
       return true;
     }
-    case 34: {  // terms.heading
+    case 37: {  // table.cellPad
+      double x;
+      if (!num(v, 0, 10, false, x, why)) return false;
+      c.tableCellPadEm = x;
+      return true;
+    }
+    case 38: {  // table.rowPad
+      double x;
+      if (!num(v, 0, 10, false, x, why)) return false;
+      c.tableRowPadEm = x;
+      return true;
+    }
+    case 39: {  // terms.heading
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supHeading = v.str;
       return true;
     }
-    case 35: {  // terms.table
+    case 40: {  // terms.table
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supTable = v.str;
       return true;
     }
-    case 36: {  // terms.figure
+    case 41: {  // terms.figure
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supFigure = v.str;
       return true;
     }
-    case 37: {  // terms.equation
+    case 42: {  // terms.equation
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supEquation = v.str;
       return true;
     }
-    case 38: {  // terms.captionSep
+    case 43: {  // terms.captionSep
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.capSep = v.str;
       return true;
     }
-    case 39: {  // page.height
+    case 44: {  // page.height
       double x;
       if (!num(v, 16, 100000, false, x, why)) return false;
       c.pageHeightPx = x;
       return true;
     }
-    case 40: {  // semantics.elements
+    case 45: {  // semantics.elements
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semElements.clear();
       if (!v.keys.empty()) jsonDump(c.semElements, v);
       return true;
     }
-    case 41: {  // semantics.counters
+    case 46: {  // semantics.counters
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semCounters.clear();
       if (!v.keys.empty()) jsonDump(c.semCounters, v);
       return true;
     }
-    case 42: {  // semantics.collectors
+    case 47: {  // semantics.collectors
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semCollectors.clear();
       if (!v.keys.empty()) jsonDump(c.semCollectors, v);
       return true;
     }
-    case 43: {  // semantics.systems
+    case 48: {  // semantics.systems
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semSystems.clear();
       if (!v.keys.empty()) jsonDump(c.semSystems, v);
       return true;
     }
-    case 44: {  // style.rules
+    case 49: {  // style.rules
       if (v.t != JsonValue::T::Arr) return type(why, "an array");
       c.styleRules.clear();
       if (!v.arr.empty()) jsonDump(c.styleRules, v);
@@ -494,12 +529,22 @@ std::string settingsJson(const Config& c) {
   num(out, (double)c.sidebarFrac);
   out += ", \"snapKerning\": ";
   out += c.verbatimSnapKerning ? "true" : "false";
+  out += ", \"minCols\": ";
+  num(out, (double)c.verbatimMinCols);
+  out += ", \"snapTolerance\": ";
+  num(out, (double)c.verbatimSnapTolerance);
+  out += ", \"snapMaxQ\": ";
+  num(out, (double)c.verbatimSnapMaxQ);
   out += ", \"fontFeatures\": ";
   jsonString(out, c.codeFontFeatures);
   out += ", \"fontFeaturesByLang\": ";
   out += '{';
   { bool first = true; for (const auto& [mk, mv] : c.codeFontFeaturesByLang) { if (!first) out += ", "; first = false; jsonString(out, mk); out += ": "; jsonString(out, mv); } }
   out += '}';
+  out += "}, \"table\": {\"cellPad\": ";
+  num(out, (double)c.tableCellPadEm);
+  out += ", \"rowPad\": ";
+  num(out, (double)c.tableRowPadEm);
   out += "}, \"terms\": {\"heading\": ";
   jsonString(out, c.supHeading);
   out += ", \"table\": ";

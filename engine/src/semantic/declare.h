@@ -20,7 +20,7 @@
 namespace tsr {
 
 // `base`: a replacement for the built-in rows (tests), "" = the built-in ones
-std::shared_ptr<const Registry> declaredRegistry(const RawOps& raw, const Config& cfg, std::string_view base,
+std::shared_ptr<const Registry> declaredRegistry(const RawOps& raw, const IngestSettings& cfg, std::string_view base,
                                                  DiagSink& diags);
 
 // after instantiate: an instance before its class's declaration

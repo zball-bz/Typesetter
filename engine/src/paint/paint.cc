@@ -230,7 +230,7 @@ void codeRuns(const Fragment& l, const GridData& g, const Interner& strs, std::v
 
 }  // namespace
 
-DLRoot paintRoot(const Config& cfg) {
+DLRoot paintRoot(const PaintSettings& cfg) {
   DLRoot r;
   r.lang = cfg.lang;
   r.fontBody = familyFor(cfg, false, Script::Latin);
@@ -242,7 +242,7 @@ DLRoot paintRoot(const Config& cfg) {
 }
 
 void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& tops, const Interner& strs,
-                const Config& cfg, DLBlock& out) {
+                const PaintSettings& cfg, DLBlock& out) {
   const ParaFrame& fr = lr.paras[p];
   const TopBlock& tb = tops[p];
   const TopTree& tree = *tb.tree;
@@ -349,7 +349,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
 }
 
 std::string dumpDisplayList(const LayoutResult& lr, const std::vector<TopBlock>& tops, const StyleTable& styles,
-                            const Interner& strs, const Config& cfg) {
+                            const Interner& strs, const PaintSettings& cfg) {
   static const char* const kKind[] = {"line", "rule", "code", "raw", "math", "image"};
   static const char* const kRun[] = {"words", "chars", "glyph", "hyphen", "spacer",
                                      "math",  "image", "raw",   "code",   "cont"};

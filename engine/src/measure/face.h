@@ -4,6 +4,7 @@
 // differ in paint only (color, link, decoration, lang) share a face and
 // therefore share their metrics.
 #pragma once
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
@@ -46,7 +47,8 @@ struct FaceKeyHash {
 
 // The one em of a style (plan P0-08): an absolute sizePx replaces the base,
 // sizeMul composes on top. Measurement, CSS and emit all use this formula.
-inline double emPx(const Config& cfg, const Styling& s) { return emPx(cfg.baseSizePx, s); }
+template <class S>  // a stage view with doc.baseSize
+inline double emPx(const S& cfg, const Styling& s) { return emPx(cfg.baseSizePx, s); }
 
 // Family resolution (plan P1-04): an explicit text.font wins; otherwise the
 // font role (text.fontRole, plan P2-08: body or mono) and the script
@@ -55,7 +57,8 @@ inline double emPx(const Config& cfg, const Styling& s) { return emPx(cfg.baseSi
 //   Cjk:    role.cjk → body.cjk → role.latin   (CJK-class glyphs never fall
 //           into a Latin face; no mono special case: a host with a CJK-capable
 //           mono font sets fonts.monoCjk)
-inline std::string_view familyFor(const Config& cfg, bool mono, Script script) {
+template <class S>  // a stage view with the fonts.* rows (Measure, Paint)
+inline std::string_view familyFor(const S& cfg, bool mono, Script script) {
   if (script == Script::Latin) return mono ? cfg.monoFont : cfg.bodyFont;
   if (mono && !cfg.monoCjkFont.empty()) return cfg.monoCjkFont;
   if (!cfg.cjkFont.empty()) return cfg.cjkFont;
@@ -64,8 +67,23 @@ inline std::string_view familyFor(const Config& cfg, bool mono, Script script) {
 
 class FaceTable {
  public:
-  void bind(const Config* cfg, const StyleTable* styles, Interner* strs) {
-    cfg_ = cfg;
+  FaceTable() = default;
+  FaceTable(const FaceTable&) = default;
+  // (a view holds references: a copy keeps the faces, the next bind() the
+  // settings)
+  FaceTable& operator=(const FaceTable& o) {
+    if (this == &o) return *this;
+    cfg_.reset();
+    if (o.cfg_) cfg_.emplace(*o.cfg_);
+    styles_ = o.styles_;
+    strs_ = o.strs_;
+    keys_ = o.keys_;
+    index_ = o.index_;
+    memo_ = o.memo_;
+    return *this;
+  }
+  void bind(const MeasureSettings& cfg, const StyleTable* styles, Interner* strs) {
+    cfg_.emplace(cfg);
     styles_ = styles;
     strs_ = strs;
   }
@@ -126,7 +144,7 @@ class FaceTable {
 
  private:
   static constexpr FaceId kNone = 0xFFFFFFFFu;
-  const Config* cfg_ = nullptr;
+  std::optional<MeasureSettings> cfg_;
   const StyleTable* styles_ = nullptr;
   Interner* strs_ = nullptr;
   std::vector<FaceKey> keys_;

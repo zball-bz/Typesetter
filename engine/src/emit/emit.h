@@ -193,7 +193,7 @@ class ResourceTable;
 // (the caller discards it and its diagnostics, and retries once measured).
 class EmitPass {
  public:
-  EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const Config& cfg,
+  EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const EmitSettings& cfg,
            DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt);
   ~EmitPass();
   bool top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing);
@@ -204,11 +204,11 @@ class EmitPass {
   std::unique_ptr<State> st_;
 };
 std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
-                              const Config& cfg, DiagSink& diags, const MeasureNeeds* mathText = nullptr,
+                              const EmitSettings& cfg, DiagSink& diags, const MeasureNeeds* mathText = nullptr,
                               const ResourceTable* rt = nullptr);
 
 // the penalty before a formula part, by its break class (math.h MathSeg)
-inline double mathPenalty(const Config& cfg, u8 brkBefore) {
+inline double mathPenalty(const EmitSettings& cfg, u8 brkBefore) {
   return brkBefore == 1 ? cfg.mathRelAfterPenalty
          : brkBefore == 2 ? cfg.mathRelBeforePenalty
                           : cfg.mathBinAfterPenalty;
@@ -230,7 +230,7 @@ struct ObjectEnv {
 // With an ObjectEnv, deferred formulas are laid out and spliced once their
 // text-font runs are measured (their misses join the request).
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
-                             const StyleTable& styles, const Config& cfg,
+                             const StyleTable& styles, const EmitSettings& cfg,
                              ObjectEnv* objects = nullptr);
 
 // The lowering of an HList to today's blocks (plan P1-12; the legacy breaker

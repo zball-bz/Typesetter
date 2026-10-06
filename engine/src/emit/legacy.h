@@ -9,14 +9,14 @@
 namespace tsr {
 
 std::vector<TopBlock> emitDocLegacy(const BoxTree& bt, Arena& arena, Interner& strs,
-                                    StyleTable& styles, const Config& cfg, DiagSink& diags,
+                                    StyleTable& styles, const EmitSettings& cfg, DiagSink& diags,
                                     const MeasureNeeds* mathText);
 MeasureRequest resolveWidthsLegacy(std::vector<TopBlock>& tops, MetricStore& store,
-                                   const StyleTable& styles, const Config& cfg);
+                                   const StyleTable& styles, const EmitSettings& cfg);
 // "" when fuseLegacy of every unit's and cell's HList equals, field by field,
 // the blocks the legacy emitter produces for the same document and metrics
 std::string fuseCheck(const std::vector<TopBlock>& tops, const BoxTree& bt, Arena& arena,
-                      Interner& strs, StyleTable& styles, const Config& cfg, MetricStore& metrics,
+                      Interner& strs, StyleTable& styles, const EmitSettings& cfg, MetricStore& metrics,
                       double baseSizePx);
 
 }  // namespace tsr

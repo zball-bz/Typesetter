@@ -143,7 +143,7 @@ struct Doc {
   } backing{this};
 
   Doc() {
-    faces.bind(&cfg, &styles, &strs);
+    faces.bind(cfg, &styles, &strs);
     metrics.bind(&faces);
     metrics.bindBacking(&backing);
   }
@@ -197,7 +197,7 @@ struct Doc {
     f.attach(session_);  // the fork shares its source's Session (plan P1-21)
     if (!(p.affects & stageBit(Stage::Measure))) {  // faces and answers stay valid
       f.faces = faces;
-      f.faces.bind(&f.cfg, &f.styles, &f.strs);
+      f.faces.bind(f.cfg, &f.styles, &f.strs);
       f.metrics = metrics;
       f.metrics.bind(&f.faces);
       f.metrics.bindBacking(&f.backing);

@@ -16,7 +16,7 @@ struct EmitEnv {
   DiagSink& diags;
   Interner& strs;
   StyleTable& styles;
-  const Config& cfg;
+  EmitSettings cfg;
   const MeasureNeeds* mathText = nullptr;  // text-font runs in formulas (math-design §14)
   const ResourceTable* rt = nullptr;      // answered code tokens and image sizes
   const MathEnv* math = nullptr;          // the document's math declarations (plan P2-15)

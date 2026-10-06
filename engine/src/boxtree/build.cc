@@ -31,7 +31,7 @@ constexpr const char* kSides[] = {"left", "right"};
 
 class Builder {
  public:
-  Builder(Interner& s, StyleTable& st, const NodePropsTable& np, const Config& c, const Registry& r)
+  Builder(Interner& s, StyleTable& st, const NodePropsTable& np, const BoxTreeSettings& c, const Registry& r)
       : strs(s), styles(st), cfg(c), reg(r), props(np) {
     for (const char* side : kSides) sideRefs.push_back(s.find(side));
   }
@@ -64,7 +64,7 @@ class Builder {
  private:
   Interner& strs;
   StyleTable& styles;
-  const Config& cfg;
+  BoxTreeSettings cfg;
   const Registry& reg;
   const NodePropsTable& props;
   std::vector<StrRef> sideRefs;
@@ -283,7 +283,7 @@ class Builder {
 const char* traitsName(TraitsId t) { return kTraitNames[(size_t)t]; }
 
 BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const NodePropsTable& props,
-                     const Config& cfg, const Registry& reg) {
+                     const BoxTreeSettings& cfg, const Registry& reg) {
   BoxTree bt;
   if (!tree.root) return bt;
   Builder b(strs, styles, props, cfg, reg);

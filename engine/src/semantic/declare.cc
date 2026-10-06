@@ -362,7 +362,7 @@ bool templateJson(const RawOps& raw, u32 id, JsonValue& out, std::string& error)
   return true;
 }
 
-std::shared_ptr<const Registry> declaredRegistry(const RawOps& raw, const Config& cfg, std::string_view base,
+std::shared_ptr<const Registry> declaredRegistry(const RawOps& raw, const IngestSettings& cfg, std::string_view base,
                                                  DiagSink& diags) {
   std::vector<Patch> patches;
   // host rows: semantics.{elements,counters,collectors,systems}

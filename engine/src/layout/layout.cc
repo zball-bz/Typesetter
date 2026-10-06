@@ -1,4 +1,6 @@
 #include "layout.h"
+
+#include "../support/rails.h"
 #include "../shape/objects.h"
 #include "../shape/textrules.h"
 
@@ -141,7 +143,7 @@ struct LineStream {
 // with a space, a Disc, synthetic glue or nothing with none, the paragraph
 // end or a forced break is a real boundary); Overfull lines set at the
 // shrink limit. Returns the cursor after the last line.
-i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricStore& metrics, const Config& cfg,
+i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricStore& metrics, const LayoutSettings& cfg,
                      Su baseLeading, i64 y, std::vector<Fragment>& out) {
   u32 prev = 0;
   bool first = true;
@@ -292,7 +294,7 @@ class ExclusionMap {
   LineWidths widths(Su lineWidth, bool& fromLeft) const {
     LineWidths lw{lineWidth};
     fromLeft = false;
-    if (remain_ > 0 && occl_ > 0 && occl_ < lw.constant - 64) {
+    if (remain_ > 0 && occl_ > 0 && occl_ < lw.constant - kRailMinLineSu) {
       lw.narrow = lw.constant - occl_;
       lw.narrowK = (u32)((remain_ + lead_ - 1) / lead_);
       fromLeft = side_ == 1;
@@ -323,7 +325,7 @@ class ExclusionMap {
 // the floats of the ExclusionMap.
 class DocLayout {
  public:
-  DocLayout(const MetricStore& m, Interner& s, const Config& c, DiagSink& d, LayoutResult& r, BreakMemo* memo)
+  DocLayout(const MetricStore& m, Interner& s, const LayoutSettings& c, DiagSink& d, LayoutResult& r, BreakMemo* memo)
       : metrics(m), strs(s), cfg(c), diags(d), lr(r), memo_(memo), measure(suFloorPx(c.widthPx)),
         baseLeading(suRoundPx(c.lineHeight * c.baseSizePx)), paraGap(suRoundPx(c.paraSpacingEm * c.baseSizePx)),
         excl(baseLeading, paraGap, suRoundPx(c.baseSizePx)) {
@@ -357,7 +359,7 @@ class DocLayout {
  private:
   const MetricStore& metrics;
   Interner& strs;
-  const Config& cfg;
+  LayoutSettings cfg;
   DiagSink& diags;
   LayoutResult& lr;
   BreakMemo* memo_;  // the Session's KP memo (plan P1-21), or none
@@ -606,7 +608,7 @@ class DocLayout {
     if (hasSidecar) {
       gapSu = suRoundPx(cfg.baseSizePx * cfg.codeScale);
       lineWidthCode = lineWidth - sidebarW - gapSu;
-      if (lineWidthCode < 64) lineWidthCode = 64;
+      if (lineWidthCode < kRailMinLineSu) lineWidthCode = kRailMinLineSu;
       for (const TableCell& c : u.cells) {  // sidecar rows break to the sidebar
         cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{sidebarW}));
         lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
@@ -628,7 +630,8 @@ class DocLayout {
       if (cjkCols < 1) cjkCols = 1;
     }
     i32 cols = chSu > 0 ? (i32)(lineWidthCode / chSu) : 0;
-    if (cols > 0 && cols < 8) cols = 8;
+    const i32 minCols = cfg.verbatimMinCols;  // code.minCols
+    if (cols > 0 && cols < minCols) cols = minCols;
     // snap-kerning (verbatim §3): solve the rational grid from RAW
     // measurements; column budget switches to atom units — Latin = q,
     // CJK = p atoms — with letter-spacing pulling advances onto it
@@ -639,14 +642,14 @@ class DocLayout {
         metrics.hasWord(g.cjkChRef, g.codeStyle)) {
       double chLpx = metrics.word(g.chRef, g.codeStyle).px;
       double chCpx = metrics.word(g.cjkChRef, g.codeStyle).px;
-      grid = solveGrid(chLpx, chCpx, cols);
-      if (grid.atomPx > 0 && grid.dLatinPx <= 0.1 * chLpx &&
-          grid.dCjkPx <= 0.1 * chCpx) {
+      grid = solveGrid(chLpx, chCpx, cols, cfg.verbatimSnapMaxQ);
+      const double tol = cfg.verbatimSnapTolerance;  // code.snapTolerance
+      if (grid.atomPx > 0 && grid.dLatinPx <= tol * chLpx && grid.dCjkPx <= tol * chCpx) {
         Su atomSu = suCeilPx(grid.atomPx);
         latinAtoms = grid.q;
         cjkCols = grid.p;              // in atom units now
         cols = (i32)(lineWidthCode / atomSu);  // the code column, not the measure
-        if (cols > 0 && cols < 8 * grid.q) cols = 8 * grid.q;
+        if (cols > 0 && cols < minCols * grid.q) cols = minCols * grid.q;
       } else {
         grid = GridSpec{};             // budget-only fallback
       }
@@ -700,7 +703,7 @@ class DocLayout {
           break;
         }
         i32 colCap = cols / latinAtoms;
-        if (cc > colCap - 8) cc = colCap > 8 ? colCap - 8 : 0;
+        if (cc > colCap - minCols) cc = colCap > minCols ? colCap - minCols : 0;
         if (cc < 0) cc = 0;
         return (u16)cc;
       };
@@ -825,10 +828,10 @@ class DocLayout {
     // three-line-flavoured grid: full-width rules above, between, and
     // below rows; equal columns; ragged cells aligned per column
     const Su colW = lineWidth / (Su)td.cols;
-    const Su padX = suRoundPx(kTableCellPadEm * cfg.baseSizePx);
-    const Su padY = suRoundPx(kTableRowPadEm * cfg.baseSizePx);
+    const Su padX = suRoundPx(cfg.tableCellPadEm * cfg.baseSizePx);  // table.cellPad
+    const Su padY = suRoundPx(cfg.tableRowPadEm * cfg.baseSizePx);   // table.rowPad
     Su cellW = colW - 2 * padX;
-    if (cellW < 64) cellW = 64;
+    if (cellW < kRailMinLineSu) cellW = kRailMinLineSu;
     for (const Flow& c : u.cells) {  // each cell breaks to its content width
       cellBreaks.push_back(breakStream(c.blocks, c.hl, LineWidths{cellW}));
       lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
@@ -873,7 +876,7 @@ const DocLayout::Fn DocLayout::kLayouters[] = {&DocLayout::paragraph, &DocLayout
 }  // namespace
 
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics, Interner& strs,
-                       const Config& cfg, DiagSink& diags, BreakMemo* memo) {
+                       const LayoutSettings& cfg, DiagSink& diags, BreakMemo* memo) {
   LayoutResult lr;
   DocLayout(metrics, strs, cfg, diags, lr, memo).run(tops);
   return lr;

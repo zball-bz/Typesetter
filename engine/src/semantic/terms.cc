@@ -50,7 +50,7 @@ std::string localePackFor(std::string_view lang) {
   return "en";
 }
 
-Terms::Terms(const Config& cfg) : pack_(localePackFor(cfg.lang)) {
+Terms::Terms(const ResolveSettings& cfg) : pack_(localePackFor(cfg.lang)) {
   for (const LocalePack& p : builtinLocalePacks())
     if (p.lang == pack_) chain_.push_back(&p);
   for (const LocalePack& p : builtinLocalePacks())

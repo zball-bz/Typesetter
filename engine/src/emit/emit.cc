@@ -1,4 +1,6 @@
 #include "emit.h"
+
+#include "../support/rails.h"
 #include "emit_internal.h"
 #include "../shape/objects.h"
 #include "../shape/textrules.h"
@@ -12,6 +14,11 @@
 #include "../hyphen/hyphen.h"
 
 namespace tsr {
+
+// the shortest piece a long unhyphenatable token (a URL, a path) breaks into
+// after a separator (plan P3-02: a named parameter)
+constexpr u32 kUrlMinPiece = 3;
+
 
 void reportFormula(const ContentNode* n, StrRef formula, const MathScope& scope, const Interner& strs,
                    DiagSink& diags, Arena& arena);
@@ -92,7 +99,7 @@ struct HlInline final : InlineSink {
   EmitEnv& E;
   Interner& strs;
   StyleTable& styles;
-  const Config& cfg;
+  EmitSettings cfg;
   // the open unit's list is built here (inline streams never nest) and
   // copied to the unit, exactly sized, by finish(): the scratch keeps its
   // capacity from unit to unit
@@ -554,7 +561,7 @@ struct HlInline final : InlineSink {
       if (!isL(w[k])) coreLetters = false;
 
     std::vector<u32> pts;
-    if (!noHyphen && coreLetters && e - a >= 5 && cfg.hyphenPenalty < kPenInf)
+    if (!noHyphen && coreLetters && e - a >= kHyphenMinLetters && cfg.hyphenPenalty < kPenInf)
       pts = hyphenPoints(w.substr(a, e - a));
     if (pts.empty()) {
       // long unhyphenatable tokens (URLs, paths, identifiers): break
@@ -566,7 +573,7 @@ struct HlInline final : InlineSink {
         for (u32 k = 1; k + 1 < w.size(); k++) {
           char c = w[k];
           if (c == '/' || c == '?' || c == '&' || c == '=' || c == '.' || c == '-' || c == '_')
-            if (k - (cuts.empty() ? 0 : cuts.back()) >= 3) cuts.push_back(k + 1);
+            if (k - (cuts.empty() ? 0 : cuts.back()) >= kUrlMinPiece) cuts.push_back(k + 1);
         }
         if (!cuts.empty()) {
           u32 from = 0;
@@ -794,7 +801,7 @@ struct Emitter {
   DiagSink& diags;
   Interner& strs;
   StyleTable& styles;
-  const Config& cfg;
+  EmitSettings cfg;
   const MeasureNeeds* mathText;
   Emitter(EmitEnv& e, InlineSink& s)
       : E(e), sink(s), arena(e.arena), diags(e.diags), strs(e.strs), styles(e.styles), cfg(e.cfg),
@@ -846,7 +853,7 @@ struct Emitter {
         g.wrap = attrBool(n, ArgK::wrap, g.wrap);
         g.lineNo = attrInt(n, ArgK::lineNo, g.lineNo);
         if (StrRef hl = attrStr(n, ArgK::hl))  // "3,5-7": validated by the reader
-          parseRangeSet(strs.get(hl), g.hlLines);
+          parseRangeSet(strs.get(hl), g.hlLines, kRailRangeLines, kRailRangeNumber);
         // sidecar rows (verbatim-design §5): one inline stream per logical
         // line — the whole body pipeline (KP, math, links) applies inside each
         if (ls.sidecar) {
@@ -1046,7 +1053,7 @@ struct EmitPass::State {
     return env;
   }
 };
-EmitPass::EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const Config& cfg,
+EmitPass::EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const EmitSettings& cfg,
                    DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt)
     : bt_(bt),
       st_(std::make_unique<State>(EmitEnv{arena, diags, strs, styles, cfg, nullptr, rt, bt.math, bt.cascade}, metrics)) {}
@@ -1059,7 +1066,7 @@ bool EmitPass::top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing) {
 }
 
 std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
-                              const Config& cfg, DiagSink& diags, const MeasureNeeds* mathText,
+                              const EmitSettings& cfg, DiagSink& diags, const MeasureNeeds* mathText,
                               const ResourceTable* rt) {
   EmitEnv env{arena, diags, strs, styles, cfg, mathText, rt, bt.math, bt.cascade};
   HlInline sink(env);
@@ -1169,7 +1176,7 @@ static void keepLayoutDiags(const DiagSink& scratch, ObjectEnv& env) {
 // exactly what emit wrote for a formula before plan P1-25 — each part and
 // glue a run of its own; the placeholder's run, anchor and trailing penalty
 // stay with the first / last part.
-static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const Config& cfg, ObjectEnv& env,
+static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const EmitSettings& cfg, ObjectEnv& env,
                             std::vector<MeasureItem>& need) {
   const HItem ph = h.items[at];
   const u32 objIdx = h.parts[h.specs[ph.aux].obj].obj;
@@ -1283,11 +1290,11 @@ static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const Conf
 // The pending-object hook (plan P1-25; design T8 S6, T5 owns it later): a
 // pending object of a kind with a finalizer is finalized by it in Measure;
 // resolveWidths never names a kind.
-using ObjectFinalizer = bool (*)(HList& h, size_t& at, MetricStore& store, const Config& cfg, ObjectEnv& env,
+using ObjectFinalizer = bool (*)(HList& h, size_t& at, MetricStore& store, const EmitSettings& cfg, ObjectEnv& env,
                                  std::vector<MeasureItem>& need);
 static constexpr ObjectFinalizer kFinalizers[] = {
     /*Math*/ finalizeFormula, /*Image*/ nullptr, /*Raw*/ nullptr, /*Error*/ nullptr};
-static void finalizePending(HList& h, MetricStore& store, const Config& cfg, ObjectEnv& env,
+static void finalizePending(HList& h, MetricStore& store, const EmitSettings& cfg, ObjectEnv& env,
                             std::vector<MeasureItem>& need) {
   bool still = false;
   for (size_t at = 0; at < h.items.size(); at++) {
@@ -1303,7 +1310,7 @@ static void finalizePending(HList& h, MetricStore& store, const Config& cfg, Obj
 
 // a display formula (a leaf's MathData) lays out the same way: prepared at
 // emit, finalized once its text-font runs are measured
-static void finalizeDisplay(MathData& m, MetricStore& store, const Config& cfg, ObjectEnv& env,
+static void finalizeDisplay(MathData& m, MetricStore& store, const EmitSettings& cfg, ObjectEnv& env,
                             std::vector<MeasureItem>& need) {
   (void)cfg;
   std::vector<MeasureItem> missing;
@@ -1321,7 +1328,7 @@ static void finalizeDisplay(MathData& m, MetricStore& store, const Config& cfg, 
 }
 
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
-                             const StyleTable& styles, const Config& cfg, ObjectEnv* objects) {
+                             const StyleTable& styles, const EmitSettings& cfg, ObjectEnv* objects) {
   MeasureRequest req;
   // requests are per measurement face (plan P1-04): paint-only variants of
   // a style share one face and are asked for once

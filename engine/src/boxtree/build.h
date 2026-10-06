@@ -39,6 +39,6 @@ struct BoxTree {
 
 class Registry;
 BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const NodePropsTable& props,
-                     const Config& cfg, const Registry& reg);
+                     const BoxTreeSettings& cfg, const Registry& reg);
 
 }  // namespace tsr

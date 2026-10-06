@@ -5,7 +5,7 @@
 // from the WIDER side so the thinner script gains positive letter-spacing
 // (negative spacing squeezes ink and is never emitted).
 #pragma once
-#include "../support/support.h"
+#include "../support/rails.h"
 
 namespace tsr {
 
@@ -17,7 +17,8 @@ struct GridSpec {
   double dCjkPx = 0;       // snap letter-spacing for CJK runs (≥ 0)
 };
 
-inline GridSpec solveGrid(double chLatinPx, double chCjkPx, int maxCols) {
+// (maxQ: the largest denominator, setting code.snapMaxQ; plan P3-02)
+inline GridSpec solveGrid(double chLatinPx, double chCjkPx, int maxCols, int maxQ = 7) {
   GridSpec g;
   if (chLatinPx <= 0 || chCjkPx <= 0) return g;
   double r = chCjkPx / chLatinPx;
@@ -29,9 +30,9 @@ inline GridSpec solveGrid(double chLatinPx, double chCjkPx, int maxCols) {
   int pl = 0, ql = 1, pr = 1, qr = 0;
   int p = 2, q = 1;
   double bestErr = 1e18;
-  for (int it = 0; it < 64; it++) {
+  for (int it = 0; it < kRailGridSteps; it++) {
     int pm = pl + pr, qm = ql + qr;
-    if (qm > 7) break;
+    if (qm > maxQ) break;
     double approx = (double)pm / (double)qm;
     double err = r > approx ? r - approx : approx - r;
     if (err < bestErr) {

@@ -41,6 +41,7 @@ export const SETTINGS = Object.freeze({
     "prec": "HostDefault",
     "affects": [
       "Resolve",
+      "Measure",
       "Paint"
     ]
   },
@@ -133,8 +134,7 @@ export const SETTINGS = Object.freeze({
     "def": 0,
     "prec": "HostDefault",
     "affects": [
-      "BoxTree",
-      "Emit"
+      "Ingest"
     ]
   },
   "list.indent": {
@@ -142,7 +142,7 @@ export const SETTINGS = Object.freeze({
     "def": 1.5,
     "prec": "HostDefault",
     "affects": [
-      "BoxTree"
+      "Ingest"
     ]
   },
   "quote.indent": {
@@ -150,7 +150,7 @@ export const SETTINGS = Object.freeze({
     "def": 1,
     "prec": "HostDefault",
     "affects": [
-      "BoxTree"
+      "Ingest"
     ]
   },
   "cjk.punctCompress": {
@@ -246,8 +246,7 @@ export const SETTINGS = Object.freeze({
     "def": 0.85,
     "prec": "HostDefault",
     "affects": [
-      "BoxTree",
-      "Emit",
+      "Ingest",
       "Layout"
     ]
   },
@@ -276,6 +275,30 @@ export const SETTINGS = Object.freeze({
       "Paint"
     ]
   },
+  "code.minCols": {
+    "dom": "int:1:1000",
+    "def": 8,
+    "prec": "HostDefault",
+    "affects": [
+      "Layout"
+    ]
+  },
+  "code.snapTolerance": {
+    "dom": "num:0:1",
+    "def": 0.1,
+    "prec": "HostDefault",
+    "affects": [
+      "Layout"
+    ]
+  },
+  "code.snapMaxQ": {
+    "dom": "int:1:64",
+    "def": 7,
+    "prec": "HostDefault",
+    "affects": [
+      "Layout"
+    ]
+  },
   "code.fontFeatures": {
     "dom": "features",
     "def": "",
@@ -291,6 +314,22 @@ export const SETTINGS = Object.freeze({
     "prec": "HostDefault",
     "affects": [
       "Paint"
+    ]
+  },
+  "table.cellPad": {
+    "dom": "num:0:10",
+    "def": 0.4,
+    "prec": "HostDefault",
+    "affects": [
+      "Layout"
+    ]
+  },
+  "table.rowPad": {
+    "dom": "num:0:10",
+    "def": 0.3,
+    "prec": "HostDefault",
+    "affects": [
+      "Layout"
     ]
   },
   "terms.heading": {
@@ -434,8 +473,15 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "contIndent": 2,
     "sidecarFrac": 0.4,
     "snapKerning": false,
+    "minCols": 8,
+    "snapTolerance": 0.1,
+    "snapMaxQ": 7,
     "fontFeatures": "",
     "fontFeaturesByLang": {}
+  },
+  "table": {
+    "cellPad": 0.4,
+    "rowPad": 0.3
   },
   "terms": {
     "heading": "",

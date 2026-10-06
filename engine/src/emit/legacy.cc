@@ -21,7 +21,7 @@ struct LegacyInline final : InlineSink {
   DiagSink& diags;
   Interner& strs;
   StyleTable& styles;
-  const Config& cfg;
+  EmitSettings cfg;
   const MeasureNeeds* mathText;
   StrRef& spaceRef;  // interned by emitWith
   StrRef& hyphenRef;
@@ -541,7 +541,7 @@ void LegacyInline::done(std::vector<TopBlock>& tops) { fillSpaceContexts(tops, s
 }  // namespace
 
 MeasureRequest resolveWidthsLegacy(std::vector<TopBlock>& tops, MetricStore& store,
-                             const StyleTable& styles, const Config& cfg) {
+                             const StyleTable& styles, const EmitSettings& cfg) {
   MeasureRequest req;
   // requests are per measurement face (plan P1-04): paint-only variants of
   // a style share one face and are asked for once
@@ -646,7 +646,7 @@ MeasureRequest resolveWidthsLegacy(std::vector<TopBlock>& tops, MetricStore& sto
 }
 
 std::vector<TopBlock> emitDocLegacy(const BoxTree& bt, Arena& arena, Interner& strs,
-                                    StyleTable& styles, const Config& cfg, DiagSink& diags,
+                                    StyleTable& styles, const EmitSettings& cfg, DiagSink& diags,
                                     const MeasureNeeds* mathText) {
   EmitEnv env{arena, diags, strs, styles, cfg, mathText, nullptr, bt.math};
   LegacyInline sink(env);
@@ -703,7 +703,7 @@ void cmpBlocks(std::string& out, int& budget, const std::string& where,
 }  // namespace
 
 std::string fuseCheck(const std::vector<TopBlock>& tops, const BoxTree& bt, Arena& arena,
-                      Interner& strs, StyleTable& styles, const Config& cfg, MetricStore& metrics,
+                      Interner& strs, StyleTable& styles, const EmitSettings& cfg, MetricStore& metrics,
                       double baseSizePx) {
   DiagSink scratch;
   std::vector<MeasureItem> missing;

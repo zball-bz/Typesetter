@@ -15,7 +15,7 @@ static i32 childOf(u32 node, char c) {
 std::vector<u32> hyphenPoints(std::string_view word) {
   std::vector<u32> out;
   const u32 len = (u32)word.size();
-  if (len < 5) return out;
+  if (len < kHyphenMinLetters) return out;
 
   std::string lower;
   lower.reserve(len + 2);

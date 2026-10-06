@@ -23,7 +23,7 @@ std::string localePackFor(std::string_view lang);
 
 class Terms {
  public:
-  explicit Terms(const Config& cfg);
+  explicit Terms(const ResolveSettings& cfg);
   // the word for `key` ("" when no pack has it)
   std::string_view get(std::string_view key) const;
   const std::string& pack() const { return pack_; }

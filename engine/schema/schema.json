@@ -473,6 +473,7 @@
       "prec": "HostDefault",
       "affects": [
         "Resolve",
+        "Measure",
         "Paint"
       ],
       "legacy": "lang"
@@ -581,8 +582,7 @@
       "def": 0,
       "prec": "HostDefault",
       "affects": [
-        "BoxTree",
-        "Emit"
+        "Ingest"
       ],
       "legacy": "paraIndentEm"
     },
@@ -592,7 +592,7 @@
       "def": 1.5,
       "prec": "HostDefault",
       "affects": [
-        "BoxTree"
+        "Ingest"
       ]
     },
     "quote.indent": {
@@ -601,7 +601,7 @@
       "def": 1.0,
       "prec": "HostDefault",
       "affects": [
-        "BoxTree"
+        "Ingest"
       ]
     },
     "cjk.punctCompress": {
@@ -713,8 +713,7 @@
       "def": 0.85,
       "prec": "HostDefault",
       "affects": [
-        "BoxTree",
-        "Emit",
+        "Ingest",
         "Layout"
       ]
     },
@@ -748,6 +747,38 @@
       ],
       "legacy": "verbatimSnapKerning"
     },
+    "code.minCols": {
+      "$comment": "The fewest columns a code block's grid keeps (verbatim-design §2; plan P3-02: it was a literal 8).",
+      "field": "verbatimMinCols",
+      "dom": "int:1:1000",
+      "def": 8,
+      "prec": "HostDefault",
+      "affects": [
+        "Layout"
+      ],
+      "ctype": "int"
+    },
+    "code.snapTolerance": {
+      "$comment": "Snap-kerning applies when the letter-spacing it needs is at most this fraction of a character (verbatim-design §3; plan P3-02).",
+      "field": "verbatimSnapTolerance",
+      "dom": "num:0:1",
+      "def": 0.1,
+      "prec": "HostDefault",
+      "affects": [
+        "Layout"
+      ]
+    },
+    "code.snapMaxQ": {
+      "$comment": "The largest denominator of the CJK:Latin grid ratio (verbatim-design §2: beyond it a grid stops reading as monospace; plan P3-02).",
+      "field": "verbatimSnapMaxQ",
+      "dom": "int:1:64",
+      "def": 7,
+      "prec": "HostDefault",
+      "affects": [
+        "Layout"
+      ],
+      "ctype": "int"
+    },
     "code.fontFeatures": {
       "field": "codeFontFeatures",
       "dom": "features",
@@ -768,6 +799,26 @@
         "Paint"
       ],
       "legacy": "codeFontFeaturesByLang"
+    },
+    "table.cellPad": {
+      "$comment": "A table cell's horizontal padding, in em of doc.baseSize (plan P3-02).",
+      "field": "tableCellPadEm",
+      "dom": "num:0:10",
+      "def": 0.4,
+      "prec": "HostDefault",
+      "affects": [
+        "Layout"
+      ]
+    },
+    "table.rowPad": {
+      "$comment": "A table row's vertical padding, in em of doc.baseSize (plan P3-02).",
+      "field": "tableRowPadEm",
+      "dom": "num:0:10",
+      "def": 0.3,
+      "prec": "HostDefault",
+      "affects": [
+        "Layout"
+      ]
     },
     "terms.heading": {
       "field": "supHeading",

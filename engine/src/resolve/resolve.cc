@@ -6,7 +6,7 @@
 namespace tsr {
 
 void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs, StyleTable& styles, NodePropsTable& props,
-                const Cascade& cascade, const Config& cfg, DiagSink& diags, const Registry& reg, Index& index) {
+                const Cascade& cascade, const ResolveSettings& cfg, DiagSink& diags, const Registry& reg, Index& index) {
   index = Index{};
   if (!tree.root) return;
   Counters counters(reg);

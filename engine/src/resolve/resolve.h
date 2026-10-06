@@ -15,6 +15,6 @@ class Cascade;
 class NodePropsTable;
 // (the nodes MATERIALIZE makes take the cascade at their place: plan P3-01)
 void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs, StyleTable& styles, NodePropsTable& props,
-                const Cascade& cascade, const Config& cfg, DiagSink& diags, const Registry& reg, Index& index);
+                const Cascade& cascade, const ResolveSettings& cfg, DiagSink& diags, const Registry& reg, Index& index);
 
 }  // namespace tsr

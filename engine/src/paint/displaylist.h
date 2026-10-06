@@ -97,15 +97,15 @@ struct DLRoot {
 };
 
 struct TopBlock;
-struct Config;
+struct PaintSettings;
 class StyleTable;
 
 // Paint (design T7 paintBlock): block p of the layout into `out` (reused).
 void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& tops, const Interner& strs,
-                const Config& cfg, DLBlock& out);
-DLRoot paintRoot(const Config& cfg);
+                const PaintSettings& cfg, DLBlock& out);
+DLRoot paintRoot(const PaintSettings& cfg);
 // tsrc --stage=dl (debug)
 std::string dumpDisplayList(const LayoutResult& lr, const std::vector<TopBlock>& tops, const StyleTable& styles,
-                            const Interner& strs, const Config& cfg);
+                            const Interner& strs, const PaintSettings& cfg);
 
 }  // namespace tsr
