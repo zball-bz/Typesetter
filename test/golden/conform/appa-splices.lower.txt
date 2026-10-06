@@ -20,7 +20,7 @@ block 2 content [60,176) user framed holes 2..6
     HOLE 2 [74,78)
     TEXT " and a call chain: " [79,96) raw=0:0,1:0,19:17
     HOLE 3 [97,110)
-    TEXT ". Member access: " [110,126) raw=0:0,17:16
+    TEXT ".\nMember access: " [110,126) raw=0:0,17:16
     HOLE 4 [127,138)
     TEXT " characters; expression: " [139,162) raw=0:0,1:0,25:23
     HOLE 5 [163,175)
@@ -31,11 +31,11 @@ block 4 content [201,438) user framed holes 6..10
   CALL para [201,438)
     TEXT "Statement splice binds in document scope: " [201,242) raw=0:0,42:41
     HOLE 6 [243,250)
-    TEXT ". A splice ends at punctuation: " [250,281) raw=0:0,32:31
+    TEXT ".\nA splice ends at punctuation: " [250,281) raw=0:0,32:31
     HOLE 7 [282,286)
     TEXT ". Semicolon terminator: " [286,309) raw=0:0,24:23
     HOLE 8 [310,315)
-    TEXT "[not an argument]. Content argument desugars to a trailing argument: " [315,383) raw=0:0,69:68
+    TEXT "[not an argument].\nContent argument desugars to a trailing argument: " [315,383) raw=0:0,69:68
     HOLE 9 [384,402)
       TEXT "bold text" [392,401)
-    TEXT ". Literal hash: #who stays literal." [402,438) raw=0:0,17:18
+    TEXT ".\nLiteral hash: #who stays literal." [402,438) raw=0:0,17:18

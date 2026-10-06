@@ -1,8 +1,8 @@
 doc @[0,551)
   para @[0,103)
-    text @[0,103) str="A paragraph mentions the year 1984. Then it goes on: an N. line with N other than 1 does not interrupt."
+    text @[0,103) str="A paragraph mentions the year\n1984. Then it goes on: an N. line with N other than 1 does not interrupt."
   para @[105,181)
-    text @[105,181) str="A paragraph with a dash line - continues: an empty item does not interrupt."
+    text @[105,181) str="A paragraph with a dash line\n-\ncontinues: an empty item does not interrupt."
   para @[183,213)
     text @[183,213) str="A paragraph followed by a list"
   list @[214,227) ordered start=1
@@ -15,7 +15,7 @@ doc @[0,551)
   para @[229,321)
     text @[229,275) str="Comment lines inside a paragraph are invisible"
     comment @[276,292) body=" a remark "
-    text @[293,321) str=" and the paragraph continues."
+    text @[293,321) str="\nand the paragraph continues."
   comment @[323,346) body=" a block comment "
   para @[347,377)
     text @[347,377) str="Text after the closer is kept."

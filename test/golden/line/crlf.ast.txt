@@ -2,7 +2,7 @@ doc @[0,136)
   heading @[0,13) level=1
     text @[2,13) str="CRLF source"
   para @[17,70)
-    text @[17,55) str="A paragraph that spans two lines with "
+    text @[17,55) str="A paragraph that spans\ntwo lines with "
     math @[56,64) display=0 src="a +\nb"
     text @[65,70) str=" math."
   codeblock @[74,101) lang="js" body="let x = 1;\nx++"

@@ -3,10 +3,10 @@ doc @[0,170)
     text @[0,1) str="A "
     splice @[2,33) expr="strong"
       arg @[10,32)
-        text @[10,32) str="content over a join"
+        text @[10,32) str="content\nover a join"
     text @[34,37) str=" and "
     link @[38,55) url="u"
-      text @[39,51) str="a link text"
+      text @[39,51) str="a link\ntext"
     text @[56,59) str=" and "
     code @[60,72) str="code span"
     text @[73,77) str=" end."
@@ -17,7 +17,7 @@ doc @[0,170)
       text @[100,108) str=" math and "
       splice @[109,120) expr="em"
         arg @[113,119)
-          text @[113,119) str="x y"
+          text @[113,119) str="x\ny"
       text @[121,126) str=" done."
   list @[128,169) bullet start=1
     item @[128,169)

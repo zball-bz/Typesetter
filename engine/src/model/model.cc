@@ -1,6 +1,7 @@
 #include "model.h"
 
 #include "../elements/registry.h"
+#include "softbreak.h"
 
 #include <algorithm>
 
@@ -48,9 +49,10 @@ struct Inst {
   }
 
   ContentNode* copy(u32 rootId, const Styling& inherited) {
-    struct Pending { ContentNode* parent; u32 id; Styling inh; u32 depth; u16 inside; };
+    // verb: inside a code or verbatim body, whose newlines are its lines
+    struct Pending { ContentNode* parent; u32 id; Styling inh; u32 depth; u16 inside; bool verb; };
     std::vector<Pending> work;
-    work.push_back({nullptr, rootId, inherited, 0, 0});
+    work.push_back({nullptr, rootId, inherited, 0, 0, false});
     ContentNode* result = nullptr;
     while (!work.empty()) {
       Pending p = std::move(work.back());
@@ -67,7 +69,7 @@ struct Inst {
         sp = p.parent->span;
       ContentNode* n;
       bool descend = false;
-      Styling own = p.inh;
+      Styling ownStyle = p.inh;
       if (budget == 0) {
         n = limitNode(sp, "instantiation node budget");
       } else if (p.depth > kMaxDepth) {
@@ -77,19 +79,35 @@ struct Inst {
         // a styled node's attributes are its delta; any node's `style` is
         // its own (plan P2-08), applied after
         if (rn.kind == Kind::styled)
-          for (const ArgVal& a : rn.args) applyPatch(own, a);
+          for (const ArgVal& a : rn.args) applyPatch(ownStyle, a);
         for (const ArgVal& a : rn.args)
-          if (a.key == ArgK::style && a.tag == ArgTag::Node) applyDelta(own, a.ref);
+          if (a.key == ArgK::style && a.tag == ArgTag::Node) applyDelta(ownStyle, a.ref);
         n = arena.make<ContentNode>();
         n->kind = rn.kind;
         n->span = sp;
-        n->style = styles.idOf(own);
-        if (rn.isText) n->str = strs.intern(raw.strings[rn.str]);
-        if (!rn.rawmap.empty() && an.alias == kNoAlias && sp.start == rn.span.start && sp.end == rn.span.end) {
-          u32* m = arena.allocArray<u32>(rn.rawmap.size());
-          std::copy(rn.rawmap.begin(), rn.rawmap.end(), m);
+        n->style = styles.idOf(ownStyle);
+        const bool own = an.alias == kNoAlias && sp.start == rn.span.start && sp.end == rn.span.end;
+        const std::vector<u32>* map = own && !rn.rawmap.empty() ? &rn.rawmap : nullptr;
+        std::vector<u32> resolved;
+        if (rn.isText) {
+          std::string_view str = raw.strings[rn.str];
+          if (!p.verb && str.find('\n') != std::string_view::npos) {  // soft breaks (plan P2-10)
+            std::string s(str);
+            const u32 rawLen = rn.span.end - rn.span.start;
+            const bool mapped = own && !rn.span.empty() && (map || s.size() == rawLen);
+            if (map) resolved = *map;
+            resolveSoftBreaks(s, resolved, rawLen, mapped);
+            n->str = strs.intern(s);
+            map = mapped && !resolved.empty() ? &resolved : nullptr;
+          } else {
+            n->str = strs.intern(str);
+          }
+        }
+        if (map) {
+          u32* m = arena.allocArray<u32>(map->size());
+          std::copy(map->begin(), map->end(), m);
           n->rawmap = m;
-          n->nrawmap = (u32)rn.rawmap.size();
+          n->nrawmap = (u32)map->size();
         }
         for (const ArgVal& a : rn.args) {
           if (a.key == ArgK::style) continue;  // folded into n->style
@@ -106,7 +124,8 @@ struct Inst {
       else result = n;
       if (descend)  // reversed, so children pop (and append) in order
         for (size_t c = rn.children.size(); c-- > 0;)
-          work.push_back({n, rn.children[c], own, p.depth + 1, n->cls ? n->cls : p.inside});
+          work.push_back({n, rn.children[c], ownStyle, p.depth + 1, n->cls ? n->cls : p.inside,
+                          p.verb || kKinds[(u16)n->kind].body == Body::Code || kKinds[(u16)n->kind].body == Body::Text});
     }
     return result;
   }

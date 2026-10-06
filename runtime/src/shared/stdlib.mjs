@@ -117,6 +117,15 @@ const accepts = (p, a) => {
   return false;
 };
 
+// A soft break (U+000A in inline text, plan P2-10) as the engine resolves it
+// (model/softbreak.h): nothing between two wide characters, else a space.
+// The wide classes here approximate TextRules' (CJK ideographs, kana, Hangul,
+// fullwidth forms and CJK punctuation).
+const WIDE = /[\u1100-\u115F\u2E80-\u303E\u3041-\u33FF\u3400-\u4DBF\u4E00-\u9FFF\uA000-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFF60\uFFE0-\uFFE6]|[\u{20000}-\u{3FFFD}]/u;
+export const softJoin = (s) => (s.includes('\n')
+  ? s.replace(/(.?)\n(?=(.?))/gu, (m, a, b) => a + (WIDE.test(a) && WIDE.test(b) ? '' : ' '))
+  : s);
+
 // ---- one std per execution ----------------------------------------------------
 // host: { ob, here ({s, e}: where the run is), height(), popTo(h),
 // bibliography(src, options, s, e) }
@@ -158,9 +167,9 @@ export function createStd(host) {
   };
   const kidsOf = (kids) => kids.flatMap((k) => toContent(k));
   // the plain-text projection of content (term names → label strings); it
-  // writes nothing
+  // writes nothing. A soft break (plan P2-10) reads as the engine reads it
   const plain = (x) => {
-    if (isNode(x)) return x.text !== undefined ? x.text : x.children.map(plain).join('');
+    if (isNode(x)) return x.text !== undefined ? softJoin(x.text) : x.children.map(plain).join('');
     if (typeof x === 'string' || typeof x === 'number' || typeof x === 'bigint') return String(x);
     if (Array.isArray(x)) return x.map(plain).join('');
     if (x !== null && typeof x === 'object' && typeof x[CONTENT] === 'function') return plain(x[CONTENT]());

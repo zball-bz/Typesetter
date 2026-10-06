@@ -17,7 +17,7 @@ of carrying its own ranges:
 | `isWide(cp)` | `isCjk` (support.h) | emit's CJK/Latin split, grid columns (layout), snap runs (typeset_html) |
 | `isOpenPunct`, `isClosePunct` | `isPunctOpen`, `isPunctClose` | emit's punctuation blocks, grid break rules |
 | `isIdeo(cp)` | `isCjkIdeo` | emit (solid 1em blocks, formula → CJK boundary) |
-| `joinsWide(cp)` | inline.cc's `cjkish` | the seamless line join between CJK characters |
+| `joinsWide(cp)` | inline.cc's `cjkish` | the seamless line join between CJK characters (P2-10: read when instantiation resolves a soft break, model/softbreak.h) |
 | `kernEligible(cp)` | emit's `isCjk(cp) \|\| cp >= 0x2000` | cross-space kerning contexts |
 | `isAmbDashOrEllipsis`, `isAmbQuote` | emit's U+2014/U+2026 and curly-quote literals | the em dash / ellipsis and Latin-context quote rules |
 | `cpInfo(cp)` | — | class + UAX #29 grapheme break + Extended_Pictographic + UAX #11 width (the shaper, P4-02) |

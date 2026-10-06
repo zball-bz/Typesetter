@@ -2,6 +2,6 @@ lower v1 abi 9bdc5985 docEnd 294 holes 1 module 44e2b3f46cdcc8a3
 piece 0 hole 0 js [103,138)
 block 0 content [0,124)
   CALL para [0,124)
-    TEXT "Snap-kerning with a sidecar column (guard fixture, plan P0-01): the code track and the sidecar track must share the measure." [0,124)
+    TEXT "Snap-kerning with a sidecar column (guard fixture, plan P0-01): the code track\nand the sidecar track must share the measure." [0,124)
 block 1 content [126,293) user framed async holes 0..1
   FENCE async "js" args=hole 0 body="const 标题 = \"中文与 ASCII 混排\"; /// 中文边注 with Latin\nfor (let i = 0; i < 3; i++) emit(标题, i); /// 每行一个" at=[159,289) lines=null [126,293)

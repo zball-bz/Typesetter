@@ -9,7 +9,6 @@
 #include "../syntax/lexer.h"
 #include "jslex.h"
 #include "../syntax/labels.h"
-#include "../shape/textrules.h"
 
 namespace tsr {
 
@@ -56,6 +55,10 @@ struct InlineParser {
   std::vector<u32> rmap;
   u32 rmC = 0, rmR = 0;  // the last breakpoint
   bool pendingSpace = false;
+  // a line join is a soft break (plan P2-10): U+000A in the cooked text,
+  // absorbing the blanks around it; the engine decides how it joins (a
+  // space, or nothing between two wide characters) — the parser no longer
+  bool pendingBreak = false;
   bool prevGlyph = false;
   u32 i = 0;
 
@@ -79,15 +82,15 @@ struct InlineParser {
 
   void put(char c, u32 pos, u32 len = 1) {
     if (buf.empty()) bufStart = pos;
-    if (pendingSpace) {
-      // a space for the blanks or line join before pos: it maps to where
-      // they begin (the previous byte's end), or to nothing before the
-      // text's first byte
+    if (pendingSpace || pendingBreak) {
+      // a space for the blanks before pos, a soft break for a line join: it
+      // maps to where they begin (the previous byte's end), or to nothing
+      // before the text's first byte
       if (!buf.empty() || !stack.back().items.empty()) {
         mark(buf.empty() ? L.raw(pos) : L.raw(bufEnd));
-        buf += ' ';
+        buf += pendingBreak ? '\n' : ' ';
       }
-      pendingSpace = false;
+      pendingSpace = pendingBreak = false;
     }
     mark(L.raw(pos));
     buf += c;
@@ -117,13 +120,13 @@ struct InlineParser {
   }
 
   void spaceBeforeItem() {
-    if (pendingSpace) {
+    if (pendingSpace || pendingBreak) {
       if (!buf.empty() || !stack.back().items.empty()) {
         if (buf.empty()) bufStart = bufEnd;
         mark(L.raw(bufEnd));
-        buf += ' ';
+        buf += pendingBreak ? '\n' : ' ';
       }
-      pendingSpace = false;
+      pendingSpace = pendingBreak = false;
     }
   }
 
@@ -210,15 +213,11 @@ struct InlineParser {
     return kids;
   }
 
-  // A line join: a soft space — except between two CJK-class codepoints,
-  // which join seamlessly (clreq).
+  // A line join: a soft break (plan P2-10; U+000A in the text, resolved at
+  // instantiation — model/softbreak.h)
   void join() {
-    u32 next = i + 1;
-    bool cjkJoin = next < t.size() && joinsWide(utf8PrevCp(t, i)) && joinsWide(utf8Next(t, next));
-    if (!cjkJoin) {
-      pendingSpace = true;
-      prevGlyph = false;
-    }
+    pendingBreak = true;
+    prevGlyph = false;
     i++;
   }
 
@@ -345,7 +344,7 @@ struct InlineParser {
 
   // strict pairs: an opener needs a glyph after it, a closer a glyph before it
   void pair(char c) {
-    bool canClose = prevGlyph && !pendingSpace && stack.size() > 1 && stack.back().marker == (u8)c;
+    bool canClose = prevGlyph && !pendingSpace && !pendingBreak && stack.size() > 1 && stack.back().marker == (u8)c;
     if (canClose) {
       flushText();
       Frame f = std::move(stack.back());

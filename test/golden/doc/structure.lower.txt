@@ -12,7 +12,7 @@ block 2 content [50,170)
     TEXT "An introductory paragraph with a " [50,82) raw=0:0,33:32
     CALL link [83,117) url="https://example.org"
       TEXT "useful link" [84,95)
-    TEXT " and some " [118,126) raw=0:0,1:0,10:8
+    TEXT "\nand some " [118,126) raw=0:0,1:0,10:8
     CALL code [127,140) text="inline code"
     TEXT " in it." [141,147) raw=0:0,1:0
     CALL comment [148,170) text=" invisible note "
@@ -23,7 +23,7 @@ block 3 content [172,296)
         TEXT "First bullet item with enough words to wrap onto lines" [174,228)
     CALL item [229,296)
       CALL para [231,274)
-        TEXT "Second item continued on an indented line" [231,274) raw=0:0,12:14
+        TEXT "Second item\ncontinued on an indented line" [231,274) raw=0:0,12:14
       CALL list [277,296) ordered=false start=1
         CALL item [277,296)
           CALL para [279,296)
@@ -39,7 +39,7 @@ block 4 content [297,334)
 block 5 content [336,430)
   CALL quote [336,430)
     CALL para [338,430)
-      TEXT "A quoted paragraph, indented by the engine rather than the browser, wrapping across lines." [338,430) raw=0:0,59:61
+      TEXT "A quoted paragraph, indented by the engine rather than the\nbrowser, wrapping across lines." [338,430) raw=0:0,59:61
 block 6 content [432,435)
   CALL rule [432,435)
 block 7 content [437,481) async

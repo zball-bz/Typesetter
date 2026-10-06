@@ -11,7 +11,7 @@ doc @[0,371)
         text @[44,58) str="unordered item"
     item @[59,132)
       para @[61,116)
-        text @[61,116) str="second unordered item continued at the content column"
+        text @[61,116) str="second unordered item\ncontinued at the content column"
       list @[119,132) bullet start=1
         item @[119,132)
           para @[121,132)

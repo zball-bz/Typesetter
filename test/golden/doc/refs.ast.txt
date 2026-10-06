@@ -4,7 +4,7 @@ doc @[0,437)
   para @[24,121)
     text @[24,71) str="The typesetting engine resolves references like "
     ref @[72,78) target="intro"
-    text @[79,82) str=" and "
+    text @[79,82) str=" and\n"
     ref @[83,91) target="results"
     text @[92,121) str=" before any rendering happens."
   heading @[123,132) level=2
@@ -22,7 +22,7 @@ doc @[0,437)
   para @[269,380)
     text @[269,283) str="As promised in "
     ref @[284,290) target="intro"
-    text @[290,348) str=", the resolver links back to sections and to terms such as "
+    text @[290,348) str=", the resolver links back to sections and\nto terms such as "
     ref @[349,357) target="measure"
     text @[358,380) str=" without a second pass."
   heading @[382,402) level=2

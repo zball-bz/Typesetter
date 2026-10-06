@@ -139,6 +139,14 @@ container prefix or indentation. Breakpoints are (cooked offset, raw offset)
 with identity between them; the transport to text content nodes is
 document-model §4.3.
 
+As built (plan P2-10): a **line join is a soft break** — U+000A in the cooked
+text, absorbing the blanks around it (trailing blanks, the next line's
+indentation); the parser no longer decides how lines join. The engine
+resolves it at instantiation (model/softbreak.h): a space, or nothing
+between two characters that join seamlessly (`joinsWide`, the predicate the
+parser used to apply); at a text's edge — markup on the other side — a space.
+Code and verbatim bodies keep their newlines.
+
 Dispatch is the INLINE rows: `inlineOpener(t, i)` (generated) names the rule
 whose literal opener starts at `i`, longest first, and `kInlineOpenerByte`
 marks the bytes that can start one — runs of other bytes are copied as plain

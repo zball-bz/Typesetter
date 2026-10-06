@@ -776,7 +776,7 @@ static void unitRawMaps(const fs::path& root) {
         if (raw < prevRaw || raw > n->span.end) { ok = false; break; }
         prevRaw = raw;
         const char c = cooked[i];
-        if (c == ' ') continue;  // blanks or a line join (or nothing, before the first byte)
+        if (c == ' ' || c == '\n') continue;  // blanks or a line join (a soft break, plan P2-10)
         if (raw < all.size() && all[raw] == c) continue;
         if (raw + 1 < all.size() && all[raw] == '\\' && all[raw + 1] == c) continue;
         ok = false;

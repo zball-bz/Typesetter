@@ -2,7 +2,7 @@ doc @[0,137)
   list @[0,114) bullet start=1
     item @[0,74)
       para @[2,74)
-        text @[2,74) str="first item with a tab after the marker continued on a tab-indented line"
+        text @[2,74) str="first item with a tab after the marker\ncontinued on a tab-indented line"
     item @[76,114)
       para @[78,82)
         text @[78,82) str="item"

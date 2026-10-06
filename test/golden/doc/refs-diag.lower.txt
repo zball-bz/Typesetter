@@ -6,7 +6,7 @@ block 1 content [15,96)
   CALL para [15,96)
     TEXT "A reference to " [15,29) raw=0:0,15:14
     CALL ref [30,38) target="missing"
-    TEXT " stays unresolved and a second label reuses the first one." [39,96) raw=0:0,1:0
+    TEXT " stays unresolved and a second label\nreuses the first one." [39,96) raw=0:0,1:0
 block 2 content [98,106)
   CALL heading [98,106) level=1 label="dup"
     TEXT "Second" [100,106)

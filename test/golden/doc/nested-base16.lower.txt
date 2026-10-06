@@ -9,7 +9,7 @@ block 1 content [72,213) async
         TEXT "Outer item" [74,84)
       CALL quote [87,132)
         CALL para [89,132)
-          TEXT "A quote inside the item with two lines." [89,132) raw=0:0,24:28
+          TEXT "A quote inside the item\nwith two lines." [89,132) raw=0:0,24:28
       FENCE async "js" body="nested(code);" at=[144,157) lines=[144] [136,163)
       CALL list [166,195) ordered=false start=1
         CALL item [166,195)

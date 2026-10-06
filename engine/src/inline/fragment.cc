@@ -1,3 +1,4 @@
+#include "../model/softbreak.h"
 #include "fragment.h"
 
 #include "../ast/ast.h"
@@ -38,6 +39,9 @@ struct Conv {
       case AstKind::Text: {
         ContentNode* t = mk(Kind::text, eff);
         t->str = a->str;
+        std::string s(strs.get(a->str));
+        std::vector<u32> none;
+        if (resolveSoftBreaks(s, none, 0, false)) t->str = strs.intern(s);  // (plan P2-10)
         out.push_back(t);
         return;
       }

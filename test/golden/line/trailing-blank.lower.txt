@@ -6,10 +6,10 @@ block 0 content [0,77) user framed holes 0..1
   CALL para [0,77)
     TEXT "A " [0,1) raw=0:0,2:1
     HOLE 0 [2,33)
-      TEXT "content over a join" [10,32) raw=0:0,8:11
+      TEXT "content\nover a join" [10,32) raw=0:0,8:11
     TEXT " and " [34,37) raw=0:0,1:0,5:3
     CALL link [38,55) url="u"
-      TEXT "a link text" [39,51) raw=0:0,7:8
+      TEXT "a link\ntext" [39,51) raw=0:0,7:8
     TEXT " and " [56,59) raw=0:0,1:0,5:3
     CALL code [60,72) text="code span"
     TEXT " end." [73,77) raw=0:0,1:0
@@ -21,7 +21,7 @@ block 1 content [79,126) user framed holes 1..2
         CALL mathinline [88,99) src="a +\nb"
         TEXT " math and " [100,108) raw=0:0,1:0,10:8
         HOLE 1 [109,120)
-          TEXT "x y" [113,119) raw=0:0,2:5
+          TEXT "x\ny" [113,119) raw=0:0,2:5
         TEXT " done." [121,126) raw=0:0,1:0
 block 2 content [128,169) user framed holes 2..3
   CALL list [128,169) ordered=false start=1

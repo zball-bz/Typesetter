@@ -9,7 +9,10 @@
     "  enum:A|B|C | flags:NAME=BIT,... | rangeset | color | font | html | url | delta (a node: a childless",
     "  styled node, the style change it carries — plan P2-08). retired: the version an attribute left the",
     "  vocabulary (its row stays in the lock; plan P2-08: styled.bits).",
-    "Attribute order is the writer's order (today's constructor argument order)."
+    "Attribute order is the writer's order (today's constructor argument order).",
+    "Text (plan P2-10): U+000A in the text of an inline-model body is a soft break (a line join),",
+    "resolved at instantiation — a space, or nothing between two wide characters (TextRules joinsWide);",
+    "code and verbatim bodies (body code / text) keep their newlines."
   ],
   "opsVersion": 11,
   "minCompat": 11,

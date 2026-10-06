@@ -15,7 +15,7 @@ block 3 content [42,132)
         TEXT "unordered item" [44,58)
     CALL item [59,132)
       CALL para [61,116)
-        TEXT "second unordered item continued at the content column" [61,116) raw=0:0,22:24
+        TEXT "second unordered item\ncontinued at the content column" [61,116) raw=0:0,22:24
       CALL list [119,132) ordered=false start=1
         CALL item [119,132)
           CALL para [121,132)

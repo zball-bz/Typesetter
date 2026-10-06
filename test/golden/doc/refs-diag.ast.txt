@@ -4,7 +4,7 @@ doc @[0,158)
   para @[15,96)
     text @[15,29) str="A reference to "
     ref @[30,38) target="missing"
-    text @[39,96) str=" stays unresolved and a second label reuses the first one."
+    text @[39,96) str=" stays unresolved and a second label\nreuses the first one."
   heading @[98,106) level=1 label="dup"
     text @[100,106) str="Second"
   para @[114,157)

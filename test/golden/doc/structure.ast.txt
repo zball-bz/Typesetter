@@ -9,7 +9,7 @@ doc @[0,482)
     text @[50,82) str="An introductory paragraph with a "
     link @[83,117) url="https://example.org"
       text @[84,95) str="useful link"
-    text @[118,126) str=" and some "
+    text @[118,126) str="\nand some "
     code @[127,140) str="inline code"
     text @[141,147) str=" in it."
     comment @[148,170) body=" invisible note "
@@ -19,7 +19,7 @@ doc @[0,482)
         text @[174,228) str="First bullet item with enough words to wrap onto lines"
     item @[229,296)
       para @[231,274)
-        text @[231,274) str="Second item continued on an indented line"
+        text @[231,274) str="Second item\ncontinued on an indented line"
       list @[277,296) bullet start=1
         item @[277,296)
           para @[279,296)
@@ -33,6 +33,6 @@ doc @[0,482)
         text @[321,334) str="And continues"
   quote @[336,430)
     para @[338,430)
-      text @[338,430) str="A quoted paragraph, indented by the engine rather than the browser, wrapping across lines."
+      text @[338,430) str="A quoted paragraph, indented by the engine rather than the\nbrowser, wrapping across lines."
   rule @[432,435)
   codeblock @[437,481) lang="js" body="const x = compute(1, 2);\nreturn x;"

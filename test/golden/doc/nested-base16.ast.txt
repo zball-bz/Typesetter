@@ -7,7 +7,7 @@ doc @[0,214)
         text @[74,84) str="Outer item"
       quote @[87,132)
         para @[89,132)
-          text @[89,132) str="A quote inside the item with two lines."
+          text @[89,132) str="A quote inside the item\nwith two lines."
       codeblock @[136,163) lang="js" body="nested(code);"
       list @[166,195) bullet start=1
         item @[166,195)
