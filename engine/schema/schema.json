@@ -6,11 +6,13 @@
     "mirrored in schema.lock.json. A change of meaning or encoding of an existing row needs a",
     "MIN_COMPAT bump; new vocabulary takes the next since (plan MD-03).",
     "Domains: bool | int:LO:HI | num:LO:HI | str | token (may be empty) | ident | label | lang |",
-    "  enum:A|B|C | flags:NAME=BIT,... | rangeset | color | font | html | url.",
+    "  enum:A|B|C | flags:NAME=BIT,... | rangeset | color | font | html | url | delta (a node: a childless",
+    "  styled node, the style change it carries — plan P2-08). retired: the version an attribute left the",
+    "  vocabulary (its row stays in the lock; plan P2-08: styled.bits).",
     "Attribute order is the writer's order (today's constructor argument order)."
   ],
-  "opsVersion": 10,
-  "minCompat": 6,
+  "opsVersion": 11,
+  "minCompat": 11,
   "ops": {
     "MAKE_TEXT": {"id": 1, "since": 6},
     "MAKE_NODE": {"id": 2, "since": 6},
@@ -30,7 +32,8 @@
     "sizePx": 23, "wrap": 24, "lineNo": 25, "hl": 26, "sidecar": 27, "scale": 28, "alt": 29,
     "side": 30, "slot": 31, "syn": 32, "copy": 33, "class": 34, "ext": 35, "of": 36,
     "counter": 37, "set": 38, "step": 39, "add": 40, "numbering": 41, "supplement": 42, "key": 43,
-    "sep": 44, "or": 45, "cited": 46
+    "sep": 44, "or": 45, "cited": 46, "weight": 47, "italic": 48, "decoration": 49, "fontRole": 50,
+    "baseline": 51, "size": 52, "hang": 53, "style": 54, "attach": 55
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -76,11 +79,18 @@
     "comment": {"id": 16, "level": "trivia", "inline": "skip", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
     "text": {"id": 17, "level": "inline", "inline": "text", "body": "none", "since": 6, "ctor": {"params": ["text"], "sealed": true}, "attrs": {}},
     "styled": {"id": 18, "level": "transparent", "inline": "container", "body": "position", "since": 6, "ctor": {}, "attrs": {
-      "bits": {"dom": "flags:EM=2,BOLD=3,UNDER=16,OVER=17,STRIKE=18", "def": 0},
+      "bits": {"dom": "flags:EM=2,BOLD=3,UNDER=16,OVER=17,STRIKE=18", "def": 0, "retired": 11},
       "font": {"dom": "font"},
       "lang": {"dom": "lang"},
       "color": {"dom": "color"},
-      "sizePx": {"dom": "num:1:2000"}}},
+      "sizePx": {"dom": "num:1:2000"},
+      "weight": {"dom": "int:100:900", "since": 11},
+      "italic": {"dom": "bool", "since": 11},
+      "decoration": {"dom": "flags:UNDER=0,OVER=1,STRIKE=2", "since": 11},
+      "fontRole": {"dom": "enum:body|mono", "since": 11},
+      "baseline": {"dom": "enum:super|sub", "since": 11},
+      "size": {"dom": "size", "since": 11},
+      "hang": {"dom": "enum:indent|content", "since": 11}}},
     "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "ctor": {"params": ["attr:url"]}, "attrs": {
       "url": {"dom": "url"}}},
     "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
@@ -134,7 +144,9 @@
       "the part of its parent it fills (caption, margin, …); syn: the kind of generated text it is (absent",
       "= content); copy: text | omit | replace:<text> (how a copy reads it); class: style tokens (T4);",
       "ext: EXT name/value pairs (scalar user data, opaque to emit and layout). Flags: resolved = only the",
-      "resolver sets it (dropped from input)."
+      "resolver sets it (dropped from input). (plan P2-08, since 11) style: the node's own style change, a",
+      "delta node (a childless styled node); attach: prev | next | both — no line break between the node's",
+      "inline extent and what precedes / follows it (a footnote marker attaches to its word)."
     ],
     "label": {"dom": "label", "since": 9},
     "role": {"dom": "ident", "since": 9},
@@ -142,7 +154,9 @@
     "syn": {"dom": "ident", "since": 9},
     "copy": {"dom": "copy", "since": 9},
     "class": {"dom": "classlist", "since": 9},
-    "ext": {"dom": "ext", "since": 9}
+    "ext": {"dom": "ext", "since": 9},
+    "style": {"dom": "delta", "since": 11},
+    "attach": {"dom": "enum:prev|next|both", "since": 11}
   },
   "decls": {
     "$comment": [
@@ -203,6 +217,10 @@
       "max": 64,
       "re": "[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*"
     },
+    "size": {
+      "max": 16,
+      "re": "[0-9]{1,4}(\\.[0-9]{1,4})?(em|px|%)"
+    },
     "intlist": {
       "max": 256,
       "re": "-?[0-9]{1,9}(\\.-?[0-9]{1,9})*"
@@ -243,28 +261,28 @@
       "`values` from 1) | mul (size multiplier, composed by the engine) | str (an interned string) | px (absolute px) |",
       "internal (engine-set, never on the wire: the script T5's classifier gives a run, which selects its face).",
       "attr: the styled/STYLE_PUSH attribute that patches it (domain: that attribute's); sugar: $.style.push keys and the",
-      "value each sets; legacy: the v6-10 styled `bits` flags it decodes (flag → value); dump: the label in the tree/block",
+      "value each sets; key: its $.style.push key when not the attribute's name (code.hang: {code: {hang}}); dump: the label in the tree/block",
       "dumps; html: an attribute the typeset serializer writes; css + cssOrder: the declaration it writes (cssFlags: flag →",
       "keyword; cssValue emPx: the run's em in px)."
     ],
     "text.weight": {
       "field": "weight",
       "type": "weight",
-      "sugar": {"bold": 700},
-      "legacy": {"BOLD": 700}
+      "attr": "weight",
+      "sugar": {"bold": 700}
     },
     "text.italic": {
       "field": "italic",
       "type": "bool",
-      "sugar": {"italic": true},
-      "legacy": {"EM": true}
+      "attr": "italic",
+      "sugar": {"italic": true}
     },
     "text.decoration": {
       "field": "decoration",
       "type": "flags",
+      "attr": "decoration",
       "flags": {"UNDER": 0, "OVER": 1, "STRIKE": 2},
       "sugar": {"underline": "UNDER", "overline": "OVER", "strike": "STRIKE"},
-      "legacy": {"UNDER": "UNDER", "OVER": "OVER", "STRIKE": "STRIKE"},
       "css": "text-decoration",
       "cssOrder": 4,
       "cssFlags": {"UNDER": "underline", "OVER": "overline", "STRIKE": "line-through"}
@@ -272,16 +290,29 @@
     "text.fontRole": {
       "field": "fontRole",
       "type": "enum",
+      "attr": "fontRole",
       "values": ["body", "mono"]
     },
     "text.baseline": {
       "field": "baseline",
       "type": "enum",
+      "attr": "baseline",
       "values": ["super", "sub"]
+    },
+    "code.hang": {
+      "field": "hang",
+      "type": "enum",
+      "attr": "hang",
+      "key": "code.hang",
+      "values": ["indent", "content"],
+      "dump": {
+        "label": "hang"
+      }
     },
     "text.sizeMul": {
       "field": "sizeMul",
-      "type": "mul"
+      "type": "mul",
+      "attr": "size"
     },
     "text.font": {
       "field": "fontFamily",

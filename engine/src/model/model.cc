@@ -15,9 +15,15 @@ struct Inst {
   DiagSink& diags;
   const Registry& reg;
 
-  // fold one delta (bits + InlineStyle patch args) onto an effective style
+  // fold one style attribute onto an effective style
   void applyPatch(Styling& st, const ArgVal& a) {
-    applyStyleArg(st, a, [&](u32 ref) { return strs.intern(raw.strings[ref]); });
+    applyStyleArg(st, a, [&](u32 ref) { return strs.intern(raw.strings[ref]); },
+                  [&](u32 ref) { return raw.strings[ref]; });
+  }
+  // fold a delta node (plan P2-08: a childless styled node — a STYLE_PUSH's,
+  // a node's own `style`) onto an effective style
+  void applyDelta(Styling& st, u32 id) {
+    for (const ArgVal& a : raw.nodes[id].args) applyPatch(st, a);
   }
 
   // InstLimits (plan P0-07, D-I03): a DAG value emitted many times is copied
@@ -68,8 +74,12 @@ struct Inst {
         n = limitNode(sp, "maximum nesting depth");
       } else {
         budget--;
+        // a styled node's attributes are its delta; any node's `style` is
+        // its own (plan P2-08), applied after
         if (rn.kind == Kind::styled)
           for (const ArgVal& a : rn.args) applyPatch(own, a);
+        for (const ArgVal& a : rn.args)
+          if (a.key == ArgK::style && a.tag == ArgTag::Node) applyDelta(own, a.ref);
         n = arena.make<ContentNode>();
         n->kind = rn.kind;
         n->span = sp;
@@ -82,6 +92,7 @@ struct Inst {
           n->nrawmap = (u32)rn.rawmap.size();
         }
         for (const ArgVal& a : rn.args) {
+          if (a.key == ArgK::style) continue;  // folded into n->style
           ArgVal v = a;
           if (a.tag == ArgTag::Str) v.ref = strs.intern(raw.strings[a.ref]);
           if (a.key == ArgK::ext) v.name = strs.intern(raw.strings[a.name]);
@@ -112,13 +123,10 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
 
   Inst inst{raw, arena, strs, styles, diags, reg};
   inst.budget = std::max<size_t>(kInstMinBudget, kInstPerRawNode * raw.nodes.size());
-  std::vector<const SchedItem*> stack;  // schedule deltas (bits + patches)
+  std::vector<const SchedItem*> stack;  // schedule deltas (delta nodes)
   auto refold = [&] {
     Styling st{};
-    for (const SchedItem* d : stack) {
-      applyLegacyBits(st, d->bits);
-      for (const ArgVal& a : d->patch) inst.applyPatch(st, a);
-    }
+    for (const SchedItem* d : stack) inst.applyDelta(st, d->a);
     return st;
   };
   Styling cur{};
@@ -126,8 +134,7 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
     switch (s.op) {
       case Op::STYLE_PUSH:
         stack.push_back(&s);
-        applyLegacyBits(cur, s.bits);
-        for (const ArgVal& a : s.patch) inst.applyPatch(cur, a);
+        inst.applyDelta(cur, s.a);
         break;
       case Op::STYLE_POP_TO: {
         u32 h = s.a;
@@ -225,6 +232,13 @@ static void styleStr(std::string& out, const Styling& s, const Interner& strs) {
   out += "]";
 }
 
+// a styled node's attributes the style part of its line already shows (the
+// rows that were class bits, plan P2-08, and the size multiplier)
+static bool hiddenStyleArg(ArgK k) {
+  return k == ArgK::weight || k == ArgK::italic || k == ArgK::decoration || k == ArgK::fontRole ||
+         k == ArgK::baseline || k == ArgK::size || k == ArgK::hang;
+}
+
 static void dumpNode(std::string& out, const ContentNode* n, const Interner& strs,
                      const StyleTable& styles, int depth) {
   for (int i = 0; i < depth; i++) out += "  ";
@@ -238,7 +252,7 @@ static void dumpNode(std::string& out, const ContentNode* n, const Interner& str
       appendf(out, "%s%u:%u", k ? "," : " raw=", n->rawmap[k], n->rawmap[k + 1]);
   }
   for (const ArgVal& a : n->args) {
-    if (n->kind == Kind::styled && a.key == ArgK::bits) continue;  // shown via style
+    if (n->kind == Kind::styled && hiddenStyleArg(a.key)) continue;  // shown via style
     if (a.key == ArgK::ext) appendf(out, " ext.%s=", std::string(strs.get(a.name)).c_str());
     else appendf(out, " %s=", argName(a.key));
     switch (a.tag) {

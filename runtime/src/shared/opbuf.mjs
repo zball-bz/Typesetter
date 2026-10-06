@@ -135,19 +135,13 @@ export class OpBuf {
     this.ops.push(OP.EMIT);
     this.vint(shadow.opId);
   }
-  stylePush(bits, patch = {}) {
+  // a style change (plan P2-08): its delta node, a childless styled node
+  stylePush(delta) {
+    if (!isNode(delta)) throw new Error('stylePush takes a delta node');
     this.opCount++;
     this.uses(SINCE.op[OP.STYLE_PUSH]);
     this.ops.push(OP.STYLE_PUSH);
-    this.vint(bits);
-    const entries = Object.entries(patch).filter(
-      ([k, v]) => v !== undefined && v !== null && ARGK[k] !== undefined);
-    this.ops.push(entries.length);
-    for (const [k, v] of entries) {
-      this.vint(ARGK[k]);
-      if (typeof v === 'number') { this.ops.push(ARG_NUM); this.f64(v); }
-      else { this.ops.push(ARG_STR); this.vint(this.strRef(String(v))); }
-    }
+    this.vint(delta.opId);
   }
   stylePopTo(h) {
     this.opCount++;

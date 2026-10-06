@@ -1,8 +1,8 @@
-lower v1 abi 9bdc5985 docEnd 296 holes 1 module b6e4f7a4675cf914
-piece 0 hole 0 js [140,404)
+lower v1 abi 9bdc5985 docEnd 321 holes 1 module 2a0312c1a1ceb539
+piece 0 hole 0 js [146,435)
 block 0 content [0,36)
   CALL para [0,36)
     TEXT "悬挂缩进与注释感知续行：" [0,36)
-block 1 content [38,295) user framed holes 0..1
-  CALL para [38,295)
-    HOLE 0 [38,295)
+block 1 content [38,320) user framed holes 0..1
+  CALL para [38,320)
+    HOLE 0 [38,320)

@@ -9,7 +9,7 @@ doc @[0,0) [base]
         text @[39,47) [base] str="1"
       text @[39,47) [base] str="]"
     text @[48,71) [base] str=" come first in the text." raw=0:0,1:0
-    ref @[71,126) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[71,126) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[71,126) [SUPx0.70] str="1"
     text @[127,142) [base] str=" Knuth and Plass " raw=0:0,1:0,17:15
     ref @[143,148) [base] target="kp81"

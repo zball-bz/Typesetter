@@ -11,7 +11,7 @@
 import { KIND, SCHEMA, DECLS, ARGK } from './ops.gen.mjs';
 import { CTOR_SPECS, STD_ALIASES } from './ctors.gen.mjs';
 import { isNode } from './opbuf.mjs';
-import { STYLE_KEYS, STYLE_SUGAR, validDomain } from './props.gen.mjs';
+import { STYLE_KEYS, STYLE_SUGAR, STYLE_FLAGS, validDomain } from './props.gen.mjs';
 import { Registry } from './registry.mjs';
 
 // The content protocol's markers (plan P2-01; design T2 S4): a function a
@@ -19,18 +19,47 @@ import { Registry } from './registry.mjs';
 export const NULLARY = Symbol.for('tsm.nullary');
 export const CONTENT = Symbol.for('tsm.content');
 
-// style patches from the schema's run properties (plan P1-02): boolean sugar
-// keys set flag bits, value keys map to styled/STYLE_PUSH attributes
-export const styleBits = (p) => {
-  let bits = 0;
-  for (const [k, bit] of Object.entries(STYLE_SUGAR)) if (p[k]) bits |= bit;
-  return bits || undefined;
-};
-export const styleValues = (p) => {
+// A style patch → its styled attributes (plans P1-02, P2-08; design T4
+// ScopeDelta): the property keys of the schema's run rows — font, lang,
+// color, size ('0.7em', '70%', '22px'; a number is em), sizePx, weight,
+// italic, fontRole, baseline, decoration ([under|over|strike]), code: {hang}
+// — and the boolean sugar bold, underline, overline, strike (bold: false is
+// weight 400). `unknown(key)` hears every other key. A style change on the
+// wire is a delta node: a childless styled node with these attributes.
+export const styleAttrs = (p, unknown) => {
   const out = {};
-  for (const [k, attr] of Object.entries(STYLE_KEYS)) if (p[k] !== undefined) out[attr] = p[k];
-  return out;
+  const put = (attr, v, key) => {
+    if (STYLE_FLAGS[attr]) {  // a flag set: a name or a list of names, ORed
+      for (const nm of Array.isArray(v) ? v : [v]) {
+        const f = STYLE_FLAGS[attr][String(nm)];
+        if (f) out[attr] = (out[attr] ?? 0) | f;
+        else unknown?.(`${key}: ${nm}`);
+      }
+    } else if (attr === 'size' && typeof v === 'number') out[attr] = `${v}em`;
+    else out[attr] = v;
+  };
+  for (const [k, v] of Object.entries(p ?? {})) {
+    if (v === undefined || v === null) continue;
+    if (k === 'code' && typeof v === 'object' && !Array.isArray(v)) {
+      for (const [k2, v2] of Object.entries(v)) {
+        const a = STYLE_KEYS[`code.${k2}`];
+        if (a && v2 !== undefined && v2 !== null) put(a, v2, `code.${k2}`);
+        else if (!a) unknown?.(`code.${k2}`);
+      }
+    } else if (STYLE_KEYS[k]) put(STYLE_KEYS[k], v, k);
+    else if (STYLE_SUGAR[k]) {
+      const [a, val] = STYLE_SUGAR[k];
+      if (v) put(a, STYLE_FLAGS[a] ? Object.keys(STYLE_FLAGS[a]).find((n) => STYLE_FLAGS[a][n] === val) : val, k);
+      else if (a === 'weight') out.weight = 400;
+    } else unknown?.(k);
+  }
+  // the writer's order is the schema's (styled's attribute rows)
+  return Object.fromEntries(STYLED_ORDER.filter((a) => a in out).map((a) => [a, out[a]]));
 };
+const STYLED_ORDER = Object.keys(SCHEMA.styled.attrs);
+// a key that names a style row or its sugar (a region option spelled so is a
+// mistake: style: {…} carries style, plan P2-08)
+export const isStyleKey = (k) => k in STYLE_KEYS || k in STYLE_SUGAR || k === 'code';
 
 // ---- specs ------------------------------------------------------------------
 // a param's accepted JS type, from its attribute domain
@@ -276,7 +305,7 @@ export function createStd(host) {
   const elementGroup = (name, o, kids) => {
     const ext = {};
     for (const [k, v] of Object.entries(o ?? {})) {
-      if (k === 'label' || k === 'style' || k === 'role' || k in STYLE_KEYS || k in STYLE_SUGAR) continue;
+      if (k === 'label' || k === 'style' || k === 'role' || isStyleKey(k)) continue;
       if (k === 'ext' && isPlainObject(v)) {
         for (const [n, x] of Object.entries(v)) if (isScalar(x) && validDomain('extname', n)) ext[n] = x;
       } else if (isScalar(v) && validDomain('extname', k)) ext[k] = v;
@@ -324,7 +353,27 @@ export function createStd(host) {
     const kind = KIND[spec.kind];
     return (call) => ob.makeNode(kind, ordered(spec.order, call.attrs), call.kids);
   };
-  const styledBits = (bits) => (call) => ob.makeNode(KIND.styled, { bits }, call.kids);
+  const styledBy = (attrs) => (call) => ob.makeNode(KIND.styled, attrs, call.kids);
+  const styleKeyDiag = (who) => (k) => diag(1, 'ctor-arg', `${who}: unknown style key ${k}`);
+  // a node again with more attributes (its span kept): a caption paragraph's
+  // role, a node's own style (plan P2-08)
+  const withArgs = (node, extra) => {
+    const n = ob.makeNode(node.kind, { ...node.args, ...extra }, node.children);
+    const sp = ob.spans.get(node.opId);
+    if (sp) ob.span(n, sp[0], sp[1]);
+    return n;
+  };
+  // a node's own style change (plan P2-08; the universal `style` attribute,
+  // a delta node): on top of the one it has; a text, which takes no
+  // attributes, is wrapped in a styled node instead
+  const withOwnStyle = (node, patch, who) => {
+    const attrs = styleAttrs(patch, styleKeyDiag(who));
+    if (!isNode(node) || node.text !== undefined) return ob.makeNode(KIND.styled, attrs, toContent(node));
+    const prev = node.args.style;
+    const merged = { ...(prev ? prev.args : {}), ...attrs };
+    if (prev?.args.decoration && attrs.decoration) merged.decoration = prev.args.decoration | attrs.decoration;
+    return withArgs(node, { style: ob.makeNode(KIND.styled, merged, []) });
+  };
   const collect = (what) => () => ob.makeNode(KIND.collect, { what }, []);
   const impls = {
     text: (call) => call.kids[0] ?? ob.makeText(''),
@@ -358,15 +407,11 @@ export function createStd(host) {
       });
       return ob.makeNode(KIND.table, ordered(SPECS.table.order, { ...call.attrs, cols }), trows);
     },
-    strong: styledBits(STYLE_SUGAR.bold),
-    em: styledBits(STYLE_SUGAR.italic),
-    // inline/block style scope (document-model §3): patch keys font (CSS
-    // family list), lang (BCP-47), color, sizePx, plus the bold/italic/
-    // underline/overline/strike sugar (decorations are CH1 bits)
-    style: (call) => {
-      const p = call.options ?? {};
-      return ob.makeNode(KIND.styled, { bits: styleBits(p), ...styleValues(p) }, call.kids);
-    },
+    strong: styledBy({ weight: 700 }),
+    em: styledBy({ italic: true }),
+    // inline/block style scope (document-model §3): a style patch
+    // (styleAttrs) over the kids
+    style: (call) => ob.makeNode(KIND.styled, styleAttrs(call.options ?? {}, styleKeyDiag('style')), call.kids),
     // #!figure (figure-design.md §1): an image from the region's src (only
     // the image's own options: never label or role), then the caption
     figure: (call) => {
@@ -377,7 +422,8 @@ export function createStd(host) {
         for (const k of ['alt', 'w', 'h', 'scale', 'float', 'side']) if (a[k] !== undefined) o[k] = a[k];
         kids.push(base.image(a.src, o));
       }
-      kids.push(...call.body.blocks());
+      // its paragraphs are its caption (plan P2-08: role caption)
+      for (const b of call.body.blocks()) kids.push(b.kind === KIND.para ? withArgs(b, { role: 'caption' }) : b);
       return ob.makeNode(KIND.group, { role: 'figure', label: a.label }, kids);
     },
     toc: collect('toc'),
@@ -468,7 +514,7 @@ export function createStd(host) {
       const r = invoke(name, entry, c);
       // the universal style option (plan P2-05): a styled scope around it
       if (!c.style || !isNode(r)) return r;
-      return ob.makeNode(KIND.styled, { bits: styleBits(c.style), ...styleValues(c.style) }, [r]);
+      return withOwnStyle(r, c.style, name);
     };
     Object.defineProperty(t, 'name', { value: name });
     if (registry.get('ctor', name)?.spec.nullary) t[NULLARY] = true;
@@ -485,22 +531,26 @@ export function createStd(host) {
   };
 
   // a region (#!name(args) … #name!): the constructor `name` if it takes a
-  // Body, else the default region — a group of role `name`; either way the
-  // legacy style keys of the header scope the result (#!aside(lang: …))
+  // Body, else the default region — a group of role `name`. The header's
+  // `style: {…}` (plan P2-08) is the result's own style change and never
+  // reaches the handler; a style key at the top of a default region's header
+  // is a mistake (it used to be sniffed as style) and says so
   const region = async (name, args = {}, items = []) => {
     const entry = registry.get('ctor', name);
     const body = regionBody(items);
+    const { style, ...hargs } = args;
     let node;
     if (entry?.spec.body) {
       const attrs = {};
       if (entry.spec.options !== 'raw')
-        for (const k of entry.spec.options) if (args[k] !== undefined) attrs[k] = args[k];
-      node = await invoke(name, entry, { attrs, kids: [], lines: undefined, body, options: args }, 'region-error');
+        for (const k of entry.spec.options) if (hargs[k] !== undefined) attrs[k] = hargs[k];
+      node = await invoke(name, entry, { attrs, kids: [], lines: undefined, body, options: hargs }, 'region-error');
     } else {
-      node = elementGroup(name, args, body.blocks());
+      for (const k of Object.keys(hargs))
+        if (isStyleKey(k)) diag(1, 'ctor-arg', `#!${name}: ${k} is a style: write style: {${k}: …}`);
+      node = elementGroup(name, hargs, body.blocks());
     }
-    const scope = styleValues(args);
-    if (Object.keys(scope).length) node = ob.makeNode(KIND.styled, scope, [node]);
+    if (isPlainObject(style)) node = withOwnStyle(node, style, `#!${name}`);
     return node;
   };
 

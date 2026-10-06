@@ -9,6 +9,6 @@
 #style({font: '"LXGW WenKai", serif'})[楷体片段]和#style({sizePx: 22})[放大片段]，
 连同 *粗体* 一起参与断行。
 
-#!aside(font: '"LXGW WenKai", serif', lang: "zh-TW")
+#!aside(style: {font: '"LXGW WenKai", serif', lang: "zh-TW"})
 區域級作用域：字體與語言一起換，內部照樣是普通標記。
 #aside!

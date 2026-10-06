@@ -66,9 +66,8 @@ struct RawNode {
 
 struct SchedItem {
   Op op;          // EMIT | STYLE_PUSH | STYLE_POP_TO
-  u32 a = 0;      // EMIT: node id; STYLE_POP_TO: height
-  u64 bits = 0;   // STYLE_PUSH: class bits delta
-  std::vector<ArgVal> patch;  // STYLE_PUSH: InlineStyle patch (v2)
+  u32 a = 0;      // EMIT: node id; STYLE_PUSH: its delta node (plan P2-08:
+                  // a childless styled node); STYLE_POP_TO: height
 };
 
 // Decoded, validated buffer. Strings live in the buffer's own table; the

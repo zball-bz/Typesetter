@@ -12,7 +12,7 @@ const __h = [
 (__k) => (style(...[{color: "#a8432a"}], ...__k())),
 (__k) => (style(...[{font: '"LXGW WenKai", serif'}], ...__k())),
 (__k) => (style(...[{sizePx: 22}], ...__k())),
-() => ({font: '"LXGW WenKai", serif', lang: "zh-TW"}),
+() => ({style: {font: '"LXGW WenKai", serif', lang: "zh-TW"}}),
 ];
 await __rt.run(__h, 0);
 })();

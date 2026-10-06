@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 // X-macro lists consumed by engine/src/ops/ops.h and ops.cc.
 //
-// OPS_VERSION(10)
+// OPS_VERSION(11)
 
 OP(MAKE_TEXT, 1)
 OP(MAKE_NODE, 2)
@@ -96,3 +96,12 @@ ARGK(key, key, 43)
 ARGK(sep, sep, 44)
 ARGK(or_, or, 45)
 ARGK(cited, cited, 46)
+ARGK(weight, weight, 47)
+ARGK(italic, italic, 48)
+ARGK(decoration, decoration, 49)
+ARGK(fontRole, fontRole, 50)
+ARGK(baseline, baseline, 51)
+ARGK(size, size, 52)
+ARGK(hang, hang, 53)
+ARGK(style, style, 54)
+ARGK(attach, attach, 55)

@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
-export const OPS_VERSION = 10;
-export const OPS_MIN_COMPAT = 6;
-export const SCHEMA_HASH = 'e3d07b93';
+export const OPS_VERSION = 11;
+export const OPS_MIN_COMPAT = 11;
+export const SCHEMA_HASH = 'd68c0a20';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -60,7 +60,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "2": {
       "0": 6,
@@ -70,7 +72,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "3": {
       "0": 9,
@@ -81,7 +85,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "4": {
       "0": 9,
@@ -90,7 +96,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "5": {
       "0": 9,
@@ -99,7 +107,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "6": {
       "0": 9,
@@ -113,7 +123,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "7": {
       "0": 9,
@@ -122,7 +134,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "8": {
       "0": 6,
@@ -132,7 +146,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "9": {
       "0": 6,
@@ -143,7 +159,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "10": {
       "0": 9,
@@ -152,7 +170,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "11": {
       "0": 9,
@@ -161,7 +181,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "12": {
       "0": 9,
@@ -171,7 +193,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "13": {
       "0": 9,
@@ -183,7 +207,9 @@ export const SINCE = Object.freeze({
       "33": 9,
       "34": 9,
       "35": 9,
-      "46": 10
+      "46": 10,
+      "54": 11,
+      "55": 11
     },
     "14": {
       "0": 6,
@@ -194,7 +220,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "15": {
       "0": 9,
@@ -205,7 +233,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "16": {
       "0": 9,
@@ -214,14 +244,15 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "17": {},
     "18": {
       "0": 9,
       "4": 6,
       "6": 9,
-      "20": 6,
       "21": 6,
       "22": 6,
       "23": 6,
@@ -229,7 +260,16 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "47": 11,
+      "48": 11,
+      "49": 11,
+      "50": 11,
+      "51": 11,
+      "52": 11,
+      "53": 11,
+      "54": 11,
+      "55": 11
     },
     "19": {
       "0": 9,
@@ -239,7 +279,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "20": {
       "0": 9,
@@ -248,7 +290,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "21": {
       "0": 9,
@@ -261,7 +305,9 @@ export const SINCE = Object.freeze({
       "33": 9,
       "34": 9,
       "35": 9,
-      "42": 10
+      "42": 10,
+      "54": 11,
+      "55": 11
     },
     "22": {
       "0": 9,
@@ -271,7 +317,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "23": {
       "0": 9,
@@ -283,7 +331,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "24": {
       "0": 9,
@@ -292,7 +342,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "25": {
       "0": 9,
@@ -301,7 +353,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "26": {
       "0": 9,
@@ -316,7 +370,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "27": {
       "0": 9,
@@ -325,7 +381,9 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "54": 11,
+      "55": 11
     },
     "28": {
       "0": 9,
@@ -336,7 +394,9 @@ export const SINCE = Object.freeze({
       "33": 9,
       "34": 9,
       "35": 9,
-      "36": 9
+      "36": 9,
+      "54": 11,
+      "55": 11
     },
     "29": {
       "0": 9,
@@ -351,7 +411,9 @@ export const SINCE = Object.freeze({
       "39": 10,
       "40": 10,
       "41": 10,
-      "42": 10
+      "42": 10,
+      "54": 11,
+      "55": 11
     },
     "30": {
       "0": 9,
@@ -361,7 +423,9 @@ export const SINCE = Object.freeze({
       "33": 9,
       "34": 9,
       "35": 9,
-      "43": 10
+      "43": 10,
+      "54": 11,
+      "55": 11
     },
     "31": {
       "0": 9,
@@ -372,7 +436,9 @@ export const SINCE = Object.freeze({
       "33": 9,
       "34": 9,
       "35": 9,
-      "45": 10
+      "45": 10,
+      "54": 11,
+      "55": 11
     },
     "32": {
       "0": 9,
@@ -382,7 +448,9 @@ export const SINCE = Object.freeze({
       "33": 9,
       "34": 9,
       "35": 9,
-      "36": 10
+      "36": 10,
+      "54": 11,
+      "55": 11
     },
     "33": {
       "0": 9,
@@ -393,7 +461,9 @@ export const SINCE = Object.freeze({
       "34": 9,
       "35": 9,
       "36": 10,
-      "44": 10
+      "44": 10,
+      "54": 11,
+      "55": 11
     }
   }
 });
@@ -492,7 +562,16 @@ export const ARGK = Object.freeze({
   "key": 43,
   "sep": 44,
   "or": 45,
-  "cited": 46
+  "cited": 46,
+  "weight": 47,
+  "italic": 48,
+  "decoration": 49,
+  "fontRole": 50,
+  "baseline": 51,
+  "size": 52,
+  "hang": 53,
+  "style": 54,
+  "attach": 55
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -515,7 +594,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -532,7 +613,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -550,7 +633,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -566,7 +651,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -582,7 +669,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -603,7 +692,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -619,7 +710,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -636,7 +729,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -654,7 +749,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -670,7 +767,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -686,7 +785,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -703,7 +804,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -722,7 +825,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -740,7 +845,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": [
       "name"
@@ -760,7 +867,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -776,7 +885,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -794,18 +905,26 @@ export const SCHEMA = Object.freeze({
     "body": "position",
     "inline": "container",
     "attrs": {
-      "bits": "flags:EM=2,BOLD=3,UNDER=16,OVER=17,STRIKE=18",
       "font": "font",
       "lang": "lang",
       "color": "color",
       "sizePx": "num:1:2000",
+      "weight": "int:100:900",
+      "italic": "bool",
+      "decoration": "flags:UNDER=0,OVER=1,STRIKE=2",
+      "fontRole": "enum:body|mono",
+      "baseline": "enum:super|sub",
+      "size": "size",
+      "hang": "enum:indent|content",
       "label": "label",
       "role": "ident",
       "slot": "ident",
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -822,7 +941,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -838,7 +959,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -858,7 +981,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": [
       "url"
@@ -877,7 +1002,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -896,7 +1023,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -912,7 +1041,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -928,7 +1059,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -950,7 +1083,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -966,7 +1101,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -984,7 +1121,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -1006,7 +1145,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -1023,7 +1164,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -1041,7 +1184,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -1058,7 +1203,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   },
@@ -1076,7 +1223,9 @@ export const SCHEMA = Object.freeze({
       "syn": "ident",
       "copy": "copy",
       "class": "classlist",
-      "ext": "ext"
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
     },
     "resolved": []
   }

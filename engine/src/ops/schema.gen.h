@@ -4,17 +4,17 @@
 
 namespace tsr {
 
-constexpr std::uint8_t OPS_VERSION = 10;
-constexpr std::uint8_t OPS_MIN_COMPAT = 6;
-constexpr const char* SCHEMA_HASH = "e3d07b93";
+constexpr std::uint8_t OPS_VERSION = 11;
+constexpr std::uint8_t OPS_MIN_COMPAT = 11;
+constexpr const char* SCHEMA_HASH = "d68c0a20";
 constexpr std::uint16_t KIND_COUNT = 34;
-constexpr std::uint16_t ARGK_COUNT = 47;
+constexpr std::uint16_t ARGK_COUNT = 56;
 
 enum class Level : std::uint8_t { Block, Inline, Adaptive, Transparent, Trivia };
 enum class Body : std::uint8_t { None, Inline, Blocks, Items, Code, Position, Rows, Cells, Data, Text };
 // what a kind becomes in an inline stream (the shaper's flatten table, plan P1-13)
 enum class InlineShape : std::uint8_t { Text, Container, Code, Object, Break, Error, Skip, Unsupported };
-enum class Dom : std::uint8_t { Bool, Int, Num, Str, Token, Ident, Label, Lang, Enum, Flags, RangeSet, Color, Font, Html, Url, Text, Ext };
+enum class Dom : std::uint8_t { Bool, Int, Num, Str, Token, Ident, Label, Lang, Enum, Flags, RangeSet, Color, Font, Html, Url, Text, Ext, Delta };
 
 // One attribute of one kind: its wire key, value domain and default.
 struct AttrSpec {

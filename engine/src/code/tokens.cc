@@ -41,7 +41,10 @@ void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size
       Styling s = styles.get(base);
       std::string var = std::string("var(--tsr-tok-") + kTokenTags[tag] + ")";
       s.color = strs.intern(var);
-      if (tag == kTokenTagComment) s.italic = true;  // comment: italic (duplex contract)
+      if (tag == kTokenTagComment) {  // comment: italic (duplex contract), hanging at its content
+        s.italic = true;
+        s.hang = HANG_CONTENT;
+      }
       tagStyle[tag] = styles.idOf(s);
       tagStyleMade[tag] = true;
     }
@@ -60,8 +63,8 @@ void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size
       if (scan < n && toks[scan].start < eol && toks[scan].end > cur) {
         size_t ts = toks[scan].start > cur ? toks[scan].start : cur;
         size_t te = toks[scan].end < eol ? toks[scan].end : eol;
-        if (ts > cur) line.push_back({body.substr(cur, ts - cur), base, false});
-        line.push_back({body.substr(ts, te - ts), styleFor(toks[scan].tag), toks[scan].tag == kTokenTagComment});
+        if (ts > cur) line.push_back({body.substr(cur, ts - cur), base});
+        line.push_back({body.substr(ts, te - ts), styleFor(toks[scan].tag), toks[scan].tag});
         cur = te;
         if (toks[scan].end <= eol) scan++;
         continue;
@@ -69,7 +72,7 @@ void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size
       // no token covering cur on this line: plain up to the next one
       size_t stop = eol;
       if (scan < n && toks[scan].start < eol && toks[scan].start > cur) stop = toks[scan].start;
-      line.push_back({body.substr(cur, stop - cur), base, false});
+      line.push_back({body.substr(cur, stop - cur), base});
       cur = stop;
     }
     if (eol == body.size()) break;

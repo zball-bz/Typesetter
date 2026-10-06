@@ -1,9 +1,9 @@
 export const abi = 0x9bdc5985;
 export default async (__rt, $) => {
-const {codeblock, style} = __rt.std;
+const {code, codeblock, style} = __rt.std;
 return (async () => {
 const __h = [
-() => (codeblock("", [["    indented_call(alpha, beta, gamma, delta, epsilon, zeta_long_tail);"], ["value = 1; ", style({color: "var(--tsr-tok-comment)"}, "// a very long inline comment that wraps and its continuation aligns to the comment content column")]], {})),
+() => (codeblock("", [["    indented_call(alpha, beta, gamma, delta, epsilon, zeta_long_tail);"], ["value = 1; ", style({code: {hang: "content"}, color: "var(--tsr-tok-comment)"}, "// a very long inline comment that wraps and its continuation aligns to the comment content column")]], {})),
 ];
 await __rt.run(__h, 0);
 })();

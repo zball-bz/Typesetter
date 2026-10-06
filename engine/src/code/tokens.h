@@ -35,8 +35,9 @@ bool validTokens(std::string_view body, const CodeToken* toks, size_t n);
 // product both read it.
 struct TokenRun {
   std::string_view text;
-  StyleId style = 0;
-  bool comment = false;  // comment-aware hanging (verbatim-design §4)
+  StyleId style = 0;  // its tag's: the token colour, and (plan P2-08) a
+                      // comment's italic and code.hang content
+  int tag = -1;       // its token tag (class tok-<tag>), -1: none
 };
 void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size_t n, Interner& strs,
                 StyleTable& styles, std::vector<std::vector<TokenRun>>& lines);

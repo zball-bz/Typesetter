@@ -12,7 +12,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -38,7 +40,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -65,7 +69,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -81,7 +87,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -97,7 +105,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -126,7 +136,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -142,7 +154,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": true,
     "sealed": false,
@@ -159,7 +173,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -181,7 +197,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -197,7 +215,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -213,7 +233,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -235,7 +257,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -254,7 +278,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -280,7 +306,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -307,7 +335,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": true,
@@ -327,7 +357,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -349,18 +381,26 @@ export const CTOR_SPECS = Object.freeze({
     "kind": "styled",
     "params": [],
     "options": [
-      "bits",
       "font",
       "lang",
       "color",
       "sizePx",
+      "weight",
+      "italic",
+      "decoration",
+      "fontRole",
+      "baseline",
+      "size",
+      "hang",
       "label",
       "role",
       "slot",
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -382,7 +422,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -402,7 +444,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -426,7 +470,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -448,7 +494,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -472,7 +520,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -488,7 +538,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": true,
@@ -515,7 +567,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -531,7 +585,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -554,7 +610,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -571,7 +629,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -594,7 +654,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -616,7 +678,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -639,7 +703,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -649,18 +715,26 @@ export const CTOR_SPECS = Object.freeze({
     "kind": "styled",
     "params": [],
     "options": [
-      "bits",
       "font",
       "lang",
       "color",
       "sizePx",
+      "weight",
+      "italic",
+      "decoration",
+      "fontRole",
+      "baseline",
+      "size",
+      "hang",
       "label",
       "role",
       "slot",
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -670,18 +744,26 @@ export const CTOR_SPECS = Object.freeze({
     "kind": "styled",
     "params": [],
     "options": [
-      "bits",
       "font",
       "lang",
       "color",
       "sizePx",
+      "weight",
+      "italic",
+      "decoration",
+      "fontRole",
+      "baseline",
+      "size",
+      "hang",
       "label",
       "role",
       "slot",
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": false,
     "sealed": false,
@@ -720,7 +802,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": true,
     "sealed": false,
@@ -739,7 +823,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": true,
     "sealed": false,
@@ -758,7 +844,9 @@ export const CTOR_SPECS = Object.freeze({
       "syn",
       "copy",
       "class",
-      "ext"
+      "ext",
+      "style",
+      "attach"
     ],
     "nullary": true,
     "sealed": false,

@@ -60,6 +60,11 @@ if (existsSync(lockPath)) {
         errors.push(`lock: new row ${sec}.${n} — run with --update-lock to accept it`);
   }
 }
+// a retired attribute (plan P2-08: styled.bits): its row stays in the lock (ids
+// are immutable) but leaves the vocabulary once MIN_COMPAT reaches `retired`
+for (const k of Object.values(S.kinds))
+  for (const [a, spec] of Object.entries(k.attrs))
+    if (spec.retired !== undefined && spec.retired <= S.minCompat) delete k.attrs[a];
 // unique ids
 const dupes = (o, f) => {
   const seen = new Map();
@@ -119,7 +124,7 @@ for (const [n, id] of keys) def += `ARGK(${CPP_RESERVED.has(n) ? n + '_' : n}, $
 const LEVELS = ['block', 'inline', 'adaptive', 'transparent', 'trivia'];
 const BODIES = ['none', 'inline', 'blocks', 'items', 'code', 'position', 'rows', 'cells', 'data', 'text'];
 const DOMS = ['bool', 'int', 'num', 'str', 'token', 'ident', 'label', 'lang', 'enum', 'flags',
-              'rangeset', 'color', 'font', 'html', 'url', 'text', 'ext'];
+              'rangeset', 'color', 'font', 'html', 'url', 'text', 'ext', 'delta'];
 // a "text" attribute domain is any regex domain of the domains section (plan
 // P2-05: copy, classlist): checked through its index in TextDomain
 const TEXT_DOMS = Object.keys(S.domains ?? {}).filter((d) => d !== '$comment');
@@ -256,8 +261,6 @@ const domJs = `export const DOMAINS = Object.freeze({\n${domains.map(([n, d]) =>
 // ---- run properties (plans P1-02, P2-08): Styling, its ops, dumps and CSS -----------
 const props = Object.entries(S.props ?? {}).filter(([n]) => n !== '$comment');
 const flagsOf = (attrDom) => Object.fromEntries(attrDom.split(':').slice(1).join(':').split(',').map((x) => x.split('=')).map(([k, v]) => [k, +v]));
-// the v6-10 styled `bits` flags (legacy rows decode them)
-const legacyBits = S.kinds.styled.attrs.bits ? flagsOf(S.kinds.styled.attrs.bits.dom) : {};
 const CT = { weight: 'u16', bool: 'bool', flags: 'u8', enum: 'u8', mul: 'float', str: 'StrRef', px: 'float', internal: 'u8' };
 const INIT = { weight: '0', bool: 'false', flags: '0', enum: '0', mul: '1.0f', str: '0', px: '0', internal: '0' };
 const isFloat = (r) => r.type === 'mul' || r.type === 'px';
@@ -283,24 +286,36 @@ for (const [, r] of props) {
   if (r.type === 'mul') ph += `  if (!(s.${r.field} == s.${r.field})) s.${r.field} = 1.0f;\n  if (s.${r.field} == 0) s.${r.field} = 0.0f;\n`;
   if (r.type === 'px') ph += `  if (!(s.${r.field} == s.${r.field}) || s.${r.field} < 0) s.${r.field} = 0;\n  if (s.${r.field} == 0) s.${r.field} = 0.0f;\n`;
 }
-// the legacy class bits (plan P2-08 transition): each flag sets its row
-ph += `}\n\n// the v6-10 styled \`bits\` flags, folded onto the rows that replace them\ninline void applyLegacyBits(Styling& st, u64 b) {\n`;
-for (const [, r] of props) {
-  for (const [f, v] of Object.entries(r.legacy ?? {})) {
-    const bit = legacyBits[f];
-    if (bit === undefined) { console.error(`gen-schema: props ${r.field}: legacy flag ${f} is not a styled bits flag`); process.exit(1); }
-    const set = r.type === 'weight' ? `st.${r.field} = ${v};` : r.type === 'bool' ? `st.${r.field} = true;`
-      : `st.${r.field} |= ${r.field.toUpperCase()}_${v};`;
-    ph += `  if (b & (1ull << ${bit})) ${set}\n`;
-  }
-}
-ph += `}\n\n// folds one styled attribute or STYLE_PUSH patch value onto a style (values\n// were validated at decode); intern(ref) maps a buffer string to a StrRef\n` +
-  `template <class Intern>\ninline void applyStyleArg(Styling& st, const ArgVal& a, Intern intern) {\n`;
-if (S.kinds.styled.attrs.bits) ph += `  if (a.key == ArgK::bits && a.tag == ArgTag::Num && a.num >= 0) applyLegacyBits(st, (u64)a.num);\n`;
+ph += `}\n\n// folds one styled attribute — a delta node's: a styled node's own, a node's
+// \`style\`, a STYLE_PUSH's (plan P2-08) — onto a style (values were validated
+// at decode); intern(ref) maps a buffer string to a StrRef, view(ref) reads
+// it. Sizes (D-T01): px is absolute and replaces (the multiplier resets), em
+// and % multiply\n` +
+  `template <class Intern, class View>\ninline void applyStyleArg(Styling& st, const ArgVal& a, Intern intern, View view) {\n`;
+const mulField = props.find(([, r]) => r.type === 'mul')?.[1].field;
+const pxField = props.find(([, r]) => r.type === 'px')?.[1].field;
 for (const [, r] of props) {
   if (!r.attr) continue;
-  if (r.type === 'str') ph += `  if (a.key == ArgK::${r.attr} && a.tag == ArgTag::Str) st.${r.field} = intern(a.ref);\n`;
-  if (r.type === 'px') ph += `  if (a.key == ArgK::${r.attr} && a.tag == ArgTag::Num) st.${r.field} = (float)a.num;\n`;
+  const K = `a.key == ArgK::${r.attr}`;
+  if (r.type === 'str') ph += `  if (${K} && a.tag == ArgTag::Str) st.${r.field} = intern(a.ref);\n`;
+  if (r.type === 'px') ph += `  if (${K} && a.tag == ArgTag::Num) {\n    st.${r.field} = (float)a.num;\n    st.${mulField} = 1.0f;\n  }\n`;
+  if (r.type === 'weight') ph += `  if (${K} && a.tag == ArgTag::Num) st.${r.field} = (u16)a.num;\n`;
+  if (r.type === 'bool') ph += `  if (${K} && a.tag == ArgTag::Bool) st.${r.field} = a.num != 0;\n`;
+  if (r.type === 'flags') ph += `  if (${K} && a.tag == ArgTag::Num) st.${r.field} |= (u8)(u64)a.num;  // ORed in\n`;
+  if (r.type === 'enum') {
+    ph += `  if (${K} && a.tag == ArgTag::Str) {\n    const std::string_view v = view(a.ref);\n`;
+    r.values.forEach((v, k) => { ph += `    if (v == ${JSON.stringify(v)}) st.${r.field} = ${k + 1};\n`; });
+    ph += `  }\n`;
+  }
+  if (r.type === 'mul') {
+    ph += `  if (${K} && a.tag == ArgTag::Str) {  // "0.7em" | "70%" | "22px"\n` +
+      `    const std::string_view v = view(a.ref);\n    double x = 0;\n    size_t i = 0;\n` +
+      `    for (; i < v.size() && v[i] >= '0' && v[i] <= '9'; i++) x = x * 10 + (v[i] - '0');\n` +
+      `    if (i < v.size() && v[i] == '.')\n      for (double f = 0.1; ++i < v.size() && v[i] >= '0' && v[i] <= '9'; f /= 10) x += (v[i] - '0') * f;\n` +
+      `    const std::string_view unit = v.substr(i);\n` +
+      `    if (unit == "px") {\n      if (x > 0) st.${pxField} = (float)x;\n      st.${r.field} = 1.0f;\n    } else {\n` +
+      `      st.${r.field} *= (float)(unit == "%" ? x / 100 : x);\n    }\n  }\n`;
+  }
 }
 ph += `}\n\n// the value part of the tree and block dumps, in row order (each dump keeps\n// its own flag tokens and size-multiplier spelling)\n` +
   `inline void appendStyleFields(std::string& out, const Styling& s, const Interner& strs) {\n`;
@@ -309,6 +324,9 @@ for (const [, r] of props) {
   if (r.type === 'str' && r.dump.quoted) ph += `  if (s.${r.field}) {\n    out += " ${r.dump.label}=\\"";\n    appendEscaped(out, strs.get(s.${r.field}));\n    out += "\\"";\n  }\n`;
   else if (r.type === 'str') ph += `  if (s.${r.field}) {\n    out += " ${r.dump.label}=";\n    out += strs.get(s.${r.field});\n  }\n`;
   else if (r.type === 'px') ph += `  if (s.${r.field} > 0) appendf(out, " ${r.dump.label}=%gpx", (double)s.${r.field});\n`;
+  else if (r.type === 'enum')
+    ph += `  if (s.${r.field}) {\n    static const char* const kV[] = {${r.values.map((v) => JSON.stringify(v)).join(', ')}};\n` +
+      `    out += " ${r.dump.label}=";\n    out += kV[s.${r.field} - 1];\n  }\n`;
 }
 ph += `}\n\n}  // namespace tsr\n`;
 
@@ -333,17 +351,20 @@ for (const [, r] of props.filter(([, r]) => r.css).sort((a, b) => a[1].cssOrder 
 }
 css += `}\n\n}  // namespace tsr\n`;
 
-// $.style.push sugar: until the wire carries the rows (P2-08), each key is
-// its legacy styled bit
-const sugar = {};
-for (const [, r] of props)
-  for (const [k, v] of Object.entries(r.sugar ?? {})) {
-    const f = Object.entries(r.legacy ?? {}).find(([, lv]) => lv === v)?.[0];
-    if (f !== undefined) sugar[k] = 2 ** legacyBits[f];
-  }
-const propsJs = `// ${HDR}\n// Run style properties (plan P1-02): the $.style.push / #style / region keys\n// and their value domains.\n` +
-  `export const STYLE_KEYS = Object.freeze(${JSON.stringify(Object.fromEntries(props.filter(([, r]) => r.attr).map(([, r]) => [r.key ?? r.attr, r.attr])))});\n` +
-  `export const STYLE_SUGAR = Object.freeze(${JSON.stringify(sugar)});\n` + domJs;
+// the style keys (plan P2-08): each row's key → its styled attribute; sugar
+// keys → [attribute, value] (a decoration's value is its flag); flag names
+const styleKeys = {}, sugar = {}, styleFlags = {};
+for (const [, r] of props) {
+  if (!r.attr) continue;
+  styleKeys[r.key ?? r.attr] = r.attr;
+  for (const [k, v] of Object.entries(r.sugar ?? {}))
+    sugar[k] = [r.attr, r.type === 'flags' ? 1 << r.flags[v] : v];
+  if (r.type === 'flags') styleFlags[r.attr] = Object.fromEntries(Object.entries(r.flags).map(([f, b]) => [f.toLowerCase(), 1 << b]));
+}
+const propsJs = `// ${HDR}\n// Run style properties (plans P1-02, P2-08): the $.style.push / #style / style:\n// keys and their value domains.\n` +
+  `export const STYLE_KEYS = Object.freeze(${JSON.stringify(styleKeys)});\n` +
+  `export const STYLE_SUGAR = Object.freeze(${JSON.stringify(sugar)});\n` +
+  `export const STYLE_FLAGS = Object.freeze(${JSON.stringify(styleFlags)});\n` + domJs;
 
 // ---- host settings (plan P1-03): Config, its JSON codec, JS defaults --------------
 const STAGES = [...readFileSync(join(root, 'engine/src/api/stages.def'), 'utf8')

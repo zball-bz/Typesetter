@@ -1,7 +1,7 @@
 doc @[0,593) [base]
   para @[0,66) [base]
     text @[0,35) [base] str="Notes close at their own bracket: a"
-    ref @[35,44) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[35,44) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[35,44) [SUPx0.70] str="1"
     text @[45,66) [base] str=" and the text goes on." raw=0:0,1:0
   para @[68,119) [base]

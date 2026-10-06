@@ -110,8 +110,11 @@ interior as blocks (P2-07: the header's options other than `label` and the
 style keys become its EXT data — an element instance, as the constructor
 `$.element` returns builds it). The built-ins `table` and `figure` are such
 constructors, registered like any other; nothing dispatches on their names
-any more. The legacy style keys of the header (`font`, `lang`, `color`,
-`sizePx`) wrap the result in a `styled` scope, for every region. A Body is
+any more. The header's `style: {…}` (plan P2-08; it replaced sniffing the
+style keys `font`, `lang`, `color`, `sizePx`) is the result's own style
+change — the universal `style` attribute when the result is one node, else a
+`styled` wrapper — and never reaches the handler; a style key at the top of
+a default region's header is a `ctor-arg` warning with the fix. A Body is
 `{blocks(), rows()}`: blocks() is the interior as blocks (the rows of a
 table paragraph rejoined with ` | `; a constructor's inline content kids as
 one paragraph, so `#!f(H) x #f!` ≡ `#f(H)[x]` — fixture `lower/region-call`),
@@ -123,7 +126,8 @@ Every kind's constructor takes the universal attributes as options (`label`,
 `role`, `slot`, `syn`, `copy`, `class`; document-model §4.3) and two
 universal options more: `ext: {name: scalar}` (EXT data; a name outside
 `[a-z][a-z0-9-]*` or a non-scalar value is a `ctor-arg` warning) and
-`style: {patch}` (the result wrapped in a `styled` scope, as `#style` would).
+`style: {patch}` (P2-08: the result's own style change, its universal `style`
+attribute — a delta node; a text result is wrapped in a `styled` node).
 `field(name, {of})` builds the `field` placeholder.
 `$.declare(type, name, data, ...templates)` writes a declaration (DECL) of a
 schema `decls` type at the current point of the flow: `data` is EXT, the

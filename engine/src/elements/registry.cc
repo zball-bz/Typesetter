@@ -39,17 +39,29 @@ struct Loader {
       }
     return fail("unknown argument '" + std::string(name) + "'");
   }
-  // a styled template item's flag names (the class bits' spellings)
-  bool bitOf(std::string_view name, TItem& it) {
-    if (name == "bold") it.delta.weight = 700;
-    else if (name == "em") it.delta.italic = true;
-    else if (name == "code") it.delta.fontRole = FONTROLE_MONO;
-    else if (name == "link") {}  // links are runs of their own (P2-08: no style)
-    else if (name == "sup") it.delta.baseline = BASELINE_SUPER;
-    else if (name == "under") it.delta.decoration |= DECORATION_UNDER;
-    else if (name == "over") it.delta.decoration |= DECORATION_OVER;
-    else if (name == "strike") it.delta.decoration |= DECORATION_STRIKE;
-    else return fail("unknown style bit '" + std::string(name) + "'");
+  // a styled template item (plan P2-08): {weight, italic, decoration:
+  // [under|over|strike], role: body|mono, baseline: super|sub, size: ×}
+  bool styledOf(const JsonValue& s, TItem& it) {
+    if (s.t != JsonValue::T::Obj) return fail("styled is an object of style rows");
+    for (size_t k = 0; k < s.keys.size(); k++) {
+      const std::string& key = s.keys[k];
+      const JsonValue& v = s.vals[k];
+      if (key == "weight" && v.t == JsonValue::T::Num && v.num >= 100 && v.num <= 900) it.delta.weight = (u16)v.num;
+      else if (key == "italic" && v.t == JsonValue::T::Bool) it.delta.italic = v.b;
+      else if (key == "decoration" && v.t == JsonValue::T::Arr) {
+        for (const JsonValue& d : v.arr) {
+          if (d.str == "under") it.delta.decoration |= DECORATION_UNDER;
+          else if (d.str == "over") it.delta.decoration |= DECORATION_OVER;
+          else if (d.str == "strike") it.delta.decoration |= DECORATION_STRIKE;
+          else return fail("a decoration is under, over or strike");
+        }
+      } else if (key == "role" && (v.str == "body" || v.str == "mono"))
+        it.delta.fontRole = v.str == "mono" ? FONTROLE_MONO : FONTROLE_BODY;
+      else if (key == "baseline" && (v.str == "super" || v.str == "sub"))
+        it.delta.baseline = v.str == "super" ? BASELINE_SUPER : BASELINE_SUB;
+      else if (key == "size" && v.t == JsonValue::T::Num && v.num > 0) it.size = (float)v.num;
+      else return fail("styled: unknown or invalid row '" + key + "'");
+    }
     return true;
   }
 
@@ -107,11 +119,7 @@ struct Loader {
         if (!tmpl(x.get("kids"), it.kids)) return false;
       } else if (const JsonValue* s = x.get("styled")) {
         it.k = TItem::K::Styled;
-        if (const JsonValue* b = member(*s, "bits"))
-          for (const JsonValue& n : b->arr)
-            if (!bitOf(n.str, it)) return false;
-        if (const JsonValue* z = member(*s, "size")) it.size = (float)z->num;
-        if (!tmpl(x.get("kids"), it.kids)) return false;
+        if (!styledOf(*s, it) || !tmpl(x.get("kids"), it.kids)) return false;
       } else if (const JsonValue* s = x.get("when")) {
         it.k = TItem::K::When;
         it.name = str(s);

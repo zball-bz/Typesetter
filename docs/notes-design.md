@@ -95,6 +95,11 @@ selects the glyph set at emit time; the counter is unchanged.
 - Print: notes currently print as endnotes (the section is ordinary flow);
   bottom-of-sheet inserts remain as designed above.
 
+As built (plan P2-08): the marker is `ref{role: fn-marker, attach: prev}` in
+a super-baseline ×0.7 delta (the footnote row's marker template); `attach:
+prev` is what keeps it on its word's line (the CLS_SUP bit retired), and
+any inline node can say so.
+
 ## 2. Citations
 
 ### Syntax

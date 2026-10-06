@@ -8,9 +8,8 @@ doc @[0,645) [base]
     text @[270,283) [base] str=" in a sentence" raw=0:0,1:0
   para @[285,349) [base]
     text @[285,302) [base] str="Styled by option: " raw=0:0,18:17
-    styled @[303,343) [base color=#a8432a] color="#a8432a"
-      styled @[303,343) [EM color=#a8432a]
-        text @[303,343) [EM color=#a8432a] str="word"
+    styled @[303,343) [EM color=#a8432a]
+      text @[303,343) [EM color=#a8432a] str="word"
     text @[344,349) [base] str=" here." raw=0:0,1:0
   para @[351,428) [base]
     text @[351,358) [base] str="A field " raw=0:0,8:7

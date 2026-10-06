@@ -654,7 +654,7 @@ class DocLayout {
       for (const CodeRun& r : g.lines[li]) {
         u32 b0 = (u32)joined.size();
         joined.append(strs.get(r.text));
-        if (r.isComment) commentSpans.push_back({b0, (u32)joined.size()});
+        if (r.hang) commentSpans.push_back({b0, (u32)joined.size()});
       }
       // hanging base: the logical line's own leading whitespace columns
       i32 leadChars = 0;

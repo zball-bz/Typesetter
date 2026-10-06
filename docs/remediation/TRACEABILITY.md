@@ -1043,19 +1043,19 @@ Theme steps: — · findings: 1
 | `parser-frontend/missed:5` | missed | low | P1-07 | grep:plan P1-07 |
 | `codegen-ops-model/ctor-signatures-break-sugar-equivalence` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `codegen-ops-model/private-region-builders-and-missing-ctors` | adhoc | high | P2-03 | grep:plan P2-03 |
-| `codegen-ops-model/region-meta-args-hijack` | adhoc | medium | P2-03, P2-08 | |
+| `codegen-ops-model/region-meta-args-hijack` | adhoc | medium | P2-03, P2-08 | grep:plan P2-08 |
 | `codegen-ops-model/parse-time-pipe-segmentation` | adhoc | medium | P2-11 | |
 | `codegen-ops-model/role-string-dispatch` | adhoc | high | P2-05 | grep:plan P2-05 |
 | `codegen-ops-model/sidecar-ingest-pass` | adhoc | medium | P2-13 | |
 | `codegen-ops-model/bibliography-placeholder-and-end-emission` | adhoc | medium | P2-07, P2-14 | |
-| `codegen-ops-model/cls-sup-feature-bit` | adhoc | medium | P2-08 | |
+| `codegen-ops-model/cls-sup-feature-bit` | adhoc | medium | P2-08 | grep:plan P2-08 |
 | `codegen-ops-model/kind-default-styles-in-emit` | adhoc | medium | P3-01 | |
 | `codegen-ops-model/resolver-fabricated-styles` | adhoc | medium | P3-01, P3-03 | |
 | `codegen-ops-model/token-class-as-color` | adhoc | medium | P3-01 | |
 | `codegen-ops-model/fixed-styling-fields` | adhoc | high | P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/global-argk-namespace` | adhoc | high | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/version-bump-per-vocabulary` | adhoc | medium | P1-01 | grep:plan P1-01 |
-| `codegen-ops-model/two-style-encodings-and-stack` | adhoc | medium | P0-06, P2-08 | |
+| `codegen-ops-model/two-style-encodings-and-stack` | adhoc | medium | P0-06, P2-08 | grep:plan P2-08 |
 | `codegen-ops-model/val-coercion-adhoc` | adhoc | medium | P2-01 | grep:plan P2-01 |
 | `codegen-ops-model/block-promotion-peepholes` | adhoc | medium | P2-11 | |
 | `codegen-ops-model/duplicate-lowering-fragment` | adhoc | medium | P2-13 | |
@@ -1130,7 +1130,7 @@ Theme steps: — · findings: 1
 | `emitter/sup-bit-attach-rule` | adhoc | medium | P4-07 | |
 | `emitter/kern-context-postpass` | adhoc | medium | P4-01 | |
 | `emitter/sidecar-role-string` | adhoc | medium | P2-13 | |
-| `emitter/comment-by-css-color` | adhoc | medium | P2-08 | |
+| `emitter/comment-by-css-color` | adhoc | medium | P2-08 | grep:plan P2-08 |
 | `emitter/kind-presentation-in-emit` | adhoc | medium | P3-01 | |
 | `emitter/global-typography-config` | adhoc | medium | P3-02 | |
 | `emitter/codeblock-args-in-emit` | adhoc | low | P0-06, P3-02, P3-11 | |
@@ -1165,7 +1165,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/vertical-spacing-constants` | adhoc | medium | P1-18, P3-01 | |
 | `break-layout-pages/code-wrap-in-layout` | adhoc | medium | P3-11 | |
 | `break-layout-pages/code-sidecar-three-box` | adhoc | medium | P3-11 | |
-| `break-layout-pages/comment-role-by-color` | adhoc | low | P2-08 | |
+| `break-layout-pages/comment-role-by-color` | adhoc | low | P2-08 | grep:plan P2-08 |
 | `break-layout-pages/paginator-in-serializer` | adhoc | high | P3-12 | |
 | `break-layout-pages/group-role-dispatch` | adhoc | high | P1-18, P3-14 | |
 | `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 | |
@@ -1274,7 +1274,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/supplements-and-lang` | adhoc | medium | P1-10, P3-30 | |
 | `api-measure-code/font-role-split` | adhoc | medium | P1-04 | grep:plan P1-04 |
 | `api-measure-code/token-tag-table-copies` | adhoc | medium | P3-22 | |
-| `api-measure-code/token-class-as-color-string` | adhoc | high | P2-08 | |
+| `api-measure-code/token-class-as-color-string` | adhoc | high | P2-08 | grep:plan P2-08 |
 | `api-measure-code/language-registry-scattered` | adhoc | medium | P3-22 | |
 | `api-measure-code/literate-cpp-special-case` | adhoc | low | P3-22 | |
 | `api-measure-code/grid-is-codeblock-only` | adhoc | medium | P3-11 | |
@@ -1338,6 +1338,6 @@ Theme steps: — · findings: 1
 | `real-world-evidence/missed:0` | missed | high | P0-05, P2-02 | grep:plan P2-02 |
 | `real-world-evidence/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/missed:2` | missed | medium | P2-06 | grep:plan P2-06 |
-| `real-world-evidence/missed:3` | missed | medium | P0-06, P2-08 | |
+| `real-world-evidence/missed:3` | missed | medium | P0-06, P2-08 | grep:plan P2-08 |
 | `real-world-evidence/missed:4` | missed | medium | P3-27 | |
 | `real-world-evidence/missed:5` | missed | low | P3-23 | |

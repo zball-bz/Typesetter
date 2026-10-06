@@ -971,6 +971,8 @@ static void unitRegistry(const fs::path& root) {
   }
   std::string err;
   CHECK(!Registry::fromJson(R"({"classes":{"x":{"counter":"nope"}}})", err) && !err.empty());
+  // a numbered class needs a counter (fuzz finding, plan P2-07)
+  CHECK(!Registry::fromJson(R"({"classes":{"x":{"numbering":"always"}}})", err) && !err.empty());
 
   std::string json(kElementsJson);
   size_t cls = json.find("\"classes\"");

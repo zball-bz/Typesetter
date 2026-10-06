@@ -159,18 +159,31 @@ struct Conv {
         }
         break;
       }
-      case Kind::styled: {  // a delta carrier: its bits (P2-08 widens it)
-        // the styled `bits` flags (schema: EM=2, BOLD=3, UNDER=16, OVER=17, STRIKE=18)
-        static const struct { u64 bit; const char* n; } kBits[] = {
-            {1ull << 2, "em"}, {1ull << 3, "bold"}, {1ull << 16, "under"}, {1ull << 17, "over"}, {1ull << 18, "strike"}};
-        JsonValue st, bits;
+      case Kind::styled: {  // a delta carrier (plan P2-08): its relative rows
+        JsonValue st;
         st.t = JsonValue::T::Obj;
-        bits.t = JsonValue::T::Arr;
-        const ArgVal* b = arg(n, ArgK::bits);
-        u64 v = b && b->tag == ArgTag::Num ? (u64)b->num : 0;
-        for (const auto& x : kBits)
-          if (v & x.bit) bits.arr.push_back(text(x.n));
-        put(st, "bits", std::move(bits));
+        for (const ArgVal& x : n.args) {
+          JsonValue v;
+          if (x.key == ArgK::weight && x.tag == ArgTag::Num) v.t = JsonValue::T::Num, v.num = x.num;
+          else if (x.key == ArgK::italic && x.tag == ArgTag::Bool) v.t = JsonValue::T::Bool, v.b = x.num != 0;
+          else if (x.key == ArgK::decoration && x.tag == ArgTag::Num) {
+            v.t = JsonValue::T::Arr;
+            const u64 f = (u64)x.num;
+            if (f & DECORATION_UNDER) v.arr.push_back(text("under"));
+            if (f & DECORATION_OVER) v.arr.push_back(text("over"));
+            if (f & DECORATION_STRIKE) v.arr.push_back(text("strike"));
+          } else if (x.key == ArgK::fontRole && x.tag == ArgTag::Str) v = text(str(x));
+          else if (x.key == ArgK::baseline && x.tag == ArgTag::Str) v = text(str(x));
+          else if (x.key == ArgK::size && x.tag == ArgTag::Str) {  // em and % only: a template is relative
+            Styling s;
+            applyStyleArg(s, x, [](u32) { return StrRef(0); }, [&](u32 r) { return raw.strings[r]; });
+            if (s.sizePx > 0 || s.sizeMul == 1.0f) continue;
+            v.t = JsonValue::T::Num, v.num = s.sizeMul;
+          } else {
+            continue;  // a template's styled carries relative rows only (absolute ones: P3-01 rules)
+          }
+          put(st, x.key == ArgK::fontRole ? "role" : argName(x.key), std::move(v));
+        }
         put(it, "styled", std::move(st));
         JsonValue k;
         if (!kids(n, k, depth)) return false;

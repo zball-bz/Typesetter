@@ -3,10 +3,10 @@ doc @[0,313) [base]
     text @[2,11) [base] str="Footnotes"
   para @[19,211) [base]
     text @[19,42) [base] str="A claim in running text"
-    ref @[42,106) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[42,106) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[42,106) [SUPx0.70] str="1"
     text @[107,152) [base] str=" continues after the marker, and a second note" raw=0:0,1:0
-    ref @[152,174) [SUPx0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
+    ref @[152,174) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" url="#tsr-fn-2"
       text @[152,174) [SUPx0.70] str="2"
     text @[175,211) [base] str=" follows later in the same paragraph." raw=0:0,1:0
   heading @[213,225) [base] level=2 label="h-1.1"

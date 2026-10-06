@@ -191,3 +191,9 @@ native token provider links only json+tsm, so goldens are unaffected.
   contract is documented, the audit is not yet armed), Sarasa as the
   default code stack (user call), tsm's own grammar, line-number column
   in the static-export path.
+
+- (plan P2-08) Comment-aware hanging reads the run's style: a comment token's
+  style is italic with `code.hang: content` (foldTokens), and an authored run
+  asks for it with `style({code: {hang: 'content'}}, …)` — emit no longer
+  compares a run's colour with `var(--tsr-tok-comment)`. Token runs carry
+  their class `tok-<tag>` (rendered from P3-18); the colour stays inline.

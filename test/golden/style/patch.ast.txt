@@ -1,4 +1,4 @@
-doc @[0,571)
+doc @[0,580)
   code-block @[0,67) js=" $.style.push({ font: '\"LXGW WenKai\", serif', lang: \"zh-TW\" }); "
   para @[69,190)
     text @[69,190) str="塊級作用域——這一段整體改用文楷與繁體語言標記，破折號與省略號……照常走定義寬。"
@@ -20,8 +20,8 @@ doc @[0,571)
     styled @[399,407) marker=*
       text @[400,406) str="粗体"
     text @[408,429) str=" 一起参与断行。"
-  region @[431,570) name="aside"
-    para @[484,562)
-      row @[484,562)
-        cell @[484,562)
-          text @[484,562) str="區域級作用域：字體與語言一起換，內部照樣是普通標記。"
+  region @[431,579) name="aside"
+    para @[493,571)
+      row @[493,571)
+        cell @[493,571)
+          text @[493,571) str="區域級作用域：字體與語言一起換，內部照樣是普通標記。"

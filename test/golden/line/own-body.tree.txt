@@ -24,7 +24,7 @@ doc @[38,436) [base]
       text @[268,294) [base] str="and so does this paragraph"
   para @[298,391) [base]
     text @[298,316) [base] str="A note with blocks"
-    ref @[316,367) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[316,367) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[316,367) [SUPx0.70] str="1"
     text @[368,391) [base] str=" continues the sentence." raw=0:0,1:0
   quote @[393,436) [base]

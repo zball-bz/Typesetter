@@ -119,7 +119,9 @@ struct RuleData {};
 struct CodeRun {
   StrRef text = 0;
   StyleId style = 0;
-  bool isComment = false;  // comment-aware hanging (verbatim-design §4)
+  bool hang = false;  // code.hang content: comment-aware hanging (verbatim-design §4),
+                      // read from the run's style (plan P2-08)
+  StrRef cls = 0;     // tok-<tag> for a token run (rendered from P3-18)
 };
 struct GridData {  // a code block (verbatim-design.md)
   StyleId codeStyle = 0;

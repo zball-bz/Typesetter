@@ -3,10 +3,10 @@ doc @[0,227) [base]
     text @[2,20) [base] str="Explicit placement"
   para @[22,119) [base]
     text @[22,37) [base] str="First note here"
-    ref @[37,44) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[37,44) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[37,44) [SUPx0.70] str="1"
     text @[45,56) [base] str=" and another" raw=0:0,1:0
-    ref @[56,89) [SUPx0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
+    ref @[56,89) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" url="#tsr-fn-2"
       text @[56,89) [SUPx0.70] str="2"
     text @[90,119) [base] str=" before the section is placed." raw=0:0,1:0
   group @[121,129) [base] role="notes"

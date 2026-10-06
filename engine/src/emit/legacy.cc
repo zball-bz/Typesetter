@@ -42,7 +42,18 @@ struct LegacyInline final : InlineSink {
   // their count when the last source space was set: a space collapses only
   // into a space no object (which this oracle does not model) separates
   u64 atoms = 0, atomsAtSpace = ~0ull;
+  // attach (plan P2-08), as emit.cc reads it
   void inlineWalk(const ContentNode* n, Flow& u, ICtx ctx) {
+    const ArgVal* at = attr(n, ArgK::attach);
+    if (!at || at->tag != ArgTag::Str) return walkOne(n, u, ctx);
+    const size_t before = u.legacy.size();
+    walkOne(n, u, ctx);
+    if (u.legacy.size() == before) return;
+    const std::string_view a = strs.get(at->ref);
+    if (a != "next" && before > 0) u.legacy[before - 1].breakPenalty = BREAK_INF;
+    if (a != "prev") u.legacy.back().breakPenalty = BREAK_INF;
+  }
+  void walkOne(const ContentNode* n, Flow& u, ICtx ctx) {
     if (n->kind != Kind::text && n->kind != Kind::seq && n->kind != Kind::styled && n->kind != Kind::link &&
         n->kind != Kind::comment)
       atoms++;
@@ -84,13 +95,11 @@ struct LegacyInline final : InlineSink {
         for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);
         if (u.legacy.size() > before) {
           // labelled ref = inline anchor (footnote marker, notes-design.md
-          // §1); a superscript marker also glues to what precedes it —
-          // never a line start, like a closing punct
+          // §1); the marker glues to what precedes it through its attach
+          // (inlineWalk), never a line start, like a closing punct
           for (const ArgVal& a : n->args)
             if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref)
               u.legacy[before].anchorId = a.ref;
-          if (styles.get(u.legacy[before].style).baseline == BASELINE_SUPER && before > 0)
-            u.legacy[before - 1].breakPenalty = BREAK_INF;
         }
         return;
       }

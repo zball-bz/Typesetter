@@ -199,3 +199,7 @@ narrowed units get `left += occlW` when the float is on the left.
 - The layout replay keeps the historical justification formula for full
   lines (`cfg.widthPx − indent`, unfloored) and uses `suToPx(narrow)` only
   for narrowed lines — zero golden churn on non-figure fixtures.
+
+- (plan P2-08) The figure constructor tags its paragraphs `role: caption`
+  (the layout still finds captions by figure depth until P3-01 reads the
+  role).

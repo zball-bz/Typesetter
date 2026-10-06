@@ -3,7 +3,7 @@
 // Works in Node (temp-file import) and in browsers/workers (blob URL import).
 import { KIND } from '../shared/ops.gen.mjs';
 import { OpBuf, isNode } from '../shared/opbuf.mjs';
-import { createStd, styleBits, styleValues, NULLARY, CONTENT } from '../shared/stdlib.mjs';
+import { createStd, styleAttrs, NULLARY, CONTENT } from '../shared/stdlib.mjs';
 import { decodeProgram, Lowering, STUB } from '../shared/lower.mjs';
 import { BFLAG, LPIECE, PROGRAM_ABI } from '../shared/lower.gen.mjs';
 
@@ -87,7 +87,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     // the resolver numbers cited keys and lists them in citation order
     // (cited: 'cited-then-all', or all: true, then every other row)
     bibliography: (src, o, s, e) => {
-      bibRequests.push({ src: String(src), s, e });
+      bibRequests.push({ src: String(src), s, e, stack: styleStack.slice() });
       const cited = o.cited ?? (o.all ? 'cited-then-all' : undefined);
       if (cited !== undefined && cited !== 'cited' && cited !== 'cited-then-all')
         throw new TypeError("bibliography: cited is 'cited' or 'cited-then-all'");
@@ -113,6 +113,13 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
         continue;
       }
       const fmt = S.api.formatOf('bib') ?? formatEntryDefault;
+      // the entries take the style stack the request was made under (plan
+      // P2-08), not the one the program ended with
+      const replay = req.stack.length > 0 || styleStack.length > 0;
+      if (replay) {
+        ob.stylePopTo(0);
+        for (const d of req.stack) ob.stylePush(d);
+      }
       for (const e of entries) {
         if (!e || !e.id) continue;
         let inline;
@@ -124,6 +131,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
         }
         ob.emitNode(ob.makeNode(KIND.entry, { role: 'bibentry', key: String(e.id) }, kidsOf([inline])));
       }
+      if (replay) ob.stylePopTo(0);
     }
   };
   const dollar = {
@@ -151,8 +159,10 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
       // a patch object only (plan P2-01: the raw bit-number form is gone)
       push(x) {
         if (x === null || typeof x !== 'object') throw new TypeError('$.style.push takes a style patch object');
-        styleStack.push(x);
-        ob.stylePush(styleBits(x) || 0, styleValues(x));
+        // a style change on the wire is a delta node (plan P2-08)
+        const d = ob.makeNode(KIND.styled, styleAttrs(x, (k) => ob.diag(1, 'ctor-arg', `$.style.push: unknown style key ${k}`, here.s, here.e)), []);
+        styleStack.push(d);
+        ob.stylePush(d);
       },
       get height() { return styleStack.length; },
       // a pop above the current height is clamped here and diagnosed by the

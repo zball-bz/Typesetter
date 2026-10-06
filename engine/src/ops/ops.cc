@@ -115,6 +115,14 @@ static const AttrSpec* findSpec(u16 kind, u16 key) {
 // true = keep (possibly rewritten); `why` set = report a warning
 static bool validateArg(ArgVal& a, const AttrSpec& sp, const RawOps& r, std::string& why) {
   if (a.tag == ArgTag::Null) return false;  // null means absent
+  if (sp.dom == Dom::Delta) {  // (plan P2-08) a style change: a childless styled node
+    if (a.tag != ArgTag::Node || a.ref >= r.nodes.size() || r.nodes[a.ref].kind != Kind::styled ||
+        !r.nodes[a.ref].children.empty()) {
+      why = "expected a style change (a childless styled node)";
+      return false;
+    }
+    return true;
+  }
   if (a.tag == ArgTag::Node) { why = "node-valued arguments are not accepted"; return false; }
   auto str = [&]() -> std::string_view { return r.strings[a.ref]; };
   auto wantStr = [&](bool ok, const char* what) {
@@ -168,6 +176,8 @@ static bool validateArg(ArgVal& a, const AttrSpec& sp, const RawOps& r, std::str
     case Dom::Font: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Font, str()), "font family list");
     case Dom::Text:
       return wantStr(a.tag == ArgTag::Str && matchDomain((TextDomain)sp.textDom, str()), "value of its domain");
+    case Dom::Delta:  // checked above
+      return true;
     case Dom::Ext: {  // EXT: a scalar under a validated name (plan P2-05)
       if (!matchDomain(TextDomain::Extname, r.strings[a.name])) {
         why = "EXT name is not [a-z][a-z0-9-]{0,31}";
@@ -312,40 +322,23 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
       case Op::EMIT: {
         u64 id = rd.varint();
         if (rd.fail || id >= r.nodes.size()) { bad("EMIT bad id"); return; }
-        r.sched.push_back({Op::EMIT, (u32)id, 0});
+        r.sched.push_back({Op::EMIT, (u32)id});
         break;
       }
-      case Op::STYLE_PUSH: {
-        SchedItem it;
-        it.op = Op::STYLE_PUSH;
-        it.bits = rd.varint();
-        u8 npatch = rd.byte();
-        if (rd.fail || npatch > 16) { bad("STYLE_PUSH bad patch count"); return; }
-        for (u8 i = 0; i < npatch; i++) {
-          ArgVal a;
-          const char* err = readArg(rd, r, a, /*allowNode=*/false);
-          if (err) { bad(err); return; }
-          const AttrSpec* sp = findSpec((u16)Kind::styled, (u16)a.key);
-          if (sp && sp->since > ver) sp = nullptr;
-          std::string why;
-          if (!sp) why = "STYLE_PUSH patch key is not a style attribute";
-          else if (validateArg(a, *sp, r, why)) it.patch.push_back(a);
-          if (!why.empty()) diags.add(Sev::Warning, "ops-arg", {}, "styled patch: " + why);
+      case Op::STYLE_PUSH: {  // (plan P2-08) a delta node: a childless styled node
+        u64 id = rd.varint();
+        if (rd.fail || id >= r.nodes.size()) { bad("STYLE_PUSH bad id"); return; }
+        if (r.nodes[id].kind != Kind::styled || !r.nodes[id].children.empty()) {
+          bad("STYLE_PUSH: not a style change (a childless styled node)");
+          return;
         }
-        {  // the bit delta is a styled.bits flag set
-          const AttrSpec* sp = findSpec((u16)Kind::styled, (u16)ArgK::bits);
-          ArgVal b{ArgK::bits, ArgTag::Num, (double)it.bits, 0};
-          std::string why;
-          if (sp && validateArg(b, *sp, r, why)) it.bits = (u64)b.num;
-          if (!why.empty()) diags.add(Sev::Warning, "ops-arg", {}, "STYLE_PUSH bits: " + why);
-        }
-        r.sched.push_back(std::move(it));
+        r.sched.push_back({Op::STYLE_PUSH, (u32)id});
         break;
       }
       case Op::STYLE_POP_TO: {
         u64 h = rd.varint();
         if (rd.fail) { bad("STYLE_POP_TO truncated"); return; }
-        r.sched.push_back({Op::STYLE_POP_TO, (u32)h, 0});
+        r.sched.push_back({Op::STYLE_POP_TO, (u32)h});
         break;
       }
       case Op::SPAN: {
@@ -500,18 +493,8 @@ std::string dumpOps(const RawOps& r) {
   }
   for (const SchedItem& s : r.sched) {
     if (s.op == Op::EMIT) appendf(out, "EMIT %%%u\n", s.a);
-    else if (s.op == Op::STYLE_PUSH) {
-      appendf(out, "STYLE_PUSH bits=0x%llx", (unsigned long long)s.bits);
-      for (const ArgVal& a : s.patch) {
-        appendf(out, " %s=", argName(a.key));
-        if (a.tag == ArgTag::Str) {
-          out += "\"";
-          appendEscaped(out, r.strings[a.ref]);
-          out += "\"";
-        } else appendf(out, "%g", a.num);
-      }
-      out += "\n";
-    } else appendf(out, "STYLE_POP_TO %u\n", s.a);
+    else if (s.op == Op::STYLE_PUSH) appendf(out, "STYLE_PUSH %%%u\n", s.a);
+    else appendf(out, "STYLE_POP_TO %u\n", s.a);
   }
   return out;
 }

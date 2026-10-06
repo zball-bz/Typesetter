@@ -8,25 +8,32 @@ contract, design T2/T4):
 
 | row | field | type | patched by | dump | typeset CSS |
 |---|---|---|---|---|---|
-| `text.weight` | `weight` | u16 (0 = 400) | (P2-08: the legacy `bits` flag BOLD = 700); sugar `bold` | `BOLD` (700), `W<n>` | class `tsr-b` (700) |
-| `text.italic` | `italic` | bool | legacy flag EM; sugar `italic` | `EM` | class `tsr-i` |
-| `text.decoration` | `decoration` | flags UNDER/OVER/STRIKE (ORed) | legacy flags; sugar `underline overline strike` | `U` `O` `S` | `text-decoration` |
-| `text.fontRole` | `fontRole` | enum body/mono (0 = inherited: body) | engine (inline code, code blocks, list markers: `mono`) | `CODE` (mono) | class `tsr-code` (mono) |
-| `text.baseline` | `baseline` | enum super/sub | engine (footnote markers) | `SUP` `SUB` | class `tsr-sup` |
-| `text.sizeMul` | `sizeMul` | size multiplier | composed by the engine (headings, code, sup) | `x%.2f` | `font-size` (with `sizePx`, through `emPx`) |
+| `text.weight` | `weight` | u16 (0 = 400) | `weight` (100–900); sugar `bold` (700; `bold: false` is 400) | `BOLD` (700), `W<n>` | class `tsr-b` (700) |
+| `text.italic` | `italic` | bool | `italic` | `EM` | class `tsr-i` |
+| `text.decoration` | `decoration` | flags UNDER/OVER/STRIKE (ORed) | `decoration` (names); sugar `underline overline strike` | `U` `O` `S` | `text-decoration` |
+| `text.fontRole` | `fontRole` | enum body/mono (0 = inherited: body) | `fontRole`; the engine for inline code, code blocks, list markers | `CODE` (mono) | class `tsr-code` (mono) |
+| `text.baseline` | `baseline` | enum super/sub | `baseline`; footnote markers | `SUP` `SUB` | class `tsr-sup` |
+| `code.hang` | `hang` | enum indent/content | `code: {hang}`; comment tokens (content) | `hang=` | (layout: a code line's continuation hangs at the run's content) |
+| `text.sizeMul` | `sizeMul` | size multiplier | `size` (`'0.7em'`, `'70%'` multiply; `'22px'` sets `sizePx` and resets it — D-T01) and the engine (headings, code, markers) | `x%.2f` | `font-size` (with `sizePx`, through `emPx`) |
 | `text.font` | `fontFamily` | string | `font` (domain `font`) | `font="…"` | `font-family` (escaped) |
 | `text.lang` | `lang` | string | `lang` (domain `lang`) | `lang=` | the `lang` attribute |
 | `text.color` | `color` | string | `color` (domain `color`) | `color=` | `color` |
-| `text.size` | `sizePx` | px | `sizePx` (domain `num:1:2000`) | `size=%gpx` | `font-size` |
+| `text.size` | `sizePx` | px | `sizePx` (domain `num:1:2000`; absolute: resets the multiplier, D-T01) | `size=%gpx` | `font-size` |
 | `engine.script` | `script` | internal | T5's classifier only (a CJK run; never on the wire) | `CJK` | class `tsr-cjk`; selects the face |
 
-As built (plan P2-08, structural step): the class bits retired from `Styling`.
-Engine code composes a `StyleDelta` (weight, italic, decorations, font role,
-baseline, script, size multiplier) where it used to OR bits in; links are no
-style (a link is a run of its own); the face is chosen from the font role and
-the script. Until the wire change of the same step, the v6–10 `styled.bits`
-flags decode onto these rows (`applyLegacyBits`, generated from each row's
-`legacy` map), and the dumps keep the bits' spellings.
+As built (plan P2-08): the class bits retired from `Styling`. Engine code
+composes a `StyleDelta` (weight, italic, decorations, font role, baseline,
+script, size multiplier) where it used to OR bits in; links are no style (a
+link is a run of its own); the face is chosen from the font role and the
+script; the dumps keep the bits' spellings. On the wire (ops 11, the one
+MIN_COMPAT bump of P2) every style change is a **delta node** — a childless
+`styled` node whose attributes are the rows above (`styled.bits` retired):
+a `styled` node's own attributes, the universal `style` attribute of any
+node (its own change, applied after its parent's), and `STYLE_PUSH <delta>`
+(the schedule stack). The JS side builds them from one patch form
+(`styleAttrs`: the property keys, `code: {hang}`, the boolean sugar), in
+`$.style.push`, `style(patch, …)`, `strong`/`em`, a constructor's `style:`
+option and a region header's `style: {…}`.
 
 `tools/gen-schema.mjs` generates from these rows:
 
@@ -37,9 +44,10 @@ flags decode onto these rows (`applyLegacyBits`, generated from each row's
   dump keeps its own flag tokens);
 - `engine/src/render/style_css.gen.h`: `runCss`, the typeset serializer's run
   declarations in `cssOrder`;
-- `runtime/src/shared/props.gen.mjs`: `STYLE_KEYS` (the `$.style.push` /
-  `#style` / region keys → attributes) and `STYLE_SUGAR` (boolean keys →
-  flag bits), read by the executor instead of three hand-kept key lists.
+- `runtime/src/shared/props.gen.mjs`: `STYLE_KEYS` (the patch keys →
+  attributes), `STYLE_SUGAR` (boolean keys → attribute and value) and
+  `STYLE_FLAGS` (a flag row's names), read by the executor instead of three
+  hand-kept key lists.
 
 Adding a run property is one row plus its consumer (measurement for a metric
 property, the serializer for a paint property); nothing else is spelled out by

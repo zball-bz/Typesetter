@@ -15,5 +15,5 @@
 [399,400) attribute "*"
 [400,406) attribute "粗体"
 [406,407) attribute "*"
-[431,483) function "#!aside(font: '\"LXGW WenKai\", serif', lang: \"zh-TW\")"
-[563,570) function "#aside!"
+[431,492) function "#!aside(style: {font: '\"LXGW WenKai\", serif', lang: \"zh-TW\"})"
+[572,579) function "#aside!"

@@ -17,7 +17,7 @@ doc @[0,307) [base]
     text @[145,146) [base] str="."
   group @[148,237) [base] role="figure" label="fig-a"
     image @[148,237) [base] src="a.png" alt="a figure" w=120 h=60
-    para @[148,237) [base]
+    para @[148,237) [base] role="caption"
       text @[148,237) [BOLD] str="圖 1："
       text @[219,228) [base] str="A figure."
   table @[239,285) [base] cols=2 label="tab-a"

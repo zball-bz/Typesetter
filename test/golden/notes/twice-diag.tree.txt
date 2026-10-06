@@ -1,10 +1,10 @@
 doc @[0,71) [base]
   para @[0,51) [base]
     text @[0,7) [base] str="A note."
-    ref @[7,27) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
+    ref @[7,27) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[7,27) [SUPx0.70] str="1"
     text @[28,36) [base] str=" Another." raw=0:0,1:0
-    ref @[36,51) [SUPx0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
+    ref @[36,51) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" url="#tsr-fn-2"
       text @[36,51) [SUPx0.70] str="2"
   group @[53,61) [base] role="notes"
     rule @[53,61) [base]

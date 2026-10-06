@@ -5,17 +5,17 @@ doc @[0,351) [base]
     para @[18,73) [base]
       text @[43,65) [base] str="An aside with a label."
   group @[75,122) [base] role="figure" label="fig-x"
-    para @[75,122) [base]
+    para @[75,122) [base] role="caption"
       text @[75,122) [BOLD] str="图 1："
       text @[100,113) [base] str="First figure."
   group @[124,202) [base] role="figure"
-    para @[124,202) [base]
+    para @[124,202) [base] role="caption"
       text @[124,202) [BOLD] str="图 2："
       text @[149,193) [base] str="Second figure reuses the label: it loses it."
   mathblock @[204,220) [base] src="a = b" label="eq-1" name="(1)"
   mathblock @[222,238) [base] src="c = d"
   group @[240,311) [base] role="figure"
-    para @[240,311) [base]
+    para @[240,311) [base] role="caption"
       text @[240,311) [BOLD] str="图 3："
       text @[265,302) [base] str="A figure with a reserved label shape."
   para @[313,351) [base]

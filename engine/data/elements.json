@@ -3,7 +3,7 @@
     "Built-in element rows (plan P1-10; design T3 Element registry), written in the form a document or host will use to declare its own (P2-07).",
     "counters: flat or by-level automata. classes: what a node is (select), how it is numbered, labelled, referenced, titled and what is attached to it (sites); flows lift items into a collector; tables hold keyed rows.",
     "collectors: the #toc / #glossary / #notes / #bibliography presets — a query plus wrap / entry / empty templates; a keyed table's rows are the instances of the classes that name it (bibentry: the entry rows #bibliography emits), cited ones in citation order, then (cited-then-all, or a collect node's cited) every other.",
-    "Templates are generated, style-neutral content: strings and term/slot items concatenate into one text; node items build nodes (inline kinds take the site's style, block kinds style 0 unless style:site); styled items are deltas applied to everything inside, inserted content included.",
+    "Templates are generated, style-neutral content: strings and term/slot items concatenate into one text; node items build nodes (inline kinds take the site's style, block kinds style 0 unless style:site); styled items are deltas applied to everything inside, inserted content included ({weight, italic, decoration, role, baseline, size}: plan P2-08).",
     "Words come from the locale packs (engine/data/locale) through term items; docs/semantics-design.md has the full reference."
   ],
   "counters": {
@@ -46,7 +46,7 @@
           "where": "prepend",
           "at": "first-para",
           "template": [
-            { "styled": { "bits": ["bold"] }, "kids": [{ "slot": "supplement" }, { "slot": "number" }, { "term": "caption-sep" }] }
+            { "styled": { "weight": 700 }, "kids": [{ "slot": "supplement" }, { "slot": "number" }, { "term": "caption-sep" }] }
           ]
         }
       ],
@@ -73,8 +73,13 @@
         "marker-alias": { "prefix": "fnref-", "body": "number", "ref": [{ "term": "backref" }] },
         "marker": [
           {
-            "styled": { "bits": ["sup"], "size": 0.7 },
-            "kids": [{ "node": "ref", "args": { "target": { "slot": "alias" }, "label": { "slot": "marker-alias" } } }]
+            "styled": { "baseline": "super", "size": 0.7 },
+            "kids": [
+              {
+                "node": "ref",
+                "args": { "role": "fn-marker", "attach": "prev", "target": { "slot": "alias" }, "label": { "slot": "marker-alias" } }
+              }
+            ]
           }
         ]
       }
@@ -97,7 +102,7 @@
                   "node": "para",
                   "style": "site",
                   "kids": [
-                    { "styled": { "bits": ["bold"] }, "kids": [{ "slot": "title" }] },
+                    { "styled": { "weight": 700 }, "kids": [{ "slot": "title" }] },
                     { "when": "inline-body", "kids": [{ "term": "term-sep" }, { "slot": "inline-body" }] }
                   ]
                 },

@@ -279,7 +279,20 @@ struct HlInline final : InlineSink {
 
   // -- the walk ---------------------------------------------------------------
   // -- the walk: the flatten table (schema `inline` column, plan P1-13) -------
+  // attach (plan P2-08; design T4 Extent text.attach): no break between an
+  // inline extent and the item before it (prev) or after it (next) — a
+  // footnote marker glues to its word, never a line start
   void walk(const ContentNode* n, Flow& u, ICtx ctx) override {
+    const ArgVal* at = attr(n, ArgK::attach);
+    if (!at || at->tag != ArgTag::Str) return shape(n, u, ctx);
+    const size_t before = count(u);
+    shape(n, u, ctx);
+    if (count(u) == before) return;
+    const std::string_view a = strs.get(at->ref);
+    if (a != "next" && before > 0 && !(pend[before - 1] <= -kPenInf)) pend[before - 1] = kPenInf;
+    if (a != "prev") forbidLast();
+  }
+  void shape(const ContentNode* n, Flow& u, ICtx ctx) {
     switch (kKinds[(u16)n->kind].inl) {
       case InlineShape::Text:
         emitText(n, u, ctx);
@@ -355,8 +368,8 @@ struct HlInline final : InlineSink {
     for (const ContentNode* k : n->kids) walk(k, u, ctx);
     if (count(u) > before) {
       // labelled ref = inline anchor (footnote marker, notes-design.md
-      // §1); a superscript marker also glues to what precedes it —
-      // never a line start, like a closing punct
+      // §1); the marker glues to what precedes it through its attach
+      // (walk), never a line start, like a closing punct
       HList& h = B;
       HItem& first = h.items[before];
       const bool startsRun = before == 0 || h.items[before - 1].run != first.run;
@@ -366,8 +379,6 @@ struct HlInline final : InlineSink {
           h.cold[first.cold].anchor = a.ref;
           if (startsRun) h.runs[first.run].anchor = a.ref;  // the run's first item
         }
-      if (styles.get(runOf(before).face).baseline == BASELINE_SUPER && before > 0 && !(pend[before - 1] <= -kPenInf))
-        pend[before - 1] = kPenInf;
     }
   }
 
@@ -834,7 +845,9 @@ struct Emitter {
           for (const std::vector<TokenRun>& line : lines) {
             std::vector<CodeRun>& runs = g.lines.emplace_back();
             for (const TokenRun& r : line)
-              runs.push_back({strs.intern(r.text), compose(r.style, E.mono, (float)cfg.codeScale), r.comment});
+              runs.push_back({strs.intern(r.text), compose(r.style, E.mono, (float)cfg.codeScale),
+                              styles.get(r.style).hang == HANG_CONTENT,
+                              r.tag >= 0 ? strs.intern(std::string("tok-") + kTokenTags[r.tag]) : 0});
           }
         } else if (bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text) {
           std::string_view body = strs.get(bodyKids[0]->str);
@@ -847,14 +860,13 @@ struct Emitter {
             pos = eol + 1;
           }
         } else {
-          // authored structured lines mark a comment by its token colour
-          // (a run role replaces it, T4)
-          const StrRef commentColor = strs.intern("var(--tsr-tok-comment)");
+          // authored structured lines: a run hangs at its content when its
+          // style says code.hang content (plan P2-08; it was the comment colour)
           std::function<void(const ContentNode*, std::vector<CodeRun>&)> collect =
               [&](const ContentNode* k, std::vector<CodeRun>& out) {
                 if (k->kind == Kind::text) {
-                  bool cm = styles.get(k->style).color == commentColor;
-                  out.push_back({k->str, compose(k->style, E.mono, (float)cfg.codeScale), cm});
+                  out.push_back({k->str, compose(k->style, E.mono, (float)cfg.codeScale),
+                                 styles.get(k->style).hang == HANG_CONTENT});
                   return;
                 }
                 if (k->kind == Kind::comment) return;

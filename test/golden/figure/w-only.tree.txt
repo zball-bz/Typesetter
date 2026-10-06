@@ -3,6 +3,6 @@ doc @[0,262) [base]
     text @[0,106) [base] str="作者只声明宽度时，高度按图片的宽高比推出，宽度保持作者的值（缺陷 #24）。"
   group @[108,262) [base] role="figure" label="fig-w"
     image @[108,262) [base] src="/test/e2e/img/w40h20.png" alt="只给宽度" w=120
-    para @[108,262) [base]
+    para @[108,262) [base] role="caption"
       text @[108,262) [BOLD] str="图 1："
       text @[195,253) [base] str="宽 120px 的插图，高度来自拉取到的宽高比。"
