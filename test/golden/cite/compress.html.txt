@@ -5,19 +5,19 @@
 <div class="tsr-line" data-s="97" data-e="140" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:0.889px"><span class="tsr-r" data-s="97">et: </span><span class="tsr-r" data-s="101">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-s="101">1</a><span class="tsr-r" data-s="101">, p. 5]</span><span class="tsr-r" data-s="112">, and a group takes one too:</span></div>
 <div class="tsr-line" data-s="141" data-e="168" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="141">[</span><a class="tsr-r" href="#tsr-bib-liang83" data-s="141">2</a><span class="tsr-r" data-s="141">, </span><a class="tsr-r" href="#tsr-bib-knuth84" data-s="141">3</a><span class="tsr-r" data-s="141">, ch. 2]</span><span class="tsr-r" data-s="167">.</span></div>
 </div>
-<div class="tsr-para" data-role="bibliography" data-pid="1" data-s0="0" style="position:relative;height:369.609px">
+<div class="tsr-para" data-role="bibliography" data-pid="1" data-s0="170" style="position:relative;height:369.609px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-bib-kp81" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:14.4px"><span class="tsr-r">[1] Donald E. Knuth and Michael</span></div>
-<div class="tsr-line" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r">F. Plass. </span><span class="tsr-r tsr-i">Breaking Paragraphs into</span></div>
-<div class="tsr-line" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r tsr-i">Lines</span><span class="tsr-r">. Software: Practice and Experience</span></div>
-<div class="tsr-line" data-join="none" style="top:115.203px;left:0px;width:300px;word-spacing:8px"><span class="tsr-r">11(11), 1119-1184. 1981. </span><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">doi:10.1002</a></div>
-<div class="tsr-line" data-join="para" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">/spe.4380111102</a></div>
-<div class="tsr-line" id="tsr-bib-liang83" data-join="none" style="top:182.406px;left:0px;width:300px;word-spacing:11.2px"><span class="tsr-r">[2] Franklin Mark Liang. </span><span class="tsr-r tsr-i">Word Hy-</span></div>
-<div class="tsr-line" data-join="space" style="top:206.406px;left:0px;width:300px;word-spacing:10.667px"><span class="tsr-r tsr-i">phen-a-tion by Com-put-er</span><span class="tsr-r">. Stanford</span></div>
-<div class="tsr-line" data-join="none" style="top:230.406px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r">University, 1983. </span><a class="tsr-r" href="https://tug.org/docs/liang/">https://tug.org/docs</a></div>
-<div class="tsr-line" data-join="para" style="top:254.406px;left:0px;width:300px"><a class="tsr-r" href="https://tug.org/docs/liang/">/liang/</a></div>
-<div class="tsr-line" id="tsr-bib-knuth84" data-join="none" style="top:297.609px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r">[3] Donald E. Knuth. </span><span class="tsr-r tsr-i">The TeXbook</span><span class="tsr-r">. Com</span><span class="tsr-r" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-join="space" style="top:321.609px;left:0px;width:300px;word-spacing:1px"><span class="tsr-r">puters &amp; Typesetting A. Addison-Wesley,</span></div>
-<div class="tsr-line" style="top:345.609px;left:0px;width:300px"><span class="tsr-r">1984.</span></div>
+<div class="tsr-line" id="tsr-bib-kp81" data-s="0" data-e="46" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:14.4px"><span class="tsr-r" data-s="0">[1] Donald E. Knuth and Michael</span></div>
+<div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r" data-s="0">F. Plass. </span><span class="tsr-r tsr-i" data-s="0">Breaking Paragraphs into</span></div>
+<div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r tsr-i" data-s="0">Lines</span><span class="tsr-r" data-s="0">. Software: Practice and Experience</span></div>
+<div class="tsr-line" data-s="0" data-e="46" data-join="none" style="top:115.203px;left:0px;width:300px;word-spacing:8px"><span class="tsr-r" data-s="0">11(11), 1119-1184. 1981. </span><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102" data-s="0">doi:10.1002</a></div>
+<div class="tsr-line" data-s="0" data-e="46" data-join="para" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102" data-s="0">/spe.4380111102</a></div>
+<div class="tsr-line" id="tsr-bib-liang83" data-s="0" data-e="46" data-join="none" style="top:182.406px;left:0px;width:300px;word-spacing:11.2px"><span class="tsr-r" data-s="0">[2] Franklin Mark Liang. </span><span class="tsr-r tsr-i" data-s="0">Word Hy-</span></div>
+<div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:206.406px;left:0px;width:300px;word-spacing:10.667px"><span class="tsr-r tsr-i" data-s="0">phen-a-tion by Com-put-er</span><span class="tsr-r" data-s="0">. Stanford</span></div>
+<div class="tsr-line" data-s="0" data-e="46" data-join="none" style="top:230.406px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">University, 1983. </span><a class="tsr-r" href="https://tug.org/docs/liang/" data-s="0">https://tug.org/docs</a></div>
+<div class="tsr-line" data-s="0" data-e="46" data-join="para" style="top:254.406px;left:0px;width:300px"><a class="tsr-r" href="https://tug.org/docs/liang/" data-s="0">/liang/</a></div>
+<div class="tsr-line" id="tsr-bib-knuth84" data-s="0" data-e="46" data-join="none" style="top:297.609px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">[3] Donald E. Knuth. </span><span class="tsr-r tsr-i" data-s="0">The TeXbook</span><span class="tsr-r" data-s="0">. Com</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:321.609px;left:0px;width:300px;word-spacing:1px"><span class="tsr-r" data-s="0">puters &amp; Typesetting A. Addison-Wesley,</span></div>
+<div class="tsr-line" data-s="0" data-e="46" style="top:345.609px;left:0px;width:300px"><span class="tsr-r" data-s="0">1984.</span></div>
 </div>
 </div>

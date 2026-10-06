@@ -137,7 +137,12 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
           ob.diag(1, 'bib-load', `bibliography ${key}: entry ${en.id}: ${err?.message ?? err}`, s, e);
           inline = [std.text(`⚠ ${err?.message ?? err}`)];
         }
-        ob.emitNode(ob.makeNode(KIND.entry, { role: 'bibentry', key: String(en.id) }, kidsOf([inline])));
+        // (plan P5-02; P11 provenance) a row's text is the call's: it carries
+        // its span (its descendants take it), so its lines point at the
+        // #bibliography that made them
+        const row = ob.makeNode(KIND.entry, { role: 'bibentry', key: String(en.id) }, kidsOf([inline]));
+        ob.span(row, s, e);
+        ob.emitNode(row);
       }
       return node;
     },
