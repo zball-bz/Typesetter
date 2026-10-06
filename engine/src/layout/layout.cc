@@ -42,6 +42,7 @@ struct LineFill {
   double capacityPx = 0;   // their glue capacity (the shrink limit's base)
   bool anyCjkGap = false;
   bool endsHyphen = false;
+  u32 fills = 0;  // fil glue (plan P2-16)
   Su maxAsc = 0, maxDesc = 0;
   Span span{};
 };
@@ -57,6 +58,7 @@ LineFill fillLine(const HList& h, const LineItems& r, const MetricStore& metrics
     } else if (!(it.k == IK::Glue && it.cls == (u8)GC::InterChar)) {
       f.naturalPx += c.rawPx;
     }
+    if (it.k == IK::Glue && it.cls == (u8)GC::Fill) f.fills++;
     if (it.k == IK::Glue && (it.x > 0 || it.cls == (u8)GC::InterChar)) {
       f.totalWeight += it.x;
       f.capacityPx += suToPx(c.capSu);
@@ -187,8 +189,12 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     // a line without stretchable glue (all URL pieces / one unbreakable
     // token) cannot be justified — TeX's underfull box; it sets ragged
     // rather than pretending (real-world-report.md)
-    if (f.totalWeight <= 0 && !rigid && slackPx != 0) line.noGlue = true;
-    if (f.totalWeight > 0) {
+    // fil glue (plan P2-16: a fill) takes a slack line's whole slack, on any
+    // line; the finite glue keeps its width
+    const bool fil = f.fills > 0 && slackPx > 0;
+    if (fil) line.fillPx = slackPx / f.fills;
+    if (f.totalWeight <= 0 && !rigid && slackPx != 0 && !fil) line.noGlue = true;
+    if (f.totalWeight > 0 && !fil) {
       double d = slackPx / f.totalWeight;  // per unit weight (v2 §8)
       if (rigid && slackPx > 0) d = 0;
       // an Overfull line (a run wider than the measure, plan P0-12) is set

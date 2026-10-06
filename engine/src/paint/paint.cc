@@ -94,13 +94,15 @@ void lineRuns(const Fragment& l, const HList& h, std::vector<DLRun>& out) {
       continue;
     }
     const bool indentBox = it.k == IK::Box && r.syn == SynKind::Indent;
-    const bool spacer = it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace);
+    const bool fill = it.k == IK::Glue && it.cls == (u8)GC::Fill;  // (plan P2-16)
+    const bool spacer = it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace || fill);
     if (indentBox || spacer) {
       DLRun d;
       d.k = DLRun::K::Spacer;
-      d.syn = indentBox ? "indent" : "boundary";
+      d.syn = indentBox ? "indent" : fill ? "fill" : "boundary";
       d.widthPx = h.cold[it.cold].rawPx;
-      if (spacer) d.widthPx += l.wordDeltaPx * (double)it.x;
+      if (fill) d.widthPx += l.fillPx;
+      else if (spacer) d.widthPx += l.wordDeltaPx * (double)it.x;
       out.push_back(d);
       i++;
       continue;

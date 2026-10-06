@@ -39,7 +39,9 @@ enum class IK : u8 { Box, Glue, Penalty, Disc };
 // glue classes: a typed space or soft break; the gap between two CJK
 // characters (letter-spacing); the script-boundary space (CJK–Latin, CJK–
 // formula); a punctuation blank; the space between the parts of an object
-enum class GC : u8 { Word, InterChar, Autospace, Blank, ObjectSpace };
+// Fill (plan P2-16): fil glue — no width, no finite stretch; it takes its
+// line's slack (a fill kind: a site's ∎ pushed to the measure's end)
+enum class GC : u8 { Word, InterChar, Autospace, Blank, ObjectSpace, Fill };
 enum : u8 {
   IA_SourceSpace = 1,  // a typed space or soft break: copy reads ' '
   IA_Anchor = 2,       // the first item of an anchored scope (ColdRec::anchor)

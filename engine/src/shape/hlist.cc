@@ -26,6 +26,7 @@ const char* gcName(u8 gc) {
     case GC::Autospace: return "autospace";
     case GC::Blank: return "blank";
     case GC::ObjectSpace: return "objspace";
+    case GC::Fill: return "fill";
   }
   return "?";
 }

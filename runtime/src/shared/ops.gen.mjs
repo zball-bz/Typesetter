@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 12;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '7ff81f80';
+export const SCHEMA_HASH = '36115472';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -52,7 +52,8 @@ export const SINCE = Object.freeze({
     "33": 10,
     "34": 12,
     "35": 12,
-    "36": 12
+    "36": 12,
+    "37": 12
   },
   "attr": {
     "0": {},
@@ -502,6 +503,17 @@ export const SINCE = Object.freeze({
       "35": 9,
       "54": 11,
       "55": 11
+    },
+    "37": {
+      "0": 9,
+      "6": 9,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "54": 11,
+      "55": 11
     }
   }
 });
@@ -554,7 +566,8 @@ export const KIND = Object.freeze({
   "each": 33,
   "math": 34,
   "mathsrc": 35,
-  "equations": 36
+  "equations": 36,
+  "fill": 37
 });
 export const ARGK = Object.freeze({
   "label": 0,
@@ -1314,6 +1327,24 @@ export const SCHEMA = Object.freeze({
     "level": "block",
     "body": "blocks",
     "inline": "unsupported",
+    "attrs": {
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
+    },
+    "resolved": []
+  },
+  "fill": {
+    "id": 37,
+    "level": "inline",
+    "body": "none",
+    "inline": "fill",
     "attrs": {
       "label": "label",
       "role": "ident",

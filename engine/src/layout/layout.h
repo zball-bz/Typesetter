@@ -39,6 +39,7 @@ struct Fragment {
   bool endsWithHyphen = false;
   bool ragged = false;               // a line that is not justified (its stream's policy)
   bool noGlue = false;               // no stretchable glue (URL-only line): set ragged
+  double fillPx = 0;                 // each fill's share of the slack (plan P2-16)
   bool overfull = false;             // holds a run wider than the line (breaker's
                                      // rescue, plan P0-12): set at the shrink limit
   u32 codeLine = 0;                  // CodeRow: the logical line (GridData::lines)

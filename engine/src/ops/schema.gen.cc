@@ -457,6 +457,17 @@ const AttrSpec kA_equations[] = {
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {54, "style", Dom::Delta, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 0, false},
     {55, "attach", Dom::Enum, 0, 0, kM_equations_attach, nullptr, 3, false, false, 0, 11, 0, false}};
+const char* const kM_fill_attach[] = {"prev", "next", "both"};
+const AttrSpec kA_fill[] = {
+    {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 9, false},
+    {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {54, "style", Dom::Delta, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 0, false},
+    {55, "attach", Dom::Enum, 0, 0, kM_fill_attach, nullptr, 3, false, false, 0, 11, 0, false}};
 const std::uint16_t kS_margin[] = {6};
 const std::uint16_t kS_extra[] = {21};
 }  // namespace
@@ -498,7 +509,8 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"each", Level::Transparent, Body::Position, InlineShape::Container, 10, kA_each, 11},
     {"math", Level::Inline, Body::Data, InlineShape::Object, 12, kA_math, 10},
     {"mathsrc", Level::Trivia, Body::None, InlineShape::Skip, 12, kA_mathsrc, 10},
-    {"equations", Level::Block, Body::Blocks, InlineShape::Unsupported, 12, kA_equations, 9}};
+    {"equations", Level::Block, Body::Blocks, InlineShape::Unsupported, 12, kA_equations, 9},
+    {"fill", Level::Inline, Body::None, InlineShape::Fill, 12, kA_fill, 9}};
 
 const DeclInfo kDecls[DECL_COUNT] = {
     {nullptr, false, 0},

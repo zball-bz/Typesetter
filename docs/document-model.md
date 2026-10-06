@@ -62,6 +62,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `mathsrc` | trivia | `src` (one line of a formula, as written; its own span) | only under a formula | P2-15 |
 | `equations` | block | — ; kids: display formulas only (N6) | a multi-row display (D-S11; plan P2-16): its rows stand in its place until T6's layouter and T3's per-row numbering (P3-29) | P2-16 |
 | `raw` | inline | `html`, `w?`, `h?` | — | M6 |
+| `fill` | inline | — (`#fill`, nullary; plan P2-16) | fil glue: takes its line's slack (a site's ∎ at the measure's end, P3-03) | P2-16 |
 | `hardbreak` | inline | — (syntax reserved, not yet granted; the engine sets it as a forced line break, plan P1-13) | — | — |
 | `field` | inline | `name`, `of?` | — (the enclosing instance's slot, or `of`'s; P2-05/P2-07) | P2-05 |
 | `event` | trivia | `counter`, `set?`, `step?`, `add?`, `numbering?`, `supplement?` | — (a counter event, applied in place and dropped; P2-07) | P2-07 |

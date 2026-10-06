@@ -181,7 +181,8 @@ struct HlInline final : InlineSink {
     const bool alone = leadingBlank ||
                        (it.k == IK::Box && (k.rc == RealizeClass::BlankBearing ||
                                             k.rc == RealizeClass::Pinned || k.rc == RealizeClass::Object)) ||
-                       (it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace));
+                       (it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace ||
+                                              it.cls == (u8)GC::Fill));
     if (h.runs.empty() || alone || single || !sameRunKey(h.runs.back(), k)) {
       h.runs.push_back(k);
       single = alone;
@@ -311,6 +312,17 @@ struct HlInline final : InlineSink {
         // a forced break after what precedes it (none at the stream start)
         if (count(u) > 0) pend.back() = -kPenInf;
         return;
+      case InlineShape::Fill: {
+        // fil glue (plan P2-16): no width, no finite stretch, its line's slack
+        AdvanceSpec sp;
+        sp.k = AdvanceSpec::Fixed;
+        sp.str = E.spaceRef;
+        u32 i = push(u, IK::Glue, (u8)GC::Fill, 0,
+                     key(E.compose(n->style, ctx.add, ctx.mul), ctx.url, ctx.addFlags, RealizeClass::Plain), sp,
+                     n->span, 0.0f, 0.0f);
+        fixWidth(u, i, 0.0, 0, 0);
+        return;
+      }
       case InlineShape::Error:
         errorText(n, u, ctx);
         return;
@@ -1448,6 +1460,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
 //   Box Object                 formula part                  math = the part's box
 //   Glue Word                  typed space                   BF_SPACE; KernCtx → ctx fields
 //   Glue Autospace/ObjectSpace boundary / formula glue       BF_SPACE|BF_BOUND
+//   Glue Fill                  fil glue (fill, plan P2-16)    BF_SPACE|BF_FIL
 //   Glue Blank                 punctuation half              BF_SPACE|BF_PUNCT_SP[|BF_PUNCT_OPEN if owned by next]
 //   Disc                       hyphen point                  BF_HYPHEN; width = unbroken (junction kern),
 //                                                            breakWidth/rawPx/text = the pre box
@@ -1564,6 +1577,9 @@ void lowerHList(const HList& h, std::vector<Block>& out, std::vector<u32>& start
           case GC::ObjectSpace:
             b.flags = (u16)(BF_SPACE | BF_BOUND | ref);
             break;
+          case GC::Fill:
+            b.flags = (u16)(BF_SPACE | BF_FIL | ref);
+            break;
           case GC::Blank:
             b.flags = (u16)(BF_SPACE | BF_PUNCT_SP | ((it.attrs & IA_OwnedByNext) ? BF_PUNCT_OPEN : 0) | ref);
             break;
@@ -1671,6 +1687,7 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
                   b.math->desc);
         }
         else if (b.flags & BF_INDENT) appendf(out, "indent w=%dsu", b.width);
+        else if (b.flags & BF_FIL) out += "fill";
         else if (b.flags & BF_BOUND) appendf(out, "boundary w=%dsu stretch=%g", b.width, (double)b.stretchWeight);
         else if (b.flags & BF_PUNCT_SP) appendf(out, "punct-sp w=%dsu", b.width);
         else if (b.isPunctGlyph()) {

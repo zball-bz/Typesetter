@@ -84,7 +84,7 @@ for (const [n, k] of Object.entries(S.kinds))
     if (!(a in S.keys)) errors.push(`kinds.${n}.attrs.${a}: no such key`);
 // the shaper's flatten table (plan P1-13): what every kind becomes in an
 // inline stream — closed, so a new kind cannot be dropped silently
-const INLINES = ['text', 'container', 'code', 'object', 'break', 'error', 'skip', 'unsupported'];
+const INLINES = ['text', 'container', 'code', 'object', 'break', 'fill', 'error', 'skip', 'unsupported'];
 for (const [n, k] of Object.entries(S.kinds))
   if (!INLINES.includes(k.inline)) errors.push(`kinds.${n}.inline: one of ${INLINES.join(', ')}`);
 

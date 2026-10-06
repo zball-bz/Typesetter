@@ -88,6 +88,7 @@ inline void blocksToItems(const std::vector<BreakBlock>& blocks, std::vector<BIt
       g.block = bi;
       g.w = b.width;
       g.stretch = g.shrink = b.spaceWidth;
+      if (b.flags & BF_FIL) g.order = 1;  // fill (plan P2-16)
       out.push_back(g);
       continue;
     }

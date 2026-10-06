@@ -170,6 +170,10 @@ struct LegacyInline final : InlineSink {
       }
       case Kind::comment:
         return;
+      case Kind::fill:  // fil glue (plan P2-16), as emit lowers it
+        pushSynthetic(u, compose(n->style, ctx.add, ctx.mul), ctx.url, n->span, 0.0,
+                      (u16)(BF_SPACE | BF_FIL | ctx.addFlags), 0.0f, 0.0f, 0.0);
+        return;
       case Kind::group: {
         // inline-embedded labeled group (e.g. a term spliced mid-paragraph):
         // the containing unit carries the anchor so refs still land

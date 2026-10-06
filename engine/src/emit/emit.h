@@ -28,6 +28,7 @@ enum : u16 {
   BF_PAIR = 256,       // ——/…… two-char block: no internal letter-spacing
   BF_REF = 512,        // resolver-synthesized run (rendered data-syn="ref";
                        //   skipped by the copy rebuild, document-model §9.3)
+  BF_FIL = 1024,       // fil glue (plan P2-16: fill): takes the line's slack
 };
 
 struct LinebreakBlock {

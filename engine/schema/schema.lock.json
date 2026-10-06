@@ -189,6 +189,10 @@
   "equations": [
    36,
    12
+  ],
+  "fill": [
+   37,
+   12
   ]
  },
  "keys": {
@@ -627,7 +631,16 @@
   "equations.class": 9,
   "equations.ext": 9,
   "equations.style": 11,
-  "equations.attach": 11
+  "equations.attach": 11,
+  "fill.label": 9,
+  "fill.role": 9,
+  "fill.slot": 9,
+  "fill.syn": 9,
+  "fill.copy": 9,
+  "fill.class": 9,
+  "fill.ext": 9,
+  "fill.style": 11,
+  "fill.attach": 11
  },
  "decls": {
   "element": [

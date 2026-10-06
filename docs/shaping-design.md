@@ -73,6 +73,7 @@ instances that say how their boxes paint, and side records.
 | Glue Autospace | CJK–Latin and CJK–formula boundary space | weight 1 |
 | Glue Blank | a punctuation glyph's half em (`IA_OwnedByNext` for an opening glyph's leading half) | weight 0 |
 | Glue ObjectSpace | the space between two formula parts | weight 0 |
+| Glue Fill | a `fill` (plan P2-16): fil glue — no width, no finite stretch; a line holding one is fil for the breaker, and layout gives it the line's whole slack (on any line, the last too); painted as a spacer (`data-syn="fill"`) | weight 0 |
 | Penalty | a numeric break penalty (`kPenInf` forbids) | |
 | Disc | a hyphenation point: its pre box (`"-"`) in `side`, the junction KernCtx in `DiscRec::spec`, the unbroken width = the junction kern | |
 

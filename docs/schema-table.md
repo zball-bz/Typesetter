@@ -42,6 +42,7 @@ The kind table of document-model §2.1, generated from `engine/schema/schema.jso
 | 34 | `math` | inline | data | object | `display`: bool; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `math({options}, …)` |
 | 35 | `mathsrc` | trivia | none | skip | `src`: str; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `mathsrc(src, {options}, …)` (sealed) |
 | 36 | `equations` | block | blocks | unsupported | `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `equations({options}, …)` |
+| 37 | `fill` | inline | none | fill | `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `fill({options}, …)` (nullary) |
 
 Derived constructors (`stdlib.ctors`): `strong({options}, …)`, `em({options}, …)`, `style({options}, …)`, `figure(body, {options}, …)`, `toc({options}, …)` (nullary), `glossary({options}, …)` (nullary), `notes({options}, …)` (nullary), `bibliography(src, {options}, …)`, `counterUpdate(counter, {options}, …)`, `node(kind, {options}, …)` (sealed). Std functions: `val`, `m`, `plain`.
 
