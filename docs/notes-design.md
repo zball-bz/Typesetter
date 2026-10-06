@@ -94,6 +94,14 @@ selects the glyph set at emit time; the counter is unchanged.
 - Highlighting: `footnote` token in tree-sitter-tsm (`@attribute`).
 - Print: notes currently print as endnotes (the section is ordinary flow);
   bottom-of-sheet inserts remain as designed above.
+- Hover popup (as built, plan P3-06): the shell's `refPreview` behaviour
+  (architecture §4.2). The footnote row declares `preview: "block"`, so the
+  RenderResult's anchors table marks `fn-n` (not the marker's `fnref-n`)
+  as previewing; a link to it — the marker or an `@fn-n` reference — shows
+  the engine's fragment of the note (`tsr2_render_fragment`: the item's
+  semantic HTML with its markup, no ids, no `↩`). The popup no longer
+  scrapes the typeset lines, so hyphen glyphs and line joins (spaces
+  between CJK lines) never reach it.
 
 As built (plan P2-08): the marker is `ref{role: fn-marker, attach: prev}` in
 a super-baseline ×0.7 delta (the footnote row's marker template); `attach:

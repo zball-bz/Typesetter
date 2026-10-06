@@ -20,6 +20,8 @@ struct Sem {
   const Registry* reg;     // the classes' semantic elements (plan P2-05)
   const Cascade* cascade;  // document envs (plan P3-01)
   std::string topEnv;      // the top-level block's env mark ("" = none)
+  // a preview (renderSemanticFragment): references it leaves out
+  const std::function<bool(StrRef)>* backlink = nullptr;
 
   const ArgVal* arg(const ContentNode* n, ArgK k) {
     for (const ArgVal& a : n->args)
@@ -179,6 +181,7 @@ struct Sem {
         return;
       case Kind::link:
       case Kind::ref: {
+        if (backlink && n->anchorTo && (*backlink)(n->anchorTo)) return;
         // its href: a resolved target's anchor (AnchorNamer, plan P3-04),
         // else a link's URL
         const std::string href = n->anchorTo ? AnchorNamer::href(strs.get(n->anchorTo)) : std::string(argS(n, ArgK::url));
@@ -577,6 +580,35 @@ std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& 
     }
   }
   out += "</div>\n";
+  return out;
+}
+
+std::string renderSemanticFragment(const ContentTree& tree, Interner& strs, StyleTable& styles,
+                                   const ResourceTable* rt, const Registry* reg, const Cascade* cascade,
+                                   std::string_view label, const std::function<bool(StrRef)>& backlink) {
+  std::string out;
+  if (!tree.root || label.empty()) return out;
+  Sem s{strs, styles, out, rt, reg, cascade, std::string()};
+  s.backlink = &backlink;
+  // the labelled node, and the item it begins (document order, first wins)
+  const ContentNode* hit = nullptr;
+  const ContentNode* item = nullptr;
+  auto find = [&](auto&& self, const ContentNode* n, const ContentNode* parent) -> bool {
+    if (s.argS(n, ArgK::label) == label) {
+      hit = n;
+      if (parent && parent->kind == Kind::item && !parent->kids.empty() && parent->kids[0] == n) item = parent;
+      return true;
+    }
+    for (const ContentNode* k : n->kids)
+      if (self(self, k, n)) return true;
+    return false;
+  };
+  find(find, tree.root, nullptr);
+  if (!hit) return out;
+  if (item)
+    for (const ContentNode* b : item->kids) s.block(b, -1);
+  else
+    s.block(hit, -1);
   return out;
 }
 

@@ -307,6 +307,8 @@ struct Loader {
     if (const JsonValue* x = member(v, "display")) c.display = x->b;
     if (const JsonValue* x = member(v, "refers-to"))
       c.refersTo = str(x) == "enclosing" ? ElementClass::RefersTo::Enclosing : ElementClass::RefersTo::Self;
+    if (const JsonValue* x = member(v, "preview"))
+      c.preview = str(x) == "block" ? ElementClass::Preview::Block : ElementClass::Preview::None;
     if (!alias(member(v, "alias"), c.alias)) return false;
     if (const JsonValue* x = member(v, "sites")) {
       c.sites.clear();

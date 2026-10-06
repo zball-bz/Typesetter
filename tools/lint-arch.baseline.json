@@ -1,4 +1,1 @@
-{
- "shell-dom-scrape runtime/src/main/shell.mjs for (const a of clone.querySelectorAll('a[href^=\"#tsr-fnref-\"]')) a.remove();": 1,
- "shell-dom-scrape runtime/src/main/shell.mjs const markerAt = (t) => t?.closest?.('a.tsr-sup[href^=\"#tsr-fn-\"]');": 1
-}
+{}

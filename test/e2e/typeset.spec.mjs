@@ -866,3 +866,152 @@ test('commit: a result naming a key the shell dropped is asked for again', async
   const held = await page.evaluate(() => window.__tsr.held());
   expect(held.length).toBe(3);
 });
+
+// ---- shell core + behaviours (plan P3-06) ----------------------------------
+
+const POP = '#out [data-tsr-shell="overlay"] .tsr-refpop';
+const MARKER1 = '#out .tsr-doc a[href="#tsr-fn-1"][id]';
+
+test('refPreview: a note marker shows the engine fragment of its body', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const src = 'A claim^[The note body carries *markup* and `code`.] continues.\n\nThe text cites the note back as @fn-1.';
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }), src);
+  await page.hover(MARKER1);
+  const pop = page.locator(POP);
+  await expect(pop).toBeVisible();
+  const html = await pop.innerHTML();
+  expect(html).toContain('<strong>markup</strong>');
+  expect(html).toContain('<code>code</code>');
+  expect(html).not.toContain(' id=');   // ids suppressed
+  expect(html).not.toContain('↩');     // the backlink left out
+  expect(await pop.getAttribute('data-tsr-preview')).toBe('footnote');
+  // outside the commit root
+  expect(await page.evaluate(() => !!document.querySelector('#out .tsr-doc .tsr-refpop'))).toBe(false);
+  await page.mouse.move(0, 0);
+  await expect(pop).toHaveCount(0);
+  // a reference to the note previews it too; the note's own backlink does not
+  await page.hover('#out .tsr-doc a[href="#tsr-fn-1"]:not([id])');
+  await expect(pop).toHaveText('The note body carries markup and code.');
+  await page.mouse.move(0, 0);
+  await page.hover('#out .tsr-doc a[href="#tsr-fnref-1"]');
+  await page.waitForTimeout(150);
+  await expect(pop).toHaveCount(0);
+});
+
+test('refPreview: CJK and hyphenated notes read as written', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const zh = '这是一个很长的中文脚注，用来检查弹窗里的文字在排版视图中跨行时不会被插入多余的空格，也不会丢失任何标点符号或者文字。';
+  const en = 'Notwithstanding extraordinarily incomprehensible characterizations, internationalization considerations overwhelmingly predominate everywhere.';
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }),
+    `A claim^[${en}] continues and 中文^[${zh}] 也是。`);
+  // the typeset notes break both (the old popup scraped those lines)
+  expect(await page.evaluate(() => document.querySelectorAll('#out [data-syn="hyphen"]').length)).toBeGreaterThan(0);
+  await page.hover(MARKER1);
+  await expect(page.locator(POP)).toHaveText(en);
+  await page.mouse.move(0, 0);
+  await page.hover('#out .tsr-doc a[href="#tsr-fn-2"][id]');
+  await expect(page.locator(POP)).toHaveText(zh);
+});
+
+test('refPreview: the view keeps patching while a popup is open', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const doc = (second) => `A claim^[Body one.] continues.\n\n${second}\n\nThird paragraph.`;
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }),
+    doc('Second paragraph.'));
+  await page.hover(MARKER1);
+  await expect(page.locator(POP)).toHaveText('Body one.');
+  const r = await page.evaluate(async (s) => await window.__tsr.update(s), doc('Second paragraph, edited.'));
+  expect(r.patched).toBe(true);
+  expect(r.html).toContain('edited');
+  await expect(page.locator(POP)).toHaveText('Body one.');
+});
+
+test('refPreview: a hover during an in-flight update shows the new content', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const doc = (body) => `A claim^[${body}] continues.\n\nSecond paragraph.`;
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }),
+    doc('Old body.'));
+  await page.evaluate((s) => window.__tsr.startUpdate(s), doc('New body.'));
+  await page.hover(MARKER1);
+  const r = await page.evaluate(async () => await window.__tsr.settle());
+  expect(r.diags).toBe('');
+  await expect(page.locator(POP)).toHaveText('New body.');
+});
+
+test('sessions: one engine, two documents, each with its own ids', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async () => {
+    await window.__tsr.typeset('One^[Note of document one.] here.\n\nMore of one.', { widthPx: 300, progressive: false });
+    await window.__tsr.typeset2('Two^[Note of document two.] here.\n\nMore of two.',
+      { widthPx: 300, progressive: false, settings: { render: { idPrefix: 'b-' } } });
+  });
+  const ids = await page.evaluate(() => [...document.querySelectorAll('[id]')].map((e) => e.id));
+  expect(ids.length).toBe(new Set(ids).size);
+  expect(ids.filter((id) => id.startsWith('b-')).length).toBeGreaterThan(0);
+  // each document's popup is its own (a non-default prefix included)
+  await page.hover(MARKER1);
+  await expect(page.locator(POP)).toHaveText('Note of document one.');
+  await page.hover('#out2 .tsr-doc a[href="#b-fn-1"][id]');
+  await expect(page.locator('#out2 [data-tsr-shell="overlay"] .tsr-refpop')).toHaveText('Note of document two.');
+  await expect(page.locator(POP)).toHaveCount(0);
+  // editing one leaves the other; disposing one leaves the other working
+  const r = await page.evaluate(async () => await window.__tsr.update2('Two^[Note of document two.] here.\n\nMore of two, edited.'));
+  expect(r.patched).toBe(true);
+  expect(await page.locator('#out').textContent()).toContain('More of one.');
+  await page.evaluate(() => window.__tsr.dispose(1));
+  const r2 = await page.evaluate(async () => await window.__tsr.update2('Two, again.'));
+  expect(r2.diags).toBe('');
+  expect(await page.locator('#out2').textContent()).toContain('Two, again.');
+  expect(await page.locator('#out').textContent()).toContain('More of one.');  // the last view stays
+});
+
+test('print: sheets under a print root of their own, ids derived', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async () => await window.__tsr.typeset(
+    'Body^[A note.] text.\n\n= Heading <h>\n\nMore text that refers to @h.', { widthPx: 300, progressive: false }));
+  const seen = await page.evaluate(async () => await window.__tsr.printCapture({ pageWidthPx: 300, pageHeightPx: 400 }));
+  expect(seen.rootId).toBeNull();          // shell nodes have no ids
+  expect(seen.inBody).toBe(true);
+  expect(seen.style).toBe(true);
+  expect(seen.duplicateIds).toBe(0);       // never an id shared with the live view
+  expect(seen.printIds.length).toBeGreaterThan(0);
+  expect(seen.printIds.every((id) => id.startsWith('tsrp-'))).toBe(true);
+  expect(seen.leftover).toBe(false);
+});
+
+test('behaviours: a host registry, devAudit on every commit, a failing one disabled', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const warnings = [];
+  page.on('console', (m) => { if (m.type() === 'warning') warnings.push(m.text()); });
+  const r = await page.evaluate(async () => {
+    const { createEngine, defaultBehaviors, devAudit } = await import('/runtime/src/main/shell.mjs');
+    const reports = [];
+    const boom = { name: 'boom', install(ctx) { ctx.onCommit(() => { throw new Error('boom'); }); return () => {}; } };
+    // a capability the host supplies: the worker cannot fetch this image
+    const engine = createEngine({
+      behaviors: [...defaultBehaviors(), devAudit({ onReport: (x) => reports.push(x.ok) }), boom],
+      capabilities: { imageDims: async () => ({ w: 120, h: 40 }) },
+    });
+    const el = document.getElementById('out2');
+    const fig = '#!figure(src: "/no-such-image.png", alt: "x")\nA figure.\n#figure!';
+    const h = await engine.typeset(`One para.\n\nTwo para.\n\n${fig}`, el, { widthPx: 300, progressive: false });
+    const u1 = await h.update(`One para.\n\nTwo para, edited.\n\n${fig}`);
+    const u2 = await h.update(`One para.\n\nTwo para, edited again.\n\n${fig}`);
+    const box = el.querySelector('.tsr-img')?.getBoundingClientRect();
+    const out = { reports, diags: h.diags + u1.diags + u2.diags, patched: u2.patched,
+                  img: box ? [Math.round(box.width), Math.round(box.height)] : null };
+    engine.dispose();
+    return out;
+  });
+  expect(r.reports).toEqual([true, true, true]);  // install, then each commit
+  expect(r.patched).toBe(true);                   // the throwing behaviour broke nothing
+  expect(warnings.some((w) => w.includes('behavior boom failed'))).toBe(true);
+  expect(r.img).toEqual([120, 40]);               // the host's capability answered
+});

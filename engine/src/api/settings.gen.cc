@@ -67,6 +67,7 @@ const Row kRows[] = {
     {"semantics.counters", stageBit(Stage::Ingest), true},
     {"semantics.collectors", stageBit(Stage::Ingest), true},
     {"semantics.systems", stageBit(Stage::Ingest), true},
+    {"render.idPrefix", stageBit(Stage::Paint), false},
     {"style.rules", stageBit(Stage::Ingest), true},
 };
 constexpr u32 kRowCount = sizeof kRows / sizeof kRows[0];
@@ -385,7 +386,12 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       if (!v.keys.empty()) jsonDump(c.semSystems, v);
       return true;
     }
-    case 49: {  // style.rules
+    case 49: {  // render.idPrefix
+      if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Ident, v.str))) return type(why, "ident");
+      c.idPrefix = v.str;
+      return true;
+    }
+    case 50: {  // style.rules
       if (v.t != JsonValue::T::Arr) return type(why, "an array");
       c.styleRules.clear();
       if (!v.arr.empty()) jsonDump(c.styleRules, v);
@@ -565,6 +571,8 @@ std::string settingsJson(const Config& c) {
   out += c.semCollectors.empty() ? "{}" : c.semCollectors;
   out += ", \"systems\": ";
   out += c.semSystems.empty() ? "{}" : c.semSystems;
+  out += "}, \"render\": {\"idPrefix\": ";
+  jsonString(out, c.idPrefix);
   out += "}, \"style\": {\"rules\": ";
   out += c.styleRules.empty() ? "[]" : c.styleRules;
   out += "}}";

@@ -72,9 +72,20 @@ const reposition = (html, b) => legacyBlock(strip(html), b.pid, b.s0, b.gap);
 // A commit target: one container, its root element and the blocks it holds.
 export function createSession(container) {
   // all: the blocks' legacy HTML when one frame sent them all (handle.html
-  // as it is); moved: the keys whose stored HTML spells an old place
+  // as it is); moved: the keys whose stored HTML spells an old place; head:
+  // the last committed frame's head (anchors, idPrefix)
   return { container, root: null, rootTag: '', blocks: [], bodies: new Map(), generation: 0, all: null,
-           moved: new Set() };
+           moved: new Set(), head: null };
+}
+
+// (plan P3-06) nodes the shell owns inside a container (a behaviour's
+// overlay) carry data-tsr-shell: a whole-view swap keeps them
+const shellOwned = (n) => n.nodeType === 1 && n.hasAttribute('data-tsr-shell');
+function replaceView(container, root, html) {
+  if (root && root.parentNode === container) root.remove();
+  else for (const n of [...container.childNodes]) if (!shellOwned(n)) n.remove();
+  container.insertAdjacentHTML('afterbegin', html);
+  return container.firstElementChild;
 }
 
 // the keys a session holds, for the next request (16 bytes each)
@@ -99,12 +110,13 @@ export function sessionHtml(session) {
 // against keys it dropped): the caller asks again holding nothing
 export class StaleKeys extends Error {}
 
-// commit(session, result) → { ranges: [{ oldPids, newPids }], kept, rebuilt }
-// An older generation than the last committed is ignored (a coalesced
-// request answered twice).
+// commit(session, result) → { ranges: [{ oldPids, newPids }], kept, rebuilt,
+// ignored }. An older generation than the last committed is ignored (a
+// coalesced request answered twice).
 export function commit(session, result) {
   const { head, blocks } = result;
-  if (head.generation <= session.generation) return { ranges: [], kept: session.blocks.length, rebuilt: false };
+  if (head.generation <= session.generation)
+    return { ranges: [], kept: session.blocks.length, rebuilt: false, ignored: true };
   for (const b of blocks)
     if (b.html === null && !session.bodies.has(b.key)) throw new StaleKeys(`RenderResult: key ${b.key} not held`);
   const htmlOf = (b) => b.html ?? reposition(session.bodies.get(b.key), b);
@@ -133,9 +145,9 @@ export function commit(session, result) {
     let html = head.root + '\n';
     if (result.allSent) html += result.all;  // every block, in order: the legacy body as it is
     else for (const b of blocks) html += htmlOf(b);
-    session.container.innerHTML = html + '</div>\n';
-    session.root = session.container.firstElementChild;
+    session.root = replaceView(session.container, root, html + '</div>\n');
     session.rootTag = head.root;
+    session.head = head;
     const kids = session.root.children;
     for (let i = 0; i < blocks.length; i++) {
       blocks[i].el = kids[i];
@@ -189,6 +201,7 @@ export function commit(session, result) {
   session.generation = head.generation;
   session.all = null;
   session.moved = moved;
+  session.head = head;
   const replaced = old.length - pre - suf > 0 || blocks.length - pre - suf > 0;
   return {
     ranges: replaced ? [{ oldPids: old.slice(pre, old.length - suf).map((b) => b.pid),

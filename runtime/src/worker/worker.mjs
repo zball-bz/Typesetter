@@ -95,18 +95,21 @@ async function loadFonts(fonts) {
                       new Promise((r) => setTimeout(r, policy.fontDeadlineMs))]);
 }
 
-// cross-origin images without CORS headers cannot be read in a worker
-// (opaque responses); the main thread can still learn their intrinsic
-// size through an <img> element, so the worker asks it as a fallback.
-// One request id per question (two docs may ask for one src at once).
-const mainDims = new Map(); // rid → resolve
+// Main-thread capabilities (plan P3-06; design T9 "capability"): work only
+// the main thread can do, asked by name over one RPC with per-request ids
+// (cap? → cap). createEngine({capabilities}) supplies them; 'imageDims' is
+// built in: cross-origin images without CORS headers cannot be read in a
+// worker (opaque responses), but an <img> there still yields their size.
+const capCalls = new Map(); // rid → { resolve, reject }
 let nextRid = 1;
-function askMainForDims(src) {
-  return new Promise((resolve) => {
+function askCapability(name, args, timeoutMs) {
+  return new Promise((resolve, reject) => {
     const rid = nextRid++;
-    mainDims.set(rid, resolve);
-    postMessage({ type: 'image-dims?', rid, src });
-    setTimeout(() => { if (mainDims.delete(rid)) resolve({ w: 0, h: 0 }); }, policy.imageTimeoutMs);
+    capCalls.set(rid, { resolve, reject });
+    postMessage({ type: 'cap?', rid, name, args });
+    setTimeout(() => {
+      if (capCalls.delete(rid)) reject(new Error(`capability ${name}: timed out`));
+    }, timeoutMs);
   });
 }
 // the header carries the size: read a prefix of the body, decode only
@@ -158,7 +161,8 @@ function imageSize(src, baseUrl) {
   let p = imageDims.get(url);
   if (!p) {
     p = fetchImageSize(url).catch(async (e) => {
-      const dims = await askMainForDims(url);
+      const dims = await askCapability('imageDims', { src: url }, policy.imageTimeoutMs)
+        .catch(() => ({ w: 0, h: 0 }));
       if (!(dims.w > 0)) console.warn(`tsr: image failed to load: ${url}`, e);
       return dims;
     });
@@ -400,12 +404,14 @@ function forkDoc(M, doc, patch) {
 }
 
 // P1 (pages-design.md §2): sheets at the page measure from a fork — the
-// live document stays as it is
+// live document stays as it is; `idPrefix` (plan P3-06): the sheets' own,
+// so they never share an id with the live view beside them
 async function runPaginate(s, { ids, msg }) {
-  const { pageWidthPx, pageHeightPx, baseUrl } = msg;
+  const { pageWidthPx, pageHeightPx, baseUrl, idPrefix } = msg;
   const M = await getMod();
   if (s.doc === undefined) return postError(ids, 'paginate: doc disposed');
-  const doc = forkDoc(M, s.doc, { host: { width: pageWidthPx }, page: { height: pageHeightPx } });
+  const doc = forkDoc(M, s.doc, { host: { width: pageWidthPx }, page: { height: pageHeightPx },
+                                  ...(idPrefix ? { render: { idPrefix } } : {}) });
   if (doc === undefined) return postError(ids, 'paginate: cannot fork the document');
   try {
     await measureLoop(M, doc, { baseUrl });
@@ -450,6 +456,18 @@ async function runRelayout(s, { ids, msg }, stale) {
   }
 }
 
+// (plan P3-06; design T7 ops.fragment) a preview of what a label names: the
+// live doc's semantic HTML of it, stamped with the generation of its last
+// result (the shell shows only content that matches its view)
+async function runFragment(s, { ids, msg }) {
+  const M = await getMod();
+  if (s.doc === undefined) return postError(ids, 'fragment: doc disposed');
+  const p = M.stringToNewUTF8(String(msg.label ?? ''));
+  const r = JSON.parse(M.UTF8ToString(M._tsr2_render_fragment(s.doc, p)));
+  M._free(p);
+  for (const id of ids) postMessage({ type: 'result', id, html: r.html, generation: r.generation });
+}
+
 // the live doc's result again (plan P3-05): the shell found a key it did not
 // hold (a stale frame) and asks holding nothing
 async function runRender(s, { ids, msg }) {
@@ -468,7 +486,7 @@ async function runDispose(s) {
 }
 
 const RUN = { update: runTypeset, paginate: runPaginate, relayout: runRelayout,
-              render: runRender, dispose: runDispose };
+              render: runRender, fragment: runFragment, dispose: runDispose };
 
 onmessage = (ev) => {
   const m = ev.data;
@@ -476,9 +494,13 @@ onmessage = (ev) => {
     for (const [k, v] of Object.entries(m.policy ?? {})) if (k in policy) policy[k] = v;
     return;
   }
-  if (m?.type === 'image-dims') {
-    const r = mainDims.get(m.rid);
-    if (r) { mainDims.delete(m.rid); r({ w: m.w, h: m.h }); }
+  if (m?.type === 'cap') {  // a capability's answer (askCapability)
+    const c = capCalls.get(m.rid);
+    if (c) {
+      capCalls.delete(m.rid);
+      if (m.error !== undefined) c.reject(new Error(m.error));
+      else c.resolve(m.value);
+    }
     return;
   }
   // 'typeset' opens a session under its own id; 'update' re-typesets an
@@ -488,5 +510,6 @@ onmessage = (ev) => {
   else if (m?.type === 'paginate') enqueue(m.docId, { kind: 'paginate', ids: [m.id], msg: m });
   else if (m?.type === 'relayout') enqueue(m.docId, { kind: 'relayout', ids: [m.id], msg: m });
   else if (m?.type === 'render') enqueue(m.docId, { kind: 'render', ids: [m.id], msg: m });
+  else if (m?.type === 'fragment') enqueue(m.docId, { kind: 'fragment', ids: [m.id], msg: m });
   else if (m?.type === 'dispose') enqueue(m.docId, { kind: 'dispose', ids: [], msg: m });
 };

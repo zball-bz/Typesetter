@@ -1110,7 +1110,7 @@ Theme steps: — · findings: 1
 | `resolver/untested-diagnostics` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/missed:0` | missed | high | P2-03 | grep:plan P2-03 |
 | `resolver/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
-| `resolver/missed:2` | missed | medium | P3-04, P3-06 | |
+| `resolver/missed:2` | missed | medium | P3-04, P3-06 || grep:plan P3-06 |
 | `resolver/missed:3` | missed | medium | P3-03 | grep:plan P3-03 |
 | `resolver/missed:4` | missed | low | P3-03 | grep:plan P3-03 |
 | `resolver/missed:5` | missed | low | P0-09, P1-03, P1-10 | grep:plan P1-10 |
@@ -1196,7 +1196,7 @@ Theme steps: — · findings: 1
 | `render-runtime/paged-keep-rules-by-kind` | adhoc | medium | P3-12 | |
 | `render-runtime/copy-syn-policy` | adhoc | medium | P3-07 | |
 | `render-runtime/copy-line-separators` | adhoc | medium | P3-07 | |
-| `render-runtime/shell-note-popups` | adhoc | high | P3-04, P3-06 | |
+| `render-runtime/shell-note-popups` | adhoc | high | P3-04, P3-06 || grep:plan P3-06 |
 | `render-runtime/shell-chunk-byte-coupling` | adhoc | medium | P3-05 | grep:plan P3-05 |
 | `render-runtime/anchor-namespace` | adhoc | medium | P3-04 | grep:plan P3-04 |
 | `render-runtime/css-contract-monolith` | adhoc | medium | P3-18 | |
@@ -1208,13 +1208,13 @@ Theme steps: — · findings: 1
 | `render-runtime/anchor-decode-duplication` | adhoc | medium | P3-05 | |
 | `render-runtime/audit-hint-attributes` | adhoc | low | P3-07 | |
 | `render-runtime/duplicate-serializer-primitives` | adhoc | low | P0-10, P1-02 | grep:plan P1-02 |
-| `render-runtime/shell-feature-inventory` | adhoc | medium | P3-06 | |
+| `render-runtime/shell-feature-inventory` | adhoc | medium | P3-06 || grep:plan P3-06 |
 | `render-runtime/snap-kerning-duplicate-style` | issue | high | P0-10 | grep:plan P0-10 |
 | `render-runtime/semantic-footnote-ids-dangle` | issue | high | P0-09, P0-10 | grep:plan P0-10 |
 | `render-runtime/copy-drops-blank-code-lines` | issue | medium | P3-07 | |
 | `render-runtime/sidecar-hyphen-missing` | issue | medium | P1-17 | grep:plan P1-17 |
 | `render-runtime/sidecar-dropped-in-semantic` | issue | medium | P3-23 | |
-| `render-runtime/popup-breaks-patch` | issue | low | P3-06 | |
+| `render-runtime/popup-breaks-patch` | issue | low | P3-06 || grep:plan P3-06 |
 | `render-runtime/host-line-height-leak` | issue | medium | P3-19 | |
 | `render-runtime/paged-gutter-clipping` | issue | medium | P3-16 | |
 | `render-runtime/trailing-float-and-gap-drift` | issue | low | P3-16 | |
@@ -1321,7 +1321,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/figure-model-single-image` | adhoc | medium | P3-15 | |
 | `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 | |
 | `real-world-evidence/resource-and-config-plumbing` | adhoc | medium | P3-21 | |
-| `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 | |
+| `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 || grep:plan P3-06 |
 | `real-world-evidence/presentation-constants` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `real-world-evidence/math-extensibility` | adhoc | medium | P3-29 | |
 | `real-world-evidence/no-cross-document-labels` | adhoc | high | P3-31 | |

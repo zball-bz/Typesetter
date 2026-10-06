@@ -410,6 +410,14 @@ export const SETTINGS = Object.freeze({
       "Ingest"
     ]
   },
+  "render.idPrefix": {
+    "dom": "ident",
+    "def": "tsr-",
+    "prec": "HostDefault",
+    "affects": [
+      "Paint"
+    ]
+  },
   "style.rules": {
     "dom": "json:array",
     "def": [],
@@ -496,6 +504,9 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "counters": {},
     "collectors": {},
     "systems": {}
+  },
+  "render": {
+    "idPrefix": "tsr-"
   },
   "style": {
     "rules": []

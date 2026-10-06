@@ -1339,6 +1339,55 @@ static void unitCascade() {
 // the bodies with their positional attributes put back (as the shell does)
 // are the legacy render byte for byte; held keys are not sent; keys are
 // stable across renders and generations increase.
+// (plan P3-06) a preview fragment, the anchors' preview policy and a
+// document's own id prefix
+static void unitRenderFragment(const fs::path& root) {
+  Doc doc;
+  std::string ops, profile, src;
+  readFile(root / "test" / "fixtures" / "notes" / "basic.ops", ops);
+  readFile(root / "test" / "profiles" / "golden.json", profile);
+  readFile(root / "test" / "fixtures" / "notes" / "basic.tsm", src);
+  doc.configure(profile);
+  doc.compile(src);
+  CHECK(doc.ingest((const u8*)ops.data(), ops.size()) && typesetWithMock(doc));
+  // the note's body as the semantic page writes it: no ids, no backlink
+  const std::string f = doc.renderFragment("fn-1");
+  CHECK(f.find("The note body carries <strong>markup</strong>") != std::string::npos);
+  CHECK(f.find(" id=") == std::string::npos && f.find("fnref") == std::string::npos &&
+        f.find("\xE2\x86\xA9") == std::string::npos);
+  CHECK(doc.renderFragment("no-such-label").empty());
+  // the anchors: a note previews, its marker does not; the head names the
+  // prefix and the generation a fragment is stamped with
+  auto headOf = [](const std::string& fr, JsonValue& h) {
+    u32 hl = 0;
+    if (fr.size() < 8) return false;
+    std::memcpy(&hl, fr.data() + 4, 4);
+    JsonReader rd;
+    return rd.parse(fr.substr(8, hl), h);
+  };
+  JsonValue h;
+  CHECK(headOf(doc.renderResult(nullptr, 0), h) && h.get("idPrefix") && h.get("idPrefix")->str == "tsr-");
+  CHECK(h.get("generation") && (u64)h.get("generation")->num == doc.generation);
+  int seen = 0;
+  for (const JsonValue& a : h.get("anchors")->arr) {
+    if (a.arr.size() != 4) continue;
+    if (a.arr[0].str == "fn-1") seen += a.arr[2].str == "footnote" && a.arr[3].str == "block";
+    if (a.arr[0].str == "fnref-1") seen += a.arr[3].str.empty();
+    if (a.arr[0].str == "top") seen += a.arr[3].str.empty();
+  }
+  CHECK(seen == 3);
+  // another prefix spells every id and internal href, in every backend
+  CHECK(doc.configure(R"({"render": {"idPrefix": "a2-"}})") == Doc::kApplied);
+  const std::string html = doc.render(), sem = doc.renderFallback(), paged = doc.renderPaged(600);
+  for (const std::string* out : {&html, &sem, &paged}) {
+    CHECK(out->find("id=\"a2-fn-1\"") != std::string::npos && out->find("href=\"#a2-fn-1\"") != std::string::npos);
+    CHECK(out->find("tsr-fn") == std::string::npos);
+  }
+  CHECK(headOf(doc.renderResult(nullptr, 0), h) && h.get("idPrefix")->str == "a2-");
+  // a render's prefix ends with it
+  CHECK(AnchorNamer::current().prefix == kAnchorPrefix && !AnchorNamer::current().suppress);
+}
+
 static void unitRenderResult(const fs::path& root) {
   Doc doc;
   std::string ops, profile, src;
@@ -1693,6 +1742,7 @@ int main(int argc, char** argv) {
   unitNestLimit();
   unitCascade();
   unitRenderResult(fs::path(root));
+  unitRenderFragment(fs::path(root));
   unitInstLimits();
   unitHtmlWriter();
   unitBreakMemo();

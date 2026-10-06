@@ -147,6 +147,10 @@ struct ElementClass {
   // (plan P3-03; design T3 refersTo) Enclosing: a label here names the
   // nearest classed ancestor (a table in a figure: @tab is the figure)
   enum class RefersTo : u8 { Self, Enclosing } refersTo = RefersTo::Self;
+  // (plan P3-06; design T7 refPreview) a reference to an instance may show
+  // its content in place (a footnote's body on hover): the RenderResult's
+  // anchors table carries it, the shell's refPreview behaviour reads it
+  enum class Preview : u8 { None, Block } preview = Preview::None;
   Template ref;
   bool hasRef = false;
   std::optional<FlowDef> flow;

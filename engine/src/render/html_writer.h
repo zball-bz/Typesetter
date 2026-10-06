@@ -107,22 +107,44 @@ inline std::string pxStr(double px) {
   return s;
 }
 
-// AnchorNamer (D-S06): prefix + label, escaped for an attribute. The prefix is
-// fixed until render.idPrefix (plan P3-06).
+// AnchorNamer (D-S06): prefix + label, escaped for an attribute.
+// (plan P3-06) the prefix is the document's setting render.idPrefix: a
+// render sets it for its duration (AnchorScope; per thread, one render at a
+// time, as WriterDefects) — a print root or a second article uses its own;
+// `suppress`: no ids at all (a preview fragment)
 struct AnchorNamer {
   static constexpr std::string_view kPrefix = kAnchorPrefix;
+  struct Current {
+    std::string prefix{kAnchorPrefix};
+    bool suppress = false;
+  };
+  static Current& current() {
+    static thread_local Current c;
+    return c;
+  }
   static void id(std::string& out, std::string_view label) {
-    out += kPrefix;
+    out += current().prefix;
     escapeHtml(out, label);
   }
   // (plan P3-04) a reference to a label's anchor: "#" + its id, unescaped
   // (the attribute writer escapes)
   static std::string href(std::string_view label) {
     std::string h = "#";
-    h += kPrefix;
+    h += current().prefix;
     h += label;
     return h;
   }
+};
+// a render's anchor spelling, restored when it ends
+struct AnchorScope {
+  AnchorNamer::Current saved;
+  explicit AnchorScope(std::string_view prefix, bool suppress = false) : saved(AnchorNamer::current()) {
+    AnchorNamer::current().prefix = std::string(prefix);
+    AnchorNamer::current().suppress = suppress;
+  }
+  ~AnchorScope() { AnchorNamer::current() = saved; }
+  AnchorScope(const AnchorScope&) = delete;
+  AnchorScope& operator=(const AnchorScope&) = delete;
 };
 
 // The attribute allowlist — the whole DOM vocabulary both serializers emit
@@ -197,8 +219,9 @@ class Tag {
     }
     return *this;
   }
-  // an element id, spelled by AnchorNamer
+  // an element id, spelled by AnchorNamer (none in a preview fragment)
   Tag& id(std::string_view label) {
+    if (AnchorNamer::current().suppress) return *this;
     if (begin("id")) {
       AnchorNamer::id(out_, label);
       out_ += '"';

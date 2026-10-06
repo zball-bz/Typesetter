@@ -341,6 +341,19 @@ TSR_EXPORT const u8* tsr2_render_result(WasmDoc* d, const u8* held, int nHeld) {
   return (const u8*)d->htmlOut.data();
 }
 
+// (plan P3-06; design T7 ops.fragment) a preview of what a label names, as
+// JSON: {"generation": the last RenderResult's, "html": …} ("html" empty: no
+// such label)
+TSR_EXPORT const char* tsr2_render_fragment(WasmDoc* d, const char* label) {
+  const std::string html = d->doc.renderFragment(label ? label : "");
+  std::string out = "{\"generation\":";
+  appendf(out, "%llu,\"html\":", (unsigned long long)d->doc.generation);
+  jsonString(out, html);
+  out += '}';
+  d->htmlOut = std::move(out);
+  return d->htmlOut.c_str();
+}
+
 TSR_EXPORT void tsr_set_width(WasmDoc* d, double widthPx) {
   d->doc.setWidth(widthPx);
 }

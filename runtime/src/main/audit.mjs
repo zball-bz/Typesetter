@@ -1,5 +1,8 @@
 // In-page invariant audits (testing.md §5.3). One implementation: dev
-// diagnostic in the runtime AND the assertion body of the Playwright tests.
+// diagnostic in the runtime (the devAudit behaviour) AND the assertion body
+// of the Playwright tests; the thresholds are shared/audit-constants.mjs.
+import { AUDIT } from '../shared/audit-constants.mjs';
+
 // the advance of one space in a CSS font shorthand (canvas: same shaping
 // as the DOM for a lone space)
 const spaceCache = new Map();
@@ -52,7 +55,7 @@ export function auditTypeset(root) {
     if (rects.length) {
       const maxTop = Math.max(...rects.map((r) => r.top));
       const minBottom = Math.min(...rects.map((r) => r.bottom));
-      if (maxTop >= minBottom - 0.5) {
+      if (maxTop >= minBottom - AUDIT.bandSlackPx) {
         report.failures.push({
           audit: 'line-integrity',
           text: (line.textContent || '').slice(0, 48),
@@ -82,7 +85,7 @@ export function auditTypeset(root) {
       report.rightEdge.n++;
       report.rightEdge.mean += adev;
       if (adev > report.rightEdge.max) report.rightEdge.max = adev;
-      if (adev > 1) {
+      if (adev > AUDIT.rightEdgePx) {
         report.failures.push({
           audit: 'right-edge',
           dev: Math.round(dev * 1000) / 1000,
@@ -94,7 +97,7 @@ export function auditTypeset(root) {
 
   // overflow: nothing escapes the paragraph box horizontally
   for (const para of root.querySelectorAll('.tsr-para')) {
-    if (para.scrollWidth > para.clientWidth + 1 && !para.querySelector('[data-overfull]')) {
+    if (para.scrollWidth > para.clientWidth + AUDIT.overflowPx && !para.querySelector('[data-overfull]')) {
       report.failures.push({
         audit: 'overflow',
         by: para.scrollWidth - para.clientWidth,
@@ -121,10 +124,10 @@ export function auditTypeset(root) {
     // than the old absolute -2.5px.
     for (const l of para.querySelectorAll('.tsr-line')) {
       const ws = parseFloat(l.style.wordSpacing || '0');
-      if (!(ws < -2.5)) continue;
+      if (!(ws < AUDIT.wordSpacingFloorPx)) continue;
       const first = l.querySelector('span');
-      const limit = -0.37 * spaceAdvance(first ? getComputedStyle(first).font : '') - 0.5;
-      if (ws < Math.min(-2.5, limit)) {
+      const limit = -AUDIT.shrinkShare * spaceAdvance(first ? getComputedStyle(first).font : '') - AUDIT.shrinkSlackPx;
+      if (ws < Math.min(AUDIT.wordSpacingFloorPx, limit)) {
         report.failures.push({ audit: 'compression', pid: para.dataset.pid, ws });
         break;
       }

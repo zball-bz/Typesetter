@@ -70,6 +70,10 @@ struct Doc {
   std::vector<u8> emitted;                              // per top
   std::vector<std::vector<u32>> waitTokens, waitBoxes;  // per pid: its needs
   LayoutResult layout;
+  // the generation of the last RenderResult (plan P3-06): a preview
+  // fragment is stamped with it, so a host shows only content that matches
+  // the view it committed
+  u64 generation = 0;
 
   // ---- stage model (plan P1-03; stages.def, docs/host-protocol-design.md) --
   // Every stage up to validThrough has its product; invalidateFrom drops the
@@ -737,6 +741,7 @@ struct Doc {
     if (!renderReady()) return {};
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
+    AnchorScope ids(cfg.idPrefix);  // (plan P3-06) render.idPrefix
     // paint (plan P1-18): each block's DisplayList, written by the
     // stateless typeset backend
     std::string html;
@@ -769,6 +774,7 @@ struct Doc {
     if (!renderReady()) return {};
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
+    AnchorScope ids(cfg.idPrefix);
     std::unordered_set<Key128, Key128Hash> have(held, held + nHeld);
     std::string root;
     writeRoot(root, "tsr-doc", paintRoot(cfg));
@@ -783,18 +789,24 @@ struct Doc {
     auto put32 = [&](u32 v) { table.append((const char*)&v, 4); };
     auto put64 = [&](u64 v) { table.append((const char*)&v, 8); };
     auto putF = [&](double v) { table.append((const char*)&v, 8); };
+    // (plan P3-06) its class, and "block" when a reference to it may show
+    // its content in place (the class's preview; never a marker's own label)
     auto anchorRow = [&](StrRef label, u32 pid) {
       if (!label) return;
       std::string cls;
+      bool preview = false;
       auto it = index.labels.find(std::string(strs.get(label)));
-      if (it != index.labels.end() && it->second.inst != kNoInst)
-        cls = registry->cls(index.instances[it->second.inst].cls).name;
+      if (it != index.labels.end() && it->second.inst != kNoInst) {
+        const ElementClass& C = registry->cls(index.instances[it->second.inst].cls);
+        cls = C.name;
+        preview = it->second.k == LabelTarget::K::Instance && C.preview == ElementClass::Preview::Block;
+      }
       if (!anchors.empty()) anchors += ',';
       anchors += '[';
       jsonString(anchors, strs.get(label));
       appendf(anchors, ",%u,", pid);
       jsonString(anchors, cls);
-      anchors += ']';
+      anchors += preview ? ",\"block\"]" : ",\"\"]";
     };
     const u32 n = (u32)layout.paras.size();
     put32(n);
@@ -840,9 +852,12 @@ struct Doc {
       html16 += len16;
       if (!send) html.resize(at);
     }
+    generation = ++session().generation;
     std::string head = "{\"generation\":";
-    appendf(head, "%llu,\"heightPx\":%g,\"root\":", (unsigned long long)++session().generation,
+    appendf(head, "%llu,\"heightPx\":%g,\"idPrefix\":", (unsigned long long)generation,
             (double)layout.docHeightSu / 64.0);
+    jsonString(head, cfg.idPrefix);
+    head += ",\"root\":";
     jsonString(head, root);
     head += ",\"anchors\":[" + anchors + "],\"gaps\":[" + gaps + "]}";
     std::string out = "TSRR";
@@ -860,6 +875,7 @@ struct Doc {
     if (!renderReady()) return {};
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
+    AnchorScope ids(cfg.idPrefix);
     // the sheets (layout/paginate.cc), each band's nodes rebased into its
     // sheet by the same stateless writer
     const PageResult pr = paginate(layout, tops, pageHeightPx);
@@ -889,10 +905,24 @@ struct Doc {
   std::string renderFallback() {
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
+    AnchorScope ids(cfg.idPrefix);
     std::string html = renderSemantic(tree, strs, styles, &rt, registry, &cascade);
     (void)rulesToCss(cascade, tree, strs, &diags);  // what its stylesheet leaves out (rule-no-css)
     reportWriterDefects();
     return html;
+  }
+
+  // (plan P3-06; design T7 ops.fragment) a preview of what `label` names:
+  // the post-resolve semantic HTML of its element (references resolved, no
+  // ids, no reference back to a flow marker: a note's ↩), stamped by the
+  // caller with `generation`; "" when nothing carries the label
+  std::string renderFragment(std::string_view label) {
+    AnchorScope ids(cfg.idPrefix, /*suppress=*/true);
+    const std::function<bool(StrRef)> backlink = [&](StrRef to) {
+      auto it = index.labels.find(std::string(strs.get(to)));
+      return it != index.labels.end() && it->second.k == LabelTarget::K::Marker;
+    };
+    return renderSemanticFragment(tree, strs, styles, &rt, registry, &cascade, label, backlink);
   }
 
   // the semantic page's stylesheet (rulesToCss, plan P3-01): what the rules

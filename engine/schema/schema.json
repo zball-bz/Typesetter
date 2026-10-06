@@ -929,6 +929,16 @@
         "Ingest"
       ]
     },
+    "render.idPrefix": {
+      "$comment": "The prefix of every element id and internal href the serializers spell (plan P3-06; design T7 AnchorNamer): a page that holds two documents, or a print root beside the live view, gives each its own.",
+      "field": "idPrefix",
+      "dom": "ident",
+      "def": "tsr-",
+      "prec": "HostDefault",
+      "affects": [
+        "Paint"
+      ]
+    },
     "style.rules": {
       "$comment": "The host's rules (plan P3-01; design T4 Rules, D-T03, D-T08): env 1, after the engine's defaults — an array of [selector, patch] or {select, patch, force}; a forced rule applies over a node's own style.",
       "field": "styleRules",

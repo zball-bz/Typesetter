@@ -74,6 +74,7 @@ struct Config {
   std::string semCounters = "";  // semantics.counters
   std::string semCollectors = "";  // semantics.collectors
   std::string semSystems = "";  // semantics.systems
+  std::string idPrefix = "tsr-";  // render.idPrefix
   std::string styleRules = "";  // style.rules
   CostParams cost;
 };
@@ -223,6 +224,7 @@ struct PaintSettings {
   const std::string& cjkFont;  // fonts.cjk
   const std::string& monoFont;  // fonts.mono
   const std::string& monoCjkFont;  // fonts.monoCjk
+  const std::string& idPrefix;  // render.idPrefix
   PaintSettings(const Config& c)  // NOLINT: a Config is its view
       : widthPx(c.widthPx),
         lang(c.lang),
@@ -232,7 +234,8 @@ struct PaintSettings {
         bodyFont(c.bodyFont),
         cjkFont(c.cjkFont),
         monoFont(c.monoFont),
-        monoCjkFont(c.monoCjkFont) {}
+        monoCjkFont(c.monoCjkFont),
+        idPrefix(c.idPrefix) {}
 };
 
 // host policy (schema "policy"): how hosts drive the engine

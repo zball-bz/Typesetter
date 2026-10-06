@@ -54,6 +54,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `semantics.counters` | json | `{}` | HostDefault | Ingest |  |
 | `semantics.collectors` | json | `{}` | HostDefault | Ingest |  |
 | `semantics.systems` | json | `{}` | HostDefault | Ingest |  |
+| `render.idPrefix` | ident | `"tsr-"` | HostDefault | Paint |  |
 | `style.rules` | json:array | `[]` | HostDefault | Ingest |  |
 
 ## Host policy

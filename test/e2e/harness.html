@@ -5,11 +5,12 @@
 <title>tsr harness</title>
 <style>
   body { margin: 0; padding: 24px; background: #fff; }
-  #out { width: 300px; }
+  #out, #out2 { width: 300px; }
 </style>
 </head>
 <body>
 <div id="out"></div>
+<div id="out2"></div>
 <script type="module">
 import { createEngine } from '/runtime/src/main/shell.mjs';
 import { auditTypeset } from '/runtime/src/main/audit.mjs';
@@ -17,7 +18,7 @@ import { contentTextFromRange } from '/runtime/src/main/copy.mjs';
 
 const engine = createEngine();
 const out = document.getElementById('out');
-let handle = null;
+let handle = null, handle2 = null;
 
 window.__tsr = {
   async typeset(source, opts = {}) {
@@ -53,6 +54,44 @@ window.__tsr = {
   },
   forgetHeld(i = 0) {
     handle.session.bodies.delete(handle.session.blocks[i].key);
+  },
+  // (plan P3-06) a second document in the same engine (#out2), and a
+  // document's own disposal
+  async typeset2(source, opts = {}) {
+    handle2 = await engine.typeset(source, document.getElementById('out2'), opts);
+    return { diags: handle2.diags, html: handle2.html };
+  },
+  async update2(source) {
+    const r = await handle2.update(source);
+    return { diags: r.diags, patched: r.patched };
+  },
+  dispose(which = 1) {
+    (which === 2 ? handle2 : handle).dispose();
+  },
+  // an update not awaited (a hover lands while it is in flight)
+  startUpdate(source) {
+    window.__pending = handle.update(source);
+  },
+  async settle() {
+    const r = await window.__pending;
+    return { diags: r.diags, patched: r.patched };
+  },
+  // print with the browser's dialog stubbed: what the print root held
+  async printCapture(opts) {
+    const real = window.print;
+    let seen = null;
+    window.print = () => {
+      const root = document.querySelector('[data-tsr-print="root"]');
+      const ids = [...document.querySelectorAll('[id]')].map((e) => e.id);
+      seen = { rootId: root?.getAttribute('id') ?? null, inBody: root?.parentNode === document.body,
+               printIds: [...root.querySelectorAll('[id]')].map((e) => e.id),
+               duplicateIds: ids.length - new Set(ids).size,
+               style: !!document.querySelector('style[data-tsr-print="style"]') };
+      setTimeout(() => window.dispatchEvent(new Event('afterprint')), 0);
+    };
+    try { await handle.print(opts); } finally { window.print = real; }
+    seen.leftover = !!document.querySelector('[data-tsr-print]');
+    return seen;
   },
   copyText() {
     const range = document.createRange();

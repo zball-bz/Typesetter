@@ -47,7 +47,9 @@ only the Index names the class.
   built-in heading row says false, a document that declares a class's
   `numbering` or `sites` true unless it says false), `refers-to`
   (`enclosing`: a label here names the nearest classed ancestor — a table
-  in a figure), `marker` (the instance's number is its list marker: the box
+  in a figure), `preview` (P3-06: `block` — a reference to an instance may
+  show its content in place, the shell's refPreview behaviour; the built-in
+  footnote row says it), `marker` (the instance's number is its list marker: the box
   tree draws `ContentNode::number`), `ref` (the reference form), `flow`
   (a lifted item: its flow, placement, marker template and marker alias),
   `table` (instances are rows of a keyed table; `row-key`: the row key is

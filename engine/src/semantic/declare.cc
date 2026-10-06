@@ -62,7 +62,7 @@ bool knownField(std::string_view section, std::string_view f) {
   static constexpr std::string_view kClasses[] = {"select", "like",  "counter", "numbering", "supplement", "labels",
                                                   "title",  "outline", "alias", "sites",     "ref",        "forms",
                                                   "flow",   "table", "row-key", "box",       "html",
-                                                  "display", "marker", "refers-to"};
+                                                  "display", "marker", "refers-to", "preview"};
   static constexpr std::string_view kCounters[] = {"shape", "level-arg", "depth", "gap", "keyed", "within", "pattern", "start", "scope"};
   static constexpr std::string_view kCollectors[] = {"query", "context", "wrap", "entry", "empty", "rows", "cite"};
   static constexpr std::string_view kSystems[] = {"symbols", "mode"};

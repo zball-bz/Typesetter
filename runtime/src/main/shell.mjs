@@ -3,10 +3,28 @@
 // (v2 §9): semantic flow HTML paints first; the typeset result swaps in
 // keyed by data-pid, reporting old/new rects — scroll anchoring is the
 // caller's responsibility (the engine provides the information).
+//
+// The core (plan P3-06; design T7 "Shell core + Behavior registry"): one
+// session per container — one worker and one WASM instance serve many
+// documents —, the transport, the measure/render contract, the commit path
+// and the copy contract (core: replaceable, never absent). Every other DOM
+// feature is a Behavior ({ name, css?, install(ctx) → uninstall }) that
+// reads only declared data (the RenderResult's anchors, the DOM contract,
+// settings) and calls only typed operations; hosts drop, replace or add
+// behaviours on equal footing with the built-ins (refPreview, print,
+// devAudit). Main-thread work the worker needs is a named capability.
 import { commit, createSession, decodeResult, elementsAt, heldKeys, offsetAt, sessionHtml, StaleKeys } from './commit.mjs';
 import { MATH_FONT } from '../shared/mathfont.gen.mjs';
 import { installCopy } from './copy.mjs';
 import { settingsFromOptions, settingOf } from '../shared/settings.gen.mjs';
+import { refPreview } from './behaviors/ref-preview.mjs';
+import { print } from './behaviors/print.mjs';
+import { devAudit } from './behaviors/audit.mjs';
+
+export { refPreview, print, devAudit };
+// the behaviours a session gets unless the host says otherwise (devAudit is
+// opt-in)
+export const defaultBehaviors = () => [refPreview(), print()];
 
 // Default CJK stack — mirrors the engine default (config.h cjkFont). CJK-class
 // runs must resolve in ONE font: U+2014/…/fullwidth puncts exist in Latin
@@ -15,7 +33,9 @@ export const TSR_CJK_FONT =
   '"Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif';
 
 // The serializer's CSS contract (document-model §9.1) — the nowrap rule IS
-// the DPR robustness contract (v2 §7 rule 1); never remove it.
+// the DPR robustness contract (v2 §7 rule 1); never remove it. Only what
+// the engine's DOM needs to render as measured: a behaviour brings its own
+// CSS (plan P3-06), injected once with it.
 export const TSR_CSS = `
 .tsr-doc { position: relative; text-rendering: geometricPrecision;
            /* the engine owns CJK punctuation compression (App C); Chromium's
@@ -45,7 +65,7 @@ export const TSR_CSS = `
 .tsr-iimg { vertical-align: baseline; }
 .tsr-iimgph { display: inline-block; border: 1px dashed currentColor; opacity: 0.5; box-sizing: border-box; }
 .tsr-iraw { display: inline-block; overflow: hidden; vertical-align: baseline; }
-.tsr-doc a { color: #1a5276; text-decoration: underline; text-underline-offset: 2px; }
+.tsr-doc a { color: var(--tsr-link, #1a5276); text-decoration: underline; text-underline-offset: 2px; }
 .tsr-sp { display: inline-block; }
 .tsr-sqL { margin-left: -0.5em; }   /* punct half squeezed at line start / pair */
 .tsr-sqR { margin-right: -0.5em; }  /* punct half squeezed at line end / pair */
@@ -53,15 +73,6 @@ export const TSR_CSS = `
 /* footnote markers (notes-design.md §1): size is measured (sizeMul); the
    raise is paint-only so line geometry is untouched */
 .tsr-sup, .tsr-doc a.tsr-sup { position: relative; top: -0.45em; text-decoration: none; }
-/* hover/focus popup with the note body (shell installNotePopups) */
-.tsr-notepop { position: absolute; z-index: 20; max-width: 28em; max-height: 45vh;
-  overflow: auto; padding: 0.5em 0.7em; font-size: 0.85em; line-height: 1.45;
-  font-family: var(--tsr-pop-font, inherit); background: var(--tsr-pop-bg, #fffdf7);
-  color: var(--tsr-pop-fg, #1c1c1a); border: 1px solid rgba(0,0,0,0.18);
-  border-radius: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); white-space: normal; }
-@media (prefers-color-scheme: dark) {
-  .tsr-notepop { background: var(--tsr-pop-bg, #2a2a28); color: var(--tsr-pop-fg, #e6e4dc);
-    border-color: rgba(255,255,255,0.18); } }
 /* math (math-design.md §8): one inline box per formula, absolutely
    positioned glyph runs in the bundled font; rules are painted boxes */
 .tsr-math { position: relative; display: inline-block; }
@@ -133,82 +144,6 @@ function settleFonts(fonts) {
                        new Promise((r) => setTimeout(r, 4000))]);
 }
 
-// Footnote popups: hovering (or focusing) a marker shows the note body
-// next to it. Delegated on the container so DOM patches never lose it;
-// the body text is read from the note's paragraph (minus its ↩ link).
-function installNotePopups(container) {
-  let pop = null, current = null;
-  const hide = () => { pop?.remove(); pop = null; current = null; };
-  const bodyOf = (marker) => {
-    const id = marker.getAttribute('href')?.slice(1);
-    const el = id && container.querySelector(`[id="${CSS.escape(id)}"]`);
-    if (!el) return null;
-    // typeset DOM: the id sits on the note's FIRST line box and the notes
-    // list is ONE .tsr-para — take this line and the following sibling
-    // lines up to the next item's first line (it carries a list marker /
-    // the next anchor). Semantic page: the element itself.
-    const lines = [];
-    if (el.classList.contains('tsr-line')) {
-      for (let n = el; n; n = n.nextElementSibling) {
-        if (n !== el && (n.id || n.querySelector('.tsr-marker'))) break;
-        lines.push(n);
-      }
-    } else lines.push(el);
-    const text = lines.map((n) => {
-      const clone = n.cloneNode(true);
-      for (const a of clone.querySelectorAll('a[href^="#tsr-fnref-"]')) a.remove();
-      for (const m of clone.querySelectorAll('.tsr-marker')) m.remove();
-      return clone.textContent;
-    }).join(' ');
-    return text.replace(/\s+/g, ' ').trim();
-  };
-  const show = (marker) => {
-    if (current === marker) return;
-    hide();
-    const text = bodyOf(marker);
-    if (!text) return;
-    pop = document.createElement('div');
-    pop.className = 'tsr-notepop';
-    pop.textContent = text;
-    // host = the positioned .tsr-doc (the container itself may not be a
-    // containing block); offsets are relative to the host's box
-    const host = container.querySelector('.tsr-doc') ?? container;
-    if (host === container && getComputedStyle(host).position === 'static')
-      host.style.position = 'relative';
-    host.appendChild(pop);
-    const hr = host.getBoundingClientRect();
-    const mr = marker.getBoundingClientRect();
-    const w = Math.min(pop.offsetWidth, hr.width);
-    let left = mr.left - hr.left;
-    if (left + w > hr.width) left = Math.max(0, hr.width - w);
-    pop.style.left = `${left}px`;
-    pop.style.top = `${mr.bottom - hr.top + 6}px`;
-    current = marker;
-  };
-  const markerAt = (t) => t?.closest?.('a.tsr-sup[href^="#tsr-fn-"]');
-  const inPop = (t) => !!t?.closest?.('.tsr-notepop');
-  const onOver = (e) => { const m = markerAt(e.target); if (m) show(m); else if (!inPop(e.target)) hide(); };
-  // leaving the marker keeps the popup while the pointer moves INTO it
-  // (long notes scroll); leaving both hides
-  const onOut = (e) => {
-    if ((markerAt(e.target) || inPop(e.target)) && !markerAt(e.relatedTarget) && !inPop(e.relatedTarget)) hide();
-  };
-  const onFocus = (e) => { const m = markerAt(e.target); if (m) show(m); };
-  container.addEventListener('mouseover', onOver);
-  container.addEventListener('mouseout', onOut);
-  container.addEventListener('focusin', onFocus);
-  container.addEventListener('focusout', hide);
-  window.addEventListener('scroll', hide, { passive: true });
-  return () => {
-    hide();
-    container.removeEventListener('mouseover', onOver);
-    container.removeEventListener('mouseout', onOut);
-    container.removeEventListener('focusin', onFocus);
-    container.removeEventListener('focusout', hide);
-    window.removeEventListener('scroll', hide);
-  };
-}
-
 let cssInjected = false;
 function ensureCss() {
   if (cssInjected) return;
@@ -220,27 +155,70 @@ function ensureCss() {
   ensureFontFaces([MATH_FONT_FACE]);
 }
 
+
+// a behaviour's CSS, injected once (for every session and engine)
+const behaviorCss = new Set();
+function ensureBehaviorCss(b) {
+  if (!b.css || behaviorCss.has(b.name)) return;
+  behaviorCss.add(b.name);
+  const style = document.createElement('style');
+  style.dataset.tsrBehavior = b.name;
+  style.textContent = b.css;
+  document.head.appendChild(style);
+}
+
+// Main-thread capabilities (plan P3-06; design T9 capability): the worker
+// asks one by name (cap? → cap). imageDims: an image the worker could not
+// read (cross-origin, no CORS) still yields its size through an <img>
+// (figure-design.md §2); 0×0 = failure.
+export const defaultCapabilities = () => ({ imageDims: imageDimsByElement });
+function imageDimsByElement({ src }) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
+    img.onerror = () => resolve({ w: 0, h: 0 });
+    img.src = src;
+  });
+}
+
+// The measure/render contract: an element shows the engine's DOM with
+// exactly the family, size and language the engine measured with (the live
+// container, a print root) — not styling sugar.
+function applyContract(el, settings) {
+  el.style.fontFamily = settingOf(settings, 'fonts.body');
+  el.style.fontSize = `${settingOf(settings, 'doc.baseSize')}px`;
+  el.style.setProperty('--tsr-cjk-font', settingOf(settings, 'fonts.cjk'));
+  // language tag drives OpenType 'locl' punctuation forms (multi-locale CJK
+  // fonts pick 简中/繁中/日 glyph variants by it)
+  const lang = settingOf(settings, 'doc.lang');
+  if (lang) el.setAttribute('lang', lang);
+}
+
+// createEngine({ policy, behaviors = defaultBehaviors(), copy = installCopy,
+// capabilities }) — copy(container) → uninstall is the core copy contract
+// (a host may replace it, never remove it); capabilities add to (or
+// replace) defaultCapabilities() by name.
 export function createEngine(opts = {}) {
   const workerUrl = new URL('../worker/worker.mjs', import.meta.url);
   const worker = new Worker(workerUrl, { type: 'module' });
   // host policy (schema "policy": round cap, font deadline, caches, …)
   if (opts.policy) worker.postMessage({ type: 'policy', policy: opts.policy });
+  const behaviors = opts.behaviors ?? defaultBehaviors();
+  const copy = opts.copy ?? installCopy;
+  const capabilities = { ...defaultCapabilities(), ...(opts.capabilities ?? {}) };
   let nextId = 1;
-  let liveDocId = null;
-  let uninstallCopy = null;
   const pending = new Map(); // id → {resolve, reject, onSemantic}
-  // NEED_IMAGES fallback (figure-design.md §2): the worker could not read
-  // the image (cross-origin, no CORS); an <img> here still yields its size
-  const answerDims = (rid, src) => {
-    const img = new Image();
-    const reply = (w, h) => worker.postMessage({ type: 'image-dims', rid, w, h });
-    img.onload = () => reply(img.naturalWidth, img.naturalHeight);
-    img.onerror = () => reply(0, 0);
-    img.src = src;
+  const sessions = new Map(); // container → session
+  const answerCapability = ({ rid, name, args }) => {
+    const reply = (m) => worker.postMessage({ type: 'cap', rid, ...m });
+    const fn = capabilities[name];
+    if (typeof fn !== 'function') { reply({ error: `no capability '${name}'` }); return; }
+    Promise.resolve().then(() => fn(args))
+      .then((value) => reply({ value }), (e) => reply({ error: String(e?.message ?? e) }));
   };
   worker.onmessage = (ev) => {
     const { id, type } = ev.data;
-    if (type === 'image-dims?') { answerDims(ev.data.rid, ev.data.src); return; }
+    if (type === 'cap?') { answerCapability(ev.data); return; }
     const p = pending.get(id);
     if (!p) return;
     if (type === 'semantic') {
@@ -266,59 +244,205 @@ export function createEngine(opts = {}) {
     for (const el of root.querySelectorAll('[data-pid]')) m.set(el.dataset.pid, el.getBoundingClientRect());
     return m;
   };
-  const upgradeRecords = (session, oldRects) => session.blocks.map((b) => {
+  const upgradeRecords = (view, oldRects) => view.blocks.map((b) => {
     const o = oldRects.get(String(b.pid));
     const n = b.el.getBoundingClientRect();
     return { pid: b.pid, old: o ? { top: o.top, height: o.height } : null, new: { top: n.top, height: n.height } };
   });
-  // a result committed; a stale one (it names a key the session dropped)
-  // is asked for again holding nothing
-  const commitResult = async (session, res, docId) => {
+  // a result committed into a session (a stale one — it names a key the
+  // session dropped — is asked for again holding nothing); the session's
+  // behaviours hear of every commit that changed the view
+  const commitTo = async (s, res) => {
+    let c;
     try {
-      return commit(session, decodeResult(res.frame, res.html));
+      c = commit(s.view, decodeResult(res.frame, res.html));
     } catch (e) {
       if (!(e instanceof StaleKeys)) throw e;
-      const again = await request({ type: 'render', id: nextId++, docId, held: new Uint8Array(0) });
-      return commit(session, decodeResult(again.frame, again.html));
+      const again = await request({ type: 'render', id: nextId++, docId: s.docId, held: new Uint8Array(0) });
+      c = commit(s.view, decodeResult(again.frame, again.html));
+    }
+    if (!c.ignored) for (const cb of [...s.onCommit]) cb(c.ranges);
+    return c;
+  };
+
+  // the anchors of the committed view (RenderResult head: [label, pid,
+  // class, preview]), by label — built when first asked after a commit
+  const anchorsOf = (s) => {
+    const head = s.view.head;
+    if (s.anchorsHead !== head) {
+      s.anchorsHead = head;
+      s.idPrefix = head?.idPrefix ?? settingOf(s.settings, 'render.idPrefix');
+      s.anchors = new Map((head?.anchors ?? []).map(([label, pid, cls, preview]) =>
+        [label, { id: s.idPrefix + label, label, pid, cls, preview: preview ?? '' }]));
+    }
+    return s.anchors;
+  };
+  // the anchor a link in the view leads to (its href is "#" + id), or null
+  const refAt = (s, el) => {
+    const a = el?.closest?.('a[href]');
+    if (!a) return null;
+    const anchors = anchorsOf(s);
+    const href = a.getAttribute('href') ?? '';
+    const at = '#' + s.idPrefix;
+    return href.startsWith(at) ? anchors.get(href.slice(at.length)) ?? null : null;
+  };
+  // typed operations (design T7 BehaviorCtx.ops)
+  // fragment: a preview of what a label names — { html, generation } when
+  // it belongs to the committed view, else null (never rejects)
+  const fragmentOf = async (s, label) => {
+    if (s.disposed) return null;
+    try {
+      const r = await request({ type: 'fragment', id: nextId++, docId: s.docId, label });
+      return r.html && r.generation === s.view.generation ? { html: r.html, generation: r.generation } : null;
+    } catch {
+      return null;
     }
   };
+  // paginate: sheets at a page measure from a fork (the live document stays
+  // as it is); idPrefix: the sheets' own
+  const paginateOf = async (s, { pageWidthPx = 666, pageHeightPx = settingOf(s.settings, 'page.height'),
+                                 idPrefix } = {}) => {
+    const r = await request({ type: 'paginate', id: nextId++, docId: s.docId, pageWidthPx, pageHeightPx,
+                              idPrefix, baseUrl: document.baseURI });
+    return { html: r.html, diags: r.diags };
+  };
+
+  // a session's overlay: inside the container, outside the commit root (a
+  // whole-view swap keeps it: data-tsr-shell), positioned at its origin
+  const overlayOf = (s) => {
+    if (!s.overlay) {
+      const o = document.createElement('div');
+      o.dataset.tsrShell = 'overlay';
+      o.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0;overflow:visible;z-index:20';
+      if (getComputedStyle(s.container).position === 'static') s.container.style.position = 'relative';
+      s.container.appendChild(o);
+      s.overlay = o;
+    }
+    return s.overlay;
+  };
+
+  // Behaviours are installed per session, after its first commit. A
+  // behaviour that throws — installing, or in a handler it registered
+  // through ctx — is disabled (uninstalled) and the rest go on.
+  const installBehaviors = (s) => {
+    for (const b of behaviors) {
+      ensureBehaviorCss(b);
+      const offs = [];
+      let uninstall = null, disabled = false;
+      const teardown = () => {
+        for (const off of offs.splice(0)) off();
+        try { uninstall?.(); } catch (e) { console.warn(`tsr: behavior ${b.name}: uninstall failed`, e); }
+        uninstall = null;
+      };
+      const disable = (e) => {
+        if (disabled) return;
+        disabled = true;
+        console.warn(`tsr: behavior ${b.name} failed and is disabled`, e);
+        teardown();
+      };
+      const guard = (fn) => (...a) => {
+        if (disabled) return undefined;
+        try {
+          const r = fn(...a);
+          if (r && typeof r.catch === 'function') r.catch(disable);
+          return r;
+        } catch (e) {
+          disable(e);
+          return undefined;
+        }
+      };
+      const ctx = {
+        container: s.container,
+        root: () => s.view.root,
+        get overlay() { return overlayOf(s); },
+        settings: s.settings,
+        setting: (path) => settingOf(s.settings, path),
+        applyContract: (el) => applyContract(el, s.settings),
+        onCommit(cb) {
+          const g = guard(cb);
+          s.onCommit.add(g);
+          const off = () => s.onCommit.delete(g);
+          offs.push(off);
+          return off;
+        },
+        listen(target, type, fn, o) {
+          const g = guard(fn);
+          target.addEventListener(type, g, o);
+          const off = () => target.removeEventListener(type, g, o);
+          offs.push(off);
+          return off;
+        },
+        anchors: {
+          byLabel: (label) => anchorsOf(s).get(label) ?? null,
+          byId: (id) => {
+            const anchors = anchorsOf(s);
+            return id?.startsWith(s.idPrefix) ? anchors.get(id.slice(s.idPrefix.length)) ?? null : null;
+          },
+        },
+        refAt: (el) => refAt(s, el),
+        ops: {
+          fragment: (label) => fragmentOf(s, label),
+          paginate: (spec) => paginateOf(s, spec),
+          offsetAt: (node) => offsetAt(s.view, node),
+          elementsAt: (byte) => elementsAt(s.view, byte),
+        },
+        // a method the handle forwards (handle.print → print's)
+        expose(name, fn) {
+          s.exposed[name] = fn;
+          offs.push(() => { if (s.exposed[name] === fn) delete s.exposed[name]; });
+        },
+      };
+      try {
+        uninstall = b.install(ctx) ?? null;
+      } catch (e) {
+        disable(e);
+        continue;
+      }
+      s.uninstalls.push(teardown);
+    }
+  };
+
+  const disposeSession = (s) => {
+    if (s.disposed) return;
+    s.disposed = true;
+    for (const un of s.uninstalls.splice(0).reverse()) un();
+    s.uninstallCopy?.();
+    s.overlay?.remove();
+    s.onCommit.clear();
+    if (sessions.get(s.container) === s) sessions.delete(s.container);
+    worker.postMessage({ type: 'dispose', docId: s.docId });
+  };
+  const superseded = (what) => new Error(`${what}: superseded (the session was disposed)`);
 
   return {
     async typeset(source, container, opts = {}) {
       const { progressive = true, fonts, onSemantic, onUpgrade } = opts;
       ensureCss();
       ensureFontFaces(fonts);
-      if (liveDocId !== null) {
-        worker.postMessage({ type: 'dispose', docId: liveDocId });
-        liveDocId = null;
-      }
+      // one document per container: a new typeset replaces its session
+      const prev = sessions.get(container);
+      if (prev) disposeSession(prev);
       const id = nextId++;
       // one settings document (plan P1-03; docs/settings-table.md): the
       // legacy named options (widthPx, fontFamily, lang, …) are sugar for
       // their rows, and opts.settings wins over them
       const base = settingsFromOptions(opts);
+      const s = {
+        docId: id, container, settings: base, view: createSession(container), disposed: false,
+        onCommit: new Set(), uninstalls: [], exposed: {}, overlay: null, uninstallCopy: null,
+        anchorsHead: undefined, anchors: new Map(), idPrefix: settingOf(base, 'render.idPrefix'),
+      };
+      sessions.set(container, s);
       // the session measure: relayout() moves it so later update()s follow
       let width = opts.widthPx ?? base.host?.width ?? container.getBoundingClientRect().width;
       const settingsAt = (w) => ({ ...base, host: { ...(base.host ?? {}), width: w } });
-      const fontFamily = settingOf(base, 'fonts.body');
-      const cjkFontFamily = settingOf(base, 'fonts.cjk');
-      const baseSizePx = settingOf(base, 'doc.baseSize');
-      const lang = settingOf(base, 'doc.lang');
-      // The container must render with exactly the family/size the engine
-      // measured — this is the measure/render contract, not styling sugar.
-      container.style.fontFamily = fontFamily;
-      container.style.fontSize = `${baseSizePx}px`;
-      container.style.setProperty('--tsr-cjk-font', cjkFontFamily);
-      // footnote popups are plain text: Latin stack first, CJK stack after
-      container.style.setProperty('--tsr-pop-font', `${fontFamily}, ${cjkFontFamily}`);
-      // language tag drives OpenType 'locl' punctuation forms (multi-locale
-      // CJK fonts pick 简中/繁中/日 glyph variants by it)
-      if (lang) container.setAttribute('lang', lang);
+      applyContract(container, base);
       let semanticHtml = null;
       const res = await request(
         { type: 'typeset', id, source, settings: settingsAt(width), progressive,
           fontFaces: fonts, baseUrl: document.baseURI },
         (html) => {
+          if (s.disposed) return;
           semanticHtml = html;
           if (progressive) {
             container.innerHTML = html; // first paint: browser flows it
@@ -327,19 +451,17 @@ export function createEngine(opts = {}) {
         },
       );
       await settleFonts(fonts);  // paint with the faces the engine measured
-      const session = createSession(container);
+      if (s.disposed) throw superseded('typeset');
       const before = rectsOf(container);
-      await commitResult(session, res, id);
-      const upgrades = upgradeRecords(session, before);
+      await commitTo(s, res);
+      const upgrades = upgradeRecords(s.view, before);
       onUpgrade?.(upgrades);
-      liveDocId = id;
-      uninstallCopy?.();
-      const uc = installCopy(container);
-      const un = installNotePopups(container);
-      uninstallCopy = () => { uc?.(); un(); };
+      s.uninstallCopy = copy(container) ?? null;
+      installBehaviors(s);
+      const view = s.view;
       const handle = {
         // the document as one HTML string (the legacy shape), built on demand
-        get html() { return sessionHtml(session); },
+        get html() { return sessionHtml(view); },
         diags: res.diags,
         heightPx: res.heightPx,
         timings: res.timings,
@@ -347,113 +469,74 @@ export function createEngine(opts = {}) {
         upgrades,
         // (plan P3-05) a DOM position's source byte, and the elements that
         // show a source byte (the VS Code preview's jump and reveal)
-        offsetAt: (node) => offsetAt(session, node),
-        elementsAt: (byte) => elementsAt(session, byte),
+        offsetAt: (node) => offsetAt(view, node),
+        elementsAt: (byte) => elementsAt(view, byte),
         // the commit session (the blocks held, their keys and elements):
         // read-only, for hosts' diagnostics and tests
-        session,
+        session: view,
         // Editing session (editor-design.md §2): re-typeset new source under
         // the SAME doc handle. The worker's persistent caches make this the
         // low-latency path; a failing edit keeps the last good doc alive.
         // DOM damage is patched per-paragraph; full swap is the fallback.
         async update(newSource) {
+          if (s.disposed) throw superseded('update');
           const rid = nextId++;
           const r = await request({ type: 'update', id: rid, docId: id,
             source: newSource, settings: settingsAt(width), progressive: false,
-            fontFaces: fonts, baseUrl: document.baseURI, held: heldKeys(session) });
+            fontFaces: fonts, baseUrl: document.baseURI, held: heldKeys(view) });
+          if (s.disposed) throw superseded('update');
           // rects only for a listener (an edit's commit reads no layout)
           const before = onUpgrade ? rectsOf(container) : null;
-          const c = await commitResult(session, r, id);
+          const c = await commitTo(s, r);
           let ups = [];
           if (onUpgrade) {
             const changed = new Set(c.ranges.flatMap((g) => g.newPids));
-            ups = upgradeRecords(session, before).filter((u) => c.rebuilt || changed.has(u.pid));
+            ups = upgradeRecords(view, before).filter((u) => c.rebuilt || changed.has(u.pid));
             onUpgrade(ups);
           }
           Object.assign(handle, { diags: r.diags, heightPx: r.heightPx, timings: r.timings });
-          return { get html() { return sessionHtml(session); }, diags: r.diags, heightPx: r.heightPx,
+          return { get html() { return sessionHtml(view); }, diags: r.diags, heightPx: r.heightPx,
                    timings: r.timings, upgrades: ups, patched: !c.rebuilt, ranges: c.ranges, kept: c.kept };
         },
         // width-only re-typeset: metrics persist in the worker-held doc
         async relayout(newWidthPx) {
+          if (s.disposed) throw superseded('relayout');
           const rid = nextId++;
           // the session measure moves now: an update() issued before this
           // resolves is queued behind it in the worker and must follow it
           width = newWidthPx;
           const r = await request({ type: 'relayout', id: rid, docId: id, widthPx: newWidthPx,
-                                    held: heldKeys(session) });
+                                    held: heldKeys(view) });
+          if (s.disposed) throw superseded('relayout');
           // (rects only for a listener, as on the edit path: plan P3-05)
           const before = onUpgrade ? rectsOf(container) : null;
-          const c = await commitResult(session, r, id);
-          const ups = onUpgrade ? upgradeRecords(session, before) : [];
+          const c = await commitTo(s, r);
+          const ups = onUpgrade ? upgradeRecords(view, before) : [];
           onUpgrade?.(ups);
           Object.assign(handle, { diags: r.diags, heightPx: r.heightPx, timings: r.timings });
-          return { get html() { return sessionHtml(session); }, diags: r.diags, heightPx: r.heightPx,
+          return { get html() { return sessionHtml(view); }, diags: r.diags, heightPx: r.heightPx,
                    upgrades: ups, timings: r.timings, ranges: c.ranges, kept: c.kept };
         },
-        // P1 (pages-design.md §2): sheets at the page measure; the live
-        // document is restored to its screen width before this resolves
-        async paginate({ pageWidthPx = 666, pageHeightPx = 995 } = {}) {
-          const rid = nextId++;
-          const r = await request({ type: 'paginate', id: rid, docId: id,
-            pageWidthPx, pageHeightPx });
-          return { html: r.html, diags: r.diags };
+        // P1 (pages-design.md §2): sheets at the page measure, from a fork
+        // (the live document stays as it is)
+        paginate: (spec) => paginateOf(s, spec),
+        // print-to-PDF: the print behaviour's (behaviors/print.mjs)
+        print(printOpts) {
+          if (!s.exposed.print) return Promise.reject(new Error('print: no print behavior installed'));
+          return s.exposed.print(printOpts);
         },
-        // print-to-PDF = the browser's print engine over our paged layout.
-        // The sheets are injected into the PARENT document under a print
-        // root; @media print hides everything else. (A hidden-iframe
-        // approach printed blank/blanked pages in some browsers — focus and
-        // removal races. The parent already has every font loaded.)
-        async print({ pageWidthPx = 666, pageHeightPx = 995, marginPx = 64 } = {}) {
-          const { html } = await handle.paginate({ pageWidthPx, pageHeightPx });
-          document.getElementById('tsr-print-root')?.remove();
-          document.getElementById('tsr-print-style')?.remove();
-          const style = document.createElement('style');
-          style.id = 'tsr-print-style';
-          // Gecko sizes A4 at FRACTIONAL css px (793.70 × 1122.52) and
-          // fragments with zero overflow tolerance: a 995px sheet inside a
-          // 994.52px page content box splits into content + clipped-blank
-          // page — every page doubles. (Chromium tolerates the sub-pixel
-          // overflow, which is why it hid there.) Clamp the margins so the
-          // content box clears the sheets with ≥3px slack on both axes,
-          // and never force a break after the LAST sheet — Gecko honors
-          // that literally too, as a trailing blank page.
-          const A4W = 793.7, A4H = 1122.5;
-          const mx = Math.max(0, Math.min(marginPx, Math.floor((A4W - pageWidthPx - 3) / 2)));
-          const my = Math.max(0, Math.min(marginPx, Math.floor((A4H - pageHeightPx - 3) / 2)));
-          style.textContent =
-            `@page { size: A4; margin: ${my}px ${mx}px }` +
-            `#tsr-print-root { display: none; }` +
-            `@media print {` +
-            ` body { margin: 0 !important; }` +
-            ` body > :not(#tsr-print-root) { display: none !important; }` +
-            ` #tsr-print-root { display: block !important; }` +
-            ` .tsr-sheet { break-after: page; page-break-after: always; }` +
-            ` .tsr-sheet:last-child { break-after: auto; page-break-after: auto; }` +
-            `}`;
-          document.head.appendChild(style);
-          const root = document.createElement('div');
-          root.id = 'tsr-print-root';
-          root.style.fontFamily = fontFamily;
-          root.style.fontSize = `${baseSizePx}px`;
-          root.style.setProperty('--tsr-cjk-font', cjkFontFamily);
-          if (lang) root.setAttribute('lang', lang);
-          root.innerHTML = html;
-          document.body.appendChild(root);
-          try { await document.fonts.ready; } catch { /* print what settled */ }
-          const done = new Promise((r) =>
-            window.addEventListener('afterprint', r, { once: true }));
-          window.print();
-          await Promise.race([done, new Promise((r) => setTimeout(r, 120000))]);
-          root.remove();
-          style.remove();
-          return { html };
-        },
+        // this document only: its behaviours, copy and overlay go, the worker
+        // frees it; the container keeps the last view
+        dispose: () => disposeSession(s),
       };
       return handle;
     },
+    // the handle-less view of a container's session (null: none)
+    sessionOf(container) {
+      return sessions.get(container)?.view ?? null;
+    },
     dispose() {
-      uninstallCopy?.();
+      for (const s of [...sessions.values()]) disposeSession(s);
       worker.terminate();
     },
   };

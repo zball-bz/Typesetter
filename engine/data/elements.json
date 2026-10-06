@@ -117,6 +117,7 @@
       "counter": "footnote",
       "numbering": "always",
       "labels": "none",
+      "preview": "block",
       "alias": { "prefix": "fn-", "body": "number" },
       "ref": [{ "slot": "number" }],
       "flow": {

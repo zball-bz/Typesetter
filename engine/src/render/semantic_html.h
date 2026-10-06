@@ -5,6 +5,8 @@
 // upgrade swap key), data-s/e, and label anchors ("tsr-<label>") — the
 // resolver ran first, so numbers and refs are already final (§11.1).
 #pragma once
+#include <functional>
+
 #include "../model/model.h"
 
 namespace tsr {
@@ -19,5 +21,15 @@ class Cascade;
 std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& styles,
                            const ResourceTable* rt = nullptr, const Registry* reg = nullptr,
                            const Cascade* cascade = nullptr);
+
+// (plan P3-06; design T7 ops.fragment) a preview: the content of the element
+// a label identifies on the semantic page — a list item's when the label is
+// its first block's (the page hoists it onto the <li>: a footnote's body) —
+// without the references `backlink` says lead back to where the preview is
+// shown (a note's ↩); the caller suppresses ids (AnchorScope). "" when no
+// node carries the label.
+std::string renderSemanticFragment(const ContentTree& tree, Interner& strs, StyleTable& styles,
+                                   const ResourceTable* rt, const Registry* reg, const Cascade* cascade,
+                                   std::string_view label, const std::function<bool(StrRef)>& backlink);
 
 }  // namespace tsr
