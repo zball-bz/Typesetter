@@ -74,7 +74,7 @@ top pid=2 units=1
   space w=257su stretch=1 @[349,353)
   word "WITH" w=2049su pen=INF @[349,353)
   space w=257su stretch=1 @[349,353)
-  math "X^2" w=1091su asc=967su desc=11su @[354,359)
+  obj math "X^2" w=1091su asc=967su desc=11su @[354,359)
 top pid=3 units=1
  unit text indent=0su
   word "Bro" w=1537su pen=INF @[365,412)

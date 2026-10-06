@@ -26,7 +26,7 @@ top pid=0 units=1
   hyphen bw=513su pen=0.70 @[36,49)
   word "la" w=1025su pen=INF @[36,49)
   space w=257su stretch=1 @[36,49)
-  math "x" w=539su asc=475su desc=12su @[50,53)
+  obj math "x" w=539su asc=475su desc=12su @[50,53)
   space w=257su stretch=1 @[54,63)
   word "af" w=1025su pen=INF @[54,63)
   hyphen bw=513su pen=0.70 @[54,63)

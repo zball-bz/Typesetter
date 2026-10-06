@@ -64,7 +64,7 @@ top pid=3 units=1
   hyphen bw=513su pen=0.70 @[384,401)
   word "la" w=1025su pen=INF @[384,401)
   space w=257su stretch=1 @[384,401)
-  math "x^2" w=948su asc=967su desc=12su @[402,416)
+  obj math "x^2" w=948su asc=967su desc=12su @[402,416)
   space w=257su stretch=1 @[417,456)
   word "keeps" w=2561su pen=INF @[417,456)
   space w=257su stretch=1 @[417,456)

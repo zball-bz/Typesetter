@@ -37,7 +37,7 @@ top pid=2 units=1
   hyphen bw=513su pen=0.70 @[15,70)
   word "lowed" w=2561su pen=INF @[15,70)
   space w=257su stretch=1 @[15,70)
-  word "" w=1024su pen=0 @[71,116)
+  obj image "" w=1024su asc=1024su desc=0su @[71,116)
   space w=257su stretch=1 @[117,137)
   word "stays" w=2561su pen=INF @[117,137)
   space w=257su stretch=1 @[117,137)

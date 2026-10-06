@@ -29,6 +29,8 @@ enum : u16 {
   BF_REF = 512,        // resolver-synthesized run (rendered data-syn="ref";
                        //   skipped by the copy rebuild, document-model §9.3)
   BF_FIL = 1024,       // fil glue (plan P2-16: fill): takes the line's slack
+  BF_SYNTH = 2048,     // an inline object's synthetic glue (between a formula's
+                       //   parts; plan P3-26: no character, not a boundary)
 };
 
 struct LinebreakBlock {
@@ -49,15 +51,19 @@ struct LinebreakBlock {
   StrRef ctxTrigram = 0, ctxPrev = 0, ctxNext = 0;
   float kernPx = 0;  // hyphen junction kern, applied when NOT broken here
   bool widthResolved = false;
-  // inline formula (math-design.md §8): width DEFINED by the box, never
-  // measured; layout takes the line's vertical extents from the box
-  const MathBox* math = nullptr;
+  // (plan P3-26) an inline object's part (shape/objects.h): its kind and
+  // extents — its width DEFINED by the object, never measured; payload: the
+  // part's own (a formula segment's box), for the oracle to compare
+  bool obj = false;
+  ObjKind objKind = ObjKind::Math;
+  Su objAsc = 0, objDesc = 0;
+  const void* objPayload = nullptr;
   Span span;
   bool isSpace() const { return flags & BF_SPACE; }
   bool isHyphen() const { return flags & BF_HYPHEN; }
   bool isCjkChar() const { return (flags & BF_CJK) && !(flags & BF_PUNCT_GLYPH); }
   bool isPunctGlyph() const { return flags & BF_PUNCT_GLYPH; }
-  bool isSynthetic() const { return flags & (BF_BOUND | BF_INDENT); }
+  bool isSynthetic() const { return flags & (BF_BOUND | BF_INDENT | BF_SYNTH); }
 };
 
 constexpr float BREAK_INF = kPenInf;

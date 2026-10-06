@@ -14,7 +14,7 @@ top pid=0 units=8
   hyphen bw=513su pen=0.70 @[43,51)
   word "topy" w=2049su pen=INF @[43,51)
  unit text indent=0su
-  math "Id_(A)" w=1627su asc=819su desc=263su @[52,60)
+  obj math "Id_(A)" w=1627su asc=819su desc=263su @[52,60)
  unit text indent=0su
   word "equal" w=2561su pen=INF @[66,74)
   hyphen bw=513su pen=0.70 @[66,74)
@@ -22,16 +22,16 @@ top pid=0 units=8
   hyphen bw=513su pen=0.70 @[66,74)
   word "ty" w=1025su pen=INF @[66,74)
   space w=257su stretch=1 @[66,74)
-  math "=" w=774su asc=377su desc=0su @[75,78)
+  obj math "=" w=774su asc=377su desc=0su @[75,78)
  unit text indent=0su
-  math "(x,x) | x ∈ A" w=2962su asc=721su desc=215su @[81,98)
-  boundary w=284su stretch=0 @[81,98)
-  math "" w=682su asc=554su desc=42su @[81,98)
-  boundary w=284su stretch=0 @[81,98)
-  math "" w=788su asc=696su desc=10su @[81,98)
+  obj math "(x,x) | x ∈ A" w=2962su asc=721su desc=215su @[81,98)
+  synthetic w=284su @[81,98)
+  obj math "" w=682su asc=554su desc=42su @[81,98)
+  synthetic w=284su @[81,98)
+  obj math "" w=788su asc=696su desc=10su @[81,98)
  unit text indent=0su
   word "path" w=2049su pen=INF @[101,111)
   space w=257su stretch=1 @[101,111)
   word "space" w=2561su pen=INF @[101,111)
   space w=257su stretch=1 @[101,111)
-  math "A^I" w=1121su asc=951su desc=10su @[112,117)
+  obj math "A^I" w=1121su asc=951su desc=10su @[112,117)

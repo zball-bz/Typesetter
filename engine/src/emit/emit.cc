@@ -1602,7 +1602,8 @@ void reportFormula(const ContentNode* n, StrRef formula, const MathScope& scope,
 //   Box BlankBearing           punctuation glyph             BF_CJK|BF_PUNCT_GLYPH[|BF_PUNCT_OPEN]
 //   Box Object                 formula part                  math = the part's box
 //   Glue Word                  typed space                   BF_SPACE; KernCtx → ctx fields
-//   Glue Autospace/ObjectSpace boundary / formula glue       BF_SPACE|BF_BOUND
+//   Glue Autospace boundary glue                              BF_SPACE|BF_BOUND
+//   Glue ObjectSpace an object's synthetic glue (P3-26)       BF_SPACE|BF_SYNTH
 //   Glue Fill                  fil glue (fill, plan P2-16)    BF_SPACE|BF_FIL
 //   Glue Blank                 punctuation half              BF_SPACE|BF_PUNCT_SP[|BF_PUNCT_OPEN if owned by next]
 //   Disc                       hyphen point                  BF_HYPHEN; width = unbroken (junction kern),
@@ -1684,7 +1685,14 @@ void lowerHList(const HList& h, std::vector<Block>& out, std::vector<u32>& start
             break;
           case RealizeClass::Object:
             b.flags = ref;
-            if constexpr (kFull) b.math = h.parts[sp.obj].math;
+            if constexpr (kFull) {
+              const ObjPart& pt = h.parts[sp.obj];
+              b.obj = true;
+              b.objKind = h.objs[pt.obj].kind;
+              b.objAsc = pt.asc;
+              b.objDesc = pt.desc;
+              b.objPayload = pt.math;
+            }
             break;
           case RealizeClass::Plain:
           case RealizeClass::Rigid:
@@ -1717,8 +1725,10 @@ void lowerHList(const HList& h, std::vector<Block>& out, std::vector<u32>& start
               }
             break;
           case GC::Autospace:
-          case GC::ObjectSpace:
             b.flags = (u16)(BF_SPACE | BF_BOUND | ref);
+            break;
+          case GC::ObjectSpace:  // (plan P3-26) synthetic: between an object's parts
+            b.flags = (u16)(BF_SPACE | BF_SYNTH | ref);
             break;
           case GC::Fill:
             b.flags = (u16)(BF_SPACE | BF_FIL | ref);
@@ -1822,14 +1832,15 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
       unitHeader(out, leafOf(tb, ui), u, strs);
       auto dumpBlock = [&](const LinebreakBlock& b) {
         out += "  ";
-        if (b.math) {
-          out += "math \"";
+        if (b.obj) {  // (plan P3-26) an inline object's part, whatever its kind
+          static constexpr const char* kObj[] = {"math", "image", "raw", "error"};
+          appendf(out, "obj %s \"", kObj[(int)b.objKind]);
           appendEscaped(out, strs.get(b.text));
-          appendf(out, "\" w=%dsu asc=%dsu desc=%dsu", b.width, b.math->asc,
-                  b.math->desc);
+          appendf(out, "\" w=%dsu asc=%dsu desc=%dsu", b.width, b.objAsc, b.objDesc);
         }
         else if (b.flags & BF_INDENT) appendf(out, "indent w=%dsu", b.width);
         else if (b.flags & BF_FIL) out += "fill";
+        else if (b.flags & BF_SYNTH) appendf(out, "synthetic w=%dsu", b.width);
         else if (b.flags & BF_BOUND) appendf(out, "boundary w=%dsu stretch=%g", b.width, (double)b.stretchWeight);
         else if (b.flags & BF_PUNCT_SP) appendf(out, "punct-sp w=%dsu", b.width);
         else if (b.isPunctGlyph()) {

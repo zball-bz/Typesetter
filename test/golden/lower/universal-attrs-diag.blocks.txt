@@ -35,7 +35,7 @@ top pid=1 units=1
   space w=257su stretch=1 @[194,222)
   word "name" w=2049su pen=INF @[194,222)
   space w=257su stretch=1 @[194,222)
-  word "" w=640su pen=0 @[223,269)
+  obj image "" w=640su asc=640su desc=0su @[223,269)
   space w=257su stretch=1 @[270,283)
   word "in" w=1025su pen=INF @[270,283)
   space w=257su stretch=1 @[270,283)

@@ -136,7 +136,7 @@ struct LegacyInline final : InlineSink {
             // at line edges), rigid otherwise; synthetic for copy (§9.3)
             const double pen = segs[k].penalty;
             LinebreakBlock g;
-            g.flags = (u16)(BF_SPACE | BF_BOUND | ctx.addFlags);
+            g.flags = (u16)(BF_SPACE | BF_SYNTH | ctx.addFlags);
             g.breakPenalty = (float)pen;
             g.style = st;
             g.text = spaceRef;
@@ -157,7 +157,11 @@ struct LegacyInline final : InlineSink {
           b.linkUrl = ctx.url.ref;
           b.flags = ctx.addFlags;
           b.span = n->span;
-          b.math = segs[k].box;
+          b.obj = true;
+          b.objKind = ObjKind::Math;
+          b.objAsc = segs[k].box->asc;
+          b.objDesc = segs[k].box->desc;
+          b.objPayload = segs[k].box;
           b.width = segs[k].box->w;
           b.rawPx = suToPx(segs[k].box->w);
           b.widthResolved = true;
@@ -320,7 +324,7 @@ struct LegacyInline final : InlineSink {
                     1.0f, 0.0f, px);
     };
     {  // formula → CJK boundary: the previous inline block was math
-      if (!u.legacy.empty() && u.legacy.back().math && !s.empty()) {
+      if (!u.legacy.empty() && u.legacy.back().obj && !s.empty()) {
         u32 j0 = 0;
         u32 first = utf8Next(s, j0);
         if (isIdeo(first)) boundary();
@@ -381,7 +385,7 @@ struct LegacyInline final : InlineSink {
         }
       } else {
         // 禁则: no break before a closing punct (inline formulas included)
-        if (!u.legacy.empty() && (u.legacy.back().isCjkChar() || u.legacy.back().math))
+        if (!u.legacy.empty() && (u.legacy.back().isCjkChar() || u.legacy.back().obj))
           u.legacy.back().breakPenalty = BREAK_INF;
         if (lastIsCloseSp()) {
           // closing + closing: solid; None keeps the half but rigid (a break
@@ -517,13 +521,13 @@ static void fillSpaceContexts(std::vector<TopBlock>& tops, Interner& strs) {
   };
   auto isWord = [](const LinebreakBlock& b) {
     return !b.isSpace() && !b.isHyphen() && !b.isSynthetic() && !b.isCjkChar() &&
-           !b.isPunctGlyph() && !b.math && b.text != 0;
+           !b.isPunctGlyph() && !b.obj && b.text != 0;
   };
   auto tag = [&](std::vector<LinebreakBlock>& blocks) {
     for (size_t i = 0; i < blocks.size(); i++) {
       LinebreakBlock& b = blocks[i];
       const bool hyph = b.isHyphen();
-      if (!hyph && (!b.isSpace() || (b.flags & (BF_PUNCT_SP | BF_BOUND))))
+      if (!hyph && (!b.isSpace() || (b.flags & (BF_PUNCT_SP | BF_BOUND | BF_SYNTH))))
         continue;
       if (i == 0 || i + 1 >= blocks.size()) continue;
       if (!isWord(blocks[i - 1]) || !isWord(blocks[i + 1])) continue;
@@ -701,10 +705,10 @@ void cmpBlocks(std::string& out, int& budget, const std::string& where,
     f("ctxNext", a.ctxNext == b.ctxNext);
     f("kernPx", a.kernPx == b.kernPx);
     f("widthResolved", a.widthResolved == b.widthResolved);
-    f("math", (a.math == nullptr) == (b.math == nullptr) &&
-                  (!a.math || (a.math->w == b.math->w && a.math->asc == b.math->asc &&
-                               a.math->desc == b.math->desc &&
-                               dumpMathBox(a.math, strs) == dumpMathBox(b.math, strs))));
+    auto box = [](const LinebreakBlock& x) { return static_cast<const MathBox*>(x.objPayload); };
+    f("obj", a.obj == b.obj && a.objKind == b.objKind && a.objAsc == b.objAsc && a.objDesc == b.objDesc &&
+                 (!a.obj || a.objKind != ObjKind::Math ||
+                  (box(a) && box(b) && box(a)->w == box(b)->w && dumpMathBox(box(a), strs) == dumpMathBox(box(b), strs))));
     f("span", a.span.start == b.span.start && a.span.end == b.span.end);
     if (d.empty()) continue;
     appendf(out, "%s block %zu \"", where.c_str(), i);

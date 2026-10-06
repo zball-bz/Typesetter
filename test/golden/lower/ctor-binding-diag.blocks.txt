@@ -40,7 +40,7 @@ top pid=4 units=1
  unit text indent=0su
   word "Raw" w=1537su pen=INF @[241,244)
   space w=257su stretch=1 @[241,244)
-  word "" w=2560su pen=0 @[245,285)
+  obj raw "" w=2560su asc=640su desc=0su @[245,285)
   space w=257su stretch=1 @[286,296)
   word "and" w=1537su pen=INF @[286,296)
   space w=257su stretch=1 @[286,296)
@@ -71,7 +71,7 @@ top pid=5 units=1
   hyphen bw=513su pen=0.70 @[332,363)
   word "tion" w=2049su pen=INF @[332,363)
   space w=257su stretch=1 @[332,363)
-  word "" w=640su pen=0 @[364,405)
+  obj image "" w=640su asc=640su desc=0su @[364,405)
   space w=257su stretch=1 @[406,419)
   word "in" w=1025su pen=INF @[406,419)
   space w=257su stretch=1 @[406,419)

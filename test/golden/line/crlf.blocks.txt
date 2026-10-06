@@ -21,9 +21,9 @@ top pid=1 units=1
   space w=257su stretch=1 @[17,55)
   word "with" w=2049su pen=INF @[17,55)
   space w=257su stretch=1 @[17,55)
-  math "a +\nb" w=1625su asc=600su desc=76su @[56,64)
-  boundary w=228su stretch=0 @[56,64)
-  math "" w=602su asc=700su desc=10su @[56,64)
+  obj math "a +\nb" w=1625su asc=600su desc=76su @[56,64)
+  synthetic w=228su @[56,64)
+  obj math "" w=602su asc=700su desc=10su @[56,64)
   space w=257su stretch=1 @[65,70)
   word "math." w=2561su pen=INF @[65,70)
 top pid=2 units=1
