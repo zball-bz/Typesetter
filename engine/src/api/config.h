@@ -3,12 +3,13 @@
 
 #include "../shape/textrules.h"
 #include "../support/support.h"
-#include "settings.gen.h"
+#include "settings_views.gen.h"
 
 namespace tsr {
 
-// Config (every host setting), CostParams and PunctCompress are generated
-// from the schema's "settings" rows (plan P1-03): settings.gen.h.
+// CostParams, PunctCompress and the stages' views of Config are generated
+// from the schema's "settings" rows (plan P1-03): settings_views.gen.h.
+// Config itself (settings.gen.h) is the host's: no stage sees it (plan P3-32).
 
 // App C constants (em): punct compressible half, CJK–Latin boundary glue —
 // the rules' constants (engine/rules/locale/compat.def, plan P1-11).

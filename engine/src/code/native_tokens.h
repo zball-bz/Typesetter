@@ -2,7 +2,10 @@
 // blocks are tokenized by the engine itself since plan P1-09; the tsm
 // tree-sitter grammar stays linked for the conformance check, nativeTokens.)
 #pragma once
-#include "../api/doc.h"
+#include <string_view>
+#include <vector>
+
+#include "tokens.h"
 
 namespace tsr {
 

@@ -694,7 +694,7 @@ class DocLayout {
     while (a < boxes.size()) {
       size_t z = a + 1;
       Su used = boxes[a].w;
-      while (z < boxes.size() && used + gaps[z - 1] + boxes[z].w <= room) used += gaps[z - 1] + boxes[z++].w;
+      for (; z < boxes.size() && used + gaps[z - 1] + boxes[z].w <= room; z++) used += gaps[z - 1] + boxes[z].w;
       if (!firstLine) py += gapV;
       firstLine = false;
       Su x = al == BlockTraits::Align::Ragged ? 0 : al == BlockTraits::Align::End ? room - used : (room - used) / 2;

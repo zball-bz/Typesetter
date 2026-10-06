@@ -8,7 +8,7 @@
 #pragma once
 #include <unordered_map>
 
-#include "../api/settings.gen.h"
+#include "../api/settings_views.gen.h"
 #include "locale.h"
 
 namespace tsr {

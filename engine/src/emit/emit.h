@@ -14,6 +14,17 @@
 
 namespace tsr {
 
+// (plan P3-32; design T9 M12) Emit and Measure are width-independent, and the
+// compiler proves it: stage code reads settings only through its view (Config
+// is not even defined here: the architecture lint's config-closure rule), and
+// neither view has host.width. A schema row that made one of them read the
+// width fails here, not in a golden.
+template <class View>
+concept ReadsWidth = requires(const View& v) { v.widthPx; };
+static_assert(!ReadsWidth<EmitSettings> && !ReadsWidth<MeasureSettings>,
+              "host.width reaches no stage before Layout (emit products are width-independent)");
+static_assert(ReadsWidth<LayoutSettings>, "the concept names the width row");
+
 struct ContentNode;
 struct ContentTree;
 

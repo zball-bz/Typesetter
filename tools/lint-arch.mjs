@@ -50,38 +50,20 @@ const RULES = [
     re: /#tsr-fn-|tsr-fnref-|\[href\^=/,
   },
   {
+    id: 'config-closure',
+    why: 'P3-32 (T9 M12): stage code sees no Config definition (api/settings.gen.h), not even through another header — it reads settings through its stage view (settings_views.gen.h), so the compiler proves what each stage reads (Emit: no host.width)',
+    files: () => readdirSync(join(root, 'engine/src'))
+      .filter((d) => d !== 'api' && statSync(join(root, 'engine/src', d)).isDirectory())
+      .flatMap((d) => files([`engine/src/${d}`], ['.cc', '.h'])),
+    closure: /api\/settings\.gen\.h$/,
+  },
+  {
     id: 'colour-as-semantics',
     why: 'P2: semantics never travel through paint values (use classes / properties)',
     files: () => files(['engine/src'], ['.cc', '.h']),
     re: /var\(--tsr-tok-comment\)/,
   },
 ];
-
-// P1-03 stage settings views (interim until P3-02 generates struct views): a
-// stage's sources read a Config member only if that setting row lists the
-// stage in `affects` — the stage model invalidates exactly what it declares.
-const schema = JSON.parse(readFileSync(join(root, 'engine/schema/schema.json'), 'utf8'));
-const affectsOf = {};  // Config member → stages
-for (const [path, row] of Object.entries(schema.settings ?? {})) {
-  if (path === '$comment') continue;
-  affectsOf[row.field.startsWith('cost.') ? 'cost' : row.field] =
-    [...(affectsOf[row.field.startsWith('cost.') ? 'cost' : row.field] ?? []), ...row.affects];
-}
-const STAGE_DIRS = {
-  Resolve: ['engine/src/resolve'],
-  BoxTree: ['engine/src/boxtree'],
-  Emit: ['engine/src/emit', 'engine/src/math', 'engine/src/code'],
-  Layout: ['engine/src/layout', 'engine/src/break'],
-  Paint: ['engine/src/render', 'engine/src/paint'],
-};
-for (const [stage, dirs] of Object.entries(STAGE_DIRS)) {
-  RULES.push({
-    id: `settings-view-${stage}`,
-    why: `P1-03: ${stage} reads a setting whose schema row does not list ${stage} in "affects"`,
-    files: () => files(dirs, ['.cc', '.h']),
-    re: { test: (line) => [...line.matchAll(/\bcfg\.(\w+)/g)].some((m) => !(affectsOf[m[1]] ?? []).includes(stage)) },
-  });
-}
 
 // the headers a file sees, transitively (quoted includes that resolve in the
 // tree; system and generated-at-build headers are leaves): the first chain

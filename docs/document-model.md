@@ -604,9 +604,14 @@ registry rows field by field before the document's own declarations
 `counters` keys sketched above are these rows now.
 
 As built (plan P3-02): every stage reads its settings through a generated
-view (`settings.gen.h`: `IngestSettings` … `PaintSettings`) holding only the
+view (`settings_views.gen.h`: `IngestSettings` … `PaintSettings`) holding only the
 rows whose `affects` names it, so a read of an undeclared row does not
-compile and a settings patch reruns every stage that reads the row. The
+compile and a settings patch reruns every stage that reads the row. (Plan
+P3-32, design T9 M12: `Config` itself is defined only in `settings.gen.h`,
+which no stage source sees — the architecture lint's `config-closure` rule —
+so a stage cannot read past its view. `emit.h` asserts that neither Emit's
+nor Measure's view has `host.width`: emit products are width-independent by
+construction.) The
 knobs with evidence of scoped use are properties, with the settings as
 their document defaults through the default rules: `codeblock.snapKerning`,
 `codeblock.sidecarFrac`, `codeblock.contIndent` (block rows; the code block

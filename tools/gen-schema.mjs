@@ -532,7 +532,15 @@ const cLit = (r, v) => {
 const costRows = settings.filter(([, r]) => r.field.startsWith('cost.'));
 const cfgRows = settings.filter(([, r]) => !r.field.startsWith('cost.'));
 const pc = settings.find(([, r]) => r.ctype === 'PunctCompress');
-let sh = `// ${HDR}\n// Host settings (schema "settings"; plan P1-03, design T4 M3 / T9 A4).\n#pragma once\n#include <array>\n#include <map>\n#include <string>\n#include <string_view>\n\n` +
+// (plan P3-32; design T9 M12) two headers: the stages' (settings_views.gen.h:
+// the value types and the views, Config only declared) and the host's
+// (settings.gen.h: Config itself, policy, the codec). A stage's sources see
+// no Config definition (the architecture lint's config-closure rule), so a
+// stage reads a row only through its view — the compiler proves, e.g., that
+// Emit reads no host.width
+let sv = `// ${HDR}\n// The settings each stage reads (schema "settings"; plans P1-03, P3-02, P3-32).\n` +
+  `// Stage code includes this header, never settings.gen.h: Config is only\n// declared here, so a stage reads a row through its view or not at all.\n` +
+  `#pragma once\n#include <array>\n#include <map>\n#include <string>\n#include <string_view>\n\n` +
   `#include "../support/support.h"\n#include "stages.h"\n\nnamespace tsr {\n\n` +
   `// a value per TeX atom class (ord, op, bin, rel, open, close, punct, inner); -1: none (plan P3-25)\nusing ClassMap = std::array<double, 8>;\n\n` +
   settings.filter(([, r]) => !r.ctype && r.dom.startsWith('enum:'))
@@ -543,8 +551,12 @@ let sh = `// ${HDR}\n// Host settings (schema "settings"; plan P1-03, design T4 
   `//   None: full-width style — all punctuation spaces kept (rigid where 禁则\n//         forbids a break)\n` +
   `enum class PunctCompress : u8 { ${pc[1].dom.slice(5).split('|').map((m, k) => `${cap(m)} = ${k}`).join(', ')} };\n\n` +
   `// Line cost (document-model §11; TeX-bounded since P0-12): x below\n// -shrinkThreshold is Overfull; cost = min(mapped(x)^exponent, cap).\nstruct CostParams {\n`;
-for (const [n, r] of costRows) sh += `  ${ctypeOf(r)} ${r.field.slice(5)} = ${cLit(r, r.def)};  // ${n}\n`;
-sh += `};\n\n// Every host setting, one member per row (defaults = the registry's).\nstruct Config {\n`;
+for (const [n, r] of costRows) sv += `  ${ctypeOf(r)} ${r.field.slice(5)} = ${cLit(r, r.def)};  // ${n}\n`;
+sv += `};\n\n// Every host setting (settings.gen.h: the host's; a stage reads its view)\nstruct Config;\n\n`;
+let sh = `// ${HDR}\n// Host settings (schema "settings"; plan P1-03, design T4 M3 / T9 A4): Config,\n` +
+  `// policy and the settings codec — the host's (api/); stages read their views\n// (settings_views.gen.h).\n` +
+  `#pragma once\n#include <map>\n#include <string>\n#include <string_view>\n\n#include "settings_views.gen.h"\n\nnamespace tsr {\n\n` +
+  `// Every host setting, one member per row (defaults = the registry's).\nstruct Config {\n`;
 for (const [n, r] of cfgRows) sh += `  ${ctypeOf(r)} ${r.field} = ${cLit(r, r.def)};  // ${n}\n`;
 sh += `  CostParams cost;\n};\n\n`;
 // (plan P3-02) the settings a stage reads: a view of Config with only the
@@ -552,21 +564,25 @@ sh += `  CostParams cost;\n};\n\n`;
 // compile, so `affects` (what a settings patch reruns) cannot drift from
 // what the code reads
 const VIEW_STAGES = ['Ingest', 'Resolve', 'BoxTree', 'Emit', 'Measure', 'Layout', 'Paginate', 'Paint'];
-sh += `// The settings each stage reads (plan P3-02): a view of Config holding only the\n` +
+sv += `// The settings each stage reads (plan P3-02): a view of Config holding only the\n` +
   `// rows whose \`affects\` names the stage, so reading any other row is a compile\n` +
   `// error and a settings patch reruns every stage that reads a row. Views hold\n` +
-  `// references: the Config outlives them (the Doc owns it).\n`;
+  `// references: the Config outlives them (the Doc owns it). Built from a Config\n` +
+  `// by the host (settings.gen.cc).\n`;
+let viewCtors = '';
 for (const st of VIEW_STAGES) {
   const rows = cfgRows.filter(([, r]) => r.affects.includes(st));
   const cost = costRows.some(([, r]) => r.affects.includes(st));
   if (!rows.length && !cost) continue;
-  sh += `struct ${st}Settings {\n`;
-  for (const [n, r] of rows) sh += `  const ${ctypeOf(r)}& ${r.field};  // ${n}\n`;
-  if (cost) sh += `  const CostParams& cost;  // cost.*\n`;
+  sv += `struct ${st}Settings {\n`;
+  for (const [n, r] of rows) sv += `  const ${ctypeOf(r)}& ${r.field};  // ${n}\n`;
+  if (cost) sv += `  const CostParams& cost;  // cost.*\n`;
   const inits = rows.map(([, r]) => `${r.field}(c.${r.field})`);
   if (cost) inits.push('cost(c.cost)');
-  sh += `  ${st}Settings(const Config& c)  // NOLINT: a Config is its view\n      : ${inits.join(',\n        ')} {}\n};\n`;
+  sv += `  ${st}Settings(const Config& c);  // NOLINT: a Config is its view\n};\n`;
+  viewCtors += `${st}Settings::${st}Settings(const Config& c)\n    : ${inits.join(',\n      ')} {}\n`;
 }
+sv += `\n}  // namespace tsr\n`;
 sh += `\n` +
   `// host policy (schema "policy"): how hosts drive the engine\n` +
   policy.filter(([, r]) => typeof r.def === 'number').map(([n, r]) => `constexpr u32 kPolicy${cap(n)} = ${r.def};  // ${r.doc}\n`).join('') +
@@ -608,7 +624,8 @@ const rowCase = ([n, r], k) => {
   if (r.apply) body += `\n      ${r.apply}(c, ${f});`;
   return `    case ${k}: {  // ${n}\n      ${body}\n      return true;\n    }\n`;
 };
-let sc = `// ${HDR}\n#include "settings.gen.h"\n\n#include <algorithm>\n#include <cmath>\n#include <cstdio>\n\n#include "../ops/domains.gen.h"\n#include "../support/json.h"\n#include "config.h"\n\nnamespace tsr {\nnamespace {\n\n` +
+let sc = `// ${HDR}\n#include "settings.gen.h"\n\n#include <algorithm>\n#include <cmath>\n#include <cstdio>\n\n#include "../ops/domains.gen.h"\n#include "../support/json.h"\n#include "config.h"\n\nnamespace tsr {\n\n` +
+  `// the stages' views of a Config (settings_views.gen.h)\n${viewCtors}\nnamespace {\n\n` +
   `struct Row {\n  const char* path;\n  u32 affects;  // stageBit set\n  bool group;   // the value is an object (map rows)\n};\nconst Row kRows[] = {\n` +
   settings.map(([n, r]) => `    {${JSON.stringify(n)}, ${r.affects.map((a) => `stageBit(Stage::${a})`).join(' | ')}, ${r.dom.startsWith('map') || r.dom.startsWith('json')}},`).join('\n') +
   `\n};\nconstexpr u32 kRowCount = sizeof kRows / sizeof kRows[0];\n\n` +
@@ -770,6 +787,7 @@ const outputs = {
   'engine/src/support/url_policy.gen.h': urlH,
   'runtime/src/shared/url_policy.gen.mjs': urlJs,
   'runtime/src/shared/props.gen.mjs': propsJs,
+  'engine/src/api/settings_views.gen.h': sv,
   'engine/src/api/settings.gen.h': sh,
   'engine/src/api/settings.gen.cc': sc,
   'runtime/src/shared/settings.gen.mjs': settingsJs,

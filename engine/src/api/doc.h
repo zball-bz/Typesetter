@@ -25,6 +25,7 @@
 #include "../render/typeset_html.h"
 #include "../support/hash128.h"
 #include "../syntax/exports.h"
+#include "settings.gen.h"  // (plan P3-32) Config: the host's, never a stage's
 
 namespace tsr {
 

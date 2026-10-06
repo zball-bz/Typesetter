@@ -10,6 +10,92 @@
 #include "config.h"
 
 namespace tsr {
+
+// the stages' views of a Config (settings_views.gen.h)
+IngestSettings::IngestSettings(const Config& c)
+    : paraIndentEm(c.paraIndentEm),
+      listIndentEm(c.listIndentEm),
+      quoteIndentEm(c.quoteIndentEm),
+      codeScale(c.codeScale),
+      verbatimContIndent(c.verbatimContIndent),
+      sidebarFrac(c.sidebarFrac),
+      verbatimSnapKerning(c.verbatimSnapKerning),
+      codeFontFeatures(c.codeFontFeatures),
+      codeFontFeaturesByLang(c.codeFontFeaturesByLang),
+      semElements(c.semElements),
+      semCounters(c.semCounters),
+      semCollectors(c.semCollectors),
+      semHtml(c.semHtml),
+      semSystems(c.semSystems),
+      styleRules(c.styleRules) {}
+ResolveSettings::ResolveSettings(const Config& c)
+    : lang(c.lang),
+      supHeading(c.supHeading),
+      supTable(c.supTable),
+      supFigure(c.supFigure),
+      supEquation(c.supEquation),
+      capSep(c.capSep),
+      projectDoc(c.projectDoc),
+      projectStarts(c.projectStarts) {}
+BoxTreeSettings::BoxTreeSettings(const Config& c)
+    : lang(c.lang),
+      baseSizePx(c.baseSizePx) {}
+EmitSettings::EmitSettings(const Config& c)
+    : epsilonPerWordSu(c.epsilonPerWordSu),
+      baseSizePx(c.baseSizePx),
+      lineHeight(c.lineHeight),
+      cjkJustifyK(c.cjkJustifyK),
+      cjkGlueEm(c.cjkGlueEm),
+      punctCompress(c.punctCompress),
+      hyphenPenalty(c.hyphenPenalty),
+      urlBreakPenalty(c.urlBreakPenalty),
+      urlBreakMinLen(c.urlBreakMinLen),
+      mathBreakAfter(c.mathBreakAfter),
+      mathBreakBefore(c.mathBreakBefore) {}
+MeasureSettings::MeasureSettings(const Config& c)
+    : dppx(c.dppx),
+      loadedFaces(c.loadedFaces),
+      epsilonPerWordSu(c.epsilonPerWordSu),
+      lang(c.lang),
+      baseSizePx(c.baseSizePx),
+      bodyFont(c.bodyFont),
+      cjkFont(c.cjkFont),
+      monoFont(c.monoFont),
+      monoCjkFont(c.monoCjkFont) {}
+LayoutSettings::LayoutSettings(const Config& c)
+    : widthPx(c.widthPx),
+      baseSizePx(c.baseSizePx),
+      lineHeight(c.lineHeight),
+      paraSpacingEm(c.paraSpacingEm),
+      cjkJustifyK(c.cjkJustifyK),
+      codeScale(c.codeScale),
+      verbatimMinCols(c.verbatimMinCols),
+      verbatimSnapTolerance(c.verbatimSnapTolerance),
+      verbatimSnapMaxQ(c.verbatimSnapMaxQ),
+      minWrapWidthEm(c.minWrapWidthEm),
+      tableCellPadEm(c.tableCellPadEm),
+      tableRowPadEm(c.tableRowPadEm),
+      cost(c.cost) {}
+PaginateSettings::PaginateSettings(const Config& c)
+    : pageHeightPx(c.pageHeightPx),
+      pageWidthPx(c.pageWidthPx),
+      pageMarginPx(c.pageMarginPx) {}
+PaintSettings::PaintSettings(const Config& c)
+    : widthPx(c.widthPx),
+      lang(c.lang),
+      baseSizePx(c.baseSizePx),
+      lineHeight(c.lineHeight),
+      paraSpacingEm(c.paraSpacingEm),
+      bodyFont(c.bodyFont),
+      cjkFont(c.cjkFont),
+      monoFont(c.monoFont),
+      monoCjkFont(c.monoCjkFont),
+      projectUrls(c.projectUrls),
+      idPrefix(c.idPrefix),
+      renderMath(c.renderMath),
+      a11yMathLabel(c.a11yMathLabel),
+      a11yTextLayer(c.a11yTextLayer) {}
+
 namespace {
 
 struct Row {

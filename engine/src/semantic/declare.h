@@ -14,7 +14,7 @@
 #pragma once
 #include <memory>
 
-#include "../api/settings.gen.h"
+#include "../api/settings_views.gen.h"
 #include "../elements/registry.h"
 
 namespace tsr {
