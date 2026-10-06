@@ -1,0 +1,4 @@
+instance footnote 1 label=fn-1 marker=fnref-1 @[45,83)
+label fn-1 -> footnote 1 @[45,83)
+label fnref-1 -> footnote 1 (marker) @[45,83)
+flow notes: fn-1

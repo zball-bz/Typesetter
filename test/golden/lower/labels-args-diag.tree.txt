@@ -47,6 +47,6 @@ doc @[181,832) [base]
     text @[675,738) [base] str="A paragraph ending in something label-like <looks-like-a-label>"
   para @[740,784) [base]
     text @[740,756) [base] str="Mixed arguments: " raw=0:0,17:16
-    error @[757,783) [base] message="named and positional arguments mixed: name every one, card(label: \"x\", name: 3)" code="mixed-args"
+    error @[757,783) [CODE] message="named and positional arguments mixed: name every one, card(label: \"x\", name: 3)" code="mixed-args"
     text @[783,784) [base] str="."
-  error @[786,832) [base] message="region arguments must be named (key: value): write #!aside(cols: cols)" code="header-positional"
+  error @[786,832) [CODE] message="region arguments must be named (key: value): write #!aside(cols: cols)" code="header-positional"

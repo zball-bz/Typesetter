@@ -1,0 +1,4 @@
+= A heading with a note^[The note body is set at the notes' size, *not* in the heading's bold.]
+
+The marker takes the heading's style; the note's body takes the place it is set
+in (D-S09): its own emphasis travels with it, the heading's rules do not.

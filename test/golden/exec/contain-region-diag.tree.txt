@@ -1,6 +1,6 @@
 doc @[68,105) [base]
   para @[68,75) [base]
     text @[68,75) [base] str="Before."
-  error @[77,97) [base] message="handler failed" code="region-error"
+  error @[77,97) [CODE] message="handler failed" code="region-error"
   para @[99,105) [base]
     text @[99,105) [base] str="After."

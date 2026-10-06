@@ -863,6 +863,16 @@
       "affects": [
         "Ingest"
       ]
+    },
+    "style.rules": {
+      "$comment": "The host's rules (plan P3-01; design T4 Rules, D-T03, D-T08): env 1, after the engine's defaults — an array of [selector, patch] or {select, patch, force}; a forced rule applies over a node's own style.",
+      "field": "styleRules",
+      "dom": "json:array",
+      "def": [],
+      "prec": "HostDefault",
+      "affects": [
+        "Ingest"
+      ]
     }
   },
   "policy": {

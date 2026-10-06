@@ -1,4 +1,4 @@
 doc @[44,88) [base]
   para @[44,51) [base]
     text @[44,51) [base] str="Before."
-  error @[53,88) [base] message="Error: boom (the rest of the document was not executed)" code="script-error"
+  error @[53,88) [CODE] message="Error: boom (the rest of the document was not executed)" code="script-error"

@@ -1,0 +1,9 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="160">Energy is E = mc<sup>2</sup><a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a>, a marker inside raised text keeps the raise and is scaled from its parent.</p>
+<div data-role="notes" data-pid="1" data-s="0" data-e="160">
+<hr data-s="0" data-e="160">
+<ol data-s="0" data-e="160">
+<li id="tsr-fn-1"><sup>A note marked inside a superscript.</sup><sup> </sup><a href="#tsr-fnref-1"><sup>↩</sup></a></li>
+</ol>
+</div>
+</div>

@@ -1768,6 +1768,8 @@ int main(int argc, char** argv) {
         contractCheck(label, "html", html, true);
         // a fixture may golden the print pagination (pages-design.md §2):
         // "products": ["paged"] with its page.height setting
+        // the semantic page's stylesheet (rulesToCss, plan P3-01): "products": ["css"]
+        if (hasProduct("css")) goldenCompare(g("css"), doc.product("css"), update, label + ":css");
         if (hasProduct("paged")) {
           std::string paged = doc.product("paged");
           goldenCompare(g("paged"), paged, update, label + ":paged");

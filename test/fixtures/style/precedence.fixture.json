@@ -1,0 +1,5 @@
+{"settings": {"style": {"rules": [
+  [{"kind": "code"}, {"color": "#0000aa"}],
+  [{"kind": "heading"}, {"color": "#333333"}],
+  {"select": {"role": "aside"}, "patch": {"color": "#008800", "italic": true}, "force": true}
+]}}, "products": ["css"]}

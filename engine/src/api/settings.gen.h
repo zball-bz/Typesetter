@@ -69,6 +69,7 @@ struct Config {
   std::string semCounters = "";  // semantics.counters
   std::string semCollectors = "";  // semantics.collectors
   std::string semSystems = "";  // semantics.systems
+  std::string styleRules = "";  // style.rules
   CostParams cost;
 };
 

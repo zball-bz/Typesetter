@@ -1,6 +1,6 @@
 doc @[0,102) [base]
   para @[0,7) [base]
     text @[0,7) [base] str="Before."
-  error @[9,73) [base] message="Error: after push" code="script-error"
+  error @[9,73) [CODE] message="Error: after push" code="script-error"
   para @[75,102) [base]
     text @[75,102) [base] str="This paragraph is not bold."

@@ -1,0 +1,2 @@
+instance heading 1 level=1 label=h-1 title="Rule precedence" @[0,17)
+label h-1 -> heading 1 @[0,17)

@@ -1,0 +1,4 @@
+= Styled references <top>
+
+A reference takes its site's style: #strong[see @top], #style({color: "#a8432a"})[see @top],
+and plain @top.

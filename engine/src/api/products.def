@@ -4,7 +4,8 @@
 // `semantic` is taken right after Resolve, before any host answer (the
 // golden runner's pre-token dump); `diags` and `settings` are available at
 // any stage. `program` is the LowerProgram's bytes (binary: the recorder
-// runs it), `lower` its dump.
+// runs it), `lower` its dump. `css` is the semantic page's stylesheet
+// (rulesToCss, plan P3-01).
 PRODUCT(skeleton, Compile)
 PRODUCT(ast, Compile)
 PRODUCT(js, Compile)
@@ -17,6 +18,7 @@ PRODUCT(ops, Ingest)
 PRODUCT(tree, Resolve)
 PRODUCT(index, Resolve)
 PRODUCT(semantic, Resolve)
+PRODUCT(css, Resolve)
 PRODUCT(blocktree, BoxTree)
 PRODUCT(mathir, Emit)
 PRODUCT(mathbox, Measure)

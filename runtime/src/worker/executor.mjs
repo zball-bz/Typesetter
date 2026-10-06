@@ -4,7 +4,7 @@
 import { KIND } from '../shared/ops.gen.mjs';
 import { OpBuf, isNode } from '../shared/opbuf.mjs';
 import { createStd, styleAttrs, ruleAttrs, NULLARY, CONTENT } from '../shared/stdlib.mjs';
-import { decodeProgram, Lowering, STUB, fragmentRequest, fragmentResponse } from '../shared/lower.mjs';
+import { decodeProgram, Lowering, STUB, SCOPED, isScoped, fragmentRequest, fragmentResponse } from '../shared/lower.mjs';
 import { BFLAG, LPIECE, PROGRAM_ABI } from '../shared/lower.gen.mjs';
 
 // Default numeric bibliography formatter over CSL-JSON (notes-design.md §2):
@@ -219,6 +219,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     loop: (rs) => {
       const xs = [];
       for (const r of rs) {
+        if (isScoped(r)) continue;  // an iteration that only set rules: nothing to style
         for (const x of S.toContent(r)) {
           if (x.kind === KIND.seq && Object.keys(x.args).length === 0) xs.push(...x.children);
           else xs.push(x);
@@ -249,12 +250,19 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     },
     height: () => styleStack.length,
     // a statement nested in content (plan P2-12; D-L12) that pushed styles:
-    // they end with it — scoped style is $.set's, P3-01
+    // they end with it; its rules ($.set) style the rest of the content it
+    // stands in (plan P3-01: the interpreter wraps the siblings after it),
+    // a plain style push is diagnosed
     styleInValue: (h) => {
+      const pushed = styleStack.slice(h);
       dollar.style.popTo(h);
-      ob.diag(1, 'style-in-value', 'a style pushed inside nested content ends with its statement (scoped style: $.set, P3-01)',
-              here.s, here.e);
+      const rules = pushed.filter((d) => Object.keys(d.args).some((k) => k.startsWith('match')));
+      if (rules.length < pushed.length)
+        ob.diag(1, 'style-in-value', 'a style pushed inside nested content ends with its statement (a rule for the rest of it: $.set)',
+                here.s, here.e);
+      return rules.length ? { [SCOPED]: rules } : undefined;
     },
+    where: (rule, kids) => ob.makeNode(KIND.styled, rule.args, kids),
     setCurrent: (i) => { current = i; },
     failBlock: (err, h, i) => errorAt(i, ...failure(err, h)),
     fail: (err, h, s, e) => {

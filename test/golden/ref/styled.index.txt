@@ -1,0 +1,2 @@
+instance heading 1 level=1 label=top title="Styled references" @[0,19)
+label top -> heading 1 @[0,19)

@@ -458,7 +458,7 @@ const cLit = (r, v) => {
   const t = ctypeOf(r);
   if (r.ctype === 'PunctCompress') return `PunctCompress::${cap(v)}`;
   if (t.startsWith('std::map')) return '{}';
-  if (r.dom === 'json') return '""';
+  if (r.dom.startsWith('json')) return '""';
   if (t === 'std::string') return JSON.stringify(v);
   if (t === 'bool') return v ? 'true' : 'false';
   return String(v);
@@ -500,6 +500,8 @@ const rowCase = ([n, r], k) => {
     const vd = rest[0];
     body = `if (v.t != JsonValue::T::Obj) return type(why, "an object of strings");\n      std::map<std::string, std::string> mm;\n` +
       `      for (size_t mi = 0; mi < v.keys.size(); mi++) {\n        const JsonValue& mv = v.vals[mi];\n        if (mv.t != JsonValue::T::Str${vd ? ` || !matchDomain(TextDomain::${domEnum(vd)}, mv.str)` : ''}) return type(why, "${vd ?? 'string'} values");\n        mm[v.keys[mi]] = mv.str;\n      }\n      ${f} = std::move(mm);`;
+  } else if (dom === 'json' && rest[0] === 'array') {  // an array, kept as its JSON text ("" = none)
+    body = `if (v.t != JsonValue::T::Arr) return type(why, "an array");\n      ${f}.clear();\n      if (!v.arr.empty()) jsonDump(${f}, v);`;
   } else if (dom === 'json') {  // an object, kept as its JSON text ("" = none)
     body = `if (v.t != JsonValue::T::Obj) return type(why, "an object");\n      ${f}.clear();\n      if (!v.keys.empty()) jsonDump(${f}, v);`;
   } else if (textDomains.includes(dom)) body = `if (v.t != JsonValue::T::Str || (${r.optional ? '!v.str.empty() && ' : ''}!matchDomain(TextDomain::${domEnum(dom)}, v.str))) return type(why, "${dom}${r.optional ? ' or empty' : ''}");\n      ${f} = v.str;`;
@@ -510,7 +512,7 @@ const rowCase = ([n, r], k) => {
 };
 let sc = `// ${HDR}\n#include "settings.gen.h"\n\n#include <algorithm>\n#include <cmath>\n#include <cstdio>\n\n#include "../ops/domains.gen.h"\n#include "../support/json.h"\n#include "config.h"\n\nnamespace tsr {\nnamespace {\n\n` +
   `struct Row {\n  const char* path;\n  u32 affects;  // stageBit set\n  bool group;   // the value is an object (map rows)\n};\nconst Row kRows[] = {\n` +
-  settings.map(([n, r]) => `    {${JSON.stringify(n)}, ${r.affects.map((a) => `stageBit(Stage::${a})`).join(' | ')}, ${r.dom.startsWith('map') || r.dom === 'json'}},`).join('\n') +
+  settings.map(([n, r]) => `    {${JSON.stringify(n)}, ${r.affects.map((a) => `stageBit(Stage::${a})`).join(' | ')}, ${r.dom.startsWith('map') || r.dom.startsWith('json')}},`).join('\n') +
   `\n};\nconstexpr u32 kRowCount = sizeof kRows / sizeof kRows[0];\n\n` +
   `bool type(std::string& why, const char* want) {\n  why = std::string("expected ") + want;\n  return false;\n}\n` +
   `bool num(const JsonValue& v, double lo, double hi, bool integral, double& x, std::string& why) {\n` +
@@ -551,7 +553,7 @@ settings.forEach(([n, r], k) => {
   const t = ctypeOf(r);
   if (r.ctype === 'PunctCompress') sc += `  { static const char* const kM[] = {${r.dom.slice(5).split('|').map((m) => JSON.stringify(m)).join(', ')}}; jsonString(out, kM[(int)${f}]); }\n`;
   else if (t.startsWith('std::map')) sc += `  out += '{';\n  { bool first = true; for (const auto& [mk, mv] : ${f}) { if (!first) out += ", "; first = false; jsonString(out, mk); out += ": "; jsonString(out, mv); } }\n  out += '}';\n`;
-  else if (r.dom === 'json') sc += `  out += ${f}.empty() ? "{}" : ${f};\n`;
+  else if (r.dom.startsWith('json')) sc += `  out += ${f}.empty() ? "${r.dom === 'json:array' ? '[]' : '{}'}" : ${f};\n`;
   else if (t === 'std::string') sc += `  jsonString(out, ${f});\n`;
   else if (t === 'bool') sc += `  out += ${f} ? "true" : "false";\n`;
   else sc += `  num(out, (double)${f});\n`;

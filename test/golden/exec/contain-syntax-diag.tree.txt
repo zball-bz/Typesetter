@@ -1,7 +1,7 @@
 doc @[0,61) [base]
   para @[0,7) [base]
     text @[0,7) [base] str="Before."
-  error @[9,21) [base] message="SyntaxError: invalid JavaScript in this block" code="script-syntax"
+  error @[9,21) [CODE] message="SyntaxError: invalid JavaScript in this block" code="script-syntax"
   para @[23,30) [base]
     text @[23,30) [base] str="Middle."
   para @[50,61) [base]

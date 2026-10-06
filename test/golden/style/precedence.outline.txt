@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Rule precedence","label":null,"span":[0,17]}],"regions":[{"name":"aside","label":null,"span":[274,388]}],"fences":[],"labels":[],"diagnostics":[]}

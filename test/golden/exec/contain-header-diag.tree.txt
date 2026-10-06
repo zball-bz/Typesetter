@@ -1,6 +1,6 @@
 doc @[0,41) [base]
   para @[0,7) [base]
     text @[0,7) [base] str="Before."
-  error @[9,33) [base] message="region arguments must be named (key: value): write #!table(name: 3)" code="header-positional"
+  error @[9,33) [CODE] message="region arguments must be named (key: value): write #!table(name: 3)" code="header-positional"
   para @[35,41) [base]
     text @[35,41) [base] str="After."

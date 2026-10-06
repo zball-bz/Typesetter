@@ -1,6 +1,6 @@
 doc @[0,24) [base]
   para @[0,7) [base]
     text @[0,7) [base] str="Before."
-  error @[9,16) [base] message="closer '#aside!' has no open region '#!aside'" code="region-orphan"
+  error @[9,16) [CODE] message="closer '#aside!' has no open region '#!aside'" code="region-orphan"
   para @[18,24) [base]
     text @[18,24) [base] str="After."

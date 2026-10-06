@@ -410,8 +410,7 @@ struct HlInline final : InlineSink {
     tmp.span = n->span;
     tmp.style = n->style;
     tmp.str = strs.intern(msg);
-    ctx.add += E.mono;
-    emitText(&tmp, u, ctx);
+    emitText(&tmp, u, ctx);  // in its style: mono by the default rule (plan P3-01)
   }
 
   // -- objects (shape/objects.h) ------------------------------------------------

@@ -193,11 +193,17 @@ class Registry {
   Template unresolved, unnumbered;
   // (plan P3-01; T7's minimal role map) the element a generated role reads
   // as on the semantic page — its presentation is the rules' (defaults.json)
-  std::vector<std::pair<std::string, std::string>> roleHtml;
-  std::string_view roleElement(std::string_view role) const {
-    for (const auto& [r, h] : roleHtml)
-      if (r == role) return h;
-    return {};
+  // — and what that element says of a run (a page writing a run's own
+  // superscript, bold or italic needs no second element for it)
+  struct RoleHtml {
+    std::string role, tag;
+    enum class Says : u8 { Nothing, Super, Bold, Italic } says = Says::Nothing;
+  };
+  std::vector<RoleHtml> roleHtml;
+  const RoleHtml* roleElement(std::string_view role) const {
+    for (const RoleHtml& r : roleHtml)
+      if (r.role == role) return &r;
+    return nullptr;
   }
 
  private:

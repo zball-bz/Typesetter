@@ -1,0 +1,4 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="19" id="tsr-top">Styled references</h1>
+<p data-pid="1" data-s="27" data-e="135">A reference takes its site&#39;s style: <strong>see </strong><a href="#tsr-top"><strong>§1</strong></a>, <span style="color:#a8432a">see </span><a href="#tsr-top"><span style="color:#a8432a">§1</span></a>, and plain <a href="#tsr-top">§1</a>.</p>
+</div>

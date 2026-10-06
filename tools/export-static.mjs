@@ -44,7 +44,7 @@ const lang = settingOf(settings, 'doc.lang');
 const bodyFont = settingOf(settings, 'fonts.body');
 const cjkFont = settingOf(settings, 'fonts.cjk');
 const source = await readFile(inputs[0], 'utf8');
-const { html: semantic, diags, ok } = await renderTsm(source, { settings });
+const { html: semantic, css: rulesCss, diags, ok } = await renderTsm(source, { settings });
 if (diags.trim()) console.error(diags.trim());
 if (!ok) process.exit(1);
 
@@ -76,7 +76,8 @@ body { margin: 0 auto; max-width: 42em; padding: 2em 1em;
 .tsr-flow img { max-width: 100%; height: auto; }
 .tsr-flow pre { overflow-x: auto; }
 .tsr-flow code .tsr-err { color: #b00; }
-</style>
+/* the rules (plan P3-01: engine defaults, host rules, the document's $.set) */
+${rulesCss}</style>
 </head>
 <body>
 <article id="tsr-root">

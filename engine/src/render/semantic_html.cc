@@ -4,6 +4,7 @@
 #include "../resource/resource_table.h"
 #include "../elements/registry.h"
 #include "../math/env.h"
+#include "rules_css.h"
 
 namespace tsr {
 
@@ -17,6 +18,8 @@ struct Sem {
   std::string& out;
   const ResourceTable* rt;  // answered code tokens (plan P1-19)
   const Registry* reg;     // the classes' semantic elements (plan P2-05)
+  const Cascade* cascade;  // document envs (plan P3-01)
+  std::string topEnv;      // the top-level block's env mark ("" = none)
 
   const ArgVal* arg(const ContentNode* n, ArgK k) {
     for (const ArgVal& a : n->args)
@@ -35,6 +38,7 @@ struct Sem {
   // shared attributes: span anchoring + optional pid + label anchor
   void attrs(Tag& t, const ContentNode* n, int pid) {
     if (pid >= 0) t.num("data-pid", (unsigned)pid);
+    if (pid >= 0 && !topEnv.empty()) t.attr("data-tsr-env", topEnv);
     if (!n->span.empty()) {
       t.num("data-s", n->span.start);
       t.num("data-e", n->span.end);
@@ -126,9 +130,19 @@ struct Sem {
   }
   // its content, inside the element its role reads as on this page (the
   // registry's role map, plan P3-01: the rules give it in the typeset view)
+  // — unless its own style says it already (a marker in raised text is
+  // raised once, as the typeset view sets it)
   void roleKids(const ContentNode* n) {
     const StrRef r = attrStr(n, ArgK::role);
-    const std::string_view tag = r && reg ? reg->roleElement(strs.get(r)) : std::string_view{};
+    const Registry::RoleHtml* re = r && reg ? reg->roleElement(strs.get(r)) : nullptr;
+    std::string_view tag = re ? std::string_view(re->tag) : std::string_view{};
+    if (re) {
+      using Says = Registry::RoleHtml::Says;
+      const Styling& sc = styles.get(n->scope);
+      if ((re->says == Says::Super && sc.baseline == BASELINE_SUPER) || (re->says == Says::Bold && sc.weight >= 600) ||
+          (re->says == Says::Italic && sc.italic))
+        tag = {};
+    }
     if (!tag.empty()) {
       out += "<";
       out += tag;
@@ -149,7 +163,18 @@ struct Sem {
         return;
       case Kind::styled:
         // transparent: the leaves carry the folded styles (above), a role
-        // its element
+        // its element; a style.where marks where its env begins
+        if (startsEnv(n) && cascade) {
+          const std::string env = envAttr(*cascade, n->env, strs);
+          {
+            Tag t(out, "span");
+            t.attr("data-tsr-env", env);
+            t.open();
+          }
+          roleKids(n);
+          out += "</span>";
+          return;
+        }
         roleKids(n);
         return;
       case Kind::link:
@@ -482,6 +507,28 @@ struct Sem {
         return;
       case Kind::comment:
         return;
+      case Kind::styled: {
+        // a style.where around blocks (a nested $.set, plan P3-01): a
+        // division where its env begins
+        bool blocks = false;
+        for (const ContentNode* k : n->kids) blocks = blocks || !isInlineLevel(k->kind);
+        if (blocks && startsEnv(n) && cascade) {
+          {
+            Tag t(out, "div");
+            attrs(t, n, pid);
+            t.attr("data-tsr-env", envAttr(*cascade, n->env, strs));
+            t.open();
+          }
+          out += "\n";
+          for (const ContentNode* k : n->kids) block(k, -1);
+          out += "</div>\n";
+          return;
+        }
+        open("p", n, pid);
+        inl(n);
+        out += "</p>\n";
+        return;
+      }
       default:
         // inline content at block level (defensive): wrap in a paragraph
         open("p", n, pid);
@@ -495,13 +542,14 @@ struct Sem {
 }  // namespace
 
 std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& styles,
-                           const ResourceTable* rt, const Registry* reg) {
+                           const ResourceTable* rt, const Registry* reg, const Cascade* cascade) {
   std::string out;
   out += "<div class=\"tsr-flow\">\n";
   if (tree.root) {
     int pid = 0;
     for (const ContentNode* k : tree.root->kids) {
-      Sem s{strs, styles, out, rt, reg};
+      Sem s{strs, styles, out, rt, reg, cascade,
+            cascade && !startsEnv(k) ? envAttr(*cascade, k->env, strs) : std::string()};
       s.block(k, pid);  // pid mirrors emitDoc's per-root-child numbering
       pid++;
     }

@@ -17,6 +17,7 @@
 // own attributes, its language, its depth among ancestors of its kind) —
 // never what a rule set, so there are no cycles.
 #pragma once
+#include <algorithm>
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -63,12 +64,21 @@ class Cascade {
  public:
   explicit Cascade(Interner& strs) : strs_(strs) {}
 
-  // the base env (env 0 then env 1); the defaults read `settings` values
-  // where a patch names one ({"setting": "code.scale", "unit": "em"})
+  // the base env (env 0 then env 1), starting an instantiation over (the
+  // document's envs are dropped); the defaults read `settings` values where
+  // a patch names one ({"setting": "code.scale", "unit": "em"})
   void setBase(std::vector<StyleRule> defaults, std::vector<StyleRule> host);
   // an env with one more rule after `env`'s (a $.set, a style.where)
   RuleEnvId extend(RuleEnvId env, StyleRule r);
   bool any() const { return !base_.empty() || !ext_.empty(); }
+  // the base rules (env 0 then env 1), and an env's own rules outer to inner
+  // (rulesToCss, plan P3-01)
+  const std::vector<StyleRule>& baseRules() const { return base_; }
+  void chain(RuleEnvId env, std::vector<const StyleRule*>& out) const {
+    out.clear();
+    for (RuleEnvId e = env; e; e = ext_[e - 1].parent) out.push_back(&ext_[e - 1].rule);
+    std::reverse(out.begin(), out.end());
+  }
   bool usesDepth() const { return depthRules_; }
 
   // what the fold reads of a node

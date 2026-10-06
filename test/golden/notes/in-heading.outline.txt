@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"A heading with a noteThe note body is set at the notes' size, not in the heading's bold.","label":null,"span":[0,95]}],"regions":[],"fences":[],"labels":[],"diagnostics":[]}

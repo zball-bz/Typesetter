@@ -62,6 +62,7 @@ const Row kRows[] = {
     {"semantics.counters", stageBit(Stage::Ingest), true},
     {"semantics.collectors", stageBit(Stage::Ingest), true},
     {"semantics.systems", stageBit(Stage::Ingest), true},
+    {"style.rules", stageBit(Stage::Ingest), true},
 };
 constexpr u32 kRowCount = sizeof kRows / sizeof kRows[0];
 
@@ -349,6 +350,12 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       if (!v.keys.empty()) jsonDump(c.semSystems, v);
       return true;
     }
+    case 44: {  // style.rules
+      if (v.t != JsonValue::T::Arr) return type(why, "an array");
+      c.styleRules.clear();
+      if (!v.arr.empty()) jsonDump(c.styleRules, v);
+      return true;
+    }
     default:
       return false;
   }
@@ -513,6 +520,8 @@ std::string settingsJson(const Config& c) {
   out += c.semCollectors.empty() ? "{}" : c.semCollectors;
   out += ", \"systems\": ";
   out += c.semSystems.empty() ? "{}" : c.semSystems;
+  out += "}, \"style\": {\"rules\": ";
+  out += c.styleRules.empty() ? "[]" : c.styleRules;
   out += "}}";
   return out;
 }

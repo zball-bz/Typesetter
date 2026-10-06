@@ -69,14 +69,19 @@ export const isStyleKey = (k) => k in STYLE_KEYS || k in STYLE_SUGAR || STYLE_GR
 // a selector as a rule's match attributes (plan P3-01; design T4 Selector):
 // a kind name, or {kind, role, class, lang, depth, …its own attributes
 // (level: 1)} — what the node was emitted with, never what a rule set
+const kindName = (k) => {
+  const v = String(k);
+  if (!(v in KIND)) throw new TypeError(`a selector's kind '${v}' is no node kind (para, heading, code, list, …; *strong* is styled {weight: 700})`);
+  return v;
+};
 export const matchAttrs = (sel) => {
-  if (typeof sel === 'string') return { matchKind: sel };
+  if (typeof sel === 'string') return { matchKind: kindName(sel) };
   if (sel === null || typeof sel !== 'object' || Array.isArray(sel))
     throw new TypeError('a selector is a kind name or {kind, role, class, lang, depth, …attributes}');
   const out = {}, where = [];
   for (const [k, v] of Object.entries(sel)) {
     if (v === undefined || v === null) continue;
-    if (k === 'kind') out.matchKind = String(v);
+    if (k === 'kind') out.matchKind = kindName(v);
     else if (k === 'role') out.matchRole = String(v);
     else if (k === 'class') out.matchClass = String(v);
     else if (k === 'lang' || k === 'textLang') out.matchLang = String(v);

@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="17" id="tsr-h-1">Rule precedence</h1>
+<p data-pid="1" data-s="19" data-e="115">Engine defaults, then the host&#39;s rules, then the document&#39;s: <code>code</code> here is blue by a host rule.</p>
+<p data-pid="2" data-tsr-env="e8169f86b45f773b" data-s="157" data-e="272">After the document&#39;s rule, <code>code</code> is red; its own style wins over both: <code>teal</code>.</p>
+<div data-role="aside" data-pid="3" data-tsr-env="e8169f86b45f773b" data-s="274" data-e="388">
+<p data-s="309" data-e="380"><span style="color:#555555">A host rule marked force wins over this region&#39;s own grey: it is green.</span></p>
+</div>
+</div>

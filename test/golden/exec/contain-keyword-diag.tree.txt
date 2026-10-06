@@ -1,6 +1,6 @@
 doc @[0,50) [base]
   para @[0,7) [base]
     text @[0,7) [base] str="Before."
-  error @[9,42) [base] message="ReferenceError: ok is not defined" code="script-error"
+  error @[9,42) [CODE] message="ReferenceError: ok is not defined" code="script-error"
   para @[44,50) [base]
     text @[44,50) [base] str="After."

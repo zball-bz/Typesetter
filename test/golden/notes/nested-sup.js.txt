@@ -1,0 +1,11 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {style} = __rt.std;
+return (async () => {
+const __h = [
+(__k) => (style(...[{baseline: "super"}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

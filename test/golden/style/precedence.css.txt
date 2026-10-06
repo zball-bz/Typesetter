@@ -1,0 +1,15 @@
+:where(h1,h2,h3,h4,h5,h6){font-weight:700;text-align:start;hyphens:manual;break-after:avoid}
+:where(h1){font-size:1.6em}
+:where(h2){font-size:1.35em}
+:where(h3){font-size:1.15em}
+:where(p:not(.tsr-mathblock)){text-indent:0}
+:where(:not(pre) > code){font-family:var(--tsr-font-mono, monospace);font-size:0.85em}
+:where(pre){font-family:var(--tsr-font-mono, monospace);font-size:0.85em;text-align:start;hyphens:manual}
+:where(ul,ol){padding-inline-start:1.5em}
+:where(blockquote){padding-inline-start:1em}
+:where(img){text-align:start;break-after:avoid}
+:where(p.tsr-mathblock){text-align:start}
+:where(.tsr-err){font-family:var(--tsr-font-mono, monospace);text-align:start}
+:where(:not(pre) > code){color:#0000aa}
+:where(h1,h2,h3,h4,h5,h6){color:#333333}
+:where(:not(pre) > code[data-tsr-env="e8169f86b45f773b"],[data-tsr-env="e8169f86b45f773b"] :not(pre) > code){color:#aa0000}

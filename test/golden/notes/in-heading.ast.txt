@@ -1,0 +1,10 @@
+doc @[0,251)
+  heading @[0,95) level=1
+    text @[2,23) str="A heading with a note"
+    note @[23,95)
+      text @[25,65) str="The note body is set at the notes' size, "
+      styled @[66,71) marker=*
+        text @[67,70) str="not"
+      text @[72,94) str=" in the heading's bold."
+  para @[97,250)
+    text @[97,250) str="The marker takes the heading's style; the note's body takes the place it is set\nin (D-S09): its own emphasis travels with it, the heading's rules do not."

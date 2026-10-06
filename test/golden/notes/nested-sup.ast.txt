@@ -1,0 +1,9 @@
+doc @[0,161)
+  para @[0,160)
+    text @[0,16) str="Energy is E = mc"
+    splice @[16,84) expr="style({baseline: \"super\"})"
+      arg @[44,83)
+        text @[44,45) str="2"
+        note @[45,83)
+          text @[47,82) str="A note marked inside a superscript."
+    text @[84,160) str=", a marker\ninside raised text keeps the raise and is scaled from its parent."

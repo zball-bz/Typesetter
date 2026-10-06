@@ -1,0 +1,51 @@
+lower v1 abi 3d3ccfbb docEnd 486 holes 3 module 0bab171148ab5755
+piece 0 hole 0 js [103,169)
+piece 1 hole 1 js [171,216)
+piece 2 hole 2 js [218,259)
+block 0 content [0,14)
+  CALL heading [0,14) level=1 label=null
+    TEXT "Scoped rules" [2,14)
+block 1 stmt [16,75) user framed holes 0..1
+  STMT 0
+block 2 content [77,167)
+  CALL para [77,167)
+    TEXT "A rule set at the top level styles everything after it: the section heading below is blue." [77,167)
+block 3 content [169,187)
+  CALL heading [169,187) level=2 label=null
+    TEXT "Inside a region" [172,187)
+block 4 content [189,330) user framed async holes 1..2
+  REGION async "aside" [189,330)
+    CALL para [197,230)
+      TEXT "Before the rule, " [197,213) raw=0:0,17:16
+      CALL code [214,220) text="code"
+      TEXT " is plain." [221,230) raw=0:0,1:0
+    FRAME [232,270) holes 1..2
+      STMT 1
+    CALL para [272,322)
+      TEXT "After it, " [272,281) raw=0:0,10:9
+      CALL code [282,288) text="code"
+      TEXT " is red, to the end of the region." [289,322) raw=0:0,1:0
+block 5 content [332,372)
+  CALL para [332,372)
+    TEXT "After the region, " [332,349) raw=0:0,18:17
+    CALL code [350,356) text="code"
+    TEXT " is plain again." [357,372) raw=0:0,1:0
+block 6 content [374,485) user framed holes 2..3
+  CALL list [374,485) ordered=false start=1
+    CALL item [374,383)
+      CALL para [376,383)
+        TEXT "one " [376,379) raw=0:0,4:3
+        CALL code [380,383) text="a"
+    CALL item [384,466)
+      CALL para [386,389)
+        TEXT "two" [386,389)
+      FRAME [392,426) holes 2..3
+        STMT 2
+      CALL para [429,466)
+        CALL code [429,432) text="b"
+        TEXT " is italic, to the end of the item" [433,466) raw=0:0,1:0
+    CALL item [467,485)
+      CALL para [469,485)
+        TEXT "three " [469,474) raw=0:0,6:5
+        CALL code [475,478) text="c"
+        TEXT " is not" [479,485) raw=0:0,1:0

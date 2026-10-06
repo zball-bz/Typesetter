@@ -10,6 +10,8 @@
 namespace tsr {
 
 void Cascade::setBase(std::vector<StyleRule> defaults, std::vector<StyleRule> host) {
+  ext_.clear();  // a new instantiation: the document's envs start over
+  depthRules_ = false;
   base_ = std::move(defaults);
   for (StyleRule& r : host) base_.push_back(std::move(r));
   byKind_.assign(KIND_COUNT + 1, {});

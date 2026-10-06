@@ -1,0 +1,6 @@
+doc @[59,149) [base]
+  group @[59,119) [base] role="lead"
+    para @[66,112) [base]
+      text @[66,112) [base] str="A lead-in that a rule keeps with what follows."
+  para @[121,149) [base]
+    text @[121,149) [base] str="The paragraph it keeps with."

@@ -1,0 +1,21 @@
+lower v1 abi 3d3ccfbb docEnd 136 holes 2 module 040f5fb08517ed8b
+piece 0 hole 0 js [137,166)
+piece 1 hole 1 js [168,219)
+block 0 content [0,19)
+  CALL heading [0,19) level=1 label="top"
+    TEXT "Styled references" [2,19)
+block 1 content [27,135) user framed holes 0..2
+  CALL para [27,135)
+    TEXT "A reference takes its site's style: " [27,62) raw=0:0,36:35
+    HOLE 0 [63,80)
+      CALL seq
+        TEXT "see " [71,74) raw=0:0,4:3
+        CALL ref [75,79) target="top"
+    TEXT ", " [80,81) raw=0:0,2:1
+    HOLE 1 [82,118)
+      CALL seq
+        TEXT "see " [109,112) raw=0:0,4:3
+        CALL ref [113,117) target="top"
+    TEXT ",\nand plain " [118,129) raw=0:0,12:11
+    CALL ref [130,134) target="top"
+    TEXT "." [134,135)

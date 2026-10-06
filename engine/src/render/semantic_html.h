@@ -12,8 +12,12 @@ namespace tsr {
 // rt: answered code tokens render as their styled runs (plan P1-19)
 class ResourceTable;
 class Registry;
-// reg: the element registry, for each class's semantic element (plan P2-05)
+class Cascade;
+// reg: the element registry, for each class's semantic element (plan P2-05);
+// cascade: where a document env begins, the page marks it (data-tsr-env:
+// rulesToCss, plan P3-01)
 std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& styles,
-                           const ResourceTable* rt = nullptr, const Registry* reg = nullptr);
+                           const ResourceTable* rt = nullptr, const Registry* reg = nullptr,
+                           const Cascade* cascade = nullptr);
 
 }  // namespace tsr

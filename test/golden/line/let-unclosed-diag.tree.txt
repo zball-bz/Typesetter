@@ -1,5 +1,5 @@
 doc @[0,67) [base]
-  error @[0,12) [base] message="unterminated #let: dropped up to the next blank line" code="statement-unclosed"
+  error @[0,12) [CODE] message="unterminated #let: dropped up to the next blank line" code="statement-unclosed"
   heading @[13,28) [BOLDx1.60] level=1 label="h-1"
     text @[15,28) [BOLDx1.60] str="Heading after"
   para @[30,67) [base]

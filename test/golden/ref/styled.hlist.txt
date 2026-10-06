@@ -1,0 +1,49 @@
+top pid=0 units=1
+ unit text indent=0su anchor="top"
+  box Other "Styled" w=4917su r0 @[2,19)
+  glue word w=411su x=1 cap=411su kern="d r" src r0 @[2,19)
+  box Other "references" w=8194su r0 @[2,19)
+  run r0 plain BOLD x1.60
+top pid=1 units=1
+ unit text indent=0su
+  box Other "A" w=513su r0 @[27,62)
+  glue word w=257su x=1 cap=257su kern="A r" src r0 @[27,62)
+  box Other "ref" w=1537su r0 @[27,62)
+  disc pen=0.7 w=0su pre="-" 513su kern="fe" r0 @[27,62)
+  box Other "er" w=1025su r0 @[27,62)
+  disc pen=0.7 w=0su pre="-" 513su kern="re" r0 @[27,62)
+  box Other "ence" w=2049su r0 @[27,62)
+  glue word w=257su x=1 cap=257su kern="e t" src r0 @[27,62)
+  box Other "takes" w=2561su r0 @[27,62)
+  glue word w=257su x=1 cap=257su kern="s i" src r0 @[27,62)
+  box Other "its" w=1537su r0 @[27,62)
+  glue word w=257su x=1 cap=257su kern="s s" src r0 @[27,62)
+  box Other "site's" w=3073su r0 @[27,62)
+  glue word w=257su x=1 cap=257su kern="s s" src r0 @[27,62)
+  box Other "style:" w=3073su r0 @[27,62)
+  glue word w=257su x=1 cap=257su src r0 @[27,62)
+  box Other "see" w=1537su r1 @[71,74)
+  glue word w=257su x=1 cap=257su src r1 @[71,74)
+  box Other "§1" w=1128su r2 @[75,79)
+  box Other "," w=513su r3 @[80,81)
+  glue word w=257su x=1 cap=257su src r3 @[80,81)
+  box Other "see" w=1537su r4 @[109,112)
+  glue word w=257su x=1 cap=257su src r4 @[109,112)
+  box Other "§1" w=1128su r5 @[113,117)
+  box Other "," w=513su r6 @[118,129)
+  glue word w=257su x=1 cap=257su kern=", a" src r6 @[118,129)
+  box Other "and" w=1537su r6 @[118,129)
+  glue word w=257su x=1 cap=257su kern="d p" src r6 @[118,129)
+  box Other "plain" w=2561su r6 @[118,129)
+  glue word w=257su x=1 cap=257su src r6 @[118,129)
+  box Other "§1" w=1128su r7 @[130,134)
+  box Other "." w=513su r8 @[134,135)
+  run r0 plain
+  run r1 plain BOLD
+  run r2 plain ref BOLD LINK link="#tsr-top"
+  run r3 plain
+  run r4 plain color=#a8432a
+  run r5 plain ref LINK color=#a8432a link="#tsr-top"
+  run r6 plain
+  run r7 plain ref LINK link="#tsr-top"
+  run r8 plain

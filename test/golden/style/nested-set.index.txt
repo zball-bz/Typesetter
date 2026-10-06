@@ -1,0 +1,4 @@
+instance heading 1 level=1 label=h-1 title="Scoped rules" @[0,14)
+instance heading 1.1 level=2 label=h-1.1 title="Inside a region" @[169,187)
+label h-1 -> heading 1 @[0,14)
+label h-1.1 -> heading 1.1 @[169,187)

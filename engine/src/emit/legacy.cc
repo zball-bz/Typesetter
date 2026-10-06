@@ -112,9 +112,7 @@ struct LegacyInline final : InlineSink {
         tmp.span = n->span;
         tmp.style = n->style;
         tmp.str = strs.intern(msg);
-        ICtx c2 = ctx;
-        c2.add += E.mono;
-        emitText(&tmp, u, c2);
+        emitText(&tmp, u, ctx);  // in its style: mono by the default rule (plan P3-01)
         return;
       }
       case Kind::mathinline: {

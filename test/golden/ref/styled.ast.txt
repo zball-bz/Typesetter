@@ -1,0 +1,17 @@
+doc @[0,136)
+  heading @[0,19) level=1 label="top"
+    text @[2,19) str="Styled references"
+  para @[27,135)
+    text @[27,62) str="A reference takes its site's style: "
+    splice @[63,80) expr="strong"
+      arg @[71,79)
+        text @[71,74) str="see "
+        ref @[75,79) target="top"
+    text @[80,81) str=", "
+    splice @[82,118) expr="style({color: \"#a8432a\"})"
+      arg @[109,117)
+        text @[109,112) str="see "
+        ref @[113,117) target="top"
+    text @[118,129) str=",\nand plain "
+    ref @[130,134) target="top"
+    text @[134,135) str="."

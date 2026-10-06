@@ -372,6 +372,14 @@ export const SETTINGS = Object.freeze({
     "affects": [
       "Ingest"
     ]
+  },
+  "style.rules": {
+    "dom": "json:array",
+    "def": [],
+    "prec": "HostDefault",
+    "affects": [
+      "Ingest"
+    ]
   }
 });
 export const SETTINGS_DEFAULTS = Object.freeze({
@@ -444,6 +452,9 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "counters": {},
     "collectors": {},
     "systems": {}
+  },
+  "style": {
+    "rules": []
   }
 });
 export const LEGACY_OPTIONS = Object.freeze({

@@ -1,0 +1,5 @@
+doc @[0,150)
+  code-block @[0,57) js=" $.set({role: 'lead'}, {block: {keepWithNext: true}}) "
+  region @[59,119) name="lead"
+    para @[66,112) lines=1
+  para @[121,149) lines=1

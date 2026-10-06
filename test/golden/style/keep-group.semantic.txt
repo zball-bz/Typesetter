@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<div data-role="lead" data-pid="0" data-tsr-env="b8a449b66e9b0fe6" data-s="59" data-e="119">
+<p data-s="66" data-e="112">A lead-in that a rule keeps with what follows.</p>
+</div>
+<p data-pid="1" data-tsr-env="b8a449b66e9b0fe6" data-s="121" data-e="149">The paragraph it keeps with.</p>
+</div>

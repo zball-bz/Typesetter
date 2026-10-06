@@ -48,6 +48,7 @@ add_library(tsr_core STATIC
   src/layout/paginate.cc
   src/paint/paint.cc
   src/render/typeset_html.cc
+  src/render/rules_css.cc
   src/render/semantic_html.cc
 )
 # built-in element rows and locale packs, embedded (plan P1-10)

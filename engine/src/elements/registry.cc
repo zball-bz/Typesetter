@@ -433,7 +433,10 @@ struct Loader {
         bool ok = !h.empty();
         for (char c : h) ok = ok && c >= 'a' && c <= 'z';
         if (!ok) return fail("role '" + rs->keys[k] + "': html is an element name");
-        r.roleHtml.push_back({rs->keys[k], h});
+        using Says = Registry::RoleHtml::Says;
+        const Says says = h == "sup" ? Says::Super : h == "strong" || h == "b" ? Says::Bold
+                          : h == "em" || h == "i" ? Says::Italic : Says::Nothing;
+        r.roleHtml.push_back({rs->keys[k], h, says});
       }
     return true;
   }

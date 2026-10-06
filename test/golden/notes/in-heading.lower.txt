@@ -1,0 +1,12 @@
+lower v1 abi 3d3ccfbb docEnd 251 holes 0 module none
+block 0 content [0,95)
+  CALL heading [0,95) level=1 label=null
+    TEXT "A heading with a note" [2,23)
+    CALL note [23,95)
+      TEXT "The note body is set at the notes' size, " [25,65) raw=0:0,41:40
+      CALL strong [66,71)
+        TEXT "not" [67,70)
+      TEXT " in the heading's bold." [72,94) raw=0:0,1:0
+block 1 content [97,250)
+  CALL para [97,250)
+    TEXT "The marker takes the heading's style; the note's body takes the place it is set\nin (D-S09): its own emphasis travels with it, the heading's rules do not." [97,250)

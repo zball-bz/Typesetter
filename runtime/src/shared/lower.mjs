@@ -22,6 +22,12 @@ import {
 // frame around it reports script-syntax
 export const STUB = Object.freeze({ stub: 'syntax' });
 
+// (plan P3-01; D-L12) a nested statement that set rules ($.set inside
+// content) has them as its value: they style the rest of the content it
+// stands in — the siblings after it, each rule a style.where around them
+export const SCOPED = Symbol('scoped-rules');
+export const isScoped = (x) => x !== null && typeof x === 'object' && SCOPED in x;
+
 const utf8 = new TextDecoder();
 
 // bytes (Uint8Array) → the program's tables and body
@@ -120,7 +126,9 @@ export function fragmentResponse(res) {
 // fresh) (a result at its occurrence: SPAN if made since id `fresh`, else
 // an AT alias),
 // height() (the style stack), styleInValue(h) (a nested statement left
-// styles pushed: popped to h, diagnosed — D-L12 until P3-01),
+// styles pushed: popped to h — its rules returned as {[SCOPED]: [rule
+// nodes]}, D-L12; a plain style diagnosed), where(rule, kids) (a
+// style.where of a rule node's attributes),
 // setCurrent(block), fail(err, height, s, e) → an error node,
 // failBlock(err, height, block) (emits the error block), and here {s, e}:
 // the interpreter keeps it on the innermost splice, region, frame or block
@@ -284,7 +292,7 @@ export class Lowering {
           const x = this.v();
           if (x !== undefined) kids.push(x);
         }
-        const node = env.call(f, attrs, kids);
+        const node = env.call(f, attrs, this.withRules(kids));
         return fl & CFLAG.Spanned ? env.at(node, s, e, fresh) : node;
       }
       case LOP.HOLE: {
@@ -323,8 +331,7 @@ export class Lowering {
       case LOP.STMT: {
         const h0 = env.height();
         this.hole(this.u())();
-        if (env.height() > h0) env.styleInValue(h0);
-        return undefined;
+        return env.height() > h0 ? env.styleInValue(h0) : undefined;
       }
       case LOP.LET: {
         const f = this.hole(this.u());
@@ -407,7 +414,7 @@ export class Lowering {
           const x = await this.va();
           if (x !== undefined) kids.push(x);
         }
-        const node = env.call(f, attrs, kids);
+        const node = env.call(f, attrs, this.withRules(kids));
         return fl & CFLAG.Spanned ? env.at(node, s, e, fresh) : node;
       }
       case LOP.HOLE: {
@@ -465,13 +472,12 @@ export class Lowering {
           const x = await this.va();
           if (x !== undefined) items.push(x);
         }
-        return env.at(await this.region(name, args, items, s, e), s, e, fresh);
+        return env.at(await this.region(name, args, this.withRules(items), s, e), s, e, fresh);
       }
       case LOP.STMT: {
         const h0 = env.height();
         await this.hole(this.u())();
-        if (env.height() > h0) env.styleInValue(h0);
-        return undefined;
+        return env.height() > h0 ? env.styleInValue(h0) : undefined;
       }
       case LOP.LET: {
         const f = this.hole(this.u());
@@ -565,14 +571,27 @@ export class Lowering {
       const x = this.v();
       if (x !== undefined) out.push(x);
     }
-    return out;
+    return this.withRules(out);
   }
   async kidsAsync(out, n) {
     for (let i = 0; i < n; i++) {
       const x = await this.va();
       if (x !== undefined) out.push(x);
     }
-    return out;
+    return this.withRules(out);
+  }
+  // a content list with the rules nested statements set (D-L12): the
+  // siblings after each such statement inside a style.where per rule (the
+  // later rule inner); a rule with nothing after it styles nothing
+  withRules(items) {
+    const m = items.findIndex(isScoped);
+    if (m < 0) return items;
+    const rest = this.withRules(items.slice(m + 1));
+    if (rest.length === 0) return items.slice(0, m);
+    let inner = rest;
+    const rules = items[m][SCOPED];
+    for (let k = rules.length; k-- > 0;) inner = [this.env.where(rules[k], inner)];
+    return [...items.slice(0, m), ...inner];
   }
 
   // past one value without running it (a failed frame, unused content args)

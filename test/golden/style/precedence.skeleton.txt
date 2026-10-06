@@ -1,0 +1,7 @@
+doc @[0,389)
+  heading1 @[0,17)
+  para @[19,115) lines=2
+  code-block @[117,155) js=" $.set('code', {color: '#aa0000'}) "
+  para @[157,272) lines=2
+  region @[274,388) name="aside"
+    para @[309,380) lines=1

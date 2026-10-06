@@ -1,0 +1,44 @@
+doc @[0,485) [base]
+  heading @[0,14) [BOLDx1.60] level=1 label="h-1"
+    text @[2,14) [BOLDx1.60] str="Scoped rules"
+  para @[77,167) [base]
+    text @[77,167) [base] str="A rule set at the top level styles everything after it: the section heading below is blue."
+  heading @[169,187) [BOLDx1.35 color=#2f5d8a] level=2 label="h-1.1"
+    text @[172,187) [BOLDx1.35 color=#2f5d8a] str="Inside a region"
+  group @[189,330) [base] role="aside"
+    para @[197,230) [base]
+      text @[197,213) [base] str="Before the rule, " raw=0:0,17:16
+      code @[214,220) [CODEx0.85]
+        text @[214,220) [CODEx0.85] str="code"
+      text @[221,230) [base] str=" is plain." raw=0:0,1:0
+    styled @[189,330) [base] color="#a8432a" matchKind="code"
+      para @[272,322) [base]
+        text @[272,281) [base] str="After it, " raw=0:0,10:9
+        code @[282,288) [CODEx0.85 color=#a8432a]
+          text @[282,288) [CODEx0.85 color=#a8432a] str="code"
+        text @[289,322) [base] str=" is red, to the end of the region." raw=0:0,1:0
+  para @[332,372) [base]
+    text @[332,349) [base] str="After the region, " raw=0:0,18:17
+    code @[350,356) [CODEx0.85]
+      text @[350,356) [CODEx0.85] str="code"
+    text @[357,372) [base] str=" is plain again." raw=0:0,1:0
+  list @[374,485) [base] ordered=false start=1
+    item @[374,383) [base]
+      para @[376,383) [base]
+        text @[376,379) [base] str="one " raw=0:0,4:3
+        code @[380,383) [CODEx0.85]
+          text @[380,383) [CODEx0.85] str="a"
+    item @[384,466) [base]
+      para @[386,389) [base]
+        text @[386,389) [base] str="two"
+      styled @[384,466) [base] matchKind="code"
+        para @[429,466) [base]
+          code @[429,432) [EM+CODEx0.85]
+            text @[429,432) [EM+CODEx0.85] str="b"
+          text @[433,466) [base] str=" is italic, to the end of the item" raw=0:0,1:0
+    item @[467,485) [base]
+      para @[469,485) [base]
+        text @[469,474) [base] str="three " raw=0:0,6:5
+        code @[475,478) [CODEx0.85]
+          text @[475,478) [CODEx0.85] str="c"
+        text @[479,485) [base] str=" is not" raw=0:0,1:0

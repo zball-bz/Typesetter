@@ -26,7 +26,7 @@ doc @[49,334) [base]
     text @[128,164) [base] str="A failing hole stays in its formula: " raw=0:0,37:36
     mathinline @[165,191) [base]
       mathsrc @[166,170) [base] src="y = "
-      error @[170,186) [base] message="ReferenceError: missing is not defined" code="script-error"
+      error @[170,186) [CODE] message="ReferenceError: missing is not defined" code="script-error"
       mathsrc @[186,190) [base] src=" + 1"
     text @[191,192) [base] str="."
   para @[194,288) [base]

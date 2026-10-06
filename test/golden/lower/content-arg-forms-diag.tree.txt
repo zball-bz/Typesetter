@@ -18,6 +18,6 @@ doc @[106,273) [base]
       text @[203,205) [base] str="d1"
       text @[207,209) [base] str="d2"
     text @[210,211) [base] str="."
-  error @[213,265) [base] message="TypeError: Cannot read properties of null (reading 'g')" code="script-error"
+  error @[213,265) [CODE] message="TypeError: Cannot read properties of null (reading 'g')" code="script-error"
   para @[267,273) [base]
     text @[267,273) [base] str="After."

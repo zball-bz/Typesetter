@@ -1,0 +1,13 @@
+= Rule precedence
+
+Engine defaults, then the host's rules, then the document's: `code` here is
+blue by a host rule.
+
+#{ $.set('code', {color: '#aa0000'}) }
+
+After the document's rule, `code` is red; its own style wins over both:
+#code({style: {color: "#00aaaa"}}, "teal").
+
+#!aside(style: {color: "#555555"})
+A host rule marked force wins over this region's own grey: it is green.
+#aside!

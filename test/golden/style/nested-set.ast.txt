@@ -1,0 +1,39 @@
+doc @[0,486)
+  heading @[0,14) level=1
+    text @[2,14) str="Scoped rules"
+  code-block @[16,75) js=" $.set({kind: 'heading', level: 2}, {color: '#2f5d8a'}) "
+  para @[77,167)
+    text @[77,167) str="A rule set at the top level styles everything after it: the section heading below is blue."
+  heading @[169,187) level=2
+    text @[172,187) str="Inside a region"
+  region @[189,330) name="aside"
+    para @[197,230)
+      text @[197,213) str="Before the rule, "
+      code @[214,220) str="code"
+      text @[221,230) str=" is plain."
+    code-block @[232,270) js=" $.set('code', {color: '#a8432a'}) "
+    para @[272,322)
+      text @[272,281) str="After it, "
+      code @[282,288) str="code"
+      text @[289,322) str=" is red, to the end of the region."
+  para @[332,372)
+    text @[332,349) str="After the region, "
+    code @[350,356) str="code"
+    text @[357,372) str=" is plain again."
+  list @[374,485) bullet start=1
+    item @[374,383)
+      para @[376,383)
+        text @[376,379) str="one "
+        code @[380,383) str="a"
+    item @[384,466)
+      para @[386,389)
+        text @[386,389) str="two"
+      code-block @[392,426) js=" $.set('code', {italic: true}) "
+      para @[429,466)
+        code @[429,432) str="b"
+        text @[433,466) str=" is italic, to the end of the item"
+    item @[467,485)
+      para @[469,485)
+        text @[469,474) str="three "
+        code @[475,478) str="c"
+        text @[479,485) str=" is not"

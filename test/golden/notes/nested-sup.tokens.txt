@@ -1,0 +1,7 @@
+[16,22) function "#style"
+[22,43) embedded "({baseline: \"super\"})"
+[43,44) punctuation "["
+[45,47) attribute "^["
+[47,82) attribute "A note marked inside a superscript."
+[82,83) attribute "]"
+[83,84) punctuation "]"

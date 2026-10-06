@@ -1,0 +1,21 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="14" id="tsr-h-1">Scoped rules</h1>
+<p data-pid="1" data-tsr-env="09f39c4ab14bfafd" data-s="77" data-e="167">A rule set at the top level styles everything after it: the section heading below is blue.</p>
+<h2 data-pid="2" data-tsr-env="09f39c4ab14bfafd" data-s="169" data-e="187" id="tsr-h-1.1">Inside a region</h2>
+<div data-role="aside" data-pid="3" data-tsr-env="09f39c4ab14bfafd" data-s="189" data-e="330">
+<p data-s="197" data-e="230">Before the rule, <code>code</code> is plain.</p>
+<div data-s="189" data-e="330" data-tsr-env="cc9c3b0a294a580a">
+<p data-s="272" data-e="322">After it, <code>code</code> is red, to the end of the region.</p>
+</div>
+</div>
+<p data-pid="4" data-tsr-env="09f39c4ab14bfafd" data-s="332" data-e="372">After the region, <code>code</code> is plain again.</p>
+<ul data-pid="5" data-tsr-env="09f39c4ab14bfafd" data-s="374" data-e="485">
+<li>one <code>a</code></li>
+<li><p data-s="386" data-e="389">two</p>
+<div data-s="384" data-e="466" data-tsr-env="2917ee4d8e0a5846">
+<p data-s="429" data-e="466"><code>b</code> is italic, to the end of the item</p>
+</div>
+</li>
+<li>three <code>c</code> is not</li>
+</ul>
+</div>

@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Scoped rules","label":null,"span":[0,14]},{"level":2,"title":"Inside a region","label":null,"span":[169,187]}],"regions":[{"name":"aside","label":null,"span":[189,330]}],"fences":[],"labels":[],"diagnostics":[]}

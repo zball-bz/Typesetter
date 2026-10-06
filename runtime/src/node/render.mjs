@@ -19,7 +19,10 @@ function getMod() {
   return modPromise;
 }
 
-// → { html, diags, ok }; ok=false on ingest failure or error-severity diags
+// → { html, css, diags, ok }; ok=false on ingest failure or error-severity
+// diags. css: the page's stylesheet from the rules (plan P3-01: the html
+// writes each run's rule-free style inline; the defaults, the host's rules
+// and the document's $.set arrive here)
 // opts.settings: the settings document (docs/settings-table.md; opts.lang is
 // sugar for doc.lang). opts.baseDir / opts.rootDir: where document resources (#bibliography
 // src) resolve — relative paths against baseDir, /site-root paths against
@@ -44,7 +47,7 @@ export async function renderTsm(source, opts = {}) {
     const ingested = M._tsr_ingest(doc, opsPtr, ops.length) === 0;
     M._free(opsPtr);
     if (!ingested)
-      return { html: '', diags: M.UTF8ToString(M._tsr_diags(doc)), ok: false };
+      return { html: '', css: '', diags: M.UTF8ToString(M._tsr_diags(doc)), ok: false };
     // answer NEED_TOKENS before the semantic render: foldTokens rewrites the
     // tree, so the static page carries the highlight spans
     // (the resource pull, plan P1-19: only the code tokens are asked for)
@@ -62,8 +65,9 @@ export async function renderTsm(source, opts = {}) {
       M._free(ap);
     }
     const html = M.UTF8ToString(M._tsr_render_semantic(doc));
+    const css = M.UTF8ToString(M._tsr2_render_css(doc));
     const diags = M.UTF8ToString(M._tsr_diags(doc));
-    return { html, diags, ok: !/^error /m.test(diags) };
+    return { html, css, diags, ok: !/^error /m.test(diags) };
   } finally {
     M._tsr_doc_free(doc);
   }

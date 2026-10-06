@@ -5,4 +5,4 @@ doc @[0,114) [base]
       text @[71,73) [base] str="??"
     text @[73,74) [base] str="."
   group @[76,114) [base] role="bibliography"
-  error @[76,114) [base] message="bibliography ../../../../refs.json: resource outside the document root" code="bib-load"
+  error @[76,114) [CODE] message="bibliography ../../../../refs.json: resource outside the document root" code="bib-load"

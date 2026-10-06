@@ -1,0 +1,8 @@
+doc h=10138su
+para pid=0 y=0su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=-13su dc=0su join=space blocks=[0,28) @[0,160)
+  L1 y=1536su left=0su w=19200su dw=146su dc=0su join=space blocks=[29,44) @[84,160)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[45,50) @[84,160)
+para pid=1 y=5837su w=19200su h=4301su
+  L0 rule y=768su left=0su w=19200su
+  L1 y=2765su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,19) @[45,83)

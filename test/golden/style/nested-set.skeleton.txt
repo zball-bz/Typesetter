@@ -1,0 +1,19 @@
+doc @[0,486)
+  heading1 @[0,14)
+  code-block @[16,75) js=" $.set({kind: 'heading', level: 2}, {color: '#2f5d8a'}) "
+  para @[77,167) lines=1
+  heading2 @[169,187)
+  region @[189,330) name="aside"
+    para @[197,230) lines=1
+    code-block @[232,270) js=" $.set('code', {color: '#a8432a'}) "
+    para @[272,322) lines=1
+  para @[332,372) lines=1
+  list bullet start=1 @[374,485)
+    item @[374,383)
+      para @[376,383) lines=1
+    item @[384,466)
+      para @[386,389) lines=1
+      code-block @[392,426) js=" $.set('code', {italic: true}) "
+      para @[429,466) lines=1
+    item @[467,485)
+      para @[469,485) lines=1

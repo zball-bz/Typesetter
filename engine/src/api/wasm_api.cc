@@ -21,7 +21,7 @@ using namespace tsr;
 namespace {
 struct WasmDoc {
   Doc doc;
-  std::string jsOut, htmlOut, semOut, reqOut, diagOut;
+  std::string jsOut, htmlOut, semOut, cssOut, reqOut, diagOut;
 };
 
 void jsonEscapeInto(std::string& out, std::string_view s) {
@@ -319,6 +319,13 @@ TSR_EXPORT const char* tsr_render(WasmDoc* d) {
 TSR_EXPORT const char* tsr_render_semantic(WasmDoc* d) {
   d->semOut = d->doc.renderFallback();
   return d->semOut.c_str();
+}
+
+// its stylesheet (rulesToCss, plan P3-01): what the rules add to the scopes
+// the semantic page writes inline
+TSR_EXPORT const char* tsr2_render_css(WasmDoc* d) {
+  d->cssOut = d->doc.renderCss();
+  return d->cssOut.c_str();
 }
 
 TSR_EXPORT void tsr_set_width(WasmDoc* d, double widthPx) {

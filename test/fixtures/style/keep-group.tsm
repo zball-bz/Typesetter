@@ -1,0 +1,7 @@
+#{ $.set({role: 'lead'}, {block: {keepWithNext: true}}) }
+
+#!lead
+A lead-in that a rule keeps with what follows.
+#lead!
+
+The paragraph it keeps with.

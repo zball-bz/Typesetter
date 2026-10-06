@@ -212,9 +212,7 @@ class Builder {
         }
         LayoutBlock& b = leaf(LayouterId::Grid, Painter::None, TraitsId::Code, n, parent, x, std::move(s));
         b.marker = marker;
-        StyleDelta mono;
-        mono.fontRole = FONTROLE_MONO;
-        b.markerStyle = compose(styles, n->style, mono, (float)cfg.codeScale);
+        b.markerStyle = n->style;  // mono at code.scale: the cascade's (plan P3-01)
         return;
       }
       case Kind::rule:

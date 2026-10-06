@@ -18,5 +18,5 @@
   [{"kind": "image", "side": "left"}, {"parAlign": "justify", "keepWithNext": false}],
   [{"kind": "image", "side": "right"}, {"parAlign": "justify", "keepWithNext": false}],
   [{"kind": "mathblock"}, {"parAlign": "start"}],
-  [{"kind": "error"}, {"parAlign": "start"}]
+  [{"kind": "error"}, {"fontRole": "mono", "parAlign": "start"}]
 ]

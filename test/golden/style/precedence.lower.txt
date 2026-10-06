@@ -1,0 +1,25 @@
+lower v1 abi 3d3ccfbb docEnd 389 holes 3 module afd1792a49d98131
+piece 0 hole 0 js [135,180)
+piece 1 hole 1 js [182,231)
+piece 2 hole 2 js [233,268)
+block 0 content [0,17)
+  CALL heading [0,17) level=1 label=null
+    TEXT "Rule precedence" [2,17)
+block 1 content [19,115)
+  CALL para [19,115)
+    TEXT "Engine defaults, then the host's rules, then the document's: " [19,79) raw=0:0,61:60
+    CALL code [80,86) text="code"
+    TEXT " here is\nblue by a host rule." [87,115) raw=0:0,1:0
+block 2 stmt [117,155) user framed holes 0..1
+  STMT 0
+block 3 content [157,272) user framed holes 1..2
+  CALL para [157,272)
+    TEXT "After the document's rule, " [157,183) raw=0:0,27:26
+    CALL code [184,190) text="code"
+    TEXT " is red; its own style wins over both:\n" [191,228) raw=0:0,1:0,39:37
+    HOLE 1 [229,271)
+    TEXT "." [271,272)
+block 4 content [274,388) user framed async holes 2..3
+  REGION async "aside" args=hole 2 [274,388)
+    CALL para [309,380)
+      TEXT "A host rule marked force wins over this region's own grey: it is green." [309,380)

@@ -1,0 +1,3 @@
+[0,57) function "#{ $.set({role: 'lead'}, {block: {keepWithNext: true}}) }"
+[59,65) function "#!lead"
+[113,119) function "#lead!"

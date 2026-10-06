@@ -107,13 +107,8 @@ struct Mat {
     c.span = span;
     return c;
   }
-  // in a node's style
-  ContentNode* mk(Kind k, Span span, const ContentNode* like) {
-    ContentNode* n = mk(k, span);
-    n->style = like->style;
-    n->scope = like->scope;
-    return n;
-  }
+  // made in a node's state (its replacement, its generated content)
+  ContentNode* mk(Kind k, Span span, const ContentNode* like) { return mk(k, span, siteAt(like)); }
   ContentNode* clone1(const ContentNode* n) {
     ContentNode* c = e.arena.make<ContentNode>();
     *c = *n;

@@ -1,0 +1,6 @@
+instance heading 1 level=1 label=h-1 title="A heading with a noteThe note body is set at the notes' size, not in the heading's bold." @[0,95)
+instance footnote 1 label=fn-1 marker=fnref-1 @[23,95)
+label h-1 -> heading 1 @[0,95)
+label fn-1 -> footnote 1 @[23,95)
+label fnref-1 -> footnote 1 (marker) @[23,95)
+flow notes: fn-1

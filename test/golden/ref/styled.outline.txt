@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Styled references","label":"top","span":[0,19]}],"regions":[],"fences":[],"labels":[{"id":"top","rule":"heading","span":[20,25]}],"diagnostics":[]}

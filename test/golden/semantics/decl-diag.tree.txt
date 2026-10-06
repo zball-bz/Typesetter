@@ -7,7 +7,7 @@ doc @[0,526) [base]
   para @[344,459) [base]
     text @[344,374) [base] str="A counter that does not exist: " raw=0:0,31:30
     text @[412,442) [base] str=" and a slot outside a template: " raw=0:0,1:0,32:30
-    error @[443,458) [base] message="slot belongs in a declaration's template" code="template-only"
+    error @[443,458) [CODE] message="slot belongs in a declaration's template" code="template-only"
     text @[458,459) [base] str="."
   para @[461,526) [base]
     ref @[461,488) [base] target="m1" form="bogus" url="#tsr-m1"

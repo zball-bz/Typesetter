@@ -1,0 +1,3 @@
+doc @[0,251)
+  heading1 @[0,95)
+  para @[97,250) lines=2

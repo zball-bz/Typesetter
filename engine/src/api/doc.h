@@ -16,6 +16,7 @@
 #include "../layout/layout.h"
 #include "../layout/paginate.h"
 #include "../render/html_writer.h"
+#include "../render/rules_css.h"
 #include "../render/semantic_html.h"
 #include "../render/typeset_html.h"
 #include "../syntax/exports.h"
@@ -256,7 +257,7 @@ struct Doc {
     registryOwn = declaredRegistry(raw, cfg, registryBase, diags);
     registry = registryOwn.get();
     // the base rules (plan P3-01): the engine's defaults, which read some
-    // host settings ({"setting": "code.scale"})
+    // host settings ({"setting": "code.scale"}), then the host's (style.rules)
     {
       JsonValue settings;
       JsonReader jr;
@@ -277,7 +278,9 @@ struct Doc {
         }
         return v->t == JsonValue::T::Str ? v->str : std::string();
       };
-      cascade.setBase(parseRules(defaultRulesJson(), strs, diags, "defaults", setting), {});
+      cascade.setBase(parseRules(defaultRulesJson(), strs, diags, "defaults", setting),
+                      cfg.styleRules.empty() ? std::vector<StyleRule>{}
+                                             : parseRules(cfg.styleRules, strs, diags, "style.rules", setting));
     }
     tree = instantiate(raw, arena, strs, styles, nodeProps, cascade, diags, *registry);
     checkDeclarations(raw, tree, *registry, strs, diags);
@@ -696,6 +699,7 @@ struct Doc {
     if (name == "tree") return dumpTree(tree, strs, styles);
     if (name == "index") return dumpIndex(index, *registry);
     if (name == "semantic") return renderFallback();
+    if (name == "css") return renderCss();
     if (name == "blocktree") return dumpBlockTree(boxtree.tops, strs);
     if (name == "mathir") return dumpMathIRs(tops, strs, &mathEnv);
     if (name == "mathbox") return dumpMathBoxes(tops, strs);
@@ -770,10 +774,15 @@ struct Doc {
   std::string renderFallback() {
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
-    std::string html = renderSemantic(tree, strs, styles, &rt, registry);
+    std::string html = renderSemantic(tree, strs, styles, &rt, registry, &cascade);
+    (void)rulesToCss(cascade, tree, strs, &diags);  // what its stylesheet leaves out (rule-no-css)
     reportWriterDefects();
     return html;
   }
+
+  // the semantic page's stylesheet (rulesToCss, plan P3-01): what the rules
+  // add to the scopes the page writes inline; valid with the semantic page
+  std::string renderCss() { return rulesToCss(cascade, tree, strs); }
 
   // a repeated / unlisted attribute reached the HTML writer (a serializer
   // defect; debug builds assert at the call site)

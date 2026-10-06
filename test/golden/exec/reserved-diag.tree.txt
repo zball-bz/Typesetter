@@ -1,4 +1,4 @@
 doc @[0,20) [base]
-  error @[0,12) [base] message="'__x': names starting with __ are reserved for the engine" code="reserved-name"
+  error @[0,12) [CODE] message="'__x': names starting with __ are reserved for the engine" code="reserved-name"
   para @[14,20) [base]
     text @[14,20) [base] str="After."

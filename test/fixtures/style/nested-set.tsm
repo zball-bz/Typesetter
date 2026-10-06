@@ -1,0 +1,23 @@
+= Scoped rules
+
+#{ $.set({kind: 'heading', level: 2}, {color: '#2f5d8a'}) }
+
+A rule set at the top level styles everything after it: the section heading below is blue.
+
+== Inside a region
+
+#!aside
+Before the rule, `code` is plain.
+
+#{ $.set('code', {color: '#a8432a'}) }
+
+After it, `code` is red, to the end of the region.
+#aside!
+
+After the region, `code` is plain again.
+
+- one `a`
+- two
+  #{ $.set('code', {italic: true}) }
+  `b` is italic, to the end of the item
+- three `c` is not
