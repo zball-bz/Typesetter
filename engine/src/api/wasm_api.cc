@@ -1,7 +1,9 @@
 // WASM boundary (architecture §2.5). C ABI; strings returned as doc-owned
 // buffers valid until the next call on the same doc. Measurement is the
-// pull loop: tsr_typeset → 1 (NEED_MEASURE) → tsr_measure_requests (JSON)
-// → tsr_provide_* per item → tsr_typeset again.
+// pull loop: tsr_typeset → 1 (NEED_MEASURE) → tsr2_requests (one binary
+// batch) → tsr2_provide (the answers) → tsr_typeset again; products by
+// name through tsr2_get. The JSON tsr_measure_requests / tsr_provide_* and
+// the per-knob setters remain as shims (plan P3-37).
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 
@@ -330,10 +332,26 @@ TSR_EXPORT const char* tsr_render_semantic(WasmDoc* d) {
 
 // its stylesheet (rulesToCss, plan P3-01): what the rules add to the scopes
 // the semantic page writes inline
-// (plan P3-21) a product by name (Doc::product: references, docinfo, …)
+// (plan P3-21) a product by name (Doc::product: references, docinfo, …), as
+// a C string — the shim of tsr2_get for text products
 TSR_EXPORT const char* tsr2_product(WasmDoc* d, const char* name) {
   d->productOut = d->doc.product(name ? name : "");
   return d->productOut.c_str();
+}
+// (plan P3-37; design T9 M9) every product (products.def — the diagnostics
+// JSON among them; `program` is binary) by name: u32 length + its bytes; an
+// unknown product, or one whose stage has not run, is empty. optsJson is
+// reserved (none read yet).
+TSR_EXPORT const u8* tsr2_get(WasmDoc* d, const char* product, const char* optsJson) {
+  (void)optsJson;
+  Stage st;
+  const std::string name = product ? product : "";
+  d->productOut.assign(4, '\0');
+  if (Doc::productStage(name, st) && (d->doc.done(st) || name == "diags" || name == "diagnostics" || name == "settings"))
+    d->productOut += d->doc.product(name);
+  const u32 n = (u32)d->productOut.size() - 4;
+  std::memcpy(d->productOut.data(), &n, 4);
+  return (const u8*)d->productOut.data();
 }
 
 TSR_EXPORT const char* tsr2_render_css(WasmDoc* d) {

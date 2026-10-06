@@ -29,7 +29,7 @@ test/golden/
 - **CJK conformance fixtures** are named after the clreq rule they exercise (`cjk/clreq-punct-compress-1.tsm` …) so coverage against the reference is greppable.
 - **Adversarial fixtures** are first-class: `#avg的结果` (ASCII cut), `值是 #x. 下一句` (dot rule), `a %-- b` inside code (comment precedence), `#f("a|b")` in a table cell (tree-level split), nested comments, `\|`/`\*`/`\#` escapes, unclosed regions, regex-literal rejection.
 
-## 2. Mock measurer (normative — implemented twice, identically)
+## 2. Mock measurer (normative)
 
 Used by all deterministic tests in C++ (native) and the Node harness. With `em = fontSizePx` (fixtures use 16 so every value is su-exact):
 
@@ -40,6 +40,8 @@ ascent 0.8em · descent 0.2em
 ```
 
 A shared fixture asserts both implementations produce identical `.blocks` dumps for a probe document; drift fails CI.
+
+*As built (plan P3-37 amendment; design T9 "not generalized"):* there is one implementation, `engine/src/measure/mock.h` (C++), the golden metrics; providers are swappable, so no JS twin exists or is needed — the Node and browser paths measure for real, and the WASM parity check (`tools/wasm-goldens.mjs`, gate G4) holds the WASM build to the native goldens.
 
 ## 3. Per-stage deterministic tests (native, ctest, ASan on debug preset)
 

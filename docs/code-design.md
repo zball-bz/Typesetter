@@ -87,6 +87,14 @@ at emit) renders into what already exists:
   the semantic serializer emits `<pre><code>` with `<span class="tsr-tok-*">`,
   so the static-export path is highlighted for free.
 
+*As built (plans P3-18, P3-22; plan P3-37 amendment):* a token run carries
+the class `tsr-c-tok-<tag>` over the 14 tags of `syntax.def` (TOKEN_TAGS),
+on both pages; its colour is the theme's (`runtime/src/main/theme.css` →
+`THEME_CSS`), not a Styling colour — the decoration bits remain for authored
+styles. Tokens come from the `codeTokens` resource need (the pull), answered
+by the engine itself for `tsm`, else by the Session, else by a provider; an
+overlay (`cpp-literate`, plan P3-22) sets its spans over a language's tokens.
+
 ## 4. Grid renderer (K::Code becomes a character grid)
 
 **Decision: monospace is a METRIC CONTRACT, not a measurement problem**
@@ -129,6 +137,15 @@ at emit) renders into what already exists:
   `$.fence` override (a document can still take over any language tag).
   No new JS plugin contract is needed for CH; revisit plugins when a
   feature demands runtime code.
+
+*As built (plans P3-18, P3-21, P3-22, P3-31; plan P3-37 amendment):* the
+theme is a stylesheet — `theme.css`, its colours CSS custom properties
+(`--tsr-tok-*`, light and dark), injected by the shell unless the host gives
+its own — not a Config map. Runtime extension is a provider: a host's module
+(`createEngine({providers})`, `renderTsm({providers})`) or a document's
+(`#use` module's `providers`), registered for `codeTokens` (a language the
+build does not ship: `match(row)`) or `boxInfo`; grammars stay build-time
+(`engine/schema/languages.json`, the language manifest, §8).
 
 ## 6. Milestones
 

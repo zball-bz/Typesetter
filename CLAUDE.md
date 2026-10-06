@@ -35,7 +35,7 @@ apps/playground    minimal engine host page
 ## Pipeline (docs/architecture.md)
 
 markup → linepass → inline → codegen (LowerProgram + hole module) → executor
-(shared/lower.mjs, ops v11) → ingest (PHASE 0: the element registry,
+(shared/lower.mjs, ops v15: schema.json opsVersion) → ingest (PHASE 0: the element registry,
 built-in rows < host semantics.* < the document's declarations) →
 resolver → box tree → emit → layout (KP break inside) → paginate → paint →
 render. Measurement is a **pull loop**:

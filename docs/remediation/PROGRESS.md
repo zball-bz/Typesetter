@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-37
+- 下一步：P3 阶段结束检查（全部门禁、`--long` fuzz、性能门禁），然后 P4-01
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -103,7 +103,7 @@
 | P3-34 | 描述列表（/ term: desc） | done | grep:plan P3-34 | 2026-10-07 | 既有 golden 仅 locale/doc-decl 的 js/lower（`$.locale` 对象键 terms 绑定了新的 std 名，与 figure 同理）；+1 用例 doc/terms（全部阶段：语法、脚本构造、dterm 词汇表行与引用） | schema（ops v15）：kind terms（block，body items，ctor）与 slot term（on item，inline）；默认规则 terms 的 block.indent 2em、block.gap 1/3，slot term 加粗。syntax.def（版本 6）：BLOCK term（`/ TERM: `，Column）与 sugar terms/termpart；行扫描：`/` 标记类，术语到第一个后跟空白或行尾、位于原子与转义之外的 `:`（无此冒号或术语为空则为正文），描述从冒号后开始；AST：terms 与项的 term 部分（行内解析）→ 降级为 terms 与 seq{slot: term}。盒树：terms 无标记，项的 term 部分接排在首段开头（LeafSource::runIn：emit 先写术语与一个空格），首段续行悬挂 block.indent，后续块位于该缩进，无首段的术语自成一段。语义页：terms → dl，dt 为术语部分（项的标签在 dt 上），dd 为其余块（单段内联）；呈现表加 terms 行。构造器绑定：选项名为该 kind 的 slot 时取内容，作为该 slot 的 seq 子节点（item({term})、para({tag})）。dterm-item 类：role dterm 的项为词汇表行，标题取 term 部分。规范化：受检模型（list、terms、table、trow、equations）中部件之间的纯空白文本丢弃（原报 content-model）。转换器：tex2tsm 的 description、wiki2tsm 的 `;`/`:`、html2tsm 与 pbr2tsm 的 `<dl>` 输出 `/ term: desc`；hott 样例手工迁移；tree-sitter/TextMate 的列表标记加 `/`（一致性 96.7%）。文档：syntax-design §6、document-model、layout-design §4、ctor-design、tsm-changes |
 | P3-35 | 打印器、转换器套件、front matter、语料重转 | done | grep:plan P3-35 | 2026-10-07 | 引擎 golden 无变化；+1 用例 line/front-matter（fixture 设置 source.frontMatter）；examples/real-world 的 wiki-typesetting、wiki-huozi、hott-introduction 重新转换并审阅 | 打印器 runtime/src/shared/tsm-print.mjs：print(ast, {src}) 由 AST JSON 写回 .tsm（容器前缀与缩进、相邻有序列表交替标记类、围栏与代码段的反引号串、显示公式、能读回的裸 URL、splice 的 `;`、含块或语句的内容体用块形式），escapeTsm(text, ctx) 按语法表转义（Intraword/PrevIdent 守卫、行首块开头、标签形、URL 协议的冒号、表格单元切点；私用区占位符视为未知邻字）；syntax.gen.mjs 导出整张语法表。一致性 (c)：tools/check-print.mjs 进 G6，553 篇（用例、真实语料、博客）parse(print(parse(x))) 相等，并对 600 个随机文本验证 escapeTsm。转换器套件 tools/convert/kit.mjs：WHATWG 实体表（entities.gen.mjs，gen-entities.mjs 生成）、标记以占位符构造并在 escapeTsm 之后放入（Markup：em/strong/code/link/note/raw）、强调按最终邻字取标记或函数形式、描述项；四个转换器迁移（实体全解、文本统一转义、wiki 脚注不再断裂、pbr 头注释改为 `%--`）。translate-tsm：以引擎 AST 的 span 屏蔽原子并原位回填，按 AST（去文本）校验；--check 发现既有 162 篇译文中 11 篇结构不符。front matter：host 选项 source.frontMatter（FrontEndOptions），行扫描把偏移 0 的 `---`…`---`/`...` 作为注释块（AST comment front），三个无状态导出以设置文档为第二参数，outline 报告 frontMatter；VS Code 预览不再逐行清空，改传选项。文档：syntax-design §12、tsm-changes、testing、CLAUDE.md |
 | P3-36 | 导出包 | done | grep:plan P3-36 | 2026-10-07 | 无（引擎 golden 不变）；Node 导出冒烟测试 tools/check-export.mjs 扩充 | renderTsm 返回导出包：在原字段之外增加 result（语义 RenderResult：head {lang, title, idPrefix, profile}、html、由 labels 产品得出的 anchors）、resources（清单）、styles（contract、theme、rules）与 profile；opts.profile 'feed' 令公式为源码（render.math: source，设置另有规定时从之）。runtime/src/node/export.mjs exportStatic(bundle, {template, hydrate, source, inputs, title, embedResources, docDir, assets})：纯函数，返回 {html, parts, copy, embedded, math, hydrate}；template(parts) 包装页面（默认裸页面，feed 只出文章）；水合原样传回包的解析后设置（去掉 host.* 行）；embedResources 把文档图片内联为 data: URI，其余资源进复制清单（真实路径受限于文档目录）。tools/export-static.mjs（--profile、--template、--embed）与 tools/tsm-project.mjs 经 tools/lib/static-page.mjs 的 writePage 写页面。博客侧配合改动写入 REPORT.md。文档：pages-design §3 |
-| P3-37 | ABI 收尾与文档修订 | todo | | | | |
+| P3-37 | ABI 收尾与文档修订 | done | grep:plan P3-37 | 2026-10-07 | 无（golden 不变）；golden 运行器对全部 213 个用例核对诊断 JSON 与 diags 文本逐行一致；e2e +1（诊断 JSON 与文本并列） | tsr2_get(doc, product, opts)：products.def 的全部产品按名读取（u32 长度 + 字节；未知产品或其阶段未跑时为空；diags、diagnostics、settings 任何阶段可取；opts 预留），tsr2_product 留作文本形式的兼容层。新产品 diagnostics：[{sev, code, span:[s,e], message, origin, pid?}]，origin 为 DiagSink 的阶段名；tsrc --stage=diagnostics。worker 经 tsr2_get 取产品，每个结果（含失败路径）带 diagnostics，shell 句柄与 update/relayout 结果暴露之；VS Code 预览页与 preview.js 读结构化诊断，删去解析文本的正则。文档修订：architecture §2.1（产品表）、§2.4（无估计态，relayout 原位重进）、§2.5（as-built ABI 与兼容层清单）、§4.1（as-built 文件名、模块缓存键）；document-model §6.4、§7、§10、§11；v2 §6、§9、§11.1；code-design §3、§5；figure-design §3（注明被 §8 取代）与 §8（captions 盒特性、P3-32 的图像尺寸）；testing §2；host-protocol §6；CLAUDE.md 的 ops 版本改为指向 schema.json opsVersion；wasm_api.cc 头注释改为二进制拉取 |
 | P4-01 | 按 run 实例成 run | todo | | | | |
 | P4-02 | 段落级成形器 | todo | | | | |
 | P4-03 | 逐项源 span | todo | | | | |
@@ -180,6 +180,7 @@
 | P3-34 后 | 3.50 | 11.80 | 27.90 | 1.7 / 3.2 / 0.9 / 10.4 / 3.3 | 77.5 / 110.8 / 146.8 | 2.00 / 22.30 / 58.90 | 均在 P3 门限内；35K update 首次 3 轮测得 12.30（机器负载下），同机交替 A/B：P3-33 12.10 / 14.90 / 13.50、本步 12.50 / 12.40 / 12.70，同一分布；6 轮最小中位数 11.80（表中取此值），引擎内各阶段与 P3-33 相同 |
 | P3-35 后 | 3.80 | 11.90 | 27.80 | 1.8 / 3.1 / 0.9 / 10.4 / 3.4 | 74.4 / 106.5 / 149.9 | 1.80 / 22.30 / 58.00 | 均在 P3 门限内；35K update 3 轮 12.30（机器负载 2.1，同 P3-34 情形），6 轮 11.90 取之；引擎各阶段不变 |
 | P3-36 后 | 3.70 | 11.40 | 27.70 | 1.7 / 3.1 / 0.9 / 10.3 / 3.4 | 74.5 / 109.5 / 152.7 | 1.80 / 22.50 / 57.50 | 均在 P3 门限内；本步不触及编辑路径；35K update 3 轮 14.00（噪声），6 轮 11.40 取之 |
+| P3-37 后 | 3.50 | 11.80 | 27.70 | 1.7 / 3.1 / 0.9 / 10.5 / 3.5 | 77.3 / 105.3 / 150.9 | 1.80 / 22.20 / 57.80 | 均在 P3 门限内；35K update 3 轮 13.90（机器负载 2.4），6 轮 12.20；同机 A/B 各 6 轮：HEAD 11.80、本步 11.80，取之（每次结果多解析一份诊断 JSON，量不出差别） |
 
 ## 偏差记录（MD-11）
 
@@ -443,13 +444,17 @@
 | P3-35 | escapeTsm 的上下文为 para/heading/link/body/term/cells 与 lineStart 标志，设计列有 line-start/call-body/note/label | line-start 为标志更通用；note 与 call-body 同为方括号体（body）；label 文本不经 escapeTsm | 无 |
 | P3-35 | printShadow 未做 | 计划要点只列 tsm-print 与 escapeTsm；printShadow 需 sugar 逆映射，转换器经 kit 直接写 .tsm 已满足保真 | 无 |
 | P3-35 | 无状态导出 tsr_syntax_tokens / tsr_outline / tsr_parse_json 增加第二个参数（设置文档，可为空）；tsr_parse_fragment 不变 | front matter 只在文档偏移 0 有意义，片段不会遇到 | 无 |
-| P3-36 | 设计的 renderTsm 包字段为 {result, html, settings, resources, css: {contract, behaviors}, ok}；实现保留旧字段（css 仍为规则字符串、manifest、diagnostics/diags），新增 result、resources、styles {contract, theme, rules}、profile | 博客与 tsm-project 依赖旧字段，不破坏既有调用；behaviors 的 CSS 由各 behavior 自行注入，静态页无需 |
+| P3-36 | 设计的 renderTsm 包字段为 {result, html, settings, resources, css: {contract, behaviors}, ok}；实现保留旧字段（css 仍为规则字符串、manifest、diagnostics/diags），新增 result、resources、styles {contract, theme, rules}、profile | 博客与 tsm-project 依赖旧字段，不破坏既有调用；behaviors 的 CSS 由各 behavior 自行注入，静态页无需 | 无 |
 | P3-36 | 语义 RenderResult 只含 head、html 与 anchors，没有按块的 blocks 表 | Node 端没有排版，块表的 key/hPx/状态只在排版后才有意义；anchors 取自 labels 产品 | 无 |
 | P3-36 | 水合传回的解析后设置去掉 host.* 行 | host.width 等是宿主测得的量（Node 的默认 300px 会把客户端排版锁在 300px） | 无 |
 | P3-36 | embedResources 只内联图片；书目、$.load 文件仍复制 | 水合后的引擎按 URL 读取这些文件，内联无处可读 | 无 |
 | P3-26 | role=math 与 aria-label 未做（计划注明在 P3-27 落地）；多行显示的逐行编号属 P3-29 | 计划安排 | P3-27、P3-29 |
 | P3-26 | 编号与公式同基线（TeX \\eqno），取代 CSS 的垂直居中；编号在旁时其行框的行距不推进游标（行高不变） | TeX 的做法；避免所有带编号公式之后的内容下移 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
+| P3-37 | tsr2_typeset(target) 未加；P1-19 记下的停滞判定仍由驱动循环负责 | tsr_typeset 驱动到 Layout，有未答需求时返回 NEED_MEASURE；分页是 fork；产品在其阶段读取（tsr2_get 检查阶段）——没有宿主需要更早停下，加一个目标参数只多一条路径 | 无 |
+| P3-37 | tsr_* 兼容层保留（tsr_config、tsr_set_*、tsr_measure_requests、tsr_provide_word/_vmet/_image/_tokens、tsr_render、tsr_diags、tsr2_product） | 设计让兼容层在一次 engine-dist 发布后删除；本次整改不发布 engine-dist（MD-07），博客按内容哈希用旧包 | 无（随下一次 engine-dist 发布删除） |
+| P3-37 | 诊断 JSON 不含 related 跨度；字段名为 sev（不是 severity），另加 origin 与 pid | DiagSink 不记录关联位置；sev 与文本 dump 同名；origin、pid 供宿主按阶段与块归属 | 无 |
+| P3-37 | mock.h:1-2 无改动 | P1-11 已把头注释改为“规范的 mock 测量器（testing.md §2）” | 无 |
 
 ## 阻塞记录（§4.7）
 

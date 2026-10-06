@@ -29,13 +29,13 @@ window.__tsr = {
       opts = { ...opts, onUpgrade: (u) => window.__ups.push(u) };
     }
     handle = await engine.typeset(source, out, opts);
-    return { diags: handle.diags, heightPx: handle.heightPx, dpr: devicePixelRatio,
+    return { diags: handle.diags, diagnostics: handle.diagnostics, heightPx: handle.heightPx, dpr: devicePixelRatio,
              hasSemantic: !!handle.semanticHtml, upgrades: handle.upgrades.length,
              html: handle.html };
   },
   async update(source) {
     const r = await handle.update(source);
-    return { diags: r.diags, heightPx: r.heightPx, timings: r.timings,
+    return { diags: r.diags, diagnostics: r.diagnostics, heightPx: r.heightPx, timings: r.timings,
              upgrades: r.upgrades.length, patched: r.patched,
              html: document.getElementById('out').innerHTML };
   },

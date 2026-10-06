@@ -356,6 +356,18 @@ each other); `tsr2_set_config`, `tsr2_doc_fork`, `tsr2_requests` and
 (`tsr2_typeset(target)`, `tsr2_get(product, opts)`, inputs) arrives with plan
 P3-37.
 
+As built (plan P3-37; design T9 M9): `tsr2_get(doc, product, opts)` serves
+every product of `products.def` as u32 length + bytes (empty: unknown, or
+its stage not run; `diags`, `diagnostics` and `settings` at any stage;
+`opts` reserved), the diagnostics JSON among them (document-model §10);
+the worker posts it with every result. Inputs came with P3-31
+(`tsr2_set_input`). `tsr2_typeset(target)` was not added: `tsr_typeset`
+drives to Layout and returns NEED_MEASURE while a need is open, paginate is
+a fork, and a product is read at its own stage (`tsr2_get` checks it) — no
+host asked to stop earlier. The `tsr_*` shims stay (architecture §2.5): the
+remediation publishes no engine-dist release (MD-07), after which they were
+to go.
+
 ## 7. Interim choices
 
 - Per-stage settings views are enforced by `tools/lint-arch.mjs`

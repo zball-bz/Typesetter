@@ -361,6 +361,8 @@ paragraphs are units of their own (their breaks dump as `unit=`).
 
 MetricStore entries per (strRef × StyleId): `exact | pending(estimate) | invalid`. Bundled-font entries are born `exact` (precompiled metrics). A paragraph is `estimated` if any of its blocks is pending; upgrades re-run break+layout+render for exactly those paragraphs when measurements arrive.
 
+*As built (plans P1-19, P1-20; pages-design §1 W; plan P3-37 amendment):* there are no estimate states. A MetricStore entry is present (raw px, quantized by Measure) or missing; a missing one is a need of the pull, answered or failed — a failed width is its em bound (design T9 A1), never an estimate. Fonts settle before the first Measure, so a typeset is exact or not yet done; the semantic page is the first paint. A block waits only for its own needs (per-block deferral, plan P1-20) and the document resumes at stage granularity (`stages.def`).
+
 ## 7. Measurement buffers
 
 As built (plan P1-19; docs/host-protocol-design.md §4a): measurement is two
@@ -368,9 +370,10 @@ rows of the resource pull — `textWidth` (metric key, text → px) and
 `fontVmet` (metric key → ascent, descent px) — in one binary batch with the
 code tokens and image sizes. Only missing entries are requested (the JS
 cache sits above; this is the engine-side dedup). The store keeps raw px;
-quantization per §6.1 is the Measure stage's. The JSON
+quantization per §6.1 is the Measure stage's. The batch is
+`tsr2_requests` / `tsr2_provide` (architecture §2.5); the JSON
 `tsr_measure_requests` / `tsr_provide_word` / `tsr_provide_vmet` remain as
-shims.
+shims (checked at plan P3-37).
 
 ## 8. Layout result
 
@@ -545,9 +548,9 @@ Text layer (plan P3-27; setting `a11y.textLayer`, off by default): the `textLaye
 
 ## 10. Diagnostics
 
-As built (plan P0-11): `DiagSink` stamps every diagnostic with the pass that reported it, and `begin(origin)` drops that pass's earlier slice, so a re-run never duplicates its warnings; Emit runs per top-level block (plan P1-20) and `beginPid` replaces one block's slice when it is emitted again (a deferred display formula), the slice kept in block order. A diagnostic about a generated node without a span (a figure's image) points at its innermost spanned block. The wire format is still the text dump until the JSON form below lands.
+As built (plan P0-11): `DiagSink` stamps every diagnostic with the pass that reported it, and `begin(origin)` drops that pass's earlier slice, so a re-run never duplicates its warnings; Emit runs per top-level block (plan P1-20) and `beginPid` replaces one block's slice when it is emitted again (a deferred display formula), the slice kept in block order. A diagnostic about a generated node without a span (a figure's image) points at its innermost spanned block.
 
-`{ severity: error|warning|info, code, span, message, related?: span[] }`, JSON via `tsr_diagnostics`. Initial code table:
+As built (plan P3-37; design T9 M9): the products are `diags` — the text dump for humans and goldens, `<sev> <code> @[s,e) <message>` — and `diagnostics`, the same rows as JSON, `[{sev, code, span: [s, e], message, origin, pid?}]` (`tsr2_get(doc, "diagnostics")`; the worker posts it with every result, the shell's handle exposes it as `diagnostics`, and the VS Code extension reads it instead of parsing the text). The design's sketch was `{ severity: error|warning|info, code, span, message, related?: span[] }` via `tsr_diagnostics`; `related` spans are not produced. The initial code table:
 
 ```
 parse-block          error    unparsable block (recovered at block boundary)
@@ -576,7 +579,7 @@ measure-fallback     info     glyphs measured via fallback font
 
 ## 11. Config (`tsr_doc_new` JSON)
 
-As built (plan P1-03): one settings document, `tsr2_set_config(doc, json)`, whose rows are generated from the schema (`docs/settings-table.md`; paths such as `host.width`, `doc.lang`, `fonts.body`, `code.snapKerning`, `cost.exponent`); see `docs/host-protocol-design.md`. The sketch below is the original plan of the document's shape.
+As built (plan P1-03): one settings document, `tsr2_set_config(doc, json)`, whose rows are generated from the schema (`docs/settings-table.md`; paths such as `host.width`, `doc.lang`, `fonts.body`, `code.snapKerning`, `cost.exponent`, and since plan P3-35 `source.frontMatter`, the front end's host option); see `docs/host-protocol-design.md`. `tsr_doc_new` takes no JSON (plan P3-37 amendment); the document's own declarations (`$.doc`, `$.locale`, `$.set`, `$.element`) come after the host's rows. The sketch below is the original plan of the document's shape.
 
 ```json
 {

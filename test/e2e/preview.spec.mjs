@@ -55,7 +55,7 @@ test('preview page: typeset, incremental update, reveal, jump', async ({ page })
   });
   expect(result.paras).toBe(3);
   expect(result.states.map((s) => s.version)).toEqual([1, 2]);
-  expect(result.states.every((s) => s.diags === '' && !s.error)).toBe(true);
+  expect(result.states.every((s) => Array.isArray(s.diagnostics) && s.diagnostics.length === 0 && !s.error)).toBe(true);  // (plan P3-37: as data)
   expect(result.edited).toBe(true);
   expect(result.marked).toBe(1);
   expect(result.jumps.length).toBe(1);

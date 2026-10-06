@@ -190,11 +190,12 @@ function postResult(M, doc, ids, tm, held) {
   const html = M.UTF8ToString(p + 4 + tableEnd, len - tableEnd);
   if (tm) tm.renderMs = performance.now() - t0;
   const diags = M.UTF8ToString(M._tsr_diags(doc));
+  const diagnostics = diagnosticsOf(M, doc);  // (plan P3-37) the same rows, as data
   const heightPx = M._tsr_doc_height_px(doc);
   const lang = docLangOf(M, doc);
   ids.forEach((id, k) => {
     const f = k === ids.length - 1 ? frame : frame.slice(0);
-    postMessage({ type: 'result', id, frame: f, html, diags, heightPx, timings: tm, lang }, [f]);
+    postMessage({ type: 'result', id, frame: f, html, diags, diagnostics, heightPx, timings: tm, lang }, [f]);
   });
 }
 // (plan P3-31; design T9 A7) a document's declared inputs (inputs.def:
@@ -224,6 +225,20 @@ function mergeInputs(given, imported) {
 
 // (plan P3-30, D-T06) the document's language as the engine decided it — its
 // own, the host's or detected (doc.lang: auto): docinfo
+// (plan P3-37; design T9 M9) a product through tsr2_get: u32 length + bytes
+function productOf(M, doc, name) {
+  const n = M.stringToNewUTF8(name);
+  try {
+    const p = M._tsr2_get(doc, n, 0);
+    const len = new DataView(M.HEAPU8.buffer).getUint32(p, true);
+    return new TextDecoder().decode(M.HEAPU8.subarray(p + 4, p + 4 + len));
+  } finally {
+    M._free(n);
+  }
+}
+// the diagnostics as data: [{sev, code, span, message, origin, pid?}]
+const diagnosticsOf = (M, doc) => JSON.parse(productOf(M, doc, 'diagnostics') || '[]');
+
 function docLangOf(M, doc) {
   const p = M.stringToNewUTF8('docinfo');
   const out = M.UTF8ToString(M._tsr2_product(doc, p));
@@ -382,7 +397,8 @@ async function runPaginate(s, { ids, msg }) {
     await measureLoop(M, doc, { baseUrl, scope: s.key });
     const html = M.UTF8ToString(M._tsr_render_pages(doc, pageHeightPx));
     const diags = M.UTF8ToString(M._tsr_diags(doc));
-    for (const id of ids) postMessage({ type: 'result', id, html, diags, heightPx: 0 });
+    const diagnostics = diagnosticsOf(M, doc);
+    for (const id of ids) postMessage({ type: 'result', id, html, diags, diagnostics, heightPx: 0 });
   } finally {
     M._tsr_doc_free(doc);
   }

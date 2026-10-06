@@ -103,7 +103,7 @@ class TsmPreview {
       this.send();
     } else if (m?.type === 'state') {
       if (m.version !== this.version || !this.doc) return;
-      this.publishDiags(m.diags ?? '', m.error);
+      this.publishDiags(m.diagnostics ?? [], m.error);
       const ms = m.ms?.toFixed(0);
       this.status.text = m.error ? 'tsm $(error)' : `tsm $(zap) ${ms}ms`;
       this.status.tooltip = m.timings ? JSON.stringify(m.timings) : undefined;
@@ -113,7 +113,8 @@ class TsmPreview {
     }
   }
 
-  publishDiags(text, error) {
+  // (plan P3-37) the engine's diagnostics as data: [{sev, code, span, message}]
+  publishDiags(list, error) {
     if (!this.doc) return;
     const out = [];
     const starts = this.byteStarts ?? [];
@@ -126,16 +127,14 @@ class TsmPreview {
       }
       return new vscode.Position(lo, 0);
     };
-    for (const line of text.split('\n')) {
-      const m = /^(error|warning|info) ([\w-]+) @\[(\d+),(\d+)\) (.*)$/.exec(line);
-      if (!m) continue;
-      const sev = m[1] === 'error' ? vscode.DiagnosticSeverity.Error
-        : m[1] === 'warning' ? vscode.DiagnosticSeverity.Warning
+    for (const g of list) {
+      const sev = g.sev === 'error' ? vscode.DiagnosticSeverity.Error
+        : g.sev === 'warning' ? vscode.DiagnosticSeverity.Warning
         : vscode.DiagnosticSeverity.Information;
-      const from = posOf(+m[3]);
+      const from = posOf(g.span[0]);
       const to = this.doc.lineAt(Math.min(from.line, this.doc.lineCount - 1)).range.end;
-      const d = new vscode.Diagnostic(new vscode.Range(from, to), m[5], sev);
-      d.code = m[2];
+      const d = new vscode.Diagnostic(new vscode.Range(from, to), g.message, sev);
+      d.code = g.code;
       d.source = 'tsm';
       out.push(d);
     }

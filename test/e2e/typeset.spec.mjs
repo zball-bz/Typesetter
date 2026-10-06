@@ -1287,3 +1287,20 @@ test('equations: rows aligned at &, each copied once; a formula of rows copies o
   expect(text.split('$ g &= a + b \\\n&= c $').length).toBe(2);
   expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
 });
+
+// (plan P3-37; design T9 M9) the diagnostics as data: the same rows as the
+// text, each with its span, through typeset and update
+test('diagnostics JSON beside the text', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const r = await page.evaluate(async () => {
+    const h = await window.__tsr.typeset('See @nowhere.\n', { widthPx: 300 });
+    const u = await window.__tsr.update('See @nowhere and @elsewhere.\n');
+    return { diags: h.diags, first: h.diagnostics, after: u.diagnostics, afterText: u.diags };
+  });
+  const codes = (text) => text.split('\n').filter(Boolean).map((l) => l.split(' ')[1]);
+  expect(r.first.map((d) => d.code)).toEqual(codes(r.diags));
+  expect(r.first[0]).toMatchObject({ sev: expect.any(String), span: [4, 12], message: expect.any(String) });
+  expect(r.after.map((d) => d.code)).toEqual(codes(r.afterText));
+  expect(r.after.length).toBe(2);
+});

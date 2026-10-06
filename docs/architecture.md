@@ -43,7 +43,7 @@ Source extension: `.tsm`. C++ namespace: `tsr`.
 
 Why: golden tests and fuzzing run natively in CI with gdb/ASan/UBSan available; iteration speed does not pay the emcc tax; the WASM glue stays a thin adapter that cannot accumulate logic.
 
-`tsrc` is the inspectability tool (v2's "every stage inspectable"): `tsrc --stage=skeleton|ast|js|tree|blocktree|blocks|hlist|breaks|layout|vlist|dl|semantic|html|paged input.tsm` prints that stage's dump. Stages after ops ingestion read recorded `.ops` fixtures (see §6 for why).
+`tsrc` is the inspectability tool (v2's "every stage inspectable"): `tsrc --stage=<product> input.tsm` prints a product — every row of `engine/src/api/products.def` (as built, plan P3-37: the compile products skeleton, ast, js, lower, program, tokens, outline, astjson; tree, index, semantic, css, references, docinfo, labels after Resolve; blocktree, mathir, mathbox, blocks, hlist; breaks, layout, vlist; paged; html, dl; and diags / diagnostics, the diagnostics as text and as JSON). Stages after ops ingestion read recorded `.ops` fixtures (see §6 for why); `--profile=golden --fixture=X.fixture.json` reproduces a golden.
 
 ### 2.2 Module map
 
@@ -124,9 +124,9 @@ tsr_measure_requests(doc)     → batch buffer (unique string×style tuples + st
 tsr_measure_provide(doc, buf) → void          (then call tsr_typeset again to resume)
 ```
 
-The doc handle retains stage products (content tree, per-paragraph block streams, metric store), so resuming re-runs only what the new measurements invalidate — which is also exactly the machinery `relayout(width)` (re-break only) and dppx invalidation (§6) need. The `pending(estimate)` state makes the same loop serve estimate-first typesetting for fallback upgrades.
+The doc handle retains stage products (content tree, per-paragraph block streams, metric store), so resuming re-runs only what the new measurements invalidate — which is also exactly the machinery `relayout(width)` (re-break only) and dppx invalidation (§6) need. *(As built: there is no `pending(estimate)` state — pages-design §1 W settles fonts before the first Measure, and the semantic page is the first paint; plan P3-37.)*
 
-As built (plan P1-03; docs/host-protocol-design.md): the stages and their rerun classes are `engine/src/api/stages.def`; the document records `validThrough` and a settings patch either re-enters the Reentrant tail in place or returns REBUILD, upon which the host forks a new document from the retained ops (`tsr2_doc_fork`, metric/token/image answers carried over). Relayout and paginate are forks — the live document's products are never mutated. Products are `engine/src/api/products.def`; `api/driver.h` is the one native drive loop.
+As built (plan P1-03; docs/host-protocol-design.md): the stages and their rerun classes are `engine/src/api/stages.def`; the document records `validThrough` and a settings patch either re-enters the Reentrant tail in place or returns REBUILD, upon which the host forks a new document from the retained ops (`tsr2_doc_fork`, metric/token/image answers carried over). Paginate is a fork — the live document's products are never mutated; a relayout re-enters Layout in place (plan P1-16: emit is width-independent, and since plan P3-32 the compiler proves it). The pull is one request/answer protocol for every kind of need (plan P1-19; `resources.def`): `tsr2_requests(doc, kinds)` → a batch, `tsr2_provide(doc, answer)`; the per-kind `tsr_measure_requests` / `tsr_provide_*` exports above are shims over it. Products are `engine/src/api/products.def`; `api/driver.h` is the one native drive loop.
 
 Two rejected alternatives, recorded:
 
@@ -137,22 +137,29 @@ Two rejected alternatives, recorded:
 
 Small C ABI; buffers are length-prefixed regions in WASM memory that JS copies out. One document handle = one pipeline state; handles are independent; the engine is single-threaded.
 
+As built (plans P1-01…P3-37; `engine/src/api/wasm_api.cc`; host-protocol-design §6):
+
 ```
-tsr_version()
-tsr_doc_new(config_json) / tsr_doc_free(doc)
-tsr_compile(doc, src)            → status;  outputs: tsr2_program (LowerProgram bytes),
-                                    tsr_get_js (the hole module; "" without user code)
-tsr_ingest_ops(doc, buf)         → status   (decode ops → content tree → resolver)
-tsr_typeset(doc, params)         → NEED_MEASURE | OK      (params: width, dppx)
-tsr_measure_requests(doc)        → buffer
-tsr_measure_provide(doc, buf)
-tsr_render_semantic(doc)         → html
-tsr_render_typeset(doc, range?)  → html     (whole doc or paragraph range, for upgrades)
-tsr_layout_info(doc)             → buffer   (paragraph ids, rects, line maps — upgrade payload §9)
-tsr2_fragments(request)          → program + holes  (m`…` / m.parse re-entry, plan P2-13)
-tsr_diagnostics(doc)             → buffer
-tsr_relayout(doc, params)        → NEED_MEASURE | OK   (reuses cached block streams)
+tsr2_abi()                         → {opsWindow, schemaHash, programAbi, resVersion, …}  (the one handshake)
+tsr_doc_new() / tsr_doc_free(doc)
+tsr2_set_config(doc, settings)     → 0 applied | REBUILD | REEXECUTE   (one settings document)
+tsr2_doc_fork(doc, patch)          → a new doc from the retained ops (paginate; a REBUILD)
+tsr2_set_input(doc, name, bytes)   (declared inputs, inputs.def: labels; plan P3-31)
+tsr2_session_new(json) / tsr2_session_free / tsr2_doc_attach   (the process cache, plan P1-21)
+tsr_compile(doc, src)              → status;  tsr2_program (LowerProgram bytes), tsr_get_js (the hole module)
+tsr_ingest(doc, ops)               → status   (decode → Phase 0 → instantiate → resolve)
+tsr_typeset(doc)                   → NEED_MEASURE | OK
+tsr2_requests(doc, kinds)          → a request batch (resources.def)
+tsr2_provide(doc, answer)
+tsr2_get(doc, product, opts)       → u32 length + bytes: any products.def product (plan P3-37)
+tsr2_render_result(doc, held)      → the RenderResult frame (plan P3-05)
+tsr2_render_fragment(doc, label)   → a labelled subtree's semantic HTML (previews)
+tsr_render_semantic(doc) · tsr2_render_css(doc) · tsr_render_pages(doc, h) · tsr_set_width(doc, w)
+tsr2_fragments(request)            → program + holes  (m`…` / m.parse re-entry, plan P2-13)
+tsr_syntax_tokens(src, settings) · tsr_outline(src, settings) · tsr_parse_json(src, settings)  (stateless)
 ```
+
+Shims kept for one engine-dist release (MD-07: this remediation publishes none, so they stay): `tsr_config`, `tsr_set_*`, `tsr_measure_requests`, `tsr_provide_word/_vmet/_image/_tokens`, `tsr_render`, `tsr_diags`, `tsr2_product` (the text-product form of `tsr2_get`).
 
 ## 3. The ops contract (the one shared artifact)
 
@@ -170,6 +177,8 @@ Layout: header (version, counts) · string table (UTF-8 blob + varint offsets) �
 ## 4. JS runtime
 
 ### 4.1 Worker (module worker — required for real ES imports)
+
+*(As built: `runtime/src/worker/worker.mjs` drives compile → execute → ingest → the pull loop → render per document mailbox; `executor.mjs`, `shared/lower.mjs`, `shared/opbuf.mjs` (the writer), `canvas_measure.mjs`, `tokens.mjs`, `image_sniff.mjs`, `shared/resources/` (the resource host and its providers: images, code tokens, fonts). A hole module is cached by the hash of its text; a `#use` module by its URL with `?h=<content hash>` (plan P3-31). The bullets below keep the design's names.)*
 
 - **host.ts** — loads the WASM module (Emscripten `MODULARIZE` + `EXPORT_ES6`, `ENVIRONMENT=worker,node`), drives the pipeline: compile → execute → ingest → typeset-loop → render, and the upgrade re-loop when pending measurements settle.
 - **executor.ts** — *(as built, plan P2-02: `executor.mjs` decodes the LowerProgram and runs it with `shared/lower.mjs`; only the hole module — the user's code — is imported as a Blob-URL ES module, cached by hash; `docs/lowering-design.md`)* turns the generated program into a **Blob-URL ES module** and `import()`s it. Consequence for codegen: *(as built, plan P3-31; D-I08: revised — not a static `import`)* `#use("./x.js")` is a call of the async std function `use`, in document order: the host resolves the spec against the document's base, reads it through the resource job and `import()`s its URL with `?h=<content hash>` (a changed module is a new URL; relative imports inside it resolve as usual); its default export runs as `default($, std)` and its `fences`, `regions` and `providers` exports register with this execution's `$` (host-protocol-design §5b). A module keeps no state across executions — the recorder and dev mode (`policy.checkExecution`) execute twice and compare the ops. `//# sourceURL` + the source map make user code debuggable in devtools. The context argument is built here: constructors bound to an `OpBuf` instance, the `m` tag (as built, plan P2-13: `tsr2_fragments` returns a fragment program the same interpreter runs — lowering-design §5.1), and `$` (style stack ops, counters, fence registration). Constructors also maintain **shadow nodes** — lightweight JS mirrors of what they wrote — so user code can traverse and regroup content values (table cell splitting); see document-model §4.1.

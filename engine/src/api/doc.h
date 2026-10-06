@@ -929,6 +929,7 @@ struct Doc {
     if (name == "paged") return renderPaged(cfg.pageHeightPx);
     if (name == "html") return render();
     if (name == "diags") return dumpDiags();
+    if (name == "diagnostics") return diagnosticsJson() + "\n";  // (plan P3-37)
     if (name == "settings") return settingsJson(cfg) + "\n";
     if (name == "references") return referencesJson();  // (plan P3-21)
     if (name == "docinfo") return docinfoJson();
@@ -1299,6 +1300,30 @@ struct Doc {
       out += d.msg;
       out += "\n";
     }
+    return out;
+  }
+  // (plan P3-37; design T9 M9) the diagnostics as data, for hosts (the VS
+  // Code extension): [{sev, code, span: [s, e], message, origin, pid?}] —
+  // the same rows, in the same order, as `diags` (kept for humans)
+  std::string diagnosticsJson() const {
+    static constexpr const char* kOrigin[] = {"settings", "compile", "ingest", "resolve",
+                                             "provide",  "emit",    "layout", "render"};
+    std::string out = "[";
+    for (const Diag& d : diags.items) {
+      if (out.size() > 1) out += ',';
+      out += "{\"sev\":\"";
+      out += d.sev == Sev::Error ? "error" : d.sev == Sev::Warning ? "warning" : "info";
+      out += "\",\"code\":";
+      jsonString(out, d.code);
+      appendf(out, ",\"span\":[%u,%u],\"message\":", d.span.start, d.span.end);
+      jsonString(out, d.msg);
+      out += ",\"origin\":\"";
+      out += kOrigin[(u8)d.origin];
+      out += '"';
+      if (d.pid != ~0u) appendf(out, ",\"pid\":%u", d.pid);
+      out += '}';
+    }
+    out += "]";
     return out;
   }
 };

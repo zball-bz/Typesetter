@@ -55,13 +55,13 @@ async function pump() {
         r = await handle.update(m.text);
       }
       err.style.display = 'none';
-      parent.postMessage({ type: 'state', version: m.version, diags: r.diags,
+      parent.postMessage({ type: 'state', version: m.version, diagnostics: r.diagnostics ?? [],
                            heightPx: r.heightPx, ms: performance.now() - t0,
                            timings: r.timings ?? null }, '*');
     } catch (e) {
       err.textContent = String(e?.message ?? e);
       err.style.display = 'block';
-      parent.postMessage({ type: 'state', version: m.version, diags: '',
+      parent.postMessage({ type: 'state', version: m.version, diagnostics: [],
                            error: String(e?.message ?? e), ms: 0 }, '*');
     }
   }

@@ -89,6 +89,14 @@ Display width, first match wins:
 Height follows the aspect ratio (declared `h` only participates when paired
 with `w`, and then defines the ratio together with it).
 
+*Superseded by §8 (plan P3-37 amendment: the rule as built, P0-11/P1-19):*
+`w` and `h` are the image's **intrinsic** dims as the author declares them —
+one of them alone keeps the image's aspect ratio, the host's size filling
+the other — not a display width. The display box is `scale` × measure when
+`scale` is given, else the intrinsic width; either way never wider than the
+measure (`resolveImageSize`). Since plan P3-32 the host's size is read after
+Emit: by Measure for an inline image, by Layout for a block or floated one.
+
 Block figure (no `float`): the image unit lays out like display math —
 centred on the measure, advance = display height. The caption paragraphs are
 ordinary Text units marked `ragged` + a new `centered` flag: layout shifts
@@ -244,9 +252,16 @@ the prefix model above:
   for narrowed lines — zero golden churn on non-figure fixtures. (Retired
   in P3-08: every line's slack is its slot's width.)
 
-- (plan P2-08) The figure constructor tags its paragraphs `role: caption`
-  (the layout still finds captions by figure depth until P3-01 reads the
-  role).
+- (plan P2-08) The figure constructor tags its paragraphs `role: caption`.
+  (Plan P3-37 amendment: the box tree reads no role by name — a group whose
+  element class has the `captions` box trait (plan P2-05) makes its
+  paragraphs captions, and an image with a side in it floats.)
+- (plan P3-32) The host's image size is read after Emit: Measure finishes
+  an inline image (`finalizeImage`), Layout a block or floated one through
+  its asker (`BoxAnswer {ready, pending, w, h, baseline}`). Unanswered, the
+  image lays out as a placeholder of its declared box — pending, the
+  layout is provisional and runs again when the size arrives; failed, paint
+  writes its alt box (`Fragment.placeholder`).
 
 ### Placement for any block (plan P3-15; design T6 S13)
 

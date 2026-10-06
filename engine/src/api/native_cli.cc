@@ -192,7 +192,7 @@ int main(int argc, char** argv) {
   }
 
   if (need > Stage::Compile && need <= Stage::Execute) need = Stage::Ingest;
-  if (need >= Stage::Ingest || (stage == "diags" && !opsPath.empty())) {
+  if (need >= Stage::Ingest || ((stage == "diags" || stage == "diagnostics") && !opsPath.empty())) {
     if (opsPath.empty()) {
       fprintf(stderr, "product %s needs --ops=\n", stage.c_str());
       return 2;
@@ -208,7 +208,7 @@ int main(int argc, char** argv) {
     }
     // semantic is the pre-answer render; everything later (and diags with
     // ops) drives the pull loop to completion
-    if (need >= Stage::BoxTree || stage == "diags") {
+    if (need >= Stage::BoxTree || stage == "diags" || stage == "diagnostics") {
       ProviderSet p = mockProviders();
       p.tokens = [](std::string_view lang, std::string_view text, std::vector<CodeToken>& out) {
     out = nativeTokens(lang, text);

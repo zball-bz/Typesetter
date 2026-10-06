@@ -2355,6 +2355,26 @@ int main(int argc, char** argv) {
         // *diag* fixtures golden every diagnostic of the full pipeline (P0-09 m)
         if (rel.stem().string().find("diag") != std::string::npos)
           goldenCompare(g("diags"), doc.product("diags"), update, label + ":diags");
+        {  // (plan P3-37) the diagnostics JSON: the text product's rows, in order
+          JsonValue dj;
+          JsonReader rd;
+          const std::string text = doc.product("diags");
+          std::vector<std::string> codes;
+          for (size_t a = 0; a < text.size();) {
+            size_t e = text.find('\n', a);
+            if (e == std::string::npos) e = text.size();
+            const std::string line = text.substr(a, e - a);
+            const size_t sp = line.find(' '), sp2 = line.find(' ', sp + 1);
+            if (sp != std::string::npos) codes.push_back(line.substr(sp + 1, sp2 - sp - 1));
+            a = e + 1;
+          }
+          bool same = rd.parse(doc.product("diagnostics"), dj) && dj.t == JsonValue::T::Arr && dj.arr.size() == codes.size();
+          for (size_t k = 0; same && k < codes.size(); k++) same = dj.arr[k].get("code") && dj.arr[k].get("code")->str == codes[k];
+          if (!same) {
+            printf("FAIL %s: the diagnostics JSON is not the diags text's rows\n", label.c_str());
+            failures++;
+          }
+        }
         contractCheck(label, "html", html, true);
         // a fixture may golden the print pagination (pages-design.md §2):
         // "products": ["paged"] with its page.height setting

@@ -515,6 +515,7 @@ export function createEngine(opts = {}) {
         // the document as one HTML string (the legacy shape), built on demand
         get html() { return sessionHtml(view); },
         diags: res.diags,
+        diagnostics: res.diagnostics ?? [],  // (plan P3-37) the same rows as data
         heightPx: res.heightPx,
         timings: res.timings,
         semanticHtml,
@@ -549,8 +550,8 @@ export function createEngine(opts = {}) {
             ups = upgradeRecords(view, before).filter((u) => c.rebuilt || changed.has(u.pid));
             onUpgrade(ups);
           }
-          Object.assign(handle, { diags: r.diags, heightPx: r.heightPx, timings: r.timings });
-          return { get html() { return sessionHtml(view); }, diags: r.diags, heightPx: r.heightPx,
+          Object.assign(handle, { diags: r.diags, diagnostics: r.diagnostics ?? [], heightPx: r.heightPx, timings: r.timings });
+          return { get html() { return sessionHtml(view); }, diags: r.diags, diagnostics: r.diagnostics ?? [], heightPx: r.heightPx,
                    timings: r.timings, upgrades: ups, patched: !c.rebuilt, ranges: c.ranges, kept: c.kept };
         },
         // width-only re-typeset: metrics persist in the worker-held doc
@@ -568,8 +569,8 @@ export function createEngine(opts = {}) {
           const c = await commitTo(s, r);
           const ups = onUpgrade ? upgradeRecords(view, before) : [];
           onUpgrade?.(ups);
-          Object.assign(handle, { diags: r.diags, heightPx: r.heightPx, timings: r.timings });
-          return { get html() { return sessionHtml(view); }, diags: r.diags, heightPx: r.heightPx,
+          Object.assign(handle, { diags: r.diags, diagnostics: r.diagnostics ?? [], heightPx: r.heightPx, timings: r.timings });
+          return { get html() { return sessionHtml(view); }, diags: r.diags, diagnostics: r.diagnostics ?? [], heightPx: r.heightPx,
                    upgrades: ups, timings: r.timings, ranges: c.ranges, kept: c.kept };
         },
         // P1 (pages-design.md §2): sheets at the page measure, from a fork
