@@ -1238,7 +1238,7 @@ Theme steps: — · findings: 1
 | `math/bigop-greedy-body` | adhoc | medium | P3-25 | grep:plan P3-25 |
 | `math/segmentation-class-preview` | adhoc | medium | P3-25 | grep:plan P3-25 |
 | `math/inline-math-special-block` | adhoc | medium | P1-13, P3-26 | grep:plan P3-26 |
-| `math/display-math-unit` | adhoc | medium | P1-18, P3-26, P3-29 | |
+| `math/display-math-unit` | adhoc | medium | P1-18, P3-26, P3-29 | grep:plan P3-29 |
 | `math/equation-numbering` | adhoc | low | P2-07, P2-15 | grep:plan P2-15 |
 | `math/math-island-oneoff-syntax` | adhoc | low | P2-06, P2-15 | grep:plan P2-15 |
 | `math/math-opaque-string` | adhoc | high | P2-15 | grep:plan P2-15 |
@@ -1323,7 +1323,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/resource-and-config-plumbing` | adhoc | medium | P3-21 | grep:plan P3-21 |
 | `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 || grep:plan P3-06 |
 | `real-world-evidence/presentation-constants` | adhoc | medium | P3-01 | grep:plan P3-01 |
-| `real-world-evidence/math-extensibility` | adhoc | medium | P3-29 | |
+| `real-world-evidence/math-extensibility` | adhoc | medium | P3-29 | grep:plan P3-29 |
 | `real-world-evidence/no-cross-document-labels` | adhoc | high | P3-31 | |
 | `real-world-evidence/markup-reentry-missing` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `real-world-evidence/ctor-name-collision-fatal` | issue | high | P0-05, P2-02 | grep:plan P2-02 |

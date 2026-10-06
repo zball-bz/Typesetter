@@ -133,7 +133,7 @@ const MATH = [
   [/\\(?:operatorname|mathrm)\{([A-Za-z]+)\}/g, (m, x) => (x.length > 1 ? ` class(op, "${x}") ` : ` "${x}" `)],
   [/\\(?:text|textrm|mbox)\{([^{}]*)\}/g, '"$1"'],
   [/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)'], [/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, 'frac($1, $2)'],
-  [/\\(?:left|right)\s*\./g, ''], [/\\left|\\right|\\(?:big|Big|bigg|Bigg)[lrm]?\b/g, ''],
+  [/\\(?:left|right)\s*\./g, ''], [/\\left|\\right/g, ''],
   [/\\mathopen\{\}|\\mathclose\{\}/g, ''],
   [/\\(quad|qquad)\b|\\([,:;>! ])/g, (m, w, c) => ` ${TEX_SPACE[w ?? c]} `],
   [/\^\{([^{}]*)\}/g, '^($1)'], [/_\{([^{}]*)\}/g, '_($1)'],
@@ -145,8 +145,113 @@ const MATH = [
   }],
   [/[{}]/g, ''],
 ];
+// (plan P3-29; design T8 S9) what the engine sets, converted rather than
+// flattened or deleted: matrices, cases and inner aligned rows as grids
+// (rows `;`, cells `&`), braces, sized delimiters, phantoms, wide accents,
+// over/under-set symbols. \cancel has no paint form (D-M05): its argument is
+// kept and the converter says so.
+const unsupportedMath = new Set();
+// a balanced {…} group at i (whitespace skipped): [content, end], or null
+const group = (s, i) => {
+  while (s[i] === ' ' || s[i] === '\n') i++;
+  if (s[i] !== '{') return null;
+  let depth = 0;
+  for (let j = i; j < s.length; j++) {
+    if (s[j] === '\\') { j++; continue; }
+    if (s[j] === '{') depth++;
+    else if (s[j] === '}' && --depth === 0) return [s.slice(i + 1, j), j + 1];
+  }
+  return null;
+};
+// \name{a}{b}… → fn(a, b, …, rest): argc groups, then (opt) a ^{t} or _{b}
+// annotation; the innermost first, so arguments are already converted
+const calls = (s, name, argc, fn, annotation) => {
+  const re = new RegExp(String.raw`\\` + name + String.raw`(?![A-Za-z])`, 'g');
+  for (let guard = 0; guard < 1000; guard++) {
+    const hits = [...s.matchAll(re)];
+    if (!hits.length) return s;
+    const h = hits[hits.length - 1];  // the last: its arguments hold no unconverted call
+    let at = h.index + h[0].length;
+    const args = [];
+    for (let k = 0; k < argc; k++) {
+      const g = group(s, at);
+      if (!g) break;
+      args.push(g[0]);
+      at = g[1];
+    }
+    if (args.length < argc) return s;
+    let note = '';
+    if (annotation) {
+      let j = at;
+      while (s[j] === ' ') j++;
+      if (s[j] === annotation) {
+        const g = group(s, j + 1);
+        if (g) { note = g[0]; at = g[1]; }
+        else if (s[j + 1] && /\S/.test(s[j + 1])) { note = s[j + 1]; at = j + 2; }
+      }
+    }
+    s = s.slice(0, h.index) + fn(...args, note) + s.slice(at);
+  }
+  return s;
+};
+// the top-level rows of an environment body (`\\`, outside groups and
+// nested environments)
+const rowsOf = (body) => {
+  const rows = [];
+  let depth = 0, from = 0;
+  for (let i = 0; i < body.length; i++) {
+    if (body.startsWith('\\begin{', i)) depth++;
+    else if (body.startsWith('\\end{', i)) depth--;
+    else if (body[i] === '{') depth++;
+    else if (body[i] === '}') depth--;
+    else if (depth === 0 && body.startsWith('\\\\', i)) {
+      rows.push(body.slice(from, i));
+      i++;
+      from = i + 1;
+      continue;
+    }
+    if (body[i] === '\\' && body[i + 1] !== '\\') i++;  // an escaped character
+  }
+  rows.push(body.slice(from));
+  return rows.map((r) => r.replace(/\\(hline|nonumber|notag)\b/g, '').replace(/^\s*\[[^\]]*\]/, '').trim())
+    .filter((r) => r !== '');
+};
+const TEX_GRID = { matrix: 'grid(c, ', pmatrix: 'pmat(', bmatrix: 'bmat(', Bmatrix: 'Bmat(', vmatrix: 'vmat(',
+                   Vmatrix: 'Vmat(', smallmatrix: 'grid(c, ', cases: 'cases(', aligned: 'aligned(', split: 'aligned(',
+                   gathered: 'grid(c, ', array: null };
+const TEX_DELIM = { '(': '(', ')': ')', '[': '[', ']': ']', '|': '|', '/': '/', '\\{': '{', '\\}': '}', '\\|': '‖',
+                    '\\langle': '⟨', '\\rangle': '⟩', '\\lvert': '|', '\\rvert': '|', '\\lVert': '‖', '\\rVert': '‖',
+                    '\\lfloor': '⌊', '\\rfloor': '⌋', '\\lceil': '⌈', '\\rceil': '⌉' };
+const TEX_ACCENT = { hat: 'hat', widehat: 'hat', tilde: 'tilde', widetilde: 'tilde', bar: 'bar', overline: 'overline',
+                     underline: 'underline', vec: 'vec', overrightarrow: 'vec', dot: 'dot', ddot: 'ddot', check: 'check',
+                     widecheck: 'check', breve: 'breve', acute: 'acute', grave: 'grave', mathring: 'ring' };
+const constructs = (s) => {
+  // environments, the innermost first
+  const envRe = /\\begin\{(matrix|pmatrix|bmatrix|Bmatrix|vmatrix|Vmatrix|smallmatrix|cases|aligned|split|gathered|array)\}(\{[^{}]*\})?((?:(?!\\begin\{)[\s\S])*?)\\end\{\1\}/;
+  for (let m; (m = s.match(envRe));) {
+    const [all, env, spec, body] = m;
+    const head = env === 'array' ? `grid(${(spec ?? '{c}').replace(/[^lcr]/g, '') || 'c'}, ` : TEX_GRID[env];
+    s = s.replace(all, ` ${head}${rowsOf(body).join('; ')}) `);
+  }
+  for (const [tex, fn] of [['overbrace', 'overbrace'], ['underbrace', 'underbrace']])
+    s = calls(s, tex, 1, (x, note) => ` ${fn}(${x}${note ? `, ${note}` : ''}) `, tex === 'overbrace' ? '^' : '_');
+  for (const [tex, fn] of [['phantom', 'phantom'], ['hphantom', 'hphantom'], ['vphantom', 'vphantom'], ['smash', 'smash']])
+    s = calls(s, tex, 1, (x) => ` ${fn}(${x}) `);
+  // (TeX's letters are variables: \widehat{xyz} is x y z under one hat)
+  const letters = (x) => (/^\s*[A-Za-z]{2,}\s*$/.test(x) ? x.trim().split('').join(' ') : x);
+  for (const [tex, fn] of Object.entries(TEX_ACCENT)) s = calls(s, tex, 1, (x) => ` ${fn}(${letters(x)}) `);
+  s = calls(s, 'overset', 2, (a, b) => ` limits(${b})^(${a}) `);
+  s = calls(s, 'stackrel', 2, (a, b) => ` limits(${b})^(${a}) `);
+  s = calls(s, 'underset', 2, (a, b) => ` limits(${b})_(${a}) `);
+  for (const tex of ['cancel', 'bcancel', 'xcancel'])
+    s = calls(s, tex, 1, (x) => { unsupportedMath.add(tex); return ` ${x} `; });
+  // \big( … \Biggr]: one sized delimiter (\left/\right pairs are the engine's own)
+  s = s.replace(/\\(big|Big|bigg|Bigg)[lrm]?\s*(\\[A-Za-z]+|\\[{}|]|[()[\]|/.])/g, (m, size, d) =>
+    (d === '.' ? ' ' : TEX_DELIM[d] ? ` ${size}(${TEX_DELIM[d]}) ` : m));
+  return s;
+};
 const mathToTsm = (m) => {
-  let s = expandMacros(m);
+  let s = constructs(expandMacros(m));
   for (const [re, rep] of MATH) s = s.replace(re, rep);
   return s.replace(/\s+/g, ' ').trim().replace(/\u0002/g, '{').replace(/\u0003/g, '}');
 };
@@ -167,8 +272,29 @@ src = src.replace(/\\subsubsection\*?\{([^{}]*)\}/g, (m, t) => `\n==== ${t}\n`);
 // math islands first so the prose rules never touch them
 const maths = [];
 const stash = (m) => { maths.push(m); return `\u0001M${maths.length - 1}\u0001`; };
-src = src.replace(/\\begin\{(equation\*?|align\*?|narrowmultline\*?|multline\*?)\}([\s\S]*?)\\end\{\1\}/g,
-  (m, env, body) => stash('\n$ ' + mathToTsm(body.replace(/\\\\/g, ' ').replace(/&/g, ' ')) + ' $\n'));
+// (plan P3-29, D-S11) display environments: an align's rows are display
+// lines one after the other — one equations block, aligned at `&`, each row
+// its own equation (its label); a multline's rows are one formula's rows
+// (`\` ending a line); an equation is one display. A row's \label (already
+// ` <key>`) follows its formula.
+const labelOf = (row) => {
+  let label = '';
+  const text = row.replace(/\s*<([A-Za-z0-9_-]+)>/g, (m, k) => { label = label || k; return ' '; });
+  return [text, label ? ` <${label}>` : ''];
+};
+src = src.replace(/\\begin\{(equation\*?|align\*?|flalign\*?|alignat\*?|gather\*?|narrowmultline\*?|multline\*?)\}(\{\d+\})?([\s\S]*?)\\end\{\1\}/g,
+  (m, env, n, body) => {
+    const rows = rowsOf(body);
+    if (/^(equation|multline|narrowmultline)/.test(env)) {
+      const [text, label] = labelOf(rows.join(' \\\\ '));
+      const parts = rowsOf(text).map(mathToTsm);
+      return stash('\n$ ' + parts.join(' \\\n  ') + ' $' + label + '\n');
+    }
+    return stash('\n' + rows.map((r) => {
+      const [text, label] = labelOf(r);
+      return '$ ' + mathToTsm(text) + ' $' + label;
+    }).join('\n') + '\n');
+  });
 src = src.replace(/\\\[([\s\S]*?)\\\]/g, (m, b) => stash('\n$ ' + mathToTsm(b) + ' $\n'));
 src = src.replace(/\$([^$]+)\$/g, (m, b) => stash('$' + mathToTsm(b) + '$'));
 src = src.replace(/\\\(([\s\S]*?)\\\)/g, (m, b) => stash('$' + mathToTsm(b) + '$'));
@@ -214,3 +340,5 @@ src = src.split(/\n\s*\n/).map((p) => {
 if (opt('--bib-ref')) src += `\n\n#bibliography(${JSON.stringify(opt('--bib-ref'))})\n`;
 process.stdout.write(src.replace(/\n{3,}/g, '\n\n').trim() + '\n');
 if (unknownMath.size) console.error(`tex2tsm: math macros with no symbol, kept as names: ${[...unknownMath].sort().join(' ')}`);
+if (unsupportedMath.size)
+  console.error(`tex2tsm: math-unsupported: ${[...unsupportedMath].sort().map((m) => '\\' + m).join(' ')} (no stroke to paint: the argument is kept)`);

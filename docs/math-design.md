@@ -518,10 +518,13 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
     shifted as scripts are and right-aligned before the base.
   - Horizontal constructions are compiled (mathc.py `kHorizChains`, 52
     chains; the woff2 subset is now reproducible: the source font's
-    timestamp). A wide accent takes the widest variant no wider than its
-    base (TeX's rule; a spacing accent reads its combining form's chain:
-    ˆ → U+0302), or, when every variant falls short, the assembly (an
-    arrow: `vec(A B C D)`), centred. `hstretch(base, glyph, over|under)`
+    timestamp). An accent over a base of several glyphs takes the widest
+    variant no wider than its base (TeX's rule; a spacing accent reads its
+    combining form's chain: ˆ → U+0302), or, when every variant falls
+    short, the assembly (an arrow: `vec(A B C D)`), centred; over one glyph
+    it keeps the accent made for it, at its attachment (TeX's `\hat` vs
+    `\widehat`). The real-world corpus changes in 8 formulas (pbr-en/zh,
+    `hat("p" - "p"')` and kin), reviewed. `hstretch(base, glyph, over|under)`
     stretches a brace, bracket, paren or arrow to its base as a stretch
     stack (StretchStackGap*Min); its annotations go above and below:
     `overbrace(x, t?)`, `underbrace`, `overbracket`, `underbracket`,
@@ -556,6 +559,16 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
     each formula once, its rows included). The plain page writes an
     equations block as `div.tsr-equations` of its rows, aligned the same
     way, and a formula of several rows as one span (`.tsr-mathrows`).
+  - Converters: tex2tsm writes an `align`'s rows as display lines one
+    after the other (each its label; `\nonumber` dropped), a `multline`'s
+    as one formula's rows, matrices and `cases`/`aligned`/`split`/
+    `gathered`/`array` as grids, `\overbrace`/`\underbrace` with their
+    annotations, `\big`…`\Bigg` delimiters, phantoms, `\overset`/
+    `\underset`/`\stackrel` (limits), wide accents (their letters split);
+    `\cancel` keeps its argument and is reported (math-unsupported, D-M05).
+    pbr2tsm writes MathSpeak matrices as `mat`, determinants as `vmat`,
+    layouts as `aligned` (a Blank cell keeps its column), top and bottom
+    braces as `overbrace`/`underbrace`.
 - **`inf`** is the infimum text operator; ∞ is `oo`/`infty`/`infinity`
   (v1 listed `inf` as ∞ — collision, recorded deviation).
 - **v2 §13's dotted codex names** (`arrow.r`, `subset.eq`) are not

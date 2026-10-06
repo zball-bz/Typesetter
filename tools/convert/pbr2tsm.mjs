@@ -196,18 +196,20 @@ function mathspeakToTsm(title) {
 
   function matrix(stops) {
     // Start M By N Matrix 1st Row [1st Column a 2nd Column b …] … EndMatrix
-    // (also StartBinomialOrMatrix … Choose … EndBinomialOrMatrix). tsm has
-    // no matrix construct yet — emit [a, b; c, d] as a readable fallback.
+    // (also StartBinomialOrMatrix … Choose … EndBinomialOrMatrix): its rows
+    // as a grid's (plan P3-29) — `;` between rows, `&` between cells (a
+    // cell's own commas stay its)
     const rows = [];
     let cur = [];
     let cell = [];
-    const flushCell = () => { if (cell.length) cur.push(cell.join(' ')); cell = []; };
-    const flushRow = () => { flushCell(); if (cur.length) rows.push(cur.join(', ')); cur = []; };
+    let open = false;  // a column began in this row: its cell stands, empty or not (a Blank keeps its column)
+    const flushCell = () => { if (open || cell.length) cur.push(cell.join(' ')); cell = []; };
+    const flushRow = () => { flushCell(); if (cur.length) rows.push(cur.join(' & ')); cur = []; open = false; };
     const ends = new Set(['EndMatrix', 'EndDeterminant', 'EndBinomialOrMatrix', 'EndLayout']);
     while (i < toks.length && !ends.has(peek())) {
       const t = peek();
       if (ord(t) && toks[i + 1] === 'Row') { next(); next(); flushRow(); }
-      else if (ord(t) && toks[i + 1] === 'Column') { next(); next(); flushCell(); }
+      else if (ord(t) && toks[i + 1] === 'Column') { next(); next(); flushCell(); open = true; }
       else if (t === 'Row') { next(); flushRow(); }          // EnlargedRow variants
       else {
         const a = atom(new Set([...ends, 'Row', 'Column']));
@@ -221,7 +223,7 @@ function mathspeakToTsm(title) {
     }
     if (i < toks.length) next();
     flushRow();
-    return `[${rows.join('; ')}]`;
+    return rows.join('; ');
   }
 
   function atomUpper(stops) {
@@ -264,20 +266,17 @@ function mathspeakToTsm(title) {
           if (peek() === 'EndBinomialOrMatrix') next();
           return scripts(`binom(${a}, ${b})`, stops);
         }
-        i -= 0; return scripts(a + ' ' + matrix(stops), stops);
+        return scripts(`${a} mat(${matrix(stops)})`, stops);
       }
-      case 'StartLayout': {
-        const m = matrix(stops);                                // reuse row/cell walk
-        const rows = m.slice(1, -1).split('; ').map((r) => r.replace(/, /g, ' '));
-        return scripts(rows.join(' ; '), stops);
-      }
+      case 'StartLayout':  // (plan P3-29) aligned rows (MathJax's aligned/eqnarray: right-left pairs)
+        return scripts(`aligned(${matrix(stops)})`, stops);
       case 'Start': {
         // Start M By N Matrix …
         const dims = [];
         while (i < toks.length && peek() !== 'Matrix' && peek() !== 'Determinant') dims.push(next());
         const kind = next(); // Matrix | Determinant
         const m = matrix(stops);
-        return scripts(kind === 'Determinant' ? `abs(${m.slice(1, -1)})` : m, stops);
+        return scripts(kind === 'Determinant' ? `vmat(${m})` : `mat(${m})`, stops);
       }
       case 'left': {
         const kindw = peek();
@@ -310,7 +309,8 @@ function mathspeakToTsm(title) {
         const b = seq(new Set(['With']));
         if (peek() === 'With') next();
         const acc = next() ?? '';
-        const accMap = { 'caret': 'hat', 'bar': 'bar', 'overbar': 'bar', 'right-arrow': 'vec', 'dot': 'dot', 'overTilde': 'tilde', 'ring': 'ring', 'bottom-brace': '' };
+        const accMap = { 'caret': 'hat', 'bar': 'bar', 'overbar': 'bar', 'right-arrow': 'vec', 'dot': 'dot', 'overTilde': 'tilde',
+                         'ring': 'ring', 'top-brace': 'overbrace', 'bottom-brace': 'underbrace' };  // (braces: plan P3-29)
         const fn = accMap[acc] ?? '';
         return scripts(fn ? `${fn}(${b})` : wrap(b), stops);
       }

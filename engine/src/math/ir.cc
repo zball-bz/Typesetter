@@ -89,7 +89,7 @@ struct Lexer {
     if (c == '\\') {  // (plan P3-29, D-S11) a `\` ending its line: a row break
       u32 j = i + 1;
       while (j < s.size() && (s[j] == ' ' || s[j] == '\t' || s[j] == '\r')) j++;
-      if (j >= s.size() || s[j] == '\n') {
+      if (j < s.size() && s[j] == '\n') {  // (one ending the formula is a backslash)
         i = j;
         t.k = Tok::Break;
         return t;

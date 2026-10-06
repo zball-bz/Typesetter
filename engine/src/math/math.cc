@@ -829,11 +829,14 @@ struct Layouter {
     // passes a lone atom's on, plan P3-25)
     const Su baseAttach = base->topAccent;
     MathBox* acc = glyphBox(accCp, kOrd, st);
-    // (plan P3-29) a base wider than the accent takes a wide one — the
-    // widest variant that fits (hat, tilde), or an assembly as wide as the
-    // base (an arrow) — centred over it
+    // (plan P3-29) a base of several glyphs wider than the accent takes a
+    // wide one — the widest variant that fits (hat, tilde), or an assembly
+    // as wide as the base (an arrow) — centred over it; one glyph keeps the
+    // accent made for it, at its attachment (TeX's \hat vs \widehat)
+    const bool oneGlyph = baseN->k == MNode::Sym ||
+                          (baseN->k == MNode::Run && baseN->kids.size() == 1 && baseN->kids[0]->k == MNode::Sym);
     bool wide = false;
-    if (base->w > acc->w)
+    if (!oneGlyph && base->w > acc->w)
       if (const u32 wc = F.hchain(accCp) ? accCp : combiningAccent(accCp); F.hchain(wc)) {
         MathBox* w = stretchHoriz(wc, kOrd, st, base->w, /*fit=*/true);
         if (w->w > acc->w) {

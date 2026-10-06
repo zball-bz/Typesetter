@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-29
+- 下一步：P3-30
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -95,7 +95,7 @@
 | P3-26 | 数学采用通用协议；公式编号由布局测量 | done | grep:plan P3-26 | 2026-10-07 | 三次提交，各按格式由脚本核对。blocks：29 个 dump（obj 行 165、synthetic 胶 74、image/raw 部件 9）。html：36 个（公式的 data-src → data-copy + data-copy-group）。tag：11 个用例的 layout（新增 tag 行，无高度变化）、html/paged（定位 span → 测量的 tag 行；显示公式 top 取布局基线，差 ≤0.01px）、semantic（eqno 的 data-syn）、tree（tag 部件的 syn/copy）、blocks/hlist/breaks（tag 轨道）；+1 用例 math/eqno-below | LinebreakBlock 去掉 MathBox*：行内对象部件带种类、度量与不透明 payload（只供遗留 oracle 比较），blocks dump 统一写 obj 行；对象部件间的胶有自己的 BF_SYNTH（dump 为 synthetic），BF_BOUND 只表示 CJK–拉丁边界。公式的复制与任何替换 run 相同：data-syn="math"、data-copy=源码、同一公式的各部件同一 data-copy-group（源码起点加高位），删除 data-src 特例（paint、写出器、copy.mjs）。公式编号：删除 equation 类的 where: arg 站点与 ArgK::name 兼容（emit、语义页），tag 部件声明 syn eqno / copy omit；盒树把 tag 部件作为叶的第二轨，emit 塑形，布局按 End 对齐测量成行：与公式同基线放在版心末端，两者间距小于 1em 时移到公式下方，PenTier::Structural 不被分页切开；paint 轨道名 tag，删除 eqTag/eqRightPx 与外壳 CSS 的绝对定位。文档：document-model §9.4、tsm-changes |
 | P3-27 | 语义页数学盒与无障碍 | done | grep:plan P3-27 | 2026-10-07 | 两次提交，各由脚本核对。semantic：36 个 golden，唯一变化是 118 个公式由源码 code 变为数学盒。html/paged：37 个 golden，唯一变化是 194 处公式 span 加 role="math" 与 aria-label（源码） | 新设置 render.math（boxes|source，默认 boxes）、a11y.mathLabel（默认开）、a11y.textLayer（默认关）；生成器支持通用 enum 设置（u8 下标、k<Field><Value> 常量、按名序列化），设置段名可含数字。数学 span 写出器移到 render/math_html，两个写出器共用（placed 区分显示公式的绝对定位与 "$ … $" 复制写法）；语义页与片段按页面基准字号由数学字体度量排出公式盒（文本 run 用估算），role=math、aria-label=源码、data-copy 不变。export-static 在有公式时声明并复制数学字体，主题居中显示公式；check-export 覆盖盒与字体。paint 给数学 run 与显示公式带 mathLabel。外壳：默认行为 textLayer（设置开启时 commit 根 aria-hidden，overlay 中 sr-only 容器每块一段 contentBlocks，随每次 commit 重建）；copy.mjs 拆出 contentBlocksFromRange，ctx.ops.contentBlocks。e2e：a11y 用例（标签、文本层与复制一致、随 update 更新）。文档：document-model §9.3/§9.4、tsm-changes |
 | P3-28 | 宿主测量的替换盒（boxInfo） | done | grep:plan P3-28 | 2026-10-07 | 两次提交。structure：无 golden 变化。behaviour：region/table-raw-min-diag 的 diags 去掉 raw-measure 占位提示、layout 的 host 盒行加 " host h=1280su"（mock 高度与声明高度同为 20px，其余字节不变）；+1 用例 region/raw-host-diag | IntrinsicSize {w, h, minW, scale, source: Declared|Provided|Host|Placeholder} 统一图片与 raw 的尺寸记录；盒需求按 (kind, 载荷, 宽度) 建键（BoxKind image|svg|html，resource/box.h），wire 的 boxInfo 行带 kind 与宽度，答复带 baseline；stages.def 中 Layout 的重跑类别为 Provisional（可重入且可提问：提问的一轮是临时的，不绘制）。raw(measure: 'host') 块盒：Layout 以可用宽度经 BoxAsker 提问，未答则本轮临时、拉取继续；宽度不依赖答复，一轮即可，最多提问两次（之后 box-unsettled，用声明高度）；宿主测不了时 box-measure，用声明高度；relayout 只按新宽度重问，同宽 fork 一个不问（已答盒随 fork 复制）。svg 根由引擎自答（px height，或 viewBox 按 px/% width 或盒宽缩放）。行内盒需声明 w（否则 raw-measure 警告），在 Emit 时按 w 提问、块等待，答后按测得基线放置（vertical-align 负深度）。原生 driver 的 boxes 提供者与 WASM 调试 mock 用 mockBoxPx 确定性作答。JS：htmlBoxProvider（kind≠0，LRU 缓存）经主线程 measureHtml 能力在文档自己的排版根中用隐藏探针测量（inline-block 宽 W，旁边零尺寸标记取基线）；worker 会话记住 key 作 scope。ctx.raw 改为 raw 构造器的全部选项。raw 内容（块与行内）统一按文档字体、换行、normal 行高排版（.tsr-line 的 line-height:0 不再漏入）。审计把行内 raw 盒当作一个片段。单元测试 unitHostBoxes；e2e 一例（测得高度、未裁切、行内基线、relayout 重测）。文档：document-model、host-protocol-design、security-review、tsm-changes |
-| P3-29 | 数学网格、equations 与显示行 | todo | | | | |
+| P3-29 | 数学网格、equations 与显示行 | done | grep:plan P3-29 | 2026-10-07 | 四次提交。math：现有 golden 不变，+1 用例 math/grid。html：20 个 html/paged golden，唯一变化是 33 个显示公式的 data-copy-group（2147483648 → 0x80000000|源码起点），脚本核对。equations：现有 golden 不变，+1 用例 math/equations。converters：无 golden 变化。真实语料（pbr-en/zh）只有 8 个宽帽公式外观变化（hat("p" - "p'") 等），已审阅 | `&` 改为对齐点（MNode::Align），语料中公式内 0 处；rows 参数（`r: rows`、`r: cells`，stdlib.tsv 与 $.math.fn 共用 parseSlotSpec）读到 `)`：`;` 分行、`&` 分格，cells 时 `,` 也分格；grid(align, rows) 原语按对齐字母（l c r 循环）定列，rl 成对无间隙、右格按 Ord 起头，列距 1em，行至少一个支柱（0.85em+0.35em），有成对时加 jot 0.3em，整体居轴；模板 mat/pmat/bmat/Bmat/vmat/Vmat（text 样式）、cases（`.` 空定界符）、aligned。具名参数（只认本行槽名）。attach(base, t, b, tl, bl, tr, br) 绑定为 Attach 节点（前置上下标、强制 limits）。mathc.py 输出 52 条横向构造（woff2 可复现：取源字体时间戳），宽重音（多字形底取不超过底宽的最宽变体，箭头取装配；单字形保留原重音）、hstretch 与 overbrace/underbrace/overbracket/underbracket/overparen/underparen；delim 与 big/Big/bigg/Bigg（amsmath 1.2/1.8/2.4/3.0em）；phantom/hphantom/vphantom/smash。equations：N5 把段落中相邻的两行以上显示行包成 equations 块（盒树容器 TraitsId::Equations，defaults.json block.gap 0.3em）；行末 `\` 是行断（MNode::Break；岛分片器不再把它当作换行的转义）；Measure 中 layoutMathRows 排出各行各格，alignMathRows 按组共享列宽（equations 块中有 `&` 或行断时，或单个多行/多格公式），各行等宽故居中即对齐；布局把公式各行按 jot 叠放、每行一个 Math 片段（可在行间分页），编号在末行；typeset 页首行命名、其余行 aria-hidden（加入属性白名单）；显示公式的复制组取自身源码位置；语义页 div.tsr-equations 与 span.tsr-mathrows。math.equations([rows]) 供脚本。转换器：tex2tsm 的 align 每行一条显示行（带各自标签）、multline 为一个公式的多行、矩阵/cases/aligned/split/gathered/array 为网格、花括号、big、phantom、overset/underset/stackrel、宽重音；cancel 保留参数并报告 math-unsupported（D-M05）。pbr2tsm：矩阵 mat、行列式 vmat、布局 aligned（Blank 保留列）、上下花括号。单元：启动时 checkRow 校验全部模板行；e2e：equations（对齐、标签、复制一次）。文档：math-design §13、document-model §9.4、tsm-changes |
 | P3-30 | LocalePack 与文档语言 | todo | | | | |
 | P3-31 | 跨文档标签、项目驱动、#use | todo | | | | |
 | P3-32 | boxInfo 在布局阶段消费；宽度依赖的编译期证明 | todo | | | | |
@@ -172,6 +172,7 @@
 | P3-26 后 | 3.50 | 11.20 | 27.20 | 1.8 / 3.1 / 0.8 / 10.1 / 3.3 | 69.2 / 103.5 / 145.9 | 1.70 / 22.40 / 58.10 | 均在 P3 门限内 |
 | P3-27 后 | 3.60 | 11.20 | 27.20 | 1.7 / 3.1 / 0.8 / 10.0 / 3.3 | 74.0 / 108.8 / 151.7 | 1.70 / 22.10 / 57.50 | 均在 P3 门限内；文本层默认关，不进入基准路径 |
 | P3-28 后 | 3.40 | 11.00 | 27.60 | 1.9 / 3.2 / 0.8 / 10.1 / 3.2 | 68.8 / 105.1 / 150.2 | 1.80 / 22.20 / 58.00 | 均在 P3 门限内；无宿主盒的文档不提问，Layout 多一次空的 BoxPull |
+| P3-29 后 | 3.40 | 11.00 | 26.70 | 1.8 / 3.0 / 0.8 / 10.1 / 3.3 | 69.4 / 104.3 / 149.5 | 1.80 / 22.50 / 59.20 | 均在 P3 门限内；无多行公式的文档在 Measure 多一次空的对齐遍历 |
 
 ## 偏差记录（MD-11）
 
@@ -398,6 +399,12 @@
 | P3-28 | “图片走 IntrinsicSize 路径”在本步只统一尺寸记录；图片尺寸仍在 Emit 读取，Layout 消费 boxInfo 属 P3-32 | 计划 P3-32 明确承担 Layout 消费 | P3-32 |
 | P3-28 | 分页的 media 布局（渲染时）只查已有答复、不提问：新宽度上的盒用声明高度 | 渲染阶段不再拉取；仅 media 块改变宽度时出现 | 无 |
 | P3-28 | raw 内容统一按 normal 行高与换行排版：块 raw 过去继承宿主页面行高 | 测量与绘制须同一上下文；行内 raw 过去继承行的 line-height:0（文字叠在一起） | 无 |
+| P3-29 | 设计 T8 写 `grid(#r, align: (l, l))`；实现为 `grid(对齐字, rows)`：对齐字在前（l c r 字母循环），rows 槽在最后并读到 `)` | rows 槽必须最后才能无歧义地读取 `,`/`;`/`&`；字母循环覆盖 mat（c）、cases（l）、aligned（rl） | 无 |
+| P3-29 | 宽重音只用于多字形底：单字形保留原重音及其附着点（TeX 的 \\hat 与 \\widehat 之分）；设计写的是“横向重音拉伸”而未区分 | 单字母上居中的宽变体会丢掉斜体附着点；语料变化因此正好是计划预计的 8 个宽帽公式 | 无 |
+| P3-29 | big/Big/bigg/Bigg 取 amsmath 的绝对尺寸 1.2/1.8/2.4/3.0em（设计示例为 size: 1.2）；定界符保持符号自身的类（TeX \\big 为 Ord，\\bigl 为 Open 未单列） | 与 amsmath 一致；需要 Open/Close 时可写 class(open, big(()) | 无 |
+| P3-29 | 计划写 golden 只新增用例；另有一处 golden 变化：显示公式的 data-copy-group 改为自身源码位置（20 个 golden、33 个公式，单独提交并脚本核对） | P3-26 的潜在缺陷：同一块中有多个显示公式（equations）时复制只取第一个 | 无 |
+| P3-29 | woff2 子集重新生成（字形不变，head.modified 取源字体时间戳以便可复现），内容哈希变化 | mathc.py 原先每次运行写入当时时间，产物不可复现 | 博客重新 vendor 时取新哈希 |
+| P3-29 | 公式对齐在 Measure（公式排版后）完成，布局只叠放等宽的行；设计 T6 S15 写由 Replaced 布局器按行布局 | 对齐只依赖 MathBox，与宽度无关，放在 Measure 一次完成；布局仍按行产出片段与分页 | 无 |
 | P3-26 | role=math 与 aria-label 未做（计划注明在 P3-27 落地）；多行显示的逐行编号属 P3-29 | 计划安排 | P3-27、P3-29 |
 | P3-26 | 编号与公式同基线（TeX \\eqno），取代 CSS 的垂直居中；编号在旁时其行框的行距不推进游标（行高不变） | TeX 的做法；避免所有带编号公式之后的内容下移 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
