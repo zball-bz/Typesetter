@@ -74,6 +74,12 @@ Notes:
 
 ## 3. Styles
 
+As built (plan P2-08): the class bits below retired from the style. A style
+is the run properties of docs/style-design.md — weight, italic, decoration,
+font role, baseline, size, family, language, color — plus the script T5's
+classifier gives a run; the dumps keep the bits' spellings (`BOLD`, `EM`,
+`CODE`, `CJK`, `U`/`O`/`S`, `SUP`). The original table:
+
 **Base class bits** (u64; carried from v1, bit indices frozen):
 
 ```

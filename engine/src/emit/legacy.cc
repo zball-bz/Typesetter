@@ -28,7 +28,7 @@ struct LegacyInline final : InlineSink {
   explicit LegacyInline(EmitEnv& e)
       : E(e), arena(e.arena), diags(e.diags), strs(e.strs), styles(e.styles), cfg(e.cfg),
         mathText(e.mathText), spaceRef(e.spaceRef), hyphenRef(e.hyphenRef) {}
-  StyleId compose(StyleId base, u64 addBits, float mul) { return E.compose(base, addBits, mul); }
+  StyleId compose(StyleId base, const StyleDelta& d, float mul) { return E.compose(base, d, mul); }
 
   void walk(const ContentNode* n, Flow& u, ICtx ctx) override { inlineWalk(n, u, ctx); }
   void indent(Flow& u, StyleId st, Span span, double px) override {
@@ -54,7 +54,6 @@ struct LegacyInline final : InlineSink {
         ICtx c2 = ctx;
         for (const ArgVal& a : n->args)
           if (a.key == ArgK::url && a.tag == ArgTag::Str) c2.url = a.ref;
-        c2.addBits |= CLS_LINK;
         for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);
         return;
       }
@@ -64,7 +63,7 @@ struct LegacyInline final : InlineSink {
           LinebreakBlock b;
           b.breakPenalty = BREAK_INF;
           b.flags = ctx.addFlags;
-          b.style = compose(n->style, ctx.addBits | CLS_CODE,
+          b.style = compose(n->style, ctx.add + E.mono,
                             ctx.mul * (float)cfg.codeScale);
           b.text = n->kids[0]->str;
           b.linkUrl = ctx.url;
@@ -79,8 +78,7 @@ struct LegacyInline final : InlineSink {
         for (const ArgVal& a : n->args)
           if (a.key == ArgK::url && a.tag == ArgTag::Str) {
             c2.url = a.ref;
-            c2.addBits |= CLS_LINK;
-          }
+              }
         c2.addFlags |= BF_REF;
         const size_t before = u.legacy.size();
         for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);
@@ -91,7 +89,7 @@ struct LegacyInline final : InlineSink {
           for (const ArgVal& a : n->args)
             if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref)
               u.legacy[before].anchorId = a.ref;
-          if ((styles.get(u.legacy[before].style).bits & CLS_SUP) && before > 0)
+          if (styles.get(u.legacy[before].style).baseline == BASELINE_SUPER && before > 0)
             u.legacy[before - 1].breakPenalty = BREAK_INF;
         }
         return;
@@ -106,7 +104,7 @@ struct LegacyInline final : InlineSink {
         tmp.style = n->style;
         tmp.str = strs.intern(msg);
         ICtx c2 = ctx;
-        c2.addBits |= CLS_CODE;
+        c2.add += E.mono;
         emitText(&tmp, u, c2);
         return;
       }
@@ -114,7 +112,7 @@ struct LegacyInline final : InlineSink {
         StrRef srcRef = 0;
         for (const ArgVal& a : n->args)
           if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
-        StyleId st = compose(n->style, ctx.addBits, ctx.mul);
+        StyleId st = compose(n->style, ctx.add, ctx.mul);
         // CJK–formula boundary glue (App C: formulas are Latin-class)
         if (!u.legacy.empty() && u.legacy.back().isCjkChar()) {
           double px = kCjkBoundaryEm * fontPx(st);
@@ -274,8 +272,8 @@ struct LegacyInline final : InlineSink {
   }
 
   void emitText(const ContentNode* n, Flow& u, ICtx ctx) {
-    StyleId st = compose(n->style, ctx.addBits, ctx.mul);
-    StyleId stCjk = compose(st, CLS_CJK, 1.0f);
+    StyleId st = compose(n->style, ctx.add, ctx.mul);
+    StyleId stCjk = compose(st, E.cjk, 1.0f);
     std::string_view s = strs.get(n->str);
     const double halfPx = kPunctHalfEm * fontPx(stCjk);
     const Su glueSu = suRoundPx(cfg.cjkGlueEm * fontPx(stCjk));

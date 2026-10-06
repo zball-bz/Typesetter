@@ -344,7 +344,7 @@ static void unitFragment() {
   // bold bits folded into the leaf style
   bool sawBold = false;
   for (const ContentNode* n : ns)
-    if (n->kind == Kind::text && (styles.get(n->style).bits & CLS_BOLD))
+    if (n->kind == Kind::text && styles.get(n->style).weight == 700)
       sawBold = true;
   CHECK(sawBold);
   // every node stamped with the caller's span
@@ -1180,18 +1180,20 @@ static void unitFaces() {
   StyleId plain = doc.styles.idOf(base);
   Styling red = base;
   red.color = doc.strs.intern("red");
-  red.bits |= CLS_LINK | CLS_UNDER;
+  red.decoration |= DECORATION_UNDER;
   CHECK(doc.faces.faceOf(doc.styles.idOf(red)) == doc.faces.faceOf(plain));
   Styling bold = base;
-  bold.bits |= CLS_BOLD;
+  bold.weight = 700;
   CHECK(doc.faces.faceOf(doc.styles.idOf(bold)) != doc.faces.faceOf(plain));
   Styling cjkItalic = base;
-  cjkItalic.bits |= CLS_CJK | CLS_EM;
+  cjkItalic.script = SCRIPT_CJK;
+  cjkItalic.italic = true;
   Styling cjk = base;
-  cjk.bits |= CLS_CJK;
+  cjk.script = SCRIPT_CJK;
   CHECK(doc.faces.faceOf(doc.styles.idOf(cjkItalic)) == doc.faces.faceOf(doc.styles.idOf(cjk)));
   Styling monoCjk = base;
-  monoCjk.bits |= CLS_CODE | CLS_CJK;
+  monoCjk.fontRole = FONTROLE_MONO;
+  monoCjk.script = SCRIPT_CJK;
   FaceId mc = doc.faces.faceOf(doc.styles.idOf(monoCjk));
   CHECK(doc.faces.family(mc) == doc.cfg.cjkFont);  // no monoCjk set: body CJK
   Doc d2;

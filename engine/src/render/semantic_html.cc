@@ -58,10 +58,15 @@ struct Sem {
     const Styling& st = styles.get(sid);
     // a superscript nests its emphasis (sup > strong|em): it used to
     // drop the bold/italic of a marker inside emphasis (plan P1-02)
-    const char* outer = (st.bits & CLS_SUP) ? "sup" : nullptr;
-    const char* inner = (st.bits & CLS_BOLD) ? "strong" : (st.bits & CLS_EM) ? "em" : nullptr;
+    const char* outer = st.baseline == BASELINE_SUPER ? "sup" : st.baseline == BASELINE_SUB ? "sub" : nullptr;
+    const bool bold = st.weight >= 600;
+    const char* inner = bold ? "strong" : st.italic ? "em" : nullptr;
     const char* tag = inner ? inner : outer;
-    if (inner && outer) out += "<sup>";
+    if (inner && outer) {
+      out += "<";
+      out += outer;
+      out += ">";
+    }
     std::string style;
     if (st.fontFamily) {
       style += "font-family:";
@@ -78,11 +83,16 @@ struct Sem {
       fmtPx(style, st.sizePx);
       style += ";";
     }
-    if (st.bits & (CLS_UNDER | CLS_OVER | CLS_STRIKE)) {
+    if (st.weight && st.weight != 400 && st.weight != 700) {
+      style += "font-weight:";
+      style += std::to_string(st.weight);
+      style += ";";
+    }
+    if (st.decoration) {
       style += "text-decoration:";
-      if (st.bits & CLS_UNDER) style += "underline ";
-      if (st.bits & CLS_OVER) style += "overline ";
-      if (st.bits & CLS_STRIKE) style += "line-through ";
+      if (st.decoration & DECORATION_UNDER) style += "underline ";
+      if (st.decoration & DECORATION_OVER) style += "overline ";
+      if (st.decoration & DECORATION_STRIKE) style += "line-through ";
       style.pop_back();
       style += ";";
     }
@@ -93,7 +103,7 @@ struct Sem {
       if (st.lang) t.attr("lang", strs.get(st.lang));
       t.style(style);
       // bold+italic: strong tag + italic style
-      if ((st.bits & CLS_EM) && tag && (st.bits & CLS_BOLD)) t.style("font-style:italic");
+      if (st.italic && tag && bold) t.style("font-style:italic");
       t.open();
     }
     esc(out, text);
@@ -102,7 +112,11 @@ struct Sem {
       out += tag ? tag : "span";
       out += ">";
     }
-    if (inner && outer) out += "</sup>";
+    if (inner && outer) {
+      out += "</";
+      out += outer;
+      out += ">";
+    }
   }
 
   void inlineKids(const ContentNode* n) {

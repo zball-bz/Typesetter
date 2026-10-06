@@ -37,7 +37,7 @@ struct TItem {
   Kind kind = Kind::text;
   bool siteStyle = false;  // a block node taking the site's style (else 0)
   std::vector<std::pair<ArgK, TArg>> args;
-  u64 bits = 0;
+  StyleDelta delta;  // Styled: what it puts on its content
   float size = 1.0f;
   std::vector<TItem> kids, sep, orElse, tail;
   TArg anchor;

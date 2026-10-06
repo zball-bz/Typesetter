@@ -127,11 +127,11 @@ void dumpHList(std::string& out, const HList& h, const Interner& strs, const Sty
     if (r.syn == SynKind::Ref) out += " ref";
     if (r.syn == SynKind::Indent) out += " indent";
     const Styling& st = styles.get(r.face);
-    if (st.bits & CLS_BOLD) out += " BOLD";
-    if (st.bits & CLS_EM) out += " EM";
-    if (st.bits & CLS_CODE) out += " CODE";
-    if (st.bits & CLS_LINK) out += " LINK";
-    if (st.bits & CLS_CJK) out += " CJK";
+    if (st.weight == 700) out += " BOLD";
+    if (st.italic) out += " EM";
+    if (st.fontRole == FONTROLE_MONO) out += " CODE";
+    if (r.link) out += " LINK";
+    if (st.script == SCRIPT_CJK) out += " CJK";
     if (st.sizeMul != 1.0f) appendf(out, " x%.2f", (double)st.sizeMul);
     appendStyleFields(out, st, strs);
     if (r.link) {

@@ -13,14 +13,16 @@ namespace tsr {
 struct RunClasses {
   char buf[96];
   size_t n = 0;
-  explicit RunClasses(const Styling& st, const char* before = nullptr, const char* after = nullptr) {
+  // the classes keep their names from the class bits (plan P2-08): bold for
+  // weight 700, italic, the CJK script, the mono role, a superscript
+  RunClasses(const Styling& st, const Interner& strs, const char* before = nullptr, const char* after = nullptr) {
     if (before) add(before);
     add("tsr-r");
-    if (st.bits & CLS_BOLD) add("tsr-b");
-    if (st.bits & CLS_EM) add("tsr-i");
-    if (st.bits & CLS_CJK) add("tsr-cjk");
-    if (st.bits & CLS_CODE) add("tsr-code");
-    if (st.bits & CLS_SUP) add("tsr-sup");
+    if (st.weight == 700) add("tsr-b");
+    if (st.italic) add("tsr-i");
+    if (st.script == SCRIPT_CJK) add("tsr-cjk");
+    if (st.fontRole == FONTROLE_MONO) add("tsr-code");
+    if (st.baseline == BASELINE_SUPER) add("tsr-sup");
     if (after && *after) add(after);
   }
   void add(std::string_view s) {
@@ -238,7 +240,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
   if (n.marker) {
     const Styling& mst = styles.get(n.markerStyle);
     Tag t(out, "span");
-    t.attrSafe("class", RunClasses(mst, "tsr-marker").sv());
+    t.attrSafe("class", RunClasses(mst, strs, "tsr-marker").sv());
     t.attrSafe("data-syn", "marker");
     runCss(t, mst, basePx, strs);
     t.open();
@@ -298,7 +300,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       case DLRun::K::CodeText: {
         const Styling& cst = styles.get(d.face);
         Tag t(out, "span");
-        t.attrSafe("class", RunClasses(cst).sv());
+        t.attrSafe("class", RunClasses(cst, strs).sv());
         if (d.syn) t.attrSafe("data-syn", d.syn);
         runCss(t, cst, basePx, strs);
         if (d.fit == DLRun::Fit::LetterSpacing) {
@@ -324,7 +326,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
     const bool isLink = d.link != 0;
     {
       Tag t(out, isLink ? "a" : "span");
-      t.attrSafe("class", RunClasses(sty, nullptr, d.cls).sv());
+      t.attrSafe("class", RunClasses(sty, strs, nullptr, d.cls).sv());
       if (isLink) t.attr("href", strs.get(d.link));
       if (d.id) t.id(strs.get(d.id));
       if (d.synRef) {  // §9.3: copy skips (a ref's hyphen is "hyphen")

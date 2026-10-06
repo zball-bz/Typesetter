@@ -160,8 +160,9 @@ struct Conv {
         break;
       }
       case Kind::styled: {  // a delta carrier: its bits (P2-08 widens it)
+        // the styled `bits` flags (schema: EM=2, BOLD=3, UNDER=16, OVER=17, STRIKE=18)
         static const struct { u64 bit; const char* n; } kBits[] = {
-            {CLS_EM, "em"}, {CLS_BOLD, "bold"}, {CLS_UNDER, "under"}, {CLS_OVER, "over"}, {CLS_STRIKE, "strike"}};
+            {1ull << 2, "em"}, {1ull << 3, "bold"}, {1ull << 16, "under"}, {1ull << 17, "over"}, {1ull << 18, "strike"}};
         JsonValue st, bits;
         st.t = JsonValue::T::Obj;
         bits.t = JsonValue::T::Arr;

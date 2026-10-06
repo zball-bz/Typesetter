@@ -253,21 +253,28 @@ const domJs = `export const DOMAINS = Object.freeze({\n${domains.map(([n, d]) =>
   `export function validDomain(name, s) {\n  const d = DOMAINS[name];\n  if (!d || typeof s !== 'string') return false;\n` +
   `  return (!d.max || utf8Length(s) <= d.max) && d.re.test(s);\n}\n`;
 
-// ---- run properties (plan P1-02): Styling, its ops, dumps and CSS ----------------
+// ---- run properties (plans P1-02, P2-08): Styling, its ops, dumps and CSS -----------
 const props = Object.entries(S.props ?? {}).filter(([n]) => n !== '$comment');
 const flagsOf = (attrDom) => Object.fromEntries(attrDom.split(':').slice(1).join(':').split(',').map((x) => x.split('=')).map(([k, v]) => [k, +v]));
-const bitsRow = props.find(([, r]) => r.type === 'bits');
-const bitsFlags = bitsRow ? flagsOf(S.kinds.styled.attrs[bitsRow[1].attr].dom) : {};
-const CT = { bits: 'u64', mul: 'float', str: 'StrRef', px: 'float' };
-const INIT = { bits: '0', mul: '1.0f', str: '0', px: '0' };
-let ph = `// ${HDR}\n// Run style properties (schema "props"; plan P1-02, design T4 M2).\n#pragma once\n#include <cstring>\n\n#include "../ops/ops.h"\n\nnamespace tsr {\n\n` +
-  `// The effective run style: one field per property row, in row order. StrRef 0 /\n// 0.0 = not set.\nstruct Styling {\n`;
+// the v6-10 styled `bits` flags (legacy rows decode them)
+const legacyBits = S.kinds.styled.attrs.bits ? flagsOf(S.kinds.styled.attrs.bits.dom) : {};
+const CT = { weight: 'u16', bool: 'bool', flags: 'u8', enum: 'u8', mul: 'float', str: 'StrRef', px: 'float', internal: 'u8' };
+const INIT = { weight: '0', bool: 'false', flags: '0', enum: '0', mul: '1.0f', str: '0', px: '0', internal: '0' };
+const isFloat = (r) => r.type === 'mul' || r.type === 'px';
+let ph = `// ${HDR}\n// Run style properties (schema "props"; plans P1-02, P2-08; design T4 M2/M5).\n#pragma once\n#include <cstring>\n\n#include "../ops/ops.h"\n\nnamespace tsr {\n\n` +
+  `// The effective run style: one field per property row, in row order. 0 /\n// false / StrRef 0 = not set.\nstruct Styling {\n`;
 for (const [n, r] of props) ph += `  ${CT[r.type]} ${r.field} = ${INIT[r.type]};  // ${n}\n`;
 ph += `  bool operator==(const Styling& o) const {\n    return ${props.map(([, r]) => `${r.field} == o.${r.field}`).join(' &&\n           ')};\n  }\n};\n\n`;
-ph += `// a hash over the canonical bits of every field\nstruct StylingHash {\n  size_t operator()(const Styling& s) const {\n` +
+for (const [, r] of props) {
+  if (r.type === 'flags')
+    for (const [f, b] of Object.entries(r.flags)) ph += `constexpr u8 ${r.field.toUpperCase()}_${f} = ${1 << b};\n`;
+  if (r.type === 'enum')
+    r.values.forEach((v, k) => { ph += `constexpr u8 ${r.field.toUpperCase()}_${v.toUpperCase()} = ${k + 1};\n`; });
+}
+ph += `\n// a hash over the canonical bits of every field\nstruct StylingHash {\n  size_t operator()(const Styling& s) const {\n` +
   `    u64 h = 1469598103934665603ull;\n    auto mix = [&](u64 v) { h = (h ^ v) * 1099511628211ull; };\n`;
 for (const [, r] of props)
-  ph += (r.type === 'mul' || r.type === 'px')
+  ph += isFloat(r)
     ? `    {\n      u32 b;\n      std::memcpy(&b, &s.${r.field}, 4);\n      mix(b);\n    }\n`
     : `    mix((u64)s.${r.field});\n`;
 ph += `    return (size_t)h;\n  }\n};\n\n`;
@@ -276,11 +283,22 @@ for (const [, r] of props) {
   if (r.type === 'mul') ph += `  if (!(s.${r.field} == s.${r.field})) s.${r.field} = 1.0f;\n  if (s.${r.field} == 0) s.${r.field} = 0.0f;\n`;
   if (r.type === 'px') ph += `  if (!(s.${r.field} == s.${r.field}) || s.${r.field} < 0) s.${r.field} = 0;\n  if (s.${r.field} == 0) s.${r.field} = 0.0f;\n`;
 }
+// the legacy class bits (plan P2-08 transition): each flag sets its row
+ph += `}\n\n// the v6-10 styled \`bits\` flags, folded onto the rows that replace them\ninline void applyLegacyBits(Styling& st, u64 b) {\n`;
+for (const [, r] of props) {
+  for (const [f, v] of Object.entries(r.legacy ?? {})) {
+    const bit = legacyBits[f];
+    if (bit === undefined) { console.error(`gen-schema: props ${r.field}: legacy flag ${f} is not a styled bits flag`); process.exit(1); }
+    const set = r.type === 'weight' ? `st.${r.field} = ${v};` : r.type === 'bool' ? `st.${r.field} = true;`
+      : `st.${r.field} |= ${r.field.toUpperCase()}_${v};`;
+    ph += `  if (b & (1ull << ${bit})) ${set}\n`;
+  }
+}
 ph += `}\n\n// folds one styled attribute or STYLE_PUSH patch value onto a style (values\n// were validated at decode); intern(ref) maps a buffer string to a StrRef\n` +
   `template <class Intern>\ninline void applyStyleArg(Styling& st, const ArgVal& a, Intern intern) {\n`;
+if (S.kinds.styled.attrs.bits) ph += `  if (a.key == ArgK::bits && a.tag == ArgTag::Num && a.num >= 0) applyLegacyBits(st, (u64)a.num);\n`;
 for (const [, r] of props) {
   if (!r.attr) continue;
-  if (r.type === 'bits') ph += `  if (a.key == ArgK::${r.attr} && a.tag == ArgTag::Num && a.num >= 0) st.${r.field} |= (u64)a.num;  // flags OR in\n`;
   if (r.type === 'str') ph += `  if (a.key == ArgK::${r.attr} && a.tag == ArgTag::Str) st.${r.field} = intern(a.ref);\n`;
   if (r.type === 'px') ph += `  if (a.key == ArgK::${r.attr} && a.tag == ArgTag::Num) st.${r.field} = (float)a.num;\n`;
 }
@@ -300,12 +318,12 @@ let css = `// ${HDR}\n// A typeset run's attributes and style declarations (sche
 for (const [, r] of props) if (r.html) css += `  if (st.${r.field}) t.attr("${r.html}", strs.get(st.${r.field}));\n`;
 for (const [, r] of props.filter(([, r]) => r.css).sort((a, b) => a[1].cssOrder - b[1].cssOrder)) {
   if (r.cssValue === 'emPx') {
-    const conds = props.filter(([, x]) => x.type === 'mul' || x.type === 'px')
+    const conds = props.filter(([, x]) => isFloat(x))
       .map(([, x]) => (x.type === 'mul' ? `st.${x.field} != 1.0f` : `st.${x.field} > 0`));
     css += `  if (${conds.join(' || ')}) t.px("${r.css}", emPx(basePx, st));\n`;
   } else if (r.cssFlags) {
-    const bits = Object.entries(r.cssFlags).map(([f, kw]) => [`(1ull << ${bitsFlags[f]})`, kw]);
-    css += `  if (st.${r.field} & (${bits.map((b) => b[0]).join(' | ')})) {\n    char buf[64];\n    size_t n = 0;\n` +
+    const bits = Object.entries(r.cssFlags).map(([f, kw]) => [`${r.field.toUpperCase()}_${f}`, kw]);
+    css += `  if (st.${r.field}) {\n    char buf[64];\n    size_t n = 0;\n` +
       `    auto add = [&](const char* w) {\n      if (n) buf[n++] = ' ';\n      std::memcpy(buf + n, w, std::strlen(w));\n      n += std::strlen(w);\n    };\n` +
       bits.map(([b, kw]) => `    if (st.${r.field} & ${b}) add("${kw}");\n`).join('') +
       `    t.decl("${r.css}", std::string_view(buf, n));\n  }\n`;
@@ -315,9 +333,16 @@ for (const [, r] of props.filter(([, r]) => r.css).sort((a, b) => a[1].cssOrder 
 }
 css += `}\n\n}  // namespace tsr\n`;
 
-const sugar = bitsRow ? Object.fromEntries(Object.entries(bitsRow[1].sugar ?? {}).map(([k, f]) => [k, 2 ** bitsFlags[f]])) : {};
+// $.style.push sugar: until the wire carries the rows (P2-08), each key is
+// its legacy styled bit
+const sugar = {};
+for (const [, r] of props)
+  for (const [k, v] of Object.entries(r.sugar ?? {})) {
+    const f = Object.entries(r.legacy ?? {}).find(([, lv]) => lv === v)?.[0];
+    if (f !== undefined) sugar[k] = 2 ** legacyBits[f];
+  }
 const propsJs = `// ${HDR}\n// Run style properties (plan P1-02): the $.style.push / #style / region keys\n// and their value domains.\n` +
-  `export const STYLE_KEYS = Object.freeze(${JSON.stringify(Object.fromEntries(props.filter(([, r]) => r.attr && r.type !== 'bits').map(([, r]) => [r.key ?? r.attr, r.attr])))});\n` +
+  `export const STYLE_KEYS = Object.freeze(${JSON.stringify(Object.fromEntries(props.filter(([, r]) => r.attr).map(([, r]) => [r.key ?? r.attr, r.attr])))});\n` +
   `export const STYLE_SUGAR = Object.freeze(${JSON.stringify(sugar)});\n` + domJs;
 
 // ---- host settings (plan P1-03): Config, its JSON codec, JS defaults --------------

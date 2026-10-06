@@ -41,7 +41,7 @@ void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size
       Styling s = styles.get(base);
       std::string var = std::string("var(--tsr-tok-") + kTokenTags[tag] + ")";
       s.color = strs.intern(var);
-      if (tag == kTokenTagComment) s.bits |= CLS_EM;  // comment: italic (duplex contract)
+      if (tag == kTokenTagComment) s.italic = true;  // comment: italic (duplex contract)
       tagStyle[tag] = styles.idOf(s);
       tagStyleMade[tag] = true;
     }

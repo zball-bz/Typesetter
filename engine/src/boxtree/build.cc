@@ -215,7 +215,9 @@ class Builder {
         }
         LayoutBlock& b = leaf(LayouterId::Grid, Painter::None, TraitsId::Code, n, parent, x, std::move(s));
         b.marker = marker;
-        b.markerStyle = compose(styles, n->style, CLS_CODE, (float)cfg.codeScale);
+        StyleDelta mono;
+        mono.fontRole = FONTROLE_MONO;
+        b.markerStyle = compose(styles, n->style, mono, (float)cfg.codeScale);
         return;
       }
       case Kind::rule:

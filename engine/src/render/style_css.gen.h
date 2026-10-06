@@ -14,7 +14,7 @@ inline void runCss(Tag& t, const Styling& st, double basePx, const Interner& str
   if (st.sizeMul != 1.0f || st.sizePx > 0) t.px("font-size", emPx(basePx, st));
   if (st.fontFamily) t.declEsc("font-family", strs.get(st.fontFamily));
   if (st.color) t.declEsc("color", strs.get(st.color));
-  if (st.bits & ((1ull << 16) | (1ull << 17) | (1ull << 18))) {
+  if (st.decoration) {
     char buf[64];
     size_t n = 0;
     auto add = [&](const char* w) {
@@ -22,9 +22,9 @@ inline void runCss(Tag& t, const Styling& st, double basePx, const Interner& str
       std::memcpy(buf + n, w, std::strlen(w));
       n += std::strlen(w);
     };
-    if (st.bits & (1ull << 16)) add("underline");
-    if (st.bits & (1ull << 17)) add("overline");
-    if (st.bits & (1ull << 18)) add("line-through");
+    if (st.decoration & DECORATION_UNDER) add("underline");
+    if (st.decoration & DECORATION_OVER) add("overline");
+    if (st.decoration & DECORATION_STRIKE) add("line-through");
     t.decl("text-decoration", std::string_view(buf, n));
   }
 }

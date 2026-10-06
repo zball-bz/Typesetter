@@ -29,13 +29,11 @@ struct Conv {
     n->args.push_back(a);
   }
 
-  // bits accumulate down the styled path and fold into leaf styles — the
+  // deltas accumulate down the styled path and fold into leaf styles — the
   // same emission-time semantics instantiate() gives ops-borne content
-  void conv(const AstNode* a, u64 bits, StyleId base,
+  void conv(const AstNode* a, const StyleDelta& bits, StyleId base,
             std::vector<ContentNode*>& out) {
-    Styling st = styles.get(base);
-    st.bits |= bits;
-    StyleId eff = styles.idOf(st);
+    StyleId eff = compose(styles, base, bits);
     switch (a->kind) {
       case AstKind::Text: {
         ContentNode* t = mk(Kind::text, eff);
@@ -72,13 +70,15 @@ struct Conv {
     }
   }
 
-  void call(const AstNode* a, u64 bits, StyleId base, StyleId eff,
+  void call(const AstNode* a, const StyleDelta& bits, StyleId base, StyleId eff,
             std::vector<ContentNode*>& out) {
     switch (a->sugar) {
       case SugarId::strong:
       case SugarId::em: {
-        u64 add = a->sugar == SugarId::strong ? CLS_BOLD : CLS_EM;
-        for (const AstNode* k : a->kids()) conv(k, bits | add, base, out);
+        StyleDelta add;
+        if (a->sugar == SugarId::strong) add.weight = 700;
+        else add.italic = true;
+        for (const AstNode* k : a->kids()) conv(k, bits + add, base, out);
         return;
       }
       case SugarId::code: {
@@ -146,7 +146,7 @@ std::vector<ContentNode*> parseInlineFragment(std::string_view text,
   std::vector<AstNode*> ast = parseInlineSpans(frag, spans, arena, strs, diags);
   Conv c{frag, arena, strs, styles, diags, span};
   std::vector<ContentNode*> out;
-  for (const AstNode* a : ast) c.conv(a, 0, baseStyle, out);
+  for (const AstNode* a : ast) c.conv(a, StyleDelta{}, baseStyle, out);
   return out;
 }
 

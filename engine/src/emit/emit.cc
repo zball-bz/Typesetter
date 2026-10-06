@@ -323,7 +323,6 @@ struct HlInline final : InlineSink {
     if (n->kind == Kind::link) {
       for (const ArgVal& a : n->args)
         if (a.key == ArgK::url && a.tag == ArgTag::Str) ctx.url = a.ref;
-      ctx.addBits |= CLS_LINK;
     } else if (n->kind == Kind::ref) {
       ref(n, u, ctx);
       return;
@@ -339,7 +338,7 @@ struct HlInline final : InlineSink {
   void code(const ContentNode* n, Flow& u, ICtx ctx) {
     // inline code: one unbreakable box, mono style
     if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
-      StyleId st = E.compose(n->style, ctx.addBits | CLS_CODE, ctx.mul * (float)cfg.codeScale);
+      StyleId st = E.compose(n->style, ctx.add + E.mono, ctx.mul * (float)cfg.codeScale);
       AdvanceSpec sp;
       sp.str = n->kids[0]->str;
       push(u, IK::Box, firstCc(strs.get(sp.str)), 0, key(st, ctx.url, ctx.addFlags, RealizeClass::Plain),
@@ -350,10 +349,7 @@ struct HlInline final : InlineSink {
   void ref(const ContentNode* n, Flow& u, ICtx ctx) {
     // resolver output: kids = display text, url arg = "#tsr-<label>"
     for (const ArgVal& a : n->args)
-      if (a.key == ArgK::url && a.tag == ArgTag::Str) {
-        ctx.url = a.ref;
-        ctx.addBits |= CLS_LINK;
-      }
+      if (a.key == ArgK::url && a.tag == ArgTag::Str) ctx.url = a.ref;
     ctx.addFlags |= BF_REF;
     const size_t before = count(u);
     for (const ContentNode* k : n->kids) walk(k, u, ctx);
@@ -370,7 +366,7 @@ struct HlInline final : InlineSink {
           h.cold[first.cold].anchor = a.ref;
           if (startsRun) h.runs[first.run].anchor = a.ref;  // the run's first item
         }
-      if ((styles.get(runOf(before).face).bits & CLS_SUP) && before > 0 && !(pend[before - 1] <= -kPenInf))
+      if (styles.get(runOf(before).face).baseline == BASELINE_SUPER && before > 0 && !(pend[before - 1] <= -kPenInf))
         pend[before - 1] = kPenInf;
     }
   }
@@ -385,7 +381,7 @@ struct HlInline final : InlineSink {
     tmp.span = n->span;
     tmp.style = n->style;
     tmp.str = strs.intern(msg);
-    ctx.addBits |= CLS_CODE;
+    ctx.add += E.mono;
     emitText(&tmp, u, ctx);
   }
 
@@ -428,7 +424,7 @@ struct HlInline final : InlineSink {
       case ObjKind::Image: {
         // one box from the declared or intrinsic dims (the image pull fills
         // them), sitting on the baseline; a 1em placeholder otherwise
-        StyleId st = E.compose(n->style, ctx.addBits, ctx.mul);
+        StyleId st = E.compose(n->style, ctx.add, ctx.mul);
         double iw = 0, ih = 0;
         StrRef src = 0, alt = 0;
         for (const ArgVal& a : n->args) {
@@ -454,7 +450,7 @@ struct HlInline final : InlineSink {
       case ObjKind::Raw: {
         // handler-declared markup: one box of its declared size (1em when
         // undeclared), sitting on the baseline
-        StyleId st = E.compose(n->style, ctx.addBits, ctx.mul);
+        StyleId st = E.compose(n->style, ctx.add, ctx.mul);
         double w = 0, hh = 0;
         StrRef html = 0;
         for (const ArgVal& a : n->args) {
@@ -475,7 +471,7 @@ struct HlInline final : InlineSink {
       case ObjKind::Error: {
         // the error box of a kind that cannot appear inline: its name,
         // measured in the CODE face, unbreakable
-        StyleId st = E.compose(n->style, ctx.addBits | CLS_CODE, ctx.mul);
+        StyleId st = E.compose(n->style, ctx.add + E.mono, ctx.mul);
         u32 obj = addObject(u, ObjKind::Error, n, st);
         const StrRef text = strs.intern(std::string("\xE2\x9A\xA0 ") + kKinds[(u16)n->kind].name);  // ⚠
         B.objs[obj].src = text;
@@ -491,7 +487,7 @@ struct HlInline final : InlineSink {
     StrRef srcRef = 0;
     for (const ArgVal& a : n->args)
       if (a.key == ArgK::src && a.tag == ArgTag::Str) srcRef = a.ref;
-    StyleId st = E.compose(n->style, ctx.addBits, ctx.mul);
+    StyleId st = E.compose(n->style, ctx.add, ctx.mul);
     // CJK–formula boundary glue (App C: formulas are Latin-class)
     if (count(u) > 0 && isCjkChar(count(u) - 1)) autospace(u, st, ctx, n->span);
     // prepare (plan P1-25; design T8 S6): the formula parses here — its
@@ -563,8 +559,8 @@ struct HlInline final : InlineSink {
   }
 
   void emitText(const ContentNode* n, Flow& u, ICtx ctx) {
-    StyleId st = E.compose(n->style, ctx.addBits, ctx.mul);
-    StyleId stCjk = E.compose(st, CLS_CJK, 1.0f);
+    StyleId st = E.compose(n->style, ctx.add, ctx.mul);
+    StyleId stCjk = E.compose(st, E.cjk, 1.0f);
     std::string_view s = strs.get(n->str);
     const double halfPx = kPunctHalfEm * E.fontPx(stCjk);
     const Su glueSu = suRoundPx(cfg.cjkGlueEm * E.fontPx(stCjk));
@@ -767,7 +763,7 @@ struct Emitter {
   Emitter(EmitEnv& e, InlineSink& s)
       : E(e), sink(s), arena(e.arena), diags(e.diags), strs(e.strs), styles(e.styles), cfg(e.cfg),
         mathText(e.mathText) {}
-  StyleId compose(StyleId base, u64 addBits, float mul) { return E.compose(base, addBits, mul); }
+  StyleId compose(StyleId base, const StyleDelta& d, float mul) { return E.compose(base, d, mul); }
   double fontPx(StyleId st) { return E.fontPx(st); }
 
   // an inline stream of `kids` into its own flow (a cell, a caption row, a
@@ -794,7 +790,7 @@ struct Emitter {
           sink.walk(n, u, ctx);  // error case renders ⚠ + message
         } else {
           if (n->kind == Kind::heading) {
-            ctx.addBits = CLS_BOLD;
+            ctx.add = E.bold;
             ctx.mul = (float)headingSizeMul(attrInt(n, ArgK::level, 1));
           }
           if (ls.paraIndent) sink.indent(u, n->style, n->span, cfg.paraIndentEm * fontPx(n->style));
@@ -805,7 +801,7 @@ struct Emitter {
       }
       case LayouterId::Grid: {
         GridData& g = u.data.emplace<GridData>();
-        g.codeStyle = compose(n->style, CLS_CODE, (float)cfg.codeScale);
+        g.codeStyle = compose(n->style, E.mono, (float)cfg.codeScale);
         g.chRef = strs.intern("0");
         g.cjkChRef = strs.intern("\xE4\xB8\xAD");
         if (StrRef lang = attrStr(n, ArgK::lang)) g.lang = lang;
@@ -838,7 +834,7 @@ struct Emitter {
           for (const std::vector<TokenRun>& line : lines) {
             std::vector<CodeRun>& runs = g.lines.emplace_back();
             for (const TokenRun& r : line)
-              runs.push_back({strs.intern(r.text), compose(r.style, CLS_CODE, (float)cfg.codeScale), r.comment});
+              runs.push_back({strs.intern(r.text), compose(r.style, E.mono, (float)cfg.codeScale), r.comment});
           }
         } else if (bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text) {
           std::string_view body = strs.get(bodyKids[0]->str);
@@ -858,7 +854,7 @@ struct Emitter {
               [&](const ContentNode* k, std::vector<CodeRun>& out) {
                 if (k->kind == Kind::text) {
                   bool cm = styles.get(k->style).color == commentColor;
-                  out.push_back({k->str, compose(k->style, CLS_CODE, (float)cfg.codeScale), cm});
+                  out.push_back({k->str, compose(k->style, E.mono, (float)cfg.codeScale), cm});
                   return;
                 }
                 if (k->kind == Kind::comment) return;
@@ -965,6 +961,9 @@ struct Emitter {
 }  // namespace
 
 static void prepareEnv(EmitEnv& env) {
+  env.mono.fontRole = FONTROLE_MONO;
+  env.bold.weight = 700;
+  env.cjk.script = SCRIPT_CJK;
   env.spaceRef = env.strs.intern(" ");
   env.hyphenRef = env.strs.intern("-");
   env.bulletRef = env.strs.intern("\xE2\x80\xA2");
@@ -1670,10 +1669,10 @@ std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
           appendf(out, "\" w=%dsu pen=%s", b.width, b.breakPenalty >= BREAK_INF ? "INF" : "0");
         }
         const Styling& st = styles.get(b.style);
-        if (st.bits & CLS_BOLD) out += " BOLD";
-        if (st.bits & CLS_EM) out += " EM";
-        if (st.bits & CLS_CODE) out += " CODE";
-        if (st.bits & CLS_LINK) out += " LINK";
+        if (st.weight == 700) out += " BOLD";
+        if (st.italic) out += " EM";
+        if (st.fontRole == FONTROLE_MONO) out += " CODE";
+        if (b.linkUrl) out += " LINK";
         if (b.flags & BF_REF) out += " SYN";
         if (st.sizeMul != 1.0f) appendf(out, " x%.2f", (double)st.sizeMul);
         appendStyleFields(out, st, strs);

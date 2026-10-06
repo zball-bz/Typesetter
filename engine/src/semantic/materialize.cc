@@ -11,7 +11,7 @@ namespace {
 struct Ctx {
   Span span;
   StyleId style = 0;
-  u64 bits = 0;
+  StyleDelta d;
   float size = 1.0f;
 };
 
@@ -95,12 +95,12 @@ struct Mat {
         return;
       }
   }
-  StyleId styleOf(const Ctx& c) { return compose(e.styles, c.style, c.bits, c.size); }
+  StyleId styleOf(const Ctx& c) { return compose(e.styles, c.style, c.d, c.size); }
   // a delta over inserted content: every node of the subtree, once
   ContentNode* delta(ContentNode* n, const Ctx& c) {
-    if (c.bits == 0 && c.size == 1.0f) return n;
+    if (c.d.empty() && c.size == 1.0f) return n;
     ContentNode* d = clone1(n);
-    d->style = compose(e.styles, n->style, c.bits, c.size);
+    d->style = compose(e.styles, n->style, c.d, c.size);
     for (ContentNode*& k : d->kids) k = delta(k, c);
     return d;
   }
@@ -145,7 +145,7 @@ struct Mat {
         case TItem::K::Styled: {
           flush();
           Ctx d = c;
-          d.bits |= it.bits;
+          d.d += it.delta;
           d.size *= it.size;
           inst(it.kids, d, s, container, out);
           break;
@@ -650,7 +650,7 @@ struct Mat {
   void paras(const TItem& it, const Ctx& c, const std::vector<ContentNode*>& body, const Slots& s,
              std::vector<ContentNode*>& out) {
     Ctx scaled = c;
-    scaled.bits = 0;
+    scaled.d = StyleDelta{};
     scaled.size = it.size;
     bool blocks = false;
     for (const ContentNode* k : body) blocks = blocks || !isInlineLevel(k->kind);

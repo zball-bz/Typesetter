@@ -116,7 +116,7 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
   auto refold = [&] {
     Styling st{};
     for (const SchedItem* d : stack) {
-      st.bits |= d->bits;
+      applyLegacyBits(st, d->bits);
       for (const ArgVal& a : d->patch) inst.applyPatch(st, a);
     }
     return st;
@@ -126,7 +126,7 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
     switch (s.op) {
       case Op::STYLE_PUSH:
         stack.push_back(&s);
-        cur.bits |= s.bits;
+        applyLegacyBits(cur, s.bits);
         for (const ArgVal& a : s.patch) inst.applyPatch(cur, a);
         break;
       case Op::STYLE_POP_TO: {
@@ -192,27 +192,35 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
 }
 
 static void styleStr(std::string& out, const Styling& s, const Interner& strs) {
+  // the flag tokens keep the spellings and order of the class bits they
+  // replaced (plan P2-08): script, italic, weight, mono role, decorations,
+  // baseline
   out += "[";
   bool first = true;
-  auto f = [&](u64 bit, const char* n) {
-    if (s.bits & bit) {
+  auto f = [&](bool on, const char* n) {
+    if (on) {
       if (!first) out += "+";
       out += n;
       first = false;
     }
   };
-  f(CLS_LATIN, "LATIN");
-  f(CLS_CJK, "CJK");
-  f(CLS_EM, "EM");
-  f(CLS_BOLD, "BOLD");
-  f(CLS_CODE, "CODE");
-  f(CLS_LINK, "LINK");
-  f(CLS_UNDER, "U");
-  f(CLS_OVER, "O");
-  f(CLS_STRIKE, "S");
-  f(CLS_SUP, "SUP");  // appended (plan P0-09 j): today's spellings and order kept
+  f(s.script == SCRIPT_CJK, "CJK");
+  f(s.italic, "EM");
+  f(s.weight == 700, "BOLD");
+  if (s.weight && s.weight != 700) {
+    if (!first) out += "+";
+    appendf(out, "W%u", (unsigned)s.weight);
+    first = false;
+  }
+  f(s.fontRole == FONTROLE_MONO, "CODE");
+  f(s.decoration & DECORATION_UNDER, "U");
+  f(s.decoration & DECORATION_OVER, "O");
+  f(s.decoration & DECORATION_STRIKE, "S");
+  f(s.baseline == BASELINE_SUPER, "SUP");
+  f(s.baseline == BASELINE_SUB, "SUB");
   if (first) out += "base";
   if (s.sizeMul != 1.0f) appendf(out, "x%.2f", (double)s.sizeMul);
+  if (s.fontRole == FONTROLE_BODY) out += " role=body";
   appendStyleFields(out, s, strs);
   out += "]";
 }

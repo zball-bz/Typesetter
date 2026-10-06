@@ -8,12 +8,25 @@ contract, design T2/T4):
 
 | row | field | type | patched by | dump | typeset CSS |
 |---|---|---|---|---|---|
-| `text.bits` | `bits` | flag set (ORed) | `styled.bits` / `STYLE_PUSH` bits; sugar `bold italic underline overline strike` | flag tokens (each dump its own order) | classes; `text-decoration` from UNDER/OVER/STRIKE |
+| `text.weight` | `weight` | u16 (0 = 400) | (P2-08: the legacy `bits` flag BOLD = 700); sugar `bold` | `BOLD` (700), `W<n>` | class `tsr-b` (700) |
+| `text.italic` | `italic` | bool | legacy flag EM; sugar `italic` | `EM` | class `tsr-i` |
+| `text.decoration` | `decoration` | flags UNDER/OVER/STRIKE (ORed) | legacy flags; sugar `underline overline strike` | `U` `O` `S` | `text-decoration` |
+| `text.fontRole` | `fontRole` | enum body/mono (0 = inherited: body) | engine (inline code, code blocks, list markers: `mono`) | `CODE` (mono) | class `tsr-code` (mono) |
+| `text.baseline` | `baseline` | enum super/sub | engine (footnote markers) | `SUP` `SUB` | class `tsr-sup` |
 | `text.sizeMul` | `sizeMul` | size multiplier | composed by the engine (headings, code, sup) | `x%.2f` | `font-size` (with `sizePx`, through `emPx`) |
 | `text.font` | `fontFamily` | string | `font` (domain `font`) | `font="…"` | `font-family` (escaped) |
 | `text.lang` | `lang` | string | `lang` (domain `lang`) | `lang=` | the `lang` attribute |
 | `text.color` | `color` | string | `color` (domain `color`) | `color=` | `color` |
 | `text.size` | `sizePx` | px | `sizePx` (domain `num:1:2000`) | `size=%gpx` | `font-size` |
+| `engine.script` | `script` | internal | T5's classifier only (a CJK run; never on the wire) | `CJK` | class `tsr-cjk`; selects the face |
+
+As built (plan P2-08, structural step): the class bits retired from `Styling`.
+Engine code composes a `StyleDelta` (weight, italic, decorations, font role,
+baseline, script, size multiplier) where it used to OR bits in; links are no
+style (a link is a run of its own); the face is chosen from the font role and
+the script. Until the wire change of the same step, the v6–10 `styled.bits`
+flags decode onto these rows (`applyLegacyBits`, generated from each row's
+`legacy` map), and the dumps keep the bits' spellings.
 
 `tools/gen-schema.mjs` generates from these rows:
 

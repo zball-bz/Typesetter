@@ -49,8 +49,8 @@ struct FaceKeyHash {
 inline double emPx(const Config& cfg, const Styling& s) { return emPx(cfg.baseSizePx, s); }
 
 // Family resolution (plan P1-04): an explicit text.font wins; otherwise the
-// role (mono for CODE runs, body otherwise — T5 run roles select it from
-// P2-08) and the script decide:
+// font role (text.fontRole, plan P2-08: body or mono) and the script
+// decide:
 //   Latin:  role.latin
 //   Cjk:    role.cjk → body.cjk → role.latin   (CJK-class glyphs never fall
 //           into a Latin face; no mono special case: a host with a CJK-capable
@@ -69,22 +69,23 @@ class FaceTable {
     styles_ = styles;
     strs_ = strs;
   }
-  // memoised per style; the script is the style's CJK bit until TextRules
+  // memoised per style; the script is the one T5's classifier gave the run
+  // (engine.script, plan P2-08)
   FaceId faceOf(StyleId st) {
     if (st < memo_.size() && memo_[st] != kNone) return memo_[st];
     const Styling& s = styles_->get(st);
-    const Script script = (s.bits & CLS_CJK) ? Script::Cjk : Script::Latin;
+    const Script script = s.script == SCRIPT_CJK ? Script::Cjk : Script::Latin;
+    const bool mono = s.fontRole == FONTROLE_MONO;
     FaceKey k;
-    k.family = s.fontFamily ? s.fontFamily
-                            : strs_->intern(familyFor(*cfg_, (s.bits & CLS_CODE) != 0, script));
+    k.family = s.fontFamily ? s.fontFamily : strs_->intern(familyFor(*cfg_, mono, script));
     k.sizePx = emPx(*cfg_, s);
-    k.weight = (s.bits & CLS_BOLD) ? 700 : 400;
+    k.weight = s.weight ? s.weight : 400;
     // CJK italic is painted upright with emphasis marks (.tsr-cjk.tsr-i):
     // it is measured upright too (v2 §14)
-    k.italic = (s.bits & CLS_EM) && script == Script::Latin ? 1 : 0;
+    k.italic = s.italic && script == Script::Latin ? 1 : 0;
     // the phase-1 projection (design T9 M4): features for code runs, the
     // run's language else the document's, the host's dppx
-    if ((s.bits & CLS_CODE) && !cfg_->codeFontFeatures.empty()) k.features = strs_->intern(cfg_->codeFontFeatures);
+    if (mono && !cfg_->codeFontFeatures.empty()) k.features = strs_->intern(cfg_->codeFontFeatures);
     k.lang = s.lang ? s.lang : strs_->intern(cfg_->lang);
     k.dppx = cfg_->dppx;
     k.faceDigest = loadedDigest(strs_->get(k.family));

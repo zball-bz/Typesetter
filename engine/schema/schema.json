@@ -238,30 +238,46 @@
   },
   "props": {
     "$comment": [
-      "Run properties (plan P1-02; design T4 M2): one row per Styling field, in field order.",
-      "type: bits (a flag set, ORed) | mul (size multiplier, composed by the engine) | str (an interned string) | px (absolute px).",
-      "attr: the styled/STYLE_PUSH attribute that patches it (domain: that attribute's); sugar: boolean $.style.push keys setting one flag;",
-      "dump: the label in the tree/block dumps; html: an attribute the typeset serializer writes;",
-      "css + cssOrder: the declaration it writes (cssFlags: flag → keyword list; cssValue emPx: the run's em in px)."
+      "Run properties (plans P1-02, P2-08; design T4 M2/M5): one row per Styling field, in field order.",
+      "type: weight (u16; 0 = inherited, read as 400) | bool | flags (u8; `flags`: name → bit, ORed) | enum (u8; 0 = none,",
+      "`values` from 1) | mul (size multiplier, composed by the engine) | str (an interned string) | px (absolute px) |",
+      "internal (engine-set, never on the wire: the script T5's classifier gives a run, which selects its face).",
+      "attr: the styled/STYLE_PUSH attribute that patches it (domain: that attribute's); sugar: $.style.push keys and the",
+      "value each sets; legacy: the v6-10 styled `bits` flags it decodes (flag → value); dump: the label in the tree/block",
+      "dumps; html: an attribute the typeset serializer writes; css + cssOrder: the declaration it writes (cssFlags: flag →",
+      "keyword; cssValue emPx: the run's em in px)."
     ],
-    "text.bits": {
-      "field": "bits",
-      "type": "bits",
-      "attr": "bits",
-      "sugar": {
-        "bold": "BOLD",
-        "italic": "EM",
-        "underline": "UNDER",
-        "overline": "OVER",
-        "strike": "STRIKE"
-      },
+    "text.weight": {
+      "field": "weight",
+      "type": "weight",
+      "sugar": {"bold": 700},
+      "legacy": {"BOLD": 700}
+    },
+    "text.italic": {
+      "field": "italic",
+      "type": "bool",
+      "sugar": {"italic": true},
+      "legacy": {"EM": true}
+    },
+    "text.decoration": {
+      "field": "decoration",
+      "type": "flags",
+      "flags": {"UNDER": 0, "OVER": 1, "STRIKE": 2},
+      "sugar": {"underline": "UNDER", "overline": "OVER", "strike": "STRIKE"},
+      "legacy": {"UNDER": "UNDER", "OVER": "OVER", "STRIKE": "STRIKE"},
       "css": "text-decoration",
       "cssOrder": 4,
-      "cssFlags": {
-        "UNDER": "underline",
-        "OVER": "overline",
-        "STRIKE": "line-through"
-      }
+      "cssFlags": {"UNDER": "underline", "OVER": "overline", "STRIKE": "line-through"}
+    },
+    "text.fontRole": {
+      "field": "fontRole",
+      "type": "enum",
+      "values": ["body", "mono"]
+    },
+    "text.baseline": {
+      "field": "baseline",
+      "type": "enum",
+      "values": ["super", "sub"]
     },
     "text.sizeMul": {
       "field": "sizeMul",
@@ -307,6 +323,10 @@
       "css": "font-size",
       "cssOrder": 1,
       "cssValue": "emPx"
+    },
+    "engine.script": {
+      "field": "script",
+      "type": "internal"
     }
   },
   "settings": {

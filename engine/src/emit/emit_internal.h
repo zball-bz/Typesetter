@@ -19,12 +19,13 @@ struct EmitEnv {
   const MeasureNeeds* mathText = nullptr;  // text-font runs in formulas (math-design §14)
   const ResourceTable* rt = nullptr;      // answered code tokens and image sizes
   StrRef spaceRef = 0, hyphenRef = 0, bulletRef = 0;
+  // the presentation kinds put on their text (plan P2-08): the mono font role,
+  // bold, a CJK run
+  StyleDelta mono, bold, cjk;
   const Flow* leafFlow = nullptr;  // the leaf's own stream (not a cell's) and
   Span leafSpan{};                 //   its node's span
 
-  StyleId compose(StyleId base, u64 addBits, float mul) {
-    return tsr::compose(styles, base, addBits, mul);
-  }
+  StyleId compose(StyleId base, const StyleDelta& d, float mul) { return tsr::compose(styles, base, d, mul); }
   // an image's size: the host's intrinsic size fills only what the author
   // left out (defect #24; plan P1-19: the answer lives in the resource
   // table, never in the author's args) — a declared w (or h) stays, the
@@ -42,7 +43,7 @@ struct EmitEnv {
 };
 
 struct ICtx {
-  u64 addBits = 0;
+  StyleDelta add;  // what enclosing kinds put on the text (inline code: mono)
   u16 addFlags = 0;  // BF_REF: resolver-synthesized content
   float mul = 1.0f;
   StrRef url = 0;

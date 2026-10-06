@@ -39,16 +39,18 @@ struct Loader {
       }
     return fail("unknown argument '" + std::string(name) + "'");
   }
-  bool bitOf(std::string_view name, u64& out) {
-    static const struct { std::string_view n; u64 b; } kBits[] = {
-        {"bold", CLS_BOLD}, {"em", CLS_EM},         {"code", CLS_CODE},   {"link", CLS_LINK},
-        {"sup", CLS_SUP},   {"under", CLS_UNDER},   {"over", CLS_OVER},   {"strike", CLS_STRIKE}};
-    for (const auto& b : kBits)
-      if (b.n == name) {
-        out |= b.b;
-        return true;
-      }
-    return fail("unknown style bit '" + std::string(name) + "'");
+  // a styled template item's flag names (the class bits' spellings)
+  bool bitOf(std::string_view name, TItem& it) {
+    if (name == "bold") it.delta.weight = 700;
+    else if (name == "em") it.delta.italic = true;
+    else if (name == "code") it.delta.fontRole = FONTROLE_MONO;
+    else if (name == "link") {}  // links are runs of their own (P2-08: no style)
+    else if (name == "sup") it.delta.baseline = BASELINE_SUPER;
+    else if (name == "under") it.delta.decoration |= DECORATION_UNDER;
+    else if (name == "over") it.delta.decoration |= DECORATION_OVER;
+    else if (name == "strike") it.delta.decoration |= DECORATION_STRIKE;
+    else return fail("unknown style bit '" + std::string(name) + "'");
+    return true;
   }
 
   bool targ(const JsonValue& v, TArg& out) {
@@ -107,7 +109,7 @@ struct Loader {
         it.k = TItem::K::Styled;
         if (const JsonValue* b = member(*s, "bits"))
           for (const JsonValue& n : b->arr)
-            if (!bitOf(n.str, it.bits)) return false;
+            if (!bitOf(n.str, it)) return false;
         if (const JsonValue* z = member(*s, "size")) it.size = (float)z->num;
         if (!tmpl(x.get("kids"), it.kids)) return false;
       } else if (const JsonValue* s = x.get("when")) {
