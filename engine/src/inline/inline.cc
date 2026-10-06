@@ -516,8 +516,8 @@ struct InlineParser {
       A.setKids(br, body);
       branches.push_back(br);
       end = (u32)close + 1;
-      KwElse ke;
-      if (!kKeywords[kh.kw].elseChain || !lexElse(t, end, ke)) break;
+      KwElse ke;  // (an else without a condition ends the chain: fuzz finding)
+      if (!kKeywords[kh.kw].elseChain || !hasHead || !lexElse(t, end, ke)) break;
       from = end;
       while (from < to && (t[from] == ' ' || t[from] == '\t')) from++;
       open = ke.bodyOpen;
