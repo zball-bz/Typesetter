@@ -315,6 +315,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.markerStyle = m.style;  // its paint style (colour)
         n.heightPx = suToPx(l.height);
         n.mathTopPx = suToPx(l.baseline - m.box->asc);
+        n.mathLabel = cfg.a11yMathLabel;  // (plan P3-27, D-R04) role=math, aria-label
         n.ragged = true;
         break;
       }
@@ -367,6 +368,10 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.markerStyle = l.markerStyle;
         n.h = l.cellIdx >= 0 ? &u.cells[(size_t)l.cellIdx].hl : &u.hl;
         lineRuns(l, *n.h, out.runs);
+        // (plan P3-27, D-R04) its formulas' accessible names
+        if (cfg.a11yMathLabel)
+          for (size_t k = n.runBegin; k < out.runs.size(); k++)
+            if (out.runs[k].k == DLRun::K::Math) out.runs[k].mathLabel = true;
         // (plan P3-19; design T7 S11) a run in a user font family: its
         // face's content height as its line-height (the contract gives the
         // roles theirs), so its line box is its content area

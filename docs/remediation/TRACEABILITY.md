@@ -1218,7 +1218,7 @@ Theme steps: — · findings: 1
 | `render-runtime/host-line-height-leak` | issue | medium | P3-19 | grep:plan P3-19 |
 | `render-runtime/paged-gutter-clipping` | issue | medium | P3-16 | grep:plan P3-16 |
 | `render-runtime/trailing-float-and-gap-drift` | issue | low | P3-16 | grep:plan P3-16 |
-| `render-runtime/typeset-a11y` | issue | medium | P3-27 | |
+| `render-runtime/typeset-a11y` | issue | medium | P3-27 | grep:plan P3-27 |
 | `render-runtime/error-render-divergence` | issue | low | P3-16 | grep:plan P3-16 |
 | `render-runtime/hyphen-in-link-or-ref` | issue | low | P0-10 | grep:plan P0-10 |
 | `render-runtime/normative-doc-drift` | issue | low | P3-07 || grep:plan P3-07 |
@@ -1258,7 +1258,7 @@ Theme steps: — · findings: 1
 | `math/diag-quality` | issue | low | P1-24 | grep:plan P1-24 |
 | `math/dead-data-and-params` | issue | low | P1-22 | grep:plan P1-22 |
 | `math/doc-drift` | issue | low | P1-22 | grep:plan P1-22 |
-| `math/fallback-and-a11y` | issue | low | P3-26, P3-27 | |
+| `math/fallback-and-a11y` | issue | low | P3-26, P3-27 | grep:plan P3-27 |
 | `math/toc-excerpt-drops-math` | issue | low | P2-15 | grep:plan P2-15 |
 | `math/missed:0` | missed | high | P0-04, P2-11 | grep:plan P2-11 |
 | `math/missed:1` | missed | high | P1-24 | grep:plan P1-24 |
@@ -1339,5 +1339,5 @@ Theme steps: — · findings: 1
 | `real-world-evidence/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/missed:2` | missed | medium | P2-06 | grep:plan P2-06 |
 | `real-world-evidence/missed:3` | missed | medium | P0-06, P2-08 | grep:plan P2-08 |
-| `real-world-evidence/missed:4` | missed | medium | P3-27 | |
+| `real-world-evidence/missed:4` | missed | medium | P3-27 | grep:plan P3-27 |
 | `real-world-evidence/missed:5` | missed | low | P3-23 | grep:plan P3-23 |

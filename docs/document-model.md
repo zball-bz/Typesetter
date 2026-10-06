@@ -478,7 +478,9 @@ Copy produces **content text**, not markup source. As built (plan P3-07; design 
 - Separator: `data-join` — `space` `" "`, `none` `""`, `tab` `"\t"`, `row` `"\n"`, `para` `"\n\n"`; absent `"\n"` — except between two lines of one replaced node (the same `data-copy-group` ends one and starts the next): nothing. A change of block identity — a `.tsr-para`, or on paged sheets a `.tsr-band`'s `data-b` (a block cut across sheets keeps one) — is `"\n\n"`.
 - Sidecars (D-R03): across code rows only the code is copied; a selection entirely inside the sidecar track (`data-track="sidecar"`) copies the notes, without their marker.
 
-`handle.contentText(range)` (and a behaviour's `ctx.ops.contentText`) is the same projection. Source offsets (`data-s`) are for anchoring and diagnostics, never for copy.
+`handle.contentText(range)` (and a behaviour's `ctx.ops.contentText`) is the same projection; `ctx.ops.contentBlocks(range)` gives it one block at a time (plan P3-27), the blocks it joins with `"\n\n"`. Source offsets (`data-s`) are for anchoring and diagnostics, never for copy.
+
+Text layer (plan P3-27; setting `a11y.textLayer`, off by default): the `textLayer` behaviour marks the commit root `aria-hidden="true"` and keeps a visually hidden `<div class="tsr-sr">` in the session overlay holding one `<p>` per block of `contentBlocks` over the root, rebuilt on every commit — assistive technology reads content text, not lines.
 
 ### 9.4 Math runs (M7)
 
@@ -499,8 +501,15 @@ Copy produces **content text**, not markup source. As built (plan P3-07; design 
   `data-copy` and one `data-copy-group` (its source start, high bit set),
   so copy takes the source once. Audits treat a math span as one
   engine-defined line fragment.
-- Semantic fallback (§9.2): `<code class="tsr-mathsrc">$src$</code>` inline;
-  `<p class="tsr-mathblock">` for display. MathML stays rejected (v2 §13).
+- Label (plan P3-27, `a11y.mathLabel`, on by default): every formula part
+  carries `role="math"` and `aria-label` = its source as written (D-R04).
+- Semantic page (§9.2; plan P3-27): `render.math: "boxes"` (the default)
+  writes the same span — glyph runs, rules, `data-copy`, label — laid out
+  at the page's base size, in flow (no absolute position); display inside
+  `<p class="tsr-mathblock">`, which the theme centres. `"source"` writes
+  `<code class="tsr-mathsrc">$src$</code>` inline, `$ src $` for display.
+  `export-static` ships the math font (`@font-face` + `assets/`) when a
+  formula is present. MathML stays rejected (v2 §13).
 
 ## 10. Diagnostics
 

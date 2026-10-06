@@ -75,25 +75,30 @@ function lineText(line, range, groups, block) {
 // or null when the range holds no typeset line — not ours: native copy
 // applies (a semantic page with marked generated text excepted, below).
 export function contentTextFromRange(range, root) {
+  return contentBlocksFromRange(range, root)?.join('\n\n') ?? semanticText(range, root);
+}
+
+// The same projection one block at a time: the content text of each block
+// the range meets, in order (a change of block is the '\n\n' above), or null
+// when the range holds no typeset line. The a11y text layer reads it.
+export function contentBlocksFromRange(range, root) {
   let lines = [...root.querySelectorAll('.tsr-line')].filter((l) => range.intersectsNode(l));
-  if (!lines.length) return semanticText(range, root);
+  if (!lines.length) return null;
   if (lines.some((l) => l.dataset.track !== 'sidecar')) lines = lines.filter((l) => l.dataset.track !== 'sidecar');
-  const groups = new Map();
-  let out = '', prev = null, prevBlock = null, prevLast = null;
+  const groups = new Map(), blocks = [];
+  let prev = null, prevBlock = null, prevLast = null;
   for (const line of lines) {
     const block = blockOf(line);
     const t = lineText(line, range, groups, block);
     if (t === null) continue;
-    if (prev !== null) {
-      if (block !== prevBlock) out += '\n\n';
-      else if (prevLast === null || prevLast !== t.first) out += sepOf(prev);  // (inside a group: nothing)
-    }
-    out += t.text;
+    if (prev === null || block !== prevBlock) blocks.push('');
+    else if (prevLast === null || prevLast !== t.first) blocks[blocks.length - 1] += sepOf(prev);  // (inside a group: nothing)
+    blocks[blocks.length - 1] += t.text;
     prev = line;
     prevBlock = block;
     prevLast = t.last;
   }
-  return out;
+  return blocks;
 }
 
 // The semantic page (D-R06): its generated text says what copy takes as the

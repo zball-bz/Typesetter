@@ -17,16 +17,17 @@ import { commit, createSession, decodeResult, elementsAt, heldKeys, offsetAt, se
 import { MATH_FONT } from '../shared/mathfont.gen.mjs';
 import { CONTRACT_CSS } from '../shared/contract.gen.mjs';
 import { THEME_CSS } from '../shared/theme.gen.mjs';
-import { contentTextFromRange, installCopy } from './copy.mjs';
+import { contentBlocksFromRange, contentTextFromRange, installCopy } from './copy.mjs';
 import { settingsFromOptions, settingOf } from '../shared/settings.gen.mjs';
 import { refPreview } from './behaviors/ref-preview.mjs';
 import { print } from './behaviors/print.mjs';
+import { textLayer } from './behaviors/text-layer.mjs';
 import { devAudit } from './behaviors/audit.mjs';
 
 export { refPreview, print, devAudit };
 // the behaviours a session gets unless the host says otherwise (devAudit is
 // opt-in)
-export const defaultBehaviors = () => [refPreview(), print()];
+export const defaultBehaviors = () => [refPreview(), print(), textLayer()];
 
 // Default CJK stack — mirrors the engine default (config.h cjkFont). CJK-class
 // runs must resolve in ONE font: U+2014/…/fullwidth puncts exist in Latin
@@ -377,6 +378,7 @@ export function createEngine(opts = {}) {
           offsetAt: (node) => offsetAt(s.view, node),
           elementsAt: (byte) => elementsAt(s.view, byte),
           contentText: (range) => contentTextFromRange(range, s.view.root ?? s.container),  // (plan P3-07)
+          contentBlocks: (range) => contentBlocksFromRange(range, s.view.root ?? s.container) ?? [],  // (plan P3-27)
         },
         // a method the handle forwards (handle.print → print's)
         expose(name, fn) {

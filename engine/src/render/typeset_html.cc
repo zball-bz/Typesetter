@@ -230,7 +230,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
           t.attr("href", hrefOf(d.link, strs));
           t.open();
         }
-        mathSpan(out, d.math, d.src, /*display=*/false, strs, d.span, 0, srcBase, styles.get(d.face).color, d.mathLabel);
+        mathSpan(out, d.math, d.src, /*display=*/false, strs, d.span, 0, srcBase, d.mathLabel, styles.get(d.face).color);
         if (d.link) out += "</a>";
         continue;
       }

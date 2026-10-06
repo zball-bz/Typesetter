@@ -1148,3 +1148,41 @@ test('copy: an author\'s copy attribute replaces or omits, once per node', async
   expect(lines).toBeGreaterThan(1);  // the node spans runs on several lines
   expect(await page.evaluate(() => window.__tsr.copyText())).toBe('Keep [R] and  here.');
 });
+
+// ---- a11y (plan P3-27; design T7 S13) -------------------------------------
+
+test('a11y: formulas carry role=math and their source as label; the text layer is opt-in', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const source = 'A circle of area $pi r^2$ has a circumference that grows linearly with its radius.\n\n' +
+                 '$ a^2 + b^2 = c^2 $ <eq-pyth>\n\nSee @eq-pyth.';
+  // default: the label is on, the layer off
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }), source);
+  const labels = await page.evaluate(() =>
+    [...document.querySelectorAll('#out [role="math"]')].map((e) => e.getAttribute('aria-label')));
+  expect(labels).toContain('pi r^2');
+  expect(labels).toContain('a^2 + b^2 = c^2');
+  expect(await page.evaluate(() => document.querySelector('#out .tsr-sr'))).toBeNull();
+  expect(await page.evaluate(() => document.querySelector('#out [aria-hidden]'))).toBeNull();
+
+  // on: the lines are hidden, one sr-only paragraph per block holds what copy takes
+  await page.evaluate(async (s) => await window.__tsr.typeset(s,
+    { widthPx: 300, progressive: false, settings: { a11y: { textLayer: true, mathLabel: false } } }), source);
+  const layer = await page.evaluate(() => ({
+    hidden: [...document.querySelectorAll('#out [aria-hidden="true"]')].some((e) => e.querySelector('.tsr-line')),
+    paras: [...document.querySelectorAll('#out .tsr-sr p')].map((p) => p.textContent),
+    labels: document.querySelectorAll('#out [role="math"]').length,
+    copy: window.__tsr.copyText(),
+  }));
+  expect(layer.labels).toBe(0);
+  expect(layer.hidden).toBeTruthy();
+  expect(layer.paras.length).toBe(3);
+  expect(layer.paras.join('\n\n')).toBe(layer.copy);
+  expect(layer.paras[0]).toContain('$pi r^2$');
+  expect(layer.paras[1]).toBe('$ a^2 + b^2 = c^2 $');  // no equation number
+  // it follows an update
+  await page.evaluate(async (s) => await window.__tsr.update(s), source.replace('linearly', 'in step'));
+  const paras = await page.evaluate(() => [...document.querySelectorAll('#out .tsr-sr p')].map((p) => p.textContent));
+  expect(paras[0]).toContain('in step');
+  expect(paras.length).toBe(3);
+});
