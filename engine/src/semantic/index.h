@@ -26,6 +26,7 @@ struct Instance {
   bool aliased = false;  // the anchor is the alias (written as the node's label)
   std::string markerAlias;  // a flow item's marker anchor
   std::string title;
+  Supplement supplement;  // its class's, or an event's for its counter (plan P2-07)
 };
 
 struct LabelTarget {

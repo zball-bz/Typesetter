@@ -186,15 +186,32 @@ struct Mat {
     return out;
   }
 
+  // a supplement's word (plan P2-07): a locale term, a literal, or the
+  // literal for the document's language (its pack, then its language, then
+  // en, then the first)
+  std::string supplementText(const Supplement& s) {
+    if (!s.term.empty()) return std::string(e.terms.get(s.term));
+    if (s.literal) return s.text;
+    if (s.byLang.empty()) return {};
+    const std::string& pack = e.terms.pack();
+    const std::string lang = pack.substr(0, pack.find('-'));
+    for (const auto& [l, t] : s.byLang)
+      if (l == pack) return t;
+    for (const auto& [l, t] : s.byLang)
+      if (l == lang) return t;
+    for (const auto& [l, t] : s.byLang)
+      if (l == "en") return t;
+    return s.byLang.front().second;
+  }
+
   // --- instances ------------------------------------------------------------------
   const Instance* instanceOf(const ContentNode* n) const {
     auto it = e.ix.instOf.find(n);
     return it == e.ix.instOf.end() ? nullptr : &e.ix.instances[it->second];
   }
   void instanceSlots(const Instance& in, Slots& s) {
-    const ElementClass& C = e.reg.cls(in.cls);
     s.set("number", in.number);
-    s.set("supplement", std::string(e.terms.get(C.supplement)));
+    s.set("supplement", supplementText(in.supplement));
     s.set("title", in.title);
     s.set("alias", in.label);
     s.set("marker-alias", in.markerAlias);

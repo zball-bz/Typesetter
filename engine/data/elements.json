@@ -23,8 +23,9 @@
       "numbering": "always",
       "title": "text",
       "outline": true,
+      "supplement": "section",
       "alias": { "prefix": "h-", "body": "number" },
-      "ref": [{ "term": "section" }, { "slot": "number" }]
+      "ref": [{ "slot": "supplement" }, { "slot": "number" }]
     },
     "table": {
       "select": [{ "node": "table" }],

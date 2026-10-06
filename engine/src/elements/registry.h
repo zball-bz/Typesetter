@@ -58,6 +58,32 @@ struct CounterDef {
   int depth = 1;        // by-level: levels clamp into 1..depth
   bool gapOne = false;  // a skipped level counts 1 (else 0: "1.0.1")
   bool keyed = false;   // steps once per distinct key
+  // (plan P2-07) numbered within another counter: its first withinDepth
+  // components prefix this one's (joined by withinSep), and a step of that
+  // counter at a level ≤ withinDepth restarts this one
+  u16 within = kNoIndex;
+  int withinDepth = 1;
+  std::string withinSep = ".";
+  std::string pattern;     // NumberingPattern ("" = 1.1: decimal, '.'-joined)
+  std::vector<int> start;  // the values before the first step (default: none)
+};
+
+// A counter system (plan P2-07; design T3 NumberingPattern): `{name}` in a
+// pattern formats with these symbols
+struct CounterSystem {
+  std::string name;
+  std::vector<std::string> symbols;
+  enum class Mode : u8 { Numeric, Alphabetic, Cyclic, Fixed } mode = Mode::Numeric;
+};
+
+// A class's (or an event's) supplement word: a locale term, a literal, or
+// literals per language (plan P2-07)
+struct Supplement {
+  std::string term;
+  std::string text;
+  bool literal = false;
+  std::vector<std::pair<std::string, std::string>> byLang;  // (lang prefix, text)
+  bool set() const { return !term.empty() || literal || !byLang.empty(); }
 };
 
 struct AliasRule {  // generated labels: prefix + number | key
@@ -86,7 +112,7 @@ struct ElementClass {
   std::vector<Selector> select;
   u16 counter = kNoIndex;
   enum class Numbering : u8 { Never, Always, Labelled } numbering = Numbering::Never;
-  std::string supplement;  // a term key
+  Supplement supplement;
   enum class Labels : u8 { User, None, FromArg } labels = Labels::User;
   ArgK labelArg = ArgK::label;
   enum class Title : u8 { None, Text, Arg } title = Title::None;
@@ -149,6 +175,7 @@ class Registry {
 
   std::vector<ElementClass> classes;  // [0]: no class
   std::vector<CounterDef> counters;
+  std::vector<CounterSystem> systems;
   std::vector<CollectorDef> collectors;
   Template unresolved, unnumbered;
 

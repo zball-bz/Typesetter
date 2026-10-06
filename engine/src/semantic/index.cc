@@ -92,6 +92,9 @@ struct Locator {
     in.span = n->span;
     u32 id = (u32)ix.instances.size();
     if (C.counter != kNoIndex) in.level = counters.levelOf(C.counter, n);
+    in.supplement = C.supplement;
+    if (C.counter != kNoIndex)
+      if (const Supplement* s = counters.supplementOf(C.counter)) in.supplement = *s;
     if (C.numbering == ElementClass::Numbering::Always) in.number = counters.step(C.counter, in.level);
     if (C.title == ElementClass::Title::Text) excerptInto(n, strs, in.title);
     if (C.title == ElementClass::Title::Arg) in.title = strs.get(attrStr(n, C.titleArg));

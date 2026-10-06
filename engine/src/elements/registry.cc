@@ -144,8 +144,34 @@ struct Loader {
     return 0;
   }
 
+  // a supplement (plan P2-07): "key" or {"term": key} (a locale word),
+  // {"text": "…"}, or {"en": "…", "zh": "…"} (per language)
+  bool supplement(const JsonValue& v, Supplement& out) {
+    out = Supplement{};
+    if (v.t == JsonValue::T::Str) {
+      out.term = v.str;
+      return true;
+    }
+    if (v.t != JsonValue::T::Obj) return fail("a supplement is a term key or an object");
+    if (const JsonValue* t = v.get("term")) {
+      out.term = str(t);
+      return true;
+    }
+    if (const JsonValue* t = v.get("text")) {
+      out.text = str(t);
+      out.literal = true;
+      return true;
+    }
+    for (size_t k = 0; k < v.keys.size(); k++) out.byLang.push_back({v.keys[k], str(&v.vals[k])});
+    return true;
+  }
+
+  // counters: shape (by-level: level-arg, depth), gap, keyed, and (plan
+  // P2-07) within {counter, depth, sep}, pattern, start; the within
+  // counters resolve once every counter is known
   bool counters(const JsonValue* v) {
     if (!v) return true;
+    std::vector<std::pair<size_t, std::string>> within;
     for (size_t k = 0; k < v->keys.size(); k++) {
       const JsonValue& c = v->vals[k];
       CounterDef d;
@@ -155,7 +181,45 @@ struct Loader {
       if (const JsonValue* a = member(c, "depth")) d.depth = std::max(1, (int)a->num);
       d.gapOne = str(member(c, "gap")) == "one";
       if (const JsonValue* a = member(c, "keyed")) d.keyed = a->b;
+      if (const JsonValue* w = member(c, "within")) {
+        within.push_back({r.counters.size(), str(member(*w, "counter"))});
+        if (const JsonValue* a = member(*w, "depth")) d.withinDepth = std::max(1, (int)a->num);
+        if (const JsonValue* a = member(*w, "sep")) d.withinSep = str(a);
+      }
+      d.pattern = str(member(c, "pattern"));
+      if (const JsonValue* a = member(c, "start"))
+        for (const JsonValue& x : a->arr) d.start.push_back((int)x.num);
       r.counters.push_back(std::move(d));
+    }
+    for (auto& [i, name] : within) {
+      u16 w = counterIndex(name);
+      if (w == kNoIndex || w == i) return fail("counter '" + r.counters[i].name + "' is within an undeclared counter");
+      r.counters[i].within = w;
+    }
+    // no cycles through within (decl-cycle: the offending edge is dropped)
+    for (CounterDef& d : r.counters) {
+      u16 at = d.within;
+      for (size_t steps = 0; at != kNoIndex && steps <= r.counters.size(); steps++) at = r.counters[at].within;
+      if (at != kNoIndex) d.within = kNoIndex;
+    }
+    return true;
+  }
+
+  // counter systems (plan P2-07): {symbols: […], mode}
+  bool systems(const JsonValue* v) {
+    if (!v) return true;
+    for (size_t k = 0; k < v->keys.size(); k++) {
+      CounterSystem s;
+      s.name = v->keys[k];
+      if (const JsonValue* a = member(v->vals[k], "symbols"))
+        for (const JsonValue& x : a->arr) s.symbols.push_back(str(&x));
+      if (s.symbols.empty()) return fail("counter system '" + s.name + "' has no symbols");
+      std::string m = str(member(v->vals[k], "mode"), "numeric");
+      s.mode = m == "alphabetic" ? CounterSystem::Mode::Alphabetic
+               : m == "cyclic"   ? CounterSystem::Mode::Cyclic
+               : m == "fixed"    ? CounterSystem::Mode::Fixed
+                                 : CounterSystem::Mode::Numeric;
+      r.systems.push_back(std::move(s));
     }
     return true;
   }
@@ -207,7 +271,7 @@ struct Loader {
                     : p == "labelled" ? ElementClass::Numbering::Labelled
                                       : ElementClass::Numbering::Never;
     }
-    if (const JsonValue* x = member(v, "supplement")) c.supplement = str(x);
+    if (const JsonValue* x = member(v, "supplement") ; x && !supplement(*x, c.supplement)) return false;
     if (const JsonValue* x = member(v, "labels")) {
       if (x->t == JsonValue::T::Obj) {
         c.labels = ElementClass::Labels::FromArg;
@@ -317,7 +381,7 @@ struct Loader {
     if (!rd.parse(json, v) || v.t != JsonValue::T::Obj)
       return fail(rd.error() ? rd.error() : "expected an object");
     r.classes.emplace_back();  // ClassId 0: no class
-    if (!counters(member(v, "counters"))) return false;
+    if (!systems(member(v, "systems")) || !counters(member(v, "counters"))) return false;
     if (!tmpl(member(v, "unresolved"), r.unresolved) || !tmpl(member(v, "unnumbered"), r.unnumbered))
       return false;
     std::vector<std::pair<ClassId, std::string>> insides;
