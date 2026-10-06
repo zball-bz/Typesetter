@@ -524,7 +524,7 @@ test('tokens: a CJK literate fragment name keeps its UTF-8', async ({ page }) =>
   expect(res.html).not.toContain('\ufffd');
   expect(res.html).toContain('&lt;&lt;初始化&gt;&gt;=');
   expect(res.html).toContain('计数');
-  expect(res.html).toMatch(/var\(--tsr-tok-type\)">int</);  // later tokens still land
+  expect(res.html).toMatch(/tsr-c-tok-type[^>]*>int</);  // later tokens still land (plan P3-18: a token's class)
 });
 
 // image dims: a relative src resolves against the PAGE (it was fetched

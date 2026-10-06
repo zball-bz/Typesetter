@@ -11,17 +11,17 @@
 <div class="tsr-line" id="tsr-h-1.1" data-s="0" data-e="15" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px;color:#2f5d8a">Inside a region</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="197" style="position:relative;height:91.203px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="33" data-join="para" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Before the rule, </span><span class="tsr-r tsr-code" data-s="17" style="font-size:13.6px">code</span><span class="tsr-r" data-s="24"> is plain.</span></div>
-<div class="tsr-line" data-s="75" data-e="125" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:2.311px"><span class="tsr-r" data-s="75">After it, </span><span class="tsr-r tsr-code" data-s="85" style="font-size:13.6px;color:#a8432a">code</span><span class="tsr-r" data-s="92"> is red, to the end of the</span></div>
+<div class="tsr-line" data-s="0" data-e="33" data-join="para" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Before the rule, </span><span class="tsr-r tsr-code tsr-pre" data-s="17" style="font-size:13.6px">code</span><span class="tsr-r" data-s="24"> is plain.</span></div>
+<div class="tsr-line" data-s="75" data-e="125" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:2.311px"><span class="tsr-r" data-s="75">After it, </span><span class="tsr-r tsr-code tsr-pre" data-s="85" style="font-size:13.6px;color:#a8432a">code</span><span class="tsr-r" data-s="92"> is red, to the end of the</span></div>
 <div class="tsr-line" data-s="92" data-e="125" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="92">region.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="332" style="position:relative;height:24px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="40" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">After the region, </span><span class="tsr-r tsr-code" data-s="18" style="font-size:13.6px">code</span><span class="tsr-r" data-s="25"> is plain again.</span></div>
+<div class="tsr-line" data-s="0" data-e="40" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">After the region, </span><span class="tsr-r tsr-code tsr-pre" data-s="18" style="font-size:13.6px">code</span><span class="tsr-r" data-s="25"> is plain again.</span></div>
 </div>
 <div class="tsr-para" data-pid="5" data-s0="376" style="position:relative;height:115.172px">
-<div class="tsr-line" data-s="0" data-e="7" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">one </span><span class="tsr-r tsr-code" data-s="4" style="font-size:13.6px">a</span></div>
+<div class="tsr-line" data-s="0" data-e="7" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">one </span><span class="tsr-r tsr-code tsr-pre" data-s="4" style="font-size:13.6px">a</span></div>
 <div class="tsr-line" data-s="10" data-e="13" data-join="para" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="10">two</span></div>
-<div class="tsr-line" data-s="53" data-e="90" data-join="para" style="top:60.781px;left:24px;width:276px"><span class="tsr-r tsr-i tsr-code" data-s="53" style="font-size:13.6px">b</span><span class="tsr-r" data-s="57"> is italic, to the end of the item</span></div>
-<div class="tsr-line" data-s="93" data-e="109" style="top:91.172px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="93">three </span><span class="tsr-r tsr-code" data-s="99" style="font-size:13.6px">c</span><span class="tsr-r" data-s="103"> is not</span></div>
+<div class="tsr-line" data-s="53" data-e="90" data-join="para" style="top:60.781px;left:24px;width:276px"><span class="tsr-r tsr-i tsr-code tsr-pre" data-s="53" style="font-size:13.6px">b</span><span class="tsr-r" data-s="57"> is italic, to the end of the item</span></div>
+<div class="tsr-line" data-s="93" data-e="109" style="top:91.172px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="93">three </span><span class="tsr-r tsr-code tsr-pre" data-s="99" style="font-size:13.6px">c</span><span class="tsr-r" data-s="103"> is not</span></div>
 </div>
 </div>

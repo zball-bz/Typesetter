@@ -11,26 +11,34 @@ namespace tsr {
 
 // class list of a run ("tsr-r tsr-b …"), built without allocating
 struct RunClasses {
-  char buf[96];
-  size_t n = 0;
+  std::string buf;
   // the classes keep their names from the class bits (plan P2-08): bold for
-  // weight 700, italic, the CJK script, the mono role, a superscript
+  // weight 700, italic, the CJK script, the mono role, a superscript; (plan
+  // P3-18) white space as written (text.space pre), and the style classes
+  // in force (text.classes: a node's `class`, a code token's) as tsr-c-*
   RunClasses(const Styling& st, const Interner& strs, const char* before = nullptr, const char* after = nullptr) {
     if (before) add(before);
     add("tsr-r");
-    if (st.weight == 700) add("tsr-b");
-    if (st.italic) add("tsr-i");
-    if (st.script == SCRIPT_CJK) add("tsr-cjk");
-    if (st.fontRole == FONTROLE_MONO) add("tsr-code");
-    if (st.baseline == BASELINE_SUPER) add("tsr-sup");
+    contractClasses(st, [&](std::string_view c) { add(c); });  // (the schema's contract: plan P3-18)
+    if (st.classes) {
+      const std::string_view cl = strs.get(st.classes);
+      for (size_t at = 0; at < cl.size();) {
+        size_t sp = cl.find(' ', at);
+        if (sp == std::string_view::npos) sp = cl.size();
+        if (sp > at) {
+          buf += buf.empty() ? "tsr-c-" : " tsr-c-";
+          buf += cl.substr(at, sp - at);
+        }
+        at = sp + 1;
+      }
+    }
     if (after && *after) add(after);
   }
   void add(std::string_view s) {
-    if (n) buf[n++] = ' ';
-    std::memcpy(buf + n, s.data(), s.size());
-    n += s.size();
+    if (!buf.empty()) buf += ' ';
+    buf += s;
   }
-  std::string_view sv() const { return {buf, n}; }
+  std::string_view sv() const { return buf; }
 };
 
 // data-s/data-e of a source span, relative to the paragraph base

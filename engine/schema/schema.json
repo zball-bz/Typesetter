@@ -45,7 +45,7 @@
     "parHangAfter": 85, "boxPadding": 86, "boxBorder": 87, "boxBorderColor": 88, "boxBackground": 89, "media": 90,
     "beside": 91, "breakerTolerance": 92, "breakerStretch": 93, "placeFloat": 94,
     "tracks": 95, "rules": 96, "header": 97, "colspan": 98, "rowspan": 99, "valign": 100,
-    "measure": 101, "minWidth": 102, "placeWidth": 103, "placeGap": 104, "cont": 105
+    "measure": 101, "minWidth": 102, "placeWidth": 103, "placeGap": 104, "cont": 105, "textSpace": 106
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -150,6 +150,7 @@
       "breakerTolerance": {"dom": "num:0:100000", "since": 14},
       "breakerStretch": {"dom": "len", "since": 14},
       "placeFloat": {"dom": "enum:none|left|right|top|bottom|page|inline", "since": 14},
+      "textSpace": {"dom": "enum:normal|pre", "since": 14},
       "placeWidth": {"dom": "size", "since": 14},
       "placeGap": {"dom": "len", "since": 14}}},
     "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "ctor": {"params": ["attr:url"]}, "attrs": {
@@ -493,6 +494,8 @@
     "place.gap": {"$comment": "The room between a placed block and what stands beside it (text beside a float, the next inline block); unset: an em.", "field": "placeGap", "type": "len", "gran": "block", "inherits": false, "attr": "placeGap", "key": "place.gap"},
     "text.features": {"field": "features", "type": "str", "attr": "features", "key": "text.features", "dump": {"label": "features", "quoted": true}},
     "text.punct": {"field": "punct", "type": "enum", "attr": "punct", "key": "text.punct", "values": ["full", "book", "none"], "dump": {"label": "punct"}},
+    "text.space": {"$comment": "How a run's white space is painted (plan P3-18, design T4 M8): as the line breaker set it (normal) or as written (pre: code) — the class tsr-pre.", "field": "space", "type": "enum", "attr": "textSpace", "key": "text.space", "values": ["normal", "pre"]},
+    "text.classes": {"$comment": "The style classes in force on a run (plan P3-18, design T4 M8): its nodes' `class` tokens and a code token's tok-<tag>, sorted, metric-neutral — written tsr-c-<name>; engine-set (no attribute).", "field": "classes", "type": "str"},
     "engine.script": {
       "field": "script",
       "type": "internal"
@@ -1046,6 +1049,30 @@
         "Ingest"
       ]
     }
+  },
+  "contract": {
+    "$comment": [
+      "The render contract's metric-bearing classes (plan P3-18; design T4 M8): each class a run",
+      "carries when its style says so, and the CSS it stands for — both generated from here, so the",
+      "classes the serializer writes and the stylesheet the shell injects never drift (a theme must",
+      "not override them: the dev audit checks). Class order is the serializer's. `rules`: further",
+      "contract rules on combinations; `squeeze`: the CJK punctuation half the engine squeezes, read",
+      "from the TextRules data (T5) until P4-04 writes explicit px."
+    ],
+    "classes": {
+      "tsr-b": {"when": "st.weight == 700", "css": "font-weight: 700"},
+      "tsr-i": {"when": "st.italic", "css": "font-style: italic"},
+      "tsr-cjk": {"when": "st.script == SCRIPT_CJK", "css": "font-family: var(--tsr-font-cjk, var(--tsr-cjk-font, inherit))"},
+      "tsr-code": {"when": "st.fontRole == FONTROLE_MONO", "css": "font-family: var(--tsr-font-mono, monospace)"},
+      "tsr-pre": {"when": "st.space == SPACE_PRE", "css": "white-space: pre"},
+      "tsr-sup": {"when": "st.baseline == BASELINE_SUPER", "css": "position: relative; top: -0.45em; text-decoration: none"}
+    },
+    "rules": [
+      ".tsr-code.tsr-cjk { font-family: var(--tsr-font-mono-cjk, var(--tsr-cjk-font, inherit)); }",
+      ".tsr-cjk.tsr-i { font-style: normal; text-emphasis: filled dot; text-emphasis-position: under right; }",
+      ".tsr-doc a.tsr-sup { position: relative; top: -0.45em; text-decoration: none; }"
+    ],
+    "squeeze": {"def": "engine/rules/locale/compat.def", "const": "punctHalfEm"}
   },
   "policy": {
     "$comment": [

@@ -18,8 +18,8 @@
 <div class="tsr-line" data-s="0" data-e="316" data-join="row" data-ragged="1" data-track="cell" style="top:68.781px;left:253.594px;width:40px"><span class="tsr-r" data-s="0">plain</span></div>
 <div class="tsr-rule" style="top:212.781px;left:0px;width:300px"></div>
 <div class="tsr-line" data-s="0" data-e="316" data-join="tab" data-ragged="1" data-track="cell" style="top:217.578px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">Code</span></div>
-<div class="tsr-line" data-s="0" data-e="316" data-ragged="1" style="top:217.578px;left:156.406px;width:137.188px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">let a = 1;</span></div>
-<div class="tsr-line" data-s="0" data-e="316" data-ragged="1" style="top:241.578px;left:156.406px;width:137.188px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">let b = 2;</span></div>
+<div class="tsr-line" data-s="0" data-e="316" data-ragged="1" style="top:217.578px;left:156.406px;width:137.188px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let a = 1;</span></div>
+<div class="tsr-line" data-s="0" data-e="316" data-ragged="1" style="top:241.578px;left:156.406px;width:137.188px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let b = 2;</span></div>
 <div class="tsr-rule" style="top:270.375px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="422" style="position:relative;height:24px">

@@ -4,12 +4,12 @@
 </div>
 <div class="tsr-para" data-pid="1" data-s0="19" style="position:relative;height:72px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="60" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">Engine defaults, then the host&#39;s rules,</span></div>
-<div class="tsr-line" data-s="0" data-e="96" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:0.686px"><span class="tsr-r" data-s="0">then the document&#39;s: </span><span class="tsr-r tsr-code" data-s="61" style="font-size:13.6px;color:#0000aa">code</span><span class="tsr-r" data-s="68"> here is blue by</span></div>
+<div class="tsr-line" data-s="0" data-e="96" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:0.686px"><span class="tsr-r" data-s="0">then the document&#39;s: </span><span class="tsr-r tsr-code tsr-pre" data-s="61" style="font-size:13.6px;color:#0000aa">code</span><span class="tsr-r" data-s="68"> here is blue by</span></div>
 <div class="tsr-line" data-s="68" data-e="96" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="68">a host rule.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="157" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="71" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.8px"><span class="tsr-r" data-s="0">After the document&#39;s rule, </span><span class="tsr-r tsr-code" data-s="27" style="font-size:13.6px;color:#aa0000">code</span><span class="tsr-r" data-s="34"> is red;</span></div>
-<div class="tsr-line" data-s="34" data-e="115" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="34">its own style wins over both: </span><span class="tsr-r tsr-code" data-s="72" style="font-size:13.6px;color:#00aaaa">teal</span><span class="tsr-r" data-s="114">.</span></div>
+<div class="tsr-line" data-s="0" data-e="71" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.8px"><span class="tsr-r" data-s="0">After the document&#39;s rule, </span><span class="tsr-r tsr-code tsr-pre" data-s="27" style="font-size:13.6px;color:#aa0000">code</span><span class="tsr-r" data-s="34"> is red;</span></div>
+<div class="tsr-line" data-s="34" data-e="115" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="34">its own style wins over both: </span><span class="tsr-r tsr-code tsr-pre" data-s="72" style="font-size:13.6px;color:#00aaaa">teal</span><span class="tsr-r" data-s="114">.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="309" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="71" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r tsr-i" data-s="0" style="color:#008800">A host rule marked force wins over this</span></div>

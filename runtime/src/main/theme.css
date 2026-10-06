@@ -1,0 +1,44 @@
+/* The default theme (plan P3-18; design T4 M8): paint only — colours,
+   backgrounds, decorations. It never changes a metric: the classes that
+   carry metrics are the render contract's (runtime/src/shared/
+   contract.gen.mjs), which a theme must not override (the dev audit
+   checks). A host may replace this stylesheet; the shell injects it unless
+   told not to. */
+
+/* links, errors, highlighted code lines, code line numbers */
+.tsr-doc a { color: var(--tsr-link, #1a5276); text-decoration: underline; text-underline-offset: 2px; }
+.tsr-err { color: #b3261e; }
+.tsr-flow code .tsr-err { color: #b00; }
+.tsr-hlline { background: var(--tsr-hl-line, rgba(250, 200, 60, 0.16)); }
+.tsr-marker.tsr-code { color: var(--tsr-tok-comment, #8d897f); }
+
+/* code tokens (code-design.md §5): a token run carries tsr-c-tok-<tag>
+   (the TOKEN_TAGS of syntax.def); its colour is this palette's */
+.tsr-doc, .tsr-flow { --tsr-tok-keyword: #7c4dbe; --tsr-tok-string: #2e7d32;
+  --tsr-tok-number: #b45309; --tsr-tok-comment: #8d897f;
+  --tsr-tok-function: #1d4ed8; --tsr-tok-type: #0f766e;
+  --tsr-tok-constant: #b91c1c; --tsr-tok-variable: inherit;
+  --tsr-tok-operator: #6b6b6b; --tsr-tok-punctuation: #7a7a72;
+  --tsr-tok-property: #92400e; --tsr-tok-attribute: #92400e;
+  --tsr-tok-label: #7c4dbe; --tsr-tok-embedded: inherit; }
+@media (prefers-color-scheme: dark) {
+  .tsr-doc, .tsr-flow { --tsr-tok-keyword: #b794f6; --tsr-tok-string: #7bc98b;
+    --tsr-tok-number: #e5a45b; --tsr-tok-comment: #8f8b81;
+    --tsr-tok-function: #7fb3f5; --tsr-tok-type: #5ecfbf;
+    --tsr-tok-constant: #ef8a8a; --tsr-tok-operator: #9a9a92;
+    --tsr-tok-punctuation: #8b8b83; --tsr-tok-property: #dfb27a;
+    --tsr-tok-attribute: #dfb27a; --tsr-tok-label: #b794f6; } }
+.tsr-c-tok-keyword { color: var(--tsr-tok-keyword); }
+.tsr-c-tok-string { color: var(--tsr-tok-string); }
+.tsr-c-tok-number { color: var(--tsr-tok-number); }
+.tsr-c-tok-comment { color: var(--tsr-tok-comment); }
+.tsr-c-tok-function { color: var(--tsr-tok-function); }
+.tsr-c-tok-type { color: var(--tsr-tok-type); }
+.tsr-c-tok-constant { color: var(--tsr-tok-constant); }
+.tsr-c-tok-variable { color: var(--tsr-tok-variable); }
+.tsr-c-tok-operator { color: var(--tsr-tok-operator); }
+.tsr-c-tok-punctuation { color: var(--tsr-tok-punctuation); }
+.tsr-c-tok-property { color: var(--tsr-tok-property); }
+.tsr-c-tok-attribute { color: var(--tsr-tok-attribute); }
+.tsr-c-tok-label { color: var(--tsr-tok-label); }
+.tsr-c-tok-embedded { color: var(--tsr-tok-embedded); }

@@ -1,4 +1,4 @@
-# Style properties (design; as built from plans P1-02, P3-01, P3-14)
+# Style properties (design; as built from plans P1-02, P3-01, P3-14, P3-18)
 
 ## 1. One vocabulary, declared once
 
@@ -154,8 +154,35 @@ reaches it. The semantic page's stylesheet has CSS forms for the rows: `break-in
 `break-before`/`after`, padding/text-indent for the hang, padding, border,
 background, `display: flow-root`, float.
 
+Plan P3-18 (design T4 M8) opened the **class channel** and split the
+stylesheet. A node's `class` tokens (domain classlist) join the run row
+`text.classes`. That row is engine-set, sorted and metric-neutral. It is
+inherited, so every run under the node carries the classes, and a code
+token's run carries `tok-<tag>` instead of the colour string it used to
+take. The typeset writer spells them `tsr-c-<name>` on each run; the
+semantic page spells them on the text's span. A theme colours them:
+`.tsr-c-tok-keyword { color: var(--tsr-tok-keyword) }`.
+
+The new run row `text.space` (`normal` | `pre`) gives code its class
+`tsr-pre`, set by the default rules for `code` and `codeblock`.
+
+The stylesheet now has three parts:
+- The **render contract**: schema `contract`, generated into
+  `style_css.gen.h` (`contractClasses`, which the serializer calls) and
+  `runtime/src/shared/contract.gen.mjs` (`CONTRACT_CSS`). It holds the
+  classes that carry metrics: `tsr-b`, `tsr-i`, `tsr-cjk`, `tsr-code`,
+  `tsr-pre`, `tsr-sup`, the combinations, and the CJK squeeze
+  `tsr-sqL`/`tsr-sqR`, whose half comes from T5's `compat.def`.
+- The shell's **layout module** (T7: positioning). Together with the
+  contract it forms `TSR_CSS`.
+- The **theme**: `runtime/src/main/theme.css`, mirrored in
+  `theme.gen.mjs` as `THEME_CSS`. It is paint only: links, errors,
+  highlighted lines, the token palette and its classes. It is injected
+  after the contract as a separate element (`data-tsr-theme`) that a host
+  may replace.
+
+The dev audit checks that the contract classes paint as measured.
+
 ## 5. Not yet
 
-Scoped document knobs (P3-02); the
-semantic page's role and class hooks (P3-18, P3-23); a token's colour is
-still its own until the class channel (P3-18).
+Scoped document knobs (P3-02); the semantic page's role hooks (P3-23).

@@ -33,7 +33,7 @@ if (inputs.length !== 1) {
   process.exit(2);
 }
 
-const [{ renderTsm }, { TSR_CSS }, { settingOf }] = await Promise.all([
+const [{ renderTsm }, { TSR_CSS, THEME_CSS }, { settingOf }] = await Promise.all([
   import(join(root, 'runtime/src/node/render.mjs')),
   import(join(root, 'runtime/src/main/shell.mjs')),
   import(join(root, 'runtime/src/shared/settings.gen.mjs')),
@@ -70,12 +70,12 @@ const html = `<!doctype html>
 <title>${pageTitle.replace(/[<&]/g, '')}</title>
 <style>
 ${TSR_CSS}
+${THEME_CSS}
 body { margin: 0 auto; max-width: 42em; padding: 2em 1em;
        font-family: ${bodyFont.replace(/[<>{};]/g, '')}; }
 #tsr-root { --tsr-cjk-font: ${cjkFont.replace(/"/g, "'").replace(/[<>{};]/g, '')}; }
 .tsr-flow img { max-width: 100%; height: auto; }
 .tsr-flow pre { overflow-x: auto; }
-.tsr-flow code .tsr-err { color: #b00; }
 /* the rules (plan P3-01: engine defaults, host rules, the document's $.set) */
 ${rulesCss}</style>
 </head>

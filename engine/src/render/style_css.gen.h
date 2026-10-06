@@ -29,4 +29,15 @@ inline void runCss(Tag& t, const Styling& st, double basePx, const Interner& str
   }
 }
 
+// the contract classes a run's style gives it (schema "contract"; plan P3-18)
+template <class Add>
+inline void contractClasses(const Styling& st, Add add) {
+  if (st.weight == 700) add("tsr-b");
+  if (st.italic) add("tsr-i");
+  if (st.script == SCRIPT_CJK) add("tsr-cjk");
+  if (st.fontRole == FONTROLE_MONO) add("tsr-code");
+  if (st.space == SPACE_PRE) add("tsr-pre");
+  if (st.baseline == BASELINE_SUPER) add("tsr-sup");
+}
+
 }  // namespace tsr

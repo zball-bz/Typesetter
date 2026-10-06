@@ -301,7 +301,8 @@
   "minWidth": 102,
   "placeWidth": 103,
   "placeGap": 104,
-  "cont": 105
+  "cont": 105,
+  "textSpace": 106
  },
  "attrs": {
   "para.cont": 14,
@@ -528,6 +529,7 @@
   "styled.breakerTolerance": 14,
   "styled.breakerStretch": 14,
   "styled.placeFloat": 14,
+  "styled.textSpace": 14,
   "styled.placeWidth": 14,
   "styled.placeGap": 14,
   "styled.label": 9,

@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 14;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '0ce5bcfd';
+export const SCHEMA_HASH = '8b9c1b18';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -324,7 +324,8 @@ export const SINCE = Object.freeze({
       "93": 14,
       "94": 14,
       "103": 14,
-      "104": 14
+      "104": 14,
+      "106": 14
     },
     "19": {
       "0": 9,
@@ -731,7 +732,8 @@ export const ARGK = Object.freeze({
   "minWidth": 102,
   "placeWidth": 103,
   "placeGap": 104,
-  "cont": 105
+  "cont": 105,
+  "textSpace": 106
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -1127,6 +1129,7 @@ export const SCHEMA = Object.freeze({
       "breakerTolerance": "num:0:100000",
       "breakerStretch": "len",
       "placeFloat": "enum:none|left|right|top|bottom|page|inline",
+      "textSpace": "enum:normal|pre",
       "placeWidth": "size",
       "placeGap": "len",
       "label": "label",

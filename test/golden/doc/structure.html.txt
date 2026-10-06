@@ -7,7 +7,7 @@
 </div>
 <div class="tsr-para" data-pid="2" data-s0="50" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="45" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">An introductory paragraph with a </span><a class="tsr-r" href="https://example.org" data-s="34">useful</a></div>
-<div class="tsr-line" data-s="34" data-e="97" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="https://example.org" data-s="34">link</a><span class="tsr-r" data-s="68"> and some </span><span class="tsr-r tsr-code" data-s="77" style="font-size:13.6px">inline code</span><span class="tsr-r" data-s="91"> in it.</span></div>
+<div class="tsr-line" data-s="34" data-e="97" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="https://example.org" data-s="34">link</a><span class="tsr-r" data-s="68"> and some </span><span class="tsr-r tsr-code tsr-pre" data-s="77" style="font-size:13.6px">inline code</span><span class="tsr-r" data-s="91"> in it.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="174" style="position:relative;height:132.781px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="54" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:-0.667px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">First bullet item with enough words to</span></div>
@@ -29,7 +29,7 @@
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="7" data-s0="443" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="24" data-ragged="1" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">const x = compute(1, 2);</span></div>
-<div class="tsr-line" data-s="25" data-e="34" data-ragged="1" style="top:24px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code" style="font-size:13.6px">return x;</span></div>
+<div class="tsr-line" data-s="0" data-e="24" data-ragged="1" style="top:0px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">const x = compute(1, 2);</span></div>
+<div class="tsr-line" data-s="25" data-e="34" data-ragged="1" style="top:24px;left:0px;width:300px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">return x;</span></div>
 </div>
 </div>

@@ -2,6 +2,7 @@
 // Split from model.h (plan P1-18) so layout, paint and the typeset backend
 // read styles without seeing the content tree.
 #pragma once
+#include <algorithm>
 #include <unordered_map>
 #include <vector>
 
@@ -95,6 +96,33 @@ inline StyleId compose(StyleTable& styles, StyleId base, const StyleDelta& d, fl
 inline double emPx(double basePx, const Styling& s) {
   double base = s.sizePx > 0 ? (double)s.sizePx : basePx;
   return base * (double)s.sizeMul;
+}
+
+// (plan P3-18; design T4 M8) a class list with more classes: sorted,
+// unique, space-separated, interned (Styling::classes; metric-neutral)
+inline StrRef mergeClasses(Interner& strs, StrRef have, std::string_view add) {
+  if (add.empty()) return have;
+  std::vector<std::string_view> v;
+  auto split = [&](std::string_view s) {
+    for (size_t at = 0; at < s.size();) {
+      size_t sp = s.find(' ', at);
+      if (sp == std::string_view::npos) sp = s.size();
+      if (sp > at) v.push_back(s.substr(at, sp - at));
+      at = sp + 1;
+    }
+  };
+  const std::string h(have ? strs.get(have) : std::string_view{});
+  const std::string a(add);
+  split(h);
+  split(a);
+  std::sort(v.begin(), v.end());
+  v.erase(std::unique(v.begin(), v.end()), v.end());
+  std::string out;
+  for (std::string_view x : v) {
+    if (!out.empty()) out += ' ';
+    out += x;
+  }
+  return strs.intern(out);
 }
 
 }  // namespace tsr

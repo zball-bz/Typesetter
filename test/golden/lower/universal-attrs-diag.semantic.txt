@@ -1,6 +1,6 @@
 <div class="tsr-flow">
 <blockquote data-pid="0" data-s="0" data-e="192" id="tsr-p1" data-syn="generated">
-<p data-s="0" data-e="192">A quote with every universal attribute.</p>
+<p data-s="0" data-e="192"><span class="tsr-c-note tsr-c-wide">A quote with every universal attribute.</span></p>
 </blockquote>
 <p data-pid="1" data-s="194" data-e="283">An image with a bad EXT name <img src="x.png" alt="" style="width:10px;height:10px"> in a sentence</p>
 <p data-pid="2" data-s="285" data-e="349">Styled by option: <em style="color:#a8432a">word</em> here.</p>

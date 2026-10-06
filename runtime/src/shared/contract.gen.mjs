@@ -1,0 +1,4 @@
+// GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
+// The render contract's stylesheet (schema "contract"; plan P3-18): the
+// metric-bearing classes the serializer writes, as the engine measured them.
+export const CONTRACT_CSS = ".tsr-b { font-weight: 700; }\n.tsr-i { font-style: italic; }\n.tsr-cjk { font-family: var(--tsr-font-cjk, var(--tsr-cjk-font, inherit)); }\n.tsr-code { font-family: var(--tsr-font-mono, monospace); }\n.tsr-pre { white-space: pre; }\n.tsr-sup { position: relative; top: -0.45em; text-decoration: none; }\n.tsr-code.tsr-cjk { font-family: var(--tsr-font-mono-cjk, var(--tsr-cjk-font, inherit)); }\n.tsr-cjk.tsr-i { font-style: normal; text-emphasis: filled dot; text-emphasis-position: under right; }\n.tsr-doc a.tsr-sup { position: relative; top: -0.45em; text-decoration: none; }\n.tsr-sqL { margin-left: -0.5em; }\n.tsr-sqR { margin-right: -0.5em; }\n";

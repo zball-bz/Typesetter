@@ -1336,8 +1336,9 @@ static void unitCascade() {
     CHECK(lines.size() == 1 && lines[0].size() == 3);
     const Styling& k = styles.get(lines[0][0].style);
     const Styling& c = styles.get(lines[0][2].style);
-    CHECK(!k.italic && k.hang == 0 && k.color);
-    CHECK(c.italic && c.hang == HANG_CONTENT && strs.get(c.color) == "var(--tsr-tok-comment)");
+    // (plan P3-18) a token is its class (tok-<tag>), coloured by the theme
+    CHECK(!k.italic && k.hang == 0 && !k.color && strs.get(k.classes) == "tok-keyword");
+    CHECK(c.italic && c.hang == HANG_CONTENT && !c.color && strs.get(c.classes) == "tok-comment");
     tokenLines(body, 0, nullptr, 0, toks, 2, strs, styles, lines);  // the semantic page's: no rules
     CHECK(!styles.get(lines[0][2].style).italic);
   }

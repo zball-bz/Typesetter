@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-18
+- 下一步：P3-19
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -84,7 +84,7 @@
 | P3-15 | 通用放置与独立布局（InlineBlock/子图） | done | grep:plan P3-15 | 2026-10-06 | 既有 golden 字节不变；新用例：figure/float-table（表格 figure 右浮 45%）、figure/float-pair（左右异侧浮动：FitBody 的 aside 与 9em 的代码块）、figure/subfigures（子图并排的 InlineBlock）、pages/paged-page-floats（top/bottom/page 页浮动）；单测 unitPaginate：浮动顺延时版面合拢、底部浮动与浮动页 | layoutDetached（一个块作为独立 flow root 在给定宽度下布局，取出其片段）供侧浮与行内块使用；任意块（非图片浮动）的 place.float left/right：按 place.width（长度/百分比；缺省 FitBody＝非题注内容的 max-content，不超过可用宽度）独立布局，按图片浮动同一规则（ExclusionMap::place）放置，排除带自身间距 place.gap；place.float top/bottom/page：屏幕上原位，分页时为可移动盒（kPagedMovable + kPagedBottom/kPagedPage）；分页：可移动盒在版面中留下的空洞被合拢，底部浮动置于页脚注之上，浮动页紧随其所在页；原子（浮动、可移动盒）的框随之移动；place.float inline：栈中连续的行内块各自独立布局并排、放不下换行、行居中（或按容器 par.align）、顶对齐；表格的固有宽度按列相加（tableIntrinsic）。语义页 CSS：inline-block、width。文档：figure-design §8、layout-design §4、pages-design §5、style-design、tsm-changes |
 | P3-16 | 几何权威 | done | grep:plan P3-16 | 2026-10-06 | 161 个 html golden 变化，脚本核对：除 margin-bottom 19.2px→19.203px、.tsr-doc 的 min-height、错误 run 的 tsr-err 与 title 外，其余 11 个逐一检查均为预期（浮动块的间距 0、theorem 的 1.5em 空间 24px、18px 基准的 21.594px、media 块后 0）；paged golden 不变；新用例 pages/paged-gutter（行号在版心左侧时纸张按 gutter 扩展裁切） | 段间 margin-bottom 取 layout 的 su（下一块 y 减本块底），浮动块为 0，space.* 生效；文档超出末块时 .tsr-doc 写 min-height；片段与 DL 节点带标记角色（列表标记/行号）与过渡放置（end 边在行首，拼写不变）；layout 计算行号在版心左侧的 gutter（位数×代码 ch＋0.55em 间隔），分页纸张按其扩展 clip-path 裁切（无此情况时 overflow:hidden 不变）；错误 run 带 class tsr-err 与 title（错误信息），复制省略；默认 .tsr-err 着色。文档：render-design §4、tsm-changes |
 | P3-17 | 块入行内的拆分策略 | done | grep:plan P3-17 | 2026-10-06 | 声明的 golden 变化：inline/object-unsupported-diag（句中 #rule() 由原地警告改为拆分段落，diags 去掉 block-in-inline 警告）与 line/own-math（列表项段落中的显示公式由行内退化改为拆出公式块，续段无缩进、无段前距）；新用例 inline/block-split-diag（拆分、带标签的段中显示公式编号保留、标题中的块成为 error） | normalize N5：Blocks 位置的段落内出现块时拆成 [para, block, para{cont}]，首段保留原段（标签、属性），续段为同一段落（样式、规则环境、属性、作用域同原段），只含空白的片段不成段；其它行内位置（标题、链接、行内组）的块包上 error{block-in-inline}；删除 N1（显示数学在段内退化为行内并丢标签）。para 的 cont 属性由引擎设置（resolved，输入中丢弃）；盒树：续段不加首行缩进、BlockTraits.cont；layout：续段前间距为 0（栈内与顶层）；语义页续段 margin-top:0;text-indent:0。文档：document-model 正规形、tsm-changes |
-| P3-18 | 类名渲染与主题拆分 | todo | | | | |
+| P3-18 | 类名渲染与主题拆分 | done | grep:plan P3-18 | 2026-10-06 | 42 个 golden 变化（脚本核对：token run 去掉内联 color:var(--tsr-tok-*) 换成 tsr-c-tok-*、代码 run（含行号）加 tsr-pre；另 4 个逐一检查：code/hang、code/runs 只有 tsr-pre（作者写的颜色保留），lower/universal-attrs-diag 的 class 渲染为 tsr-c-note tsr-c-wide，typeset 与语义页均是）；e2e：token 断言改为类名 | 类通道：节点的 class 进入 run 行 text.classes（引擎设置、排序、去重、度量中性、向下继承），代码 token 携带 tok-<tag> 而非颜色串；typeset run 写 tsr-c-*，语义页文字 span 写 tsr-c-*；text.space（normal/pre）新行，默认规则给 code/codeblock 设 pre → tsr-pre。CSS 拆分：schema contract 段生成渲染契约（C++ contractClasses 供序列化器、contract.gen.mjs 的 CONTRACT_CSS，挤压量取 T5 compat.def 的 punctHalfEm），shell 只留 T7 布局模块（TSR_CSS = 契约 + 布局），新建 runtime/src/main/theme.css（只含着色：链接、错误、高亮行、行号色、token 调色板与 .tsr-c-tok-* 规则）生成 theme.gen.mjs 的 THEME_CSS，shell 另注入（data-tsr-theme）、export-static 一并写出；删除死规则 .tsr-marker.tsr-code 的 font-size。devAudit 增加契约检查（tsr-b/tsr-i/tsr-pre 的计算样式）。文档：style-design §4、tsm-changes |
 | P3-19 | 基线权威 | todo | | | | |
 | P3-20 | 安全评审检查点 | todo | | | | |
 | P3-21 | ResourceHost、定位器、引用清单、静态导出 | todo | | | | |
@@ -161,6 +161,7 @@
 | P3-15 后 | 3.70 | 10.50 | 26.20 | 1.8 / 3.2 / 0.8 / 9.9 / 2.9 | 66.3 / 103.4 / 146.0 | 1.60 / 21.60 / 58.60 | 均在 P3 门限内 |
 | P3-16 后 | 3.60 | 10.30 | 25.60 | 1.8 / 3.1 / 0.8 / 9.9 / 2.9 | 64.6 / 106.5 / 144.0 | 1.50 / 21.30 / 58.00 | 均在 P3 门限内 |
 | P3-17 后 | 3.40 | 10.50 | 26.50 | 1.6 / 3.2 / 0.8 / 10.2 / 3.0 | 69.5 / 105.1 / 151.5 | 1.60 / 22.30 / 58.40 | 均在 P3 门限内 |
+| P3-18 后 | 3.30 | 11.00 | 26.40 | 1.5 / 3.1 / 0.7 / 9.8 / 3.2 | 69.9 / 102.8 / 147.7 | 1.70 / 21.50 / 57.80 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -350,6 +351,7 @@
 | P3-16 | 列表标记仍不测量（D-Y10），不计入 gutter；只有行号按 ch 计入 | 列表标记在列表缩进内；精确位置属 P3-26 | P3-26 |
 | P3-17 | 计划写"只新增用例"，但 inline/object-unsupported-diag 与 line/own-math 含段内块，按 D-I02 改变（声明的行为变化） | 设计 S8b 认为现有用例没有段内块，实际有两个；按决定 D-I02 执行 | 无 |
 | P3-17 | 拆分不报诊断（只有无法拆分的行内位置报 block-in-inline） | 拆分是 D-I02 规定的正常行为，与 Typst 一致 | 无 |
+| P3-18 | golden 变化 42 个（设计时估计 6+2+11）；token 标签表仍在 syntax.def 一处，theme.css 的 .tsr-c-tok-* 规则手写（14 个标签） | 设计之后新增了代码用例；标签集稳定，主题是可替换的样式表 | P3-22（语言清单）可生成 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

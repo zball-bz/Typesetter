@@ -68,8 +68,24 @@ struct Sem {
     t.open();
   }
 
-  // a text leaf in its scope (its rule-free style)
-  void textRun(StyleId sid, std::string_view text) {
+  // (plan P3-18) a class list as tsr-c-* tokens
+  static std::string classTokens(std::string_view cl) {
+    std::string out;
+    for (size_t at = 0; at < cl.size();) {
+      size_t sp = cl.find(' ', at);
+      if (sp == std::string_view::npos) sp = cl.size();
+      if (sp > at) {
+        if (!out.empty()) out += ' ';
+        out += "tsr-c-";
+        out += cl.substr(at, sp - at);
+      }
+      at = sp + 1;
+    }
+    return out;
+  }
+  // a text leaf in its scope (its rule-free style); `classes`: the style
+  // classes in force on it (plan P3-18: its nodes', a code token's)
+  void textRun(StyleId sid, std::string_view text, StrRef classes = 0) {
     // a leaf's scope is its rule-free style (instantiation folds styled
     // deltas onto leaves — document-model §3, plan P3-01): render it, so
     // token colours and patch styles reach the no-JS page; what rules add
@@ -117,9 +133,11 @@ struct Sem {
       style += ";";
     }
     if (!style.empty()) style.pop_back();
-    const bool wrap = tag || !style.empty() || st.lang;
+    if (!classes) classes = st.classes;
+    const bool wrap = tag || !style.empty() || st.lang || classes;
     if (wrap) {
       Tag t(out, tag ? tag : "span");
+      if (classes) t.attrSafe("class", classTokens(strs.get(classes)));
       if (st.lang) t.attr("lang", strs.get(st.lang));
       t.style(style);
       // bold+italic: strong tag + italic style
@@ -187,7 +205,7 @@ struct Sem {
   void inlNode(const ContentNode* n) {
     switch (n->kind) {
       case Kind::text:
-        textRun(n->scope, strs.get(n->str));
+        textRun(n->scope, strs.get(n->str), styles.get(n->style).classes);
         return;
       case Kind::styled:
         // transparent: the leaves carry the folded styles (above), a role

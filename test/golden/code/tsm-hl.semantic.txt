@@ -1,17 +1,17 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="58">内置 tsm 文法：Typesetter 标记语言自举高亮。</p>
-<pre data-pid="1" data-s="60" data-e="302"><code class="language-tsm"><span style="color:var(--tsr-tok-keyword)">=</span> <span style="color:var(--tsr-tok-function)">标题与标签</span> <span style="color:var(--tsr-tok-label)">&lt;intro&gt;</span>
+<pre data-pid="1" data-s="60" data-e="302"><code class="language-tsm"><span class="tsr-c-tok-keyword">=</span> <span class="tsr-c-tok-function">标题与标签</span> <span class="tsr-c-tok-label">&lt;intro&gt;</span>
 
-正文有 <span style="color:var(--tsr-tok-attribute)">*</span><span style="color:var(--tsr-tok-attribute)">加粗</span><span style="color:var(--tsr-tok-attribute)">*</span>、<span style="color:var(--tsr-tok-string)">`代码`</span> 与 <span style="color:var(--tsr-tok-type)">$a^2$</span>；引用<span style="color:var(--tsr-tok-constant)">@intro</span>，链接<span style="color:var(--tsr-tok-property)">[</span><span style="color:var(--tsr-tok-property)">站点</span><span style="color:var(--tsr-tok-property)">](https://x.dev)</span>。
+正文有 <span class="tsr-c-tok-attribute">*</span><span class="tsr-c-tok-attribute">加粗</span><span class="tsr-c-tok-attribute">*</span>、<span class="tsr-c-tok-string">`代码`</span> 与 <span class="tsr-c-tok-type">$a^2$</span>；引用<span class="tsr-c-tok-constant">@intro</span>，链接<span class="tsr-c-tok-property">[</span><span class="tsr-c-tok-property">站点</span><span class="tsr-c-tok-property">](https://x.dev)</span>。
 
-<span style="color:var(--tsr-tok-function)">#!figure(src: &quot;a.png&quot;, label: &quot;f&quot;)</span>
-图注 <span style="color:var(--tsr-tok-operator)">|</span> 单元格
-<span style="color:var(--tsr-tok-function)">#figure!</span>
+<span class="tsr-c-tok-function">#!figure(src: &quot;a.png&quot;, label: &quot;f&quot;)</span>
+图注 <span class="tsr-c-tok-operator">|</span> 单元格
+<span class="tsr-c-tok-function">#figure!</span>
 
-<span style="color:var(--tsr-tok-keyword)">```js</span>
-<span style="color:var(--tsr-tok-embedded)">const x = 1;</span>
-<span style="color:var(--tsr-tok-keyword)">```</span>
+<span class="tsr-c-tok-keyword">```js</span>
+<span class="tsr-c-tok-embedded">const x = 1;</span>
+<span class="tsr-c-tok-keyword">```</span>
 
-<span style="color:var(--tsr-tok-keyword)">-</span> 列表项
-<span style="color:var(--tsr-tok-function)">#let n = 42</span></code></pre>
+<span class="tsr-c-tok-keyword">-</span> 列表项
+<span class="tsr-c-tok-function">#let n = 42</span></code></pre>
 </div>

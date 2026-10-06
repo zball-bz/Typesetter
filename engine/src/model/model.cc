@@ -261,6 +261,8 @@ struct Inst {
           for (u32 up = p.path; up != ~0u; up = paths[up].up) view.depth += paths[up].kind == (u16)n->kind;
         }
         cascade.fold(ownStyle, np, view, rules ? p.env : 0, delta, rules);
+        // (plan P3-18) its class tokens join the classes in force on its runs
+        if (view.cls) ownStyle.classes = mergeClasses(strs, ownStyle.classes, strs.get(view.cls));
         n->style = styles.idOf(ownStyle);
         if (delta.empty()) {  // its scope: its own delta, no rule
           n->scope = p.scope;

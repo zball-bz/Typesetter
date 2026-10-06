@@ -143,6 +143,20 @@ export function auditTypeset(root) {
     }
   }
 
+  // (plan P3-18; design T4 M8) the render contract: the classes that carry
+  // metrics paint as the engine measured them — a theme overriding one
+  // (bold that is not 700, italic that is upright, code that wraps its
+  // spaces) breaks the measure/render agreement
+  const CONTRACT = [
+    ['tsr-b', (cs) => parseInt(cs.fontWeight, 10) === 700, 'font-weight'],
+    ['tsr-i', (cs, el) => el.classList.contains('tsr-cjk') || cs.fontStyle !== 'normal', 'font-style'],
+    ['tsr-pre', (cs) => cs.whiteSpace === 'pre', 'white-space'],
+  ];
+  for (const [cls, ok, prop] of CONTRACT) {
+    const el = root.querySelector(`.tsr-r.${cls}`);
+    if (el && !ok(getComputedStyle(el), el)) report.failures.push({ audit: 'contract', cls, prop });
+  }
+
   // anchors: pids unique, line spans inside their paragraph
   const pids = [...root.querySelectorAll('[data-pid]')].map((e) => e.dataset.pid);
   if (new Set(pids).size !== pids.length)

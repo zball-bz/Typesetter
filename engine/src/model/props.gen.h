@@ -23,6 +23,8 @@ struct Styling {
   float sizePx = 0;  // text.size
   StrRef features = 0;  // text.features
   u8 punct = 0;  // text.punct
+  u8 space = 0;  // text.space
+  StrRef classes = 0;  // text.classes
   u8 script = 0;  // engine.script
   bool operator==(const Styling& o) const {
     return weight == o.weight &&
@@ -38,6 +40,8 @@ struct Styling {
            sizePx == o.sizePx &&
            features == o.features &&
            punct == o.punct &&
+           space == o.space &&
+           classes == o.classes &&
            script == o.script;
   }
 };
@@ -54,6 +58,8 @@ constexpr u8 HANG_CONTENT = 2;
 constexpr u8 PUNCT_FULL = 1;
 constexpr u8 PUNCT_BOOK = 2;
 constexpr u8 PUNCT_NONE = 3;
+constexpr u8 SPACE_NORMAL = 1;
+constexpr u8 SPACE_PRE = 2;
 
 // a hash over the canonical bits of every field
 struct StylingHash {
@@ -81,6 +87,8 @@ struct StylingHash {
     }
     mix((u64)s.features);
     mix((u64)s.punct);
+    mix((u64)s.space);
+    mix((u64)s.classes);
     mix((u64)s.script);
     return (size_t)h;
   }
@@ -147,6 +155,11 @@ inline void applyStyleArg(Styling& st, const ArgVal& a, Intern intern, View view
     if (v == "full") st.punct = 1;
     if (v == "book") st.punct = 2;
     if (v == "none") st.punct = 3;
+  }
+  if (a.key == ArgK::textSpace && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "normal") st.space = 1;
+    if (v == "pre") st.space = 2;
   }
 }
 
@@ -551,6 +564,8 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
     {"text.features", ArgK::features},
     {"punct", ArgK::punct},
     {"text.punct", ArgK::punct},
+    {"textSpace", ArgK::textSpace},
+    {"text.space", ArgK::textSpace},
 };
 // whether an attribute patches a block property
 inline bool isNodeArg(ArgK k) {

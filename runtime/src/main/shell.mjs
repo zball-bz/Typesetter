@@ -15,6 +15,8 @@
 // devAudit). Main-thread work the worker needs is a named capability.
 import { commit, createSession, decodeResult, elementsAt, heldKeys, offsetAt, sessionHtml, StaleKeys } from './commit.mjs';
 import { MATH_FONT } from '../shared/mathfont.gen.mjs';
+import { CONTRACT_CSS } from '../shared/contract.gen.mjs';
+import { THEME_CSS } from '../shared/theme.gen.mjs';
 import { contentTextFromRange, installCopy } from './copy.mjs';
 import { settingsFromOptions, settingOf } from '../shared/settings.gen.mjs';
 import { refPreview } from './behaviors/ref-preview.mjs';
@@ -32,11 +34,14 @@ export const defaultBehaviors = () => [refPreview(), print()];
 export const TSR_CJK_FONT =
   '"Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif';
 
-// The serializer's CSS contract (document-model §9.1) — the nowrap rule IS
-// the DPR robustness contract (v2 §7 rule 1); never remove it. Only what
-// the engine's DOM needs to render as measured: a behaviour brings its own
-// CSS (plan P3-06), injected once with it.
-export const TSR_CSS = `
+// The serializer's CSS (document-model §9.1; plan P3-18, design T4 M8): the
+// render contract — the metric-bearing classes, generated from the schema
+// (CONTRACT_CSS) — and this layout module (T7: positioning; the nowrap rule
+// IS the DPR robustness contract, v2 §7 rule 1 — never remove it). Paint is
+// the theme's (THEME_CSS, runtime/src/main/theme.css), injected after it
+// unless a host brings its own. Only what the engine's DOM needs to render
+// as measured: a behaviour brings its own CSS (plan P3-06).
+const LAYOUT_CSS = `
 .tsr-doc { position: relative; text-rendering: geometricPrecision;
            /* the engine owns CJK punctuation compression (App C); Chromium's
               built-in trimming (text-spacing-trim: normal) would compress
@@ -46,18 +51,12 @@ export const TSR_CSS = `
 .tsr-line { position: absolute; white-space: nowrap; contain: layout style; }
 /* no 'paint' containment: list markers render in the gutter (right:100%),
    outside the line box — paint containment would clip them */
-.tsr-b { font-weight: 700; }
-.tsr-i { font-style: italic; }
 .tsr-doc { font-family: var(--tsr-font-body); }
-.tsr-code { font-family: var(--tsr-font-mono, monospace); white-space: pre; }
-.tsr-cjk { font-family: var(--tsr-font-cjk, var(--tsr-cjk-font, inherit)); }
-.tsr-code.tsr-cjk { font-family: var(--tsr-font-mono-cjk, var(--tsr-cjk-font, inherit)); }
 .tsr-marker { position: absolute; right: 100%; padding-right: 0.55em;
               user-select: none; -webkit-user-select: none; }
+.tsr-marker.tsr-code { padding-top: 0.15em; }
 .tsr-doc [data-syn="cont"] { user-select: none; -webkit-user-select: none; }
 .tsr-rule { position: absolute; height: 0; border-top: 1px solid currentColor; opacity: 0.35; }
-/* (plan P3-16, document-model §9.1) an error's text: themeable, its message in its title */
-.tsr-err { color: #b3261e; }
 /* (plan P3-14) a framed block's border and background, under its lines */
 .tsr-frame { position: absolute; box-sizing: border-box; border: 0 solid currentColor;
              pointer-events: none; user-select: none; -webkit-user-select: none; }
@@ -70,14 +69,7 @@ export const TSR_CSS = `
 .tsr-iimg { vertical-align: baseline; }
 .tsr-iimgph { display: inline-block; border: 1px dashed currentColor; opacity: 0.5; box-sizing: border-box; }
 .tsr-iraw { display: inline-block; overflow: hidden; vertical-align: baseline; }
-.tsr-doc a { color: var(--tsr-link, #1a5276); text-decoration: underline; text-underline-offset: 2px; }
 .tsr-sp { display: inline-block; }
-.tsr-sqL { margin-left: -0.5em; }   /* punct half squeezed at line start / pair */
-.tsr-sqR { margin-right: -0.5em; }  /* punct half squeezed at line end / pair */
-.tsr-cjk.tsr-i { font-style: normal; text-emphasis: filled dot; text-emphasis-position: under right; }
-/* footnote markers (notes-design.md §1): size is measured (sizeMul); the
-   raise is paint-only so line geometry is untouched */
-.tsr-sup, .tsr-doc a.tsr-sup { position: relative; top: -0.45em; text-decoration: none; }
 /* math (math-design.md §8): one inline box per formula, absolutely
    positioned glyph runs in the bundled font; rules are painted boxes */
 .tsr-math { position: relative; display: inline-block; }
@@ -88,26 +80,9 @@ export const TSR_CSS = `
    engine measured them there) — Euler stays for variables and symbols */
 .tsr-math .tsr-mg.tsr-mt { font-family: inherit; font-style: normal; }
 .tsr-eqno { position: absolute; top: 50%; transform: translateY(-50%); }
-.tsr-hlline { background: var(--tsr-hl-line, rgba(250, 200, 60, 0.16)); }
-.tsr-marker.tsr-code { color: var(--tsr-tok-comment, #8d897f);
-                       font-size: 0.85em; padding-top: 0.15em; }
-/* code token theme (code-design.md §5): engine emits var(--tsr-tok-<tag>);
-   theming lives entirely here */
-.tsr-doc, .tsr-flow { --tsr-tok-keyword: #7c4dbe; --tsr-tok-string: #2e7d32;
-  --tsr-tok-number: #b45309; --tsr-tok-comment: #8d897f;
-  --tsr-tok-function: #1d4ed8; --tsr-tok-type: #0f766e;
-  --tsr-tok-constant: #b91c1c; --tsr-tok-variable: inherit;
-  --tsr-tok-operator: #6b6b6b; --tsr-tok-punctuation: #7a7a72;
-  --tsr-tok-property: #92400e; --tsr-tok-attribute: #92400e;
-  --tsr-tok-label: #7c4dbe; --tsr-tok-embedded: inherit; }
-@media (prefers-color-scheme: dark) {
-  .tsr-doc, .tsr-flow { --tsr-tok-keyword: #b794f6; --tsr-tok-string: #7bc98b;
-    --tsr-tok-number: #e5a45b; --tsr-tok-comment: #8f8b81;
-    --tsr-tok-function: #7fb3f5; --tsr-tok-type: #5ecfbf;
-    --tsr-tok-constant: #ef8a8a; --tsr-tok-operator: #9a9a92;
-    --tsr-tok-punctuation: #8b8b83; --tsr-tok-property: #dfb27a;
-    --tsr-tok-attribute: #dfb27a; --tsr-tok-label: #b794f6; } }
 `;
+export const TSR_CSS = CONTRACT_CSS + LAYOUT_CSS;
+export { THEME_CSS };
 
 // The bundled math font (plan P1-23; the manifest mathfont.gen.mjs, written
 // by tools/mathc.py with the metrics artifact): a declared webfont of role
@@ -156,6 +131,12 @@ function ensureCss() {
   style.dataset.tsr = '1';
   style.textContent = TSR_CSS;
   document.head.appendChild(style);
+  // (plan P3-18) the default theme, after the contract: a host replaces it
+  // by removing this element (data-tsr-theme) or overriding its rules
+  const theme = document.createElement('style');
+  theme.dataset.tsrTheme = '1';
+  theme.textContent = THEME_CSS;
+  document.head.appendChild(theme);
   cssInjected = true;
   ensureFontFaces([MATH_FONT_FACE]);
 }

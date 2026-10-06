@@ -432,7 +432,31 @@ for (const [, r] of props.filter(([, r]) => r.css).sort((a, b) => a[1].cssOrder 
     css += `  if (st.${r.field}) t.declEsc("${r.css}", strs.get(st.${r.field}));\n`;
   }
 }
-css += `}\n\n}  // namespace tsr\n`;
+css += `}\n\n`;
+// (plan P3-18; design T4 M8) the render contract's classes: what a run
+// carries, in the serializer's order (the stylesheet: contract.gen.mjs)
+const contract = S.contract ?? { classes: {}, rules: [] };
+css += `// the contract classes a run's style gives it (schema "contract"; plan P3-18)\n` +
+  `template <class Add>\ninline void contractClasses(const Styling& st, Add add) {\n` +
+  Object.entries(contract.classes).map(([c, r]) => `  if (${r.when}) add("${c}");\n`).join('') + `}\n\n}  // namespace tsr\n`;
+// the contract's stylesheet: its classes, its rules, the punctuation squeeze
+// (its half from the TextRules data, T5)
+const squeezeEm = (() => {
+  const sq = contract.squeeze;
+  if (!sq) return null;
+  const def = readFileSync(join(root, sq.def), 'utf8');
+  const m = def.match(new RegExp(`CONST\\(${sq.const},\\s*([0-9.]+)\\)`));
+  if (!m) throw new Error(`contract squeeze: no CONST(${sq.const}, …) in ${sq.def}`);
+  return m[1];
+})();
+const contractCss = Object.entries(contract.classes).map(([c, r]) => `.${c} { ${r.css}; }`).concat(contract.rules)
+  .concat(squeezeEm ? [`.tsr-sqL { margin-left: -${squeezeEm}em; }`, `.tsr-sqR { margin-right: -${squeezeEm}em; }`] : []).join('\n');
+const contractJs = `// ${HDR}\n// The render contract's stylesheet (schema "contract"; plan P3-18): the\n// metric-bearing classes the serializer writes, as the engine measured them.\n` +
+  `export const CONTRACT_CSS = ${JSON.stringify(contractCss + '\n')};\n`;
+// (plan P3-18) the default theme: runtime/src/main/theme.css as a module
+const themeCss = readFileSync(join(root, 'runtime/src/main/theme.css'), 'utf8');
+const themeJs = `// ${HDR}\n// The default theme (runtime/src/main/theme.css; plan P3-18): paint only.\n` +
+  `export const THEME_CSS = ${JSON.stringify(themeCss)};\n`;
 
 // the style keys (plan P2-08): each row's key → its styled attribute; sugar
 // keys → [attribute, value] (a decoration's value is its flag); flag names
@@ -693,6 +717,8 @@ const outputs = {
   'engine/src/ops/domains.gen.cc': domCc,
   'engine/src/model/props.gen.h': ph,
   'engine/src/render/style_css.gen.h': css,
+  'runtime/src/shared/contract.gen.mjs': contractJs,
+  'runtime/src/shared/theme.gen.mjs': themeJs,
   'runtime/src/shared/props.gen.mjs': propsJs,
   'engine/src/api/settings.gen.h': sh,
   'engine/src/api/settings.gen.cc': sc,

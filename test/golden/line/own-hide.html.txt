@@ -4,7 +4,7 @@
 <div class="tsr-line" data-s="87" data-e="113" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="87">graph goes on.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="115" style="position:relative;height:24px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="32" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A code span </span><span class="tsr-r tsr-code" data-s="12" style="font-size:13.6px">%--</span><span class="tsr-r" data-s="18"> hides nothing:</span></div>
+<div class="tsr-line" data-s="0" data-e="32" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A code span </span><span class="tsr-r tsr-code tsr-pre" data-s="12" style="font-size:13.6px">%--</span><span class="tsr-r" data-s="18"> hides nothing:</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="150" style="position:relative;height:25.609px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-h-1" data-s="0" data-e="21" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">This heading survives</span></div>

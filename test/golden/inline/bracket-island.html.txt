@@ -8,11 +8,11 @@
 <div class="tsr-line" data-s="39" data-e="51" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="39">link.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="129" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="55" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.95px"><span class="tsr-r tsr-b" data-s="0">code </span><span class="tsr-r tsr-b tsr-code" data-s="5" style="font-size:13.6px">a]b</span><span class="tsr-r tsr-b" data-s="11"> here</span><span class="tsr-r" data-s="17"> and the body ends after the</span></div>
+<div class="tsr-line" data-s="0" data-e="55" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.95px"><span class="tsr-r tsr-b" data-s="0">code </span><span class="tsr-r tsr-b tsr-code tsr-pre" data-s="5" style="font-size:13.6px">a]b</span><span class="tsr-r tsr-b" data-s="11"> here</span><span class="tsr-r" data-s="17"> and the body ends after the</span></div>
 <div class="tsr-line" data-s="17" data-e="55" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="17">code span.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="186" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="92" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r" data-s="0">Code spans by run length: </span><span class="tsr-r tsr-code" data-s="26" style="font-size:13.6px">a`b</span><span class="tsr-r" data-s="33">, </span><span class="tsr-r tsr-code" data-s="35" style="font-size:13.6px">`tick`</span><span class="tsr-r" data-s="48"> and </span><span class="tsr-r tsr-code" data-s="52" style="font-size:13.6px">x</span><span class="tsr-r" data-s="57">;</span></div>
+<div class="tsr-line" data-s="0" data-e="92" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r" data-s="0">Code spans by run length: </span><span class="tsr-r tsr-code tsr-pre" data-s="26" style="font-size:13.6px">a`b</span><span class="tsr-r" data-s="33">, </span><span class="tsr-r tsr-code tsr-pre" data-s="35" style="font-size:13.6px">`tick`</span><span class="tsr-r" data-s="48"> and </span><span class="tsr-r tsr-code tsr-pre" data-s="52" style="font-size:13.6px">x</span><span class="tsr-r" data-s="57">;</span></div>
 <div class="tsr-line" data-s="57" data-e="92" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="57">an unclosed `` run stays literal.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="280" style="position:relative;height:48px;margin-bottom:19.203px">

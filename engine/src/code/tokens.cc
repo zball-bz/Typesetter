@@ -48,7 +48,8 @@ void tokenLines(std::string_view body, StyleId base, const Cascade* cascade, u32
         v.lang = s.lang;
         cascade->make(s, scope, v, env, StyleDelta{}, 1.0f);
       }
-      s.color = strs.intern(std::string("var(--tsr-tok-") + kTokenTags[tag] + ")");
+      // (plan P3-18) its token class: the theme colours it (.tsr-c-tok-<tag>)
+      s.classes = mergeClasses(strs, s.classes, std::string("tok-") + kTokenTags[tag]);
       tagStyle[tag] = styles.idOf(s);
       tagStyleMade[tag] = true;
     }

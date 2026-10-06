@@ -1199,9 +1199,9 @@ Theme steps: — · findings: 1
 | `render-runtime/shell-note-popups` | adhoc | high | P3-04, P3-06 || grep:plan P3-06 |
 | `render-runtime/shell-chunk-byte-coupling` | adhoc | medium | P3-05 | grep:plan P3-05 |
 | `render-runtime/anchor-namespace` | adhoc | medium | P3-04 | grep:plan P3-04 |
-| `render-runtime/css-contract-monolith` | adhoc | medium | P3-18 | |
-| `render-runtime/no-class-channel` | adhoc | high | P3-18 | |
-| `render-runtime/token-theme-sniffing` | adhoc | medium | P3-18 | |
+| `render-runtime/css-contract-monolith` | adhoc | medium | P3-18 | grep:plan P3-18 |
+| `render-runtime/no-class-channel` | adhoc | high | P3-18 | grep:plan P3-18 |
+| `render-runtime/token-theme-sniffing` | adhoc | medium | P3-18 | grep:plan P3-18 |
 | `render-runtime/marker-gutter` | adhoc | low | P1-18, P3-16 | grep:plan P3-16 |
 | `render-runtime/config-plumbing` | adhoc | medium | P1-03 | grep:plan P1-03 |
 | `render-runtime/static-export-template` | adhoc | medium | P3-21, P3-36 | |
