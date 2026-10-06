@@ -1775,6 +1775,7 @@ static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u
     if (b.floatSide) out += b.floatSide == 1 ? " float=left" : " float=right";
   }
   if (b.tr.align == BlockTraits::Align::Center) out += " centered";
+  if (b.tr.singleCenter) out += " single-center";
   out += "\n";
 }
 

@@ -115,6 +115,18 @@ features: measurement and paint read the run's) and run `text.punct` (CJK
 punctuation compression, `full|book|none`; unset reads the document's
 `cjk.punctCompress`).
 
+Plan P3-09 made `par.align` the choice of a **line-end glue preset**
+(break.h `LineEnds`, design T6): `justify` (interior glue absorbs the slack,
+the last line ends with fil), `start` / `end` (2em of finite stretch at the
+free end, interior glue rigid — D-Y01), `center` (1em each side). The
+breaker optimizes with the same glue the lines are set with, so a ragged
+paragraph avoids hyphens and tight lines as TeX's ragged-right does; table
+cells take their column's halign as a preset. New block row
+`par.singleLine`: `align` | `center` — a paragraph that is one line is
+centred (the semantic page: a shrink-to-fit centred box). The caption rule
+(D-Y05, LaTeX's `singlelinecheck`): justified, hyphenated, a one-line
+caption centred — block and float captions alike.
+
 ## 5. Not yet
 
 Element style sections (P3-14) and scoped document knobs (P3-02); the

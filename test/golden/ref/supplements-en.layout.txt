@@ -8,7 +8,7 @@ para pid=1 y=2868su w=19200su h=6144su
   L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[60,62) @[141,147)
 para pid=2 y=10241su w=19200su h=6605su
   L0 img y=0su left=5760su w=7680su h=3840su
-  L1 y=5069su left=5120su w=14080su dw=0su dc=0su join=last blocks=[0,7) @[220,229)
+  L1 y=5069su left=5120su w=14080su dw=0su dc=0su join=last blocks=[0,11) @[220,229)
 para pid=3 y=18075su w=19200su h=2150su
   L0 rule y=0su left=0su w=19200su
   L1 cell=0 y=307su left=410su w=8780su blocks=[0,1)

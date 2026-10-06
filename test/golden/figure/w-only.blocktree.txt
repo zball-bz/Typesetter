@@ -5,4 +5,4 @@ top pid=1 leaves=2
   stack root gap=1/1 @[108,262)
     stack figure anchor="fig-w" @[108,262)
       replaced image image unit=0 ragged keep-with-next carry="fig-w" @[108,262)
-      paragraph caption unit=1 centered nohyphen @[195,253)
+      paragraph caption unit=1 single-center @[195,253)

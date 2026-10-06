@@ -37,7 +37,7 @@ top pid=0 units=1
   punct-sp w=512su @[0,99)
 top pid=1 units=2
  unit img indent=0su anchor="fig-light" intrinsic=512x384px
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[181,239)
   space w=257su stretch=1 BOLD @[181,239)
   word "1" w=513su pen=INF BOLD @[181,239)
@@ -59,7 +59,9 @@ top pid=1 units=2
   space w=257su stretch=1 @[181,222)
   word "NEED" w=2049su pen=INF @[181,222)
   word "_" w=513su pen=INF @[222,223)
-  word "IMAGES" w=3073su pen=INF @[223,239)
+  word "IM" w=1025su pen=INF @[223,239)
+  hyphen bw=513su pen=0.70 @[223,239)
+  word "AGES" w=2049su pen=INF @[223,239)
   space w=257su stretch=1 @[223,239)
   cjk "拉" w=1025su glue=102su wt=0.6 pen=0 @[223,239)
   cjk "取" w=1025su glue=102su wt=0.6 pen=INF @[223,239)
@@ -67,7 +69,7 @@ top pid=1 units=2
   punct-sp w=512su @[223,239)
 top pid=2 units=2
  unit img indent=0su placeholder
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[308,359)
   space w=257su stretch=1 BOLD @[308,359)
   word "2" w=513su pen=INF BOLD @[308,359)

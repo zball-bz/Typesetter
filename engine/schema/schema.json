@@ -14,7 +14,7 @@
     "resolved at instantiation — a space, or nothing between two wide characters (TextRules joinsWide);",
     "code and verbatim bodies (body code / text) keep their newlines."
   ],
-  "opsVersion": 13,
+  "opsVersion": 14,
   "minCompat": 11,
   "ops": {
     "MAKE_TEXT": {"id": 1, "since": 6},
@@ -40,7 +40,7 @@
     "parIndent": 57, "parAlign": 58, "parHyphenate": 59, "blockGap": 60, "blockIndent": 61,
     "keepWithNext": 62, "listMarker": 63, "matchKind": 64, "matchRole": 65, "matchClass": 66, "matchLang": 67,
     "matchDepth": 68, "matchWhere": 69, "snapKerning": 70, "sidecarFrac": 71, "contIndent": 72, "features": 73,
-    "punct": 74, "kind": 75
+    "punct": 74, "kind": 75, "parSingleLine": 76
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -119,7 +119,8 @@
       "matchWhere": {"dom": "where", "since": 12},
       "snapKerning": {"dom": "bool", "since": 13}, "sidecarFrac": {"dom": "num:0.1:0.9", "since": 13},
       "contIndent": {"dom": "int:0:40", "since": 13}, "features": {"dom": "features", "since": 13},
-      "punct": {"dom": "enum:full|book|none", "since": 13}}},
+      "punct": {"dom": "enum:full|book|none", "since": 13},
+      "parSingleLine": {"dom": "enum:align|center", "since": 14}}},
     "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "ctor": {"params": ["attr:url"]}, "attrs": {
       "url": {"dom": "url"}, "target": {"dom": "str", "since": 13}}},
     "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
@@ -417,6 +418,7 @@
     "par.indent": {"field": "parIndent", "type": "len", "gran": "block", "inherits": true, "attr": "parIndent", "key": "par.indent"},
     "par.align": {"field": "parAlign", "type": "enum", "gran": "block", "inherits": true, "attr": "parAlign", "key": "par.align", "values": ["justify", "start", "center", "end"]},
     "par.hyphenate": {"field": "parHyphenate", "type": "enum", "gran": "block", "inherits": true, "attr": "parHyphenate", "key": "par.hyphenate", "values": ["auto", "true", "false"]},
+    "par.singleLine": {"$comment": "A paragraph that is one line is set as par.align says (align) or centred (center: D-Y05, a caption's LaTeX singlelinecheck), plan P3-09.", "field": "parSingleLine", "type": "enum", "gran": "block", "inherits": true, "attr": "parSingleLine", "key": "par.singleLine", "values": ["align", "center"]},
     "block.gap": {"field": "blockGap", "type": "gap", "gran": "block", "inherits": false, "attr": "blockGap", "key": "block.gap"},
     "block.indent": {"field": "blockIndent", "type": "len", "gran": "block", "inherits": false, "attr": "blockIndent", "key": "block.indent"},
     "block.keepWithNext": {"field": "keepWithNext", "type": "bool", "gran": "block", "inherits": false, "attr": "keepWithNext", "key": "block.keepWithNext"},

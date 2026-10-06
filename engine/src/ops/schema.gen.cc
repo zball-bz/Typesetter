@@ -214,6 +214,7 @@ const char* const kM_styled_hang[] = {"indent", "content"};
 const char* const kM_styled_parAlign[] = {"justify", "start", "center", "end"};
 const char* const kM_styled_parHyphenate[] = {"auto", "true", "false"};
 const char* const kM_styled_punct[] = {"full", "book", "none"};
+const char* const kM_styled_parSingleLine[] = {"align", "center"};
 const char* const kM_styled_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_styled[] = {
     {21, "font", Dom::Font, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -245,6 +246,7 @@ const AttrSpec kA_styled[] = {
     {72, "contIndent", Dom::Int, 0, 40, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 14, false},
     {74, "punct", Dom::Enum, 0, 0, kM_styled_punct, nullptr, 3, false, false, 0, 13, 0, false},
+    {76, "parSingleLine", Dom::Enum, 0, 0, kM_styled_parSingleLine, nullptr, 2, false, false, 0, 14, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -520,7 +522,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"error", Level::Adaptive, Body::None, InlineShape::Error, 6, kA_error, 11},
     {"comment", Level::Trivia, Body::Text, InlineShape::Skip, 6, kA_comment, 9},
     {"text", Level::Inline, Body::None, InlineShape::Text, 6, nullptr, 0},
-    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 38},
+    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 39},
     {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 11},
     {"code", Level::Inline, Body::Text, InlineShape::Code, 6, kA_code, 9},
     {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 13},

@@ -6,7 +6,7 @@
 </div>
 <div class="tsr-para" data-pid="1" data-s0="88" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-w" data-s="0" data-e="128" src="photos/wide.png" alt="wide" style="top:0px;left:60px;width:240px;height:60px">
-<div class="tsr-line" data-s="106" data-e="119" data-ragged="1" data-track="caption" style="top:60px;left:60px;width:240px"><span class="tsr-r tsr-b tsr-cjk" data-s="106">图</span><span class="tsr-r tsr-b" data-s="106"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="106">：</span><span class="tsr-r" data-s="106">A wide float.</span></div>
+<div class="tsr-line" data-s="106" data-e="119" data-ragged="1" data-track="caption" style="top:60px;left:110px;width:190px"><span class="tsr-r tsr-b tsr-cjk" data-s="106">图</span><span class="tsr-r tsr-b" data-s="106"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="106">：</span><span class="tsr-r" data-s="106">A wide float.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="218" style="position:relative;height:175.203px">
 <div class="tsr-line" data-s="0" data-e="111" data-join="none" style="top:103.203px;left:0px;width:300px"><span class="tsr-r" data-s="0">This paragraph would wrap in a sliver be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>

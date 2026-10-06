@@ -271,7 +271,8 @@
   "contIndent": 72,
   "features": 73,
   "punct": 74,
-  "kind": 75
+  "kind": 75,
+  "parSingleLine": 76
  },
  "attrs": {
   "para.label": 9,
@@ -473,6 +474,7 @@
   "styled.contIndent": 13,
   "styled.features": 13,
   "styled.punct": 13,
+  "styled.parSingleLine": 14,
   "styled.label": 9,
   "styled.role": 9,
   "styled.slot": 9,

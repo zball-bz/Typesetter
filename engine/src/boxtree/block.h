@@ -51,7 +51,8 @@ struct BlockTraits {
   // integer division) or a length (gapSu); 0/0 and 0 inherit the parent's
   u8 gapNum = 0, gapDen = 0;
   Su gapSu = 0;
-  enum class Align : u8 { Justify, Ragged, Center, End } align = Align::Justify;
+  enum class Align : u8 { Justify, Ragged, Center, End } align = Align::Justify;  // its LineEnds preset (P3-09)
+  bool singleCenter = false;  // par.singleLine center: a one-line paragraph is centred (D-Y05)
   bool hyphenate = true;
   bool keepWithNext = false;  // paged: never the last block on a sheet
   // a code block's grid (plan P3-02: codeblock.* rows)
@@ -88,6 +89,8 @@ struct LayoutBlock {
   StrRef marker = 0;
   StyleId markerStyle = 0;
   Span span;
+  // (plan P3-09) a float leaf: its caption rows' own block properties
+  BlockTraits rowTr;
   // (plan P3-07) a leaf: the separator after its last line in content text
   // — Para where the semantic page sets it apart, Newline in a tight list
   // item and at the top's end (a new block is a new paragraph anyway)

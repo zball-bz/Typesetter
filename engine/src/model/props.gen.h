@@ -231,6 +231,7 @@ struct NodeProps {
   Len parIndent = {};  // par.indent (inherits)
   u8 parAlign = 0;  // par.align (inherits)
   u8 parHyphenate = 0;  // par.hyphenate (inherits)
+  u8 parSingleLine = 0;  // par.singleLine (inherits)
   Gap blockGap = {};  // block.gap
   Len blockIndent = {};  // block.indent
   bool keepWithNext = false;  // block.keepWithNext
@@ -242,6 +243,7 @@ struct NodeProps {
     return parIndent == o.parIndent &&
            parAlign == o.parAlign &&
            parHyphenate == o.parHyphenate &&
+           parSingleLine == o.parSingleLine &&
            blockGap == o.blockGap &&
            blockIndent == o.blockIndent &&
            keepWithNext == o.keepWithNext &&
@@ -258,6 +260,8 @@ constexpr u8 PARALIGN_END = 4;
 constexpr u8 PARHYPHENATE_AUTO = 1;
 constexpr u8 PARHYPHENATE_TRUE = 2;
 constexpr u8 PARHYPHENATE_FALSE = 3;
+constexpr u8 PARSINGLELINE_ALIGN = 1;
+constexpr u8 PARSINGLELINE_CENTER = 2;
 struct NodePropsHash {
   size_t operator()(const NodeProps& p) const {
     u64 h = 1469598103934665603ull;
@@ -271,6 +275,7 @@ struct NodePropsHash {
     len(p.parIndent);
     mix((u64)p.parAlign);
     mix((u64)p.parHyphenate);
+    mix((u64)p.parSingleLine);
     mix(p.blockGap.num);
     mix(p.blockGap.den);
     len(p.blockGap.len);
@@ -297,6 +302,7 @@ inline NodeProps inheritProps(const NodeProps& parent) {
   p.parIndent = parent.parIndent;
   p.parAlign = parent.parAlign;
   p.parHyphenate = parent.parHyphenate;
+  p.parSingleLine = parent.parSingleLine;
   p.listMarker = parent.listMarker;
   p.snapKerning = parent.snapKerning;
   p.sidecarFrac = parent.sidecarFrac;
@@ -319,6 +325,11 @@ inline void applyNodeArg(NodeProps& p, const ArgVal& a, Intern intern, View view
     if (v == "auto") p.parHyphenate = 1;
     if (v == "true") p.parHyphenate = 2;
     if (v == "false") p.parHyphenate = 3;
+  }
+  if (a.key == ArgK::parSingleLine && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "align") p.parSingleLine = 1;
+    if (v == "center") p.parSingleLine = 2;
   }
   if (a.key == ArgK::blockGap && a.tag == ArgTag::Str) p.blockGap = parseGap(view(a.ref));
   if (a.key == ArgK::blockIndent && a.tag == ArgTag::Str) p.blockIndent = parseLen(view(a.ref));
@@ -353,6 +364,8 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
     {"par.align", ArgK::parAlign},
     {"parHyphenate", ArgK::parHyphenate},
     {"par.hyphenate", ArgK::parHyphenate},
+    {"parSingleLine", ArgK::parSingleLine},
+    {"par.singleLine", ArgK::parSingleLine},
     {"blockGap", ArgK::blockGap},
     {"block.gap", ArgK::blockGap},
     {"blockIndent", ArgK::blockIndent},
@@ -374,7 +387,7 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
 };
 // whether an attribute patches a block property
 inline bool isNodeArg(ArgK k) {
-  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent;
+  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::parSingleLine || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent;
 }
 // (plan P3-02; design T4: settable element arguments alias property rows)
 // whether a kind's attribute is its own style (the kind row's `prop` attrs)

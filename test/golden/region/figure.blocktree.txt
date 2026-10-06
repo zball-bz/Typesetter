@@ -4,7 +4,7 @@ top pid=0 leaves=1
 top pid=1 leaves=1
   stack root gap=1/1 @[17,112)
     stack figure anchor="fig1" @[17,112)
-      paragraph caption unit=0 centered nohyphen carry="fig1" @[41,103)
+      paragraph caption unit=0 single-center carry="fig1" @[41,103)
 top pid=2 leaves=3
   stack root gap=1/1 @[114,197)
     stack group @[114,197)

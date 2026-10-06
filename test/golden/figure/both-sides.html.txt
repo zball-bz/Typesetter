@@ -6,13 +6,13 @@
 </div>
 <div class="tsr-para" data-pid="1" data-s0="96" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-l" data-s="0" data-e="116" src="photos/l.png" alt="left" style="top:0px;left:0px;width:60px;height:60px">
-<div class="tsr-line" data-s="102" data-e="107" data-join="none" data-ragged="1" data-track="caption" style="top:60px;left:0px;width:60px"><span class="tsr-r tsr-b tsr-cjk" data-s="102">图</span><span class="tsr-r tsr-b" data-s="102"> 1</span><span class="tsr-r tsr-b tsr-cjk tsr-sqR" data-s="102">：</span></div>
-<div class="tsr-line" data-s="102" data-e="107" data-ragged="1" data-track="caption" style="top:84px;left:0px;width:60px"><span class="tsr-r" data-s="102">Left.</span></div>
+<div class="tsr-line" data-s="102" data-e="107" data-join="none" data-track="caption" style="top:60px;left:0px;width:60px;word-spacing:24px"><span class="tsr-r tsr-b tsr-cjk" data-s="102">图</span><span class="tsr-r tsr-b" data-s="102"> 1</span><span class="tsr-r tsr-b tsr-cjk tsr-sqR" data-s="102">：</span></div>
+<div class="tsr-line" data-s="102" data-e="107" data-track="caption" style="top:84px;left:0px;width:60px"><span class="tsr-r" data-s="102">Left.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="214" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-r" data-s="0" data-e="119" src="photos/r.png" alt="right" style="top:0px;left:240px;width:60px;height:90px">
-<div class="tsr-line" data-s="104" data-e="110" data-join="none" data-ragged="1" data-track="caption" style="top:90px;left:240px;width:60px"><span class="tsr-r tsr-b tsr-cjk" data-s="104">图</span><span class="tsr-r tsr-b" data-s="104"> 2</span><span class="tsr-r tsr-b tsr-cjk tsr-sqR" data-s="104">：</span></div>
-<div class="tsr-line" data-s="104" data-e="110" data-ragged="1" data-track="caption" style="top:114px;left:240px;width:60px"><span class="tsr-r" data-s="104">Right.</span></div>
+<div class="tsr-line" data-s="104" data-e="110" data-join="none" data-track="caption" style="top:90px;left:240px;width:60px;word-spacing:24px"><span class="tsr-r tsr-b tsr-cjk" data-s="104">图</span><span class="tsr-r tsr-b" data-s="104"> 2</span><span class="tsr-r tsr-b tsr-cjk tsr-sqR" data-s="104">：</span></div>
+<div class="tsr-line" data-s="104" data-e="110" data-track="caption" style="top:114px;left:240px;width:60px"><span class="tsr-r" data-s="104">Right.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="335" style="position:relative;height:240px">
 <div class="tsr-line" data-s="0" data-e="245" data-join="none" style="top:0px;left:76px;width:148px;word-spacing:10px"><span class="tsr-r" data-s="0">The paragraph be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>

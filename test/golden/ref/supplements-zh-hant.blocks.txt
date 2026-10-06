@@ -71,7 +71,7 @@ top pid=1 units=1
   word "." w=513su pen=INF @[145,146)
 top pid=2 units=2
  unit img indent=0su anchor="fig-a" intrinsic=120x60px
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "圖" w=1025su glue=102su wt=0.6 pen=0 BOLD @[219,228)
   space w=257su stretch=1 BOLD @[219,228)
   word "1" w=513su pen=INF BOLD @[219,228)
@@ -79,7 +79,9 @@ top pid=2 units=2
   punct-sp w=512su BOLD @[219,228)
   word "A" w=513su pen=INF @[219,228)
   space w=257su stretch=1 @[219,228)
-  word "figure." w=3585su pen=INF @[219,228)
+  word "fig" w=1537su pen=INF @[219,228)
+  hyphen bw=513su pen=0.70 @[219,228)
+  word "ure." w=2049su pen=INF @[219,228)
 top pid=3 units=1
  unit table indent=0su anchor="tab-a" cols=2 cells=2
   cell 0

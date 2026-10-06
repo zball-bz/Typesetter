@@ -43,7 +43,7 @@ top pid=1 units=2
   word "pha" w=1537su pen=INF @[139,144)
   cell 3
   word "2" w=513su pen=INF @[147,148)
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "表" w=1025su glue=102su wt=0.6 pen=0 BOLD @[157,209)
   space w=257su stretch=1 BOLD @[157,209)
   word "1" w=513su pen=INF BOLD @[157,209)
@@ -51,7 +51,9 @@ top pid=1 units=2
   punct-sp w=512su BOLD @[157,209)
   word "A" w=513su pen=INF @[157,209)
   space w=257su stretch=1 @[157,209)
-  word "figure" w=3073su pen=INF @[157,209)
+  word "fig" w=1537su pen=INF @[157,209)
+  hyphen bw=513su pen=0.70 @[157,209)
+  word "ure" w=1537su pen=INF @[157,209)
   space w=257su stretch=1 @[157,209)
   word "whose" w=2561su pen=INF @[157,209)
   space w=257su stretch=1 @[157,209)
@@ -61,15 +63,21 @@ top pid=1 units=2
   space w=257su stretch=1 @[157,209)
   word "one" w=1537su pen=INF @[157,209)
   space w=257su stretch=1 @[157,209)
-  word "table" w=2561su pen=INF @[157,209)
+  word "ta" w=1025su pen=INF @[157,209)
+  hyphen bw=513su pen=0.70 @[157,209)
+  word "ble" w=1537su pen=INF @[157,209)
   space w=257su stretch=1 @[157,209)
-  word "numbers" w=3585su pen=INF @[157,209)
+  word "num" w=1537su pen=INF @[157,209)
+  hyphen bw=513su pen=0.70 @[157,209)
+  word "bers" w=2049su pen=INF @[157,209)
   space w=257su stretch=1 @[157,209)
   word "as" w=1025su pen=INF @[157,209)
   space w=257su stretch=1 @[157,209)
   word "a" w=513su pen=INF @[157,209)
   space w=257su stretch=1 @[157,209)
-  word "table." w=3073su pen=INF @[157,209)
+  word "ta" w=1025su pen=INF @[157,209)
+  hyphen bw=513su pen=0.70 @[157,209)
+  word "ble." w=2049su pen=INF @[157,209)
 top pid=2 units=2
  unit table indent=0su anchor="fig-kept" cols=2 cells=4
   cell 0
@@ -80,7 +88,7 @@ top pid=2 units=2
   word "Beta" w=2049su pen=INF @[292,296)
   cell 3
   word "3" w=513su pen=INF @[299,300)
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[309,354)
   space w=257su stretch=1 BOLD @[309,354)
   word "1" w=513su pen=INF BOLD @[309,354)
@@ -92,20 +100,26 @@ top pid=2 units=2
   space w=257su stretch=1 @[309,354)
   word "says" w=2049su pen=INF @[309,354)
   space w=257su stretch=1 @[309,354)
-  word "figure:" w=3585su pen=INF @[309,354)
+  word "fig" w=1537su pen=INF @[309,354)
+  hyphen bw=513su pen=0.70 @[309,354)
+  word "ure:" w=2049su pen=INF @[309,354)
   space w=257su stretch=1 @[309,354)
   word "it" w=1025su pen=INF @[309,354)
   space w=257su stretch=1 @[309,354)
-  word "numbers" w=3585su pen=INF @[309,354)
+  word "num" w=1537su pen=INF @[309,354)
+  hyphen bw=513su pen=0.70 @[309,354)
+  word "bers" w=2049su pen=INF @[309,354)
   space w=257su stretch=1 @[309,354)
   word "as" w=1025su pen=INF @[309,354)
   space w=257su stretch=1 @[309,354)
   word "a" w=513su pen=INF @[309,354)
   space w=257su stretch=1 @[309,354)
-  word "figure." w=3585su pen=INF @[309,354)
+  word "fig" w=1537su pen=INF @[309,354)
+  hyphen bw=513su pen=0.70 @[309,354)
+  word "ure." w=2049su pen=INF @[309,354)
 top pid=3 units=5
  unit img indent=0su anchor="fig-a" intrinsic=100x50px
- unit text indent=0su centered
+ unit text indent=0su single-center
   word "2(a)" w=2049su pen=INF BOLD @[447,461)
   space w=257su stretch=1 BOLD @[447,461)
   word "The" w=1537su pen=INF @[447,461)
@@ -114,7 +128,7 @@ top pid=3 units=5
   space w=257su stretch=1 @[447,461)
   word "view." w=2561su pen=INF @[447,461)
  unit img indent=0su anchor="fig-b" intrinsic=100x50px
- unit text indent=0su centered
+ unit text indent=0su single-center
   word "2(b)" w=2049su pen=INF BOLD @[525,540)
   space w=257su stretch=1 BOLD @[525,540)
   word "The" w=1537su pen=INF @[525,540)
@@ -122,7 +136,7 @@ top pid=3 units=5
   word "right" w=2561su pen=INF @[525,540)
   space w=257su stretch=1 @[525,540)
   word "view." w=2561su pen=INF @[525,540)
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[550,573)
   space w=257su stretch=1 BOLD @[550,573)
   word "2" w=513su pen=INF BOLD @[550,573)

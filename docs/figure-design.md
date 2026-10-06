@@ -217,7 +217,9 @@ the prefix model above:
   covers the blog cases and keeps one source of truth.
 - Captions keep the body size (no 0.92 shrink — per-leaf style composition
   wasn't worth it); they are ragged + centred + unhyphenated, and skip 首行
-  缩进.
+  缩进. (As built in P3-09, D-Y05: justified and hyphenated, one line
+  centred — `par.singleLine: center` — for block and float captions alike;
+  float caption rows read their caption paragraphs' own properties.)
 - The KP breaker needed **zero changes** for parshape: the DP always carried
   the line index and called `widths.at(e.line)` — only the `LineWidths`
   struct grew the prefix form.

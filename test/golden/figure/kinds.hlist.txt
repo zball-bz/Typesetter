@@ -48,7 +48,7 @@ top pid=1 units=2
   cell 3
    box Other "2" w=513su r0 @[147,148)
    run r0 plain
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Ideo "表" w=1025su wt=0.6 cap=102su r0 @[157,209)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[157,209)
@@ -57,7 +57,9 @@ top pid=1 units=2
   glue blank w=512su x=0 cap=0su r2 @[157,209)
   box Other "A" w=513su r3 @[157,209)
   glue word w=257su x=1 cap=257su kern="A f" src r3 @[157,209)
-  box Other "figure" w=3073su r3 @[157,209)
+  box Other "fig" w=1537su r3 @[157,209)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[157,209)
+  box Other "ure" w=1537su r3 @[157,209)
   glue word w=257su x=1 cap=257su kern="e w" src r3 @[157,209)
   box Other "whose" w=2561su r3 @[157,209)
   glue word w=257su x=1 cap=257su kern="e b" src r3 @[157,209)
@@ -67,15 +69,21 @@ top pid=1 units=2
   glue word w=257su x=1 cap=257su kern="s o" src r3 @[157,209)
   box Other "one" w=1537su r3 @[157,209)
   glue word w=257su x=1 cap=257su kern="e t" src r3 @[157,209)
-  box Other "table" w=2561su r3 @[157,209)
+  box Other "ta" w=1025su r3 @[157,209)
+  disc pen=0.7 w=0su pre="-" 513su kern="ab" r3 @[157,209)
+  box Other "ble" w=1537su r3 @[157,209)
   glue word w=257su x=1 cap=257su kern="e n" src r3 @[157,209)
-  box Other "numbers" w=3585su r3 @[157,209)
+  box Other "num" w=1537su r3 @[157,209)
+  disc pen=0.7 w=0su pre="-" 513su kern="mb" r3 @[157,209)
+  box Other "bers" w=2049su r3 @[157,209)
   glue word w=257su x=1 cap=257su kern="s a" src r3 @[157,209)
   box Other "as" w=1025su r3 @[157,209)
   glue word w=257su x=1 cap=257su kern="s a" src r3 @[157,209)
   box Other "a" w=513su r3 @[157,209)
   glue word w=257su x=1 cap=257su kern="a t" src r3 @[157,209)
-  box Other "table." w=3073su r3 @[157,209)
+  box Other "ta" w=1025su r3 @[157,209)
+  disc pen=0.7 w=0su pre="-" 513su kern="ab" r3 @[157,209)
+  box Other "ble." w=2049su r3 @[157,209)
   run r0 letter-spaced BOLD CJK
   run r1 plain BOLD
   run r2 blank-bearing BOLD CJK
@@ -94,7 +102,7 @@ top pid=2 units=2
   cell 3
    box Other "3" w=513su r0 @[299,300)
    run r0 plain
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[309,354)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[309,354)
@@ -107,24 +115,30 @@ top pid=2 units=2
   glue word w=257su x=1 cap=257su kern="d s" src r3 @[309,354)
   box Other "says" w=2049su r3 @[309,354)
   glue word w=257su x=1 cap=257su kern="s f" src r3 @[309,354)
-  box Other "figure:" w=3585su r3 @[309,354)
+  box Other "fig" w=1537su r3 @[309,354)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[309,354)
+  box Other "ure:" w=2049su r3 @[309,354)
   glue word w=257su x=1 cap=257su kern=": i" src r3 @[309,354)
   box Other "it" w=1025su r3 @[309,354)
   glue word w=257su x=1 cap=257su kern="t n" src r3 @[309,354)
-  box Other "numbers" w=3585su r3 @[309,354)
+  box Other "num" w=1537su r3 @[309,354)
+  disc pen=0.7 w=0su pre="-" 513su kern="mb" r3 @[309,354)
+  box Other "bers" w=2049su r3 @[309,354)
   glue word w=257su x=1 cap=257su kern="s a" src r3 @[309,354)
   box Other "as" w=1025su r3 @[309,354)
   glue word w=257su x=1 cap=257su kern="s a" src r3 @[309,354)
   box Other "a" w=513su r3 @[309,354)
   glue word w=257su x=1 cap=257su kern="a f" src r3 @[309,354)
-  box Other "figure." w=3585su r3 @[309,354)
+  box Other "fig" w=1537su r3 @[309,354)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[309,354)
+  box Other "ure." w=2049su r3 @[309,354)
   run r0 letter-spaced BOLD CJK
   run r1 plain BOLD
   run r2 blank-bearing BOLD CJK
   run r3 plain
 top pid=3 units=5
  unit img indent=0su anchor="fig-a" intrinsic=100x50px
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Other "2(a)" w=2049su r0 @[447,461)
   glue word w=257su x=1 cap=257su src r0 @[447,461)
   box Other "The" w=1537su r1 @[447,461)
@@ -135,7 +149,7 @@ top pid=3 units=5
   run r0 plain BOLD
   run r1 plain
  unit img indent=0su anchor="fig-b" intrinsic=100x50px
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Other "2(b)" w=2049su r0 @[525,540)
   glue word w=257su x=1 cap=257su src r0 @[525,540)
   box Other "The" w=1537su r1 @[525,540)
@@ -145,7 +159,7 @@ top pid=3 units=5
   box Other "view." w=2561su r1 @[525,540)
   run r0 plain BOLD
   run r1 plain
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[550,573)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[550,573)

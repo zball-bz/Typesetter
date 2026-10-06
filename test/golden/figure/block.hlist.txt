@@ -55,7 +55,7 @@ top pid=0 units=1
   run r5 blank-bearing CJK
 top pid=1 units=2
  unit img indent=0su anchor="fig-pipe" intrinsic=300x150px scale=0.5
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[175,228)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[175,228)
@@ -108,7 +108,7 @@ top pid=1 units=2
   run r7 blank-bearing CJK
 top pid=2 units=2
  unit img indent=0su anchor="fig-wide" intrinsic=1200x300px
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[323,374)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[323,374)

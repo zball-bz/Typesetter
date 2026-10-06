@@ -27,7 +27,7 @@ top pid=0 units=1
   punct-sp w=512su @[0,66)
 top pid=1 units=2
  unit img indent=0su anchor="fig-pipe" intrinsic=300x150px scale=0.5
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[175,228)
   space w=257su stretch=1 BOLD @[175,228)
   word "1" w=513su pen=INF BOLD @[175,228)
@@ -54,7 +54,7 @@ top pid=1 units=2
   punct-sp w=512su @[213,228)
 top pid=2 units=2
  unit img indent=0su anchor="fig-wide" intrinsic=1200x300px
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[323,374)
   space w=257su stretch=1 BOLD @[323,374)
   word "2" w=513su pen=INF BOLD @[323,374)

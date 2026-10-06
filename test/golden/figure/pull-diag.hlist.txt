@@ -72,7 +72,7 @@ top pid=0 units=1
   run r7 blank-bearing CJK
 top pid=1 units=2
  unit img indent=0su anchor="fig-light" intrinsic=512x384px
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[181,239)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[181,239)
@@ -107,7 +107,9 @@ top pid=1 units=2
   glue word w=257su x=1 cap=257su src r6 @[181,222)
   box Other "NEED" w=2049su r6 @[181,222)
   box Other "_" w=513su r6 @[222,223)
-  box Other "IMAGES" w=3073su r6 @[223,239)
+  box Other "IM" w=1025su r6 @[223,239)
+  disc pen=0.7 w=0su pre="-" 513su kern="MA" r6 @[223,239)
+  box Other "AGES" w=2049su r6 @[223,239)
   glue word w=257su x=1 cap=257su src r6 @[223,239)
   box Ideo "拉" w=1025su wt=0.6 cap=102su r7 @[223,239)
   glue inter w=0su x=0.6 cap=102su r7 @[223,239)
@@ -127,7 +129,7 @@ top pid=1 units=2
   run r8 blank-bearing CJK
 top pid=2 units=2
  unit img indent=0su placeholder
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[308,359)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[308,359)

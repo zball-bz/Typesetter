@@ -166,6 +166,12 @@ struct Writer {
                                                               : "justify");
           break;
         case ArgK::parHyphenate: decl("hyphens", np.parHyphenate == PARHYPHENATE_FALSE ? "manual" : "auto"); break;
+        case ArgK::parSingleLine:  // (plan P3-09) a shrink-to-fit box, centred: one line centres, more fill the measure
+          if (np.parSingleLine == PARSINGLELINE_CENTER) {
+            decl("display", "table");
+            decl("margin-inline", "auto");
+          }
+          break;
         case ArgK::blockIndent: decl("padding-inline-start", len(np.blockIndent)); break;
         case ArgK::keepWithNext: decl("break-after", np.keepWithNext ? "avoid" : "auto"); break;
         case ArgK::listMarker:

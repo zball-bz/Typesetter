@@ -114,11 +114,11 @@ struct LinePolicy {
   // paragraph's sepAfter) or its track's (a cell's tab or row); inside the
   // stream every line takes its break's — whatever the alignment
   Sep endSep = Sep::Newline;
-  // Justify: the measure is filled; Ragged: it is not (tight lines still
-  // shrink); Center: ragged, the slack split both sides; Cell: ragged, set
-  // left, centre or right within the cell's content width
-  enum class Align : u8 { Justify, Ragged, Center, Cell } align = Align::Justify;
-  u8 cellAlign = 'l';
+  // (plan P3-09; design T6 LineEnds) the glue at the lines' ends — the
+  // breaker optimized with it, materializeLines realizes it: one preset
+  // per alignment, a table cell's halign included
+  LineEnds ends;
+  bool singleCenter = false;  // par.singleLine center: a one-line stream is centred (D-Y05)
   StrRef marker = 0;    // on the first line
   StyleId markerStyle = 0;
   StrRef anchor = 0;    // the stream's anchor (a cell's, a caption's), on its first line
@@ -157,9 +157,7 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     const LineFill f = fillLine(s.h, r, metrics);
     Fragment line;
     line.unitIdx = s.unitIdx;
-    // not justified: the lines say so (paint: data-ragged; the audit's right
-    // edge skips them)
-    line.ragged = pol.align != LinePolicy::Align::Justify;
+
     line.cellIdx = s.cellIdx;
     line.blockBegin = r.lo;
     line.blockEnd = r.hi;
@@ -182,24 +180,34 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     // real line boundary for copy
     const bool last = bp == s.nBlocks || endsForced(s.h, r.ihi, s.blockStart[bp]);
     line.overfull = std::binary_search(br.overfullLines.begin(), br.overfullLines.end(), (u32)li);
-    // the spacing: justified lines fill the measure, every other line only
-    // shrinks when tight (the breaker counted on it) — one rule for every
-    // stream
-    const bool rigid = last || pol.align != LinePolicy::Align::Justify;
+    // (plan P3-09) its end glue: the last-line pair after a Forced break; a
+    // stream of one line under par.singleLine center is centred
+    static constexpr EndGlue kFil{0, 0, 1};
+    const bool single = pol.singleCenter && br.breakpoints.size() == 1;
+    const EndGlue& ea = single ? kFil : last ? pol.ends.lastStart : pol.ends.start;
+    const EndGlue& eb = single ? kFil : last ? pol.ends.lastEnd : pol.ends.end;
+    const bool endFil = ea.order > 0 || eb.order > 0;
+    // not justified: the lines say so (paint: data-ragged; the audit's right
+    // edge skips them)
+    line.ragged = pol.ends.rigidInterior || single;
     // (plan P3-08) the slot width is the one definition of the measure:
     // justification and centring slack come from it
     const double slackPx = suToPx(slot.width) - f.naturalPx;
-    // a line without stretchable glue (all URL pieces / one unbreakable
-    // token) cannot be justified — TeX's underfull box; it sets ragged
-    // rather than pretending (real-world-report.md)
-    // fil glue (plan P2-16: a fill) takes a slack line's whole slack, on any
-    // line; the finite glue keeps its width
+    // the slack goes to the highest order of glue the line holds: a fill
+    // (plan P2-16) first, then the ends' fil (the last line's \parfillskip,
+    // a centred last line), then the interior glue — unless the preset keeps
+    // it rigid — or the ends' finite stretch; a tight line shrinks its
+    // interior glue whatever the preset (the breaker counted on it)
     const bool fil = f.fills > 0 && slackPx > 0;
     if (fil) line.fillPx = slackPx / f.fills;
-    if (f.totalWeight <= 0 && !rigid && slackPx != 0 && !fil) line.noGlue = true;
+    const bool stretchesInterior = !fil && !endFil && !pol.ends.rigidInterior;
+    // a line without stretchable glue (all URL pieces / one unbreakable
+    // token) cannot be justified — TeX's underfull box; it says ragged
+    // rather than pretending (real-world-report.md)
+    if (f.totalWeight <= 0 && stretchesInterior && slackPx != 0) line.noGlue = true;
     if (f.totalWeight > 0 && !fil) {
       double d = slackPx / f.totalWeight;  // per unit weight (v2 §8)
-      if (rigid && slackPx > 0) d = 0;
+      if (!stretchesInterior && slackPx > 0) d = 0;
       // an Overfull line (a run wider than the measure, plan P0-12) is set
       // at the shrink limit and overflows; it never spreads unbounded
       // negative spacing over its glue
@@ -214,21 +222,17 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
         line.cjkDeltaSu = (i32)std::llround(line.cjkDeltaPx * 64.0);
       }
     }
-    if (pol.align == LinePolicy::Align::Center && slackPx > 0) {
-      // caption centring: slack splits both sides; the right edge stays
-      // inside the measure (width shrinks by the shift)
-      Su cs = suRoundPx(slackPx / 2);
-      line.left += cs;
-      line.width -= cs;
-    } else if (pol.align == LinePolicy::Align::Cell) {
-      Su slack = slot.width - suCeilPx(f.naturalPx);
+    // the start glue's share of the slack, in su of the natural width (the
+    // right edge stays at the slot's end: the width shrinks by the shift)
+    if (!fil && !stretchesInterior && slackPx > 0) {
+      const Su slack = slot.width - suCeilPx(f.naturalPx);
       Su shift = 0;
       if (slack > 0) {
-        if (pol.cellAlign == 'c') shift = slack / 2;
-        else if (pol.cellAlign == 'r') shift = slack;
+        if (endFil) shift = ea.order && eb.order ? slack / 2 : ea.order ? slack : 0;
+        else if (ea.stretch + eb.stretch > 0) shift = (Su)((i64)slack * ea.stretch / (ea.stretch + eb.stretch));
       }
       line.left += shift;
-      line.width -= shift;  // the right edge stays at the content edge (audit: no overflow)
+      line.width -= shift;
     }
     // its separator (plan P3-07): the break's inside the stream, a forced
     // break's newline, the stream's own at its end
@@ -357,7 +361,7 @@ class DocLayout {
   DocLayout(const MetricStore& m, Interner& s, const LayoutSettings& c, DiagSink& d, LayoutResult& r, BreakMemo* memo)
       : metrics(m), strs(s), cfg(c), diags(d), lr(r), memo_(memo), measure(suFloorPx(c.widthPx)),
         baseLeading(suRoundPx(c.lineHeight * c.baseSizePx)), paraGap(suRoundPx(c.paraSpacingEm * c.baseSizePx)),
-        minWrap(suRoundPx(c.minWrapWidthEm * c.baseSizePx)), excl(suRoundPx(c.baseSizePx)) {
+        minWrap(suRoundPx(c.minWrapWidthEm * c.baseSizePx)), em(suRoundPx(c.baseSizePx)), excl(suRoundPx(c.baseSizePx)) {
     bparams.cost = c.cost;
   }
 
@@ -400,6 +404,18 @@ class DocLayout {
   BreakMemo* memo_;  // the Session's KP memo (plan P1-21), or none
   const Su measure, baseLeading, paraGap;
   const Su minWrap;  // layout.minWrapWidth: narrower beside floats, text clears them
+  const Su em;       // the ragged presets' end stretch unit (D-Y01)
+  // a block's line-end preset (plan P3-09): its par.align
+  LineEnds endsOf(const BlockTraits& tr) const {
+    using A = BlockTraits::Align;
+    using P = LineEnds::Preset;
+    return LineEnds::preset(tr.align == A::Ragged   ? P::Left
+                            : tr.align == A::Center ? P::Center
+                            : tr.align == A::End    ? P::Right
+                                                    : P::Justify,
+                            em);
+  }
+  LineEnds leftEnds() const { return LineEnds::preset(LineEnds::Preset::Left, em); }
   ExclusionMap excl;
   BreakParams bparams;
   i64 floatBottomAbs = 0;  // doc-height watermark for a trailing float (F2)
@@ -419,8 +435,12 @@ class DocLayout {
   // keyed by exactly the DP inputs, shared across documents — the editing
   // loop's fast path). A run wider than the line is set Overfull on a line
   // of its own (the final-pass rescue) and reported once per stream.
-  BreakResult breakStream(const std::vector<BreakBlock>& blocks, const HList& h, const ParShape& shape) {
-    BreakResult r = breakLinesCached(blocks, shape, bparams, memo_);
+  // (plan P3-09) a stream breaks with the line-end glue it will be set with
+  BreakResult breakStream(const std::vector<BreakBlock>& blocks, const HList& h, const ParShape& shape,
+                          const LineEnds& ends) {
+    BreakParams params = bparams;
+    params.ends = ends;
+    BreakResult r = breakLinesCached(blocks, shape, params, memo_);
     if (!r.overfullLines.empty()) {
       Span sp{};
       for (const ColdRec& c : h.cold)
@@ -518,14 +538,10 @@ class DocLayout {
         l.top = py;
       }
     }
-    lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, shape)});
-    const BlockTraits::Align a = b.tr.align;
     LinePolicy pol;
-    pol.align = a == BlockTraits::Align::Center   ? LinePolicy::Align::Center
-                : a == BlockTraits::Align::Ragged ? LinePolicy::Align::Ragged
-                : a == BlockTraits::Align::End    ? LinePolicy::Align::Cell
-                                                  : LinePolicy::Align::Justify;
-    if (a == BlockTraits::Align::End) pol.cellAlign = 'r';  // set at the end (plan P3-01: par.align end)
+    pol.ends = endsOf(b.tr);
+    pol.singleCenter = b.tr.singleCenter;
+    lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, shape, pol.ends)});
     pol.endSep = b.sepAfter;
     pol.marker = b.marker;
     pol.markerStyle = b.markerStyle;
@@ -609,8 +625,11 @@ class DocLayout {
     Su imgW = 0, imgH = 0;
     resolveImageSize(std::get<ImageData>(u.data).size, cfg.widthPx - suToPx(b.x), imgW, imgH);
     i64 captionH = 0;
+    // its caption rows: aligned as caption paragraphs say (D-Y05: as a
+    // block figure's)
+    const LineEnds capEnds = endsOf(b.rowTr);
     for (const Flow& c : u.cells) {  // the caption breaks to the float width
-      cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(imgW)));
+      cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(imgW), capEnds));
       lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
       captionH += (i64)cellBreaks.back().breakpoints.size() * baseLeading;
     }
@@ -637,7 +656,8 @@ class DocLayout {
       // on copy (§9.3), each caption paragraph ends a line, the last the unit
       const Flow& cell = u.cells[ci];
       LinePolicy pol;
-      pol.align = LinePolicy::Align::Ragged;
+      pol.ends = capEnds;
+      pol.singleCenter = b.rowTr.singleCenter;
       pol.endSep = ci + 1 < (u32)u.cells.size() ? Sep::Newline : b.sepAfter;
       pol.anchor = cell.anchor;
       const ParShape shape(imgW);
@@ -675,7 +695,7 @@ class DocLayout {
       lineWidthCode = lineWidth - sidebarW - gapSu;
       if (lineWidthCode < kRailMinLineSu) lineWidthCode = kRailMinLineSu;
       for (const TableCell& c : u.cells) {  // sidecar rows break to the sidebar
-        cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(sidebarW)));
+        cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(sidebarW), leftEnds()));
         lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
       }
     }
@@ -880,7 +900,7 @@ class DocLayout {
       if (hasSidecar && li < u.cells.size()) {
         const TableCell& cell = u.cells[li];
         LinePolicy pol;  // a row's note: one stream, ending a line (D-R03)
-        pol.align = LinePolicy::Align::Ragged;
+        pol.ends = leftEnds();
         pol.anchor = cell.anchor;
         const ParShape shape(sidebarW);
         const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[li], shape,
@@ -909,8 +929,17 @@ class DocLayout {
     const Su padY = suRoundPx(cfg.tableRowPadEm * cfg.baseSizePx);   // table.rowPad
     Su cellW = colW - 2 * padX;
     if (cellW < kRailMinLineSu) cellW = kRailMinLineSu;
-    for (const Flow& c : u.cells) {  // each cell breaks to its content width
-      cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(cellW)));
+    // each cell breaks to its content width, set as its column's halign
+    auto cellEnds = [&](u32 col) {
+      const u8 a = td.aligns[col];
+      return LineEnds::preset(a == 'c'   ? LineEnds::Preset::Center
+                              : a == 'r' ? LineEnds::Preset::Right
+                                         : LineEnds::Preset::Left,
+                              em);
+    };
+    for (size_t ci = 0; ci < u.cells.size(); ci++) {
+      const Flow& c = u.cells[ci];
+      cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(cellW), cellEnds((u32)(ci % td.cols))));
       lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
     }
     const size_t nRows = u.cells.size() / td.cols;
@@ -930,8 +959,7 @@ class DocLayout {
       for (u32 c = 0; c < td.cols; c++) {
         const Flow& cell = u.cells[r * td.cols + c];
         LinePolicy pol;
-        pol.align = LinePolicy::Align::Cell;
-        pol.cellAlign = td.aligns[c];
+        pol.ends = cellEnds(c);
         pol.anchor = cell.anchor;
         // (plan P3-07) a cell ends with a tab, a row with a row; the table
         // with its unit's separator

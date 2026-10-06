@@ -1161,7 +1161,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/unit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `break-layout-pages/nested-stream-copies` | adhoc | high | P1-17 | grep:plan P1-17 |
 | `break-layout-pages/table-closed` | adhoc | high | P3-10, P3-14 | |
-| `break-layout-pages/alignment-flags` | adhoc | medium | P3-09 | |
+| `break-layout-pages/alignment-flags` | adhoc | medium | P3-09 || grep:plan P3-09 |
 | `break-layout-pages/vertical-spacing-constants` | adhoc | medium | P1-18, P3-01 | grep:plan P3-01 |
 | `break-layout-pages/code-wrap-in-layout` | adhoc | medium | P3-11 | |
 | `break-layout-pages/code-sidecar-three-box` | adhoc | medium | P3-11 | |

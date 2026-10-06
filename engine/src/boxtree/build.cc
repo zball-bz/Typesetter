@@ -126,22 +126,27 @@ class Builder {
     if (tr == TraitsId::Root) {
       b.tr.gapNum = b.tr.gapDen = 1;
     } else if (n) {
-      const NodeProps& np = props.get(n->props);
-      b.tr.gapNum = np.blockGap.num;
-      b.tr.gapDen = np.blockGap.den;
-      if (np.blockGap.len.unit) b.tr.gapSu = lenSu(np.blockGap.len, n);
-      b.tr.align = np.parAlign == PARALIGN_START    ? Align::Ragged
-                   : np.parAlign == PARALIGN_CENTER ? Align::Center
-                   : np.parAlign == PARALIGN_END    ? Align::End
-                                                    : Align::Justify;
-      b.tr.hyphenate = np.parHyphenate != PARHYPHENATE_FALSE;
-      b.tr.keepWithNext = np.keepWithNext;
-      b.tr.snapKerning = np.snapKerning;
-      if (np.sidecarFrac > 0) b.tr.sidecarFrac = np.sidecarFrac;
-      b.tr.contIndent = (i32)np.contIndent;
+      traitsOf(n, b.tr);
     }
     t->blocks.push_back(b);
     return (u32)t->blocks.size() - 1;
+  }
+  // a node's block properties (plan P3-01) as the traits layout reads
+  void traitsOf(const ContentNode* n, BlockTraits& tr) const {
+    const NodeProps& np = props.get(n->props);
+    tr.gapNum = np.blockGap.num;
+    tr.gapDen = np.blockGap.den;
+    if (np.blockGap.len.unit) tr.gapSu = lenSu(np.blockGap.len, n);
+    tr.align = np.parAlign == PARALIGN_START    ? Align::Ragged
+               : np.parAlign == PARALIGN_CENTER ? Align::Center
+               : np.parAlign == PARALIGN_END    ? Align::End
+                                                : Align::Justify;
+    tr.singleCenter = np.parSingleLine == PARSINGLELINE_CENTER;
+    tr.hyphenate = np.parHyphenate != PARHYPHENATE_FALSE;
+    tr.keepWithNext = np.keepWithNext;
+    tr.snapKerning = np.snapKerning;
+    if (np.sidecarFrac > 0) tr.sidecarFrac = np.sidecarFrac;
+    tr.contIndent = (i32)np.contIndent;
   }
   // a container without leaves is dropped: it takes no gap
   void close(u32 i) {
@@ -284,8 +289,10 @@ class Builder {
             fs.node = img;
             for (const ContentNode* k : n->kids)
               if (k->kind == Kind::para) fs.rows.push_back(k);
-            leaf(LayouterId::Replaced, Painter::Image, TraitsId::Float, img, g, x, std::move(fs)).floatSide =
-                sideOf(img);
+            const ContentNode* row0 = fs.rows.empty() ? nullptr : fs.rows[0];
+            LayoutBlock& fb = leaf(LayouterId::Replaced, Painter::Image, TraitsId::Float, img, g, x, std::move(fs));
+            fb.floatSide = sideOf(img);
+            if (row0) traitsOf(row0, fb.rowTr);  // its caption rows' (plan P3-09, D-Y05)
             close(g);
             return;
           }
@@ -344,6 +351,7 @@ std::string dumpBlockTree(const std::vector<TopTree>& tops, const Interner& strs
       if (tr.gapDen) appendf(out, " gap=%u/%u", tr.gapNum, tr.gapDen);
       if (tr.align == BlockTraits::Align::Ragged) out += " ragged";
       if (tr.align == BlockTraits::Align::Center) out += " centered";
+      if (tr.singleCenter) out += " single-center";
       if (tr.align == BlockTraits::Align::End) out += " end";
       if (tr.gapSu) appendf(out, " gap=%dsu", tr.gapSu);
       if (!tr.hyphenate) out += " nohyphen";

@@ -32,7 +32,7 @@ top pid=0 units=1
   run r5 plain ref LINK link="#tsr-f2"
   run r6 plain
 top pid=1 units=1
- unit text indent=0su anchor="f1" centered
+ unit text indent=0su anchor="f1" single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[61,83)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[61,83)
@@ -43,7 +43,9 @@ top pid=1 units=1
   glue word w=257su x=1 cap=257su kern="A b" src r3 @[61,83)
   box Other "built-in" w=4097su r3 @[61,83)
   glue word w=257su x=1 cap=257su kern="n f" src r3 @[61,83)
-  box Other "figure" w=3073su r3 @[61,83)
+  box Other "fig" w=1537su r3 @[61,83)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[61,83)
+  box Other "ure" w=1537su r3 @[61,83)
   glue word w=257su x=1 cap=257su kern="e r" src r3 @[61,83)
   box Other "row." w=2049su r3 @[61,83)
   run r0 letter-spaced BOLD CJK
@@ -51,7 +53,7 @@ top pid=1 units=1
   run r2 blank-bearing BOLD CJK
   run r3 plain
 top pid=2 units=1
- unit text indent=0su anchor="f2" centered
+ unit text indent=0su anchor="f2" single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[116,136)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[116,136)
@@ -60,9 +62,13 @@ top pid=2 units=1
   glue blank w=512su x=0 cap=0su r2 @[116,136)
   box Other "Its" w=1537su r3 @[116,136)
   glue word w=257su x=1 cap=257su kern="s s" src r3 @[116,136)
-  box Other "second" w=3073su r3 @[116,136)
+  box Other "sec" w=1537su r3 @[116,136)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r3 @[116,136)
+  box Other "ond" w=1537su r3 @[116,136)
   glue word w=257su x=1 cap=257su kern="d i" src r3 @[116,136)
-  box Other "instance." w=4609su r3 @[116,136)
+  box Other "in" w=1025su r3 @[116,136)
+  disc pen=0.7 w=0su pre="-" 513su kern="ns" r3 @[116,136)
+  box Other "stance." w=3585su r3 @[116,136)
   run r0 letter-spaced BOLD CJK
   run r1 plain BOLD
   run r2 blank-bearing BOLD CJK

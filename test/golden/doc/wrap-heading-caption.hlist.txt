@@ -34,7 +34,7 @@ top pid=0 units=1
   run r0 plain BOLD x1.60
 top pid=1 units=2
  unit img indent=0su anchor="fig-wide" intrinsic=300x100px
- unit text indent=0su centered
+ unit text indent=0su single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[163,271)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[163,271)
@@ -43,7 +43,9 @@ top pid=1 units=2
   glue blank w=512su x=0 cap=0su r2 @[163,271)
   box Other "A" w=513su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="A c" src r3 @[163,271)
-  box Other "caption" w=3585su r3 @[163,271)
+  box Other "cap" w=1537su r3 @[163,271)
+  disc pen=0.7 w=0su pre="-" 513su kern="pt" r3 @[163,271)
+  box Other "tion" w=2049su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="n t" src r3 @[163,271)
   box Other "that" w=2049su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="t i" src r3 @[163,271)
@@ -61,7 +63,9 @@ top pid=1 units=2
   glue word w=257su x=1 cap=257su kern="o a" src r3 @[163,271)
   box Other "a" w=513su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="a s" src r3 @[163,271)
-  box Other "second" w=3073su r3 @[163,271)
+  box Other "sec" w=1537su r3 @[163,271)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r3 @[163,271)
+  box Other "ond" w=1537su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="d l" src r3 @[163,271)
   box Other "line" w=2049su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="e a" src r3 @[163,271)
@@ -69,9 +73,13 @@ top pid=1 units=2
   glue word w=257su x=1 cap=257su kern="t t" src r3 @[163,271)
   box Other "the" w=1537su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="e n" src r3 @[163,271)
-  box Other "narrow" w=3073su r3 @[163,271)
+  box Other "nar" w=1537su r3 @[163,271)
+  disc pen=0.7 w=0su pre="-" 513su kern="rr" r3 @[163,271)
+  box Other "row" w=1537su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="w m" src r3 @[163,271)
-  box Other "measure," w=4097su r3 @[163,271)
+  box Other "mea" w=1537su r3 @[163,271)
+  disc pen=0.7 w=0su pre="-" 513su kern="as" r3 @[163,271)
+  box Other "sure," w=2561su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern=", s" src r3 @[163,271)
   box Other "so" w=1025su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="o c" src r3 @[163,271)

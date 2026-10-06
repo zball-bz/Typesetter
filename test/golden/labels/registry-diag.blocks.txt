@@ -15,7 +15,7 @@ top pid=1 units=1
   hyphen bw=513su pen=0.70 @[43,65)
   word "bel." w=2049su pen=INF @[43,65)
 top pid=2 units=1
- unit text indent=0su anchor="fig-x" centered
+ unit text indent=0su anchor="fig-x" single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[100,113)
   space w=257su stretch=1 BOLD @[100,113)
   word "1" w=513su pen=INF BOLD @[100,113)
@@ -23,27 +23,37 @@ top pid=2 units=1
   punct-sp w=512su BOLD @[100,113)
   word "First" w=2561su pen=INF @[100,113)
   space w=257su stretch=1 @[100,113)
-  word "figure." w=3585su pen=INF @[100,113)
+  word "fig" w=1537su pen=INF @[100,113)
+  hyphen bw=513su pen=0.70 @[100,113)
+  word "ure." w=2049su pen=INF @[100,113)
 top pid=3 units=1
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[149,193)
   space w=257su stretch=1 BOLD @[149,193)
   word "2" w=513su pen=INF BOLD @[149,193)
   punct-close "：" w=512su BOLD @[149,193)
   punct-sp w=512su BOLD @[149,193)
-  word "Second" w=3073su pen=INF @[149,193)
+  word "Sec" w=1537su pen=INF @[149,193)
+  hyphen bw=513su pen=0.70 @[149,193)
+  word "ond" w=1537su pen=INF @[149,193)
   space w=257su stretch=1 @[149,193)
-  word "figure" w=3073su pen=INF @[149,193)
+  word "fig" w=1537su pen=INF @[149,193)
+  hyphen bw=513su pen=0.70 @[149,193)
+  word "ure" w=1537su pen=INF @[149,193)
   space w=257su stretch=1 @[149,193)
   word "reuses" w=3073su pen=INF @[149,193)
   space w=257su stretch=1 @[149,193)
   word "the" w=1537su pen=INF @[149,193)
   space w=257su stretch=1 @[149,193)
-  word "label:" w=3073su pen=INF @[149,193)
+  word "la" w=1025su pen=INF @[149,193)
+  hyphen bw=513su pen=0.70 @[149,193)
+  word "bel:" w=2049su pen=INF @[149,193)
   space w=257su stretch=1 @[149,193)
   word "it" w=1025su pen=INF @[149,193)
   space w=257su stretch=1 @[149,193)
-  word "loses" w=2561su pen=INF @[149,193)
+  word "los" w=1537su pen=INF @[149,193)
+  hyphen bw=513su pen=0.70 @[149,193)
+  word "es" w=1025su pen=INF @[149,193)
   space w=257su stretch=1 @[149,193)
   word "it." w=1537su pen=INF @[149,193)
 top pid=4 units=1
@@ -51,7 +61,7 @@ top pid=4 units=1
 top pid=5 units=1
  unit math indent=0su w=2457su asc=700su desc=19su
 top pid=6 units=1
- unit text indent=0su centered
+ unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[265,302)
   space w=257su stretch=1 BOLD @[265,302)
   word "3" w=513su pen=INF BOLD @[265,302)
@@ -59,15 +69,21 @@ top pid=6 units=1
   punct-sp w=512su BOLD @[265,302)
   word "A" w=513su pen=INF @[265,302)
   space w=257su stretch=1 @[265,302)
-  word "figure" w=3073su pen=INF @[265,302)
+  word "fig" w=1537su pen=INF @[265,302)
+  hyphen bw=513su pen=0.70 @[265,302)
+  word "ure" w=1537su pen=INF @[265,302)
   space w=257su stretch=1 @[265,302)
   word "with" w=2049su pen=INF @[265,302)
   space w=257su stretch=1 @[265,302)
   word "a" w=513su pen=INF @[265,302)
   space w=257su stretch=1 @[265,302)
-  word "reserved" w=4097su pen=INF @[265,302)
+  word "re" w=1025su pen=INF @[265,302)
+  hyphen bw=513su pen=0.70 @[265,302)
+  word "served" w=3073su pen=INF @[265,302)
   space w=257su stretch=1 @[265,302)
-  word "label" w=2561su pen=INF @[265,302)
+  word "la" w=1025su pen=INF @[265,302)
+  hyphen bw=513su pen=0.70 @[265,302)
+  word "bel" w=1537su pen=INF @[265,302)
   space w=257su stretch=1 @[265,302)
   word "shape." w=3073su pen=INF @[265,302)
 top pid=7 units=1

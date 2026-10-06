@@ -41,10 +41,40 @@ struct ParShape {
 // rescue. Pass 1 accepts only lines of cost <= tolerance; pass 2 adds
 // emergencyStretch to every line's stretch.
 constexpr double kNoTolerance = -1;
+// (plan P3-09; design T6 LineEnds, D-Y01) the glue at a line's ends, which
+// the breaker optimizes with and layout realizes: TeX's \leftskip /
+// \rightskip and, for a line ended by a Forced break (the paragraph end, a
+// hard line break), \parfillskip. order 1 is fil (it absorbs any slack);
+// rigidInterior: the interior glue keeps its shrink but stretches nothing
+// (ragged, centred and flush lines). One preset per alignment.
+struct EndGlue {
+  Su w = 0, stretch = 0;
+  u8 order = 0;
+};
+struct LineEnds {  // (default: justified — the last line fil)
+  EndGlue start, end;                  // a line ended by an optional break
+  EndGlue lastStart, lastEnd{0, 0, 1};  // a line ended by a Forced break
+  bool rigidInterior = false;
+  enum class Preset : u8 { Justify, Left, Center, Right };
+  // em: the ragged lines' finite end stretch unit (D-Y01: 2em at the free
+  // end of a flush line, 1em each side of a centred one)
+  static LineEnds preset(Preset p, Su em) {
+    LineEnds e;
+    const EndGlue fil{0, 0, 1};
+    switch (p) {
+      case Preset::Justify: e.lastEnd = fil; break;
+      case Preset::Left: e = {{}, {0, 2 * em, 0}, {}, fil, true}; break;
+      case Preset::Center: e = {{0, em, 0}, {0, em, 0}, fil, fil, true}; break;
+      case Preset::Right: e = {{0, 2 * em, 0}, {}, fil, {}, true}; break;
+    }
+    return e;
+  }
+};
 struct BreakParams {
   CostParams cost;
   double tolerance = kNoTolerance;
   Su emergencyStretch = 0;
+  LineEnds ends;  // the stream's (layout sets it per stream)
 };
 
 BreakResult breakItems(const std::vector<BItem>& items, u32 nBlocks, const ParShape& shape,

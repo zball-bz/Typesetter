@@ -96,22 +96,27 @@ struct Para {
   }
   // the line after break `from` (item index, -1 = paragraph start) up to the
   // break at item `to` (it.size() = the paragraph end); `extraStretch` is
-  // pass 2's emergency stretch
-  LineFit fit(i64 from, u32 to, i64 width, const CostParams& p, Su extraStretch) const {
+  // pass 2's emergency stretch; `ends` the line-end glue (plan P3-09)
+  LineFit fit(i64 from, u32 to, i64 width, const CostParams& p, Su extraStretch, const LineEnds& ends) const {
     const u32 n = (u32)it.size();
     u32 s = nextBox[(u32)(from + 1)];
     u32 e = to;
     i64 extra = 0;
     // the paragraph end and a forced break (a hard line break, plan P1-13:
-    // TeX's \hfil\break) end a ragged line: fil stretch
-    const bool fil = to == n || (it[to].k == ItemKind::Penalty && it[to].tag == PenTag::Forced);
+    // TeX's \hfil\break) end a line with the last-line glue (\parfillskip)
+    const bool last = to == n || (it[to].k == ItemKind::Penalty && it[to].tag == PenTag::Forced);
     if (to == n) {
       while (e > s && it[e - 1].k == ItemKind::Glue) e--;  // \unskip
     } else if (it[to].k == ItemKind::Disc) {
       extra = it[to].pre;
     }
     if (e < s) e = s;
-    return fitLine(w[e] - w[s] + extra, st[e] - st[s] + extraStretch, sh[e] - sh[s], fil || (!fl.empty() && fl[e] > fl[s]), width, p);
+    const EndGlue& a = last ? ends.lastStart : ends.start;
+    const EndGlue& b = last ? ends.lastEnd : ends.end;
+    const i64 interior = ends.rigidInterior ? 0 : st[e] - st[s];
+    const i64 endStretch = (a.order ? 0 : a.stretch) + (b.order ? 0 : b.stretch);
+    const bool fil = a.order > 0 || b.order > 0 || (!fl.empty() && fl[e] > fl[s]);
+    return fitLine(w[e] - w[s] + extra + a.w + b.w, interior + endStretch + extraStretch, sh[e] - sh[s], fil, width, p);
   }
 };
 
@@ -137,6 +142,7 @@ struct Search {
   const std::vector<i64>& bk;  // legal breaks; bk[0] = -1 (the start)
   const ParShape& shape;
   const CostParams& cp;
+  const LineEnds& ends;
   std::vector<Node> pool;
 
   // one pass: the end node of the best path, or ~0u when there is none
@@ -170,7 +176,7 @@ struct Search {
       next.clear();
       for (u32 a : active) {
         const Node& nd = pool[a];
-        const LineFit f = para.fit(bk[nd.bi], to, shape.at(nd.line).width, cp, extraStretch);
+        const LineFit f = para.fit(bk[nd.bi], to, shape.at(nd.line).width, cp, extraStretch, ends);
         if (f.overfull) {
           if (rescueFrom == ~0u ||
               better(nd.val, nd.line, a, pool[rescueFrom].val, pool[rescueFrom].line, rescueFrom))
@@ -236,7 +242,7 @@ BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, const ParShape
     if (legal) bk.push_back(k);
   }
 
-  Search search{it, para, bk, shape, params.cost, {}};
+  Search search{it, para, bk, shape, params.cost, params.ends, {}};
   u32 best = ~0u;
   const bool tol = params.tolerance >= 0;
   if (tol) {
@@ -305,6 +311,10 @@ Key128 breakKey(const std::vector<BItem>& items, u32 nBlocks, const ParShape& sh
   // the widths (the offsets break nothing)
   h.word(((u64)(u32)shape.rest.width << 32) | (u32)shape.lines.size());
   for (const LineSlot& l : shape.lines) h.word((u32)l.width);
+  const LineEnds& le = params.ends;
+  for (const EndGlue* g : {&le.start, &le.end, &le.lastStart, &le.lastEnd})
+    h.word(((u64)(u32)g->w << 32) ^ ((u64)(u32)g->stretch << 8) ^ g->order);
+  h.word(le.rigidInterior);
   h.word(params.cost.exponent);
   h.dbl(params.cost.shrinkThreshold);
   h.dbl(params.cost.shrinkCoeff);
@@ -362,6 +372,12 @@ BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, const ParSha
   const u32 nLines = (u32)shape.lines.size();
   put(&nLines, 4);
   for (const LineSlot& l : shape.lines) put(&l.width, sizeof l.width);
+  for (const EndGlue* g : {&params.ends.start, &params.ends.end, &params.ends.lastStart, &params.ends.lastEnd}) {
+    put(&g->w, sizeof g->w);
+    put(&g->stretch, sizeof g->stretch);
+    put(&g->order, 1);
+  }
+  put(&params.ends.rigidInterior, 1);
   put(&params.cost.exponent, sizeof params.cost.exponent);
   put(&params.cost.shrinkThreshold, sizeof params.cost.shrinkThreshold);
   put(&params.cost.shrinkCoeff, sizeof params.cost.shrinkCoeff);

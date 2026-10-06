@@ -7,9 +7,9 @@
 </div>
 <div class="tsr-para" data-pid="1" data-s0="137" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-box" data-s="0" data-e="143" src="photos/box.png" alt="box" style="top:0px;left:180px;width:120px;height:120px">
-<div class="tsr-line" data-s="106" data-e="134" data-join="space" data-ragged="1" data-track="caption" style="top:120px;left:180px;width:120px"><span class="tsr-r tsr-b tsr-cjk" data-s="106">图</span><span class="tsr-r tsr-b" data-s="106"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="106">：</span><span class="tsr-r" data-s="106">Right</span></div>
-<div class="tsr-line" data-s="106" data-e="134" data-join="space" data-ragged="1" data-track="caption" style="top:144px;left:180px;width:120px"><span class="tsr-r" data-s="106">float near the</span></div>
-<div class="tsr-line" data-s="106" data-e="134" data-ragged="1" data-track="caption" style="top:168px;left:180px;width:120px"><span class="tsr-r" data-s="106">bottom.</span></div>
+<div class="tsr-line" data-s="106" data-e="134" data-join="space" data-track="caption" style="top:120px;left:180px;width:120px;word-spacing:36px"><span class="tsr-r tsr-b tsr-cjk" data-s="106">图</span><span class="tsr-r tsr-b" data-s="106"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="106">：</span><span class="tsr-r" data-s="106">Right</span></div>
+<div class="tsr-line" data-s="106" data-e="134" data-join="space" data-track="caption" style="top:144px;left:180px;width:120px;word-spacing:8px"><span class="tsr-r" data-s="106">float near the</span></div>
+<div class="tsr-line" data-s="106" data-e="134" data-track="caption" style="top:168px;left:180px;width:120px"><span class="tsr-r" data-s="106">bottom.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="282" style="position:relative;height:144px">
 <div class="tsr-line" data-s="0" data-e="115" data-join="none" style="top:0px;left:0px;width:164px;word-spacing:8px"><span class="tsr-r" data-s="0">Text that wraps be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>

@@ -4,11 +4,11 @@
 
 namespace tsr {
 
-constexpr std::uint8_t OPS_VERSION = 13;
+constexpr std::uint8_t OPS_VERSION = 14;
 constexpr std::uint8_t OPS_MIN_COMPAT = 11;
-constexpr const char* SCHEMA_HASH = "c502be7f";
+constexpr const char* SCHEMA_HASH = "80b68203";
 constexpr std::uint16_t KIND_COUNT = 38;
-constexpr std::uint16_t ARGK_COUNT = 76;
+constexpr std::uint16_t ARGK_COUNT = 77;
 
 enum class Level : std::uint8_t { Block, Inline, Adaptive, Transparent, Trivia };
 enum class Body : std::uint8_t { None, Inline, Blocks, Items, Code, Position, Rows, Cells, Data, Text };

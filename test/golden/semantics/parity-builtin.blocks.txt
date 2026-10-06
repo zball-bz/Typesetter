@@ -23,7 +23,7 @@ top pid=0 units=1
   word "2" w=513su pen=INF LINK SYN @[33,36)
   word "." w=513su pen=INF @[36,37)
 top pid=1 units=1
- unit text indent=0su anchor="f1" centered
+ unit text indent=0su anchor="f1" single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[61,83)
   space w=257su stretch=1 BOLD @[61,83)
   word "1" w=513su pen=INF BOLD @[61,83)
@@ -33,11 +33,13 @@ top pid=1 units=1
   space w=257su stretch=1 @[61,83)
   word "built-in" w=4097su pen=INF @[61,83)
   space w=257su stretch=1 @[61,83)
-  word "figure" w=3073su pen=INF @[61,83)
+  word "fig" w=1537su pen=INF @[61,83)
+  hyphen bw=513su pen=0.70 @[61,83)
+  word "ure" w=1537su pen=INF @[61,83)
   space w=257su stretch=1 @[61,83)
   word "row." w=2049su pen=INF @[61,83)
 top pid=2 units=1
- unit text indent=0su anchor="f2" centered
+ unit text indent=0su anchor="f2" single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[116,136)
   space w=257su stretch=1 BOLD @[116,136)
   word "2" w=513su pen=INF BOLD @[116,136)
@@ -45,6 +47,10 @@ top pid=2 units=1
   punct-sp w=512su BOLD @[116,136)
   word "Its" w=1537su pen=INF @[116,136)
   space w=257su stretch=1 @[116,136)
-  word "second" w=3073su pen=INF @[116,136)
+  word "sec" w=1537su pen=INF @[116,136)
+  hyphen bw=513su pen=0.70 @[116,136)
+  word "ond" w=1537su pen=INF @[116,136)
   space w=257su stretch=1 @[116,136)
-  word "instance." w=4609su pen=INF @[116,136)
+  word "in" w=1025su pen=INF @[116,136)
+  hyphen bw=513su pen=0.70 @[116,136)
+  word "stance." w=3585su pen=INF @[116,136)

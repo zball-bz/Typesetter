@@ -4,7 +4,7 @@
   [{"kind": "heading", "level": 2}, {"size": "1.35em"}],
   [{"kind": "heading", "level": 3}, {"size": "1.15em"}],
   [{"kind": "para"}, {"parIndent": {"setting": "par.indent", "unit": "em"}}],
-  [{"role": "caption"}, {"parAlign": "center", "parHyphenate": "false", "parIndent": "0"}],
+  [{"role": "caption"}, {"parAlign": "justify", "parSingleLine": "center", "parIndent": "0"}],
   [{"role": "caption-label"}, {"weight": 700}],
   [{"role": "term-name"}, {"weight": 700}],
   [{"role": "fn-marker"}, {"baseline": "super", "size": "0.7em"}],

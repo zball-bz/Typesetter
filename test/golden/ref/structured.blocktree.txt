@@ -7,11 +7,11 @@ top pid=1 leaves=1
 top pid=2 leaves=1
   stack root gap=1/1 @[39,82)
     stack figure anchor="fig-a" @[39,82)
-      paragraph caption unit=0 centered nohyphen carry="fig-a" @[64,73)
+      paragraph caption unit=0 single-center carry="fig-a" @[64,73)
 top pid=3 leaves=1
   stack root gap=1/1 @[84,126)
     stack figure anchor="fig-b" @[84,126)
-      paragraph caption unit=0 centered nohyphen carry="fig-b" @[109,117)
+      paragraph caption unit=0 single-center carry="fig-b" @[109,117)
 top pid=4 leaves=1
   stack root gap=1/1 @[128,289)
     paragraph para unit=0 @[128,289)

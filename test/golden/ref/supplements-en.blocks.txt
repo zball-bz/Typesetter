@@ -67,14 +67,18 @@ top pid=1 units=1
   word "." w=513su pen=INF @[146,147)
 top pid=2 units=2
  unit img indent=0su anchor="fig-a" intrinsic=120x60px
- unit text indent=0su centered
-  word "Figure" w=3073su pen=INF BOLD @[220,229)
+ unit text indent=0su single-center
+  word "Fig" w=1537su pen=INF BOLD @[220,229)
+  hyphen bw=513su pen=0.70 BOLD @[220,229)
+  word "ure" w=1537su pen=INF BOLD @[220,229)
   space w=257su stretch=1 BOLD @[220,229)
   word "1:" w=1025su pen=INF BOLD @[220,229)
   space w=257su stretch=1 BOLD @[220,229)
   word "A" w=513su pen=INF @[220,229)
   space w=257su stretch=1 @[220,229)
-  word "figure." w=3585su pen=INF @[220,229)
+  word "fig" w=1537su pen=INF @[220,229)
+  hyphen bw=513su pen=0.70 @[220,229)
+  word "ure." w=2049su pen=INF @[220,229)
 top pid=3 units=1
  unit table indent=0su anchor="tab-a" cols=2 cells=2
   cell 0

@@ -8,7 +8,7 @@ top pid=2 leaves=2
   stack root gap=1/1 @[137,226)
     stack figure anchor="fig-a" @[137,226)
       replaced image image unit=0 ragged keep-with-next carry="fig-a" @[137,226)
-      paragraph caption unit=1 centered nohyphen @[208,217)
+      paragraph caption unit=1 single-center @[208,217)
 top pid=3 leaves=1
   stack root gap=1/1 @[228,274)
     table table unit=0 anchor="tab-a" @[228,274)

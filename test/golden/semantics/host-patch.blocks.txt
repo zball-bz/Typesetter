@@ -5,20 +5,24 @@ top pid=1 units=1
  unit text indent=0su anchor="deep"
   word "Deep" w=2357su pen=INF BOLD x1.15 @[11,15)
 top pid=2 units=1
- unit text indent=0su anchor="f1" centered
+ unit text indent=0su anchor="f1" single-center
   word "Fig." w=2049su pen=INF BOLD @[46,72)
   space w=257su stretch=1 BOLD @[46,72)
   word "1:" w=1025su pen=INF BOLD @[46,72)
   space w=257su stretch=1 BOLD @[46,72)
   word "A" w=513su pen=INF @[46,72)
   space w=257su stretch=1 @[46,72)
-  word "figure" w=3073su pen=INF @[46,72)
+  word "fig" w=1537su pen=INF @[46,72)
+  hyphen bw=513su pen=0.70 @[46,72)
+  word "ure" w=1537su pen=INF @[46,72)
   space w=257su stretch=1 @[46,72)
   word "the" w=1537su pen=INF @[46,72)
   space w=257su stretch=1 @[46,72)
   word "host" w=2049su pen=INF @[46,72)
   space w=257su stretch=1 @[46,72)
-  word "renamed." w=4097su pen=INF @[46,72)
+  word "re" w=1025su pen=INF @[46,72)
+  hyphen bw=513su pen=0.70 @[46,72)
+  word "named." w=3073su pen=INF @[46,72)
 top pid=3 units=1
  unit text indent=0su
   word "See" w=1537su pen=INF @[83,86)

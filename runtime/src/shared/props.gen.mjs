@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 // Run style properties (plans P1-02, P2-08): the $.style.push / #style / style:
 // keys and their value domains.
-export const STYLE_KEYS = Object.freeze({"weight":"weight","italic":"italic","decoration":"decoration","fontRole":"fontRole","baseline":"baseline","code.hang":"hang","size":"size","font":"font","lang":"lang","color":"color","sizePx":"sizePx","par.indent":"parIndent","par.align":"parAlign","par.hyphenate":"parHyphenate","block.gap":"blockGap","block.indent":"blockIndent","block.keepWithNext":"keepWithNext","list.marker":"listMarker","codeblock.snapKerning":"snapKerning","codeblock.sidecarFrac":"sidecarFrac","codeblock.contIndent":"contIndent","text.features":"features","text.punct":"punct"});
+export const STYLE_KEYS = Object.freeze({"weight":"weight","italic":"italic","decoration":"decoration","fontRole":"fontRole","baseline":"baseline","code.hang":"hang","size":"size","font":"font","lang":"lang","color":"color","sizePx":"sizePx","par.indent":"parIndent","par.align":"parAlign","par.hyphenate":"parHyphenate","par.singleLine":"parSingleLine","block.gap":"blockGap","block.indent":"blockIndent","block.keepWithNext":"keepWithNext","list.marker":"listMarker","codeblock.snapKerning":"snapKerning","codeblock.sidecarFrac":"sidecarFrac","codeblock.contIndent":"contIndent","text.features":"features","text.punct":"punct"});
 export const STYLE_SUGAR = Object.freeze({"bold":["weight",700],"italic":["italic",true],"underline":["decoration",1],"overline":["decoration",2],"strike":["decoration",4]});
 export const STYLE_FLAGS = Object.freeze({"decoration":{"under":1,"over":2,"strike":4}});
 export const DOMAINS = Object.freeze({
