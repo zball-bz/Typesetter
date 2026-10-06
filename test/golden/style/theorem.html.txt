@@ -7,7 +7,7 @@
 <div class="tsr-line" data-s="0" data-e="98" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">the measure; the theorem below stands a</span></div>
 <div class="tsr-line" data-s="0" data-e="98" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">little further off.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="670" style="position:relative;height:206.406px;margin-bottom:24px">
+<div class="tsr-para" data-role="theorem" data-pid="2" data-s0="670" style="position:relative;height:206.406px;margin-bottom:24px">
 <div class="tsr-frame" style="top:0px;left:0px;width:300px;height:206.406px;border-width:0px 0px 0px 2px;border-color:#2f5d8a;background:#f4f7fb" data-syn="frame"></div>
 <div class="tsr-line" id="tsr-thm-a" data-s="26" data-e="142" data-join="none" style="top:6.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r tsr-b" data-s="26">Theorem 1.</span><span class="tsr-r" data-s="26"> Every bounded monotone se</span><span class="tsr-r" data-s="26" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="26" data-e="142" data-join="space" style="top:30.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r" data-s="26">quence of real numbers converges. Its</span></div>

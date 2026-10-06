@@ -12,6 +12,7 @@
 #include <optional>
 
 #include "../model/model.h"
+#include "presentation.h"
 #include "../support/json.h"
 
 namespace tsr {
@@ -182,10 +183,11 @@ struct ElementClass {
   // title, supplement and full
   std::vector<std::pair<std::string, Template>> forms;
   // presentation traits (plan P2-05, finding role-string-dispatch: what a
-  // class means to the box tree and the semantic page, read through
-  // ContentNode::cls, never through its role string)
+  // class means to the box tree, read through ContentNode::cls, never
+  // through its role string; what it shows as is the presentation map's,
+  // plan P3-23)
   enum class Box : u8 { Plain, Figure } box = Box::Plain;   // Figure: captions, floats
-  enum class Html : u8 { Plain, Figure } html = Html::Plain;  // Figure: <figure>/<figcaption>
+  ClassId like = 0;  // the class it was declared like (its presentation's fallback)
   bool replaced() const {
     for (const SiteDef& s : sites)
       if (s.where == SiteDef::Where::Replace) return true;
@@ -251,20 +253,16 @@ class Registry {
   std::vector<CounterSystem> systems;
   std::vector<CollectorDef> collectors;
   Template unresolved, unnumbered;
-  // (plan P3-01; T7's minimal role map) the element a generated role reads
-  // as on the semantic page — its presentation is the rules' (defaults.json)
-  // — and what that element says of a run (a page writing a run's own
-  // superscript, bold or italic needs no second element for it)
-  struct RoleHtml {
-    std::string role, tag;
-    enum class Says : u8 { Nothing, Super, Bold, Italic } says = Says::Nothing;
-  };
-  std::vector<RoleHtml> roleHtml;
-  const RoleHtml* roleElement(std::string_view role) const {
-    for (const RoleHtml& r : roleHtml)
-      if (r.role == role) return &r;
+  // (plan P3-23; design T7 PresentationMap) the presentation rows, by name
+  // (a kind, a generated role, a class), and a node's: its class's (or its
+  // `like:` base's), else its role's, else its kind's
+  std::vector<HtmlShape> html;
+  const HtmlShape* htmlRow(std::string_view name) const {
+    for (const HtmlShape& h : html)
+      if (h.name == name) return &h;
     return nullptr;
   }
+  const HtmlShape* shapeOf(const ContentNode* n, const Interner& strs) const;
 
  private:
   std::vector<std::pair<ClassId, const Selector*>> byKind_[KIND_COUNT + 1];  // [KIND_COUNT]: any kind

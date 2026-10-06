@@ -1,0 +1,16 @@
+doc @[0,256)
+  para @[0,115)
+    text @[0,115) str="A caption of two paragraphs is one figcaption holding both, and a block in the figure stays out of it (plan P3-23):"
+  region @[117,240) name="figure"
+    para @[144,172)
+      text @[144,172) str="The first caption paragraph."
+    list @[174,200) bullet start=1
+      item @[174,200)
+        para @[176,200)
+          text @[176,200) str="a list inside the figure"
+    para @[202,231)
+      text @[202,231) str="The second caption paragraph."
+  para @[242,255)
+    text @[242,245) str="See "
+    ref @[246,254) target="fig-two"
+    text @[254,255) str="."

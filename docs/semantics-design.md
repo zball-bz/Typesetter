@@ -57,8 +57,11 @@ only the Index names the class.
   reference forms beyond the built-in `number`, `title`/`name`,
   `supplement` and `full`), and (as built in P2-05)
   the presentation traits `box` (`"figure"`: the box tree's figure —
-  captions, floats) and `html` (`"figure"`: `<figure>`/`<figcaption>` on the
-  semantic page); no stage reads a role string to decide them. Defaults
+  captions, floats) and `html` — since P3-23 its row of the presentation
+  map (`elements.json` `html`; document-model §9.2): an object
+  (`{element, inline, slots, aria, projection, typeset: {dataRole, frame},
+  like}`), or a row's name to read like (`"figure"`); no stage reads a role
+  string to decide them. Defaults
   (P2-07): a class without `select` selects `{role: <its name>}` on any
   kind (selectors never inherit through `like`), and a numbered class
   without `ref` reads as `[supplement, number]`.

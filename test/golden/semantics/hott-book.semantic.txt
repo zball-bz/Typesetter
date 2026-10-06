@@ -1,5 +1,6 @@
 <div class="tsr-flow">
-<ul data-pid="0" data-s="1125" data-e="1131">
+<nav data-role="toc" role="doc-toc" data-pid="0" data-s="1125" data-e="1131">
+<ul data-s="1125" data-e="1131">
 <li><p data-s="1125" data-e="1131"><a href="#tsr-part-f">I Foundations</a></p>
 <ul data-s="1125" data-e="1131">
 <li><p data-s="1125" data-e="1131"><a href="#tsr-ch-tt">1 Type theory</a></p>
@@ -21,6 +22,7 @@
 </ul>
 </li>
 </ul>
+</nav>
 <h1 data-pid="1" data-s="1133" data-e="1146" id="tsr-part-f">Part I Foundations</h1>
 <h2 data-pid="2" data-s="1157" data-e="1171" id="tsr-ch-tt">Chapter 1 Type theory</h2>
 <h3 data-pid="3" data-s="1181" data-e="1194" id="tsr-sec-j">§1.1 Judgments</h3>

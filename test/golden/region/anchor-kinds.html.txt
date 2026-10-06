@@ -2,14 +2,14 @@
 <div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-top" data-s="0" data-e="12" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Anchor kinds</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="58" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="listing" data-pid="1" data-s0="58" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line tsr-row" id="tsr-lst-a" data-s="0" data-e="5" data-ragged="1" style="top:0px;left:0px;width:300px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">x = 1</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="106" style="position:relative;height:67.203px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="aside" data-pid="2" data-s0="106" style="position:relative;height:67.203px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-sec-in" data-s="0" data-e="13" data-join="para" data-ragged="1" style="top:0px;left:0px;width:300px"><span id="tsr-box-b" data-syn="anchor"></span><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">Inner heading</span></div>
 <div class="tsr-line" data-s="24" data-e="47" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="24">Body text of the aside.</span></div>
 </div>
-<div class="tsr-para" data-pid="3" data-s0="193" style="position:relative;height:67.203px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="aside" data-pid="3" data-s0="193" style="position:relative;height:67.203px;margin-bottom:19.203px">
 <div class="tsr-rule" id="tsr-rule-c" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" data-s="0" data-e="15" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="0">After the rule.</span></div>
 </div>

@@ -1,0 +1,23 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {slot, strong} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+
+  $.counter('thm')
+  $.element('theorem', {
+    counter: 'thm', numbering: 'always', supplement: {en: 'Theorem '},
+    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}],
+    html: {element: 'section', aria: 'note', typeset: {frame: true, dataRole: true}},
+  })
+  $.element('key', {html: {element: 'kbd', inline: true}})
+
+},
+() => ({label: "t1"}),
+(__k) => (strong(...[{role: 'key'}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

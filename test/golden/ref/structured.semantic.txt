@@ -1,10 +1,10 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="0" data-e="9" id="tsr-sec-a">Methods</h1>
 <h2 data-pid="1" data-s="19" data-e="29" id="tsr-sec-b">Details</h2>
-<figure data-pid="2" data-s="39" data-e="82" id="tsr-fig-a">
+<figure data-role="figure" data-pid="2" data-s="39" data-e="82" id="tsr-fig-a">
 <figcaption><strong>Figure 1: </strong>A figure.</figcaption>
 </figure>
-<figure data-pid="3" data-s="84" data-e="126" id="tsr-fig-b">
+<figure data-role="figure" data-pid="3" data-s="84" data-e="126" id="tsr-fig-b">
 <figcaption><strong>Figure 2: </strong>Another.</figcaption>
 </figure>
 <p data-pid="4" data-s="128" data-e="289">A group of labels: <a href="#tsr-fig-a">Figure 1</a>, <a href="#tsr-fig-b">Figure 2</a> and <a href="#tsr-sec-a">§1</a>, <a href="#tsr-sec-b">§1.1</a>. A bracket replaces the word: <a href="#tsr-fig-a">Fig. 1</a> and <a href="#tsr-sec-b">Section 1.1</a>. A form: <a href="#tsr-fig-b">2</a>.</p>

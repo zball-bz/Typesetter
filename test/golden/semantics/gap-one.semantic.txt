@@ -1,5 +1,6 @@
 <div class="tsr-flow">
-<ul data-pid="0" data-s="41" data-e="47">
+<nav data-role="toc" role="doc-toc" data-pid="0" data-s="41" data-e="47">
+<ul data-s="41" data-e="47">
 <li><p data-s="41" data-e="47"><a href="#tsr-h-1">1 A</a></p>
 <ul data-s="41" data-e="47">
 <li><ul data-s="41" data-e="47">
@@ -29,6 +30,7 @@
 </ul>
 </li>
 </ul>
+</nav>
 <h1 data-pid="1" data-s="49" data-e="52" id="tsr-h-1">A</h1>
 <h3 data-pid="2" data-s="54" data-e="61" id="tsr-h-1.1.1">A.c</h3>
 <h1 data-pid="3" data-s="63" data-e="66" id="tsr-h-2">B</h1>

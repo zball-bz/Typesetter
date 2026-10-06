@@ -1,5 +1,7 @@
 #include "rules_css.h"
 
+#include "../elements/registry.h"
+
 #include <algorithm>
 
 namespace tsr {
@@ -27,6 +29,16 @@ struct Writer {
   const Interner& strs;
   DiagSink* diags;  // (null while writing the engine's own rules: what the
                     // plain page cannot select of them is no author's to fix)
+  const Registry* reg = nullptr;  // (plan P3-23) the kinds' elements
+  const std::vector<StrRef>* hooked = nullptr;  // the roles the page's groups carry as data-role
+
+  // a kind's element on the page: its presentation row's, if the row names a
+  // plain one (else the projection's, written below)
+  std::string_view rowElement(Kind k) const {
+    const HtmlShape* h = reg ? reg->htmlRow(kKinds[(u16)k].name) : nullptr;
+    return h && h->projection == HtmlShape::Projection::None && !h->levelSuffix ? std::string_view(h->element)
+                                                                               : std::string_view{};
+  }
 
   void noCss(const char* what) const {
     if (diags) diags->add(Sev::Warning, "rule-no-css", {}, std::string("a rule's ") + what + " has no CSS form: the semantic page leaves the rule out");
@@ -36,7 +48,34 @@ struct Writer {
   // false: none (a role or class waits for its hook; others are diagnosed)
   bool selector(const StyleSelector& s, std::vector<std::string>& out) const {
     out.clear();
-    if (s.role || s.cls) return false;  // P3-18 / P3-23 hooks
+    // (plan P3-23) a role: the groups whose row hooks it carry data-role; a
+    // class: its runs carry .tsr-c-<name> (plan P3-18)
+    if (s.role || s.cls) {
+      if (s.kind != 0xFFFF && s.kind != (u16)Kind::group && s.role) {
+        noCss("role selector on a kind other than a group");
+        return false;
+      }
+      if (s.kind != 0xFFFF && s.cls) {
+        noCss("class selector with a kind");
+        return false;
+      }
+      if (s.depth || !s.where.empty() || (s.role && s.cls)) {
+        noCss("role or class selector with more conditions");
+        return false;
+      }
+      // (a role no group of this page carries as data-role selects nothing
+      // there: a caption paragraph, a marker — left out, as before)
+      if (s.role && (!hooked || std::find(hooked->begin(), hooked->end(), s.role) == hooked->end())) return false;
+      const std::string_view v = strs.get(s.role ? s.role : s.cls);
+      if (!tokenSafe(v)) return false;
+      out = {s.role ? "[data-role=\"" + std::string(v) + "\"]" : ".tsr-c-" + std::string(v)};
+      if (s.lang) {
+        const std::string_view l = strs.get(s.lang);
+        if (!tokenSafe(l)) return false;
+        out[0] += ":lang(" + std::string(l) + ")";
+      }
+      return true;
+    }
     if (s.depth) {
       noCss("depth selector");
       return false;
@@ -54,21 +93,28 @@ struct Writer {
     }
     switch (s.kind) {
       case 0xFFFF: out = {"*"}; break;
-      case (u16)Kind::para: out = {"p:not(.tsr-mathblock)"}; break;
-      case (u16)Kind::heading:
-        if (!level.empty()) out = {"h" + level};
+      case (u16)Kind::para: {
+        const std::string_view el = rowElement(Kind::para);
+        out = {std::string(el.empty() ? std::string_view("p") : el) + ":not(.tsr-mathblock)"};  // (a formula's p is no para)
+        break;
+      }
+      case (u16)Kind::heading: {
+        const HtmlShape* h = reg ? reg->htmlRow("heading") : nullptr;
+        if (h && !h->levelSuffix && !h->element.empty()) out = {h->element};
+        else if (!level.empty()) out = {"h" + level};
         else out = {"h1", "h2", "h3", "h4", "h5", "h6"};
         break;
+      }
       case (u16)Kind::list:
         if (ordered == 1) out = {"ol"};
         else if (ordered == 2) out = {"ul"};
         else out = {"ul", "ol"};
         break;
-      case (u16)Kind::item: out = {"li"}; break;
-      case (u16)Kind::quote: out = {"blockquote"}; break;
+      case (u16)Kind::item: out = {std::string(rowElement(Kind::item).empty() ? "li" : rowElement(Kind::item))}; break;
+      case (u16)Kind::quote: out = {std::string(rowElement(Kind::quote).empty() ? "blockquote" : rowElement(Kind::quote))}; break;
       case (u16)Kind::codeblock: out = {"pre"}; break;
       case (u16)Kind::code: out = {":not(pre) > code"}; break;
-      case (u16)Kind::rule: out = {"hr"}; break;
+      case (u16)Kind::rule: out = {std::string(rowElement(Kind::rule).empty() ? "hr" : rowElement(Kind::rule))}; break;
       case (u16)Kind::table: out = {"table"}; break;
       case (u16)Kind::trow: out = {"tr"}; break;
       case (u16)Kind::tcell: out = {"td"}; break;
@@ -310,8 +356,23 @@ std::string envAttr(const Cascade& cascade, RuleEnvId env, const Interner& strs)
   return out;
 }
 
-std::string rulesToCss(const Cascade& cascade, const ContentTree& tree, const Interner& strs, DiagSink* diags) {
-  Writer w{strs, diags};
+std::string rulesToCss(const Cascade& cascade, const ContentTree& tree, const Interner& strs, DiagSink* diags,
+                       const Registry* reg) {
+  // (plan P3-23) the roles the page writes as data-role: groups whose
+  // presentation row hooks them
+  std::vector<StrRef> hooked;
+  if (tree.root && reg) {
+    std::vector<const ContentNode*> work{tree.root};
+    while (!work.empty()) {
+      const ContentNode* n = work.back();
+      work.pop_back();
+      if (n->kind == Kind::group)
+        if (const StrRef r = attrStr(n, ArgK::role); r && std::find(hooked.begin(), hooked.end(), r) == hooked.end())
+          if (const HtmlShape* sh = reg->shapeOf(n, strs); sh && sh->dataRole) hooked.push_back(r);
+      for (const ContentNode* k : n->kids) work.push_back(k);
+    }
+  }
+  Writer w{strs, diags, reg, &hooked};
   std::string out;
   for (const StyleRule& r : cascade.baseRules()) {
     w.diags = r.builtin ? nullptr : diags;

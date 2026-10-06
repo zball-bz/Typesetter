@@ -1,0 +1,15 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {style} = __rt.std;
+return (async () => {
+const __h = [
+(__k) => (style(...[{weight: 600}], ...__k())),
+(__k) => (style(...[{weight: 300}], ...__k())),
+(__k) => (style(...[{size: '0.8em'}], ...__k())),
+(__k) => (style(...[{sizePx: 20}], ...__k())),
+(__k) => (style(...[{size: '50%'}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

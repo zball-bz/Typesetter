@@ -10,7 +10,7 @@
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
-<div class="tsr-band" data-b="2">
+<div class="tsr-band" data-role="theorem" data-b="2">
 <div class="tsr-frame" style="top:0px;left:0px;width:300px;height:206.406px;border-width:0px 0px 0px 2px;border-color:#2f5d8a;background:#f4f7fb" data-syn="frame"></div>
 <div class="tsr-line" id="tsr-thm-a" data-s="696" data-e="812" data-join="none" style="top:6.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r tsr-b" data-s="696">Theorem 1.</span><span class="tsr-r" data-s="696"> Every bounded monotone se</span><span class="tsr-r" data-s="696" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="696" data-e="812" data-join="space" style="top:30.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r" data-s="696">quence of real numbers converges. Its</span></div>

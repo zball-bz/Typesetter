@@ -7,7 +7,7 @@
 <div class="tsr-line" data-s="0" data-e="55" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">first</span></div>
 <div class="tsr-line" data-s="0" data-e="55" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">second</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="105" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="aside" data-pid="2" data-s0="105" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-a1" data-s="0" data-e="61" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Inside a group.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="168" style="position:relative;height:67.188px;margin-bottom:19.203px">

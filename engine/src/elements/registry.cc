@@ -264,6 +264,7 @@ struct Loader {
       c = r.classes[base];
       c.select.clear();  // selectors never inherit
       if (c.flow) c.flow = FlowDef(*c.flow);
+      c.like = base;
     }
     c.name = name;
     ClassId self = (ClassId)r.classes.size();
@@ -411,10 +412,6 @@ struct Loader {
       if (str(x) != "figure") return fail("class box: only 'figure'");
       c.box = ElementClass::Box::Figure;
     }
-    if (const JsonValue* x = member(v, "html")) {
-      if (str(x) != "figure") return fail("class html: only 'figure'");
-      c.html = ElementClass::Html::Figure;
-    }
     if (c.numbering != ElementClass::Numbering::Never && c.counter == kNoIndex)
       return fail("class '" + name + "' is numbered but has no counter");
     // a numbered class reads, by default, as its supplement (or the
@@ -547,23 +544,83 @@ struct Loader {
     if (const JsonValue* cs = member(v, "collectors"))
       for (size_t k = 0; k < cs->keys.size(); k++)
         if (!collector(cs->keys[k], cs->vals[k])) return false;
-    if (const JsonValue* rs = member(v, "roles"))
-      for (size_t k = 0; k < rs->keys.size(); k++) {
-        if (rs->keys[k] == "$comment") continue;
-        // (plan P3-20; D-R09) a role reads as a phrasing element of the
-        // allowlist: never script, style, iframe or another active element
-        static constexpr std::string_view kPhrasing[] = {"sup", "sub", "strong", "b", "em", "i", "small", "span",
-                                                         "code", "kbd", "samp", "var", "mark", "cite", "q", "abbr",
-                                                         "dfn", "s", "u", "del", "ins", "bdi", "time", "data"};
-        const std::string h = str(member(rs->vals[k], "html"));
-        bool ok = false;
-        for (std::string_view e : kPhrasing) ok = ok || h == e;
-        if (!ok) return fail("role '" + rs->keys[k] + "': html is a phrasing element of the allowlist ('" + h + "')");
-        using Says = Registry::RoleHtml::Says;
-        const Says says = h == "sup" ? Says::Super : h == "strong" || h == "b" ? Says::Bold
-                          : h == "em" || h == "i" ? Says::Italic : Says::Nothing;
-        r.roleHtml.push_back({rs->keys[k], h, says});
+    if (member(v, "roles")) return fail("roles: their elements are rows of the html section (plan P3-23)");
+    if (const JsonValue* hs = member(v, "html")) {
+      for (size_t k = 0; k < hs->keys.size(); k++) {
+        if (hs->keys[k] == "$comment") continue;
+        HtmlShape h;
+        if (!htmlRow(*hs, hs->keys[k], h, 0)) return false;
+        r.html.push_back(std::move(h));
       }
+    }
+    return true;
+  }
+
+  // (plan P3-23; D-R09) a presentation row, its `like:` row's fields first;
+  // every element, role and projection from the allowlists (presentation.h)
+  bool htmlRow(const JsonValue& section, const std::string& name, HtmlShape& h, int depth) {
+    const JsonValue* v = member(section, name);
+    if (!v || v->t != JsonValue::T::Obj) return fail("html '" + name + "': a row is an object");
+    if (const JsonValue* l = member(*v, "like")) {
+      if (depth > 8 || !member(section, str(l))) return fail("html '" + name + "' is like an undeclared row");
+      if (!htmlRow(section, str(l), h, depth + 1)) return false;
+    }
+    h.name = name;
+    auto in = [](std::string_view x, const auto& xs) {
+      for (std::string_view e : xs)
+        if (e == x) return true;
+      return false;
+    };
+    if (const JsonValue* x = member(*v, "inline")) h.inlineLevel = x->t == JsonValue::T::Bool && x->b;
+    if (const JsonValue* x = member(*v, "element")) {
+      std::string el = str(x);
+      h.levelSuffix = el.size() > 7 && el.substr(el.size() - 7) == "{level}";
+      if (h.levelSuffix) el.resize(el.size() - 7);
+      h.element = el;
+    }
+    if (!h.element.empty()) {
+      const bool ok = h.inlineLevel ? in(h.element, kHtmlPhrasingElements)
+                                    : (h.levelSuffix ? h.element == "h" : h.element != "h" && in(h.element, kHtmlBlockElements));
+      if (!ok)
+        return fail("html '" + name + "': '" + h.element + "' is not " +
+                    (h.inlineLevel ? "a phrasing element" : "a flow element") + " of the allowlist");
+    }
+    h.says = h.element == "sup" ? HtmlShape::Says::Super
+             : h.element == "strong" || h.element == "b" ? HtmlShape::Says::Bold
+             : h.element == "em" || h.element == "i"     ? HtmlShape::Says::Italic
+                                                         : HtmlShape::Says::Nothing;
+    if (const JsonValue* x = member(*v, "projection")) {
+      static constexpr std::pair<std::string_view, HtmlShape::Projection> kProj[] = {
+          {"none", HtmlShape::Projection::None},   {"list", HtmlShape::Projection::List},
+          {"table", HtmlShape::Projection::Table}, {"codeblock", HtmlShape::Projection::Codeblock},
+          {"math", HtmlShape::Projection::Math},   {"term", HtmlShape::Projection::Term}};
+      bool ok = false;
+      for (const auto& [n, p] : kProj)
+        if (str(x) == n) h.projection = p, ok = true;
+      if (!ok) return fail("html '" + name + "': no projection '" + str(x) + "'");
+    }
+    if (const JsonValue* x = member(*v, "slots")) {
+      if (x->t != JsonValue::T::Obj) return fail("html '" + name + "' slots: an object of slot: element");
+      for (size_t k = 0; k < x->keys.size(); k++) {
+        SlotId id = SlotId::None;
+        for (u8 i = 1; i < SLOT_COUNT; i++)
+          if (x->keys[k] == kSlots[i].name) id = (SlotId)i;
+        if (id == SlotId::None) return fail("html '" + name + "' slots: no slot '" + x->keys[k] + "'");
+        const std::string el = str(&x->vals[k]);
+        if (!in(el, kHtmlBlockElements) || el == "h")
+          return fail("html '" + name + "' slot " + x->keys[k] + ": '" + el + "' is not a flow element of the allowlist");
+        std::erase_if(h.slots, [&](const auto& p) { return p.first == id; });
+        h.slots.push_back({id, el});
+      }
+    }
+    if (const JsonValue* x = member(*v, "aria")) {
+      h.aria = str(x);
+      if (!h.aria.empty() && !in(h.aria, kAriaRoles)) return fail("html '" + name + "': no ARIA role '" + h.aria + "' of the allowlist");
+    }
+    if (const JsonValue* t = member(*v, "typeset")) {
+      if (const JsonValue* x = member(*t, "dataRole")) h.dataRole = x->t == JsonValue::T::Bool && x->b;
+      if (const JsonValue* x = member(*t, "frame")) h.frame = x->t == JsonValue::T::Bool && x->b;
+    }
     return true;
   }
 };
@@ -611,6 +668,14 @@ bool parseSupplement(const JsonValue& v, Supplement& out) {
     out.byLang.push_back({v.keys[k], v.vals[k].str});
   }
   return !out.byLang.empty();
+}
+
+const HtmlShape* Registry::shapeOf(const ContentNode* n, const Interner& strs) const {
+  for (ClassId c = n->cls; c && c < classes.size(); c = classes[c].like)
+    if (const HtmlShape* h = htmlRow(classes[c].name)) return h;
+  if (const StrRef role = attrStr(n, ArgK::role))
+    if (const HtmlShape* h = htmlRow(strs.get(role))) return h;
+  return (u16)n->kind < KIND_COUNT ? htmlRow(kKinds[(u16)n->kind].name) : nullptr;
 }
 
 ClassId Registry::classNamed(std::string_view name) const {

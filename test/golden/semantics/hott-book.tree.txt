@@ -1,49 +1,50 @@
 doc @[1125,1425) [base]
-  list @[1125,1131) [base] ordered=false
-    item @[1125,1131) [base]
-      para @[1125,1131) [base]
-        link @[1125,1131) [base] target="part-f"
-          text @[1125,1131) [base] str="I "
-          text @[1125,1131) [base] str="Foundations"
-      list @[1125,1131) [base] ordered=false
-        item @[1125,1131) [base]
-          para @[1125,1131) [base]
-            link @[1125,1131) [base] target="ch-tt"
-              text @[1125,1131) [base] str="1 "
-              text @[1125,1131) [base] str="Type theory"
-          list @[1125,1131) [base] ordered=false
-            item @[1125,1131) [base]
-              para @[1125,1131) [base]
-                link @[1125,1131) [base] target="sec-j"
-                  text @[1125,1131) [base] str="1.1 "
-                  text @[1125,1131) [base] str="Judgments"
-        item @[1125,1131) [base]
-          para @[1125,1131) [base]
-            link @[1125,1131) [base] target="ch-hott"
-              text @[1125,1131) [base] str="2 "
-              text @[1125,1131) [base] str="Homotopy type theory"
-    item @[1125,1131) [base]
-      para @[1125,1131) [base]
-        link @[1125,1131) [base]
-          text @[1125,1131) [base] str="II "
-          text @[1125,1131) [base] str="Mathematics"
-      list @[1125,1131) [base] ordered=false
-        item @[1125,1131) [base]
-          para @[1125,1131) [base]
-            link @[1125,1131) [base] target="ch-sets"
-              text @[1125,1131) [base] str="3 "
-              text @[1125,1131) [base] str="Sets"
-        item @[1125,1131) [base]
-          para @[1125,1131) [base]
-            link @[1125,1131) [base] target="ch-n"
-              text @[1125,1131) [base] str="A "
-              text @[1125,1131) [base] str="Notation"
-          list @[1125,1131) [base] ordered=false
-            item @[1125,1131) [base]
-              para @[1125,1131) [base]
-                link @[1125,1131) [base] target="sec-s"
-                  text @[1125,1131) [base] str="A.1 "
-                  text @[1125,1131) [base] str="Symbols"
+  group @[1125,1131) [base] role="toc"
+    list @[1125,1131) [base] ordered=false
+      item @[1125,1131) [base]
+        para @[1125,1131) [base]
+          link @[1125,1131) [base] target="part-f"
+            text @[1125,1131) [base] str="I "
+            text @[1125,1131) [base] str="Foundations"
+        list @[1125,1131) [base] ordered=false
+          item @[1125,1131) [base]
+            para @[1125,1131) [base]
+              link @[1125,1131) [base] target="ch-tt"
+                text @[1125,1131) [base] str="1 "
+                text @[1125,1131) [base] str="Type theory"
+            list @[1125,1131) [base] ordered=false
+              item @[1125,1131) [base]
+                para @[1125,1131) [base]
+                  link @[1125,1131) [base] target="sec-j"
+                    text @[1125,1131) [base] str="1.1 "
+                    text @[1125,1131) [base] str="Judgments"
+          item @[1125,1131) [base]
+            para @[1125,1131) [base]
+              link @[1125,1131) [base] target="ch-hott"
+                text @[1125,1131) [base] str="2 "
+                text @[1125,1131) [base] str="Homotopy type theory"
+      item @[1125,1131) [base]
+        para @[1125,1131) [base]
+          link @[1125,1131) [base]
+            text @[1125,1131) [base] str="II "
+            text @[1125,1131) [base] str="Mathematics"
+        list @[1125,1131) [base] ordered=false
+          item @[1125,1131) [base]
+            para @[1125,1131) [base]
+              link @[1125,1131) [base] target="ch-sets"
+                text @[1125,1131) [base] str="3 "
+                text @[1125,1131) [base] str="Sets"
+          item @[1125,1131) [base]
+            para @[1125,1131) [base]
+              link @[1125,1131) [base] target="ch-n"
+                text @[1125,1131) [base] str="A "
+                text @[1125,1131) [base] str="Notation"
+            list @[1125,1131) [base] ordered=false
+              item @[1125,1131) [base]
+                para @[1125,1131) [base]
+                  link @[1125,1131) [base] target="sec-s"
+                    text @[1125,1131) [base] str="A.1 "
+                    text @[1125,1131) [base] str="Symbols"
   heading @[1133,1146) [BOLDx1.60] level=1 label="part-f"
     text @[1133,1146) [BOLDx1.60] str="Part I "
     text @[1135,1146) [BOLDx1.60] str="Foundations"

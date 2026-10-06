@@ -8,10 +8,10 @@
 <div class="tsr-line" data-s="0" data-e="140" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="0">that the lemma comes close to the bottom</span></div>
 <div class="tsr-line" data-s="0" data-e="140" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">edge of the sheet.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="374" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="lemma" data-pid="2" data-s0="374" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="43" style="top:0px;left:0px;width:300px;word-spacing:-0.889px"><span class="tsr-r" data-s="0">A lemma that fits at the foot of the sheet.</span></div>
 </div>
-<div class="tsr-para" data-pid="3" data-s0="435" style="position:relative;height:96px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="proof" data-pid="3" data-s0="435" style="position:relative;height:96px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="130" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">Its proof, three lines long, which the</span></div>
 <div class="tsr-line" data-s="0" data-e="130" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">lemma keeps with: neither is left alone</span></div>
 <div class="tsr-line" data-s="0" data-e="130" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:-0.5px"><span class="tsr-r" data-s="0">at a sheet&#39;s foot, and the proof itself is</span></div>

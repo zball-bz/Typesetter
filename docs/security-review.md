@@ -6,6 +6,7 @@ conclusion. Problems found were fixed in this step and have a fixture,
 unit test or fuzz target. Surfaces added later are reviewed in addenda
 by the steps that add them:
 - P3-21: document providers, locators and the reference manifest;
+- P3-23: the presentation map's elements, roles and selectors;
 - P3-31: inputs and `#use`;
 - P5-01: `.tsmf`.
 
@@ -162,3 +163,34 @@ copy a file from elsewhere.
 
 **Conclusion: closed.** Document providers wait for `#use` (P3-31), whose
 addendum reviews module loading.
+
+## Addendum P3-23: the presentation map
+
+**Surface.** The elements the semantic page writes for kinds, roles and
+classes are data: `engine/data/elements.json`'s `html` rows. The host
+patches them through `semantics.html`, a document through `$.element(name,
+{html})`. P3-20's role allowlist (§2) becomes the rows' allowlists
+(`engine/src/elements/presentation.h`):
+- a block row names a flow or sectioning element (`p`, `div`, `section`,
+  `aside`, `nav`, `figure`, `dl`, …, `h{level}`);
+- an inline row names a phrasing element (§2's list);
+- a slot names a flow element;
+- `aria` names a role of WAI-ARIA 1.2 document structure or DPUB-ARIA;
+- a projection is one of five fixed shapes.
+
+A row naming anything else refuses the registry: a document's declaration
+is `decl-invalid`, and the built-in rows stand. Tests: `unitRegistry`
+(script, iframe, an unknown ARIA role and an image slot are refused; `like:`
+inherits).
+
+**Attributes.** One name joins `kHtmlAttrs`: `role`, whose value comes only
+from the allowlist above. `data-role` writes a node's role, which is a
+validated identifier (domain `ident`). The stylesheet's new selectors,
+`[data-role="…"]` and `.tsr-c-…`, take a role or class only when it is a
+CSS-safe token; anything else is left out.
+
+**Sidecar notes** now appear inline in the semantic page's code. They are
+written through the same escaping inline writer as any paragraph, and the
+fence's marker is escaped text.
+
+**Conclusion: closed.**

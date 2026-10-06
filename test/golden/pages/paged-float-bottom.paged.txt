@@ -8,7 +8,7 @@
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
-<div class="tsr-band" data-b="1">
+<div class="tsr-band" data-role="figure" data-b="1">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-box" data-s="137" data-e="280" src="photos/box.png" alt="box" style="top:0px;left:180px;width:120px;height:120px">
 <div class="tsr-line" data-s="243" data-e="271" data-join="space" data-track="caption" style="top:120px;left:180px;width:120px;word-spacing:36px"><span class="tsr-r tsr-b tsr-cjk" data-s="243">图</span><span class="tsr-r tsr-b" data-s="243"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="243">：</span><span class="tsr-r" data-s="243">Right</span></div>
 <div class="tsr-line" data-s="243" data-e="271" data-join="space" data-track="caption" style="top:144px;left:180px;width:120px;word-spacing:8px"><span class="tsr-r" data-s="243">float near the</span></div>

@@ -75,6 +75,7 @@ bool knownField(std::string_view section, std::string_view f) {
   static constexpr std::string_view kCounters[] = {"shape", "level-arg", "depth", "gap", "keyed", "within", "pattern", "start", "scope"};
   static constexpr std::string_view kCollectors[] = {"query", "like", "context", "wrap", "entry", "empty", "rows", "cite", "head"};
   static constexpr std::string_view kSystems[] = {"symbols", "mode", "weights"};
+  static constexpr std::string_view kHtml[] = {"element", "inline", "projection", "slots", "aria", "typeset", "like"};
   auto in = [&](const auto& xs) {
     for (std::string_view x : xs)
       if (x == f) return true;
@@ -84,6 +85,7 @@ bool knownField(std::string_view section, std::string_view f) {
   if (section == "classes") return in(kClasses);
   if (section == "counters") return in(kCounters);
   if (section == "collectors") return in(kCollectors);
+  if (section == "html") return in(kHtml);
   return in(kSystems);
 }
 
@@ -403,7 +405,8 @@ std::shared_ptr<const Registry> declaredRegistry(const RawOps& raw, const Ingest
   const std::pair<const std::string*, const char*> host[] = {{&cfg.semSystems, "systems"},
                                                              {&cfg.semCounters, "counters"},
                                                              {&cfg.semElements, "classes"},
-                                                             {&cfg.semCollectors, "collectors"}};
+                                                             {&cfg.semCollectors, "collectors"},
+                                                             {&cfg.semHtml, "html"}};
   for (const auto& [text, section] : host) {
     if (text->empty()) continue;
     JsonValue v;
@@ -449,6 +452,29 @@ std::shared_ptr<const Registry> declaredRegistry(const RawOps& raw, const Ingest
         diags.add(Sev::Warning, "decl-field", d.span,
                   std::string(kDecls[d.type].name) + " '" + p.name + "': unknown field '" + f + "' (ignored)");
     patches.push_back(std::move(p));
+  }
+  // (plan P3-23) a class's `html` is its presentation row: html 'figure'
+  // reads like that row, an object is the row itself
+  for (size_t i = 0, n = patches.size(); i < n; i++) {
+    if (std::string_view(patches[i].section) != "classes") continue;
+    JsonValue& row = patches[i].row;
+    for (size_t k = 0; k < row.keys.size(); k++) {
+      if (row.keys[k] != "html") continue;
+      JsonValue h = std::move(row.vals[k]);
+      row.keys.erase(row.keys.begin() + (std::ptrdiff_t)k);
+      row.vals.erase(row.vals.begin() + (std::ptrdiff_t)k);
+      if (h.t == JsonValue::T::Str) {
+        JsonValue like;
+        like.t = JsonValue::T::Obj;
+        Conv::put(like, "like", std::move(h));
+        h = std::move(like);
+      }
+      Patch p = patches[i];
+      p.section = "html";
+      p.row = std::move(h);
+      patches.push_back(std::move(p));
+      break;
+    }
   }
   if (patches.empty() && base.empty())
     return std::shared_ptr<const Registry>(&Registry::builtin(), [](const Registry*) {});

@@ -87,7 +87,7 @@ top pid=2 units=2
   run r1 plain LINK link="#tsr-tbl-c"
   run r2 blank-bearing CJK
   run r3 plain
-top pid=3 units=1
+top pid=3 units=2
  unit text indent=0su
   box Other "The" w=1537su r0 @[622,633)
   disc pen=0.7 w=0su pre="-" 513su kern="eo" r0 @[622,633)
@@ -95,7 +95,6 @@ top pid=3 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="or" r0 @[622,633)
   box Other "rems" w=2049su r0 @[622,633)
   run r0 plain BOLD
-top pid=4 units=1
  unit text indent=1536su marker="•"
   box Other "The" w=1537su r0 @[622,633)
   disc pen=0.7 w=0su pre="-" 513su kern="eo" r0 @[622,633)
@@ -110,7 +109,7 @@ top pid=4 units=1
   box Other "Main" w=2049su r1 @[622,633)
   run r0 plain LINK link="#tsr-thm-main"
   run r1 plain
-top pid=5 units=2
+top pid=4 units=2
  unit img indent=0su anchor="fig-a" intrinsic=200x100px
  unit text indent=0su single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[707,754)
@@ -148,7 +147,7 @@ top pid=5 units=2
   run r3 plain
   run r4 plain BOLD
   run r5 plain
-top pid=6 units=4
+top pid=5 units=4
  unit text indent=0su anchor="tbl-b"
   box Other "Key" w=1537su r0 @[798,801)
   run r0 plain
@@ -163,7 +162,7 @@ top pid=6 units=4
  unit text indent=0su
   box Other "1" w=513su r0 @[814,815)
   run r0 plain
-top pid=7 units=3
+top pid=6 units=3
  unit text indent=0su anchor="tbl-c"
   box Other "x" w=513su r0 @[867,868)
   run r0 plain
@@ -200,7 +199,7 @@ top pid=7 units=3
   run r1 plain BOLD
   run r2 blank-bearing BOLD CJK
   run r3 plain
-top pid=8 units=1
+top pid=7 units=1
  unit text indent=0su anchor="thm-main"
   box Other "The" w=1537su r0 @[969,995)
   disc pen=0.7 w=0su pre="-" 513su kern="eo" r0 @[969,995)

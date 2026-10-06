@@ -1,0 +1,14 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,200)
+    paragraph para unit=0 @[0,200)
+top pid=1 leaves=1
+  stack root gap=1/1 @[590,654)
+    stack group box=0,0,0,0/0,0,0,0 anchor="t1" @[590,654)
+      paragraph para unit=0 carry="t1" @[613,644)
+top pid=2 leaves=1
+  stack root gap=1/1 @[656,708)
+    paragraph para unit=0 @[656,708)
+top pid=3 leaves=1
+  stack root gap=1/1 @[710,747)
+    stack quote pad=1024su @[710,747)
+      paragraph para unit=0 x=1024su @[712,747)

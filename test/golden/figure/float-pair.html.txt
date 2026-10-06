@@ -6,7 +6,7 @@
 <div class="tsr-line" data-s="0" data-e="182" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="0">right a fixed width; the text between them</span></div>
 <div class="tsr-line" data-s="0" data-e="182" style="top:96px;left:0px;width:300px"><span class="tsr-r" data-s="0">narrows from both sides.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="184" style="position:relative;height:0px;margin-bottom:0px">
+<div class="tsr-para" data-role="aside" data-pid="1" data-s0="184" style="position:relative;height:0px;margin-bottom:0px">
 <div class="tsr-frame" style="top:0px;left:0px;width:135.281px;height:35.594px;border-width:1px 1px 1px 1px" data-syn="frame"></div>
 <div class="tsr-line" data-s="81" data-e="96" style="top:5.797px;left:5.797px;width:123.688px"><span class="tsr-r" data-s="81">A narrow aside.</span></div>
 </div>

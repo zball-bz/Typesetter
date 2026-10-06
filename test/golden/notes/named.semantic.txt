@@ -2,11 +2,11 @@
 <p data-pid="0" data-s="0" data-e="141">Named notes (plan P3-13): a labelled note is named, and a marker reference marks it again — one entry, three markers, its back-links a b c.</p>
 <p data-pid="1" data-s="143" data-e="338">The claim<a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a> rests on one source<a href="#tsr-src" id="tsr-fnref-2" data-syn="fn-marker"><sup>2</sup></a> that is cited again here<a href="#tsr-src" id="tsr-fnref-2.2" data-syn="fn-marker"><sup>2</sup></a> and once more<a href="#tsr-src" id="tsr-fnref-2.3" data-syn="fn-marker"><sup>2</sup></a>.</p>
 <p data-pid="2" data-s="340" data-e="397">The note itself reads <a href="#tsr-src">2</a>; its second marker <a href="#tsr-fnref-2.2">↩</a>.</p>
-<div data-role="notes" data-pid="3" data-s="0" data-e="397">
+<section data-role="notes" role="doc-endnotes" data-pid="3" data-s="0" data-e="397">
 <hr data-s="0" data-e="397">
 <ol data-s="0" data-e="397">
 <li id="tsr-fn-1">A plain note. <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
 <li id="tsr-src">Knuth, <em>The TeXbook</em>, p. 101. <a href="#tsr-fnref-2" data-syn="backlink">↩</a> <a href="#tsr-fnref-2" data-syn="backlink">a</a> <a href="#tsr-fnref-2.2" data-syn="backlink">b</a> <a href="#tsr-fnref-2.3" data-syn="backlink">c</a></li>
 </ol>
-</div>
+</section>
 </div>

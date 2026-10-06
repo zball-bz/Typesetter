@@ -187,6 +187,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
           if (b.borderColor) t.decl("border-color", strs.get(b.borderColor));  // (a validated colour)
         }
         if (b.background) t.decl("background", strs.get(b.background));
+        if (b.themed && b.role) t.attr("data-role", strs.get(b.role));  // (plan P3-23; D-Y11) the theme's frame
       }
       t.attrSafe("data-syn", "frame");
       t.open();
@@ -434,6 +435,7 @@ void writeRoot(std::string& out, const char* cls, const DLRoot& r) {
 void writeBlockOpen(std::string& out, const DLBlock& b, bool positional) {
   Tag t(out, "div");
   t.attrSafe("class", "tsr-para");
+  if (!b.role.empty()) t.attr("data-role", b.role);  // (plan P3-23; D-R02) the theme's hook
   if (positional) {
     t.num("data-pid", b.pid);
     t.num("data-s0", b.srcBase);

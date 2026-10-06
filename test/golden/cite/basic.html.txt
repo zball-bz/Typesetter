@@ -11,7 +11,7 @@
 <div class="tsr-line" data-s="169" data-e="305" data-join="space" style="top:120px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="169">the data. Citing </span><span class="tsr-r" data-s="242">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-s="242">1</a><span class="tsr-r" data-s="242">]</span><span class="tsr-r" data-s="248"> once more keeps its</span></div>
 <div class="tsr-line" data-s="248" data-e="305" style="top:144px;left:0px;width:300px"><span class="tsr-r" data-s="248">number; the uncited entry is omitted.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="0" style="position:relative;height:369.609px">
+<div class="tsr-para" data-role="bibliography" data-pid="2" data-s0="0" style="position:relative;height:369.609px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-bib-kp81" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:14.4px"><span class="tsr-r">[1] Donald E. Knuth and Michael</span></div>
 <div class="tsr-line" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r">F. Plass. </span><span class="tsr-r tsr-i">Breaking Paragraphs into</span></div>

@@ -4,25 +4,31 @@
 <div data-role="refsection" data-pid="2" data-s="131" data-e="264">
 <h2 data-s="144" data-e="158" id="tsr-h-1.1">Chapter one</h2>
 <p data-s="160" data-e="242">Knuth and Plass [<a href="#tsr-bib-1-kp81">1</a>], then the TeXbook [<a href="#tsr-bib-1-knuth84">2</a>]: numbered afresh in this section.</p>
-<div data-role="bibliography" data-s="244" data-e="251">
+<div data-role="refs" data-s="244" data-e="251">
+<section data-role="bibliography" role="doc-bibliography" data-s="244" data-e="251">
 <hr data-s="244" data-e="251">
 <p data-s="432" data-e="527" id="tsr-bib-1-kp81">[1] Knuth and Plass, Breaking paragraphs into lines, 1981.</p>
 <p data-s="529" data-e="598" id="tsr-bib-1-knuth84">[2] Knuth, The TeXbook, 1984.</p>
+</section>
 </div>
 </div>
 <div data-role="refsection" data-pid="3" data-s="266" data-e="376">
 <h2 data-s="279" data-e="293" id="tsr-h-1.2">Chapter two</h2>
 <p data-s="295" data-e="354">The TeXbook again [<a href="#tsr-bib-2-knuth84">1</a>], first here, and Liang [<a href="#tsr-bib-2-liang83">2</a>].</p>
-<div data-role="bibliography" data-s="356" data-e="363">
+<div data-role="refs" data-s="356" data-e="363">
+<section data-role="bibliography" role="doc-bibliography" data-s="356" data-e="363">
 <hr data-s="356" data-e="363">
 <p data-s="529" data-e="598" id="tsr-bib-2-knuth84">[1] Knuth, The TeXbook, 1984.</p>
 <p data-s="600" data-e="686" id="tsr-bib-2-liang83">[2] Liang, Word hyphenation by computer, 1983.</p>
+</section>
 </div>
 </div>
 <p data-pid="4" data-s="378" data-e="421">Back outside: [<a href="#tsr-bib-kp81">2</a>] keeps its outer number.</p>
-<div data-role="bibliography" data-pid="5" data-s="423" data-e="430">
+<div data-role="refs" data-pid="5" data-s="423" data-e="430">
+<section data-role="bibliography" role="doc-bibliography" data-s="423" data-e="430">
 <hr data-s="423" data-e="430">
 <p data-s="600" data-e="686" id="tsr-bib-liang83">[1] Liang, Word hyphenation by computer, 1983.</p>
 <p data-s="432" data-e="527" id="tsr-bib-kp81">[2] Knuth and Plass, Breaking paragraphs into lines, 1981.</p>
+</section>
 </div>
 </div>

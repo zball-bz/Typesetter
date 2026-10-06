@@ -1,31 +1,37 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="565" data-e="604" id="tsr-h-1">Lists of figures, tables and theorems</h1>
-<ul data-pid="1" data-s="606" data-e="612">
+<nav data-role="lof" data-pid="1" data-s="606" data-e="612">
+<ul data-s="606" data-e="612">
 <li><a href="#tsr-fig-a">图 1</a>：A first figure, with <strong>emphasis</strong> in its caption.</li>
 </ul>
-<ul data-pid="2" data-s="614" data-e="620">
+</nav>
+<nav data-role="lot" data-pid="2" data-s="614" data-e="620">
+<ul data-s="614" data-e="620">
 <li><a href="#tsr-tbl-b">表 1</a></li>
 <li><a href="#tsr-tbl-c">表 2</a>：A figure that numbers as a table.</li>
 </ul>
-<p data-pid="3" data-s="622" data-e="633"><strong>Theorems</strong></p>
-<ul data-pid="4" data-s="622" data-e="633">
+</nav>
+<div data-role="theorems" data-pid="3" data-s="622" data-e="633">
+<p data-s="622" data-e="633"><strong>Theorems</strong></p>
+<ul data-s="622" data-e="633">
 <li><a href="#tsr-thm-main">Theorem 1</a> — Main</li>
 </ul>
-<figure data-pid="5" data-s="635" data-e="763" id="tsr-fig-a">
+</div>
+<figure data-role="figure" data-pid="4" data-s="635" data-e="763" id="tsr-fig-a">
 <img data-s="635" data-e="763" src="photos/a.png" alt="a" style="max-width:100%">
 <figcaption><strong>图 1：</strong>A first figure, with <strong>emphasis</strong> in its caption.</figcaption>
 </figure>
-<table data-pid="6" data-s="765" data-e="823" id="tsr-tbl-b">
+<table data-pid="5" data-s="765" data-e="823" id="tsr-tbl-b">
 <tr><td>Key</td><td>Value</td></tr>
 <tr><td>a</td><td>1</td></tr>
 </table>
-<figure data-pid="7" data-s="825" data-e="923" id="tsr-tbl-c">
+<figure data-role="figure" data-pid="6" data-s="825" data-e="923" id="tsr-tbl-c">
 <table data-s="850" data-e="880">
 <tr><td>x</td><td>y</td></tr>
 </table>
 <figcaption><strong>表 2：</strong>A figure that numbers as a table.</figcaption>
 </figure>
-<div data-role="theorem" data-pid="8" data-s="925" data-e="1005" id="tsr-thm-main">
+<div data-role="theorem" data-pid="7" data-s="925" data-e="1005" id="tsr-thm-main">
 <p data-s="969" data-e="995"><strong>Theorem 1.</strong> Every list is a collector.</p>
 </div>
 </div>

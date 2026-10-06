@@ -4,7 +4,7 @@
 <div class="tsr-line" data-s="0" data-e="86" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">leaves no column worth wrapping in (plan</span></div>
 <div class="tsr-line" data-s="0" data-e="86" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">P3-08).</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="88" style="position:relative;height:0px;margin-bottom:0px">
+<div class="tsr-para" data-role="figure" data-pid="1" data-s0="88" style="position:relative;height:0px;margin-bottom:0px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-w" data-s="0" data-e="128" src="photos/wide.png" alt="wide" style="top:0px;left:60px;width:240px;height:60px">
 <div class="tsr-line" data-s="106" data-e="119" data-ragged="1" data-track="caption" style="top:60px;left:110px;width:190px"><span class="tsr-r tsr-b tsr-cjk" data-s="106">图</span><span class="tsr-r tsr-b" data-s="106"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="106">：</span><span class="tsr-r" data-s="106">A wide float.</span></div>
 </div>

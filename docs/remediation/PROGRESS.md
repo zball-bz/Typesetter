@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-23
+- 下一步：P3-24
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -89,7 +89,7 @@
 | P3-20 | 安全评审检查点 | done | grep:plan P3-20 | 2026-10-06 | +1 用例（inline/link-url-diag，仅新增）| docs/security-review.md：§0 信任模型（文档即代码）、§1 RawHtml、§2 元素与属性白名单、§3 定位器与资源路径、§4 解码器与 fuzz 目标。本步发现并修复两项：链接/引用 URL 不限 scheme（`javascript:` 在排版页、语义页与静态导出成为活链接）→ 解码时按 url_policy.def 丢弃并报 ops-arg；role 的 html 可为任意小写元素名（script、iframe）→ 限于短语元素白名单，否则注册表拒绝。url_policy.def 生成 C++ safeImageSrc/safeLinkUrl 与 JS urlAllowed。fuzz --long 30 分钟（七个目标）无新崩溃 |
 | P3-21 | ResourceHost、定位器、引用清单、静态导出 | done | grep:plan P3-21 | 2026-10-06 | 0（录制器经 ResourceHost 复现全部 .ops，含 cite/*）；e2e 新增宿主 provider 模块用例 | runtime/src/shared/resources/：ResourceHost（provider 注册表，文档 provider 只限 resources.def docProviders 的 codeTokens/boxInfo，行带 store:false；provider 抛错只令本类行失败）、ResourceJob（拉取循环的 answer、执行期 load、清单）、ResourceLocator（按来源的 base、请求方类别 exec/image/input、url_policy.def 的用途，Node 文件限于根目录且读时按真实路径复查）、LruCache（条目、字节、TTL、失败 TTL 为 policy 四行）；内建 provider：canvas 宽度与纵向度量、代码 token、图片尺寸（嗅探→解码→主线程能力）。`$.load`/`ctx.load`（{as: text|json|bytes}）与 #bibliography 走同一 job.load。createEngine({providers:[{kind,module}]}) 由 worker 导入并注册；renderTsm({providers}|{host})。产品 references、docinfo 与 tsr2_product；renderTsm 返回 {html, css, diagnostics, ok, manifest, settings, docinfo}。export-static：docinfo 的 lang 与标题、按清单复制文档目录内的资源（真实路径复查）、按 shell.mjs 的模块图复制水合资源（tools/lib/module-graph.mjs）；tools/check-export.mjs 入 G6。文档：host-protocol-design §4b、pages-design §3、ctor-design、security-review 补遗、tsm-changes |
 | P3-22 | 代码高亮清单与引擎侧 overlay | done | grep:plan P3-22 | 2026-10-06 | 0 变化；+3 用例（code/overlay-json、code/overlay-unknown-diag、code/features-by-lang，仅新增）；native json-hl/tsm-hl 字节不变（stable_sort 无并列换序） | engine/schema/languages.json 为唯一清单（类别→编辑器类型、捕获别名、语言与别名、TextMate 作用域、语法源与查询、native、overlay、profile）；tools/gen-languages.mjs 生成 languages.gen.mjs（worker/编辑器/stdlib）、editors/vscode-tsm/src/hl.gen.js、engine/src/code/languages.gen.h、engine/native_grammars.gen.cmake（CMake 据此编译语法并嵌入查询）；gen-grammars 的 TextMate 围栏与 overlay 注入、codehl-assets 的语法表均读清单；生成器拒绝类别≠TOKEN_TAGS、主题缺类、native 语法用 #match?。hl-core.mjs（tagOf、resolveCaptures：稳定排序）供 worker 与编辑器共用；native 孪生 stable_sort 并求值 #eq?/#not-eq?/#any-of?/#not-any-of?。引擎侧 overlay（code/overlay.{h,cc}）：codeblock.overlays 属性（键 107，since 14，域 names），围栏参数、规则或 profile 默认规则（cpp-literate）开启；Resolve 时找区间、按字节置空格后请求、Emit 与语义页把区间合并为 label 词元；需求键 (语言, 正文, overlay)。去掉 worker 中只对 cpp 全局生效的正则；pbr2tsm 输出 cpp-literate。资源宿主一个种类可有多个 provider（match(row)），宿主可在运行时增加语言。code.fontFeaturesByLang 作用于内建语言的所有围栏标签。文档：code-design §8、host-protocol §4a/§4b、tsm-changes |
-| P3-23 | PresentationMap（元素行的 html 段） | todo | | | | |
+| P3-23 | PresentationMap（元素行的 html 段） | done | grep:plan P3-23 | 2026-10-06 | 185 个 golden 变化（脚本 check323.py 核对：89 个 html/paged 只多 data-role，其一 semantics/lists 另因收集器成组；64 个 semantic、2 个 css、13 个 tree、12 个 blocktree 为下列有意修复）；+3 用例（figure/caption-paras、semantics/presentation、style/weight-size） | 中性移植：elements.json 新增 html 段（种类、生成角色、类的展示行，like 继承；吸收 P3-01 的 roles 映射与类的 html: figure），语义页按行取元素，字节不变后再做有意修复。有意修复：图注按 caption 部件写一个 figcaption（多段各为 p，块不再落入 figcaption，不再按首段猜测）；定义术语 dl/dt/dd（term 投影，模板给描述包一层 term-def 角色）；收集器输出外包一层以收集器名为角色的组（toc/lof/lot/index→nav，glossary/notes/bibliography→section，带 DPUB-ARIA 角色）；代码边注在语义页行内投影（行尾、按声明的标记、data-syn 使复制只取代码）；data-role：语义页与排版页 .tsr-para/.tsr-band 上的组角色（D-R02）；typeset.frame 声明的类得到 .tsr-frame[data-role] 框（D-Y11，内建无）；白名单：块/行内元素、slot 元素、ARIA 角色、projection，非法行拒绝注册表；kHtmlAttrs 增加 role。样式分歧：排版页写出 700 以外的 font-weight，语义页写出 sizeMul（em）与 sizePx×sizeMul；规则样式表按展示行取种类元素，角色选择器→[data-role]（仅限页面上带钩子的组），类选择器→.tsr-c-*。通道：semantics.html 宿主设置、$.element(name, {html})。文档：document-model §9.2、semantics-design、security-review 补遗、tsm-changes |
 | P3-24 | SymbolInfo 身份与数据驱动的数学族 | todo | | | | |
 | P3-25 | 运算符原子与单一 mlist→item 转换 | todo | | | | |
 | P3-26 | 数学采用通用协议；公式编号由布局测量 | todo | | | | |
@@ -166,6 +166,7 @@
 | P3-20 后 | 3.30 | 10.60 | 26.90 | 1.7 / 3.1 / 0.8 / 9.8 / 3.3 | 71.3 / 104.9 / 146.9 | 1.70 / 21.70 / 58.30 | 均在 P3 门限内（解码时多一次链接 URL 检查） |
 | P3-21 后 | 3.50 | 10.40 | 27.10 | 1.8 / 3.2 / 0.8 / 10.1 / 3.3 | 66.7 / 102.3 / 147.6 | 1.70 / 22.60 / 55.80 | 均在 P3 门限内（拉取循环的各类行经 provider 注册表分派） |
 | P3-22 后 | 3.50 | 11.00 | 26.80 | 1.8 / 3.4 / 0.8 / 9.9 / 3.3 | 68.7 / 99.3 / 145.1 | 1.70 / 22.30 / 54.70 | 均在 P3 门限内 |
+| P3-23 后 | 3.40 | 10.90 | 26.70 | 1.8 / 3.0 / 0.8 / 9.9 / 3.2 | 69.6 / 99.1 / 147.4 | 1.70 / 23.10 / 55.60 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -370,6 +371,11 @@
 | P3-22 | cpp 增加别名 c（worker 此前不高亮 ```c；编辑器的 TextMate 早已把 c 当作 cpp） | 两处行为统一，按 tree-sitter-cpp 高亮 C 代码质量足够 | 无 |
 | P3-22 | 语义页的 class 保持围栏原文（language-cpp-literate），profile 只通过默认规则设置 overlays | profile 是规则，不改写作者的属性 | 无 |
 | P3-22 | 修复（本步发现）：devAudit 用计算样式的 font 简写设置 canvas，而有 font-feature-settings 时该简写序列化为空串，基线检查与压缩检查用了陈旧字体；改为由各分项拼出字体串 | 新增的 features-by-lang 用例暴露；P3-19 的基线检查对设置了字体特性的代码行误报 | 无 |
+| P3-23 | 展示行放在 elements.json 的 html 段，宿主通道为 settings 行 semantics.html，文档通道为 $.element 的 html 字段（设计写 render.classes.<cls> 设置键） | 计划写 html 段；与注册表其余各段同一分层（内建 < 宿主 semantics.* < 文档声明） | 无 |
+| P3-23 | 只有 kind/role/class 的元素、slot、ARIA、projection、typeset 钩子做成数据；设计中的 attrs（从参数取属性）、classes、ref 预览与 copy 策略、generatedCopy、omitInFragment、math 投影选择未做；link/ref、code、image、raw、error 仍是代码 | 现有发现与计划要点只需要这些；预览与复制已由 P3-06/P3-07 的类字段承载；数学投影属 P3-27 | P3-27 |
+| P3-23 | data-role 只写在顶层块（.tsr-para/.tsr-band）与语义页的组元素上，未写到行；行内角色（caption、fn-marker 等段落与样式节点）不带 data-role，规则样式表对这些角色仍不输出 CSS | 顶层组（图、注释、目录、定理）是主题需要的钩子；段落级角色已由默认规则在两页同样生效 | 无 |
+| P3-23 | 收集器输出外包一层组（角色为收集器名）：带静态 head 的收集器（semantics/lists 的 theorems）其 head 与列表成为同一顶层块，pid 编号随之变化（排版位置不变） | nav/section 必须包住收集器的全部输出；为 head 另开块会把 nav 拆开 | 无 |
+| P3-23 | parity 单元测试不再比较语义页：文档声明的 #!sketch 区域没有 caption 部件（内建 figure 构造器才有），旧语义页靠"首段即图注"的猜测才与内建一致 | 去掉猜测正是本步修复 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

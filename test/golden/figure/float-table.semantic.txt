@@ -1,6 +1,6 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="150">Any block floats (plan P3-15): a figure whose body is a table floats right at 45% of the measure, its caption beneath it, the text beside it narrowed.</p>
-<figure data-pid="1" data-s="152" data-e="309" id="tsr-tbl-float">
+<figure data-role="figure" data-pid="1" data-s="152" data-e="309" id="tsr-tbl-float">
 <table data-s="229" data-e="283">
 <tr><td>Name</td><td>Qty</td></tr>
 <tr><td>Alpha</td><td>2</td></tr>

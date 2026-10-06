@@ -1,11 +1,11 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="154">Subfigures side by side (plan P3-15): each an inline block at 45% of the figure, laid out on its own; they wrap like words when the measure is too narrow.</p>
-<figure data-pid="1" data-s="156" data-e="507" id="tsr-fig-pair">
-<figure data-s="184" data-e="310" id="tsr-fig-a">
+<figure data-role="figure" data-pid="1" data-s="156" data-e="507" id="tsr-fig-pair">
+<figure data-role="figure" data-s="184" data-e="310" id="tsr-fig-a">
 <img data-s="184" data-e="310" src="a.png" alt="" style="max-width:100%">
 <figcaption><strong>1(a) </strong>The left view.</figcaption>
 </figure>
-<figure data-s="311" data-e="474" id="tsr-fig-b">
+<figure data-role="figure" data-s="311" data-e="474" id="tsr-fig-b">
 <img data-s="311" data-e="474" src="b.png" alt="" style="max-width:100%">
 <figcaption><strong>1(b) </strong>The right view, whose caption runs a little longer.</figcaption>
 </figure>

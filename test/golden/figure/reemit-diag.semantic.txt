@@ -1,6 +1,6 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="117">A refused image scheme is reported once, even though the formula <code class="tsr-mathsrc">$f(x) &quot;if&quot; x &gt; 0$</code> makes emit run twice (plan P0-11).</p>
-<figure data-pid="1" data-s="119" data-e="225" id="tsr-fig-bad">
+<figure data-role="figure" data-pid="1" data-s="119" data-e="225" id="tsr-fig-bad">
 <div class="tsr-imgph">refused</div>
 <figcaption><strong>图 1：</strong>The placeholder stands in.</figcaption>
 </figure>

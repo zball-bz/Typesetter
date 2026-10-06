@@ -9,10 +9,10 @@
 <h1 data-pid="7" data-s="497" data-e="506" id="tsr-tgt">Targets</h1>
 <h2 data-pid="8" data-s="514" data-e="546" id="tsr-a]b">An odd label</h2>
 <p data-pid="9" data-s="548" data-e="593">References: <a href="#tsr-tgt">§1</a> and <a href="#tsr-a]b">§1.1</a> in brackets.</p>
-<div data-role="notes" data-pid="10" data-s="0" data-e="593">
+<section data-role="notes" role="doc-endnotes" data-pid="10" data-s="0" data-e="593">
 <hr data-s="0" data-e="593">
 <ol data-s="0" data-e="593">
 <li id="tsr-fn-1">a ] b <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
 </ol>
-</div>
+</section>
 </div>

@@ -5,7 +5,7 @@
 <div class="tsr-line" data-s="63" data-e="140" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:0.889px"><span class="tsr-r" data-s="63">et: </span><span class="tsr-r" data-s="101">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-s="101">1</a><span class="tsr-r" data-s="101">, p. 5]</span><span class="tsr-r" data-s="112">, and a group takes one too:</span></div>
 <div class="tsr-line" data-s="141" data-e="168" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="141">[</span><a class="tsr-r" href="#tsr-bib-liang83" data-s="141">2</a><span class="tsr-r" data-s="141">, </span><a class="tsr-r" href="#tsr-bib-knuth84" data-s="141">3</a><span class="tsr-r" data-s="141">, ch. 2]</span><span class="tsr-r" data-s="167">.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:369.609px">
+<div class="tsr-para" data-role="bibliography" data-pid="1" data-s0="0" style="position:relative;height:369.609px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-bib-kp81" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:14.4px"><span class="tsr-r">[1] Donald E. Knuth and Michael</span></div>
 <div class="tsr-line" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r">F. Plass. </span><span class="tsr-r tsr-i">Breaking Paragraphs into</span></div>

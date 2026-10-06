@@ -2,7 +2,7 @@
 <div class="tsr-para" data-pid="0" data-s0="271" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="26" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Cited: </span><span class="tsr-r" data-s="7">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-s="7">1</a><span class="tsr-r" data-s="7">]</span><span class="tsr-r" data-s="13"> and </span><span class="tsr-r" data-s="17">[</span><a class="tsr-r" href="#tsr-bib-knuth84" data-s="17">2</a><span class="tsr-r" data-s="17">]</span><span class="tsr-r" data-s="25">.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="308" style="position:relative;height:230.406px">
+<div class="tsr-para" data-role="refs" data-pid="1" data-s0="308" style="position:relative;height:230.406px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-bib-kp81" data-s="0" data-e="171" data-join="space" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="0">[1] Donald E. Knuth and Michael F. Plass.</span></div>
 <div class="tsr-line" data-s="40" data-e="170" data-join="space" style="top:67.203px;left:32px;width:268px;word-spacing:10.667px"><span class="tsr-r" data-s="40">Breaking paragraphs into lines.</span></div>

@@ -9,16 +9,17 @@ doc @[553,780) [base]
     ref @[623,649) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
       text @[623,649) [SUPx0.70] str="1"
     text @[649,650) [base] str="."
-  group @[652,663) [base] role="notes"
-    rule @[652,663) [base]
-    list @[652,663) [base] ordered=true
-      item @[564,608) [base]
-        para @[564,608) [base] label="en-1"
-          styled @[564,608) [basex0.85] role="note-body"
-            text @[589,607) [basex0.85] str="The first endnote."
-            text @[564,608) [basex0.85] str=" "
-            ref @[564,608) [basex0.85] target="enref-1" syn="backlink" copy="omit"
-              text @[564,608) [basex0.85] str="↩"
+  group @[652,663) [base] role="endnotes"
+    group @[652,663) [base] role="notes"
+      rule @[652,663) [base]
+      list @[652,663) [base] ordered=true
+        item @[564,608) [base]
+          para @[564,608) [base] label="en-1"
+            styled @[564,608) [basex0.85] role="note-body"
+              text @[589,607) [basex0.85] str="The first endnote."
+              text @[564,608) [basex0.85] str=" "
+              ref @[564,608) [basex0.85] target="enref-1" syn="backlink" copy="omit"
+                text @[564,608) [basex0.85] str="↩"
   heading @[665,670) [BOLDx1.60] level=1 label="h-2"
     text @[667,670) [BOLDx1.60] str="Two"
   para @[672,767) [base]
@@ -29,23 +30,24 @@ doc @[553,780) [base]
     ref @[730,766) [SUPx0.70] role="fn-marker" attach="prev" target="en-3" label="enref-3" syn="fn-marker" copy="omit"
       text @[730,766) [SUPx0.70] str="iii"
     text @[766,767) [base] str="."
-  group @[769,780) [base] role="notes"
-    rule @[769,780) [base]
-    list @[769,780) [base] ordered=true
-      item @[676,721) [base]
-        para @[676,721) [base] label="en-2"
-          styled @[676,721) [basex0.85] role="note-body"
-            text @[701,720) [basex0.85] str="The second endnote."
-            text @[676,721) [basex0.85] str=" "
-            ref @[676,721) [basex0.85] target="enref-2" syn="backlink" copy="omit"
-              text @[676,721) [basex0.85] str="↩"
-      item @[730,766) [base]
-        para @[730,766) [base] label="en-3"
-          styled @[730,766) [basex0.85] role="note-body"
-            text @[755,765) [basex0.85] str="The third."
-            text @[730,766) [basex0.85] str=" "
-            ref @[730,766) [basex0.85] target="enref-3" syn="backlink" copy="omit"
-              text @[730,766) [basex0.85] str="↩"
+  group @[769,780) [base] role="endnotes"
+    group @[769,780) [base] role="notes"
+      rule @[769,780) [base]
+      list @[769,780) [base] ordered=true
+        item @[676,721) [base]
+          para @[676,721) [base] label="en-2"
+            styled @[676,721) [basex0.85] role="note-body"
+              text @[701,720) [basex0.85] str="The second endnote."
+              text @[676,721) [basex0.85] str=" "
+              ref @[676,721) [basex0.85] target="enref-2" syn="backlink" copy="omit"
+                text @[676,721) [basex0.85] str="↩"
+        item @[730,766) [base]
+          para @[730,766) [base] label="en-3"
+            styled @[730,766) [basex0.85] role="note-body"
+              text @[755,765) [basex0.85] str="The third."
+              text @[730,766) [basex0.85] str=" "
+              ref @[730,766) [basex0.85] target="enref-3" syn="backlink" copy="omit"
+                text @[730,766) [basex0.85] str="↩"
   group @[553,780) [base] role="notes"
     rule @[553,780) [base]
     list @[553,780) [base] ordered=true

@@ -1,0 +1,10 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="200">Presentation rows (plan P3-23): a class of the document&#39;s shows as its own element, with an ARIA role and a frame the theme draws; a role reads as an inline element; the host turns quotes into asides.</p>
+<section data-role="theorem" role="note" data-pid="1" data-s="590" data-e="654" id="tsr-t1">
+<p data-s="613" data-e="644"><strong>Theorem 1.</strong> Every presentation row is data.</p>
+</section>
+<p data-pid="2" data-s="656" data-e="708">Press <kbd><strong>Ctrl</strong></kbd> to copy; see <a href="#tsr-t1">Theorem 1</a>.</p>
+<aside role="note" data-pid="3" data-s="710" data-e="747">
+<p data-s="712" data-e="747">A quote the host shows as an aside.</p>
+</aside>
+</div>

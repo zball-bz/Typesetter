@@ -15,7 +15,7 @@
 <div class="tsr-line" data-s="0" data-e="47" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">Broken markup is diagnosed where it was</span></div>
 <div class="tsr-line" data-s="0" data-e="83" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">parsed: an unclosed %-- comment</span></div>
 </div>
-<div class="tsr-para" data-pid="4" data-s0="97" style="position:relative;height:97.594px">
+<div class="tsr-para" data-role="notes" data-pid="4" data-s0="97" style="position:relative;height:97.594px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="6" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">A note made by m. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 <div class="tsr-line" id="tsr-fn-2" data-s="14" data-e="20" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="14" style="font-size:13.6px">A note made by m. </span><a class="tsr-r" href="#tsr-fnref-2" data-syn="backlink" style="font-size:13.6px">↩</a></div>

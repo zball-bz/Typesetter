@@ -76,6 +76,7 @@ struct Config {
   std::string semElements = "";  // semantics.elements
   std::string semCounters = "";  // semantics.counters
   std::string semCollectors = "";  // semantics.collectors
+  std::string semHtml = "";  // semantics.html
   std::string semSystems = "";  // semantics.systems
   std::string idPrefix = "tsr-";  // render.idPrefix
   std::string styleRules = "";  // style.rules
@@ -99,6 +100,7 @@ struct IngestSettings {
   const std::string& semElements;  // semantics.elements
   const std::string& semCounters;  // semantics.counters
   const std::string& semCollectors;  // semantics.collectors
+  const std::string& semHtml;  // semantics.html
   const std::string& semSystems;  // semantics.systems
   const std::string& styleRules;  // style.rules
   IngestSettings(const Config& c)  // NOLINT: a Config is its view
@@ -114,6 +116,7 @@ struct IngestSettings {
         semElements(c.semElements),
         semCounters(c.semCounters),
         semCollectors(c.semCollectors),
+        semHtml(c.semHtml),
         semSystems(c.semSystems),
         styleRules(c.styleRules) {}
 };

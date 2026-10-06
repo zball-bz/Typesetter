@@ -18,7 +18,7 @@
 <div class="tsr-para" data-pid="4" data-s0="339" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="6" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Row 1 Row 2</span></div>
 </div>
-<div class="tsr-para" data-pid="5" data-s0="386" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="aside" data-pid="5" data-s0="386" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="32" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">A region holds statements: inside a re</span><span class="tsr-r" data-s="27" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="27" data-e="33" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="27">gion.</span></div>
 </div>

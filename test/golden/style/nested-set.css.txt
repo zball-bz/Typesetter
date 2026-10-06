@@ -5,6 +5,7 @@
 :where(p:not(.tsr-mathblock)){text-indent:0}
 :where(:not(pre) > code){font-family:var(--tsr-font-mono, monospace);font-size:0.85em}
 :where(pre){font-family:var(--tsr-font-mono, monospace);font-size:0.85em;text-align:start;hyphens:manual}
+:where(.tsr-c-tok-comment){font-style:italic}
 :where(ul,ol){padding-inline-start:1.5em}
 :where(blockquote){padding-inline-start:1em}
 :where(img){text-align:start;break-after:avoid}

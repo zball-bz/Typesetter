@@ -1037,6 +1037,7 @@ struct Doc {
         if (k == 0 || pg.bands[k - 1].para != band.para) {
           Tag t(html, "div");
           t.attrSafe("class", "tsr-band");
+          if (!dl[band.para].role.empty()) t.attr("data-role", dl[band.para].role);
           t.num("data-b", dl[band.para].pid);
           t.open();
           html += "\n";
@@ -1064,7 +1065,7 @@ struct Doc {
     writerDefects() = {};
     AnchorScope ids(cfg.idPrefix);
     std::string html = renderSemantic(tree, strs, styles, &rt, registry, &cascade, &nodeProps);
-    (void)rulesToCss(cascade, tree, strs, &diags);  // what its stylesheet leaves out (rule-no-css)
+    (void)rulesToCss(cascade, tree, strs, &diags, registry);  // what its stylesheet leaves out (rule-no-css)
     reportWriterDefects();
     return html;
   }
@@ -1084,7 +1085,7 @@ struct Doc {
 
   // the semantic page's stylesheet (rulesToCss, plan P3-01): what the rules
   // add to the scopes the page writes inline; valid with the semantic page
-  std::string renderCss() { return rulesToCss(cascade, tree, strs); }
+  std::string renderCss() { return rulesToCss(cascade, tree, strs, nullptr, registry); }
 
   // a repeated / unlisted attribute reached the HTML writer (a serializer
   // defect; debug builds assert at the call site)

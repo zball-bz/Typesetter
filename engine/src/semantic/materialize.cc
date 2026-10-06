@@ -731,18 +731,35 @@ struct Mat {
       return;
     }
     Ctx cc = siteAt(k);
-    if (C->hasHead) inst(C->head, cc, Slots{}, nullptr, out);  // (plan P3-13) its static head
+    // (plan P3-23) its output stands in a group of its role, the
+    // collector's name — the presentation map's hook (a table of contents
+    // is a nav, the notes a section) and a rule's — unless its wrap is that
+    // group already (notes, bibliography)
+    const bool own = C->wrap.size() == 1 && C->wrap[0].k == TItem::K::Node && C->wrap[0].kind == Kind::group &&
+                     std::any_of(C->wrap[0].args.begin(), C->wrap[0].args.end(), [&](const auto& a) {
+                       return a.first == ArgK::role && a.second.k == TArg::K::Text && a.second.s == what;
+                     });
+    std::vector<ContentNode*>* dst = &out;
+    if (!own) {
+      ContentNode* g = mk(Kind::group, k->span);
+      g->args.push_back({ArgK::role, ArgTag::Str, 0, e.strs.intern(what)});
+      make(g, cc);
+      out.push_back(g);
+      cc = under(g, cc.span);
+      dst = &g->kids;
+    }
+    if (C->hasHead) inst(C->head, cc, Slots{}, nullptr, *dst);  // (plan P3-13) its static head
     switch (C->src) {
-      case CollectorDef::Src::Outline: outline(*C, cc, out); return;
-      case CollectorDef::Src::Table: table(*C, k, cc, out); return;
+      case CollectorDef::Src::Outline: outline(*C, cc, *dst); return;
+      case CollectorDef::Src::Table: table(*C, k, cc, *dst); return;
       case CollectorDef::Src::Flow: {
         u32 lo = 0, hi = kNoInst;
         if (C->scope == CollectorDef::Scope::Section)
           if (auto at = e.ix.collectAt.find(k); at != e.ix.collectAt.end()) sectionOf(at->second, C->scopeDepth, lo, hi);
-        flow(*C, cc, out, lo, hi);
+        flow(*C, cc, *dst, lo, hi);
         return;
       }
-      case CollectorDef::Src::Classes: classes(*C, cc, out); return;
+      case CollectorDef::Src::Classes: classes(*C, cc, *dst); return;
     }
   }
   // (plan P3-13) the section around a place (the instances before it): from

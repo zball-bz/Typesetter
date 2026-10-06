@@ -1,0 +1,8 @@
+doc @[0,748)
+  para @[0,200) lines=1
+  code-block @[202,588) js="\n  $.counter('thm')\n  $.element('theorem', {\n    counter: 'thm', numbering: 'always', supplement: {en: 'Theorem '},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}],\n    html: {element: 'section', aria: 'note', typeset: {frame: true, dataRole: true}},\n  })\n  $.element('key', {html: {element: 'kbd', inline: true}})\n"
+  region @[590,654) name="theorem"
+    para @[613,644) lines=1
+  para @[656,708) lines=1
+  quote @[710,747)
+    para @[712,747) lines=1

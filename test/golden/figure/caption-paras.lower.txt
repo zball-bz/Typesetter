@@ -1,0 +1,20 @@
+lower v1 abi 3d3ccfbb docEnd 256 holes 1 module 3efebf51c3cdca17
+piece 0 hole 0 js [103,129)
+block 0 content [0,115)
+  CALL para [0,115)
+    TEXT "A caption of two paragraphs is one figcaption holding both, and a block in the figure stays out of it (plan P3-23):" [0,115)
+block 1 content [117,240) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [117,240)
+    CALL para [144,172)
+      TEXT "The first caption paragraph." [144,172)
+    CALL list [174,200) ordered=false start=1
+      CALL item [174,200)
+        CALL para [176,200)
+          TEXT "a list inside the figure" [176,200)
+    CALL para [202,231)
+      TEXT "The second caption paragraph." [202,231)
+block 2 content [242,255)
+  CALL para [242,255)
+    TEXT "See " [242,245) raw=0:0,4:3
+    CALL ref [246,254) target="fig-two"
+    TEXT "." [254,255)

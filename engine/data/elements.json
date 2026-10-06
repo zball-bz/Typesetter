@@ -17,12 +17,6 @@
     "enum": { "scope": "olist", "pattern": "1." },
     "index-entry": {}
   },
-  "roles": {
-    "$comment": "Generated roles and the element each reads as on the semantic page (plan P3-01; T7's minimal map). Their presentation is the default rules' (engine/data/defaults.json).",
-    "fn-marker": { "html": "sup" },
-    "caption-label": { "html": "strong" },
-    "term-name": { "html": "strong" }
-  },
   "unresolved": [{ "term": "unresolved" }],
   "unnumbered": [{ "slot": "label" }],
   "classes": {
@@ -48,7 +42,6 @@
     "figure": {
       "select": [{ "node": "group", "role": "figure" }],
       "box": "figure",
-      "html": "figure",
       "counter": "figure",
       "numbering": "always",
       "supplement": "figure",
@@ -169,7 +162,10 @@
                   "style": "site",
                   "kids": [
                     { "node": "styled", "args": { "role": "term-name" }, "kids": [{ "slot": "title" }] },
-                    { "when": "inline-body", "kids": [{ "term": "term-sep" }, { "slot": "inline-body" }] }
+                    {
+                      "when": "inline-body",
+                      "kids": [{ "term": "term-sep" }, { "node": "styled", "args": { "role": "term-def" }, "kids": [{ "slot": "inline-body" }] }]
+                    }
                   ]
                 },
                 { "slot": "block-body" }
@@ -377,5 +373,34 @@
         }
       ]
     }
+  },
+  "html": {
+    "$comment": [
+      "The presentation map (plan P3-23; design T7 PresentationMap): how a kind, a generated role or a class shows. A node's row is its class's (or its like: base's), else its role's, else its kind's.",
+      "element: the semantic page's element (h{level}: the level argument, 1–6); inline: a phrasing element around a run (a role); projection: list, table, codeblock, math or term — the structural shapes that are code; slots: a part's element (caption: figcaption); aria: its role attribute; typeset: {dataRole: its blocks carry data-role on the typeset page (D-R02), frame: a frame box the theme draws (D-Y11)}; like: another row's fields first.",
+      "Elements, roles and projections come from allowlists (engine/src/elements/presentation.h; D-R09). The host patches rows with semantics.html, a document with $.element(name, {html: {…}})."
+    ],
+    "para": { "element": "p" },
+    "heading": { "element": "h{level}" },
+    "list": { "projection": "list" },
+    "item": { "element": "li" },
+    "quote": { "element": "blockquote" },
+    "codeblock": { "projection": "codeblock" },
+    "rule": { "element": "hr" },
+    "mathblock": { "projection": "math" },
+    "table": { "projection": "table" },
+    "group": { "element": "div", "typeset": { "dataRole": true } },
+    "figure": { "element": "figure", "slots": { "caption": "figcaption" }, "typeset": { "dataRole": true } },
+    "fn-marker": { "element": "sup", "inline": true },
+    "caption-label": { "element": "strong", "inline": true },
+    "term-name": { "element": "strong", "inline": true },
+    "term": { "element": "dl", "projection": "term", "typeset": { "dataRole": true } },
+    "toc": { "element": "nav", "aria": "doc-toc", "typeset": { "dataRole": true } },
+    "lof": { "element": "nav", "typeset": { "dataRole": true } },
+    "lot": { "element": "nav", "typeset": { "dataRole": true } },
+    "index": { "element": "nav", "aria": "doc-index", "typeset": { "dataRole": true } },
+    "glossary": { "element": "section", "aria": "doc-glossary", "typeset": { "dataRole": true } },
+    "notes": { "element": "section", "aria": "doc-endnotes", "typeset": { "dataRole": true } },
+    "bibliography": { "element": "section", "aria": "doc-bibliography", "typeset": { "dataRole": true } }
   }
 }

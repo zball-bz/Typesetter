@@ -1,0 +1,18 @@
+doc @[0,748)
+  para @[0,200)
+    text @[0,200) str="Presentation rows (plan P3-23): a class of the document's shows as its own element, with an ARIA role and a frame the theme draws; a role reads as an inline element; the host turns quotes into asides."
+  code-block @[202,588) js="\n  $.counter('thm')\n  $.element('theorem', {\n    counter: 'thm', numbering: 'always', supplement: {en: 'Theorem '},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}],\n    html: {element: 'section', aria: 'note', typeset: {frame: true, dataRole: true}},\n  })\n  $.element('key', {html: {element: 'kbd', inline: true}})\n"
+  region @[590,654) name="theorem"
+    para @[613,644)
+      text @[613,644) str="Every presentation row is data."
+  para @[656,708)
+    text @[656,661) str="Press "
+    splice @[662,690) expr="strong({role: 'key'})"
+      arg @[685,689)
+        text @[685,689) str="Ctrl"
+    text @[691,703) str=" to copy; see "
+    ref @[704,707) target="t1"
+    text @[707,708) str="."
+  quote @[710,747)
+    para @[712,747)
+      text @[712,747) str="A quote the host shows as an aside."

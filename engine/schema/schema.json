@@ -381,10 +381,14 @@
       "keyword; cssValue emPx: the run's em in px)."
     ],
     "text.weight": {
+      "$comment": "700 is the contract class tsr-b; another weight but 400 is written as font-weight (plan P3-23: the page paints the weight it measured).",
       "field": "weight",
       "type": "weight",
       "attr": "weight",
-      "sugar": {"bold": 700}
+      "sugar": {"bold": 700},
+      "css": "font-weight",
+      "cssOrder": 5,
+      "cssValue": "weight"
     },
     "text.italic": {
       "field": "italic",
@@ -1021,6 +1025,16 @@
     },
     "semantics.collectors": {
       "field": "semCollectors",
+      "dom": "json",
+      "def": {},
+      "prec": "HostDefault",
+      "affects": [
+        "Ingest"
+      ]
+    },
+    "semantics.html": {
+      "$comment": "The host's presentation rows (plan P3-23; design T7 PresentationMap): elements.json html rows by name, patched field by field.",
+      "field": "semHtml",
       "dom": "json",
       "def": {},
       "prec": "HostDefault",

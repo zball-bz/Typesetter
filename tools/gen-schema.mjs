@@ -414,7 +414,7 @@ ph += `}\n// the style keys by name (plan P3-01: rules in JSON read them as\n// 
   `  return false;\n}\n\n}  // namespace tsr\n`;
 
 // the typeset serializer's run attributes and declarations
-let css = `// ${HDR}\n// A typeset run's attributes and style declarations (schema "props"; plan\n// P1-02). Values were validated at decode; text values are attribute-escaped.\n#pragma once\n#include <cstring>\n\n#include "../model/style.h"\n#include "html_writer.h"\n\nnamespace tsr {\n\n` +
+let css = `// ${HDR}\n// A typeset run's attributes and style declarations (schema "props"; plan\n// P1-02). Values were validated at decode; text values are attribute-escaped.\n#pragma once\n#include <cstdio>\n#include <cstring>\n\n#include "../model/style.h"\n#include "html_writer.h"\n\nnamespace tsr {\n\n` +
   `inline void runCss(Tag& t, const Styling& st, double basePx, const Interner& strs) {\n`;
 for (const [, r] of props) if (r.html) css += `  if (st.${r.field}) t.attr("${r.html}", strs.get(st.${r.field}));\n`;
 for (const [, r] of props.filter(([, r]) => r.css).sort((a, b) => a[1].cssOrder - b[1].cssOrder)) {
@@ -428,6 +428,9 @@ for (const [, r] of props.filter(([, r]) => r.css).sort((a, b) => a[1].cssOrder 
       `    auto add = [&](const char* w) {\n      if (n) buf[n++] = ' ';\n      std::memcpy(buf + n, w, std::strlen(w));\n      n += std::strlen(w);\n    };\n` +
       bits.map(([b, kw]) => `    if (st.${r.field} & ${b}) add("${kw}");\n`).join('') +
       `    t.decl("${r.css}", std::string_view(buf, n));\n  }\n`;
+  } else if (r.cssValue === 'weight') {  // (plan P3-23) beside the contract's tsr-b (700)
+    css += `  if (st.${r.field} && st.${r.field} != 400 && st.${r.field} != 700) {\n` +
+      `    char w[8];\n    t.decl("${r.css}", std::string_view(w, (size_t)std::snprintf(w, sizeof w, "%u", (unsigned)st.${r.field})));\n  }\n`;
   } else if (r.type === 'str') {
     css += `  if (st.${r.field}) t.declEsc("${r.css}", strs.get(st.${r.field}));\n`;
   }

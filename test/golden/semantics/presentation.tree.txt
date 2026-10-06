@@ -1,0 +1,28 @@
+doc @[0,747) [base]
+  para @[0,200) [base]
+    text @[0,200) [base] str="Presentation rows (plan P3-23): a class of the document's shows as its own element, with an ARIA role and a frame the theme draws; a role reads as an inline element; the host turns quotes into asides."
+  group @[590,654) [base] role="theorem" label="t1"
+    para @[613,644) [base]
+      text @[613,644) [BOLD] str="Theorem 1."
+      text @[613,644) [base] str=" "
+      text @[613,644) [base] str="Every presentation row is data."
+  para @[656,708) [base]
+    text @[656,661) [base] str="Press " raw=0:0,6:5
+    styled @[662,690) [BOLD] role="key"
+      text @[685,689) [BOLD] str="Ctrl"
+    text @[691,703) [base] str=" to copy; see " raw=0:0,1:0,14:12
+    ref @[704,707) [base] target="t1"
+      text @[704,707) [base] str="Theorem 1"
+    text @[707,708) [base] str="."
+  quote @[710,747) [base]
+    para @[712,747) [base]
+      text @[712,747) [base] str="A quote the host shows as an aside."
+decl counter name="thm" flow=1 @[202,588) ext.row="{}"
+decl element name="theorem" flow=1 @[202,588) ext.row="{\"counter\":\"thm\",\"numbering\":\"always\",\"supplement\":{\"en\":\"Theorem \"},\"sites\":[{\"where\":\"prepend\",\"at\":\"first-para\",\"template\":{\"$t\":0}}],\"html\":{\"element\":\"section\",\"aria\":\"note\",\"typeset\":{\"frame\":true,\"dataRole\":true}}}"
+  seq @[0,0) [base]
+    styled @[0,0) [BOLD]
+      slot @[0,0) [BOLD] name="supplement"
+      slot @[0,0) [BOLD] name="number"
+      text @[0,0) [BOLD] str="."
+    text @[0,0) [base] str=" "
+decl element name="key" flow=1 @[202,588) ext.row="{\"html\":{\"element\":\"kbd\",\"inline\":true}}"

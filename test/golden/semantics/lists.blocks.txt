@@ -71,14 +71,13 @@ top pid=2 units=2
   word "ta" w=1025su pen=INF @[614,620)
   hyphen bw=513su pen=0.70 @[614,620)
   word "ble." w=2049su pen=INF @[614,620)
-top pid=3 units=1
+top pid=3 units=2
  unit text indent=0su
   word "The" w=1537su pen=INF BOLD @[622,633)
   hyphen bw=513su pen=0.70 BOLD @[622,633)
   word "o" w=513su pen=INF BOLD @[622,633)
   hyphen bw=513su pen=0.70 BOLD @[622,633)
   word "rems" w=2049su pen=INF BOLD @[622,633)
-top pid=4 units=1
  unit text indent=1536su marker="•"
   word "The" w=1537su pen=INF LINK @[622,633)
   hyphen bw=513su pen=0.70 LINK @[622,633)
@@ -91,7 +90,7 @@ top pid=4 units=1
   word "—" w=616su pen=INF @[622,633)
   space w=257su stretch=1 @[622,633)
   word "Main" w=2049su pen=INF @[622,633)
-top pid=5 units=2
+top pid=4 units=2
  unit img indent=0su anchor="fig-a" intrinsic=200x100px
  unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[707,754)
@@ -122,7 +121,7 @@ top pid=5 units=2
   word "cap" w=1537su pen=INF @[739,754)
   hyphen bw=513su pen=0.70 @[739,754)
   word "tion." w=2561su pen=INF @[739,754)
-top pid=6 units=4
+top pid=5 units=4
  unit text indent=0su anchor="tbl-b"
   word "Key" w=1537su pen=INF @[798,801)
  unit text indent=0su
@@ -133,7 +132,7 @@ top pid=6 units=4
   word "a" w=513su pen=INF @[810,811)
  unit text indent=0su
   word "1" w=513su pen=INF @[814,815)
-top pid=7 units=3
+top pid=6 units=3
  unit text indent=0su anchor="tbl-c"
   word "x" w=513su pen=INF @[867,868)
  unit text indent=0su
@@ -163,7 +162,7 @@ top pid=7 units=3
   word "ta" w=1025su pen=INF @[881,914)
   hyphen bw=513su pen=0.70 @[881,914)
   word "ble." w=2049su pen=INF @[881,914)
-top pid=8 units=1
+top pid=7 units=1
  unit text indent=0su anchor="thm-main"
   word "The" w=1537su pen=INF BOLD @[969,995)
   hyphen bw=513su pen=0.70 BOLD @[969,995)

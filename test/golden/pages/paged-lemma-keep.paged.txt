@@ -11,10 +11,10 @@
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
-<div class="tsr-band" data-b="2">
+<div class="tsr-band" data-role="lemma" data-b="2">
 <div class="tsr-line" data-s="374" data-e="417" style="top:0px;left:0px;width:300px;word-spacing:-0.889px"><span class="tsr-r" data-s="374">A lemma that fits at the foot of the sheet.</span></div>
 </div>
-<div class="tsr-band" data-b="3">
+<div class="tsr-band" data-role="proof" data-b="3">
 <div class="tsr-line" data-s="435" data-e="565" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="435">Its proof, three lines long, which the</span></div>
 <div class="tsr-line" data-s="435" data-e="565" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="435">lemma keeps with: neither is left alone</span></div>
 <div class="tsr-line" data-s="435" data-e="565" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-0.5px"><span class="tsr-r" data-s="435">at a sheet&#39;s foot, and the proof itself is</span></div>

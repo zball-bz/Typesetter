@@ -1,10 +1,11 @@
 doc @[289,508) [base]
-  list @[289,293) [base] ordered=false
-    item @[289,293) [base]
-      para @[289,293) [base]
-        link @[289,293) [base] target="intro"
-          text @[289,293) [base] str="1 "
-          text @[289,293) [base] str="Introduction"
+  group @[289,293) [base] role="toc"
+    list @[289,293) [base] ordered=false
+      item @[289,293) [base]
+        para @[289,293) [base]
+          link @[289,293) [base] target="intro"
+            text @[289,293) [base] str="1 "
+            text @[289,293) [base] str="Introduction"
   heading @[295,309) [BOLDx1.60] level=1 label="intro"
     text @[295,309) [BOLDx1.60] str="1 "
     text @[297,309) [BOLDx1.60] str="Introduction"
@@ -18,12 +19,13 @@ doc @[289,508) [base]
   group @[374,473) [base] role="dterm" name="lemma" label="lemma"
     para @[413,472) [base]
       text @[413,472) [base] str="A lemma is a small theorem used on the way to a larger one."
-  list @[475,484) [base] ordered=false
-    item @[475,484) [base]
-      para @[475,484) [base]
-        link @[475,484) [base] target="lemma"
-          text @[475,484) [base] str="lemma"
-        text @[475,484) [base] str=" — A lemma is a small theorem used on the way to a larger one."
+  group @[475,484) [base] role="glossary"
+    list @[475,484) [base] ordered=false
+      item @[475,484) [base]
+        para @[475,484) [base]
+          link @[475,484) [base] target="lemma"
+            text @[475,484) [base] str="lemma"
+          text @[475,484) [base] str=" — A lemma is a small theorem used on the way to a larger one."
   para @[486,508) [base]
     text @[486,489) [base] str="See " raw=0:0,4:3
     ref @[490,496) [base] target="intro"

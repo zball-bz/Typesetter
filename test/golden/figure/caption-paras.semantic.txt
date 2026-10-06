@@ -1,0 +1,13 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="115">A caption of two paragraphs is one figcaption holding both, and a block in the figure stays out of it (plan P3-23):</p>
+<figure data-role="figure" data-pid="1" data-s="117" data-e="240" id="tsr-fig-two">
+<figcaption>
+<p data-s="144" data-e="172"><strong>图 1：</strong>The first caption paragraph.</p>
+<p data-s="202" data-e="231">The second caption paragraph.</p>
+</figcaption>
+<ul data-s="174" data-e="200">
+<li>a list inside the figure</li>
+</ul>
+</figure>
+<p data-pid="2" data-s="242" data-e="255">See <a href="#tsr-fig-two">图 1</a>.</p>
+</div>

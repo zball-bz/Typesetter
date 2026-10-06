@@ -15,10 +15,10 @@
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
-<div class="tsr-band" data-b="4">
+<div class="tsr-band" data-role="aside" data-b="4">
 <div class="tsr-line" data-s="208" data-e="248" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="208">A region that starts a sheet of its own.</span></div>
 </div>
-<div class="tsr-band" data-b="6">
+<div class="tsr-band" data-role="note" data-b="6">
 <div class="tsr-line" data-s="353" data-e="405" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="353">Printed only: this paragraph has no place</span></div>
 <div class="tsr-line" data-s="353" data-e="405" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="353">on screen.</span></div>
 </div>

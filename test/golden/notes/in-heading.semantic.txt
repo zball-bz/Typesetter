@@ -1,10 +1,10 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="0" data-e="95" id="tsr-h-1">A heading with a note<a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a></h1>
 <p data-pid="1" data-s="97" data-e="250">The marker takes the heading&#39;s style; the note&#39;s body takes the place it is set in (D-S09): its own emphasis travels with it, the heading&#39;s rules do not.</p>
-<div data-role="notes" data-pid="2" data-s="0" data-e="250">
+<section data-role="notes" role="doc-endnotes" data-pid="2" data-s="0" data-e="250">
 <hr data-s="0" data-e="250">
 <ol data-s="0" data-e="250">
 <li id="tsr-fn-1">The note body is set at the notes&#39; size, <strong>not</strong> in the heading&#39;s bold. <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
 </ol>
-</div>
+</section>
 </div>

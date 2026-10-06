@@ -4,7 +4,7 @@
 <div class="tsr-line" data-s="0" data-e="78" data-join="space" data-ragged="1" style="top:25.609px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">it has to wrap across two</span></div>
 <div class="tsr-line" data-s="0" data-e="78" data-ragged="1" style="top:51.219px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">lines at the test measure</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="82" style="position:relative;height:191.203px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="figure" data-pid="1" data-s0="82" style="position:relative;height:191.203px;margin-bottom:19.203px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-wide" data-s="0" data-e="198" src="photos/wide.png" alt="wide" style="top:0px;left:0px;width:300px;height:100px">
 <div class="tsr-line" data-s="81" data-e="189" data-join="space" style="top:119.203px;left:0px;width:300px;word-spacing:-1.5px"><span class="tsr-r tsr-b tsr-cjk" data-s="81">图</span><span class="tsr-r tsr-b" data-s="81"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="81">：</span><span class="tsr-r" data-s="81">A caption that is long enough to wrap</span></div>
 <div class="tsr-line" data-s="81" data-e="189" data-join="space" style="top:143.203px;left:0px;width:300px"><span class="tsr-r" data-s="81">onto a second line at the narrow measure,</span></div>

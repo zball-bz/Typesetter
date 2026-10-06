@@ -1,0 +1,19 @@
+doc @[0,255) [base]
+  para @[0,115) [base]
+    text @[0,115) [base] str="A caption of two paragraphs is one figcaption holding both, and a block in the figure stays out of it (plan P3-23):"
+  group @[117,240) [base] role="figure" label="fig-two"
+    para @[144,172) [base] role="caption" slot="caption"
+      styled @[144,172) [BOLD] role="caption-label"
+        text @[144,172) [BOLD] str="图 1："
+      text @[144,172) [base] str="The first caption paragraph."
+    list @[174,200) [base] ordered=false start=1
+      item @[174,200) [base]
+        para @[176,200) [base]
+          text @[176,200) [base] str="a list inside the figure"
+    para @[202,231) [base] role="caption" slot="caption"
+      text @[202,231) [base] str="The second caption paragraph."
+  para @[242,255) [base]
+    text @[242,245) [base] str="See " raw=0:0,4:3
+    ref @[246,254) [base] target="fig-two"
+      text @[246,254) [base] str="图 1"
+    text @[254,255) [base] str="."

@@ -1,0 +1,11 @@
+A caption of two paragraphs is one figcaption holding both, and a block in the figure stays out of it (plan P3-23):
+
+#!figure(label: "fig-two")
+The first caption paragraph.
+
+- a list inside the figure
+
+The second caption paragraph.
+#figure!
+
+See @fig-two.

@@ -92,10 +92,14 @@ struct BlockTraits {
 struct BoxModel {
   Su pad[4] = {0, 0, 0, 0}, border[4] = {0, 0, 0, 0};
   StrRef borderColor = 0, background = 0;
+  // (plan P3-23; D-Y11) a frame its class's presentation row declares
+  // (typeset.frame): drawn by the theme (.tsr-frame[data-role]), no inset
+  bool themed = false;
+  StrRef role = 0;
   bool framed() const {
     for (int i = 0; i < 4; i++)
       if (pad[i] || border[i]) return true;
-    return background != 0;
+    return background != 0 || themed;
   }
   Su inset(int side) const { return pad[side] + border[side]; }
 };
@@ -195,6 +199,9 @@ struct TopTree {
   std::vector<u32> leaves;          // unit → block
   std::vector<TableSpec> tables;    // the tables' tracks (plan P3-10)
   u32 lostAnchors = 0;              // labels a third on one leaf (none carries them)
+  // (plan P3-23; D-R02) its node's role, where its presentation row hooks
+  // it: data-role on the typeset page's block
+  StrRef role = 0;
 };
 
 // the effective gap between a stack's children, in paragraph gaps

@@ -159,6 +159,8 @@ inline constexpr std::string_view kHtmlAttrs[] = {
     "data-copy", "data-copy-group", "data-track", "data-b",
     // (plan P3-14) a table cell's spans
     "colspan", "rowspan",
+    // (plan P3-23) a presentation row's ARIA role
+    "role",
 };
 static_assert(std::size(kHtmlAttrs) <= 32);
 constexpr int htmlAttrIndex(std::string_view name) {

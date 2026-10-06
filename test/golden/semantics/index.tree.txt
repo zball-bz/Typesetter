@@ -17,29 +17,30 @@ doc @[0,532) [base]
     text @[438,444) [base] str="单子"
     entry @[444,501) [base] key="单子" sortKey="dan zi" role="index" label="idx-5"
     text @[501,522) [base] str="与函子的关系。"
-  list @[524,532) [base] ordered=false
-    item @[524,532) [base]
-      para @[524,532) [base]
-        text @[524,532) [base] str="单子 "
-        link @[524,532) [base] target="idx-5"
-          text @[524,532) [base] str="1"
-    item @[524,532) [base]
-      para @[524,532) [base]
-        text @[524,532) [base] str="functor "
-        link @[524,532) [base] target="idx-3"
-          text @[524,532) [base] str="1"
-    item @[524,532) [base]
-      para @[524,532) [base]
-        styled @[524,532) [BOLD]
-          text @[524,532) [BOLD] str="monad"
-        text @[524,532) [base] str=" "
-        link @[524,532) [base] target="idx-1"
-          text @[524,532) [base] str="1"
-        text @[524,532) [base] str=", "
-        link @[524,532) [base] target="idx-4"
-          text @[524,532) [base] str="2"
-    item @[524,532) [base]
-      para @[524,532) [base]
-        text @[524,532) [base] str="zeta "
-        link @[524,532) [base] target="idx-2"
-          text @[524,532) [base] str="1"
+  group @[524,532) [base] role="index"
+    list @[524,532) [base] ordered=false
+      item @[524,532) [base]
+        para @[524,532) [base]
+          text @[524,532) [base] str="单子 "
+          link @[524,532) [base] target="idx-5"
+            text @[524,532) [base] str="1"
+      item @[524,532) [base]
+        para @[524,532) [base]
+          text @[524,532) [base] str="functor "
+          link @[524,532) [base] target="idx-3"
+            text @[524,532) [base] str="1"
+      item @[524,532) [base]
+        para @[524,532) [base]
+          styled @[524,532) [BOLD]
+            text @[524,532) [BOLD] str="monad"
+          text @[524,532) [base] str=" "
+          link @[524,532) [base] target="idx-1"
+            text @[524,532) [base] str="1"
+          text @[524,532) [base] str=", "
+          link @[524,532) [base] target="idx-4"
+            text @[524,532) [base] str="2"
+      item @[524,532) [base]
+        para @[524,532) [base]
+          text @[524,532) [base] str="zeta "
+          link @[524,532) [base] target="idx-2"
+            text @[524,532) [base] str="1"

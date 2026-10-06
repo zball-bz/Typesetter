@@ -1,0 +1,1 @@
+{"headings":[],"regions":[{"name":"theorem","label":"t1","span":[590,654]}],"fences":[],"labels":[{"id":"t1","rule":"region","span":[590,612]}],"diagnostics":[]}

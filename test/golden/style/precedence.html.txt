@@ -11,7 +11,7 @@
 <div class="tsr-line" data-s="0" data-e="71" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.8px"><span class="tsr-r" data-s="0">After the document&#39;s rule, </span><span class="tsr-r tsr-code tsr-pre" data-s="27" style="font-size:13.6px;color:#aa0000">code</span><span class="tsr-r" data-s="34"> is red;</span></div>
 <div class="tsr-line" data-s="34" data-e="115" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="34">its own style wins over both: </span><span class="tsr-r tsr-code tsr-pre" data-s="72" style="font-size:13.6px;color:#00aaaa">teal</span><span class="tsr-r" data-s="114">.</span></div>
 </div>
-<div class="tsr-para" data-pid="3" data-s0="309" style="position:relative;height:48px">
+<div class="tsr-para" data-role="aside" data-pid="3" data-s0="309" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="71" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r tsr-i" data-s="0" style="color:#008800">A host rule marked force wins over this</span></div>
 <div class="tsr-line" data-s="0" data-e="71" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-i" data-s="0" style="color:#008800">region&#39;s own grey: it is green.</span></div>
 </div>

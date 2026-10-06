@@ -16,7 +16,8 @@ doc @[0,215) [base]
             styled @[134,173) [BOLD] role="term-name"
               text @[134,173) [BOLD] str="gizmo"
             text @[134,173) [base] str=" — "
-            text @[147,172) [base] str="a small mechanical device"
+            styled @[134,173) [base] role="term-def"
+              text @[147,172) [base] str="a small mechanical device"
         text @[174,184) [base] str=" in the box" raw=0:0,1:0
   para @[194,215) [base]
     text @[194,197) [base] str="See " raw=0:0,4:3

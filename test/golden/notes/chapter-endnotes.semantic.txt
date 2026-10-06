@@ -1,25 +1,29 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="553" data-e="558" id="tsr-h-1">One</h1>
 <p data-pid="1" data-s="560" data-e="650">Text<a href="#tsr-en-1" id="tsr-enref-1" data-syn="fn-marker"><sup>i</sup></a> and a footnote<a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a>.</p>
-<div data-role="notes" data-pid="2" data-s="652" data-e="663">
+<div data-role="endnotes" data-pid="2" data-s="652" data-e="663">
+<section data-role="notes" role="doc-endnotes" data-s="652" data-e="663">
 <hr data-s="652" data-e="663">
 <ol data-s="652" data-e="663">
 <li id="tsr-en-1">The first endnote. <a href="#tsr-enref-1" data-syn="backlink">↩</a></li>
 </ol>
+</section>
 </div>
 <h1 data-pid="3" data-s="665" data-e="670" id="tsr-h-2">Two</h1>
 <p data-pid="4" data-s="672" data-e="767">More<a href="#tsr-en-2" id="tsr-enref-2" data-syn="fn-marker"><sup>ii</sup></a> and more<a href="#tsr-en-3" id="tsr-enref-3" data-syn="fn-marker"><sup>iii</sup></a>.</p>
-<div data-role="notes" data-pid="5" data-s="769" data-e="780">
+<div data-role="endnotes" data-pid="5" data-s="769" data-e="780">
+<section data-role="notes" role="doc-endnotes" data-s="769" data-e="780">
 <hr data-s="769" data-e="780">
 <ol data-s="769" data-e="780">
 <li id="tsr-en-2">The second endnote. <a href="#tsr-enref-2" data-syn="backlink">↩</a></li>
 <li id="tsr-en-3">The third. <a href="#tsr-enref-3" data-syn="backlink">↩</a></li>
 </ol>
+</section>
 </div>
-<div data-role="notes" data-pid="6" data-s="553" data-e="780">
+<section data-role="notes" role="doc-endnotes" data-pid="6" data-s="553" data-e="780">
 <hr data-s="553" data-e="780">
 <ol data-s="553" data-e="780">
 <li id="tsr-fn-1">A footnote, at the end. <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
 </ol>
-</div>
+</section>
 </div>

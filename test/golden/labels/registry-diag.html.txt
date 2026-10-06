@@ -2,13 +2,13 @@
 <div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-sec-a" data-s="0" data-e="6" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Labels</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="43" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="aside" data-pid="1" data-s0="43" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-side-1" data-s="0" data-e="22" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">An aside with a label.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="100" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="figure" data-pid="2" data-s0="100" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-fig-x" data-s="0" data-e="13" data-ragged="1" style="top:0px;left:78px;width:222px"><span class="tsr-r tsr-b tsr-cjk" data-s="0">图</span><span class="tsr-r tsr-b" data-s="0"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="0">：</span><span class="tsr-r" data-s="0">First figure.</span></div>
 </div>
-<div class="tsr-para" data-pid="3" data-s0="149" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="figure" data-pid="3" data-s0="149" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="44" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r tsr-b tsr-cjk" data-s="0">图</span><span class="tsr-r tsr-b" data-s="0"> 2</span><span class="tsr-r tsr-b tsr-cjk" data-s="0">：</span><span class="tsr-r" data-s="0">Second figure reuses the label: it</span></div>
 <div class="tsr-line" data-s="0" data-e="44" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">loses it.</span></div>
 </div>
@@ -18,7 +18,7 @@
 <div class="tsr-para" data-pid="5" data-s0="222" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="16" data-ragged="1" style="top:0px;left:130.797px;width:38.391px;height:24px"><span class="tsr-math" data-syn="math" data-src="$ c = d $" style="width:38.391px;height:11.234px;position:absolute;left:0;top:6.383px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:12.219px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:28.75px;top:-1.863px;font-size:16px;line-height:16px">d</span></span></div>
 </div>
-<div class="tsr-para" data-pid="6" data-s0="265" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="figure" data-pid="6" data-s0="265" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="37" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6px"><span class="tsr-r tsr-b tsr-cjk" data-s="0">图</span><span class="tsr-r tsr-b" data-s="0"> 3</span><span class="tsr-r tsr-b tsr-cjk" data-s="0">：</span><span class="tsr-r" data-s="0">A figure with a reserved label</span></div>
 <div class="tsr-line" data-s="0" data-e="37" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">shape.</span></div>
 </div>

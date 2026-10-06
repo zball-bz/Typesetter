@@ -426,6 +426,14 @@ export const SETTINGS = Object.freeze({
       "Ingest"
     ]
   },
+  "semantics.html": {
+    "dom": "json",
+    "def": {},
+    "prec": "HostDefault",
+    "affects": [
+      "Ingest"
+    ]
+  },
   "semantics.systems": {
     "dom": "json",
     "def": {},
@@ -532,6 +540,7 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "elements": {},
     "counters": {},
     "collectors": {},
+    "html": {},
     "systems": {}
   },
   "render": {

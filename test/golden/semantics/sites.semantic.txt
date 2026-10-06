@@ -1,7 +1,9 @@
 <div class="tsr-flow">
-<ul data-pid="0" data-s="289" data-e="293">
+<nav data-role="toc" role="doc-toc" data-pid="0" data-s="289" data-e="293">
+<ul data-s="289" data-e="293">
 <li><a href="#tsr-intro">1 Introduction</a></li>
 </ul>
+</nav>
 <h1 data-pid="1" data-s="295" data-e="309" id="tsr-intro">1 Introduction</h1>
 <div data-role="proof" data-pid="2" data-s="319" data-e="372">
 <p data-s="327" data-e="340">By induction.</p>
@@ -10,8 +12,10 @@
 <div data-role="dterm" data-pid="3" data-s="374" data-e="473" id="tsr-lemma">
 <p data-s="413" data-e="472">A lemma is a small theorem used on the way to a larger one.</p>
 </div>
-<ul data-pid="4" data-s="475" data-e="484">
+<section data-role="glossary" role="doc-glossary" data-pid="4" data-s="475" data-e="484">
+<ul data-s="475" data-e="484">
 <li><a href="#tsr-lemma">lemma</a> — A lemma is a small theorem used on the way to a larger one.</li>
 </ul>
+</section>
 <p data-pid="5" data-s="486" data-e="508">See <a href="#tsr-intro">§1</a> and <a href="#tsr-lemma">lemma</a>.</p>
 </div>

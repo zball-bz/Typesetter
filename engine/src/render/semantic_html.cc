@@ -1,5 +1,7 @@
 #include "semantic_html.h"
 
+#include <algorithm>
+
 #include "html_writer.h"
 #include "../resource/resource_table.h"
 #include "../code/overlay.h"
@@ -63,10 +65,12 @@ struct Sem {
     if (!label.empty()) t.id(label);
     copyAttrs(t, n);
   }
-  // <name …shared attributes…>
+  // <name …shared attributes…> (plan P3-23: its presentation row's ARIA role)
   void open(std::string_view name, const ContentNode* n, int pid, const char* cls = nullptr) {
     Tag t(out, name);
     if (cls) t.attrSafe("class", cls);
+    if (reg)
+      if (const HtmlShape* sh = reg->shapeOf(n, strs); sh && !sh->aria.empty()) t.attr("role", sh->aria);
     attrs(t, n, pid);
     t.open();
   }
@@ -117,9 +121,16 @@ struct Sem {
       esc(style, strs.get(st.color));
       style += ";";
     }
+    // its size as the typeset page sets it (plan P3-23): an absolute size
+    // times its multiplier, else the multiplier, relative to its element
     if (st.sizePx > 0) {
       style += "font-size:";
-      fmtPx(style, st.sizePx);
+      fmtPx(style, st.sizePx * st.sizeMul);
+      style += ";";
+    } else if (st.sizeMul != 1.0f) {
+      char buf[32];
+      style += "font-size:";
+      style.append(buf, (size_t)std::snprintf(buf, sizeof buf, "%gem", (double)st.sizeMul));
       style += ";";
     }
     if (st.weight && st.weight != 400 && st.weight != 700) {
@@ -163,16 +174,17 @@ struct Sem {
   void inlineKids(const ContentNode* n) {
     for (const ContentNode* k : n->kids) inl(k);
   }
-  // its content, inside the element its role reads as on this page (the
-  // registry's role map, plan P3-01: the rules give it in the typeset view)
-  // — unless its own style says it already (a marker in raised text is
-  // raised once, as the typeset view sets it)
+  // its content, inside the element its role reads as on this page (its
+  // inline presentation row, plan P3-23: the rules give it in the typeset
+  // view) — unless its own style says it already (a marker in raised text
+  // is raised once, as the typeset view sets it)
   void roleKids(const ContentNode* n) {
     const StrRef r = attrStr(n, ArgK::role);
-    const Registry::RoleHtml* re = r && reg ? reg->roleElement(strs.get(r)) : nullptr;
-    std::string_view tag = re ? std::string_view(re->tag) : std::string_view{};
+    const HtmlShape* re = r && reg ? reg->htmlRow(strs.get(r)) : nullptr;
+    if (re && !re->inlineLevel) re = nullptr;
+    std::string_view tag = re ? std::string_view(re->element) : std::string_view{};
     if (re) {
-      using Says = Registry::RoleHtml::Says;
+      using Says = HtmlShape::Says;
       const Styling& sc = styles.get(n->scope);
       if ((re->says == Says::Super && sc.baseline == BASELINE_SUPER) || (re->says == Says::Bold && sc.weight >= 600) ||
           (re->says == Says::Italic && sc.italic))
@@ -347,28 +359,85 @@ struct Sem {
     t.open();
   }
 
+  // (plan P3-23) a node's presentation row, and the element it names
+  const HtmlShape* shape(const ContentNode* n) const { return reg ? reg->shapeOf(n, strs) : nullptr; }
+  std::string elementOf(const ContentNode* n, const HtmlShape* sh, std::string_view dflt) {
+    if (!sh || sh->element.empty()) return std::string(dflt);
+    if (!sh->levelSuffix) return sh->element;
+    int level = attrInt(n, ArgK::level, 1);
+    if (level < 1) level = 1;
+    if (level > 6) level = 6;
+    return sh->element + (char)('0' + level);
+  }
+  void close(std::string_view el) {
+    out += "</";
+    out += el;
+    out += ">\n";
+  }
+
+  // (plan P3-23; document-model §9.2) a defined term as a description
+  // list: its name (role term-name) the term, its description (role
+  // term-def, and the blocks after its first paragraph) the definition
+  void term(const ContentNode* n, const HtmlShape* sh, int pid) {
+    const ContentNode* head = !n->kids.empty() && n->kids[0]->kind == Kind::para ? n->kids[0] : nullptr;
+    auto roleIs = [&](const ContentNode* k, std::string_view r) {
+      return k->kind == Kind::styled && argS(k, ArgK::role) == r;
+    };
+    const std::string el = elementOf(n, sh, "dl");
+    {
+      Tag t(out, el);
+      std::string_view role = argS(n, ArgK::role);
+      if (!role.empty() && sh->dataRole) t.attr("data-role", role);
+      if (!sh->aria.empty()) t.attr("role", sh->aria);
+      attrs(t, n, pid);
+      t.open();
+      out += "\n";
+    }
+    out += "<dt>";
+    if (head)
+      for (const ContentNode* k : head->kids)
+        if (roleIs(k, "term-name")) inlineKids(k);
+    out += "</dt>\n";
+    bool def = false;
+    if (head)
+      for (const ContentNode* k : head->kids) def = def || roleIs(k, "term-def");
+    const bool blocks = n->kids.size() > (head ? 1u : 0u);
+    if (def || blocks) {
+      out += "<dd>";
+      if (head)
+        for (const ContentNode* k : head->kids)
+          if (roleIs(k, "term-def")) inlineKids(k);
+      if (blocks) {
+        out += "\n";
+        for (size_t i = head ? 1 : 0; i < n->kids.size(); i++) block(n->kids[i], -1);
+      }
+      out += "</dd>\n";
+    }
+    close(el);
+  }
+
   void block(const ContentNode* n, int pid) {
+    const HtmlShape* sh = shape(n);
     switch (n->kind) {
-      case Kind::para:
+      case Kind::para: {
+        const std::string el = elementOf(n, sh, "p");
         if (attrBool(n, ArgK::cont, false)) {  // (plan P3-17) a continuation: no indent, no space above
-          Tag t(out, "p");
+          Tag t(out, el);
           attrs(t, n, pid);
           t.decl("margin-top", "0").decl("text-indent", "0");
           t.open();
         } else {
-          open("p", n, pid);
+          open(el, n, pid);
         }
         inlineKids(n);
-        out += "</p>\n";
+        close(el);
         return;
+      }
       case Kind::heading: {
-        int level = attrInt(n, ArgK::level, 1);
-        if (level < 1) level = 1;
-        if (level > 6) level = 6;
-        const char hn[3] = {'h', (char)('0' + level), 0};
-        open(hn, n, pid);
+        const std::string el = elementOf(n, sh, "h1");
+        open(el, n, pid);
         inlineKids(n);
-        appendf(out, "</h%d>\n", level);
+        close(el);
         return;
       }
       case Kind::list: {
@@ -407,12 +476,14 @@ struct Sem {
         out += ordered ? "</ol>\n" : "</ul>\n";
         return;
       }
-      case Kind::quote:
-        open("blockquote", n, pid);
+      case Kind::quote: {
+        const std::string el = elementOf(n, sh, "blockquote");
+        open(el, n, pid);
         out += "\n";
         for (const ContentNode* k : n->kids) block(k, -1);
-        out += "</blockquote>\n";
+        close(el);
         return;
+      }
       case Kind::codeblock: {
         open("pre", n, pid);
         {
@@ -422,6 +493,24 @@ struct Sem {
           t.open();
         }
         const ContentNode* body = !n->kids.empty() && n->kids[0]->kind == Kind::text ? n->kids[0] : nullptr;
+        // (plan P3-23) its margin slot (plan P2-13: sidecar notes are
+        // content — a footnote marker, a reference) projected inline: after
+        // its line, behind the fence's declared marker, as copy omits it
+        // (D-R03: the code is what a code block copies)
+        const ContentNode* margin = nullptr;
+        for (const ContentNode* k : n->kids)
+          if (k->kind == Kind::group && slotOf(k, strs) == SlotId::Margin) margin = k;
+        const std::string_view marker = argS(n, ArgK::sidecar);
+        auto note = [&](size_t li) {
+          if (!margin || li >= margin->kids.size() || margin->kids[li]->kids.empty()) return;
+          out += " <span class=\"tsr-margin\" data-syn=\"sidecar\">";
+          if (!marker.empty()) {
+            esc(out, marker);
+            out += " ";
+          }
+          inl(margin->kids[li]);
+          out += "</span>";
+        };
         const u32 overlays = props ? overlayMask(strs.get(props->get(n->props).codeOverlays)) : 0;
         const TokenNeed* tok = body && rt ? rt->tokens(attrStr(n, ArgK::lang), body->str, overlays) : nullptr;
         if (tok && tok->st == ResState::Ready) {
@@ -432,41 +521,34 @@ struct Sem {
           for (size_t li = 0; li < lines.size(); li++) {
             if (li) out += "\n";
             for (const TokenRun& r : lines[li]) textRun(r.style, r.text);
+            note(li);
           }
-        } else if (n->kids.size() == 1 && body) {
-          esc(out, strs.get(body->str));
+        } else if (body) {
+          const std::string_view text = strs.get(body->str);
+          size_t li = 0;
+          for (size_t at = 0; at <= text.size(); li++) {
+            size_t eol = text.find('\n', at);
+            if (eol == std::string_view::npos) eol = text.size();
+            if (li) out += "\n";
+            esc(out, text.substr(at, eol - at));
+            note(li);
+            at = eol + 1;
+          }
         } else {
-          // structured lines: seq of styled runs per child (CH1); the
-          // margin slot follows the code (below)
-          bool firstLine = true;
-          for (size_t li = 0; li < n->kids.size(); li++) {
-            if (n->kids[li]->kind == Kind::group) continue;
-            if (!firstLine) out += "\n";
-            firstLine = false;
-            inl(n->kids[li]);
+          // structured lines: seq of styled runs per child (CH1)
+          size_t li = 0;
+          for (const ContentNode* k : n->kids) {
+            if (k->kind == Kind::group) continue;
+            if (li) out += "\n";
+            inl(k);
+            note(li++);
           }
         }
         out += "</code></pre>\n";
-        // its margin slot (plan P2-13: sidecar notes are content — a
-        // footnote marker, a reference): an aside after the code, one
-        // paragraph per annotated line (data-line counts from 1)
-        for (const ContentNode* k : n->kids) {
-          if (k->kind != Kind::group || slotOf(k, strs) != SlotId::Margin) continue;
-          bool any = false;
-          for (size_t li = 0; li < k->kids.size(); li++) {
-            if (k->kids[li]->kids.empty()) continue;
-            if (!any) out += "<aside class=\"tsr-margin\">\n";
-            any = true;
-            appendf(out, "<p data-line=\"%zu\">", li + 1);
-            inl(k->kids[li]);
-            out += "</p>\n";
-          }
-          if (any) out += "</aside>\n";
-        }
         return;
       }
       case Kind::rule:
-        open("hr", n, pid);
+        open(elementOf(n, sh, "hr"), n, pid);
         out += "\n";
         return;
       case Kind::mathblock:
@@ -510,40 +592,54 @@ struct Sem {
         return;
       }
       case Kind::group: {
-        if (n->cls && reg && reg->cls(n->cls).html == ElementClass::Html::Figure) {
-          // real HTML for the no-JS page (figure-design.md §5)
-          open("figure", n, pid);
-          out += "\n";
-          // its caption part (slot caption, plan P3-03) is the figcaption;
-          // a figure-box element with none reads its paragraphs as it
-          bool parts = false;
-          for (const ContentNode* k : n->kids) parts = parts || slotOf(k, strs) == SlotId::Caption;
-          bool capOpen = false;
-          for (const ContentNode* k : n->kids) {
-            if (parts ? slotOf(k, strs) == SlotId::Caption : k->kind == Kind::para) {
-              if (!capOpen) {
-                out += "<figcaption>";
-                capOpen = true;
-              }
-              inlineKids(k);
-            } else {
-              block(k, -1);
-            }
-          }
-          if (capOpen) out += "</figcaption>\n";
-          out += "</figure>\n";
+        // (plan P3-23) its presentation row: its element (a div by default),
+        // its role as data-role where the row hooks it (D-R02), its ARIA
+        // role, and its parts in their slots' elements (a figure's caption:
+        // one figcaption, where its first part stands) — a part of one
+        // paragraph holds its text, of several their paragraphs; nothing is
+        // guessed from where a paragraph stands (finding
+        // real-world-evidence/missed:5)
+        if (sh && sh->projection == HtmlShape::Projection::Term) {
+          term(n, sh, pid);
           return;
         }
+        const std::string el = elementOf(n, sh, "div");
         {
-          Tag t(out, "div");
-          std::string_view role = argS(n, ArgK::role);  // the role is data for the page
-          if (!role.empty()) t.attr("data-role", role);
+          Tag t(out, el);
+          std::string_view role = argS(n, ArgK::role);
+          if (!role.empty() && (!sh || sh->dataRole)) t.attr("data-role", role);
+          if (sh && !sh->aria.empty()) t.attr("role", sh->aria);
           attrs(t, n, pid);
           t.open();
           out += "\n";
         }
-        for (const ContentNode* k : n->kids) block(k, -1);
-        out += "</div>\n";
+        std::vector<SlotId> written;
+        for (const ContentNode* k : n->kids) {
+          const SlotId slot = slotOf(k, strs);
+          const std::string_view sel = sh && slot != SlotId::None ? sh->slotElement(slot) : std::string_view{};
+          if (sel.empty()) {
+            block(k, -1);
+            continue;
+          }
+          if (std::find(written.begin(), written.end(), slot) != written.end()) continue;
+          written.push_back(slot);
+          std::vector<const ContentNode*> part;
+          for (const ContentNode* x : n->kids)
+            if (slotOf(x, strs) == slot) part.push_back(x);
+          out += "<";
+          out += sel;
+          out += ">";
+          if (part.size() == 1 && part[0]->kind == Kind::para) {
+            inlineKids(part[0]);
+          } else {
+            out += "\n";
+            for (const ContentNode* x : part) block(x, -1);
+          }
+          out += "</";
+          out += sel;
+          out += ">\n";
+        }
+        close(el);
         return;
       }
       case Kind::table: {

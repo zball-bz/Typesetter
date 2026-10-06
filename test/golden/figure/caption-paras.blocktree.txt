@@ -1,0 +1,14 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,115)
+    paragraph para unit=0 @[0,115)
+top pid=1 leaves=3
+  stack root gap=1/1 @[117,240)
+    stack figure anchor="fig-two" @[117,240)
+      paragraph caption unit=0 single-center carry="fig-two" @[144,172)
+      stack list pad=1536su gap=1/3 @[174,200)
+        stack item x=1536su @[174,200)
+          paragraph caption unit=1 x=1536su single-center marker="•" @[176,200)
+      paragraph caption unit=2 single-center @[202,231)
+top pid=2 leaves=1
+  stack root gap=1/1 @[242,255)
+    paragraph para unit=0 @[242,255)

@@ -10,12 +10,12 @@
 <div class="tsr-line" data-s="0" data-e="56" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">The second sheet starts here, though the</span></div>
 <div class="tsr-line" data-s="0" data-e="56" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">first had room.</span></div>
 </div>
-<div class="tsr-para" data-pid="4" data-s0="208" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="aside" data-pid="4" data-s0="208" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="40" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A region that starts a sheet of its own.</span></div>
 </div>
-<div class="tsr-para" data-pid="5" data-s0="291" style="position:relative;height:24px;margin-bottom:0px">
+<div class="tsr-para" data-role="note" data-pid="5" data-s0="291" style="position:relative;height:24px;margin-bottom:0px">
 <div class="tsr-line" data-s="0" data-e="21" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Shown on screen only.</span></div>
 </div>
-<div class="tsr-para" data-pid="6" data-s0="0" style="position:relative;height:0px">
+<div class="tsr-para" data-role="note" data-pid="6" data-s0="0" style="position:relative;height:0px">
 </div>
 </div>

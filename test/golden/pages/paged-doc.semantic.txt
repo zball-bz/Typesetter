@@ -8,7 +8,7 @@
   &quot;b&quot;: [2, 3],
   &quot;c&quot;: &quot;long enough to wrap at the narrow measure used by the tests&quot;
 }</code></pre>
-<figure data-pid="5" data-s="496" data-e="611" id="tsr-fig-p">
+<figure data-role="figure" data-pid="5" data-s="496" data-e="611" id="tsr-fig-p">
 <img data-s="496" data-e="611" src="photos/x.png" alt="样图" style="max-width:100%">
 <figcaption><strong>图 1：</strong>图与图注保持在同页。</figcaption>
 </figure>

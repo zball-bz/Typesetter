@@ -5,7 +5,7 @@
 <div class="tsr-line" data-s="0" data-e="154" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">laid out on its own; they wrap like words</span></div>
 <div class="tsr-line" data-s="0" data-e="154" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">when the measure is too narrow.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="184" style="position:relative;height:218.406px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="figure" data-pid="1" data-s0="184" style="position:relative;height:218.406px;margin-bottom:19.203px">
 <span id="tsr-fig-pair" data-syn="anchor"></span><img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" data-s="0" data-e="126" src="a.png" alt="" style="top:0px;left:24.5px;width:100px;height:50px">
 <div class="tsr-line" data-s="103" data-e="117" data-join="space" style="top:69.203px;left:7.016px;width:134.984px;word-spacing:19.492px"><span class="tsr-r tsr-b" data-s="103">1(a) </span><span class="tsr-r" data-s="103">The left</span></div>
 <div class="tsr-line" data-s="103" data-e="117" data-join="para" style="top:93.203px;left:7.016px;width:134.984px"><span class="tsr-r" data-s="103">view.</span></div>

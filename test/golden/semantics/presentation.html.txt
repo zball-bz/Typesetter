@@ -1,0 +1,20 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:120px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="200" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">Presentation rows (plan P3-23): a class</span></div>
+<div class="tsr-line" data-s="0" data-e="200" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="0">of the document&#39;s shows as its own ele</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="200" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:2.5px"><span class="tsr-r" data-s="0">ment, with an ARIA role and a frame the</span></div>
+<div class="tsr-line" data-s="0" data-e="200" data-join="none" style="top:72px;left:0px;width:300px;word-spacing:-0.5px"><span class="tsr-r" data-s="0">theme draws; a role reads as an inline el</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="200" style="top:96px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">ement; the host turns quotes into asides.</span></div>
+</div>
+<div class="tsr-para" data-role="theorem" data-pid="1" data-s0="590" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-frame" style="top:0px;left:0px;width:300px;height:48px" data-role="theorem" data-syn="frame"></div>
+<div class="tsr-line" id="tsr-t1" data-s="23" data-e="54" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6.4px"><span class="tsr-r tsr-b" data-s="23">Theorem 1.</span><span class="tsr-r" data-s="23"> Every presentation row is</span></div>
+<div class="tsr-line" data-s="23" data-e="54" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="23">data.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="656" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="52" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Press </span><span class="tsr-r tsr-b" data-s="29">Ctrl</span><span class="tsr-r" data-s="35"> to copy; see </span><a class="tsr-r" href="#tsr-t1" data-s="48">Theorem 1</a><span class="tsr-r" data-s="51">.</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="712" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="35" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">A quote the host shows as an aside.</span></div>
+</div>
+</div>

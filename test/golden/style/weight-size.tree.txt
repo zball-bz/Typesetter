@@ -1,0 +1,16 @@
+doc @[0,271) [base]
+  para @[0,271) [base]
+    text @[0,49) [base] str="Both pages show what was measured (plan P3-23): a " raw=0:0,50:49
+    styled @[50,81) [W600]
+      text @[72,80) [W600] str="semibold"
+    text @[82,87) [base] str=" and a " raw=0:0,1:0,7:5
+    styled @[88,116) [W300]
+      text @[110,115) [W300] str="light"
+    text @[117,146) [base] str=" run keep their weights, and a " raw=0:0,1:0,31:29
+    styled @[147,179) [basex0.80]
+      text @[171,178) [basex0.80] str="smaller"
+    text @[180,189) [base] str=" run and a " raw=0:0,1:0,11:9
+    styled @[190,249) [base size=20px] sizePx=20
+      styled @[211,248) [basex0.50 size=20px]
+        text @[233,247) [basex0.50 size=20px] str="half of twenty"
+    text @[250,271) [base] str=" run keep their sizes." raw=0:0,1:0

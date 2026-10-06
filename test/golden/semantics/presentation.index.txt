@@ -1,0 +1,3 @@
+instance theorem 1 label=t1 @[590,654)
+instance key @[662,690)
+label t1 -> theorem 1 @[590,654)

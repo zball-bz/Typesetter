@@ -1,0 +1,22 @@
+lower v1 abi 3d3ccfbb docEnd 272 holes 5 module fe7f10fcf3e9d630
+piece 0 hole 0 js [129,175)
+piece 1 hole 1 js [177,223)
+piece 2 hole 2 js [225,273)
+piece 3 hole 3 js [275,320)
+piece 4 hole 4 js [322,368)
+block 0 content [0,271) user framed holes 0..5
+  CALL para [0,271)
+    TEXT "Both pages show what was measured (plan P3-23): a " [0,49) raw=0:0,50:49
+    HOLE 0 [50,81)
+      TEXT "semibold" [72,80)
+    TEXT " and a " [82,87) raw=0:0,1:0,7:5
+    HOLE 1 [88,116)
+      TEXT "light" [110,115)
+    TEXT " run keep their weights, and a " [117,146) raw=0:0,1:0,31:29
+    HOLE 2 [147,179)
+      TEXT "smaller" [171,178)
+    TEXT " run and a " [180,189) raw=0:0,1:0,11:9
+    HOLE 3 [190,249)
+      HOLE 4 [211,248)
+        TEXT "half of twenty" [233,247)
+    TEXT " run keep their sizes." [250,271) raw=0:0,1:0

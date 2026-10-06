@@ -1,63 +1,64 @@
 doc @[41,117) [base]
-  list @[41,47) [base] ordered=false
-    item @[41,47) [base]
-      para @[41,47) [base]
-        link @[41,47) [base] target="h-1"
-          text @[41,47) [base] str="1 "
-          text @[41,47) [base] str="A"
-      list @[41,47) [base] ordered=false
-        item @[41,47) [base]
-          list @[41,47) [base] ordered=false
-            item @[41,47) [base]
-              para @[41,47) [base]
-                link @[41,47) [base] target="h-1.1.1"
-                  text @[41,47) [base] str="1.1.1 "
-                  text @[41,47) [base] str="A.c"
-    item @[41,47) [base]
-      para @[41,47) [base]
-        link @[41,47) [base] target="h-2"
-          text @[41,47) [base] str="2 "
-          text @[41,47) [base] str="B"
-      list @[41,47) [base] ordered=false
-        item @[41,47) [base]
-          para @[41,47) [base]
-            link @[41,47) [base] target="h-2.1"
-              text @[41,47) [base] str="2.1 "
-              text @[41,47) [base] str="B.a"
-        item @[41,47) [base]
-          para @[41,47) [base]
-            link @[41,47) [base] target="h-2.2"
-              text @[41,47) [base] str="2.2 "
-              text @[41,47) [base] str="B.b"
-    item @[41,47) [base]
-      para @[41,47) [base]
-        link @[41,47) [base] target="h-3"
-          text @[41,47) [base] str="3 "
-          text @[41,47) [base] str="C"
-      list @[41,47) [base] ordered=false
-        item @[41,47) [base]
-          para @[41,47) [base]
-            link @[41,47) [base] target="h-3.1"
-              text @[41,47) [base] str="3.1 "
-              text @[41,47) [base] str="C.a"
-    item @[41,47) [base]
-      para @[41,47) [base]
-        link @[41,47) [base] target="h-4"
-          text @[41,47) [base] str="4 "
-          text @[41,47) [base] str="D"
-      list @[41,47) [base] ordered=false
-        item @[41,47) [base]
-          list @[41,47) [base] ordered=false
-            item @[41,47) [base]
-              para @[41,47) [base]
-                link @[41,47) [base] target="h-4.1.1"
-                  text @[41,47) [base] str="4.1.1 "
-                  text @[41,47) [base] str="D.c"
-        item @[41,47) [base]
-          para @[41,47) [base]
-            link @[41,47) [base] target="h-4.2"
-              text @[41,47) [base] str="4.2 "
-              text @[41,47) [base] str="D.b"
+  group @[41,47) [base] role="toc"
+    list @[41,47) [base] ordered=false
+      item @[41,47) [base]
+        para @[41,47) [base]
+          link @[41,47) [base] target="h-1"
+            text @[41,47) [base] str="1 "
+            text @[41,47) [base] str="A"
+        list @[41,47) [base] ordered=false
+          item @[41,47) [base]
+            list @[41,47) [base] ordered=false
+              item @[41,47) [base]
+                para @[41,47) [base]
+                  link @[41,47) [base] target="h-1.1.1"
+                    text @[41,47) [base] str="1.1.1 "
+                    text @[41,47) [base] str="A.c"
+      item @[41,47) [base]
+        para @[41,47) [base]
+          link @[41,47) [base] target="h-2"
+            text @[41,47) [base] str="2 "
+            text @[41,47) [base] str="B"
+        list @[41,47) [base] ordered=false
+          item @[41,47) [base]
+            para @[41,47) [base]
+              link @[41,47) [base] target="h-2.1"
+                text @[41,47) [base] str="2.1 "
+                text @[41,47) [base] str="B.a"
+          item @[41,47) [base]
+            para @[41,47) [base]
+              link @[41,47) [base] target="h-2.2"
+                text @[41,47) [base] str="2.2 "
+                text @[41,47) [base] str="B.b"
+      item @[41,47) [base]
+        para @[41,47) [base]
+          link @[41,47) [base] target="h-3"
+            text @[41,47) [base] str="3 "
+            text @[41,47) [base] str="C"
+        list @[41,47) [base] ordered=false
+          item @[41,47) [base]
+            para @[41,47) [base]
+              link @[41,47) [base] target="h-3.1"
+                text @[41,47) [base] str="3.1 "
+                text @[41,47) [base] str="C.a"
+      item @[41,47) [base]
+        para @[41,47) [base]
+          link @[41,47) [base] target="h-4"
+            text @[41,47) [base] str="4 "
+            text @[41,47) [base] str="D"
+        list @[41,47) [base] ordered=false
+          item @[41,47) [base]
+            list @[41,47) [base] ordered=false
+              item @[41,47) [base]
+                para @[41,47) [base]
+                  link @[41,47) [base] target="h-4.1.1"
+                    text @[41,47) [base] str="4.1.1 "
+                    text @[41,47) [base] str="D.c"
+          item @[41,47) [base]
+            para @[41,47) [base]
+              link @[41,47) [base] target="h-4.2"
+                text @[41,47) [base] str="4.2 "
+                text @[41,47) [base] str="D.b"
   heading @[49,52) [BOLDx1.60] level=1 label="h-1"
     text @[51,52) [BOLDx1.60] str="A"
   heading @[54,61) [BOLDx1.15] level=3 label="h-1.1.1"

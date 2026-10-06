@@ -26,7 +26,7 @@
 <div class="tsr-para" data-pid="5" data-s0="868" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="48" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The last note</span><a class="tsr-r tsr-sup" href="#tsr-fn-3" id="tsr-fnref-3" data-syn="fn-marker" style="font-size:11.2px">3</a><span class="tsr-r" data-s="32"> closes the text.</span></div>
 </div>
-<div class="tsr-para" data-pid="6" data-s0="321" style="position:relative;height:175.984px">
+<div class="tsr-para" data-role="notes" data-pid="6" data-s0="321" style="position:relative;height:175.984px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-fn-1" data-s="2" data-e="53" data-join="space" style="top:43.203px;left:24px;width:276px;word-spacing:0.822px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="2" style="font-size:13.6px">The first note sits at the foot of the first</span></div>
 <div class="tsr-line" data-s="0" data-e="54" style="top:67.203px;left:24px;width:276px"><span class="tsr-r" data-s="2" style="font-size:13.6px">sheet. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>

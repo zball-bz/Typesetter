@@ -8,7 +8,7 @@
 <div class="tsr-line" data-s="0" data-e="17" data-join="para" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">quoted line stays</span></div>
 <div class="tsr-line" data-s="22" data-e="48" data-ragged="1" style="top:43.203px;left:16px;width:284px"><span class="tsr-r tsr-code tsr-err" title="Error: deep" data-syn="error">⚠ Error: deep</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="175" style="position:relative;height:67.203px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="aside" data-pid="2" data-s0="175" style="position:relative;height:67.203px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="19" data-join="para" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">interior para stays</span></div>
 <div class="tsr-line" data-s="21" data-e="49" data-ragged="1" style="top:43.203px;left:0px;width:300px"><span class="tsr-r tsr-code tsr-err" title="Error: deep" data-syn="error">⚠ Error: deep</span></div>
 </div>

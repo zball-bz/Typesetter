@@ -3,11 +3,11 @@
 <div class="tsr-line" data-s="0" data-e="108" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.392px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px">两张同侧浮动图连续出现时应当堆叠</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.235px;margin-right:0.235px">而不</span></div>
 <div class="tsr-line" data-s="0" data-e="108" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">是把第二张清到第一张之下留出空白</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="0">。</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="110" style="position:relative;height:0px;margin-bottom:0px">
+<div class="tsr-para" data-role="figure" data-pid="1" data-s0="110" style="position:relative;height:0px;margin-bottom:0px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" data-s="0" data-e="126" src="photos/a.jpg" alt="甲" style="top:0px;left:180px;width:120px;height:90px">
 <div class="tsr-line" data-s="102" data-e="117" data-ragged="1" data-track="caption" style="top:90px;left:182px;width:118px"><span class="tsr-r tsr-b tsr-cjk" data-s="102">图</span><span class="tsr-r tsr-b" data-s="102"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="102">：</span><span class="tsr-r tsr-cjk" data-s="102">第一张图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="102">。</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="238" style="position:relative;height:0px;margin-bottom:0px">
+<div class="tsr-para" data-role="figure" data-pid="2" data-s0="238" style="position:relative;height:0px;margin-bottom:0px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-b" data-s="0" data-e="147" src="photos/b.jpg" alt="乙" style="top:133.203px;left:180px;width:120px;height:60px">
 <div class="tsr-line" data-s="102" data-e="138" data-join="none" data-track="caption" style="top:193.203px;left:180px;width:120px;word-spacing:1.176px"><span class="tsr-r tsr-b tsr-cjk" data-s="102" style="letter-spacing:0.706px;margin-right:-0.706px">图</span><span class="tsr-r tsr-b" data-s="102"> 2</span><span class="tsr-r tsr-b tsr-cjk" data-s="102">：</span><span class="tsr-r tsr-cjk" data-s="102" style="letter-spacing:0.706px">第二张图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="102">，</span></div>
 <div class="tsr-line" data-s="102" data-e="138" data-track="caption" style="top:217.203px;left:180px;width:120px"><span class="tsr-r tsr-cjk" data-s="102">紧接着第一张</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="102">。</span></div>

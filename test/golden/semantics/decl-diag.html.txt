@@ -2,7 +2,7 @@
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="30" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A memo before its declaration:</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="52" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="memo" data-pid="1" data-s0="52" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-m1" data-s="0" data-e="6" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Noted.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="344" style="position:relative;height:72px;margin-bottom:19.203px">

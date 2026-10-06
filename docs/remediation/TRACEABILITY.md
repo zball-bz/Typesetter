@@ -1189,8 +1189,8 @@ Theme steps: — · findings: 1
 | `break-layout-pages/missed:3` | missed | medium | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/missed:4` | missed | medium | P3-28 | |
 | `break-layout-pages/missed:5` | missed | low | P0-12 | grep:plan P0-12 |
-| `render-runtime/semantic-role-switch` | adhoc | high | P3-23 | |
-| `render-runtime/typeset-role-blind` | adhoc | high | P3-23 | |
+| `render-runtime/semantic-role-switch` | adhoc | high | P3-23 | grep:plan P3-23 |
+| `render-runtime/typeset-role-blind` | adhoc | high | P3-23 | grep:plan P3-23 |
 | `render-runtime/linebox-special-dispatch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `render-runtime/render-layout-decisions` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `render-runtime/paged-keep-rules-by-kind` | adhoc | medium | P3-12 || grep:plan P3-12 |
@@ -1213,7 +1213,7 @@ Theme steps: — · findings: 1
 | `render-runtime/semantic-footnote-ids-dangle` | issue | high | P0-09, P0-10 | grep:plan P0-10 |
 | `render-runtime/copy-drops-blank-code-lines` | issue | medium | P3-07 || grep:plan P3-07 |
 | `render-runtime/sidecar-hyphen-missing` | issue | medium | P1-17 | grep:plan P1-17 |
-| `render-runtime/sidecar-dropped-in-semantic` | issue | medium | P3-23 | |
+| `render-runtime/sidecar-dropped-in-semantic` | issue | medium | P3-23 | grep:plan P3-23 |
 | `render-runtime/popup-breaks-patch` | issue | low | P3-06 || grep:plan P3-06 |
 | `render-runtime/host-line-height-leak` | issue | medium | P3-19 | grep:plan P3-19 |
 | `render-runtime/paged-gutter-clipping` | issue | medium | P3-16 | grep:plan P3-16 |
@@ -1302,7 +1302,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/doc-drift-api-subsystem` | issue | low | P3-37 | |
 | `api-measure-code/missed:0` | missed | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/missed:1` | missed | medium | P1-19 | grep:plan P1-19 |
-| `api-measure-code/missed:2` | missed | medium | P3-23 | |
+| `api-measure-code/missed:2` | missed | medium | P3-23 | grep:plan P3-23 |
 | `api-measure-code/missed:3` | missed | medium | P1-04, P1-19 | grep:plan P1-19 |
 | `api-measure-code/missed:4` | missed | low | P3-11 | |
 | `real-world-evidence/role-figure-hardwired` | adhoc | high | P2-07 | grep:plan P2-07 |
@@ -1340,4 +1340,4 @@ Theme steps: — · findings: 1
 | `real-world-evidence/missed:2` | missed | medium | P2-06 | grep:plan P2-06 |
 | `real-world-evidence/missed:3` | missed | medium | P0-06, P2-08 | grep:plan P2-08 |
 | `real-world-evidence/missed:4` | missed | medium | P3-27 | |
-| `real-world-evidence/missed:5` | missed | low | P3-23 | |
+| `real-world-evidence/missed:5` | missed | low | P3-23 | grep:plan P3-23 |

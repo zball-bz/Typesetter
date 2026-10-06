@@ -1,6 +1,6 @@
 <div class="tsr-doc tsr-paged" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
-<div class="tsr-band" data-b="2">
+<div class="tsr-band" data-role="topnote" data-b="2">
 <div class="tsr-frame" style="top:0px;left:0px;width:300px;height:32.406px;border-width:1px 1px 1px 1px" data-syn="frame"></div>
 <div class="tsr-line" data-s="556" data-e="589" style="top:4.203px;left:4.203px;width:291.594px"><span class="tsr-r" data-s="556">A float for the top of its sheet.</span></div>
 </div>
@@ -15,7 +15,7 @@
 <div class="tsr-line" data-s="601" data-e="681" data-join="space" style="top:144.422px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="601">Filler paragraph two, after the top float</span></div>
 <div class="tsr-line" data-s="601" data-e="681" style="top:168.422px;left:0px;width:300px"><span class="tsr-r" data-s="601">in the source, before it on the sheet.</span></div>
 </div>
-<div class="tsr-band" data-b="4">
+<div class="tsr-band" data-role="bottomnote" data-b="4">
 <div class="tsr-frame" style="top:207.594px;left:0px;width:300px;height:32.406px;border-width:1px 1px 1px 1px" data-syn="frame"></div>
 <div class="tsr-line" data-s="696" data-e="730" style="top:211.797px;left:4.203px;width:291.594px"><span class="tsr-r" data-s="696">A float for the foot of its sheet.</span></div>
 </div>
@@ -30,7 +30,7 @@
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
-<div class="tsr-band" data-b="6">
+<div class="tsr-band" data-role="pagenote" data-b="6">
 <div class="tsr-line" data-s="833" data-e="874" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="833">A float that waits for a sheet of floats.</span></div>
 </div>
 </div>

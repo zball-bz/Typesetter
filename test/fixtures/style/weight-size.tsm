@@ -1,0 +1,1 @@
+Both pages show what was measured (plan P3-23): a #style({weight: 600})[semibold] and a #style({weight: 300})[light] run keep their weights, and a #style({size: '0.8em'})[smaller] run and a #style({sizePx: 20})[#style({size: '50%'})[half of twenty]] run keep their sizes.

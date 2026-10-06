@@ -1,0 +1,25 @@
+lower v1 abi 3d3ccfbb docEnd 748 holes 3 module 2e0e6332e1fffe93
+piece 0 hole 0 js [136,529)
+piece 1 hole 1 js [531,552)
+piece 2 hole 2 js [554,601)
+block 0 content [0,200)
+  CALL para [0,200)
+    TEXT "Presentation rows (plan P3-23): a class of the document's shows as its own element, with an ARIA role and a frame the theme draws; a role reads as an inline element; the host turns quotes into asides." [0,200)
+block 1 stmt [202,588) user framed holes 0..1
+  STMT 0
+block 2 content [590,654) user framed async holes 1..2
+  REGION async "theorem" args=hole 1 [590,654)
+    CALL para [613,644)
+      TEXT "Every presentation row is data." [613,644)
+block 3 content [656,708) user framed holes 2..3
+  CALL para [656,708)
+    TEXT "Press " [656,661) raw=0:0,6:5
+    HOLE 2 [662,690)
+      TEXT "Ctrl" [685,689)
+    TEXT " to copy; see " [691,703) raw=0:0,1:0,14:12
+    CALL ref [704,707) target="t1"
+    TEXT "." [707,708)
+block 4 content [710,747)
+  CALL quote [710,747)
+    CALL para [712,747)
+      TEXT "A quote the host shows as an aside." [712,747)

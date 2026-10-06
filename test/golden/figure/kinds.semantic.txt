@@ -1,25 +1,25 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="65">Figures of tables, tables in figures and subfigures (plan P3-03).</p>
-<figure data-pid="1" data-s="67" data-e="218" id="tsr-fig-tab">
+<figure data-role="figure" data-pid="1" data-s="67" data-e="218" id="tsr-fig-tab">
 <table data-s="94" data-e="156" id="tsr-tab-in">
 <tr><td>Name</td><td>Qty</td></tr>
 <tr><td>Alpha</td><td>2</td></tr>
 </table>
 <figcaption><strong>表 1：</strong>A figure whose body is one table numbers as a table.</figcaption>
 </figure>
-<figure data-pid="2" data-s="220" data-e="363" id="tsr-fig-kept">
+<figure data-role="figure" data-pid="2" data-s="220" data-e="363" id="tsr-fig-kept">
 <table data-s="264" data-e="308">
 <tr><td>Name</td><td>Qty</td></tr>
 <tr><td>Beta</td><td>3</td></tr>
 </table>
 <figcaption><strong>图 1：</strong>Its kind says figure: it numbers as a figure.</figcaption>
 </figure>
-<figure data-pid="3" data-s="365" data-e="582" id="tsr-fig-pair">
-<figure data-s="393" data-e="470" id="tsr-fig-a">
+<figure data-role="figure" data-pid="3" data-s="365" data-e="582" id="tsr-fig-pair">
+<figure data-role="figure" data-s="393" data-e="470" id="tsr-fig-a">
 <img data-s="393" data-e="470" src="a.png" alt="" style="max-width:100%">
 <figcaption><strong>2(a) </strong>The left view.</figcaption>
 </figure>
-<figure data-s="471" data-e="549" id="tsr-fig-b">
+<figure data-role="figure" data-s="471" data-e="549" id="tsr-fig-b">
 <img data-s="471" data-e="549" src="b.png" alt="" style="max-width:100%">
 <figcaption><strong>2(b) </strong>The right view.</figcaption>
 </figure>

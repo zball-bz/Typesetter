@@ -3,7 +3,7 @@
 <ul data-pid="1" data-s="62" data-e="449">
 <li>First item before the float.</li>
 <li><p data-s="95" data-e="130">Second item holds a floated figure.</p>
-<figure data-s="134" data-e="276" id="tsr-fig-icon">
+<figure data-role="figure" data-s="134" data-e="276" id="tsr-fig-icon">
 <img data-s="134" data-e="276" src="photos/icon.png" alt="icon" style="max-width:100%">
 <figcaption><strong>图 1：</strong>A small floated icon.</figcaption>
 </figure>

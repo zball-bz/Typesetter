@@ -3,7 +3,7 @@
 <div class="tsr-line" data-s="0" data-e="65" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">Figures of tables, tables in figures and</span></div>
 <div class="tsr-line" data-s="0" data-e="65" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">subfigures (plan P3-03).</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="128" style="position:relative;height:134.391px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="figure" data-pid="1" data-s0="128" style="position:relative;height:134.391px;margin-bottom:19.203px">
 <div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-tab-in" data-s="0" data-e="4" data-join="tab" data-ragged="1" data-track="cell" style="top:4.797px;left:6.406px;width:137.188px"><span id="tsr-fig-tab" data-syn="anchor"></span><span class="tsr-r" data-s="0">Name</span></div>
 <div class="tsr-line" data-s="7" data-e="10" data-join="row" data-ragged="1" data-track="cell" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="7">Qty</span></div>
@@ -14,7 +14,7 @@
 <div class="tsr-line" data-s="29" data-e="81" data-join="space" style="top:86.391px;left:0px;width:300px;word-spacing:3.429px"><span class="tsr-r tsr-b tsr-cjk" data-s="29">表</span><span class="tsr-r tsr-b" data-s="29"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="29">：</span><span class="tsr-r" data-s="29">A figure whose body is one table</span></div>
 <div class="tsr-line" data-s="29" data-e="81" style="top:110.391px;left:0px;width:300px"><span class="tsr-r" data-s="29">numbers as a table.</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="281" style="position:relative;height:134.391px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="figure" data-pid="2" data-s0="281" style="position:relative;height:134.391px;margin-bottom:19.203px">
 <div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-fig-kept" data-s="0" data-e="4" data-join="tab" data-ragged="1" data-track="cell" style="top:4.797px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">Name</span></div>
 <div class="tsr-line" data-s="7" data-e="10" data-join="row" data-ragged="1" data-track="cell" style="top:4.797px;left:156.406px;width:137.188px"><span class="tsr-r" data-s="7">Qty</span></div>
@@ -25,7 +25,7 @@
 <div class="tsr-line" data-s="28" data-e="73" data-join="space" style="top:86.391px;left:0px;width:300px"><span class="tsr-r tsr-b tsr-cjk" data-s="28">图</span><span class="tsr-r tsr-b" data-s="28"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="28">：</span><span class="tsr-r" data-s="28">Its kind says figure: it numbers as</span></div>
 <div class="tsr-line" data-s="28" data-e="73" style="top:110.391px;left:0px;width:300px"><span class="tsr-r" data-s="28">a figure.</span></div>
 </div>
-<div class="tsr-para" data-pid="3" data-s0="393" style="position:relative;height:248.812px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="figure" data-pid="3" data-s0="393" style="position:relative;height:248.812px;margin-bottom:19.203px">
 <span id="tsr-fig-pair" data-syn="anchor"></span><img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" data-s="0" data-e="77" src="a.png" alt="" style="top:0px;left:100px;width:100px;height:50px">
 <div class="tsr-line" data-s="54" data-e="68" data-join="para" data-ragged="1" style="top:69.203px;left:80px;width:220px"><span class="tsr-r tsr-b" data-s="54">2(a) </span><span class="tsr-r" data-s="54">The left view.</span></div>
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-b" data-s="78" data-e="156" src="b.png" alt="" style="top:112.406px;left:100px;width:100px;height:50px">

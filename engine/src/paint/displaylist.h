@@ -96,6 +96,7 @@ struct DLBlock {
   Su h = 0;
   double gapAfterPx = -1;   // the gap to the next block (< 0: the last)
   bool scrollX = false;     // (plan P3-14, D-Y09) content past the measure: scrolls sideways on screen
+  std::string_view role;    // (plan P3-23; D-R02) its node's role: data-role
   std::vector<DLNode> nodes;  // fragment order
   std::vector<DLRun> runs;
 };

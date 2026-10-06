@@ -1011,9 +1011,21 @@ static void unitRegistry(const fs::path& root) {
   CHECK(!Registry::fromJson(R"({"classes":{"x":{"counter":"nope"}}})", err) && !err.empty());
   // a numbered class needs a counter (fuzz finding, plan P2-07)
   CHECK(!Registry::fromJson(R"({"classes":{"x":{"numbering":"always"}}})", err) && !err.empty());
-  // (plan P3-20) a role reads as an allowlisted phrasing element only
-  CHECK(!Registry::fromJson(R"({"roles":{"x":{"html":"script"}}})", err) && err.find("allowlist") != std::string::npos);
-  CHECK(Registry::fromJson(R"({"roles":{"x":{"html":"mark"}}})", err) != nullptr);
+  // (plans P3-20, P3-23) a presentation row names allowlisted elements and
+  // ARIA roles only: a role an inline phrasing element, a block a flow one
+  CHECK(!Registry::fromJson(R"({"html":{"x":{"element":"script","inline":true}}})", err) &&
+        err.find("allowlist") != std::string::npos);
+  CHECK(!Registry::fromJson(R"({"html":{"x":{"element":"iframe"}}})", err) && err.find("allowlist") != std::string::npos);
+  CHECK(!Registry::fromJson(R"({"html":{"x":{"element":"div","aria":"button"}}})", err) &&
+        err.find("ARIA") != std::string::npos);
+  CHECK(!Registry::fromJson(R"({"html":{"x":{"element":"figure","slots":{"caption":"img"}}}})", err));
+  CHECK(Registry::fromJson(R"({"html":{"x":{"element":"mark","inline":true}}})", err) != nullptr);
+  {
+    auto r = Registry::fromJson(
+        R"({"html":{"a":{"element":"section","aria":"note","typeset":{"frame":true}},"b":{"like":"a","element":"aside"}}})", err);
+    CHECK(r && r->htmlRow("b") && r->htmlRow("b")->element == "aside" && r->htmlRow("b")->aria == "note" &&
+          r->htmlRow("b")->frame);
+  }
   // (plan P3-20) link hrefs: relative, http(s), mailto — never another scheme
   for (const char* ok : {"a.html", "/x/y", "#top", "?q=1", "https://e.org/a:b", "HTTP://e", "mailto:a@b", "x/y:z"})
     CHECK(safeLinkUrl(ok));
@@ -1104,7 +1116,10 @@ static void unitRegistry(const fs::path& root) {
     d.ingest((const u8*)buf.data(), buf.size());
     ProviderSet p = mockProviders();
     driveToCompletion(d, p);
-    return d.product("index") + d.product("semantic") + d.product("html") + d.product("blocks");
+    // (the semantic page writes a figure's caption from its caption part,
+    // plan P3-23, which the figure constructor makes and a #!sketch region
+    // does not: the registry rows' products are compared)
+    return d.product("index") + d.product("html") + d.product("blocks");
   };
   std::string builtin = products("parity-builtin"), declared = products("parity-declared");
   size_t at;

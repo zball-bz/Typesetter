@@ -1,0 +1,21 @@
+doc @[0,272)
+  para @[0,271)
+    text @[0,49) str="Both pages show what was measured (plan P3-23): a "
+    splice @[50,81) expr="style({weight: 600})"
+      arg @[72,80)
+        text @[72,80) str="semibold"
+    text @[82,87) str=" and a "
+    splice @[88,116) expr="style({weight: 300})"
+      arg @[110,115)
+        text @[110,115) str="light"
+    text @[117,146) str=" run keep their weights, and a "
+    splice @[147,179) expr="style({size: '0.8em'})"
+      arg @[171,178)
+        text @[171,178) str="smaller"
+    text @[180,189) str=" run and a "
+    splice @[190,249) expr="style({sizePx: 20})"
+      arg @[211,248)
+        splice @[211,248) expr="style({size: '50%'})"
+          arg @[233,247)
+            text @[233,247) str="half of twenty"
+    text @[250,271) str=" run keep their sizes."

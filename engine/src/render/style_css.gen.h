@@ -2,6 +2,7 @@
 // A typeset run's attributes and style declarations (schema "props"; plan
 // P1-02). Values were validated at decode; text values are attribute-escaped.
 #pragma once
+#include <cstdio>
 #include <cstring>
 
 #include "../model/style.h"
@@ -26,6 +27,10 @@ inline void runCss(Tag& t, const Styling& st, double basePx, const Interner& str
     if (st.decoration & DECORATION_OVER) add("overline");
     if (st.decoration & DECORATION_STRIKE) add("line-through");
     t.decl("text-decoration", std::string_view(buf, n));
+  }
+  if (st.weight && st.weight != 400 && st.weight != 700) {
+    char w[8];
+    t.decl("font-weight", std::string_view(w, (size_t)std::snprintf(w, sizeof w, "%u", (unsigned)st.weight)));
   }
 }
 

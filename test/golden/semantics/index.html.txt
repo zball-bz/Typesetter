@@ -15,7 +15,7 @@
 <div class="tsr-para" data-pid="3" data-s0="438" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="84" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">单子</span><span class="tsr-r" id="tsr-idx-5" data-s="6"></span><span class="tsr-r tsr-cjk" data-s="63">与函子的关系</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="63">。</span></div>
 </div>
-<div class="tsr-para" data-pid="4" data-s0="524" style="position:relative;height:115.172px">
+<div class="tsr-para" data-role="index" data-pid="4" data-s0="524" style="position:relative;height:115.172px">
 <div class="tsr-line" data-s="0" data-e="8" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r tsr-cjk" data-s="0">单子</span><span class="tsr-r" data-s="0"> </span><a class="tsr-r" href="#tsr-idx-5" data-s="0">1</a></div>
 <div class="tsr-line" data-s="0" data-e="8" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">functor </span><a class="tsr-r" href="#tsr-idx-3" data-s="0">1</a></div>
 <div class="tsr-line" data-s="0" data-e="8" style="top:60.781px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r tsr-b" data-s="0">monad</span><span class="tsr-r" data-s="0"> </span><a class="tsr-r" href="#tsr-idx-1" data-s="0">1</a><span class="tsr-r" data-s="0">, </span><a class="tsr-r" href="#tsr-idx-4" data-s="0">2</a></div>

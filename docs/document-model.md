@@ -422,9 +422,31 @@ and the paged output carry the same ids.
 
 ### 9.2 Semantic HTML
 
-Element mapping: `para→p, heading→h1..h6, list→ul|ol, item→li, quote→blockquote, codeblock→pre>code, rule→hr, group→div[data-role], table→table/tr/td, link/ref→a, code→code, raw→passthrough`. Not built yet (PresentationMap, plan P3-23): `term→dl>dt+dd`, `collect→nav|section`, `styled→em|strong|span[class]` — a term and a collector render as their groups, a styled run as its scope. As built (plan P3-07, D-R06): generated text the typeset view omits or replaces says so here too — an `<a>` of a footnote marker or a backlink carries `data-syn`, error text `data-syn="error"`, a node with `copy`/`syn` attributes its `data-syn`/`data-copy` (on its element, or a `<span>`) — so one copy contract serves both phases. Paragraph-level elements carry the same `data-pid` (the upgrade swap keys on it) and `data-s/e`. No positioning, no spacing styles — the browser flows it (v2 §9).
+Element mapping (plan P3-23; the **presentation map**, `engine/data/elements.json` `html`): a node shows as its row's element. A node's row is its class's (or its `like:` base's), else its role's, else its kind's. The built-in rows:
+- kinds: `para→p`, `heading→h{level}`, `list→ul|ol` (the list projection), `item→li`, `quote→blockquote`, `codeblock→pre>code` (the codeblock projection), `rule→hr`, `mathblock` (the math projection), `table→table/tr/td` (the table projection), `group→div[data-role]`;
+- classes: `figure→figure` (its caption part in `figcaption`), a defined `term→dl>dt+dd` (the term projection: the name in `dt`, the description and the blocks after it in `dd`);
+- collectors: `toc`, `lof`, `lot`, `index→nav`; `glossary`, `notes`, `bibliography→section`, each with its DPUB-ARIA role. A collector's output stands in a group of its role (its name), so a document's collector shows as `div[data-role=<name>]`;
+- generated roles, inline: `fn-marker→sup`, `caption-label`, `term-name→strong`. A role's element is not written where the run's own style says it already.
 
-As built (plan P3-01): runs are written in their **scope** (the rule-free style, §3); what the rules add is the page's stylesheet, `rulesToCss` (`render/rules_css.{h,cc}`; the `css` product, `tsr2_render_css`, `renderTsm(…).css`, inlined by `tools/export-static.mjs`). Every rule is `:where(…)` (specificity 0, so order decides as in the cascade); a forced host rule is `!important`; a kind maps to the element above; a document env that begins mid-document is compiled under `[data-tsr-env="<hash of its rule chain>"]`, which the page sets on the top-level blocks in that env and on a `style.where` wrapper (`div` around blocks, `span` inline). Role and class selectors wait for the page's hooks (P3-18 `tsr-c-*`, P3-23 `data-role`); until then the generated roles read through the registry's role map (`elements.json` `roles`: fn-marker → `sup`, caption-label / term-name → `strong`, skipped where the run's own style already says it). A selector with no CSS form (depth, other attributes) is left out with `rule-no-css`.
+`link/ref→a`, `code→code`, `image→img` and `raw` (passthrough) stay code.
+
+A row gives:
+- `element` (from the allowlists of `elements/presentation.h`: flow elements for blocks, phrasing ones for `inline` rows);
+- `slots` (a part's element; every part of a slot in one element, where its first part stands — one paragraph holds its text, several their paragraphs);
+- `aria` (an allowlisted role);
+- `projection` (list, table, codeblock, math, term);
+- `typeset: {dataRole, frame}`;
+- `like` (another row's fields first).
+
+The host patches rows with `semantics.html`, a document with `$.element(name, {html: {…}})`. A row naming anything outside the allowlists refuses the registry (D-R09).
+
+`data-role` (D-R02): a group whose row hooks it (`group`, `figure`, the collectors) carries its role as `data-role`, on the semantic page and on the typeset page's `.tsr-para` (and paged `.tsr-band`). A class whose row declares `typeset.frame` gets a frame box on the typeset page, `.tsr-frame[data-role]`, which the theme draws; no built-in class declares one (D-Y11).
+
+A code block's sidecar notes (its margin part) follow their line inside the code, behind the fence's declared marker: `<span class="tsr-margin" data-syn="sidecar">/// …</span>`. Copy omits them, so a code block copies its code (D-R03).
+
+Runs: the semantic page writes a run's weight (`strong`, and `font-weight` for a weight but 400 and 700) and its size (`font-size`: an absolute size times its multiplier, else the multiplier in `em`) as the typeset page paints them. As built (plan P3-07, D-R06): generated text the typeset view omits or replaces says so here too — an `<a>` of a footnote marker or a backlink carries `data-syn`, error text `data-syn="error"`, a node with `copy`/`syn` attributes its `data-syn`/`data-copy` (on its element, or a `<span>`) — so one copy contract serves both phases. Paragraph-level elements carry the same `data-pid` (the upgrade swap keys on it) and `data-s/e`. No positioning, no spacing styles — the browser flows it (v2 §9).
+
+As built (plan P3-01): runs are written in their **scope** (the rule-free style, §3); what the rules add is the page's stylesheet, `rulesToCss` (`render/rules_css.{h,cc}`; the `css` product, `tsr2_render_css`, `renderTsm(…).css`, inlined by `tools/export-static.mjs`). Every rule is `:where(…)` (specificity 0, so order decides as in the cascade); a forced host rule is `!important`; a kind maps to the element above; a document env that begins mid-document is compiled under `[data-tsr-env="<hash of its rule chain>"]`, which the page sets on the top-level blocks in that env and on a `style.where` wrapper (`div` around blocks, `span` inline). Role and class selectors wait for the page's hooks (P3-18 `tsr-c-*`, P3-23 `data-role`); the generated roles read through their inline presentation rows (above). A selector with no CSS form (depth, other attributes) is left out with `rule-no-css`.
 
 Implementation notes (M5): the semantic serializer runs on the post-resolve
 tree with no measurements — the worker posts it immediately after ingest and

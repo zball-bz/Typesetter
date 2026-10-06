@@ -69,6 +69,7 @@ const Row kRows[] = {
     {"semantics.elements", stageBit(Stage::Ingest), true},
     {"semantics.counters", stageBit(Stage::Ingest), true},
     {"semantics.collectors", stageBit(Stage::Ingest), true},
+    {"semantics.html", stageBit(Stage::Ingest), true},
     {"semantics.systems", stageBit(Stage::Ingest), true},
     {"render.idPrefix", stageBit(Stage::Paint), false},
     {"style.rules", stageBit(Stage::Ingest), true},
@@ -401,18 +402,24 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       if (!v.keys.empty()) jsonDump(c.semCollectors, v);
       return true;
     }
-    case 51: {  // semantics.systems
+    case 51: {  // semantics.html
+      if (v.t != JsonValue::T::Obj) return type(why, "an object");
+      c.semHtml.clear();
+      if (!v.keys.empty()) jsonDump(c.semHtml, v);
+      return true;
+    }
+    case 52: {  // semantics.systems
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semSystems.clear();
       if (!v.keys.empty()) jsonDump(c.semSystems, v);
       return true;
     }
-    case 52: {  // render.idPrefix
+    case 53: {  // render.idPrefix
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Ident, v.str))) return type(why, "ident");
       c.idPrefix = v.str;
       return true;
     }
-    case 53: {  // style.rules
+    case 54: {  // style.rules
       if (v.t != JsonValue::T::Arr) return type(why, "an array");
       c.styleRules.clear();
       if (!v.arr.empty()) jsonDump(c.styleRules, v);
@@ -596,6 +603,8 @@ std::string settingsJson(const Config& c) {
   out += c.semCounters.empty() ? "{}" : c.semCounters;
   out += ", \"collectors\": ";
   out += c.semCollectors.empty() ? "{}" : c.semCollectors;
+  out += ", \"html\": ";
+  out += c.semHtml.empty() ? "{}" : c.semHtml;
   out += ", \"systems\": ";
   out += c.semSystems.empty() ? "{}" : c.semSystems;
   out += "}, \"render\": {\"idPrefix\": ";

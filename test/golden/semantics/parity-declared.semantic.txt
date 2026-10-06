@@ -1,9 +1,9 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="37">Parity (plan P2-07): see <a href="#tsr-f1">图 1</a> and <a href="#tsr-f2">图 2</a>.</p>
-<figure data-pid="1" data-s="39" data-e="92" id="tsr-f1">
-<figcaption><strong>图 1：</strong>A built-in figure row.</figcaption>
+<figure data-role="sketch" data-pid="1" data-s="39" data-e="92" id="tsr-f1">
+<p data-s="61" data-e="83"><strong>图 1：</strong>A built-in figure row.</p>
 </figure>
-<figure data-pid="2" data-s="94" data-e="145" id="tsr-f2">
-<figcaption><strong>图 2：</strong>Its second instance.</figcaption>
+<figure data-role="sketch" data-pid="2" data-s="94" data-e="145" id="tsr-f2">
+<p data-s="116" data-e="136"><strong>图 2：</strong>Its second instance.</p>
 </figure>
 </div>

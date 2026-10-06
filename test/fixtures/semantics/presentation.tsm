@@ -1,0 +1,19 @@
+Presentation rows (plan P3-23): a class of the document's shows as its own element, with an ARIA role and a frame the theme draws; a role reads as an inline element; the host turns quotes into asides.
+
+#{
+  $.counter('thm')
+  $.element('theorem', {
+    counter: 'thm', numbering: 'always', supplement: {en: 'Theorem '},
+    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}],
+    html: {element: 'section', aria: 'note', typeset: {frame: true, dataRole: true}},
+  })
+  $.element('key', {html: {element: 'kbd', inline: true}})
+}
+
+#!theorem(label: "t1")
+Every presentation row is data.
+#theorem!
+
+Press #strong({role: 'key'})[Ctrl] to copy; see @t1.
+
+> A quote the host shows as an aside.

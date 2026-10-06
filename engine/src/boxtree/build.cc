@@ -209,6 +209,10 @@ class Builder {
   // (plan P3-14) a node's box: its padding and border widths (CSS shorthand,
   // in its own em), their colours
   void boxOf(const ContentNode* n, BoxModel& box) const {
+    if (const HtmlShape* sh = reg.shapeOf(n, strs); sh && sh->frame) {
+      box.themed = true;
+      box.role = attrStr(n, ArgK::role);
+    }
     const NodeProps& np = props.get(n->props);
     auto lens = [&](StrRef v, Su out[4]) {
       if (!v) return;
@@ -593,6 +597,8 @@ BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles
   for (const ContentNode* child : tree.root->kids) {
     TopTree t;
     t.pid = pid++;
+    if (const StrRef role = attrStr(child, ArgK::role))
+      if (const HtmlShape* sh = reg.shapeOf(child, strs); sh && sh->dataRole) t.role = role;
     std::vector<LeafSource> src;
     b.top(child, t, src);
     if (t.leaves.empty()) continue;  // nothing to lay out: no frame

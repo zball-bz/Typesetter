@@ -1,35 +1,38 @@
 doc @[565,1005) [base]
   heading @[565,604) [BOLDx1.60] level=1 label="h-1"
     text @[567,604) [BOLDx1.60] str="Lists of figures, tables and theorems"
-  list @[606,612) [base] ordered=false
-    item @[606,612) [base]
-      para @[606,612) [base]
-        link @[606,612) [base] target="fig-a"
-          text @[606,612) [base] str="图 1"
-        text @[606,612) [base] str="："
-        text @[606,612) [base] str="A first figure, with "
-        styled @[606,612) [BOLD]
-          text @[606,612) [BOLD] str="emphasis"
-        text @[606,612) [base] str=" in its caption."
-  list @[614,620) [base] ordered=false
-    item @[614,620) [base]
-      para @[614,620) [base]
-        link @[614,620) [base] target="tbl-b"
-          text @[614,620) [base] str="表 1"
-    item @[614,620) [base]
-      para @[614,620) [base]
-        link @[614,620) [base] target="tbl-c"
-          text @[614,620) [base] str="表 2"
-        text @[614,620) [base] str="："
-        text @[614,620) [base] str="A figure that numbers as a table."
-  para @[622,633) [base]
-    text @[622,633) [BOLD] str="Theorems"
-  list @[622,633) [base] ordered=false
-    item @[622,633) [base]
-      para @[622,633) [base]
-        link @[622,633) [base] target="thm-main"
-          text @[622,633) [base] str="Theorem 1"
-        text @[622,633) [base] str=" — Main"
+  group @[606,612) [base] role="lof"
+    list @[606,612) [base] ordered=false
+      item @[606,612) [base]
+        para @[606,612) [base]
+          link @[606,612) [base] target="fig-a"
+            text @[606,612) [base] str="图 1"
+          text @[606,612) [base] str="："
+          text @[606,612) [base] str="A first figure, with "
+          styled @[606,612) [BOLD]
+            text @[606,612) [BOLD] str="emphasis"
+          text @[606,612) [base] str=" in its caption."
+  group @[614,620) [base] role="lot"
+    list @[614,620) [base] ordered=false
+      item @[614,620) [base]
+        para @[614,620) [base]
+          link @[614,620) [base] target="tbl-b"
+            text @[614,620) [base] str="表 1"
+      item @[614,620) [base]
+        para @[614,620) [base]
+          link @[614,620) [base] target="tbl-c"
+            text @[614,620) [base] str="表 2"
+          text @[614,620) [base] str="："
+          text @[614,620) [base] str="A figure that numbers as a table."
+  group @[622,633) [base] role="theorems"
+    para @[622,633) [base]
+      text @[622,633) [BOLD] str="Theorems"
+    list @[622,633) [base] ordered=false
+      item @[622,633) [base]
+        para @[622,633) [base]
+          link @[622,633) [base] target="thm-main"
+            text @[622,633) [base] str="Theorem 1"
+          text @[622,633) [base] str=" — Main"
   group @[635,763) [base] role="figure" label="fig-a"
     image @[635,763) [base] src="photos/a.png" alt="a" w=200 h=100
     para @[707,754) [base] role="caption" slot="caption"
