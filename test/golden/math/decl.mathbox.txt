@@ -51,7 +51,7 @@ hbox Ord w=3983 asc=819 desc=262
       glyph ")" Close w=336 asc=721 desc=209 px=16 @(2017,0)
 inline pid=1 "prd(x, A, B(x))"
 hbox Ord w=4269 asc=768 desc=316
-  hbox Op w=4269 asc=768 desc=316
+  hbox Ord w=4269 asc=768 desc=316
     hbox Op w=2216 asc=768 desc=316
       glyph "∏" Op w=1081 asc=768 desc=256 px=16
       hbox Ord w=1084 asc=487 desc=9 @(1081,-307)
@@ -60,6 +60,7 @@ hbox Ord w=4269 asc=768 desc=316
         glyph "∶" Rel w=155 asc=326 desc=9 px=11.2 @(377,0)
         hbox Ord w=552 asc=487 desc=7 @(532,0)
           glyph "A" Ord w=552 asc=487 desc=7 px=11.2
+    glue w=171 @(2216,0)
     hbox Ord w=1882 asc=721 desc=209 @(2387,0)
       glyph "B" Ord w=671 asc=702 desc=1 px=16
       hbox Ord w=1211 asc=721 desc=209 @(671,0)

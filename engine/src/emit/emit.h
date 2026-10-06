@@ -211,12 +211,9 @@ std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, S
                               const EmitSettings& cfg, DiagSink& diags, const MeasureNeeds* mathText = nullptr,
                               const ResourceTable* rt = nullptr);
 
-// the penalty before a formula part, by its break class (math.h MathSeg)
-inline double mathPenalty(const EmitSettings& cfg, u8 brkBefore) {
-  return brkBefore == 1 ? cfg.mathRelAfterPenalty
-         : brkBefore == 2 ? cfg.mathRelBeforePenalty
-                          : cfg.mathBinAfterPenalty;
-}
+// (plan P3-25) where an inline formula may break: the settings' class
+// tables (math.breakAfter / math.breakBefore)
+inline MathBreaks mathBreaks(const EmitSettings& cfg) { return MathBreaks{cfg.mathBreakAfter, cfg.mathBreakBefore}; }
 
 // What resolveWidths needs to lay out a deferred formula (plan P1-13): the
 // document's arena, strings and styles.

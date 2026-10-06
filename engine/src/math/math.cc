@@ -288,13 +288,15 @@ struct Layouter {
   MathBox* layout(MNode* n, u8 st) {
     switch (n->k) {
       case MNode::Run: return layoutRun(n, st);
-      case MNode::Sym: return glyphBox(n->cp, n->cls, st);
+      case MNode::Sym:
+        if (n->mid) return glyphBox(n->cp, n->cls, st);  // (a middle outside a group: its natural glyph)
+        if (n->flags & kFlagLarge) return bigOpGlyph(n->cp, st);
+        return glyphBox(n->cp, n->cls, st);
       case MNode::Num: return textBox(n->txt, n->cls, st, false);
       case MNode::Text: return textBox(n->txt, n->cls, st, n->textFont);
       case MNode::Attach: return layoutScript(n, st);
       case MNode::Frac: return layoutFrac(n, st);
       case MNode::Group: return layoutGroup(n, st);
-      case MNode::BigOp: return layoutBigOp(n, st);
       case MNode::Call: return layoutCall(n, st);
       case MNode::Error:  // its source slice, set in the text font (measured like names)
         return textBox(n->txt, kOrd, st, /*textFont=*/true);
@@ -315,14 +317,12 @@ struct Layouter {
     return assemble(boxes, st, startEdge, endEdge);
   }
 
-  // demotion (TeXbook Rules 5–6) + pair glue + horizontal assembly.
-  // startEdge/endEdge false = this run is an inner slice of a segmented
-  // formula: the formula start/end demotion rules do not apply.
-  MathBox* assemble(std::vector<MathBox*>& boxes, u8 st, bool startEdge = true,
-                    bool endEdge = true) {
-    // Rule 5: Bin after {start, Bin, Op, Rel, Open, Punct} → Ord.
-    // Rule 6: Bin before {Rel, Close, Punct, end} → Ord (KaTeX
-    // binRightCanceller folded into the same forward pass).
+  // Rules 5–6 (TeXbook): a Bin with no operand on its left — at the start,
+  // after Bin, Op, Rel, Open or Punct — or before Rel, Close, Punct or the
+  // end is an Ord. It runs ONCE over a list of laid-out atoms (plan P3-25):
+  // a formula's top level for its segments, a run's own atoms inside it.
+  // startEdge/endEdge false: the list is a slice of a larger one.
+  void demote(std::vector<MathBox*>& boxes, bool startEdge, bool endEdge) {
     for (size_t i = 0; i < boxes.size(); i++) {
       u8 c = boxes[i]->cls;
       if (c == kBin) {
@@ -338,12 +338,16 @@ struct Layouter {
     }
     if (endEdge && !boxes.empty() && boxes.back()->cls == kBin)
       boxes.back()->cls = boxes.back()->firstCls = boxes.back()->lastCls = kOrd;
+  }
 
+  // atoms [lo, hi) side by side with their pair glue (their classes as
+  // demoted); a lone atom's accent attachment is the list's (plan P3-25)
+  MathBox* pack(const std::vector<MathBox*>& boxes, size_t lo, size_t hi, u8 st) {
     MathBox* out = mkBox(MathKind::HBox);
     out->cls = kOrd;
     Su x = 0;
-    for (size_t i = 0; i < boxes.size(); i++) {
-      if (i) {
+    for (size_t i = lo; i < hi; i++) {
+      if (i > lo) {
         Su g = pairGlue(boxes[i - 1]->lastCls, boxes[i]->firstCls, st);
         if (g) {
           out->kids.push_back({x, 0, spacer(g)});
@@ -356,30 +360,33 @@ struct Layouter {
       if (boxes[i]->desc > out->desc) out->desc = boxes[i]->desc;
     }
     out->w = x;
-    out->topAccent = x / 2;
-    if (!boxes.empty()) {
-      out->firstCls = boxes.front()->firstCls;
-      out->lastCls = boxes.back()->lastCls;
-      out->italic = boxes.back()->italic;
+    out->topAccent = hi - lo == 1 ? boxes[lo]->topAccent : x / 2;
+    if (hi > lo) {
+      out->firstCls = boxes[lo]->firstCls;
+      out->lastCls = boxes[hi - 1]->lastCls;
+      out->italic = boxes[hi - 1]->italic;
     }
     return out;
+  }
+  MathBox* assemble(std::vector<MathBox*>& boxes, u8 st, bool startEdge = true, bool endEdge = true) {
+    demote(boxes, startEdge, endEdge);
+    return pack(boxes, 0, boxes.size(), st);
   }
 
   // scripts: MATH constants with the TeX 18a character-base refinement and
   // Typst's joint collision resolution (scripts.rs::compute_script_shifts)
+  // (plan P3-25) one attach for every base: an operator's limits mode — a
+  // large operator's (sum), a text operator's (lim), limits() — sets its
+  // scripts above and below; else they are scripts
   MathBox* layoutScript(MNode* n, u8 st) {
-    // lim_(n->oo) in display style: text operators with the limits flag
-    // take their scripts above/below (TeXbook \\op limits convention); a
-    // base limits() marked takes them so in every style (plan P3-24)
     const u8 fl = n->a->flags;
-    if ((fl & kFlagLimitsAlways) ||
-        (n->a->k == MNode::Text && (fl & kFlagLimits) && (fl & kFlagTextOp) && isDisplay(st))) {
+    if ((fl & kFlagLimitsAlways) || ((fl & kFlagLimits) && isDisplay(st))) {
       MathBox* base = n->a->k == MNode::Text ? textBox(n->a->txt, kOp, st, n->a->textFont) : layout(n->a, st);
       return attachLimits(base, n->sub, n->sup, st);
     }
     MathBox* base = layout(n->a, st);
     return attachScripts(base, n->sub, n->sup, st,
-                         /*isChar=*/n->a->k == MNode::Sym);
+                         /*isChar=*/n->a->k == MNode::Sym && !(fl & kFlagLarge));
   }
 
   MathBox* attachScripts(MathBox* base, MNode* subN, MNode* supN, u8 st,
@@ -420,7 +427,9 @@ struct Layouter {
     }
 
     MathBox* out = mkBox(MathKind::HBox);
-    out->cls = out->firstCls = base->cls;
+    // (plan P3-25) its edges are its base's: (a+b)^2 opens with an Open
+    out->cls = base->cls;
+    out->firstCls = base->firstCls;
     out->w = base->w;
     out->asc = base->asc;
     out->desc = base->desc;
@@ -444,7 +453,7 @@ struct Layouter {
       if (sub->asc - shiftDown > out->asc) out->asc = sub->asc - shiftDown;
     }
     out->w = right + constSu(C::SpaceAfterScript, st);
-    out->lastCls = base->cls;
+    out->lastCls = base->lastCls;
     return out;
   }
 
@@ -560,39 +569,17 @@ struct Layouter {
     return out;
   }
 
-  // big operator + scripts, then the greedy body as an opaque subrun.
-  MathBox* layoutBigOp(MNode* n, u8 st) {
-    // (a text operator never reaches here: parseWord makes it a Text node)
-    MathBox* op = glyphBox(n->cp, kOp, st);
+  // (plan P3-25) a large operator's glyph: in display style grown to
+  // DisplayOperatorMinHeight and centred on the axis (T glyph stretch; K
+  // makeLargeOp Size2 swap). Its scripts are attach's; what follows it is
+  // the formula's own atoms.
+  MathBox* bigOpGlyph(u32 cp, u8 st) {
+    MathBox* op = glyphBox(cp, kOp, st);
     if (isDisplay(st)) {
-      // grow to DisplayOperatorMinHeight and centre on the axis (T glyph
-      // stretch; K makeLargeOp Size2 swap)
       Su minH = constSu(C::DisplayOperatorMinHeight, st);
-      if (op->asc + op->desc < minH)
-        op = centerOnAxis(stretchVert(n->cp, kOp, st, minH), kOp, st);
+      if (op->asc + op->desc < minH) op = centerOnAxis(stretchVert(cp, kOp, st, minH), kOp, st);
     }
-    bool limits = (n->flags & kFlagLimitsAlways) || ((n->flags & kFlagLimits) && isDisplay(st));
-    MathBox* scripted = limits ? attachLimits(op, n->sub, n->sup, st)
-                               : attachScripts(op, n->sub, n->sup, st,
-                                               /*isChar=*/false);
-    MathBox* body = n->b && !n->b->kids.empty() ? layoutRun(n->b, st) : nullptr;
-    if (!body) {
-      scripted->cls = scripted->firstCls = scripted->lastCls = kOp;
-      return scripted;
-    }
-    MathBox* out = mkBox(MathKind::HBox);
-    out->cls = kOp;
-    out->firstCls = kOp;
-    out->lastCls = body->lastCls;
-    Su x = scripted->w;
-    out->kids.push_back({0, 0, scripted});
-    Su g = pairGlue(kOp, body->firstCls, st);
-    x += g;
-    out->kids.push_back({x, 0, body});
-    out->w = x + body->w;
-    out->asc = scripted->asc > body->asc ? scripted->asc : body->asc;
-    out->desc = scripted->desc > body->desc ? scripted->desc : body->desc;
-    return out;
+    return op;
   }
 
   // radicals: MATH constants per Typst radical.rs; surd stretched to the
@@ -645,14 +632,9 @@ struct Layouter {
   // base; the accent rides at max(0, base.asc − AccentBaseHeight).
   MathBox* layoutAccent(u32 accCp, MNode* baseN, u8 st) {
     MathBox* base = layoutRun(baseN, (u8)(st | 1));
-    // single-glyph base: the glyph's own TopAccentAttachment is authoritative
-    // (the run wrapper only knows w/2 — same for Euler's x, off by ~0.04em
-    // for f-like glyphs whose ink centre leads the advance centre)
-    Su baseAttach = base->topAccent;
-    if (baseN->kids.size() == 1 && baseN->kids[0]->k == MNode::Sym) {
-      if (const GlyphRec* r = F.glyph(baseN->kids[0]->cp))
-        if (r->topAccent != kNoTopAccent) baseAttach = toSu(r->topAccent, st);
-    }
+    // a single-glyph base carries its glyph's TopAccentAttachment (pack
+    // passes a lone atom's on, plan P3-25)
+    const Su baseAttach = base->topAccent;
     MathBox* acc = glyphBox(accCp, kOrd, st);
     Su dy = base->asc - constSu(C::AccentBaseHeight, st);
     if (dy < 0) dy = 0;
@@ -802,41 +784,6 @@ struct Layouter {
 
 }  // namespace
 
-// effective edge classes of a parse node, for segmentation's demotion
-// preview (mirrors what layout will produce)
-static void effClsOf(const MNode* n, u8& f, u8& l) {
-  switch (n->k) {
-    case MNode::Sym:
-    case MNode::Num:
-    case MNode::Text:
-      f = l = n->cls;
-      return;
-    case MNode::Attach:
-      effClsOf(n->a, f, l);
-      l = f;
-      return;
-    case MNode::Group:
-      f = kOpen;
-      l = kClose;
-      return;
-    case MNode::Call:  // (plan P3-24) class(…) is its class; other calls are Ord
-      f = l = n->prim == Prim::Class ? n->cls : (u8)kOrd;
-      return;
-    case MNode::BigOp: {
-      f = kOp;
-      l = kOp;
-      if (n->b && !n->b->kids.empty()) {
-        u8 bf;
-        effClsOf(n->b->kids.back(), bf, l);
-      }
-      return;
-    }
-    default:
-      f = l = kOrd;
-      return;
-  }
-}
-
 MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Arena& arena, Interner& strs, DiagSink& diags,
                            Span span, const MeasureNeeds* text, bool parseDiags, const MathScope* scope) {
@@ -847,76 +794,46 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
   return L.layout(ir.root, display ? D : T);
 }
 
+// (plan P3-25; design T8 Lazy MathLayout: one math-list → item conversion)
+// the formula's top-level atoms are laid out once and demoted once; a break
+// between two of them costs min(after its left's class, before its right's)
+// from the class tables (math.breakAfter / math.breakBefore), a class with
+// none giving none; a segment is a maximal run without a break inside, and
+// the glue a break consumes is the pair's
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         double sizePx, Arena& arena,
                                         Interner& strs, DiagSink& diags,
-                                        Span span, const MeasureNeeds* text, bool parseDiags,
-                                        const MathScope* scope) {
+                                        Span span, const MathBreaks& breaks, const MeasureNeeds* text,
+                                        bool parseDiags, const MathScope* scope) {
   std::vector<MathSeg> out;
   MathIR ir = parseMath(src, arena, scope);
   if (parseDiags) reportMathDiags(ir, src, span, diags);
-  MNode* run = ir.root;
   Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0};
-  u8 st = display ? D : T;
-  const std::vector<MNode*>& kids = run->kids;
-  size_t n = kids.size();
-  if (display || n == 0) {
-    out.push_back({L.layout(run, st), 0, 0});
+  const u8 st = display ? D : T;
+  const std::vector<MNode*>& kids = ir.root->kids;
+  if (display || kids.empty()) {
+    out.push_back({L.layout(ir.root, st), 0, 0});
     return out;
   }
-  // demotion preview over top-level effective classes
-  std::vector<u8> f(n), l(n);
-  for (size_t i = 0; i < n; i++) effClsOf(kids[i], f[i], l[i]);
-  for (size_t i = 0; i < n; i++) {
-    if (f[i] == kBin && l[i] == kBin) {
-      u8 prev = i ? l[i - 1] : 0xFF;
-      if (i == 0 || prev == kBin || prev == kOp || prev == kRel ||
-          prev == kOpen || prev == kPunct)
-        f[i] = l[i] = kOrd;
-    }
-    if ((f[i] == kRel || f[i] == kClose || f[i] == kPunct) && i &&
-        f[i - 1] == kBin && l[i - 1] == kBin)
-      f[i - 1] = l[i - 1] = kOrd;
+  std::vector<MathBox*> boxes;
+  boxes.reserve(kids.size());
+  for (MNode* k : kids) boxes.push_back(L.layout(k, st));
+  L.demote(boxes, /*startEdge=*/true, /*endEdge=*/true);
+  std::vector<size_t> cuts{0};
+  std::vector<float> pens{0};
+  for (size_t i = 0; i + 1 < boxes.size(); i++) {
+    const u8 l = boxes[i]->lastCls, r = boxes[i + 1]->firstCls;
+    const double a = l < 8 ? breaks.after[l] : -1, b = r < 8 ? breaks.before[r] : -1;
+    const double p = a >= 0 && b >= 0 ? std::min(a, b) : a >= 0 ? a : b;
+    if (p < 0) continue;
+    cuts.push_back(i + 1);
+    pens.push_back((float)p);
   }
-  if (n && f[n - 1] == kBin && l[n - 1] == kBin) f[n - 1] = l[n - 1] = kOrd;
-
-  // cut points: a top-level Rel atom is its own segment (break before AND
-  // after); a top-level Bin atom ends its segment (break after)
-  struct Cut { size_t lo, hi; u8 brk; };
-  std::vector<Cut> cuts;
-  size_t cur = 0;
-  u8 pending = 0;
-  for (size_t i = 0; i < n; i++) {
-    bool relAtom = kids[i]->k == MNode::Sym && f[i] == kRel;
-    bool binAtom = kids[i]->k == MNode::Sym && f[i] == kBin && l[i] == kBin;
-    if (relAtom) {
-      if (i > cur) {
-        cuts.push_back({cur, i, pending});
-      }
-      cuts.push_back({i, i + 1, i > cur || !cuts.empty() ? (u8)2 : pending});
-      pending = 1;  // after-Rel
-      cur = i + 1;
-      continue;
-    }
-    if (binAtom) {
-      cuts.push_back({cur, i + 1, pending});
-      pending = 3;  // after-Bin
-      cur = i + 1;
-    }
-  }
-  if (cur < n) cuts.push_back({cur, n, pending});
-  if (cuts.size() <= 1) {
-    out.push_back({L.layout(run, st), 0, 0});
-    return out;
-  }
-  MathBox* prev = nullptr;
-  for (size_t c = 0; c < cuts.size(); c++) {
-    MathBox* b = L.layoutSlice(kids, cuts[c].lo, cuts[c].hi, st,
-                               /*startEdge=*/c == 0,
-                               /*endEdge=*/c + 1 == cuts.size());
-    Su glue = prev ? L.pairGlue(prev->lastCls, b->firstCls, st) : 0;
-    out.push_back({b, glue, cuts[c].brk});
-    prev = b;
+  cuts.push_back(boxes.size());
+  for (size_t c = 0; c + 1 < cuts.size(); c++) {
+    MathBox* b = L.pack(boxes, cuts[c], cuts[c + 1], st);
+    const Su glue = c ? L.pairGlue(boxes[cuts[c] - 1]->lastCls, boxes[cuts[c]]->firstCls, st) : 0;
+    out.push_back({b, glue, pens[c]});
   }
   return out;
 }

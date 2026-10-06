@@ -474,6 +474,28 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
     from the tex column. `unitMathDict` parses every key and every target
     back to its symbol. `pbr2tsm` checks its MathSpeak map against the
     vocabulary when it loads.
+- **Plan P3-25 (operator atoms; one math-list → item conversion; design T8 S5)**:
+  - `MNode::BigOp` is gone. A large operator is an Op atom (`flags`: large,
+    limits). Its scripts are attach's, where one rule decides: limits above
+    and below when its mode is always (`limits()`) or display in display
+    style, for any base (sum, lim, a limits()-marked relation). The greedy
+    scope of v2 §13 is a reading annotation (`scopeEnd`, the byte of the
+    next relation of the run or its end); its atoms are the formula's own.
+  - Demotion (Rules 5–6) runs once over a list of laid-out atoms (`demote`,
+    then `pack`). Inline segmentation lays the formula's top-level atoms
+    out once, demotes them once, and breaks between two atoms at
+    min(`math.breakAfter`[left's last class], `math.breakBefore`[right's
+    first class]) — the settings' class tables (defaults: after Rel 0.8,
+    after Bin 0.95, before Rel 0.85), replacing `break.mathRelAfter`,
+    `break.mathRelBefore` and `break.mathBinAfter`. A scripted relation and
+    an atom after a scripted group break like a bare one; a unary minus
+    after a break is demoted (it was a Bin there). `effClsOf` is gone.
+  - Scripts keep their base's edge classes (`sin (a+b)^2` opens with an
+    Open, as `sin(a+b)` does); a lone atom's accent attachment passes
+    through its list (the accent's own re-read of the glyph is gone).
+  - The single-token operand rule: an unknown word as a script or a
+    fraction operand is its letters (`x^ab` = x^{ab}, `a/bc` = a/(bc),
+    `ab/c`: italic ab over c).
 - **`inf`** is the infimum text operator; ∞ is `oo`/`infty`/`infinity`
   (v1 listed `inf` as ∞ — collision, recorded deviation).
 - **v2 §13's dotted codex names** (`arrow.r`, `subset.eq`) are not

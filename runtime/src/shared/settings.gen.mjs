@@ -185,25 +185,22 @@ export const SETTINGS = Object.freeze({
       "Emit"
     ]
   },
-  "break.mathRelAfter": {
-    "dom": "num:0:1e18",
-    "def": 0.8,
+  "math.breakAfter": {
+    "dom": "classmap:0:1e18",
+    "def": {
+      "rel": 0.8,
+      "bin": 0.95
+    },
     "prec": "HostDefault",
     "affects": [
       "Emit"
     ]
   },
-  "break.mathRelBefore": {
-    "dom": "num:0:1e18",
-    "def": 0.85,
-    "prec": "HostDefault",
-    "affects": [
-      "Emit"
-    ]
-  },
-  "break.mathBinAfter": {
-    "dom": "num:0:1e18",
-    "def": 0.95,
+  "math.breakBefore": {
+    "dom": "classmap:0:1e18",
+    "def": {
+      "rel": 0.85
+    },
     "prec": "HostDefault",
     "affects": [
       "Emit"
@@ -495,10 +492,16 @@ export const SETTINGS_DEFAULTS = Object.freeze({
   "break": {
     "hyphenPenalty": 0.7,
     "urlPenalty": 1.2,
-    "urlMinLen": 20,
-    "mathRelAfter": 0.8,
-    "mathRelBefore": 0.85,
-    "mathBinAfter": 0.95
+    "urlMinLen": 20
+  },
+  "math": {
+    "breakAfter": {
+      "rel": 0.8,
+      "bin": 0.95
+    },
+    "breakBefore": {
+      "rel": 0.85
+    }
   },
   "cost": {
     "exponent": 3,

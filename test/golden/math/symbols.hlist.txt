@@ -438,13 +438,16 @@ top pid=6 units=1
   glue word w=257su x=1 cap=257su src r6 @[788,791)
   box Other "and" w=1537su r6 @[788,791)
   glue word w=257su x=1 cap=257su src r6 @[788,791)
-  box object o3 math part=0 asc=702su desc=10su "class(rel, A) B" w=1743su r7 @[792,809)
-  pen 0 r7
-  box Other "." w=513su r8 @[809,810)
+  box object o3 math part=0 asc=696su desc=10su "class(rel, A) B" w=788su r7 @[792,809)
+  pen 0.8 r8
+  glue objspace w=284su x=0 cap=0su r8 @[792,809)
+  box object o3 math part=1 asc=702su desc=1su w=671su r9 @[792,809)
+  pen 0 r9
+  box Other "." w=513su r10 @[809,810)
   obj o0 math parts=1 edges=Alpha/Alpha src="a thin b med c thick d quad e wide f" [w=7036su asc=700su desc=19su]
   obj o1 math parts=1 edges=Alpha/Alpha src="display(sum_i x_i)" [w=2498su asc=973su desc=1128su]
   obj o2 math parts=1 edges=Alpha/Alpha src="limits(lim)_(x -> 0)" [w=3039su asc=819su desc=266su]
-  obj o3 math parts=1 edges=Alpha/Alpha src="class(rel, A) B" [w=1743su asc=702su desc=10su]
+  obj o3 math parts=2 edges=Alpha/Alpha src="class(rel, A) B" [w=788su asc=696su desc=10su] [w=671su asc=702su desc=1su glue=284su]
   run r0 plain
   run r1 object
   run r2 plain
@@ -454,5 +457,7 @@ top pid=6 units=1
   run r6 plain
   run r7 object
   run r8 plain
+  run r9 object
+  run r10 plain
 top pid=7 units=1
- unit math indent=0su w=3536su asc=1058su desc=518su
+ unit math indent=0su w=3707su asc=1058su desc=518su

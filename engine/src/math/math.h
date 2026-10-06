@@ -2,6 +2,7 @@
 // The entire box tree is a pure function of (source, sizePx, display) over the
 // precompiled MATH artifact — natively golden-testable (--stage=mathbox).
 #pragma once
+#include <array>
 #include "../measure/measure.h"
 #include "../support/support.h"
 
@@ -49,23 +50,26 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
                            Span span, const MeasureNeeds* text = nullptr, bool parseDiags = true,
                            const MathScope* scope = nullptr);
 
-// Inline-formula line breaking (math-design.md §9): the formula splits into
-// unbreakable segments at top-level relations (a break point BEFORE and
-// AFTER each Rel — CJK convention heads the continuation line with the
-// relation, TeX breaks after) and after top-level binary operators. Display
-// formulas and degraded parses stay one segment. glueBefore is the
-// inter-atom glue the break consumes; brkBefore: 0 first segment,
-// 1 after-Rel, 2 before-Rel, 3 after-Bin.
+// Inline-formula line breaking (math-design.md §9; plan P3-25): the formula
+// splits into unbreakable segments where its top-level atoms allow a break
+// (MathBreaks: a penalty after and before each atom class; a relation by
+// default may head the continuation line — the CJK convention — and TeX
+// breaks after it and after a binary operator). Display formulas and
+// degraded parses stay one segment. glueBefore is the inter-atom glue the
+// break consumes, penalty its cost.
+struct MathBreaks {
+  std::array<double, 8> after{}, before{};  // by atom class (ord … inner); < 0: no break there
+};
 struct MathSeg {
   MathBox* box;
   Su glueBefore = 0;
-  u8 brkBefore = 0;
+  float penalty = 0;
 };
 std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         double sizePx, Arena& arena,
                                         Interner& strs, DiagSink& diags,
-                                        Span span, const MeasureNeeds* text = nullptr, bool parseDiags = true,
-                                        const MathScope* scope = nullptr);
+                                        Span span, const MathBreaks& breaks, const MeasureNeeds* text = nullptr,
+                                        bool parseDiags = true, const MathScope* scope = nullptr);
 
 std::string dumpMathBox(const MathBox* box, const Interner& strs);
 

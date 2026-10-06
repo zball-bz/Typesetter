@@ -1,6 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 // Host settings (schema "settings"; plan P1-03, design T4 M3 / T9 A4).
 #pragma once
+#include <array>
 #include <map>
 #include <string>
 #include <string_view>
@@ -9,6 +10,9 @@
 #include "stages.h"
 
 namespace tsr {
+
+// a value per TeX atom class (ord, op, bin, rel, open, close, punct, inner); -1: none (plan P3-25)
+using ClassMap = std::array<double, 8>;
 
 // Adjacent-punctuation compression style (clreq; v2 App C).
 //   Full: every adjacent gap compressed (newspaper-tight)
@@ -50,9 +54,8 @@ struct Config {
   double hyphenPenalty = 0.7;  // break.hyphenPenalty
   double urlBreakPenalty = 1.2;  // break.urlPenalty
   u32 urlBreakMinLen = 20;  // break.urlMinLen
-  double mathRelAfterPenalty = 0.8;  // break.mathRelAfter
-  double mathRelBeforePenalty = 0.85;  // break.mathRelBefore
-  double mathBinAfterPenalty = 0.95;  // break.mathBinAfter
+  ClassMap mathBreakAfter = ClassMap{{-1, -1, 0.95, 0.8, -1, -1, -1, -1}};  // math.breakAfter
+  ClassMap mathBreakBefore = ClassMap{{-1, -1, -1, 0.85, -1, -1, -1, -1}};  // math.breakBefore
   double codeScale = 0.85;  // code.scale
   int verbatimContIndent = 2;  // code.contIndent
   double sidebarFrac = 0.4;  // code.sidecarFrac
@@ -150,9 +153,8 @@ struct EmitSettings {
   const double& hyphenPenalty;  // break.hyphenPenalty
   const double& urlBreakPenalty;  // break.urlPenalty
   const u32& urlBreakMinLen;  // break.urlMinLen
-  const double& mathRelAfterPenalty;  // break.mathRelAfter
-  const double& mathRelBeforePenalty;  // break.mathRelBefore
-  const double& mathBinAfterPenalty;  // break.mathBinAfter
+  const ClassMap& mathBreakAfter;  // math.breakAfter
+  const ClassMap& mathBreakBefore;  // math.breakBefore
   EmitSettings(const Config& c)  // NOLINT: a Config is its view
       : epsilonPerWordSu(c.epsilonPerWordSu),
         baseSizePx(c.baseSizePx),
@@ -163,9 +165,8 @@ struct EmitSettings {
         hyphenPenalty(c.hyphenPenalty),
         urlBreakPenalty(c.urlBreakPenalty),
         urlBreakMinLen(c.urlBreakMinLen),
-        mathRelAfterPenalty(c.mathRelAfterPenalty),
-        mathRelBeforePenalty(c.mathRelBeforePenalty),
-        mathBinAfterPenalty(c.mathBinAfterPenalty) {}
+        mathBreakAfter(c.mathBreakAfter),
+        mathBreakBefore(c.mathBreakBefore) {}
 };
 struct MeasureSettings {
   const double& dppx;  // host.dppx

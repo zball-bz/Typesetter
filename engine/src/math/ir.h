@@ -34,7 +34,7 @@ enum class Prim : u8 {
 enum class SlotKind : u8 { Content, Sym, Ident };
 
 struct MNode {
-  enum K : u8 { Sym, Num, Text, Run, Attach, Frac, Group, BigOp, Call, Param, Error } k = Sym;
+  enum K : u8 { Sym, Num, Text, Run, Attach, Frac, Group, Call, Param, Error } k = Sym;
   u32 cp = 0;
   u8 cls = kOrd, flags = 0;
   std::string txt;            // Num/Text: the glyphs; Call: the row; Param: its name;
@@ -44,10 +44,14 @@ struct MNode {
   bool mid = false;           // Sym (plan P3-24): a fence alone in its group — its middle, stretched
   Prim prim = Prim::None;     // Call
   u32 lo = 0, hi = 0;         // the source bytes it came from
-  MNode* a = nullptr;         // Attach/BigOp: base; Frac: numerator; Group: inner run
-  MNode* sub = nullptr;       // Attach/BigOp
-  MNode* sup = nullptr;       // Attach/BigOp
-  MNode* b = nullptr;         // Frac: denominator; BigOp: body
+  MNode* a = nullptr;         // Attach: base; Frac: numerator; Group: inner run
+  MNode* sub = nullptr;       // Attach
+  MNode* sup = nullptr;       // Attach
+  MNode* b = nullptr;         // Frac: denominator
+  // (plan P3-25) a large operator's scope (v2 §13: up to a relation, a
+  // closing bracket or the end) — the source byte it ends at; a reading
+  // annotation only: layout sets its atoms in the formula's own run
+  u32 scopeEnd = 0;
   u32 openCp = 0, closeCp = 0;  // Group (closeCp 0: unclosed)
   std::vector<MNode*> kids;   // Run; Call: the arguments
 };

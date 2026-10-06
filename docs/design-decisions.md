@@ -93,7 +93,7 @@ Example: `$sum_(i=0)^n i/n ~> (n+1)/2$`
 
 **Precedence:** Standard infix rules as humans naturally read them. `/` and juxtaposition follow conventional mathematical precedence.
 
-**Big operators** (`sum`, `prod`, `int`, etc.) are **greedy** — they bind everything to their right until a closing bracket or end of expression. `sum_(i=0)^n i/n` means the `i/n` is the body of the sum, not a separate expression. Use parentheses to limit scope when needed.
+**Big operators** (`sum`, `prod`, `int`, etc.) are **greedy** — they bind everything to their right until a closing bracket or end of expression. `sum_(i=0)^n i/n` means the `i/n` is the body of the sum, not a separate expression. Use parentheses to limit scope when needed. (As built, plan P3-25: the scope is a reading annotation — up to the next relation, typed ones included — and layout sets the body's atoms in the formula's own run, so an inline sum breaks inside its body like any other run.)
 
 **Symbol shorthands — three tiers:**
 
@@ -120,7 +120,7 @@ Example: `$sum_(i=0)^n i/n ~> (n+1)/2$`
 - *Negation is a rule, not a list.* A `!` touching a symbol negates it by the Unicode data (`!=` ≠, `!in` ∉, `!models` ⊭, `!|` ∤, `!||` ∦). A relation with no negation is an error leaf (`!<<`). A `!` before anything else, or with a space, is a factorial (`n! = n (n-1)!`).
 - *ASCII keys are operator characters only.* `_|_` and `o+`-style keys are gone; ⊥ is `perp` or `bot`, ⊕ is `oplus`.
 - *Only parentheses disappear (D-M01).* `x^(a b)` sets a b as the exponent without brackets; `x^{a b}` and `x^[a]` keep theirs. `class(ord, …)` makes an atom without brackets.
-- *One token is an operand.* `x^ab` is x^a·b and `a/bc` is (a/b)·c; a name is one token (`x^pi`).
+- *An operand is one token; an unknown word as an operand is its letters* (plan P3-25): `x^ab` is x^{ab}, `a/bc` is a/(bc) and `ab/c` is italic ab over c; a name is one token (`x^pi` is x^π). A relation name as a script (`x_in`) is that symbol, with an info diagnostic.
 - *A call needs its parenthesis adjacent.* `abs(x)` is a call; `abs (x)` is the name abs and a group.
 - *A bar alone in a group is its middle.* `{x | x > 0}` and `P(A | B)` stretch the bar with the group and space it as a relation; two bars (`|x|`, `||v||`) stay as they are.
 - *Alphabets are rows.* `bb(R)`, `cal(A)`, `frak(g)`, `bold(v)`, `italic(h)`, `sans(x)`, `mono(x)`; `AA`..`ZZ` stay the blackboard shorthand.

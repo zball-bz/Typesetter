@@ -271,7 +271,9 @@ top pid=6 units=1
   space w=257su stretch=1 @[788,791)
   word "and" w=1537su pen=INF @[788,791)
   space w=257su stretch=1 @[788,791)
-  math "class(rel, A) B" w=1743su asc=702su desc=10su @[792,809)
+  math "class(rel, A) B" w=788su asc=696su desc=10su @[792,809)
+  boundary w=284su stretch=0 @[792,809)
+  math "" w=671su asc=702su desc=1su @[792,809)
   word "." w=513su pen=INF @[809,810)
 top pid=7 units=1
- unit math indent=0su w=3536su asc=1058su desc=518su
+ unit math indent=0su w=3707su asc=1058su desc=518su

@@ -355,14 +355,27 @@ struct Parser {
   // Factors nest at most 256 deep: deeper source is one error leaf (the
   // fuzzers' stack bound)
   int depth = 0;
-  MNode* parseRun(bool stopAtRel = false) {
+  MNode* parseRun() {
     MNode* run = mk(MNode::Run, tok.pos);
-    while (!runEnds()) {
-      if (stopAtRel && atRel()) break;
-      parseMolecule(run->kids);
-    }
+    while (!runEnds()) parseMolecule(run->kids);
     run->hi = tok.pos;
+    scopes(run);
     return run;
+  }
+  // (plan P3-25) each large operator's scope: up to the next relation of the
+  // run (a typed one too), or its end — an annotation, not a node
+  static void scopes(MNode* run) {
+    for (size_t i = 0; i < run->kids.size(); i++) {
+      MNode* k = run->kids[i];
+      MNode* op = k->k == MNode::Attach ? k->a : k;
+      if (!op || op->k != MNode::Sym || !(op->flags & kFlagLarge)) continue;
+      op->scopeEnd = run->hi;
+      for (size_t j = i + 1; j < run->kids.size(); j++)
+        if (run->kids[j]->cls == kRel) {
+          op->scopeEnd = run->kids[j]->lo;
+          break;
+        }
+    }
   }
 
   // factor + postfix scripts/primes + fraction chaining; visible unscripted
@@ -405,7 +418,7 @@ struct Parser {
           arg = error(at, at + 1);
         }
         arg = shed(arg);
-        if (f->k != MNode::Attach && f->k != MNode::BigOp) {
+        if (f->k != MNode::Attach) {
           MNode* sc = mk(MNode::Attach, f->lo);
           sc->a = f;
           sc->cls = f->cls;
@@ -447,7 +460,7 @@ struct Parser {
       if (tok.k == Tok::Prime) {
         MNode* prime = atom(0x2032, kOrd, 0, tok.pos, tok.end);
         advance();
-        if (f->k != MNode::Attach && f->k != MNode::BigOp) {
+        if (f->k != MNode::Attach) {
           MNode* sc = mk(MNode::Attach, f->lo);
           sc->a = f;
           sc->cls = f->cls;
@@ -532,8 +545,7 @@ struct Parser {
       case Tok::Op: {
         const SymbolInfo* e = tok.op;
         advance();
-        if (e->flags & kFlagLarge) return parseBigOp(e, lo, hi);
-        return atom(e->cp, e->cls, e->flags, lo, hi);
+        return atom(e->cp, e->cls, e->flags, lo, hi);  // (a large one too: an Op atom, plan P3-25)
       }
       case Tok::Chr: {
         if (MNode* neg = negation()) return neg;
@@ -626,6 +638,11 @@ struct Parser {
       return bind(expand(*row, c));
     }
     if (const SymbolInfo* e = MathDict::byName(builtin(w))) {
+      // (plan P3-25; design T8 D-M04) a relation or operator name as a
+      // script (x_in) is that symbol — likely meant as letters: it says so
+      if (!items && w.size() > 1 && (e->cls == kRel || e->cls == kBin) && !lex.templ)
+        err(wpos, wend, "'" + w + "' as a script is a symbol, not letters (quote it for the letters)", Sev::Info,
+            "math-implicit-name");
       if (e->flags & kFlagTextOp) {
         MNode* n = mk(MNode::Text, wpos, wend);
         n->txt = w;
@@ -634,15 +651,16 @@ struct Parser {
         n->textFont = true;
         return n;
       }
-      if (e->flags & kFlagLarge) return parseBigOp(e, wpos, wend);
       return atom(e->cp, e->cls, e->flags, wpos, wend);
     }
-    // Single-token contexts consume only the first letter (x^ab == x^a b):
-    // rewind the lexer to just past it and re-lex the remainder.
-    if (w.size() > 1 && !items) {
-      lex.i = wpos + 1;
-      advance();
-      return atom((u8)w[0], kOrd, 0, wpos, wpos + 1);
+    // (plan P3-25; design T8 the single-token operand rule) an unknown word
+    // as an operand — a script, a fraction's numerator or denominator — is
+    // its letters, never the dictionary's say: x^ab = x^{ab}, a/bc = a/(bc),
+    // ab/c is italic ab over c
+    if (w.size() > 1 && (!items || tok.k == Tok::Slash)) {
+      MNode* run = mk(MNode::Run, wpos, wend);
+      for (u32 i = 0; i < w.size(); i++) run->kids.push_back(atom((u8)w[i], kOrd, 0, wpos + i, wpos + i + 1));
+      return run;
     }
     // an unknown multi-letter word (or a function name without its '(') is
     // a NAME (Typst rule): one upright text-font box with TeX's
@@ -860,31 +878,6 @@ struct Parser {
     }
   }
 
-  // big operator: optional scripts in either order, then greedy body until a
-  // relation, a closing bracket, or end (v2 §13)
-  MNode* parseBigOp(const SymbolInfo* e, u32 lo, u32 hi) {
-    MNode* op = mk(MNode::BigOp, lo, hi);
-    op->cp = e->cp;
-    op->cls = kOp;
-    op->flags = e->flags;
-    while (tok.k == Tok::Sup || tok.k == Tok::Sub) {
-      const bool isSup = tok.k == Tok::Sup;
-      const u32 at = tok.pos;
-      advance();
-      MNode* arg = parseFactor(nullptr);
-      if (!arg) {
-        err(at, at + 1, "missing script argument");
-        arg = error(at, at + 1);
-      }
-      arg = shed(arg);
-      MNode*& slot = isSup ? op->sup : op->sub;
-      if (slot) err(at, tok.pos, "double script");
-      else slot = arg;
-    }
-    op->b = parseRun(/*stopAtRel=*/true);
-    op->hi = tok.pos;
-    return op;
-  }
 };
 
 // ---- the row registry --------------------------------------------------------
@@ -966,14 +959,17 @@ void dumpNode(std::string& out, const MNode* n, int depth, const char* role = nu
   static const char* const kCls[] = {"ord", "op", "bin", "rel", "open", "close", "punct", "inner"};
   const char* cls = n->cls < 8 ? kCls[n->cls] : "?";
   switch (n->k) {
-    case MNode::Sym: appendf(out, "sym U+%04X %s", n->cp, cls); break;
+    case MNode::Sym:
+      appendf(out, "sym U+%04X %s", n->cp, cls);
+      if (n->flags & kFlagLarge) appendf(out, " large%s scope→%u", (n->flags & kFlagLimits) ? " limits" : "", n->scopeEnd);
+      if (n->mid) out += " mid";
+      break;
     case MNode::Num: appendf(out, "num \"%s\"", n->txt.c_str()); break;
     case MNode::Text: appendf(out, "text \"%s\" %s%s", n->txt.c_str(), cls, n->textFont ? " textfont" : ""); break;
     case MNode::Run: out += "run"; break;
     case MNode::Attach: out += "attach"; break;
     case MNode::Frac: out += "frac"; break;
     case MNode::Group: appendf(out, "group U+%04X U+%04X", n->openCp, n->closeCp); break;
-    case MNode::BigOp: appendf(out, "bigop U+%04X%s", n->cp, (n->flags & kFlagLimits) ? " limits" : ""); break;
     case MNode::Call: appendf(out, "call %s", n->txt.c_str()); break;
     case MNode::Param: appendf(out, "param #%s", n->txt.c_str()); break;
     case MNode::Error: out += "error \"" + n->txt + "\""; break;
@@ -983,7 +979,7 @@ void dumpNode(std::string& out, const MNode* n, int depth, const char* role = nu
   dumpNode(out, n->a, depth + 1, n->k == MNode::Frac ? "num" : n->k == MNode::Group ? nullptr : "base");
   dumpNode(out, n->sub, depth + 1, "sub");
   dumpNode(out, n->sup, depth + 1, "sup");
-  dumpNode(out, n->b, depth + 1, n->k == MNode::Frac ? "den" : "body");
+  dumpNode(out, n->b, depth + 1, "den");
   for (const MNode* k : n->kids) dumpNode(out, k, depth + 1);
 }
 

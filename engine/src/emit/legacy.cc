@@ -129,14 +129,12 @@ struct LegacyInline final : InlineSink {
         }
         std::vector<MathSeg> segs = layoutMathSegments(
             ms.text, /*display=*/false, fontPx(st), arena, strs,
-            diags, n->span, mathText, true, &scope);
+            diags, n->span, MathBreaks{cfg.mathBreakAfter, cfg.mathBreakBefore}, mathText, true, &scope);
         for (size_t k = 0; k < segs.size(); k++) {
           if (k) {
             // the break-point glue: discardable at a break (BF_SPACE trims
             // at line edges), rigid otherwise; synthetic for copy (§9.3)
-            double pen = segs[k].brkBefore == 1 ? cfg.mathRelAfterPenalty
-                         : segs[k].brkBefore == 2 ? cfg.mathRelBeforePenalty
-                                                  : cfg.mathBinAfterPenalty;
+            const double pen = segs[k].penalty;
             LinebreakBlock g;
             g.flags = (u16)(BF_SPACE | BF_BOUND | ctx.addFlags);
             g.breakPenalty = (float)pen;

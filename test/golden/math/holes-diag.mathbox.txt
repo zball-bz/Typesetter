@@ -57,10 +57,9 @@ hbox Ord w=2013 asc=967 desc=243
   glue w=228 @(1012,0)
   glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1240,0)
 inline pid=2 ""
-hbox Ord w=1513 asc=719 desc=17
-  glyph "−" Bin w=774 asc=276 desc=-236 px=16
-  glue w=228 @(774,0)
-  glyph "3" Ord w=511 asc=719 desc=17 px=16 @(1002,0)
+hbox Ord w=1285 asc=719 desc=17
+  glyph "−" Ord w=774 asc=276 desc=-236 px=16
+  glyph "3" Ord w=511 asc=719 desc=17 px=16 @(774,0)
 inline pid=2 "alpha"
 hbox Ord w=674 asc=479 desc=20
   glyph "α" Ord w=674 asc=479 desc=20 px=16

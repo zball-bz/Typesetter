@@ -277,18 +277,35 @@ static void unitMathSegments() {
   Arena a;
   Interner strs{a};
   DiagSink d;
-  auto segs = layoutMathSegments("a + b = c", false, 16, a, strs, d, {});
-  CHECK(segs.size() == 4);           // [a +][b][=][c]
-  CHECK(segs[1].brkBefore == 3);     // after-Bin
-  CHECK(segs[2].brkBefore == 2);     // before-Rel
-  CHECK(segs[3].brkBefore == 1);     // after-Rel
+  // (plan P3-25) the class tables: after Rel 0.8, after Bin 0.95, before Rel 0.85
+  MathBreaks br;
+  br.after.fill(-1);
+  br.before.fill(-1);
+  br.after[kRel] = 0.8;
+  br.after[kBin] = 0.95;
+  br.before[kRel] = 0.85;
+  auto segs = layoutMathSegments("a + b = c", false, 16, a, strs, d, {}, br);
+  CHECK(segs.size() == 4);  // [a +][b][=][c]
+  CHECK(segs[1].penalty == 0.95f);  // after a Bin
+  CHECK(segs[2].penalty == 0.85f);  // before a Rel
+  CHECK(segs[3].penalty == 0.8f);   // after a Rel
   CHECK(segs[2].glueBefore > 0 && segs[3].glueBefore > 0);  // thick glue
-  auto neg = layoutMathSegments("-x", false, 16, a, strs, d, {});
-  CHECK(neg.size() == 1);            // unary minus demoted: no break
-  auto disp = layoutMathSegments("a + b", true, 16, a, strs, d, {});
-  CHECK(disp.size() == 1);           // display formulas never segment
-  auto opq = layoutMathSegments("(a = b)", false, 16, a, strs, d, {});
-  CHECK(opq.size() == 1);            // groups are opaque
+  auto neg = layoutMathSegments("-x", false, 16, a, strs, d, {}, br);
+  CHECK(neg.size() == 1);  // unary minus demoted: no break
+  auto disp = layoutMathSegments("a + b", true, 16, a, strs, d, {}, br);
+  CHECK(disp.size() == 1);  // display formulas never segment
+  auto opq = layoutMathSegments("(a = b)", false, 16, a, strs, d, {}, br);
+  CHECK(opq.size() == 1);  // groups are opaque
+  // (plan P3-25) a sum's atoms are the formula's: it breaks inside the sum
+  // (finding math/bigop-greedy-body), and a scripted base keeps its edges
+  auto sum = layoutMathSegments("sum_i a_i + b_i = x", false, 16, a, strs, d, {}, br);
+  CHECK(sum.size() == 4);
+  auto sq = layoutMathSegments("(a+b)^2 - c", false, 16, a, strs, d, {}, br);
+  CHECK(sq.size() == 2);  // the minus after a scripted group is a Bin: a break after it
+  MathBreaks none;
+  none.after.fill(-1);
+  none.before.fill(-1);
+  CHECK(layoutMathSegments("a + b = c", false, 16, a, strs, d, {}, none).size() == 1);
 }
 
 static void unitGrid() {
@@ -528,7 +545,7 @@ static void unitMathDict() {
     const MNode* n = m.root->kids[0];
     if (delim) return n->k == MNode::Call && !n->kids.empty() && n->kids[0]->cp == e.cp;
     if (!e.cp) return n->k == MNode::Text && n->txt == src;  // a text operator
-    return (n->k == MNode::Sym || n->k == MNode::BigOp) && n->cp == e.cp;
+    return n->k == MNode::Sym && n->cp == e.cp;
   };
   for (int i = 0; i < mathdict::kSymbolCount; i++) {
     const SymbolInfo& e = mathdict::kSymbols[i];
@@ -571,7 +588,19 @@ static void unitMathDict() {
   CHECK(bb.diags.empty() && bb.root->kids.size() == 3 && bb.root->kids[0]->kids[0]->cp == 0x211D &&
         bb.root->kids[1]->kids[0]->cp == 0x1D49C && bb.root->kids[2]->kids[0]->kids[0]->cp == 0x1D7D9);
   MathIR typed = one("∑_i a_i ≤ b");
-  CHECK(typed.root->kids.size() == 3 && typed.root->kids[0]->k == MNode::BigOp && typed.root->kids[1]->cls == kRel);
+  CHECK(typed.root->kids.size() == 4 && typed.root->kids[0]->k == MNode::Attach &&
+        (typed.root->kids[0]->a->flags & kFlagLarge) && typed.root->kids[2]->cls == kRel);
+  // (plan P3-25) the single-token operand rule: an unknown word as an
+  // operand is its letters; a big operator is an Op atom with its scope
+  MathIR xab = one("x^ab");
+  CHECK(xab.root->kids.size() == 1 && xab.root->kids[0]->sup->k == MNode::Run && xab.root->kids[0]->sup->kids.size() == 2);
+  MathIR abc = one("a/bc + ab/c");
+  CHECK(abc.root->kids[0]->k == MNode::Frac && abc.root->kids[0]->b->kids.size() == 2 &&
+        abc.root->kids[2]->k == MNode::Frac && abc.root->kids[2]->a->k == MNode::Run);
+  MathIR scope = one("sum_i a_i + b = c");
+  CHECK(scope.root->kids[0]->a->scopeEnd == 14);  // up to the = (its byte)
+  MathIR xin = one("x_in");
+  CHECK(xin.diags.size() == 1 && std::string_view(xin.diags[0].code) == "math-implicit-name");
 }
 
 static void unitMathIR() {

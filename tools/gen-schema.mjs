@@ -510,12 +510,16 @@ for (const [n, r] of settings) {
 }
 if (errors.length) { for (const e of errors) console.error('gen-schema: ' + e); process.exit(1); }
 const textDomains = domains.map(([n]) => n);
+// (plan P3-25) a class map: a value per TeX atom class (math.breakAfter), -1 = none
+const ATOM_CLASSES = ['ord', 'op', 'bin', 'rel', 'open', 'close', 'punct', 'inner'];
 const ctypeOf = (r) => r.ctype ?? (r.dom.startsWith('num') ? 'double' : r.dom.startsWith('int') ? 'int'
-  : r.dom === 'bool' ? 'bool' : r.dom.startsWith('map') ? 'std::map<std::string, std::string>' : 'std::string');
+  : r.dom === 'bool' ? 'bool' : r.dom.startsWith('map') ? 'std::map<std::string, std::string>'
+  : r.dom.startsWith('classmap') ? 'ClassMap' : 'std::string');
 const cLit = (r, v) => {
   const t = ctypeOf(r);
   if (r.ctype === 'PunctCompress') return `PunctCompress::${cap(v)}`;
   if (t.startsWith('std::map')) return '{}';
+  if (t === 'ClassMap') return `ClassMap{{${ATOM_CLASSES.map((c) => (v[c] ?? -1)).join(', ')}}}`;
   if (r.dom.startsWith('json')) return '""';
   if (t === 'std::string') return JSON.stringify(v);
   if (t === 'bool') return v ? 'true' : 'false';
@@ -524,8 +528,9 @@ const cLit = (r, v) => {
 const costRows = settings.filter(([, r]) => r.field.startsWith('cost.'));
 const cfgRows = settings.filter(([, r]) => !r.field.startsWith('cost.'));
 const pc = settings.find(([, r]) => r.ctype === 'PunctCompress');
-let sh = `// ${HDR}\n// Host settings (schema "settings"; plan P1-03, design T4 M3 / T9 A4).\n#pragma once\n#include <map>\n#include <string>\n#include <string_view>\n\n` +
+let sh = `// ${HDR}\n// Host settings (schema "settings"; plan P1-03, design T4 M3 / T9 A4).\n#pragma once\n#include <array>\n#include <map>\n#include <string>\n#include <string_view>\n\n` +
   `#include "../support/support.h"\n#include "stages.h"\n\nnamespace tsr {\n\n` +
+  `// a value per TeX atom class (ord, op, bin, rel, open, close, punct, inner); -1: none (plan P3-25)\nusing ClassMap = std::array<double, 8>;\n\n` +
   `// Adjacent-punctuation compression style (clreq; v2 App C).\n//   Full: every adjacent gap compressed (newspaper-tight)\n` +
   `//   Book: close+close and open+open set solid, but a breakable half-width\n//         breathing space is kept between a closing/dot and an opening punct\n` +
   `//   None: full-width style — all punctuation spaces kept (rigid where 禁则\n//         forbids a break)\n` +
@@ -579,6 +584,13 @@ const rowCase = ([n, r], k) => {
     const vd = rest[0];
     body = `if (v.t != JsonValue::T::Obj) return type(why, "an object of strings");\n      std::map<std::string, std::string> mm;\n` +
       `      for (size_t mi = 0; mi < v.keys.size(); mi++) {\n        const JsonValue& mv = v.vals[mi];\n        if (mv.t != JsonValue::T::Str${vd ? ` || !matchDomain(TextDomain::${domEnum(vd)}, mv.str)` : ''}) return type(why, "${vd ?? 'string'} values");\n        mm[v.keys[mi]] = mv.str;\n      }\n      ${f} = std::move(mm);`;
+  } else if (dom === 'classmap') {  // (plan P3-25) {class: value}; a class not given: -1, none
+    body = `if (v.t != JsonValue::T::Obj) return type(why, "an object of atom classes");\n` +
+      `      static const char* const kC[] = {${ATOM_CLASSES.map((c) => JSON.stringify(c)).join(', ')}};\n` +
+      `      ClassMap cm;\n      cm.fill(-1);\n` +
+      `      for (size_t mi = 0; mi < v.keys.size(); mi++) {\n        int c = -1;\n        for (int k = 0; k < 8; k++)\n          if (v.keys[mi] == kC[k]) c = k;\n` +
+      `        if (c < 0) return type(why, "keys ord, op, bin, rel, open, close, punct, inner");\n` +
+      `        double x;\n        if (!num(v.vals[mi], ${rest[0]}, ${rest[1]}, false, x, why)) return false;\n        cm[(size_t)c] = x;\n      }\n      ${f} = cm;`;
   } else if (dom === 'json' && rest[0] === 'array') {  // an array, kept as its JSON text ("" = none)
     body = `if (v.t != JsonValue::T::Arr) return type(why, "an array");\n      ${f}.clear();\n      if (!v.arr.empty()) jsonDump(${f}, v);`;
   } else if (dom === 'json') {  // an object, kept as its JSON text ("" = none)
@@ -632,6 +644,7 @@ settings.forEach(([n, r], k) => {
   const t = ctypeOf(r);
   if (r.ctype === 'PunctCompress') sc += `  { static const char* const kM[] = {${r.dom.slice(5).split('|').map((m) => JSON.stringify(m)).join(', ')}}; jsonString(out, kM[(int)${f}]); }\n`;
   else if (t.startsWith('std::map')) sc += `  out += '{';\n  { bool first = true; for (const auto& [mk, mv] : ${f}) { if (!first) out += ", "; first = false; jsonString(out, mk); out += ": "; jsonString(out, mv); } }\n  out += '}';\n`;
+  else if (t === 'ClassMap') sc += `  out += '{';\n  { static const char* const kC[] = {${ATOM_CLASSES.map((c) => JSON.stringify(c)).join(', ')}}; bool first = true;\n    for (int k = 0; k < 8; k++) if (${f}[(size_t)k] >= 0) { if (!first) out += ", "; first = false; jsonString(out, kC[k]); out += ": "; num(out, ${f}[(size_t)k]); } }\n  out += '}';\n`;
   else if (r.dom.startsWith('json')) sc += `  out += ${f}.empty() ? "${r.dom === 'json:array' ? '[]' : '{}'}" : ${f};\n`;
   else if (t === 'std::string') sc += `  jsonString(out, ${f});\n`;
   else if (t === 'bool') sc += `  out += ${f} ? "true" : "false";\n`;

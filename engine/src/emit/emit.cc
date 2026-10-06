@@ -1300,7 +1300,7 @@ static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const Emit
     std::vector<MathSeg> segs =
         layoutMathSegments(env.strs.get(ob.formula), /*display=*/false, emPx(cfg, env.styles.get(ob.style)),
                            env.arena, env.strs, scratch, Span{h.cold[ph.cold].srcStart, h.cold[ph.cold].srcEnd},
-                           &mt, /*parseDiags=*/false, &scope);
+                           mathBreaks(cfg), &mt, /*parseDiags=*/false, &scope);
     if (!missing.empty()) {
       need.insert(need.end(), missing.begin(), missing.end());
       return false;
@@ -1340,7 +1340,7 @@ static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const Emit
         HItem pen;
         pen.k = IK::Penalty;
         pen.st = IS_Resolved;
-        pen.x = (float)mathPenalty(cfg, segs[k].brkBefore);
+        pen.x = segs[k].penalty;
         pen.run = gr;
         pen.cold = (u32)h.cold.size();
         if (pen.x != 0) ins.push_back(pen);

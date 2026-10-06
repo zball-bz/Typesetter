@@ -741,28 +741,21 @@
       ],
       "ctype": "u32"
     },
-    "break.mathRelAfter": {
-      "field": "mathRelAfterPenalty",
-      "dom": "num:0:1e18",
-      "def": 0.8,
+    "math.breakAfter": {
+      "$comment": "Where an inline formula may break (plan P3-25; design T8 Lazy MathLayout): the penalty after an atom of each class (a missing class: no break there); a break between two atoms costs min(after its left, before its right).",
+      "field": "mathBreakAfter",
+      "dom": "classmap:0:1e18",
+      "def": {"rel": 0.8, "bin": 0.95},
       "prec": "HostDefault",
       "affects": [
         "Emit"
       ]
     },
-    "break.mathRelBefore": {
-      "field": "mathRelBeforePenalty",
-      "dom": "num:0:1e18",
-      "def": 0.85,
-      "prec": "HostDefault",
-      "affects": [
-        "Emit"
-      ]
-    },
-    "break.mathBinAfter": {
-      "field": "mathBinAfterPenalty",
-      "dom": "num:0:1e18",
-      "def": 0.95,
+    "math.breakBefore": {
+      "$comment": "The penalty before an atom of each class (plan P3-25): a relation may head the continuation line (the CJK convention), TeX breaks after it.",
+      "field": "mathBreakBefore",
+      "dom": "classmap:0:1e18",
+      "def": {"rel": 0.85},
       "prec": "HostDefault",
       "affects": [
         "Emit"
