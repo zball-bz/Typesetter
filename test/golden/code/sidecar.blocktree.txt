@@ -2,8 +2,15 @@ top pid=0 leaves=1
   stack root gap=1/1 @[0,51)
     paragraph para unit=0 @[0,51)
 top pid=1 leaves=1
-  stack root gap=1/1 @[53,289)
-    grid code unit=0 ragged nohyphen @[53,289)
+  stack root gap=1/1 @[53,331)
+    grid code unit=0 ragged nohyphen @[53,331)
 top pid=2 leaves=1
-  stack root gap=1/1 @[291,305)
-    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="base" @[291,305)
+  stack root gap=1/1 @[333,347)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="base" @[333,347)
+top pid=3 leaves=2
+  stack root gap=1/1 @[0,347)
+    stack group @[0,347)
+      replaced rule rule unit=0 @[0,347)
+      stack list pad=1536su gap=1/3 @[0,347)
+        stack item x=1536su @[249,291)
+          paragraph para unit=1 x=1536su anchor="fn-1" marker="1." @[249,291)

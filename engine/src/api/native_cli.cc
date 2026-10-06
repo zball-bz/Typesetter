@@ -18,9 +18,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 #include "../code/native_tokens.h"
+#include "../codegen/codegen.h"
 #include "driver.h"
 #include "../emit/legacy.h"
 
@@ -62,7 +64,8 @@ int main(int argc, char** argv) {
   std::string stage = "ast", opsPath, file;
   std::vector<std::string> layers;  // settings documents, applied in order
   std::string profile, fixture;
-  bool fuse = false;
+  bool fuse = false, fragmentsDump = false;
+  std::string fragments;
   for (int i = 1; i < argc; i++) {
     std::string a = argv[i];
     auto val = [&](size_t n) { return a.substr(n); };
@@ -90,7 +93,34 @@ int main(int argc, char** argv) {
     else if (a.rfind("--page-height=", 0) == 0) layers.push_back(legacy("page", "height", val(14)));
     else if (a == "--snap") layers.push_back(legacy("code", "snapKerning", "true"));
     else if (a == "--fuse-check") fuse = true;
+    else if (a.rfind("--fragments=", 0) == 0) fragments = val(12);
+    else if (a == "--fragments-dump") fragmentsDump = true;
     else file = a;
+  }
+  // fragments (plan P2-13): a tsr2_fragments request (a file, - = stdin) →
+  // its response on stdout, as the WASM export answers it; --fragments-dump
+  // prints the program and the JSON instead
+  if (!fragments.empty()) {
+    std::string req;
+    if (fragments == "-") {
+      std::ostringstream ss;
+      ss << std::cin.rdbuf();
+      req = ss.str();
+    } else if (!readFile(fragments, req)) {
+      fprintf(stderr, "cannot read %s\n", fragments.c_str());
+      return 2;
+    }
+    const std::string res = runFragmentRequest(req);
+    if (!fragmentsDump) {
+      fwrite(res.data(), 1, res.size(), stdout);
+      return 0;
+    }
+    const u32 pl = (u32)(u8)res[0] | (u32)(u8)res[1] << 8 | (u32)(u8)res[2] << 16 | (u32)(u8)res[3] << 24;
+    std::string out = dumpLowerProgram(std::string_view(res).substr(4, pl));
+    out += std::string_view(res).substr(8 + pl);
+    out += "\n";
+    fwrite(out.data(), 1, out.size(), stdout);
+    return 0;
   }
   if (file.empty()) {
     fprintf(stderr, "usage: tsrc --stage=<product> [--ops=f.ops] [--profile=P] [--fixture=F] "

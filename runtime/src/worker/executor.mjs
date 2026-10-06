@@ -4,7 +4,7 @@
 import { KIND } from '../shared/ops.gen.mjs';
 import { OpBuf, isNode } from '../shared/opbuf.mjs';
 import { createStd, styleAttrs, NULLARY, CONTENT } from '../shared/stdlib.mjs';
-import { decodeProgram, Lowering, STUB } from '../shared/lower.mjs';
+import { decodeProgram, Lowering, STUB, fragmentRequest, fragmentResponse } from '../shared/lower.mjs';
 import { BFLAG, LPIECE, PROGRAM_ABI } from '../shared/lower.gen.mjs';
 
 // Default numeric bibliography formatter over CSL-JSON (notes-design.md §2):
@@ -80,14 +80,8 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     ob,
     here,
     height: () => styleStack.length,
-    // a statement nested in content (plan P2-12; D-L12) that pushed styles:
-    // they end with it — scoped style is $.set's, P3-01
-    styleInValue: (h) => {
-      dollar.style.popTo(h);
-      ob.diag(1, 'style-in-value', 'a style pushed inside nested content ends with its statement (scoped style: $.set, P3-01)',
-              here.s, here.e);
-    },
     popTo: (h) => dollar.style.popTo(h),
+    fragments: (texts, o) => runFragments(texts, o),
     // citations (notes-design.md §2; plan P2-07): the collector stands
     // where #bibliography is; the data loads after the program ran and each
     // entry becomes a row — entry{role: bibentry, key}, a trailing root —
@@ -277,6 +271,54 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
               `${describe(e)} (the rest of the document was not executed)`, true);
     },
   };
+  // ---- fragments (plan P2-13): markup parsed at run time -------------------
+  // opts.parse(request) → its answer (tsr2_fragments: the host's engine
+  // parses); the program runs here, on this interpreter, against these
+  // constructors. o: {bases} (each text's source offset: exact spans; else
+  // all at the construct running it), scope (bare value heads #x, #a.b:
+  // looked up on it, then the std — D-L07, no eval), vals (m`…`'s
+  // interpolations). One value per text (a promise where it awaits).
+  const ownOrStd = (scope, k) => {
+    if (scope !== null && (typeof scope === 'object' || typeof scope === 'function') && k in scope &&
+        !(k in Object.prototype && scope[k] === Object.prototype[k])) return scope[k];
+    return std[k];
+  };
+  const runFragments = (texts, o = {}) => {
+    if (typeof opts.parse !== 'function') throw new Error('m: this host has no fragment parser (opts.parse)');
+    const { program, info } = fragmentResponse(opts.parse(fragmentRequest(texts, o.bases, o.bases ? null : [here.s, here.e])));
+    if (info.error) throw new Error(`m: ${info.error}`);
+    for (const d of info.diags) {
+      const own = d.code === 'fragment-splice';
+      ob.diag(d.sev, own ? d.code : 'fragment-parse', own ? d.msg : `${d.code}: ${d.msg}`, d.s, d.e);
+    }
+    const vals = o.vals ?? [];
+    const lookup = (path) => {
+      const ks = path.split('.');
+      let v = ownOrStd(o.scope, ks[0]);
+      for (let i = 1; i < ks.length && v !== undefined && v !== null; i++) v = v[ks[i]];
+      return v;
+    };
+    const call = (path, kids) => {
+      const f = lookup(path);
+      if (typeof f !== 'function') throw new TypeError(`#${path} is not a function`);
+      return f(...kids);
+    };
+    const h = info.holes.map((d) => {
+      if (d.v !== undefined) return () => vals[d.v];
+      if (!d.k) return () => lookup(d.p);
+      return d.a ? async (k) => call(d.p, await k()) : (k) => call(d.p, k());
+    });
+    // one interpreter, its blocks in turn (after the one before settles)
+    const L = new Lowering(decodeProgram(program), env);
+    let chain = null;
+    return texts.map((_, i) => {
+      if (chain) return (chain = chain.then(() => L.fragment(i, h)));
+      const r = L.fragment(i, h);
+      if (r instanceof Promise) chain = r;
+      return r;
+    });
+  };
+
   return { std, dollar, finishBibliographies, helpers, env };
 }
 

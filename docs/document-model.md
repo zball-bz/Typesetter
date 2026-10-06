@@ -109,7 +109,7 @@ classifier gives a run; the dumps keep the bits' spellings (`BOLD`, `EM`,
 
 ### 4.1 JS-side values are shadow nodes
 
-A content value in user/constructor JS is a **shadow node** `{ kind, args, children: shadow[], span, opId }` — a lightweight JS mirror created by each constructor as it writes the op. Why: constructors must be able to **traverse and regroup** content (the table constructor walking region children and splitting cells at tree level, v2 §4.1) — bare opaque ids cannot support that, and querying WASM mid-execution would be chatty. Regrouping emits new `MAKE_NODE` ops that reference the *existing* child `opId`s — the DAG shares; nothing is re-encoded. `m`-tag fragments come back from `tsr_parse_fragment` as an ops slice plus shadows reconstructed by the shared `ops.ts` reader; splicing rebases ids.
+A content value in user/constructor JS is a **shadow node** `{ kind, args, children: shadow[], span, opId }` — a lightweight JS mirror created by each constructor as it writes the op. Why: constructors must be able to **traverse and regroup** content (the table constructor walking region children and splitting cells at tree level, v2 §4.1) — bare opaque ids cannot support that, and querying WASM mid-execution would be chatty. Regrouping emits new `MAKE_NODE` ops that reference the *existing* child `opId`s — the DAG shares; nothing is re-encoded. `m`-tag fragments (as built, plan P2-13): `tsr2_fragments` returns a LowerProgram — one block per text, its holes as out-of-band descriptors — which the executor runs on the same interpreter against the same constructors, so a fragment's values are shadow nodes like any other (docs/lowering-design.md §5.1); nothing is rebased.
 
 ### 4.2 Buffer layout
 

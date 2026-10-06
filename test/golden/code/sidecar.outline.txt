@@ -1,1 +1,1 @@
-{"headings":[{"level":1,"title":"基例说明","label":"base","span":[291,305]}],"regions":[],"fences":[{"lang":"js","span":[53,289]}],"labels":[{"id":"base","rule":"heading","span":[306,312]}],"diagnostics":[]}
+{"headings":[{"level":1,"title":"基例说明","label":"base","span":[333,347]}],"regions":[],"fences":[{"lang":"js","span":[53,331]}],"labels":[{"id":"base","rule":"heading","span":[348,354]}],"diagnostics":[]}

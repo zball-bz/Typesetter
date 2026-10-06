@@ -2,4 +2,8 @@
 <p data-pid="0" data-s="0" data-e="124">Snap-kerning with a sidecar column (guard fixture, plan P0-01): the code track and the sidecar track must share the measure.</p>
 <pre data-pid="1" data-s="126" data-e="293"><code class="language-js">const 标题 = &quot;中文与 ASCII 混排&quot;;
 for (let i = 0; i &lt; 3; i++) emit(标题, i);</code></pre>
+<aside class="tsr-margin">
+<p data-line="1">中文边注 with Latin</p>
+<p data-line="2">每行一个</p>
+</aside>
 </div>

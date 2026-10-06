@@ -203,12 +203,13 @@ static u32 addString(RawOps& r, std::string s) {
 
 // the executor's diagnostic codes (plan P2-01: stable; a DIAG op names one
 // of them, anything else reads as script-diag; P2-03 adds the constructor
-// ABI's: ctor-arg, ctor-error, hook-recursion)
+// ABI's: ctor-arg, ctor-error, hook-recursion; P2-13 a fragment's:
+// fragment-splice, fragment-parse — its parser's, "code: message")
 static const char* execDiagCode(std::string_view code) {
   static const char* const kCodes[] = {"splice-undefined", "splice-function", "splice-object", "script-error",
                                        "script-syntax", "region-error", "fence-error", "bib-load",
                                        "ctor-arg", "ctor-error", "hook-recursion", "row-spans-markup",
-                                       "style-in-value"};
+                                       "style-in-value", "fragment-splice", "fragment-parse"};
   for (const char* c : kCodes)
     if (code == c) return c;
   return "script-diag";

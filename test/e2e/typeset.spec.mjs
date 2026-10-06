@@ -374,7 +374,7 @@ test('lowering: module cache and incremental SyntaxError isolation', async () =>
     const program = new Uint8Array(execFileSync(tsrc, ['--stage=program', file]));
     const js = () => execFileSync(tsrc, ['--stage=js', file], { encoding: 'utf8' });
     const before = lowerStats.imports;
-    writeFileSync(opsFile, await execute({ program, js }));
+    writeFileSync(opsFile, await execute({ program, js }, { parse: (req) => new Uint8Array(execFileSync(tsrc, ['--fragments=-'], { input: req })) }));
     const diags = execFileSync(tsrc, ['--stage=diags', `--ops=${opsFile}`, file], { encoding: 'utf8' });
     return { imports: lowerStats.imports - before, diags };
   };

@@ -9,6 +9,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { execute } from '../runtime/src/worker/executor.mjs';
+import { nativeParse } from './lib/native-parse.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const tsrc = join(root, 'engine/build/tsrc');
@@ -22,7 +23,7 @@ for (const f of readdirSync(dir).filter((f) => f.endsWith('.tsm')).sort()) {
   try {
     const program = new Uint8Array(execFileSync(tsrc, ['--stage=program', p], { timeout: 10000 }));
     const js = () => run(['--stage=js', p]);
-    const ops = Buffer.from(await execute({ program, js }, { rootDir: root }));
+    const ops = Buffer.from(await execute({ program, js }, { rootDir: root, parse: nativeParse(tsrc) }));
     const opsPath = join(tmpdir(), 'corpus.ops');
     writeFileSync(opsPath, ops);
     const diags = run(['--stage=diags', p]);

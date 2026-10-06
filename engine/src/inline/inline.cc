@@ -848,9 +848,13 @@ struct AstBuilder {
         fp.bodyOffset = s->lineSpans.empty() ? s->span.end : s->lineSpans[0].start;
         // the body's raw end: its source span is [bodyOffset, bodyEnd) (plan P2-04)
         fp.bodyEnd = s->lineSpans.empty() ? fp.bodyOffset : s->lineSpans.back().end;
-        // inside a quote or list item the body lines are not contiguous in
-        // the source: each line's offset goes to the handler
-        if (s->contained) {
+        // inside a quote or list item (or with CRLF line ends) the body
+        // lines are not contiguous in the source: each line's offset goes
+        // to the handler (and to a sidecar's notes, plan P2-13)
+        bool contiguous = true;
+        for (size_t k = 1; k < s->lineSpans.size(); k++)
+          contiguous = contiguous && s->lineSpans[k].start == s->lineSpans[k - 1].end + 1;
+        if (s->contained || !contiguous) {
           std::string offs = "[";
           for (size_t k = 0; k < s->lineSpans.size(); k++)
             appendf(offs, "%s%u", k ? "," : "", s->lineSpans[k].start);

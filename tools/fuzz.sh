@@ -13,7 +13,7 @@ set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 BUILD=engine/build-fuzz
-TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower)
+TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment)
 
 if [ ! -f "$BUILD/CMakeCache.txt" ]; then
   GEN="Unix Makefiles"; command -v ninja >/dev/null && GEN=Ninja

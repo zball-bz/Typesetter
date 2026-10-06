@@ -11,6 +11,7 @@
 #define TSR_EXPORT extern "C"
 #endif
 
+#include "../codegen/codegen.h"
 #include "../measure/measure.h"
 #include "doc.h"
 #include "../support/json.h"
@@ -358,6 +359,20 @@ TSR_EXPORT const char* tsr_parse_json(const char* src) {
   static std::string out;
   out = astJson(std::string_view(src ? src : ""));
   return out.c_str();
+}
+
+// Fragments (plan P2-13; codegen.h has the wire form): a request — texts,
+// their source offsets or one clamp span — answered with
+// [u32 length][the fragment program, its holes and diagnostics]. No
+// document is involved; the buffer lives until the next call.
+TSR_EXPORT const u8* tsr2_fragments(const u8* req, int len) {
+  static std::string out;
+  const std::string body = runFragmentRequest(std::string_view((const char*)req, len > 0 ? (size_t)len : 0));
+  out.assign(4, '\0');
+  const u32 n = (u32)body.size();
+  std::memcpy(&out[0], &n, 4);
+  out += body;
+  return (const u8*)out.data();
 }
 
 // The one ABI handshake (plan P1-01, D-H06): the host checks it before it

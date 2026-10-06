@@ -84,6 +84,35 @@ export function decodeProgram(bytes) {
   return { abi, hash, module, docEnd, strs, ctors, blocks, holes, pieces, body: b.subarray(p) };
 }
 
+// A fragment request (plan P2-13; tsr2_fragments' wire form,
+// engine/src/codegen/codegen.h): texts (strings), each at its source offset
+// (bases: exact spans) or all at the clamp span [s, e].
+const utf8enc = new TextEncoder();
+export function fragmentRequest(texts, bases, clamp) {
+  const bs = texts.map((t) => utf8enc.encode(String(t)));
+  const out = new Uint8Array(13 + bs.reduce((n, b) => n + 8 + b.length, 0));
+  const dv = new DataView(out.buffer);
+  dv.setUint32(0, bs.length, true);
+  out[4] = clamp ? 1 : 0;
+  dv.setUint32(5, clamp ? Math.max(0, clamp[0] >>> 0) : 0, true);
+  dv.setUint32(9, clamp ? Math.max(clamp[0] >>> 0, clamp[1] >>> 0) : 0, true);
+  let p = 13;
+  bs.forEach((b, i) => {
+    dv.setUint32(p, bases ? Math.max(0, Math.floor(Number(bases[i]) || 0)) >>> 0 : 0, true);
+    dv.setUint32(p + 4, b.length, true);
+    out.set(b, p + 8);
+    p += 8 + b.length;
+  });
+  return out;
+}
+// its answer: the program's bytes and {holes, diags} (or {error})
+export function fragmentResponse(res) {
+  const dv = new DataView(res.buffer, res.byteOffset, res.byteLength);
+  const pl = dv.getUint32(0, true);
+  const jl = dv.getUint32(4 + pl, true);
+  return { program: res.subarray(4, 4 + pl), info: JSON.parse(utf8.decode(res.subarray(8 + pl, 8 + pl + jl))) };
+}
+
 // env (the executor's half): ob (OpBuf), call(ctor, attrs, kids) (a bound
 // constructor call: shared/stdlib.mjs), region(name, args, items),
 // loop(results) (a loop's iterations as one value, plan P2-12),
@@ -205,6 +234,17 @@ export class Lowering {
       this.running = false;
       this.seg++;
     }
+  }
+
+  // ---- one fragment (plan P2-13) -------------------------------------------
+  // block i of a fragment program — m`…`, m.parse, a sidecar note — as a
+  // value, against the hole table h the host built from its descriptors:
+  // its content, a promise when it awaits (a fence in it)
+  fragment(i, h) {
+    const blk = this.prog.blocks[i];
+    this.h = h;
+    this.p = blk.pc;
+    return blk.flags & BFLAG.Async ? this.va() : this.v();
   }
 
   // ---- values -------------------------------------------------------------

@@ -1,0 +1,14 @@
+doc @[0,449)
+  code-let @[0,18) js=" who = \"world\""
+  code-let @[19,95) js=" hello = m`Hello, *${who}*: _markup_ in a template.^[A note made by m.]`"
+  para @[97,117)
+    splice @[97,103) expr="hello"
+    text @[104,110) str=" Again: "
+    splice @[111,117) expr="hello"
+  para @[119,229)
+    splice @[119,229) expr="m.parse(\"Parsed with #name and #strong[content] — but #f(1) stays text.\", {scope: {name: \"a scope value\"}})"
+  code-block @[231,328) js=" $.fence(\"loud\", (body, ctx) => ctx.m.parse(body.trim().toUpperCase(), {offset: ctx.offset})) "
+  codeblock @[330,363) lang="loud" body="say *this* with $x^2$"
+  para @[365,448)
+    text @[365,412) str="Broken markup is diagnosed where it was parsed: "
+    splice @[413,448) expr="m.parse(\"an unclosed %-- comment\")"

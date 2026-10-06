@@ -4,9 +4,7 @@
 #include <limits>
 #include <memory>
 #include "../ast/ast.h"
-#include "../code/sidecars.h"
 #include "../code/tokens.h"
-#include "../inline/fragment.h"
 #include "../codegen/codegen.h"
 #include "../resolve/resolve.h"
 #include "../semantic/declare.h"
@@ -257,11 +255,11 @@ struct Doc {
     validThrough = (int)Stage::Ingest;
     return true;
   }
-  // Resolve (once: it rewrites the instantiated tree): sidecars, references,
-  // numbering, then the host needs it raises (tokens, image sizes)
+  // Resolve (once: it rewrites the instantiated tree): references,
+  // numbering, then the host needs it raises (tokens, image sizes). (A code
+  // block's sidecars arrive split, from the default fence: plan P2-13.)
   void stageResolve() {
     diags.begin(DiagOrigin::Resolve);
-    extractSidecars(tree.root, arena, strs, styles, diags);
     resolveDoc(tree, arena, strs, styles, cfg, diags, *registry, index);
     rt.clear();
     waitTokens.clear();

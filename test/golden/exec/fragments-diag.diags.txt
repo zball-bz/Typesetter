@@ -1,0 +1,2 @@
+info fragment-splice @[119,229) a fragment runs no JavaScript: only #name, #a.b and m`…` interpolations are values
+error fragment-parse @[413,448) parse-inline: unterminated comment

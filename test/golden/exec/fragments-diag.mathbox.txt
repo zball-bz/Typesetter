@@ -1,0 +1,5 @@
+inline pid=2 "X^2"
+hbox Ord w=1091 asc=967 desc=11
+  hbox Ord w=1091 asc=967 desc=11
+    glyph "X" Ord w=682 asc=705 desc=11 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(682,461)

@@ -1,0 +1,28 @@
+lower v1 abi 3d3ccfbb docEnd 449 holes 7 module 356cf12d65db25eb
+piece 0 hole 0 js [141,170)
+piece 1 hole 1 js [172,259)
+piece 2 hole 2 js [261,274)
+piece 3 hole 3 js [276,289)
+piece 4 hole 4 js [291,406)
+piece 5 hole 5 js [408,512)
+piece 6 hole 6 js [514,556)
+block 0 stmt [0,18) user framed holes 0..1
+  STMT 0
+block 1 stmt [19,95) user framed holes 1..2
+  STMT 1
+block 2 content [97,117) user framed holes 2..4
+  CALL para [97,117)
+    HOLE 2 [97,103)
+    TEXT " Again: " [104,110) raw=0:0,1:0,8:6
+    HOLE 3 [111,117)
+block 3 content [119,229) user framed holes 4..5
+  CALL para [119,229)
+    HOLE 4 [119,229)
+block 4 stmt [231,328) user framed holes 5..6
+  STMT 5
+block 5 content [330,363) async
+  FENCE async "loud" body="say *this* with $x^2$" at=[338,359) lines=null [330,363)
+block 6 content [365,448) user framed holes 6..7
+  CALL para [365,448)
+    TEXT "Broken markup is diagnosed where it was parsed: " [365,412) raw=0:0,48:47
+    HOLE 6 [413,448)

@@ -1,0 +1,8 @@
+doc @[0,449)
+  code-let @[0,18) js=" who = \"world\""
+  code-let @[19,95) js=" hello = m`Hello, *${who}*: _markup_ in a template.^[A note made by m.]`"
+  para @[97,117) lines=1
+  para @[119,229) lines=1
+  code-block @[231,328) js=" $.fence(\"loud\", (body, ctx) => ctx.m.parse(body.trim().toUpperCase(), {offset: ctx.offset})) "
+  fence @[330,363) lang="loud" lines=1
+  para @[365,448) lines=1

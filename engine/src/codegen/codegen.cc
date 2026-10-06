@@ -5,6 +5,8 @@
 #include <iterator>
 
 #include "../inline/jslex.h"
+#include "../linepass/linepass.h"
+#include "../support/json.h"
 #include "stdnames.gen.h"
 
 namespace tsr {
@@ -34,10 +36,47 @@ struct Gen {
   const Interner& strs;
   LowerWriter& w;
   std::vector<std::string> holes;  // the current hole table (top level: the module's __h)
+  // a fragment (plan P2-13): its spans moved by `base`, or all `clamp` (a
+  // text with no place in the source); its holes are descriptors, never
+  // JavaScript
+  bool frag = false;
+  u32 base = 0;
+  const Span* clamp = nullptr;
+  DiagSink* fdiags = nullptr;
 
   u32 newHole() {
     holes.emplace_back();
     return (u32)holes.size() - 1;
+  }
+  Span at(Span s) const { return !frag ? s : clamp ? *clamp : Span{s.start + base, s.end + base}; }
+  // a fragment's splice is a hole only as a bare value head (#x, #a.b — the
+  // scope's, D-L07 — with or without content arguments) or an
+  // interpolation (#(__mK);): anything else would need eval
+  static bool barePath(std::string_view e) {
+    if (e.empty() || !isIdentStart(e[0]) || e.back() == '.') return false;
+    for (size_t i = 0; i < e.size(); i++) {
+      if (e[i] == '.') {
+        if (i + 1 >= e.size() || !isIdentStart(e[i + 1])) return false;
+      } else if (!isIdentCont(e[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  static bool interpolation(std::string_view e, u32& k) {
+    if (e.size() < 6 || e.substr(0, 4) != "(__m" || e.back() != ')') return false;
+    k = 0;
+    for (char c : e.substr(4, e.size() - 5)) {
+      if (c < '0' || c > '9') return false;
+      k = k * 10 + (u32)(c - '0');
+    }
+    return true;
+  }
+  bool fragHole(const AstNode* n) const {
+    const SpliceP& sp = side<SpliceP>(n);
+    std::string_view e = strs.get(sp.expr);
+    u32 k;
+    return (interpolation(e, k) && !n->nkids) || (barePath(e) && !sp.named);
   }
 
   // The holes of a subtree in the current table — splices, statements,
@@ -49,16 +88,22 @@ struct Gen {
     u32 c = 0;
     switch (n->kind) {
       case AstKind::Splice:
+        if (frag && !fragHole(n)) return 0;  // text
+        c = 1;
+        break;
       case AstKind::Stmt:  // its hole (a content literal's body follows)
+        if (frag) return 0;
         c = 1;
         break;
       case AstKind::Keyword: {
+        if (frag) return 0;
         if (strs.get(n->str) != "if") return 1;  // a loop: one hole, its body a table of its own
         for (const AstNode* br : n->kids())
           c += (isElse(side<BranchP>(br).head) ? 0 : 1) + (declares(br) ? 1 : kidHoles(br));
         return c;
       }
       case AstKind::Call:
+        if (frag) break;  // argument lists are dropped
         if (n->isCall(SugarId::fence) && !side<FenceP>(n).args.empty()) c = 1;
         else if (n->isCall(SugarId::region) && !side<RegionP>(n).args.empty()) c = 1;
         break;
@@ -105,6 +150,7 @@ struct Gen {
     return !names.empty();
   }
   void span(Span s) {
+    s = at(s);
     w.u(s.start);
     w.u(s.end);
   }
@@ -156,10 +202,11 @@ struct Gen {
   // a keyword body or a content literal's: its one value, or a seq of its
   // values — each in a frame when it runs user code, so an error stays in
   // the block (the iteration) it happens in
-  bool blockBody(const AstNode* n) {
-    if (n->nkids == 1) return block(n->kids()[0]);
+  bool blockBody(const AstNode* n) { return blockList(n->kids()); }
+  bool blockList(std::span<AstNode* const> ks) {
+    if (ks.size() == 1) return block(ks[0]);
     size_t at = callHead("seq", nullptr, 0);
-    return done(at, blockKids(n->kids()));
+    return done(at, blockKids(ks));
   }
   // a content body: its one value, or a seq of its values
   bool body(const AstNode* n) {
@@ -203,6 +250,7 @@ struct Gen {
           }
         }
         if (digit) pairs.push_back(v);
+        if (clamp) pairs.clear();  // a clamped fragment's text has no place to map to
         w.u((u32)pairs.size() / 2);
         for (u32 x : pairs) w.u(x);
         // its cell cuts (plan P2-11): "o,…" → nSep o*
@@ -246,14 +294,29 @@ struct Gen {
         w.u(0);
         return false;
       case AstKind::Stmt:
+        if (frag) return literal(n);
         return stmt(n);
       case AstKind::Keyword:
+        if (frag) return literal(n);
         return keyword(n);
       case AstKind::Branch:  // only inside its Keyword
       case AstKind::Doc:
         emptyText();
         return false;
     }
+    return false;
+  }
+
+  // (a fragment) code that would need eval: its source as text, and why
+  bool literal(const AstNode* n) {
+    if (fdiags)
+      fdiags->add(Sev::Info, "fragment-splice", n->span,
+                  "a fragment runs no JavaScript: only #name, #a.b and m`…` interpolations are values");
+    w.op(Lop::TEXT);
+    w.u(w.str(src.slice(n->span)));
+    span(n->span);
+    w.u(0);
+    w.u(0);
     return false;
   }
 
@@ -390,6 +453,7 @@ struct Gen {
   // list ends (plan P2-02) — f(...[args], ...__k()), so an empty list, a
   // trailing comma or a comment needs no text surgery.
   bool splice(const AstNode* n) {
+    if (frag) return fragSplice(n);
     const SpliceP& sp = side<SpliceP>(n);
     std::string_view expr = strs.get(sp.expr);
     const u32 h = newHole();
@@ -434,11 +498,40 @@ struct Gen {
     return done(at, async);
   }
 
+  // a fragment's splice (plan P2-13): its hole's descriptor — {"v":k} the
+  // k-th interpolation, {"p":"a.b"} a value head ("k":1 with content
+  // arguments, "a":1 when they await) — else its source as text
+  bool fragSplice(const AstNode* n) {
+    if (!fragHole(n)) return literal(n);
+    std::string_view expr = strs.get(side<SpliceP>(n).expr);
+    const u32 h = newHole();
+    size_t at = w.op(Lop::HOLE);
+    w.u(h);
+    span(n->span);
+    const bool a = kids(n->kids());
+    u32 k;
+    if (interpolation(expr, k)) {
+      holes[h] = "{\"v\":" + std::to_string(k) + "}";
+    } else {
+      holes[h] = "{\"p\":\"" + std::string(expr) + "\"";
+      if (n->nkids) holes[h] += ",\"k\":1";
+      if (a) holes[h] += ",\"a\":1";
+      holes[h] += "}";
+    }
+    return done(at, a);
+  }
+
   // a fence or region argument list: a hole making the opts object; the
   // operand is 0 (none) or (hole + 1) << 1 | awaits
   u32 argsHole(Span args, bool& awaits) {
     awaits = false;
     if (args.empty()) return 0;
+    if (frag) {  // a fragment evaluates no JavaScript
+      if (fdiags)
+        fdiags->add(Sev::Info, "fragment-splice", args,
+                    "a fragment runs no JavaScript: this argument list is dropped");
+      return 0;
+    }
     const u32 h = newHole();
     std::string_view a = src.slice(args);
     awaits = jsMentions(a, "await");
@@ -565,9 +658,10 @@ struct Gen {
         w.u(f.label ? w.str(strs.get(f.label)) + 1 : 0);  // ` <id>` (plan P2-06): 0 = none
         w.u(f.info ? w.str(strs.get(f.info)) + 1 : 0);    // the info words
         w.u(w.str(strs.get(n->str)));
-        w.u(f.bodyOffset);
-        w.u(f.bodyEnd);
-        if (f.lines) {  // per-line offsets (contained): "[o1,o2,…]"
+        const Span body = this->at({f.bodyOffset, f.bodyEnd});
+        w.u(body.start);
+        w.u(body.end);
+        if (f.lines && !clamp) {  // per-line offsets (contained): "[o1,o2,…]"
           std::string_view l = strs.get(f.lines);
           std::vector<u32> offs;
           u32 v = 0;
@@ -583,7 +677,7 @@ struct Gen {
             }
           }
           w.constArrayHead((u32)offs.size());
-          for (u32 o : offs) w.constUint(o);
+          for (u32 o : offs) w.constUint(this->at({o, o}).start);
         } else {
           w.constNull();
         }
@@ -759,6 +853,125 @@ Lowered codegen(const AstNode* doc, const SourceText& src, const Interner& strs)
   }
   L.program = w.finish(module ? fnv1a64(L.js) : 0, module, doc->span.end);
   return L;
+}
+
+// ---- fragments (plan P2-13) ---------------------------------------------------
+
+Lowered codegenFragments(const std::vector<FragmentText>& texts, const Span* clamp) {
+  Lowered L;
+  LowerWriter w;
+  Arena arena;
+  Interner strs(arena);
+  std::vector<std::string> holes;
+  std::string diags;
+  u32 docEnd = clamp ? clamp->end : 0;
+  for (const FragmentText& ft : texts) {
+    SourceText src;
+    src.init(ft.text);
+    DiagSink d;
+    const Skeleton sk = linepass(src, arena, d);
+    const AstNode* doc = parseDoc(src, sk, arena, strs, d);
+    Gen g{src, strs, w, std::move(holes)};
+    g.frag = true;
+    g.base = ft.base;
+    g.clamp = clamp;
+    g.fdiags = &d;
+    // its content (as a content body's, syntax-design §7): one paragraph —
+    // statements aside — is its inline content
+    std::vector<AstNode*> kids(doc->kids().begin(), doc->kids().end());
+    size_t paras = 0, other = 0;
+    for (const AstNode* k : kids) {
+      if (k->isCall(SugarId::para)) paras++;
+      else if (k->kind != AstKind::Stmt) other++;
+    }
+    if (paras == 1 && other == 0) {
+      std::vector<AstNode*> inl;
+      for (AstNode* k : kids) {
+        if (k->kind == AstKind::Stmt) inl.push_back(k);
+        else inl.insert(inl.end(), k->kids().begin(), k->kids().end());
+      }
+      kids = std::move(inl);
+    }
+    LBlockRow b;
+    const Span sp = g.at({0, src.size()});
+    b.s = sp.start;
+    b.e = sp.end;
+    b.pc = (u32)w.body.size();
+    b.holeLo = (u32)g.holes.size();
+    b.kind = LBlock::Content;
+    u32 hc = 0;
+    for (const AstNode* k : kids) hc += g.holeCount(k);
+    b.flags = hc ? kBlockUser | kBlockFramed : 0;
+    if (g.blockList(kids)) b.flags |= kBlockAsync;
+    b.holeHi = (u32)g.holes.size();
+    w.blocks.push_back(b);
+    holes = std::move(g.holes);
+    for (const Diag& x : d.items) {
+      const Span ds = g.at(x.span);
+      if (!diags.empty()) diags += ",";
+      appendf(diags, "{\"sev\":%d,\"code\":", x.sev == Sev::Error ? 2 : x.sev == Sev::Warning ? 1 : 0);
+      jsonString(diags, x.code);
+      diags += ",\"msg\":";
+      jsonString(diags, x.msg);
+      appendf(diags, ",\"s\":%u,\"e\":%u}", ds.start, ds.end);
+    }
+    if (!clamp) docEnd = std::max(docEnd, ft.base + src.size());
+  }
+  w.holes = (u32)holes.size();
+  L.program = w.finish(0, false, docEnd);
+  L.js = "{\"holes\":[";
+  for (size_t i = 0; i < holes.size(); i++) {
+    if (i) L.js += ",";
+    L.js += holes[i];
+  }
+  L.js += "],\"diags\":[" + diags + "]}";
+  return L;
+}
+
+namespace {
+bool getU32(std::string_view b, size_t& p, u32& v) {
+  if (p + 4 > b.size()) return false;
+  v = (u32)(u8)b[p] | (u32)(u8)b[p + 1] << 8 | (u32)(u8)b[p + 2] << 16 | (u32)(u8)b[p + 3] << 24;
+  p += 4;
+  return true;
+}
+void putU32(std::string& out, u32 v) {
+  for (int i = 0; i < 4; i++) out += (char)((v >> (8 * i)) & 0xff);
+}
+}  // namespace
+
+bool decodeFragmentRequest(std::string_view b, FragmentRequest& r) {
+  r = FragmentRequest{};
+  size_t p = 0;
+  u32 n, s, e;
+  if (!getU32(b, p, n) || p >= b.size()) return false;
+  r.clamped = b[p++] != 0;
+  if (!getU32(b, p, s) || !getU32(b, p, e) || s > e) return false;
+  r.clamp = {s, e};
+  if (n > (b.size() - p) / 8) return false;
+  for (u32 i = 0; i < n; i++) {
+    FragmentText t;
+    u32 len;
+    if (!getU32(b, p, t.base) || !getU32(b, p, len) || len > b.size() - p) return false;
+    if ((u64)t.base + len > 0xffffffffu) return false;
+    t.text.assign(b.substr(p, len));
+    p += len;
+    r.texts.push_back(std::move(t));
+  }
+  return p == b.size();
+}
+
+std::string runFragmentRequest(std::string_view request) {
+  FragmentRequest r;
+  Lowered L;
+  if (decodeFragmentRequest(request, r)) L = codegenFragments(r.texts, r.clamped ? &r.clamp : nullptr);
+  else L.js = "{\"error\":\"bad fragment request\"}";
+  std::string out;
+  putU32(out, (u32)L.program.size());
+  out += L.program;
+  putU32(out, (u32)L.js.size());
+  out += L.js;
+  return out;
 }
 
 }  // namespace tsr

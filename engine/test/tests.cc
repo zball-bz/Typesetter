@@ -15,7 +15,6 @@
 #include "../src/inline/jslex.h"
 #include "../src/math/math.h"
 #include "../src/code/grid.h"
-#include "../src/inline/fragment.h"
 #include "../src/syntax/lexer.h"
 #include "../src/syntax/exports.h"
 #include "../src/semantic/terms.h"
@@ -321,46 +320,51 @@ static void unitImageSrc() {
   CHECK(!safeImageSrc("vbscript:x"));
 }
 
+// Fragment programs (plan P2-13): markup parsed at run time lowers to the
+// same LowerProgram — every inline form, spans moved by the base or all
+// clamped, bare value heads and interpolations as out-of-band holes, and
+// JavaScript left as text.
 static void unitFragment() {
-  Arena a;
-  Interner strs{a};
-  StyleTable styles;
-  DiagSink d;
-  auto ns = parseInlineFragment(
-      "\xE5\x9D\x87\xE6\x91\x8A *O* \xE5\xA4\x8D\xE6\x9D\x82\xE5\xBA\xA6 $n log n$ \xE8\xA7\x81 @sec \xE5\x92\x8C [doc](https://x) \xE4\xB8\x8E `code`",
-      0, {5, 9}, a, strs, styles, d);
-  int kinds[8] = {0};
-  std::function<void(const ContentNode*)> walk = [&](const ContentNode* n) {
-    if (n->kind == Kind::text) kinds[0]++;
-    if (n->kind == Kind::mathinline) kinds[1]++;
-    if (n->kind == Kind::ref) kinds[2]++;
-    if (n->kind == Kind::link) kinds[3]++;
-    if (n->kind == Kind::code) kinds[4]++;
-    for (const ContentNode* k : n->kids) walk(k);
+  std::vector<FragmentText> texts{{"\xE5\x9D\x87\xE6\x91\x8A *O* $n log n$ @sec [doc](https://x) `code` #name.x "
+                                   "#strong[s] #(__m0); #f(1)",
+                                   5}};
+  Lowered L = codegenFragments(texts, nullptr);
+  LowerProgram p;
+  std::string why;
+  CHECK(readLowerProgram(L.program, p, why));
+  const std::string dump = dumpLowerProgram(L.program);
+  for (const char* k : {"CALL strong", "mathinline", "CALL ref", "CALL link", "CALL code", "HOLE 0", "HOLE 2"})
+    CHECK(dump.find(k) != std::string::npos);
+  CHECK(dump.find("TEXT \"#f(1)\"") != std::string::npos);  // JavaScript stays text
+  CHECK(dump.find("[5,") != std::string::npos);              // spans moved by the base
+  CHECK(L.js.find("{\"p\":\"name.x\"}") != std::string::npos);
+  CHECK(L.js.find("{\"p\":\"strong\",\"k\":1}") != std::string::npos);
+  CHECK(L.js.find("{\"v\":0}") != std::string::npos);
+  CHECK(L.js.find("fragment-splice") != std::string::npos);
+  // clamped: every span is the clamp; two texts are two blocks
+  const Span clamp{40, 44};
+  Lowered C = codegenFragments({{"a *b*", 0}, {"= H\n\npara", 0}}, &clamp);
+  CHECK(readLowerProgram(C.program, p, why) && p.blocks.size() == 2);
+  const std::string cd = dumpLowerProgram(C.program);
+  CHECK(cd.find("[40,44)") != std::string::npos && cd.find("[0,") == std::string::npos);
+  CHECK(cd.find("CALL heading") != std::string::npos);
+  // the wire form round-trips; a malformed request is an error answer
+  std::string req;
+  auto u32le = [&](u32 v) {
+    for (int i = 0; i < 4; i++) req += (char)((v >> (8 * i)) & 0xff);
   };
-  for (const ContentNode* n : ns) walk(n);
-  CHECK(kinds[1] == 1 && kinds[2] == 1 && kinds[3] == 1 && kinds[4] == 1);
-  CHECK(kinds[0] >= 4);
-  // bold bits folded into the leaf style
-  bool sawBold = false;
-  for (const ContentNode* n : ns)
-    if (n->kind == Kind::text && styles.get(n->style).weight == 700)
-      sawBold = true;
-  CHECK(sawBold);
-  // every node stamped with the caller's span
-  CHECK(!ns.empty() && ns[0]->span.start == 5 && ns[0]->span.end == 9);
-  // splice stays literal with an Info diag
-  DiagSink d2;
-  auto ns2 = parseInlineFragment("x #toc y", 0, {}, a, strs, styles, d2);
-  bool lit = false;
-  for (const ContentNode* n : ns2)
-    if (n->kind == Kind::text &&
-        strs.get(n->str).find("#toc") != std::string::npos)
-      lit = true;
-  CHECK(lit);
-  CHECK(!d2.items.empty() && d2.items[0].sev == Sev::Info);
+  u32le(1);
+  req += (char)0;
+  u32le(0);
+  u32le(0);
+  u32le(7);
+  u32le(3);
+  req += "*a*";
+  FragmentRequest fr;
+  CHECK(decodeFragmentRequest(req, fr) && fr.texts.size() == 1 && fr.texts[0].base == 7);
+  CHECK(runFragmentRequest(req).find("\"holes\":[]") != std::string::npos);
+  CHECK(runFragmentRequest(req.substr(0, 10)).find("\"error\"") != std::string::npos);
 }
-
 
 // The resource pull (plan P1-19): the wire codec round-trips every column
 // type; an answer to another batch is refused whole; a missing or invalid
@@ -1090,6 +1094,15 @@ static void fuzzRegressions(const fs::path& root) {
     doc.cfg.baseSizePx = 16;
     if (target == "fuzz_opreader") {
       if (doc.ingest((const u8*)data.data(), data.size())) (void)doc.renderFallback();
+    } else if (target == "fuzz_fragment") {  // (plan P2-13) as the target checks
+      FragmentRequest req;
+      std::vector<std::vector<FragmentText>> runs{{{data, 7}}};
+      if (decodeFragmentRequest(data, req)) runs.push_back(req.texts);
+      for (const auto& texts : runs) {
+        LowerProgram prog;
+        std::string why;
+        CHECK(readLowerProgram(codegenFragments(texts, nullptr).program, prog, why));
+      }
     } else {
       doc.compile(data);
       (void)dumpAst(doc.ast, doc.src, doc.strs);

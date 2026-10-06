@@ -1,9 +1,19 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="51">三盒模型：行号、代码与结构化边注。</p>
-<pre data-pid="1" data-s="53" data-e="289"><code class="language-js">const memo = new Map();
+<pre data-pid="1" data-s="53" data-e="331"><code class="language-js">const memo = new Map();
 function fib(n) {
   if (n &lt;= 1) return n;
   return fib(n - 1) + fib(n - 2);
 }</code></pre>
-<h1 data-pid="2" data-s="291" data-e="305" id="tsr-base">基例说明</h1>
+<aside class="tsr-margin">
+<p data-line="1">记忆化容器，均摊 <code class="tsr-mathsrc">$O(1)$</code> 查询</p>
+<p data-line="3"><strong>基例</strong>：<code class="tsr-mathsrc">$n &lt;= 1$</code> 时直接返回，详见 <a href="#tsr-base">§1</a><a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a></p>
+</aside>
+<h1 data-pid="2" data-s="333" data-e="347" id="tsr-base">基例说明</h1>
+<div data-role="notes" data-pid="3" data-s="0" data-e="347">
+<hr data-s="0" data-e="347">
+<ol data-s="0" data-e="347">
+<li id="tsr-fn-1">边注里的脚注是真正的脚注。 <a href="#tsr-fnref-1">↩</a></li>
+</ol>
+</div>
 </div>

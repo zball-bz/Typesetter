@@ -984,7 +984,7 @@ Theme steps: — · findings: 1
 | `markup-language/block-inline-placement` | adhoc | medium | P2-11, P3-17 | |
 | `markup-language/value-coercion` | adhoc | medium | P2-01 | grep:plan P2-01 |
 | `markup-language/surface-grammar-drift` | adhoc | medium | P1-09 | grep:plan P1-09 |
-| `markup-language/sidecar-private-lowering` | adhoc | medium | P2-13 | |
+| `markup-language/sidecar-private-lowering` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `markup-language/collectors-closed` | adhoc | medium | P3-13 | |
 | `markup-language/style-surfaces` | adhoc | medium | P3-01 | |
 | `markup-language/cjk-softbreak-classifier` | adhoc | medium | P2-10, P4-02 | |
@@ -1018,7 +1018,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/label-and-id-lexing-scattered` | adhoc | medium | P2-06 | grep:plan P2-06 |
 | `parser-frontend/display-math-by-ast-shape` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `parser-frontend/parser-owned-cjk-line-join` | adhoc | medium | P2-10, P4-02 | |
-| `parser-frontend/fragment-parallel-lowering` | adhoc | high | P2-13 | |
+| `parser-frontend/fragment-parallel-lowering` | adhoc | high | P2-13 | grep:plan P2-13 |
 | `parser-frontend/region-fence-private-dispatch` | adhoc | medium | P2-03, P2-06 | grep:plan P2-06 |
 | `parser-frontend/region-container-special-case` | adhoc | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/multiple-tsm-grammars` | adhoc | high | P1-09 | grep:plan P1-09 |
@@ -1046,7 +1046,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/region-meta-args-hijack` | adhoc | medium | P2-03, P2-08 | grep:plan P2-08 |
 | `codegen-ops-model/parse-time-pipe-segmentation` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `codegen-ops-model/role-string-dispatch` | adhoc | high | P2-05 | grep:plan P2-05 |
-| `codegen-ops-model/sidecar-ingest-pass` | adhoc | medium | P2-13 | |
+| `codegen-ops-model/sidecar-ingest-pass` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `codegen-ops-model/bibliography-placeholder-and-end-emission` | adhoc | medium | P2-07, P2-14 | |
 | `codegen-ops-model/cls-sup-feature-bit` | adhoc | medium | P2-08 | grep:plan P2-08 |
 | `codegen-ops-model/kind-default-styles-in-emit` | adhoc | medium | P3-01 | |
@@ -1058,7 +1058,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/two-style-encodings-and-stack` | adhoc | medium | P0-06, P2-08 | grep:plan P2-08 |
 | `codegen-ops-model/val-coercion-adhoc` | adhoc | medium | P2-01 | grep:plan P2-01 |
 | `codegen-ops-model/block-promotion-peepholes` | adhoc | medium | P2-11 | grep:plan P2-11 |
-| `codegen-ops-model/duplicate-lowering-fragment` | adhoc | medium | P2-13 | |
+| `codegen-ops-model/duplicate-lowering-fragment` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `codegen-ops-model/note-kind-and-lift` | adhoc | medium | P3-01, P3-13 | |
 | `codegen-ops-model/collector-switch-and-fixed-counters` | adhoc | medium | P2-07 | grep:plan P2-07 |
 | `codegen-ops-model/occurrence-spans-unsound` | issue | high | P2-04 | grep:plan P2-04 |
@@ -1129,7 +1129,7 @@ Theme steps: — · findings: 1
 | `emitter/latin-quote-heuristic` | adhoc | medium | P4-02 | |
 | `emitter/sup-bit-attach-rule` | adhoc | medium | P4-07 | |
 | `emitter/kern-context-postpass` | adhoc | medium | P4-01 | |
-| `emitter/sidecar-role-string` | adhoc | medium | P2-13 | |
+| `emitter/sidecar-role-string` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `emitter/comment-by-css-color` | adhoc | medium | P2-08 | grep:plan P2-08 |
 | `emitter/kind-presentation-in-emit` | adhoc | medium | P3-01 | |
 | `emitter/global-typography-config` | adhoc | medium | P3-02 | |
@@ -1278,7 +1278,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/language-registry-scattered` | adhoc | medium | P3-22 | |
 | `api-measure-code/literate-cpp-special-case` | adhoc | low | P3-22 | |
 | `api-measure-code/grid-is-codeblock-only` | adhoc | medium | P3-11 | |
-| `api-measure-code/sidecar-api-layer-rewrite` | adhoc | high | P2-13 | |
+| `api-measure-code/sidecar-api-layer-rewrite` | adhoc | high | P2-13 | grep:plan P2-13 |
 | `api-measure-code/doc-typeset-hosts-layout-logic` | adhoc | medium | P1-15 | grep:plan P1-15 |
 | `api-measure-code/adhoc-invalidation-flags` | adhoc | high | P1-03 | grep:plan P1-03 |
 | `api-measure-code/adhoc-caches` | adhoc | high | P1-21 | grep:plan P1-21 |
@@ -1325,7 +1325,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/presentation-constants` | adhoc | medium | P3-01 | |
 | `real-world-evidence/math-extensibility` | adhoc | medium | P3-29 | |
 | `real-world-evidence/no-cross-document-labels` | adhoc | high | P3-31 | |
-| `real-world-evidence/markup-reentry-missing` | adhoc | medium | P2-13 | |
+| `real-world-evidence/markup-reentry-missing` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `real-world-evidence/ctor-name-collision-fatal` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `real-world-evidence/heading-numbers-invisible` | issue | medium | P3-03 | |
 | `real-world-evidence/labels-on-unsupported-nodes-silent` | issue | medium | P0-09 | grep:plan P0-09 |

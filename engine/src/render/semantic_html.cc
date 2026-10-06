@@ -318,7 +318,7 @@ struct Sem {
           esc(out, strs.get(body->str));
         } else {
           // structured lines: seq of styled runs per child (CH1); the
-          // trailing sidecar group is display-layer only (verbatim §5)
+          // margin slot follows the code (below)
           bool firstLine = true;
           for (size_t li = 0; li < n->kids.size(); li++) {
             if (n->kids[li]->kind == Kind::group) continue;
@@ -328,6 +328,23 @@ struct Sem {
           }
         }
         out += "</code></pre>\n";
+        // its margin slot (plan P2-13: sidecar notes are content — a
+        // footnote marker, a reference): an aside after the code, one
+        // paragraph per annotated line (data-line counts from 1)
+        const StrRef margin = strs.find("margin");
+        for (const ContentNode* k : n->kids) {
+          if (k->kind != Kind::group || !margin || attrStr(k, ArgK::slot) != margin) continue;
+          bool any = false;
+          for (size_t li = 0; li < k->kids.size(); li++) {
+            if (k->kids[li]->kids.empty()) continue;
+            if (!any) out += "<aside class=\"tsr-margin\">\n";
+            any = true;
+            appendf(out, "<p data-line=\"%zu\">", li + 1);
+            inl(k->kids[li]);
+            out += "</p>\n";
+          }
+          if (any) out += "</aside>\n";
+        }
         return;
       }
       case Kind::rule:

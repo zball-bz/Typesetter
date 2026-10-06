@@ -3,10 +3,10 @@
 Status: as built in plan P2-02 (design T2 S5, `docs/remediation/design/
 T2-constructor-ir.md`; decision MD-04, which amends v2 §2), with P2-03 (the
 bound constructor ABI and the registry: CALL attributes bind by key), P2-04
-(SPAN/AT on hole results) and P2-12 (statements anywhere, keyword forms,
-content literals: IF/SCOPE/LOOP/LET, §3.1). Later steps: S10 (`#use`
-prologue frames), and the fragment entry points (`m```, `ctx.m.parse`,
-sidecar notes), which will produce programs in this format.
+(SPAN/AT on hole results), P2-12 (statements anywhere, keyword forms,
+content literals: IF/SCOPE/LOOP/LET, §3.1) and P2-13 (fragments: `m```,
+`m.parse`, `ctx.m.parse`, sidecar notes, §5.1). Later step: S10 (`#use`
+prologue frames).
 
 ## 1. Shape
 
@@ -279,6 +279,49 @@ On a SyntaxError (failure path only):
 Typing inside one splice therefore costs two imports per keystroke while the
 expression is broken (the failing module and the stubbed one), and none once
 it compiles again and its text is cached.
+
+## 5.1 Fragments (as built from plan P2-13; design T1 S11, T2 S10; D-L07)
+
+Markup parsed at run time — `` m`…` ``, `m.parse`, a fence handler's
+`ctx.m.parse`, a code block's sidecar notes — lowers to the same program
+format and runs on the same interpreter; there is no second lowering
+(`fragment.cc`, with its own AST→content switch, is gone).
+
+```
+JS: host.fragments(texts, {bases | clamp, scope, vals})
+    → opts.parse(request)            the host's engine: tsr2_fragments (WASM),
+                                     `tsrc --fragments=-` (the native tools)
+    → [program][{"holes": […], "diags": […]}]
+    → new Lowering(program, env).fragment(i, holes)   one value per text
+```
+
+- **One program, one block per text** (`codegenFragments`,
+  engine/src/codegen/codegen.h has the wire form). A text is parsed as a
+  document — line pass, AST — and its content is a content body's: one
+  paragraph (statements aside) is its inline content; each block of it that
+  has holes is framed, so a failing hole is an error node in place.
+- **Spans.** `bases`: each text's source offset, so every span is exact (a
+  sidecar note, `m.parse(src, {offset})`, `ctx.m.parse(…, {offset:
+  ctx.offset})`); else every span is the clamp — the construct running it
+  (`here`) — and texts carry no raw maps.
+- **No JavaScript.** Holes are descriptors, out of band: `{"v": k}` the k-th
+  interpolation of `` m`…` `` (written `#(__mk);` into the text, so markup
+  may span an interpolation), `{"p": "a.b"}` a bare value head — looked up
+  on `scope`, then the std (D-L07: no eval, CSP-safe) — with `"k": 1` when it
+  takes content arguments. Any other splice (`#f(x)`), a statement, a
+  keyword form or a fence/region argument list stays text, with info
+  `fragment-splice`. The program has no module (`readLowerProgram` skips
+  the piece count then).
+- **Diagnostics** of the parse come back mapped (exact or clamped) and are
+  emitted as `fragment-parse` (`code: message`) or `fragment-splice`.
+- **Awaiting.** A fragment whose value awaits (a fence in it) returns a
+  promise; the blocks of one request run in turn.
+- `` m`…` `` reads the template's **raw** strings (a backslash is markup's
+  escape). `m.parseMany(srcs, {scope, offsets})` parses several in one
+  crossing.
+- The fuzz target `fuzz_fragment` takes any bytes as a request and as one
+  text (at a base, clamped): the decoder rejects or the program reads back,
+  with JSON naming one descriptor per hole (D-H08).
 
 ## 6. The handshake
 

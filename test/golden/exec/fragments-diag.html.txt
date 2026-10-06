@@ -1,0 +1,23 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="97" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="6" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6.88px"><span class="tsr-r" data-s="0">Hello, </span><span class="tsr-r tsr-b" data-s="0">world</span><span class="tsr-r" data-s="0">: </span><span class="tsr-r tsr-i" data-s="0">markup</span><span class="tsr-r" data-s="0"> in a template.</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="ref" style="font-size:11.2px">1</a></div>
+<div class="tsr-line" data-s="7" data-e="20" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:4.667px"><span class="tsr-r" data-s="7">Again: Hello, </span><span class="tsr-r tsr-b" data-s="14">world</span><span class="tsr-r" data-s="14">: </span><span class="tsr-r tsr-i" data-s="14">markup</span><span class="tsr-r" data-s="14"> in a tem</span><span class="tsr-r" data-s="14" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="14" data-e="20" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="14">plate.</span><a class="tsr-r tsr-sup" href="#tsr-fn-2" id="tsr-fnref-2" data-syn="ref" style="font-size:11.2px">2</a></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="119" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="110" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.057px"><span class="tsr-r" data-s="0">Parsed with a scope value and </span><span class="tsr-r tsr-b" data-s="0">content</span><span class="tsr-r" data-s="0"> —</span></div>
+<div class="tsr-line" data-s="0" data-e="110" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">but #f(1) stays text.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="338" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="21" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">SAY </span><span class="tsr-r tsr-b" data-s="5">THIS</span><span class="tsr-r" data-s="11"> WITH </span><span class="tsr-math" data-syn="math" data-src="$X^2$" data-s="16" data-e="21" style="width:17.047px;height:15.281px;vertical-align:-0.172px"><span class="tsr-mg" style="left:0px;top:2.309px;font-size:16px;line-height:16px">X</span><span class="tsr-mg" style="left:10.656px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span></span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="365" style="position:relative;height:48px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="47" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">Broken markup is diagnosed where it was</span></div>
+<div class="tsr-line" data-s="0" data-e="83" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">parsed: an unclosed %-- comment</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="97" style="position:relative;height:97.594px">
+<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="6" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">A note made by m. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="ref" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-2" data-s="14" data-e="20" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="14" style="font-size:13.6px">A note made by m. </span><a class="tsr-r" href="#tsr-fnref-2" data-syn="ref" style="font-size:13.6px">↩</a></div>
+</div>
+</div>

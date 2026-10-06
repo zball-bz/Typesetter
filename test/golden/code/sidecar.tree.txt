@@ -1,22 +1,34 @@
-doc @[0,305) [base]
+doc @[0,347) [base]
   para @[0,51) [base]
     text @[0,51) [base] str="三盒模型：行号、代码与结构化边注。"
-  codeblock @[53,289) [base] lang="js" lineNo=1 sidecar="///"
-    text @[86,285) [base] str="const memo = new Map();\nfunction fib(n) {\n  if (n <= 1) return n;\n  return fib(n - 1) + fib(n - 2);\n}"
-    group @[86,285) [base] role="sidecar-lines"
-      seq @[86,285) [base]
-        text @[86,285) [base] str="记忆化容器，均摊 "
-        mathinline @[86,285) [base] src="O(1)"
-        text @[86,285) [base] str=" 查询"
-      seq @[86,285) [base]
-      seq @[86,285) [base]
-        text @[86,285) [BOLD] str="基例"
-        text @[86,285) [base] str="："
-        mathinline @[86,285) [base] src="n <= 1"
-        text @[86,285) [base] str=" 时直接返回，详见 "
-        ref @[86,285) [base] target="base" url="#tsr-base"
-          text @[86,285) [base] str="§1"
-      seq @[86,285) [base]
-      seq @[86,285) [base]
-  heading @[291,305) [base] level=1 label="base"
-    text @[293,305) [base] str="基例说明"
+  codeblock @[53,331) [base] lang="js" lineNo=1 sidecar="///"
+    text @[86,327) [base] str="const memo = new Map();\nfunction fib(n) {\n  if (n <= 1) return n;\n  return fib(n - 1) + fib(n - 2);\n}" raw=0:0,24:67,42:85,66:206,100:240
+    group @[53,331) [base] slot="margin"
+      seq @[114,152) [base]
+        text @[114,138) [base] str="记忆化容器，均摊 " raw=0:0,25:24
+        mathinline @[139,145) [base] src="O(1)"
+        text @[146,152) [base] str=" 查询" raw=0:0,1:0
+      seq @[53,331) [base]
+      seq @[199,291) [base]
+        styled @[199,207) [BOLD]
+          text @[200,206) [BOLD] str="基例"
+        text @[207,210) [base] str="："
+        mathinline @[210,218) [base] src="n <= 1"
+        text @[219,243) [base] str=" 时直接返回，详见 " raw=0:0,1:0,26:24
+        ref @[244,249) [base] target="base" url="#tsr-base"
+          text @[244,249) [base] str="§1"
+        ref @[249,291) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
+          text @[249,291) [SUPx0.70] str="1"
+      seq @[53,331) [base]
+      seq @[53,331) [base]
+  heading @[333,347) [base] level=1 label="base"
+    text @[335,347) [base] str="基例说明"
+  group @[0,347) [base] role="notes"
+    rule @[0,347) [base]
+    list @[0,347) [base] ordered=true
+      item @[249,291) [base]
+        para @[249,291) [base] label="fn-1"
+          text @[251,290) [basex0.85] str="边注里的脚注是真正的脚注。"
+          text @[249,291) [basex0.85] str=" "
+          ref @[249,291) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+            text @[249,291) [basex0.85] str="↩"

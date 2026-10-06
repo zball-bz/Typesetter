@@ -1,0 +1,58 @@
+doc @[97,448) [base]
+  para @[97,117) [base]
+    seq @[97,103) [base]
+      text @[97,103) [base] str="Hello, "
+      styled @[97,103) [BOLD]
+        text @[97,103) [BOLD] str="world"
+      text @[97,103) [base] str=": "
+      styled @[97,103) [EM]
+        text @[97,103) [EM] str="markup"
+      text @[97,103) [base] str=" in a template."
+      ref @[97,103) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
+        text @[97,103) [SUPx0.70] str="1"
+    text @[104,110) [base] str=" Again: " raw=0:0,1:0,8:6
+    seq @[111,117) [base]
+      text @[111,117) [base] str="Hello, "
+      styled @[111,117) [BOLD]
+        text @[111,117) [BOLD] str="world"
+      text @[111,117) [base] str=": "
+      styled @[111,117) [EM]
+        text @[111,117) [EM] str="markup"
+      text @[111,117) [base] str=" in a template."
+      ref @[111,117) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" url="#tsr-fn-2"
+        text @[111,117) [SUPx0.70] str="2"
+  para @[119,229) [base]
+    seq @[119,229) [base]
+      text @[119,229) [base] str="Parsed with "
+      text @[119,229) [base] str="a scope value"
+      text @[119,229) [base] str=" and "
+      styled @[119,229) [BOLD]
+        text @[119,229) [BOLD] str="content"
+      text @[119,229) [base] str=" — but "
+      text @[119,229) [base] str="#f(1)"
+      text @[119,229) [base] str=" stays text."
+  para @[330,363) [base]
+    seq @[330,363) [base]
+      text @[338,341) [base] str="SAY " raw=0:0,4:3
+      styled @[342,348) [BOLD]
+        text @[343,347) [BOLD] str="THIS"
+      text @[349,353) [base] str=" WITH " raw=0:0,1:0,6:4
+      mathinline @[354,359) [base] src="X^2"
+  para @[365,448) [base]
+    text @[365,412) [base] str="Broken markup is diagnosed where it was parsed: " raw=0:0,48:47
+    text @[413,448) [base] str="an unclosed %-- comment"
+  group @[97,448) [base] role="notes"
+    rule @[97,448) [base]
+    list @[97,448) [base] ordered=true
+      item @[97,103) [base]
+        para @[97,103) [base] label="fn-1"
+          text @[97,103) [basex0.85] str="A note made by m."
+          text @[97,103) [basex0.85] str=" "
+          ref @[97,103) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+            text @[97,103) [basex0.85] str="↩"
+      item @[111,117) [base]
+        para @[111,117) [base] label="fn-2"
+          text @[111,117) [basex0.85] str="A note made by m."
+          text @[111,117) [basex0.85] str=" "
+          ref @[111,117) [basex0.85] target="fnref-2" url="#tsr-fnref-2"
+            text @[111,117) [basex0.85] str="↩"

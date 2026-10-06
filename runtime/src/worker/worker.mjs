@@ -9,7 +9,7 @@ import { execute } from './executor.mjs';
 import { CanvasMeasurer } from './canvas_measure.mjs';
 import { tokenize } from './tokens.mjs';
 import { sniffImageSize } from './image_sniff.mjs';
-import { checkAbi, compiledOf } from '../shared/abi.mjs';
+import { checkAbi, compiledOf, fragmentsOf } from '../shared/abi.mjs';
 import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
 import { POLICY } from '../shared/settings.gen.mjs';
 
@@ -341,7 +341,7 @@ async function runTypeset(s, { ids, msg }, stale) {
     mark('compileMs', t0);
 
     t0 = performance.now();
-    const ops = await execute(compiledOf(M, doc), { baseUrl });
+    const ops = await execute(compiledOf(M, doc), { baseUrl, parse: fragmentsOf(M) });
     mark('executeMs', t0);
     await yieldTurn();  // (counted in the edit's total, not in executeMs)
     if (stale()) { M._tsr_doc_free(doc); return false; }

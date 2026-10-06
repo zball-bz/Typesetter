@@ -41,3 +41,16 @@ export function compiledOf(M, doc) {
   const program = M.HEAPU8.slice(p + 4, p + 4 + len);
   return { program, js: () => M.UTF8ToString(M._tsr_get_js(doc)) };
 }
+
+// The fragment parser a host gives the executor (plan P2-13: opts.parse):
+// a tsr2_fragments request → its answer, one crossing each way.
+export function fragmentsOf(M) {
+  return (req) => {
+    const p = M._malloc(req.length);
+    M.HEAPU8.set(req, p);
+    const r = M._tsr2_fragments(p, req.length);
+    M._free(p);
+    const len = new DataView(M.HEAPU8.buffer).getUint32(r, true);
+    return M.HEAPU8.slice(r + 4, r + 4 + len);
+  };
+}

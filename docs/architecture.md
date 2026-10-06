@@ -149,7 +149,7 @@ tsr_measure_provide(doc, buf)
 tsr_render_semantic(doc)         → html
 tsr_render_typeset(doc, range?)  → html     (whole doc or paragraph range, for upgrades)
 tsr_layout_info(doc)             → buffer   (paragraph ids, rects, line maps — upgrade payload §9)
-tsr_parse_fragment(doc, str)     → ops buffer   (m`…` / m.parse re-entry)
+tsr2_fragments(request)          → program + holes  (m`…` / m.parse re-entry, plan P2-13)
 tsr_diagnostics(doc)             → buffer
 tsr_relayout(doc, params)        → NEED_MEASURE | OK   (reuses cached block streams)
 ```
@@ -172,7 +172,7 @@ Layout: header (version, counts) · string table (UTF-8 blob + varint offsets) �
 ### 4.1 Worker (module worker — required for real ES imports)
 
 - **host.ts** — loads the WASM module (Emscripten `MODULARIZE` + `EXPORT_ES6`, `ENVIRONMENT=worker,node`), drives the pipeline: compile → execute → ingest → typeset-loop → render, and the upgrade re-loop when pending measurements settle.
-- **executor.ts** — *(as built, plan P2-02: `executor.mjs` decodes the LowerProgram and runs it with `shared/lower.mjs`; only the hole module — the user's code — is imported as a Blob-URL ES module, cached by hash; `docs/lowering-design.md`)* turns the generated program into a **Blob-URL ES module** and `import()`s it. Consequence for codegen: `#use "./x.js"` compiles to a real static `import`, resolved against a caller-supplied base URL; after imports, generated `__reg(mod)` calls auto-register `fences` exports (document-order registration, §4.1 of v2). `//# sourceURL` + the source map make user code debuggable in devtools. The context argument is built here: constructors bound to an `OpBuf` instance, the `m` tag (calls `tsr_parse_fragment`, splices the returned ops, rebasing ids), and `$` (style stack ops, counters, fence registration). Constructors also maintain **shadow nodes** — lightweight JS mirrors of what they wrote — so user code can traverse and regroup content values (table cell splitting); see document-model §4.1.
+- **executor.ts** — *(as built, plan P2-02: `executor.mjs` decodes the LowerProgram and runs it with `shared/lower.mjs`; only the hole module — the user's code — is imported as a Blob-URL ES module, cached by hash; `docs/lowering-design.md`)* turns the generated program into a **Blob-URL ES module** and `import()`s it. Consequence for codegen: `#use "./x.js"` compiles to a real static `import`, resolved against a caller-supplied base URL; after imports, generated `__reg(mod)` calls auto-register `fences` exports (document-order registration, §4.1 of v2). `//# sourceURL` + the source map make user code debuggable in devtools. The context argument is built here: constructors bound to an `OpBuf` instance, the `m` tag (as built, plan P2-13: `tsr2_fragments` returns a fragment program the same interpreter runs — lowering-design §5.1), and `$` (style stack ops, counters, fence registration). Constructors also maintain **shadow nodes** — lightweight JS mirrors of what they wrote — so user code can traverse and regroup content values (table cell splitting); see document-model §4.1.
 - **measure/** — `canvas.ts` (OffscreenCanvas + `textRendering='geometricPrecision'`), `domproxy.ts` (batches forwarded to main), `fontfile.ts` (precompiled bundled-font metrics from `gen/`). All behind one `Measurer` interface; the cache (keyed string×style×dppx) sits above the backends.
 - **fences.ts** — tag → handler registry; wraps handler calls (async, try/catch → error block ops, `ctx` construction per v2 §4.1).
 - **opbuf.ts** — the writer half of §3.
@@ -257,8 +257,8 @@ M6  extensibility: fence handler API, #!table + provenance queries, #use ergonom
      codegen-materialized '|' segmentation provenance, __region/__fence
      dispatchers, $.fence/$.region registration, raw passthrough units,
      #!table with equal columns + per-column alignment + three-line rules.
-     Deferred: #use, cell-continuation indent rule; m.parse ENGINE half done
-     (parseInlineFragment, verbatim-design §5) — JS handler surface still deferred]
+     Deferred: #use, cell-continuation indent rule; m.parse done in P2-13
+     (fragment programs, lowering-design §5.1; ctx.m.parse in handlers)]
 M7  math: operator dictionary artifact, box model, Euler-Math metrics, inline boxes — DONE (mathc.py -> euler_math.h artifact; MathBox layout in su, zero measurement; $...$ islands; display/limits/stretch; equation labels+refs; 3-class inline breaks; woff2 subset). Deferred: cut-in kerning (no font data), horizontal stretch (wide accents), corpus math opt-ins
 CH  code highlighting — DONE (build-time tree-sitter grammars as emcc side
     modules + NEED_TOKENS pull state; native tests statically link the same

@@ -586,7 +586,8 @@ bool readLowerProgram(std::string_view bytes, LowerProgram& p, std::string& why)
       return bad("verbatim piece names no verbatim block");
     }
   }
-  if (nh != p.holes) return bad("hole count differs from the pieces");
+  // (a fragment program, plan P2-13, has no module: its holes come out of band)
+  if (p.module && nh != p.holes) return bad("hole count differs from the pieces");
   if (p.pieces.size() - nh > p.blocks.size()) return bad("more verbatim pieces than blocks");
   // blocks tile the body; each holds exactly its grammar
   u32 next = 0, verbatims = 0;

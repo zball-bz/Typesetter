@@ -1,2 +1,6 @@
-instance heading 1 level=1 label=base title="基例说明" @[291,305)
-label base -> heading 1 @[291,305)
+instance footnote 1 label=fn-1 marker=fnref-1 @[249,291)
+instance heading 1 level=1 label=base title="基例说明" @[333,347)
+label fn-1 -> footnote 1 @[249,291)
+label fnref-1 -> footnote 1 (marker) @[249,291)
+label base -> heading 1 @[333,347)
+flow notes: fn-1

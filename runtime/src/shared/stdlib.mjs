@@ -648,15 +648,10 @@ export function createStd(host) {
   // or list item (its lines are not contiguous)
   const fence = async (tag, args = {}, body = '', offset = 0, lines = null, end = offset, info = '') => {
     const entry = registry.get('fence', tag);
-    if (!entry) {
-      // the default: a code block whose text carries the body's span
-      // (plan P2-04; its lines inside a quote or list item are not
-      // contiguous, so the span covers them from the first to the last)
-      const cb = std.codeblock(tag, body, args);
-      const t = cb.children?.[0];
-      if (cb.kind === KIND.codeblock && t?.text !== undefined && !ob.spans.has(t.opId)) ob.span(t, offset, end);
-      return cb;
+    if (!entry && typeof args.sidecar === 'string' && args.sidecar) {
+      return sidecars(tag, args, body, offset, lines, end, args.sidecar);
     }
+    if (!entry) return codeOf(tag, args, body, offset, end);
     // invoke frame (P2-01): a handler's error is an error node and a
     // diagnostic at the body (ctx.error's localOffset into it)
     const mkErr = (msg, localOffset = 0) => {
@@ -670,7 +665,7 @@ export function createStd(host) {
       info,  // the opener's free words after the tag (plan P2-06)
       offset,
       lineOffsets: lines,
-      m: (...a) => std.m(...a),  // m.parse (WASM re-entry) is P2-13
+      m: std.m,  // m`…`, m.parse(src, {offset: ctx.offset + …}), m.parseMany (plan P2-13)
       error: mkErr,
       raw: (html, { width, height } = {}) =>
         ob.makeNode(KIND.raw, { html: String(html), w: width, h: height }, []),
@@ -682,6 +677,77 @@ export function createStd(host) {
     } catch (e) {
       return mkErr(e?.message || e);
     }
+  };
+
+  // the default fence: a code block whose text carries the body's span
+  // (plan P2-04; its lines inside a quote or list item are not contiguous,
+  // so the span covers them from the first to the last)
+  const codeOf = (tag, args, body, offset, end) => {
+    const cb = std.codeblock(tag, body, args);
+    const t = cb.children?.[0];
+    if (cb.kind === KIND.codeblock && t?.text !== undefined && !ob.spans.has(t.opId)) ob.span(t, offset, end);
+    return cb;
+  };
+  // Sidecars (plan P2-13; verbatim-design §5), the default fence's: the
+  // `sidecar` marker splits each body line — the code before it (trailing
+  // blanks dropped) is the code block's text, the note after it (leading
+  // blanks dropped) is markup at its exact source offset. The notes are one
+  // fragment parse; the code block's margin slot, group{slot: 'margin'},
+  // holds one seq per line (empty where the line has no note). The text
+  // keeps its body's span, mapped line by line to the source.
+  const sidecars = async (tag, args, body, offset, lines, end, marker) => {
+    const ls = body.split('\n');
+    const at = [];  // each line's source offset
+    for (let k = 0, o = offset; k < ls.length; k++) {
+      at.push(lines?.[k] ?? o);
+      o = at[k] + byteAt(ls[k], ls[k].length) + 1;
+    }
+    const code = [], map = [], notes = [], bases = [], spans = [], which = [];
+    let cooked = 0;
+    for (let k = 0; k < ls.length; k++) {
+      const line = ls[k];
+      const cut = line.indexOf(marker);
+      const c = cut < 0 ? line : line.slice(0, cut).replace(/[ \t]+$/, '');
+      map.push(cooked, at[k] - offset);
+      code.push(c);
+      cooked += byteAt(c, c.length) + 1;
+      if (cut < 0) continue;
+      let from = cut + marker.length;
+      while (from < line.length && (line[from] === ' ' || line[from] === '\t')) from++;
+      if (from >= line.length) continue;
+      notes.push(line.slice(from));
+      bases.push(at[k] + byteAt(line, from));
+      spans.push([at[k] + byteAt(line, from), at[k] + byteAt(line, line.length)]);
+      which.push(k);
+    }
+    if (!notes.length) return codeOf(tag, args, body, offset, end);
+    const vals = host.fragments(notes, { bases });
+    const rows = ls.map(() => null);
+    for (let i = 0; i < which.length; i++) rows[which[i]] = i;
+    const seqs = [];
+    for (let k = 0; k < ls.length; k++) {
+      const i = rows[k];
+      if (i === null) {
+        seqs.push(ob.makeNode(KIND.seq, {}, []));
+        continue;
+      }
+      // a note's value is its row (a plain seq), else in one
+      const v = await vals[i];
+      const n = isNode(v) && v.kind === KIND.seq && Object.keys(v.args).length === 0 && !ob.spans.has(v.opId)
+        ? v : ob.makeNode(KIND.seq, {}, toContent(v));
+      ob.span(n, spans[i][0], spans[i][1]);
+      seqs.push(n);
+    }
+    const margin = ob.makeNode(KIND.group, { slot: 'margin' }, seqs);
+    const text = code.join('\n');
+    const cb = std.codeblock(tag, text, args);
+    const t = cb.children?.[0];
+    if (cb.kind !== KIND.codeblock || t?.text === undefined) return cb;
+    ob.span(t, offset, end);
+    const total = byteAt(text, text.length);
+    if (total > map.at(-2) && map.at(-1) + (total - map.at(-2)) !== end - offset) map.push(total, end - offset);
+    ob.rawmap(t, map);
+    return ob.makeNode(KIND.codeblock, cb.args, [t, margin]);
   };
 
   // ---- the user-visible std ------------------------------------------------
@@ -705,16 +771,26 @@ export function createStd(host) {
     return one(x);
   };
   std.plain = plain;
-  // m`…` (interim until P2-13): the cooked strings as text and every
-  // interpolation through toContent — a content value stays content
+  // m`…` (plan P2-13): markup, parsed by the engine and run on the
+  // interpreter — the template's raw strings (a backslash is markup's
+  // escape), each interpolation a value in place (`#(__mK);` in the text,
+  // its hole out of band); its spans are the construct running it.
+  // m.parse(src, {scope, offset}): a string — its bare value heads (#x,
+  // #a.b) looked up on scope, then the std (D-L07: no eval); spans at
+  // `offset` when src is the source's own text. m.parseMany(srcs, {scope,
+  // offsets}): one value each, in one parse. A fragment that awaits (a fence
+  // in it) is a promise.
   std.m = (strings, ...vals) => {
-    const parts = [];
-    for (let i = 0; i < strings.length; i++) {
-      if (strings[i]) parts.push(ob.makeText(strings[i]));
-      if (i < vals.length) toContent(vals[i], parts);
-    }
-    return parts.length === 1 ? parts[0] : ob.makeNode(KIND.seq, {}, parts);
+    const raw = strings?.raw ?? strings;
+    if (!Array.isArray(raw)) throw new TypeError('m is a template tag (m`…`); m.parse(src) parses a string');
+    let text = raw[0];
+    for (let i = 1; i < raw.length; i++) text += `#(__m${i - 1});${raw[i]}`;
+    return host.fragments([text], { vals })[0];
   };
+  std.m.parse = (src, o = {}) =>
+    host.fragments([String(src)], { scope: o.scope, bases: o.offset !== undefined ? [o.offset] : undefined })[0];
+  std.m.parseMany = (srcs, o = {}) =>
+    host.fragments([...srcs].map(String), { scope: o.scope, bases: o.offsets });
 
   // ---- semantic declarations: canonical rows ----------------------------------
   // The JS sugar ends here: rows reach the engine in elements.json's form

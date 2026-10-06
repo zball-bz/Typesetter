@@ -11,7 +11,6 @@ add_library(tsr_core STATIC
   src/hyphen/hyphen.cc
   src/linepass/linepass.cc
   src/inline/inline.cc
-  src/inline/fragment.cc
   src/syntax/syntax.gen.cc
   src/syntax/lexer.cc
   src/syntax/exports.cc
@@ -30,7 +29,6 @@ add_library(tsr_core STATIC
   src/model/model.cc
   src/model/normalize.cc
   src/code/tokens.cc
-  src/code/sidecars.cc
   src/math/math.cc
   src/math/font.cc
   src/math/ir.cc
@@ -68,7 +66,7 @@ target_compile_options(tsr_core PUBLIC -fno-exceptions -fno-rtti -Wall -Wextra -
 target_compile_options(tsr_core PRIVATE -ffp-contract=off)
 # front end: every enumerator handled explicitly, no default: arms (plan P0-02)
 set_source_files_properties(
-  src/linepass/linepass.cc src/inline/inline.cc src/inline/fragment.cc
+  src/linepass/linepass.cc src/inline/inline.cc
   src/syntax/syntax.gen.cc src/syntax/lexer.cc src/syntax/exports.cc
   src/codegen/codegen.cc
   PROPERTIES COMPILE_OPTIONS "-Wswitch-enum;-Werror=switch-enum")
@@ -141,7 +139,7 @@ endif()
 #   CC=clang CXX=clang++ cmake -S engine -B engine/build-fuzz -DTSR_FUZZ=ON
 option(TSR_FUZZ "build libFuzzer targets (clang only)" OFF)
 if(TSR_FUZZ AND NOT EMSCRIPTEN)
-  foreach(t fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower)
+  foreach(t fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment)
     add_executable(${t} fuzz/${t}.cc)
     target_link_libraries(${t} tsr_core)
     target_compile_options(${t} PRIVATE -fsanitize=fuzzer,address,undefined

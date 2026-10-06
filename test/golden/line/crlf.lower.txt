@@ -8,6 +8,6 @@ block 1 content [17,70)
     CALL mathinline [56,64) src="a +\nb"
     TEXT " math." [65,70) raw=0:0,1:0
 block 2 content [74,101) async
-  FENCE async "js" body="let x = 1;\nx++" at=[81,96) lines=null [74,101)
+  FENCE async "js" body="let x = 1;\nx++" at=[81,96) lines=[81,93] [74,101)
 block 3 content [105,134)
   CALL comment [105,134) text=" a comment\nover lines "

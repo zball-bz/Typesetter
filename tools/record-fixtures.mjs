@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { execute } from '../runtime/src/worker/executor.mjs';
 import { OpBuf } from '../runtime/src/shared/opbuf.mjs';
 import { KIND } from '../runtime/src/shared/ops.gen.mjs';
+import { nativeParse } from './lib/native-parse.mjs';
 
 function opsFromTree(tree) {
   const ob = new OpBuf();
@@ -33,6 +34,7 @@ function opsFromTree(tree) {
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const tsrc = join(root, 'engine/build/tsrc');
+const parse = nativeParse(tsrc);
 const fixtures = join(root, 'test/fixtures');
 const check = process.argv.includes('--check');
 
@@ -53,7 +55,7 @@ for (const tsm of walk(fixtures)) {
   } else {
     const program = new Uint8Array(execFileSync(tsrc, ['--stage=program', tsm]));
     const js = () => execFileSync(tsrc, ['--stage=js', tsm], { encoding: 'utf8' });
-    ops = Buffer.from(await execute({ program, js }, { baseDir: dirname(tsm), rootDir: root }));
+    ops = Buffer.from(await execute({ program, js }, { baseDir: dirname(tsm), rootDir: root, parse }));
   }
   const opsPath = tsm.replace(/\.tsm$/, '.ops');
   const prev = existsSync(opsPath) ? readFileSync(opsPath) : null;

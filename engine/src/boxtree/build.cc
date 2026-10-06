@@ -34,30 +34,22 @@ constexpr BlockTraits kTraits[] = {
 };
 static_assert(sizeof kTraits / sizeof kTraits[0] == (size_t)TraitsId::N, "one row per TraitsId");
 
-// Roles are data (finding emitter/figure-role-string-dispatch): what a
-// group{role} means to the box tree, looked up by interned name.
+// What a group means to the box tree (finding emitter/figure-role-string-
+// dispatch): its element class's box trait (plan P2-05) — no role is read
+// by name; a code block's sidecar lines are its margin slot (plan P2-13).
 struct RoleInfo {
   TraitsId traits = TraitsId::Group;
   bool captions = false;  // its paragraphs are captions; an image with a side floats
-  bool sidecar = false;   // a code block's sidecar lines
 };
 // a figure-class group (its class's box trait, plan P2-05)
-constexpr RoleInfo kFigureRole{TraitsId::Figure, true, false};
-// the one role still read by name: a code block's sidecar lines (P2-13 makes
-// them a margin slot)
-constexpr struct {
-  const char* name;
-  RoleInfo info;
-} kRoles[] = {
-    {"sidecar-lines", {TraitsId::Group, false, true}},
-};
+constexpr RoleInfo kFigureRole{TraitsId::Figure, true};
 // image sides (figure-design.md §4): 1 left, 2 right
 constexpr const char* kSides[] = {"left", "right"};
 
 class Builder {
  public:
   Builder(Interner& s, StyleTable& st, const Config& c, const Registry& r) : strs(s), styles(st), cfg(c), reg(r) {
-    for (const auto& r : kRoles) roleRefs.push_back(s.find(r.name));
+    marginRef = s.find("margin");
     for (const char* side : kSides) sideRefs.push_back(s.find(side));
   }
 
@@ -91,16 +83,14 @@ class Builder {
   StyleTable& styles;
   const Config& cfg;
   const Registry& reg;
-  std::vector<StrRef> roleRefs, sideRefs;
+  std::vector<StrRef> sideRefs;
+  StrRef marginRef = 0;  // slot "margin": a code block's sidecar lines
   TopTree* t = nullptr;
   std::vector<LeafSource>* leaves = nullptr;
   int figDepth = 0;  // inside a captions role: paragraphs are captions
 
   const RoleInfo* roleOf(const ContentNode* n) const {
     if (n->cls && reg.cls(n->cls).box == ElementClass::Box::Figure) return &kFigureRole;
-    const StrRef r = attrStr(n, ArgK::role);
-    for (size_t i = 0; r && i < roleRefs.size(); i++)
-      if (roleRefs[i] == r) return &kRoles[i].info;
     return nullptr;
   }
 
@@ -204,11 +194,11 @@ class Builder {
         return;
       }
       case Kind::codeblock: {
-        // sidecar rows (verbatim-design §5): the sidecar group's lines are
+        // sidecar rows (verbatim-design §5): the lines of its margin slot
+        // (plan P2-13: group{slot: margin}, made by the default fence) are
         // the block's second track
         for (const ContentNode* k : n->kids) {
-          const RoleInfo* r = k->kind == Kind::group ? roleOf(k) : nullptr;
-          if (r && r->sidecar) {
+          if (k->kind == Kind::group && marginRef && attrStr(k, ArgK::slot) == marginRef) {
             s.sidecar = k;
             s.rows.assign(k->kids.begin(), k->kids.end());
           }

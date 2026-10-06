@@ -1,0 +1,24 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {m} = __rt.std;
+return (async () => {
+let who, hello;
+const __h = [
+() => { who = (
+ "world"
+); },
+() => { hello = (
+ m`Hello, *${who}*: _markup_ in a template.^[A note made by m.]`
+); },
+() => (hello),
+() => (hello),
+() => (m.parse("Parsed with #name and #strong[content] — but #f(1) stays text.", {scope: {name: "a scope value"}})),
+() => {
+ $.fence("loud", (body, ctx) => ctx.m.parse(body.trim().toUpperCase(), {offset: ctx.offset})) 
+},
+() => (m.parse("an unclosed %-- comment")),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

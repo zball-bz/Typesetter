@@ -118,8 +118,9 @@ byte (`styled marker=*`, `codeblock lang=… body=…`, `code-let`/`code-block`,
 slot prints today's constructor call (`__p`, `__hd`, `__l`, `__fence`,
 `__region`, …), so the program text is byte-identical. The paragraph that is
 exactly one display formula still prints `__mb` (the interim L1 rule; T2's
-normalisation retires it). `fragment.cc` (inline fragments: sidecars,
-`m.parse`) converts the same tree to content nodes.
+normalisation retires it). Inline fragments (sidecars,
+`m.parse`) lower through the same codegen since P2-13 (`codegenFragments`,
+lowering-design §5.1); `fragment.cc` is gone.
 
 ## 5. The inline lexer (as built from plan P1-06)
 

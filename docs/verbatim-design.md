@@ -1,9 +1,9 @@
 # Verbatim Grid Design (V)
 
-Status: **implemented (V1, V1.5, V3; 2026-08-26).** m.parse note: the
-engine half (parseInlineFragment) is live and serves sidecars; the JS
-fence-handler surface (`ctx.m.parse`) remains deferred — it needs an
-ops-slice return channel (document-model §4.1).
+Status: **implemented (V1, V1.5, V3; 2026-08-26).** Plan P2-13: sidecars
+are split by the default fence and their notes parsed as fragment programs
+(lowering-design §5.1), which also serve `m`, `m.parse` and the
+fence-handler `ctx.m.parse`.
 Generalizes the CH4 character grid ([code-design.md](code-design.md) §4)
 into a generic monospace/verbatim text layer. Orthogonal to highlighting:
 the grid consumes styled runs, whoever produced them.
@@ -89,19 +89,24 @@ ONE constraint: rows belonging to the same logical line are equal-height
   @refs, styled runs. A taller formula row raises that row; the code
   column shows white below — exactly the intended look.
 
-**Unlocks `m.parse`**: structured sidecars require re-entrant inline
-markup parsing of an extracted string. Precedent exists (mathinline
-parses runtime strings in-engine); a `parseInlineFragment(string)`
-adaptation of InlineParser serves the sidecar AND finally delivers the
-long-deferred fence-handler `m.parse` — one mechanism, two debts.
+**Unlocks `m.parse`**: structured sidecars require re-entrant markup
+parsing of an extracted string; the fragment program (plan P2-13) serves
+the sidecar AND the fence-handler `m.parse` — one mechanism, two debts.
 
 Mechanics: fence-declared marker (e.g. `///`), chosen by the author to be
 a comment or illegal in the source language (string-literal collisions
 are the author's risk, documented); character-level split BEFORE
-tokenization; each logical line's sidecar text parses as an inline
-fragment into a trailing `group{role:"sidecar"}` child of the line seq
-(existing kinds only). `sidebarCol` configures the code box's right
-edge. Copy contract (OPEN): the sidecar is display content — copy emits
+tokenization. As built (plan P2-13): the default fence splits — the code
+before the marker (trailing blanks dropped) is the code block's text,
+mapped line by line to the source; each note (leading blanks dropped) is
+a fragment at its exact source offset, all of a block's notes in one
+parse — into the code block's **margin slot**, `group{slot: "margin"}`,
+one seq per logical line (empty where a line has no note). Notes are full
+inline markup: math, links, references, footnotes (`^[…]` is a real
+footnote). The box tree finds the sidecar track by the slot (no role
+string); the semantic page renders the notes as `<aside
+class="tsr-margin">` after the code, one `<p data-line>` per annotated
+line. `sidebarCol` configures the code box's right edge. Copy contract (OPEN): the sidecar is display content — copy emits
 `/// ` + content text, not a byte-exact source round-trip. TeX
 precedent: listings escapechar, algorithmicx right-aligned \Comment.
 

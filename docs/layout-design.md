@@ -42,11 +42,12 @@ subtree `[i, end)`. A block holds
 - `floatSide` (an image with a side, F2);
 - a leaf's `unit`: its index in the top's emitted units.
 
-**Roles are data.** `group{role}` is looked up in the role table (`figure`:
-its paragraphs are captions and an image with a side floats with its caption
-rows; `sidecar-lines`: a code block's sidecar track) by interned name; no
-layer below compares a role or kind spelling (lint `role-string-compare`
-covers boxtree/, layout/, paint/, render/).
+**Roles are data.** A group's box trait comes from its element class (a
+`figure`-class group: its paragraphs are captions and an image with a side
+floats with its caption rows; plan P2-05); a code block's sidecar track is
+its margin slot, `group{slot: margin}` (plan P2-13). No layer below
+compares a role or kind spelling (lint `role-string-compare` covers
+boxtree/, layout/, paint/, render/).
 
 **Anchors** (finding `emitter/anchor-opt-in-per-kind`): an anchored block's
 label rides the first leaf of its subtree whatever its kind (a code block, a
