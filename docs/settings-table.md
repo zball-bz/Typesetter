@@ -62,6 +62,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `project.urls` | json | `{}` | HostOnly | Paint |  |
 | `render.idPrefix` | ident | `"tsr-"` | HostDefault | Paint |  |
 | `source.frontMatter` | bool | `false` | HostDefault | Compile |  |
+| `render.runWidths` | bool | `false` | HostDefault | Paint |  |
 | `render.math` | enum:boxes\|source | `"boxes"` | HostDefault | Paint |  |
 | `a11y.mathLabel` | bool | `true` | HostDefault | Paint |  |
 | `a11y.textLayer` | bool | `false` | HostDefault | Paint |  |

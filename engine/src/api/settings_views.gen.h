@@ -139,6 +139,7 @@ struct PaintSettings {
   const std::string& monoCjkFont;  // fonts.monoCjk
   const std::string& projectUrls;  // project.urls
   const std::string& idPrefix;  // render.idPrefix
+  const bool& runWidths;  // render.runWidths
   const u8& renderMath;  // render.math
   const bool& a11yMathLabel;  // a11y.mathLabel
   const bool& a11yTextLayer;  // a11y.textLayer

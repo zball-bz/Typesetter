@@ -50,6 +50,14 @@ static std::string hrefOf(const LinkTarget& l, const Interner& strs) {
   return l.anchor ? AnchorNamer::href(strs.get(l.ref)) : std::string(strs.get(l.ref));
 }
 
+// (plan P4-04, render.runWidths) a run's width as the engine set it
+static void runWidth(Tag& t, const DLRun& d) {
+  if (d.predictPx < 0) return;
+  char buf[32];
+  const int n = std::snprintf(buf, sizeof buf, "%.3f", d.predictPx);
+  t.attrSafe("data-w", std::string_view(buf, (size_t)n));
+}
+
 static void spanAttrs(Tag& t, Span sp, u32 base) {
   t.num("data-s", sp.start - base);
   t.num("data-e", sp.end - base);
@@ -271,6 +279,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
         Tag t(out, "span");
         t.attrSafe("class", "tsr-sp");
         t.attrSafe("data-syn", d.syn);
+        runWidth(t, d);
         t.px("width", d.widthPx);
         t.open();
         out += "</span>";
@@ -338,6 +347,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       }
       if (d.rigid) t.decl("word-spacing", "0");  // (plan P4-01) its spaces are its boxes'
       if (d.syn) t.attrSafe("data-syn", d.syn);
+      runWidth(t, d);
       t.open();
     }
     if (d.k == DLRun::K::Hyphen) {

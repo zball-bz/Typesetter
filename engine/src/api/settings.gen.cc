@@ -92,6 +92,7 @@ PaintSettings::PaintSettings(const Config& c)
       monoCjkFont(c.monoCjkFont),
       projectUrls(c.projectUrls),
       idPrefix(c.idPrefix),
+      runWidths(c.runWidths),
       renderMath(c.renderMath),
       a11yMathLabel(c.a11yMathLabel),
       a11yTextLayer(c.a11yTextLayer) {}
@@ -161,6 +162,7 @@ const Row kRows[] = {
     {"project.urls", stageBit(Stage::Paint), true},
     {"render.idPrefix", stageBit(Stage::Paint), false},
     {"source.frontMatter", stageBit(Stage::Compile), false},
+    {"render.runWidths", stageBit(Stage::Paint), false},
     {"render.math", stageBit(Stage::Paint), false},
     {"a11y.mathLabel", stageBit(Stage::Paint), false},
     {"a11y.textLayer", stageBit(Stage::Paint), false},
@@ -549,24 +551,29 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.frontMatter = v.b;
       return true;
     }
-    case 57: {  // render.math
+    case 57: {  // render.runWidths
+      if (v.t != JsonValue::T::Bool) return type(why, "true or false");
+      c.runWidths = v.b;
+      return true;
+    }
+    case 58: {  // render.math
       static const char* const kM[] = {"boxes", "source"};
       int m = member(v, kM, 2, why);
       if (m < 0) return false;
       c.renderMath = (u8)m;
       return true;
     }
-    case 58: {  // a11y.mathLabel
+    case 59: {  // a11y.mathLabel
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.a11yMathLabel = v.b;
       return true;
     }
-    case 59: {  // a11y.textLayer
+    case 60: {  // a11y.textLayer
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.a11yTextLayer = v.b;
       return true;
     }
-    case 60: {  // style.rules
+    case 61: {  // style.rules
       if (v.t != JsonValue::T::Arr) return type(why, "an array");
       c.styleRules.clear();
       if (!v.arr.empty()) jsonDump(c.styleRules, v);
@@ -768,7 +775,9 @@ std::string settingsJson(const Config& c) {
   jsonString(out, c.idPrefix);
   out += "}, \"source\": {\"frontMatter\": ";
   out += c.frontMatter ? "true" : "false";
-  out += "}, \"render\": {\"math\": ";
+  out += "}, \"render\": {\"runWidths\": ";
+  out += c.runWidths ? "true" : "false";
+  out += ", \"math\": ";
   { static const char* const kM[] = {"boxes", "source"}; jsonString(out, kM[(int)c.renderMath]); }
   out += "}, \"a11y\": {\"mathLabel\": ";
   out += c.a11yMathLabel ? "true" : "false";

@@ -23,8 +23,51 @@ bool hasWordSeparator(std::string_view t) {
 // changes; a punctuation glyph, a pinned box and an inline object are runs
 // of their own; spacer glue and the indent paint as spacers; blanks fold
 // into their glyph's squeeze and InterChar gaps into letter-spacing.
-void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vector<DLRun>& out) {
+void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vector<DLRun>& out, bool widths) {
   const std::vector<HItem>& v = h.items;
+  // (plan P4-04, render.runWidths) a run's width as the engine set it — what
+  // the line's justification assumed it renders at: its items' raw advances,
+  // the line's word-spacing on its spaces, its letter-spacing and margin, a
+  // glyph's own blank when it stands
+  auto predict = [&](const DLRun& d) {
+    double w = 0;
+    switch (d.k) {
+      case DLRun::K::Words:
+        for (u32 k = d.i; k < d.j; k++) {
+          const HItem& x = v[k];
+          const double raw = h.cold[x.cold].rawPx;
+          if (x.k == IK::Box || x.k == IK::Disc) w += raw;  // (a mid-line hyphen point: its junction kern)
+          else if (x.k == IK::Glue) w += raw + (d.rigid ? 0.0 : l.wordDeltaPx * (double)x.x);
+        }
+        return w;
+      case DLRun::K::Chars: {
+        u32 boxes = 0;
+        for (u32 k = d.i; k < d.j; k++)
+          if (v[k].k == IK::Box) {
+            w += h.cold[v[k].cold].rawPx;
+            boxes++;
+          }
+        if (d.fit == DLRun::Fit::LetterSpacing) w += d.letterPx * boxes + (d.marginRight ? d.marginRightPx : 0.0);
+        return w;
+      }
+      case DLRun::K::Glyph:
+      case DLRun::K::Hyphen:
+        return -1.0;  // (set where the run is made)
+      case DLRun::K::Spacer:
+        return d.widthPx;
+      case DLRun::K::Math:
+      case DLRun::K::Image:
+      case DLRun::K::Raw:
+      case DLRun::K::CodeText:
+      case DLRun::K::CodeCont:
+        return -1.0;
+    }
+    return -1.0;
+  };
+  auto emit = [&](DLRun& d) {
+    if (widths && d.predictPx < 0) d.predictPx = predict(d);
+    out.push_back(d);
+  };
   auto nextOnLine = [&](u32 i) -> i64 {
     for (u32 k = i + 1; k < l.itemEnd; k++)
       if (v[k].k != IK::Penalty) return k;
@@ -106,7 +149,8 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
           d.text = sp.str;
           break;
       }
-      out.push_back(d);
+      if (widths) d.predictPx = suToPx(pt.w);
+      emit(d);
       i++;
       continue;
     }
@@ -115,7 +159,8 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
       if (i == l.itemEnd - 1 && l.endsWithHyphen) {
         DLRun d = run(it, DLRun::K::Hyphen);
         d.syn = "hyphen";
-        out.push_back(d);
+        if (widths) d.predictPx = h.cold[h.side[h.discs[it.aux].pre].cold].rawPx;
+        emit(d);
       }
       i++;
       continue;
@@ -130,7 +175,7 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
       d.widthPx = h.cold[it.cold].rawPx;
       if (fill) d.widthPx += l.fillPx;
       else if (spacer) d.widthPx += l.wordDeltaPx * (double)it.x;
-      out.push_back(d);
+      emit(d);
       i++;
       continue;
     }
@@ -147,7 +192,11 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
       DLRun d = run(it, DLRun::K::Glyph);
       d.cls = halfPresent ? nullptr : (open ? "tsr-sqL" : "tsr-sqR");
       d.text = h.specs[it.aux].str;
-      out.push_back(d);
+      if (widths) {
+        const ColdRec& c = h.cold[it.cold];
+        d.predictPx = c.rawPx + (halfPresent ? (open ? c.blankLpx : c.blankRpx) : 0.0);
+      }
+      emit(d);
       i++;
       continue;
     }
@@ -162,7 +211,8 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
       d.marginRight = l.cjkDeltaPx != 0 && isGap(nextOnLine(i));
       d.marginRightPx = l.cjkDeltaPx;
       d.text = h.specs[it.aux].str;
-      out.push_back(d);
+      if (widths) d.predictPx = d.widthPx + (d.marginRight ? d.marginRightPx : 0.0);
+      emit(d);
       i++;
       continue;
     }
@@ -187,7 +237,7 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
         d.marginRight = !isGap(last);
         d.marginRightPx = -l.cjkDeltaPx;
       }
-      out.push_back(d);
+      emit(d);
       i = j;
       continue;
     }
@@ -202,7 +252,7 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
     if (r.rc == RealizeClass::Rigid && l.wordDeltaPx != 0)
       for (u32 k = i; k < j && !d.rigid; k++)
         d.rigid = v[k].k == IK::Box && hasWordSeparator(strs.get(h.specs[v[k].aux].str));
-    out.push_back(d);
+    emit(d);
     i = j;
   }
 }
@@ -397,7 +447,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.markerRole = l.markerRole;
         n.markerStyle = l.markerStyle;
         n.h = l.cellIdx >= 0 ? &u.cells[(size_t)l.cellIdx].hl : &u.hl;
-        lineRuns(l, *n.h, strs, out.runs);
+        lineRuns(l, *n.h, strs, out.runs, cfg.runWidths);
         // (plan P3-27, D-R04) its formulas' accessible names
         if (cfg.a11yMathLabel)
           for (size_t k = n.runBegin; k < out.runs.size(); k++)

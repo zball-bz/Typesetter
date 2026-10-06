@@ -182,6 +182,8 @@ inline constexpr std::string_view kHtmlAttrs[] = {
     // accessible name (its source); (plan P3-29) a formula's later rows,
     // hidden (its first is named)
     "role", "aria-label", "aria-hidden",
+    // (plan P4-04, render.runWidths) a run's width as the engine set it
+    "data-w",
 };
 static_assert(std::size(kHtmlAttrs) <= 32);
 constexpr int htmlAttrIndex(std::string_view name) {

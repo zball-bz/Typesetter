@@ -480,6 +480,14 @@ export const SETTINGS = Object.freeze({
       "Compile"
     ]
   },
+  "render.runWidths": {
+    "dom": "bool",
+    "def": false,
+    "prec": "HostDefault",
+    "affects": [
+      "Paint"
+    ]
+  },
   "render.math": {
     "dom": "enum:boxes|source",
     "def": "boxes",
@@ -610,6 +618,7 @@ export const SETTINGS_DEFAULTS = Object.freeze({
   },
   "render": {
     "idPrefix": "tsr-",
+    "runWidths": false,
     "math": "boxes"
   },
   "source": {

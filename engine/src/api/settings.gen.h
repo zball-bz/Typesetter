@@ -66,6 +66,7 @@ struct Config {
   std::string projectUrls = "";  // project.urls
   std::string idPrefix = "tsr-";  // render.idPrefix
   bool frontMatter = false;  // source.frontMatter
+  bool runWidths = false;  // render.runWidths
   u8 renderMath = kRenderMathBoxes;  // render.math
   bool a11yMathLabel = true;  // a11y.mathLabel
   bool a11yTextLayer = false;  // a11y.textLayer
