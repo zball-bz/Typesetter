@@ -1,28 +1,28 @@
 doc @[0,167) [base]
   para @[0,75) [base]
-    text @[0,1) [base] str="A "
+    text @[0,1) [base] str="A " raw=0:0,2:1
     styled @[2,31) [BOLD]
-      text @[10,30) [BOLD] str="content over a join"
-    text @[32,35) [base] str=" and "
+      text @[10,30) [BOLD] str="content over a join" raw=0:0,8:9
+    text @[32,35) [base] str=" and " raw=0:0,1:0,5:3
     link @[36,53) [base] url="u"
-      text @[37,49) [base] str="a link text"
-    text @[54,57) [base] str=" and "
+      text @[37,49) [base] str="a link text" raw=0:0,7:8
+    text @[54,57) [base] str=" and " raw=0:0,1:0,5:3
     code @[58,70) [base]
       text @[58,70) [base] str="code span"
-    text @[71,75) [base] str=" end."
+    text @[71,75) [base] str=" end." raw=0:0,1:0
   quote @[79,125) [base]
     para @[81,125) [base]
-      text @[81,87) [base] str="quoted "
+      text @[81,87) [base] str="quoted " raw=0:0,7:6
       mathinline @[88,98) [base] src="a +\nb"
-      text @[99,107) [base] str=" math and "
+      text @[99,107) [base] str=" math and " raw=0:0,1:0,10:8
       styled @[108,119) [EM]
-        text @[112,118) [EM] str="x y"
-      text @[120,125) [base] str=" done."
+        text @[112,118) [EM] str="x y" raw=0:0,2:5
+      text @[120,125) [base] str=" done." raw=0:0,1:0
   list @[129,167) [base] ordered=false start=1
     item @[129,167) [base]
       para @[131,167) [base]
-        text @[131,135) [base] str="item "
+        text @[131,135) [base] str="item " raw=0:0,5:4
         mathinline @[136,146) [base] src="c +\nd"
-        text @[147,150) [base] str=" and "
+        text @[147,150) [base] str=" and " raw=0:0,1:0,5:3
         text @[151,162) [base] str="3"
-        text @[163,167) [base] str=" end."
+        text @[163,167) [base] str=" end." raw=0:0,1:0

@@ -1,9 +1,9 @@
-lower v1 abi 7f64f38d docEnd 137 holes 0 module none
+lower v1 abi a42c4357 docEnd 137 holes 0 module none
 block 0 content [0,114)
   CALL list [0,114) ordered=false start=1
     CALL item [0,74)
       CALL para [2,74)
-        TEXT "first item with a tab after the marker continued on a tab-indented line" [2,74)
+        TEXT "first item with a tab after the marker continued on a tab-indented line" [2,74) raw=0:0,39:40
     CALL item [76,114)
       CALL para [78,82)
         TEXT "item" [78,82)

@@ -50,7 +50,8 @@ Rows are data; behaviour is a closed set implemented in code. The row kinds:
   interned string) `| src` (a source span); the dump format is a template:
   `{field}` prints a value, `"…{field}…"` an escaped string, `{?field …}` its
   body only when the field is set, `{field?yes:no}` picks by a boolean, and
-  `$str` is the node's own string.
+  `$str` is the node's own string. A trailing `?` on a field's type
+  (`rawmap:str?`, plan P2-04) makes the JSON AST omit it when empty.
 - `NODE(kind, payload, dump)` — the same for the non-call kinds.
 
 ## 2. The CallAST
@@ -129,6 +130,14 @@ container prefixes (`> `, list indentation) between the lines never reach the
 lexer — and every scan runs over this view (or a prefix of it), so no scan can
 leave its leaf. When the lines are adjacent in the source the view is the raw
 text itself; offsets map back to raw offsets for every span.
+
+A Text node records its **cooked→raw map** (plan P2-04; payload `TextP{rawmap}`,
+`"c:r,…"` with raw offsets relative to the span start) whenever its cooked
+string is not positionally its raw slice: an escape (`\*`: one cooked byte for
+two raw), a run of blanks collapsed to one space, a line join across a
+container prefix or indentation. Breakpoints are (cooked offset, raw offset)
+with identity between them; the transport to text content nodes is
+document-model §4.3.
 
 Dispatch is the INLINE rows: `inlineOpener(t, i)` (generated) names the rule
 whose literal opener starts at `i`, longest first, and `kInlineOpenerByte`

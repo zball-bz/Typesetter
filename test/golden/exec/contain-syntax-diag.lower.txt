@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 62 holes 2 module 3e32988a0f03e65e
+lower v1 abi a42c4357 docEnd 62 holes 2 module 939db54d3a28c73f
 piece 0 hole 0 js [111,138)
 piece 1 hole 1 js [140,150)
 piece 2 verbatim block 1 js [179,188)
@@ -14,6 +14,6 @@ block 3 stmt [32,48) user framed holes 0..1
   STMT 0
 block 4 content [50,61) user framed holes 1..2
   CALL para [50,61)
-    TEXT "After: " [50,56)
+    TEXT "After: " [50,56) raw=0:0,7:6
     HOLE 1 [57,60)
     TEXT "." [60,61)

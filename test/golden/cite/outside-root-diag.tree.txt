@@ -1,6 +1,6 @@
 doc @[0,114) [base]
   para @[0,74) [base]
-    text @[0,70) [base] str="A bibliography file outside the document root is refused (plan P0-11): "
+    text @[0,70) [base] str="A bibliography file outside the document root is refused (plan P0-11): " raw=0:0,71:70
     ref @[71,73) [base] target="k"
       text @[71,73) [base] str="??"
     text @[73,74) [base] str="."

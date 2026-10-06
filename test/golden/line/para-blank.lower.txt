@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 59 holes 0 module none
+lower v1 abi a42c4357 docEnd 59 holes 0 module none
 block 0 content [0,39)
   CALL para [0,39)
     TEXT "First paragraph spans two source lines." [0,39)

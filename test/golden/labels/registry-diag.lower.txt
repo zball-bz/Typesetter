@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 352 holes 4 module 734d77c4a0758550
+lower v1 abi a42c4357 docEnd 352 holes 4 module 5ba02a87edf1b761
 piece 0 hole 0 js [103,128)
 piece 1 hole 1 js [130,154)
 piece 2 hole 2 js [156,180)
@@ -32,12 +32,12 @@ block 6 content [240,311) user framed async holes 3..4
         TEXT "A figure with a reserved label shape." [265,302)
 block 7 content [313,351)
   CALL para [313,351)
-    TEXT "See " [313,316)
+    TEXT "See " [313,316) raw=0:0,4:3
     CALL ref [317,324) target="side-1"
-    TEXT ", " [324,325)
+    TEXT ", " [324,325) raw=0:0,2:1
     CALL ref [326,332) target="fig-x"
-    TEXT ", " [332,333)
+    TEXT ", " [332,333) raw=0:0,2:1
     CALL ref [334,339) target="eq-1"
-    TEXT " and " [340,343)
+    TEXT " and " [340,343) raw=0:0,1:0,5:3
     CALL ref [344,350) target="sec-a"
     TEXT "." [350,351)

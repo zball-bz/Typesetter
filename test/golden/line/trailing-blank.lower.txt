@@ -1,35 +1,35 @@
-lower v1 abi 7f64f38d docEnd 170 holes 3 module e71378dc185bf745
+lower v1 abi a42c4357 docEnd 170 holes 3 module cbd91cce1a374ad2
 piece 0 hole 0 js [134,163)
 piece 1 hole 1 js [165,190)
 piece 2 hole 2 js [192,207)
 block 0 content [0,77) user framed holes 0..1
   CALL para [0,77)
-    TEXT "A " [0,1)
+    TEXT "A " [0,1) raw=0:0,2:1
     HOLE 0 [2,33)
-      TEXT "content over a join" [10,32)
-    TEXT " and " [34,37)
+      TEXT "content over a join" [10,32) raw=0:0,8:11
+    TEXT " and " [34,37) raw=0:0,1:0,5:3
     CALL link [38,55) url="u"
-      TEXT "a link text" [39,51)
-    TEXT " and " [56,59)
+      TEXT "a link text" [39,51) raw=0:0,7:8
+    TEXT " and " [56,59) raw=0:0,1:0,5:3
     CALL code [60,72) text="code span"
-    TEXT " end." [73,77)
+    TEXT " end." [73,77) raw=0:0,1:0
 block 1 content [79,126) user framed holes 1..2
   CALL quote [79,126)
     FRAME [81,126) holes 1..2
       CALL para [81,126)
-        TEXT "quoted " [81,87)
+        TEXT "quoted " [81,87) raw=0:0,7:6
         CALL mathinline [88,99) src="a +\nb"
-        TEXT " math and " [100,108)
+        TEXT " math and " [100,108) raw=0:0,1:0,10:8
         HOLE 1 [109,120)
-          TEXT "x y" [113,119)
-        TEXT " done." [121,126)
+          TEXT "x y" [113,119) raw=0:0,2:5
+        TEXT " done." [121,126) raw=0:0,1:0
 block 2 content [128,169) user framed holes 2..3
   CALL list [128,169) ordered=false start=1
     CALL item [128,169)
       FRAME [130,169) holes 2..3
         CALL para [130,169)
-          TEXT "item " [130,134)
+          TEXT "item " [130,134) raw=0:0,5:4
           CALL mathinline [135,147) src="c +\nd"
-          TEXT " and " [148,151)
+          TEXT " and " [148,151) raw=0:0,1:0,5:3
           HOLE 2 [152,164)
-          TEXT " end." [165,169)
+          TEXT " end." [165,169) raw=0:0,1:0

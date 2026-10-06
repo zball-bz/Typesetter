@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 571 holes 6 module a0cffbfc715363e2
+lower v1 abi a42c4357 docEnd 571 holes 6 module 84b5f15af3fb388f
 piece 0 hole 0 js [129,203)
 piece 1 hole 1 js [205,234)
 piece 2 hole 2 js [236,287)
@@ -9,7 +9,7 @@ block 0 stmt [0,67) user framed holes 0..1
   STMT 0
 block 1 content [69,190)
   CALL para [69,190)
-    TEXT "塊級作用域——這一段整體改用文楷與繁體語言標記，破折號與省略號……照常走定義寬。" [69,190)
+    TEXT "塊級作用域——這一段整體改用文楷與繁體語言標記，破折號與省略號……照常走定義寬。" [69,190) raw=0:0,99:100
 block 2 stmt [192,214) user framed holes 1..2
   STMT 1
 block 3 content [216,429) user framed holes 2..5
@@ -17,16 +17,16 @@ block 3 content [216,429) user framed holes 2..5
     TEXT "回到默认样式的段落，行内有" [216,255)
     HOLE 2 [255,295)
       TEXT "着色强调" [282,294)
-    TEXT "、 " [295,298)
+    TEXT "、 " [295,298) raw=0:0,4:3
     HOLE 3 [299,351)
       TEXT "楷体片段" [338,350)
     TEXT "和" [351,354)
     HOLE 4 [354,388)
       TEXT "放大片段" [375,387)
-    TEXT "，连同 " [388,398)
+    TEXT "，连同 " [388,398) raw=0:0,3:4,10:10
     CALL strong [399,407)
       TEXT "粗体" [400,406)
-    TEXT " 一起参与断行。" [408,429)
+    TEXT " 一起参与断行。" [408,429) raw=0:0,1:0
 block 4 content [431,570) user framed async holes 5..6
   REGION async "aside" args=hole 5 [431,570)
     ROWS

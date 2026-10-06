@@ -1,11 +1,11 @@
-lower v1 abi 7f64f38d docEnd 189 holes 2 module c87ec794e00c1b1d
+lower v1 abi a42c4357 docEnd 189 holes 2 module c9db0156ef15b294
 piece 0 hole 0 js [136,189)
 piece 1 hole 1 js [191,244)
 block 0 content [0,26)
   CALL para [0,26)
-    TEXT "Cited: " [0,6)
+    TEXT "Cited: " [0,6) raw=0:0,7:6
     CALL ref [7,12) target="kp81"
-    TEXT " and " [13,16)
+    TEXT " and " [13,16) raw=0:0,1:0,5:3
     CALL ref [17,25) target="liang83"
     TEXT "." [25,26)
 block 1 content [28,74) user framed holes 0..1

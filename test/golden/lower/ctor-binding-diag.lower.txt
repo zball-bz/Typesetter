@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 420 holes 7 module 8959ebbe54e4780b
+lower v1 abi a42c4357 docEnd 420 holes 7 module 56a0493127e49eda
 piece 0 hole 0 js [192,228)
 piece 1 hole 1 js [230,292)
 piece 2 hole 2 js [294,362)
@@ -21,13 +21,13 @@ block 3 content [168,239) user framed holes 3..4
     HOLE 3 [168,239)
 block 4 content [241,330) user framed holes 4..6
   CALL para [241,330)
-    TEXT "Raw " [241,244)
+    TEXT "Raw " [241,244) raw=0:0,4:3
     HOLE 4 [245,285)
-    TEXT " and a node " [286,296)
+    TEXT " and a node " [286,296) raw=0:0,1:0,12:10
     HOLE 5 [297,325)
-    TEXT " here" [326,330)
+    TEXT " here" [326,330) raw=0:0,1:0
 block 5 content [332,419) user framed holes 6..7
   CALL para [332,419)
-    TEXT "An image with an unknown option " [332,363)
+    TEXT "An image with an unknown option " [332,363) raw=0:0,32:31
     HOLE 6 [364,405)
-    TEXT " in a sentence" [406,419)
+    TEXT " in a sentence" [406,419) raw=0:0,1:0

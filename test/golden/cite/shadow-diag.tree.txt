@@ -2,8 +2,8 @@ doc @[0,0) [base]
   heading @[0,31) [base] level=1 label="kp81"
     text @[2,31) [base] str="A heading labelled like a key"
   para @[40,111) [base]
-    text @[40,53) [base] str="The reference "
+    text @[40,53) [base] str="The reference " raw=0:0,14:13
     ref @[54,59) [base] target="kp81" url="#tsr-kp81"
       text @[54,59) [base] str="§1"
-    text @[60,111) [base] str=" resolves to the heading, and the clash is reported."
+    text @[60,111) [base] str=" resolves to the heading, and the clash is reported." raw=0:0,1:0
   group @[0,0) [base] role="bibliography"

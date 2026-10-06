@@ -8,10 +8,10 @@ doc @[38,436) [base]
         para @[64,76) [base]
           text @[64,76) [base] str="second point"
     para @[78,138) [base]
-      text @[78,116) [base] str="A paragraph after a blank line, with a "
+      text @[78,116) [base] str="A paragraph after a blank line, with a " raw=0:0,39:38
       styled @[117,132) [BOLD]
         text @[125,131) [BOLD] str="nested"
-      text @[133,138) [base] str=" call."
+      text @[133,138) [base] str=" call." raw=0:0,1:0
   quote @[142,296) [base]
     list @[156,262) [base] ordered=false start=1
       item @[156,212) [base]
@@ -26,7 +26,7 @@ doc @[38,436) [base]
     text @[298,316) [base] str="A note with blocks"
     ref @[316,367) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[316,367) [SUPx0.70] str="1"
-    text @[368,391) [base] str=" continues the sentence."
+    text @[368,391) [base] str=" continues the sentence." raw=0:0,1:0
   quote @[393,436) [base]
     list @[400,435) [base] ordered=false start=1
       item @[400,435) [base]

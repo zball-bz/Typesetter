@@ -2,17 +2,17 @@ doc @[0,481) [base]
   heading @[0,19) [base] level=1 label="h-1"
     text @[2,19) [base] str="Typesetting Notes"
   heading @[21,48) [base] level=2 label="h-1.1"
-    text @[24,37) [base] str="Structure and "
+    text @[24,37) [base] str="Structure and " raw=0:0,14:13
     styled @[38,48) [BOLD]
       text @[39,47) [BOLD] str="emphasis"
   para @[50,170) [base]
-    text @[50,82) [base] str="An introductory paragraph with a "
+    text @[50,82) [base] str="An introductory paragraph with a " raw=0:0,33:32
     link @[83,117) [base] url="https://example.org"
       text @[84,95) [base] str="useful link"
-    text @[118,126) [base] str=" and some "
+    text @[118,126) [base] str=" and some " raw=0:0,1:0,10:8
     code @[127,140) [base]
       text @[127,140) [base] str="inline code"
-    text @[141,147) [base] str=" in it."
+    text @[141,147) [base] str=" in it." raw=0:0,1:0
     comment @[148,170) [base]
       text @[148,170) [base] str=" invisible note "
   list @[172,296) [base] ordered=false start=1
@@ -21,7 +21,7 @@ doc @[0,481) [base]
         text @[174,228) [base] str="First bullet item with enough words to wrap onto lines"
     item @[229,296) [base]
       para @[231,274) [base]
-        text @[231,274) [base] str="Second item continued on an indented line"
+        text @[231,274) [base] str="Second item continued on an indented line" raw=0:0,12:14
       list @[277,296) [base] ordered=false start=1
         item @[277,296) [base]
           para @[279,296) [base]
@@ -35,7 +35,7 @@ doc @[0,481) [base]
         text @[321,334) [base] str="And continues"
   quote @[336,430) [base]
     para @[338,430) [base]
-      text @[338,430) [base] str="A quoted paragraph, indented by the engine rather than the browser, wrapping across lines."
+      text @[338,430) [base] str="A quoted paragraph, indented by the engine rather than the browser, wrapping across lines." raw=0:0,59:61
   rule @[432,435) [base]
   codeblock @[437,481) [base] lang="js"
     text @[443,477) [base] str="const x = compute(1, 2);\nreturn x;"

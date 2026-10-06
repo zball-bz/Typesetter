@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 274 holes 7 module 13d51cf534d9c299
+lower v1 abi a42c4357 docEnd 274 holes 7 module 7a34fd8fee1a4f56
 piece 0 hole 0 js [143,244)
 piece 1 hole 1 js [246,270)
 piece 2 hole 2 js [272,301)
@@ -12,26 +12,26 @@ block 1 stmt [91,104) user framed holes 1..2
   STMT 1
 block 2 content [106,181) user framed holes 2..5
   CALL para [106,181)
-    TEXT "Empty: " [106,112)
+    TEXT "Empty: " [106,112) raw=0:0,7:6
     HOLE 2 [113,121)
       TEXT "c1" [118,120)
-    TEXT ". Trailing comma: " [121,138)
+    TEXT ". Trailing comma: " [121,138) raw=0:0,18:17
     HOLE 3 [139,151)
       TEXT "c2" [148,150)
-    TEXT ". Comment: " [151,161)
+    TEXT ". Comment: " [151,161) raw=0:0,11:10
     HOLE 4 [162,180)
       TEXT "c3" [177,179)
     TEXT "." [180,181)
 block 3 content [183,211) user framed holes 5..6
   CALL para [183,211)
-    TEXT "Two bodies: " [183,194)
+    TEXT "Two bodies: " [183,194) raw=0:0,12:11
     HOLE 5 [195,210)
       TEXT "d1" [203,205)
       TEXT "d2" [207,209)
     TEXT "." [210,211)
 block 4 content [213,265) user framed holes 6..7
   CALL para [213,265)
-    TEXT "An argument that throws first: " [213,243)
+    TEXT "An argument that throws first: " [213,243) raw=0:0,31:30
     HOLE 6 [244,264)
       TEXT "never built" [252,263)
     TEXT "." [264,265)

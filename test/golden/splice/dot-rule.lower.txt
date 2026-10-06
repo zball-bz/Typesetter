@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 64 holes 3 module 792ca7b676fb8b9c
+lower v1 abi a42c4357 docEnd 64 holes 3 module 6c12cadc85769797
 piece 0 hole 0 js [110,132)
 piece 1 hole 1 js [134,143)
 piece 2 hole 2 js [145,159)
@@ -6,8 +6,8 @@ block 0 stmt [0,11) user framed holes 0..1
   STMT 0
 block 1 content [12,63) user framed holes 1..3
   CALL para [12,63)
-    TEXT "The value is " [12,24)
+    TEXT "The value is " [12,24) raw=0:0,13:12
     HOLE 1 [25,27)
-    TEXT ". Next sentence follows " [27,50)
+    TEXT ". Next sentence follows " [27,50) raw=0:0,24:23
     HOLE 2 [51,58)
-    TEXT " too." [59,63)
+    TEXT " too." [59,63) raw=0:0,1:0

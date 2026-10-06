@@ -19,16 +19,16 @@ doc @[0,351) [base]
       text @[240,311) [BOLD] str="图 3："
       text @[265,302) [base] str="A figure with a reserved label shape."
   para @[313,351) [base]
-    text @[313,316) [base] str="See "
+    text @[313,316) [base] str="See " raw=0:0,4:3
     ref @[317,324) [base] target="side-1" url="#tsr-side-1"
       text @[317,324) [base] str="side-1"
-    text @[324,325) [base] str=", "
+    text @[324,325) [base] str=", " raw=0:0,2:1
     ref @[326,332) [base] target="fig-x" url="#tsr-fig-x"
       text @[326,332) [base] str="图 1"
-    text @[332,333) [base] str=", "
+    text @[332,333) [base] str=", " raw=0:0,2:1
     ref @[334,339) [base] target="eq-1" url="#tsr-eq-1"
       text @[334,339) [base] str="式 (1)"
-    text @[340,343) [base] str=" and "
+    text @[340,343) [base] str=" and " raw=0:0,1:0,5:3
     ref @[344,350) [base] target="sec-a" url="#tsr-sec-a"
       text @[344,350) [base] str="§1"
     text @[350,351) [base] str="."

@@ -1,17 +1,17 @@
-lower v1 abi 7f64f38d docEnd 158 holes 0 module none
+lower v1 abi a42c4357 docEnd 158 holes 0 module none
 block 0 content [0,7)
   CALL heading [0,7) level=1 label="dup"
     TEXT "First" [2,7)
 block 1 content [15,96)
   CALL para [15,96)
-    TEXT "A reference to " [15,29)
+    TEXT "A reference to " [15,29) raw=0:0,15:14
     CALL ref [30,38) target="missing"
-    TEXT " stays unresolved and a second label reuses the first one." [39,96)
+    TEXT " stays unresolved and a second label reuses the first one." [39,96) raw=0:0,1:0
 block 2 content [98,106)
   CALL heading [98,106) level=1 label="dup"
     TEXT "Second" [100,106)
 block 3 content [114,157)
   CALL para [114,157)
-    TEXT "Back to " [114,121)
+    TEXT "Back to " [114,121) raw=0:0,8:7
     CALL ref [122,126) target="dup"
-    TEXT " resolves to the first heading." [127,157)
+    TEXT " resolves to the first heading." [127,157) raw=0:0,1:0

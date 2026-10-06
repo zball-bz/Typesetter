@@ -1,7 +1,7 @@
 doc @[12,63) [base]
   para @[12,63) [base]
-    text @[12,24) [base] str="The value is "
+    text @[12,24) [base] str="The value is " raw=0:0,13:12
     text @[25,27) [base] str="42"
-    text @[27,50) [base] str=". Next sentence follows "
+    text @[27,50) [base] str=". Next sentence follows " raw=0:0,24:23
     seq @[51,58) [base]
-    text @[59,63) [base] str=" too."
+    text @[59,63) [base] str=" too." raw=0:0,1:0

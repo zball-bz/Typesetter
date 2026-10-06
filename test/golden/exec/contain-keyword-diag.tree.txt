@@ -2,8 +2,8 @@ doc @[0,50) [base]
   para @[0,7) [base]
     text @[0,7) [base] str="Before."
   para @[9,42) [base]
-    text @[9,16) [base] str="Status: "
+    text @[9,16) [base] str="Status: " raw=0:0,8:7
     error @[17,20) [base] message="#if is not supported yet (keyword forms: plan P2-12)" code="keyword-unsupported"
-    text @[21,42) [base] str=" (ok) [yes] else [no]."
+    text @[21,42) [base] str=" (ok) [yes] else [no]." raw=0:0,1:0
   para @[44,50) [base]
     text @[44,50) [base] str="After."

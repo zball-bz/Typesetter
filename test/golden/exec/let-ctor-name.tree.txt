@@ -7,6 +7,6 @@ doc @[15,83) [base]
       para @[46,57) [base]
         text @[46,57) [base] str="second item"
   para @[59,83) [base]
-    text @[59,76) [base] str="The user binding: "
+    text @[59,76) [base] str="The user binding: " raw=0:0,18:17
     text @[77,82) [base] str="1"
     text @[82,83) [base] str="."

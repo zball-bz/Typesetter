@@ -143,6 +143,16 @@ export class OpBuf {
     if (target.text !== undefined) alias.text = target.text;
     return nodeValue(alias);
   }
+  // a text's cooked→raw map (plan P2-04, RAWMAP since 8): pairs (cooked
+  // offset, raw offset relative to its span start), identity between them
+  rawmap(text, pairs) {
+    this.opCount++;
+    this.uses(SINCE.op[OP.RAWMAP]);
+    this.ops.push(OP.RAWMAP);
+    this.vint(text.opId);
+    this.vint(pairs.length / 2);
+    for (const x of pairs) this.vint(x);
+  }
   // an execution diagnostic (plan P2-01, DIAG since 7): severity 0 info,
   // 1 warning, 2 error; a stable code; the source span it is about
   diag(sev, code, message, s = 0, e = s) {

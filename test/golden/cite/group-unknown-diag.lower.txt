@@ -1,10 +1,10 @@
-lower v1 abi 7f64f38d docEnd 144 holes 1 module b9e45dfd52cfeb60
+lower v1 abi a42c4357 docEnd 144 holes 1 module 00e02979961c9b47
 piece 0 hole 0 js [136,189)
 block 0 content [0,95)
   CALL para [0,95)
-    TEXT "A grouped citation with one unknown key " [0,39)
+    TEXT "A grouped citation with one unknown key " [0,39) raw=0:0,40:39
     CALL ref [40,67) target="kp81, nosuchkey, liang83"
-    TEXT " still links the known keys." [68,95)
+    TEXT " still links the known keys." [68,95) raw=0:0,1:0
 block 1 content [97,143) user framed holes 0..1
   CALL para [97,143)
     HOLE 0 [97,143)

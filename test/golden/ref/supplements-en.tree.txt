@@ -2,16 +2,16 @@ doc @[0,308) [base]
   heading @[0,14) [base] level=1 label="intro"
     text @[2,14) [base] str="Introduction"
   para @[24,147) [base]
-    text @[24,113) [base] str="An English document takes English supplements from the doc.lang setting (plan P1-03): see "
+    text @[24,113) [base] str="An English document takes English supplements from the doc.lang setting (plan P1-03): see " raw=0:0,90:89
     ref @[114,120) [base] target="intro" url="#tsr-intro"
       text @[114,120) [base] str="§1"
-    text @[120,121) [base] str=", "
+    text @[120,121) [base] str=", " raw=0:0,2:1
     ref @[122,128) [base] target="fig-a" url="#tsr-fig-a"
       text @[122,128) [base] str="Figure 1"
-    text @[128,129) [base] str=", "
+    text @[128,129) [base] str=", " raw=0:0,2:1
     ref @[130,136) [base] target="tab-a" url="#tsr-tab-a"
       text @[130,136) [base] str="Table 1"
-    text @[137,140) [base] str=" and "
+    text @[137,140) [base] str=" and " raw=0:0,1:0,5:3
     ref @[141,146) [base] target="eq-a" url="#tsr-eq-a"
       text @[141,146) [base] str="Eq. (1)"
     text @[146,147) [base] str="."

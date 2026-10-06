@@ -1,9 +1,9 @@
-lower v1 abi 7f64f38d docEnd 64 holes 0 module none
+lower v1 abi a42c4357 docEnd 64 holes 0 module none
 block 0 content [0,63)
   CALL para [0,63)
-    TEXT "A link with a dollar: " [0,21)
+    TEXT "A link with a dollar: " [0,21) raw=0:0,22:21
     CALL link [22,35) url="u"
       TEXT "price $5" [23,31)
-    TEXT " and a formula " [36,49)
+    TEXT " and a formula " [36,49) raw=0:0,1:0,15:13
     CALL mathinline [50,53) src="x"
-    TEXT " after it." [54,63)
+    TEXT " after it." [54,63) raw=0:0,1:0

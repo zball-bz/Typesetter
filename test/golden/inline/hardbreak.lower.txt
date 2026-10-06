@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 224 holes 0 module none
+lower v1 abi a42c4357 docEnd 224 holes 0 module none
 block 0 content [0,165)
   CALL para [0,165)
     TEXT "Raw ops fixture (hardbreak.tree.json): this line ends here\\ and the next one starts after a hard break, then the paragraph goes on and wraps at the measure as usual." [0,165)

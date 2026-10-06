@@ -22,7 +22,7 @@ doc @[0,420) [base]
         text @[367,379) [base] str="English word"
         ref @[379,401) [SUPx0.70] target="fn-5" label="fnref-5" url="#tsr-fn-5"
           text @[379,401) [SUPx0.70] str="5"
-        text @[402,420) [base] str=" before the marker."
+        text @[402,420) [base] str=" before the marker." raw=0:0,1:0
   group @[0,420) [base] role="notes"
     rule @[0,420) [base]
     list @[0,420) [base] ordered=true

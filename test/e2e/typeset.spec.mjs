@@ -753,6 +753,40 @@ test('update: session re-typeset patches only the edited paragraph', async ({ pa
   expect(report.failures).toEqual([]);
 });
 
+// plan P2-04 (design T2 S7): an edit between a #let and the paragraph that
+// splices its value re-patches only the edited paragraph — the value's
+// occurrence carries the splice's span (containment keeps it inside the
+// splicing paragraph), so that paragraph's source range only shifts
+test('update: an edit between a #let and its splice patches only the edited paragraph', async ({ page }) => {
+  const mk = (edit) => [
+    '#let term = em("occurrence spans")',
+    '',
+    `The paragraph between the binding and its use${edit}, edited here.`,
+    '',
+    'This paragraph splices #term and keeps its identity across the edit.',
+    '',
+    'A last paragraph that only shifts.',
+  ].join('\n');
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 300, progressive: false }),
+    { source: mk('') },
+  );
+  await page.evaluate(() => {
+    document.querySelectorAll('#out .tsr-para').forEach((el, i) => { el.__tag = 'keep' + i; });
+  });
+  const r = await page.evaluate(
+    async ({ source }) => await window.__tsr.update(source),
+    { source: mk(' (now longer, so it breaks differently)') },
+  );
+  expect(r.patched).toBe(true);
+  expect(r.diags).toBe('');
+  const tags = await page.evaluate(() =>
+    [...document.querySelectorAll('#out .tsr-para')].map((el) => el.__tag ?? null));
+  expect(tags).toEqual([null, 'keep1', 'keep2']);
+});
+
 test('update: failing edit keeps the last good document', async ({ page }) => {
   await page.goto('/test/e2e/harness.html');
   await page.waitForFunction(() => window.__tsrReady);

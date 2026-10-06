@@ -12,6 +12,12 @@ struct ContentNode {
   u16 cls = 0;     // SemInfo: its element class (elements/registry.h), set at
                    // instantiate; 0 = none. Not an argument; dumps omit it.
   StrRef str = 0;  // text: interned string
+  // text: its cooked→raw map (plan P2-04), nrawmap/2 pairs (cooked offset,
+  // raw offset − span.start), identity between breakpoints; none when the
+  // text is its own source slice, or not at its own source (an occurrence
+  // alias, a contained span)
+  const u32* rawmap = nullptr;
+  u32 nrawmap = 0;
   std::vector<ArgVal> args;         // Str args re-pointed to doc interner
   std::vector<ContentNode*> kids;
 };

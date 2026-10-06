@@ -55,6 +55,8 @@ struct RawNode {
   Span span;                 // set by SPAN ops; default empty (synthetic)
   u32 alias = kNoAlias;      // AT (plan P2-04): an occurrence of node `alias`,
                              // instantiated with this node's span at its root
+  std::vector<u32> rawmap;   // RAWMAP (plan P2-04): a text's cooked→raw
+                             // breakpoints, (cooked, raw − span start) pairs
   StrRef str = 0;            // MAKE_TEXT payload (raw-buffer string index)
   bool isText = false;
   std::vector<ArgVal> args;

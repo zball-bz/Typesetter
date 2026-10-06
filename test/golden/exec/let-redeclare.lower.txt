@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 48 holes 4 module 1d1f9463206f80a4
+lower v1 abi a42c4357 docEnd 48 holes 4 module 508d0942a8b2f6c1
 piece 0 hole 0 js [110,131)
 piece 1 hole 1 js [133,142)
 piece 2 hole 2 js [144,165)
@@ -7,13 +7,13 @@ block 0 stmt [0,10) user framed holes 0..1
   STMT 0
 block 1 content [12,22) user framed holes 1..2
   CALL para [12,22)
-    TEXT "First: " [12,18)
+    TEXT "First: " [12,18) raw=0:0,7:6
     HOLE 1 [19,21)
     TEXT "." [21,22)
 block 2 stmt [24,34) user framed holes 2..3
   STMT 2
 block 3 content [36,47) user framed holes 3..4
   CALL para [36,47)
-    TEXT "Second: " [36,43)
+    TEXT "Second: " [36,43) raw=0:0,8:7
     HOLE 3 [44,46)
     TEXT "." [46,47)

@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 164 holes 1 module 2bc55fc449a53a13
+lower v1 abi a42c4357 docEnd 164 holes 1 module 817f7c8449161d9a
 piece 0 hole 0 js [103,125)
 piece 1 verbatim block 0 js [154,168)
 piece 2 verbatim block 2 js [193,238)
@@ -12,4 +12,4 @@ block 2 verbatim [73,121) user
 block 3 content [123,163) user framed holes 0..1
   CALL para [123,163)
     HOLE 0 [123,138)
-    TEXT " after a declaring block." [139,163)
+    TEXT " after a declaring block." [139,163) raw=0:0,1:0

@@ -1,18 +1,18 @@
 doc @[106,273) [base]
   para @[106,181) [base]
-    text @[106,112) [base] str="Empty: "
+    text @[106,112) [base] str="Empty: " raw=0:0,7:6
     seq @[113,121) [base]
       text @[118,120) [base] str="c1"
-    text @[121,138) [base] str=". Trailing comma: "
+    text @[121,138) [base] str=". Trailing comma: " raw=0:0,18:17
     seq @[139,151) [base]
       text @[139,151) [base] str="[a]"
       text @[148,150) [base] str="c2"
-    text @[151,161) [base] str=". Comment: "
+    text @[151,161) [base] str=". Comment: " raw=0:0,11:10
     seq @[162,180) [base]
       text @[177,179) [base] str="c3"
     text @[180,181) [base] str="."
   para @[183,211) [base]
-    text @[183,194) [base] str="Two bodies: "
+    text @[183,194) [base] str="Two bodies: " raw=0:0,12:11
     seq @[195,210) [base]
       text @[195,210) [base] str="[b]"
       text @[203,205) [base] str="d1"

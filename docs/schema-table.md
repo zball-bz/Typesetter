@@ -46,3 +46,4 @@ Derived constructors (`stdlib.ctors`): `strong({options}, …)`, `em({options}, 
 | SPAN | 6 |
 | DIAG | 7 |
 | AT | 8 |
+| RAWMAP | 9 |

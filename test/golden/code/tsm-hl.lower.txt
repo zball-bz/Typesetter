@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 303 holes 0 module none
+lower v1 abi a42c4357 docEnd 303 holes 0 module none
 block 0 content [0,58)
   CALL para [0,58)
     TEXT "内置 tsm 文法：Typesetter 标记语言自举高亮。" [0,58)

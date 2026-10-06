@@ -357,6 +357,30 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
         r.nodes.push_back(std::move(n));
         break;
       }
+      case Op::RAWMAP: {
+        // a text's cooked→raw map (plan P2-04): cooked offsets increasing
+        // inside the text, raw offsets non-decreasing; a bad map is dropped
+        // with a warning (the text keeps its span)
+        u64 id = rd.varint();
+        u64 n = rd.varint();
+        if (rd.fail || id >= r.nodes.size() || n > (u64)(rd.end - rd.p)) { bad("RAWMAP bad header"); return; }
+        std::vector<u32> m;
+        bool ok = r.nodes[id].isText && r.nodes[id].alias == kNoAlias;
+        u64 pc = 0, pr = 0;
+        for (u64 k = 0; k < n; k++) {
+          u64 c = rd.varint(), raw = rd.varint();
+          if (rd.fail) { bad("RAWMAP truncated"); return; }
+          if (ok && ((k && c <= pc) || raw < pr || c > r.strings[r.nodes[id].str].size() || raw > 0xFFFFFFFFu))
+            ok = false;
+          m.push_back((u32)c);
+          m.push_back((u32)raw);
+          pc = c;
+          pr = raw;
+        }
+        if (ok) r.nodes[id].rawmap = std::move(m);
+        else diags.add(Sev::Warning, "ops-arg", r.nodes[id].span, "text: invalid cooked-to-raw map");
+        break;
+      }
       case Op::DIAG: {
         // an executor diagnostic (plan P2-01, D-I04): severity, stable code,
         // message, source span — the one channel for execution warnings and
@@ -401,6 +425,8 @@ std::string dumpOps(const RawOps& r) {
       out += " \"";
       appendEscaped(out, r.strings[n.str]);
       out += "\"";
+      for (size_t k = 0; k < n.rawmap.size(); k += 2)
+        appendf(out, "%s%u:%u", k ? "," : " raw=", n.rawmap[k], n.rawmap[k + 1]);
     } else {
       appendf(out, " %s", kindName(n.kind));
       for (const ArgVal& a : n.args) {

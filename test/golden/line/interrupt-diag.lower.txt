@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 551 holes 3 module bd17f40776d51d9a
+lower v1 abi a42c4357 docEnd 551 holes 3 module 2431fe3d9e2c1695
 piece 0 hole 0 js [110,131)
 piece 1 hole 1 js [133,142)
 piece 2 hole 2 js [144,153)
@@ -8,7 +8,7 @@ block 0 content [0,103)
     TEXT "A paragraph mentions the year 1984. Then it goes on: an N. line with N other than 1 does not interrupt." [0,103)
 block 1 content [105,181)
   CALL para [105,181)
-    TEXT "A paragraph with a dash line - continues: an empty item does not interrupt." [105,181)
+    TEXT "A paragraph with a dash line - continues: an empty item does not interrupt." [105,181) raw=0:0,31:32
 block 2 content [183,213)
   CALL para [183,213)
     TEXT "A paragraph followed by a list" [183,213)
@@ -24,7 +24,7 @@ block 4 content [229,321)
   CALL para [229,321)
     TEXT "Comment lines inside a paragraph are invisible" [229,275)
     CALL comment [276,292) text=" a remark "
-    TEXT " and the paragraph continues." [293,321)
+    TEXT " and the paragraph continues." [293,321) raw=0:0,1:0
 block 5 content [323,346)
   CALL comment [323,346) text=" a block comment "
 block 6 content [347,377)
@@ -34,14 +34,14 @@ block 7 stmt [378,389) user framed holes 0..1
   STMT 0
 block 8 content [390,420) user framed holes 1..2
   CALL para [390,420)
-    TEXT "and after a let statement: " [390,416)
+    TEXT "and after a let statement: " [390,416) raw=0:0,27:26
     HOLE 1 [417,419)
     TEXT "." [419,420)
 block 9 verbatim [421,435) user
   VERBATIM 0
 block 10 content [436,458) user framed holes 2..3
   CALL para [436,458)
-    TEXT "and after a block: " [436,454)
+    TEXT "and after a block: " [436,454) raw=0:0,19:18
     HOLE 2 [455,457)
     TEXT "." [457,458)
 block 11 content [460,481)

@@ -53,7 +53,12 @@ const sugars = rows('SUGAR').map(([id, form, payload, dump]) => ({ id, form, pay
 const nodes = rows('NODE').map(([id, payload, dump]) => ({ id, payload, dump }));
 
 const CT = { u8: 'u8', bool: 'bool', i32: 'i32', u32: 'u32', str: 'StrRef', src: 'Span' };
-const fieldsOf = (p) => (p ? p.split(/\s+/).filter(Boolean).map((f) => f.split(':')) : []);
+// payload fields "name:type"; a trailing '?' (name:str?) marks a field the
+// JSON AST omits when it is empty (plan P2-04: Text's rawmap)
+const fieldsOf = (p) => (p ? p.split(/\s+/).filter(Boolean).map((f) => {
+  const [n, t] = f.split(':');
+  return t.endsWith('?') ? [n, t.slice(0, -1), true] : [n, t, false];
+}) : []);
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
 const structName = (id) => `${cap(id)}P`;
 
@@ -216,8 +221,9 @@ cc += `  }\n}\n\n`;
 // ---- the JSON AST (tsrc --stage=astjson, tsr_parse_json; plan P1-09): one
 // node's fields, from the same payload rows
 const KIND_NAMES = ['Doc', 'Text', 'Comment', 'Call', 'Splice', 'Stmt', 'Error'];
-const jsonField = (name, type, v) => {
+const jsonField = (name, type, v, optional) => {
   const key = `out += ${JSON.stringify(`,"${name}":`)};\n`;
+  if (optional && type === 'str') return `  if (${v}) {\n  ${key}  jsonString(out, strs.get(${v}));\n  }\n`;
   if (type === 'str') return `  ${key}  jsonString(out, strs.get(${v}));\n`;
   if (type === 'src') return `  ${key}  jsonString(out, src.slice(${v}));\n`;
   if (type === 'bool') return `  ${key}  out += ${v} ? "true" : "false";\n`;
@@ -230,7 +236,7 @@ const jsonCase = (label, row) => {
   if (!f.length) return `case ${label}:\n  break;\n`;
   const sn = payloadOf.get(row.id);
   return `case ${label}: {\n  const ${sn}& p = side<${sn}>(n);\n` +
-    f.map(([name, t]) => jsonField(name, t, 'p.' + name)).join('') + `  break;\n}\n`;
+    f.map(([name, t, opt]) => jsonField(name, t, 'p.' + name, opt)).join('') + `  break;\n}\n`;
 };
 cc += `// one node's JSON members (no braces, no kids): kind, sugar, span, str and
 // its payload fields
@@ -269,7 +275,7 @@ const json = JSON.stringify({
   block: blocks.map(([id, shape, starter, interrupts, own, slot]) => ({ id, shape, starter, interrupts, own, slot })),
   keywords: keywords.map(([k, ...p]) => ({ keyword: k, params: p })),
   reservedHeads: { unsupported, reserved },
-  tokenTags, sugar: sugars.map((s) => ({ id: s.id, form: s.form, payload: fieldsOf(s.payload) })),
+  tokenTags, sugar: sugars.map((s) => ({ id: s.id, form: s.form, payload: fieldsOf(s.payload).map(([n, t]) => [n, t]) })),
 }, null, 1) + '\n';
 const mjs = `// ${HDR}\nexport const SYNTAX_VERSION = ${version};\n` +
   `export const TOKEN_TAGS = Object.freeze(${JSON.stringify(tokenTags)});\n`;

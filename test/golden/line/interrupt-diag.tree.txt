@@ -2,7 +2,7 @@ doc @[0,550) [base]
   para @[0,103) [base]
     text @[0,103) [base] str="A paragraph mentions the year 1984. Then it goes on: an N. line with N other than 1 does not interrupt."
   para @[105,181) [base]
-    text @[105,181) [base] str="A paragraph with a dash line - continues: an empty item does not interrupt."
+    text @[105,181) [base] str="A paragraph with a dash line - continues: an empty item does not interrupt." raw=0:0,31:32
   para @[183,213) [base]
     text @[183,213) [base] str="A paragraph followed by a list"
   list @[214,227) [base] ordered=true start=1
@@ -16,17 +16,17 @@ doc @[0,550) [base]
     text @[229,275) [base] str="Comment lines inside a paragraph are invisible"
     comment @[276,292) [base]
       text @[276,292) [base] str=" a remark "
-    text @[293,321) [base] str=" and the paragraph continues."
+    text @[293,321) [base] str=" and the paragraph continues." raw=0:0,1:0
   comment @[323,346) [base]
     text @[323,346) [base] str=" a block comment "
   para @[347,377) [base]
     text @[347,377) [base] str="Text after the closer is kept."
   para @[390,420) [base]
-    text @[390,416) [base] str="and after a let statement: "
+    text @[390,416) [base] str="and after a let statement: " raw=0:0,27:26
     text @[417,419) [base] str="2"
     text @[419,420) [base] str="."
   para @[436,458) [base]
-    text @[436,454) [base] str="and after a block: "
+    text @[436,454) [base] str="and after a block: " raw=0:0,19:18
     text @[455,457) [base] str="3"
     text @[457,458) [base] str="."
   list @[460,481) [base] ordered=true start=1

@@ -1,11 +1,11 @@
 doc @[0,80) [base]
   para @[0,80) [base]
-    text @[0,5) [base] str="Plain "
+    text @[0,5) [base] str="Plain " raw=0:0,6:5
     styled @[6,18) [BOLD]
       text @[7,17) [BOLD] str="bold words"
-    text @[19,22) [base] str=" and "
+    text @[19,22) [base] str=" and " raw=0:0,1:0,5:3
     styled @[23,31) [EM]
       text @[24,30) [EM] str="italic"
-    text @[32,65) [base] str=" text with *escaped* markers, un"
+    text @[32,65) [base] str=" text with *escaped* markers, un" raw=0:0,1:0,12:12,20:21
     text @[65,66) [base] str="*"
     text @[66,80) [base] str="closed at end."

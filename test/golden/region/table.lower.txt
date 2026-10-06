@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 169 holes 1 module 22763bc7360b25c0
+lower v1 abi a42c4357 docEnd 169 holes 1 module 1e1eb51cf9e41dd9
 piece 0 hole 0 js [103,148)
 block 0 content [0,6)
   CALL heading [0,6) level=1 label="sec"
@@ -20,8 +20,8 @@ block 1 content [14,136) user framed async holes 0..1
         TEXT "12.00" [123,128)
 block 2 content [138,168)
   CALL para [138,168)
-    TEXT "Totals appear in " [138,154)
+    TEXT "Totals appear in " [138,154) raw=0:0,17:16
     CALL ref [155,159) target="tbl"
-    TEXT " of " [160,162)
+    TEXT " of " [160,162) raw=0:0,1:0,4:2
     CALL ref [163,167) target="sec"
     TEXT "." [167,168)

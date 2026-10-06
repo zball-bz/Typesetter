@@ -1,10 +1,10 @@
-lower v1 abi 7f64f38d docEnd 138 holes 2 module 5cace9968fcefd51
+lower v1 abi a42c4357 docEnd 138 holes 2 module e2464f8fb0520192
 piece 0 hole 0 js [135,149)
 piece 1 hole 1 js [151,203)
 block 0 content [0,137) user framed holes 0..2
   CALL para [0,137)
-    TEXT "A rule " [0,6)
+    TEXT "A rule " [0,6) raw=0:0,7:6
     HOLE 0 [7,14)
-    TEXT " in a sentence, and an image whose source is not allowed " [15,70)
+    TEXT " in a sentence, and an image whose source is not allowed " [15,70) raw=0:0,1:0,57:55
     HOLE 1 [71,116)
-    TEXT " stays a placeholder." [117,137)
+    TEXT " stays a placeholder." [117,137) raw=0:0,1:0

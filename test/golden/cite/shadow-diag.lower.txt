@@ -1,13 +1,13 @@
-lower v1 abi 7f64f38d docEnd 160 holes 1 module b9e45dfd52cfeb60
+lower v1 abi a42c4357 docEnd 160 holes 1 module 00e02979961c9b47
 piece 0 hole 0 js [136,189)
 block 0 content [0,31)
   CALL heading [0,31) level=1 label="kp81"
     TEXT "A heading labelled like a key" [2,31)
 block 1 content [40,111)
   CALL para [40,111)
-    TEXT "The reference " [40,53)
+    TEXT "The reference " [40,53) raw=0:0,14:13
     CALL ref [54,59) target="kp81"
-    TEXT " resolves to the heading, and the clash is reported." [60,111)
+    TEXT " resolves to the heading, and the clash is reported." [60,111) raw=0:0,1:0
 block 2 content [113,159) user framed holes 0..1
   CALL para [113,159)
     HOLE 0 [113,159)

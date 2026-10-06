@@ -19,7 +19,8 @@
     "STYLE_POP_TO": {"id": 5, "since": 6},
     "SPAN": {"id": 6, "since": 6},
     "DIAG": {"id": 7, "since": 7},
-    "AT": {"id": 8, "since": 8}
+    "AT": {"id": 8, "since": 8},
+    "RAWMAP": {"id": 9, "since": 8}
   },
   "keys": {
     "label": 0, "level": 1, "ordered": 2, "start": 3, "lang": 4, "body": 5, "role": 6, "cols": 7,

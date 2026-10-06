@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 330 holes 1 module 7a5e45448e6f8e19
+lower v1 abi a42c4357 docEnd 330 holes 1 module c293167296dc64d2
 piece 0 hole 0 js [103,183)
 block 0 content [0,80)
   CALL heading [0,80) level=1 label=null
@@ -10,6 +10,6 @@ block 1 content [82,280) user framed async holes 0..1
         TEXT "A caption that is long enough to wrap onto a second line at the narrow measure, so copy must join its lines." [163,271)
 block 2 content [282,329)
   CALL para [282,329)
-    TEXT "Body text after the figure refers to " [282,318)
+    TEXT "Body text after the figure refers to " [282,318) raw=0:0,37:36
     CALL ref [319,328) target="fig-wide"
     TEXT "." [328,329)

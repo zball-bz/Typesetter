@@ -124,7 +124,22 @@ ops      op stream (all ints varint/LEB128 unless noted)
                                      P2-04: an occurrence alias — the value
                                      `id` spliced again, instantiated with
                                      this span at its root)
+0x09 RAWMAP      id n (cooked raw)*                 (since 8, plan P2-04:
+                                     a text's cooked→raw map, raw relative
+                                     to its span start)
 ```
+
+**Cooked→raw maps** (plan P2-04; design T1 TextRaw; the prerequisite of
+per-atom source spans, P4-03). A text's cooked string differs from its raw
+source where the parser decoded an escape (`\*`), collapsed a run of blanks
+or joined two lines (container prefixes and indentation removed). The parser
+records breakpoints (cooked offset, raw offset) with identity between them;
+the LowerProgram's TEXT carries them, the executor writes RAWMAP, and the
+instantiated text node keeps them (`ContentNode::rawmap`) — unless it is not
+at its own source (an occurrence alias, a contained span). A text without a
+map is positionally its own slice (a join cooked to a space keeps offsets).
+The tree dump prints `raw=c:r,…`; a unit check walks every fixture's text
+and verifies each cooked byte against its mapped source byte.
 
 As built (plan P2-04; design T2 S7): **occurrence spans**. Every construct
 the interpreter runs — a markup call, a splice, a fence, a region — gives its

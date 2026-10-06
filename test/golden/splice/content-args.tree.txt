@@ -1,25 +1,25 @@
 doc @[47,206) [base]
   para @[47,135) [base]
-    text @[47,60) [base] str="Content args: "
+    text @[47,60) [base] str="Content args: " raw=0:0,14:13
     styled @[61,90) [EM]
       seq @[61,90) [EM]
-        text @[65,75) [EM] str="emphasized "
+        text @[65,75) [EM] str="emphasized " raw=0:0,11:10
         styled @[76,84) [EM+BOLD]
           text @[77,83) [EM+BOLD] str="nested"
-        text @[85,89) [EM] str=" text"
-    text @[91,94) [base] str=" and "
+        text @[85,89) [EM] str=" text" raw=0:0,1:0
+    text @[91,94) [base] str=" and " raw=0:0,1:0,5:3
     seq @[95,129) [base]
       text @[95,129) [base] str="tip: "
       seq @[95,129) [base]
-        text @[110,115) [base] str="boxed "
+        text @[110,115) [base] str="boxed " raw=0:0,6:5
         styled @[116,122) [BOLD]
           text @[117,121) [BOLD] str="bold"
-        text @[123,128) [base] str=" words"
-    text @[130,135) [base] str=" here."
+        text @[123,128) [base] str=" words" raw=0:0,1:0
+    text @[130,135) [base] str=" here." raw=0:0,1:0
   para @[137,206) [base]
-    text @[137,162) [base] str="Deep JS brackets stay JS: "
+    text @[137,162) [base] str="Deep JS brackets stay JS: " raw=0:0,26:25
     text @[163,178) [base] str="a"
-    text @[179,182) [base] str=" and "
+    text @[179,182) [base] str=" and " raw=0:0,1:0,5:3
     seq @[183,205) [base]
       text @[183,205) [base] str="n: "
       text @[196,204) [base] str="trailing"

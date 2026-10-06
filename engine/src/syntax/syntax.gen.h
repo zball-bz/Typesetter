@@ -58,6 +58,9 @@ struct StmtP {
 struct ErrorP {
   StrRef message = 0;
 };
+struct TextP {
+  StrRef rawmap = 0;
+};
 
 // inline rules (INLINE rows): precedence and body mode per rule
 enum class InlineRule : u8 { none, code, math, comment, splice, strong, em, link, note, ref, refs };

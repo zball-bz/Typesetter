@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 437 holes 5 module 6c9e8ed105e411d3
+lower v1 abi a42c4357 docEnd 437 holes 5 module 9039a095f21d7746
 piece 0 hole 0 js [150,197)
 piece 1 hole 1 js [199,229)
 piece 2 hole 2 js [231,260)
@@ -18,10 +18,10 @@ block 1 content [38,140) user framed holes 1..3
             CALL para [64,76)
               TEXT "second point" [64,76)
         CALL para [78,138)
-          TEXT "A paragraph after a blank line, with a " [78,116)
+          TEXT "A paragraph after a blank line, with a " [78,116) raw=0:0,39:38
           HOLE 2 [117,132)
             TEXT "nested" [125,131)
-          TEXT " call." [133,138)
+          TEXT " call." [133,138) raw=0:0,1:0
 block 2 content [142,296) user framed holes 3..4
   CALL para [142,296)
     HOLE 3 [142,296)
@@ -45,7 +45,7 @@ block 3 content [298,391)
         CALL item [349,365)
           CALL para [351,365)
             TEXT "a listed point" [351,365)
-    TEXT " continues the sentence." [368,391)
+    TEXT " continues the sentence." [368,391) raw=0:0,1:0
 block 4 content [393,436) user framed holes 4..5
   CALL para [393,436)
     HOLE 4 [393,436)

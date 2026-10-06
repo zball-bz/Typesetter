@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 439 holes 10 module cfe104a640e5a918
+lower v1 abi a42c4357 docEnd 439 holes 10 module db9c6d75a7d41c25
 piece 0 hole 0 js [146,175)
 piece 1 hole 1 js [177,227)
 piece 2 hole 2 js [229,240)
@@ -16,26 +16,26 @@ block 1 stmt [19,58) user framed holes 1..2
   STMT 1
 block 2 content [60,176) user framed holes 2..6
   CALL para [60,176)
-    TEXT "Value splice: " [60,73)
+    TEXT "Value splice: " [60,73) raw=0:0,14:13
     HOLE 2 [74,78)
-    TEXT " and a call chain: " [79,96)
+    TEXT " and a call chain: " [79,96) raw=0:0,1:0,19:17
     HOLE 3 [97,110)
-    TEXT ". Member access: " [110,126)
+    TEXT ". Member access: " [110,126) raw=0:0,17:16
     HOLE 4 [127,138)
-    TEXT " characters; expression: " [139,162)
+    TEXT " characters; expression: " [139,162) raw=0:0,1:0,25:23
     HOLE 5 [163,175)
     TEXT "." [175,176)
 block 3 verbatim [177,201) user
   VERBATIM 0
 block 4 content [201,438) user framed holes 6..10
   CALL para [201,438)
-    TEXT "Statement splice binds in document scope: " [201,242)
+    TEXT "Statement splice binds in document scope: " [201,242) raw=0:0,42:41
     HOLE 6 [243,250)
-    TEXT ". A splice ends at punctuation: " [250,281)
+    TEXT ". A splice ends at punctuation: " [250,281) raw=0:0,32:31
     HOLE 7 [282,286)
-    TEXT ". Semicolon terminator: " [286,309)
+    TEXT ". Semicolon terminator: " [286,309) raw=0:0,24:23
     HOLE 8 [310,315)
-    TEXT "[not an argument]. Content argument desugars to a trailing argument: " [315,383)
+    TEXT "[not an argument]. Content argument desugars to a trailing argument: " [315,383) raw=0:0,69:68
     HOLE 9 [384,402)
       TEXT "bold text" [392,401)
-    TEXT ". Literal hash: #who stays literal." [402,438)
+    TEXT ". Literal hash: #who stays literal." [402,438) raw=0:0,17:18

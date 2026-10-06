@@ -1,9 +1,9 @@
 doc @[0,0) [base]
   para @[0,106) [base]
-    text @[0,26) [base] str="A key that exists nowhere, "
+    text @[0,26) [base] str="A key that exists nowhere, " raw=0:0,27:26
     ref @[27,34) [base] target="nosuch"
       text @[27,34) [base] str="??"
-    text @[34,80) [base] str=", stays unresolved with a warning; a real one, "
+    text @[34,80) [base] str=", stays unresolved with a warning; a real one, " raw=0:0,47:46
     ref @[81,89) [base] target="liang83"
       text @[81,89) [base] str="["
       link @[81,89) [base] url="#tsr-bib-liang83"

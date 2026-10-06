@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 421 holes 0 module none
+lower v1 abi a42c4357 docEnd 421 holes 0 module none
 block 0 content [0,276)
   CALL para [0,276)
     TEXT "中文正文里的断言" [0,24)
@@ -24,4 +24,4 @@ block 1 content [278,420)
         TEXT "English word" [367,379)
         CALL note [379,401)
           TEXT "Latin-context note." [381,400)
-        TEXT " before the marker." [402,420)
+        TEXT " before the marker." [402,420) raw=0:0,1:0

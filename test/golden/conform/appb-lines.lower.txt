@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 371 holes 0 module none
+lower v1 abi a42c4357 docEnd 371 holes 0 module none
 block 0 content [0,11)
   CALL heading [0,11) level=1 label=null
     TEXT "Level one" [2,11)
@@ -15,7 +15,7 @@ block 3 content [42,132)
         TEXT "unordered item" [44,58)
     CALL item [59,132)
       CALL para [61,116)
-        TEXT "second unordered item continued at the content column" [61,116)
+        TEXT "second unordered item continued at the content column" [61,116) raw=0:0,22:24
       CALL list [119,132) ordered=false start=1
         CALL item [119,132)
           CALL para [121,132)
@@ -53,4 +53,4 @@ block 10 content [317,320)
   CALL rule [317,320)
 block 11 content [322,370)
   CALL para [322,370)
-    TEXT "= not a heading, - not a list, > not a quote." [322,370)
+    TEXT "= not a heading, - not a list, > not a quote." [322,370) raw=0:0,1:2,18:20,32:35

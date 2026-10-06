@@ -2,22 +2,22 @@ doc @[0,0) [base]
   heading @[0,20) [base] level=1 label="h-1"
     text @[2,20) [base] str="Citations in notes"
   para @[22,171) [base]
-    text @[22,38) [base] str="Liang's patterns "
+    text @[22,38) [base] str="Liang's patterns " raw=0:0,17:16
     ref @[39,47) [base] target="liang83"
       text @[39,47) [base] str="["
       link @[39,47) [base] url="#tsr-bib-liang83"
         text @[39,47) [base] str="1"
       text @[39,47) [base] str="]"
-    text @[48,71) [base] str=" come first in the text."
+    text @[48,71) [base] str=" come first in the text." raw=0:0,1:0
     ref @[71,126) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[71,126) [SUPx0.70] str="1"
-    text @[127,142) [base] str=" Knuth and Plass "
+    text @[127,142) [base] str=" Knuth and Plass " raw=0:0,1:0,17:15
     ref @[143,148) [base] target="kp81"
       text @[143,148) [base] str="["
       link @[143,148) [base] url="#tsr-bib-kp81"
         text @[143,148) [base] str="3"
       text @[143,148) [base] str="]"
-    text @[149,171) [base] str=" follow after the note."
+    text @[149,171) [base] str=" follow after the note." raw=0:0,1:0
   group @[0,0) [base] role="bibliography"
     rule @[0,0) [base]
     para @[0,0) [base] label="bib-liang83"
@@ -57,13 +57,13 @@ doc @[0,0) [base]
     list @[0,0) [base] ordered=true
       item @[71,126) [base]
         para @[71,126) [base] label="fn-1"
-          text @[73,84) [basex0.85] str="The TeXbook "
+          text @[73,84) [basex0.85] str="The TeXbook " raw=0:0,12:11
           ref @[85,93) [basex0.85] target="knuth84"
             text @[85,93) [basex0.85] str="["
             link @[85,93) [basex0.85] url="#tsr-bib-knuth84"
               text @[85,93) [basex0.85] str="2"
             text @[85,93) [basex0.85] str="]"
-          text @[94,125) [basex0.85] str=" is cited only inside this note."
+          text @[94,125) [basex0.85] str=" is cited only inside this note." raw=0:0,1:0
           text @[71,126) [basex0.85] str=" "
           ref @[71,126) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
             text @[71,126) [basex0.85] str="↩"

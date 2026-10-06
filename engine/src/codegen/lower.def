@@ -17,7 +17,7 @@ LOWER_PROTOCOL(1)
 // LOP(name, code, operands) — body ops, preorder. The high bit of the op
 // byte (0x80) marks a subtree that awaits (a fence, a region — their
 // handlers may be async —, an async hole).
-LOP(TEXT,     1, "str s e")
+LOP(TEXT,     1, "str s e nMap (cooked raw)*")   // raw relative to s (plan P2-04)
 LOP(CALL,     2, "flags ctor [s e] nAttrs (key const)* nKids value*")
 LOP(HOLE,     3, "hole s e nKids value*")
 LOP(FRAME,    4, "s e holeLo holeHi value")

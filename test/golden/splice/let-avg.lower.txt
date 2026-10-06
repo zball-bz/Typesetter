@@ -1,13 +1,13 @@
-lower v1 abi 7f64f38d docEnd 75 holes 2 module 7b19e2dbd0971d69
+lower v1 abi a42c4357 docEnd 75 holes 2 module da7685f63564bf2c
 piece 0 hole 0 js [112,150)
 piece 1 hole 1 js [152,168)
 block 0 stmt [0,27) user framed holes 0..1
   STMT 0
 block 1 content [28,74) user framed holes 1..2
   CALL para [28,74)
-    TEXT "The mean is " [28,39)
+    TEXT "The mean is " [28,39) raw=0:0,12:11
     HOLE 1 [40,49)
-    TEXT ", computed " [49,59)
+    TEXT ", computed " [49,59) raw=0:0,11:10
     CALL strong [60,68)
       TEXT "inline" [61,67)
-    TEXT " here." [69,74)
+    TEXT " here." [69,74) raw=0:0,1:0

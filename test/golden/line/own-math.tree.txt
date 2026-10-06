@@ -2,9 +2,9 @@ doc @[0,87) [base]
   list @[0,87) [base] ordered=false start=1
     item @[0,74) [base]
       para @[2,74) [base]
-        text @[2,28) [base] str="An item with display math: "
+        text @[2,28) [base] str="An item with display math: " raw=0:0,27:26
         mathinline @[31,56) [base] src="x = a\n- b\n+ c"
-        text @[59,74) [base] str=" and text after."
+        text @[59,74) [base] str=" and text after." raw=0:0,1:0
     item @[75,87) [base]
       para @[77,87) [base]
         text @[77,87) [base] str="Next item."

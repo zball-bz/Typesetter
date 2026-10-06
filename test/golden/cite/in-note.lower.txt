@@ -1,20 +1,20 @@
-lower v1 abi 7f64f38d docEnd 220 holes 1 module b9e45dfd52cfeb60
+lower v1 abi a42c4357 docEnd 220 holes 1 module 00e02979961c9b47
 piece 0 hole 0 js [136,189)
 block 0 content [0,20)
   CALL heading [0,20) level=1 label=null
     TEXT "Citations in notes" [2,20)
 block 1 content [22,171)
   CALL para [22,171)
-    TEXT "Liang's patterns " [22,38)
+    TEXT "Liang's patterns " [22,38) raw=0:0,17:16
     CALL ref [39,47) target="liang83"
-    TEXT " come first in the text." [48,71)
+    TEXT " come first in the text." [48,71) raw=0:0,1:0
     CALL note [71,126)
-      TEXT "The TeXbook " [73,84)
+      TEXT "The TeXbook " [73,84) raw=0:0,12:11
       CALL ref [85,93) target="knuth84"
-      TEXT " is cited only inside this note." [94,125)
-    TEXT " Knuth and Plass " [127,142)
+      TEXT " is cited only inside this note." [94,125) raw=0:0,1:0
+    TEXT " Knuth and Plass " [127,142) raw=0:0,1:0,17:15
     CALL ref [143,148) target="kp81"
-    TEXT " follow after the note." [149,171)
+    TEXT " follow after the note." [149,171) raw=0:0,1:0
 block 2 content [173,219) user framed holes 0..1
   CALL para [173,219)
     HOLE 0 [173,219)

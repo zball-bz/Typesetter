@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 308 holes 2 module d29bda7144b9eff1
+lower v1 abi a42c4357 docEnd 308 holes 2 module d2a3578170b9ac78
 piece 0 hole 0 js [103,173)
 piece 1 hole 1 js [175,208)
 block 0 content [0,14)
@@ -6,13 +6,13 @@ block 0 content [0,14)
     TEXT "Introduction" [2,14)
 block 1 content [24,146)
   CALL para [24,146)
-    TEXT "A Traditional Chinese document takes 圖/表/式 from its locale terms (plan P1-10): see " [24,112)
+    TEXT "A Traditional Chinese document takes 圖/表/式 from its locale terms (plan P1-10): see " [24,112) raw=0:0,89:88
     CALL ref [113,119) target="intro"
-    TEXT ", " [119,120)
+    TEXT ", " [119,120) raw=0:0,2:1
     CALL ref [121,127) target="fig-a"
-    TEXT ", " [127,128)
+    TEXT ", " [127,128) raw=0:0,2:1
     CALL ref [129,135) target="tab-a"
-    TEXT " and " [136,139)
+    TEXT " and " [136,139) raw=0:0,1:0,5:3
     CALL ref [140,145) target="eq-a"
     TEXT "." [145,146)
 block 2 content [148,237) user framed async holes 0..1

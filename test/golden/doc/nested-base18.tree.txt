@@ -7,7 +7,7 @@ doc @[0,213) [base]
         text @[74,84) [base] str="Outer item"
       quote @[87,132) [base]
         para @[89,132) [base]
-          text @[89,132) [base] str="A quote inside the item with two lines."
+          text @[89,132) [base] str="A quote inside the item with two lines." raw=0:0,24:28
       codeblock @[136,163) [base] lang="js"
         text @[144,157) [base] str="nested(code);"
       list @[166,195) [base] ordered=false start=1

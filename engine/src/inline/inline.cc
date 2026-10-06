@@ -48,6 +48,12 @@ struct InlineParser {
   std::vector<Frame> stack;
   std::string buf;
   u32 bufStart = 0, bufEnd = 0;  // view offsets
+  // the text's cooked→raw map (plan P2-04; design T1 TextRaw): breakpoints
+  // (cooked offset, raw offset), identity between them — escapes, collapsed
+  // blanks, line joins and container prefixes break it; empty when the
+  // text is its own raw slice
+  std::vector<u32> rmap;
+  u32 rmC = 0, rmR = 0;  // the last breakpoint
   bool pendingSpace = false;
   bool prevGlyph = false;
   u32 i = 0;
@@ -59,12 +65,30 @@ struct InlineParser {
 
   Span span(u32 a, u32 b) const { return L.rawSpan(a, b); }
 
+  // the next cooked byte (at buf.size()) comes from raw offset `raw`
+  void mark(u32 raw) {
+    const u32 c = (u32)buf.size();
+    if (rmap.empty() || raw != rmR + (c - rmC)) {
+      rmap.push_back(c);
+      rmap.push_back(raw);
+      rmC = c;
+      rmR = raw;
+    }
+  }
+
   void put(char c, u32 pos, u32 len = 1) {
     if (buf.empty()) bufStart = pos;
     if (pendingSpace) {
-      if (!buf.empty() || !stack.back().items.empty()) buf += ' ';
+      // a space for the blanks or line join before pos: it maps to where
+      // they begin (the previous byte's end), or to nothing before the
+      // text's first byte
+      if (!buf.empty() || !stack.back().items.empty()) {
+        mark(buf.empty() ? L.raw(pos) : L.raw(bufEnd));
+        buf += ' ';
+      }
       pendingSpace = false;
     }
+    mark(L.raw(pos));
     buf += c;
     bufEnd = pos + len;
     prevGlyph = true;
@@ -72,16 +96,30 @@ struct InlineParser {
 
   void flushText() {
     if (buf.empty()) return;
-    AstNode* n = A.node(AstKind::Text, span(bufStart, bufEnd));
+    const Span sp = span(bufStart, bufEnd);
+    AstNode* n = A.node<TextP>(AstKind::Text, sp);
     n->str = strs.intern(buf);
+    const u32 c = (u32)buf.size();
+    if (rmR + (c - rmC) != sp.end) {  // the end, unless identity reaches it
+      rmap.push_back(c);
+      rmap.push_back(sp.end);
+    }
+    if (!(rmap.size() == 2 && rmap[1] == sp.start && c == sp.end - sp.start)) {
+      std::string m;  // "cooked:raw" pairs, raw relative to the span start
+      for (size_t k = 0; k < rmap.size(); k += 2)
+        appendf(m, "%s%u:%u", k ? "," : "", rmap[k], rmap[k + 1] - sp.start);
+      side<TextP>(n).rawmap = strs.intern(m);
+    }
     stack.back().items.push_back(n);
     buf.clear();
+    rmap.clear();
   }
 
   void spaceBeforeItem() {
     if (pendingSpace) {
       if (!buf.empty() || !stack.back().items.empty()) {
         if (buf.empty()) bufStart = bufEnd;
+        mark(L.raw(bufEnd));
         buf += ' ';
       }
       pendingSpace = false;
@@ -517,7 +555,7 @@ struct InlineParser {
     while (stack.size() > 1) {
       Frame f = std::move(stack.back());
       stack.pop_back();
-      AstNode* lit = A.node(AstKind::Text, span(f.markerPos, f.markerPos + 1));
+      AstNode* lit = A.node<TextP>(AstKind::Text, span(f.markerPos, f.markerPos + 1));
       char m = (char)f.marker;
       lit->str = strs.intern(std::string_view(&m, 1));
       auto& parent = stack.back().items;

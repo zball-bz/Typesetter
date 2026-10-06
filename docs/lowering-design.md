@@ -57,7 +57,7 @@ and a REGION always do):
 
 | op | operands | runs as |
 |---|---|---|
-| TEXT | str s e | `span(text(str))` |
+| TEXT | str s e nMap (cooked raw)* | `span(text(str))`, and its cooked→raw map (RAWMAP, document-model §4.3) |
 | CALL | flags ctor [s e] nAttrs (key const)* nKids value* | `ctor(...attrs, ...kids)`, spanned if flagged |
 | HOLE | hole s e nKids value* | `val(h[hole](__k))` |
 | FRAME | s e holeLo holeHi value | the value inside a frame (§4) |

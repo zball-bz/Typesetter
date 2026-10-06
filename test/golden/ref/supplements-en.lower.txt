@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 309 holes 2 module d29bda7144b9eff1
+lower v1 abi a42c4357 docEnd 309 holes 2 module d2a3578170b9ac78
 piece 0 hole 0 js [103,173)
 piece 1 hole 1 js [175,208)
 block 0 content [0,14)
@@ -6,13 +6,13 @@ block 0 content [0,14)
     TEXT "Introduction" [2,14)
 block 1 content [24,147)
   CALL para [24,147)
-    TEXT "An English document takes English supplements from the doc.lang setting (plan P1-03): see " [24,113)
+    TEXT "An English document takes English supplements from the doc.lang setting (plan P1-03): see " [24,113) raw=0:0,90:89
     CALL ref [114,120) target="intro"
-    TEXT ", " [120,121)
+    TEXT ", " [120,121) raw=0:0,2:1
     CALL ref [122,128) target="fig-a"
-    TEXT ", " [128,129)
+    TEXT ", " [128,129) raw=0:0,2:1
     CALL ref [130,136) target="tab-a"
-    TEXT " and " [137,140)
+    TEXT " and " [137,140) raw=0:0,1:0,5:3
     CALL ref [141,146) target="eq-a"
     TEXT "." [146,147)
 block 2 content [149,238) user framed async holes 0..1

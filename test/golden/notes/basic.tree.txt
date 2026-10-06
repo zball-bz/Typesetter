@@ -5,17 +5,17 @@ doc @[0,313) [base]
     text @[19,42) [base] str="A claim in running text"
     ref @[42,106) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[42,106) [SUPx0.70] str="1"
-    text @[107,152) [base] str=" continues after the marker, and a second note"
+    text @[107,152) [base] str=" continues after the marker, and a second note" raw=0:0,1:0
     ref @[152,174) [SUPx0.70] target="fn-2" label="fnref-2" url="#tsr-fn-2"
       text @[152,174) [SUPx0.70] str="2"
-    text @[175,211) [base] str=" follows later in the same paragraph."
+    text @[175,211) [base] str=" follows later in the same paragraph." raw=0:0,1:0
   heading @[213,225) [base] level=2 label="h-1.1"
     text @[216,225) [base] str="A section"
   para @[227,313) [base]
-    text @[227,241) [base] str="Notes may cite "
+    text @[227,241) [base] str="Notes may cite " raw=0:0,15:14
     ref @[242,246) [base] target="top" url="#tsr-top"
       text @[242,246) [base] str="§1"
-    text @[247,283) [base] str=" and the text may cite a note back as "
+    text @[247,283) [base] str=" and the text may cite a note back as " raw=0:0,1:0,38:36
     ref @[284,289) [base] target="fn-1" url="#tsr-fn-1"
       text @[284,289) [base] str="1"
     text @[289,313) [base] str="; the section ends here."
@@ -24,13 +24,13 @@ doc @[0,313) [base]
     list @[0,313) [base] ordered=true
       item @[42,106) [base]
         para @[42,106) [base] label="fn-1"
-          text @[44,65) [basex0.85] str="The note body carries "
+          text @[44,65) [basex0.85] str="The note body carries " raw=0:0,22:21
           styled @[66,74) [BOLDx0.85]
             text @[67,73) [BOLDx0.85] str="markup"
-          text @[74,75) [basex0.85] str=", "
+          text @[74,75) [basex0.85] str=", " raw=0:0,2:1
           code @[76,82) [basex0.85]
             text @[76,82) [basex0.85] str="code"
-          text @[82,92) [basex0.85] str=", and math "
+          text @[82,92) [basex0.85] str=", and math " raw=0:0,11:10
           mathinline @[93,104) [basex0.85] src="x^2 + y^2"
           text @[104,105) [basex0.85] str="."
           text @[42,106) [basex0.85] str=" "

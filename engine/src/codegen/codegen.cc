@@ -112,11 +112,30 @@ struct Gen {
 
   bool value(const AstNode* n) {
     switch (n->kind) {
-      case AstKind::Text:
+      case AstKind::Text: {
         w.op(Lop::TEXT);
         w.u(w.str(strs.get(n->str)));
         span(n->span);
+        // the cooked→raw map (plan P2-04): "c:r,…" → nMap (c r)*
+        std::string_view m = strs.get(side<TextP>(n).rawmap);
+        std::vector<u32> pairs;
+        u32 v = 0;
+        bool digit = false;
+        for (char ch : m) {
+          if (ch >= '0' && ch <= '9') {
+            v = v * 10 + (u32)(ch - '0');
+            digit = true;
+          } else if (digit) {
+            pairs.push_back(v);
+            v = 0;
+            digit = false;
+          }
+        }
+        if (digit) pairs.push_back(v);
+        w.u((u32)pairs.size() / 2);
+        for (u32 x : pairs) w.u(x);
         return false;
+      }
       case AstKind::Comment:
         return strCall("comment", n, "text", n->str);
       case AstKind::Call:

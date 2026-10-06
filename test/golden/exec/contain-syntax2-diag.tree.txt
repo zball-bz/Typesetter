@@ -3,11 +3,11 @@ doc @[0,72) [base]
     text @[0,7) [base] str="Before."
   error @[9,21) [base] message="SyntaxError: invalid JavaScript in this block" code="script-syntax"
   para @[23,39) [base]
-    text @[23,29) [base] str="Middle "
+    text @[23,29) [base] str="Middle " raw=0:0,7:6
     text @[30,38) [base] str="3"
     text @[38,39) [base] str="."
   error @[41,55) [base] message="SyntaxError: invalid JavaScript in this block" code="script-syntax"
   para @[57,72) [base]
-    text @[57,62) [base] str="After "
+    text @[57,62) [base] str="After " raw=0:0,6:5
     text @[63,71) [base] str="12"
     text @[71,72) [base] str="."

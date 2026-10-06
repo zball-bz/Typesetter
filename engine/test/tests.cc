@@ -724,6 +724,74 @@ static void unitHostInputs(const fs::path& root) {
   }
 }
 
+// The cooked→raw maps (plan P2-04; design T1 TextRaw), over every fixture's
+// AST: every cooked byte sits at its mapped raw offset — the same byte, a
+// space standing for blanks or a line join, or the character of an escape —
+// and the raw offsets stay inside the span, never going back. A text without
+// a map is positionally its own slice (same length, identity offsets).
+static void unitRawMaps(const fs::path& root) {
+  long texts = 0, mapped = 0;
+  for (auto& e : fs::recursive_directory_iterator(root / "test" / "fixtures")) {
+    if (!e.is_regular_file() || e.path().extension() != ".tsm") continue;
+    std::string text;
+    readFile(e.path(), text);
+    Doc doc;
+    doc.compile(text);
+    const std::string_view all = doc.src.view();
+    std::vector<const AstNode*> work{doc.ast};
+    while (!work.empty()) {
+      const AstNode* n = work.back();
+      work.pop_back();
+      for (const AstNode* k : n->kids()) work.push_back(k);
+      if (n->kind != AstKind::Text) continue;
+      texts++;
+      std::string_view cooked = doc.strs.get(n->str);
+      std::string_view m = doc.strs.get(side<TextP>(n).rawmap);
+      const std::string where = fs::relative(e.path(), root).string() + " @" + std::to_string(n->span.start);
+      std::vector<std::pair<u32, u32>> pairs;
+      if (m.empty()) {
+        if (cooked.size() != n->span.end - n->span.start) {
+          printf("FAIL raw map: %s: unmapped text is not its slice's length\n", where.c_str());
+          failures++;
+          continue;
+        }
+        pairs.push_back({0, 0});
+      } else {
+        mapped++;
+      }
+      for (size_t p = 0; p < m.size();) {
+        u32 c = 0, r = 0;
+        while (p < m.size() && m[p] != ':') c = c * 10 + (u32)(m[p++] - '0');
+        p++;
+        while (p < m.size() && m[p] != ',') r = r * 10 + (u32)(m[p++] - '0');
+        p++;
+        pairs.push_back({c, r});
+      }
+      bool ok = !pairs.empty() && pairs[0].first == 0;
+      size_t k = 0;
+      u32 prevRaw = 0;
+      for (u32 i = 0; ok && i < cooked.size(); i++) {
+        while (k + 1 < pairs.size() && pairs[k + 1].first <= i) k++;
+        const u32 raw = n->span.start + pairs[k].second + (i - pairs[k].first);
+        if (raw < prevRaw || raw > n->span.end) { ok = false; break; }
+        prevRaw = raw;
+        const char c = cooked[i];
+        if (c == ' ') continue;  // blanks or a line join (or nothing, before the first byte)
+        if (raw < all.size() && all[raw] == c) continue;
+        if (raw + 1 < all.size() && all[raw] == '\\' && all[raw + 1] == c) continue;
+        ok = false;
+      }
+      if (!ok) {
+        printf("FAIL raw map: %s: map %.*s does not place \"%.*s\"\n", where.c_str(), (int)m.size(), m.data(),
+               (int)cooked.size(), cooked.data());
+        failures++;
+      }
+    }
+  }
+  CHECK(mapped > 0);
+  printf("unit: raw maps: %ld texts, %ld mapped, all consistent\n", texts, mapped);
+}
+
 // The ops version window (plan P1-01): MIN_COMPAT..OPS_VERSION is read, the
 // buffer remembers its version, anything outside the window is refused.
 // Conformance (b) of plan P1-09: the tree-sitter grammar (the editor's
@@ -961,8 +1029,10 @@ static void unitAstBytes(const fs::path& root) {
 
 static void unitOpsWindow(const fs::path& root) {
   std::string ops;
-  readFile(root / "test" / "fixtures" / "inline" / "emph.ops", ops);
-  CHECK(ops.size() > 5 && (u8)ops[4] == OPS_MIN_COMPAT);  // today's buffers: v6
+  // a buffer that uses no vocabulary newer than MIN_COMPAT stays at it (a
+  // text without a cooked→raw map, no DIAG, no AT: plan P2-04)
+  readFile(root / "test" / "fixtures" / "cjk" / "basic.ops", ops);
+  CHECK(ops.size() > 5 && (u8)ops[4] == OPS_MIN_COMPAT);
   for (int v : {(int)OPS_MIN_COMPAT - 1, (int)OPS_VERSION + 1}) {
     std::string b = ops;
     b[4] = (char)v;
@@ -1418,6 +1488,7 @@ int main(int argc, char** argv) {
   unitOpsWindow(fs::path(root));
   unitAstBytes(fs::path(root));
   unitTokenConformance(fs::path(root));
+  unitRawMaps(fs::path(root));
   unitRegistry(fs::path(root));
   unitTextRules();
   unitFmtPx();

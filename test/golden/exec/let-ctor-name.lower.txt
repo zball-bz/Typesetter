@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 84 holes 2 module 506d88d50040ae78
+lower v1 abi a42c4357 docEnd 84 holes 2 module 4efe227701e3c4fd
 piece 0 hole 0 js [138,162)
 piece 1 hole 1 js [164,176)
 block 0 stmt [0,13) user framed holes 0..1
@@ -13,6 +13,6 @@ block 1 content [15,57)
         TEXT "second item" [46,57)
 block 2 content [59,83) user framed holes 1..2
   CALL para [59,83)
-    TEXT "The user binding: " [59,76)
+    TEXT "The user binding: " [59,76) raw=0:0,18:17
     HOLE 1 [77,82)
     TEXT "." [82,83)

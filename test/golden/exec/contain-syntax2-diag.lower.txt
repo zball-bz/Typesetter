@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 73 holes 2 module efd38ad5b96a9590
+lower v1 abi a42c4357 docEnd 73 holes 2 module 7009368c4bba11d7
 piece 0 hole 0 js [103,118)
 piece 1 hole 1 js [120,135)
 piece 2 verbatim block 1 js [164,173)
@@ -10,13 +10,13 @@ block 1 verbatim [9,21) user
   VERBATIM 0
 block 2 content [23,39) user framed holes 0..1
   CALL para [23,39)
-    TEXT "Middle " [23,29)
+    TEXT "Middle " [23,29) raw=0:0,7:6
     HOLE 0 [30,38)
     TEXT "." [38,39)
 block 3 verbatim [41,55) user
   VERBATIM 1
 block 4 content [57,72) user framed holes 1..2
   CALL para [57,72)
-    TEXT "After " [57,62)
+    TEXT "After " [57,62) raw=0:0,6:5
     HOLE 1 [63,71)
     TEXT "." [71,72)

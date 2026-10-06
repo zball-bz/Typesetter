@@ -1,14 +1,14 @@
 doc @[21,73) [base]
   para @[21,49) [base]
-    text @[21,26) [base] str="First "
+    text @[21,26) [base] str="First " raw=0:0,6:5
     styled @[27,29) [EM]
       text @[27,29) [EM] str="word"
-    text @[30,39) [base] str=" here, and "
+    text @[30,39) [base] str=" here, and " raw=0:0,1:0,11:9
     styled @[40,42) [EM]
       text @[40,42) [EM] str="word"
-    text @[43,49) [base] str=" again."
+    text @[43,49) [base] str=" again." raw=0:0,1:0
   para @[51,73) [base]
-    text @[51,69) [base] str="A later paragraph: "
+    text @[51,69) [base] str="A later paragraph: " raw=0:0,19:18
     styled @[70,72) [EM]
       text @[70,72) [EM] str="word"
     text @[72,73) [base] str="."

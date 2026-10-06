@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 228 holes 1 module 96a2db375032b839
+lower v1 abi a42c4357 docEnd 228 holes 1 module c028e2c74fb65394
 piece 0 hole 0 js [129,144)
 block 0 content [0,20)
   CALL heading [0,20) level=1 label=null
@@ -8,12 +8,12 @@ block 1 content [22,119)
     TEXT "First note here" [22,37)
     CALL note [37,44)
       TEXT "One." [39,43)
-    TEXT " and another" [45,56)
+    TEXT " and another" [45,56) raw=0:0,1:0
     CALL note [56,89)
-      TEXT "Two, with a reference to " [58,82)
+      TEXT "Two, with a reference to " [58,82) raw=0:0,25:24
       CALL ref [83,87) target="top"
       TEXT "." [87,88)
-    TEXT " before the section is placed." [90,119)
+    TEXT " before the section is placed." [90,119) raw=0:0,1:0
 block 2 content [121,129) user framed holes 0..1
   CALL para [121,129)
     HOLE 0 [121,129)

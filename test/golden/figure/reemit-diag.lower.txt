@@ -1,10 +1,10 @@
-lower v1 abi 7f64f38d docEnd 226 holes 1 module 8a5cf8b5495baff2
+lower v1 abi a42c4357 docEnd 226 holes 1 module 8e1ec1e43068686d
 piece 0 hole 0 js [103,173)
 block 0 content [0,117)
   CALL para [0,117)
-    TEXT "A refused image scheme is reported once, even though the formula " [0,64)
+    TEXT "A refused image scheme is reported once, even though the formula " [0,64) raw=0:0,65:64
     CALL mathinline [65,82) src="f(x) \"if\" x > 0"
-    TEXT " makes emit run twice (plan P0-11)." [83,117)
+    TEXT " makes emit run twice (plan P0-11)." [83,117) raw=0:0,1:0
 block 1 content [119,225) user framed async holes 0..1
   REGION async "figure" args=hole 0 [119,225)
     ROWS

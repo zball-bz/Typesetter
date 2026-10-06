@@ -10,10 +10,10 @@ doc @[0,243) [base]
   group @[114,197) [base] role="aside"
     para @[114,197) [base]
       seq @[114,197) [base]
-        text @[122,136) [base] str="Side note with "
+        text @[122,136) [base] str="Side note with " raw=0:0,15:14
         styled @[137,147) [BOLD]
           text @[138,146) [BOLD] str="emphasis"
-        text @[148,154) [base] str=" inside"
+        text @[148,154) [base] str=" inside" raw=0:0,1:0
     list @[155,189) [base] ordered=false start=1
       item @[155,172) [base]
         para @[157,172) [base]
@@ -22,10 +22,10 @@ doc @[0,243) [base]
         para @[175,189) [base]
           text @[175,189) [base] str="another bullet"
   para @[199,243) [base]
-    text @[199,212) [base] str="The figure is "
+    text @[199,212) [base] str="The figure is " raw=0:0,14:13
     ref @[213,218) [base] target="fig1" url="#tsr-fig1"
       text @[213,218) [base] str="图 1"
-    text @[219,237) [base] str=" and the section is "
+    text @[219,237) [base] str=" and the section is " raw=0:0,1:0,20:18
     ref @[238,242) [base] target="top" url="#tsr-top"
       text @[238,242) [base] str="§1"
     text @[242,243) [base] str="."

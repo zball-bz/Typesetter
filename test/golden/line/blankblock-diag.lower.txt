@@ -1,11 +1,11 @@
-lower v1 abi 7f64f38d docEnd 193 holes 1 module bb9f49c5a35a97e5
+lower v1 abi a42c4357 docEnd 193 holes 1 module c73d6af2eb473d86
 piece 0 hole 0 js [103,118)
 piece 1 verbatim block 0 js [147,173)
 block 0 verbatim [0,29) user
   VERBATIM 0
 block 1 content [30,78) user framed holes 0..1
   CALL para [30,78)
-    TEXT "A root statement may hold blank lines: " [30,68)
+    TEXT "A root statement may hold blank lines: " [30,68) raw=0:0,39:38
     HOLE 0 [69,77)
     TEXT "." [77,78)
 block 2 content [80,136)

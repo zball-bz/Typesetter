@@ -11,6 +11,7 @@ OP(STYLE_POP_TO, 5)
 OP(SPAN, 6)
 OP(DIAG, 7)
 OP(AT, 8)
+OP(RAWMAP, 9)
 
 KIND(doc, 0)
 KIND(para, 1)

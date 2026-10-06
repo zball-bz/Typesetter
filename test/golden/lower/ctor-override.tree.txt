@@ -1,19 +1,19 @@
 doc @[0,165) [base]
   para @[0,15) [base]
-    text @[0,6) [base] str="Before "
+    text @[0,6) [base] str="Before " raw=0:0,7:6
     styled @[7,15) [BOLD]
       text @[8,14) [BOLD] str="bold x"
   para @[17,39) [base]
-    text @[17,23) [base] str="Before "
+    text @[17,23) [base] str="Before " raw=0:0,7:6
     styled @[24,39) [BOLD]
       text @[32,38) [BOLD] str="bold x"
   para @[128,142) [base]
-    text @[128,133) [base] str="After "
+    text @[128,133) [base] str="After " raw=0:0,6:5
     group @[134,142) [base] role="key"
       styled @[134,142) [BOLD]
         text @[135,141) [BOLD] str="bold x"
   para @[144,165) [base]
-    text @[144,149) [base] str="After "
+    text @[144,149) [base] str="After " raw=0:0,6:5
     group @[150,165) [base] role="key"
       styled @[150,165) [BOLD]
         text @[158,164) [BOLD] str="bold x"

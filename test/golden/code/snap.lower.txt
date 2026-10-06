@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 217 holes 0 module none
+lower v1 abi a42c4357 docEnd 217 holes 0 module none
 block 0 content [0,78)
   CALL para [0,78)
     TEXT "Snap-kerning on a wrapping code block (guard fixture, plan P0-01; defect #21)." [0,78)

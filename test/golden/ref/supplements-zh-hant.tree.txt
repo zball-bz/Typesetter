@@ -2,16 +2,16 @@ doc @[0,307) [base]
   heading @[0,14) [base] level=1 label="intro"
     text @[2,14) [base] str="Introduction"
   para @[24,146) [base]
-    text @[24,112) [base] str="A Traditional Chinese document takes 圖/表/式 from its locale terms (plan P1-10): see "
+    text @[24,112) [base] str="A Traditional Chinese document takes 圖/表/式 from its locale terms (plan P1-10): see " raw=0:0,89:88
     ref @[113,119) [base] target="intro" url="#tsr-intro"
       text @[113,119) [base] str="§1"
-    text @[119,120) [base] str=", "
+    text @[119,120) [base] str=", " raw=0:0,2:1
     ref @[121,127) [base] target="fig-a" url="#tsr-fig-a"
       text @[121,127) [base] str="圖 1"
-    text @[127,128) [base] str=", "
+    text @[127,128) [base] str=", " raw=0:0,2:1
     ref @[129,135) [base] target="tab-a" url="#tsr-tab-a"
       text @[129,135) [base] str="表 1"
-    text @[136,139) [base] str=" and "
+    text @[136,139) [base] str=" and " raw=0:0,1:0,5:3
     ref @[140,145) [base] target="eq-a" url="#tsr-eq-a"
       text @[140,145) [base] str="式 (1)"
     text @[145,146) [base] str="."

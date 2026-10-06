@@ -75,6 +75,12 @@ struct Inst {
         n->span = sp;
         n->style = styles.idOf(own);
         if (rn.isText) n->str = strs.intern(raw.strings[rn.str]);
+        if (!rn.rawmap.empty() && an.alias == kNoAlias && sp.start == rn.span.start && sp.end == rn.span.end) {
+          u32* m = arena.allocArray<u32>(rn.rawmap.size());
+          std::copy(rn.rawmap.begin(), rn.rawmap.end(), m);
+          n->rawmap = m;
+          n->nrawmap = (u32)rn.rawmap.size();
+        }
         for (const ArgVal& a : rn.args) {
           ArgVal v = a;
           if (a.tag == ArgTag::Str) v.ref = strs.intern(raw.strings[a.ref]);
@@ -183,6 +189,8 @@ static void dumpNode(std::string& out, const ContentNode* n, const Interner& str
     out += " str=\"";
     appendEscaped(out, strs.get(n->str));
     out += "\"";
+    for (u32 k = 0; k < n->nrawmap; k += 2)  // the cooked→raw map (plan P2-04)
+      appendf(out, "%s%u:%u", k ? "," : " raw=", n->rawmap[k], n->rawmap[k + 1]);
   }
   for (const ArgVal& a : n->args) {
     if (n->kind == Kind::styled && a.key == ArgK::bits) continue;  // shown via style

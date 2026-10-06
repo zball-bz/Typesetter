@@ -1,9 +1,9 @@
 doc @[0,226) [base]
   para @[0,226) [base]
-    text @[0,11) [base] str="Text before "
+    text @[0,11) [base] str="Text before " raw=0:0,12:11
     image @[12,43) [base] src="x.png" w=20 h=16
-    text @[44,73) [base] str=" text after, and in CJK 中文"
+    text @[44,73) [base] str=" text after, and in CJK 中文" raw=0:0,1:0
     image @[73,104) [base] src="y.png" w=16 h=16
-    text @[104,150) [base] str="中文。An image with only its width declared "
+    text @[104,150) [base] str="中文。An image with only its width declared " raw=0:0,47:46
     image @[151,194) [base] src="/test/e2e/img/w40h20.png" w=24
-    text @[195,226) [base] str=" takes its height from the file."
+    text @[195,226) [base] str=" takes its height from the file." raw=0:0,1:0

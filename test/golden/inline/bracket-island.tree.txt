@@ -3,74 +3,74 @@ doc @[0,582) [base]
     text @[0,35) [base] str="Notes close at their own bracket: a"
     ref @[35,44) [SUPx0.70] target="fn-1" label="fnref-1" url="#tsr-fn-1"
       text @[35,44) [SUPx0.70] str="1"
-    text @[45,66) [base] str=" and the text goes on."
+    text @[45,66) [base] str=" and the text goes on." raw=0:0,1:0
   para @[68,119) [base]
-    text @[68,87) [base] str="A link around math: "
+    text @[68,87) [base] str="A link around math: " raw=0:0,20:19
     link @[88,106) [base] url="u"
-      text @[89,94) [base] str="range "
+      text @[89,94) [base] str="range " raw=0:0,6:5
       mathinline @[95,102) [base] src="[0,1)"
-    text @[107,119) [base] str=" is one link."
+    text @[107,119) [base] str=" is one link." raw=0:0,1:0
   para @[121,184) [base]
     styled @[121,145) [BOLD]
       seq @[121,145) [BOLD]
-        text @[129,133) [BOLD] str="code "
+        text @[129,133) [BOLD] str="code " raw=0:0,5:4
         code @[134,139) [BOLD]
           text @[134,139) [BOLD] str="a]b"
-        text @[140,144) [BOLD] str=" here"
-    text @[146,184) [base] str=" and the body ends after the code span."
+        text @[140,144) [BOLD] str=" here" raw=0:0,1:0
+    text @[146,184) [base] str=" and the body ends after the code span." raw=0:0,1:0
   para @[186,278) [base]
-    text @[186,211) [base] str="Code spans by run length: "
+    text @[186,211) [base] str="Code spans by run length: " raw=0:0,26:25
     code @[212,219) [base]
       text @[212,219) [base] str="a`b"
-    text @[219,220) [base] str=", "
+    text @[219,220) [base] str=", " raw=0:0,2:1
     code @[221,233) [base]
       text @[221,233) [base] str="`tick`"
-    text @[234,237) [base] str=" and "
+    text @[234,237) [base] str=" and " raw=0:0,1:0,5:3
     code @[238,243) [base]
       text @[238,243) [base] str="x"
     text @[243,278) [base] str="; an unclosed `` run stays literal."
   para @[280,345) [base]
-    text @[280,306) [base] str="Pairs skip stray brackets: "
+    text @[280,306) [base] str="Pairs skip stray brackets: " raw=0:0,27:26
     styled @[307,326) [BOLD]
       text @[308,325) [BOLD] str="range [0, 1) only"
-    text @[327,330) [base] str=" and "
+    text @[327,330) [base] str=" and " raw=0:0,1:0,5:3
     styled @[331,341) [EM]
       text @[332,340) [EM] str="see [sic"
-    text @[342,345) [base] str=" ok."
+    text @[342,345) [base] str=" ok." raw=0:0,1:0
   para @[347,406) [base]
-    text @[347,383) [base] str="Math decodes only the dollar escape: "
+    text @[347,383) [base] str="Math decodes only the dollar escape: " raw=0:0,37:36
     mathinline @[384,392) [base] src="a $ b"
-    text @[393,396) [base] str=" and "
+    text @[393,396) [base] str=" and " raw=0:0,1:0,5:3
     mathinline @[397,405) [base] src="x \\, y"
     text @[405,406) [base] str="."
   para @[408,495) [base]
-    text @[408,444) [base] str="Islands that would swallow a closer: "
+    text @[408,444) [base] str="Islands that would swallow a closer: " raw=0:0,37:36
     link @[445,458) [base] url="u"
       text @[446,454) [base] str="price $5"
-    text @[459,462) [base] str=" and "
+    text @[459,462) [base] str=" and " raw=0:0,1:0,5:3
     styled @[463,479) [BOLD]
       text @[471,478) [BOLD] str="cost $3"
-    text @[480,484) [base] str=" then "
+    text @[480,484) [base] str=" then " raw=0:0,1:0,6:4
     mathinline @[485,488) [base] src="x"
-    text @[489,495) [base] str=" after."
+    text @[489,495) [base] str=" after." raw=0:0,1:0
   heading @[497,506) [base] level=1 label="tgt"
     text @[499,506) [base] str="Targets"
   heading @[514,529) [base] level=2 label="a]b"
     text @[517,529) [base] str="An odd label"
   para @[537,582) [base]
-    text @[537,548) [base] str="References: "
+    text @[537,548) [base] str="References: " raw=0:0,12:11
     ref @[549,557) [base] target="tgt" url="#tsr-tgt"
       text @[549,557) [base] str="§1"
-    text @[558,561) [base] str=" and "
+    text @[558,561) [base] str=" and " raw=0:0,1:0,5:3
     ref @[562,569) [base] target="a]b" url="#tsr-a]b"
       text @[562,569) [base] str="§1.1"
-    text @[570,582) [base] str=" in brackets."
+    text @[570,582) [base] str=" in brackets." raw=0:0,1:0
   group @[0,582) [base] role="notes"
     rule @[0,582) [base]
     list @[0,582) [base] ordered=true
       item @[35,44) [base]
         para @[35,44) [base] label="fn-1"
-          text @[37,43) [basex0.85] str="a ] b"
+          text @[37,43) [basex0.85] str="a ] b" raw=0:0,3:4
           text @[35,44) [basex0.85] str=" "
           ref @[35,44) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
             text @[35,44) [basex0.85] str="↩"

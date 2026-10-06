@@ -14,16 +14,16 @@ doc @[0,258) [base]
     para @[163,216) [base]
       text @[193,208) [base] str="After the rule."
   para @[218,258) [base]
-    text @[218,221) [base] str="See "
+    text @[218,221) [base] str="See " raw=0:0,4:3
     ref @[222,228) [base] target="lst-a" url="#tsr-lst-a"
       text @[222,228) [base] str="lst-a"
-    text @[228,229) [base] str=", "
+    text @[228,229) [base] str=", " raw=0:0,2:1
     ref @[230,236) [base] target="box-b" url="#tsr-box-b"
       text @[230,236) [base] str="box-b"
-    text @[236,237) [base] str=", "
+    text @[236,237) [base] str=", " raw=0:0,2:1
     ref @[238,245) [base] target="sec-in" url="#tsr-sec-in"
       text @[238,245) [base] str="§1.1"
-    text @[246,249) [base] str=" and "
+    text @[246,249) [base] str=" and " raw=0:0,1:0,5:3
     ref @[250,257) [base] target="rule-c" url="#tsr-rule-c"
       text @[250,257) [base] str="rule-c"
     text @[257,258) [base] str="."

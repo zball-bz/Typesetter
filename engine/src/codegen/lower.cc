@@ -300,11 +300,22 @@ struct Walker {
     u32 s, e;
     switch (op) {
       case Lop::TEXT: {
-        u32 r;
+        u32 r, nm;
         if (!strRef(r)) return false;
         if (out) *out += " ";
         quoted(r);
-        if (!span(s, e)) return false;
+        if (!span(s, e) || !count(nm)) return false;
+        // the cooked→raw map: cooked offsets increasing within the text, raw
+        // offsets non-decreasing within the span
+        u32 pc = 0, pr = 0;
+        for (u32 k = 0; k < nm; k++) {
+          u32 c0, r0;
+          if (!c.u(c0) || !c.u(r0)) return fail("truncated TEXT map");
+          if ((k && c0 <= pc) || c0 > P.strs[r].size() || r0 < pr || r0 > e - s) return fail("bad TEXT map");
+          if (out) appendf(*out, "%s%u:%u", k ? "," : " raw=", c0, r0);
+          pc = c0;
+          pr = r0;
+        }
         if (out) *out += "\n";
         if (async) return fail("TEXT cannot await");
         return true;

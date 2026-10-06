@@ -1,9 +1,9 @@
 doc @[12,47) [base]
   para @[12,22) [base]
-    text @[12,18) [base] str="First: "
+    text @[12,18) [base] str="First: " raw=0:0,7:6
     text @[19,21) [base] str="1"
     text @[21,22) [base] str="."
   para @[36,47) [base]
-    text @[36,43) [base] str="Second: "
+    text @[36,43) [base] str="Second: " raw=0:0,8:7
     text @[44,46) [base] str="2"
     text @[46,47) [base] str="."

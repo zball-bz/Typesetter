@@ -212,6 +212,12 @@ export class Lowering {
       case LOP.TEXT: {
         const n = env.ob.makeText(this.S[this.u()]);
         env.ob.span(n, this.u(), this.u());
+        const nm = this.u();
+        if (nm) {  // its cooked→raw map (plan P2-04)
+          const m = new Array(2 * nm);
+          for (let k = 0; k < m.length; k++) m[k] = this.u();
+          env.ob.rawmap(n, m);
+        }
         return n;
       }
       case LOP.CALL: {
@@ -410,7 +416,11 @@ export class Lowering {
   skipValue() {
     const b = this.b;
     switch (b[this.p++] & 0x7f) {
-      case LOP.TEXT: this.u(); this.u(); this.u(); return;
+      case LOP.TEXT: {
+        this.u(); this.u(); this.u();
+        for (let n = 2 * this.u(); n > 0; n--) this.u();
+        return;
+      }
       case LOP.CALL: {
         const fl = b[this.p++];
         this.u();

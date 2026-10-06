@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 244 holes 1 module dd4f8188d6251c3d
+lower v1 abi a42c4357 docEnd 244 holes 1 module f760aab1f5d53408
 piece 0 hole 0 js [103,126)
 block 0 content [0,9)
   CALL heading [0,9) level=1 label="top"
@@ -15,10 +15,10 @@ block 2 content [114,197) async
     ROWS
       row
         CALL seq
-          TEXT "Side note with " [122,136)
+          TEXT "Side note with " [122,136) raw=0:0,15:14
           CALL strong [137,147)
             TEXT "emphasis" [138,146)
-          TEXT " inside" [148,154)
+          TEXT " inside" [148,154) raw=0:0,1:0
     CALL list [155,189) ordered=false start=1
       CALL item [155,172)
         CALL para [157,172)
@@ -28,8 +28,8 @@ block 2 content [114,197) async
           TEXT "another bullet" [175,189)
 block 3 content [199,243)
   CALL para [199,243)
-    TEXT "The figure is " [199,212)
+    TEXT "The figure is " [199,212) raw=0:0,14:13
     CALL ref [213,218) target="fig1"
-    TEXT " and the section is " [219,237)
+    TEXT " and the section is " [219,237) raw=0:0,1:0,20:18
     CALL ref [238,242) target="top"
     TEXT "." [242,243)

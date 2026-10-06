@@ -213,8 +213,14 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
   switch (n->kind) {
     case AstKind::Doc:
       break;
-    case AstKind::Text:
+    case AstKind::Text: {
+      const TextP& p = side<TextP>(n);
+      if (p.rawmap) {
+      out += ",\"rawmap\":";
+      jsonString(out, strs.get(p.rawmap));
+      }
       break;
+    }
     case AstKind::Comment:
       break;
     case AstKind::Call:

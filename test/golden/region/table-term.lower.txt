@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 216 holes 2 module 9611cc478d0e42a1
+lower v1 abi a42c4357 docEnd 216 holes 2 module 40b1e66f55a3d204
 piece 0 hole 0 js [128,161)
 piece 1 hole 1 js [163,190)
 block 0 content [0,80)
@@ -17,11 +17,11 @@ block 1 content [82,192) user framed async holes 0..2
             HOLE 1 [134,173)
               TEXT "gizmo" [140,145)
               TEXT "a small mechanical device" [147,172)
-            TEXT " in the box" [174,184)
+            TEXT " in the box" [174,184) raw=0:0,1:0
 block 2 content [194,215)
   CALL para [194,215)
-    TEXT "See " [194,197)
+    TEXT "See " [194,197) raw=0:0,4:3
     CALL ref [198,204) target="gizmo"
-    TEXT " in " [205,207)
+    TEXT " in " [205,207) raw=0:0,1:0,4:2
     CALL ref [208,214) target="parts"
     TEXT "." [214,215)

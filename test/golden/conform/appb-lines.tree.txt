@@ -11,7 +11,7 @@ doc @[0,370) [base]
         text @[44,58) [base] str="unordered item"
     item @[59,132) [base]
       para @[61,116) [base]
-        text @[61,116) [base] str="second unordered item continued at the content column"
+        text @[61,116) [base] str="second unordered item continued at the content column" raw=0:0,22:24
       list @[119,132) [base] ordered=false start=1
         item @[119,132) [base]
           para @[121,132) [base]
@@ -43,4 +43,4 @@ doc @[0,370) [base]
   mathblock @[302,315) [base] src="a + b = c"
   rule @[317,320) [base]
   para @[322,370) [base]
-    text @[322,370) [base] str="= not a heading, - not a list, > not a quote."
+    text @[322,370) [base] str="= not a heading, - not a list, > not a quote." raw=0:0,1:2,18:20,32:35

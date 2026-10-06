@@ -2,16 +2,16 @@ doc @[0,296) [base]
   heading @[0,14) [base] level=1 label="intro"
     text @[2,14) [base] str="Introduction"
   para @[24,135) [base]
-    text @[24,101) [base] str="A Japanese document takes 図/表/式 from its locale terms (plan P1-10): see "
+    text @[24,101) [base] str="A Japanese document takes 図/表/式 from its locale terms (plan P1-10): see " raw=0:0,78:77
     ref @[102,108) [base] target="intro" url="#tsr-intro"
       text @[102,108) [base] str="§1"
-    text @[108,109) [base] str=", "
+    text @[108,109) [base] str=", " raw=0:0,2:1
     ref @[110,116) [base] target="fig-a" url="#tsr-fig-a"
       text @[110,116) [base] str="図 1"
-    text @[116,117) [base] str=", "
+    text @[116,117) [base] str=", " raw=0:0,2:1
     ref @[118,124) [base] target="tab-a" url="#tsr-tab-a"
       text @[118,124) [base] str="表 1"
-    text @[125,128) [base] str=" and "
+    text @[125,128) [base] str=" and " raw=0:0,1:0,5:3
     ref @[129,134) [base] target="eq-a" url="#tsr-eq-a"
       text @[129,134) [base] str="式 (1)"
     text @[134,135) [base] str="."

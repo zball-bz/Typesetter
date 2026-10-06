@@ -1,8 +1,8 @@
-lower v1 abi 7f64f38d docEnd 115 holes 1 module 18a25ed5c073602b
+lower v1 abi a42c4357 docEnd 115 holes 1 module c8ba927bda058e14
 piece 0 hole 0 js [136,181)
 block 0 content [0,74)
   CALL para [0,74)
-    TEXT "A bibliography file outside the document root is refused (plan P0-11): " [0,70)
+    TEXT "A bibliography file outside the document root is refused (plan P0-11): " [0,70) raw=0:0,71:70
     CALL ref [71,73) target="k"
     TEXT "." [73,74)
 block 1 content [76,114) user framed holes 0..1

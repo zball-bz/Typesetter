@@ -2,13 +2,13 @@ doc @[0,436) [base]
   heading @[0,14) [base] level=1 label="intro"
     text @[2,14) [base] str="Introduction"
   para @[24,121) [base]
-    text @[24,71) [base] str="The typesetting engine resolves references like "
+    text @[24,71) [base] str="The typesetting engine resolves references like " raw=0:0,48:47
     ref @[72,78) [base] target="intro" url="#tsr-intro"
       text @[72,78) [base] str="§1"
-    text @[79,82) [base] str=" and "
+    text @[79,82) [base] str=" and " raw=0:0,1:0,5:3
     ref @[83,91) [base] target="results" url="#tsr-results"
       text @[83,91) [base] str="§2"
-    text @[92,121) [base] str=" before any rendering happens."
+    text @[92,121) [base] str=" before any rendering happens." raw=0:0,1:0
   heading @[123,132) [base] level=2 label="h-1.1"
     text @[126,132) [base] str="Method"
   para @[134,183) [base]
@@ -21,13 +21,13 @@ doc @[0,436) [base]
   heading @[248,257) [base] level=1 label="results"
     text @[250,257) [base] str="Results"
   para @[269,380) [base]
-    text @[269,283) [base] str="As promised in "
+    text @[269,283) [base] str="As promised in " raw=0:0,15:14
     ref @[284,290) [base] target="intro" url="#tsr-intro"
       text @[284,290) [base] str="§1"
-    text @[290,348) [base] str=", the resolver links back to sections and to terms such as "
+    text @[290,348) [base] str=", the resolver links back to sections and to terms such as " raw=0:0,59:58
     ref @[349,357) [base] target="measure" url="#tsr-measure"
       text @[349,357) [base] str="measure"
-    text @[358,380) [base] str=" without a second pass."
+    text @[358,380) [base] str=" without a second pass." raw=0:0,1:0
   heading @[382,402) [base] level=2 label="h-2.1"
     text @[385,402) [base] str="Table of contents"
   list @[404,410) [base] ordered=false

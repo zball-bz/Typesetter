@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 259 holes 3 module 294ab7a5e89e6a0f
+lower v1 abi a42c4357 docEnd 259 holes 3 module d5ec634802ce5e7a
 piece 0 hole 0 js [103,127)
 piece 1 hole 1 js [129,153)
 piece 2 hole 2 js [155,180)
@@ -23,12 +23,12 @@ block 3 content [163,216) user framed async holes 2..3
         TEXT "After the rule." [193,208)
 block 4 content [218,258)
   CALL para [218,258)
-    TEXT "See " [218,221)
+    TEXT "See " [218,221) raw=0:0,4:3
     CALL ref [222,228) target="lst-a"
-    TEXT ", " [228,229)
+    TEXT ", " [228,229) raw=0:0,2:1
     CALL ref [230,236) target="box-b"
-    TEXT ", " [236,237)
+    TEXT ", " [236,237) raw=0:0,2:1
     CALL ref [238,245) target="sec-in"
-    TEXT " and " [246,249)
+    TEXT " and " [246,249) raw=0:0,1:0,5:3
     CALL ref [250,257) target="rule-c"
     TEXT "." [257,258)

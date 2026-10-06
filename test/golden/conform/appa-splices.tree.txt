@@ -1,22 +1,22 @@
 doc @[60,438) [base]
   para @[60,176) [base]
-    text @[60,73) [base] str="Value splice: "
+    text @[60,73) [base] str="Value splice: " raw=0:0,14:13
     text @[74,78) [base] str="world"
-    text @[79,96) [base] str=" and a call chain: "
+    text @[79,96) [base] str=" and a call chain: " raw=0:0,1:0,19:17
     text @[97,110) [base] str="Hello, tsm"
-    text @[110,126) [base] str=". Member access: "
+    text @[110,126) [base] str=". Member access: " raw=0:0,17:16
     text @[127,138) [base] str="5"
-    text @[139,162) [base] str=" characters; expression: "
+    text @[139,162) [base] str=" characters; expression: " raw=0:0,1:0,25:23
     text @[163,175) [base] str="7"
     text @[175,176) [base] str="."
   para @[201,438) [base]
-    text @[201,242) [base] str="Statement splice binds in document scope: "
+    text @[201,242) [base] str="Statement splice binds in document scope: " raw=0:0,42:41
     text @[243,250) [base] str="42"
-    text @[250,281) [base] str=". A splice ends at punctuation: "
+    text @[250,281) [base] str=". A splice ends at punctuation: " raw=0:0,32:31
     text @[282,286) [base] str="world"
-    text @[286,309) [base] str=". Semicolon terminator: "
+    text @[286,309) [base] str=". Semicolon terminator: " raw=0:0,24:23
     text @[310,315) [base] str="world"
-    text @[315,383) [base] str="[not an argument]. Content argument desugars to a trailing argument: "
+    text @[315,383) [base] str="[not an argument]. Content argument desugars to a trailing argument: " raw=0:0,69:68
     styled @[384,402) [BOLD]
       text @[392,401) [BOLD] str="bold text"
-    text @[402,438) [base] str=". Literal hash: #who stays literal."
+    text @[402,438) [base] str=". Literal hash: #who stays literal." raw=0:0,17:18

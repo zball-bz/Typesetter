@@ -1,4 +1,4 @@
-lower v1 abi 7f64f38d docEnd 31 holes 1 module 72988defef3b2697
+lower v1 abi a42c4357 docEnd 31 holes 1 module f54c38cb457d251e
 piece 0 hole 0 js [103,120)
 block 0 content [0,30) user framed async holes 0..1
   REGION async "table" args=hole 0 [0,30)

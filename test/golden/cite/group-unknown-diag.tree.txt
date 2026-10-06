@@ -1,6 +1,6 @@
 doc @[0,0) [base]
   para @[0,95) [base]
-    text @[0,39) [base] str="A grouped citation with one unknown key "
+    text @[0,39) [base] str="A grouped citation with one unknown key " raw=0:0,40:39
     ref @[40,67) [base] target="kp81, nosuchkey, liang83"
       text @[40,67) [base] str="["
       link @[40,67) [base] url="#tsr-bib-kp81"
@@ -11,7 +11,7 @@ doc @[0,0) [base]
       link @[40,67) [base] url="#tsr-bib-liang83"
         text @[40,67) [base] str="2"
       text @[40,67) [base] str="]"
-    text @[68,95) [base] str=" still links the known keys."
+    text @[68,95) [base] str=" still links the known keys." raw=0:0,1:0
   group @[0,0) [base] role="bibliography"
     rule @[0,0) [base]
     para @[0,0) [base] label="bib-kp81"

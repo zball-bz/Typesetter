@@ -997,7 +997,7 @@ Theme steps: — · findings: 1
 | `markup-language/inline-scanner-overrun` | issue | high | P1-06 | grep:plan P1-06 |
 | `markup-language/same-line-trailing-text-dropped` | issue | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/region-error-recovery` | issue | medium | P1-07 | grep:plan P1-07 |
-| `markup-language/span-loss` | issue | medium | P2-04 | |
+| `markup-language/span-loss` | issue | medium | P2-04 | grep:plan P2-04 |
 | `markup-language/structured-content-flattened` | issue | medium | P3-03 | |
 | `markup-language/ambiguity-hazards` | issue | medium | P3-33 | |
 | `markup-language/ast-dump-note` | issue | low | P0-02 | grep:plan P0-02 |
@@ -1061,7 +1061,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/duplicate-lowering-fragment` | adhoc | medium | P2-13 | |
 | `codegen-ops-model/note-kind-and-lift` | adhoc | medium | P3-01, P3-13 | |
 | `codegen-ops-model/collector-switch-and-fixed-counters` | adhoc | medium | P2-07 | |
-| `codegen-ops-model/occurrence-spans-unsound` | issue | high | P2-04 | |
+| `codegen-ops-model/occurrence-spans-unsound` | issue | high | P2-04 | grep:plan P2-04 |
 | `codegen-ops-model/exponential-instantiation` | issue | high | P0-07 | grep:plan P0-07 |
 | `codegen-ops-model/no-per-block-containment` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `codegen-ops-model/keyword-forms-uncompiled` | issue | high | P0-05, P2-12, P3-31 | |
@@ -1329,7 +1329,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/ctor-name-collision-fatal` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `real-world-evidence/heading-numbers-invisible` | issue | medium | P3-03 | |
 | `real-world-evidence/labels-on-unsupported-nodes-silent` | issue | medium | P0-09 | grep:plan P0-09 |
-| `real-world-evidence/span-loss-synthesized-nodes` | issue | medium | P2-04 | |
+| `real-world-evidence/span-loss-synthesized-nodes` | issue | medium | P2-04 | grep:plan P2-04 |
 | `real-world-evidence/grouped-cite-all-or-nothing` | issue | low | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/spec-drift` | issue | medium | P3-37, P5-02 | |
 | `real-world-evidence/converter-fidelity-unchecked` | issue | medium | P3-35 | |

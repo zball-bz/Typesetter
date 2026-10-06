@@ -1,13 +1,13 @@
-lower v1 abi 7f64f38d docEnd 227 holes 3 module 2599e963c7f662e9
+lower v1 abi a42c4357 docEnd 227 holes 3 module 72a51c1e64937096
 piece 0 hole 0 js [129,167)
 piece 1 hole 1 js [169,207)
 piece 2 hole 2 js [209,259)
 block 0 content [0,226) user framed holes 0..3
   CALL para [0,226)
-    TEXT "Text before " [0,11)
+    TEXT "Text before " [0,11) raw=0:0,12:11
     HOLE 0 [12,43)
-    TEXT " text after, and in CJK 中文" [44,73)
+    TEXT " text after, and in CJK 中文" [44,73) raw=0:0,1:0
     HOLE 1 [73,104)
-    TEXT "中文。An image with only its width declared " [104,150)
+    TEXT "中文。An image with only its width declared " [104,150) raw=0:0,47:46
     HOLE 2 [151,194)
-    TEXT " takes its height from the file." [195,226)
+    TEXT " takes its height from the file." [195,226) raw=0:0,1:0

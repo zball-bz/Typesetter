@@ -1,12 +1,12 @@
-lower v1 abi 7f64f38d docEnd 81 holes 0 module none
+lower v1 abi a42c4357 docEnd 81 holes 0 module none
 block 0 content [0,80)
   CALL para [0,80)
-    TEXT "Plain " [0,5)
+    TEXT "Plain " [0,5) raw=0:0,6:5
     CALL strong [6,18)
       TEXT "bold words" [7,17)
-    TEXT " and " [19,22)
+    TEXT " and " [19,22) raw=0:0,1:0,5:3
     CALL em [23,31)
       TEXT "italic" [24,30)
-    TEXT " text with *escaped* markers, un" [32,65)
+    TEXT " text with *escaped* markers, un" [32,65) raw=0:0,1:0,12:12,20:21
     TEXT "*" [65,66)
     TEXT "closed at end." [66,80)
