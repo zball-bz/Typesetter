@@ -29,9 +29,9 @@ struct Scratch {
   Interner strs{arena};
   DiagSink diags;
   AstNode* root = nullptr;
-  explicit Scratch(std::string_view text) {
+  explicit Scratch(std::string_view text, const FrontEndOptions& opts = {}) {
     src.init(std::string(text));
-    Skeleton sk = linepass(src, arena, diags);
+    Skeleton sk = linepass(src, arena, diags, opts);
     root = parseDoc(src, sk, arena, strs, diags);
   }
 };
@@ -532,8 +532,8 @@ std::vector<CodeToken> syntaxTokens(const AstNode* doc, const SourceText& src, c
   if (doc) w.walk(doc, kNoTag, 0);
   return w.finish();
 }
-std::vector<CodeToken> syntaxTokens(std::string_view source) {
-  Scratch s(source);
+std::vector<CodeToken> syntaxTokens(std::string_view source, const FrontEndOptions& opts) {
+  Scratch s(source, opts);
   return syntaxTokens(s.root, s.src, s.strs);
 }
 
@@ -542,7 +542,15 @@ std::string outlineJson(const AstNode* doc, const SourceText& src, const Interne
   OutlineWalk w(src.view(), strs);
   if (doc) w.walk(doc, src);
   std::string out = "{\"headings\":[" + w.headings + "],\"regions\":[" + w.regions +
-                    "],\"fences\":[" + w.fences + "],\"labels\":[" + w.labels + "],\"diagnostics\":[";
+                    "],\"fences\":[" + w.fences + "],\"labels\":[" + w.labels + "],";
+  // (plan P3-35) the document's front matter, when the host's option found it
+  if (doc && doc->nkids && doc->kids()[0]->kind == AstKind::Comment && side<CommentP>(doc->kids()[0]).front) {
+    const AstNode* f = doc->kids()[0];
+    appendf(out, "\"frontMatter\":{\"span\":[%u,%u],\"text\":", f->span.start, f->span.end);
+    jsonString(out, strs.get(f->str));
+    out += "},";
+  }
+  out += "\"diagnostics\":[";
   bool first = true;
   for (const Diag& d : diags.items) {
     if (!first) out += ',';
@@ -558,8 +566,8 @@ std::string outlineJson(const AstNode* doc, const SourceText& src, const Interne
   out += "]}";
   return out;
 }
-std::string outlineJson(std::string_view source) {
-  Scratch s(source);
+std::string outlineJson(std::string_view source, const FrontEndOptions& opts) {
+  Scratch s(source, opts);
   return outlineJson(s.root, s.src, s.strs, s.diags);
 }
 
@@ -568,8 +576,8 @@ std::string astJson(const AstNode* doc, const SourceText& src, const Interner& s
   if (doc) astJsonRec(out, doc, src, strs);
   return out;
 }
-std::string astJson(std::string_view source) {
-  Scratch s(source);
+std::string astJson(std::string_view source, const FrontEndOptions& opts) {
+  Scratch s(source, opts);
   return astJson(s.root, s.src, s.strs);
 }
 

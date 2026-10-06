@@ -1,0 +1,11 @@
+---
+title: "A post with front matter"
+tags: [typesetting, tsm]
+---
+= The post
+
+Its front matter — the lines between the two `---` lines at the start — is the site generator's: with the host option `source.frontMatter`, the engine skips it as a comment.
+
+---
+
+A rule after the front matter stays a rule.

@@ -99,7 +99,8 @@ NODE(Splice, "expr:str lastCall:u32 named:bool?",           "splice expr=\"{expr
 NODE(Stmt,   "let:bool js:str content:bool?",               "{let?code-let:code-block} js=\"{js}\"{content? content:}")
 NODE(Error,  "message:str",                                 "error code=\"{$str}\" msg=\"{message}\"")
 NODE(Text,   "rawmap:str? seps:str?",                       "text str=\"{$str}\"")
-NODE(Comment, "",                                           "comment body=\"{$str}\"")
+// a comment block; front: the document's front matter (plan P3-35, a host option)
+NODE(Comment, "front:bool?",                                "comment body=\"{$str}\"{front? front:}")
 // a keyword form (plan P2-12): $str = the keyword; kids = its Branch nodes
 NODE(Keyword, "",                                           "keyword {$str}")
 // a branch of a keyword form: its head JS (a condition, a for/while head;

@@ -1,0 +1,13 @@
+doc @[0,307)
+  comment @[0,66) body="title: \"A post with front matter\"\ntags: [typesetting, tsm]" front
+  heading @[67,77) level=1
+    text @[69,77) str="The post"
+  para @[79,256)
+    text @[79,125) str="Its front matter — the lines between the two "
+    code @[126,131) str="---"
+    text @[132,200) str=" lines at the start — is the site generator's: with the host option "
+    code @[201,221) str="source.frontMatter"
+    text @[221,256) str=", the engine skips it as a comment."
+  rule @[258,261)
+  para @[263,306)
+    text @[263,306) str="A rule after the front matter stays a rule."

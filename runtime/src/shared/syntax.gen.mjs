@@ -1,3 +1,480 @@
 // GENERATED from engine/src/syntax/syntax.def by tools/gen-syntax.mjs — do not edit.
 export const SYNTAX_VERSION = 6;
 export const TOKEN_TAGS = Object.freeze(["keyword","string","number","comment","function","type","constant","variable","operator","punctuation","property","attribute","label","embedded"]);
+// (plan P3-35) the whole table, as syntax.gen.json holds it (the printer, escapeTsm)
+export const SYNTAX = Object.freeze({
+ "version": 6,
+ "classes": {
+  "SpliceHead": "A-Za-z_$",
+  "SpliceCont": "A-Za-z0-9_$",
+  "IdStart": "A-Za-z_",
+  "IdCont": "A-Za-z0-9_",
+  "IdJoin": "-.:",
+  "LabelChar": "^ <>[]@,;\\",
+  "Escapable": "!-/:-@[-`{-~"
+ },
+ "inline": [
+  {
+   "id": "code",
+   "open": "`",
+   "close": "`",
+   "body": "Verbatim",
+   "params": "pad=Strip",
+   "guard": "-",
+   "prec": "Island",
+   "slot": "code",
+   "capture": "string"
+  },
+  {
+   "id": "math",
+   "open": "$",
+   "close": "$",
+   "body": "Verbatim",
+   "params": "esc=$ pad=Display",
+   "guard": "-",
+   "prec": "Island",
+   "slot": "math",
+   "capture": "embedded"
+  },
+  {
+   "id": "comment",
+   "open": "%--",
+   "close": "--%",
+   "body": "Verbatim",
+   "params": "nest",
+   "guard": "-",
+   "prec": "Comment",
+   "slot": "comment",
+   "capture": "comment"
+  },
+  {
+   "id": "url",
+   "open": "SCHEME://",
+   "close": "URL_END",
+   "body": "Verbatim",
+   "params": "-",
+   "guard": "-",
+   "prec": "Island",
+   "slot": "link",
+   "capture": "link"
+  },
+  {
+   "id": "splice",
+   "open": "#HEAD",
+   "close": "HEAD_CHAIN",
+   "body": "CallChain",
+   "params": "-",
+   "guard": "PrevIdent",
+   "prec": "Markup",
+   "slot": "splice",
+   "capture": "function"
+  },
+  {
+   "id": "strong",
+   "open": "*",
+   "close": "*",
+   "body": "Pair",
+   "params": "-",
+   "guard": "Intraword",
+   "prec": "Markup",
+   "slot": "strong",
+   "capture": "strong"
+  },
+  {
+   "id": "em",
+   "open": "_",
+   "close": "_",
+   "body": "Pair",
+   "params": "-",
+   "guard": "Intraword",
+   "prec": "Markup",
+   "slot": "em",
+   "capture": "emphasis"
+  },
+  {
+   "id": "link",
+   "open": "[",
+   "close": "](URL)",
+   "body": "LinkText",
+   "params": "-",
+   "guard": "-",
+   "prec": "Markup",
+   "slot": "link",
+   "capture": "link"
+  },
+  {
+   "id": "note",
+   "open": "^[",
+   "close": "]",
+   "body": "Content",
+   "params": "-",
+   "guard": "-",
+   "prec": "Markup",
+   "slot": "note",
+   "capture": "note"
+  },
+  {
+   "id": "ref",
+   "open": "@",
+   "close": "BARE_ID",
+   "body": "Ident",
+   "params": "-",
+   "guard": "PrevIdent",
+   "prec": "Markup",
+   "slot": "ref",
+   "capture": "label"
+  },
+  {
+   "id": "refs",
+   "open": "@[",
+   "close": "]",
+   "body": "IdList",
+   "params": "-",
+   "guard": "-",
+   "prec": "Markup",
+   "slot": "ref",
+   "capture": "label"
+  },
+  {
+   "id": "brk",
+   "open": "\\EOL",
+   "close": "-",
+   "body": "-",
+   "params": "-",
+   "guard": "-",
+   "prec": "Markup",
+   "slot": "linebreak",
+   "capture": "punctuation"
+  }
+ ],
+ "block": [
+  {
+   "id": "quote",
+   "shape": "Prefix",
+   "starter": ">",
+   "interrupts": "Always",
+   "own": "None",
+   "slot": "quote"
+  },
+  {
+   "id": "item",
+   "shape": "Column",
+   "starter": "LIST_MARKER",
+   "interrupts": "ListRule",
+   "own": "None",
+   "slot": "item"
+  },
+  {
+   "id": "term",
+   "shape": "Column",
+   "starter": "/ TERM:",
+   "interrupts": "ListRule",
+   "own": "None",
+   "slot": "terms"
+  },
+  {
+   "id": "region",
+   "shape": "Explicit",
+   "starter": "#!NAME ARGS?",
+   "interrupts": "Always",
+   "own": "Container",
+   "slot": "region"
+  },
+  {
+   "id": "fence",
+   "shape": "Verbatim",
+   "starter": "``` INFO",
+   "interrupts": "Always",
+   "own": "Container",
+   "slot": "fence"
+  },
+  {
+   "id": "comment",
+   "shape": "Verbatim",
+   "starter": "%--",
+   "interrupts": "LeafOwned",
+   "own": "Container",
+   "slot": "comment"
+  },
+  {
+   "id": "heading",
+   "shape": "Leaf",
+   "starter": "={1,6} TEXT <label>?",
+   "interrupts": "Always",
+   "own": "None",
+   "slot": "heading"
+  },
+  {
+   "id": "rule",
+   "shape": "Leaf",
+   "starter": "---",
+   "interrupts": "Always",
+   "own": "None",
+   "slot": "rule"
+  },
+  {
+   "id": "let",
+   "shape": "Stmt",
+   "starter": "#let",
+   "interrupts": "Always",
+   "own": "Container",
+   "slot": "-"
+  },
+  {
+   "id": "stmt",
+   "shape": "Stmt",
+   "starter": "#{",
+   "interrupts": "Always",
+   "own": "Container",
+   "slot": "-"
+  },
+  {
+   "id": "para",
+   "shape": "Leaf",
+   "starter": "DEFAULT",
+   "interrupts": "-",
+   "own": "None",
+   "slot": "para"
+  }
+ ],
+ "keywords": [
+  {
+   "keyword": "if",
+   "params": [
+    "elseChain"
+   ]
+  },
+  {
+   "keyword": "for",
+   "params": []
+  },
+  {
+   "keyword": "while",
+   "params": []
+  }
+ ],
+ "reservedHeads": {
+  "unsupported": [
+   "if",
+   "else",
+   "for",
+   "while",
+   "let"
+  ],
+  "reserved": [
+   "break",
+   "case",
+   "catch",
+   "class",
+   "const",
+   "continue",
+   "debugger",
+   "default",
+   "delete",
+   "do",
+   "export",
+   "extends",
+   "finally",
+   "function",
+   "import",
+   "in",
+   "instanceof",
+   "new",
+   "return",
+   "switch",
+   "throw",
+   "try",
+   "typeof",
+   "var",
+   "void",
+   "with",
+   "yield",
+   "static",
+   "enum",
+   "await"
+  ]
+ },
+ "tokenTags": [
+  "keyword",
+  "string",
+  "number",
+  "comment",
+  "function",
+  "type",
+  "constant",
+  "variable",
+  "operator",
+  "punctuation",
+  "property",
+  "attribute",
+  "label",
+  "embedded"
+ ],
+ "sugar": [
+  {
+   "id": "para",
+   "form": "Block",
+   "payload": []
+  },
+  {
+   "id": "heading",
+   "form": "Block",
+   "payload": [
+    [
+     "level",
+     "u8"
+    ],
+    [
+     "label",
+     "str"
+    ]
+   ]
+  },
+  {
+   "id": "list",
+   "form": "Block",
+   "payload": [
+    [
+     "ordered",
+     "bool"
+    ],
+    [
+     "start",
+     "i32"
+    ]
+   ]
+  },
+  {
+   "id": "item",
+   "form": "Block",
+   "payload": []
+  },
+  {
+   "id": "terms",
+   "form": "Block",
+   "payload": []
+  },
+  {
+   "id": "termpart",
+   "form": "Inline",
+   "payload": []
+  },
+  {
+   "id": "quote",
+   "form": "Block",
+   "payload": []
+  },
+  {
+   "id": "rule",
+   "form": "Block",
+   "payload": []
+  },
+  {
+   "id": "fence",
+   "form": "Block",
+   "payload": [
+    [
+     "lang",
+     "str"
+    ],
+    [
+     "args",
+     "src"
+    ],
+    [
+     "bodyOffset",
+     "u32"
+    ],
+    [
+     "bodyEnd",
+     "u32"
+    ],
+    [
+     "lines",
+     "str"
+    ],
+    [
+     "info",
+     "str"
+    ],
+    [
+     "label",
+     "str"
+    ]
+   ]
+  },
+  {
+   "id": "region",
+   "form": "Block",
+   "payload": [
+    [
+     "args",
+     "src"
+    ],
+    [
+     "label",
+     "str"
+    ]
+   ]
+  },
+  {
+   "id": "strong",
+   "form": "Inline",
+   "payload": []
+  },
+  {
+   "id": "em",
+   "form": "Inline",
+   "payload": []
+  },
+  {
+   "id": "code",
+   "form": "Inline",
+   "payload": []
+  },
+  {
+   "id": "link",
+   "form": "Inline",
+   "payload": [
+    [
+     "url",
+     "str"
+    ]
+   ]
+  },
+  {
+   "id": "note",
+   "form": "Inline",
+   "payload": []
+  },
+  {
+   "id": "ref",
+   "form": "Inline",
+   "payload": []
+  },
+  {
+   "id": "linebreak",
+   "form": "Inline",
+   "payload": []
+  },
+  {
+   "id": "math",
+   "form": "Both",
+   "payload": [
+    [
+     "display",
+     "bool"
+    ],
+    [
+     "label",
+     "str"
+    ]
+   ]
+  },
+  {
+   "id": "arg",
+   "form": "Inline",
+   "payload": []
+  }
+ ]
+});

@@ -1,0 +1,18 @@
+lower v1 abi 3d3ccfbb docEnd 307 holes 0 module none
+block 0 content [0,66)
+  CALL comment [0,66) text="title: \"A post with front matter\"\ntags: [typesetting, tsm]"
+block 1 content [67,77)
+  CALL heading [67,77) level=1 label=null
+    TEXT "The post" [69,77)
+block 2 content [79,256)
+  CALL para [79,256)
+    TEXT "Its front matter — the lines between the two " [79,125) raw=0:0,47:46
+    CALL code [126,131) text="---"
+    TEXT " lines at the start — is the site generator's: with the host option " [132,200) raw=0:0,1:0,70:68
+    CALL code [201,221) text="source.frontMatter"
+    TEXT ", the engine skips it as a comment." [221,256)
+block 3 content [258,261)
+  CALL rule [258,261)
+block 4 content [263,306)
+  CALL para [263,306)
+    TEXT "A rule after the front matter stays a rule." [263,306)

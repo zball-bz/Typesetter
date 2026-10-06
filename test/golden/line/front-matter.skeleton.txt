@@ -1,0 +1,6 @@
+doc @[0,307)
+  comment @[0,66)
+  heading1 @[67,77)
+  para @[79,256) lines=1
+  rule @[258,261)
+  para @[263,306) lines=1

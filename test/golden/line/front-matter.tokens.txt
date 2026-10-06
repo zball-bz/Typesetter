@@ -1,0 +1,6 @@
+[0,66) comment "---\ntitle: \"A post with front matter\"\ntags: [typesetting, tsm]\n---"
+[67,68) keyword "="
+[69,77) function "The post"
+[126,131) string "`---`"
+[201,221) string "`source.frontMatter`"
+[258,261) punctuation "---"

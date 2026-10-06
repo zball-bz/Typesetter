@@ -1,0 +1,16 @@
+doc @[0,306) [base]
+  comment @[0,66) [base]
+    text @[0,66) [base] str="title: \"A post with front matter\"\ntags: [typesetting, tsm]"
+  heading @[67,77) [BOLDx1.60] level=1 label="h-1"
+    text @[69,77) [BOLDx1.60] str="The post"
+  para @[79,256) [base]
+    text @[79,125) [base] str="Its front matter — the lines between the two " raw=0:0,47:46
+    code @[126,131) [CODEx0.85]
+      text @[126,131) [CODEx0.85] str="---"
+    text @[132,200) [base] str=" lines at the start — is the site generator's: with the host option " raw=0:0,1:0,70:68
+    code @[201,221) [CODEx0.85]
+      text @[201,221) [CODEx0.85] str="source.frontMatter"
+    text @[221,256) [base] str=", the engine skips it as a comment."
+  rule @[258,261) [base]
+  para @[263,306) [base]
+    text @[263,306) [base] str="A rule after the front matter stays a rule."

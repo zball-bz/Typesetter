@@ -10,17 +10,18 @@
 //
 //   node tools/convert/html2tsm.mjs page.html --base https://pbr-book.org/4ed/Introduction/ > page.tsm
 import { readFileSync } from 'node:fs';
-import { em, strong, markers, escapeProse, descriptionItems } from './prose.mjs';
+import { Markup, decodeEntities, descriptionItems } from './kit.mjs';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : '';
 let html = readFileSync(file, 'utf8');
 
-const entities = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
-  .replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, '’').replace(/&lsquo;/g, '‘')
-  .replace(/&ldquo;/g, '“').replace(/&rdquo;/g, '”').replace(/&nbsp;/g, ' ')
-  .replace(/&ndash;/g, '–').replace(/&mdash;/g, '—').replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(+n));
+// (plan P3-35) the converter kit: entities by the WHATWG table, text escaped
+// by the printer's escapeTsm, markup placed after it
+const entities = decodeEntities;
+const M = new Markup();
+const flat = (s) => s.replace(/\s+/g, ' ').trim();
 
 // main column only
 const start = html.indexOf('class="maincontainer"');
@@ -32,7 +33,7 @@ let mathCount = 0;
 // MathJax SVG → italic title text
 html = html.replace(/<svg[^>]*>[\s\S]*?<title[^>]*>([\s\S]*?)<\/title>[\s\S]*?<\/svg>/g, (m, t) => {
   mathCount++;
-  return `<em>${entities(t.trim())}</em>`;
+  return `<em>${t.trim()}</em>`;  // (its entities: decoded with the paragraph's)
 });
 html = html.replace(/<div class="displaymath">([\s\S]*?)<\/div>/g, '<p>$1</p>');
 
@@ -43,7 +44,7 @@ html = html.replace(/<div class="card outerfigure">([\s\S]*?)<\/div>\s*<\/div>/g
   const cap = /<figcaption[^>]*>([\s\S]*?)<\/figcaption>/.exec(inner);
   if (!src) return '';
   const url = /^https?:/.test(src[1]) ? src[1] : base + src[1];
-  const caption = cap ? entities(cap[1].replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').replace(/^Figure [\d.]+:\s*/, '').trim() : '';
+  const caption = cap ? M.finish(flat(entities(cap[1].replace(/<[^>]+>/g, ''))).replace(/^Figure [\d.]+:\s*/, '')) : '';
   figs.push(url);
   return `\n\n#!figure(src: "${url}", alt: "figure", scale: 0.8)\n${caption}\n#figure!\n\n`;
 });
@@ -51,7 +52,7 @@ html = html.replace(/<div class="card outerfigure">([\s\S]*?)<\/div>\s*<\/div>/g
 // literate fragments → code blocks
 html = html.replace(/<div class="fragmentname">([\s\S]*?)<\/div>\s*<div class="fragmentcode">([\s\S]*?)<\/div>\s*<\/div>/g, (m, name, code) => {
   const text = entities(code.replace(/<div id="fragbit[^"]*"[^>]*>[\s\S]*?<\/div>/g, '')
-    .replace(/<br\s*\/?>/g, '\n').replace(/<[^>]+>/g, ''))
+    .replace(/<br\s*\/?>/g, '\n').replace(/<[^>]+>/g, '')).replace(/\u00a0/g, ' ')  // (code: a no-break space is a space)
     .replace(/>>[ \t]+(?=\S)/g, '>>\n    ');  // expanded sub-fragments start their own line
   const head = entities(name.replace(/<[^>]+>/g, '')).trim();
   return `\n\n\`\`\`cpp\n${head}\n${text.replace(/^\s*\n/, '').trimEnd()}\n\`\`\`\n\n`;
@@ -59,15 +60,16 @@ html = html.replace(/<div class="fragmentname">([\s\S]*?)<\/div>\s*<div class="f
 
 // block structure
 const out = [];
-const inlineText = (s) => entities(s
-  .replace(/<em>([\s\S]*?)<\/em>/g, (m, b) => em(b)).replace(/<i>([\s\S]*?)<\/i>/g, (m, b) => em(b))
-  .replace(/<(?:tt|code)>([\s\S]*?)<\/(?:tt|code)>/g, '`$1`')
-  .replace(/<b>([\s\S]*?)<\/b>/g, (m, b) => strong(b)).replace(/<strong>([\s\S]*?)<\/strong>/g, (m, b) => strong(b))
-  .replace(/<a [^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g, (m, h, t) => /^https?:/.test(h) ? `[${t}](${h})` : t)
+// a fragment of HTML → its text with the kit's markup placeholders
+const inlineText = (s) => flat(entities(s
+  .replace(/<em>([\s\S]*?)<\/em>/g, (m, b) => M.em(b)).replace(/<i>([\s\S]*?)<\/i>/g, (m, b) => M.em(b))
+  .replace(/<(?:tt|code)>([\s\S]*?)<\/(?:tt|code)>/g, (m, b) => M.code(flat(entities(b.replace(/<[^>]+>/g, '')))))
+  .replace(/<b>([\s\S]*?)<\/b>/g, (m, b) => M.strong(b)).replace(/<strong>([\s\S]*?)<\/strong>/g, (m, b) => M.strong(b))
+  .replace(/<a [^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g, (m, h, t) => /^https?:/.test(h) ? M.link(t, entities(h)) : t)
   .replace(/<sup>([\s\S]*?)<\/sup>/g, '^$1')
-  .replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
-// (plan P3-33) no escape inside a URL; emphasis resolved with its neighbours
-const inline = (s) => markers(escapeProse(inlineText(s)));
+  .replace(/<[^>]+>/g, '')));
+// …as finished .tsm (ctx: escapeTsm's; a paragraph's text starts its line)
+const inline = (s, ctx = 'para') => M.finish(inlineText(s), ctx, { lineStart: ctx === 'para' });
 
 const re = /<(h2|h3|h4|p|li|pre|dl)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;
 let m;
@@ -77,11 +79,14 @@ while ((m = re.exec(html))) {
     out.push('', ...descriptionItems(m[2], inline), '');
     continue;
   }
-  const tag = m[1], body = inline(m[2]);
+  const tag = m[1];
+  if (/^h[234]$/.test(tag)) {  // its section number dropped
+    const text = M.finish(inlineText(m[2]).replace(/^[\d.]+\s*/, ''), 'heading', { lineStart: false });
+    if (text) out.push('', '='.repeat(+tag[1] - 1) + ' ' + text, '');
+    continue;
+  }
+  const body = inline(m[2]);
   if (!body) continue;
-  if (tag === 'h2') out.push('', '= ' + body.replace(/^[\d.]+\s*/, ''), '');
-  else if (tag === 'h3') out.push('', '== ' + body.replace(/^[\d.]+\s*/, ''), '');
-  else if (tag === 'h4') out.push('', '=== ' + body, '');
   else if (tag === 'li') out.push('- ' + body);
   else out.push('', body, '');
 }

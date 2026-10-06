@@ -26,13 +26,19 @@ function load(assetRoot) {
 }
 const ready = () => engine !== null;
 
+// (plan P3-35; D-L09) the front end's host options, one for every export and
+// the preview: a .tsm file's SSG front matter is a comment
+const FRONT_END = Object.freeze({ source: { frontMatter: true } });
+
 function call(fn, text) {
   const { M } = engine;
   const p = M.stringToNewUTF8(text);
+  const s = M.stringToNewUTF8(JSON.stringify(FRONT_END));
   try {
-    return JSON.parse(M.UTF8ToString(M[fn](p)));
+    return JSON.parse(M.UTF8ToString(M[fn](p, s)));
   } finally {
     M._free(p);
+    M._free(s);
   }
 }
 
@@ -61,10 +67,11 @@ function outline(text) {
   const o = call('_tsr_outline', text);
   const conv = (x) => ({ ...x, span: [map[x.span[0]], map[x.span[1]]] });
   for (const k of ['headings', 'regions', 'fences', 'labels', 'diagnostics']) o[k] = o[k].map(conv);
+  if (o.frontMatter) o.frontMatter = conv(o.frontMatter);
   return o;
 }
 
 // the static constructor manifest ([] before the engine loaded)
 const manifest = () => engine?.manifest ?? [];
 
-module.exports = { load, ready, tokens, outline, byteToUtf16, manifest };
+module.exports = { load, ready, tokens, outline, byteToUtf16, manifest, FRONT_END };

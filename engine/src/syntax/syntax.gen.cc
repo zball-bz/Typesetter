@@ -28,6 +28,7 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       out += " body=\"";
       appendEscaped(out, strs.get(n->str));
       out += "\"";
+      out += side<CommentP>(n).front ? " front" : "";
       break;
     }
     case AstKind::Call:
@@ -263,8 +264,14 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       }
       break;
     }
-    case AstKind::Comment:
+    case AstKind::Comment: {
+      const CommentP& p = side<CommentP>(n);
+      if (p.front) {
+      out += ",\"front\":";
+      out += "true";
+      }
       break;
+    }
     case AstKind::Call:
       switch (n->sugar) {
         case SugarId::para:

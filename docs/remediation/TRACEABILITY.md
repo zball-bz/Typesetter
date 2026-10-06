@@ -1001,7 +1001,7 @@ Theme steps: — · findings: 1
 | `markup-language/structured-content-flattened` | issue | medium | P3-03 | grep:plan P3-03 |
 | `markup-language/ambiguity-hazards` | issue | medium | P3-33 | grep:plan P3-33 |
 | `markup-language/ast-dump-note` | issue | low | P0-02 | grep:plan P0-02 |
-| `markup-language/doc-drift` | issue | low | P3-35 | |
+| `markup-language/doc-drift` | issue | low | P3-35 | grep:plan P3-35 |
 | `markup-language/missed:0` | missed | high | P2-11 | grep:plan P2-11 |
 | `markup-language/missed:1` | missed | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/missed:2` | missed | medium | P1-07 | grep:plan P1-07 |
@@ -1023,7 +1023,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/region-container-special-case` | adhoc | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/multiple-tsm-grammars` | adhoc | high | P1-09 | grep:plan P1-09 |
 | `parser-frontend/sigil-context-rules` | adhoc | medium | P3-33 | grep:plan P3-33 |
-| `parser-frontend/front-matter-editor-only` | adhoc | low | P3-35 | |
+| `parser-frontend/front-matter-editor-only` | adhoc | low | P3-35 | grep:plan P3-35 |
 | `parser-frontend/editor-region-builder-list` | adhoc | low | P1-09 | grep:plan P1-09 |
 | `parser-frontend/contiguous-escapes-blocks` | issue | high | P1-06 | grep:plan P1-06 |
 | `parser-frontend/inline-comment-leaks-block-structure` | issue | high | P1-08 | grep:plan P1-08 |
@@ -1309,7 +1309,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/counters-fixed-fields` | adhoc | high | P2-07 | grep:plan P2-07 |
 | `real-world-evidence/open-arg-schema` | adhoc | high | P1-01, P2-05 | grep:plan P2-05 |
 | `real-world-evidence/sugar-dispatch-fixed` | adhoc | high | P2-03 | grep:plan P2-03 |
-| `real-world-evidence/no-tsm-printer` | adhoc | high | P3-35 | |
+| `real-world-evidence/no-tsm-printer` | adhoc | high | P3-35 | grep:plan P3-35 |
 | `real-world-evidence/lexical-syntax-copies` | adhoc | medium | P1-09 | grep:plan P1-09 |
 | `real-world-evidence/literate-cpp-hack` | adhoc | medium | P3-22 | grep:plan P3-22 |
 | `real-world-evidence/ref-cite-format-in-cpp` | adhoc | medium | P2-09 | grep:plan P2-09 |
@@ -1332,9 +1332,9 @@ Theme steps: — · findings: 1
 | `real-world-evidence/span-loss-synthesized-nodes` | issue | medium | P2-04 | grep:plan P2-04 |
 | `real-world-evidence/grouped-cite-all-or-nothing` | issue | low | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/spec-drift` | issue | medium | P3-37, P5-02 | |
-| `real-world-evidence/converter-fidelity-unchecked` | issue | medium | P3-35 | |
+| `real-world-evidence/converter-fidelity-unchecked` | issue | medium | P3-35 | grep:plan P3-35 |
 | `real-world-evidence/math-leniency-silent` | issue | low | P3-24 | grep:plan P3-24 |
-| `real-world-evidence/converter-code-duplication` | issue | low | P3-35 | |
+| `real-world-evidence/converter-code-duplication` | issue | low | P3-35 | grep:plan P3-35 |
 | `real-world-evidence/missed:0` | missed | high | P0-05, P2-02 | grep:plan P2-02 |
 | `real-world-evidence/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/missed:2` | missed | medium | P2-06 | grep:plan P2-06 |

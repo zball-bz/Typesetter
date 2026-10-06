@@ -1094,10 +1094,32 @@ Skeleton linepassLines(const SourceText& src, const std::vector<Span>& lines, Ar
   return {lp.root, std::move(lp.windows)};
 }
 
-Skeleton linepass(const SourceText& src, Arena& arena, DiagSink& diags) {
+Skeleton linepass(const SourceText& src, Arena& arena, DiagSink& diags, const FrontEndOptions& opts) {
   std::vector<Span> lines(src.lineCount());
   for (u32 l = 0; l < src.lineCount(); l++) lines[l] = {src.lineStart(l), src.lineEnd(l)};
-  Skeleton sk = linepassLines(src, lines, arena, diags);
+  // (plan P3-35; D-L09) front matter: with the host's option, a `---` line at
+  // offset 0 through the next `---` or `...` line is one comment block;
+  // unclosed, it is markup as usual
+  SkelNode* front = nullptr;
+  size_t first = 0;
+  auto lineIs = [&](size_t l, std::string_view w) {
+    std::string_view t = src.slice(lines[l]);
+    while (!t.empty() && (t.back() == ' ' || t.back() == '\t' || t.back() == '\r')) t.remove_suffix(1);
+    return t == w;
+  };
+  if (opts.frontMatter && lines.size() > 1 && lines[0].start == 0 && lineIs(0, "---"))
+    for (size_t l = 1; l < lines.size(); l++)
+      if (lineIs(l, "---") || lineIs(l, "...")) {
+        front = arena.make<SkelNode>();
+        front->kind = SkelKind::Comment;
+        front->front = true;
+        front->span = {0, lines[l].end};
+        front->lineSpans.assign(lines.begin() + 1, lines.begin() + (long)l);
+        first = l + 1;
+        break;
+      }
+  Skeleton sk = linepassLines(src, std::vector<Span>(lines.begin() + (long)first, lines.end()), arena, diags);
+  if (front) sk.root->kids.insert(sk.root->kids.begin(), front);
   sk.root->span = {0, src.size()};
   return sk;
 }

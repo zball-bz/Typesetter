@@ -292,7 +292,9 @@ const json = JSON.stringify({
   tokenTags, sugar: sugars.map((s) => ({ id: s.id, form: s.form, payload: fieldsOf(s.payload).map(([n, t]) => [n, t]) })),
 }, null, 1) + '\n';
 const mjs = `// ${HDR}\nexport const SYNTAX_VERSION = ${version};\n` +
-  `export const TOKEN_TAGS = Object.freeze(${JSON.stringify(tokenTags)});\n`;
+  `export const TOKEN_TAGS = Object.freeze(${JSON.stringify(tokenTags)});\n` +
+  `// (plan P3-35) the whole table, as syntax.gen.json holds it (the printer, escapeTsm)\n` +
+  `export const SYNTAX = Object.freeze(${json.trim()});\n`;
 
 // a markdown code span that survives backticks and pipes in table cells
 const mdCode = (x) => {

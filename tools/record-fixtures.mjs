@@ -55,8 +55,11 @@ for (const tsm of walk(fixtures)) {
   if (existsSync(treePath)) {
     ops = Buffer.from(opsFromTree(JSON.parse(readFileSync(treePath, 'utf8'))));
   } else {
-    const program = new Uint8Array(execFileSync(tsrc, ['--stage=program', tsm]));
-    const js = () => execFileSync(tsrc, ['--stage=js', tsm], { encoding: 'utf8' });
+    // (plan P3-35) its settings reach the compile too (source.frontMatter)
+    const fx = tsm.replace(/\.tsm$/, '.fixture.json');
+    const withFx = existsSync(fx) ? [`--fixture=${fx}`] : [];
+    const program = new Uint8Array(execFileSync(tsrc, ['--stage=program', ...withFx, tsm]));
+    const js = () => execFileSync(tsrc, ['--stage=js', ...withFx, tsm], { encoding: 'utf8' });
     // (plan P3-21) its loads through a resource host: the fixture's folder
     // as its base, the repository as its root
     const job = resources.job({ bases: { doc: resolve(dirname(tsm)) }, root: resolve(root) });

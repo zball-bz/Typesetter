@@ -78,6 +78,7 @@ g6() {
   npm run corpus || return 1
   node tools/check-export.mjs || return 1  # the static export (plan P3-21)
   node tools/check-project.mjs || return 1  # a project of files (plan P3-31)
+  node tools/check-print.mjs || return 1  # the printer round trip and escapeTsm (plan P3-35)
   if [ -f tools/review-corpus.mjs ]; then node tools/review-corpus.mjs --check; fi
 }
 

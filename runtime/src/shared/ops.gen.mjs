@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 15;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = 'b3eda818';
+export const SCHEMA_HASH = 'a946d405';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,

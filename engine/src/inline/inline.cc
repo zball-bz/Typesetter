@@ -290,7 +290,7 @@ struct InlineParser {
       return;
     }
     flushText();
-    AstNode* cm = A.node(AstKind::Comment, span(i, end));
+    AstNode* cm = A.node<CommentP>(AstKind::Comment, span(i, end));
     cm->str = strs.intern(t.substr(i + 3, end - 3 - (i + 3)));
     stack.back().items.push_back(cm);  // does not set prevGlyph
     i = end;
@@ -1129,8 +1129,9 @@ struct AstBuilder {
       case SkelKind::Rule:
         return A.call(SugarId::rule, s->span);
       case SkelKind::Comment: {
-        AstNode* c = A.node(AstKind::Comment, s->span);
+        AstNode* c = A.node<CommentP>(AstKind::Comment, s->span);
         c->str = strs.intern(joinLines(s->lineSpans));
+        side<CommentP>(c).front = s->front;
         return c;
       }
       case SkelKind::Region: {

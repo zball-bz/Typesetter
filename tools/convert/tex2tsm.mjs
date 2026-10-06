@@ -10,7 +10,12 @@
 //   node tools/convert/tex2tsm.mjs chapter.tex [--bib refs.bib --bib-out refs.json]
 import { readFileSync, writeFileSync } from 'node:fs';
 import { TEX_MATH } from '../../runtime/src/shared/math-vocab.gen.mjs';
-import { em, strong, markers, termText } from './prose.mjs';
+import { Markup } from './kit.mjs';
+
+// (plan P3-35) the converter kit: markup as placeholders, text escaped once
+// (escapeTsm) when its block is known; generated block lines carry a mark:
+const K = new Markup();
+const HEAD = '\uE030', ITEM = '\uE031', TERM = '\uE032', TSEP = '\uE033', ROW = '\uE034', RAWLINE = '\uE035';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
@@ -258,18 +263,20 @@ const mathToTsm = (m) => {
 };
 
 // ---- prose --------------------------------------------------------------------
+// TeX text's escapes as their characters (\{ \} as stashed above)
+const texText = (s) => s.replace(/\\([#$%&_])/g, '$1').replace(/\u0006/g, '{').replace(/\u0007/g, '}');
 src = src.replace(/(^|[^\\])%.*$/gm, '$1');
 src = src.replace(/^[ \t]*\\index(see)?\{[^{}]*(\{[^{}]*\}[^{}]*)*\}(\{[^{}]*\})?[ \t]*\n/gm, '');
 src = src.replace(/\\index\{[^{}]*(\{[^{}]*\}[^{}]*)*\}/g, '');
 src = src.replace(/\\indexsee\{[^{}]*\}\{[^{}]*\}/g, '');
-src = src.replace(/\\label\{([^{}]*)\}/g, (m, l) => ` <${safeKey(l)}>`);
+src = src.replace(/\\label\{([^{}]*)\}/g, (m, l) => K.raw(` <${safeKey(l)}>`));
 src = src.replace(/\\addlinespace(\[[^\]]*\])?/g, '');
 src = src.replace(/\\OPT[A-Za-z]+|\\noindent|\\clearpage|\\newpage|\\addlinespace|\\toprule|\\midrule|\\bottomrule/g, '');
 src = src.replace(/\\(markboth|addcontentsline|setcounter|pagenumbering)(\{(?:[^{}]|\{[^{}]*\})*\})+/g, '');
-src = src.replace(/\\chapter\*?\{([^{}]*)\}/g, (m, t) => `\n= ${t}\n`);
-src = src.replace(/\\section\*?\{([^{}]*)\}/g, (m, t) => `\n== ${t}\n`);
-src = src.replace(/\\subsection\*?\{([^{}]*)\}/g, (m, t) => `\n=== ${t}\n`);
-src = src.replace(/\\subsubsection\*?\{([^{}]*)\}/g, (m, t) => `\n==== ${t}\n`);
+src = src.replace(/\\chapter\*?\{([^{}]*)\}/g, (m, t) => `\n\n${HEAD}= ${t}\n\n`);
+src = src.replace(/\\section\*?\{([^{}]*)\}/g, (m, t) => `\n\n${HEAD}== ${t}\n\n`);
+src = src.replace(/\\subsection\*?\{([^{}]*)\}/g, (m, t) => `\n\n${HEAD}=== ${t}\n\n`);
+src = src.replace(/\\subsubsection\*?\{([^{}]*)\}/g, (m, t) => `\n\n${HEAD}==== ${t}\n\n`);
 // math islands first so the prose rules never touch them
 const maths = [];
 const stash = (m) => { maths.push(m); return `\u0001M${maths.length - 1}\u0001`; };
@@ -278,9 +285,14 @@ const stash = (m) => { maths.push(m); return `\u0001M${maths.length - 1}\u0001`;
 // its own equation (its label); a multline's rows are one formula's rows
 // (`\` ending a line); an equation is one display. A row's \label (already
 // ` <key>`) follows its formula.
-const labelOf = (row) => {
+const labelOf = (row) => {  // (a \label: the kit's stashed ` <key>`)
   let label = '';
-  const text = row.replace(/\s*<([A-Za-z0-9_-]+)>/g, (m, k) => { label = label || k; return ' '; });
+  const text = row.replace(/\s*\uE010(\d+)\uE011/g, (m, n) => {
+    const s = K.stash[+n];
+    if (!/^ <[A-Za-z0-9_-]+>$/.test(s)) return m;
+    label = label || s.slice(2, -1);
+    return ' ';
+  });
   return [text, label ? ` <${label}>` : ''];
 };
 src = src.replace(/\\begin\{(equation\*?|align\*?|flalign\*?|alignat\*?|gather\*?|narrowmultline\*?|multline\*?)\}(\{\d+\})?([\s\S]*?)\\end\{\1\}/g,
@@ -308,18 +320,18 @@ const ACCENTS = { '"': '\u0308', "'": '\u0301', '`': '\u0300', '^': '\u0302', '~
 src = src.replace(/(?<!\\)\\(["'`^~=.])\{?([A-Za-z])\}?/g, (m, a, ch) => (ch + ACCENTS[a]).normalize('NFC'))
   .replace(/(?<!\\)\\([uvHcrk])\{([A-Za-z])\}/g, (m, a, ch) => (ch + ACCENTS[a]).normalize('NFC'))
   .replace(/(?<!\\)\\[ ;:]/g, ' ').replace(/(?<!\\)\\,/g, '\u2009').replace(/(?<!\\)\\[!@/-]/g, '');
-src = src.replace(/\\footnote\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => `^[${b}]`);
-src = src.replace(/\\emph\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => em(b));
-src = src.replace(/\\textit\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => em(b));
-src = src.replace(/\\textbf\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => strong(b));
+src = src.replace(/\\footnote\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => K.note(b));
+src = src.replace(/\\emph\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => K.em(b));
+src = src.replace(/\\textit\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => K.em(b));
+src = src.replace(/\\textbf\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => K.strong(b));
 src = src.replace(/\\textsc\{([^{}]*)\}/g, '$1');
-src = src.replace(/\\texttt\{([^{}]*)\}/g, '`$1`');
-src = src.replace(/\\url\{([^{}]*)\}/g, '$1');
+src = src.replace(/\\texttt\{([^{}]*)\}/g, (m, c) => K.code(texText(c)));
+src = src.replace(/\\url\{([^{}]*)\}/g, (m, u) => K.raw(u));
 src = src.replace(/\\cite\{([^{}]*)\}/g, (m, keys) => {
   const ks = keys.split(',').map(safeKey);
-  return ks.length === 1 ? `@${ks[0]}` : `@[${ks.join(', ')}]`;
+  return K.raw(ks.length === 1 ? `@${ks[0]}` : `@[${ks.join(', ')}]`);
 });
-src = src.replace(/\\(cref|Cref|autoref|ref|eqref)\{([^{}]*)\}/g, (m, c, l) => `@${safeKey(l.split(',')[0])}`);
+src = src.replace(/\\(cref|Cref|autoref|ref|eqref)\{([^{}]*)\}/g, (m, c, l) => K.raw(`@${safeKey(l.split(',')[0])}`));
 src = src.replace(/``/g, '“').replace(/''/g, '”').replace(/---/g, '—').replace(/--/g, '–').replace(/~/g, ' ');
 src = src.replace(/\\begin\{(itemize|enumerate|description)\}([\s\S]*?)\\end\{\1\}/g, (m, env, body) => {
   const mark = env === 'enumerate' ? '+' : '-';
@@ -328,33 +340,72 @@ src = src.replace(/\\begin\{(itemize|enumerate|description)\}([\s\S]*?)\\end\{\1
     // (plan P3-34) a description item is `/ term: description` (a colon in
     // the term escaped); another list's [label] stays a bold lead
     const dt = env === 'description' && /^\[([^\]]*)\]\s*/.exec(it);
-    if (dt) return `/ ${termText(flat(dt[1]))}: ${flat(it.slice(dt[0].length))}`;
-    return `${mark} ${flat(it.replace(/^\[([^\]]*)\]\s*/, (m, b) => strong(b) + ' '))}`;
+    if (dt) return `${TERM}${flat(dt[1])}${TSEP}${flat(it.slice(dt[0].length))}`;
+    return `${ITEM}${mark} ${flat(it.replace(/^\[([^\]]*)\]\s*/, (m, b) => K.strong(b) + ' '))}`;
   }).join('\n') + '\n';
 });
 src = src.replace(/\\begin\{tabular\}\{([^{}]*)\}([\s\S]*?)\\end\{tabular\}/g, (m, spec, body) => {
   const cols = (spec.match(/[lcr]/g) || []).length || 2;
   const rows = body.replace(/\\(toprule|midrule|bottomrule|hline|addlinespace)(\[[^\]]*\])?/g, '')
     .split(/\\\\(?:\[[^\]]*\])?/).map((r) => r.trim()).filter(Boolean)
-    .map((r) => r.split(/(?<!\\)&/).map((c) => c.replace(/\s*\n\s*/g, ' ').trim()).join(' | '));
-  return '\n\n#!table(cols: ' + cols + ')\n' + rows.join('\n') + '\n#table!\n\n';
+    .map((r) => ROW + r.split(/(?<!\\)&/).map((c) => c.replace(/\s*\n\s*/g, ' ').trim()).join(K.raw(' | ')));
+  return `\n\n${RAWLINE}#!table(cols: ${cols})\n` + rows.join('\n') + `\n${RAWLINE}#table!\n\n`;
 });
 src = src.replace(/\\begin\{(center|table|figure)\}(\[[^\]]*\])?(\{[^{}]*\})?/g, '').replace(/\\end\{(center|table|figure)\}/g, '');
-src = src.replace(/\\caption\{([^{}]*)\}/g, (m, b) => em(b));
+src = src.replace(/\\caption\{([^{}]*)\}/g, (m, b) => K.em(b));
 src = src.replace(/\\(hline|centering|small|large|Large|bigskip|medskip|smallskip|vspace\{[^}]*\}|hspace\{[^}]*\})/g, '');
 src = src.replace(/\\\\/g, ' ').replace(/(?<!\\)&/g, ' | ');
-src = src.replace(/\\([A-Za-z]+)\b\*?/g, (m, name) => `⟨\\\\${name}⟩`);  // survivors = visible gaps (an escaped \\)
-src = src.replace(/[{}]/g, '');
-src = src.replace(/\u0001M(\d+)\u0001/g, (m, i) => maths[+i]);
-// HoTT sources put one sentence per line: join lines inside paragraphs
-src = src.split(/\n\s*\n/).map((p) => {
-  const t = p.trim();
-  return /^(=|-|\+|\$ |#|\/ )/.test(t) ? t : t.replace(/\s*\n\s*/g, ' ');
+src = src.replace(/\\([A-Za-z]+)\b\*?/g, (m, name) => `⟨\u0005${name}⟩`);  // survivors = visible gaps (⟨\name⟩)
+src = src.replace(/\\\{/g, '\u0006').replace(/\\\}/g, '\u0007').replace(/[{}]/g, '');
+// the text as written: TeX's escapes are its characters, which escapeTsm
+// writes as .tsm needs them
+src = texText(src).replace(/\u0005/g, '\\');
+// the formulas (final .tsm) as the kit's stash; a display's line ends stay
+// outside it, so it stands as its own block
+src = src.replace(/\u0001M(\d+)\u0001/g, (m, i) => {
+  const f = maths[+i];
+  const lead = /^\s*\n/.test(f) ? '\n' : '', tail = /\n\s*$/.test(f) ? '\n' : '';
+  return lead + K.raw(f.trim()) + tail;
+});
+// the blocks: HoTT sources put one sentence per line, so a paragraph's lines
+// join; a generated line (a heading, a list or description item, a table
+// row) is finished by its kind
+const finished = src.split(/\n\s*\n/).map((p) => {
+  const lines = p.trim().split('\n');
+  const out = [];
+  let para = [];
+  const flush = () => {
+    if (para.length) out.push(K.finish(para.join(' ').replace(/\s+/g, ' ').trim()));
+    para = [];
+  };
+  for (const l0 of lines) {
+    const l = l0.trim();
+    if (l.startsWith(HEAD)) {
+      flush();
+      const h = /^(=+) (.*)$/.exec(l.slice(1));
+      out.push(`${h[1]} ${K.finish(h[2].trim(), 'heading', { lineStart: false })}`);
+    } else if (l.startsWith(ITEM)) {
+      flush();
+      out.push(l.slice(1, 3) + K.finish(l.slice(3).trim()));
+    } else if (l.startsWith(TERM)) {
+      flush();
+      const [term, desc] = l.slice(1).split(TSEP);
+      out.push(`/ ${K.finish(term.trim(), 'term', { lineStart: false })}: ${K.finish(desc.trim())}`);
+    } else if (l.startsWith(ROW)) {
+      flush();
+      out.push(K.finish(l.slice(1).trim(), 'cells'));
+    } else if (l.startsWith(RAWLINE)) {
+      flush();
+      out.push(l.slice(1));
+    } else para.push(l);
+  }
+  flush();
+  return out.join('\n');
 }).join('\n\n');
+src = finished;
 // bibliography: --bib-ref is the path the DOCUMENT will use for the CSL-JSON
 if (opt('--bib-ref')) src += `\n\n#bibliography(${JSON.stringify(opt('--bib-ref'))})\n`;
-// (plan P3-33) emphasis resolved with its final neighbours (prose.mjs)
-process.stdout.write(markers(src).replace(/\n{3,}/g, '\n\n').trim() + '\n');
+process.stdout.write(src.replace(/\n{3,}/g, '\n\n').trim() + '\n');
 if (unknownMath.size) console.error(`tex2tsm: math macros with no symbol, kept as names: ${[...unknownMath].sort().join(' ')}`);
 if (unsupportedMath.size)
   console.error(`tex2tsm: math-unsupported: ${[...unsupportedMath].sort().map((m) => '\\' + m).join(' ')} (no stroke to paint: the argument is kept)`);

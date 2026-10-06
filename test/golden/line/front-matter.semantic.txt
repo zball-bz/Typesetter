@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<h1 data-pid="1" data-s="67" data-e="77" id="tsr-h-1">The post</h1>
+<p data-pid="2" data-s="79" data-e="256">Its front matter — the lines between the two <code>---</code> lines at the start — is the site generator&#39;s: with the host option <code>source.frontMatter</code>, the engine skips it as a comment.</p>
+<hr data-pid="3" data-s="258" data-e="261">
+<p data-pid="4" data-s="263" data-e="306">A rule after the front matter stays a rule.</p>
+</div>

@@ -421,6 +421,55 @@ content; a content literal's `#let x = [` as function, its body as content.
 The tree-sitter grammar has `keyword_form` (head + JS); the TextMate grammar
 colors the heads and an `else` after `]`.
 
+## 12. The printer, escapeTsm, front matter (as built from plan P3-35)
+
+`runtime/src/shared/tsm-print.mjs` (design T1 S12) inverts the front end:
+- `print(ast, {src})` writes the AST JSON (`tsr_parse_json`, `tsrc
+  --stage=astjson`; Node: `parseTsm` in `runtime/src/node/render.mjs`) as
+  `.tsm` whose parse is the same tree, spans and layout aside: blocks one
+  blank line apart (a statement only its line end), containers as prefixes
+  and indents, adjacent ordered lists in alternating marker classes (`N.`,
+  `+`), a fence's backtick run longer than any in its body, a code span's
+  likewise, display math padded and labelled, a bare URL only where it reads
+  back as one, a splice ended with `;` where the next character would
+  continue it, a content body in the block form when it holds blocks or
+  statements (a keyword body's edge blanks left to the parser). `src` gives
+  an error node its own text.
+- `escapeTsm(text, ctx, {before, after, lineStart, seps})` writes text that
+  parses as itself where it stands, by the syntax table's classes: `\` where
+  an escape or a hard break would read, `` ` `` `$` `[` `]` always, `*` `_`
+  unless between ASCII letters or digits (Intraword), `#` before a head or
+  `(`, `{`, `!`, `@` before an id or `[` unless after an identifier
+  character (PrevIdent), `%` before `--`, `^` before `[`, `<` of a label's
+  shape, `:` of an http(s) scheme before `//` (and, `term`, before a blank),
+  `|` off a region paragraph's cuts (`cells`), and a line's block starter
+  (`= - + N. > / ---`). A private-use character (a converter's markup
+  placeholder) is an unknown neighbour: the safe choice.
+- Conformance (c): `tools/check-print.mjs` (gate G6) asserts
+  parse(print(parse(x))) = parse(x) over the fixtures, `examples/real-world`
+  and the blog's sources, and escapeTsm's property over 600 seeded texts
+  in four contexts.
+
+The converters share `tools/convert/kit.mjs`: the WHATWG entity table
+(`entities.gen.mjs`, `gen-entities.mjs`), markup built as placeholders and
+placed after `escapeTsm` has written the text (`Markup`: `em`, `strong`,
+`code`, `link`, `note`, `raw`), emphasis resolved with its final neighbours
+(a marker that would be text there is `#em[…]` / `#strong[…]`), and
+description items. `tools/translate-tsm.mjs` masks atoms by the engine's
+spans (units: paragraphs, headings, terms, region paragraphs; atoms: code,
+formulas, references, splices and keyword forms, URLs and link targets, a
+note's `^[` `]`, statements, comments, hard breaks, cell cuts), patches the
+source in place and validates by the AST, text aside (a paragraph's atoms
+as a multiset: a translation may reorder them).
+
+**Front matter** (D-L09) is the host option `source.frontMatter`
+(`FrontEndOptions`): a `---` line at offset 0 through the next `---` or
+`...` line is one comment block (AST `comment … front`), in the document's
+parse and in every stateless export (`tsr_syntax_tokens`, `tsr_outline`,
+`tsr_parse_json` take the settings document as their second argument);
+the outline reports it as `frontMatter: {span, text}`. Without the option,
+the lines are markup as before.
+
 ## 11. Next steps
 
 (As built since: P1-09 grammars, P2-11/P2-13 provenance and splice bodies,

@@ -261,7 +261,7 @@ struct Doc {
     diags.begin(DiagOrigin::Compile);
     validThrough = (int)Stage::Compile;
     src.init(std::move(source));
-    skel = linepass(src, arena, diags);
+    skel = linepass(src, arena, diags, FrontEndOptions{cfg.frontMatter});  // (plan P3-35) its host options
     ast = parseDoc(src, skel, arena, strs, diags);
     js = codegen(ast, src, strs);
   }

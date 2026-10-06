@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-35
+- 下一步：P3-36
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -101,7 +101,7 @@
 | P3-32 | boxInfo 在布局阶段消费；宽度依赖的编译期证明 | done | grep:plan P3-32 | 2026-10-07 | 无（blocks/hlist 的图片单元头经 Lookup 取答复，字节不变） | 两次提交。结构：生成器拆出 settings_views.gen.h（值类型与各阶段视图，Config 仅前置声明；视图构造移入 settings.gen.cc），settings.gen.h（Config、policy、编解码）只有 api/ 包含；lint 新增 config-closure（api/ 之外任何 include 链看不到 settings.gen.h），删去 P1-03 的临时正则规则；emit.h 以 static_assert 断言 Emit、Measure 视图无 host.width；顺带修复 layout.cc 的无序 z 读写。行为：Emit 不再读任何图片答复——Resolve 扫描只预先登记 boxInfo 需求（不再让块等待），行内图片为待定对象，由 Measure 的对象表图片 finalizer 结算（未答复则 Measure 等待；失败则 1em 占位并清 src），块级与浮动图片的尺寸 spec 为 Provided，由 Layout 经 BoxAsker 以宽 0 询问（未答复：布局临时，失败：占位，Fragment::placeholder 交给 paint）；BoxAnswer 增 w 与 pending；BoxPull 在 Settle 模式下对图片给出图片专用的 box-unsettled 文案。单元测试改为新契约：首轮请求同时含图片与全部宽度，两块都已发射。文档：host-protocol-design §1（Image sizes after Emit）、figure-design §2、document-model（视图与 config-closure）、architecture |
 | P3-33 | 正文防护、自动链接、转义、硬换行 | done | grep:plan P3-33 | 2026-10-07 | 计划所列 doc/url-break（斜体去掉、链接加上）、inline/emph（un*closed 为一个文本节点）、figure/pull-diag（NEED_IMAGES 为一个文本节点）；另有 doc/url-overlong、inline/hardbreak、line/own-hide（见偏差）；+1 用例 inline/prose-guards；7 个 .ops 重录 | 单提交落地（整合裁决）。syntax.def（版本 5）：url 行（开符 `SCHEME://`，在 `://` 处分派、向后核对协议；生成器支持前导占位符）、brk 行（`\` 加行尾，无体模式 None）、linebreak sugar；派生构造器 linebreak（nullary，生成 hardbreak 节点 → Penalty(Forced)，与 P1-13 同一罚分）。解析器：Intraword（`*`、`_` 夹在两个 ASCII 字母数字间为正文）、PrevIdent（`#` 裸值头紧跟标识符字符为正文；`@` 原有）、转义只对 ASCII 标点、`\`+行尾为硬换行（吞掉前导空白与下行缩进）、其他 `\` 保留、自动链接（lexUrl：词法器、括号匹配与行扫描共用；链接文字内不链接）、相邻 Text 合并（拼接 rawmap 与单元格切点）。导出：自动链接整段 property，硬换行 punctuation；tree-sitter 与 TextMate 语法加 autolink，词 token 吸收 @尾（一致性 96.8%）。转换器经 tools/convert/prose.mjs 输出在新规则下含义不变；已提交样例手工迁移。文档：syntax-design §5、tsm-changes、ctor-design、shaping-design、document-model |
 | P3-34 | 描述列表（/ term: desc） | done | grep:plan P3-34 | 2026-10-07 | 既有 golden 仅 locale/doc-decl 的 js/lower（`$.locale` 对象键 terms 绑定了新的 std 名，与 figure 同理）；+1 用例 doc/terms（全部阶段：语法、脚本构造、dterm 词汇表行与引用） | schema（ops v15）：kind terms（block，body items，ctor）与 slot term（on item，inline）；默认规则 terms 的 block.indent 2em、block.gap 1/3，slot term 加粗。syntax.def（版本 6）：BLOCK term（`/ TERM: `，Column）与 sugar terms/termpart；行扫描：`/` 标记类，术语到第一个后跟空白或行尾、位于原子与转义之外的 `:`（无此冒号或术语为空则为正文），描述从冒号后开始；AST：terms 与项的 term 部分（行内解析）→ 降级为 terms 与 seq{slot: term}。盒树：terms 无标记，项的 term 部分接排在首段开头（LeafSource::runIn：emit 先写术语与一个空格），首段续行悬挂 block.indent，后续块位于该缩进，无首段的术语自成一段。语义页：terms → dl，dt 为术语部分（项的标签在 dt 上），dd 为其余块（单段内联）；呈现表加 terms 行。构造器绑定：选项名为该 kind 的 slot 时取内容，作为该 slot 的 seq 子节点（item({term})、para({tag})）。dterm-item 类：role dterm 的项为词汇表行，标题取 term 部分。规范化：受检模型（list、terms、table、trow、equations）中部件之间的纯空白文本丢弃（原报 content-model）。转换器：tex2tsm 的 description、wiki2tsm 的 `;`/`:`、html2tsm 与 pbr2tsm 的 `<dl>` 输出 `/ term: desc`；hott 样例手工迁移；tree-sitter/TextMate 的列表标记加 `/`（一致性 96.7%）。文档：syntax-design §6、document-model、layout-design §4、ctor-design、tsm-changes |
-| P3-35 | 打印器、转换器套件、front matter、语料重转 | todo | | | | |
+| P3-35 | 打印器、转换器套件、front matter、语料重转 | done | grep:plan P3-35 | 2026-10-07 | 引擎 golden 无变化；+1 用例 line/front-matter（fixture 设置 source.frontMatter）；examples/real-world 的 wiki-typesetting、wiki-huozi、hott-introduction 重新转换并审阅 | 打印器 runtime/src/shared/tsm-print.mjs：print(ast, {src}) 由 AST JSON 写回 .tsm（容器前缀与缩进、相邻有序列表交替标记类、围栏与代码段的反引号串、显示公式、能读回的裸 URL、splice 的 `;`、含块或语句的内容体用块形式），escapeTsm(text, ctx) 按语法表转义（Intraword/PrevIdent 守卫、行首块开头、标签形、URL 协议的冒号、表格单元切点；私用区占位符视为未知邻字）；syntax.gen.mjs 导出整张语法表。一致性 (c)：tools/check-print.mjs 进 G6，553 篇（用例、真实语料、博客）parse(print(parse(x))) 相等，并对 600 个随机文本验证 escapeTsm。转换器套件 tools/convert/kit.mjs：WHATWG 实体表（entities.gen.mjs，gen-entities.mjs 生成）、标记以占位符构造并在 escapeTsm 之后放入（Markup：em/strong/code/link/note/raw）、强调按最终邻字取标记或函数形式、描述项；四个转换器迁移（实体全解、文本统一转义、wiki 脚注不再断裂、pbr 头注释改为 `%--`）。translate-tsm：以引擎 AST 的 span 屏蔽原子并原位回填，按 AST（去文本）校验；--check 发现既有 162 篇译文中 11 篇结构不符。front matter：host 选项 source.frontMatter（FrontEndOptions），行扫描把偏移 0 的 `---`…`---`/`...` 作为注释块（AST comment front），三个无状态导出以设置文档为第二参数，outline 报告 frontMatter；VS Code 预览不再逐行清空，改传选项。文档：syntax-design §12、tsm-changes、testing、CLAUDE.md |
 | P3-36 | 导出包 | todo | | | | |
 | P3-37 | ABI 收尾与文档修订 | todo | | | | |
 | P4-01 | 按 run 实例成 run | todo | | | | |
@@ -178,6 +178,7 @@
 | P3-32 后 | 3.60 | 12.20 | 27.80 | 1.6 / 3.1 / 0.9 / 10.5 / 3.5 | 71.5 / 105.3 / 156.8 | 1.80 / 23.00 / 57.70 | 均在 P3 门限内；35K update 12.20 距门限 12.27 仅 0.07（复跑同值），P3-29 起 11.00 → 11.50 → 12.10 → 12.20。已排查：同机同时段 A/B，P3-30 提交的代码测得 12.20、HEAD 12.30（第二轮 14.90 / 16.30），差异在机器噪声内——上升来自测量环境，不是代码回退 |
 | P3-33 后 | 3.70 | 11.30 | 27.80 | 1.7 / 3.2 / 0.9 / 10.4 / 3.4 | 74.3 / 110.6 / 152.2 | 1.80 / 21.90 / 58.00 | 均在 P3 门限内；`:` 成为开符字节，87K 编译 1.60 → 1.70 |
 | P3-34 后 | 3.50 | 11.80 | 27.90 | 1.7 / 3.2 / 0.9 / 10.4 / 3.3 | 77.5 / 110.8 / 146.8 | 2.00 / 22.30 / 58.90 | 均在 P3 门限内；35K update 首次 3 轮测得 12.30（机器负载下），同机交替 A/B：P3-33 12.10 / 14.90 / 13.50、本步 12.50 / 12.40 / 12.70，同一分布；6 轮最小中位数 11.80（表中取此值），引擎内各阶段与 P3-33 相同 |
+| P3-35 后 | 3.80 | 11.90 | 27.80 | 1.8 / 3.1 / 0.9 / 10.4 / 3.4 | 74.4 / 106.5 / 149.9 | 1.80 / 22.30 / 58.00 | 均在 P3 门限内；35K update 3 轮 12.30（机器负载 2.1，同 P3-34 情形），6 轮 11.90 取之；引擎各阶段不变 |
 
 ## 偏差记录（MD-11）
 
@@ -435,6 +436,12 @@
 | P3-34 | 计划写“dterm 类（P3-03）”：新增 dterm-item 类（选择 role dterm 的 item，标题取 term 部分），使描述项可选择成为词汇表行；语法形式不自动成为词汇表行 | T3：词汇表成员与列表版式正交；语法项默认不入表 | 无 |
 | P3-34 | 本步另修：受检模型（list、terms、table、trow、equations）部件之间的纯空白文本此前报 content-model 警告并包成错误节点，现直接丢弃（`#list[#item[a] #item[b]]`） | 测试脚本构造的描述列表时暴露；空白不是内容 | 无 |
 | P3-34 | 中文描述项的术语与描述之间同样是一个词间空格（可伸缩），未另设中文分隔 | 与西文一致；分隔样式可由后续语言规则数据化（T5） | P4 |
+| P3-35 | translate-tsm 的校验在段落内把原子作为多重集比较（块结构仍按序），设计写“parseJson 等价（模文本）” | 译文合理地调整语序会改变段内原子顺序；按序比较使 162 篇既有译文中 112 篇误报，多重集比较后只剩 11 篇真实缺陷（丢失或改写代码段、强调，围栏变段落） | 无 |
+| P3-35 | 既有 pbr-zh 中 11 篇译文结构不符未修复；pbr-en/pbr-zh 未重新转换 | 译文是派生数据，重转 pbr-en 会使中文译文失配，需重新翻译；pbr2tsm 已迁移，并以两页抓取的原页验证 | 无 |
+| P3-35 | 已提交的 hott-introduction 重转后同时带入 P3-29 的数学转换改进（class(op, …)、cal(U)、cdot、infty、对齐等），不只是本步的转义与实体差异 | 重转取上游当前源与当前转换器；逐项审阅无结构损失 | 无 |
+| P3-35 | escapeTsm 的上下文为 para/heading/link/body/term/cells 与 lineStart 标志，设计列有 line-start/call-body/note/label | line-start 为标志更通用；note 与 call-body 同为方括号体（body）；label 文本不经 escapeTsm | 无 |
+| P3-35 | printShadow 未做 | 计划要点只列 tsm-print 与 escapeTsm；printShadow 需 sugar 逆映射，转换器经 kit 直接写 .tsm 已满足保真 | 无 |
+| P3-35 | 无状态导出 tsr_syntax_tokens / tsr_outline / tsr_parse_json 增加第二个参数（设置文档，可为空）；tsr_parse_fragment 不变 | front matter 只在文档偏移 0 有意义，片段不会遇到 | 无 |
 | P3-26 | role=math 与 aria-label 未做（计划注明在 P3-27 落地）；多行显示的逐行编号属 P3-29 | 计划安排 | P3-27、P3-29 |
 | P3-26 | 编号与公式同基线（TeX \\eqno），取代 CSS 的垂直居中；编号在旁时其行框的行距不推进游标（行高不变） | TeX 的做法；避免所有带编号公式之后的内容下移 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |

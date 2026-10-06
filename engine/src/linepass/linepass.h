@@ -31,6 +31,7 @@ struct SkelNode {
   char marker = 0;              // List: marker class '-', '+', '.' (N.) or '/' (a description list, P3-34)
   u32 markerCol = 0;            // List: the markers' column
   int start = 1;                // List (ordered)
+  bool front = false;           // Comment: the document's front matter (plan P3-35)
   bool contained = false;       // Fence: inside a quote or list item (its
                                 // lines are not contiguous in the source)
   std::vector<Span> bodies;     // Para: block-form content bodies, from the
@@ -61,7 +62,17 @@ struct Skeleton {
 // tree stays shallow and codegen's program stays inside its reader's bound.
 constexpr u32 kMaxNesting = 128;
 
-Skeleton linepass(const SourceText& src, Arena& arena, DiagSink& diags);
+// The front end's host options (plan P3-35; design T1 FrontEndOptions,
+// D-L09: front matter is a host option, not a language form) — read from
+// the settings document (source.*) by every parse: the document's and the
+// stateless exports'.
+struct FrontEndOptions {
+  // a `---` line at offset 0 through the next `---` or `...` line is the
+  // document's front matter: a comment block (an SSG's metadata), not markup
+  bool frontMatter = false;
+};
+
+Skeleton linepass(const SourceText& src, Arena& arena, DiagSink& diags, const FrontEndOptions& opts = {});
 // The same pass over any list of raw line slices (a content body, plan P1-08)
 // `depth` levels deep.
 Skeleton linepassLines(const SourceText& src, const std::vector<Span>& lines, Arena& arena,

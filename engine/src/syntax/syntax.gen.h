@@ -68,6 +68,9 @@ struct TextP {
   StrRef rawmap = 0;
   StrRef seps = 0;
 };
+struct CommentP {
+  bool front = 0;
+};
 struct BranchP {
   Span head{};
 };

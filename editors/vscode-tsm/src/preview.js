@@ -4,6 +4,8 @@
 // phase timings back. Double-click in the preview jumps to source; editor
 // scroll reveals the corresponding paragraph in the preview.
 const vscode = require('vscode');
+// (plan P3-35) the front end's host options, as tokens and outline get them
+const { FRONT_END } = require('./engine');
 const path = require('node:path');
 const { startServer } = require('./server');
 const { assetRoot } = require('./paths');
@@ -175,15 +177,9 @@ class TsmPreview {
   send() {
     if (!this.panel || !this.doc || !this.ready) return;
     const cfgw = vscode.workspace.getConfiguration('tsm.preview');
-    let text = this.doc.getText();
-    // SSG front matter is not markup: blank it out LINE BY LINE, so the
-    // engine never sees it while every line keeps its number — diagnostics
-    // and jump/reveal offsets are computed against this transformed text
-    const fm = /^---\r?\n[\s\S]*?\r?\n---(\r?\n|$)/.exec(text);
-    if (fm) {
-      const blanked = fm[0].replace(/[^\n]/g, '');
-      text = blanked + text.slice(fm[0].length);
-    }
+    // (plan P3-35; D-L09) SSG front matter is the engine's host option
+    // (source.frontMatter): it reads it as a comment, offsets unchanged
+    const text = this.doc.getText();
     this.version = this.doc.version;
     this.byteStarts = lineByteStarts(text);
     this.panel.webview.postMessage({
@@ -194,6 +190,7 @@ class TsmPreview {
         fontFamily: cfgw.get('fontFamily'),
         cjkFontFamily: cfgw.get('cjkFontFamily'),
         baseSizePx: cfgw.get('baseSizePx', 18),
+        settings: FRONT_END,
       },
     });
   }

@@ -9,13 +9,14 @@
 //   export ZAI_API_KEY=...
 //   node tools/translate-tsm.mjs --src examples/real-world/pbr-en \
 //        --dst examples/real-world/pbr-zh [--model glm-5.3] [--only Shapes/]
-//        [--concurrency 3] [--dry] [--check] [--force]
+//        [--concurrency 3] [--dry [--show]] [--check] [--force]
 //
 // Files already present in --dst are skipped (resume-friendly). Output is
 // written only after ALL validations pass; failures leave a .reject file
 // with diagnostics instead. --check re-validates existing outputs only.
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, statSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import { parseTsm } from '../runtime/src/node/render.mjs';
 
 const args = process.argv.slice(2);
 const opt = (k, d) => (args.includes(k) ? args[args.indexOf(k) + 1] : d);
@@ -25,6 +26,7 @@ const BASE = opt('--base', 'https://api.z.ai/api/coding/paas/v4');
 const ONLY = opt('--only', null);
 const CONC = parseInt(opt('--concurrency', '3'), 10);
 const DRY = args.includes('--dry');
+const SHOW = args.includes('--show');  // (with --dry) each unit as the model sees it
 const CHECK = args.includes('--check');
 const FORCE = args.includes('--force');
 const KEY = process.env.ZAI_API_KEY;
@@ -38,77 +40,164 @@ const SYS = [
   '1) 形如 ⟦数字⟧ 的占位符是被保护的代码/公式/链接，必须原样保留在译文中语法合适的位置，一个都不能增删或改动。',
   '2) 全角中文标点；人名、系统名（pbrt、RenderMan 等）、书名不翻译；难度标记 ①②③、^&dagger; 等符号原样保留。',
   '3) 术语表（强制）：' + GLOSSARY,
-  '4) 行首的结构标记（= == === 标题层级、- 列表符、_强调_ 下划线对）保持不变，只翻译其中文字。',
+  '4) 强调标记（*粗体*、_斜体_）与链接文字的方括号 [文字] 保持成对，只翻译其中文字。',
   '5) 首次出现的专业术语可用全角括号括注英文原词。',
 ].join('\n');
 
 // ---------------------------------------------------------------------------
-// masking
+// masking by the engine's AST (plan P3-35; design T1 S12): the translatable
+// units are a document's paragraphs, headings and description terms (a
+// table's cells, a figure's caption: their region's paragraphs), each its
+// source span; inside one, every atom — a code span, a formula, a
+// reference, a splice or keyword form, a URL and a link's (target), a
+// note's ^[ and ], a statement, a comment, a hard break, a table's cell cut
+// — becomes ⟦n⟧, by its engine span. Emphasis markers and a link's [text]
+// stay visible to the model. The translations are patched into the source
+// in place; everything else is untouched.
 // ---------------------------------------------------------------------------
-const INLINE_RE = /(\\\$(?:[^$\\]|\\.)*?\\\$|(?<!\\)\$[^$\n]+?(?<!\\)\$|`[^`\n]+`|\]\([^)\n]+\)|<<[^<>\n]+>>)/g;
+const enc = new TextEncoder(), dec = new TextDecoder();
+const ATOMS = new Set(['code', 'math', 'ref', 'linebreak']);
+const atomic = (n) => n.kind === 'splice' || n.kind === 'keyword' || n.kind === 'stmt' || n.kind === 'comment' ||
+  n.kind === 'error' || (n.kind === 'call' && ATOMS.has(n.sugar));
+const hasText = (n) => (n.kind === 'text' ? /\p{L}/u.test(n.str ?? '') : !atomic(n) && (n.kids ?? []).some(hasText));
+const kidSpan = (kids) => [Math.min(...kids.map((k) => k.span[0])), Math.max(...kids.map((k) => k.span[1]))];
 
-function maskFile(text) {
-  const lines = text.split('\n');
-  const out = [];          // template entries: {t:'raw',s} | {t:'prose',id}
-  const prose = [];        // prose strings with inline placeholders
-  const spans = [];        // inline placeholder id → original
-  let inFence = false, inRefs = false;
-  for (const l of lines) {
-    if (l.startsWith('```')) { inFence = !inFence; out.push({ t: 'raw', s: l }); continue; }
-    if (inFence) { out.push({ t: 'raw', s: l }); continue; }
-    if (/^== References/.test(l) || /^== 参考文献/.test(l)) inRefs = true;
-    else if (/^==? /.test(l) && inRefs) inRefs = false;
-    const keep = l.startsWith('//') || l.startsWith('#!figure') || l === '#figure!' ||
-      /^\$ .*\$$/.test(l) || l.trim() === '' || (inRefs && l.startsWith('- '));
-    if (keep) { out.push({ t: 'raw', s: l }); continue; }
-    const masked = l.replace(INLINE_RE, (m) => {
-      // keep the "](" prefix of link targets outside the span
-      if (m.startsWith('](')) { spans.push(m.slice(1)); return ']⟦' + (spans.length - 1) + '⟧'; }
-      spans.push(m); return '⟦' + (spans.length - 1) + '⟧';
-    });
-    out.push({ t: 'prose', id: prose.length });
-    prose.push(masked);
+function units(ast, bytes) {
+  const out = [];  // {span, masks: [[s, e]], cells}
+  let inRefs = false;
+  const masksIn = (kids, masks) => {
+    for (const k of kids) {
+      if (k.kind === 'text') continue;
+      if (atomic(k)) { masks.push(k.span); continue; }
+      if (k.kind === 'call' && k.sugar === 'link') {
+        const autolink = (k.kids ?? []).length === 1 && k.kids[0].kind === 'text' && k.kids[0].str === k.url &&
+          bytes[k.span[0]] !== 0x5b;
+        if (autolink || !(k.kids ?? []).length) { masks.push(k.span); continue; }
+        masksIn(k.kids, masks);
+        masks.push([kidSpan(k.kids)[1], k.span[1]]);  // ](url)
+        continue;
+      }
+      if (k.kind === 'call' && k.sugar === 'note') {
+        if ((k.kids ?? []).every((x) => x.kind !== 'call' || !['para', 'list', 'quote'].includes(x.sugar))) {
+          masks.push([k.span[0], k.span[0] + 2], [k.span[1] - 1, k.span[1]]);  // ^[ … ]
+          masksIn(k.kids ?? [], masks);
+        } else masks.push(k.span);
+        continue;
+      }
+      masksIn(k.kids ?? [], masks);  // strong, em: their markers stay
+    }
+  };
+  const unit = (kids, cells) => {
+    if (!kids.length || !kids.some(hasText)) return;
+    const masks = [];
+    masksIn(kids, masks);
+    out.push({ span: kidSpan(kids), masks, cells });
+  };
+  const walk = (n, ctx) => {
+    if (n.kind === 'call') {
+      switch (n.sugar) {
+        case 'heading':
+          inRefs = /^(references|参考文献|bibliography)$/i.test((n.kids ?? []).map((k) => k.str ?? '').join('').trim());
+          unit(n.kids ?? [], false);
+          return;
+        case 'para': unit(n.kids ?? [], ctx === 'region'); return;
+        case 'termpart': unit(n.kids ?? [], false); return;
+        case 'fence': return;
+        case 'list': if (inRefs) return; break;
+        case 'region': for (const k of n.kids ?? []) walk(k, 'region'); return;
+        default: break;
+      }
+    }
+    if (n.kind === 'stmt' || n.kind === 'comment' || n.kind === 'error') return;
+    for (const k of n.kids ?? []) walk(k, ctx);
+  };
+  walk(ast, 'doc');
+  return out;
+}
+
+// a unit's text for the model: its atoms ⟦n⟧, its line joins one space
+function maskUnit(bytes, u, spans) {
+  let [s, e] = u.span;
+  const masks = u.masks.filter(([a, b]) => b > a).sort((x, y) => x[0] - y[0]);
+  let out = '';
+  let at = s;
+  const plain = (a, b) => {
+    let t = dec.decode(bytes.subarray(a, b)).replace(/\n(?:[ \t]*>)*[ \t]*/g, ' ');
+    if (u.cells) {  // a table cell cut (an unescaped |) is an atom too
+      t = t.replace(/(?<!\\)\|/g, () => { spans.push('|'); return `⟦${spans.length - 1}⟧`; });
+    }
+    return t;
+  };
+  for (const [a, b] of masks) {
+    if (a < at) continue;  // (nested in one already masked)
+    out += plain(at, a);
+    spans.push(dec.decode(bytes.subarray(a, b)));
+    out += `⟦${spans.length - 1}⟧`;
+    at = b;
   }
-  return { template: out, prose, spans };
+  out += plain(at, e);
+  return out;
+}
+
+function maskFile(ast, bytes) {
+  const spans = [];  // ⟦n⟧ → its source text
+  const us = units(ast, bytes);
+  const prose = us.map((u) => maskUnit(bytes, u, spans));
+  return { units: us, prose, spans };
 }
 
 function unmask(str, spans, usedIds) {
   return str.replace(/⟦(\d+)⟧/g, (m, n) => { usedIds.add(+n); return spans[+n]; });
 }
 
-// ---------------------------------------------------------------------------
-// validation (same checks the manual pipeline used)
-// ---------------------------------------------------------------------------
-function blocks(x) {
-  const o = []; let f = false, cur = [];
-  for (const l of x.split('\n')) {
-    if (l.startsWith('```')) { if (f) { o.push(cur.join('\n')); cur = []; } f = !f; }
-    else if (f) cur.push(l);
+// the source with each unit's span replaced by its translation
+function patch(bytes, us, texts) {
+  const order = us.map((u, i) => i).sort((a, b) => us[a].span[0] - us[b].span[0]);
+  const parts = [];
+  let at = 0;
+  for (const i of order) {
+    const [s, e] = us[i].span;
+    parts.push(dec.decode(bytes.subarray(at, s)), texts[i]);
+    at = e;
   }
+  parts.push(dec.decode(bytes.subarray(at)));
+  return parts.join('');
+}
+
+// ---------------------------------------------------------------------------
+// validation: the translation's tree is the source's, its text aside — the
+// same blocks, the same markup, the same atoms (formulas, code, references,
+// splices, URLs, labels), the same table cuts
+// ---------------------------------------------------------------------------
+const INLINE_HOLDERS = new Set(['para', 'heading', 'termpart', 'strong', 'em', 'link', 'note']);
+function shape(n) {
+  const o = {};
+  for (const [k, v] of Object.entries(n)) {
+    if (k === 'span' || k === 'rawmap' || k === 'bodyOffset' || k === 'bodyEnd' || k === 'lines' || k === 'str' && n.kind === 'text') continue;
+    if (k === 'kids') continue;
+    if (k === 'seps') continue;
+    o[k] = v;
+  }
+  let kids = (n.kids ?? []).filter((k) => k.kind !== 'text').map(shape);
+  // inside a paragraph, a translation may reorder its atoms (word order):
+  // the same ones, in any order — blocks keep theirs
+  if (n.kind === 'call' && INLINE_HOLDERS.has(n.sugar)) kids = kids.map((k) => [JSON.stringify(k), k]).sort().map(([, k]) => k);
+  if (kids.length) o.kids = kids;
+  const cuts = (n.kids ?? []).reduce((c, k) => c + (k.kind === 'text' && k.seps ? k.seps.split(',').length : 0), 0);
+  if (cuts) o.cuts = cuts;
   return o;
 }
-function counter(arr) { const c = new Map(); for (const x of arr) c.set(x, (c.get(x) ?? 0) + 1); return c; }
-function eqCounter(a, b) {
-  if (a.size !== b.size) return false;
-  for (const [k, v] of a) if (b.get(k) !== v) return false;
-  return true;
+function firstDiff(a, b, path = '') {
+  if (typeof a !== 'object' || typeof b !== 'object' || !a || !b) return a === b ? null : `${path}: ${JSON.stringify(a)?.slice(0, 80)} ≠ ${JSON.stringify(b)?.slice(0, 80)}`;
+  for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) {
+    const d = firstDiff(a[k], b[k], `${path}/${k}${a.sugar ? `(${a.sugar})` : ''}`);
+    if (d) return d;
+  }
+  return null;
 }
-function mathset(x) {
-  const body = x.split('\n').filter((l) => !l.startsWith('```')).join('\n');
-  return counter(body.match(/(?<!\\)\$[^$\n]+?(?<!\\)\$/g) ?? []);
-}
-function validate(en, zh) {
-  const errs = [];
-  if (en.split('```').length !== zh.split('```').length) errs.push('fence count');
-  const be = blocks(en), bz = blocks(zh);
-  if (be.length !== bz.length || be.some((b, i) => b !== bz[i])) errs.push('code blocks differ');
-  const fe = en.match(/^#!figure\(.*$/gm) ?? [], fz = zh.match(/^#!figure\(.*$/gm) ?? [];
-  if (fe.join('\n') !== fz.join('\n')) errs.push('figure param lines differ');
-  const de = en.match(/^\$ .*\$$/gm) ?? [], dz = zh.match(/^\$ .*\$$/gm) ?? [];
-  if (de.join('\n') !== dz.join('\n')) errs.push('display math differs');
-  if (!eqCounter(mathset(en), mathset(zh))) errs.push('inline math multiset differs');
-  if ((en.match(/\\\$/g) ?? []).length !== (zh.match(/\\\$/g) ?? []).length) errs.push('escaped-$ count differs');
-  return errs;
+async function validate(en, zh) {
+  const d = firstDiff(shape(await parseTsm(en)), shape(await parseTsm(zh)));
+  return d ? [d] : [];
 }
 
 // ---------------------------------------------------------------------------
@@ -182,28 +271,29 @@ async function one(rel) {
   const en = readFileSync(join(SRC, rel), 'utf8');
   if (CHECK) {
     const zh = readFileSync(join(DST, rel), 'utf8');
-    const errs = validate(en, zh);
+    const errs = await validate(en, zh);
     console.log((errs.length ? 'FAIL ' : 'ok   ') + rel + (errs.length ? '  [' + errs.join('; ') + ']' : ''));
     errs.length ? fail++ : pass++;
     return;
   }
-  const { template, prose, spans } = maskFile(en);
+  const bytes = enc.encode(en);
+  const { units: us, prose, spans } = maskFile(await parseTsm(en), bytes);
   if (DRY) {
-    console.log(rel + ': ' + prose.length + ' prose lines, ' + spans.length + ' protected spans, ' +
-      template.filter((e) => e.t === 'raw').length + ' raw lines');
+    console.log(rel + ': ' + prose.length + ' units, ' + spans.length + ' protected atoms');
+    if (SHOW) prose.forEach((p, i) => console.log(`  [${i}] ${p}`));
     return;
   }
   try {
     const zhProse = await translateProse(prose);
     const usedIds = new Set();
-    const outLines = template.map((e) => e.t === 'raw' ? e.s : unmask(zhProse[e.id], spans, usedIds));
-    // every span must be restored exactly once; none invented
+    const texts = zhProse.map((s) => unmask(s, spans, usedIds));
+    // every atom restored exactly once; none invented
     if (usedIds.size !== spans.length) throw new Error('placeholder loss: ' + usedIds.size + '/' + spans.length);
-    let zh = outLines.join('\n');
-    if (/⟦\d+⟧/.test(zh)) throw new Error('unresolved placeholder');
-    const anchor = '// Local private adaptation; do not redistribute.\n';
-    if (zh.includes(anchor)) zh = zh.replace(anchor, anchor + '// 中文为本地私用机器翻译（' + MODEL + '），未经授权不得传播。\n');
-    const errs = validate(en, zh);
+    if (texts.some((s) => /⟦\d+⟧/.test(s))) throw new Error('unresolved placeholder');
+    let zh = patch(bytes, us, texts);
+    // a leading attribution comment (the converters') notes the translation
+    zh = zh.replace(/^%--([\s\S]*?)--%/, (m, body) => `%--${body.trimEnd()}\n中文为本地私用机器翻译（${MODEL}），未经授权不得传播。 --%`);
+    const errs = await validate(en, zh);
     if (errs.length) throw new Error('validation: ' + errs.join('; '));
     mkdirSync(dirname(join(DST, rel)), { recursive: true });
     writeFileSync(join(DST, rel), zh);

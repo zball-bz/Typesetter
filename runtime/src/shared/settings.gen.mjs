@@ -472,6 +472,14 @@ export const SETTINGS = Object.freeze({
       "Paint"
     ]
   },
+  "source.frontMatter": {
+    "dom": "bool",
+    "def": false,
+    "prec": "HostDefault",
+    "affects": [
+      "Compile"
+    ]
+  },
   "render.math": {
     "dom": "enum:boxes|source",
     "def": "boxes",
@@ -603,6 +611,9 @@ export const SETTINGS_DEFAULTS = Object.freeze({
   "render": {
     "idPrefix": "tsr-",
     "math": "boxes"
+  },
+  "source": {
+    "frontMatter": false
   },
   "a11y": {
     "mathLabel": true,

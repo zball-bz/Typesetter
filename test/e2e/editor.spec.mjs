@@ -63,4 +63,12 @@ test('editor: engine tokens and outline in UTF-16', async ({}, testInfo) => {
   expect(features.regionNames(o, engine.manifest())).toEqual(['figure', 'table']);
   expect(features.regionNames(o, engine.manifest(), '#{ $.region("callout", f) }')).toEqual(['figure', 'table', 'callout']);
   expect(features.labelNames(o)).toEqual(['intro', 'f1']);
+
+  // (plan P3-35; D-L09) an SSG's front matter: the host option the editor
+  // passes makes it one comment, not a rule and a paragraph
+  const FM = '---\ntitle: "Post"\n---\n= After';
+  const fo = engine.outline(FM);
+  expect(FM.slice(fo.frontMatter.span[0], fo.frontMatter.span[1])).toBe('---\ntitle: "Post"\n---');
+  expect(fo.headings.map((h) => h.title)).toEqual(['After']);
+  expect(engine.tokens(FM)[0]).toEqual({ s: 0, e: fo.frontMatter.span[1], tag: 'comment' });
 });

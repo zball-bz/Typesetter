@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"The post","label":null,"span":[67,77]}],"regions":[],"fences":[],"labels":[],"frontMatter":{"span":[0,66],"text":"title: \"A post with front matter\"\ntags: [typesetting, tsm]"},"diagnostics":[]}

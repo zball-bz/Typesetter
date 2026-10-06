@@ -1,0 +1,2 @@
+instance heading 1 level=1 label=h-1 title="The post" @[67,77)
+label h-1 -> heading 1 @[67,77)

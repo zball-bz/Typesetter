@@ -6,7 +6,7 @@ Movable type on a composing stick on a type case
 A specimen sheet issued by William Caslon, letter founder, from the 1728 edition of Cyclopaedia
 #figure!
 
-*Typesetting* is the composition of text for publication, display, or distribution by means of arranging physical _type_ (or _sort_) in mechanical systems or _glyphs_ in digital systems representing _characters_ (letters and other symbols).^[Dictionary.com Unabridged. Random House, Inc. 23 December 2009. http://dictionary.reference.com/browse/typeset Dictionary.reference.com] Stored types are retrieved and ordered according to a language's orthography for visual display. Typesetting requires one or more fonts (which are widely but erroneously confused with and substituted for typefaces). 
+*Typesetting* is the composition of text for publication, display, or distribution by means of arranging physical _type_ (or _sort_) in mechanical systems or _glyphs_ in digital systems representing _characters_ (letters and other symbols).^[Dictionary.com Unabridged. Random House, Inc. 23 December 2009. [Dictionary.reference.com](http://dictionary.reference.com/browse/typeset)] Stored types are retrieved and ordered according to a language's orthography for visual display. Typesetting requires one or more fonts (which are widely but erroneously confused with and substituted for typefaces). 
 One significant effect of typesetting was that authorship of works could be spotted more easily, making it difficult for copiers who had not gained permission.^[Murray, Stuart A., The Library: An Illustrated History, ALA edition, Skyhorse, 2009, page 131]
 
 = Pre-digital era
@@ -57,7 +57,7 @@ One of the earliest electronic photocomposition systems was introduced by Fairch
 Dutch newsreel from 1977 about the transition to computer typesetting
 #figure!
 
-The next generation of phototypesetting machines to emerge were those that generated characters on a cathode-ray tube display. Typical of the type were the Alphanumeric APS2 (1963),^[Encyclopedia of Computer Science and Technology, 1976](https://books.google.com/books?id=G6a2tSuOoq8C&pg=PA351) IBM 2680 (1967), I.I.I. VideoComp (1973?), Autologic APS5 (1975),^[Encyclopedia of Computer Science and Technology](https://books.google.com/books?id=G6a2tSuOoq8C&pg=PA352) and Linotron 202 (1978).^[Linotype History](http://www.linotype.com/en/49-14026/19731989.html) These machines were the mainstay of phototypesetting for much of the 1970s and 1980s. Such machines could be "driven online" by a computer front-end system or took their data from magnetic tape. Type fonts were stored digitally on conventional magnetic disk drives.
+The next generation of phototypesetting machines to emerge were those that generated characters on a cathode-ray tube display. Typical of the type were the Alphanumeric APS2 (1963),^[[Encyclopedia of Computer Science and Technology](https://books.google.com/books?id=G6a2tSuOoq8C&pg=PA351), 1976] IBM 2680 (1967), I.I.I. VideoComp (1973?), Autologic APS5 (1975),^[[Encyclopedia of Computer Science and Technology](https://books.google.com/books?id=G6a2tSuOoq8C&pg=PA352)] and Linotron 202 (1978).^[[Linotype History](http://www.linotype.com/en/49-14026/19731989.html)] These machines were the mainstay of phototypesetting for much of the 1970s and 1980s. Such machines could be "driven online" by a computer front-end system or took their data from magnetic tape. Type fonts were stored digitally on conventional magnetic disk drives.
 
 Computers excel at automatically typesetting and correcting documents.^[(webpage has a translation button)] Character-by-character, computer-aided phototypesetting was, in turn, rapidly rendered obsolete in the 1980s by fully digital systems employing a raster image processor to render an entire page to a single high-resolution digital image, now known as imagesetting.
 
@@ -89,21 +89,21 @@ See also: SCRIPT (markup)
 Mural mosaic "Typesetter" at John A. Prior Health Sciences Library in Ohio
 #figure!
 
-IBM created and inspired a family of typesetting languages with names that were derivatives of the word "SCRIPT". Later versions of SCRIPT included advanced features, such as automatic generation of a table of contents and index, multicolumn page layout, footnotes, boxes, automatic hyphenation and spelling verification.^[U01-0547, "Introduction to SCRIPT," is available through PRTDOC.](http://web.utk.edu/~mnewman/ibmguide07.html)
+IBM created and inspired a family of typesetting languages with names that were derivatives of the word "SCRIPT". Later versions of SCRIPT included advanced features, such as automatic generation of a table of contents and index, multicolumn page layout, footnotes, boxes, automatic hyphenation and spelling verification.^[[U01-0547, "Introduction to SCRIPT,"](http://web.utk.edu/~mnewman/ibmguide07.html) is available through PRTDOC.]
 
-NSCRIPT was a port of SCRIPT to OS and TSO from CP-67/CMS SCRIPT.^[SCRIPT 90.1 Implementation Guide, June 6, 1990](http://csg.uwaterloo.ca/sdtp/watscr.html)
+NSCRIPT was a port of SCRIPT to OS and TSO from CP-67/CMS SCRIPT.^[[SCRIPT 90.1 Implementation Guide](http://csg.uwaterloo.ca/sdtp/watscr.html), June 6, 1990]
 
-Waterloo Script was created at the University of Waterloo (UW) later. One version of SCRIPT was created at MIT and the AA/CS at UW took over project development in 1974. The program was first used at UW in 1975. In the 1970s, SCRIPT was the only practical way to word process and format documents using a computer. By the late 1980s, the SCRIPT system had been extended to incorporate various upgrades.^[A Chronology of Computing at The University of Waterloo](http://www.cs.uwaterloo.ca/40th/Chronology/1974.shtml)
+Waterloo Script was created at the University of Waterloo (UW) later. One version of SCRIPT was created at MIT and the AA/CS at UW took over project development in 1974. The program was first used at UW in 1975. In the 1970s, SCRIPT was the only practical way to word process and format documents using a computer. By the late 1980s, the SCRIPT system had been extended to incorporate various upgrades.^[[A Chronology of Computing at The University of Waterloo](http://www.cs.uwaterloo.ca/40th/Chronology/1974.shtml)]
 
 The initial implementation of SCRIPT at UW was documented in the May 1975 issue of the Computing Centre Newsletter, which noted some the advantages of using SCRIPT:
 
-The article also pointed out SCRIPT had over 100 commands to assist in formatting documents, though 8 to 10 of these commands were sufficient to complete most formatting jobs.  Thus, SCRIPT had many of the capabilities computer users generally associate with contemporary word processors.^[Glossary of University of Waterloo Computing Chronology](http://www.cs.uwaterloo.ca/40th/Chronology/ChronologyGlossary.pdf)
+The article also pointed out SCRIPT had over 100 commands to assist in formatting documents, though 8 to 10 of these commands were sufficient to complete most formatting jobs.  Thus, SCRIPT had many of the capabilities computer users generally associate with contemporary word processors.^[[Glossary of University of Waterloo Computing Chronology](http://www.cs.uwaterloo.ca/40th/Chronology/ChronologyGlossary.pdf)]
 
 SCRIPT/VS was a SCRIPT variant developed at IBM in the 1980s.
 
 DWScript is a version of SCRIPT for MS-DOS, named after its author, D. D. Williams,^[DWScript – Document Composition Facility for the IBM Personal Computer Version 4.6 Updates, DW-04167, Nov 8th, 1985] but was never released to the public and only used internally by IBM.
 
-Script is still available from IBM as part of the Document Composition Facility for the z/OS operating system.^[IBM Document Composition Facility (DCF)](https://web.archive.org/web/20080623144718/http://www-03.ibm.com/systems/z/os/zos/printsoftware/dcfhome_z_ww.html)
+Script is still available from IBM as part of the Document Composition Facility for the z/OS operating system.^[[IBM Document Composition Facility (DCF)](https://web.archive.org/web/20080623144718/http://www-03.ibm.com/systems/z/os/zos/printsoftware/dcfhome_z_ww.html)]
 
 == SGML and XML systems
 

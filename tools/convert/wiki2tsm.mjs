@@ -7,7 +7,11 @@
 //
 //   node tools/convert/wiki2tsm.mjs page.wikitext [--lang zh] > page.tsm
 import { readFileSync } from 'node:fs';
-import { em, strong, markers, escapeProse, termText } from './prose.mjs';
+import { Markup, decodeEntities } from './kit.mjs';
+
+// (plan P3-35) the converter kit: markup as placeholders, the text escaped by
+// the printer's escapeTsm, entities by the WHATWG table
+const K = new Markup();
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
@@ -47,17 +51,17 @@ src = balanced(src, '{{', '}}', (inner) => {
 // --- refs → footnotes; named refs reuse the first body --------------------
 const refBodies = new Map();
 const cleanRef = (t) => t.replace(/\[\[([^\]|]*\|)?([^\]]*)\]\]/g, '$2')
-  .replace(/'''?/g, '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').replace(/[\[\]]/g, '').trim();
+  .replace(/'''?/g, '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 src = src.replace(/<ref([^>/]*)\/>/g, (m, a) => {
   const name = /name\s*=\s*"?([^">]+)"?/.exec(a)?.[1]?.trim();
   const body = name && refBodies.get(name);
-  return body ? `^[${body}]` : '';
+  return body ? K.note(body) : '';
 });
 src = src.replace(/<ref([^>]*)>([\s\S]*?)<\/ref>/g, (m, a, body) => {
   const name = /name\s*=\s*"?([^">]+)"?/.exec(a)?.[1]?.trim();
   const b = cleanRef(body);
   if (name) refBodies.set(name, b);
-  return b ? `^[${b}]` : '';
+  return b ? K.note(b) : '';
 });
 
 // --- images → figures (balanced: captions nest [[links]]) ------------------
@@ -95,19 +99,20 @@ const isFile = (s) => /^\[\[(Image|File|文件|圖像|图像|檔案):/i.test(s);
 }
 
 // --- inline markup ---------------------------------------------------------
-const inline = (t) => markers(escapeProse(t
+// a line's wikitext → finished .tsm (ctx: escapeTsm's; a paragraph's text
+// starts its line): internal links as their text, external ones as links, a
+// bare [url] as an autolink; ^[…] here are OUR footnotes (from <ref>)
+const inline = (t, ctx = 'para') => K.finish(decodeEntities(t
   .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')
   .replace(/\[\[([^\]]+)\]\]/g, '$1')
-  .replace(/\[(https?:[^\s\]]+) ([^\]]+)\]/g, '[$2]($1)')
-  .replace(/\[(https?:[^\s\]]+)\]/g, '$1')
-  .replace(/'''''([^']+)'''''/g, (m, b) => strong(em(b)))
-  .replace(/'''([^']+)'''/g, (m, b) => strong(b))
-  .replace(/''([^']+)''/g, (m, b) => em(b))
+  .replace(/\[(https?:[^\s\]]+) ([^\]]+)\]/g, (m, url, text) => K.link(text, url))
+  .replace(/\[(https?:[^\s\]]+)\]/g, (m, url) => K.raw(url))
+  .replace(/'''''([^']+)'''''/g, (m, b) => K.strong(K.em(b)))
+  .replace(/'''([^']+)'''/g, (m, b) => K.strong(b))
+  .replace(/''([^']+)''/g, (m, b) => K.em(b))
   .replace(/<br\s*\/?>/gi, ' ')
-  .replace(/<\/?(span|small|sup|sub|i|b|u|s|code|nowiki|abbr|cite|em|strong|div)[^>]*>/gi, '')
-  .replace(/&nbsp;/g, ' ').replace(/&ndash;/g, '–').replace(/&mdash;/g, '—').replace(/&amp;/g, '&')));
-// (plan P3-33: prose.mjs) no escape inside a URL; ^[…] here are OUR footnotes
-// (from <ref>); emphasis resolved with its neighbours
+  .replace(/<\/?[A-Za-z][^<>]*>/g, '')), ctx,  // (any other tag: its text stays)
+{ lineStart: ctx === 'para' });
 
 // --- block structure -------------------------------------------------------
 const STOP = /^(references|see also|external links|notes|further reading|参考文献|参见|外部链接|注释|參考資料|外部連結|參見|延伸阅读)$/i;
@@ -115,7 +120,7 @@ const out = [];
 for (const line of src.split('\n')) {
   const h = /^(=+)\s*(.*?)\s*\1\s*$/.exec(line);
   if (h) {
-    const title = inline(h[2]).replace(/<[^>]+>/g, '').trim();
+    const title = inline(h[2].replace(/<[^>]+>/g, '').trim(), 'heading');
     if (STOP.test(title)) break;
     out.push('', '='.repeat(Math.max(1, h[1].length - 1)) + ' ' + title, '');
     continue;
@@ -128,7 +133,7 @@ for (const line of src.split('\n')) {
   // escaped); a lone `:` line (an indented remark) stays a paragraph
   const dt = /^;\s*([^:]*?)\s*(?::\s*(.*))?$/.exec(line);
   if (dt) {
-    out.push(`/ ${termText(inline(dt[1]))}:` + (dt[2] ? ' ' + inline(dt[2]) : ''));
+    out.push(`/ ${inline(dt[1], 'term')}:` + (dt[2] ? ' ' + inline(dt[2]) : ''));
     continue;
   }
   if (/^:/.test(line) && out.length && /^\/ /.test(out.at(-1)) ) {
@@ -140,5 +145,5 @@ for (const line of src.split('\n')) {
   if (/^\s*$/.test(line)) { out.push(''); continue; }
   out.push(inline(line));
 }
-const text = out.join('\n').replace(/<[^>]+>/g, '').replace(/\n{3,}/g, '\n\n');
+const text = out.join('\n').replace(/\n{3,}/g, '\n\n');
 process.stdout.write(text.trim() + '\n');

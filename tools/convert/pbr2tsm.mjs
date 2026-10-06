@@ -13,7 +13,7 @@
 import { MATH_SYMBOLS } from '../../runtime/src/shared/math-vocab.gen.mjs';
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, statSync } from 'node:fs';
 import { join, basename } from 'node:path';
-import { em, strong, markers, escapeProse, descriptionItems } from './prose.mjs';
+import { Markup, decodeEntities, descriptionItems } from './kit.mjs';
 
 const args = process.argv.slice(2);
 const root = args.find((a) => !a.startsWith('--'));
@@ -391,14 +391,10 @@ function mathspeakToTsm(title) {
 // ---------------------------------------------------------------------------
 // HTML → tsm (html2tsm.mjs lineage, batch + MathSpeak)
 // ---------------------------------------------------------------------------
-const entities = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
-  .replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, '’').replace(/&lsquo;/g, '‘')
-  .replace(/&ldquo;/g, '“').replace(/&rdquo;/g, '”').replace(/&nbsp;/g, ' ')
-  .replace(/&ndash;/g, '–').replace(/&mdash;/g, '—').replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(+n))
-  .replace(/&([a-z]+)acute;/g, (m, c) => ({ e: 'é', a: 'á', o: 'ó', i: 'í', u: 'ú' }[c] ?? m))
-  .replace(/&([a-z]+)grave;/g, (m, c) => ({ e: 'è', a: 'à' }[c] ?? m))
-  .replace(/&([aou])uml;/g, (m, c) => ({ a: 'ä', o: 'ö', u: 'ü' }[c] ?? m))
-  .replace(/&szlig;/g, 'ß').replace(/&ccedil;/g, 'ç').replace(/&hellip;/g, '…');
+// (plan P3-35) the converter kit: entities by the WHATWG table, text escaped
+// by the printer's escapeTsm, markup placed after it
+const entities = decodeEntities;
+const flat = (s) => s.replace(/\s+/g, ' ').trim();
 
 const M0 = '\u0001', M1 = '\u0002';  // math placeholders survive escaping
 
@@ -410,6 +406,7 @@ function convertPage(html, base, stats) {
 
   const maths = [];
   const stash = (t) => { maths.push(t); return `${M0}${maths.length - 1}${M1}`; };
+  const K = new Markup();
 
   // display math first (div wrapper), then inline SVG
   html = html.replace(/<div class="displaymath">([\s\S]*?)<\/div>/g, (m, inner) => {
@@ -437,7 +434,7 @@ function convertPage(html, base, stats) {
     let caption = cap ? cap[1] : '';
     caption = caption.replace(new RegExp(`${M0}(\\d+)${M1}`, 'g'), (mm, n) => maths[+n])
       .replace(/<[^>]+>/g, '');
-    caption = escapeProse(entities(caption).replace(/\s+/g, ' ').replace(/^Figure [\d.]+:\s*/, '').trim());
+    caption = K.finish(flat(entities(caption)).replace(/^Figure [\d.]+:\s*/, ''));
     stats.figs++;
     return `\n\n#!figure(src: "${url}", alt: "figure", scale: 0.8)\n${caption}\n#figure!\n\n`;
   });
@@ -487,7 +484,7 @@ function convertPage(html, base, stats) {
       pos = end;
       re.lastIndex = end;
       const text = entities(code.replace(/<div id="fragbit[^"]*"[^>]*>[\s\S]*?<\/div>/g, '')
-        .replace(/<br\s*\/?>/g, '\n').replace(/<[^>]+>/g, ''))
+        .replace(/<br\s*\/?>/g, '\n').replace(/<[^>]+>/g, '')).replace(/\u00a0/g, ' ')  // (code: a no-break space is a space)
         .replace(/>>[ \t]+(?=\S)/g, '>>\n    ');
       const head = entities(name.replace(/<[^>]+>/g, '')).trim();
       const bodyTxt = (head ? head + '\n' : '') + text.replace(/^\s*\n/, '').trimEnd();
@@ -502,15 +499,16 @@ function convertPage(html, base, stats) {
 
 
 
-  const inlineText = (s) => entities(s
-    .replace(/<em>([\s\S]*?)<\/em>/g, (m, b) => em(b)).replace(/<i>([\s\S]*?)<\/i>/g, (m, b) => em(b))
-    .replace(/<(?:tt|code)>([\s\S]*?)<\/(?:tt|code)>/g, '`$1`')
-    .replace(/<b>([\s\S]*?)<\/b>/g, (m, b) => strong(b)).replace(/<strong>([\s\S]*?)<\/strong>/g, (m, b) => strong(b))
-    .replace(/<a [^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g, (m, h, t) => /^https?:/.test(h) ? `[${t}](${h})` : t)
+  // a fragment of HTML → its text with the kit's markup placeholders
+  const inlineText = (s) => flat(entities(s
+    .replace(/<em>([\s\S]*?)<\/em>/g, (m, b) => K.em(b)).replace(/<i>([\s\S]*?)<\/i>/g, (m, b) => K.em(b))
+    .replace(/<(?:tt|code)>([\s\S]*?)<\/(?:tt|code)>/g, (m, b) => K.code(flat(entities(b.replace(/<[^>]+>/g, '')))))
+    .replace(/<b>([\s\S]*?)<\/b>/g, (m, b) => K.strong(b)).replace(/<strong>([\s\S]*?)<\/strong>/g, (m, b) => K.strong(b))
+    .replace(/<a [^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g, (m, h, t) => /^https?:/.test(h) ? K.link(t, entities(h)) : t)
     .replace(/<sup>([\s\S]*?)<\/sup>/g, '^$1')
-    .replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
-  // (plan P3-33) no escape inside a URL; emphasis resolved with its neighbours
-  const inline = (s) => markers(escapeProse(inlineText(s)));
+    .replace(/<[^>]+>/g, '')));
+  // …as finished .tsm (ctx: escapeTsm's; a paragraph's text starts its line)
+  const inline = (s, ctx = 'para') => K.finish(inlineText(s), ctx, { lineStart: ctx === 'para' });
 
   const out = [];
   const re = /<(h2|h3|h4|p|li|pre|dl)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp(?:-literate)?\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;
@@ -521,11 +519,14 @@ function convertPage(html, base, stats) {
       out.push('', ...descriptionItems(m[2], inline), '');
       continue;
     }
-    const tag = m[1], body = inline(m[2]);
+    const tag = m[1];
+    if (/^h[234]$/.test(tag)) {  // its section number dropped
+      const text = K.finish(inlineText(m[2]).replace(/^[\d.]+\s*/, ''), 'heading', { lineStart: false });
+      if (text) out.push('', '='.repeat(+tag[1] - 1) + ' ' + text, '');
+      continue;
+    }
+    const body = inline(m[2]);
     if (!body) continue;
-    if (tag === 'h2') out.push('', '= ' + body.replace(/^[\d.]+\s*/, ''), '');
-    else if (tag === 'h3') out.push('', '== ' + body.replace(/^[\d.]+\s*/, ''), '');
-    else if (tag === 'h4') out.push('', '=== ' + body, '');
     else if (tag === 'li') out.push('- ' + body);
     else out.push('', body, '');
   }
@@ -563,9 +564,10 @@ for (const ch of chapters) {
     const html = readFileSync(join(fdir, f), 'utf8');
     const base = baseOverride ?? `https://pbr-book.org/4ed/${encodeURI(ch)}/`;
     let tsm = convertPage(html, base, stats);
-    tsm = `// Source: https://pbr-book.org/4ed/${encodeURI(ch)}/${encodeURI(basename(f, '.html'))}\n` +
-      `// © Matt Pharr, Wenzel Jakob, Greg Humphreys — CC BY-NC-ND 4.0.\n` +
-      `// Local private adaptation; do not redistribute.\n\n` + tsm;
+    // (plan P3-35) the attribution as a comment (.tsm has no `//` lines)
+    tsm = `%-- Source: https://pbr-book.org/4ed/${encodeURI(ch)}/${encodeURI(basename(f, '.html'))}\n` +
+      `© Matt Pharr, Wenzel Jakob, Greg Humphreys — CC BY-NC-ND 4.0.\n` +
+      `Local private adaptation; do not redistribute. --%\n\n` + tsm;
     mkdirSync(join(outDir, ch), { recursive: true });
     writeFileSync(outFile, tsm);
     index.push({ file: outFile.slice(outDir.length + 1), chars: tsm.length, ...stats });

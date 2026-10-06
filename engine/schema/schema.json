@@ -1085,6 +1085,16 @@
         "Paint"
       ]
     },
+    "source.frontMatter": {
+      "$comment": "Front matter (plan P3-35; D-L09: a host option, not a language form): a `---` line at offset 0 through the next `---` or `...` line is the document's front matter — a comment block every parse and export skips (an SSG's metadata).",
+      "field": "frontMatter",
+      "dom": "bool",
+      "def": false,
+      "prec": "HostDefault",
+      "affects": [
+        "Compile"
+      ]
+    },
     "render.math": {
       "$comment": "How the plain page (first paint, static export, a fragment) shows a formula (plan P3-27; design T7 S13, D-R07): boxes — the typeset page's glyph boxes, its text runs estimated before measurement — or source ($…$, a feed's choice).",
       "field": "renderMath",

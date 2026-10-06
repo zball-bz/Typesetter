@@ -20,6 +20,23 @@ function getMod() {
   return modPromise;
 }
 
+// (plan P3-35) the engine's front end, for tools: a document's AST JSON
+// (tsr_parse_json; spans are UTF-8 byte offsets) and its syntax tokens;
+// opts.settings: the settings document (its source.* rows: front matter)
+async function frontEnd(fn, source, settings) {
+  const M = await getMod();
+  const p = M.stringToNewUTF8(String(source));
+  const s = M.stringToNewUTF8(settings ? JSON.stringify(settings) : '');
+  try {
+    return JSON.parse(M.UTF8ToString(M[fn](p, s)));
+  } finally {
+    M._free(p);
+    M._free(s);
+  }
+}
+export const parseTsm = (source, { settings } = {}) => frontEnd('_tsr_parse_json', source, settings);
+export const syntaxTokens = (source, { settings } = {}) => frontEnd('_tsr_syntax_tokens', source, settings);
+
 // → { html, diagnostics, ok, manifest, settings, css, docinfo } (plan P3-21;
 // design T9 A2; `diags` is diagnostics' older name). ok=false on ingest
 // failure or error-severity diagnostics. css: the page's stylesheet from the

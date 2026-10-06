@@ -391,19 +391,30 @@ TSR_EXPORT double tsr_doc_height_px(WasmDoc* d) {
 // Front-end exports (plan P1-09): stateless functions of a .tsm source
 // (UTF-8 in, JSON out; byte offsets), for editors and tools. The returned
 // buffer is valid until the next call of the same export.
-TSR_EXPORT const char* tsr_syntax_tokens(const char* src) {
+// (plan P3-35) the stateless front end takes the settings document's
+// source.* rows (FrontEndOptions); none, or null: the defaults
+static FrontEndOptions frontEndOf(const char* settings) {
+  FrontEndOptions o;
+  if (!settings || !*settings) return o;
+  Config c;
+  DiagSink ignored;
+  applySettings(c, settings, ignored);
+  o.frontMatter = c.frontMatter;
+  return o;
+}
+TSR_EXPORT const char* tsr_syntax_tokens(const char* src, const char* settings) {
   static std::string out;
-  out = tokensJson(syntaxTokens(std::string_view(src ? src : "")));
+  out = tokensJson(syntaxTokens(std::string_view(src ? src : ""), frontEndOf(settings)));
   return out.c_str();
 }
-TSR_EXPORT const char* tsr_outline(const char* src) {
+TSR_EXPORT const char* tsr_outline(const char* src, const char* settings) {
   static std::string out;
-  out = outlineJson(std::string_view(src ? src : ""));
+  out = outlineJson(std::string_view(src ? src : ""), frontEndOf(settings));
   return out.c_str();
 }
-TSR_EXPORT const char* tsr_parse_json(const char* src) {
+TSR_EXPORT const char* tsr_parse_json(const char* src, const char* settings) {
   static std::string out;
-  out = astJson(std::string_view(src ? src : ""));
+  out = astJson(std::string_view(src ? src : ""), frontEndOf(settings));
   return out.c_str();
 }
 
