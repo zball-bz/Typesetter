@@ -55,6 +55,27 @@ try {
   check(r.manifest.some((m) => m.url === '../secret.txt' && m.status === 'denied'), 'the manifest has the denied load');
   check(/<span class="tsr-c-tok-[a-z]+">alpha<\/span> beta/.test(r.html), 'the caller\'s codeTokens provider answered');
   check(/<span class="tsr-c-tok-number">1<\/span>/.test(r.html), 'the built-in highlighter still answers the rest');
+
+  // (plan P3-36; design T7 S14) the bundle and exportStatic
+  const { exportStatic } = await import('../runtime/src/node/export.mjs');
+  const postDir = join(root, 'test/export');
+  const postSrc = readFileSync(join(postDir, 'post.tsm'), 'utf8');
+  const bundle = await renderTsm(postSrc, { baseDir: postDir, rootDir: postDir, settings: { doc: { lang: 'en' } } });
+  check(bundle.result?.head?.lang === 'en' && bundle.result.head.title === 'An exported post', 'the bundle\'s head: lang and title');
+  check(bundle.styles?.contract?.includes('.tsr-line') && typeof bundle.styles.rules === 'string', 'the bundle\'s styles');
+  check(Array.isArray(bundle.resources) && bundle.resources.some((m) => m.url === 'pic.png'), 'the bundle\'s resources');
+  const page = await exportStatic(bundle, { docDir: postDir, source: postSrc, template: (p) => `<main data-lang="${p.lang}">${p.article}</main>${p.hydrate}` });
+  check(page.html.startsWith('<main data-lang="en"><article id="tsr-root">'), 'a template function wraps the page');
+  check(page.copy.some((c) => c.to === 'pic.png') && page.copy.some((c) => c.to === 'refs.json'), 'its resources to copy');
+  const hydrated = /settings: (\{[^\n]*\}),/.exec(page.html);
+  check(hydrated && !JSON.parse(hydrated[1]).host && JSON.parse(hydrated[1]).doc?.lang === 'en', 'hydration: the resolved settings, the host\'s rows aside');
+  const embedded = await exportStatic(bundle, { docDir: postDir, embedResources: true, hydrate: false });
+  check(embedded.embedded === 1 && embedded.html.includes('src="data:image/png;base64,') && !embedded.copy.some((c) => c.to === 'pic.png'),
+    'an embedded image is a data: URI, not a copy');
+  check(!embedded.html.includes('type="module"'), 'no hydration when not asked');
+  const feed = await exportStatic(await renderTsm(postSrc, { baseDir: postDir, rootDir: postDir, profile: 'feed' }), { docDir: postDir, source: postSrc });
+  check(feed.html.startsWith('<article lang=') && feed.html.includes('class="tsr-mathsrc">$a^2 + b^2$') && !feed.hydrate,
+    'the feed profile: the article alone, formulas as source, no hydration');
 } catch (e) {
   console.error(String(e.stderr ?? e));
   failures++;

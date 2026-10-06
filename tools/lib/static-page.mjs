@@ -11,62 +11,21 @@ import { MATH_FONT } from '../../runtime/src/shared/mathfont.gen.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const jsonIn = (v) => JSON.stringify(v).replace(/</g, '\\u003c');
 
-// the page: rendered — renderTsm's result; source — for hydration; inputs —
-// its declared inputs (a project page's labels), given to the hydrated
-// engine too; assets — where the shared assets are, relative to the page
-export async function pageHtml({ rendered, source, settings, title, fallbackTitle, hydrate = true, inputs, assets = 'assets' }) {
-  const [{ TSR_CSS, THEME_CSS }, { settingOf }] = await Promise.all([
-    import(join(root, 'runtime/src/main/shell.mjs')),
-    import(join(root, 'runtime/src/shared/settings.gen.mjs')),
-  ]);
-  const { html: semantic, css: rulesCss, docinfo = {} } = rendered;
-  const bodyFont = settingOf(settings, 'fonts.body');
-  const cjkFont = settingOf(settings, 'fonts.cjk');
-  // (plan P3-30) the engine decides the language — the document's own, the
-  // host's, or detected (doc.lang: auto); an undecided one is und, never "auto"
-  const lang = docinfo.lang || (settingOf(settings, 'doc.lang') === 'auto' ? 'und' : settingOf(settings, 'doc.lang'));
-  const pageTitle = title ?? (docinfo.title || fallbackTitle || '');
-  const hydrateBlock = hydrate ? `
-<script type="text/plain" id="tsr-src">${source.replace(/<\/script/gi, '<\\/script')}</script>
-<script type="module">
-import { createEngine } from './${assets}/runtime/src/main/shell.mjs';
-const el = document.getElementById('tsr-root');
-const engine = createEngine();
-engine.typeset(document.getElementById('tsr-src').textContent, el, {
-  settings: ${jsonIn(settings)},${inputs ? `\n  inputs: ${jsonIn(inputs)},` : ''}
-  progressive: false,  // the static semantic page IS the first paint
-}).catch((e) => console.warn('tsr hydrate failed; static page stands', e));
-</script>` : '';
-  // (plan P3-27) formulas as boxes on the static page too: their glyphs in
-  // the bundled math font, beside the page (the hydrated page declares it again)
-  const hasMath = semantic.includes('class="tsr-math');
-  const mathFace = hasMath
-    ? `@font-face { font-family: ${JSON.stringify(MATH_FONT.family)}; src: url(${JSON.stringify(`${assets}/${MATH_FONT.file}`)}); }\n`
-    : '';
-  const html = `<!doctype html>
-<html lang="${lang.replace(/[^A-Za-z0-9-]/g, '')}">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${pageTitle.replace(/[<&]/g, '')}</title>
-<style>
-${mathFace}${TSR_CSS}
-${THEME_CSS}
-body { margin: 0 auto; max-width: 42em; padding: 2em 1em;
-       font-family: ${bodyFont.replace(/[<>{};]/g, '')}; }
-#tsr-root { --tsr-cjk-font: ${cjkFont.replace(/"/g, "'").replace(/[<>{};]/g, '')}; }
-.tsr-flow img { max-width: 100%; height: auto; }
-.tsr-flow pre { overflow-x: auto; }
-/* the rules (plan P3-01: engine defaults, host rules, the document's $.set) */
-${rulesCss}</style>
-</head>
-<body>
-<article id="tsr-root">
-${semantic}</article>${hydrateBlock}
-</body>
-</html>
-`;
-  return { html, hasMath };
+// the page (plan P3-36: runtime/src/node/export.mjs's exportStatic, the one
+// a site generator uses too) written into outDir with its resources
+export async function writePage(bundle, { outDir, name = 'index.html', docDir, log = console.error, ...opts }) {
+  const { exportStatic } = await import(join(root, 'runtime/src/node/export.mjs'));
+  const page = await exportStatic(bundle, { docDir, ...opts });
+  await mkdir(outDir, { recursive: true });
+  await writeFile(join(outDir, name), page.html);
+  for (const { from, to } of page.copy) {
+    const dest = join(outDir, to);
+    try {
+      await mkdir(dirname(dest), { recursive: true });
+      await cp(from, dest);
+    } catch { log(`export: ${to} not copied`); }
+  }
+  return page;
 }
 
 // (plan P3-21) the document's own resources beside it: what the manifest

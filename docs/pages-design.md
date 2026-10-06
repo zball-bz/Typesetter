@@ -145,6 +145,28 @@ As built (plan P3-21; T9 M7; D-I09):
   renderTsm's resources: `$.load` within the root, a denial above it, both in
   the manifest, and a caller's provider.
 
+As built (plan P3-36; design T7 S14): the export bundle.
+- `renderTsm(source, opts)` returns, besides `html`, `css`, `diagnostics`,
+  `ok`, `manifest`, `settings`, `docinfo` and `labels`: `result` (the semantic
+  RenderResult: `head {lang, title, idPrefix, profile}`, `html`, `anchors
+  [{id, label, cls}]` from its labels), `resources` (the manifest), `styles`
+  (`contract` — the DOM contract and layout CSS, `theme`, `rules` — the
+  engine's rules) and `profile`. `opts.profile: 'feed'` sets formulas as
+  their source (`render.math: source`) unless the settings say otherwise.
+- `exportStatic(bundle, {template, hydrate, source, inputs, title,
+  embedResources, docDir, assets})` (`runtime/src/node/export.mjs`, the
+  function a site generator calls) is pure: it returns `{html, parts, copy,
+  embedded, math, hydrate}`. `template(parts)` wraps the page (`parts`: lang,
+  title, head, article, root, hydrate, styles, settings, docinfo, profile);
+  the default is a bare page, a feed bundle's the article alone. Hydration
+  passes the bundle's resolved settings back verbatim — the host's rows
+  (`host.*`: the browser's to say) aside. `embedResources` inlines the
+  document's images as `data:` URIs; every other resource inside the
+  document's folder is in `copy` (its real path checked, as before).
+- `tools/export-static.mjs` (`--profile page|feed`, `--template layout.mjs`,
+  `--embed`) and `tools/tsm-project.mjs` write pages through it
+  (`tools/lib/static-page.mjs` `writePage`).
+
 ## 4. Milestones
 
 - **W** fonts option end-to-end + e2e with a real woff2 fixture.

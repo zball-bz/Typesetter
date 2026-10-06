@@ -34,7 +34,7 @@ if (!Array.isArray(config.files) || !config.files.length) {
   process.exit(2);
 }
 const { renderProject, CONTINUED_COUNTERS } = await import('../runtime/src/node/project.mjs');
-const { pageHtml, copyResources, copyAssets, readSettings, writeFile, mkdir } = await import('./lib/static-page.mjs');
+const { writePage, copyAssets, readSettings, writeFile, mkdir } = await import('./lib/static-page.mjs');
 
 const settings = await readSettings(typeof config.settings === 'string' ? join(base, config.settings) : config.settings);
 const files = [];
@@ -56,15 +56,14 @@ for (let i = 0; i < files.length; i++) {
   if (!r.ok) failed = true;
   // its page: the project's settings, its manifests as the hydrated engine's input
   const others = Object.entries(project.manifests).filter(([k]) => k !== f.doc).map(([, m]) => m);
-  const pageSettings = { ...settings, project: { doc: f.doc, starts: project.starts, urls: project.urls } };
-  const { html, hasMath } = await pageHtml({
-    rendered: r, source: f.source, settings: pageSettings, hydrate, fallbackTitle: f.doc,
+  // (plan P3-36) exportStatic: hydration gets the bundle's resolved settings
+  // (its project rows: the render's), the others' manifests as its input
+  const page = await writePage(r, {
+    outDir, name: `${f.doc}.html`, docDir: f.baseDir, source: f.source, hydrate, fallbackTitle: f.doc,
     inputs: { labels: `[${others.join(',')}]` },
   });
-  math = math || hasMath;
-  await writeFile(join(outDir, `${f.doc}.html`), html);
+  math = math || page.math;
   await writeFile(join(outDir, `${f.doc}.labels.json`), project.manifests[f.doc]);
-  await copyResources({ manifest: r.manifest, docDir: f.baseDir, outDir });
 }
 await copyAssets({ outDir, math, hydrate });
 console.log(`built ${files.length} document(s) -> ${outDir}`);

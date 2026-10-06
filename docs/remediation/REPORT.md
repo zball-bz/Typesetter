@@ -58,3 +58,15 @@ figure/float、figure/stack、region/table-tiny 的正文与图注、math/* 其�
 ### 需要救援的用例
 
 只有 doc/url-overlong（预期）与 region/hott-row（五栏表在 300px 下单元格 47px，公式单元格过宽，旧版同样溢出但整格塌成一行）。两者都给 `overfull-line` 警告，e2e 在 `EXPECTED_DIAGS` 中声明。
+
+## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
+
+重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。
+
+1. 水合：`eleventy.config.js` 手写的引擎选项（`fontFamily`、`cjkFontFamily`、`lang`、`paraIndentEm`、`fonts`）改为站点设置文档（`fonts.*`、`par.indent` 等，见 docs/settings-table.md）传给 `renderTsm(src, {settings})`，客户端 `createEngine().typeset(…, {settings: bundle.settings 去掉 host 行})`；`exportStatic` 生成的水合脚本即如此。
+2. 语言：删去正则读取 front matter 的 `lang`。文档语言来自 `bundle.docinfo.lang`（文档自己的 `$.doc({lang})`、宿主设置 `doc.lang` 或自动检测，P3-30）。若把含 front matter 的原文交给引擎，设置 `source.frontMatter: true`（P3-35）。
+3. CSS：不再自行 import `TSR_CSS` 并复制引擎样式；用 `bundle.styles.contract` / `theme` / `rules`，或 `exportStatic` 的 `parts.head`。
+4. 页面与订阅：文章片段可由 `exportStatic(bundle, {template: (p) => …})` 生成；RSS 用 `renderTsm(src, {profile: 'feed'})`（公式为源码，无水合）。
+5. 双语：每种语言一个引擎实例不再必要——一个 `createEngine()` 按容器管理多个会话；各语言用各自 bundle 的 settings。
+6. 资源：`bundle.resources`（清单）列出图片、`#bibliography`、`$.load` 文件；用 `exportStatic` 的 `copy` 列表或 `embedResources`。
+7. 内容：`src/docs/example-hott.tsm` 与 `example-huozi.tsm` 需从本仓库 `examples/real-world` 重新复制（P3-33 起 `\x` 保留反斜杠、URL 自动链接，P3-35 的转换器修正）；其余语法变化见 docs/tsm-changes.md 的 P3-29…P3-35 条目（`&` 为公式对齐点、`/ 术语: 描述`、`*`/`_` 词内不成对等）。

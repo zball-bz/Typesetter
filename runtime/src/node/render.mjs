@@ -54,7 +54,20 @@ export const syntaxTokens = (source, { settings } = {}) => frontEnd('_tsr_syntax
 // (its providers and cache), else one per process; opts.providers:
 // [{ kind, provider }] registered for this render.
 let defaultHost = null;
+// (plan P3-36; design T7 S14) the bundle: besides the fields above, result —
+// the semantic RenderResult ({head: {lang, title, idPrefix, profile}, html,
+// anchors: [{id, label, cls}]}), resources (the manifest), styles ({contract,
+// theme, rules}: the page's CSS, the engine's) and profile. opts.profile:
+// 'page' (default) or 'feed' — formulas as their source (render.math:
+// source, unless the settings say otherwise). exportStatic (./export.mjs)
+// turns a bundle into a page.
+let pageCss = null;
+const pageStyles = () => (pageCss ??= import('../main/shell.mjs').then((m) => ({ contract: m.TSR_CSS, theme: m.THEME_CSS })));
+
 export async function renderTsm(source, opts = {}) {
+  const profile = opts.profile === 'feed' ? 'feed' : 'page';
+  if (profile === 'feed' && opts.settings?.render?.math === undefined)
+    opts = { ...opts, settings: { ...(opts.settings ?? {}), render: { ...(opts.settings?.render ?? {}), math: 'source' } } };
   const M = await getMod();
   const doc = M._tsr_doc_new();
   // one Session per process (plan P1-21): code tokens answered once are reused
@@ -139,9 +152,20 @@ export async function renderTsm(source, opts = {}) {
     for (const f of opts.fonts ?? [])
       if (f?.src) manifest.push({ url: String(f.src), role: 'font', source: 'host', status: 'declared', requester: 'host' });
     const diagnostics = M.UTF8ToString(M._tsr_diags(doc));
+    const resolved = JSON.parse(product('settings'));
+    const docinfo = JSON.parse(product('docinfo'));
+    const labels = product('labels');  // (plan P3-31) its labels product (a project's manifest)
+    // (plan P3-36) the anchors the page carries: its labels, as ids
+    const idPrefix = resolved.render?.idPrefix ?? 'tsr-';
+    let anchors = [];
+    try {
+      anchors = (JSON.parse(labels).labels ?? []).map((l) => ({ id: idPrefix + l.anchor, label: l.label, cls: l.class }));
+    } catch { /* no labels product */ }
+    const { contract, theme } = await pageStyles();
     return { html, css, diagnostics, diags: diagnostics, ok: !/^error /m.test(diagnostics), manifest,
-             settings: JSON.parse(product('settings')), docinfo: JSON.parse(product('docinfo')),
-             labels: product('labels') };  // (plan P3-31) its labels product (a project's manifest)
+             settings: resolved, docinfo, labels, profile,
+             result: { head: { lang: docinfo.lang ?? '', title: docinfo.title ?? '', idPrefix, profile }, html, anchors },
+             resources: manifest, styles: { contract, theme, rules: css } };
   } finally {
     M._tsr_doc_free(doc);
   }

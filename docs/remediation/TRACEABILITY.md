@@ -1204,7 +1204,7 @@ Theme steps: — · findings: 1
 | `render-runtime/token-theme-sniffing` | adhoc | medium | P3-18 | grep:plan P3-18 |
 | `render-runtime/marker-gutter` | adhoc | low | P1-18, P3-16 | grep:plan P3-16 |
 | `render-runtime/config-plumbing` | adhoc | medium | P1-03 | grep:plan P1-03 |
-| `render-runtime/static-export-template` | adhoc | medium | P3-21, P3-36 | |
+| `render-runtime/static-export-template` | adhoc | medium | P3-21, P3-36 | grep:plan P3-36 |
 | `render-runtime/anchor-decode-duplication` | adhoc | medium | P3-05 || grep:plan P3-07 |
 | `render-runtime/audit-hint-attributes` | adhoc | low | P3-07 || grep:plan P3-07 |
 | `render-runtime/duplicate-serializer-primitives` | adhoc | low | P0-10, P1-02 | grep:plan P1-02 |
