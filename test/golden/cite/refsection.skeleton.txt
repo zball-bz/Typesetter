@@ -1,0 +1,17 @@
+doc @[0,687)
+  code-let @[0,55) js=" refs = $.collector('refs', {like: 'bibliography'})"
+  heading1 @[57,77)
+  para @[79,129) lines=1
+  region @[131,264) name="refsection"
+    heading2 @[144,158)
+    para @[160,242) lines=1
+    para @[244,251) lines=1
+  region @[266,376) name="refsection"
+    heading2 @[279,293)
+    para @[295,354) lines=1
+    para @[356,363) lines=1
+  para @[378,421) lines=1
+  para @[423,430) lines=1
+  para @[432,527) lines=1
+  para @[529,598) lines=1
+  para @[600,686) lines=1

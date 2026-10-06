@@ -257,6 +257,16 @@ struct Sem {
         return;
       case Kind::comment:
         return;  // document-model nodes, excluded from output
+      case Kind::entry:  // (plan P3-13) an anchored entry marks its place
+        if (std::string_view id = argS(n, ArgK::label); !id.empty()) {
+          {
+            Tag t(out, "span");
+            t.id(id);
+            t.open();
+          }
+          out += "</span>";
+        }
+        return;
       case Kind::group: {
         // an inline labelled group (a term used inline, also inside a table
         // cell — plan P1-17) is a link target: its anchor wraps its content

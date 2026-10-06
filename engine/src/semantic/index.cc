@@ -63,6 +63,7 @@ struct Locator {
   Index& ix;
   DiagSink& diags;
   std::vector<u32> encl;  // the instances around the node visited, innermost last
+  std::vector<u32> ordinals = std::vector<u32>(reg.classes.size(), 0);  // per class (Body::Ordinal)
 
   bool addLabel(const std::string& label, LabelTarget t, Span span) {
     if (ix.labels.count(label)) {
@@ -88,8 +89,10 @@ struct Locator {
     }
     return true;
   }
-  std::string alias(const AliasRule& a, const std::string& number, const std::string& key) {
-    return a.prefix + (a.body == AliasRule::Body::Number ? number : key);
+  std::string alias(const AliasRule& a, const std::string& number, const std::string& key, u32 ordinal) {
+    return a.prefix + (a.body == AliasRule::Body::Number    ? number
+                       : a.body == AliasRule::Body::Ordinal ? std::to_string(ordinal)
+                                                            : key);
   }
 
   void instance(const ContentNode* n, ClassId c) {
@@ -99,7 +102,12 @@ struct Locator {
     in.node = n;
     in.span = n->span;
     u32 id = (u32)ix.instances.size();
+    const u32 ordinal = ++ordinals[c];
+    in.parent = encl.empty() ? kNoInst : encl.back();
     if (C.counter != kNoIndex) in.level = counters.levelOf(C.counter, n);
+    // (plan P3-13) a per-level outline class (a part, a chapter: a counter
+    // of its own) stands at its node's level
+    if (C.outline && (C.counter == kNoIndex || !reg.counters[C.counter].byLevel)) in.level = attrInt(n, ArgK::level, 1);
     in.supplement = C.supplement;
     if (C.counter != kNoIndex)
       if (const Supplement* s = counters.supplementOf(C.counter)) in.supplement = *s;
@@ -110,6 +118,13 @@ struct Locator {
       in.titleNode = n;
     }
     if (C.title == ElementClass::Title::Arg) in.title = strs.get(attrStr(n, C.titleArg));
+    if (C.title == ElementClass::Title::Part)  // (plan P3-13) its part's content: a figure's caption
+      for (const ContentNode* k : n->kids)
+        if (slotOf(k, strs) == C.titlePart) {
+          excerptInto(k, strs, in.title);
+          in.titleNode = k;
+          break;
+        }
     if (C.title == ElementClass::Title::Ext)
       for (const ArgVal& a : n->args)
         if (a.key == ArgK::ext && a.tag == ArgTag::Str && strs.get(a.name) == C.titleExt) in.title = strs.get(a.ref);
@@ -139,12 +154,12 @@ struct Locator {
         break;
     }
     if (in.label.empty() && C.alias.body != AliasRule::Body::None) {
-      in.label = alias(C.alias, in.number, in.label);
+      in.label = alias(C.alias, in.number, in.label, ordinal);
       in.aliased = true;
       addLabel(in.label, self, n->span);
     }
     if (C.flow) {
-      in.markerAlias = alias(C.flow->markerAlias, in.number, in.label);
+      in.markerAlias = alias(C.flow->markerAlias, in.number, in.label, ordinal);
       addLabel(in.markerAlias, {LabelTarget::K::Marker, id, n->span}, n->span);
       ix.flow(C.flow->name).push_back(id);
     }
@@ -152,16 +167,17 @@ struct Locator {
     // row of a key wins), else by its label
     std::string key = C.rowKeyed ? std::string(strs.get(attrStr(n, C.rowKey)))
                       : C.labels == ElementClass::Labels::FromArg ? in.label : std::string();
-    if (!C.table.empty() && !key.empty() && !(C.rowKeyed && ix.row(C.table, key))) {
+    if (!C.table.empty() && !key.empty() && !(C.rowKeyed && !C.multi && ix.row(C.table, key))) {
       Row r;
       r.table = C.table;
       r.key = key;
+      r.sortKey = strs.get(attrStr(n, ArgK::sortKey));
       r.node = n;
       r.span = n->span;
       r.inst = id;
       r.title = in.title;
       for (const ContentNode* k : n->kids) excerptInto(k, strs, r.bodyText);
-      ix.rowOf.emplace(C.table + '\0' + key, (u32)ix.rows.size());
+      ix.rowOf.emplace(C.table + '\0' + key, (u32)ix.rows.size());  // (a multi table: its first)
       ix.rows.push_back(std::move(r));
     }
     ix.instOf[n] = id;
@@ -202,12 +218,14 @@ struct Locator {
     } else if (n->kind == Kind::event) {
       event(n);
       return;
-    } else if (n->kind == Kind::entry) {
+    } else if (n->kind == Kind::entry && !n->cls) {
       diags.add(Sev::Warning, "entry-unclassed", n->span,
                 "an entry of no element class (role '" + std::string(strs.get(attrStr(n, ArgK::role))) +
                     "') is collected nowhere");
     } else if (n->kind == Kind::collect) {
-      // a collector node holds no labels of its own
+      // a collector node holds no labels of its own; its place (a scoped
+      // collector's section)
+      ix.collectAt[n] = (u32)ix.instances.size();
     } else {
       std::string l(strs.get(attrStr(n, ArgK::label)));
       if (!l.empty()) userLabel(n, l, {LabelTarget::K::Plain, kNoInst, n->span});
@@ -225,21 +243,72 @@ void locate(const ContentNode* root, const Registry& reg, Counters& counters, co
   l.visit(root);
 }
 
-void bindCites(const ContentNode* root, const Registry& reg, Counters& counters, const Interner& strs,
-               const Index& ix) {
-  if (!root) return;
-  if (root->kind == Kind::ref) {
-    std::string target(strs.get(attrStr(root, ArgK::target)));
-    if (!ix.labels.count(target))
-      for (const std::string& k : splitKeys(target))
-        for (const CollectorDef& c : reg.collectors)
-          if (c.citeable && ix.row(c.table, k)) {
-            counters.keyed(c.rowCounter, k);
-            break;
-          }
+u32 keyedScope(const Registry& reg, const Index& ix, u16 c, const std::vector<u32>& encl) {
+  const ClassId sc = reg.counters[c].scope;
+  if (sc)
+    for (size_t i = encl.size(); i-- > 0;)
+      if (ix.instances[encl[i]].cls == sc) return encl[i];
+  return kDocScope;
+}
+
+namespace {
+
+struct Binder {
+  const Registry& reg;
+  Counters& counters;
+  const Interner& strs;
+  Index& ix;
+  DiagSink& diags;
+  std::vector<u32> encl;
+
+  // another marker of a flow item (a named note's): an occurrence, anchored
+  // by the item's marker alias and its place among them
+  void occurrence(const ContentNode* n, const std::string& target) {
+    auto it = ix.labels.find(target);
+    if (it == ix.labels.end() || it->second.k != LabelTarget::K::Instance) return;
+    Instance& in = ix.instances[it->second.inst];
+    if (!reg.cls(in.cls).flow || in.markerAlias.empty()) return;
+    const u32 k = (u32)in.occurrences.size() + 2;
+    std::string label = in.markerAlias + "." + std::to_string(k);
+    if (ix.labels.count(label)) {
+      diags.add(Sev::Warning, "label-duplicate", n->span, "label '" + label + "' declared twice (first wins)");
+      return;
+    }
+    ix.labels.emplace(label, LabelTarget{LabelTarget::K::Marker, it->second.inst, n->span});
+    ix.labelOrder.push_back(label);
+    in.occurrences.push_back(std::move(label));
+    ix.occurrenceOf[n] = {it->second.inst, k};
   }
-  if (root->kind == Kind::collect) return;  // a collector's rows are not citations
-  for (const ContentNode* k : root->kids) bindCites(k, reg, counters, strs, ix);
+
+  void visit(const ContentNode* n) {
+    if (n->kind == Kind::ref) {
+      std::string target(strs.get(attrStr(n, ArgK::target)));
+      if (!ix.labels.count(target)) {
+        for (const std::string& k : splitKeys(target))
+          for (const CollectorDef& c : reg.collectors)
+            if (c.citeable && ix.row(c.table, k)) {
+              counters.keyed(c.rowCounter, k, keyedScope(reg, ix, c.rowCounter, encl));
+              break;
+            }
+      } else if (strs.get(attrStr(n, ArgK::form)) == "marker") {
+        occurrence(n, target);
+      }
+    }
+    if (n->kind == Kind::collect) return;  // a collector's rows are not citations
+    auto in = n->cls ? ix.instOf.find(n) : ix.instOf.end();
+    if (in != ix.instOf.end()) encl.push_back(in->second);
+    for (const ContentNode* k : n->kids) visit(k);
+    if (in != ix.instOf.end()) encl.pop_back();
+  }
+};
+
+}  // namespace
+
+void bind(const ContentNode* root, const Registry& reg, Counters& counters, const Interner& strs, Index& ix,
+          DiagSink& diags) {
+  if (!root) return;
+  Binder b{reg, counters, strs, ix, diags, {}};
+  b.visit(root);
 }
 
 std::string dumpIndex(const Index& ix, const Registry& reg) {
@@ -251,6 +320,7 @@ std::string dumpIndex(const Index& ix, const Registry& reg) {
     if (C.counter != kNoIndex && reg.counters[C.counter].byLevel) appendf(out, " level=%d", in.level);
     if (!in.label.empty()) out += " label=" + in.label;
     if (!in.markerAlias.empty()) out += " marker=" + in.markerAlias;
+    for (const std::string& o : in.occurrences) out += " occurrence=" + o;
     if (!in.title.empty()) {
       out += " title=\"";
       appendEscaped(out, in.title);

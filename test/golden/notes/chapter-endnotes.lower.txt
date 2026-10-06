@@ -1,0 +1,42 @@
+lower v1 abi 3d3ccfbb docEnd 781 holes 7 module 826ddce37adb408f
+piece 0 hole 0 js [148,611)
+piece 1 hole 1 js [613,716)
+piece 2 hole 2 js [718,767)
+piece 3 hole 3 js [769,787)
+piece 4 hole 4 js [789,838)
+piece 5 hole 5 js [840,889)
+piece 6 hole 6 js [891,909)
+block 0 stmt [0,458) user framed holes 0..1
+  STMT 0
+block 1 stmt [459,551) user framed holes 1..2
+  STMT 1
+block 2 content [553,558)
+  CALL heading [553,558) level=1 label=null
+    TEXT "One" [555,558)
+block 3 content [560,650) user framed holes 2..3
+  CALL para [560,650)
+    TEXT "Text" [560,564)
+    HOLE 2 [564,608)
+      TEXT "The first endnote." [589,607)
+    TEXT " and a footnote" [609,623) raw=0:0,1:0
+    CALL note [623,649)
+      TEXT "A footnote, at the end." [625,648)
+    TEXT "." [649,650)
+block 4 content [652,663) user framed holes 3..4
+  CALL para [652,663)
+    HOLE 3 [652,663)
+block 5 content [665,670)
+  CALL heading [665,670) level=1 label=null
+    TEXT "Two" [667,670)
+block 6 content [672,767) user framed holes 4..6
+  CALL para [672,767)
+    TEXT "More" [672,676)
+    HOLE 4 [676,721)
+      TEXT "The second endnote." [701,720)
+    TEXT " and more" [722,730) raw=0:0,1:0
+    HOLE 5 [730,766)
+      TEXT "The third." [755,765)
+    TEXT "." [766,767)
+block 7 content [769,780) user framed holes 6..7
+  CALL para [769,780)
+    HOLE 6 [769,780)

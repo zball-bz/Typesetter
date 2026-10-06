@@ -1,0 +1,12 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="110">A back-of-book index (plan P3-13): entries anywhere, a key with several occurrences, sorted by their sort key.</p>
+<p data-pid="1" data-s="112" data-e="261">A <span id="tsr-idx-1"></span>monad is a monoid in endofunctors; the <span id="tsr-idx-2"></span>zeta function comes later.</p>
+<p data-pid="2" data-s="263" data-e="436">Every <span id="tsr-idx-3"></span>functor preserves composition, and a <span id="tsr-idx-4"></span>monad is a functor with structure.</p>
+<p data-pid="3" data-s="438" data-e="522">单子<span id="tsr-idx-5"></span>与函子的关系。</p>
+<ul data-pid="4" data-s="524" data-e="532">
+<li>单子 <a href="#tsr-idx-5">1</a></li>
+<li>functor <a href="#tsr-idx-3">1</a></li>
+<li><strong>monad</strong> <a href="#tsr-idx-1">1</a>, <a href="#tsr-idx-4">2</a></li>
+<li>zeta <a href="#tsr-idx-2">1</a></li>
+</ul>
+</div>

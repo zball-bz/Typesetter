@@ -1,0 +1,86 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  word "One" w=2459su pen=INF BOLD x1.60 @[314,317)
+top pid=1 units=1
+ unit text indent=0su
+  word "First" w=2561su pen=INF @[319,324)
+  word "①" w=432su pen=INF LINK SYN x0.70 @[324,338)
+  space w=257su stretch=1 @[339,349)
+  word "and" w=1537su pen=INF @[339,349)
+  space w=257su stretch=1 @[339,349)
+  word "sec" w=1537su pen=INF @[339,349)
+  hyphen bw=513su pen=0.70 @[339,349)
+  word "ond" w=1537su pen=INF @[339,349)
+  word "②" w=432su pen=INF LINK SYN x0.70 @[349,364)
+  space w=257su stretch=1 @[365,371)
+  word "notes." w=3073su pen=INF @[365,371)
+top pid=2 units=1
+ unit text indent=0su anchor="h-1.1"
+  word "A" w=693su pen=INF BOLD x1.35 @[376,388)
+  space w=347su stretch=1 BOLD x1.35 @[376,388)
+  word "subsection" w=6914su pen=INF BOLD x1.35 @[376,388)
+top pid=3 units=1
+ unit text indent=0su
+  word "A" w=513su pen=INF @[390,397)
+  space w=257su stretch=1 @[390,397)
+  word "third" w=2561su pen=INF @[390,397)
+  word "③" w=432su pen=INF LINK SYN x0.70 @[397,411)
+  space w=257su stretch=1 @[412,439)
+  word "note," w=2561su pen=INF @[412,439)
+  space w=257su stretch=1 @[412,439)
+  word "still" w=2561su pen=INF @[412,439)
+  space w=257su stretch=1 @[412,439)
+  word "in" w=1025su pen=INF @[412,439)
+  space w=257su stretch=1 @[412,439)
+  word "chap" w=2049su pen=INF @[412,439)
+  hyphen bw=513su pen=0.70 @[412,439)
+  word "ter" w=1537su pen=INF @[412,439)
+  space w=257su stretch=1 @[412,439)
+  word "one." w=2049su pen=INF @[412,439)
+top pid=4 units=4
+ unit rule indent=0su
+ unit text indent=1536su anchor="fn-1" marker="①."
+  word "One," w=1742su pen=INF x0.85 @[326,337)
+  space w=219su stretch=1 x0.85 @[326,337)
+  word "first." w=2613su pen=INF x0.85 @[326,337)
+  space w=219su stretch=1 x0.85 @[324,338)
+  word "↩" w=524su pen=INF LINK SYN x0.85 @[324,338)
+ unit text indent=1536su anchor="fn-2" marker="②."
+  word "One," w=1742su pen=INF x0.85 @[351,363)
+  space w=219su stretch=1 x0.85 @[351,363)
+  word "sec" w=1307su pen=INF x0.85 @[351,363)
+  hyphen bw=437su pen=0.70 x0.85 @[351,363)
+  word "ond." w=1742su pen=INF x0.85 @[351,363)
+  space w=219su stretch=1 x0.85 @[349,364)
+  word "↩" w=524su pen=INF LINK SYN x0.85 @[349,364)
+ unit text indent=1536su anchor="fn-3" marker="③."
+  word "One," w=1742su pen=INF x0.85 @[399,410)
+  space w=219su stretch=1 x0.85 @[399,410)
+  word "third." w=2613su pen=INF x0.85 @[399,410)
+  space w=219su stretch=1 x0.85 @[397,411)
+  word "↩" w=524su pen=INF LINK SYN x0.85 @[397,411)
+top pid=5 units=1
+ unit text indent=0su anchor="h-2"
+  word "Two" w=2459su pen=INF BOLD x1.60 @[443,446)
+top pid=6 units=1
+ unit text indent=0su
+  word "Again" w=2561su pen=INF @[448,453)
+  word "①" w=432su pen=INF LINK SYN x0.70 @[453,467)
+  space w=257su stretch=1 @[468,478)
+  word "the" w=1537su pen=INF @[468,478)
+  space w=257su stretch=1 @[468,478)
+  word "first;" w=3073su pen=INF @[468,478)
+  space w=257su stretch=1 @[468,478)
+  word "①" w=616su pen=INF LINK SYN @[479,484)
+  space w=257su stretch=1 @[485,498)
+  word "stays" w=2561su pen=INF @[485,498)
+  space w=257su stretch=1 @[485,498)
+  word "unique." w=3585su pen=INF @[485,498)
+top pid=7 units=2
+ unit rule indent=0su
+ unit text indent=1536su anchor="fn-4" marker="①."
+  word "Two," w=1742su pen=INF x0.85 @[455,466)
+  space w=219su stretch=1 x0.85 @[455,466)
+  word "first." w=2613su pen=INF x0.85 @[455,466)
+  space w=219su stretch=1 x0.85 @[453,467)
+  word "↩" w=524su pen=INF LINK SYN x0.85 @[453,467)

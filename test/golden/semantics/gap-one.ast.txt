@@ -1,0 +1,24 @@
+doc @[0,118)
+  code-block @[0,39) js=" $.counter('heading', {gap: 'one'}) "
+  para @[41,47)
+    splice @[41,47) expr="toc()"
+  heading @[49,52) level=1
+    text @[51,52) str="A"
+  heading @[54,61) level=3
+    text @[58,61) str="A.c"
+  heading @[63,66) level=1
+    text @[65,66) str="B"
+  heading @[68,74) level=2
+    text @[71,74) str="B.a"
+  heading @[76,82) level=2
+    text @[79,82) str="B.b"
+  heading @[84,87) level=1
+    text @[86,87) str="C"
+  heading @[89,95) level=2
+    text @[92,95) str="C.a"
+  heading @[97,100) level=1
+    text @[99,100) str="D"
+  heading @[102,109) level=3
+    text @[106,109) str="D.c"
+  heading @[111,117) level=2
+    text @[114,117) str="D.b"

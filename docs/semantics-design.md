@@ -1,4 +1,4 @@
-# Semantics: element registry, Index and the staged resolver (design; as built from plans P1-10, P2-07)
+# Semantics: element registry, Index and the staged resolver (design; as built from plans P1-10, P2-07, P3-13)
 
 What a node *is* — a heading, a figure, an equation, a footnote, a glossary
 term, a bibliography entry — and everything that follows from it (numbers,
@@ -281,3 +281,72 @@ nowhere itself, and a bracket after it is not read: `ref-extra`, info).
 `ref(target, {form, supplement})` applies to each member. A childless
 reference whose target has commas (a script's `ref("a, b")`) still reads as
 a group of those keys.
+
+## 9. New collections, flows and counters (plan P3-13; design T3 S6)
+
+All of this is rows and generic code; no new node kinds.
+
+**Collectors.** A query names classes (`"classes": ["figure"]`, the
+instances in document order: `lof`, `lot`, a user's list of theorems),
+the outline, a table or a flow. Optional fields:
+- `head`: a static head before the wrap;
+- `group: "key"` with `order: "sort-key"`: a multi table's rows grouped by
+  key in sort-key order (the index);
+- `scope: "section"` (with `depth`, default 1) for a flow: only the items
+  of the section the collector stands in, from the last outline instance of
+  level ≤ depth before it to the next one (a chapter's endnotes);
+- `like`: another collector's query and templates; the fields given
+  replace theirs.
+
+An entry's `each{of: 'occurrences'}` iterates a group's rows (an index
+key's places) or a flow item's markers. Each iteration sets `anchor`,
+`ordinal` and `letter`; for a note, `letter` is a, b, c.
+
+**Index.** An index entry is `entry({role: 'index', key, sortKey})[content]`
+anywhere in the text. It is a row of the multi table `index`, so a key may
+hold several rows. Its anchor `idx-n` stays where it stands: an empty
+labelled node, which emit draws as a zero-width box. `#index()` lists the
+keys in sort-key order, each with its content (else its key) and links to
+its occurrences. A sort key is data, so a script may compute it (pinyin,
+locale collation).
+
+**Flows.** `flow.placement` takes one of four values:
+- `collector-only`: only a collector places the items.
+- `end`: at the document's end, unless a collector placed them.
+- `section-end` (with `depth`): before the next outline instance of level
+  ≤ depth, and at the end.
+- `deferred`: placed like `end` on screen. Each placed entry carries
+  `insertAt`, its marker's source position (`ContentNode` → `LayoutBlock`
+  → `Fragment.paged = kPagedInsert`). The rest of the flow's wrap, the
+  rule, is the inserts' separator (`kPagedInsert | kPagedHeader`), so the
+  paged sheets move each entry to the foot of its marker's sheet
+  (pages-design §5). One layout serves both pages.
+
+Each item is placed once, by the first collector or placement whose range
+holds it. A collector that finds every item of its range already placed
+reports `flow-already-placed` (info). A labelled flow item (`#note({label:
+"src"})[…]`) is named. `ref("src", {form: "marker"})` is then another marker
+of it: an occurrence bound in BIND, anchored `fnref-n.2`, `.3`, and so on.
+The occurrence renders the flow's marker template, and the item's entry
+back-links every marker.
+
+**Counters.**
+- `within: {counter, depth, prefix: false}` restarts a counter without
+  prefixing it (footnotes per chapter). An alias body `ordinal` counts an
+  instance's place among its class's instances, so `fn-12` stays unique
+  when the number restarts. The footnote rows use it.
+- A keyed counter with `scope: <class>` counts afresh in each instance of
+  that class. The built-in `cite` is scoped to `refsection`, a group of
+  that role (`#!refsection … #refsection!`). Citations and a bibliography
+  inside one section use its ordinals. The rows' anchors carry the
+  section's place among its class (`bib-2-kp81`), and the first rendering
+  in each scope owns them.
+- A per-level outline class (a part, a chapter) whose counter is not
+  by-level stands at its node's `level`, so the TOC nests it.
+- Counter systems take `mode: "additive"` with `weights` (roman numerals).
+
+**Declarations.** A document's patch of a class's `flow` merges field by
+field (`$.element('footnote', {flow: {placement: 'deferred'}})` keeps the
+marker), and a class `like` another patches the inherited flow. An alias
+patch that gives no `ref` keeps the reference form it replaces.
+

@@ -1,0 +1,80 @@
+doc @[0,76) [base]
+  list @[0,6) [base] ordered=false
+    item @[0,6) [base]
+      para @[0,6) [base]
+        link @[0,6) [base] target="h-1"
+          text @[0,6) [base] str="1 "
+          text @[0,6) [base] str="A"
+      list @[0,6) [base] ordered=false
+        item @[0,6) [base]
+          list @[0,6) [base] ordered=false
+            item @[0,6) [base]
+              para @[0,6) [base]
+                link @[0,6) [base] target="h-1.0.1"
+                  text @[0,6) [base] str="1.0.1 "
+                  text @[0,6) [base] str="A.c"
+    item @[0,6) [base]
+      para @[0,6) [base]
+        link @[0,6) [base] target="h-2"
+          text @[0,6) [base] str="2 "
+          text @[0,6) [base] str="B"
+      list @[0,6) [base] ordered=false
+        item @[0,6) [base]
+          para @[0,6) [base]
+            link @[0,6) [base] target="h-2.1"
+              text @[0,6) [base] str="2.1 "
+              text @[0,6) [base] str="B.a"
+        item @[0,6) [base]
+          para @[0,6) [base]
+            link @[0,6) [base] target="h-2.2"
+              text @[0,6) [base] str="2.2 "
+              text @[0,6) [base] str="B.b"
+    item @[0,6) [base]
+      para @[0,6) [base]
+        link @[0,6) [base] target="h-3"
+          text @[0,6) [base] str="3 "
+          text @[0,6) [base] str="C"
+      list @[0,6) [base] ordered=false
+        item @[0,6) [base]
+          para @[0,6) [base]
+            link @[0,6) [base] target="h-3.1"
+              text @[0,6) [base] str="3.1 "
+              text @[0,6) [base] str="C.a"
+    item @[0,6) [base]
+      para @[0,6) [base]
+        link @[0,6) [base] target="h-4"
+          text @[0,6) [base] str="4 "
+          text @[0,6) [base] str="D"
+      list @[0,6) [base] ordered=false
+        item @[0,6) [base]
+          list @[0,6) [base] ordered=false
+            item @[0,6) [base]
+              para @[0,6) [base]
+                link @[0,6) [base] target="h-4.0.1"
+                  text @[0,6) [base] str="4.0.1 "
+                  text @[0,6) [base] str="D.c"
+        item @[0,6) [base]
+          para @[0,6) [base]
+            link @[0,6) [base] target="h-4.1"
+              text @[0,6) [base] str="4.1 "
+              text @[0,6) [base] str="D.b"
+  heading @[8,11) [BOLDx1.60] level=1 label="h-1"
+    text @[10,11) [BOLDx1.60] str="A"
+  heading @[13,20) [BOLDx1.15] level=3 label="h-1.0.1"
+    text @[17,20) [BOLDx1.15] str="A.c"
+  heading @[22,25) [BOLDx1.60] level=1 label="h-2"
+    text @[24,25) [BOLDx1.60] str="B"
+  heading @[27,33) [BOLDx1.35] level=2 label="h-2.1"
+    text @[30,33) [BOLDx1.35] str="B.a"
+  heading @[35,41) [BOLDx1.35] level=2 label="h-2.2"
+    text @[38,41) [BOLDx1.35] str="B.b"
+  heading @[43,46) [BOLDx1.60] level=1 label="h-3"
+    text @[45,46) [BOLDx1.60] str="C"
+  heading @[48,54) [BOLDx1.35] level=2 label="h-3.1"
+    text @[51,54) [BOLDx1.35] str="C.a"
+  heading @[56,59) [BOLDx1.60] level=1 label="h-4"
+    text @[58,59) [BOLDx1.60] str="D"
+  heading @[61,68) [BOLDx1.15] level=3 label="h-4.0.1"
+    text @[65,68) [BOLDx1.15] str="D.c"
+  heading @[70,76) [BOLDx1.35] level=2 label="h-4.1"
+    text @[73,76) [BOLDx1.35] str="D.b"

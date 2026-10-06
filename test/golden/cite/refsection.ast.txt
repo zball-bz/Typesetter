@@ -1,0 +1,50 @@
+doc @[0,687)
+  code-let @[0,55) js=" refs = $.collector('refs', {like: 'bibliography'})"
+  heading @[57,77) level=1
+    text @[59,77) str="Reference sections"
+  para @[79,129)
+    text @[79,109) str="Citations outside any section: "
+    ref @[110,118) target="liang83"
+    text @[119,122) str=" and "
+    ref @[123,128) target="kp81"
+    text @[128,129) str="."
+  region @[131,264) name="refsection"
+    heading @[144,158) level=2
+      text @[147,158) str="Chapter one"
+    para @[160,242)
+      text @[160,175) str="Knuth and Plass "
+      ref @[176,181) target="kp81"
+      text @[181,199) str=", then the TeXbook "
+      ref @[200,208) target="knuth84"
+      text @[208,242) str=": numbered afresh in this section."
+    para @[244,251)
+      splice @[244,251) expr="refs()"
+  region @[266,376) name="refsection"
+    heading @[279,293) level=2
+      text @[282,293) str="Chapter two"
+    para @[295,354)
+      text @[295,312) str="The TeXbook again "
+      ref @[313,321) target="knuth84"
+      text @[321,344) str=", first here, and Liang "
+      ref @[345,353) target="liang83"
+      text @[353,354) str="."
+    para @[356,363)
+      splice @[356,363) expr="refs()"
+  para @[378,421)
+    text @[378,391) str="Back outside: "
+    ref @[392,397) target="kp81"
+    text @[398,421) str=" keeps its outer number."
+  para @[423,430)
+    splice @[423,430) expr="refs()"
+  para @[432,527)
+    splice @[432,527) expr="entry({role: \"bibentry\", key: \"kp81\"})"
+      arg @[472,526)
+        text @[472,526) str="Knuth and Plass, Breaking paragraphs into lines, 1981."
+  para @[529,598)
+    splice @[529,598) expr="entry({role: \"bibentry\", key: \"knuth84\"})"
+      arg @[572,597)
+        text @[572,597) str="Knuth, The TeXbook, 1984."
+  para @[600,686)
+    splice @[600,686) expr="entry({role: \"bibentry\", key: \"liang83\"})"
+      arg @[643,685)
+        text @[643,685) str="Liang, Word hyphenation by computer, 1983."

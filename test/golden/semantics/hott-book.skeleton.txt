@@ -1,0 +1,16 @@
+doc @[0,1426)
+  code-block @[0,1017) js="\n  // a HoTT-shaped book (plan P3-13): parts in roman numerals (an additive\n  // counter system), chapters running on across parts, sections and\n  // equations within chapters, an appendix — all declarations\n  $.counter.system('roman', {mode: 'additive', symbols: ['X', 'IX', 'V', 'IV', 'I'], weights: [10, 9, 5, 4, 1]})\n  const num = (word) => [{where: 'prepend', at: 'self', template: [slot('supplement'), slot('number'), ' ']}]\n  $.element('part', {select: [{node: 'heading', level: 1}], counter: {name: 'part', numbering: '{roman}'},\n    supplement: {en: 'Part '}, title: 'text', outline: true, sites: num()})\n  $.element('chapter', {select: [{node: 'heading', level: 2}], counter: {name: 'chapter'},\n    supplement: {en: 'Chapter '}, title: 'text', outline: true, sites: num()})\n  $.element('section', {select: [{node: 'heading', level: 3}], counter: {name: 'section', within: 'chapter'},\n    supplement: {en: '§'}, title: 'text', outline: true, sites: num()})\n  $.counter('equation', {within: 'chapter'})\n"
+  code-let @[1018,1123) js=" appendix = () => counterUpdate('chapter', {set: [0], numbering: 'A', supplement: {en: 'Appendix '}})"
+  para @[1125,1131) lines=1
+  heading1 @[1133,1146) label="part-f"
+  heading2 @[1157,1171) label="ch-tt"
+  heading3 @[1181,1194) label="sec-j"
+  para @[1204,1220) lines=1
+  heading2 @[1222,1245) label="ch-hott"
+  heading1 @[1257,1270)
+  heading2 @[1272,1279) label="ch-sets"
+  para @[1291,1302) lines=1
+  heading2 @[1304,1315) label="ch-n"
+  heading3 @[1324,1335) label="sec-s"
+  para @[1345,1361) lines=1
+  para @[1363,1425) lines=1

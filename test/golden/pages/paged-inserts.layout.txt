@@ -1,0 +1,29 @@
+doc h=41780su
+para pid=0 y=0su w=19200su h=1639su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,1) @[277,284)
+para pid=1 y=2868su w=19200su h=6144su
+  L0 y=0su left=0su w=19200su dw=95su dc=0su join=space blocks=[0,18) @[286,476)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=space blocks=[19,40) @[376,476)
+  L2 y=3072su left=0su w=19200su dw=219su dc=0su join=space blocks=[41,58) @[376,476)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[59,64) @[376,476)
+para pid=2 y=10241su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=205su dc=0su join=space blocks=[0,17) @[478,588)
+  L1 y=1536su left=0su w=19200su dw=160su dc=0su join=space blocks=[18,37) @[478,588)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[38,53) @[478,588)
+para pid=3 y=16078su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=-13su dc=0su join=space blocks=[0,24) @[590,753)
+  L1 y=1536su left=0su w=19200su dw=-73su dc=0su join=none hyphen blocks=[25,43) @[683,753)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[43,54) @[683,753)
+para pid=4 y=21915su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=102su dc=0su join=space blocks=[0,17) @[755,866)
+  L1 y=1536su left=0su w=19200su dw=160su dc=0su join=space blocks=[18,37) @[755,866)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[38,53) @[755,866)
+para pid=5 y=27752su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,14) @[868,916)
+para pid=6 y=30517su w=19200su h=11263su
+  L0 rule y=768su left=0su w=19200su insert-sep
+  L1 y=2765su left=1536su w=17664su dw=53su dc=0su join=space marker blocks=[0,19) @[323,374) insert@321
+  L2 y=4301su left=1536su w=17664su dw=0su dc=0su join=last blocks=[20,23) @[321,375) insert@321
+  L3 y=6246su left=1536su w=17664su dw=-22su dc=0su join=space marker blocks=[0,21) @[628,681) insert@626
+  L4 y=7782su left=1536su w=17664su dw=0su dc=0su join=last blocks=[22,27) @[626,682) insert@626
+  L5 y=9727su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,7) @[881,899) insert@881

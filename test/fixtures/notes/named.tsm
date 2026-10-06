@@ -1,0 +1,5 @@
+Named notes (plan P3-13): a labelled note is named, and a marker reference marks it again — one entry, three markers, its back-links a b c.
+
+The claim^[A plain note.] rests on one source#note({label: "src"})[Knuth, _The TeXbook_, p. 101.] that is cited again here#ref("src", {form: "marker"}) and once more#ref("src", {form: "marker"}).
+
+The note itself reads @src; its second marker @fnref-2.2.

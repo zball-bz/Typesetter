@@ -1,0 +1,28 @@
+doc @[0,499)
+  code-block @[0,310) js="\n  // notes per chapter (plan P3-13): circled numbers restarting with each\n  // chapter (not prefixed by it), placed at the chapter's end\n  $.counter('footnote', {within: {counter: 'heading', depth: 1, prefix: false}, numbering: '①'})\n  $.element('footnote', {flow: {placement: 'section-end', depth: 1}})\n"
+  heading @[312,317) level=1
+    text @[314,317) str="One"
+  para @[319,371)
+    text @[319,324) str="First"
+    note @[324,338)
+      text @[326,337) str="One, first."
+    text @[339,349) str=" and second"
+    note @[349,364)
+      text @[351,363) str="One, second."
+    text @[365,371) str=" notes."
+  heading @[373,388) level=2
+    text @[376,388) str="A subsection"
+  para @[390,439)
+    text @[390,397) str="A third"
+    note @[397,411)
+      text @[399,410) str="One, third."
+    text @[412,439) str=" note, still in chapter one."
+  heading @[441,446) level=1
+    text @[443,446) str="Two"
+  para @[448,498)
+    text @[448,453) str="Again"
+    note @[453,467)
+      text @[455,466) str="Two, first."
+    text @[468,478) str=" the first; "
+    ref @[479,484) target="fn-4"
+    text @[485,498) str=" stays unique."

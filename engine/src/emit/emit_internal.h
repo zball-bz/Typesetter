@@ -23,6 +23,7 @@ struct EmitEnv {
   const Cascade* cascade = nullptr;       // the rules, for code tokens (plan P3-01)
   StrRef spaceRef = 0, hyphenRef = 0, bulletRef = 0;
   StrRef errorSyn = 0;  // "error": error text's data-syn (plan P3-07)
+  StrRef emptyRef = 0;  // "": an anchor box's text (plan P3-13)
   // the presentation kinds put on their text (plan P2-08): the mono font role,
   // bold, a CJK run
   StyleDelta mono, bold, cjk;

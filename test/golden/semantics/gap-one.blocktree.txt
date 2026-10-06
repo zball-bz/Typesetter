@@ -1,0 +1,61 @@
+top pid=0 leaves=10
+  stack root gap=1/1 @[41,47)
+    stack list pad=1536su gap=1/3 @[41,47)
+      stack item x=1536su @[41,47)
+        paragraph para unit=0 x=1536su marker="•" @[41,47)
+        stack list x=1536su pad=1536su gap=1/3 @[41,47)
+          stack item x=3072su @[41,47)
+            stack list x=3072su pad=1536su gap=1/3 @[41,47)
+              stack item x=4608su @[41,47)
+                paragraph para unit=1 x=4608su marker="•" @[41,47)
+      stack item x=1536su @[41,47)
+        paragraph para unit=2 x=1536su marker="•" @[41,47)
+        stack list x=1536su pad=1536su gap=1/3 @[41,47)
+          stack item x=3072su @[41,47)
+            paragraph para unit=3 x=3072su marker="•" @[41,47)
+          stack item x=3072su @[41,47)
+            paragraph para unit=4 x=3072su marker="•" @[41,47)
+      stack item x=1536su @[41,47)
+        paragraph para unit=5 x=1536su marker="•" @[41,47)
+        stack list x=1536su pad=1536su gap=1/3 @[41,47)
+          stack item x=3072su @[41,47)
+            paragraph para unit=6 x=3072su marker="•" @[41,47)
+      stack item x=1536su @[41,47)
+        paragraph para unit=7 x=1536su marker="•" @[41,47)
+        stack list x=1536su pad=1536su gap=1/3 @[41,47)
+          stack item x=3072su @[41,47)
+            stack list x=3072su pad=1536su gap=1/3 @[41,47)
+              stack item x=4608su @[41,47)
+                paragraph para unit=8 x=4608su marker="•" @[41,47)
+          stack item x=3072su @[41,47)
+            paragraph para unit=9 x=3072su marker="•" @[41,47)
+top pid=1 leaves=1
+  stack root gap=1/1 @[49,52)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1" @[49,52)
+top pid=2 leaves=1
+  stack root gap=1/1 @[54,61)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1.1.1" @[54,61)
+top pid=3 leaves=1
+  stack root gap=1/1 @[63,66)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-2" @[63,66)
+top pid=4 leaves=1
+  stack root gap=1/1 @[68,74)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-2.1" @[68,74)
+top pid=5 leaves=1
+  stack root gap=1/1 @[76,82)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-2.2" @[76,82)
+top pid=6 leaves=1
+  stack root gap=1/1 @[84,87)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-3" @[84,87)
+top pid=7 leaves=1
+  stack root gap=1/1 @[89,95)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-3.1" @[89,95)
+top pid=8 leaves=1
+  stack root gap=1/1 @[97,100)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-4" @[97,100)
+top pid=9 leaves=1
+  stack root gap=1/1 @[102,109)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-4.1.1" @[102,109)
+top pid=10 leaves=1
+  stack root gap=1/1 @[111,117)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-4.2" @[111,117)

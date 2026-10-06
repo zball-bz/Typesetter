@@ -150,6 +150,16 @@ plus optional hydration that upgrades to the typeset rendering client-side.
 - (Until P3-12) Table units paginate atomically (whole table, not rule-to-rule rows) —
   simpler, and blog tables are small; oversized atoms overflow their sheet
   (clipped) exactly like KP's Overfull rescue (plan P0-12): one overlong run per line, never a collapsed paragraph.
+- (Plan P3-13) Footnote inserts have a producer: a flow placed
+  `deferred`. Its entries' fragments are `kPagedInsert` with `insertAt` (their
+  marker's source position), matched to the flow box whose line span holds
+  it. The flow's rule is the separator (`kPagedInsert | kPagedHeader`): it is
+  written above each sheet's inserts (a repeat band) and replaces the
+  footnote skip, the rule's own band giving the space. An insert is not split
+  across sheets. If its marker's line and the note cannot share a sheet, the
+  line moves to the next sheet with it (the fit counts the inserts a box
+  references), as in TeX. The layout dump marks the roles (`insert@n`,
+  `insert-sep`). Fixture: `pages/paged-inserts`.
 - A float box separated from its wrapped text by a sheet cut keeps the
   narrowed lines (cosmetic under-fill beside no float) — accepted; floats
   near page boundaries are an authoring concern in print.

@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Reference sections","label":null,"span":[57,77]},{"level":2,"title":"Chapter one","label":null,"span":[144,158]},{"level":2,"title":"Chapter two","label":null,"span":[279,293]}],"regions":[{"name":"refsection","label":null,"span":[131,264]},{"name":"refsection","label":null,"span":[266,376]}],"fences":[],"labels":[],"diagnostics":[]}

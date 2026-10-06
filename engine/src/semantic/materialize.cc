@@ -64,8 +64,13 @@ struct Slots {
 struct Mat {
   MaterializeEnv& e;
   int collecting = 0;
-  std::vector<std::string> flowPlaced, tablesRendered;
+  std::vector<std::string> tablesRendered, anchorsRendered;
   std::vector<const Instance*> scope;  // the instances the walk is inside (field)
+  // (plan P3-13) the flow items placed: each goes to one place — the first
+  // collector whose scope holds it, a section's end, the document's end
+  std::vector<char> placed = std::vector<char>(e.ix.instances.size(), 0);
+  const ContentNode* root_ = nullptr;
+  std::vector<const FlowDef*> sectionFlows;  // flows placed at their sections' ends
 
   static bool contains(const std::vector<std::string>& v, const std::string& s) {
     for (const std::string& x : v)
@@ -291,6 +296,21 @@ struct Mat {
     s.set("alias", in.label);
     s.set("marker-alias", in.markerAlias);
   }
+  u32 idOf(const Instance* in) const { return (u32)(in - e.ix.instances.data()); }
+  // (plan P3-13) a keyed row's anchor in a scope: in a refsection, the
+  // section's place among its class's first (bib-2-kp81)
+  std::string rowAnchorIn(const AliasRule& a, const std::string& key, u32 scope) const {
+    if (scope == kDocScope) return a.prefix + key;
+    u32 n = 0;
+    for (u32 i = 0; i <= scope; i++) n += e.ix.instances[i].cls == e.ix.instances[scope].cls;
+    return a.prefix + std::to_string(n) + "-" + key;
+  }
+  // (plan P3-13) the scope a keyed counter counts in here (a refsection)
+  u32 keyedHere(u16 c) const {
+    std::vector<u32> encl;
+    for (const Instance* in : scope) encl.push_back(idOf(in));
+    return keyedScope(e.reg, e.ix, c, encl);
+  }
 
   // B1: a reference, in place on a new ref node. Structured (plan P2-09;
   // design T3 S3): its child refs are a group (@[a, b]), its child in slot
@@ -414,7 +434,7 @@ struct Mat {
             const std::vector<ContentNode*>& extra, const Ctx& c) {
     std::vector<int> ord(keys.size(), 0);
     for (size_t i = 0; i < keys.size(); i++)
-      if (e.ix.row(T.table, keys[i])) ord[i] = e.counters.keyed(T.rowCounter, keys[i]);
+      if (e.ix.row(T.table, keys[i])) ord[i] = e.counters.keyed(T.rowCounter, keys[i], keyedHere(T.rowCounter));
     Slots s;
     s.nodes.push_back({"extra", extra});
     s.each = [&](const TItem& it, const Ctx& ec, ContentNode* container, std::vector<ContentNode*>& out) {
@@ -422,7 +442,7 @@ struct Mat {
         Slots ks;
         if (ord[i]) {
           ks.set("row", "1");
-          ks.set("anchor", T.rowAnchor.prefix + keys[i]);
+          ks.set("anchor", rowAnchorIn(T.rowAnchor, keys[i], keyedHere(T.rowCounter)));
           ks.set("ordinal", std::to_string(ord[i]));
         } else {
           e.diags.add(Sev::Warning, "ref-unresolved", r->span,
@@ -471,6 +491,16 @@ struct Mat {
     out.reserve(n->kids.size());
     for (const ContentNode* k : n->kids) {
       size_t before = out.size();
+      // (plan P3-13) a section ends where the next of its level or above
+      // starts: the items of section-end flows before it go there
+      if (n == root_ && !sectionFlows.empty() && k->cls && e.reg.cls(k->cls).outline)
+        if (const Instance* h = instanceOf(k))
+          for (const FlowDef* F : sectionFlows)
+            if (h->level <= F->depth) placeRest(*F, siteAt(root_), out, idOf(h));
+      if (out.size() != before) {
+        changed = true;
+        before = out.size();
+      }
       replace(k, out);
       changed = changed || out.size() != before + 1 || out.back() != k;
     }
@@ -490,7 +520,16 @@ struct Mat {
   }
   void replace(const ContentNode* k, std::vector<ContentNode*>& out) {
     // B2: events (applied in LOCATE) and entries (rows of their table)
-    // leave nothing where they stand
+    // leave nothing where they stand — an anchored entry (an index entry,
+    // plan P3-13) its empty anchor, the target of its collector's back-link
+    if (k->kind == Kind::entry && k->cls)
+      if (const Instance* in = instanceOf(k); in && in->aliased && !in->label.empty()) {
+        ContentNode* a = clone1(k);
+        a->kids.clear();
+        setArg(a, ArgK::label, in->label);
+        out.push_back(a);
+        return;
+      }
     if (positional(k->kind) || vacuous(k)) return;
     if (k->kind == Kind::slot || k->kind == Kind::when || k->kind == Kind::each) {
       std::string msg = std::string(kindName(k->kind)) + " belongs in a declaration's template";
@@ -506,6 +545,16 @@ struct Mat {
       return;
     }
     if (k->kind == Kind::ref) {
+      // (plan P3-13) another marker of a flow item (a named note): its
+      // marker, anchored as this occurrence
+      if (auto oc = e.ix.occurrenceOf.find(k); oc != e.ix.occurrenceOf.end()) {
+        const Instance& in = e.ix.instances[oc->second.first];
+        Slots s;
+        instanceSlots(in, s);
+        s.put("marker-alias", in.occurrences[oc->second.second - 2]);
+        inst(e.reg.cls(in.cls).flow->marker, siteAt(k), s, nullptr, out);
+        return;
+      }
       out.push_back(resolveRef(clone1(k)));
       return;
     }
@@ -681,11 +730,67 @@ struct Mat {
       return;
     }
     Ctx cc = siteAt(k);
+    if (C->hasHead) inst(C->head, cc, Slots{}, nullptr, out);  // (plan P3-13) its static head
     switch (C->src) {
       case CollectorDef::Src::Outline: outline(*C, cc, out); return;
       case CollectorDef::Src::Table: table(*C, k, cc, out); return;
-      case CollectorDef::Src::Flow: flow(*C, cc, out); return;
+      case CollectorDef::Src::Flow: {
+        u32 lo = 0, hi = kNoInst;
+        if (C->scope == CollectorDef::Scope::Section)
+          if (auto at = e.ix.collectAt.find(k); at != e.ix.collectAt.end()) sectionOf(at->second, C->scopeDepth, lo, hi);
+        flow(*C, cc, out, lo, hi);
+        return;
+      }
+      case CollectorDef::Src::Classes: classes(*C, cc, out); return;
     }
+  }
+  // (plan P3-13) the section around a place (the instances before it): from
+  // the last outline instance of level ≤ depth before it to the next
+  void sectionOf(u32 at, int depth, u32& lo, u32& hi) const {
+    lo = 0;
+    hi = kNoInst;
+    for (u32 i = 0; i < (u32)e.ix.instances.size(); i++) {
+      const Instance& in = e.ix.instances[i];
+      if (!e.reg.cls(in.cls).outline || in.level > depth) continue;
+      if (i < at) lo = i;
+      else {
+        hi = i;
+        break;
+      }
+    }
+  }
+
+  // (plan P3-13; design T3 Query Classes) the instances of the collector's
+  // classes, in document order: a list of figures, of tables, of theorems
+  void classes(const CollectorDef& C, const Ctx& cc, std::vector<ContentNode*>& out) {
+    std::vector<const Instance*> items;
+    for (const Instance& in : e.ix.instances)
+      if (std::find(C.classes.begin(), C.classes.end(), in.cls) != C.classes.end()) items.push_back(&in);
+    if (items.empty() && C.hasEmpty) {
+      inst(C.empty, cc, Slots{}, nullptr, out);
+      return;
+    }
+    Slots ws;
+    ws.each = [&](const TItem&, const Ctx&, ContentNode* container, std::vector<ContentNode*>& o) {
+      for (const Instance* in : items) {
+        Slots s;  // (its title content, not its excerpt: titleSlot)
+        s.set("number", in->number);
+        s.set("supplement", supplementText(in->supplement));
+        titleSlot(*in, cc, s);
+        s.set("anchor", in->label);
+        // its parts' content, by slot name (a figure's caption), cloned as
+        // a title is
+        if (in->node)
+          for (const ContentNode* k : in->node->kids)
+            if (const SlotId part = slotOf(k, e.strs); part != SlotId::None) {
+              std::vector<ContentNode*> nodes;
+              for (const ContentNode* x : k->kids) cloneTitle(x, cc, k->scope, k->env, nodes);
+              s.nodes.push_back({kSlots[(u8)part].name, nodes});
+            }
+        inst(C.entry, cc, s, container, o);
+      }
+    };
+    inst(C.wrap, cc, ws, nullptr, out);
   }
 
   // (plan P3-03; D-S03) an entry's title: the instance's title content
@@ -793,14 +898,55 @@ struct Mat {
 
   void table(const CollectorDef& C, const ContentNode* k, const Ctx& cc, std::vector<ContentNode*>& out) {
     Slots ws;
-    if (!C.keyedRows) {  // rows of instances (a glossary)
+    if (!C.keyedRows) {  // rows of instances (a glossary, an index)
+      // (plan P3-13) in sort-key order, grouped by key (an index: a key and
+      // its occurrences), else each row by itself in document order
+      std::vector<const Row*> rows;
+      for (const Row& r : e.ix.rows)
+        if (r.table == C.table) rows.push_back(&r);
+      auto order = [](const Row* r) -> const std::string& { return r->sortKey.empty() ? r->key : r->sortKey; };
+      if (C.bySortKey) std::stable_sort(rows.begin(), rows.end(), [&](const Row* a, const Row* b) { return order(a) < order(b); });
+      std::vector<std::vector<const Row*>> groups;
+      for (const Row* r : rows) {
+        if (C.groupByKey)
+          if (auto g = std::find_if(groups.begin(), groups.end(), [&](const auto& x) { return x[0]->key == r->key; });
+              g != groups.end()) {
+            g->push_back(r);
+            continue;
+          }
+        groups.push_back({r});
+      }
+      if (groups.empty() && C.hasEmpty) {
+        inst(C.empty, cc, Slots{}, nullptr, out);
+        return;
+      }
+      // a row's anchor: its instance's (an index entry's alias), else its key
+      auto anchorOf = [&](const Row* r) {
+        return r->inst != kNoInst && !e.ix.instances[r->inst].label.empty() ? e.ix.instances[r->inst].label : r->key;
+      };
       ws.each = [&](const TItem&, const Ctx&, ContentNode* container, std::vector<ContentNode*>& o) {
-        for (const Row& r : e.ix.rows) {
-          if (r.table != C.table) continue;
+        for (const std::vector<const Row*>& g : groups) {
+          const Row& r = *g[0];
           Slots s;
           s.set("title", r.title);
-          s.set("anchor", r.key);
+          s.set("key", r.key);
+          s.set("anchor", anchorOf(&r));
           s.set("body-text", r.bodyText);
+          if (r.node && !r.node->kids.empty()) {  // its content, as a title is cloned
+            std::vector<ContentNode*> body;
+            for (const ContentNode* x : r.node->kids) cloneTitle(x, cc, r.node->scope, r.node->env, body);
+            s.nodes.push_back({"body", body});
+          }
+          // each{of: occurrences}: every row of the key, its back-link
+          s.each = [&](const TItem& it, const Ctx& ec, ContentNode* cont, std::vector<ContentNode*>& eo) {
+            for (size_t k = 0; k < g.size(); k++) {
+              if (k) inst(it.sep, ec, Slots{}, cont, eo);
+              Slots os;
+              os.set("anchor", anchorOf(g[k]));
+              os.set("ordinal", std::to_string(k + 1));
+              inst(it.kids, ec, os, cont, eo);
+            }
+          };
           inst(C.entry, cc, s, container, o);
         }
       };
@@ -809,30 +955,36 @@ struct Mat {
     }
     // keyed rows: the cited ones in citation order, then (cited-then-all)
     // every other row in document order
-    std::vector<std::string> keys = e.counters.keyOrder(C.rowCounter);
+    // (plan P3-13) in its scope: a refsection's bibliography lists its citations
+    const u32 ks = keyedHere(C.rowCounter);
+    std::vector<std::string> keys = e.counters.keyOrder(C.rowCounter, ks);
     std::string_view cited = e.strs.get(attrStr(k, ArgK::cited));
     if (cited.empty() && e.strs.get(attrStr(k, ArgK::form)) == "all") cited = "cited-then-all";  // (v6–9 buffers)
     if (cited == "cited-then-all" || (cited.empty() && C.cited == CollectorDef::Cited::CitedThenAll))
       for (const Row& r : e.ix.rows)
-        if (r.table == C.table && !e.counters.keyedIfSeen(C.rowCounter, r.key)) {
-          e.counters.keyed(C.rowCounter, r.key);
+        if (r.table == C.table && !e.counters.keyedIfSeen(C.rowCounter, r.key, ks)) {
+          e.counters.keyed(C.rowCounter, r.key, ks);
           keys.push_back(r.key);
         }
     if (keys.empty()) {
       inst(C.empty, cc, Slots{}, nullptr, out);
       return;
     }
-    // the first rendering of a table owns its rows' anchors; a later one
-    // clones the rows and carries none (one id per row)
-    bool first = !contains(tablesRendered, C.table);
+    // the first rendering of a table owns its rows' nodes, the first in a
+    // scope their anchors there; a later one clones the rows and carries
+    // none (one id per row)
+    const bool first = !contains(tablesRendered, C.table);
     if (first) tablesRendered.push_back(C.table);
+    const std::string scoped = C.table + '\0' + std::to_string(ks);
+    const bool anchors = !contains(anchorsRendered, scoped);
+    if (anchors) anchorsRendered.push_back(scoped);
     ws.each = [&](const TItem&, const Ctx&, ContentNode* container, std::vector<ContentNode*>& o) {
       for (const std::string& key : keys) {
         const Row* r = e.ix.row(C.table, key);
         if (!r || !r->node) continue;  // a cited key without a row
         Slots s;
-        s.set("ordinal", std::to_string(e.counters.keyedIfSeen(C.rowCounter, key)));
-        s.set("anchor", first ? C.rowAnchor.prefix + key : std::string());
+        s.set("ordinal", std::to_string(e.counters.keyedIfSeen(C.rowCounter, key, ks)));
+        s.set("anchor", anchors ? rowAnchorIn(C.rowAnchor, key, ks) : std::string());
         std::vector<ContentNode*> body;
         for (ContentNode* x : r->node->kids) body.push_back(first ? x : deepClone(x));
         s.nodes.push_back({"body", body});
@@ -844,34 +996,82 @@ struct Mat {
     inst(C.wrap, cc, ws, nullptr, out);
   }
 
-  // a flow's items, placed once: each item's body (materialized here, where
-  // it is placed) as the entry's paragraphs
-  void flow(const CollectorDef& C, const Ctx& cc, std::vector<ContentNode*>& out) {
-    if (contains(flowPlaced, C.flow)) {
-      e.diags.add(Sev::Info, "flow-already-placed", cc.span, C.flow + " were already placed");
+  // a flow's items not yet placed, of those in [lo, hi) (a scoped
+  // collector's section): each item's body (materialized here, where it is
+  // placed) as the entry's paragraphs. A deferred item's entry is an insert
+  // of its marker's page and the rest of its wrap the inserts' separator
+  // (plan P3-13: the paged sheets move them, design T6)
+  void flow(const CollectorDef& C, const Ctx& cc, std::vector<ContentNode*>& out, u32 lo = 0, u32 hi = kNoInst) {
+    std::vector<u32> items;
+    bool any = false;
+    if (const std::vector<u32>* all = e.ix.flowItems(C.flow))
+      for (u32 id : *all)
+        if (id >= lo && id < hi) {
+          any = true;
+          if (!placed[id]) items.push_back(id);
+        }
+    if (items.empty()) {
+      if (any) e.diags.add(Sev::Info, "flow-already-placed", cc.span, C.flow + " were already placed");
       inst(C.empty, cc, Slots{}, nullptr, out);
       return;
     }
-    flowPlaced.push_back(C.flow);
-    const std::vector<u32>* items = e.ix.flowItems(C.flow);
-    if (!items || items->empty()) {
-      inst(C.empty, cc, Slots{}, nullptr, out);
-      return;
+    bool deferred = false;
+    for (u32 id : items) {
+      placed[id] = 1;
+      deferred = deferred || e.reg.cls(e.ix.instances[id].cls).flow->placement == FlowDef::Placement::Deferred;
     }
     Slots ws;
     ws.each = [&](const TItem&, const Ctx&, ContentNode* container, std::vector<ContentNode*>& o) {
-      for (u32 id : *items) {
+      for (u32 id : items) {
         const Instance& in = e.ix.instances[id];
+        // its body, walked as where it stands (its instances around it)
+        std::vector<const Instance*> outer = std::move(scope);
+        scope.clear();
+        for (u32 a = id; a != kNoInst; a = e.ix.instances[a].parent) scope.insert(scope.begin(), &e.ix.instances[a]);
         std::vector<ContentNode*> body;
         kidsOf(in.node, body);
+        scope = std::move(outer);
         Slots s;
         instanceSlots(in, s);
         s.nodes.push_back({"body", body});
         s.paras = [&](const TItem& it, const Ctx& c, std::vector<ContentNode*>& po) { paras(it, c, body, s, po); };
+        // each{of: occurrences}: its markers' back-links (a named note's
+        // several: a b c)
+        std::vector<std::string> marks{in.markerAlias};
+        marks.insert(marks.end(), in.occurrences.begin(), in.occurrences.end());
+        if (marks.size() > 1) s.set("occurrences", std::to_string(marks.size()));
+        s.each = [&](const TItem& it, const Ctx& ec, ContentNode* cont, std::vector<ContentNode*>& eo) {
+          for (size_t m = 0; m < marks.size(); m++) {
+            if (m) inst(it.sep, ec, Slots{}, cont, eo);
+            Slots os;
+            os.set("anchor", marks[m]);
+            os.set("ordinal", std::to_string(m + 1));
+            os.set("letter", formatNumber("a", {(int)m + 1}, e.reg));
+            inst(it.kids, ec, os, cont, eo);
+          }
+        };
+        const size_t at = o.size();
         inst(C.entry, siteAt(in.node), s, container, o);
+        if (e.reg.cls(in.cls).flow->placement == FlowDef::Placement::Deferred)
+          for (size_t x = at; x < o.size(); x++) o[x]->insertAt = in.node->span.start;
       }
     };
+    const size_t at = out.size();
     inst(C.wrap, cc, ws, nullptr, out);
+    if (deferred)
+      for (size_t x = at; x < out.size(); x++) out[x]->insertAt = kInsertArea;
+  }
+  // (plan P3-13) a flow's items before instance `hi` that no collector
+  // placed, where its placement puts them (a section's end, the document's)
+  void placeRest(const FlowDef& F, const Ctx& cc, std::vector<ContentNode*>& out, u32 hi = kNoInst) {
+    const std::vector<u32>* items = e.ix.flowItems(F.name);
+    const CollectorDef* fc = e.reg.flowCollector(F.name);
+    if (!items || !fc) return;
+    for (u32 id : *items)
+      if (id < hi && !placed[id]) {
+        flow(*fc, cc, out, 0, hi);
+        return;
+      }
   }
 
   // Cascade.lift (plan P3-01; T4, D-S09): a moved node and its subtree
@@ -947,17 +1147,22 @@ struct Mat {
   }
 
   ContentNode* run(const ContentNode* root) {
+    root_ = root;
+    std::vector<std::string> seen;
+    for (const ElementClass& C : e.reg.classes)
+      if (C.flow && C.flow->placement == FlowDef::Placement::SectionEnd && !contains(seen, C.flow->name)) {
+        seen.push_back(C.flow->name);
+        sectionFlows.push_back(&*C.flow);
+      }
     ContentNode* o = walk(root);
     if (o == root) o = clone1(root);
-    // a flow whose items no collector placed goes where its class says
-    std::vector<std::string> seen;
+    // a flow's items no collector placed go where its class says: the
+    // document's end (the last section's, a deferred flow's on screen)
+    seen.clear();
     for (const ElementClass& C : e.reg.classes) {
-      if (!C.flow || !C.flow->placeAtEnd || contains(seen, C.flow->name)) continue;
+      if (!C.flow || !C.flow->atEnd() || contains(seen, C.flow->name)) continue;
       seen.push_back(C.flow->name);
-      const std::vector<u32>* items = e.ix.flowItems(C.flow->name);
-      const CollectorDef* fc = e.reg.flowCollector(C.flow->name);
-      if (items && !items->empty() && fc && !contains(flowPlaced, C.flow->name))
-        flow(*fc, siteAt(root), o->kids);
+      placeRest(*C.flow, siteAt(root), o->kids);
     }
     return o;
   }

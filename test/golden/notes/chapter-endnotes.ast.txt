@@ -1,0 +1,30 @@
+doc @[0,781)
+  code-block @[0,458) js="\n  // a user endnote flow (plan P3-13): notes of role endnote, numbered in\n  // roman, placed by a collector scoped to its section — each chapter's own\n  $.counter('endnote', {numbering: 'i'})\n  $.element('endnote', {like: 'footnote', select: [{node: 'note', role: 'endnote'}], counter: 'endnote',\n    alias: {prefix: 'en-', body: 'ordinal'},\n    flow: {name: 'endnotes', placement: 'collector-only', markerAlias: {prefix: 'enref-', body: 'ordinal'}}})\n"
+  code-let @[459,551) js=" endnotes = $.collector('endnotes', {like: 'notes', flow: 'endnotes', scope: 'section'})"
+  heading @[553,558) level=1
+    text @[555,558) str="One"
+  para @[560,650)
+    text @[560,564) str="Text"
+    splice @[564,608) expr="note({role: \"endnote\"})"
+      arg @[589,607)
+        text @[589,607) str="The first endnote."
+    text @[609,623) str=" and a footnote"
+    note @[623,649)
+      text @[625,648) str="A footnote, at the end."
+    text @[649,650) str="."
+  para @[652,663)
+    splice @[652,663) expr="endnotes()"
+  heading @[665,670) level=1
+    text @[667,670) str="Two"
+  para @[672,767)
+    text @[672,676) str="More"
+    splice @[676,721) expr="note({role: \"endnote\"})"
+      arg @[701,720)
+        text @[701,720) str="The second endnote."
+    text @[722,730) str=" and more"
+    splice @[730,766) expr="note({role: \"endnote\"})"
+      arg @[755,765)
+        text @[755,765) str="The third."
+    text @[766,767) str="."
+  para @[769,780)
+    splice @[769,780) expr="endnotes()"

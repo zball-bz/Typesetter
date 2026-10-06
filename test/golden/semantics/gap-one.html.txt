@@ -1,0 +1,44 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="41" style="position:relative;height:297.516px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="6" data-join="para" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-1" data-s="0">1 A</a></div>
+<div class="tsr-line" data-s="0" data-e="6" style="top:30.391px;left:72px;width:228px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-1.1.1" data-s="0">1.1.1 A.c</a></div>
+<div class="tsr-line" data-s="0" data-e="6" data-join="para" style="top:60.781px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-2" data-s="0">2 B</a></div>
+<div class="tsr-line" data-s="0" data-e="6" style="top:91.172px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-2.1" data-s="0">2.1 B.a</a></div>
+<div class="tsr-line" data-s="0" data-e="6" style="top:121.562px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-2.2" data-s="0">2.2 B.b</a></div>
+<div class="tsr-line" data-s="0" data-e="6" data-join="para" style="top:151.953px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-3" data-s="0">3 C</a></div>
+<div class="tsr-line" data-s="0" data-e="6" style="top:182.344px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-3.1" data-s="0">3.1 C.a</a></div>
+<div class="tsr-line" data-s="0" data-e="6" data-join="para" style="top:212.734px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-4" data-s="0">4 D</a></div>
+<div class="tsr-line" data-s="0" data-e="6" style="top:243.125px;left:72px;width:228px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-4.1.1" data-s="0">4.1.1 D.c</a></div>
+<div class="tsr-line" data-s="0" data-e="6" style="top:273.516px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-h-4.2" data-s="0">4.2 D.b</a></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="51" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-1" data-s="0" data-e="1" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">A</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="58" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-1.1.1" data-s="0" data-e="3" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:18.4px">A.c</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="65" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-2" data-s="0" data-e="1" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">B</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="71" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-2.1" data-s="0" data-e="3" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">B.a</span></div>
+</div>
+<div class="tsr-para" data-pid="5" data-s0="79" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-2.2" data-s="0" data-e="3" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">B.b</span></div>
+</div>
+<div class="tsr-para" data-pid="6" data-s0="86" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-3" data-s="0" data-e="1" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">C</span></div>
+</div>
+<div class="tsr-para" data-pid="7" data-s0="92" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-3.1" data-s="0" data-e="3" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">C.a</span></div>
+</div>
+<div class="tsr-para" data-pid="8" data-s0="99" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-4" data-s="0" data-e="1" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">D</span></div>
+</div>
+<div class="tsr-para" data-pid="9" data-s0="106" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-4.1.1" data-s="0" data-e="3" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:18.4px">D.c</span></div>
+</div>
+<div class="tsr-para" data-pid="10" data-s0="114" style="position:relative;height:24px">
+<div class="tsr-line" id="tsr-h-4.2" data-s="0" data-e="3" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">D.b</span></div>
+</div>
+</div>

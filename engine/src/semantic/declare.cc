@@ -34,7 +34,16 @@ void overlay(JsonValue& section, const std::string& name, const JsonValue& row) 
   }
   for (size_t i = 0; i < row.keys.size(); i++) {
     if (row.keys[i] == "like" && row.vals[i].t == JsonValue::T::Str && row.vals[i].str == name) continue;
-    if (JsonValue* f = member(*have, row.keys[i])) *f = row.vals[i];
+    JsonValue* f = member(*have, row.keys[i]);
+    // (plan P3-13) a class's flow is patched field by field: a document
+    // moves the footnotes ({flow: {placement: 'deferred'}}) and keeps
+    // their marker
+    if (f && row.keys[i] == "flow" && f->t == JsonValue::T::Obj && row.vals[i].t == JsonValue::T::Obj) {
+      for (size_t j = 0; j < row.vals[i].keys.size(); j++)
+        memberOrAdd(*f, row.vals[i].keys[j], row.vals[i].vals[j].t) = row.vals[i].vals[j];
+      continue;
+    }
+    if (f) *f = row.vals[i];
     else {
       have->keys.push_back(row.keys[i]);
       have->vals.push_back(row.vals[i]);
@@ -62,10 +71,10 @@ bool knownField(std::string_view section, std::string_view f) {
   static constexpr std::string_view kClasses[] = {"select", "like",  "counter", "numbering", "supplement", "labels",
                                                   "title",  "outline", "alias", "sites",     "ref",        "forms",
                                                   "flow",   "table", "row-key", "box",       "html",
-                                                  "display", "marker", "refers-to", "preview"};
+                                                  "display", "marker", "refers-to", "preview", "multi"};
   static constexpr std::string_view kCounters[] = {"shape", "level-arg", "depth", "gap", "keyed", "within", "pattern", "start", "scope"};
-  static constexpr std::string_view kCollectors[] = {"query", "context", "wrap", "entry", "empty", "rows", "cite"};
-  static constexpr std::string_view kSystems[] = {"symbols", "mode"};
+  static constexpr std::string_view kCollectors[] = {"query", "like", "context", "wrap", "entry", "empty", "rows", "cite", "head"};
+  static constexpr std::string_view kSystems[] = {"symbols", "mode", "weights"};
   auto in = [&](const auto& xs) {
     for (std::string_view x : xs)
       if (x == f) return true;
@@ -203,6 +212,16 @@ struct Conv {
         args.t = JsonValue::T::Obj;
         for (const ArgVal& a : n.args) {
           if (a.key == ArgK::ext || a.key == ArgK::label) continue;  // no data, no anchors (rule 2)
+          // (plan P3-13; design T3 collectors) link({to: 'target'}): to the
+          // collected item — the anchor its slot holds ('target': the item's)
+          if (a.key == ArgK::to && a.tag == ArgTag::Str && n.kind == Kind::link) {
+            const std::string_view to = raw.strings[a.ref];
+            JsonValue anchor;
+            anchor.t = JsonValue::T::Obj;
+            put(anchor, "anchor", text(to == "target" ? std::string_view("anchor") : to));
+            put(args, "url", std::move(anchor));
+            continue;
+          }
           JsonValue v;
           switch (a.tag) {
             case ArgTag::Str: v = text(raw.strings[a.ref]); break;

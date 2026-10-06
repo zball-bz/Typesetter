@@ -68,6 +68,23 @@ Format: `- [step] what changed — migration (if any)`.
 - [P3-01] Kind presentation is default rules, so rules can change it: headings (bold, 1.6/1.35/1.15em, ragged, keep with next), code and code blocks (mono at `code.scale`), captions (centred, unhyphenated, no indent), list and quote insets, footnote markers (`fn-marker`: raised, 0.7em), note bodies (`note-body`: 0.85em), caption labels and term names (bold), comment tokens (class `tok-comment`: italic, hanging at the content), error text (mono). A paragraph of a declared figure-box element is its caption.
 - [P3-01] A footnote's body takes the notes list's context, not its site's: a footnote in a heading is no longer bold and large (its own emphasis stays). A list inside a footnote indents by its own (smaller) em.
 - [P3-01] The semantic page writes what the document styled; the rules arrive as its stylesheet (`renderTsm` returns `css`, the static exporter inlines it; a mid-document `$.set` is marked with `data-tsr-env`).
+- [P3-13] New collections and flows. All of these are declarations (docs/semantics-design.md §9); existing documents read as before.
+  - Lists:
+    - `#lof()` and `#lot()` list the figures and tables with their captions.
+    - `$.collector(name, {select: ['theorem'], head, entry})` makes a list of your own classes.
+    - `$.collector(name, {like: 'notes', …})` starts from a built-in.
+  - Index: `#entry({role: "index", key: "monad", sortKey: "monad"})[monad]` marks an index entry where it stands, and `#index()` lists the keys in sort-key order with links to every place.
+  - Notes:
+    - Named notes: `#note({label: "src"})[…]`, then `#ref("src", {form: "marker"})` for each further marker. The single note links back to every marker (`↩ a b c`).
+    - Notes per chapter: `$.counter('footnote', {within: {counter: 'heading', depth: 1, prefix: false}})` restarts the numbers without prefixing them. `$.element('footnote', {flow: {placement: 'section-end'}})` puts each chapter's notes at its end.
+    - A collector with `scope: 'section'` takes only its section's items.
+    - Print: `$.element('footnote', {flow: {placement: 'deferred'}})` sets notes at the foot of the page of their marker, below a rule; the screen still shows them at the end.
+  - Citations:
+    - `#!refsection … #refsection!` numbers its citations afresh.
+    - A bibliography inside a refsection lists that section's citations.
+  - Counters and headings:
+    - Counter systems take `mode: 'additive'` with `weights` (roman numerals).
+    - Heading classes declared per level (part, chapter) nest in the table of contents.
 - [P3-12] Printing: a code block's last line no longer starts a page alone (its lines keep two together at a page cut, like a paragraph's); a table may break between its rows; a block taller than a page shows whole instead of being cut off. The page is set by `page.width`, `page.height` and `page.margin` (the defaults: A4 with 64px margins) — print options still override them. Pagination warns when it has to break a keep (`keep-violated`) or a block does not fit a page (`page-overflow`).
 - [P3-11] A code block with `wrap: false` keeps snap-kerning (it was silently off). A code block with sidecar notes is laid out as a two-column table of its lines — the same output.
 - [P3-10] A table cell holding blocks lays them out: a list keeps its markers and items, two paragraphs keep their gap, a code block keeps its lines (`#table({cols: 2}, row(cell("Steps"), cell(list(false, item("one"), item("two")))))`); they used to run together on one line. A cell of text is unchanged.

@@ -1,0 +1,11 @@
+= A note in a styled region
+
+Outside, a marker^[An outer note.] takes the default rules.
+
+#!aside(style: {color: "#555555"})
+#{ $.set({role: 'fn-marker'}, {color: '#a8432a'}) }
+#{ $.set('code', {color: '#2f5d8a'}) }
+Inside the grey region a scoped rule colours its markers^[A note whose `code` keeps the rule of its place.] red.
+#aside!
+
+After the region, a marker^[A later note.] is plain again.

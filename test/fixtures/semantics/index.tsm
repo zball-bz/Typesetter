@@ -1,0 +1,9 @@
+A back-of-book index (plan P3-13): entries anywhere, a key with several occurrences, sorted by their sort key.
+
+A #entry({role: "index", key: "monad"})[*monad*]monad is a monoid in endofunctors; the #entry({role: "index", key: "zeta"})zeta function comes later.
+
+Every #entry({role: "index", key: "functor", sortKey: "functor"})functor preserves composition, and a #entry({role: "index", key: "monad"})monad is a functor with structure.
+
+单子#entry({role: "index", key: "单子", sortKey: "dan zi"})与函子的关系。
+
+#index()

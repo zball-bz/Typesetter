@@ -1,0 +1,9 @@
+doc @[0,781)
+  code-block @[0,458) js="\n  // a user endnote flow (plan P3-13): notes of role endnote, numbered in\n  // roman, placed by a collector scoped to its section — each chapter's own\n  $.counter('endnote', {numbering: 'i'})\n  $.element('endnote', {like: 'footnote', select: [{node: 'note', role: 'endnote'}], counter: 'endnote',\n    alias: {prefix: 'en-', body: 'ordinal'},\n    flow: {name: 'endnotes', placement: 'collector-only', markerAlias: {prefix: 'enref-', body: 'ordinal'}}})\n"
+  code-let @[459,551) js=" endnotes = $.collector('endnotes', {like: 'notes', flow: 'endnotes', scope: 'section'})"
+  heading1 @[553,558)
+  para @[560,650) lines=1
+  para @[652,663) lines=1
+  heading1 @[665,670)
+  para @[672,767) lines=1
+  para @[769,780) lines=1

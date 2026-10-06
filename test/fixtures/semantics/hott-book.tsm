@@ -1,0 +1,41 @@
+#{
+  // a HoTT-shaped book (plan P3-13): parts in roman numerals (an additive
+  // counter system), chapters running on across parts, sections and
+  // equations within chapters, an appendix — all declarations
+  $.counter.system('roman', {mode: 'additive', symbols: ['X', 'IX', 'V', 'IV', 'I'], weights: [10, 9, 5, 4, 1]})
+  const num = (word) => [{where: 'prepend', at: 'self', template: [slot('supplement'), slot('number'), ' ']}]
+  $.element('part', {select: [{node: 'heading', level: 1}], counter: {name: 'part', numbering: '{roman}'},
+    supplement: {en: 'Part '}, title: 'text', outline: true, sites: num()})
+  $.element('chapter', {select: [{node: 'heading', level: 2}], counter: {name: 'chapter'},
+    supplement: {en: 'Chapter '}, title: 'text', outline: true, sites: num()})
+  $.element('section', {select: [{node: 'heading', level: 3}], counter: {name: 'section', within: 'chapter'},
+    supplement: {en: '§'}, title: 'text', outline: true, sites: num()})
+  $.counter('equation', {within: 'chapter'})
+}
+#let appendix = () => counterUpdate('chapter', {set: [0], numbering: 'A', supplement: {en: 'Appendix '}})
+
+#toc()
+
+= Foundations <part-f>
+
+== Type theory <ch-tt>
+
+=== Judgments <sec-j>
+
+$ a = b $ <eq-j>
+
+== Homotopy type theory <ch-hott>
+
+= Mathematics
+
+== Sets <ch-sets>
+
+#appendix()
+
+== Notation <ch-n>
+
+=== Symbols <sec-s>
+
+$ x = x $ <eq-s>
+
+See @part-f, @ch-hott, @sec-j, @eq-j, @ch-n, @sec-s and @eq-s.

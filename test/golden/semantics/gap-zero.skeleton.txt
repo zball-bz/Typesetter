@@ -1,0 +1,12 @@
+doc @[0,77)
+  para @[0,6) lines=1
+  heading1 @[8,11)
+  heading3 @[13,20)
+  heading1 @[22,25)
+  heading2 @[27,33)
+  heading2 @[35,41)
+  heading1 @[43,46)
+  heading2 @[48,54)
+  heading1 @[56,59)
+  heading3 @[61,68)
+  heading2 @[70,76)

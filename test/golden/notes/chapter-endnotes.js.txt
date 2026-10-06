@@ -1,0 +1,29 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {node, note} = __rt.std;
+return (async () => {
+let endnotes;
+const __h = [
+() => {
+
+  // a user endnote flow (plan P3-13): notes of role endnote, numbered in
+  // roman, placed by a collector scoped to its section — each chapter's own
+  $.counter('endnote', {numbering: 'i'})
+  $.element('endnote', {like: 'footnote', select: [{node: 'note', role: 'endnote'}], counter: 'endnote',
+    alias: {prefix: 'en-', body: 'ordinal'},
+    flow: {name: 'endnotes', placement: 'collector-only', markerAlias: {prefix: 'enref-', body: 'ordinal'}}})
+
+},
+() => { endnotes = (
+ $.collector('endnotes', {like: 'notes', flow: 'endnotes', scope: 'section'})
+); },
+(__k) => (note(...[{role: "endnote"}], ...__k())),
+() => (endnotes()),
+(__k) => (note(...[{role: "endnote"}], ...__k())),
+(__k) => (note(...[{role: "endnote"}], ...__k())),
+() => (endnotes()),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

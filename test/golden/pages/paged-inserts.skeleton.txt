@@ -1,0 +1,8 @@
+doc @[0,917)
+  code-block @[0,273) js="\n  // footnotes at the bottom of their marker's sheet (plan P3-13): the\n  // footnote flow is deferred — on screen its entries close the document,\n  // on paged sheets each is an insert below the separator rule\n  $.element('footnote', {flow: {placement: 'deferred'}})\n"
+  heading1 @[275,284)
+  para @[286,476) lines=1
+  para @[478,588) lines=1
+  para @[590,753) lines=1
+  para @[755,866) lines=1
+  para @[868,916) lines=1

@@ -195,7 +195,7 @@ struct HlInline final : InlineSink {
     RunRec k = rk;
     if (leadingBlank) k.rc = RealizeClass::BlankBearing;  // its glyph's run
     const bool alone = leadingBlank ||
-                       (it.k == IK::Box && (k.rc == RealizeClass::BlankBearing ||
+                       (it.k == IK::Box && (k.rc == RealizeClass::BlankBearing || (it.attrs & IA_Anchor) ||
                                             k.rc == RealizeClass::Pinned || k.rc == RealizeClass::Object)) ||
                        (it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace ||
                                               it.cls == (u8)GC::Fill));
@@ -377,6 +377,19 @@ struct HlInline final : InlineSink {
         errorText(n, u, ctx);
         return;
       case InlineShape::Skip:
+        // (plan P3-13) a labelled node that shows nothing (an index entry)
+        // marks its place: a zero-width box carrying its anchor, in a run
+        // of its own
+        if (StrRef label = attrStr(n, ArgK::label)) {
+          AdvanceSpec sp;
+          sp.k = AdvanceSpec::Fixed;
+          sp.str = E.emptyRef;
+          RunRec rk = key(E.compose(n->style, ctx.add, ctx.mul), ctx, RealizeClass::Plain);
+          rk.anchor = label;
+          const u32 i = push(u, IK::Box, 0, IA_Anchor, rk, sp, n->span, 0.0f, kPenInf);
+          B.cold[B.items[i].cold].anchor = label;
+          fixWidth(u, i, 0.0, 0, 0);
+        }
         return;
       case InlineShape::Unsupported:
         // a kind that cannot appear inline: an error box, never a silent drop
@@ -1100,6 +1113,7 @@ static void prepareEnv(EmitEnv& env) {
   env.spaceRef = env.strs.intern(" ");
   env.hyphenRef = env.strs.intern("-");
   env.errorSyn = env.strs.intern("error");
+  env.emptyRef = env.strs.intern("");
   env.bulletRef = env.strs.intern("\xE2\x80\xA2");
 }
 static void shapeTop(const BoxTree& bt, size_t t, Emitter& e, TopBlock& tb) {

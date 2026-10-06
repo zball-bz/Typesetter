@@ -1,0 +1,35 @@
+<div class="tsr-flow">
+<ul data-pid="0" data-s="1125" data-e="1131">
+<li><p data-s="1125" data-e="1131"><a href="#tsr-part-f">I Foundations</a></p>
+<ul data-s="1125" data-e="1131">
+<li><p data-s="1125" data-e="1131"><a href="#tsr-ch-tt">1 Type theory</a></p>
+<ul data-s="1125" data-e="1131">
+<li><a href="#tsr-sec-j">1.1 Judgments</a></li>
+</ul>
+</li>
+<li><a href="#tsr-ch-hott">2 Homotopy type theory</a></li>
+</ul>
+</li>
+<li><p data-s="1125" data-e="1131">II Mathematics</p>
+<ul data-s="1125" data-e="1131">
+<li><a href="#tsr-ch-sets">3 Sets</a></li>
+<li><p data-s="1125" data-e="1131"><a href="#tsr-ch-n">A Notation</a></p>
+<ul data-s="1125" data-e="1131">
+<li><a href="#tsr-sec-s">A.1 Symbols</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 data-pid="1" data-s="1133" data-e="1146" id="tsr-part-f">Part I Foundations</h1>
+<h2 data-pid="2" data-s="1157" data-e="1171" id="tsr-ch-tt">Chapter 1 Type theory</h2>
+<h3 data-pid="3" data-s="1181" data-e="1194" id="tsr-sec-j">§1.1 Judgments</h3>
+<p class="tsr-mathblock" data-pid="4" data-s="1204" data-e="1220" id="tsr-eq-j"><code class="tsr-mathsrc">$ a = b $</code> <span class="tsr-eqno">(1.1)</span></p>
+<h2 data-pid="5" data-s="1222" data-e="1245" id="tsr-ch-hott">Chapter 2 Homotopy type theory</h2>
+<h1 data-pid="6" data-s="1257" data-e="1270">Part II Mathematics</h1>
+<h2 data-pid="7" data-s="1272" data-e="1279" id="tsr-ch-sets">Chapter 3 Sets</h2>
+<h2 data-pid="8" data-s="1304" data-e="1315" id="tsr-ch-n">Appendix A Notation</h2>
+<h3 data-pid="9" data-s="1324" data-e="1335" id="tsr-sec-s">§A.1 Symbols</h3>
+<p class="tsr-mathblock" data-pid="10" data-s="1345" data-e="1361" id="tsr-eq-s"><code class="tsr-mathsrc">$ x = x $</code> <span class="tsr-eqno">(A.1)</span></p>
+<p data-pid="11" data-s="1363" data-e="1425">See <a href="#tsr-part-f">Part I</a>, <a href="#tsr-ch-hott">Chapter 2</a>, <a href="#tsr-sec-j">§1.1</a>, <a href="#tsr-eq-j">式 (1.1)</a>, <a href="#tsr-ch-n">Appendix A</a>, <a href="#tsr-sec-s">§A.1</a> and <a href="#tsr-eq-s">式 (A.1)</a>.</p>
+</div>

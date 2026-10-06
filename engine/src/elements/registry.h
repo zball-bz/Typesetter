@@ -69,6 +69,7 @@ struct CounterDef {
   u16 within = kNoIndex;
   int withinDepth = 1;
   std::string withinSep = ".";
+  bool withinPrefix = true;  // (plan P3-13) false: restarted, not prefixed (footnotes per chapter)
   // (plan P3-03; design T3 enum {scope: olist}) a counter scoped to each
   // instance of a class: it starts over in one (from its `start` argument,
   // in its `numbering` pattern) and the outer count resumes after it
@@ -83,7 +84,11 @@ struct CounterDef {
 struct CounterSystem {
   std::string name;
   std::vector<std::string> symbols;
-  enum class Mode : u8 { Numeric, Alphabetic, Cyclic, Fixed } mode = Mode::Numeric;
+  // (plan P3-13; CSS additive-symbols) Additive: a number is the greedy sum
+  // of the symbols' weights, largest first (roman numerals, Greek or Hebrew
+  // numbering)
+  enum class Mode : u8 { Numeric, Alphabetic, Cyclic, Fixed, Additive } mode = Mode::Numeric;
+  std::vector<int> weights;  // Additive: one per symbol, descending
 };
 
 // A class's (or an event's) supplement word: a locale term, a literal, or
@@ -96,9 +101,11 @@ struct Supplement {
   bool set() const { return !term.empty() || literal || !byLang.empty(); }
 };
 
-struct AliasRule {  // generated labels: prefix + number | key
+struct AliasRule {  // generated labels: prefix + number | key | ordinal
   std::string prefix;
-  enum class Body : u8 { None, Number, Key } body = Body::None;
+  // Ordinal (plan P3-13): the instance's place among its class's, from 1 —
+  // unique when the number is not (a footnote counter reset per chapter)
+  enum class Body : u8 { None, Number, Key, Ordinal } body = Body::None;
   Template ref;  // how a reference to this alias reads (empty: the class's)
   bool hasRef = false;
 };
@@ -116,11 +123,18 @@ struct SiteDef {
   Template tmpl;
 };
 
+// (plan P3-13; design T3 Placement) where a flow's items go that no
+// collector placed: nowhere (CollectorOnly), the document's end (End), the
+// end of each section of outline level ≤ depth (SectionEnd: endnotes per
+// chapter), or the bottom of their marker's page (Deferred: placed at the
+// end like End, its entries are the paged sheets' inserts, design T6)
 struct FlowDef {
   std::string name;
-  bool placeAtEnd = false;
+  enum class Placement : u8 { CollectorOnly, End, SectionEnd, Deferred } placement = Placement::CollectorOnly;
+  int depth = 1;  // SectionEnd: the sections' outline level
   AliasRule markerAlias;
   Template marker;
+  bool atEnd() const { return placement != Placement::CollectorOnly; }
 };
 
 struct ElementClass {
@@ -131,7 +145,9 @@ struct ElementClass {
   Supplement supplement;
   enum class Labels : u8 { User, None, FromArg } labels = Labels::User;
   ArgK labelArg = ArgK::label;
-  enum class Title : u8 { None, Text, Arg, Ext } title = Title::None;
+  // (plan P3-13) Part: a part's content (a figure's caption)
+  enum class Title : u8 { None, Text, Arg, Ext, Part } title = Title::None;
+  SlotId titlePart = SlotId::None;
   ArgK titleArg = ArgK::label;
   std::string titleExt;  // Title::Ext: the EXT name (plan P2-07)
   bool outline = false;
@@ -159,6 +175,9 @@ struct ElementClass {
   // are no labels: `@key` cites the row)
   bool rowKeyed = false;
   ArgK rowKey = ArgK::key;
+  // (plan P3-13; design T3 multi tables) every instance is a row, a key may
+  // hold several (an index's entries); else the first row of a key wins
+  bool multi = false;
   // named reference forms (ref(target, {form})) beyond the built-in number,
   // title, supplement and full
   std::vector<std::pair<std::string, Template>> forms;
@@ -176,8 +195,18 @@ struct ElementClass {
 
 struct CollectorDef {
   std::string name;
-  enum class Src : u8 { Outline, Table, Flow } src = Src::Outline;
+  // (plan P3-13) Classes: the instances of these classes in document order
+  // (a list of figures, of tables, of theorems)
+  enum class Src : u8 { Outline, Table, Flow, Classes } src = Src::Outline;
+  // (plan P3-13; design T3 Query.scope) a flow's items in the whole
+  // document, or in the section the collector stands in (outline level ≤
+  // scopeDepth): a chapter's endnotes placed at its end
+  enum class Scope : u8 { Doc, Section } scope = Scope::Doc;
+  int scopeDepth = 1;
+  std::vector<ClassId> classes;
   std::string table, flow;
+  Template head;  // (plan P3-13) a static head, before its wrap (empty or not)
+  bool hasHead = false;
   bool nestByDepth = false;
   // a keyed table's rows: the cited ones in citation order, then (by
   // default or by the collect node's `cited`) every other in document order
@@ -185,6 +214,9 @@ struct CollectorDef {
   enum class Ctx : u8 { Collector, Instance, Row } ctx = Ctx::Collector;
   Template wrap, entry, empty;
   bool hasEmpty = false;
+  // (plan P3-13) a table's rows grouped by key (an index: a key, then
+  // its occurrences), in sort-key order (else document order)
+  bool groupByKey = false, bySortKey = false;
   bool keyedRows = false;     // (rows) a keyed table: ordinals and anchors per row
   u16 rowCounter = kNoIndex;  // a keyed counter: the rows' ordinals
   AliasRule rowAnchor;

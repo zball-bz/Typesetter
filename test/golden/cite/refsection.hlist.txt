@@ -1,0 +1,287 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  box Other "Reference" w=7374su r0 @[59,77)
+  glue word w=411su x=1 cap=411su kern="e s" src r0 @[59,77)
+  box Other "sections" w=6555su r0 @[59,77)
+  run r0 plain BOLD x1.60
+top pid=1 units=1
+ unit text indent=0su
+  box Other "Ci" w=1025su r0 @[79,109)
+  disc pen=0.7 w=0su pre="-" 513su kern="it" r0 @[79,109)
+  box Other "ta" w=1025su r0 @[79,109)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[79,109)
+  box Other "tions" w=2561su r0 @[79,109)
+  glue word w=257su x=1 cap=257su kern="s o" src r0 @[79,109)
+  box Other "out" w=1537su r0 @[79,109)
+  disc pen=0.7 w=0su pre="-" 513su kern="ts" r0 @[79,109)
+  box Other "side" w=2049su r0 @[79,109)
+  glue word w=257su x=1 cap=257su kern="e a" src r0 @[79,109)
+  box Other "any" w=1537su r0 @[79,109)
+  glue word w=257su x=1 cap=257su kern="y s" src r0 @[79,109)
+  box Other "sec" w=1537su r0 @[79,109)
+  disc pen=0.7 w=0su pre="-" 513su kern="ct" r0 @[79,109)
+  box Other "tion:" w=2561su r0 @[79,109)
+  glue word w=257su x=1 cap=257su kern=": [" src r0 @[79,109)
+  box Other "[" w=513su r1 @[110,118)
+  box Other "1" w=513su r2 @[110,118)
+  box Other "]" w=513su r3 @[110,118)
+  glue word w=257su x=1 cap=257su kern="] a" src r4 @[119,122)
+  box Other "and" w=1537su r4 @[119,122)
+  glue word w=257su x=1 cap=257su kern="d [" src r4 @[119,122)
+  box Other "[" w=513su r5 @[123,128)
+  box Other "2" w=513su r6 @[123,128)
+  box Other "]" w=513su r7 @[123,128)
+  box Other "." w=513su r8 @[128,129)
+  run r0 plain
+  run r1 plain ref
+  run r2 plain ref LINK link="#tsr-bib-liang83"
+  run r3 plain ref
+  run r4 plain
+  run r5 plain ref
+  run r6 plain ref LINK link="#tsr-bib-kp81"
+  run r7 plain ref
+  run r8 plain
+top pid=2 units=5
+ unit text indent=0su anchor="h-1.1"
+  box Other "Chapter" w=4840su r0 @[147,158)
+  glue word w=347su x=1 cap=347su kern="r o" src r0 @[147,158)
+  box Other "one" w=2075su r0 @[147,158)
+  run r0 plain BOLD x1.35
+ unit text indent=0su
+  box Other "Knuth" w=2561su r0 @[160,175)
+  glue word w=257su x=1 cap=257su kern="h a" src r0 @[160,175)
+  box Other "and" w=1537su r0 @[160,175)
+  glue word w=257su x=1 cap=257su kern="d P" src r0 @[160,175)
+  box Other "Plass" w=2561su r0 @[160,175)
+  glue word w=257su x=1 cap=257su kern="s [" src r0 @[160,175)
+  box Other "[" w=513su r1 @[176,181)
+  box Other "1" w=513su r2 @[176,181)
+  box Other "]" w=513su r3 @[176,181)
+  box Other "," w=513su r4 @[181,199)
+  glue word w=257su x=1 cap=257su kern=", t" src r4 @[181,199)
+  box Other "then" w=2049su r4 @[181,199)
+  glue word w=257su x=1 cap=257su kern="n t" src r4 @[181,199)
+  box Other "the" w=1537su r4 @[181,199)
+  glue word w=257su x=1 cap=257su kern="e T" src r4 @[181,199)
+  box Other "TeX" w=1537su r4 @[181,199)
+  disc pen=0.7 w=0su pre="-" 513su kern="Xb" r4 @[181,199)
+  box Other "book" w=2049su r4 @[181,199)
+  glue word w=257su x=1 cap=257su kern="k [" src r4 @[181,199)
+  box Other "[" w=513su r5 @[200,208)
+  box Other "2" w=513su r6 @[200,208)
+  box Other "]" w=513su r7 @[200,208)
+  box Other ":" w=513su r8 @[208,242)
+  glue word w=257su x=1 cap=257su kern=": n" src r8 @[208,242)
+  box Other "num" w=1537su r8 @[208,242)
+  disc pen=0.7 w=0su pre="-" 513su kern="mb" r8 @[208,242)
+  box Other "bered" w=2561su r8 @[208,242)
+  glue word w=257su x=1 cap=257su kern="d a" src r8 @[208,242)
+  box Other "afresh" w=3073su r8 @[208,242)
+  glue word w=257su x=1 cap=257su kern="h i" src r8 @[208,242)
+  box Other "in" w=1025su r8 @[208,242)
+  glue word w=257su x=1 cap=257su kern="n t" src r8 @[208,242)
+  box Other "this" w=2049su r8 @[208,242)
+  glue word w=257su x=1 cap=257su kern="s s" src r8 @[208,242)
+  box Other "sec" w=1537su r8 @[208,242)
+  disc pen=0.7 w=0su pre="-" 513su kern="ct" r8 @[208,242)
+  box Other "tion." w=2561su r8 @[208,242)
+  run r0 plain
+  run r1 plain ref
+  run r2 plain ref LINK link="#tsr-bib-1-kp81"
+  run r3 plain ref
+  run r4 plain
+  run r5 plain ref
+  run r6 plain ref LINK link="#tsr-bib-1-knuth84"
+  run r7 plain ref
+  run r8 plain
+ unit rule indent=0su
+ unit text indent=0su anchor="bib-1-kp81"
+  box Other "[1]" w=1537su r0 @[432,527)
+  glue word w=257su x=1 cap=257su kern="] K" src r0 @[432,527)
+  box Other "Knuth" w=2561su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="h a" src r0 @[472,526)
+  box Other "and" w=1537su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="d P" src r0 @[472,526)
+  box Other "Plass," w=3073su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern=", B" src r0 @[472,526)
+  box Other "Break" w=2561su r0 @[472,526)
+  disc pen=0.7 w=0su pre="-" 513su kern="ki" r0 @[472,526)
+  box Other "ing" w=1537su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="g p" src r0 @[472,526)
+  box Other "para" w=2049su r0 @[472,526)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[472,526)
+  box Other "graphs" w=3073su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="s i" src r0 @[472,526)
+  box Other "into" w=2049su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="o l" src r0 @[472,526)
+  box Other "lines," w=3073su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern=", 1" src r0 @[472,526)
+  box Other "1981." w=2561su r0 @[472,526)
+  run r0 plain
+ unit text indent=0su anchor="bib-1-knuth84"
+  box Other "[2]" w=1537su r0 @[529,598)
+  glue word w=257su x=1 cap=257su kern="] K" src r0 @[529,598)
+  box Other "Knuth," w=3073su r0 @[572,597)
+  glue word w=257su x=1 cap=257su kern=", T" src r0 @[572,597)
+  box Other "The" w=1537su r0 @[572,597)
+  glue word w=257su x=1 cap=257su kern="e T" src r0 @[572,597)
+  box Other "TeX" w=1537su r0 @[572,597)
+  disc pen=0.7 w=0su pre="-" 513su kern="Xb" r0 @[572,597)
+  box Other "book," w=2561su r0 @[572,597)
+  glue word w=257su x=1 cap=257su kern=", 1" src r0 @[572,597)
+  box Other "1984." w=2561su r0 @[572,597)
+  run r0 plain
+top pid=3 units=5
+ unit text indent=0su anchor="h-1.2"
+  box Other "Chapter" w=4840su r0 @[282,293)
+  glue word w=347su x=1 cap=347su kern="r t" src r0 @[282,293)
+  box Other "two" w=2075su r0 @[282,293)
+  run r0 plain BOLD x1.35
+ unit text indent=0su
+  box Other "The" w=1537su r0 @[295,312)
+  glue word w=257su x=1 cap=257su kern="e T" src r0 @[295,312)
+  box Other "TeX" w=1537su r0 @[295,312)
+  disc pen=0.7 w=0su pre="-" 513su kern="Xb" r0 @[295,312)
+  box Other "book" w=2049su r0 @[295,312)
+  glue word w=257su x=1 cap=257su kern="k a" src r0 @[295,312)
+  box Other "again" w=2561su r0 @[295,312)
+  glue word w=257su x=1 cap=257su kern="n [" src r0 @[295,312)
+  box Other "[" w=513su r1 @[313,321)
+  box Other "1" w=513su r2 @[313,321)
+  box Other "]" w=513su r3 @[313,321)
+  box Other "," w=513su r4 @[321,344)
+  glue word w=257su x=1 cap=257su kern=", f" src r4 @[321,344)
+  box Other "first" w=2561su r4 @[321,344)
+  glue word w=257su x=1 cap=257su kern="t h" src r4 @[321,344)
+  box Other "here," w=2561su r4 @[321,344)
+  glue word w=257su x=1 cap=257su kern=", a" src r4 @[321,344)
+  box Other "and" w=1537su r4 @[321,344)
+  glue word w=257su x=1 cap=257su kern="d L" src r4 @[321,344)
+  box Other "Liang" w=2561su r4 @[321,344)
+  glue word w=257su x=1 cap=257su kern="g [" src r4 @[321,344)
+  box Other "[" w=513su r5 @[345,353)
+  box Other "2" w=513su r6 @[345,353)
+  box Other "]" w=513su r7 @[345,353)
+  box Other "." w=513su r8 @[353,354)
+  run r0 plain
+  run r1 plain ref
+  run r2 plain ref LINK link="#tsr-bib-2-knuth84"
+  run r3 plain ref
+  run r4 plain
+  run r5 plain ref
+  run r6 plain ref LINK link="#tsr-bib-2-liang83"
+  run r7 plain ref
+  run r8 plain
+ unit rule indent=0su
+ unit text indent=0su anchor="bib-2-knuth84"
+  box Other "[1]" w=1537su r0 @[529,598)
+  glue word w=257su x=1 cap=257su kern="] K" src r0 @[529,598)
+  box Other "Knuth," w=3073su r0 @[572,597)
+  glue word w=257su x=1 cap=257su kern=", T" src r0 @[572,597)
+  box Other "The" w=1537su r0 @[572,597)
+  glue word w=257su x=1 cap=257su kern="e T" src r0 @[572,597)
+  box Other "TeX" w=1537su r0 @[572,597)
+  disc pen=0.7 w=0su pre="-" 513su kern="Xb" r0 @[572,597)
+  box Other "book," w=2561su r0 @[572,597)
+  glue word w=257su x=1 cap=257su kern=", 1" src r0 @[572,597)
+  box Other "1984." w=2561su r0 @[572,597)
+  run r0 plain
+ unit text indent=0su anchor="bib-2-liang83"
+  box Other "[2]" w=1537su r0 @[600,686)
+  glue word w=257su x=1 cap=257su kern="] L" src r0 @[600,686)
+  box Other "Liang," w=3073su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern=", W" src r0 @[643,685)
+  box Other "Word" w=2049su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern="d h" src r0 @[643,685)
+  box Other "hy" w=1025su r0 @[643,685)
+  disc pen=0.7 w=0su pre="-" 513su kern="yp" r0 @[643,685)
+  box Other "phen" w=2049su r0 @[643,685)
+  disc pen=0.7 w=0su pre="-" 513su kern="na" r0 @[643,685)
+  box Other "ation" w=2561su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern="n b" src r0 @[643,685)
+  box Other "by" w=1025su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern="y c" src r0 @[643,685)
+  box Other "com" w=1537su r0 @[643,685)
+  disc pen=0.7 w=0su pre="-" 513su kern="mp" r0 @[643,685)
+  box Other "put" w=1537su r0 @[643,685)
+  disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[643,685)
+  box Other "er," w=1537su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern=", 1" src r0 @[643,685)
+  box Other "1983." w=2561su r0 @[643,685)
+  run r0 plain
+top pid=4 units=1
+ unit text indent=0su
+  box Other "Back" w=2049su r0 @[378,391)
+  glue word w=257su x=1 cap=257su kern="k o" src r0 @[378,391)
+  box Other "out" w=1537su r0 @[378,391)
+  disc pen=0.7 w=0su pre="-" 513su kern="ts" r0 @[378,391)
+  box Other "side:" w=2561su r0 @[378,391)
+  glue word w=257su x=1 cap=257su kern=": [" src r0 @[378,391)
+  box Other "[" w=513su r1 @[392,397)
+  box Other "2" w=513su r2 @[392,397)
+  box Other "]" w=513su r3 @[392,397)
+  glue word w=257su x=1 cap=257su kern="] k" src r4 @[398,421)
+  box Other "keeps" w=2561su r4 @[398,421)
+  glue word w=257su x=1 cap=257su kern="s i" src r4 @[398,421)
+  box Other "its" w=1537su r4 @[398,421)
+  glue word w=257su x=1 cap=257su kern="s o" src r4 @[398,421)
+  box Other "out" w=1537su r4 @[398,421)
+  disc pen=0.7 w=0su pre="-" 513su kern="te" r4 @[398,421)
+  box Other "er" w=1025su r4 @[398,421)
+  glue word w=257su x=1 cap=257su kern="r n" src r4 @[398,421)
+  box Other "num" w=1537su r4 @[398,421)
+  disc pen=0.7 w=0su pre="-" 513su kern="mb" r4 @[398,421)
+  box Other "ber." w=2049su r4 @[398,421)
+  run r0 plain
+  run r1 plain ref
+  run r2 plain ref LINK link="#tsr-bib-kp81"
+  run r3 plain ref
+  run r4 plain
+top pid=5 units=3
+ unit rule indent=0su
+ unit text indent=0su anchor="bib-liang83"
+  box Other "[1]" w=1537su r0 @[600,686)
+  glue word w=257su x=1 cap=257su kern="] L" src r0 @[600,686)
+  box Other "Liang," w=3073su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern=", W" src r0 @[643,685)
+  box Other "Word" w=2049su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern="d h" src r0 @[643,685)
+  box Other "hy" w=1025su r0 @[643,685)
+  disc pen=0.7 w=0su pre="-" 513su kern="yp" r0 @[643,685)
+  box Other "phen" w=2049su r0 @[643,685)
+  disc pen=0.7 w=0su pre="-" 513su kern="na" r0 @[643,685)
+  box Other "ation" w=2561su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern="n b" src r0 @[643,685)
+  box Other "by" w=1025su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern="y c" src r0 @[643,685)
+  box Other "com" w=1537su r0 @[643,685)
+  disc pen=0.7 w=0su pre="-" 513su kern="mp" r0 @[643,685)
+  box Other "put" w=1537su r0 @[643,685)
+  disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[643,685)
+  box Other "er," w=1537su r0 @[643,685)
+  glue word w=257su x=1 cap=257su kern=", 1" src r0 @[643,685)
+  box Other "1983." w=2561su r0 @[643,685)
+  run r0 plain
+ unit text indent=0su anchor="bib-kp81"
+  box Other "[2]" w=1537su r0 @[432,527)
+  glue word w=257su x=1 cap=257su kern="] K" src r0 @[432,527)
+  box Other "Knuth" w=2561su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="h a" src r0 @[472,526)
+  box Other "and" w=1537su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="d P" src r0 @[472,526)
+  box Other "Plass," w=3073su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern=", B" src r0 @[472,526)
+  box Other "Break" w=2561su r0 @[472,526)
+  disc pen=0.7 w=0su pre="-" 513su kern="ki" r0 @[472,526)
+  box Other "ing" w=1537su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="g p" src r0 @[472,526)
+  box Other "para" w=2049su r0 @[472,526)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[472,526)
+  box Other "graphs" w=3073su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="s i" src r0 @[472,526)
+  box Other "into" w=2049su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern="o l" src r0 @[472,526)
+  box Other "lines," w=3073su r0 @[472,526)
+  glue word w=257su x=1 cap=257su kern=", 1" src r0 @[472,526)
+  box Other "1981." w=2561su r0 @[472,526)
+  run r0 plain

@@ -12,7 +12,7 @@ void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs, StyleTable& sty
   Counters counters(reg);
   Terms terms(cfg);
   locate(tree.root, reg, counters, strs, index, diags);
-  bindCites(tree.root, reg, counters, strs, index);
+  bind(tree.root, reg, counters, strs, index, diags);
   MaterializeEnv env{arena, strs, styles, diags, reg, terms, counters, index, cascade};
   tree.root = materialize(tree.root, env);
   if (env.made) settleMade(tree.root, cascade, props, styles);
@@ -24,6 +24,8 @@ void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs, StyleTable& sty
   for (Row& r : index.rows) r.node = nullptr;
   index.instOf.clear();
   index.refused.clear();
+  index.collectAt.clear();
+  index.occurrenceOf.clear();
 }
 
 }  // namespace tsr

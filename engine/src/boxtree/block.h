@@ -117,6 +117,9 @@ struct LayoutBlock {
   // — Para where the semantic page sets it apart, Newline in a tight list
   // item and at the top's end (a new block is a new paragraph anyway)
   Sep sepAfter = Sep::Newline;
+  // (plan P3-13) a deferred flow's entry: its marker's source position (its
+  // fragments are the paged sheets' inserts); kInsertArea: their separator
+  u32 insertAt = kNotInsert;
   bool leaf() const { return unit != ~0u; }
 };
 

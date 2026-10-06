@@ -1,0 +1,14 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {toc} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+ $.counter('heading', {gap: 'one'}) 
+},
+() => (toc()),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

@@ -1,0 +1,18 @@
+instance heading 1 level=1 label=h-1 title="One" @[553,558)
+instance endnote i label=en-1 marker=enref-1 @[564,608)
+instance footnote 1 label=fn-1 marker=fnref-1 @[623,649)
+instance heading 2 level=1 label=h-2 title="Two" @[665,670)
+instance endnote ii label=en-2 marker=enref-2 @[676,721)
+instance endnote iii label=en-3 marker=enref-3 @[730,766)
+label h-1 -> heading 1 @[553,558)
+label en-1 -> endnote i @[564,608)
+label enref-1 -> endnote i (marker) @[564,608)
+label fn-1 -> footnote 1 @[623,649)
+label fnref-1 -> footnote 1 (marker) @[623,649)
+label h-2 -> heading 2 @[665,670)
+label en-2 -> endnote ii @[676,721)
+label enref-2 -> endnote ii (marker) @[676,721)
+label en-3 -> endnote iii @[730,766)
+label enref-3 -> endnote iii (marker) @[730,766)
+flow endnotes: en-1 en-2 en-3
+flow notes: fn-1

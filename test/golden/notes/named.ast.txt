@@ -1,0 +1,25 @@
+doc @[0,398)
+  para @[0,141)
+    text @[0,141) str="Named notes (plan P3-13): a labelled note is named, and a marker reference marks it again — one entry, three markers, its back-links a b c."
+  para @[143,338)
+    text @[143,152) str="The claim"
+    note @[152,168)
+      text @[154,167) str="A plain note."
+    text @[169,188) str=" rests on one source"
+    splice @[188,240) expr="note({label: \"src\"})"
+      arg @[210,239)
+        text @[210,216) str="Knuth, "
+        styled @[217,230) marker=_
+          text @[218,229) str="The TeXbook"
+        text @[230,239) str=", p. 101."
+    text @[241,265) str=" that is cited again here"
+    splice @[265,294) expr="ref(\"src\", {form: \"marker\"})"
+    text @[295,308) str=" and once more"
+    splice @[308,337) expr="ref(\"src\", {form: \"marker\"})"
+    text @[337,338) str="."
+  para @[340,397)
+    text @[340,361) str="The note itself reads "
+    ref @[362,366) target="src"
+    text @[366,385) str="; its second marker "
+    ref @[386,396) target="fnref-2.2"
+    text @[396,397) str="."

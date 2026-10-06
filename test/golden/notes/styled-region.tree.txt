@@ -1,0 +1,48 @@
+doc @[0,396) [base]
+  heading @[0,27) [BOLDx1.60] level=1 label="h-1"
+    text @[2,27) [BOLDx1.60] str="A note in a styled region"
+  para @[29,88) [base]
+    text @[29,46) [base] str="Outside, a marker"
+    ref @[46,63) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
+      text @[46,63) [SUPx0.70] str="1"
+    text @[64,88) [base] str=" takes the default rules." raw=0:0,1:0
+  group @[90,336) [base color=#555555] role="aside"
+    styled @[90,336) [base color=#555555] color="#a8432a" matchRole="fn-marker"
+      styled @[90,336) [base color=#555555] color="#2f5d8a" matchKind="code"
+        para @[216,328) [base color=#555555]
+          text @[216,272) [base color=#555555] str="Inside the grey region a scoped rule colours its markers"
+          ref @[272,323) [SUPx0.70 color=#a8432a] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" syn="fn-marker" copy="omit"
+            text @[272,323) [SUPx0.70 color=#a8432a] str="2"
+          text @[324,328) [base color=#555555] str=" red." raw=0:0,1:0
+  para @[338,396) [base]
+    text @[338,364) [base] str="After the region, a marker"
+    ref @[364,380) [SUPx0.70] role="fn-marker" attach="prev" target="fn-3" label="fnref-3" syn="fn-marker" copy="omit"
+      text @[364,380) [SUPx0.70] str="3"
+    text @[381,396) [base] str=" is plain again." raw=0:0,1:0
+  group @[0,396) [base] role="notes"
+    rule @[0,396) [base]
+    list @[0,396) [base] ordered=true
+      item @[46,63) [base]
+        para @[46,63) [base] label="fn-1"
+          styled @[46,63) [basex0.85] role="note-body"
+            text @[48,62) [basex0.85] str="An outer note."
+            text @[46,63) [basex0.85] str=" "
+            ref @[46,63) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
+              text @[46,63) [basex0.85] str="↩"
+      item @[272,323) [base]
+        para @[272,323) [base] label="fn-2"
+          styled @[272,323) [basex0.85 color=#555555] role="note-body"
+            text @[274,286) [basex0.85 color=#555555] str="A note whose " raw=0:0,13:12
+            code @[287,293) [CODEx0.72 color=#2f5d8a]
+              text @[287,293) [CODEx0.72 color=#2f5d8a] str="code"
+            text @[294,322) [basex0.85 color=#555555] str=" keeps the rule of its place." raw=0:0,1:0
+            text @[272,323) [basex0.85 color=#555555] str=" "
+            ref @[272,323) [basex0.85 color=#555555] target="fnref-2" syn="backlink" copy="omit"
+              text @[272,323) [basex0.85 color=#555555] str="↩"
+      item @[364,380) [base]
+        para @[364,380) [base] label="fn-3"
+          styled @[364,380) [basex0.85] role="note-body"
+            text @[366,379) [basex0.85] str="A later note."
+            text @[364,380) [basex0.85] str=" "
+            ref @[364,380) [basex0.85] target="fnref-3" syn="backlink" copy="omit"
+              text @[364,380) [basex0.85] str="↩"

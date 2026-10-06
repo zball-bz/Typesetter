@@ -154,6 +154,11 @@ inline void parseRangeSet(std::string_view h, std::vector<u32>& out, u32 maxLine
 // AnchorNamer spells it; dumps print an internal link as its href)
 constexpr std::string_view kAnchorPrefix = "tsr-";
 
+// (plan P3-13) a deferred flow entry's insert reference (ContentNode and
+// LayoutBlock insertAt): its marker's source position, none, or the rest of
+// the flow's wrap (the inserts' separator)
+constexpr u32 kNotInsert = ~0u, kInsertArea = ~0u - 1;
+
 // --- diagnostics (document-model §10) ---
 enum class Sev : u8 { Error, Warning, Info };
 // The pass that reported a diagnostic (plan P0-11, design T9 M1). A pass

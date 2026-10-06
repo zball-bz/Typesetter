@@ -92,8 +92,8 @@ selects the glyph set at emit time; the counter is unchanged.
 - Render: `.tsr-sup` (paint-only raise via `position: relative`),
   semantic `<sup>` + `<ol>`; paragraphs honor `label` as anchors.
 - Highlighting: `footnote` token in tree-sitter-tsm (`@attribute`).
-- Print: notes currently print as endnotes (the section is ordinary flow);
-  bottom-of-sheet inserts remain as designed above.
+- Print: notes print as endnotes unless their flow is deferred (plan P3-13,
+  below), which makes them bottom-of-sheet inserts.
 - Copy (as built, plan P3-07, D-R01): the marker and the `↩` backlink are
   decorative generated text — the footnote row's marker template and the
   notes collector's backlink carry `syn: "fn-marker"` / `syn: "backlink"`
@@ -107,6 +107,23 @@ selects the glyph set at emit time; the counter is unchanged.
   semantic HTML with its markup, no ids, no `↩`). The popup no longer
   scrapes the typeset lines, so hyphen glyphs and line joins (spaces
   between CJK lines) never reach it.
+
+As built (plan P3-13, semantics-design §9):
+- Named notes: `#note({label: "src"})[…]` is a footnote named `src`, and
+  `ref("src", {form: "marker"})` marks it again. That gives one entry with
+  several markers, whose back-links read `↩ a b c`. The `^[src]` sugar
+  belongs to T1's surface and is not built.
+- Per-chapter notes: `$.counter('footnote', {within: {counter: 'heading',
+  depth: 1, prefix: false}, numbering: '①'})` restarts the circled numbers
+  per chapter. Anchors use the ordinal (`fn-<n>`), so they stay unique.
+- `flow: {placement: 'section-end', depth: 1}` closes each chapter with its
+  notes.
+- A user endnote flow is a class like `footnote` with its own flow,
+  together with a collector `{like: 'notes', flow, scope: 'section'}`.
+- Print: `flow: {placement: 'deferred'}` puts the notes at the foot of
+  their marker's sheet, below the rule, which repeats on every sheet with
+  notes. On screen the notes still close the document. The built-in row
+  keeps `end`, so documents opt in, and existing output is unchanged.
 
 As built (plan P2-08): the marker is `ref{role: fn-marker, attach: prev}` in
 a super-baseline ×0.7 delta (the footnote row's marker template); `attach:

@@ -130,6 +130,14 @@ std::string component(const std::string& sym, int n, const Registry& reg) {
       case CounterSystem::Mode::Alphabetic: return alpha(n, s.symbols);
       case CounterSystem::Mode::Cyclic: return n > 0 ? s.symbols[(n - 1) % k] : std::to_string(n);
       case CounterSystem::Mode::Fixed: return n >= 1 && n <= k ? s.symbols[n - 1] : std::to_string(n);
+      case CounterSystem::Mode::Additive: {  // greedy, largest weight first
+        if (n <= 0) return std::to_string(n);
+        std::string out;
+        int m = n;
+        for (size_t q = 0; q < s.weights.size() && m > 0; q++)
+          for (; m >= s.weights[q]; m -= s.weights[q]) out += s.symbols[q];
+        return m == 0 ? out : std::to_string(n);  // (not representable: arabic)
+      }
       case CounterSystem::Mode::Numeric: {
         if (n == 0) return s.symbols[0];
         if (k < 2) return std::to_string(n);
@@ -225,7 +233,7 @@ std::string Counters::step(u16 c, int level) {
 std::string Counters::formatComps(u16 c, const std::vector<int>& comps) const {
   const CounterDef& d = reg_.counters[c];
   std::string out;
-  if (d.within != kNoIndex) {
+  if (d.within != kNoIndex && d.withinPrefix) {
     std::vector<int> pv = v_[d.within];
     pv.resize((size_t)d.withinDepth, 0);
     out = formatComps(d.within, pv) + d.withinSep;
@@ -264,8 +272,8 @@ void Counters::apply(u16 c, const Event& ev) {
   if (ev.supplement.set()) sup_[c] = ev.supplement;
 }
 
-int Counters::keyed(u16 c, const std::string& key) {
-  Keyed& k = keyed_[c];
+int Counters::keyed(u16 c, const std::string& key, u32 scope) {
+  Keyed& k = keyed_[c][scope];
   auto it = k.ord.find(key);
   if (it != k.ord.end()) return it->second;
   int n = (int)k.order.size() + 1;
@@ -274,9 +282,17 @@ int Counters::keyed(u16 c, const std::string& key) {
   return n;
 }
 
-int Counters::keyedIfSeen(u16 c, const std::string& key) const {
-  auto it = keyed_[c].ord.find(key);
-  return it == keyed_[c].ord.end() ? 0 : it->second;
+int Counters::keyedIfSeen(u16 c, const std::string& key, u32 scope) const {
+  auto s = keyed_[c].find(scope);
+  if (s == keyed_[c].end()) return 0;
+  auto it = s->second.ord.find(key);
+  return it == s->second.ord.end() ? 0 : it->second;
+}
+
+const std::vector<std::string>& Counters::keyOrder(u16 c, u32 scope) const {
+  static const std::vector<std::string> kNone;
+  auto s = keyed_[c].find(scope);
+  return s == keyed_[c].end() ? kNone : s->second.order;
 }
 
 u16 Counters::counterNamed(std::string_view name) const {

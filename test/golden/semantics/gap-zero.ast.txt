@@ -1,0 +1,23 @@
+doc @[0,77)
+  para @[0,6)
+    splice @[0,6) expr="toc()"
+  heading @[8,11) level=1
+    text @[10,11) str="A"
+  heading @[13,20) level=3
+    text @[17,20) str="A.c"
+  heading @[22,25) level=1
+    text @[24,25) str="B"
+  heading @[27,33) level=2
+    text @[30,33) str="B.a"
+  heading @[35,41) level=2
+    text @[38,41) str="B.b"
+  heading @[43,46) level=1
+    text @[45,46) str="C"
+  heading @[48,54) level=2
+    text @[51,54) str="C.a"
+  heading @[56,59) level=1
+    text @[58,59) str="D"
+  heading @[61,68) level=3
+    text @[65,68) str="D.c"
+  heading @[70,76) level=2
+    text @[73,76) str="D.b"

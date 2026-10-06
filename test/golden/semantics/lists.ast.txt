@@ -1,0 +1,29 @@
+doc @[0,1006)
+  code-block @[0,312) js="\n  // a user list of theorems with a static head, linking each item (plan P3-13)\n  $.element('theorem', {\n    counter: {name: 'thm'}, supplement: {en: 'Theorem '}, title: {arg: 'title'},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}],\n  })\n"
+  code-let @[313,563) js=" theorems = $.collector('theorems', {select: ['theorem'], head: [para(strong('Theorems'))], wrap: [list(false, each('items'))], entry: [item(para(link({to: 'target'}, slot('supplement'), slot('number')), when('title', ' — ', slot('title'))))]})"
+  heading @[565,604) level=1
+    text @[567,604) str="Lists of figures, tables and theorems"
+  para @[606,612)
+    splice @[606,612) expr="lof()"
+  para @[614,620)
+    splice @[614,620) expr="lot()"
+  para @[622,633)
+    splice @[622,633) expr="theorems()"
+  region @[635,763) name="figure"
+    para @[707,754)
+      text @[707,727) str="A first figure, with "
+      styled @[728,738) marker=*
+        text @[729,737) str="emphasis"
+      text @[739,754) str=" in its caption."
+  region @[765,823) name="table"
+    para @[798,815)
+      text @[798,815) str="Key | Value\na | 1"
+  region @[825,923) name="figure"
+    region @[850,880) name="table"
+      para @[867,872)
+        text @[867,872) str="x | y"
+    para @[881,914)
+      text @[881,914) str="A figure that numbers as a table."
+  region @[925,1005) name="theorem"
+    para @[969,995)
+      text @[969,995) str="Every list is a collector."

@@ -1,0 +1,31 @@
+#let refs = $.collector('refs', {like: 'bibliography'})
+
+= Reference sections
+
+Citations outside any section: @liang83 and @kp81.
+
+#!refsection
+== Chapter one
+
+Knuth and Plass @kp81, then the TeXbook @knuth84: numbered afresh in this section.
+
+#refs()
+#refsection!
+
+#!refsection
+== Chapter two
+
+The TeXbook again @knuth84, first here, and Liang @liang83.
+
+#refs()
+#refsection!
+
+Back outside: @kp81 keeps its outer number.
+
+#refs()
+
+#entry({role: "bibentry", key: "kp81"})[Knuth and Plass, Breaking paragraphs into lines, 1981.]
+
+#entry({role: "bibentry", key: "knuth84"})[Knuth, The TeXbook, 1984.]
+
+#entry({role: "bibentry", key: "liang83"})[Liang, Word hyphenation by computer, 1983.]

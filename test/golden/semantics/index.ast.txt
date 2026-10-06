@@ -1,0 +1,24 @@
+doc @[0,533)
+  para @[0,110)
+    text @[0,110) str="A back-of-book index (plan P3-13): entries anywhere, a key with several occurrences, sorted by their sort key."
+  para @[112,261)
+    text @[112,113) str="A "
+    splice @[114,160) expr="entry({role: \"index\", key: \"monad\"})"
+      arg @[152,159)
+        styled @[152,159) marker=*
+          text @[153,158) str="monad"
+    text @[160,198) str="monad is a monoid in endofunctors; the "
+    splice @[199,235) expr="entry({role: \"index\", key: \"zeta\"})"
+    text @[235,261) str="zeta function comes later."
+  para @[263,436)
+    text @[263,268) str="Every "
+    splice @[269,328) expr="entry({role: \"index\", key: \"functor\", sortKey: \"functor\"})"
+    text @[328,364) str="functor preserves composition, and a "
+    splice @[365,402) expr="entry({role: \"index\", key: \"monad\"})"
+    text @[402,436) str="monad is a functor with structure."
+  para @[438,522)
+    text @[438,444) str="单子"
+    splice @[444,501) expr="entry({role: \"index\", key: \"单子\", sortKey: \"dan zi\"})"
+    text @[501,522) str="与函子的关系。"
+  para @[524,532)
+    splice @[524,532) expr="index()"

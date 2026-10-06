@@ -1,0 +1,23 @@
+doc @[0,397)
+  heading @[0,27) level=1
+    text @[2,27) str="A note in a styled region"
+  para @[29,88)
+    text @[29,46) str="Outside, a marker"
+    note @[46,63)
+      text @[48,62) str="An outer note."
+    text @[64,88) str=" takes the default rules."
+  region @[90,336) name="aside"
+    code-block @[125,176) js=" $.set({role: 'fn-marker'}, {color: '#a8432a'}) "
+    code-block @[177,215) js=" $.set('code', {color: '#2f5d8a'}) "
+    para @[216,328)
+      text @[216,272) str="Inside the grey region a scoped rule colours its markers"
+      note @[272,323)
+        text @[274,286) str="A note whose "
+        code @[287,293) str="code"
+        text @[294,322) str=" keeps the rule of its place."
+      text @[324,328) str=" red."
+  para @[338,396)
+    text @[338,364) str="After the region, a marker"
+    note @[364,380)
+      text @[366,379) str="A later note."
+    text @[381,396) str=" is plain again."

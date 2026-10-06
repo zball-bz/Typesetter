@@ -1,0 +1,84 @@
+doc @[57,686) [base]
+  heading @[57,77) [BOLDx1.60] level=1 label="h-1"
+    text @[59,77) [BOLDx1.60] str="Reference sections"
+  para @[79,129) [base]
+    text @[79,109) [base] str="Citations outside any section: " raw=0:0,31:30
+    ref @[110,118) [base] target="liang83"
+      text @[110,118) [base] str="["
+      link @[110,118) [base] target="bib-liang83"
+        text @[110,118) [base] str="1"
+      text @[110,118) [base] str="]"
+    text @[119,122) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[123,128) [base] target="kp81"
+      text @[123,128) [base] str="["
+      link @[123,128) [base] target="bib-kp81"
+        text @[123,128) [base] str="2"
+      text @[123,128) [base] str="]"
+    text @[128,129) [base] str="."
+  group @[131,264) [base] role="refsection"
+    heading @[144,158) [BOLDx1.35] level=2 label="h-1.1"
+      text @[147,158) [BOLDx1.35] str="Chapter one"
+    para @[160,242) [base]
+      text @[160,175) [base] str="Knuth and Plass " raw=0:0,16:15
+      ref @[176,181) [base] target="kp81"
+        text @[176,181) [base] str="["
+        link @[176,181) [base] target="bib-1-kp81"
+          text @[176,181) [base] str="1"
+        text @[176,181) [base] str="]"
+      text @[181,199) [base] str=", then the TeXbook " raw=0:0,19:18
+      ref @[200,208) [base] target="knuth84"
+        text @[200,208) [base] str="["
+        link @[200,208) [base] target="bib-1-knuth84"
+          text @[200,208) [base] str="2"
+        text @[200,208) [base] str="]"
+      text @[208,242) [base] str=": numbered afresh in this section."
+    group @[244,251) [base] role="bibliography"
+      rule @[244,251) [base]
+      para @[432,527) [base] label="bib-1-kp81"
+        text @[432,527) [base] str="[1] "
+        text @[472,526) [base] str="Knuth and Plass, Breaking paragraphs into lines, 1981."
+      para @[529,598) [base] label="bib-1-knuth84"
+        text @[529,598) [base] str="[2] "
+        text @[572,597) [base] str="Knuth, The TeXbook, 1984."
+  group @[266,376) [base] role="refsection"
+    heading @[279,293) [BOLDx1.35] level=2 label="h-1.2"
+      text @[282,293) [BOLDx1.35] str="Chapter two"
+    para @[295,354) [base]
+      text @[295,312) [base] str="The TeXbook again " raw=0:0,18:17
+      ref @[313,321) [base] target="knuth84"
+        text @[313,321) [base] str="["
+        link @[313,321) [base] target="bib-2-knuth84"
+          text @[313,321) [base] str="1"
+        text @[313,321) [base] str="]"
+      text @[321,344) [base] str=", first here, and Liang " raw=0:0,24:23
+      ref @[345,353) [base] target="liang83"
+        text @[345,353) [base] str="["
+        link @[345,353) [base] target="bib-2-liang83"
+          text @[345,353) [base] str="2"
+        text @[345,353) [base] str="]"
+      text @[353,354) [base] str="."
+    group @[356,363) [base] role="bibliography"
+      rule @[356,363) [base]
+      para @[529,598) [base] label="bib-2-knuth84"
+        text @[529,598) [base] str="[1] "
+        text @[572,597) [base] str="Knuth, The TeXbook, 1984."
+      para @[600,686) [base] label="bib-2-liang83"
+        text @[600,686) [base] str="[2] "
+        text @[643,685) [base] str="Liang, Word hyphenation by computer, 1983."
+  para @[378,421) [base]
+    text @[378,391) [base] str="Back outside: " raw=0:0,14:13
+    ref @[392,397) [base] target="kp81"
+      text @[392,397) [base] str="["
+      link @[392,397) [base] target="bib-kp81"
+        text @[392,397) [base] str="2"
+      text @[392,397) [base] str="]"
+    text @[398,421) [base] str=" keeps its outer number." raw=0:0,1:0
+  group @[423,430) [base] role="bibliography"
+    rule @[423,430) [base]
+    para @[600,686) [base] label="bib-liang83"
+      text @[600,686) [base] str="[1] "
+      text @[643,685) [base] str="Liang, Word hyphenation by computer, 1983."
+    para @[432,527) [base] label="bib-kp81"
+      text @[432,527) [base] str="[2] "
+      text @[472,526) [base] str="Knuth and Plass, Breaking paragraphs into lines, 1981."
+decl collector name="refs" flow=0 @[0,55) ext.row="{\"like\":\"bibliography\"}"

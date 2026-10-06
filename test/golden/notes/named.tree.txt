@@ -1,0 +1,55 @@
+doc @[0,397) [base]
+  para @[0,141) [base]
+    text @[0,141) [base] str="Named notes (plan P3-13): a labelled note is named, and a marker reference marks it again — one entry, three markers, its back-links a b c."
+  para @[143,338) [base]
+    text @[143,152) [base] str="The claim"
+    ref @[152,168) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
+      text @[152,168) [SUPx0.70] str="1"
+    text @[169,188) [base] str=" rests on one source" raw=0:0,1:0
+    ref @[188,240) [SUPx0.70] role="fn-marker" attach="prev" target="src" label="fnref-2" syn="fn-marker" copy="omit"
+      text @[188,240) [SUPx0.70] str="2"
+    text @[241,265) [base] str=" that is cited again here" raw=0:0,1:0
+    ref @[265,294) [SUPx0.70] role="fn-marker" attach="prev" target="src" label="fnref-2.2" syn="fn-marker" copy="omit"
+      text @[265,294) [SUPx0.70] str="2"
+    text @[295,308) [base] str=" and once more" raw=0:0,1:0
+    ref @[308,337) [SUPx0.70] role="fn-marker" attach="prev" target="src" label="fnref-2.3" syn="fn-marker" copy="omit"
+      text @[308,337) [SUPx0.70] str="2"
+    text @[337,338) [base] str="."
+  para @[340,397) [base]
+    text @[340,361) [base] str="The note itself reads " raw=0:0,22:21
+    ref @[362,366) [base] target="src"
+      text @[362,366) [base] str="2"
+    text @[366,385) [base] str="; its second marker " raw=0:0,20:19
+    ref @[386,396) [base] target="fnref-2.2"
+      text @[386,396) [base] str="↩"
+    text @[396,397) [base] str="."
+  group @[0,397) [base] role="notes"
+    rule @[0,397) [base]
+    list @[0,397) [base] ordered=true
+      item @[152,168) [base]
+        para @[152,168) [base] label="fn-1"
+          styled @[152,168) [basex0.85] role="note-body"
+            text @[154,167) [basex0.85] str="A plain note."
+            text @[152,168) [basex0.85] str=" "
+            ref @[152,168) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
+              text @[152,168) [basex0.85] str="↩"
+      item @[188,240) [base]
+        para @[188,240) [base] label="src"
+          styled @[188,240) [basex0.85] role="note-body"
+            seq @[188,240) [basex0.85]
+              text @[210,216) [basex0.85] str="Knuth, " raw=0:0,7:6
+              styled @[217,230) [EMx0.85]
+                text @[218,229) [EMx0.85] str="The TeXbook"
+              text @[230,239) [basex0.85] str=", p. 101."
+            text @[188,240) [basex0.85] str=" "
+            ref @[188,240) [basex0.85] target="fnref-2" syn="backlink" copy="omit"
+              text @[188,240) [basex0.85] str="↩"
+            text @[188,240) [basex0.85] str=" "
+            link @[188,240) [basex0.85] target="fnref-2" syn="backlink" copy="omit"
+              text @[188,240) [basex0.85] str="a"
+            text @[188,240) [basex0.85] str=" "
+            link @[188,240) [basex0.85] target="fnref-2.2" syn="backlink" copy="omit"
+              text @[188,240) [basex0.85] str="b"
+            text @[188,240) [basex0.85] str=" "
+            link @[188,240) [basex0.85] target="fnref-2.3" syn="backlink" copy="omit"
+              text @[188,240) [basex0.85] str="c"

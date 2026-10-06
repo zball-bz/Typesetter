@@ -1,0 +1,12 @@
+instance heading 1 level=1 label=h-1 title="A note in a styled region" @[0,27)
+instance footnote 1 label=fn-1 marker=fnref-1 @[46,63)
+instance footnote 2 label=fn-2 marker=fnref-2 @[272,323)
+instance footnote 3 label=fn-3 marker=fnref-3 @[364,380)
+label h-1 -> heading 1 @[0,27)
+label fn-1 -> footnote 1 @[46,63)
+label fnref-1 -> footnote 1 (marker) @[46,63)
+label fn-2 -> footnote 2 @[272,323)
+label fnref-2 -> footnote 2 (marker) @[272,323)
+label fn-3 -> footnote 3 @[364,380)
+label fnref-3 -> footnote 3 (marker) @[364,380)
+flow notes: fn-1 fn-2 fn-3

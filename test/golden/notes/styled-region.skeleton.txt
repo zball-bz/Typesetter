@@ -1,0 +1,8 @@
+doc @[0,397)
+  heading1 @[0,27)
+  para @[29,88) lines=1
+  region @[90,336) name="aside"
+    code-block @[125,176) js=" $.set({role: 'fn-marker'}, {color: '#a8432a'}) "
+    code-block @[177,215) js=" $.set('code', {color: '#2f5d8a'}) "
+    para @[216,328) lines=1
+  para @[338,396) lines=1

@@ -141,13 +141,26 @@ struct Loader {
     return true;
   }
 
+  // (a patch that gives no reference form keeps the one it replaces: a
+  // class like another renaming its anchors, plan P3-13)
   bool alias(const JsonValue* v, AliasRule& out) {
     if (!v) return true;
+    if (!member(*v, "ref") && out.hasRef) {
+      Template keep = out.ref;
+      out.hasRef = false;
+      if (!alias(v, out)) return false;
+      out.ref = std::move(keep);
+      out.hasRef = true;
+      return true;
+    }
+    out.ref.clear();
     out.prefix = str(member(*v, "prefix"));
     std::string body = str(member(*v, "body"));
-    out.body = body == "number" ? AliasRule::Body::Number : body == "key" ? AliasRule::Body::Key
-                                                                         : AliasRule::Body::None;
-    if (out.body == AliasRule::Body::None) return fail("an alias body is number or key");
+    out.body = body == "number"    ? AliasRule::Body::Number
+               : body == "key"     ? AliasRule::Body::Key
+               : body == "ordinal" ? AliasRule::Body::Ordinal
+                                   : AliasRule::Body::None;
+    if (out.body == AliasRule::Body::None) return fail("an alias body is number, key or ordinal");
     out.hasRef = member(*v, "ref") != nullptr;
     return tmpl(member(*v, "ref"), out.ref);
   }
@@ -186,6 +199,7 @@ struct Loader {
         within.push_back({r.counters.size(), str(member(*w, "counter"))});
         if (const JsonValue* a = member(*w, "depth")) d.withinDepth = std::max(1, (int)a->num);
         if (const JsonValue* a = member(*w, "sep")) d.withinSep = str(a);
+        if (const JsonValue* a = member(*w, "prefix")) d.withinPrefix = a->t != JsonValue::T::Bool || a->b;
       }
       d.pattern = str(member(c, "pattern"));
       d.scopeName = str(member(c, "scope"));
@@ -220,7 +234,17 @@ struct Loader {
       s.mode = m == "alphabetic" ? CounterSystem::Mode::Alphabetic
                : m == "cyclic"   ? CounterSystem::Mode::Cyclic
                : m == "fixed"    ? CounterSystem::Mode::Fixed
+               : m == "additive" ? CounterSystem::Mode::Additive
                                  : CounterSystem::Mode::Numeric;
+      if (s.mode == CounterSystem::Mode::Additive) {
+        if (const JsonValue* w = member(v->vals[k], "weights"))
+          for (const JsonValue& x : w->arr) s.weights.push_back((int)x.num);
+        bool descending = s.weights.size() == s.symbols.size();
+        for (size_t q = 1; descending && q < s.weights.size(); q++)
+          descending = s.weights[q] < s.weights[q - 1] && s.weights[q] > 0;
+        if (!descending || s.weights.empty() || s.weights.back() <= 0)
+          return fail("counter system '" + s.name + "': additive weights are positive, descending, one per symbol");
+      }
       r.systems.push_back(std::move(s));
     }
     return true;
@@ -295,6 +319,12 @@ struct Loader {
       if (x->t == JsonValue::T::Obj && member(*x, "ext")) {  // EXT data (plan P2-07)
         c.title = ElementClass::Title::Ext;
         c.titleExt = str(member(*x, "ext"));
+      } else if (x->t == JsonValue::T::Obj && member(*x, "part")) {  // a part's content (plan P3-13)
+        c.title = ElementClass::Title::Part;
+        const std::string part = str(member(*x, "part"));
+        for (u8 k = 1; k < SLOT_COUNT; k++)
+          if (part == kSlots[k].name) c.titlePart = (SlotId)k;
+        if (c.titlePart == SlotId::None) return fail("title part '" + part + "' is no slot");
       } else if (x->t == JsonValue::T::Obj) {
         c.title = ElementClass::Title::Arg;
         if (!argOf(str(member(*x, "arg")), c.titleArg)) return false;
@@ -305,6 +335,7 @@ struct Loader {
     if (const JsonValue* x = member(v, "outline")) c.outline = x->b;
     if (const JsonValue* x = member(v, "marker")) c.marker = x->b;
     if (const JsonValue* x = member(v, "display")) c.display = x->b;
+    if (const JsonValue* x = member(v, "multi")) c.multi = x->t == JsonValue::T::Bool && x->b;
     if (const JsonValue* x = member(v, "refers-to"))
       c.refersTo = str(x) == "enclosing" ? ElementClass::RefersTo::Enclosing : ElementClass::RefersTo::Self;
     if (const JsonValue* x = member(v, "preview"))
@@ -341,11 +372,25 @@ struct Loader {
       if (!tmpl(x, c.ref)) return false;
     }
     if (const JsonValue* x = member(v, "flow")) {
-      FlowDef f;
-      f.name = str(member(*x, "name"));
-      f.placeAtEnd = str(member(*x, "placement")) == "end";
-      if (!alias(member(*x, "marker-alias"), f.markerAlias) || !tmpl(member(*x, "marker"), f.marker))
-        return false;
+      // (a class like another patches its flow: the fields given)
+      FlowDef f = c.flow ? *c.flow : FlowDef{};
+      if (const JsonValue* a = member(*x, "name")) f.name = str(a);
+      if (const JsonValue* a = member(*x, "placement")) {
+        const std::string p = str(a);
+        using P = FlowDef::Placement;
+        if (p == "end") f.placement = P::End;
+        else if (p == "section-end") f.placement = P::SectionEnd;
+        else if (p == "deferred") f.placement = P::Deferred;
+        else if (p == "collector-only") f.placement = P::CollectorOnly;
+        else return fail("a flow's placement is end, section-end, deferred or collector-only ('" + p + "')");
+      }
+      if (const JsonValue* a = member(*x, "depth")) f.depth = std::max(1, (int)a->num);
+      if (f.name.empty()) return fail("class '" + name + "': a flow has a name");
+      if (const JsonValue* a = member(*x, "marker-alias"); a && !alias(a, f.markerAlias)) return false;
+      if (const JsonValue* a = member(*x, "marker")) {
+        f.marker.clear();
+        if (!tmpl(a, f.marker)) return false;
+      }
       c.flow = std::move(f);
     }
     if (const JsonValue* x = member(v, "table")) c.table = str(x);
@@ -387,31 +432,81 @@ struct Loader {
 
   bool collector(const std::string& name, const JsonValue& v) {
     CollectorDef d;
+    // (plan P3-13) like another: its query and templates, the fields given
+    // replacing theirs
+    const JsonValue* like = member(v, "like");
+    if (like) {
+      const CollectorDef* base = nullptr;
+      for (const CollectorDef& c : r.collectors)
+        if (c.name == str(like)) base = &c;
+      if (!base) return fail("collector '" + name + "' is like an undeclared collector");
+      d = *base;
+    }
     d.name = name;
     const JsonValue* q = member(v, "query");
-    if (!q) return fail("collector '" + name + "' has no query");
+    if (!q && !like) return fail("collector '" + name + "' has no query");
+    static const JsonValue kNoQuery;
+    if (!q) q = &kNoQuery;
     if (const JsonValue* x = member(*q, "classes")) {
-      d.src = CollectorDef::Src::Outline;
-      if (str(x) != "outline") return fail("collector classes: only 'outline' (P3-13 adds lists)");
+      if (x->t == JsonValue::T::Arr) {  // (plan P3-13) instances of these classes
+        d.src = CollectorDef::Src::Classes;
+        for (const JsonValue& c : x->arr) {
+          const ClassId id = classIndex(str(&c));
+          if (id == 0) return fail("collector '" + name + "': unknown class '" + str(&c) + "'");
+          d.classes.push_back(id);
+        }
+      } else {
+        d.src = CollectorDef::Src::Outline;
+        if (str(x) != "outline") return fail("collector classes: 'outline' or a list of class names");
+      }
     } else if (const JsonValue* x = member(*q, "table")) {
       d.src = CollectorDef::Src::Table;
       d.table = str(x);
     } else if (const JsonValue* x = member(*q, "flow")) {
       d.src = CollectorDef::Src::Flow;
       d.flow = str(x);
-    } else {
+    } else if (!like) {
       return fail("collector '" + name + "': a query names classes, a table or a flow");
     }
-    d.nestByDepth = str(member(*q, "nest")) == "depth";
-    d.cited = str(member(*q, "cited")) == "cited-then-all" ? CollectorDef::Cited::CitedThenAll
-                                                              : CollectorDef::Cited::Cited;
-    std::string ctx = str(member(v, "context"), "collector");
-    d.ctx = ctx == "instance" ? CollectorDef::Ctx::Instance
-            : ctx == "row"    ? CollectorDef::Ctx::Row
+    // each field: given, else (like) the base's
+    auto field = [&](const JsonValue* o, const char* k, auto&& set) {
+      if (const JsonValue* x = member(*o, k)) set(str(x), x);
+      else if (!like) set(std::string(), nullptr);
+    };
+    field(q, "nest", [&](const std::string& x, auto) { d.nestByDepth = x == "depth"; });
+    field(q, "group", [&](const std::string& x, auto) { d.groupByKey = x == "key"; });
+    field(q, "order", [&](const std::string& x, auto) { d.bySortKey = x == "sort-key"; });
+    field(q, "cited", [&](const std::string& x, auto) {
+      d.cited = x == "cited-then-all" ? CollectorDef::Cited::CitedThenAll : CollectorDef::Cited::Cited;
+    });
+    bool ok = true;
+    field(q, "scope", [&](const std::string& x, auto) {
+      if (x == "section") d.scope = CollectorDef::Scope::Section;
+      else if (x.empty() || x == "doc") d.scope = CollectorDef::Scope::Doc;
+      else ok = fail("collector '" + name + "': a scope is doc or section");
+    });
+    field(q, "depth", [&](const std::string&, const JsonValue* x) { d.scopeDepth = x ? std::max(1, (int)x->num) : 1; });
+    field(&v, "context", [&](const std::string& x, auto) {
+      d.ctx = x == "instance" ? CollectorDef::Ctx::Instance
+              : x == "row"    ? CollectorDef::Ctx::Row
                               : CollectorDef::Ctx::Collector;
-    if (!tmpl(member(v, "wrap"), d.wrap) || !tmpl(member(v, "entry"), d.entry)) return false;
-    d.hasEmpty = member(v, "empty") != nullptr;
-    if (!tmpl(member(v, "empty"), d.empty)) return false;
+    });
+    if (!ok) return false;
+    for (auto [k, t] : {std::pair{"wrap", &d.wrap}, std::pair{"entry", &d.entry}})
+      if (const JsonValue* x = member(v, k); x || !like) {
+        t->clear();
+        if (!tmpl(x, *t)) return false;
+      }
+    if (const JsonValue* x = member(v, "empty"); x || !like) {
+      d.hasEmpty = x != nullptr;
+      d.empty.clear();
+      if (!tmpl(x, d.empty)) return false;
+    }
+    if (const JsonValue* x = member(v, "head"); x || !like) {
+      d.hasHead = x != nullptr;
+      d.head.clear();
+      if (!tmpl(x, d.head)) return false;
+    }
     if (const JsonValue* rows = member(v, "rows")) {
       d.keyedRows = true;
       d.rowCounter = counterIndex(str(member(*rows, "counter")));
@@ -605,7 +700,7 @@ bool Registry::reservedShape(std::string_view l) const {
   for (const ElementClass& c : classes) {
     bool dotted = c.counter != kNoIndex && counters[c.counter].byLevel;
     if (check(c.alias, dotted)) return true;
-    if (c.flow && check(c.flow->markerAlias, dotted)) return true;
+    if (c.flow && check(c.flow->markerAlias, true)) return true;  // (a marker's occurrences: dotted)
   }
   for (const CollectorDef& c : collectors)
     if (check(c.rowAnchor, false)) return true;

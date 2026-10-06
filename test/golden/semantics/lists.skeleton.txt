@@ -1,0 +1,17 @@
+doc @[0,1006)
+  code-block @[0,312) js="\n  // a user list of theorems with a static head, linking each item (plan P3-13)\n  $.element('theorem', {\n    counter: {name: 'thm'}, supplement: {en: 'Theorem '}, title: {arg: 'title'},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}],\n  })\n"
+  code-let @[313,563) js=" theorems = $.collector('theorems', {select: ['theorem'], head: [para(strong('Theorems'))], wrap: [list(false, each('items'))], entry: [item(para(link({to: 'target'}, slot('supplement'), slot('number')), when('title', ' — ', slot('title'))))]})"
+  heading1 @[565,604)
+  para @[606,612) lines=1
+  para @[614,620) lines=1
+  para @[622,633) lines=1
+  region @[635,763) name="figure"
+    para @[707,754) lines=1
+  region @[765,823) name="table"
+    para @[798,815) lines=2
+  region @[825,923) name="figure"
+    region @[850,880) name="table"
+      para @[867,872) lines=1
+    para @[881,914) lines=1
+  region @[925,1005) name="theorem"
+    para @[969,995) lines=1

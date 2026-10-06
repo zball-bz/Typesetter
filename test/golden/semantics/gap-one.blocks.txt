@@ -1,0 +1,71 @@
+top pid=0 units=10
+ unit text indent=1536su marker="•"
+  word "1" w=513su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "A" w=513su pen=INF LINK @[41,47)
+ unit text indent=4608su marker="•"
+  word "1.1.1" w=2561su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "A.c" w=1537su pen=INF LINK @[41,47)
+ unit text indent=1536su marker="•"
+  word "2" w=513su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "B" w=513su pen=INF LINK @[41,47)
+ unit text indent=3072su marker="•"
+  word "2.1" w=1537su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "B.a" w=1537su pen=INF LINK @[41,47)
+ unit text indent=3072su marker="•"
+  word "2.2" w=1537su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "B.b" w=1537su pen=INF LINK @[41,47)
+ unit text indent=1536su marker="•"
+  word "3" w=513su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "C" w=513su pen=INF LINK @[41,47)
+ unit text indent=3072su marker="•"
+  word "3.1" w=1537su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "C.a" w=1537su pen=INF LINK @[41,47)
+ unit text indent=1536su marker="•"
+  word "4" w=513su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "D" w=513su pen=INF LINK @[41,47)
+ unit text indent=4608su marker="•"
+  word "4.1.1" w=2561su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "D.c" w=1537su pen=INF LINK @[41,47)
+ unit text indent=3072su marker="•"
+  word "4.2" w=1537su pen=INF LINK @[41,47)
+  space w=257su stretch=1 LINK @[41,47)
+  word "D.b" w=1537su pen=INF LINK @[41,47)
+top pid=1 units=1
+ unit text indent=0su anchor="h-1"
+  word "A" w=821su pen=INF BOLD x1.60 @[51,52)
+top pid=2 units=1
+ unit text indent=0su anchor="h-1.1.1"
+  word "A.c" w=1768su pen=INF BOLD x1.15 @[58,61)
+top pid=3 units=1
+ unit text indent=0su anchor="h-2"
+  word "B" w=821su pen=INF BOLD x1.60 @[65,66)
+top pid=4 units=1
+ unit text indent=0su anchor="h-2.1"
+  word "B.a" w=2075su pen=INF BOLD x1.35 @[71,74)
+top pid=5 units=1
+ unit text indent=0su anchor="h-2.2"
+  word "B.b" w=2075su pen=INF BOLD x1.35 @[79,82)
+top pid=6 units=1
+ unit text indent=0su anchor="h-3"
+  word "C" w=821su pen=INF BOLD x1.60 @[86,87)
+top pid=7 units=1
+ unit text indent=0su anchor="h-3.1"
+  word "C.a" w=2075su pen=INF BOLD x1.35 @[92,95)
+top pid=8 units=1
+ unit text indent=0su anchor="h-4"
+  word "D" w=821su pen=INF BOLD x1.60 @[99,100)
+top pid=9 units=1
+ unit text indent=0su anchor="h-4.1.1"
+  word "D.c" w=1768su pen=INF BOLD x1.15 @[106,109)
+top pid=10 units=1
+ unit text indent=0su anchor="h-4.2"
+  word "D.b" w=2075su pen=INF BOLD x1.35 @[114,117)

@@ -119,6 +119,7 @@ class Builder {
     b.x = x;
     if (n) {
       b.span = n->span;
+      b.insertAt = n->insertAt;
       // a label is universal (plan P2-05): any block a node opens carries it
       // — not the top-level wrapper, which only borrows its child's span
       if (tr != TraitsId::Root) b.anchor = labelOf(n);

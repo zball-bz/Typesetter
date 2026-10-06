@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 14;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '298d48ea';
+export const SCHEMA_HASH = '2cebfc6d';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -311,7 +311,8 @@ export const SINCE = Object.freeze({
       "34": 9,
       "35": 9,
       "54": 11,
-      "55": 11
+      "55": 11,
+      "77": 14
     },
     "20": {
       "0": 9,
@@ -455,7 +456,8 @@ export const SINCE = Object.freeze({
       "35": 9,
       "43": 10,
       "54": 11,
-      "55": 11
+      "55": 11,
+      "78": 14
     },
     "31": {
       "0": 9,
@@ -672,7 +674,9 @@ export const ARGK = Object.freeze({
   "features": 73,
   "punct": 74,
   "kind": 75,
-  "parSingleLine": 76
+  "parSingleLine": 76,
+  "to": 77,
+  "sortKey": 78
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -1062,6 +1066,7 @@ export const SCHEMA = Object.freeze({
     "attrs": {
       "url": "url",
       "target": "str",
+      "to": "ident",
       "label": "label",
       "role": "ident",
       "slot": "ident",
@@ -1285,6 +1290,7 @@ export const SCHEMA = Object.freeze({
     "inline": "skip",
     "attrs": {
       "key": "str",
+      "sortKey": "str",
       "label": "label",
       "role": "ident",
       "slot": "ident",

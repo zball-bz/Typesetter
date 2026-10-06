@@ -1,0 +1,52 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[565,604)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1" @[565,604)
+top pid=1 leaves=1
+  stack root gap=1/1 @[606,612)
+    stack list pad=1536su gap=1/3 @[606,612)
+      stack item x=1536su @[606,612)
+        paragraph para unit=0 x=1536su marker="•" @[606,612)
+top pid=2 leaves=2
+  stack root gap=1/1 @[614,620)
+    stack list pad=1536su gap=1/3 @[614,620)
+      stack item x=1536su @[614,620)
+        paragraph para unit=0 x=1536su marker="•" @[614,620)
+      stack item x=1536su @[614,620)
+        paragraph para unit=1 x=1536su marker="•" @[614,620)
+top pid=3 leaves=1
+  stack root gap=1/1 @[622,633)
+    paragraph para unit=0 @[622,633)
+top pid=4 leaves=1
+  stack root gap=1/1 @[622,633)
+    stack list pad=1536su gap=1/3 @[622,633)
+      stack item x=1536su @[622,633)
+        paragraph para unit=0 x=1536su marker="•" @[622,633)
+top pid=5 leaves=2
+  stack root gap=1/1 @[635,763)
+    stack figure anchor="fig-a" @[635,763)
+      replaced image image unit=0 ragged keep-with-next carry="fig-a" @[635,763)
+      paragraph caption unit=1 single-center @[707,754)
+top pid=6 leaves=4
+  stack root gap=1/1 @[765,823)
+    table table anchor="tbl-b" @[765,823)
+      stack cell @[765,823)
+        paragraph para unit=0 carry="tbl-b" @[765,823)
+      stack cell @[765,823)
+        paragraph para unit=1 @[765,823)
+      stack cell @[765,823)
+        paragraph para unit=2 @[765,823)
+      stack cell @[765,823)
+        paragraph para unit=3 @[765,823)
+top pid=7 leaves=3
+  stack root gap=1/1 @[825,923)
+    stack figure anchor="tbl-c" @[825,923)
+      table table @[850,880)
+        stack cell @[850,880)
+          paragraph para unit=0 carry="tbl-c" @[850,880)
+        stack cell @[850,880)
+          paragraph para unit=1 @[850,880)
+      paragraph caption unit=2 single-center @[881,914)
+top pid=8 leaves=1
+  stack root gap=1/1 @[925,1005)
+    stack group anchor="thm-main" @[925,1005)
+      paragraph para unit=0 carry="thm-main" @[969,995)

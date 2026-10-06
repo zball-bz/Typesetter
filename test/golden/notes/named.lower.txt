@@ -1,0 +1,31 @@
+lower v1 abi 3d3ccfbb docEnd 398 holes 3 module 689c569f3143e46d
+piece 0 hole 0 js [133,179)
+piece 1 hole 1 js [181,217)
+piece 2 hole 2 js [219,255)
+block 0 content [0,141)
+  CALL para [0,141)
+    TEXT "Named notes (plan P3-13): a labelled note is named, and a marker reference marks it again — one entry, three markers, its back-links a b c." [0,141)
+block 1 content [143,338) user framed holes 0..3
+  CALL para [143,338)
+    TEXT "The claim" [143,152)
+    CALL note [152,168)
+      TEXT "A plain note." [154,167)
+    TEXT " rests on one source" [169,188) raw=0:0,1:0
+    HOLE 0 [188,240)
+      CALL seq
+        TEXT "Knuth, " [210,216) raw=0:0,7:6
+        CALL em [217,230)
+          TEXT "The TeXbook" [218,229)
+        TEXT ", p. 101." [230,239)
+    TEXT " that is cited again here" [241,265) raw=0:0,1:0
+    HOLE 1 [265,294)
+    TEXT " and once more" [295,308) raw=0:0,1:0
+    HOLE 2 [308,337)
+    TEXT "." [337,338)
+block 2 content [340,397)
+  CALL para [340,397)
+    TEXT "The note itself reads " [340,361) raw=0:0,22:21
+    CALL ref [362,366) target="src"
+    TEXT "; its second marker " [366,385) raw=0:0,20:19
+    CALL ref [386,396) target="fnref-2.2"
+    TEXT "." [396,397)

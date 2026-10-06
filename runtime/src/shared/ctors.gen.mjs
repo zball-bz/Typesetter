@@ -460,6 +460,7 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "options": [
       "target",
+      "to",
       "label",
       "role",
       "slot",
@@ -676,6 +677,7 @@ export const CTOR_SPECS = Object.freeze({
     "params": [],
     "options": [
       "key",
+      "sortKey",
       "label",
       "role",
       "slot",
@@ -1015,6 +1017,72 @@ export const CTOR_SPECS = Object.freeze({
     "derived": true,
     "async": false
   },
+  "lof": {
+    "kind": "collect",
+    "params": [],
+    "options": [
+      "what",
+      "form",
+      "cited",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext",
+      "style",
+      "attach"
+    ],
+    "nullary": true,
+    "sealed": false,
+    "derived": true,
+    "async": false
+  },
+  "lot": {
+    "kind": "collect",
+    "params": [],
+    "options": [
+      "what",
+      "form",
+      "cited",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext",
+      "style",
+      "attach"
+    ],
+    "nullary": true,
+    "sealed": false,
+    "derived": true,
+    "async": false
+  },
+  "index": {
+    "kind": "collect",
+    "params": [],
+    "options": [
+      "what",
+      "form",
+      "cited",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext",
+      "style",
+      "attach"
+    ],
+    "nullary": true,
+    "sealed": false,
+    "derived": true,
+    "async": false
+  },
   "notes": {
     "kind": "collect",
     "params": [],
@@ -1113,9 +1181,12 @@ export const STD_NAMES = Object.freeze([
   "group",
   "heading",
   "image",
+  "index",
   "item",
   "link",
   "list",
+  "lof",
+  "lot",
   "m",
   "math",
   "mathblock",

@@ -1,0 +1,36 @@
+lower v1 abi 3d3ccfbb docEnd 499 holes 1 module 07ebc4782898d74f
+piece 0 hole 0 js [103,418)
+block 0 stmt [0,310) user framed holes 0..1
+  STMT 0
+block 1 content [312,317)
+  CALL heading [312,317) level=1 label=null
+    TEXT "One" [314,317)
+block 2 content [319,371)
+  CALL para [319,371)
+    TEXT "First" [319,324)
+    CALL note [324,338)
+      TEXT "One, first." [326,337)
+    TEXT " and second" [339,349) raw=0:0,1:0
+    CALL note [349,364)
+      TEXT "One, second." [351,363)
+    TEXT " notes." [365,371) raw=0:0,1:0
+block 3 content [373,388)
+  CALL heading [373,388) level=2 label=null
+    TEXT "A subsection" [376,388)
+block 4 content [390,439)
+  CALL para [390,439)
+    TEXT "A third" [390,397)
+    CALL note [397,411)
+      TEXT "One, third." [399,410)
+    TEXT " note, still in chapter one." [412,439) raw=0:0,1:0
+block 5 content [441,446)
+  CALL heading [441,446) level=1 label=null
+    TEXT "Two" [443,446)
+block 6 content [448,498)
+  CALL para [448,498)
+    TEXT "Again" [448,453)
+    CALL note [453,467)
+      TEXT "Two, first." [455,466)
+    TEXT " the first; " [468,478) raw=0:0,1:0,12:10
+    CALL ref [479,484) target="fn-4"
+    TEXT " stays unique." [485,498) raw=0:0,1:0

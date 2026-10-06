@@ -1,0 +1,32 @@
+lower v1 abi 3d3ccfbb docEnd 397 holes 3 module d5fd633a721ab8c1
+piece 0 hole 0 js [129,164)
+piece 1 hole 1 js [166,224)
+piece 2 hole 2 js [226,271)
+block 0 content [0,27)
+  CALL heading [0,27) level=1 label=null
+    TEXT "A note in a styled region" [2,27)
+block 1 content [29,88)
+  CALL para [29,88)
+    TEXT "Outside, a marker" [29,46)
+    CALL note [46,63)
+      TEXT "An outer note." [48,62)
+    TEXT " takes the default rules." [64,88) raw=0:0,1:0
+block 2 content [90,336) user framed async holes 0..3
+  REGION async "aside" args=hole 0 [90,336)
+    FRAME [125,176) holes 1..2
+      STMT 1
+    FRAME [177,215) holes 2..3
+      STMT 2
+    CALL para [216,328)
+      TEXT "Inside the grey region a scoped rule colours its markers" [216,272)
+      CALL note [272,323)
+        TEXT "A note whose " [274,286) raw=0:0,13:12
+        CALL code [287,293) text="code"
+        TEXT " keeps the rule of its place." [294,322) raw=0:0,1:0
+      TEXT " red." [324,328) raw=0:0,1:0
+block 3 content [338,396)
+  CALL para [338,396)
+    TEXT "After the region, a marker" [338,364)
+    CALL note [364,380)
+      TEXT "A later note." [366,379)
+    TEXT " is plain again." [381,396) raw=0:0,1:0

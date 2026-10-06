@@ -1,0 +1,121 @@
+doc @[1125,1425) [base]
+  list @[1125,1131) [base] ordered=false
+    item @[1125,1131) [base]
+      para @[1125,1131) [base]
+        link @[1125,1131) [base] target="part-f"
+          text @[1125,1131) [base] str="I "
+          text @[1125,1131) [base] str="Foundations"
+      list @[1125,1131) [base] ordered=false
+        item @[1125,1131) [base]
+          para @[1125,1131) [base]
+            link @[1125,1131) [base] target="ch-tt"
+              text @[1125,1131) [base] str="1 "
+              text @[1125,1131) [base] str="Type theory"
+          list @[1125,1131) [base] ordered=false
+            item @[1125,1131) [base]
+              para @[1125,1131) [base]
+                link @[1125,1131) [base] target="sec-j"
+                  text @[1125,1131) [base] str="1.1 "
+                  text @[1125,1131) [base] str="Judgments"
+        item @[1125,1131) [base]
+          para @[1125,1131) [base]
+            link @[1125,1131) [base] target="ch-hott"
+              text @[1125,1131) [base] str="2 "
+              text @[1125,1131) [base] str="Homotopy type theory"
+    item @[1125,1131) [base]
+      para @[1125,1131) [base]
+        link @[1125,1131) [base]
+          text @[1125,1131) [base] str="II "
+          text @[1125,1131) [base] str="Mathematics"
+      list @[1125,1131) [base] ordered=false
+        item @[1125,1131) [base]
+          para @[1125,1131) [base]
+            link @[1125,1131) [base] target="ch-sets"
+              text @[1125,1131) [base] str="3 "
+              text @[1125,1131) [base] str="Sets"
+        item @[1125,1131) [base]
+          para @[1125,1131) [base]
+            link @[1125,1131) [base] target="ch-n"
+              text @[1125,1131) [base] str="A "
+              text @[1125,1131) [base] str="Notation"
+          list @[1125,1131) [base] ordered=false
+            item @[1125,1131) [base]
+              para @[1125,1131) [base]
+                link @[1125,1131) [base] target="sec-s"
+                  text @[1125,1131) [base] str="A.1 "
+                  text @[1125,1131) [base] str="Symbols"
+  heading @[1133,1146) [BOLDx1.60] level=1 label="part-f"
+    text @[1133,1146) [BOLDx1.60] str="Part I "
+    text @[1135,1146) [BOLDx1.60] str="Foundations"
+  heading @[1157,1171) [BOLDx1.35] level=2 label="ch-tt"
+    text @[1157,1171) [BOLDx1.35] str="Chapter 1 "
+    text @[1160,1171) [BOLDx1.35] str="Type theory"
+  heading @[1181,1194) [BOLDx1.15] level=3 label="sec-j"
+    text @[1181,1194) [BOLDx1.15] str="§1.1 "
+    text @[1185,1194) [BOLDx1.15] str="Judgments"
+  mathblock @[1204,1220) [base] label="eq-j" name="(1.1)"
+    mathsrc @[1206,1211) [base] src="a = b"
+    seq @[1204,1220) [base] slot="tag"
+      text @[1204,1220) [base] str="(1.1)"
+  heading @[1222,1245) [BOLDx1.35] level=2 label="ch-hott"
+    text @[1222,1245) [BOLDx1.35] str="Chapter 2 "
+    text @[1225,1245) [BOLDx1.35] str="Homotopy type theory"
+  heading @[1257,1270) [BOLDx1.60] level=1
+    text @[1257,1270) [BOLDx1.60] str="Part II "
+    text @[1259,1270) [BOLDx1.60] str="Mathematics"
+  heading @[1272,1279) [BOLDx1.35] level=2 label="ch-sets"
+    text @[1272,1279) [BOLDx1.35] str="Chapter 3 "
+    text @[1275,1279) [BOLDx1.35] str="Sets"
+  heading @[1304,1315) [BOLDx1.35] level=2 label="ch-n"
+    text @[1304,1315) [BOLDx1.35] str="Appendix A "
+    text @[1307,1315) [BOLDx1.35] str="Notation"
+  heading @[1324,1335) [BOLDx1.15] level=3 label="sec-s"
+    text @[1324,1335) [BOLDx1.15] str="§A.1 "
+    text @[1328,1335) [BOLDx1.15] str="Symbols"
+  mathblock @[1345,1361) [base] label="eq-s" name="(A.1)"
+    mathsrc @[1347,1352) [base] src="x = x"
+    seq @[1345,1361) [base] slot="tag"
+      text @[1345,1361) [base] str="(A.1)"
+  para @[1363,1425) [base]
+    text @[1363,1366) [base] str="See " raw=0:0,4:3
+    ref @[1367,1374) [base] target="part-f"
+      text @[1367,1374) [base] str="Part I"
+    text @[1374,1375) [base] str=", " raw=0:0,2:1
+    ref @[1376,1384) [base] target="ch-hott"
+      text @[1376,1384) [base] str="Chapter 2"
+    text @[1384,1385) [base] str=", " raw=0:0,2:1
+    ref @[1386,1392) [base] target="sec-j"
+      text @[1386,1392) [base] str="§1.1"
+    text @[1392,1393) [base] str=", " raw=0:0,2:1
+    ref @[1394,1399) [base] target="eq-j"
+      text @[1394,1399) [base] str="式 (1.1)"
+    text @[1399,1400) [base] str=", " raw=0:0,2:1
+    ref @[1401,1406) [base] target="ch-n"
+      text @[1401,1406) [base] str="Appendix A"
+    text @[1406,1407) [base] str=", " raw=0:0,2:1
+    ref @[1408,1414) [base] target="sec-s"
+      text @[1408,1414) [base] str="§A.1"
+    text @[1415,1418) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[1419,1424) [base] target="eq-s"
+      text @[1419,1424) [base] str="式 (A.1)"
+    text @[1424,1425) [base] str="."
+decl counter-system name="roman" flow=0 @[0,0) ext.row="{\"symbols\":[\"X\",\"IX\",\"V\",\"IV\",\"I\"],\"mode\":\"additive\",\"weights\":[10,9,5,4,1]}"
+decl counter name="part" flow=0 @[0,0) ext.row="{\"pattern\":\"{roman}\"}"
+decl element name="part" flow=0 @[0,0) ext.row="{\"select\":[{\"node\":\"heading\",\"level\":1}],\"counter\":\"part\",\"supplement\":{\"en\":\"Part \"},\"title\":\"text\",\"outline\":true,\"sites\":[{\"where\":\"prepend\",\"at\":\"self\",\"template\":{\"$t\":0}}],\"numbering\":\"always\"}"
+  seq @[0,0) [base]
+    slot @[0,0) [base] name="supplement"
+    slot @[0,0) [base] name="number"
+    text @[0,0) [base] str=" "
+decl counter name="chapter" flow=0 @[0,0) ext.row="{}"
+decl element name="chapter" flow=0 @[0,0) ext.row="{\"select\":[{\"node\":\"heading\",\"level\":2}],\"counter\":\"chapter\",\"supplement\":{\"en\":\"Chapter \"},\"title\":\"text\",\"outline\":true,\"sites\":[{\"where\":\"prepend\",\"at\":\"self\",\"template\":{\"$t\":0}}],\"numbering\":\"always\"}"
+  seq @[0,0) [base]
+    slot @[0,0) [base] name="supplement"
+    slot @[0,0) [base] name="number"
+    text @[0,0) [base] str=" "
+decl counter name="section" flow=0 @[0,0) ext.row="{\"within\":{\"counter\":\"chapter\"}}"
+decl element name="section" flow=0 @[0,0) ext.row="{\"select\":[{\"node\":\"heading\",\"level\":3}],\"counter\":\"section\",\"supplement\":{\"en\":\"§\"},\"title\":\"text\",\"outline\":true,\"sites\":[{\"where\":\"prepend\",\"at\":\"self\",\"template\":{\"$t\":0}}],\"numbering\":\"always\"}"
+  seq @[0,0) [base]
+    slot @[0,0) [base] name="supplement"
+    slot @[0,0) [base] name="number"
+    text @[0,0) [base] str=" "
+decl counter name="equation" flow=0 @[0,0) ext.row="{\"within\":{\"counter\":\"chapter\"}}"

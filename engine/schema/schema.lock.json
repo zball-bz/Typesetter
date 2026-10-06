@@ -272,7 +272,9 @@
   "features": 73,
   "punct": 74,
   "kind": 75,
-  "parSingleLine": 76
+  "parSingleLine": 76,
+  "to": 77,
+  "sortKey": 78
  },
  "attrs": {
   "para.label": 9,
@@ -486,6 +488,7 @@
   "styled.attach": 11,
   "link.url": 6,
   "link.target": 13,
+  "link.to": 14,
   "link.label": 9,
   "link.role": 9,
   "link.slot": 9,
@@ -608,6 +611,7 @@
   "event.style": 11,
   "event.attach": 11,
   "entry.key": 10,
+  "entry.sortKey": 14,
   "entry.label": 9,
   "entry.role": 9,
   "entry.slot": 9,

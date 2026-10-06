@@ -1,0 +1,64 @@
+doc @[312,498) [base]
+  heading @[312,317) [BOLDx1.60] level=1 label="h-1"
+    text @[314,317) [BOLDx1.60] str="One"
+  para @[319,371) [base]
+    text @[319,324) [base] str="First"
+    ref @[324,338) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
+      text @[324,338) [SUPx0.70] str="①"
+    text @[339,349) [base] str=" and second" raw=0:0,1:0
+    ref @[349,364) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" syn="fn-marker" copy="omit"
+      text @[349,364) [SUPx0.70] str="②"
+    text @[365,371) [base] str=" notes." raw=0:0,1:0
+  heading @[373,388) [BOLDx1.35] level=2 label="h-1.1"
+    text @[376,388) [BOLDx1.35] str="A subsection"
+  para @[390,439) [base]
+    text @[390,397) [base] str="A third"
+    ref @[397,411) [SUPx0.70] role="fn-marker" attach="prev" target="fn-3" label="fnref-3" syn="fn-marker" copy="omit"
+      text @[397,411) [SUPx0.70] str="③"
+    text @[412,439) [base] str=" note, still in chapter one." raw=0:0,1:0
+  group @[312,498) [base] role="notes"
+    rule @[312,498) [base]
+    list @[312,498) [base] ordered=true
+      item @[324,338) [base]
+        para @[324,338) [base] label="fn-1"
+          styled @[324,338) [basex0.85] role="note-body"
+            text @[326,337) [basex0.85] str="One, first."
+            text @[324,338) [basex0.85] str=" "
+            ref @[324,338) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
+              text @[324,338) [basex0.85] str="↩"
+      item @[349,364) [base]
+        para @[349,364) [base] label="fn-2"
+          styled @[349,364) [basex0.85] role="note-body"
+            text @[351,363) [basex0.85] str="One, second."
+            text @[349,364) [basex0.85] str=" "
+            ref @[349,364) [basex0.85] target="fnref-2" syn="backlink" copy="omit"
+              text @[349,364) [basex0.85] str="↩"
+      item @[397,411) [base]
+        para @[397,411) [base] label="fn-3"
+          styled @[397,411) [basex0.85] role="note-body"
+            text @[399,410) [basex0.85] str="One, third."
+            text @[397,411) [basex0.85] str=" "
+            ref @[397,411) [basex0.85] target="fnref-3" syn="backlink" copy="omit"
+              text @[397,411) [basex0.85] str="↩"
+  heading @[441,446) [BOLDx1.60] level=1 label="h-2"
+    text @[443,446) [BOLDx1.60] str="Two"
+  para @[448,498) [base]
+    text @[448,453) [base] str="Again"
+    ref @[453,467) [SUPx0.70] role="fn-marker" attach="prev" target="fn-4" label="fnref-4" syn="fn-marker" copy="omit"
+      text @[453,467) [SUPx0.70] str="①"
+    text @[468,478) [base] str=" the first; " raw=0:0,1:0,12:10
+    ref @[479,484) [base] target="fn-4"
+      text @[479,484) [base] str="①"
+    text @[485,498) [base] str=" stays unique." raw=0:0,1:0
+  group @[312,498) [base] role="notes"
+    rule @[312,498) [base]
+    list @[312,498) [base] ordered=true
+      item @[453,467) [base]
+        para @[453,467) [base] label="fn-4"
+          styled @[453,467) [basex0.85] role="note-body"
+            text @[455,466) [basex0.85] str="Two, first."
+            text @[453,467) [basex0.85] str=" "
+            ref @[453,467) [basex0.85] target="fnref-4" syn="backlink" copy="omit"
+              text @[453,467) [basex0.85] str="↩"
+decl counter name="footnote" flow=0 @[0,310) ext.row="{\"pattern\":\"①\",\"within\":{\"counter\":\"heading\",\"depth\":1,\"prefix\":false}}"
+decl element name="footnote" flow=0 @[0,310) ext.row="{\"flow\":{\"placement\":\"section-end\",\"depth\":1}}"

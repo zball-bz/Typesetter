@@ -1,0 +1,110 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  box Other "One" w=2459su r0 @[314,317)
+  run r0 plain BOLD x1.60
+top pid=1 units=1
+ unit text indent=0su
+  box Other "First" w=2561su r0 @[319,324)
+  box Other "①" w=432su anchor="fnref-1" r1 @[324,338)
+  glue word w=257su x=1 cap=257su src r2 @[339,349)
+  box Other "and" w=1537su r2 @[339,349)
+  glue word w=257su x=1 cap=257su kern="d s" src r2 @[339,349)
+  box Other "sec" w=1537su r2 @[339,349)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r2 @[339,349)
+  box Other "ond" w=1537su r2 @[339,349)
+  box Other "②" w=432su anchor="fnref-2" r3 @[349,364)
+  glue word w=257su x=1 cap=257su src r4 @[365,371)
+  box Other "notes." w=3073su r4 @[365,371)
+  run r0 plain
+  run r1 plain ref LINK x0.70 link="#tsr-fn-1" anchor="fnref-1"
+  run r2 plain
+  run r3 plain ref LINK x0.70 link="#tsr-fn-2" anchor="fnref-2"
+  run r4 plain
+top pid=2 units=1
+ unit text indent=0su anchor="h-1.1"
+  box Other "A" w=693su r0 @[376,388)
+  glue word w=347su x=1 cap=347su kern="A s" src r0 @[376,388)
+  box Other "subsection" w=6914su r0 @[376,388)
+  run r0 plain BOLD x1.35
+top pid=3 units=1
+ unit text indent=0su
+  box Other "A" w=513su r0 @[390,397)
+  glue word w=257su x=1 cap=257su kern="A t" src r0 @[390,397)
+  box Other "third" w=2561su r0 @[390,397)
+  box Other "③" w=432su anchor="fnref-3" r1 @[397,411)
+  glue word w=257su x=1 cap=257su src r2 @[412,439)
+  box Other "note," w=2561su r2 @[412,439)
+  glue word w=257su x=1 cap=257su kern=", s" src r2 @[412,439)
+  box Other "still" w=2561su r2 @[412,439)
+  glue word w=257su x=1 cap=257su kern="l i" src r2 @[412,439)
+  box Other "in" w=1025su r2 @[412,439)
+  glue word w=257su x=1 cap=257su kern="n c" src r2 @[412,439)
+  box Other "chap" w=2049su r2 @[412,439)
+  disc pen=0.7 w=0su pre="-" 513su kern="pt" r2 @[412,439)
+  box Other "ter" w=1537su r2 @[412,439)
+  glue word w=257su x=1 cap=257su kern="r o" src r2 @[412,439)
+  box Other "one." w=2049su r2 @[412,439)
+  run r0 plain
+  run r1 plain ref LINK x0.70 link="#tsr-fn-3" anchor="fnref-3"
+  run r2 plain
+top pid=4 units=4
+ unit rule indent=0su
+ unit text indent=1536su anchor="fn-1" marker="①."
+  box Other "One," w=1742su r0 @[326,337)
+  glue word w=219su x=1 cap=219su kern=", f" src r0 @[326,337)
+  box Other "first." w=2613su r0 @[326,337)
+  glue word w=219su x=1 cap=219su src r0 @[324,338)
+  box Other "↩" w=524su r1 @[324,338)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-1"
+ unit text indent=1536su anchor="fn-2" marker="②."
+  box Other "One," w=1742su r0 @[351,363)
+  glue word w=219su x=1 cap=219su kern=", s" src r0 @[351,363)
+  box Other "sec" w=1307su r0 @[351,363)
+  disc pen=0.7 w=0su pre="-" 437su kern="co" r0 @[351,363)
+  box Other "ond." w=1742su r0 @[351,363)
+  glue word w=219su x=1 cap=219su src r0 @[349,364)
+  box Other "↩" w=524su r1 @[349,364)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-2"
+ unit text indent=1536su anchor="fn-3" marker="③."
+  box Other "One," w=1742su r0 @[399,410)
+  glue word w=219su x=1 cap=219su kern=", t" src r0 @[399,410)
+  box Other "third." w=2613su r0 @[399,410)
+  glue word w=219su x=1 cap=219su src r0 @[397,411)
+  box Other "↩" w=524su r1 @[397,411)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-3"
+top pid=5 units=1
+ unit text indent=0su anchor="h-2"
+  box Other "Two" w=2459su r0 @[443,446)
+  run r0 plain BOLD x1.60
+top pid=6 units=1
+ unit text indent=0su
+  box Other "Again" w=2561su r0 @[448,453)
+  box Other "①" w=432su anchor="fnref-4" r1 @[453,467)
+  glue word w=257su x=1 cap=257su src r2 @[468,478)
+  box Other "the" w=1537su r2 @[468,478)
+  glue word w=257su x=1 cap=257su kern="e f" src r2 @[468,478)
+  box Other "first;" w=3073su r2 @[468,478)
+  glue word w=257su x=1 cap=257su src r2 @[468,478)
+  box Other "①" w=616su r3 @[479,484)
+  glue word w=257su x=1 cap=257su src r4 @[485,498)
+  box Other "stays" w=2561su r4 @[485,498)
+  glue word w=257su x=1 cap=257su kern="s u" src r4 @[485,498)
+  box Other "unique." w=3585su r4 @[485,498)
+  run r0 plain
+  run r1 plain ref LINK x0.70 link="#tsr-fn-4" anchor="fnref-4"
+  run r2 plain
+  run r3 plain ref LINK link="#tsr-fn-4"
+  run r4 plain
+top pid=7 units=2
+ unit rule indent=0su
+ unit text indent=1536su anchor="fn-4" marker="①."
+  box Other "Two," w=1742su r0 @[455,466)
+  glue word w=219su x=1 cap=219su kern=", f" src r0 @[455,466)
+  box Other "first." w=2613su r0 @[455,466)
+  glue word w=219su x=1 cap=219su src r0 @[453,467)
+  box Other "↩" w=524su r1 @[453,467)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-4"

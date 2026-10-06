@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"One","label":null,"span":[312,317]},{"level":2,"title":"A subsection","label":null,"span":[373,388]},{"level":1,"title":"Two","label":null,"span":[441,446]}],"regions":[],"fences":[],"labels":[],"diagnostics":[]}

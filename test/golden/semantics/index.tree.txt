@@ -1,0 +1,45 @@
+doc @[0,532) [base]
+  para @[0,110) [base]
+    text @[0,110) [base] str="A back-of-book index (plan P3-13): entries anywhere, a key with several occurrences, sorted by their sort key."
+  para @[112,261) [base]
+    text @[112,113) [base] str="A " raw=0:0,2:1
+    entry @[114,160) [base] key="monad" role="index" label="idx-1"
+    text @[160,198) [base] str="monad is a monoid in endofunctors; the " raw=0:0,39:38
+    entry @[199,235) [base] key="zeta" role="index" label="idx-2"
+    text @[235,261) [base] str="zeta function comes later."
+  para @[263,436) [base]
+    text @[263,268) [base] str="Every " raw=0:0,6:5
+    entry @[269,328) [base] key="functor" sortKey="functor" role="index" label="idx-3"
+    text @[328,364) [base] str="functor preserves composition, and a " raw=0:0,37:36
+    entry @[365,402) [base] key="monad" role="index" label="idx-4"
+    text @[402,436) [base] str="monad is a functor with structure."
+  para @[438,522) [base]
+    text @[438,444) [base] str="单子"
+    entry @[444,501) [base] key="单子" sortKey="dan zi" role="index" label="idx-5"
+    text @[501,522) [base] str="与函子的关系。"
+  list @[524,532) [base] ordered=false
+    item @[524,532) [base]
+      para @[524,532) [base]
+        text @[524,532) [base] str="单子 "
+        link @[524,532) [base] target="idx-5"
+          text @[524,532) [base] str="1"
+    item @[524,532) [base]
+      para @[524,532) [base]
+        text @[524,532) [base] str="functor "
+        link @[524,532) [base] target="idx-3"
+          text @[524,532) [base] str="1"
+    item @[524,532) [base]
+      para @[524,532) [base]
+        styled @[524,532) [BOLD]
+          text @[524,532) [BOLD] str="monad"
+        text @[524,532) [base] str=" "
+        link @[524,532) [base] target="idx-1"
+          text @[524,532) [base] str="1"
+        text @[524,532) [base] str=", "
+        link @[524,532) [base] target="idx-4"
+          text @[524,532) [base] str="2"
+    item @[524,532) [base]
+      para @[524,532) [base]
+        text @[524,532) [base] str="zeta "
+        link @[524,532) [base] target="idx-2"
+          text @[524,532) [base] str="1"

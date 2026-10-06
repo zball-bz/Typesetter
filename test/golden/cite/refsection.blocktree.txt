@@ -1,0 +1,33 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[57,77)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1" @[57,77)
+top pid=1 leaves=1
+  stack root gap=1/1 @[79,129)
+    paragraph para unit=0 @[79,129)
+top pid=2 leaves=5
+  stack root gap=1/1 @[131,264)
+    stack group @[131,264)
+      paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1.1" @[144,158)
+      paragraph para unit=1 @[160,242)
+      stack group @[244,251)
+        replaced rule rule unit=2 @[244,251)
+        paragraph para unit=3 anchor="bib-1-kp81" @[432,527)
+        paragraph para unit=4 anchor="bib-1-knuth84" @[529,598)
+top pid=3 leaves=5
+  stack root gap=1/1 @[266,376)
+    stack group @[266,376)
+      paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1.2" @[279,293)
+      paragraph para unit=1 @[295,354)
+      stack group @[356,363)
+        replaced rule rule unit=2 @[356,363)
+        paragraph para unit=3 anchor="bib-2-knuth84" @[529,598)
+        paragraph para unit=4 anchor="bib-2-liang83" @[600,686)
+top pid=4 leaves=1
+  stack root gap=1/1 @[378,421)
+    paragraph para unit=0 @[378,421)
+top pid=5 leaves=3
+  stack root gap=1/1 @[423,430)
+    stack group @[423,430)
+      replaced rule rule unit=0 @[423,430)
+      paragraph para unit=1 anchor="bib-liang83" @[600,686)
+      paragraph para unit=2 anchor="bib-kp81" @[432,527)

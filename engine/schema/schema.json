@@ -40,7 +40,7 @@
     "parIndent": 57, "parAlign": 58, "parHyphenate": 59, "blockGap": 60, "blockIndent": 61,
     "keepWithNext": 62, "listMarker": 63, "matchKind": 64, "matchRole": 65, "matchClass": 66, "matchLang": 67,
     "matchDepth": 68, "matchWhere": 69, "snapKerning": 70, "sidecarFrac": 71, "contIndent": 72, "features": 73,
-    "punct": 74, "kind": 75, "parSingleLine": 76
+    "punct": 74, "kind": 75, "parSingleLine": 76, "to": 77, "sortKey": 78
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -122,7 +122,7 @@
       "punct": {"dom": "enum:full|book|none", "since": 13},
       "parSingleLine": {"dom": "enum:align|center", "since": 14}}},
     "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "ctor": {"params": ["attr:url"]}, "attrs": {
-      "url": {"dom": "url"}, "target": {"dom": "str", "since": 13}}},
+      "url": {"dom": "url"}, "target": {"dom": "str", "since": 13}, "to": {"dom": "ident", "since": 14}}},
     "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
     "ref": {"id": 21, "level": "inline", "inline": "container", "body": "none", "since": 6, "ctor": {"params": ["attr:target"]}, "attrs": {
       "target": {"dom": "str"},
@@ -156,7 +156,7 @@
       "numbering": {"dom": "str"},
       "supplement": {"dom": "str"}}},
     "entry": {"id": 30, "level": "trivia", "inline": "skip", "body": "inline", "since": 10, "ctor": {}, "attrs": {
-      "key": {"dom": "str"}}},
+      "key": {"dom": "str"}, "sortKey": {"dom": "str", "since": 14}}},
     "slot": {"id": 31, "level": "inline", "inline": "skip", "body": "none", "since": 10, "ctor": {"params": ["attr:name"]}, "attrs": {
       "name": {"dom": "str"},
       "or": {"dom": "str"}}},
@@ -242,6 +242,9 @@
       "figure": {"kind": "group", "params": ["body"], "options": "raw"},
       "toc": {"kind": "collect", "nullary": true},
       "glossary": {"kind": "collect", "nullary": true},
+      "lof": {"kind": "collect", "nullary": true},
+      "lot": {"kind": "collect", "nullary": true},
+      "index": {"kind": "collect", "nullary": true},
       "notes": {"kind": "collect", "nullary": true},
       "bibliography": {"kind": "collect", "params": ["attr:src:str"], "options": "raw", "async": true},
       "counterUpdate": {"kind": "event", "params": ["attr:counter:ident"], "options": "raw"},

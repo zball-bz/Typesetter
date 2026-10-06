@@ -1,0 +1,31 @@
+lower v1 abi 3d3ccfbb docEnd 917 holes 1 module 1480474ae90d3f63
+piece 0 hole 0 js [103,381)
+block 0 stmt [0,273) user framed holes 0..1
+  STMT 0
+block 1 content [275,284)
+  CALL heading [275,284) level=1 label=null
+    TEXT "Inserts" [277,284)
+block 2 content [286,476)
+  CALL para [286,476)
+    TEXT "The first sheet carries a note here" [286,321)
+    CALL note [321,375)
+      TEXT "The first note sits at the foot of the first sheet." [323,374)
+    TEXT " and its running text continues with ordinary words to fill the measure and push the paragraphs down." [376,476) raw=0:0,1:0
+block 3 content [478,588)
+  CALL para [478,588)
+    TEXT "Filler paragraph two continues to push the content down the page by a few more lines of ordinary running text." [478,588)
+block 4 content [590,753)
+  CALL para [590,753)
+    TEXT "A note in the middle of the document" [590,626)
+    CALL note [626,682)
+      TEXT "The second note, on the second sheet with its marker." [628,681)
+    TEXT " goes with the line that holds its marker, wherever the page cut falls." [683,753) raw=0:0,1:0
+block 5 content [755,866)
+  CALL para [755,866)
+    TEXT "Filler paragraph four continues to push the content down the page by a few more lines of ordinary running text." [755,866)
+block 6 content [868,916)
+  CALL para [868,916)
+    TEXT "The last note" [868,881)
+    CALL note [881,899)
+      TEXT "The third note." [883,898)
+    TEXT " closes the text." [900,916) raw=0:0,1:0

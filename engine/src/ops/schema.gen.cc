@@ -260,6 +260,7 @@ const char* const kM_link_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_link[] = {
     {14, "url", Dom::Url, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {15, "target", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
+    {77, "to", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -405,6 +406,7 @@ const AttrSpec kA_event[] = {
 const char* const kM_entry_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_entry[] = {
     {43, "key", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {78, "sortKey", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -523,7 +525,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"comment", Level::Trivia, Body::Text, InlineShape::Skip, 6, kA_comment, 9},
     {"text", Level::Inline, Body::None, InlineShape::Text, 6, nullptr, 0},
     {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 39},
-    {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 11},
+    {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 12},
     {"code", Level::Inline, Body::Text, InlineShape::Code, 6, kA_code, 9},
     {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 13},
     {"mathinline", Level::Inline, Body::None, InlineShape::Object, 6, kA_mathinline, 10},
@@ -534,7 +536,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"note", Level::Inline, Body::Blocks, InlineShape::Unsupported, 6, kA_note, 9},
     {"field", Level::Inline, Body::None, InlineShape::Skip, 9, kA_field, 11},
     {"event", Level::Trivia, Body::None, InlineShape::Skip, 10, kA_event, 15},
-    {"entry", Level::Trivia, Body::Inline, InlineShape::Skip, 10, kA_entry, 10},
+    {"entry", Level::Trivia, Body::Inline, InlineShape::Skip, 10, kA_entry, 11},
     {"slot", Level::Inline, Body::None, InlineShape::Skip, 10, kA_slot, 11},
     {"when", Level::Transparent, Body::Position, InlineShape::Container, 10, kA_when, 10},
     {"each", Level::Transparent, Body::Position, InlineShape::Container, 10, kA_each, 11},

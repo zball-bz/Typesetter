@@ -28,7 +28,7 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
   PageResult pr;
   const i64 H = spec.h;
   pr.height = spec.h;
-  std::vector<Box> flow, ins;
+  std::vector<Box> flow, ins, sep;  // sep: the inserts' separator (plan P3-13)
   std::vector<u64> tablesSeen;
   for (u32 p = 0; p < (u32)lr.paras.size(); p++) {
     const ParaFrame& fr = lr.paras[p];
@@ -36,7 +36,7 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
     for (u32 i = 0; i < (u32)fr.lines.size(); i++) {
       const Fragment& l = fr.lines[i];
       const i64 t = (i64)fr.y + l.y, bo = t + l.height;
-      std::vector<Box>& list = (l.paged & kPagedInsert) ? ins : flow;
+      std::vector<Box>& list = !(l.paged & kPagedInsert) ? flow : (l.paged & kPagedHeader) ? sep : ins;
       const u64 table = l.table != ~0u ? (((u64)p << 32) | l.table) + 1 : 0;
       if (l.brk == PenTier::Structural && last == &list && !list.empty() && list.back().para == p &&
           list.back().paged == l.paged) {
@@ -71,6 +71,13 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
     }
   }
   std::stable_sort(flow.begin(), flow.end(), [](const Box& a, const Box& b) { return a.top < b.top; });
+  // the separator above a sheet's inserts (its first: a rule), repeated on
+  // every sheet that has any
+  if (sep.size() > 1) sep.resize(1);
+  const i64 sepH = sep.empty() ? 0 : sep[0].h();
+  // above the inserts: the separator's band (its rule at its midline), else
+  // the footnote skip
+  const i64 insSkip = sep.empty() ? spec.footnoteSkip : sepH;
   // each insert to the box that references it (its source position), else
   // to the last sheet
   std::vector<u32> unreferenced;
@@ -125,7 +132,7 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
       }
       i64 need = 0;
       for (u32 x : b.inserts) need += ins[x].h();
-      const i64 skip = !anyIns && need > 0 ? spec.footnoteSkip : 0;
+      const i64 skip = !anyIns && need > 0 ? insSkip : 0;
       const i64 bottom = std::max(flowBot, b.bot) - S + lift + insH + need + skip;
       if (bottom <= H || k == s) {
         flowBot = std::max(flowBot, b.bot);
@@ -192,9 +199,13 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
     }
     if (j >= n) pageInserts.insert(pageInserts.end(), unreferenced.begin(), unreferenced.end());
     if (!pageInserts.empty()) {
-      i64 total = spec.footnoteSkip;
+      i64 total = insSkip;
       for (u32 r : pageInserts) total += ins[r].h();
-      i64 y = std::max(H - total, cursor + (flowBot - S)) + spec.footnoteSkip;
+      i64 y = std::max(H - total, cursor + (flowBot - S)) + (sep.empty() ? spec.footnoteSkip : 0);
+      for (const Box& b : sep) {
+        pg.bands.push_back(band(b, y + S - b.top, true));
+        y += b.h();
+      }
       for (u32 r : pageInserts) {
         pg.bands.push_back(band(ins[r], y + S - ins[r].top, false));
         y += ins[r].h();

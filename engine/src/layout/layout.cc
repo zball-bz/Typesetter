@@ -516,6 +516,20 @@ class DocLayout {
     if (!ctx.cell) fr->vlist.push_back({b.unit, gapBefore, l.clear, (Su)l.top, (Su)(py - l.top), out});
     gapBefore = 0;
     boundary(l.from, b.tr.keepWithNext, out);
+    insertRole(b, l.from);
+  }
+  // (plan P3-13) a deferred flow's entry (its nearest block that says so):
+  // its fragments are inserts of its marker's sheet; the rest of the flow's
+  // wrap (a rule) the separator above a sheet's inserts
+  void insertRole(const LayoutBlock& b, size_t from) {
+    u32 at = kNotInsert;
+    for (u32 k = (u32)(&b - tree->blocks.data()); k != ~0u && at == kNotInsert; k = tree->blocks[k].parent)
+      at = tree->blocks[k].insertAt;
+    if (at == kNotInsert) return;
+    for (size_t q = from; q < fr->lines.size(); q++) {
+      fr->lines[q].paged |= at == kInsertArea ? kPagedInsert | kPagedHeader : kPagedInsert;
+      if (at != kInsertArea) fr->lines[q].insertAt = at;
+    }
   }
   // (plan P3-12) a block's fragments [from, end) in the vertical list: a
   // page cut before the first is its boundary's — kept with a block before
@@ -1005,44 +1019,51 @@ std::string dumpLayout(const LayoutResult& lr) {
     appendf(out, "para pid=%u y=%dsu w=%dsu h=%dsu\n", fr.pid, fr.y, fr.w, fr.h);
     for (size_t i = 0; i < fr.lines.size(); i++) {
       const Fragment& l = fr.lines[i];
-      if (l.kind == FragKind::Rule) {  // printed at its midline
-        appendf(out, "  L%zu rule y=%dsu left=%dsu w=%dsu\n", i, l.y + l.height / 2, l.left, l.width);
-        continue;
-      }
-      if (l.kind == FragKind::CodeRow) {
-        appendf(out, "  L%zu code y=%dsu left=%dsu line=%u [%u,%u)%s%s%s\n", i,
-                l.y, l.left, l.codeLine, l.cbLo, l.cbHi,
-                l.codeCont ? " cont" : "", l.codeHl ? " hl" : "",
-                l.marker ? " marker" : "");
-        if (l.contCols) out.insert(out.size() - 1,
-                                   " cc=" + std::to_string(l.contCols));
-        continue;
-      }
-      if (l.kind == FragKind::Raw) {
-        appendf(out, "  L%zu raw y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
-        continue;
-      }
-      if (l.kind == FragKind::Math) {
-        appendf(out, "  L%zu math y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
-        continue;
-      }
-      if (l.kind == FragKind::Image) {
-        appendf(out, "  L%zu img y=%dsu left=%dsu w=%dsu h=%dsu\n", i, l.y,
-                l.left, l.width, l.height);
-        continue;
-      }
-      if (l.cellIdx >= 0 || l.gridCell >= 0) {
-        appendf(out, "  L%zu cell=%d y=%dsu left=%dsu w=%dsu blocks=[%u,%u)%s\n",
-                i, l.gridCell >= 0 ? l.gridCell : l.cellIdx, l.y, l.left, l.width, l.blockBegin, l.blockEnd,
-                l.overfull ? " overfull" : "");
-        continue;
-      }
-      appendf(out, "  L%zu y=%dsu left=%dsu w=%dsu dw=%dsu dc=%dsu join=%s%s%s%s blocks=[%u,%u) @[%u,%u)\n",
-              i, l.y, l.left, l.width, l.wordDeltaSu, l.cjkDeltaSu,
-              l.sep == Sep::Newline ? "last" : sepName(l.sep),
-              l.endsWithHyphen ? " hyphen" : "", l.marker ? " marker" : "",
-              l.overfull ? " overfull" : "",
-              l.blockBegin, l.blockEnd, l.srcSpan.start, l.srcSpan.end);
+      [&] {
+        if (l.kind == FragKind::Rule) {  // printed at its midline
+          appendf(out, "  L%zu rule y=%dsu left=%dsu w=%dsu\n", i, l.y + l.height / 2, l.left, l.width);
+          return;
+        }
+        if (l.kind == FragKind::CodeRow) {
+          appendf(out, "  L%zu code y=%dsu left=%dsu line=%u [%u,%u)%s%s%s\n", i,
+                  l.y, l.left, l.codeLine, l.cbLo, l.cbHi,
+                  l.codeCont ? " cont" : "", l.codeHl ? " hl" : "",
+                  l.marker ? " marker" : "");
+          if (l.contCols) out.insert(out.size() - 1,
+                                     " cc=" + std::to_string(l.contCols));
+          return;
+        }
+        if (l.kind == FragKind::Raw) {
+          appendf(out, "  L%zu raw y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
+          return;
+        }
+        if (l.kind == FragKind::Math) {
+          appendf(out, "  L%zu math y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
+          return;
+        }
+        if (l.kind == FragKind::Image) {
+          appendf(out, "  L%zu img y=%dsu left=%dsu w=%dsu h=%dsu\n", i, l.y,
+                  l.left, l.width, l.height);
+          return;
+        }
+        if (l.cellIdx >= 0 || l.gridCell >= 0) {
+          appendf(out, "  L%zu cell=%d y=%dsu left=%dsu w=%dsu blocks=[%u,%u)%s\n",
+                  i, l.gridCell >= 0 ? l.gridCell : l.cellIdx, l.y, l.left, l.width, l.blockBegin, l.blockEnd,
+                  l.overfull ? " overfull" : "");
+          return;
+        }
+        appendf(out, "  L%zu y=%dsu left=%dsu w=%dsu dw=%dsu dc=%dsu join=%s%s%s%s blocks=[%u,%u) @[%u,%u)\n",
+                i, l.y, l.left, l.width, l.wordDeltaSu, l.cjkDeltaSu,
+                l.sep == Sep::Newline ? "last" : sepName(l.sep),
+                l.endsWithHyphen ? " hyphen" : "", l.marker ? " marker" : "",
+                l.overfull ? " overfull" : "",
+                l.blockBegin, l.blockEnd, l.srcSpan.start, l.srcSpan.end);
+      }();
+      // (plan P3-13) its paged role: an insert (its reference's source
+      // position) or the inserts' separator
+      if (l.paged & kPagedInsert)
+        out.insert(out.size() - 1, (l.paged & kPagedHeader) ? std::string(" insert-sep")
+                                                            : " insert@" + std::to_string(l.insertAt));
     }
   }
   return out;

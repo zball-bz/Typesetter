@@ -1,0 +1,23 @@
+doc @[0,917)
+  code-block @[0,273) js="\n  // footnotes at the bottom of their marker's sheet (plan P3-13): the\n  // footnote flow is deferred — on screen its entries close the document,\n  // on paged sheets each is an insert below the separator rule\n  $.element('footnote', {flow: {placement: 'deferred'}})\n"
+  heading @[275,284) level=1
+    text @[277,284) str="Inserts"
+  para @[286,476)
+    text @[286,321) str="The first sheet carries a note here"
+    note @[321,375)
+      text @[323,374) str="The first note sits at the foot of the first sheet."
+    text @[376,476) str=" and its running text continues with ordinary words to fill the measure and push the paragraphs down."
+  para @[478,588)
+    text @[478,588) str="Filler paragraph two continues to push the content down the page by a few more lines of ordinary running text."
+  para @[590,753)
+    text @[590,626) str="A note in the middle of the document"
+    note @[626,682)
+      text @[628,681) str="The second note, on the second sheet with its marker."
+    text @[683,753) str=" goes with the line that holds its marker, wherever the page cut falls."
+  para @[755,866)
+    text @[755,866) str="Filler paragraph four continues to push the content down the page by a few more lines of ordinary running text."
+  para @[868,916)
+    text @[868,881) str="The last note"
+    note @[881,899)
+      text @[883,898) str="The third note."
+    text @[900,916) str=" closes the text."

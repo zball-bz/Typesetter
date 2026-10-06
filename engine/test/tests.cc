@@ -985,13 +985,44 @@ static void unitRegistry(const fs::path& root) {
   CHECK(!Registry::fromJson(R"({"classes":{"x":{"counter":"nope"}}})", err) && !err.empty());
   // a numbered class needs a counter (fuzz finding, plan P2-07)
   CHECK(!Registry::fromJson(R"({"classes":{"x":{"numbering":"always"}}})", err) && !err.empty());
+  // (plan P3-13) flows: a placement is one of four; a class like another
+  // patches its flow (the marker-alias's reference form kept); a collector
+  // like another takes its query and templates, its scope given
+  CHECK(!Registry::fromJson(R"({"classes":{"x":{"flow":{"name":"f","placement":"page"}}}})", err) &&
+        err.find("placement") != std::string::npos);
+  {
+    std::string j(kElementsJson);
+    j.insert(j.find("\"refsection\": {"),  // (after the footnote row)
+             R"("endnote": {"like": "footnote", "select": [{"node": "note", "role": "endnote"}],)"
+             R"( "alias": {"prefix": "en-", "body": "ordinal"},)"
+             R"( "flow": {"name": "endnotes", "placement": "section-end", "depth": 2,)"
+             R"( "marker-alias": {"prefix": "enref-", "body": "ordinal"}}},)");
+    j.insert(j.find("\"bibliography\": {", j.find("\"collectors\": {")),  // (after notes)
+             R"("endnotes": {"like": "notes", "query": {"flow": "endnotes", "scope": "section", "depth": 2}},)");
+    std::unique_ptr<Registry> r = Registry::fromJson(j, err);
+    CHECK(r != nullptr);
+    if (!r) printf("  (%s)\n", err.c_str());
+    if (r) {
+      const ElementClass* en = nullptr;
+      for (const ElementClass& c : r->classes)
+        if (c.name == "endnote") en = &c;
+      CHECK(en && en->flow && en->flow->name == "endnotes" && en->flow->depth == 2 &&
+            en->flow->placement == FlowDef::Placement::SectionEnd && en->flow->markerAlias.hasRef &&
+            en->alias.body == AliasRule::Body::Ordinal && !en->flow->marker.empty());
+      const CollectorDef* c = r->collector("endnotes");
+      CHECK(c && c->src == CollectorDef::Src::Flow && c->flow == "endnotes" &&
+            c->scope == CollectorDef::Scope::Section && c->scopeDepth == 2 && !c->entry.empty() && !c->wrap.empty());
+      CHECK(r->reservedShape("enref-3.2") && r->reservedShape("en-7") && !r->reservedShape("en-x"));
+    }
+  }
 
   std::string json(kElementsJson);
   size_t cls = json.find("\"classes\"");
   size_t fig = json.find("\"figure\": {", cls);
   CHECK(cls != std::string::npos && fig != std::string::npos);
   json.replace(fig, 8, "\"illustration\"");
-  for (const char* ref : {"\"like\": \"figure\"", "\"inside\": \"figure\""})  // the rows built on it (P3-03)
+  for (const char* ref : {"\"like\": \"figure\"", "\"inside\": \"figure\"",
+                          "\"classes\": [\"figure\"]"})  // the rows built on it (P3-03), the lists naming it (P3-13)
     for (size_t at = json.find(ref); at != std::string::npos; at = json.find(ref, at + 1))
       json.replace(json.find("figure", at), 6, "illustration");
   std::unique_ptr<Registry> renamed = Registry::fromJson(json, err);
@@ -1415,6 +1446,19 @@ static void unitPaginate() {
     const PageResult pr = paginate(layoutOf({frag(0, 100), frag(100, 100), ins}), PageSpec{300, 10});
     CHECK(pagesOf(pr) == (V{{0, 1, 2}}));
     CHECK(pr.pages[0].bands[2].yShift == 250 - 1000);  // at 300 - 60 + 10
+  }
+  {  // (plan P3-13) a separator (a deferred flow's rule) stands above each
+     // sheet's inserts in place of the skip; a sheet without any has none
+    Fragment sep = frag(900, 20, PenTier::Normal, kPagedInsert | kPagedHeader);
+    Fragment a = frag(1000, 50, PenTier::Normal, kPagedInsert), b = frag(1050, 50, PenTier::Normal, kPagedInsert);
+    a.insertAt = 0;
+    b.insertAt = 300;
+    const PageResult pr = paginate(layoutOf({frag(0, 100), frag(100, 100), frag(200, 100), frag(300, 100), sep, a, b}),
+                                   PageSpec{300, 10});
+    CHECK(pagesOf(pr) == (V{{0, 1, 4, 5}, {2, 3, 4, 6}}));
+    CHECK(pr.pages[0].bands[2].repeat && pr.pages[0].bands[2].yShift == 230 - 900 &&
+          pr.pages[0].bands[3].yShift == 250 - 1000);  // the rule at 300 - 70, the insert below it
+    CHECK(pr.pages[1].bands[2].yShift == 200 + 230 - 900 && pr.pages[1].bands[3].yShift == 200 + 250 - 1050);
   }
   {  // a table's header rows repeat atop its continuation sheet
     std::vector<Fragment> t = {frag(0, 50, PenTier::Normal, kPagedHeader), frag(50, 100), frag(150, 100)};

@@ -1,0 +1,34 @@
+lower v1 abi 3d3ccfbb docEnd 533 holes 6 module 235b71192810c534
+piece 0 hole 0 js [136,198)
+piece 1 hole 1 js [200,243)
+piece 2 hole 2 js [245,311)
+piece 3 hole 3 js [313,357)
+piece 4 hole 4 js [359,419)
+piece 5 hole 5 js [421,436)
+block 0 content [0,110)
+  CALL para [0,110)
+    TEXT "A back-of-book index (plan P3-13): entries anywhere, a key with several occurrences, sorted by their sort key." [0,110)
+block 1 content [112,261) user framed holes 0..2
+  CALL para [112,261)
+    TEXT "A " [112,113) raw=0:0,2:1
+    HOLE 0 [114,160)
+      CALL strong [152,159)
+        TEXT "monad" [153,158)
+    TEXT "monad is a monoid in endofunctors; the " [160,198) raw=0:0,39:38
+    HOLE 1 [199,235)
+    TEXT "zeta function comes later." [235,261)
+block 2 content [263,436) user framed holes 2..4
+  CALL para [263,436)
+    TEXT "Every " [263,268) raw=0:0,6:5
+    HOLE 2 [269,328)
+    TEXT "functor preserves composition, and a " [328,364) raw=0:0,37:36
+    HOLE 3 [365,402)
+    TEXT "monad is a functor with structure." [402,436)
+block 3 content [438,522) user framed holes 4..5
+  CALL para [438,522)
+    TEXT "单子" [438,444)
+    HOLE 4 [444,501)
+    TEXT "与函子的关系。" [501,522)
+block 4 content [524,532) user framed holes 5..6
+  CALL para [524,532)
+    HOLE 5 [524,532)

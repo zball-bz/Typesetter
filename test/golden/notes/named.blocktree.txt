@@ -1,0 +1,18 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,141)
+    paragraph para unit=0 @[0,141)
+top pid=1 leaves=1
+  stack root gap=1/1 @[143,338)
+    paragraph para unit=0 @[143,338)
+top pid=2 leaves=1
+  stack root gap=1/1 @[340,397)
+    paragraph para unit=0 @[340,397)
+top pid=3 leaves=3
+  stack root gap=1/1 @[0,397)
+    stack group @[0,397)
+      replaced rule rule unit=0 @[0,397)
+      stack list pad=1536su gap=1/3 @[0,397)
+        stack item x=1536su @[152,168)
+          paragraph para unit=1 x=1536su anchor="fn-1" marker="1." @[152,168)
+        stack item x=1536su @[188,240)
+          paragraph para unit=2 x=1536su anchor="src" marker="2." @[188,240)

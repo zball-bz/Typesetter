@@ -1,0 +1,50 @@
+lower v1 abi 3d3ccfbb docEnd 1006 holes 10 module f5952661e2f025ce
+piece 0 hole 0 js [203,522)
+piece 1 hole 1 js [524,783)
+piece 2 hole 2 js [785,798)
+piece 3 hole 3 js [800,813)
+piece 4 hole 4 js [815,833)
+piece 5 hole 5 js [835,906)
+piece 6 hole 6 js [908,941)
+piece 7 hole 7 js [943,967)
+piece 8 hole 8 js [969,986)
+piece 9 hole 9 js [988,1030)
+block 0 stmt [0,312) user framed holes 0..1
+  STMT 0
+block 1 stmt [313,563) user framed holes 1..2
+  STMT 1
+block 2 content [565,604)
+  CALL heading [565,604) level=1 label=null
+    TEXT "Lists of figures, tables and theorems" [567,604)
+block 3 content [606,612) user framed holes 2..3
+  CALL para [606,612)
+    HOLE 2 [606,612)
+block 4 content [614,620) user framed holes 3..4
+  CALL para [614,620)
+    HOLE 3 [614,620)
+block 5 content [622,633) user framed holes 4..5
+  CALL para [622,633)
+    HOLE 4 [622,633)
+block 6 content [635,763) user framed async holes 5..6
+  REGION async "figure" args=hole 5 [635,763)
+    CALL para [707,754)
+      TEXT "A first figure, with " [707,727) raw=0:0,21:20
+      CALL strong [728,738)
+        TEXT "emphasis" [729,737)
+      TEXT " in its caption." [739,754) raw=0:0,1:0
+block 7 content [765,823) user framed async holes 6..7
+  REGION async "table" args=hole 6 [765,823)
+    CALL para [798,815)
+      TEXT "Key | Value\na | 1" [798,815) seps=4,14
+block 8 content [825,923) user framed async holes 7..9
+  REGION async "figure" args=hole 7 [825,923)
+    FRAME async [850,880) holes 8..9
+      REGION async "table" args=hole 8 [850,880)
+        CALL para [867,872)
+          TEXT "x | y" [867,872) seps=2
+    CALL para [881,914)
+      TEXT "A figure that numbers as a table." [881,914)
+block 9 content [925,1005) user framed async holes 9..10
+  REGION async "theorem" args=hole 9 [925,1005)
+    CALL para [969,995)
+      TEXT "Every list is a collector." [969,995)

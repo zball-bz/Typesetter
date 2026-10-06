@@ -1,0 +1,17 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => {
+
+  // footnotes at the bottom of their marker's sheet (plan P3-13): the
+  // footnote flow is deferred — on screen its entries close the document,
+  // on paged sheets each is an insert below the separator rule
+  $.element('footnote', {flow: {placement: 'deferred'}})
+
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

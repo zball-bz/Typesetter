@@ -1,0 +1,36 @@
+#{
+  // a user list of theorems with a static head, linking each item (plan P3-13)
+  $.element('theorem', {
+    counter: {name: 'thm'}, supplement: {en: 'Theorem '}, title: {arg: 'title'},
+    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}],
+  })
+}
+#let theorems = $.collector('theorems', {select: ['theorem'], head: [para(strong('Theorems'))], wrap: [list(false, each('items'))], entry: [item(para(link({to: 'target'}, slot('supplement'), slot('number')), when('title', ' — ', slot('title'))))]})
+
+= Lists of figures, tables and theorems
+
+#lof()
+
+#lot()
+
+#theorems()
+
+#!figure(src: "photos/a.png", alt: "a", w: 200, h: 100, label: "fig-a")
+A first figure, with *emphasis* in its caption.
+#figure!
+
+#!table(cols: 2, label: "tbl-b")
+Key | Value
+a | 1
+#table!
+
+#!figure(label: "tbl-c")
+#!table(cols: 2)
+x | y
+#table!
+A figure that numbers as a table.
+#figure!
+
+#!theorem(title: "Main", label: "thm-main")
+Every list is a collector.
+#theorem!

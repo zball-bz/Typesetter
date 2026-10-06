@@ -1,0 +1,47 @@
+doc @[275,916) [base]
+  heading @[275,284) [BOLDx1.60] level=1 label="h-1"
+    text @[277,284) [BOLDx1.60] str="Inserts"
+  para @[286,476) [base]
+    text @[286,321) [base] str="The first sheet carries a note here"
+    ref @[321,375) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
+      text @[321,375) [SUPx0.70] str="1"
+    text @[376,476) [base] str=" and its running text continues with ordinary words to fill the measure and push the paragraphs down." raw=0:0,1:0
+  para @[478,588) [base]
+    text @[478,588) [base] str="Filler paragraph two continues to push the content down the page by a few more lines of ordinary running text."
+  para @[590,753) [base]
+    text @[590,626) [base] str="A note in the middle of the document"
+    ref @[626,682) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" syn="fn-marker" copy="omit"
+      text @[626,682) [SUPx0.70] str="2"
+    text @[683,753) [base] str=" goes with the line that holds its marker, wherever the page cut falls." raw=0:0,1:0
+  para @[755,866) [base]
+    text @[755,866) [base] str="Filler paragraph four continues to push the content down the page by a few more lines of ordinary running text."
+  para @[868,916) [base]
+    text @[868,881) [base] str="The last note"
+    ref @[881,899) [SUPx0.70] role="fn-marker" attach="prev" target="fn-3" label="fnref-3" syn="fn-marker" copy="omit"
+      text @[881,899) [SUPx0.70] str="3"
+    text @[900,916) [base] str=" closes the text." raw=0:0,1:0
+  group @[275,916) [base] role="notes"
+    rule @[275,916) [base]
+    list @[275,916) [base] ordered=true
+      item @[321,375) [base]
+        para @[321,375) [base] label="fn-1"
+          styled @[321,375) [basex0.85] role="note-body"
+            text @[323,374) [basex0.85] str="The first note sits at the foot of the first sheet."
+            text @[321,375) [basex0.85] str=" "
+            ref @[321,375) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
+              text @[321,375) [basex0.85] str="↩"
+      item @[626,682) [base]
+        para @[626,682) [base] label="fn-2"
+          styled @[626,682) [basex0.85] role="note-body"
+            text @[628,681) [basex0.85] str="The second note, on the second sheet with its marker."
+            text @[626,682) [basex0.85] str=" "
+            ref @[626,682) [basex0.85] target="fnref-2" syn="backlink" copy="omit"
+              text @[626,682) [basex0.85] str="↩"
+      item @[881,899) [base]
+        para @[881,899) [base] label="fn-3"
+          styled @[881,899) [basex0.85] role="note-body"
+            text @[883,898) [basex0.85] str="The third note."
+            text @[881,899) [basex0.85] str=" "
+            ref @[881,899) [basex0.85] target="fnref-3" syn="backlink" copy="omit"
+              text @[881,899) [basex0.85] str="↩"
+decl element name="footnote" flow=0 @[0,273) ext.row="{\"flow\":{\"placement\":\"deferred\"}}"

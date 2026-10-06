@@ -1,0 +1,16 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {entry, index} = __rt.std;
+return (async () => {
+const __h = [
+(__k) => (entry(...[{role: "index", key: "monad"}], ...__k())),
+() => (entry({role: "index", key: "zeta"})),
+() => (entry({role: "index", key: "functor", sortKey: "functor"})),
+() => (entry({role: "index", key: "monad"})),
+() => (entry({role: "index", key: "单子", sortKey: "dan zi"})),
+() => (index()),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

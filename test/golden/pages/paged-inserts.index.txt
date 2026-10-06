@@ -1,0 +1,12 @@
+instance heading 1 level=1 label=h-1 title="Inserts" @[275,284)
+instance footnote 1 label=fn-1 marker=fnref-1 @[321,375)
+instance footnote 2 label=fn-2 marker=fnref-2 @[626,682)
+instance footnote 3 label=fn-3 marker=fnref-3 @[881,899)
+label h-1 -> heading 1 @[275,284)
+label fn-1 -> footnote 1 @[321,375)
+label fnref-1 -> footnote 1 (marker) @[321,375)
+label fn-2 -> footnote 2 @[626,682)
+label fnref-2 -> footnote 2 (marker) @[626,682)
+label fn-3 -> footnote 3 @[881,899)
+label fnref-3 -> footnote 3 (marker) @[881,899)
+flow notes: fn-1 fn-2 fn-3

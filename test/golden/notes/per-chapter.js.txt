@@ -1,0 +1,17 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => {
+
+  // notes per chapter (plan P3-13): circled numbers restarting with each
+  // chapter (not prefixed by it), placed at the chapter's end
+  $.counter('footnote', {within: {counter: 'heading', depth: 1, prefix: false}, numbering: '①'})
+  $.element('footnote', {flow: {placement: 'section-end', depth: 1}})
+
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

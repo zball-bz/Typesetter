@@ -4,7 +4,7 @@
 // number, level, title and anchor; every label registers uniformly (user
 // labels validated, aliases minted); keyed rows and flow items are recorded.
 // BIND then assigns citation ordinals in document order (a note's body at its
-// marker). MATERIALIZE (materialize.h) builds the output from these facts.
+// marker) and binds marker references to their flow items. MATERIALIZE (materialize.h) builds the output from these facts.
 // The Index persists on the document for `tsrc --stage=index` and tools.
 #pragma once
 #include <unordered_map>
@@ -31,6 +31,10 @@ struct Instance {
   // resolve
   const ContentNode* titleNode = nullptr;
   Supplement supplement;  // its class's, or an event's for its counter (plan P2-07)
+  u32 parent = ~0u;  // (plan P3-13) the innermost instance around it
+  // (plan P3-13) a flow item's other markers (ref{form: 'marker'} to its
+  // label), in document order: their anchors (its marker alias, '.', 2…)
+  std::vector<std::string> occurrences;
 };
 
 struct LabelTarget {
@@ -41,6 +45,7 @@ struct LabelTarget {
 
 struct Row {
   std::string table, key;
+  std::string sortKey;  // (plan P3-13) its order in a sorted collector (else its key)
   const ContentNode* node = nullptr;  // the row's own node, or the instance's (during resolve)
   Span span;
   u32 inst = kNoInst;
@@ -57,6 +62,10 @@ struct Index {
   std::vector<std::pair<std::string, std::vector<u32>>> flows;  // flow → items, document order
   std::unordered_map<const ContentNode*, u32> instOf;
   std::unordered_set<const ContentNode*> refused;  // user labels dropped from their node
+  // (plan P3-13) a collector node: the instances before it (its section)
+  std::unordered_map<const ContentNode*, u32> collectAt;
+  // (plan P3-13) a marker reference: its flow item and occurrence (2…)
+  std::unordered_map<const ContentNode*, std::pair<u32, u32>> occurrenceOf;
 
   const Row* row(std::string_view table, std::string_view key) const;
   std::vector<u32>& flow(const std::string& name);
@@ -70,8 +79,13 @@ void excerptInto(const ContentNode* n, const Interner& strs, std::string& out);
 
 void locate(const ContentNode* root, const Registry& reg, Counters& counters, const Interner& strs,
             Index& ix, DiagSink& diags);
-void bindCites(const ContentNode* root, const Registry& reg, Counters& counters, const Interner& strs,
-               const Index& ix);
+// BIND: citation ordinals (each key in its keyed counter's scope: a
+// refsection), and the occurrences of flow items (plan P3-13)
+void bind(const ContentNode* root, const Registry& reg, Counters& counters, const Interner& strs, Index& ix,
+          DiagSink& diags);
+// (plan P3-13) the scope a keyed counter counts in where the instances
+// `encl` (innermost last) stand: the innermost of its scope class
+u32 keyedScope(const Registry& reg, const Index& ix, u16 c, const std::vector<u32>& encl);
 
 // tsrc --stage=index
 std::string dumpIndex(const Index& ix, const Registry& reg);

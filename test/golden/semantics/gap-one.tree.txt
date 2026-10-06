@@ -1,0 +1,81 @@
+doc @[41,117) [base]
+  list @[41,47) [base] ordered=false
+    item @[41,47) [base]
+      para @[41,47) [base]
+        link @[41,47) [base] target="h-1"
+          text @[41,47) [base] str="1 "
+          text @[41,47) [base] str="A"
+      list @[41,47) [base] ordered=false
+        item @[41,47) [base]
+          list @[41,47) [base] ordered=false
+            item @[41,47) [base]
+              para @[41,47) [base]
+                link @[41,47) [base] target="h-1.1.1"
+                  text @[41,47) [base] str="1.1.1 "
+                  text @[41,47) [base] str="A.c"
+    item @[41,47) [base]
+      para @[41,47) [base]
+        link @[41,47) [base] target="h-2"
+          text @[41,47) [base] str="2 "
+          text @[41,47) [base] str="B"
+      list @[41,47) [base] ordered=false
+        item @[41,47) [base]
+          para @[41,47) [base]
+            link @[41,47) [base] target="h-2.1"
+              text @[41,47) [base] str="2.1 "
+              text @[41,47) [base] str="B.a"
+        item @[41,47) [base]
+          para @[41,47) [base]
+            link @[41,47) [base] target="h-2.2"
+              text @[41,47) [base] str="2.2 "
+              text @[41,47) [base] str="B.b"
+    item @[41,47) [base]
+      para @[41,47) [base]
+        link @[41,47) [base] target="h-3"
+          text @[41,47) [base] str="3 "
+          text @[41,47) [base] str="C"
+      list @[41,47) [base] ordered=false
+        item @[41,47) [base]
+          para @[41,47) [base]
+            link @[41,47) [base] target="h-3.1"
+              text @[41,47) [base] str="3.1 "
+              text @[41,47) [base] str="C.a"
+    item @[41,47) [base]
+      para @[41,47) [base]
+        link @[41,47) [base] target="h-4"
+          text @[41,47) [base] str="4 "
+          text @[41,47) [base] str="D"
+      list @[41,47) [base] ordered=false
+        item @[41,47) [base]
+          list @[41,47) [base] ordered=false
+            item @[41,47) [base]
+              para @[41,47) [base]
+                link @[41,47) [base] target="h-4.1.1"
+                  text @[41,47) [base] str="4.1.1 "
+                  text @[41,47) [base] str="D.c"
+        item @[41,47) [base]
+          para @[41,47) [base]
+            link @[41,47) [base] target="h-4.2"
+              text @[41,47) [base] str="4.2 "
+              text @[41,47) [base] str="D.b"
+  heading @[49,52) [BOLDx1.60] level=1 label="h-1"
+    text @[51,52) [BOLDx1.60] str="A"
+  heading @[54,61) [BOLDx1.15] level=3 label="h-1.1.1"
+    text @[58,61) [BOLDx1.15] str="A.c"
+  heading @[63,66) [BOLDx1.60] level=1 label="h-2"
+    text @[65,66) [BOLDx1.60] str="B"
+  heading @[68,74) [BOLDx1.35] level=2 label="h-2.1"
+    text @[71,74) [BOLDx1.35] str="B.a"
+  heading @[76,82) [BOLDx1.35] level=2 label="h-2.2"
+    text @[79,82) [BOLDx1.35] str="B.b"
+  heading @[84,87) [BOLDx1.60] level=1 label="h-3"
+    text @[86,87) [BOLDx1.60] str="C"
+  heading @[89,95) [BOLDx1.35] level=2 label="h-3.1"
+    text @[92,95) [BOLDx1.35] str="C.a"
+  heading @[97,100) [BOLDx1.60] level=1 label="h-4"
+    text @[99,100) [BOLDx1.60] str="D"
+  heading @[102,109) [BOLDx1.15] level=3 label="h-4.1.1"
+    text @[106,109) [BOLDx1.15] str="D.c"
+  heading @[111,117) [BOLDx1.35] level=2 label="h-4.2"
+    text @[114,117) [BOLDx1.35] str="D.b"
+decl counter name="heading" flow=0 @[0,39) ext.row="{\"gap\":\"one\"}"

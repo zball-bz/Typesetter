@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"A note in a styled region","label":null,"span":[0,27]}],"regions":[{"name":"aside","label":null,"span":[90,336]}],"fences":[],"labels":[],"diagnostics":[]}

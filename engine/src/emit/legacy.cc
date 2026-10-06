@@ -169,6 +169,21 @@ struct LegacyInline final : InlineSink {
       }
       case Kind::comment:
         return;
+      case Kind::entry:  // (plan P3-13) an anchored entry (an index entry): an empty anchor
+        for (const ArgVal& a : n->args)
+          if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref) {
+            LinebreakBlock b;
+            b.breakPenalty = BREAK_INF;
+            b.style = compose(n->style, ctx.add, ctx.mul);
+            b.text = strs.intern("");
+            b.linkUrl = ctx.url.ref;
+            b.flags = ctx.addFlags;
+            b.span = n->span;
+            b.anchorId = a.ref;
+            b.widthResolved = true;
+            u.legacy.push_back(b);
+          }
+        return;
       case Kind::fill:  // fil glue (plan P2-16), as emit lowers it
         pushSynthetic(u, compose(n->style, ctx.add, ctx.mul), ctx.url.ref, n->span, 0.0,
                       (u16)(BF_SPACE | BF_FIL | ctx.addFlags), 0.0f, 0.0f, 0.0);

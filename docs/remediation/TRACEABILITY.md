@@ -985,7 +985,7 @@ Theme steps: — · findings: 1
 | `markup-language/value-coercion` | adhoc | medium | P2-01 | grep:plan P2-01 |
 | `markup-language/surface-grammar-drift` | adhoc | medium | P1-09 | grep:plan P1-09 |
 | `markup-language/sidecar-private-lowering` | adhoc | medium | P2-13 | grep:plan P2-13 |
-| `markup-language/collectors-closed` | adhoc | medium | P3-13 | |
+| `markup-language/collectors-closed` | adhoc | medium | P3-13 | grep:plan P3-13 |
 | `markup-language/style-surfaces` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `markup-language/cjk-softbreak-classifier` | adhoc | medium | P2-10, P4-02 | |
 | `markup-language/reference-forms-closed` | adhoc | medium | P2-09 | grep:plan P2-09 |
@@ -1059,7 +1059,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/val-coercion-adhoc` | adhoc | medium | P2-01 | grep:plan P2-01 |
 | `codegen-ops-model/block-promotion-peepholes` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `codegen-ops-model/duplicate-lowering-fragment` | adhoc | medium | P2-13 | grep:plan P2-13 |
-| `codegen-ops-model/note-kind-and-lift` | adhoc | medium | P3-01, P3-13 | |
+| `codegen-ops-model/note-kind-and-lift` | adhoc | medium | P3-01, P3-13 | grep:plan P3-13 |
 | `codegen-ops-model/collector-switch-and-fixed-counters` | adhoc | medium | P2-07 | grep:plan P2-07 |
 | `codegen-ops-model/occurrence-spans-unsound` | issue | high | P2-04 | grep:plan P2-04 |
 | `codegen-ops-model/exponential-instantiation` | issue | high | P0-07 | grep:plan P0-07 |

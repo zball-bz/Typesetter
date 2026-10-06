@@ -1,0 +1,66 @@
+lower v1 abi 3d3ccfbb docEnd 687 holes 7 module 363304369db109a2
+piece 0 hole 0 js [139,205)
+piece 1 hole 1 js [207,221)
+piece 2 hole 2 js [223,237)
+piece 3 hole 3 js [239,253)
+piece 4 hole 4 js [255,319)
+piece 5 hole 5 js [321,388)
+piece 6 hole 6 js [390,457)
+block 0 stmt [0,55) user framed holes 0..1
+  STMT 0
+block 1 content [57,77)
+  CALL heading [57,77) level=1 label=null
+    TEXT "Reference sections" [59,77)
+block 2 content [79,129)
+  CALL para [79,129)
+    TEXT "Citations outside any section: " [79,109) raw=0:0,31:30
+    CALL ref [110,118) target="liang83"
+    TEXT " and " [119,122) raw=0:0,1:0,5:3
+    CALL ref [123,128) target="kp81"
+    TEXT "." [128,129)
+block 3 content [131,264) user framed async holes 1..2
+  REGION async "refsection" [131,264)
+    CALL heading [144,158) level=2 label=null
+      TEXT "Chapter one" [147,158)
+    CALL para [160,242)
+      TEXT "Knuth and Plass " [160,175) raw=0:0,16:15
+      CALL ref [176,181) target="kp81"
+      TEXT ", then the TeXbook " [181,199) raw=0:0,19:18
+      CALL ref [200,208) target="knuth84"
+      TEXT ": numbered afresh in this section." [208,242)
+    FRAME [244,251) holes 1..2
+      CALL para [244,251)
+        HOLE 1 [244,251)
+block 4 content [266,376) user framed async holes 2..3
+  REGION async "refsection" [266,376)
+    CALL heading [279,293) level=2 label=null
+      TEXT "Chapter two" [282,293)
+    CALL para [295,354)
+      TEXT "The TeXbook again " [295,312) raw=0:0,18:17
+      CALL ref [313,321) target="knuth84"
+      TEXT ", first here, and Liang " [321,344) raw=0:0,24:23
+      CALL ref [345,353) target="liang83"
+      TEXT "." [353,354)
+    FRAME [356,363) holes 2..3
+      CALL para [356,363)
+        HOLE 2 [356,363)
+block 5 content [378,421)
+  CALL para [378,421)
+    TEXT "Back outside: " [378,391) raw=0:0,14:13
+    CALL ref [392,397) target="kp81"
+    TEXT " keeps its outer number." [398,421) raw=0:0,1:0
+block 6 content [423,430) user framed holes 3..4
+  CALL para [423,430)
+    HOLE 3 [423,430)
+block 7 content [432,527) user framed holes 4..5
+  CALL para [432,527)
+    HOLE 4 [432,527)
+      TEXT "Knuth and Plass, Breaking paragraphs into lines, 1981." [472,526)
+block 8 content [529,598) user framed holes 5..6
+  CALL para [529,598)
+    HOLE 5 [529,598)
+      TEXT "Knuth, The TeXbook, 1984." [572,597)
+block 9 content [600,686) user framed holes 6..7
+  CALL para [600,686)
+    HOLE 6 [600,686)
+      TEXT "Liang, Word hyphenation by computer, 1983." [643,685)

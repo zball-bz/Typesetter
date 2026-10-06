@@ -1,0 +1,21 @@
+#{
+  // a user endnote flow (plan P3-13): notes of role endnote, numbered in
+  // roman, placed by a collector scoped to its section — each chapter's own
+  $.counter('endnote', {numbering: 'i'})
+  $.element('endnote', {like: 'footnote', select: [{node: 'note', role: 'endnote'}], counter: 'endnote',
+    alias: {prefix: 'en-', body: 'ordinal'},
+    flow: {name: 'endnotes', placement: 'collector-only', markerAlias: {prefix: 'enref-', body: 'ordinal'}}})
+}
+#let endnotes = $.collector('endnotes', {like: 'notes', flow: 'endnotes', scope: 'section'})
+
+= One
+
+Text#note({role: "endnote"})[The first endnote.] and a footnote^[A footnote, at the end.].
+
+#endnotes()
+
+= Two
+
+More#note({role: "endnote"})[The second endnote.] and more#note({role: "endnote"})[The third.].
+
+#endnotes()

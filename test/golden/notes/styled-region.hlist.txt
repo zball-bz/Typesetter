@@ -1,0 +1,151 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  box Other "A" w=821su r0 @[2,27)
+  glue word w=411su x=1 cap=411su kern="A n" src r0 @[2,27)
+  box Other "note" w=3278su r0 @[2,27)
+  glue word w=411su x=1 cap=411su kern="e i" src r0 @[2,27)
+  box Other "in" w=1640su r0 @[2,27)
+  glue word w=411su x=1 cap=411su kern="n a" src r0 @[2,27)
+  box Other "a" w=821su r0 @[2,27)
+  glue word w=411su x=1 cap=411su kern="a s" src r0 @[2,27)
+  box Other "styled" w=4917su r0 @[2,27)
+  glue word w=411su x=1 cap=411su kern="d r" src r0 @[2,27)
+  box Other "region" w=4917su r0 @[2,27)
+  run r0 plain BOLD x1.60
+top pid=1 units=1
+ unit text indent=0su
+  box Other "Out" w=1537su r0 @[29,46)
+  disc pen=0.7 w=0su pre="-" 513su kern="ts" r0 @[29,46)
+  box Other "side," w=2561su r0 @[29,46)
+  glue word w=257su x=1 cap=257su kern=", a" src r0 @[29,46)
+  box Other "a" w=513su r0 @[29,46)
+  glue word w=257su x=1 cap=257su kern="a m" src r0 @[29,46)
+  box Other "mark" w=2049su r0 @[29,46)
+  disc pen=0.7 w=0su pre="-" 513su kern="ke" r0 @[29,46)
+  box Other "er" w=1025su r0 @[29,46)
+  box Other "1" w=360su anchor="fnref-1" r1 @[46,63)
+  glue word w=257su x=1 cap=257su src r2 @[64,88)
+  box Other "takes" w=2561su r2 @[64,88)
+  glue word w=257su x=1 cap=257su kern="s t" src r2 @[64,88)
+  box Other "the" w=1537su r2 @[64,88)
+  glue word w=257su x=1 cap=257su kern="e d" src r2 @[64,88)
+  box Other "de" w=1025su r2 @[64,88)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r2 @[64,88)
+  box Other "fault" w=2561su r2 @[64,88)
+  glue word w=257su x=1 cap=257su kern="t r" src r2 @[64,88)
+  box Other "rules." w=3073su r2 @[64,88)
+  run r0 plain
+  run r1 plain ref LINK x0.70 link="#tsr-fn-1" anchor="fnref-1"
+  run r2 plain
+top pid=2 units=1
+ unit text indent=0su
+  box Other "In" w=1025su r0 @[216,272)
+  disc pen=0.7 w=0su pre="-" 513su kern="ns" r0 @[216,272)
+  box Other "side" w=2049su r0 @[216,272)
+  glue word w=257su x=1 cap=257su kern="e t" src r0 @[216,272)
+  box Other "the" w=1537su r0 @[216,272)
+  glue word w=257su x=1 cap=257su kern="e g" src r0 @[216,272)
+  box Other "grey" w=2049su r0 @[216,272)
+  glue word w=257su x=1 cap=257su kern="y r" src r0 @[216,272)
+  box Other "re" w=1025su r0 @[216,272)
+  disc pen=0.7 w=0su pre="-" 513su kern="eg" r0 @[216,272)
+  box Other "gion" w=2049su r0 @[216,272)
+  glue word w=257su x=1 cap=257su kern="n a" src r0 @[216,272)
+  box Other "a" w=513su r0 @[216,272)
+  glue word w=257su x=1 cap=257su kern="a s" src r0 @[216,272)
+  box Other "scoped" w=3073su r0 @[216,272)
+  glue word w=257su x=1 cap=257su kern="d r" src r0 @[216,272)
+  box Other "rule" w=2049su r0 @[216,272)
+  glue word w=257su x=1 cap=257su kern="e c" src r0 @[216,272)
+  box Other "colours" w=3585su r0 @[216,272)
+  glue word w=257su x=1 cap=257su kern="s i" src r0 @[216,272)
+  box Other "its" w=1537su r0 @[216,272)
+  glue word w=257su x=1 cap=257su kern="s m" src r0 @[216,272)
+  box Other "mark" w=2049su r0 @[216,272)
+  disc pen=0.7 w=0su pre="-" 513su kern="ke" r0 @[216,272)
+  box Other "ers" w=1537su r0 @[216,272)
+  box Other "2" w=360su anchor="fnref-2" r1 @[272,323)
+  glue word w=257su x=1 cap=257su src r2 @[324,328)
+  box Other "red." w=2049su r2 @[324,328)
+  run r0 plain color=#555555
+  run r1 plain ref LINK x0.70 color=#a8432a link="#tsr-fn-2" anchor="fnref-2"
+  run r2 plain color=#555555
+top pid=3 units=1
+ unit text indent=0su
+  box Other "Af" w=1025su r0 @[338,364)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[338,364)
+  box Other "ter" w=1537su r0 @[338,364)
+  glue word w=257su x=1 cap=257su kern="r t" src r0 @[338,364)
+  box Other "the" w=1537su r0 @[338,364)
+  glue word w=257su x=1 cap=257su kern="e r" src r0 @[338,364)
+  box Other "re" w=1025su r0 @[338,364)
+  disc pen=0.7 w=0su pre="-" 513su kern="eg" r0 @[338,364)
+  box Other "gion," w=2561su r0 @[338,364)
+  glue word w=257su x=1 cap=257su kern=", a" src r0 @[338,364)
+  box Other "a" w=513su r0 @[338,364)
+  glue word w=257su x=1 cap=257su kern="a m" src r0 @[338,364)
+  box Other "mark" w=2049su r0 @[338,364)
+  disc pen=0.7 w=0su pre="-" 513su kern="ke" r0 @[338,364)
+  box Other "er" w=1025su r0 @[338,364)
+  box Other "3" w=360su anchor="fnref-3" r1 @[364,380)
+  glue word w=257su x=1 cap=257su src r2 @[381,396)
+  box Other "is" w=1025su r2 @[381,396)
+  glue word w=257su x=1 cap=257su kern="s p" src r2 @[381,396)
+  box Other "plain" w=2561su r2 @[381,396)
+  glue word w=257su x=1 cap=257su kern="n a" src r2 @[381,396)
+  box Other "again." w=3073su r2 @[381,396)
+  run r0 plain
+  run r1 plain ref LINK x0.70 link="#tsr-fn-3" anchor="fnref-3"
+  run r2 plain
+top pid=4 units=4
+ unit rule indent=0su
+ unit text indent=1536su anchor="fn-1" marker="1."
+  box Other "An" w=872su r0 @[48,62)
+  glue word w=219su x=1 cap=219su kern="n o" src r0 @[48,62)
+  box Other "out" w=1307su r0 @[48,62)
+  disc pen=0.7 w=0su pre="-" 437su kern="te" r0 @[48,62)
+  box Other "er" w=872su r0 @[48,62)
+  glue word w=219su x=1 cap=219su kern="r n" src r0 @[48,62)
+  box Other "note." w=2178su r0 @[48,62)
+  glue word w=219su x=1 cap=219su src r0 @[46,63)
+  box Other "↩" w=524su r1 @[46,63)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-1"
+ unit text indent=1536su anchor="fn-2" marker="2."
+  box Other "A" w=437su r0 @[274,286)
+  glue word w=219su x=1 cap=219su kern="A n" src r0 @[274,286)
+  box Other "note" w=1742su r0 @[274,286)
+  glue word w=219su x=1 cap=219su kern="e w" src r0 @[274,286)
+  box Other "whose" w=2178su r0 @[274,286)
+  glue word w=219su x=1 cap=219su src r0 @[274,286)
+  box Other "code" w=1481su r1 @[287,293)
+  glue word w=219su x=1 cap=219su src r2 @[294,322)
+  box Other "keeps" w=2178su r2 @[294,322)
+  glue word w=219su x=1 cap=219su kern="s t" src r2 @[294,322)
+  box Other "the" w=1307su r2 @[294,322)
+  glue word w=219su x=1 cap=219su kern="e r" src r2 @[294,322)
+  box Other "rule" w=1742su r2 @[294,322)
+  glue word w=219su x=1 cap=219su kern="e o" src r2 @[294,322)
+  box Other "of" w=872su r2 @[294,322)
+  glue word w=219su x=1 cap=219su kern="f i" src r2 @[294,322)
+  box Other "its" w=1307su r2 @[294,322)
+  glue word w=219su x=1 cap=219su kern="s p" src r2 @[294,322)
+  box Other "place." w=2613su r2 @[294,322)
+  glue word w=219su x=1 cap=219su src r2 @[272,323)
+  box Other "↩" w=524su r3 @[272,323)
+  run r0 plain x0.85 color=#555555
+  run r1 plain CODE x0.72 color=#2f5d8a
+  run r2 plain x0.85 color=#555555
+  run r3 plain ref LINK x0.85 color=#555555 link="#tsr-fnref-2"
+ unit text indent=1536su anchor="fn-3" marker="3."
+  box Other "A" w=437su r0 @[366,379)
+  glue word w=219su x=1 cap=219su kern="A l" src r0 @[366,379)
+  box Other "lat" w=1307su r0 @[366,379)
+  disc pen=0.7 w=0su pre="-" 437su kern="te" r0 @[366,379)
+  box Other "er" w=872su r0 @[366,379)
+  glue word w=219su x=1 cap=219su kern="r n" src r0 @[366,379)
+  box Other "note." w=2178su r0 @[366,379)
+  glue word w=219su x=1 cap=219su src r0 @[364,380)
+  box Other "↩" w=524su r1 @[364,380)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-3"

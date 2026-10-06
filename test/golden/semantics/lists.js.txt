@@ -1,0 +1,31 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {each, entry, item, link, list, lof, lot, para, slot, strong, when} = __rt.std;
+return (async () => {
+let theorems;
+const __h = [
+() => {
+
+  // a user list of theorems with a static head, linking each item (plan P3-13)
+  $.element('theorem', {
+    counter: {name: 'thm'}, supplement: {en: 'Theorem '}, title: {arg: 'title'},
+    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}],
+  })
+
+},
+() => { theorems = (
+ $.collector('theorems', {select: ['theorem'], head: [para(strong('Theorems'))], wrap: [list(false, each('items'))], entry: [item(para(link({to: 'target'}, slot('supplement'), slot('number')), when('title', ' — ', slot('title'))))]})
+); },
+() => (lof()),
+() => (lot()),
+() => (theorems()),
+() => ({src: "photos/a.png", alt: "a", w: 200, h: 100, label: "fig-a"}),
+() => ({cols: 2, label: "tbl-b"}),
+() => ({label: "tbl-c"}),
+() => ({cols: 2}),
+() => ({title: "Main", label: "thm-main"}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

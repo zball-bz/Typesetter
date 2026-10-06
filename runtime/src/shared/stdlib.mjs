@@ -560,6 +560,9 @@ export function createStd(host) {
     },
     toc: collect('toc'),
     glossary: collect('glossary'),
+    lof: collect('lof'),  // (plan P3-13) a list of figures, of tables
+    lot: collect('lot'),
+    index: collect('index'),
     notes: collect('notes'),
     // citations (notes-design.md §2; plan P2-14): a promise — the data loads,
     // its entries become the table's rows here, and the collector stands in
@@ -927,9 +930,9 @@ export function createStd(host) {
     return { $t: templates.length - 1 };
   };
   const unknownField = (who, k) => diag(1, 'ctor-arg', `${who}: unknown field ${k}`);
-  // counter: {within: name | {counter, depth, sep}, depth, sep (of within),
-  // numbering (a pattern), start, gap: 'zero' | 'one', levels (by-level, and
-  // its depth), levelArg, keyed}
+  // counter: {within: name | {counter, depth, sep, prefix}, depth, sep (of
+  // within), numbering (a pattern), start, gap: 'zero' | 'one', levels
+  // (by-level, and its depth), levelArg, keyed, scope (a class)}
   const counterRow = (name, spec, who = '$.counter') => {
     checkSpec(who, name, spec);
     const row = {};
@@ -956,6 +959,7 @@ export function createStd(host) {
         case 'levels': row.shape = 'by-level'; row.depth = v; break;
         case 'levelArg': row['level-arg'] = v; break;
         case 'keyed': row.keyed = !!v; break;
+        case 'scope': row.scope = String(v); break;  // a class whose instances count it afresh
         default: unknownField(who, k);
       }
     }
@@ -1063,8 +1067,10 @@ export function createStd(host) {
     if (row.counter && !row.numbering && !spec.like) row.numbering = 'always';
     return { row, templates, counters };
   };
-  // collector: {query (or select / table / flow), context, wrap,
-  // entry, empty, rows, cite}
+  // collector: {query (or select / table / flow), like (another
+  // collector: its query and templates, plan P3-13), scope ('doc' |
+  // 'section') and depth (a section's outline level), context, wrap,
+  // entry, empty, head, rows, cite}
   const collectorRow = (name, spec) => {
     const who = '$.collector';
     checkSpec(who, name, spec);
@@ -1076,9 +1082,9 @@ export function createStd(host) {
       switch (k) {
         case 'query': row.query = { ...row.query, ...v }; break;
         case 'select': row.query = { ...row.query, classes: v }; break;
-        case 'table': case 'flow': row.query = { ...row.query, [k]: v }; break;
-        case 'context': case 'rows': row[k] = v; break;
-        case 'wrap': case 'entry': case 'empty': case 'cite': row[k] = tpl(v); break;
+        case 'table': case 'flow': case 'scope': case 'depth': row.query = { ...row.query, [k]: v }; break;
+        case 'context': case 'rows': case 'like': row[k] = v; break;
+        case 'wrap': case 'entry': case 'empty': case 'cite': case 'head': row[k] = tpl(v); break;
         default: unknownField(who, k);
       }
     }
@@ -1206,9 +1212,15 @@ export function createStd(host) {
         throw new TypeError('$.counter.system: symbols is a list of strings');
       const row = { symbols: [...symbols] };
       if (spec.mode !== undefined) {
-        if (!['numeric', 'alphabetic', 'cyclic', 'fixed'].includes(spec.mode))
-          throw new TypeError('$.counter.system: mode is numeric, alphabetic, cyclic or fixed');
+        if (!['numeric', 'alphabetic', 'cyclic', 'fixed', 'additive'].includes(spec.mode))
+          throw new TypeError('$.counter.system: mode is numeric, alphabetic, cyclic, fixed or additive');
         row.mode = spec.mode;
+      }
+      if (spec.mode === 'additive') {  // (plan P3-13) weights, one per symbol, descending
+        const w = spec.weights;
+        if (!Array.isArray(w) || w.length !== symbols.length || !w.every((x) => Number.isInteger(x) && x > 0))
+          throw new TypeError('$.counter.system: additive weights are positive integers, one per symbol');
+        row.weights = [...w];
       }
       declareRow('counter-system', name, row, []);
     },

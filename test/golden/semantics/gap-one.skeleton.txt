@@ -1,0 +1,13 @@
+doc @[0,118)
+  code-block @[0,39) js=" $.counter('heading', {gap: 'one'}) "
+  para @[41,47) lines=1
+  heading1 @[49,52)
+  heading3 @[54,61)
+  heading1 @[63,66)
+  heading2 @[68,74)
+  heading2 @[76,82)
+  heading1 @[84,87)
+  heading2 @[89,95)
+  heading1 @[97,100)
+  heading3 @[102,109)
+  heading2 @[111,117)

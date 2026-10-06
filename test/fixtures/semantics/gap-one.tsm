@@ -1,0 +1,23 @@
+#{ $.counter('heading', {gap: 'one'}) }
+
+#toc()
+
+= A
+
+=== A.c
+
+= B
+
+== B.a
+
+== B.b
+
+= C
+
+== C.a
+
+= D
+
+=== D.c
+
+== D.b

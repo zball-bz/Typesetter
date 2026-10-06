@@ -13,8 +13,9 @@
     "subfigure": { "within": { "counter": "figure", "depth": 1, "sep": "" }, "pattern": "(a)" },
     "equation": {},
     "footnote": {},
-    "cite": { "keyed": true },
-    "enum": { "scope": "olist", "pattern": "1." }
+    "cite": { "keyed": true, "scope": "refsection" },
+    "enum": { "scope": "olist", "pattern": "1." },
+    "index-entry": {}
   },
   "roles": {
     "$comment": "Generated roles and the element each reads as on the semantic page (plan P3-01; T7's minimal map). Their presentation is the default rules' (engine/data/defaults.json).",
@@ -113,17 +114,18 @@
       "ref": [{ "when": "extra", "kids": [{ "slot": "extra" }, " "], "else": [{ "slot": "supplement" }] }, "(", { "slot": "number" }, ")"]
     },
     "footnote": {
+      "$comment": "A note (plan P3-13): its anchors count its place among the notes (fn-12 stays unique when the counter restarts per chapter); a labelled note is named, and ref(label, {form: 'marker'}) adds a marker of it (an occurrence, fnref-n.2, …).",
       "select": [{ "node": "note" }],
       "counter": "footnote",
       "numbering": "always",
-      "labels": "none",
+      "labels": "user",
       "preview": "block",
-      "alias": { "prefix": "fn-", "body": "number" },
+      "alias": { "prefix": "fn-", "body": "ordinal" },
       "ref": [{ "slot": "number" }],
       "flow": {
         "name": "notes",
         "placement": "end",
-        "marker-alias": { "prefix": "fnref-", "body": "number", "ref": [{ "term": "backref" }] },
+        "marker-alias": { "prefix": "fnref-", "body": "ordinal", "ref": [{ "term": "backref" }] },
         "marker": [
           {
             "node": "ref",
@@ -132,6 +134,21 @@
           }
         ]
       }
+    },
+    "refsection": {
+      "$comment": "A reference section (plan P3-13), #!refsection … #refsection!: its citations number afresh, and a bibliography in it lists them.",
+      "select": [{ "node": "group", "role": "refsection" }]
+    },
+    "index-entry": {
+      "$comment": "An index entry, entry({role: 'index', key, sortKey})[content] (plan P3-13): a row of the multi table index — a key may hold several — anchored where it stands (idx-n) for the index's back-links.",
+      "select": [{ "node": "entry", "role": "index" }],
+      "counter": "index-entry",
+      "numbering": "always",
+      "labels": "none",
+      "alias": { "prefix": "idx-", "body": "number" },
+      "table": "index",
+      "row-key": "key",
+      "multi": true
     },
     "term": {
       "select": [{ "node": "term" }],
@@ -201,6 +218,71 @@
         }
       ]
     },
+    "lof": {
+      "$comment": "A list of figures (plan P3-13): each figure's number, linked, and its caption.",
+      "query": { "classes": ["figure"] },
+      "context": "collector",
+      "wrap": [{ "node": "list", "args": { "ordered": false }, "kids": [{ "each": "items" }] }],
+      "entry": [
+        {
+          "node": "item",
+          "kids": [
+            {
+              "node": "para",
+              "kids": [
+                { "node": "link", "args": { "url": { "anchor": "anchor" } }, "kids": [{ "slot": "supplement" }, { "slot": "number" }] },
+                { "when": "caption", "kids": [{ "term": "caption-sep" }, { "slot": "caption" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "lot": {
+      "$comment": "A list of tables (plan P3-13): tables, and figures that number as tables.",
+      "query": { "classes": ["table", "table-figure"] },
+      "context": "collector",
+      "wrap": [{ "node": "list", "args": { "ordered": false }, "kids": [{ "each": "items" }] }],
+      "entry": [
+        {
+          "node": "item",
+          "kids": [
+            {
+              "node": "para",
+              "kids": [
+                { "node": "link", "args": { "url": { "anchor": "anchor" } }, "kids": [{ "slot": "supplement" }, { "slot": "number" }] },
+                { "when": "caption", "kids": [{ "term": "caption-sep" }, { "slot": "caption" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "index": {
+      "$comment": "A back-of-book index (plan P3-13): the index table's keys in sort-key order, each with links to its occurrences.",
+      "query": { "table": "index", "group": "key", "order": "sort-key" },
+      "context": "collector",
+      "wrap": [{ "node": "list", "args": { "ordered": false }, "kids": [{ "each": "items" }] }],
+      "entry": [
+        {
+          "node": "item",
+          "kids": [
+            {
+              "node": "para",
+              "kids": [
+                { "slot": "body", "or": "key" },
+                " ",
+                {
+                  "each": "occurrences",
+                  "sep": [", "],
+                  "kids": [{ "node": "link", "args": { "url": { "anchor": "anchor" } }, "kids": [{ "slot": "ordinal" }] }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
     "glossary": {
       "query": { "table": "glossary" },
       "context": "collector",
@@ -240,7 +322,23 @@
               "paras": {
                 "anchor": { "slot": "alias" },
                 "role": "note-body",
-                "tail": [" ", { "node": "ref", "args": { "target": { "slot": "marker-alias" }, "syn": "backlink", "copy": "omit" } }]
+                "tail": [
+                  " ",
+                  { "node": "ref", "args": { "target": { "slot": "marker-alias" }, "syn": "backlink", "copy": "omit" } },
+                  {
+                    "when": "occurrences",
+                    "kids": [
+                      " ",
+                      {
+                        "each": "occurrences",
+                        "sep": [" "],
+                        "kids": [
+                          { "node": "link", "args": { "url": { "anchor": "anchor" }, "syn": "backlink", "copy": "omit" }, "kids": [{ "slot": "letter" }] }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               }
             }
           ]

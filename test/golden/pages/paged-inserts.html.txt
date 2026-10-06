@@ -1,0 +1,37 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="277" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-h-1" data-s="0" data-e="7" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Inserts</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="286" style="position:relative;height:96px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="190" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.486px"><span class="tsr-r" data-s="0">The first sheet carries a note here</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px">1</a><span class="tsr-r" data-s="90"> and</span></div>
+<div class="tsr-line" data-s="90" data-e="190" data-join="space" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="90">its running text continues with ordinary</span></div>
+<div class="tsr-line" data-s="90" data-e="190" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:3.429px"><span class="tsr-r" data-s="90">words to fill the measure and push the</span></div>
+<div class="tsr-line" data-s="90" data-e="190" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="90">paragraphs down.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="478" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="110" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">Filler paragraph two continues to push</span></div>
+<div class="tsr-line" data-s="0" data-e="110" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.5px"><span class="tsr-r" data-s="0">the content down the page by a few more</span></div>
+<div class="tsr-line" data-s="0" data-e="110" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">lines of ordinary running text.</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="590" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="163" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.2px"><span class="tsr-r" data-s="0">A note in the middle of the document</span><a class="tsr-r tsr-sup" href="#tsr-fn-2" id="tsr-fnref-2" data-syn="fn-marker" style="font-size:11.2px">2</a><span class="tsr-r" data-s="93"> goes</span></div>
+<div class="tsr-line" data-s="93" data-e="163" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="93">with the line that holds its marker, wher</span><span class="tsr-r" data-s="93" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="93" data-e="163" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="93">ever the page cut falls.</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="755" style="position:relative;height:72px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="111" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">Filler paragraph four continues to push</span></div>
+<div class="tsr-line" data-s="0" data-e="111" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.5px"><span class="tsr-r" data-s="0">the content down the page by a few more</span></div>
+<div class="tsr-line" data-s="0" data-e="111" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">lines of ordinary running text.</span></div>
+</div>
+<div class="tsr-para" data-pid="5" data-s0="868" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="48" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The last note</span><a class="tsr-r tsr-sup" href="#tsr-fn-3" id="tsr-fnref-3" data-syn="fn-marker" style="font-size:11.2px">3</a><span class="tsr-r" data-s="32"> closes the text.</span></div>
+</div>
+<div class="tsr-para" data-pid="6" data-s0="321" style="position:relative;height:175.984px">
+<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="2" data-e="53" data-join="space" style="top:43.203px;left:24px;width:276px;word-spacing:0.822px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="2" style="font-size:13.6px">The first note sits at the foot of the first</span></div>
+<div class="tsr-line" data-s="0" data-e="54" style="top:67.203px;left:24px;width:276px"><span class="tsr-r" data-s="2" style="font-size:13.6px">sheet. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-2" data-s="307" data-e="360" data-join="space" style="top:97.594px;left:24px;width:276px;word-spacing:-0.35px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="307" style="font-size:13.6px">The second note, on the second sheet with its</span></div>
+<div class="tsr-line" data-s="305" data-e="361" style="top:121.594px;left:24px;width:276px"><span class="tsr-r" data-s="307" style="font-size:13.6px">marker. </span><a class="tsr-r" href="#tsr-fnref-2" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-3" data-s="560" data-e="578" style="top:151.984px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">3.</span><span class="tsr-r" data-s="562" style="font-size:13.6px">The third note. </span><a class="tsr-r" href="#tsr-fnref-3" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+</div>
+</div>

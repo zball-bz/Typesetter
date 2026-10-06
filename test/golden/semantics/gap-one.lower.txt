@@ -1,0 +1,38 @@
+lower v1 abi 3d3ccfbb docEnd 118 holes 2 module 3eaee84c58f09560
+piece 0 hole 0 js [127,173)
+piece 1 hole 1 js [175,188)
+block 0 stmt [0,39) user framed holes 0..1
+  STMT 0
+block 1 content [41,47) user framed holes 1..2
+  CALL para [41,47)
+    HOLE 1 [41,47)
+block 2 content [49,52)
+  CALL heading [49,52) level=1 label=null
+    TEXT "A" [51,52)
+block 3 content [54,61)
+  CALL heading [54,61) level=3 label=null
+    TEXT "A.c" [58,61)
+block 4 content [63,66)
+  CALL heading [63,66) level=1 label=null
+    TEXT "B" [65,66)
+block 5 content [68,74)
+  CALL heading [68,74) level=2 label=null
+    TEXT "B.a" [71,74)
+block 6 content [76,82)
+  CALL heading [76,82) level=2 label=null
+    TEXT "B.b" [79,82)
+block 7 content [84,87)
+  CALL heading [84,87) level=1 label=null
+    TEXT "C" [86,87)
+block 8 content [89,95)
+  CALL heading [89,95) level=2 label=null
+    TEXT "C.a" [92,95)
+block 9 content [97,100)
+  CALL heading [97,100) level=1 label=null
+    TEXT "D" [99,100)
+block 10 content [102,109)
+  CALL heading [102,109) level=3 label=null
+    TEXT "D.c" [106,109)
+block 11 content [111,117)
+  CALL heading [111,117) level=2 label=null
+    TEXT "D.b" [114,117)

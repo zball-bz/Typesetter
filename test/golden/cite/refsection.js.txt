@@ -1,0 +1,20 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {entry} = __rt.std;
+return (async () => {
+let refs;
+const __h = [
+() => { refs = (
+ $.collector('refs', {like: 'bibliography'})
+); },
+() => (refs()),
+() => (refs()),
+() => (refs()),
+(__k) => (entry(...[{role: "bibentry", key: "kp81"}], ...__k())),
+(__k) => (entry(...[{role: "bibentry", key: "knuth84"}], ...__k())),
+(__k) => (entry(...[{role: "bibentry", key: "liang83"}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

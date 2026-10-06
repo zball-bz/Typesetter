@@ -21,6 +21,8 @@ namespace tsr {
 // a formatted number in a pattern ("" = 1.1)
 std::string formatNumber(std::string_view pattern, const std::vector<int>& comps, const Registry& reg);
 
+constexpr u32 kDocScope = ~0u;  // a keyed counter's document-wide scope
+
 class Counters {
  public:
   explicit Counters(const Registry& reg);
@@ -28,10 +30,12 @@ class Counters {
   std::string step(u16 c, int level);
   // the level a node steps a by-level counter at (clamped into 1..depth)
   int levelOf(u16 c, const ContentNode* n) const;
-  // a keyed counter's ordinal for `key`, stepping on its first use
-  int keyed(u16 c, const std::string& key);
-  int keyedIfSeen(u16 c, const std::string& key) const;
-  const std::vector<std::string>& keyOrder(u16 c) const { return keyed_[c].order; }
+  // a keyed counter's ordinal for `key`, stepping on its first use — in a
+  // scope (plan P3-13: an instance of the counter's scope class, a
+  // refsection, counts its citations afresh; kDocScope: the document)
+  int keyed(u16 c, const std::string& key, u32 scope = kDocScope);
+  int keyedIfSeen(u16 c, const std::string& key, u32 scope = kDocScope) const;
+  const std::vector<std::string>& keyOrder(u16 c, u32 scope = kDocScope) const;
   u16 counterNamed(std::string_view name) const;
 
   // a positional event (plan P2-07): set the values (a dot or comma list),
@@ -63,7 +67,7 @@ class Counters {
   std::vector<std::vector<int>> v_;
   std::vector<std::string> pattern_;  // the current pattern of each counter
   std::vector<Supplement> sup_;
-  std::vector<Keyed> keyed_;
+  std::vector<std::unordered_map<u32, Keyed>> keyed_;  // per counter, per scope
   struct Saved {
     u16 c;
     std::vector<int> v;
