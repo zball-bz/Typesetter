@@ -136,10 +136,10 @@ struct GridData {  // a code block (verbatim-design.md)
   StrRef cjkChRef = 0;       // interned "中" (measured CJK width — no more
                              //   assumed 2:1; budget uses the real ratio)
   StrRef lang = 0;           // language tag (font-feature selection)
-  bool sidecar = false;      // sidecar rows in the unit's cells (one per
-                             //   line); the column width is layout's
   i32 lineNo = 0;            // 0 = no numbers; else first line number
   std::vector<u32> hlLines;  // 1-based highlighted lines
+  u32 firstLine = 0;         // (plan P3-11) a two-track table's row: the block line it shows first
+  bool snap = false;         // snap-kerning: its probes are measured even when it does not wrap
   // (plan P3-07) each logical line's source: exact when its length is the
   // line's (a verbatim body: a row is its slice), else the line's node
   // (or the body) as a whole; empty when the code has no source

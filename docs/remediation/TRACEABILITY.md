@@ -1163,8 +1163,8 @@ Theme steps: — · findings: 1
 | `break-layout-pages/table-closed` | adhoc | high | P3-10, P3-14 | |
 | `break-layout-pages/alignment-flags` | adhoc | medium | P3-09 || grep:plan P3-09 |
 | `break-layout-pages/vertical-spacing-constants` | adhoc | medium | P1-18, P3-01 | grep:plan P3-01 |
-| `break-layout-pages/code-wrap-in-layout` | adhoc | medium | P3-11 | |
-| `break-layout-pages/code-sidecar-three-box` | adhoc | medium | P3-11 | |
+| `break-layout-pages/code-wrap-in-layout` | adhoc | medium | P3-11 || grep:plan P3-11 |
+| `break-layout-pages/code-sidecar-three-box` | adhoc | medium | P3-11 || grep:plan P3-11 |
 | `break-layout-pages/comment-role-by-color` | adhoc | low | P2-08 | grep:plan P2-08 |
 | `break-layout-pages/paginator-in-serializer` | adhoc | high | P3-12 | |
 | `break-layout-pages/group-role-dispatch` | adhoc | high | P1-18, P3-14 | |
@@ -1175,7 +1175,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/wide-float-overprints-text` | issue | medium | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/break-inf-float-vs-double` | issue | medium | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/trailing-glue-in-break-cost` | issue | medium | P0-12 | grep:plan P0-12 |
-| `break-layout-pages/snap-kerning-ignores-sidecar` | issue | medium | P3-11 | |
+| `break-layout-pages/snap-kerning-ignores-sidecar` | issue | medium | P3-11 || grep:plan P3-11 |
 | `break-layout-pages/float-adds-paragraph-gap` | issue | low | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/float-indent-geometry` | issue | low | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/paged-atoms-clipped` | issue | medium | P3-12 | |
@@ -1277,7 +1277,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/token-class-as-color-string` | adhoc | high | P2-08 | grep:plan P2-08 |
 | `api-measure-code/language-registry-scattered` | adhoc | medium | P3-22 | |
 | `api-measure-code/literate-cpp-special-case` | adhoc | low | P3-22 | |
-| `api-measure-code/grid-is-codeblock-only` | adhoc | medium | P3-11 | |
+| `api-measure-code/grid-is-codeblock-only` | adhoc | medium | P3-11 || grep:plan P3-11 |
 | `api-measure-code/sidecar-api-layer-rewrite` | adhoc | high | P2-13 | grep:plan P2-13 |
 | `api-measure-code/doc-typeset-hosts-layout-logic` | adhoc | medium | P1-15 | grep:plan P1-15 |
 | `api-measure-code/adhoc-invalidation-flags` | adhoc | high | P1-03 | grep:plan P1-03 |
@@ -1289,7 +1289,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/snap-kerning-duplicate-style-attr` | issue | high | P0-10, P1-03 | grep:plan P1-03 |
 | `api-measure-code/relayout-stale-emit` | issue | high | P0-11, P1-16 | grep:plan P1-16 |
 | `api-measure-code/image-w-only-overwritten` | issue | high | P0-11, P1-19 | grep:plan P1-19 |
-| `api-measure-code/snap-ignores-sidecar-partition` | issue | medium | P1-03, P3-11 | |
+| `api-measure-code/snap-ignores-sidecar-partition` | issue | medium | P1-03, P3-11 || grep:plan P3-11 |
 | `api-measure-code/late-font-stale-measure-cache` | issue | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/main-dims-rpc-race` | issue | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/worker-no-per-doc-serialization` | issue | medium | P0-11 | grep:plan P0-11 |

@@ -692,8 +692,6 @@ class DocLayout {
     const GridData& g = std::get<GridData>(u.data);
     Leaf l = enter(true, b);
     const Su lineWidth = width(b);
-    // the sidecar column is layout's (plan P1-16: code.sidecarFrac)
-    const Su sidebarW = g.sidecar ? suRoundPx(b.tr.sidecarFrac * (widthPx(b))) : 0;
     Su adv = baseLeading;
     Su rowBase = adv / 2;  // a row's baseline, centred (its line-height is the row)
     if (metrics.hasVmet(g.codeStyle)) {
@@ -701,28 +699,17 @@ class DocLayout {
       if (v.ascent + v.descent > adv) adv = v.ascent + v.descent;
       rowBase = (adv - (v.ascent + v.descent)) / 2 + v.ascent;
     }
-    // three-box partition (verbatim §5): the code measure stops before
-    // the sidecar column; the gutter stays out-of-flow (markers)
-    const bool hasSidecar = sidebarW > 0 && !u.cells.empty();
-    Su gapSu = 0;
-    Su lineWidthFull = lineWidth;
-    Su lineWidthCode = lineWidth;
-    if (hasSidecar) {
-      gapSu = suRoundPx(cfg.baseSizePx * cfg.codeScale);
-      lineWidthCode = lineWidth - sidebarW - gapSu;
-      if (lineWidthCode < kRailMinLineSu) lineWidthCode = kRailMinLineSu;
-      for (const TableCell& c : u.cells) {  // sidecar rows break to the sidebar
-        cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(sidebarW), leftEnds()));
-        lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
-      }
-    }
-    (void)lineWidthFull;
+    // the code track: the whole measure (its sidecar notes, if any, are a
+    // second track of the table it sits in: plan P3-11); the gutter stays
+    // out of flow (markers)
+    const Su lineWidthCode = lineWidth;
     // ch grid (CH4, code-design.md §4): monospace is a metric contract —
-    // 1ch per char, 2ch for CJK; wrap is a COLUMN computation, greedy
-    // with a token-boundary preference, continuation rows indent 2ch.
+    // 1ch per char, 2ch for CJK; wrap is a COLUMN computation, greedy with
+    // a break-character preference, continuation rows indent 2ch. The
+    // alignment (snap-kerning, budget) does not depend on wrapping (plan
+    // P3-11: wrap:false kept snap-kerning off).
     Su chSu = 0;
-    if (g.wrap && g.chRef && metrics.hasWord(g.chRef, g.codeStyle))
-      chSu = metrics.word(g.chRef, g.codeStyle).su;
+    if (g.chRef && metrics.hasWord(g.chRef, g.codeStyle)) chSu = metrics.word(g.chRef, g.codeStyle).su;
     // measured CJK width (verbatim-design §2): budget columns from the
     // real ratio, conservatively ceiled — no assumed 2:1
     i32 cjkCols = 2;
@@ -731,7 +718,7 @@ class DocLayout {
       cjkCols = (i32)((c + chSu - 1) / chSu);
       if (cjkCols < 1) cjkCols = 1;
     }
-    i32 cols = chSu > 0 ? (i32)(lineWidthCode / chSu) : 0;
+    i32 cols = g.wrap && chSu > 0 ? (i32)(lineWidthCode / chSu) : 0;
     const i32 minCols = cfg.verbatimMinCols;  // code.minCols
     if (cols > 0 && cols < minCols) cols = minCols;
     // snap-kerning (verbatim §3): solve the rational grid from RAW
@@ -750,7 +737,7 @@ class DocLayout {
         Su atomSu = suCeilPx(grid.atomPx);
         latinAtoms = grid.q;
         cjkCols = grid.p;              // in atom units now
-        cols = (i32)(lineWidthCode / atomSu);  // the code column, not the measure
+        cols = g.wrap ? (i32)(lineWidthCode / atomSu) : 0;  // the code column, not the measure
         if (cols > 0 && cols < minCols * grid.q) cols = minCols * grid.q;
       } else {
         grid = GridSpec{};             // budget-only fallback
@@ -772,8 +759,8 @@ class DocLayout {
         if (r.hang) commentSpans.push_back({b0, (u32)joined.size()});
       }
       const std::vector<GridRow> rows = wrapGridLine(joined, commentSpans, cols, latinAtoms, cjkCols, gp);
-      bool hl = hlSet.count(li + 1) != 0;
-      const i64 rowTop = py;
+      const u32 at = g.firstLine + li;  // the block's line (a table row shows one: plan P3-11)
+      bool hl = hlSet.count(at + 1) != 0;
       // (plan P3-07) its source: a row is its slice of an exact line, else
       // the line as a whole
       const Span ls = li < g.lineSpans.size() ? g.lineSpans[li] : Span{};
@@ -782,7 +769,7 @@ class DocLayout {
         Fragment line;
         line.unitIdx = b.unit;
         line.kind = FragKind::CodeRow;
-        line.codeLine = li;
+        line.codeLine = at;
         line.cbLo = rows[ri].lo;
         line.cbHi = rows[ri].hi;
         line.codeCont = ri > 0;
@@ -803,7 +790,7 @@ class DocLayout {
         line.width = lineWidthCode;
         line.y = (Su)py;
         if (ri == 0 && g.lineNo > 0) {
-          line.marker = strs.intern(std::to_string(g.lineNo + (i32)li));
+          line.marker = strs.intern(std::to_string(g.lineNo + (i32)at));
           line.markerStyle = g.codeStyle;
         } else if (first && b.marker) {
           line.marker = b.marker;
@@ -813,20 +800,6 @@ class DocLayout {
         py += adv;
         lastRow = fr->lines.size();
         fr->lines.push_back(line);
-      }
-      // sidecar rows for this logical line (equal-height zip, §5):
-      // ordinary inline lines broken to the sidebar measure — math,
-      // links and refs land through the generic cell render path
-      if (hasSidecar && li < u.cells.size()) {
-        const TableCell& cell = u.cells[li];
-        LinePolicy pol;  // a row's note: one stream, ending a line (D-R03)
-        pol.ends = leftEnds();
-        pol.anchor = cell.anchor;
-        const ParShape shape(sidebarW);
-        const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[li], shape,
-                                         (Su)(left(b) + lineWidthCode + gapSu), b.unit, (i32)li},
-                                        pol, metrics, cfg, baseLeading, rowTop, fr->lines);
-        if (cy > py) py = cy;  // the equal-height constraint
       }
     }
     if (lastRow != ~size_t(0)) fr->lines[lastRow].sep = b.sepAfter;
@@ -856,13 +829,31 @@ class DocLayout {
       }
     const Sep endSep = lastLeaf != ~0u ? tree->blocks[lastLeaf].sepAfter : Sep::Newline;
     const size_t first = fr->lines.size();
-    if (spec.cols > 0 && !cells.empty()) {
-      const Su colW = lineWidth / (Su)spec.cols;
-      const Su padX = suRoundPx(cfg.tableCellPadEm * cfg.baseSizePx);  // table.cellPad
-      const Su padY = suRoundPx(cfg.tableRowPadEm * cfg.baseSizePx);   // table.rowPad
-      Su cellW = colW - 2 * padX;
-      if (cellW < kRailMinLineSu) cellW = kRailMinLineSu;
-      const size_t nRows = cells.size() / spec.cols;
+    const u32 ncols = (u32)spec.cols.size();
+    if (ncols > 0 && !cells.empty()) {
+      // its tracks (plan P3-11: Fr(1) or Percent; v1 tables: equal columns,
+      // the padding inside): each column's start and content width
+      const Su padX = spec.framed ? suRoundPx(cfg.tableCellPadEm * cfg.baseSizePx) : 0;  // table.cellPad
+      const Su padY = spec.framed ? suRoundPx(cfg.tableRowPadEm * cfg.baseSizePx) : 0;   // table.rowPad
+      const Su gap = suRoundPx(spec.gapCodeEm * cfg.baseSizePx * cfg.codeScale);
+      std::vector<Su> colX(ncols), colW(ncols);
+      Su fixed = gap * (Su)(ncols - 1);
+      u32 nFr = 0;
+      for (u32 c = 0; c < ncols; c++) {
+        if (spec.cols[c].percent > 0) fixed += colW[c] = suRoundPx(spec.cols[c].percent * widthPx(b));
+        else nFr++;
+      }
+      const Su frW = nFr ? (lineWidth - fixed) / (Su)nFr : 0;
+      for (u32 c = 0, x = 0; c < ncols; c++) {
+        if (spec.cols[c].percent <= 0) colW[c] = spec.framed ? frW : std::max(frW, kRailMinLineSu);
+        colX[c] = (Su)x;
+        x += (u32)(colW[c] + gap);
+      }
+      auto cellWidth = [&](u32 c) {
+        const Su w = colW[c] - 2 * padX;
+        return w < kRailMinLineSu ? kRailMinLineSu : w;
+      };
+      const size_t nRows = cells.size() / ncols;
       auto addRule = [&](i64 yy) {
         Fragment rl;
         rl.unitIdx = unit0;
@@ -872,21 +863,27 @@ class DocLayout {
         rl.y = (Su)yy;
         fr->lines.push_back(rl);
       };
-      addRule(py);
+      if (spec.framed) addRule(py);
       for (size_t r = 0; r < nRows; r++) {
         const i64 rowTop = py + padY;
         i64 rowBottom = rowTop + baseLeading;
-        for (u32 c = 0; c < spec.cols; c++) {
-          const u32 k = (u32)(r * spec.cols + c);
-          const u8 a = spec.aligns[c];
+        for (u32 c = 0; c < ncols; c++) {
+          const u32 k = (u32)(r * ncols + c);
+          const Su cellW = cellWidth(c);
+          const u8 a = spec.cols[c].align;
           const LineEnds halign = LineEnds::preset(a == 'c'   ? LineEnds::Preset::Center
                                                    : a == 'r' ? LineEnds::Preset::Right
                                                               : LineEnds::Preset::Left,
                                                    em);
           // (plan P3-07) a cell ends with a tab, a row with a row; the table
-          // with what follows its last leaf
-          const Sep cellSep = c + 1 < spec.cols ? Sep::Tab : r + 1 < nRows ? Sep::Row : endSep;
-          const Su cellX = (Su)(left(b) + (Su)c * colW + padX);
+          // with what follows its last leaf. A code block's row ends a line
+          // (plan P3-11): each of its cells ends with a newline, the last
+          // row with what follows the block
+          const Sep cellSep = spec.lines ? (r + 1 < nRows ? Sep::Newline : endSep)
+                              : c + 1 < ncols  ? Sep::Tab
+                              : r + 1 < nRows  ? Sep::Row
+                                               : endSep;
+          const Su cellX = (Su)(left(b) + colX[c] + padX);
           const size_t before = fr->lines.size();
           // the cell: a flow root at its content box
           ExclusionMap cellFloats(em);
@@ -901,9 +898,10 @@ class DocLayout {
           ctx = saved;
           py = savedPy;
           gapBefore = savedGap;
-          if (fr->lines.size() == before) {
+          if (fr->lines.size() == before && !spec.lines) {
             // an empty cell still holds its place in content text: an empty
-            // line carrying its separator (no items, no height of its own)
+            // line carrying its separator (no items, no height of its own);
+            // a code line without a note has none (its notes copy alone)
             Fragment e;
             e.unitIdx = unit0;
             e.y = (Su)rowTop;
@@ -929,7 +927,7 @@ class DocLayout {
           if (cy > rowBottom) rowBottom = cy;
         }
         py = rowBottom + padY;
-        addRule(py);
+        if (spec.framed) addRule(py);
       }
     }
     for (size_t q = first; q < fr->lines.size(); q++) fr->lines[q].table = self;

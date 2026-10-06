@@ -37,9 +37,9 @@ top pid=0 units=1
   word "row" w=1537su pen=INF @[0,74)
   space w=257su stretch=1 @[0,74)
   word "end." w=2049su pen=INF @[0,74)
-top pid=1 units=1
- unit code indent=0su lines=2 wrap
-  cell 0
+top pid=1 units=3
+ unit code indent=0su lines=1 wrap
+ unit text indent=0su
   word "ac" w=1025su pen=INF @[117,177)
   hyphen bw=513su pen=0.70 @[117,177)
   word "cu" w=1025su pen=INF @[117,177)
@@ -75,4 +75,4 @@ top pid=1 units=1
   word "mea" w=1537su pen=INF @[117,177)
   hyphen bw=513su pen=0.70 @[117,177)
   word "sured" w=2561su pen=INF @[117,177)
-  cell 1
+ unit code indent=0su lines=1 wrap

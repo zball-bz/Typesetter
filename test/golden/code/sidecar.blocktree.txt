@@ -1,9 +1,26 @@
 top pid=0 leaves=1
   stack root gap=1/1 @[0,51)
     paragraph para unit=0 @[0,51)
-top pid=1 leaves=1
+top pid=1 leaves=7
   stack root gap=1/1 @[53,331)
-    grid code unit=0 ragged nohyphen @[53,331)
+    table code ragged nohyphen @[53,331)
+      stack cell @[0,0)
+        grid code unit=0 ragged nohyphen @[53,331)
+      stack cell @[0,0)
+        paragraph para unit=1 @[114,152)
+      stack cell @[0,0)
+        grid code unit=2 ragged nohyphen @[53,331)
+      stack cell @[0,0)
+      stack cell @[0,0)
+        grid code unit=3 ragged nohyphen @[53,331)
+      stack cell @[0,0)
+        paragraph para unit=4 @[199,291)
+      stack cell @[0,0)
+        grid code unit=5 ragged nohyphen @[53,331)
+      stack cell @[0,0)
+      stack cell @[0,0)
+        grid code unit=6 ragged nohyphen @[53,331)
+      stack cell @[0,0)
 top pid=2 leaves=1
   stack root gap=1/1 @[333,347)
     paragraph heading unit=0 ragged nohyphen keep-with-next anchor="base" @[333,347)

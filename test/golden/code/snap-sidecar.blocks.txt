@@ -49,9 +49,9 @@ top pid=0 units=1
   word "mea" w=1537su pen=INF @[0,124)
   hyphen bw=513su pen=0.70 @[0,124)
   word "sure." w=2561su pen=INF @[0,124)
-top pid=1 units=1
- unit code indent=0su lines=2 wrap lineNo=1
-  cell 0
+top pid=1 units=4
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit text indent=0su
   cjk "中" w=1025su glue=102su wt=0.6 pen=0 @[204,227)
   cjk "文" w=1025su glue=102su wt=0.6 pen=0 @[204,227)
   cjk "边" w=1025su glue=102su wt=0.6 pen=0 @[204,227)
@@ -60,7 +60,8 @@ top pid=1 units=1
   word "with" w=2049su pen=INF @[204,227)
   space w=257su stretch=1 @[204,227)
   word "Latin" w=2561su pen=INF @[204,227)
-  cell 1
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit text indent=0su
   cjk "每" w=1025su glue=102su wt=0.6 pen=0 @[277,289)
   cjk "行" w=1025su glue=102su wt=0.6 pen=0 @[277,289)
   cjk "一" w=1025su glue=102su wt=0.6 pen=0 @[277,289)

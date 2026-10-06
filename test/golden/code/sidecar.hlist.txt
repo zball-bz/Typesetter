@@ -43,97 +43,98 @@ top pid=0 units=1
   run r3 blank-bearing CJK
   run r4 letter-spaced CJK
   run r5 blank-bearing CJK
-top pid=1 units=1
- unit code indent=0su lines=5 wrap lineNo=1
-  cell 0
-   box Ideo "记" w=1025su wt=0.6 cap=102su r0 @[114,138)
-   glue inter w=0su x=0.6 cap=102su r0 @[114,138)
-   box Ideo "忆" w=1025su wt=0.6 cap=102su r0 @[114,138)
-   glue inter w=0su x=0.6 cap=102su r0 @[114,138)
-   box Ideo "化" w=1025su wt=0.6 cap=102su r0 @[114,138)
-   glue inter w=0su x=0.6 cap=102su r0 @[114,138)
-   box Ideo "容" w=1025su wt=0.6 cap=102su r0 @[114,138)
-   glue inter w=0su x=0.6 cap=102su r0 @[114,138)
-   box Ideo "器" w=1025su wt=0.6 cap=102su r0 @[114,138)
-   pen INF r0
-   glue inter w=0su x=0.6 cap=102su r0 @[114,138)
-   box CommaW "，" w=512su blank=R r1 @[114,138)
-   glue blank w=512su x=0 cap=0su r1 @[114,138)
-   box Ideo "均" w=1025su wt=0.6 cap=102su r2 @[114,138)
-   glue inter w=0su x=0.6 cap=102su r2 @[114,138)
-   box Ideo "摊" w=1025su wt=0.6 cap=102su r2 @[114,138)
-   pen 0 r2
-   glue word w=257su x=1 cap=257su src r3 @[114,138)
-   box object o0 math part=0 asc=727su desc=209su "O(1)" w=2005su r4 @[139,145)
-   pen 0 r4
-   glue word w=257su x=1 cap=257su src r5 @[146,152)
-   box Ideo "查" w=1025su wt=0.6 cap=102su r6 @[146,152)
-   glue inter w=0su x=0.6 cap=102su r6 @[146,152)
-   box Ideo "询" w=1025su wt=0.6 cap=102su r6 @[146,152)
-   pen 0 r6
-   obj o0 math parts=1 edges=Alpha/Alpha src="O(1)" [w=2005su asc=727su desc=209su]
-   run r0 letter-spaced CJK
-   run r1 blank-bearing CJK
-   run r2 letter-spaced CJK
-   run r3 plain
-   run r4 object
-   run r5 plain
-   run r6 letter-spaced CJK
-  cell 1
-  cell 2
-   box Ideo "基" w=1025su wt=0.6 cap=102su r0 @[200,206)
-   glue inter w=0su x=0.6 cap=102su r0 @[200,206)
-   box Ideo "例" w=1025su wt=0.6 cap=102su r0 @[200,206)
-   pen INF r0
-   glue inter w=0su x=0.6 cap=102su r0 @[200,206)
-   box ColonW "：" w=512su blank=R r1 @[207,210)
-   glue blank w=512su x=0 cap=0su r1 @[207,210)
-   box object o0 math part=0 asc=482su desc=10su "n <= 1" w=680su r2 @[210,218)
-   pen 0.85 r3
-   glue objspace w=284su x=0 cap=0su r3 @[210,218)
-   box object o0 math part=1 asc=665su desc=153su w=819su r4 @[210,218)
-   pen 0.8 r5
-   glue objspace w=284su x=0 cap=0su r5 @[210,218)
-   box object o0 math part=2 asc=727su desc=7su w=511su r6 @[210,218)
-   pen 0 r6
-   glue word w=257su x=1 cap=257su src r7 @[219,243)
-   box Ideo "时" w=1025su wt=0.6 cap=102su r8 @[219,243)
-   glue inter w=0su x=0.6 cap=102su r8 @[219,243)
-   box Ideo "直" w=1025su wt=0.6 cap=102su r8 @[219,243)
-   glue inter w=0su x=0.6 cap=102su r8 @[219,243)
-   box Ideo "接" w=1025su wt=0.6 cap=102su r8 @[219,243)
-   glue inter w=0su x=0.6 cap=102su r8 @[219,243)
-   box Ideo "返" w=1025su wt=0.6 cap=102su r8 @[219,243)
-   glue inter w=0su x=0.6 cap=102su r8 @[219,243)
-   box Ideo "回" w=1025su wt=0.6 cap=102su r8 @[219,243)
-   pen INF r8
-   glue inter w=0su x=0.6 cap=102su r8 @[219,243)
-   box CommaW "，" w=512su blank=R r9 @[219,243)
-   glue blank w=512su x=0 cap=0su r9 @[219,243)
-   box Ideo "详" w=1025su wt=0.6 cap=102su r10 @[219,243)
-   glue inter w=0su x=0.6 cap=102su r10 @[219,243)
-   box Ideo "见" w=1025su wt=0.6 cap=102su r10 @[219,243)
-   pen 0 r10
-   glue word w=257su x=1 cap=257su src r11 @[219,243)
-   box Other "§1" w=1128su r12 @[244,249)
-   box Other "1" w=360su anchor="fnref-1" r13 @[249,291)
-   obj o0 math parts=3 edges=Alpha/Alpha src="n <= 1" [w=680su asc=482su desc=10su] [w=819su asc=665su desc=153su glue=284su] [w=511su asc=727su desc=7su glue=284su]
-   run r0 letter-spaced BOLD CJK
-   run r1 blank-bearing CJK
-   run r2 object
-   run r3 plain
-   run r4 object
-   run r5 plain
-   run r6 object
-   run r7 plain
-   run r8 letter-spaced CJK
-   run r9 blank-bearing CJK
-   run r10 letter-spaced CJK
-   run r11 plain
-   run r12 plain ref LINK link="#tsr-base"
-   run r13 plain ref LINK x0.70 link="#tsr-fn-1" anchor="fnref-1"
-  cell 3
-  cell 4
+top pid=1 units=7
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit text indent=0su
+  box Ideo "记" w=1025su wt=0.6 cap=102su r0 @[114,138)
+  glue inter w=0su x=0.6 cap=102su r0 @[114,138)
+  box Ideo "忆" w=1025su wt=0.6 cap=102su r0 @[114,138)
+  glue inter w=0su x=0.6 cap=102su r0 @[114,138)
+  box Ideo "化" w=1025su wt=0.6 cap=102su r0 @[114,138)
+  glue inter w=0su x=0.6 cap=102su r0 @[114,138)
+  box Ideo "容" w=1025su wt=0.6 cap=102su r0 @[114,138)
+  glue inter w=0su x=0.6 cap=102su r0 @[114,138)
+  box Ideo "器" w=1025su wt=0.6 cap=102su r0 @[114,138)
+  pen INF r0
+  glue inter w=0su x=0.6 cap=102su r0 @[114,138)
+  box CommaW "，" w=512su blank=R r1 @[114,138)
+  glue blank w=512su x=0 cap=0su r1 @[114,138)
+  box Ideo "均" w=1025su wt=0.6 cap=102su r2 @[114,138)
+  glue inter w=0su x=0.6 cap=102su r2 @[114,138)
+  box Ideo "摊" w=1025su wt=0.6 cap=102su r2 @[114,138)
+  pen 0 r2
+  glue word w=257su x=1 cap=257su src r3 @[114,138)
+  box object o0 math part=0 asc=727su desc=209su "O(1)" w=2005su r4 @[139,145)
+  pen 0 r4
+  glue word w=257su x=1 cap=257su src r5 @[146,152)
+  box Ideo "查" w=1025su wt=0.6 cap=102su r6 @[146,152)
+  glue inter w=0su x=0.6 cap=102su r6 @[146,152)
+  box Ideo "询" w=1025su wt=0.6 cap=102su r6 @[146,152)
+  pen 0 r6
+  obj o0 math parts=1 edges=Alpha/Alpha src="O(1)" [w=2005su asc=727su desc=209su]
+  run r0 letter-spaced CJK
+  run r1 blank-bearing CJK
+  run r2 letter-spaced CJK
+  run r3 plain
+  run r4 object
+  run r5 plain
+  run r6 letter-spaced CJK
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit text indent=0su
+  box Ideo "基" w=1025su wt=0.6 cap=102su r0 @[200,206)
+  glue inter w=0su x=0.6 cap=102su r0 @[200,206)
+  box Ideo "例" w=1025su wt=0.6 cap=102su r0 @[200,206)
+  pen INF r0
+  glue inter w=0su x=0.6 cap=102su r0 @[200,206)
+  box ColonW "：" w=512su blank=R r1 @[207,210)
+  glue blank w=512su x=0 cap=0su r1 @[207,210)
+  box object o0 math part=0 asc=482su desc=10su "n <= 1" w=680su r2 @[210,218)
+  pen 0.85 r3
+  glue objspace w=284su x=0 cap=0su r3 @[210,218)
+  box object o0 math part=1 asc=665su desc=153su w=819su r4 @[210,218)
+  pen 0.8 r5
+  glue objspace w=284su x=0 cap=0su r5 @[210,218)
+  box object o0 math part=2 asc=727su desc=7su w=511su r6 @[210,218)
+  pen 0 r6
+  glue word w=257su x=1 cap=257su src r7 @[219,243)
+  box Ideo "时" w=1025su wt=0.6 cap=102su r8 @[219,243)
+  glue inter w=0su x=0.6 cap=102su r8 @[219,243)
+  box Ideo "直" w=1025su wt=0.6 cap=102su r8 @[219,243)
+  glue inter w=0su x=0.6 cap=102su r8 @[219,243)
+  box Ideo "接" w=1025su wt=0.6 cap=102su r8 @[219,243)
+  glue inter w=0su x=0.6 cap=102su r8 @[219,243)
+  box Ideo "返" w=1025su wt=0.6 cap=102su r8 @[219,243)
+  glue inter w=0su x=0.6 cap=102su r8 @[219,243)
+  box Ideo "回" w=1025su wt=0.6 cap=102su r8 @[219,243)
+  pen INF r8
+  glue inter w=0su x=0.6 cap=102su r8 @[219,243)
+  box CommaW "，" w=512su blank=R r9 @[219,243)
+  glue blank w=512su x=0 cap=0su r9 @[219,243)
+  box Ideo "详" w=1025su wt=0.6 cap=102su r10 @[219,243)
+  glue inter w=0su x=0.6 cap=102su r10 @[219,243)
+  box Ideo "见" w=1025su wt=0.6 cap=102su r10 @[219,243)
+  pen 0 r10
+  glue word w=257su x=1 cap=257su src r11 @[219,243)
+  box Other "§1" w=1128su r12 @[244,249)
+  box Other "1" w=360su anchor="fnref-1" r13 @[249,291)
+  obj o0 math parts=3 edges=Alpha/Alpha src="n <= 1" [w=680su asc=482su desc=10su] [w=819su asc=665su desc=153su glue=284su] [w=511su asc=727su desc=7su glue=284su]
+  run r0 letter-spaced BOLD CJK
+  run r1 blank-bearing CJK
+  run r2 object
+  run r3 plain
+  run r4 object
+  run r5 plain
+  run r6 object
+  run r7 plain
+  run r8 letter-spaced CJK
+  run r9 blank-bearing CJK
+  run r10 letter-spaced CJK
+  run r11 plain
+  run r12 plain ref LINK link="#tsr-base"
+  run r13 plain ref LINK x0.70 link="#tsr-fn-1" anchor="fnref-1"
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit code indent=0su lines=1 wrap lineNo=1
 top pid=2 units=1
  unit text indent=0su anchor="base"
   box Ideo "基" w=1640su wt=0.6 cap=164su r0 @[335,347)

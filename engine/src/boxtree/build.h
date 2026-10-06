@@ -26,6 +26,9 @@ struct LeafSource {
   // a code block's sidecar lines (its sidecar track)
   std::vector<const ContentNode*> rows;
   const ContentNode* sidecar = nullptr;  // a code block's sidecar group: not body
+  // (plan P3-11) a code block's line in its two-track table: this leaf
+  // shows its logical lines [lineLo, lineHi) (~0u: all)
+  u32 lineLo = 0, lineHi = ~0u;
 };
 
 class MathEnv;

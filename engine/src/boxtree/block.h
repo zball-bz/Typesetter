@@ -66,13 +66,25 @@ enum class TraitsId : u8 {
   Rule, Error, Marker, Cell, N
 };
 
-// (plan P3-10; design T6 TableSpec, v1 form) a table's tracks: `cols`
-// equal Fr(1) columns, each with its halign ('l', 'c', 'r'); its children
-// are one Cell block per grid position, row-major (a short row padded with
-// empty cells)
+// (plan P3-10; design T6 TableSpec) a table's tracks: Fr(1) columns, or a
+// Percent share of the available width, each with its halign ('l', 'c',
+// 'r'); its children are one Cell block per grid position, row-major (a
+// short row padded with empty cells). A v1 table (`cols`, `align`) is
+// framed: cell padding (table.cellPad / rowPad) and full-width rules. A
+// code block with sidecar notes is a two-track table of its lines (plan
+// P3-11): its code beside its notes a code em apart, unframed, a row per
+// logical line — a row ends a line (no tab or row separator), and a page
+// may break between rows.
+struct ColSpec {
+  float percent = 0;     // > 0: a Percent track; else Fr(1)
+  u8 align = 'l';
+  bool sidecar = false;  // a code block's notes (data-track="sidecar")
+};
 struct TableSpec {
-  u32 cols = 0;
-  std::vector<u8> aligns;
+  std::vector<ColSpec> cols;
+  float gapCodeEm = 0;  // between tracks, in code em
+  bool framed = true;
+  bool lines = false;
 };
 const char* traitsName(TraitsId t);
 

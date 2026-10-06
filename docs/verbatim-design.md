@@ -23,7 +23,10 @@ the grid consumes styled runs, whoever produced them.
 ## 2. Grid atom via Stern–Brocot
 
 Measure chL ("0") and chC ("中") per code style; r = chC/chL. Walk the
-Stern–Brocot tree and take the FIRST convergent p/q satisfying BOTH:
+Stern–Brocot tree and take the FIRST convergent p/q satisfying BOTH (as
+built: the walk keeps the mediant with the smallest error among q ≤ maxQ,
+and `exact` reports whether it also meets the error budget — snap-kerning
+forces rendering onto the grid, so the ratio need not be exact):
 
 - error budget: maxCols × |r − p/q| × chL < 0.5px (per-row drift under
   half a pixel), and
@@ -109,6 +112,19 @@ class="tsr-margin">` after the code, one `<p data-line>` per annotated
 line. `sidebarCol` configures the code box's right edge. Copy contract (OPEN): the sidecar is display content — copy emits
 `/// ` + content text, not a byte-exact source round-trip. TeX
 precedent: listings escapechar, algorithmicx right-aligned \Comment.
+
+As built (plan P3-11; design T6 S10): the three-box model is an ordinary
+**two-track table** (document-model §6.3) — the box tree lowers a code
+block with notes to a table of its logical lines, each row a one-line grid
+leaf (the code track, Fr(1) with a 64su floor) beside its note's paragraph
+leaf (the notes track, `codeblock.sidecarFrac` of the measure), the tracks
+a code em apart, unframed; the row takes its taller cell (the equal-height
+constraint), the gutter stays the code leaf's out-of-flow marker, and the
+code track's width is the grid's budget, snap-kerning included (it once
+used the full measure). A row ends a line (no tab/row separator; copy:
+D-R03 — the code alone across code rows, the notes alone inside the notes
+track), and a page may break between rows. The code block's label rides
+its first line, its notes keep `data-track="sidecar"`.
 
 ## 6. Rejected / withdrawn
 

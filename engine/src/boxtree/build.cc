@@ -1,5 +1,7 @@
 #include "build.h"
 
+#include <algorithm>
+
 #include "../elements/registry.h"
 #include "../model/cascade.h"
 
@@ -166,6 +168,57 @@ class Builder {
     return t->blocks[i];
   }
 
+  // (plan P3-11; design T6 S10) a code block with sidecar notes: a table of
+  // its logical lines — each row a one-line grid leaf beside its note's
+  // paragraph (an empty cell when it has none); the block's label rides
+  // its first line, a list marker too
+  void codeTable(const ContentNode* n, const ContentNode* side, u32 parent, Su x, StrRef marker) {
+    const u32 tb = open(LayouterId::Table, Painter::None, TraitsId::Code, n, parent, x);
+    TableSpec spec;
+    spec.cols = {ColSpec{0, 'l', false}, ColSpec{t->blocks[tb].tr.sidecarFrac, 'l', true}};
+    spec.gapCodeEm = 1;
+    spec.framed = false;
+    spec.lines = true;
+    t->blocks[tb].spec = (u32)t->tables.size();
+    t->tables.push_back(std::move(spec));
+    // its logical lines, as emit splits them: one text body by its line
+    // breaks, else one kid per line
+    u32 lines = 0;
+    std::vector<const ContentNode*> body;
+    for (const ContentNode* k : n->kids)
+      if (k != side) body.push_back(k);
+    if (body.size() == 1 && body[0]->kind == Kind::text) {
+      const std::string_view text = strs.get(body[0]->str);
+      lines = 1 + (u32)std::count(text.begin(), text.end(), '\n');
+    } else {
+      lines = (u32)body.size();
+    }
+    for (u32 i = 0; i < lines; i++) {
+      const u32 c0 = open(LayouterId::Stack, Painter::None, TraitsId::Cell, nullptr, tb, 0);
+      LeafSource s;
+      s.node = n;
+      s.sidecar = side;  // (not body)
+      s.lineLo = i;
+      s.lineHi = i + 1;
+      LayoutBlock& lb = leaf(LayouterId::Grid, Painter::None, TraitsId::Code, n, c0, 0, std::move(s));
+      lb.anchor = 0;  // the block's label is the table's
+      if (i == 0) {
+        lb.marker = marker;
+        lb.markerStyle = n->style;
+      }
+      t->blocks[c0].end = (u32)t->blocks.size();
+      const ContentNode* note = i < side->kids.size() ? side->kids[i] : nullptr;
+      const u32 c1 = open(LayouterId::Stack, Painter::None, TraitsId::Cell, nullptr, tb, 0);
+      if (note && !note->kids.empty()) {
+        LeafSource ns;
+        ns.node = note;
+        leaf(LayouterId::Paragraph, Painter::None, TraitsId::Para, note, c1, 0, std::move(ns));
+      }
+      t->blocks[c1].end = (u32)t->blocks.size();
+    }
+    t->blocks[tb].end = (u32)t->blocks.size();
+  }
+
   // a table cell (plan P3-10): kept even when empty — it holds its grid
   // position; its x is the cell's own (layout places the cell)
   void cellBlock(const ContentNode* cell, u32 table) {
@@ -251,14 +304,14 @@ class Builder {
         return;
       }
       case Kind::codeblock: {
-        // sidecar rows (verbatim-design §5): the lines of its margin slot
-        // (plan P2-13: group{slot: margin}, made by the default fence) are
-        // the block's second track
-        for (const ContentNode* k : n->kids) {
-          if (k->kind == Kind::group && slotOf(k, strs) == SlotId::Margin) {
-            s.sidecar = k;
-            s.rows.assign(k->kids.begin(), k->kids.end());
-          }
+        // sidecar notes (verbatim-design §5): the lines of its margin slot
+        // (plan P2-13: group{slot: margin}, made by the default fence) make
+        // the block a two-track table (plan P3-11)
+        for (const ContentNode* k : n->kids)
+          if (k->kind == Kind::group && slotOf(k, strs) == SlotId::Margin) s.sidecar = k;
+        if (s.sidecar && !s.sidecar->kids.empty()) {
+          codeTable(n, s.sidecar, parent, x, marker);
+          return;
         }
         LayoutBlock& b = leaf(LayouterId::Grid, Painter::None, TraitsId::Code, n, parent, x, std::move(s));
         b.marker = marker;
@@ -276,21 +329,22 @@ class Builder {
         const u32 tb = open(LayouterId::Table, Painter::None, TraitsId::Table, n, parent, x);
         TableSpec spec;
         const int cols = attrInt(n, ArgK::cols, 1);
-        spec.cols = cols < 1 ? 1 : (u32)cols;
         const StrRef al = attrStr(n, ArgK::align);
         const std::string_view a = al ? strs.get(al) : std::string_view{};
-        for (u32 c = 0; c < spec.cols; c++) spec.aligns.push_back(c < a.size() ? (u8)a[c] : (u8)'l');
+        for (u32 c = 0; c < (u32)(cols < 1 ? 1 : cols); c++)
+          spec.cols.push_back(ColSpec{0, c < a.size() ? (u8)a[c] : (u8)'l', false});
+        const u32 ncols = (u32)spec.cols.size();
         t->blocks[tb].spec = (u32)t->tables.size();
-        t->tables.push_back(spec);
+        t->tables.push_back(std::move(spec));
         for (const ContentNode* row : n->kids) {
           if (row->kind != Kind::trow) continue;
           u32 c = 0;
           for (const ContentNode* cell : row->kids) {
-            if (cell->kind != Kind::tcell || c >= spec.cols) continue;
+            if (cell->kind != Kind::tcell || c >= ncols) continue;
             cellBlock(cell, tb);
             c++;
           }
-          for (; c < spec.cols; c++) cellBlock(nullptr, tb);
+          for (; c < ncols; c++) cellBlock(nullptr, tb);
         }
         t->blocks[tb].end = (u32)t->blocks.size();
         return;

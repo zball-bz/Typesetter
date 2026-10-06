@@ -865,6 +865,102 @@ struct Emitter {
     return tc;
   }
 
+  // a code block's grid (verbatim-design): its lines of styled runs, their
+  // source, its numbering and highlight; its sidecar notes are a second
+  // track of their own (plan P3-11: a two-track table)
+  std::unordered_map<const ContentNode*, GridData> gridCache;  // per block, for its table rows
+  void buildGrid(const ContentNode* n, const LeafSource& ls, const BlockTraits& tr, GridData& g) {
+    g.codeStyle = n->style;  // mono at its size: the cascade's (plan P3-01)
+    g.features = styles.get(n->style).features;
+    g.chRef = strs.intern(kGridProbeLatin);  // the grid's probes (code/grid.h)
+    g.cjkChRef = strs.intern(kGridProbeCjk);
+    if (StrRef lang = attrStr(n, ArgK::lang)) g.lang = lang;
+    g.wrap = attrBool(n, ArgK::wrap, g.wrap);
+    g.lineNo = attrInt(n, ArgK::lineNo, g.lineNo);
+    if (StrRef hl = attrStr(n, ArgK::hl))  // "3,5-7": validated by the reader
+      parseRangeSet(strs.get(hl), g.hlLines, kRailRangeLines, kRailRangeNumber);
+    g.snap = tr.snapKerning;
+    std::vector<const ContentNode*> bodyKids;
+    for (const ContentNode* k : n->kids)
+      if (k != ls.sidecar) bodyKids.push_back(k);
+    // Two body forms (CH1): a single text child = plain lines split on
+    // \n, styled by its code tokens when they were answered (plan P1-19:
+    // the answer is folded here, the tree is never rewritten); otherwise
+    // each child is one line (seq of styled runs — the leaves' styles
+    // were already folded at instantiation).
+    const StrRef lang = attrStr(n, ArgK::lang);
+    const TokenNeed* tok = bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text && lang && E.rt
+                               ? E.rt->tokens(lang, bodyKids[0]->str)
+                               : nullptr;
+    if (tok && tok->st == ResState::Ready) {
+      std::vector<std::vector<TokenRun>> lines;
+      tokenLines(strs.get(bodyKids[0]->str), bodyKids[0]->style, E.cascade, bodyKids[0]->env, tok->toks.data(),
+                 tok->toks.size(), strs, styles, lines);
+      for (const std::vector<TokenRun>& line : lines) {
+        std::vector<CodeRun>& runs = g.lines.emplace_back();
+        for (const TokenRun& r : line)
+          runs.push_back({strs.intern(r.text), r.style,
+                          styles.get(r.style).hang == HANG_CONTENT,
+                          r.tag >= 0 ? strs.intern(std::string("tok-") + kTokenTags[r.tag]) : 0});
+      }
+    } else if (bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text) {
+      std::string_view body = strs.get(bodyKids[0]->str);
+      size_t pos = 0;
+      while (pos <= body.size()) {
+        size_t eol = body.find('\n', pos);
+        if (eol == std::string_view::npos) eol = body.size();
+        g.lines.push_back({{strs.intern(body.substr(pos, eol - pos)), g.codeStyle}});
+        if (eol == body.size()) break;
+        pos = eol + 1;
+      }
+    } else {
+      // authored structured lines: a run hangs at its content when its
+      // style says code.hang content (plan P2-08; it was the comment colour)
+      std::function<void(const ContentNode*, std::vector<CodeRun>&)> collect =
+          [&](const ContentNode* k, std::vector<CodeRun>& out) {
+            if (k->kind == Kind::text) {
+              out.push_back({k->str, k->style,
+                             styles.get(k->style).hang == HANG_CONTENT});
+              return;
+            }
+            if (k->kind == Kind::comment) return;
+            for (const ContentNode* c : k->kids) collect(c, out);
+          };
+      for (const ContentNode* lineNode : bodyKids) {
+        std::vector<CodeRun> runs;
+        collect(lineNode, runs);
+        g.lines.push_back(std::move(runs));
+        g.lineSpans.push_back(lineNode->span.empty() ? n->span : lineNode->span);
+      }
+      if (n->span.empty()) g.lineSpans.clear();  // generated code: no source
+    }
+    // (plan P3-07) a body's lines: its slices when it is the source as
+    // written (its length is its span's), else the body as a whole
+    if (g.lineSpans.empty() && bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text && !n->span.empty()) {
+      const ContentNode* t = bodyKids[0];
+      const std::string_view body = strs.get(t->str);
+      // the source as written, or with every line ending CRLF (the reader
+      // keeps LF only): a line's start moves by one per line before it
+      const size_t nl = (size_t)std::count(body.begin(), body.end(), '\n');
+      const u32 len = t->span.end - t->span.start;
+      const bool verbatim = len == body.size() && (!t->span.empty() || body.empty());
+      const bool crlf = !verbatim && nl > 0 && len == body.size() + nl;
+      const Span whole = t->span.empty() ? n->span : t->span;
+      size_t pos = 0;
+      u32 line = 0;
+      while (pos <= body.size()) {
+        size_t eol = body.find('\n', pos);
+        if (eol == std::string_view::npos) eol = body.size();
+        const u32 at = t->span.start + (u32)pos + (crlf ? line : 0);
+        g.lineSpans.push_back(verbatim || crlf ? Span{at, at + (u32)(eol - pos)} : whole);
+        line++;
+        if (eol == body.size()) break;
+        pos = eol + 1;
+      }
+      if (g.lineSpans.size() != g.lines.size()) g.lineSpans.assign(g.lines.size(), whole);
+    }
+  }
+
   void leaf(const LayoutBlock& b, const LeafSource& ls, FlowUnit& u) {
     const ContentNode* n = ls.node;
     E.leafFlow = &u;  // a generated node without a span reports at its leaf
@@ -893,103 +989,26 @@ struct Emitter {
       }
       case LayouterId::Grid: {
         GridData& g = u.data.emplace<GridData>();
-        g.codeStyle = n->style;  // mono at its size: the cascade's (plan P3-01)
-        g.features = styles.get(n->style).features;
-        g.chRef = strs.intern(kGridProbeLatin);  // the grid's probes (code/grid.h)
-        g.cjkChRef = strs.intern(kGridProbeCjk);
-        if (StrRef lang = attrStr(n, ArgK::lang)) g.lang = lang;
-        g.wrap = attrBool(n, ArgK::wrap, g.wrap);
-        g.lineNo = attrInt(n, ArgK::lineNo, g.lineNo);
-        if (StrRef hl = attrStr(n, ArgK::hl))  // "3,5-7": validated by the reader
-          parseRangeSet(strs.get(hl), g.hlLines, kRailRangeLines, kRailRangeNumber);
-        // sidecar rows (verbatim-design §5): one inline stream per logical
-        // line — the whole body pipeline (KP, math, links) applies inside each
-        if (ls.sidecar) {
-          g.sidecar = true;
-          for (const ContentNode* lineNode : ls.rows) {
-            u.cells.push_back(cellOf(lineNode->kids, {}));
-            u.cells.back().span = lineNode->span;
-          }
+        if (ls.lineHi == ~0u) {
+          buildGrid(n, ls, tr, g);
+          return;
         }
-        std::vector<const ContentNode*> bodyKids;
-        for (const ContentNode* k : n->kids)
-          if (k != ls.sidecar) bodyKids.push_back(k);
-        // Two body forms (CH1): a single text child = plain lines split on
-        // \n, styled by its code tokens when they were answered (plan P1-19:
-        // the answer is folded here, the tree is never rewritten); otherwise
-        // each child is one line (seq of styled runs — the leaves' styles
-        // were already folded at instantiation).
-        const StrRef lang = attrStr(n, ArgK::lang);
-        const TokenNeed* tok = bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text && lang && E.rt
-                                   ? E.rt->tokens(lang, bodyKids[0]->str)
-                                   : nullptr;
-        if (tok && tok->st == ResState::Ready) {
-          std::vector<std::vector<TokenRun>> lines;
-          tokenLines(strs.get(bodyKids[0]->str), bodyKids[0]->style, E.cascade, bodyKids[0]->env, tok->toks.data(),
-                     tok->toks.size(), strs, styles, lines);
-          for (const std::vector<TokenRun>& line : lines) {
-            std::vector<CodeRun>& runs = g.lines.emplace_back();
-            for (const TokenRun& r : line)
-              runs.push_back({strs.intern(r.text), r.style,
-                              styles.get(r.style).hang == HANG_CONTENT,
-                              r.tag >= 0 ? strs.intern(std::string("tok-") + kTokenTags[r.tag]) : 0});
-          }
-        } else if (bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text) {
-          std::string_view body = strs.get(bodyKids[0]->str);
-          size_t pos = 0;
-          while (pos <= body.size()) {
-            size_t eol = body.find('\n', pos);
-            if (eol == std::string_view::npos) eol = body.size();
-            g.lines.push_back({{strs.intern(body.substr(pos, eol - pos)), g.codeStyle}});
-            if (eol == body.size()) break;
-            pos = eol + 1;
-          }
-        } else {
-          // authored structured lines: a run hangs at its content when its
-          // style says code.hang content (plan P2-08; it was the comment colour)
-          std::function<void(const ContentNode*, std::vector<CodeRun>&)> collect =
-              [&](const ContentNode* k, std::vector<CodeRun>& out) {
-                if (k->kind == Kind::text) {
-                  out.push_back({k->str, k->style,
-                                 styles.get(k->style).hang == HANG_CONTENT});
-                  return;
-                }
-                if (k->kind == Kind::comment) return;
-                for (const ContentNode* c : k->kids) collect(c, out);
-              };
-          for (const ContentNode* lineNode : bodyKids) {
-            std::vector<CodeRun> runs;
-            collect(lineNode, runs);
-            g.lines.push_back(std::move(runs));
-            g.lineSpans.push_back(lineNode->span.empty() ? n->span : lineNode->span);
-          }
-          if (n->span.empty()) g.lineSpans.clear();  // generated code: no source
+        // (plan P3-11) a row of a code block's two-track table: its lines of
+        // the block's grid, built once per block
+        auto it = gridCache.find(n);
+        if (it == gridCache.end()) {
+          GridData full;
+          buildGrid(n, ls, tr, full);
+          it = gridCache.emplace(n, std::move(full)).first;
         }
-        // (plan P3-07) a body's lines: its slices when it is the source as
-        // written (its length is its span's), else the body as a whole
-        if (g.lineSpans.empty() && bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text && !n->span.empty()) {
-          const ContentNode* t = bodyKids[0];
-          const std::string_view body = strs.get(t->str);
-          // the source as written, or with every line ending CRLF (the reader
-          // keeps LF only): a line's start moves by one per line before it
-          const size_t nl = (size_t)std::count(body.begin(), body.end(), '\n');
-          const u32 len = t->span.end - t->span.start;
-          const bool verbatim = len == body.size() && (!t->span.empty() || body.empty());
-          const bool crlf = !verbatim && nl > 0 && len == body.size() + nl;
-          const Span whole = t->span.empty() ? n->span : t->span;
-          size_t pos = 0;
-          u32 line = 0;
-          while (pos <= body.size()) {
-            size_t eol = body.find('\n', pos);
-            if (eol == std::string_view::npos) eol = body.size();
-            const u32 at = t->span.start + (u32)pos + (crlf ? line : 0);
-            g.lineSpans.push_back(verbatim || crlf ? Span{at, at + (u32)(eol - pos)} : whole);
-            line++;
-            if (eol == body.size()) break;
-            pos = eol + 1;
-          }
-          if (g.lineSpans.size() != g.lines.size()) g.lineSpans.assign(g.lines.size(), whole);
-        }
+        const GridData& full = it->second;
+        const u32 lo = std::min(ls.lineLo, (u32)full.lines.size()), hi = std::min(ls.lineHi, (u32)full.lines.size());
+        g = full;
+        g.lines.assign(full.lines.begin() + lo, full.lines.begin() + hi);
+        g.lineSpans.clear();
+        if (full.lineSpans.size() == full.lines.size())
+          g.lineSpans.assign(full.lineSpans.begin() + lo, full.lineSpans.begin() + hi);
+        g.firstLine = lo;
         return;
       }
       case LayouterId::Table:  // a container (plan P3-10): its cells' leaves are units
@@ -1507,7 +1526,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
         finalizeDisplay(*m, store, cfg, *objects, need);
       if (const GridData* g = std::get_if<GridData>(&u.data)) {
         needStyle(g->codeStyle);
-        if (g->wrap) {
+        if (g->wrap || g->snap) {  // (plan P3-11: snap-kerning without wrap measures them too)
           for (StrRef probe : {g->chRef, g->cjkChRef}) {
             if (!probe || store.hasWord(probe, g->codeStyle)) continue;
             ask(probe, g->codeStyle);

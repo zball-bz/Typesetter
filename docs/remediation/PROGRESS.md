@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-11
+- 下一步：P3-12
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -77,7 +77,7 @@
 | P3-08 | ParShape 与侧向排除区 | done | grep:plan P3-08 | 2026-10-06 | figure/float、figure/stack、figure/float-in-list 的 breaks/layout/vlist/html（浮动后不再多一个段距；堆叠浮动按真实行带收窄 9 行而非取较宽者近似；列表内浮动之后的正文从浮动顶部开始）；新用例 figure/both-sides（左右浮动并存，文字夹在中间，较短者结束后只从右侧收窄）、figure/wide-float（剩余栏宽小于 minWrapWidth，段落清除浮动）；单测 unitFloatsNeverOverlap（5 个浮动用例 × 4 个版心宽，任何流内行不与浮动框相交） | 两个提交：结构（LineWidths → ParShape{lines: LineSlot{left,width}, rest}，断行器读宽度、layout 读偏移，memo 键散列每个宽度；golden 不变）+ 行为。ExclusionMap 改为流根（文档）坐标中带侧标的浮动框：available（行带内收窄，起始侧可加列表标记的位置）、clearY（整个内容盒，D-Y02）、shape（保守行带 [yTop+i·minAdv, yTop+(i+1)·maxAdv)，maxAdv 为该流最高行）、place（同侧重叠则堆在其下，异侧之间栏宽小于 minWrapWidth 则放到其下）；浮动推进量 0、其后无间距（顶层与栈内都是）；段落任何行栏宽小于 minWrapWidth 时清除浮动；非段落块按整个内容盒清除并保持其间距；对齐与居中的余量一律取行槽宽度（measure-definition-split）。新设置 layout.minWrapWidth（em，默认 8）。文档：figure-design §4/§8、settings-table |
 | P3-09 | LineEnds 取代对齐标志 | done | grep:plan P3-09 | 2026-10-06 | 122 个 golden：breaks 37（35 个只是 cost 值，2 个真正换断点：exec/contain-fence-header-diag 的错误块与 region/table-term 的不齐格改为不用连字符/不过紧的断法）；blocks/blocktree/hlist 各 17（题注 centered → single-center，取消题注的 nohyphen，题注出现连字点）；layout 19、html 14、paged 1（多行题注两端对齐、末行不齐，单行题注居中；浮动题注同样；上述两处重断）。居中/右对齐格与单行题注的 su 偏移不变（原来已按 su 自然宽计算） | LineEnds{start,end,lastStart,lastEnd,rigidInterior} 进 BreakParams（断行器的代价与 memo 键）与 LinePolicy（layout 实现）：预设 justify / left（自由端 2em 有限伸长，D-Y01）/ center（两侧各 1em）/ right，末行端为 fil；每个流按其 par.align 选预设，表格格按列 halign，sidecar 行 left；layout 的余量按胶的阶分配——行内 fill > 端 fil > 行内胶（非 rigid）或端的有限伸长，偏移用 su 自然宽；删除 LinePolicy 的 Align/cellAlign 与 rigid/Center/Cell 分支；ragged 与 noGlue 保留为实现结果（DOM 提示）。新块属性 par.singleLine（align/center，since 14，opsVersion 14）：单行段落居中，语义页为居中的收缩盒（display:table; margin-inline:auto）；BlockTraits.singleCenter；浮动题注行读题注段落自身的属性（LayoutBlock.rowTr，traitsOf 一处计算）。题注默认规则（D-Y05）：justify + singleLine center + 可断字（原为居中且不断字）。文档：style-design §4、figure-design §8、tsm-changes、schema-table |
 | P3-10 | 表格布局器 | done | grep:plan P3-10 | 2026-10-06 | region/table、region/table-tiny 的 html/layout/vlist/paged 字节不变（全部含表用例的 html/layout 均不变）；结构 dump 变化（10 个含表用例的 blocks/blocktree/hlist/breaks：表格成为容器、每格一个 Cell 块、格内段落成为独立单元，breaks 由 unit=0 cell=k 变为 unit=k，断点与代价不变）；figure/kinds 的 vlist（单元编号随格内段落后移）；region/hott-row 新增 mathir/mathbox（格内公式现在属于单元）；新用例 region/table-blocks（格内列表、两段、代码块，右对齐列） | box tree：表格为容器块（LayouterId::Table，TableSpec{cols, aligns} 存 TopTree::tables），每个网格位置一个 Cell 块（TraitsId::Cell，空格也保留）；全为块的格逐块 walk，含行内内容的格（包括解析器把行内术语变成的组旁带文字）为一个段落叶子。emit：TableData 删除，格内叶子为普通单元。layout：容器上下文 Ctx{x0, width, widthPx, excl, halign, cell}——各布局器以 left(b)/width(b)/widthPx(b) 取位置，格为流根（自带空排除表，文档浮动不入），格内叶子不进 vlist，格内段落取列 halign 的 LineEnds 预设；表格布局器按 v1 轨道逐格以普通布局器排布、行取最高格、每格末行 sep 为 tab/row/表后、空格输出空行；Fragment.gridCell/table（布局 dump 打印 cell=、paint 的 data-track、分页的原子组），VEntry.block（vlist 打印容器）。文档：document-model §6.3、tsm-changes |
-| P3-11 | 网格布局器；代码块 + sidecar 两轨表 | todo | | | | |
+| P3-11 | 网格布局器；代码块 + sidecar 两轨表 | done | grep:plan P3-11 | 2026-10-06 | 6 个代码用例渲染不变（code/sidecar、snap-sidecar、sidecar-hyphen 的 html/paged 字节不变）；三个 sidecar 用例的结构 dump 变化（blocks/blocktree/hlist/breaks：两轨表、每逻辑行一个代码叶子与一个注释段落叶子；layout 的 sidecar 行 cell= 改为网格序号）；code/sidecar 新增 mathir/mathbox（注释中的公式现属单元）。snap+sidecar 守护用例未变化：其列预算错误已在 P1-03 修正。e2e：snap-kerning 用例增加 wrap:false 仍 snap 的检查（120px 下普通版有续行、不折行版无续行且有 data-snap） | 两个提交：结构（layout/grid.{h,cc} 的纯函数 wrapGridLine + GridParams{minCols, contIndent, commentAware, breakAfter}，四处硬编码 8 统一为 minCols；ch 探针由 code/grid.h 声明；solveGrid 注释与实际一致；golden 不变）+ 行为。box tree：带注释的代码块降级为两轨表（TableSpec 新增 ColSpec{percent, align, sidecar}、gapCodeEm、framed、lines）：每逻辑行一行——单行 Grid 叶子（LeafSource.lineLo/lineHi，标签由表承载、列表标记在首行）与注释段落叶子（无注释为空格，不输出占位行）。emit：buildGrid 每块构建一次（gridCache）后按行切片，GridData.firstLine，sidecar 字段与格内 cells 删除；snap 时也请求探针。layout：grid 不再有 sidecar 分支，代码轨即网格预算（snap 也用它），对齐（snap/预算）与折行解耦（wrap:false 时 snap 仍生效），行号与高亮按 firstLine；表格布局器按 ColSpec 解析轨道（Fr/Percent、轨间距、framed 才有内边距与线），lines 表每格行末为 newline、末行为块后分隔。paint：代码 run 按 firstLine 取行，sidecar 轨由列规格判断。分页：lines 表按行（逻辑行）分组。文档：verbatim-design §2/§5、code-design §4、tsm-changes |
 | P3-12 | VList 与分页阶段 | todo | | | | |
 | P3-13 | 新集合、flow 与计数器 | todo | | | | |
 | P3-14 | 作者面特征（traits）与表格扩展 | todo | | | | |
@@ -154,6 +154,7 @@
 | P3-08 后 | 3.60 | 10.50 | 25.50 | 1.7 / 3.1 / 0.6 / 9.6 / 2.8 | 65.1 / 100.9 / 143.1 | 1.60 / 21.40 / 52.90 | 无浮动的文档不计算行带；均在 P3 门限内 |
 | P3-09 后 | 3.30 | 10.50 | 25.60 | 1.7 / 3.0 / 0.6 / 9.6 / 2.8 | 63.2 / 96.0 / 142.1 | 1.60 / 21.40 / 57.30 | 断行 memo 键多端胶；均在 P3 门限内 |
 | P3-10 后 | 3.50 | 10.20 | 25.10 | 1.7 / 3.0 / 0.6 / 9.6 / 2.9 | 63.1 / 97.4 / 139.2 | 1.60 / 21.10 / 56.20 | 均在 P3 门限内 |
+| P3-11 后 | 3.20 | 10.10 | 25.70 | 1.8 / 3.2 / 0.6 / 9.7 / 2.8 | 61.7 / 100.4 / 137.8 | 1.70 / 22.30 / 52.80 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -317,6 +318,8 @@
 | P3-09 | 显示公式与块图片的居中仍由各自的放置代码完成（替换盒，不是行）；ragged/noGlue 作为实现结果保留在 Fragment 上供 DOM 提示 | LineEnds 只描述行；替换盒的放置属 T6 的 Place（P3-15） | P3-15 |
 | P3-10 | 计划写 region/table* 字节不变：渲染产物（html/layout/vlist/paged）不变，结构 dump（blocks/blocktree/hlist/breaks）因格成为 Cell 块与独立单元而变 | 流根格必须在 box tree 中有自己的块与叶子；dump 如实反映结构 | 无 |
 | P3-10 | break-layout-pages/table-closed 只完成一半（TableSpec v1 与流根格）；列宽规格、规则预设、表头、跨格、溢出诊断属作者面 | 计划把这些放在 P3-14 | P3-14 |
+| P3-11 | 结构 dump 不字节不变：带注释的代码块成为两轨表后，blocks/blocktree/hlist/breaks 与 layout 中注释行的 cell= 序号随结构变化（渲染不变） | 两轨表必须有自己的叶子；dump 如实反映 | 无 |
+| P3-11 | 网格的断行字符类仍是 ASCII 集合加 CJK 禁则，未接入 T5 的 Grid 模式分类；注释感知续行仍按 code.hang 的 run 判断 | T5 的 Grid 模式属 P4 的段落整形器 | P4-02 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

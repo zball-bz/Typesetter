@@ -1,0 +1,16 @@
+inline pid=1 "O(1)"
+hbox Ord w=2005 asc=727 desc=209
+  glyph "O" Ord w=822 asc=717 desc=19 px=16
+  hbox Ord w=1183 asc=727 desc=209 @(822,0)
+    glyph "(" Open w=336 asc=721 desc=209 px=16
+    glyph "1" Ord w=511 asc=727 desc=7 px=16 @(336,0)
+    glyph ")" Close w=336 asc=721 desc=209 px=16 @(847,0)
+inline pid=1 "n <= 1"
+hbox Ord w=680 asc=482 desc=10
+  glyph "n" Ord w=680 asc=482 desc=10 px=16
+inline pid=1 ""
+hbox Ord w=819 asc=665 desc=153
+  glyph "≤" Rel w=819 asc=665 desc=153 px=16
+inline pid=1 ""
+hbox Ord w=511 asc=727 desc=7
+  glyph "1" Ord w=511 asc=727 desc=7 px=16

@@ -194,7 +194,9 @@ void codeRuns(const Fragment& l, const GridData& g, const Interner& strs, std::v
   }
   const bool snap = l.snapLatinPx > 0 || l.snapCjkPx > 0;
   u32 off = 0;
-  for (const CodeRun& r : g.lines[l.codeLine]) {
+  // (a two-track table's row holds its slice of the block's lines: P3-11)
+  if (l.codeLine < g.firstLine || l.codeLine - g.firstLine >= g.lines.size()) return;
+  for (const CodeRun& r : g.lines[l.codeLine - g.firstLine]) {
     std::string_view t0 = strs.get(r.text);
     u32 rLo = off, rHi = off + (u32)t0.size();
     off = rHi;
@@ -335,8 +337,13 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.ragged = l.ragged || l.noGlue;
         // (plan P3-07) a second track's line: a table cell, a code block's
         // sidecar row, a float's caption row (data-cell retired)
-        if (l.gridCell >= 0) n.track = "cell";
-        else if (l.cellIdx >= 0) n.track = b.layouter == LayouterId::Grid ? "sidecar" : "caption";
+        if (l.gridCell >= 0 && l.table != ~0u) {  // a table cell — a code block's notes say so (plan P3-11)
+          const TableSpec& ts = tree.tables[tree.blocks[l.table].spec];
+          const bool side = !ts.cols.empty() && ts.cols[(size_t)l.gridCell % ts.cols.size()].sidecar;
+          n.track = side ? "sidecar" : "cell";
+        } else if (l.cellIdx >= 0) {
+          n.track = "caption";  // a float's caption row
+        }
         n.overfull = l.overfull;
         n.wordSpacingPx = l.wordDeltaPx;
         n.marker = l.marker;

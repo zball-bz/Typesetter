@@ -100,7 +100,13 @@ at emit) renders into what already exists:
 - **Word wrap is a column computation** (no Knuth, by decision):
   `cols = floor(measure/ch)`, greedy fill with a two-level break
   preference — token boundary (space/punct) over mid-identifier — plus a
-  configurable continuation indent. Wrap is ON by default: lines are
+  configurable continuation indent. As built (plan P3-11): the boundary is
+  a break-AFTER character class (`GridParams.breakAfter`, default
+  `space tab , ; ) } ] >`; CJK between any two characters by kinsoku) —
+  no token or language information is read; the wrapper is the pure
+  `wrapGridLine` (layout/grid.cc) and the alignment (snap-kerning, the
+  measured CJK ratio) no longer depends on wrapping (`wrap: false` kept
+  snap-kerning off). Wrap is ON by default: lines are
   absolutely positioned with no scroll container, so overflow has nowhere
   to go.
 - Line numbers reuse the gutter mechanism (`.tsr-marker`, right:100%):

@@ -1,0 +1,11 @@
+inline pid=1 "O(1)"
+  run [0,4)
+    sym U+004F ord [0,1)
+    group U+0028 U+0029 [1,4)
+      run [2,3)
+        num "1" [2,3)
+inline pid=1 "n <= 1"
+  run [0,6)
+    sym U+006E ord [0,1)
+    sym U+2264 rel [2,4)
+    num "1" [5,6)

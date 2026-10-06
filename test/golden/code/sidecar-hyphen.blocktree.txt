@@ -1,6 +1,13 @@
 top pid=0 leaves=1
   stack root gap=1/1 @[0,74)
     paragraph para unit=0 @[0,74)
-top pid=1 leaves=1
+top pid=1 leaves=3
   stack root gap=1/1 @[76,193)
-    grid code unit=0 ragged nohyphen @[76,193)
+    table code ragged nohyphen @[76,193)
+      stack cell @[0,0)
+        grid code unit=0 ragged nohyphen @[76,193)
+      stack cell @[0,0)
+        paragraph para unit=1 @[117,177)
+      stack cell @[0,0)
+        grid code unit=2 ragged nohyphen @[76,193)
+      stack cell @[0,0)

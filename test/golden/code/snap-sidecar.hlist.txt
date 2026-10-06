@@ -50,30 +50,31 @@ top pid=0 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="as" r0 @[0,124)
   box Other "sure." w=2561su r0 @[0,124)
   run r0 plain
-top pid=1 units=1
- unit code indent=0su lines=2 wrap lineNo=1
-  cell 0
-   box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[204,227)
-   glue inter w=0su x=0.6 cap=102su r0 @[204,227)
-   box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[204,227)
-   glue inter w=0su x=0.6 cap=102su r0 @[204,227)
-   box Ideo "边" w=1025su wt=0.6 cap=102su r0 @[204,227)
-   glue inter w=0su x=0.6 cap=102su r0 @[204,227)
-   box Ideo "注" w=1025su wt=0.6 cap=102su r0 @[204,227)
-   pen 0 r0
-   glue word w=257su x=1 cap=257su src r1 @[204,227)
-   box Other "with" w=2049su r1 @[204,227)
-   glue word w=257su x=1 cap=257su kern="h L" src r1 @[204,227)
-   box Other "Latin" w=2561su r1 @[204,227)
-   run r0 letter-spaced CJK
-   run r1 plain
-  cell 1
-   box Ideo "每" w=1025su wt=0.6 cap=102su r0 @[277,289)
-   glue inter w=0su x=0.6 cap=102su r0 @[277,289)
-   box Ideo "行" w=1025su wt=0.6 cap=102su r0 @[277,289)
-   glue inter w=0su x=0.6 cap=102su r0 @[277,289)
-   box Ideo "一" w=1025su wt=0.6 cap=102su r0 @[277,289)
-   glue inter w=0su x=0.6 cap=102su r0 @[277,289)
-   box Ideo "个" w=1025su wt=0.6 cap=102su r0 @[277,289)
-   pen 0 r0
-   run r0 letter-spaced CJK
+top pid=1 units=4
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit text indent=0su
+  box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[204,227)
+  glue inter w=0su x=0.6 cap=102su r0 @[204,227)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[204,227)
+  glue inter w=0su x=0.6 cap=102su r0 @[204,227)
+  box Ideo "边" w=1025su wt=0.6 cap=102su r0 @[204,227)
+  glue inter w=0su x=0.6 cap=102su r0 @[204,227)
+  box Ideo "注" w=1025su wt=0.6 cap=102su r0 @[204,227)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[204,227)
+  box Other "with" w=2049su r1 @[204,227)
+  glue word w=257su x=1 cap=257su kern="h L" src r1 @[204,227)
+  box Other "Latin" w=2561su r1 @[204,227)
+  run r0 letter-spaced CJK
+  run r1 plain
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit text indent=0su
+  box Ideo "每" w=1025su wt=0.6 cap=102su r0 @[277,289)
+  glue inter w=0su x=0.6 cap=102su r0 @[277,289)
+  box Ideo "行" w=1025su wt=0.6 cap=102su r0 @[277,289)
+  glue inter w=0su x=0.6 cap=102su r0 @[277,289)
+  box Ideo "一" w=1025su wt=0.6 cap=102su r0 @[277,289)
+  glue inter w=0su x=0.6 cap=102su r0 @[277,289)
+  box Ideo "个" w=1025su wt=0.6 cap=102su r0 @[277,289)
+  pen 0 r0
+  run r0 letter-spaced CJK

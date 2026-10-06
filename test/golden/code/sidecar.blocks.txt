@@ -20,9 +20,9 @@ top pid=0 units=1
   cjk "注" w=1025su glue=102su wt=0.6 pen=INF @[0,51)
   punct-close "。" w=512su @[0,51)
   punct-sp w=512su @[0,51)
-top pid=1 units=1
- unit code indent=0su lines=5 wrap lineNo=1
-  cell 0
+top pid=1 units=7
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit text indent=0su
   cjk "记" w=1025su glue=102su wt=0.6 pen=0 @[114,138)
   cjk "忆" w=1025su glue=102su wt=0.6 pen=0 @[114,138)
   cjk "化" w=1025su glue=102su wt=0.6 pen=0 @[114,138)
@@ -37,8 +37,9 @@ top pid=1 units=1
   space w=257su stretch=1 @[146,152)
   cjk "查" w=1025su glue=102su wt=0.6 pen=0 @[146,152)
   cjk "询" w=1025su glue=102su wt=0.6 pen=0 @[146,152)
-  cell 1
-  cell 2
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit text indent=0su
   cjk "基" w=1025su glue=102su wt=0.6 pen=0 BOLD @[200,206)
   cjk "例" w=1025su glue=102su wt=0.6 pen=INF BOLD @[200,206)
   punct-close "：" w=512su @[207,210)
@@ -61,8 +62,8 @@ top pid=1 units=1
   space w=257su stretch=1 @[219,243)
   word "§1" w=1128su pen=INF LINK SYN @[244,249)
   word "1" w=360su pen=INF LINK SYN x0.70 @[249,291)
-  cell 3
-  cell 4
+ unit code indent=0su lines=1 wrap lineNo=1
+ unit code indent=0su lines=1 wrap lineNo=1
 top pid=2 units=1
  unit text indent=0su anchor="base"
   cjk "基" w=1640su glue=164su wt=0.6 pen=0 BOLD x1.60 @[335,347)

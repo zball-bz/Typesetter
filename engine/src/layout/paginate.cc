@@ -41,8 +41,14 @@ PageResult paginate(const LayoutResult& lr, const std::vector<TopBlock>& tops, d
       size_t j = i + 1;
       auto sameUnit = [&](size_t k) { return k < fr.lines.size() && fr.lines[k].unitIdx == l.unitIdx; };
       if (l.table != ~0u) {
-        // a table with its rules and cells is atomic (plan P3-10: its group)
-        while (j < fr.lines.size() && fr.lines[j].table == l.table) j++;
+        // a table with its rules and cells is atomic (plan P3-10: its group);
+        // a code block's table cuts between its rows (logical lines, plan
+        // P3-11): a row is its code rows and its note
+        const TableSpec& ts = tree.tables[tree.blocks[l.table].spec];
+        const size_t nc = ts.cols.size() ? ts.cols.size() : 1;
+        auto rowOf = [&](const Fragment& f) { return f.gridCell < 0 ? -1 : (i64)((size_t)f.gridCell / nc); };
+        const i64 row = rowOf(l);
+        while (j < fr.lines.size() && fr.lines[j].table == l.table && (!ts.lines || rowOf(fr.lines[j]) == row)) j++;
       } else if (b.floatSide != 0) {
         // the whole leaf is atomic (a float with its caption)
         while (sameUnit(j)) j++;

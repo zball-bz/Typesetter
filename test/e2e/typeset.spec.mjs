@@ -276,6 +276,17 @@ test('snap-kerning: one style attribute carrying letter-spacing', async ({ page 
   expect(spacing.length).toBe(tags.length);
   for (const v of spacing) expect(v).not.toBe('');
   expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
+  // (plan P3-11) the grid's alignment does not depend on wrapping: a block
+  // that does not wrap still snaps
+  const at = async (src) => await page.evaluate(
+    async ({ source }) => await window.__tsr.typeset(source, { widthPx: 120, verbatimSnapKerning: true }),
+    { source: src },
+  );
+  const wrapped = await at(source);
+  expect(wrapped.html).toContain('data-syn="cont"');  // at 120px the block wraps
+  const nowrap = await at(source.replace('```text', '```text(wrap: false)'));
+  expect(nowrap.html).not.toContain('data-syn="cont"');
+  expect((nowrap.html.match(/data-snap="1"/g) ?? []).length).toBeGreaterThan(0);
 });
 
 // plan P1-04: the document root carries its language, base size and the
