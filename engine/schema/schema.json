@@ -905,6 +905,26 @@
         "Paginate"
       ]
     },
+    "page.width": {
+      "$comment": "The page's content width in px (plan P3-12; design T6 PageSpec): the measure print lays the document out at. With page.height and page.margin it is the sheet: content plus margins (the defaults: A4 at 96 dpi with 64px margins).",
+      "field": "pageWidthPx",
+      "dom": "num:16:100000",
+      "def": 666,
+      "prec": "HostDefault",
+      "affects": [
+        "Paginate"
+      ]
+    },
+    "page.margin": {
+      "$comment": "The page's margin in px on every side (plan P3-12; design T6 PageSpec).",
+      "field": "pageMarginPx",
+      "dom": "num:0:10000",
+      "def": 64,
+      "prec": "HostDefault",
+      "affects": [
+        "Paginate"
+      ]
+    },
     "semantics.elements": {
       "field": "semElements",
       "dom": "json",

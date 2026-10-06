@@ -149,6 +149,8 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
   u32 prev = 0;
   bool first = true;
   const BreakResult& br = s.br;
+  const u32 nLines = (u32)br.breakpoints.size();
+  u32 made = 0;  // lines made so far
   for (size_t li = 0; li < br.breakpoints.size(); li++) {
     const u32 bp = br.breakpoints[li];
     LineItems r;
@@ -241,6 +243,11 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
       line.sep = (f.endsHyphen || !joinsSpace(s.h, r.ihi)) ? Sep::None : Sep::Space;
     else if (bp == s.nBlocks)
       line.sep = pol.endSep;
+    // (plan P3-12) a page cut before it: its stream's own (the block's
+    // boundary, set by the caller) for the first line, widows and orphans
+    // inside
+    if (made > 0 && (made < kOrphans || nLines - made < kWidows)) line.brk = PenTier::WidowOrphan;
+    made++;
     Su advance = baseLeading;
     if (f.maxAsc + f.maxDesc > advance) advance = f.maxAsc + f.maxDesc;
     line.height = advance;
@@ -508,6 +515,22 @@ class DocLayout {
     }
     if (!ctx.cell) fr->vlist.push_back({b.unit, gapBefore, l.clear, (Su)l.top, (Su)(py - l.top), out});
     gapBefore = 0;
+    boundary(l.from, b.tr.keepWithNext, out);
+  }
+  // (plan P3-12) a block's fragments [from, end) in the vertical list: a
+  // page cut before the first is its boundary's — kept with a block before
+  // it that keeps with what follows (a heading); a float box is one atom
+  // that leaves the flow's keeps alone; inside a table cell the table
+  // decides
+  bool keepNext = false;
+  void boundary(size_t from, bool keepsWithNext, bool atom) {
+    if (ctx.cell || from >= fr->lines.size()) return;
+    if (atom) {
+      for (size_t q = from + 1; q < fr->lines.size(); q++) fr->lines[q].brk = PenTier::Structural;
+      return;
+    }
+    if (keepNext && fr->lines[from].brk < PenTier::KeepWithNext) fr->lines[from].brk = PenTier::KeepWithNext;
+    keepNext = keepsWithNext;
   }
 
   void stack(const LayoutBlock& b) {
@@ -773,6 +796,10 @@ class DocLayout {
         line.cbLo = rows[ri].lo;
         line.cbHi = rows[ri].hi;
         line.codeCont = ri > 0;
+        // (plan P3-12) a page never cuts a logical line; between lines it
+        // keeps widows and orphans, counted in logical lines
+        if (ri > 0) line.brk = PenTier::Structural;
+        else if (li > 0 && (li < kOrphans || (u32)g.lines.size() - li < kWidows)) line.brk = PenTier::WidowOrphan;
         // a wrapped row rejoins its continuation (§9.3); a code line ends
         // with a newline, the block with its unit's separator (below)
         if (ri + 1 < rows.size()) line.sep = Sep::None;
@@ -829,6 +856,7 @@ class DocLayout {
       }
     const Sep endSep = lastLeaf != ~0u ? tree->blocks[lastLeaf].sepAfter : Sep::Newline;
     const size_t first = fr->lines.size();
+    std::vector<size_t> rowStarts;  // each row's first fragment
     const u32 ncols = (u32)spec.cols.size();
     if (ncols > 0 && !cells.empty()) {
       // its tracks (plan P3-11: Fr(1) or Percent; v1 tables: equal columns,
@@ -867,6 +895,7 @@ class DocLayout {
       for (size_t r = 0; r < nRows; r++) {
         const i64 rowTop = py + padY;
         i64 rowBottom = rowTop + baseLeading;
+        rowStarts.push_back(fr->lines.size());
         for (u32 c = 0; c < ncols; c++) {
           const u32 k = (u32)(r * ncols + c);
           const Su cellW = cellWidth(c);
@@ -931,8 +960,18 @@ class DocLayout {
       }
     }
     for (size_t q = first; q < fr->lines.size(); q++) fr->lines[q].table = self;
+    // (plan P3-12) a page cuts between rows only — a row (with the rule
+    // under it) is one atom; a code block's rows keep widows and orphans
+    for (size_t q = first; q < fr->lines.size(); q++) fr->lines[q].brk = PenTier::Structural;
+    for (size_t r = 1; r < rowStarts.size(); r++) {
+      if (rowStarts[r] >= fr->lines.size()) continue;
+      const bool wo = spec.lines && (r < kOrphans || rowStarts.size() - r < kWidows);
+      fr->lines[rowStarts[r]].brk = wo ? PenTier::WidowOrphan : PenTier::Normal;
+    }
+    if (first < fr->lines.size()) fr->lines[first].brk = PenTier::Normal;
     if (!ctx.cell) fr->vlist.push_back({unit0, gapBefore, l.clear, (Su)l.top, (Su)(py - l.top), false, self});
     gapBefore = 0;
+    boundary(first, b.tr.keepWithNext, false);
   }
 };
 const DocLayout::Fn DocLayout::kLayouters[] = {&DocLayout::paragraph, &DocLayout::stack, &DocLayout::replaced,

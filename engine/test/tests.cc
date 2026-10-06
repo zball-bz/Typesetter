@@ -10,6 +10,7 @@
 #include <set>
 
 #include "../src/api/doc.h"
+#include "../src/layout/paginate.h"
 #include "../src/support/hash128.h"
 #include "../src/code/tokens.h"
 #include "../src/model/cascade.h"
@@ -1339,6 +1340,91 @@ static void unitCascade() {
 // the bodies with their positional attributes put back (as the shell does)
 // are the legacy render byte for byte; held keys are not sent; keys are
 // stable across renders and generations increase.
+// (plan P3-12; design T6 PageBuilder, D-Y04) the page builder's mechanisms
+// over synthetic layouts: their producers (page floats, table headers,
+// footnote inserts, #pagebreak) arrive in later steps
+static void unitPaginate() {
+  auto frag = [](i64 y, Su h, PenTier t = PenTier::Normal, u8 paged = 0) {
+    Fragment f;
+    f.y = (Su)y;
+    f.height = h;
+    f.brk = t;
+    f.paged = paged;
+    f.srcSpan = Span{(u32)y, (u32)(y + 1)};
+    return f;
+  };
+  auto layoutOf = [](std::vector<Fragment> lines) {
+    LayoutResult lr;
+    ParaFrame fr;
+    fr.lines = std::move(lines);
+    lr.paras.push_back(std::move(fr));
+    return lr;
+  };
+  auto pagesOf = [](const PageResult& pr) {
+    std::vector<std::vector<u32>> out;
+    for (const Page& pg : pr.pages) {
+      out.emplace_back();
+      for (const PageBand& b : pg.bands) out.back().push_back(b.lo);
+    }
+    return out;
+  };
+  using V = std::vector<std::vector<u32>>;
+  {  // widows and orphans relax before keep-with-next (D-Y04)
+    DiagSink d;
+    const PageResult pr = paginate(layoutOf({frag(0, 100), frag(100, 100, PenTier::KeepWithNext),
+                                             frag(200, 100, PenTier::WidowOrphan), frag(300, 100)}),
+                                   PageSpec{250, 0}, &d);
+    CHECK(pagesOf(pr) == (V{{0, 1}, {2, 3}}));
+    CHECK(d.items.size() == 1 && std::string_view(d.items[0].code) == "keep-violated");
+  }
+  {  // a relaxed cut must keep something together on the next sheet
+    const PageResult pr = paginate(layoutOf({frag(0, 100), frag(100, 100, PenTier::WidowOrphan),
+                                             frag(200, 200, PenTier::KeepWithNext)}),
+                                   PageSpec{250, 0});
+    CHECK(pagesOf(pr) == (V{{0, 1}, {2}}));
+  }
+  {  // an atom taller than a sheet is set alone and overflows it, visibly
+    DiagSink d;
+    const PageResult pr = paginate(layoutOf({frag(0, 100), frag(100, 400), frag(500, 100)}), PageSpec{250, 0}, &d);
+    CHECK(pagesOf(pr) == (V{{0}, {1}, {2}}) && pr.pages[1].overflow == 150 && pr.pages[0].overflow == 0);
+    CHECK(d.items.size() == 1 && std::string_view(d.items[0].code) == "page-overflow");
+  }
+  {  // a forced break ends the sheet
+    const PageResult pr = paginate(layoutOf({frag(0, 50), frag(50, 50, PenTier::Forced), frag(100, 50)}),
+                                   PageSpec{250, 0});
+    CHECK(pagesOf(pr) == (V{{0}, {1, 2}}));
+  }
+  {  // a page float lifts to the top of its sheet; the flow moves below it
+    const PageResult pr = paginate(layoutOf({frag(0, 100), frag(100, 100, PenTier::Normal, kPagedMovable),
+                                             frag(200, 100)}),
+                                   PageSpec{250, 0});
+    CHECK(pagesOf(pr) == (V{{1, 0}, {2}}));
+    CHECK(pr.pages[0].bands[0].yShift == -100 && pr.pages[0].bands[1].yShift == 100);
+  }
+  {  // ... or waits for the next sheet's top when it does not fit
+    const PageResult pr = paginate(layoutOf({frag(0, 200), frag(200, 100, PenTier::Normal, kPagedMovable),
+                                             frag(300, 20)}),
+                                   PageSpec{250, 0});
+    CHECK(pagesOf(pr) == (V{{0}, {1, 2}}));  // carried to the top of sheet 2
+    CHECK(pr.pages[1].bands[0].lo == 1 && pr.pages[1].bands[0].yShift == 300 - 200 &&
+          pr.pages[1].bands[1].yShift == 100);
+  }
+  {  // a footnote insert goes to the bottom of its reference's sheet
+    Fragment ins = frag(1000, 50, PenTier::Normal, kPagedInsert);
+    ins.insertAt = 100;
+    const PageResult pr = paginate(layoutOf({frag(0, 100), frag(100, 100), ins}), PageSpec{300, 10});
+    CHECK(pagesOf(pr) == (V{{0, 1, 2}}));
+    CHECK(pr.pages[0].bands[2].yShift == 250 - 1000);  // at 300 - 60 + 10
+  }
+  {  // a table's header rows repeat atop its continuation sheet
+    std::vector<Fragment> t = {frag(0, 50, PenTier::Normal, kPagedHeader), frag(50, 100), frag(150, 100)};
+    for (Fragment& f : t) f.table = 5;
+    const PageResult pr = paginate(layoutOf(t), PageSpec{160, 0});
+    CHECK(pagesOf(pr) == (V{{0, 1}, {0, 2}}));
+    CHECK(pr.pages[1].bands[0].repeat && pr.pages[1].bands[0].yShift == 150 && pr.pages[1].bands[1].yShift == 50);
+  }
+}
+
 // (plan P3-08; design T6 conservative bands) no line overlaps a float: every
 // in-flow line of the float fixtures, in document coordinates, stays clear
 // of every float box (image and caption rows), at any measure
@@ -1788,6 +1874,7 @@ int main(int argc, char** argv) {
   unitRenderResult(fs::path(root));
   unitRenderFragment(fs::path(root));
   unitFloatsNeverOverlap(fs::path(root));
+  unitPaginate();
   unitInstLimits();
   unitHtmlWriter();
   unitBreakMemo();
@@ -1969,6 +2056,9 @@ int main(int argc, char** argv) {
         // "products": ["paged"] with its page.height setting
         // the semantic page's stylesheet (rulesToCss, plan P3-01): "products": ["css"]
         if (hasProduct("css")) goldenCompare(g("css"), doc.product("css"), update, label + ":css");
+        // (pagination reports into the paged render's slice — keep-violated,
+        // page-overflow, plan P3-12: the screen diagnostics are taken first)
+        const std::string screenDiags = doc.product("diags");
         if (hasProduct("paged")) {
           std::string paged = doc.product("paged");
           goldenCompare(g("paged"), paged, update, label + ":paged");
@@ -1989,7 +2079,7 @@ int main(int argc, char** argv) {
           warm.configure(fx.settings);
           warm.compile(source);
           if (!warm.ingest((const u8*)ops.data(), ops.size()) || !typesetWithMock(warm) ||
-              warm.product("html") != html || warm.product("diags") != doc.product("diags") ||
+              warm.product("html") != html || warm.product("diags") != screenDiags ||
               warm.product("breaks") != doc.product("breaks")) {
             printf("FAIL %s: a warm Session differs from a fresh build\n", label.c_str());
             failures++;
@@ -2001,7 +2091,7 @@ int main(int argc, char** argv) {
         {
           Doc same;
           if (!doc.forkInto(same, "{}") || !typesetWithMock(same) ||
-              same.product("html") != html || same.product("diags") != doc.product("diags")) {
+              same.product("html") != html || same.product("diags") != screenDiags) {
             printf("FAIL %s: fork differs from its source\n", label.c_str());
             failures++;
           }

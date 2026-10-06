@@ -1166,7 +1166,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/code-wrap-in-layout` | adhoc | medium | P3-11 || grep:plan P3-11 |
 | `break-layout-pages/code-sidecar-three-box` | adhoc | medium | P3-11 || grep:plan P3-11 |
 | `break-layout-pages/comment-role-by-color` | adhoc | low | P2-08 | grep:plan P2-08 |
-| `break-layout-pages/paginator-in-serializer` | adhoc | high | P3-12 | |
+| `break-layout-pages/paginator-in-serializer` | adhoc | high | P3-12 || grep:plan P3-12 |
 | `break-layout-pages/group-role-dispatch` | adhoc | high | P1-18, P3-14 | |
 | `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/kp-window-heuristics` | adhoc | low | P1-14 | grep:plan P1-14 |
@@ -1178,12 +1178,12 @@ Theme steps: — · findings: 1
 | `break-layout-pages/snap-kerning-ignores-sidecar` | issue | medium | P3-11 || grep:plan P3-11 |
 | `break-layout-pages/float-adds-paragraph-gap` | issue | low | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/float-indent-geometry` | issue | low | P3-08 || grep:plan P3-08 |
-| `break-layout-pages/paged-atoms-clipped` | issue | medium | P3-12 | |
+| `break-layout-pages/paged-atoms-clipped` | issue | medium | P3-12 || grep:plan P3-12 |
 | `break-layout-pages/break-cache-robustness` | issue | low | P0-11, P1-14 | grep:plan P1-14 |
 | `break-layout-pages/api-hosts-layout-policy` | issue | medium | P1-03, P1-15 | grep:plan P1-15 |
 | `break-layout-pages/baseline-not-communicated` | issue | low | P1-18 | grep:plan P1-18 |
-| `break-layout-pages/doc-drift` | issue | low | P1-15, P3-12 | |
-| `break-layout-pages/missed:0` | missed | medium | P1-18, P3-12 | |
+| `break-layout-pages/doc-drift` | issue | low | P1-15, P3-12 || grep:plan P3-12 |
+| `break-layout-pages/missed:0` | missed | medium | P1-18, P3-12 || grep:plan P3-12 |
 | `break-layout-pages/missed:1` | missed | medium | P0-10 | grep:plan P0-10 |
 | `break-layout-pages/missed:2` | missed | medium | P1-17, P3-07 || grep:plan P3-07 |
 | `break-layout-pages/missed:3` | missed | medium | P0-12 | grep:plan P0-12 |
@@ -1193,7 +1193,7 @@ Theme steps: — · findings: 1
 | `render-runtime/typeset-role-blind` | adhoc | high | P3-23 | |
 | `render-runtime/linebox-special-dispatch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `render-runtime/render-layout-decisions` | adhoc | high | P1-18 | grep:plan P1-18 |
-| `render-runtime/paged-keep-rules-by-kind` | adhoc | medium | P3-12 | |
+| `render-runtime/paged-keep-rules-by-kind` | adhoc | medium | P3-12 || grep:plan P3-12 |
 | `render-runtime/copy-syn-policy` | adhoc | medium | P3-07 || grep:plan P3-07 |
 | `render-runtime/copy-line-separators` | adhoc | medium | P3-07 || grep:plan P3-07 |
 | `render-runtime/shell-note-popups` | adhoc | high | P3-04, P3-06 || grep:plan P3-06 |

@@ -71,6 +71,8 @@ struct Config {
   std::string supEquation = "";  // terms.equation
   std::string capSep = "";  // terms.captionSep
   double pageHeightPx = 995;  // page.height
+  double pageWidthPx = 666;  // page.width
+  double pageMarginPx = 64;  // page.margin
   std::string semElements = "";  // semantics.elements
   std::string semCounters = "";  // semantics.counters
   std::string semCollectors = "";  // semantics.collectors
@@ -214,8 +216,12 @@ struct LayoutSettings {
 };
 struct PaginateSettings {
   const double& pageHeightPx;  // page.height
+  const double& pageWidthPx;  // page.width
+  const double& pageMarginPx;  // page.margin
   PaginateSettings(const Config& c)  // NOLINT: a Config is its view
-      : pageHeightPx(c.pageHeightPx) {}
+      : pageHeightPx(c.pageHeightPx),
+        pageWidthPx(c.pageWidthPx),
+        pageMarginPx(c.pageMarginPx) {}
 };
 struct PaintSettings {
   const double& widthPx;  // host.width

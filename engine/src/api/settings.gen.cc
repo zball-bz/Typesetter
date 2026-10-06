@@ -64,6 +64,8 @@ const Row kRows[] = {
     {"terms.equation", stageBit(Stage::Resolve), false},
     {"terms.captionSep", stageBit(Stage::Resolve), false},
     {"page.height", stageBit(Stage::Paginate), false},
+    {"page.width", stageBit(Stage::Paginate), false},
+    {"page.margin", stageBit(Stage::Paginate), false},
     {"semantics.elements", stageBit(Stage::Ingest), true},
     {"semantics.counters", stageBit(Stage::Ingest), true},
     {"semantics.collectors", stageBit(Stage::Ingest), true},
@@ -369,36 +371,48 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.pageHeightPx = x;
       return true;
     }
-    case 46: {  // semantics.elements
+    case 46: {  // page.width
+      double x;
+      if (!num(v, 16, 100000, false, x, why)) return false;
+      c.pageWidthPx = x;
+      return true;
+    }
+    case 47: {  // page.margin
+      double x;
+      if (!num(v, 0, 10000, false, x, why)) return false;
+      c.pageMarginPx = x;
+      return true;
+    }
+    case 48: {  // semantics.elements
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semElements.clear();
       if (!v.keys.empty()) jsonDump(c.semElements, v);
       return true;
     }
-    case 47: {  // semantics.counters
+    case 49: {  // semantics.counters
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semCounters.clear();
       if (!v.keys.empty()) jsonDump(c.semCounters, v);
       return true;
     }
-    case 48: {  // semantics.collectors
+    case 50: {  // semantics.collectors
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semCollectors.clear();
       if (!v.keys.empty()) jsonDump(c.semCollectors, v);
       return true;
     }
-    case 49: {  // semantics.systems
+    case 51: {  // semantics.systems
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semSystems.clear();
       if (!v.keys.empty()) jsonDump(c.semSystems, v);
       return true;
     }
-    case 50: {  // render.idPrefix
+    case 52: {  // render.idPrefix
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Ident, v.str))) return type(why, "ident");
       c.idPrefix = v.str;
       return true;
     }
-    case 51: {  // style.rules
+    case 53: {  // style.rules
       if (v.t != JsonValue::T::Arr) return type(why, "an array");
       c.styleRules.clear();
       if (!v.arr.empty()) jsonDump(c.styleRules, v);
@@ -572,6 +586,10 @@ std::string settingsJson(const Config& c) {
   jsonString(out, c.capSep);
   out += "}, \"page\": {\"height\": ";
   num(out, (double)c.pageHeightPx);
+  out += ", \"width\": ";
+  num(out, (double)c.pageWidthPx);
+  out += ", \"margin\": ";
+  num(out, (double)c.pageMarginPx);
   out += "}, \"semantics\": {\"elements\": ";
   out += c.semElements.empty() ? "{}" : c.semElements;
   out += ", \"counters\": ";

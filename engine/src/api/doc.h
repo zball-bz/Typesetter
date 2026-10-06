@@ -878,7 +878,12 @@ struct Doc {
     AnchorScope ids(cfg.idPrefix);
     // the sheets (layout/paginate.cc), each band's nodes rebased into its
     // sheet by the same stateless writer
-    const PageResult pr = paginate(layout, tops, pageHeightPx);
+    // (plan P3-12) the page's geometry: its content height; a sheet's
+    // inserts sit an em below its flow
+    PageSpec spec;
+    spec.h = suRoundPx(pageHeightPx);
+    spec.footnoteSkip = suRoundPx(cfg.baseSizePx);
+    const PageResult pr = paginate(layout, spec, &diags);
     std::vector<DLBlock> dl(layout.paras.size());
     for (size_t p = 0; p < layout.paras.size(); p++) paintBlock(layout, p, tops, strs, cfg, dl[p]);
     std::string html;
@@ -887,7 +892,8 @@ struct Doc {
       {
         Tag t(html, "div");
         t.attrSafe("class", "tsr-sheet");
-        t.decl("position", "relative").decl("overflow", "hidden").px("height", suToPx(pr.height));
+        // (plan P3-12) a sheet an atom overflows shows it: never clipped
+        t.decl("position", "relative").decl("overflow", pg.overflow > 0 ? "visible" : "hidden").px("height", suToPx(pr.height));
         t.open();
         html += "\n";
       }
@@ -903,8 +909,14 @@ struct Doc {
           t.open();
           html += "\n";
         }
-        writeNodes(html, dl[band.para], band.lo, band.hi, (Su)((i64)layout.paras[band.para].y - pg.top), styles,
-                   strs, cfg.baseSizePx);
+        // its place on the sheet; a repeated header row carries no ids
+        const Su at = (Su)((i64)layout.paras[band.para].y - pg.top + band.yShift);
+        if (band.repeat) {
+          AnchorScope none(cfg.idPrefix, /*suppress=*/true);
+          writeNodes(html, dl[band.para], band.lo, band.hi, at, styles, strs, cfg.baseSizePx);
+        } else {
+          writeNodes(html, dl[band.para], band.lo, band.hi, at, styles, strs, cfg.baseSizePx);
+        }
         if (k + 1 == pg.bands.size() || pg.bands[k + 1].para != band.para) html += "</div>\n";
       }
       html += "</div>\n";

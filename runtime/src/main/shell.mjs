@@ -300,8 +300,8 @@ export function createEngine(opts = {}) {
   };
   // paginate: sheets at a page measure from a fork (the live document stays
   // as it is); idPrefix: the sheets' own
-  const paginateOf = async (s, { pageWidthPx = 666, pageHeightPx = settingOf(s.settings, 'page.height'),
-                                 idPrefix } = {}) => {
+  const paginateOf = async (s, { pageWidthPx = settingOf(s.settings, 'page.width'),
+                                 pageHeightPx = settingOf(s.settings, 'page.height'), idPrefix } = {}) => {
     const r = await request({ type: 'paginate', id: nextId++, docId: s.docId, pageWidthPx, pageHeightPx,
                               idPrefix, baseUrl: document.baseURI });
     return { html: r.html, diags: r.diags };

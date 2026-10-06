@@ -6,10 +6,9 @@
 // print root that @media print shows alone. (A hidden-iframe approach
 // printed blank pages in some browsers — focus and removal races; the parent
 // already has every font loaded.) The shell's nodes carry data-tsr-print and
-// are held by reference: no ids. The sheet size is still the A4 literal and
-// page.height until PageSpec (plan P3-12).
-
-const A4W = 793.7, A4H = 1122.5;  // css px
+// are held by reference: no ids. The sheet is the document's PageSpec (plan
+// P3-12): page.width × page.height of content inside page.margin — the
+// defaults are A4 at 96 dpi — and print options override it.
 
 // a prefix no live id starts with and that starts no live id: the two id
 // sets cannot meet, whatever the labels
@@ -21,7 +20,7 @@ export function derivedPrefix(prefix) {
   return `${prefix}print-`;
 }
 
-export function print({ pageWidthPx: defWidth = 666, marginPx: defMargin = 64 } = {}) {
+export function print(defaults = {}) {
   return {
     name: 'print',
     install(ctx) {
@@ -31,25 +30,30 @@ export function print({ pageWidthPx: defWidth = 666, marginPx: defMargin = 64 } 
         active?.style.remove();
         active = null;
       };
-      ctx.expose('print', async ({ pageWidthPx = defWidth, pageHeightPx = ctx.setting('page.height'),
-                                   marginPx = defMargin } = {}) => {
+      ctx.expose('print', async (opts = {}) => {
+        const o = { ...defaults, ...opts };
+        const pageWidthPx = o.pageWidthPx ?? ctx.setting('page.width');
+        const pageHeightPx = o.pageHeightPx ?? ctx.setting('page.height');
+        const marginPx = o.marginPx ?? ctx.setting('page.margin');
+        // the sheet: the content plus its margins on every side
+        const sheetW = pageWidthPx + 2 * marginPx, sheetH = pageHeightPx + 2 * marginPx;
         const { html } = await ctx.ops.paginate({ pageWidthPx, pageHeightPx,
                                                   idPrefix: derivedPrefix(ctx.setting('render.idPrefix')) });
         cleanup();
         const style = document.createElement('style');
         style.dataset.tsrPrint = 'style';
-        // Gecko sizes A4 at FRACTIONAL css px (793.70 × 1122.52) and
-        // fragments with zero overflow tolerance: a 995px sheet inside a
-        // 994.52px page content box splits into content + clipped-blank
-        // page — every page doubles. (Chromium tolerates the sub-pixel
-        // overflow, which is why it hid there.) Clamp the margins so the
-        // content box clears the sheets with ≥3px slack on both axes, and
-        // never force a break after the LAST sheet — Gecko honors that
-        // literally too, as a trailing blank page.
-        const mx = Math.max(0, Math.min(marginPx, Math.floor((A4W - pageWidthPx - 3) / 2)));
-        const my = Math.max(0, Math.min(marginPx, Math.floor((A4H - pageHeightPx - 3) / 2)));
+        // Gecko fragments with zero overflow tolerance (and sizes named
+        // papers at FRACTIONAL css px: A4 is 793.70 × 1122.52): a sheet
+        // exactly as tall as the page content box splits into content +
+        // clipped-blank page — every page doubles. (Chromium tolerates the
+        // sub-pixel overflow, which is why it hid there.) Clamp the margins
+        // so the content box clears the sheets with ≥3px slack on both
+        // axes, and never force a break after the LAST sheet — Gecko honors
+        // that literally too, as a trailing blank page.
+        const mx = Math.max(0, Math.min(marginPx, Math.floor((sheetW - pageWidthPx - 3) / 2)));
+        const my = Math.max(0, Math.min(marginPx, Math.floor((sheetH - pageHeightPx - 3) / 2)));
         style.textContent =
-          `@page { size: A4; margin: ${my}px ${mx}px }` +
+          `@page { size: ${sheetW}px ${sheetH}px; margin: ${my}px ${mx}px }` +
           `[data-tsr-print="root"] { display: none; }` +
           `@media print {` +
           ` body { margin: 0 !important; }` +

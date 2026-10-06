@@ -42,15 +42,37 @@ the finished `LayoutResult` (no re-break, no new layout mode):
 - Flatten every ParaFrame's lines to absolute y. Cut greedily at the last
   fitting line boundary, then back the cut up until all keep-rules hold:
   - **widow/orphan**: ≥2 lines of a paragraph on each side of a cut
-    (1-2-line paragraphs are atomic);
+    (paragraphs of up to three lines never split);
   - **keep-with-next**: a heading frame sticks to the next frame (as
     built: a frame whose block says `keepWithNext` never ends a sheet; the
     "≥2 lines of the next frame" refinement is not implemented);
   - **atomic**: display math, rules, raw units, figures (image+caption),
-    table rows (rule-to-rule), and each code logical line (its wrapped rows
-    + zipped sidecar rows share rowTop — cut only between logical lines);
-  - a cut that cannot satisfy the rules (oversized atom) falls back to the
-    greedy cut — never an infinite loop, matching KP's final-pass Overfull rescue (plan P0-12).
+    and each code logical line (its wrapped rows + zipped sidecar rows
+    share rowTop — cut only between logical lines);
+  - a cut that cannot satisfy the rules falls back to the greedy cut; an
+    atom taller than a sheet is set alone — never an infinite loop.
+
+As built (plan P3-12; design T6 PageBuilder): the layouters declare a
+page-break **tier** before every fragment — Normal; keep-together;
+widows/orphans (2/2: inside a paragraph, and between a code block's
+logical lines); keep-with-next (after a block whose rules say so: headings);
+Structural (inside a wrapped code line, a table row — the rule under it
+included — or a float box); Forced (a page break). Fragments joined by
+Structural tiers are a box; `paginate()` (layout/paginate.cc) reads no
+block kinds. When the next box does not fit, the cut is the latest legal
+one; failing that the keeps relax in D-Y04's order — keep-together, then
+widows/orphans, then keep-with-next — and a relaxed cut is taken only if
+it moves what it keeps together onto the next sheet (else the next keep
+relaxes); each relaxation is a `keep-violated` warning, the last resort
+the greedy cut. An atom taller than a sheet is set alone and overflows it
+visibly (`page-overflow`, the sheet not clipped). Mechanisms whose
+producers come later: page floats lift to the top of their sheet if they
+fit there, else of the next; footnote inserts go to the bottom of their
+reference's sheet, an em below its flow, lowering its goal; a table's
+header rows repeat atop its continuation sheets (without ids). Tables cut
+between rows. The page's geometry is the document's PageSpec:
+`page.width` × `page.height` of content inside `page.margin` (defaults:
+A4 at 96 dpi, 64px margins); print options override it.
 - Output: `<div class="tsr-sheet">` per page, fixed height, containing the
   page's line boxes re-based to the page top. `data-pid` is NOT emitted
   (print markup never participates in progressive swap); source spans are.
@@ -125,7 +147,7 @@ plus optional hydration that upgrades to the typeset rendering client-side.
 - `tokens.mjs` is environment-adaptive: under Node it hands web-tree-sitter
   filesystem paths and reads `.scm` via fs (web-tree-sitter resolves
   strings through fs there, not fetch). No global fetch polyfill.
-- Table units paginate atomically (whole table, not rule-to-rule rows) —
+- (Until P3-12) Table units paginate atomically (whole table, not rule-to-rule rows) —
   simpler, and blog tables are small; oversized atoms overflow their sheet
   (clipped) exactly like KP's Overfull rescue (plan P0-12): one overlong run per line, never a collapsed paragraph.
 - A float box separated from its wrapped text by a sheet cut keeps the

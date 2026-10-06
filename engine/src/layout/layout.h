@@ -19,6 +19,21 @@ enum class FragKind : u8 {
   Math,     // a display formula's row
   Image,    // an image (or its placeholder)
 };
+// (plan P3-12; design T6 VList penalties, D-Y04) the tier of a page break
+// just before a fragment — the layouters declare it, pagination relaxes it in
+// this order when a page cannot be filled otherwise: KeepTogether, then
+// WidowOrphan, then KeepWithNext; a Structural joint (inside a wrapped code
+// line, a table row, a float box) is never broken — an atom taller than the
+// page overflows it, visibly; Forced ends the page
+enum class PenTier : u8 { Normal, KeepTogether, WidowOrphan, KeepWithNext, Structural, Forced };
+// a fragment's paged role (pagination's mechanisms; their producers come
+// with page floats, table headers and footnote inserts)
+constexpr u8 kPagedMovable = 1;  // a page float: to the top of its page, or the next
+constexpr u8 kPagedInsert = 2;   // a footnote insert: to the bottom of its reference's page
+constexpr u8 kPagedHeader = 4;   // a table header row: repeated atop a continuation page
+// widows and orphans: lines a paragraph keeps together at a page cut
+constexpr u32 kOrphans = 2, kWidows = 2;
+
 struct Fragment {
   FragKind kind = FragKind::Line;
   Su y = 0, left = 0, width = 0;     // y: the top (a rule's too)
@@ -39,6 +54,9 @@ struct Fragment {
   i32 wordDeltaSu = 0;               // rounded, for dumps
   i32 cjkDeltaSu = 0;
   Sep sep = Sep::Newline;            // what joins it to the next line in content text
+  PenTier brk = PenTier::Normal;     // a page break just before it (plan P3-12)
+  u8 paged = 0;                      // its paged role (kPaged*)
+  u32 insertAt = ~0u;                // an insert: the source position of its reference
   bool spanned = false;              // srcSpan holds even when empty (a blank code row)
   bool endsWithHyphen = false;
   bool ragged = false;               // a line that is not justified (its stream's alignment)

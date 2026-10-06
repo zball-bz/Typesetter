@@ -386,6 +386,22 @@ export const SETTINGS = Object.freeze({
       "Paginate"
     ]
   },
+  "page.width": {
+    "dom": "num:16:100000",
+    "def": 666,
+    "prec": "HostDefault",
+    "affects": [
+      "Paginate"
+    ]
+  },
+  "page.margin": {
+    "dom": "num:0:10000",
+    "def": 64,
+    "prec": "HostDefault",
+    "affects": [
+      "Paginate"
+    ]
+  },
   "semantics.elements": {
     "dom": "json",
     "def": {},
@@ -508,7 +524,9 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "captionSep": ""
   },
   "page": {
-    "height": 995
+    "height": 995,
+    "width": 666,
+    "margin": 64
   },
   "semantics": {
     "elements": {},
