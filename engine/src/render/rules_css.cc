@@ -211,6 +211,13 @@ struct Writer {
         case ArgK::placeFloat:
           if (np.placeFloat == PLACEFLOAT_LEFT || np.placeFloat == PLACEFLOAT_RIGHT)
             decl("float", np.placeFloat == PLACEFLOAT_LEFT ? "inline-start" : "inline-end");
+          if (np.placeFloat == PLACEFLOAT_INLINE) {  // (plan P3-15) side by side
+            decl("display", "inline-block");
+            decl("vertical-align", "top");
+          }
+          break;
+        case ArgK::placeWidth:
+          if (np.placeWidth) decl("width", strs.get(np.placeWidth));
           break;
         default: break;  // no CSS form on this page (gap, lang, media, breaker)
       }

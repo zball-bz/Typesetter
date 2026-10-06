@@ -1,0 +1,6 @@
+instance figure 1 label=fig-pair @[156,507)
+instance subfigure 1(a) label=fig-a @[184,310)
+instance subfigure 1(b) label=fig-b @[311,474)
+label fig-pair -> figure 1 @[156,507)
+label fig-a -> subfigure 1(a) @[184,310)
+label fig-b -> subfigure 1(b) @[311,474)

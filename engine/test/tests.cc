@@ -1432,13 +1432,23 @@ static void unitPaginate() {
     CHECK(pagesOf(pr) == (V{{1, 0}, {2}}));
     CHECK(pr.pages[0].bands[0].yShift == -100 && pr.pages[0].bands[1].yShift == 100);
   }
-  {  // ... or waits for the next sheet's top when it does not fit
+  {  // ... or waits for the next sheet's top when it does not fit; the
+     // flow closes over the room it left (plan P3-15)
     const PageResult pr = paginate(layoutOf({frag(0, 200), frag(200, 100, PenTier::Normal, kPagedMovable),
                                              frag(300, 20)}),
                                    PageSpec{250, 0});
-    CHECK(pagesOf(pr) == (V{{0}, {1, 2}}));  // carried to the top of sheet 2
-    CHECK(pr.pages[1].bands[0].lo == 1 && pr.pages[1].bands[0].yShift == 300 - 200 &&
-          pr.pages[1].bands[1].yShift == 100);
+    CHECK(pagesOf(pr) == (V{{0, 2}, {1}}));  // carried to the top of sheet 2
+    CHECK(pr.pages[0].bands[1].yShift == -100 && pr.pages[1].bands[0].lo == 1 && pr.pages[1].bands[0].yShift == 0);
+  }
+  {  // (plan P3-15) a bottom float sinks to its sheet's foot; a page float
+     // waits for a sheet of floats after its sheet
+    const PageResult pr =
+        paginate(layoutOf({frag(0, 50), frag(50, 40, PenTier::Normal, kPagedMovable | kPagedBottom), frag(90, 50),
+                           frag(140, 60, PenTier::Normal, kPagedMovable | kPagedPage), frag(200, 50)}),
+                 PageSpec{300, 0});
+    CHECK(pagesOf(pr) == (V{{0, 2, 4, 1}, {3}}));
+    CHECK(pr.pages[0].bands[3].yShift == 260 - 50 && pr.pages[0].bands[1].yShift == -40 &&
+          pr.pages[0].bands[2].yShift == -100 && pr.pages[1].bands[0].yShift == 0);
   }
   {  // a footnote insert goes to the bottom of its reference's sheet
     Fragment ins = frag(1000, 50, PenTier::Normal, kPagedInsert);

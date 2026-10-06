@@ -1,0 +1,31 @@
+doc @[0,623) [base]
+  para @[0,150) [base]
+    text @[0,150) [base] str="Any block floats (plan P3-15): a figure whose body is a table floats right at 45% of the measure, its caption beneath it, the text beside it narrowed."
+  group @[152,309) [base] role="figure" label="tbl-float" kind="table"
+    table @[229,283) [base] cols=2
+      trow @[229,283) [base]
+        tcell @[229,283) [base]
+          text @[246,250) [base] str="Name"
+        tcell @[229,283) [base]
+          text @[253,256) [base] str="Qty"
+      trow @[229,283) [base]
+        tcell @[229,283) [base]
+          text @[257,262) [base] str="Alpha"
+        tcell @[229,283) [base]
+          text @[265,266) [base] str="2"
+      trow @[229,283) [base]
+        tcell @[229,283) [base]
+          text @[267,271) [base] str="Beta"
+        tcell @[229,283) [base]
+          text @[274,275) [base] str="3"
+    para @[284,300) [base] role="caption" slot="caption"
+      styled @[284,300) [BOLD] role="caption-label"
+        text @[284,300) [BOLD] str="表 1："
+      text @[284,300) [base] str="A floated table."
+  para @[311,570) [base]
+    text @[311,570) [base] str="The paragraph beside the floated table wraps around it: its first lines break at the narrowed width, the ones below the float's bottom at the full measure again, as for an image float; the figure is laid out on its own, a flow root, at the width it asked for."
+  para @[572,623) [base]
+    text @[572,588) [base] str="After the float, " raw=0:0,17:16
+    ref @[589,599) [base] target="tbl-float"
+      text @[589,599) [base] str="表 1"
+    text @[600,623) [base] str=" is referenced as usual." raw=0:0,1:0

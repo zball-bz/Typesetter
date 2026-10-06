@@ -1,0 +1,11 @@
+Floats on both sides (plan P3-15): an aside floated left takes its content's width (FitBody), a code block floated right a fixed width; the text between them narrows from both sides.
+
+#!aside(style: {place: {float: "left"}, box: {padding: "0.3em", border: "1px"}})
+A narrow aside.
+#aside!
+
+```js(style: {place: {float: "right", width: "9em", gap: "0.5em"}})
+let x = 1;
+```
+
+The right float stands below the left one: the column between them would be narrower than the least wrap width. The paragraph narrows beside each, then widens past their bottoms; both floats are out of flow.

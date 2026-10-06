@@ -1,0 +1,13 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="150">Any block floats (plan P3-15): a figure whose body is a table floats right at 45% of the measure, its caption beneath it, the text beside it narrowed.</p>
+<figure data-pid="1" data-s="152" data-e="309" id="tsr-tbl-float">
+<table data-s="229" data-e="283">
+<tr><td>Name</td><td>Qty</td></tr>
+<tr><td>Alpha</td><td>2</td></tr>
+<tr><td>Beta</td><td>3</td></tr>
+</table>
+<figcaption><strong>表 1：</strong>A floated table.</figcaption>
+</figure>
+<p data-pid="2" data-s="311" data-e="570">The paragraph beside the floated table wraps around it: its first lines break at the narrowed width, the ones below the float&#39;s bottom at the full measure again, as for an image float; the figure is laid out on its own, a flow root, at the width it asked for.</p>
+<p data-pid="3" data-s="572" data-e="623">After the float, <a href="#tsr-tbl-float">表 1</a> is referenced as usual.</p>
+</div>

@@ -1,0 +1,14 @@
+Any block floats (plan P3-15): a figure whose body is a table floats right at 45% of the measure, its caption beneath it, the text beside it narrowed.
+
+#!figure(label: "tbl-float", style: {place: {float: "right", width: "45%"}})
+#!table(cols: 2)
+Name | Qty
+Alpha | 2
+Beta | 3
+#table!
+A floated table.
+#figure!
+
+The paragraph beside the floated table wraps around it: its first lines break at the narrowed width, the ones below the float's bottom at the full measure again, as for an image float; the figure is laid out on its own, a flow root, at the width it asked for.
+
+After the float, @tbl-float is referenced as usual.

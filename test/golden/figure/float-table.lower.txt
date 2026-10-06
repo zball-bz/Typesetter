@@ -1,0 +1,22 @@
+lower v1 abi 3d3ccfbb docEnd 624 holes 2 module b87c479251bcbd5a
+piece 0 hole 0 js [129,205)
+piece 1 hole 1 js [207,224)
+block 0 content [0,150)
+  CALL para [0,150)
+    TEXT "Any block floats (plan P3-15): a figure whose body is a table floats right at 45% of the measure, its caption beneath it, the text beside it narrowed." [0,150)
+block 1 content [152,309) user framed async holes 0..2
+  REGION async "figure" args=hole 0 [152,309)
+    FRAME async [229,283) holes 1..2
+      REGION async "table" args=hole 1 [229,283)
+        CALL para [246,275)
+          TEXT "Name | Qty\nAlpha | 2\nBeta | 3" [246,275) seps=5,17,26
+    CALL para [284,300)
+      TEXT "A floated table." [284,300)
+block 2 content [311,570)
+  CALL para [311,570)
+    TEXT "The paragraph beside the floated table wraps around it: its first lines break at the narrowed width, the ones below the float's bottom at the full measure again, as for an image float; the figure is laid out on its own, a flow root, at the width it asked for." [311,570)
+block 3 content [572,623)
+  CALL para [572,623)
+    TEXT "After the float, " [572,588) raw=0:0,17:16
+    CALL ref [589,599) target="tbl-float"
+    TEXT " is referenced as usual." [600,623) raw=0:0,1:0

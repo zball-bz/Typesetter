@@ -1,0 +1,5 @@
+[184,264) function "#!aside(style: {place: {float: \"left\"}, box: {padding: \"0.3em\", border: \"1px\"}})"
+[281,288) function "#aside!"
+[290,357) keyword "```js(style: {place: {float: \"right\", width: \"9em\", gap: \"0.5em\"}})"
+[358,368) embedded "let x = 1;"
+[369,372) keyword "```"

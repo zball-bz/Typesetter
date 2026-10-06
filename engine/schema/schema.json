@@ -45,7 +45,7 @@
     "parHangAfter": 85, "boxPadding": 86, "boxBorder": 87, "boxBorderColor": 88, "boxBackground": 89, "media": 90,
     "beside": 91, "breakerTolerance": 92, "breakerStretch": 93, "placeFloat": 94,
     "tracks": 95, "rules": 96, "header": 97, "colspan": 98, "rowspan": 99, "valign": 100,
-    "measure": 101, "minWidth": 102
+    "measure": 101, "minWidth": 102, "placeWidth": 103, "placeGap": 104
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -148,7 +148,9 @@
       "beside": {"dom": "enum:clear|shrink", "since": 14},
       "breakerTolerance": {"dom": "num:0:100000", "since": 14},
       "breakerStretch": {"dom": "len", "since": 14},
-      "placeFloat": {"dom": "enum:none|left|right|top|bottom|page", "since": 14}}},
+      "placeFloat": {"dom": "enum:none|left|right|top|bottom|page|inline", "since": 14},
+      "placeWidth": {"dom": "size", "since": 14},
+      "placeGap": {"dom": "len", "since": 14}}},
     "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "ctor": {"params": ["attr:url"]}, "attrs": {
       "url": {"dom": "url"}, "target": {"dom": "str", "since": 13}, "to": {"dom": "ident", "since": 14}}},
     "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
@@ -485,7 +487,9 @@
     "beside": {"$comment": "A non-paragraph block beside a float: clears it (D-Y02, the default) or narrows to the room left.", "field": "beside", "type": "enum", "gran": "block", "inherits": false, "attr": "beside", "key": "beside", "values": ["clear", "shrink"]},
     "breaker.tolerance": {"field": "breakerTolerance", "type": "num", "gran": "block", "inherits": true, "attr": "breakerTolerance", "key": "breaker.tolerance"},
     "breaker.emergencyStretch": {"field": "breakerStretch", "type": "len", "gran": "block", "inherits": true, "attr": "breakerStretch", "key": "breaker.emergencyStretch"},
-    "place.float": {"$comment": "Where a block floats (plan P3-14: an image's side is its alias; any block from P3-15).", "field": "placeFloat", "type": "enum", "gran": "block", "inherits": false, "attr": "placeFloat", "key": "place.float", "values": ["none", "left", "right", "top", "bottom", "page"]},
+    "place.float": {"$comment": "Where a block goes (plans P3-14, P3-15; design T6 Place): in the flow (none); floated to the start / end side, text beside it (left, right); a page float — on paged sheets at the top or bottom of its sheet, or on a sheet of floats (top, bottom, page), in place on screen; an inline block, side by side with its inline siblings (inline: subfigures). An image's side is its alias.", "field": "placeFloat", "type": "enum", "gran": "block", "inherits": false, "attr": "placeFloat", "key": "place.float", "values": ["none", "left", "right", "top", "bottom", "page", "inline"]},
+    "place.width": {"$comment": "A placed block's width: a length or a percent of its container; unset, its content's (FitBody: the widest of its non-caption content, at most the room).", "field": "placeWidth", "type": "str", "gran": "block", "inherits": false, "attr": "placeWidth", "key": "place.width"},
+    "place.gap": {"$comment": "The room between a placed block and what stands beside it (text beside a float, the next inline block); unset: an em.", "field": "placeGap", "type": "len", "gran": "block", "inherits": false, "attr": "placeGap", "key": "place.gap"},
     "text.features": {"field": "features", "type": "str", "attr": "features", "key": "text.features", "dump": {"label": "features", "quoted": true}},
     "text.punct": {"field": "punct", "type": "enum", "attr": "punct", "key": "text.punct", "values": ["full", "book", "none"], "dump": {"label": "punct"}},
     "engine.script": {

@@ -1,0 +1,1 @@
+{"headings":[],"regions":[{"name":"figure","label":"fig-pair","span":[156,507]},{"name":"figure","label":"fig-a","span":[184,310]},{"name":"figure","label":"fig-b","span":[311,474]}],"fences":[],"labels":[{"id":"fig-pair","rule":"region","span":[156,183]},{"id":"fig-a","rule":"region","span":[184,286]},{"id":"fig-b","rule":"region","span":[311,413]}],"diagnostics":[]}

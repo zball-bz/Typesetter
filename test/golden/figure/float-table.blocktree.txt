@@ -1,0 +1,26 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,150)
+    paragraph para unit=0 @[0,150)
+top pid=1 leaves=7
+  stack root gap=1/1 @[152,309)
+    stack figure place=end/45% anchor="tbl-float" @[152,309)
+      table table @[229,283)
+        stack cell @[229,283)
+          paragraph para unit=0 carry="tbl-float" @[229,283)
+        stack cell @[229,283)
+          paragraph para unit=1 @[229,283)
+        stack cell @[229,283)
+          paragraph para unit=2 @[229,283)
+        stack cell @[229,283)
+          paragraph para unit=3 @[229,283)
+        stack cell @[229,283)
+          paragraph para unit=4 @[229,283)
+        stack cell @[229,283)
+          paragraph para unit=5 @[229,283)
+      paragraph caption unit=6 single-center @[284,300)
+top pid=2 leaves=1
+  stack root gap=1/1 @[311,570)
+    paragraph para unit=0 @[311,570)
+top pid=3 leaves=1
+  stack root gap=1/1 @[572,623)
+    paragraph para unit=0 @[572,623)

@@ -273,7 +273,8 @@ class ExclusionMap {
   struct Box {
     i64 y0, y1;
     Su x0, x1;
-    bool start;  // on the start side: pushes text from the start
+    bool start;    // on the start side: pushes text from the start
+    Su gap = -1;   // (plan P3-15) its own gap to the text beside it (unset: the map's)
   };
   explicit ExclusionMap(Su gap) : gap_(gap) {}
   bool empty() const { return v_.empty(); }
@@ -283,8 +284,9 @@ class ExclusionMap {
   void available(i64 y0, i64 y1, Su& x0, Su& x1, Su push = 0) const {
     for (const Box& f : v_) {
       if (f.y1 <= y0 || f.y0 >= y1) continue;
-      if (f.start) x0 = std::max(x0, f.x1 + gap_ + push);
-      else x1 = std::min(x1, f.x0 - gap_);
+      const Su g = f.gap >= 0 ? f.gap : gap_;
+      if (f.start) x0 = std::max(x0, f.x1 + g + push);
+      else x1 = std::min(x1, f.x0 - g);
     }
   }
   // the first y at or below `y` clear of the floats that meet [x0, x1)
@@ -474,6 +476,17 @@ class DocLayout {
   void block(u32 i) {
     const LayoutBlock& b = tree->blocks[i];
     if (b.tr.media && b.tr.media != (paged_ ? 2 : 1)) return;  // not in this medium
+    // (plan P3-15) a block floated to a side (not an image float: its own
+    // layouter's) goes out of flow, laid out detached
+    using P = BlockTraits::Place;
+    if ((b.tr.place == P::Start || b.tr.place == P::End) && !b.floatSide && i != detaching_) {
+      sideFloat(i);
+      return;
+    }
+    if ((b.tr.place == P::Top || b.tr.place == P::Bottom || b.tr.place == P::Page) && i != detaching_ && !ctx.cell) {
+      pageFloat(i);
+      return;
+    }
     const bool hooks = forceNext || b.tr.breakBefore || b.tr.breakAfter || b.tr.keepTogether || b.tr.shrink ||
                        b.box.framed() || (b.tr.keepWithNext && !b.leaf());
     if (!hooks) {
@@ -540,6 +553,157 @@ class DocLayout {
         if (fr->lines[q].brk < PenTier::KeepTogether) fr->lines[q].brk = PenTier::KeepTogether;
     if (b.tr.keepWithNext && !b.leaf()) keepNext = true;
     if (b.tr.breakAfter) forceNext = true;
+  }
+  // (plan P3-15; design T6 layoutDetached) a block laid out on its own: a
+  // flow root at width `w` (no floats from outside, none leaking out, no
+  // vertical-list entries), its fragments taken out of the frame relative
+  // to its box's top-left; its height
+  u32 detaching_ = ~0u;  // the block laid out detached (its placement not applied again)
+  struct Detached {
+    std::vector<Fragment> frags;
+    Su w = 0;
+    i64 h = 0;
+  };
+  Detached layoutDetached(u32 i, Su w) {
+    const LayoutBlock& b = tree->blocks[i];
+    Detached d;
+    d.w = w;
+    const size_t from = fr->lines.size();
+    ExclusionMap own(em);
+    const Ctx saved = ctx;
+    const i64 savedPy = py;
+    const Su savedGap = gapBefore;
+    const bool savedKeep = keepNext, savedForce = forceNext;
+    const u32 savedDetaching = detaching_;
+    // its box at x 0: its own indent (b.x, b.xr) cancelled
+    ctx = Ctx{-b.x, w + b.x + b.xr, suToPx(w + b.x + b.xr), &own, nullptr, true};
+    py = 0;
+    gapBefore = 0;
+    keepNext = false;
+    forceNext = false;
+    detaching_ = i;
+    block(i);
+    d.h = py;
+    detaching_ = savedDetaching;
+    ctx = saved;
+    py = savedPy;
+    gapBefore = savedGap;
+    keepNext = savedKeep;
+    forceNext = savedForce;
+    d.frags.assign(fr->lines.begin() + (long)from, fr->lines.end());
+    fr->lines.resize(from);
+    return d;
+  }
+  // a detached box placed at (x, frame-relative y): one atom on paged sheets
+  void place(Detached& d, Su x, i64 y) {
+    for (size_t q = 0; q < d.frags.size(); q++) {
+      Fragment f = d.frags[q];
+      f.left += x;
+      f.y += (Su)y;
+      if (q > 0) f.brk = PenTier::Structural;
+      f.paged &= (u8)~kPagedFrame;  // (an atom: its frames go with it)
+      fr->lines.push_back(f);
+    }
+  }
+  // (plan P3-15) a placed block's width: its declared length or fraction of
+  // the room, else its content's (FitBody: its non-caption content's
+  // max-content) — never more than the room
+  Su placedWidth(u32 i, Su room) const {
+    const BlockTraits& tr = tree->blocks[i].tr;
+    Su w = tr.placeW ? tr.placeW : tr.placeFrac > 0 ? (Su)((double)room * tr.placeFrac) : 0;
+    if (!w) {
+      Su mn = 0, mx = 0;
+      intrinsic(i, mn, mx, /*captions=*/false);
+      w = std::max(mx, mn);
+      const LayoutBlock& b = tree->blocks[i];
+      w += b.box.inset(1) + b.box.inset(3);
+    }
+    return std::clamp<Su>(w, std::min<Su>(kRailMinLineSu, room), room);
+  }
+  // a block floated to the start or end side: laid out detached, placed at
+  // the cursor beside the floats already there (ExclusionMap::place, as an
+  // image float), the text beside it narrowed by its exclusion
+  void sideFloat(u32 i) {
+    const LayoutBlock& b = tree->blocks[i];
+    Leaf l = enter(false, b);
+    const Su room = ctx.width - b.x - b.xr;
+    const Su w = placedWidth(i, room);
+    Detached d = layoutDetached(i, w);
+    const bool start = b.tr.place == BlockTraits::Place::Start;
+    const Su boxLeft = start ? ctx.x0 + b.x : ctx.x0 + ctx.width - b.xr - w;
+    const Su gap = b.tr.placeGap >= 0 ? b.tr.placeGap : em;
+    const i64 top = ctx.excl->place((i64)fr->y + py, d.h, start, boxLeft, boxLeft + w, minWrap, paraGap);
+    place(d, boxLeft, top - fr->y);
+    ctx.excl->add({top, top + d.h, boxLeft, boxLeft + w, start, gap});
+    if (top + d.h > floatBottomAbs) floatBottomAbs = top + d.h;
+    // its box in the vertical list, out of flow
+    if (!ctx.cell) fr->vlist.push_back({b.leaf() ? b.unit : firstUnit(i), gapBefore, l.clear, (Su)(top - fr->y), (Su)d.h, true});
+    gapBefore = 0;
+    if (l.from < fr->lines.size()) fr->lines[l.from].brk = PenTier::Normal;
+  }
+  // a page float: in place on screen; on paged sheets one movable box to
+  // the top or bottom of its sheet, or to a sheet of floats
+  void pageFloat(u32 i) {
+    const LayoutBlock& b = tree->blocks[i];
+    const size_t from = fr->lines.size();
+    const u32 saved = detaching_;
+    detaching_ = i;
+    block(i);
+    detaching_ = saved;
+    const u8 role = kPagedMovable | (b.tr.place == BlockTraits::Place::Bottom ? kPagedBottom
+                                     : b.tr.place == BlockTraits::Place::Page ? kPagedPage
+                                                                               : 0);
+    for (size_t q = from; q < fr->lines.size(); q++) {
+      fr->lines[q].paged = (u8)((fr->lines[q].paged & ~kPagedFrame) | role);  // (its frames move with it)
+      if (q > from) fr->lines[q].brk = PenTier::Structural;
+    }
+  }
+  // (plan P3-15) consecutive inline blocks of a stack: each laid out
+  // detached at its width, set side by side a gap apart, a line full when
+  // the next does not fit; lines centred (or as the stack's par.align says),
+  // their boxes top-aligned, the stack's gap between lines; returns past the
+  // run
+  u32 inlineRun(const LayoutBlock& parent, u32 k, Su gapV) {
+    const u32 self = (u32)(&parent - tree->blocks.data());
+    std::vector<u32> run;
+    for (u32 c = k; c < parent.end && tree->blocks[c].tr.place == BlockTraits::Place::Inline; c = tree->blocks[c].end)
+      if (shows(tree->blocks[c])) run.push_back(c);
+    u32 next = k;
+    for (u32 c = k; c < parent.end && tree->blocks[c].tr.place == BlockTraits::Place::Inline; c = tree->blocks[c].end)
+      next = tree->blocks[c].end;
+    if (run.empty()) return next;
+    const Su x0 = left(parent), room = width(parent);
+    std::vector<Detached> boxes;
+    std::vector<Su> gaps;
+    for (u32 c : run) {
+      boxes.push_back(layoutDetached(c, placedWidth(c, room)));
+      gaps.push_back(tree->blocks[c].tr.placeGap >= 0 ? tree->blocks[c].tr.placeGap : em);
+    }
+    const BlockTraits::Align al = parent.tr.align;
+    size_t a = 0;
+    bool firstLine = true;
+    while (a < boxes.size()) {
+      size_t z = a + 1;
+      Su used = boxes[a].w;
+      while (z < boxes.size() && used + gaps[z - 1] + boxes[z].w <= room) used += gaps[z - 1] + boxes[z++].w;
+      if (!firstLine) py += gapV;
+      firstLine = false;
+      Su x = al == BlockTraits::Align::Ragged ? 0 : al == BlockTraits::Align::End ? room - used : (room - used) / 2;
+      if (x < 0) x = 0;
+      i64 h = 0;
+      const size_t lineFrom = fr->lines.size();
+      for (size_t q = a; q < z; q++) {
+        place(boxes[q], x0 + x, py);
+        x += boxes[q].w + gaps[q];
+        h = std::max(h, boxes[q].h);
+      }
+      for (size_t q = lineFrom + 1; q < fr->lines.size(); q++) fr->lines[q].brk = PenTier::Structural;  // a line: one atom
+      if (!ctx.cell) fr->vlist.push_back({firstUnit(run[a]), gapBefore, 0, (Su)py, (Su)h, false, self});
+      gapBefore = 0;
+      py += h;
+      a = z;
+    }
+    return next;
   }
   // a valid unit for a container's own fragments: its first leaf's
   u32 firstUnit(u32 i) const {
@@ -673,8 +837,12 @@ class DocLayout {
     const u32 self = (u32)(&b - tree->blocks.data());
     bool prevOut = false;  // the child before was only out of flow (a float)
     u32 prev = ~0u;        // the child before, in flow
-    for (u32 k = self + 1; k < b.end; k = tree->blocks[k].end) {
-      if (!shows(tree->blocks[k])) continue;  // (plan P3-14) not in this medium: no gap
+    for (u32 k = self + 1; k < b.end;) {
+      const LayoutBlock& kb = tree->blocks[k];
+      if (!shows(kb)) {  // (plan P3-14) not in this medium: no gap
+        k = kb.end;
+        continue;
+      }
       if (prev != ~0u && !prevOut) {
         // the gap, or more when either side asks for more space
         const Su g = std::max({gap, spaceAfter(prev), spaceBefore(k)});
@@ -682,11 +850,14 @@ class DocLayout {
         gapBefore = g;
       }
       const size_t v0 = fr->vlist.size();
-      block(k);
+      u32 next = kb.end;
+      if (kb.tr.place == BlockTraits::Place::Inline) next = inlineRun(b, k, gap);  // (plan P3-15) a line of boxes
+      else block(k);
       prevOut = fr->vlist.size() > v0;
       for (size_t e = v0; e < fr->vlist.size(); e++) prevOut = prevOut && fr->vlist[e].out;
       if (prevOut) gapBefore = prev != ~0u ? gap : gapBefore;  // what follows takes the float's gap
       if (!prevOut) prev = k;
+      k = next;
     }
   }
 
@@ -990,11 +1161,21 @@ class DocLayout {
   // (plan P3-14) the intrinsic widths of a block's content (CSS min- and
   // max-content): the widest run no legal break divides, the widest line
   // unbroken; a leaf's indent within the block is added
-  void intrinsic(u32 k, Su& mn, Su& mx) const {
+  void intrinsic(u32 k, Su& mn, Su& mx, bool captions = true) const {
     const LayoutBlock& top = tree->blocks[k];
     for (u32 i = k; i < top.end; i++) {
       const LayoutBlock& b = tree->blocks[i];
+      if (b.layouter == LayouterId::Table && i != k) {  // (plan P3-15) a table: its columns side by side
+        Su tmn = 0, tmx = 0;
+        tableIntrinsic(i, tmn, tmx);
+        const Su ind = (b.x - top.x) + (b.xr - top.xr);
+        mn = std::max(mn, tmn + ind);
+        mx = std::max(mx, tmx + ind);
+        i = b.end - 1;
+        continue;
+      }
       if (!b.leaf()) continue;
+      if (!captions && b.traits == TraitsId::Caption) continue;  // (FitBody: a figure's body, not its caption)
       const FlowUnit& u = tb->units[b.unit];
       Su lmn = 0, lmx = 0;
       switch (b.layouter) {
@@ -1041,6 +1222,39 @@ class DocLayout {
       const Su ind = (b.x - top.x) + (b.xr - top.xr) + b.box.inset(1) + b.box.inset(3);
       mn = std::max(mn, lmn + ind);
       mx = std::max(mx, lmx + ind);
+    }
+  }
+
+  // (plan P3-15) a table's intrinsic widths: its columns' (each its cells'
+  // widest, a spanning cell's excess shared) side by side, with its gaps
+  void tableIntrinsic(u32 t, Su& mn, Su& mx) const {
+    const LayoutBlock& b = tree->blocks[t];
+    const TableSpec& spec = tree->tables[b.spec];
+    const u32 ncols = (u32)spec.cols.size();
+    const Su padX = spec.framed ? suRoundPx(cfg.tableCellPadEm * cfg.baseSizePx) : 0;
+    const Su gap = suRoundPx(spec.gapCodeEm * cfg.baseSizePx * cfg.codeScale);
+    std::vector<Su> cmn(ncols, 2 * padX), cmx(ncols, 2 * padX);
+    u32 i = 0;
+    for (u32 c = t + 1; c < b.end && i < spec.place.size(); c = tree->blocks[c].end, i++) {
+      const CellPlace& p = spec.place[i];
+      Su a = 0, z = 0;
+      intrinsic(c, a, z);
+      a += 2 * padX;
+      z += 2 * padX;
+      Su have = gap * (Su)(p.colspan - 1), haveX = have;
+      for (u32 q = p.col; q < p.col + p.colspan && q < ncols; q++) {
+        have += cmn[q];
+        haveX += cmx[q];
+      }
+      for (u32 q = p.col; q < p.col + p.colspan && q < ncols; q++) {
+        if (a > have) cmn[q] += (a - have) / (Su)p.colspan;
+        if (z > haveX) cmx[q] += (z - haveX) / (Su)p.colspan;
+      }
+    }
+    mn = mx = gap * (Su)(ncols ? ncols - 1 : 0);
+    for (u32 q = 0; q < ncols; q++) {
+      mn += cmn[q];
+      mx += std::max(cmx[q], cmn[q]);
     }
   }
 

@@ -1,0 +1,2 @@
+instance heading 1 level=1 label=h-1 title="Page floats" @[447,460)
+label h-1 -> heading 1 @[447,460)

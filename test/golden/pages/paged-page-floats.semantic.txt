@@ -1,0 +1,16 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-tsr-env="7f0cbcd8d64a6ba9" data-s="447" data-e="460" id="tsr-h-1">Page floats</h1>
+<p data-pid="1" data-tsr-env="7f0cbcd8d64a6ba9" data-s="462" data-e="544">Filler paragraph one fills the first part of the sheet with ordinary running text.</p>
+<div data-role="topnote" data-pid="2" data-tsr-env="7f0cbcd8d64a6ba9" data-s="546" data-e="599">
+<p data-s="556" data-e="589">A float for the top of its sheet.</p>
+</div>
+<p data-pid="3" data-tsr-env="7f0cbcd8d64a6ba9" data-s="601" data-e="681">Filler paragraph two, after the top float in the source, before it on the sheet.</p>
+<div data-role="bottomnote" data-pid="4" data-tsr-env="7f0cbcd8d64a6ba9" data-s="683" data-e="743">
+<p data-s="696" data-e="730">A float for the foot of its sheet.</p>
+</div>
+<p data-pid="5" data-tsr-env="7f0cbcd8d64a6ba9" data-s="745" data-e="820">Filler paragraph three, which the bottom float leaves behind in the source.</p>
+<div data-role="pagenote" data-pid="6" data-tsr-env="7f0cbcd8d64a6ba9" data-s="822" data-e="885">
+<p data-s="833" data-e="874">A float that waits for a sheet of floats.</p>
+</div>
+<p data-pid="7" data-tsr-env="7f0cbcd8d64a6ba9" data-s="887" data-e="906">The last paragraph.</p>
+</div>

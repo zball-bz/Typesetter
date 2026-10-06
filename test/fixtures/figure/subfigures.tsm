@@ -1,0 +1,13 @@
+Subfigures side by side (plan P3-15): each an inline block at 45% of the figure, laid out on its own; they wrap like words when the measure is too narrow.
+
+#!figure(label: "fig-pair")
+#!figure(src: "a.png", w: 100, h: 50, label: "fig-a", style: {place: {float: "inline", width: "45%"}})
+The left view.
+#figure!
+#!figure(src: "b.png", w: 100, h: 60, label: "fig-b", style: {place: {float: "inline", width: "45%"}})
+The right view, whose caption runs a little longer.
+#figure!
+Two views of one thing.
+#figure!
+
+See @fig-a and @fig-b of @fig-pair.

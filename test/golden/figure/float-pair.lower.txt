@@ -1,0 +1,15 @@
+lower v1 abi 3d3ccfbb docEnd 582 holes 2 module 82ae29367a590e53
+piece 0 hole 0 js [129,210)
+piece 1 hole 1 js [212,282)
+block 0 content [0,182)
+  CALL para [0,182)
+    TEXT "Floats on both sides (plan P3-15): an aside floated left takes its content's width (FitBody), a code block floated right a fixed width; the text between them narrows from both sides." [0,182)
+block 1 content [184,288) user framed async holes 0..1
+  REGION async "aside" args=hole 0 [184,288)
+    CALL para [265,280)
+      TEXT "A narrow aside." [265,280)
+block 2 content [290,372) user framed async holes 1..2
+  FENCE async "js" args=hole 1 body="let x = 1;" at=[358,368) lines=null [290,372)
+block 3 content [374,581)
+  CALL para [374,581)
+    TEXT "The right float stands below the left one: the column between them would be narrower than the least wrap width. The paragraph narrows beside each, then widens past their bottoms; both floats are out of flow." [374,581)

@@ -298,7 +298,9 @@
   "rowspan": 99,
   "valign": 100,
   "measure": 101,
-  "minWidth": 102
+  "minWidth": 102,
+  "placeWidth": 103,
+  "placeGap": 104
  },
  "attrs": {
   "para.label": 9,
@@ -524,6 +526,8 @@
   "styled.breakerTolerance": 14,
   "styled.breakerStretch": 14,
   "styled.placeFloat": 14,
+  "styled.placeWidth": 14,
+  "styled.placeGap": 14,
   "styled.label": 9,
   "styled.role": 9,
   "styled.slot": 9,

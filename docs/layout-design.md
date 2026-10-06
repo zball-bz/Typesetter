@@ -130,6 +130,20 @@ Every in-flow box that is not a paragraph clears the float beside it,
 unless its `beside: shrink` lays it out in the room its top line leaves
 (plan P3-14).
 
+**Placement (plan P3-15).** `block()` sends a side float (`place.float`
+left/right, not an image float) to `sideFloat`, which lays it out with
+`layoutDetached(i, w)`. That call runs the ordinary layouters with the
+block as a flow root at x 0 and width w (no vertical-list entries), then
+takes its fragments out of the frame. The float is placed as an atom (its
+frames go with it), its exclusion added with its own gap, its vertical-list
+entry out of flow. A page float (`top`/`bottom`/`page`) is laid out in
+place, and its fragments become one movable box (`kPagedMovable`, plus
+`kPagedBottom` or `kPagedPage`). A stack sets consecutive inline blocks
+(`place.float: inline`) as lines of detached boxes (`inlineRun`).
+`placedWidth` resolves `place.width`; when it is unset, `intrinsic()` gives
+the content's max-content (captions left out), and a table's intrinsic
+widths are its columns' (`tableIntrinsic`).
+
 **Block traits (plan P3-14).** `block()` wraps every layouter with the
 trait group (style-design.md §4):
 - the medium filter;

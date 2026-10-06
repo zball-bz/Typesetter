@@ -127,11 +127,43 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
   };
 
   const size_t n = flow.size();
+  // (plan P3-15) the room a movable box (a page float) leaves in the flow —
+  // from its top to the next box's: the flow closes over it on its sheet
+  std::vector<i64> hole(n, 0);
+  for (size_t x = 0; x < n; x++)
+    if (flow[x].paged & kPagedMovable) {
+      i64 next = flow[x].bot;
+      for (size_t y = x + 1; y < n; y++)
+        if (!(flow[y].paged & kPagedMovable)) {
+          next = flow[y].extTop;
+          break;
+        }
+      hole[x] = std::max<i64>(0, next - flow[x].extTop);
+    }
   size_t s = 0;
-  std::vector<size_t> carried;  // page floats deferred to the next sheet's top
-  while (s < n || !carried.empty()) {
+  std::vector<size_t> carried, carriedBottom;  // page floats deferred to the next sheet's top / bottom
+  std::vector<size_t> floatSheet;              // (plan P3-15) page floats for a sheet of floats
+  while (s < n || !carried.empty() || !carriedBottom.empty() || !floatSheet.empty()) {
+    // a sheet of floats: the page floats met on the sheet before, stacked
+    // from its top (as many as fit; one taller than it overflows it)
+    if (!floatSheet.empty()) {
+      Page pg;
+      pg.top = flow[floatSheet[0]].top;
+      i64 cursor = 0;
+      size_t q = 0;
+      for (; q < floatSheet.size(); q++) {
+        const Box& b = flow[floatSheet[q]];
+        if (q > 0 && cursor + b.h() > H) break;
+        pg.bands.push_back(band(b, cursor + pg.top - b.top, false));
+        cursor += b.h();
+      }
+      if (cursor > H) pg.overflow = cursor - H;
+      floatSheet.erase(floatSheet.begin(), floatSheet.begin() + (long)q);
+      pr.pages.push_back(std::move(pg));
+      continue;
+    }
     Page pg;
-    const i64 S = s < n ? flow[s].extTop : flow[carried[0]].top;
+    const i64 S = s < n ? flow[s].extTop : flow[!carried.empty() ? carried[0] : carriedBottom[0]].top;
     pg.top = S;
     // a table continued from an earlier sheet repeats its header rows
     std::vector<size_t> header;
@@ -154,30 +186,44 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
     i64 lift = 0;  // what sits above the flow: carried floats, a repeated header, lifted floats
     for (size_t c : carried) lift += flow[c].h();
     lift += headerH;
-    std::vector<size_t> lifted, nextCarried;
+    i64 sink = 0;  // (plan P3-15) what sits below it: bottom floats
+    for (size_t c : carriedBottom) sink += flow[c].h();
+    std::vector<size_t> lifted, nextCarried, sunk, nextBottom, pageFloats;
     i64 insH = 0;
     bool anyIns = false;
-    i64 flowBot = S;
+    i64 flowEnd = 0;  // the flow's height so far (the floats' holes closed)
+    i64 removed = 0;  // the holes of the floats met so far
     size_t k = s;
     for (; k < n; k++) {
       const Box& b = flow[k];
       if (k > s && b.tier == PenTier::Forced) break;
       if (b.paged & kPagedMovable) {
-        // to the top of this sheet if it fits there, else of the next
-        if (lift + b.h() + (flowBot - S) + insH <= H) {
+        // a page float: to a sheet of floats; to the bottom or the top of
+        // this sheet if it fits there, else of the next
+        if (b.paged & kPagedPage) pageFloats.push_back(k);
+        else if (b.paged & kPagedBottom) {
+          if (lift + sink + b.h() + flowEnd + insH <= H) {
+            sunk.push_back(k);
+            sink += b.h();
+          } else {
+            nextBottom.push_back(k);
+          }
+        } else if (lift + b.h() + flowEnd + insH + sink <= H) {
           lifted.push_back(k);
           lift += b.h();
         } else {
           nextCarried.push_back(k);
         }
+        removed += hole[k];
         continue;
       }
       i64 need = 0;
       for (u32 x : b.inserts) need += ins[x].h();
       const i64 skip = !anyIns && need > 0 ? insSkip : 0;
-      const i64 bottom = std::max(flowBot, b.extBot) - S + lift + insH + need + skip;
+      const i64 end = std::max(flowEnd, b.extBot - S - removed);
+      const i64 bottom = end + lift + sink + insH + need + skip;
       if (bottom <= H || k == s) {
-        flowBot = std::max(flowBot, b.extBot);
+        flowEnd = end;
         insH += need + skip;
         anyIns = anyIns || need > 0;
         if (bottom > H) {  // an atom taller than a sheet: set alone, overflowing visibly
@@ -221,8 +267,17 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
       }
       if (!found && flow[k].tier > PenTier::Normal) report("keep-violated", flow[k].span, "a page cut violates a keep");
     }
+    // the flow's end at the cut (its holes closed)
+    i64 flowH = 0;
+    {
+      i64 rem = 0;
+      for (size_t x = s; x < j; x++) {
+        if (flow[x].paged & kPagedMovable) rem += hole[x];
+        else flowH = std::max(flowH, flow[x].extBot - S - rem);
+      }
+    }
     // the sheet: carried, repeated and lifted boxes at its top, the flow
-    // [s, j) below them, its inserts at its bottom
+    // [s, j) below them, its bottom floats and inserts at its bottom
     i64 cursor = 0;
     auto place = [&](const Box& b, bool repeat) {
       pg.bands.push_back(band(b, cursor + S - b.top, repeat));
@@ -251,16 +306,41 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
         if (f.top < hi && f.bot > lo) pg.bands.push_back(band(f, flowShift, f.top < lo));
     }
     std::vector<u32> pageInserts;
-    for (size_t x = s; x < j; x++) {
-      if (flow[x].paged & kPagedMovable) continue;
-      pg.bands.push_back(band(flow[x], flowShift, false));
-      for (u32 r : flow[x].inserts) pageInserts.push_back(r);
+    {
+      i64 rem = 0;
+      for (size_t x = s; x < j; x++) {
+        if (flow[x].paged & kPagedMovable) {
+          rem += hole[x];
+          continue;
+        }
+        pg.bands.push_back(band(flow[x], flowShift - rem, false));
+        for (u32 r : flow[x].inserts) pageInserts.push_back(r);
+      }
     }
     if (j >= n) pageInserts.insert(pageInserts.end(), unreferenced.begin(), unreferenced.end());
+    i64 total = 0;  // the inserts' room
     if (!pageInserts.empty()) {
-      i64 total = insSkip;
+      total = insSkip;
       for (u32 r : pageInserts) total += ins[r].h();
-      i64 y = std::max(H - total, cursor + (flowBot - S)) + (sep.empty() ? spec.footnoteSkip : 0);
+    }
+    // (plan P3-15) bottom floats: above the inserts, below the flow
+    std::vector<size_t> bottoms(carriedBottom);
+    for (size_t x : sunk)
+      if (x < j) bottoms.push_back(x);
+    i64 bottomsH = 0;
+    for (size_t x : bottoms) bottomsH += flow[x].h();
+    i64 floorY = H - total;  // the inserts' top
+    if (!bottoms.empty()) {
+      i64 y = std::max(H - total - bottomsH, cursor + flowH);
+      for (size_t x : bottoms) {
+        pg.bands.push_back(band(flow[x], y + S - flow[x].top, false));
+        y += flow[x].h();
+      }
+      floorY = y;
+    }
+    if (!pageInserts.empty()) {
+      i64 y = std::max(H - total, std::max(cursor + flowH, bottoms.empty() ? cursor + flowH : floorY)) +
+              (sep.empty() ? spec.footnoteSkip : 0);
       for (const Box& b : sep) {
         pg.bands.push_back(band(b, y + S - b.top, true));
         y += b.h();
@@ -270,11 +350,16 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
         y += ins[r].h();
       }
     }
-    // floats that did not fit wait for the next sheet's top; floats lifted
-    // past the cut are met again in the flow
+    // floats that did not fit wait for the next sheet; floats placed past
+    // the cut are met again in the flow; page floats make the next sheet
     carried.clear();
     for (size_t x : nextCarried)
       if (x < j) carried.push_back(x);
+    carriedBottom.clear();
+    for (size_t x : nextBottom)
+      if (x < j) carriedBottom.push_back(x);
+    for (size_t x : pageFloats)
+      if (x < j) floatSheet.push_back(x);
     pr.pages.push_back(std::move(pg));
     s = j;
   }

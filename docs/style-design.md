@@ -141,7 +141,8 @@ ruling: no `$.role` — role defaults are rules, `$.set({role: …}, …)`):
 | `media` | all, screen, paged | no | the block is laid out only for that medium |
 | `beside` | clear, shrink | no | a non-paragraph block beside a float clears it (D-Y02) or narrows |
 | `breaker.tolerance`, `breaker.emergencyStretch` | number, len | yes | the paragraph's BreakParams |
-| `place.float` | none, left, right, top, bottom, page | no | an image floats (from P3-15: any block) |
+| `place.float` | none, left, right, top, bottom, page, inline | no | (P3-15) a side float laid out detached, a page float, an inline block; an image's side is its alias |
+| `place.width`, `place.gap` | size (length or %), len | no | (P3-15) a placed block's width (unset: FitBody) and its gap |
 
 Old spellings stay as declared aliases. A kind's schema attribute may say
 `aliasOf: <attribute>`: it is then the node's own style for that row, as

@@ -1,0 +1,8 @@
+[152,228) function "#!figure(label: \"tbl-float\", style: {place: {float: \"right\", width: \"45%\"}})"
+[229,245) function "#!table(cols: 2)"
+[251,252) operator "|"
+[263,264) operator "|"
+[272,273) operator "|"
+[276,283) function "#table!"
+[301,309) function "#figure!"
+[589,599) constant "@tbl-float"

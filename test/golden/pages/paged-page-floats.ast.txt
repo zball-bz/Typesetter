@@ -1,0 +1,21 @@
+doc @[0,907)
+  code-block @[0,445) js="\n  // page floats (plan P3-15): in place on screen; on paged sheets a top\n  // float goes to the top of its sheet, a bottom float to its foot, a page\n  // float to a sheet of floats after its sheet\n  $.set({role: 'topnote'}, {place: {float: 'top'}, box: {border: '1px', padding: '0.2em'}})\n  $.set({role: 'bottomnote'}, {place: {float: 'bottom'}, box: {border: '1px', padding: '0.2em'}})\n  $.set({role: 'pagenote'}, {place: {float: 'page'}})\n"
+  heading @[447,460) level=1
+    text @[449,460) str="Page floats"
+  para @[462,544)
+    text @[462,544) str="Filler paragraph one fills the first part of the sheet with ordinary running text."
+  region @[546,599) name="topnote"
+    para @[556,589)
+      text @[556,589) str="A float for the top of its sheet."
+  para @[601,681)
+    text @[601,681) str="Filler paragraph two, after the top float in the source, before it on the sheet."
+  region @[683,743) name="bottomnote"
+    para @[696,730)
+      text @[696,730) str="A float for the foot of its sheet."
+  para @[745,820)
+    text @[745,820) str="Filler paragraph three, which the bottom float leaves behind in the source."
+  region @[822,885) name="pagenote"
+    para @[833,874)
+      text @[833,874) str="A float that waits for a sheet of floats."
+  para @[887,906)
+    text @[887,906) str="The last paragraph."

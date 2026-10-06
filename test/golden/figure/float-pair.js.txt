@@ -1,0 +1,12 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {style} = __rt.std;
+return (async () => {
+const __h = [
+() => ({style: {place: {float: "left"}, box: {padding: "0.3em", border: "1px"}}}),
+() => ({style: {place: {float: "right", width: "9em", gap: "0.5em"}}}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

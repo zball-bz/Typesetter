@@ -243,3 +243,32 @@ the prefix model above:
 - (plan P2-08) The figure constructor tags its paragraphs `role: caption`
   (the layout still finds captions by figure depth until P3-01 reads the
   role).
+
+### Placement for any block (plan P3-15; design T6 S13)
+
+- `place: {float: 'left' | 'right', width, gap}` floats any block or
+  container: a figure whose body is a table, an aside, a code block. Its
+  width is `place.width`: a length, or a percent of the room. Unset, it is
+  FitBody, the max-content of its non-caption content, at most the room.
+  The block is laid out detached (`layoutDetached`: a flow root at that
+  width; no float leaks in or out), then placed beside the floats already
+  there by the image floats' rule (ExclusionMap::place). The text beside it
+  narrows by its exclusion, whose gap is `place.gap` (unset: an em).
+- An image with `side` (its `place.float` alias) keeps its own float leaf
+  (image plus caption rows), whose geometry FitBody reproduces. Its output
+  is unchanged.
+- `place: {float: 'inline', width}` makes a block an inline block.
+  Consecutive inline siblings are laid out detached at their widths and set
+  side by side, a gap apart. A line is full when the next box does not fit.
+  Lines are centred, or follow the container's `par.align`; boxes are
+  top-aligned, with the stack gap between lines. This is the way to put
+  subfigures side by side; nested figures still stack unless they say so.
+- `place: {float: 'top' | 'bottom' | 'page'}` makes a page float. It stays
+  in place on screen. On paged sheets it is one movable box, and its frame
+  moves with it:
+  - `top` goes to the top of its sheet, or of the next one;
+  - `bottom` goes to the foot, above the footnote inserts;
+  - `page` goes to a sheet of floats after the sheet where it stood.
+
+  The flow closes over the room it left.
+

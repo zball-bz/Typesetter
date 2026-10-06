@@ -255,6 +255,8 @@ struct NodeProps {
   float breakerTolerance = 0;  // breaker.tolerance (inherits)
   Len breakerStretch = {};  // breaker.emergencyStretch (inherits)
   u8 placeFloat = 0;  // place.float
+  StrRef placeWidth = 0;  // place.width
+  Len placeGap = {};  // place.gap
   bool operator==(const NodeProps& o) const {
     return parIndent == o.parIndent &&
            parAlign == o.parAlign &&
@@ -282,7 +284,9 @@ struct NodeProps {
            beside == o.beside &&
            breakerTolerance == o.breakerTolerance &&
            breakerStretch == o.breakerStretch &&
-           placeFloat == o.placeFloat;
+           placeFloat == o.placeFloat &&
+           placeWidth == o.placeWidth &&
+           placeGap == o.placeGap;
   }
 };
 constexpr u8 PARALIGN_JUSTIFY = 1;
@@ -312,6 +316,7 @@ constexpr u8 PLACEFLOAT_RIGHT = 3;
 constexpr u8 PLACEFLOAT_TOP = 4;
 constexpr u8 PLACEFLOAT_BOTTOM = 5;
 constexpr u8 PLACEFLOAT_PAGE = 6;
+constexpr u8 PLACEFLOAT_INLINE = 7;
 struct NodePropsHash {
   size_t operator()(const NodeProps& p) const {
     u64 h = 1469598103934665603ull;
@@ -367,6 +372,8 @@ struct NodePropsHash {
     }
     len(p.breakerStretch);
     mix((u64)p.placeFloat);
+    mix((u64)p.placeWidth);
+    len(p.placeGap);
     return (size_t)h;
   }
 };
@@ -461,7 +468,10 @@ inline void applyNodeArg(NodeProps& p, const ArgVal& a, Intern intern, View view
     if (v == "top") p.placeFloat = 4;
     if (v == "bottom") p.placeFloat = 5;
     if (v == "page") p.placeFloat = 6;
+    if (v == "inline") p.placeFloat = 7;
   }
+  if (a.key == ArgK::placeWidth && a.tag == ArgTag::Str) p.placeWidth = intern(a.ref);
+  if (a.key == ArgK::placeGap && a.tag == ArgTag::Str) p.placeGap = parseLen(view(a.ref));
 }
 // the style keys by name (plan P3-01: rules in JSON read them as
 // $.style.push does): each row's attribute name and its key path
@@ -533,6 +543,10 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
     {"breaker.emergencyStretch", ArgK::breakerStretch},
     {"placeFloat", ArgK::placeFloat},
     {"place.float", ArgK::placeFloat},
+    {"placeWidth", ArgK::placeWidth},
+    {"place.width", ArgK::placeWidth},
+    {"placeGap", ArgK::placeGap},
+    {"place.gap", ArgK::placeGap},
     {"features", ArgK::features},
     {"text.features", ArgK::features},
     {"punct", ArgK::punct},
@@ -540,7 +554,7 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
 };
 // whether an attribute patches a block property
 inline bool isNodeArg(ArgK k) {
-  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::parSingleLine || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent || k == ArgK::keep || k == ArgK::spaceBefore || k == ArgK::spaceAfter || k == ArgK::breakBefore || k == ArgK::breakAfter || k == ArgK::parHang || k == ArgK::parHangAfter || k == ArgK::boxPadding || k == ArgK::boxBorder || k == ArgK::boxBorderColor || k == ArgK::boxBackground || k == ArgK::media || k == ArgK::beside || k == ArgK::breakerTolerance || k == ArgK::breakerStretch || k == ArgK::placeFloat;
+  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::parSingleLine || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent || k == ArgK::keep || k == ArgK::spaceBefore || k == ArgK::spaceAfter || k == ArgK::breakBefore || k == ArgK::breakAfter || k == ArgK::parHang || k == ArgK::parHangAfter || k == ArgK::boxPadding || k == ArgK::boxBorder || k == ArgK::boxBorderColor || k == ArgK::boxBackground || k == ArgK::media || k == ArgK::beside || k == ArgK::breakerTolerance || k == ArgK::breakerStretch || k == ArgK::placeFloat || k == ArgK::placeWidth || k == ArgK::placeGap;
 }
 // (plan P3-02; design T4: settable element arguments alias property rows;
 // plan P3-14: declared aliases) whether a kind's attribute is its own style:

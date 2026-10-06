@@ -1,0 +1,20 @@
+doc @[447,906) [base]
+  heading @[447,460) [BOLDx1.60] level=1 label="h-1"
+    text @[449,460) [BOLDx1.60] str="Page floats"
+  para @[462,544) [base]
+    text @[462,544) [base] str="Filler paragraph one fills the first part of the sheet with ordinary running text."
+  group @[546,599) [base] role="topnote"
+    para @[556,589) [base]
+      text @[556,589) [base] str="A float for the top of its sheet."
+  para @[601,681) [base]
+    text @[601,681) [base] str="Filler paragraph two, after the top float in the source, before it on the sheet."
+  group @[683,743) [base] role="bottomnote"
+    para @[696,730) [base]
+      text @[696,730) [base] str="A float for the foot of its sheet."
+  para @[745,820) [base]
+    text @[745,820) [base] str="Filler paragraph three, which the bottom float leaves behind in the source."
+  group @[822,885) [base] role="pagenote"
+    para @[833,874) [base]
+      text @[833,874) [base] str="A float that waits for a sheet of floats."
+  para @[887,906) [base]
+    text @[887,906) [base] str="The last paragraph."

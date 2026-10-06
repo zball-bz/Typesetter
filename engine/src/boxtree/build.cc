@@ -1,6 +1,7 @@
 #include "build.h"
 
 #include <algorithm>
+#include <cstdlib>
 
 #include "../elements/registry.h"
 #include "../model/cascade.h"
@@ -187,6 +188,21 @@ class Builder {
     tr.shrink = np.beside == BESIDE_SHRINK;
     if (np.breakerTolerance > 0) tr.tolerance = np.breakerTolerance;
     tr.emergencyStretch = lenSu(np.breakerStretch, n);
+    // (plan P3-15) its placement
+    using P = BlockTraits::Place;
+    tr.place = np.placeFloat == PLACEFLOAT_LEFT     ? P::Start
+               : np.placeFloat == PLACEFLOAT_RIGHT  ? P::End
+               : np.placeFloat == PLACEFLOAT_TOP    ? P::Top
+               : np.placeFloat == PLACEFLOAT_BOTTOM ? P::Bottom
+               : np.placeFloat == PLACEFLOAT_PAGE   ? P::Page
+               : np.placeFloat == PLACEFLOAT_INLINE ? P::Inline
+                                                    : P::Flow;
+    if (np.placeWidth) {  // domain "size": a length, or a percent of the container
+      const std::string_view w = strs.get(np.placeWidth);
+      if (!w.empty() && w.back() == '%') tr.placeFrac = std::strtof(std::string(w.substr(0, w.size() - 1)).c_str(), nullptr) / 100.0f;
+      else tr.placeW = lenSu(parseLen(w), n);
+    }
+    if (np.placeGap.unit) tr.placeGap = lenSu(np.placeGap, n);
   }
   // (plan P3-14) a node's box: its padding and border widths (CSS shorthand,
   // in its own em), their colours
@@ -617,6 +633,12 @@ std::string dumpBlockTree(const std::vector<TopTree>& tops, const Interner& strs
       if (tr.shrink) out += " shrink";
       if (tr.tolerance >= 0) appendf(out, " tolerance=%g", tr.tolerance);
       if (tr.emergencyStretch) appendf(out, " emergency=%dsu", tr.emergencyStretch);
+      if (tr.place != BlockTraits::Place::Flow && !b.floatSide) {  // (an image float: float= above)
+        static const char* const kPlace[] = {"flow", "start", "end", "top", "bottom", "page", "inline"};
+        appendf(out, " place=%s", kPlace[(size_t)tr.place]);
+        if (tr.placeW) appendf(out, "/%dsu", tr.placeW);
+        if (tr.placeFrac) appendf(out, "/%g%%", tr.placeFrac * 100);
+      }
       if (b.box.framed())
         appendf(out, " box=%d,%d,%d,%d/%d,%d,%d,%d", b.box.pad[0], b.box.pad[1], b.box.pad[2], b.box.pad[3],
                 b.box.border[0], b.box.border[1], b.box.border[2], b.box.border[3]);

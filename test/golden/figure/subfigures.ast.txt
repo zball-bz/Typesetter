@@ -1,0 +1,20 @@
+doc @[0,545)
+  para @[0,154)
+    text @[0,154) str="Subfigures side by side (plan P3-15): each an inline block at 45% of the figure, laid out on its own; they wrap like words when the measure is too narrow."
+  region @[156,507) name="figure"
+    region @[184,310) name="figure"
+      para @[287,301)
+        text @[287,301) str="The left view."
+    region @[311,474) name="figure"
+      para @[414,465)
+        text @[414,465) str="The right view, whose caption runs a little longer."
+    para @[475,498)
+      text @[475,498) str="Two views of one thing."
+  para @[509,544)
+    text @[509,512) str="See "
+    ref @[513,519) target="fig-a"
+    text @[520,523) str=" and "
+    ref @[524,530) target="fig-b"
+    text @[531,533) str=" of "
+    ref @[534,543) target="fig-pair"
+    text @[543,544) str="."

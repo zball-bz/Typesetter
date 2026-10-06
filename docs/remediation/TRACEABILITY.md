@@ -1157,7 +1157,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/break-policy-config-knobs` | adhoc | medium | P4-06, P4-08 | |
 | `break-layout-pages/parshape-prefix-form` | adhoc | high | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/float-tracker-replay` | adhoc | high | P1-15 | grep:plan P1-15 |
-| `break-layout-pages/float-model-closed` | adhoc | high | P3-15 | |
+| `break-layout-pages/float-model-closed` | adhoc | high | P3-15 | grep:plan P3-15 |
 | `break-layout-pages/unit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `break-layout-pages/nested-stream-copies` | adhoc | high | P1-17 | grep:plan P1-17 |
 | `break-layout-pages/table-closed` | adhoc | high | P3-10, P3-14 | grep:plan P3-14 |
@@ -1318,7 +1318,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/sup-attach-private` | adhoc | medium | P2-08, P4-07 | |
 | `real-world-evidence/description-list-missing` | adhoc | medium | P3-34 | |
 | `real-world-evidence/table-model-v1` | adhoc | medium | P3-14 | grep:plan P3-14 |
-| `real-world-evidence/figure-model-single-image` | adhoc | medium | P3-15 | |
+| `real-world-evidence/figure-model-single-image` | adhoc | medium | P3-15 | grep:plan P3-15 |
 | `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 || grep:plan P3-08 |
 | `real-world-evidence/resource-and-config-plumbing` | adhoc | medium | P3-21 | |
 | `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 || grep:plan P3-06 |

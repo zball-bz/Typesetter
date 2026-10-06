@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="182">Floats on both sides (plan P3-15): an aside floated left takes its content&#39;s width (FitBody), a code block floated right a fixed width; the text between them narrows from both sides.</p>
+<div data-role="aside" data-pid="1" data-s="184" data-e="288">
+<p data-s="265" data-e="280">A narrow aside.</p>
+</div>
+<pre data-pid="2" data-s="290" data-e="372"><code class="language-js">let x = 1;</code></pre>
+<p data-pid="3" data-s="374" data-e="581">The right float stands below the left one: the column between them would be narrower than the least wrap width. The paragraph narrows beside each, then widens past their bottoms; both floats are out of flow.</p>
+</div>

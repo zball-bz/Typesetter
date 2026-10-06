@@ -1,0 +1,10 @@
+vlist pid=0 y=0su h=6144su
+  box unit=0 para y=0su h=6144su
+vlist pid=1 y=7373su h=13978su
+  glue 1229su
+  box unit=0 figure y=0su h=11213su
+  glue 1229su
+  box unit=4 caption y=12442su h=1536su
+vlist pid=2 y=22580su h=1536su
+  glue 1229su
+  box unit=0 para y=0su h=1536su

@@ -1,0 +1,15 @@
+doc @[0,624)
+  para @[0,150)
+    text @[0,150) str="Any block floats (plan P3-15): a figure whose body is a table floats right at 45% of the measure, its caption beneath it, the text beside it narrowed."
+  region @[152,309) name="figure"
+    region @[229,283) name="table"
+      para @[246,275)
+        text @[246,275) str="Name | Qty\nAlpha | 2\nBeta | 3"
+    para @[284,300)
+      text @[284,300) str="A floated table."
+  para @[311,570)
+    text @[311,570) str="The paragraph beside the floated table wraps around it: its first lines break at the narrowed width, the ones below the float's bottom at the full measure again, as for an image float; the figure is laid out on its own, a flow root, at the width it asked for."
+  para @[572,623)
+    text @[572,588) str="After the float, "
+    ref @[589,599) target="tbl-float"
+    text @[600,623) str=" is referenced as usual."

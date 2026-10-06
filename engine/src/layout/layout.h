@@ -33,6 +33,8 @@ constexpr u8 kPagedMovable = 1;  // a page float: to the top of its page, or the
 constexpr u8 kPagedInsert = 2;   // a footnote insert: to the bottom of its reference's page
 constexpr u8 kPagedHeader = 4;   // a table header row: repeated atop a continuation page
 constexpr u8 kPagedFrame = 8;    // (plan P3-14) a frame: drawn, clipped, on every sheet its block meets
+constexpr u8 kPagedBottom = 16;  // (plan P3-15) a movable box: to the bottom of its page, not the top
+constexpr u8 kPagedPage = 32;    // (plan P3-15) a movable box: to a sheet of floats after its page
 // widows and orphans: lines a paragraph keeps together at a page cut
 constexpr u32 kOrphans = 2, kWidows = 2;
 

@@ -1,0 +1,10 @@
+doc @[0,581) [base]
+  para @[0,182) [base]
+    text @[0,182) [base] str="Floats on both sides (plan P3-15): an aside floated left takes its content's width (FitBody), a code block floated right a fixed width; the text between them narrows from both sides."
+  group @[184,288) [base] role="aside"
+    para @[265,280) [base]
+      text @[265,280) [base] str="A narrow aside."
+  codeblock @[290,372) [CODEx0.85] lang="js"
+    text @[358,368) [CODEx0.85] str="let x = 1;"
+  para @[374,581) [base]
+    text @[374,581) [base] str="The right float stands below the left one: the column between them would be narrower than the least wrap width. The paragraph narrows beside each, then widens past their bottoms; both floats are out of flow."

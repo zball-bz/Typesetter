@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Page floats","label":null,"span":[447,460]}],"regions":[{"name":"topnote","label":null,"span":[546,599]},{"name":"bottomnote","label":null,"span":[683,743]},{"name":"pagenote","label":null,"span":[822,885]}],"fences":[],"labels":[],"diagnostics":[]}

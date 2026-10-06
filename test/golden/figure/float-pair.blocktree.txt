@@ -1,0 +1,13 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,182)
+    paragraph para unit=0 @[0,182)
+top pid=1 leaves=1
+  stack root gap=1/1 @[184,288)
+    stack group place=start box=307,307,307,307/64,64,64,64 @[184,288)
+      paragraph para unit=0 x=371su xr=371su @[265,280)
+top pid=2 leaves=1
+  stack root gap=1/1 @[290,372)
+    grid code unit=0 ragged nohyphen place=end/7834su @[290,372)
+top pid=3 leaves=1
+  stack root gap=1/1 @[374,581)
+    paragraph para unit=0 @[374,581)

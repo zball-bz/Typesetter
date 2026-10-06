@@ -1,0 +1,30 @@
+#{
+  // page floats (plan P3-15): in place on screen; on paged sheets a top
+  // float goes to the top of its sheet, a bottom float to its foot, a page
+  // float to a sheet of floats after its sheet
+  $.set({role: 'topnote'}, {place: {float: 'top'}, box: {border: '1px', padding: '0.2em'}})
+  $.set({role: 'bottomnote'}, {place: {float: 'bottom'}, box: {border: '1px', padding: '0.2em'}})
+  $.set({role: 'pagenote'}, {place: {float: 'page'}})
+}
+
+= Page floats
+
+Filler paragraph one fills the first part of the sheet with ordinary running text.
+
+#!topnote
+A float for the top of its sheet.
+#topnote!
+
+Filler paragraph two, after the top float in the source, before it on the sheet.
+
+#!bottomnote
+A float for the foot of its sheet.
+#bottomnote!
+
+Filler paragraph three, which the bottom float leaves behind in the source.
+
+#!pagenote
+A float that waits for a sheet of floats.
+#pagenote!
+
+The last paragraph.

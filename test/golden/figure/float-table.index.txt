@@ -1,0 +1,3 @@
+instance table-figure 1 label=tbl-float @[152,309)
+instance figure-table @[229,283)
+label tbl-float -> table-figure 1 @[152,309)

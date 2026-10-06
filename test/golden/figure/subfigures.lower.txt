@@ -1,0 +1,28 @@
+lower v1 abi 3d3ccfbb docEnd 545 holes 3 module 52bb12bb59c5ef71
+piece 0 hole 0 js [129,156)
+piece 1 hole 1 js [158,260)
+piece 2 hole 2 js [262,364)
+block 0 content [0,154)
+  CALL para [0,154)
+    TEXT "Subfigures side by side (plan P3-15): each an inline block at 45% of the figure, laid out on its own; they wrap like words when the measure is too narrow." [0,154)
+block 1 content [156,507) user framed async holes 0..3
+  REGION async "figure" args=hole 0 [156,507)
+    FRAME async [184,310) holes 1..2
+      REGION async "figure" args=hole 1 [184,310)
+        CALL para [287,301)
+          TEXT "The left view." [287,301)
+    FRAME async [311,474) holes 2..3
+      REGION async "figure" args=hole 2 [311,474)
+        CALL para [414,465)
+          TEXT "The right view, whose caption runs a little longer." [414,465)
+    CALL para [475,498)
+      TEXT "Two views of one thing." [475,498)
+block 2 content [509,544)
+  CALL para [509,544)
+    TEXT "See " [509,512) raw=0:0,4:3
+    CALL ref [513,519) target="fig-a"
+    TEXT " and " [520,523) raw=0:0,1:0,5:3
+    CALL ref [524,530) target="fig-b"
+    TEXT " of " [531,533) raw=0:0,1:0,4:2
+    CALL ref [534,543) target="fig-pair"
+    TEXT "." [543,544)

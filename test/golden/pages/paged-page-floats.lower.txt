@@ -1,0 +1,31 @@
+lower v1 abi 3d3ccfbb docEnd 907 holes 1 module a0248ce73c2d0151
+piece 0 hole 0 js [103,555)
+block 0 stmt [0,445) user framed holes 0..1
+  STMT 0
+block 1 content [447,460)
+  CALL heading [447,460) level=1 label=null
+    TEXT "Page floats" [449,460)
+block 2 content [462,544)
+  CALL para [462,544)
+    TEXT "Filler paragraph one fills the first part of the sheet with ordinary running text." [462,544)
+block 3 content [546,599) async
+  REGION async "topnote" [546,599)
+    CALL para [556,589)
+      TEXT "A float for the top of its sheet." [556,589)
+block 4 content [601,681)
+  CALL para [601,681)
+    TEXT "Filler paragraph two, after the top float in the source, before it on the sheet." [601,681)
+block 5 content [683,743) async
+  REGION async "bottomnote" [683,743)
+    CALL para [696,730)
+      TEXT "A float for the foot of its sheet." [696,730)
+block 6 content [745,820)
+  CALL para [745,820)
+    TEXT "Filler paragraph three, which the bottom float leaves behind in the source." [745,820)
+block 7 content [822,885) async
+  REGION async "pagenote" [822,885)
+    CALL para [833,874)
+      TEXT "A float that waits for a sheet of floats." [833,874)
+block 8 content [887,906)
+  CALL para [887,906)
+    TEXT "The last paragraph." [887,906)

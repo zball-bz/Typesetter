@@ -160,6 +160,14 @@ plus optional hydration that upgrades to the typeset rendering client-side.
   line moves to the next sheet with it (the fit counts the inserts a box
   references), as in TeX. The layout dump marks the roles (`insert@n`,
   `insert-sep`). Fixture: `pages/paged-inserts`.
+- (Plan P3-15) Movable boxes have producers, the page floats (`place.float`
+  top / bottom / page). The flow closes over the room a movable box left:
+  its hole, from its top to the next box's, is removed before the boxes
+  after it are placed. A top float goes to the top of its sheet if it fits
+  there, else to the next sheet's top. A bottom float goes to the foot,
+  above the inserts, if it fits, else to the next sheet's foot. A page
+  float waits for a sheet of floats emitted right after its sheet: it is
+  stacked from the top, and one taller than a sheet overflows it.
 - A float box separated from its wrapped text by a sheet cut keeps the
   narrowed lines (cosmetic under-fill beside no float) — accepted; floats
   near page boundaries are an authoring concern in print.

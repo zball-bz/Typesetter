@@ -68,6 +68,10 @@ Format: `- [step] what changed — migration (if any)`.
 - [P3-01] Kind presentation is default rules, so rules can change it: headings (bold, 1.6/1.35/1.15em, ragged, keep with next), code and code blocks (mono at `code.scale`), captions (centred, unhyphenated, no indent), list and quote insets, footnote markers (`fn-marker`: raised, 0.7em), note bodies (`note-body`: 0.85em), caption labels and term names (bold), comment tokens (class `tok-comment`: italic, hanging at the content), error text (mono). A paragraph of a declared figure-box element is its caption.
 - [P3-01] A footnote's body takes the notes list's context, not its site's: a footnote in a heading is no longer bold and large (its own emphasis stays). A list inside a footnote indents by its own (smaller) em.
 - [P3-01] The semantic page writes what the document styled; the rules arrive as its stylesheet (`renderTsm` returns `css`, the static exporter inlines it; a mid-document `$.set` is marked with `data-tsr-env`).
+- [P3-15] Any block can float:
+  - `style: {place: {float: "right", width: "45%"}}` on a figure holding a table, an aside or a code block floats it, and the text wraps beside it. Without a width it takes its content's width.
+  - `place: {float: "inline", width: "45%"}` sets blocks side by side (subfigures); they wrap like words when the page is narrow.
+  - `place: {float: "top" | "bottom" | "page"}` makes a page float. It stays in place on screen; in print it goes to the top or the foot of its page, or onto a page of floats after it.
 - [P3-14] Layout traits, set by rules or a block's own style:
   - `$.set({role: 'theorem'}, {box: {padding: '0.4em 0.8em', border: '0 0 0 2px', borderColor: '#2f5d8a', background: '#f4f7fb'}, keep: 'together', space: {before: '1.5em', after: '1.5em'}})` frames a theorem, sets it apart and keeps it on one printed page.
   - `keep: 'with-next'` keeps a block with the block after it when printing.

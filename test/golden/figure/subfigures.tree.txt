@@ -1,0 +1,31 @@
+doc @[0,544) [base]
+  para @[0,154) [base]
+    text @[0,154) [base] str="Subfigures side by side (plan P3-15): each an inline block at 45% of the figure, laid out on its own; they wrap like words when the measure is too narrow."
+  group @[156,507) [base] role="figure" label="fig-pair"
+    group @[184,310) [base] role="figure" label="fig-a"
+      image @[184,310) [base] src="a.png" w=100 h=50
+      para @[287,301) [base] role="caption" slot="caption"
+        styled @[287,301) [BOLD] role="caption-label"
+          text @[287,301) [BOLD] str="1(a) "
+        text @[287,301) [base] str="The left view."
+    group @[311,474) [base] role="figure" label="fig-b"
+      image @[311,474) [base] src="b.png" w=100 h=60
+      para @[414,465) [base] role="caption" slot="caption"
+        styled @[414,465) [BOLD] role="caption-label"
+          text @[414,465) [BOLD] str="1(b) "
+        text @[414,465) [base] str="The right view, whose caption runs a little longer."
+    para @[475,498) [base] role="caption" slot="caption"
+      styled @[475,498) [BOLD] role="caption-label"
+        text @[475,498) [BOLD] str="图 1："
+      text @[475,498) [base] str="Two views of one thing."
+  para @[509,544) [base]
+    text @[509,512) [base] str="See " raw=0:0,4:3
+    ref @[513,519) [base] target="fig-a"
+      text @[513,519) [base] str="图 1(a)"
+    text @[520,523) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[524,530) [base] target="fig-b"
+      text @[524,530) [base] str="图 1(b)"
+    text @[531,533) [base] str=" of " raw=0:0,1:0,4:2
+    ref @[534,543) [base] target="fig-pair"
+      text @[534,543) [base] str="图 1"
+    text @[543,544) [base] str="."

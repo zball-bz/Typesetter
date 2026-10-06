@@ -75,6 +75,14 @@ struct BlockTraits {
   bool shrink = false;
   double tolerance = -1;  // kNoTolerance
   Su emergencyStretch = 0;
+  // (plan P3-15; design T6 Place) where it goes: in the flow, floated to a
+  // side (text beside it), a page float (on paged sheets), an inline block
+  // (side by side with its inline siblings); its width (a length, or a
+  // fraction of its container's; neither: its content's) and its gap
+  enum class Place : u8 { Flow, Start, End, Top, Bottom, Page, Inline } place = Place::Flow;
+  Su placeW = 0;
+  float placeFrac = 0;
+  Su placeGap = -1;  // (unset: an em)
 };
 // (plan P3-14; design T6 BoxModel) a framed block: its padding and border
 // (top, right, bottom, left), their colours; its content box is inset by
