@@ -56,6 +56,7 @@ struct StyleRule {
   StyleSelector sel;
   std::vector<ArgVal> patch;  // styled attributes; strings are document StrRefs
   bool force = false;         // a host rule over the node's own delta (D-T03)
+  bool builtin = false;       // the engine's defaults (rulesToCss reports only the others)
 };
 
 using RuleEnvId = u32;  // 0: the base rules (defaults, host)

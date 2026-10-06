@@ -167,6 +167,64 @@ other follows the aspect ratio), and the semantic product reads the same
 token answers. The JSON `tsr_measure_requests` and the per-kind
 `tsr_provide_*` exports remain as shims over the same table.
 
+## 4b. The resource host (plan P3-21; design T9 A2, M7; D-I09)
+
+The engine's needs (§4a) and a document's execute-time loads are answered
+in one place, `runtime/src/shared/resources/`:
+
+- **ResourceHost** (`host.mjs`; one per worker, one per Node process unless
+  the caller passes its own): a provider registry, one LRU cache and
+  seeded entries (a static export's known bytes). The cache (`lru.mjs`)
+  is limited by entries and bytes and has a time to live, with a shorter
+  one for failures. These are the policy rows `resourceCacheEntries`,
+  `resourceCacheBytes`, `resourceTtlMs` and `resourceFailureTtlMs`.
+  `host.register(kind, provider)` makes `provider.resolve(rows, ctx)` the
+  answerer of a `resources.def` kind. Built-in, host and document providers
+  stand on equal terms. A **document** provider (`{document: true}`; `#use`,
+  P3-31) may answer only kinds whose `docProviders` column is true
+  (`codeTokens`, `boxInfo`: keys that are authored content), and its rows
+  are answered with `store: false`, so the Session keeps no answer of one
+  document's code for another. A provider that throws fails its kind's rows
+  (an image's placeholder, plain code), never the batch.
+- **ResourceJob** (`host.job({bases, root})`, one per document): the pull
+  loop's `answer(request, {stale, capability})`, the loads
+  (`load(src, {as: 'text' | 'json' | 'bytes', role})`) and the
+  **manifest**: `[{url, role, source, status, requester}]` of every load,
+  image and denial.
+- **ResourceLocator** (`locator.mjs`): a reference resolves against the
+  base of the source that made it (`bases.doc`: the page URL in a worker,
+  the document's folder in Node), a `/path` against `root`. The requester
+  class (`exec`: `$.load`, `ctx.load`, `#bibliography`; `image`; `input`,
+  P3-31) and the use (`image`, `link`, `load`) select the scheme policy of
+  `engine/schema/url_policy.def` (plan P3-20). The C++ `safeImageSrc` /
+  `safeLinkUrl` and the JS `urlAllowed` are generated from it. A file must
+  lie below `root` or the document's folder, checked by path when resolved
+  and by real path when read. Reads revalidate: http(s) by ETag and
+  Last-Modified, files by mtime and size.
+
+Providers in the worker: canvas `textWidth` and `fontVmet`, `codeTokens`
+(the highlighter) and `boxInfo` (`providers/images.mjs`: the header sniff,
+then decode, then the main thread's `imageDims` capability; sizes cached by
+URL, failures only for the failure time to live). The host adds its own
+with `createEngine({providers: [{kind, module}]})`: the worker imports each
+module and registers its default export before the next job runs. In Node,
+`renderTsm(source, {providers: [{kind, provider}]})` or
+`renderTsm(source, {host})`.
+
+`$.load(src, {as})` (a document's script) and `ctx.load(src, {as})` (a
+fence or region handler) are the same job load; `#bibliography(src)` reads
+through it with role `bibliography`.
+
+**Products.** `tsr2_product(doc, name)` returns a product's text after
+Resolve:
+- `references`: one JSON line per image, `{role, src, s, e, allowed}`;
+- `docinfo`: `{lang, title}`, where the title is the first heading's text;
+- `settings`: the effective settings document.
+
+`renderTsm` returns `{html, css, diagnostics, ok, manifest, settings,
+docinfo}` (`diags` is diagnostics' older name). Its manifest is the
+references, the job's log and the fonts the caller declared (`opts.fonts`).
+
 ## 5. Fixtures, profiles, tsrc
 
 - `test/profiles/golden.json` — `{host: {width: 300}, doc: {baseSize: 16}}`.

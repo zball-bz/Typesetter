@@ -1,6 +1,7 @@
 // Executes a compiled document — its LowerProgram (run by shared/lower.mjs)
 // and its hole module — against an OpBuf (architecture §4.1; plan P2-02).
 // Works in Node (temp-file import) and in browsers/workers (blob URL import).
+import { ResourceHost } from '../shared/resources/host.mjs';
 import { KIND } from '../shared/ops.gen.mjs';
 import { OpBuf, isNode } from '../shared/opbuf.mjs';
 import { createStd, styleAttrs, ruleAttrs, NULLARY, CONTENT } from '../shared/stdlib.mjs';
@@ -34,31 +35,24 @@ export function formatEntryDefault(e, c) {
   return parts;
 }
 
-// resource loader for #bibliography(src): browser/worker fetch against the
-// page's base URL; Node reads the file — /site-root paths against rootDir
-// (the site/repo root), relative ones against the document's folder. A
-// document reads only below rootDir or its own folder (plan P0-11): no
-// `../../..` walk and no OS-absolute path reaches the rest of the disk.
-async function loadResource(src, opts) {
-  const s = String(src);
-  if (typeof process !== 'undefined' && process.versions?.node && !/^https?:/.test(s)) {
-    const { readFile, realpath } = await import('node:fs/promises');
-    const { join, resolve, sep } = await import('node:path');
-    const rootDir = resolve(opts.rootDir ?? process.cwd());
-    const baseDir = resolve(opts.baseDir ?? rootDir);
-    const file = s.startsWith('/') ? join(rootDir, s) : resolve(baseDir, s);
-    const within = (p, d) => p === d || p.startsWith(d.endsWith(sep) ? d : d + sep);
-    const allowed = (p, roots) => roots.some((d) => within(p, d));
-    if (!allowed(file, [rootDir, baseDir])) throw new Error('resource outside the document root');
-    const real = await realpath(file);  // a symlink may not lead out either
-    const realRoots = await Promise.all([rootDir, baseDir].map((d) => realpath(d).catch(() => d)));
-    if (!allowed(real, realRoots)) throw new Error('resource outside the document root');
-    return await readFile(real, 'utf8');
+// (plan P3-21; design T9 A2) a document's loads go through its resource
+// job (shared/resources/host.mjs: one locator, one cache, the manifest):
+// opts.host. A caller of the older options (baseUrl in a worker; baseDir
+// and rootDir in Node — P0-11: a document reads only below rootDir or its
+// own folder) gets a job built from them.
+async function jobOf(opts) {
+  if (opts.host) return opts.host;
+  if (opts._job) return opts._job;
+  let bases = {};
+  let root = null;
+  if (typeof process !== 'undefined' && process.versions?.node) {
+    const { resolve } = await import('node:path');
+    root = resolve(opts.rootDir ?? process.cwd());
+    bases = { doc: resolve(opts.baseDir ?? root) };
+  } else if (opts.baseUrl) {
+    bases = { doc: opts.baseUrl };
   }
-  const url = opts.baseUrl ? new URL(s, opts.baseUrl) : s;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.text();
+  return (opts._job = new ResourceHost().job({ bases, root }));
 }
 
 // the content protocol's markers (plan P2-01), defined with the stdlib
@@ -84,7 +78,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     fragments: (texts, o) => runFragments(texts, o),
     // a document resource (plan P2-14: ctx.load; P0-11: below rootDir or the
     // document's folder — P3-21 moves it to the common locator and cache)
-    load: (src) => loadResource(String(src), opts),
+    load: async (src, o = {}) => (await jobOf(opts)).load(String(src), { as: o.as ?? 'text' }),
     // citations (notes-design.md §2; plans P2-07, P2-14): #bibliography(src)
     // loads its data — once per source: another collector naming it lists
     // the same rows —, formats each entry with the 'bib' format entry, each
@@ -103,7 +97,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
       bibLoaded.add(key);
       let entries;
       try {
-        entries = JSON.parse(await loadResource(key, opts));
+        entries = await (await jobOf(opts)).load(key, { as: 'json', role: 'bibliography' });
         if (!Array.isArray(entries)) throw new Error('CSL-JSON array expected');
       } catch (err) {
         const message = `bibliography ${key}: ${err?.message ?? err}`;
@@ -144,6 +138,9 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     }),
     collector: S.api.collector,
     labels: Object.freeze({ import: S.api.labelsImport }),
+    // (plan P3-21) $.load(src, {as}): a document resource through the
+    // resource host (locator, cache, manifest), a promise
+    load: S.api.load,
     bib: {
       set format(fn) { S.api.format('bib', fn); },
       get format() { return S.api.formatOf('bib') ?? formatEntryDefault; },
@@ -440,7 +437,7 @@ async function importModule(jsText) {
     const dir = mkdtempSync(join(tmpdir(), 'tsm-'));
     const file = join(dir, 'doc.mjs');
     writeFileSync(file, jsText);
-    try { return await import(pathToFileURL(file).href); }
+    try { return await import(/* a document's hole module */ pathToFileURL(file).href); }
     finally { rmSync(dir, { recursive: true, force: true }); }
   }
   // worker scope: blob URLs work in module workers

@@ -1284,7 +1284,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/adhoc-caches` | adhoc | high | P1-21 | grep:plan P1-21 |
 | `api-measure-code/per-feature-api-entry-points` | adhoc | medium | P3-37 | |
 | `api-measure-code/native-driver-config-divergence` | adhoc | medium | P1-03 | grep:plan P1-03 |
-| `api-measure-code/resource-io-paths` | adhoc | medium | P3-21 | |
+| `api-measure-code/resource-io-paths` | adhoc | medium | P3-21 | grep:plan P3-21 |
 | `api-measure-code/magic-policy-constants` | adhoc | low | P1-03, P3-02 | grep:plan P3-02 |
 | `api-measure-code/snap-kerning-duplicate-style-attr` | issue | high | P0-10, P1-03 | grep:plan P1-03 |
 | `api-measure-code/relayout-stale-emit` | issue | high | P0-11, P1-16 | grep:plan P1-16 |
@@ -1320,7 +1320,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/table-model-v1` | adhoc | medium | P3-14 | grep:plan P3-14 |
 | `real-world-evidence/figure-model-single-image` | adhoc | medium | P3-15 | grep:plan P3-15 |
 | `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 || grep:plan P3-08 |
-| `real-world-evidence/resource-and-config-plumbing` | adhoc | medium | P3-21 | |
+| `real-world-evidence/resource-and-config-plumbing` | adhoc | medium | P3-21 | grep:plan P3-21 |
 | `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 || grep:plan P3-06 |
 | `real-world-evidence/presentation-constants` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `real-world-evidence/math-extensibility` | adhoc | medium | P3-29 | |

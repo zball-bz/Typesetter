@@ -4,7 +4,8 @@
 // handles are transient. No browser, no canvas, no typeset pass — the
 // output is the resolver-complete semantic page with static token spans.
 import { execute } from '../worker/executor.mjs';
-import { tokenize } from '../worker/tokens.mjs';
+import { ResourceHost } from '../shared/resources/host.mjs';
+import { tokenProvider } from '../shared/resources/providers/tokens.mjs';
 import { checkAbi, compiledOf, fragmentsOf } from '../shared/abi.mjs';
 import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
 import { RES_KINDS } from '../shared/resources.gen.mjs';
@@ -19,14 +20,21 @@ function getMod() {
   return modPromise;
 }
 
-// → { html, css, diags, ok }; ok=false on ingest failure or error-severity
-// diags. css: the page's stylesheet from the rules (plan P3-01: the html
-// writes each run's rule-free style inline; the defaults, the host's rules
-// and the document's $.set arrive here)
+// → { html, diagnostics, ok, manifest, settings, css, docinfo } (plan P3-21;
+// design T9 A2; `diags` is diagnostics' older name). ok=false on ingest
+// failure or error-severity diagnostics. css: the page's stylesheet from the
+// rules (plan P3-01). manifest: everything the document references — its
+// images (the engine's references product), its execution loads (the
+// resource host's log: #bibliography, $.load) and the fonts the host
+// declared (opts.fonts) — [{ url, role, source, status, requester }].
+// settings: the effective settings document. docinfo: { lang, title }.
 // opts.settings: the settings document (docs/settings-table.md; opts.lang is
-// sugar for doc.lang). opts.baseDir / opts.rootDir: where document resources (#bibliography
-// src) resolve — relative paths against baseDir, /site-root paths against
-// rootDir (defaults: process.cwd())
+// sugar for doc.lang). opts.baseDir / opts.rootDir: where document resources
+// resolve — relative paths against baseDir, /site-root paths against rootDir
+// (defaults: process.cwd()). opts.host: a ResourceHost of the caller's
+// (its providers and cache), else one per process; opts.providers:
+// [{ kind, provider }] registered for this render.
+let defaultHost = null;
 export async function renderTsm(source, opts = {}) {
   const M = await getMod();
   const doc = M._tsr_doc_new();
@@ -41,13 +49,24 @@ export async function renderTsm(source, opts = {}) {
     const srcPtr = M.stringToNewUTF8(String(source));
     M._tsr_compile(doc, srcPtr);
     M._free(srcPtr);
-    const ops = await execute(compiledOf(M, doc), { baseDir: opts.baseDir, rootDir: opts.rootDir, parse: fragmentsOf(M) });
+    const { resolve } = await import('node:path');
+    const rootDir = resolve(opts.rootDir ?? process.cwd());
+    let host = opts.host ?? (defaultHost ??= new ResourceHost().register('codeTokens', tokenProvider));
+    if (opts.providers?.length) {  // (plan P3-21) [{ kind, provider }]: this render's own
+      const own = new ResourceHost({ cache: host.cache }).register('codeTokens', tokenProvider);
+      for (const { kind, provider } of opts.providers) own.register(kind, provider);
+      host = own;
+    }
+    const job = host.job({ bases: { doc: resolve(opts.baseDir ?? rootDir) }, root: rootDir });
+    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M) });
     const opsPtr = M._malloc(ops.length);
     M.HEAPU8.set(ops, opsPtr);
     const ingested = M._tsr_ingest(doc, opsPtr, ops.length) === 0;
     M._free(opsPtr);
-    if (!ingested)
-      return { html: '', css: '', diags: M.UTF8ToString(M._tsr_diags(doc)), ok: false };
+    if (!ingested) {
+      const diagnostics = M.UTF8ToString(M._tsr_diags(doc));
+      return { html: '', css: '', diagnostics, diags: diagnostics, ok: false, manifest: job.manifest(), settings: {}, docinfo: {} };
+    }
     // answer NEED_TOKENS before the semantic render: foldTokens rewrites the
     // tree, so the static page carries the highlight spans
     // (the resource pull, plan P1-19: only the code tokens are asked for)
@@ -56,9 +75,8 @@ export async function renderTsm(source, opts = {}) {
     const req = decodeRequest(M.HEAPU8.slice(p + 4, p + 4 + len));
     const rows = req.kinds.codeTokens ?? [];
     if (rows.length) {
-      const codeTokens = [];
-      for (const t of rows) codeTokens.push({ resId: t.resId, runs: await tokenize(t.lang, t.text) });
-      const bytes = encodeAnswer({ batch: req.batch, kinds: { codeTokens } });
+      const ans = await job.answer({ batch: req.batch, mks: req.mks, kinds: { codeTokens: rows } });
+      const bytes = encodeAnswer(ans);
       const ap = M._malloc(bytes.length);
       M.HEAPU8.set(bytes, ap);
       M._tsr2_provide(doc, ap, bytes.length);
@@ -66,8 +84,24 @@ export async function renderTsm(source, opts = {}) {
     }
     const html = M.UTF8ToString(M._tsr_render_semantic(doc));
     const css = M.UTF8ToString(M._tsr2_render_css(doc));
-    const diags = M.UTF8ToString(M._tsr_diags(doc));
-    return { html, css, diags, ok: !/^error /m.test(diags) };
+    const product = (name) => {
+      const p = M.stringToNewUTF8(name);
+      const out = M.UTF8ToString(M._tsr2_product(doc, p));
+      M._free(p);
+      return out;
+    };
+    // the manifest: the images the engine knows of, the loads, the fonts
+    const manifest = [];
+    for (const line of product('references').split('\n').filter(Boolean)) {
+      const r = JSON.parse(line);
+      manifest.push({ url: r.src, role: r.role, source: 'doc', status: r.allowed ? 'referenced' : 'denied', requester: 'image' });
+    }
+    manifest.push(...job.manifest());
+    for (const f of opts.fonts ?? [])
+      if (f?.src) manifest.push({ url: String(f.src), role: 'font', source: 'host', status: 'declared', requester: 'host' });
+    const diagnostics = M.UTF8ToString(M._tsr_diags(doc));
+    return { html, css, diagnostics, diags: diagnostics, ok: !/^error /m.test(diagnostics), manifest,
+             settings: JSON.parse(product('settings')), docinfo: JSON.parse(product('docinfo')) };
   } finally {
     M._tsr_doc_free(doc);
   }

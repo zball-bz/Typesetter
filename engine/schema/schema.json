@@ -1116,6 +1116,22 @@
         384
       ],
       "doc": "the native/golden image provider's answer"
+    },
+    "resourceCacheEntries": {
+      "def": 512,
+      "doc": "the resource host's LRU cache of URL-keyed answers (image sizes, loads): entries kept"
+    },
+    "resourceCacheBytes": {
+      "def": 33554432,
+      "doc": "the resource host's LRU cache: bytes of loaded resources kept"
+    },
+    "resourceTtlMs": {
+      "def": 300000,
+      "doc": "a cached resource is revalidated (ETag, Last-Modified; a file's mtime and size) after this"
+    },
+    "resourceFailureTtlMs": {
+      "def": 10000,
+      "doc": "a failed resource (an image that did not load, a missing file) is retried after this"
     }
   }
 }

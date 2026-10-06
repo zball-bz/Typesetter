@@ -254,6 +254,10 @@ constexpr u32 kPolicyFontRetryMs = 30000;  // a failed font load is retried afte
 constexpr u32 kPolicyGrammarRetryMs = 30000;  // a failed highlight grammar load is retried after this
 constexpr u32 kPolicyImageTimeoutMs = 15000;  // main-thread image size fallback timeout
 constexpr u32 kPolicySessionBudgetBytes = 67108864;  // the worker Session's answer cache and memo budget (content-keyed: widths, vertical metrics, code tokens, KP results)
+constexpr u32 kPolicyResourceCacheEntries = 512;  // the resource host's LRU cache of URL-keyed answers (image sizes, loads): entries kept
+constexpr u32 kPolicyResourceCacheBytes = 33554432;  // the resource host's LRU cache: bytes of loaded resources kept
+constexpr u32 kPolicyResourceTtlMs = 300000;  // a cached resource is revalidated (ETag, Last-Modified; a file's mtime and size) after this
+constexpr u32 kPolicyResourceFailureTtlMs = 10000;  // a failed resource (an image that did not load, a missing file) is retried after this
 constexpr double kPolicyNativeImagePx[] = {512, 384};  // the native/golden image provider's answer
 
 // the result of a settings document: which stages its applied rows affect

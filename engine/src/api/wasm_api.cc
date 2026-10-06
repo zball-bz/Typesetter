@@ -22,6 +22,7 @@ namespace {
 struct WasmDoc {
   Doc doc;
   std::string jsOut, htmlOut, semOut, cssOut, reqOut, diagOut;
+  std::string productOut;  // (plan P3-21) tsr2_product
 };
 
 void jsonEscapeInto(std::string& out, std::string_view s) {
@@ -323,6 +324,12 @@ TSR_EXPORT const char* tsr_render_semantic(WasmDoc* d) {
 
 // its stylesheet (rulesToCss, plan P3-01): what the rules add to the scopes
 // the semantic page writes inline
+// (plan P3-21) a product by name (Doc::product: references, docinfo, …)
+TSR_EXPORT const char* tsr2_product(WasmDoc* d, const char* name) {
+  d->productOut = d->doc.product(name ? name : "");
+  return d->productOut.c_str();
+}
+
 TSR_EXPORT const char* tsr2_render_css(WasmDoc* d) {
   d->cssOut = d->doc.renderCss();
   return d->cssOut.c_str();

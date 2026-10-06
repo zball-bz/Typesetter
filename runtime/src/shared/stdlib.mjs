@@ -1276,6 +1276,12 @@ export function createStd(host) {
     formatOf(name) {
       return registry.get('format', name)?.fn;
     },
+    // (plan P3-21) $.load(src, {as: 'text' | 'json' | 'bytes'}): a document
+    // resource through the host's locator and cache (relative to the
+    // document; recorded in its manifest), a promise
+    load(src, o = {}) {
+      return host.load(src, o);
+    },
     manifest() {
       return {
         ctors: registry.names('ctor').map((n) => {

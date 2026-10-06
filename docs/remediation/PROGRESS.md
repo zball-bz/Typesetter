@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-21
+- 下一步：P3-22
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -87,7 +87,7 @@
 | P3-18 | 类名渲染与主题拆分 | done | grep:plan P3-18 | 2026-10-06 | 42 个 golden 变化（脚本核对：token run 去掉内联 color:var(--tsr-tok-*) 换成 tsr-c-tok-*、代码 run（含行号）加 tsr-pre；另 4 个逐一检查：code/hang、code/runs 只有 tsr-pre（作者写的颜色保留），lower/universal-attrs-diag 的 class 渲染为 tsr-c-note tsr-c-wide，typeset 与语义页均是）；e2e：token 断言改为类名 | 类通道：节点的 class 进入 run 行 text.classes（引擎设置、排序、去重、度量中性、向下继承），代码 token 携带 tok-<tag> 而非颜色串；typeset run 写 tsr-c-*，语义页文字 span 写 tsr-c-*；text.space（normal/pre）新行，默认规则给 code/codeblock 设 pre → tsr-pre。CSS 拆分：schema contract 段生成渲染契约（C++ contractClasses 供序列化器、contract.gen.mjs 的 CONTRACT_CSS，挤压量取 T5 compat.def 的 punctHalfEm），shell 只留 T7 布局模块（TSR_CSS = 契约 + 布局），新建 runtime/src/main/theme.css（只含着色：链接、错误、高亮行、行号色、token 调色板与 .tsr-c-tok-* 规则）生成 theme.gen.mjs 的 THEME_CSS，shell 另注入（data-tsr-theme）、export-static 一并写出；删除死规则 .tsr-marker.tsr-code 的 font-size。devAudit 增加契约检查（tsr-b/tsr-i/tsr-pre 的计算样式）。文档：style-design §4、tsm-changes |
 | P3-19 | 基线权威 | done | grep:plan P3-19 | 2026-10-06 | 31 个 golden 变化（脚本核对：代码行 class 加 tsr-row 与 font-size（代码字号）、用户字体族 run 加内联 line-height；dl 调试产物的行基线数值随模型变化）；e2e：所有用例的 devAudit 新增基线检查（≤1px，四种 DPR 全过），新增"宿主 line-height 3 下基线不动"用例 | 文本行基线 = 行顶 + 最高 run 的 ascent（Fragment.baseline 改为内容高公式）；契约 CSS：.tsr-line line-height 0（strut 不抬高），.tsr-r/.tsr-cjk/.tsr-code/mono-cjk 的 line-height 取 --tsr-lh-* 变量（fallback normal）；RenderResult head 带 container.lh（各字体角色的 (ascent+descent)/em，取文档测过的常规字面），shell 每次 commit 后设到根元素；用户字体族的 run 由 paint 按其字面度量写内联 line-height；代码行 tsr-row：内联代码字号、契约令 strut 为等宽字面，行内居中与 layout 一致。devAudit 基线检查（文字行 = 最高 ascent；代码行 = 居中）。文档：render-design §5、document-model §8、tsm-changes |
 | P3-20 | 安全评审检查点 | done | grep:plan P3-20 | 2026-10-06 | +1 用例（inline/link-url-diag，仅新增）| docs/security-review.md：§0 信任模型（文档即代码）、§1 RawHtml、§2 元素与属性白名单、§3 定位器与资源路径、§4 解码器与 fuzz 目标。本步发现并修复两项：链接/引用 URL 不限 scheme（`javascript:` 在排版页、语义页与静态导出成为活链接）→ 解码时按 url_policy.def 丢弃并报 ops-arg；role 的 html 可为任意小写元素名（script、iframe）→ 限于短语元素白名单，否则注册表拒绝。url_policy.def 生成 C++ safeImageSrc/safeLinkUrl 与 JS urlAllowed。fuzz --long 30 分钟（七个目标）无新崩溃 |
-| P3-21 | ResourceHost、定位器、引用清单、静态导出 | todo | | | | |
+| P3-21 | ResourceHost、定位器、引用清单、静态导出 | done | grep:plan P3-21 | 2026-10-06 | 0（录制器经 ResourceHost 复现全部 .ops，含 cite/*）；e2e 新增宿主 provider 模块用例 | runtime/src/shared/resources/：ResourceHost（provider 注册表，文档 provider 只限 resources.def docProviders 的 codeTokens/boxInfo，行带 store:false；provider 抛错只令本类行失败）、ResourceJob（拉取循环的 answer、执行期 load、清单）、ResourceLocator（按来源的 base、请求方类别 exec/image/input、url_policy.def 的用途，Node 文件限于根目录且读时按真实路径复查）、LruCache（条目、字节、TTL、失败 TTL 为 policy 四行）；内建 provider：canvas 宽度与纵向度量、代码 token、图片尺寸（嗅探→解码→主线程能力）。`$.load`/`ctx.load`（{as: text|json|bytes}）与 #bibliography 走同一 job.load。createEngine({providers:[{kind,module}]}) 由 worker 导入并注册；renderTsm({providers}|{host})。产品 references、docinfo 与 tsr2_product；renderTsm 返回 {html, css, diagnostics, ok, manifest, settings, docinfo}。export-static：docinfo 的 lang 与标题、按清单复制文档目录内的资源（真实路径复查）、按 shell.mjs 的模块图复制水合资源（tools/lib/module-graph.mjs）；tools/check-export.mjs 入 G6。文档：host-protocol-design §4b、pages-design §3、ctor-design、security-review 补遗、tsm-changes |
 | P3-22 | 代码高亮清单与引擎侧 overlay | todo | | | | |
 | P3-23 | PresentationMap（元素行的 html 段） | todo | | | | |
 | P3-24 | SymbolInfo 身份与数据驱动的数学族 | todo | | | | |
@@ -164,6 +164,7 @@
 | P3-18 后 | 3.30 | 11.00 | 26.40 | 1.5 / 3.1 / 0.7 / 9.8 / 3.2 | 69.9 / 102.8 / 147.7 | 1.70 / 21.50 / 57.80 | 均在 P3 门限内 |
 | P3-19 后 | 3.20 | 10.70 | 26.70 | 1.9 / 3.1 / 0.8 / 9.9 / 3.2 | 69.1 / 105.1 / 148.2 | 1.70 / 22.90 / 59.40 | 均在 P3 门限内 |
 | P3-20 后 | 3.30 | 10.60 | 26.90 | 1.7 / 3.1 / 0.8 / 9.8 / 3.3 | 71.3 / 104.9 / 146.9 | 1.70 / 21.70 / 58.30 | 均在 P3 门限内（解码时多一次链接 URL 检查） |
+| P3-21 后 | 3.50 | 10.40 | 27.10 | 1.8 / 3.2 / 0.8 / 10.1 / 3.3 | 66.7 / 102.3 / 147.6 | 1.70 / 22.60 / 55.80 | 均在 P3 门限内（拉取循环的各类行经 provider 注册表分派） |
 
 ## 偏差记录（MD-11）
 
@@ -357,6 +358,10 @@
 | P3-19 | 文本行基线采用内容高模型（行顶＋最高 ascent，与 §8 原表述一致），而非 P1-18 文档里的"半行距在上"公式；字面的内容高因子按角色取常规字面（粗体/斜体共用） | 契约钉住 run 的行框为其内容区才能与宿主无关；同族粗斜体的纵向度量一致 | 无 |
 | P3-20 | 评审结论"接受"两项而不修：文档脚本不沙箱（文档即代码）、raw() 是唯一不转义的路径 | 引擎的消费者（博客）只排版自己作者的文章；隔离不受信文档是宿主的部署选择（跨源 iframe 中的 worker、独立进程），security-review §0 写明宿主责任 | 无 |
 | P3-20 | url_policy.def 及其生成（计划列在 P3-21 要点）在本步引入 | 本步的链接 URL 发现需要一张 scheme 表；先手写再迁移是重复工作。P3-21 的定位器使用其 JS 一侧 | 无 |
+| P3-21 | render-runtime/static-export-template 本步未打勾：清单复制资源、docinfo 的 lang/标题、模块图已做，页面模板与字体仍写在 export-static 里 | 该发现在追溯表中同时列 P3-36，按规则在最后一步落地后打勾 | P3-36 |
+| P3-21 | 文档 provider 只有注册表的 document 选项与 docProviders 检查，文档侧的注册入口（#use）未做 | #use 属 P3-31 | P3-31 |
+| P3-21 | 图片尺寸的失败不再在 worker 生命周期内永久缓存，而是在 resourceFailureTtlMs（10 秒）后重试；资源缓存的上限与 TTL 新增 policy 四行（计划只写 LruCache） | 临时失败（网络抖动）不应让编辑会话一直显示占位；宿主旋钮按约定是 schema policy 行，不是 worker 字段 | 无 |
+| P3-21 | 修复（本步发现）：renderTsm 与静态导出的每篇文档都带两条 rule-no-css 警告，来自引擎自己的默认规则（图片 side 的属性选择器，语义页不标记侧放图片）；现在只报告宿主与文档的规则 | 作者无法处理的警告是噪声，会淹没真正的诊断 | 语义页的侧放图片属 P3-23 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

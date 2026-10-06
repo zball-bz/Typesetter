@@ -7,9 +7,11 @@
 import createTypesetter from '../../../engine/build-wasm/typesetter.js';
 import { execute } from './executor.mjs';
 import { CanvasMeasurer } from './canvas_measure.mjs';
-import { tokenize } from './tokens.mjs';
-import { sniffImageSize } from './image_sniff.mjs';
 import { checkAbi, compiledOf, fragmentsOf } from '../shared/abi.mjs';
+import { ResourceHost } from '../shared/resources/host.mjs';
+import { canvasProviders } from '../shared/resources/providers/canvas.mjs';
+import { tokenProvider } from '../shared/resources/providers/tokens.mjs';
+import { imageProvider } from '../shared/resources/providers/images.mjs';
 import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
 import { POLICY } from '../shared/settings.gen.mjs';
 
@@ -19,17 +21,23 @@ const policy = { ...POLICY };
 let modPromise = null;
 const getMod = () => (modPromise ??= createTypesetter().then((M) => { checkAbi(M); return M; }));
 
-// NEED_IMAGES (figure-design.md §2): intrinsic CSS dims only, cached per
-// absolute URL for the worker's lifetime (in-flight lookups shared);
-// 0×0 = failure (engine placeholder + diag)
-const imageDims = new Map(); // url → Promise<{w, h}>
-
 // Editing sessions (editor-design.md §2) re-typeset the whole document per
 // keystroke. Answers persist across documents in the engine's Session (plan
 // P1-21; content-keyed widths, vertical metrics, code tokens and the KP
 // memo): a new document asks only for what no earlier one was answered, so
 // the measurer keeps no cache of its own (a round's rows are already unique).
-const measurer = new CanvasMeasurer();
+// (plan P3-21; design T9 A2) one resource host per worker: the providers
+// (canvas widths and metrics, code tokens, image boxes), one LRU cache of
+// URL-keyed answers; each document a job with its own locator (the page's
+// base) and manifest
+const host = new ResourceHost({ policy });
+{
+  const canvas = canvasProviders(new CanvasMeasurer());
+  host.register('textWidth', canvas.textWidth).register('fontVmet', canvas.fontVmet)
+    .register('codeTokens', tokenProvider)
+    .register('boxInfo', imageProvider({ get timeoutMs() { return policy.imageTimeoutMs; } }));
+}
+const jobOf = (baseUrl) => host.job({ bases: { doc: baseUrl ?? self.location.href } });
 let session = 0;
 function sessionOf(M) {
   if (!session) {
@@ -112,65 +120,6 @@ function askCapability(name, args, timeoutMs) {
     }, timeoutMs);
   });
 }
-// the header carries the size: read a prefix of the body, decode only
-// formats the sniffer does not know (SVG, AVIF)
-async function fetchImageSize(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const chunks = [];
-  let have = 0;
-  if (res.body) {
-    const reader = res.body.getReader();
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-      have += value.length;
-      const head = chunks.length === 1 ? value : concat(chunks, have);
-      const r = sniffImageSize(head);
-      if (r && !r.more) {
-        reader.cancel().catch(() => {});
-        if (r.w > 0 && r.h > 0) return r;
-        break;
-      }
-      if (!r) break;  // unknown format: decode below
-    }
-    for (;;) {  // the rest of the body, for the decoder
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-      have += value.length;
-    }
-  }
-  const blob = res.body ? new Blob(chunks, { type: res.headers.get('content-type') ?? '' })
-                        : await res.blob();
-  const bm = await createImageBitmap(blob);
-  const dims = { w: bm.width, h: bm.height };
-  bm.close();
-  return dims;
-}
-function concat(chunks, n) {
-  const out = new Uint8Array(n);
-  let at = 0;
-  for (const c of chunks) { out.set(c, at); at += c.length; }
-  return out;
-}
-function imageSize(src, baseUrl) {
-  let url;
-  try { url = new URL(src, baseUrl ?? self.location.href).href; } catch { url = src; }
-  let p = imageDims.get(url);
-  if (!p) {
-    p = fetchImageSize(url).catch(async (e) => {
-      const dims = await askCapability('imageDims', { src: url }, policy.imageTimeoutMs)
-        .catch(() => ({ w: 0, h: 0 }));
-      if (!(dims.w > 0)) console.warn(`tsr: image failed to load: ${url}`, e);
-      return dims;
-    });
-    imageDims.set(url, p);
-  }
-  return p;
-}
-
 // one request batch, copied out of wasm memory ([u32 length][TSRQ …])
 function takeRequests(M, doc, kinds = 0) {
   const p = M._tsr2_requests(doc, kinds);
@@ -184,14 +133,11 @@ function provideAnswer(M, doc, ans) {
   M._tsr2_provide(doc, p, bytes.length);
   M._free(p);
 }
-// a metric key → the canvas font (phase 1: the stack, size, weight, style)
-const styleOf = (mk) => ({ family: mk.stack, sizePx: mk.sizePx, weight: mk.weight, italic: mk.italic });
-
 // timings (bench-edit.mjs): engineMs = wasm typeset passes (emit + KP +
 // layout), the rest is the provider side of the pull loop
 // `stale()` is the job's generation check: polled after every await, a
 // superseded job stops (returns false) instead of finishing stale work.
-async function measureLoop(M, doc, { tm = {}, baseUrl, stale = () => false } = {}) {
+async function measureLoop(M, doc, { tm = {}, baseUrl, job = jobOf(baseUrl), stale = () => false } = {}) {
   const mark = (k, t0) => { tm[k] = (tm[k] ?? 0) + performance.now() - t0; };
   for (let round = 0; round < policy.maxRounds; round++) {
     if (stale()) return false;
@@ -207,39 +153,13 @@ async function measureLoop(M, doc, { tm = {}, baseUrl, stale = () => false } = {
     // not done, and nothing to ask: the engine has stalled (never loop)
     if (!Object.values(req.kinds).some((rows) => rows.length))
       throw new Error('typeset stalled: the engine asked for nothing');
-    const ans = { batch: req.batch, kinds: {} };
+    // (plan P3-21) the batch to the resource host: each kind's rows to its
+    // provider (image boxes in parallel, a capability for what the worker
+    // cannot read)
     t0 = performance.now();
-    const ims = req.kinds.boxInfo ?? [];
-    const dims = await Promise.all(ims.map((im) => imageSize(im.ref, baseUrl)));
-    if (stale()) return false;
-    // 0×0 = a failed load: the engine's placeholder + image-load warning
-    ans.kinds.boxInfo = ims.map((im, k) => ({ resId: im.resId, w: dims[k].w, h: dims[k].h, baseline: dims[k].h }));
-    mark('imagesMs', t0);
-    t0 = performance.now();
-    ans.kinds.codeTokens = [];
-    for (const t of req.kinds.codeTokens ?? []) {
-      const runs = await tokenize(t.lang, t.text);
-      if (stale()) return false;
-      ans.kinds.codeTokens.push({ resId: t.resId, runs });
-    }
-    mark('tokensMs', t0);
-    t0 = performance.now();
-    ans.kinds.fontVmet = (req.kinds.fontVmet ?? []).map((r) => {
-      measurer.setStyle(styleOf(req.mks[r.mk]));
-      const { ascent, descent } = measurer.vmet();
-      return { resId: r.resId, asc: ascent, desc: descent };
-    });
-    const words = req.kinds.textWidth ?? [];
-    const seen = new Map();  // per round: keys that share a canvas font
-    ans.kinds.textWidth = words.map((r) => {
-      measurer.setStyle(styleOf(req.mks[r.mk]));
-      const k = measurer.fontKey + '\0' + r.text;
-      let px = seen.get(k);
-      if (px === undefined) seen.set(k, (px = measurer.width(r.text)));
-      return { resId: r.resId, px };
-    });
-    tm.words = (tm.words ?? 0) + words.length;
-    mark('wordsMs', t0);
+    const ans = await job.answer(req, { stale, tm, capability: askCapability });
+    if (!ans || stale()) return false;
+    mark('providersMs', t0);
     t0 = performance.now();
     provideAnswer(M, doc, ans);
     mark('requestMs', t0);
@@ -302,6 +222,7 @@ function enqueue(key, job) {
 }
 
 async function pump(key, s) {
+  await providersReady;
   while (s.queue.length) {
     const job = s.queue.shift();
     s.running = job;
@@ -362,7 +283,8 @@ async function runTypeset(s, { ids, msg }, stale) {
     mark('compileMs', t0);
 
     t0 = performance.now();
-    const ops = await execute(compiledOf(M, doc), { baseUrl, parse: fragmentsOf(M) });
+    const job = jobOf(baseUrl);  // (plan P3-21) its loads and its needs: one locator, one manifest
+    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M) });
     mark('executeMs', t0);
     await yieldTurn();  // (counted in the edit's total, not in executeMs)
     if (stale()) { M._tsr_doc_free(doc); return false; }
@@ -379,7 +301,7 @@ async function runTypeset(s, { ids, msg }, stale) {
       for (const id of ids) postMessage({ type: 'semantic', id, html });
     }
 
-    if (!(await measureLoop(M, doc, { tm, baseUrl, stale }))) {
+    if (!(await measureLoop(M, doc, { tm, job, stale }))) {
       M._tsr_doc_free(doc);
       return false;
     }
@@ -488,10 +410,24 @@ async function runDispose(s) {
 const RUN = { update: runTypeset, paginate: runPaginate, relayout: runRelayout,
               render: runRender, fragment: runFragment, dispose: runDispose };
 
+// (plan P3-21) the host's providers: imported here, registered before the
+// next job runs (jobs wait for them)
+let providersReady = Promise.resolve();
 onmessage = (ev) => {
   const m = ev.data;
   if (m?.type === 'policy') {  // createEngine({policy}): host policy overrides
     for (const [k, v] of Object.entries(m.policy ?? {})) if (k in policy) policy[k] = v;
+    return;
+  }
+  if (m?.type === 'providers') {  // createEngine({providers}): resource providers by module
+    providersReady = providersReady.then(() => Promise.all(m.providers.map(async ({ kind, module }) => {
+      try {
+        const mod = await import(/* a host's provider module */ module);
+        host.register(kind, mod.default ?? mod);
+      } catch (e) {
+        console.warn(`tsr: provider ${kind} (${module}) failed to load`, e);
+      }
+    })));
     return;
   }
   if (m?.type === 'cap') {  // a capability's answer (askCapability)

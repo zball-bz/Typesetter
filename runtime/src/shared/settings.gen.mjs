@@ -564,7 +564,11 @@ export const POLICY = Object.freeze({
   "nativeImagePx": [
     512,
     384
-  ]
+  ],
+  "resourceCacheEntries": 512,
+  "resourceCacheBytes": 33554432,
+  "resourceTtlMs": 300000,
+  "resourceFailureTtlMs": 10000
 });
 export const STAGES = Object.freeze(["Compile","Execute","Ingest","Resolve","BoxTree","Emit","Measure","Layout","Paginate","Paint"]);
 // the value of a dotted setting in a (partial) settings document, else its default

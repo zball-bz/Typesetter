@@ -1039,6 +1039,23 @@ test('behaviours: a host registry, devAudit on every commit, a failing one disab
   expect(r.img).toEqual([120, 40]);               // the host's capability answered
 });
 
+test('resources: a host provider module answers its kind (createEngine({providers}))', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const r = await page.evaluate(async () => {
+    const { createEngine } = await import('/runtime/src/main/shell.mjs');
+    const engine = createEngine({ providers: [{ kind: 'boxInfo', module: '/test/e2e/provider-box.mjs' }] });
+    const el = document.getElementById('out2');
+    const h = await engine.typeset('#!figure(src: "/no-such-image.png", alt: "x")\nA figure.\n#figure!', el,
+      { widthPx: 300, progressive: false });
+    const box = el.querySelector('.tsr-img')?.getBoundingClientRect();
+    const out = { diags: h.diags, img: box ? [Math.round(box.width), Math.round(box.height)] : null };
+    engine.dispose();
+    return out;
+  });
+  expect(r.img).toEqual([150, 50]);  // the module's answer, not a fetch of the src
+});
+
 // ---- separators and the copy contract (plan P3-07) -----------------------
 
 test('copy: a table is tab-separated rows; an empty cell keeps its column', async ({ page }) => {

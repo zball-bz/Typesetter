@@ -124,6 +124,27 @@ plus optional hydration that upgrades to the typeset rendering client-side.
   works exactly like the playground. This is the seam a static blog
   framework will later call directly.
 
+As built (plan P3-21; T9 M7; D-I09):
+- The exporter renders with `renderTsm(source, {settings, baseDir, rootDir})`.
+  Both directories are the post's folder, so the post reads only what lies
+  beside or below it.
+- `<html lang>` is the language the engine typeset with (`docinfo.lang`), and
+  `<title>` is `--title`, else the first heading's text (`docinfo.title`),
+  else the file name.
+- The manifest's resources (images, bibliographies, `$.load` files) that are
+  relative, or files below the post's folder, are copied beside
+  `index.html` at the same relative path, so the page's references hold.
+- The hydration assets are the module graph of `shell.mjs`
+  (`tools/lib/module-graph.mjs`: static imports and exports, literal dynamic
+  imports, `new URL('…', import.meta.url)`), plus the wasm, the math font and
+  the highlighter assets. A module that the page never loads (Node code,
+  tests) is no longer copied. A non-literal dynamic import is a warning
+  unless annotated: a document's hole module and a host's provider module
+  are loaded by URL.
+- `tools/check-export.mjs` (gate G6) checks the export of `test/export/` and
+  renderTsm's resources: `$.load` within the root, a denial above it, both in
+  the manifest, and a caller's provider.
+
 ## 4. Milestones
 
 - **W** fonts option end-to-end + e2e with a real woff2 fixture.

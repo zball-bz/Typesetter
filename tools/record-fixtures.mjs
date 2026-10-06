@@ -8,9 +8,10 @@
 // "kids", "span"} — encoded with the runtime's own OpBuf.
 import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync, writeFileSync, existsSync, statSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execute } from '../runtime/src/worker/executor.mjs';
+import { ResourceHost } from '../runtime/src/shared/resources/host.mjs';
 import { OpBuf } from '../runtime/src/shared/opbuf.mjs';
 import { KIND } from '../runtime/src/shared/ops.gen.mjs';
 import { nativeParse } from './lib/native-parse.mjs';
@@ -46,6 +47,7 @@ function* walk(dir) {
   }
 }
 
+const resources = new ResourceHost();
 let stale = 0, wrote = 0;
 for (const tsm of walk(fixtures)) {
   const treePath = tsm.replace(/\.tsm$/, '.tree.json');
@@ -55,7 +57,10 @@ for (const tsm of walk(fixtures)) {
   } else {
     const program = new Uint8Array(execFileSync(tsrc, ['--stage=program', tsm]));
     const js = () => execFileSync(tsrc, ['--stage=js', tsm], { encoding: 'utf8' });
-    ops = Buffer.from(await execute({ program, js }, { baseDir: dirname(tsm), rootDir: root, parse }));
+    // (plan P3-21) its loads through a resource host: the fixture's folder
+    // as its base, the repository as its root
+    const job = resources.job({ bases: { doc: resolve(dirname(tsm)) }, root: resolve(root) });
+    ops = Buffer.from(await execute({ program, js }, { host: job, parse }));
   }
   const opsPath = tsm.replace(/\.tsm$/, '.ops');
   const prev = existsSync(opsPath) ? readFileSync(opsPath) : null;

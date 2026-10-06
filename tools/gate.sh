@@ -76,6 +76,7 @@ g5() {
 }
 g6() {
   npm run corpus || return 1
+  node tools/check-export.mjs || return 1  # the static export (plan P3-21)
   if [ -f tools/review-corpus.mjs ]; then node tools/review-corpus.mjs --check; fi
 }
 

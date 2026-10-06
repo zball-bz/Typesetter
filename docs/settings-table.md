@@ -71,3 +71,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `imageTimeoutMs` | `15000` | main-thread image size fallback timeout |
 | `sessionBudgetBytes` | `67108864` | the worker Session's answer cache and memo budget (content-keyed: widths, vertical metrics, code tokens, KP results) |
 | `nativeImagePx` | `[512,384]` | the native/golden image provider's answer |
+| `resourceCacheEntries` | `512` | the resource host's LRU cache of URL-keyed answers (image sizes, loads): entries kept |
+| `resourceCacheBytes` | `33554432` | the resource host's LRU cache: bytes of loaded resources kept |
+| `resourceTtlMs` | `300000` | a cached resource is revalidated (ETag, Last-Modified; a file's mtime and size) after this |
+| `resourceFailureTtlMs` | `10000` | a failed resource (an image that did not load, a missing file) is retried after this |

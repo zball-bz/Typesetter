@@ -295,7 +295,9 @@ struct Doc {
       }
       if (!cfg.styleRules.empty())
         for (StyleRule& r : parseRules(cfg.styleRules, strs, diags, "style.rules", setting)) host.push_back(std::move(r));
-      cascade.setBase(parseRules(defaultRulesJson(), strs, diags, "defaults", setting), std::move(host));
+      std::vector<StyleRule> defaults = parseRules(defaultRulesJson(), strs, diags, "defaults", setting);
+      for (StyleRule& r : defaults) r.builtin = true;
+      cascade.setBase(std::move(defaults), std::move(host));
     }
     tree = instantiate(raw, arena, strs, styles, nodeProps, cascade, diags, *registry);
     checkDeclarations(raw, tree, *registry, strs, diags);
@@ -728,6 +730,8 @@ struct Doc {
     if (name == "html") return render();
     if (name == "diags") return dumpDiags();
     if (name == "settings") return settingsJson(cfg) + "\n";
+    if (name == "references") return referencesJson();  // (plan P3-21)
+    if (name == "docinfo") return docinfoJson();
     return {};
   }
 
@@ -868,6 +872,48 @@ struct Doc {
     out += table;
     out += html;
     reportWriterDefects();
+    return out;
+  }
+
+  // (plan P3-21; design T9 A2) the resources the document references that
+  // the engine knows of — its images' sources, where they stand, whether the
+  // URL policy admits them — one JSON row per line; the host's manifest
+  // adds its execution loads and the declared fonts
+  std::string referencesJson() const {
+    std::string out;
+    std::function<void(const ContentNode*)> walk = [&](const ContentNode* n) {
+      if (n->kind == Kind::image)
+        if (StrRef src = attrStr(n, ArgK::src)) {
+          const std::string_view v = strs.get(src);
+          out += "{\"role\":\"image\",\"src\":";
+          jsonString(out, v);
+          appendf(out, ",\"s\":%u,\"e\":%u,\"allowed\":%s}\n", n->span.start, n->span.end,
+                  safeImageSrc(v) ? "true" : "false");
+        }
+      for (const ContentNode* k : n->kids) walk(k);
+    };
+    if (tree.root) walk(tree.root);
+    return out;
+  }
+  // (plan P3-21) what a page around the document needs: its language and
+  // title (its first heading's text)
+  std::string docinfoJson() const {
+    std::string title;
+    std::function<bool(const ContentNode*)> first = [&](const ContentNode* n) {
+      if (n->kind == Kind::heading) {
+        excerptInto(n, strs, title);
+        return true;
+      }
+      for (const ContentNode* k : n->kids)
+        if (first(k)) return true;
+      return false;
+    };
+    if (tree.root) first(tree.root);
+    std::string out = "{\"lang\":";
+    jsonString(out, cfg.lang);
+    out += ",\"title\":";
+    jsonString(out, title);
+    out += "}\n";
     return out;
   }
 

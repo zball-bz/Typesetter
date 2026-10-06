@@ -9,7 +9,7 @@
 // --settings: the settings document (docs/settings-table.md) — document
 // language, fonts, sizes — used for the static page and passed to hydration.
 import { MATH_FONT } from '../runtime/src/shared/mathfont.gen.mjs';
-import { readFile, writeFile, mkdir, cp, access } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, cp, access, realpath } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,15 +40,18 @@ const [{ renderTsm }, { TSR_CSS, THEME_CSS }, { settingOf }] = await Promise.all
 ]);
 
 const settings = settingsPath ? JSON.parse(await readFile(settingsPath, 'utf8')) : {};
-const lang = settingOf(settings, 'doc.lang');
 const bodyFont = settingOf(settings, 'fonts.body');
 const cjkFont = settingOf(settings, 'fonts.cjk');
 const source = await readFile(inputs[0], 'utf8');
-const { html: semantic, css: rulesCss, diags, ok } = await renderTsm(source, { settings });
-if (diags.trim()) console.error(diags.trim());
+const docDir = dirname(resolve(inputs[0]));
+const { html: semantic, css: rulesCss, diagnostics, ok, manifest, docinfo } =
+  await renderTsm(source, { settings, baseDir: docDir, rootDir: docDir });
+if (diagnostics.trim()) console.error(diagnostics.trim());
 if (!ok) process.exit(1);
+// (plan P3-21) the page's language and title are the document's (docinfo)
+const lang = docinfo.lang || settingOf(settings, 'doc.lang');
 
-const pageTitle = title ?? inputs[0].replace(/^.*\//, '').replace(/\.tsm$/, '');
+const pageTitle = title ?? (docinfo.title || inputs[0].replace(/^.*\//, '').replace(/\.tsm$/, ''));
 const escapedSrc = source.replace(/<\/script/gi, '<\\/script');
 const hydrateBlock = hydrate ? `
 <script type="text/plain" id="tsr-src">${escapedSrc}</script>
@@ -89,9 +92,42 @@ ${semantic}</article>${hydrateBlock}
 await mkdir(outDir, { recursive: true });
 await writeFile(join(outDir, 'index.html'), html);
 
+// (plan P3-21) the document's own resources beside it: what the manifest
+// lists by a relative reference inside the document's folder (its images,
+// its loads), copied to the same place under out/ — the file's real path
+// too, so a symbolic link does not export a file from elsewhere
+let copied = 0;
+const realDocDir = await realpath(docDir);
+for (const m of manifest) {
+  if (m.status === 'denied' || /^[a-z][a-z0-9+.-]*:/i.test(m.url) || m.role === 'font') continue;
+  // (a load names its file; a reference is as written: /site-root or relative)
+  const from = m.url.startsWith(docDir + '/') ? m.url : resolve(docDir, m.url.startsWith('/') ? '.' + m.url : m.url);
+  if (!from.startsWith(docDir + '/')) continue;
+  const to = join(outDir, from.slice(docDir.length + 1));
+  try {
+    if (!(await realpath(from)).startsWith(realDocDir + '/')) {
+      console.error(`export-static: ${m.role} ${m.url} not copied (outside the post's folder)`);
+      continue;
+    }
+    await mkdir(dirname(to), { recursive: true });
+    await cp(from, to);
+    copied++;
+  } catch { console.error(`export-static: ${m.role} ${m.url} not copied (missing)`); }
+}
+
 if (hydrate) {
   const assets = join(outDir, 'assets');
-  await cp(join(root, 'runtime/src'), join(assets, 'runtime/src'), { recursive: true });
+  // (plan P3-21, D-I09) the runtime's module graph from its entry, by a
+  // lexical scan of its imports (a dynamic import it cannot follow warns)
+  const { moduleGraph } = await import('./lib/module-graph.mjs');
+  const graph = await moduleGraph(join(root, 'runtime/src/main/shell.mjs'));
+  for (const w of graph.warnings) console.error(w);
+  for (const f of graph.files) {
+    if (!f.startsWith(root + '/')) continue;
+    const to = join(assets, f.slice(root.length + 1));
+    await mkdir(dirname(to), { recursive: true });
+    await cp(f, to);
+  }
   await mkdir(join(assets, 'engine/build-wasm'), { recursive: true });
   for (const f of ['typesetter.js', 'typesetter.wasm'])
     await cp(join(root, 'engine/build-wasm', f), join(assets, 'engine/build-wasm', f));
@@ -103,4 +139,4 @@ if (hydrate) {
   } catch { /* hl assets not built: hydrated code stays plain */ }
 }
 console.log(`exported ${inputs[0]} -> ${resolve(outDir)}/index.html` +
-            (hydrate ? ' (+assets)' : ''));
+            (copied ? ` (+${copied} resource${copied > 1 ? 's' : ''})` : '') + (hydrate ? ' (+assets)' : ''));

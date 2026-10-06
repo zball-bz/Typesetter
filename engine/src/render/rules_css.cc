@@ -25,7 +25,8 @@ bool tokenSafe(std::string_view v) {  // a language tag, a level
 
 struct Writer {
   const Interner& strs;
-  DiagSink* diags;
+  DiagSink* diags;  // (null while writing the engine's own rules: what the
+                    // plain page cannot select of them is no author's to fix)
 
   void noCss(const char* what) const {
     if (diags) diags->add(Sev::Warning, "rule-no-css", {}, std::string("a rule's ") + what + " has no CSS form: the semantic page leaves the rule out");
@@ -312,7 +313,11 @@ std::string envAttr(const Cascade& cascade, RuleEnvId env, const Interner& strs)
 std::string rulesToCss(const Cascade& cascade, const ContentTree& tree, const Interner& strs, DiagSink* diags) {
   Writer w{strs, diags};
   std::string out;
-  for (const StyleRule& r : cascade.baseRules()) w.rule(out, r, {});
+  for (const StyleRule& r : cascade.baseRules()) {
+    w.diags = r.builtin ? nullptr : diags;
+    w.rule(out, r, {});
+  }
+  w.diags = diags;
   // the document envs the page marks, in the order they first appear
   std::vector<RuleEnvId> envs;
   auto note = [&](RuleEnvId e) {

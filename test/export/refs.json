@@ -1,0 +1,17 @@
+[
+  { "id": "knuth84", "type": "article-journal",
+    "author": [{ "family": "Knuth", "given": "Donald E." }],
+    "title": "The TeXbook", "container-title": "Computers & Typesetting", "volume": "A",
+    "issued": { "date-parts": [[1984]] }, "publisher": "Addison-Wesley" },
+  { "id": "liang83", "type": "thesis",
+    "author": [{ "family": "Liang", "given": "Franklin Mark" }],
+    "title": "Word Hy-phen-a-tion by Com-put-er", "publisher": "Stanford University",
+    "issued": { "date-parts": [[1983]] }, "URL": "https://tug.org/docs/liang/" },
+  { "id": "kp81", "type": "article-journal",
+    "author": [{ "family": "Knuth", "given": "Donald E." }, { "family": "Plass", "given": "Michael F." }],
+    "title": "Breaking Paragraphs into Lines", "container-title": "Software: Practice and Experience",
+    "volume": "11", "issue": "11", "page": "1119-1184", "issued": { "date-parts": [[1981]] },
+    "DOI": "10.1002/spe.4380111102" },
+  { "id": "uncited", "type": "book", "author": [{ "family": "Nobody", "given": "N." }],
+    "title": "Never Cited", "issued": { "date-parts": [[2000]] } }
+]

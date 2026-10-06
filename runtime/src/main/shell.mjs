@@ -181,14 +181,20 @@ function applyContract(el, settings) {
 }
 
 // createEngine({ policy, behaviors = defaultBehaviors(), copy = installCopy,
-// capabilities }) — copy(container) → uninstall is the core copy contract
-// (a host may replace it, never remove it); capabilities add to (or
-// replace) defaultCapabilities() by name.
+// capabilities, providers }) — copy(container) → uninstall is the core copy
+// contract (a host may replace it, never remove it); capabilities add to
+// (or replace) defaultCapabilities() by name; providers (plan P3-21; design
+// T9 A2): [{ kind, module }] — resource providers the worker imports
+// (module's default export, { resolve(rows, ctx) }) and registers for that
+// kind of need, beside or in place of the built-in ones.
 export function createEngine(opts = {}) {
   const workerUrl = new URL('../worker/worker.mjs', import.meta.url);
   const worker = new Worker(workerUrl, { type: 'module' });
   // host policy (schema "policy": round cap, font deadline, caches, …)
   if (opts.policy) worker.postMessage({ type: 'policy', policy: opts.policy });
+  if (opts.providers?.length)
+    worker.postMessage({ type: 'providers', providers: opts.providers.map((p) => ({
+      kind: p.kind, module: new URL(p.module, document.baseURI).href })) });
   const behaviors = opts.behaviors ?? defaultBehaviors();
   const copy = opts.copy ?? installCopy;
   const capabilities = { ...defaultCapabilities(), ...(opts.capabilities ?? {}) };

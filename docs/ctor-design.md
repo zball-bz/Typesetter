@@ -99,8 +99,10 @@ returns its handler's promise when that handler is async, to be awaited —
 A constructor that loads is async (plan P2-14: schema `"async": true`,
 today `bibliography`): its result is a promise, and a splice that names one
 awaits it — codegen marks the hole async (`kStdAsync`, stdnames.gen.h).
-Handlers reach the same loader as `ctx.load(src)` (a resource's text, a
-promise; P3-21 moves it to the common locator and cache).
+Handlers reach the same loader as `ctx.load(src, {as})`, and a document's
+script as `$.load(src, {as})`: a resource's text, JSON or bytes, a promise.
+Since P3-21 it is the resource host's job load, with the common locator,
+cache and manifest (host-protocol-design §4b).
 
 ## 4. Markup and regions
 
