@@ -1,0 +1,15 @@
+doc @[0,286)
+  para @[0,168)
+    text @[0,77) str="Font features by language reach every fence tag of the language (plan P3-22): "
+    code @[78,83) str="cpp"
+    text @[83,94) str="'s apply to "
+    code @[95,100) str="c++"
+    text @[101,107) str=" and to "
+    code @[108,122) str="cpp-literate"
+    text @[122,123) str="; "
+    code @[124,128) str="js"
+    text @[129,168) str=" is configured itself and keeps its own."
+  codeblock @[170,191) lang="c++" body="int a = 1;"
+  codeblock @[193,233) lang="cpp-literate" body="<<step>>=\nint b = 2;"
+  codeblock @[235,255) lang="js" body="let c = 3;"
+  codeblock @[257,285) lang="javascript" body="let d = 4;"

@@ -4,7 +4,8 @@
 //   runtime/assets/hl/<lang>.scm                highlights query (inherits flattened)
 //   runtime/assets/hl/web-tree-sitter.{js,wasm} runtime copied from node_modules
 // Grammars come from checked-in parser.c in the npm grammar packages — the
-// same tables the native tests link statically. Requires emcc (emsdk).
+// same tables the native tests link statically; the list is
+// engine/schema/languages.json's. Requires emcc (emsdk).
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -18,28 +19,13 @@ const emcc = process.env.EMCC ||
   (existsSync('/home/dev/emsdk/upstream/emscripten/emcc')
     ? '/home/dev/emsdk/upstream/emscripten/emcc' : 'emcc');
 
-// name → {srcDir, entry, scm: [paths to concatenate, base-first]}
+// the grammars: engine/schema/languages.json (plan P3-22) — the sources
+// (paths from the repository root) and the highlight queries, base first
 const nm = (p) => join(root, 'node_modules', p);
-const GRAMMARS = {
-  json: { srcDir: join(root, 'third_party/grammars/json'), srcs: ['parser.c'],
-          scm: [join(root, 'third_party/grammars/json/highlights.scm')] },
-  javascript: { srcDir: nm('tree-sitter-javascript/src'), srcs: ['parser.c', 'scanner.c'],
-                scm: [nm('tree-sitter-javascript/queries/highlights.scm')] },
-  typescript: { srcDir: nm('tree-sitter-typescript/typescript/src'), srcs: ['parser.c', 'scanner.c'],
-                scm: [nm('tree-sitter-javascript/queries/highlights.scm'),
-                      nm('tree-sitter-typescript/queries/highlights.scm')] },
-  python: { srcDir: nm('tree-sitter-python/src'), srcs: ['parser.c', 'scanner.c'],
-            scm: [nm('tree-sitter-python/queries/highlights.scm')] },
-  cpp: { srcDir: nm('tree-sitter-cpp/src'), srcs: ['parser.c', 'scanner.c'],
-         scm: [nm('tree-sitter-c/queries/highlights.scm'),
-               nm('tree-sitter-cpp/queries/highlights.scm')] },
-  rust: { srcDir: nm('tree-sitter-rust/src'), srcs: ['parser.c', 'scanner.c'],
-          scm: [nm('tree-sitter-rust/queries/highlights.scm')] },
-  // our own markup: the editor's cold-start fallback (tools/gen-grammars.mjs
-  // vendors the parser; ```tsm blocks are tokenized by the engine itself)
-  tsm: { srcDir: join(root, 'third_party/grammars/tsm'), srcs: ['parser.c'],
-         scm: [join(root, 'grammar/tree-sitter-tsm/highlights.scm')] },
-};
+const MANIFEST = JSON.parse(readFileSync(join(root, 'engine/schema/languages.json'), 'utf8'));
+const GRAMMARS = Object.fromEntries(Object.entries(MANIFEST.languages).map(([name, l]) => [name, {
+  srcDir: join(root, l.grammar.src), srcs: l.grammar.files, scm: l.grammar.scm.map((p) => join(root, p)),
+}]));
 
 for (const [name, g] of Object.entries(GRAMMARS)) {
   const srcs = g.srcs.map((s) => join(g.srcDir, s)).filter(existsSync);

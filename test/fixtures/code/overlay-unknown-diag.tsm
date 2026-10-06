@@ -1,0 +1,5 @@
+An overlay name the manifest does not have is reported, and the block is highlighted without it (plan P3-22):
+
+```json(overlays: "noweb weave")
+{"a": "<<x>>"}
+```

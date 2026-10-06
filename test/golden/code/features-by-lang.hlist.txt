@@ -1,0 +1,90 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Font" w=2049su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="t f" src r0 @[0,77)
+  box Other "fea" w=1537su r0 @[0,77)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[0,77)
+  box Other "tures" w=2561su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="s b" src r0 @[0,77)
+  box Other "by" w=1025su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="y l" src r0 @[0,77)
+  box Other "lan" w=1537su r0 @[0,77)
+  disc pen=0.7 w=0su pre="-" 513su kern="ng" r0 @[0,77)
+  box Other "guage" w=2561su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="e r" src r0 @[0,77)
+  box Other "reach" w=2561su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="h e" src r0 @[0,77)
+  box Other "every" w=2561su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="y f" src r0 @[0,77)
+  box Other "fence" w=2561su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="e t" src r0 @[0,77)
+  box Other "tag" w=1537su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="g o" src r0 @[0,77)
+  box Other "of" w=1025su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="f t" src r0 @[0,77)
+  box Other "the" w=1537su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="e l" src r0 @[0,77)
+  box Other "lan" w=1537su r0 @[0,77)
+  disc pen=0.7 w=0su pre="-" 513su kern="ng" r0 @[0,77)
+  box Other "guage" w=2561su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="e (" src r0 @[0,77)
+  box Other "(plan" w=2561su r0 @[0,77)
+  glue word w=257su x=1 cap=257su kern="n P" src r0 @[0,77)
+  box Other "P3-22):" w=3585su r0 @[0,77)
+  glue word w=257su x=1 cap=257su src r0 @[0,77)
+  box Other "cpp" w=1307su r1 @[78,83)
+  box Other "'s" w=1025su r2 @[83,94)
+  glue word w=257su x=1 cap=257su kern="s a" src r2 @[83,94)
+  box Other "ap" w=1025su r2 @[83,94)
+  disc pen=0.7 w=0su pre="-" 513su kern="pp" r2 @[83,94)
+  box Other "ply" w=1537su r2 @[83,94)
+  glue word w=257su x=1 cap=257su kern="y t" src r2 @[83,94)
+  box Other "to" w=1025su r2 @[83,94)
+  glue word w=257su x=1 cap=257su src r2 @[83,94)
+  box Other "c++" w=1307su r3 @[95,100)
+  glue word w=257su x=1 cap=257su src r4 @[101,107)
+  box Other "and" w=1537su r4 @[101,107)
+  glue word w=257su x=1 cap=257su kern="d t" src r4 @[101,107)
+  box Other "to" w=1025su r4 @[101,107)
+  glue word w=257su x=1 cap=257su src r4 @[101,107)
+  box Other "cpp-literate" w=5224su r5 @[108,122)
+  box Other ";" w=513su r6 @[122,123)
+  glue word w=257su x=1 cap=257su src r6 @[122,123)
+  box Other "js" w=872su r7 @[124,128)
+  glue word w=257su x=1 cap=257su src r8 @[129,168)
+  box Other "is" w=1025su r8 @[129,168)
+  glue word w=257su x=1 cap=257su kern="s c" src r8 @[129,168)
+  box Other "con" w=1537su r8 @[129,168)
+  disc pen=0.7 w=0su pre="-" 513su kern="nf" r8 @[129,168)
+  box Other "fig" w=1537su r8 @[129,168)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r8 @[129,168)
+  box Other "ured" w=2049su r8 @[129,168)
+  glue word w=257su x=1 cap=257su kern="d i" src r8 @[129,168)
+  box Other "it" w=1025su r8 @[129,168)
+  disc pen=0.7 w=0su pre="-" 513su kern="ts" r8 @[129,168)
+  box Other "self" w=2049su r8 @[129,168)
+  glue word w=257su x=1 cap=257su kern="f a" src r8 @[129,168)
+  box Other "and" w=1537su r8 @[129,168)
+  glue word w=257su x=1 cap=257su kern="d k" src r8 @[129,168)
+  box Other "keeps" w=2561su r8 @[129,168)
+  glue word w=257su x=1 cap=257su kern="s i" src r8 @[129,168)
+  box Other "its" w=1537su r8 @[129,168)
+  glue word w=257su x=1 cap=257su kern="s o" src r8 @[129,168)
+  box Other "own." w=2049su r8 @[129,168)
+  run r0 plain
+  run r1 plain CODE x0.85
+  run r2 plain
+  run r3 plain CODE x0.85
+  run r4 plain
+  run r5 plain CODE x0.85
+  run r6 plain
+  run r7 plain CODE x0.85
+  run r8 plain
+top pid=1 units=1
+ unit code indent=0su lines=1 wrap
+top pid=2 units=1
+ unit code indent=0su lines=2 wrap
+top pid=3 units=1
+ unit code indent=0su lines=1 wrap
+top pid=4 units=1
+ unit code indent=0su lines=1 wrap

@@ -1,0 +1,6 @@
+doc @[0,286)
+  para @[0,168) lines=1
+  fence @[170,191) lang="c++" lines=1
+  fence @[193,233) lang="cpp-literate" lines=2
+  fence @[235,255) lang="js" lines=1
+  fence @[257,285) lang="javascript" lines=1

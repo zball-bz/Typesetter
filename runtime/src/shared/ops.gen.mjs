@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 14;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '361271dd';
+export const SCHEMA_HASH = '9fc32aa0';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -135,7 +135,8 @@ export const SINCE = Object.freeze({
       "70": 13,
       "71": 13,
       "72": 13,
-      "73": 13
+      "73": 13,
+      "107": 14
     },
     "7": {
       "0": 9,
@@ -325,7 +326,8 @@ export const SINCE = Object.freeze({
       "94": 14,
       "103": 14,
       "104": 14,
-      "106": 14
+      "106": 14,
+      "107": 14
     },
     "19": {
       "0": 9,
@@ -733,7 +735,8 @@ export const ARGK = Object.freeze({
   "placeWidth": 103,
   "placeGap": 104,
   "cont": 105,
-  "textSpace": 106
+  "textSpace": 106,
+  "overlays": 107
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -856,6 +859,7 @@ export const SCHEMA = Object.freeze({
       "sidecarFrac": "num:0.1:0.9",
       "contIndent": "int:0:40",
       "features": "features",
+      "overlays": "names",
       "label": "label",
       "role": "ident",
       "slot": "ident",
@@ -1111,6 +1115,7 @@ export const SCHEMA = Object.freeze({
       "sidecarFrac": "num:0.1:0.9",
       "contIndent": "int:0:40",
       "features": "features",
+      "overlays": "names",
       "punct": "enum:full|book|none",
       "parSingleLine": "enum:align|center",
       "keep": "enum:together|with-next|both",

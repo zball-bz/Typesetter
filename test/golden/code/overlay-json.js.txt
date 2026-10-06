@@ -1,0 +1,17 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {codeblock} = __rt.std;
+return (async () => {
+const __h = [
+() => ({overlays: ["noweb"]}),
+() => {
+ $.set({kind: 'codeblock', lang: 'json'}, {codeblock: {overlays: 'noweb'}}) 
+},
+() => {
+ $.set({kind: 'codeblock', lang: 'json'}, {codeblock: {overlays: []}}) 
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

@@ -2,6 +2,8 @@
 
 #include "html_writer.h"
 #include "../resource/resource_table.h"
+#include "../code/overlay.h"
+#include "../model/cascade.h"
 #include "../elements/registry.h"
 #include "../math/env.h"
 #include "rules_css.h"
@@ -19,6 +21,7 @@ struct Sem {
   const ResourceTable* rt;  // answered code tokens (plan P1-19)
   const Registry* reg;     // the classes' semantic elements (plan P2-05)
   const Cascade* cascade;  // document envs (plan P3-01)
+  const NodePropsTable* props;  // a code block's overlays (plan P3-22)
   std::string topEnv;      // the top-level block's env mark ("" = none)
   // a preview (renderSemanticFragment): references it leaves out
   const std::function<bool(StrRef)>* backlink = nullptr;
@@ -419,12 +422,13 @@ struct Sem {
           t.open();
         }
         const ContentNode* body = !n->kids.empty() && n->kids[0]->kind == Kind::text ? n->kids[0] : nullptr;
-        const TokenNeed* tok = body && rt ? rt->tokens(attrStr(n, ArgK::lang), body->str) : nullptr;
+        const u32 overlays = props ? overlayMask(strs.get(props->get(n->props).codeOverlays)) : 0;
+        const TokenNeed* tok = body && rt ? rt->tokens(attrStr(n, ArgK::lang), body->str, overlays) : nullptr;
         if (tok && tok->st == ResState::Ready) {
           // its code tokens, folded here (the tree is never rewritten)
           std::vector<std::vector<TokenRun>> lines;
-          tokenLines(strs.get(body->str), body->scope, nullptr, 0, tok->toks.data(), tok->toks.size(), strs, styles,
-                     lines);
+          tokenLines(strs.get(body->str), body->scope, nullptr, 0, tok->runs().data(), tok->runs().size(), strs,
+                     styles, lines);
           for (size_t li = 0; li < lines.size(); li++) {
             if (li) out += "\n";
             for (const TokenRun& r : lines[li]) textRun(r.style, r.text);
@@ -663,13 +667,14 @@ struct Sem {
 }  // namespace
 
 std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& styles,
-                           const ResourceTable* rt, const Registry* reg, const Cascade* cascade) {
+                           const ResourceTable* rt, const Registry* reg, const Cascade* cascade,
+                           const NodePropsTable* props) {
   std::string out;
   out += "<div class=\"tsr-flow\">\n";
   if (tree.root) {
     int pid = 0;
     for (const ContentNode* k : tree.root->kids) {
-      Sem s{strs, styles, out, rt, reg, cascade,
+      Sem s{strs, styles, out, rt, reg, cascade, props,
             cascade && !startsEnv(k) ? envAttr(*cascade, k->env, strs) : std::string()};
       s.block(k, pid);  // pid mirrors emitDoc's per-root-child numbering
       pid++;
@@ -681,10 +686,11 @@ std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& 
 
 std::string renderSemanticFragment(const ContentTree& tree, Interner& strs, StyleTable& styles,
                                    const ResourceTable* rt, const Registry* reg, const Cascade* cascade,
-                                   std::string_view label, const std::function<bool(StrRef)>& backlink) {
+                                   const NodePropsTable* props, std::string_view label,
+                                   const std::function<bool(StrRef)>& backlink) {
   std::string out;
   if (!tree.root || label.empty()) return out;
-  Sem s{strs, styles, out, rt, reg, cascade, std::string()};
+  Sem s{strs, styles, out, rt, reg, cascade, props, std::string()};
   s.backlink = &backlink;
   // the labelled node, and the item it begins (document order, first wins)
   const ContentNode* hit = nullptr;

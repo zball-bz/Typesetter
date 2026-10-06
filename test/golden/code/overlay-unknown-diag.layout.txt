@@ -1,0 +1,7 @@
+doc h=7373su
+para pid=0 y=0su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=-73su dc=0su join=space blocks=[0,21) @[0,109)
+  L1 y=1536su left=0su w=19200su dw=-43su dc=0su join=space blocks=[22,43) @[0,109)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[44,53) @[0,109)
+para pid=1 y=5837su w=19200su h=1536su
+  L0 code y=0su left=0su line=0 [0,14)

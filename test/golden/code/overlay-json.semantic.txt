@@ -1,0 +1,11 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="128">A noweb overlay over JSON (plan P3-22): each fragment name is one label token, whatever the grammar makes of the text around it.</p>
+<pre data-pid="1" data-s="130" data-e="224"><code class="language-json">&lt;&lt;config&gt;&gt;=
+{&quot;name&quot;: &quot;&lt;&lt;the name&gt;&gt;&quot;, &quot;n&quot;: 1, &lt;&lt;more fields&gt;&gt;}</code></pre>
+<p data-pid="2" data-s="226" data-e="341">A rule turns it on for every JSON block; a CJK name keeps its bytes, and <code>&lt;&lt;</code> with no close on its line stays code:</p>
+<pre data-pid="3" data-tsr-env="930d913d07f29198" data-s="424" data-e="477"><code class="language-json">&lt;&lt;定义&gt;&gt;+=
+{&quot;a&quot;: [1, 2], &quot;b&quot;: &quot;x &lt;&lt; y&quot;}</code></pre>
+<p data-pid="4" data-tsr-env="930d913d07f29198" data-s="479" data-e="548">An empty list switches it off again, and the same text is plain JSON:</p>
+<pre data-pid="5" data-tsr-env="531cc5e93a73ed21" data-s="626" data-e="664"><code class="language-json">&lt;&lt;定义&gt;&gt;+=
+{&quot;a&quot;: [1, 2]}</code></pre>
+</div>

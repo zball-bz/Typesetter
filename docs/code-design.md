@@ -152,7 +152,7 @@ load); wrap continuation indent 2ch with no marker glyph.
 
 ## 7. As-built deltas (CH completion)
 
-**Literate C++ fragments (2026-09-01).** pbrt-style `<<Fragment Name>>`
+**Literate C++ fragments (2026-09-01; superseded by plan P3-22, §8).** pbrt-style `<<Fragment Name>>`
 references and `<<Name>>=` / `+=` definition headers are not C++, so
 tree-sitter-cpp shredded them (Function → type, Definitions → variable,
 `>>` → operators) and degraded the surrounding parse. Rather than fork
@@ -180,9 +180,9 @@ native token provider links only json+tsm, so goldens are unaffected.
   en-dash in a comment shifted every later token until mapped.
 - **Priority contract**: captures sort (start asc, patternIndex asc),
   earlier pattern wins on overlap — implemented identically in the native
-  (C++) and worker (JS) providers; the alias table is shared by hand, the
-  tag set (kTokenTags / TOKEN_TAGS) is generated from syntax.def since
-  plan P1-05.
+  (C++) and worker (JS) providers; the tag set (kTokenTags / TOKEN_TAGS)
+  is generated from syntax.def since plan P1-05, the alias table from the
+  language manifest since plan P3-22 (§8).
 - **.tsr-code gained white-space:pre** — leading indentation collapsed in
   every code path until CH3's graphical pass caught it.
 - **Continuation indent is two literal spaces in the text flow**, not an
@@ -203,3 +203,81 @@ native token provider links only json+tsm, so goldens are unaffected.
   asks for it with `style({code: {hang: 'content'}}, …)` — emit no longer
   compares a run's colour with `var(--tsr-tok-comment)`. Token runs carry
   their class `tok-<tag>` (rendered from P3-18); the colour stays inline.
+
+## 8. The language manifest and engine overlays (plan P3-22; T9 A6)
+
+**One manifest.** `engine/schema/languages.json` defines:
+- the classes: syntax.def's TOKEN_TAGS, each with the editor's semantic
+  token type;
+- the capture aliases (`conditional` → keyword, …);
+- the languages, each with its fence-tag aliases, its tree-sitter sources
+  and queries, and whether the native build links it;
+- the overlays and the fence profiles.
+
+`tools/gen-languages.mjs` (run by gen-all) generates:
+- the worker's and the editor's tables: `runtime/src/shared/languages.gen.mjs`;
+- the extension's legend: `editors/vscode-tsm/src/hl.gen.js`;
+- the engine's tables: `engine/src/code/languages.gen.h`;
+- the native build's grammar list: `engine/native_grammars.gen.cmake`.
+  CMake builds the grammars and embeds their queries from it.
+
+`tools/codehl-assets.mjs` builds the web side modules from the same list.
+A new built-in language is one manifest entry and an asset rebuild.
+
+The generator refuses a manifest whose classes are not the token tags, a
+class the theme does not colour, and a native grammar whose queries use
+`#match?`.
+
+**One core.** `runtime/src/shared/hl-core.mjs` holds a capture's class
+(`tagOf`) and the priority contract (`resolveCaptures`): a stable sort by
+(start, pattern), ties in the cursor's order, an earlier capture winning
+an overlap. Both the worker's provider and the editor's cold-start
+tokenizer use it.
+
+The native twin (`code/native_tokens.cc`) is the same contract in C++:
+- `std::stable_sort`;
+- the string predicates `#eq?`, `#not-eq?`, `#any-of?` and
+  `#not-any-of?`, which web-tree-sitter evaluates too.
+
+**Overlays are the engine's** (`code/overlay.{h,cc}`). A code block's
+`codeblock.overlays` names manifest overlays. noweb is `<<`, a name
+without `<`, `>` or a line break, `>>`, then an optional `+=` or `=`. It
+can be set three ways:
+- a fence argument: ```` ```py(overlays: ["noweb"]) ````;
+- a rule: `$.set({kind: 'codeblock', lang: 'py'}, {codeblock: {overlays: 'noweb'}})`;
+- a fence profile: ```` ```cpp-literate ````, which is cpp plus noweb by a
+  built-in default rule. A later rule with `overlays: []` switches it off.
+
+At Resolve the engine finds the overlay spans in the body. It asks the
+provider for the tokens of the body with every span byte blanked to a
+space. The text keeps its UTF-8 length, so every offset outside a span
+holds, and a CJK fragment name shifts nothing. The provider only ever
+sees plain code.
+
+Emit and the semantic page set the spans over the answer as `label`
+tokens; a span wins any overlap. The need's key is (language, body,
+overlays). The Session stores the provider's answer by the text it was
+sent.
+
+The cpp-only regex in the worker is gone, so plain ```` ```cpp ```` keeps
+`(1 << n) >> 2` as shifts. `tools/convert/pbr2tsm.mjs` writes its literate
+fragments as ```` ```cpp-literate ````.
+
+**Hosts add languages at run time.** A resource provider may declare
+`match(row)`. A row goes to the latest registered provider that accepts
+it, so `createEngine({providers: [{kind: 'codeTokens', module}]})` with
+`match: (r) => r.lang === 'tla'` adds a language beside the built-in
+highlighter (host-protocol-design §4b).
+
+**As-built deltas from T9 A6:**
+- The manifest lives with the other vocabulary tables in
+  `engine/schema/`, not in `runtime/hl/`.
+- The classes' order stays syntax.def's TOKEN_TAGS, which the in-engine
+  tsm tokenizer shares. The manifest maps each class to the editor's type
+  and is checked against that order.
+- The answer carries no `canonLang`. `code.fontFeaturesByLang` applies a
+  built-in language's features to every tag that names it: `c++`, `cc`
+  and `cpp-literate` are cpp, and a tag configured itself wins. A host
+  provider's language is its own fence tag.
+- A codeblock selector's `lang` is the code's language (its own
+  attribute); `textLang` selects the text's language.

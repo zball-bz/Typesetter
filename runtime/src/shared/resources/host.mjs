@@ -6,11 +6,15 @@
 //
 //   const host = new ResourceHost({ policy })        // providers + cache (its limits: policy)
 //   host.register('boxInfo', provider)                // provider.resolve(rows, ctx) → answer rows
+//   host.register('codeTokens', { match: (row) => row.lang === 'tla', resolve })   // some rows only
 //   const job = host.job({ bases: { doc }, root })    // one document's locator and manifest
 //   await job.answer(request, { stale, capability }) // the pull loop's batch → its answer
 //   await job.load(src, { as: 'text' | 'json' | 'bytes' })   // $.load, ctx.load, #bibliography
 //   job.manifest()                                   // [{ url, role, source, status, requester }]
 //
+// A kind may have several providers (plan P3-22): a row goes to the latest
+// registered whose match(row) accepts it (no match: every row), so a host
+// adds a language without replacing the built-in highlighter.
 // A document-registered provider (#use, P3-31) may answer only the kinds
 // whose keys are authored content (resources.def docProviders: codeTokens,
 // boxInfo); its rows carry store: false (the Session keeps no answer of
@@ -30,7 +34,7 @@ export class ResourceHost {
   constructor({ policy = POLICY, cache = new LruCache(policy) } = {}) {
     this.policy = policy;
     this.cache = cache;
-    this.providers = new Map();  // kind → { provider, document }
+    this.providers = new Map();  // kind → [{ provider, document }], the latest first
     this.seeded = new Map();     // url / file → value (static export, hydration)
   }
   register(kind, provider, { document = false } = {}) {
@@ -38,7 +42,7 @@ export class ResourceHost {
     if (!k) throw new TypeError(`resource provider: no kind ${kind}`);
     if (document && !k.docProviders)
       throw new TypeError(`resource provider: a document may not answer ${kind} (only kinds of authored content)`);
-    this.providers.set(kind, { provider, document });
+    this.providers.set(kind, [{ provider, document }, ...(this.providers.get(kind) ?? [])]);
     return this;
   }
   seed(entries) {
@@ -73,17 +77,27 @@ class ResourceJob {
     const ans = { batch: req.batch, kinds: {} };
     for (const [kind, rows] of Object.entries(req.kinds)) {
       if (!rows.length) continue;
-      const entry = this.host.providers.get(kind);
-      if (!entry) throw new Error(`resource host: no provider for ${kind}`);
-      try {
-        const out = await entry.provider.resolve(rows, { ...ctx, req, job: this, host: this.host });
-        ans.kinds[kind] = entry.document ? out.map((r) => ({ ...r, store: false })) : out;
-      } catch (e) {
-        const fail = FAILED[kind];
-        if (!fail) throw e;
-        ans.kinds[kind] = rows.map((r) => fail(r, String(e?.message ?? e)));
+      const entries = this.host.providers.get(kind);
+      if (!entries?.length) throw new Error(`resource host: no provider for ${kind}`);
+      // each row to the first provider that takes it (none: the oldest)
+      const shares = new Map();
+      for (const r of rows) {
+        const entry = entries.find((x) => !x.provider.match || x.provider.match(r)) ?? entries[entries.length - 1];
+        if (!shares.has(entry)) shares.set(entry, []);
+        shares.get(entry).push(r);
       }
-      if (ctx.stale?.()) return null;
+      ans.kinds[kind] = [];
+      for (const [entry, mine] of shares) {
+        try {
+          const out = await entry.provider.resolve(mine, { ...ctx, req, job: this, host: this.host });
+          ans.kinds[kind].push(...(entry.document ? out.map((r) => ({ ...r, store: false })) : out));
+        } catch (e) {
+          const fail = FAILED[kind];
+          if (!fail) throw e;
+          ans.kinds[kind].push(...mine.map((r) => fail(r, String(e?.message ?? e))));
+        }
+        if (ctx.stale?.()) return null;
+      }
     }
     return ans;
   }

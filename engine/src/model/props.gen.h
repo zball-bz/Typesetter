@@ -252,6 +252,7 @@ struct NodeProps {
   bool snapKerning = false;  // codeblock.snapKerning (inherits)
   float sidecarFrac = 0;  // codeblock.sidecarFrac (inherits)
   float contIndent = 0;  // codeblock.contIndent (inherits)
+  StrRef codeOverlays = 0;  // codeblock.overlays (inherits)
   u8 keep = 0;  // keep
   Len spaceBefore = {};  // space.before
   Len spaceAfter = {};  // space.after
@@ -282,6 +283,7 @@ struct NodeProps {
            snapKerning == o.snapKerning &&
            sidecarFrac == o.sidecarFrac &&
            contIndent == o.contIndent &&
+           codeOverlays == o.codeOverlays &&
            keep == o.keep &&
            spaceBefore == o.spaceBefore &&
            spaceAfter == o.spaceAfter &&
@@ -361,6 +363,7 @@ struct NodePropsHash {
       std::memcpy(&b, &p.contIndent, 4);
       mix(b);
     }
+    mix((u64)p.codeOverlays);
     mix((u64)p.keep);
     len(p.spaceBefore);
     len(p.spaceAfter);
@@ -401,6 +404,7 @@ inline NodeProps inheritProps(const NodeProps& parent) {
   p.snapKerning = parent.snapKerning;
   p.sidecarFrac = parent.sidecarFrac;
   p.contIndent = parent.contIndent;
+  p.codeOverlays = parent.codeOverlays;
   p.parHang = parent.parHang;
   p.parHangAfter = parent.parHangAfter;
   p.breakerTolerance = parent.breakerTolerance;
@@ -436,6 +440,7 @@ inline void applyNodeArg(NodeProps& p, const ArgVal& a, Intern intern, View view
   if (a.key == ArgK::snapKerning && a.tag == ArgTag::Bool) p.snapKerning = a.num != 0;
   if (a.key == ArgK::sidecarFrac && a.tag == ArgTag::Num) p.sidecarFrac = (float)a.num;
   if (a.key == ArgK::contIndent && a.tag == ArgTag::Num) p.contIndent = (float)a.num;
+  if (a.key == ArgK::overlays && a.tag == ArgTag::Str) p.codeOverlays = intern(a.ref);
   if (a.key == ArgK::keep && a.tag == ArgTag::Str) {
     const std::string_view v = view(a.ref);
     if (v == "together") p.keep = 1;
@@ -527,6 +532,8 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
     {"codeblock.sidecarFrac", ArgK::sidecarFrac},
     {"contIndent", ArgK::contIndent},
     {"codeblock.contIndent", ArgK::contIndent},
+    {"overlays", ArgK::overlays},
+    {"codeblock.overlays", ArgK::overlays},
     {"keep", ArgK::keep},
     {"spaceBefore", ArgK::spaceBefore},
     {"space.before", ArgK::spaceBefore},
@@ -569,7 +576,7 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
 };
 // whether an attribute patches a block property
 inline bool isNodeArg(ArgK k) {
-  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::parSingleLine || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent || k == ArgK::keep || k == ArgK::spaceBefore || k == ArgK::spaceAfter || k == ArgK::breakBefore || k == ArgK::breakAfter || k == ArgK::parHang || k == ArgK::parHangAfter || k == ArgK::boxPadding || k == ArgK::boxBorder || k == ArgK::boxBorderColor || k == ArgK::boxBackground || k == ArgK::media || k == ArgK::beside || k == ArgK::breakerTolerance || k == ArgK::breakerStretch || k == ArgK::placeFloat || k == ArgK::placeWidth || k == ArgK::placeGap;
+  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::parSingleLine || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent || k == ArgK::overlays || k == ArgK::keep || k == ArgK::spaceBefore || k == ArgK::spaceAfter || k == ArgK::breakBefore || k == ArgK::breakAfter || k == ArgK::parHang || k == ArgK::parHangAfter || k == ArgK::boxPadding || k == ArgK::boxBorder || k == ArgK::boxBorderColor || k == ArgK::boxBackground || k == ArgK::media || k == ArgK::beside || k == ArgK::breakerTolerance || k == ArgK::breakerStretch || k == ArgK::placeFloat || k == ArgK::placeWidth || k == ArgK::placeGap;
 }
 // (plan P3-02; design T4: settable element arguments alias property rows;
 // plan P3-14: declared aliases) whether a kind's attribute is its own style:
@@ -591,6 +598,10 @@ inline bool propAlias(Kind k, ArgK a, ArgK& to) {
   }
   if (k == Kind::codeblock && a == ArgK::features) {
     to = ArgK::features;
+    return true;
+  }
+  if (k == Kind::codeblock && a == ArgK::overlays) {
+    to = ArgK::overlays;
     return true;
   }
   if (k == Kind::image && a == ArgK::side) {

@@ -1,0 +1,5 @@
+doc @[0,162) [base]
+  para @[0,109) [base]
+    text @[0,109) [base] str="An overlay name the manifest does not have is reported, and the block is highlighted without it (plan P3-22):"
+  codeblock @[111,162) [CODEx0.85] lang="json" overlays="noweb weave"
+    text @[144,158) [CODEx0.85] str="{\"a\": \"<<x>>\"}"

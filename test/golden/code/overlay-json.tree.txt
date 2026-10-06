@@ -1,0 +1,16 @@
+doc @[0,664) [base]
+  para @[0,128) [base]
+    text @[0,128) [base] str="A noweb overlay over JSON (plan P3-22): each fragment name is one label token, whatever the grammar makes of the text around it."
+  codeblock @[130,224) [CODEx0.85] lang="json" overlays="noweb"
+    text @[159,220) [CODEx0.85] str="<<config>>=\n{\"name\": \"<<the name>>\", \"n\": 1, <<more fields>>}"
+  para @[226,341) [base]
+    text @[226,298) [base] str="A rule turns it on for every JSON block; a CJK name keeps its bytes, and " raw=0:0,73:72
+    code @[299,303) [CODEx0.85]
+      text @[299,303) [CODEx0.85] str="<<"
+    text @[304,341) [base] str=" with no close on its line stays code:" raw=0:0,1:0
+  codeblock @[424,477) [CODEx0.85] lang="json"
+    text @[432,473) [CODEx0.85] str="<<定义>>+=\n{\"a\": [1, 2], \"b\": \"x << y\"}"
+  para @[479,548) [base]
+    text @[479,548) [base] str="An empty list switches it off again, and the same text is plain JSON:"
+  codeblock @[626,664) [CODEx0.85] lang="json"
+    text @[634,660) [CODEx0.85] str="<<定义>>+=\n{\"a\": [1, 2]}"

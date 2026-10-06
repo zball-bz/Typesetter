@@ -1,0 +1,7 @@
+lower v1 abi 3d3ccfbb docEnd 163 holes 1 module 0280fcb43a359db8
+piece 0 hole 0 js [103,136)
+block 0 content [0,109)
+  CALL para [0,109)
+    TEXT "An overlay name the manifest does not have is reported, and the block is highlighted without it (plan P3-22):" [0,109)
+block 1 content [111,162) user framed async holes 0..1
+  FENCE async "json" args=hole 0 body="{\"a\": \"<<x>>\"}" at=[144,158) lines=null [111,162)

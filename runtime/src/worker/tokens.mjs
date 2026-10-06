@@ -1,28 +1,13 @@
 // Token provider (code-design.md §2): web-tree-sitter + per-language side
-// modules, lazily loaded, all compute in wasm. Priority contract (shared
-// with engine/test/native_tokens.h): captures sort by (start asc,
-// patternIndex asc); earlier pattern wins on overlap.
-// The tag set is syntax.def's TOKEN_TAGS row (engine kTokenTags).
+// modules, lazily loaded, all compute in wasm. The languages, their aliases
+// and the capture classes are engine/schema/languages.json's; a capture's
+// class and the priority contract are hl-core's, shared with the editor and
+// twinned natively (engine/src/code/native_tokens.cc). Overlays (noweb
+// fragments) are the engine's (plan P3-22): the text this sees has them
+// blanked already.
 import { POLICY } from '../shared/settings.gen.mjs';
-import { TOKEN_TAGS as TAGS } from '../shared/syntax.gen.mjs';
-
-const ALIAS = { tag: 'type', conditional: 'keyword', repeat: 'keyword',
-                include: 'keyword', boolean: 'constant', constructor: 'constant',
-                method: 'function', field: 'property', parameter: 'property' };
-function tagOf(name) {
-  const head = name.split('.')[0];
-  const t = TAGS.indexOf(head);
-  if (t >= 0) return t;
-  const a = ALIAS[head];
-  return a ? TAGS.indexOf(a) : -1;
-}
-
-// language tag normalization → asset basename
-const LANGS = { json: 'json', js: 'javascript', javascript: 'javascript',
-                mjs: 'javascript', ts: 'typescript', typescript: 'typescript',
-                py: 'python', python: 'python', cpp: 'cpp', 'c++': 'cpp',
-                cc: 'cpp', rust: 'rust', rs: 'rust' };
-// ('tsm' blocks are tokenized by the engine itself, plan P1-09)
+import { LANGUAGES } from '../shared/languages.gen.mjs';
+import { languageOf, resolveCaptures, tagOf } from '../shared/hl-core.mjs';
 
 const HL_BASE = new URL('../../assets/hl/', import.meta.url);
 // Node (static export, pages-design.md §3): web-tree-sitter resolves asset
@@ -84,42 +69,13 @@ function u16ToU8Map(text) {
   return map;
 }
 
-// Literate-programming fragments (pbrt / noweb style): `<<Name>>`
-// references and `<<Name>>=` / `<<Name>>+=` definition headers are not
-// valid C++, so the grammar shreds them into type/variable/operator
-// noise and the surrounding parse degrades. Instead of forking the
-// grammar (530K-line parser.c, and a lexical fight with `<<` shifts),
-// the provider recognizes them itself: each fragment span becomes one
-// `label` token, and the text handed to tree-sitter has those spans
-// blanked with one space per UTF-16 unit (same JS length). The byte map is
-// built from the ORIGINAL text: blanking a non-ASCII name (中文 fragment
-// names are the expected case) changes the UTF-8 length.
-const FRAGMENT_RE = /<<[^<>\n]+>>(?:\+?=)?/g;
-const LABEL_TAG = TAGS.indexOf('label');
-
-function literateSpans(text) {
-  const spans = [];
-  for (const m of text.matchAll(FRAGMENT_RE)) spans.push([m.index, m.index + m[0].length]);
-  return spans;
-}
-
 // → flat Uint32Array of (start, end, tagId) triples (possibly empty)
 export async function tokenize(langTag, text) {
-  const name = LANGS[String(langTag).toLowerCase()];
-  if (!name) return new Uint32Array(0);
-  const entry = await load(name);
+  const name = languageOf(langTag);
+  if (!name || !(name in LANGUAGES)) return new Uint32Array(0);
+  const entry = await load(LANGUAGES[name].asset);
   if (!entry) return new Uint32Array(0);
-  const u8 = u16ToU8Map(text);  // original-text coordinates (see above)
-  let fragments = [];
-  if (name === 'cpp') {
-    fragments = literateSpans(text);
-    if (fragments.length) {
-      let masked = '';
-      let pos = 0;
-      for (const [a, b] of fragments) { masked += text.slice(pos, a) + ' '.repeat(b - a); pos = b; }
-      text = masked + text.slice(pos);
-    }
-  }
+  const u8 = u16ToU8Map(text);  // UTF-8 byte offsets (see above)
   const parser = new tsMod.Parser();
   parser.setLanguage(entry.lang);
   const tree = parser.parse(text);
@@ -133,19 +89,8 @@ export async function tokenize(langTag, text) {
       caps.push({ s, e, pat: m.patternIndex, tag });
     }
   }
-  for (const [a, b] of fragments) {
-    const s0 = u8 ? u8[a] : a;
-    const e0 = u8 ? u8[b] : b;
-    caps.push({ s: s0, e: e0, pat: -1, tag: LABEL_TAG });  // pat -1: fragments win overlaps
-  }
-  caps.sort((a, b) => a.s - b.s || a.pat - b.pat);
   const out = [];
-  let covered = 0;
-  for (const c of caps) {
-    if (c.s < covered || c.e <= c.s) continue;  // earlier pattern won
-    out.push(c.s, c.e, c.tag);
-    covered = c.e;
-  }
+  for (const c of resolveCaptures(caps)) out.push(c.s, c.e, c.tag);
   tree.delete();
   parser.delete();
   return Uint32Array.from(out);

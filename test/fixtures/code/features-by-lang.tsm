@@ -1,0 +1,18 @@
+Font features by language reach every fence tag of the language (plan P3-22): `cpp`'s apply to `c++` and to `cpp-literate`; `js` is configured itself and keeps its own.
+
+```c++
+int a = 1;
+```
+
+```cpp-literate
+<<step>>=
+int b = 2;
+```
+
+```js
+let c = 3;
+```
+
+```javascript
+let d = 4;
+```

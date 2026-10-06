@@ -16,10 +16,19 @@ namespace tsr {
 
 enum class ResState : u8 { Pending, Ready, Failed };
 
+// A code body's tokens. With overlays (plan P3-22; code/overlay.h) the text
+// the provider tokenizes, `sent`, is the body with the overlay spans
+// blanked; `toks` is its answer (as the Session keeps it), `runs()` that
+// answer with the spans set over it.
 struct TokenNeed {
   StrRef lang = 0, body = 0;
+  u32 overlays = 0;               // the overlay mask
+  StrRef sent = 0;                // the provider's text: body, or body masked
+  std::vector<CodeToken> spans;   // the overlay spans (tokens of their class)
   ResState st = ResState::Pending;
-  std::vector<CodeToken> toks;  // Ready: sorted, disjoint, on UTF-8 boundaries
+  std::vector<CodeToken> toks;    // Ready: sorted, disjoint, on UTF-8 boundaries
+  std::vector<CodeToken> merged;  // Ready, with spans: toks with the spans set
+  const std::vector<CodeToken>& runs() const { return spans.empty() ? toks : merged; }
 };
 struct BoxNeed {
   StrRef src = 0;
@@ -30,12 +39,19 @@ struct BoxNeed {
 
 class ResourceTable {
  public:
-  // one need per distinct key; returns its index
-  u32 needTokens(StrRef lang, StrRef body) {
-    const u64 k = ((u64)lang << 32) | body;
+  // one need per distinct key (language, body, overlays); returns its
+  // index — a new one's `sent` and `spans` are the caller's to fill
+  u32 needTokens(StrRef lang, StrRef body, u32 overlays, bool* fresh = nullptr) {
+    const TokenKey k{lang, body, overlays};
     auto it = tokenIndex_.find(k);
+    if (fresh) *fresh = it == tokenIndex_.end();
     if (it != tokenIndex_.end()) return it->second;
-    tokenNeeds.push_back({lang, body});
+    TokenNeed t;
+    t.lang = lang;
+    t.body = body;
+    t.overlays = overlays;
+    t.sent = body;
+    tokenNeeds.push_back(std::move(t));
     return tokenIndex_[k] = (u32)tokenNeeds.size() - 1;
   }
   u32 needBox(StrRef src, Span span) {
@@ -47,8 +63,8 @@ class ResourceTable {
     boxNeeds.push_back(b);
     return boxIndex_[src] = (u32)boxNeeds.size() - 1;
   }
-  const TokenNeed* tokens(StrRef lang, StrRef body) const {
-    auto it = tokenIndex_.find(((u64)lang << 32) | body);
+  const TokenNeed* tokens(StrRef lang, StrRef body, u32 overlays) const {
+    auto it = tokenIndex_.find(TokenKey{lang, body, overlays});
     return it == tokenIndex_.end() ? nullptr : &tokenNeeds[it->second];
   }
   const BoxNeed* box(StrRef src) const {
@@ -85,7 +101,17 @@ class ResourceTable {
   u32 nextBatch = 1;
 
  private:
-  std::unordered_map<u64, u32> tokenIndex_;
+  struct TokenKey {
+    StrRef lang, body;
+    u32 overlays;
+    bool operator==(const TokenKey& o) const { return lang == o.lang && body == o.body && overlays == o.overlays; }
+  };
+  struct TokenKeyHash {
+    size_t operator()(const TokenKey& k) const {
+      return std::hash<u64>()(((u64)k.lang << 32) | k.body) ^ (std::hash<u32>()(k.overlays) * 0x9E3779B97F4A7C15ull);
+    }
+  };
+  std::unordered_map<TokenKey, u32, TokenKeyHash> tokenIndex_;
   std::unordered_map<StrRef, u32> boxIndex_;
 };
 

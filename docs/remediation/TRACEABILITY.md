@@ -1273,10 +1273,10 @@ Theme steps: — · findings: 1
 | `api-measure-code/global-feature-knobs-no-cascade` | adhoc | high | P3-02 | grep:plan P3-02 |
 | `api-measure-code/supplements-and-lang` | adhoc | medium | P1-10, P3-30 | |
 | `api-measure-code/font-role-split` | adhoc | medium | P1-04 | grep:plan P1-04 |
-| `api-measure-code/token-tag-table-copies` | adhoc | medium | P3-22 | |
+| `api-measure-code/token-tag-table-copies` | adhoc | medium | P3-22 | grep:plan P3-22 |
 | `api-measure-code/token-class-as-color-string` | adhoc | high | P2-08 | grep:plan P2-08 |
-| `api-measure-code/language-registry-scattered` | adhoc | medium | P3-22 | |
-| `api-measure-code/literate-cpp-special-case` | adhoc | low | P3-22 | |
+| `api-measure-code/language-registry-scattered` | adhoc | medium | P3-22 | grep:plan P3-22 |
+| `api-measure-code/literate-cpp-special-case` | adhoc | low | P3-22 | grep:plan P3-22 |
 | `api-measure-code/grid-is-codeblock-only` | adhoc | medium | P3-11 || grep:plan P3-11 |
 | `api-measure-code/sidecar-api-layer-rewrite` | adhoc | high | P2-13 | grep:plan P2-13 |
 | `api-measure-code/doc-typeset-hosts-layout-logic` | adhoc | medium | P1-15 | grep:plan P1-15 |
@@ -1311,7 +1311,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/sugar-dispatch-fixed` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `real-world-evidence/no-tsm-printer` | adhoc | high | P3-35 | |
 | `real-world-evidence/lexical-syntax-copies` | adhoc | medium | P1-09 | grep:plan P1-09 |
-| `real-world-evidence/literate-cpp-hack` | adhoc | medium | P3-22 | |
+| `real-world-evidence/literate-cpp-hack` | adhoc | medium | P3-22 | grep:plan P3-22 |
 | `real-world-evidence/ref-cite-format-in-cpp` | adhoc | medium | P2-09 | grep:plan P2-09 |
 | `real-world-evidence/locale-terms-switch` | adhoc | medium | P1-10, P3-30 | |
 | `real-world-evidence/codepoint-heuristics` | adhoc | low | P4-02 | |

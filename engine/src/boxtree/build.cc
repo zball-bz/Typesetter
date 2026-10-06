@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 
+#include "../code/overlay.h"
 #include "../elements/registry.h"
 #include "../model/cascade.h"
 
@@ -176,6 +177,7 @@ class Builder {
     tr.snapKerning = np.snapKerning;
     if (np.sidecarFrac > 0) tr.sidecarFrac = np.sidecarFrac;
     tr.contIndent = (i32)np.contIndent;
+    if (np.codeOverlays) tr.codeOverlays = overlayMask(strs.get(np.codeOverlays));
     // (plan P3-14) the block trait group
     tr.keepTogether = np.keep == KEEP_TOGETHER || np.keep == KEEP_BOTH;
     tr.spaceBefore = lenSu(np.spaceBefore, n);

@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="168">Font features by language reach every fence tag of the language (plan P3-22): <code>cpp</code>&#39;s apply to <code>c++</code> and to <code>cpp-literate</code>; <code>js</code> is configured itself and keeps its own.</p>
+<pre data-pid="1" data-s="170" data-e="191"><code class="language-c++">int a = 1;</code></pre>
+<pre data-pid="2" data-s="193" data-e="233"><code class="language-cpp-literate">&lt;&lt;step&gt;&gt;=
+int b = 2;</code></pre>
+<pre data-pid="3" data-s="235" data-e="255"><code class="language-js">let c = 3;</code></pre>
+<pre data-pid="4" data-s="257" data-e="285"><code class="language-javascript">let d = 4;</code></pre>
+</div>

@@ -1,0 +1,84 @@
+{
+  "$comment": [
+    "The code-highlight manifest (plan P3-22; design T9 A6): the one definition of the languages, their aliases,",
+    "the capture aliases, the overlays and the fence profiles. A new built-in language is one entry here.",
+    "Generated from it (tools/gen-all.mjs): the worker's and the editor's tables (tools/gen-languages.mjs:",
+    "runtime/src/shared/languages.gen.mjs, editors/vscode-tsm/src/hl.gen.js), the engine's",
+    "(engine/src/code/languages.gen.h), the native build's (engine/native_grammars.gen.cmake) and the editor's",
+    "fence and overlay grammars (tools/gen-grammars.mjs); tools/codehl-assets.mjs builds the web grammars.",
+    "classes: the token classes in syntax.def's TOKEN_TAGS order, each with the editor's semantic token type",
+    "(null: left plain). alias: a capture name's first segment → its class.",
+    "languages: aliases = more fence tags; textmate = the editor grammar scope its fences embed; grammar = the",
+    "tree-sitter sources (paths from the repository root) and its highlight queries, base first; native = the",
+    "native build links it (goldens), and its queries may use only the string predicates #eq? #not-eq? #any-of?",
+    "#not-any-of? (no regular expressions: the twins share none).",
+    "overlays: spans the engine finds in a code body itself (open, a name without the forbid characters, close,",
+    "an optional suffix, the longest first) and sets as one token of its class whatever the provider says.",
+    "profiles: a fence tag that means a language with overlays (a default rule sets codeblock.overlays)."
+  ],
+  "version": 1,
+  "classes": {
+    "keyword": "keyword", "string": "string", "number": "number", "comment": "comment",
+    "function": "function", "type": "type", "constant": "enumMember", "variable": "variable",
+    "operator": "operator", "punctuation": "operator", "property": "property", "attribute": "decorator",
+    "label": "label", "embedded": null
+  },
+  "alias": {
+    "tag": "type", "conditional": "keyword", "repeat": "keyword", "include": "keyword",
+    "boolean": "constant", "constructor": "constant", "method": "function",
+    "field": "property", "parameter": "property"
+  },
+  "overlays": {
+    "noweb": {"open": "<<", "close": ">>", "forbid": "<>\n", "suffix": ["+=", "="], "class": "label"}
+  },
+  "profiles": {
+    "cpp-literate": {"lang": "cpp", "overlays": ["noweb"]}
+  },
+  "languages": {
+    "json": {
+      "textmate": "source.json",
+      "grammar": {"src": "third_party/grammars/json", "files": ["parser.c"],
+                  "scm": ["third_party/grammars/json/highlights.scm"]},
+      "native": true
+    },
+    "javascript": {
+      "aliases": ["js", "mjs"],
+      "textmate": "source.js",
+      "grammar": {"src": "node_modules/tree-sitter-javascript/src", "files": ["parser.c", "scanner.c"],
+                  "scm": ["node_modules/tree-sitter-javascript/queries/highlights.scm"]}
+    },
+    "typescript": {
+      "aliases": ["ts"],
+      "textmate": "source.ts",
+      "grammar": {"src": "node_modules/tree-sitter-typescript/typescript/src", "files": ["parser.c", "scanner.c"],
+                  "scm": ["node_modules/tree-sitter-javascript/queries/highlights.scm",
+                          "node_modules/tree-sitter-typescript/queries/highlights.scm"]}
+    },
+    "python": {
+      "aliases": ["py"],
+      "textmate": "source.python",
+      "grammar": {"src": "node_modules/tree-sitter-python/src", "files": ["parser.c", "scanner.c"],
+                  "scm": ["node_modules/tree-sitter-python/queries/highlights.scm"]}
+    },
+    "cpp": {
+      "aliases": ["c++", "cc", "c"],
+      "textmate": "source.cpp",
+      "grammar": {"src": "node_modules/tree-sitter-cpp/src", "files": ["parser.c", "scanner.c"],
+                  "scm": ["node_modules/tree-sitter-c/queries/highlights.scm",
+                          "node_modules/tree-sitter-cpp/queries/highlights.scm"]}
+    },
+    "rust": {
+      "aliases": ["rs"],
+      "textmate": "source.rust",
+      "grammar": {"src": "node_modules/tree-sitter-rust/src", "files": ["parser.c", "scanner.c"],
+                  "scm": ["node_modules/tree-sitter-rust/queries/highlights.scm"]}
+    },
+    "tsm": {
+      "$comment": "our own markup: the engine answers it itself (plan P1-09); the grammar is the editor's cold start and the native conformance check",
+      "textmate": "source.tsm",
+      "grammar": {"src": "third_party/grammars/tsm", "files": ["parser.c"],
+                  "scm": ["grammar/tree-sitter-tsm/highlights.scm"]},
+      "native": true
+    }
+  }
+}

@@ -1,0 +1,20 @@
+lower v1 abi 3d3ccfbb docEnd 286 holes 0 module none
+block 0 content [0,168)
+  CALL para [0,168)
+    TEXT "Font features by language reach every fence tag of the language (plan P3-22): " [0,77) raw=0:0,78:77
+    CALL code [78,83) text="cpp"
+    TEXT "'s apply to " [83,94) raw=0:0,12:11
+    CALL code [95,100) text="c++"
+    TEXT " and to " [101,107) raw=0:0,1:0,8:6
+    CALL code [108,122) text="cpp-literate"
+    TEXT "; " [122,123) raw=0:0,2:1
+    CALL code [124,128) text="js"
+    TEXT " is configured itself and keeps its own." [129,168) raw=0:0,1:0
+block 1 content [170,191) async
+  FENCE async "c++" body="int a = 1;" at=[177,187) lines=null [170,191)
+block 2 content [193,233) async
+  FENCE async "cpp-literate" body="<<step>>=\nint b = 2;" at=[209,229) lines=null [193,233)
+block 3 content [235,255) async
+  FENCE async "js" body="let c = 3;" at=[241,251) lines=null [235,255)
+block 4 content [257,285) async
+  FENCE async "javascript" body="let d = 4;" at=[271,281) lines=null [257,285)

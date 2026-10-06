@@ -1,6 +1,7 @@
 #include "tokens.h"
 
 #include "../model/cascade.h"
+#include "languages.gen.h"
 
 namespace tsr {
 
@@ -9,13 +10,9 @@ int tokenTagFromCapture(std::string_view name) {
   std::string_view head = dot == std::string_view::npos ? name : name.substr(0, dot);
   for (int i = 0; i < kTokenTagCount; i++)
     if (head == kTokenTags[i]) return i;
-  // common aliases seen across grammar queries
-  if (head == "tag") return 5;                                   // type-ish
-  if (head == "conditional" || head == "repeat" || head == "include")
-    return 0;                                                    // keyword
-  if (head == "boolean" || head == "constructor") return 6;      // constant
-  if (head == "method") return 4;                                // function
-  if (head == "field" || head == "parameter") return 10;         // property
+  // the manifest's capture aliases (engine/schema/languages.json, plan P3-22)
+  for (const CaptureAlias& a : kCaptureAliases)
+    if (head == a.name) return a.tag;
   return -1;
 }
 

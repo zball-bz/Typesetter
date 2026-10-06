@@ -45,7 +45,7 @@
     "parHangAfter": 85, "boxPadding": 86, "boxBorder": 87, "boxBorderColor": 88, "boxBackground": 89, "media": 90,
     "beside": 91, "breakerTolerance": 92, "breakerStretch": 93, "placeFloat": 94,
     "tracks": 95, "rules": 96, "header": 97, "colspan": 98, "rowspan": 99, "valign": 100,
-    "measure": 101, "minWidth": 102, "placeWidth": 103, "placeGap": 104, "cont": 105, "textSpace": 106
+    "measure": 101, "minWidth": 102, "placeWidth": 103, "placeGap": 104, "cont": 105, "textSpace": 106, "overlays": 107
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -69,7 +69,8 @@
       "snapKerning": {"dom": "bool", "since": 13, "prop": true},
       "sidecarFrac": {"dom": "num:0.1:0.9", "since": 13, "prop": true},
       "contIndent": {"dom": "int:0:40", "since": 13, "prop": true},
-      "features": {"dom": "features", "since": 13, "prop": true}}},
+      "features": {"dom": "features", "since": 13, "prop": true},
+      "overlays": {"dom": "names", "since": 14, "prop": true}}},
     "rule": {"id": 7, "level": "block", "inline": "unsupported", "body": "none", "since": 6, "ctor": {"nullary": true}, "attrs": {}},
     "group": {"id": 8, "level": "adaptive", "inline": "container", "body": "position", "since": 6, "ctor": {}, "attrs": {
       "role": {"dom": "ident"},
@@ -132,6 +133,7 @@
       "matchWhere": {"dom": "where", "since": 12},
       "snapKerning": {"dom": "bool", "since": 13}, "sidecarFrac": {"dom": "num:0.1:0.9", "since": 13},
       "contIndent": {"dom": "int:0:40", "since": 13}, "features": {"dom": "features", "since": 13},
+      "overlays": {"dom": "names", "since": 14},
       "punct": {"dom": "enum:full|book|none", "since": 13},
       "parSingleLine": {"dom": "enum:align|center", "since": 14},
       "keep": {"dom": "enum:together|with-next|both", "since": 14},
@@ -331,6 +333,11 @@
       "max": 512,
       "re": "[A-Za-z_][A-Za-z0-9_\\-]*( [A-Za-z_][A-Za-z0-9_\\-]*)*"
     },
+    "names": {
+      "$comment": "Space-separated names, or none (plan P3-22: codeblock.overlays; empty switches a profile's off).",
+      "max": 512,
+      "re": "([A-Za-z_][A-Za-z0-9_\\-]*( [A-Za-z_][A-Za-z0-9_\\-]*)*)?"
+    },
     "extname": {
       "max": 32,
       "re": "[a-z][a-z0-9\\-]*"
@@ -474,6 +481,7 @@
     "codeblock.snapKerning": {"field": "snapKerning", "type": "bool", "gran": "block", "inherits": true, "attr": "snapKerning", "key": "codeblock.snapKerning"},
     "codeblock.sidecarFrac": {"field": "sidecarFrac", "type": "num", "gran": "block", "inherits": true, "attr": "sidecarFrac", "key": "codeblock.sidecarFrac"},
     "codeblock.contIndent": {"field": "contIndent", "type": "num", "gran": "block", "inherits": true, "attr": "contIndent", "key": "codeblock.contIndent"},
+    "codeblock.overlays": {"$comment": "The overlays a code block's body gets (plan P3-22; design T9 A6): names of engine/schema/languages.json overlays, space-separated — spans the engine finds and sets as one token whatever the provider says (noweb: <<fragment>> names). A fence profile (cpp-literate) sets them by a default rule.", "field": "codeOverlays", "type": "str", "gran": "block", "inherits": true, "attr": "overlays", "key": "codeblock.overlays"},
     "keep": {"$comment": "The block trait group (plan P3-14; design T6 S12): keep, space, break, par.hang, box, media, beside, breaker, place — together with par.align/hyphenate and block.gap. keep: a page cut inside the block (together) or after it (with-next) is avoided, relaxed in D-Y04's order.", "field": "keep", "type": "enum", "gran": "block", "inherits": false, "attr": "keep", "key": "keep", "values": ["together", "with-next", "both"]},
     "space.before": {"field": "spaceBefore", "type": "len", "gran": "block", "inherits": false, "attr": "spaceBefore", "key": "space.before"},
     "space.after": {"field": "spaceAfter", "type": "len", "gran": "block", "inherits": false, "attr": "spaceAfter", "key": "space.after"},

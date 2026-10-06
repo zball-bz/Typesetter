@@ -42,15 +42,17 @@ try {
   execFileSync('mkdir', ['-p', docDir]);
   writeFileSync(join(docDir, 'data.json'), '{"n": 7}');
   writeFileSync(join(out, 'secret.txt'), 'no');
-  const source = '```zz\nalpha beta\n```\n\n#{ const d = await $.load("data.json", {as: "json"}); }\nN is #(String(d.n)).\n\n'
+  const source = '```zz\nalpha beta\n```\n\n```json\n{"k": 1}\n```\n\n#{ const d = await $.load("data.json", {as: "json"}); }\nN is #(String(d.n)).\n\n'
     + '#{ let why = "read"; try { await $.load("../secret.txt"); } catch (e) { why = e.message; } }\nThe secret was #(why).';
-  const tokens = { resolve: (rows) => rows.map((r) => ({ resId: r.resId, runs: new Uint32Array([0, 5, 1]) })) };
+  // a language of the caller's beside the built-in ones (plan P3-22: match)
+  const tokens = { match: (r) => r.lang === 'zz', resolve: (rows) => rows.map((r) => ({ resId: r.resId, runs: new Uint32Array([0, 5, 1]) })) };
   const r = await renderTsm(source, { baseDir: docDir, rootDir: docDir, providers: [{ kind: 'codeTokens', provider: tokens }] });
   check(r.html.includes('N is 7.'), '$.load reads a resource beside the document');
   check(r.html.includes('The secret was resource outside the document root.'), '$.load is confined to the document root');
   check(r.manifest.some((m) => m.role === 'load' && m.url.endsWith('data.json') && m.status === 'ok'), 'the manifest has the load');
   check(r.manifest.some((m) => m.url === '../secret.txt' && m.status === 'denied'), 'the manifest has the denied load');
   check(/<span class="tsr-c-tok-[a-z]+">alpha<\/span> beta/.test(r.html), 'the caller\'s codeTokens provider answered');
+  check(/<span class="tsr-c-tok-number">1<\/span>/.test(r.html), 'the built-in highlighter still answers the rest');
 } catch (e) {
   console.error(String(e.stderr ?? e));
   failures++;

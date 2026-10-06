@@ -261,7 +261,7 @@ TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
     appendf(out, "{\"id\":%u,\"lang\":\"", i);
     jsonEscapeInto(out, d->doc.strs.get(r.lang));
     out += "\",\"text\":\"";
-    jsonEscapeInto(out, d->doc.strs.get(r.body));
+    jsonEscapeInto(out, d->doc.strs.get(r.sent));
     out += "\"}";
   }
   out += "]";

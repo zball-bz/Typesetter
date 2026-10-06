@@ -40,6 +40,7 @@ export const styleAttrs = (p, unknown) => {
         else unknown?.(`${key}: ${nm}`);
       }
     } else if ((attr === 'size' || dom === 'len' || dom === 'gap') && typeof v === 'number') out[attr] = `${v}em`;
+    else if (dom === 'names' && Array.isArray(v)) out[attr] = v.map(String).join(' ');  // codeblock.overlays
     else if (dom.startsWith('enum:') && typeof v === 'boolean') out[attr] = String(v);  // par.hyphenate
     else out[attr] = v;
   };
@@ -74,17 +75,20 @@ const kindName = (k) => {
   if (!(v in KIND)) throw new TypeError(`a selector's kind '${v}' is no node kind (para, heading, code, list, …; *strong* is styled {weight: 700})`);
   return v;
 };
+// (A code block's `lang` is its code's language, its own attribute — plan
+// P3-22: {kind: 'codeblock', lang: 'cpp'}; `textLang` is its text's.)
 export const matchAttrs = (sel) => {
   if (typeof sel === 'string') return { matchKind: kindName(sel) };
   if (sel === null || typeof sel !== 'object' || Array.isArray(sel))
     throw new TypeError('a selector is a kind name or {kind, role, class, lang, depth, …attributes}');
   const out = {}, where = [];
+  const codeLang = sel.kind === 'codeblock';
   for (const [k, v] of Object.entries(sel)) {
     if (v === undefined || v === null) continue;
     if (k === 'kind') out.matchKind = kindName(v);
     else if (k === 'role') out.matchRole = String(v);
     else if (k === 'class') out.matchClass = String(v);
-    else if (k === 'lang' || k === 'textLang') out.matchLang = String(v);
+    else if ((k === 'lang' && !codeLang) || k === 'textLang') out.matchLang = String(v);
     else if (k === 'depth') out.matchDepth = Number(v);
     else where.push(`${k}=${v}`);
   }
@@ -534,6 +538,7 @@ export function createStd(host) {
     codeblock: (call) => {
       const a = call.attrs;
       if (a.lineNo === true) a.lineNo = 1;  // schema coerce boolAsInt
+      if (Array.isArray(a.overlays)) a.overlays = a.overlays.map(String).join(' ');  // (plan P3-22) a list of names
       let kids = call.kids;
       if (Array.isArray(call.lines)) {
         kids = call.lines.map((line) => ob.makeNode(KIND.seq, {},

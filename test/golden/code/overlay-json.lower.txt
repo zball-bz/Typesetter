@@ -1,0 +1,25 @@
+lower v1 abi 3d3ccfbb docEnd 665 holes 3 module 330dcace33c18611
+piece 0 hole 0 js [133,162)
+piece 1 hole 1 js [164,250)
+piece 2 hole 2 js [252,333)
+block 0 content [0,128)
+  CALL para [0,128)
+    TEXT "A noweb overlay over JSON (plan P3-22): each fragment name is one label token, whatever the grammar makes of the text around it." [0,128)
+block 1 content [130,224) user framed async holes 0..1
+  FENCE async "json" args=hole 0 body="<<config>>=\n{\"name\": \"<<the name>>\", \"n\": 1, <<more fields>>}" at=[159,220) lines=null [130,224)
+block 2 content [226,341)
+  CALL para [226,341)
+    TEXT "A rule turns it on for every JSON block; a CJK name keeps its bytes, and " [226,298) raw=0:0,73:72
+    CALL code [299,303) text="<<"
+    TEXT " with no close on its line stays code:" [304,341) raw=0:0,1:0
+block 3 stmt [343,422) user framed holes 1..2
+  STMT 1
+block 4 content [424,477) async
+  FENCE async "json" body="<<定义>>+=\n{\"a\": [1, 2], \"b\": \"x << y\"}" at=[432,473) lines=null [424,477)
+block 5 content [479,548)
+  CALL para [479,548)
+    TEXT "An empty list switches it off again, and the same text is plain JSON:" [479,548)
+block 6 stmt [550,624) user framed holes 2..3
+  STMT 2
+block 7 content [626,664) async
+  FENCE async "json" body="<<定义>>+=\n{\"a\": [1, 2]}" at=[634,660) lines=null [626,664)

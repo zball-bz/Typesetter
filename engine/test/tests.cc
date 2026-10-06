@@ -12,6 +12,7 @@
 #include "../src/api/doc.h"
 #include "../src/layout/paginate.h"
 #include "../src/support/hash128.h"
+#include "../src/code/overlay.h"
 #include "../src/code/tokens.h"
 #include "../src/model/cascade.h"
 #include "../src/break/items.h"
@@ -882,6 +883,31 @@ static void unitTokenConformance(const fs::path& root) {
 // fmtPxBuf (perf, ahead of plan P1-12): the integer formatter is printf's "%.3f" with
 // trailing zeros trimmed — exact ties (k/16, k/1024), negatives that round
 // to zero, subnormals, large values, random doubles.
+// (plan P3-22) the noweb overlay: spans, masking, merging; a capture alias
+static void unitOverlays() {
+  std::vector<std::string_view> unknown;
+  const u32 noweb = overlayMask("noweb weave", &unknown);
+  CHECK(noweb == 1 && unknown.size() == 1 && unknown[0] == "weave" && overlayNames(noweb) == "noweb");
+  CHECK(languageOfTag("c++") == "cpp" && languageOfTag("cpp-literate") == "cpp" && languageOfTag("tla").empty());
+  // a definition (with its suffix), a reference, a shift and an unclosed name
+  const std::string body = "<<a b>>+= x << 1; \"<<c>>\" <<d\n>>";
+  const std::vector<CodeToken> spans = overlaySpans(body, noweb);
+  CHECK(spans.size() == 2 && spans[0].start == 0 && spans[0].end == 9 && spans[1].start == 19 && spans[1].end == 24);
+  CHECK(spans[0].tag == (u8)tokenTagFromCapture("label"));
+  const std::string masked = maskSpans(body, spans);
+  CHECK(masked.size() == body.size() && masked.substr(0, 10) == "          " && masked.substr(10, 6) == "x << 1");
+  // a string run across the second span keeps its parts outside it
+  const std::vector<CodeToken> runs = {{10, 11, 7}, {18, 25, 1}};
+  const std::vector<CodeToken> merged = mergeSpans(runs, spans);
+  CHECK(merged.size() == 5);
+  CHECK(merged[0].start == 0 && merged[0].end == 9 && merged[1].start == 10 && merged[2].start == 18 &&
+        merged[2].end == 19 && merged[3].start == 19 && merged[3].end == 24 && merged[4].start == 24 &&
+        merged[4].end == 25 && merged[4].tag == 1);
+  CHECK(validTokens(body, merged.data(), merged.size()));
+  CHECK(overlaySpans("<<>> << >>", noweb).size() == 1);  // an empty name is none; a spaced one is
+  CHECK(tokenTagFromCapture("conditional.ternary") == 0 && tokenTagFromCapture("nope") == -1);
+}
+
 static void unitFmtPx() {
   auto ref = [](double px) {
     char b[64];
@@ -1993,6 +2019,7 @@ int main(int argc, char** argv) {
   unitRawMaps(fs::path(root));
   unitRegistry(fs::path(root));
   unitTextRules();
+  unitOverlays();
   unitFmtPx();
 
   fs::path fixtures = fs::path(root) / "test" / "fixtures";

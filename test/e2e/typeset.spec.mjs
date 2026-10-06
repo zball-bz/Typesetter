@@ -525,11 +525,11 @@ test('mailbox: back-to-back updates, the newest source wins (two-docs)', async (
   expect(res).toEqual({ a: true, b: true, dom: true, relayout: true, h: res.h });
 });
 
-// tokens.mjs: literate fragment names are blanked for the grammar, but the
-// byte offsets come from the ORIGINAL text — a CJK name used to shift every
-// later token into the middle of a UTF-8 sequence
+// literate fragment names are blanked for the grammar (plan P3-22: the
+// engine's noweb overlay, byte for byte), so a CJK name shifts no later
+// token into the middle of a UTF-8 sequence
 test('tokens: a CJK literate fragment name keeps its UTF-8', async ({ page }) => {
-  const source = '```cpp\n<<初始化>>=\nint x = 1; // 计数\n```';
+  const source = '```cpp-literate\n<<初始化>>=\nint x = 1; // 计数\n```';
   await page.goto('/test/e2e/harness.html');
   await page.waitForFunction(() => window.__tsrReady);
   const res = await page.evaluate(async ({ source }) =>
@@ -538,6 +538,22 @@ test('tokens: a CJK literate fragment name keeps its UTF-8', async ({ page }) =>
   expect(res.html).toContain('&lt;&lt;初始化&gt;&gt;=');
   expect(res.html).toContain('计数');
   expect(res.html).toMatch(/tsr-c-tok-type[^>]*>int</);  // later tokens still land (plan P3-18: a token's class)
+  expect(res.html).toMatch(/tsr-c-tok-label[^>]*>&lt;&lt;初始化&gt;&gt;=</);  // the fragment is one label
+});
+
+// (plan P3-22) the overlay is opt-in: plain C++ keeps its shifts, and a
+// rule turns noweb on for any language
+test('tokens: noweb is a profile or a rule, never plain cpp', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const plain = await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 400 }),
+    '```cpp\nint y = (1 << n) >> 2; // <<not a fragment>>\n```');
+  expect(plain.html).not.toContain('tsr-c-tok-label');
+  expect(plain.html).toMatch(/tsr-c-tok-comment[^>]*>\/\//);  // the comment holds what looks like a fragment
+  const ruled = await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 400 }),
+    "#{ $.set({kind: 'codeblock', lang: 'python'}, {codeblock: {overlays: ['noweb']}}) }\n\n```python\n<<setup>>=\nx = 1\n```");
+  expect(ruled.html).toMatch(/tsr-c-tok-label[^>]*>&lt;&lt;setup&gt;&gt;=</);
+  expect(ruled.html).toMatch(/tsr-c-tok-number[^>]*>1</);
 });
 
 // image dims: a relative src resolves against the PAGE (it was fetched

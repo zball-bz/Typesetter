@@ -1,0 +1,21 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="77" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="0">Font features by language reach every</span></div>
+<div class="tsr-line" data-s="0" data-e="77" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">fence tag of the language (plan P3-22):</span></div>
+<div class="tsr-line" data-s="78" data-e="168" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:-0.5px"><span class="tsr-r tsr-code tsr-pre" data-s="78" style="font-size:13.6px">cpp</span><span class="tsr-r" data-s="83">&#39;s apply to </span><span class="tsr-r tsr-code tsr-pre" data-s="95" style="font-size:13.6px">c++</span><span class="tsr-r" data-s="101"> and to </span><span class="tsr-r tsr-code tsr-pre" data-s="108" style="font-size:13.6px">cpp-literate</span><span class="tsr-r" data-s="122">; </span><span class="tsr-r tsr-code tsr-pre" data-s="124" style="font-size:13.6px">js</span><span class="tsr-r" data-s="129"> is</span></div>
+<div class="tsr-line" data-s="129" data-e="168" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="129">configured itself and keeps its own.</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="177" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-line tsr-row" data-s="0" data-e="10" data-ragged="1" style="top:0px;left:0px;width:300px;font-feature-settings:&quot;ss01&quot;;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">int a = 1;</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="209" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-line tsr-row" data-s="0" data-e="9" data-ragged="1" style="top:0px;left:0px;width:300px;font-feature-settings:&quot;ss01&quot;;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre tsr-c-tok-label" style="font-size:13.6px">&lt;&lt;step&gt;&gt;=</span></div>
+<div class="tsr-line tsr-row" data-s="10" data-e="20" data-ragged="1" style="top:24px;left:0px;width:300px;font-feature-settings:&quot;ss01&quot;;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">int b = 2;</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="241" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-line tsr-row" data-s="0" data-e="10" data-ragged="1" style="top:0px;left:0px;width:300px;font-feature-settings:&quot;zero&quot;;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let c = 3;</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="271" style="position:relative;height:24px">
+<div class="tsr-line tsr-row" data-s="0" data-e="10" data-ragged="1" style="top:0px;left:0px;width:300px;font-feature-settings:&quot;ss02&quot;;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let d = 4;</span></div>
+</div>
+</div>

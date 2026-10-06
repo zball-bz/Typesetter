@@ -1,0 +1,1 @@
+{"headings":[],"regions":[],"fences":[{"lang":"c++","span":[170,191]},{"lang":"cpp-literate","span":[193,233]},{"lang":"js","span":[235,255]},{"lang":"javascript","span":[257,285]}],"labels":[],"diagnostics":[]}

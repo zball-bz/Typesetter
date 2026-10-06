@@ -302,7 +302,8 @@
   "placeWidth": 103,
   "placeGap": 104,
   "cont": 105,
-  "textSpace": 106
+  "textSpace": 106,
+  "overlays": 107
  },
  "attrs": {
   "para.cont": 14,
@@ -364,6 +365,7 @@
   "codeblock.sidecarFrac": 13,
   "codeblock.contIndent": 13,
   "codeblock.features": 13,
+  "codeblock.overlays": 14,
   "codeblock.label": 9,
   "codeblock.role": 9,
   "codeblock.slot": 9,
@@ -511,6 +513,7 @@
   "styled.sidecarFrac": 13,
   "styled.contIndent": 13,
   "styled.features": 13,
+  "styled.overlays": 14,
   "styled.punct": 13,
   "styled.parSingleLine": 14,
   "styled.keep": 14,

@@ -1,0 +1,9 @@
+doc @[0,665)
+  para @[0,128) lines=1
+  fence @[130,224) lang="json(overlays: [\"noweb\"])" lines=2
+  para @[226,341) lines=1
+  code-block @[343,422) js=" $.set({kind: 'codeblock', lang: 'json'}, {codeblock: {overlays: 'noweb'}}) "
+  fence @[424,477) lang="json" lines=2
+  para @[479,548) lines=1
+  code-block @[550,624) js=" $.set({kind: 'codeblock', lang: 'json'}, {codeblock: {overlays: []}}) "
+  fence @[626,664) lang="json" lines=2

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const check = process.argv.includes('--check');
-const GENERATORS = ['tools/gen-schema.mjs', 'tools/gen-syntax.mjs', 'tools/gen-res.mjs', 'tools/gen-lower.mjs', 'tools/mathdict.py', 'tools/gen-grammars.mjs', 'tools/ucdc.mjs'];
+const GENERATORS = ['tools/gen-schema.mjs', 'tools/gen-syntax.mjs', 'tools/gen-languages.mjs', 'tools/gen-res.mjs', 'tools/gen-lower.mjs', 'tools/mathdict.py', 'tools/gen-grammars.mjs', 'tools/ucdc.mjs'];
 let failed = 0;
 for (const g of GENERATORS) {
   try {

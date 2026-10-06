@@ -4,6 +4,8 @@
 #include <limits>
 #include <memory>
 #include "../ast/ast.h"
+#include "../code/languages.gen.h"
+#include "../code/overlay.h"
 #include "../code/tokens.h"
 #include "../codegen/codegen.h"
 #include "../math/env.h"
@@ -214,7 +216,7 @@ struct Doc {
     for (u32 i = 0; i < f.rt.tokenNeeds.size(); i++) {
       const TokenNeed& t = f.rt.tokenNeeds[i];
       if (t.st != ResState::Pending) continue;
-      const TokenNeed* src = rt.tokens(strs.find(f.strs.get(t.lang)), strs.find(f.strs.get(t.body)));
+      const TokenNeed* src = rt.tokens(strs.find(f.strs.get(t.lang)), strs.find(f.strs.get(t.body)), t.overlays);
       if (src && src->st != ResState::Pending) f.settleTokens(i, src->toks.data(), src->toks.size(), src->st);
     }
     for (u32 i = 0; i < f.rt.boxNeeds.size(); i++) {
@@ -283,19 +285,32 @@ struct Doc {
         else return false;
         return true;
       };
-      // env 1: the per-language code features (code.fontFeaturesByLang:
-      // rules on code blocks of that language, plan P3-02), then style.rules
-      std::vector<StyleRule> host;
-      for (const auto& [lang, feats] : cfg.codeFontFeaturesByLang) {
+      // a code block's rule by its fence tag (lang)
+      auto codeRule = [&](std::string_view lang, ArgK key, std::string_view value) {
         StyleRule r;
         r.sel.kind = (u16)Kind::codeblock;
         r.sel.where.push_back({ArgK::lang, strs.intern(lang)});
-        r.patch.push_back({ArgK::features, ArgTag::Str, 0, strs.intern(feats)});
-        host.push_back(std::move(r));
-      }
+        r.patch.push_back({key, ArgTag::Str, 0, strs.intern(value)});
+        return r;
+      };
+      // env 1: the per-language code features (code.fontFeaturesByLang:
+      // rules on code blocks of that language, plan P3-02) — a built-in
+      // language's for each of its fence tags (plan P3-22: c++ and
+      // cpp-literate are cpp), the tag as configured winning — then
+      // style.rules
+      std::vector<StyleRule> host;
+      const auto& byLang = cfg.codeFontFeaturesByLang;
+      for (const auto& [lang, feats] : byLang)
+        for (const LangAlias& a : kLangAliases)
+          if (a.lang == languageOfTag(lang) && a.tag != lang && !byLang.count(std::string(a.tag)))
+            host.push_back(codeRule(a.tag, ArgK::features, feats));
+      for (const auto& [lang, feats] : byLang) host.push_back(codeRule(lang, ArgK::features, feats));
       if (!cfg.styleRules.empty())
         for (StyleRule& r : parseRules(cfg.styleRules, strs, diags, "style.rules", setting)) host.push_back(std::move(r));
+      // env 0: the engine's defaults, then the fence profiles' (plan P3-22:
+      // cpp-literate's code blocks get the noweb overlay)
       std::vector<StyleRule> defaults = parseRules(defaultRulesJson(), strs, diags, "defaults", setting);
+      for (const LangProfile& p : kProfiles) defaults.push_back(codeRule(p.tag, ArgK::overlays, overlayNames(p.overlays)));
       for (StyleRule& r : defaults) r.builtin = true;
       cascade.setBase(std::move(defaults), std::move(host));
     }
@@ -326,19 +341,33 @@ struct Doc {
   }
 
   // a code block with a language and a plain body needs its tokens; the
-  // engine answers its own language (plan P1-09; code-design §2): 'tsm'
+  // engine answers its own language (plan P1-09; code-design §2): 'tsm'.
+  // Its overlays (plan P3-22; code/overlay.h) blank their spans in the text
+  // the provider tokenizes.
   void scanTokenNeeds(const ContentNode* n, u32 pid) {
     if (!n) return;
     if (n->kind == Kind::codeblock && !n->kids.empty() && n->kids[0]->kind == Kind::text) {
       const StrRef lang = attrStr(n, ArgK::lang);
       if (lang && !strs.get(lang).empty()) {
-        const u32 i = rt.needTokens(lang, n->kids[0]->str);
+        const StrRef body = n->kids[0]->str;
+        std::vector<std::string_view> unknown;
+        const u32 overlays = overlayMask(strs.get(nodeProps.get(n->props).codeOverlays), &unknown);
+        for (std::string_view u : unknown)
+          diags.add(Sev::Warning, "code-overlay", n->span,
+                    "no overlay '" + std::string(u) + "' (engine/schema/languages.json has: " + overlayNames(~0u) + ")");
+        bool fresh = false;
+        const u32 i = rt.needTokens(lang, body, overlays, &fresh);
+        TokenNeed& need = rt.tokenNeeds[i];
+        if (fresh && overlays) {
+          need.spans = overlaySpans(strs.get(body), overlays);
+          if (!need.spans.empty()) need.sent = strs.intern(maskSpans(strs.get(body), need.spans));
+        }
         waitTokens[pid].push_back(i);
         // an in-engine answerer, else the Session (plan P1-21), else the host
         std::vector<CodeToken> toks;
-        if (rt.tokenNeeds[i].st == ResState::Pending &&
-            (session().answerTokens(strs.get(lang), strs.get(n->kids[0]->str), toks) ||
-             session().tokens(strs.get(lang), strs.get(n->kids[0]->str), toks)))
+        if (need.st == ResState::Pending &&
+            (session().answerTokens(strs.get(lang), strs.get(need.sent), toks) ||
+             session().tokens(strs.get(lang), strs.get(need.sent), toks)))
           settleTokens(i, toks.data(), toks.size(), ResState::Ready);
       }
     }
@@ -368,7 +397,7 @@ struct Doc {
   void settleTokens(u32 i, const CodeToken* toks, size_t n, ResState st) {
     if (i >= rt.tokenNeeds.size() || rt.tokenNeeds[i].st != ResState::Pending) return;
     TokenNeed& t = rt.tokenNeeds[i];
-    if (st == ResState::Ready && !validTokens(strs.get(t.body), toks, n)) {
+    if (st == ResState::Ready && !validTokens(strs.get(t.sent), toks, n)) {
       diags.addAs(DiagOrigin::Provide, Sev::Warning, "provider-invalid", {},
                   "code tokens for '" + std::string(strs.get(t.lang)) + "' rejected: unsorted, overlapping, "
                   "off a UTF-8 boundary, past the body or of an unknown tag");
@@ -376,6 +405,7 @@ struct Doc {
     }
     t.st = st;
     if (st == ResState::Ready) t.toks.assign(toks, toks + n);
+    if (st == ResState::Ready && !t.spans.empty()) t.merged = mergeSpans(t.toks, t.spans);
     invalidateFrom(Stage::Emit);
   }
   // Box sizes: 0×0 (or anything not finite and positive) is a failed load:
@@ -472,7 +502,7 @@ struct Doc {
       WireKind& k = kind(ResKind::codeTokens, b.tokens.size());
       for (size_t i = 0; i < b.tokens.size(); i++) {
         k.rows[i].col[0] = str(rt.tokenNeeds[b.tokens[i]].lang);
-        k.rows[i].col[1] = str(rt.tokenNeeds[b.tokens[i]].body);
+        k.rows[i].col[1] = str(rt.tokenNeeds[b.tokens[i]].sent);
       }
     }
     if (!b.vmets.empty()) {
@@ -553,7 +583,7 @@ struct Doc {
             settleTokens(ti, toks.data(), toks.size(), ok && shaped ? ResState::Ready : ResState::Failed);
             const TokenNeed& tn = rt.tokenNeeds[ti];
             if ((r.flags & 1) && tn.st == ResState::Ready)  // write-through
-              session().putTokens(strs.get(tn.lang), strs.get(tn.body), tn.toks);
+              session().putTokens(strs.get(tn.lang), strs.get(tn.sent), tn.toks);
             break;
           }
           case ResKind::boxInfo:
@@ -1033,7 +1063,7 @@ struct Doc {
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
     AnchorScope ids(cfg.idPrefix);
-    std::string html = renderSemantic(tree, strs, styles, &rt, registry, &cascade);
+    std::string html = renderSemantic(tree, strs, styles, &rt, registry, &cascade, &nodeProps);
     (void)rulesToCss(cascade, tree, strs, &diags);  // what its stylesheet leaves out (rule-no-css)
     reportWriterDefects();
     return html;
@@ -1049,7 +1079,7 @@ struct Doc {
       auto it = index.labels.find(std::string(strs.get(to)));
       return it != index.labels.end() && it->second.k == LabelTarget::K::Marker;
     };
-    return renderSemanticFragment(tree, strs, styles, &rt, registry, &cascade, label, backlink);
+    return renderSemanticFragment(tree, strs, styles, &rt, registry, &cascade, &nodeProps, label, backlink);
   }
 
   // the semantic page's stylesheet (rulesToCss, plan P3-01): what the rules

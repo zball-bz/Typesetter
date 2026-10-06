@@ -106,7 +106,7 @@ column tables of both codecs: `resource/resources.gen.h`,
 | textWidth (1) | metric key, text | px | Content |
 | fontVmet (2) | metric key | ascent, descent px | Content |
 | fontFace (3) | family, src, weight, style | status (reserved: no declared faces yet) | None |
-| codeTokens (4) | language, body | runs (start, end, tag)… | Content |
+| codeTokens (4) | language, body (its overlay spans blanked: plan P3-22) | runs (start, end, tag)… | Content |
 | boxInfo (5) | kind (0 image), ref, available px | w, h, baseline px | Host |
 
 The **metric key** is the complete measurement tuple (D-T04): the resolved
@@ -185,7 +185,11 @@ in one place, `runtime/src/shared/resources/`:
   (`codeTokens`, `boxInfo`: keys that are authored content), and its rows
   are answered with `store: false`, so the Session keeps no answer of one
   document's code for another. A provider that throws fails its kind's rows
-  (an image's placeholder, plain code), never the batch.
+  (an image's placeholder, plain code), never the batch. A kind may have
+  several providers (plan P3-22): a row goes to the latest registered whose
+  `match(row)` accepts it (none declared: every row). A host thus adds a
+  language (`match: (r) => r.lang === 'tla'`) beside the built-in
+  highlighter.
 - **ResourceJob** (`host.job({bases, root})`, one per document): the pull
   loop's `answer(request, {stale, capability})`, the loads
   (`load(src, {as: 'text' | 'json' | 'bytes', role})`) and the

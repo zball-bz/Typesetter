@@ -29,6 +29,7 @@ add_library(tsr_core STATIC
   src/model/model.cc
   src/model/cascade.cc
   src/model/normalize.cc
+  src/code/overlay.cc
   src/code/tokens.cc
   src/math/math.cc
   src/math/font.cc
@@ -98,24 +99,44 @@ if(EMSCRIPTEN)
     -sEXPORT_NAME=createTypesetterDebug)
 else()
   # statically linked tree-sitter + grammars: the native token provider
-  # (code-design.md §2 — same parse tables as the web side modules)
+  # (code-design.md §2 — same parse tables as the web side modules). The
+  # grammars are engine/schema/languages.json's native ones (plan P3-22:
+  # tools/gen-languages.mjs writes native_grammars.gen.cmake).
+  include(${CMAKE_CURRENT_SOURCE_DIR}/native_grammars.gen.cmake)
+  set(TSR_GRAMMAR_SOURCES)
+  set(TSR_GRAMMAR_DIRS)
+  set(TSR_QUERIES "")
+  set(TSR_GRAMMAR_ROWS "")
+  foreach(g ${TSR_NATIVE_GRAMMARS})
+    foreach(f ${TSR_GRAMMAR_${g}_FILES})
+      list(APPEND TSR_GRAMMAR_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../${TSR_GRAMMAR_${g}_DIR}/${f})
+    endforeach()
+    list(APPEND TSR_GRAMMAR_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../${TSR_GRAMMAR_${g}_DIR})
+    # its highlight queries, embedded at build time (plan P1-03: tsrc needs
+    # no repository path), base first
+    set(scm "")
+    foreach(q ${TSR_GRAMMAR_${g}_SCM})
+      file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../${q} part)
+      string(APPEND scm "${part}\n")
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${q})
+    endforeach()
+    string(APPEND TSR_QUERIES "extern \"C\" const TSLanguage* tree_sitter_${g}();\n")
+    string(APPEND TSR_QUERIES "constexpr std::string_view kQuery_${g} = R\"tsrq(${scm})tsrq\";\n")
+    string(APPEND TSR_GRAMMAR_ROWS "    {\"${g}\", tree_sitter_${g}, kQuery_${g}},\n")
+  endforeach()
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/native_grammars.gen.cmake)
   add_library(tsr_treesitter STATIC
     ../third_party/tree-sitter/lib/src/lib.c
-    ../third_party/grammars/json/parser.c
-    ../third_party/grammars/tsm/parser.c
+    ${TSR_GRAMMAR_SOURCES}
   )
   target_include_directories(tsr_treesitter PUBLIC
     ../third_party/tree-sitter/lib/include
     ../third_party/tree-sitter/lib/src
-    ../third_party/grammars/json
-    ../third_party/grammars/tsm
+    ${TSR_GRAMMAR_DIRS}
   )
   target_compile_options(tsr_treesitter PRIVATE -w)
 
-  # the native token provider, with its highlight queries embedded at build
-  # time (plan P1-03: tsrc needs no repository path)
-  file(READ ../third_party/grammars/json/highlights.scm JSON_SCM)
-  file(READ ../grammar/tree-sitter-tsm/highlights.scm TSM_SCM)
+  # the native token provider and its grammar table
   configure_file(src/code/native_queries.gen.h.in
                  ${CMAKE_CURRENT_BINARY_DIR}/gen/native_queries.gen.h @ONLY)
   add_library(tsr_native STATIC src/code/native_tokens.cc)

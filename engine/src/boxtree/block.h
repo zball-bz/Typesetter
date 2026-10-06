@@ -59,6 +59,7 @@ struct BlockTraits {
   bool snapKerning = false;
   float sidecarFrac = 0.4f;
   i32 contIndent = 2;
+  u32 codeOverlays = 0;  // (plan P3-22) its overlay mask: the key of its tokens
   // (plan P3-14; design T6 S12) the block trait group: a page cut inside
   // it avoided (keep together; with-next is keepWithNext), the space above
   // and below it (collapsing with its neighbours' and the stack's gap), a

@@ -6,6 +6,13 @@ import { AUDIT } from '../shared/audit-constants.mjs';
 // the advance of one space in a CSS font shorthand (canvas: same shaping
 // as the DOM for a lone space)
 const spaceCache = new Map();
+// an element's font as a canvas font string, from the longhands: the
+// computed `font` shorthand serializes to "" whenever a longhand it cannot
+// express is set (font-feature-settings on a code row, plan P3-22)
+function canvasFont(el) {
+  const cs = getComputedStyle(el);
+  return `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+}
 function spaceAdvance(font) {
   if (!font) return 0;
   let w = spaceCache.get(font);
@@ -135,7 +142,7 @@ export function auditTypeset(root) {
       const ws = parseFloat(l.style.wordSpacing || '0');
       if (!(ws < AUDIT.wordSpacingFloorPx)) continue;
       const first = l.querySelector('span');
-      const limit = -AUDIT.shrinkShare * spaceAdvance(first ? getComputedStyle(first).font : '') - AUDIT.shrinkSlackPx;
+      const limit = -AUDIT.shrinkShare * spaceAdvance(first ? canvasFont(first) : '') - AUDIT.shrinkSlackPx;
       if (ws < Math.min(AUDIT.wordSpacingFloorPx, limit)) {
         report.failures.push({ audit: 'compression', pid: para.dataset.pid, ws });
         break;
@@ -150,7 +157,7 @@ export function auditTypeset(root) {
   // Lines of text runs only (objects size their own boxes).
   const g = document.createElement('canvas').getContext('2d');
   const extents = (el) => {
-    g.font = getComputedStyle(el).font;
+    g.font = canvasFont(el);
     const m = g.measureText('Hg');
     return [m.fontBoundingBoxAscent, m.fontBoundingBoxDescent];
   };

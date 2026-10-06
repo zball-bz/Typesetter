@@ -482,7 +482,9 @@ function convertPage(html, base, stats) {
       const bodyTxt = (head ? head + '\n' : '') + text.replace(/^\s*\n/, '').trimEnd();
       if (!bodyTxt.trim()) continue;
       stats.frags++;
-      out2 += `\n\n\`\`\`cpp\n${bodyTxt}\n\`\`\`\n\n`;
+      // (plan P3-22) cpp-literate: C++ with the engine's noweb overlay, so
+      // <<fragment>> names are labels and a shift stays a shift
+      out2 += `\n\n\`\`\`cpp-literate\n${bodyTxt}\n\`\`\`\n\n`;
     }
     html = out2 + html.slice(pos);
   }
@@ -499,7 +501,7 @@ function convertPage(html, base, stats) {
     .replace(/\$/g, '\\$').replace(/#/g, '\\#').replace(/@(?=[A-Za-z\[])/g, '\\@');
 
   const out = [];
-  const re = /<(h2|h3|h4|p|li|pre)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;
+  const re = /<(h2|h3|h4|p|li|pre)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp(?:-literate)?\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;
   let m;
   while ((m = re.exec(html))) {
     if (m[0].startsWith('```') || m[0].startsWith('#!figure')) { out.push('', m[0], ''); continue; }

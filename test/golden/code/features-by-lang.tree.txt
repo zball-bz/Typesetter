@@ -1,0 +1,23 @@
+doc @[0,285) [base]
+  para @[0,168) [base]
+    text @[0,77) [base] str="Font features by language reach every fence tag of the language (plan P3-22): " raw=0:0,78:77
+    code @[78,83) [CODEx0.85]
+      text @[78,83) [CODEx0.85] str="cpp"
+    text @[83,94) [base] str="'s apply to " raw=0:0,12:11
+    code @[95,100) [CODEx0.85]
+      text @[95,100) [CODEx0.85] str="c++"
+    text @[101,107) [base] str=" and to " raw=0:0,1:0,8:6
+    code @[108,122) [CODEx0.85]
+      text @[108,122) [CODEx0.85] str="cpp-literate"
+    text @[122,123) [base] str="; " raw=0:0,2:1
+    code @[124,128) [CODEx0.85]
+      text @[124,128) [CODEx0.85] str="js"
+    text @[129,168) [base] str=" is configured itself and keeps its own." raw=0:0,1:0
+  codeblock @[170,191) [CODEx0.85 features="\"ss01\""] lang="c++"
+    text @[177,187) [CODEx0.85 features="\"ss01\""] str="int a = 1;"
+  codeblock @[193,233) [CODEx0.85 features="\"ss01\""] lang="cpp-literate"
+    text @[209,229) [CODEx0.85 features="\"ss01\""] str="<<step>>=\nint b = 2;"
+  codeblock @[235,255) [CODEx0.85 features="\"zero\""] lang="js"
+    text @[241,251) [CODEx0.85 features="\"zero\""] str="let c = 3;"
+  codeblock @[257,285) [CODEx0.85 features="\"ss02\""] lang="javascript"
+    text @[271,281) [CODEx0.85 features="\"ss02\""] str="let d = 4;"

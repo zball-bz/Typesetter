@@ -909,12 +909,12 @@ struct Emitter {
     // were already folded at instantiation).
     const StrRef lang = attrStr(n, ArgK::lang);
     const TokenNeed* tok = bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text && lang && E.rt
-                               ? E.rt->tokens(lang, bodyKids[0]->str)
+                               ? E.rt->tokens(lang, bodyKids[0]->str, tr.codeOverlays)
                                : nullptr;
     if (tok && tok->st == ResState::Ready) {
       std::vector<std::vector<TokenRun>> lines;
-      tokenLines(strs.get(bodyKids[0]->str), bodyKids[0]->style, E.cascade, bodyKids[0]->env, tok->toks.data(),
-                 tok->toks.size(), strs, styles, lines);
+      tokenLines(strs.get(bodyKids[0]->str), bodyKids[0]->style, E.cascade, bodyKids[0]->env, tok->runs().data(),
+                 tok->runs().size(), strs, styles, lines);
       for (const std::vector<TokenRun>& line : lines) {
         std::vector<CodeRun>& runs = g.lines.emplace_back();
         for (const TokenRun& r : line)

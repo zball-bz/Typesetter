@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-22
+- 下一步：P3-23
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -88,7 +88,7 @@
 | P3-19 | 基线权威 | done | grep:plan P3-19 | 2026-10-06 | 31 个 golden 变化（脚本核对：代码行 class 加 tsr-row 与 font-size（代码字号）、用户字体族 run 加内联 line-height；dl 调试产物的行基线数值随模型变化）；e2e：所有用例的 devAudit 新增基线检查（≤1px，四种 DPR 全过），新增"宿主 line-height 3 下基线不动"用例 | 文本行基线 = 行顶 + 最高 run 的 ascent（Fragment.baseline 改为内容高公式）；契约 CSS：.tsr-line line-height 0（strut 不抬高），.tsr-r/.tsr-cjk/.tsr-code/mono-cjk 的 line-height 取 --tsr-lh-* 变量（fallback normal）；RenderResult head 带 container.lh（各字体角色的 (ascent+descent)/em，取文档测过的常规字面），shell 每次 commit 后设到根元素；用户字体族的 run 由 paint 按其字面度量写内联 line-height；代码行 tsr-row：内联代码字号、契约令 strut 为等宽字面，行内居中与 layout 一致。devAudit 基线检查（文字行 = 最高 ascent；代码行 = 居中）。文档：render-design §5、document-model §8、tsm-changes |
 | P3-20 | 安全评审检查点 | done | grep:plan P3-20 | 2026-10-06 | +1 用例（inline/link-url-diag，仅新增）| docs/security-review.md：§0 信任模型（文档即代码）、§1 RawHtml、§2 元素与属性白名单、§3 定位器与资源路径、§4 解码器与 fuzz 目标。本步发现并修复两项：链接/引用 URL 不限 scheme（`javascript:` 在排版页、语义页与静态导出成为活链接）→ 解码时按 url_policy.def 丢弃并报 ops-arg；role 的 html 可为任意小写元素名（script、iframe）→ 限于短语元素白名单，否则注册表拒绝。url_policy.def 生成 C++ safeImageSrc/safeLinkUrl 与 JS urlAllowed。fuzz --long 30 分钟（七个目标）无新崩溃 |
 | P3-21 | ResourceHost、定位器、引用清单、静态导出 | done | grep:plan P3-21 | 2026-10-06 | 0（录制器经 ResourceHost 复现全部 .ops，含 cite/*）；e2e 新增宿主 provider 模块用例 | runtime/src/shared/resources/：ResourceHost（provider 注册表，文档 provider 只限 resources.def docProviders 的 codeTokens/boxInfo，行带 store:false；provider 抛错只令本类行失败）、ResourceJob（拉取循环的 answer、执行期 load、清单）、ResourceLocator（按来源的 base、请求方类别 exec/image/input、url_policy.def 的用途，Node 文件限于根目录且读时按真实路径复查）、LruCache（条目、字节、TTL、失败 TTL 为 policy 四行）；内建 provider：canvas 宽度与纵向度量、代码 token、图片尺寸（嗅探→解码→主线程能力）。`$.load`/`ctx.load`（{as: text|json|bytes}）与 #bibliography 走同一 job.load。createEngine({providers:[{kind,module}]}) 由 worker 导入并注册；renderTsm({providers}|{host})。产品 references、docinfo 与 tsr2_product；renderTsm 返回 {html, css, diagnostics, ok, manifest, settings, docinfo}。export-static：docinfo 的 lang 与标题、按清单复制文档目录内的资源（真实路径复查）、按 shell.mjs 的模块图复制水合资源（tools/lib/module-graph.mjs）；tools/check-export.mjs 入 G6。文档：host-protocol-design §4b、pages-design §3、ctor-design、security-review 补遗、tsm-changes |
-| P3-22 | 代码高亮清单与引擎侧 overlay | todo | | | | |
+| P3-22 | 代码高亮清单与引擎侧 overlay | done | grep:plan P3-22 | 2026-10-06 | 0 变化；+3 用例（code/overlay-json、code/overlay-unknown-diag、code/features-by-lang，仅新增）；native json-hl/tsm-hl 字节不变（stable_sort 无并列换序） | engine/schema/languages.json 为唯一清单（类别→编辑器类型、捕获别名、语言与别名、TextMate 作用域、语法源与查询、native、overlay、profile）；tools/gen-languages.mjs 生成 languages.gen.mjs（worker/编辑器/stdlib）、editors/vscode-tsm/src/hl.gen.js、engine/src/code/languages.gen.h、engine/native_grammars.gen.cmake（CMake 据此编译语法并嵌入查询）；gen-grammars 的 TextMate 围栏与 overlay 注入、codehl-assets 的语法表均读清单；生成器拒绝类别≠TOKEN_TAGS、主题缺类、native 语法用 #match?。hl-core.mjs（tagOf、resolveCaptures：稳定排序）供 worker 与编辑器共用；native 孪生 stable_sort 并求值 #eq?/#not-eq?/#any-of?/#not-any-of?。引擎侧 overlay（code/overlay.{h,cc}）：codeblock.overlays 属性（键 107，since 14，域 names），围栏参数、规则或 profile 默认规则（cpp-literate）开启；Resolve 时找区间、按字节置空格后请求、Emit 与语义页把区间合并为 label 词元；需求键 (语言, 正文, overlay)。去掉 worker 中只对 cpp 全局生效的正则；pbr2tsm 输出 cpp-literate。资源宿主一个种类可有多个 provider（match(row)），宿主可在运行时增加语言。code.fontFeaturesByLang 作用于内建语言的所有围栏标签。文档：code-design §8、host-protocol §4a/§4b、tsm-changes |
 | P3-23 | PresentationMap（元素行的 html 段） | todo | | | | |
 | P3-24 | SymbolInfo 身份与数据驱动的数学族 | todo | | | | |
 | P3-25 | 运算符原子与单一 mlist→item 转换 | todo | | | | |
@@ -165,6 +165,7 @@
 | P3-19 后 | 3.20 | 10.70 | 26.70 | 1.9 / 3.1 / 0.8 / 9.9 / 3.2 | 69.1 / 105.1 / 148.2 | 1.70 / 22.90 / 59.40 | 均在 P3 门限内 |
 | P3-20 后 | 3.30 | 10.60 | 26.90 | 1.7 / 3.1 / 0.8 / 9.8 / 3.3 | 71.3 / 104.9 / 146.9 | 1.70 / 21.70 / 58.30 | 均在 P3 门限内（解码时多一次链接 URL 检查） |
 | P3-21 后 | 3.50 | 10.40 | 27.10 | 1.8 / 3.2 / 0.8 / 10.1 / 3.3 | 66.7 / 102.3 / 147.6 | 1.70 / 22.60 / 55.80 | 均在 P3 门限内（拉取循环的各类行经 provider 注册表分派） |
+| P3-22 后 | 3.50 | 11.00 | 26.80 | 1.8 / 3.4 / 0.8 / 9.9 / 3.3 | 68.7 / 99.3 / 145.1 | 1.70 / 22.30 / 54.70 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -362,6 +363,13 @@
 | P3-21 | 文档 provider 只有注册表的 document 选项与 docProviders 检查，文档侧的注册入口（#use）未做 | #use 属 P3-31 | P3-31 |
 | P3-21 | 图片尺寸的失败不再在 worker 生命周期内永久缓存，而是在 resourceFailureTtlMs（10 秒）后重试；资源缓存的上限与 TTL 新增 policy 四行（计划只写 LruCache） | 临时失败（网络抖动）不应让编辑会话一直显示占位；宿主旋钮按约定是 schema policy 行，不是 worker 字段 | 无 |
 | P3-21 | 修复（本步发现）：renderTsm 与静态导出的每篇文档都带两条 rule-no-css 警告，来自引擎自己的默认规则（图片 side 的属性选择器，语义页不标记侧放图片）；现在只报告宿主与文档的规则 | 作者无法处理的警告是噪声，会淹没真正的诊断 | 语义页的侧放图片属 P3-23 |
+| P3-22 | 清单放在 engine/schema/languages.json（设计写 runtime/hl/languages.json） | 与 schema.json、url_policy.def 等词汇表同处，由 gen-all 生成与检查；runtime/hl 并不存在（runtime/assets/hl 是被忽略的构建产物） | 无 |
+| P3-22 | 类别的集合与顺序仍是 syntax.def 的 TOKEN_TAGS（引擎内的 tsm 分词共用），清单只给每类的编辑器类型并由生成器核对；theme.css 的 .tsr-c-tok-* 仍手写，由生成器检查覆盖 | 一处定义类别集合；主题是可替换的配色表，无法生成颜色 | 无 |
+| P3-22 | 答复不带 canonLang（线格式不变）：code.fontFeaturesByLang 由引擎按内建别名表展开到同一语言的所有围栏标签（c++、cc、c、cpp-literate 属 cpp），显式配置的标签优先；宿主 provider 的语言就是它的围栏标签 | 规则在 Resolve 前已经确定，按答复改写样式需重新级联；内建语言的别名表引擎本就生成 | 无 |
+| P3-22 | 代码块选择器的 `lang` 改为代码语言（节点自身属性），文本语言用 `textLang`（行为变化） | 规则按语言开启 overlay 或设置代码选项需要它；此前 `lang` 对代码块选的是文本语言，没有已知用法 | 无 |
+| P3-22 | cpp 增加别名 c（worker 此前不高亮 ```c；编辑器的 TextMate 早已把 c 当作 cpp） | 两处行为统一，按 tree-sitter-cpp 高亮 C 代码质量足够 | 无 |
+| P3-22 | 语义页的 class 保持围栏原文（language-cpp-literate），profile 只通过默认规则设置 overlays | profile 是规则，不改写作者的属性 | 无 |
+| P3-22 | 修复（本步发现）：devAudit 用计算样式的 font 简写设置 canvas，而有 font-feature-settings 时该简写序列化为空串，基线检查与压缩检查用了陈旧字体；改为由各分项拼出字体串 | 新增的 features-by-lang 用例暴露；P3-19 的基线检查对设置了字体特性的代码行误报 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）
