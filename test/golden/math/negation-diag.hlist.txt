@@ -76,7 +76,6 @@ top pid=0 units=1
   box Other "and" w=1537su r2 @[145,148)
   glue word w=257su x=1 cap=257su src r2 @[145,148)
   box object o1 math part=0 asc=819su desc=215su "Equiv(A, B)" w=5146su r3 @[149,162)
-  pen 0 r3
   box Other "." w=513su r4 @[162,163)
   obj o0 math parts=1 edges=Alpha/Alpha src="a !<< b" [w=2762su asc=819su desc=205su]
   obj o1 math parts=1 edges=Alpha/Alpha src="Equiv(A, B)" [w=5146su asc=819su desc=215su]

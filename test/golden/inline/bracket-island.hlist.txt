@@ -187,7 +187,6 @@ top pid=5 units=1
   box Other "and" w=1537su r2 @[393,396)
   glue word w=257su x=1 cap=257su src r2 @[393,396)
   box object o1 math part=0 asc=721su desc=239su "x \\, y" w=2114su r3 @[397,405)
-  pen 0 r3
   box Other "." w=513su r4 @[405,406)
   obj o0 math parts=1 edges=Alpha/Alpha src="a \\$ b" [w=1796su asc=725su desc=110su]
   obj o1 math parts=1 edges=Alpha/Alpha src="x \\, y" [w=2114su asc=721su desc=239su]

@@ -16,7 +16,6 @@ top pid=0 units=2
   box Other "," w=513su r2 @[0,4)
   glue word w=257su x=1 cap=257su src r2 @[0,4)
   box object o0 math part=0 asc=967su desc=12su "x^2" w=948su r3 @[0,4)
-  pen 0 r3
   box Other "," w=513su r4 @[0,4)
   glue word w=257su x=1 cap=257su kern=", a" src r4 @[0,4)
   box Other "a" w=513su r4 @[0,4)
@@ -49,7 +48,6 @@ top pid=1 units=1
   box Other "," w=821su r0 @[29,30)
   glue word w=411su x=1 cap=411su src r0 @[29,30)
   box object o0 math part=0 asc=1547su desc=20su "x^2" w=1516su r1 @[31,36)
-  pen 0 r1
   box Other "," w=821su r2 @[36,44)
   glue word w=411su x=1 cap=411su kern=", a" src r2 @[36,44)
   box Other "a" w=821su r2 @[36,44)

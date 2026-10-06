@@ -8,21 +8,9 @@
 #include "../model/model.h"
 #include "../resource/resource_table.h"
 #include "../math/env.h"
+#include "../shape/context.h"
 
 namespace tsr {
-
-// (plan P3-30; finding markup-language/quote-context-heuristic) how the
-// ambiguous marks — curly quotes, the em dash, the ellipsis — of a run are
-// set: as its own language says (zh, ja, ko: CJK punctuation; another:
-// Latin glyphs), or, a run without one, by its neighbours
-enum class MarkClass : u8 { Neighbours, Cjk, Latin };
-inline MarkClass markClassOf(StrRef lang, const Interner& strs) {
-  if (!lang) return MarkClass::Neighbours;
-  std::string_view tag = strs.get(lang);
-  tag = tag.substr(0, tag.find_first_of("-_"));
-  auto is = [&](const char* l) { return tag.size() == 2 && (tag[0] | 32) == l[0] && (tag[1] | 32) == l[1]; };
-  return is("zh") || is("ja") || is("ko") ? MarkClass::Cjk : MarkClass::Latin;
-}
 
 struct EmitEnv {
   Arena& arena;
@@ -71,16 +59,14 @@ struct InlineSink {
   virtual void copyPolicy(const ContentNode* n, Flow& u, ICtx& ctx) = 0;
   // the paragraph indent (首行缩进, App C): an unbreakable fixed-width box
   virtual void indent(Flow& u, StyleId st, Span span, double px, double em) = 0;
-  // the unit's inline stream is complete
+  // the unit's inline stream is complete (plan P4-02: walk and indent
+  // record it; finish shapes it as one paragraph)
   virtual void finish(Flow& u) = 0;
   // a cell's stream (table cell, caption row, sidecar line) moves to its cell
   virtual void toCell(Flow& tmp, Flow& tc) = 0;
-  // the whole document is emitted (cross-unit passes)
-  virtual void done(std::vector<TopBlock>& tops) = 0;
 };
 
 struct BoxTree;
 // shapes every leaf of the box tree through the sink
-std::vector<TopBlock> emitWith(const BoxTree& bt, EmitEnv& env, InlineSink& sink);
 
 }  // namespace tsr

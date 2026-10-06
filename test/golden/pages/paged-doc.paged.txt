@@ -39,7 +39,7 @@
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
 <div class="tsr-band" data-b="6">
 <div class="tsr-line" data-s="613" data-e="679" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.333px"><span class="tsr-r tsr-cjk" data-s="613" style="letter-spacing:0.8px">尾段</span><span class="tsr-r tsr-cjk" data-s="613">：</span><span class="tsr-r tsr-cjk" data-s="613" style="letter-spacing:0.8px">越过图之后继续排布</span><span class="tsr-r tsr-cjk" data-s="613">，</span><span class="tsr-r tsr-cjk" data-s="613" style="letter-spacing:0.8px;margin-right:-0.8px">直至文档结</span></div>
-<div class="tsr-line" data-s="613" data-e="700" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="613">束</span><span class="tsr-r tsr-cjk" data-s="613">，</span><span class="tsr-r tsr-cjk" data-s="613">引用</span><a class="tsr-r tsr-cjk" href="#tsr-fig-p" data-s="679">图</a><a class="tsr-r" href="#tsr-fig-p" data-s="679"> 1</a><span class="tsr-r tsr-cjk" data-s="685">照常解析</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="685">。</span></div>
+<div class="tsr-line" data-s="613" data-e="700" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="613">束</span><span class="tsr-r tsr-cjk" data-s="613">，</span><span class="tsr-r tsr-cjk" data-s="613">引用</span><a class="tsr-r tsr-cjk" href="#tsr-fig-p" data-s="679">图</a><a class="tsr-r" href="#tsr-fig-p" data-s="679"> 1</a><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-cjk" data-s="685">照常解析</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="685">。</span></div>
 </div>
 </div>
 </div>

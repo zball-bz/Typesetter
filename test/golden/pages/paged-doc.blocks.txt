@@ -190,6 +190,7 @@ top pid=6 units=1
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 LINK SYN @[679,685)
   space w=257su stretch=1 LINK SYN @[679,685)
   word "1" w=513su pen=INF LINK SYN @[679,685)
+  boundary w=256su stretch=1 @[685,700)
   cjk "照" w=1025su glue=102su wt=0.6 pen=0 @[685,700)
   cjk "常" w=1025su glue=102su wt=0.6 pen=0 @[685,700)
   cjk "解" w=1025su glue=102su wt=0.6 pen=0 @[685,700)

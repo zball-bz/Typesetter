@@ -17,10 +17,10 @@ of carrying its own ranges:
 | `isWide(cp)` | `isCjk` (support.h) | emit's CJK/Latin split, grid columns (layout), snap runs (typeset_html) |
 | `isOpenPunct`, `isClosePunct` | `isPunctOpen`, `isPunctClose` | emit's punctuation blocks, grid break rules |
 | `isIdeo(cp)` | `isCjkIdeo` | emit (solid 1em blocks, formula → CJK boundary) |
-| `joinsWide(cp)` | inline.cc's `cjkish` | the seamless line join between CJK characters (P2-10: read when instantiation resolves a soft break, model/softbreak.h) |
+| `joinsWide(cp)` | inline.cc's `cjkish` | the joining classes (P2-10); since P4-02 read through `joinsWithoutSpace(prev, prevWide, next, nextWide)` — a soft break between two joining characters (an ambiguous quote joins when its context sets it wide) is nothing, else a space (model/softbreak.h) |
 | `kernEligible(cp)` | emit's `isCjk(cp) \|\| cp >= 0x2000` | cross-space kerning contexts |
 | `isAmbDashOrEllipsis`, `isAmbQuote` | emit's U+2014/U+2026 and curly-quote literals | the em dash / ellipsis and Latin-context quote rules |
-| `cpInfo(cp)` | — | class + UAX #29 grapheme break + Extended_Pictographic + UAX #11 width (the shaper, P4-02) |
+| `cpInfo(cp)` | — | class + UAX #29 grapheme break + Extended_Pictographic + UAX #11 width; `clusterEnd(s, i)` — the extended grapheme cluster (GB3–GB13), what the shaper iterates (P4-02) |
 
 A character's class (`CC`, `engine/rules/classes.def`: Alpha … Ideo, Kana,
 OpenW … EllipsisW, OpenN … BreakBefore, the ambiguous quotes / dash /
@@ -86,18 +86,19 @@ KernCtx (`m(prev+str+next) − m(prev) − m(next)`), Object.
 
 **Legality** is TeX's (the header states it): glue breaks only after a Box or
 Disc, a penalty below `kPenInf` breaks, a Disc breaks, a Box never. Until the
-paragraph shaper (P4-02) the emitter writes **today's** break structure in
-this form — the per-node logic is the old emitter's: a box that may break
-after it gets `Penalty(p)` right after it (no penalty when InterChar glue
-follows: that glue is the break, or `Penalty(INF)` before it when the char
-may not break), a glue whose own penalty is not 0 gets it right before it.
+item-native breaker (P4-08) the emitter writes the break structure the
+legacy breaker's lowering reads in this form: a box that may break after it
+gets `Penalty(p)` right after it (no penalty when InterChar glue follows:
+that glue is the break, or `Penalty(INF)` before it when the char may not
+break), a glue whose own penalty is not 0 gets it right before it.
 `lintHList` checks every golden and the corpus: at most one legal
 breakpoint per boundary, none after an opening or before a closing glyph,
 runs numbered in order and contiguous, BlankBearing/Pinned/Object runs of
 one box, every non-final box of a LetterSpaced run followed by InterChar
-glue. The typst corpus has two documents (`！ ？` with a typed space) where
-today's emitter allows a break before the closing glyph — the UAX #14 LB13
-"even after spaces" case; P4-02's pair table with `spacesBetween` closes it.
+glue. The typst corpus had two documents (`！ ？` with a typed space) where
+the emitter allowed a break before the closing glyph — the UAX #14 LB13
+"even after spaces" case; since P4-02 the typed spaces before a closing
+glyph, and the box before them, do not break, and the corpus run lints them.
 
 **Run instances** form as the items arrive: consecutive boxes share a run
 while (face, link, SynKind, copy policy, RealizeClass, error) agree; glyphs, pinned
@@ -156,12 +157,13 @@ follows it; InterChar folds into its char. Production keeps only what the
 breaker reads (`BreakBlock`: widths, capacity, penalty, kind bits); the full
 `LinebreakBlock` is built for the `blocks` dump and the check.
 
-**The equivalence check.** `emit/legacy.cc` keeps the pre-HList inline
-emitter verbatim (the block walk is shared through `InlineSink`); the golden
-runner and `tsrc --fuse-check` compare `fuseLegacy` with it field by field —
-every fixture, and the real-world/typst/blog corpora (650 documents) were
-checked when the step landed. The oracle is native only (the WASM binaries
-never reference it) and goes with the paragraph shaper (P4-02).
+**The equivalence check.** `emit/legacy.cc` kept the pre-HList inline
+emitter verbatim; the golden runner and `tsrc --fuse-check` compared
+`fuseLegacy` with it field by field — every fixture, and the
+real-world/typst/blog corpora (650 documents) were checked when the step
+landed. It went with the paragraph shaper (P4-02), whose typography differs
+from it by design; `tsrc --lint` keeps the legality lint, and the corpus run
+(`tools/corpus-run.mjs`) lints every typst document.
 
 **Dump**: `tsrc --stage=hlist` (a golden for every typeset fixture) prints
 kind, class, attrs, width, weight, numeric penalty, capacity, KernCtx, run
@@ -205,10 +207,10 @@ separated by ObjectSpace glue with the formula's break penalties. Layout
 reads a part's asc/desc (`objectPart`, the shim over the three former
 copies until P1-17); paint dispatches on the kind (formula box, `<img>`, a
 `tsr-iraw` inline-block with the markup, or the error text); the hlist dump
-lists the object table. Until the paragraph shaper reads the edge classes
-(P4-02), objects keep the formula rules: a break is legal after one, a
-closing glyph after it is kinsoku-protected, and only a formula gets
-CJK autospace.
+lists the object table. Since the paragraph shaper (P4-02) the break after
+an object is its neighbour's (below, §7): never before a closer, never
+between a formula and Latin text or code glued to it; CJK autospace goes
+beside formulas and inline code (Latin-class), not images or raw marks.
 
 **Two phases for formulas.** Since plan P1-25 emit never lays a formula
 out: it keeps a single placeholder part and flags the list (`hasDeferred`),
@@ -228,10 +230,64 @@ layout. Fixtures for vocabulary without syntax declare their tree in
 `X.tree.json`, which `tools/record-fixtures.mjs` encodes with the runtime's
 OpBuf.
 
-## 7. Next steps
+## 7. The paragraph shaper (plan P4-02; design T5 step 5)
 
-P4-01…P4-08:
-run formation, the paragraph shaper (the boundary pass reading object edge
-classes), per-item spans, TextProps and locale sections (punctuation,
+A unit's inline content — a paragraph, a heading, a cell, a caption row —
+is shaped as one paragraph. The emitter's `walk` and `indent` only record;
+`finish` flattens the records into the **paragraph context**
+(`shape/context.h`): one entry per grapheme cluster (`clusterEnd`) of every
+text node in reading order, across style, link, reference and error edges;
+inline code and formulas (and an error box) as one Narrow entry each — Latin
+evidence —, images, raw marks, hard breaks and fills as Opaque, spaces and
+tabs as Blank. `resolveContext` settles the ambiguous marks once:
+- the em dash and the ellipsis are CJK (a defined-width box) as the run's
+  language says (P3-30), else when doubled or beside a CJK character or
+  wide punctuation;
+- U+2019 between letters is an apostrophe (Latin, in its word);
+- a curly quote is CJK punctuation as the run's language says, else when
+  the character before it is CJK or wide punctuation (`他说：“Hello”`: the
+  ： is evidence, finding emitter/missed:4) or a CJK character or
+  punctuation follows it; a matched pair (`“ ”`, `‘ ’`) resolves jointly —
+  either quote's evidence sets both, so a pair never splits between two
+  fonts (`，“*强调*”。`). A blank gives no evidence: a quote set off by
+  spaces stays Latin, and no document language decides one that has none.
+
+The emission then replays the records with that context. A text node starts
+from what precedes it in the paragraph (a CJK character in another node, a
+Latin word, a formula, code) instead of a blank state, so markup never
+changes typography (finding emitter/paragraph-blind-script-context):
+- CJK–Latin boundary glue (0.25em, App C) goes at every script edge —
+  `中文*English*中文`, `中文[链接](…)`, `中文`code`中文`, a reference's
+  `(1)` before CJK — except beside a raised or lowered mark (a note's
+  reference digit hugs the text on both sides) and at an `attach` edge (the
+  glue would be the break the attach forbids);
+- the break after an inline object is its neighbour's (finding
+  emitter/missed:1): never before a closer (CJK, or `, . ; : ! ? ) ] } %`
+  and quotes), never between a formula and Latin text or code glued to it
+  (`$x$th`, `$f$(`: UAX #14 AL × AL, AL × OP); before a CJK character, an
+  opening glyph, a blank or an image it may break;
+- before a closing CJK glyph no break, even after typed spaces (UAX #14
+  LB13);
+- the long-token (URL) scan counts the token's characters — not bytes —
+  across style edges (`abc.def/*ghij*/klmn.opq/rst` is one token); its
+  cuts stay inside each node's text, and `break.urlMinLen` counts
+  characters (P4-06 replaces the scan with the emergency table);
+- a CJK box is a whole cluster (an ideograph with its variation selector).
+
+**Soft breaks** (`model/softbreak.{h,cc}`): instantiation leaves U+000A in
+inline-model text and gives a mapped text an explicit cooked→raw map; right
+after the normal form a pass walks the tree's inline streams (a block's
+inline content through its containers; code and verbatim bodies are
+evidence, notes and errors streams of their own), builds the same paragraph
+context with each soft break a Blank, resolves it and rewrites each break
+with `joinsWithoutSpace` of its two neighbours: `这是*强调*⏎中文`,
+`他说“好”⏎然后` and `中文结尾⏎“引号”` join; the map is rebuilt as the
+parser builds one. The tree, the semantic page, titles and emit read the
+same text.
+
+## 8. Next steps
+
+P4-03…P4-08: per-item spans, TextProps and locale sections (punctuation,
 blanks, autospace as data), UCD-derived classes, hyphenation registry,
-attach edges and the item-native breaker.
+attach edges and the item-native breaker (with it, the canonical TeX form
+and the end of the lowering).

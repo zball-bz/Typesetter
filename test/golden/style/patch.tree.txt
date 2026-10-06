@@ -5,7 +5,7 @@ doc @[69,579) [base]
     text @[216,255) [base] str="回到默认样式的段落，行内有"
     styled @[255,295) [base color=#a8432a] color="#a8432a"
       text @[282,294) [base color=#a8432a] str="着色强调"
-    text @[295,298) [base] str="、 " raw=0:0,4:3
+    text @[295,298) [base] str="、"
     styled @[299,351) [base font="\"LXGW WenKai\", serif"] font="\"LXGW WenKai\", serif"
       text @[338,350) [base font="\"LXGW WenKai\", serif"] str="楷体片段"
     text @[351,354) [base] str="和"

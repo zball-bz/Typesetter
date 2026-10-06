@@ -11,9 +11,9 @@ release).
 ```
 engine/src/        C++ core: api/ (Doc, wasm_api.cc) · ops/ (generated from
                    engine/schema/schema.json = single source of truth) · markup/inline/codegen · resolve/ ·
-                   shape/ (TextRules, HList item lists) · boxtree/ (LayoutBlocks,
-                   traits, roles, anchors) · emit/ (leaf content: HLists, payloads;
-                   legacy.cc = fuseLegacy's CI oracle until P4-02) ·
+                   shape/ (TextRules, HList item lists, the paragraph context) ·
+                   boxtree/ (LayoutBlocks, traits, roles, anchors) · emit/ (leaf
+                   content: the paragraph shaper → HLists, payloads) ·
                    break/ (Knuth–Plass) · layout/ (layouters → fragments,
                    paginate) · paint/ (DisplayList) · render/ (stateless
                    typeset/paged writer + semantic) · math/ · code/ (token fold)

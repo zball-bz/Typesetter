@@ -144,7 +144,6 @@ top pid=4 units=3
   pen 0.95 r6
   glue objspace w=193su x=0 cap=0su r6 @[93,104)
   box object o0 math part=1 asc=822su desc=203su w=864su r7 @[93,104)
-  pen 0 r7
   box Other "." w=437su r8 @[104,105)
   glue word w=219su x=1 cap=219su src r8 @[42,106)
   box Other "↩" w=524su r9 @[42,106)

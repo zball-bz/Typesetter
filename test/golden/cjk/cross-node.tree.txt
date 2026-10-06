@@ -1,0 +1,38 @@
+doc @[0,363) [base]
+  para @[0,77) [base]
+    text @[0,6) [base] str="中文"
+    styled @[6,15) [BOLD]
+      text @[7,14) [BOLD] str="English"
+    text @[15,24) [base] str="中文和"
+    code @[24,30) [CODEx0.85]
+      text @[24,30) [CODEx0.85] str="code"
+    text @[30,39) [base] str="中文，"
+    link @[39,68) [base] url="https://example.com"
+      text @[40,46) [base] str="链接"
+    text @[68,77) [base] str="也算。"
+  para @[79,134) [base]
+    text @[79,120) [base] str="他说：“Hello”之后，又说，“"
+    styled @[120,128) [BOLD]
+      text @[121,127) [BOLD] str="强调"
+    text @[128,134) [base] str="”。"
+  para @[136,234) [base]
+    text @[136,142) [base] str="这是"
+    styled @[142,150) [BOLD]
+      text @[143,149) [BOLD] str="强调"
+    text @[151,234) [base] str="中文继续，他说“好”然后写到中文结尾“引号开头”结束。" raw=0:0,30:31,54:56
+  para @[236,293) [base]
+    text @[236,247) [base] str="The value ("
+    mathinline @[247,252) [base]
+      mathsrc @[248,251) [base] src="a=b"
+    text @[252,272) [base] str=") holds, and so does " raw=0:0,21:20
+    mathinline @[273,280) [base]
+      mathsrc @[274,279) [base] src="x+y+z"
+    text @[280,286) [base] str=", too: " raw=0:0,7:6
+    mathinline @[287,290) [base]
+      mathsrc @[288,289) [base] src="f"
+    text @[290,293) [base] str="th."
+  para @[295,363) [base]
+    text @[295,310) [base] str="A path abc.def/"
+    styled @[310,316) [BOLD]
+      text @[311,315) [BOLD] str="ghij"
+    text @[316,363) [base] str="/klmn.opq/rst is one token across its emphasis."

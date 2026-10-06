@@ -3,11 +3,9 @@ top pid=0 units=1
   box Other "Holes:" w=3073su r0 @[49,55)
   glue word w=257su x=1 cap=257su src r0 @[49,55)
   box object o0 math part=0 asc=964su desc=12su "x^-3" w=1490su r1 @[56,62)
-  pen 0 r1
   box Other "," w=513su r2 @[62,63)
   glue word w=257su x=1 cap=257su src r2 @[62,63)
   box object o1 math part=0 asc=964su desc=12su "e^(4 pi i)" w=1615su r3 @[64,83)
-  pen 0 r3
   box Other "," w=513su r4 @[83,84)
   glue word w=257su x=1 cap=257su src r4 @[83,84)
   box object o2 math part=0 asc=723su desc=76su "2.5 + 1" w=2307su r5 @[85,101)
@@ -25,7 +23,6 @@ top pid=0 units=1
   pen 0.95 r12
   glue objspace w=228su x=0 cap=0su r12 @[106,125)
   box object o3 math part=2 asc=700su desc=10su w=602su r13 @[106,125)
-  pen 0 r13
   box Other "." w=513su r14 @[125,126)
   obj o0 math parts=1 edges=Alpha/Alpha src="x^-3" [w=1490su asc=964su desc=12su]
   obj o1 math parts=1 edges=Alpha/Alpha src="e^(4 pi i)" [w=1615su asc=964su desc=12su]
@@ -78,7 +75,6 @@ top pid=1 units=1
   pen 0.95 r6
   glue objspace w=228su x=0 cap=0su r6 @[165,191)
   box object o0 math part=3 asc=727su desc=7su w=511su r7 @[165,191)
-  pen 0 r7
   box Other "." w=513su r8 @[191,192)
   obj o0 math parts=4 edges=Alpha/Alpha src="y = ⚠ + 1" [w=607su asc=479su desc=239su] [w=774su asc=377su desc=0su glue=284su] [w=20304su asc=819su desc=205su glue=284su] [w=511su asc=727su desc=7su glue=228su]
   run r0 plain
@@ -104,7 +100,6 @@ top pid=2 units=1
   pen 0.95 r2
   glue objspace w=228su x=0 cap=0su r2 @[212,234)
   box object o0 math part=1 asc=719su desc=17su w=1285su r3 @[212,234)
-  pen 0 r3
   box Other "," w=513su r4 @[234,235)
   glue word w=257su x=1 cap=257su src r4 @[234,235)
   box object o1 math part=0 asc=479su desc=20su "alpha" w=674su r5 @[236,256)
@@ -113,7 +108,6 @@ top pid=2 units=1
   box Other "and" w=1537su r6 @[257,260)
   glue word w=257su x=1 cap=257su src r6 @[257,260)
   box object o2 math part=0 asc=912su desc=353su "frac(1, 2)" w=562su r7 @[261,287)
-  pen 0 r7
   box Other "." w=513su r8 @[287,288)
   obj o0 math parts=2 edges=Alpha/Alpha src="p^2 + -3" [w=2013su asc=967su desc=243su] [w=1285su asc=719su desc=17su glue=228su]
   obj o1 math parts=1 edges=Alpha/Alpha src="alpha" [w=674su asc=479su desc=20su]
@@ -140,7 +134,6 @@ top pid=3 units=1
   box Other "hash:" w=2561su r0 @[290,305)
   glue word w=257su x=1 cap=257su src r0 @[290,305)
   box object o0 math part=0 asc=707su desc=10su "\\#A" w=1300su r1 @[306,311)
-  pen 0 r1
   box Other ";" w=513su r2 @[311,325)
   glue word w=257su x=1 cap=257su kern="; a" src r2 @[311,325)
   box Other "a" w=513su r2 @[311,325)
@@ -150,7 +143,6 @@ top pid=3 units=1
   box Other "one:" w=2049su r2 @[311,325)
   glue word w=257su x=1 cap=257su src r2 @[311,325)
   box object o1 math part=0 asc=707su desc=12su "a # b" w=1738su r3 @[326,333)
-  pen 0 r3
   box Other "." w=513su r4 @[333,334)
   obj o0 math parts=1 edges=Alpha/Alpha src="\\#A" [w=1300su asc=707su desc=10su]
   obj o1 math parts=1 edges=Alpha/Alpha src="a # b" [w=1738su asc=707su desc=12su]

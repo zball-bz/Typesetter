@@ -9,4 +9,4 @@ para pid=2 y=13095su w=19200su h=7565su
   L0 img y=0su left=0su w=19200su h=4800su
   L1 y=6029su left=0su w=19200su dw=-51su dc=-31su join=last blocks=[0,23) @[323,374)
 para pid=3 y=21889su w=19200su h=1536su
-  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,21) @[385,445)
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,22) @[385,445)

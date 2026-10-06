@@ -28,7 +28,6 @@
 #include "../src/math/ir.h"
 #include "../src/math/font.h"
 #include "../src/api/driver.h"
-#include "../src/emit/legacy.h"
 #include "../src/render/html_writer.h"
 #include "../src/code/native_tokens.h"
 #include "../src/measure/mock.h"
@@ -1114,6 +1113,34 @@ static void unitFmtPx() {
     if (ref(v) != got(v) && bad++ < 5)
       printf("FAIL fmtPx %.17g: %s vs printf %s\n", v, got(v).c_str(), ref(v).c_str());
   CHECK(bad == 0);
+}
+
+// (plan P4-02) extended grapheme clusters: the shaper's unit
+static void unitClusters() {
+  auto clusters = [](std::string_view s) {
+    std::vector<std::string> out;
+    for (u32 i = 0; i < s.size();) {
+      const u32 j = clusterEnd(s, i);
+      out.emplace_back(s.substr(i, j - i));
+      i = j;
+    }
+    return out;
+  };
+  using V = std::vector<std::string>;
+  CHECK(clusters("ab c") == V({"a", "b", " ", "c"}));
+  CHECK(clusters("e\xCC\x81x") == V({"e\xCC\x81", "x"}));                    // e + U+0301
+  CHECK(clusters("\xE4\xB8\xAD" "a" "\xE6\x96\x87") == V({"\xE4\xB8\xAD", "a", "\xE6\x96\x87"}));  // 中a文 (fast path)
+  CHECK(clusters("\xE8\x91\x9B\xF3\xA0\x84\x80\xE5\xAD\x97")             // 葛 + IVS U+E0100, 字
+        == V({"\xE8\x91\x9B\xF3\xA0\x84\x80", "\xE5\xAD\x97"}));
+  CHECK(clusters("\xF0\x9F\x91\xA9\xE2\x80\x8D\xF0\x9F\x92\xBB!")      // 👩‍💻!
+        == V({"\xF0\x9F\x91\xA9\xE2\x80\x8D\xF0\x9F\x92\xBB", "!"}));
+  CHECK(clusters("\xF0\x9F\x87\xAF\xF0\x9F\x87\xB5\xF0\x9F\x87\xA8")  // 🇯🇵 + a lone 🇨
+        == V({"\xF0\x9F\x87\xAF\xF0\x9F\x87\xB5", "\xF0\x9F\x87\xA8"}));
+  CHECK(clusters("\xE1\x84\x80\xE1\x85\xA1x") == V({"\xE1\x84\x80\xE1\x85\xA1", "x"}));  // Hangul L V
+  CHECK(clusters("a\r\nb") == V({"a", "\r\n", "b"}));
+  CHECK(clusters(" \xCC\x81") == V({" ", "\xCC\x81"}));  // a space stays a glue
+  CHECK(joinsWithoutSpace(0x4E2D, true, 0x6587, true) && !joinsWithoutSpace(0x4E2D, true, 'a', false));
+  CHECK(joinsWithoutSpace(0x201D, true, 0x7136, true) && !joinsWithoutSpace(0x201D, false, 0x7136, true));
 }
 
 static void unitTextRules() {
@@ -2217,6 +2244,7 @@ int main(int argc, char** argv) {
   unitRawMaps(fs::path(root));
   unitRegistry(fs::path(root));
   unitTextRules();
+  unitClusters();
   unitOverlays();
   unitMathDict();
   unitFmtPx();
@@ -2315,16 +2343,9 @@ int main(int argc, char** argv) {
           goldenCompare(g(p), doc.product(p), update, label + ":" + p);
         // the DisplayList dump (plan P1-18; a debug product): on request
         if (hasProduct("dl")) goldenCompare(g("dl"), doc.product("dl"), update, label + ":dl");
-        // the HList contract (plan P1-12): fuseLegacy equals, field by
-        // field, what the legacy emitter makes of the same document, and
-        // every list passes the legality lint
+        // the HList contract (plan P1-12): every list passes the legality
+        // lint (the legacy emitter's field-by-field oracle left with P4-02)
         {
-          std::string d = fuseCheck(doc.tops, doc.boxtree, doc.arena, doc.strs, doc.styles, doc.cfg,
-                                    doc.metrics, doc.cfg.baseSizePx);
-          if (!d.empty()) {
-            printf("FAIL %s: fuseLegacy differs from the legacy blocks\n%s", label.c_str(), d.c_str());
-            failures++;
-          }
           std::string lint;
           for (const TopBlock& tb : doc.tops)
             for (const FlowUnit& u : tb.units) {

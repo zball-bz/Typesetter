@@ -93,7 +93,6 @@ top pid=1 units=1
   box Other "pand:" w=2561su r12 @[451,493)
   glue word w=257su x=1 cap=257su src r12 @[451,493)
   box object o2 math part=0 asc=702su desc=10su "eqv(A, B)" w=2638su r13 @[494,505)
-  pen 0 r13
   box Other "," w=513su r14 @[505,506)
   glue word w=257su x=1 cap=257su src r14 @[505,506)
   box object o3 math part=0 asc=819su desc=262su "idtype(U, a, b)" w=3983su r15 @[507,524)
@@ -102,7 +101,6 @@ top pid=1 units=1
   box Other "and" w=1537su r16 @[525,528)
   glue word w=257su x=1 cap=257su src r16 @[525,528)
   box object o4 math part=0 asc=768su desc=316su "prd(x, A, B(x))" w=4269su r17 @[529,546)
-  pen 0 r17
   box Other "." w=513su r18 @[546,547)
   obj o0 math parts=3 edges=Alpha/Alpha src="a defeq b" [w=624su asc=477su desc=12su] [w=796su asc=771su desc=0su glue=284su] [w=602su asc=700su desc=10su glue=284su]
   obj o1 math parts=3 edges=Alpha/Alpha src="a ≝ b" [w=624su asc=477su desc=12su] [w=796su asc=771su desc=0su glue=284su] [w=602su asc=700su desc=10su glue=284su]
@@ -143,7 +141,6 @@ top pid=3 units=1
   box Other "able:" w=2561su r0 @[574,603)
   glue word w=257su x=1 cap=257su src r0 @[574,603)
   box object o0 math part=0 asc=912su desc=353su "std.frac(1, 2)" w=562su r1 @[604,620)
-  pen 0 r1
   box Other "." w=513su r2 @[620,621)
   obj o0 math parts=1 edges=Alpha/Alpha src="std.frac(1, 2)" [w=562su asc=912su desc=353su]
   run r0 plain
@@ -173,7 +170,6 @@ top pid=4 units=2
   box Other "ing:" w=1742su r0 @[70,113)
   glue word w=219su x=1 cap=219su src r0 @[70,113)
   box object o0 math part=0 asc=696su desc=203su "x defeq y" w=3441su r1 @[114,125)
-  pen 0 r1
   box Other "." w=437su r2 @[125,126)
   glue word w=219su x=1 cap=219su src r2 @[68,127)
   box Other "↩" w=524su r3 @[68,127)

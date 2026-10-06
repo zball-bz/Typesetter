@@ -74,6 +74,32 @@ figure/float、figure/stack、region/table-tiny 的正文与图注、math/* 其�
 - 斜体标题与正体之间仍不计接合字距（字体不同，real-world-report #1 的修正保持）。
 - 锚点规则在现有用例与语料中没有可见变化（带标签的引用都是单盒标记）。
 
+## P4-02 段落级成形器（T5 步骤 5）
+
+**变化：**
+1. 段落上下文：一个单元的行内内容先展平成字素簇流，跨样式、链接、引用、错误边界；行内代码、公式记为拉丁类证据，图片、原始标记记为不透明。文字节点从段落中前一个字符的状态开始，不再从空白状态开始。因此 CJK–拉丁边界胶（0.25em，可断可伸）出现在每个文字体系边界：强调、链接、引用、行内代码两侧。例外有两处：上标或下标的标记（脚注序号）两侧不加；attach 边缘不加，因为此处的胶会成为 attach 禁止的断点。
+2. 歧义标点按上下文解析：引号成对联合判定，任一侧的证据决定整对，宽标点算 CJK 证据；U+2019 夹在字母之间是撇号；破折号、省略号的判定也读跨节点的邻居。
+3. 对象之后的断点看后邻：后面是闭合标点（CJK，或 `, . ; : ! ? ) ] } %` 与引号）时禁断；公式紧贴拉丁文字或代码时禁断（AL × AL、AL × OP）。
+4. 闭合 CJK 标点之前的键入空格不可断（UAX #14 LB13）。
+5. 软换行在规范形之后、按段落上下文以 joinsWithoutSpace 解析，可跨节点（`这是*强调*⏎中文` 无缝）。
+6. 长 token 的门限按字符而不是字节计数，并跨样式边界计算。
+7. CJK 盒按字素簇划分。
+
+**范围：** 引擎 golden 共 57 个文件：16 个 hlist、10 个 breaks/layout/html、8 个 blocks、tree/semantic/paged 各 1 个。
+- 有排版变化的用例：figure/block、figure/float、math/eqref、pages/paged-doc、inline/prose-guards、locale/quote-lang、splice/ascii-cut（引用、URL、lang 引语、拼接结果与 CJK 之间加边界胶）。
+- math/grid、math/symbols：公式后不再于 `,`、`.` 前断行。旧版 math/symbols 第二行以 ", and" 开头，现改在公式内的关系符后断，第二行为 "b, and"。
+- style/patch：`、⏎#style(…)[楷体片段]` 处软换行无缝；tree、semantic 也随之去掉多余空格。
+- 只有 hlist 变化（去掉公式后的 pen 0）：doc/toc-clone、inline/bracket-island、math/decl、math/holes-diag、math/negation-diag、notes/basic。
+- 新用例 cjk/cross-node 逐项覆盖以上情形。WASM 断点一致（214/214）。
+
+真实语料 340 篇（mock 测量）：
+- 171 篇 hlist 有变化，116 篇断点有变化（多为 pbr-en 公式后的标点）；
+- 边界胶 2,658 → 4,015：49 篇增加，没有一篇减少（个别处减少是错判为拉丁的引号改判为 CJK 标点，例如 `！”——`，同篇他处有增加）；
+- 语义页 340 篇不变；
+- typst 语料 199 篇全部通过新增的 HList lint。旧版在两篇 `！ ？` 文档中有闭合标点前的断点。
+
+**审阅结论：改进。** 抽查博客语料：引用 `(1)` 后接"所"、`.tsm` 后接 `——`、链接 `§1` 两侧，均为应有的中西间距与断点。e2e 审计矩阵 1091 项通过（right-edge、line-integrity、overflow、copy）。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。

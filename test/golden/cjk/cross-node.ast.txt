@@ -1,0 +1,37 @@
+doc @[0,364)
+  para @[0,77)
+    text @[0,6) str="中文"
+    styled @[6,15) marker=*
+      text @[7,14) str="English"
+    text @[15,24) str="中文和"
+    code @[24,30) str="code"
+    text @[30,39) str="中文，"
+    link @[39,68) url="https://example.com"
+      text @[40,46) str="链接"
+    text @[68,77) str="也算。"
+  para @[79,134)
+    text @[79,120) str="他说：“Hello”之后，又说，“"
+    styled @[120,128) marker=*
+      text @[121,127) str="强调"
+    text @[128,134) str="”。"
+  para @[136,234)
+    text @[136,142) str="这是"
+    styled @[142,150) marker=*
+      text @[143,149) str="强调"
+    text @[151,234) str="\n中文继续，他说“好”\n然后写到中文结尾\n“引号开头”结束。"
+  para @[236,293)
+    text @[236,247) str="The value ("
+    math @[247,252) display=0 src="a=b"
+      text @[248,251) str="a=b"
+    text @[252,272) str=") holds, and so does "
+    math @[273,280) display=0 src="x+y+z"
+      text @[274,279) str="x+y+z"
+    text @[280,286) str=", too: "
+    math @[287,290) display=0 src="f"
+      text @[288,289) str="f"
+    text @[290,293) str="th."
+  para @[295,363)
+    text @[295,310) str="A path abc.def/"
+    styled @[310,316) marker=*
+      text @[311,315) str="ghij"
+    text @[316,363) str="/klmn.opq/rst is one token across its emphasis."

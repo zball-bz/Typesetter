@@ -98,12 +98,19 @@ void kernContexts(HList& h, Interner& strs, const StyleTable& styles) {  // the 
 }
 
 
-// ---- the inline stream as HList items (plan P1-12) --------------------------
-// The per-node logic is the one the LinebreakBlock emitter had (legacy.cc
-// keeps that emitter as the oracle): every push is a carrier — a Box, a Glue
-// or a Disc — with today's break penalty after it (`pend`) and its run key.
-// finish() writes the penalties in TeX form, adds the InterChar glue where
-// the rendered gap is CJK, and forms the run instances.
+// ---- the inline stream as HList items (plans P1-12, P4-02) ------------------
+// The paragraph shaper. A unit's inline content is flattened first: walk()
+// and indent() only record, and finish() scans the records into the
+// paragraph context (shape/context.h) — every cluster in reading order
+// across node edges, code and objects as evidence — and resolves it. The
+// emission then replays the records in reading order with that context:
+// what precedes a text node's first cluster, what follows an object, how an
+// ambiguous mark is set are the paragraph's, never reset by markup
+// (findings emitter/paragraph-blind-script-context, emitter/missed:1,
+// emitter/missed:4). Every push is a carrier — a Box, a Glue or a Disc —
+// with its break penalty after it (`pend`) and its run key; finish() writes
+// the penalties in TeX form, adds the InterChar glue where the rendered gap
+// is CJK, and forms the run instances.
 struct HlInline final : InlineSink {
   EmitEnv& E;
   Interner& strs;
@@ -120,6 +127,153 @@ struct HlInline final : InlineSink {
   StrRef anchorNext = 0;    // an anchor for the next Box or Disc (a labelled ref's first)
   explicit HlInline(EmitEnv& e) : E(e), strs(e.strs), styles(e.styles), cfg(e.cfg) {}
 
+  // -- the flatten: records, then the paragraph context -----------------------
+  struct Record {
+    const ContentNode* n = nullptr;  // null: the paragraph indent
+    ICtx ctx;
+    StyleId st = 0;
+    Span span;
+    double px = 0, em = 0;
+  };
+  Flow* recUnit = nullptr;
+  std::vector<Record> recs, todo;  // (todo: the replay's, its capacity kept)
+  std::vector<CtxEntry> cx;  // the unit's paragraph context
+  bool ambiguous = false;    // … holds an ambiguous mark
+  struct Mark {
+    const void* key;  // the text, code or object node (an error node: its ⚠ text)
+    u32 at;           // its first entry
+  };
+  std::vector<Mark> marks;
+  size_t markAt = 0;
+  void record(Flow& u, Record r) {
+    if (recUnit && recUnit != &u) replay(*recUnit);  // (inline streams never interleave)
+    recUnit = &u;
+    recs.push_back(r);
+  }
+  MarkClass marksOf(StyleId st) const {
+    const StrRef lang = styles.get(st).lang;
+    return markClassOf(lang ? strs.get(lang) : std::string_view{});
+  }
+  void scanText(const void* key, std::string_view s, StyleId st) {
+    marks.push_back({key, (u32)cx.size()});
+    const MarkClass m = marksOf(st);
+    for (u32 i = 0; i < s.size();) {
+      const u32 start = i;
+      i = clusterEnd(s, i);
+      u32 j = start;
+      const u32 cp = (u8)s[start] < 0x80 ? (u8)s[start] : utf8Next(s, j);
+      if (cp == ' ' || cp == '\t') cx.push_back({CtxEntry::Blank});
+      else cx.push_back(ctxChar(cp, m, ambiguous));
+    }
+  }
+  void scanEvidence(const void* key, CtxEntry::K k) {
+    marks.push_back({key, (u32)cx.size()});
+    cx.push_back({k});
+  }
+  // the flatten table again (shape()'s dispatch), for the context only
+  void scan(const ContentNode* n) {
+    switch (kKinds[(u16)n->kind].inl) {
+      case InlineShape::Text:
+        scanText(n, strs.get(n->str), n->style);
+        return;
+      case InlineShape::Container:
+        for (const ContentNode* k : n->kids) scan(k);
+        return;
+      case InlineShape::Code:
+        scanEvidence(n, CtxEntry::Narrow);
+        return;
+      case InlineShape::Object:
+        scanEvidence(n, objectKind(objectKindOf(n->kind)).lastCC == CC::Alpha ? CtxEntry::Narrow : CtxEntry::Opaque);
+        return;
+      case InlineShape::Break:
+      case InlineShape::Fill:
+        cx.push_back({CtxEntry::Opaque});
+        return;
+      case InlineShape::Error:
+        scanText(n, errorMessage(n), n->style);
+        return;
+      case InlineShape::Skip:
+        return;
+      case InlineShape::Unsupported:  // its error box
+        scanEvidence(n, CtxEntry::Narrow);
+        return;
+    }
+  }
+  // a node's first context entry (~0u: none — the replay keeps the scan's order)
+  u32 contextOf(const void* key) {
+    for (size_t k = markAt; k < marks.size(); k++)
+      if (marks[k].key == key) {
+        markAt = k + 1;
+        return marks[k].at;
+      }
+    return ~0u;
+  }
+  // what precedes entry `at` in the paragraph, as the text state machine counts it
+  enum class Prev : u8 { None, Latin, Cjk, Punct };  // Punct: CJK punctuation glyph
+  Prev prevAt(u32 at) const {
+    if (at == ~0u || at == 0 || at > cx.size()) return Prev::None;
+    const CtxEntry& e = cx[at - 1];
+    switch (e.k) {
+      case CtxEntry::Blank:
+      case CtxEntry::Opaque:
+        return Prev::None;
+      case CtxEntry::Narrow:
+        return Prev::Latin;
+      case CtxEntry::Char:
+        if (!e.wide) return Prev::Latin;
+        return isOpenPunct(e.cp) || isClosePunct(e.cp) ? Prev::Punct : Prev::Cjk;
+    }
+    return Prev::None;
+  }
+  // the break after an inline object (finding emitter/missed:1), by what
+  // follows it: never before a closer; a formula glued to Latin text or code
+  // stays with it (UAX #14 AL × AL, AL × OP); before a CJK character, an
+  // opening glyph, a blank or another object it may break
+  float breakAfterObject(ObjKind k, u32 at) const {
+    if (at == ~0u || at + 1 >= cx.size()) return 0.0f;
+    const CtxEntry& e = cx[at + 1];
+    const bool alpha = objectKind(k).lastCC == CC::Alpha;
+    switch (e.k) {
+      case CtxEntry::Blank:
+      case CtxEntry::Opaque:
+        return 0.0f;
+      case CtxEntry::Narrow:
+        return alpha ? kPenInf : 0.0f;
+      case CtxEntry::Char: {
+        const u32 c = e.cp;
+        const bool latinCloser = c == ',' || c == '.' || c == ';' || c == ':' || c == '!' || c == '?' || c == ')' ||
+                                 c == ']' || c == '}' || c == '%' || c == '\'' || c == '"';
+        if (isClosePunct(c) || latinCloser) return kPenInf;
+        return alpha && !e.wide ? kPenInf : 0.0f;
+      }
+    }
+    return 0.0f;
+  }
+  void replay(Flow& u) {
+    cx.clear();
+    marks.clear();
+    markAt = 0;
+    ambiguous = false;
+    for (const Record& r : recs)
+      if (r.n) scan(r.n);
+    resolveContext(cx, ambiguous);
+    todo.clear();
+    todo.swap(recs);
+    recUnit = nullptr;
+    for (const Record& r : todo) {
+      if (r.n) doWalk(r.n, u, r.ctx);
+      else doIndent(u, r.st, r.span, r.px, r.em);
+    }
+    cx.clear();
+    marks.clear();
+  }
+  std::string errorMessage(const ContentNode* n) const {
+    std::string msg = "\xE2\x9A\xA0 ";  // ⚠
+    for (const ArgVal& a : n->args)
+      if (a.key == ArgK::message && a.tag == ArgTag::Str) msg += strs.get(a.ref);
+    return msg;
+  }
+
   void open(Flow& u) {
     if (cur == &u) return;
     cur = &u;
@@ -135,6 +289,7 @@ struct HlInline final : InlineSink {
     pend.clear();
     gapKind.clear();
     single = false;
+    glueBan = ~(size_t)0;
   }
   static RunRec key(StyleId face, const ICtx& ctx, RealizeClass rc) {
     RunRec r;
@@ -263,7 +418,15 @@ struct HlInline final : InlineSink {
   }
 
   // -- the item kinds ---------------------------------------------------------
+  size_t glueBan = ~(size_t)0;  // an attach edge (walk): no synthesized glue at this item
   void autospace(Flow& u, StyleId st, const ICtx& ctx, Span span) {
+    // (plan P4-02) none at an attach edge — it would be the break the
+    // attach forbids (design T5: synthesized glue suppressed) — and none
+    // beside a raised or lowered mark: a note's reference digit hugs the
+    // text on both sides (notes-design §1)
+    if (count(u) == glueBan || styles.get(st).baseline ||
+        (count(u) > 0 && styles.get(runOf(count(u) - 1).face).baseline))
+      return;
     double px = kCjkBoundaryEm * E.fontPx(st);
     AdvanceSpec sp;
     sp.k = AdvanceSpec::Fixed;
@@ -318,16 +481,21 @@ struct HlInline final : InlineSink {
   // attach (plan P2-08; design T4 Extent text.attach): no break between an
   // inline extent and the item before it (prev) or after it (next) — a
   // footnote marker glues to its word, never a line start
-  void walk(const ContentNode* n, Flow& u, ICtx ctx) override {
+  void walk(const ContentNode* n, Flow& u, ICtx ctx) override { record(u, {n, ctx}); }
+  void doWalk(const ContentNode* n, Flow& u, ICtx ctx) {
     copyPolicy(n, u, ctx);
     const ArgVal* at = attr(n, ArgK::attach);
     if (!at || at->tag != ArgTag::Str) return shape(n, u, ctx);
+    const std::string_view a = strs.get(at->ref);
     const size_t before = count(u);
+    if (a != "next") glueBan = before;  // no glue between it and what precedes it
     shape(n, u, ctx);
     if (count(u) == before) return;
-    const std::string_view a = strs.get(at->ref);
     if (a != "next" && before > 0 && !(pend[before - 1] <= -kPenInf)) pend[before - 1] = kPenInf;
-    if (a != "prev") forbidLast();
+    if (a != "prev") {
+      forbidLast();
+      glueBan = count(u);  // nor between it and what follows it
+    }
   }
   // (plan P3-07; design T7 CopyPolicy) a node's `copy` / `syn` attributes
   // set its text's copy policy, the innermost winning: copy "text",
@@ -446,7 +614,7 @@ struct HlInline final : InlineSink {
       for (const ArgVal& a : n->args)
         if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref && !u.anchor) u.anchor = a.ref;
     }
-    for (const ContentNode* k : n->kids) walk(k, u, ctx);
+    for (const ContentNode* k : n->kids) doWalk(k, u, ctx);
   }
 
   void code(const ContentNode* n, Flow& u, ICtx ctx) {
@@ -455,6 +623,8 @@ struct HlInline final : InlineSink {
     // line's justification off them (word-spacing: 0)
     if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
       StyleId st = E.compose(n->style, ctx.add, ctx.mul);  // mono and its size: rules (plan P3-01)
+      // CJK–code boundary glue (plan P4-02: code is Latin-class, as a formula)
+      if (count(u) > 0 && isCjkChar(count(u) - 1)) autospace(u, st, ctx, n->span);
       AdvanceSpec sp;
       sp.str = n->kids[0]->str;
       push(u, IK::Box, firstCc(strs.get(sp.str)), 0, key(st, ctx, RealizeClass::Rigid),
@@ -473,7 +643,7 @@ struct HlInline final : InlineSink {
     // line start, like a closing punct
     const StrRef outer = anchorNext;
     if (StrRef label = attrStr(n, ArgK::label)) anchorNext = label;
-    for (const ContentNode* k : n->kids) walk(k, u, ctx);
+    for (const ContentNode* k : n->kids) doWalk(k, u, ctx);
     anchorNext = outer;
   }
 
@@ -481,18 +651,14 @@ struct HlInline final : InlineSink {
     // an error node stays breakable CODE-style text (design T5 A22): tsr-err
     // runs titled with its message (plan P3-16, document-model §9.1)
     omitAsError(ctx);
-    std::string msg = "\xE2\x9A\xA0 ";  // ⚠
     for (const ArgVal& a : n->args)
-      if (a.key == ArgK::message && a.tag == ArgTag::Str) {
-        msg += strs.get(a.ref);
-        ctx.error = a.ref;
-      }
+      if (a.key == ArgK::message && a.tag == ArgTag::Str) ctx.error = a.ref;
     ContentNode tmp;
     tmp.kind = Kind::text;
     tmp.span = n->span;
     tmp.style = n->style;
-    tmp.str = strs.intern(msg);
-    emitText(&tmp, u, ctx);  // in its style: mono by the default rule (plan P3-01)
+    tmp.str = strs.intern(errorMessage(n));
+    emitText(&tmp, u, ctx, n);  // in its style: mono by the default rule (plan P3-01)
   }
 
   // -- objects (shape/objects.h) ------------------------------------------------
@@ -509,7 +675,7 @@ struct HlInline final : InlineSink {
   }
   // one Box part with its extents; returns the item
   u32 objectBox(Flow& u, u32 obj, const ObjPart& part, StyleId st, const ICtx& ctx, Span span, StrRef str,
-                bool resolved) {
+                bool resolved, float pen) {
     InlineObject& ob = B.objs[obj];
     if (ob.nParts == 0) ob.part0 = (u32)B.parts.size();
     ob.nParts++;
@@ -518,18 +684,18 @@ struct HlInline final : InlineSink {
     bs.k = AdvanceSpec::Object;
     bs.obj = (u32)B.parts.size() - 1;
     bs.str = str;
-    // a break after an object is legal (as after a formula); the boundary
-    // pass that reads its edge classes is the paragraph shaper's (P4-02)
+    // the break after it: by what follows it in the paragraph (breakAfterObject)
     u32 b = push(u, IK::Box, ob.firstCC, 0, key(st, ctx, RealizeClass::Object), bs, span,
-                 0.0f, 0.0f);
+                 0.0f, pen);
     if (resolved) fixWidth(u, b, suToPx(part.w), part.w, 0);
     return b;
   }
 
   void object(const ContentNode* n, Flow& u, ICtx ctx, ObjKind k) {
+    const float pen = breakAfterObject(k, contextOf(n));
     switch (k) {
       case ObjKind::Math:
-        math(n, u, ctx);
+        math(n, u, ctx, pen);
         return;
       case ObjKind::Image: {
         // one box sitting on the baseline: the author's w × h, else (plan
@@ -555,13 +721,13 @@ struct HlInline final : InlineSink {
         if (safe && !declared) {
           B.objs[obj].deferred = true;
           B.hasDeferred = true;
-          objectBox(u, obj, pt, st, ctx, n->span, 0, false);
+          objectBox(u, obj, pt, st, ctx, n->span, 0, false, pen);
           return;
         }
         const double em = E.fontPx(st);
         pt.w = suRoundPx(safe ? iw : em);
         pt.asc = suRoundPx(safe ? ih : em);
-        objectBox(u, obj, pt, st, ctx, n->span, 0, true);
+        objectBox(u, obj, pt, st, ctx, n->span, 0, true, pen);
         return;
       }
       case ObjKind::Raw: {
@@ -594,7 +760,7 @@ struct HlInline final : InlineSink {
             pt.asc = suRoundPx(a.baseline);
             pt.desc = suRoundPx(a.h) - pt.asc;
           }
-        objectBox(u, obj, pt, st, ctx, n->span, 0, true);
+        objectBox(u, obj, pt, st, ctx, n->span, 0, true, pen);
         return;
       }
       case ObjKind::Error: {
@@ -608,13 +774,13 @@ struct HlInline final : InlineSink {
         B.objs[obj].src = text;
         ObjPart pt;
         pt.obj = obj;
-        objectBox(u, obj, pt, st, ctx, n->span, text, false);
+        objectBox(u, obj, pt, st, ctx, n->span, text, false, pen);
         return;
       }
     }
   }
 
-  void math(const ContentNode* n, Flow& u, ICtx ctx) {
+  void math(const ContentNode* n, Flow& u, ICtx ctx, float pen) {
     // its source (plan P2-15): fragments and holes, bound as of its epoch
     // (one clean fragment, the common case, is its interned string)
     StrRef srcRef = mathSourceRef(n, strs), formula = srcRef;
@@ -641,10 +807,12 @@ struct HlInline final : InlineSink {
     B.hasDeferred = true;
     ObjPart pt;
     pt.obj = obj;
-    objectBox(u, obj, pt, st, ctx, n->span, srcRef, false);
+    objectBox(u, obj, pt, st, ctx, n->span, srcRef, false, pen);
   }
 
-  void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, const ICtx& ctx) {
+  // tokenChars: the characters of the token it is part of (plan P4-02:
+  // across style edges — a URL whose middle is emphasized is one token)
+  void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, const ICtx& ctx, u32 tokenChars) {
     const bool noHyphen = ctx.noHyphen;
     // lead / core / trail split (ASCII letters core) for hyphenation
     u32 a = 0, b = (u32)w.size();
@@ -664,7 +832,7 @@ struct HlInline final : InlineSink {
       // opportunities after separators, glyph-free — the browser's own
       // "break after slash" convention, under KP control (no hyphen glyph,
       // penalty urlBreakPenalty). Pieces stay one shaped run when unbroken.
-      if (!noHyphen && w.size() >= cfg.urlBreakMinLen && cfg.urlBreakPenalty < kPenInf) {
+      if (!noHyphen && tokenChars >= cfg.urlBreakMinLen && cfg.urlBreakPenalty < kPenInf) {
         std::vector<u32> cuts;
         for (u32 k = 1; k + 1 < w.size(); k++) {
           char c = w[k];
@@ -697,36 +865,48 @@ struct HlInline final : InlineSink {
     }
   }
 
-  void emitText(const ContentNode* n, Flow& u, ICtx ctx) {
+  // a text node's clusters in its paragraph (`scanned`: the node its
+  // context was scanned under — an error node for its ⚠ text)
+  void emitText(const ContentNode* n, Flow& u, ICtx ctx, const void* scanned = nullptr) {
     StyleId st = E.compose(n->style, ctx.add, ctx.mul);
     StyleId stCjk = E.compose(st, E.cjk, 1.0f);
     std::string_view s = strs.get(n->str);
     const double halfPx = kPunctHalfEm * E.fontPx(stCjk);
     const Su glueSu = suRoundPx(cfg.cjkGlueEm * E.fontPx(stCjk));
 
-    enum class Prev : u8 { None, Latin, Cjk, Punct };  // Punct: CJK punctuation glyph
-    Prev prev = Prev::None;
+    // (plan P4-02) its place in the paragraph context: what precedes its
+    // first cluster (a CJK character in the node before, a formula, code)
+    // and how its ambiguous marks resolve (shape/context.h) — the context
+    // of the run's language (plan P3-30) and of its neighbours across
+    // node edges
+    const u32 base = contextOf(scanned ? scanned : n);
+    auto wideAt = [&](u32 k) { return base != ~0u && base + k < cx.size() && cx[base + k].wide; };
+    Prev prev = prevAt(base);
     std::string wordBuf;
     u32 i = 0;
-    // (plan P3-30) the ambiguous marks as the run's language says
-    // (#style({lang: 'en'})[“OK”]), else by their neighbours
-    using Marks = MarkClass;
-    const Marks marks = markClassOf(E.styles.get(st).lang, strs);
-
-    auto flushWord = [&] {
-      if (!wordBuf.empty()) {
-        emitWord(wordBuf, n, u, st, ctx);
-        wordBuf.clear();
+    u32 wordFrom = 0, wordEnd = 0;  // the clusters wordBuf holds
+    auto addWord = [&](u32 start, u32 at) {
+      if (wordBuf.empty()) wordFrom = at;
+      wordBuf.append(s.data() + start, i - start);
+      wordEnd = at + 1;
+    };
+    // a Latin token's characters (the emergency scan's measure, plan P4-02):
+    // its clusters here, and — at an edge of the node — its continuation in
+    // the nodes before and after (narrow characters, no blank between)
+    auto narrowAt = [&](size_t k) { return cx[k].k == CtxEntry::Char && !cx[k].wide; };
+    auto flushWord = [&](bool atEnd = false) {
+      if (wordBuf.empty()) return;
+      u32 chars = wordEnd - wordFrom;
+      if (base != ~0u) {
+        if (wordFrom == 0)
+          for (size_t k = base; k > 0 && narrowAt(k - 1); k--) chars++;
+        if (atEnd)
+          for (size_t k = base + wordEnd; k < cx.size() && narrowAt(k); k++) chars++;
       }
+      emitWord(wordBuf, n, u, st, ctx, chars);
+      wordBuf.clear();
     };
     auto boundary = [&] { autospace(u, st, ctx, n->span); };
-    {  // formula → CJK boundary: the previous inline item was a formula
-      if (count(u) > 0 && isObject(count(u) - 1) && objectOf(count(u) - 1).kind == ObjKind::Math && !s.empty()) {
-        u32 j0 = 0;
-        u32 first = utf8Next(s, j0);
-        if (isIdeo(first)) boundary();
-      }
-    }
     auto lastIsCloseSp = [&] {  // a closing/dot punct's trailing half
       return count(u) > 0 && isBlank(count(u) - 1, /*ownedByNext=*/false);
     };
@@ -772,7 +952,12 @@ struct HlInline final : InlineSink {
           blank(u, stCjk, ctx, n->span, halfPx, true, 0.0f);  // leading half — breakable, NOT stretchable
         }
       } else {
-        // 禁则: no break before a closing punct (inline formulas included)
+        // 禁则: no break before a closing punct (inline formulas included) —
+        // nor at the typed spaces before it (plan P4-02; UAX #14 LB13: even
+        // after spaces), so `！ ？` never puts the ？ at a line start
+        size_t k = count(u);
+        while (k > 0 && B.items[k - 1].k == IK::Glue && B.items[k - 1].cls == (u8)GC::Word) pend[--k] = kPenInf;
+        if (k < count(u) && k > 0 && !(pend[k - 1] <= -kPenInf)) pend[k - 1] = kPenInf;
         if (count(u) > 0 && (isCjkChar(count(u) - 1) || isObject(count(u) - 1))) forbidLast();
         if (lastIsCloseSp()) {
           // closing + closing: solid; None keeps the half but rigid (a break
@@ -789,9 +974,12 @@ struct HlInline final : InlineSink {
       if (!open) blank(u, stCjk, ctx, n->span, halfPx, false, 0.0f);
     };
 
-    while (i < s.size()) {
-      u32 start = i;
-      u32 cp = utf8Next(s, i);
+    for (u32 e = 0; i < s.size();) {  // e: the cluster (its context entry: base + e)
+      const u32 start = i;
+      const u32 at = e++;  // its context entry
+      i = clusterEnd(s, i);  // one grapheme cluster: a base and its marks
+      u32 j0 = start;
+      const u32 cp = (u8)s[start] < 0x80 ? (u8)s[start] : utf8Next(s, j0);
       if (cp == ' ' || cp == '\t') {
         flushWord();
         // a text that starts with a space right after a space (something
@@ -811,30 +999,31 @@ struct HlInline final : InlineSink {
         continue;
       }
       // the em dash and ellipsis (ambiguous classes) sit outside the wide
-      // ranges but are CJK-class here (em-dash/ellipsis pairs, App C) —
-      // without this they would take the Latin path and grow spurious
-      // boundary glue on both sides.
+      // ranges but are CJK-class as the context resolves them (em-dash/
+      // ellipsis pairs, App C): defined-width pinned boxes — 2em as a pair,
+      // 1em alone (advance is unmeasurable, see pushCjkChar). An English
+      // em dash or ellipsis — single, with no CJK on either side — is
+      // ordinary text: it measures in the Latin face, where the 1em
+      // convention would over-budget it (blog EN pages showed ~2px).
       if (isIdeo(cp) || isAmbDashOrEllipsis(cp)) {
-        // em-dash / ellipsis: defined-width pinned boxes — 2em as a pair,
-        // 1em alone (App C; advance is unmeasurable, see pushCjkChar).
-        // BUT an English em dash / ellipsis — single, with no CJK on either
-        // side — is ordinary text: it measures in the Latin face, where the
-        // 1em convention would over-budget it (blog EN pages showed ~2px).
         if (isAmbDashOrEllipsis(cp)) {
-          u32 j = i;
-          u32 cp2 = (i < s.size()) ? utf8Next(s, j) : 0;
-          const bool pair = cp2 == cp;
-          const bool cjkAfter = cp2 != 0 && (isWide(cp2) || isAmbDashOrEllipsis(cp2));
-          if (marks == Marks::Latin || (marks == Marks::Neighbours && !pair && prev != Prev::Cjk && !cjkAfter)) {
-            wordBuf.append(s.data() + start, i - start);
+          if (!wideAt(at)) {
+            addWord(start, at);
             prev = Prev::Latin;
             continue;
           }
+          u32 j = i, cp2 = 0;  // its pair, in this node
+          if (i < s.size()) {
+            u32 t = i;
+            cp2 = utf8Next(s, t);
+            j = clusterEnd(s, i);
+          }
           flushWord();
           if (prev == Prev::Latin) boundary();
-          if (pair) {
+          if (cp2 == cp) {
             pushCjkChar(s.substr(start, j - start), /*definedEm=*/2.0);
             i = j;
+            e++;
           } else {
             pushCjkChar(s.substr(start, i - start), /*definedEm=*/1.0);
           }
@@ -848,17 +1037,14 @@ struct HlInline final : InlineSink {
         continue;
       }
       if (isOpenPunct(cp) || isClosePunct(cp)) {
-        // Latin-context curly quotes / apostrophes (real-world-report.md):
-        // “…” and don’t between Latin text are ordinary Latin glyphs, not
-        // full-width CJK punctuation with half-em compressible spaces
-        if (isAmbQuote(cp) && marks != Marks::Cjk && (marks == Marks::Latin || prev != Prev::Cjk)) {
-          u32 j = i;
-          u32 cp2 = (i < s.size()) ? utf8Next(s, j) : 0;
-          if (marks == Marks::Latin || cp2 == 0 || !(isWide(cp2) || isOpenPunct(cp2) || isClosePunct(cp2))) {
-            wordBuf.append(s.data() + start, i - start);
-            prev = Prev::Latin;
-            continue;
-          }
+        // a curly quote or apostrophe the context sets Latin (real-world-
+        // report #3; plan P4-02: joint pairs, wide punctuation as evidence)
+        // is an ordinary Latin glyph, not full-width CJK punctuation with
+        // half-em compressible spaces
+        if (isAmbQuote(cp) && !wideAt(at)) {
+          addWord(start, at);
+          prev = Prev::Latin;
+          continue;
         }
         flushWord();
         // no CJK–Latin boundary glue next to full-width punctuation: （1322
@@ -868,13 +1054,21 @@ struct HlInline final : InlineSink {
         continue;
       }
       if (prev == Prev::Cjk) boundary();
-      wordBuf.append(s.data() + start, i - start);
+      addWord(start, at);
       prev = Prev::Latin;
     }
-    flushWord();
+    flushWord(/*atEnd=*/true);
   }
 
   void indent(Flow& u, StyleId st, Span span, double px, double em) override {
+    Record r;
+    r.st = st;
+    r.span = span;
+    r.px = px;
+    r.em = em;
+    record(u, r);
+  }
+  void doIndent(Flow& u, StyleId st, Span span, double px, double em) {
     AdvanceSpec sp;
     sp.k = AdvanceSpec::Fixed;
     sp.em = em;
@@ -889,10 +1083,9 @@ struct HlInline final : InlineSink {
     tc.hl = std::move(tmp.hl);
     tc.anchor = tmp.anchor;  // a label inside the cell, kept (plan P1-17)
   }
-  void done(std::vector<TopBlock>&) override {}
 };
 
-// ---- the leaves (shared by the HList and the legacy inline sinks) ----------
+// ---- the leaves --------------------------------------------------------------
 // The box tree (boxtree/build.cc) decided the structure, the anchors, the
 // markers and the indents; emit shapes each leaf's content: its inline
 // stream, cells and rows, and its typed payload (plan P1-18).
@@ -1040,12 +1233,12 @@ struct Emitter {
           }
           if (ls.runIn) {  // (plan P3-34) a description item's term, then a space
             sink.walk(ls.runIn, u, ctx);
-            ContentNode sp;
-            sp.kind = Kind::text;
-            sp.span = {ls.runIn->span.end, ls.runIn->span.end};
-            sp.style = n->style;
-            sp.str = E.spaceRef;
-            sink.walk(&sp, u, ctx);
+            ContentNode* sp = arena.make<ContentNode>();  // (the sink records it until finish)
+            sp->kind = Kind::text;
+            sp->span = {ls.runIn->span.end, ls.runIn->span.end};
+            sp->style = n->style;
+            sp->str = E.spaceRef;
+            sink.walk(sp, u, ctx);
           }
           for (const ContentNode* k : n->kids) sink.walk(k, u, ctx);  // the block's content
         }
@@ -1160,7 +1353,8 @@ struct Emitter {
             m.span = n->span;
             m.style = n->style;
             reportFormula(n, m.formula, scope, strs, diags, arena);
-            if (mathText) {  // the legacy oracle lays out at emit (MIGRATION, until P4-02)
+            if (mathText) {  // (plan P1-20) the metrics at hand: it lays out here — a block lacking its
+                             // text runs is incomplete (EmitPass); without them resolveWidths finalizes it
               m.box = layoutMathFormula(strs.get(m.formula), /*display=*/true, m.sizePx, arena, strs, diags,
                                         n->span, mathText, true, &scope);
             }
@@ -1196,15 +1390,6 @@ static void shapeTop(const BoxTree& bt, size_t t, Emitter& e, TopBlock& tb) {
   for (size_t k = 0; k < tt.leaves.size(); k++) e.leaf(tt.blocks[tt.leaves[k]], bt.sources[t][k], tb.units[k]);
 }
 
-std::vector<TopBlock> emitWith(const BoxTree& bt, EmitEnv& env, InlineSink& sink) {
-  std::vector<TopBlock> tops(bt.tops.size());
-  prepareEnv(env);
-  Emitter e(env, sink);
-  for (size_t t = 0; t < bt.tops.size(); t++) shapeTop(bt, t, e, tops[t]);
-  sink.done(tops);
-  return tops;
-}
-
 struct EmitPass::State {
   std::vector<MeasureItem> missing;
   MeasureNeeds needs;
@@ -1233,14 +1418,6 @@ bool EmitPass::top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing) {
   return missing.empty();
 }
 
-std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
-                              const EmitSettings& cfg, DiagSink& diags, const MeasureNeeds* mathText,
-                              const ResourceTable* rt) {
-  EmitEnv env{arena, diags, strs, styles, cfg, mathText, rt, bt.math, bt.cascade};
-  HlInline sink(env);
-  return emitWith(bt, env, sink);
-}
-
 // The unit's carriers → TeX form and run instances:
 // - a Box that may break after it gets Penalty(p) right after it; when an
 //   InterChar glue follows instead (the rendered gap after a CJK char is CJK:
@@ -1255,6 +1432,7 @@ std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, S
 // glyph's run (a leading one opens it); penalties and InterChar glue take
 // their owner's run.
 void HlInline::finish(Flow& u) {
+  if (recUnit == &u) replay(u);
   if (cur != &u) return;
   HList& h = B;
   const size_t n = h.items.size();

@@ -193,19 +193,22 @@ struct Inst {
         n->env = kidsEnv;
         const bool own = an.alias == kNoAlias && sp.start == rn.span.start && sp.end == rn.span.end;
         const std::vector<u32>* map = own && !rn.rawmap.empty() ? &rn.rawmap : nullptr;
-        std::vector<u32> resolved;
+        std::vector<u32> identity;
         if (rn.isText) {
           std::string_view str = raw.strings[rn.str];
-          if (!p.verb && str.find('\n') != std::string_view::npos) {  // soft breaks (plan P2-10)
-            std::string s(str);
+          n->str = strs.intern(str);
+          if (!p.verb && str.find('\n') != std::string_view::npos) {
+            // soft breaks (plan P2-10) stay until the paragraph context
+            // resolves them (plan P4-02: resolveSoftBreaks, after the normal
+            // form); a mapped text keeps an explicit map for it to rebuild
             const u32 rawLen = rn.span.end - rn.span.start;
-            const bool mapped = own && !rn.span.empty() && (map || s.size() == rawLen);
-            if (map) resolved = *map;
-            resolveSoftBreaks(s, resolved, rawLen, mapped);
-            n->str = strs.intern(s);
-            map = mapped && !resolved.empty() ? &resolved : nullptr;
-          } else {
-            n->str = strs.intern(str);
+            const bool mapped = own && !rn.span.empty() && (map || str.size() == rawLen);
+            if (mapped && !map) {
+              identity = {0, 0};
+              map = &identity;
+            } else if (!mapped) {
+              map = nullptr;
+            }
           }
         }
         if (map) {
@@ -402,6 +405,7 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs, StyleTa
   // after the root span: an unwrapped block keeps its span; its wrappers
   // take the cascade at their place (plan P3-01)
   if (normalize(root, arena, strs, diags)) settleMade(root, cascade, props, styles);
+  resolveSoftBreaks(root, arena, strs, styles);  // (plan P4-02) with the paragraph context
   return t;
 }
 

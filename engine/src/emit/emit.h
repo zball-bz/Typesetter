@@ -82,7 +82,7 @@ constexpr float BREAK_INF = kPenInf;
 
 // What the legacy breaker reads of a block (plan P1-12): production lowers
 // each HList to these (fuseLegacy); the full LinebreakBlock is built only for
-// the blocks dump and the equivalence check (fuseCheck, legacy.h).
+// the blocks dump.
 struct BreakBlock {
   Su width = 0, breakWidth = 0, spaceWidth = 0;
   float breakPenalty = 0;  // INF = unbreakable after this block
@@ -145,7 +145,6 @@ struct Flow {
   Span span;          // (plan P3-07) a cell's or sidecar row's node: an empty cell's line
   std::vector<BreakBlock> blocks;  // fuseLegacy(hl), for the legacy breaker
   std::vector<u32> blockStart;     // block b = hl.items [blockStart[b], blockStart[b+1])
-  std::vector<LinebreakBlock> legacy;  // MIGRATION: the legacy emitter's blocks (fuseCheck)
 };
 using TableCell = Flow;
 
@@ -254,9 +253,6 @@ class EmitPass {
   const BoxTree& bt_;
   std::unique_ptr<State> st_;
 };
-std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
-                              const EmitSettings& cfg, DiagSink& diags, const MeasureNeeds* mathText = nullptr,
-                              const ResourceTable* rt = nullptr);
 
 // (plan P3-25) where an inline formula may break: the settings' class
 // tables (math.breakAfter / math.breakBefore)
@@ -283,10 +279,10 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
                              ObjectEnv* objects = nullptr);
 
 // The lowering of an HList to today's blocks (plan P1-12; the legacy breaker
-// reads them until P4-08): a specified table per item and glue class, equal
-// field by field to what the pre-HList emitter produced (fuseCheck, legacy.h).
-// The full form feeds the dumps and the check; production keeps only what
-// the breaker reads.
+// reads them until P4-08): a specified table per item and glue class, which
+// was equal field by field to what the pre-HList emitter produced until
+// P4-02 retired that emitter. The full form feeds the dumps; production
+// keeps only what the breaker reads.
 void fuseLegacy(const HList& h, std::vector<LinebreakBlock>& blocks, std::vector<u32>& blockStart);
 void fuseLegacy(const HList& h, std::vector<BreakBlock>& blocks, std::vector<u32>& blockStart);
 void fuseLegacy(std::vector<TopBlock>& tops);  // every unit and cell, the breaker's form

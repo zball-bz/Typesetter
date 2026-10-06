@@ -27,7 +27,16 @@ for (const f of readdirSync(dir).filter((f) => f.endsWith('.tsm')).sort()) {
     const opsPath = join(tmpdir(), 'corpus.ops');
     writeFileSync(opsPath, ops);
     const diags = run(['--stage=diags', p]);
-    const html = run(['--stage=html', `--ops=${opsPath}`, '--width=300', p]);
+    // (plan P4-02) every inline stream's legality too (lintHList): the
+    // typst `！ ？` documents the paragraph shaper closed (UAX #14 LB13)
+    let html;
+    try {
+      html = run(['--stage=html', `--ops=${opsPath}`, '--width=300', '--lint', p]);
+    } catch (e) {
+      if (e.status !== 1) throw e;
+      findings.push({ f, kind: 'lint', detail: String(e.stdout).trim().split('\n').slice(0, 3).join(' | ') });
+      continue;
+    }
     const errors = diags.split('\n').filter((l) => l.startsWith('error'));
     if (errors.length) findings.push({ f, kind: 'diag', detail: errors.join(' | ') });
     else if (!html.includes('tsr-line')) findings.push({ f, kind: 'empty', detail: 'no lines rendered' });

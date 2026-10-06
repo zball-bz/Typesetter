@@ -168,41 +168,43 @@ top pid=3 units=1
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[391,400)
   box Other "1" w=513su r2 @[391,400)
-  box Ideo "与" w=1025su wt=0.6 cap=102su r3 @[400,403)
-  glue inter w=0su x=0.6 cap=102su r3 @[400,403)
-  box Ideo "图" w=1025su wt=0.6 cap=102su r4 @[403,412)
-  pen 0 r4
-  glue word w=257su x=1 cap=257su src r5 @[403,412)
-  box Other "2" w=513su r5 @[403,412)
-  box ColonW "；" w=512su blank=R r6 @[412,445)
-  glue blank w=512su x=0 cap=0su r6 @[412,445)
-  box Ideo "前" w=1025su wt=0.6 cap=102su r7 @[412,445)
-  glue inter w=0su x=0.6 cap=102su r7 @[412,445)
-  box Ideo "者" w=1025su wt=0.6 cap=102su r7 @[412,445)
-  glue inter w=0su x=0.6 cap=102su r7 @[412,445)
-  box Ideo "宽" w=1025su wt=0.6 cap=102su r7 @[412,445)
-  glue inter w=0su x=0.6 cap=102su r7 @[412,445)
-  box Ideo "度" w=1025su wt=0.6 cap=102su r7 @[412,445)
-  glue inter w=0su x=0.6 cap=102su r7 @[412,445)
-  box Ideo "为" w=1025su wt=0.6 cap=102su r7 @[412,445)
-  glue inter w=0su x=0.6 cap=102su r7 @[412,445)
-  box Ideo "版" w=1025su wt=0.6 cap=102su r7 @[412,445)
-  glue inter w=0su x=0.6 cap=102su r7 @[412,445)
-  box Ideo "心" w=1025su wt=0.6 cap=102su r7 @[412,445)
-  glue inter w=0su x=0.6 cap=102su r7 @[412,445)
-  box Ideo "之" w=1025su wt=0.6 cap=102su r7 @[412,445)
-  glue inter w=0su x=0.6 cap=102su r7 @[412,445)
-  box Ideo "半" w=1025su wt=0.6 cap=102su r7 @[412,445)
-  pen INF r7
-  glue inter w=0su x=0.6 cap=102su r7 @[412,445)
-  box FullStopW "。" w=512su blank=R r8 @[412,445)
-  glue blank w=512su x=0 cap=0su r8 @[412,445)
+  glue autospace w=256su x=1 cap=256su r3 @[400,403)
+  box Ideo "与" w=1025su wt=0.6 cap=102su r4 @[400,403)
+  glue inter w=0su x=0.6 cap=102su r4 @[400,403)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r5 @[403,412)
+  pen 0 r5
+  glue word w=257su x=1 cap=257su src r6 @[403,412)
+  box Other "2" w=513su r6 @[403,412)
+  box ColonW "；" w=512su blank=R r7 @[412,445)
+  glue blank w=512su x=0 cap=0su r7 @[412,445)
+  box Ideo "前" w=1025su wt=0.6 cap=102su r8 @[412,445)
+  glue inter w=0su x=0.6 cap=102su r8 @[412,445)
+  box Ideo "者" w=1025su wt=0.6 cap=102su r8 @[412,445)
+  glue inter w=0su x=0.6 cap=102su r8 @[412,445)
+  box Ideo "宽" w=1025su wt=0.6 cap=102su r8 @[412,445)
+  glue inter w=0su x=0.6 cap=102su r8 @[412,445)
+  box Ideo "度" w=1025su wt=0.6 cap=102su r8 @[412,445)
+  glue inter w=0su x=0.6 cap=102su r8 @[412,445)
+  box Ideo "为" w=1025su wt=0.6 cap=102su r8 @[412,445)
+  glue inter w=0su x=0.6 cap=102su r8 @[412,445)
+  box Ideo "版" w=1025su wt=0.6 cap=102su r8 @[412,445)
+  glue inter w=0su x=0.6 cap=102su r8 @[412,445)
+  box Ideo "心" w=1025su wt=0.6 cap=102su r8 @[412,445)
+  glue inter w=0su x=0.6 cap=102su r8 @[412,445)
+  box Ideo "之" w=1025su wt=0.6 cap=102su r8 @[412,445)
+  glue inter w=0su x=0.6 cap=102su r8 @[412,445)
+  box Ideo "半" w=1025su wt=0.6 cap=102su r8 @[412,445)
+  pen INF r8
+  glue inter w=0su x=0.6 cap=102su r8 @[412,445)
+  box FullStopW "。" w=512su blank=R r9 @[412,445)
+  glue blank w=512su x=0 cap=0su r9 @[412,445)
   run r0 letter-spaced CJK
   run r1 letter-spaced ref LINK CJK link="#tsr-fig-pipe"
   run r2 plain ref LINK link="#tsr-fig-pipe"
-  run r3 letter-spaced CJK
-  run r4 letter-spaced ref LINK CJK link="#tsr-fig-wide"
-  run r5 plain ref LINK link="#tsr-fig-wide"
-  run r6 blank-bearing CJK
-  run r7 letter-spaced CJK
-  run r8 blank-bearing CJK
+  run r3 plain
+  run r4 letter-spaced CJK
+  run r5 letter-spaced ref LINK CJK link="#tsr-fig-wide"
+  run r6 plain ref LINK link="#tsr-fig-wide"
+  run r7 blank-bearing CJK
+  run r8 letter-spaced CJK
+  run r9 blank-bearing CJK

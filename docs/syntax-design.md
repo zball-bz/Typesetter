@@ -143,9 +143,11 @@ document-model §4.3.
 As built (plan P2-10): a **line join is a soft break** — U+000A in the cooked
 text, absorbing the blanks around it (trailing blanks, the next line's
 indentation); the parser no longer decides how lines join. The engine
-resolves it at instantiation (model/softbreak.h): a space, or nothing
-between two characters that join seamlessly (`joinsWide`, the predicate the
-parser used to apply); at a text's edge — markup on the other side — a space.
+resolves it right after the normal form (model/softbreak.h; plan P4-02): a
+space, or nothing between two characters that join seamlessly
+(`joinsWithoutSpace`: the joining classes, and an ambiguous quote its
+context sets wide), asked of the characters on either side in the
+paragraph's reading order — across markup (`这是*强调*⏎中文` joins).
 Code and verbatim bodies keep their newlines.
 
 Dispatch is the INLINE rows: `inlineOpener(t, i)` (generated) names the rule

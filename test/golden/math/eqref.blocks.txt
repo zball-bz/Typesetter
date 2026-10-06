@@ -27,6 +27,7 @@ top pid=2 units=1
   cjk "式" w=1025su glue=102su wt=0.6 pen=0 LINK SYN @[74,78)
   space w=257su stretch=1 LINK SYN @[74,78)
   word "(1)" w=1537su pen=INF LINK SYN @[74,78)
+  boundary w=256su stretch=1 @[78,120)
   cjk "可" w=1025su glue=102su wt=0.6 pen=0 @[78,120)
   cjk "知" w=1025su glue=102su wt=0.6 pen=0 @[78,120)
   cjk "能" w=1025su glue=102su wt=0.6 pen=0 @[78,120)

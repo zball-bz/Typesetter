@@ -15,8 +15,8 @@
 // A boundary (the items between two Boxes/Discs) holds at most one legal
 // breakpoint; lintHList checks it on every golden.
 //
-// Until the paragraph shaper (P4-02) the emitter writes today's break
-// structure in this form: a box that may break after it carries a Penalty
+// Until the item-native breaker (P4-08) the emitter writes the break
+// structure the lowering reads in this form: a box that may break after it carries a Penalty
 // right after it (none when an InterChar glue follows: that glue is the
 // break); a glue whose own penalty is not 0 carries it right before it. The
 // legacy breaker reads the lowering fuseLegacy (emit.h) of this list until

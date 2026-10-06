@@ -1,14 +1,16 @@
 // Soft breaks (plan P2-10; design T1 S13 as decided by the integration: on
 // the wire a line join inside a paragraph is U+000A in its inline-model text;
-// code and verbatim bodies keep their newlines). A soft break reads as a
-// space — or as nothing between two characters that join seamlessly
-// (TextRules joinsWide: the wide CJK classes, the predicate the parser used
-// to apply, unchanged); at a text's edge (markup on the other side, which is
-// never wide) it is a space. Resolved once, at instantiation, so every
-// consumer — the tree, the semantic page, titles, emit — reads the same text;
-// P4-02 moves the decision into the paragraph shaper, with context across
-// node edges (TextRules joinsWithoutSpace).
+// code and verbatim bodies keep their newlines). A soft break reads as
+// nothing between two characters that join seamlessly, else as a space —
+// TextRules joinsWithoutSpace (plan P4-02), asked of the characters on
+// either side in the paragraph's reading order, across node edges
+// (`这是*强调*⏎中文` joins: findings parser-owned-cjk-line-join,
+// markup-language/cjk-softbreak-classifier), with the ambiguous quotes as
+// the paragraph context resolves them (shape/context.h: `他说“好”⏎然后`
+// joins). Resolved once, right after the normal form, so every consumer —
+// the tree, the semantic page, titles, emit — reads the same text.
 #pragma once
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -16,14 +18,19 @@
 
 namespace tsr {
 
-// Resolves the soft breaks of `s` in place. `map` is its cooked→raw map
-// (pairs: cooked offset, raw offset − span start; empty = the identity over a
-// raw slice of `rawLen` bytes) and is rebuilt as the parser builds one: a
-// breakpoint wherever the identity breaks, the end when the identity does
-// not reach it, nothing when the whole text is its own raw slice. Returns
-// whether anything changed.
-inline bool resolveSoftBreaks(std::string& s, std::vector<u32>& map, u32 rawLen, bool mapped) {
-  if (s.find('\n') == std::string::npos) return false;
+struct ContentNode;
+class Interner;
+class StyleTable;
+class Arena;
+
+// Rewrites the soft breaks of `s`: the k-th one (in order) becomes nothing
+// when join(k), else a space. `map` is its cooked→raw map (pairs: cooked
+// offset, raw offset − span start; empty = the identity over a raw slice of
+// `rawLen` bytes) and is rebuilt as the parser builds one: a breakpoint
+// wherever the identity breaks, the end when the identity does not reach
+// it, nothing when the whole text is its own raw slice.
+inline void rewriteSoftBreaks(std::string& s, std::vector<u32>& map, u32 rawLen, bool mapped,
+                              const std::function<bool(u32)>& join) {
   const u32 n = (u32)s.size();
   // each cooked byte's raw offset, and the end
   std::vector<u32> raw(n);
@@ -44,26 +51,20 @@ inline bool resolveSoftBreaks(std::string& s, std::vector<u32>& map, u32 rawLen,
   std::vector<u32> outRaw;
   out.reserve(n);
   outRaw.reserve(n);
+  u32 nth = 0;
   for (u32 k = 0; k < n; k++) {
     if (s[k] != '\n') {
       out += s[k];
       if (mapped) outRaw.push_back(raw[k]);
       continue;
     }
-    bool seamless = false;
-    if (k > 0 && k + 1 < n) {
-      u32 p = k, q = k + 1;
-      const u32 prev = utf8PrevCp(s, p);
-      const u32 next = utf8Next(s, q);
-      seamless = joinsWide(prev) && joinsWide(next);
-    }
-    if (!seamless) {
+    if (!join(nth++)) {
       out += ' ';
       if (mapped) outRaw.push_back(raw[k]);
     }
   }
   s = std::move(out);
-  if (!mapped) return true;
+  if (!mapped) return;
   map.clear();
   const u32 m = (u32)s.size();
   for (u32 k = 0; k < m; k++)
@@ -76,7 +77,11 @@ inline bool resolveSoftBreaks(std::string& s, std::vector<u32>& map, u32 rawLen,
     map.push_back(end);
   }
   if (map.size() == 2 && map[1] == 0 && m == rawLen) map.clear();  // its own raw slice
-  return true;
 }
+
+// The pass: every inline-model text of the tree (instantiation leaves its
+// soft breaks in place, a mapped text with an explicit map), resolved with
+// its paragraph's context.
+void resolveSoftBreaks(ContentNode* root, Arena& arena, Interner& strs, const StyleTable& styles);
 
 }  // namespace tsr

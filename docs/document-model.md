@@ -53,7 +53,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `mathblock` | block | `src`, `label?`, `name?` (resolver: "(n)") | — (MathBox at emit) | M7 ✓ |
 | `error` | both | `message`, `code` | best-effort content | M1 |
 | `comment` | both | `body` | — | M2 |
-| `text` | inline | `str` (P2-10: U+000A in an inline-model text is a soft break — a space, or nothing between two wide characters, resolved at instantiation; code/verbatim bodies keep newlines) | — | M1 |
+| `text` | inline | `str` (P2-10: U+000A in an inline-model text is a soft break — a space, or nothing between two joining characters, resolved after the normal form with the paragraph's context across node edges, plan P4-02; code/verbatim bodies keep newlines) | — | M1 |
 | `styled` | inline | `delta` (§3) | inline | M1 |
 | `link` | inline | `url` | inline | M2 |
 | `code` | inline | `str` | — | M2 |

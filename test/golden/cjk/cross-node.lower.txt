@@ -1,0 +1,42 @@
+lower v1 abi 3d3ccfbb docEnd 364 holes 0 module none
+block 0 content [0,77)
+  CALL para [0,77)
+    TEXT "中文" [0,6)
+    CALL strong [6,15)
+      TEXT "English" [7,14)
+    TEXT "中文和" [15,24)
+    CALL code [24,30) text="code"
+    TEXT "中文，" [30,39)
+    CALL link [39,68) url="https://example.com"
+      TEXT "链接" [40,46)
+    TEXT "也算。" [68,77)
+block 1 content [79,134)
+  CALL para [79,134)
+    TEXT "他说：“Hello”之后，又说，“" [79,120)
+    CALL strong [120,128)
+      TEXT "强调" [121,127)
+    TEXT "”。" [128,134)
+block 2 content [136,234)
+  CALL para [136,234)
+    TEXT "这是" [136,142)
+    CALL strong [142,150)
+      TEXT "强调" [143,149)
+    TEXT "\n中文继续，他说“好”\n然后写到中文结尾\n“引号开头”结束。" [151,234) raw=0:0,1:0
+block 3 content [236,293)
+  CALL para [236,293)
+    TEXT "The value (" [236,247)
+    CALL math [247,252)
+      CALL mathsrc [248,251) src="a=b"
+    TEXT ") holds, and so does " [252,272) raw=0:0,21:20
+    CALL math [273,280)
+      CALL mathsrc [274,279) src="x+y+z"
+    TEXT ", too: " [280,286) raw=0:0,7:6
+    CALL math [287,290)
+      CALL mathsrc [288,289) src="f"
+    TEXT "th." [290,293)
+block 4 content [295,363)
+  CALL para [295,363)
+    TEXT "A path abc.def/" [295,310)
+    CALL strong [310,316)
+      TEXT "ghij" [311,315)
+    TEXT "/klmn.opq/rst is one token across its emphasis." [316,363)

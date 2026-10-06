@@ -48,41 +48,43 @@ top pid=2 units=1
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[74,78)
   box Other "(1)" w=1537su r2 @[74,78)
-  box Ideo "可" w=1025su wt=0.6 cap=102su r3 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r3 @[78,120)
-  box Ideo "知" w=1025su wt=0.6 cap=102su r3 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r3 @[78,120)
-  box Ideo "能" w=1025su wt=0.6 cap=102su r3 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r3 @[78,120)
-  box Ideo "量" w=1025su wt=0.6 cap=102su r3 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r3 @[78,120)
-  box Ideo "与" w=1025su wt=0.6 cap=102su r3 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r3 @[78,120)
-  box Ideo "质" w=1025su wt=0.6 cap=102su r3 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r3 @[78,120)
-  box Ideo "量" w=1025su wt=0.6 cap=102su r3 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r3 @[78,120)
-  box Ideo "等" w=1025su wt=0.6 cap=102su r3 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r3 @[78,120)
-  box Ideo "价" w=1025su wt=0.6 cap=102su r3 @[78,120)
-  pen INF r3
-  glue inter w=0su x=0.6 cap=102su r3 @[78,120)
-  box FullStopW "。" w=512su blank=R r4 @[78,120)
-  glue blank w=512su x=0 cap=0su r4 @[78,120)
-  box Ideo "高" w=1025su wt=0.6 cap=102su r5 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r5 @[78,120)
-  box Ideo "斯" w=1025su wt=0.6 cap=102su r5 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r5 @[78,120)
-  box Ideo "积" w=1025su wt=0.6 cap=102su r5 @[78,120)
-  glue inter w=0su x=0.6 cap=102su r5 @[78,120)
-  box Ideo "分" w=1025su wt=0.6 cap=102su r5 @[78,120)
-  pen 0 r5
+  glue autospace w=256su x=1 cap=256su r3 @[78,120)
+  box Ideo "可" w=1025su wt=0.6 cap=102su r4 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r4 @[78,120)
+  box Ideo "知" w=1025su wt=0.6 cap=102su r4 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r4 @[78,120)
+  box Ideo "能" w=1025su wt=0.6 cap=102su r4 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r4 @[78,120)
+  box Ideo "量" w=1025su wt=0.6 cap=102su r4 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r4 @[78,120)
+  box Ideo "与" w=1025su wt=0.6 cap=102su r4 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r4 @[78,120)
+  box Ideo "质" w=1025su wt=0.6 cap=102su r4 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r4 @[78,120)
+  box Ideo "量" w=1025su wt=0.6 cap=102su r4 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r4 @[78,120)
+  box Ideo "等" w=1025su wt=0.6 cap=102su r4 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r4 @[78,120)
+  box Ideo "价" w=1025su wt=0.6 cap=102su r4 @[78,120)
+  pen INF r4
+  glue inter w=0su x=0.6 cap=102su r4 @[78,120)
+  box FullStopW "。" w=512su blank=R r5 @[78,120)
+  glue blank w=512su x=0 cap=0su r5 @[78,120)
+  box Ideo "高" w=1025su wt=0.6 cap=102su r6 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r6 @[78,120)
+  box Ideo "斯" w=1025su wt=0.6 cap=102su r6 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r6 @[78,120)
+  box Ideo "积" w=1025su wt=0.6 cap=102su r6 @[78,120)
+  glue inter w=0su x=0.6 cap=102su r6 @[78,120)
+  box Ideo "分" w=1025su wt=0.6 cap=102su r6 @[78,120)
+  pen 0 r6
   run r0 letter-spaced CJK
   run r1 letter-spaced ref LINK CJK link="#tsr-emc"
   run r2 plain ref LINK link="#tsr-emc"
-  run r3 letter-spaced CJK
-  run r4 blank-bearing CJK
-  run r5 letter-spaced CJK
+  run r3 plain
+  run r4 letter-spaced CJK
+  run r5 blank-bearing CJK
+  run r6 letter-spaced CJK
 top pid=3 units=1
  unit math indent=0su anchor="gauss" w=7788su asc=1458su desc=941su
   cell 0

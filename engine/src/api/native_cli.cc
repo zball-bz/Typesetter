@@ -2,7 +2,7 @@
 // (api/driver.h) and one settings document (plan P1-03):
 //   tsrc --stage=<product> [--ops=f.ops] [--profile=golden|path.json]
 //        [--fixture=f.fixture.json] [--settings=f.json] [--set path=value]…
-//        [--labels=m.json]… [--fuse-check] <file.tsm>
+//        [--labels=m.json]… [--lint] <file.tsm>
 // Products are products.def (skeleton ast js tokens outline astjson ops tree
 // index semantic blocktree mathir mathbox blocks hlist breaks layout vlist paged html dl diags
 // settings); those after Ingest need --ops.
@@ -14,9 +14,9 @@
 // sugar for their settings rows. Post-ops stages use the normative mock
 // measurer, the policy's image answer and the native token provider — with
 // --profile=golden and a fixture's X.fixture.json, tsrc reproduces the
-// golden files byte for byte (tools/check-tsrc.mjs). --fuse-check (plan
-// P1-12, until P4-02) also compares fuseLegacy with the legacy emitter and
-// lints every HList; a difference prints and exits 1.
+// golden files byte for byte (tools/check-tsrc.mjs). --lint (plan P1-12)
+// also checks every HList's legality (lintHList); a finding prints and exits
+// 1. (The legacy emitter it once compared with left with plan P4-02.)
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -26,7 +26,6 @@
 #include "../code/native_tokens.h"
 #include "../codegen/codegen.h"
 #include "driver.h"
-#include "../emit/legacy.h"
 
 using namespace tsr;
 
@@ -66,7 +65,7 @@ int main(int argc, char** argv) {
   std::string stage = "ast", opsPath, file;
   std::vector<std::string> layers;  // settings documents, applied in order
   std::string profile, fixture;
-  bool fuse = false, fragmentsDump = false;
+  bool lint = false, fragmentsDump = false;
   std::string fragments;
   std::vector<std::string> labelFiles;  // (plan P3-31) --labels=F: the input labels
   for (int i = 1; i < argc; i++) {
@@ -95,7 +94,7 @@ int main(int argc, char** argv) {
     else if (a.rfind("--punct=", 0) == 0) layers.push_back(legacy("cjk", "punctCompress", "\"" + val(8) + "\""));
     else if (a.rfind("--page-height=", 0) == 0) layers.push_back(legacy("page", "height", val(14)));
     else if (a == "--snap") layers.push_back(legacy("code", "snapKerning", "true"));
-    else if (a == "--fuse-check") fuse = true;
+    else if (a == "--lint") lint = true;
     else if (a.rfind("--fragments=", 0) == 0) fragments = val(12);
     else if (a.rfind("--labels=", 0) == 0) labelFiles.push_back(val(9));  // (plan P3-31) a manifest, repeatable
     else if (a == "--fragments-dump") fragmentsDump = true;
@@ -220,13 +219,12 @@ int main(int argc, char** argv) {
       }
     }
   }
-  if (fuse) {
+  if (lint) {
     if (!doc.done(Stage::Measure)) {
-      fprintf(stderr, "--fuse-check needs a typeset stage (and --ops=)\n");
+      fprintf(stderr, "--lint needs a typeset stage (and --ops=)\n");
       return 2;
     }
-    std::string d = fuseCheck(doc.tops, doc.boxtree, doc.arena, doc.strs, doc.styles, doc.cfg,
-                              doc.metrics, doc.cfg.baseSizePx);
+    std::string d;
     for (const TopBlock& tb : doc.tops)
       for (const FlowUnit& u : tb.units) {
         d += lintHList(u.hl);

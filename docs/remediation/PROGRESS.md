@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P4
-- 下一步：P4-02
+- 下一步：P4-03
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -105,7 +105,7 @@
 | P3-36 | 导出包 | done | grep:plan P3-36 | 2026-10-07 | 无（引擎 golden 不变）；Node 导出冒烟测试 tools/check-export.mjs 扩充 | renderTsm 返回导出包：在原字段之外增加 result（语义 RenderResult：head {lang, title, idPrefix, profile}、html、由 labels 产品得出的 anchors）、resources（清单）、styles（contract、theme、rules）与 profile；opts.profile 'feed' 令公式为源码（render.math: source，设置另有规定时从之）。runtime/src/node/export.mjs exportStatic(bundle, {template, hydrate, source, inputs, title, embedResources, docDir, assets})：纯函数，返回 {html, parts, copy, embedded, math, hydrate}；template(parts) 包装页面（默认裸页面，feed 只出文章）；水合原样传回包的解析后设置（去掉 host.* 行）；embedResources 把文档图片内联为 data: URI，其余资源进复制清单（真实路径受限于文档目录）。tools/export-static.mjs（--profile、--template、--embed）与 tools/tsm-project.mjs 经 tools/lib/static-page.mjs 的 writePage 写页面。博客侧配合改动写入 REPORT.md。文档：pages-design §3 |
 | P3-37 | ABI 收尾与文档修订 | done | grep:plan P3-37 | 2026-10-07 | 无（golden 不变）；golden 运行器对全部 213 个用例核对诊断 JSON 与 diags 文本逐行一致；e2e +1（诊断 JSON 与文本并列） | tsr2_get(doc, product, opts)：products.def 的全部产品按名读取（u32 长度 + 字节；未知产品或其阶段未跑时为空；diags、diagnostics、settings 任何阶段可取；opts 预留），tsr2_product 留作文本形式的兼容层。新产品 diagnostics：[{sev, code, span:[s,e], message, origin, pid?}]，origin 为 DiagSink 的阶段名；tsrc --stage=diagnostics。worker 经 tsr2_get 取产品，每个结果（含失败路径）带 diagnostics，shell 句柄与 update/relayout 结果暴露之；VS Code 预览页与 preview.js 读结构化诊断，删去解析文本的正则。文档修订：architecture §2.1（产品表）、§2.4（无估计态，relayout 原位重进）、§2.5（as-built ABI 与兼容层清单）、§4.1（as-built 文件名、模块缓存键）；document-model §6.4、§7、§10、§11；v2 §6、§9、§11.1；code-design §3、§5；figure-design §3（注明被 §8 取代）与 §8（captions 盒特性、P3-32 的图像尺寸）；testing §2；host-protocol §6；CLAUDE.md 的 ops 版本改为指向 schema.json opsVersion；wasm_api.cc 头注释改为二进制拉取 |
 | P4-01 | 按 run 实例成 run | done | grep:plan P4-01 | 2026-10-07 | 69 个 hlist（178 处词间胶加 kern 上下文：链接/引用/颜色边界两侧同字体；36 个行内代码 run plain→rigid）；1 个 html（locale/auto-en：两端对齐行上的行内代码加 word-spacing:0）；breaks/blocks/layout 不变，WASM 213/213；e2e AUDIT_XFAIL 1→0（semantics/appendix 通过） | 接合字距按成形 run：measure/face.h 新增 FaceStyle/faceStyleOf（字体由之决定的样式字段），FaceTable::faceOf 经它取值；kernContexts 的条件改为两侧是文字盒（Plain/Rigid）且两词与空格的 FaceStyle 相同，不再看链接（Chromium/Firefox 实测：同字体跨 span/a/颜色成形与配对字距，跨字体、letter-spacing、inline-block 不跨），旧发射器预言机同步，fuseCheck 全部相等。锚点是点：带标签引用的锚点在发射其文字之前给出，第一个 Box/Disc 取 IA_Anchor 并开启携带它的 run（RunRec.anchor），后续同键项可并入；索引条目的空锚点盒仍独占 run。行内代码为 Rigid，paint 在两端对齐且文字含词分隔符（CSS Text §8.1）时写 word-spacing:0（DLRun.rigid，dl dump 记 rigid）。ICtx 的 BF_REF 标志位换成 SynKind（P0-10 的过渡键），预言机映射回去。lintHList 新增：锚点开启其 run 且 run 携带它；KernCtx 只在两个文字盒之间。验收：87K 基准文档 DOM 节点 15,178→15,178；真实语料与用例 553 篇 733,686→733,686（增长 0%，D-X08 ≤10%），75 篇字节变化全部是 151 个 word-spacing:0；review-corpus 340 篇不变；rules-diff 0 变化。文档：shaping-design §5、document-model §9.1、render-design §2、REPORT.md |
-| P4-02 | 段落级成形器 | todo | | | | |
+| P4-02 | 段落级成形器 | done | grep:plan P4-02 | 2026-10-07 | 57 个 golden 文件：hlist 16、breaks/layout/html 各 10、blocks 8、tree/semantic/paged 各 1——figure/block、figure/float、math/eqref、pages/paged-doc、inline/prose-guards、locale/quote-lang、splice/ascii-cut（跨节点边界胶）；math/grid、math/symbols（公式后不在标点前断行）；style/patch（跨节点软换行无缝，tree/semantic 同变）；doc/toc-clone、inline/bracket-island、math/decl、math/holes-diag、math/negation-diag、notes/basic 只有 hlist；+1 用例 cjk/cross-node；WASM 214/214 | 段落级成形：HlInline 的 walk/indent 只记录，finish 把记录展平为段落上下文（shape/context.h：每个字素簇一项，跨样式、链接、引用、错误边界；行内代码、公式为拉丁证据，图片、原始标记、硬换行为不透明，空格为空白），resolveContext 一次性解析歧义标点（破折号/省略号按 lang、成对或邻近 CJK；字母间 U+2019 为撇号；引号按 lang，否则前一字符为 CJK 或宽标点、后一字符为 CJK 或标点，成对联合判定），再按阅读顺序重放原有逐节点发射。文字节点的起始状态取段落中的前一字符，CJK–拉丁边界胶出现在强调、链接、引用、行内代码两侧（上标/下标标记两侧和 attach 边缘除外）；对象之后的断点看后邻（闭合标点与公式紧贴的拉丁文字或代码前禁断）；CJK 闭合标点前的键入空格不可断（LB13）；长 token 门限按字符、跨样式边界计数；CJK 盒按字素簇（textrules clusterEnd，UAX #29 GB3–GB13）。软换行：实例化保留 U+000A（映射文本带显式映射），规范形之后 model/softbreak.cc 按段落流以 joinsWithoutSpace 解析，可跨节点；连同歧义引号的上下文解析。删除旧发射器 emit/legacy.{h,cc}、fuseCheck、Flow::legacy、emitDoc/emitWith、InlineSink::done；tsrc --fuse-check 改为 --lint，corpus-run 对 199 篇 typst 语料做 HList lint（旧版两篇 `！ ？` 文档的闭合标点前断点已消除）。性能：clusterEnd 的 ASCII 与 CJK 统一表意字快路径、packed() 的汉字区间热路径（由生成表在编译期求得）、无歧义标点时跳过解析、软换行只在含软换行的流上建项。文档：shaping-design §7（新）、§1、§5、§6，syntax-design、document-model 的软换行，tsm-changes，REPORT，CLAUDE.md |
 | P4-03 | 逐项源 span | todo | | | | |
 | P4-04 | TextProps v1；标点/空白/autospace 数据化 | todo | | | | |
 | P4-05 | UCD 字符类（RULES_VERSION 1）与 Unicode 控制符 | todo | | | | |
@@ -184,6 +184,7 @@
 | P3-37 后 | 3.50 | 11.80 | 27.70 | 1.7 / 3.1 / 0.9 / 10.5 / 3.5 | 77.3 / 105.3 / 150.9 | 1.80 / 22.20 / 57.80 | 均在 P3 门限内；35K update 3 轮 13.90（机器负载 2.4），6 轮 12.20；同机 A/B 各 6 轮：HEAD 11.80、本步 11.80，取之（每次结果多解析一份诊断 JSON，量不出差别） |
 | P3 结束 | 3.70 | 11.60 | 27.90 | 1.8 / 3.0 / 0.9 / 10.4 / 3.5 | 70.9 / 108.8 / 153.5 | 1.80 / 21.70 / 58.80 | 阶段门禁满足：update ≤ P3 门限（3.98 / 12.27 / 29.91），relayout ≤（5.87 / 23.40 / 63.30）；4adfe84 上一次 bench.sh（机器负载 3.9） |
 | P4-01 后 | 3.90 | 11.70 | 28.00 | 1.6 / 3.2 / 0.9 / 10.6 / 3.4 | 74.2 / 106.7 / 149.1 | 1.70 / 22.70 / 58.10 | 均在 P4 阶段门限内（P3 结束 ×1.05+0.3：update 4.19 / 12.48 / 29.60，relayout 2.19 / 23.09 / 62.04）；kernContexts 每个词间胶多两次样式比较，量不出差别 |
+| P4-02 后 | 3.90 | 11.50 | 28.50 | 1.7 / 3.1 / 0.9 / 11.2 / 3.3 | 71.4 / 106.8 / 152.1 | 1.70 / 22.00 / 59.20 | 均在 P4 门限内（4.19 / 12.48 / 29.60；relayout 2.19 / 23.09 / 62.04）；35K 为 6 轮（3 轮 12.80）。初版 87K 36.90（ingest +2.8：软换行逐字建项；engine +5.6：逐簇查表），按 callgrind 优化后 engine 11.2（P4-01 10.6，+0.6：段落上下文扫描） |
 
 ## 偏差记录（MD-11）
 
@@ -463,6 +464,13 @@
 | P4-01 | Rigid run 只在文字含词分隔符时写 word-spacing:0 | word-spacing 只作用于词分隔符（CSS Text §8.1），无空格的行内代码写了也无效果，只增加 HTML 字节 | 无 |
 | P4-01 | golden 变化与计划所列不同：计划预计 cite/*、notes/*、doc/structure、inline/fence-edge、pages/paged-doc 的 html；实际 html 只有 locale/auto-en，另有 69 个 hlist | cite/* 的 data-syn 修正已在 P0-10/P3-07 落地；notes/* 的锚点标记都是单盒、本来就开启 run；doc/structure 等用例的行内代码所在行不两端对齐（行无 word-spacing）；hlist 变化是 kern 上下文与 rigid run 列 | 无 |
 | P4-01 | 行内代码之外 `text.space: pre` 的文字仍按普通词间胶排（可拉伸），而契约类 tsr-pre 的 word-spacing:0 使其在两端对齐行上不拉伸 | whiteSpace 成为 TextProps 属性属 P4-04（设计 T5 步骤 7）；当前语料与用例无此用法 | P4-04 |
+| P4-02 | 软换行在规范形之后由模型层（model/softbreak.cc）按段落上下文解析，而非设计中成形器里的 NewLine 原子 | 树、语义页、标题、emit 读同一文本只能有一个解析点（P2-10 同理）；语义页不经过成形器 | 无 |
+| P4-02 | 成形器的结构是"记录 → 段落上下文 → 按阅读顺序重放既有逐节点发射"，不是设计中独立的 shape/shaper.cc 原子流；闭合标点的回溯修改（去掉半宽、禁断）仍在输出流上进行 | 跨节点上下文（前一字符、后邻、歧义标点）由段落上下文提供，行为改动集中在明确的规则上，既有逐节点规则逐字保留，golden 变化只来自有意的修正；回溯按阅读顺序进行，与节点结构无关 | P4-04、P4-08 |
+| P4-02 | 规范 TeX 形式（Direct 且有胶则不加罚分）推迟到 P4-08 | 在物品原生断行器之前，传统断行器读取降级块；规范形式只改变块下标（breaks golden 大面积变动），没有排版差别 | P4-08 |
+| P4-02 | 无证据的引号保持拉丁，不以文档语言兜底；空白结束证据搜索（用空格隔开的引号保持拉丁） | 现行行为（中文文档里作者用空格隔开的英文引语）；verifier 指出强邻居证据应优先于继承的文档语言；显式 lang 仍然决定 | 无 |
+| P4-02 | 上标/下标标记两侧不加 CJK–拉丁边界胶；attach 边缘不加合成胶 | 脚注序号贴着文字（notes-design §1）；attach 边缘的胶会成为 attach 禁止的断点（设计 T5：synthesized glue suppressed，本属 P4-07，此处先行以免引入断点） | P4-07 |
+| P4-02 | 长 token 的门限跨样式边界计数，但切点只在各节点文字内部；URL 规则本身（链接节点、Chicago、标题与题注）未改 | 节点边缘的切点需要改动相邻节点的罚分；URL 断行策略属 emitter/url-break-special-path（P4-06） | P4-06 |
+| P4-02 | golden 变化与设计所列不同：cjk/softwrap、code/runs、code/sidecar、code/tsm-hl、math/stretch、inline/quotes、doc/url-break 不变；另有 math/grid、math/symbols、inline/prose-guards、locale/quote-lang、splice/ascii-cut 与 6 个只有 hlist 的用例；无 OPS 变动 | 这些用例在节点内已有正确上下文（如 inline/quotes 的引号证据在节点内），或没有跨节点边界；多出的是公式后标点与跨节点边界胶的修正；软换行自 P2-10 起已是 U+000A（INTEGRATION：P4 无需 OPS 变动） | 无 |
 
 ## 阻塞记录（§4.7）
 

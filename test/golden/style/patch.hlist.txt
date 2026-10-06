@@ -126,69 +126,67 @@ top pid=1 units=1
   glue inter w=0su x=0.6 cap=102su r3 @[282,294)
   box CommaW "、" w=512su blank=R r4 @[295,298)
   glue blank w=512su x=0 cap=0su r4 @[295,298)
-  glue word w=257su x=1 cap=257su src r5 @[295,298)
-  box Ideo "楷" w=1025su wt=0.6 cap=102su r6 @[338,350)
-  glue inter w=0su x=0.6 cap=102su r6 @[338,350)
-  box Ideo "体" w=1025su wt=0.6 cap=102su r6 @[338,350)
-  glue inter w=0su x=0.6 cap=102su r6 @[338,350)
-  box Ideo "片" w=1025su wt=0.6 cap=102su r6 @[338,350)
-  glue inter w=0su x=0.6 cap=102su r6 @[338,350)
-  box Ideo "段" w=1025su wt=0.6 cap=102su r6 @[338,350)
-  glue inter w=0su x=0.6 cap=102su r6 @[338,350)
-  box Ideo "和" w=1025su wt=0.6 cap=102su r7 @[351,354)
-  glue inter w=0su x=0.6 cap=102su r7 @[351,354)
-  box Ideo "放" w=1409su wt=0.6 cap=141su r8 @[375,387)
-  glue inter w=0su x=0.6 cap=141su r8 @[375,387)
-  box Ideo "大" w=1409su wt=0.6 cap=141su r8 @[375,387)
-  glue inter w=0su x=0.6 cap=141su r8 @[375,387)
-  box Ideo "片" w=1409su wt=0.6 cap=141su r8 @[375,387)
-  glue inter w=0su x=0.6 cap=141su r8 @[375,387)
-  box Ideo "段" w=1409su wt=0.6 cap=141su r8 @[375,387)
-  pen INF r8
-  glue inter w=0su x=0.6 cap=141su r8 @[375,387)
-  box CommaW "，" w=512su blank=R r9 @[388,398)
-  glue blank w=512su x=0 cap=0su r9 @[388,398)
-  box Ideo "连" w=1025su wt=0.6 cap=102su r10 @[388,398)
-  glue inter w=0su x=0.6 cap=102su r10 @[388,398)
-  box Ideo "同" w=1025su wt=0.6 cap=102su r10 @[388,398)
-  pen 0 r10
-  glue word w=257su x=1 cap=257su src r11 @[388,398)
-  box Ideo "粗" w=1025su wt=0.6 cap=102su r12 @[400,406)
-  glue inter w=0su x=0.6 cap=102su r12 @[400,406)
-  box Ideo "体" w=1025su wt=0.6 cap=102su r12 @[400,406)
-  pen 0 r12
-  glue word w=257su x=1 cap=257su src r13 @[408,429)
-  box Ideo "一" w=1025su wt=0.6 cap=102su r14 @[408,429)
-  glue inter w=0su x=0.6 cap=102su r14 @[408,429)
-  box Ideo "起" w=1025su wt=0.6 cap=102su r14 @[408,429)
-  glue inter w=0su x=0.6 cap=102su r14 @[408,429)
-  box Ideo "参" w=1025su wt=0.6 cap=102su r14 @[408,429)
-  glue inter w=0su x=0.6 cap=102su r14 @[408,429)
-  box Ideo "与" w=1025su wt=0.6 cap=102su r14 @[408,429)
-  glue inter w=0su x=0.6 cap=102su r14 @[408,429)
-  box Ideo "断" w=1025su wt=0.6 cap=102su r14 @[408,429)
-  glue inter w=0su x=0.6 cap=102su r14 @[408,429)
-  box Ideo "行" w=1025su wt=0.6 cap=102su r14 @[408,429)
-  pen INF r14
-  glue inter w=0su x=0.6 cap=102su r14 @[408,429)
-  box FullStopW "。" w=512su blank=R r15 @[408,429)
-  glue blank w=512su x=0 cap=0su r15 @[408,429)
+  box Ideo "楷" w=1025su wt=0.6 cap=102su r5 @[338,350)
+  glue inter w=0su x=0.6 cap=102su r5 @[338,350)
+  box Ideo "体" w=1025su wt=0.6 cap=102su r5 @[338,350)
+  glue inter w=0su x=0.6 cap=102su r5 @[338,350)
+  box Ideo "片" w=1025su wt=0.6 cap=102su r5 @[338,350)
+  glue inter w=0su x=0.6 cap=102su r5 @[338,350)
+  box Ideo "段" w=1025su wt=0.6 cap=102su r5 @[338,350)
+  glue inter w=0su x=0.6 cap=102su r5 @[338,350)
+  box Ideo "和" w=1025su wt=0.6 cap=102su r6 @[351,354)
+  glue inter w=0su x=0.6 cap=102su r6 @[351,354)
+  box Ideo "放" w=1409su wt=0.6 cap=141su r7 @[375,387)
+  glue inter w=0su x=0.6 cap=141su r7 @[375,387)
+  box Ideo "大" w=1409su wt=0.6 cap=141su r7 @[375,387)
+  glue inter w=0su x=0.6 cap=141su r7 @[375,387)
+  box Ideo "片" w=1409su wt=0.6 cap=141su r7 @[375,387)
+  glue inter w=0su x=0.6 cap=141su r7 @[375,387)
+  box Ideo "段" w=1409su wt=0.6 cap=141su r7 @[375,387)
+  pen INF r7
+  glue inter w=0su x=0.6 cap=141su r7 @[375,387)
+  box CommaW "，" w=512su blank=R r8 @[388,398)
+  glue blank w=512su x=0 cap=0su r8 @[388,398)
+  box Ideo "连" w=1025su wt=0.6 cap=102su r9 @[388,398)
+  glue inter w=0su x=0.6 cap=102su r9 @[388,398)
+  box Ideo "同" w=1025su wt=0.6 cap=102su r9 @[388,398)
+  pen 0 r9
+  glue word w=257su x=1 cap=257su src r10 @[388,398)
+  box Ideo "粗" w=1025su wt=0.6 cap=102su r11 @[400,406)
+  glue inter w=0su x=0.6 cap=102su r11 @[400,406)
+  box Ideo "体" w=1025su wt=0.6 cap=102su r11 @[400,406)
+  pen 0 r11
+  glue word w=257su x=1 cap=257su src r12 @[408,429)
+  box Ideo "一" w=1025su wt=0.6 cap=102su r13 @[408,429)
+  glue inter w=0su x=0.6 cap=102su r13 @[408,429)
+  box Ideo "起" w=1025su wt=0.6 cap=102su r13 @[408,429)
+  glue inter w=0su x=0.6 cap=102su r13 @[408,429)
+  box Ideo "参" w=1025su wt=0.6 cap=102su r13 @[408,429)
+  glue inter w=0su x=0.6 cap=102su r13 @[408,429)
+  box Ideo "与" w=1025su wt=0.6 cap=102su r13 @[408,429)
+  glue inter w=0su x=0.6 cap=102su r13 @[408,429)
+  box Ideo "断" w=1025su wt=0.6 cap=102su r13 @[408,429)
+  glue inter w=0su x=0.6 cap=102su r13 @[408,429)
+  box Ideo "行" w=1025su wt=0.6 cap=102su r13 @[408,429)
+  pen INF r13
+  glue inter w=0su x=0.6 cap=102su r13 @[408,429)
+  box FullStopW "。" w=512su blank=R r14 @[408,429)
+  glue blank w=512su x=0 cap=0su r14 @[408,429)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
   run r2 letter-spaced CJK
   run r3 letter-spaced CJK color=#a8432a
   run r4 blank-bearing CJK
-  run r5 plain
-  run r6 letter-spaced CJK font="\"LXGW WenKai\", serif"
-  run r7 letter-spaced CJK
-  run r8 letter-spaced CJK size=22px
-  run r9 blank-bearing CJK
-  run r10 letter-spaced CJK
-  run r11 plain
-  run r12 letter-spaced BOLD CJK
-  run r13 plain
-  run r14 letter-spaced CJK
-  run r15 blank-bearing CJK
+  run r5 letter-spaced CJK font="\"LXGW WenKai\", serif"
+  run r6 letter-spaced CJK
+  run r7 letter-spaced CJK size=22px
+  run r8 blank-bearing CJK
+  run r9 letter-spaced CJK
+  run r10 plain
+  run r11 letter-spaced BOLD CJK
+  run r12 plain
+  run r13 letter-spaced CJK
+  run r14 blank-bearing CJK
 top pid=2 units=1
  unit text indent=0su
   box Ideo "區" w=1025su wt=0.6 cap=102su r0 @[493,571)

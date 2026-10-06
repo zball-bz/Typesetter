@@ -31,6 +31,7 @@ add_library(tsr_core STATIC
   src/model/model.cc
   src/model/cascade.cc
   src/model/normalize.cc
+  src/model/softbreak.cc
   src/code/overlay.cc
   src/code/tokens.cc
   src/math/math.cc
@@ -45,7 +46,6 @@ add_library(tsr_core STATIC
   src/shape/hlist.cc
   src/shape/objects.cc
   src/emit/emit.cc
-  src/emit/legacy.cc
   src/break/break.cc
   src/boxtree/build.cc
   src/layout/layout.cc

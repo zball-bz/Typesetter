@@ -62,7 +62,6 @@ top pid=1 units=1
   cjk "调" w=1025su glue=102su wt=0.6 pen=INF color=#a8432a @[282,294)
   punct-close "、" w=512su @[295,298)
   punct-sp w=512su @[295,298)
-  space w=257su stretch=1 @[295,298)
   cjk "楷" w=1025su glue=102su wt=0.6 pen=0 font="\"LXGW WenKai\", serif" @[338,350)
   cjk "体" w=1025su glue=102su wt=0.6 pen=0 font="\"LXGW WenKai\", serif" @[338,350)
   cjk "片" w=1025su glue=102su wt=0.6 pen=0 font="\"LXGW WenKai\", serif" @[338,350)

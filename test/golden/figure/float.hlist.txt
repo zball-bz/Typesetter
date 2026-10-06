@@ -466,38 +466,42 @@ top pid=5 units=1
   pen 0 r4
   glue word w=257su x=1 cap=257su src r5 @[835,845)
   box Other "1" w=513su r5 @[835,845)
-  box Ideo "与" w=1025su wt=0.6 cap=102su r6 @[845,848)
-  glue inter w=0su x=0.6 cap=102su r6 @[845,848)
-  box Ideo "图" w=1025su wt=0.6 cap=102su r7 @[848,857)
-  pen 0 r7
-  glue word w=257su x=1 cap=257su src r8 @[848,857)
-  box Other "2" w=513su r8 @[848,857)
-  box Ideo "都" w=1025su wt=0.6 cap=102su r9 @[857,878)
-  glue inter w=0su x=0.6 cap=102su r9 @[857,878)
-  box Ideo "可" w=1025su wt=0.6 cap=102su r9 @[857,878)
-  glue inter w=0su x=0.6 cap=102su r9 @[857,878)
-  box Ideo "以" w=1025su wt=0.6 cap=102su r9 @[857,878)
-  glue inter w=0su x=0.6 cap=102su r9 @[857,878)
-  box Ideo "被" w=1025su wt=0.6 cap=102su r9 @[857,878)
-  glue inter w=0su x=0.6 cap=102su r9 @[857,878)
-  box Ideo "引" w=1025su wt=0.6 cap=102su r9 @[857,878)
-  glue inter w=0su x=0.6 cap=102su r9 @[857,878)
-  box Ideo "用" w=1025su wt=0.6 cap=102su r9 @[857,878)
-  pen INF r9
-  glue inter w=0su x=0.6 cap=102su r9 @[857,878)
-  box FullStopW "。" w=512su blank=R r10 @[857,878)
-  glue blank w=512su x=0 cap=0su r10 @[857,878)
+  glue autospace w=256su x=1 cap=256su r6 @[845,848)
+  box Ideo "与" w=1025su wt=0.6 cap=102su r7 @[845,848)
+  glue inter w=0su x=0.6 cap=102su r7 @[845,848)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r8 @[848,857)
+  pen 0 r8
+  glue word w=257su x=1 cap=257su src r9 @[848,857)
+  box Other "2" w=513su r9 @[848,857)
+  glue autospace w=256su x=1 cap=256su r10 @[857,878)
+  box Ideo "都" w=1025su wt=0.6 cap=102su r11 @[857,878)
+  glue inter w=0su x=0.6 cap=102su r11 @[857,878)
+  box Ideo "可" w=1025su wt=0.6 cap=102su r11 @[857,878)
+  glue inter w=0su x=0.6 cap=102su r11 @[857,878)
+  box Ideo "以" w=1025su wt=0.6 cap=102su r11 @[857,878)
+  glue inter w=0su x=0.6 cap=102su r11 @[857,878)
+  box Ideo "被" w=1025su wt=0.6 cap=102su r11 @[857,878)
+  glue inter w=0su x=0.6 cap=102su r11 @[857,878)
+  box Ideo "引" w=1025su wt=0.6 cap=102su r11 @[857,878)
+  glue inter w=0su x=0.6 cap=102su r11 @[857,878)
+  box Ideo "用" w=1025su wt=0.6 cap=102su r11 @[857,878)
+  pen INF r11
+  glue inter w=0su x=0.6 cap=102su r11 @[857,878)
+  box FullStopW "。" w=512su blank=R r12 @[857,878)
+  glue blank w=512su x=0 cap=0su r12 @[857,878)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
   run r2 letter-spaced CJK
   run r3 blank-bearing CJK
   run r4 letter-spaced ref LINK CJK link="#tsr-fig-tower"
   run r5 plain ref LINK link="#tsr-fig-tower"
-  run r6 letter-spaced CJK
-  run r7 letter-spaced ref LINK CJK link="#tsr-fig-gate"
-  run r8 plain ref LINK link="#tsr-fig-gate"
-  run r9 letter-spaced CJK
-  run r10 blank-bearing CJK
+  run r6 plain
+  run r7 letter-spaced CJK
+  run r8 letter-spaced ref LINK CJK link="#tsr-fig-gate"
+  run r9 plain ref LINK link="#tsr-fig-gate"
+  run r10 plain
+  run r11 letter-spaced CJK
+  run r12 blank-bearing CJK
 top pid=6 units=1
  unit rule indent=0su
 top pid=7 units=1

@@ -216,36 +216,38 @@ top pid=3 units=1
   glue word w=257su x=1 cap=257su src r4 @[460,480)
   box Ideo "见" w=1025su wt=0.6 cap=102su r5 @[460,480)
   pen 0 r5
-  box Other "https:/" w=3585su r6 @[480,500)
-  pen 1.2 r6
-  box Other "/example." w=4609su r6 @[480,500)
-  pen 1.2 r6
-  box Other "org/" w=2049su r6 @[480,500)
-  box Ideo "路" w=1025su wt=0.6 cap=102su r7 @[500,557)
-  glue inter w=0su x=0.6 cap=102su r7 @[500,557)
-  box Ideo "径" w=1025su wt=0.6 cap=102su r7 @[500,557)
-  pen INF r7
-  glue inter w=0su x=0.6 cap=102su r7 @[500,557)
-  box FullStopW "。" w=512su blank=R r8 @[500,557)
-  glue blank w=512su x=0 cap=0su r8 @[500,557)
-  glue word w=257su x=1 cap=257su src r9 @[500,557)
-  box Other "An" w=1025su r9 @[500,557)
-  glue word w=257su x=1 cap=257su kern="n e" src r9 @[500,557)
-  box Other "es" w=1025su r9 @[500,557)
-  disc pen=0.7 w=0su pre="-" 513su kern="sc" r9 @[500,557)
-  box Other "caped" w=2561su r9 @[500,557)
-  glue word w=257su x=1 cap=257su kern="d c" src r9 @[500,557)
-  box Other "colon" w=2561su r9 @[500,557)
-  glue word w=257su x=1 cap=257su kern="n i" src r9 @[500,557)
-  box Other "is" w=1025su r9 @[500,557)
-  glue word w=257su x=1 cap=257su kern="s t" src r9 @[500,557)
-  box Other "text:" w=2561su r9 @[500,557)
-  glue word w=257su x=1 cap=257su kern=": h" src r9 @[500,557)
-  box Other "https:/" w=3585su r9 @[500,557)
-  pen 1.2 r9
-  box Other "/example." w=4609su r9 @[500,557)
-  pen 1.2 r9
-  box Other "com." w=2049su r9 @[500,557)
+  glue autospace w=256su x=1 cap=256su r6 @[480,500)
+  box Other "https:/" w=3585su r7 @[480,500)
+  pen 1.2 r7
+  box Other "/example." w=4609su r7 @[480,500)
+  pen 1.2 r7
+  box Other "org/" w=2049su r7 @[480,500)
+  glue autospace w=256su x=1 cap=256su r8 @[500,557)
+  box Ideo "路" w=1025su wt=0.6 cap=102su r9 @[500,557)
+  glue inter w=0su x=0.6 cap=102su r9 @[500,557)
+  box Ideo "径" w=1025su wt=0.6 cap=102su r9 @[500,557)
+  pen INF r9
+  glue inter w=0su x=0.6 cap=102su r9 @[500,557)
+  box FullStopW "。" w=512su blank=R r10 @[500,557)
+  glue blank w=512su x=0 cap=0su r10 @[500,557)
+  glue word w=257su x=1 cap=257su src r11 @[500,557)
+  box Other "An" w=1025su r11 @[500,557)
+  glue word w=257su x=1 cap=257su kern="n e" src r11 @[500,557)
+  box Other "es" w=1025su r11 @[500,557)
+  disc pen=0.7 w=0su pre="-" 513su kern="sc" r11 @[500,557)
+  box Other "caped" w=2561su r11 @[500,557)
+  glue word w=257su x=1 cap=257su kern="d c" src r11 @[500,557)
+  box Other "colon" w=2561su r11 @[500,557)
+  glue word w=257su x=1 cap=257su kern="n i" src r11 @[500,557)
+  box Other "is" w=1025su r11 @[500,557)
+  glue word w=257su x=1 cap=257su kern="s t" src r11 @[500,557)
+  box Other "text:" w=2561su r11 @[500,557)
+  glue word w=257su x=1 cap=257su kern=": h" src r11 @[500,557)
+  box Other "https:/" w=3585su r11 @[500,557)
+  pen 1.2 r11
+  box Other "/example." w=4609su r11 @[500,557)
+  pen 1.2 r11
+  box Other "com." w=2049su r11 @[500,557)
   run r0 plain
   run r1 plain LINK link="https://example.com/a_b_c?q=1&r=2#frag_x"
   run r2 plain
@@ -253,9 +255,11 @@ top pid=3 units=1
   run r4 plain
   run r5 letter-spaced CJK
   run r6 plain LINK link="https://example.org/"
-  run r7 letter-spaced CJK
-  run r8 blank-bearing CJK
-  run r9 plain
+  run r7 plain LINK link="https://example.org/"
+  run r8 plain
+  run r9 letter-spaced CJK
+  run r10 blank-bearing CJK
+  run r11 plain
 top pid=4 units=1
  unit text indent=0su
   box Other "A" w=513su r0 @[560,600)

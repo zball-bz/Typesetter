@@ -30,6 +30,6 @@
 </div>
 <div class="tsr-para" data-pid="6" data-s0="613" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="66" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.333px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.8px">尾段</span><span class="tsr-r tsr-cjk" data-s="0">：</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.8px">越过图之后继续排布</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.8px;margin-right:-0.8px">直至文档结</span></div>
-<div class="tsr-line" data-s="0" data-e="87" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">束</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0">引用</span><a class="tsr-r tsr-cjk" href="#tsr-fig-p" data-s="66">图</a><a class="tsr-r" href="#tsr-fig-p" data-s="66"> 1</a><span class="tsr-r tsr-cjk" data-s="72">照常解析</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="72">。</span></div>
+<div class="tsr-line" data-s="0" data-e="87" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">束</span><span class="tsr-r tsr-cjk" data-s="0">，</span><span class="tsr-r tsr-cjk" data-s="0">引用</span><a class="tsr-r tsr-cjk" href="#tsr-fig-p" data-s="66">图</a><a class="tsr-r" href="#tsr-fig-p" data-s="66"> 1</a><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-cjk" data-s="72">照常解析</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="72">。</span></div>
 </div>
 </div>

@@ -17,6 +17,7 @@ top pid=0 units=1
   cjk "他" w=1025su glue=102su wt=0.6 pen=0 @[0,39)
   cjk "说" w=1025su glue=102su wt=0.6 pen=0 @[0,39)
   word "“OK”" w=2254su pen=INF lang=en @[60,68)
+  boundary w=256su stretch=1 @[69,84)
   cjk "然" w=1025su glue=102su wt=0.6 pen=0 @[69,84)
   cjk "后" w=1025su glue=102su wt=0.6 pen=0 @[69,84)
   cjk "离" w=1025su glue=102su wt=0.6 pen=0 @[69,84)
