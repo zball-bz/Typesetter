@@ -1,0 +1,34 @@
+doc @[383,540) [base]
+  heading @[383,392) [base] level=1 label="methods"
+    text @[383,392) [base] str="1 "
+    text @[385,392) [base] str="Methods"
+  mathblock @[404,420) [base] src="a = b" label="eq-m" name="(1.1)"
+  heading @[435,443) [base] level=1 label="proofs"
+    text @[435,443) [base] str="A "
+    text @[437,443) [base] str="Proofs"
+  heading @[454,463) [base] level=2 label="lemmas"
+    text @[454,463) [base] str="A.1 "
+    text @[457,463) [base] str="Lemmas"
+  mathblock @[474,490) [base] src="c = d" label="eq-p" name="(A.1)"
+  para @[492,540) [base]
+    text @[492,495) [base] str="See " raw=0:0,4:3
+    ref @[496,504) [base] target="methods" url="#tsr-methods"
+      text @[496,504) [base] str="§1"
+    text @[504,505) [base] str=", " raw=0:0,2:1
+    ref @[506,513) [base] target="proofs" url="#tsr-proofs"
+      text @[506,513) [base] str="Appendix A"
+    text @[513,514) [base] str=", " raw=0:0,2:1
+    ref @[515,522) [base] target="lemmas" url="#tsr-lemmas"
+      text @[515,522) [base] str="Appendix A.1"
+    text @[522,523) [base] str=", " raw=0:0,2:1
+    ref @[524,529) [base] target="eq-m" url="#tsr-eq-m"
+      text @[524,529) [base] str="Eq. (1.1)"
+    text @[530,533) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[534,539) [base] target="eq-p" url="#tsr-eq-p"
+      text @[534,539) [base] str="Eq. (A.1)"
+    text @[539,540) [base] str="."
+decl counter name="equation" flow=0 @[0,272) ext.row="{\"within\":{\"counter\":\"heading\",\"depth\":1}}"
+decl element name="heading" flow=0 @[0,272) ext.row="{\"sites\":[{\"where\":\"prepend\",\"at\":\"self\",\"template\":{\"$t\":0}}]}"
+  seq @[0,0) [base]
+    slot @[0,0) [base] name="number"
+    text @[0,0) [base] str=" "

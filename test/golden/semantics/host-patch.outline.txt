@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Top","label":null,"span":[0,5]},{"level":3,"title":"Deep","label":"deep","span":[7,15]}],"regions":[{"name":"figure","label":"f1","span":[24,81]}],"fences":[],"labels":[{"id":"deep","rule":"heading","span":[16,22]},{"id":"f1","rule":"region","span":[24,45]}],"diagnostics":[]}

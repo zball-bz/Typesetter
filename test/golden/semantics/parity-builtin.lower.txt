@@ -1,0 +1,20 @@
+lower v1 abi 9bdc5985 docEnd 146 holes 2 module e5c38b57c0a0c177
+piece 0 hole 0 js [103,124)
+piece 1 hole 1 js [126,147)
+block 0 content [0,37)
+  CALL para [0,37)
+    TEXT "Parity (plan P2-07): see " [0,24) raw=0:0,25:24
+    CALL ref [25,28) target="f1"
+    TEXT " and " [29,32) raw=0:0,1:0,5:3
+    CALL ref [33,36) target="f2"
+    TEXT "." [36,37)
+block 1 content [39,92) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [39,92)
+    ROWS
+      row
+        TEXT "A built-in figure row." [61,83)
+block 2 content [94,145) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [94,145)
+    ROWS
+      row
+        TEXT "Its second instance." [116,136)

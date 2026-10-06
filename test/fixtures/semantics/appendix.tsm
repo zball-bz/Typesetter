@@ -1,0 +1,21 @@
+#{
+  // appendix lettering (plan P2-07): a counter event, numbers at the
+  // headings, equations within the chapter
+  $.counter('equation', {within: 'heading', depth: 1})
+  $.element('heading', {sites: [{where: 'prepend', at: 'self', template: [slot('number'), ' ']}]})
+}
+#let appendix = () => counterUpdate('heading', {set: [0], numbering: 'A.1', supplement: {term: 'appendix'}})
+
+= Methods <methods>
+
+$ a = b $ <eq-m>
+
+#appendix()
+
+= Proofs <proofs>
+
+== Lemmas <lemmas>
+
+$ c = d $ <eq-p>
+
+See @methods, @proofs, @lemmas, @eq-m and @eq-p.

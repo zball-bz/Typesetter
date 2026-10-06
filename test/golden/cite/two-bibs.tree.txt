@@ -13,10 +13,8 @@ doc @[0,0) [base]
         text @[17,25) [base] str="2"
       text @[17,25) [base] str="]"
     text @[25,26) [base] str="."
-  para @[76,140) [base]
-    text @[76,140) [base] str="The same bibliography placed again carries no duplicate anchors."
-  group @[0,0) [base] role="bibliography"
-    rule @[0,0) [base]
+  group @[28,74) [base] role="bibliography"
+    rule @[28,74) [base]
     para @[0,0) [base] label="bib-kp81"
       text @[0,0) [base] str="[1] "
       text @[0,0) [base] str="Donald E. Knuth and Michael F. Plass."
@@ -40,8 +38,10 @@ doc @[0,0) [base]
       text @[0,0) [base] str=" "
       link @[0,0) [base] url="https://tug.org/docs/liang/"
         text @[0,0) [base] str="https://tug.org/docs/liang/"
-  group @[0,0) [base] role="bibliography"
-    rule @[0,0) [base]
+  para @[76,140) [base]
+    text @[76,140) [base] str="The same bibliography placed again carries no duplicate anchors."
+  group @[142,188) [base] role="bibliography"
+    rule @[142,188) [base]
     para @[0,0) [base]
       text @[0,0) [base] str="[1] "
       text @[0,0) [base] str="Donald E. Knuth and Michael F. Plass."

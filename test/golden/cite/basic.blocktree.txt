@@ -5,9 +5,9 @@ top pid=1 leaves=1
   stack root gap=1/1 @[13,318)
     paragraph para unit=0 @[13,318)
 top pid=2 leaves=4
-  stack root gap=1/1 @[0,0)
-    stack group @[0,0)
-      replaced rule rule unit=0 @[0,0)
+  stack root gap=1/1 @[320,366)
+    stack group @[320,366)
+      replaced rule rule unit=0 @[320,366)
       paragraph para unit=1 anchor="bib-kp81" @[0,0)
       paragraph para unit=2 anchor="bib-liang83" @[0,0)
       paragraph para unit=3 anchor="bib-knuth84" @[0,0)

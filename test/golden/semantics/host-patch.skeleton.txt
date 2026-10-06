@@ -1,0 +1,6 @@
+doc @[0,102)
+  heading1 @[0,5)
+  heading3 @[7,15) label="deep"
+  region @[24,81) name="figure"
+    para @[46,72) lines=1
+  para @[83,101) lines=1

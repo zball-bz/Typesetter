@@ -8,8 +8,8 @@ const AttrSpec kA_para[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_heading[] = {
     {1, "level", Dom::Int, 1, 6, nullptr, nullptr, 0, false, true, 1, 6, 0, false},
@@ -17,8 +17,8 @@ const AttrSpec kA_heading[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_list[] = {
     {2, "ordered", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, true, 0, 6, 0, false},
@@ -27,24 +27,24 @@ const AttrSpec kA_list[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_item[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_quote[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_codeblock[] = {
     {4, "lang", Dom::Token, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -56,16 +56,16 @@ const AttrSpec kA_codeblock[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_rule[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_group[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -73,8 +73,8 @@ const AttrSpec kA_group[] = {
     {9, "name", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_table[] = {
     {7, "cols", Dom::Int, 1, 64, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -83,24 +83,24 @@ const AttrSpec kA_table[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_trow[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_tcell[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_term[] = {
     {9, "name", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -108,20 +108,21 @@ const AttrSpec kA_term[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
-const char* const kM_collect_what[] = {"toc", "glossary", "notes", "bibliography"};
 const char* const kM_collect_form[] = {"all"};
+const char* const kM_collect_cited[] = {"cited", "cited-then-all"};
 const AttrSpec kA_collect[] = {
-    {10, "what", Dom::Enum, 0, 0, kM_collect_what, nullptr, 4, false, false, 0, 6, 0, false},
+    {10, "what", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {16, "form", Dom::Enum, 0, 0, kM_collect_form, nullptr, 1, false, false, 0, 6, 0, false},
+    {46, "cited", Dom::Enum, 0, 0, kM_collect_cited, nullptr, 2, false, false, 0, 10, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_mathblock[] = {
     {11, "src", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -130,8 +131,8 @@ const AttrSpec kA_mathblock[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_error[] = {
     {12, "message", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -140,16 +141,16 @@ const AttrSpec kA_error[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_comment[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const char* const kM_styled_bits[] = {"EM", "BOLD", "UNDER", "OVER", "STRIKE"};
 const std::uint8_t kB_styled_bits[] = {2, 3, 16, 17, 18};
@@ -163,8 +164,8 @@ const AttrSpec kA_styled[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_link[] = {
     {14, "url", Dom::Url, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -172,26 +173,28 @@ const AttrSpec kA_link[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_code[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_ref[] = {
     {15, "target", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {14, "url", Dom::Url, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, true},
+    {16, "form", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {42, "supplement", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_mathinline[] = {
     {11, "src", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -199,8 +202,8 @@ const AttrSpec kA_mathinline[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_raw[] = {
     {17, "html", Dom::Html, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -210,24 +213,24 @@ const AttrSpec kA_raw[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_hardbreak[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_seq[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const char* const kM_image_side[] = {"left", "right"};
 const AttrSpec kA_image[] = {
@@ -241,16 +244,16 @@ const AttrSpec kA_image[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_note[] = {
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 const AttrSpec kA_field[] = {
     {9, "name", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -259,8 +262,60 @@ const AttrSpec kA_field[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
-    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 6, false},
-    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
+    {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
+const AttrSpec kA_event[] = {
+    {37, "counter", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {38, "set", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 3, false},
+    {39, "step", Dom::Int, 1, 16, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {40, "add", Dom::Int, -1073741824, 1073741824, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {41, "numbering", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {42, "supplement", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
+    {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
+const AttrSpec kA_entry[] = {
+    {43, "key", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
+    {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
+const AttrSpec kA_slot[] = {
+    {9, "name", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {45, "or", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
+    {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
+const AttrSpec kA_when[] = {
+    {36, "of", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
+    {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
+const AttrSpec kA_each[] = {
+    {36, "of", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {44, "sep", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 10, 0, false},
+    {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
+    {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 7, false},
+    {34, "class", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false}};
 }  // namespace
 
@@ -278,7 +333,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"trow", Level::Block, Body::Cells, InlineShape::Unsupported, 6, kA_trow, 7},
     {"tcell", Level::Block, Body::Inline, InlineShape::Unsupported, 6, kA_tcell, 7},
     {"term", Level::Adaptive, Body::Inline, InlineShape::Unsupported, 6, kA_term, 8},
-    {"collect", Level::Block, Body::Data, InlineShape::Unsupported, 6, kA_collect, 9},
+    {"collect", Level::Block, Body::Data, InlineShape::Unsupported, 6, kA_collect, 10},
     {"mathblock", Level::Block, Body::None, InlineShape::Unsupported, 6, kA_mathblock, 9},
     {"error", Level::Adaptive, Body::None, InlineShape::Error, 6, kA_error, 9},
     {"comment", Level::Trivia, Body::Text, InlineShape::Skip, 6, kA_comment, 7},
@@ -286,14 +341,19 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 12},
     {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 8},
     {"code", Level::Inline, Body::Text, InlineShape::Code, 6, kA_code, 7},
-    {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 9},
+    {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 11},
     {"mathinline", Level::Inline, Body::None, InlineShape::Object, 6, kA_mathinline, 8},
     {"raw", Level::Block, Body::None, InlineShape::Object, 6, kA_raw, 10},
     {"hardbreak", Level::Inline, Body::None, InlineShape::Break, 6, kA_hardbreak, 7},
     {"seq", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_seq, 7},
     {"image", Level::Block, Body::None, InlineShape::Object, 6, kA_image, 13},
     {"note", Level::Inline, Body::Blocks, InlineShape::Unsupported, 6, kA_note, 7},
-    {"field", Level::Inline, Body::None, InlineShape::Skip, 9, kA_field, 9}};
+    {"field", Level::Inline, Body::None, InlineShape::Skip, 9, kA_field, 9},
+    {"event", Level::Trivia, Body::None, InlineShape::Skip, 10, kA_event, 13},
+    {"entry", Level::Trivia, Body::Inline, InlineShape::Skip, 10, kA_entry, 8},
+    {"slot", Level::Inline, Body::None, InlineShape::Skip, 10, kA_slot, 9},
+    {"when", Level::Transparent, Body::Position, InlineShape::Container, 10, kA_when, 8},
+    {"each", Level::Transparent, Body::Position, InlineShape::Container, 10, kA_each, 9}};
 
 const DeclInfo kDecls[DECL_COUNT] = {
     {nullptr, false, 0},

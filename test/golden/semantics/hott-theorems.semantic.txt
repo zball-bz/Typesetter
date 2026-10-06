@@ -1,0 +1,11 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="568" data-e="582" id="tsr-h-1">Introduction</h1>
+<h1 data-pid="1" data-s="584" data-e="596" id="tsr-ch-ua">Univalence</h1>
+<div data-role="theorem" data-pid="2" data-s="641" data-e="726" id="tsr-thm-ua">
+<p data-s="641" data-e="726"><strong>Theorem 2.10</strong> (Univalence)<strong>.</strong> Equivalent types are equal.</p>
+</div>
+<div data-role="lemma" data-pid="3" data-s="728" data-e="809" id="tsr-lem-transport">
+<p data-s="728" data-e="809"><strong>Lemma 2.11</strong><strong>.</strong> Transport along a path is an equivalence.</p>
+</div>
+<p data-pid="4" data-s="811" data-e="981">By <a href="#tsr-thm-ua">Theorem 2.10</a> and <a href="#tsr-lem-transport">Lemma 2.11</a> in <a href="#tsr-ch-ua">§2</a>; <a href="#tsr-thm-ua">Univalence</a> is <a href="#tsr-thm-ua">2.10</a>, and <a href="#tsr-lem-transport">Lem. 2.11</a> follows it.</p>
+</div>

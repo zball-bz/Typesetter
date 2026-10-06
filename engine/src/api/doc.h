@@ -9,6 +9,7 @@
 #include "../inline/fragment.h"
 #include "../codegen/codegen.h"
 #include "../resolve/resolve.h"
+#include "../semantic/declare.h"
 #include "../boxtree/build.h"
 #include "../resource/resource_table.h"
 #include "../resource/session.h"
@@ -35,8 +36,12 @@ struct Doc {
   RawOps raw;
   StyleTable styles;
   ContentTree tree;
-  // the element registry (plan P1-10): the built-in rows unless a host or a
-  // test swaps in another before ingest; the Index resolve leaves behind
+  // the element registry (plan P1-10, P2-07): built at Ingest (PHASE 0,
+  // semantic/declare.h) from the built-in rows — or `registryBase`, a
+  // test's replacement in their form — the host's semantics.* settings and
+  // the document's declarations; the Index resolve leaves behind
+  std::string registryBase;
+  std::shared_ptr<const Registry> registryOwn;
   const Registry* registry = &Registry::builtin();
   Index index;
 
@@ -245,7 +250,10 @@ struct Doc {
     decodeOps((const u8*)opsBytes.data(), opsBytes.size(), raw, diags);  // raw views raw.blob
     validThrough = std::min(validThrough, (int)Stage::Execute);
     if (!raw.ok) return false;
+    registryOwn = declaredRegistry(raw, cfg, registryBase, diags);
+    registry = registryOwn.get();
     tree = instantiate(raw, arena, strs, styles, diags, *registry);
+    checkDeclarations(raw, tree, *registry, strs, diags);
     validThrough = (int)Stage::Ingest;
     return true;
   }

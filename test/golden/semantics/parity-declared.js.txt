@@ -1,0 +1,27 @@
+export const abi = 0x9bdc5985;
+export default async (__rt, $) => {
+const {node, ref, slot, strong, term} = __rt.std;
+return (async () => {
+const __h = [
+() => ({label: "f1"}),
+() => ({label: "f2"}),
+() => {
+
+  // the built-in figure row, declared by the document under another name
+  // (hoisted: the instances above are sketches)
+  $.counter('sketch')
+  $.element('sketch', {
+    select: [{node: 'group', role: 'sketch'}],
+    box: 'figure', html: 'figure',
+    counter: 'sketch', numbering: 'always',
+    supplement: {term: 'figure'},
+    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), slot('term:caption-sep'))]}],
+    ref: [slot('supplement'), slot('number')],
+  })
+
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

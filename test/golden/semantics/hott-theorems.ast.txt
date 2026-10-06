@@ -1,0 +1,32 @@
+doc @[0,982)
+  code-block @[0,566) js="\n  // HoTT-style theorems and lemmas (plan P2-07): one counter, numbered\n  // within the chapter, the head written at the first paragraph\n  const head = [strong(slot('supplement'), slot('number')), when('title', ' (', slot('title'), ')'), strong('.'), ' ']\n  $.element('theorem', {\n    counter: {name: 'thm', within: 'heading', depth: 1},\n    supplement: {en: 'Theorem ', zh: '定理 '},\n    title: {arg: 'title'},\n    sites: [{where: 'prepend:first-para', template: head}],\n  })\n  $.element('lemma', {like: 'theorem', supplement: {en: 'Lemma ', zh: '引理 '}})\n"
+  heading @[568,582) level=1
+    text @[570,582) str="Introduction"
+  heading @[584,596) level=1 label="ch-ua"
+    text @[586,596) str="Univalence"
+  para @[606,639)
+    splice @[606,639) expr="counterUpdate('thm', {set: [9]})"
+  region @[641,726) name="theorem"
+    para @[689,716)
+      row @[689,716)
+        cell @[689,716)
+          text @[689,716) str="Equivalent types are equal."
+  region @[728,809) name="lemma"
+    para @[760,801)
+      row @[760,801)
+        cell @[760,801)
+          text @[760,801) str="Transport along a path is an equivalence."
+  para @[811,981)
+    text @[811,813) str="By "
+    ref @[814,821) target="thm-ua"
+    text @[822,825) str=" and "
+    ref @[826,840) target="lem-transport"
+    text @[841,843) str=" in "
+    ref @[844,850) target="ch-ua"
+    text @[850,851) str="; "
+    splice @[852,883) expr="ref(\"thm-ua\", {form: \"title\"})"
+    text @[884,886) str=" is "
+    splice @[887,919) expr="ref(\"thm-ua\", {form: \"number\"})"
+    text @[919,924) str=", and "
+    splice @[925,969) expr="ref(\"lem-transport\", {supplement: \"Lem. \"})"
+    text @[970,981) str=" follows it."

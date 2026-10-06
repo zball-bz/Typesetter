@@ -27,6 +27,10 @@ const fixtures = [...walk(fixturesDir)].map((p) => {
 // a defect before the step that fixes it. A listed fixture whose audit passes
 // fails the run, so the list can only shrink. Mirrors test/golden/XFAIL.
 const AUDIT_XFAIL = new Map([
+  // a link's last letter kerns with the space or comma after it in the
+  // browser (one face across </a>); the engine's KernCtx stops at the run
+  // boundary — "Appendix A, …" refs (P4-01: KernCtx over the paint runs)
+  ['semantics/appendix', 'P4-01'],
 ]);
 
 // Content wider than its measure is set Overfull on a line of its own and
@@ -38,6 +42,8 @@ const EXPECTED_DIAGS = new Map([
   ['region/anchor-kinds', /^(info ref-unnumbered [^\n]*\n){3}$/],
   // a splice of undefined renders nothing and says so (plan P2-01, D-I05)
   ['splice/dot-rule', /^warning splice-undefined [^\n]*\n$/],
+  // instances before their (hoisted) declaration say so (plan P2-07)
+  ['semantics/parity-declared', /^info decl-after-use [^\n]*\n$/],
 ]);
 
 for (const f of fixtures) {

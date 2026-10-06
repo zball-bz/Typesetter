@@ -98,6 +98,9 @@ struct Locator {
     if (C.numbering == ElementClass::Numbering::Always) in.number = counters.step(C.counter, in.level);
     if (C.title == ElementClass::Title::Text) excerptInto(n, strs, in.title);
     if (C.title == ElementClass::Title::Arg) in.title = strs.get(attrStr(n, C.titleArg));
+    if (C.title == ElementClass::Title::Ext)
+      for (const ArgVal& a : n->args)
+        if (a.key == ArgK::ext && a.tag == ArgTag::Str && strs.get(a.name) == C.titleExt) in.title = strs.get(a.ref);
     LabelTarget self{LabelTarget::K::Instance, id, n->span};
     switch (C.labels) {
       case ElementClass::Labels::User: {
@@ -130,43 +133,60 @@ struct Locator {
       addLabel(in.markerAlias, {LabelTarget::K::Marker, id, n->span}, n->span);
       ix.flow(C.flow->name).push_back(id);
     }
-    if (!C.table.empty() && C.labels == ElementClass::Labels::FromArg && !in.label.empty()) {
+    // a table row: keyed by its row-key argument (a citation key: the first
+    // row of a key wins), else by its label
+    std::string key = C.rowKeyed ? std::string(strs.get(attrStr(n, C.rowKey)))
+                      : C.labels == ElementClass::Labels::FromArg ? in.label : std::string();
+    if (!C.table.empty() && !key.empty() && !(C.rowKeyed && ix.row(C.table, key))) {
       Row r;
       r.table = C.table;
-      r.key = in.label;
+      r.key = key;
       r.node = n;
       r.span = n->span;
       r.inst = id;
       r.title = in.title;
       for (const ContentNode* k : n->kids) excerptInto(k, strs, r.bodyText);
+      ix.rowOf.emplace(C.table + '\0' + key, (u32)ix.rows.size());
       ix.rows.push_back(std::move(r));
     }
     ix.instOf[n] = id;
     ix.instances.push_back(std::move(in));
   }
 
-  // a collector whose rows are its own children (a bibliography's entries)
-  void rows(const ContentNode* n) {
-    const CollectorDef* c = reg.collector(strs.get(attrStr(n, ArgK::what)));
-    if (!c || !c->rowsFromKids) return;
-    for (const ContentNode* k : n->kids) {
-      std::string key(strs.get(attrStr(k, c->rowKey)));
-      if (key.empty() || ix.row(c->table, key)) continue;  // the first entry wins
-      Row r;
-      r.table = c->table;
-      r.key = key;
-      r.node = k;
-      r.span = k->span;
-      ix.rowOf[c->table + '\0' + key] = (u32)ix.rows.size();
-      ix.rows.push_back(std::move(r));
+  // a counter event (plan P2-07), applied where it stands in pre-order
+  void event(const ContentNode* n) {
+    std::string name(strs.get(attrStr(n, ArgK::counter)));
+    u16 c = counters.counterNamed(name);
+    if (c == kNoIndex) {
+      diags.add(Sev::Warning, "event-counter", n->span, "counterUpdate: no counter '" + name + "'");
+      return;
     }
+    Counters::Event ev;
+    ev.set = strs.get(attrStr(n, ArgK::set));
+    ev.step = attrInt(n, ArgK::step, 0);
+    ev.add = attrInt(n, ArgK::add, 0);
+    ev.pattern = strs.get(attrStr(n, ArgK::numbering));
+    if (StrRef sup = attrStr(n, ArgK::supplement)) {
+      JsonValue v;
+      JsonReader rd;
+      if (!rd.parse(strs.get(sup), v) || !parseSupplement(v, ev.supplement))
+        diags.add(Sev::Warning, "event-supplement", n->span, "counterUpdate: a supplement is a term, a text or texts by language");
+    }
+    counters.apply(c, ev);
   }
 
   void visit(const ContentNode* n) {
     if (n->cls) {
       instance(n, n->cls);
+    } else if (n->kind == Kind::event) {
+      event(n);
+      return;
+    } else if (n->kind == Kind::entry) {
+      diags.add(Sev::Warning, "entry-unclassed", n->span,
+                "an entry of no element class (role '" + std::string(strs.get(attrStr(n, ArgK::role))) +
+                    "') is collected nowhere");
     } else if (n->kind == Kind::collect) {
-      rows(n);  // a collector node holds no labels of its own
+      // a collector node holds no labels of its own
     } else {
       std::string l(strs.get(attrStr(n, ArgK::label)));
       if (!l.empty()) userLabel(n, l, {LabelTarget::K::Plain, kNoInst, n->span});

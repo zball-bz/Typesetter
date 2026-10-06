@@ -1,0 +1,9 @@
+= Top
+
+=== Deep <deep>
+
+#!figure(label: "f1")
+A figure the host renamed.
+#figure!
+
+See @deep and @f1.

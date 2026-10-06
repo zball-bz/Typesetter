@@ -157,6 +157,26 @@
   "field": [
    28,
    9
+  ],
+  "event": [
+   29,
+   10
+  ],
+  "entry": [
+   30,
+   10
+  ],
+  "slot": [
+   31,
+   10
+  ],
+  "when": [
+   32,
+   10
+  ],
+  "each": [
+   33,
+   10
   ]
  },
  "keys": {
@@ -196,7 +216,17 @@
   "copy": 33,
   "class": 34,
   "ext": 35,
-  "of": 36
+  "of": 36,
+  "counter": 37,
+  "set": 38,
+  "step": 39,
+  "add": 40,
+  "numbering": 41,
+  "supplement": 42,
+  "key": 43,
+  "sep": 44,
+  "or": 45,
+  "cited": 46
  },
  "attrs": {
   "para.label": 9,
@@ -297,6 +327,7 @@
   "term.ext": 9,
   "collect.what": 6,
   "collect.form": 6,
+  "collect.cited": 10,
   "collect.label": 9,
   "collect.role": 9,
   "collect.slot": 9,
@@ -358,6 +389,8 @@
   "code.ext": 9,
   "ref.target": 6,
   "ref.url": 9,
+  "ref.form": 10,
+  "ref.supplement": 10,
   "ref.label": 9,
   "ref.role": 9,
   "ref.slot": 9,
@@ -425,7 +458,54 @@
   "field.syn": 9,
   "field.copy": 9,
   "field.class": 9,
-  "field.ext": 9
+  "field.ext": 9,
+  "event.counter": 10,
+  "event.set": 10,
+  "event.step": 10,
+  "event.add": 10,
+  "event.numbering": 10,
+  "event.supplement": 10,
+  "event.label": 9,
+  "event.role": 9,
+  "event.slot": 9,
+  "event.syn": 9,
+  "event.copy": 9,
+  "event.class": 9,
+  "event.ext": 9,
+  "entry.key": 10,
+  "entry.label": 9,
+  "entry.role": 9,
+  "entry.slot": 9,
+  "entry.syn": 9,
+  "entry.copy": 9,
+  "entry.class": 9,
+  "entry.ext": 9,
+  "slot.name": 10,
+  "slot.or": 10,
+  "slot.label": 9,
+  "slot.role": 9,
+  "slot.slot": 9,
+  "slot.syn": 9,
+  "slot.copy": 9,
+  "slot.class": 9,
+  "slot.ext": 9,
+  "when.of": 10,
+  "when.label": 9,
+  "when.role": 9,
+  "when.slot": 9,
+  "when.syn": 9,
+  "when.copy": 9,
+  "when.class": 9,
+  "when.ext": 9,
+  "each.of": 10,
+  "each.sep": 10,
+  "each.label": 9,
+  "each.role": 9,
+  "each.slot": 9,
+  "each.syn": 9,
+  "each.copy": 9,
+  "each.class": 9,
+  "each.ext": 9
  },
  "decls": {
   "element": [

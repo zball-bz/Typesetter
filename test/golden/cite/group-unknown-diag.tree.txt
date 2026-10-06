@@ -12,8 +12,8 @@ doc @[0,0) [base]
         text @[40,67) [base] str="2"
       text @[40,67) [base] str="]"
     text @[68,95) [base] str=" still links the known keys." raw=0:0,1:0
-  group @[0,0) [base] role="bibliography"
-    rule @[0,0) [base]
+  group @[97,143) [base] role="bibliography"
+    rule @[97,143) [base]
     para @[0,0) [base] label="bib-kp81"
       text @[0,0) [base] str="[1] "
       text @[0,0) [base] str="Donald E. Knuth and Michael F. Plass."

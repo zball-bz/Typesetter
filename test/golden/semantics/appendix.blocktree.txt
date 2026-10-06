@@ -1,0 +1,18 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[383,392)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="methods" @[383,392)
+top pid=1 leaves=1
+  stack root gap=1/1 @[404,420)
+    replaced math math unit=0 ragged anchor="eq-m" @[404,420)
+top pid=2 leaves=1
+  stack root gap=1/1 @[435,443)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="proofs" @[435,443)
+top pid=3 leaves=1
+  stack root gap=1/1 @[454,463)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="lemmas" @[454,463)
+top pid=4 leaves=1
+  stack root gap=1/1 @[474,490)
+    replaced math math unit=0 ragged anchor="eq-p" @[474,490)
+top pid=5 leaves=1
+  stack root gap=1/1 @[492,540)
+    paragraph para unit=0 @[492,540)

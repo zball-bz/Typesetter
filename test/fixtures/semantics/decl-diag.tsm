@@ -1,0 +1,17 @@
+A memo before its declaration:
+
+#!memo(label: "m1")
+Noted.
+#memo!
+
+#{
+  $.element('memo', {numbering: 'always', supplement: 'Memo '})
+  $.declare('element', 'broken', {counter: 'nope'})
+  $.declare('counter', 'c1', {colour: 'red'})
+  $.element('gather', {sites: [{template: [collect({what: 'toc'})]}]})
+  counterUpdate('heading', {step: 1})
+}
+
+A counter that does not exist: #counterUpdate('nosuch', {set: [1]}) and a slot outside a template: #slot('number').
+
+#ref("m1", {form: "bogus"}) and #ref("m1", {form: "supplement"}).

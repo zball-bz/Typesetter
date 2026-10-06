@@ -23,43 +23,7 @@ top pid=0 units=1
   run r6 plain ref LINK link="#tsr-bib-liang83"
   run r7 plain ref
   run r8 plain
-top pid=1 units=1
- unit text indent=0su
-  box Other "The" w=1537su r0 @[76,140)
-  glue word w=257su x=1 cap=257su kern="e s" src r0 @[76,140)
-  box Other "same" w=2049su r0 @[76,140)
-  glue word w=257su x=1 cap=257su kern="e b" src r0 @[76,140)
-  box Other "bib" w=1537su r0 @[76,140)
-  disc pen=0.7 w=0su pre="-" 513su kern="bl" r0 @[76,140)
-  box Other "li" w=1025su r0 @[76,140)
-  disc pen=0.7 w=0su pre="-" 513su kern="io" r0 @[76,140)
-  box Other "og" w=1025su r0 @[76,140)
-  disc pen=0.7 w=0su pre="-" 513su kern="gr" r0 @[76,140)
-  box Other "ra" w=1025su r0 @[76,140)
-  disc pen=0.7 w=0su pre="-" 513su kern="ap" r0 @[76,140)
-  box Other "phy" w=1537su r0 @[76,140)
-  glue word w=257su x=1 cap=257su kern="y p" src r0 @[76,140)
-  box Other "placed" w=3073su r0 @[76,140)
-  glue word w=257su x=1 cap=257su kern="d a" src r0 @[76,140)
-  box Other "again" w=2561su r0 @[76,140)
-  glue word w=257su x=1 cap=257su kern="n c" src r0 @[76,140)
-  box Other "car" w=1537su r0 @[76,140)
-  disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[76,140)
-  box Other "ries" w=2049su r0 @[76,140)
-  glue word w=257su x=1 cap=257su kern="s n" src r0 @[76,140)
-  box Other "no" w=1025su r0 @[76,140)
-  glue word w=257su x=1 cap=257su kern="o d" src r0 @[76,140)
-  box Other "du" w=1025su r0 @[76,140)
-  disc pen=0.7 w=0su pre="-" 513su kern="up" r0 @[76,140)
-  box Other "pli" w=1537su r0 @[76,140)
-  disc pen=0.7 w=0su pre="-" 513su kern="ic" r0 @[76,140)
-  box Other "cate" w=2049su r0 @[76,140)
-  glue word w=257su x=1 cap=257su kern="e a" src r0 @[76,140)
-  box Other "an" w=1025su r0 @[76,140)
-  disc pen=0.7 w=0su pre="-" 513su kern="nc" r0 @[76,140)
-  box Other "chors." w=3073su r0 @[76,140)
-  run r0 plain
-top pid=2 units=3
+top pid=1 units=3
  unit rule indent=0su
  unit text indent=0su anchor="bib-kp81"
   box Other "[1]" w=1537su r0 @[0,0)
@@ -173,6 +137,42 @@ top pid=2 units=3
   run r1 plain EM
   run r2 plain
   run r3 plain LINK link="https://tug.org/docs/liang/"
+top pid=2 units=1
+ unit text indent=0su
+  box Other "The" w=1537su r0 @[76,140)
+  glue word w=257su x=1 cap=257su kern="e s" src r0 @[76,140)
+  box Other "same" w=2049su r0 @[76,140)
+  glue word w=257su x=1 cap=257su kern="e b" src r0 @[76,140)
+  box Other "bib" w=1537su r0 @[76,140)
+  disc pen=0.7 w=0su pre="-" 513su kern="bl" r0 @[76,140)
+  box Other "li" w=1025su r0 @[76,140)
+  disc pen=0.7 w=0su pre="-" 513su kern="io" r0 @[76,140)
+  box Other "og" w=1025su r0 @[76,140)
+  disc pen=0.7 w=0su pre="-" 513su kern="gr" r0 @[76,140)
+  box Other "ra" w=1025su r0 @[76,140)
+  disc pen=0.7 w=0su pre="-" 513su kern="ap" r0 @[76,140)
+  box Other "phy" w=1537su r0 @[76,140)
+  glue word w=257su x=1 cap=257su kern="y p" src r0 @[76,140)
+  box Other "placed" w=3073su r0 @[76,140)
+  glue word w=257su x=1 cap=257su kern="d a" src r0 @[76,140)
+  box Other "again" w=2561su r0 @[76,140)
+  glue word w=257su x=1 cap=257su kern="n c" src r0 @[76,140)
+  box Other "car" w=1537su r0 @[76,140)
+  disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[76,140)
+  box Other "ries" w=2049su r0 @[76,140)
+  glue word w=257su x=1 cap=257su kern="s n" src r0 @[76,140)
+  box Other "no" w=1025su r0 @[76,140)
+  glue word w=257su x=1 cap=257su kern="o d" src r0 @[76,140)
+  box Other "du" w=1025su r0 @[76,140)
+  disc pen=0.7 w=0su pre="-" 513su kern="up" r0 @[76,140)
+  box Other "pli" w=1537su r0 @[76,140)
+  disc pen=0.7 w=0su pre="-" 513su kern="ic" r0 @[76,140)
+  box Other "cate" w=2049su r0 @[76,140)
+  glue word w=257su x=1 cap=257su kern="e a" src r0 @[76,140)
+  box Other "an" w=1025su r0 @[76,140)
+  disc pen=0.7 w=0su pre="-" 513su kern="nc" r0 @[76,140)
+  box Other "chors." w=3073su r0 @[76,140)
+  run r0 plain
 top pid=3 units=3
  unit rule indent=0su
  unit text indent=0su

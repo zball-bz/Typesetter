@@ -1,5 +1,7 @@
 #include "registry.h"
 
+#include <algorithm>
+
 #include "semantic_data.gen.h"
 
 namespace tsr {
@@ -53,16 +55,16 @@ struct Loader {
     switch (v.t) {
       case JsonValue::T::Str: out = {TArg::K::Text, v.str}; return true;
       case JsonValue::T::Bool: out = {TArg::K::Bool, "", v.b}; return true;
+      case JsonValue::T::Num: out = {TArg::K::Num, "", false, v.num}; return true;
       case JsonValue::T::Obj:
         if (const JsonValue* s = v.get("slot")) return out = {TArg::K::Slot, str(s)}, true;
         if (const JsonValue* s = v.get("anchor")) return out = {TArg::K::Anchor, str(s)}, true;
-        return fail("an argument value is a string, a boolean, {slot} or {anchor}");
+        return fail("an argument value is a string, a number, a boolean, {slot} or {anchor}");
       case JsonValue::T::Null:
-      case JsonValue::T::Num:
       case JsonValue::T::Arr:
         break;
     }
-    return fail("an argument value is a string, a boolean, {slot} or {anchor}");
+    return fail("an argument value is a string, a number, a boolean, {slot} or {anchor}");
   }
 
   bool tmpl(const JsonValue* v, Template& out) {
@@ -79,6 +81,13 @@ struct Loader {
       if (const JsonValue* s = x.get("slot")) {
         it.k = TItem::K::Slot;
         it.name = str(s);
+        if (const JsonValue* o = x.get("or")) {  // the slot, else the `or` slot (plan P2-07)
+          TItem a = it, b = it;
+          b.name = str(o);
+          it.k = TItem::K::When;
+          it.kids.push_back(std::move(a));
+          it.orElse.push_back(std::move(b));
+        }
       } else if (const JsonValue* s = x.get("term")) {
         it.k = TItem::K::Term;
         it.name = str(s);
@@ -144,26 +153,8 @@ struct Loader {
     return 0;
   }
 
-  // a supplement (plan P2-07): "key" or {"term": key} (a locale word),
-  // {"text": "…"}, or {"en": "…", "zh": "…"} (per language)
   bool supplement(const JsonValue& v, Supplement& out) {
-    out = Supplement{};
-    if (v.t == JsonValue::T::Str) {
-      out.term = v.str;
-      return true;
-    }
-    if (v.t != JsonValue::T::Obj) return fail("a supplement is a term key or an object");
-    if (const JsonValue* t = v.get("term")) {
-      out.term = str(t);
-      return true;
-    }
-    if (const JsonValue* t = v.get("text")) {
-      out.text = str(t);
-      out.literal = true;
-      return true;
-    }
-    for (size_t k = 0; k < v.keys.size(); k++) out.byLang.push_back({v.keys[k], str(&v.vals[k])});
-    return true;
+    return parseSupplement(v, out) || fail("a supplement is a term key, {term}, {text} or texts by language");
   }
 
   // counters: shape (by-level: level-arg, depth), gap, keyed, and (plan
@@ -260,6 +251,10 @@ struct Loader {
         }
         c.select.push_back(std::move(sel));
       }
+    } else {  // the default selector (plan P2-07): {role: name} on any kind
+      Selector sel;
+      sel.preds.push_back({ArgK::role, name});
+      c.select.push_back(std::move(sel));
     }
     if (const JsonValue* x = member(v, "counter")) {
       c.counter = counterIndex(str(x));
@@ -281,7 +276,10 @@ struct Loader {
       }
     }
     if (const JsonValue* x = member(v, "title")) {
-      if (x->t == JsonValue::T::Obj) {
+      if (x->t == JsonValue::T::Obj && member(*x, "ext")) {  // EXT data (plan P2-07)
+        c.title = ElementClass::Title::Ext;
+        c.titleExt = str(member(*x, "ext"));
+      } else if (x->t == JsonValue::T::Obj) {
         c.title = ElementClass::Title::Arg;
         if (!argOf(str(member(*x, "arg")), c.titleArg)) return false;
       } else {
@@ -317,6 +315,19 @@ struct Loader {
       c.flow = std::move(f);
     }
     if (const JsonValue* x = member(v, "table")) c.table = str(x);
+    if (const JsonValue* x = member(v, "row-key")) {
+      c.rowKeyed = true;
+      if (!argOf(str(x), c.rowKey)) return false;
+    }
+    if (const JsonValue* x = member(v, "forms")) {
+      if (x->t != JsonValue::T::Obj) return fail("class forms: an object of templates");
+      for (size_t k = 0; k < x->keys.size(); k++) {
+        auto it = std::find_if(c.forms.begin(), c.forms.end(), [&](const auto& f) { return f.first == x->keys[k]; });
+        if (it == c.forms.end()) it = c.forms.insert(c.forms.end(), {x->keys[k], {}});
+        it->second.clear();
+        if (!tmpl(&x->vals[k], it->second)) return false;
+      }
+    }
     if (const JsonValue* x = member(v, "box")) {
       if (str(x) != "figure") return fail("class box: only 'figure'");
       c.box = ElementClass::Box::Figure;
@@ -324,6 +335,11 @@ struct Loader {
     if (const JsonValue* x = member(v, "html")) {
       if (str(x) != "figure") return fail("class html: only 'figure'");
       c.html = ElementClass::Html::Figure;
+    }
+    // a numbered class reads, by default, as its supplement and number
+    if (!c.hasRef && c.counter != kNoIndex && c.numbering != ElementClass::Numbering::Never) {
+      c.hasRef = true;
+      c.ref = {TItem{TItem::K::Slot, "supplement"}, TItem{TItem::K::Slot, "number"}};
     }
     r.classes.push_back(std::move(c));
     return true;
@@ -347,11 +363,8 @@ struct Loader {
       return fail("collector '" + name + "': a query names classes, a table or a flow");
     }
     d.nestByDepth = str(member(*q, "nest")) == "depth";
-    d.cited = str(member(*q, "cited")) == "cited";
-    if (const JsonValue* a = member(*q, "all-arg")) {
-      if (!argOf(str(member(*a, "arg")), d.allArg)) return false;
-      d.allValue = str(member(*a, "value"));
-    }
+    d.cited = str(member(*q, "cited")) == "cited-then-all" ? CollectorDef::Cited::CitedThenAll
+                                                              : CollectorDef::Cited::Cited;
     std::string ctx = str(member(v, "context"), "collector");
     d.ctx = ctx == "instance" ? CollectorDef::Ctx::Instance
             : ctx == "row"    ? CollectorDef::Ctx::Row
@@ -360,8 +373,7 @@ struct Loader {
     d.hasEmpty = member(v, "empty") != nullptr;
     if (!tmpl(member(v, "empty"), d.empty)) return false;
     if (const JsonValue* rows = member(v, "rows")) {
-      d.rowsFromKids = str(member(*rows, "from")) == "kids";
-      if (!argOf(str(member(*rows, "key"), "name"), d.rowKey)) return false;
+      d.keyedRows = true;
       d.rowCounter = counterIndex(str(member(*rows, "counter")));
       if (d.rowCounter == kNoIndex || !r.counters[d.rowCounter].keyed)
         return fail("collector '" + name + "': rows need a keyed counter");
@@ -419,6 +431,38 @@ bool digitsDots(std::string_view t, bool dots) {
 }
 
 }  // namespace
+
+// a supplement (plan P2-07): "key" or {"term": key} (a locale word),
+// {"text": "…"}, or {"en": "…", "zh": "…"} (per language)
+bool parseSupplement(const JsonValue& v, Supplement& out) {
+  out = Supplement{};
+  if (v.t == JsonValue::T::Str) {
+    out.term = v.str;
+    return true;
+  }
+  if (v.t != JsonValue::T::Obj) return false;
+  auto text = [](const JsonValue* x) { return x && x->t == JsonValue::T::Str ? x->str : std::string(); };
+  if (const JsonValue* t = v.get("term")) {
+    out.term = text(t);
+    return !out.term.empty();
+  }
+  if (const JsonValue* t = v.get("text")) {
+    out.text = text(t);
+    out.literal = true;
+    return true;
+  }
+  for (size_t k = 0; k < v.keys.size(); k++) {
+    if (v.vals[k].t != JsonValue::T::Str) return false;
+    out.byLang.push_back({v.keys[k], v.vals[k].str});
+  }
+  return !out.byLang.empty();
+}
+
+ClassId Registry::classNamed(std::string_view name) const {
+  for (size_t k = 1; k < classes.size(); k++)
+    if (classes[k].name == name) return (ClassId)k;
+  return 0;
+}
 
 std::unique_ptr<Registry> Registry::fromJson(std::string_view json, std::string& error) {
   auto r = std::make_unique<Registry>();
@@ -488,7 +532,7 @@ const CollectorDef* Registry::collector(std::string_view name) const {
 }
 const CollectorDef* Registry::tableOwner(std::string_view table) const {
   for (const CollectorDef& c : collectors)
-    if (c.rowsFromKids && c.table == table) return &c;
+    if (c.keyedRows && c.table == table) return &c;
   return nullptr;
 }
 const CollectorDef* Registry::flowCollector(std::string_view flow) const {

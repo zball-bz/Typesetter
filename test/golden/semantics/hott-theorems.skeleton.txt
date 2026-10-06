@@ -1,0 +1,10 @@
+doc @[0,982)
+  code-block @[0,566) js="\n  // HoTT-style theorems and lemmas (plan P2-07): one counter, numbered\n  // within the chapter, the head written at the first paragraph\n  const head = [strong(slot('supplement'), slot('number')), when('title', ' (', slot('title'), ')'), strong('.'), ' ']\n  $.element('theorem', {\n    counter: {name: 'thm', within: 'heading', depth: 1},\n    supplement: {en: 'Theorem ', zh: '定理 '},\n    title: {arg: 'title'},\n    sites: [{where: 'prepend:first-para', template: head}],\n  })\n  $.element('lemma', {like: 'theorem', supplement: {en: 'Lemma ', zh: '引理 '}})\n"
+  heading1 @[568,582)
+  heading1 @[584,596) label="ch-ua"
+  para @[606,639) lines=1
+  region @[641,726) name="theorem"
+    para @[689,716) lines=1
+  region @[728,809) name="lemma"
+    para @[760,801) lines=1
+  para @[811,981) lines=1

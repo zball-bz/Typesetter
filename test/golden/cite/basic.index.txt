@@ -1,4 +1,8 @@
 instance heading 1 level=1 label=h-1 title="Citations" @[0,11)
+instance bibentry @[0,0)
+instance bibentry @[0,0)
+instance bibentry @[0,0)
+instance bibentry @[0,0)
 label h-1 -> heading 1 @[0,11)
 row bib knuth84 ordinal=3 @[0,0)
 row bib liang83 ordinal=2 @[0,0)

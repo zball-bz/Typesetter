@@ -1,0 +1,17 @@
+doc @[0,101) [base]
+  heading @[0,5) [base] level=1 label="h-1"
+    text @[2,5) [base] str="Top"
+  heading @[7,15) [base] level=3 label="deep"
+    text @[11,15) [base] str="Deep"
+  group @[24,81) [base] role="figure" label="f1"
+    para @[24,81) [base]
+      text @[24,81) [BOLD] str="Fig. 1: "
+      text @[46,72) [base] str="A figure the host renamed."
+  para @[83,101) [base]
+    text @[83,86) [base] str="See " raw=0:0,4:3
+    ref @[87,92) [base] target="deep" url="#tsr-deep"
+      text @[87,92) [base] str="§1.1.1"
+    text @[93,96) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[97,100) [base] target="f1" url="#tsr-f1"
+      text @[97,100) [base] str="Fig. 1"
+    text @[100,101) [base] str="."

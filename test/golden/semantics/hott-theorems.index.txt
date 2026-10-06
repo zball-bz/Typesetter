@@ -1,0 +1,8 @@
+instance heading 1 level=1 label=h-1 title="Introduction" @[568,582)
+instance heading 2 level=1 label=ch-ua title="Univalence" @[584,596)
+instance theorem 2.10 label=thm-ua title="Univalence" @[641,726)
+instance lemma 2.11 label=lem-transport @[728,809)
+label h-1 -> heading 1 @[568,582)
+label ch-ua -> heading 2 @[584,596)
+label thm-ua -> theorem 2.10 @[641,726)
+label lem-transport -> lemma 2.11 @[728,809)

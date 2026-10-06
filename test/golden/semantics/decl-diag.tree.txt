@@ -1,0 +1,24 @@
+doc @[0,526) [base]
+  para @[0,30) [base]
+    text @[0,30) [base] str="A memo before its declaration:"
+  group @[32,65) [base] role="memo" label="m1"
+    para @[32,65) [base]
+      text @[52,58) [base] str="Noted."
+  para @[344,459) [base]
+    text @[344,374) [base] str="A counter that does not exist: " raw=0:0,31:30
+    text @[412,442) [base] str=" and a slot outside a template: " raw=0:0,1:0,32:30
+    error @[443,458) [base] message="slot belongs in a declaration's template" code="template-only"
+    text @[458,459) [base] str="."
+  para @[461,526) [base]
+    ref @[461,488) [base] target="m1" form="bogus" url="#tsr-m1"
+      text @[461,488) [base] str="Memo 1"
+    text @[489,492) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[493,525) [base] target="m1" form="supplement" url="#tsr-m1"
+      text @[493,525) [base] str="Memo "
+    text @[525,526) [base] str="."
+decl counter name="memo" flow=2 @[67,342) ext.row="{}"
+decl element name="memo" flow=2 @[67,342) ext.row="{\"numbering\":\"always\",\"supplement\":{\"text\":\"Memo \"},\"counter\":\"memo\"}"
+decl element name="broken" flow=2 @[67,342) ext.counter="nope"
+decl counter name="c1" flow=2 @[67,342) ext.colour="red"
+decl element name="gather" flow=2 @[67,342) ext.row="{\"sites\":[{\"where\":\"prepend\",\"template\":{\"$t\":0}}]}"
+  collect @[0,0) [base] what="toc"

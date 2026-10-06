@@ -1,8 +1,8 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="0" data-e="20" id="tsr-h-1">Citations in notes</h1>
 <p data-pid="1" data-s="22" data-e="171">Liang&#39;s patterns [<a href="#tsr-bib-liang83">1</a>] come first in the text.<a href="#tsr-fn-1" id="tsr-fnref-1"><sup>1</sup></a> Knuth and Plass [<a href="#tsr-bib-kp81">3</a>] follow after the note.</p>
-<div data-role="bibliography" data-pid="2">
-<hr>
+<div data-role="bibliography" data-pid="2" data-s="173" data-e="219">
+<hr data-s="173" data-e="219">
 <p id="tsr-bib-liang83">[1] Franklin Mark Liang. <em>Word Hy-phen-a-tion by Com-put-er</em>. Stanford University, 1983. <a href="https://tug.org/docs/liang/">https://tug.org/docs/liang/</a></p>
 <p id="tsr-bib-knuth84">[2] Donald E. Knuth. <em>The TeXbook</em>. Computers &amp; Typesetting A. Addison-Wesley, 1984.</p>
 <p id="tsr-bib-kp81">[3] Donald E. Knuth and Michael F. Plass. <em>Breaking Paragraphs into Lines</em>. Software: Practice and Experience 11(11), 1119-1184. 1981. <a href="https://doi.org/10.1002/spe.4380111102">doi:10.1002/spe.4380111102</a></p>

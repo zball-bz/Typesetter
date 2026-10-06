@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="383" data-e="392" id="tsr-methods">1 Methods</h1>
+<p class="tsr-mathblock" data-pid="1" data-s="404" data-e="420" id="tsr-eq-m"><code class="tsr-mathsrc">$ a = b $</code> <span class="tsr-eqno">(1.1)</span></p>
+<h1 data-pid="2" data-s="435" data-e="443" id="tsr-proofs">A Proofs</h1>
+<h2 data-pid="3" data-s="454" data-e="463" id="tsr-lemmas">A.1 Lemmas</h2>
+<p class="tsr-mathblock" data-pid="4" data-s="474" data-e="490" id="tsr-eq-p"><code class="tsr-mathsrc">$ c = d $</code> <span class="tsr-eqno">(A.1)</span></p>
+<p data-pid="5" data-s="492" data-e="540">See <a href="#tsr-methods">§1</a>, <a href="#tsr-proofs">Appendix A</a>, <a href="#tsr-lemmas">Appendix A.1</a>, <a href="#tsr-eq-m">Eq. (1.1)</a> and <a href="#tsr-eq-p">Eq. (A.1)</a>.</p>
+</div>

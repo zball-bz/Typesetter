@@ -1,0 +1,27 @@
+doc @[0,541)
+  code-block @[0,272) js="\n  // appendix lettering (plan P2-07): a counter event, numbers at the\n  // headings, equations within the chapter\n  $.counter('equation', {within: 'heading', depth: 1})\n  $.element('heading', {sites: [{where: 'prepend', at: 'self', template: [slot('number'), ' ']}]})\n"
+  code-let @[273,381) js=" appendix = () => counterUpdate('heading', {set: [0], numbering: 'A.1', supplement: {term: 'appendix'}})"
+  heading @[383,392) level=1 label="methods"
+    text @[385,392) str="Methods"
+  para @[404,420)
+    math @[404,420) display=1 src="a = b" label="eq-m"
+  para @[422,433)
+    splice @[422,433) expr="appendix()"
+  heading @[435,443) level=1 label="proofs"
+    text @[437,443) str="Proofs"
+  heading @[454,463) level=2 label="lemmas"
+    text @[457,463) str="Lemmas"
+  para @[474,490)
+    math @[474,490) display=1 src="c = d" label="eq-p"
+  para @[492,540)
+    text @[492,495) str="See "
+    ref @[496,504) target="methods"
+    text @[504,505) str=", "
+    ref @[506,513) target="proofs"
+    text @[513,514) str=", "
+    ref @[515,522) target="lemmas"
+    text @[522,523) str=", "
+    ref @[524,529) target="eq-m"
+    text @[530,533) str=" and "
+    ref @[534,539) target="eq-p"
+    text @[539,540) str="."

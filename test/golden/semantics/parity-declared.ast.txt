@@ -1,0 +1,18 @@
+doc @[0,666)
+  para @[0,37)
+    text @[0,24) str="Parity (plan P2-07): see "
+    ref @[25,28) target="f1"
+    text @[29,32) str=" and "
+    ref @[33,36) target="f2"
+    text @[36,37) str="."
+  region @[39,92) name="sketch"
+    para @[61,83)
+      row @[61,83)
+        cell @[61,83)
+          text @[61,83) str="A built-in figure row."
+  region @[94,145) name="sketch"
+    para @[116,136)
+      row @[116,136)
+        cell @[116,136)
+          text @[116,136) str="Its second instance."
+  code-block @[147,665) js="\n  // the built-in figure row, declared by the document under another name\n  // (hoisted: the instances above are sketches)\n  $.counter('sketch')\n  $.element('sketch', {\n    select: [{node: 'group', role: 'sketch'}],\n    box: 'figure', html: 'figure',\n    counter: 'sketch', numbering: 'always',\n    supplement: {term: 'figure'},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), slot('term:caption-sep'))]}],\n    ref: [slot('supplement'), slot('number')],\n  })\n"

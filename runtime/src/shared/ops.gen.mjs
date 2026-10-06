@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
-export const OPS_VERSION = 9;
+export const OPS_VERSION = 10;
 export const OPS_MIN_COMPAT = 6;
-export const SCHEMA_HASH = '3958a889';
+export const SCHEMA_HASH = 'cdd27a7f';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -44,7 +44,12 @@ export const SINCE = Object.freeze({
     "25": 6,
     "26": 6,
     "27": 6,
-    "28": 9
+    "28": 9,
+    "29": 10,
+    "30": 10,
+    "31": 10,
+    "32": 10,
+    "33": 10
   },
   "attr": {
     "0": {},
@@ -177,7 +182,8 @@ export const SINCE = Object.freeze({
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "46": 10
     },
     "14": {
       "0": 6,
@@ -249,11 +255,13 @@ export const SINCE = Object.freeze({
       "6": 9,
       "14": 9,
       "15": 6,
+      "16": 10,
       "31": 9,
       "32": 9,
       "33": 9,
       "34": 9,
-      "35": 9
+      "35": 9,
+      "42": 10
     },
     "22": {
       "0": 9,
@@ -329,6 +337,63 @@ export const SINCE = Object.freeze({
       "34": 9,
       "35": 9,
       "36": 9
+    },
+    "29": {
+      "0": 9,
+      "6": 9,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "37": 10,
+      "38": 10,
+      "39": 10,
+      "40": 10,
+      "41": 10,
+      "42": 10
+    },
+    "30": {
+      "0": 9,
+      "6": 9,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "43": 10
+    },
+    "31": {
+      "0": 9,
+      "6": 9,
+      "9": 10,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "45": 10
+    },
+    "32": {
+      "0": 9,
+      "6": 9,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "36": 10
+    },
+    "33": {
+      "0": 9,
+      "6": 9,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "36": 10,
+      "44": 10
     }
   }
 });
@@ -373,7 +438,12 @@ export const KIND = Object.freeze({
   "seq": 25,
   "image": 26,
   "note": 27,
-  "field": 28
+  "field": 28,
+  "event": 29,
+  "entry": 30,
+  "slot": 31,
+  "when": 32,
+  "each": 33
 });
 export const ARGK = Object.freeze({
   "label": 0,
@@ -412,7 +482,17 @@ export const ARGK = Object.freeze({
   "copy": 33,
   "class": 34,
   "ext": 35,
-  "of": 36
+  "of": 36,
+  "counter": 37,
+  "set": 38,
+  "step": 39,
+  "add": 40,
+  "numbering": 41,
+  "supplement": 42,
+  "key": 43,
+  "sep": 44,
+  "or": 45,
+  "cited": 46
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -633,8 +713,9 @@ export const SCHEMA = Object.freeze({
     "body": "data",
     "inline": "unsupported",
     "attrs": {
-      "what": "enum:toc|glossary|notes|bibliography",
+      "what": "ident",
       "form": "enum:all",
+      "cited": "enum:cited|cited-then-all",
       "label": "label",
       "role": "ident",
       "slot": "ident",
@@ -769,6 +850,8 @@ export const SCHEMA = Object.freeze({
     "attrs": {
       "target": "str",
       "url": "url",
+      "form": "ident",
+      "supplement": "str",
       "label": "label",
       "role": "ident",
       "slot": "ident",
@@ -895,6 +978,98 @@ export const SCHEMA = Object.freeze({
     "attrs": {
       "name": "str",
       "of": "str",
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext"
+    },
+    "resolved": []
+  },
+  "event": {
+    "id": 29,
+    "level": "trivia",
+    "body": "none",
+    "inline": "skip",
+    "attrs": {
+      "counter": "ident",
+      "set": "intlist",
+      "step": "int:1:16",
+      "add": "int:-1073741824:1073741824",
+      "numbering": "str",
+      "supplement": "str",
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext"
+    },
+    "resolved": []
+  },
+  "entry": {
+    "id": 30,
+    "level": "trivia",
+    "body": "inline",
+    "inline": "skip",
+    "attrs": {
+      "key": "str",
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext"
+    },
+    "resolved": []
+  },
+  "slot": {
+    "id": 31,
+    "level": "inline",
+    "body": "none",
+    "inline": "skip",
+    "attrs": {
+      "name": "str",
+      "or": "str",
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext"
+    },
+    "resolved": []
+  },
+  "when": {
+    "id": 32,
+    "level": "transparent",
+    "body": "position",
+    "inline": "container",
+    "attrs": {
+      "of": "str",
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext"
+    },
+    "resolved": []
+  },
+  "each": {
+    "id": 33,
+    "level": "transparent",
+    "body": "position",
+    "inline": "container",
+    "attrs": {
+      "of": "str",
+      "sep": "str",
       "label": "label",
       "role": "ident",
       "slot": "ident",

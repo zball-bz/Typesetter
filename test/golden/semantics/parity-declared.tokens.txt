@@ -1,0 +1,7 @@
+[25,28) constant "@f1"
+[33,36) constant "@f2"
+[39,60) function "#!sketch(label: \"f1\")"
+[84,92) function "#sketch!"
+[94,115) function "#!sketch(label: \"f2\")"
+[137,145) function "#sketch!"
+[147,665) function "#{\n  // the built-in figure row, declared by the document under another name\n  // (hoisted: the instances above are sketches)\n  $.counter('sketch')\n  $.element('sketch', {\n    select: [{node: 'group', role: 'sketch'}],\n    box: 'figure', html: 'figure',\n    counter: 'sketch', numbering: 'always',\n    supplement: {term: 'figure'},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), slot('term:caption-sep'))]}],\n    ref: [slot('supplement'), slot('number')],\n  })\n}"

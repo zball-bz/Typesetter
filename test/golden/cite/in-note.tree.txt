@@ -18,8 +18,8 @@ doc @[0,0) [base]
         text @[143,148) [base] str="3"
       text @[143,148) [base] str="]"
     text @[149,171) [base] str=" follow after the note." raw=0:0,1:0
-  group @[0,0) [base] role="bibliography"
-    rule @[0,0) [base]
+  group @[173,219) [base] role="bibliography"
+    rule @[173,219) [base]
     para @[0,0) [base] label="bib-liang83"
       text @[0,0) [base] str="[1] "
       text @[0,0) [base] str="Franklin Mark Liang."

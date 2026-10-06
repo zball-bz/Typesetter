@@ -24,6 +24,14 @@ struct Slots {
   std::function<void(const TItem&, const Ctx&, std::vector<ContentNode*>&)> paras;
 
   void set(std::string_view k, std::string v) { text.push_back({k, std::move(v)}); }
+  void put(std::string_view k, std::string v) {  // set, replacing a value already set
+    for (auto& [n, x] : text)
+      if (n == k) {
+        x = std::move(v);
+        return;
+      }
+    set(k, std::move(v));
+  }
   const std::string* textOf(std::string_view k) const {
     for (const auto& [n, v] : text)
       if (n == k) return &v;
@@ -45,6 +53,7 @@ struct Mat {
   MaterializeEnv& e;
   int collecting = 0;
   std::vector<std::string> flowPlaced, tablesRendered;
+  std::vector<const Instance*> scope;  // the instances the walk is inside (field)
 
   static bool contains(const std::vector<std::string>& v, const std::string& s) {
     for (const std::string& x : v)
@@ -167,8 +176,8 @@ struct Mat {
     bool inline_ = isInlineLevel(it.kind);
     ContentNode* n = mk(it.kind, c.span, inline_ || it.siteStyle ? styleOf(c) : 0);
     for (const auto& [k, v] : it.args) {
-      if (v.k == TArg::K::Bool) {
-        n->args.push_back({k, ArgTag::Bool, v.b ? 1.0 : 0.0, 0});
+      if (v.k == TArg::K::Bool || v.k == TArg::K::Num) {
+        n->args.push_back({k, v.k == TArg::K::Bool ? ArgTag::Bool : ArgTag::Num, v.k == TArg::K::Bool ? (v.b ? 1.0 : 0.0) : v.num, 0});
         continue;
       }
       std::string val = argValue(v, s);
@@ -245,8 +254,11 @@ struct Mat {
       const Instance& in = e.ix.instances[lt.inst];
       const ElementClass& C = e.reg.cls(in.cls);
       instanceSlots(in, s);
+      // ref(target, {supplement}) replaces the supplement word (plan P2-07)
+      if (StrRef sup = attrStr(r, ArgK::supplement)) s.put("supplement", std::string(e.strs.get(sup)));
       if (lt.k == LabelTarget::K::Marker && C.flow && C.flow->markerAlias.hasRef) form = &C.flow->markerAlias.ref;
       else if (C.hasRef) form = &C.ref;
+      if (StrRef f = attrStr(r, ArgK::form)) form = namedForm(C, e.strs.get(f), form, r);
     }
     if (!form) {
       e.diags.add(Sev::Info, "ref-unnumbered", r->span,
@@ -256,6 +268,23 @@ struct Mat {
     setArg(r, ArgK::url, "#tsr-" + target);
     inst(*form, c, s, r, r->kids);
     return r;
+  }
+
+  // ref(target, {form}) (plan P2-07): the class's named form, else a
+  // built-in one — number, title (name), supplement, full (the class's)
+  const Template* namedForm(const ElementClass& C, std::string_view name, const Template* dflt, const ContentNode* r) {
+    for (const auto& [n, t] : C.forms)
+      if (n == name) return &t;
+    static const Template kNumber{TItem{TItem::K::Slot, "number"}};
+    static const Template kTitle{TItem{TItem::K::Slot, "title"}};
+    static const Template kSupplement{TItem{TItem::K::Slot, "supplement"}};
+    if (name == "number") return &kNumber;
+    if (name == "title" || name == "name") return &kTitle;
+    if (name == "supplement") return &kSupplement;
+    if (name != "full")
+      e.diags.add(Sev::Warning, "ref-form", r->span,
+                  "a " + C.name + " has no reference form '" + std::string(name) + "' (the full form is used)");
+    return dflt;
   }
 
   // a group reference to keys of a citeable table: each key links to its
@@ -295,7 +324,10 @@ struct Mat {
   // classes say, then its own class's changes
   ContentNode* walk(const ContentNode* n) {
     std::vector<ContentNode*> kids;
+    const Instance* in = n->cls ? instanceOf(n) : nullptr;
+    if (in) scope.push_back(in);
     bool changed = kidsOf(n, kids);
+    if (in) scope.pop_back();
     ContentNode* o = const_cast<ContentNode*>(n);
     if (changed) {
       o = clone1(n);
@@ -313,7 +345,31 @@ struct Mat {
     }
     return changed;
   }
+  // a paragraph of only events, entries and empty text vanishes with them
+  // (plan P2-07; the generalized empty paragraph): #appendix() on its own line
+  static bool positional(Kind k) { return k == Kind::event || k == Kind::entry; }
+  bool vacuous(const ContentNode* p) const {
+    if (p->kind != Kind::para) return false;
+    bool any = false;
+    for (const ContentNode* k : p->kids) {
+      if (positional(k->kind)) any = true;
+      else if (k->kind != Kind::text || !e.strs.get(k->str).empty()) return false;
+    }
+    return any;
+  }
   void replace(const ContentNode* k, std::vector<ContentNode*>& out) {
+    // B2: events (applied in LOCATE) and entries (rows of their table)
+    // leave nothing where they stand
+    if (positional(k->kind) || vacuous(k)) return;
+    if (k->kind == Kind::slot || k->kind == Kind::when || k->kind == Kind::each) {
+      std::string msg = std::string(kindName(k->kind)) + " belongs in a declaration's template";
+      e.diags.add(Sev::Warning, "template-only", k->span, msg);
+      ContentNode* x = mk(Kind::error, k->span, k->style);
+      x->args.push_back({ArgK::message, ArgTag::Str, 0, e.strs.intern(msg)});
+      x->args.push_back({ArgK::code, ArgTag::Str, 0, e.strs.intern("template-only")});
+      out.push_back(x);
+      return;
+    }
     if (k->kind == Kind::collect) {
       collect(k, out);
       return;
@@ -322,8 +378,24 @@ struct Mat {
       out.push_back(resolveRef(clone1(k)));
       return;
     }
-    if (k->kind == Kind::field) {  // (plan P2-05) filled by T3's elements; until then it reads unresolved
+    if (k->kind == Kind::field) {  // (plan P2-05, P2-07) a slot of the enclosing instance, or of `of`'s
       std::string name(e.strs.get(attrStr(k, ArgK::name)));
+      const Instance* in = scope.empty() ? nullptr : scope.back();
+      if (StrRef of = attrStr(k, ArgK::of)) {
+        auto lt = e.ix.labels.find(std::string(e.strs.get(of)));
+        in = lt != e.ix.labels.end() && lt->second.inst != kNoInst ? &e.ix.instances[lt->second.inst] : nullptr;
+      }
+      if (in) {
+        Slots s;
+        instanceSlots(*in, s);
+        s.set("label", in->label);
+        if (const std::string* v = s.textOf(name)) {
+          ContentNode* tx = mk(Kind::text, k->span, k->style);
+          tx->str = e.strs.intern(*v);
+          out.push_back(tx);
+          return;
+        }
+      }
       e.diags.add(Sev::Warning, "field-unresolved", k->span, "field '" + name + "' has no value");
       Slots s;
       s.set("label", name);
@@ -491,7 +563,7 @@ struct Mat {
 
   void table(const CollectorDef& C, const ContentNode* k, const Ctx& cc, std::vector<ContentNode*>& out) {
     Slots ws;
-    if (!C.rowsFromKids) {  // rows of instances (a glossary)
+    if (!C.keyedRows) {  // rows of instances (a glossary)
       ws.each = [&](const TItem&, const Ctx&, ContentNode* container, std::vector<ContentNode*>& o) {
         for (const Row& r : e.ix.rows) {
           if (r.table != C.table) continue;
@@ -505,16 +577,17 @@ struct Mat {
       inst(C.wrap, cc, ws, nullptr, out);
       return;
     }
-    // keyed rows: the cited ones in citation order, every row when asked
+    // keyed rows: the cited ones in citation order, then (cited-then-all)
+    // every other row in document order
     std::vector<std::string> keys = e.counters.keyOrder(C.rowCounter);
-    if (!C.allValue.empty() && e.strs.get(attrStr(k, C.allArg)) == C.allValue)
-      for (const ContentNode* x : k->kids) {
-        std::string key(e.strs.get(attrStr(x, C.rowKey)));
-        if (!key.empty() && !e.counters.keyedIfSeen(C.rowCounter, key)) {
-          e.counters.keyed(C.rowCounter, key);
-          keys.push_back(key);
+    std::string_view cited = e.strs.get(attrStr(k, ArgK::cited));
+    if (cited.empty() && e.strs.get(attrStr(k, ArgK::form)) == "all") cited = "cited-then-all";  // (v6–9 buffers)
+    if (cited == "cited-then-all" || (cited.empty() && C.cited == CollectorDef::Cited::CitedThenAll))
+      for (const Row& r : e.ix.rows)
+        if (r.table == C.table && !e.counters.keyedIfSeen(C.rowCounter, r.key)) {
+          e.counters.keyed(C.rowCounter, r.key);
+          keys.push_back(r.key);
         }
-      }
     if (keys.empty()) {
       inst(C.empty, cc, Slots{}, nullptr, out);
       return;

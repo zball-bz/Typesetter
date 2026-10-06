@@ -10,8 +10,8 @@ doc @[0,0) [base]
         text @[81,89) [base] str="1"
       text @[81,89) [base] str="]"
     text @[89,106) [base] str=", still resolves."
-  group @[0,0) [base] role="bibliography"
-    rule @[0,0) [base]
+  group @[108,167) [base] role="bibliography"
+    rule @[108,167) [base]
     para @[0,0) [base] label="bib-liang83"
       text @[0,0) [base] str="[1] "
       text @[0,0) [base] str="Franklin Mark Liang."

@@ -1,0 +1,44 @@
+lower v1 abi 9bdc5985 docEnd 982 holes 6 module d7dbfa229390a368
+piece 0 hole 0 js [162,202)
+piece 1 hole 1 js [204,250)
+piece 2 hole 2 js [252,284)
+piece 3 hole 3 js [286,324)
+piece 4 hole 4 js [326,365)
+piece 5 hole 5 js [367,418)
+piece 6 verbatim block 0 js [447,1002)
+block 0 verbatim [0,566) user
+  VERBATIM 0
+block 1 content [568,582)
+  CALL heading [568,582) level=1 label=null
+    TEXT "Introduction" [570,582)
+block 2 content [584,596)
+  CALL heading [584,596) level=1 label="ch-ua"
+    TEXT "Univalence" [586,596)
+block 3 content [606,639) user framed holes 0..1
+  CALL para [606,639)
+    HOLE 0 [606,639)
+block 4 content [641,726) user framed async holes 1..2
+  REGION async "theorem" args=hole 1 [641,726)
+    ROWS
+      row
+        TEXT "Equivalent types are equal." [689,716)
+block 5 content [728,809) user framed async holes 2..3
+  REGION async "lemma" args=hole 2 [728,809)
+    ROWS
+      row
+        TEXT "Transport along a path is an equivalence." [760,801)
+block 6 content [811,981) user framed holes 3..6
+  CALL para [811,981)
+    TEXT "By " [811,813) raw=0:0,3:2
+    CALL ref [814,821) target="thm-ua"
+    TEXT " and " [822,825) raw=0:0,1:0,5:3
+    CALL ref [826,840) target="lem-transport"
+    TEXT " in " [841,843) raw=0:0,1:0,4:2
+    CALL ref [844,850) target="ch-ua"
+    TEXT "; " [850,851) raw=0:0,2:1
+    HOLE 3 [852,883)
+    TEXT " is " [884,886) raw=0:0,1:0,4:2
+    HOLE 4 [887,919)
+    TEXT ", and " [919,924) raw=0:0,6:5
+    HOLE 5 [925,969)
+    TEXT " follows it." [970,981) raw=0:0,1:0

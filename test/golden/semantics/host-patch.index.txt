@@ -1,0 +1,6 @@
+instance heading 1 level=1 label=h-1 title="Top" @[0,5)
+instance heading 1.1.1 level=3 label=deep title="Deep" @[7,15)
+instance figure 1 label=f1 @[24,81)
+label h-1 -> heading 1 @[0,5)
+label deep -> heading 1.1.1 @[7,15)
+label f1 -> figure 1 @[24,81)

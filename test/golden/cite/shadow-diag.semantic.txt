@@ -1,6 +1,6 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="0" data-e="31" id="tsr-kp81">A heading labelled like a key</h1>
 <p data-pid="1" data-s="40" data-e="111">The reference <a href="#tsr-kp81">§1</a> resolves to the heading, and the clash is reported.</p>
-<div data-role="bibliography" data-pid="2">
+<div data-role="bibliography" data-pid="2" data-s="113" data-e="159">
 </div>
 </div>

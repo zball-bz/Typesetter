@@ -1,0 +1,6 @@
+[25,28) constant "@f1"
+[33,36) constant "@f2"
+[39,60) function "#!figure(label: \"f1\")"
+[84,92) function "#figure!"
+[94,115) function "#!figure(label: \"f2\")"
+[137,145) function "#figure!"

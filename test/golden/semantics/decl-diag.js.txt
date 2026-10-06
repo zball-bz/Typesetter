@@ -1,0 +1,24 @@
+export const abi = 0x9bdc5985;
+export default async (__rt, $) => {
+const {collect, counterUpdate, ref, slot} = __rt.std;
+return (async () => {
+const __h = [
+() => ({label: "m1"}),
+() => {
+
+  $.element('memo', {numbering: 'always', supplement: 'Memo '})
+  $.declare('element', 'broken', {counter: 'nope'})
+  $.declare('counter', 'c1', {colour: 'red'})
+  $.element('gather', {sites: [{template: [collect({what: 'toc'})]}]})
+  counterUpdate('heading', {step: 1})
+
+},
+() => (counterUpdate('nosuch', {set: [1]})),
+() => (slot('number')),
+() => (ref("m1", {form: "bogus"})),
+() => (ref("m1", {form: "supplement"})),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

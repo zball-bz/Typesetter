@@ -1,0 +1,37 @@
+lower v1 abi 9bdc5985 docEnd 541 holes 3 module cdb592873e728faa
+piece 0 hole 0 js [163,442)
+piece 1 hole 1 js [444,563)
+piece 2 hole 2 js [565,583)
+block 0 stmt [0,272) user framed holes 0..1
+  STMT 0
+block 1 stmt [273,381) user framed holes 1..2
+  STMT 1
+block 2 content [383,392)
+  CALL heading [383,392) level=1 label="methods"
+    TEXT "Methods" [385,392)
+block 3 content [404,420)
+  CALL mathblock [404,420) src="a = b" label="eq-m"
+block 4 content [422,433) user framed holes 2..3
+  CALL para [422,433)
+    HOLE 2 [422,433)
+block 5 content [435,443)
+  CALL heading [435,443) level=1 label="proofs"
+    TEXT "Proofs" [437,443)
+block 6 content [454,463)
+  CALL heading [454,463) level=2 label="lemmas"
+    TEXT "Lemmas" [457,463)
+block 7 content [474,490)
+  CALL mathblock [474,490) src="c = d" label="eq-p"
+block 8 content [492,540)
+  CALL para [492,540)
+    TEXT "See " [492,495) raw=0:0,4:3
+    CALL ref [496,504) target="methods"
+    TEXT ", " [504,505) raw=0:0,2:1
+    CALL ref [506,513) target="proofs"
+    TEXT ", " [513,514) raw=0:0,2:1
+    CALL ref [515,522) target="lemmas"
+    TEXT ", " [522,523) raw=0:0,2:1
+    CALL ref [524,529) target="eq-m"
+    TEXT " and " [530,533) raw=0:0,1:0,5:3
+    CALL ref [534,539) target="eq-p"
+    TEXT "." [539,540)

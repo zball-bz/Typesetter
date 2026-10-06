@@ -21,9 +21,10 @@ constexpr u16 kNoIndex = 0xFFFF;
 
 // --- templates: generated, style-neutral content ------------------------------
 struct TArg {  // a template node's argument value
-  enum class K : u8 { Text, Bool, Slot, Anchor } k = K::Text;
+  enum class K : u8 { Text, Bool, Slot, Anchor, Num } k = K::Text;
   std::string s;  // Text: the value; Slot / Anchor: a slot name
   bool b = false;
+  double num = 0;
 };
 struct TItem {
   // Text: a literal; Slot / Term: a value (adjacent ones make one text);
@@ -115,8 +116,9 @@ struct ElementClass {
   Supplement supplement;
   enum class Labels : u8 { User, None, FromArg } labels = Labels::User;
   ArgK labelArg = ArgK::label;
-  enum class Title : u8 { None, Text, Arg } title = Title::None;
+  enum class Title : u8 { None, Text, Arg, Ext } title = Title::None;
   ArgK titleArg = ArgK::label;
+  std::string titleExt;  // Title::Ext: the EXT name (plan P2-07)
   bool outline = false;
   AliasRule alias;
   std::vector<SiteDef> sites;
@@ -124,6 +126,13 @@ struct ElementClass {
   bool hasRef = false;
   std::optional<FlowDef> flow;
   std::string table;  // instances are rows of this keyed table (key = label)
+  // (plan P2-07) the rows' key is this argument, not a label (citation keys
+  // are no labels: `@key` cites the row)
+  bool rowKeyed = false;
+  ArgK rowKey = ArgK::key;
+  // named reference forms (ref(target, {form})) beyond the built-in number,
+  // title, supplement and full
+  std::vector<std::pair<std::string, Template>> forms;
   // presentation traits (plan P2-05, finding role-string-dispatch: what a
   // class means to the box tree and the semantic page, read through
   // ContentNode::cls, never through its role string)
@@ -141,20 +150,21 @@ struct CollectorDef {
   enum class Src : u8 { Outline, Table, Flow } src = Src::Outline;
   std::string table, flow;
   bool nestByDepth = false;
-  bool cited = false;  // the rows cited, in citation order …
-  ArgK allArg = ArgK::label;
-  std::string allValue;  // … every row when the collector's allArg says so
+  // a keyed table's rows: the cited ones in citation order, then (by
+  // default or by the collect node's `cited`) every other in document order
+  enum class Cited : u8 { Cited, CitedThenAll } cited = Cited::Cited;
   enum class Ctx : u8 { Collector, Instance, Row } ctx = Ctx::Collector;
   Template wrap, entry, empty;
   bool hasEmpty = false;
-  // a table whose rows are the collector node's own children
-  bool rowsFromKids = false;
-  ArgK rowKey = ArgK::name;
+  bool keyedRows = false;     // (rows) a keyed table: ordinals and anchors per row
   u16 rowCounter = kNoIndex;  // a keyed counter: the rows' ordinals
   AliasRule rowAnchor;
   Template cite;  // a reference to keys of this table
   bool citeable = false;
 };
+
+// a supplement in its JSON form ("key": a term; {term}, {text}, {lang: text, …})
+bool parseSupplement(const JsonValue& v, Supplement& out);
 
 class Registry {
  public:
@@ -172,6 +182,7 @@ class Registry {
   const CollectorDef* flowCollector(std::string_view flow) const;
   // a label of the shape some alias rule mints (it would collide)
   bool reservedShape(std::string_view label) const;
+  ClassId classNamed(std::string_view name) const;
 
   std::vector<ElementClass> classes;  // [0]: no class
   std::vector<CounterDef> counters;

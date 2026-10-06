@@ -1,0 +1,20 @@
+lower v1 abi 9bdc5985 docEnd 102 holes 1 module a4f433554caf8118
+piece 0 hole 0 js [103,124)
+block 0 content [0,5)
+  CALL heading [0,5) level=1 label=null
+    TEXT "Top" [2,5)
+block 1 content [7,15)
+  CALL heading [7,15) level=3 label="deep"
+    TEXT "Deep" [11,15)
+block 2 content [24,81) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [24,81)
+    ROWS
+      row
+        TEXT "A figure the host renamed." [46,72)
+block 3 content [83,101)
+  CALL para [83,101)
+    TEXT "See " [83,86) raw=0:0,4:3
+    CALL ref [87,92) target="deep"
+    TEXT " and " [93,96) raw=0:0,1:0,5:3
+    CALL ref [97,100) target="f1"
+    TEXT "." [100,101)

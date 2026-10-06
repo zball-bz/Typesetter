@@ -1,0 +1,11 @@
+export const abi = 0x9bdc5985;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => ({label: "f1"}),
+() => ({label: "f2"}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

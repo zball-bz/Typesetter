@@ -247,6 +247,7 @@ export const CTOR_SPECS = Object.freeze({
     "options": [
       "what",
       "form",
+      "cited",
       "label",
       "role",
       "slot",
@@ -417,6 +418,8 @@ export const CTOR_SPECS = Object.freeze({
       }
     ],
     "options": [
+      "form",
+      "supplement",
       "label",
       "role",
       "slot",
@@ -557,6 +560,91 @@ export const CTOR_SPECS = Object.freeze({
     "sealed": false,
     "derived": false
   },
+  "entry": {
+    "kind": "entry",
+    "params": [],
+    "options": [
+      "key",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
+    "nullary": false,
+    "sealed": false,
+    "derived": false
+  },
+  "slot": {
+    "kind": "slot",
+    "params": [
+      {
+        "k": "attr",
+        "name": "name",
+        "dom": "str"
+      }
+    ],
+    "options": [
+      "or",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
+    "nullary": false,
+    "sealed": false,
+    "derived": false
+  },
+  "when": {
+    "kind": "when",
+    "params": [
+      {
+        "k": "attr",
+        "name": "of",
+        "dom": "str"
+      }
+    ],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
+    "nullary": false,
+    "sealed": false,
+    "derived": false
+  },
+  "each": {
+    "kind": "each",
+    "params": [
+      {
+        "k": "attr",
+        "name": "of",
+        "dom": "str"
+      }
+    ],
+    "options": [
+      "sep",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
+    "nullary": false,
+    "sealed": false,
+    "derived": false
+  },
   "strong": {
     "kind": "styled",
     "params": [],
@@ -625,6 +713,7 @@ export const CTOR_SPECS = Object.freeze({
     "options": [
       "what",
       "form",
+      "cited",
       "label",
       "role",
       "slot",
@@ -643,6 +732,7 @@ export const CTOR_SPECS = Object.freeze({
     "options": [
       "what",
       "form",
+      "cited",
       "label",
       "role",
       "slot",
@@ -661,6 +751,7 @@ export const CTOR_SPECS = Object.freeze({
     "options": [
       "what",
       "form",
+      "cited",
       "label",
       "role",
       "slot",
@@ -680,6 +771,20 @@ export const CTOR_SPECS = Object.freeze({
         "k": "attr",
         "name": "src",
         "dom": "str"
+      }
+    ],
+    "options": "raw",
+    "nullary": false,
+    "sealed": false,
+    "derived": true
+  },
+  "counterUpdate": {
+    "kind": "event",
+    "params": [
+      {
+        "k": "attr",
+        "name": "counter",
+        "dom": "ident"
       }
     ],
     "options": "raw",
@@ -719,7 +824,10 @@ export const STD_NAMES = Object.freeze([
   "codeblock",
   "collect",
   "comment",
+  "counterUpdate",
+  "each",
   "em",
+  "entry",
   "error",
   "field",
   "figure",
@@ -744,6 +852,7 @@ export const STD_NAMES = Object.freeze([
   "row",
   "rule",
   "seq",
+  "slot",
   "strong",
   "style",
   "styled",
@@ -751,5 +860,6 @@ export const STD_NAMES = Object.freeze([
   "term",
   "text",
   "toc",
-  "val"
+  "val",
+  "when"
 ]);

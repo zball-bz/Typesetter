@@ -1,0 +1,69 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Par" w=1537su r0 @[0,24)
+  disc pen=0.7 w=0su pre="-" 513su kern="ri" r0 @[0,24)
+  box Other "i" w=513su r0 @[0,24)
+  disc pen=0.7 w=0su pre="-" 513su kern="it" r0 @[0,24)
+  box Other "ty" w=1025su r0 @[0,24)
+  glue word w=257su x=1 cap=257su kern="y (" src r0 @[0,24)
+  box Other "(plan" w=2561su r0 @[0,24)
+  glue word w=257su x=1 cap=257su kern="n P" src r0 @[0,24)
+  box Other "P2-07):" w=3585su r0 @[0,24)
+  glue word w=257su x=1 cap=257su kern=": s" src r0 @[0,24)
+  box Other "see" w=1537su r0 @[0,24)
+  glue word w=257su x=1 cap=257su src r0 @[0,24)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r1 @[25,28)
+  pen 0 r1
+  glue word w=257su x=1 cap=257su src r2 @[25,28)
+  box Other "1" w=513su r2 @[25,28)
+  glue word w=257su x=1 cap=257su src r3 @[29,32)
+  box Other "and" w=1537su r3 @[29,32)
+  glue word w=257su x=1 cap=257su src r3 @[29,32)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r4 @[33,36)
+  pen 0 r4
+  glue word w=257su x=1 cap=257su src r5 @[33,36)
+  box Other "2" w=513su r5 @[33,36)
+  box Other "." w=513su r6 @[36,37)
+  run r0 plain
+  run r1 letter-spaced ref LINK CJK link="#tsr-f1"
+  run r2 plain ref LINK link="#tsr-f1"
+  run r3 plain
+  run r4 letter-spaced ref LINK CJK link="#tsr-f2"
+  run r5 plain ref LINK link="#tsr-f2"
+  run r6 plain
+top pid=1 units=1
+ unit text indent=0su anchor="f1" centered
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[39,92)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[39,92)
+  box Other "1" w=513su r1 @[39,92)
+  box ColonW "：" w=512su blank=R r2 @[39,92)
+  glue blank w=512su x=0 cap=0su r2 @[39,92)
+  box Other "A" w=513su r3 @[61,83)
+  glue word w=257su x=1 cap=257su kern="A b" src r3 @[61,83)
+  box Other "built-in" w=4097su r3 @[61,83)
+  glue word w=257su x=1 cap=257su kern="n f" src r3 @[61,83)
+  box Other "figure" w=3073su r3 @[61,83)
+  glue word w=257su x=1 cap=257su kern="e r" src r3 @[61,83)
+  box Other "row." w=2049su r3 @[61,83)
+  run r0 letter-spaced BOLD CJK
+  run r1 plain BOLD
+  run r2 blank-bearing BOLD CJK
+  run r3 plain
+top pid=2 units=1
+ unit text indent=0su anchor="f2" centered
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[94,145)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[94,145)
+  box Other "2" w=513su r1 @[94,145)
+  box ColonW "：" w=512su blank=R r2 @[94,145)
+  glue blank w=512su x=0 cap=0su r2 @[94,145)
+  box Other "Its" w=1537su r3 @[116,136)
+  glue word w=257su x=1 cap=257su kern="s s" src r3 @[116,136)
+  box Other "second" w=3073su r3 @[116,136)
+  glue word w=257su x=1 cap=257su kern="d i" src r3 @[116,136)
+  box Other "instance." w=4609su r3 @[116,136)
+  run r0 letter-spaced BOLD CJK
+  run r1 plain BOLD
+  run r2 blank-bearing BOLD CJK
+  run r3 plain

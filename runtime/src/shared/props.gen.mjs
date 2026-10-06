@@ -7,6 +7,7 @@ export const DOMAINS = Object.freeze({
   ident: Object.freeze({ max: 64, re: /^(?:[A-Za-z_][A-Za-z0-9_\-]*)$/u }),
   label: Object.freeze({ max: 512, re: /^(?:[^\x00-\x1f\x7f]+)$/u }),
   lang: Object.freeze({ max: 64, re: /^(?:[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*)$/u }),
+  intlist: Object.freeze({ max: 256, re: /^(?:-?[0-9]{1,9}(\.-?[0-9]{1,9})*)$/u }),
   rangeset: Object.freeze({ max: 0, re: /^(?: *[0-9]{1,7} *(- *[0-9]{1,7} *)?(, *[0-9]{1,7} *(- *[0-9]{1,7} *)?)*)$/u }),
   color: Object.freeze({ max: 64, re: /^(?:#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})|var\(--[A-Za-z0-9_\-]+\)|(rgb|rgba|hsl|hsla)\([0-9.,/ %deg\-]*\)|[A-Za-z]+)$/u }),
   font: Object.freeze({ max: 512, re: /^(?: *("[^"'\\\x00-\x1f\x7f]+" *|'[^"'\\\x00-\x1f\x7f]+' *|[A-Za-z0-9_\-\u0080-\u{10ffff}][A-Za-z0-9 _\-\u0080-\u{10ffff}]*)(, *("[^"'\\\x00-\x1f\x7f]+" *|'[^"'\\\x00-\x1f\x7f]+' *|[A-Za-z0-9_\-\u0080-\u{10ffff}][A-Za-z0-9 _\-\u0080-\u{10ffff}]*))*)$/u }),

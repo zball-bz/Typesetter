@@ -58,6 +58,10 @@ const Row kRows[] = {
     {"terms.equation", stageBit(Stage::Resolve), false},
     {"terms.captionSep", stageBit(Stage::Resolve), false},
     {"page.height", stageBit(Stage::Paginate), false},
+    {"semantics.elements", stageBit(Stage::Ingest), true},
+    {"semantics.counters", stageBit(Stage::Ingest), true},
+    {"semantics.collectors", stageBit(Stage::Ingest), true},
+    {"semantics.systems", stageBit(Stage::Ingest), true},
 };
 constexpr u32 kRowCount = sizeof kRows / sizeof kRows[0];
 
@@ -321,6 +325,30 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.pageHeightPx = x;
       return true;
     }
+    case 40: {  // semantics.elements
+      if (v.t != JsonValue::T::Obj) return type(why, "an object");
+      c.semElements.clear();
+      if (!v.keys.empty()) jsonDump(c.semElements, v);
+      return true;
+    }
+    case 41: {  // semantics.counters
+      if (v.t != JsonValue::T::Obj) return type(why, "an object");
+      c.semCounters.clear();
+      if (!v.keys.empty()) jsonDump(c.semCounters, v);
+      return true;
+    }
+    case 42: {  // semantics.collectors
+      if (v.t != JsonValue::T::Obj) return type(why, "an object");
+      c.semCollectors.clear();
+      if (!v.keys.empty()) jsonDump(c.semCollectors, v);
+      return true;
+    }
+    case 43: {  // semantics.systems
+      if (v.t != JsonValue::T::Obj) return type(why, "an object");
+      c.semSystems.clear();
+      if (!v.keys.empty()) jsonDump(c.semSystems, v);
+      return true;
+    }
     default:
       return false;
   }
@@ -477,6 +505,14 @@ std::string settingsJson(const Config& c) {
   jsonString(out, c.capSep);
   out += "}, \"page\": {\"height\": ";
   num(out, (double)c.pageHeightPx);
+  out += "}, \"semantics\": {\"elements\": ";
+  out += c.semElements.empty() ? "{}" : c.semElements;
+  out += ", \"counters\": ";
+  out += c.semCounters.empty() ? "{}" : c.semCounters;
+  out += ", \"collectors\": ";
+  out += c.semCollectors.empty() ? "{}" : c.semCollectors;
+  out += ", \"systems\": ";
+  out += c.semSystems.empty() ? "{}" : c.semSystems;
   out += "}}";
   return out;
 }

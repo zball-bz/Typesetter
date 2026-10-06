@@ -1,0 +1,9 @@
+Parity (plan P2-07): see @f1 and @f2.
+
+#!figure(label: "f1")
+A built-in figure row.
+#figure!
+
+#!figure(label: "f2")
+Its second instance.
+#figure!

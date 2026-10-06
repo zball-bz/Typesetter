@@ -1,0 +1,29 @@
+export const abi = 0x9bdc5985;
+export default async (__rt, $) => {
+const {counterUpdate, ref, slot, strong, when} = __rt.std;
+return (async () => {
+const __h = [
+() => (counterUpdate('thm', {set: [9]})),
+() => ({label: "thm-ua", title: "Univalence"}),
+() => ({label: "lem-transport"}),
+() => (ref("thm-ua", {form: "title"})),
+() => (ref("thm-ua", {form: "number"})),
+() => (ref("lem-transport", {supplement: "Lem. "})),
+];
+await __rt.run(__h, 0);
+
+  // HoTT-style theorems and lemmas (plan P2-07): one counter, numbered
+  // within the chapter, the head written at the first paragraph
+  const head = [strong(slot('supplement'), slot('number')), when('title', ' (', slot('title'), ')'), strong('.'), ' ']
+  $.element('theorem', {
+    counter: {name: 'thm', within: 'heading', depth: 1},
+    supplement: {en: 'Theorem ', zh: '定理 '},
+    title: {arg: 'title'},
+    sites: [{where: 'prepend:first-para', template: head}],
+  })
+  $.element('lemma', {like: 'theorem', supplement: {en: 'Lemma ', zh: '引理 '}})
+
+await __rt.run(__h, 1);
+})();
+};
+//# sourceURL=tsm:doc

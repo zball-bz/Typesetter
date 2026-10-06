@@ -1,0 +1,21 @@
+<div class="tsr-doc" lang="en" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="383" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-methods" data-s="0" data-e="9" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">1 Methods</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="404" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-eq-m" data-s="0" data-e="16" data-ragged="1" style="top:0px;left:129.938px;width:40.125px;height:24px"><span class="tsr-eqno" data-syn="eqno" style="right:-129.938px">(1.1)</span><span class="tsr-math" data-syn="math" data-src="$ a = b $" style="width:40.125px;height:11.125px;position:absolute;left:0;top:6.438px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:14.188px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:30.719px;top:-1.863px;font-size:16px;line-height:16px">b</span></span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="435" style="position:relative;height:25.609px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-proofs" data-s="0" data-e="8" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">A Proofs</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="454" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-lemmas" data-s="0" data-e="9" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">A.1 Lemmas</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="474" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-eq-p" data-s="0" data-e="16" data-ragged="1" style="top:0px;left:130.797px;width:38.391px;height:24px"><span class="tsr-eqno" data-syn="eqno" style="right:-130.812px">(A.1)</span><span class="tsr-math" data-syn="math" data-src="$ c = d $" style="width:38.391px;height:11.234px;position:absolute;left:0;top:6.383px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:12.219px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:28.75px;top:-1.863px;font-size:16px;line-height:16px">d</span></span></div>
+</div>
+<div class="tsr-para" data-pid="5" data-s0="492" style="position:relative;height:48px">
+<div class="tsr-line" data-s="0" data-e="37" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.4px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-methods" data-syn="ref">§1</a><span class="tsr-r" data-s="12">, </span><a class="tsr-r" href="#tsr-proofs" data-syn="ref">Appendix A</a><span class="tsr-r" data-s="21">, </span><a class="tsr-r" href="#tsr-lemmas" data-syn="ref">Appendix A.1</a><span class="tsr-r" data-s="30">, </span><a class="tsr-r" href="#tsr-eq-m" data-syn="ref">Eq.</a></div>
+<div class="tsr-line" data-s="32" data-e="48" style="top:24px;left:0px;width:300px"><a class="tsr-r" href="#tsr-eq-m" data-syn="ref">(1.1)</a><span class="tsr-r" data-s="38"> and </span><a class="tsr-r" href="#tsr-eq-p" data-syn="ref">Eq. (A.1)</a><span class="tsr-r" data-s="47">.</span></div>
+</div>
+</div>

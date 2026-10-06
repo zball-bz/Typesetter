@@ -1,0 +1,16 @@
+doc @[0,102)
+  heading @[0,5) level=1
+    text @[2,5) str="Top"
+  heading @[7,15) level=3 label="deep"
+    text @[11,15) str="Deep"
+  region @[24,81) name="figure"
+    para @[46,72)
+      row @[46,72)
+        cell @[46,72)
+          text @[46,72) str="A figure the host renamed."
+  para @[83,101)
+    text @[83,86) str="See "
+    ref @[87,92) target="deep"
+    text @[93,96) str=" and "
+    ref @[97,100) target="f1"
+    text @[100,101) str="."

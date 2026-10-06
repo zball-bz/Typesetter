@@ -81,21 +81,29 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     here,
     height: () => styleStack.length,
     popTo: (h) => dollar.style.popTo(h),
-    // citations (notes-design.md §2): the data loads after the program
-    // ran; the collector is then emitted at document end with one formatted
-    // entry per key — the resolver numbers cited keys and rebuilds the
-    // section in citation order
+    // citations (notes-design.md §2; plan P2-07): the collector stands
+    // where #bibliography is; the data loads after the program ran and each
+    // entry becomes a row — entry{role: bibentry, key}, a trailing root —
+    // the resolver numbers cited keys and lists them in citation order
+    // (cited: 'cited-then-all', or all: true, then every other row)
     bibliography: (src, o, s, e) => {
-      bibRequests.push({ src: String(src), all: !!o.all, s, e });
-      return ob.makeText('');
+      bibRequests.push({ src: String(src), s, e });
+      const cited = o.cited ?? (o.all ? 'cited-then-all' : undefined);
+      if (cited !== undefined && cited !== 'cited' && cited !== 'cited-then-all')
+        throw new TypeError("bibliography: cited is 'cited' or 'cited-then-all'");
+      return ob.makeNode(KIND.collect, { what: 'bibliography', cited }, []);
     },
   });
   const { std, kidsOf } = S;
   const styleStack = [];
   const bibRequests = [];
-  // runs after the document program: load + format + emit bibliographies
+  // runs after the document program: load + format + emit the entries
+  // (a source loaded once, however many collectors name it)
   const finishBibliographies = async () => {
+    const loaded = new Set();
     for (const req of bibRequests) {
+      if (loaded.has(req.src)) continue;
+      loaded.add(req.src);
       let entries;
       try {
         entries = JSON.parse(await loadResource(req.src, opts));
@@ -105,7 +113,6 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
         continue;
       }
       const fmt = S.api.formatOf('bib') ?? formatEntryDefault;
-      const kids = [];
       for (const e of entries) {
         if (!e || !e.id) continue;
         let inline;
@@ -115,10 +122,8 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
           ob.diag(1, 'bib-load', msg, req.s, req.e);
           inline = [std.text(`⚠ ${err?.message ?? err}`)];
         }
-        kids.push(ob.makeNode(KIND.group, { role: 'bibentry', name: String(e.id) }, kidsOf([inline])));
+        ob.emitNode(ob.makeNode(KIND.entry, { role: 'bibentry', key: String(e.id) }, kidsOf([inline])));
       }
-      ob.emitNode(ob.makeNode(KIND.collect,
-        { what: 'bibliography', form: req.all ? 'all' : undefined }, kids));
     }
   };
   const dollar = {
@@ -127,6 +132,14 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     region: S.api.region,
     fence: S.api.fence,
     declare: S.api.declare,
+    // semantic declarations (plan P2-07): rows of the element registry
+    element: S.api.element,
+    counter: Object.assign((name, spec) => S.api.counter(name, spec), {
+      system: S.api.counterSystem,
+      update: std.counterUpdate,
+    }),
+    collector: S.api.collector,
+    labels: Object.freeze({ import: S.api.labelsImport }),
     bib: {
       set format(fn) { S.api.format('bib', fn); },
       get format() { return S.api.formatOf('bib') ?? formatEntryDefault; },

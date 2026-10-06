@@ -1,0 +1,54 @@
+top pid=0 units=1
+ unit text indent=0su anchor="methods"
+  word "1" w=821su pen=INF BOLD x1.60 @[383,392)
+  space w=411su stretch=1 BOLD x1.60 @[383,392)
+  word "Methods" w=5736su pen=INF BOLD x1.60 @[385,392)
+top pid=1 units=1
+ unit math indent=0su anchor="eq-m" w=2568su asc=700su desc=12su
+top pid=2 units=1
+ unit text indent=0su anchor="proofs"
+  word "A" w=821su pen=INF BOLD x1.60 @[435,443)
+  space w=411su stretch=1 BOLD x1.60 @[435,443)
+  word "Proofs" w=4917su pen=INF BOLD x1.60 @[437,443)
+top pid=3 units=1
+ unit text indent=0su anchor="lemmas"
+  word "A.1" w=2075su pen=INF BOLD x1.35 @[454,463)
+  space w=347su stretch=1 BOLD x1.35 @[454,463)
+  word "Lemmas" w=4149su pen=INF BOLD x1.35 @[457,463)
+top pid=4 units=1
+ unit math indent=0su anchor="eq-p" w=2457su asc=700su desc=19su
+top pid=5 units=1
+ unit text indent=0su
+  word "See" w=1537su pen=INF @[492,495)
+  space w=257su stretch=1 @[492,495)
+  word "§1" w=1128su pen=INF LINK SYN @[496,504)
+  word "," w=513su pen=INF @[504,505)
+  space w=257su stretch=1 @[504,505)
+  word "Ap" w=1025su pen=INF LINK SYN @[506,513)
+  hyphen bw=513su pen=0.70 LINK SYN @[506,513)
+  word "pen" w=1537su pen=INF LINK SYN @[506,513)
+  hyphen bw=513su pen=0.70 LINK SYN @[506,513)
+  word "dix" w=1537su pen=INF LINK SYN @[506,513)
+  space w=257su stretch=1 LINK SYN @[506,513)
+  word "A" w=513su pen=INF LINK SYN @[506,513)
+  word "," w=513su pen=INF @[513,514)
+  space w=257su stretch=1 @[513,514)
+  word "Ap" w=1025su pen=INF LINK SYN @[515,522)
+  hyphen bw=513su pen=0.70 LINK SYN @[515,522)
+  word "pen" w=1537su pen=INF LINK SYN @[515,522)
+  hyphen bw=513su pen=0.70 LINK SYN @[515,522)
+  word "dix" w=1537su pen=INF LINK SYN @[515,522)
+  space w=257su stretch=1 LINK SYN @[515,522)
+  word "A.1" w=1537su pen=INF LINK SYN @[515,522)
+  word "," w=513su pen=INF @[522,523)
+  space w=257su stretch=1 @[522,523)
+  word "Eq." w=1537su pen=INF LINK SYN @[524,529)
+  space w=257su stretch=1 LINK SYN @[524,529)
+  word "(1.1)" w=2561su pen=INF LINK SYN @[524,529)
+  space w=257su stretch=1 @[530,533)
+  word "and" w=1537su pen=INF @[530,533)
+  space w=257su stretch=1 @[530,533)
+  word "Eq." w=1537su pen=INF LINK SYN @[534,539)
+  space w=257su stretch=1 LINK SYN @[534,539)
+  word "(A.1)" w=2561su pen=INF LINK SYN @[534,539)
+  word "." w=513su pen=INF @[539,540)

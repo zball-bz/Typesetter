@@ -20,6 +20,7 @@ add_library(tsr_core STATIC
   src/semantic/numbering.cc
   src/semantic/index.cc
   src/semantic/materialize.cc
+  src/semantic/declare.cc
   src/codegen/codegen.cc
   src/codegen/lower.cc
   src/ops/ops.cc

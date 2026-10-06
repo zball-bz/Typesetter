@@ -977,7 +977,7 @@ Theme steps: — · findings: 1
 | `markup-language/closed-constructor-set` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `markup-language/ctor-signature-vs-content-args` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `markup-language/arg-grammar-unification` | adhoc | medium | P2-06 | grep:plan P2-06 |
-| `markup-language/numbered-env-hardcoding` | adhoc | high | P2-07 | |
+| `markup-language/numbered-env-hardcoding` | adhoc | high | P2-07 | grep:plan P2-07 |
 | `markup-language/universal-labels` | adhoc | high | P2-06 | grep:plan P2-06 |
 | `markup-language/label-namespace-collision` | adhoc | medium | P0-09, P3-04 | |
 | `markup-language/region-builtin-privilege` | adhoc | medium | P2-03 | grep:plan P2-03 |
@@ -1060,7 +1060,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/block-promotion-peepholes` | adhoc | medium | P2-11 | |
 | `codegen-ops-model/duplicate-lowering-fragment` | adhoc | medium | P2-13 | |
 | `codegen-ops-model/note-kind-and-lift` | adhoc | medium | P3-01, P3-13 | |
-| `codegen-ops-model/collector-switch-and-fixed-counters` | adhoc | medium | P2-07 | |
+| `codegen-ops-model/collector-switch-and-fixed-counters` | adhoc | medium | P2-07 | grep:plan P2-07 |
 | `codegen-ops-model/occurrence-spans-unsound` | issue | high | P2-04 | grep:plan P2-04 |
 | `codegen-ops-model/exponential-instantiation` | issue | high | P0-07 | grep:plan P0-07 |
 | `codegen-ops-model/no-per-block-containment` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
@@ -1093,10 +1093,10 @@ Theme steps: — · findings: 1
 | `resolver/excerpt-strings` | adhoc | medium | P3-03 | |
 | `resolver/presentation-constants` | adhoc | medium | P1-10 | grep:plan P1-10 |
 | `resolver/anchor-namespace` | adhoc | medium | P3-04 | |
-| `resolver/argk-overloading` | adhoc | medium | P0-06, P2-05, P2-07 | |
-| `resolver/rewrite-normalizations` | adhoc | low | P0-07, P2-07 | |
+| `resolver/argk-overloading` | adhoc | medium | P0-06, P2-05, P2-07 | grep:plan P2-07 |
+| `resolver/rewrite-normalizations` | adhoc | low | P0-07, P2-07 | grep:plan P2-07 |
 | `resolver/cite-ordinal-pass-order` | issue | high | P0-09 | grep:plan P0-09 |
-| `resolver/extensibility-matrix` | issue | high | P2-07 | |
+| `resolver/extensibility-matrix` | issue | high | P2-07 | grep:plan P2-07 |
 | `resolver/invariant-declares-decides` | issue | high | P1-10 | grep:plan P1-10 |
 | `resolver/collector-aliasing` | issue | medium | P0-09 | grep:plan P0-09 |
 | `resolver/reserved-label-collision` | issue | medium | P0-09 | grep:plan P0-09 |
@@ -1105,7 +1105,7 @@ Theme steps: — · findings: 1
 | `resolver/duplicate-label-dom-ids` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/spec-drift` | issue | medium | P1-10 | grep:plan P1-10 |
 | `resolver/grouped-cite-all-or-nothing` | issue | low | P0-09 | grep:plan P0-09 |
-| `resolver/resolver-spans` | issue | low | P2-07 | |
+| `resolver/resolver-spans` | issue | low | P2-07 | grep:plan P2-07 |
 | `resolver/fragile-aggregate-init` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/untested-diagnostics` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/missed:0` | missed | high | P2-03 | grep:plan P2-03 |
@@ -1305,8 +1305,8 @@ Theme steps: — · findings: 1
 | `api-measure-code/missed:2` | missed | medium | P3-23 | |
 | `api-measure-code/missed:3` | missed | medium | P1-04, P1-19 | grep:plan P1-19 |
 | `api-measure-code/missed:4` | missed | low | P3-11 | |
-| `real-world-evidence/role-figure-hardwired` | adhoc | high | P2-07 | |
-| `real-world-evidence/counters-fixed-fields` | adhoc | high | P2-07 | |
+| `real-world-evidence/role-figure-hardwired` | adhoc | high | P2-07 | grep:plan P2-07 |
+| `real-world-evidence/counters-fixed-fields` | adhoc | high | P2-07 | grep:plan P2-07 |
 | `real-world-evidence/open-arg-schema` | adhoc | high | P1-01, P2-05 | grep:plan P2-05 |
 | `real-world-evidence/sugar-dispatch-fixed` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `real-world-evidence/no-tsm-printer` | adhoc | high | P3-35 | |

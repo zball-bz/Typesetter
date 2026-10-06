@@ -1,6 +1,6 @@
 export const abi = 0x9bdc5985;
 export default async (__rt, $) => {
-const {em, field, image, para, quote, style} = __rt.std;
+const {em, field, image, para, quote, slot, style} = __rt.std;
 return (async () => {
 const __h = [
 () => (quote({role: "lead", label: "p1", slot: "body", syn: "generated", copy: "omit", class: "wide note", ext: {chart: "bar", rows: 3, live: true}}, para("A quote with every universal attribute."))),

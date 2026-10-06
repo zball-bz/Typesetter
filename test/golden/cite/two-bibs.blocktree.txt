@@ -1,18 +1,18 @@
 top pid=0 leaves=1
   stack root gap=1/1 @[0,26)
     paragraph para unit=0 @[0,26)
-top pid=1 leaves=1
-  stack root gap=1/1 @[76,140)
-    paragraph para unit=0 @[76,140)
-top pid=2 leaves=3
-  stack root gap=1/1 @[0,0)
-    stack group @[0,0)
-      replaced rule rule unit=0 @[0,0)
+top pid=1 leaves=3
+  stack root gap=1/1 @[28,74)
+    stack group @[28,74)
+      replaced rule rule unit=0 @[28,74)
       paragraph para unit=1 anchor="bib-kp81" @[0,0)
       paragraph para unit=2 anchor="bib-liang83" @[0,0)
+top pid=2 leaves=1
+  stack root gap=1/1 @[76,140)
+    paragraph para unit=0 @[76,140)
 top pid=3 leaves=3
-  stack root gap=1/1 @[0,0)
-    stack group @[0,0)
-      replaced rule rule unit=0 @[0,0)
+  stack root gap=1/1 @[142,188)
+    stack group @[142,188)
+      replaced rule rule unit=0 @[142,188)
       paragraph para unit=1 @[0,0)
       paragraph para unit=2 @[0,0)

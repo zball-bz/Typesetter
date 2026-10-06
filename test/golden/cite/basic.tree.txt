@@ -36,8 +36,8 @@ doc @[0,0) [base]
         text @[255,260) [base] str="1"
       text @[255,260) [base] str="]"
     text @[261,318) [base] str=" once more keeps its number; the uncited entry is omitted." raw=0:0,1:0
-  group @[0,0) [base] role="bibliography"
-    rule @[0,0) [base]
+  group @[320,366) [base] role="bibliography"
+    rule @[320,366) [base]
     para @[0,0) [base] label="bib-kp81"
       text @[0,0) [base] str="[1] "
       text @[0,0) [base] str="Donald E. Knuth and Michael F. Plass."

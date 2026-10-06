@@ -1,0 +1,33 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  word "Top" w=2459su pen=INF BOLD x1.60 @[2,5)
+top pid=1 units=1
+ unit text indent=0su anchor="deep"
+  word "Deep" w=2357su pen=INF BOLD x1.15 @[11,15)
+top pid=2 units=1
+ unit text indent=0su anchor="f1" centered
+  word "Fig." w=2049su pen=INF BOLD @[24,81)
+  space w=257su stretch=1 BOLD @[24,81)
+  word "1:" w=1025su pen=INF BOLD @[24,81)
+  space w=257su stretch=1 BOLD @[24,81)
+  word "A" w=513su pen=INF @[46,72)
+  space w=257su stretch=1 @[46,72)
+  word "figure" w=3073su pen=INF @[46,72)
+  space w=257su stretch=1 @[46,72)
+  word "the" w=1537su pen=INF @[46,72)
+  space w=257su stretch=1 @[46,72)
+  word "host" w=2049su pen=INF @[46,72)
+  space w=257su stretch=1 @[46,72)
+  word "renamed." w=4097su pen=INF @[46,72)
+top pid=3 units=1
+ unit text indent=0su
+  word "See" w=1537su pen=INF @[83,86)
+  space w=257su stretch=1 @[83,86)
+  word "§1.1.1" w=3176su pen=INF LINK SYN @[87,92)
+  space w=257su stretch=1 @[93,96)
+  word "and" w=1537su pen=INF @[93,96)
+  space w=257su stretch=1 @[93,96)
+  word "Fig." w=2049su pen=INF LINK SYN @[97,100)
+  space w=257su stretch=1 LINK SYN @[97,100)
+  word "1" w=513su pen=INF LINK SYN @[97,100)
+  word "." w=513su pen=INF @[100,101)

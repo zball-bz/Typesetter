@@ -9,7 +9,7 @@
     "  enum:A|B|C | flags:NAME=BIT,... | rangeset | color | font | html | url.",
     "Attribute order is the writer's order (today's constructor argument order)."
   ],
-  "opsVersion": 9,
+  "opsVersion": 10,
   "minCompat": 6,
   "ops": {
     "MAKE_TEXT": {"id": 1, "since": 6},
@@ -28,7 +28,9 @@
     "align": 8, "name": 9, "what": 10, "src": 11, "message": 12, "code": 13, "url": 14,
     "target": 15, "form": 16, "html": 17, "w": 18, "h": 19, "bits": 20, "font": 21, "color": 22,
     "sizePx": 23, "wrap": 24, "lineNo": 25, "hl": 26, "sidecar": 27, "scale": 28, "alt": 29,
-    "side": 30, "slot": 31, "syn": 32, "copy": 33, "class": 34, "ext": 35, "of": 36
+    "side": 30, "slot": 31, "syn": 32, "copy": 33, "class": 34, "ext": 35, "of": 36,
+    "counter": 37, "set": 38, "step": 39, "add": 40, "numbering": 41, "supplement": 42, "key": 43,
+    "sep": 44, "or": 45, "cited": 46
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -61,8 +63,9 @@
     "term": {"id": 12, "level": "adaptive", "inline": "unsupported", "body": "inline", "since": 6, "ctor": {"params": ["projected:name"]}, "attrs": {
       "name": {"dom": "str"}}},
     "collect": {"id": 13, "level": "block", "inline": "unsupported", "body": "data", "since": 6, "ctor": {}, "attrs": {
-      "what": {"dom": "enum:toc|glossary|notes|bibliography"},
-      "form": {"dom": "enum:all"}}},
+      "what": {"dom": "ident"},
+      "form": {"dom": "enum:all"},
+      "cited": {"dom": "enum:cited|cited-then-all", "since": 10}}},
     "mathblock": {"id": 14, "level": "block", "inline": "unsupported", "body": "none", "since": 6, "ctor": {"params": ["attr:src", "attr:label"]}, "attrs": {
       "src": {"dom": "str"},
       "label": {"dom": "label"},
@@ -83,7 +86,9 @@
     "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
     "ref": {"id": 21, "level": "inline", "inline": "container", "body": "none", "since": 6, "ctor": {"params": ["attr:target"]}, "attrs": {
       "target": {"dom": "str"},
-      "url": {"dom": "url", "since": 9, "flags": ["resolved"]}}},
+      "url": {"dom": "url", "since": 9, "flags": ["resolved"]},
+      "form": {"dom": "ident", "since": 10},
+      "supplement": {"dom": "str", "since": 10}}},
     "mathinline": {"id": 22, "level": "inline", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:src"]}, "attrs": {
       "src": {"dom": "str"}}},
     "raw": {"id": 23, "level": "block", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:html"]}, "attrs": {
@@ -102,7 +107,24 @@
     "note": {"id": 27, "level": "inline", "inline": "unsupported", "body": "blocks", "since": 6, "ctor": {}, "attrs": {}},
     "field": {"id": 28, "level": "inline", "inline": "skip", "body": "none", "since": 9, "ctor": {"params": ["attr:name"]}, "attrs": {
       "name": {"dom": "str"},
-      "of": {"dom": "str"}}}
+      "of": {"dom": "str"}}},
+    "event": {"id": 29, "level": "trivia", "inline": "skip", "body": "none", "since": 10, "attrs": {
+      "counter": {"dom": "ident"},
+      "set": {"dom": "intlist"},
+      "step": {"dom": "int:1:16"},
+      "add": {"dom": "int:-1073741824:1073741824"},
+      "numbering": {"dom": "str"},
+      "supplement": {"dom": "str"}}},
+    "entry": {"id": 30, "level": "trivia", "inline": "skip", "body": "inline", "since": 10, "ctor": {}, "attrs": {
+      "key": {"dom": "str"}}},
+    "slot": {"id": 31, "level": "inline", "inline": "skip", "body": "none", "since": 10, "ctor": {"params": ["attr:name"]}, "attrs": {
+      "name": {"dom": "str"},
+      "or": {"dom": "str"}}},
+    "when": {"id": 32, "level": "transparent", "inline": "container", "body": "position", "since": 10, "ctor": {"params": ["attr:of"]}, "attrs": {
+      "of": {"dom": "str"}}},
+    "each": {"id": 33, "level": "transparent", "inline": "container", "body": "position", "since": 10, "ctor": {"params": ["attr:of"]}, "attrs": {
+      "of": {"dom": "str"},
+      "sep": {"dom": "str"}}}
   },
   "universal": {
     "$comment": [
@@ -160,6 +182,7 @@
       "glossary": {"kind": "collect", "nullary": true},
       "notes": {"kind": "collect", "nullary": true},
       "bibliography": {"kind": "collect", "params": ["attr:src:str"], "options": "raw"},
+      "counterUpdate": {"kind": "event", "params": ["attr:counter:ident"], "options": "raw"},
       "node": {"params": ["attr:kind:ident"], "options": "raw", "sealed": true}},
     "functions": ["val", "m", "plain"]},
   "domains": {
@@ -179,6 +202,10 @@
     "lang": {
       "max": 64,
       "re": "[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*"
+    },
+    "intlist": {
+      "max": 256,
+      "re": "-?[0-9]{1,9}(\\.-?[0-9]{1,9})*"
     },
     "rangeset": {
       "max": 0,
@@ -286,10 +313,12 @@
     "$comment": [
       "Host settings (plan P1-03; design T4 M3 / T9 A4): one row per setting, by dotted path.",
       "field: the Config member (cost.* fill CostParams); dom: value domain (a domains entry, num:LO:HI, int:LO:HI, bool,",
-      "enum:A|B, str, map); def: default; prec: HostOnly | HostDefault | HostForce | DocOnly (no document layer before P3);",
+      "enum:A|B, str, map, json); def: default; prec: HostOnly | HostDefault | HostForce | DocOnly (no document layer before P3);",
       "affects: the stages (stages.def) whose products the setting changes — the first one decides whether a patch",
       "applies in place or the document is rebuilt; legacy: the createEngine/tsr_* option it replaces (MD-06).",
       "terms.* override single locale words (semantic/terms.h, plan P1-10); unset, the document language's locale pack decides.",
+      "semantics.* (plan P2-07; dom json: an object, kept as its JSON text) patch the element registry's rows by name,",
+      "field by field, in engine/data/elements.json's form: built-in rows < these < the document's declarations.",
       "optional: an empty string is accepted (the row is unset and resolution falls through)."
     ],
     "host.width": {
@@ -691,6 +720,42 @@
       "prec": "HostDefault",
       "affects": [
         "Paginate"
+      ]
+    },
+    "semantics.elements": {
+      "field": "semElements",
+      "dom": "json",
+      "def": {},
+      "prec": "HostDefault",
+      "affects": [
+        "Ingest"
+      ]
+    },
+    "semantics.counters": {
+      "field": "semCounters",
+      "dom": "json",
+      "def": {},
+      "prec": "HostDefault",
+      "affects": [
+        "Ingest"
+      ]
+    },
+    "semantics.collectors": {
+      "field": "semCollectors",
+      "dom": "json",
+      "def": {},
+      "prec": "HostDefault",
+      "affects": [
+        "Ingest"
+      ]
+    },
+    "semantics.systems": {
+      "field": "semSystems",
+      "dom": "json",
+      "def": {},
+      "prec": "HostDefault",
+      "affects": [
+        "Ingest"
       ]
     }
   },

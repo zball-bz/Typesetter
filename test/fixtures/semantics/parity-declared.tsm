@@ -1,0 +1,23 @@
+Parity (plan P2-07): see @f1 and @f2.
+
+#!sketch(label: "f1")
+A built-in figure row.
+#sketch!
+
+#!sketch(label: "f2")
+Its second instance.
+#sketch!
+
+#{
+  // the built-in figure row, declared by the document under another name
+  // (hoisted: the instances above are sketches)
+  $.counter('sketch')
+  $.element('sketch', {
+    select: [{node: 'group', role: 'sketch'}],
+    box: 'figure', html: 'figure',
+    counter: 'sketch', numbering: 'always',
+    supplement: {term: 'figure'},
+    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), slot('term:caption-sep'))]}],
+    ref: [slot('supplement'), slot('number')],
+  })
+}

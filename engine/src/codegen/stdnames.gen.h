@@ -12,7 +12,10 @@ inline constexpr const char* kStdNames[] = {
     "codeblock",
     "collect",
     "comment",
+    "counterUpdate",
+    "each",
     "em",
+    "entry",
     "error",
     "field",
     "figure",
@@ -37,6 +40,7 @@ inline constexpr const char* kStdNames[] = {
     "row",
     "rule",
     "seq",
+    "slot",
     "strong",
     "style",
     "styled",
@@ -45,6 +49,7 @@ inline constexpr const char* kStdNames[] = {
     "text",
     "toc",
     "val",
+    "when",
 };
 
 }  // namespace tsr

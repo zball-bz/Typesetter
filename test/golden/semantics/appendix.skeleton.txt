@@ -1,0 +1,10 @@
+doc @[0,541)
+  code-block @[0,272) js="\n  // appendix lettering (plan P2-07): a counter event, numbers at the\n  // headings, equations within the chapter\n  $.counter('equation', {within: 'heading', depth: 1})\n  $.element('heading', {sites: [{where: 'prepend', at: 'self', template: [slot('number'), ' ']}]})\n"
+  code-let @[273,381) js=" appendix = () => counterUpdate('heading', {set: [0], numbering: 'A.1', supplement: {term: 'appendix'}})"
+  heading1 @[383,392) label="methods"
+  para @[404,420) lines=1
+  para @[422,433) lines=1
+  heading1 @[435,443) label="proofs"
+  heading2 @[454,463) label="lemmas"
+  para @[474,490) lines=1
+  para @[492,540) lines=1

@@ -1,0 +1,7 @@
+doc @[0,666)
+  para @[0,37) lines=1
+  region @[39,92) name="sketch"
+    para @[61,83) lines=1
+  region @[94,145) name="sketch"
+    para @[116,136) lines=1
+  code-block @[147,665) js="\n  // the built-in figure row, declared by the document under another name\n  // (hoisted: the instances above are sketches)\n  $.counter('sketch')\n  $.element('sketch', {\n    select: [{node: 'group', role: 'sketch'}],\n    box: 'figure', html: 'figure',\n    counter: 'sketch', numbering: 'always',\n    supplement: {term: 'figure'},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), slot('term:caption-sep'))]}],\n    ref: [slot('supplement'), slot('number')],\n  })\n"

@@ -153,6 +153,19 @@ per cited key in citation order (`{all: true}` appends the uncited). The
 placeholder's empty paragraph is dropped by the rewrite pass. The
 bibliography position is always document end in this version.
 
+As built (plan P2-07): `#bibliography(src, {cited})` returns its collector
+**in place** — `collect{what: bibliography, cited?}` at the call site, with
+the call's span (`cited: 'cited-then-all'`, or the old `{all: true}`,
+appends the uncited rows in data order; the default is the collector row's
+`cited`). After the program the executor loads each source once and emits
+one `entry{role: bibentry, key}` per CSL item as a trailing root with an
+empty span. Those entries are instances of the `bibentry` element class
+(`labels: none`, `table: bib`, `row-key: key`: a citation key is a row key,
+never a label), LOCATE makes them the `bib` table's rows (the first entry
+of a key wins), and MATERIALIZE drops them where they stand; the
+collector lists the table's rows. Two bibliographies list the same table,
+each where it is written (the first owns the row anchors).
+
 ## 3. What is shared
 
 | concern | footnotes | citations |

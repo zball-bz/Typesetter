@@ -8,7 +8,7 @@
 // the binder, so `*x*`, `#strong[x]` and an override of strong agree.
 // A region is a constructor with a Body parameter. One std per execution:
 // its constructors write into that execution's OpBuf.
-import { KIND, SCHEMA, DECLS } from './ops.gen.mjs';
+import { KIND, SCHEMA, DECLS, ARGK } from './ops.gen.mjs';
 import { CTOR_SPECS, STD_ALIASES } from './ctors.gen.mjs';
 import { isNode } from './opbuf.mjs';
 import { STYLE_KEYS, STYLE_SUGAR, validDomain } from './props.gen.mjs';
@@ -268,6 +268,57 @@ export function createStd(host) {
     return rows;
   };
 
+  // ---- semantic values (plan P2-07; design T3) ------------------------------
+  // an element instance: a group of role `name` whose options other than
+  // label and the style keys are its EXT data (a scalar under an
+  // [a-z][a-z0-9-]* name: title, …), which the element's row may read
+  const isScalar = (v) => typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean';
+  const elementGroup = (name, o, kids) => {
+    const ext = {};
+    for (const [k, v] of Object.entries(o ?? {})) {
+      if (k === 'label' || k === 'style' || k === 'role' || k in STYLE_KEYS || k in STYLE_SUGAR) continue;
+      if (k === 'ext' && isPlainObject(v)) {
+        for (const [n, x] of Object.entries(v)) if (isScalar(x) && validDomain('extname', n)) ext[n] = x;
+      } else if (isScalar(v) && validDomain('extname', k)) ext[k] = v;
+    }
+    return ob.makeNode(KIND.group, { role: name, label: o?.label, ext: Object.keys(ext).length ? ext : undefined }, kids);
+  };
+  // a supplement in its canonical row form: a string is literal text;
+  // {term}, {text} and {lang: text, …} as they are
+  const supplementOf = (v, who) => {
+    if (typeof v === 'string') return { text: v };
+    if (isPlainObject(v) && Object.values(v).length && Object.values(v).every((x) => typeof x === 'string')) return { ...v };
+    throw new TypeError(`${who}: a supplement is a string, {term}, {text} or {lang: text, …}`);
+  };
+  // counterUpdate(name, {set, step, add, numbering, supplement}): a
+  // positional counter event — a content value, applied where it is placed
+  const eventAttrs = (counter, o) => {
+    const who = 'counterUpdate';
+    if (typeof counter !== 'string' || !validDomain('ident', counter)) throw new TypeError(`${who}(name, {set, step, add, numbering, supplement}): a counter name`);
+    const a = { counter };
+    for (const [k, v] of Object.entries(o)) {
+      if (v === undefined) continue;
+      if (k === 'set') {
+        const xs = Array.isArray(v) ? v : [v];
+        if (!xs.length || !xs.every((x) => Number.isInteger(x) && Math.abs(x) < 1e9)) throw new TypeError(`${who}: set takes an integer or a list of integers`);
+        a.set = xs.join('.');
+      } else if (k === 'step') {
+        const n = v === true ? 1 : v;
+        if (!Number.isInteger(n) || n < 1 || n > 16) throw new TypeError(`${who}: step takes a level 1–16`);
+        a.step = n;
+      } else if (k === 'add') {
+        if (!Number.isInteger(v)) throw new TypeError(`${who}: add takes an integer`);
+        a.add = v;
+      } else if (k === 'numbering') {
+        if (typeof v !== 'string') throw new TypeError(`${who}: numbering takes a pattern`);
+        a.numbering = v;
+      } else if (k === 'supplement') {
+        a.supplement = JSON.stringify(supplementOf(v, who));
+      } else diag(1, 'ctor-arg', `${who}: unknown option ${k}`);
+    }
+    return a;
+  };
+
   // ---- base implementations (the registry's first entries) ---------------
   const kindImpl = (spec) => {
     const kind = KIND[spec.kind];
@@ -332,9 +383,16 @@ export function createStd(host) {
     toc: collect('toc'),
     glossary: collect('glossary'),
     notes: collect('notes'),
-    // citations (notes-design.md §2): the data loads after the program ran;
-    // the collector is emitted at document end
+    // citations (notes-design.md §2): the collector, in place; the data
+    // loads after the program ran and its entries become the table's rows
     bibliography: (call) => host.bibliography(call.attrs.src, call.options ?? {}, here.s, here.e),
+    // the event carries the construct it was made in (where a discarded
+    // one is reported: event-unplaced); placed, it takes its occurrence's
+    counterUpdate: (call) => {
+      const n = ob.makeNode(KIND.event, eventAttrs(call.attrs.counter, call.options ?? {}), []);
+      ob.span(n, here.s, here.e);
+      return n;
+    },
     // node(kind, attrs, ...kids): any public kind, every attribute by name
     node: (call) => {
       const kind = call.attrs.kind;
@@ -439,7 +497,7 @@ export function createStd(host) {
         for (const k of entry.spec.options) if (args[k] !== undefined) attrs[k] = args[k];
       node = await invoke(name, entry, { attrs, kids: [], lines: undefined, body, options: args }, 'region-error');
     } else {
-      node = ob.makeNode(KIND.group, { role: name, label: args.label }, body.blocks());
+      node = elementGroup(name, args, body.blocks());
     }
     const scope = styleValues(args);
     if (Object.keys(scope).length) node = ob.makeNode(KIND.styled, scope, [node]);
@@ -520,6 +578,188 @@ export function createStd(host) {
     return parts.length === 1 ? parts[0] : ob.makeNode(KIND.seq, {}, parts);
   };
 
+  // ---- semantic declarations: canonical rows ----------------------------------
+  // The JS sugar ends here: rows reach the engine in elements.json's form
+  // (one DECL each, EXT `row` = its JSON); a template is content, carried as
+  // a DECL template and written {"$t": k} in the row.
+  const checkSpec = (who, name, spec) => {
+    if (typeof name !== 'string' || !validDomain('ident', name)) throw new TypeError(`${who}(name, spec): a name [A-Za-z_][A-Za-z0-9_-]*`);
+    if (!isPlainObject(spec)) throw new TypeError(`${who}(name, spec): spec is an object`);
+  };
+  const declareRow = (type, name, row, templates) => {
+    ob.uses(10);  // canonical rows (EXT row) are since 10
+    ob.decl(DECLS[type].id, here.s, here.e, name, { row: JSON.stringify(row) }, templates);
+  };
+  const templater = (templates) => (v) => {
+    const kids = kidsOf([v]);
+    templates.push(kids.length === 1 ? kids[0] : ob.makeNode(KIND.seq, {}, kids));
+    return { $t: templates.length - 1 };
+  };
+  const unknownField = (who, k) => diag(1, 'ctor-arg', `${who}: unknown field ${k}`);
+  // counter: {within: name | {counter, depth, sep}, depth, sep (of within),
+  // numbering (a pattern), start, gap: 'zero' | 'one', levels (by-level, and
+  // its depth), levelArg, keyed}
+  const counterRow = (name, spec, who = '$.counter') => {
+    checkSpec(who, name, spec);
+    const row = {};
+    let within;
+    for (const [k, v] of Object.entries(spec)) {
+      if (v === undefined) continue;
+      switch (k) {
+        case 'within':
+          if (typeof v === 'string') within = { ...within, counter: v };
+          else if (isPlainObject(v)) within = { ...within, ...v };
+          else throw new TypeError(`${who}: within names a counter`);
+          break;
+        case 'depth': within = { ...within, depth: v }; break;
+        case 'sep': within = { ...within, sep: String(v) }; break;
+        case 'numbering':
+          if (typeof v !== 'string') throw new TypeError(`${who}: numbering is a pattern ('1.1', 'A', '(i)', …)`);
+          row.pattern = v;
+          break;
+        case 'start': row.start = Array.isArray(v) ? [...v] : [v]; break;
+        case 'gap':
+          if (v !== 'zero' && v !== 'one') throw new TypeError(`${who}: gap is 'zero' or 'one'`);
+          row.gap = v;
+          break;
+        case 'levels': row.shape = 'by-level'; row.depth = v; break;
+        case 'levelArg': row['level-arg'] = v; break;
+        case 'keyed': row.keyed = !!v; break;
+        default: unknownField(who, k);
+      }
+    }
+    if (within) {
+      if (!within.counter) throw new TypeError(`${who}: depth and sep belong to within`);
+      row.within = within;
+    }
+    return row;
+  };
+  const selectorOf = (x) => (typeof x === 'string' ? { node: x } : isPlainObject(x) ? { ...x } : (() => {
+    throw new TypeError('$.element: a selector is a node kind or {node, role, inside, <attribute>: value}');
+  })());
+  // title: 'text' (the content's text) or {arg: name} (an attribute, or the
+  // instance's EXT data of that name)
+  const titleOf = (v) => {
+    const t = Array.isArray(v) ? v[0] : v;
+    if (t === 'text' || t === null) return t === null ? 'none' : 'text';
+    if (isPlainObject(t) && typeof t.arg === 'string') return t.arg in ARGK ? { arg: t.arg } : { ext: t.arg };
+    throw new TypeError("$.element: title is 'text' or {arg: name}");
+  };
+  // element: {select, like, counter (a name, or {name, …} declaring it),
+  // numbering ('always' | 'labelled' | false, or a pattern for its
+  // counter), supplement, title, labels, outline, sites [{where, at,
+  // template}], ref (a template), forms {name: template}, alias, flow,
+  // table, rowKey, box, html}
+  const elementRow = (name, spec) => {
+    const who = '$.element';
+    checkSpec(who, name, spec);
+    const templates = [];
+    const tpl = templater(templates);
+    const row = {};
+    const counters = [];
+    let pattern;
+    for (const [k, v] of Object.entries(spec)) {
+      if (v === undefined) continue;
+      switch (k) {
+        case 'select': row.select = (Array.isArray(v) ? v : [v]).map(selectorOf); break;
+        case 'like': case 'outline': case 'table': case 'box': case 'html': case 'labels': row[k] = v; break;
+        case 'rowKey': row['row-key'] = v; break;
+        case 'counter':
+          if (typeof v === 'string') row.counter = v;
+          else if (isPlainObject(v)) {
+            const { name: cn = name, ...c } = v;
+            counters.push([cn, counterRow(cn, c, who)]);
+            row.counter = cn;
+          } else throw new TypeError(`${who}: counter is a name or {name, within, …}`);
+          break;
+        case 'numbering':
+          if (v === false || v === null || v === 'never') row.numbering = 'never';
+          else if (v === true || v === 'always') row.numbering = 'always';
+          else if (v === 'labelled') row.numbering = 'labelled';
+          else if (typeof v === 'string') pattern = v;
+          else throw new TypeError(`${who}: numbering is 'always', 'labelled', false or a pattern`);
+          break;
+        case 'supplement': row.supplement = supplementOf(v, who); break;
+        case 'title': row.title = titleOf(v); break;
+        case 'sites':
+          row.sites = (Array.isArray(v) ? v : [v]).map((x) => {
+            if (!isPlainObject(x)) throw new TypeError(`${who}: a site is {where, at, template}`);
+            const { where = 'prepend', at, template, arg } = x;
+            const [w, a] = String(where).split(':');  // 'prepend:first-para'
+            const site = { where: w };
+            if (at ?? a) site.at = at ?? a;
+            if (arg !== undefined) site.arg = arg;
+            site.template = tpl(template ?? []);
+            return site;
+          });
+          break;
+        case 'ref': row.ref = tpl(v); break;
+        case 'forms':
+          if (!isPlainObject(v)) throw new TypeError(`${who}: forms is {name: template}`);
+          row.forms = Object.fromEntries(Object.entries(v).map(([f, t]) => [f, tpl(t)]));
+          break;
+        case 'alias': {
+          if (!isPlainObject(v)) throw new TypeError(`${who}: alias is {prefix, body, ref}`);
+          const { ref, ...a } = v;
+          row.alias = ref === undefined ? a : { ...a, ref: tpl(ref) };
+          break;
+        }
+        case 'flow': {
+          if (!isPlainObject(v)) throw new TypeError(`${who}: flow is {name, placement, marker, markerAlias}`);
+          const { marker, markerAlias, ...f } = v;
+          if (marker !== undefined) f.marker = tpl(marker);
+          if (markerAlias !== undefined) {
+            const { ref, ...a } = markerAlias;
+            f['marker-alias'] = ref === undefined ? a : { ...a, ref: tpl(ref) };
+          }
+          row.flow = f;
+          break;
+        }
+        default: unknownField(who, k);
+      }
+    }
+    // a numbered element without a counter counts with its own
+    if (!row.counter && !spec.like && (pattern !== undefined || row.numbering === 'always' || row.numbering === 'labelled')) {
+      counters.push([name, {}]);
+      row.counter = name;
+    }
+    if (pattern !== undefined) {
+      if (!row.counter) throw new TypeError(`${who}: a numbering pattern belongs to a counter: $.counter(name, {numbering})`);
+      const own = counters.find(([cn]) => cn === row.counter);
+      if (own) own[1].pattern = pattern;
+      else counters.push([row.counter, { pattern }]);
+    }
+    if (row.counter && !row.numbering && !spec.like) row.numbering = 'always';
+    return { row, templates, counters };
+  };
+  // collector: {query (or select / table / flow), context, wrap,
+  // entry, empty, rows, cite}
+  const collectorRow = (name, spec) => {
+    const who = '$.collector';
+    checkSpec(who, name, spec);
+    const templates = [];
+    const tpl = templater(templates);
+    const row = {};
+    for (const [k, v] of Object.entries(spec)) {
+      if (v === undefined) continue;
+      switch (k) {
+        case 'query': row.query = { ...row.query, ...v }; break;
+        case 'select': row.query = { ...row.query, classes: v }; break;
+        case 'table': case 'flow': row.query = { ...row.query, [k]: v }; break;
+        case 'context': case 'rows': row[k] = v; break;
+        case 'wrap': case 'entry': case 'empty': case 'cite': row[k] = tpl(v); break;
+        default: unknownField(who, k);
+      }
+    }
+    return { row, templates };
+  };
+  // the constructor $.element returns: an instance of the element (its
+  // options → elementGroup; content kids as blocks)
+  const elementCtor = (name) => Object.defineProperty((...args) => {
+    const o = isPlainObject(args[0]) ? args.shift() : {};
+    return elementGroup(name, o, kidsBody(kidsOf(args)).blocks());
+  }, 'name', { value: name });
+
   // ---- $.ctor / $.region / $.fence / $.bib.format / $.std -------------------
   const missingNext = (name) => () => { throw new TypeError(`${name} has no previous definition to delegate to`); };
   const api = {
@@ -545,7 +785,7 @@ export function createStd(host) {
         next: (body = c.body, o = {}) => {
           const nc = { ...c, body, options: o.args ?? c.options };
           return next ? next(nc, { ...ctx, args: nc.options ?? {} })
-            : ob.makeNode(KIND.group, { role: name, label: nc.options?.label }, body.blocks());
+            : elementGroup(name, nc.options, body.blocks());
         },
       }), { spec: prev?.spec?.body ? prev.spec : BODY_SPEC, user: true });
       return (std[name] ??= trampoline(name));
@@ -580,6 +820,45 @@ export function createStd(host) {
         ext[n] = x;
       }
       ob.decl(d.id, here.s, here.e, name, ext, kidsOf(templates));
+    },
+    // $.element / $.counter / $.counter.system / $.collector (plan P2-07;
+    // design T3 "Semantic declarations"): a row of engine/data/elements.json's
+    // form, declared at this point (hoisted: the document's last declaration
+    // of a name wins; it patches a built-in row of that name field by field)
+    element(name, spec = {}) {
+      const { row, templates, counters } = elementRow(name, spec);
+      for (const [cn, c] of counters) declareRow('counter', cn, c, []);
+      declareRow('element', name, row, templates);
+      return elementCtor(name);
+    },
+    counter(name, spec = {}) {
+      declareRow('counter', name, counterRow(name, spec), []);
+    },
+    counterSystem(name, spec = {}) {
+      checkSpec('$.counter.system', name, spec);
+      const symbols = spec.symbols;
+      if (!Array.isArray(symbols) || !symbols.length || !symbols.every((x) => typeof x === 'string'))
+        throw new TypeError('$.counter.system: symbols is a list of strings');
+      const row = { symbols: [...symbols] };
+      if (spec.mode !== undefined) {
+        if (!['numeric', 'alphabetic', 'cyclic', 'fixed'].includes(spec.mode))
+          throw new TypeError('$.counter.system: mode is numeric, alphabetic, cyclic or fixed');
+        row.mode = spec.mode;
+      }
+      declareRow('counter-system', name, row, []);
+    },
+    collector(name, spec = {}) {
+      const { row, templates } = collectorRow(name, spec);
+      declareRow('collector', name, row, templates);
+      const ctor = Object.defineProperty((o = {}) => ob.makeNode(KIND.collect,
+        { what: name, cited: isPlainObject(o) ? o.cited : undefined }, []), 'name', { value: name });
+      ctor[NULLARY] = true;
+      return ctor;
+    },
+    // $.labels.import(src): cross-document labels — P3-31; until then it
+    // says so and imports nothing
+    labelsImport(src) {
+      diag(0, 'labels-import', `$.labels.import(${JSON.stringify(String(src))}): cross-document labels arrive with P3-31; nothing imported`);
     },
     formatOf(name) {
       return registry.get('format', name)?.fn;

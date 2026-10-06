@@ -1,0 +1,23 @@
+export const abi = 0x9bdc5985;
+export default async (__rt, $) => {
+const {counterUpdate, slot, term} = __rt.std;
+return (async () => {
+let appendix;
+const __h = [
+() => {
+
+  // appendix lettering (plan P2-07): a counter event, numbers at the
+  // headings, equations within the chapter
+  $.counter('equation', {within: 'heading', depth: 1})
+  $.element('heading', {sites: [{where: 'prepend', at: 'self', template: [slot('number'), ' ']}]})
+
+},
+() => { appendix = (
+ () => counterUpdate('heading', {set: [0], numbering: 'A.1', supplement: {term: 'appendix'}})
+); },
+() => (appendix()),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

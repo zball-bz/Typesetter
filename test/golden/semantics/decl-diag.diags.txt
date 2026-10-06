@@ -1,0 +1,8 @@
+warning decl-field @[67,342) counter 'c1': unknown field 'colour' (ignored)
+warning decl-invalid @[67,342) element 'gather': a template may not contain collect
+warning decl-invalid @[67,342) element 'broken': class 'broken' uses an undeclared counter
+info decl-after-use @[32,65) a memo before its declaration (declarations are hoisted)
+warning event-unplaced @[67,342) a counterUpdate placed nowhere does nothing: splice its value (#…) where it applies
+warning event-counter @[375,411) counterUpdate: no counter 'nosuch'
+warning template-only @[443,458) slot belongs in a declaration's template
+warning ref-form @[461,488) a memo has no reference form 'bogus' (the full form is used)

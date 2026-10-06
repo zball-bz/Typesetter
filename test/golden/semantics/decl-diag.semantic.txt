@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="30">A memo before its declaration:</p>
+<div data-role="memo" data-pid="1" data-s="32" data-e="65" id="tsr-m1">
+<p data-s="32" data-e="65">Noted.</p>
+</div>
+<p data-pid="2" data-s="344" data-e="459">A counter that does not exist:  and a slot outside a template: <span class="tsr-err" title="slot belongs in a declaration&#39;s template">&#9888; slot belongs in a declaration&#39;s template</span>.</p>
+<p data-pid="3" data-s="461" data-e="526"><a href="#tsr-m1">Memo 1</a> and <a href="#tsr-m1">Memo </a>.</p>
+</div>

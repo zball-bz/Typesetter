@@ -1,0 +1,2 @@
+instance memo 1 label=m1 @[32,65)
+label m1 -> memo 1 @[32,65)

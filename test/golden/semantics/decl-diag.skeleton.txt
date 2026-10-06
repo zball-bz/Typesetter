@@ -1,0 +1,7 @@
+doc @[0,527)
+  para @[0,30) lines=1
+  region @[32,65) name="memo"
+    para @[52,58) lines=1
+  code-block @[67,342) js="\n  $.element('memo', {numbering: 'always', supplement: 'Memo '})\n  $.declare('element', 'broken', {counter: 'nope'})\n  $.declare('counter', 'c1', {colour: 'red'})\n  $.element('gather', {sites: [{template: [collect({what: 'toc'})]}]})\n  counterUpdate('heading', {step: 1})\n"
+  para @[344,459) lines=1
+  para @[461,526) lines=1

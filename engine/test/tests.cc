@@ -987,9 +987,9 @@ static void unitRegistry(const fs::path& root) {
     std::string src, buf, profile;
     if (!readFile(tsm, src) || !readFile(ops, buf)) continue;
     readFile(root / "test" / "profiles" / "golden.json", profile);
-    auto run = [&](const Registry* r, std::string& index) {
+    auto run = [&](const std::string& base, std::string& index) {
       Doc d;
-      d.registry = r;
+      d.registryBase = base;
       d.configure(profile);
       d.compile(src);
       d.ingest((const u8*)buf.data(), buf.size());
@@ -999,12 +999,34 @@ static void unitRegistry(const fs::path& root) {
       return d.product("tree") + d.product("html") + d.product("diags");
     };
     std::string i1, i2;
-    std::string a = run(&reg, i1), b = run(renamed.get(), i2);
+    std::string a = run("", i1), b = run(json, i2);
     CHECK(a == b);
     size_t at;
     while ((at = i2.find("illustration")) != std::string::npos) i2.replace(at, 12, "figure");
     CHECK(i1 == i2 && i1.find("instance figure") != std::string::npos);
   }
+  // (plan P2-07) the same, declared by the document: the figure row written
+  // with $.element under another name (semantics/parity-declared, its
+  // declarations after its instances) reads exactly as the built-in row
+  auto products = [&](const char* rel) {
+    fs::path tsm = root / "test" / "fixtures" / "semantics" / (std::string(rel) + ".tsm");
+    fs::path ops = tsm;
+    ops.replace_extension(".ops");
+    std::string src, buf, profile;
+    if (!readFile(tsm, src) || !readFile(ops, buf)) return std::string();
+    readFile(root / "test" / "profiles" / "golden.json", profile);
+    Doc d;
+    d.configure(profile);
+    d.compile(src);
+    d.ingest((const u8*)buf.data(), buf.size());
+    ProviderSet p = mockProviders();
+    driveToCompletion(d, p);
+    return d.product("index") + d.product("semantic") + d.product("html") + d.product("blocks");
+  };
+  std::string builtin = products("parity-builtin"), declared = products("parity-declared");
+  size_t at;
+  while ((at = declared.find("sketch")) != std::string::npos) declared.replace(at, 6, "figure");
+  CHECK(!builtin.empty() && builtin == declared && builtin.find("instance figure 2") != std::string::npos);
 }
 
 // AST bytes (plan P1-05 bench gate): node + side record + kid slot per

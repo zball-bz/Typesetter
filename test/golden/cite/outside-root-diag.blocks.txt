@@ -40,7 +40,7 @@ top pid=0 units=1
   space w=257su stretch=1 @[0,70)
   word "??" w=1025su pen=INF SYN @[71,73)
   word "." w=513su pen=INF @[73,74)
-top pid=1 units=1
+top pid=2 units=1
  unit text indent=0su
   word "⚠" w=616su pen=INF CODE @[76,114)
   space w=257su stretch=1 CODE @[76,114)

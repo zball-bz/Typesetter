@@ -1,4 +1,8 @@
 instance heading 1 level=1 label=kp81 title="A heading labelled like a key" @[0,31)
+instance bibentry @[0,0)
+instance bibentry @[0,0)
+instance bibentry @[0,0)
+instance bibentry @[0,0)
 label kp81 -> heading 1 @[0,31)
 row bib knuth84 @[0,0)
 row bib liang83 @[0,0)

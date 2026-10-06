@@ -1,5 +1,5 @@
 doc @[0,80) [base]
-  group @[0,80) [base] role="aside"
+  group @[0,80) [base] role="aside" ext.title="pipes"
     para @[0,80) [base]
       seq @[0,80) [base]
         text @[24,33) [base] str="绝对值 " raw=0:0,10:9

@@ -1,0 +1,28 @@
+#{
+  // HoTT-style theorems and lemmas (plan P2-07): one counter, numbered
+  // within the chapter, the head written at the first paragraph
+  const head = [strong(slot('supplement'), slot('number')), when('title', ' (', slot('title'), ')'), strong('.'), ' ']
+  $.element('theorem', {
+    counter: {name: 'thm', within: 'heading', depth: 1},
+    supplement: {en: 'Theorem ', zh: '定理 '},
+    title: {arg: 'title'},
+    sites: [{where: 'prepend:first-para', template: head}],
+  })
+  $.element('lemma', {like: 'theorem', supplement: {en: 'Lemma ', zh: '引理 '}})
+}
+
+= Introduction
+
+= Univalence <ch-ua>
+
+#counterUpdate('thm', {set: [9]})
+
+#!theorem(label: "thm-ua", title: "Univalence")
+Equivalent types are equal.
+#theorem!
+
+#!lemma(label: "lem-transport")
+Transport along a path is an equivalence.
+#lemma!
+
+By @thm-ua and @lem-transport in @ch-ua; #ref("thm-ua", {form: "title"}) is #ref("thm-ua", {form: "number"}), and #ref("lem-transport", {supplement: "Lem. "}) follows it.

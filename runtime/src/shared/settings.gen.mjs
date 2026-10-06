@@ -340,6 +340,38 @@ export const SETTINGS = Object.freeze({
     "affects": [
       "Paginate"
     ]
+  },
+  "semantics.elements": {
+    "dom": "json",
+    "def": {},
+    "prec": "HostDefault",
+    "affects": [
+      "Ingest"
+    ]
+  },
+  "semantics.counters": {
+    "dom": "json",
+    "def": {},
+    "prec": "HostDefault",
+    "affects": [
+      "Ingest"
+    ]
+  },
+  "semantics.collectors": {
+    "dom": "json",
+    "def": {},
+    "prec": "HostDefault",
+    "affects": [
+      "Ingest"
+    ]
+  },
+  "semantics.systems": {
+    "dom": "json",
+    "def": {},
+    "prec": "HostDefault",
+    "affects": [
+      "Ingest"
+    ]
   }
 });
 export const SETTINGS_DEFAULTS = Object.freeze({
@@ -406,6 +438,12 @@ export const SETTINGS_DEFAULTS = Object.freeze({
   },
   "page": {
     "height": 995
+  },
+  "semantics": {
+    "elements": {},
+    "counters": {},
+    "collectors": {},
+    "systems": {}
   }
 });
 export const LEGACY_OPTIONS = Object.freeze({

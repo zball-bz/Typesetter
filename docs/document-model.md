@@ -48,7 +48,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `trow` | block | — | `tcell*` | M6 |
 | `tcell` | block | — | blocks | M6 |
 | `term` | block | `name`, `label?` | blocks (description) | M4 |
-| `collect` | block | `what`, params | — (expanded by resolver) | M4 |
+| `collect` | block | `what` (a collector's name), `cited?` (P2-07) | — (expanded by resolver) | M4 |
 | `mathblock` | block | `src`, `label?`, `name?` (resolver: "(n)") | — (MathBox at emit) | M7 ✓ |
 | `error` | both | `message`, `code` | best-effort content | M1 |
 | `comment` | both | `body` | — | M2 |
@@ -56,14 +56,19 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `styled` | inline | `delta` (§3) | inline | M1 |
 | `link` | inline | `url` | inline | M2 |
 | `code` | inline | `str` | — | M2 |
-| `ref` | inline | `target`, `form?` (+resolved fields) | — | M4 |
+| `ref` | inline | `target`, `form?`, `supplement?` (P2-07; +resolved fields) | — | M4 |
 | `mathinline` | inline | `src` | — (MathBox segments at emit) | M7 ✓ |
 | `raw` | inline | `html`, `w?`, `h?` | — | M6 |
 | `hardbreak` | inline | — (syntax reserved, not yet granted; the engine sets it as a forced line break, plan P1-13) | — | — |
+| `field` | inline | `name`, `of?` | — (the enclosing instance's slot, or `of`'s; P2-05/P2-07) | P2-05 |
+| `event` | trivia | `counter`, `set?`, `step?`, `add?`, `numbering?`, `supplement?` | — (a counter event, applied in place and dropped; P2-07) | P2-07 |
+| `entry` | trivia | `key?` (+ `role`) | inline (a row of its class's table, dropped in place; P2-07) | P2-07 |
+| `slot` / `when` / `each` | inline / transparent | `name`, `or?` / `of` / `of`, `sep?` | template content (P2-07; elsewhere an error node) | P2-07 |
 
 Notes:
 - **Labelable kinds** (accept `label`): `heading`, `group`, `table`, `term`, `mathblock`. Labels are args, not nodes.
-- **Figure is a declared class, not a kind**: `group{role:"figure", label}` with a caption paragraph is selected by the figure row of the element registry (docs/semantics-design.md; plan P1-10) — keeps the engine kind set minimal, and a document can declare classes the same way.
+- **Figure is a declared class, not a kind**: `group{role:"figure", label}` with a caption paragraph is selected by the figure row of the element registry (docs/semantics-design.md; plan P1-10) — keeps the engine kind set minimal, and a document declares classes the same way (P2-07: `$.element(name, spec)` writes a registry row; a `#!name` region builds `group{role: name}` with its options as EXT data, which the row's default selector `{role: name}` picks up).
+- **Positional semantics are nodes** (P2-07): a counter event (`counterUpdate`) and a table row (`entry`, e.g. a bibliography entry) are level-neutral nodes that render nothing where they stand; template-only kinds (`slot`, `when`, `each`) are content of declarations.
 - `val(x)` is not a kind: primitives splice as `text`; content values splice as themselves.
 - **User constructors compose engine kinds.** There is no user-defined kind; custom constructs are built from `group`/`styled`/`raw` plus the rest. This is what keeps layout closed under the kind table.
 
@@ -151,6 +156,13 @@ style-neutral `Decl`s on the content tree. A hoisted type's (element, counter,
 collector, counter-system, doc, locale, fontRoles) last declaration of a name
 wins wherever it is (`decl-redeclared` info); positional types (rule,
 math.*) apply from their position. The tree dump lists them after the tree.
+As built (plan P2-07; since 10): `element`, `counter`, `collector` and
+`counter-system` declarations are rows of the element registry — EXT `row`
+holds the row's canonical JSON (templates `{"$t": k}` → the DECL's k-th
+template), read in PHASE 0 before instantiation (docs/semantics-design.md
+§6); the kinds `event`, `entry`, `slot`, `when` and `each`, `ref.form`,
+`ref.supplement` and `collect.cited` are since 10, and `collect.what`
+widens to any collector name.
 
 **Cooked→raw maps** (plan P2-04; design T1 TextRaw; the prerequisite of
 per-atom source spans, P4-03). A text's cooked string differs from its raw
@@ -201,6 +213,13 @@ only.
 - **Validation** (the reader is a fuzz target — it consumes JS-produced input and must reject, never crash): magic/version; string refs and node ids in range; child id < own id; unknown kind → `error` node + diagnostic, not a crash; stack height underflow → diagnostic + clamp.
 
 ## 5. Resolver
+
+As built (plans P1-10, P2-07): the staged resolver of docs/semantics-design.md
+— PHASE 0 (the registry: built-in rows < host `semantics.*` settings < the
+document's declarations), LOCATE (instances, labels, rows, counter events),
+BIND (citation ordinals), MATERIALIZE (references and their forms, sites,
+fields, collectors; events, entries and vacuous paragraphs dropped). The
+original plan follows.
 
 Pure function of (ContentTree, Config). Document-order walk:
 
@@ -460,6 +479,13 @@ As built (plan P1-03): one settings document, `tsr2_set_config(doc, json)`, whos
 ```
 
 Unknown keys → diagnostic, not error (forward compat).
+
+As built (plan P2-07): the `semantics` section — `semantics.elements`,
+`.counters`, `.collectors`, `.systems` (dom `json`: an object in
+elements.json's form, kept as its JSON text) — patches the built-in
+registry rows field by field before the document's own declarations
+(docs/semantics-design.md §6); `affects: Ingest`. The `supplements` and
+`counters` keys sketched above are these rows now.
 
 ## 12. Dump formats (golden-test contract, byte-exact)
 

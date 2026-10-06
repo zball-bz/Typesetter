@@ -106,7 +106,9 @@ therefore meet in the same entry: `*x*` ≡ `#strong[x]`, before and after a
 
 A region `#!name(args) … #name!` calls the constructor `name` when its spec
 takes a Body, else the default region, a `group` of role `name` with the
-interior as blocks. The built-ins `table` and `figure` are such
+interior as blocks (P2-07: the header's options other than `label` and the
+style keys become its EXT data — an element instance, as the constructor
+`$.element` returns builds it). The built-ins `table` and `figure` are such
 constructors, registered like any other; nothing dispatches on their names
 any more. The legacy style keys of the header (`font`, `lang`, `color`,
 `sizePx`) wrap the result in a `styled` scope, for every region. A Body is
@@ -126,6 +128,16 @@ universal options more: `ext: {name: scalar}` (EXT data; a name outside
 `$.declare(type, name, data, ...templates)` writes a declaration (DECL) of a
 schema `decls` type at the current point of the flow: `data` is EXT, the
 templates are content (style-neutral until used).
+
+As built (P2-07): the semantic constructors — `counterUpdate(name, {set,
+step, add, numbering, supplement})` (a derived constructor of the `event`
+kind; `$.counter.update`), `slot(name, {or})`, `when(of, …kids)`,
+`each(of, {sep})`, `entry({role, key}, …kids)`, `ref(target, {form,
+supplement})`, `collect({what, cited})` — and the declaring functions
+`$.element`, `$.counter`, `$.counter.system`, `$.collector` (canonical
+registry rows, docs/semantics-design.md §6) and the `$.labels.import`
+placeholder. The declaring functions are write-only: `$.element` and
+`$.collector` return constructors, never numbers.
 
 ## 6. Manifest
 

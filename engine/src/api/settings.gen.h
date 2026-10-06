@@ -65,6 +65,10 @@ struct Config {
   std::string supEquation = "";  // terms.equation
   std::string capSep = "";  // terms.captionSep
   double pageHeightPx = 995;  // page.height
+  std::string semElements = "";  // semantics.elements
+  std::string semCounters = "";  // semantics.counters
+  std::string semCollectors = "";  // semantics.collectors
+  std::string semSystems = "";  // semantics.systems
   CostParams cost;
 };
 
