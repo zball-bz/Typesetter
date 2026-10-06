@@ -10,6 +10,7 @@
 //
 //   node tools/convert/html2tsm.mjs page.html --base https://pbr-book.org/4ed/Introduction/ > page.tsm
 import { readFileSync } from 'node:fs';
+import { em, strong, markers, escapeProse } from './prose.mjs';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
@@ -58,14 +59,15 @@ html = html.replace(/<div class="fragmentname">([\s\S]*?)<\/div>\s*<div class="f
 
 // block structure
 const out = [];
-const inline = (s) => entities(s
-  .replace(/<em>([\s\S]*?)<\/em>/g, '_$1_').replace(/<i>([\s\S]*?)<\/i>/g, '_$1_')
+const inlineText = (s) => entities(s
+  .replace(/<em>([\s\S]*?)<\/em>/g, (m, b) => em(b)).replace(/<i>([\s\S]*?)<\/i>/g, (m, b) => em(b))
   .replace(/<(?:tt|code)>([\s\S]*?)<\/(?:tt|code)>/g, '`$1`')
-  .replace(/<b>([\s\S]*?)<\/b>/g, '*$1*').replace(/<strong>([\s\S]*?)<\/strong>/g, '*$1*')
+  .replace(/<b>([\s\S]*?)<\/b>/g, (m, b) => strong(b)).replace(/<strong>([\s\S]*?)<\/strong>/g, (m, b) => strong(b))
   .replace(/<a [^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g, (m, h, t) => /^https?:/.test(h) ? `[${t}](${h})` : t)
   .replace(/<sup>([\s\S]*?)<\/sup>/g, '^$1')
-  .replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim()
-  .replace(/\$/g, '\\$').replace(/#/g, '\\#').replace(/@(?=[A-Za-z\[])/g, '\\@');
+  .replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
+// (plan P3-33) no escape inside a URL; emphasis resolved with its neighbours
+const inline = (s) => markers(escapeProse(inlineText(s)));
 
 const re = /<(h2|h3|h4|p|li|pre)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;
 let m;

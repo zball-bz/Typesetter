@@ -7,6 +7,4 @@ block 0 content [0,80)
     TEXT " and " [19,22) raw=0:0,1:0,5:3
     CALL em [23,31)
       TEXT "italic" [24,30)
-    TEXT " text with *escaped* markers, un" [32,65) raw=0:0,1:0,12:12,20:21
-    TEXT "*" [65,66)
-    TEXT "closed at end." [66,80)
+    TEXT " text with *escaped* markers, un*closed at end." [32,80) raw=0:0,1:0,12:12,20:21

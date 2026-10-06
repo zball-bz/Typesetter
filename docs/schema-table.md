@@ -44,7 +44,7 @@ The kind table of document-model §2.1, generated from `engine/schema/schema.jso
 | 36 | `equations` | block | blocks | unsupported | `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `equations({options}, …)` |
 | 37 | `fill` | inline | none | fill | `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `fill({options}, …)` (nullary) |
 
-Derived constructors (`stdlib.ctors`): `strong({options}, …)`, `em({options}, …)`, `style({options}, …)`, `figure(body, {options}, …)`, `toc({options}, …)` (nullary), `glossary({options}, …)` (nullary), `lof({options}, …)` (nullary), `lot({options}, …)` (nullary), `index({options}, …)` (nullary), `notes({options}, …)` (nullary), `pagebreak({options}, …)` (nullary), `bibliography(src, {options}, …)`, `counterUpdate(counter, {options}, …)`, `node(kind, {options}, …)` (sealed). Std functions: `val`, `m`, `plain`, `use`.
+Derived constructors (`stdlib.ctors`): `strong({options}, …)`, `em({options}, …)`, `style({options}, …)`, `figure(body, {options}, …)`, `toc({options}, …)` (nullary), `glossary({options}, …)` (nullary), `lof({options}, …)` (nullary), `lot({options}, …)` (nullary), `index({options}, …)` (nullary), `notes({options}, …)` (nullary), `pagebreak({options}, …)` (nullary), `linebreak({options}, …)` (nullary), `bibliography(src, {options}, …)`, `counterUpdate(counter, {options}, …)`, `node(kind, {options}, …)` (sealed). Std functions: `val`, `m`, `plain`, `use`.
 
 | op | id |
 |---|---|

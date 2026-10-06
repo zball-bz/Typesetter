@@ -1196,6 +1196,25 @@ export const CTOR_SPECS = Object.freeze({
     "derived": true,
     "async": false
   },
+  "linebreak": {
+    "kind": "hardbreak",
+    "params": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext",
+      "style",
+      "attach"
+    ],
+    "nullary": true,
+    "sealed": false,
+    "derived": true,
+    "async": false
+  },
   "bibliography": {
     "kind": "collect",
     "params": [
@@ -1275,6 +1294,7 @@ export const STD_NAMES = Object.freeze([
   "image",
   "index",
   "item",
+  "linebreak",
   "link",
   "list",
   "lof",

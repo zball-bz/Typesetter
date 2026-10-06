@@ -163,6 +163,24 @@ text in one step (87K bench: parse 0.43 → 0.19 ms). Rule behaviour is code:
 | `link` | `[text](url)`, see brackets below; the URL is a plain paren match on its line |
 | `note` | `^[…]` content body |
 | `ref`, `refs` | `@id` (not after an identifier character); `@[a, b]` an id list on one line (`\]` escapes; ids trimmed and joined by `, `) |
+| `url` | (plan P3-33) a bare `http://` / `https://` URL, dispatched at `://` with its scheme checked behind it (the run of scheme characters before it, http or https in any case): a link to itself, its text the URL, verbatim — no markup or escape inside it. It ends at a blank, a non-ASCII byte or one of `` < > " ` \| \ $ ``; trailing `. , : ; ! ? ' * _ ~` and an unbalanced `)` or `]` are the prose's (`lexUrl`, shared with the bracket counter and the line pass). In a link's own text a URL is text |
+| `brk` | (plan P3-33) `\` at the end of a line (a following line in the leaf): a hard line break, the `linebreak` slot (the `linebreak` constructor: a `hardbreak` node); the blanks before it and the next line's indentation are dropped |
+
+**Prose guards and escapes** (plan P3-33; design T1 S10). Two guards keep
+markup out of ordinary words, each a column of its rows in `syntax.def`:
+- *Intraword*: `*` and `_` between two ASCII letters or digits are text —
+  `snake_case`, `2*3*4`, `un*closed`. Neighbours that are not ASCII (CJK)
+  never guard, so `中*强调*文` pairs as before. Emphasis inside a word is
+  written `#em[…]`.
+- *PrevIdent*: `@` and a `#` bare value head (no call, no content argument:
+  `word#todo`, `C#`) right after `[A-Za-z0-9_$]` are text; `H#strong[2]O`
+  stays a splice.
+
+Outside verbatim islands a backslash escapes ASCII punctuation (the
+`Escapable` class); before the end of a line it is a hard break; before
+anything else it stays a backslash (`\a`, `C:\temp`). Adjacent Text nodes
+(an unclosed marker between its neighbours) are coalesced into one, with
+their cooked→raw maps and cell cuts joined.
 
 **Atoms and brackets.** `syntax/lexer.h` holds the primitives the parser,
 the bracket counter and the region cell splitter share: `lexCodeSpan`,
@@ -396,6 +414,9 @@ The tree-sitter grammar has `keyword_form` (head + JS); the TextMate grammar
 colors the heads and an `else` after `]`.
 
 ## 11. Next steps
+
+(As built since: P1-09 grammars, P2-11/P2-13 provenance and splice bodies,
+P3-33 the prose guards, autolinks, escapes and hard breaks — §5.)
 
 - P1-09: editor grammars from `syntax.gen.json`.
 - P2-11 / P2-13: region provenance and splice bodies delete the legacy

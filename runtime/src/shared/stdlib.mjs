@@ -601,6 +601,9 @@ export function createStd(host) {
     lot: collect('lot'),
     index: collect('index'),
     notes: collect('notes'),
+    // (plan P3-33) a hard line break (`\` at the end of a line): a forced
+    // break inside its paragraph (the hardbreak kind: Penalty(Forced))
+    linebreak: () => ob.makeNode(KIND.hardbreak, {}, []),
     // (plan P3-14) a page break: an empty group whose break.before lands on
     // the block after it (screen: nothing)
     pagebreak: () => ob.makeNode(KIND.group, { role: 'pagebreak',

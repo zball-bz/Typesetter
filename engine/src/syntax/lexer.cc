@@ -181,6 +181,48 @@ bool lexElse(std::string_view t, u32 p, KwElse& out) {
   return parenThenBody(t, skipBlank(t, f), out.headStart, out.headEnd, out.bodyOpen, out.openAt);
 }
 
+bool lexUrl(std::string_view t, u32 colon, u32& start, u32& end) {
+  auto schemeChar = [](char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '+' || c == '-' ||
+           c == '.';
+  };
+  if (t.substr(colon, 3) != "://") return false;
+  u32 s = colon;
+  while (s > 0 && schemeChar(t[s - 1])) s--;
+  std::string scheme(t.substr(s, colon - s));
+  for (char& c : scheme) c = (char)((c >= 'A' && c <= 'Z') ? c + 32 : c);
+  if (scheme != "http" && scheme != "https") return false;
+  const u32 n = (u32)t.size(), body = colon + 3;
+  u32 e = body;
+  for (; e < n; e++) {
+    const unsigned char c = (unsigned char)t[e];
+    if (c <= ' ' || c >= 0x7f || c == '<' || c == '>' || c == '"' || c == '`' || c == '|' || c == '\\' || c == '$')
+      break;
+  }
+  for (;;) {  // the prose's trailing punctuation
+    if (e <= body) break;
+    const char c = t[e - 1];
+    if (std::string_view(".,:;!?'*_~").find(c) != std::string_view::npos) {
+      e--;
+      continue;
+    }
+    if (c == ')' || c == ']') {
+      const char o = c == ')' ? '(' : '[';
+      int depth = 0;
+      for (u32 k = body; k < e; k++) depth += t[k] == o ? 1 : t[k] == c ? -1 : 0;
+      if (depth < 0) {
+        e--;
+        continue;
+      }
+    }
+    break;
+  }
+  if (e <= body) return false;
+  start = s;
+  end = e;
+  return true;
+}
+
 u32 atomEnd(std::string_view t, u32 i) {
   const u32 n = (u32)t.size();
   switch (inlineOpener(t, i)) {
@@ -200,9 +242,14 @@ u32 atomEnd(std::string_view t, u32 i) {
       SpliceLex s;
       return lexSplice(t, i, s) ? s.end : i;
     }
-    case InlineRule::none:
-      if (t[i] == '\\' && i + 1 < n && t[i + 1] != '\n') return i + 2;
+    case InlineRule::url: {
+      u32 s, e;
+      return lexUrl(t, i, s, e) ? e : i;
+    }
+    case InlineRule::brk:  // an escape: the backslash and its character
+      if (i + 1 < n && t[i + 1] != '\n') return i + 2;
       return i;
+    case InlineRule::none:
     case InlineRule::strong:
     case InlineRule::em:
     case InlineRule::link:

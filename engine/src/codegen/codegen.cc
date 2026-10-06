@@ -735,6 +735,10 @@ struct Gen {
         callHead("rule", &n->span, 0);
         w.u(0);
         return false;
+      case SugarId::linebreak:  // (plan P3-33) `\` at a line's end: the linebreak constructor
+        callHead("linebreak", &n->span, 0);
+        w.u(0);
+        return false;
     }
     return false;
   }

@@ -6,7 +6,7 @@
 
 namespace tsr {
 
-constexpr u32 SYNTAX_VERSION = 4;
+constexpr u32 SYNTAX_VERSION = 5;
 
 // character classes
 inline bool isSpliceHead(char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == '$'; }
@@ -18,9 +18,9 @@ inline bool isLabelChar(char c) { return !((unsigned char)c < 0x20 || c == 0x7f 
 inline bool isEscapable(char c) { return (c >= '!' && c <= '/') || (c >= ':' && c <= '@') || (c >= '[' && c <= '`') || (c >= '{' && c <= '~'); }
 
 // sugar: a built-in Call's slot (its meaning); the payload struct follows
-enum class SugarId : u16 { para, heading, list, item, quote, rule, fence, region, strong, em, code, link, note, ref, math, arg };
-constexpr const char* kSugarName[] = {"para", "heading", "list", "item", "quote", "rule", "fence", "region", "strong", "em", "code", "link", "note", "ref", "math", "arg"};
-constexpr u32 kSugarCount = 16;
+enum class SugarId : u16 { para, heading, list, item, quote, rule, fence, region, strong, em, code, link, note, ref, linebreak, math, arg };
+constexpr const char* kSugarName[] = {"para", "heading", "list", "item", "quote", "rule", "fence", "region", "strong", "em", "code", "link", "note", "ref", "linebreak", "math", "arg"};
+constexpr u32 kSugarCount = 17;
 
 // payloads (zero-width side records trailing their node)
 struct HeadingP {
@@ -73,11 +73,11 @@ struct BranchP {
 };
 
 // inline rules (INLINE rows): precedence and body mode per rule
-enum class InlineRule : u8 { none, code, math, comment, splice, strong, em, link, note, ref, refs };
+enum class InlineRule : u8 { none, code, math, comment, url, splice, strong, em, link, note, ref, refs, brk };
 enum class InlinePrec : u8 { Island, Comment, Markup };
-enum class InlineBody : u8 { Verbatim, CallChain, Pair, LinkText, Content, Ident, IdList };
-constexpr InlinePrec kInlinePrec[] = {InlinePrec::Markup, InlinePrec::Island, InlinePrec::Island, InlinePrec::Comment, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup};
-constexpr InlineBody kInlineBody[] = {InlineBody::Pair, InlineBody::Verbatim, InlineBody::Verbatim, InlineBody::Verbatim, InlineBody::CallChain, InlineBody::Pair, InlineBody::Pair, InlineBody::LinkText, InlineBody::Content, InlineBody::Ident, InlineBody::IdList};
+enum class InlineBody : u8 { Verbatim, CallChain, Pair, LinkText, Content, Ident, IdList, None };
+constexpr InlinePrec kInlinePrec[] = {InlinePrec::Markup, InlinePrec::Island, InlinePrec::Island, InlinePrec::Comment, InlinePrec::Island, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup, InlinePrec::Markup};
+constexpr InlineBody kInlineBody[] = {InlineBody::Pair, InlineBody::Verbatim, InlineBody::Verbatim, InlineBody::Verbatim, InlineBody::Verbatim, InlineBody::CallChain, InlineBody::Pair, InlineBody::Pair, InlineBody::LinkText, InlineBody::Content, InlineBody::Ident, InlineBody::IdList, InlineBody::None};
 // the rule whose literal opener starts at t[i] (longest first)
 inline InlineRule inlineOpener(std::string_view t, u32 i) {
   switch (t[i]) {
@@ -87,6 +87,9 @@ inline InlineRule inlineOpener(std::string_view t, u32 i) {
       return InlineRule::math;
     case '%':
       if (t.substr(i, 3) == "%--") return InlineRule::comment;
+      break;
+    case ':':
+      if (t.substr(i, 3) == "://") return InlineRule::url;
       break;
     case '#':
       return InlineRule::splice;
@@ -102,6 +105,8 @@ inline InlineRule inlineOpener(std::string_view t, u32 i) {
     case '@':
       if (t.substr(i, 2) == "@[") return InlineRule::refs;
       return InlineRule::ref;
+    case '\\':
+      return InlineRule::brk;
     default:
       break;
   }
@@ -112,9 +117,9 @@ constexpr bool kInlineOpenerByte[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

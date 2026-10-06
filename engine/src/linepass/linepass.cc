@@ -474,11 +474,16 @@ struct LinePass {
         u32 e = bodyEnd(i + 1);
         return e == kNone && left.opener == kNone ? i + 1 : e;
       }
+      case InlineRule::url: {  // (plan P3-33) verbatim to its end: no opener inside it is one
+        u32 s, e;
+        return lexUrl(t, i, s, e) ? e : kNone;
+      }
       case InlineRule::strong:
       case InlineRule::em:
       case InlineRule::link:
       case InlineRule::ref:
       case InlineRule::refs:
+      case InlineRule::brk:
       case InlineRule::none:
         break;
     }

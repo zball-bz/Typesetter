@@ -12,9 +12,7 @@ doc @[0,359) [base]
   heading @[148,171) [BOLDx1.60] level=1 label="h-1"
     text @[150,171) [BOLDx1.60] str="This heading survives"
   para @[173,198) [base]
-    text @[173,182) [base] str="请注意"
-    text @[182,183) [base] str="*"
-    text @[183,198) [base] str="以下事项："
+    text @[173,198) [base] str="请注意*以下事项："
   list @[199,230) [base] ordered=false start=1
     item @[199,218) [base]
       para @[201,218) [base]

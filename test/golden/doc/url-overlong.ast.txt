@@ -1,3 +1,9 @@
 doc @[0,216)
   para @[0,215)
-    text @[0,215) str="Two overlong addresses in one paragraph: https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere and https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure end."
+    text @[0,41) str="Two overlong addresses in one paragraph: "
+    link @[41,124) url="https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere"
+      text @[41,124) str="https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere"
+    text @[125,129) str=" and "
+    link @[129,210) url="https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure"
+      text @[129,210) str="https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure"
+    text @[211,215) str=" end."

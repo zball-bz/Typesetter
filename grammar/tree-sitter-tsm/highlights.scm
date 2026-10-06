@@ -29,4 +29,5 @@
 (strong) @attribute
 (emphasis) @attribute
 (link) @property
+(autolink) @property
 (cell_bar) @operator

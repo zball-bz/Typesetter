@@ -10,9 +10,7 @@ doc @[0,360)
   heading @[148,171) level=1
     text @[150,171) str="This heading survives"
   para @[173,198)
-    text @[173,182) str="请注意"
-    text @[182,183) str="*"
-    text @[183,198) str="以下事项："
+    text @[173,198) str="请注意*以下事项："
   list @[199,230) bullet start=1
     item @[199,218)
       para @[201,218)

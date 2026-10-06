@@ -4,7 +4,7 @@
 // and docs/syntax-table.md. Rows are data; behaviour (body modes, ownership,
 // block shapes) is a closed set implemented in code. Never hand-edit the
 // generated files.
-SYNTAX_VERSION(4)
+SYNTAX_VERSION(5)
 
 // ---- character classes ----------------------------------------------------
 CLASS(SpliceHead, "A-Za-z_$")
@@ -15,12 +15,20 @@ CLASS(IdJoin, "-.:")
 // labels (` <id>`, `@[…]`; plan P2-06): any character but whitespace and
 // the label syntax's own (Unicode whitespace is excluded by the lexer)
 CLASS(LabelChar, "^ <>[]@,;\\")
+// a backslash before one of these is that character; before the end of a
+// line a hard line break; before anything else a backslash (plan P3-33)
 CLASS(Escapable, "!-/:-@[-`{-~")
 
 // ---- inline delimiters: id, open, close, body mode, params, guard, prec, slot, capture
+// Guards (plan P3-33): PrevIdent — a '#' bare value head (no '(' or '['
+// after it) and '@' are text right after [A-Za-z0-9_$] (word#todo,
+// user@host); Intraword — '*' and '_' are text between two ASCII letters or
+// digits (snake_case, 2*3*4). A leading placeholder is the lexer's to check
+// behind the literal opener: url's SCHEME (http, https) precedes "://".
 INLINE(code,    "`",       "`",        Verbatim,  "pad=Strip",            "-",         Island,  code,      "string")
 INLINE(math,    "$",       "$",        Verbatim,  "esc=$ pad=Display",    "-",         Island,  math,      "embedded")
 INLINE(comment, "%--",     "--%",      Verbatim,  "nest",                 "-",         Comment, comment,   "comment")
+INLINE(url,     "SCHEME://", "URL_END", Verbatim, "-",                    "-",         Island,  link,      "link")
 INLINE(splice,  "#HEAD",   "HEAD_CHAIN", CallChain, "-",                  "PrevIdent", Markup,  splice,    "function")
 INLINE(strong,  "*",       "*",        Pair,      "-",                    "Intraword", Markup,  strong,    "strong")
 INLINE(em,      "_",       "_",        Pair,      "-",                    "Intraword", Markup,  em,        "emphasis")
@@ -28,6 +36,7 @@ INLINE(link,    "[",       "](URL)",   LinkText,  "-",                    "-",  
 INLINE(note,    "^[",      "]",        Content,   "-",                    "-",         Markup,  note,      "note")
 INLINE(ref,     "@",       "BARE_ID",  Ident,     "-",                    "PrevIdent", Markup,  ref,       "label")
 INLINE(refs,    "@[",      "]",        IdList,    "-",                    "-",         Markup,  ref,       "label")
+INLINE(brk,     "\\EOL",   "-",        -,         "-",                    "-",         Markup,  linebreak, "punctuation")
 
 // ---- blocks: id, shape, starter, interrupts, ownership, slot ---------------
 BLOCK(quote,   Prefix,   "> ",                  Always,    None,      quote)
@@ -72,6 +81,7 @@ SUGAR(code,    Inline, "",                                  "code str=\"{$str}\"
 SUGAR(link,    Inline, "url:str",                           "link url=\"{url}\"")
 SUGAR(note,    Inline, "",                                  "note")
 SUGAR(ref,     Inline, "",                                  "ref target=\"{$str}\"")
+SUGAR(linebreak, Inline, "",                                "linebreak")
 SUGAR(math,    Both,   "display:bool label:str",            "math display={display} src=\"{$str}\"{?label label=\"{label}\"}")
 // legacy shapes until P2-11 (region provenance) / P2-13 (splice bodies)
 SUGAR(arg,     Inline, "",                                  "arg")

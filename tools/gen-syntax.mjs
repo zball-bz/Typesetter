@@ -100,9 +100,11 @@ for (const s of [...sugars, ...nodes]) {
 // ---- inline rules: the opener dispatch (first byte, longest literal opener
 // first; placeholders such as HEAD / BARE_ID are the lexer's to check)
 const ruleIds = inlines.map((r) => r[0]);
-const literalOf = (open) => open.replace(/[A-Z][A-Z_]+$/, '');
+// (a leading placeholder — url's SCHEME — is checked behind the opener)
+const literalOf = (open) => open.replace(/^[A-Z][A-Z_]+/, '').replace(/[A-Z][A-Z_]+$/, '');
+const bodyOf = (b) => (b === '-' ? 'None' : b);  // a row without a body (brk)
 const precs = [...new Set(inlines.map((r) => r[6]))];
-const bodies = [...new Set(inlines.map((r) => r[3]))];
+const bodies = [...new Set(inlines.map((r) => bodyOf(r[3])))];
 const byFirst = new Map();
 for (const r of inlines) {
   const lit = literalOf(r[1]);
@@ -115,7 +117,7 @@ h += `\n// inline rules (INLINE rows): precedence and body mode per rule\n` +
   `enum class InlinePrec : u8 { ${precs.join(', ')} };\n` +
   `enum class InlineBody : u8 { ${bodies.join(', ')} };\n` +
   `constexpr InlinePrec kInlinePrec[] = {InlinePrec::Markup, ${inlines.map((r) => `InlinePrec::${r[6]}`).join(', ')}};\n` +
-  `constexpr InlineBody kInlineBody[] = {InlineBody::Pair, ${inlines.map((r) => `InlineBody::${r[3]}`).join(', ')}};\n` +
+  `constexpr InlineBody kInlineBody[] = {InlineBody::Pair, ${inlines.map((r) => `InlineBody::${bodyOf(r[3])}`).join(', ')}};\n` +
   `// the rule whose literal opener starts at t[i] (longest first)\n` +
   `inline InlineRule inlineOpener(std::string_view t, u32 i) {\n  switch (t[i]) {\n`;
 for (const [c, list] of byFirst) {

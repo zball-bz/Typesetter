@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="140">Markers between letters or digits are text: snake_case_name, 2*3*4 and un*closed; <strong>bold</strong> and <em>emphasis</em> still pair, as does <em>inside</em>word.</p>
+<p data-pid="1" data-s="142" data-e="238">A bare value after a word is text: word#todo, C#, user@host.org; a call stays one: H<strong>2</strong>O.</p>
+<p data-pid="2" data-s="240" data-e="334">Escapes: * _ # \ [ and \a keep their meaning (the last keeps its backslash, as does \é).</p>
+<p data-pid="3" data-s="336" data-e="557">A URL is a link, verbatim: <a href="https://example.com/a_b_c?q=1&amp;r=2#frag_x">https://example.com/a_b_c?q=1&amp;r=2#frag_x</a>. In parentheses (<a href="https://en.wikipedia.org/wiki/Foo_(bar)">https://en.wikipedia.org/wiki/Foo_(bar)</a>) and beside CJK 见<a href="https://example.org/">https://example.org/</a>路径。 An escaped colon is text: https://example.com.</p>
+<p data-pid="4" data-s="559" data-e="636"><a href="https://example.com">A link whose text is https://example.com</a> has one link.</p>
+<p data-pid="5" data-s="638" data-e="732">A hard break ends this line<br>and the next starts at the margin; 中文也可以<br>硬换行。</p>
+</div>

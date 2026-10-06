@@ -1,7 +1,7 @@
 <!-- GENERATED from engine/src/syntax/syntax.def by tools/gen-syntax.mjs — do not edit. -->
 # Surface syntax (generated)
 
-From `engine/src/syntax/syntax.def`, syntax version 4. Behaviour for each body mode, ownership class and block shape: `docs/syntax-design.md`.
+From `engine/src/syntax/syntax.def`, syntax version 5. Behaviour for each body mode, ownership class and block shape: `docs/syntax-design.md`.
 
 ## Inline delimiters
 
@@ -10,6 +10,7 @@ From `engine/src/syntax/syntax.def`, syntax version 4. Behaviour for each body m
 | `code` | `` ` `` | `` ` `` | `Verbatim` | `pad=Strip` | `-` | `Island` | `code` | `string` |
 | `math` | `$` | `$` | `Verbatim` | `esc=$ pad=Display` | `-` | `Island` | `math` | `embedded` |
 | `comment` | `%--` | `--%` | `Verbatim` | `nest` | `-` | `Comment` | `comment` | `comment` |
+| `url` | `SCHEME://` | `URL_END` | `Verbatim` | `-` | `-` | `Island` | `link` | `link` |
 | `splice` | `#HEAD` | `HEAD_CHAIN` | `CallChain` | `-` | `PrevIdent` | `Markup` | `splice` | `function` |
 | `strong` | `*` | `*` | `Pair` | `-` | `Intraword` | `Markup` | `strong` | `strong` |
 | `em` | `_` | `_` | `Pair` | `-` | `Intraword` | `Markup` | `em` | `emphasis` |
@@ -17,6 +18,7 @@ From `engine/src/syntax/syntax.def`, syntax version 4. Behaviour for each body m
 | `note` | `^[` | `]` | `Content` | `-` | `-` | `Markup` | `note` | `note` |
 | `ref` | `@` | `BARE_ID` | `Ident` | `-` | `PrevIdent` | `Markup` | `ref` | `label` |
 | `refs` | `@[` | `]` | `IdList` | `-` | `-` | `Markup` | `ref` | `label` |
+| `brk` | `\EOL` | `-` | `-` | `-` | `-` | `Markup` | `linebreak` | `punctuation` |
 
 ## Blocks
 
@@ -51,6 +53,7 @@ From `engine/src/syntax/syntax.def`, syntax version 4. Behaviour for each body m
 | `link` | Inline | url:str | `link url="{url}"` |
 | `note` | Inline | — | `note` |
 | `ref` | Inline | — | `ref target="{$str}"` |
+| `linebreak` | Inline | — | `linebreak` |
 | `math` | Both | display:bool label:str | `math display={display} src="{$str}"{?label label="{label}"}` |
 | `arg` | Inline | — | `arg` |
 

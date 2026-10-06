@@ -1,0 +1,13 @@
+Markers between letters or digits are text: snake_case_name, 2*3*4 and un*closed; *bold* and _emphasis_ still pair, as does #em[inside]word.
+
+A bare value after a word is text: word#todo, C#, user@host.org; a call stays one: H#strong[2]O.
+
+Escapes: \* \_ \# \\ \[ and \a keep their meaning (the last keeps its backslash, as does \é).
+
+A URL is a link, verbatim: https://example.com/a_b_c?q=1&r=2#frag_x. In parentheses (https://en.wikipedia.org/wiki/Foo_(bar)) and beside CJK 见https://example.org/路径。 An escaped colon is text: https\://example.com.
+
+[A link whose text is https://example.com](https://example.com) has one link.
+
+A hard break ends this line \
+and the next starts at the margin; 中文也可以\
+硬换行。

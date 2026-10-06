@@ -190,7 +190,8 @@ its parts in place of the placeholder — the same items, with the runs
 renumbered (the fuse check covers it: the legacy oracle still lays out at
 emit). A display formula's box is made the same way.
 
-**Hard breaks.** A `hardbreak` node (no surface syntax yet) makes the break
+**Hard breaks.** A `hardbreak` node (plan P3-33: `\` at the end of a line,
+or `#linebreak`) makes the break
 after the preceding item forced. The lowering keeps it as a block penalty of
 `-BREAK_INF`, the breaker adapter turns that into `Penalty(Forced)`, and the
 line before it ends ragged — fil stretch in the breaker (TeX's

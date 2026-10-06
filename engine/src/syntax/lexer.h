@@ -67,7 +67,16 @@ struct KwElse {
 };
 bool lexElse(std::string_view t, u32 p, KwElse& out);
 
-// One past the atom starting at t[i], or i when none starts there.
+// (plan P3-33; syntax.def url) a bare http(s) URL whose "://" is at `colon`:
+// its scheme — the run of scheme characters (letters, digits, + - .) before
+// it, http or https in any case — from `start`, and its end (URL_END):
+// ASCII, no blank, none of < > " ` | \ $ (a URL never swallows an island's
+// opener or a hard break); trailing . , : ; ! ? ' * _ ~ and an unbalanced
+// ) or ] are the prose's. false: no such scheme, or nothing after "://".
+bool lexUrl(std::string_view t, u32 colon, u32& start, u32& end);
+
+// One past the atom starting at t[i], or i when none starts there (a URL:
+// one past it when `i` is its "://").
 u32 atomEnd(std::string_view t, u32 i);
 
 // '[' … ']' matching over a bounded view, memoised (one scan records every

@@ -50,28 +50,32 @@ top pid=2 units=1
   run r0 plain BOLD x1.60
 top pid=3 units=1
  unit text indent=0su
-  box Ideo "请" w=1025su wt=0.6 cap=102su r0 @[173,182)
-  glue inter w=0su x=0.6 cap=102su r0 @[173,182)
-  box Ideo "注" w=1025su wt=0.6 cap=102su r0 @[173,182)
-  glue inter w=0su x=0.6 cap=102su r0 @[173,182)
-  box Ideo "意" w=1025su wt=0.6 cap=102su r0 @[173,182)
+  box Ideo "请" w=1025su wt=0.6 cap=102su r0 @[173,198)
+  glue inter w=0su x=0.6 cap=102su r0 @[173,198)
+  box Ideo "注" w=1025su wt=0.6 cap=102su r0 @[173,198)
+  glue inter w=0su x=0.6 cap=102su r0 @[173,198)
+  box Ideo "意" w=1025su wt=0.6 cap=102su r0 @[173,198)
   pen 0 r0
-  box Other "*" w=513su r1 @[182,183)
-  box Ideo "以" w=1025su wt=0.6 cap=102su r2 @[183,198)
-  glue inter w=0su x=0.6 cap=102su r2 @[183,198)
-  box Ideo "下" w=1025su wt=0.6 cap=102su r2 @[183,198)
-  glue inter w=0su x=0.6 cap=102su r2 @[183,198)
-  box Ideo "事" w=1025su wt=0.6 cap=102su r2 @[183,198)
-  glue inter w=0su x=0.6 cap=102su r2 @[183,198)
-  box Ideo "项" w=1025su wt=0.6 cap=102su r2 @[183,198)
-  pen INF r2
-  glue inter w=0su x=0.6 cap=102su r2 @[183,198)
-  box ColonW "：" w=512su blank=R r3 @[183,198)
-  glue blank w=512su x=0 cap=0su r3 @[183,198)
+  glue autospace w=256su x=1 cap=256su r1 @[173,198)
+  box Other "*" w=513su r2 @[173,198)
+  glue autospace w=256su x=1 cap=256su r3 @[173,198)
+  box Ideo "以" w=1025su wt=0.6 cap=102su r4 @[173,198)
+  glue inter w=0su x=0.6 cap=102su r4 @[173,198)
+  box Ideo "下" w=1025su wt=0.6 cap=102su r4 @[173,198)
+  glue inter w=0su x=0.6 cap=102su r4 @[173,198)
+  box Ideo "事" w=1025su wt=0.6 cap=102su r4 @[173,198)
+  glue inter w=0su x=0.6 cap=102su r4 @[173,198)
+  box Ideo "项" w=1025su wt=0.6 cap=102su r4 @[173,198)
+  pen INF r4
+  glue inter w=0su x=0.6 cap=102su r4 @[173,198)
+  box ColonW "：" w=512su blank=R r5 @[173,198)
+  glue blank w=512su x=0 cap=0su r5 @[173,198)
   run r0 letter-spaced CJK
   run r1 plain
-  run r2 letter-spaced CJK
-  run r3 blank-bearing CJK
+  run r2 plain
+  run r3 plain
+  run r4 letter-spaced CJK
+  run r5 blank-bearing CJK
 top pid=4 units=2
  unit text indent=1536su marker="•"
   box Ideo "第" w=1025su wt=0.6 cap=102su r0 @[201,210)

@@ -309,6 +309,7 @@ struct TokenWalk : Lines {
         kids(n, kNoTag, qd + 1);
         return;
       case SugarId::rule:
+      case SugarId::linebreak:  // (plan P3-33) the `\` of a hard break
         tok(sp.start, sp.end, kPunct);
         return;
       case SugarId::fence:
@@ -327,6 +328,10 @@ struct TokenWalk : Lines {
         tok(sp.start, sp.end, kString);
         return;
       case SugarId::link: {
+        if (all[sp.start] != '[') {  // (plan P3-33) a bare URL: the link is its text
+          tok(sp.start, sp.end, kProperty);
+          return;
+        }
         u32 urlLen = (u32)strs.get(side<LinkP>(n).url).size();
         tok(sp.start, sp.start + 1, kProperty);
         kids(n, kProperty, qd);

@@ -1,4 +1,10 @@
 lower v1 abi 3d3ccfbb docEnd 216 holes 0 module none
 block 0 content [0,215)
   CALL para [0,215)
-    TEXT "Two overlong addresses in one paragraph: https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere and https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure end." [0,215)
+    TEXT "Two overlong addresses in one paragraph: " [0,41)
+    CALL link [41,124) url="https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere"
+      TEXT "https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere" [41,124)
+    TEXT " and " [125,129) raw=0:0,1:0
+    CALL link [129,210) url="https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure"
+      TEXT "https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure" [129,210)
+    TEXT " end." [211,215) raw=0:0,1:0

@@ -13,6 +13,7 @@
 import { MATH_SYMBOLS } from '../../runtime/src/shared/math-vocab.gen.mjs';
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, statSync } from 'node:fs';
 import { join, basename } from 'node:path';
+import { em, strong, markers, escapeProse } from './prose.mjs';
 
 const args = process.argv.slice(2);
 const root = args.find((a) => !a.startsWith('--'));
@@ -436,8 +437,7 @@ function convertPage(html, base, stats) {
     let caption = cap ? cap[1] : '';
     caption = caption.replace(new RegExp(`${M0}(\\d+)${M1}`, 'g'), (mm, n) => maths[+n])
       .replace(/<[^>]+>/g, '');
-    caption = entities(caption).replace(/\s+/g, ' ').replace(/^Figure [\d.]+:\s*/, '').trim()
-      .replace(/\$/g, '\\$').replace(/#/g, '\\#').replace(/@(?=[A-Za-z\[])/g, '\\@');
+    caption = escapeProse(entities(caption).replace(/\s+/g, ' ').replace(/^Figure [\d.]+:\s*/, '').trim());
     stats.figs++;
     return `\n\n#!figure(src: "${url}", alt: "figure", scale: 0.8)\n${caption}\n#figure!\n\n`;
   });
@@ -502,14 +502,15 @@ function convertPage(html, base, stats) {
 
 
 
-  const inline = (s) => entities(s
-    .replace(/<em>([\s\S]*?)<\/em>/g, '_$1_').replace(/<i>([\s\S]*?)<\/i>/g, '_$1_')
+  const inlineText = (s) => entities(s
+    .replace(/<em>([\s\S]*?)<\/em>/g, (m, b) => em(b)).replace(/<i>([\s\S]*?)<\/i>/g, (m, b) => em(b))
     .replace(/<(?:tt|code)>([\s\S]*?)<\/(?:tt|code)>/g, '`$1`')
-    .replace(/<b>([\s\S]*?)<\/b>/g, '*$1*').replace(/<strong>([\s\S]*?)<\/strong>/g, '*$1*')
+    .replace(/<b>([\s\S]*?)<\/b>/g, (m, b) => strong(b)).replace(/<strong>([\s\S]*?)<\/strong>/g, (m, b) => strong(b))
     .replace(/<a [^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g, (m, h, t) => /^https?:/.test(h) ? `[${t}](${h})` : t)
     .replace(/<sup>([\s\S]*?)<\/sup>/g, '^$1')
-    .replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim()
-    .replace(/\$/g, '\\$').replace(/#/g, '\\#').replace(/@(?=[A-Za-z\[])/g, '\\@');
+    .replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
+  // (plan P3-33) no escape inside a URL; emphasis resolved with its neighbours
+  const inline = (s) => markers(escapeProse(inlineText(s)));
 
   const out = [];
   const re = /<(h2|h3|h4|p|li|pre)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp(?:-literate)?\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;

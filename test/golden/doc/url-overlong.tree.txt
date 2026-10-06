@@ -1,3 +1,9 @@
 doc @[0,215) [base]
   para @[0,215) [base]
-    text @[0,215) [base] str="Two overlong addresses in one paragraph: https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere and https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure end."
+    text @[0,41) [base] str="Two overlong addresses in one paragraph: "
+    link @[41,124) [base] url="https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere"
+      text @[41,124) [base] str="https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere"
+    text @[125,129) [base] str=" and " raw=0:0,1:0
+    link @[129,210) [base] url="https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure"
+      text @[129,210) [base] str="https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure"
+    text @[211,215) [base] str=" end." raw=0:0,1:0

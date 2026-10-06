@@ -45,16 +45,18 @@ top pid=2 units=1
   word "survives" w=6555su pen=INF BOLD x1.60 @[150,171)
 top pid=3 units=1
  unit text indent=0su
-  cjk "请" w=1025su glue=102su wt=0.6 pen=0 @[173,182)
-  cjk "注" w=1025su glue=102su wt=0.6 pen=0 @[173,182)
-  cjk "意" w=1025su glue=102su wt=0.6 pen=0 @[173,182)
-  word "*" w=513su pen=INF @[182,183)
-  cjk "以" w=1025su glue=102su wt=0.6 pen=0 @[183,198)
-  cjk "下" w=1025su glue=102su wt=0.6 pen=0 @[183,198)
-  cjk "事" w=1025su glue=102su wt=0.6 pen=0 @[183,198)
-  cjk "项" w=1025su glue=102su wt=0.6 pen=INF @[183,198)
-  punct-close "：" w=512su @[183,198)
-  punct-sp w=512su @[183,198)
+  cjk "请" w=1025su glue=102su wt=0.6 pen=0 @[173,198)
+  cjk "注" w=1025su glue=102su wt=0.6 pen=0 @[173,198)
+  cjk "意" w=1025su glue=102su wt=0.6 pen=0 @[173,198)
+  boundary w=256su stretch=1 @[173,198)
+  word "*" w=513su pen=INF @[173,198)
+  boundary w=256su stretch=1 @[173,198)
+  cjk "以" w=1025su glue=102su wt=0.6 pen=0 @[173,198)
+  cjk "下" w=1025su glue=102su wt=0.6 pen=0 @[173,198)
+  cjk "事" w=1025su glue=102su wt=0.6 pen=0 @[173,198)
+  cjk "项" w=1025su glue=102su wt=0.6 pen=INF @[173,198)
+  punct-close "：" w=512su @[173,198)
+  punct-sp w=512su @[173,198)
 top pid=4 units=2
  unit text indent=1536su marker="•"
   cjk "第" w=1025su glue=102su wt=0.6 pen=0 @[201,210)

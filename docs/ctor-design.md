@@ -19,7 +19,8 @@ Every public kind has a constructor, described in `engine/schema/schema.json`:
 
 A param is `attr:NAME[:DOMAIN]`, `projected:NAME`, `text`, `lines` or `body`;
 every attribute not bound positionally is an option. `doc` and `hardbreak`
-have none (P3-33). The `stdlib` section adds the derived constructors
+have none; (plan P3-33) the derived nullary `linebreak` makes a `hardbreak`
+(`\` at the end of a line lowers to it). The `stdlib` section adds the derived constructors
 (`strong`, `em`, `style`, `figure`, `toc`, `glossary`, `notes`,
 `bibliography`, `node`; options `"raw"` = the options object reaches the
 implementation unvalidated), the std functions (`val`, `m`, `plain`) and the

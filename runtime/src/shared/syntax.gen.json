@@ -1,5 +1,5 @@
 {
- "version": 4,
+ "version": 5,
  "classes": {
   "SpliceHead": "A-Za-z_$",
   "SpliceCont": "A-Za-z0-9_$",
@@ -42,6 +42,17 @@
    "prec": "Comment",
    "slot": "comment",
    "capture": "comment"
+  },
+  {
+   "id": "url",
+   "open": "SCHEME://",
+   "close": "URL_END",
+   "body": "Verbatim",
+   "params": "-",
+   "guard": "-",
+   "prec": "Island",
+   "slot": "link",
+   "capture": "link"
   },
   {
    "id": "splice",
@@ -119,6 +130,17 @@
    "prec": "Markup",
    "slot": "ref",
    "capture": "label"
+  },
+  {
+   "id": "brk",
+   "open": "\\EOL",
+   "close": "-",
+   "body": "-",
+   "params": "-",
+   "guard": "-",
+   "prec": "Markup",
+   "slot": "linebreak",
+   "capture": "punctuation"
   }
  ],
  "block": [
@@ -405,6 +427,11 @@
   },
   {
    "id": "ref",
+   "form": "Inline",
+   "payload": []
+  },
+  {
+   "id": "linebreak",
    "form": "Inline",
    "payload": []
   },

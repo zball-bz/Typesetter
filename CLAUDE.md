@@ -88,7 +88,7 @@ rolling `engine-dist` release.
   `X.fixture.json` (`{settings, products}`) on top of test/profiles/golden.json;
   `tsrc --stage=<product> --profile=golden --fixture=X.fixture.json --ops=X.ops
   X.tsm` reproduces a golden. A fixture for vocabulary without surface syntax
-  (e.g. hardbreak) declares its node tree in `X.tree.json`; `npm run record`
+  (e.g. inline/object-raw) declares its node tree in `X.tree.json`; `npm run record`
   encodes it instead of executing X.tsm.
 - Commit per milestone; messages end with
   `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`.

@@ -27,6 +27,7 @@ inline constexpr const char* kStdNames[] = {
     "image",
     "index",
     "item",
+    "linebreak",
     "link",
     "list",
     "lof",

@@ -121,6 +121,7 @@ struct InlineParser {
   // space, or nothing between two wide characters) — the parser no longer
   bool pendingBreak = false;
   bool prevGlyph = false;
+  bool inLink = false;  // (plan P3-33) a link's text: a URL in it is text, not a link of its own
   u32 i = 0;
 
   InlineParser(const SourceText& sr, const LeafText& leaf, LeafHints h, u32 a, u32 b, u32 d, Arena& ar,
@@ -226,9 +227,10 @@ struct InlineParser {
     return {e};
   }
 
-  std::vector<AstNode*> parseSub(u32 a, u32 b) {
+  std::vector<AstNode*> parseSub(u32 a, u32 b, bool linkText = false) {
     if (tooDeep()) return nestCut(a, b);
     InlineParser p(src, L, hints, a, b, nest(), arena, strs, diags);
+    p.inLink = inLink || linkText;
     p.run();
     return std::move(p.stack.back().items);
   }
@@ -459,14 +461,22 @@ struct InlineParser {
     spaceBeforeItem();
     flushText();
     AstNode* n = A.call<LinkP>(SugarId::link, span(i, pclose + 1));
-    A.setKids(n, parseSub(i + 1, (u32)close));
+    A.setKids(n, parseSub(i + 1, (u32)close, /*linkText=*/true));
     side<LinkP>(n).url = strs.intern(t.substr(close + 2, pclose - (close + 2)));
     pushItem(n);
     i = pclose + 1;
   }
 
-  // strict pairs: an opener needs a glyph after it, a closer a glyph before it
+  // strict pairs: an opener needs a glyph after it, a closer a glyph before
+  // it; (plan P3-33; syntax.def Intraword) between two ASCII letters or
+  // digits a marker is text — snake_case, 2*3*4 (CJK neighbours never guard)
   void pair(char c) {
+    auto alnum = [](char ch) { return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9'); };
+    if (i > 0 && i + 1 < to && alnum(t[i - 1]) && alnum(t[i + 1])) {
+      put(c, i);
+      i++;
+      return;
+    }
     bool canClose = prevGlyph && !pendingSpace && !pendingBreak && stack.size() > 1 && stack.back().marker == (u8)c;
     if (canClose) {
       flushText();
@@ -573,6 +583,16 @@ struct InlineParser {
       return;
     }
     const u32 exprStart = hash + 1, exprEnd = s.end;
+    // (plan P3-33; syntax.def PrevIdent) a bare value head — no call, no
+    // content argument — right after an identifier character is text
+    // (word#todo, C#); a call or a body stays a splice (H#sub[2]O)
+    if (!s.paren && hash > 0 && isSpliceCont(t[hash - 1]) &&
+        t.substr(exprStart, exprEnd - exprStart).find('(') == std::string_view::npos &&
+        !(exprEnd < to && t[exprEnd] == '[')) {
+      put('#', hash);
+      i = hash + 1;
+      return;
+    }
     spaceBeforeItem();
     flushText();
     // a keyword form (plan P2-12): #if (c) [A] else [B], #for (h) [B], #while (c) [B]
@@ -740,6 +760,122 @@ struct InlineParser {
     i = end;
   }
 
+  // (plan P3-33; syntax.def brk) `\` at the end of a line: a hard line
+  // break (the linebreak slot); the blanks before it and the next line's
+  // indentation are no text
+  void lineBreak() {
+    pendingSpace = pendingBreak = false;
+    flushText();
+    pushItem(A.call(SugarId::linebreak, span(i, i + 2)));  // (the backslash and its line's end)
+    prevGlyph = false;
+    i += 2;
+    while (i < to && (t[i] == ' ' || t[i] == '\t' || t[i] == '\r')) i++;
+  }
+
+  // (plan P3-33; syntax.def url, an Island) a bare http(s) URL is a link to
+  // itself, verbatim — markup inside it (a_b_c) is the URL's. Its scheme
+  // is already this text's tail: it leaves the text for the link. In a
+  // link's own text a URL is text.
+  void autolink() {
+    u32 s0 = 0, e = 0;
+    const bool ok = !inLink && lexUrl(t, i, s0, e) && s0 >= from && bufEnd == i && buf.size() >= i - s0 &&
+              std::string_view(buf).substr(buf.size() - (i - s0)) == t.substr(s0, i - s0);
+    if (!ok) {
+      put(':', i);
+      i++;
+      return;
+    }
+    buf.resize(buf.size() - (i - s0));
+    bufEnd = s0;
+    while (rmap.size() >= 2 && rmap[rmap.size() - 2] >= buf.size()) rmap.resize(rmap.size() - 2);
+    if (!rmap.empty()) {
+      rmC = rmap[rmap.size() - 2];
+      rmR = rmap[rmap.size() - 1];
+    }
+    flushText();
+    AstNode* n0 = A.call<LinkP>(SugarId::link, span(s0, e));
+    const std::string_view url = t.substr(s0, e - s0);
+    side<LinkP>(n0).url = strs.intern(url);
+    AstNode* text = A.node<TextP>(AstKind::Text, span(s0, e));
+    text->str = strs.intern(url);
+    A.setKids(n0, std::vector<AstNode*>{text});
+    pushItem(n0);
+    i = e;
+  }
+
+  // (plan P3-33) adjacent text nodes — an unclosed marker's text between
+  // its neighbours — are one: their strings, cooked→raw maps and cell cuts
+  // joined
+  void coalesce(std::vector<AstNode*>& items) {
+    std::vector<AstNode*> out;
+    for (AstNode* n : items) {
+      if (n->kind != AstKind::Text || out.empty() || out.back()->kind != AstKind::Text) {
+        out.push_back(n);
+        continue;
+      }
+      out.back() = joinText(out.back(), n);
+    }
+    items.swap(out);
+  }
+  // pairs (cooked, raw relative to its span start) of a text's map; an
+  // identity text: (0, 0)
+  std::vector<u32> mapOf(const AstNode* n) const {
+    std::vector<u32> m;
+    const StrRef r = side<TextP>(n).rawmap;
+    if (!r) return {0, 0};
+    std::string_view s = strs.get(r);
+    while (!s.empty()) {
+      const size_t comma = s.find(','), colon = s.find(':');
+      m.push_back((u32)std::stoul(std::string(s.substr(0, colon))));
+      m.push_back((u32)std::stoul(std::string(s.substr(colon + 1, comma == std::string_view::npos ? std::string_view::npos
+                                                                                             : comma - colon - 1))));
+      s = comma == std::string_view::npos ? std::string_view{} : s.substr(comma + 1);
+    }
+    return m;
+  }
+  AstNode* joinText(const AstNode* a, const AstNode* b) {
+    const std::string_view as = strs.get(a->str), bs = strs.get(b->str);
+    const u32 ac = (u32)as.size(), shift = b->span.start - a->span.start;
+    std::vector<u32> m = mapOf(a);
+    if (m.size() >= 4 && m[m.size() - 2] == ac) m.resize(m.size() - 2);  // a's end: b's start says it
+    const std::vector<u32> mb = mapOf(b);
+    for (size_t k = 0; k < mb.size(); k += 2) {
+      const u32 c = mb[k] + ac, r = mb[k + 1] + shift;
+      if (m.size() >= 2 && r == m[m.size() - 1] + (c - m[m.size() - 2])) continue;  // the identity holds
+      if (m.size() >= 2 && m[m.size() - 2] == c) m.resize(m.size() - 2);
+      m.push_back(c);
+      m.push_back(r);
+    }
+    const Span sp{a->span.start, b->span.end};
+    const u32 total = ac + (u32)bs.size();
+    if (m[m.size() - 1] + (total - m[m.size() - 2]) != sp.end - sp.start) {
+      m.push_back(total);
+      m.push_back(sp.end - sp.start);
+    }
+    AstNode* n = A.node<TextP>(AstKind::Text, sp);
+    n->str = strs.intern(std::string(as) + std::string(bs));
+    if (!(m.size() == 2 && m[1] == 0 && total == sp.end - sp.start)) {
+      std::string s;
+      for (size_t k = 0; k < m.size(); k += 2) appendf(s, "%s%u:%u", k ? "," : "", m[k], m[k + 1]);
+      side<TextP>(n).rawmap = strs.intern(s);
+    }
+    std::string seps;
+    for (const AstNode* x : {a, b})
+      if (const StrRef sr = side<TextP>(x).seps) {
+        std::string_view v = strs.get(sr);
+        while (!v.empty()) {
+          const size_t comma = v.find(',');
+          u32 o = (u32)std::stoul(std::string(v.substr(0, comma)));
+          if (x == b) o += ac;
+          if (!seps.empty()) seps += ',';
+          seps += std::to_string(o);
+          v = comma == std::string_view::npos ? std::string_view{} : v.substr(comma + 1);
+        }
+      }
+    if (!seps.empty()) side<TextP>(n).seps = strs.intern(seps);
+    return n;
+  }
+
   void run() {
     stack.push_back({0});
     i = from;
@@ -769,13 +905,24 @@ struct InlineParser {
         i++;
         continue;
       }
-      if (c == '\\' && i + 1 < to && t[i + 1] != '\n') {
-        put(t[i + 1], i, 2);
-        i += 2;
+      if (c == '\\') {
+        // (plan P3-33; syntax.def Escapable) `\` and ASCII punctuation: that
+        // character; `\` at a line's end: a hard break; else a backslash
+        if (i + 1 < to && isEscapable(t[i + 1])) {
+          put(t[i + 1], i, 2);
+          i += 2;
+        } else if (i + 1 < to && t[i + 1] == '\n') {
+          lineBreak();
+        } else {
+          put('\\', i);
+          i++;
+        }
         continue;
       }
       const InlineRule rule = inlineOpener(t, i);
       switch (rule) {
+        case InlineRule::url: autolink(); continue;
+        case InlineRule::brk: break;  // (handled above)
         case InlineRule::comment: comment(); continue;
         case InlineRule::math: math(); continue;
         case InlineRule::code: code(); continue;
@@ -804,6 +951,7 @@ struct InlineParser {
       parent.push_back(lit);
       for (AstNode* it : f.items) parent.push_back(it);
     }
+    coalesce(stack.back().items);
   }
 };
 

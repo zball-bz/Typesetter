@@ -50,6 +50,12 @@ module.exports = {
   strong: pair(inline.strong.open),
   em: pair(inline.em.open),
   linkText: `${esc(inline.link.open)}[^\\]\\n]*\\]`,
+  // (plan P3-33) a bare http(s) URL (syntax.def url: SCHEME "://" URL_END):
+  // ASCII without blanks and < > " ` | \ $; it never ends in . , : ; ! ? '
+  // * _ ~ or a closing bracket (the engine keeps a balanced one: a known
+  // approximation)
+  url: `[Hh][Tt][Tt][Pp][Ss]?${esc(literal(inline.url.open.replace(/^[A-Z]+/, '')))}` +
+    '[!#%&\'()*+,\\-./0-9:;=?@A-Z\\[\\]^_a-z{}~]*[#%&(+\\-/0-9=@A-Z\\[^a-z{}]',
   linkUrl: '\\([^)\\n]*\\)',
   // @id, or @[ids] (the refs opener after the shared '@')
   reference: `${esc(inline.ref.open)}([${cls('SpliceHead')}][${cls('SpliceCont')}-]*|` +

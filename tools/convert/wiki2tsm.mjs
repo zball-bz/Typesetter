@@ -7,6 +7,7 @@
 //
 //   node tools/convert/wiki2tsm.mjs page.wikitext [--lang zh] > page.tsm
 import { readFileSync } from 'node:fs';
+import { em, strong, markers, escapeProse } from './prose.mjs';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
@@ -94,18 +95,19 @@ const isFile = (s) => /^\[\[(Image|File|文件|圖像|图像|檔案):/i.test(s);
 }
 
 // --- inline markup ---------------------------------------------------------
-const inline = (t) => t
+const inline = (t) => markers(escapeProse(t
   .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')
   .replace(/\[\[([^\]]+)\]\]/g, '$1')
   .replace(/\[(https?:[^\s\]]+) ([^\]]+)\]/g, '[$2]($1)')
   .replace(/\[(https?:[^\s\]]+)\]/g, '$1')
-  .replace(/'''''([^']+)'''''/g, '*_$1_*')
-  .replace(/'''([^']+)'''/g, '*$1*')
-  .replace(/''([^']+)''/g, '_$1_')
+  .replace(/'''''([^']+)'''''/g, (m, b) => strong(em(b)))
+  .replace(/'''([^']+)'''/g, (m, b) => strong(b))
+  .replace(/''([^']+)''/g, (m, b) => em(b))
   .replace(/<br\s*\/?>/gi, ' ')
   .replace(/<\/?(span|small|sup|sub|i|b|u|s|code|nowiki|abbr|cite|em|strong|div)[^>]*>/gi, '')
-  .replace(/&nbsp;/g, ' ').replace(/&ndash;/g, '–').replace(/&mdash;/g, '—').replace(/&amp;/g, '&')
-  .replace(/\$/g, '\\$').replace(/#/g, '\\#').replace(/@(?=[A-Za-z\[])/g, '\\@');  // ^[…] here are OUR footnotes (from <ref>)
+  .replace(/&nbsp;/g, ' ').replace(/&ndash;/g, '–').replace(/&mdash;/g, '—').replace(/&amp;/g, '&')));
+// (plan P3-33: prose.mjs) no escape inside a URL; ^[…] here are OUR footnotes
+// (from <ref>); emphasis resolved with its neighbours
 
 // --- block structure -------------------------------------------------------
 const STOP = /^(references|see also|external links|notes|further reading|参考文献|参见|外部链接|注释|參考資料|外部連結|參見|延伸阅读)$/i;

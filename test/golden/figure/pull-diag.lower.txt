@@ -7,9 +7,7 @@ block 0 content [0,99)
 block 1 content [101,248) user framed async holes 0..1
   REGION async "figure" args=hole 0 [101,248)
     CALL para [181,239)
-      TEXT "黄昏时分的灯塔，尺寸来自 NEED" [181,222)
-      TEXT "_" [222,223)
-      TEXT "IMAGES 拉取。" [223,239)
+      TEXT "黄昏时分的灯塔，尺寸来自 NEED_IMAGES 拉取。" [181,239)
 block 2 content [250,368) user framed async holes 1..2
   REGION async "figure" args=hole 1 [250,368)
     CALL para [308,359)

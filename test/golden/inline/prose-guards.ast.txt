@@ -1,0 +1,42 @@
+doc @[0,733)
+  para @[0,140)
+    text @[0,81) str="Markers between letters or digits are text: snake_case_name, 2*3*4 and un*closed; "
+    styled @[82,88) marker=*
+      text @[83,87) str="bold"
+    text @[89,92) str=" and "
+    styled @[93,103) marker=_
+      text @[94,102) str="emphasis"
+    text @[104,123) str=" still pair, as does "
+    splice @[124,135) expr="em"
+      arg @[128,134)
+        text @[128,134) str="inside"
+    text @[135,140) str="word."
+  para @[142,238)
+    text @[142,226) str="A bare value after a word is text: word#todo, C#, user@host.org; a call stays one: H"
+    splice @[226,236) expr="strong"
+      arg @[234,235)
+        text @[234,235) str="2"
+    text @[236,238) str="O."
+  para @[240,334)
+    text @[240,334) str="Escapes: * _ # \\ [ and \\a keep their meaning (the last keeps its backslash, as does \\é)."
+  para @[336,557)
+    text @[336,363) str="A URL is a link, verbatim: "
+    link @[363,403) url="https://example.com/a_b_c?q=1&r=2#frag_x"
+      text @[363,403) str="https://example.com/a_b_c?q=1&r=2#frag_x"
+    text @[403,421) str=". In parentheses ("
+    link @[421,460) url="https://en.wikipedia.org/wiki/Foo_(bar)"
+      text @[421,460) str="https://en.wikipedia.org/wiki/Foo_(bar)"
+    text @[460,480) str=") and beside CJK 见"
+    link @[480,500) url="https://example.org/"
+      text @[480,500) str="https://example.org/"
+    text @[500,557) str="路径。 An escaped colon is text: https://example.com."
+  para @[559,636)
+    link @[559,622) url="https://example.com"
+      text @[560,600) str="A link whose text is https://example.com"
+    text @[623,636) str=" has one link."
+  para @[638,732)
+    text @[638,665) str="A hard break ends this line"
+    linebreak @[666,668)
+    text @[668,718) str="and the next starts at the margin; 中文也可以"
+    linebreak @[718,720)
+    text @[720,732) str="硬换行。"

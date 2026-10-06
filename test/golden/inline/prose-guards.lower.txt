@@ -1,0 +1,48 @@
+lower v1 abi 3d3ccfbb docEnd 733 holes 2 module c1409c97ac12fc03
+piece 0 hole 0 js [134,159)
+piece 1 hole 1 js [161,190)
+block 0 content [0,140) user framed holes 0..1
+  CALL para [0,140)
+    TEXT "Markers between letters or digits are text: snake_case_name, 2*3*4 and un*closed; " [0,81) raw=0:0,82:81
+    CALL strong [82,88)
+      TEXT "bold" [83,87)
+    TEXT " and " [89,92) raw=0:0,1:0,5:3
+    CALL em [93,103)
+      TEXT "emphasis" [94,102)
+    TEXT " still pair, as does " [104,123) raw=0:0,1:0,21:19
+    HOLE 0 [124,135)
+      TEXT "inside" [128,134)
+    TEXT "word." [135,140)
+block 1 content [142,238) user framed holes 1..2
+  CALL para [142,238)
+    TEXT "A bare value after a word is text: word#todo, C#, user@host.org; a call stays one: H" [142,226)
+    HOLE 1 [226,236)
+      TEXT "2" [234,235)
+    TEXT "O." [236,238)
+block 2 content [240,334)
+  CALL para [240,334)
+    TEXT "Escapes: * _ # \\ [ and \\a keep their meaning (the last keeps its backslash, as does \\é)." [240,334) raw=0:0,10:11,12:14,14:17,16:20,18:23
+block 3 content [336,557)
+  CALL para [336,557)
+    TEXT "A URL is a link, verbatim: " [336,363)
+    CALL link [363,403) url="https://example.com/a_b_c?q=1&r=2#frag_x"
+      TEXT "https://example.com/a_b_c?q=1&r=2#frag_x" [363,403)
+    TEXT ". In parentheses (" [403,421)
+    CALL link [421,460) url="https://en.wikipedia.org/wiki/Foo_(bar)"
+      TEXT "https://en.wikipedia.org/wiki/Foo_(bar)" [421,460)
+    TEXT ") and beside CJK 见" [460,480)
+    CALL link [480,500) url="https://example.org/"
+      TEXT "https://example.org/" [480,500)
+    TEXT "路径。 An escaped colon is text: https://example.com." [500,557) raw=0:0,42:43
+block 4 content [559,636)
+  CALL para [559,636)
+    CALL link [559,622) url="https://example.com"
+      TEXT "A link whose text is https://example.com" [560,600)
+    TEXT " has one link." [623,636) raw=0:0,1:0
+block 5 content [638,732)
+  CALL para [638,732)
+    TEXT "A hard break ends this line" [638,665)
+    CALL linebreak [666,668)
+    TEXT "and the next starts at the margin; 中文也可以" [668,718)
+    CALL linebreak [718,720)
+    TEXT "硬换行。" [720,732)

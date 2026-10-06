@@ -10,6 +10,7 @@
 //   node tools/convert/tex2tsm.mjs chapter.tex [--bib refs.bib --bib-out refs.json]
 import { readFileSync, writeFileSync } from 'node:fs';
 import { TEX_MATH } from '../../runtime/src/shared/math-vocab.gen.mjs';
+import { em, strong, markers } from './prose.mjs';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
@@ -299,10 +300,18 @@ src = src.replace(/\\\[([\s\S]*?)\\\]/g, (m, b) => stash('\n$ ' + mathToTsm(b) +
 src = src.replace(/\$([^$]+)\$/g, (m, b) => stash('$' + mathToTsm(b) + '$'));
 src = src.replace(/\\\(([\s\S]*?)\\\)/g, (m, b) => stash('$' + mathToTsm(b) + '$'));
 src = expandMacros(src);
+// (plan P3-33) TeX's text-mode spacing, discretionary hyphen and accents: a
+// backslash before a letter or a blank is no .tsm escape (it would show)
+const ACCENTS = { '"': '\u0308', "'": '\u0301', '`': '\u0300', '^': '\u0302', '~': '\u0303', '=': '\u0304',
+  '.': '\u0307', u: '\u0306', v: '\u030C', H: '\u030B', c: '\u0327', r: '\u030A', k: '\u0328' };
+// (never the second backslash of TeX's line break \\)
+src = src.replace(/(?<!\\)\\(["'`^~=.])\{?([A-Za-z])\}?/g, (m, a, ch) => (ch + ACCENTS[a]).normalize('NFC'))
+  .replace(/(?<!\\)\\([uvHcrk])\{([A-Za-z])\}/g, (m, a, ch) => (ch + ACCENTS[a]).normalize('NFC'))
+  .replace(/(?<!\\)\\[ ;:]/g, ' ').replace(/(?<!\\)\\,/g, '\u2009').replace(/(?<!\\)\\[!@/-]/g, '');
 src = src.replace(/\\footnote\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => `^[${b}]`);
-src = src.replace(/\\emph\{((?:[^{}]|\{[^{}]*\})*)\}/g, '_$1_');
-src = src.replace(/\\textit\{((?:[^{}]|\{[^{}]*\})*)\}/g, '_$1_');
-src = src.replace(/\\textbf\{((?:[^{}]|\{[^{}]*\})*)\}/g, '*$1*');
+src = src.replace(/\\emph\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => em(b));
+src = src.replace(/\\textit\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => em(b));
+src = src.replace(/\\textbf\{((?:[^{}]|\{[^{}]*\})*)\}/g, (m, b) => strong(b));
 src = src.replace(/\\textsc\{([^{}]*)\}/g, '$1');
 src = src.replace(/\\texttt\{([^{}]*)\}/g, '`$1`');
 src = src.replace(/\\url\{([^{}]*)\}/g, '$1');
@@ -315,7 +324,7 @@ src = src.replace(/``/g, '“').replace(/''/g, '”').replace(/---/g, '—').rep
 src = src.replace(/\\begin\{(itemize|enumerate|description)\}([\s\S]*?)\\end\{\1\}/g, (m, env, body) => {
   const mark = env === 'enumerate' ? '+' : '-';
   return '\n' + body.trim().split(/\\item\s*/).filter((x) => x.trim())
-    .map((it) => `${mark} ${it.replace(/^\[([^\]]*)\]\s*/, '*$1* ').replace(/\s*\n\s*/g, ' ').trim()}`).join('\n') + '\n';
+    .map((it) => `${mark} ${it.replace(/^\[([^\]]*)\]\s*/, (m, b) => strong(b) + ' ').replace(/\s*\n\s*/g, ' ').trim()}`).join('\n') + '\n';
 });
 src = src.replace(/\\begin\{tabular\}\{([^{}]*)\}([\s\S]*?)\\end\{tabular\}/g, (m, spec, body) => {
   const cols = (spec.match(/[lcr]/g) || []).length || 2;
@@ -325,10 +334,10 @@ src = src.replace(/\\begin\{tabular\}\{([^{}]*)\}([\s\S]*?)\\end\{tabular\}/g, (
   return '\n\n#!table(cols: ' + cols + ')\n' + rows.join('\n') + '\n#table!\n\n';
 });
 src = src.replace(/\\begin\{(center|table|figure)\}(\[[^\]]*\])?(\{[^{}]*\})?/g, '').replace(/\\end\{(center|table|figure)\}/g, '');
-src = src.replace(/\\caption\{([^{}]*)\}/g, '_$1_');
+src = src.replace(/\\caption\{([^{}]*)\}/g, (m, b) => em(b));
 src = src.replace(/\\(hline|centering|small|large|Large|bigskip|medskip|smallskip|vspace\{[^}]*\}|hspace\{[^}]*\})/g, '');
 src = src.replace(/\\\\/g, ' ').replace(/(?<!\\)&/g, ' | ');
-src = src.replace(/\\([A-Za-z]+)\b\*?/g, (m, name) => `⟨\\${name}⟩`);  // survivors = visible gaps
+src = src.replace(/\\([A-Za-z]+)\b\*?/g, (m, name) => `⟨\\\\${name}⟩`);  // survivors = visible gaps (an escaped \\)
 src = src.replace(/[{}]/g, '');
 src = src.replace(/\u0001M(\d+)\u0001/g, (m, i) => maths[+i]);
 // HoTT sources put one sentence per line: join lines inside paragraphs
@@ -338,7 +347,8 @@ src = src.split(/\n\s*\n/).map((p) => {
 }).join('\n\n');
 // bibliography: --bib-ref is the path the DOCUMENT will use for the CSL-JSON
 if (opt('--bib-ref')) src += `\n\n#bibliography(${JSON.stringify(opt('--bib-ref'))})\n`;
-process.stdout.write(src.replace(/\n{3,}/g, '\n\n').trim() + '\n');
+// (plan P3-33) emphasis resolved with its final neighbours (prose.mjs)
+process.stdout.write(markers(src).replace(/\n{3,}/g, '\n\n').trim() + '\n');
 if (unknownMath.size) console.error(`tex2tsm: math macros with no symbol, kept as names: ${[...unknownMath].sort().join(' ')}`);
 if (unsupportedMath.size)
   console.error(`tex2tsm: math-unsupported: ${[...unsupportedMath].sort().map((m) => '\\' + m).join(' ')} (no stroke to paint: the argument is kept)`);

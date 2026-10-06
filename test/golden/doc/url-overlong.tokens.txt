@@ -1,0 +1,2 @@
+[41,124) property "https://example.org/aVeryLongPathSegmentWithoutAnySeparatorsThatCannotBreakAnywhere"
+[129,210) property "https://example.org/anotherExtremelyLongSegmentThatAlsoRefusesToBreakAtTheMeasure"

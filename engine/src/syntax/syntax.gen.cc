@@ -148,6 +148,11 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
           out += "\"";
           break;
         }
+        case SugarId::linebreak: {
+          out += "linebreak";
+          spanOut();
+          break;
+        }
         case SugarId::math: {
           out += "math";
           spanOut();
@@ -323,6 +328,8 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
         case SugarId::note:
           break;
         case SugarId::ref:
+          break;
+        case SugarId::linebreak:
           break;
         case SugarId::math: {
           const MathP& p = side<MathP>(n);

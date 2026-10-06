@@ -83,6 +83,7 @@ module.exports = grammar({
       $.strong,
       $.emphasis,
       $.link,
+      $.autolink,
       $.reference,
       $.label,
       $.keyword_form,
@@ -99,6 +100,7 @@ module.exports = grammar({
     strong: () => token(re(R.strong)),
     emphasis: () => token(re(R.em)),
     link: () => token(re(R.linkText + R.linkUrl)),
+    autolink: () => token(prec(1, re(R.url))),  // (plan P3-33) a bare http(s) URL
     reference: () => token(re(R.reference)),
     label: () => token(re(R.label)),
     // #name.head(...)  #(expr)  #toc — the head, then its JS arguments
@@ -112,7 +114,9 @@ module.exports = grammar({
     keyword_head: () => token(prec(1, re(R.keywordHead))),
     cell_bar: () => token('|'),
 
-    word: () => token(prec(-1, /[A-Za-z0-9_]+/)),
+    // (plan P3-33, PrevIdent) an '@' right after a word is text (user@host):
+    // the word takes it (no lookbehind here; the longest token wins)
+    word: () => token(prec(-1, /[A-Za-z0-9_]+(@[A-Za-z0-9_.-]*)?/)),
     punct: () => token(prec(-2, /[^\sA-Za-z0-9_]|[ \t]+/)),
   },
 });

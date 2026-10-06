@@ -143,6 +143,7 @@ const tm = {
           match: `(${R.linkText})(${R.linkUrl})`,
           captures: { 1: delim('string.other.link.title.tsm'), 2: delim('markup.underline.link.tsm') },
         },
+        { name: 'markup.underline.link.tsm', match: R.url },  // (plan P3-33) a bare http(s) URL
         { name: 'constant.other.reference.tsm', match: R.reference },
         { name: 'entity.name.label.tsm', match: R.label },
         { name: 'keyword.control.flow.tsm', match: `${R.keywordHead}(?!\\w)` },

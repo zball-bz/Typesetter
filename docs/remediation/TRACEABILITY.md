@@ -999,7 +999,7 @@ Theme steps: — · findings: 1
 | `markup-language/region-error-recovery` | issue | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/span-loss` | issue | medium | P2-04 | grep:plan P2-04 |
 | `markup-language/structured-content-flattened` | issue | medium | P3-03 | grep:plan P3-03 |
-| `markup-language/ambiguity-hazards` | issue | medium | P3-33 | |
+| `markup-language/ambiguity-hazards` | issue | medium | P3-33 | grep:plan P3-33 |
 | `markup-language/ast-dump-note` | issue | low | P0-02 | grep:plan P0-02 |
 | `markup-language/doc-drift` | issue | low | P3-35 | |
 | `markup-language/missed:0` | missed | high | P2-11 | grep:plan P2-11 |
@@ -1022,7 +1022,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/region-fence-private-dispatch` | adhoc | medium | P2-03, P2-06 | grep:plan P2-06 |
 | `parser-frontend/region-container-special-case` | adhoc | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/multiple-tsm-grammars` | adhoc | high | P1-09 | grep:plan P1-09 |
-| `parser-frontend/sigil-context-rules` | adhoc | medium | P3-33 | |
+| `parser-frontend/sigil-context-rules` | adhoc | medium | P3-33 | grep:plan P3-33 |
 | `parser-frontend/front-matter-editor-only` | adhoc | low | P3-35 | |
 | `parser-frontend/editor-region-builder-list` | adhoc | low | P1-09 | grep:plan P1-09 |
 | `parser-frontend/contiguous-escapes-blocks` | issue | high | P1-06 | grep:plan P1-06 |
