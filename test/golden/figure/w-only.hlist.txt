@@ -67,7 +67,7 @@ top pid=0 units=1
   box Ideo "陷" w=1025su wt=0.6 cap=102su r6 @[93,96)
   pen 0 r6
   glue word w=257su x=1 cap=257su src r7 @[96,97)
-  box Other "#24" w=1537su r7 @[97,100)
+  box Alpha "#24" w=1537su r7 @[97,100)
   box CloseW "）" w=513su blank=R r8 @[100,103)
   box FullStopW "。" w=513su blank=R r9 @[103,106)
   glue blank w=512su x=0 cap=0su r9 @[103,106)
@@ -87,13 +87,13 @@ top pid=1 units=2
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[195,253)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[195,253)
-  box Other "1" w=513su r1 @[195,253)
+  box Digit "1" w=513su r1 @[195,253)
   box ColonW "：" w=513su blank=R r2 @[195,253)
   glue blank w=512su x=0 cap=0su r2 @[195,253)
   box Ideo "宽" w=1025su wt=0.6 cap=102su r3 @[195,198)
   pen 0 r3
   glue word w=257su x=1 cap=257su src r4 @[198,199)
-  box Other "120px" w=2561su r4 @[199,204)
+  box Digit "120px" w=2561su r4 @[199,204)
   glue word w=257su x=1 cap=257su src r4 @[204,205)
   box Ideo "的" w=1025su wt=0.6 cap=102su r5 @[205,208)
   glue inter w=0su x=0.6 cap=102su r5 @[205,208)

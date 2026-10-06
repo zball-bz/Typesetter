@@ -1,0 +1,31 @@
+lower v1 abi 3d3ccfbb docEnd 509 holes 5 module e69c4688db18cfef
+piece 0 hole 0 js [103,120)
+piece 1 hole 1 js [122,138)
+piece 2 hole 2 js [140,188)
+piece 3 hole 3 js [190,219)
+piece 4 hole 4 js [221,236)
+block 0 content [0,197) user framed holes 0..4
+  CALL para [0,197)
+    TEXT "Stretch " [0,7) raw=0:0,8:7
+    HOLE 0 [8,19)
+    TEXT " and " [20,23) raw=0:0,1:0,5:3
+    HOLE 1 [24,34)
+    TEXT " never break; a long " [35,54) raw=0:0,1:0,21:19
+    HOLE 2 [55,100)
+    TEXT " breaks at its zero-width spaces; " [101,133) raw=0:0,1:0,34:32
+    HOLE 3 [134,160)
+    TEXT " hyphenates at its soft hyphens only." [161,197) raw=0:0,1:0
+block 1 content [199,261) user framed holes 4..5
+  CALL para [199,261)
+    TEXT "中文" [199,205)
+    HOLE 4 [205,219)
+    TEXT "不分开，　全角空格后接文字。" [219,261)
+block 2 content [263,352)
+  CALL para [263,352)
+    TEXT "ちょっと待ってーー、繰り返し々々、ジョン・スミス、範囲1〜2。" [263,352)
+block 3 content [354,461)
+  CALL para [354,461)
+    TEXT "한국어 텍스트와 English 단어가 섞인 문장에서는 자간 대신 띄어쓰기를 지킵니다." [354,461)
+block 4 content [463,508)
+  CALL para [463,508)
+    TEXT "括号〖白括号〗与｟白圆括号｠。" [463,508)

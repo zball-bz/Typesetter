@@ -1,91 +1,91 @@
 top pid=0 units=10
  unit text indent=1536su marker="•"
-  box Other "1" w=513su r0 @[0,6)
+  box Digit "1" w=513su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="1 A" src r0 @[0,6)
-  box Other "A" w=513su r0 @[0,6)
+  box Alpha "A" w=513su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-1"
  unit text indent=4608su marker="•"
-  box Other "1.0.1" w=2561su r0 @[0,6)
+  box Digit "1.0.1" w=2561su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="1 A" src r0 @[0,6)
-  box Other "A.c" w=1537su r0 @[0,6)
+  box Alpha "A.c" w=1537su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-1.0.1"
  unit text indent=1536su marker="•"
-  box Other "2" w=513su r0 @[0,6)
+  box Digit "2" w=513su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="2 B" src r0 @[0,6)
-  box Other "B" w=513su r0 @[0,6)
+  box Alpha "B" w=513su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-2"
  unit text indent=3072su marker="•"
-  box Other "2.1" w=1537su r0 @[0,6)
+  box Digit "2.1" w=1537su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="1 B" src r0 @[0,6)
-  box Other "B.a" w=1537su r0 @[0,6)
+  box Alpha "B.a" w=1537su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-2.1"
  unit text indent=3072su marker="•"
-  box Other "2.2" w=1537su r0 @[0,6)
+  box Digit "2.2" w=1537su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="2 B" src r0 @[0,6)
-  box Other "B.b" w=1537su r0 @[0,6)
+  box Alpha "B.b" w=1537su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-2.2"
  unit text indent=1536su marker="•"
-  box Other "3" w=513su r0 @[0,6)
+  box Digit "3" w=513su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="3 C" src r0 @[0,6)
-  box Other "C" w=513su r0 @[0,6)
+  box Alpha "C" w=513su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-3"
  unit text indent=3072su marker="•"
-  box Other "3.1" w=1537su r0 @[0,6)
+  box Digit "3.1" w=1537su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="1 C" src r0 @[0,6)
-  box Other "C.a" w=1537su r0 @[0,6)
+  box Alpha "C.a" w=1537su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-3.1"
  unit text indent=1536su marker="•"
-  box Other "4" w=513su r0 @[0,6)
+  box Digit "4" w=513su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="4 D" src r0 @[0,6)
-  box Other "D" w=513su r0 @[0,6)
+  box Alpha "D" w=513su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-4"
  unit text indent=4608su marker="•"
-  box Other "4.0.1" w=2561su r0 @[0,6)
+  box Digit "4.0.1" w=2561su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="1 D" src r0 @[0,6)
-  box Other "D.c" w=1537su r0 @[0,6)
+  box Alpha "D.c" w=1537su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-4.0.1"
  unit text indent=3072su marker="•"
-  box Other "4.1" w=1537su r0 @[0,6)
+  box Digit "4.1" w=1537su r0 @[0,6)
   glue word w=257su x=1 cap=257su kern="1 D" src r0 @[0,6)
-  box Other "D.b" w=1537su r0 @[0,6)
+  box Alpha "D.b" w=1537su r0 @[0,6)
   run r0 plain LINK link="#tsr-h-4.1"
 top pid=1 units=1
  unit text indent=0su anchor="h-1"
-  box Other "A" w=821su r0 @[10,11)
+  box Alpha "A" w=821su r0 @[10,11)
   run r0 plain BOLD x1.60
 top pid=2 units=1
  unit text indent=0su anchor="h-1.0.1"
-  box Other "A.c" w=1768su r0 @[17,20)
+  box Alpha "A.c" w=1768su r0 @[17,20)
   run r0 plain BOLD x1.15
 top pid=3 units=1
  unit text indent=0su anchor="h-2"
-  box Other "B" w=821su r0 @[24,25)
+  box Alpha "B" w=821su r0 @[24,25)
   run r0 plain BOLD x1.60
 top pid=4 units=1
  unit text indent=0su anchor="h-2.1"
-  box Other "B.a" w=2075su r0 @[30,33)
+  box Alpha "B.a" w=2075su r0 @[30,33)
   run r0 plain BOLD x1.35
 top pid=5 units=1
  unit text indent=0su anchor="h-2.2"
-  box Other "B.b" w=2075su r0 @[38,41)
+  box Alpha "B.b" w=2075su r0 @[38,41)
   run r0 plain BOLD x1.35
 top pid=6 units=1
  unit text indent=0su anchor="h-3"
-  box Other "C" w=821su r0 @[45,46)
+  box Alpha "C" w=821su r0 @[45,46)
   run r0 plain BOLD x1.60
 top pid=7 units=1
  unit text indent=0su anchor="h-3.1"
-  box Other "C.a" w=2075su r0 @[51,54)
+  box Alpha "C.a" w=2075su r0 @[51,54)
   run r0 plain BOLD x1.35
 top pid=8 units=1
  unit text indent=0su anchor="h-4"
-  box Other "D" w=821su r0 @[58,59)
+  box Alpha "D" w=821su r0 @[58,59)
   run r0 plain BOLD x1.60
 top pid=9 units=1
  unit text indent=0su anchor="h-4.0.1"
-  box Other "D.c" w=1768su r0 @[65,68)
+  box Alpha "D.c" w=1768su r0 @[65,68)
   run r0 plain BOLD x1.15
 top pid=10 units=1
  unit text indent=0su anchor="h-4.1"
-  box Other "D.b" w=2075su r0 @[73,76)
+  box Alpha "D.b" w=2075su r0 @[73,76)
   run r0 plain BOLD x1.35

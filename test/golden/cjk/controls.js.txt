@@ -1,0 +1,14 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => (("10 km")),
+() => (("5 kg")),
+() => (("super​califragilistic​expialidocious")),
+() => (("ex­tra­or­di­nary")),
+() => (("字⁠句")),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

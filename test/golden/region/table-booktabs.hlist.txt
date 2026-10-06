@@ -1,122 +1,122 @@
 top pid=0 units=1
  unit text indent=0su
-  box Other "Content-fitted" w=7169su r0 @[0,14)
+  box Alpha "Content-fitted" w=7169su r0 @[0,14)
   glue word w=257su x=1 cap=257su kern="d c" src r0 @[14,15)
-  box Other "columns," w=4097su r0 @[15,23)
+  box Alpha "columns," w=4097su r0 @[15,23)
   glue word w=257su x=1 cap=257su kern=", b" src r0 @[23,24)
-  box Other "book" w=2049su r0 @[24,28)
+  box Alpha "book" w=2049su r0 @[24,28)
   disc pen=0.7 w=0su pre="-" 513su kern="kt" r0 @[28,28)
-  box Other "tabs" w=2049su r0 @[28,32)
+  box Alpha "tabs" w=2049su r0 @[28,32)
   glue word w=257su x=1 cap=257su kern="s r" src r0 @[32,33)
-  box Other "rules," w=3073su r0 @[33,39)
+  box Alpha "rules," w=3073su r0 @[33,39)
   glue word w=257su x=1 cap=257su kern=", a" src r0 @[39,40)
-  box Other "a" w=513su r0 @[40,41)
+  box Alpha "a" w=513su r0 @[40,41)
   glue word w=257su x=1 cap=257su kern="a h" src r0 @[41,42)
-  box Other "head" w=2049su r0 @[42,46)
+  box Alpha "head" w=2049su r0 @[42,46)
   disc pen=0.7 w=0su pre="-" 513su kern="de" r0 @[46,46)
-  box Other "er" w=1025su r0 @[46,48)
+  box Alpha "er" w=1025su r0 @[46,48)
   glue word w=257su x=1 cap=257su kern="r r" src r0 @[48,49)
-  box Other "row," w=2049su r0 @[49,53)
+  box Alpha "row," w=2049su r0 @[49,53)
   glue word w=257su x=1 cap=257su kern=", c" src r0 @[53,54)
-  box Other "cells" w=2561su r0 @[54,59)
+  box Alpha "cells" w=2561su r0 @[54,59)
   glue word w=257su x=1 cap=257su kern="s s" src r0 @[59,60)
-  box Other "span" w=2049su r0 @[60,64)
+  box Alpha "span" w=2049su r0 @[60,64)
   disc pen=0.7 w=0su pre="-" 513su kern="nn" r0 @[64,64)
-  box Other "ning" w=2049su r0 @[64,68)
+  box Alpha "ning" w=2049su r0 @[64,68)
   glue word w=257su x=1 cap=257su kern="g c" src r0 @[68,69)
-  box Other "columns" w=3585su r0 @[69,76)
+  box Alpha "columns" w=3585su r0 @[69,76)
   glue word w=257su x=1 cap=257su kern="s a" src r0 @[76,77)
-  box Other "and" w=1537su r0 @[77,80)
+  box Alpha "and" w=1537su r0 @[77,80)
   glue word w=257su x=1 cap=257su kern="d r" src r0 @[80,81)
-  box Other "rows" w=2049su r0 @[81,85)
+  box Alpha "rows" w=2049su r0 @[81,85)
   glue word w=257su x=1 cap=257su kern="s (" src r0 @[85,86)
-  box Other "(plan" w=2561su r0 @[86,91)
+  box OpenN "(plan" w=2561su r0 @[86,91)
   glue word w=257su x=1 cap=257su kern="n P" src r0 @[91,92)
-  box Other "P3-14)." w=3585su r0 @[92,99)
+  box Alpha "P3-14)." w=3585su r0 @[92,99)
   run r0 plain
 top pid=1 units=13
  unit text indent=0su anchor="tbl-x"
-  box Other "Name" w=2049su r0 @[236,240)
+  box Alpha "Name" w=2049su r0 @[236,240)
   run r0 plain
  unit text indent=0su
-  box Other "Val" w=1537su r0 @[243,246)
+  box Alpha "Val" w=1537su r0 @[243,246)
   disc pen=0.7 w=0su pre="-" 513su kern="lu" r0 @[246,246)
-  box Other "ue" w=1025su r0 @[246,248)
+  box Alpha "ue" w=1025su r0 @[246,248)
   run r0 plain
  unit text indent=0su
-  box Other "Unit" w=2049su r0 @[251,255)
+  box Alpha "Unit" w=2049su r0 @[251,255)
   run r0 plain
  unit text indent=0su
-  box Other "Speed" w=2561su r0 @[256,261)
+  box Alpha "Speed" w=2561su r0 @[256,261)
   run r0 plain
  unit text indent=0su
-  box Other "the" w=1537su r0 @[264,267)
+  box Alpha "the" w=1537su r0 @[264,267)
   glue word w=257su x=1 cap=257su kern="e r" src r0 @[267,268)
-  box Other "rate" w=2049su r0 @[268,272)
+  box Alpha "rate" w=2049su r0 @[268,272)
   glue word w=257su x=1 cap=257su kern="e a" src r0 @[272,273)
-  box Other "at" w=1025su r0 @[273,275)
+  box Alpha "at" w=1025su r0 @[273,275)
   glue word w=257su x=1 cap=257su kern="t w" src r0 @[275,276)
-  box Other "which" w=2561su r0 @[276,281)
+  box Alpha "which" w=2561su r0 @[276,281)
   glue word w=257su x=1 cap=257su kern="h s" src r0 @[281,282)
-  box Other "some" w=2049su r0 @[282,286)
+  box Alpha "some" w=2049su r0 @[282,286)
   disc pen=0.7 w=0su pre="-" 513su kern="et" r0 @[286,286)
-  box Other "thing" w=2561su r0 @[286,291)
+  box Alpha "thing" w=2561su r0 @[286,291)
   glue word w=257su x=1 cap=257su kern="g m" src r0 @[291,292)
-  box Other "moves" w=2561su r0 @[292,297)
+  box Alpha "moves" w=2561su r0 @[292,297)
   run r0 plain
  unit text indent=0su
-  box Other "30" w=1025su r0 @[300,302)
+  box Digit "30" w=1025su r0 @[300,302)
   run r0 plain
  unit text indent=0su
-  box Other "a" w=513su r0 @[335,336)
+  box Alpha "a" w=513su r0 @[335,336)
   glue word w=257su x=1 cap=257su kern="a c" src r0 @[336,337)
-  box Other "cell" w=2049su r0 @[337,341)
+  box Alpha "cell" w=2049su r0 @[337,341)
   glue word w=257su x=1 cap=257su kern="l a" src r0 @[341,342)
-  box Other "across" w=3073su r0 @[342,348)
+  box Alpha "across" w=3073su r0 @[342,348)
   glue word w=257su x=1 cap=257su kern="s t" src r0 @[348,349)
-  box Other "two" w=1537su r0 @[349,352)
+  box Alpha "two" w=1537su r0 @[349,352)
   glue word w=257su x=1 cap=257su kern="o c" src r0 @[352,353)
-  box Other "columns" w=3585su r0 @[353,360)
+  box Alpha "columns" w=3585su r0 @[353,360)
   run r0 plain
  unit text indent=0su
-  box Other "2" w=513su r0 @[364,365)
+  box Digit "2" w=513su r0 @[364,365)
   run r0 plain
  unit text indent=0su
-  box Other "tall" w=2049su r0 @[404,408)
+  box Alpha "tall" w=2049su r0 @[404,408)
   run r0 plain
  unit text indent=0su
-  box Other "the" w=1537su r0 @[412,415)
+  box Alpha "the" w=1537su r0 @[412,415)
   glue word w=257su x=1 cap=257su kern="e f" src r0 @[415,416)
-  box Other "first" w=2561su r0 @[416,421)
+  box Alpha "first" w=2561su r0 @[416,421)
   glue word w=257su x=1 cap=257su kern="t o" src r0 @[421,422)
-  box Other "of" w=1025su r0 @[422,424)
+  box Alpha "of" w=1025su r0 @[422,424)
   glue word w=257su x=1 cap=257su kern="f t" src r0 @[424,425)
-  box Other "two" w=1537su r0 @[425,428)
+  box Alpha "two" w=1537su r0 @[425,428)
   glue word w=257su x=1 cap=257su kern="o r" src r0 @[428,429)
-  box Other "rows" w=2049su r0 @[429,433)
+  box Alpha "rows" w=2049su r0 @[429,433)
   run r0 plain
  unit text indent=0su
-  box Other "1" w=513su r0 @[436,437)
+  box Digit "1" w=513su r0 @[436,437)
   run r0 plain
  unit text indent=0su
-  box Other "the" w=1537su r0 @[438,441)
+  box Alpha "the" w=1537su r0 @[438,441)
   glue word w=257su x=1 cap=257su kern="e s" src r0 @[441,442)
-  box Other "sec" w=1537su r0 @[442,445)
+  box Alpha "sec" w=1537su r0 @[442,445)
   disc pen=0.7 w=0su pre="-" 513su kern="co" r0 @[445,445)
-  box Other "ond" w=1537su r0 @[445,448)
+  box Alpha "ond" w=1537su r0 @[445,448)
   run r0 plain
  unit text indent=0su
-  box Other "2" w=513su r0 @[451,452)
+  box Digit "2" w=513su r0 @[451,452)
   run r0 plain
 top pid=2 units=1
  unit text indent=0su
-  box Other "See" w=1537su r0 @[462,465)
+  box Alpha "See" w=1537su r0 @[462,465)
   glue word w=257su x=1 cap=257su src r0 @[465,465)
   box Ideo "表" w=1025su wt=0.6 cap=102su r1 @[466,472)
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[466,472)
-  box Other "1" w=513su r2 @[466,472)
-  box Other "." w=513su r3 @[472,473)
+  box Digit "1" w=513su r2 @[466,472)
+  box Infix "." w=513su r3 @[472,473)
   run r0 plain
   run r1 letter-spaced ref LINK CJK link="#tsr-tbl-x"
   run r2 plain ref LINK link="#tsr-tbl-x"

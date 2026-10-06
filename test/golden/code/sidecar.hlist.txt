@@ -116,8 +116,8 @@ top pid=1 units=7
   box Ideo "见" w=1025su wt=0.6 cap=102su r10 @[240,243)
   pen 0 r10
   glue word w=257su x=1 cap=257su src r11 @[243,243)
-  box Other "§1" w=1128su r12 @[244,249)
-  box Other "1" w=360su anchor="fnref-1" r13 @[249,291)
+  box Alpha "§1" w=1128su r12 @[244,249)
+  box Digit "1" w=360su anchor="fnref-1" r13 @[249,291)
   obj o0 math parts=3 edges=Alpha/Alpha src="n <= 1" [w=680su asc=482su desc=10su] [w=819su asc=665su desc=153su glue=284su] [w=511su asc=727su desc=7su glue=284su]
   run r0 letter-spaced BOLD CJK
   run r1 blank-bearing CJK
@@ -177,7 +177,7 @@ top pid=3 units=2
   box FullStopW "。" w=437su blank=R r1 @[287,290)
   glue blank w=435su x=0 cap=0su r1 @[287,290)
   glue word w=219su x=1 cap=219su src r2 @[249,291)
-  box Other "↩" w=524su r3 @[249,291)
+  box Alpha "↩" w=524su r3 @[249,291)
   run r0 letter-spaced CJK x0.85
   run r1 blank-bearing CJK x0.85
   run r2 plain x0.85

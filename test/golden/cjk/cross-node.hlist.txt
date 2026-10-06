@@ -5,9 +5,9 @@ top pid=0 units=1
   box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[3,6)
   pen 0 r0
   glue autospace w=256su x=1 cap=256su r1 @[7,7)
-  box Other "Eng" w=1537su r2 @[7,10)
+  box Alpha "Eng" w=1537su r2 @[7,10)
   disc pen=0.7 w=0su pre="-" 513su kern="gl" r2 @[10,10)
-  box Other "lish" w=2049su r2 @[10,14)
+  box Alpha "lish" w=2049su r2 @[10,14)
   glue autospace w=256su x=1 cap=256su r3 @[15,15)
   box Ideo "中" w=1025su wt=0.6 cap=102su r4 @[15,18)
   glue inter w=0su x=0.6 cap=102su r4 @[15,18)
@@ -16,7 +16,7 @@ top pid=0 units=1
   box Ideo "和" w=1025su wt=0.6 cap=102su r4 @[21,24)
   pen 0 r4
   glue autospace w=218su x=1 cap=218su r5 @[24,30)
-  box Other "code" w=1742su r6 @[24,30)
+  box Alpha "code" w=1742su r6 @[24,30)
   glue autospace w=256su x=1 cap=256su r7 @[30,30)
   box Ideo "中" w=1025su wt=0.6 cap=102su r8 @[30,33)
   glue inter w=0su x=0.6 cap=102su r8 @[30,33)
@@ -59,9 +59,9 @@ top pid=1 units=1
   box ColonW "：" w=513su blank=R r1 @[85,88)
   glue blank w=512su x=0 cap=0su r1 @[85,88)
   box AmbOpenQuote "“" w=104su blank=L r2 @[88,91)
-  box Other "Hel" w=1537su r3 @[91,94)
+  box Alpha "Hel" w=1537su r3 @[91,94)
   disc pen=0.7 w=0su pre="-" 513su kern="ll" r3 @[94,94)
-  box Other "lo" w=1025su r3 @[94,96)
+  box Alpha "lo" w=1025su r3 @[94,96)
   box AmbCloseQuote "”" w=104su blank=R r4 @[96,99)
   glue blank w=512su x=0 cap=0su r4 @[96,99)
   box Ideo "之" w=1025su wt=0.6 cap=102su r5 @[99,102)
@@ -184,13 +184,13 @@ top pid=2 units=1
   run r13 blank-bearing CJK
 top pid=3 units=1
  unit text indent=0su
-  box Other "The" w=1537su r0 @[236,239)
+  box Alpha "The" w=1537su r0 @[236,239)
   glue word w=257su x=1 cap=257su kern="e v" src r0 @[239,240)
-  box Other "val" w=1537su r0 @[240,243)
+  box Alpha "val" w=1537su r0 @[240,243)
   disc pen=0.7 w=0su pre="-" 513su kern="lu" r0 @[243,243)
-  box Other "ue" w=1025su r0 @[243,245)
+  box Alpha "ue" w=1025su r0 @[243,245)
   glue word w=257su x=1 cap=257su kern="e (" src r0 @[245,246)
-  box Other "(" w=513su r0 @[246,247)
+  box OpenN "(" w=513su r0 @[246,247)
   box object o0 math part=0 asc=477su desc=12su "a=b" w=624su r1 @[247,252)
   pen 0.85 r2
   glue objspace w=284su x=0 cap=0su r2 @[247,252)
@@ -198,15 +198,15 @@ top pid=3 units=1
   pen 0.8 r4
   glue objspace w=284su x=0 cap=0su r4 @[247,252)
   box object o0 math part=2 asc=700su desc=10su w=602su r5 @[247,252)
-  box Other ")" w=513su r6 @[252,253)
+  box CloseN ")" w=513su r6 @[252,253)
   glue word w=257su x=1 cap=257su kern=") h" src r6 @[253,254)
-  box Other "holds," w=3073su r6 @[254,260)
+  box Alpha "holds," w=3073su r6 @[254,260)
   glue word w=257su x=1 cap=257su kern=", a" src r6 @[260,261)
-  box Other "and" w=1537su r6 @[261,264)
+  box Alpha "and" w=1537su r6 @[261,264)
   glue word w=257su x=1 cap=257su kern="d s" src r6 @[264,265)
-  box Other "so" w=1025su r6 @[265,267)
+  box Alpha "so" w=1025su r6 @[265,267)
   glue word w=257su x=1 cap=257su kern="o d" src r6 @[267,268)
-  box Other "does" w=2049su r6 @[268,272)
+  box Alpha "does" w=2049su r6 @[268,272)
   glue word w=257su x=1 cap=257su src r6 @[272,272)
   box object o1 math part=0 asc=600su desc=76su "x+y+z" w=1540su r7 @[273,280)
   pen 0.95 r8
@@ -215,12 +215,12 @@ top pid=3 units=1
   pen 0.95 r10
   glue objspace w=228su x=0 cap=0su r10 @[273,280)
   box object o1 math part=2 asc=473su desc=28su w=481su r11 @[273,280)
-  box Other "," w=513su r12 @[280,281)
+  box Infix "," w=513su r12 @[280,281)
   glue word w=257su x=1 cap=257su kern=", t" src r12 @[281,282)
-  box Other "too:" w=2049su r12 @[282,286)
+  box Alpha "too:" w=2049su r12 @[282,286)
   glue word w=257su x=1 cap=257su src r12 @[286,286)
   box object o2 math part=0 asc=685su desc=12su "f" w=429su r13 @[287,290)
-  box Other "th." w=1537su r14 @[290,293)
+  box Alpha "th." w=1537su r14 @[290,293)
   obj o0 math parts=3 edges=Alpha/Alpha src="a=b" [w=624su asc=477su desc=12su] [w=774su asc=377su desc=0su glue=284su] [w=602su asc=700su desc=10su glue=284su]
   obj o1 math parts=3 edges=Alpha/Alpha src="x+y+z" [w=1540su asc=600su desc=76su] [w=1608su asc=600su desc=239su glue=228su] [w=481su asc=473su desc=28su glue=228su]
   obj o2 math parts=1 edges=Alpha/Alpha src="f" [w=429su asc=685su desc=12su]
@@ -241,37 +241,37 @@ top pid=3 units=1
   run r14 plain
 top pid=4 units=1
  unit text indent=0su
-  box Other "A" w=513su r0 @[295,296)
+  box Alpha "A" w=513su r0 @[295,296)
   glue word w=257su x=1 cap=257su kern="A p" src r0 @[296,297)
-  box Other "path" w=2049su r0 @[297,301)
+  box Alpha "path" w=2049su r0 @[297,301)
   glue word w=257su x=1 cap=257su kern="h a" src r0 @[301,302)
-  box Other "abc." w=2049su r0 @[302,306)
+  box Alpha "abc." w=2049su r0 @[302,306)
   pen 1.2 r0
-  box Other "def/" w=2049su r0 @[306,310)
-  box Other "ghij" w=2049su r1 @[311,315)
-  box Other "/klmn." w=3073su r2 @[316,322)
+  box Alpha "def/" w=2049su r0 @[306,310)
+  box Alpha "ghij" w=2049su r1 @[311,315)
+  box Solidus "/klmn." w=3073su r2 @[316,322)
   pen 1.2 r2
-  box Other "opq/" w=2049su r2 @[322,326)
+  box Alpha "opq/" w=2049su r2 @[322,326)
   pen 1.2 r2
-  box Other "rst" w=1537su r2 @[326,329)
+  box Alpha "rst" w=1537su r2 @[326,329)
   glue word w=257su x=1 cap=257su kern="t i" src r2 @[329,330)
-  box Other "is" w=1025su r2 @[330,332)
+  box Alpha "is" w=1025su r2 @[330,332)
   glue word w=257su x=1 cap=257su kern="s o" src r2 @[332,333)
-  box Other "one" w=1537su r2 @[333,336)
+  box Alpha "one" w=1537su r2 @[333,336)
   glue word w=257su x=1 cap=257su kern="e t" src r2 @[336,337)
-  box Other "to" w=1025su r2 @[337,339)
+  box Alpha "to" w=1025su r2 @[337,339)
   disc pen=0.7 w=0su pre="-" 513su kern="ok" r2 @[339,339)
-  box Other "ken" w=1537su r2 @[339,342)
+  box Alpha "ken" w=1537su r2 @[339,342)
   glue word w=257su x=1 cap=257su kern="n a" src r2 @[342,343)
-  box Other "across" w=3073su r2 @[343,349)
+  box Alpha "across" w=3073su r2 @[343,349)
   glue word w=257su x=1 cap=257su kern="s i" src r2 @[349,350)
-  box Other "its" w=1537su r2 @[350,353)
+  box Alpha "its" w=1537su r2 @[350,353)
   glue word w=257su x=1 cap=257su kern="s e" src r2 @[353,354)
-  box Other "em" w=1025su r2 @[354,356)
+  box Alpha "em" w=1025su r2 @[354,356)
   disc pen=0.7 w=0su pre="-" 513su kern="mp" r2 @[356,356)
-  box Other "pha" w=1537su r2 @[356,359)
+  box Alpha "pha" w=1537su r2 @[356,359)
   disc pen=0.7 w=0su pre="-" 513su kern="as" r2 @[359,359)
-  box Other "sis." w=2049su r2 @[359,363)
+  box Alpha "sis." w=2049su r2 @[359,363)
   run r0 plain
   run r1 plain BOLD
   run r2 plain

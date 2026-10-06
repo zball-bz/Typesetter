@@ -1115,7 +1115,7 @@ Theme steps: — · findings: 1
 | `resolver/missed:4` | missed | low | P3-03 | grep:plan P3-03 |
 | `resolver/missed:5` | missed | low | P0-09, P1-03, P1-10 | grep:plan P1-10 |
 | `emitter/paragraph-blind-script-context` | adhoc | high | P4-02 | grep:plan P4-02 |
-| `emitter/hardcoded-script-class-tables` | adhoc | high | P4-05 | |
+| `emitter/hardcoded-script-class-tables` | adhoc | high | P4-05 | grep:plan P4-05 |
 | `emitter/punct-compression-control-flow` | adhoc | high | P4-04 | grep:plan P4-04 |
 | `emitter/hyphenation-en-us-only` | adhoc | high | P4-06 | |
 | `emitter/math-only-inline-box` | adhoc | high | P1-13, P3-26 | grep:plan P3-26 |
@@ -1148,7 +1148,7 @@ Theme steps: — · findings: 1
 | `emitter/dump-hides-finite-penalties` | issue | low | P1-12 | grep:plan P1-12 |
 | `emitter/missed:0` | missed | high | P0-10, P4-01 | grep:plan P4-01 |
 | `emitter/missed:1` | missed | medium | P4-02 | grep:plan P4-02 |
-| `emitter/missed:2` | missed | medium | P4-05 | |
+| `emitter/missed:2` | missed | medium | P4-05 | grep:plan P4-05 |
 | `emitter/missed:3` | missed | medium | P1-17 | grep:plan P1-17 |
 | `emitter/missed:4` | missed | medium | P4-02 | grep:plan P4-02 |
 | `emitter/missed:5` | missed | medium | P1-04 | grep:plan P1-04 |

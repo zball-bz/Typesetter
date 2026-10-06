@@ -76,7 +76,7 @@ for (const tsm of walk(fixtures)) {
       // its first character there (a space: one there, or — a space the
       // parser inserted, which has no source — its first non-space); or the
       // markup it was made from (a reference's text, a call's result)
-      const lead = t.match(/^\s*/)[0].length;
+      const lead = t.match(/^[ \t\n]*/)[0].length;  // (ASCII: an ideographic space is a character)
       const first = t.codePointAt(lead);
       const at1 = (b) => src[at] === b;
       if (first === undefined) continue;

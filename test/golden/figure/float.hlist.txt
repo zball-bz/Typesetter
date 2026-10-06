@@ -16,9 +16,9 @@ top pid=0 units=1
   pen 0 r0
   glue blank w=512su x=0 cap=0su owned-by-next r1 @[21,24)
   box OpenW "（" w=513su blank=L r1 @[21,24)
-  box Other "par" w=1537su r2 @[24,27)
+  box Alpha "par" w=1537su r2 @[24,27)
   disc pen=0.7 w=0su pre="-" 513su kern="rs" r2 @[27,27)
-  box Other "shape" w=2561su r2 @[27,32)
+  box Alpha "shape" w=2561su r2 @[27,32)
   box CloseW "）" w=513su blank=R r3 @[32,35)
   box ColonW "：" w=513su blank=R r4 @[35,38)
   glue blank w=512su x=0 cap=0su r4 @[35,38)
@@ -77,7 +77,7 @@ top pid=1 units=1
    box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[210,237)
    pen 0 r0
    glue word w=257su x=1 cap=257su src r1 @[210,237)
-   box Other "1" w=513su r1 @[210,237)
+   box Digit "1" w=513su r1 @[210,237)
    box ColonW "：" w=513su blank=R r2 @[210,237)
    glue blank w=512su x=0 cap=0su r2 @[210,237)
    box Ideo "右" w=1025su wt=0.6 cap=102su r3 @[210,213)
@@ -397,7 +397,7 @@ top pid=4 units=1
    box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[746,767)
    pen 0 r0
    glue word w=257su x=1 cap=257su src r1 @[746,767)
-   box Other "2" w=513su r1 @[746,767)
+   box Digit "2" w=513su r1 @[746,767)
    box ColonW "：" w=513su blank=R r2 @[746,767)
    glue blank w=512su x=0 cap=0su r2 @[746,767)
    box Ideo "左" w=1025su wt=0.6 cap=102su r3 @[746,749)
@@ -465,14 +465,14 @@ top pid=5 units=1
   box Ideo "图" w=1025su wt=0.6 cap=102su r4 @[835,845)
   pen 0 r4
   glue word w=257su x=1 cap=257su src r5 @[835,845)
-  box Other "1" w=513su r5 @[835,845)
+  box Digit "1" w=513su r5 @[835,845)
   glue autospace w=256su x=1 cap=256su r6 @[845,845)
   box Ideo "与" w=1025su wt=0.6 cap=102su r7 @[845,848)
   glue inter w=0su x=0.6 cap=102su r7 @[845,848)
   box Ideo "图" w=1025su wt=0.6 cap=102su r8 @[848,857)
   pen 0 r8
   glue word w=257su x=1 cap=257su src r9 @[848,857)
-  box Other "2" w=513su r9 @[848,857)
+  box Digit "2" w=513su r9 @[848,857)
   glue autospace w=256su x=1 cap=256su r10 @[857,857)
   box Ideo "都" w=1025su wt=0.6 cap=102su r11 @[857,860)
   glue inter w=0su x=0.6 cap=102su r11 @[857,860)

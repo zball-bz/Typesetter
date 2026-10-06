@@ -114,7 +114,7 @@ top pid=2 units=2
   box Ideo "圖" w=1025su wt=0.6 cap=102su r0 @[242,257)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[242,257)
-  box Other "1" w=513su r1 @[242,257)
+  box Digit "1" w=513su r1 @[242,257)
   box ColonW "：" w=513su blank=R r2 @[242,257)
   glue blank w=512su x=0 cap=0su r2 @[242,257)
   box Ideo "塔" w=1025su wt=0.6 cap=102su r3 @[242,245)
@@ -136,7 +136,7 @@ top pid=2 units=2
 top pid=3 units=1
  unit math indent=0su anchor="eq-a" w=5522su asc=967su desc=76su
   cell 0
-   box Other "(1)" w=1537su r0 @[268,294)
+   box OpenN "(1)" w=1537su r0 @[268,294)
    run r0 plain
 top pid=4 units=1
  unit text indent=0su
@@ -150,7 +150,7 @@ top pid=4 units=1
   box Ideo "圖" w=1025su wt=0.6 cap=102su r2 @[306,312)
   pen 0 r2
   glue word w=257su x=1 cap=257su src r3 @[306,312)
-  box Other "1" w=513su r3 @[306,312)
+  box Digit "1" w=513su r3 @[306,312)
   glue word w=257su x=1 cap=257su src r4 @[313,313)
   box Ideo "與" w=1025su wt=0.6 cap=102su r5 @[313,316)
   pen 0 r5
@@ -158,7 +158,7 @@ top pid=4 units=1
   box Ideo "式" w=1025su wt=0.6 cap=102su r7 @[317,322)
   pen 0 r7
   glue word w=257su x=1 cap=257su src r8 @[317,322)
-  box Other "(1)" w=1537su r8 @[317,322)
+  box OpenN "(1)" w=1537su r8 @[317,322)
   box FullStopW "。" w=513su blank=R r9 @[322,325)
   glue blank w=512su x=0 cap=0su r9 @[322,325)
   run r0 letter-spaced CJK

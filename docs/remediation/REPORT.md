@@ -141,6 +141,29 @@ tools/check-spans.mjs 检查全部 213 个 html golden 的 2,835 个 run，结�
 
 **审阅结论：等价实现，并修正一处缺陷。** 渲染与预测的偏差没有变化（≤0.016px）；拼接空格的预算修正属于改进。
 
+## P4-05 UCD 字符类（RULES_VERSION 1）与 Unicode 控制符（T5 步骤 8）
+
+**变化：**
+1. **默认规则改为 RULES_VERSION 1。** 由 engine/rules/locale/default.def 编译，链为 und ← en ← zh-Hans：
+   - und 由 UAX #14 派生字母、数字、窄标点、谚文和控制符；
+   - zh-Hans 保留 compat 的宽区间与 clreq 标点，再补上新覆盖。
+   tools/rules-diff 按行为投影（引擎读取的列、空白、歧义/控制类）比较。test/golden/RULES 记录允许的变化：60 段，另加"任意码位仅字距列"。--check 通过；unitTextRules 把清单外的每个码位钉在 compat 的字面谓词上。
+2. **禁则（nostart 列）。** 闭合与句读、小假名、迭代记号、ー、〜、・不在行首：它们之前不断，经过空格或边界胶也不断；・的前空白不可断。代码网格的折行与 lintHList 读同一列；typst 语料 199 篇过 lint。
+3. **谚文。** 作为 CJK 盒，音节间可断；不加中西间距；作为歧义标点的证据时不算 CJK；软换行读作空格。U+3000 是 CJK 盒，不加间距。
+4. **纯文本断行控制符。**
+   - NBSP、U+2007：可伸展、不可断、不折叠；
+   - NNBSP：留在词内；
+   - ZWSP：只是断点；
+   - WJ、BOM：前后都不断；
+   - SHY：词的唯一连字点，断开时出连字符。
+5. **字距资格按类判定**（kern 列），弯引号与破折号也有资格。
+6. **代码网格宽度按 UAX #11。** W、F 占两列，半角片假名改为一列。
+7. **分类表改为两级表**（约 38KB，两次读取）。RULES_VERSION 1 有 2,094 个区间，逐字二分查找曾使 87K 引擎时间 +2.7ms。
+
+**范围：** 引擎 golden 只有 hlist 变化（201 个文件：类名 Other → Alpha/Digit/Infix 等；引号、破折号、↩、⚠ 旁的词间胶新增 kern 上下文，mock 下宽度仍为 257su）。breaks、blocks、layout、html 均不变；WASM 一致。新用例 cjk/controls 覆盖控制符、谚文与新覆盖字符。真实语料 340 篇（mock）断点 0 变化；语义页不变。
+
+**审阅结论：改进。** 新覆盖字符与控制符按规范处理，现有用例与语料的排版不变；真实字体下引号、破折号旁的字距预算更准确。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。

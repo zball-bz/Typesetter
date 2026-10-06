@@ -95,15 +95,15 @@ top pid=0 units=1
   run r17 blank-bearing CJK
 top pid=1 units=1
  unit text indent=0su
-  box Other "Euler's" w=3585su r0 @[119,126)
+  box Alpha "Euler's" w=3585su r0 @[119,126)
   glue word w=257su x=1 cap=257su kern="s i" src r0 @[126,127)
-  box Other "iden" w=2049su r0 @[127,131)
+  box Alpha "iden" w=2049su r0 @[127,131)
   disc pen=0.7 w=0su pre="-" 513su kern="nt" r0 @[131,131)
-  box Other "ti" w=1025su r0 @[131,133)
+  box Alpha "ti" w=1025su r0 @[131,133)
   disc pen=0.7 w=0su pre="-" 513su kern="it" r0 @[133,133)
-  box Other "ty" w=1025su r0 @[133,135)
+  box Alpha "ty" w=1025su r0 @[133,135)
   glue word w=257su x=1 cap=257su kern="y l" src r0 @[135,136)
-  box Other "links" w=2561su r0 @[136,141)
+  box Alpha "links" w=2561su r0 @[136,141)
   glue word w=257su x=1 cap=257su src r0 @[141,141)
   box object o0 math part=0 asc=951su desc=76su "e^(i pi) + 1 = 0" w=2258su r1 @[142,160)
   pen 0.95 r2
@@ -117,7 +117,7 @@ top pid=1 units=1
   box object o0 math part=3 asc=721su desc=14su w=511su r7 @[142,160)
   pen 0 r7
   glue word w=257su x=1 cap=257su src r8 @[161,161)
-  box Other "with" w=2049su r8 @[161,165)
+  box Alpha "with" w=2049su r8 @[161,165)
   glue word w=257su x=1 cap=257su src r8 @[165,165)
   box object o1 math part=0 asc=478su desc=202su "phi = (1 + 5^(1/2))/2" w=781su r9 @[166,189)
   pen 0.85 r10
@@ -128,11 +128,11 @@ top pid=1 units=1
   box object o1 math part=2 asc=1309su desc=353su w=1854su r13 @[166,189)
   pen 0 r13
   glue word w=257su x=1 cap=257su src r14 @[190,190)
-  box Other "in" w=1025su r14 @[190,192)
+  box Alpha "in" w=1025su r14 @[190,192)
   glue word w=257su x=1 cap=257su kern="n o" src r14 @[192,193)
-  box Other "one" w=1537su r14 @[193,196)
+  box Alpha "one" w=1537su r14 @[193,196)
   glue word w=257su x=1 cap=257su kern="e l" src r14 @[196,197)
-  box Other "line." w=2561su r14 @[197,202)
+  box Alpha "line." w=2561su r14 @[197,202)
   obj o0 math parts=4 edges=Alpha/Alpha src="e^(i pi) + 1 = 0" [w=2258su asc=951su desc=76su] [w=511su asc=727su desc=7su glue=228su] [w=774su asc=377su desc=0su glue=284su] [w=511su asc=721su desc=14su glue=284su]
   obj o1 math parts=3 edges=Alpha/Alpha src="phi = (1 + 5^(1/2))/2" [w=781su asc=478su desc=202su] [w=774su asc=377su desc=0su glue=284su] [w=1854su asc=1309su desc=353su glue=284su]
   run r0 plain

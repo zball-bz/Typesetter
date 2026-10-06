@@ -1,0 +1,21 @@
+doc @[0,509)
+  para @[0,197)
+    text @[0,7) str="Stretch "
+    splice @[8,19) expr="(\"10 km\")"
+    text @[20,23) str=" and "
+    splice @[24,34) expr="(\"5 kg\")"
+    text @[35,54) str=" never break; a long "
+    splice @[55,100) expr="(\"super​califragilistic​expialidocious\")"
+    text @[101,133) str=" breaks at its zero-width spaces; "
+    splice @[134,160) expr="(\"ex­tra­or­di­nary\")"
+    text @[161,197) str=" hyphenates at its soft hyphens only."
+  para @[199,261)
+    text @[199,205) str="中文"
+    splice @[205,219) expr="(\"字⁠句\")"
+    text @[219,261) str="不分开，　全角空格后接文字。"
+  para @[263,352)
+    text @[263,352) str="ちょっと待ってーー、繰り返し々々、ジョン・スミス、範囲1〜2。"
+  para @[354,461)
+    text @[354,461) str="한국어 텍스트와 English 단어가 섞인 문장에서는 자간 대신 띄어쓰기를 지킵니다."
+  para @[463,508)
+    text @[463,508) str="括号〖白括号〗与｟白圆括号｠。"

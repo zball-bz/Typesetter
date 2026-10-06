@@ -52,75 +52,165 @@ function ucdProperty(file, map, dflt) {
   return out;
 }
 
-// a rules version → per-codepoint (class, kern) and the class columns
-export function buildRules(defPath = join(root, 'engine/rules/locale/compat.def')) {
+// a rules version → per-codepoint (class, kern) and the class columns.
+// Rows (applied in this order): DEFAULT; LB(lb…, Class) — UAX #14 classes,
+// the first matching row wins; WIDE ranges + WIDE_DEFAULT (a codepoint in
+// them is wide, the default class unless named later); SCRIPT(script…,
+// Class) — Scripts.txt, within the WIDE ranges; CLASS_LB(lb…, Class) — as
+// LB, within the WIDE ranges, over everything so far; CLASS(Class, cp…); then COLUMN, KERN_CUTOFF, BLANK, ADVANCE, CONST.
+// INCLUDE(file) splices a file (relative to the including one). Without
+// COLUMN(wide) a class's width comes from the WIDE ranges (compat), without
+// COLUMN(kern) its kerning from KERN_CUTOFF.
+const ucdCache = new Map();
+function ucdColumn(file) {
+  if (!ucdCache.has(file)) ucdCache.set(file, ucdProperty(file, (v) => v, file === 'LineBreak.txt' ? 'XX' : 'Unknown'));
+  return ucdCache.get(file);
+}
+function expand(path, seen = new Set()) {
+  if (seen.has(path)) throw new Error(`${path}: INCLUDE cycle`);
+  seen.add(path);
+  const out = [];
+  for (const line of strip(readFileSync(path, 'utf8'))) {
+    const m = /^INCLUDE\((.+)\)$/.exec(line);
+    if (m) out.push(...expand(join(dirname(path), m[1].trim()), seen));
+    else out.push(line);
+  }
+  return out;
+}
+export function buildRules(defPath = join(root, 'engine/rules/locale/default.def')) {
   const classes = classList();
   const ccIndex = (n) => {
     const i = classes.indexOf(n);
     if (i < 0) throw new Error(`${defPath}: unknown class ${n}`);
     return i;
   };
-  const lines = strip(readFileSync(defPath, 'utf8'));
+  const lines = expand(defPath);
   const version = Number(rowsOf(lines, 'RULES_VERSION')[0]);
   const cc = new Uint8Array(MAX).fill(ccIndex(rowsOf(lines, 'DEFAULT')[0]));
+  const split = (row) => row.split(',').map((x) => x.trim());
+  const byLb = (rows, onlyUnset, within = null) => {
+    if (!rows.length) return;
+    const lb = ucdColumn('LineBreak.txt');
+    const set = new Uint8Array(MAX);
+    for (const row of rows) {
+      const [lbs, name] = split(row);
+      const want = new Set(lbs.split(/\s+/));
+      const c = ccIndex(name);
+      for (let cp = 0; cp < MAX; cp++)
+        if (want.has(lb[cp]) && !(onlyUnset && set[cp]) && (!within || within[cp])) {
+          cc[cp] = c;
+          set[cp] = 1;
+        }
+    }
+  };
+  byLb(rowsOf(lines, 'LB'), true);
   const wide = new Uint8Array(MAX);
   for (const spec of rowsOf(lines, 'WIDE'))
     for (const r of spec.split(/\s+/)) {
       const [a, b] = r.split('..').map((h) => parseInt(h, 16));
       for (let cp = a; cp <= (b ?? a); cp++) wide[cp] = 1;
     }
-  const wideDefault = ccIndex(rowsOf(lines, 'WIDE_DEFAULT')[0]);
-  for (let cp = 0; cp < MAX; cp++) if (wide[cp]) cc[cp] = wideDefault;
+  const wideDefaultRow = rowsOf(lines, 'WIDE_DEFAULT')[0];
+  if (wideDefaultRow) {
+    const wideDefault = ccIndex(wideDefaultRow);
+    for (let cp = 0; cp < MAX; cp++) if (wide[cp]) cc[cp] = wideDefault;
+  }
+  const scriptRows = rowsOf(lines, 'SCRIPT');
+  if (scriptRows.length) {
+    const sc = ucdColumn('Scripts.txt');
+    for (const row of scriptRows) {
+      const [names, name] = split(row);
+      const want = new Set(names.split(/\s+/));
+      const c = ccIndex(name);
+      // (the Han section's: within its WIDE ranges)
+      for (let cp = 0; cp < MAX; cp++) if (wide[cp] && want.has(sc[cp])) cc[cp] = c;
+    }
+  }
+  byLb(rowsOf(lines, 'CLASS_LB'), false, wide);  // (the Han section's: within its ranges)
   for (const row of rowsOf(lines, 'CLASS')) {
-    const [name, cps] = row.split(',').map((s) => s.trim());
+    const [name, cps] = split(row);
     for (const h of cps.split(/\s+/)) cc[parseInt(h, 16)] = ccIndex(name);
   }
-  // a class is wide everywhere or nowhere
-  const wideOf = new Int8Array(classes.length).fill(-1);
-  for (let cp = 0; cp < MAX; cp++) {
-    const c = cc[cp];
-    if (wideOf[c] === -1) wideOf[c] = wide[cp];
-    else if (wideOf[c] !== wide[cp]) throw new Error(`${defPath}: class ${classes[c]} is both wide and narrow`);
+  const columns = {};
+  const colRows = Object.fromEntries(rowsOf(lines, 'COLUMN').map((row) => {
+    const [name, members] = split(row);
+    return [name, new Set(members.split(/\s+/).map(ccIndex))];
+  }));
+  if (colRows.wide) {
+    columns.wide = classes.map((_, c) => colRows.wide.has(c));
+  } else {
+    // a class is wide everywhere or nowhere (compat: the WIDE ranges say)
+    const wideOf = new Int8Array(classes.length).fill(-1);
+    for (let cp = 0; cp < MAX; cp++) {
+      const c = cc[cp];
+      if (wideOf[c] === -1) wideOf[c] = wide[cp];
+      else if (wideOf[c] !== wide[cp]) throw new Error(`${defPath}: class ${classes[c]} is both wide and narrow`);
+    }
+    columns.wide = classes.map((_, c) => wideOf[c] === 1);
   }
-  const columns = { wide: classes.map((_, c) => wideOf[c] === 1) };
-  for (const row of rowsOf(lines, 'COLUMN')) {
-    const [name, members] = row.split(',').map((s) => s.trim());
-    const set = new Set(members.split(/\s+/).map(ccIndex));
+  for (const [name, set] of Object.entries(colRows)) {
+    if (name === 'wide' || name === 'kern') continue;
     columns[name] = classes.map((_, c) => set.has(c));
   }
-  const cutoff = parseInt(rowsOf(lines, 'KERN_CUTOFF')[0], 16);
   const kern = new Uint8Array(MAX);
-  for (let cp = 0; cp < MAX; cp++) kern[cp] = !wide[cp] && cp < cutoff ? 1 : 0;
-  const consts = rowsOf(lines, 'CONST').map((r) => r.split(',').map((s) => s.trim()));
+  if (colRows.kern) {
+    for (let cp = 0; cp < MAX; cp++) kern[cp] = colRows.kern.has(cc[cp]) ? 1 : 0;
+  } else {
+    const cutoff = parseInt(rowsOf(lines, 'KERN_CUTOFF')[0], 16);
+    for (let cp = 0; cp < MAX; cp++) kern[cp] = !columns.wide[cc[cp]] && cp < cutoff ? 1 : 0;
+  }
+  const consts = rowsOf(lines, 'CONST').map((r) => r.split(',').map((x) => x.trim()));
   // (plan P4-04) blanks per class, defined advances
   const blanks = classes.map(() => [0, 0]);
   for (const row of rowsOf(lines, 'BLANK')) {
-    const [members, l, r] = row.split(',').map((s) => s.trim());
+    const [members, l, r] = split(row);
     for (const n of members.split(/\s+/)) blanks[ccIndex(n)] = [Number(l), Number(r)];
   }
   const advances = rowsOf(lines, 'ADVANCE').map((row) => {
-    const [cps, em] = row.split(',').map((s) => s.trim());
+    const [cps, em] = split(row);
     const seq = cps.split(/\s+/).map((h) => parseInt(h, 16));
     if (seq.length > 3) throw new Error(`${defPath}: an ADVANCE sequence holds at most 3 codepoints`);
     return { seq, em: Number(em) };
   }).sort((a, b) => b.seq.length - a.seq.length);
-  return { version, classes, cc, kern, columns, consts, blanks, advances };
+  // (plan P4-05) what the engine reads of a codepoint, the columns compat
+  // lacked derived as compat's engine read them — rules-diff compares this
+  const col = (name, c, dflt) => (columns[name] ? columns[name][c] : dflt);
+  const behaviour = (cp) => {
+    const c = cc[cp];
+    const w = columns.wide[c], o = col('open', c, false), cl = col('close', c, false);
+    const punct = col('punct', c, o || cl);
+    // (a class the shaper reads by name: an ambiguous mark, a space, a break control)
+    const named = /^(Amb|Space$|NbSpace$|NbRigid$|ZwSpace$|WordJoiner$|SoftHyphen$|NewLine$)/.test(classes[c]) ? classes[c] : '';
+    return [w && 'wide', punct && 'punct', o && 'open', cl && 'close', col('nostart', c, cl) && 'nostart',
+      col('autospace', c, w && !punct) && 'autospace', col('ambwide', c, w) && 'ambwide', col('joins', c, false) && 'joins',
+      kern[cp] && 'kern', blanks[c].some((x) => x) && `blank${blanks[c][0]}/${blanks[c][1]}`, named]
+      .filter(Boolean).join('+') || '-';
+  };
+  return { version, classes, cc, kern, columns, consts, blanks, advances, behaviour };
 }
 
 function generate() {
-  const R = buildRules();
+  const R = buildRules();  // (plan P4-05) engine/rules/locale/default.def
   const gcbIdx = Object.fromEntries(GCB.map((g, i) => [g, i]));
   const eawIdx = Object.fromEntries(EAW.map((g, i) => [g, i]));
   const gcb = ucdProperty('GraphemeBreakProperty.txt', (v) => gcbIdx[v], 0);
   const eaw = ucdProperty('EastAsianWidth.txt', (v) => eawIdx[v], 0);
   const ext = ucdProperty('emoji-data.txt', (v) => (v === 'Extended_Pictographic' ? 1 : undefined), 0);
 
-  // (class, kern) ranges and UCD-column ranges, each covering [0, 0x110000)
-  const ccRanges = [];
-  for (let cp = 0; cp < MAX; cp++) {
-    const v = (R.cc[cp] << 1) | R.kern[cp];
-    if (!ccRanges.length || ccRanges[ccRanges.length - 1][1] !== v) ccRanges.push([cp, v]);
+  // (plan P4-05) (class, kern) as a two-level table — [cp >> 7] → one of the
+  // deduplicated blocks of 128 — and the UCD columns as ranges, covering [0, 0x110000)
+  const blockIds = new Map(), blocks = [], index = [];
+  for (let b = 0; b < MAX / 128; b++) {
+    const vals = [];
+    for (let k = 0; k < 128; k++) vals.push((R.cc[b * 128 + k] << 1) | R.kern[b * 128 + k]);
+    const key = vals.join(',');
+    if (!blockIds.has(key)) {
+      blockIds.set(key, blocks.length);
+      blocks.push(vals);
+    }
+    index.push(blockIds.get(key));
   }
+  if (blocks.length > 256) throw new Error('the class table needs more than 256 blocks');
   const ucdRanges = [];
   for (let cp = 0; cp < MAX; cp++) {
     const v = gcb[cp] | (eaw[cp] << 4) | (ext[cp] << 7);
@@ -134,7 +224,7 @@ function generate() {
     for (let i = 0; i < items.length; i += per) out.push('    ' + items.slice(i, i + per).join(', ') + ',');
     return out.join('\n');
   };
-  const h = `// GENERATED by tools/ucdc.mjs from engine/rules (classes.def, locale/compat.def) and the
+  const h = `// GENERATED by tools/ucdc.mjs from engine/rules (classes.def, locale/default.def) and the
 // pinned UCD ${UNICODE_VERSION} — do not edit. API: engine/src/shape/textrules.h.
 #pragma once
 #include <cstdint>
@@ -155,10 +245,13 @@ constexpr std::uint8_t kCCFlags[] = {${flags.join(', ')}};
 enum class GCB : std::uint8_t { ${GCB.join(', ')} };
 enum class EAW : std::uint8_t { ${EAW.join(', ')} };
 
-// [start, next start): class << 1 | kern-eligible
-struct CCRange { std::uint32_t start; std::uint8_t v; };
-constexpr CCRange kCCRanges[] = {
-${wrap(ccRanges.map(([a, v]) => `{${hex(a)}, ${v}}`), 6)}
+// (plan P4-05) class << 1 | kern-eligible, two levels: kCCIndex[cp >> 7]
+// names the block of 128 that holds cp
+constexpr std::uint8_t kCCIndex[${index.length}] = {
+${wrap(index, 32)}
+};
+constexpr std::uint8_t kCCBlocks[${blocks.length}][128] = {
+${blocks.map((b) => '    {' + b.join(', ') + '},').join('\n')}
 };
 // [start, next start): gcb | eaw << 4 | extPict << 7
 struct UcdRange { std::uint32_t start; std::uint8_t v; };

@@ -23,20 +23,25 @@ const arg = (name, dflt) => {
 const A = buildRules(arg('--a', join(root, 'engine/rules/locale/compat.def')));
 const bPath = arg('--b');
 if (!bPath) {
-  console.error('usage: rules-diff.mjs --b <rules.def> [--a <rules.def>] [--corpus] [--allow f] [--check]');
+  console.error('usage: rules-diff.mjs --b <rules.def> [--a <rules.def>] [--corpus] [--allow f] [--check]  (the engine\'s: engine/rules/locale/default.def)');
   process.exit(2);
 }
 const B = buildRules(bPath);
-const cols = [...new Set([...Object.keys(A.columns), ...Object.keys(B.columns)])];
-const colsOf = (R, c) => cols.filter((n) => R.columns[n]?.[c]).join('+') || '-';
-const desc = (R, cp) => `${R.classes[R.cc[cp]]}[${colsOf(R, R.cc[cp])}${R.kern[cp] ? '+kern' : ''}]`;
+// (plan P4-05) a codepoint as the engine reads it — its columns, blanks and
+// ambiguous kind; class names differ between rules versions (compat's
+// Other is RULES_VERSION 1's Alpha, Digit, …) and are not compared
+const desc = (R, cp) => R.behaviour(cp);
 
+// the allowlist: `U+XXXX[..U+YYYY] [kern]` per line — any change there, or
+// (kern) only its kerning (plan P4-05: eligibility is a class's column)
 const allowed = [];
 for (const line of existsSync(arg('--allow', '')) ? readFileSync(arg('--allow'), 'utf8').split('\n') : []) {
-  const m = /U\+([0-9A-Fa-f]+)(?:\.\.U\+([0-9A-Fa-f]+))?/.exec(line);
-  if (m) allowed.push([parseInt(m[1], 16), parseInt(m[2] ?? m[1], 16)]);
+  const m = /^\s*U\+([0-9A-Fa-f]+)(?:\.\.U\+([0-9A-Fa-f]+))?(\s+kern)?/.exec(line);
+  if (m) allowed.push([parseInt(m[1], 16), parseInt(m[2] ?? m[1], 16), !!m[3]]);
 }
-const isAllowed = (cp) => allowed.some(([a, b]) => cp >= a && cp <= b);
+const strip = (x) => x.split('+').filter((t) => t && t !== '-' && t !== 'kern').join('+');
+const kernOnly = (a, b) => strip(a) === strip(b);
+const isAllowed = (cp, a, b) => allowed.some(([lo, hi, k]) => cp >= lo && cp <= hi && (!k || kernOnly(a, b)));
 
 // codepoints, as ranges of identical changes
 let changes = 0, unexpected = 0;
@@ -49,7 +54,7 @@ for (let cp = 0; cp < 0x110000;) {
   let end = cp;
   while (end + 1 < 0x110000 && desc(A, end + 1) === a && desc(B, end + 1) === b) end++;
   const hex = (n) => 'U+' + n.toString(16).toUpperCase().padStart(4, '0');
-  const ok = isAllowed(cp) && isAllowed(end);
+  const ok = isAllowed(cp, a, b) && isAllowed(end, a, b);
   console.log(`${ok ? 'allowed ' : ''}${hex(cp)}${end > cp ? '..' + hex(end) : ''}  ${a} → ${b}`);
   changes += end - cp + 1;
   if (!ok) unexpected += end - cp + 1;

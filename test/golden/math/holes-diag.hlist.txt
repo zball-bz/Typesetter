@@ -1,12 +1,12 @@
 top pid=0 units=1
  unit text indent=0su
-  box Other "Holes:" w=3073su r0 @[49,55)
+  box Alpha "Holes:" w=3073su r0 @[49,55)
   glue word w=257su x=1 cap=257su src r0 @[55,55)
   box object o0 math part=0 asc=964su desc=12su "x^-3" w=1490su r1 @[56,62)
-  box Other "," w=513su r2 @[62,63)
+  box Infix "," w=513su r2 @[62,63)
   glue word w=257su x=1 cap=257su src r2 @[63,63)
   box object o1 math part=0 asc=964su desc=12su "e^(4 pi i)" w=1615su r3 @[64,83)
-  box Other "," w=513su r4 @[83,84)
+  box Infix "," w=513su r4 @[83,84)
   glue word w=257su x=1 cap=257su src r4 @[84,84)
   box object o2 math part=0 asc=723su desc=76su "2.5 + 1" w=2307su r5 @[85,101)
   pen 0.95 r6
@@ -14,7 +14,7 @@ top pid=0 units=1
   box object o2 math part=1 asc=727su desc=7su w=511su r7 @[85,101)
   pen 0 r7
   glue word w=257su x=1 cap=257su src r8 @[102,102)
-  box Other "and" w=1537su r8 @[102,105)
+  box Alpha "and" w=1537su r8 @[102,105)
   glue word w=257su x=1 cap=257su src r8 @[105,105)
   box object o3 math part=0 asc=600su desc=76su "a + \"text\" + b" w=1625su r9 @[106,125)
   pen 0.95 r10
@@ -23,7 +23,7 @@ top pid=0 units=1
   pen 0.95 r12
   glue objspace w=228su x=0 cap=0su r12 @[106,125)
   box object o3 math part=2 asc=700su desc=10su w=602su r13 @[106,125)
-  box Other "." w=513su r14 @[125,126)
+  box Infix "." w=513su r14 @[125,126)
   obj o0 math parts=1 edges=Alpha/Alpha src="x^-3" [w=1490su asc=964su desc=12su]
   obj o1 math parts=1 edges=Alpha/Alpha src="e^(4 pi i)" [w=1615su asc=964su desc=12su]
   obj o2 math parts=2 edges=Alpha/Alpha src="2.5 + 1" [w=2307su asc=723su desc=76su] [w=511su asc=727su desc=7su glue=228su]
@@ -45,25 +45,25 @@ top pid=0 units=1
   run r14 plain
 top pid=1 units=1
  unit text indent=0su
-  box Other "A" w=513su r0 @[128,129)
+  box Alpha "A" w=513su r0 @[128,129)
   glue word w=257su x=1 cap=257su kern="A f" src r0 @[129,130)
-  box Other "fail" w=2049su r0 @[130,134)
+  box Alpha "fail" w=2049su r0 @[130,134)
   disc pen=0.7 w=0su pre="-" 513su kern="li" r0 @[134,134)
-  box Other "ing" w=1537su r0 @[134,137)
+  box Alpha "ing" w=1537su r0 @[134,137)
   glue word w=257su x=1 cap=257su kern="g h" src r0 @[137,138)
-  box Other "hole" w=2049su r0 @[138,142)
+  box Alpha "hole" w=2049su r0 @[138,142)
   glue word w=257su x=1 cap=257su kern="e s" src r0 @[142,143)
-  box Other "stays" w=2561su r0 @[143,148)
+  box Alpha "stays" w=2561su r0 @[143,148)
   glue word w=257su x=1 cap=257su kern="s i" src r0 @[148,149)
-  box Other "in" w=1025su r0 @[149,151)
+  box Alpha "in" w=1025su r0 @[149,151)
   glue word w=257su x=1 cap=257su kern="n i" src r0 @[151,152)
-  box Other "its" w=1537su r0 @[152,155)
+  box Alpha "its" w=1537su r0 @[152,155)
   glue word w=257su x=1 cap=257su kern="s f" src r0 @[155,156)
-  box Other "for" w=1537su r0 @[156,159)
+  box Alpha "for" w=1537su r0 @[156,159)
   disc pen=0.7 w=0su pre="-" 513su kern="rm" r0 @[159,159)
-  box Other "mu" w=1025su r0 @[159,161)
+  box Alpha "mu" w=1025su r0 @[159,161)
   disc pen=0.7 w=0su pre="-" 513su kern="ul" r0 @[161,161)
-  box Other "la:" w=1537su r0 @[161,164)
+  box Alpha "la:" w=1537su r0 @[161,164)
   glue word w=257su x=1 cap=257su src r0 @[164,164)
   box object o0 math part=0 asc=479su desc=239su "y = ⚠ + 1" w=607su r1 @[165,191)
   pen 0.85 r2
@@ -75,7 +75,7 @@ top pid=1 units=1
   pen 0.95 r6
   glue objspace w=228su x=0 cap=0su r6 @[165,191)
   box object o0 math part=3 asc=727su desc=7su w=511su r7 @[165,191)
-  box Other "." w=513su r8 @[191,192)
+  box Infix "." w=513su r8 @[191,192)
   obj o0 math parts=4 edges=Alpha/Alpha src="y = ⚠ + 1" [w=607su asc=479su desc=239su] [w=774su asc=377su desc=0su glue=284su] [w=20304su asc=819su desc=205su glue=284su] [w=511su asc=727su desc=7su glue=228su]
   run r0 plain
   run r1 object
@@ -88,27 +88,27 @@ top pid=1 units=1
   run r8 plain
 top pid=2 units=1
  unit text indent=0su
-  box Other "Val" w=1537su r0 @[194,197)
+  box Alpha "Val" w=1537su r0 @[194,197)
   disc pen=0.7 w=0su pre="-" 513su kern="lu" r0 @[197,197)
-  box Other "ues" w=1537su r0 @[197,200)
+  box Alpha "ues" w=1537su r0 @[197,200)
   glue word w=257su x=1 cap=257su kern="s f" src r0 @[200,201)
-  box Other "from" w=2049su r0 @[201,205)
+  box Alpha "from" w=2049su r0 @[201,205)
   glue word w=257su x=1 cap=257su kern="m c" src r0 @[205,206)
-  box Other "code:" w=2561su r0 @[206,211)
+  box Alpha "code:" w=2561su r0 @[206,211)
   glue word w=257su x=1 cap=257su src r0 @[211,211)
   box object o0 math part=0 asc=967su desc=243su "p^2 + -3" w=2013su r1 @[212,234)
   pen 0.95 r2
   glue objspace w=228su x=0 cap=0su r2 @[212,234)
   box object o0 math part=1 asc=719su desc=17su w=1285su r3 @[212,234)
-  box Other "," w=513su r4 @[234,235)
+  box Infix "," w=513su r4 @[234,235)
   glue word w=257su x=1 cap=257su src r4 @[235,235)
   box object o1 math part=0 asc=479su desc=20su "alpha" w=674su r5 @[236,256)
   pen 0 r5
   glue word w=257su x=1 cap=257su src r6 @[257,257)
-  box Other "and" w=1537su r6 @[257,260)
+  box Alpha "and" w=1537su r6 @[257,260)
   glue word w=257su x=1 cap=257su src r6 @[260,260)
   box object o2 math part=0 asc=912su desc=353su "frac(1, 2)" w=562su r7 @[261,287)
-  box Other "." w=513su r8 @[287,288)
+  box Infix "." w=513su r8 @[287,288)
   obj o0 math parts=2 edges=Alpha/Alpha src="p^2 + -3" [w=2013su asc=967su desc=243su] [w=1285su asc=719su desc=17su glue=228su]
   obj o1 math parts=1 edges=Alpha/Alpha src="alpha" [w=674su asc=479su desc=20su]
   obj o2 math parts=1 edges=Alpha/Alpha src="frac(1, 2)" [w=562su asc=912su desc=353su]
@@ -123,27 +123,27 @@ top pid=2 units=1
   run r8 plain
 top pid=3 units=1
  unit text indent=0su
-  box Other "A" w=513su r0 @[290,291)
+  box Alpha "A" w=513su r0 @[290,291)
   glue word w=257su x=1 cap=257su kern="A l" src r0 @[291,292)
-  box Other "lit" w=1537su r0 @[292,295)
+  box Alpha "lit" w=1537su r0 @[292,295)
   disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[295,295)
-  box Other "er" w=1025su r0 @[295,297)
+  box Alpha "er" w=1025su r0 @[295,297)
   disc pen=0.7 w=0su pre="-" 513su kern="ra" r0 @[297,297)
-  box Other "al" w=1025su r0 @[297,299)
+  box Alpha "al" w=1025su r0 @[297,299)
   glue word w=257su x=1 cap=257su kern="l h" src r0 @[299,300)
-  box Other "hash:" w=2561su r0 @[300,305)
+  box Alpha "hash:" w=2561su r0 @[300,305)
   glue word w=257su x=1 cap=257su src r0 @[305,305)
   box object o0 math part=0 asc=707su desc=10su "\\#A" w=1300su r1 @[306,311)
-  box Other ";" w=513su r2 @[311,312)
+  box Infix ";" w=513su r2 @[311,312)
   glue word w=257su x=1 cap=257su kern="; a" src r2 @[312,313)
-  box Other "a" w=513su r2 @[313,314)
+  box Alpha "a" w=513su r2 @[313,314)
   glue word w=257su x=1 cap=257su kern="a s" src r2 @[314,315)
-  box Other "stray" w=2561su r2 @[315,320)
+  box Alpha "stray" w=2561su r2 @[315,320)
   glue word w=257su x=1 cap=257su kern="y o" src r2 @[320,321)
-  box Other "one:" w=2049su r2 @[321,325)
+  box Alpha "one:" w=2049su r2 @[321,325)
   glue word w=257su x=1 cap=257su src r2 @[325,325)
   box object o1 math part=0 asc=707su desc=12su "a # b" w=1738su r3 @[326,333)
-  box Other "." w=513su r4 @[333,334)
+  box Infix "." w=513su r4 @[333,334)
   obj o0 math parts=1 edges=Alpha/Alpha src="\\#A" [w=1300su asc=707su desc=10su]
   obj o1 math parts=1 edges=Alpha/Alpha src="a # b" [w=1738su asc=707su desc=12su]
   run r0 plain

@@ -1,0 +1,81 @@
+# The rules the engine goldens were made with (plan P4-05; D-X04). A change
+# of the rules is deliberate and re-records the goldens: engine/rules/locale/
+# default.def (RULES_VERSION 1: und ← en ← zh-Hans) over the pinned UCD.
+# tools/rules-diff.mjs --b engine/rules/locale/default.def --allow
+# test/golden/RULES --corpus --check passes only the changes listed here
+# from compat (RULES_VERSION 0); a line is U+X[..U+Y] [kern] — any change
+# there, or its kerning only.
+RULES_VERSION 1
+UNICODE 17.0.0
+
+# kerning is a class column now, not a codepoint cutoff
+U+0000..U+10FFFF kern
+
+# line ends, spaces and the break controls the shaper reads (NBSP, figure
+# space, NNBSP, soft hyphen, ZWSP, word joiner, BOM)
+U+000A..U+000D
+U+0020
+U+0085
+U+00A0
+U+00AD
+U+2007
+U+200B
+U+2028..U+2029
+U+202F
+U+2060
+U+FEFF
+
+# Hangul: its own class (a CJK box; no CJK–Latin glue, no seamless join)
+U+1100..U+11FF
+U+302E..U+302F
+U+3131..U+318E
+U+3200..U+321E
+U+3260..U+327E
+U+A960..U+A97C
+U+AC00..U+D7A3
+U+D7B0..U+D7C6
+U+D7CB..U+D7FB
+U+FFA0..U+FFBE
+U+FFC2..U+FFC7
+U+FFCA..U+FFCF
+U+FFD2..U+FFD7
+U+FFDA..U+FFDC
+
+# the Han section's new coverage: 〖〗｟｠ brackets, small kana, the prolonged
+# sound mark, iteration marks, the katakana middle dot, the wave dash, the
+# ideographic space
+U+3000
+U+3005
+U+3016
+U+3017
+U+301C
+U+303B
+U+3041
+U+3043
+U+3045
+U+3047
+U+3049
+U+3063
+U+3083
+U+3085
+U+3087
+U+308E
+U+3095..U+3096
+U+309D..U+309E
+U+30A1
+U+30A3
+U+30A5
+U+30A7
+U+30A9
+U+30C3
+U+30E3
+U+30E5
+U+30E7
+U+30EE
+U+30F5..U+30F6
+U+30FB
+U+30FC..U+30FE
+U+31F0..U+31FF
+U+FF5F
+U+FF60
+U+FF67..U+FF70

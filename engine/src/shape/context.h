@@ -35,20 +35,21 @@ struct CtxEntry {
     Opaque,  // an image, raw markup, a hard break, a fill: none
   } k = Char;
   MarkClass marks = MarkClass::Neighbours;  // Char: its run's
-  bool wide = false;  // Char, resolved: set as CJK (an ideograph, wide punctuation, a wide ambiguous mark)
+  bool wide = false;  // Char: CJK evidence (Han, kana, wide punctuation); an ambiguous mark: resolved CJK
   bool apostrophe = false;  // Char: U+2019 between letters (UAX #29 MidLetter), never a quote
   u32 cp = 0;
 };
 
-// a cluster's entry, its width class preset (CJK: an ideograph or wide
-// punctuation); `ambiguous` notes a mark resolveContext has to settle
+// a cluster's entry, its evidence preset (CJK: Han, kana, wide punctuation
+// — the ambwide column; Hangul text sets its quotes Latin); `ambiguous`
+// notes a mark resolveContext has to settle
 inline CtxEntry ctxChar(u32 cp, MarkClass marks, bool& ambiguous) {
   CtxEntry e;
   e.cp = cp;
   e.marks = marks;
-  if (cp >= kCCRanges[1].start) {  // (below the table's first break: one class, the common one)
+  if (cp >= 0x80) {
     const CC c = ccOf(cp);
-    e.wide = kCCFlags[(u8)c] & kCC_wide;
+    e.wide = kCCFlags[(u8)c] & kCC_ambwide;
     ambiguous = ambiguous || c == CC::AmbOpenQuote || c == CC::AmbCloseQuote || c == CC::AmbDash ||
                 c == CC::AmbEllipsis;
   }
@@ -62,7 +63,7 @@ inline bool wideAt(const std::vector<CtxEntry>& v, size_t i) { return v[i].k == 
 inline bool wideAhead(const std::vector<CtxEntry>& v, size_t i) {
   if (i + 1 >= v.size() || v[i + 1].k != CtxEntry::Char) return false;
   const u32 c = v[i + 1].cp;
-  return isWide(c) || isOpenPunct(c) || isClosePunct(c);
+  return ambWide(c) || isOpenPunct(c) || isClosePunct(c);
 }
 inline bool wordAt(const std::vector<CtxEntry>& v, size_t i) {
   return i < v.size() && v[i].k == CtxEntry::Char && isWordChar(v[i].cp);
@@ -98,7 +99,7 @@ inline void resolveContext(std::vector<CtxEntry>& v, bool ambiguous) {
     const bool pair = (i + 1 < n && v[i + 1].k == CtxEntry::Char && v[i + 1].cp == e.cp) ||
                       (i > 0 && v[i - 1].k == CtxEntry::Char && v[i - 1].cp == e.cp);
     const bool after = i + 1 < n && v[i + 1].k == CtxEntry::Char &&
-                       (isWide(v[i + 1].cp) || isAmbDashOrEllipsis(v[i + 1].cp));
+                       (ambWide(v[i + 1].cp) || isAmbDashOrEllipsis(v[i + 1].cp));
     e.wide = pair || (i > 0 && wideAt(v, i - 1)) || after;
   }
   // quotes: each one's own evidence, then the pairs

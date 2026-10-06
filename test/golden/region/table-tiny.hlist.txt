@@ -1,7 +1,7 @@
 top pid=0 units=2
  unit text indent=0su
-  box Other "A" w=513su r0 @[17,18)
+  box Alpha "A" w=513su r0 @[17,18)
   run r0 plain
  unit text indent=0su
-  box Other "B" w=513su r0 @[21,22)
+  box Alpha "B" w=513su r0 @[21,22)
   run r0 plain

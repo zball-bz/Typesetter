@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P4
-- 下一步：P4-05
+- 下一步：P4-06
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -108,7 +108,7 @@
 | P4-02 | 段落级成形器 | done | grep:plan P4-02 | 2026-10-07 | 57 个 golden 文件：hlist 16、breaks/layout/html 各 10、blocks 8、tree/semantic/paged 各 1——figure/block、figure/float、math/eqref、pages/paged-doc、inline/prose-guards、locale/quote-lang、splice/ascii-cut（跨节点边界胶）；math/grid、math/symbols（公式后不在标点前断行）；style/patch（跨节点软换行无缝，tree/semantic 同变）；doc/toc-clone、inline/bracket-island、math/decl、math/holes-diag、math/negation-diag、notes/basic 只有 hlist；+1 用例 cjk/cross-node；WASM 214/214 | 段落级成形：HlInline 的 walk/indent 只记录，finish 把记录展平为段落上下文（shape/context.h：每个字素簇一项，跨样式、链接、引用、错误边界；行内代码、公式为拉丁证据，图片、原始标记、硬换行为不透明，空格为空白），resolveContext 一次性解析歧义标点（破折号/省略号按 lang、成对或邻近 CJK；字母间 U+2019 为撇号；引号按 lang，否则前一字符为 CJK 或宽标点、后一字符为 CJK 或标点，成对联合判定），再按阅读顺序重放原有逐节点发射。文字节点的起始状态取段落中的前一字符，CJK–拉丁边界胶出现在强调、链接、引用、行内代码两侧（上标/下标标记两侧和 attach 边缘除外）；对象之后的断点看后邻（闭合标点与公式紧贴的拉丁文字或代码前禁断）；CJK 闭合标点前的键入空格不可断（LB13）；长 token 门限按字符、跨样式边界计数；CJK 盒按字素簇（textrules clusterEnd，UAX #29 GB3–GB13）。软换行：实例化保留 U+000A（映射文本带显式映射），规范形之后 model/softbreak.cc 按段落流以 joinsWithoutSpace 解析，可跨节点；连同歧义引号的上下文解析。删除旧发射器 emit/legacy.{h,cc}、fuseCheck、Flow::legacy、emitDoc/emitWith、InlineSink::done；tsrc --fuse-check 改为 --lint，corpus-run 对 199 篇 typst 语料做 HList lint（旧版两篇 `！ ？` 文档的闭合标点前断点已消除）。性能：clusterEnd 的 ASCII 与 CJK 统一表意字快路径、packed() 的汉字区间热路径（由生成表在编译期求得）、无歧义标点时跳过解析、软换行只在含软换行的流上建项。文档：shaping-design §7（新）、§1、§5、§6，syntax-design、document-model 的软换行，tsm-changes，REPORT，CLAUDE.md |
 | P4-03 | 逐项源 span | done | grep:plan P4-03 | 2026-10-07 | 751 个文件（blocks 210、hlist 210、html 165、layout 154、paged 12）——全部是 span 字段：去掉位置、data-s 的有无与 data-s0 后与 P4-02 逐字节相同；e2e +1（run 级 offsetAt 与行级 elementsAt） | ContentNode::srcExact（实例化时：文字是自身来源，映射或恒等；materialize 移动节点时清除）；emit 的 TextSource 把每个簇的熟字节经 cooked→raw 映射得到源 span（插入的字节为点、删除的字节不属于任一侧），词的连字段与长 token 切片各有切片，连字符与边界胶为点，标点的半宽随其字形；无映射的文字（造出的文字）保留节点 span。paint 的 run data-s 取其第一个有源的项；layout 的行 span 取第一个有源项的起点与最远的终点（不再取最小值：笔记回链等造出文字不会把行起点拉回）。tools/check-spans.mjs 进 G1：每个 html golden 的内容 run 的 data-s 指向其首字符（或其转义的反斜杠、造出文字的标记处），同行按源顺序，同一流的行按源顺序；对 P4-02 的 golden 报 396 处，对现在的为 0。文档：document-model §9.1、shaping-design §7、REPORT、CLAUDE.md |
 | P4-04 | TextProps v1；标点/空白/autospace 数据化 | done | grep:plan P4-04（前置 1d7b592） | 2026-10-07 | 211 个文件：hlist 60、blocks 60（标点字形 +ε 1su）、breaks 32（只有代价，断点全部不变）、html 57 与 paged 2（tsr-sqL/R → margin px，上标 top px）；layout 不变；+1 用例 style/text-props（e2e 预期一条 overfull-line）；e2e +1 标点矩阵（4 dsf，偏差 ≤0.016px，与基线相同） | 前置提交：render.runWidths 设置（paint 预测每个 run 的宽度：项的原始宽、行的词距/字距、留存的空白、钉住宽度，写为 data-w），标点矩阵 punct.spec.mjs 与改动前基线。compat.def 新增 BLANK（各类前后空白 em）、ADVANCE（——/—/……/… 的定义宽度）行与 CONST superRaiseEm，ucdc 生成 kBlanks/kDefinedAdvances；pushPunct 改为空白数据上的一条压缩规则（none/book/full）；定义宽度查表取代 U+2014/U+2026 特判（任何被上下文定为宽的簇都可选用）；resolveWidths 按 kBlanks 减空白并加 ε；paint 两侧各自判断自身空白是否留存，缺失一侧写 margin px，契约 CSS 去掉 tsr-sqL/R 与 -0.45em（gen-schema 不再读 squeeze）；上标 top 为引擎 px。新属性 text.wrap（wrap|nowrap）、text.autospace、text.hyphens、text.overflowWrap（opsVersion 16，styled 参数 108–111）；text.space pre 的空格进刚性盒；正常模式下文字中任意位置的连续空格折叠（原只在文字开头）。文档：shaping-design §2、§8（新）、style-design、document-model §9.1、tsm-changes、REPORT |
-| P4-05 | UCD 字符类（RULES_VERSION 1）与 Unicode 控制符 | todo | | | | |
+| P4-05 | UCD 字符类（RULES_VERSION 1）与 Unicode 控制符 | done | grep:plan P4-05 | 2026-10-07 | 201 个 hlist（类名 Other → Alpha/Digit/Infix…；引号/破折号/↩/⚠ 旁新增 kern 上下文，mock 下仍 257su）；breaks/blocks/layout/html 不变；+1 用例 cjk/controls；语料 340 篇断点 0 变化 | engine/rules/locale/{default,und,en,zh-Hans}.def（RULES_VERSION 1）：und 以 LB 行由 UAX #14 派生字母/数字/窄标点/谚文/空格与控制符并定义列（wide、punct、open、close、nostart、autospace、ambwide、joins、kern）；zh-Hans 保留 compat 宽区间（WIDE_DEFAULT Ideo），区间内按文字系统设 Kana/Hangul（SCRIPT），clreq 标点与新覆盖（〖〗｟｠、CJ 小假名、ー、迭代记号、・、〜、U+3000），BLANK/ADVANCE/CONST。ucdc：INCLUDE、LB、SCRIPT、CLASS_LB 行，按类的 wide/kern 列，类表改为两级表（kCCIndex[cp>>7] → 226 个 128 块，约 38KB）；rules-diff 按行为投影比较，允许清单可限"仅字距"；test/golden/RULES 为规则版本与允许清单；unitTextRules 读清单，清单外码位钉在 compat 字面谓词上。引擎：textrules.h 新谓词（isPunctGlyph、noStart、takesAutospace、ambWide、eawWide），isWordChar 按 Alpha/Digit；上下文证据用 ambwide（谚文不使引号成 CJK）；emit：Prev 新增 Wide 态（谚文、全角空格不加间距），noBreakBefore（非行首类之前及其前的空格/边界胶不可断），非行首标点的前空白不可断，控制符分支（NBSP 不可断可伸展且不折叠、ZWSP、WJ），SHY 断字（emitWord），连续空格折叠改为记录可折叠空格的项；网格宽度按 EAW，网格禁则读 nostart；lintHList 对所有非行首盒检查。check-spans 的空白跳过只取 ASCII。文档：shaping-design §1、§2、§4、§9（新），tsm-changes，REPORT |
 | P4-06 | 连字注册表、ExHyphen、hyphens/overflowWrap | todo | | | | |
 | P4-07 | attach 语义；脚注附着移出解析器 | todo | | | | |
 | P4-08 | 原生项断行器与统一伸缩模型 | todo | | | | |
@@ -187,6 +187,7 @@
 | P4-02 后 | 3.90 | 11.50 | 28.50 | 1.7 / 3.1 / 0.9 / 11.2 / 3.3 | 71.4 / 106.8 / 152.1 | 1.70 / 22.00 / 59.20 | 均在 P4 门限内（4.19 / 12.48 / 29.60；relayout 2.19 / 23.09 / 62.04）；35K 为 6 轮（3 轮 12.80）。初版 87K 36.90（ingest +2.8：软换行逐字建项；engine +5.6：逐簇查表），按 callgrind 优化后 engine 11.2（P4-01 10.6，+0.6：段落上下文扫描） |
 | P4-03 后 | 3.80 | 12.30 | 28.30 | 1.7 / 3.1 / 0.9 / 11.0 / 3.3 | 73.3 / 112.2 / 155.2 | 1.70 / 22.10 / 59.50 | 均在 P4 门限内；35K 为 6 轮（update 3 轮 15.30、relayout 3 轮 23.30 为机器噪声）；同机交替 A/B 各 6 轮：P4-02 12.30 / 12.20、本步 12.50 / 15.40（各轮中位数多在 15–16，噪声大），引擎阶段两者均 4.5–4.6 |
 | P4-04 后 | 3.90 | 12.50 | 28.80 | 1.8 / 3.2 / 0.9 / 11.1 / 3.4 | 74.2 / 113.5 / 157.0 | 1.70 / 22.30 / 58.40 | 均在 P4 门限内或噪声边缘：35K update 6 轮 12.50（门限 12.48，引擎阶段 4.5 与 P4-02/03 相同；3 轮 13.90），35K relayout 6 轮 22.30（3 轮 23.50，机器负载 3.4）；定义宽度查表先比首码位（callgrind：EmitPass 72.3M，P4-02 优化后 69.1M，含 P4-03 的逐簇源映射） |
+| P4-05 后 | 3.80 | 12.80 | 29.10 | 1.7 / 3.2 / 0.9 / 11.5 / 3.4 | 72.4 / 109.2 / 151.5 | 1.70 / 22.50 / 59.60 | 87K 在门限 29.60 内；初版类表沿用区间二分（2,094 个区间）时 87K 31.30（引擎 13.8），改两级表后引擎 11.5（P4-04 11.1；callgrind EmitPass 74.3M，P4-04 72.3M）；35K 3 轮 12.80（门限 12.48，引擎 4.6 与 P4-04 相同，噪声） |
 
 ## 偏差记录（MD-11）
 
@@ -481,6 +482,12 @@
 | P4-04 | text.space: pre 只能保留树中已有的空格：解析器把作者键入的连续空格折叠为一个（拼接字符串中的空格保留） | 行内文本的空白折叠在前端（P2 以来）；改变它会改动所有文本的 cooked 形式 | 无 |
 | P4-04 | text.wrap nowrap 作用于文字节点；nowrap 范围内的行内代码与对象按自身规则断行 | 对象之后的断点由其后邻决定（P4-02）；nowrap 的语义是"文字内部不断" | 无 |
 | P4-04 | emitter/scattered-magic-constants 在本步打勾，其中连字最短核心 5 与 URL 最短片段 3 仍是代码常量 | 两者属于连字词典与紧急断行表（P4-06 的 emitter/hyphenation-en-us-only、emitter/url-break-special-path 覆盖）；其余引擎数值已入规则或设置，CSS 不再携带引擎数值 | P4-06 |
+| P4-05 | 三个包编译成一张表（und ← en ← zh-Hans），没有建设计中的 RulesResolver / Section / pair 表与按 run 语言的解析 | 三个包定制不同的文字系统，不互相冲突；按语言解析在第一个冲突的包（ja、zh-Hant、ko）加入时才有意义，届时只增数据与解析层 | 无 |
+| P4-05 | zh-Hans 在 compat 的宽区间内沿用 compat 分类（默认 Ideo，再按名列出标点与新覆盖），UCD 派生只用于区间外；SCRIPT 与 CLASS_LB 只作用于宽区间内 | 这样 compat 已分类的每个码位行为不变（设计要求），变化恰为计划所列与允许清单；区间外的假名扩展、U+1F200、CJK 扩展 G/H 保持 compat 的 Other | 无 |
+| P4-05 | U+00B7 未设为 AmbMiddleDot（仍为字母类） | 中文外国人名常用 U+00B7 分隔，按上下文改为全角居中点会改变现有排版；计划所列只有 ・（U+30FB） | 无 |
+| P4-05 | rules-diff 改为比较行为投影（列、空白、歧义/控制类）而非类名；语料边界统计因空格、字母的投影变化计数很大（约 160 万），只作报告 | RULES_VERSION 1 的类名与 compat 不同（Other 拆为 Alpha/Digit…），按类名比较没有意义；允许清单按码位与"仅字距"判定 | 无 |
+| P4-05 | 设计预计 inline/quotes、style/kern-boundary 的 blocks/breaks/layout 变化（257su → 258su），实际只有 hlist 中新增的 kern 上下文 | mock 测量器可加，m(三元组) − m(前) − m(后) 等于空格宽，宽度不变 | 无 |
+| P4-05 | 半角片假名在代码网格中改为一列（原按 compat 宽类占两列） | 按 UAX #11（H 为窄）；现有用例与语料无此字符 | 无 |
 
 ## 阻塞记录（§4.7）
 

@@ -1,34 +1,34 @@
 top pid=0 units=1
  unit text indent=0su
-  box Other "Be" w=1025su r0 @[0,2)
+  box Alpha "Be" w=1025su r0 @[0,2)
   disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[2,2)
-  box Other "fore." w=2561su r0 @[2,7)
+  box Alpha "fore." w=2561su r0 @[2,7)
   run r0 plain
 top pid=1 units=1
  unit text indent=0su
-  box Other "⚠" w=616su r0 @[9,73)
-  glue word w=257su x=1 cap=257su src r0 @[9,73)
-  box Other "Er" w=1025su r0 @[9,73)
+  box Alpha "⚠" w=616su r0 @[9,73)
+  glue word w=257su x=1 cap=257su kern="⚠ E" src r0 @[9,73)
+  box Alpha "Er" w=1025su r0 @[9,73)
   disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[9,73)
-  box Other "ror:" w=2049su r0 @[9,73)
+  box Alpha "ror:" w=2049su r0 @[9,73)
   glue word w=257su x=1 cap=257su kern=": a" src r0 @[9,73)
-  box Other "af" w=1025su r0 @[9,73)
+  box Alpha "af" w=1025su r0 @[9,73)
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[9,73)
-  box Other "ter" w=1537su r0 @[9,73)
+  box Alpha "ter" w=1537su r0 @[9,73)
   glue word w=257su x=1 cap=257su kern="r p" src r0 @[9,73)
-  box Other "push" w=2049su r0 @[9,73)
+  box Alpha "push" w=2049su r0 @[9,73)
   run r0 plain CODE
 top pid=2 units=1
  unit text indent=0su
-  box Other "This" w=2049su r0 @[75,79)
+  box Alpha "This" w=2049su r0 @[75,79)
   glue word w=257su x=1 cap=257su kern="s p" src r0 @[79,80)
-  box Other "para" w=2049su r0 @[80,84)
+  box Alpha "para" w=2049su r0 @[80,84)
   disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[84,84)
-  box Other "graph" w=2561su r0 @[84,89)
+  box Alpha "graph" w=2561su r0 @[84,89)
   glue word w=257su x=1 cap=257su kern="h i" src r0 @[89,90)
-  box Other "is" w=1025su r0 @[90,92)
+  box Alpha "is" w=1025su r0 @[90,92)
   glue word w=257su x=1 cap=257su kern="s n" src r0 @[92,93)
-  box Other "not" w=1537su r0 @[93,96)
+  box Alpha "not" w=1537su r0 @[93,96)
   glue word w=257su x=1 cap=257su kern="t b" src r0 @[96,97)
-  box Other "bold." w=2561su r0 @[97,102)
+  box Alpha "bold." w=2561su r0 @[97,102)
   run r0 plain

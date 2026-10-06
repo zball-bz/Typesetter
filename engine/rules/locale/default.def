@@ -1,0 +1,12 @@
+// The engine's rules (plan P4-05; design T5 step 8, D-X04): RULES_VERSION 1,
+// the default chain und ← en ← zh-Hans compiled into one table. The packs
+// tailor different scripts (en Latin, zh-Hans Han), so no codepoint is
+// classified twice; a pack that tailors a script another pack also
+// tailors (ja, zh-Hant, ko) is resolved per run's language when it comes.
+// tools/ucdc.mjs compiles it (with the pinned UCD) into engine/gen/textrules.h;
+// tools/rules-diff compares it with compat (RULES_VERSION 0) and allows
+// only the changes test/golden/RULES lists.
+RULES_VERSION(1)
+INCLUDE(und.def)
+INCLUDE(en.def)
+INCLUDE(zh-Hans.def)

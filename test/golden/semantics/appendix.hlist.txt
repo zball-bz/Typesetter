@@ -1,66 +1,66 @@
 top pid=0 units=1
  unit text indent=0su anchor="methods"
-  box Other "1" w=821su r0 @[383,392)
+  box Digit "1" w=821su r0 @[383,392)
   glue word w=411su x=1 cap=411su kern="1 M" src r0 @[383,392)
-  box Other "Methods" w=5736su r0 @[385,392)
+  box Alpha "Methods" w=5736su r0 @[385,392)
   run r0 plain BOLD x1.60
 top pid=1 units=1
  unit math indent=0su anchor="eq-m" w=2568su asc=700su desc=12su
   cell 0
-   box Other "(1.1)" w=2561su r0 @[404,420)
+   box OpenN "(1.1)" w=2561su r0 @[404,420)
    run r0 plain
 top pid=2 units=1
  unit text indent=0su anchor="proofs"
-  box Other "A" w=821su r0 @[435,443)
+  box Alpha "A" w=821su r0 @[435,443)
   glue word w=411su x=1 cap=411su kern="A P" src r0 @[435,443)
-  box Other "Proofs" w=4917su r0 @[437,443)
+  box Alpha "Proofs" w=4917su r0 @[437,443)
   run r0 plain BOLD x1.60
 top pid=3 units=1
  unit text indent=0su anchor="lemmas"
-  box Other "A.1" w=2075su r0 @[454,463)
+  box Alpha "A.1" w=2075su r0 @[454,463)
   glue word w=347su x=1 cap=347su kern="1 L" src r0 @[454,463)
-  box Other "Lemmas" w=4149su r0 @[457,463)
+  box Alpha "Lemmas" w=4149su r0 @[457,463)
   run r0 plain BOLD x1.35
 top pid=4 units=1
  unit math indent=0su anchor="eq-p" w=2457su asc=700su desc=19su
   cell 0
-   box Other "(A.1)" w=2561su r0 @[474,490)
+   box OpenN "(A.1)" w=2561su r0 @[474,490)
    run r0 plain
 top pid=5 units=1
  unit text indent=0su
-  box Other "See" w=1537su r0 @[492,495)
+  box Alpha "See" w=1537su r0 @[492,495)
   glue word w=257su x=1 cap=257su kern="e §" src r0 @[495,495)
-  box Other "§1" w=1128su r1 @[496,504)
-  box Other "," w=513su r2 @[504,505)
+  box Alpha "§1" w=1128su r1 @[496,504)
+  box Infix "," w=513su r2 @[504,505)
   glue word w=257su x=1 cap=257su kern=", A" src r2 @[505,505)
-  box Other "Ap" w=1025su r3 @[506,513)
+  box Alpha "Ap" w=1025su r3 @[506,513)
   disc pen=0.7 w=0su pre="-" 513su kern="pp" r3 @[506,513)
-  box Other "pen" w=1537su r3 @[506,513)
+  box Alpha "pen" w=1537su r3 @[506,513)
   disc pen=0.7 w=0su pre="-" 513su kern="nd" r3 @[506,513)
-  box Other "dix" w=1537su r3 @[506,513)
+  box Alpha "dix" w=1537su r3 @[506,513)
   glue word w=257su x=1 cap=257su kern="x A" src r3 @[506,513)
-  box Other "A" w=513su r3 @[506,513)
-  box Other "," w=513su r4 @[513,514)
+  box Alpha "A" w=513su r3 @[506,513)
+  box Infix "," w=513su r4 @[513,514)
   glue word w=257su x=1 cap=257su kern=", A" src r4 @[514,514)
-  box Other "Ap" w=1025su r5 @[515,522)
+  box Alpha "Ap" w=1025su r5 @[515,522)
   disc pen=0.7 w=0su pre="-" 513su kern="pp" r5 @[515,522)
-  box Other "pen" w=1537su r5 @[515,522)
+  box Alpha "pen" w=1537su r5 @[515,522)
   disc pen=0.7 w=0su pre="-" 513su kern="nd" r5 @[515,522)
-  box Other "dix" w=1537su r5 @[515,522)
+  box Alpha "dix" w=1537su r5 @[515,522)
   glue word w=257su x=1 cap=257su kern="x A" src r5 @[515,522)
-  box Other "A.1" w=1537su r5 @[515,522)
-  box Other "," w=513su r6 @[522,523)
+  box Alpha "A.1" w=1537su r5 @[515,522)
+  box Infix "," w=513su r6 @[522,523)
   glue word w=257su x=1 cap=257su kern=", E" src r6 @[523,523)
-  box Other "Eq." w=1537su r7 @[524,529)
+  box Alpha "Eq." w=1537su r7 @[524,529)
   glue word w=257su x=1 cap=257su kern=". (" src r7 @[524,529)
-  box Other "(1.1)" w=2561su r7 @[524,529)
+  box OpenN "(1.1)" w=2561su r7 @[524,529)
   glue word w=257su x=1 cap=257su kern=") a" src r8 @[530,530)
-  box Other "and" w=1537su r8 @[530,533)
+  box Alpha "and" w=1537su r8 @[530,533)
   glue word w=257su x=1 cap=257su kern="d E" src r8 @[533,533)
-  box Other "Eq." w=1537su r9 @[534,539)
+  box Alpha "Eq." w=1537su r9 @[534,539)
   glue word w=257su x=1 cap=257su kern=". (" src r9 @[534,539)
-  box Other "(A.1)" w=2561su r9 @[534,539)
-  box Other "." w=513su r10 @[539,540)
+  box OpenN "(A.1)" w=2561su r9 @[534,539)
+  box Infix "." w=513su r10 @[539,540)
   run r0 plain
   run r1 plain ref LINK link="#tsr-methods"
   run r2 plain

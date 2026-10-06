@@ -14,40 +14,51 @@ of carrying its own ranges:
 
 | API | was | used by |
 |---|---|---|
-| `isWide(cp)` | `isCjk` (support.h) | emit's CJK/Latin split, grid columns (layout), snap runs (typeset_html) |
-| `isOpenPunct`, `isClosePunct` | `isPunctOpen`, `isPunctClose` | emit's punctuation blocks, grid break rules |
-| `isIdeo(cp)` | `isCjkIdeo` | emit (solid 1em blocks, formula → CJK boundary) |
+| `isWide(cp)` | `isCjk` (support.h) | emit's CJK/Latin split, snap runs (typeset_html), grid breaks |
+| `isPunctGlyph`, `isOpenPunct`, `isClosePunct` | `isPunctOpen`, `isPunctClose` | emit's punctuation glyphs (P4-05: the punct column, its blanks), grid break rules |
+| `noStart(cp)` | — | P4-05: 禁则 — never at a line start (closers, stops, small kana, iteration marks, ー, 〜, ・) |
+| `takesAutospace(cp)`, `ambWide(cp)` | — | P4-05: CJK–Latin glue beside it (Han, kana — not Hangul, not U+3000); evidence that sets an ambiguous neighbour CJK |
+| `isIdeo(cp)` | `isCjkIdeo` | a CJK letter (wide, not a punctuation glyph) |
 | `joinsWide(cp)` | inline.cc's `cjkish` | the joining classes (P2-10); since P4-02 read through `joinsWithoutSpace(prev, prevWide, next, nextWide)` — a soft break between two joining characters (an ambiguous quote joins when its context sets it wide) is nothing, else a space (model/softbreak.h) |
-| `kernEligible(cp)` | emit's `isCjk(cp) \|\| cp >= 0x2000` | cross-space kerning contexts |
+| `kernEligible(cp)` | emit's `isCjk(cp) \|\| cp >= 0x2000` | cross-space kerning contexts (P4-05: the kern column — letters and narrow punctuation) |
+| `eawWide(cp)` | — | P4-05: a code grid's two-column characters (UAX #11 W, F) |
 | `isAmbDashOrEllipsis`, `isAmbQuote` | emit's U+2014/U+2026 and curly-quote literals | the em dash / ellipsis and Latin-context quote rules |
 | `cpInfo(cp)` | — | class + UAX #29 grapheme break + Extended_Pictographic + UAX #11 width; `clusterEnd(s, i)` — the extended grapheme cluster (GB3–GB13), what the shaper iterates (P4-02) |
 
 A character's class (`CC`, `engine/rules/classes.def`: Alpha … Ideo, Kana,
 OpenW … EllipsisW, OpenN … BreakBefore, the ambiguous quotes / dash /
 ellipsis / middle dot, spaces and controls) is one per cluster base;
-everything else is a *column* of the class (today: wide, open, close,
-joins; later: UAX #14 break class, blanks, autospace, font role).
+everything else is a *column* of the class (wide, punct, open, close,
+nostart, autospace, ambwide, joins, kern; its blanks).
 
 ## 2. The tables
 
-`tools/ucdc.mjs` (run by gen-all, checked by G9) compiles
-`engine/rules/locale/compat.def` — RULES_VERSION 0, today's classification
-as data: the five wide ranges, the clreq punctuation sets, the ambiguous
-classes, the columns, the kern cutoff, the App C constants
-(`cjkBoundaryEm` 0.25, `superRaiseEm` 0.45), and since plan P4-04 the
-punctuation blanks (`BLANK`: each class's leading and trailing blank, em —
-an opener's 0.5 before, a closer's or a stop's 0.5 after → `kBlanks`) and
-the defined advances (`ADVANCE`: —— 2em, — 1em, …… 2em, … 1em, longest
-first → `kDefinedAdvances`) — plus the pinned UCD files
-(`engine/rules/ucd/17.0.0`: LineBreak, EastAsianWidth, Scripts,
-emoji-data, GraphemeBreakProperty; `--fetch` re-downloads them) into
-`engine/gen/textrules.h`: the class enum and columns, a range table of
-(class, kern) (≈50 ranges; a lookup below U+2000 is one comparison) and one
-of the UCD columns (≈380 ranges), ~3.4 KB of data.
+`tools/ucdc.mjs` (run by gen-all, checked by G9) compiles the engine's rules,
+`engine/rules/locale/default.def` (plan P4-05: RULES_VERSION 1, the chain
+und ← en ← zh-Hans), with the pinned UCD files (`engine/rules/ucd/17.0.0`:
+LineBreak, EastAsianWidth, Scripts, emoji-data, GraphemeBreakProperty;
+`--fetch` re-downloads them) into `engine/gen/textrules.h`:
+- `und.def` derives the classes from UAX #14 (`LB(lb…, Class)`: letters,
+  digits, narrow punctuation, Hangul, the spaces and break controls) and
+  defines the columns;
+- `en.def` is the Latin section (no tailoring yet);
+- `zh-Hans.def` is the Han section: compat's wide ranges (`WIDE`, default
+  Ideo), kana and Hangul by script within them (`SCRIPT`), the clreq
+  punctuation (`CLASS`), and the coverage compat lacked — 〖〗｟｠, small
+  kana (`CLASS_LB(CJ, …)`), ー, iteration marks, ・, 〜, U+3000 —, the
+  punctuation blanks (`BLANK`: each class's leading and trailing blank, em
+  → `kBlanks`), the defined advances (`ADVANCE`: —— 2em, — 1em, …… 2em,
+  … 1em → `kDefinedAdvances`) and the constants (`cjkBoundaryEm`,
+  `superRaiseEm`).
 
-`unitTextRules` pins the API against literal copies of the five old
-classifiers over every codepoint, so RULES_VERSION 0 is today's behaviour
-bit for bit.
+The packs tailor different scripts, so one table serves; a pack that
+tailors a script another pack does (ja, zh-Hant, ko) is the point where the
+table becomes per language. The (class, kern) table is two-level —
+`kCCIndex[cp >> 7]` names one of ≈230 deduplicated blocks of 128, ~38 KB,
+two loads per lookup (RULES_VERSION 1 has thousands of ranges); the UCD
+columns stay ranges (≈2,500, read by the cluster iterator's slow path and
+the grid). `engine/rules/locale/compat.def` (RULES_VERSION 0) stays as the
+reference rules-diff compares with.
 
 ## 3. The mock measurer
 
@@ -57,11 +68,14 @@ by the same test: golden metrics never move when the classes do.
 ## 4. Changing the rules
 
 `tools/rules-diff.mjs --b <rules.def> [--corpus] [--allow f] [--check]`
-compares a rules version with compat: the codepoints whose class or columns
-change (as ranges) and, with `--corpus`, every fixture / real-world boundary
-whose class pair changes. P4-05 (RULES_VERSION 1, UCD-derived classes)
-must keep compat's results for every codepoint compat classifies unless
-allowlisted.
+compares a rules version with compat: the codepoints whose behaviour — the
+columns the engine reads, the blanks, the ambiguous or control class, not
+the class name — changes (as ranges) and, with `--corpus`, every fixture /
+real-world boundary whose pair changes. `test/golden/RULES` records the
+rules the goldens were made with (RULES_VERSION 1, UCD 17.0.0) and the
+allowlist of changes from compat (`U+X[..U+Y] [kern]`: any change, or the
+kerning only); `--check` fails on anything else, and `unitTextRules` pins
+every codepoint the allowlist does not name to compat's literal predicates.
 
 ## 5. The item list (`engine/src/shape/hlist.h`, plan P1-12)
 
@@ -334,8 +348,34 @@ first such item to the furthest end.
   width within 1px of the engine's (`data-w`); before and after the change
   at most 0.016px.
 
-## 9. Next steps
+## 9. UCD-derived classes and the break controls (plan P4-05; design T5 step 8)
 
-P4-05…P4-08: UCD-derived classes, hyphenation registry,
+The shaper reads the new columns and classes (findings
+emitter/hardcoded-script-class-tables, emitter/missed:2):
+- **Non-starters** (`nostart`: closers and stops, small kana, iteration
+  marks, ー, 〜, ・) never begin a line: no break before them, nor at the
+  spaces or the boundary glue before them; a non-starter's leading blank
+  (・'s quarter em) does not break. The code grid's wrap and `lintHList`
+  read the same column.
+- **Hangul** is a CJK box (it breaks between syllables) that takes no
+  CJK–Latin glue, sets its neighbours' quotes and dashes Latin, and keeps
+  a source line break as a space; U+3000 is a CJK box without glue.
+- **Break controls in plain text** (UAX #14): U+00A0 / U+2007 are spaces
+  that stretch and never break (nor collapse); U+202F stays in its word;
+  U+200B is a break and nothing else; U+2060 / U+FEFF forbid the break
+  around them (inside a word the word stays one); U+00AD marks the word's
+  only hyphenation points (a hyphen where the line breaks, nothing where
+  it does not).
+- **Kerning across a space** is the kern column: letters and narrow
+  punctuation, curly quotes and dashes included — not CJK, marks or spaces.
+- **A code grid's widths** are UAX #11's: wide and fullwidth characters
+  take two columns.
+- The goldens move only in the hlist's class names (Other → Alpha, Digit,
+  Infix, …) and kern contexts beside quotes and dashes (the mock measures
+  them at the space's width); `cjk/controls` covers the rest.
+
+## 10. Next steps
+
+P4-06…P4-08: hyphenation registry,
 attach edges and the item-native breaker (with it, the canonical TeX form
 and the end of the lowering).

@@ -1143,7 +1143,27 @@ static void unitClusters() {
   CHECK(joinsWithoutSpace(0x201D, true, 0x7136, true) && !joinsWithoutSpace(0x201D, false, 0x7136, true));
 }
 
-static void unitTextRules() {
+// (plan P4-05) RULES_VERSION 1 against compat's literal predicates: every
+// codepoint the allowlist (test/golden/RULES, rules-diff's) does not name
+// classifies as compat did; kerning is a class column everywhere
+static void unitTextRules(const fs::path& root) {
+  std::vector<std::pair<u32, u32>> allowed;
+  {
+    std::ifstream f(root / "test/golden/RULES");
+    std::string line;
+    while (std::getline(f, line)) {
+      if (line.rfind("U+", 0) != 0 || line.find(" kern") != std::string::npos) continue;
+      const u32 a = (u32)std::stoul(line.substr(2), nullptr, 16);
+      const size_t dots = line.find("..U+");
+      allowed.push_back({a, dots == std::string::npos ? a : (u32)std::stoul(line.substr(dots + 4), nullptr, 16)});
+    }
+  }
+  CHECK(allowed.size() > 30);
+  auto isAllowed = [&](u32 cp) {
+    for (auto [a, b] : allowed)
+      if (cp >= a && cp <= b) return true;
+    return false;
+  };
   auto oldCjk = [](u32 cp) {
     return (cp >= 0x2E80 && cp <= 0x9FFF) || (cp >= 0xF900 && cp <= 0xFAFF) ||
            (cp >= 0x3000 && cp <= 0x303F) || (cp >= 0xFF00 && cp <= 0xFFEF) ||
@@ -1172,21 +1192,32 @@ static void unitTextRules() {
   u32 bad = 0;
   for (u32 cp = 0; cp < 0x110000; cp++) {
     bool cjk = oldCjk(cp), op = oldOpen(cp), cl = oldClose(cp);
-    bool ok = isWide(cp) == cjk && isOpenPunct(cp) == op && isClosePunct(cp) == cl &&
-              isIdeo(cp) == (cjk && !op && !cl) &&
-              joinsWide(cp) == (cjk || cp == 0x2014 || cp == 0x2026) &&
-              kernEligible(cp) == !(cjk || cp >= 0x2000) &&
-              isAmbDashOrEllipsis(cp) == (cp == 0x2014 || cp == 0x2026) &&
-              isAmbQuote(cp) == (cp == 0x2018 || cp == 0x2019 || cp == 0x201C || cp == 0x201D) &&
-              mockIsWide(cp) == cjk;
+    bool ok = mockIsWide(cp) == cjk;  // (the mock measurer's copy is frozen)
+    if (!isAllowed(cp))
+      ok = ok && isWide(cp) == cjk && isOpenPunct(cp) == op && isClosePunct(cp) == cl &&
+           isIdeo(cp) == (cjk && !op && !cl) && isPunctGlyph(cp) == (op || cl) && noStart(cp) == cl &&
+           takesAutospace(cp) == (cjk && !op && !cl) &&
+           joinsWide(cp) == (cjk || cp == 0x2014 || cp == 0x2026) &&
+           isAmbDashOrEllipsis(cp) == (cp == 0x2014 || cp == 0x2026) &&
+           isAmbQuote(cp) == (cp == 0x2018 || cp == 0x2019 || cp == 0x201C || cp == 0x201D);
     if (!ok && bad++ < 5) printf("FAIL textrules: U+%04X classifies differently\n", cp);
   }
   CHECK(bad == 0);
-  CHECK(RULES_VERSION == 0 && std::string_view(UNICODE_VERSION) == "17.0.0");
+  CHECK(RULES_VERSION == 1 && std::string_view(UNICODE_VERSION) == "17.0.0");
+  // kerning by class (plan P4-05): letters and narrow punctuation — curly
+  // quotes and dashes too — not CJK, not marks, not spaces
+  CHECK(kernEligible('A') && kernEligible('7') && kernEligible(0x201C) && kernEligible(0x2014) &&
+        !kernEligible(0x4E2D) && !kernEligible(0x0301) && !kernEligible(' ') && !kernEligible(0x00A0));
+  // the new coverage: Hangul, small kana, the prolonged sound mark, the
+  // brackets compat missed, the break controls
+  CHECK(isWide(0xAC00) && !takesAutospace(0xAC00) && !joinsWide(0xAC00) && noStart(0x3063) && noStart(0x30FC) &&
+        isOpenPunct(0x3016) && isClosePunct(0xFF60) && isPunctGlyph(0x30FB) && noStart(0x30FB) &&
+        ccOf(0x200B) == CC::ZwSpace && ccOf(0x2060) == CC::WordJoiner && ccOf(0x00A0) == CC::NbSpace &&
+        ccOf(0x202F) == CC::NbRigid && ccOf(0x00AD) == CC::SoftHyphen && ccOf(0x3000) == CC::IdeoSpace);
   CHECK(cpInfo(0x1F600).extPict && cpInfo(0x4E00).eaw == EAW::W && cpInfo(0x41).eaw == EAW::Na);
   CHECK(cpInfo(0x0301).gcb == GCB::Extend && cpInfo(0x1F1E6).gcb == GCB::Regional_Indicator &&
         cpInfo(0x1100).gcb == GCB::L && cpInfo(0x0D).gcb == GCB::CR && cpInfo(0x200D).gcb == GCB::ZWJ);
-  CHECK(cpInfo(0x4E00).cc == CC::Ideo && cpInfo(0x3002).cc == CC::FullStopW && cpInfo(0x41).cc == CC::Other);
+  CHECK(cpInfo(0x4E00).cc == CC::Ideo && cpInfo(0x3002).cc == CC::FullStopW && cpInfo(0x41).cc == CC::Alpha);
 }
 
 // The element registry and locale terms (plan P1-10): the built-in rows
@@ -2243,7 +2274,7 @@ int main(int argc, char** argv) {
   unitTokenConformance(fs::path(root));
   unitRawMaps(fs::path(root));
   unitRegistry(fs::path(root));
-  unitTextRules();
+  unitTextRules(root);
   unitClusters();
   unitOverlays();
   unitMathDict();

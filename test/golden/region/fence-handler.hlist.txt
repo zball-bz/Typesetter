@@ -1,8 +1,8 @@
 top pid=0 units=1
  unit text indent=0su
-  box Other "LOUD" w=2049su r0 @[171,193)
+  box Alpha "LOUD" w=2049su r0 @[171,193)
   glue word w=257su x=1 cap=257su kern="D T" src r0 @[171,193)
-  box Other "TEXT" w=2049su r0 @[171,193)
+  box Alpha "TEXT" w=2049su r0 @[171,193)
   run r0 plain BOLD
 top pid=1 units=1
  unit raw indent=0su

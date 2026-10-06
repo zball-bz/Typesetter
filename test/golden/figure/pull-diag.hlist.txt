@@ -29,7 +29,7 @@ top pid=0 units=1
   box Ideo "供" w=1025su wt=0.6 cap=102su r2 @[39,42)
   pen 0 r2
   glue word w=257su x=1 cap=257su src r3 @[42,43)
-  box Other "512×384" w=3688su r3 @[43,51)
+  box Digit "512×384" w=3688su r3 @[43,51)
   box ColonW "；" w=513su blank=R r4 @[51,54)
   glue blank w=512su x=0 cap=0su r4 @[51,54)
   box Ideo "浏" w=1025su wt=0.6 cap=102su r5 @[54,57)
@@ -76,7 +76,7 @@ top pid=1 units=2
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[181,239)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[181,239)
-  box Other "1" w=513su r1 @[181,239)
+  box Digit "1" w=513su r1 @[181,239)
   box ColonW "：" w=513su blank=R r2 @[181,239)
   glue blank w=512su x=0 cap=0su r2 @[181,239)
   box Ideo "黄" w=1025su wt=0.6 cap=102su r3 @[181,184)
@@ -105,7 +105,7 @@ top pid=1 units=2
   box Ideo "自" w=1025su wt=0.6 cap=102su r5 @[214,217)
   pen 0 r5
   glue word w=257su x=1 cap=257su src r6 @[217,218)
-  box Other "NEED_IMAGES" w=5633su r6 @[218,229)
+  box Alpha "NEED_IMAGES" w=5633su r6 @[218,229)
   glue word w=257su x=1 cap=257su src r6 @[229,230)
   box Ideo "拉" w=1025su wt=0.6 cap=102su r7 @[230,233)
   glue inter w=0su x=0.6 cap=102su r7 @[230,233)
@@ -129,7 +129,7 @@ top pid=2 units=2
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[308,359)
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[308,359)
-  box Other "2" w=513su r1 @[308,359)
+  box Digit "2" w=513su r1 @[308,359)
   box ColonW "：" w=513su blank=R r2 @[308,359)
   glue blank w=512su x=0 cap=0su r2 @[308,359)
   box Ideo "这" w=1025su wt=0.6 cap=102su r3 @[308,311)

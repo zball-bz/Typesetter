@@ -1,74 +1,74 @@
 top pid=0 units=1
  unit text indent=0su anchor="sec-a"
-  box Other "Labelled" w=6555su r0 @[2,10)
+  box Alpha "Labelled" w=6555su r0 @[2,10)
   glue word w=411su x=1 cap=411su kern="d h" src r0 @[10,11)
-  box Other "heading" w=5736su r0 @[11,18)
+  box Alpha "heading" w=5736su r0 @[11,18)
   run r0 plain BOLD x1.60
 top pid=1 units=1
  unit text indent=0su
-  box Other "A" w=513su r0 @[28,29)
+  box Alpha "A" w=513su r0 @[28,29)
   glue word w=257su x=1 cap=257su kern="A s" src r0 @[29,30)
-  box Other "short" w=2561su r0 @[30,35)
+  box Alpha "short" w=2561su r0 @[30,35)
   glue word w=257su x=1 cap=257su kern="t p" src r0 @[35,36)
-  box Other "para" w=2049su r0 @[36,40)
+  box Alpha "para" w=2049su r0 @[36,40)
   disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[40,40)
-  box Other "graph" w=2561su r0 @[40,45)
+  box Alpha "graph" w=2561su r0 @[40,45)
   glue word w=257su x=1 cap=257su kern="h b" src r0 @[45,46)
-  box Other "be" w=1025su r0 @[46,48)
+  box Alpha "be" w=1025su r0 @[46,48)
   disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[48,48)
-  box Other "fore" w=2049su r0 @[48,52)
+  box Alpha "fore" w=2049su r0 @[48,52)
   glue word w=257su x=1 cap=257su kern="e a" src r0 @[52,53)
-  box Other "a" w=513su r0 @[53,54)
+  box Alpha "a" w=513su r0 @[53,54)
   glue word w=257su x=1 cap=257su kern="a l" src r0 @[54,55)
-  box Other "la" w=1025su r0 @[55,57)
+  box Alpha "la" w=1025su r0 @[55,57)
   disc pen=0.7 w=0su pre="-" 513su kern="ab" r0 @[57,57)
-  box Other "belled" w=3073su r0 @[57,63)
+  box Alpha "belled" w=3073su r0 @[57,63)
   glue word w=257su x=1 cap=257su kern="d d" src r0 @[63,64)
-  box Other "dis" w=1537su r0 @[64,67)
+  box Alpha "dis" w=1537su r0 @[64,67)
   disc pen=0.7 w=0su pre="-" 513su kern="sp" r0 @[67,67)
-  box Other "play" w=2049su r0 @[67,71)
+  box Alpha "play" w=2049su r0 @[67,71)
   glue word w=257su x=1 cap=257su kern="y e" src r0 @[71,72)
-  box Other "equa" w=2049su r0 @[72,76)
+  box Alpha "equa" w=2049su r0 @[72,76)
   disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[76,76)
-  box Other "tion" w=2049su r0 @[76,80)
+  box Alpha "tion" w=2049su r0 @[76,80)
   glue word w=257su x=1 cap=257su kern="n o" src r0 @[80,81)
-  box Other "on" w=1025su r0 @[81,83)
+  box Alpha "on" w=1025su r0 @[81,83)
   glue word w=257su x=1 cap=257su kern="n t" src r0 @[83,84)
-  box Other "the" w=1537su r0 @[84,87)
+  box Alpha "the" w=1537su r0 @[84,87)
   glue word w=257su x=1 cap=257su kern="e s" src r0 @[87,88)
-  box Other "same" w=2049su r0 @[88,92)
+  box Alpha "same" w=2049su r0 @[88,92)
   glue word w=257su x=1 cap=257su kern="e s" src r0 @[92,93)
-  box Other "sheet." w=3073su r0 @[93,99)
+  box Alpha "sheet." w=3073su r0 @[93,99)
   run r0 plain
 top pid=2 units=1
  unit math indent=0su anchor="eq-pyth" w=5522su asc=967su desc=76su
   cell 0
-   box Other "(1)" w=1537su r0 @[101,130)
+   box OpenN "(1)" w=1537su r0 @[101,130)
    run r0 plain
 top pid=3 units=1
  unit math indent=0su anchor="eq-euler" w=4850su asc=951su desc=76su
   cell 0
-   box Other "(2)" w=1537su r0 @[132,163)
+   box OpenN "(2)" w=1537su r0 @[132,163)
    run r0 plain
 top pid=4 units=1
  unit text indent=0su
-  box Other "See" w=1537su r0 @[165,168)
+  box Alpha "See" w=1537su r0 @[165,168)
   glue word w=257su x=1 cap=257su kern="e §" src r0 @[168,168)
-  box Other "§1" w=1128su r1 @[169,175)
-  box Other "," w=513su r2 @[175,176)
+  box Alpha "§1" w=1128su r1 @[169,175)
+  box Infix "," w=513su r2 @[175,176)
   glue word w=257su x=1 cap=257su src r2 @[176,176)
   box Ideo "式" w=1025su wt=0.6 cap=102su r3 @[177,185)
   pen 0 r3
   glue word w=257su x=1 cap=257su src r4 @[177,185)
-  box Other "(1)" w=1537su r4 @[177,185)
+  box OpenN "(1)" w=1537su r4 @[177,185)
   glue word w=257su x=1 cap=257su kern=") a" src r5 @[186,186)
-  box Other "and" w=1537su r5 @[186,189)
+  box Alpha "and" w=1537su r5 @[186,189)
   glue word w=257su x=1 cap=257su src r5 @[189,189)
   box Ideo "式" w=1025su wt=0.6 cap=102su r6 @[190,199)
   pen 0 r6
   glue word w=257su x=1 cap=257su src r7 @[190,199)
-  box Other "(2)" w=1537su r7 @[190,199)
-  box Other "." w=513su r8 @[199,200)
+  box OpenN "(2)" w=1537su r7 @[190,199)
+  box Infix "." w=513su r8 @[199,200)
   run r0 plain
   run r1 plain ref LINK link="#tsr-sec-a"
   run r2 plain

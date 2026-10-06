@@ -68,6 +68,12 @@ Format: `- [step] what changed — migration (if any)`.
 - [P3-01] Kind presentation is default rules, so rules can change it: headings (bold, 1.6/1.35/1.15em, ragged, keep with next), code and code blocks (mono at `code.scale`), captions (centred, unhyphenated, no indent), list and quote insets, footnote markers (`fn-marker`: raised, 0.7em), note bodies (`note-body`: 0.85em), caption labels and term names (bold), comment tokens (class `tok-comment`: italic, hanging at the content), error text (mono). A paragraph of a declared figure-box element is its caption.
 - [P3-01] A footnote's body takes the notes list's context, not its site's: a footnote in a heading is no longer bold and large (its own emphasis stays). A list inside a footnote indents by its own (smaller) em.
 - [P3-01] The semantic page writes what the document styled; the rules arrive as its stylesheet (`renderTsm` returns `css`, the static exporter inlines it; a mid-document `$.set` is marked with `data-tsr-env`).
+- [P4-05] Plain-text break controls work:
+  - A no-break space (U+00A0) keeps `10 km` together but stretches like a space.
+  - A zero-width space (U+200B) allows a break.
+  - A word joiner (U+2060) forbids one.
+  - A soft hyphen (U+00AD) marks where a word may hyphenate.
+- [P4-05] Japanese and Korean text: small kana, ー, 々, ・ and 〜 never begin a line, and 〖〗｟｠ are brackets. Hangul breaks between syllables, keeps its spaces, and gets no CJK–Latin spacing; line breaks in Korean source read as spaces.
 - [P4-04] New text properties for `#style({text: {…}})` and `$.set` rules. `wrap: 'nowrap'` keeps a phrase on one line. `autospace: 'none'` drops the CJK–Latin spacing at its edges. `hyphens: 'none' | 'manual' | 'auto'` and `overflowWrap: 'normal' | 'separators' | 'anywhere'` override a block's own hyphenation and long-token rules. `space: 'pre'` keeps a text's spaces as written.
 - [P4-04] A run of spaces inside spliced text (`#("a   b")`) reads as one space, as the browser shows it. It used to be budgeted as several spaces, which left justified lines short.
 - [P4-02] Markup no longer changes spacing or breaking. CJK–Latin spacing now goes at every script edge, including next to emphasis, links, references and inline code: `中文*English*中文`, `中文[链接](…)`, `中文`code`中文`, and `(1)` before CJK text. Each such edge is also a line-break opportunity. A footnote's reference digit still hugs the text on both sides.

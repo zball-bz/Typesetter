@@ -38,7 +38,7 @@ top pid=0 units=1
 top pid=1 units=1
  unit math indent=0su anchor="emc" w=3804su asc=967su desc=19su
   cell 0
-   box Other "(1)" w=1537su r0 @[50,69)
+   box OpenN "(1)" w=1537su r0 @[50,69)
    run r0 plain
 top pid=2 units=1
  unit text indent=0su
@@ -47,7 +47,7 @@ top pid=2 units=1
   box Ideo "式" w=1025su wt=0.6 cap=102su r1 @[74,78)
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[74,78)
-  box Other "(1)" w=1537su r2 @[74,78)
+  box OpenN "(1)" w=1537su r2 @[74,78)
   glue autospace w=256su x=1 cap=256su r3 @[78,78)
   box Ideo "可" w=1025su wt=0.6 cap=102su r4 @[78,81)
   glue inter w=0su x=0.6 cap=102su r4 @[78,81)
@@ -88,7 +88,7 @@ top pid=2 units=1
 top pid=3 units=1
  unit math indent=0su anchor="gauss" w=7788su asc=1458su desc=941su
   cell 0
-   box Other "(2)" w=1537su r0 @[122,170)
+   box OpenN "(2)" w=1537su r0 @[122,170)
    run r0 plain
 top pid=4 units=1
  unit text indent=0su
@@ -101,7 +101,7 @@ top pid=4 units=1
   box Ideo "式" w=1025su wt=0.6 cap=102su r1 @[181,187)
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[181,187)
-  box Other "(2)" w=1537su r2 @[181,187)
+  box OpenN "(2)" w=1537su r2 @[181,187)
   box ColonW "；" w=513su blank=R r3 @[187,190)
   glue blank w=512su x=0 cap=0su r3 @[187,190)
   box Ideo "无" w=1025su wt=0.6 cap=102su r4 @[190,193)

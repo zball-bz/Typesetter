@@ -1,31 +1,31 @@
 top pid=0 units=1
  unit text indent=0su anchor="sec"
-  box Other "Data" w=3278su r0 @[2,6)
+  box Alpha "Data" w=3278su r0 @[2,6)
   run r0 plain BOLD x1.60
 top pid=1 units=9
  unit text indent=0su anchor="tbl"
-  box Other "Name" w=2049su r0 @[59,63)
+  box Alpha "Name" w=2049su r0 @[59,63)
   run r0 plain
  unit text indent=0su
-  box Other "Qty" w=1537su r0 @[66,69)
+  box Alpha "Qty" w=1537su r0 @[66,69)
   run r0 plain
  unit text indent=0su
-  box Other "Price" w=2561su r0 @[72,77)
+  box Alpha "Price" w=2561su r0 @[72,77)
   run r0 plain
  unit text indent=0su
-  box Other "Al" w=1025su r0 @[78,80)
+  box Alpha "Al" w=1025su r0 @[78,80)
   disc pen=0.7 w=0su pre="-" 513su kern="lp" r0 @[80,80)
-  box Other "pha" w=1537su r0 @[80,83)
+  box Alpha "pha" w=1537su r0 @[80,83)
   glue word w=257su x=1 cap=257su kern="a w" src r0 @[83,84)
-  box Other "wid" w=1537su r0 @[84,87)
+  box Alpha "wid" w=1537su r0 @[84,87)
   disc pen=0.7 w=0su pre="-" 513su kern="dg" r0 @[87,87)
-  box Other "get" w=1537su r0 @[87,90)
+  box Alpha "get" w=1537su r0 @[87,90)
   run r0 plain
  unit text indent=0su
-  box Other "2" w=513su r0 @[93,94)
+  box Digit "2" w=513su r0 @[93,94)
   run r0 plain
  unit text indent=0su
-  box Other "3.50" w=2049su r0 @[97,101)
+  box Digit "3.50" w=2049su r0 @[97,101)
   run r0 plain
  unit text indent=0su
   box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[102,105)
@@ -42,29 +42,29 @@ top pid=1 units=9
   pen 0 r0
   run r0 letter-spaced CJK
  unit text indent=0su
-  box Other "12.00" w=2561su r0 @[123,128)
+  box Digit "12.00" w=2561su r0 @[123,128)
   run r0 plain
 top pid=2 units=1
  unit text indent=0su
-  box Other "To" w=1025su r0 @[138,140)
+  box Alpha "To" w=1025su r0 @[138,140)
   disc pen=0.7 w=0su pre="-" 513su kern="ot" r0 @[140,140)
-  box Other "tals" w=2049su r0 @[140,144)
+  box Alpha "tals" w=2049su r0 @[140,144)
   glue word w=257su x=1 cap=257su kern="s a" src r0 @[144,145)
-  box Other "ap" w=1025su r0 @[145,147)
+  box Alpha "ap" w=1025su r0 @[145,147)
   disc pen=0.7 w=0su pre="-" 513su kern="pp" r0 @[147,147)
-  box Other "pear" w=2049su r0 @[147,151)
+  box Alpha "pear" w=2049su r0 @[147,151)
   glue word w=257su x=1 cap=257su kern="r i" src r0 @[151,152)
-  box Other "in" w=1025su r0 @[152,154)
+  box Alpha "in" w=1025su r0 @[152,154)
   glue word w=257su x=1 cap=257su src r0 @[154,154)
   box Ideo "表" w=1025su wt=0.6 cap=102su r1 @[155,159)
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[155,159)
-  box Other "1" w=513su r2 @[155,159)
+  box Digit "1" w=513su r2 @[155,159)
   glue word w=257su x=1 cap=257su kern="1 o" src r3 @[160,160)
-  box Other "of" w=1025su r3 @[160,162)
+  box Alpha "of" w=1025su r3 @[160,162)
   glue word w=257su x=1 cap=257su kern="f §" src r3 @[162,162)
-  box Other "§1" w=1128su r4 @[163,167)
-  box Other "." w=513su r5 @[167,168)
+  box Alpha "§1" w=1128su r4 @[163,167)
+  box Infix "." w=513su r5 @[167,168)
   run r0 plain
   run r1 letter-spaced ref LINK CJK link="#tsr-tbl"
   run r2 plain ref LINK link="#tsr-tbl"

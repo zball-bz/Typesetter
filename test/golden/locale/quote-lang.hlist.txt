@@ -42,7 +42,7 @@ top pid=0 units=1
   box FullStopW "。" w=513su blank=R r10 @[81,84)
   glue blank w=512su x=0 cap=0su r10 @[81,84)
   box AmbOpenQuote "“" w=104su blank=L r11 @[105,108)
-  box Other "OK" w=1025su r12 @[108,110)
+  box Alpha "OK" w=1025su r12 @[108,110)
   box AmbCloseQuote "”" w=104su blank=R r13 @[110,113)
   glue blank w=512su x=0 cap=0su r13 @[110,113)
   glue word w=257su x=1 cap=257su src r14 @[115,115)

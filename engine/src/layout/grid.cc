@@ -28,7 +28,7 @@ std::vector<GridRow> wrapGridLine(std::string_view joined, const std::vector<std
       u32 pb = 0;
       while (pb < cs) {
         u32 cp2 = utf8Next(joined, pb);
-        col += isWide(cp2) ? cjkCols : latinAtoms;
+        col += eawWide(cp2) ? cjkCols : latinAtoms;
       }
       // lead-in: opening punctuation streak + one space
       u32 q2 = cs;
@@ -60,7 +60,7 @@ std::vector<GridRow> wrapGridLine(std::string_view joined, const std::vector<std
     while (p < joined.size()) {
       u32 q = p;
       u32 cp = utf8Next(joined, q);
-      i32 w = isWide(cp) ? cjkCols : latinAtoms;
+      i32 w = eawWide(cp) ? cjkCols : latinAtoms;  // (plan P4-05) UAX #11: wide and fullwidth take two columns
       if (col + w > avail) break;
       col += w;
       p = q;
@@ -71,7 +71,7 @@ std::vector<GridRow> wrapGridLine(std::string_view joined, const std::vector<std
         // closing punct / after an opening one (禁则)
         u32 r = q;
         u32 nx = q < joined.size() ? utf8Next(joined, r) : 0;
-        if (!(nx && isClosePunct(nx))) lastBrk = p;
+        if (!(nx && (isClosePunct(nx) || noStart(nx)))) lastBrk = p;  // (plan P4-05: the nostart column)
       }
     }
     if (p >= joined.size()) {

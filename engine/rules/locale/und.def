@@ -1,0 +1,61 @@
+// 'und' (plan P4-05; design T5 step 8): the classes every language starts
+// from, derived from the pinned UCD instead of hand lists. LB(lb…, Class):
+// codepoints whose UAX #14 line-break class is one of lb… take Class (the
+// first row that matches wins); CLASS rows override single codepoints.
+// Wide classes are the Han section's (zh-Hans.def): its ranges override
+// these rows.
+DEFAULT(Other)
+
+// spaces and break controls: what a text says about breaking in plain text
+LB(ZW, ZwSpace)
+LB(WJ, WordJoiner)
+LB(SP, Space)
+LB(BK CR LF NL, NewLine)
+CLASS(NbSpace, 00A0 2007)
+CLASS(NbRigid, 202F)
+CLASS(SoftHyphen, 00AD)
+// Hangul: syllables and jamo (a Hangul run breaks between syllables and
+// keeps its typed spaces; no CJK–Latin glue, no seamless line join)
+LB(H2 H3 JL JV JT, Hangul)
+// letters, digits and narrow punctuation (UAX #14)
+LB(AL HL AI GL, Alpha)
+LB(NU, Digit)
+LB(OP, OpenN)
+LB(CL CP NS, CloseN)
+LB(QU, QuoteN)
+LB(IS, Infix)
+LB(SY, Solidus)
+LB(HY, HyphenMinus)
+LB(EX, Excl)
+LB(PR, PrefixNum)
+LB(PO, PostfixNum)
+LB(BA, BreakAfter)
+LB(BB, BreakBefore)
+// the ambiguous marks: a curly quote, the em dash, the ellipsis — set by
+// their context (shape/context.h, plan P4-02)
+CLASS(AmbOpenQuote, 201C 2018)
+CLASS(AmbCloseQuote, 201D 2019)
+CLASS(AmbDash, 2014)
+CLASS(AmbEllipsis, 2026)
+
+// columns: what the shaper reads of a class
+// set solid as CJK (a letter-spaced box or a punctuation glyph)
+COLUMN(wide, Ideo Kana SmallKana IterMark Prolonged IdeoSpace Hangul OpenW CloseW FullStopW CommaW ColonW ExclW MiddleDotW DashW EllipsisW)
+// a punctuation glyph with blanks (BlankBearing), and its sides
+COLUMN(punct, OpenW CloseW FullStopW CommaW ColonW ExclW MiddleDotW AmbOpenQuote AmbCloseQuote)
+COLUMN(open, OpenW AmbOpenQuote)
+COLUMN(close, CloseW FullStopW CommaW ColonW ExclW AmbCloseQuote)
+// never at a line start (禁则: closers and stops, small kana, iteration
+// marks, the prolonged sound mark, a wave dash, a middle dot)
+COLUMN(nostart, CloseW FullStopW CommaW ColonW ExclW AmbCloseQuote SmallKana IterMark Prolonged DashW MiddleDotW)
+// CJK–Latin boundary glue (App C, CSS text-autospace ideograph-alpha: Han
+// and kana, not Hangul, not a space)
+COLUMN(autospace, Ideo Kana SmallKana IterMark Prolonged DashW)
+// evidence that sets an ambiguous neighbour CJK (Hangul text sets its
+// quotes and dashes Latin)
+COLUMN(ambwide, Ideo Kana SmallKana IterMark Prolonged IdeoSpace DashW EllipsisW OpenW CloseW FullStopW CommaW ColonW ExclW MiddleDotW)
+// a source line break between two of these joins without a space
+COLUMN(joins, Ideo Kana SmallKana IterMark Prolonged IdeoSpace DashW OpenW CloseW FullStopW CommaW ColonW ExclW MiddleDotW AmbDash AmbEllipsis)
+// may kern across a space with its neighbour (by class, not a codepoint
+// cutoff: plan P4-05)
+COLUMN(kern, Alpha Digit Apostrophe OpenN CloseN QuoteN Infix Solidus HyphenMinus Excl PrefixNum PostfixNum BreakAfter BreakBefore AmbOpenQuote AmbCloseQuote AmbDash AmbEllipsis AmbMiddleDot)

@@ -1,0 +1,48 @@
+// 'zh-Hans' (plan P4-05; design T5 step 8): the Han section — compat's
+// classification (RULES_VERSION 0, the clreq sets, App C) reproduced for
+// every codepoint compat classified, plus the coverage it lacked.
+// the Han ranges: a codepoint in them is wide, Ideo unless named
+WIDE(2E80..9FFF F900..FAFF 3000..303F FF00..FFEF 20000..2FA1F)
+WIDE_DEFAULT(Ideo)
+// kana and Hangul by script (columns as Ideo's; Hangul its own)
+SCRIPT(Hiragana Katakana, Kana)
+SCRIPT(Hangul, Hangul)
+
+// clreq punctuation (SC horizontal; v2 App C)
+CLASS(OpenW, FF08 3014 FF3B FF5B 300A 3008 300C 300E 3010)
+CLASS(CloseW, FF09 3015 FF3D FF5D 300B 3009 300D 300F 3011)
+CLASS(FullStopW, 3002 FF0E)
+CLASS(CommaW, FF0C 3001)
+CLASS(ColonW, FF1B FF1A)
+CLASS(ExclW, FF01 FF1F)
+// (plan P4-05) the coverage compat lacked: white lenticular and white
+// parenthesis brackets, small kana (UAX #14 CJ), the prolonged sound mark,
+// iteration marks, the katakana middle dot, the wave dash, the ideographic
+// space
+CLASS(OpenW, 3016 FF5F)
+CLASS(CloseW, 3017 FF60)
+CLASS_LB(CJ, SmallKana)
+CLASS(Prolonged, 30FC FF70)
+CLASS(IterMark, 3005 303B 309D 309E 30FD 30FE)
+CLASS(MiddleDotW, 30FB)
+CLASS(DashW, 301C)
+CLASS(IdeoSpace, 3000)
+
+// (plan P4-04) punctuation blanks (em): the compressible space a glyph's
+// advance holds on its leading and trailing side (SC horizontal, App C:
+// openers before, closers and stops after; jlreq: a middle dot's quarter
+// on each side). Adjacent blanks compress by the run's punct mode
+BLANK(OpenW AmbOpenQuote, 0.5, 0)
+BLANK(CloseW FullStopW CommaW ColonW ExclW AmbCloseQuote, 0, 0.5)
+BLANK(MiddleDotW, 0.25, 0.25)
+// (plan P4-04) defined advances (em): App C's em dash and ellipsis, 2em
+// doubled, 1em alone, when the context sets them wide
+ADVANCE(2014 2014, 2)
+ADVANCE(2014, 1)
+ADVANCE(2026 2026, 2)
+ADVANCE(2026, 1)
+
+// App C constants (em)
+CONST(cjkBoundaryEm, 0.25)
+// (plan P4-04) a superscript run's raise
+CONST(superRaiseEm, 0.45)

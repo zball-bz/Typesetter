@@ -175,11 +175,12 @@ std::string lintHList(const HList& h) {
     // kinsoku: no break after an opening glyph, none before a closing one
     const bool afterOpen = i > 0 && v[i - 1].k == IK::Box && h.runs[v[i - 1].run].rc == RealizeClass::BlankBearing &&
                            (kCCFlags[v[i - 1].cls] & kCC_open);
-    const bool beforeClose = j < n && v[j].k == IK::Box && h.runs[v[j].run].rc == RealizeClass::BlankBearing &&
-                             !(kCCFlags[v[j].cls] & kCC_open);
+    // (plan P4-05) before any non-starter — a closer, a stop, a small kana,
+    // an iteration mark (the rules' nostart column)
+    const bool beforeClose = j < n && v[j].k == IK::Box && (kCCFlags[v[j].cls] & kCC_nostart);
     if (c > 0 && (afterOpen || beforeClose))
-      appendf(out, "item %zu: a breakpoint %s punctuation glyph\n", i,
-              afterOpen ? "after an opening" : "before a closing");
+      appendf(out, "item %zu: a breakpoint %s\n", i,
+              afterOpen ? "after an opening glyph" : "before a non-starter");
     i = j;
   }
   // runs: numbered in order, contiguous, every one used
