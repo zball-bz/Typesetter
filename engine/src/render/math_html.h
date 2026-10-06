@@ -17,6 +17,7 @@ struct MathSpanOpts {
   u32 srcBase = 0;
   StrRef color = 0;        // its paint style's colour
   bool label = false;      // (plan P3-27, D-R04) role=math, its source as aria-label
+  u32 group = 0;           // (plan P3-29) its copy group's source position when its span is not written (a display row)
 };
 
 // <span class="tsr-math" data-syn="math" data-copy="$src$" …> with its

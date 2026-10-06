@@ -68,7 +68,7 @@ void writeMathSpan(std::string& out, const MathBox* mb, std::string_view srcAsWr
   src += srcAsWritten;
   src += o.display ? " $" : "$";
   t.attr("data-copy", src);
-  t.num("data-copy-group", 0x80000000u | o.span.start);
+  t.num("data-copy-group", 0x80000000u | (o.span.empty() ? o.group : o.span.start));
   if (o.label) {
     t.attrSafe("role", "math");
     t.attr("aria-label", srcAsWritten);
