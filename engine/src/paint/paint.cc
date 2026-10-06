@@ -301,7 +301,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         break;
       case FragKind::Raw: {
         const RawData& r = std::get<RawData>(u.data);
-        n.heightPx = r.hPx;
+        n.heightPx = r.size.h;
         n.src = r.html;
         break;
       }

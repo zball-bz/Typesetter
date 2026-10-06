@@ -179,7 +179,7 @@ struct Doc {
     }
     if (first <= Stage::Execute) return kReexecute;
     for (int k = (int)first; k <= validThrough; k++)
-      if (kStageRerun[k] != Rerun::Reentrant) return kRebuild;
+      if (!reentrant(kStageRerun[k])) return kRebuild;
     cfg = std::move(next);
     invalidateFrom(first);
     return kApplied;
@@ -222,8 +222,9 @@ struct Doc {
     for (u32 i = 0; i < f.rt.boxNeeds.size(); i++) {
       const BoxNeed& b = f.rt.boxNeeds[i];
       if (b.st != ResState::Pending) continue;
-      const BoxNeed* src = rt.box(strs.find(f.strs.get(b.src)));
-      if (src && src->st != ResState::Pending) f.settleBox(i, src->w, src->h, src->st == ResState::Failed);
+      const BoxNeed* src = rt.box(b.kind, strs.find(f.strs.get(b.src)), b.availPx);
+      if (src && src->st != ResState::Pending)
+        f.settleBox(i, src->w, src->h, src->baseline, src->st == ResState::Failed);
     }
     return true;
   }
@@ -387,7 +388,7 @@ struct Doc {
       if (src && !safeImageSrc(strs.get(src)))
         diags.add(Sev::Warning, "image-src", n->span.empty() ? outer : n->span, "image src scheme not allowed");
       else if (src && !(iw > 0 && ih > 0))
-        waitBoxes[pid].push_back(rt.needBox(src, outer));
+        waitBoxes[pid].push_back(rt.needBox(BoxKind::Image, src, 0, outer));
     }
     for (const ContentNode* k : n->kids) scanImageNeeds(k, pid, outer);
   }
@@ -411,13 +412,14 @@ struct Doc {
   // Box sizes: 0×0 (or anything not finite and positive) is a failed load:
   // a placeholder and a warning. The author's own dims stay theirs (emit
   // fills only what they left out — defect #24).
-  void settleBox(u32 i, double wPx, double hPx, bool failed) {
+  void settleBox(u32 i, double wPx, double hPx, double baselinePx, bool failed) {
     if (i >= rt.boxNeeds.size() || rt.boxNeeds[i].st != ResState::Pending) return;
     BoxNeed& b = rt.boxNeeds[i];
     if (!failed && std::isfinite(wPx) && std::isfinite(hPx) && wPx > 0 && hPx > 0) {
       b.st = ResState::Ready;
       b.w = wPx;
       b.h = hPx;
+      b.baseline = std::isfinite(baselinePx) && baselinePx >= 0 && baselinePx <= hPx ? baselinePx : hPx;
     } else {
       b.st = ResState::Failed;
       diags.addAs(DiagOrigin::Provide, Sev::Warning, "image-load", b.span,
@@ -429,7 +431,7 @@ struct Doc {
   // no pending need is reported, never silently dropped
   void provideImage(u32 id, double wPx, double hPx) {
     if (id >= rt.boxNeeds.size() || rt.boxNeeds[id].st != ResState::Pending) return unmatched("image", id);
-    settleBox(id, wPx, hPx, false);
+    settleBox(id, wPx, hPx, hPx, false);
   }
   void provideTokens(u32 id, const CodeToken* toks, size_t n) {
     if (id >= rt.tokenNeeds.size() || rt.tokenNeeds[id].st != ResState::Pending) return unmatched("tokens", id);
@@ -494,8 +496,10 @@ struct Doc {
     if (!b.boxes.empty()) {
       WireKind& k = kind(ResKind::boxInfo, b.boxes.size());
       for (size_t i = 0; i < b.boxes.size(); i++) {
-        k.rows[i].col[0] = 0;  // an image
-        k.rows[i].col[1] = str(rt.boxNeeds[b.boxes[i]].src);
+        const BoxNeed& bn = rt.boxNeeds[b.boxes[i]];
+        k.rows[i].col[0] = (u64)bn.kind;
+        k.rows[i].col[1] = str(bn.src);
+        k.rows[i].setF64(2, bn.availPx);
       }
     }
     if (!b.tokens.empty()) {
@@ -588,7 +592,7 @@ struct Doc {
           }
           case ResKind::boxInfo:
             if (!fresh(seenBoxes, r.resId, t)) break;
-            settleBox(b.boxes[r.resId], r.f64(0), r.f64(1), !ok);
+            settleBox(b.boxes[r.resId], r.f64(0), r.f64(1), r.f64(2), !ok);
             break;
           default:
             t.invalid++;
@@ -611,7 +615,7 @@ struct Doc {
     for (u32 i = 0; i < seenBoxes.size(); i++)
       if (!seenBoxes[i]) {
         tally[(u16)ResKind::boxInfo].missing++;
-        settleBox(b.boxes[i], 0, 0, true);
+        settleBox(b.boxes[i], 0, 0, 0, true);
       }
     for (const ResKindInfo& k : kResKinds) {
       const Tally& t = tally[(u16)k.kind];

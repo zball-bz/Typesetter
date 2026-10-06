@@ -9,7 +9,10 @@ enum class Stage : u8 {
 #include "stages.def"
 #undef STAGE
 };
-enum class Rerun : u8 { Once, PidRetry, Resumable, Reentrant };
+enum class Rerun : u8 { Once, PidRetry, Resumable, Reentrant, Provisional };
+// a stage a settings patch may re-enter in place (its product is pure over
+// earlier ones and its answers)
+constexpr bool reentrant(Rerun r) { return r == Rerun::Reentrant || r == Rerun::Provisional; }
 
 constexpr Rerun kStageRerun[] = {
 #define STAGE(id, side, unit, rerun) Rerun::rerun,

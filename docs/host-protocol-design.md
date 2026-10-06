@@ -45,7 +45,8 @@ defaults, rows, the legacy option map, `settingsFromOptions`).
 | BoxTree | engine | Once (the block structure of the resolved tree, plan P1-18; Emit reads it) |
 | Emit | engine | PidRetry (re-run while math-text metrics arrive) |
 | Measure | engine | Resumable (the pull loop) |
-| Layout (breaking included, plan P1-15), Paginate, Paint | engine | Reentrant (pure over earlier products) |
+| Layout (breaking included, plan P1-15) | engine | Provisional (plan P3-28): Reentrant, and it may ask — a host box at its width (boxInfo); a run that asks is provisional, never painted, and runs again when the answers arrive |
+| Paginate, Paint | engine | Reentrant (pure over earlier products) |
 
 `Doc::validThrough` records how far a document has run (it replaced the old
 `emitted`/`laidOut` flags); `invalidateFrom(stage)` drops the later products.
@@ -62,7 +63,7 @@ and the golden runner alike.
 
 A settings patch is applied in place when nothing it affects has run yet, or
 when every stage from its first affected stage through `validThrough` is
-Reentrant (e.g. `cost.*` on a laid-out document re-breaks in place). Otherwise
+Reentrant or Provisional (e.g. `cost.*` on a laid-out document re-breaks in place). Otherwise
 `tsr2_set_config` changes nothing and returns **REBUILD** (4) — the host forks —
 or **REEXECUTE** (5) when the first affected stage is Execute or earlier.
 
@@ -107,7 +108,7 @@ column tables of both codecs: `resource/resources.gen.h`,
 | fontVmet (2) | metric key | ascent, descent px | Content |
 | fontFace (3) | family, src, weight, style | status (reserved: no declared faces yet) | None |
 | codeTokens (4) | language, body (its overlay spans blanked: plan P3-22) | runs (start, end, tag)… | Content |
-| boxInfo (5) | kind (0 image), ref, available px | w, h, baseline px | Host |
+| boxInfo (5) | kind (0 image, 1 svg, 2 html), ref (src, or the markup), the width it is measured at (px; 0: an image's intrinsic size) | w, h, baseline px (baseline from the top) | Host |
 
 The **metric key** is the complete measurement tuple (D-T04): the resolved
 family stack, the digest of the loaded declared faces in it (0 until

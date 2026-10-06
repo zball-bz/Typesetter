@@ -15,23 +15,32 @@ namespace tsr {
 // false answers its row as failed (the engine degrades that quantity).
 struct ProviderSet {
   std::function<bool(std::string_view lang, std::string_view text, std::vector<CodeToken>& out)> tokens;
-  std::function<bool(std::string_view src, double& w, double& h)> images;
+  // a box's size (BoxKind): an image's intrinsic px (availPx 0), an svg or
+  // html box's height and baseline at its width (plan P3-28)
+  std::function<bool(BoxKind kind, std::string_view ref, double availPx, double& w, double& h, double& baseline)>
+      boxes;
   std::function<double(const WireMetricKey& mk, std::string_view text)> width;
   std::function<void(const WireMetricKey& mk, double& asc, double& desc)> vmet;
 };
 
 // The golden/native providers: the normative mock measurer (it depends only
-// on the key's size), the policy's image answer, plain code (callers add a
-// token provider, e.g. native tree-sitter: nativeTokens).
+// on the key's size), the policy's image answer, the mock box (its payload's
+// text in lines of its width), plain code (callers add a token provider,
+// e.g. native tree-sitter: nativeTokens).
 inline ProviderSet mockProviders() {
   ProviderSet p;
   p.tokens = [](std::string_view, std::string_view, std::vector<CodeToken>& out) {
     out.clear();
     return true;
   };
-  p.images = [](std::string_view, double& w, double& h) {
-    w = kPolicyNativeImagePx[0];
-    h = kPolicyNativeImagePx[1];
+  p.boxes = [](BoxKind kind, std::string_view ref, double availPx, double& w, double& h, double& baseline) {
+    if (kind == BoxKind::Image) {
+      w = kPolicyNativeImagePx[0];
+      h = baseline = kPolicyNativeImagePx[1];
+      return true;
+    }
+    w = availPx;
+    mockBoxPx(ref, availPx, h, baseline);
     return true;
   };
   p.width = [](const WireMetricKey& mk, std::string_view text) { return mockWordWidthPx(text, mk.sizePx); };
@@ -78,11 +87,12 @@ inline bool answerRound(Doc& doc, const ProviderSet& p) {
           break;
         }
         case ResKind::boxInfo: {
-          double w = 0, h = 0;
-          if ((ok = p.images && p.images(q.strings[r.col[1]], w, h))) {
+          double w = 0, h = 0, baseline = 0;
+          if ((ok = p.boxes && r.col[0] <= (u64)BoxKind::Html &&
+                    p.boxes((BoxKind)r.col[0], q.strings[r.col[1]], r.f64(2), w, h, baseline))) {
             o.setF64(0, w);
             o.setF64(1, h);
-            o.setF64(2, h);
+            o.setF64(2, baseline);
           }
           break;
         }

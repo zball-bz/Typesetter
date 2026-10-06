@@ -944,7 +944,7 @@ class DocLayout {
         break;
       case Painter::Raw:
         f.kind = FragKind::Raw;
-        f.height = suRoundPx(std::get<RawData>(u.data).hPx);
+        f.height = suRoundPx(std::get<RawData>(u.data).size.h);
         break;
       case Painter::Image: {
         // block figure image (figure-design.md §3): centred on the measure,
@@ -1264,8 +1264,8 @@ class DocLayout {
             lmn = lmx = w;
           } else if (b.painter == Painter::Raw) {
             const RawData& r = std::get<RawData>(u.data);
-            lmx = suRoundPx(std::max(r.wPx, r.minWPx));
-            lmn = suRoundPx(r.minWPx > 0 ? r.minWPx : r.wPx);
+            lmx = suRoundPx(std::max(r.size.w, r.size.minW));
+            lmn = suRoundPx(r.size.minW > 0 ? r.size.minW : r.size.w);
           } else if (b.painter == Painter::MathRow) {
             if (const MathBox* mb = std::get<MathData>(u.data).box) lmn = lmx = mb->w;
           }

@@ -9,6 +9,7 @@
 
 #include "../math/math.h"
 #include "../measure/measure.h"
+#include "../resource/box.h"
 #include "../shape/hlist.h"
 
 namespace tsr {
@@ -79,23 +80,33 @@ struct BreakBlock {
   bool isHyphen() const { return flags & BF_HYPHEN; }
 };
 
-// An image's size as emit knows it (plan P1-16; design T6 S4): intrinsic
-// px (declared, or pulled from the host) and the scale; layout resolves the
-// display box against its measure — emit reads no width.
-struct ImageSize {
-  double iw = 0, ih = 0;     // intrinsic px
-  double scale = 0;          // a fraction of the measure (0 = the intrinsic width)
-  bool placeholder = false;  // unsized or unsafe: measure × measure/3
+// A replaced box's size as emit knows it (plan P1-16; P3-28, design T6
+// IntrinsicSize): one record for every replaced box — an image, a raw box —
+// saying where its size comes from. Layout resolves the display box against
+// its measure; emit reads no width.
+//   Declared:    the author's w × h (a raw box's h: one leading when unset)
+//   Provided:    an image's intrinsic px, from the host (boxInfo at width 0)
+//   Host:        measured by the host at the box's width (boxInfo at that
+//                width): h and baseline arrive with layout's width; w and h
+//                hold the declared fallback
+//   Placeholder: unsized or unsafe: measure × measure/3
+enum class SizeSource : u8 { Declared, Provided, Host, Placeholder };
+struct IntrinsicSize {
+  double w = 0, h = 0;  // px (an image's intrinsic px; a raw box's declared)
+  double minW = 0;      // (plan P3-14) the least width it takes (a content-fitted column's floor)
+  double scale = 0;     // a fraction of the measure (0 = the intrinsic width)
+  SizeSource source = SizeSource::Declared;
+  bool placeholder() const { return source == SizeSource::Placeholder; }
 };
-// the display box: the scaled or intrinsic width, never wider than the
-// measure, the height from the aspect ratio
-inline void resolveImageSize(const ImageSize& s, double measurePx, Su& w, Su& h) {
+// an image's display box: the scaled or intrinsic width, never wider than
+// the measure, the height from the aspect ratio
+inline void resolveImageSize(const IntrinsicSize& s, double measurePx, Su& w, Su& h) {
   double dw, dh;
-  if (!s.placeholder) {
-    dw = s.scale > 0 ? s.scale * measurePx : s.iw;
+  if (!s.placeholder()) {
+    dw = s.scale > 0 ? s.scale * measurePx : s.w;
     if (dw > measurePx) dw = measurePx;
     if (dw < 1) dw = 1;
-    dh = dw * s.ih / s.iw;
+    dh = dw * s.h / s.w;
   } else {
     dw = measurePx;
     dh = measurePx / 3;
@@ -151,17 +162,19 @@ struct GridData {  // a code block (verbatim-design.md)
   // (or the body) as a whole; empty when the code has no source
   std::vector<Span> lineSpans;
 };
-struct RawData {  // handler-declared passthrough markup and its height
+// handler-written passthrough markup (v2 §4.1): its size declared (w: its
+// intrinsic width in a content-fitted column, plan P3-14) or measured by
+// the host at the box's width (plan P3-28: kind svg or html)
+struct RawData {
   StrRef html = 0;
-  double hPx = 0;
-  double wPx = 0;  // (plan P3-14) its declared width: its intrinsic width in a content-fitted column
-  double minWPx = 0;  // (plan P3-14) the least width it takes (a content-fitted column's floor)
+  BoxKind kind = BoxKind::Html;
+  IntrinsicSize size;
 };
 // figure-design.md §3: src 0 = placeholder (unsafe scheme or failed load —
 // the box carries the alt text); its display box is layout's
 struct ImageData {
   StrRef src = 0, alt = 0;
-  ImageSize size;
+  IntrinsicSize size;
 };
 struct MathData {  // a display formula
   const MathBox* box = nullptr;  // laid out in Measure (plan P1-25), once its text runs are measured

@@ -10,6 +10,7 @@
 
 #include "../code/tokens.h"
 #include "../measure/measure.h"
+#include "box.h"
 #include "codec.h"
 
 namespace tsr {
@@ -30,11 +31,19 @@ struct TokenNeed {
   std::vector<CodeToken> merged;  // Ready, with spans: toks with the spans set
   const std::vector<CodeToken>& runs() const { return spans.empty() ? toks : merged; }
 };
+// A replaced box's size (resources.def boxInfo; plan P3-28, design T6 S14 /
+// T9 M11): its kind, its payload (an image's src, the markup of an svg or
+// html box) and the width it is measured at — 0 for an image's intrinsic
+// size, else the box's width (a block's available width at layout, an
+// inline box's declared one), so a width-dependent box is one need per
+// width. The answer: CSS px; baseline from the box's top.
 struct BoxNeed {
+  BoxKind kind = BoxKind::Image;
   StrRef src = 0;
+  double availPx = 0;
   Span span;  // the first requesting node's (diagnostics)
   ResState st = ResState::Pending;
-  double w = 0, h = 0;  // Ready: intrinsic CSS px
+  double w = 0, h = 0, baseline = 0;  // Ready: CSS px
 };
 
 class ResourceTable {
@@ -54,21 +63,25 @@ class ResourceTable {
     tokenNeeds.push_back(std::move(t));
     return tokenIndex_[k] = (u32)tokenNeeds.size() - 1;
   }
-  u32 needBox(StrRef src, Span span) {
-    auto it = boxIndex_.find(src);
+  u32 needBox(BoxKind kind, StrRef src, double availPx, Span span, bool* fresh = nullptr) {
+    const BoxKey k{kind, src, suRoundPx(availPx)};
+    auto it = boxIndex_.find(k);
+    if (fresh) *fresh = it == boxIndex_.end();
     if (it != boxIndex_.end()) return it->second;
     BoxNeed b;
+    b.kind = kind;
     b.src = src;
+    b.availPx = availPx;
     b.span = span;
     boxNeeds.push_back(b);
-    return boxIndex_[src] = (u32)boxNeeds.size() - 1;
+    return boxIndex_[k] = (u32)boxNeeds.size() - 1;
   }
   const TokenNeed* tokens(StrRef lang, StrRef body, u32 overlays) const {
     auto it = tokenIndex_.find(TokenKey{lang, body, overlays});
     return it == tokenIndex_.end() ? nullptr : &tokenNeeds[it->second];
   }
-  const BoxNeed* box(StrRef src) const {
-    auto it = boxIndex_.find(src);
+  const BoxNeed* box(BoxKind kind, StrRef src, double availPx = 0) const {
+    auto it = boxIndex_.find(BoxKey{kind, src, suRoundPx(availPx)});
     return it == boxIndex_.end() ? nullptr : &boxNeeds[it->second];
   }
   // a token or box need still pending (the blocks that wait on one are
@@ -111,8 +124,19 @@ class ResourceTable {
       return std::hash<u64>()(((u64)k.lang << 32) | k.body) ^ (std::hash<u32>()(k.overlays) * 0x9E3779B97F4A7C15ull);
     }
   };
+  struct BoxKey {
+    BoxKind kind;
+    StrRef src;
+    Su avail;  // the width, quantized (one need per su)
+    bool operator==(const BoxKey& o) const { return kind == o.kind && src == o.src && avail == o.avail; }
+  };
+  struct BoxKeyHash {
+    size_t operator()(const BoxKey& k) const {
+      return std::hash<u64>()(((u64)k.src << 32) | (u32)k.avail) ^ ((size_t)k.kind * 0x9E3779B97F4A7C15ull);
+    }
+  };
   std::unordered_map<TokenKey, u32, TokenKeyHash> tokenIndex_;
-  std::unordered_map<StrRef, u32> boxIndex_;
+  std::unordered_map<BoxKey, u32, BoxKeyHash> boxIndex_;
 };
 
 // a width the host failed to give (design T9 A1): a per-code-point em bound

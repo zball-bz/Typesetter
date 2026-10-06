@@ -269,7 +269,7 @@ TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
   bool fi = true;
   for (u32 i = 0; i < d->doc.rt.boxNeeds.size(); i++) {
     const BoxNeed& r = d->doc.rt.boxNeeds[i];
-    if (r.st != ResState::Pending) continue;
+    if (r.st != ResState::Pending || r.kind != BoxKind::Image) continue;
     if (!fi) out += ",";
     fi = false;
     appendf(out, "{\"id\":%u,\"src\":\"", i);

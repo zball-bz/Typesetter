@@ -1043,11 +1043,11 @@ struct Emitter {
             RawData& r = u.data.emplace<RawData>();
             for (const ArgVal& a : n->args) {
               if (a.key == ArgK::html && a.tag == ArgTag::Str) r.html = a.ref;
-              if (a.key == ArgK::h && a.tag == ArgTag::Num) r.hPx = a.num;
-              if (a.key == ArgK::w && a.tag == ArgTag::Num) r.wPx = a.num;
+              if (a.key == ArgK::h && a.tag == ArgTag::Num) r.size.h = a.num;
+              if (a.key == ArgK::w && a.tag == ArgTag::Num) r.size.w = a.num;
               if (a.key == ArgK::minWidth && a.tag == ArgTag::Str) {  // (plan P3-14)
                 const Len ml = parseLen(strs.get(a.ref));
-                r.minWPx = ml.unit == 2 ? (double)ml.v : ml.v * fontPx(n->style);
+                r.size.minW = ml.unit == 2 ? (double)ml.v : ml.v * fontPx(n->style);
               }
               // (plan P3-14) a box the host measures arrives with P3-28's
               // resources; until then it keeps its declared height
@@ -1055,7 +1055,7 @@ struct Emitter {
                 E.diags.add(Sev::Info, "raw-measure", n->span,
                             "raw(measure: 'host'): host-measured boxes come later; its declared height is used");
             }
-            if (r.hPx <= 0) r.hPx = cfg.lineHeight * cfg.baseSizePx;
+            if (r.size.h <= 0) r.size.h = cfg.lineHeight * cfg.baseSizePx;
             return;
           }
           case Painter::Image: {
@@ -1074,12 +1074,13 @@ struct Emitter {
               if (a.key == ArgK::scale && a.tag == ArgTag::Num) scale = a.num;
             }
             const bool safe = srcRef && safeImageSrc(strs.get(srcRef));
+            const bool declared = iw > 0 && ih > 0;
             if (safe) E.imageDims(srcRef, iw, ih);
             if (safe && iw > 0 && ih > 0) im.src = srcRef;
-            im.size.iw = iw;
-            im.size.ih = ih;
+            im.size.w = iw;
+            im.size.h = ih;
             im.size.scale = scale;
-            im.size.placeholder = !im.src;
+            im.size.source = !im.src ? SizeSource::Placeholder : declared ? SizeSource::Declared : SizeSource::Provided;
             // a float's caption rows break to its width
             ICtx cctx;
             cctx.noHyphen = true;
@@ -1819,9 +1820,9 @@ static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u
     appendf(out, " w=%dsu asc=%dsu desc=%dsu", m->box->w, m->box->asc, m->box->desc);
   if (const ImageData* im = std::get_if<ImageData>(&u.data)) {
     // the size spec layout resolves (plan P1-16)
-    if (im->size.iw > 0 || im->size.ih > 0) appendf(out, " intrinsic=%gx%gpx", im->size.iw, im->size.ih);
+    if (im->size.w > 0 || im->size.h > 0) appendf(out, " intrinsic=%gx%gpx", im->size.w, im->size.h);
     if (im->size.scale > 0) appendf(out, " scale=%g", im->size.scale);
-    if (im->size.placeholder) out += " placeholder";
+    if (im->size.placeholder()) out += " placeholder";
     if (b.floatSide) out += b.floatSide == 1 ? " float=left" : " float=right";
   }
   if (b.tr.align == BlockTraits::Align::Center) out += " centered";

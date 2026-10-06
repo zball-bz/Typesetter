@@ -28,6 +28,28 @@ inline double mockWordWidthPx(std::string_view word, double sizePx) {
   return em * sizePx;
 }
 
+// A host-measured box (plan P3-28): the markup's text (tags and entities
+// skipped) set in 16px mock widths in lines of the box's width, 20px each,
+// at least one; its baseline the last line's (an inline-block's), 4px above
+// its bottom. Depends on the payload and the width only.
+inline void mockBoxPx(std::string_view html, double widthPx, double& h, double& baseline) {
+  double em = 0;
+  bool tag = false, ent = false;
+  u32 i = 0;
+  while (i < html.size()) {
+    const u32 cp = utf8Next(html, i);
+    if (tag) tag = cp != '>';
+    else if (ent) ent = cp != ';';
+    else if (cp == '<') tag = true;
+    else if (cp == '&') ent = true, em += 0.5;
+    else if (cp != '\n') em += mockCpWidthEm(cp);
+  }
+  const double textPx = em * 16;
+  const double lines = widthPx > 0 ? std::max(1.0, std::ceil(textPx / widthPx)) : 1;
+  h = 20 * lines;
+  baseline = h - 4;
+}
+
 // widths and vertical metrics depend only on the face's px size
 inline void mockProvide(const MeasureRequest& req, MetricStore& store, const Interner& strs,
                         const FaceTable& faces) {

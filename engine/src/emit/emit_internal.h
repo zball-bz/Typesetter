@@ -37,7 +37,7 @@ struct EmitEnv {
   // other side follows the image's aspect ratio
   void imageDims(StrRef src, double& iw, double& ih) const {
     if ((iw > 0 && ih > 0) || !rt) return;
-    const BoxNeed* bx = rt->box(src);
+    const BoxNeed* bx = rt->box(BoxKind::Image, src);
     if (!bx || bx->st != ResState::Ready) return;
     if (iw > 0) ih = iw * bx->h / bx->w;
     else if (ih > 0) iw = ih * bx->w / bx->h;
