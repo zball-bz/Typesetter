@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-01
+- 下一步：P3-02
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -67,7 +67,7 @@
 | P2-14 | 参考文献就地生成 | done | grep:plan P2-14 | 2026-10-06 | cite/* 的 .ops（条目在调用处发出，在含调用的段落之前）、lower 与 js（调用 bibliography 的洞变为 async）；tree：根节点 span 由 [0,0) 变为 [0,文末)（过去末尾的无 span 条目根决定了它），cite/in-note 的脚注组及其 blocktree/semantic 随之带上该 span；其余输出不变；新用例 cite/load | schema 的 stdlib 构造器加 "async"（bibliography），gen-schema 生成 kStdAsync；codegen：提到加载型构造器的 splice 洞为 async（va 等待其 promise）；执行器：host.bibliography 改为 async——经 loadResource 加载（每个来源一次），用 bib format 项逐条格式化（每条一帧：抛错时该条显示 ⚠ 与 bib-load 警告），在调用处 EMIT entry{role:bibentry,key}，在原位返回 collect；加载失败返回 seq[collect, error{bib-load}]；删除 bibRequests、finishBibliographies 与样式栈重放；host.load 与 ctx.load（构造器 ctx 与 fence ctx）包装 loadResource（限定 rootDir/文档目录，P0-11）；文档：notes-design、ctor-design、lowering-design、tsm-changes |
 | P2-15 | math/mathsrc 节点、洞与数学声明 | done | grep:plan P2-15 | 2026-10-06 | 含数学的 26 个用例的 ast/astjson（数学岛带逐行片段与洞子节点）与 lower（CALL math 加 CALL mathsrc，代替 mathinline/mathblock{src}），28 个用例的 tree（公式节点不再带 src，改为 mathsrc 子节点；含 code/sidecar、exec/fragments-diag 的片段公式）与 .ops；inline/bracket-island 的 mathir/mathbox/hlist/blocks/html/semantic 中 `\$` 按原样显示（复制文本保留转义；排版不变）；js 不变（现有用例没有数学洞）；mathbox/blocks/layout 其余不变；新用例 math/decl、math/holes-diag | schema：kind math{display}（since 12，opsVersion 12）与 mathsrc{src}，键 display；实例化把 math 映射为 mathblock（display）或 mathinline 并保留子节点，mathsrc 只允许在公式下（content-model），并给每个节点打 declEpoch（flow index 不大于其 EMIT 的位置型声明数）；解析器：数学岛按行切片（容器前缀已去、各带 span），洞为 #ident 与 #(expr)（D-L13），游离 # 为字面并报 math-hash；codegen：CALL math 由 mathsrc 片段与成帧的洞组成，洞代码为 __rt.std.mathHole(expr)；引擎：math/env.{h,cc}——MathEnv 由位置型 DECL math.symbol/op/fn 构建（epoch 为其次序，名字校验、std. 保留、math-shadow、math-decl、fn 体按模板语言并用 checkRow 校验、只绑定之前的声明），mathSource 把片段与洞拼成词法输入（数学值 \x01…\x02 解析隔离、字符串 \x03…\x04、错误 \x05…\x06），带偏移到片段 span 的映射与复制文本；词法：洞单元、`\$`/`\#` 转义、带点名字（std.frac、声明的点名）、claimCp 覆盖输入字符类；解析：声明的 symbol/op/fn 按 epoch 查找，洞在运算数或脚本底位置为一个单元、否则并入行；数学布局、emit（行内对象与行间公式的 formula/epoch）、旧版 legacy、语义页与 mathir 转储都读同一来源；TOC/引用摘录保留公式源文本（toc-excerpt 的过渡修复）；JS：math`…`、math(src, opts)、math.sym、math.call、mathHole、$.math.symbol/op/fn；文档：math-design §10.2、document-model、lowering-design、tsm-changes |
 | P2-16 | 其余 schema 变更（tcell 块体、equations、tag 槽、fill） | done | grep:plan P2-16 | 2026-10-06 | 无 golden 变化（四项各自提交：ca9dbd5、8bf64bc、8d43a18、05dcf51） | tcell 体改为 blocks，范式中按 Mixed 读（全为行内的格仍是其一行，含块则为块位置；emit 仍把格展平为一条行内流，T6 接手）；新 kind equations（块，体为显示公式行，N6 检查内容模型，盒树中暂由其行原位代替，P3-29 给布局与逐行编号）；schema 新增 slots 表（margin/codeblock、extra/ref、tag/任一块），生成 SlotId/kSlots/SLOTS 并锁定 id，槽中的子节点是部件：范式不移动、不包裹、不检查，其子节点按槽的模型定位；盒树、语义页与解析器按 SlotId 读 margin/extra；新 kind fill（#fill，nullary）：emit 为 Glue Fill（零宽、无有限伸缩、独立 run），断行块 BF_FIL、断行项 order 1，断行器把含 fill 的行视为 fil，布局把行的全部松弛分给 fill（任一行，含末行），paint 为 spacer（data-syn="fill"），legacy 判定器同样降级；不提升 MIN_COMPAT（MD-03）；文档：document-model、shaping-design、tsm-changes |
-| P3-01 | 级联、规则、默认样式表、NodeProps | todo | | | | |
+| P3-01 | 级联、规则、默认样式表、NodeProps | done | grep:plan P3-01 | 2026-10-06 | 结构提交 0258d0b 无 golden 变化。行为提交 f728e95：52 个 tree 显示有效样式（标题 [BOLDx1.60]/[BOLDx1.35]/[BOLDx1.15]、行内代码与代码块 [CODEx0.85]、记号 run 带 CODE），line/own-body 的脚注内列表缩进按其自身 em（blocktree/blocks/hlist/layout/html：1536su→1306su）；9f10d7b：31 个 tree 增加角色包装（styled caption-label / term-name / note-body），其余行逐行相同；本提交：23 个 tree 的 error 节点为 [CODE]（error 规则 mono），exec/keyword-diag 的 style-in-value 文案；新用例 style/nested-set、style/precedence（二者带 css 产品）、style/keep-group、notes/in-heading、notes/nested-sup、ref/styled；semantic、breaks 及其余 blocks/layout/html 不变 | 级联（model/cascade.{h,cc}）：StyleSelector（kind/role/class/lang/depth/where）、StyleRule（patch、force）、RuleEnv 持久链（env 0 defaults.json、env 1 宿主 style.rules、$.set 与 style.where 延伸）、fold（每属性末值胜；size 一槽；decoration 或），NodeProps 表（par.indent/align/hyphenate、block.gap/indent/keepWithNext、list.marker），节点存 style、scope（无规则投影）、props、env；Cascade::make（模板行内节点在现场按角色取规则）、reenter/lift（脚注体在 note-body 包装下重入，D-S09）、settleMade（normalize 与 MATERIALIZE 造的节点按位置取块属性）；盒树 BlockTraits 由 NodeProps 编译、块长度按块自身 em；emit 不再拼装标题/代码/错误呈现；记号 = tok-<tag> 类的文本（tok-comment 规则：italic、hang content）；数学文字 run 在公式样式下造；figure-box 元素的段落读作 caption 角色；JS：$.set、style.where、嵌套 $.set 包住其后兄弟（D-L12）、选择器 kind 校验；设置行 style.rules（json:array，force，D-T03）；rulesToCss（render/rules_css.{h,cc}：:where 选择器、force→!important、文档 env 以 data-tsr-env 哈希限定；css 产品、tsr2_render_css、renderTsm.css、export-static 内联）；语义页写 scope、角色映射来自 elements.json roles；文档：v2 §12、document-model §3/§9.2/§10、style-design §4、settings-table、tsm-changes |
 | P3-02 | 全局开关变为作用域属性 | todo | | | | |
 | P3-03 | slot、site、冻结标题克隆、计数器标记 | todo | | | | |
 | P3-04 | 身份与 DOM 拼写解耦（AnchorId） | todo | | | | |
@@ -146,6 +146,7 @@
 | P2-07 后 | 3.20 | 10.90 | 26.60 | 1.4 / 2.8 / 0.4 / 9.2 / 4.3 | 57.9 / 89.1 / 129.7 | 5.20 / 22.00 / 59.20 | PHASE 0：无声明无宿主语义时直接用内建注册表（零开销路径）；变体 splice 39.3、region 34.3、let 33.5、syntax 44.7；均在 P2 门限内（update 3.98 / 12.69 / 29.39，relayout 5.66 / 23.30 / 59.63；87K relayout 处于已知 57.5–59.8 噪声带） |
 | P2-08 后 | 3.40 | 10.90 | 26.80 | 1.4 / 3.0 / 0.4 / 9.4 / 4.2 | 56.3 / 90.9 / 128.7 | 5.20 / 22.10 / 57.40 | delta 节点与样式字段；变体 splice 38.3、region 32.9、let 32.6、syntax 44.4；均在 P2 门限内 |
 | P2 结束 | 3.50 | 11.40 | 28.20 | 1.6 / 3.4 / 0.4 / 9.7 / 4.4 | 62.5 / 95.6 / 134.2 | 5.30 / 22.00 / 60.00 | 阶段门禁：update 满足 P2 门限（3.98 / 12.69 / 29.39）；relayout 7.8K/35K 满足（5.66 / 23.30），87K 一次 bench.sh 为 60.00，重复测量 59.1–62.5（同机噪声带），与 P2-11 提交在同一时段交替 A/B：P2-11 59.5/59.6/59.7/59.6，HEAD 59.9/59.1/62.4/60.8——P2-11 本身已贴着门限 59.63；relayout 的引擎部分约 4ms（其余为浏览器 DOM），P2-12…P2-16 未触及该路径（另做了性能步 0be1119：一段公式直接用其驻留串、fill 前缀按需分配）。记为满足（取多次测量最小值 59.1），P3 第一个性能步须找回 relayout 余量。变体 splice 39.5、region 34.9、let 34.4、syntax 46.4。P3 门限：update 3.98 / 12.27 / 29.91，relayout 5.87 / 23.40 / 63.30 |
+| P3-01 后 | 3.70 | 11.60 | 28.20 | 1.6 / 3.3 / 0.6 / 9.5 / 4.4 | 63.4 / 97.0 / 139.2 | 5.60 / 22.60 / 58.00 | 级联：ingest 0.4→0.6（每节点一次 fold、scope、规则表解析）；均在 P3 门限内（update 3.98 / 12.27 / 29.91，relayout 5.87 / 23.40 / 63.30）；87K relayout 回到 58.0。变体 splice 40.6、region 35.0、let 35.4、syntax 46.1 |
 
 ## 偏差记录（MD-11）
 
@@ -271,6 +272,14 @@
 | P2-15 | 计划外：TOC 与引用文字的摘录保留公式源文本（toc-excerpt-drops-math 的过渡修复，T8 S8 的 Fixes 所列） | 过去摘录丢掉公式；结构化摘录（克隆公式节点）属 T3 | P3 的结构化摘录 |
 | P2 结束 | fuzz 第三轮发现（1dd81f0）之外的同类问题一并修正：一行内大量未闭合内容体的扫描由 O(n²) 变为线性（行扫描共享带记忆的括号匹配器、本行即到边界的开括号不再按窗口重扫、回退开括号有序存放并二分查找）。未修：同一段落内跨多行的大量未闭合开括号仍各自重扫到段落边界（8000 行约 4.6s） | 只出现在对抗输入；修它需要按段落共享窗口视图，超出本次修复范围 | 无（如真实文档出现再处理） |
 | P2 结束 | 87K relayout 的性能门禁按多次测量的最小值（59.1 ≤ 59.63）记为满足；单次 bench.sh 为 60.00，重复测量 59.1–62.5 | 同时段与 P2-11 提交交替 A/B 二者在噪声带内（P2-11 自身 59.5–59.7，已贴门限）；relayout 主要耗在浏览器 DOM，P2 后半段未触及其引擎路径 | P3 第一个性能步找回余量 |
+| P3-01 | 计划写"约 22 个 tree 显示有效样式""3 个 notes tree 增加 note-body 包装""blocks、layout、html 不变"；实际 52 个 tree 显示有效样式、31 个 tree 增加角色包装（全部含脚注、题注、术语的用例）、23 个 tree 的 error 为 [CODE]，line/own-body 的 blocks/layout/html 变化（脚注内列表缩进 1306su） | 含标题、代码、错误、脚注的用例比估计多；own-body 的变化正是本步要求的"块长度用块自身 em"（列表在 0.85em 的脚注里） | 无 |
+| P3-01 | 数学文字（覆盖缺口的码位、错误叶）在公式的计算样式下造（MathScope.style），不是设计中的 faceOf(state, Script::MathText) | 还没有 MathText 字体脚本（T5） | T5 的 face 步骤 |
+| P3-01 | 记号的颜色仍是记号自身的（var(--tsr-tok-<tag>)），只有 tok-comment 的 italic 与 hang 走规则 | 颜色进类通道要等 P3-18 的 tsr-c-* | P3-18 |
+| P3-01 | 未做：D-T08 的"内建元素样式段""文档元素样式段"两级；按 role/class 选择的规则不进语义页样式表 | 元素样式段属 P3-14；role/class 钩子属 P3-18/P3-23（D-T07 同） | P3-14、P3-18、P3-23 |
+| P3-01 | 解析器造的块节点（脚注列表、目录列表、段落）样式仍为 0，只按位置结算块属性；设计中为 make(collect 节点父状态) | 现有输出逐字节不变；块样式只影响其中造的行内节点，后者已按现场 make | P3-03 |
+| P3-01 | 仍有两处常量：不能出现在行内的 kind 的错误占位（⚠ kind 名）在 emit 中按 mono 量；代码边注列间距按 code.scale × 基础字号（layout 读不到样式） | 前者是引擎造的占位而非节点呈现；后者属块几何常量 | P3-02 |
+| P3-01 | 选择器的 kind 按实例化后的种类匹配：`math` 不选中公式（公式是 mathblock/mathinline）；lift 时 depth 选择器按 1 计 | 少见；公式按 mathblock/mathinline 选；深度选择器尚无用例 | 无 |
+| P3-01 | scope 按设计不含任何规则（含文档 $.set）：语义页内联只写作者样式，文档规则经 rulesToCss 的 data-tsr-env 进样式表 | T4 CascadeState：scope 供语义页与提升，规则进样式表 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

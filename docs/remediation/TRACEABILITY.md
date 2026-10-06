@@ -986,7 +986,7 @@ Theme steps: — · findings: 1
 | `markup-language/surface-grammar-drift` | adhoc | medium | P1-09 | grep:plan P1-09 |
 | `markup-language/sidecar-private-lowering` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `markup-language/collectors-closed` | adhoc | medium | P3-13 | |
-| `markup-language/style-surfaces` | adhoc | medium | P3-01 | |
+| `markup-language/style-surfaces` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `markup-language/cjk-softbreak-classifier` | adhoc | medium | P2-10, P4-02 | |
 | `markup-language/reference-forms-closed` | adhoc | medium | P2-09 | grep:plan P2-09 |
 | `markup-language/footnote-sugar-oneoff` | adhoc | low | P4-07 | |
@@ -1005,7 +1005,7 @@ Theme steps: — · findings: 1
 | `markup-language/missed:0` | missed | high | P2-11 | grep:plan P2-11 |
 | `markup-language/missed:1` | missed | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/missed:2` | missed | medium | P1-07 | grep:plan P1-07 |
-| `markup-language/missed:3` | missed | medium | P2-02, P3-01 | |
+| `markup-language/missed:3` | missed | medium | P2-02, P3-01 | grep:plan P3-01 |
 | `markup-language/missed:4` | missed | low | P1-07 | grep:plan P1-07 |
 | `markup-language/missed:5` | missed | low | P1-07 | grep:plan P1-07 |
 | `parser-frontend/per-feature-ast-kinds` | adhoc | high | P1-05 | grep:plan P1-05 |
@@ -1049,9 +1049,9 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/sidecar-ingest-pass` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `codegen-ops-model/bibliography-placeholder-and-end-emission` | adhoc | medium | P2-07, P2-14 | grep:plan P2-14 |
 | `codegen-ops-model/cls-sup-feature-bit` | adhoc | medium | P2-08 | grep:plan P2-08 |
-| `codegen-ops-model/kind-default-styles-in-emit` | adhoc | medium | P3-01 | |
+| `codegen-ops-model/kind-default-styles-in-emit` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `codegen-ops-model/resolver-fabricated-styles` | adhoc | medium | P3-01, P3-03 | |
-| `codegen-ops-model/token-class-as-color` | adhoc | medium | P3-01 | |
+| `codegen-ops-model/token-class-as-color` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `codegen-ops-model/fixed-styling-fields` | adhoc | high | P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/global-argk-namespace` | adhoc | high | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/version-bump-per-vocabulary` | adhoc | medium | P1-01 | grep:plan P1-01 |
@@ -1131,7 +1131,7 @@ Theme steps: — · findings: 1
 | `emitter/kern-context-postpass` | adhoc | medium | P4-01 | |
 | `emitter/sidecar-role-string` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `emitter/comment-by-css-color` | adhoc | medium | P2-08 | grep:plan P2-08 |
-| `emitter/kind-presentation-in-emit` | adhoc | medium | P3-01 | |
+| `emitter/kind-presentation-in-emit` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `emitter/global-typography-config` | adhoc | medium | P3-02 | |
 | `emitter/codeblock-args-in-emit` | adhoc | low | P0-06, P3-02, P3-11 | |
 | `emitter/anchor-opt-in-per-kind` | adhoc | low | P1-18 | grep:plan P1-18 |
@@ -1162,7 +1162,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/nested-stream-copies` | adhoc | high | P1-17 | grep:plan P1-17 |
 | `break-layout-pages/table-closed` | adhoc | high | P3-10, P3-14 | |
 | `break-layout-pages/alignment-flags` | adhoc | medium | P3-09 | |
-| `break-layout-pages/vertical-spacing-constants` | adhoc | medium | P1-18, P3-01 | |
+| `break-layout-pages/vertical-spacing-constants` | adhoc | medium | P1-18, P3-01 | grep:plan P3-01 |
 | `break-layout-pages/code-wrap-in-layout` | adhoc | medium | P3-11 | |
 | `break-layout-pages/code-sidecar-three-box` | adhoc | medium | P3-11 | |
 | `break-layout-pages/comment-role-by-color` | adhoc | low | P2-08 | grep:plan P2-08 |
@@ -1322,7 +1322,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 | |
 | `real-world-evidence/resource-and-config-plumbing` | adhoc | medium | P3-21 | |
 | `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 | |
-| `real-world-evidence/presentation-constants` | adhoc | medium | P3-01 | |
+| `real-world-evidence/presentation-constants` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `real-world-evidence/math-extensibility` | adhoc | medium | P3-29 | |
 | `real-world-evidence/no-cross-document-labels` | adhoc | high | P3-31 | |
 | `real-world-evidence/markup-reentry-missing` | adhoc | medium | P2-13 | grep:plan P2-13 |

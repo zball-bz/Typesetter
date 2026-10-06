@@ -95,8 +95,20 @@ all resolved engine-side; the CSS contract paints `.tsr-doc`, `.tsr-cjk`,
 paint name the same family. `lang` is not part of the face: the residual
 'locl'/generic-fallback exposure (document-model §3) remains documented.
 
-## 4. Not yet
+## 4. The cascade (as built, plan P3-01)
 
-The cascade, block/extent properties, document properties and the settings
-codec arrive with plan P1-03 (settings), P3-01 (cascade) and P3-02 (scoped
-knobs); the semantic serializer keeps its own property subset until P3-01.
+Rules patch the same rows: a rule is a selector and a patch of styled
+attributes (`$.set`, `style.where`, the host's `style.rules`, the engine's
+`engine/data/defaults.json`, whose patches may name a setting:
+`{"setting": "code.scale", "unit": "em"}`). The block rows (`gran: block` in
+the `props` section: `par.*`, `block.*`, `list.marker`) form `NodeProps`; the
+run rows `Styling`. One fold (`model/cascade.cc`) computes both, with each
+node's rule-free scope for the semantic page, whose stylesheet the same
+rules compile to (`render/rules_css.cc`). Precedence, scoping and the made
+and lifted nodes: docs/document-model.md §3, v2 §12.
+
+## 5. Not yet
+
+Element style sections (P3-14) and scoped document knobs (P3-02); the
+semantic page's role and class hooks (P3-18, P3-23); a token's colour is
+still its own until the class channel (P3-18).
