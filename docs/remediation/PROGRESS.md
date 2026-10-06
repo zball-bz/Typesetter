@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-05
+- 下一步：P3-06
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -71,7 +71,7 @@
 | P3-02 | 全局开关变为作用域属性 | done | grep:plan P3-02 | 2026-10-06 | 无既有 golden 变化；新用例 code/scoped-props（逐块 snapKerning、规则设 contIndent、run 级 text.punct；其 html 的 line-spans 列入 XFAIL，代码行无 span 的既有类） | 结构（7975905）：按阶段生成设置视图（settings.gen.h 的 IngestSettings…PaintSettings，只含 affects 列出该阶段的行，读未声明的行编译失败），各阶段改读视图；视图查出两处 affects 漂移并改正（P3-01 后默认规则在 Ingest 读 par.indent/list.indent/quote.indent/code.scale；测量按 doc.lang 定 face）；策略字面量改为 Doc 行 code.minCols、code.snapTolerance、code.snapMaxQ、table.cellPad、table.rowPad；安全栏改为具名 constexpr（support/rails.h），连字最小词长、URL 片段最小长度具名；删除 headingSizeMul 与表格内边距常量。行为：props 新行 codeblock.snapKerning/sidecarFrac/contIndent（块级，继承，新类型 num）与 text.features、text.punct（run 级）；codeblock 的同名参数为属性别名（schema 的 prop 标记，生成 isPropAlias，实例化时并入节点自身 delta）；默认规则按设置给出这些值（设置值按属性域取 Bool/Num/Str，空值为未设），code.fontFeaturesByLang 生成为宿主规则（env 1 开头）；layout 读 BlockTraits 的 snapKerning/sidecarFrac/contIndent，测量与 paint 读 run 的 features，emit 读 run 的 punct（未设回落 cjk.punctCompress）；opsVersion 13；文档：document-model §11、style-design、verbatim-design §2、settings-table、tsm-changes |
 | P3-03 | slot、site、冻结标题克隆、计数器标记 | done | grep:plan P3-03 | 2026-10-06 | tree：27 个题注段落加 slot="caption"（figure/*、region/figure、pages、labels、lower、doc/wrap-heading-caption）、12 个公式加 tag 部件 seq{slot:"tag"}（math/*、semantics/appendix 等，name 保留）、doc/refs 与 doc/toc-before-after 的 TOC 链接文字拆成编号与克隆的标题；index：含有序列表的 3 个用例增加 olist/enum-item 实例；semantic、blocks、layout、html 不变（列表标记字符串相同）；新用例 figure/kinds、doc/toc-clone、semantics/sites | 新槽 caption（schema slots，figure 构造器标记题注段落），group 新属性 kind；site 一般化：prepend/append 于 self、first-para、last-para 或部件（槽名），arg、replace、tag（seq{slot:tag} 部件），site 产物标 synthetic；display（D-S05：内建标题行 false，文档为类声明 numbering 或 sites 时为 true，除非写 false）；refers-to enclosing（LOCATE 记录外围实例）；marker（实例编号即列表标记，ContentNode::number，盒树绘制，其次 list.marker、再次位置）；新行 table-figure（D-S01，构造器按主体自动设 kind）、subfigure（D-S02，计数器 subfigure 在 figure 内、模式 (a)）、figure-table（不编号、refers-to enclosing）、olist/enum-item（计数器 enum 以 scope 按列表实例重启，start 与 numbering 属性）、dterm（role dterm 的组成为术语表行、原地保留、引用读其名）；模板节点的 marker（脚注条目的标记取自脚注编号）；cloneTitle（TOC 条目克隆标题内容：去 site 产物、flow、锚点、collect/event/entry，ref 变为解析后的文字，按 Cascade.lift 保留作者样式、取目的地上下文，D-S03）；公式源跳过部件，语义页打印 tag 部件；修复：类的多个选择器各自的 inside 解析到各自的类（以前全部取第一个） |
 | P3-04 | 身份与 DOM 拼写解耦（AnchorId） | todo | | | | |
-| P3-05 | RenderResult 与提交路径 | todo | | | | |
+| P3-05 | RenderResult 与提交路径 | done | grep:plan P3-05 | 2026-10-06 | 无 golden 变化；e2e 新增段落插入/删除只替换该段并保留其余元素、更新时的 upgrade 记录只含改动块、宿主丢弃的键触发重取（过期键防护），共 4×3 项 | 引擎：Doc::renderResult/tsr2_render_result——每块按正文（去掉 data-pid、data-s0、margin-bottom 的块）取 128 位键（MurmurHash3 x64_128，挪到 support/hash128.h，断行缓存共用），只发送宿主未持有的块（按旧写法带位置属性，全部发送时即旧正文），表含 pid、源范围、高度、间距、键与 UTF-16 偏移，头含 generation（Session 单调）、根开标签、anchors [label, pid, class]、各块间距的写法；writeBlockOpen/writeBlockNodes/writeBlockBody 拆分；unitRenderResult 校验全部发送等于旧 render、去位置后重放位置逐字节相等、持有键不再发送、generation 递增。worker：带 held 的请求、帧传输、HTML 在 worker 解码、render 请求（重取）。壳：commit.mjs（decodeResult、commit、heldKeys、sessionHtml、offsetAt、elementsAt、StaleKeys），删除 chunkParas/patchIn/swapIn；typeset/update/relayout 走 commit；update 与 relayout 仅在有 onUpgrade 监听时读 rect；handle.html 按需拼接；handle.offsetAt/elementsAt，VS Code 预览改用；文档：architecture §4.2/§4.3 |
 | P3-06 | shell 核心与 Behavior 注册表 | todo | | | | |
 | P3-07 | 分隔符与复制契约 | todo | | | | |
 | P3-08 | ParShape 与侧向排除区 | todo | | | | |
@@ -148,6 +148,7 @@
 | P2 结束 | 3.50 | 11.40 | 28.20 | 1.6 / 3.4 / 0.4 / 9.7 / 4.4 | 62.5 / 95.6 / 134.2 | 5.30 / 22.00 / 60.00 | 阶段门禁：update 满足 P2 门限（3.98 / 12.69 / 29.39）；relayout 7.8K/35K 满足（5.66 / 23.30），87K 一次 bench.sh 为 60.00，重复测量 59.1–62.5（同机噪声带），与 P2-11 提交在同一时段交替 A/B：P2-11 59.5/59.6/59.7/59.6，HEAD 59.9/59.1/62.4/60.8——P2-11 本身已贴着门限 59.63；relayout 的引擎部分约 4ms（其余为浏览器 DOM），P2-12…P2-16 未触及该路径（另做了性能步 0be1119：一段公式直接用其驻留串、fill 前缀按需分配）。记为满足（取多次测量最小值 59.1），P3 第一个性能步须找回 relayout 余量。变体 splice 39.5、region 34.9、let 34.4、syntax 46.4。P3 门限：update 3.98 / 12.27 / 29.91，relayout 5.87 / 23.40 / 63.30 |
 | P3-01 后 | 3.70 | 11.60 | 28.20 | 1.6 / 3.3 / 0.6 / 9.5 / 4.4 | 63.4 / 97.0 / 139.2 | 5.60 / 22.60 / 58.00 | 级联：ingest 0.4→0.6（每节点一次 fold、scope、规则表解析）；均在 P3 门限内（update 3.98 / 12.27 / 29.91，relayout 5.87 / 23.40 / 63.30）；87K relayout 回到 58.0。变体 splice 40.6、region 35.0、let 35.4、syntax 46.1 |
 | P3-02 后 | 3.90 | 11.90 | 28.40 | 1.5 / 3.4 / 0.6 / 9.6 / 4.3 | 64.0 / 97.0 / 140.3 | 5.70 / 22.20 / 61.00 | 均在 P3 门限内；87K relayout 61.0（P2 以来的噪声带 57.5–62.5）。变体 splice 40.3、region 35.4、let 33.8、syntax 45.9 |
+| P3-05 后 | 3.40 | 10.70 | 25.50 | 1.6 / 3.1 / 0.7 / 9.6 / 2.8 | 62.8 / 103.5 / 142.4 | 1.50 / 13.90 / 55.40 | update 的 render 从 4.3 降到 2.8（不再整篇解码与比较字符串，只发未持有的块）；relayout 不再在测量窗口内强制同步布局（rect 只为 onUpgrade 监听读取，按设计），所以与先前行不完全可比——布局改在下一帧；两次 bench 的 relayout 35K 为 22.0 与 13.9、87K 为 55.4 与 58.1，均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -290,6 +291,9 @@
 | P3-03 | 公式 tag 部件由布局测量与放置未做，屏幕仍按 name 放置编号；lof/lot 收集器未加；dterm 用 role 为 dterm 的 group（尚无描述列表语法） | 计划写明 tag 由 P3-26 放置；新收集器属 P3-13；描述列表表层语法属 T1 | P3-26、P3-13 |
 | P3-03 | 解析器造的块节点样式仍为 0（P3-01 偏差）不变；cloneTitle 只用于大纲（TOC），术语表条目仍用名字与正文摘录 | 术语表的标题本是参数文字；正文摘录的结构化留给集合步骤 | P3-13 |
 | P3-04 | 设计 S5 中 data-ref-class/data-flow 来自 SemInfo、壳的脚注弹出改为 refPreview 行为未做；SemInfo 只落地 targetAnchor（anchorTo），anchor/targetCls/flow 未单独存 | 计划 P3-04 要点只列 anchor/url 与 AnchorNamer；refPreview 与 render.idPrefix 属 P3-06 | P3-06 |
+| P3-05 | 未做"进程级块 HTML 缓存"（命中时跳过 paint 与序列化）：块键是序列化后正文的散列，所以每块仍 paint 并序列化，只是不再发送宿主已持有的块 | 在序列化前算出的键必须覆盖写出器读取的一切（HList 项、数学盒、按值的样式），漏一项就会返回过期 HTML；精确的前置键需要 T6 的块布局散列 | P4（T6 块布局散列） |
+| P3-05 | RenderResult 的 anchors 行没有 preview 策略、块状态总为 exact、head 只带根开标签（没有 container 样式字段）；relayout 与 update 的 upgrade 记录只为 onUpgrade 监听计算 | preview 属 P3-06 的 refPreview；容器样式仍由 typeset() 写入；rect 懒读是设计要求，也去掉了 relayout 中的同步布局 | P3-06 |
+| P3-05 | render-runtime/anchor-decode-duplication 只做了宿主一侧（预览改用 offsetAt/elementsAt，不再假设 data-s0 单调）；引擎一侧——代码行、rule、raw、浮动题注行没有行 span、代码块 srcBase 回落为 0——仍在 XFAIL 的 line-spans 一类，留给 P3-07 | 行 span 的补全是 P3-07（与 P4-03）的范围；该发现在 TRACEABILITY 中保持未关闭 | P3-07 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

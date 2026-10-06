@@ -328,6 +328,19 @@ TSR_EXPORT const char* tsr2_render_css(WasmDoc* d) {
   return d->cssOut.c_str();
 }
 
+// the RenderResult frame (plan P3-05; Doc::renderResult): `held` the keys
+// the host holds, 16 bytes each (lo, hi); u32 length + the frame
+TSR_EXPORT const u8* tsr2_render_result(WasmDoc* d, const u8* held, int nHeld) {
+  std::vector<Key128> keys(nHeld > 0 ? (size_t)nHeld : 0);
+  if (nHeld > 0) std::memcpy(keys.data(), held, keys.size() * sizeof(Key128));
+  const std::string frame = d->doc.renderResult(keys.data(), keys.size());
+  d->htmlOut.assign(4, '\0');
+  const u32 len = (u32)frame.size();
+  std::memcpy(&d->htmlOut[0], &len, 4);
+  d->htmlOut += frame;
+  return (const u8*)d->htmlOut.data();
+}
+
 TSR_EXPORT void tsr_set_width(WasmDoc* d, double widthPx) {
   d->doc.setWidth(widthPx);
 }

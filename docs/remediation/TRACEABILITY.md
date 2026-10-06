@@ -1197,7 +1197,7 @@ Theme steps: — · findings: 1
 | `render-runtime/copy-syn-policy` | adhoc | medium | P3-07 | |
 | `render-runtime/copy-line-separators` | adhoc | medium | P3-07 | |
 | `render-runtime/shell-note-popups` | adhoc | high | P3-04, P3-06 | |
-| `render-runtime/shell-chunk-byte-coupling` | adhoc | medium | P3-05 | |
+| `render-runtime/shell-chunk-byte-coupling` | adhoc | medium | P3-05 | grep:plan P3-05 |
 | `render-runtime/anchor-namespace` | adhoc | medium | P3-04 | grep:plan P3-04 |
 | `render-runtime/css-contract-monolith` | adhoc | medium | P3-18 | |
 | `render-runtime/no-class-channel` | adhoc | high | P3-18 | |
@@ -1222,12 +1222,12 @@ Theme steps: — · findings: 1
 | `render-runtime/error-render-divergence` | issue | low | P3-16 | |
 | `render-runtime/hyphen-in-link-or-ref` | issue | low | P0-10 | grep:plan P0-10 |
 | `render-runtime/normative-doc-drift` | issue | low | P3-07 | |
-| `render-runtime/swap-whole-container` | issue | low | P3-05 | |
+| `render-runtime/swap-whole-container` | issue | low | P3-05 | grep:plan P3-05 |
 | `render-runtime/missed:0` | missed | high | P0-10, P4-01 | |
 | `render-runtime/missed:1` | missed | medium | P1-18 | grep:plan P1-18 |
 | `render-runtime/missed:2` | missed | medium | P1-02 | grep:plan P1-02 |
 | `render-runtime/missed:3` | missed | medium | P4-03 | |
-| `render-runtime/missed:4` | missed | low | P3-05 | |
+| `render-runtime/missed:4` | missed | low | P3-05 | grep:plan P3-05 |
 | `render-runtime/missed:5` | missed | low | P3-07 | |
 | `math/call-construct-string-dispatch` | adhoc | high | P1-24 | grep:plan P1-24 |
 | `math/vocabulary-in-font-artifact` | adhoc | high | P1-22, P3-24 | |

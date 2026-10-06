@@ -22,6 +22,11 @@ let handle = null;
 window.__tsr = {
   async typeset(source, opts = {}) {
     if (opts.widthPx) out.style.width = opts.widthPx + 'px';
+    // collectUpgrades: every onUpgrade batch lands in window.__ups (plan P3-05)
+    if (opts.collectUpgrades) {
+      window.__ups = [];
+      opts = { ...opts, onUpgrade: (u) => window.__ups.push(u) };
+    }
     handle = await engine.typeset(source, out, opts);
     return { diags: handle.diags, heightPx: handle.heightPx, dpr: devicePixelRatio,
              hasSemantic: !!handle.semanticHtml, upgrades: handle.upgrades.length,
@@ -40,6 +45,14 @@ window.__tsr = {
   },
   async paginate(opts) {
     return await handle.paginate(opts);
+  },
+  // (plan P3-05) the commit session's view: block pids and keys; and a
+  // dropped body, so the next result names a key the shell no longer holds
+  held() {
+    return handle.session.blocks.map((b) => ({ pid: b.pid, key: b.key }));
+  },
+  forgetHeld(i = 0) {
+    handle.session.bodies.delete(handle.session.blocks[i].key);
   },
   copyText() {
     const range = document.createRange();

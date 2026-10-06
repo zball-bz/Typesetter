@@ -92,33 +92,17 @@ new ResizeObserver(() => {
   }, 150);
 }).observe(out);
 
-// engine byte offset of an element inside a paragraph container
-function offsetOf(el) {
-  const para = el.closest('.tsr-para[data-s0]');
-  if (!para) return null;
-  const anchored = el.closest('[data-s]');
-  const rel = anchored && para.contains(anchored) ? +anchored.dataset.s : 0;
-  return +para.dataset.s0 + rel;
-}
-
+// (plan P3-05) source offsets through the engine handle: it knows each
+// block's source range, so nothing here assumes data-s0 order
 out.addEventListener('dblclick', (e) => {
-  const off = offsetOf(e.target);
-  if (off !== null) parent.postMessage({ type: 'jump', offset: off }, '*');
+  const off = handle?.offsetAt(e.target);
+  if (off !== null && off !== undefined) parent.postMessage({ type: 'jump', offset: off }, '*');
 });
 
 let lastMark = null;
 function reveal(offset) {
-  let best = null;
-  for (const para of out.querySelectorAll('.tsr-para[data-s0]')) {
-    if (+para.dataset.s0 <= offset) best = para;
-    else break;
-  }
-  if (!best) return;
-  let target = best;
-  const rel = offset - +best.dataset.s0;
-  for (const line of best.querySelectorAll(':scope > [data-s][data-e]')) {
-    if (+line.dataset.s <= rel && rel < +line.dataset.e) { target = line; break; }
-  }
+  const target = handle?.elementsAt(offset)[0];
+  if (!target) return;
   target.scrollIntoView({ block: 'center' });
   lastMark?.classList.remove('tsr-jump', 'fade');
   lastMark = target;

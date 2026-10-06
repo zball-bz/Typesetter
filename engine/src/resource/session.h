@@ -51,6 +51,7 @@ class Session {
 
   BreakMemo breakMemo;  // the KP memo slot
   int refs = 0;         // documents attached
+  u64 generation = 0;   // the last RenderResult stamped (plan P3-05: monotone per session)
   struct Stats {
     u64 widthHits = 0, widthMisses = 0;
   } stats;

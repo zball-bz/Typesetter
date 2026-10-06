@@ -3,6 +3,7 @@
 // (v2 §9): semantic flow HTML paints first; the typeset result swaps in
 // keyed by data-pid, reporting old/new rects — scroll anchoring is the
 // caller's responsibility (the engine provides the information).
+import { commit, createSession, decodeResult, elementsAt, heldKeys, offsetAt, sessionHtml, StaleKeys } from './commit.mjs';
 import { MATH_FONT } from '../shared/mathfont.gen.mjs';
 import { installCopy } from './copy.mjs';
 import { settingsFromOptions, settingOf } from '../shared/settings.gen.mjs';
@@ -256,90 +257,30 @@ export function createEngine(opts = {}) {
       worker.postMessage(msg);
     });
 
-  // Editing path (editor-design.md §3): the typeset HTML is a flat list of
-  // per-paragraph containers in normal flow, so an edit's DOM damage is
-  // computed by chunking the OLD and NEW strings at paragraph boundaries
-  // and replacing only the differing middle — a one-paragraph edit touches
-  // one node, and the browser reflows the tail by normal-flow shifting.
-  const chunkParas = (html) => {
-    const open = html.indexOf('<div class="tsr-para"');
-    // the root open tag carries lang, base size and font roles (plan P1-04);
-    // it is part of `head`, so a changed root falls back to a full swap
-    if (open < 0 || !/^<div class="tsr-doc"[ >]/.test(html)) return null;
-    const head = html.slice(0, open);
-    const chunks = [];
-    const s0 = [];
-    let at = open;
-    while (at >= 0) {
-      const next = html.indexOf('<div class="tsr-para"', at + 1);
-      let chunk = next >= 0 ? html.slice(at, next) : html.slice(at);
-      // data-s0 is the paragraph's ABSOLUTE source base — a length-changing
-      // edit shifts it for every tail paragraph, so chunks compare with it
-      // normalized out and the live attribute is fixed up afterwards
-      const m = /^(<div class="tsr-para" data-pid="\d+" data-s0=)"(\d+)"/.exec(chunk);
-      if (!m) return null;
-      s0.push(m[2]);
-      chunks.push(m[1] + '""' + chunk.slice(m[0].length));
-      at = next;
-    }
-    // last chunk carries the doc-wrapper close; peel it so chunks compare
-    // structurally (it is re-added only conceptually — patching never
-    // rewrites the wrapper)
-    const tail = '</div>\n</div>\n';
-    if (!chunks[chunks.length - 1].endsWith(tail)) return null;
-    chunks[chunks.length - 1] =
-      chunks[chunks.length - 1].slice(0, -'</div>\n'.length);
-    return { head, chunks, s0 };
+  // The commit path (plan P3-05; ./commit.mjs): a result names every block
+  // by key and carries only the bodies this session lacks; commit() keeps
+  // the blocks it holds and replaces the differing middle. Upgrade records
+  // (old/new paragraph rects by pid) are read for a typeset and a relayout.
+  const rectsOf = (root) => {
+    const m = new Map();
+    for (const el of root.querySelectorAll('[data-pid]')) m.set(el.dataset.pid, el.getBoundingClientRect());
+    return m;
   };
-  const patchIn = (container, prev, nextHtml) => {
-    const next = chunkParas(nextHtml);
-    const root = container.firstElementChild;
-    if (!next || !prev || prev.head !== next.head || !root ||
-        root.children.length !== prev.chunks.length) return null;
-    const a = prev.chunks, b = next.chunks;
-    let pre = 0;
-    while (pre < a.length && pre < b.length && a[pre] === b[pre]) pre++;
-    let suf = 0;
-    while (suf < a.length - pre && suf < b.length - pre &&
-           a[a.length - 1 - suf] === b[b.length - 1 - suf]) suf++;
-    let mid = '';
-    for (let i = pre; i < b.length - suf; i++)
-      mid += b[i].replace('data-s0=""', 'data-s0="' + next.s0[i] + '"');
-    for (let i = a.length - suf - 1; i >= pre; i--) root.children[i].remove();
-    if (mid) {
-      const ref = root.children[pre];
-      if (ref) ref.insertAdjacentHTML('beforebegin', mid);
-      else root.insertAdjacentHTML('beforeend', mid);
+  const upgradeRecords = (session, oldRects) => session.blocks.map((b) => {
+    const o = oldRects.get(String(b.pid));
+    const n = b.el.getBoundingClientRect();
+    return { pid: b.pid, old: o ? { top: o.top, height: o.height } : null, new: { top: n.top, height: n.height } };
+  });
+  // a result committed; a stale one (it names a key the session dropped)
+  // is asked for again holding nothing
+  const commitResult = async (session, res, docId) => {
+    try {
+      return commit(session, decodeResult(res.frame, res.html));
+    } catch (e) {
+      if (!(e instanceof StaleKeys)) throw e;
+      const again = await request({ type: 'render', id: nextId++, docId, held: new Uint8Array(0) });
+      return commit(session, decodeResult(again.frame, again.html));
     }
-    // restore real source bases: inserted middle already carries its own;
-    // kept prefix/suffix paragraphs get a one-attribute fix-up when shifted
-    for (let i = 0; i < pre; i++)
-      if (prev.s0[i] !== next.s0[i]) root.children[i].dataset.s0 = next.s0[i];
-    for (let k = 0; k < suf; k++) {
-      const bi = b.length - suf + k;
-      if (prev.s0[a.length - suf + k] !== next.s0[bi])
-        root.children[bi].dataset.s0 = next.s0[bi];
-    }
-    return next;
-  };
-
-  // Atomic per-pid swap with upgrade records (old/new paragraph rects).
-  const swapIn = (container, html) => {
-    const oldRects = new Map();
-    for (const el of container.querySelectorAll('[data-pid]'))
-      oldRects.set(el.dataset.pid, el.getBoundingClientRect());
-    container.innerHTML = html;
-    const upgrades = [];
-    for (const el of container.querySelectorAll('.tsr-para[data-pid]')) {
-      const o = oldRects.get(el.dataset.pid);
-      const n = el.getBoundingClientRect();
-      upgrades.push({
-        pid: +el.dataset.pid,
-        old: o ? { top: o.top, height: o.height } : null,
-        new: { top: n.top, height: n.height },
-      });
-    }
-    return upgrades;
   };
 
   return {
@@ -386,21 +327,31 @@ export function createEngine(opts = {}) {
         },
       );
       await settleFonts(fonts);  // paint with the faces the engine measured
-      const upgrades = swapIn(container, res.html);
+      const session = createSession(container);
+      const before = rectsOf(container);
+      await commitResult(session, res, id);
+      const upgrades = upgradeRecords(session, before);
       onUpgrade?.(upgrades);
       liveDocId = id;
       uninstallCopy?.();
       const uc = installCopy(container);
       const un = installNotePopups(container);
       uninstallCopy = () => { uc?.(); un(); };
-      let paraChunks = chunkParas(res.html);
       const handle = {
-        html: res.html,
+        // the document as one HTML string (the legacy shape), built on demand
+        get html() { return sessionHtml(session); },
         diags: res.diags,
         heightPx: res.heightPx,
         timings: res.timings,
         semanticHtml,
         upgrades,
+        // (plan P3-05) a DOM position's source byte, and the elements that
+        // show a source byte (the VS Code preview's jump and reveal)
+        offsetAt: (node) => offsetAt(session, node),
+        elementsAt: (byte) => elementsAt(session, byte),
+        // the commit session (the blocks held, their keys and elements):
+        // read-only, for hosts' diagnostics and tests
+        session,
         // Editing session (editor-design.md §2): re-typeset new source under
         // the SAME doc handle. The worker's persistent caches make this the
         // low-latency path; a failing edit keeps the last good doc alive.
@@ -409,19 +360,19 @@ export function createEngine(opts = {}) {
           const rid = nextId++;
           const r = await request({ type: 'update', id: rid, docId: id,
             source: newSource, settings: settingsAt(width), progressive: false,
-            fontFaces: fonts, baseUrl: document.baseURI });
+            fontFaces: fonts, baseUrl: document.baseURI, held: heldKeys(session) });
+          // rects only for a listener (an edit's commit reads no layout)
+          const before = onUpgrade ? rectsOf(container) : null;
+          const c = await commitResult(session, r, id);
           let ups = [];
-          const patched = patchIn(container, paraChunks, r.html);
-          if (patched) paraChunks = patched;
-          else {
-            ups = swapIn(container, r.html);
-            paraChunks = chunkParas(r.html);
+          if (onUpgrade) {
+            const changed = new Set(c.ranges.flatMap((g) => g.newPids));
+            ups = upgradeRecords(session, before).filter((u) => c.rebuilt || changed.has(u.pid));
+            onUpgrade(ups);
           }
-          onUpgrade?.(ups);
-          Object.assign(handle, { html: r.html, diags: r.diags,
-                                  heightPx: r.heightPx, timings: r.timings });
-          return { html: r.html, diags: r.diags, heightPx: r.heightPx,
-                   timings: r.timings, upgrades: ups, patched: !!patched };
+          Object.assign(handle, { diags: r.diags, heightPx: r.heightPx, timings: r.timings });
+          return { get html() { return sessionHtml(session); }, diags: r.diags, heightPx: r.heightPx,
+                   timings: r.timings, upgrades: ups, patched: !c.rebuilt, ranges: c.ranges, kept: c.kept };
         },
         // width-only re-typeset: metrics persist in the worker-held doc
         async relayout(newWidthPx) {
@@ -429,11 +380,16 @@ export function createEngine(opts = {}) {
           // the session measure moves now: an update() issued before this
           // resolves is queued behind it in the worker and must follow it
           width = newWidthPx;
-          const r = await request({ type: 'relayout', id: rid, docId: id, widthPx: newWidthPx });
-          const ups = swapIn(container, r.html);
-          paraChunks = chunkParas(r.html);
+          const r = await request({ type: 'relayout', id: rid, docId: id, widthPx: newWidthPx,
+                                    held: heldKeys(session) });
+          // (rects only for a listener, as on the edit path: plan P3-05)
+          const before = onUpgrade ? rectsOf(container) : null;
+          const c = await commitResult(session, r, id);
+          const ups = onUpgrade ? upgradeRecords(session, before) : [];
           onUpgrade?.(ups);
-          return { html: r.html, diags: r.diags, heightPx: r.heightPx, upgrades: ups, timings: r.timings };
+          Object.assign(handle, { diags: r.diags, heightPx: r.heightPx, timings: r.timings });
+          return { get html() { return sessionHtml(session); }, diags: r.diags, heightPx: r.heightPx,
+                   upgrades: ups, timings: r.timings, ranges: c.ranges, kept: c.kept };
         },
         // P1 (pages-design.md §2): sheets at the page measure; the live
         // document is restored to its screen width before this resolves

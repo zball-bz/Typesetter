@@ -385,19 +385,33 @@ void writeRoot(std::string& out, const char* cls, const DLRoot& r) {
   out += "\n";
 }
 
-void writeBlock(std::string& out, const DLBlock& b, const StyleTable& styles, const Interner& strs, double basePx) {
-  {
-    Tag t(out, "div");
-    t.attrSafe("class", "tsr-para");
+// the flowing block, with or without its positional attributes
+void writeBlockOpen(std::string& out, const DLBlock& b, bool positional) {
+  Tag t(out, "div");
+  t.attrSafe("class", "tsr-para");
+  if (positional) {
     t.num("data-pid", b.pid);
     t.num("data-s0", b.srcBase);
-    t.decl("position", "relative").px("height", suToPx(b.h));
-    if (b.gapAfterPx >= 0) t.px("margin-bottom", b.gapAfterPx);
-    t.open();
-    out += "\n";
   }
+  t.decl("position", "relative").px("height", suToPx(b.h));
+  if (positional && b.gapAfterPx >= 0) t.px("margin-bottom", b.gapAfterPx);
+  t.open();
+  out += "\n";
+}
+void writeBlockNodes(std::string& out, const DLBlock& b, const StyleTable& styles, const Interner& strs, double basePx) {
   for (const DLNode& n : b.nodes) writeNode(out, b, n, 0, b.srcBase, styles, strs, basePx);
   out += "</div>\n";
+}
+static void writeFlowBlock(std::string& out, const DLBlock& b, const StyleTable& styles, const Interner& strs,
+                           double basePx, bool positional) {
+  writeBlockOpen(out, b, positional);
+  writeBlockNodes(out, b, styles, strs, basePx);
+}
+void writeBlock(std::string& out, const DLBlock& b, const StyleTable& styles, const Interner& strs, double basePx) {
+  writeFlowBlock(out, b, styles, strs, basePx, true);
+}
+void writeBlockBody(std::string& out, const DLBlock& b, const StyleTable& styles, const Interner& strs, double basePx) {
+  writeFlowBlock(out, b, styles, strs, basePx, false);
 }
 
 void writeNodes(std::string& out, const DLBlock& b, u32 lo, u32 hi, Su yShift, const StyleTable& styles,

@@ -808,3 +808,61 @@ test('update: failing edit keeps the last good document', async ({ page }) => {
   expect(r.html).toContain('第二版');
   expect(r.heightPx).toBeGreaterThan(0);
 });
+
+// plan P3-05: the RenderResult commit path — a result carries only the blocks
+// the shell lacks; inserting or deleting a paragraph replaces only that range
+// and keeps every other block's element
+test('commit: paragraph insert and delete keep the other blocks', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const paras = ['One para.', 'Two para.', 'Three para.', 'Four para.'];
+  await page.evaluate(async ({ source }) =>
+    await window.__tsr.typeset(source, { widthPx: 300, progressive: false }), { source: paras.join('\n\n') });
+  const tag = () => page.evaluate(() =>
+    document.querySelectorAll('#out .tsr-para').forEach((el, i) => { el.__tag = 'k' + i; }));
+  const tags = () => page.evaluate(() =>
+    [...document.querySelectorAll('#out .tsr-para')].map((el) => el.__tag ?? null));
+  await tag();
+  // insert after the second paragraph: the new block alone is new
+  let r = await page.evaluate(async ({ source }) => await window.__tsr.update(source),
+    { source: [paras[0], paras[1], 'Inserted para.', paras[2], paras[3]].join('\n\n') });
+  expect(r.patched).toBe(true);
+  expect(await tags()).toEqual(['k0', 'k1', null, 'k2', 'k3']);
+  const pids = await page.evaluate(() =>
+    [...document.querySelectorAll('#out .tsr-para')].map((el) => +el.dataset.pid));
+  expect(pids).toEqual([0, 1, 2, 3, 4]);  // positional attributes follow
+  // delete it again: the others keep their elements
+  await tag();
+  r = await page.evaluate(async ({ source }) => await window.__tsr.update(source), { source: paras.join('\n\n') });
+  expect(r.patched).toBe(true);
+  expect(await tags()).toEqual(['k0', 'k1', 'k3', 'k4']);
+  const html = await page.evaluate(() => document.getElementById('out').innerHTML);
+  expect(html).not.toContain('Inserted');
+});
+
+test('commit: upgrade records on update name the changed block', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async () => await window.__tsr.typeset('Alpha.\n\nBeta.\n\nGamma.',
+    { widthPx: 300, progressive: false, collectUpgrades: true }));
+  await page.evaluate(async () => await window.__tsr.update('Alpha.\n\nBeta, edited.\n\nGamma.'));
+  const ups = await page.evaluate(() => window.__ups);
+  expect(ups.length).toBe(2);  // the typeset's, then the update's
+  expect(ups[1].map((u) => u.pid)).toEqual([1]);
+  expect(ups[1][0].new.height).toBeGreaterThan(0);
+});
+
+test('commit: a result naming a key the shell dropped is asked for again', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async () =>
+    await window.__tsr.typeset('First.\n\nSecond.\n\nThird.', { widthPx: 300, progressive: false }));
+  await page.evaluate(() => window.__tsr.forgetHeld(0));  // the shell no longer holds block 0's body
+  const r = await page.evaluate(async () => await window.__tsr.update('First.\n\nSecond.\n\nThird, edited.'));
+  expect(r.diags).toBe('');
+  const text = await page.evaluate(() => document.getElementById('out').textContent);
+  expect(text).toContain('First.');
+  expect(text).toContain('Third, edited.');
+  const held = await page.evaluate(() => window.__tsr.held());
+  expect(held.length).toBe(3);
+});

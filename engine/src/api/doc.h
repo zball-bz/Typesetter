@@ -19,6 +19,7 @@
 #include "../render/rules_css.h"
 #include "../render/semantic_html.h"
 #include "../render/typeset_html.h"
+#include "../support/hash128.h"
 #include "../syntax/exports.h"
 
 namespace tsr {
@@ -748,6 +749,110 @@ struct Doc {
     html += "</div>\n";
     reportWriterDefects();
     return html;
+  }
+
+  // The RenderResult frame (plan P3-05; design T7 RenderResult): each
+  // block keyed by a 128-bit hash of its body (the block without its
+  // positional attributes: data-pid, data-s0, margin-bottom), the blocks the
+  // host does not hold (`held`) as the legacy writer spells them — so a
+  // frame that sends every block is the legacy document's body —, the
+  // root's open tag, the anchors and a generation stamp: a host commits
+  // only what changed. Little-endian:
+  //   "TSRR"; u32 n, the head as JSON {generation, heightPx, root, anchors:
+  //   [[label, pid, class], …], gaps: [each block's margin-bottom as the
+  //   writer spells it, "" for none]}; u32 blocks; per block 56 bytes: u32 pid,
+  //   s0, s1 (its source range), state (2: exact), f64 hPx, gapAfterPx (< 0:
+  //   the last), u64 keyLo, keyHi, u32 off, len (into the HTML, in UTF-16
+  //   units — a host decodes the HTML once and slices it; len 0: held);
+  //   then the HTML.
+  std::string renderResult(const Key128* held, size_t nHeld) {
+    if (!renderReady()) return {};
+    diags.begin(DiagOrigin::Render);
+    writerDefects() = {};
+    std::unordered_set<Key128, Key128Hash> have(held, held + nHeld);
+    std::string root;
+    writeRoot(root, "tsr-doc", paintRoot(cfg));
+    while (!root.empty() && root.back() == '\n') root.pop_back();
+    std::string table, html, anchors, gaps;
+    u32 html16 = 0;  // the HTML so far, in UTF-16 units
+    auto units16 = [](std::string_view s) {  // a lead byte counts 1, a 4-byte one 2
+      u32 n = 0;
+      for (unsigned char c : s) n += (c & 0xC0) != 0x80 ? (c >= 0xF0 ? 2 : 1) : 0;
+      return n;
+    };
+    auto put32 = [&](u32 v) { table.append((const char*)&v, 4); };
+    auto put64 = [&](u64 v) { table.append((const char*)&v, 8); };
+    auto putF = [&](double v) { table.append((const char*)&v, 8); };
+    auto anchorRow = [&](StrRef label, u32 pid) {
+      if (!label) return;
+      std::string cls;
+      auto it = index.labels.find(std::string(strs.get(label)));
+      if (it != index.labels.end() && it->second.inst != kNoInst)
+        cls = registry->cls(index.instances[it->second.inst].cls).name;
+      if (!anchors.empty()) anchors += ',';
+      anchors += '[';
+      jsonString(anchors, strs.get(label));
+      appendf(anchors, ",%u,", pid);
+      jsonString(anchors, cls);
+      anchors += ']';
+    };
+    const u32 n = (u32)layout.paras.size();
+    put32(n);
+    DLBlock b;
+    for (size_t p = 0; p < layout.paras.size(); p++) {
+      paintBlock(layout, p, tops, strs, cfg, b);
+      // its key: its open tag without the positional attributes, then its
+      // nodes (written in place after its legacy open tag; kept unless held)
+      std::string open;
+      writeBlockOpen(open, b, false);
+      const size_t at = html.size();
+      writeBlockOpen(html, b, true);
+      const size_t nodesAt = html.size();
+      writeBlockNodes(html, b, styles, strs, cfg.baseSizePx);
+      Hasher kh;
+      kh.bytes(open.data(), open.size());
+      kh.bytes(html.data() + nodesAt, html.size() - nodesAt);
+      const Key128 key = kh.done();
+      const std::string_view body = std::string_view(html).substr(at);
+      u32 s1 = b.srcBase;
+      for (const DLNode& x : b.nodes) {
+        s1 = std::max(s1, x.span.end);
+        anchorRow(x.anchor, b.pid);
+        anchorRow(x.anchor2, b.pid);
+      }
+      for (const DLRun& r : b.runs) anchorRow(r.id, b.pid);
+      put32(b.pid);
+      put32(b.srcBase);
+      put32(s1);
+      put32(2);  // exact
+      putF(suToPx(b.h));
+      putF(b.gapAfterPx);
+      put64(key.lo);
+      put64(key.hi);
+      if (p) gaps += ',';
+      gaps += '"';
+      if (b.gapAfterPx >= 0) fmtPx(gaps, b.gapAfterPx);
+      gaps += '"';
+      const bool send = !have.count(key);
+      const u32 len16 = send ? units16(body) : 0;
+      put32(html16);
+      put32(len16);
+      html16 += len16;
+      if (!send) html.resize(at);
+    }
+    std::string head = "{\"generation\":";
+    appendf(head, "%llu,\"heightPx\":%g,\"root\":", (unsigned long long)++session().generation,
+            (double)layout.docHeightSu / 64.0);
+    jsonString(head, root);
+    head += ",\"anchors\":[" + anchors + "],\"gaps\":[" + gaps + "]}";
+    std::string out = "TSRR";
+    const u32 hl = (u32)head.size();
+    out.append((const char*)&hl, 4);
+    out += head;
+    out += table;
+    out += html;
+    reportWriterDefects();
+    return out;
   }
 
   // paged rendering for print (pages-design.md §2); needs a finished layout

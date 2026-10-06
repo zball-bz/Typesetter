@@ -184,6 +184,8 @@ Layout: header (version, counts) · string table (UTF-8 blob + varint offsets) �
 - **copy.ts** — clipboard listener: selection → `data-s/e` offsets → clean source text (strips `\n`, hyphen artifacts, comments).
 - **observe.ts** — ResizeObserver + dppx `matchMedia` one-shots; forwards events to the worker.
 
+As built (plan P3-05; design T7 RenderResult + commit): `runtime/src/main/commit.mjs` is the one path that changes the typeset view. A result names every block by a 128-bit key of its body (the block without its positional attributes `data-pid`, `data-s0`, `margin-bottom`) and carries only the blocks the shell does not hold; `commit()` keeps the blocks it holds by element reference (checked still in place), matches an order-preserving prefix and suffix on key, replaces only the middle (one Range deletion and one insert; nothing kept — a relayout — is one swap of the view) and writes the positional attributes of kept blocks in place. A frame naming a key the shell dropped is asked for again holding nothing (`StaleKeys`). Upgrade records (old/new rects by pid) are read for a typeset, and on an update or relayout only for an `onUpgrade` listener. `handle.html` is the legacy concatenation, built on demand; `handle.offsetAt(node)` and `handle.elementsAt(byte)` answer source positions from the blocks' source ranges (the VS Code preview's jump and reveal).
+
 ### 4.3 Protocol (postMessage, transferables for buffers)
 
 ```
@@ -201,6 +203,8 @@ worker → main : ready
 ```
 
 The `semantic` → `paragraphs` sequence *is* the native-fallback state machine as seen from the DOM: inject flow HTML immediately, swap paragraphs as they arrive.
+
+As built (plan P3-05): a typeset, update, relayout or render request carries the keys the shell holds (`held`, 16 bytes each); the result is `result{id, frame, html, diags, heightPx, timings}` — `frame` (transferred) holds the head (generation, height, the root's open tag, the anchors `[label, pid, class]`, each block's gap as the writer spells it) and the block table (pid, source range, state, height, gap, key, offset and length into `html` in UTF-16 units; length 0: held), `html` the blocks the shell lacks, decoded in the worker (`tsr2_render_result`, `Doc::renderResult`).
 
 As built (plan P0-11, `runtime/src/worker/worker.mjs`): the worker keeps one **mailbox per docId** — messages for a document run strictly in order (an older update can no longer install its document over a newer one, and paginate's width round trip cannot interleave with a relayout). A newer `update` or `relayout` supersedes the running one of its kind: the running job checks its generation after every await and stops, queued jobs of the same kind coalesce, and superseded requests are answered with the newer result. The main-thread image-size fallback is an RPC with per-request ids (`image-dims?{rid, src}` → `image-dims{rid, w, h}`). Image sizes are resolved against the page's base URL, looked up in parallel, and read from the file header (PNG/GIF/WebP/JPEG with EXIF orientation) before falling back to a decode. A width change re-enters Layout in place (plan P1-16: emit records image size specs and sidecar flags, layout resolves them at the measure; the `host.width` patch applies to the live document); paginate forks the document (`tsr2_doc_fork` with a `host.width` / `page.height` patch), and every message carries one settings document (`settings`) instead of per-knob fields.
 

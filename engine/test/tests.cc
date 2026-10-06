@@ -10,6 +10,7 @@
 #include <set>
 
 #include "../src/api/doc.h"
+#include "../src/support/hash128.h"
 #include "../src/code/tokens.h"
 #include "../src/model/cascade.h"
 #include "../src/break/items.h"
@@ -1334,6 +1335,103 @@ static void unitCascade() {
   }
 }
 
+// The RenderResult frame (plan P3-05): every block's body under its key;
+// the bodies with their positional attributes put back (as the shell does)
+// are the legacy render byte for byte; held keys are not sent; keys are
+// stable across renders and generations increase.
+static void unitRenderResult(const fs::path& root) {
+  Doc doc;
+  std::string ops, profile, src;
+  readFile(root / "test" / "fixtures" / "doc" / "structure.ops", ops);
+  readFile(root / "test" / "profiles" / "golden.json", profile);
+  readFile(root / "test" / "fixtures" / "doc" / "structure.tsm", src);
+  doc.configure(profile);
+  doc.compile(src);
+  CHECK(doc.ingest((const u8*)ops.data(), ops.size()) && typesetWithMock(doc));
+  struct Block {
+    u32 pid, s0, s1, state;
+    double h, gap;
+    Key128 key;
+    u32 off, len;
+  };
+  auto parse = [](const std::string& f, std::string& head, std::vector<Block>& bs, std::string& html) {
+    if (f.size() < 8 || f.compare(0, 4, "TSRR") != 0) return false;
+    u32 hl;
+    std::memcpy(&hl, f.data() + 4, 4);
+    head = f.substr(8, hl);
+    size_t at = 8 + hl;
+    u32 n;
+    std::memcpy(&n, f.data() + at, 4);
+    at += 4;
+    bs.resize(n);
+    for (Block& b : bs) {
+      std::memcpy(&b.pid, f.data() + at, 4);
+      std::memcpy(&b.s0, f.data() + at + 4, 4);
+      std::memcpy(&b.s1, f.data() + at + 8, 4);
+      std::memcpy(&b.state, f.data() + at + 12, 4);
+      std::memcpy(&b.h, f.data() + at + 16, 8);
+      std::memcpy(&b.gap, f.data() + at + 24, 8);
+      std::memcpy(&b.key, f.data() + at + 32, 16);
+      std::memcpy(&b.off, f.data() + at + 48, 4);
+      std::memcpy(&b.len, f.data() + at + 52, 4);
+      at += 56;
+    }
+    html = f.substr(at);
+    return true;
+  };
+  std::string head, html;
+  std::vector<Block> bs;
+  CHECK(parse(doc.renderResult(nullptr, 0), head, bs, html) && !bs.empty());
+  JsonValue h;
+  JsonReader rd;
+  CHECK(rd.parse(head, h) && h.get("gaps") && h.get("gaps")->arr.size() == bs.size());
+  // a frame that sends every block holds the legacy body as it is
+  CHECK(h.get("root")->str + "\n" + html + "</div>\n" == doc.render());
+  // the shell's repositioning: a body stripped of its positional attributes,
+  // then given (pid, s0, gap)
+  std::string legacy = h.get("root")->str + "\n";
+  for (size_t i = 0; i < bs.size(); i++) {
+    // offsets in UTF-16 units → bytes
+    auto byteAt = [&](u32 u16) {
+      size_t b = 0;
+      for (u32 u = 0; u < u16 && b < html.size();) {
+        const unsigned char c = (unsigned char)html[b];
+        const size_t w = c < 0x80 ? 1 : c < 0xE0 ? 2 : c < 0xF0 ? 3 : 4;
+        u += w == 4 ? 2 : 1;
+        b += w;
+      }
+      return b;
+    };
+    const size_t b0 = byteAt(bs[i].off), b1 = byteAt(bs[i].off + bs[i].len);
+    std::string body = html.substr(b0, b1 - b0);
+    {  // strip: ' data-pid="…" data-s0="…"' and ';margin-bottom:…'
+      const size_t a = body.find(" data-pid=\""), z = body.find(" style=\"");
+      body.erase(a, z - a);
+      const size_t m = body.find(";margin-bottom:");
+      if (m != std::string::npos) body.erase(m, body.find("\">") - m);
+    }
+    const std::string cls = "<div class=\"tsr-para\"";
+    CHECK(body.compare(0, cls.size(), cls) == 0);
+    std::string pos = " data-pid=\"" + std::to_string(bs[i].pid) + "\" data-s0=\"" + std::to_string(bs[i].s0) + "\"";
+    body.insert(cls.size(), pos);
+    const std::string gap = h.get("gaps")->arr[i].str;
+    if (!gap.empty()) body.insert(body.find("\">"), ";margin-bottom:" + gap);
+    legacy += body;
+  }
+  legacy += "</div>\n";
+  CHECK(legacy == doc.render());
+  // held: nothing sent, keys stable, a later generation
+  std::vector<Key128> keys;
+  for (const Block& b : bs) keys.push_back(b.key);
+  std::string head2, html2;
+  std::vector<Block> bs2;
+  CHECK(parse(doc.renderResult(keys.data(), keys.size()), head2, bs2, html2) && html2.empty());
+  for (size_t i = 0; i < bs.size() && i < bs2.size(); i++) CHECK(bs2[i].key == bs[i].key && bs2[i].len == 0);
+  JsonValue g2;
+  JsonReader rd2;
+  CHECK(rd2.parse(head2, g2) && g2.get("generation")->num > h.get("generation")->num);
+}
+
 static void unitSettings() {
   {
     Config c;
@@ -1594,6 +1692,7 @@ int main(int argc, char** argv) {
   unitCrlf();
   unitNestLimit();
   unitCascade();
+  unitRenderResult(fs::path(root));
   unitInstLimits();
   unitHtmlWriter();
   unitBreakMemo();

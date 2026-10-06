@@ -243,13 +243,30 @@ async function measureLoop(M, doc, { tm = {}, baseUrl, stale = () => false } = {
   throw new Error('typeset did not converge');
 }
 
-function postResult(M, doc, ids, tm) {
+// the RenderResult frame (plan P3-05): every block's key, the bodies of the
+// blocks the shell does not hold (`held`: its keys, 16 bytes each), the
+// anchors and a generation; a single answer transfers its buffer
+function postResult(M, doc, ids, tm, held) {
   const t0 = performance.now();
-  const html = M.UTF8ToString(M._tsr_render(doc));
+  const keys = held instanceof Uint8Array ? held : new Uint8Array(0);
+  const kp = keys.length ? M._malloc(keys.length) : 0;
+  if (kp) M.HEAPU8.set(keys, kp);
+  const p = M._tsr2_render_result(doc, kp, keys.length / 16);
+  if (kp) M._free(kp);
+  // the head and table as bytes, the HTML decoded here (off the main thread)
+  const dv = new DataView(M.HEAPU8.buffer);
+  const len = dv.getUint32(p, true);
+  const hl = dv.getUint32(p + 8, true);
+  const tableEnd = 12 + hl + 56 * dv.getUint32(p + 12 + hl, true);  // (frame-relative: "TSRR", hl, head, n, table)
+  const frame = M.HEAPU8.slice(p + 4, p + 4 + tableEnd).buffer;
+  const html = M.UTF8ToString(p + 4 + tableEnd, len - tableEnd);
   if (tm) tm.renderMs = performance.now() - t0;
   const diags = M.UTF8ToString(M._tsr_diags(doc));
   const heightPx = M._tsr_doc_height_px(doc);
-  for (const id of ids) postMessage({ type: 'result', id, html, diags, heightPx, timings: tm });
+  ids.forEach((id, k) => {
+    const f = k === ids.length - 1 ? frame : frame.slice(0);
+    postMessage({ type: 'result', id, frame: f, html, diags, heightPx, timings: tm }, [f]);
+  });
 }
 const postError = (ids, message) => {
   for (const id of ids) postMessage({ type: 'error', id, message });
@@ -364,7 +381,7 @@ async function runTypeset(s, { ids, msg }, stale) {
     }
     if (s.doc !== undefined) M._tsr_doc_free(s.doc);
     s.doc = doc;
-    postResult(M, doc, ids, tm);
+    postResult(M, doc, ids, tm, msg.held);
     return true;
   } catch (e) {
     M._tsr_doc_free(doc);
@@ -416,7 +433,7 @@ async function runRelayout(s, { ids, msg }, stale) {
   if (rc === 0) {
     const tm = {};
     if (!(await measureLoop(M, s.doc, { tm, baseUrl: msg.baseUrl, stale }))) return false;
-    postResult(M, s.doc, ids, tm);
+    postResult(M, s.doc, ids, tm, msg.held);
     return;
   }
   const doc = forkDoc(M, s.doc, patch);
@@ -427,10 +444,18 @@ async function runRelayout(s, { ids, msg }, stale) {
     if (!ok) return false;
     M._tsr_doc_free(s.doc);
     s.doc = doc;
-    postResult(M, doc, ids);
+    postResult(M, doc, ids, undefined, msg.held);
   } finally {
     if (!ok) M._tsr_doc_free(doc);
   }
+}
+
+// the live doc's result again (plan P3-05): the shell found a key it did not
+// hold (a stale frame) and asks holding nothing
+async function runRender(s, { ids, msg }) {
+  const M = await getMod();
+  if (s.doc === undefined) return postError(ids, 'render: doc disposed');
+  postResult(M, s.doc, ids, undefined, msg.held);
 }
 
 async function runDispose(s) {
@@ -443,7 +468,7 @@ async function runDispose(s) {
 }
 
 const RUN = { update: runTypeset, paginate: runPaginate, relayout: runRelayout,
-              dispose: runDispose };
+              render: runRender, dispose: runDispose };
 
 onmessage = (ev) => {
   const m = ev.data;
@@ -462,5 +487,6 @@ onmessage = (ev) => {
   else if (m?.type === 'update') enqueue(m.docId, { kind: 'update', ids: [m.id], msg: m });
   else if (m?.type === 'paginate') enqueue(m.docId, { kind: 'paginate', ids: [m.id], msg: m });
   else if (m?.type === 'relayout') enqueue(m.docId, { kind: 'relayout', ids: [m.id], msg: m });
+  else if (m?.type === 'render') enqueue(m.docId, { kind: 'render', ids: [m.id], msg: m });
   else if (m?.type === 'dispose') enqueue(m.docId, { kind: 'dispose', ids: [], msg: m });
 };
