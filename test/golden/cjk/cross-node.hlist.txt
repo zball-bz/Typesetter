@@ -245,15 +245,15 @@ top pid=4 units=1
   glue word w=257su x=1 cap=257su kern="A p" src r0 @[296,297)
   box Alpha "path" w=2049su r0 @[297,301)
   glue word w=257su x=1 cap=257su kern="h a" src r0 @[301,302)
-  box Alpha "abc." w=2049su r0 @[302,306)
-  pen 1.2 r0
-  box Alpha "def/" w=2049su r0 @[306,310)
+  box Alpha "abc" w=1537su r0 @[302,305)
+  disc pen=1.2 w=0su pre=none kern="c." r0 @[305,305)
+  box Infix ".def/" w=2561su r0 @[305,310)
   box Alpha "ghij" w=2049su r1 @[311,315)
-  box Solidus "/klmn." w=3073su r2 @[316,322)
-  pen 1.2 r2
-  box Alpha "opq/" w=2049su r2 @[322,326)
-  pen 1.2 r2
-  box Alpha "rst" w=1537su r2 @[326,329)
+  box Solidus "/klmn" w=2561su r2 @[316,321)
+  disc pen=1.2 w=0su pre=none kern="n." r2 @[321,321)
+  box Infix ".opq" w=2049su r2 @[321,325)
+  disc pen=1.2 w=0su pre=none kern="q/" r2 @[325,325)
+  box Solidus "/rst" w=2049su r2 @[325,329)
   glue word w=257su x=1 cap=257su kern="t i" src r2 @[329,330)
   box Alpha "is" w=1025su r2 @[330,332)
   glue word w=257su x=1 cap=257su kern="s o" src r2 @[332,333)

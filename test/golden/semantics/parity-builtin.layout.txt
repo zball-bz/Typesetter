@@ -2,6 +2,6 @@ doc h=7066su
 para pid=0 y=0su w=19200su h=1536su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,22) @[0,37)
 para pid=1 y=2765su w=19200su h=1536su
-  L0 y=0su left=2944su w=16256su dw=0su dc=0su join=last blocks=[0,14) @[61,83)
+  L0 y=0su left=2944su w=16256su dw=0su dc=0su join=last blocks=[0,16) @[61,83)
 para pid=2 y=5530su w=19200su h=1536su
   L0 y=0su left=3328su w=15872su dw=0su dc=0su join=last blocks=[0,14) @[116,136)

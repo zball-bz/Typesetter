@@ -90,9 +90,9 @@ LineFill fillLine(const HList& h, const LineItems& r, const MetricStore& metrics
     }
   }
   f.endsHyphen = h.items[r.ihi - 1].k == IK::Disc;
-  if (f.endsHyphen) {
-    const HItem& d = h.items[r.ihi - 1];
-    f.naturalPx += h.cold[h.side[h.discs[d.aux].pre].cold].rawPx;
+  if (f.endsHyphen) {  // its pre (none: an explicit hyphen's, an emergency break's — plan P4-06)
+    const DiscRec& d = h.discs[h.items[r.ihi - 1].aux];
+    for (u32 s = d.pre; s < d.pre + d.preN; s++) f.naturalPx += h.cold[h.side[s].cold].rawPx;
   }
   return f;
 }

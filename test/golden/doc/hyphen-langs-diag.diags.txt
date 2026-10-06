@@ -1,0 +1,2 @@
+info hyph-unavailable @[0,0) no hyphenation patterns for 'en-GB' (the host has none): en-US's are used
+warning hyph-unavailable @[0,0) no hyphenation patterns for 'fr' (the host has none): its words break only at soft and explicit hyphens

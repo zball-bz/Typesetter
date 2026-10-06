@@ -87,6 +87,7 @@ struct EmitSettings {
   const double& cjkGlueEm;  // doc.cjkGlue
   const PunctCompress& punctCompress;  // cjk.punctCompress
   const double& hyphenPenalty;  // break.hyphenPenalty
+  const double& exHyphenPenalty;  // break.exHyphenPenalty
   const double& urlBreakPenalty;  // break.urlPenalty
   const u32& urlBreakMinLen;  // break.urlMinLen
   const ClassMap& mathBreakAfter;  // math.breakAfter

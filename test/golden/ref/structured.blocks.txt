@@ -6,9 +6,7 @@ top pid=1 units=1
   word "Details" w=4840su pen=INF BOLD x1.35 @[22,29)
 top pid=2 units=1
  unit text indent=0su anchor="fig-a" single-center
-  word "Fig" w=1537su pen=INF BOLD @[64,73)
-  hyphen bw=513su pen=0.70 BOLD @[64,73)
-  word "ure" w=1537su pen=INF BOLD @[64,73)
+  word "Figure" w=3073su pen=INF BOLD @[64,73)
   space w=257su stretch=1 BOLD @[64,73)
   word "1:" w=1025su pen=INF BOLD @[64,73)
   space w=257su stretch=1 BOLD @[64,73)
@@ -19,9 +17,7 @@ top pid=2 units=1
   word "ure." w=2049su pen=INF @[69,73)
 top pid=3 units=1
  unit text indent=0su anchor="fig-b" single-center
-  word "Fig" w=1537su pen=INF BOLD @[109,117)
-  hyphen bw=513su pen=0.70 BOLD @[109,117)
-  word "ure" w=1537su pen=INF BOLD @[109,117)
+  word "Figure" w=3073su pen=INF BOLD @[109,117)
   space w=257su stretch=1 BOLD @[109,117)
   word "2:" w=1025su pen=INF BOLD @[109,117)
   space w=257su stretch=1 BOLD @[109,117)

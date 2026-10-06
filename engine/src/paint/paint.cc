@@ -154,12 +154,17 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
       i++;
       continue;
     }
-    // final hyphen glyph: inside its word's link
+    // final hyphen glyph — its Disc's pre, the dictionary's hyphen (plan
+    // P4-06; none after an explicit hyphen or at an emergency break):
+    // inside its word's link
     if (it.k == IK::Disc) {
-      if (i == l.itemEnd - 1 && l.endsWithHyphen) {
+      const DiscRec& dr = h.discs[it.aux];
+      if (i == l.itemEnd - 1 && l.endsWithHyphen && dr.preN) {
+        const HItem& pre = h.side[dr.pre];
         DLRun d = run(it, DLRun::K::Hyphen);
         d.syn = "hyphen";
-        if (widths) d.predictPx = h.cold[h.side[h.discs[it.aux].pre].cold].rawPx;
+        d.text = h.specs[pre.aux].str;
+        if (widths) d.predictPx = h.cold[pre.cold].rawPx;
         emit(d);
       }
       i++;

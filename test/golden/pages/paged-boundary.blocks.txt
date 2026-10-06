@@ -113,7 +113,9 @@ top pid=3 units=1
  unit text indent=0su
   word "This" w=2049su pen=INF @[252,256)
   space w=257su stretch=1 @[256,257)
-  word "three-line" w=5121su pen=INF @[257,267)
+  word "three-" w=3073su pen=INF @[257,263)
+  hyphen bw=0su pen=0.70 @[263,263)
+  word "line" w=2049su pen=INF @[263,267)
   space w=257su stretch=1 @[267,268)
   word "para" w=2049su pen=INF @[268,272)
   hyphen bw=513su pen=0.70 @[272,272)

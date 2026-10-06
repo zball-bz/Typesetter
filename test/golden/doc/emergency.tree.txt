@@ -1,0 +1,24 @@
+doc @[0,669) [base]
+  heading @[0,81) [BOLDx1.60] level=1 label="h-1"
+    text @[2,17) [BOLDx1.60] str="A heading with "
+    link @[17,81) [BOLDx1.60] url="https://example.com/an/overlong/address/that/must/wrap/somewhere"
+      text @[17,81) [BOLDx1.60] str="https://example.com/an/overlong/address/that/must/wrap/somewhere"
+  para @[83,230) [base]
+    text @[83,120) [base] str="Inline code breaks at its separators: " raw=0:0,38:37
+    code @[121,177) [CODEx0.85]
+      text @[121,177) [CODEx0.85] str="very_long_identifier_name.with.member_access(argument)"
+    text @[178,181) [base] str=" and " raw=0:0,1:0,5:3
+    code @[182,220) [CODEx0.85]
+      text @[182,220) [CODEx0.85] str="/usr/local/share/typesetter/patterns"
+    text @[221,230) [base] str=" in prose." raw=0:0,1:0
+  group @[232,397) [base] role="figure"
+    image @[232,397) [base] src="photos/wide.png" alt="wide" w=300 h=100
+    para @[294,388) [base] role="caption" slot="caption"
+      styled @[294,388) [BOLD] role="caption-label"
+        text @[294,388) [BOLD] str="Figure 1: "
+      text @[294,388) [base] str="A caption with a long path /usr/local/share/typesetter/patterns/hyphenation/en-us.json inside."
+  para @[399,531) [base]
+    styled @[399,531) [base] overflowWrap="anywhere"
+      text @[442,530) [base] str="A digest without separators: 0x3f2a9c4b7e1d5f8a2c6e0b9d4f7a1c3e5b8d2f6a breaks anywhere."
+  para @[533,669) [base]
+    text @[533,669) [base] str="An address someone.with.a.long.name@example.org and a scheme-less www.example.com/path/to/a/resource?query=value&other=thing#anchor end."

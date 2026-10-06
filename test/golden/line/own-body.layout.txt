@@ -14,7 +14,7 @@ para pid=2 y=19558su w=19200su h=3072su
   L0 y=0su left=0su w=19200su dw=239su dc=0su join=none hyphen blocks=[0,19) @[298,385)
   L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[19,20) @[385,391)
 para pid=3 y=23859su w=19200su h=1536su
-  L0 y=0su left=2560su w=16640su dw=0su dc=0su join=last marker blocks=[0,13) @[402,435)
+  L0 y=0su left=2560su w=16640su dw=0su dc=0su join=last marker blocks=[0,17) @[402,435)
 para pid=4 y=26624su w=19200su h=8191su
   L0 rule y=768su left=0su w=19200su
   L1 y=2765su left=1536su w=17664su dw=0su dc=0su join=para marker blocks=[0,11) @[319,347)

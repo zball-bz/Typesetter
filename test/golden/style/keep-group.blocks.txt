@@ -2,7 +2,9 @@ top pid=0 units=1
  unit text indent=0su
   word "A" w=513su pen=INF @[66,67)
   space w=257su stretch=1 @[67,68)
-  word "lead-in" w=3585su pen=INF @[68,75)
+  word "lead-" w=2561su pen=INF @[68,73)
+  hyphen bw=0su pen=0.70 @[73,73)
+  word "in" w=1025su pen=INF @[73,75)
   space w=257su stretch=1 @[75,76)
   word "that" w=2049su pen=INF @[76,80)
   space w=257su stretch=1 @[80,81)

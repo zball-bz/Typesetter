@@ -1117,18 +1117,18 @@ Theme steps: — · findings: 1
 | `emitter/paragraph-blind-script-context` | adhoc | high | P4-02 | grep:plan P4-02 |
 | `emitter/hardcoded-script-class-tables` | adhoc | high | P4-05 | grep:plan P4-05 |
 | `emitter/punct-compression-control-flow` | adhoc | high | P4-04 | grep:plan P4-04 |
-| `emitter/hyphenation-en-us-only` | adhoc | high | P4-06 | |
+| `emitter/hyphenation-en-us-only` | adhoc | high | P4-06 | grep:plan P4-06 |
 | `emitter/math-only-inline-box` | adhoc | high | P1-13, P3-26 | grep:plan P3-26 |
 | `emitter/flowunit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `emitter/figure-role-string-dispatch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `emitter/measure-dependent-geometry-in-emit` | adhoc | high | P1-16, P3-32 | grep:plan P3-32 |
 | `emitter/bf-flag-overload-and-rederivation` | adhoc | medium | P1-12 | grep:plan P1-12 |
-| `emitter/url-break-special-path` | adhoc | medium | P4-06 | |
+| `emitter/url-break-special-path` | adhoc | medium | P4-06 | grep:plan P4-06 |
 | `emitter/boundary-glue-constant` | adhoc | medium | P4-02 | grep:plan P4-02 |
 | `emitter/defined-width-dash-ellipsis` | adhoc | medium | P4-04 | grep:plan P4-04 |
 | `emitter/latin-quote-heuristic` | adhoc | medium | P4-02 | grep:plan P4-02 |
 | `emitter/sup-bit-attach-rule` | adhoc | medium | P4-07 | |
-| `emitter/kern-context-postpass` | adhoc | medium | P4-01 | |
+| `emitter/kern-context-postpass` | adhoc | medium | P4-01 | grep:plan P4-06 |
 | `emitter/sidecar-role-string` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `emitter/comment-by-css-color` | adhoc | medium | P2-08 | grep:plan P2-08 |
 | `emitter/kind-presentation-in-emit` | adhoc | medium | P3-01 | grep:plan P3-01 |

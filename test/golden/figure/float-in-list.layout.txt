@@ -7,7 +7,7 @@ para pid=1 y=4301su w=19200su h=18123su
   L1 y=1945su left=1536su w=17664su dw=0su dc=0su join=para marker blocks=[0,17) @[95,130)
   L2 img y=3890su left=1536su w=7066su h=7066su
   L3 cell=0 y=10956su left=1536su w=7066su blocks=[0,8)
-  L4 cell=0 y=12492su left=1536su w=7066su blocks=[9,12)
+  L4 cell=0 y=12492su left=1536su w=7066su blocks=[9,14)
   L5 y=3890su left=9626su w=9574su dw=375su dc=0su join=none hyphen blocks=[0,8) @[280,297)
   L6 y=5426su left=9626su w=9574su dw=691su dc=0su join=space blocks=[8,17) @[297,314)
   L7 y=6962su left=9626su w=9574su dw=947su dc=0su join=space blocks=[18,23) @[315,331)

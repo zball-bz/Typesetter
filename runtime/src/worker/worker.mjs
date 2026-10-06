@@ -11,6 +11,7 @@ import { checkAbi, compiledOf, fragmentsOf } from '../shared/abi.mjs';
 import { ResourceHost } from '../shared/resources/host.mjs';
 import { canvasProviders } from '../shared/resources/providers/canvas.mjs';
 import { tokenProvider } from '../shared/resources/providers/tokens.mjs';
+import { hyphProvider } from '../shared/resources/providers/hyph.mjs';
 import { imageProvider } from '../shared/resources/providers/images.mjs';
 import { htmlBoxProvider } from '../shared/resources/providers/html-boxes.mjs';
 import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
@@ -28,14 +29,15 @@ const getMod = () => (modPromise ??= createTypesetter().then((M) => { checkAbi(M
 // memo): a new document asks only for what no earlier one was answered, so
 // the measurer keeps no cache of its own (a round's rows are already unique).
 // (plan P3-21; design T9 A2) one resource host per worker: the providers
-// (canvas widths and metrics, code tokens, image boxes), one LRU cache of
-// URL-keyed answers; each document a job with its own locator (the page's
-// base) and manifest
+// (canvas widths and metrics, code tokens, hyphenation patterns — plan
+// P4-06 —, image boxes), one LRU cache of URL-keyed answers; each document
+// a job with its own locator (the page's base) and manifest
 const host = new ResourceHost({ policy });
 {
   const canvas = canvasProviders(new CanvasMeasurer());
   host.register('textWidth', canvas.textWidth).register('fontVmet', canvas.fontVmet)
     .register('codeTokens', tokenProvider)
+    .register('hyphPatterns', hyphProvider())
     .register('boxInfo', imageProvider({ get timeoutMs() { return policy.imageTimeoutMs; } }))
     .register('boxInfo', htmlBoxProvider({ get timeoutMs() { return policy.imageTimeoutMs; } }));
 }

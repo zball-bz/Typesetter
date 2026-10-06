@@ -421,7 +421,79 @@ struct Doc {
         scanImageNeeds(tree.root->kids[pid]);
       }
     }
+    scanHyphNeeds();
     validThrough = (int)Stage::Resolve;
+  }
+
+  // (plan P4-06; D-X09) the languages the text names (a run's text.lang,
+  // the document's): one whose words hyphenate and that the resident en-US
+  // does not serve asks the host for its patterns, once — the Session keeps
+  // them —, and Emit waits for every answer: a dictionary arriving later
+  // must never change breaks from one pass to the next
+  std::vector<StrRef> hyphLangs_;  // 0: the document's
+  bool hyphResolved_ = false;
+  std::string_view langTag(StrRef l) const { return l ? strs.get(l) : std::string_view(cfg.lang); }
+  // a language with patterns of its own: its words hyphenate (its pack),
+  // the resident dictionary is not its, and it is written in a script that
+  // hyphenates — a CJK language's Latin words are und's, en-US (design T5:
+  // the dictionary of a (language, script) walks to und's)
+  static bool ownPatterns(std::string_view tag) {
+    if (residentHyphenLang(tag) || !localeHyphenates(tag)) return false;
+    const std::string full = maximizeLocale(tag);  // lang-Script-REGION
+    for (std::string_view cjk : {"-Hani", "-Hans", "-Hant", "-Jpan", "-Kore", "-Hang", "-Hira", "-Kana", "-Bopo"})
+      if (full.find(cjk) != std::string::npos) return false;
+    return true;
+  }
+  void collectLangs(const ContentNode* n) {
+    if (!n) return;
+    const StrRef l = styles.get(n->style).lang;
+    if (std::find(hyphLangs_.begin(), hyphLangs_.end(), l) == hyphLangs_.end()) hyphLangs_.push_back(l);
+    for (const ContentNode* k : n->kids) collectLangs(k);
+  }
+  void scanHyphNeeds() {
+    hyphLangs_.assign(1, 0);
+    hyphResolved_ = false;
+    collectLangs(tree.root);
+    for (StrRef l : hyphLangs_) {
+      const std::string_view tag = langTag(l);
+      if (!ownPatterns(tag)) continue;
+      bool fresh = false;
+      const u32 i = rt.needHyph(strs.intern(tag), &fresh);
+      std::shared_ptr<const HyphenDict> d;
+      if (fresh && session().hyph(tag, d)) settleHyph(i, std::move(d));
+    }
+  }
+  void settleHyph(u32 i, std::shared_ptr<const HyphenDict> d) {
+    HyphNeed& h = rt.hyphNeeds[i];
+    h.st = d ? ResState::Ready : ResState::Failed;
+    h.dict = std::move(d);
+    invalidateFrom(Stage::Emit);
+  }
+  // once every need has settled: each language's dictionary — the
+  // resident one for en, en-US and a language whose words do not hyphenate
+  // (its Latin words: und's, en-US), the host's, else the resident one
+  // when the language falls back to it (en-GB → en), else none (the words
+  // break at soft and explicit hyphens only); a diagnostic says which
+  void resolveHyph() {
+    if (hyphResolved_) return;
+    hyphResolved_ = true;
+    rt.hyphDicts.clear();
+    for (StrRef l : hyphLangs_) {
+      const std::string_view tag = langTag(l);
+      const HyphenDict* d = &residentHyphenDict();
+      if (ownPatterns(tag)) {
+        const HyphNeed& h = rt.hyphNeeds[rt.needHyph(strs.intern(tag))];
+        d = h.dict.get();
+        if (!d) {
+          for (const std::string& name : localeChain(tag))
+            if (name != "root" && residentHyphenLang(name)) d = &residentHyphenDict();
+          diags.addAs(DiagOrigin::Resolve, d ? Sev::Info : Sev::Warning, "hyph-unavailable", {},
+                      "no hyphenation patterns for '" + std::string(tag) + "' (the host has none): " +
+                          (d ? "en-US's are used" : "its words break only at soft and explicit hyphens"));
+        }
+      }
+      rt.hyphDicts[l] = d;
+    }
   }
 
   // a code block with a language and a plain body needs its tokens; the
@@ -603,6 +675,8 @@ struct Doc {
       if (rt.tokenNeeds[i].st == ResState::Pending) b.tokens.push_back(i);
     for (u32 i = 0; i < rt.boxNeeds.size() && want(ResKind::boxInfo); i++)
       if (rt.boxNeeds[i].st == ResState::Pending) b.boxes.push_back(i);
+    for (u32 i = 0; i < rt.hyphNeeds.size() && want(ResKind::hyphPatterns); i++)
+      if (rt.hyphNeeds[i].st == ResState::Pending) b.hyphs.push_back(i);
     WireBatch w;
     w.batch = b.id;
     std::unordered_map<StrRef, u32> strIdx;
@@ -644,6 +718,10 @@ struct Doc {
         k.rows[i].setF64(2, bn.availPx);
       }
     }
+    if (!b.hyphs.empty()) {
+      WireKind& k = kind(ResKind::hyphPatterns, b.hyphs.size());
+      for (size_t i = 0; i < b.hyphs.size(); i++) k.rows[i].col[0] = str(rt.hyphNeeds[b.hyphs[i]].lang);
+    }
     if (!b.tokens.empty()) {
       WireKind& k = kind(ResKind::codeTokens, b.tokens.size());
       for (size_t i = 0; i < b.tokens.size(); i++) {
@@ -684,7 +762,7 @@ struct Doc {
     };
     Tally tally[kResKindCount + 1] = {};
     std::vector<u8> seenWords(b.words.size()), seenVmets(b.vmets.size()), seenTokens(b.tokens.size()),
-        seenBoxes(b.boxes.size());
+        seenBoxes(b.boxes.size()), seenHyphs(b.hyphs.size());
     auto fresh = [&](std::vector<u8>& seen, u32 id, Tally& t) {
       if (id >= seen.size() || seen[id]) {
         t.invalid++;
@@ -736,6 +814,29 @@ struct Doc {
             if (!fresh(seenBoxes, r.resId, t)) break;
             settleBox(b.boxes[r.resId], r.f64(0), r.f64(1), r.f64(2), !ok);
             break;
+          case ResKind::hyphPatterns: {
+            // (plan P4-06) compiled here; text that does not compile fails
+            // the language (provider-invalid). Kept in the Session either
+            // way: a document's breaks never change from one edit to the next
+            if (!fresh(seenHyphs, r.resId, t)) break;
+            const u32 hi = b.hyphs[r.resId];
+            const std::string tag(strs.get(rt.hyphNeeds[hi].lang));
+            std::shared_ptr<HyphenDict> d;
+            if (ok) {
+              d = std::make_shared<HyphenDict>();
+              std::string err;
+              if (!HyphenDict::compile(tag, a.strings[r.col[0]], a.strings[r.col[1]], (u8)r.col[2], (u8)r.col[3],
+                                       a.strings[r.col[4]], *d, err)) {
+                diags.addAs(DiagOrigin::Provide, Sev::Warning, "provider-invalid", {},
+                            "hyphenation patterns for '" + tag + "' rejected: " + err);
+                d.reset();
+                t.invalid++;
+              }
+            }  // (a host without them: hyph-unavailable says so, at Emit)
+            if (r.flags & 1) session().putHyph(tag, d);
+            settleHyph(hi, std::move(d));
+            break;
+          }
           default:
             t.invalid++;
             break;
@@ -758,6 +859,11 @@ struct Doc {
       if (!seenBoxes[i]) {
         tally[(u16)ResKind::boxInfo].missing++;
         settleBox(b.boxes[i], 0, 0, 0, true);
+      }
+    for (u32 i = 0; i < seenHyphs.size(); i++)
+      if (!seenHyphs[i]) {
+        tally[(u16)ResKind::hyphPatterns].missing++;
+        settleHyph(b.hyphs[i], nullptr);
       }
     for (const ResKindInfo& k : kResKinds) {
       const Tally& t = tally[(u16)k.kind];
@@ -798,6 +904,8 @@ struct Doc {
       validThrough = (int)Stage::BoxTree;
     }
     if (!done(Stage::Emit)) {
+      if (rt.hyphPending()) return Status::NeedMeasure;  // (plan P4-06) its dictionaries first
+      resolveHyph();
       const size_t n = boxtree.tops.size();
       if (tops.size() != n || emitted.size() != n) {
         tops.assign(n, {});

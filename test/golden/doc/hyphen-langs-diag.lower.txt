@@ -1,0 +1,19 @@
+lower v1 abi 3d3ccfbb docEnd 646 holes 3 module 3c59abd67f1a71e6
+piece 0 hole 0 js [129,174)
+piece 1 hole 1 js [176,224)
+piece 2 hole 2 js [226,271)
+block 0 content [0,219)
+  CALL para [0,219)
+    TEXT "English prose: extraordinary representation, a well-known state-of-the-art design, an e-mail and an X-ray (too short to break at), co‐operation with U+2010, and the German Übersetzung, which en-US patterns never cut." [0,219)
+block 1 content [221,394) user framed holes 0..1
+  CALL para [221,394)
+    HOLE 0 [221,394)
+      TEXT "Die Silbentrennung der Übersetzung folgt den deutschen Mustern: Bundesverfassungsgericht, Fußgängerübergang und Donaudampfschifffahrtsgesellschaft." [242,393)
+block 2 content [396,530) user framed holes 1..2
+  CALL para [396,530)
+    HOLE 1 [396,530)
+      TEXT "British text falls back to the American patterns: extraordinary characterisation of organisational behaviour." [420,529)
+block 3 content [532,645) user framed holes 2..3
+  CALL para [532,645)
+    HOLE 2 [532,645)
+      TEXT "Le français sans motifs : extraordinairement, anticonstitutionnellement, un porte-monnaie." [553,644)

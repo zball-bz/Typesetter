@@ -1,0 +1,26 @@
+doc h=42141su
+para pid=0 y=0su w=19200su h=6556su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=none hyphen blocks=[0,8) @[2,25)
+  L1 y=1639su left=0su w=19200su dw=0su dc=0su join=none hyphen blocks=[8,16) @[25,48)
+  L2 y=3278su left=0su w=19200su dw=0su dc=0su join=none hyphen blocks=[16,24) @[48,71)
+  L3 y=4917su left=0su w=19200su dw=0su dc=0su join=last blocks=[24,25) @[71,81)
+para pid=1 y=7785su w=19200su h=6144su
+  L0 y=0su left=0su w=19200su dw=717su dc=0su join=none hyphen blocks=[0,18) @[83,115)
+  L1 y=1536su left=0su w=19200su dw=282su dc=0su join=none hyphen blocks=[18,32) @[115,177)
+  L2 y=3072su left=0su w=19200su dw=1395su dc=0su join=none hyphen blocks=[32,42) @[121,220)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[42,49) @[182,230)
+para pid=2 y=15158su w=19200su h=13773su
+  L0 img y=0su left=0su w=19200su h=6400su
+  L1 y=7629su left=0su w=19200su dw=1434su dc=0su join=space blocks=[0,13) @[294,388)
+  L2 y=9165su left=0su w=19200su dw=384su dc=0su join=none hyphen blocks=[14,26) @[311,348)
+  L3 y=10701su left=0su w=19200su dw=1024su dc=0su join=none hyphen blocks=[26,38) @[348,383)
+  L4 y=12237su left=0su w=19200su dw=0su dc=0su join=last blocks=[38,39) @[383,388)
+para pid=3 y=30160su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=2560su dc=0su join=none hyphen blocks=[0,16) @[442,465)
+  L1 y=1536su left=0su w=19200su dw=1024su dc=0su join=none hyphen blocks=[16,38) @[465,501)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[38,51) @[501,530)
+para pid=4 y=35997su w=19200su h=6144su
+  L0 y=0su left=0su w=19200su dw=896su dc=0su join=none hyphen blocks=[0,14) @[533,568)
+  L1 y=1536su left=0su w=19200su dw=704su dc=0su join=none hyphen blocks=[14,28) @[568,602)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=none hyphen blocks=[28,40) @[602,639)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[40,49) @[639,669)

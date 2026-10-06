@@ -42,7 +42,10 @@ struct ICtx {
   SynKind synKind = SynKind::Content;  // (plan P4-01) Ref: a resolver reference's text
   float mul = 1.0f;
   LinkTarget url;  // the link the text is in
-  bool noHyphen = false;  // display context (headings)
+  // (plan P4-06) the block's own rule for a run whose text.hyphens is
+  // unset: its par.hyphenate — auto, or manual where its words do not
+  // hyphenate (a heading's role style, a language whose pack says so)
+  u8 hyphens = HYPHENS_AUTO;
   // (plan P3-07) the copy policy of the text: the innermost node's
   // `copy` / `syn` attributes
   CopyMode copy = CopyMode::Text;

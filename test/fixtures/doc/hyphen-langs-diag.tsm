@@ -1,0 +1,7 @@
+English prose: extraordinary representation, a well-known state-of-the-art design, an e-mail and an X-ray (too short to break at), co‐operation with U+2010, and the German Übersetzung, which en-US patterns never cut.
+
+#style({lang: 'de'})[Die Silbentrennung der Übersetzung folgt den deutschen Mustern: Bundesverfassungsgericht, Fußgängerübergang und Donaudampfschifffahrtsgesellschaft.]
+
+#style({lang: 'en-GB'})[British text falls back to the American patterns: extraordinary characterisation of organisational behaviour.]
+
+#style({lang: 'fr'})[Le français sans motifs : extraordinairement, anticonstitutionnellement, un porte-monnaie.]

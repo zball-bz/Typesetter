@@ -2,7 +2,11 @@ top pid=0 units=1
  unit text indent=0su
   word "A" w=513su pen=INF @[0,1)
   space w=257su stretch=1 @[1,2)
-  word "back-of-book" w=6145su pen=INF @[2,14)
+  word "back-" w=2561su pen=INF @[2,7)
+  hyphen bw=0su pen=0.70 @[7,7)
+  word "of-" w=1537su pen=INF @[7,10)
+  hyphen bw=0su pen=0.70 @[10,10)
+  word "book" w=2049su pen=INF @[10,14)
   space w=257su stretch=1 @[14,15)
   word "in" w=1025su pen=INF @[15,17)
   hyphen bw=513su pen=0.70 @[17,17)

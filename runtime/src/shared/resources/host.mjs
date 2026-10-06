@@ -30,6 +30,7 @@ import { ResourceLocator, within } from './locator.mjs';
 const FAILED = {  // a kind's rows when its provider failed
   boxInfo: (r, msg) => ({ resId: r.resId, w: 0, h: 0, baseline: 0, failed: true, msg }),
   codeTokens: (r, msg) => ({ resId: r.resId, runs: [], failed: true, msg }),
+  hyphPatterns: (r, msg) => ({ resId: r.resId, failed: true, msg }),
 };
 
 export class ResourceHost {

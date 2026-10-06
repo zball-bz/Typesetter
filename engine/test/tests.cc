@@ -491,6 +491,37 @@ static void unitResources(const fs::path& root) {
     CHECK(!own.answerTokens("tsm", "= a", toks) && sess.answerTokens("tsm", "= a", toks) && !toks.empty());
   }
   {
+    // (plan P4-06; D-X09) a language's patterns: asked for before anything
+    // emits (its breaks never change from one pass to the next), compiled,
+    // kept by the Session — a second document asks for none, a language the
+    // host has none for included
+    std::string hops;
+    readFile(root / "test" / "fixtures" / "doc" / "hyphen-langs-diag.ops", hops);
+    Session sess;
+    ProviderSet p = mockProviders((root / "test" / "hyph").string());
+    std::vector<std::string> asked;
+    auto inner = p.hyph;
+    p.hyph = [&](std::string_view lang, HyphAnswer& out) {
+      asked.emplace_back(lang);
+      return inner(lang, out);
+    };
+    auto ingest = [&](Doc& d) {
+      d.attach(&sess);
+      d.configure(R"({"host": {"width": 300}, "doc": {"lang": "en"}})");
+      return d.ingest((const u8*)hops.data(), hops.size());
+    };
+    Doc a, b;
+    CHECK(ingest(a) && a.typeset() == Doc::Status::NeedMeasure);
+    CHECK(std::none_of(a.emitted.begin(), a.emitted.end(), [](u8 e) { return e; }));
+    std::string req, err;
+    a.requests(req);
+    WireBatch q;
+    CHECK(decodeWire((const u8*)req.data(), req.size(), false, q, err) && q.kinds.size() == 1 &&
+          q.kinds[0].kind == (u16)ResKind::hyphPatterns && q.kinds[0].rows.size() == 3);  // de, en-GB, fr
+    CHECK(driveToCompletion(a, p) && asked.size() == 3 && has(a, "hyph-unavailable"));
+    CHECK(ingest(b) && driveToCompletion(b, p) && asked.size() == 3 && b.render() == a.render());
+  }
+  {
     // (plan P3-32; design T9 M12) no block waits to emit for an image: its
     // size is Layout's (a figure's) or Measure's (an inline image's), asked
     // for in the first round beside every width
@@ -753,8 +784,9 @@ static void unitMathGlyphs(const fs::path& root) {
 // --- golden runner ---
 // the shared drive loop (api/driver.h) with the golden providers: native
 // tree-sitter tokens, the policy's image answer, the mock measurer
+static std::string g_hyphDir = "test/hyph";  // (plan P4-06) <root>/test/hyph
 static bool typesetWithMock(Doc& doc) {
-  ProviderSet p = mockProviders();
+  ProviderSet p = mockProviders(g_hyphDir);
   p.tokens = [](std::string_view lang, std::string_view text, std::vector<CodeToken>& out) {
     out = nativeTokens(lang, text);
     return true;
@@ -1146,6 +1178,48 @@ static void unitClusters() {
 // (plan P4-05) RULES_VERSION 1 against compat's literal predicates: every
 // codepoint the allowlist (test/golden/RULES, rules-diff's) does not name
 // classifies as compat did; kerning is a class column everywhere
+// (plan P4-06; D-X09) the dictionaries: the resident en-US, a host's
+// German through the golden provider (test/hyph), the alphabet and case
+static void unitHyphenDicts(const fs::path& root) {
+  auto hyph = [](const HyphenDict& d, std::string_view word) {
+    std::vector<u32> cps, pts;
+    std::vector<u32> at;  // each letter's byte
+    for (u32 i = 0; i < word.size();) {
+      at.push_back(i);
+      const u32 cp = utf8Next(word, i);
+      if (!d.has(lowerOf(cp))) return std::string("(not in its alphabet)");
+      cps.push_back(lowerOf(cp));
+    }
+    at.push_back((u32)word.size());
+    d.points(cps.data(), (u32)cps.size(), pts);
+    std::string out;
+    u32 prev = 0;
+    for (u32 p : pts) {
+      out += std::string(word.substr(at[prev], at[p] - at[prev])) + "-";
+      prev = p;
+    }
+    return out + std::string(word.substr(at[prev]));
+  };
+  const HyphenDict& en = residentHyphenDict();
+  CHECK(en.tag == "en-US" && en.minWord() == 5);
+  CHECK(hyph(en, "associate") == "as-soc-iate");  // an exception
+  CHECK(hyph(en, "Extraordinarily") == "Ex-tra-or-di-nar-i-ly");
+  CHECK(hyph(en, "\xC3\x9C" "bersetzung") == "(not in its alphabet)");  // Übersetzung: no en-US points
+  CHECK(residentHyphenLang("en") && residentHyphenLang("EN-us") && residentHyphenLang("") && !residentHyphenLang("en-GB"));
+  CHECK(lowerOf(0xDC) == 0xFC && lowerOf('Q') == 'q' && lowerOf(0x4E00) == 0x4E00 && lowerOf(0x0416) == 0x0436);
+  CHECK(isLetter(0xDF) && isLetter(0x4E00) && isLetter('z') && !isLetter('-') && !isLetter('3') && !isLetter(0x2019));
+  HyphAnswer a;
+  CHECK(hyphFromDir((root / "test" / "hyph").string(), "de-DE", a));
+  HyphenDict de;
+  std::string err;
+  CHECK(HyphenDict::compile("de", a.patterns, a.exceptions, a.leftmin, a.rightmin, a.hyphenChar, de, err));
+  CHECK(hyph(de, "\xC3\x9C" "bersetzung") == "\xC3\x9C" "ber-set-zung");
+  CHECK(hyph(de, "Fu\xC3\x9Fg\xC3\xA4nger\xC3\xBC" "bergang") == "Fu\xC3\x9F-g\xC3\xA4n-ger-\xC3\xBC" "ber-gang");
+  CHECK(!hyphFromDir((root / "test" / "hyph").string(), "xx", a));
+  HyphenDict bad;
+  CHECK(!HyphenDict::compile("x", "a1b 12", "", 2, 2, "-", bad, err) && !err.empty());
+}
+
 static void unitTextRules(const fs::path& root) {
   std::vector<std::pair<u32, u32>> allowed;
   {
@@ -2202,6 +2276,7 @@ int main(int argc, char** argv) {
     if (a == "--update") update = true;
     else root = a;
   }
+  if (!root.empty()) g_hyphDir = (fs::path(root) / "test" / "hyph").string();
   unitJslex();
   unitSpliceHead();
   unitSu();
@@ -2246,7 +2321,9 @@ int main(int argc, char** argv) {
         size_t sp = line.find(' ');
         if (sp == std::string::npos) continue;
         std::string word = line.substr(0, sp), expect = line.substr(sp + 1);
-        std::vector<u32> pts = hyphenPoints(word);
+        std::vector<u32> cps, pts;  // (ASCII words: a letter is a byte)
+        for (char c : word) cps.push_back(lowerOf((u8)c));
+        if (cps.size() >= residentHyphenDict().minWord()) residentHyphenDict().points(cps.data(), (u32)cps.size(), pts);
         std::string got;
         u32 prev = 0;
         for (u32 p : pts) {
@@ -2263,6 +2340,7 @@ int main(int argc, char** argv) {
     }
   }
 
+  unitHyphenDicts(fs::path(root));
   fuzzRegressions(fs::path(root));
   unitHostInputs(fs::path(root));
   unitResources(fs::path(root));

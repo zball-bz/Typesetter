@@ -1,10 +1,10 @@
 <div class="tsr-doc tsr-paged" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-sheet" style="position:relative;overflow:visible;height:240px;clip-path:inset(0px 0px 0px -14.297px)">
 <div class="tsr-band" data-b="0">
-<div class="tsr-line" data-s="0" data-e="34" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:8.667px"><span class="tsr-r" data-s="0">A listing with line numbers at the</span></div>
-<div class="tsr-line" data-s="35" data-e="72" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="35">measure&#39;s left edge (plan P3-16): its</span></div>
-<div class="tsr-line" data-s="73" data-e="113" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="73">sheet keeps the numbers, clipping at the</span></div>
-<div class="tsr-line" data-s="114" data-e="147" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="114">measure extended by their gutter.</span></div>
+<div class="tsr-line" data-s="0" data-e="38" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="0">A listing with line numbers at the mea</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="38" data-e="78" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="38">sure&#39;s left edge (plan P3-16): its sheet</span></div>
+<div class="tsr-line" data-s="79" data-e="117" data-join="none" style="top:48px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="79">keeps the numbers, clipping at the mea</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="117" data-e="147" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="117">sure extended by their gutter.</span></div>
 </div>
 <div class="tsr-band" data-b="1">
 <div class="tsr-line tsr-row" data-s="166" data-e="176" data-ragged="1" style="top:115.203px;left:0px;width:300px;font-size:13.6px;line-height:24px"><span class="tsr-marker tsr-r tsr-code tsr-pre" data-syn="marker" style="font-size:13.6px">1</span><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let a = 1;</span></div>

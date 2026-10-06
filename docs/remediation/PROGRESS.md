@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P4
-- 下一步：P4-06
+- 下一步：P4-07
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -109,7 +109,7 @@
 | P4-03 | 逐项源 span | done | grep:plan P4-03 | 2026-10-07 | 751 个文件（blocks 210、hlist 210、html 165、layout 154、paged 12）——全部是 span 字段：去掉位置、data-s 的有无与 data-s0 后与 P4-02 逐字节相同；e2e +1（run 级 offsetAt 与行级 elementsAt） | ContentNode::srcExact（实例化时：文字是自身来源，映射或恒等；materialize 移动节点时清除）；emit 的 TextSource 把每个簇的熟字节经 cooked→raw 映射得到源 span（插入的字节为点、删除的字节不属于任一侧），词的连字段与长 token 切片各有切片，连字符与边界胶为点，标点的半宽随其字形；无映射的文字（造出的文字）保留节点 span。paint 的 run data-s 取其第一个有源的项；layout 的行 span 取第一个有源项的起点与最远的终点（不再取最小值：笔记回链等造出文字不会把行起点拉回）。tools/check-spans.mjs 进 G1：每个 html golden 的内容 run 的 data-s 指向其首字符（或其转义的反斜杠、造出文字的标记处），同行按源顺序，同一流的行按源顺序；对 P4-02 的 golden 报 396 处，对现在的为 0。文档：document-model §9.1、shaping-design §7、REPORT、CLAUDE.md |
 | P4-04 | TextProps v1；标点/空白/autospace 数据化 | done | grep:plan P4-04（前置 1d7b592） | 2026-10-07 | 211 个文件：hlist 60、blocks 60（标点字形 +ε 1su）、breaks 32（只有代价，断点全部不变）、html 57 与 paged 2（tsr-sqL/R → margin px，上标 top px）；layout 不变；+1 用例 style/text-props（e2e 预期一条 overfull-line）；e2e +1 标点矩阵（4 dsf，偏差 ≤0.016px，与基线相同） | 前置提交：render.runWidths 设置（paint 预测每个 run 的宽度：项的原始宽、行的词距/字距、留存的空白、钉住宽度，写为 data-w），标点矩阵 punct.spec.mjs 与改动前基线。compat.def 新增 BLANK（各类前后空白 em）、ADVANCE（——/—/……/… 的定义宽度）行与 CONST superRaiseEm，ucdc 生成 kBlanks/kDefinedAdvances；pushPunct 改为空白数据上的一条压缩规则（none/book/full）；定义宽度查表取代 U+2014/U+2026 特判（任何被上下文定为宽的簇都可选用）；resolveWidths 按 kBlanks 减空白并加 ε；paint 两侧各自判断自身空白是否留存，缺失一侧写 margin px，契约 CSS 去掉 tsr-sqL/R 与 -0.45em（gen-schema 不再读 squeeze）；上标 top 为引擎 px。新属性 text.wrap（wrap|nowrap）、text.autospace、text.hyphens、text.overflowWrap（opsVersion 16，styled 参数 108–111）；text.space pre 的空格进刚性盒；正常模式下文字中任意位置的连续空格折叠（原只在文字开头）。文档：shaping-design §2、§8（新）、style-design、document-model §9.1、tsm-changes、REPORT |
 | P4-05 | UCD 字符类（RULES_VERSION 1）与 Unicode 控制符 | done | grep:plan P4-05 | 2026-10-07 | 201 个 hlist（类名 Other → Alpha/Digit/Infix…；引号/破折号/↩/⚠ 旁新增 kern 上下文，mock 下仍 257su）；breaks/blocks/layout/html 不变；+1 用例 cjk/controls；语料 340 篇断点 0 变化 | engine/rules/locale/{default,und,en,zh-Hans}.def（RULES_VERSION 1）：und 以 LB 行由 UAX #14 派生字母/数字/窄标点/谚文/空格与控制符并定义列（wide、punct、open、close、nostart、autospace、ambwide、joins、kern）；zh-Hans 保留 compat 宽区间（WIDE_DEFAULT Ideo），区间内按文字系统设 Kana/Hangul（SCRIPT），clreq 标点与新覆盖（〖〗｟｠、CJ 小假名、ー、迭代记号、・、〜、U+3000），BLANK/ADVANCE/CONST。ucdc：INCLUDE、LB、SCRIPT、CLASS_LB 行，按类的 wide/kern 列，类表改为两级表（kCCIndex[cp>>7] → 226 个 128 块，约 38KB）；rules-diff 按行为投影比较，允许清单可限"仅字距"；test/golden/RULES 为规则版本与允许清单；unitTextRules 读清单，清单外码位钉在 compat 字面谓词上。引擎：textrules.h 新谓词（isPunctGlyph、noStart、takesAutospace、ambWide、eawWide），isWordChar 按 Alpha/Digit；上下文证据用 ambwide（谚文不使引号成 CJK）；emit：Prev 新增 Wide 态（谚文、全角空格不加间距），noBreakBefore（非行首类之前及其前的空格/边界胶不可断），非行首标点的前空白不可断，控制符分支（NBSP 不可断可伸展且不折叠、ZWSP、WJ），SHY 断字（emitWord），连续空格折叠改为记录可折叠空格的项；网格宽度按 EAW，网格禁则读 nostart；lintHList 对所有非行首盒检查。check-spans 的空白跳过只取 ASCII。文档：shaping-design §1、§2、§4、§9（新），tsm-changes，REPORT |
-| P4-06 | 连字注册表、ExHyphen、hyphens/overflowWrap | todo | | | | |
+| P4-06 | 连字注册表、ExHyphen、hyphens/overflowWrap | done | grep:plan P4-06 | 2026-10-07 | 55 个用例的 blocks/breaks/hlist/layout（html 14、paged 1，行数不变）：15 个 URL/DOI/路径按芝加哥规则（104 处，cite/* 断在 . / 之前）、30 个显式连字符断点（51 处）、31 个新增连字点（59 处：复合词各部分、撇号前、浮动题注行）、3 个题注标签不再连字；+2 用例 doc/hyphen-langs-diag、doc/emergency；e2e +2（test/e2e/hyphen.spec.mjs）；rules-diff --check 通过（类无变化）；语料 340 篇 333 篇行界变化（行数 −183，行末连字 +7.6%，Σ|dw| −6.2%） | 词典：hyphen/hyphen.{h,cc} 重写为 HyphenDict（TeX 模式文本编译成 trie：ASCII 根表、字母表位图、例外；leftmin/rightmin/minWord/hyphenChar 按词典），常驻 en-US 由 tools/hyphc.mjs 生成模式文本（gen/hyphen_en_us.h，首次使用编译），--assets 写 runtime/assets/hyph（88 个标签 + index.json，gitignore，CI 与打包生成），test/hyph 为 golden 的德语（de-1996）。资源行 hyphPatterns（id 6，键 lang，答 patterns/exceptions/leftmin/rightmin/hyphenChar；RES_VERSION 2，答复列上限 6，JS 编码器支持 Str 答复列）；ResourceTable.hyphNeeds/hyphDicts，Doc 在 Resolve 收集文本语言（ownPatterns：非 en/und、包允许连字、非 CJK 文字），Emit 等待全部答复，resolveHyph 回退 en-US（info）或无（warning hyph-unavailable）；Session.hyph 缓存（含失败）；原生 ProviderSet.hyph（hyphFromDir：index.json + 前缀回退，与运行时 provider 同法），tsrc/测试/wasm-goldens 读 test/hyph；worker 注册 providers/hyph.mjs。规则：und.def 的 EMERGENCY 行与 CONST emergencyMinPiece；ucdc 由 UnicodeData.txt 生成 kLetterEdges 与 kLower，textrules.h 新增 isLetter、lowerOf、isHyphenChar、emergencySepAt。emit：emitWord 改为记号遍（软连字符 → 词内显式连字符 ExHyphen（最少字母数）→ 各部分的词典点 → 无断点的长记号走紧急表/anywhere），所有词内断点为 Disc（disc() 取代 hyphenPoint，pre 为词典连字字形或无）；行内代码长于阈值时走同一遍；ICtx::noHyphen → ICtx::hyphens（块的 par.hyphenate）；新设置 break.exHyphenPenalty（0.7）。Disc 无 pre 时 resolveWidths、lowerHList、layout、paint、dump 均处理；paint 输出 pre 文本。defaults.json：标题 hyphens manual + overflowWrap separators，题注与行内代码 overflowWrap separators，题注标签 hyphens manual。文档：shaping-design §10（新）、host-protocol-design §5、tsm-changes、settings-table、REPORT |
 | P4-07 | attach 语义；脚注附着移出解析器 | todo | | | | |
 | P4-08 | 原生项断行器与统一伸缩模型 | todo | | | | |
 | P5-01 | 多字体数学链与宿主数学字体 | todo | | | | |
@@ -188,6 +188,7 @@
 | P4-03 后 | 3.80 | 12.30 | 28.30 | 1.7 / 3.1 / 0.9 / 11.0 / 3.3 | 73.3 / 112.2 / 155.2 | 1.70 / 22.10 / 59.50 | 均在 P4 门限内；35K 为 6 轮（update 3 轮 15.30、relayout 3 轮 23.30 为机器噪声）；同机交替 A/B 各 6 轮：P4-02 12.30 / 12.20、本步 12.50 / 15.40（各轮中位数多在 15–16，噪声大），引擎阶段两者均 4.5–4.6 |
 | P4-04 后 | 3.90 | 12.50 | 28.80 | 1.8 / 3.2 / 0.9 / 11.1 / 3.4 | 74.2 / 113.5 / 157.0 | 1.70 / 22.30 / 58.40 | 均在 P4 门限内或噪声边缘：35K update 6 轮 12.50（门限 12.48，引擎阶段 4.5 与 P4-02/03 相同；3 轮 13.90），35K relayout 6 轮 22.30（3 轮 23.50，机器负载 3.4）；定义宽度查表先比首码位（callgrind：EmitPass 72.3M，P4-02 优化后 69.1M，含 P4-03 的逐簇源映射） |
 | P4-05 后 | 3.80 | 12.80 | 29.10 | 1.7 / 3.2 / 0.9 / 11.5 / 3.4 | 72.4 / 109.2 / 151.5 | 1.70 / 22.50 / 59.60 | 87K 在门限 29.60 内；初版类表沿用区间二分（2,094 个区间）时 87K 31.30（引擎 13.8），改两级表后引擎 11.5（P4-04 11.1；callgrind EmitPass 74.3M，P4-04 72.3M）；35K 3 轮 12.80（门限 12.48，引擎 4.6 与 P4-04 相同，噪声） |
+| P4-06 后 | 3.80 | 12.90 | 29.10 | 1.7 / 3.1 / 1.0 / 11.9 / 3.5 | 78.8 / 114.7 / 166.1 | 1.70 / 22.20 / 60.60 | 87K 在门限 29.60 内；35K update 双峰噪声：同机交替 A/B 各 6 轮，P4-05 树 14.10 / 12.70 / 15.90、本步 15.90 / 16.00 / 12.90（取最小 12.90，门限 12.48，同 P4-05 的 12.80 情形），引擎阶段 4.7–4.9 对 4.8；87K 引擎 11.4 → 11.9（callgrind 每次编辑 +7.5M 指令 ≈ +3%：词内断点增多带来的盒与测量查找、emitWord；常驻词典的编译 6.7M 只在进程首次）。初版 87K 30.00（引擎 12.4），经 ASCII 根表、字母表位图、簇基码预计算、单遍连字符扫描、上一词典缓存后降至 29.10 |
 
 ## 偏差记录（MD-11）
 
@@ -488,6 +489,15 @@
 | P4-05 | rules-diff 改为比较行为投影（列、空白、歧义/控制类）而非类名；语料边界统计因空格、字母的投影变化计数很大（约 160 万），只作报告 | RULES_VERSION 1 的类名与 compat 不同（Other 拆为 Alpha/Digit…），按类名比较没有意义；允许清单按码位与"仅字距"判定 | 无 |
 | P4-05 | 设计预计 inline/quotes、style/kern-boundary 的 blocks/breaks/layout 变化（257su → 258su），实际只有 hlist 中新增的 kern 上下文 | mock 测量器可加，m(三元组) − m(前) − m(后) 等于空格宽，宽度不变 | 无 |
 | P4-05 | 半角片假名在代码网格中改为一列（原按 compat 宽类占两列） | 按 UAX #11（H 为窄）；现有用例与语料无此字符 | 无 |
+| P4-06 | 题注保持自动连字（设计 T5 的角色默认值为 hyphens manual）；只有题注标签（Figure 1:）设为 manual | 题注的角色样式为两端对齐（parAlign justify），短行宽上不连字会出现松行；旧版块题注本来就连字，只有浮动题注行（noHyphen）不连字，现与块题注一致；标签是名称，不应断开 | 无 |
+| P4-06 | 复合词按部分连字（Ad-di-son-Wes-ley），撇号前的部分也连字；设计写的是"整词在字母表内才连字" | LuaTeX 的做法：TeX 只对胶后第一个词连字是公认缺陷；部分须全在字母表内，Übersetzung 之类不受影响 | 无 |
+| P4-06 | ExHyphen 两侧片段要求词典的最少字母数（leftmin/rightmin，无词典时 2/2）；D-X02 只规定罚分 | 避免 e-\|mail、X-\|ray、D-\|S11 这类单字母断开，同 LuaTeX；罚分取 0.7，即 TeX 的 50（与连字罚分相同） | 无 |
+| P4-06 | 显式连字符断点只在同一文本节点内判定，跨样式边界（*well*-known）不断 | 记号遍的边界判定需要跨节点的上下文索引，现有用例与语料无此情形；长度阈值已跨节点计数 | P4-08 |
+| P4-06 | 紧急表放在 und.def 的 EMERGENCY 行（不按 overflowWrap 分表）；anywhere = 分隔符 + 任意簇边界，仍要求长度阈值与最短段 | 一张表覆盖语料中的 URL、路径、标识符（设计 B17 的结论）；CSS 的 anywhere 只在溢出时生效，KP 中无阈值会让普通词在罚分 1.2 下被拆开 | 无 |
+| P4-06 | 芝加哥分隔符增加 @ 之前（邮件地址） | 设计列表未含 @；邮件地址只在 @ 与点处可断 | 无 |
+| P4-06 | 词典格式为 TeX 模式文本（引擎编译），而不是 hyphc 生成的每语言头文件或二进制块；常驻 en-US 也由文本在首次使用时编译 | 任何宿主都能直接提供 hyph-utf8 等来源的模式；编译 1 次约 3.9M 指令，Session 缓存；wasm 体积比旧数组小 | 无 |
+| P4-06 | 词典需求按文档等待（Emit 在全部 hyphPatterns 答复前不开始），不按块 | 一种语言可出现在任意块；只在文档首次排版时多一轮，之后 Session 命中 | 无 |
+| P4-06 | 罚分仍是设置行（break.hyphenPenalty、break.exHyphenPenalty 新增、break.urlPenalty、break.urlMinLen），未改为包的 BreakClass 罚分 | 设置是宿主旋钮的正规位置（CLAUDE.md）；按 BreakClass 的罚分表与 −INF 强制断属 P4-08 的断行器 | P4-08 |
 
 ## 阻塞记录（§4.7）
 

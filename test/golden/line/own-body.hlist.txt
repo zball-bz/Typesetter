@@ -137,7 +137,11 @@ top pid=3 units=1
  unit text indent=2560su marker="•"
   box Alpha "a" w=513su r0 @[402,403)
   glue word w=257su x=1 cap=257su kern="a s" src r0 @[403,404)
-  box Alpha "single-line" w=5633su r0 @[404,415)
+  box Alpha "sin" w=1537su r0 @[404,407)
+  disc pen=0.7 w=0su pre="-" 513su kern="ng" r0 @[407,407)
+  box Alpha "gle-" w=2049su r0 @[407,411)
+  disc pen=0.7 w=0su pre=none kern="-l" r0 @[411,411)
+  box Alpha "line" w=2049su r0 @[411,415)
   glue word w=257su x=1 cap=257su kern="e b" src r0 @[415,416)
   box Alpha "body" w=2049su r0 @[416,420)
   glue word w=257su x=1 cap=257su kern="y t" src r0 @[420,421)

@@ -114,6 +114,7 @@ column tables of both codecs: `resource/resources.gen.h`,
 | fontFace (3) | family, src, weight, style | status (reserved: no declared faces yet) | None |
 | codeTokens (4) | language, body (its overlay spans blanked: plan P3-22) | runs (start, end, tag)… | Content |
 | boxInfo (5) | kind (0 image, 1 svg, 2 html), ref (src, or the markup), the width it is measured at (px; 0: an image's intrinsic size) | w, h, baseline px (baseline from the top) | Host |
+| hyphPatterns (6) | language (BCP-47, as the text names it; plan P4-06) | TeX patterns, exceptions (hyphenated words), leftmin, rightmin, the hyphen glyph | Content |
 
 The **metric key** is the complete measurement tuple (D-T04): the resolved
 family stack, the digest of the loaded declared faces in it (0 until
@@ -224,7 +225,11 @@ in one place, `runtime/src/shared/resources/`:
   Last-Modified, files by mtime and size.
 
 Providers in the worker: canvas `textWidth` and `fontVmet`, `codeTokens`
-(the highlighter) and `boxInfo`: images (kind 0, `providers/images.mjs`: the
+(the highlighter), `hyphPatterns` (plan P4-06, `providers/hyph.mjs`: the
+dictionary assets of `runtime/assets/hyph` — tools/hyphc.mjs --assets —
+by tag, then by its shorter prefixes; Emit waits for the answers, a
+language without one falls back to en-US or does not hyphenate, and says
+so) and `boxInfo`: images (kind 0, `providers/images.mjs`: the
 header sniff, then decode, then the main thread's `imageDims` capability;
 sizes cached by URL, failures only for the failure time to live) and, plan
 P3-28, svg and html boxes (kinds 1 and 2, `providers/html-boxes.mjs`): the

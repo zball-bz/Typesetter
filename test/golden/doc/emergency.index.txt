@@ -1,0 +1,3 @@
+instance heading 1 level=1 label=h-1 title="A heading with https://example.com/an/overlong/address/that/must/wrap/somewhere" @[0,81)
+instance figure 1 @[232,397)
+label h-1 -> heading 1 @[0,81)

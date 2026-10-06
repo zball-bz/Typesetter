@@ -30,6 +30,8 @@ const ids = new Set(rows.map((r) => r.id));
 if (ids.size !== rows.length) throw new Error('resources.def: duplicate id');
 for (const r of rows) if (r.ans.filter((c) => c.type === 'U32List').length > 1)
   throw new Error(`resources.def ${r.name}: at most one list column`);
+for (const r of rows) if (r.key.length > 4 || r.ans.length > 6)
+  throw new Error(`resources.def ${r.name}: at most 4 key and 6 answer columns`);
 
 const colsC = (cs) => cs.map((c) => `{"${c.name}", ColType::${c.type}}`).join(', ');
 const h = `// ${HDR}
@@ -58,7 +60,7 @@ struct ResKindInfo {
   ResCache cache;
   bool docProviders;
   u8 nKey, nAns;
-  ResCol key[4], ans[4];
+  ResCol key[4], ans[6];
 };
 inline constexpr ResKindInfo kResKinds[] = {
 ${rows.map((r) => `    {ResKind::${r.name}, "${r.name}", ResCache::${r.cache}, ${r.doc}, ${r.key.length}, ${r.ans.length}, {${colsC(r.key)}}, {${colsC(r.ans)}}},`).join('\n')}

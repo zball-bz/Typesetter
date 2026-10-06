@@ -209,13 +209,17 @@ top pid=8 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="et" r0 @[701,701)
   box Alpha "thing" w=2561su r0 @[701,706)
   glue word w=257su x=1 cap=257su kern="g l" src r0 @[706,707)
-  box Alpha "label-like" w=5121su r0 @[707,717)
+  box Alpha "la" w=1025su r0 @[707,709)
+  disc pen=0.7 w=0su pre="-" 513su kern="ab" r0 @[709,709)
+  box Alpha "bel-" w=2049su r0 @[709,713)
+  disc pen=0.7 w=0su pre=none kern="-l" r0 @[713,713)
+  box Alpha "like" w=2049su r0 @[713,717)
   glue word w=257su x=1 cap=257su kern="e <" src r0 @[717,718)
   box Alpha "<looks-" w=3585su r0 @[718,725)
-  pen 1.2 r0
-  box Alpha "like-" w=2561su r0 @[725,730)
-  pen 1.2 r0
-  box Alpha "a-label>" w=4097su r0 @[730,738)
+  disc pen=0.7 w=0su pre=none kern="-l" r0 @[725,725)
+  box Alpha "like-a-la" w=4609su r0 @[725,734)
+  disc pen=0.7 w=0su pre="-" 513su kern="ab" r0 @[734,734)
+  box Alpha "bel>" w=2049su r0 @[734,738)
   run r0 plain
 top pid=9 units=1
  unit text indent=0su

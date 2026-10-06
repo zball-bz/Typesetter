@@ -108,6 +108,7 @@ void dumpHList(std::string& out, const HList& h, const Interner& strs, const Sty
         out += "disc pen=";
         pen(out, it.x);
         appendf(out, " w=%dsu pre=", it.w);
+        if (!d.preN) out += "none";  // (plan P4-06) an explicit hyphen's, an emergency break's
         for (u32 s = d.pre; s < d.pre + d.preN; s++) {
           quoted(out, strs, h.specs[h.side[s].aux].str);
           appendf(out, " %dsu", h.side[s].w);

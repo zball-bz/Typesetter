@@ -1,6 +1,10 @@
 top pid=0 units=1
  unit text indent=0su
-  word "Snap-kerning" w=6145su pen=INF @[0,12)
+  word "Snap-" w=2561su pen=INF @[0,5)
+  hyphen bw=0su pen=0.70 @[5,5)
+  word "kern" w=2049su pen=INF @[5,9)
+  hyphen bw=513su pen=0.70 @[9,9)
+  word "ing" w=1537su pen=INF @[9,12)
   space w=257su stretch=1 @[12,13)
   word "on" w=1025su pen=INF @[13,15)
   space w=257su stretch=1 @[15,16)

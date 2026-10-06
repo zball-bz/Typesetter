@@ -8,11 +8,11 @@ top pid=0 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="xt" r0 @[11,11)
   box Alpha "ture" w=2049su r0 @[11,15)
   glue word w=257su x=1 cap=257su kern="e (" src r0 @[15,16)
-  box OpenN "(hardbreak." w=5633su r0 @[16,27)
-  pen 1.2 r0
-  box Alpha "tree." w=2561su r0 @[27,32)
-  pen 1.2 r0
-  box Alpha "json):" w=3073su r0 @[32,38)
+  box OpenN "(hardbreak" w=5121su r0 @[16,26)
+  disc pen=1.2 w=0su pre=none kern="k." r0 @[26,26)
+  box Infix ".tree" w=2561su r0 @[26,31)
+  disc pen=1.2 w=0su pre=none kern="e." r0 @[31,31)
+  box Infix ".json):" w=3585su r0 @[31,38)
   glue word w=257su x=1 cap=257su kern=": t" src r0 @[38,39)
   box Alpha "this" w=2049su r0 @[39,43)
   glue word w=257su x=1 cap=257su kern="s l" src r0 @[43,44)

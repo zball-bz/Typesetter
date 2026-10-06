@@ -4,9 +4,9 @@ para pid=1 y=0su w=19200su h=1639su
 para pid=2 y=2868su w=19200su h=7680su
   L0 y=0su left=0su w=19200su dw=367su dc=0su join=space blocks=[0,17) @[79,117)
   L1 y=1536su left=0su w=19200su dw=185su dc=0su join=space blocks=[18,37) @[118,161)
-  L2 y=3072su left=0su w=19200su dw=205su dc=0su join=space blocks=[38,51) @[162,200)
-  L3 y=4608su left=0su w=19200su dw=-68su dc=0su join=space blocks=[52,68) @[201,247)
-  L4 y=6144su left=0su w=19200su dw=0su dc=0su join=last blocks=[69,72) @[248,256)
+  L2 y=3072su left=0su w=19200su dw=205su dc=0su join=space blocks=[38,57) @[162,200)
+  L3 y=4608su left=0su w=19200su dw=-68su dc=0su join=space blocks=[58,74) @[201,247)
+  L4 y=6144su left=0su w=19200su dw=0su dc=0su join=last blocks=[75,78) @[248,256)
 para pid=3 y=11777su w=19200su h=1536su
   L0 rule y=768su left=0su w=19200su
 para pid=4 y=14542su w=19200su h=3072su

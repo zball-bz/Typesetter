@@ -64,7 +64,11 @@ export function encodeAnswer({ batch, kinds }) {
     return strIdx.get(s);
   };
   const entries = Object.entries(kinds).filter(([, rows]) => rows.length);
-  for (const [, rows] of entries) for (const r of rows) str(r.msg);
+  for (const [name, rows] of entries)
+    for (const r of rows) {
+      str(r.msg);
+      for (const c of RES_KINDS[name].ans) if (c.type === 'Str') str(r[c.name]);  // (plan P4-06: hyphPatterns)
+    }
   const blobs = strings.map((s) => enc.encode(s));
   let size = 4 + 4 + 4 + 4 + blobs.reduce((a, b) => a + 4 + b.length, 0) + 4;
   for (const [name, rows] of entries) {
@@ -101,7 +105,7 @@ export function encodeAnswer({ batch, kinds }) {
       for (const r of rows) {
         const x = r[c.name] ?? 0;
         if (t === 'U8') u8(x); else if (t === 'U16') u16(x); else if (t === 'F64') f64(x);
-        else if (t === 'U32List') u32(x?.length ?? 0); else u32(x);
+        else if (t === 'U32List') u32(x?.length ?? 0); else if (t === 'Str') u32(str(x)); else u32(x);
       }
       if (t === 'U32List') for (const r of rows) for (const x of r[c.name] ?? []) u32(x);
     }

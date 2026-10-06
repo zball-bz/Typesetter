@@ -1,0 +1,11 @@
+= A heading with https://example.com/an/overlong/address/that/must/wrap/somewhere
+
+Inline code breaks at its separators: `very_long_identifier_name.with.member_access(argument)` and `/usr/local/share/typesetter/patterns` in prose.
+
+#!figure(src: "photos/wide.png", alt: "wide", w: 300, h: 100)
+A caption with a long path /usr/local/share/typesetter/patterns/hyphenation/en-us.json inside.
+#figure!
+
+#style({text: {overflowWrap: 'anywhere'}})[A digest without separators: 0x3f2a9c4b7e1d5f8a2c6e0b9d4f7a1c3e5b8d2f6a breaks anywhere.]
+
+An address someone.with.a.long.name@example.org and a scheme-less www.example.com/path/to/a/resource?query=value&other=thing#anchor end.

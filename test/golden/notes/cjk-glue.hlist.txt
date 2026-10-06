@@ -314,7 +314,11 @@ top pid=2 units=6
   run r2 plain x0.85
   run r3 plain ref LINK x0.85 link="#tsr-fnref-4"
  unit text indent=1536su anchor="fn-5" marker="5."
-  box Alpha "Latin-context" w=5659su r0 @[381,394)
+  box Alpha "Latin-" w=2613su r0 @[381,387)
+  disc pen=0.7 w=0su pre=none kern="-c" r0 @[387,387)
+  box Alpha "con" w=1307su r0 @[387,390)
+  disc pen=0.7 w=0su pre="-" 437su kern="nt" r0 @[390,390)
+  box Alpha "text" w=1742su r0 @[390,394)
   glue word w=219su x=1 cap=219su kern="t n" src r0 @[394,395)
   box Alpha "note." w=2178su r0 @[395,400)
   glue word w=219su x=1 cap=219su kern=". ↩" src r0 @[379,401)

@@ -93,7 +93,7 @@ instances that say how their boxes paint, and side records.
 | Glue ObjectSpace | the space between two formula parts | weight 0 |
 | Glue Fill | a `fill` (plan P2-16): fil glue — no width, no finite stretch; a line holding one is fil for the breaker, and layout gives it the line's whole slack (on any line, the last too); painted as a spacer (`data-syn="fill"`) | weight 0 |
 | Penalty | a numeric break penalty (`kPenInf` forbids) | |
-| Disc | a hyphenation point: its pre box (`"-"`) in `side`, the junction KernCtx in `DiscRec::spec`, the unbroken width = the junction kern | |
+| Disc | a break inside a word: its pre box in `side` — the dictionary's hyphen at a pattern or soft-hyphen point; none after an explicit hyphen or at an emergency break (plan P4-06) —, the junction KernCtx in `DiscRec::spec`, the unbroken width = the junction kern | |
 
 The 24-byte `HItem` holds kind, class, attrs, state, run, aux (the
 `AdvanceSpec` or `DiscRec`), width, x (glue weight; penalty; a CJK box's gap
@@ -148,9 +148,9 @@ As built (plan P4-01; design T5 step 4):
   link's last letter and the space after it kern (the P2-07 audit XFAIL
   semantics/appendix passes), a citation's `[1, 2]` kerns like prose; an
   italic title against roman text still does not (real-world-report #1).
-  Eligibility stays `kernEligible` (cp < U+2000) until P4-05. URL break
-  points (a Box, a Penalty, a Box) still carry no junction kern: P4-06
-  makes them breaks of their own.
+  Eligibility is the kern column (P4-05). Every break inside a word — a
+  pattern point, an explicit hyphen's, an emergency break in a URL — is a
+  Disc, so its junction is kerned like a hyphen point's (P4-06).
 - `ICtx::synKind` (SynKind::Ref inside a resolver reference) replaces the
   `BF_REF` flag bit the run key read; the legacy oracle maps it back.
 
@@ -286,10 +286,9 @@ changes typography (finding emitter/paragraph-blind-script-context):
   opening glyph, a blank or an image it may break;
 - before a closing CJK glyph no break, even after typed spaces (UAX #14
   LB13);
-- the long-token (URL) scan counts the token's characters — not bytes —
-  across style edges (`abc.def/*ghij*/klmn.opq/rst` is one token); its
-  cuts stay inside each node's text, and `break.urlMinLen` counts
-  characters (P4-06 replaces the scan with the emergency table);
+- a long token's length counts its clusters — not bytes — across style
+  edges (`abc.def/*ghij*/klmn.opq/rst` is one token); its breaks stay
+  inside each node's text (§10);
 - a CJK box is a whole cluster (an ideograph with its variation selector).
 
 **Soft breaks** (`model/softbreak.{h,cc}`): instantiation leaves U+000A in
@@ -340,8 +339,7 @@ first such item to the furthest end.
   keeps its spaces in rigid boxes; normal collapses a run of spaces, as the
   browser does — a spliced string's too), `text.autospace` (none | normal:
   the boundary glue at its edges), `text.hyphens` (none | manual | auto)
-  and `text.overflowWrap` (normal | separators | anywhere) over the block's
-  rule (a heading's, a caption's: neither), which P4-06 replaces.
+  and `text.overflowWrap` (normal | separators | anywhere): §10.
 - **The punctuation matrix** (`test/e2e/punct.spec.mjs`, setting
   `render.runWidths`): every combination of the classes in the three modes,
   justified and ragged, at four device pixel ratios — each run's rendered
@@ -374,8 +372,55 @@ emitter/hardcoded-script-class-tables, emitter/missed:2):
   Infix, …) and kern contexts beside quotes and dashes (the mock measures
   them at the space's width); `cjk/controls` covers the rest.
 
-## 10. Next steps
+## 10. Hyphenation and emergency breaks (plan P4-06; design T5 step 9)
 
-P4-06…P4-08: hyphenation registry,
-attach edges and the item-native breaker (with it, the canonical TeX form
-and the end of the lowering).
+The breaks inside a word are the token pass's (`emitWord`), each a Disc
+(findings emitter/hyphenation-en-us-only, emitter/url-break-special-path):
+- **Two properties, no block flag.** `text.hyphens` (none | manual | auto)
+  says where a word may hyphenate: nowhere, at its soft hyphens, or at its
+  dictionary's points too; unset, the block's `par.hyphenate` decides (auto
+  or manual). `text.overflowWrap` (normal | separators | anywhere; unset:
+  separators) says how a long token with no other break opportunity
+  breaks. The role stylesheet (`engine/data/defaults.json`) gives headings
+  `hyphens: manual` and headings, captions and inline code
+  `overflowWrap: separators`: a heading's URL wraps instead of running
+  off, a long identifier in code breaks at its separators. (`ICtx::noHyphen`,
+  which conflated the two, is gone.)
+- **A word** is its core from its first letter (UCD General_Category L*)
+  to its last, of letters, digits, apostrophes and hyphens. An explicit
+  hyphen (U+002D, U+2010) between letters is a break that adds nothing
+  (ExHyphen, D-X02: `break.exHyphenPenalty`, TeX's \exhyphenpenalty —
+  equal to the hyphen penalty) when its pieces keep the dictionary's
+  minima (`e-mail`, `X-ray` stay whole). Under hyphens auto each part — a
+  run of letters — takes the points of the run's language's dictionary
+  when all its letters (lower-cased: UnicodeData's simple mapping) are in
+  the dictionary's alphabet and it is as long as its minimum: compounds
+  hyphenate in their parts (`Ad-di-son-Wes-ley`), `content's` before its
+  apostrophe, and `Übersetzung` not by en-US.
+- **Dictionaries** (`hyphen/hyphen.{h,cc}`): Liang's patterns as TeX
+  writes them, compiled into one trie form — the resident en-US
+  (`engine/gen/hyphen_en_us.h`, from tools/hyphc.mjs) and any other
+  language through the `hyphPatterns` resource row (D-X09): patterns,
+  exceptions, minima, hyphen glyph. A language whose words hyphenate
+  (its locale pack), that is not en/en-US/und and is not written in a CJK
+  script asks once; Emit waits for the answer (a dictionary never arrives
+  mid-document), the Session keeps it — a host without one too. Without
+  one the language falls back along its BCP-47 chain to en-US (en-GB, info)
+  or hyphenates nowhere (warning `hyph-unavailable`). The runtime's
+  provider serves `runtime/assets/hyph` (tools/hyphc.mjs --assets, every
+  language of the `hyphen` package; index.json maps tags to files); the
+  goldens' is `test/hyph` (German). A point's Disc carries the
+  dictionary's hyphen glyph, painted as its pre (`data-syn="hyphen"`).
+- **Emergency breaks** (the emergency table, `und.def` EMERGENCY rows —
+  the Chicago Manual's URL rule): after a colon or `//`; before `/ ~ . , -
+  _ ? # %` and `@`; on either side of `=` and `&`; never inside a leading
+  `scheme://`; each piece at least `emergencyMinPiece` (3) clusters. They
+  apply to a token of `break.urlMinLen` clusters or more that has no other
+  break (`https://` | `example` | `.com` | `/a/very` …); under
+  `overflowWrap: anywhere` any cluster boundary is one too. A pre run
+  (inline code) takes only these.
+
+## 11. Next steps
+
+P4-07, P4-08: attach edges and the item-native breaker (with it, the
+canonical TeX form and the end of the lowering).

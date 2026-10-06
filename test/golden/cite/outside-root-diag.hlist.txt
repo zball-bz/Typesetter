@@ -57,15 +57,15 @@ top pid=2 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="ap" r0 @[76,114)
   box Alpha "phy" w=1537su r0 @[76,114)
   glue word w=257su x=1 cap=257su kern="y ." src r0 @[76,114)
-  box Infix "../." w=2049su r0 @[76,114)
-  pen 1.2 r0
-  box Infix "./.." w=2049su r0 @[76,114)
-  pen 1.2 r0
-  box Solidus "/../" w=2049su r0 @[76,114)
-  pen 1.2 r0
-  box Alpha "refs." w=2561su r0 @[76,114)
-  pen 1.2 r0
-  box Alpha "json:" w=2561su r0 @[76,114)
+  box Infix "../" w=1537su r0 @[76,114)
+  disc pen=1.2 w=0su pre=none kern="/." r0 @[76,114)
+  box Infix "../" w=1537su r0 @[76,114)
+  disc pen=1.2 w=0su pre=none kern="/." r0 @[76,114)
+  box Infix "../" w=1537su r0 @[76,114)
+  disc pen=1.2 w=0su pre=none kern="/." r0 @[76,114)
+  box Infix "../refs" w=3585su r0 @[76,114)
+  disc pen=1.2 w=0su pre=none kern="s." r0 @[76,114)
+  box Infix ".json:" w=3073su r0 @[76,114)
   glue word w=257su x=1 cap=257su kern=": r" src r0 @[76,114)
   box Alpha "re" w=1025su r0 @[76,114)
   disc pen=0.7 w=0su pre="-" 513su kern="es" r0 @[76,114)

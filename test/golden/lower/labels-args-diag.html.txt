@@ -29,8 +29,8 @@
 <div class="tsr-line" id="tsr-sec:intro" data-s="0" data-e="12" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Introduction</span></div>
 </div>
 <div class="tsr-para" data-pid="8" data-s0="675" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="31" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:17px"><span class="tsr-r" data-s="0">A paragraph ending in something</span></div>
-<div class="tsr-line" data-s="32" data-e="63" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="32">label-like &lt;looks-like-a-label&gt;</span></div>
+<div class="tsr-line" data-s="0" data-e="38" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">A paragraph ending in something label-</span></div>
+<div class="tsr-line" data-s="38" data-e="63" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="38">like &lt;looks-like-a-label&gt;</span></div>
 </div>
 <div class="tsr-para" data-pid="9" data-s0="740" style="position:relative;height:72px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="43" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2.88px"><span class="tsr-r" data-s="0">Mixed arguments: </span><span class="tsr-r tsr-code tsr-err" title="named and positional arguments mixed: name every one, card(label: &quot;x&quot;, name: 3)" data-syn="error">⚠ named and position</span><span class="tsr-r tsr-code tsr-err" title="named and positional arguments mixed: name every one, card(label: &quot;x&quot;, name: 3)" data-syn="hyphen">-</span></div>

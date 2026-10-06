@@ -12,29 +12,31 @@ top pid=0 units=1
   glue word w=257su x=1 cap=257su kern="h a" src r0 @[19,20)
   box Alpha "as" w=1025su r0 @[20,22)
   glue word w=257su x=1 cap=257su kern="s h" src r0 @[22,23)
-  box Alpha "https:/" w=3585su r1 @[23,30)
-  pen 1.2 r1
-  box Solidus "/commons." w=4609su r1 @[30,39)
-  pen 1.2 r1
-  box Alpha "wikimedia." w=5121su r1 @[39,49)
-  pen 1.2 r1
-  box Alpha "org/" w=2049su r1 @[49,53)
-  pen 1.2 r1
-  box Alpha "wiki/" w=2561su r1 @[53,58)
-  pen 1.2 r1
-  box Alpha "Special:FilePath/" w=8705su r1 @[58,75)
-  pen 1.2 r1
-  box Alpha "Metal_" w=3073su r1 @[75,81)
-  pen 1.2 r1
-  box Alpha "movable_" w=4097su r1 @[81,89)
-  pen 1.2 r1
-  box Alpha "type." w=2561su r1 @[89,94)
-  pen 1.2 r1
-  box Alpha "jpg?" w=2049su r1 @[94,98)
-  pen 1.2 r1
-  box Alpha "width=" w=3073su r1 @[98,104)
-  pen 1.2 r1
-  box Digit "800" w=1537su r1 @[104,107)
+  box Alpha "https://" w=4097su r1 @[23,31)
+  disc pen=1.2 w=0su pre=none kern="/c" r1 @[31,31)
+  box Alpha "commons" w=3585su r1 @[31,38)
+  disc pen=1.2 w=0su pre=none kern="s." r1 @[38,38)
+  box Infix ".wikimedia" w=5121su r1 @[38,48)
+  disc pen=1.2 w=0su pre=none kern="a." r1 @[48,48)
+  box Infix ".org" w=2049su r1 @[48,52)
+  disc pen=1.2 w=0su pre=none kern="g/" r1 @[52,52)
+  box Solidus "/wiki" w=2561su r1 @[52,57)
+  disc pen=1.2 w=0su pre=none kern="i/" r1 @[57,57)
+  box Solidus "/Special:" w=4609su r1 @[57,66)
+  disc pen=1.2 w=0su pre=none kern=":F" r1 @[66,66)
+  box Alpha "FilePath" w=4097su r1 @[66,74)
+  disc pen=1.2 w=0su pre=none kern="h/" r1 @[74,74)
+  box Solidus "/Metal" w=3073su r1 @[74,80)
+  disc pen=1.2 w=0su pre=none kern="l_" r1 @[80,80)
+  box Alpha "_movable" w=4097su r1 @[80,88)
+  disc pen=1.2 w=0su pre=none kern="e_" r1 @[88,88)
+  box Alpha "_type" w=2561su r1 @[88,93)
+  disc pen=1.2 w=0su pre=none kern="e." r1 @[93,93)
+  box Infix ".jpg" w=2049su r1 @[93,97)
+  disc pen=1.2 w=0su pre=none kern="g?" r1 @[97,97)
+  box Excl "?width" w=3073su r1 @[97,103)
+  disc pen=1.2 w=0su pre=none kern="h=" r1 @[103,103)
+  box Alpha "=800" w=2049su r1 @[103,107)
   glue word w=257su x=1 cap=257su kern="0 m" src r2 @[108,108)
   box Alpha "must" w=2049su r2 @[108,112)
   glue word w=257su x=1 cap=257su kern="t b" src r2 @[112,113)

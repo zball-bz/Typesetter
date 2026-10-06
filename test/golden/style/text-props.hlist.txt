@@ -190,23 +190,23 @@ top pid=4 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="es" r2 @[591,591)
   box Alpha "side" w=2049su r2 @[591,595)
   glue word w=257su x=1 cap=257su kern="e h" src r2 @[595,596)
-  box Alpha "https:/" w=3585su r3 @[596,603)
-  pen 1.2 r3
-  box Solidus "/example." w=4609su r3 @[603,612)
-  pen 1.2 r3
-  box Alpha "com/" w=2049su r3 @[612,616)
-  pen 1.2 r3
-  box Alpha "a/very/" w=3585su r3 @[616,623)
-  pen 1.2 r3
-  box Alpha "long/" w=2561su r3 @[623,628)
-  pen 1.2 r3
-  box Alpha "path/" w=2561su r3 @[628,633)
-  pen 1.2 r3
-  box Alpha "that/" w=2561su r3 @[633,638)
-  pen 1.2 r3
-  box Alpha "may/" w=2049su r3 @[638,642)
-  pen 1.2 r3
-  box Alpha "break" w=2561su r3 @[642,647)
+  box Alpha "https://" w=4097su r3 @[596,604)
+  disc pen=1.2 w=0su pre=none kern="/e" r3 @[604,604)
+  box Alpha "example" w=3585su r3 @[604,611)
+  disc pen=1.2 w=0su pre=none kern="e." r3 @[611,611)
+  box Infix ".com" w=2049su r3 @[611,615)
+  disc pen=1.2 w=0su pre=none kern="m/" r3 @[615,615)
+  box Solidus "/a/very" w=3585su r3 @[615,622)
+  disc pen=1.2 w=0su pre=none kern="y/" r3 @[622,622)
+  box Solidus "/long" w=2561su r3 @[622,627)
+  disc pen=1.2 w=0su pre=none kern="g/" r3 @[627,627)
+  box Solidus "/path" w=2561su r3 @[627,632)
+  disc pen=1.2 w=0su pre=none kern="h/" r3 @[632,632)
+  box Solidus "/that" w=2561su r3 @[632,637)
+  disc pen=1.2 w=0su pre=none kern="t/" r3 @[637,637)
+  box Solidus "/may" w=2049su r3 @[637,641)
+  disc pen=1.2 w=0su pre=none kern="y/" r3 @[641,641)
+  box Solidus "/break" w=3073su r3 @[641,647)
   glue word w=257su x=1 cap=257su kern="k h" src r4 @[648,648)
   box Alpha "here." w=2561su r4 @[648,653)
   run r0 plain

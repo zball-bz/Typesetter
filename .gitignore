@@ -4,6 +4,7 @@ dist/
 engine/build*/
 grammar/tree-sitter-tsm/src/
 runtime/assets/hl/
+runtime/assets/hyph/
 
 # test output
 test-results/

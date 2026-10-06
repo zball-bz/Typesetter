@@ -132,7 +132,9 @@ top pid=3 units=1
  unit text indent=0su
   box Alpha "The" w=1537su r0 @[574,577)
   glue word w=257su x=1 cap=257su kern="e b" src r0 @[577,578)
-  box Alpha "built-in" w=4097su r0 @[578,586)
+  box Alpha "built-" w=3073su r0 @[578,584)
+  disc pen=0.7 w=0su pre=none kern="-i" r0 @[584,584)
+  box Alpha "in" w=1025su r0 @[584,586)
   glue word w=257su x=1 cap=257su kern="n s" src r0 @[586,587)
   box Alpha "stays" w=2561su r0 @[587,592)
   glue word w=257su x=1 cap=257su kern="s r" src r0 @[592,593)

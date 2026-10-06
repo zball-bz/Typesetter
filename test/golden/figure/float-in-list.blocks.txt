@@ -67,7 +67,9 @@ top pid=1 units=5
   space w=257su stretch=1 @[245,246)
   word "small" w=2561su pen=INF @[246,251)
   space w=257su stretch=1 @[251,252)
-  word "floated" w=3585su pen=INF @[252,259)
+  word "float" w=2561su pen=INF @[252,257)
+  hyphen bw=513su pen=0.70 @[257,257)
+  word "ed" w=1025su pen=INF @[257,259)
   space w=257su stretch=1 @[259,260)
   word "icon." w=2561su pen=INF @[260,265)
  unit text indent=1536su

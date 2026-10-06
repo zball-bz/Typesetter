@@ -164,7 +164,11 @@ top pid=2 units=6
   space w=219su stretch=1 x0.85 @[301,331)
   word "↩" w=524su pen=INF LINK SYN x0.85 @[301,331)
  unit text indent=1536su anchor="fn-5" marker="5."
-  word "Latin-context" w=5659su pen=INF x0.85 @[381,394)
+  word "Latin-" w=2613su pen=INF x0.85 @[381,387)
+  hyphen bw=0su pen=0.70 x0.85 @[387,387)
+  word "con" w=1307su pen=INF x0.85 @[387,390)
+  hyphen bw=437su pen=0.70 x0.85 @[390,390)
+  word "text" w=1742su pen=INF x0.85 @[390,394)
   space w=219su stretch=1 x0.85 @[394,395)
   word "note." w=2178su pen=INF x0.85 @[395,400)
   space w=219su stretch=1 x0.85 @[379,401)

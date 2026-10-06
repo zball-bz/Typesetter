@@ -5,10 +5,12 @@
 // quantizes), code tokens and box sizes here. Answers never touch the
 // authored tree (finding api-measure-code/image-dims-in-author-args).
 #pragma once
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
 #include "../code/tokens.h"
+#include "../hyphen/hyphen.h"
 #include "../measure/measure.h"
 #include "box.h"
 #include "codec.h"
@@ -47,6 +49,15 @@ struct BoxNeed {
   bool emit = false;  // an Emit consumer waits on it (an image, an inline box): its answer re-runs Emit
 };
 
+// (plan P4-06; D-X09) a language's hyphenation patterns (resources.def
+// hyphPatterns): one need per language tag the document's text names that
+// the resident dictionary does not serve
+struct HyphNeed {
+  StrRef lang = 0;
+  ResState st = ResState::Pending;
+  std::shared_ptr<const HyphenDict> dict;  // Ready
+};
+
 class ResourceTable {
  public:
   // one need per distinct key (language, body, overlays); returns its
@@ -77,6 +88,27 @@ class ResourceTable {
     boxNeeds.push_back(b);
     return boxIndex_[k] = (u32)boxNeeds.size() - 1;
   }
+  u32 needHyph(StrRef lang, bool* fresh = nullptr) {
+    auto it = hyphIndex_.find(lang);
+    if (fresh) *fresh = it == hyphIndex_.end();
+    if (it != hyphIndex_.end()) return it->second;
+    HyphNeed h;
+    h.lang = lang;
+    hyphNeeds.push_back(std::move(h));
+    return hyphIndex_[lang] = (u32)hyphNeeds.size() - 1;
+  }
+  bool hyphPending() const {
+    for (const HyphNeed& h : hyphNeeds)
+      if (h.st == ResState::Pending) return true;
+    return false;
+  }
+  // a run's language (0: the document's) → its dictionary, null: none —
+  // resolved once every need has settled (Doc::resolveHyph); a language
+  // not named there (no scan: a unit test's emit) has the resident one
+  const HyphenDict* hyphFor(StrRef lang) const {
+    auto it = hyphDicts.find(lang);
+    return it != hyphDicts.end() ? it->second : &residentHyphenDict();
+  }
   const TokenNeed* tokens(StrRef lang, StrRef body, u32 overlays) const {
     auto it = tokenIndex_.find(TokenKey{lang, body, overlays});
     return it == tokenIndex_.end() ? nullptr : &tokenNeeds[it->second];
@@ -92,25 +124,30 @@ class ResourceTable {
       if (t.st == ResState::Pending) return true;
     for (const BoxNeed& b : boxNeeds)
       if (b.st == ResState::Pending) return true;
-    return false;
+    return hyphPending();
   }
   void clear() {
     tokenNeeds.clear();
     boxNeeds.clear();
+    hyphNeeds.clear();
     tokenIndex_.clear();
     boxIndex_.clear();
+    hyphIndex_.clear();
+    hyphDicts.clear();
     batch = {};
   }
 
   std::vector<TokenNeed> tokenNeeds;
   std::vector<BoxNeed> boxNeeds;
+  std::vector<HyphNeed> hyphNeeds;
+  std::unordered_map<StrRef, const HyphenDict*> hyphDicts;
   // the open request batch: what each kind's resIds stand for
   struct Batch {
     u32 id = 0;
     bool open = false;
     std::vector<MeasureItem> words;  // textWidth
     std::vector<FaceId> vmets;       // fontVmet
-    std::vector<u32> tokens, boxes;  // codeTokens, boxInfo: need indices
+    std::vector<u32> tokens, boxes, hyphs;  // codeTokens, boxInfo, hyphPatterns: need indices
   } batch;
   u32 nextBatch = 1;
 
@@ -138,6 +175,7 @@ class ResourceTable {
   };
   std::unordered_map<TokenKey, u32, TokenKeyHash> tokenIndex_;
   std::unordered_map<BoxKey, u32, BoxKeyHash> boxIndex_;
+  std::unordered_map<StrRef, u32> hyphIndex_;
 };
 
 // a width the host failed to give (design T9 A1): a per-code-point em bound

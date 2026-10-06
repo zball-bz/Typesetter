@@ -8,6 +8,8 @@
 // RULES_VERSION 0, stays as rules-diff's reference) and the pinned UCD 17.0.0
 // columns (UAX #29 grapheme break, Extended_Pictographic, UAX #11).
 #pragma once
+#include <algorithm>
+#include <iterator>
 #include "../../gen/textrules.h"
 #include "../support/support.h"
 
@@ -98,6 +100,38 @@ inline const DefinedAdvance* definedAdvanceAt(std::string_view s, u32 i, u32 fir
 inline bool isWordChar(u32 cp) {
   const CC c = ccOf(cp);
   return c == CC::Alpha || c == CC::Digit;
+}
+
+// (plan P4-06) a letter (UCD General_Category L*) — what a word's core is
+// made of, between which an explicit hyphen is a break (ExHyphen)
+inline bool isLetter(u32 cp) {
+  if (cp < 0x80) return ((cp | 0x20) - 'a') < 26;
+  const u32* e = std::upper_bound(std::begin(kLetterEdges), std::end(kLetterEdges), cp);
+  return (e - std::begin(kLetterEdges)) & 1;
+}
+// its simple lowercase mapping (UnicodeData.txt; itself when it has none)
+inline u32 lowerOf(u32 cp) {
+  if (cp < 0x80) return cp - 'A' < 26 ? cp + 32 : cp;
+  const CaseMap* m = std::lower_bound(std::begin(kLower), std::end(kLower), cp,
+                                      [](const CaseMap& a, u32 c) { return a.from < c; });
+  return m != std::end(kLower) && m->from == cp ? m->to : cp;
+}
+// (plan P4-06) an explicit hyphen: U+002D (the HyphenMinus class) or U+2010
+inline bool isHyphenChar(u32 cp) { return cp == 0x2010 || ccOf(cp) == CC::HyphenMinus; }
+// the emergency table's separator starting at byte i of s (whose first
+// codepoint is `first`): its sides (1 before, 2 after; 0: none) and, in
+// end, the byte after it
+inline u8 emergencySepAt(std::string_view s, u32 i, u32 first, u32& end) {
+  for (const EmergencySep& e : kEmergencySeps) {
+    if (e.seq[0] != first) continue;
+    u32 j = i, k = 0;
+    while (k < e.len && j < s.size() && utf8Next(s, j) == e.seq[k]) k++;
+    if (k == e.len) {
+      end = j;
+      return e.side;
+    }
+  }
+  return 0;
 }
 
 // (plan P4-02; design T5) a soft break between two characters reads as

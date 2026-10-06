@@ -8,6 +8,9 @@
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { decodeRequest, encodeAnswer } from '../runtime/src/shared/rescodec.mjs';
+import { RES_KINDS } from '../runtime/src/shared/resources.gen.mjs';
+import { hyphProvider } from '../runtime/src/shared/resources/providers/hyph.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const modPath = join(root, 'engine/build-wasm/typesetter_debug.js');
@@ -28,6 +31,21 @@ function* walk(dir) {
 }
 const str = (s) => M.stringToNewUTF8(s);
 const profile = (name) => JSON.parse(readFileSync(join(root, 'test/profiles', name + '.json'), 'utf8'));
+
+// (plan P4-06) the golden provider's dictionaries (test/hyph), as the native runner's
+const hyph = hyphProvider({ base: pathToFileURL(join(root, 'test/hyph/')), read: (url) => readFileSync(url, 'utf8') });
+async function answerHyph(doc) {
+  const p = M._tsr2_requests(doc, 1 << RES_KINDS.hyphPatterns.id);
+  const len = new DataView(M.HEAPU8.buffer).getUint32(p, true);
+  const req = decodeRequest(M.HEAPU8.slice(p + 4, p + 4 + len));
+  const rows = req.kinds.hyphPatterns ?? [];
+  if (!rows.length) return;
+  const bytes = encodeAnswer({ batch: req.batch, kinds: { hyphPatterns: await hyph.resolve(rows) } });
+  const ap = M._malloc(bytes.length);
+  M.HEAPU8.set(bytes, ap);
+  M._tsr2_provide(doc, ap, bytes.length);
+  M._free(ap);
+}
 
 let checked = 0;
 const diffs = [];
@@ -68,6 +86,7 @@ for (const tsm of walk(fixtures)) {
     let done = false;
     for (let round = 0; round < 64 && !done; round++) {
       if (M._tsr_typeset(doc) === 0) { done = true; break; }
+      await answerHyph(doc);
       const req = JSON.parse(M.UTF8ToString(M._tsr_measure_requests(doc)));
       // images: the native stub's 512×384; tokens: plain (they never reach
       // a text unit's breaks)

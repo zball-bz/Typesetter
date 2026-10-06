@@ -8,6 +8,7 @@
 // the host marks `store` are written through. It also holds the memo slots
 // (the KP memo).
 #pragma once
+#include <memory>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -15,6 +16,7 @@
 
 #include "../break/break.h"
 #include "../code/tokens.h"
+#include "../hyphen/hyphen.h"
 #include "resources.gen.h"
 
 namespace tsr {
@@ -43,6 +45,11 @@ class Session {
   void putVmet(u32 mk, double asc, double desc);
   bool tokens(std::string_view lang, std::string_view body, std::vector<CodeToken>& out);
   void putTokens(std::string_view lang, std::string_view body, const std::vector<CodeToken>& toks);
+  // (plan P4-06) a language's compiled hyphenation patterns: false: not
+  // asked yet; true with null: the host had none (kept, so a document's
+  // breaks never change from one edit to the next)
+  bool hyph(std::string_view lang, std::shared_ptr<const HyphenDict>& out) const;
+  void putHyph(std::string_view lang, std::shared_ptr<const HyphenDict> dict);
   // in-engine answerers (design T9 A5): deterministic and recomputable, so
   // never written to the cache — codeTokens 'tsm' (the engine's own
   // language: syntax/exports.h)
@@ -71,6 +78,7 @@ class Session {
   std::unordered_map<std::string, u32> mkIds_;
   std::unordered_map<u32, std::pair<double, double>> vmets_;
   std::unordered_map<std::string, std::vector<CodeToken>> tokens_;
+  std::unordered_map<std::string, std::shared_ptr<const HyphenDict>> hyph_;
   size_t budget_;
 };
 

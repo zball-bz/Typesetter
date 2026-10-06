@@ -62,6 +62,8 @@ jobs:
         run: node tools/lint-arch.mjs
       - name: code highlighting assets
         run: node tools/codehl-assets.mjs
+      - name: hyphenation pattern assets
+        run: node tools/hyphc.mjs --assets
       - name: typst corpus smoke
         run: node tools/corpus-run.mjs
       - name: real-world corpus review (no new error diagnostics)
@@ -122,6 +124,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: code highlighting assets
         run: node tools/codehl-assets.mjs
+      - name: hyphenation pattern assets
+        run: node tools/hyphc.mjs --assets
       - name: pack
         run: node tools/pack-dist.mjs
       # VSCode extension: vendor the same dist, package a .vsix

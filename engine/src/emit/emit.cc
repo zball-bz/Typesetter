@@ -17,10 +17,6 @@
 
 namespace tsr {
 
-// the shortest piece a long unhyphenatable token (a URL, a path) breaks into
-// after a separator (plan P3-02: a named parameter)
-constexpr u32 kUrlMinPiece = 3;
-
 
 void reportFormula(const ContentNode* n, StrRef formula, const MathScope& scope, const Interner& strs,
                    DiagSink& diags, Arena& arena);
@@ -498,25 +494,30 @@ struct HlInline final : InlineSink {
     const RealizeClass rc = styles.get(st).space == SPACE_PRE ? RealizeClass::Rigid : RealizeClass::Plain;
     push(u, IK::Box, firstCc(w), 0, key(st, ctx, rc), sp, span, 0.0f, pen);
   }
-  void hyphenPoint(Flow& u, StyleId st, const ICtx& ctx, Span span) {
+  // a break inside a word (plan P4-06): a discretionary whose pre is the
+  // glyph the break adds at the line end — a dictionary's hyphen (a pattern
+  // or soft-hyphen point) — or nothing (after an explicit hyphen, an
+  // emergency break); unbroken, the pieces shape as one run
+  void disc(Flow& u, StyleId st, const ICtx& ctx, Span span, StrRef glyph, float pen) {
     open(u);
     HList& h = B;
-    AdvanceSpec hs;
-    hs.str = E.hyphenRef;
-    HItem pre;
-    pre.cls = (u8)ccOf('-');
-    pre.aux = (u32)h.specs.size();
-    h.specs.push_back(hs);
-    pre.cold = (u32)h.cold.size();
-    ColdRec pc;
-    pc.srcStart = span.start;
-    pc.srcEnd = span.end;
-    h.cold.push_back(pc);
     DiscRec d;
     d.pre = (u32)h.side.size();
-    d.preN = 1;
-    h.side.push_back(pre);
-    const float pen = (float)cfg.hyphenPenalty;
+    if (glyph) {
+      AdvanceSpec hs;
+      hs.str = glyph;
+      HItem pre;
+      pre.cls = firstCc(strs.get(glyph));
+      pre.aux = (u32)h.specs.size();
+      h.specs.push_back(hs);
+      pre.cold = (u32)h.cold.size();
+      ColdRec pc;
+      pc.srcStart = span.start;
+      pc.srcEnd = span.end;
+      h.cold.push_back(pc);
+      d.preN = 1;
+      h.side.push_back(pre);
+    }
     u32 i = push(u, IK::Disc, 0, 0, key(st, ctx, RealizeClass::Plain), AdvanceSpec{}, span,
                  pen, pen);
     h.specs.pop_back();  // a Disc's aux is its DiscRec
@@ -679,17 +680,32 @@ struct HlInline final : InlineSink {
   }
 
   void code(const ContentNode* n, Flow& u, ICtx ctx) {
-    // inline code: one unbreakable box, mono style — Rigid (plan P4-01): its
-    // spaces are inside the box, measured as written, so paint keeps the
-    // line's justification off them (word-spacing: 0)
+    // inline code: one box, mono style — Rigid (plan P4-01): its spaces are
+    // inside the box, measured as written, so paint keeps the line's
+    // justification off them (word-spacing: 0)
     if (!n->kids.empty() && n->kids[0]->kind == Kind::text) {
       StyleId st = E.compose(n->style, ctx.add, ctx.mul);  // mono and its size: rules (plan P3-01)
       // CJK–code boundary glue (plan P4-02: code is Latin-class, as a formula)
       if (count(u) > 0 && isCjkChar(count(u) - 1)) autospace(u, st, ctx, n->span);
+      // (plan P4-06; D-X05) a long one is a token like any other: it breaks
+      // at the emergency table's separators (its role's text.overflowWrap),
+      // its pieces Rigid (its text.space pre)
+      const Styling& sty = styles.get(st);
+      const std::string_view text = strs.get(n->kids[0]->str);
+      nowrap = sty.wrap == WRAP_NOWRAP;
+      if (!nowrap && sty.overflowWrap != OVERFLOWWRAP_NORMAL && cfg.urlBreakPenalty < kPenInf &&
+          text.size() >= cfg.urlBreakMinLen) {
+        u32 chars = 0;
+        for (u32 i = 0; i < text.size(); i = clusterEnd(text, i)) chars++;
+        if (chars >= cfg.urlBreakMinLen) {
+          tsrc.n = n->kids[0];
+          emitWord(text, 0, u, st, ctx, chars);
+          return;
+        }
+      }
       AdvanceSpec sp;
       sp.str = n->kids[0]->str;
-      push(u, IK::Box, firstCc(strs.get(sp.str)), 0, key(st, ctx, RealizeClass::Rigid),
-           sp, n->span, 0.0f, kPenInf);
+      push(u, IK::Box, firstCc(text), 0, key(st, ctx, RealizeClass::Rigid), sp, n->span, 0.0f, kPenInf);
     }
   }
 
@@ -871,84 +887,205 @@ struct HlInline final : InlineSink {
     objectBox(u, obj, pt, st, ctx, n->span, srcRef, false, pen);
   }
 
-  // tokenChars: the characters of the token it is part of (plan P4-02:
-  // across style edges — a URL whose middle is emphasized is one token)
-  // (at: w's cooked offset in the text, for its pieces' sources)
+  // A word of one run — its bytes w at its cooked offset `at`; tokenChars:
+  // the clusters of the token it is part of, across style edges (plan P4-02:
+  // a URL whose middle is emphasized is one token) — and the breaks inside
+  // it (plan P4-06; design T5 step 4, the token pass), each a Disc (the
+  // pieces shape as one run unbroken; a junction kern is the Disc's):
+  // - soft hyphens: the word's hyphenation points, its only ones (text.
+  //   hyphens manual or auto; plan P4-05, finding emitter/missed:2);
+  // - in a word (letters, digits, apostrophes, hyphens between its first
+  //   and its last letter): an explicit hyphen between two letters, its
+  //   pieces as long as the dictionary's minima (ExHyphen, D-X02: nothing
+  //   added where the line breaks), and under hyphens auto the points of
+  //   each of its parts (a run of letters) that the run's language's
+  //   dictionary spells (all its letters in its alphabet, as long as its
+  //   minimum);
+  // - a token with none of these, as long as break.urlMinLen: the
+  //   emergency table's separators (text.overflowWrap separators — Chicago's
+  //   URL rule, never inside a scheme) or any cluster boundary (anywhere),
+  //   leaving at least emergencyMinPiece clusters on either side (D-X05).
+  // A pre run (text.space) takes only emergency breaks; a nowrap run none.
+  enum : u8 { kCutNone, kCutPoint, kCutExplicit, kCutEmergency };
+  struct Cut {
+    u32 at, skip;  // the break's byte in the word, the bytes it drops (a soft hyphen)
+    u8 kind;
+  };
+  std::vector<Cut> cuts_;
+  std::vector<u32> clus_, bases_, lower_, pts_, cand_;  // the token pass's scratch
+  StrRef dictLang_ = 0;  // the last word's language and its dictionary
+  const HyphenDict* dict_ = nullptr;
+  bool dictSet_ = false;
   void emitWord(std::string_view w, u32 at, Flow& u, StyleId st, const ICtx& ctx, u32 tokenChars) {
     auto src = [&](u32 a, u32 b) { return tsrc.of(at + a, at + b); };
-    // (plan P4-04) the run's text.hyphens and text.overflowWrap over the
-    // block's rule (a heading or caption: neither); a pre or nowrap run
-    // breaks inside nowhere
     const Styling& sty = styles.get(st);
     const bool rigid = sty.space == SPACE_PRE || nowrap;
-    const bool hyph = !rigid && (sty.hyphens ? sty.hyphens == HYPHENS_AUTO : !ctx.noHyphen);
-    const bool cutSeparators = !rigid && (sty.overflowWrap ? sty.overflowWrap != OVERFLOWWRAP_NORMAL : !ctx.noHyphen);
-    // (plan P4-05; finding emitter/missed:2) soft hyphens are the word's
-    // hyphenation points — its only ones (hyphens manual or auto; none:
-    // none) —, a hyphen glyph where the line breaks, nothing where it does not
-    static constexpr std::string_view kShy = "\xC2\xAD";
-    if (w.find(kShy) != std::string_view::npos) {
-      const bool points = !rigid && sty.hyphens != HYPHENS_NONE && cfg.hyphenPenalty < kPenInf;
-      u32 from = 0;
-      for (size_t k = w.find(kShy); k != std::string_view::npos; k = w.find(kShy, from)) {
-        if (k > from) {
-          word(w.substr(from, k - from), u, st, kPenInf, ctx, src(from, (u32)k));
-          if (points) hyphenPoint(u, st, ctx, src((u32)k, (u32)k + 2));
-        }
-        from = (u32)k + 2;
-      }
-      if (from < w.size()) word(w.substr(from), u, st, kPenInf, ctx, src(from, (u32)w.size()));
-      return;
+    const u8 hyphens = sty.hyphens ? sty.hyphens : ctx.hyphens;
+    const u8 wrap = nowrap ? OVERFLOWWRAP_NORMAL : sty.overflowWrap ? sty.overflowWrap : OVERFLOWWRAP_SEPARATORS;
+    // its soft hyphens (U+00AD) and explicit ones (U+002D, U+2010), in one pass
+    bool hasShy = false, hasHyphen = false;
+    for (u32 i = 0; i < w.size(); i++) {
+      const u8 c = (u8)w[i];
+      if (c == '-') hasHyphen = true;
+      else if (c == 0xC2 && i + 1 < w.size() && (u8)w[i + 1] == 0xAD) hasShy = true;
+      else if (c == 0xE2 && w.substr(i, 3) == "\xE2\x80\x90") hasHyphen = true;
     }
-    // lead / core / trail split (ASCII letters core) for hyphenation
-    u32 a = 0, b = (u32)w.size();
-    auto isL = [](char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); };
-    while (a < b && !isL(w[a])) a++;
-    u32 e = b;
-    while (e > a && !isL(w[e - 1])) e--;
-    bool coreLetters = a < e;
-    for (u32 k = a; k < e && coreLetters; k++)
-      if (!isL(w[k])) coreLetters = false;
-
-    std::vector<u32> pts;
-    if (hyph && coreLetters && e - a >= kHyphenMinLetters && cfg.hyphenPenalty < kPenInf)
-      pts = hyphenPoints(w.substr(a, e - a));
-    if (pts.empty()) {
-      // long unhyphenatable tokens (URLs, paths, identifiers): break
-      // opportunities after separators, glyph-free — the browser's own
-      // "break after slash" convention, under KP control (no hyphen glyph,
-      // penalty urlBreakPenalty). Pieces stay one shaped run when unbroken.
-      if (cutSeparators && tokenChars >= cfg.urlBreakMinLen && cfg.urlBreakPenalty < kPenInf) {
-        std::vector<u32> cuts;
-        for (u32 k = 1; k + 1 < w.size(); k++) {
-          char c = w[k];
-          if (c == '/' || c == '?' || c == '&' || c == '=' || c == '.' || c == '-' || c == '_')
-            if (k - (cuts.empty() ? 0 : cuts.back()) >= kUrlMinPiece) cuts.push_back(k + 1);
-        }
-        if (!cuts.empty()) {
-          u32 from = 0;
-          for (u32 cut : cuts) {
-            word(w.substr(from, cut - from), u, st, (float)cfg.urlBreakPenalty, ctx, src(from, cut));
-            from = cut;
-          }
-          word(w.substr(from), u, st, kPenInf, ctx, src(from, (u32)w.size()));
-          return;
-        }
+    // the common case: a word with no soft or explicit hyphen, no
+    // emergency, that cannot hyphenate (no rule, or too short to)
+    const bool plain = !hasShy && !hasHyphen && (wrap == OVERFLOWWRAP_NORMAL || tokenChars < cfg.urlBreakMinLen);
+    const bool auto_ = !rigid && hyphens == HYPHENS_AUTO && cfg.hyphenPenalty < kPenInf;
+    const HyphenDict* dict = nullptr;
+    if (auto_ || hasShy || !plain) {  // (the last language's, the common case, without a lookup)
+      if (sty.lang != dictLang_ || !dictSet_) {
+        dictLang_ = sty.lang;
+        dict_ = E.rt ? E.rt->hyphFor(sty.lang) : &residentHyphenDict();
+        dictSet_ = true;
       }
+      dict = dict_;
+    }
+    if (plain && (!auto_ || !dict || w.size() < dict->minWord())) {
       word(w, u, st, kPenInf, ctx, src(0, (u32)w.size()));
       return;
     }
-    u32 prev = 0;  // within core
-    for (size_t k = 0; k <= pts.size(); k++) {
-      u32 end = (k < pts.size()) ? pts[k] : e - a;
-      std::string seg;
-      if (k == 0) seg += w.substr(0, a);  // lead
-      seg += w.substr(a + prev, end - prev);
-      if (k == pts.size()) seg += w.substr(e);  // trail
-      const u32 from = k == 0 ? 0 : a + prev, to = k == pts.size() ? (u32)w.size() : a + end;
-      word(seg, u, st, kPenInf, ctx, src(from, to));
-      if (k < pts.size()) hyphenPoint(u, st, ctx, src(to, to));
-      prev = end;
+    // the clusters: their first bytes (then the word's end) and base
+    // codepoints, a single codepoint's flagged (bit 31: more than one)
+    // (an ASCII word — no CR, no space inside a word — is a cluster per byte)
+    std::vector<u32>& cl = clus_;
+    std::vector<u32>& bs = bases_;
+    cl.clear();
+    bs.clear();
+    if (std::all_of(w.begin(), w.end(), [](char c) { return (u8)c < 0x80 && c != '\r'; })) {
+      for (u32 i = 0; i < w.size(); i++) {
+        cl.push_back(i);
+        bs.push_back((u8)w[i]);
+      }
+    } else {
+      for (u32 i = 0; i < w.size();) {
+        cl.push_back(i);
+        u32 j = i;
+        const u32 cp = utf8Next(w, j);
+        i = clusterEnd(w, i);
+        bs.push_back(cp | (j == i ? 0 : 0x80000000u));
+      }
+    }
+    const u32 n = (u32)cl.size();
+    cl.push_back((u32)w.size());
+    auto base = [&](u32 k) { return bs[k] & 0x7FFFFFFFu; };
+    std::vector<Cut>& cuts = cuts_;
+    cuts.clear();
+    if (hasShy) {
+      const bool points = !rigid && hyphens != HYPHENS_NONE && cfg.hyphenPenalty < kPenInf;
+      for (u32 k = 0; k < n; k++)
+        if (base(k) == 0xAD) cuts.push_back({cl[k], 2, points ? kCutPoint : kCutNone});
+    }
+    if (!rigid) {
+      u32 a = 0, b = n;  // the core: its first letter to its last
+      while (a < b && !isLetter(base(a))) a++;
+      while (b > a && !isLetter(base(b - 1))) b--;
+      bool isWord = a < b;
+      for (u32 k = a; k < b && isWord; k++) {
+        const u32 c = base(k);
+        isWord = isLetter(c) || ccOf(c) == CC::Digit || isHyphenChar(c) || c == '\'' || c == 0x2019 || c == 0xAD;
+      }
+      // (an explicit hyphen's pieces keep the dictionary's minima of
+      // letters, as LuaTeX's: no e-|mail, X-|ray)
+      const u32 lmin = dict ? dict->leftmin : 2, rmin = dict ? dict->rightmin : 2;
+      if (isWord && hasHyphen && cfg.exHyphenPenalty < kPenInf)
+        for (u32 k = a + 1; k + 1 < b; k++) {
+          if (!isHyphenChar(base(k))) continue;
+          u32 l = k, r = k + 1;
+          while (l > a && isLetter(base(l - 1))) l--;
+          while (r < b && isLetter(base(r))) r++;
+          if (k - l >= lmin && r - (k + 1) >= rmin) cuts.push_back({cl[k + 1], 0, kCutExplicit});
+        }
+      if (isWord && auto_ && !hasShy && dict) {
+        for (u32 p = a; p < b;) {
+          u32 q = p;
+          bool spelled = true;
+          lower_.clear();
+          while (q < b && isLetter(base(q))) {
+            const u32 c = lowerOf(base(q));
+            spelled = spelled && !(bs[q] >> 31) && dict->has(c);  // (one codepoint, in its alphabet)
+            lower_.push_back(c);
+            q++;
+          }
+          if (spelled && q - p >= dict->minWord()) {
+            pts_.clear();
+            dict->points(lower_.data(), q - p, pts_);
+            for (u32 x : pts_)
+              if (x > 0 && x < q - p) cuts.push_back({cl[p + x], 0, kCutPoint});
+          }
+          p = q + 1;
+        }
+      }
+      auto byAt = [](const Cut& x, const Cut& y) { return x.at < y.at; };
+      if (!std::is_sorted(cuts.begin(), cuts.end(), byAt)) std::sort(cuts.begin(), cuts.end(), byAt);
+    }
+    const bool breaks = std::any_of(cuts.begin(), cuts.end(), [](const Cut& c) { return c.kind != kCutNone; });
+    if (!breaks && wrap != OVERFLOWWRAP_NORMAL && tokenChars >= cfg.urlBreakMinLen && cfg.urlBreakPenalty < kPenInf)
+      emergencyCuts(w, wrap == OVERFLOWWRAP_ANYWHERE);
+    // the pieces and the breaks between them (a break needs a piece on
+    // either side; a soft hyphen's bytes are dropped wherever it stands)
+    StrRef glyph = 0;
+    u32 from = 0;
+    for (const Cut& c : cuts) {
+      const bool between = c.at > from && c.at + c.skip < w.size();
+      if (c.at > from) word(w.substr(from, c.at - from), u, st, kPenInf, ctx, src(from, c.at));
+      if (between && c.kind == kCutPoint) {
+        if (!glyph) glyph = dict == &residentHyphenDict() ? E.hyphenRef : strs.intern(dict ? dict->hyphenChar : "-");
+        disc(u, st, ctx, src(c.at, c.at + c.skip), glyph, (float)cfg.hyphenPenalty);
+      } else if (between && c.kind != kCutNone) {
+        disc(u, st, ctx, src(c.at, c.at), 0,
+             (float)(c.kind == kCutExplicit ? cfg.exHyphenPenalty : cfg.urlBreakPenalty));
+      }
+      from = std::max(from, c.at + c.skip);
+    }
+    if (from < w.size()) word(w.substr(from), u, st, kPenInf, ctx, src(from, (u32)w.size()));
+  }
+  // the emergency table's breaks in a token (clus_: its clusters), into
+  // cuts_: before and after its separators, never inside its scheme (the
+  // prefix through a leading "scheme://"); anywhere: at every cluster
+  // boundary too. Each leaves emergencyMinPiece clusters on either side.
+  void emergencyCuts(std::string_view w, bool anywhere) {
+    const std::vector<u32>& cl = clus_;
+    const u32 n = (u32)cl.size() - 1;
+    u32 scheme = 0;
+    if (const size_t p = w.find("://"); p != std::string_view::npos && p > 0 && isLetter((u8)w[0])) {
+      bool ok = true;
+      for (size_t k = 0; k < p && ok; k++) {
+        const char c = w[k];
+        ok = (u8)c < 0x80 && (isLetter((u8)c) || (c >= '0' && c <= '9') || c == '+' || c == '.' || c == '-');
+      }
+      if (ok) scheme = (u32)p + 3;
+    }
+    std::vector<u32>& cand = cand_;  // cluster indices
+    cand.clear();
+    auto clusterAt = [&](u32 byte) { return (u32)(std::lower_bound(cl.begin(), cl.end(), byte) - cl.begin()); };
+    for (u32 k = 0; k < n;) {
+      u32 j = cl[k];
+      const u32 first = utf8Next(w, j);
+      u32 end = 0;
+      const u8 side = emergencySepAt(w, cl[k], first, end);
+      if (anywhere && k > 0) cand.push_back(k);
+      if (!side) {
+        k++;
+        continue;
+      }
+      const u32 next = clusterAt(end);  // (a separator of two: one)
+      if ((side & 1) && k > 0) cand.push_back(k);
+      if ((side & 2) && next < n) cand.push_back(next);
+      if (anywhere)
+        for (u32 m = k + 1; m < next; m++) cand.push_back(m);
+      k = std::max(next, k + 1);
+    }
+    std::sort(cand.begin(), cand.end());
+    cand.erase(std::unique(cand.begin(), cand.end()), cand.end());
+    const u32 minPiece = (u32)kRule_emergencyMinPiece;
+    u32 last = 0;
+    for (u32 k : cand) {
+      if (cl[k] < scheme || k - last < minPiece || n - k < minPiece) continue;
+      cuts_.push_back({cl[k], 0, kCutEmergency});
+      last = k;
     }
   }
 
@@ -1346,7 +1483,7 @@ struct Emitter {
       case LayouterId::Paragraph: {
         if (ls.role == LeafSource::Role::MarkerOnly) return;  // its marker alone
         ICtx ctx;
-        ctx.noHyphen = !tr.hyphenate;
+        ctx.hyphens = tr.hyphenate ? HYPHENS_AUTO : HYPHENS_MANUAL;  // (plan P4-06) its par.hyphenate
         sink.copyPolicy(n, u, ctx);
         if (n->kind == Kind::error) {
           sink.walk(n, u, ctx);  // error case renders ⚠ + message
@@ -1447,9 +1584,9 @@ struct Emitter {
             im.size.h = ih;
             im.size.scale = scale;
             im.size.source = !safe ? SizeSource::Placeholder : declared ? SizeSource::Declared : SizeSource::Provided;
-            // a float's caption rows break to its width
+            // a float's caption rows break to its width (plan P4-06: as a
+            // caption, by its role's style — hyphens manual)
             ICtx cctx;
-            cctx.noHyphen = true;
             for (const ContentNode* k : ls.rows) u.cells.push_back(cellOf(k->kids, cctx));
             return;
           }
@@ -1460,7 +1597,6 @@ struct Emitter {
             // (copied as the part says: an equation number is left out)
             for (const ContentNode* k : ls.rows) {
               ICtx cctx;
-              cctx.noHyphen = true;
               if (const CopyAttr c = copyAttr(k, strs); c.marked && c.mode == CopyAttr::Mode::Omit) {
                 cctx.copy = CopyMode::Omit;
                 cctx.syn = strs.intern(c.syn);
@@ -1926,25 +2062,28 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
       if (it.st & IS_Resolved) continue;
       ColdRec& c = h.cold[it.cold];
       if (it.k == IK::Disc) {
-        // the hyphen box measures; the junction kern applies when NOT broken
-        // here: the pieces shape as one run
+        // the hyphen box measures (an explicit hyphen's or an emergency
+        // break's Disc has none, plan P4-06); the junction kern applies when
+        // NOT broken here: the pieces shape as one run
         const DiscRec& d = h.discs[it.aux];
-        HItem& pre = h.side[d.pre];
-        const StrRef hy = h.specs[pre.aux].str;
+        HItem* pre = d.preN ? &h.side[d.pre] : nullptr;
+        const StrRef hy = pre ? h.specs[pre->aux].str : 0;
         const AdvanceSpec* ks = d.spec != ~0u ? &h.specs[d.spec] : nullptr;
         const bool ready = ctxReady(ks, st);
-        if (store.hasWord(hy, st) && ready) {
-          const WordMet& w = store.word(hy, st);
-          pre.w = w.su;
-          pre.st |= IS_Resolved;
-          h.cold[pre.cold].rawPx = w.px;  // only added to a line when it ends here
+        if ((!pre || store.hasWord(hy, st)) && ready) {
+          if (pre) {
+            const WordMet& w = store.word(hy, st);
+            pre->w = w.su;
+            pre->st |= IS_Resolved;
+            h.cold[pre->cold].rawPx = w.px;  // only added to a line when it ends here
+          }
           if (ks) {
             double k = ctxPx(*ks, st);
             c.rawPx = (double)(float)k;
             it.w = suRoundPx(k);  // feeds KP's in-line width sum
           }
           it.st |= IS_Resolved;
-        } else {
+        } else if (pre && !store.hasWord(hy, st)) {
           ask(hy, st);
         }
         continue;
@@ -2186,14 +2325,14 @@ void lowerHList(const HList& h, std::vector<Block>& out, std::vector<u32>& start
       }
       case IK::Disc: {
         const DiscRec& d = h.discs[it.aux];
-        const HItem& pre = h.side[d.pre];
+        const HItem* pre = d.preN ? &h.side[d.pre] : nullptr;
         b.flags = (u16)(BF_HYPHEN | ref);
         b.breakPenalty = it.x;
-        b.breakWidth = pre.w;
+        b.breakWidth = pre ? pre->w : 0;
         if constexpr (kFull) {
           b.kernPx = (float)c.rawPx;
-          b.rawPx = h.cold[pre.cold].rawPx;
-          b.text = h.specs[pre.aux].str;
+          b.rawPx = pre ? h.cold[pre->cold].rawPx : 0;
+          b.text = pre ? h.specs[pre->aux].str : 0;
           if (d.spec != ~0u) {
             const AdvanceSpec& ks = h.specs[d.spec];
             b.ctxTrigram = ks.tri;

@@ -60,7 +60,13 @@ top pid=0 units=1
   space w=257su stretch=1 @[131,132)
   word "a" w=513su pen=INF @[132,133)
   space w=257su stretch=1 @[133,134)
-  word "table-overflow" w=7169su pen=INF @[134,148)
+  word "ta" w=1025su pen=INF @[134,136)
+  hyphen bw=513su pen=0.70 @[136,136)
+  word "ble-" w=2049su pen=INF @[136,140)
+  hyphen bw=0su pen=0.70 @[140,140)
+  word "over" w=2049su pen=INF @[140,144)
+  hyphen bw=513su pen=0.70 @[144,144)
+  word "flow" w=2049su pen=INF @[144,148)
   space w=257su stretch=1 @[148,149)
   word "warn" w=2049su pen=INF @[149,153)
   hyphen bw=513su pen=0.70 @[153,153)
@@ -69,7 +75,9 @@ top pid=1 units=6
  unit text indent=0su
   word "pneumonoultramicroscopic" w=10446su pen=INF CODE x0.85 @[199,225)
  unit text indent=0su
-  word "silicovolcanoconiosis_long" w=11317su pen=INF CODE x0.85 @[228,256)
+  word "silicovolcanoconiosis" w=9141su pen=INF CODE x0.85 @[228,256)
+  hyphen bw=0su pen=1.20 CODE x0.85 @[228,256)
+  word "_long" w=2178su pen=INF CODE x0.85 @[228,256)
  unit text indent=0su
   word "antidisestablishmentarian" w=10882su pen=INF CODE x0.85 @[259,286)
  unit text indent=0su

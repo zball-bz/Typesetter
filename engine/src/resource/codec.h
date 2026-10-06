@@ -26,7 +26,7 @@ struct WireRow {
   u32 resId = 0;
   u8 status = 0;          // answers: 0 answered, 1 failed
   u8 flags = 0;           // answers: bit0 store (a session may keep it)
-  u64 col[4] = {};        // the scalar columns in order (F64 as its bits)
+  u64 col[6] = {};        // the scalar columns in order (F64 as its bits)
   std::vector<u32> list;  // the U32List column, if the kind has one
   u32 msg = 0;            // answers: a string index (0 = "")
   double f64(int c) const;

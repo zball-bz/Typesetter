@@ -164,6 +164,58 @@ tools/check-spans.mjs 检查全部 213 个 html golden 的 2,835 个 run，结�
 
 **审阅结论：改进。** 新覆盖字符与控制符按规范处理，现有用例与语料的排版不变；真实字体下引号、破折号旁的字距预算更准确。
 
+## P4-06 连字注册表、ExHyphen、hyphens/overflowWrap（T5 步骤 9）
+
+**变化：**
+1. **词典注册表（D-X09）。** Liang 模式统一用 TeX 模式文本，编译成同一种 trie：
+   - en-US 常驻：tools/hyphc.mjs 生成 engine/gen/hyphen_en_us.h，首次使用时编译；
+   - 其他语言经新资源行 hyphPatterns（RES_VERSION 2）由宿主按需提供，Session 缓存（包括"宿主没有"）；
+   - Emit 等所有词典到齐才开始，断点不会逐步变化；
+   - 运行时 provider 读 runtime/assets/hyph（tools/hyphc.mjs --assets：hyphen 包的 88 个标签与 index.json），golden 用 test/hyph（德语）；
+   - 宿主没有词典时：英语变体回退 en-US（info），其他语言只在软连字符和显式连字符处断（warning hyph-unavailable）；CJK 语言文中的拉丁词用 und 的 en-US，与旧行为相同。
+2. **词与字母按 UCD。** 词的核心是首个字母到末个字母（General_Category L*，ucdc 从 UnicodeData.txt 生成），由字母、数字、撇号和连字符组成。按 UnicodeData 的简单小写映射，一个部分（一串字母）的字母全在词典字母表内才连字。因此：
+   - 英文中的 Übersetzung 不再被 en-US 断开；
+   - 复合词按部分连字（Ad-di-son-Wes-ley）；
+   - 撇号前的部分也连字（con-tent's）。
+3. **ExHyphen（D-X02）。** 字母之间的显式连字符（U+002D、U+2010）之后可断，断开时不加字形。罚分 break.exHyphenPenalty = 0.7，即 TeX 的 \exhyphenpenalty 50（与 \hyphenpenalty 相同）。两侧片段须满足词典的最少字母数，所以 e-mail、X-ray 不断。
+4. **紧急断行表（D-X05）。** und.def 的 EMERGENCY 行按芝加哥手册的 URL 规则：
+   - 冒号和 // 之后；
+   - / ~ . , - _ ? # % 与 @ 之前；
+   - = 与 & 两侧；
+   - scheme:// 之内不断，每段至少 3 个字素簇（CONST emergencyMinPiece）；
+   - 长度阈值按字素簇计；overflowWrap: anywhere 时任意簇边界都可断。
+   词内的每个断点都是 Disc，带接合字距（emitter/kern-context-postpass 的 URL 部分）。
+5. **noHyphen 拆成两个属性。** 删除 ICtx::noHyphen：
+   - text.hyphens 未设时取块的 par.hyphenate（auto 或 manual）；
+   - text.overflowWrap 未设时为 separators。
+   角色样式表给标题 hyphens manual 与 overflowWrap separators，题注、行内代码 overflowWrap separators，题注标签 hyphens manual。标题中的长 URL、题注中的长路径、行内代码中的长标识符都能在分隔符处断开。
+6. **连字字形取自词典。** Disc 的 pre 是词典的 hyphenChar，paint 输出它（data-syn="hyphen"），不再写死 '-'。
+
+**范围：** 55 个用例的 blocks/breaks/hlist/layout 变化，其中 14 个有 html、1 个有 paged 变化，行数全部不变：
+- 15 个用例（104 处）是 URL、DOI、路径按芝加哥规则断开：doc/url-break、doc/url-overlong、inline/prose-guards、style/text-props、cite/*（参考文献中的 URL 和 DOI 断在 . 和 / 之前，不再之后）、inline/hardbreak、inline/object-raw、cjk/cross-node、region/table-overflow-diag；
+- 30 个用例（51 处）在显式连字符后新增断点（well-|known、Snap-|kerning；D-S11 这类单字母片段不断）；
+- 31 个用例（59 处）新增连字点：复合词的各部分、撇号前的部分、浮动题注的行（原 noHyphen：figure/float-in-list、figure/float-pair、pages/paged-float-bottom）；
+- ref/structured、ref/supplements-en、locale/auto-en 的题注标签不再连字（Fig-ure）。
+
+新用例：
+- doc/hyphen-langs-diag：德语词典经资源行；英文中的 Übersetzung 不断；en-GB 回退；fr 没有词典时的警告；复合词、e-mail、X-ray、U+2010；
+- doc/emergency：标题中的 URL、行内代码、题注中的路径、anywhere、邮件地址、无 scheme 的 URL。
+
+e2e +2：浏览器中德语按 de-1996 的点断开（且至少一处是 en-US 不会断的），没有词典的语言给出诊断。
+
+真实语料 340 篇（mock）：
+- 333 篇的行界变化，行数 132,324 → 132,141；
+- 行末连字的行 24,297 → 26,147（+7.6%）；
+- Σ|dw| −6.2%，过松行（dw > 256su）24,020 → 22,286（−7.2%）；
+- 收紧行（dw < −64su）6,698 → 6,870（+2.6%）。
+
+**审阅结论：改进。**
+- URL 断在芝加哥规则规定的位置（旧：https:/ | /example）；
+- 德语等语言按自己的模式连字；
+- 复合词可在连字符后及各部分内断开，语料的词间距整体更均匀。
+
+代价是行末连字符多了约 8%，连续连字的惩罚（doublehyphendemerits）属 P4-08 的断行器。题注保持自动连字，这是对设计的偏离，见偏差记录。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。

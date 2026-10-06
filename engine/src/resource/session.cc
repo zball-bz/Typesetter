@@ -108,6 +108,17 @@ void Session::putTokens(std::string_view lang, std::string_view body, const std:
   tokens_[k] = toks;
 }
 
+bool Session::hyph(std::string_view lang, std::shared_ptr<const HyphenDict>& out) const {
+  auto it = hyph_.find(std::string(lang));
+  if (it == hyph_.end()) return false;
+  out = it->second;
+  return true;
+}
+void Session::putHyph(std::string_view lang, std::shared_ptr<const HyphenDict> dict) {
+  if (hyph_.size() > 64) hyph_.clear();  // bounded: eviction only costs a re-request
+  hyph_[std::string(lang)] = std::move(dict);
+}
+
 bool Session::answerTokens(std::string_view lang, std::string_view body, std::vector<CodeToken>& out) const {
   for (size_t i = 0; i < answerers().size(); i++)
     if (enabled[i] && answerers()[i].kind == ResKind::codeTokens && answerers()[i].answer(lang, body, out)) return true;

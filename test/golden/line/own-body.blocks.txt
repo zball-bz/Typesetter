@@ -126,7 +126,11 @@ top pid=3 units=1
  unit text indent=2560su marker="•"
   word "a" w=513su pen=INF @[402,403)
   space w=257su stretch=1 @[403,404)
-  word "single-line" w=5633su pen=INF @[404,415)
+  word "sin" w=1537su pen=INF @[404,407)
+  hyphen bw=513su pen=0.70 @[407,407)
+  word "gle-" w=2049su pen=INF @[407,411)
+  hyphen bw=0su pen=0.70 @[411,411)
+  word "line" w=2049su pen=INF @[411,415)
   space w=257su stretch=1 @[415,416)
   word "body" w=2049su pen=INF @[416,420)
   space w=257su stretch=1 @[420,421)

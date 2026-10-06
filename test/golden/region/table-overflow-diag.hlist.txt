@@ -60,7 +60,13 @@ top pid=0 units=1
   glue word w=257su x=1 cap=257su kern="h a" src r0 @[131,132)
   box Alpha "a" w=513su r0 @[132,133)
   glue word w=257su x=1 cap=257su kern="a t" src r0 @[133,134)
-  box Alpha "table-overflow" w=7169su r0 @[134,148)
+  box Alpha "ta" w=1025su r0 @[134,136)
+  disc pen=0.7 w=0su pre="-" 513su kern="ab" r0 @[136,136)
+  box Alpha "ble-" w=2049su r0 @[136,140)
+  disc pen=0.7 w=0su pre=none kern="-o" r0 @[140,140)
+  box Alpha "over" w=2049su r0 @[140,144)
+  disc pen=0.7 w=0su pre="-" 513su kern="rf" r0 @[144,144)
+  box Alpha "flow" w=2049su r0 @[144,148)
   glue word w=257su x=1 cap=257su kern="w w" src r0 @[148,149)
   box Alpha "warn" w=2049su r0 @[149,153)
   disc pen=0.7 w=0su pre="-" 513su kern="ni" r0 @[153,153)
@@ -71,8 +77,12 @@ top pid=1 units=6
   box Alpha "pneumonoultramicroscopic" w=10446su r0 @[199,225)
   run r0 rigid CODE x0.85
  unit text indent=0su
-  box Alpha "silicovolcanoconiosis_long" w=11317su r0 @[228,256)
+  box Alpha "silicovolcanoconiosis" w=9141su r0 @[228,256)
+  disc pen=1.2 w=0su pre=none kern="s_" r1 @[228,256)
+  box Alpha "_long" w=2178su r2 @[228,256)
   run r0 rigid CODE x0.85
+  run r1 plain CODE x0.85
+  run r2 rigid CODE x0.85
  unit text indent=0su
   box Alpha "antidisestablishmentarian" w=10882su r0 @[259,286)
   run r0 rigid CODE x0.85

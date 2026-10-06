@@ -1,0 +1,26 @@
+lower v1 abi 3d3ccfbb docEnd 670 holes 2 module 230490bdb212e925
+piece 0 hole 0 js [135,196)
+piece 1 hole 1 js [198,265)
+block 0 content [0,81)
+  CALL heading [0,81) level=1 label=null
+    TEXT "A heading with " [2,17)
+    CALL link [17,81) url="https://example.com/an/overlong/address/that/must/wrap/somewhere"
+      TEXT "https://example.com/an/overlong/address/that/must/wrap/somewhere" [17,81)
+block 1 content [83,230)
+  CALL para [83,230)
+    TEXT "Inline code breaks at its separators: " [83,120) raw=0:0,38:37
+    CALL code [121,177) text="very_long_identifier_name.with.member_access(argument)"
+    TEXT " and " [178,181) raw=0:0,1:0,5:3
+    CALL code [182,220) text="/usr/local/share/typesetter/patterns"
+    TEXT " in prose." [221,230) raw=0:0,1:0
+block 2 content [232,397) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [232,397)
+    CALL para [294,388)
+      TEXT "A caption with a long path /usr/local/share/typesetter/patterns/hyphenation/en-us.json inside." [294,388)
+block 3 content [399,531) user framed holes 1..2
+  CALL para [399,531)
+    HOLE 1 [399,531)
+      TEXT "A digest without separators: 0x3f2a9c4b7e1d5f8a2c6e0b9d4f7a1c3e5b8d2f6a breaks anywhere." [442,530)
+block 4 content [533,669)
+  CALL para [533,669)
+    TEXT "An address someone.with.a.long.name@example.org and a scheme-less www.example.com/path/to/a/resource?query=value&other=thing#anchor end." [533,669)

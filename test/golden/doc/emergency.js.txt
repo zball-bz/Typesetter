@@ -1,0 +1,12 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {style, text} = __rt.std;
+return (async () => {
+const __h = [
+() => ({src: "photos/wide.png", alt: "wide", w: 300, h: 100}),
+(__k) => (style(...[{text: {overflowWrap: 'anywhere'}}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

@@ -10,6 +10,7 @@
     "corpus": "node tools/corpus-run.mjs",
     "bench:edit": "node tools/bench-edit.mjs",
     "hl-assets": "node tools/codehl-assets.mjs",
+    "hyph-assets": "node tools/hyphc.mjs --assets",
     "pack": "node tools/pack-dist.mjs"
   },
   "license": "ISC",

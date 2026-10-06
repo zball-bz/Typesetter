@@ -4,7 +4,8 @@
 // class rules (engine/rules/locale/compat.def) → engine/gen/textrules.h —
 // the class enum, the per-class columns, a range table of (class, kern) and
 // one of the UCD columns (UAX #29 grapheme break, Extended_Pictographic,
-// UAX #11 East Asian width), and the rules' constants.
+// UAX #11 East Asian width), the letters and their lowercase mappings
+// (UnicodeData.txt, plan P4-06), and the rules' constants.
 //   node tools/ucdc.mjs            regenerate
 //   node tools/ucdc.mjs --check    fail if the generated header is stale
 //   node tools/ucdc.mjs --fetch    re-download the pinned UCD files
@@ -22,6 +23,7 @@ const UCD_FILES = {
   'Scripts.txt': 'Scripts.txt',
   'emoji-data.txt': 'emoji/emoji-data.txt',
   'GraphemeBreakProperty.txt': 'auxiliary/GraphemeBreakProperty.txt',
+  'UnicodeData.txt': 'UnicodeData.txt',
 };
 const MAX = 0x110000;
 export const GCB = ['Other', 'CR', 'LF', 'Control', 'Extend', 'ZWJ', 'Regional_Indicator', 'Prepend',
@@ -57,7 +59,7 @@ function ucdProperty(file, map, dflt) {
 // the first matching row wins; WIDE ranges + WIDE_DEFAULT (a codepoint in
 // them is wide, the default class unless named later); SCRIPT(script…,
 // Class) — Scripts.txt, within the WIDE ranges; CLASS_LB(lb…, Class) — as
-// LB, within the WIDE ranges, over everything so far; CLASS(Class, cp…); then COLUMN, KERN_CUTOFF, BLANK, ADVANCE, CONST.
+// LB, within the WIDE ranges, over everything so far; CLASS(Class, cp…); then COLUMN, KERN_CUTOFF, BLANK, ADVANCE, EMERGENCY, CONST.
 // INCLUDE(file) splices a file (relative to the including one). Without
 // COLUMN(wide) a class's width comes from the WIDE ranges (compat), without
 // COLUMN(kern) its kerning from KERN_CUTOFF.
@@ -172,6 +174,18 @@ export function buildRules(defPath = join(root, 'engine/rules/locale/default.def
     if (seq.length > 3) throw new Error(`${defPath}: an ADVANCE sequence holds at most 3 codepoints`);
     return { seq, em: Number(em) };
   }).sort((a, b) => b.seq.length - a.seq.length);
+  // (plan P4-06) the emergency table: separators and the sides a break takes
+  const SIDES = { before: 1, after: 2, both: 3 };
+  const emergency = rowsOf(lines, 'EMERGENCY').flatMap((row) => {
+    const [side, cps] = split(row);
+    if (!SIDES[side]) throw new Error(`${defPath}: EMERGENCY side ${side} (before, after or both)`);
+    // a row of single codepoints; a sequence is written joined by '+' (002F+002F)
+    return cps.split(/\s+/).map((tok) => {
+      const seq = tok.split('+').map((h) => parseInt(h, 16));
+      if (seq.length > 2) throw new Error(`${defPath}: an EMERGENCY separator holds at most 2 codepoints`);
+      return { seq, side: SIDES[side] };
+    });
+  }).sort((a, b) => b.seq.length - a.seq.length);
   // (plan P4-05) what the engine reads of a codepoint, the columns compat
   // lacked derived as compat's engine read them — rules-diff compares this
   const col = (name, c, dflt) => (columns[name] ? columns[name][c] : dflt);
@@ -186,11 +200,41 @@ export function buildRules(defPath = join(root, 'engine/rules/locale/default.def
       kern[cp] && 'kern', blanks[c].some((x) => x) && `blank${blanks[c][0]}/${blanks[c][1]}`, named]
       .filter(Boolean).join('+') || '-';
   };
-  return { version, classes, cc, kern, columns, consts, blanks, advances, behaviour };
+  return { version, classes, cc, kern, columns, consts, blanks, advances, emergency, behaviour };
+}
+
+// (plan P4-06) UnicodeData.txt: the letters (General_Category L*) as the
+// edges of their ranges, and the simple lowercase mappings (field 13)
+function unicodeData() {
+  const letter = new Uint8Array(MAX);
+  const lower = [];
+  let first = -1;
+  for (const line of readFileSync(join(ucdDir, 'UnicodeData.txt'), 'utf8').split('\n')) {
+    if (!line) continue;
+    const f = line.split(';');
+    const cp = parseInt(f[0], 16);
+    const isL = f[2][0] === 'L';
+    if (f[1].endsWith(', First>')) {
+      first = cp;
+      continue;
+    }
+    for (let c = f[1].endsWith(', Last>') ? first : cp; c <= cp; c++) letter[c] = isL ? 1 : 0;
+    if (f[13]) lower.push([cp, parseInt(f[13], 16)]);
+  }
+  const edges = [];
+  for (let cp = 0, in_ = 0; cp <= MAX; cp++) {
+    const v = cp < MAX ? letter[cp] : 0;
+    if (v !== in_) {
+      edges.push(cp);
+      in_ = v;
+    }
+  }
+  return { edges, lower };
 }
 
 function generate() {
-  const R = buildRules();  // (plan P4-05) engine/rules/locale/default.def
+  const R = buildRules();
+  const U = unicodeData();  // (plan P4-05) engine/rules/locale/default.def
   const gcbIdx = Object.fromEntries(GCB.map((g, i) => [g, i]));
   const eawIdx = Object.fromEntries(EAW.map((g, i) => [g, i]));
   const gcb = ucdProperty('GraphemeBreakProperty.txt', (v) => gcbIdx[v], 0);
@@ -259,7 +303,7 @@ constexpr UcdRange kUcdRanges[] = {
 ${wrap(ucdRanges.map(([a, v]) => `{${hex(a)}, ${v}}`), 6)}
 };
 
-// the rules' constants (em)
+// the rules' constants (em; a count where its name says so)
 ${R.consts.map(([n, v]) => `constexpr double kRule_${n} = ${v};`).join('\n')}
 
 // (plan P4-04) each class's punctuation blanks (em): leading, trailing
@@ -270,6 +314,23 @@ constexpr Blank kBlanks[] = {${R.blanks.map(([l, r]) => `{${l}, ${r}}`).join(', 
 struct DefinedAdvance { std::uint32_t seq[3]; std::uint8_t len; float em; };
 constexpr DefinedAdvance kDefinedAdvances[] = {
 ${R.advances.map((a) => `    {{${[...a.seq, 0, 0].slice(0, 3).map(hex).join(', ')}}, ${a.seq.length}, ${a.em}},`).join('\n')}
+};
+// (plan P4-06) the emergency table: a separator (1–2 codepoints, longest
+// first) and the sides of it a break may take (1 before, 2 after)
+struct EmergencySep { std::uint32_t seq[2]; std::uint8_t len, side; };
+constexpr EmergencySep kEmergencySeps[] = {
+${R.emergency.map((e) => `    {{${[...e.seq, 0].slice(0, 2).map(hex).join(', ')}}, ${e.seq.length}, ${e.side}},`).join('\n')}
+};
+
+// (plan P4-06) the letters (UCD General_Category L*): the edges of their
+// ranges — a letter range starts at an even index, ends at an odd one
+constexpr std::uint32_t kLetterEdges[] = {
+${wrap(U.edges.map(hex), 10)}
+};
+// the simple lowercase mappings (UnicodeData.txt field 13), by codepoint
+struct CaseMap { std::uint32_t from, to; };
+constexpr CaseMap kLower[] = {
+${wrap(U.lower.map(([a, b]) => `{${hex(a)}, ${hex(b)}}`), 6)}
 };
 
 }  // namespace tsr

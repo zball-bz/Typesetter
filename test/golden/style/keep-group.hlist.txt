@@ -2,7 +2,9 @@ top pid=0 units=1
  unit text indent=0su
   box Alpha "A" w=513su r0 @[66,67)
   glue word w=257su x=1 cap=257su kern="A l" src r0 @[67,68)
-  box Alpha "lead-in" w=3585su r0 @[68,75)
+  box Alpha "lead-" w=2561su r0 @[68,73)
+  disc pen=0.7 w=0su pre=none kern="-i" r0 @[73,73)
+  box Alpha "in" w=1025su r0 @[73,75)
   glue word w=257su x=1 cap=257su kern="n t" src r0 @[75,76)
   box Alpha "that" w=2049su r0 @[76,80)
   glue word w=257su x=1 cap=257su kern="t a" src r0 @[80,81)

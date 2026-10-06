@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"A heading with https://example.com/an/overlong/address/that/must/wrap/somewhere","label":null,"span":[0,81]}],"regions":[{"name":"figure","label":null,"span":[232,397]}],"fences":[],"labels":[],"diagnostics":[]}

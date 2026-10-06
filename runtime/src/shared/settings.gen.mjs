@@ -170,6 +170,14 @@ export const SETTINGS = Object.freeze({
       "Emit"
     ]
   },
+  "break.exHyphenPenalty": {
+    "dom": "num:0:1e18",
+    "def": 0.7,
+    "prec": "HostDefault",
+    "affects": [
+      "Emit"
+    ]
+  },
   "break.urlPenalty": {
     "dom": "num:0:1e18",
     "def": 1.2,
@@ -556,6 +564,7 @@ export const SETTINGS_DEFAULTS = Object.freeze({
   },
   "break": {
     "hyphenPenalty": 0.7,
+    "exHyphenPenalty": 0.7,
     "urlPenalty": 1.2,
     "urlMinLen": 20
   },

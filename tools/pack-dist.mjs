@@ -24,6 +24,7 @@ const parts = [
   ['engine/build-wasm/typesetter.wasm', 'engine/build-wasm/typesetter.wasm'],
   ['runtime/src', 'runtime/src'],
   ['runtime/assets/hl', 'runtime/assets/hl'],
+  ['runtime/assets/hyph', 'runtime/assets/hyph'],  // (plan P4-06) tools/hyphc.mjs --assets
   [MATH_FONT.file, MATH_FONT.file],  // the math font manifest (P1-23)
 ];
 for (const [from, to] of parts) {

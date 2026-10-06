@@ -353,7 +353,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       t.open();
     }
     if (d.k == DLRun::K::Hyphen) {
-      out += "-";
+      escapeHtml(out, strs.get(d.text));  // (plan P4-06) the dictionary's hyphen
     } else if (d.k == DLRun::K::Glyph) {
       escapeHtml(out, strs.get(d.text));
     } else {

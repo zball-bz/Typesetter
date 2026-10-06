@@ -3,6 +3,7 @@
 // same code. Hosts answer through a ProviderSet; the JS hosts' twin is the
 // worker's measureLoop.
 #pragma once
+#include <cctype>
 #include <fstream>
 #include <functional>
 #include <sstream>
@@ -12,6 +13,49 @@
 #include "doc.h"
 
 namespace tsr {
+
+// (plan P4-06; D-X09) a language's hyphenation patterns as a host answers them
+struct HyphAnswer {
+  std::string patterns, exceptions, hyphenChar = "-";
+  u8 leftmin = 2, rightmin = 2;
+};
+// a language's dictionary in a directory of them (tools/hyphc.mjs: index.json
+// maps BCP-47 tags to files, a file is {tag, leftmin, rightmin, hyphenChar,
+// patterns, exceptions}): the tag lower-cased, then each shorter prefix of
+// it (de-DE → de) — as the runtime's provider (runtime/src/shared/
+// resources/providers/hyph.mjs) resolves it; false: none
+inline bool hyphFromDir(const std::string& dir, std::string_view lang, HyphAnswer& out) {
+  auto readJson = [](const std::string& path, JsonValue& v) {
+    std::ifstream f(path, std::ios::binary);
+    if (!f) return false;
+    std::stringstream ss;
+    ss << f.rdbuf();
+    JsonReader rd;
+    return rd.parse(ss.str(), v) && v.t == JsonValue::T::Obj;
+  };
+  JsonValue index, v;
+  if (!readJson(dir + "/index.json", index)) return false;
+  std::string tag(lang);
+  for (char& c : tag) c = c == '_' ? '-' : (char)std::tolower((unsigned char)c);
+  const JsonValue* file = nullptr;
+  while (!tag.empty() && !(file = index.get(tag))) {
+    const size_t dash = tag.rfind('-');
+    tag.resize(dash == std::string::npos ? 0 : dash);
+  }
+  if (!file || file->t != JsonValue::T::Str || !readJson(dir + "/" + file->str + ".json", v)) return false;
+  auto str = [&](const char* k, std::string& dst) {
+    if (const JsonValue* x = v.get(k); x && x->t == JsonValue::T::Str) dst = x->str;
+  };
+  auto num = [&](const char* k, u8& dst) {
+    if (const JsonValue* x = v.get(k); x && x->t == JsonValue::T::Num) dst = (u8)x->num;
+  };
+  str("patterns", out.patterns);
+  str("exceptions", out.exceptions);
+  str("hyphenChar", out.hyphenChar);
+  num("leftmin", out.leftmin);
+  num("rightmin", out.rightmin);
+  return !out.patterns.empty();
+}
 
 // One provider per resource kind (design T9 A2); a provider that returns
 // false answers its row as failed (the engine degrades that quantity).
@@ -23,14 +67,18 @@ struct ProviderSet {
       boxes;
   std::function<double(const WireMetricKey& mk, std::string_view text)> width;
   std::function<void(const WireMetricKey& mk, double& asc, double& desc)> vmet;
+  std::function<bool(std::string_view lang, HyphAnswer& out)> hyph;  // (plan P4-06)
 };
 
 // The golden/native providers: the normative mock measurer (it depends only
 // on the key's size), the policy's image answer, the mock box (its payload's
 // text in lines of its width), plain code (callers add a token provider,
-// e.g. native tree-sitter: nativeTokens).
-inline ProviderSet mockProviders() {
+// e.g. native tree-sitter: nativeTokens), the dictionaries in hyphDir
+// (plan P4-06: the goldens' are test/hyph — tsrc's under its current
+// directory, as its profiles are)
+inline ProviderSet mockProviders(std::string hyphDir = "test/hyph") {
   ProviderSet p;
+  p.hyph = [hyphDir](std::string_view lang, HyphAnswer& out) { return hyphFromDir(hyphDir, lang, out); };
   p.tokens = [](std::string_view, std::string_view, std::vector<CodeToken>& out) {
     out.clear();
     return true;
@@ -95,6 +143,17 @@ inline bool answerRound(Doc& doc, const ProviderSet& p) {
             o.setF64(0, w);
             o.setF64(1, h);
             o.setF64(2, baseline);
+          }
+          break;
+        }
+        case ResKind::hyphPatterns: {
+          HyphAnswer h;
+          if ((ok = p.hyph && p.hyph(q.strings[r.col[0]], h))) {
+            o.col[0] = a.str(h.patterns);
+            o.col[1] = a.str(h.exceptions);
+            o.col[2] = h.leftmin;
+            o.col[3] = h.rightmin;
+            o.col[4] = a.str(h.hyphenChar);
           }
           break;
         }

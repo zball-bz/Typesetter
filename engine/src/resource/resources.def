@@ -18,9 +18,13 @@
 //   columns:      name:type, types Str (a string of the batch's blob),
 //                 MetricKey (a row of the batch's metric-key table), U8, U16,
 //                 U32, F64, U32List
-RES_VERSION(1)
+RES_VERSION(2)
 RES(textWidth, 1, Content, false, "mk:MetricKey text:Str", "px:F64")
 RES(fontVmet, 2, Content, false, "mk:MetricKey", "asc:F64 desc:F64")
 RES(fontFace, 3, None, false, "family:Str src:Str weight:U16 style:U8", "status:U8")
 RES(codeTokens, 4, Content, true, "lang:Str text:Str", "runs:U32List")
 RES(boxInfo, 5, Host, true, "kind:U8 ref:Str availPx:F64", "w:F64 h:F64 baseline:F64")
+// (plan P4-06; D-X09) a language's hyphenation patterns, asked for once per
+// language tag the document's text names (en-US is resident): TeX pattern
+// text, exceptions as hyphenated words, the minima, the hyphen glyph
+RES(hyphPatterns, 6, Content, false, "lang:Str", "patterns:Str exceptions:Str leftmin:U8 rightmin:U8 hyphenChar:Str")

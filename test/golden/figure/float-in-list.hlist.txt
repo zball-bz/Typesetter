@@ -71,7 +71,9 @@ top pid=1 units=5
    glue word w=257su x=1 cap=257su kern="A s" src r3 @[245,246)
    box Alpha "small" w=2561su r3 @[246,251)
    glue word w=257su x=1 cap=257su kern="l f" src r3 @[251,252)
-   box Alpha "floated" w=3585su r3 @[252,259)
+   box Alpha "float" w=2561su r3 @[252,257)
+   disc pen=0.7 w=0su pre="-" 513su kern="te" r3 @[257,257)
+   box Alpha "ed" w=1025su r3 @[257,259)
    glue word w=257su x=1 cap=257su kern="d i" src r3 @[259,260)
    box Alpha "icon." w=2561su r3 @[260,265)
    run r0 letter-spaced BOLD CJK

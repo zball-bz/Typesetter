@@ -1,0 +1,20 @@
+doc @[0,670)
+  heading @[0,81) level=1
+    text @[2,17) str="A heading with "
+    link @[17,81) url="https://example.com/an/overlong/address/that/must/wrap/somewhere"
+      text @[17,81) str="https://example.com/an/overlong/address/that/must/wrap/somewhere"
+  para @[83,230)
+    text @[83,120) str="Inline code breaks at its separators: "
+    code @[121,177) str="very_long_identifier_name.with.member_access(argument)"
+    text @[178,181) str=" and "
+    code @[182,220) str="/usr/local/share/typesetter/patterns"
+    text @[221,230) str=" in prose."
+  region @[232,397) name="figure"
+    para @[294,388)
+      text @[294,388) str="A caption with a long path /usr/local/share/typesetter/patterns/hyphenation/en-us.json inside."
+  para @[399,531)
+    splice @[399,531) expr="style({text: {overflowWrap: 'anywhere'}})"
+      arg @[442,530)
+        text @[442,530) str="A digest without separators: 0x3f2a9c4b7e1d5f8a2c6e0b9d4f7a1c3e5b8d2f6a breaks anywhere."
+  para @[533,669)
+    text @[533,669) str="An address someone.with.a.long.name@example.org and a scheme-less www.example.com/path/to/a/resource?query=value&other=thing#anchor end."

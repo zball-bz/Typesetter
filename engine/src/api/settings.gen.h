@@ -32,6 +32,7 @@ struct Config {
   double quoteIndentEm = 1;  // quote.indent
   PunctCompress punctCompress = PunctCompress::Book;  // cjk.punctCompress
   double hyphenPenalty = 0.7;  // break.hyphenPenalty
+  double exHyphenPenalty = 0.7;  // break.exHyphenPenalty
   double urlBreakPenalty = 1.2;  // break.urlPenalty
   u32 urlBreakMinLen = 20;  // break.urlMinLen
   ClassMap mathBreakAfter = ClassMap{{-1, -1, 0.95, 0.8, -1, -1, -1, -1}};  // math.breakAfter

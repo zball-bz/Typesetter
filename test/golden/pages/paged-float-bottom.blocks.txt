@@ -81,7 +81,9 @@ top pid=1 units=1
   space w=257su stretch=1 @[259,260)
   word "the" w=1537su pen=INF @[260,263)
   space w=257su stretch=1 @[263,264)
-  word "bottom." w=3585su pen=INF @[264,271)
+  word "bot" w=1537su pen=INF @[264,267)
+  hyphen bw=513su pen=0.70 @[267,267)
+  word "tom." w=2049su pen=INF @[267,271)
 top pid=2 units=1
  unit text indent=0su
   word "Text" w=2049su pen=INF @[282,286)

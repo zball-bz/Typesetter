@@ -165,21 +165,21 @@ top pid=3 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[358,358)
   box Alpha "tim:" w=2049su r0 @[358,362)
   glue word w=257su x=1 cap=257su kern=": h" src r0 @[362,363)
-  box Alpha "https:/" w=3585su r1 @[363,370)
-  pen 1.2 r1
-  box Solidus "/example." w=4609su r1 @[370,379)
-  pen 1.2 r1
-  box Alpha "com/" w=2049su r1 @[379,383)
-  pen 1.2 r1
-  box Alpha "a_b_" w=2049su r1 @[383,387)
-  pen 1.2 r1
-  box Alpha "c?q=" w=2049su r1 @[387,391)
-  pen 1.2 r1
-  box Digit "1&r=" w=2049su r1 @[391,395)
-  pen 1.2 r1
-  box Digit "2#frag_" w=3585su r1 @[395,402)
-  pen 1.2 r1
-  box Alpha "x" w=513su r1 @[402,403)
+  box Alpha "https://" w=4097su r1 @[363,371)
+  disc pen=1.2 w=0su pre=none kern="/e" r1 @[371,371)
+  box Alpha "example" w=3585su r1 @[371,378)
+  disc pen=1.2 w=0su pre=none kern="e." r1 @[378,378)
+  box Infix ".com" w=2049su r1 @[378,382)
+  disc pen=1.2 w=0su pre=none kern="m/" r1 @[382,382)
+  box Solidus "/a_b" w=2049su r1 @[382,386)
+  disc pen=1.2 w=0su pre=none kern="b_" r1 @[386,386)
+  box Alpha "_c?q" w=2049su r1 @[386,390)
+  disc pen=1.2 w=0su pre=none kern="q=" r1 @[390,390)
+  box Alpha "=1&" w=1537su r1 @[390,393)
+  disc pen=1.2 w=0su pre=none kern="&r" r1 @[393,393)
+  box Alpha "r=2" w=1537su r1 @[393,396)
+  disc pen=1.2 w=0su pre=none kern="2#" r1 @[396,396)
+  box Alpha "#frag_x" w=3585su r1 @[396,403)
   box Infix "." w=513su r2 @[403,404)
   glue word w=257su x=1 cap=257su kern=". I" src r2 @[404,405)
   box Alpha "In" w=1025su r2 @[405,407)
@@ -191,19 +191,17 @@ top pid=3 units=1
   box Alpha "ses" w=1537su r2 @[416,419)
   glue word w=257su x=1 cap=257su kern="s (" src r2 @[419,420)
   box OpenN "(" w=513su r2 @[420,421)
-  box Alpha "https:/" w=3585su r3 @[421,428)
-  pen 1.2 r3
-  box Solidus "/en." w=2049su r3 @[428,432)
-  pen 1.2 r3
-  box Alpha "wikipedia." w=5121su r3 @[432,442)
-  pen 1.2 r3
-  box Alpha "org/" w=2049su r3 @[442,446)
-  pen 1.2 r3
-  box Alpha "wiki/" w=2561su r3 @[446,451)
-  pen 1.2 r3
-  box Alpha "Foo_" w=2049su r3 @[451,455)
-  pen 1.2 r3
-  box OpenN "(bar)" w=2561su r3 @[455,460)
+  box Alpha "https://" w=4097su r3 @[421,429)
+  disc pen=1.2 w=0su pre=none kern="/e" r3 @[429,429)
+  box Alpha "en.wikipedia" w=6145su r3 @[429,441)
+  disc pen=1.2 w=0su pre=none kern="a." r3 @[441,441)
+  box Infix ".org" w=2049su r3 @[441,445)
+  disc pen=1.2 w=0su pre=none kern="g/" r3 @[445,445)
+  box Solidus "/wiki" w=2561su r3 @[445,450)
+  disc pen=1.2 w=0su pre=none kern="i/" r3 @[450,450)
+  box Solidus "/Foo" w=2049su r3 @[450,454)
+  disc pen=1.2 w=0su pre=none kern="o_" r3 @[454,454)
+  box Alpha "_(bar)" w=3073su r3 @[454,460)
   box CloseN ")" w=513su r4 @[460,461)
   glue word w=257su x=1 cap=257su kern=") a" src r4 @[461,462)
   box Alpha "and" w=1537su r4 @[462,465)
@@ -217,11 +215,11 @@ top pid=3 units=1
   box Ideo "见" w=1025su wt=0.6 cap=102su r5 @[477,480)
   pen 0 r5
   glue autospace w=256su x=1 cap=256su r6 @[480,480)
-  box Alpha "https:/" w=3585su r7 @[480,487)
-  pen 1.2 r7
-  box Solidus "/example." w=4609su r7 @[487,496)
-  pen 1.2 r7
-  box Alpha "org/" w=2049su r7 @[496,500)
+  box Alpha "https://" w=4097su r7 @[480,488)
+  disc pen=1.2 w=0su pre=none kern="/e" r7 @[488,488)
+  box Alpha "example" w=3585su r7 @[488,495)
+  disc pen=1.2 w=0su pre=none kern="e." r7 @[495,495)
+  box Infix ".org/" w=2561su r7 @[495,500)
   glue autospace w=256su x=1 cap=256su r8 @[500,500)
   box Ideo "路" w=1025su wt=0.6 cap=102su r9 @[500,503)
   glue inter w=0su x=0.6 cap=102su r9 @[500,503)
@@ -243,11 +241,11 @@ top pid=3 units=1
   glue word w=257su x=1 cap=257su kern="s t" src r11 @[529,530)
   box Alpha "text:" w=2561su r11 @[530,535)
   glue word w=257su x=1 cap=257su kern=": h" src r11 @[535,536)
-  box Alpha "https:/" w=3585su r11 @[536,544)
-  pen 1.2 r11
-  box Solidus "/example." w=4609su r11 @[544,553)
-  pen 1.2 r11
-  box Alpha "com." w=2049su r11 @[553,557)
+  box Alpha "https://" w=4097su r11 @[536,545)
+  disc pen=1.2 w=0su pre=none kern="/e" r11 @[545,545)
+  box Alpha "example" w=3585su r11 @[545,552)
+  disc pen=1.2 w=0su pre=none kern="e." r11 @[552,552)
+  box Infix ".com." w=2561su r11 @[552,557)
   run r0 plain
   run r1 plain LINK link="https://example.com/a_b_c?q=1&r=2#frag_x"
   run r2 plain

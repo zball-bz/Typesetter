@@ -12,8 +12,8 @@
 <div class="tsr-rule" style="top:63.984px;left:0px;width:300px"></div>
 <div class="tsr-line" data-s="0" data-e="316" data-join="para" data-ragged="1" data-track="cell" style="top:68.781px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">Two paragraphs.</span></div>
 <div class="tsr-line" data-s="0" data-e="316" data-join="space" data-ragged="1" data-track="cell" style="top:111.984px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">The second one</span></div>
-<div class="tsr-line" data-s="0" data-e="316" data-join="space" data-ragged="1" data-track="cell" style="top:135.984px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">wraps at the</span></div>
-<div class="tsr-line" data-s="0" data-e="316" data-join="space" data-ragged="1" data-track="cell" style="top:159.984px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">column&#39;s narrow</span></div>
+<div class="tsr-line" data-s="0" data-e="316" data-join="none" data-ragged="1" data-track="cell" style="top:135.984px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">wraps at the col</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="316" data-join="space" data-ragged="1" data-track="cell" style="top:159.984px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">umn&#39;s narrow</span></div>
 <div class="tsr-line" data-s="0" data-e="316" data-join="tab" data-ragged="1" data-track="cell" style="top:183.984px;left:6.406px;width:137.188px"><span class="tsr-r" data-s="0">width.</span></div>
 <div class="tsr-line" data-s="0" data-e="316" data-join="row" data-ragged="1" data-track="cell" style="top:68.781px;left:253.594px;width:40px"><span class="tsr-r" data-s="0">plain</span></div>
 <div class="tsr-rule" style="top:212.781px;left:0px;width:300px"></div>

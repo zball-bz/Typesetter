@@ -8,8 +8,8 @@
 <div class="tsr-line" data-s="78" data-e="109" data-join="space" style="top:67.203px;left:32px;width:268px;word-spacing:10.667px"><span class="tsr-r" data-s="78">Breaking paragraphs into lines.</span></div>
 <div class="tsr-line" data-s="110" data-e="143" data-join="space" style="top:91.203px;left:32px;width:268px;word-spacing:5.333px"><span class="tsr-r" data-s="110">Software: Practice and Experience</span></div>
 <div class="tsr-line" data-s="144" data-e="170" data-join="para" style="top:115.203px;left:32px;width:268px"><span class="tsr-r" data-s="144">11(11), 1119–1184, 1981.</span></div>
-<div class="tsr-line" id="tsr-bib-knuth84" data-s="173" data-e="305" data-join="none" style="top:158.406px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="173">[2] Donald E. Knuth. The TeXbook. Com</span><span class="tsr-r" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="249" data-e="282" data-join="space" style="top:182.406px;left:32px;width:268px;word-spacing:5px"><span class="tsr-r" data-s="249">puters and Typesetting, volume A.</span></div>
-<div class="tsr-line" data-s="283" data-e="304" style="top:206.406px;left:32px;width:268px"><span class="tsr-r" data-s="283">Addison-Wesley, 1984.</span></div>
+<div class="tsr-line" id="tsr-bib-knuth84" data-s="173" data-e="305" data-join="none" style="top:158.406px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="173">[2] Donald E. Knuth. The TeXbook. Comput</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="252" data-e="287" data-join="none" style="top:182.406px;left:32px;width:268px"><span class="tsr-r" data-s="252">ers and Typesetting, volume A. Addi</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="287" data-e="304" style="top:206.406px;left:32px;width:268px"><span class="tsr-r" data-s="287">son-Wesley, 1984.</span></div>
 </div>
 </div>

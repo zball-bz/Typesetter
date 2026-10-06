@@ -95,7 +95,9 @@ top pid=3 units=1
  unit text indent=0su
   word "The" w=1537su pen=INF @[574,577)
   space w=257su stretch=1 @[577,578)
-  word "built-in" w=4097su pen=INF @[578,586)
+  word "built-" w=3073su pen=INF @[578,584)
+  hyphen bw=0su pen=0.70 @[584,584)
+  word "in" w=1025su pen=INF @[584,586)
   space w=257su stretch=1 @[586,587)
   word "stays" w=2561su pen=INF @[587,592)
   space w=257su stretch=1 @[592,593)

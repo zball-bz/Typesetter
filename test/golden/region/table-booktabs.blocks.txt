@@ -1,6 +1,12 @@
 top pid=0 units=1
  unit text indent=0su
-  word "Content-fitted" w=7169su pen=INF @[0,14)
+  word "Con" w=1537su pen=INF @[0,3)
+  hyphen bw=513su pen=0.70 @[3,3)
+  word "tent-" w=2561su pen=INF @[3,8)
+  hyphen bw=0su pen=0.70 @[8,8)
+  word "fit" w=1537su pen=INF @[8,11)
+  hyphen bw=513su pen=0.70 @[11,11)
+  word "ted" w=1537su pen=INF @[11,14)
   space w=257su stretch=1 @[14,15)
   word "columns," w=4097su pen=INF @[15,23)
   space w=257su stretch=1 @[23,24)

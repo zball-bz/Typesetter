@@ -1,0 +1,12 @@
+doc @[0,645) [base]
+  para @[0,219) [base]
+    text @[0,219) [base] str="English prose: extraordinary representation, a well-known state-of-the-art design, an e-mail and an X-ray (too short to break at), co‐operation with U+2010, and the German Übersetzung, which en-US patterns never cut."
+  para @[221,394) [base]
+    styled @[221,394) [base lang=de] lang="de"
+      text @[242,393) [base lang=de] str="Die Silbentrennung der Übersetzung folgt den deutschen Mustern: Bundesverfassungsgericht, Fußgängerübergang und Donaudampfschifffahrtsgesellschaft."
+  para @[396,530) [base]
+    styled @[396,530) [base lang=en-GB] lang="en-GB"
+      text @[420,529) [base lang=en-GB] str="British text falls back to the American patterns: extraordinary characterisation of organisational behaviour."
+  para @[532,645) [base]
+    styled @[532,645) [base lang=fr] lang="fr"
+      text @[553,644) [base lang=fr] str="Le français sans motifs : extraordinairement, anticonstitutionnellement, un porte-monnaie."

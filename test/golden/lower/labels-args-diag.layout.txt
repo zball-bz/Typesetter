@@ -21,8 +21,8 @@ para pid=6 y=21198su w=19200su h=3072su
 para pid=7 y=25499su w=19200su h=1639su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,1) @[649,661)
 para pid=8 y=28367su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=1088su dc=0su join=space blocks=[0,15) @[675,706)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[16,21) @[707,738)
+  L0 y=0su left=0su w=19200su dw=205su dc=0su join=none hyphen blocks=[0,20) @[675,713)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[20,27) @[713,738)
 para pid=9 y=32668su w=19200su h=4608su
   L0 y=0su left=0su w=19200su dw=184su dc=0su join=none hyphen blocks=[0,20) @[740,783)
   L1 y=1536su left=0su w=19200su dw=512su dc=0su join=space blocks=[20,35) @[757,783)

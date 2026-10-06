@@ -738,7 +738,18 @@
         "Emit"
       ]
     },
+    "break.exHyphenPenalty": {
+      "$comment": "(plan P4-06; D-X02) The penalty of a break after an explicit hyphen between two letters (well-|known): TeX's \\exhyphenpenalty, 50 there like its \\hyphenpenalty, so break.hyphenPenalty's value here. A URL's, a path's or code's hyphens are the emergency table's.",
+      "field": "exHyphenPenalty",
+      "dom": "num:0:1e18",
+      "def": 0.7,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
     "break.urlPenalty": {
+      "$comment": "(plan P4-06; D-X05) The penalty of an emergency break: a long token with no other break opportunity (a URL, a path, an identifier) breaking at the emergency table's separators — Chicago's URL rule, engine/rules/locale/und.def — under text.overflowWrap separators (the default), or between any grapheme clusters under anywhere.",
       "field": "urlBreakPenalty",
       "dom": "num:0:1e18",
       "def": 1.2,
@@ -748,6 +759,7 @@
       ]
     },
     "break.urlMinLen": {
+      "$comment": "(plan P4-06) The shortest token (grapheme clusters, across style edges) that takes emergency breaks.",
       "field": "urlBreakMinLen",
       "dom": "int:1:100000",
       "def": 20,

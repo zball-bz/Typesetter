@@ -1,0 +1,7 @@
+doc @[0,670)
+  heading1 @[0,81)
+  para @[83,230) lines=1
+  region @[232,397) name="figure"
+    para @[294,388) lines=1
+  para @[399,531) lines=1
+  para @[533,669) lines=1

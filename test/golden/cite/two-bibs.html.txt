@@ -7,12 +7,12 @@
 <div class="tsr-line" id="tsr-bib-kp81" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:14.4px"><span class="tsr-r">[1] Donald E. Knuth and Michael</span></div>
 <div class="tsr-line" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r">F. Plass. </span><span class="tsr-r tsr-i">Breaking Paragraphs into</span></div>
 <div class="tsr-line" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r tsr-i">Lines</span><span class="tsr-r">. Software: Practice and Experience</span></div>
-<div class="tsr-line" data-join="none" style="top:115.203px;left:0px;width:300px;word-spacing:5.333px"><span class="tsr-r">11(11), 1119-1184. 1981. </span><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">doi:10.1002/</a></div>
-<div class="tsr-line" data-join="para" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">spe.4380111102</a></div>
-<div class="tsr-line" id="tsr-bib-liang83" data-join="space" style="top:182.406px;left:0px;width:300px;word-spacing:21px"><span class="tsr-r">[2] Franklin Mark Liang. </span><span class="tsr-r tsr-i">Word</span></div>
-<div class="tsr-line" data-join="none" style="top:206.406px;left:0px;width:300px;word-spacing:10.667px"><span class="tsr-r tsr-i">Hy-phen-a-tion by Com-put-er</span><span class="tsr-r">. Stan</span><span class="tsr-r" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-join="none" style="top:230.406px;left:0px;width:300px"><span class="tsr-r">ford University, 1983. </span><a class="tsr-r" href="https://tug.org/docs/liang/">https://tug.org/</a></div>
-<div class="tsr-line" style="top:254.406px;left:0px;width:300px"><a class="tsr-r" href="https://tug.org/docs/liang/">docs/liang/</a></div>
+<div class="tsr-line" data-join="none" style="top:115.203px;left:0px;width:300px;word-spacing:8px"><span class="tsr-r">11(11), 1119-1184. 1981. </span><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">doi:10.1002</a></div>
+<div class="tsr-line" data-join="para" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">/spe.4380111102</a></div>
+<div class="tsr-line" id="tsr-bib-liang83" data-join="none" style="top:182.406px;left:0px;width:300px;word-spacing:11.2px"><span class="tsr-r">[2] Franklin Mark Liang. </span><span class="tsr-r tsr-i">Word Hy-</span></div>
+<div class="tsr-line" data-join="space" style="top:206.406px;left:0px;width:300px;word-spacing:10.667px"><span class="tsr-r tsr-i">phen-a-tion by Com-put-er</span><span class="tsr-r">. Stanford</span></div>
+<div class="tsr-line" data-join="none" style="top:230.406px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r">University, 1983. </span><a class="tsr-r" href="https://tug.org/docs/liang/">https://tug.org/docs</a></div>
+<div class="tsr-line" style="top:254.406px;left:0px;width:300px"><a class="tsr-r" href="https://tug.org/docs/liang/">/liang/</a></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="76" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="38" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">The same bibliography placed again car</span><span class="tsr-r" data-syn="hyphen">-</span></div>
@@ -23,11 +23,11 @@
 <div class="tsr-line" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:14.4px"><span class="tsr-r">[1] Donald E. Knuth and Michael</span></div>
 <div class="tsr-line" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r">F. Plass. </span><span class="tsr-r tsr-i">Breaking Paragraphs into</span></div>
 <div class="tsr-line" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r tsr-i">Lines</span><span class="tsr-r">. Software: Practice and Experience</span></div>
-<div class="tsr-line" data-join="none" style="top:115.203px;left:0px;width:300px;word-spacing:5.333px"><span class="tsr-r">11(11), 1119-1184. 1981. </span><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">doi:10.1002/</a></div>
-<div class="tsr-line" data-join="para" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">spe.4380111102</a></div>
-<div class="tsr-line" data-join="space" style="top:182.406px;left:0px;width:300px;word-spacing:21px"><span class="tsr-r">[2] Franklin Mark Liang. </span><span class="tsr-r tsr-i">Word</span></div>
-<div class="tsr-line" data-join="none" style="top:206.406px;left:0px;width:300px;word-spacing:10.667px"><span class="tsr-r tsr-i">Hy-phen-a-tion by Com-put-er</span><span class="tsr-r">. Stan</span><span class="tsr-r" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-join="none" style="top:230.406px;left:0px;width:300px"><span class="tsr-r">ford University, 1983. </span><a class="tsr-r" href="https://tug.org/docs/liang/">https://tug.org/</a></div>
-<div class="tsr-line" style="top:254.406px;left:0px;width:300px"><a class="tsr-r" href="https://tug.org/docs/liang/">docs/liang/</a></div>
+<div class="tsr-line" data-join="none" style="top:115.203px;left:0px;width:300px;word-spacing:8px"><span class="tsr-r">11(11), 1119-1184. 1981. </span><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">doi:10.1002</a></div>
+<div class="tsr-line" data-join="para" style="top:139.203px;left:0px;width:300px"><a class="tsr-r" href="https://doi.org/10.1002/spe.4380111102">/spe.4380111102</a></div>
+<div class="tsr-line" data-join="none" style="top:182.406px;left:0px;width:300px;word-spacing:11.2px"><span class="tsr-r">[2] Franklin Mark Liang. </span><span class="tsr-r tsr-i">Word Hy-</span></div>
+<div class="tsr-line" data-join="space" style="top:206.406px;left:0px;width:300px;word-spacing:10.667px"><span class="tsr-r tsr-i">phen-a-tion by Com-put-er</span><span class="tsr-r">. Stanford</span></div>
+<div class="tsr-line" data-join="none" style="top:230.406px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r">University, 1983. </span><a class="tsr-r" href="https://tug.org/docs/liang/">https://tug.org/docs</a></div>
+<div class="tsr-line" style="top:254.406px;left:0px;width:300px"><a class="tsr-r" href="https://tug.org/docs/liang/">/liang/</a></div>
 </div>
 </div>
