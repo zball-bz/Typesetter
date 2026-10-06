@@ -1,0 +1,22 @@
+lower v1 abi 3d3ccfbb docEnd 323 holes 1 module 05aa6ce740cff1ec
+piece 0 hole 0 js [103,194)
+block 0 content [0,17)
+  CALL heading [0,17) level=1 label=null
+    TEXT "文書の言語" [2,17)
+block 1 content [19,127)
+  CALL para [19,127)
+    TEXT "この文書は日本語で書かれています。図と式の番号は日本語の語で示されます。" [19,127)
+block 2 content [129,245) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [129,245)
+    CALL para [221,236)
+      TEXT "塔の写真。" [221,236)
+block 3 content [247,273)
+  CALL para [247,273)
+    CALL math [247,273) display=true label="eq-a"
+      CALL mathsrc [249,264) src="a^2 + b^2 = c^2"
+block 4 content [275,322)
+  CALL para [275,322)
+    CALL ref [275,281) target="fig-a"
+    TEXT " と " [282,285) raw=0:0,1:0,5:3
+    CALL ref [286,291) target="eq-a"
+    TEXT " を参照してください。" [292,322) raw=0:0,1:0

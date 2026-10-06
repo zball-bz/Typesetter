@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"文件語言","label":null,"span":[0,14]}],"regions":[{"name":"figure","label":"fig-a","span":[150,266]}],"fences":[],"labels":[{"id":"fig-a","rule":"region","span":[150,241]},{"id":"eq-a","rule":"math","span":[288,294]}],"diagnostics":[]}

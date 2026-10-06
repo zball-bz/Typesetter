@@ -1,5 +1,5 @@
 {
-  "$comment": "The golden profile (plan P1-03): the native goldens, tsrc --profile=golden and the WASM parity check run with it; a fixture's X.fixture.json adds its own settings on top.",
+  "$comment": "The golden profile (plan P1-03): the native goldens, tsrc --profile=golden and the WASM parity check run with it; a fixture's X.fixture.json adds its own settings on top. doc.lang is pinned (plan P3-30: the engine's default is auto).",
   "host": {"width": 300},
-  "doc": {"baseSize": 16}
+  "doc": {"baseSize": 16, "lang": "zh-CN"}
 }

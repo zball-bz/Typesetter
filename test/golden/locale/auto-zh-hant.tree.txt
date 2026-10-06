@@ -1,0 +1,23 @@
+doc @[0,325) [base]
+  heading @[0,14) [BOLDx1.60] level=1 label="h-1"
+    text @[2,14) [BOLDx1.60] str="文件語言"
+  para @[16,148) [base]
+    text @[16,148) [base] str="這是一份以繁體中文書寫的文件，圖與表的編號會使用繁體的字詞，說明其語言是由文字偵測而來。"
+  group @[150,266) [base] role="figure" label="fig-a"
+    image @[150,266) [base] src="photos/tower.jpg" alt="tower" w=400 h=300 scale=0.4
+    para @[242,257) [base] role="caption" slot="caption"
+      styled @[242,257) [BOLD] role="caption-label"
+        text @[242,257) [BOLD] str="圖 1："
+      text @[242,257) [base] str="塔的照片。"
+  mathblock @[268,294) [base] label="eq-a"
+    mathsrc @[270,285) [base] src="a^2 + b^2 = c^2"
+    seq @[268,294) [base] slot="tag" syn="eqno" copy="omit"
+      text @[268,294) [base] str="(1)"
+  para @[296,325) [base]
+    text @[296,305) [base] str="請參見 " raw=0:0,10:9
+    ref @[306,312) [base] target="fig-a"
+      text @[306,312) [base] str="圖 1"
+    text @[313,316) [base] str=" 與 " raw=0:0,1:0,5:3
+    ref @[317,322) [base] target="eq-a"
+      text @[317,322) [base] str="式 (1)"
+    text @[322,325) [base] str="。"

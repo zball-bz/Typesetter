@@ -192,7 +192,7 @@ export function auditTypeset(root) {
   const CONTRACT = [
     ['tsr-b', (cs) => parseInt(cs.fontWeight, 10) === 700, 'font-weight'],
     ['tsr-i', (cs, el) => el.classList.contains('tsr-cjk') || cs.fontStyle !== 'normal', 'font-style'],
-    ['tsr-pre', (cs) => cs.whiteSpace === 'pre', 'white-space'],
+    ['tsr-pre', (cs) => cs.whiteSpace === 'pre' && (parseFloat(cs.wordSpacing) || 0) === 0, 'white-space'],  // (word-spacing 0: plan P3-30)
   ];
   for (const [cls, ok, prop] of CONTRACT) {
     const el = root.querySelector(`.tsr-r.${cls}`);

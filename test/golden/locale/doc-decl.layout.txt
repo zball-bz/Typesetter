@@ -1,0 +1,13 @@
+doc h=19892su
+para pid=0 y=0su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=21su dc=0su join=space blocks=[0,21) @[70,180)
+  L1 y=1536su left=0su w=19200su dw=-73su dc=0su join=space blocks=[22,37) @[112,180)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[38,53) @[112,192)
+para pid=1 y=5837su w=19200su h=8525su
+  L0 img y=0su left=5760su w=7680su h=5760su
+  L1 y=6989su left=5888su w=13312su dw=0su dc=0su join=last blocks=[0,9) @[286,294)
+para pid=2 y=15591su w=19200su h=1536su
+  L0 math y=0su left=8316su w=2568su
+  L1 cell=0 y=293su left=17664su w=1536su blocks=[0,1)
+para pid=3 y=18356su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,12) @[323,344)

@@ -1,0 +1,10 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="17" id="tsr-h-1">文書の言語</h1>
+<p data-pid="1" data-s="19" data-e="127">この文書は日本語で書かれています。図と式の番号は日本語の語で示されます。</p>
+<figure data-role="figure" data-pid="2" data-s="129" data-e="245" id="tsr-fig-a">
+<img data-s="129" data-e="245" src="photos/tower.jpg" alt="tower" style="max-width:100%">
+<figcaption><strong>図 1：</strong>塔の写真。</figcaption>
+</figure>
+<p class="tsr-mathblock" data-pid="3" data-s="247" data-e="273" id="tsr-eq-a"><span class="tsr-math" data-syn="math" data-copy="$ a^2 + b^2 = c^2 $" data-copy-group="2147483895" role="math" aria-label="a^2 + b^2 = c^2" data-s="247" data-e="273" style="width:86.281px;height:16.297px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:2.309px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:9.75px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span><span class="tsr-mg" style="left:19.703px;top:2.309px;font-size:16px;line-height:16px">+</span><span class="tsr-mg" style="left:35.344px;top:2.309px;font-size:16px;line-height:16px">b</span><span class="tsr-mg" style="left:44.75px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span><span class="tsr-mg" style="left:55.578px;top:2.309px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:72.109px;top:2.309px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:79.891px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span></span> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
+<p data-pid="4" data-s="275" data-e="322"><a href="#tsr-fig-a">図 1</a> と <a href="#tsr-eq-a">式 (1)</a> を参照してください。</p>
+</div>

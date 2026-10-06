@@ -1,0 +1,11 @@
+= Document language
+
+An English document under `doc.lang: auto` (plan P3-30, D-T06): its language is detected from its text, so its figures, tables and equations take English words.
+
+#!figure(src: "photos/tower.jpg", alt: "tower", w: 400, h: 300, scale: 0.4, label: "fig-a")
+A tower.
+#figure!
+
+$ a^2 + b^2 = c^2 $ <eq-a>
+
+See @fig-a and @eq-a.

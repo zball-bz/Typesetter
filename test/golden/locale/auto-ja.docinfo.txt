@@ -1,0 +1,1 @@
+{"lang":"ja","langSource":"detected","title":"文書の言語"}

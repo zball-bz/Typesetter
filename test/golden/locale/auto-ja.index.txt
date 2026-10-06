@@ -1,0 +1,6 @@
+instance heading 1 level=1 label=h-1 title="文書の言語" @[0,17)
+instance figure 1 label=fig-a @[129,245)
+instance equation 1 label=eq-a @[247,273)
+label h-1 -> heading 1 @[0,17)
+label fig-a -> figure 1 @[129,245)
+label eq-a -> equation 1 @[247,273)

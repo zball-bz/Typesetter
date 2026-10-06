@@ -10,7 +10,7 @@ void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs, StyleTable& sty
   index = Index{};
   if (!tree.root) return;
   Counters counters(reg);
-  Terms terms(cfg);
+  Terms terms(cfg, &tree.decls, &strs);  // (plan P3-30: the document's locale packs too)
   locate(tree.root, reg, counters, strs, index, diags);
   bind(tree.root, reg, counters, strs, index, diags);
   MaterializeEnv env{arena, strs, styles, diags, reg, terms, counters, index, cascade};

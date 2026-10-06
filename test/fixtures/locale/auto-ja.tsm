@@ -1,0 +1,11 @@
+= 文書の言語
+
+この文書は日本語で書かれています。図と式の番号は日本語の語で示されます。
+
+#!figure(src: "photos/tower.jpg", alt: "tower", w: 400, h: 300, scale: 0.4, label: "fig-a")
+塔の写真。
+#figure!
+
+$ a^2 + b^2 = c^2 $ <eq-a>
+
+@fig-a と @eq-a を参照してください。

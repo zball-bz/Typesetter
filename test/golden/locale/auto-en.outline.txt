@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Document language","label":null,"span":[0,19]}],"regions":[{"name":"figure","label":"fig-a","span":[183,292]}],"fences":[],"labels":[{"id":"fig-a","rule":"region","span":[183,274]},{"id":"eq-a","rule":"math","span":[314,320]}],"diagnostics":[]}

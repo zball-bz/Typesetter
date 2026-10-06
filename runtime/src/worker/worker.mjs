@@ -191,10 +191,19 @@ function postResult(M, doc, ids, tm, held) {
   if (tm) tm.renderMs = performance.now() - t0;
   const diags = M.UTF8ToString(M._tsr_diags(doc));
   const heightPx = M._tsr_doc_height_px(doc);
+  const lang = docLangOf(M, doc);
   ids.forEach((id, k) => {
     const f = k === ids.length - 1 ? frame : frame.slice(0);
-    postMessage({ type: 'result', id, frame: f, html, diags, heightPx, timings: tm }, [f]);
+    postMessage({ type: 'result', id, frame: f, html, diags, heightPx, timings: tm, lang }, [f]);
   });
+}
+// (plan P3-30, D-T06) the document's language as the engine decided it — its
+// own, the host's or detected (doc.lang: auto): docinfo
+function docLangOf(M, doc) {
+  const p = M.stringToNewUTF8('docinfo');
+  const out = M.UTF8ToString(M._tsr2_product(doc, p));
+  M._free(p);
+  try { return JSON.parse(out).lang ?? ''; } catch { return ''; }
 }
 const postError = (ids, message) => {
   for (const id of ids) postMessage({ type: 'error', id, message });
@@ -302,7 +311,8 @@ async function runTypeset(s, { ids, msg }, stale) {
 
     if (progressive !== false) {
       const html = M.UTF8ToString(M._tsr_render_semantic(doc));
-      for (const id of ids) postMessage({ type: 'semantic', id, html });
+      const lang = docLangOf(M, doc);  // (plan P3-30) the page's language from the first paint on
+      for (const id of ids) postMessage({ type: 'semantic', id, html, lang });
     }
 
     if (!(await measureLoop(M, doc, { tm, job, stale, scope: s.key }))) {

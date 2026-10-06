@@ -132,10 +132,27 @@ symbols repeats the last symbol and separator (`1.1` [2, 10] → 2.10, `A.1`
 ## 3. Locale terms (`semantic/terms.{h,cc}`)
 
 Words come from locale packs (`engine/data/locale`: en, zh-Hans, zh-Hant,
-ja) chosen by the document language (`doc.lang`, the host default) through
-exact → script (zh-TW/HK/MO → zh-Hant, zh/zh-CN/zh-SG → zh-Hans) → language
-→ root (en). ja gives 図/表/式, zh-Hant 圖/表/式; every other language keeps
-the English words. The `terms.*` settings override single words.
+ja, ko) chosen by the document's language. As built (plan P3-30; design T4
+M9, `semantic/locale.{h,cc}`): a tag reads its packs through a chain — its
+likely subtags (`locale.json` `likely`, CLDR likelySubtags: zh → zh-Hans-CN,
+zh-TW → zh-Hant-TW, ja → ja-Jpan-JP), then its truncations unless a parent
+locale says otherwise (`parents`, CLDR parentLocales: zh-Hant's parent is
+the root, not zh), ending at the root, en. ja gives 図/表/式, zh-Hant 圖/表/式,
+ko 그림/표/식; a language without a pack keeps the English words. A
+document's own packs (`$.locale(tag, {terms})`, DECL `locale`) come before
+the built-in pack of each name in the chain; the `terms.*` settings
+override single words. A pack's `hyphenate` decides `par.hyphenate: auto`
+for blocks of its language (en: true; the others read their parent's).
+
+The document's language (D-T06) is decided at ingest, before anything reads
+it (Phase 0, `Doc::documentLanguage`): its own (`$.doc({lang})`, DECL `doc`,
+the last), else the host's `doc.lang`, else — `auto`, the default — the
+language of its text (`detectDocumentLang`, over the RawOps texts, code
+skipped): kana make it ja (at least 5% of the CJK characters), hangul ko,
+Han zh-Hans or zh-Hant by the characters only one of the two scripts uses
+(`locale.json` `detect`), Latin letters en (a CJK character weighs four
+letters), nothing und. `tsr2_product(doc, "docinfo")` reports it with its
+source (`langSource`: host, document, detected).
 
 ## 4. The phases (`resolve/resolve.cc`, `semantic/`)
 

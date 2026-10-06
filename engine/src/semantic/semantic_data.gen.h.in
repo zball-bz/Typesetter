@@ -18,6 +18,9 @@ constexpr LocaleSource kLocalePacks[] = {
     {"zh-Hans", R"tsrdata(@LOCALE_ZH_HANS@)tsrdata"},
     {"zh-Hant", R"tsrdata(@LOCALE_ZH_HANT@)tsrdata"},
     {"ja", R"tsrdata(@LOCALE_JA@)tsrdata"},
+    {"ko", R"tsrdata(@LOCALE_KO@)tsrdata"},
 };
+// (plan P3-30) likely subtags, parent locales, the language detection's characters
+constexpr std::string_view kLocaleJson = R"tsrdata(@LOCALE_TABLE@)tsrdata";
 
 }  // namespace tsr

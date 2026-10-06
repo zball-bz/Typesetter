@@ -130,6 +130,8 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     fence: S.api.fence,
     declare: S.api.declare,
     math: S.api.math,  // $.math.symbol / op / fn (plan P2-15)
+    doc: S.api.doc,        // (plan P3-30) $.doc({lang})
+    locale: S.api.locale,  // (plan P3-30) $.locale(tag, {terms})
     // semantic declarations (plan P2-07): rows of the element registry
     element: S.api.element,
     counter: Object.assign((name, spec) => S.api.counter(name, spec), {

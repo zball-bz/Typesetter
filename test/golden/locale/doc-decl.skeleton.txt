@@ -1,0 +1,7 @@
+doc @[0,345)
+  code-block @[0,68) js=" $.doc({lang: \"en\"}); $.locale(\"en\", {terms: {figure: \"Fig. \"}}) "
+  para @[70,192) lines=1
+  region @[194,303) name="figure"
+    para @[286,294) lines=1
+  para @[305,321) lines=1
+  para @[323,344) lines=1

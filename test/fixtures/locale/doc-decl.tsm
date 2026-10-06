@@ -1,0 +1,11 @@
+#{ $.doc({lang: "en"}); $.locale("en", {terms: {figure: "Fig. "}}) }
+
+A document that says its language (`$.doc`, plan P3-30) over the host's zh-CN, and its own word for a figure (`$.locale`).
+
+#!figure(src: "photos/tower.jpg", alt: "tower", w: 400, h: 300, scale: 0.4, label: "fig-a")
+A tower.
+#figure!
+
+$ a = b $ <eq-a>
+
+See @fig-a and @eq-a.

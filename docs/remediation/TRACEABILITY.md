@@ -1271,7 +1271,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/math-text-measure-side-channel` | adhoc | medium | P1-20, P1-25 | grep:plan P1-25 |
 | `api-measure-code/config-plumbing-per-knob` | adhoc | high | P1-03 | grep:plan P1-03 |
 | `api-measure-code/global-feature-knobs-no-cascade` | adhoc | high | P3-02 | grep:plan P3-02 |
-| `api-measure-code/supplements-and-lang` | adhoc | medium | P1-10, P3-30 | |
+| `api-measure-code/supplements-and-lang` | adhoc | medium | P1-10, P3-30 | grep:plan P3-30 |
 | `api-measure-code/font-role-split` | adhoc | medium | P1-04 | grep:plan P1-04 |
 | `api-measure-code/token-tag-table-copies` | adhoc | medium | P3-22 | grep:plan P3-22 |
 | `api-measure-code/token-class-as-color-string` | adhoc | high | P2-08 | grep:plan P2-08 |
@@ -1313,7 +1313,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/lexical-syntax-copies` | adhoc | medium | P1-09 | grep:plan P1-09 |
 | `real-world-evidence/literate-cpp-hack` | adhoc | medium | P3-22 | grep:plan P3-22 |
 | `real-world-evidence/ref-cite-format-in-cpp` | adhoc | medium | P2-09 | grep:plan P2-09 |
-| `real-world-evidence/locale-terms-switch` | adhoc | medium | P1-10, P3-30 | |
+| `real-world-evidence/locale-terms-switch` | adhoc | medium | P1-10, P3-30 | grep:plan P3-30 |
 | `real-world-evidence/codepoint-heuristics` | adhoc | low | P4-02 | |
 | `real-world-evidence/sup-attach-private` | adhoc | medium | P2-08, P4-07 | |
 | `real-world-evidence/description-list-missing` | adhoc | medium | P3-34 | |

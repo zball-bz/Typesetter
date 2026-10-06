@@ -1,0 +1,8 @@
+[39,45) function "#style"
+[45,59) embedded "({lang: \"en\"})"
+[59,60) punctuation "["
+[68,69) punctuation "]"
+[84,90) function "#style"
+[90,104) embedded "({lang: \"zh\"})"
+[104,105) punctuation "["
+[113,114) punctuation "]"

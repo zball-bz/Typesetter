@@ -9,7 +9,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `host.dppx` | num:0.25:16 | `1` | HostOnly | Measure |  |
 | `host.loadedFaces` | str | `""` | HostOnly | Measure |  |
 | `host.epsilonSu` | num:0:64 | `1` | HostOnly | Emit, Measure |  |
-| `doc.lang` | lang | `"zh-CN"` | HostDefault | Resolve, Measure, Paint | `lang` |
+| `doc.lang` | lang | `"auto"` | HostDefault | Resolve, BoxTree, Measure, Paint | `lang` |
 | `doc.baseSize` | num:4:96 | `18` | HostDefault | BoxTree, Emit, Measure, Layout, Paint | `baseSizePx` |
 | `doc.leading` | num:0.5:4 | `1.5` | HostDefault | Emit, Layout, Paint | `lineHeight` |
 | `doc.parGap` | num:0:10 | `1.2` | HostDefault | Layout, Paint |  |

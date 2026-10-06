@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"文書の言語","label":null,"span":[0,17]}],"regions":[{"name":"figure","label":"fig-a","span":[129,245]}],"fences":[],"labels":[{"id":"fig-a","rule":"region","span":[129,220]},{"id":"eq-a","rule":"math","span":[267,273]}],"diagnostics":[]}

@@ -1,0 +1,11 @@
+= 文件語言
+
+這是一份以繁體中文書寫的文件，圖與表的編號會使用繁體的字詞，說明其語言是由文字偵測而來。
+
+#!figure(src: "photos/tower.jpg", alt: "tower", w: 400, h: 300, scale: 0.4, label: "fig-a")
+塔的照片。
+#figure!
+
+$ a^2 + b^2 = c^2 $ <eq-a>
+
+請參見 @fig-a 與 @eq-a。

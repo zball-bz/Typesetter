@@ -15,6 +15,7 @@ add_library(tsr_core STATIC
   src/syntax/lexer.cc
   src/syntax/exports.cc
   src/elements/registry.cc
+  src/semantic/locale.cc
   src/semantic/terms.cc
   src/semantic/numbering.cc
   src/semantic/index.cc
@@ -57,7 +58,7 @@ add_library(tsr_core STATIC
 )
 # built-in element rows and locale packs, embedded (plan P1-10)
 set(TSR_DATA data/elements.json data/defaults.json data/locale/en.json data/locale/zh-Hans.json
-    data/locale/zh-Hant.json data/locale/ja.json)
+    data/locale/zh-Hant.json data/locale/ja.json data/locale/ko.json data/locale/locale.json)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${TSR_DATA})
 file(READ data/elements.json ELEMENTS_JSON)
 file(READ data/defaults.json DEFAULTS_JSON)
@@ -65,6 +66,8 @@ file(READ data/locale/en.json LOCALE_EN)
 file(READ data/locale/zh-Hans.json LOCALE_ZH_HANS)
 file(READ data/locale/zh-Hant.json LOCALE_ZH_HANT)
 file(READ data/locale/ja.json LOCALE_JA)
+file(READ data/locale/ko.json LOCALE_KO)
+file(READ data/locale/locale.json LOCALE_TABLE)
 configure_file(src/semantic/semantic_data.gen.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/gen/semantic_data.gen.h @ONLY)
 target_include_directories(tsr_core PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/gen)

@@ -1,0 +1,27 @@
+lower v1 abi 3d3ccfbb docEnd 345 holes 2 module 13cf83dc98414602
+piece 0 hole 0 js [130,205)
+piece 1 hole 1 js [207,298)
+block 0 stmt [0,68) user framed holes 0..1
+  STMT 0
+block 1 content [70,192)
+  CALL para [70,192)
+    TEXT "A document that says its language (" [70,105)
+    CALL code [105,112) text="$.doc"
+    TEXT ", plan P3-30) over the host's zh-CN, and its own word for a figure (" [112,180)
+    CALL code [180,190) text="$.locale"
+    TEXT ")." [190,192)
+block 2 content [194,303) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [194,303)
+    CALL para [286,294)
+      TEXT "A tower." [286,294)
+block 3 content [305,321)
+  CALL para [305,321)
+    CALL math [305,321) display=true label="eq-a"
+      CALL mathsrc [307,312) src="a = b"
+block 4 content [323,344)
+  CALL para [323,344)
+    TEXT "See " [323,326) raw=0:0,4:3
+    CALL ref [327,333) target="fig-a"
+    TEXT " and " [334,337) raw=0:0,1:0,5:3
+    CALL ref [338,343) target="eq-a"
+    TEXT "." [343,344)

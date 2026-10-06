@@ -1,0 +1,19 @@
+doc @[0,344)
+  heading @[0,19) level=1
+    text @[2,19) str="Document language"
+  para @[21,181)
+    text @[21,46) str="An English document under "
+    code @[47,63) str="doc.lang: auto"
+    text @[64,181) str=" (plan P3-30, D-T06): its language is detected from its text, so its figures, tables and equations take English words."
+  region @[183,292) name="figure"
+    para @[275,283)
+      text @[275,283) str="A tower."
+  para @[294,320)
+    math @[294,320) display=1 src="a^2 + b^2 = c^2" label="eq-a"
+      text @[296,311) str="a^2 + b^2 = c^2"
+  para @[322,343)
+    text @[322,325) str="See "
+    ref @[326,332) target="fig-a"
+    text @[333,336) str=" and "
+    ref @[337,342) target="eq-a"
+    text @[342,343) str="."

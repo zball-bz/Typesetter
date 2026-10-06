@@ -1,0 +1,9 @@
+doc @[0,148) [base]
+  para @[0,148) [base]
+    text @[0,39) [base] str="他说“好的”然后离开。他说"
+    styled @[39,69) [base lang=en] lang="en"
+      text @[60,68) [base lang=en] str="“OK”"
+    text @[69,84) [base] str="然后离开。"
+    styled @[84,114) [base lang=zh] lang="zh"
+      text @[105,113) [base lang=zh] str="“OK”"
+    text @[115,148) [base] str=" 不在中文旁边也是全角。" raw=0:0,1:0

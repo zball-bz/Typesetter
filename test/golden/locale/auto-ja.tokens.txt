@@ -1,0 +1,8 @@
+[0,1) keyword "="
+[2,17) function "文書の言語"
+[129,220) function "#!figure(src: \"photos/tower.jpg\", alt: \"tower\", w: 400, h: 300, scale: 0.4, label: \"fig-a\")"
+[237,245) function "#figure!"
+[247,266) type "$ a^2 + b^2 = c^2 $"
+[267,273) label "<eq-a>"
+[275,281) constant "@fig-a"
+[286,291) constant "@eq-a"

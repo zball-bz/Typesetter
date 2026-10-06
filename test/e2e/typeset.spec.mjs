@@ -346,7 +346,39 @@ test('settings: one document, legacy options as sugar, diagnostics', async ({ pa
     { widthPx: 300, settings: { doc: { leading: 'tall' }, nope: { x: 1 } } }), { source });
   expect(bad.diags).toContain('setting-type');
   expect(bad.diags).toContain('setting-unknown');
-  expect(bad.html).toContain('>图</span>');  // defaults stand (zh terms)
+  // defaults stand: doc.lang auto (plan P3-30) — this English text detects en
+  expect(bad.html).toContain('>Figure 1');
+});
+
+// an unclosed bracket in a formula has no closing glyph (it was U+0000, whose
+// NUL cut the page's HTML short and the shell threw)
+test('math: an unclosed bracket typesets', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const r = await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300 }), 'A $($ b.\n\nSee it.\n');
+  expect(r.diags).toContain('unclosed bracket');
+  expect(r.html).not.toContain('\u0000');
+  expect(await page.evaluate(() => document.querySelectorAll('#out .tsr-para').length)).toBe(2);
+});
+
+// plan P3-30 (D-T06): doc.lang auto — the language of the text decides the
+// terms and the page's lang; the document's own $.doc wins
+test('locale: auto detects the language; the container takes it', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const fig = '#!figure(src: "x.png", alt: "a", w: 100, h: 50, label: "f")\n';
+  const cases = [
+    [fig + 'A caption.\n#figure!\n\nSee @f in this English text.', 'en', 'Figure 1'],
+    [fig + '塔の写真。\n#figure!\n\nこの図を参照してください：@f。', 'ja', '図 1'],
+    [fig + '塔的照片。\n#figure!\n\n這是繁體中文的說明，請參見 @f。', 'zh-Hant', '圖 1'],
+    ['#{ $.doc({lang: "en"}) }\n\n' + fig + '塔的照片。\n#figure!\n\n请参见 @f。', 'en', 'Figure 1'],
+  ];
+  for (const [source, lang, word] of cases) {
+    await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300 }), source);
+    expect(await page.evaluate(() => document.getElementById('out').textContent)).toContain(word);
+    expect(await page.evaluate(() => document.getElementById('out').getAttribute('lang'))).toBe(lang);
+    expect(await page.evaluate(() => document.querySelector('#out .tsr-doc').getAttribute('lang'))).toBe(lang);
+  }
 });
 
 // plan P1-01: the ABI handshake refuses an engine that cannot read what the

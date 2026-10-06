@@ -1,0 +1,25 @@
+lower v1 abi 3d3ccfbb docEnd 344 holes 1 module 05aa6ce740cff1ec
+piece 0 hole 0 js [103,194)
+block 0 content [0,19)
+  CALL heading [0,19) level=1 label=null
+    TEXT "Document language" [2,19)
+block 1 content [21,181)
+  CALL para [21,181)
+    TEXT "An English document under " [21,46) raw=0:0,26:25
+    CALL code [47,63) text="doc.lang: auto"
+    TEXT " (plan P3-30, D-T06): its language is detected from its text, so its figures, tables and equations take English words." [64,181) raw=0:0,1:0
+block 2 content [183,292) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [183,292)
+    CALL para [275,283)
+      TEXT "A tower." [275,283)
+block 3 content [294,320)
+  CALL para [294,320)
+    CALL math [294,320) display=true label="eq-a"
+      CALL mathsrc [296,311) src="a^2 + b^2 = c^2"
+block 4 content [322,343)
+  CALL para [322,343)
+    TEXT "See " [322,325) raw=0:0,4:3
+    CALL ref [326,332) target="fig-a"
+    TEXT " and " [333,336) raw=0:0,1:0,5:3
+    CALL ref [337,342) target="eq-a"
+    TEXT "." [342,343)

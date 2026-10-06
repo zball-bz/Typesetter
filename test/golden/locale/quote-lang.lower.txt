@@ -1,0 +1,12 @@
+lower v1 abi 3d3ccfbb docEnd 149 holes 2 module c21743b509843dcf
+piece 0 hole 0 js [129,174)
+piece 1 hole 1 js [176,221)
+block 0 content [0,148) user framed holes 0..2
+  CALL para [0,148)
+    TEXT "他说“好的”然后离开。他说" [0,39)
+    HOLE 0 [39,69)
+      TEXT "“OK”" [60,68)
+    TEXT "然后离开。" [69,84)
+    HOLE 1 [84,114)
+      TEXT "“OK”" [105,113)
+    TEXT " 不在中文旁边也是全角。" [115,148) raw=0:0,1:0

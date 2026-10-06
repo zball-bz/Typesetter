@@ -2340,6 +2340,8 @@ int main(int argc, char** argv) {
         // "products": ["paged"] with its page.height setting
         // the semantic page's stylesheet (rulesToCss, plan P3-01): "products": ["css"]
         if (hasProduct("css")) goldenCompare(g("css"), doc.product("css"), update, label + ":css");
+        // (plan P3-30) the document's language and where it came from
+        if (hasProduct("docinfo")) goldenCompare(g("docinfo"), doc.product("docinfo"), update, label + ":docinfo");
         // (pagination reports into the paged render's slice — keep-violated,
         // page-overflow, plan P3-12: the screen diagnostics are taken first)
         const std::string screenDiags = doc.product("diags");

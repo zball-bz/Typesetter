@@ -1,0 +1,29 @@
+doc @[70,344) [base]
+  para @[70,192) [base]
+    text @[70,105) [base] str="A document that says its language ("
+    code @[105,112) [CODEx0.85]
+      text @[105,112) [CODEx0.85] str="$.doc"
+    text @[112,180) [base] str=", plan P3-30) over the host's zh-CN, and its own word for a figure ("
+    code @[180,190) [CODEx0.85]
+      text @[180,190) [CODEx0.85] str="$.locale"
+    text @[190,192) [base] str=")."
+  group @[194,303) [base] role="figure" label="fig-a"
+    image @[194,303) [base] src="photos/tower.jpg" alt="tower" w=400 h=300 scale=0.4
+    para @[286,294) [base] role="caption" slot="caption"
+      styled @[286,294) [BOLD] role="caption-label"
+        text @[286,294) [BOLD] str="Fig. 1: "
+      text @[286,294) [base] str="A tower."
+  mathblock @[305,321) [base] label="eq-a"
+    mathsrc @[307,312) [base] src="a = b"
+    seq @[305,321) [base] slot="tag" syn="eqno" copy="omit"
+      text @[305,321) [base] str="(1)"
+  para @[323,344) [base]
+    text @[323,326) [base] str="See " raw=0:0,4:3
+    ref @[327,333) [base] target="fig-a"
+      text @[327,333) [base] str="Fig. 1"
+    text @[334,337) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[338,343) [base] target="eq-a"
+      text @[338,343) [base] str="Eq. (1)"
+    text @[343,344) [base] str="."
+decl doc name="doc" flow=0 @[0,68) ext.lang="en"
+decl locale name="en" flow=0 @[0,68) ext.terms="{\"figure\":\"Fig. \"}"

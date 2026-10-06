@@ -2,10 +2,12 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <unordered_map>
 
 #include "../code/overlay.h"
 #include "../elements/registry.h"
 #include "../model/cascade.h"
+#include "../semantic/locale.h"
 
 namespace tsr {
 
@@ -162,8 +164,16 @@ class Builder {
     t->blocks.push_back(b);
     return (u32)t->blocks.size() - 1;
   }
+  // (plan P3-30) whether a language's words hyphenate (its locale pack),
+  // once per language: a run's own (text.lang), else the document's
+  std::unordered_map<StrRef, bool> hyphenates_;
+  bool hyphenates(StrRef lang) {
+    auto it = hyphenates_.find(lang);
+    if (it != hyphenates_.end()) return it->second;
+    return hyphenates_[lang] = localeHyphenates(lang ? strs.get(lang) : std::string_view(cfg.lang));
+  }
   // a node's block properties (plan P3-01) as the traits layout reads
-  void traitsOf(const ContentNode* n, BlockTraits& tr) const {
+  void traitsOf(const ContentNode* n, BlockTraits& tr) {
     const NodeProps& np = props.get(n->props);
     tr.gapNum = np.blockGap.num;
     tr.gapDen = np.blockGap.den;
@@ -173,7 +183,9 @@ class Builder {
                : np.parAlign == PARALIGN_END    ? Align::End
                                                 : Align::Justify;
     tr.singleCenter = np.parSingleLine == PARSINGLELINE_CENTER;
-    tr.hyphenate = np.parHyphenate != PARHYPHENATE_FALSE;
+    // (plan P3-30) auto: whether its language's words hyphenate (its pack)
+    tr.hyphenate = np.parHyphenate == PARHYPHENATE_TRUE ||
+                   (np.parHyphenate != PARHYPHENATE_FALSE && hyphenates(styles.get(n->style).lang));
     tr.keepWithNext = np.keepWithNext || np.keep == KEEP_WITH_NEXT || np.keep == KEEP_BOTH;
     tr.snapKerning = np.snapKerning;
     if (np.sidecarFrac > 0) tr.sidecarFrac = np.sidecarFrac;

@@ -1,0 +1,8 @@
+[0,1) keyword "="
+[2,14) function "文件語言"
+[150,241) function "#!figure(src: \"photos/tower.jpg\", alt: \"tower\", w: 400, h: 300, scale: 0.4, label: \"fig-a\")"
+[258,266) function "#figure!"
+[268,287) type "$ a^2 + b^2 = c^2 $"
+[288,294) label "<eq-a>"
+[306,312) constant "@fig-a"
+[317,322) constant "@eq-a"

@@ -1,0 +1,11 @@
+doc @[0,149)
+  para @[0,148)
+    text @[0,39) str="他说“好的”然后离开。他说"
+    splice @[39,69) expr="style({lang: \"en\"})"
+      arg @[60,68)
+        text @[60,68) str="“OK”"
+    text @[69,84) str="然后离开。"
+    splice @[84,114) expr="style({lang: \"zh\"})"
+      arg @[105,113)
+        text @[105,113) str="“OK”"
+    text @[115,148) str=" 不在中文旁边也是全角。"

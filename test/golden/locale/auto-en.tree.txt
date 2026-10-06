@@ -1,0 +1,26 @@
+doc @[0,343) [base]
+  heading @[0,19) [BOLDx1.60] level=1 label="h-1"
+    text @[2,19) [BOLDx1.60] str="Document language"
+  para @[21,181) [base]
+    text @[21,46) [base] str="An English document under " raw=0:0,26:25
+    code @[47,63) [CODEx0.85]
+      text @[47,63) [CODEx0.85] str="doc.lang: auto"
+    text @[64,181) [base] str=" (plan P3-30, D-T06): its language is detected from its text, so its figures, tables and equations take English words." raw=0:0,1:0
+  group @[183,292) [base] role="figure" label="fig-a"
+    image @[183,292) [base] src="photos/tower.jpg" alt="tower" w=400 h=300 scale=0.4
+    para @[275,283) [base] role="caption" slot="caption"
+      styled @[275,283) [BOLD] role="caption-label"
+        text @[275,283) [BOLD] str="Figure 1: "
+      text @[275,283) [base] str="A tower."
+  mathblock @[294,320) [base] label="eq-a"
+    mathsrc @[296,311) [base] src="a^2 + b^2 = c^2"
+    seq @[294,320) [base] slot="tag" syn="eqno" copy="omit"
+      text @[294,320) [base] str="(1)"
+  para @[322,343) [base]
+    text @[322,325) [base] str="See " raw=0:0,4:3
+    ref @[326,332) [base] target="fig-a"
+      text @[326,332) [base] str="Figure 1"
+    text @[333,336) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[337,342) [base] target="eq-a"
+      text @[337,342) [base] str="Eq. (1)"
+    text @[342,343) [base] str="."

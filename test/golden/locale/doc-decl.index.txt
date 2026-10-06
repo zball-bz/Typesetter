@@ -1,0 +1,4 @@
+instance figure 1 label=fig-a @[194,303)
+instance equation 1 label=eq-a @[305,321)
+label fig-a -> figure 1 @[194,303)
+label eq-a -> equation 1 @[305,321)

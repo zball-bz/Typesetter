@@ -1,0 +1,11 @@
+{
+  "lang": "ko",
+  "terms": {
+    "section": "§",
+    "figure": "그림 ",
+    "table": "표 ",
+    "equation": "식 ",
+    "appendix": "부록 ",
+    "caption-sep": ": "
+  }
+}

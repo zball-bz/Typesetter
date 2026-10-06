@@ -1,0 +1,22 @@
+doc @[0,322) [base]
+  heading @[0,17) [BOLDx1.60] level=1 label="h-1"
+    text @[2,17) [BOLDx1.60] str="文書の言語"
+  para @[19,127) [base]
+    text @[19,127) [base] str="この文書は日本語で書かれています。図と式の番号は日本語の語で示されます。"
+  group @[129,245) [base] role="figure" label="fig-a"
+    image @[129,245) [base] src="photos/tower.jpg" alt="tower" w=400 h=300 scale=0.4
+    para @[221,236) [base] role="caption" slot="caption"
+      styled @[221,236) [BOLD] role="caption-label"
+        text @[221,236) [BOLD] str="図 1："
+      text @[221,236) [base] str="塔の写真。"
+  mathblock @[247,273) [base] label="eq-a"
+    mathsrc @[249,264) [base] src="a^2 + b^2 = c^2"
+    seq @[247,273) [base] slot="tag" syn="eqno" copy="omit"
+      text @[247,273) [base] str="(1)"
+  para @[275,322) [base]
+    ref @[275,281) [base] target="fig-a"
+      text @[275,281) [base] str="図 1"
+    text @[282,285) [base] str=" と " raw=0:0,1:0,5:3
+    ref @[286,291) [base] target="eq-a"
+      text @[286,291) [base] str="式 (1)"
+    text @[292,322) [base] str=" を参照してください。" raw=0:0,1:0

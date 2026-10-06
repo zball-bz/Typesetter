@@ -37,10 +37,11 @@ export const SETTINGS = Object.freeze({
   },
   "doc.lang": {
     "dom": "lang",
-    "def": "zh-CN",
+    "def": "auto",
     "prec": "HostDefault",
     "affects": [
       "Resolve",
+      "BoxTree",
       "Measure",
       "Paint"
     ]
@@ -488,7 +489,7 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "epsilonSu": 1
   },
   "doc": {
-    "lang": "zh-CN",
+    "lang": "auto",
     "baseSize": 18,
     "leading": 1.5,
     "parGap": 1.2,

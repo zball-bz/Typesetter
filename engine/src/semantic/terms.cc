@@ -1,60 +1,43 @@
 #include "terms.h"
 
+#include "../model/model.h"
 #include "../support/json.h"
-#include "semantic_data.gen.h"
 
 namespace tsr {
 
-const std::vector<LocalePack>& builtinLocalePacks() {
-  static const std::vector<LocalePack> packs = [] {
-    std::vector<LocalePack> out;
-    for (const LocaleSource& src : kLocalePacks) {
-      JsonValue v;
-      JsonReader rd;
-      if (!rd.parse(src.json, v)) __builtin_trap();  // checked by the native tests
+namespace {
+const ArgVal* extOf(const Decl& d, const Interner& strs, std::string_view name) {
+  for (const ArgVal& a : d.args)
+    if (a.key == ArgK::ext && strs.get(a.name) == name) return &a;
+  return nullptr;
+}
+}  // namespace
+
+Terms::Terms(const ResolveSettings& cfg, const std::vector<Decl>* decls, const Interner* strs)
+    : pack_(localePackFor(cfg.lang)) {
+  // (plan P3-30) the document's packs: $.locale(tag, {terms, hyphenate})
+  if (decls && strs)
+    for (const Decl& d : *decls) {
+      if (d.superseded || d.type >= DECL_COUNT || std::string_view(kDecls[d.type].name) != "locale") continue;
       LocalePack p;
-      p.lang = std::string(src.lang);
-      if (const JsonValue* t = v.get("terms"))
-        for (size_t k = 0; k < t->keys.size(); k++) p.terms[t->keys[k]] = t->vals[k].str;
-      out.push_back(std::move(p));
+      p.lang = maximizeLocale(strs->get(d.name)) == maximizeLocale("en") ? "en" : std::string(strs->get(d.name));
+      if (const ArgVal* t = extOf(d, *strs, "terms"); t && t->tag == ArgTag::Str) {
+        JsonValue v;
+        JsonReader rd;
+        if (rd.parse(strs->get(t->ref), v))
+          for (size_t k = 0; k < v.keys.size(); k++)
+            if (v.vals[k].t == JsonValue::T::Str) p.terms[v.keys[k]] = v.vals[k].str;
+      }
+      own_.push_back(std::move(p));
     }
-    return out;
-  }();
-  return packs;
-}
-
-std::string localePackFor(std::string_view lang) {
-  auto has = [](std::string_view name) {
+  // its chain: each name's own pack, then the built-in one; the root is en
+  for (std::string name : localeChain(cfg.lang)) {
+    if (name == "root") name = "en";
+    for (const LocalePack& p : own_)
+      if (p.lang == name || maximizeLocale(p.lang) == maximizeLocale(name)) chain_.push_back(&p);
     for (const LocalePack& p : builtinLocalePacks())
-      if (p.lang == name) return true;
-    return false;
-  };
-  std::string l(lang);
-  for (char& c : l)
-    if (c == '_') c = '-';
-  if (has(l)) return l;
-  auto lower = [](std::string s) {
-    for (char& c : s)
-      if (c >= 'A' && c <= 'Z') c = (char)(c - 'A' + 'a');
-    return s;
-  };
-  std::string ll = lower(l);
-  std::string prim = ll.substr(0, ll.find('-'));
-  if (prim == "zh") {
-    bool hant = ll.find("hant") != std::string::npos || ll == "zh-tw" || ll == "zh-hk" ||
-                ll == "zh-mo" || ll.rfind("zh-tw-", 0) == 0 || ll.rfind("zh-hk-", 0) == 0 ||
-                ll.rfind("zh-mo-", 0) == 0;
-    return hant ? "zh-Hant" : "zh-Hans";
+      if (p.lang == name) chain_.push_back(&p);
   }
-  if (has(prim)) return prim;
-  return "en";
-}
-
-Terms::Terms(const ResolveSettings& cfg) : pack_(localePackFor(cfg.lang)) {
-  for (const LocalePack& p : builtinLocalePacks())
-    if (p.lang == pack_) chain_.push_back(&p);
-  for (const LocalePack& p : builtinLocalePacks())
-    if (p.lang == "en" && pack_ != "en") chain_.push_back(&p);
   const std::pair<const char*, const std::string*> kOverrides[] = {
       {"section", &cfg.supHeading}, {"table", &cfg.supTable},     {"figure", &cfg.supFigure},
       {"equation", &cfg.supEquation}, {"caption-sep", &cfg.capSep}};

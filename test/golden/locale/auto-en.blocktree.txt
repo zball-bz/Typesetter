@@ -1,0 +1,17 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,19)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1" @[0,19)
+top pid=1 leaves=1
+  stack root gap=1/1 @[21,181)
+    paragraph para unit=0 @[21,181)
+top pid=2 leaves=2
+  stack root gap=1/1 @[183,292)
+    stack figure anchor="fig-a" @[183,292)
+      replaced image image unit=0 ragged keep-with-next carry="fig-a" @[183,292)
+      paragraph caption unit=1 single-center @[275,283)
+top pid=3 leaves=1
+  stack root gap=1/1 @[294,320)
+    replaced math math unit=0 ragged anchor="eq-a" @[294,320)
+top pid=4 leaves=1
+  stack root gap=1/1 @[322,343)
+    paragraph para unit=0 @[322,343)

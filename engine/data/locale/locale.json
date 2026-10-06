@@ -1,0 +1,47 @@
+{
+ "$comment": [
+  "The locale table (plan P3-30; design T4 M9, D-T06): likely subtags (CLDR likelySubtags, the",
+  "languages and scripts this engine detects and ships packs for), parent locales (CLDR",
+  "parentLocales: a script variant does not inherit from its language), and the document-language",
+  "detection's characters: simplified forms and their traditional counterparts that the other script",
+  "does not use (frequent words), counted in a Han text to tell zh-Hans from zh-Hant."
+ ],
+ "likely": {
+  "en": "en-Latn-US",
+  "ja": "ja-Jpan-JP",
+  "ko": "ko-Kore-KR",
+  "zh": "zh-Hans-CN",
+  "zh-CN": "zh-Hans-CN",
+  "zh-SG": "zh-Hans-SG",
+  "zh-MY": "zh-Hans-MY",
+  "zh-TW": "zh-Hant-TW",
+  "zh-HK": "zh-Hant-HK",
+  "zh-MO": "zh-Hant-MO",
+  "zh-Hans": "zh-Hans-CN",
+  "zh-Hant": "zh-Hant-TW",
+  "und": "en-Latn-US",
+  "und-Latn": "en-Latn-US",
+  "und-Hans": "zh-Hans-CN",
+  "und-Hant": "zh-Hant-TW",
+  "und-Hani": "zh-Hani-CN",
+  "und-Jpan": "ja-Jpan-JP",
+  "und-Hira": "ja-Hira-JP",
+  "und-Kana": "ja-Kana-JP",
+  "und-Kore": "ko-Kore-KR",
+  "und-Hang": "ko-Hang-KR"
+ },
+ "parents": {
+  "zh-Hant": "root",
+  "zh-Hant-MO": "zh-Hant-HK",
+  "en-150": "en-001",
+  "en-GB": "en-001",
+  "en-AU": "en-001",
+  "en-IN": "en-001",
+  "en-NZ": "en-001",
+  "en-SG": "en-001"
+ },
+ "detect": {
+  "hans": "这个们来说时为会对国学发经过动还进种实现关长开问题东么没将应样从当点无头体机间两见让请认识话语写读书买卖车门马鸟鱼电脑网络图层区华万与产务业专丰临乐习乡亚亲亿仅价众优传伤伦伟侧债倾储儿党兰兴养内册军农决况净减几击划刘则刚创删别剂剑剧劝办励劳势医协单卫却厂厅历压县参双变叶号叹吗启员响团园围圆圣场坏块坚处备够夺奋奖妇妈娱孙宁宝审宪宽宾寻导寿尔尘尝属岁岛岭币师帐带帮广庆库庙废弃张弹归录彻径忆怀态总恋恶悬惊惧惨惯愿戏战户扑执扩扫扬扰护报担拟拥择挂挤挥损换据携摄摆数断旧显晓暂术杀杂权条杨极构枪柜标栏树档桥梦检楼欢欧残毕毁气汇汉汤沟泪泽洁浅测济浓涛润涨渐温湾满滚灭灯灵灾炉炼热爱爷牵犹状独狭猎献环画畅疗盖盘硕确礼祸离积称稳穷窃竞笔简类粮紧纠红纪约级纯纳纸线组细织终结给统继续维综绿缓编缘罗罚职联肃胜脉脚艺节苏荣药获虑虽补装规视览觉誉计订讨训议记讲许论设访证评诉词译试诗诚询该详误调谈谢贝负财责败货质贯贸费资赛赞赵赶跃践轨转轮软轻载较辅辈边达迁运远违连迟适选递逻遗邮邻郑释鉴针钟钢钱铁银销错锋闭闯闹闻阅队阶际陆陈险随隐难雾静页项顺须顾预领频额风飞饭馆驱驾验骑鲜鸡麦黄齐龙龟观讯讼赠谁课谓谱",
+  "hant": "這個們來說時為會對國學發經過動還進種實現關長開問題東麼沒將應樣從當點無頭體機間兩見讓請認識話語寫讀書買賣車門馬鳥魚電腦網絡圖層區華萬與產務業專豐臨樂習鄉亞親億僅價眾優傳傷倫偉側債傾儲兒黨蘭興養內冊軍農決況淨減幾擊劃劉則剛創刪別劑劍劇勸辦勵勞勢醫協單衛卻廠廳歷壓縣參雙變葉號嘆嗎啟員響團園圍圓聖場壞塊堅處備夠奪奮獎婦媽娛孫寧寶審憲寬賓尋導壽爾塵嘗屬歲島嶺幣師帳帶幫廣慶庫廟廢棄張彈歸錄徹徑憶懷態總戀惡懸驚懼慘慣願戲戰戶撲執擴掃揚擾護報擔擬擁擇掛擠揮損換據攜攝擺數斷舊顯曉暫術殺雜權條楊極構槍櫃標欄樹檔橋夢檢樓歡歐殘畢毀氣匯漢湯溝淚澤潔淺測濟濃濤潤漲漸溫灣滿滾滅燈靈災爐煉熱愛爺牽猶狀獨狹獵獻環畫暢療蓋盤碩確禮禍離積稱穩窮竊競筆簡類糧緊糾紅紀約級純納紙線組細織終結給統繼續維綜綠緩編緣羅罰職聯肅勝脈腳藝節蘇榮藥獲慮雖補裝規視覽覺譽計訂討訓議記講許論設訪證評訴詞譯試詩誠詢該詳誤調談謝貝負財責敗貨質貫貿費資賽贊趙趕躍踐軌轉輪軟輕載較輔輩邊達遷運遠違連遲適選遞邏遺郵鄰鄭釋鑑針鐘鋼錢鐵銀銷錯鋒閉闖鬧聞閱隊階際陸陳險隨隱難霧靜頁項順須顧預領頻額風飛飯館驅駕驗騎鮮雞麥黃齊龍龜觀訊訟贈誰課謂譜"
+ }
+}

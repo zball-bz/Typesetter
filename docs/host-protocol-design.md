@@ -17,7 +17,12 @@ defaults, rows, the legacy option map, `settingsFromOptions`).
 - `tsr2_set_config(doc, json)` applies a document in row order. `doc.lang` is
   the host default document language: it picks the locale terms (supplement
   words, docs/semantics-design.md §3), which `terms.*` override word by word
-  (plan P1-10). Unknown paths are
+  (plan P1-10). As built (plan P3-30, D-T06): its default is `auto` — the
+  engine detects the language of the text at ingest — and a document's own
+  `$.doc({lang})` wins over the host's; the result is docinfo's `lang` (its
+  `langSource`: host, document, detected). The shell sets the container's
+  `lang` from it (the first paint's and every result's), never "auto";
+  `export-static` writes it as `<html lang>`. Unknown paths are
   `setting-unknown`, values outside their domain `setting-type` (the row keeps
   its value), malformed JSON `setting-json`; these form the Settings slice of
   the diagnostics, replaced by the next document.

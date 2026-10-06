@@ -49,7 +49,9 @@ const { html: semantic, css: rulesCss, diagnostics, ok, manifest, docinfo } =
 if (diagnostics.trim()) console.error(diagnostics.trim());
 if (!ok) process.exit(1);
 // (plan P3-21) the page's language and title are the document's (docinfo)
-const lang = docinfo.lang || settingOf(settings, 'doc.lang');
+// (plan P3-30) the engine decides it — the document's own, the host's, or
+// detected (doc.lang: auto); an undecided one is und, never "auto"
+const lang = docinfo.lang || (settingOf(settings, 'doc.lang') === 'auto' ? 'und' : settingOf(settings, 'doc.lang'));
 
 const pageTitle = title ?? (docinfo.title || inputs[0].replace(/^.*\//, '').replace(/\.tsm$/, ''));
 const escapedSrc = source.replace(/<\/script/gi, '<\\/script');

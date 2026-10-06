@@ -41,7 +41,7 @@ struct Config {
   double dppx = 1;  // host.dppx
   std::string loadedFaces = "";  // host.loadedFaces
   double epsilonPerWordSu = 1;  // host.epsilonSu
-  std::string lang = "zh-CN";  // doc.lang
+  std::string lang = "auto";  // doc.lang
   double baseSizePx = 18;  // doc.baseSize
   double lineHeight = 1.5;  // doc.leading
   double paraSpacingEm = 1.2;  // doc.parGap
@@ -146,9 +146,11 @@ struct ResolveSettings {
         capSep(c.capSep) {}
 };
 struct BoxTreeSettings {
+  const std::string& lang;  // doc.lang
   const double& baseSizePx;  // doc.baseSize
   BoxTreeSettings(const Config& c)  // NOLINT: a Config is its view
-      : baseSizePx(c.baseSizePx) {}
+      : lang(c.lang),
+        baseSizePx(c.baseSizePx) {}
 };
 struct EmitSettings {
   const double& epsilonPerWordSu;  // host.epsilonSu

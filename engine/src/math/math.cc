@@ -702,9 +702,11 @@ struct Layouter {
     target = kMathPolicy.shortfall(target);  // short_fall
     auto delim = [&](u32 cp, u8 cls) {
       // (plan P3-29) `.`: no delimiter (TeX's \right.), its null space
-      // (\nulldelimiterspace: 1.2pt at 10pt)
-      if (cp == '.') {
-        MathBox* sp = spacer(toSu(0.12 * F.upem, st));
+      // (\nulldelimiterspace: 1.2pt at 10pt); none at all (an unclosed
+      // group's missing closer, plan P3-30): nothing — never a U+0000 glyph,
+      // whose NUL would cut the page's HTML short
+      if (cp == '.' || cp == 0) {
+        MathBox* sp = spacer(cp ? toSu(0.12 * F.upem, st) : 0);
         sp->cls = sp->firstCls = sp->lastCls = cls;
         return sp;
       }

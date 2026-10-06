@@ -1,6 +1,7 @@
 {
-  "$comment": "Locale pack (plan P1-10; design T3 LocaleTerms over T4 LocalePack): the words the semantic layer generates. en is the root: every language without its own pack falls back to it.",
+  "$comment": "Locale pack (plan P1-10; design T3 LocaleTerms over T4 LocalePack): the words the semantic layer generates. en is the root: every language without its own pack falls back to it. hyphenate (plan P3-30): par.hyphenate auto — whether the language's words hyphenate; a pack without it reads its parent's.",
   "lang": "en",
+  "hyphenate": true,
   "terms": {
     "section": "§",
     "figure": "Figure ",

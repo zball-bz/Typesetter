@@ -1,0 +1,23 @@
+lower v1 abi 3d3ccfbb docEnd 326 holes 1 module 05aa6ce740cff1ec
+piece 0 hole 0 js [103,194)
+block 0 content [0,14)
+  CALL heading [0,14) level=1 label=null
+    TEXT "文件語言" [2,14)
+block 1 content [16,148)
+  CALL para [16,148)
+    TEXT "這是一份以繁體中文書寫的文件，圖與表的編號會使用繁體的字詞，說明其語言是由文字偵測而來。" [16,148)
+block 2 content [150,266) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [150,266)
+    CALL para [242,257)
+      TEXT "塔的照片。" [242,257)
+block 3 content [268,294)
+  CALL para [268,294)
+    CALL math [268,294) display=true label="eq-a"
+      CALL mathsrc [270,285) src="a^2 + b^2 = c^2"
+block 4 content [296,325)
+  CALL para [296,325)
+    TEXT "請參見 " [296,305) raw=0:0,10:9
+    CALL ref [306,312) target="fig-a"
+    TEXT " 與 " [313,316) raw=0:0,1:0,5:3
+    CALL ref [317,322) target="eq-a"
+    TEXT "。" [322,325)

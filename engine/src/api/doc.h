@@ -12,6 +12,7 @@
 #include "../model/cascade.h"
 #include "../resolve/resolve.h"
 #include "../semantic/declare.h"
+#include "../semantic/locale.h"
 #include "../boxtree/build.h"
 #include "../resource/resource_table.h"
 #include "../resource/session.h"
@@ -201,6 +202,7 @@ struct Doc {
   bool forkInto(Doc& f, std::string_view patch) const {
     if (!done(Stage::Ingest)) return false;
     f.cfg = cfg;
+    f.langSource = langSource;  // (its language, as this document decided it)
     f.diags.begin(DiagOrigin::Settings);
     SettingsPatch p = applySettings(f.cfg, patch, f.diags);
     if (p.applied && firstStage(p.affects) <= Stage::Execute) return false;
@@ -277,6 +279,7 @@ struct Doc {
     decodeOps((const u8*)opsBytes.data(), opsBytes.size(), raw, diags);  // raw views raw.blob
     validThrough = std::min(validThrough, (int)Stage::Execute);
     if (!raw.ok) return false;
+    documentLanguage();
     registryOwn = declaredRegistry(raw, cfg, registryBase, diags);
     registry = registryOwn.get();
     // the base rules (plan P3-01): the engine's defaults, which read some
@@ -336,6 +339,29 @@ struct Doc {
     validThrough = (int)Stage::Ingest;
     return true;
   }
+  // (plan P3-30; D-T06) Phase 0: the document's language — its own
+  // ($.doc({lang}): the last), else the host's doc.lang, else (auto) the
+  // language of its text — before anything reads it (the terms, the faces,
+  // the page's lang); docinfo reports it and where it came from
+  std::string langSource = "host";
+  void documentLanguage() {
+    std::string_view declared;
+    for (const RawDecl& d : raw.decls) {
+      if (d.type >= DECL_COUNT || std::string_view(kDecls[d.type].name) != "doc") continue;
+      for (const ArgVal& a : d.args)
+        if (a.key == ArgK::ext && a.tag == ArgTag::Str && a.name < raw.strings.size() && raw.strings[a.name] == "lang" &&
+            a.ref < raw.strings.size() && !raw.strings[a.ref].empty())
+          declared = raw.strings[a.ref];
+    }
+    if (!declared.empty()) {
+      cfg.lang = std::string(declared);
+      langSource = "document";
+    } else if (cfg.lang == "auto") {
+      cfg.lang = detectDocumentLang(raw);
+      langSource = "detected";
+    }
+  }
+
   // Resolve (once: it rewrites the instantiated tree): references,
   // numbering, then the host needs it raises (tokens, image sizes). (A code
   // block's sidecars arrive split, from the default fence: plan P2-13.)
@@ -1026,6 +1052,8 @@ struct Doc {
     if (tree.root) first(tree.root);
     std::string out = "{\"lang\":";
     jsonString(out, cfg.lang);
+    out += ",\"langSource\":";  // (plan P3-30) host, document ($.doc) or detected (auto)
+    jsonString(out, langSource);
     out += ",\"title\":";
     jsonString(out, title);
     out += "}\n";

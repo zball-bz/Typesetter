@@ -1227,6 +1227,34 @@ export function createStd(host) {
     format(name, fn) {
       registry.define('format', name, () => fn, { user: true });
     },
+    // $.doc({lang}) (plan P3-30, D-T06): the document's own settings — its
+    // language wins over the host's doc.lang and over detection (hoisted:
+    // the last wins)
+    doc(spec = {}) {
+      if (!isPlainObject(spec)) throw new TypeError('$.doc({lang})');
+      const ext = {};
+      for (const [k, v] of Object.entries(spec)) {
+        if (k !== 'lang') { unknownField('$.doc', k); continue; }
+        if (typeof v !== 'string' || !validDomain('lang', v)) throw new TypeError(`$.doc: lang is a BCP-47 tag, not ${v}`);
+        ext.lang = v;
+      }
+      ob.decl(DECLS.doc.id, here.s, here.e, 'doc', ext, []);
+    },
+    // $.locale(tag, {terms}) (plan P3-30): the document's words for a
+    // language (figure, table, equation, section, caption-sep, …) — before
+    // the built-in pack of that name in its readers' chains
+    locale(tag, spec = {}) {
+      if (typeof tag !== 'string' || !validDomain('lang', tag)) throw new TypeError('$.locale(tag, {terms}): tag is a BCP-47 tag');
+      if (!isPlainObject(spec)) throw new TypeError('$.locale(tag, {terms})');
+      const ext = {};
+      for (const [k, v] of Object.entries(spec)) {
+        if (k !== 'terms') { unknownField('$.locale', k); continue; }
+        if (!isPlainObject(v) || Object.values(v).some((x) => typeof x !== 'string'))
+          throw new TypeError('$.locale: terms is an object of words');
+        ext.terms = JSON.stringify(v);
+      }
+      ob.decl(DECLS.locale.id, here.s, here.e, tag, ext, []);
+    },
     // $.declare(type, name, data, ...templates) (plan P2-05): a typed
     // declaration at this point of the flow — DECL (schema "decls": element,
     // counter, collector, rule, math.*, …); data is EXT (scalar values under

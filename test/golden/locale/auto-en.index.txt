@@ -1,0 +1,6 @@
+instance heading 1 level=1 label=h-1 title="Document language" @[0,19)
+instance figure 1 label=fig-a @[183,292)
+instance equation 1 label=eq-a @[294,320)
+label h-1 -> heading 1 @[0,19)
+label fig-a -> figure 1 @[183,292)
+label eq-a -> equation 1 @[294,320)

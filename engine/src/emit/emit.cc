@@ -687,6 +687,10 @@ struct HlInline final : InlineSink {
     Prev prev = Prev::None;
     std::string wordBuf;
     u32 i = 0;
+    // (plan P3-30) the ambiguous marks as the run's language says
+    // (#style({lang: 'en'})[“OK”]), else by their neighbours
+    using Marks = MarkClass;
+    const Marks marks = markClassOf(E.styles.get(st).lang, strs);
 
     auto flushWord = [&] {
       if (!wordBuf.empty()) {
@@ -800,7 +804,7 @@ struct HlInline final : InlineSink {
           u32 cp2 = (i < s.size()) ? utf8Next(s, j) : 0;
           const bool pair = cp2 == cp;
           const bool cjkAfter = cp2 != 0 && (isWide(cp2) || isAmbDashOrEllipsis(cp2));
-          if (!pair && prev != Prev::Cjk && !cjkAfter) {
+          if (marks == Marks::Latin || (marks == Marks::Neighbours && !pair && prev != Prev::Cjk && !cjkAfter)) {
             wordBuf.append(s.data() + start, i - start);
             prev = Prev::Latin;
             continue;
@@ -826,10 +830,10 @@ struct HlInline final : InlineSink {
         // Latin-context curly quotes / apostrophes (real-world-report.md):
         // “…” and don’t between Latin text are ordinary Latin glyphs, not
         // full-width CJK punctuation with half-em compressible spaces
-        if (isAmbQuote(cp) && prev != Prev::Cjk) {
+        if (isAmbQuote(cp) && marks != Marks::Cjk && (marks == Marks::Latin || prev != Prev::Cjk)) {
           u32 j = i;
           u32 cp2 = (i < s.size()) ? utf8Next(s, j) : 0;
-          if (cp2 == 0 || !(isWide(cp2) || isOpenPunct(cp2) || isClosePunct(cp2))) {
+          if (marks == Marks::Latin || cp2 == 0 || !(isWide(cp2) || isOpenPunct(cp2) || isClosePunct(cp2))) {
             wordBuf.append(s.data() + start, i - start);
             prev = Prev::Latin;
             continue;

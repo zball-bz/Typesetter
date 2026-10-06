@@ -206,6 +206,12 @@ function measureHtmlIn(where) {
   };
 }
 
+// (plan P3-30, D-T06) the container's language: the document's, as the
+// engine decided it (its own, the host's or detected), from its docinfo
+function docLang(el, lang) {
+  if (lang && lang !== 'und') el.setAttribute('lang', lang);
+}
+
 // The measure/render contract: an element shows the engine's DOM with
 // exactly the family, size and language the engine measured with (the live
 // container, a print root) — not styling sugar.
@@ -214,9 +220,10 @@ function applyContract(el, settings) {
   el.style.fontSize = `${settingOf(settings, 'doc.baseSize')}px`;
   el.style.setProperty('--tsr-cjk-font', settingOf(settings, 'fonts.cjk'));
   // language tag drives OpenType 'locl' punctuation forms (multi-locale CJK
-  // fonts pick 简中/繁中/日 glyph variants by it)
+  // fonts pick 简中/繁中/日 glyph variants by it); auto (plan P3-30): the
+  // document's, which its results carry (docLang below)
   const lang = settingOf(settings, 'doc.lang');
-  if (lang) el.setAttribute('lang', lang);
+  if (lang && lang !== 'auto') el.setAttribute('lang', lang);
 }
 
 // createEngine({ policy, behaviors = defaultBehaviors(), copy = installCopy,
@@ -258,7 +265,7 @@ export function createEngine(opts = {}) {
     const p = pending.get(id);
     if (!p) return;
     if (type === 'semantic') {
-      p.onSemantic?.(ev.data.html);
+      p.onSemantic?.(ev.data.html, ev.data);
       return; // the result for this id is still coming
     }
     pending.delete(id);
@@ -482,15 +489,17 @@ export function createEngine(opts = {}) {
       const res = await request(
         { type: 'typeset', id, source, settings: settingsAt(width), progressive,
           fontFaces: fonts, baseUrl: document.baseURI },
-        (html) => {
+        (html, info) => {
           if (s.disposed) return;
           semanticHtml = html;
           if (progressive) {
+            docLang(container, info?.lang);
             container.innerHTML = html; // first paint: browser flows it
             onSemantic?.(html);
           }
         },
       );
+      docLang(container, res.lang);
       await settleFonts(fonts);  // paint with the faces the engine measured
       if (s.disposed) throw superseded('typeset');
       const before = rectsOf(container);
@@ -527,6 +536,7 @@ export function createEngine(opts = {}) {
             source: newSource, settings: settingsAt(width), progressive: false,
             fontFaces: fonts, baseUrl: document.baseURI, held: heldKeys(view) });
           if (s.disposed) throw superseded('update');
+          docLang(container, r.lang);  // (an edit may change it: $.doc, or detection)
           // rects only for a listener (an edit's commit reads no layout)
           const before = onUpgrade ? rectsOf(container) : null;
           const c = await commitTo(s, r);

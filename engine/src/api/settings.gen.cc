@@ -22,7 +22,7 @@ const Row kRows[] = {
     {"host.dppx", stageBit(Stage::Measure), false},
     {"host.loadedFaces", stageBit(Stage::Measure), false},
     {"host.epsilonSu", stageBit(Stage::Emit) | stageBit(Stage::Measure), false},
-    {"doc.lang", stageBit(Stage::Resolve) | stageBit(Stage::Measure) | stageBit(Stage::Paint), false},
+    {"doc.lang", stageBit(Stage::Resolve) | stageBit(Stage::BoxTree) | stageBit(Stage::Measure) | stageBit(Stage::Paint), false},
     {"doc.baseSize", stageBit(Stage::BoxTree) | stageBit(Stage::Emit) | stageBit(Stage::Measure) | stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
     {"doc.leading", stageBit(Stage::Emit) | stageBit(Stage::Layout) | stageBit(Stage::Paint), false},
     {"doc.parGap", stageBit(Stage::Layout) | stageBit(Stage::Paint), false},

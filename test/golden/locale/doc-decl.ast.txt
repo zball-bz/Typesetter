@@ -1,0 +1,20 @@
+doc @[0,345)
+  code-block @[0,68) js=" $.doc({lang: \"en\"}); $.locale(\"en\", {terms: {figure: \"Fig. \"}}) "
+  para @[70,192)
+    text @[70,105) str="A document that says its language ("
+    code @[105,112) str="$.doc"
+    text @[112,180) str=", plan P3-30) over the host's zh-CN, and its own word for a figure ("
+    code @[180,190) str="$.locale"
+    text @[190,192) str=")."
+  region @[194,303) name="figure"
+    para @[286,294)
+      text @[286,294) str="A tower."
+  para @[305,321)
+    math @[305,321) display=1 src="a = b" label="eq-a"
+      text @[307,312) str="a = b"
+  para @[323,344)
+    text @[323,326) str="See "
+    ref @[327,333) target="fig-a"
+    text @[334,337) str=" and "
+    ref @[338,343) target="eq-a"
+    text @[343,344) str="."

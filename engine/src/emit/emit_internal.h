@@ -11,6 +11,19 @@
 
 namespace tsr {
 
+// (plan P3-30; finding markup-language/quote-context-heuristic) how the
+// ambiguous marks — curly quotes, the em dash, the ellipsis — of a run are
+// set: as its own language says (zh, ja, ko: CJK punctuation; another:
+// Latin glyphs), or, a run without one, by its neighbours
+enum class MarkClass : u8 { Neighbours, Cjk, Latin };
+inline MarkClass markClassOf(StrRef lang, const Interner& strs) {
+  if (!lang) return MarkClass::Neighbours;
+  std::string_view tag = strs.get(lang);
+  tag = tag.substr(0, tag.find_first_of("-_"));
+  auto is = [&](const char* l) { return tag.size() == 2 && (tag[0] | 32) == l[0] && (tag[1] | 32) == l[1]; };
+  return is("zh") || is("ja") || is("ko") ? MarkClass::Cjk : MarkClass::Latin;
+}
+
 struct EmitEnv {
   Arena& arena;
   DiagSink& diags;

@@ -1,0 +1,169 @@
+top pid=0 units=1
+ unit text indent=0su anchor="h-1"
+  box Ideo "文" w=1640su wt=0.6 cap=164su r0 @[2,17)
+  glue inter w=0su x=0.6 cap=164su r0 @[2,17)
+  box Ideo "書" w=1640su wt=0.6 cap=164su r0 @[2,17)
+  glue inter w=0su x=0.6 cap=164su r0 @[2,17)
+  box Ideo "の" w=1640su wt=0.6 cap=164su r0 @[2,17)
+  glue inter w=0su x=0.6 cap=164su r0 @[2,17)
+  box Ideo "言" w=1640su wt=0.6 cap=164su r0 @[2,17)
+  glue inter w=0su x=0.6 cap=164su r0 @[2,17)
+  box Ideo "語" w=1640su wt=0.6 cap=164su r0 @[2,17)
+  pen 0 r0
+  run r0 letter-spaced BOLD CJK x1.60
+top pid=1 units=1
+ unit text indent=0su
+  box Ideo "こ" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "の" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "書" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "は" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "日" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "本" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "語" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "で" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "書" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "か" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "れ" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "て" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "い" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "ま" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box Ideo "す" w=1025su wt=0.6 cap=102su r0 @[19,127)
+  pen INF r0
+  glue inter w=0su x=0.6 cap=102su r0 @[19,127)
+  box FullStopW "。" w=512su blank=R r1 @[19,127)
+  glue blank w=512su x=0 cap=0su r1 @[19,127)
+  box Ideo "図" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "と" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "式" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "の" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "番" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "号" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "は" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "日" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "本" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "語" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "の" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "語" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "で" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "示" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "さ" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "れ" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "ま" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box Ideo "す" w=1025su wt=0.6 cap=102su r2 @[19,127)
+  pen INF r2
+  glue inter w=0su x=0.6 cap=102su r2 @[19,127)
+  box FullStopW "。" w=512su blank=R r3 @[19,127)
+  glue blank w=512su x=0 cap=0su r3 @[19,127)
+  run r0 letter-spaced CJK
+  run r1 blank-bearing CJK
+  run r2 letter-spaced CJK
+  run r3 blank-bearing CJK
+top pid=2 units=2
+ unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4
+ unit text indent=0su single-center
+  box Ideo "図" w=1025su wt=0.6 cap=102su r0 @[221,236)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[221,236)
+  box Other "1" w=513su r1 @[221,236)
+  box ColonW "：" w=512su blank=R r2 @[221,236)
+  glue blank w=512su x=0 cap=0su r2 @[221,236)
+  box Ideo "塔" w=1025su wt=0.6 cap=102su r3 @[221,236)
+  glue inter w=0su x=0.6 cap=102su r3 @[221,236)
+  box Ideo "の" w=1025su wt=0.6 cap=102su r3 @[221,236)
+  glue inter w=0su x=0.6 cap=102su r3 @[221,236)
+  box Ideo "写" w=1025su wt=0.6 cap=102su r3 @[221,236)
+  glue inter w=0su x=0.6 cap=102su r3 @[221,236)
+  box Ideo "真" w=1025su wt=0.6 cap=102su r3 @[221,236)
+  pen INF r3
+  glue inter w=0su x=0.6 cap=102su r3 @[221,236)
+  box FullStopW "。" w=512su blank=R r4 @[221,236)
+  glue blank w=512su x=0 cap=0su r4 @[221,236)
+  run r0 letter-spaced BOLD CJK
+  run r1 plain BOLD
+  run r2 blank-bearing BOLD CJK
+  run r3 letter-spaced CJK
+  run r4 blank-bearing CJK
+top pid=3 units=1
+ unit math indent=0su anchor="eq-a" w=5522su asc=967su desc=76su
+  cell 0
+   box Other "(1)" w=1537su r0 @[247,273)
+   run r0 plain
+top pid=4 units=1
+ unit text indent=0su
+  box Ideo "図" w=1025su wt=0.6 cap=102su r0 @[275,281)
+  pen 0 r0
+  glue word w=257su x=1 cap=257su src r1 @[275,281)
+  box Other "1" w=513su r1 @[275,281)
+  glue word w=257su x=1 cap=257su src r2 @[282,285)
+  box Ideo "と" w=1025su wt=0.6 cap=102su r3 @[282,285)
+  pen 0 r3
+  glue word w=257su x=1 cap=257su src r4 @[282,285)
+  box Ideo "式" w=1025su wt=0.6 cap=102su r5 @[286,291)
+  pen 0 r5
+  glue word w=257su x=1 cap=257su src r6 @[286,291)
+  box Other "(1)" w=1537su r6 @[286,291)
+  glue word w=257su x=1 cap=257su src r7 @[292,322)
+  box Ideo "を" w=1025su wt=0.6 cap=102su r8 @[292,322)
+  glue inter w=0su x=0.6 cap=102su r8 @[292,322)
+  box Ideo "参" w=1025su wt=0.6 cap=102su r8 @[292,322)
+  glue inter w=0su x=0.6 cap=102su r8 @[292,322)
+  box Ideo "照" w=1025su wt=0.6 cap=102su r8 @[292,322)
+  glue inter w=0su x=0.6 cap=102su r8 @[292,322)
+  box Ideo "し" w=1025su wt=0.6 cap=102su r8 @[292,322)
+  glue inter w=0su x=0.6 cap=102su r8 @[292,322)
+  box Ideo "て" w=1025su wt=0.6 cap=102su r8 @[292,322)
+  glue inter w=0su x=0.6 cap=102su r8 @[292,322)
+  box Ideo "く" w=1025su wt=0.6 cap=102su r8 @[292,322)
+  glue inter w=0su x=0.6 cap=102su r8 @[292,322)
+  box Ideo "だ" w=1025su wt=0.6 cap=102su r8 @[292,322)
+  glue inter w=0su x=0.6 cap=102su r8 @[292,322)
+  box Ideo "さ" w=1025su wt=0.6 cap=102su r8 @[292,322)
+  glue inter w=0su x=0.6 cap=102su r8 @[292,322)
+  box Ideo "い" w=1025su wt=0.6 cap=102su r8 @[292,322)
+  pen INF r8
+  glue inter w=0su x=0.6 cap=102su r8 @[292,322)
+  box FullStopW "。" w=512su blank=R r9 @[292,322)
+  glue blank w=512su x=0 cap=0su r9 @[292,322)
+  run r0 letter-spaced ref LINK CJK link="#tsr-fig-a"
+  run r1 plain ref LINK link="#tsr-fig-a"
+  run r2 plain
+  run r3 letter-spaced CJK
+  run r4 plain
+  run r5 letter-spaced ref LINK CJK link="#tsr-eq-a"
+  run r6 plain ref LINK link="#tsr-eq-a"
+  run r7 plain
+  run r8 letter-spaced CJK
+  run r9 blank-bearing CJK

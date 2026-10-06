@@ -1,0 +1,17 @@
+doc @[0,326)
+  heading @[0,14) level=1
+    text @[2,14) str="文件語言"
+  para @[16,148)
+    text @[16,148) str="這是一份以繁體中文書寫的文件，圖與表的編號會使用繁體的字詞，說明其語言是由文字偵測而來。"
+  region @[150,266) name="figure"
+    para @[242,257)
+      text @[242,257) str="塔的照片。"
+  para @[268,294)
+    math @[268,294) display=1 src="a^2 + b^2 = c^2" label="eq-a"
+      text @[270,285) str="a^2 + b^2 = c^2"
+  para @[296,325)
+    text @[296,305) str="請參見 "
+    ref @[306,312) target="fig-a"
+    text @[313,316) str=" 與 "
+    ref @[317,322) target="eq-a"
+    text @[322,325) str="。"

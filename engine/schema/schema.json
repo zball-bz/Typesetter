@@ -565,12 +565,14 @@
       ]
     },
     "doc.lang": {
+      "$comment": "The document's language (plan P3-30, D-T06): a BCP-47 tag, or auto — detected from its text at ingest (docinfo reports it); the document's own $.doc({lang}) wins over the host's.",
       "field": "lang",
       "dom": "lang",
-      "def": "zh-CN",
+      "def": "auto",
       "prec": "HostDefault",
       "affects": [
         "Resolve",
+        "BoxTree",
         "Measure",
         "Paint"
       ],
@@ -1109,7 +1111,7 @@
       "tsr-i": {"when": "st.italic", "css": "font-style: italic"},
       "tsr-cjk": {"when": "st.script == SCRIPT_CJK", "css": "font-family: var(--tsr-font-cjk, var(--tsr-cjk-font, inherit))"},
       "tsr-code": {"when": "st.fontRole == FONTROLE_MONO", "css": "font-family: var(--tsr-font-mono, monospace)"},
-      "tsr-pre": {"when": "st.space == SPACE_PRE", "css": "white-space: pre"},
+      "tsr-pre": {"when": "st.space == SPACE_PRE", "css": "white-space: pre; word-spacing: 0", "$comment": "word-spacing: 0 (plan P3-30): its spaces are rigid in the engine; a justified line's word-spacing must not reach them"},
       "tsr-sup": {"when": "st.baseline == BASELINE_SUPER", "css": "position: relative; top: -0.45em; text-decoration: none"}
     },
     "rules": [
