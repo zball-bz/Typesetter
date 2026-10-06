@@ -20,7 +20,6 @@ top pid=0 units=1
   box Other "fol" w=1537su r0 @[27,50)
   disc pen=0.7 w=0su pre="-" 513su kern="ll" r0 @[27,50)
   box Other "lows" w=2049su r0 @[27,50)
-  glue word w=257su x=1 cap=257su src r0 @[27,50)
-  glue word w=257su x=1 cap=257su src r0 @[59,63)
+  glue word w=257su x=1 cap=257su kern="s t" src r0 @[27,50)
   box Other "too." w=2049su r0 @[59,63)
   run r0 plain

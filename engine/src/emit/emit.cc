@@ -653,6 +653,15 @@ struct HlInline final : InlineSink {
       u32 cp = utf8Next(s, i);
       if (cp == ' ' || cp == '\t') {
         flushWord();
+        // a text that starts with a space right after a space (something
+        // between two texts rendered nothing: an undefined splice, a counter
+        // event) adds none — the browser collapses it, as TeX's input does
+        const size_t c = count(u);
+        if (start == 0 && c > 0 && B.items[c - 1].k == IK::Glue && B.items[c - 1].cls == (u8)GC::Word &&
+            (B.items[c - 1].attrs & IA_SourceSpace)) {
+          prev = Prev::None;
+          continue;
+        }
         AdvanceSpec sp;
         sp.str = E.spaceRef;
         push(u, IK::Glue, (u8)GC::Word, IA_SourceSpace, key(st, ctx.url, ctx.addFlags, RealizeClass::Plain),

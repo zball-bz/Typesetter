@@ -38,7 +38,14 @@ struct LegacyInline final : InlineSink {
   void toCell(Flow& tmp, Flow& tc) override { tc.legacy = std::move(tmp.legacy); }
   void done(std::vector<TopBlock>& tops) override;
 
+  // inline nodes other than text and its containers walked so far, and
+  // their count when the last source space was set: a space collapses only
+  // into a space no object (which this oracle does not model) separates
+  u64 atoms = 0, atomsAtSpace = ~0ull;
   void inlineWalk(const ContentNode* n, Flow& u, ICtx ctx) {
+    if (n->kind != Kind::text && n->kind != Kind::seq && n->kind != Kind::styled && n->kind != Kind::link &&
+        n->kind != Kind::comment)
+      atoms++;
     switch (n->kind) {
       case Kind::text:
         emitText(n, u, ctx);
@@ -377,6 +384,13 @@ struct LegacyInline final : InlineSink {
       u32 cp = utf8Next(s, i);
       if (cp == ' ' || cp == '\t') {
         flushWord();
+        // a space right after a source space collapses (emit.cc does the same)
+        if (start == 0 && atomsAtSpace == atoms && !u.legacy.empty() && (u.legacy.back().flags & BF_SPACE) &&
+            !(u.legacy.back().flags & (BF_BOUND | BF_PUNCT_SP)) && u.legacy.back().text == spaceRef) {
+          prev = Prev::None;
+          continue;
+        }
+        atomsAtSpace = atoms;
         LinebreakBlock b;
         b.flags = (u16)(BF_SPACE | ctx.addFlags);
         b.breakPenalty = 0;

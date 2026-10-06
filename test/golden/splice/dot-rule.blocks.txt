@@ -21,5 +21,4 @@ top pid=0 units=1
   hyphen bw=513su pen=0.70 @[27,50)
   word "lows" w=2049su pen=INF @[27,50)
   space w=257su stretch=1 @[27,50)
-  space w=257su stretch=1 @[59,63)
   word "too." w=2049su pen=INF @[59,63)
