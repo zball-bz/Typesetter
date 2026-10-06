@@ -194,7 +194,9 @@ struct Locator {
     if (n->cls) {
       instance(n, n->cls);
       encl.push_back((u32)ix.instances.size() - 1);
+      counters.enterScope(n->cls, n, strs);  // its scoped counters (an ordered list's items)
       for (const ContentNode* k : n->kids) visit(k);
+      counters.leaveScope(n->cls);
       encl.pop_back();
       return;
     } else if (n->kind == Kind::event) {

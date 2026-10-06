@@ -998,7 +998,7 @@ Theme steps: — · findings: 1
 | `markup-language/same-line-trailing-text-dropped` | issue | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/region-error-recovery` | issue | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/span-loss` | issue | medium | P2-04 | grep:plan P2-04 |
-| `markup-language/structured-content-flattened` | issue | medium | P3-03 | |
+| `markup-language/structured-content-flattened` | issue | medium | P3-03 | grep:plan P3-03 |
 | `markup-language/ambiguity-hazards` | issue | medium | P3-33 | |
 | `markup-language/ast-dump-note` | issue | low | P0-02 | grep:plan P0-02 |
 | `markup-language/doc-drift` | issue | low | P3-35 | |
@@ -1050,7 +1050,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/bibliography-placeholder-and-end-emission` | adhoc | medium | P2-07, P2-14 | grep:plan P2-14 |
 | `codegen-ops-model/cls-sup-feature-bit` | adhoc | medium | P2-08 | grep:plan P2-08 |
 | `codegen-ops-model/kind-default-styles-in-emit` | adhoc | medium | P3-01 | grep:plan P3-01 |
-| `codegen-ops-model/resolver-fabricated-styles` | adhoc | medium | P3-01, P3-03 | |
+| `codegen-ops-model/resolver-fabricated-styles` | adhoc | medium | P3-01, P3-03 | grep:plan P3-03 |
 | `codegen-ops-model/token-class-as-color` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `codegen-ops-model/fixed-styling-fields` | adhoc | high | P1-02 | grep:plan P1-02 |
 | `codegen-ops-model/global-argk-namespace` | adhoc | high | P0-06 | grep:plan P0-06 |
@@ -1080,7 +1080,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/missed:3` | missed | medium | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/missed:4` | missed | low | P2-01 | grep:plan P2-01 |
 | `resolver/fixed-counter-set` | adhoc | high | P1-10 | grep:plan P1-10 |
-| `resolver/figure-role-string` | adhoc | high | P3-03 | |
+| `resolver/figure-role-string` | adhoc | high | P3-03 | grep:plan P3-03 |
 | `resolver/label-registration-per-kind` | adhoc | high | P1-10 | grep:plan P1-10 |
 | `resolver/ref-display-switch` | adhoc | high | P1-10 | grep:plan P1-10 |
 | `resolver/collector-what-dispatch` | adhoc | high | P1-10 | grep:plan P1-10 |
@@ -1090,7 +1090,7 @@ Theme steps: — · findings: 1
 | `resolver/numbering-format-hardcoded` | adhoc | medium | P1-10 | grep:plan P1-10 |
 | `resolver/site-display-injection` | adhoc | medium | P3-03, P3-26 | |
 | `resolver/term-rewrite` | adhoc | medium | P1-10 | grep:plan P1-10 |
-| `resolver/excerpt-strings` | adhoc | medium | P3-03 | |
+| `resolver/excerpt-strings` | adhoc | medium | P3-03 | grep:plan P3-03 |
 | `resolver/presentation-constants` | adhoc | medium | P1-10 | grep:plan P1-10 |
 | `resolver/anchor-namespace` | adhoc | medium | P3-04 | |
 | `resolver/argk-overloading` | adhoc | medium | P0-06, P2-05, P2-07 | grep:plan P2-07 |
@@ -1111,8 +1111,8 @@ Theme steps: — · findings: 1
 | `resolver/missed:0` | missed | high | P2-03 | grep:plan P2-03 |
 | `resolver/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
 | `resolver/missed:2` | missed | medium | P3-04, P3-06 | |
-| `resolver/missed:3` | missed | medium | P3-03 | |
-| `resolver/missed:4` | missed | low | P3-03 | |
+| `resolver/missed:3` | missed | medium | P3-03 | grep:plan P3-03 |
+| `resolver/missed:4` | missed | low | P3-03 | grep:plan P3-03 |
 | `resolver/missed:5` | missed | low | P0-09, P1-03, P1-10 | grep:plan P1-10 |
 | `emitter/paragraph-blind-script-context` | adhoc | high | P4-02 | |
 | `emitter/hardcoded-script-class-tables` | adhoc | high | P4-05 | |
@@ -1327,7 +1327,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/no-cross-document-labels` | adhoc | high | P3-31 | |
 | `real-world-evidence/markup-reentry-missing` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `real-world-evidence/ctor-name-collision-fatal` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
-| `real-world-evidence/heading-numbers-invisible` | issue | medium | P3-03 | |
+| `real-world-evidence/heading-numbers-invisible` | issue | medium | P3-03 | grep:plan P3-03 |
 | `real-world-evidence/labels-on-unsupported-nodes-silent` | issue | medium | P0-09 | grep:plan P0-09 |
 | `real-world-evidence/span-loss-synthesized-nodes` | issue | medium | P2-04 | grep:plan P2-04 |
 | `real-world-evidence/grouped-cite-all-or-nothing` | issue | low | P0-09 | grep:plan P0-09 |

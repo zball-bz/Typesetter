@@ -37,6 +37,10 @@ struct ContentNode {
   // (plan P3-03; design T3 SemInfo.synthetic) made by a site: a title's
   // clone (a TOC entry) skips it
   bool synthetic = false;
+  // (plan P3-03; design T3 SemInfo.number) its marker as MATERIALIZE wrote
+  // it — an ordered list item's counter-backed number, a notes entry's —
+  // which the box tree draws; 0: none (dumps omit it)
+  StrRef number = 0;
 };
 
 // Typed attribute accessors (plan P0-06). Values that came through the ops

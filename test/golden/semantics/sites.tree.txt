@@ -1,0 +1,40 @@
+doc @[289,508) [base]
+  list @[289,293) [base] ordered=false
+    item @[289,293) [base]
+      para @[289,293) [base]
+        link @[289,293) [base] url="#tsr-intro"
+          text @[289,293) [base] str="1 "
+          text @[289,293) [base] str="Introduction"
+  heading @[295,309) [BOLDx1.60] level=1 label="intro"
+    text @[295,309) [BOLDx1.60] str="1 "
+    text @[297,309) [BOLDx1.60] str="Introduction"
+  group @[319,372) [base] role="proof"
+    para @[327,340) [base]
+      text @[327,340) [base] str="By induction."
+    para @[342,364) [base]
+      text @[342,364) [base] str="The step is immediate."
+      fill @[342,364) [base]
+      text @[342,364) [base] str="∎"
+  group @[374,473) [base] role="dterm" name="lemma" label="lemma"
+    para @[413,472) [base]
+      text @[413,472) [base] str="A lemma is a small theorem used on the way to a larger one."
+  list @[475,484) [base] ordered=false
+    item @[475,484) [base]
+      para @[475,484) [base]
+        link @[475,484) [base] url="#tsr-lemma"
+          text @[475,484) [base] str="lemma"
+        text @[475,484) [base] str=" — A lemma is a small theorem used on the way to a larger one."
+  para @[486,508) [base]
+    text @[486,489) [base] str="See " raw=0:0,4:3
+    ref @[490,496) [base] target="intro" url="#tsr-intro"
+      text @[490,496) [base] str="§1"
+    text @[497,500) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[501,507) [base] target="lemma" url="#tsr-lemma"
+      text @[501,507) [base] str="lemma"
+    text @[507,508) [base] str="."
+decl counter name="heading" flow=0 @[0,287) ext.row="{\"pattern\":\"1.1\"}"
+decl element name="heading" flow=0 @[0,287) ext.row="{\"counter\":\"heading\",\"numbering\":\"always\"}"
+decl element name="proof" flow=0 @[0,287) ext.row="{\"sites\":[{\"where\":\"append\",\"at\":\"last-para\",\"template\":{\"$t\":0}}]}"
+  seq @[0,0) [base]
+    fill @[0,0) [base]
+    text @[0,0) [base] str="∎"

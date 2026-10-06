@@ -226,6 +226,7 @@ struct Mat {
   ContentNode* node(const TItem& it, const Ctx& c, const Slots& s) {
     bool inline_ = isInlineLevel(it.kind);
     ContentNode* n = mk(it.kind, c.span);
+    if (!it.marker.empty()) n->number = e.strs.intern(textOf(it.marker, s));  // its marker (SemInfo.number)
     for (const auto& [k, v] : it.args) {
       if (v.k == TArg::K::Bool || v.k == TArg::K::Num) {
         n->args.push_back({k, v.k == TArg::K::Bool ? ArgTag::Bool : ArgTag::Num, v.k == TArg::K::Bool ? (v.b ? 1.0 : 0.0) : v.num, 0});
@@ -565,9 +566,17 @@ struct Mat {
     bool refused = e.ix.refused.count(n) != 0;
     const Instance* in = n->cls ? instanceOf(n) : nullptr;
     const ElementClass* C = in ? &e.reg.cls(in->cls) : nullptr;
-    bool anchor = C && in->aliased && !C->flow && !C->replaced();
+    // its anchor where the node does not carry it: an alias, or a label from
+    // an argument (a dterm's name, plan P3-03)
+    bool anchor = C && (in->aliased || (C->labels == ElementClass::Labels::FromArg && !in->label.empty())) &&
+                  !C->flow && !C->replaced();
+    if (C && C->marker && !in->number.empty()) {  // its number is its marker (SemInfo.number)
+      if (o == n) o = clone1(n);
+      o->number = e.strs.intern(in->number);
+    }
     bool sites = false;
-    if (C && !in->number.empty())
+    // (a numbered instance, or one of a class that never numbers: a proof's ∎)
+    if (C && (!in->number.empty() || C->numbering == ElementClass::Numbering::Never) && C->display)
       for (const SiteDef& s : C->sites) sites = sites || s.where != SiteDef::Where::Replace;
     if (!refused && !anchor && !sites) return o;
     if (o == n) o = clone1(n);

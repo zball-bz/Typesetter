@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Introduction","label":"intro","span":[295,309]}],"regions":[{"name":"proof","label":null,"span":[319,372]}],"fences":[],"labels":[{"id":"intro","rule":"heading","span":[310,317]}],"diagnostics":[]}

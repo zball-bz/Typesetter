@@ -171,6 +171,24 @@ Counters::Counters(const Registry& reg)
   }
 }
 
+void Counters::enterScope(ClassId cls, const ContentNode* n, const Interner& strs) {
+  for (u16 c = 0; c < (u16)reg_.counters.size(); c++) {
+    if (reg_.counters[c].scope != cls) continue;
+    scopes_.push_back({c, v_[c], pattern_[c]});
+    v_[c] = {attrInt(n, ArgK::start, 1) - 1};
+    if (StrRef p = attrStr(n, ArgK::numbering)) pattern_[c] = strs.get(p);
+  }
+}
+
+void Counters::leaveScope(ClassId cls) {
+  for (u16 c = (u16)reg_.counters.size(); c-- > 0;) {
+    if (reg_.counters[c].scope != cls || scopes_.empty() || scopes_.back().c != c) continue;
+    v_[c] = std::move(scopes_.back().v);
+    pattern_[c] = std::move(scopes_.back().pattern);
+    scopes_.pop_back();
+  }
+}
+
 int Counters::levelOf(u16 c, const ContentNode* n) const {
   const CounterDef& d = reg_.counters[c];
   if (!d.byLevel) return 1;

@@ -44,6 +44,15 @@ Resolver: `group{role:"figure"}` already increments `figNo` and feeds
 `mathblock` gets `ArgK::name = "(n)"`. Figures without a caption paragraph
 get no prefix (the number still exists for refs).
 
+As built (plan P3-03): the constructor marks the caption paragraphs as the
+figure's caption part (`slot: "caption"`, besides `role: "caption"`), and
+the figure row's site attaches at that part (`at: "caption"`). A figure
+whose body is one table numbers as a table (表 1: row `table-figure`,
+D-S01; `kind:` overrides: `#!figure(kind: "figure")`), a figure inside a
+figure is a subfigure (图 1(a), D-S02), and a table inside a figure is
+unnumbered with its label naming the figure (`figure-table`, refers-to
+enclosing) — docs/semantics-design.md §1.
+
 ## 2. NEED_IMAGES: the third pull resource
 
 Exactly symmetric to NEED_MEASURE and NEED_TOKENS (code-design.md §2): the
@@ -150,7 +159,9 @@ narrowed units get `left += occlW` when the float is on the left.
 - Copy (§9.3): image blocks are synthetic — skipped, like `data-syn="ref"`;
   the caption copies as text including the 图 n： prefix.
 - Semantic serializer: `<figure><img src alt><figcaption>…</figcaption></figure>`
-  (the group{role:figure} case), so the no-JS page is real HTML.
+  (the group{role:figure} case), so the no-JS page is real HTML. As built
+  in P3-03 the figcaption holds the caption part (a figure-box element with
+  none: its paragraphs).
 
 ## 6. Testing
 

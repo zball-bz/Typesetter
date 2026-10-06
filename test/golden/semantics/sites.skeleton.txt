@@ -1,0 +1,10 @@
+doc @[0,509)
+  code-block @[0,287) js="\n  // a document that numbers headings shows the numbers (D-S05); a proof\n  // ends with a flush-right ∎ (an append site at its last paragraph)\n  $.element('heading', {numbering: '1.1'})\n  $.element('proof', {sites: [{where: 'append', at: 'last-para', template: [fill(), '∎']}]})\n"
+  para @[289,293) lines=1
+  heading1 @[295,309) label="intro"
+  region @[319,372) name="proof"
+    para @[327,340) lines=1
+    para @[342,364) lines=1
+  para @[374,473) lines=1
+  para @[475,484) lines=1
+  para @[486,508) lines=1

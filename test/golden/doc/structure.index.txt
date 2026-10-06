@@ -1,4 +1,7 @@
 instance heading 1 level=1 label=h-1 title="Typesetting Notes" @[0,19)
 instance heading 1.1 level=2 label=h-1.1 title="Structure and emphasis" @[21,48)
+instance olist @[297,334)
+instance enum-item 1. @[297,318)
+instance enum-item 2. @[319,334)
 label h-1 -> heading 1 @[0,19)
 label h-1.1 -> heading 1.1 @[21,48)

@@ -1,0 +1,22 @@
+#{
+  // a document that numbers headings shows the numbers (D-S05); a proof
+  // ends with a flush-right ∎ (an append site at its last paragraph)
+  $.element('heading', {numbering: '1.1'})
+  $.element('proof', {sites: [{where: 'append', at: 'last-para', template: [fill(), '∎']}]})
+}
+
+#toc
+
+= Introduction <intro>
+
+#!proof
+By induction.
+
+The step is immediate.
+#proof!
+
+#group({role: "dterm", name: "lemma"})[A lemma is a small theorem used on the way to a larger one.]
+
+#glossary
+
+See @intro and @lemma.

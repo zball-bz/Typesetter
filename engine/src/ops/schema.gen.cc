@@ -30,6 +30,7 @@ const char* const kM_list_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_list[] = {
     {2, "ordered", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, true, 0, 6, 0, false},
     {3, "start", Dom::Int, -1073741824, 1073741824, nullptr, nullptr, 0, false, true, 1, 6, 0, false},
+    {41, "numbering", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -503,7 +504,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"doc", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, nullptr, 0},
     {"para", Level::Block, Body::Inline, InlineShape::Container, 6, kA_para, 9},
     {"heading", Level::Block, Body::Inline, InlineShape::Unsupported, 6, kA_heading, 10},
-    {"list", Level::Block, Body::Items, InlineShape::Unsupported, 6, kA_list, 11},
+    {"list", Level::Block, Body::Items, InlineShape::Unsupported, 6, kA_list, 12},
     {"item", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_item, 9},
     {"quote", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_quote, 9},
     {"codeblock", Level::Block, Body::Code, InlineShape::Unsupported, 6, kA_codeblock, 18},

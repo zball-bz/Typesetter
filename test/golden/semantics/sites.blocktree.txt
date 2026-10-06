@@ -1,0 +1,25 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[289,293)
+    stack list pad=1536su gap=1/3 @[289,293)
+      stack item x=1536su @[289,293)
+        paragraph para unit=0 x=1536su marker="•" @[289,293)
+top pid=1 leaves=1
+  stack root gap=1/1 @[295,309)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="intro" @[295,309)
+top pid=2 leaves=2
+  stack root gap=1/1 @[319,372)
+    stack group @[319,372)
+      paragraph para unit=0 @[327,340)
+      paragraph para unit=1 @[342,364)
+top pid=3 leaves=1
+  stack root gap=1/1 @[374,473)
+    stack group anchor="lemma" @[374,473)
+      paragraph para unit=0 carry="lemma" @[413,472)
+top pid=4 leaves=1
+  stack root gap=1/1 @[475,484)
+    stack list pad=1536su gap=1/3 @[475,484)
+      stack item x=1536su @[475,484)
+        paragraph para unit=0 x=1536su marker="•" @[475,484)
+top pid=5 leaves=1
+  stack root gap=1/1 @[486,508)
+    paragraph para unit=0 @[486,508)

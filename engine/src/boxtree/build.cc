@@ -172,9 +172,14 @@ class Builder {
         u32 list = open(LayouterId::Stack, Painter::None, TraitsId::List, n, parent, x);
         const Su pad = lenSu(props.get(n->props).blockIndent, n);  // its block.indent (plan P3-01)
         t->blocks[list].pad = pad;
+        // an item's marker: the number the resolver gave it (plan P3-03:
+        // counter-backed, SemInfo.number), else its list.marker, else its
+        // place in the list
+        const StrRef bullet = props.get(n->props).listMarker;
         for (const ContentNode* item : n->kids) {
-          std::string m = ordered ? std::to_string(num++) + "." : "\xE2\x80\xA2";  // •
-          const StrRef mref = strs.intern(m);
+          StrRef mref = item->number;
+          if (!mref) mref = !ordered && bullet ? bullet : strs.intern(ordered ? std::to_string(num) + "." : "\xE2\x80\xA2");  // •
+          num++;
           u32 it = open(LayouterId::Stack, Painter::None, TraitsId::Item, item, list, x + pad);
           bool first = true;
           for (const ContentNode* k : item->kids) {

@@ -43,6 +43,11 @@ class Counters {
     Supplement supplement;
   };
   void apply(u16 c, const Event& ev);
+  // (plan P3-03) entering an instance of class `cls` (n): the counters
+  // scoped to it start over — from n's `start`, in n's `numbering` pattern
+  // — and resume their outer count when it is left
+  void enterScope(ClassId cls, const ContentNode* n, const Interner& strs);
+  void leaveScope(ClassId cls);
   // the supplement an event set for counter c (none: the class's)
   const Supplement* supplementOf(u16 c) const { return sup_[c].set() ? &sup_[c] : nullptr; }
 
@@ -59,6 +64,12 @@ class Counters {
   std::vector<std::string> pattern_;  // the current pattern of each counter
   std::vector<Supplement> sup_;
   std::vector<Keyed> keyed_;
+  struct Saved {
+    u16 c;
+    std::vector<int> v;
+    std::string pattern;
+  };
+  std::vector<Saved> scopes_;
 };
 
 }  // namespace tsr

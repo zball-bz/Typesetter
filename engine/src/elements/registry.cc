@@ -116,7 +116,7 @@ struct Loader {
             it.args.push_back(std::move(p));
           }
         }
-        if (!tmpl(x.get("kids"), it.kids)) return false;
+        if (!tmpl(x.get("kids"), it.kids) || !tmpl(x.get("marker"), it.marker)) return false;
       } else if (const JsonValue* s = x.get("styled")) {
         it.k = TItem::K::Styled;
         if (!styledOf(*s, it) || !tmpl(x.get("kids"), it.kids)) return false;
@@ -188,6 +188,7 @@ struct Loader {
         if (const JsonValue* a = member(*w, "sep")) d.withinSep = str(a);
       }
       d.pattern = str(member(c, "pattern"));
+      d.scopeName = str(member(c, "scope"));
       if (const JsonValue* a = member(c, "start"))
         for (const JsonValue& x : a->arr) d.start.push_back((int)x.num);
       r.counters.push_back(std::move(d));
@@ -302,6 +303,8 @@ struct Loader {
       }
     }
     if (const JsonValue* x = member(v, "outline")) c.outline = x->b;
+    if (const JsonValue* x = member(v, "marker")) c.marker = x->b;
+    if (const JsonValue* x = member(v, "display")) c.display = x->b;
     if (const JsonValue* x = member(v, "refers-to"))
       c.refersTo = str(x) == "enclosing" ? ElementClass::RefersTo::Enclosing : ElementClass::RefersTo::Self;
     if (!alias(member(v, "alias"), c.alias)) return false;
@@ -441,6 +444,9 @@ struct Loader {
       if (!in) return fail("selector inside an undeclared class '" + x.name + "'");
       r.classes[x.cls].select[x.sel].inside = in;  // its own selector (plan P3-03: one per selector)
     }
+    for (CounterDef& d : r.counters)  // a scoped counter's class (plan P3-03)
+      if (!d.scopeName.empty() && !(d.scope = classIndex(d.scopeName)))
+        return fail("counter '" + d.name + "' is scoped to an undeclared class '" + d.scopeName + "'");
     if (const JsonValue* cs = member(v, "collectors"))
       for (size_t k = 0; k < cs->keys.size(); k++)
         if (!collector(cs->keys[k], cs->vals[k])) return false;

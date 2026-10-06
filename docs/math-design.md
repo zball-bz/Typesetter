@@ -488,6 +488,14 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
   horizontal accents/over-braces (52 horiz chains unused so far), corpus
   math opt-ins, MathML/a11y output (semantic fallback emits source text).
 
+### As built: the equation number as content (plan P3-03)
+
+A labelled equation's number is a tag site (design T3 Site{where: Tag}):
+MATERIALIZE appends `seq{slot: "tag"}` holding "(n)" to the `mathblock` —
+a part, which formula sources skip — and the semantic page prints it. The
+compat `name` argument stays beside it until layout measures and places
+the tag (P3-26).
+
 ## 14. Text-font runs — names, operators, quoted text (as built 2026-08)
 
 The real-world corpus (HoTT) showed formulas full of multi-letter names:

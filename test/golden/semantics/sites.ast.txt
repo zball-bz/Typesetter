@@ -1,0 +1,23 @@
+doc @[0,509)
+  code-block @[0,287) js="\n  // a document that numbers headings shows the numbers (D-S05); a proof\n  // ends with a flush-right ∎ (an append site at its last paragraph)\n  $.element('heading', {numbering: '1.1'})\n  $.element('proof', {sites: [{where: 'append', at: 'last-para', template: [fill(), '∎']}]})\n"
+  para @[289,293)
+    splice @[289,293) expr="toc"
+  heading @[295,309) level=1 label="intro"
+    text @[297,309) str="Introduction"
+  region @[319,372) name="proof"
+    para @[327,340)
+      text @[327,340) str="By induction."
+    para @[342,364)
+      text @[342,364) str="The step is immediate."
+  para @[374,473)
+    splice @[374,473) expr="group({role: \"dterm\", name: \"lemma\"})"
+      arg @[413,472)
+        text @[413,472) str="A lemma is a small theorem used on the way to a larger one."
+  para @[475,484)
+    splice @[475,484) expr="glossary"
+  para @[486,508)
+    text @[486,489) str="See "
+    ref @[490,496) target="intro"
+    text @[497,500) str=" and "
+    ref @[501,507) target="lemma"
+    text @[507,508) str="."

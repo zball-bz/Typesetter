@@ -61,8 +61,9 @@ const char* sectionOf(std::string_view type) {
 bool knownField(std::string_view section, std::string_view f) {
   static constexpr std::string_view kClasses[] = {"select", "like",  "counter", "numbering", "supplement", "labels",
                                                   "title",  "outline", "alias", "sites",     "ref",        "forms",
-                                                  "flow",   "table", "row-key", "box",       "html"};
-  static constexpr std::string_view kCounters[] = {"shape", "level-arg", "depth", "gap", "keyed", "within", "pattern", "start"};
+                                                  "flow",   "table", "row-key", "box",       "html",
+                                                  "display", "marker", "refers-to"};
+  static constexpr std::string_view kCounters[] = {"shape", "level-arg", "depth", "gap", "keyed", "within", "pattern", "start", "scope"};
   static constexpr std::string_view kCollectors[] = {"query", "context", "wrap", "entry", "empty", "rows", "cite"};
   static constexpr std::string_view kSystems[] = {"symbols", "mode"};
   auto in = [&](const auto& xs) {
@@ -325,6 +326,20 @@ Built build(std::string_view base, const std::vector<Patch>& patches) {
     rd.parse(base, rows);
   }
   auto apply = [&](JsonValue& r, const Patch& p) {
+    // (D-S05) a patch that numbers a class, or gives it sites, shows its
+    // numbers unless it says display: false (the built-in heading row hides
+    // them)
+    if (std::string_view(p.section) == "classes" && (p.row.get("numbering") || p.row.get("sites")) &&
+        !p.row.get("display")) {
+      JsonValue row = p.row;
+      JsonValue t;
+      t.t = JsonValue::T::Bool;
+      t.b = true;
+      row.keys.push_back("display");
+      row.vals.push_back(t);
+      overlay(memberOrAdd(r, p.section, JsonValue::T::Obj), p.name, row);
+      return;
+    }
     overlay(memberOrAdd(r, p.section, JsonValue::T::Obj), p.name, p.row);
   };
   Built b;

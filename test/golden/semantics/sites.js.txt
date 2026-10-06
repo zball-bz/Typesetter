@@ -1,0 +1,21 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {fill, glossary, group, toc} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+
+  // a document that numbers headings shows the numbers (D-S05); a proof
+  // ends with a flush-right ∎ (an append site at its last paragraph)
+  $.element('heading', {numbering: '1.1'})
+  $.element('proof', {sites: [{where: 'append', at: 'last-para', template: [fill(), '∎']}]})
+
+},
+() => (toc),
+(__k) => (group(...[{role: "dterm", name: "lemma"}], ...__k())),
+() => (glossary),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

@@ -13,7 +13,8 @@
     "subfigure": { "within": { "counter": "figure", "depth": 1, "sep": "" }, "pattern": "(a)" },
     "equation": {},
     "footnote": {},
-    "cite": { "keyed": true }
+    "cite": { "keyed": true },
+    "enum": { "scope": "olist", "pattern": "1." }
   },
   "roles": {
     "$comment": "Generated roles and the element each reads as on the semantic page (plan P3-01; T7's minimal map). Their presentation is the default rules' (engine/data/defaults.json).",
@@ -32,6 +33,8 @@
       "outline": true,
       "supplement": "section",
       "alias": { "prefix": "h-", "body": "number" },
+      "display": false,
+      "sites": [{ "where": "prepend", "template": [{ "slot": "number" }, " "] }],
       "ref": [{ "when": "extra", "kids": [{ "slot": "extra" }, " "], "else": [{ "slot": "supplement" }] }, { "slot": "number" }]
     },
     "table": {
@@ -85,6 +88,18 @@
       "like": "table",
       "numbering": "never",
       "refers-to": "enclosing"
+    },
+    "olist": {
+      "$comment": "An ordered list: the scope of its items' counter (plan P3-03; its start and numbering arguments).",
+      "select": [{ "node": "list", "ordered": true }]
+    },
+    "enum-item": {
+      "$comment": "An ordered list's item: counter-backed, its number is its marker (SemInfo.number), and it is referenceable.",
+      "select": [{ "node": "item", "inside": "olist" }],
+      "counter": "enum",
+      "numbering": "always",
+      "marker": true,
+      "ref": [{ "slot": "number" }]
     },
     "equation": {
       "select": [{ "node": "mathblock" }],
@@ -144,6 +159,14 @@
           ]
         }
       ],
+      "ref": [{ "slot": "title" }]
+    },
+    "dterm": {
+      "$comment": "A defined term where it is defined (plan P3-03; design T3): a glossary row that stays in place (no replace site), named by its name argument.",
+      "select": [{ "role": "dterm" }],
+      "labels": { "arg": "name" },
+      "title": { "arg": "name" },
+      "table": "glossary",
       "ref": [{ "slot": "title" }]
     },
     "bibentry": {
@@ -209,6 +232,7 @@
       "entry": [
         {
           "node": "item",
+          "marker": [{ "slot": "number" }, "."],
           "kids": [
             {
               "paras": {

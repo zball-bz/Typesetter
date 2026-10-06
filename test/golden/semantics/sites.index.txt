@@ -1,0 +1,6 @@
+instance heading 1 level=1 label=intro title="Introduction" @[295,309)
+instance proof @[319,372)
+instance dterm label=lemma title="lemma" @[374,473)
+label intro -> heading 1 @[295,309)
+label lemma -> dterm @[374,473)
+row glossary lemma @[374,473)

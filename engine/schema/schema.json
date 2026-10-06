@@ -50,7 +50,8 @@
       "label": {"dom": "label"}}},
     "list": {"id": 3, "level": "block", "inline": "unsupported", "body": "items", "since": 6, "ctor": {"params": ["attr:ordered", "attr:start"]}, "attrs": {
       "ordered": {"dom": "bool", "def": false},
-      "start": {"dom": "int:-1073741824:1073741824", "def": 1}}},
+      "start": {"dom": "int:-1073741824:1073741824", "def": 1},
+      "numbering": {"dom": "str", "since": 13}}},
     "item": {"id": 4, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "ctor": {}, "attrs": {}},
     "quote": {"id": 5, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "ctor": {}, "attrs": {}},
     "codeblock": {"id": 6, "level": "block", "inline": "unsupported", "body": "code", "since": 6, "ctor": {"params": ["attr:lang", "lines"]}, "attrs": {

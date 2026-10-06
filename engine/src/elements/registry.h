@@ -42,6 +42,9 @@ struct TItem {
   float size = 1.0f;
   std::vector<TItem> kids, sep, orElse, tail;
   TArg anchor;
+  // Node: its list marker (plan P3-03: a notes entry's, from the note's
+  // number), as text
+  std::vector<TItem> marker;
 };
 using Template = std::vector<TItem>;
 
@@ -66,6 +69,11 @@ struct CounterDef {
   u16 within = kNoIndex;
   int withinDepth = 1;
   std::string withinSep = ".";
+  // (plan P3-03; design T3 enum {scope: olist}) a counter scoped to each
+  // instance of a class: it starts over in one (from its `start` argument,
+  // in its `numbering` pattern) and the outer count resumes after it
+  ClassId scope = 0;
+  std::string scopeName;
   std::string pattern;     // NumberingPattern ("" = 1.1: decimal, '.'-joined)
   std::vector<int> start;  // the values before the first step (default: none)
 };
@@ -129,6 +137,13 @@ struct ElementClass {
   bool outline = false;
   AliasRule alias;
   std::vector<SiteDef> sites;
+  // (plan P3-03; D-S05) whether its sites show its number where it stands
+  // (a site's output; a reference and a collector show it regardless): the
+  // built-in heading row says false, a document that numbers a class true
+  bool display = true;
+  // (plan P3-03; design T3 SemInfo.number) its number is its list marker
+  // (an ordered list's item): the box tree draws it
+  bool marker = false;
   // (plan P3-03; design T3 refersTo) Enclosing: a label here names the
   // nearest classed ancestor (a table in a figure: @tab is the figure)
   enum class RefersTo : u8 { Self, Enclosing } refersTo = RefersTo::Self;

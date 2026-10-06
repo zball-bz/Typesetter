@@ -36,8 +36,19 @@ only the Index names the class.
   `none`, or `{arg}`), `title` (`text`, `{arg}`, or `{ext}`: the instance's
   EXT data — region options such as `title:` arrive as EXT), `outline`,
   `alias` (generated labels: prefix + number | key),
-  `sites` (templates attached when numbered: `prepend` at `first-para`, an
-  `arg`, or a `replace` of the node), `ref` (the reference form), `flow`
+  `sites` (templates attached when numbered, or always for a class that
+  never numbers; as built in P3-03: `prepend` or `append` at `self`,
+  `first-para`, `last-para` or a part — a slot's name, `caption`: the
+  figure's caption paragraphs, else the first paragraph —, an `arg`, a
+  `replace` of the node, or a `tag`: the node's tag part, `seq{slot: tag}`
+  — an equation's number, beside the compat `name` until layout places it;
+  site output is synthetic, so a cloned title leaves it out), `display`
+  (P3-03, D-S05: whether the sites show the number where it stands — the
+  built-in heading row says false, a document that declares a class's
+  `numbering` or `sites` true unless it says false), `refers-to`
+  (`enclosing`: a label here names the nearest classed ancestor — a table
+  in a figure), `marker` (the instance's number is its list marker: the box
+  tree draws `ContentNode::number`), `ref` (the reference form), `flow`
   (a lifted item: its flow, placement, marker template and marker alias),
   `table` (instances are rows of a keyed table; `row-key`: the row key is
   that argument, not a label — `bibentry`'s `key`), `forms` (named
@@ -58,6 +69,22 @@ only the Index names the class.
   naming the table) and how references to its keys read (`cite`).
 - **unresolved** / **unnumbered**: the reference forms for a missing label
   and a label on an unnumbered node.
+
+As built in P3-03 (design T3 S4): `table-figure` (a figure whose body is
+one table — the figure constructor sets the group's `kind`, D-S01, and
+`kind:` overrides — numbers with the table counter), `subfigure` (a figure
+in a figure, counter `subfigure` within `figure`, pattern `(a)`: 图 1(a),
+D-S02), `figure-table` (a table in a figure: unnumbered, `refers-to:
+enclosing`), `olist` / `enum-item` (an ordered list scopes counter `enum`
+— a counter's `scope: <class>` starts it over in each instance, from its
+`start`, in its `numbering` pattern, default `1.` —, and each item's
+number is its marker: list items are referenceable), and `dterm` (a group
+of role `dterm`: a glossary row named by its `name`, staying in place).
+Collectors' outline entries clone the title (cloneTitle, D-S03): the
+title node's content without site output, flows, anchors, collectors,
+events or entries, a reference as its text, its own styling kept and the
+collector's context taken; a notes entry's marker is the note's number (a
+template node's `marker`).
 
 Membership is decided once, at instantiate (`ContentNode::cls`, with the
 class of the nearest classed ancestor for `inside`). No stage compares role

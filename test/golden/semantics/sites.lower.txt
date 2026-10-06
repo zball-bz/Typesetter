@@ -1,0 +1,33 @@
+lower v1 abi 3d3ccfbb docEnd 509 holes 4 module 22b94d33a38db9bf
+piece 0 hole 0 js [150,440)
+piece 1 hole 1 js [442,453)
+piece 2 hole 2 js [455,518)
+piece 3 hole 3 js [520,536)
+block 0 stmt [0,287) user framed holes 0..1
+  STMT 0
+block 1 content [289,293) user framed holes 1..2
+  CALL para [289,293)
+    HOLE 1 [289,293)
+block 2 content [295,309)
+  CALL heading [295,309) level=1 label="intro"
+    TEXT "Introduction" [297,309)
+block 3 content [319,372) async
+  REGION async "proof" [319,372)
+    CALL para [327,340)
+      TEXT "By induction." [327,340)
+    CALL para [342,364)
+      TEXT "The step is immediate." [342,364)
+block 4 content [374,473) user framed holes 2..3
+  CALL para [374,473)
+    HOLE 2 [374,473)
+      TEXT "A lemma is a small theorem used on the way to a larger one." [413,472)
+block 5 content [475,484) user framed holes 3..4
+  CALL para [475,484)
+    HOLE 3 [475,484)
+block 6 content [486,508)
+  CALL para [486,508)
+    TEXT "See " [486,489) raw=0:0,4:3
+    CALL ref [490,496) target="intro"
+    TEXT " and " [497,500) raw=0:0,1:0,5:3
+    CALL ref [501,507) target="lemma"
+    TEXT "." [507,508)
