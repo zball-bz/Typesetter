@@ -657,10 +657,12 @@ struct Gen {
         }
         bool a = false;
         if (n->nkids) {
-          callHead("seq", nullptr, 1);
+          // (the seq awaits when its kids do: a fence or a region in the
+          // bracket — its async bit is its own, as every call's)
+          const size_t seq = callHead("seq", nullptr, 1);
           key("slot");
           w.constStr("extra");
-          a = kids(n->kids());
+          a = done(seq, kids(n->kids()));
         }
         return done(at, a);
       }
