@@ -1,0 +1,5 @@
+doc @[127,227) [base]
+  para @[127,183) [base]
+    text @[127,183) [base] str="A fence handler reads a document resource with ctx.load:"
+  para @[185,227) [base]
+    text @[185,227) [base] str="The data lists 4 entries."

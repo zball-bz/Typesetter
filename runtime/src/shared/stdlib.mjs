@@ -128,7 +128,8 @@ export const softJoin = (s) => (s.includes('\n')
 
 // ---- one std per execution ----------------------------------------------------
 // host: { ob, here ({s, e}: where the run is), height(), popTo(h),
-// bibliography(src, options, s, e) }
+// bibliography(src, options, s, e) (a promise: plan P2-14), load(src) (a
+// document resource's text, a promise), fragments(texts, o) (plan P2-13) }
 export function createStd(host) {
   const { ob, here } = host;
   const diag = (sev, code, msg) => ob.diag(sev, code, msg, here.s, here.e);
@@ -517,8 +518,9 @@ export function createStd(host) {
     toc: collect('toc'),
     glossary: collect('glossary'),
     notes: collect('notes'),
-    // citations (notes-design.md §2): the collector, in place; the data
-    // loads after the program ran and its entries become the table's rows
+    // citations (notes-design.md §2; plan P2-14): a promise — the data loads,
+    // its entries become the table's rows here, and the collector stands in
+    // place (a splice naming it awaits: schema "async")
     bibliography: (call) => host.bibliography(call.attrs.src, call.options ?? {}, here.s, here.e),
     // the event carries the construct it was made in (where a discarded
     // one is reported: event-unplaced); placed, it takes its occurrence's
@@ -557,7 +559,7 @@ export function createStd(host) {
   let depth = 0;
   const ctxOf = (name, call) => ({
     args: call.options ?? {}, label: call.options?.label, span: [here.s, here.e],
-    std, plain, m: std.m,
+    std, plain, m: std.m, load: host.load,
   });
   const hookError = (code, message) => {
     diag(2, code, message);
@@ -666,6 +668,7 @@ export function createStd(host) {
       offset,
       lineOffsets: lines,
       m: std.m,  // m`…`, m.parse(src, {offset: ctx.offset + …}), m.parseMany (plan P2-13)
+      load: host.load,  // a document resource's text, a promise (plan P2-14)
       error: mkErr,
       raw: (html, { width, height } = {}) =>
         ob.makeNode(KIND.raw, { html: String(html), w: width, h: height }, []),

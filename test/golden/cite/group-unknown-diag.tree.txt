@@ -1,4 +1,4 @@
-doc @[0,0) [base]
+doc @[0,143) [base]
   para @[0,95) [base]
     text @[0,39) [base] str="A grouped citation with one unknown key " raw=0:0,40:39
     ref @[40,67) [base] target="kp81, nosuchkey, liang83"

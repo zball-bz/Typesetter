@@ -1,6 +1,6 @@
-lower v1 abi 3d3ccfbb docEnd 189 holes 2 module c40ce36c09cda771
-piece 0 hole 0 js [136,189)
-piece 1 hole 1 js [191,244)
+lower v1 abi 3d3ccfbb docEnd 189 holes 2 module ddef738252e0a191
+piece 0 hole 0 js [136,195)
+piece 1 hole 1 js [197,256)
 block 0 content [0,26)
   CALL para [0,26)
     TEXT "Cited: " [0,6) raw=0:0,7:6
@@ -8,12 +8,12 @@ block 0 content [0,26)
     TEXT " and " [13,16) raw=0:0,1:0,5:3
     CALL ref [17,25) target="liang83"
     TEXT "." [25,26)
-block 1 content [28,74) user framed holes 0..1
-  CALL para [28,74)
-    HOLE 0 [28,74)
+block 1 content [28,74) user framed async holes 0..1
+  CALL async para [28,74)
+    HOLE async 0 [28,74)
 block 2 content [76,140)
   CALL para [76,140)
     TEXT "The same bibliography placed again carries no duplicate anchors." [76,140)
-block 3 content [142,188) user framed holes 1..2
-  CALL para [142,188)
-    HOLE 1 [142,188)
+block 3 content [142,188) user framed async holes 1..2
+  CALL async para [142,188)
+    HOLE async 1 [142,188)

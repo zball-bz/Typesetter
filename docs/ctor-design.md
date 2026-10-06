@@ -96,6 +96,12 @@ paragraph is built in one pass); a region constructor called from code
 returns its handler's promise when that handler is async, to be awaited —
 `#(await callout({label: "c"}, para("…")))`.
 
+A constructor that loads is async (plan P2-14: schema `"async": true`,
+today `bibliography`): its result is a promise, and a splice that names one
+awaits it — codegen marks the hole async (`kStdAsync`, stdnames.gen.h).
+Handlers reach the same loader as `ctx.load(src)` (a resource's text, a
+promise; P3-21 moves it to the common locator and cache).
+
 ## 4. Markup and regions
 
 The LowerProgram's CALL ops carry their attributes bound by name

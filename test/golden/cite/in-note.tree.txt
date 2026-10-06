@@ -1,4 +1,4 @@
-doc @[0,0) [base]
+doc @[0,219) [base]
   heading @[0,20) [base] level=1 label="h-1"
     text @[2,20) [base] str="Citations in notes"
   para @[22,171) [base]
@@ -52,9 +52,9 @@ doc @[0,0) [base]
       text @[0,0) [base] str=" "
       link @[0,0) [base] url="https://doi.org/10.1002/spe.4380111102"
         text @[0,0) [base] str="doi:10.1002/spe.4380111102"
-  group @[0,0) [base] role="notes"
-    rule @[0,0) [base]
-    list @[0,0) [base] ordered=true
+  group @[0,219) [base] role="notes"
+    rule @[0,219) [base]
+    list @[0,219) [base] ordered=true
       item @[71,126) [base]
         para @[71,126) [base] label="fn-1"
           text @[73,84) [basex0.85] str="The TeXbook " raw=0:0,12:11

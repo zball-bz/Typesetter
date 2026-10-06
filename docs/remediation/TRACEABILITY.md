@@ -1047,7 +1047,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/parse-time-pipe-segmentation` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `codegen-ops-model/role-string-dispatch` | adhoc | high | P2-05 | grep:plan P2-05 |
 | `codegen-ops-model/sidecar-ingest-pass` | adhoc | medium | P2-13 | grep:plan P2-13 |
-| `codegen-ops-model/bibliography-placeholder-and-end-emission` | adhoc | medium | P2-07, P2-14 | |
+| `codegen-ops-model/bibliography-placeholder-and-end-emission` | adhoc | medium | P2-07, P2-14 | grep:plan P2-14 |
 | `codegen-ops-model/cls-sup-feature-bit` | adhoc | medium | P2-08 | grep:plan P2-08 |
 | `codegen-ops-model/kind-default-styles-in-emit` | adhoc | medium | P3-01 | |
 | `codegen-ops-model/resolver-fabricated-styles` | adhoc | medium | P3-01, P3-03 | |

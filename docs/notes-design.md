@@ -177,6 +177,22 @@ of a key wins), and MATERIALIZE drops them where they stand; the
 collector lists the table's rows. Two bibliographies list the same table,
 each where it is written (the first owns the row anchors).
 
+As built (plan P2-14; design T2 S11): the bibliography is made **at its
+call**. `bibliography(src, …)` is an async constructor (schema
+`"async": true`): it loads the source through the executor's resource
+loader (the same as `ctx.load`: below `rootDir` or the document's folder,
+P0-11), formats each item with the `bib` format entry — each in its own
+frame: a throwing formatter leaves `⚠ message` in that entry and a
+`bib-load` warning —, emits the `entry{role: bibentry, key}` rows there,
+under the style stack of the call, and returns the collector. A splice
+that names an async constructor awaits it (its hole is async: codegen
+reads `kStdAsync`); `#let b = bibliography(…)` binds the promise — write
+`await`. A source is loaded once: a later collector naming it lists the
+same rows. A load failure is an error node (`bib-load`) beside the empty
+collector. `finishBibliographies`, the trailing unspanned roots and the
+style-stack replay are gone; the document root's span now ends at its
+last block.
+
 ## 3. What is shared
 
 | concern | footnotes | citations |

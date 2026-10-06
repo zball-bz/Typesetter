@@ -1,0 +1,7 @@
+#{ $.fence("count", async (body, ctx) => para(`The data lists ${JSON.parse(await ctx.load(body.trim())).length} entries.`)) }
+
+A fence handler reads a document resource with ctx.load:
+
+```count
+/test/fixtures/cite/refs.json
+```

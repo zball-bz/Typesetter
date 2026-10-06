@@ -134,8 +134,9 @@ await __rt.run(__h, 1);
   trailing comma or a comment needs no text surgery. If the call never gets
   there (an argument threw), the content is skipped.
 - **Awaiting.** A hole whose code mentions `await` (a token scan that also
-  sees template `${…}` holes) is an `async` function and its op carries the
-  async bit; so does every op above it. Nothing else is awaited — a hole
+  sees template `${…}` holes), or names a constructor that loads (plan
+  P2-14: `kStdAsync`, `bibliography`), is an `async` function and its op
+  carries the async bit; so does every op above it. Nothing else is awaited — a hole
   that merely returns a promise splices it as an object, as before.
 - **No user code, no module.** The program then runs as segment 0 alone,
   and nothing is imported.

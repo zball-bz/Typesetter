@@ -1,0 +1,9 @@
+lower v1 abi 3d3ccfbb docEnd 228 holes 1 module 01056fe9abdf84f7
+piece 0 hole 0 js [128,266)
+block 0 stmt [0,125) user framed async holes 0..1
+  STMT async 0
+block 1 content [127,183)
+  CALL para [127,183)
+    TEXT "A fence handler reads a document resource with ctx.load:" [127,183)
+block 2 content [185,227) async
+  FENCE async "count" body="/test/fixtures/cite/refs.json" at=[194,223) lines=null [185,227)

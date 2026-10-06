@@ -461,7 +461,10 @@ struct Gen {
     w.u(h);
     span(n->span);
     const bool kidsAwait = kids(n->kids());
-    const bool async = kidsAwait || jsMentions(expr, "await");
+    // (plan P2-14) a splice that names a loading constructor awaits it
+    bool loads = false;
+    for (const char* n : kStdAsync) loads = loads || jsMentions(expr, n);
+    const bool async = kidsAwait || loads || jsMentions(expr, "await");
     std::string t = async ? "async " : "";
     // a named argument list (plan P2-06) is one options object
     auto args = [&](std::string& o) {

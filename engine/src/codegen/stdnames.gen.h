@@ -52,4 +52,10 @@ inline constexpr const char* kStdNames[] = {
     "when",
 };
 
+// the constructors whose result is a promise (plan P2-14: they load): a
+// splice that names one awaits it
+inline constexpr const char* kStdAsync[] = {
+    "bibliography",
+};
+
 }  // namespace tsr

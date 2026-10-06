@@ -1,0 +1,4 @@
+[0,125) function "#{ $.fence(\"count\", async (body, ctx) => para(`The data lists ${JSON.parse(await ctx.load(body.trim())).length} entries.`)) }"
+[185,193) keyword "```count"
+[194,223) embedded "/test/fixtures/cite/refs.json"
+[224,227) keyword "```"

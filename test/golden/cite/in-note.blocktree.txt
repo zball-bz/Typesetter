@@ -12,9 +12,9 @@ top pid=2 leaves=4
       paragraph para unit=2 anchor="bib-knuth84" @[0,0)
       paragraph para unit=3 anchor="bib-kp81" @[0,0)
 top pid=3 leaves=2
-  stack root gap=1/1 @[0,0)
-    stack group @[0,0)
-      replaced rule rule unit=0 @[0,0)
-      stack list pad=1536su gap=1/3 @[0,0)
+  stack root gap=1/1 @[0,219)
+    stack group @[0,219)
+      replaced rule rule unit=0 @[0,219)
+      stack list pad=1536su gap=1/3 @[0,219)
         stack item x=1536su @[71,126)
           paragraph para unit=1 x=1536su anchor="fn-1" marker="1." @[71,126)

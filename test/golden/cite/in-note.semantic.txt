@@ -7,9 +7,9 @@
 <p id="tsr-bib-knuth84">[2] Donald E. Knuth. <em>The TeXbook</em>. Computers &amp; Typesetting A. Addison-Wesley, 1984.</p>
 <p id="tsr-bib-kp81">[3] Donald E. Knuth and Michael F. Plass. <em>Breaking Paragraphs into Lines</em>. Software: Practice and Experience 11(11), 1119-1184. 1981. <a href="https://doi.org/10.1002/spe.4380111102">doi:10.1002/spe.4380111102</a></p>
 </div>
-<div data-role="notes" data-pid="3">
-<hr>
-<ol>
+<div data-role="notes" data-pid="3" data-s="0" data-e="219">
+<hr data-s="0" data-e="219">
+<ol data-s="0" data-e="219">
 <li id="tsr-fn-1">The TeXbook [<a href="#tsr-bib-knuth84">2</a>] is cited only inside this note. <a href="#tsr-fnref-1">↩</a></li>
 </ol>
 </div>

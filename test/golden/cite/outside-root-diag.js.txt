@@ -3,7 +3,7 @@ export default async (__rt, $) => {
 const {bibliography} = __rt.std;
 return (async () => {
 const __h = [
-() => (bibliography("../../../../refs.json")),
+async () => (bibliography("../../../../refs.json")),
 ];
 await __rt.run(__h, 0);
 })();

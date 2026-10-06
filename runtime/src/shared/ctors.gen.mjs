@@ -18,7 +18,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "heading": {
     "kind": "heading",
@@ -46,7 +47,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "list": {
     "kind": "list",
@@ -75,7 +77,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "item": {
     "kind": "item",
@@ -93,7 +96,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "quote": {
     "kind": "quote",
@@ -111,7 +115,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "codeblock": {
     "kind": "codeblock",
@@ -142,7 +147,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "rule": {
     "kind": "rule",
@@ -160,7 +166,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": true,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "group": {
     "kind": "group",
@@ -179,7 +186,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "table": {
     "kind": "table",
@@ -203,7 +211,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "row": {
     "kind": "trow",
@@ -221,7 +230,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "cell": {
     "kind": "tcell",
@@ -239,7 +249,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "term": {
     "kind": "term",
@@ -263,7 +274,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "collect": {
     "kind": "collect",
@@ -284,7 +296,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "mathblock": {
     "kind": "mathblock",
@@ -312,7 +325,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "error": {
     "kind": "error",
@@ -341,7 +355,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": true,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "comment": {
     "kind": "comment",
@@ -363,7 +378,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "text": {
     "kind": "text",
@@ -375,7 +391,8 @@ export const CTOR_SPECS = Object.freeze({
     "options": [],
     "nullary": false,
     "sealed": true,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "styled": {
     "kind": "styled",
@@ -404,7 +421,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "link": {
     "kind": "link",
@@ -428,7 +446,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "code": {
     "kind": "code",
@@ -450,7 +469,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "ref": {
     "kind": "ref",
@@ -476,7 +496,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "mathinline": {
     "kind": "mathinline",
@@ -500,7 +521,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "raw": {
     "kind": "raw",
@@ -526,7 +548,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "seq": {
     "kind": "seq",
@@ -544,7 +567,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": true,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "image": {
     "kind": "image",
@@ -573,7 +597,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "note": {
     "kind": "note",
@@ -591,7 +616,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "field": {
     "kind": "field",
@@ -616,7 +642,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "entry": {
     "kind": "entry",
@@ -635,7 +662,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "slot": {
     "kind": "slot",
@@ -660,7 +688,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "when": {
     "kind": "when",
@@ -684,7 +713,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "each": {
     "kind": "each",
@@ -709,7 +739,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": false
+    "derived": false,
+    "async": false
   },
   "strong": {
     "kind": "styled",
@@ -738,7 +769,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": true
+    "derived": true,
+    "async": false
   },
   "em": {
     "kind": "styled",
@@ -767,7 +799,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": false,
     "sealed": false,
-    "derived": true
+    "derived": true,
+    "async": false
   },
   "style": {
     "kind": "styled",
@@ -775,7 +808,8 @@ export const CTOR_SPECS = Object.freeze({
     "options": "raw",
     "nullary": false,
     "sealed": false,
-    "derived": true
+    "derived": true,
+    "async": false
   },
   "figure": {
     "kind": "group",
@@ -787,7 +821,8 @@ export const CTOR_SPECS = Object.freeze({
     "options": "raw",
     "nullary": false,
     "sealed": false,
-    "derived": true
+    "derived": true,
+    "async": false
   },
   "toc": {
     "kind": "collect",
@@ -808,7 +843,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": true,
     "sealed": false,
-    "derived": true
+    "derived": true,
+    "async": false
   },
   "glossary": {
     "kind": "collect",
@@ -829,7 +865,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": true,
     "sealed": false,
-    "derived": true
+    "derived": true,
+    "async": false
   },
   "notes": {
     "kind": "collect",
@@ -850,7 +887,8 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "nullary": true,
     "sealed": false,
-    "derived": true
+    "derived": true,
+    "async": false
   },
   "bibliography": {
     "kind": "collect",
@@ -864,7 +902,8 @@ export const CTOR_SPECS = Object.freeze({
     "options": "raw",
     "nullary": false,
     "sealed": false,
-    "derived": true
+    "derived": true,
+    "async": true
   },
   "counterUpdate": {
     "kind": "event",
@@ -878,7 +917,8 @@ export const CTOR_SPECS = Object.freeze({
     "options": "raw",
     "nullary": false,
     "sealed": false,
-    "derived": true
+    "derived": true,
+    "async": false
   },
   "node": {
     "kind": null,
@@ -892,7 +932,8 @@ export const CTOR_SPECS = Object.freeze({
     "options": "raw",
     "nullary": false,
     "sealed": true,
-    "derived": true
+    "derived": true,
+    "async": false
   }
 });
 export const STD_ALIASES = Object.freeze({

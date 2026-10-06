@@ -198,7 +198,7 @@
       "toc": {"kind": "collect", "nullary": true},
       "glossary": {"kind": "collect", "nullary": true},
       "notes": {"kind": "collect", "nullary": true},
-      "bibliography": {"kind": "collect", "params": ["attr:src:str"], "options": "raw"},
+      "bibliography": {"kind": "collect", "params": ["attr:src:str"], "options": "raw", "async": true},
       "counterUpdate": {"kind": "event", "params": ["attr:counter:ident"], "options": "raw"},
       "node": {"params": ["attr:kind:ident"], "options": "raw", "sealed": true}},
     "functions": ["val", "m", "plain"]},

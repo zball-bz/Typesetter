@@ -1,4 +1,4 @@
-doc @[0,0) [base]
+doc @[0,216) [base]
   para @[0,168) [base]
     text @[0,37) [base] str="Three consecutive citations compress: " raw=0:0,38:37
     ref @[38,63) [base] target="kp81, liang83, knuth84"

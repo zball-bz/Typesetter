@@ -1,0 +1,5 @@
+doc @[0,228)
+  code-block @[0,125) js=" $.fence(\"count\", async (body, ctx) => para(`The data lists ${JSON.parse(await ctx.load(body.trim())).length} entries.`)) "
+  para @[127,183)
+    text @[127,183) str="A fence handler reads a document resource with ctx.load:"
+  codeblock @[185,227) lang="count" body="/test/fixtures/cite/refs.json"

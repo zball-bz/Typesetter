@@ -82,59 +82,53 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     height: () => styleStack.length,
     popTo: (h) => dollar.style.popTo(h),
     fragments: (texts, o) => runFragments(texts, o),
-    // citations (notes-design.md §2; plan P2-07): the collector stands
-    // where #bibliography is; the data loads after the program ran and each
-    // entry becomes a row — entry{role: bibentry, key}, a trailing root —
-    // the resolver numbers cited keys and lists them in citation order
-    // (cited: 'cited-then-all', or all: true, then every other row)
-    bibliography: (src, o, s, e) => {
-      bibRequests.push({ src: String(src), s, e, stack: styleStack.slice() });
+    // a document resource (plan P2-14: ctx.load; P0-11: below rootDir or the
+    // document's folder — P3-21 moves it to the common locator and cache)
+    load: (src) => loadResource(String(src), opts),
+    // citations (notes-design.md §2; plans P2-07, P2-14): #bibliography(src)
+    // loads its data — once per source: another collector naming it lists
+    // the same rows —, formats each entry with the 'bib' format entry, each
+    // in its own frame, and emits it here as a row, entry{role: bibentry,
+    // key}; the collector stands in place. The resolver numbers cited keys
+    // and lists them in citation order (cited: 'cited-then-all', or all:
+    // true, then every other row). A load failure is an error beside the
+    // empty collector.
+    bibliography: async (src, o, s, e) => {
       const cited = o.cited ?? (o.all ? 'cited-then-all' : undefined);
       if (cited !== undefined && cited !== 'cited' && cited !== 'cited-then-all')
         throw new TypeError("bibliography: cited is 'cited' or 'cited-then-all'");
-      return ob.makeNode(KIND.collect, { what: 'bibliography', cited }, []);
+      const node = ob.makeNode(KIND.collect, { what: 'bibliography', cited }, []);
+      const key = String(src);
+      if (bibLoaded.has(key)) return node;
+      bibLoaded.add(key);
+      let entries;
+      try {
+        entries = JSON.parse(await loadResource(key, opts));
+        if (!Array.isArray(entries)) throw new Error('CSL-JSON array expected');
+      } catch (err) {
+        const message = `bibliography ${key}: ${err?.message ?? err}`;
+        const n = ob.makeNode(KIND.error, { message, code: 'bib-load' }, []);
+        ob.span(n, s, e);
+        ob.diag(2, 'bib-load', message, s, e);
+        return ob.makeNode(KIND.seq, {}, [node, n]);
+      }
+      const fmt = S.api.formatOf('bib') ?? formatEntryDefault;
+      for (const en of entries) {
+        if (!en || !en.id) continue;
+        let inline;
+        try { inline = fmt(en, std); }
+        catch (err) {  // its frame: the entry shows the failure, and says so
+          ob.diag(1, 'bib-load', `bibliography ${key}: entry ${en.id}: ${err?.message ?? err}`, s, e);
+          inline = [std.text(`⚠ ${err?.message ?? err}`)];
+        }
+        ob.emitNode(ob.makeNode(KIND.entry, { role: 'bibentry', key: String(en.id) }, kidsOf([inline])));
+      }
+      return node;
     },
   });
   const { std, kidsOf } = S;
   const styleStack = [];
-  const bibRequests = [];
-  // runs after the document program: load + format + emit the entries
-  // (a source loaded once, however many collectors name it)
-  const finishBibliographies = async () => {
-    const loaded = new Set();
-    for (const req of bibRequests) {
-      if (loaded.has(req.src)) continue;
-      loaded.add(req.src);
-      let entries;
-      try {
-        entries = JSON.parse(await loadResource(req.src, opts));
-        if (!Array.isArray(entries)) throw new Error('CSL-JSON array expected');
-      } catch (e) {  // reported at the #bibliography call
-        errorSpan(req.s, req.e, 'bib-load', `bibliography ${req.src}: ${e?.message ?? e}`);
-        continue;
-      }
-      const fmt = S.api.formatOf('bib') ?? formatEntryDefault;
-      // the entries take the style stack the request was made under (plan
-      // P2-08), not the one the program ended with
-      const replay = req.stack.length > 0 || styleStack.length > 0;
-      if (replay) {
-        ob.stylePopTo(0);
-        for (const d of req.stack) ob.stylePush(d);
-      }
-      for (const e of entries) {
-        if (!e || !e.id) continue;
-        let inline;
-        try { inline = fmt(e, std); }
-        catch (err) {  // invoke frame: the entry shows the failure, and says so
-          const msg = `bibliography ${req.src}: entry ${e.id}: ${err?.message ?? err}`;
-          ob.diag(1, 'bib-load', msg, req.s, req.e);
-          inline = [std.text(`⚠ ${err?.message ?? err}`)];
-        }
-        ob.emitNode(ob.makeNode(KIND.entry, { role: 'bibentry', key: String(e.id) }, kidsOf([inline])));
-      }
-      if (replay) ob.stylePopTo(0);
-    }
-  };
+  const bibLoaded = new Set();  // the sources whose rows are emitted
   const dollar = {
     // registration precedes use; each returns the constructor's trampoline
     ctor: S.api.ctor,
@@ -319,7 +313,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     });
   };
 
-  return { std, dollar, finishBibliographies, helpers, env };
+  return { std, dollar, helpers, env };
 }
 
 const isSyntaxError = (e) => e?.name === 'SyntaxError' || e instanceof SyntaxError;
@@ -446,7 +440,7 @@ async function importModule(jsText) {
 export async function execute(compiled, opts = {}) {
   const prog = decodeProgram(compiled.program);
   const ob = new OpBuf();
-  const { std, dollar, finishBibliographies, helpers, env } = buildContext(ob, opts, prog);
+  const { std, dollar, helpers, env } = buildContext(ob, opts, prog);
   const mod = prog.module ? await loadModule(prog, compiled.js) : null;
   const lowering = new Lowering(prog, env);
   const rt = {
@@ -460,6 +454,5 @@ export async function execute(compiled, opts = {}) {
   } catch (e) {
     helpers.failRest(e);  // an unframed statement threw (D-I10)
   }
-  await finishBibliographies();
   return ob.finalize();
 }
