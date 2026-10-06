@@ -31,7 +31,7 @@ window.__tsr = {
     handle = await engine.typeset(source, out, opts);
     return { diags: handle.diags, diagnostics: handle.diagnostics, heightPx: handle.heightPx, dpr: devicePixelRatio,
              hasSemantic: !!handle.semanticHtml, upgrades: handle.upgrades.length,
-             html: handle.html };
+             html: handle.html, timings: handle.timings };
   },
   async update(source) {
     const r = await handle.update(source);
