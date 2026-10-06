@@ -99,20 +99,21 @@ static void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
 
 // One formula as an inline box (§8): width/height from the box, the baseline
 // pinned with vertical-align (inline) or an explicit top offset (display).
-// data-syn="math" + data-src carry the copy contract (§9.3: source text).
+// (plan P3-26) the copy contract as any replaced run's: data-syn="math", its
+// source as data-copy, every part of one formula in one data-copy-group
+// (its source start, high bit set — never a replaced node's small number),
+// so copy takes the source once whichever parts the selection holds.
 static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
                      bool display, const Interner& strs, Span span,
                      double displayTop = 0, u32 srcBase = 0, StrRef color = 0) {
   Tag t(out, "span");
   t.attrSafe("class", "tsr-math");
   t.attrSafe("data-syn", "math");
-  std::string src;
-  if (srcRef) {  // later segments of a split formula contribute nothing
-    src = display ? "$ " : "$";
-    src += strs.get(srcRef);
-    src += display ? " $" : "$";
-  }
-  t.attr("data-src", src);
+  std::string src = display ? "$ " : "$";
+  src += strs.get(srcRef);
+  src += display ? " $" : "$";
+  t.attr("data-copy", src);
+  t.num("data-copy-group", 0x80000000u | span.start);
   if (!span.empty()) spanAttrs(t, span, srcBase);
   t.px("width", suToPx(mb->w)).px("height", suToPx(mb->asc + mb->desc));
   if (display) t.decl("position", "absolute").decl("left", "0").px("top", displayTop);

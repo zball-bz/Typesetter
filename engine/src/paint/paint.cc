@@ -62,7 +62,7 @@ void lineRuns(const Fragment& l, const HList& h, std::vector<DLRun>& out) {
         case ObjKind::Math:  // one box, baseline via vertical-align
           d.k = DLRun::K::Math;
           d.math = pt.math;
-          d.src = sp.str;
+          d.src = ob.src;  // (plan P3-26) every part: its formula's source, copied once per group
           d.face = h.runs[it.run].face;  // its paint style: colour, link (plan P1-25)
           d.link = h.runs[it.run].link;
           break;

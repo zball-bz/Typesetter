@@ -3,8 +3,8 @@
 // decides what copy takes of each run and encodes it; this is the DOM
 // mirror, a plain concatenator:
 // - a run without data-syn is text (its selected part);
-// - data-copy replaces a run, once per data-copy-group in a block (math:
-//   data-src, on a formula's first segment only);
+// - data-copy replaces a run, once per data-copy-group in a block (a
+//   formula's source too, plan P3-26: every part of it in one group);
 // - any other data-syn run is omitted (hyphens, markers, spacers, a
 //   footnote marker, a backlink, error text);
 // - after each line its separator, data-join: space ' ', none '', tab, row
@@ -53,7 +53,7 @@ function lineText(line, range, groups, block) {
       for (const tn of run.childNodes) if (tn.nodeType === Node.TEXT_NODE) text += selected(range, tn);
       continue;
     }
-    const copy = run.dataset.copy ?? (syn === 'math' ? run.dataset.src : undefined);
+    const copy = run.dataset.copy;
     if (copy === undefined) continue;  // omitted
     const g = run.dataset.copyGroup ?? null;
     if (!kept++) first = g;

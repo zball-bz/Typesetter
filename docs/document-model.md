@@ -473,7 +473,7 @@ and webfont-settle re-typesets, `size-adjust` fallback descriptors.
 Copy produces **content text**, not markup source. As built (plan P3-07; design T7 "ContentText projection + CopyPolicy"): the engine decides what copy takes of every run and line (§9.1) and `copy.mjs` concatenates:
 
 - Ownership: the core copy handler owns the clipboard iff the range intersects at least one `.tsr-line` (even if the result is empty); otherwise native copy applies — except on the semantic page, where a range holding `data-syn`/`data-copy` elements is copied as the browser would copy it without the omitted ones (D-R06).
-- Runs, in DOM order: a run without `data-syn` contributes its selected text (partial at the selection endpoints); `data-copy` (math: `data-src`) contributes its replacement once per `data-copy-group` in a block; any other `data-syn` run nothing.
+- Runs, in DOM order: a run without `data-syn` contributes its selected text (partial at the selection endpoints); `data-copy` (a formula's source too, plan P3-26) contributes its replacement once per `data-copy-group` in a block; any other `data-syn` run nothing.
 - Lines, in order: a line without items (a blank code row, an empty cell) contributes `""` and its separator; a line whose items are all omitted contributes nothing, not even its separator; otherwise its text, then its separator.
 - Separator: `data-join` — `space` `" "`, `none` `""`, `tab` `"\t"`, `row` `"\n"`, `para` `"\n\n"`; absent `"\n"` — except between two lines of one replaced node (the same `data-copy-group` ends one and starts the next): nothing. A change of block identity — a `.tsr-para`, or on paged sheets a `.tsr-band`'s `data-b` (a block cut across sheets keeps one) — is `"\n\n"`.
 - Sidecars (D-R03): across code rows only the code is copied; a selection entirely inside the sidecar track (`data-track="sidecar"`) copies the notes, without their marker.
@@ -483,7 +483,7 @@ Copy produces **content text**, not markup source. As built (plan P3-07; design 
 ### 9.4 Math runs (M7)
 
 - A formula renders as one `<span class="tsr-math" data-syn="math"
-  data-src="$…$">` inline box (width/height/vertical-align from the MathBox;
+  data-copy="$…$" data-copy-group="…">` inline box (width/height/vertical-align from the MathBox;
   display formulas are a `Math` fragment: a centred row with an explicit
   height, the formula placed in it by paint, and an optional `.tsr-eqno`
   right-margin number, `data-syn="eqno"`, its offset computed by paint).
@@ -491,10 +491,11 @@ Copy produces **content text**, not markup source. As built (plan P3-07; design 
   line-height == hhea height) and `.tsr-mr` rule boxes. Glyphs are painted
   BY CODEPOINT in the bundled font — the artifact's gating check guarantees
   every variant/assembly glyph is cmap-reachable.
-- Copy (§9.3 extension): `data-syn="math"` runs contribute their `data-src`
-  source text; a formula split into break segments carries the source on
-  the FIRST segment only (later segments have empty data-src). Audits treat
-  a math span as one engine-defined line fragment.
+- Copy (§9.3; plan P3-26): a formula is a replaced run like any other —
+  every part of a formula split at break points carries its source as
+  `data-copy` and one `data-copy-group` (its source start, high bit set),
+  so copy takes the source once. Audits treat a math span as one
+  engine-defined line fragment.
 - Semantic fallback (§9.2): `<code class="tsr-mathsrc">$src$</code>` inline;
   `<p class="tsr-mathblock">` for display. MathML stays rejected (v2 §13).
 
