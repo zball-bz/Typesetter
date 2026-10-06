@@ -337,15 +337,15 @@ top pid=5 units=1
   glue word w=257su x=1 cap=257su kern="r s" src r0 @[468,511)
   box Other "spelling:" w=4609su r0 @[468,511)
   glue word w=257su x=1 cap=257su src r0 @[468,511)
-  box object o0 math part=0 asc=1178su desc=666su "⟨x/y, z⟩" w=2499su r1 @[512,526)
+  box object o0 math part=0 asc=1178su desc=666su "⟨x/y, z⟩" w=2703su r1 @[512,526)
   pen 0 r1
   box Other "," w=513su r2 @[526,527)
   glue word w=257su x=1 cap=257su src r2 @[526,527)
-  box object o1 math part=0 asc=1178su desc=666su "langle x/y rangle" w=1563su r3 @[528,547)
+  box object o1 math part=0 asc=1178su desc=666su "langle x/y rangle" w=1767su r3 @[528,547)
   pen 0 r3
   box Other "," w=513su r4 @[547,548)
   glue word w=257su x=1 cap=257su src r4 @[547,548)
-  box object o2 math part=0 asc=870su desc=358su "lfloor x/2 rfloor" w=1343su r5 @[549,568)
+  box object o2 math part=0 asc=870su desc=358su "lfloor x/2 rfloor" w=1547su r5 @[549,568)
   pen 0 r5
   box Other ";" w=513su r6 @[568,607)
   glue word w=257su x=1 cap=257su kern="; a" src r6 @[568,607)
@@ -393,9 +393,9 @@ top pid=5 units=1
   box Other "they" w=2049su r14 @[658,675)
   glue word w=257su x=1 cap=257su kern="y a" src r14 @[658,675)
   box Other "are." w=2049su r14 @[658,675)
-  obj o0 math parts=1 edges=Alpha/Alpha src="⟨x/y, z⟩" [w=2499su asc=1178su desc=666su]
-  obj o1 math parts=1 edges=Alpha/Alpha src="langle x/y rangle" [w=1563su asc=1178su desc=666su]
-  obj o2 math parts=1 edges=Alpha/Alpha src="lfloor x/2 rfloor" [w=1343su asc=870su desc=358su]
+  obj o0 math parts=1 edges=Alpha/Alpha src="⟨x/y, z⟩" [w=2703su asc=1178su desc=666su]
+  obj o1 math parts=1 edges=Alpha/Alpha src="langle x/y rangle" [w=1767su asc=1178su desc=666su]
+  obj o2 math parts=1 edges=Alpha/Alpha src="lfloor x/2 rfloor" [w=1547su asc=870su desc=358su]
   obj o3 math parts=1 edges=Alpha/Alpha src="{x | x > 0}" [w=4468su asc=721su desc=209su]
   obj o4 math parts=1 edges=Alpha/Alpha src="P(A | B)" [w=3507su asc=721su desc=209su]
   obj o5 math parts=2 edges=Alpha/Alpha src="|x| + ||v||" [w=1976su asc=721su desc=209su] [w=1309su asc=721su desc=209su glue=228su]

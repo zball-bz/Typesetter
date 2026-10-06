@@ -112,12 +112,12 @@ top pid=2 units=1
   glue word w=257su x=1 cap=257su src r6 @[257,260)
   box Other "and" w=1537su r6 @[257,260)
   glue word w=257su x=1 cap=257su src r6 @[257,260)
-  box object o2 math part=0 asc=912su desc=353su "frac(1, 2)" w=358su r7 @[261,287)
+  box object o2 math part=0 asc=912su desc=353su "frac(1, 2)" w=562su r7 @[261,287)
   pen 0 r7
   box Other "." w=513su r8 @[287,288)
   obj o0 math parts=2 edges=Alpha/Alpha src="p^2 + -3" [w=2013su asc=967su desc=243su] [w=1285su asc=719su desc=17su glue=228su]
   obj o1 math parts=1 edges=Alpha/Alpha src="alpha" [w=674su asc=479su desc=20su]
-  obj o2 math parts=1 edges=Alpha/Alpha src="frac(1, 2)" [w=358su asc=912su desc=353su]
+  obj o2 math parts=1 edges=Alpha/Alpha src="frac(1, 2)" [w=562su asc=912su desc=353su]
   run r0 plain
   run r1 object
   run r2 plain

@@ -23,7 +23,7 @@ top pid=0 units=1
   punct-close "：" w=512su @[35,53)
   punct-sp w=512su @[35,53)
 top pid=1 units=1
- unit math indent=0su w=9205su asc=1705su desc=714su
+ unit math indent=0su w=9409su asc=1705su desc=714su
 top pid=2 units=1
  unit text indent=0su
   cjk "组" w=1025su glue=102su wt=0.6 pen=0 @[96,105)
@@ -34,7 +34,7 @@ top pid=2 units=1
   boundary w=284su stretch=0 @[106,136)
   math "" w=774su asc=377su desc=0su @[106,136)
   boundary w=284su stretch=0 @[106,136)
-  math "" w=2706su asc=898su desc=499su @[106,136)
+  math "" w=2910su asc=898su desc=499su @[106,136)
   space w=257su stretch=1 @[137,164)
   cjk "满" w=1025su glue=102su wt=0.6 pen=0 @[137,164)
   cjk "足" w=1025su glue=102su wt=0.6 pen=0 @[137,164)

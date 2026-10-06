@@ -478,17 +478,18 @@ struct Layouter {
     if (denFloor > denDown) denDown = denFloor;
 
     Su w = num->w > den->w ? num->w : den->w;
+    const Su pad = toSu((double)F.upem * kMathPolicy.fracPadNum / kMathPolicy.fracPadDen, st);
     MathBox* out = mkBox(MathKind::HBox);
     out->cls = out->firstCls = out->lastCls = kOrd;
-    out->w = w;
+    out->w = w + 2 * pad;
     out->asc = numUp + num->asc;
     out->desc = denDown + den->desc;
     MathBox* bar = mkBox(MathKind::Rule);
     bar->w = w;
     bar->asc = thick;
-    out->kids.push_back({(w - num->w) / 2, numUp, num});
-    out->kids.push_back({0, axis - thick / 2, bar});
-    out->kids.push_back({(w - den->w) / 2, -denDown, den});
+    out->kids.push_back({pad + (w - num->w) / 2, numUp, num});
+    out->kids.push_back({pad, axis - thick / 2, bar});
+    out->kids.push_back({pad + (w - den->w) / 2, -denDown, den});
     return out;
   }
 

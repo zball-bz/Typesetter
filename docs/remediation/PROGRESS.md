@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-25
+- 下一步：P3-26
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -91,7 +91,7 @@
 | P3-22 | 代码高亮清单与引擎侧 overlay | done | grep:plan P3-22 | 2026-10-06 | 0 变化；+3 用例（code/overlay-json、code/overlay-unknown-diag、code/features-by-lang，仅新增）；native json-hl/tsm-hl 字节不变（stable_sort 无并列换序） | engine/schema/languages.json 为唯一清单（类别→编辑器类型、捕获别名、语言与别名、TextMate 作用域、语法源与查询、native、overlay、profile）；tools/gen-languages.mjs 生成 languages.gen.mjs（worker/编辑器/stdlib）、editors/vscode-tsm/src/hl.gen.js、engine/src/code/languages.gen.h、engine/native_grammars.gen.cmake（CMake 据此编译语法并嵌入查询）；gen-grammars 的 TextMate 围栏与 overlay 注入、codehl-assets 的语法表均读清单；生成器拒绝类别≠TOKEN_TAGS、主题缺类、native 语法用 #match?。hl-core.mjs（tagOf、resolveCaptures：稳定排序）供 worker 与编辑器共用；native 孪生 stable_sort 并求值 #eq?/#not-eq?/#any-of?/#not-any-of?。引擎侧 overlay（code/overlay.{h,cc}）：codeblock.overlays 属性（键 107，since 14，域 names），围栏参数、规则或 profile 默认规则（cpp-literate）开启；Resolve 时找区间、按字节置空格后请求、Emit 与语义页把区间合并为 label 词元；需求键 (语言, 正文, overlay)。去掉 worker 中只对 cpp 全局生效的正则；pbr2tsm 输出 cpp-literate。资源宿主一个种类可有多个 provider（match(row)），宿主可在运行时增加语言。code.fontFeaturesByLang 作用于内建语言的所有围栏标签。文档：code-design §8、host-protocol §4a/§4b、tsm-changes |
 | P3-23 | PresentationMap（元素行的 html 段） | done | grep:plan P3-23 | 2026-10-06 | 185 个 golden 变化（脚本 check323.py 核对：89 个 html/paged 只多 data-role，其一 semantics/lists 另因收集器成组；64 个 semantic、2 个 css、13 个 tree、12 个 blocktree 为下列有意修复）；+3 用例（figure/caption-paras、semantics/presentation、style/weight-size） | 中性移植：elements.json 新增 html 段（种类、生成角色、类的展示行，like 继承；吸收 P3-01 的 roles 映射与类的 html: figure），语义页按行取元素，字节不变后再做有意修复。有意修复：图注按 caption 部件写一个 figcaption（多段各为 p，块不再落入 figcaption，不再按首段猜测）；定义术语 dl/dt/dd（term 投影，模板给描述包一层 term-def 角色）；收集器输出外包一层以收集器名为角色的组（toc/lof/lot/index→nav，glossary/notes/bibliography→section，带 DPUB-ARIA 角色）；代码边注在语义页行内投影（行尾、按声明的标记、data-syn 使复制只取代码）；data-role：语义页与排版页 .tsr-para/.tsr-band 上的组角色（D-R02）；typeset.frame 声明的类得到 .tsr-frame[data-role] 框（D-Y11，内建无）；白名单：块/行内元素、slot 元素、ARIA 角色、projection，非法行拒绝注册表；kHtmlAttrs 增加 role。样式分歧：排版页写出 700 以外的 font-weight，语义页写出 sizeMul（em）与 sizePx×sizeMul；规则样式表按展示行取种类元素，角色选择器→[data-role]（仅限页面上带钩子的组），类选择器→.tsr-c-*。通道：semantics.html 宿主设置、$.element(name, {html})。文档：document-model §9.2、semantics-design、security-review 补遗、tsm-changes |
 | P3-24 | SymbolInfo 身份与数据驱动的数学族 | done | grep:plan P3-24 | 2026-10-06 | 2 个 mathir dump 多出 info math-implicit-name（math/decl 的 defeq 先于声明、region/hott-row 的 Id），其余 golden 不变（已验证）；+2 用例（math/symbols、math/negation-diag）；e2e 声明这两个用例的 info 诊断 | 谓词只读 SymbolInfo：直接输入的字符按其默认行成为 Op/Open/Close 记号（∑ 带 limits、≤ 结束大算子体、⟨⟩ 成组伸缩），具名定界符（langle、lceil…）同样开/闭组；! 规则：紧贴的符号取 UCD 否定或行内覆盖（| → ∤、‖ → ∦），无否定的关系为错误叶，其余为阶乘；删除 28 个 !x 行、_|_ 行与 !word/_|_ 词法分支，生成器拒绝字母与运算符字符混合的键，运算符字符集 kOpChars 生成；只剥圆括号（D-M01）；组内唯一的 | 或 ‖ 成为中间符（Rel，随组伸缩）；新原语 space/mstyle/mlimits/variant/class 与行 thin med thick quad wide、display inline script sscript、limits scripts、bb cal frak bold italic sans mono（字母表由 UCD 名称生成，含 letterlike 空位），无参数行裸用即常量；隐式名字报 info math-implicit-name（D-M04）；tex 列生成转换器映射（kTexNames/TEX_MATH），unitMathDict 把每个键与每个 TeX 目标解析回其符号（词法门禁）；tex2tsm 改用生成映射、字母表行、class(op, "X") 与空白行，并列出无符号的宏；pbr2tsm 加载时核对 MathSpeak 映射，粗体/手写/哥特字母用字母表。语料：review-corpus 340 篇 0 个新错误、typst 语料 199 篇通过。文档：design-decisions、math-design §13、tsm-changes |
-| P3-25 | 运算符原子与单一 mlist→item 转换 | todo | | | | |
+| P3-25 | 运算符原子与单一 mlist→item 转换 | done | grep:plan P3-25 | 2026-10-06 | 两次提交。主体：19 个 golden（脚本 check325.py 核对：display/eqref/stretch/decl 的 mathbox 只是树变平，每个字形与规则线的绝对位置不变；holes-diag 断点后的负号由 Bin 正确降为 Ord；math/symbols 新断点）。fracPadEm：29 个 golden（check325b.py 数值审阅：每个顶层分式宽 +204su = 2×0.1em@16px，脚本级 72su、二级脚本 51su，嵌套按层累加） | 删除 MNode::BigOp：大算子是带 limits 模式的 Op 原子，上下标走唯一的 attach（limits() 或 display 下的 limits 对任何底都成立）；v2 §13 的贪婪作用域只作阅读注记 scopeEnd（到下一个 Rel 类原子，含直接输入的关系）。降级只做一遍（demote + pack）；行内分段：顶层原子各排一次、降级一次，断点代价 = min(math.breakAfter[左], math.breakBefore[右])，新增 classmap 设置域，取代三个 break.math* 键；删除 effClsOf。上下标保留底的首末类；pack 传递单个原子的 topAccent（删 layoutAccent 的重读）。单记号操作数规则（P3-24 遗留，本步补）：未知词作上下标或分式操作数时为字母串（x^ab = x^{ab}）；关系名作上标（x_in）报 info。fracPadEm 0.1em 单独提交 |
 | P3-26 | 数学采用通用协议；公式编号由布局测量 | todo | | | | |
 | P3-27 | 语义页数学盒与无障碍 | todo | | | | |
 | P3-28 | 宿主测量的替换盒（boxInfo） | todo | | | | |
@@ -168,6 +168,7 @@
 | P3-22 后 | 3.50 | 11.00 | 26.80 | 1.8 / 3.4 / 0.8 / 9.9 / 3.3 | 68.7 / 99.3 / 145.1 | 1.70 / 22.30 / 54.70 | 均在 P3 门限内 |
 | P3-23 后 | 3.40 | 10.90 | 26.70 | 1.8 / 3.0 / 0.8 / 9.9 / 3.2 | 69.6 / 99.1 / 147.4 | 1.70 / 23.10 / 55.60 | 均在 P3 门限内 |
 | P3-24 后 | 3.60 | 10.80 | 27.20 | 1.7 / 3.2 / 0.8 / 10.2 / 3.2 | 70.1 / 105.1 / 149.2 | 1.70 / 22.20 / 57.90 | 均在 P3 门限内 |
+| P3-25 后 | 3.30 | 10.90 | 26.80 | 1.7 / 3.0 / 0.8 / 10.2 / 3.2 | 69.2 / 107.2 / 146.8 | 1.80 / 22.00 / 58.10 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -382,6 +383,9 @@
 | P3-24 | 组内"唯一"的 | 或 ‖ 才成为中间符（两条及以上保持 Ord），设计写作围栏配对 | 规则确定、不需要猜测配对；与设计预估一致：集合与条件概率的竖线获得 Rel 间距，范数不变 | 无 |
 | P3-24 | 空白行 space 的盒按 Ord 参与相邻间距（TeX 的 \quad 是 glue，不是原子） | 与相邻原子的间距只在 Bin 降级等边缘情形不同；够用 | 无 |
 | P3-24 | ⊥ 的默认行改为 perp（Rel，与原 _|_ 行同类），bot 为其别名（Ord） | 保持直接输入 ⊥ 的现有间距 | 无 |
+| P3-24 | 设计 S4 的"单记号操作数规则"（未知词作操作数为字母串）在 P3-24 漏做，记作 x^a·b 的语言差异；P3-25 补上并更正 design-decisions | 发现于 P3-25 复读设计；语料与用例均无此类写法，补做不改 golden | 无 |
+| P3-25 | 数学断点设置名为 math.breakAfter / math.breakBefore（设计写 math.break.*） | 设置路径约定为 section.name 两段；值是按原子类的表（新 classmap 域，未给的类不断行） | 无 |
+| P3-25 | 段间胶仍带 BF_BOUND（设计如此：等 T5 的 Glue.synthetic） | 设计明定保留 | P4 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

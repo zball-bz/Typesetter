@@ -82,12 +82,12 @@ hbox Ord w=4283 asc=819 desc=895
     glyph "i" Ord w=369 asc=699 desc=8 px=16 @(336,0)
     glyph ")" Close w=336 asc=721 desc=209 px=16 @(705,0)
 inline pid=3 "std.frac(1, 2)"
-hbox Ord w=358 asc=912 desc=353
-  hbox Ord w=358 asc=912 desc=353
-    hbox Ord w=358 asc=509 desc=5 @(0,403)
+hbox Ord w=562 asc=912 desc=353
+  hbox Ord w=562 asc=912 desc=353
+    hbox Ord w=358 asc=509 desc=5 @(102,403)
       glyph "1" Ord w=358 asc=509 desc=5 px=11.2
-    rule w=358 h=41 @(0,236)
-    hbox Ord w=358 asc=506 desc=0 @(0,-353)
+    rule w=358 h=41 @(102,236)
+    hbox Ord w=358 asc=506 desc=0 @(102,-353)
       glyph "2" Ord w=358 asc=506 desc=0 px=11.2
 inline pid=4 "x defeq y"
 hbox Ord w=3441 asc=696 desc=203

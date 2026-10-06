@@ -191,40 +191,40 @@ hbox Ord w=1443 asc=966 desc=12
       glyph "a" Ord w=437 asc=334 desc=9 px=11.2 @(208,0)
       glyph "]" Close w=208 asc=505 desc=146 px=11.2 @(645,0)
 inline pid=5 "⟨x/y, z⟩"
-hbox Ord w=2499 asc=1178 desc=666
-  hbox Ord w=2499 asc=1178 desc=666
+hbox Ord w=2703 asc=1178 desc=666
+  hbox Ord w=2703 asc=1178 desc=666
     hbox Open w=569 asc=1178 desc=666
       glyph "" Open w=569 asc=1178 desc=666 px=16
-    hbox Ord w=425 asc=736 desc=520 @(569,0)
-      glyph "x" Ord w=377 asc=333 desc=9 px=11.2 @(24,403)
-      rule w=425 h=41 @(0,236)
-      glyph "y" Ord w=425 asc=335 desc=167 px=11.2 @(0,-353)
-    glyph "," Punct w=284 asc=141 desc=215 px=16 @(994,0)
-    glue w=171 @(1278,0)
-    glyph "z" Ord w=481 asc=473 desc=28 px=16 @(1449,0)
-    hbox Close w=569 asc=1178 desc=666 @(1930,0)
+    hbox Ord w=629 asc=736 desc=520 @(569,0)
+      glyph "x" Ord w=377 asc=333 desc=9 px=11.2 @(126,403)
+      rule w=425 h=41 @(102,236)
+      glyph "y" Ord w=425 asc=335 desc=167 px=11.2 @(102,-353)
+    glyph "," Punct w=284 asc=141 desc=215 px=16 @(1198,0)
+    glue w=171 @(1482,0)
+    glyph "z" Ord w=481 asc=473 desc=28 px=16 @(1653,0)
+    hbox Close w=569 asc=1178 desc=666 @(2134,0)
       glyph "" Close w=569 asc=1178 desc=666 px=16
 inline pid=5 "langle x/y rangle"
-hbox Ord w=1563 asc=1178 desc=666
-  hbox Ord w=1563 asc=1178 desc=666
+hbox Ord w=1767 asc=1178 desc=666
+  hbox Ord w=1767 asc=1178 desc=666
     hbox Open w=569 asc=1178 desc=666
       glyph "" Open w=569 asc=1178 desc=666 px=16
-    hbox Ord w=425 asc=736 desc=520 @(569,0)
-      glyph "x" Ord w=377 asc=333 desc=9 px=11.2 @(24,403)
-      rule w=425 h=41 @(0,236)
-      glyph "y" Ord w=425 asc=335 desc=167 px=11.2 @(0,-353)
-    hbox Close w=569 asc=1178 desc=666 @(994,0)
+    hbox Ord w=629 asc=736 desc=520 @(569,0)
+      glyph "x" Ord w=377 asc=333 desc=9 px=11.2 @(126,403)
+      rule w=425 h=41 @(102,236)
+      glyph "y" Ord w=425 asc=335 desc=167 px=11.2 @(102,-353)
+    hbox Close w=569 asc=1178 desc=666 @(1198,0)
       glyph "" Close w=569 asc=1178 desc=666 px=16
 inline pid=5 "lfloor x/2 rfloor"
-hbox Ord w=1343 asc=870 desc=358
-  hbox Ord w=1343 asc=870 desc=358
+hbox Ord w=1547 asc=870 desc=358
+  hbox Ord w=1547 asc=870 desc=358
     hbox Open w=483 asc=870 desc=358
       glyph "" Open w=483 asc=870 desc=358 px=16
-    hbox Ord w=377 asc=736 desc=353 @(483,0)
-      glyph "x" Ord w=377 asc=333 desc=9 px=11.2 @(0,403)
-      rule w=377 h=41 @(0,236)
-      glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(9,-353)
-    hbox Close w=483 asc=870 desc=358 @(860,0)
+    hbox Ord w=581 asc=736 desc=353 @(483,0)
+      glyph "x" Ord w=377 asc=333 desc=9 px=11.2 @(102,403)
+      rule w=377 h=41 @(102,236)
+      glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(111,-353)
+    hbox Close w=483 asc=870 desc=358 @(1064,0)
       glyph "" Close w=483 asc=870 desc=358 px=16
 inline pid=5 "{x | x > 0}"
 hbox Ord w=4468 asc=721 desc=209

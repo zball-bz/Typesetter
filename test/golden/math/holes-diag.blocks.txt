@@ -69,7 +69,7 @@ top pid=2 units=1
   space w=257su stretch=1 @[257,260)
   word "and" w=1537su pen=INF @[257,260)
   space w=257su stretch=1 @[257,260)
-  math "frac(1, 2)" w=358su asc=912su desc=353su @[261,287)
+  math "frac(1, 2)" w=562su asc=912su desc=353su @[261,287)
   word "." w=513su pen=INF @[287,288)
 top pid=3 units=1
  unit text indent=0su

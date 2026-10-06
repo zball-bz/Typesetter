@@ -53,7 +53,7 @@ top pid=0 units=1
   run r12 letter-spaced CJK
   run r13 blank-bearing CJK
 top pid=1 units=1
- unit math indent=0su w=9205su asc=1705su desc=714su
+ unit math indent=0su w=9409su asc=1705su desc=714su
 top pid=2 units=1
  unit text indent=0su
   box Ideo "组" w=1025su wt=0.6 cap=102su r0 @[96,105)
@@ -69,7 +69,7 @@ top pid=2 units=1
   box object o0 math part=1 asc=377su desc=0su w=774su r4 @[106,136)
   pen 0.8 r5
   glue objspace w=284su x=0 cap=0su r5 @[106,136)
-  box object o0 math part=2 asc=898su desc=499su w=2706su r6 @[106,136)
+  box object o0 math part=2 asc=898su desc=499su w=2910su r6 @[106,136)
   pen 0 r6
   glue word w=257su x=1 cap=257su src r7 @[137,164)
   box Ideo "满" w=1025su wt=0.6 cap=102su r8 @[137,164)
@@ -101,7 +101,7 @@ top pid=2 units=1
   box object o1 math part=2 asc=723su desc=0su w=511su r16 @[165,181)
   box FullStopW "。" w=512su blank=R r17 @[181,184)
   glue blank w=512su x=0 cap=0su r17 @[181,184)
-  obj o0 math parts=3 edges=Alpha/Alpha src="binom(n, k) = n!/(k! (n-k)!)" [w=1230su asc=870su desc=358su] [w=774su asc=377su desc=0su glue=284su] [w=2706su asc=898su desc=499su glue=284su]
+  obj o0 math parts=3 edges=Alpha/Alpha src="binom(n, k) = n!/(k! (n-k)!)" [w=1230su asc=870su desc=358su] [w=774su asc=377su desc=0su glue=284su] [w=2910su asc=898su desc=499su glue=284su]
   obj o1 math parts=3 edges=Alpha/Alpha src="root(3, 8) = 2" [w=1356su asc=946su desc=100su] [w=774su asc=377su desc=0su glue=284su] [w=511su asc=723su desc=0su glue=284su]
   run r0 letter-spaced CJK
   run r1 plain

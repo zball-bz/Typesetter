@@ -19,20 +19,20 @@ hbox Ord w=890 asc=967 desc=28
     glyph "z" Ord w=481 asc=473 desc=28 px=16
     glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(481,461)
 inline pid=0 "2/(1/a + 1/b)"
-hbox Ord w=1154 asc=909 desc=704
-  hbox Ord w=1154 asc=909 desc=704
-    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(398,403)
-    rule w=1154 h=41 @(0,236)
-    hbox Ord w=1154 asc=646 desc=253 @(0,-451)
-      hbox Ord w=312 asc=646 desc=253
-        glyph "1" Ord w=255 asc=364 desc=4 px=8 @(28,282)
-        rule w=312 h=29 @(0,165)
-        glyph "a" Ord w=312 asc=239 desc=6 px=8 @(0,-247)
-      glyph "+" Bin w=541 asc=420 desc=53 px=11.2 @(312,0)
-      hbox Ord w=301 asc=646 desc=252 @(853,0)
-        glyph "1" Ord w=255 asc=364 desc=4 px=8 @(23,282)
-        rule w=301 h=29 @(0,165)
-        glyph "b" Ord w=301 asc=350 desc=5 px=8 @(0,-247)
+hbox Ord w=1646 asc=909 desc=704
+  hbox Ord w=1646 asc=909 desc=704
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(644,403)
+    rule w=1442 h=41 @(102,236)
+    hbox Ord w=1442 asc=646 desc=253 @(102,-451)
+      hbox Ord w=456 asc=646 desc=253
+        glyph "1" Ord w=255 asc=364 desc=4 px=8 @(100,282)
+        rule w=312 h=29 @(72,165)
+        glyph "a" Ord w=312 asc=239 desc=6 px=8 @(72,-247)
+      glyph "+" Bin w=541 asc=420 desc=53 px=11.2 @(456,0)
+      hbox Ord w=445 asc=646 desc=252 @(997,0)
+        glyph "1" Ord w=255 asc=364 desc=4 px=8 @(95,282)
+        rule w=301 h=29 @(72,165)
+        glyph "b" Ord w=301 asc=350 desc=5 px=8 @(72,-247)
 inline pid=1 "e^(i pi) + 1 = 0"
 hbox Ord w=2258 asc=951 desc=76
   hbox Ord w=1257 asc=951 desc=12
@@ -58,17 +58,17 @@ inline pid=1 ""
 hbox Ord w=774 asc=377 desc=0
   glyph "=" Rel w=774 asc=377 desc=-135 px=16
 inline pid=1 ""
-hbox Ord w=1548 asc=1309 desc=353
-  hbox Ord w=1548 asc=1309 desc=353
-    hbox Ord w=1548 asc=906 desc=53 @(0,403)
+hbox Ord w=1854 asc=1309 desc=353
+  hbox Ord w=1854 asc=1309 desc=353
+    hbox Ord w=1650 asc=906 desc=53 @(102,403)
       glyph "1" Ord w=358 asc=509 desc=5 px=11.2
       glyph "+" Bin w=541 asc=420 desc=53 px=11.2 @(358,0)
-      hbox Ord w=649 asc=906 desc=8 @(899,0)
+      hbox Ord w=751 asc=906 desc=8 @(899,0)
         glyph "5" Ord w=358 asc=492 desc=8 px=11.2
-        hbox Ord w=255 asc=566 desc=263 @(358,340)
-          hbox Ord w=255 asc=566 desc=263
-            glyph "1" Ord w=255 asc=364 desc=4 px=8 @(0,202)
-            rule w=255 h=20 @(0,118)
-            glyph "2" Ord w=255 asc=361 desc=0 px=8 @(0,-263)
-    rule w=1548 h=41 @(0,236)
-    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(595,-353)
+        hbox Ord w=357 asc=566 desc=263 @(358,340)
+          hbox Ord w=357 asc=566 desc=263
+            glyph "1" Ord w=255 asc=364 desc=4 px=8 @(51,202)
+            rule w=255 h=20 @(51,118)
+            glyph "2" Ord w=255 asc=361 desc=0 px=8 @(51,-263)
+    rule w=1650 h=41 @(102,236)
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(748,-353)

@@ -22,13 +22,13 @@ inline pid=0 ""
 hbox Ord w=511 asc=721 desc=14
   glyph "0" Ord w=511 asc=721 desc=14 px=16
 display pid=1
-hbox Ord w=9205 asc=1705 desc=714
+hbox Ord w=9409 asc=1705 desc=714
   glyph "x" Ord w=539 asc=475 desc=12 px=16
   glue w=284 @(539,0)
   glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(823,0)
   glue w=284 @(1597,0)
-  hbox Ord w=7324 asc=1705 desc=714 @(1881,0)
-    hbox Ord w=7324 asc=1012 desc=76 @(0,693)
+  hbox Ord w=7528 asc=1705 desc=714 @(1881,0)
+    hbox Ord w=7324 asc=1012 desc=76 @(102,693)
       glyph "−" Ord w=774 asc=276 desc=-236 px=16
       glyph "b" Ord w=602 asc=700 desc=10 px=16 @(774,0)
       glue w=228 @(1376,0)
@@ -47,8 +47,8 @@ hbox Ord w=9205 asc=1705 desc=714
           glyph "4" Ord w=511 asc=719 desc=7 px=16 @(2241,0)
           glyph "a" Ord w=624 asc=477 desc=12 px=16 @(2752,0)
           glyph "c" Ord w=498 asc=486 desc=19 px=16 @(3376,0)
-    rule w=7324 h=41 @(0,236)
-    hbox Ord w=1135 asc=723 desc=12 @(3094,-702)
+    rule w=7324 h=41 @(102,236)
+    hbox Ord w=1135 asc=723 desc=12 @(3196,-702)
       glyph "2" Ord w=511 asc=723 desc=0 px=16
       glyph "a" Ord w=624 asc=477 desc=12 px=16 @(511,0)
 inline pid=2 "binom(n, k) = n!/(k! (n-k)!)"
@@ -67,13 +67,13 @@ inline pid=2 ""
 hbox Ord w=774 asc=377 desc=0
   glyph "=" Rel w=774 asc=377 desc=-135 px=16
 inline pid=2 ""
-hbox Ord w=2706 asc=898 desc=499
-  hbox Ord w=2706 asc=898 desc=499
-    hbox Ord w=687 asc=495 desc=8 @(1009,403)
+hbox Ord w=2910 asc=898 desc=499
+  hbox Ord w=2910 asc=898 desc=499
+    hbox Ord w=687 asc=495 desc=8 @(1111,403)
       glyph "n" Ord w=476 asc=338 desc=7 px=11.2
       glyph "!" Ord w=211 asc=495 desc=8 px=11.2 @(476,0)
-    rule w=2706 h=41 @(0,236)
-    hbox Ord w=2706 asc=505 desc=146 @(0,-353)
+    rule w=2706 h=41 @(102,236)
+    hbox Ord w=2706 asc=505 desc=146 @(102,-353)
       hbox Ord w=609 asc=495 desc=8
         glyph "k" Ord w=398 asc=492 desc=5 px=11.2
         glyph "!" Ord w=211 asc=495 desc=8 px=11.2 @(398,0)

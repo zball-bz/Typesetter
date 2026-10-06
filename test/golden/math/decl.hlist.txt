@@ -142,10 +142,10 @@ top pid=3 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="ha" r0 @[574,603)
   box Other "able:" w=2561su r0 @[574,603)
   glue word w=257su x=1 cap=257su src r0 @[574,603)
-  box object o0 math part=0 asc=912su desc=353su "std.frac(1, 2)" w=358su r1 @[604,620)
+  box object o0 math part=0 asc=912su desc=353su "std.frac(1, 2)" w=562su r1 @[604,620)
   pen 0 r1
   box Other "." w=513su r2 @[620,621)
-  obj o0 math parts=1 edges=Alpha/Alpha src="std.frac(1, 2)" [w=358su asc=912su desc=353su]
+  obj o0 math parts=1 edges=Alpha/Alpha src="std.frac(1, 2)" [w=562su asc=912su desc=353su]
   run r0 plain
   run r1 object
   run r2 plain

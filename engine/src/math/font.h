@@ -81,6 +81,10 @@ struct MathPolicy {
   int shortfallNum = 1, shortfallDen = 10;
   int maxAssemblyRepeats = 64;  // extender repeats tried before giving up
   int missingAdvU = 600, missingAscU = 700;  // an uncovered glyph's stand-in box (design units)
+  // (plan P3-25; finding math/spacing-edge-classes) the room either side of
+  // a fraction, in em: TeX's \nulldelimiterspace, Typst's 0.1em — two
+  // fractions side by side no longer touch
+  int fracPadNum = 1, fracPadDen = 10;
   Su shortfall(Su target) const { return target - target * shortfallNum / shortfallDen; }
 };
 inline constexpr MathPolicy kMathPolicy{};

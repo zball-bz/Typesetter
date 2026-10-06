@@ -103,7 +103,7 @@ top pid=3 units=1
   hyphen bw=513su pen=0.70 @[574,603)
   word "able:" w=2561su pen=INF @[574,603)
   space w=257su stretch=1 @[574,603)
-  math "std.frac(1, 2)" w=358su asc=912su desc=353su @[604,620)
+  math "std.frac(1, 2)" w=562su asc=912su desc=353su @[604,620)
   word "." w=513su pen=INF @[620,621)
 top pid=4 units=2
  unit rule indent=0su

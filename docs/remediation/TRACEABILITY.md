@@ -1235,8 +1235,8 @@ Theme steps: — · findings: 1
 | `math/negation-enumerated` | adhoc | medium | P3-24 | grep:plan P3-24 |
 | `math/alphabet-variants` | adhoc | medium | P3-24 | grep:plan P3-24 |
 | `math/implicit-names-op-class` | adhoc | medium | P3-24 | grep:plan P3-24 |
-| `math/bigop-greedy-body` | adhoc | medium | P3-25 | |
-| `math/segmentation-class-preview` | adhoc | medium | P3-25 | |
+| `math/bigop-greedy-body` | adhoc | medium | P3-25 | grep:plan P3-25 |
+| `math/segmentation-class-preview` | adhoc | medium | P3-25 | grep:plan P3-25 |
 | `math/inline-math-special-block` | adhoc | medium | P1-13, P3-26 | |
 | `math/display-math-unit` | adhoc | medium | P1-18, P3-26, P3-29 | |
 | `math/equation-numbering` | adhoc | low | P2-07, P2-15 | grep:plan P2-15 |
@@ -1254,7 +1254,7 @@ Theme steps: — · findings: 1
 | `math/bracket-shedding-any-group` | issue | medium | P3-24 | grep:plan P3-24 |
 | `math/call-arity-silent` | issue | medium | P1-24 | grep:plan P1-24 |
 | `math/exactness-gaps-paint` | issue | medium | P1-23 | grep:plan P1-23 |
-| `math/spacing-edge-classes` | issue | low | P3-25 | |
+| `math/spacing-edge-classes` | issue | low | P3-25 | grep:plan P3-25 |
 | `math/diag-quality` | issue | low | P1-24 | grep:plan P1-24 |
 | `math/dead-data-and-params` | issue | low | P1-22 | grep:plan P1-22 |
 | `math/doc-drift` | issue | low | P1-22 | grep:plan P1-22 |

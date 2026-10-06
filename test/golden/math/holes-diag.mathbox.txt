@@ -64,12 +64,12 @@ inline pid=2 "alpha"
 hbox Ord w=674 asc=479 desc=20
   glyph "α" Ord w=674 asc=479 desc=20 px=16
 inline pid=2 "frac(1, 2)"
-hbox Ord w=358 asc=912 desc=353
-  hbox Ord w=358 asc=912 desc=353
-    hbox Ord w=358 asc=509 desc=5 @(0,403)
+hbox Ord w=562 asc=912 desc=353
+  hbox Ord w=562 asc=912 desc=353
+    hbox Ord w=358 asc=509 desc=5 @(102,403)
       glyph "1" Ord w=358 asc=509 desc=5 px=11.2
-    rule w=358 h=41 @(0,236)
-    hbox Ord w=358 asc=506 desc=0 @(0,-353)
+    rule w=358 h=41 @(102,236)
+    hbox Ord w=358 asc=506 desc=0 @(102,-353)
       glyph "2" Ord w=358 asc=506 desc=0 px=11.2
 inline pid=3 "\\#A"
 hbox Ord w=1300 asc=707 desc=10
