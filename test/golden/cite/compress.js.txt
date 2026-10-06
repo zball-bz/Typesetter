@@ -1,0 +1,11 @@
+export const abi = 0x9bdc5985;
+export default async (__rt, $) => {
+const {bibliography} = __rt.std;
+return (async () => {
+const __h = [
+() => (bibliography("/test/fixtures/cite/refs.json")),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

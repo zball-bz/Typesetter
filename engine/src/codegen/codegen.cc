@@ -276,17 +276,42 @@ struct Gen {
         return done(at, kids(n->kids()));
       }
       case SugarId::ref: {
-        if (!n->nkids) return strCall("ref", n, "target", n->str);
-        // a supplement (D-L01, parsed since P2-06): read by the reference
-        // template from P2-09; until then it shows as today, in brackets
-        // after the reference
-        size_t at = callHead("seq", nullptr, 0);
-        w.u(n->nkids + 3);
-        strCall("ref", n, "target", n->str);
-        emptyText("[");
+        // a structured reference (plan P2-09; design T3 S3): @[a, b] is a
+        // parent ref with one child ref per id (the parent keeps the whole
+        // target), and @x[…] / @[x][…] carry their bracket as the `extra`
+        // child — a seq in slot "extra" the element row's template reads
+        // (a supplement word, or a citation's locator; D-L01)
+        std::string_view target = strs.get(n->str);
+        std::vector<std::string_view> ids;
+        if (target.find(',') != std::string_view::npos) {
+          for (size_t at = 0; at <= target.size();) {
+            size_t comma = target.find(',', at);
+            if (comma == std::string_view::npos) comma = target.size();
+            std::string_view id = target.substr(at, comma - at);
+            while (!id.empty() && (id.front() == ' ' || id.front() == '\t')) id.remove_prefix(1);
+            while (!id.empty() && (id.back() == ' ' || id.back() == '\t')) id.remove_suffix(1);
+            if (!id.empty()) ids.push_back(id);
+            at = comma + 1;
+          }
+        }
+        if (!n->nkids && ids.empty()) return strCall("ref", n, "target", n->str);
+        size_t at = callHead("ref", &n->span, 1);
+        key("target");
+        w.constStr(target);
+        w.u((u32)ids.size() + (n->nkids ? 1 : 0));
+        for (std::string_view id : ids) {
+          callHead("ref", nullptr, 1);
+          key("target");
+          w.constStr(id);
+          w.u(0);
+        }
         bool a = false;
-        for (const AstNode* k : n->kids()) a |= value(k);
-        emptyText("]");
+        if (n->nkids) {
+          callHead("seq", nullptr, 1);
+          key("slot");
+          w.constStr("extra");
+          a = kids(n->kids());
+        }
         return done(at, a);
       }
       case SugarId::list: {

@@ -1,0 +1,3 @@
+Three consecutive citations compress: @[kp81, liang83, knuth84]; a locator reads inside the bracket: @kp81[p. 5], and a group takes one too: @[liang83, knuth84][ch. 2].
+
+#bibliography("/test/fixtures/cite/refs.json")

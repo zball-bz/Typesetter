@@ -47,11 +47,9 @@ block 8 content [559,645)
     TEXT " and " [599,602) raw=0:0,1:0,5:3
     CALL ref [603,613) target="sec:intro"
     TEXT ". With a supplement: " [613,633) raw=0:0,21:20
-    CALL seq
-      CALL ref [634,644) target="emc"
-      CALL text text="["
-      TEXT "p. 5" [639,643)
-      CALL text text="]"
+    CALL ref [634,644) target="emc"
+      CALL seq slot="extra"
+        TEXT "p. 5" [639,643)
     TEXT "." [644,645)
 block 9 content [647,661)
   CALL heading [647,661) level=1 label="sec:intro"

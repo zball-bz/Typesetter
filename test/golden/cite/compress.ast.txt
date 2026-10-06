@@ -1,0 +1,13 @@
+doc @[0,217)
+  para @[0,168)
+    text @[0,37) str="Three consecutive citations compress: "
+    ref @[38,63) target="kp81, liang83, knuth84"
+    text @[63,100) str="; a locator reads inside the bracket: "
+    ref @[101,112) target="kp81"
+      text @[107,111) str="p. 5"
+    text @[112,140) str=", and a group takes one too: "
+    ref @[141,167) target="liang83, knuth84"
+      text @[161,166) str="ch. 2"
+    text @[167,168) str="."
+  para @[170,216)
+    splice @[170,216) expr="bibliography(\"/test/fixtures/cite/refs.json\")"

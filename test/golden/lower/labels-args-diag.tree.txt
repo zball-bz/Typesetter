@@ -35,12 +35,9 @@ doc @[181,832) [base]
     ref @[603,613) [base] target="sec:intro" url="#tsr-sec:intro"
       text @[603,613) [base] str="§1"
     text @[613,633) [base] str=". With a supplement: " raw=0:0,21:20
-    seq @[559,645) [base]
-      ref @[634,644) [base] target="emc" url="#tsr-emc"
-        text @[634,644) [base] str="式 (1)"
-      text @[559,645) [base] str="["
+    ref @[634,644) [base] target="emc" url="#tsr-emc"
       text @[639,643) [base] str="p. 5"
-      text @[559,645) [base] str="]"
+      text @[634,644) [base] str=" (1)"
     text @[644,645) [base] str="."
   heading @[647,661) [base] level=1 label="sec:intro"
     text @[649,661) [base] str="Introduction"

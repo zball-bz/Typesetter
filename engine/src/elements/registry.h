@@ -161,6 +161,7 @@ struct CollectorDef {
   AliasRule rowAnchor;
   Template cite;  // a reference to keys of this table
   bool citeable = false;
+  bool compress = false;  // (plan P2-09) three or more consecutive ordinals read first–last
 };
 
 // a supplement in its JSON form ("key": a term; {term}, {text}, {lang: text, …})

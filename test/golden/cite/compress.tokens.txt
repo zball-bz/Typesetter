@@ -1,0 +1,5 @@
+[38,63) constant "@[kp81, liang83, knuth84]"
+[101,112) constant "@kp81[p. 5]"
+[141,167) constant "@[liang83, knuth84][ch. 2]"
+[170,183) function "#bibliography"
+[183,216) embedded "(\"/test/fixtures/cite/refs.json\")"

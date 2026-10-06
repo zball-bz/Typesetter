@@ -11,6 +11,8 @@ block 1 content [13,318)
     CALL ref [102,110) target="liang83"
     TEXT ", and the pair is cited again as " [110,142) raw=0:0,33:32
     CALL ref [143,159) target="kp81, liang83"
+      CALL ref target="kp81"
+      CALL ref target="liang83"
     TEXT ". The TeXbook " [159,172) raw=0:0,14:13
     CALL ref [173,181) target="knuth84"
     TEXT " comes last in citation order even though it is first in the data. Citing " [182,254) raw=0:0,1:0,74:72

@@ -1,0 +1,13 @@
+= Methods <sec-a>
+
+== Details <sec-b>
+
+#!figure(label: "fig-a")
+A figure.
+#figure!
+
+#!figure(label: "fig-b")
+Another.
+#figure!
+
+A group of labels: @[fig-a, fig-b] and @[sec-a, sec-b]. A bracket replaces the word: @fig-a[Fig.] and @[sec-b][Section]. A form: #ref("fig-b", {form: "number"}).

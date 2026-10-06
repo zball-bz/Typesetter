@@ -136,6 +136,12 @@ emit) — no BibTeX parser in the engine. Keys are the CSL `id`.
   `all: true`.
 - **paged render**: nothing new — the bibliography is ordinary flow.
 
+As built (plan P2-09): a group citation `@[a, b, c]` is a parent reference
+with child references and renders through the bibliography's `cite`
+template; three or more consecutive ordinals compress ([1–3]); the bracket of
+`@kp81[p. 5]` is the locator ([1, p. 5]), also after a group
+(`@[a, b][ch. 2]` → [2, 3, ch. 2]).
+
 ### As built (2026-08)
 
 The pull-resource design (`NEED_BIB`) was NOT used. The executor already

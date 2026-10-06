@@ -153,14 +153,11 @@ top pid=6 units=1
   hyphen bw=513su pen=0.70 @[613,633)
   word "ment:" w=2561su pen=INF @[613,633)
   space w=257su stretch=1 @[613,633)
-  cjk "式" w=1025su glue=102su wt=0.6 pen=0 LINK SYN @[634,644)
+  word "p." w=1025su pen=INF LINK SYN @[639,643)
+  space w=257su stretch=1 LINK SYN @[639,643)
+  word "5" w=513su pen=INF LINK SYN @[639,643)
   space w=257su stretch=1 LINK SYN @[634,644)
   word "(1)" w=1537su pen=INF LINK SYN @[634,644)
-  word "[" w=513su pen=INF @[559,645)
-  word "p." w=1025su pen=INF @[639,643)
-  space w=257su stretch=1 @[639,643)
-  word "5" w=513su pen=INF @[639,643)
-  word "]" w=513su pen=INF @[559,645)
   word "." w=513su pen=INF @[644,645)
 top pid=7 units=1
  unit text indent=0su anchor="sec:intro"

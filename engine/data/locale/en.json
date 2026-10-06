@@ -8,6 +8,7 @@
     "equation": "Eq. ",
     "appendix": "Appendix ",
     "caption-sep": ": ",
+    "range-sep": "–",
     "ref-sep": ", ",
     "unresolved": "??",
     "backref": "↩",

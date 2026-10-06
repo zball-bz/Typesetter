@@ -56,7 +56,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `styled` | inline | `delta` (§3) | inline | M1 |
 | `link` | inline | `url` | inline | M2 |
 | `code` | inline | `str` | — | M2 |
-| `ref` | inline | `target`, `form?`, `supplement?` (P2-07; +resolved fields) | — | M4 |
+| `ref` | inline | `target`, `form?`, `supplement?` (P2-07; +resolved fields) | child refs (a group, `@[a, b]`) and an `extra` seq (slot `extra`: the bracket of `@x[…]`) — P2-09 | M4 |
 | `mathinline` | inline | `src` | — (MathBox segments at emit) | M7 ✓ |
 | `raw` | inline | `html`, `w?`, `h?` | — | M6 |
 | `hardbreak` | inline | — (syntax reserved, not yet granted; the engine sets it as a forced line break, plan P1-13) | — | — |

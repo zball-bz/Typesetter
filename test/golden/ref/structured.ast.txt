@@ -1,0 +1,29 @@
+doc @[0,290)
+  heading @[0,9) level=1 label="sec-a"
+    text @[2,9) str="Methods"
+  heading @[19,29) level=2 label="sec-b"
+    text @[22,29) str="Details"
+  region @[39,82) name="figure"
+    para @[64,73)
+      row @[64,73)
+        cell @[64,73)
+          text @[64,73) str="A figure."
+  region @[84,126) name="figure"
+    para @[109,117)
+      row @[109,117)
+        cell @[109,117)
+          text @[109,117) str="Another."
+  para @[128,289)
+    text @[128,146) str="A group of labels: "
+    ref @[147,162) target="fig-a, fig-b"
+    text @[163,166) str=" and "
+    ref @[167,182) target="sec-a, sec-b"
+    text @[182,212) str=". A bracket replaces the word: "
+    ref @[213,225) target="fig-a"
+      text @[220,224) str="Fig."
+    text @[226,229) str=" and "
+    ref @[230,247) target="sec-b"
+      text @[239,246) str="Section"
+    text @[247,256) str=". A form: "
+    splice @[257,288) expr="ref(\"fig-b\", {form: \"number\"})"
+    text @[288,289) str="."

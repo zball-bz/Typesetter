@@ -109,41 +109,54 @@ struct Mat {
   // Strings, terms and text slots that follow each other make one text node.
   void inst(const Template& t, const Ctx& c, const Slots& s, ContentNode* container,
             std::vector<ContentNode*>& out) {
-    std::string run;
-    bool inRun = false;
-    auto flush = [&] {
-      if (!inRun) return;
-      ContentNode* tx = mk(Kind::text, c.span, styleOf(c));
-      tx->str = e.strs.intern(run);
+    Run run{c, out};
+    items(t, c, s, container, out, run);
+    run.flush(*this);
+  }
+  // the text run a template is building (one text node per run of strings,
+  // terms and text slots, `when` branches included: § + 1 stays one node)
+  struct Run {
+    const Ctx& c;
+    std::vector<ContentNode*>& out;
+    std::string text;
+    bool open = false;
+    void add(std::string_view s) {
+      text += s;
+      open = true;
+    }
+    void flush(Mat& m) {
+      if (!open) return;
+      ContentNode* tx = m.mk(Kind::text, c.span, m.styleOf(c));
+      tx->str = m.e.strs.intern(text);
       out.push_back(tx);
-      run.clear();
-      inRun = false;
-    };
+      text.clear();
+      open = false;
+    }
+  };
+  void items(const Template& t, const Ctx& c, const Slots& s, ContentNode* container,
+             std::vector<ContentNode*>& out, Run& run) {
     for (const TItem& it : t) {
       switch (it.k) {
         case TItem::K::Text:
-          run += it.name;
-          inRun = true;
+          run.add(it.name);
           break;
         case TItem::K::Term:
-          run += e.terms.get(it.name);
-          inRun = true;
+          run.add(e.terms.get(it.name));
           break;
         case TItem::K::Slot:
           if (const std::string* v = s.textOf(it.name)) {
-            run += *v;
-            inRun = true;
+            run.add(*v);
           } else if (const std::vector<ContentNode*>* ns = s.nodesOf(it.name)) {
-            flush();
+            run.flush(*this);
             for (ContentNode* n : *ns) out.push_back(delta(n, c));
           }
           break;
         case TItem::K::Node:
-          flush();
+          run.flush(*this);
           out.push_back(node(it, c, s));
           break;
         case TItem::K::Styled: {
-          flush();
+          run.flush(*this);
           Ctx d = c;
           d.d += it.delta;
           d.size *= it.size;
@@ -151,20 +164,18 @@ struct Mat {
           break;
         }
         case TItem::K::When:
-          flush();
-          inst(s.isSet(it.name) ? it.kids : it.orElse, c, s, container, out);
+          items(s.isSet(it.name) ? it.kids : it.orElse, c, s, container, out, run);
           break;
         case TItem::K::Each:
-          flush();
+          run.flush(*this);
           if (s.each) s.each(it, c, container, out);
           break;
         case TItem::K::Paras:
-          flush();
+          run.flush(*this);
           if (s.paras) s.paras(it, c, out);
           break;
       }
     }
-    flush();
   }
   std::string argValue(const TArg& a, const Slots& s) {
     const std::string* v = s.textOf(a.s);
@@ -226,14 +237,31 @@ struct Mat {
     s.set("marker-alias", in.markerAlias);
   }
 
-  // B1: a reference, in place on a new ref node
+  // B1: a reference, in place on a new ref node. Structured (plan P2-09;
+  // design T3 S3): its child refs are a group (@[a, b]), its child in slot
+  // "extra" the bracket of @x[…], which the template reads — a reference's
+  // supplement word, a citation's locator
   ContentNode* resolveRef(ContentNode* r) {
+    std::vector<std::string> members;
+    std::vector<ContentNode*> extra;
+    const StrRef extraSlot = e.strs.find("extra");
+    for (ContentNode* k : r->kids) {
+      if (k->kind == Kind::ref) members.emplace_back(e.strs.get(attrStr(k, ArgK::target)));
+      else if (extraSlot && attrStr(k, ArgK::slot) == extraSlot) kidsOf(k, extra);
+    }
     r->kids.clear();
     std::string target(e.strs.get(attrStr(r, ArgK::target)));
     Ctx c{r->span, r->style};
+    if (!members.empty()) return group(r, members, extra, c);
     auto it = e.ix.labels.find(target);
     if (it == e.ix.labels.end()) {
-      if (cite(r, target, c)) return r;
+      // not a label: a citation (a group of one; a JS target "a, b" still
+      // splits into its keys)
+      std::vector<std::string> keys = splitKeys(target);
+      if (const CollectorDef* T = citeTable(keys)) {
+        cite(r, *T, keys, extra, c);
+        return r;
+      }
       e.diags.add(Sev::Warning, "ref-unresolved", r->span, "reference '" + target + "' has no label");
       Slots s;
       s.set("label", target);
@@ -250,6 +278,7 @@ struct Mat {
     const Template* form = nullptr;
     Slots s;
     s.set("label", target);
+    s.nodes.push_back({"extra", extra});
     if (lt.k != LabelTarget::K::Plain) {
       const Instance& in = e.ix.instances[lt.inst];
       const ElementClass& C = e.reg.cls(in.cls);
@@ -270,6 +299,32 @@ struct Mat {
     return r;
   }
 
+  // a group reference (@[a, b]): citations read through their table's cite
+  // template (one bracket, ranges compressed); labels each as their own
+  // reference, the ref-sep word between (the parent links nowhere itself)
+  ContentNode* group(ContentNode* r, const std::vector<std::string>& members, const std::vector<ContentNode*>& extra,
+                     const Ctx& c) {
+    if (const CollectorDef* T = citeTable(members)) {
+      cite(r, *T, members, extra, c);
+      return r;
+    }
+    for (size_t i = 0; i < members.size(); i++) {
+      if (i) {
+        ContentNode* tx = mk(Kind::text, c.span, styleOf(c));
+        tx->str = e.strs.intern(e.terms.get("ref-sep"));
+        r->kids.push_back(tx);
+      }
+      ContentNode* m = mk(Kind::ref, r->span, r->style);
+      setArg(m, ArgK::target, members[i]);
+      for (ArgK k : {ArgK::form, ArgK::supplement})
+        if (StrRef v = attrStr(r, k)) setArg(m, k, e.strs.get(v));
+      r->kids.push_back(resolveRef(m));
+    }
+    if (!extra.empty())
+      e.diags.add(Sev::Info, "ref-extra", r->span, "the bracket after a group of labels is not read (it is a citation's locator)");
+    return r;
+  }
+
   // ref(target, {form}) (plan P2-07): the class's named form, else a
   // built-in one — number, title (name), supplement, full (the class's)
   const Template* namedForm(const ElementClass& C, std::string_view name, const Template* dflt, const ContentNode* r) {
@@ -287,36 +342,57 @@ struct Mat {
     return dflt;
   }
 
-  // a group reference to keys of a citeable table: each key links to its
-  // row with its ordinal (an unknown key is diagnosed in its own slot)
-  bool cite(ContentNode* r, const std::string& target, const Ctx& c) {
-    std::vector<std::string> keys = splitKeys(target);
-    const CollectorDef* T = nullptr;
+  // the citeable table any of `keys` is a row of
+  const CollectorDef* citeTable(const std::vector<std::string>& keys) const {
     for (const CollectorDef& t : e.reg.collectors) {
       if (!t.citeable) continue;
       for (const std::string& k : keys)
-        if (e.ix.row(t.table, k)) T = &t;
-      if (T) break;
+        if (e.ix.row(t.table, k)) return &t;
     }
-    if (!T) return false;
+    return nullptr;
+  }
+
+  // citations: each key links to its row with its ordinal (an unknown key is
+  // diagnosed in its own slot); with the table's `compress`, three or more
+  // consecutive ordinals read first–last (range-sep); `extra` is the locator
+  void cite(ContentNode* r, const CollectorDef& T, const std::vector<std::string>& keys,
+            const std::vector<ContentNode*>& extra, const Ctx& c) {
+    std::vector<int> ord(keys.size(), 0);
+    for (size_t i = 0; i < keys.size(); i++)
+      if (e.ix.row(T.table, keys[i])) ord[i] = e.counters.keyed(T.rowCounter, keys[i]);
     Slots s;
+    s.nodes.push_back({"extra", extra});
     s.each = [&](const TItem& it, const Ctx& ec, ContentNode* container, std::vector<ContentNode*>& out) {
-      for (size_t i = 0; i < keys.size(); i++) {
-        if (i) inst(it.sep, ec, Slots{}, container, out);
+      auto item = [&](size_t i) {
         Slots ks;
-        if (e.ix.row(T->table, keys[i])) {
+        if (ord[i]) {
           ks.set("row", "1");
-          ks.set("anchor", T->rowAnchor.prefix + keys[i]);
-          ks.set("ordinal", std::to_string(e.counters.keyed(T->rowCounter, keys[i])));
+          ks.set("anchor", T.rowAnchor.prefix + keys[i]);
+          ks.set("ordinal", std::to_string(ord[i]));
         } else {
           e.diags.add(Sev::Warning, "ref-unresolved", r->span,
-                      "citation key '" + keys[i] + "' has no " + T->name + " entry");
+                      "citation key '" + keys[i] + "' has no " + T.name + " entry");
         }
         inst(it.kids, ec, ks, container, out);
+      };
+      for (size_t i = 0; i < keys.size(); i++) {
+        if (i) inst(it.sep, ec, Slots{}, container, out);
+        size_t j = i;
+        if (T.compress && ord[i])
+          while (j + 1 < keys.size() && ord[j + 1] == ord[j] + 1) j++;
+        if (j - i >= 2) {  // a run of three or more
+          item(i);
+          ContentNode* tx = mk(Kind::text, ec.span, styleOf(ec));
+          tx->str = e.strs.intern(e.terms.get("range-sep"));
+          out.push_back(tx);
+          item(j);
+          i = j;
+        } else {
+          item(i);
+        }
       }
     };
-    inst(T->cite, c, s, r, r->kids);
-    return true;
+    inst(T.cite, c, s, r, r->kids);
   }
 
   // --- the walk (B1–B3 in document order) ----------------------------------------

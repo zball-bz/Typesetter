@@ -1,0 +1,8 @@
+doc @[0,290)
+  heading1 @[0,9) label="sec-a"
+  heading2 @[19,29) label="sec-b"
+  region @[39,82) name="figure"
+    para @[64,73) lines=1
+  region @[84,126) name="figure"
+    para @[109,117) lines=1
+  para @[128,289) lines=1

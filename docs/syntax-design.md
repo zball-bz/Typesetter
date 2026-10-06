@@ -333,9 +333,10 @@ text after a region opener that keeps it from being one gets
 **References**: a bare id is IdStart IdCont* (IdJoin IdCont+)* with IdJoin
 `-.:`, so `@sec:intro` names `sec:intro` and `@x.` leaves the period to the
 prose; `@[a, b]` is an id list. A `[…]` right after the id (`@fig[p. 5]`,
-`@[label][…]`) is the reference's supplement (D-L01): parsed into the ref's
-content now, read by the reference templates from P2-09 — until then it
-renders as before, the reference followed by the bracketed text.
+`@[label][…]`) is the reference's supplement (D-L01): lowered (P2-09) to the
+ref's `extra` child, which the element row's template reads — the prefix
+word of a reference, the locator of a citation; `@[a, b]` lowers to a parent
+ref with child refs (docs/semantics-design.md §8).
 
 ## 10. Next steps
 

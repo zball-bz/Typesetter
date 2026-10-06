@@ -230,3 +230,25 @@ it; an unknown counter is `event-counter`.
 #appendix()
 = Proofs <proofs>          → A Proofs (with a heading site); @proofs → Appendix A; an equation inside → (A.1)
 ```
+
+## 8. Structured references (plan P2-09; design T3 S3, D-L01)
+
+A reference is structured where it is written: `@[a, b]` is a parent `ref`
+(its `target` the whole list) with one child `ref` per id, and the bracket of
+`@x[…]` / `@[x][…]` is its `extra` child — a `seq` in slot `extra`. The
+element row's reference template decides what the bracket means: a numbered
+class's template (built-in rows and the default) puts it in place of the
+supplement word (`when: extra` → the bracket and a space, else the
+supplement: `@fig-a[Fig.]` → Fig. 1, `@emc[式]`); a citation table's `cite`
+template reads it as a locator (`@kp81[p. 5]` → [1, p. 5]).
+
+One renderer serves groups and single references. A group whose ids name
+rows of a citeable table renders through that table's `cite` template — one
+bracket, and with the collector's `compress` three or more consecutive
+ordinals read first–last with the `range-sep` word ([1–3]); a single
+citation is a group of one. A group of labels renders each child as its own
+reference, the `ref-sep` word between (Figure 1, Figure 2; the parent links
+nowhere itself, and a bracket after it is not read: `ref-extra`, info).
+`ref(target, {form, supplement})` applies to each member. A childless
+reference whose target has commas (a script's `ref("a, b")`) still reads as
+a group of those keys.

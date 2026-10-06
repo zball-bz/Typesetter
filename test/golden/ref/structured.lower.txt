@@ -1,0 +1,41 @@
+lower v1 abi 9bdc5985 docEnd 290 holes 3 module 2ffd80d28067b1ff
+piece 0 hole 0 js [127,151)
+piece 1 hole 1 js [153,177)
+piece 2 hole 2 js [179,217)
+block 0 content [0,9)
+  CALL heading [0,9) level=1 label="sec-a"
+    TEXT "Methods" [2,9)
+block 1 content [19,29)
+  CALL heading [19,29) level=2 label="sec-b"
+    TEXT "Details" [22,29)
+block 2 content [39,82) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [39,82)
+    ROWS
+      row
+        TEXT "A figure." [64,73)
+block 3 content [84,126) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [84,126)
+    ROWS
+      row
+        TEXT "Another." [109,117)
+block 4 content [128,289) user framed holes 2..3
+  CALL para [128,289)
+    TEXT "A group of labels: " [128,146) raw=0:0,19:18
+    CALL ref [147,162) target="fig-a, fig-b"
+      CALL ref target="fig-a"
+      CALL ref target="fig-b"
+    TEXT " and " [163,166) raw=0:0,1:0,5:3
+    CALL ref [167,182) target="sec-a, sec-b"
+      CALL ref target="sec-a"
+      CALL ref target="sec-b"
+    TEXT ". A bracket replaces the word: " [182,212) raw=0:0,31:30
+    CALL ref [213,225) target="fig-a"
+      CALL seq slot="extra"
+        TEXT "Fig." [220,224)
+    TEXT " and " [226,229) raw=0:0,1:0,5:3
+    CALL ref [230,247) target="sec-b"
+      CALL seq slot="extra"
+        TEXT "Section" [239,246)
+    TEXT ". A form: " [247,256) raw=0:0,10:9
+    HOLE 2 [257,288)
+    TEXT "." [288,289)

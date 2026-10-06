@@ -25,14 +25,14 @@
       "outline": true,
       "supplement": "section",
       "alias": { "prefix": "h-", "body": "number" },
-      "ref": [{ "slot": "supplement" }, { "slot": "number" }]
+      "ref": [{ "when": "extra", "kids": [{ "slot": "extra" }, " "], "else": [{ "slot": "supplement" }] }, { "slot": "number" }]
     },
     "table": {
       "select": [{ "node": "table" }],
       "counter": "table",
       "numbering": "always",
       "supplement": "table",
-      "ref": [{ "slot": "supplement" }, { "slot": "number" }]
+      "ref": [{ "when": "extra", "kids": [{ "slot": "extra" }, " "], "else": [{ "slot": "supplement" }] }, { "slot": "number" }]
     },
     "figure": {
       "select": [{ "node": "group", "role": "figure" }],
@@ -50,7 +50,7 @@
           ]
         }
       ],
-      "ref": [{ "slot": "supplement" }, { "slot": "number" }]
+      "ref": [{ "when": "extra", "kids": [{ "slot": "extra" }, " "], "else": [{ "slot": "supplement" }] }, { "slot": "number" }]
     },
     "equation": {
       "select": [{ "node": "mathblock" }],
@@ -58,7 +58,7 @@
       "numbering": "labelled",
       "supplement": "equation",
       "sites": [{ "where": "arg", "arg": "name", "template": ["(", { "slot": "number" }, ")"] }],
-      "ref": [{ "slot": "supplement" }, "(", { "slot": "number" }, ")"]
+      "ref": [{ "when": "extra", "kids": [{ "slot": "extra" }, " "], "else": [{ "slot": "supplement" }] }, "(", { "slot": "number" }, ")"]
     },
     "footnote": {
       "select": [{ "node": "note" }],
@@ -211,8 +211,10 @@
             }
           ]
         },
+        { "when": "extra", "kids": [{ "term": "ref-sep" }, { "slot": "extra" }] },
         "]"
       ],
+      "compress": true,
       "wrap": [{ "node": "group", "style": "site", "args": { "role": "bibliography" }, "kids": [{ "node": "rule" }, { "each": "items" }] }],
       "empty": [{ "node": "group", "style": "site", "args": { "role": "bibliography" } }],
       "entry": [

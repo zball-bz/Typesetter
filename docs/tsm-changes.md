@@ -83,3 +83,5 @@ Format: `- [step] what changed — migration (if any)`.
 - [P2-08] `{style: {…}}` on any constructor styles that node itself (it used to wrap it in a separate styled node).
 - [P2-08] A code run is no longer recognised as a comment by its colour: authored code lines that relied on `style({color: "var(--tsr-tok-comment)"}, …)` for comment-aware wrapping add `code: {hang: "content"}`.
 - [P2-08] Op buffers older than version 11 are no longer read (the one format break of the remediation): re-execute documents rather than replaying stored buffers.
+- [P2-09] The bracket after a reference means something now (D-L01): `@fig-a[Fig.]` reads "Fig. 1" (it replaces the word), and after a citation it is the locator: `@kp81[p. 5]` reads "[1, p. 5]". It used to print as literal text after the reference ("Figure 1[Fig.]").
+- [P2-09] `@[a, b]` of labels reads each reference in turn ("Figure 1, Figure 2"; it used to be unresolved); of citation keys, three or more consecutive numbers compress ("[1–3]").

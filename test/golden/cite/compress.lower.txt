@@ -1,0 +1,23 @@
+lower v1 abi 9bdc5985 docEnd 217 holes 1 module 71247ae83df9331f
+piece 0 hole 0 js [136,189)
+block 0 content [0,168)
+  CALL para [0,168)
+    TEXT "Three consecutive citations compress: " [0,37) raw=0:0,38:37
+    CALL ref [38,63) target="kp81, liang83, knuth84"
+      CALL ref target="kp81"
+      CALL ref target="liang83"
+      CALL ref target="knuth84"
+    TEXT "; a locator reads inside the bracket: " [63,100) raw=0:0,38:37
+    CALL ref [101,112) target="kp81"
+      CALL seq slot="extra"
+        TEXT "p. 5" [107,111)
+    TEXT ", and a group takes one too: " [112,140) raw=0:0,29:28
+    CALL ref [141,167) target="liang83, knuth84"
+      CALL ref target="liang83"
+      CALL ref target="knuth84"
+      CALL seq slot="extra"
+        TEXT "ch. 2" [161,166)
+    TEXT "." [167,168)
+block 1 content [170,216) user framed holes 0..1
+  CALL para [170,216)
+    HOLE 0 [170,216)

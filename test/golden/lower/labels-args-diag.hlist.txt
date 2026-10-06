@@ -162,16 +162,12 @@ top pid=6 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="em" r13 @[613,633)
   box Other "ment:" w=2561su r13 @[613,633)
   glue word w=257su x=1 cap=257su src r13 @[613,633)
-  box Ideo "式" w=1025su wt=0.6 cap=102su r14 @[634,644)
-  pen 0 r14
-  glue word w=257su x=1 cap=257su src r15 @[634,644)
-  box Other "(1)" w=1537su r15 @[634,644)
-  box Other "[" w=513su r16 @[559,645)
-  box Other "p." w=1025su r16 @[639,643)
-  glue word w=257su x=1 cap=257su kern=". 5" src r16 @[639,643)
-  box Other "5" w=513su r16 @[639,643)
-  box Other "]" w=513su r16 @[559,645)
-  box Other "." w=513su r16 @[644,645)
+  box Other "p." w=1025su r14 @[639,643)
+  glue word w=257su x=1 cap=257su kern=". 5" src r14 @[639,643)
+  box Other "5" w=513su r14 @[639,643)
+  glue word w=257su x=1 cap=257su kern="5 (" src r14 @[634,644)
+  box Other "(1)" w=1537su r14 @[634,644)
+  box Other "." w=513su r15 @[644,645)
   run r0 plain
   run r1 plain ref LINK link="#tsr-b1"
   run r2 plain
@@ -186,9 +182,8 @@ top pid=6 units=1
   run r11 plain
   run r12 plain ref LINK link="#tsr-sec:intro"
   run r13 plain
-  run r14 letter-spaced ref LINK CJK link="#tsr-emc"
-  run r15 plain ref LINK link="#tsr-emc"
-  run r16 plain
+  run r14 plain ref LINK link="#tsr-emc"
+  run r15 plain
 top pid=7 units=1
  unit text indent=0su anchor="sec:intro"
   box Other "Introduction" w=9832su r0 @[649,661)

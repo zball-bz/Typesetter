@@ -3,6 +3,7 @@
 # and fails the run: remove the line in the commit that fixes it.
 
 cite/basic.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
+cite/compress.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 cite/group-unknown-diag.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 cite/in-note.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 cite/two-bibs.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)

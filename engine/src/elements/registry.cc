@@ -348,10 +348,14 @@ struct Loader {
     }
     if (c.numbering != ElementClass::Numbering::Never && c.counter == kNoIndex)
       return fail("class '" + name + "' is numbered but has no counter");
-    // a numbered class reads, by default, as its supplement and number
+    // a numbered class reads, by default, as its supplement (or the
+    // reference's bracket, plan P2-09) and its number
     if (!c.hasRef && c.counter != kNoIndex && c.numbering != ElementClass::Numbering::Never) {
       c.hasRef = true;
-      c.ref = {TItem{TItem::K::Slot, "supplement"}, TItem{TItem::K::Slot, "number"}};
+      TItem word{TItem::K::When, "extra"};
+      word.kids = {TItem{TItem::K::Slot, "extra"}, TItem{TItem::K::Text, " "}};
+      word.orElse = {TItem{TItem::K::Slot, "supplement"}};
+      c.ref = {word, TItem{TItem::K::Slot, "number"}};
     }
     r.classes.push_back(std::move(c));
     return true;
@@ -395,6 +399,7 @@ struct Loader {
       d.citeable = true;
       if (!tmpl(c, d.cite)) return false;
     }
+    if (const JsonValue* c = member(v, "compress")) d.compress = c->t == JsonValue::T::Bool && c->b;
     r.collectors.push_back(std::move(d));
     return true;
   }
