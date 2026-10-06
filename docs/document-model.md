@@ -279,27 +279,39 @@ render, via `--tsr-cjk-font`) with `fonts.cjk`, keeping ambiguous glyphs
 
 Document-height accumulation uses i64.
 
-### 6.2 Block struct (formalizing the PoC)
+### 6.2 The item list the breaker reads (plan P4-08)
+
+Every inline stream is an HList (`shape/hlist.h`, shaping-design §5): Box,
+Glue (a class: word space, CJK gap, CJK–Latin boundary, punctuation blank,
+object space, fill), Penalty and Disc items in TeX's canonical form, with
+run instances for paint. The breaker reads it directly (`break/items.h`;
+the PoC's `LinebreakBlock` with its flag bits and the lowering to it are
+gone, with the `blocks` golden):
 
 ```
-LinebreakBlock {
-  width, breakWidth, spaceWidth : su
-  breakPenalty                  : f32   (INF allowed)
-  stretchWeight                 : f32   (0 = rigid; Latin space 1.0; CJK glue = k)
-  style                         : StyleId
-  flags                         : isSpace | isHyphen | isCJK | isBoundary | isIndent
-  content                       : text strRef | inlineBox nodeId
-  span                          : source span
-}
+Box      w                        a word, glyph, formula part, indent
+Glue     w, stretch = shrink = x · juSu, order (fil: a fill)
+Penalty  thousandths | Forbidden | Forced
+Disc     w (unbroken: the junction kern), pre (its glyph's width, or none)
 ```
 
-`stretchWeight` carries the v2 §8 k-rule into the breaker: line stretchability = Σ weights; the renderer distributes `Δword` per unit weight, so cost model and rendering agree by construction. Emission rules per Appendix C of v2.
+**The stretch model is v2 §8's (D-X01).** A glue's weight `x` is 1 for a
+word space and the CJK–Latin boundary, k (`doc.cjkJustify`, 0.6) for a CJK
+gap — which exists only where the renderer realizes one (before a CJK
+character or a closing glyph) —, 0 for a punctuation blank or an object's
+glue; `juSu` is the stream's justification unit, a space of its base style
+(its paragraph's, measured). The breaker's capacity is therefore
+(n_latin + k·n_cjk)·juSu and layout distributes a line's slack as slack /
+Σweights per unit weight — the two agree by construction. (App C's fixed
+0.1em CJK capacity is retired with `doc.cjkGlue`; the shrink limit,
+`cost.shrinkThreshold` 0.37 of the capacity, keeps a word space's shrink
+what it was.)
 
-**Breaking semantics (as built, plan P0-12; rules at the top of `break/break.cc`).** The breaker reads the TeX item projection of the blocks (`break/items.h`: Box / Glue / Penalty{Normal, Forbidden, Forced} / Disc{pre}): `BREAK_INF` is Forbidden — never a candidate; glue at a break and at a line start (paragraph start included) is discarded, so the optimizer measures exactly the range layout renders; a hyphen point adds its glyph only when broken; the paragraph end is a Forced break whose line has fil stretch and normal shrink. Line cost is `min(mapped(x)^exponent, 1e4)` (an integer power by multiplication), Overfull (x < −shrinkThreshold) is a class, penalties are i32 thousandths; ties go to lower demerits, then fewer lines, then the later parent. The search (plan P1-14) is TeX's active list: a node leaves it as soon as its line becomes Overfull, a Forced break deactivates every earlier node, line counts are kept apart only while the parshape prefix makes widths depend on them — no window, no line-count pruning, no retry ladder; `BreakParams` adds optional tolerance and emergency-stretch passes (off by default). When no path exists, the final pass rescues: the best active node breaks at the first legal break after the run, the line is Overfull — set at the shrink limit by layout, marked `data-overfull` in HTML, reported as `overfull-line`. A breakpoint is the index of the next line's first block after discard. Native and WASM builds produce identical breaks (`tools/wasm-goldens.mjs`).
+**Breaking semantics (as built, plans P0-12, P4-08; rules at the top of `break/break.cc`).** Forbidden is never a candidate; glue at a break and at a line start (paragraph start included) is discarded, so the optimizer measures exactly the range layout renders; a Disc adds its pre only when broken; the paragraph end is a Forced break whose line has fil stretch and normal shrink. Line cost is `min(mapped(x)^exponent, 1e4)` (an integer power by multiplication), Overfull (x < −shrinkThreshold) is a class, penalties are i32 thousandths; ties go to lower demerits, then fewer lines, then the later parent. The search (plan P1-14) is TeX's active list: a node leaves it as soon as its line becomes Overfull, a Forced break deactivates every earlier node, line counts are kept apart only while the parshape prefix makes widths depend on them — no window, no line-count pruning, no retry ladder; `BreakParams` adds optional tolerance and emergency-stretch passes (off by default). When no path exists, the final pass rescues: the best active node breaks at the first legal break after the run, the line is Overfull — set at the shrink limit by layout, marked `data-overfull` in HTML, reported as `overfull-line`. A breakpoint is the HList index of the next line's first Box or Disc after discard. Native and WASM builds produce identical breaks (`tools/wasm-goldens.mjs`).
 
 ### 6.3 Table cells (M6 v1)
 
-Each `tcell` flattens to its own miniature block stream (`TableCell`), broken
+Each `tcell` flattens to its own miniature item stream (`TableCell`), broken
 by the same KP breaker at the cell content width. v1 geometry: **equal
 columns** (`colW = measure / cols`), horizontal cell padding 0.4em, vertical
 row padding 0.3em, full-width rules above/between/below rows. Cells are

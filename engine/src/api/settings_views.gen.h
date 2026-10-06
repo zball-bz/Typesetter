@@ -84,7 +84,6 @@ struct EmitSettings {
   const double& baseSizePx;  // doc.baseSize
   const double& lineHeight;  // doc.leading
   const double& cjkJustifyK;  // doc.cjkJustify
-  const double& cjkGlueEm;  // doc.cjkGlue
   const PunctCompress& punctCompress;  // cjk.punctCompress
   const double& hyphenPenalty;  // break.hyphenPenalty
   const double& exHyphenPenalty;  // break.exHyphenPenalty
@@ -111,7 +110,6 @@ struct LayoutSettings {
   const double& baseSizePx;  // doc.baseSize
   const double& lineHeight;  // doc.leading
   const double& paraSpacingEm;  // doc.parGap
-  const double& cjkJustifyK;  // doc.cjkJustify
   const double& codeScale;  // code.scale
   const int& verbatimMinCols;  // code.minCols
   const double& verbatimSnapTolerance;  // code.snapTolerance

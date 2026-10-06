@@ -1,68 +1,74 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[0,1)
-  glue word w=257su x=1 cap=257su kern="A r" src r0 @[1,2)
+  glue word w=257su x=1 st=257su kern="A r" src r0 @[1,2)
   box Alpha "row" w=1537su r0 @[2,5)
-  glue word w=257su x=1 cap=257su kern="w w" src r0 @[5,6)
+  glue word w=257su x=1 st=257su kern="w w" src r0 @[5,6)
   box Alpha "with" w=2049su r0 @[6,10)
-  glue word w=257su x=1 cap=257su kern="h m" src r0 @[10,11)
+  glue word w=257su x=1 st=257su kern="h m" src r0 @[10,11)
   box Alpha "more" w=2049su r0 @[11,15)
-  glue word w=257su x=1 cap=257su kern="e c" src r0 @[15,16)
+  glue word w=257su x=1 st=257su kern="e c" src r0 @[15,16)
   box Alpha "cells" w=2561su r0 @[16,21)
-  glue word w=257su x=1 cap=257su kern="s t" src r0 @[21,22)
+  glue word w=257su x=1 st=257su kern="s t" src r0 @[21,22)
   box Alpha "than" w=2049su r0 @[22,26)
-  glue word w=257su x=1 cap=257su kern="n t" src r0 @[26,27)
+  glue word w=257su x=1 st=257su kern="n t" src r0 @[26,27)
   box Alpha "the" w=1537su r0 @[27,30)
-  glue word w=257su x=1 cap=257su kern="e t" src r0 @[30,31)
+  glue word w=257su x=1 st=257su kern="e t" src r0 @[30,31)
   box Alpha "ta" w=1025su r0 @[31,33)
   disc pen=0.7 w=0su pre="-" 513su kern="ab" r0 @[33,33)
   box Alpha "ble's" w=2561su r0 @[33,38)
-  glue word w=257su x=1 cap=257su kern="s c" src r0 @[38,39)
+  glue word w=257su x=1 st=257su kern="s c" src r0 @[38,39)
   box Alpha "columns" w=3585su r0 @[39,46)
-  glue word w=257su x=1 cap=257su kern="s i" src r0 @[46,47)
+  glue word w=257su x=1 st=257su kern="s i" src r0 @[46,47)
   box Alpha "is" w=1025su r0 @[47,49)
-  glue word w=257su x=1 cap=257su kern="s r" src r0 @[49,50)
+  glue word w=257su x=1 st=257su kern="s r" src r0 @[49,50)
   box Alpha "re" w=1025su r0 @[50,52)
   disc pen=0.7 w=0su pre="-" 513su kern="ep" r0 @[52,52)
   box Alpha "port" w=2049su r0 @[52,56)
   disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[56,56)
   box Alpha "ed," w=1537su r0 @[56,59)
-  glue word w=257su x=1 cap=257su kern=", n" src r0 @[59,60)
+  glue word w=257su x=1 st=257su kern=", n" src r0 @[59,60)
   box Alpha "not" w=1537su r0 @[60,63)
-  glue word w=257su x=1 cap=257su kern="t c" src r0 @[63,64)
+  glue word w=257su x=1 st=257su kern="t c" src r0 @[63,64)
   box Alpha "cut:" w=2049su r0 @[64,68)
-  glue word w=257su x=1 cap=257su kern=": t" src r0 @[68,69)
+  glue word w=257su x=1 st=257su kern=": t" src r0 @[68,69)
   box Alpha "the" w=1537su r0 @[69,72)
-  glue word w=257su x=1 cap=257su kern="e t" src r0 @[72,73)
+  glue word w=257su x=1 st=257su kern="e t" src r0 @[72,73)
   box Alpha "ta" w=1025su r0 @[73,75)
   disc pen=0.7 w=0su pre="-" 513su kern="ab" r0 @[75,75)
   box Alpha "ble" w=1537su r0 @[75,78)
-  glue word w=257su x=1 cap=257su kern="e w" src r0 @[78,79)
+  glue word w=257su x=1 st=257su kern="e w" src r0 @[78,79)
   box Alpha "widens" w=3073su r0 @[79,85)
-  glue word w=257su x=1 cap=257su kern="s t" src r0 @[85,86)
+  glue word w=257su x=1 st=257su kern="s t" src r0 @[85,86)
   box Alpha "to" w=1025su r0 @[86,88)
-  glue word w=257su x=1 cap=257su kern="o h" src r0 @[88,89)
+  glue word w=257su x=1 st=257su kern="o h" src r0 @[88,89)
   box Alpha "hold" w=2049su r0 @[89,93)
-  glue word w=257su x=1 cap=257su kern="d i" src r0 @[93,94)
+  glue word w=257su x=1 st=257su kern="d i" src r0 @[93,94)
   box Alpha "it" w=1025su r0 @[94,96)
-  glue word w=257su x=1 cap=257su kern="t (" src r0 @[96,97)
+  glue word w=257su x=1 st=257su kern="t (" src r0 @[96,97)
   box OpenN "(plan" w=2561su r0 @[97,102)
-  glue word w=257su x=1 cap=257su kern="n P" src r0 @[102,103)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[102,103)
   box Alpha "P3-14)." w=3585su r0 @[103,110)
   run r0 plain
 top pid=1 units=5
  unit text indent=0su
+  ju=257su
   box Alpha "a" w=513su r0 @[129,130)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "b" w=513su r0 @[133,134)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "c" w=513su r0 @[135,136)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "d" w=513su r0 @[139,140)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "e" w=513su r0 @[143,144)
   run r0 plain

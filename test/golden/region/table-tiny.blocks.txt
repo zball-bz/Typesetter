@@ -1,5 +1,0 @@
-top pid=0 units=2
- unit text indent=0su
-  word "A" w=513su pen=INF @[17,18)
- unit text indent=0su
-  word "B" w=513su pen=INF @[21,22)

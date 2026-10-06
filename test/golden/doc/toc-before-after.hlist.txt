@@ -1,56 +1,65 @@
 top pid=0 units=3
  unit text indent=1536su marker="•"
+  ju=257su
   box Digit "1" w=513su r0 @[0,4)
-  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[0,4)
+  glue word w=257su x=1 st=257su kern="1 O" src r0 @[0,4)
   box Alpha "One" w=1537su r0 @[0,4)
   run r0 plain LINK link="#tsr-h-1"
  unit text indent=3072su marker="•"
+  ju=257su
   box Digit "1.1" w=1537su r0 @[0,4)
-  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[0,4)
+  glue word w=257su x=1 st=257su kern="1 O" src r0 @[0,4)
   box Alpha "One" w=1537su r0 @[0,4)
-  glue word w=257su x=1 cap=257su kern="e p" src r0 @[0,4)
+  glue word w=257su x=1 st=257su kern="e p" src r0 @[0,4)
   box Alpha "point" w=2561su r0 @[0,4)
-  glue word w=257su x=1 cap=257su kern="t o" src r0 @[0,4)
+  glue word w=257su x=1 st=257su kern="t o" src r0 @[0,4)
   box Alpha "one" w=1537su r0 @[0,4)
   run r0 plain LINK link="#tsr-h-1.1"
  unit text indent=1536su marker="•"
+  ju=257su
   box Digit "2" w=513su r0 @[0,4)
-  glue word w=257su x=1 cap=257su kern="2 T" src r0 @[0,4)
+  glue word w=257su x=1 st=257su kern="2 T" src r0 @[0,4)
   box Alpha "Two" w=1537su r0 @[0,4)
   run r0 plain LINK link="#tsr-h-2"
 top pid=1 units=1
  unit text indent=0su anchor="h-1"
+  ju=411su
   box Alpha "One" w=2459su r0 @[8,11)
   run r0 plain BOLD x1.60
 top pid=2 units=1
  unit text indent=0su anchor="h-1.1"
+  ju=347su
   box Alpha "One" w=2075su r0 @[16,19)
-  glue word w=347su x=1 cap=347su kern="e p" src r0 @[19,20)
+  glue word w=347su x=1 st=347su kern="e p" src r0 @[19,20)
   box Alpha "point" w=3458su r0 @[20,25)
-  glue word w=347su x=1 cap=347su kern="t o" src r0 @[25,26)
+  glue word w=347su x=1 st=347su kern="t o" src r0 @[25,26)
   box Alpha "one" w=2075su r0 @[26,29)
   run r0 plain BOLD x1.35
 top pid=3 units=1
  unit text indent=0su anchor="h-2"
+  ju=411su
   box Alpha "Two" w=2459su r0 @[33,36)
   run r0 plain BOLD x1.60
 top pid=4 units=3
  unit text indent=1536su marker="•"
+  ju=257su
   box Digit "1" w=513su r0 @[38,42)
-  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[38,42)
+  glue word w=257su x=1 st=257su kern="1 O" src r0 @[38,42)
   box Alpha "One" w=1537su r0 @[38,42)
   run r0 plain LINK link="#tsr-h-1"
  unit text indent=3072su marker="•"
+  ju=257su
   box Digit "1.1" w=1537su r0 @[38,42)
-  glue word w=257su x=1 cap=257su kern="1 O" src r0 @[38,42)
+  glue word w=257su x=1 st=257su kern="1 O" src r0 @[38,42)
   box Alpha "One" w=1537su r0 @[38,42)
-  glue word w=257su x=1 cap=257su kern="e p" src r0 @[38,42)
+  glue word w=257su x=1 st=257su kern="e p" src r0 @[38,42)
   box Alpha "point" w=2561su r0 @[38,42)
-  glue word w=257su x=1 cap=257su kern="t o" src r0 @[38,42)
+  glue word w=257su x=1 st=257su kern="t o" src r0 @[38,42)
   box Alpha "one" w=1537su r0 @[38,42)
   run r0 plain LINK link="#tsr-h-1.1"
  unit text indent=1536su marker="•"
+  ju=257su
   box Digit "2" w=513su r0 @[38,42)
-  glue word w=257su x=1 cap=257su kern="2 T" src r0 @[38,42)
+  glue word w=257su x=1 st=257su kern="2 T" src r0 @[38,42)
   box Alpha "Two" w=1537su r0 @[38,42)
   run r0 plain LINK link="#tsr-h-2"

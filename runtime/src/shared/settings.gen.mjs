@@ -82,15 +82,6 @@ export const SETTINGS = Object.freeze({
     "def": 0.6,
     "prec": "HostDefault",
     "affects": [
-      "Emit",
-      "Layout"
-    ]
-  },
-  "doc.cjkGlue": {
-    "dom": "num:0:1",
-    "def": 0.1,
-    "prec": "HostDefault",
-    "affects": [
       "Emit"
     ]
   },
@@ -541,8 +532,7 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "baseSize": 18,
     "leading": 1.5,
     "parGap": 1.2,
-    "cjkJustify": 0.6,
-    "cjkGlue": 0.1
+    "cjkJustify": 0.6
   },
   "fonts": {
     "body": "\"Crimson Text\", Georgia, serif",

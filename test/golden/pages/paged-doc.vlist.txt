@@ -6,17 +6,17 @@ vlist pid=1 y=2868su h=7680su
 vlist pid=2 y=11777su h=1536su
   glue 1229su
   box unit=0 heading y=0su h=1536su
-vlist pid=3 y=14542su h=3072su
+vlist pid=3 y=14542su h=1536su
   glue 1229su
-  box unit=0 para y=0su h=3072su
-vlist pid=4 y=18843su h=9216su
+  box unit=0 para y=0su h=1536su
+vlist pid=4 y=17307su h=9216su
   glue 1229su
   box unit=0 code y=0su h=9216su
-vlist pid=5 y=29288su h=7885su
+vlist pid=5 y=27752su h=7885su
   glue 1229su
   box unit=0 image y=0su h=5120su
   glue 1229su
   box unit=1 caption y=6349su h=1536su
-vlist pid=6 y=38402su h=3072su
+vlist pid=6 y=36866su h=3072su
   glue 1229su
   box unit=0 para y=0su h=3072su

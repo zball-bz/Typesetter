@@ -1,1 +1,1 @@
-top pid=0 unit=0 lines=2 cost=0.0128 breakpoints=[22,25]
+top pid=0 unit=0 lines=2 cost=0.0075 breakpoints=[34,39]

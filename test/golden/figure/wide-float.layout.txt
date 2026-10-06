@@ -1,12 +1,12 @@
 doc h=17050su
 para pid=0 y=0su w=19200su h=4608su
-  L0 y=0su left=0su w=19200su dw=293su dc=0su join=space blocks=[0,19) @[0,37)
-  L1 y=1536su left=0su w=19200su dw=43su dc=0su join=space blocks=[20,37) @[38,78)
-  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[38,39) @[79,86)
+  L0 y=0su left=0su w=19200su dw=293su dc=0su join=space items=[0,19) @[0,37)
+  L1 y=1536su left=0su w=19200su dw=43su dc=0su join=space items=[20,37) @[38,78)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last items=[38,39) @[79,86)
 para pid=1 y=5837su w=19200su h=0su
   L0 img y=0su left=3840su w=15360su h=3840su
-  L1 cell=0 y=3840su left=7040su w=12160su blocks=[0,10)
+  L1 cell=0 y=3840su left=7040su w=12160su items=[0,11)
 para pid=2 y=5837su w=19200su h=11213su
-  L0 y=6605su left=0su w=19200su dw=0su dc=0su join=none hyphen blocks=[0,20) @[218,258)
-  L1 y=8141su left=0su w=19200su dw=0su dc=0su join=space blocks=[20,37) @[258,299)
-  L2 y=9677su left=0su w=19200su dw=0su dc=0su join=last blocks=[38,51) @[300,329)
+  L0 y=6605su left=0su w=19200su dw=0su dc=0su join=none hyphen items=[0,20) @[218,258)
+  L1 y=8141su left=0su w=19200su dw=0su dc=0su join=space items=[20,37) @[258,299)
+  L2 y=9677su left=0su w=19200su dw=0su dc=0su join=last items=[38,51) @[300,329)

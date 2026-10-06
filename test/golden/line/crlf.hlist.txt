@@ -1,33 +1,35 @@
 top pid=0 units=1
  unit text indent=0su anchor="h-1"
+  ju=411su
   box Alpha "CRLF" w=3278su r0 @[2,6)
-  glue word w=411su x=1 cap=411su kern="F s" src r0 @[6,7)
+  glue word w=411su x=1 st=411su kern="F s" src r0 @[6,7)
   box Alpha "source" w=4917su r0 @[7,13)
   run r0 plain BOLD x1.60
 top pid=1 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[17,18)
-  glue word w=257su x=1 cap=257su kern="A p" src r0 @[18,19)
+  glue word w=257su x=1 st=257su kern="A p" src r0 @[18,19)
   box Alpha "para" w=2049su r0 @[19,23)
   disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[23,23)
   box Alpha "graph" w=2561su r0 @[23,28)
-  glue word w=257su x=1 cap=257su kern="h t" src r0 @[28,29)
+  glue word w=257su x=1 st=257su kern="h t" src r0 @[28,29)
   box Alpha "that" w=2049su r0 @[29,33)
-  glue word w=257su x=1 cap=257su kern="t s" src r0 @[33,34)
+  glue word w=257su x=1 st=257su kern="t s" src r0 @[33,34)
   box Alpha "spans" w=2561su r0 @[34,39)
-  glue word w=257su x=1 cap=257su kern="s t" src r0 @[39,40)
+  glue word w=257su x=1 st=257su kern="s t" src r0 @[39,40)
   box Alpha "two" w=1537su r0 @[41,44)
-  glue word w=257su x=1 cap=257su kern="o l" src r0 @[44,45)
+  glue word w=257su x=1 st=257su kern="o l" src r0 @[44,45)
   box Alpha "lines" w=2561su r0 @[45,50)
-  glue word w=257su x=1 cap=257su kern="s w" src r0 @[50,51)
+  glue word w=257su x=1 st=257su kern="s w" src r0 @[50,51)
   box Alpha "with" w=2049su r0 @[51,55)
-  glue word w=257su x=1 cap=257su src r0 @[55,55)
+  glue word w=257su x=1 st=257su src r0 @[55,55)
   box object o0 math part=0 asc=600su desc=76su "a +\nb" w=1625su r1 @[56,64)
   pen 0.95 r2
-  glue objspace w=228su x=0 cap=0su r2 @[56,64)
+  glue objspace w=228su x=0 r2 @[56,64)
   box object o0 math part=1 asc=700su desc=10su w=602su r3 @[56,64)
   pen 0 r3
-  glue word w=257su x=1 cap=257su src r4 @[65,65)
+  glue word w=257su x=1 st=257su src r4 @[65,65)
   box Alpha "math." w=2561su r4 @[65,70)
   obj o0 math parts=2 edges=Alpha/Alpha src="a +\nb" [w=1625su asc=600su desc=76su] [w=602su asc=700su desc=10su glue=228su]
   run r0 plain

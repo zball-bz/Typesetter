@@ -1,8 +1,7 @@
-// Emit internals shared by the leaf shaper (emit.cc) and the legacy inline
-// emitter (legacy.cc, the CI equivalence check of plan P1-12; deleted with
-// the paragraph shaper, P4-02). The leaves are the box tree's (plan P1-18);
-// a leaf's inline stream is written by an InlineSink: HList items in
-// production, the old LinebreakBlocks for the check.
+// Emit internals of the leaf shaper (emit.cc). The leaves are the box
+// tree's (plan P1-18); a leaf's inline stream is written by an InlineSink:
+// HList items (the paragraph shaper, plan P4-02), which the breaker reads
+// (plan P4-08).
 #pragma once
 #include "emit.h"
 #include "../model/model.h"
@@ -62,6 +61,9 @@ struct InlineSink {
   virtual void copyPolicy(const ContentNode* n, Flow& u, ICtx& ctx) = 0;
   // the paragraph indent (首行缩进, App C): an unbreakable fixed-width box
   virtual void indent(Flow& u, StyleId st, Span span, double px, double em) = 0;
+  // (plan P4-08) the stream's base style — its paragraph's, its row's —
+  // whose space is its justification unit (HList::juSu)
+  virtual void base(StyleId st) = 0;
   // the unit's inline stream is complete (plan P4-02: walk and indent
   // record it; finish shapes it as one paragraph)
   virtual void finish(Flow& u) = 0;

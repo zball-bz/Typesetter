@@ -208,7 +208,7 @@ Rules (implementation checklist in Appendix D):
 
 - A line = absolutely positioned element (engine-owned `top`, plus `left`/`width` for shaped containers), `white-space: nowrap`, containing real text with real spaces, span tree per style run (v1 subset/superset algorithm).
 - Justification: per-line `word-spacing` (Latin gaps) + per-run `letter-spacing` (CJK runs); punctuation-compression widths absorbed into adjacent spans' padding. A uniform per-gap Δ is the direct translation of the K-P uniform glue ratio.
-- **Mixed-line distribution rule**: CJK inter-character gaps receive `Δcjk = k × Δword`, where `Δword` is the Latin word-gap adjustment and `k` is a configurable constant applied to the **absolute (px) adjustment** (not rescaled per font size). The breaker's stretchability accounting uses the same weights (`n_latin + k·n_cjk`), so the cost model and the renderer agree by construction.
+- **Mixed-line distribution rule**: CJK inter-character gaps receive `Δcjk = k × Δword`, where `Δword` is the Latin word-gap adjustment and `k` is a configurable constant applied to the **absolute (px) adjustment** (not rescaled per font size). The breaker's stretchability accounting uses the same weights (`n_latin + k·n_cjk`), so the cost model and the renderer agree by construction (as built since plan P4-08: capacity = the weights × the paragraph's space, App C).
 - **DOM weight is O(lines + style runs)** — lighter than the PoC's span-per-word. Static after typesetting: no canvas repaint loop, no scroll listeners.
 - **Absolute positioning must never descend to word level** (v1's "absolute positioning for all content placement" is hereby scoped to line/block granularity). Word-level is strictly worse: O(words) nodes, and inter-word spaces stop existing as characters, destroying copy.
 - Copy fidelity: a `copy` listener on the container rebuilds clean **content text** from the run structure (synthetic runs — hyphens, resolved refs — are marked and skipped; per-line join rules handle consumed spaces; normative algorithm in the document-model spec §9.3). Source offsets (`data-s`/`data-e`) drive anchoring and diagnostics, not copy. Required regardless of renderer once hyphenation inserts glyphs.
@@ -378,24 +378,33 @@ Nesting rules:
 
 ## Appendix C: CJK block emission rules (from PoC; normative reference: clreq)
 
+Amended at plan P4-08 (D-X01): the breaker reads the item list (TeX's Box,
+Glue, Penalty, Disc) and a glue's stretch = shrink is its **weight × the
+paragraph's justification unit juSu** (a space of its base style), so the
+capacity is v2 §8's (n_latin + k·n_cjk)·juSu and agrees with the renderer by
+construction. The PoC's per-block `spaceWidth` capacities (0.1em for a CJK
+gap) are retired.
+
 ```
-Phoneme                  breakPenalty=INF, width=measured, breakWidth=0, spaceWidth=0
-Hyphen point             breakPenalty>0, width=0, breakWidth=width('-'), spaceWidth=0
-Existing hyphen break    breakPenalty=0, width=0, breakWidth=0   (e.g. after "bit-" in "bit-wise")
-Space                    breakPenalty=0, width=spaceWidth=width(' ')
-CJK char                 breakPenalty=0, width=1em, spaceWidth=0.1em (stretchable inter-char glue)
-Opening punct            [breakable 0.5em space, sw=0] + [unbreakable 0.5em glyph]
-Closing punct            [unbreakable 0.5em glyph] + [breakable 0.5em space, sw=0]
-Consecutive punct        compressed (inter-punct spaces removed, no break between)
+Phoneme                  Box (width measured), no break inside
+Hyphen point             Disc: pre = the dictionary's hyphen, unbroken width = the junction kern
+Existing hyphen break    Disc: pre = none, penalty break.exHyphenPenalty (after "bit-" in "bit-wise")
+Space                    Glue width(' '), weight 1
+CJK char                 Box 1em; Glue weight k (0.6) after it only where the gap is realized
+                         (before a CJK char or a closing glyph), else a breakable Penalty
+Opening punct            [breakable blank, weight 0] + [unbreakable glyph]
+Closing punct            [unbreakable glyph] + [breakable blank, weight 0]
+Consecutive punct        compressed (inter-punct blanks removed, no break between)
 Em-dash pair ——          unbreakable, width=2em
 Ellipsis pair ……         unbreakable, width=2em
-CJK–Latin boundary       breakable, width=0.25em, sw=0.25em (stretchable)
-Paragraph indent         2 × 1em unbreakable blocks (not CSS padding)
+CJK–Latin boundary       breakable Glue 0.25em, weight 1 — beside a letter or digit only
+                         (CSS text-autospace ideograph-alpha/numeric)
+Paragraph indent         an unbreakable box (not CSS padding)
 ```
 
 Notes:
 
-- Punctuation compressible spaces are NOT stretchable.
+- Punctuation compressible spaces are NOT stretchable (weight 0).
 - Line-start/-end compression falls out of the breakable half-width spaces vanishing at line edges.
 - **Adjacent-punct compression is a 3-level config** (`punctCompress: full | book | none`, default **book**): close+close and open+open always set solid (a breakable gap there would violate 禁则 — a dangling opener at line end or a closer at line start); `book` keeps a breakable half-width breathing space between a closing/dot and an opening punct (《书名》、「引号」), `full` compresses it too (newspaper-tight), `none` is the full-width style with rigid spaces wherever 禁则 forbids a break.
 - No CJK italic; emphasis via `text-emphasis: filled dot`.

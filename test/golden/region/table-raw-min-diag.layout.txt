@@ -1,16 +1,16 @@
 doc h=14745su
 para pid=0 y=0su w=19200su h=6144su
-  L0 y=0su left=0su w=19200su dw=384su dc=0su join=space blocks=[0,13) @[0,36)
-  L1 y=1536su left=0su w=19200su dw=102su dc=0su join=space blocks=[14,33) @[37,76)
-  L2 y=3072su left=0su w=19200su dw=-43su dc=0su join=space blocks=[34,51) @[77,118)
-  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[52,57) @[119,134)
+  L0 y=0su left=0su w=19200su dw=384su dc=0su join=space items=[0,13) @[0,36)
+  L1 y=1536su left=0su w=19200su dw=102su dc=0su join=space items=[14,33) @[37,76)
+  L2 y=3072su left=0su w=19200su dw=-43su dc=0su join=space items=[34,51) @[77,118)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last items=[52,57) @[119,134)
 para pid=1 y=7373su w=19200su h=7372su
   L0 rule y=0su left=0su w=19200su
   L1 raw y=307su left=410su w=8192su
-  L2 cell=1 y=307su left=9422su w=9368su blocks=[0,9)
-  L3 cell=1 y=1843su left=9422su w=9368su blocks=[10,17)
-  L4 cell=1 y=3379su left=9422su w=9368su blocks=[18,21)
+  L2 cell=1 y=307su left=9422su w=9368su items=[0,9)
+  L3 cell=1 y=1843su left=9422su w=9368su items=[10,17)
+  L4 cell=1 y=3379su left=9422su w=9368su items=[18,21)
   L5 rule y=5222su left=0su w=19200su
   L6 raw y=5529su left=410su w=8192su host h=1280su
-  L7 cell=3 y=5529su left=9422su w=9368su blocks=[0,1)
+  L7 cell=3 y=5529su left=9422su w=9368su items=[0,1)
   L8 rule y=7372su left=0su w=19200su

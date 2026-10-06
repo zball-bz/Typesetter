@@ -208,7 +208,20 @@ struct HlInline final : InlineSink {
   // counts it: Cjk a CJK letter that takes CJK–Latin glue (Han, kana; a dash
   // or an ellipsis set wide), Wide one that takes none (Hangul, an
   // ideographic space: plan P4-05), Punct a CJK punctuation glyph
-  enum class Prev : u8 { None, Latin, Cjk, Wide, Punct };
+  // (plan P4-08) Latin: a letter or digit (CSS text-autospace's alpha and
+  // numeric: CJK–Latin glue beside it); LatinPunct: Latin punctuation
+  enum class Prev : u8 { None, Latin, LatinPunct, Cjk, Wide, Punct };
+  static bool alnum(u32 cp) { return isLetter(cp) || ccOf(cp) == CC::Digit; }
+  // UAX #14: no break before CL CP EX IS SY (LB13) or QU (LB19) — the
+  // narrow non-starters —, nor after OP (LB14) or QU
+  static bool narrowNoStart(u32 cp) {
+    const CC c = ccOf(cp);
+    return c == CC::CloseN || c == CC::Excl || c == CC::Infix || c == CC::Solidus || c == CC::QuoteN;
+  }
+  static bool narrowNoEnd(u32 cp) {
+    const CC c = ccOf(cp);
+    return c == CC::OpenN || c == CC::QuoteN;
+  }
   // an entry set as CJK: its class, or an ambiguous mark as resolved
   static bool entryWide(const CtxEntry& e) {
     return isAmbQuote(e.cp) || isAmbDashOrEllipsis(e.cp) ? e.wide : isWide(e.cp);
@@ -223,7 +236,7 @@ struct HlInline final : InlineSink {
       case CtxEntry::Narrow:
         return Prev::Latin;
       case CtxEntry::Char:
-        if (!entryWide(e)) return Prev::Latin;
+        if (!entryWide(e)) return alnum(e.cp) ? Prev::Latin : Prev::LatinPunct;
         if (isPunctGlyph(e.cp)) return Prev::Punct;
         return isAmbDashOrEllipsis(e.cp) || takesAutospace(e.cp) ? Prev::Cjk : Prev::Wide;
     }
@@ -400,13 +413,11 @@ struct HlInline final : InlineSink {
   }
   const RunRec& runOf(size_t i) const { return B.runs[B.items[i].run]; }
   // a synthetic or object item: its width is defined at emit
-  void fixWidth(Flow&, u32 i, double px, Su w, Su cap) {
+  void fixWidth(Flow&, u32 i, double px, Su w) {
     HItem& it = B.items[i];
     it.w = w;
     it.st |= IS_Resolved;
-    ColdRec& c = B.cold[it.cold];
-    c.rawPx = px;
-    c.capSu = cap;
+    B.cold[it.cold].rawPx = px;
   }
   // the last carrier (a punctuation blank; plan P4-07: a typed space, a
   // blank an attach displaces), and its run when it was the run's only one —
@@ -456,7 +467,7 @@ struct HlInline final : InlineSink {
     sp.str = E.spaceRef;
     u32 i = push(u, IK::Glue, (u8)GC::Autospace, 0, key(st, ctx, RealizeClass::Plain),
                  sp, span, 1.0f, 0.0f);
-    fixWidth(u, i, px, suRoundPx(px), suRoundPx(px));
+    fixWidth(u, i, px, suRoundPx(px));
   }
   // a punctuation blank of `em` (the rules' BLANK rows, plan P4-04)
   void blank(Flow& u, StyleId st, const ICtx& ctx, Span span, double em, bool ownedByNext, float pen) {
@@ -467,7 +478,7 @@ struct HlInline final : InlineSink {
     sp.str = E.spaceRef;
     u32 i = push(u, IK::Glue, (u8)GC::Blank, ownedByNext ? IA_OwnedByNext : 0,
                  key(st, ctx, RealizeClass::Plain), sp, span, 0.0f, pen);
-    fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
+    fixWidth(u, i, px, suRoundPx(px));
   }
   // (plan P4-03; design T5 per-item spans) the source of a text's cooked
   // bytes [a, b): exact through its cooked→raw map (the identity without
@@ -656,7 +667,7 @@ struct HlInline final : InlineSink {
         u32 i = push(u, IK::Glue, (u8)GC::Fill, 0,
                      key(E.compose(n->style, ctx.add, ctx.mul), ctx, RealizeClass::Plain), sp,
                      n->span, 0.0f, 0.0f);
-        fixWidth(u, i, 0.0, 0, 0);
+        fixWidth(u, i, 0.0, 0);
         return;
       }
       case InlineShape::Error:
@@ -676,7 +687,7 @@ struct HlInline final : InlineSink {
                              sp, n->span, 0.0f, kPenInf);
           anchorNext = outer;
           single = true;  // nothing joins it: the entry shows nothing
-          fixWidth(u, i, 0.0, 0, 0);
+          fixWidth(u, i, 0.0, 0);
         }
         return;
       case InlineShape::Unsupported:
@@ -705,6 +716,18 @@ struct HlInline final : InlineSink {
       pend[--k] = kPenInf;
     if (k < count(u) && k > 0 && !(pend[k - 1] <= -kPenInf)) pend[k - 1] = kPenInf;
     if (count(u) > 0 && (isCjkChar(count(u) - 1) || isObject(count(u) - 1))) forbidLast();
+  }
+  // (plan P4-08) a CJK character after Latin punctuation, no glue between:
+  // the break after the punctuation is a break (UAX #14: CP ÷ ID, SY ÷ ID,
+  // IS ÷ ID), unless it is an opening one or a quote
+  void breakAfterLatinPunct(Flow& u) {
+    const size_t c = count(u);
+    if (c == 0 || B.items[c - 1].k != IK::Box || !(pend[c - 1] >= kPenInf) || nowrap) return;
+    const RealizeClass rc = runOf(c - 1).rc;
+    if (rc != RealizeClass::Plain && rc != RealizeClass::Rigid) return;
+    const std::string_view t = strs.get(B.specs[B.items[c - 1].aux].str);
+    if (t.empty() || narrowNoEnd(utf8PrevCp(t, (u32)t.size()))) return;
+    pend[c - 1] = 0.0f;
   }
   // the penalty after the last item: forbidden, unless a forced break
   void forbidLast() {
@@ -819,7 +842,7 @@ struct HlInline final : InlineSink {
     // the break after it: by what follows it in the paragraph (breakAfterObject)
     u32 b = push(u, IK::Box, ob.firstCC, 0, key(st, ctx, RealizeClass::Object), bs, span,
                  0.0f, pen);
-    if (resolved) fixWidth(u, b, suToPx(part.w), part.w, 0);
+    if (resolved) fixWidth(u, b, suToPx(part.w), part.w);
     return b;
   }
 
@@ -1150,7 +1173,6 @@ struct HlInline final : InlineSink {
     StyleId st = E.compose(n->style, ctx.add, ctx.mul);
     StyleId stCjk = E.compose(st, E.cjk, 1.0f);
     std::string_view s = strs.get(n->str);
-    const Su glueSu = suRoundPx(cfg.cjkGlueEm * E.fontPx(stCjk));
 
     // (plan P4-02) its place in the paragraph context: what precedes its
     // first cluster (a CJK character in the node before, a formula, code)
@@ -1217,10 +1239,9 @@ struct HlInline final : InlineSink {
       const RealizeClass rc = definedEm > 0 ? RealizeClass::Pinned : RealizeClass::LetterSpaced;
       u32 b = push(u, IK::Box, firstCc(chars), 0, key(stCjk, ctx, rc), sp, span,
                    (float)cfg.cjkJustifyK, 0.0f);
-      B.cold[B.items[b].cold].capSu = glueSu;  // stretch capacity for the cost fn (App C)
       if (definedEm > 0) {
         double px = definedEm * E.fontPx(stCjk);
-        fixWidth(u, b, px, suRoundPx(px), glueSu);
+        fixWidth(u, b, px, suRoundPx(px));
       }
     };
     // the run's text.punct (plan P3-02), else the document's cjk.punctCompress
@@ -1341,6 +1362,7 @@ struct HlInline final : InlineSink {
         const bool glue = takesAutospace(cp) || isAmbDashOrEllipsis(cp);
         flushWord();
         if (prev == Prev::Latin && glue) boundary(start);
+        else if (prev == Prev::LatinPunct) breakAfterLatinPunct(u);
         if (noStart(cp)) noBreakBefore(u);
         u32 end = 0;
         if (const DefinedAdvance* da = definedAdvanceAt(s, start, cp, end)) {
@@ -1371,9 +1393,16 @@ struct HlInline final : InlineSink {
         prev = Prev::Punct;
         continue;
       }
-      if (prev == Prev::Cjk) boundary(start);
+      // (plan P4-08) after a CJK character: the CJK–Latin glue before a
+      // letter or a digit (CSS text-autospace ideograph-alpha/numeric, App
+      // C), none before Latin punctuation — nor a break before a narrow
+      // non-starter (圖/表: never a line starting with '/')
+      if (prev == Prev::Cjk) {
+        if (alnum(cp)) boundary(start);
+        else if (narrowNoStart(cp) && count(u) > 0) forbidLast();
+      }
       addWord(start, at);
-      prev = Prev::Latin;
+      prev = alnum(cp) ? Prev::Latin : Prev::LatinPunct;
     }
     flushWord(/*atEnd=*/true);
     nowrap = false;
@@ -1395,8 +1424,10 @@ struct HlInline final : InlineSink {
     RunRec rk = key(st, ICtx{}, RealizeClass::Pinned);
     rk.syn = SynKind::Indent;
     u32 i = push(u, IK::Box, 0, 0, rk, sp, span, 0.0f, kPenInf);
-    fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
+    fixWidth(u, i, px, suRoundPx(px));
   }
+  StyleId juBase = 0;
+  void base(StyleId st) override { juBase = st; }
   void finish(Flow& u) override;
   void toCell(Flow& tmp, Flow& tc) override {
     tc.hl = std::move(tmp.hl);
@@ -1425,9 +1456,10 @@ struct Emitter {
 
   // an inline stream of `kids` into its own flow (a cell, a caption row, a
   // sidecar line)
-  Flow cellOf(const std::vector<ContentNode*>& kids, ICtx ctx) {
+  Flow cellOf(const ContentNode* row, ICtx ctx) {
     Flow tmp, tc;
-    for (const ContentNode* k : kids) sink.walk(k, tmp, ctx);
+    sink.base(row->style);
+    for (const ContentNode* k : row->kids) sink.walk(k, tmp, ctx);
     sink.finish(tmp);
     sink.toCell(tmp, tc);
     return tc;
@@ -1539,6 +1571,7 @@ struct Emitter {
         if (ls.role == LeafSource::Role::MarkerOnly) return;  // its marker alone
         ICtx ctx;
         ctx.hyphens = tr.hyphenate ? HYPHENS_AUTO : HYPHENS_MANUAL;  // (plan P4-06) its par.hyphenate
+        sink.base(n->style);  // (plan P4-08) its justification unit's
         sink.copyPolicy(n, u, ctx);
         if (n->kind == Kind::error) {
           sink.walk(n, u, ctx);  // error case renders ⚠ + message
@@ -1642,7 +1675,7 @@ struct Emitter {
             // a float's caption rows break to its width (plan P4-06: as a
             // caption, by its role's style — hyphens manual)
             ICtx cctx;
-            for (const ContentNode* k : ls.rows) u.cells.push_back(cellOf(k->kids, cctx));
+            for (const ContentNode* k : ls.rows) u.cells.push_back(cellOf(k, cctx));
             return;
           }
           case Painter::MathRow: {
@@ -1656,7 +1689,7 @@ struct Emitter {
                 cctx.copy = CopyMode::Omit;
                 cctx.syn = strs.intern(c.syn);
               }
-              u.cells.push_back(cellOf(k->kids, cctx));
+              u.cells.push_back(cellOf(k, cctx));
             }
             // (plan P2-15) its source; one clean fragment is its interned string
             const MathScope scope{E.math, n->declEpoch, n->style};
@@ -1817,6 +1850,9 @@ void HlInline::finish(Flow& u) {
   dst.objs.assign(h.objs.begin(), h.objs.end());
   dst.parts.assign(h.parts.begin(), h.parts.end());
   dst.hasDeferred = h.hasDeferred;
+  dst.juStyle = juBase;
+  dst.juStr = E.spaceRef;
+  juBase = 0;
   cur = nullptr;
 }
 
@@ -1977,7 +2013,6 @@ static bool finalizeImage(HList& h, size_t& at, MetricStore&, const EmitSettings
   it.w = part.w;
   it.st |= IS_Resolved;
   c.rawPx = suToPx(part.w);
-  c.capSu = 0;
   ob.deferred = false;
   return true;
 }
@@ -2110,6 +2145,15 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
   std::vector<MeasureItem> need;  // deferred formulas' text-font runs
   auto resolveItems = [&](HList& h) {
     if (h.hasDeferred && objects) finalizePending(h, store, cfg, *objects, need);
+    // (plan P4-08; v2 §8) its justification unit: a space of its base style
+    if (!h.juSu && h.juStr && !h.items.empty()) {
+      if (store.hasWord(h.juStr, h.juStyle)) {  // (quantized as a word space is)
+        h.juPx = store.word(h.juStr, h.juStyle).px;
+        h.juSu = suCeilPx(h.juPx) + (Su)cfg.epsilonPerWordSu;
+      } else {
+        ask(h.juStr, h.juStyle);
+      }
+    }
     for (HItem& it : h.items) {
       if (it.k == IK::Penalty || (it.k == IK::Glue && it.cls == (u8)GC::InterChar)) continue;
       const StyleId st = h.runs[it.run].face;
@@ -2135,7 +2179,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
           if (ks) {
             double k = ctxPx(*ks, st);
             c.rawPx = (double)(float)k;
-            it.w = suRoundPx(k);  // feeds KP's in-line width sum
+            it.w = suCeilPx(k);  // feeds KP's in-line width sum (ceil: never under the run, v2 §7)
           }
           it.st |= IS_Resolved;
         } else if (pre && !store.hasWord(hy, st)) {
@@ -2168,7 +2212,6 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
             if (px < 0) px = 0;
           }
           Su su = suCeilPx(px) + (Su)cfg.epsilonPerWordSu;
-          c.capSu = su;
           it.w = su;
           c.rawPx = px;
         } else {
@@ -2230,197 +2273,6 @@ void reportFormula(const ContentNode* n, StrRef formula, const MathScope& scope,
   reportMathDiags(ir, text, n->span, diags, &ms.map);
 }
 
-// ---- fuseLegacy: the specified lowering HList → LinebreakBlocks -------------
-// One block per carrier (Box, Disc, Glue other than InterChar):
-//   Box Plain/Rigid            word or inline code           flags: -
-//   Box LetterSpaced           CJK char                      BF_CJK; weight = x, capacity = capSu
-//   Box Pinned (content)       defined-width dash/ellipsis   BF_CJK|BF_PAIR; weight, capacity
-//   Box Pinned (indent)        paragraph indent              BF_INDENT
-//   Box BlankBearing           punctuation glyph             BF_CJK|BF_PUNCT_GLYPH[|BF_PUNCT_OPEN]
-//   Box Object                 formula part                  math = the part's box
-//   Glue Word                  typed space                   BF_SPACE; KernCtx → ctx fields
-//   Glue Autospace boundary glue                              BF_SPACE|BF_BOUND
-//   Glue ObjectSpace an object's synthetic glue (P3-26)       BF_SPACE|BF_SYNTH
-//   Glue Fill                  fil glue (fill, plan P2-16)    BF_SPACE|BF_FIL
-//   Glue Blank                 punctuation half              BF_SPACE|BF_PUNCT_SP[|BF_PUNCT_OPEN if owned by next]
-//   Disc                       hyphen point                  BF_HYPHEN; width = unbroken (junction kern),
-//                                                            breakWidth/rawPx/text = the pre box
-// every block: BF_REF for a Ref run; style/link of the run; anchorId for
-// IA_Anchor; width, rawPx, capacity (spaceWidth), span from the item.
-// Penalties: one right before a Glue (not InterChar) is the glue's when it is
-// not 0 or follows another penalty (then the first is the box's); any other
-// is the preceding carrier's. Defaults: Box kPenInf, except 0 when InterChar
-// glue follows it directly; Glue 0; Disc its x. InterChar glue folds into
-// the box before it.
-namespace {
-
-template <class Block>
-void lowerHList(const HList& h, std::vector<Block>& out, std::vector<u32>& start) {
-  constexpr bool kFull = std::is_same_v<Block, LinebreakBlock>;
-  out.clear();
-  start.clear();
-  const std::vector<HItem>& v = h.items;
-  const size_t n = v.size();
-  out.reserve(n);
-  start.reserve(n + 1);
-  bool glueOwned = false;
-  float gluePen = 0;
-  u32 glueFrom = 0;
-  for (size_t i = 0; i < n; i++) {
-    const HItem& it = v[i];
-    if (it.k == IK::Penalty) {
-      const bool toGlue = i + 1 < n && v[i + 1].k == IK::Glue && v[i + 1].cls != (u8)GC::InterChar &&
-                          (it.x != 0 || (i > 0 && v[i - 1].k == IK::Penalty));
-      if (toGlue) {
-        glueOwned = true;
-        gluePen = it.x;
-        glueFrom = (u32)i;
-      } else if (!out.empty()) {
-        out.back().breakPenalty = it.x;
-      }
-      continue;
-    }
-    if (it.k == IK::Glue && it.cls == (u8)GC::InterChar) {
-      if (i > 0 && v[i - 1].k == IK::Box && !out.empty()) out.back().breakPenalty = 0;  // the gap is the break
-      continue;
-    }
-    const RunRec& r = h.runs[it.run];
-    const ColdRec& c = h.cold[it.cold];
-    const u16 ref = r.syn == SynKind::Ref ? BF_REF : 0;
-    Block& b = out.emplace_back();
-    b.width = it.w;
-    if constexpr (kFull) {
-      b.rawPx = c.rawPx;
-      b.style = r.face;
-      b.linkUrl = r.link.ref;
-      b.anchorId = (it.attrs & IA_Anchor) ? c.anchor : 0;
-      b.widthResolved = (it.st & IS_Resolved) != 0;
-      b.span = Span{c.srcStart, c.srcEnd};
-    }
-    start.push_back(it.k == IK::Glue && glueOwned ? glueFrom : (u32)i);
-    switch (it.k) {
-      case IK::Box: {
-        const AdvanceSpec& sp = h.specs[it.aux];
-        if constexpr (kFull) b.text = sp.str;
-        b.breakPenalty = kPenInf;
-        bool weighted = false;
-        switch (r.rc) {
-          case RealizeClass::LetterSpaced:
-            b.flags = (u16)(BF_CJK | ref);
-            weighted = true;
-            break;
-          case RealizeClass::Pinned:
-            if (r.syn == SynKind::Indent) {
-              b.flags = BF_INDENT;
-            } else {
-              b.flags = (u16)(BF_CJK | BF_PAIR | ref);
-              weighted = true;
-            }
-            break;
-          case RealizeClass::BlankBearing:
-            b.flags = (u16)(BF_CJK | BF_PUNCT_GLYPH | ((kCCFlags[it.cls] & kCC_open) ? BF_PUNCT_OPEN : 0) | ref);
-            break;
-          case RealizeClass::Object:
-            b.flags = ref;
-            if constexpr (kFull) {
-              const ObjPart& pt = h.parts[sp.obj];
-              b.obj = true;
-              b.objKind = h.objs[pt.obj].kind;
-              b.objAsc = pt.asc;
-              b.objDesc = pt.desc;
-              b.objPayload = pt.math;
-            }
-            break;
-          case RealizeClass::Plain:
-          case RealizeClass::Rigid:
-            b.flags = ref;
-            break;
-        }
-        if (weighted) {
-          b.spaceWidth = c.capSu;
-          if constexpr (kFull) b.stretchWeight = it.x;
-        }
-        break;
-      }
-      case IK::Glue: {
-        const AdvanceSpec& sp = h.specs[it.aux];
-        b.breakPenalty = glueOwned ? gluePen : 0.0f;
-        glueOwned = false;
-        b.spaceWidth = c.capSu;
-        if constexpr (kFull) {
-          b.text = sp.str;
-          b.stretchWeight = it.x;
-        }
-        switch ((GC)it.cls) {
-          case GC::Word:
-            b.flags = (u16)(BF_SPACE | ref);
-            if constexpr (kFull)
-              if (sp.k == AdvanceSpec::KernCtx) {
-                b.ctxTrigram = sp.tri;
-                b.ctxPrev = sp.prev;
-                b.ctxNext = sp.next;
-              }
-            break;
-          case GC::Autospace:
-            b.flags = (u16)(BF_SPACE | BF_BOUND | ref);
-            break;
-          case GC::ObjectSpace:  // (plan P3-26) synthetic: between an object's parts
-            b.flags = (u16)(BF_SPACE | BF_SYNTH | ref);
-            break;
-          case GC::Fill:
-            b.flags = (u16)(BF_SPACE | BF_FIL | ref);
-            break;
-          case GC::Blank:
-            b.flags = (u16)(BF_SPACE | BF_PUNCT_SP | ((it.attrs & IA_OwnedByNext) ? BF_PUNCT_OPEN : 0) | ref);
-            break;
-          case GC::InterChar:
-            break;
-        }
-        break;
-      }
-      case IK::Disc: {
-        const DiscRec& d = h.discs[it.aux];
-        const HItem* pre = d.preN ? &h.side[d.pre] : nullptr;
-        b.flags = (u16)(BF_HYPHEN | ref);
-        b.breakPenalty = it.x;
-        b.breakWidth = pre ? pre->w : 0;
-        if constexpr (kFull) {
-          b.kernPx = (float)c.rawPx;
-          b.rawPx = pre ? h.cold[pre->cold].rawPx : 0;
-          b.text = pre ? h.specs[pre->aux].str : 0;
-          if (d.spec != ~0u) {
-            const AdvanceSpec& ks = h.specs[d.spec];
-            b.ctxTrigram = ks.tri;
-            b.ctxPrev = ks.prev;
-            b.ctxNext = ks.next;
-          }
-        }
-        break;
-      }
-      case IK::Penalty:
-        break;
-    }
-  }
-  start.push_back((u32)n);
-}
-
-}  // namespace
-
-void fuseLegacy(const HList& h, std::vector<LinebreakBlock>& blocks, std::vector<u32>& start) {
-  lowerHList(h, blocks, start);
-}
-void fuseLegacy(const HList& h, std::vector<BreakBlock>& blocks, std::vector<u32>& start) {
-  lowerHList(h, blocks, start);
-}
-
-void fuseLegacy(std::vector<TopBlock>& tops) {
-  for (TopBlock& tb : tops)
-    for (FlowUnit& u : tb.units) {
-      fuseLegacy(u.hl, u.blocks, u.blockStart);
-      for (TableCell& c : u.cells) fuseLegacy(c.hl, c.blocks, c.blockStart);
-    }
-}
-
 static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u, const Interner& strs,
                        BoxAsker* boxes) {
   const char* k = "text";
@@ -2466,69 +2318,6 @@ static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u
 }
 
 static const LayoutBlock& leafOf(const TopBlock& tb, size_t k) { return tb.tree->blocks[tb.tree->leaves[k]]; }
-
-std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
-                       const StyleTable& styles, BoxAsker* boxes) {
-  std::string out;
-  for (const TopBlock& tb : tops) {
-    appendf(out, "top pid=%u units=%zu\n", tb.pid, tb.units.size());
-    for (size_t ui = 0; ui < tb.units.size(); ui++) {
-      const FlowUnit& u = tb.units[ui];
-      unitHeader(out, leafOf(tb, ui), u, strs, boxes);
-      auto dumpBlock = [&](const LinebreakBlock& b) {
-        out += "  ";
-        if (b.obj) {  // (plan P3-26) an inline object's part, whatever its kind
-          static constexpr const char* kObj[] = {"math", "image", "raw", "error"};
-          appendf(out, "obj %s \"", kObj[(int)b.objKind]);
-          appendEscaped(out, strs.get(b.text));
-          appendf(out, "\" w=%dsu asc=%dsu desc=%dsu", b.width, b.objAsc, b.objDesc);
-        }
-        else if (b.flags & BF_INDENT) appendf(out, "indent w=%dsu", b.width);
-        else if (b.flags & BF_FIL) out += "fill";
-        else if (b.flags & BF_SYNTH) appendf(out, "synthetic w=%dsu", b.width);
-        else if (b.flags & BF_BOUND) appendf(out, "boundary w=%dsu stretch=%g", b.width, (double)b.stretchWeight);
-        else if (b.flags & BF_PUNCT_SP) appendf(out, "punct-sp w=%dsu", b.width);
-        else if (b.isPunctGlyph()) {
-          out += (b.flags & BF_PUNCT_OPEN) ? "punct-open \"" : "punct-close \"";
-          appendEscaped(out, strs.get(b.text));
-          appendf(out, "\" w=%dsu", b.width);
-        }
-        else if (b.isCjkChar()) {
-          out += "cjk \"";
-          appendEscaped(out, strs.get(b.text));
-          appendf(out, "\" w=%dsu glue=%dsu wt=%g pen=%s", b.width, b.spaceWidth,
-                  (double)b.stretchWeight, b.breakPenalty >= BREAK_INF ? "INF" : "0");
-        }
-        else if (b.isSpace()) appendf(out, "space w=%dsu stretch=%g", b.spaceWidth, (double)b.stretchWeight);
-        else if (b.isHyphen()) appendf(out, "hyphen bw=%dsu pen=%.2f", b.breakWidth, (double)b.breakPenalty);
-        else {
-          out += "word \"";
-          appendEscaped(out, strs.get(b.text));
-          appendf(out, "\" w=%dsu pen=%s", b.width, b.breakPenalty >= BREAK_INF ? "INF" : "0");
-        }
-        const Styling& st = styles.get(b.style);
-        if (st.weight == 700) out += " BOLD";
-        if (st.italic) out += " EM";
-        if (st.fontRole == FONTROLE_MONO) out += " CODE";
-        if (b.linkUrl) out += " LINK";
-        if (b.flags & BF_REF) out += " SYN";
-        if (st.sizeMul != 1.0f) appendf(out, " x%.2f", (double)st.sizeMul);
-        appendStyleFields(out, st, strs);
-        appendf(out, " @[%u,%u)\n", b.span.start, b.span.end);
-      };
-      std::vector<LinebreakBlock> full;
-      std::vector<u32> start;
-      fuseLegacy(u.hl, full, start);
-      for (const LinebreakBlock& b : full) dumpBlock(b);
-      for (size_t ci = 0; ci < u.cells.size(); ci++) {
-        appendf(out, "  cell %zu\n", ci);
-        fuseLegacy(u.cells[ci].hl, full, start);
-        for (const LinebreakBlock& b : full) dumpBlock(b);
-      }
-    }
-  }
-  return out;
-}
 
 std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
                        const StyleTable& styles, BoxAsker* boxes) {

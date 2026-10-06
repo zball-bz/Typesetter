@@ -86,9 +86,9 @@ instances that say how their boxes paint, and side records.
 | item | what | today from |
 |---|---|---|
 | Box | a word, inline code, a CJK char (LetterSpaced), a defined-width dash/ellipsis (Pinned), a punctuation glyph (BlankBearing), a formula part (Object), the paragraph indent (Pinned, syn indent) | `cls` = the CC of its first codepoint |
-| Glue Word | a typed space (`IA_SourceSpace`), KernCtx when it sits between two words of one shaping run (below) | weight 1, capacity = width |
-| Glue InterChar | the gap after a CJK char whose next item is a CJK char or a closing glyph (the topology layout and paint used) | weight `cjk.justifyK`; shares its char's cold record |
-| Glue Autospace | CJK–Latin and CJK–formula boundary space | weight 1 |
+| Glue Word | a typed space (`IA_SourceSpace`), KernCtx when it sits between two words of one shaping run (below) | weight 1 |
+| Glue InterChar | the gap after a CJK char whose next item is a CJK char or a closing glyph (the topology layout and paint used) | weight `doc.cjkJustify` (k); shares its char's cold record |
+| Glue Autospace | CJK–Latin (a letter or digit: CSS text-autospace ideograph-alpha/numeric, plan P4-08) and CJK–formula boundary space | weight 1 |
 | Glue Blank | a punctuation glyph's half em (`IA_OwnedByNext` for an opening glyph's leading half) | weight 0 |
 | Glue ObjectSpace | the space between two formula parts | weight 0 |
 | Glue Fill | a `fill` (plan P2-16): fil glue — no width, no finite stretch; a line holding one is fil for the breaker, and layout gives it the line's whole slack (on any line, the last too); painted as a spacer (`data-syn="fill"`) | weight 0 |
@@ -97,8 +97,9 @@ instances that say how their boxes paint, and side records.
 
 The 24-byte `HItem` holds kind, class, attrs, state, run, aux (the
 `AdvanceSpec` or `DiscRec`), width, x (glue weight; penalty; a CJK box's gap
-weight) and its `ColdRec` (source span, raw px, resolved blanks, the
-migration capacity `capSu`, an anchor). `AdvanceSpec` (32 bytes) says how
+weight) and its `ColdRec` (source span, raw px, resolved blanks, an
+anchor). A glue's stretch and shrink are its weight times the list's
+justification unit (`HList::juSu`, plan P4-08). `AdvanceSpec` (32 bytes) says how
 `resolveWidths` sizes it: Measured, Defined/Fixed em, MeasuredMinusBlanks,
 KernCtx (`m(prev+str+next) − m(prev) − m(next)`), Object.
 
@@ -158,22 +159,23 @@ As built (plan P4-01; design T5 step 4):
 block breakpoints map through `blockStart`, leading and trailing glue and
 penalties drop (TeX's discard). Natural width sums raw px (a mid-line Disc
 adds its junction kern, a line-final one its hyphen), stretch sums glue
-weights and capacities (InterChar = the CJK gap), the copy join is "a
-source space was consumed". Paint: spacers for Autospace/ObjectSpace glue
+weights (InterChar = the CJK gap) — each glue takes the line's adjustment
+per unit weight times its weight —, the copy join is "a source space was
+consumed". Paint: spacers for Autospace/ObjectSpace glue
 and the indent, a Blank folds into its glyph's squeeze, a Pinned box is an
 inline-block of its defined width, a LetterSpaced run takes the line's
 letter-spacing (and a compensating margin when no gap follows on the line),
 everything else paints its run's text.
 
-**fuseLegacy** lowers an HList to the old blocks for the legacy breaker
-until the item-native breaker (P4-08) deletes it with `capSu`: one block per
-carrier (Box, Disc, non-InterChar Glue) by item kind, glue class and run
-class (the table is in `emit.cc`); a penalty right before a glue is the
-glue's when it is not 0 or follows another penalty, any other is the
-preceding carrier's; a box defaults to "unbreakable" unless InterChar glue
-follows it; InterChar folds into its char. Production keeps only what the
-breaker reads (`BreakBlock`: widths, capacity, penalty, kind bits); the full
-`LinebreakBlock` is built for the `blocks` dump and the check.
+**The breaker reads the list** (plan P4-08; `break/items.h`): a Box its
+width, a Glue its width and a stretch = shrink of its weight times the
+list's justification unit `juSu` (a space of the stream's base style —
+v2 §8: capacity (n_latin + k·n_cjk)·juSu, which layout's distribution
+matches by construction), a fill fil glue, a Penalty its thousandths
+(Forbidden, Forced), a Disc its unbroken width and its pre's. A breakpoint
+is the item the next line starts at. The lowering to the PoC's blocks
+(`fuseLegacy`, `BreakBlock`, `LinebreakBlock`, the `BF_*` bits, `capSu`)
+and the `blocks` golden are gone.
 
 **The equivalence check.** `emit/legacy.cc` kept the pre-HList inline
 emitter verbatim; the golden runner and `tsrc --fuse-check` compared
@@ -184,8 +186,9 @@ from it by design; `tsrc --lint` keeps the legality lint, and the corpus run
 (`tools/corpus-run.mjs`) lints every typst document.
 
 **Dump**: `tsrc --stage=hlist` (a golden for every typeset fixture) prints
-kind, class, attrs, width, weight, numeric penalty, capacity, KernCtx, run
-and source span per item, then the run table.
+the justification unit, then kind, class, attrs, width, weight (and a
+glue's stretch), numeric penalty, KernCtx, run and source span per item,
+then the run table.
 
 Performance (87K update, WASM): the item list costs ~0.8 ms of engine time
 over the block stream; the step also moved the word metrics to a slot table
@@ -436,7 +439,29 @@ follows it, or both — a note's mark is `attach: prev` (elements.json):
   paint squeezes, the blank stays a breakable blank — a spacer of its own
   (`data-syn="blank"`).
 
-## 12. Next steps
+## 12. The item-native breaker and the unified stretch (plan P4-08; design T5 step 11, T6 S16)
 
-P4-08: the item-native breaker (with it, the canonical TeX form and the end
-of the lowering).
+The breaker reads the HList (§5): no lowering, no flag bits; layout and
+paint read the same items and test no kind bits. Glue stretch and shrink
+are weight × `juSu` — the stream's justification unit, a space of its base
+style (its paragraph's, a caption row's), measured with its other widths —
+so a line's capacity is (n_latin + k·n_cjk)·juSu (v2 §8, D-X01; App C's
+0.1em CJK capacity and `doc.cjkGlue` are retired) and the breaker's x is
+exactly the adjustment layout realizes per unit weight. A CJK gap exists
+only where it is realized, so a line's last character carries none.
+`cost.shrinkThreshold` stays 0.37: a word space's capacity is the space it
+was, so the Latin shrink limit is unchanged; a CJK gap's is now k·juSu
+(≈ 0.15em with a 0.25em space, was 0.1em), so a CJK line may stretch or
+shrink a little more per gap before it costs as much. A Disc's unbroken
+width (a junction kern) rounds up (ceil, v2 §7).
+
+With it the CJK–Latin glue follows CSS text-autospace exactly: between an
+ideograph and a letter or digit, not Latin punctuation (`圖/表` sets solid),
+and no break comes before a narrow non-starter after a CJK character
+(UAX #14 LB13: `/ , . ; : ! ? ) ]` and quotes) — a line never starts with
+the `/` of `圖/表`; after Latin punctuation a CJK character may begin a
+line (`)`, `/`, `,`, not an opening one or a quote).
+
+## 13. Next steps
+
+P4 phase end: the long fuzz, the perf gate and the corpus review; then P5.

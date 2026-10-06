@@ -14,25 +14,19 @@ namespace tsr {
 
 namespace {
 
-// A line between block breakpoints [prevBp, bp), read as items (plan
-// P1-12): leading and trailing glue and penalties dropped — TeX's discard,
-// as the legacy blocks' space trim — plus its block range for the dumps.
+// A line between the breaker's item breakpoints [prevBp, bp) (plan P4-08:
+// the breaker reads the HList): leading and trailing glue and penalties
+// dropped — TeX's discard.
 struct LineItems {
-  u32 ilo = 0, ihi = 0;  // items
-  u32 lo = 0, hi = 0;    // blocks
+  u32 ilo = 0, ihi = 0;
 };
-u32 blockOf(const std::vector<u32>& bs, u32 item) {
-  return (u32)(std::upper_bound(bs.begin(), bs.end(), item) - bs.begin()) - 1;
-}
-bool lineItems(const HList& h, const std::vector<u32>& bs, u32 prevBp, u32 bp, LineItems& r) {
-  u32 a = bs[prevBp], b = bs[bp];
+bool lineItems(const HList& h, u32 prevBp, u32 bp, LineItems& r) {
+  u32 a = prevBp, b = bp;
   while (a < b && !isBoxOrDisc(h.items[a])) a++;
   while (b > a && !isBoxOrDisc(h.items[b - 1])) b--;
   if (a >= b) return false;
   r.ilo = a;
   r.ihi = b;
-  r.lo = blockOf(bs, a);
-  r.hi = blockOf(bs, b - 1) + 1;
   return true;
 }
 // what a line holds: its natural width (a hyphen point adds its junction
@@ -43,7 +37,7 @@ struct LineFill {
   double naturalPx = 0;
   double totalWeight = 0;  // stretch positions the renderer will realize
   double capacityPx = 0;   // their glue capacity (the shrink limit's base)
-  bool anyCjkGap = false;
+  float cjkWeight = 0;  // a realized CJK gap's weight (k), 0: none on the line
   bool endsHyphen = false;
   u32 fills = 0;  // fil glue (plan P2-16)
   Su maxAsc = 0, maxDesc = 0;
@@ -62,10 +56,12 @@ LineFill fillLine(const HList& h, const LineItems& r, const MetricStore& metrics
       f.naturalPx += c.rawPx;
     }
     if (it.k == IK::Glue && it.cls == (u8)GC::Fill) f.fills++;
-    if (it.k == IK::Glue && (it.x > 0 || it.cls == (u8)GC::InterChar)) {
+    // (plan P4-08; v2 §8) its stretch: the weights, and their capacity in
+    // the list's justification unit — the breaker's, by construction
+    if (it.k == IK::Glue && it.cls != (u8)GC::Fill && it.x > 0) {
       f.totalWeight += it.x;
-      f.capacityPx += suToPx(c.capSu);
-      if (it.cls == (u8)GC::InterChar) f.anyCjkGap = true;
+      f.capacityPx += it.x * h.juPx;
+      if (it.cls == (u8)GC::InterChar) f.cjkWeight = it.x;
     }
     const StyleId st = h.runs[it.run].face;
     if (metrics.hasVmet(st)) {
@@ -97,7 +93,7 @@ LineFill fillLine(const HList& h, const LineItems& r, const MetricStore& metrics
   return f;
 }
 // does the line end at a forced break (a hard line break, plan P1-13)? It
-// sits after the line's last box, inside the blocks the break consumed
+// sits after the line's last box, among the items the break consumed
 bool endsForced(const HList& h, u32 ihi, u32 consumedEnd) {
   for (u32 k = ihi; k < consumedEnd; k++)
     if (h.items[k].k == IK::Penalty && h.items[k].x <= -kPenInf) return true;
@@ -129,8 +125,6 @@ struct LinePolicy {
 // a broken stream and where its lines go
 struct LineStream {
   const HList& h;
-  const std::vector<u32>& blockStart;
-  u32 nBlocks;
   const BreakResult& br;
   const ParShape& shape;  // each line's slot in the content box
   Su left;                // the content box's start
@@ -156,7 +150,7 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
   for (size_t li = 0; li < br.breakpoints.size(); li++) {
     const u32 bp = br.breakpoints[li];
     LineItems r;
-    const bool any = lineItems(s.h, s.blockStart, prev, bp, r);
+    const bool any = lineItems(s.h, prev, bp, r);
     prev = bp;
     if (!any) continue;
     const LineFill f = fillLine(s.h, r, metrics);
@@ -164,8 +158,6 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     line.unitIdx = s.unitIdx;
 
     line.cellIdx = s.cellIdx;
-    line.blockBegin = r.lo;
-    line.blockEnd = r.hi;
     line.itemBegin = r.ilo;
     line.itemEnd = r.ihi;
     // its slot (plan P3-08: the paragraph's shape)
@@ -183,7 +175,8 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     }
     // a hard line break ends a line like the paragraph end: unjustified, a
     // real line boundary for copy
-    const bool last = bp == s.nBlocks || endsForced(s.h, r.ihi, s.blockStart[bp]);
+    const u32 nItems = (u32)s.h.items.size();
+    const bool last = bp == nItems || endsForced(s.h, r.ihi, bp);
     line.overfull = std::binary_search(br.overfullLines.begin(), br.overfullLines.end(), (u32)li);
     // (plan P3-09) its end glue: the last-line pair after a Forced break; a
     // stream of one line under par.singleLine center is centred
@@ -220,10 +213,12 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
         const double minD = -cfg.cost.shrinkThreshold * f.capacityPx / f.totalWeight;
         if (d < minD) d = minD;
       }
+      // each glue takes d times its weight (paint: a word space d, a CJK
+      // run's letter-spacing d·k — its gaps' weight, plan P4-08)
       line.wordDeltaPx = d;
       line.wordDeltaSu = (i32)std::llround(d * 64.0);
-      if (f.anyCjkGap) {
-        line.cjkDeltaPx = d * cfg.cjkJustifyK;
+      if (f.cjkWeight > 0) {
+        line.cjkDeltaPx = d * f.cjkWeight;
         line.cjkDeltaSu = (i32)std::llround(line.cjkDeltaPx * 64.0);
       }
     }
@@ -243,7 +238,7 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
     // break's newline, the stream's own at its end
     if (!last)
       line.sep = (f.endsHyphen || !joinsSpace(s.h, r.ihi)) ? Sep::None : Sep::Space;
-    else if (bp == s.nBlocks)
+    else if (bp == nItems)
       line.sep = pol.endSep;
     // (plan P3-12) a page cut before it: its stream's own (the block's
     // boundary, set by the caller) for the first line, widows and orphans
@@ -729,15 +724,15 @@ class DocLayout {
   // loop's fast path). A run wider than the line is set Overfull on a line
   // of its own (the final-pass rescue) and reported once per stream.
   // (plan P3-09) a stream breaks with the line-end glue it will be set with
-  BreakResult breakStream(const std::vector<BreakBlock>& blocks, const HList& h, const ParShape& shape,
-                          const LineEnds& ends, const BlockTraits* tr = nullptr) {
+  BreakResult breakStream(const HList& h, const ParShape& shape, const LineEnds& ends,
+                          const BlockTraits* tr = nullptr) {
     BreakParams params = bparams;
     params.ends = ends;
     if (tr) {  // (plan P3-14) its breaker: a tolerance pass, an emergency stretch
       params.tolerance = tr->tolerance;
       params.emergencyStretch = tr->emergencyStretch;
     }
-    BreakResult r = breakLinesCached(blocks, shape, params, memo_);
+    BreakResult r = breakLinesCached(h, shape, params, memo_);
     if (!r.overfullLines.empty()) {
       Span sp{};
       for (const ColdRec& c : h.cold)
@@ -918,12 +913,12 @@ class DocLayout {
     LinePolicy pol;
     pol.ends = ctx.halign ? *ctx.halign : endsOf(b.tr);  // (in a table cell: its column's halign)
     pol.singleCenter = b.tr.singleCenter;
-    lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, shape, pol.ends, &b.tr)});
+    lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.hl, shape, pol.ends, &b.tr)});
     pol.endSep = b.sepAfter;
     pol.marker = b.marker;
     pol.markerStyle = b.markerStyle;
     pol.anchor = b.carry ? b.carry : u.anchor;  // a block's label, else an inline one
-    py = materializeLines({u.hl, u.blockStart, (u32)u.blocks.size(), lr.breaks.back().r, shape, left(b), b.unit, -1},
+    py = materializeLines({u.hl, lr.breaks.back().r, shape, left(b), b.unit, -1},
                           pol, metrics, cfg, baseLeading, py, fr->lines);
     leave(b, l);
   }
@@ -1036,12 +1031,12 @@ class DocLayout {
           const LineEnds ends = endsOf(tagTr);
           const ParShape shape(lineWidth);
           const Flow& cell = u.cells[0];
-          cellBreaks.push_back(breakStream(cell.blocks, cell.hl, shape, ends));
+          cellBreaks.push_back(breakStream(cell.hl, shape, ends));
           lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
           LinePolicy pol;
           pol.ends = ends;
           std::vector<Fragment> tag;
-          const i64 tagH = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks.back(), shape,
+          const i64 tagH = materializeLines({cell.hl, cellBreaks.back(), shape,
                                              left(b), b.unit, 0},
                                             pol, metrics, cfg, baseLeading, 0, tag);
           fr->lines.push_back(f);
@@ -1089,7 +1084,7 @@ class DocLayout {
     // block figure's)
     const LineEnds capEnds = endsOf(b.rowTr);
     for (const Flow& c : u.cells) {  // the caption breaks to the float width
-      cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(imgW), capEnds));
+      cellBreaks.push_back(breakStream(c.hl, ParShape(imgW), capEnds));
       lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
       captionH += (i64)cellBreaks.back().breakpoints.size() * baseLeading;
     }
@@ -1122,7 +1117,7 @@ class DocLayout {
       pol.endSep = ci + 1 < (u32)u.cells.size() ? Sep::Newline : b.sepAfter;
       pol.anchor = cell.anchor;
       const ParShape shape(imgW);
-      cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[ci], shape, boxLeft,
+      cy = materializeLines({cell.hl, cellBreaks[ci], shape, boxLeft,
                              b.unit, (i32)ci},
                             pol, metrics, cfg, baseLeading, cy, fr->lines);
     }
@@ -1700,17 +1695,17 @@ std::string dumpLayout(const LayoutResult& lr) {
           return;
         }
         if (l.cellIdx >= 0 || l.gridCell >= 0) {
-          appendf(out, "  L%zu cell=%d y=%dsu left=%dsu w=%dsu blocks=[%u,%u)%s\n",
-                  i, l.gridCell >= 0 ? l.gridCell : l.cellIdx, l.y, l.left, l.width, l.blockBegin, l.blockEnd,
+          appendf(out, "  L%zu cell=%d y=%dsu left=%dsu w=%dsu items=[%u,%u)%s\n",
+                  i, l.gridCell >= 0 ? l.gridCell : l.cellIdx, l.y, l.left, l.width, l.itemBegin, l.itemEnd,
                   l.overfull ? " overfull" : "");
           return;
         }
-        appendf(out, "  L%zu y=%dsu left=%dsu w=%dsu dw=%dsu dc=%dsu join=%s%s%s%s blocks=[%u,%u) @[%u,%u)\n",
+        appendf(out, "  L%zu y=%dsu left=%dsu w=%dsu dw=%dsu dc=%dsu join=%s%s%s%s items=[%u,%u) @[%u,%u)\n",
                 i, l.y, l.left, l.width, l.wordDeltaSu, l.cjkDeltaSu,
                 l.sep == Sep::Newline ? "last" : sepName(l.sep),
                 l.endsWithHyphen ? " hyphen" : "", l.marker ? " marker" : "",
                 l.overfull ? " overfull" : "",
-                l.blockBegin, l.blockEnd, l.srcSpan.start, l.srcSpan.end);
+                l.itemBegin, l.itemEnd, l.srcSpan.start, l.srcSpan.end);
       }();
       // (plan P3-13) its paged role: an insert (its reference's source
       // position) or the inserts' separator

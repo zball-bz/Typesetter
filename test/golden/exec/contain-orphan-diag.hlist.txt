@@ -1,33 +1,36 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Be" w=1025su r0 @[0,2)
   disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[2,2)
   box Alpha "fore." w=2561su r0 @[2,7)
   run r0 plain
 top pid=1 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "⚠" w=616su r0 @[9,16)
-  glue word w=257su x=1 cap=257su kern="⚠ c" src r0 @[9,16)
+  glue word w=257su x=1 st=257su kern="⚠ c" src r0 @[9,16)
   box Alpha "clos" w=2049su r0 @[9,16)
   disc pen=0.7 w=0su pre="-" 513su kern="se" r0 @[9,16)
   box Alpha "er" w=1025su r0 @[9,16)
-  glue word w=257su x=1 cap=257su kern="r '" src r0 @[9,16)
+  glue word w=257su x=1 st=257su kern="r '" src r0 @[9,16)
   box QuoteN "'#aside!'" w=4609su r0 @[9,16)
-  glue word w=257su x=1 cap=257su kern="' h" src r0 @[9,16)
+  glue word w=257su x=1 st=257su kern="' h" src r0 @[9,16)
   box Alpha "has" w=1537su r0 @[9,16)
-  glue word w=257su x=1 cap=257su kern="s n" src r0 @[9,16)
+  glue word w=257su x=1 st=257su kern="s n" src r0 @[9,16)
   box Alpha "no" w=1025su r0 @[9,16)
-  glue word w=257su x=1 cap=257su kern="o o" src r0 @[9,16)
+  glue word w=257su x=1 st=257su kern="o o" src r0 @[9,16)
   box Alpha "open" w=2049su r0 @[9,16)
-  glue word w=257su x=1 cap=257su kern="n r" src r0 @[9,16)
+  glue word w=257su x=1 st=257su kern="n r" src r0 @[9,16)
   box Alpha "re" w=1025su r0 @[9,16)
   disc pen=0.7 w=0su pre="-" 513su kern="eg" r0 @[9,16)
   box Alpha "gion" w=2049su r0 @[9,16)
-  glue word w=257su x=1 cap=257su kern="n '" src r0 @[9,16)
+  glue word w=257su x=1 st=257su kern="n '" src r0 @[9,16)
   box QuoteN "'#!aside'" w=4609su r0 @[9,16)
   run r0 plain CODE
 top pid=2 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Af" w=1025su r0 @[18,20)
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[20,20)
   box Alpha "ter." w=2049su r0 @[20,24)

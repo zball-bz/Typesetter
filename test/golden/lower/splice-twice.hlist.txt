@@ -1,15 +1,16 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "First" w=2561su r0 @[21,26)
-  glue word w=257su x=1 cap=257su src r0 @[26,26)
+  glue word w=257su x=1 st=257su src r0 @[26,26)
   box Alpha "word" w=2049su r1 @[27,29)
-  glue word w=257su x=1 cap=257su src r2 @[30,30)
+  glue word w=257su x=1 st=257su src r2 @[30,30)
   box Alpha "here," w=2561su r2 @[30,35)
-  glue word w=257su x=1 cap=257su kern=", a" src r2 @[35,36)
+  glue word w=257su x=1 st=257su kern=", a" src r2 @[35,36)
   box Alpha "and" w=1537su r2 @[36,39)
-  glue word w=257su x=1 cap=257su src r2 @[39,39)
+  glue word w=257su x=1 st=257su src r2 @[39,39)
   box Alpha "word" w=2049su r3 @[40,42)
-  glue word w=257su x=1 cap=257su src r4 @[43,43)
+  glue word w=257su x=1 st=257su src r4 @[43,43)
   box Alpha "again." w=3073su r4 @[43,49)
   run r0 plain
   run r1 plain EM
@@ -18,16 +19,17 @@ top pid=0 units=1
   run r4 plain
 top pid=1 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[51,52)
-  glue word w=257su x=1 cap=257su kern="A l" src r0 @[52,53)
+  glue word w=257su x=1 st=257su kern="A l" src r0 @[52,53)
   box Alpha "lat" w=1537su r0 @[53,56)
   disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[56,56)
   box Alpha "er" w=1025su r0 @[56,58)
-  glue word w=257su x=1 cap=257su kern="r p" src r0 @[58,59)
+  glue word w=257su x=1 st=257su kern="r p" src r0 @[58,59)
   box Alpha "para" w=2049su r0 @[59,63)
   disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[63,63)
   box Alpha "graph:" w=3073su r0 @[63,69)
-  glue word w=257su x=1 cap=257su src r0 @[69,69)
+  glue word w=257su x=1 st=257su src r0 @[69,69)
   box Alpha "word" w=2049su r1 @[70,72)
   box Infix "." w=513su r2 @[72,73)
   run r0 plain

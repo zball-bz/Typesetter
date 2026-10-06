@@ -1139,7 +1139,7 @@ Theme steps: — · findings: 1
 | `emitter/stale-emit-on-relayout` | issue | high | P1-16 | grep:plan P1-16 |
 | `emitter/sizepx-em-mismatch` | issue | high | P0-08 | grep:plan P0-08 |
 | `emitter/kp-counts-discardable-glue` | issue | medium | P0-12 | grep:plan P0-12 |
-| `emitter/kp-ignores-stretch-weight` | issue | medium | P4-08 | |
+| `emitter/kp-ignores-stretch-weight` | issue | medium | P4-08 | grep:plan P4-08 |
 | `emitter/negative-wordspacing-overfull` | issue | medium | P0-12 | grep:plan P0-12 |
 | `emitter/duplicate-diagnostics-on-reemit` | issue | medium | P0-11 | grep:plan P0-11 |
 | `emitter/silent-drops-of-unhandled-kinds` | issue | medium | P1-13, P2-11 | grep:plan P2-11 |
@@ -1152,9 +1152,9 @@ Theme steps: — · findings: 1
 | `emitter/missed:3` | missed | medium | P1-17 | grep:plan P1-17 |
 | `emitter/missed:4` | missed | medium | P4-02 | grep:plan P4-02 |
 | `emitter/missed:5` | missed | medium | P1-04 | grep:plan P1-04 |
-| `break-layout-pages/glue-semantics-split` | adhoc | high | P4-08 | |
-| `break-layout-pages/hyphen-url-not-discretionary` | adhoc | medium | P4-08 | |
-| `break-layout-pages/break-policy-config-knobs` | adhoc | medium | P4-06, P4-08 | |
+| `break-layout-pages/glue-semantics-split` | adhoc | high | P4-08 | grep:plan P4-08 |
+| `break-layout-pages/hyphen-url-not-discretionary` | adhoc | medium | P4-08 | grep:plan P4-08 |
+| `break-layout-pages/break-policy-config-knobs` | adhoc | medium | P4-06, P4-08 | grep:plan P4-08 |
 | `break-layout-pages/parshape-prefix-form` | adhoc | high | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/float-tracker-replay` | adhoc | high | P1-15 | grep:plan P1-15 |
 | `break-layout-pages/float-model-closed` | adhoc | high | P3-15 | grep:plan P3-15 |

@@ -952,7 +952,6 @@ struct Doc {
       MeasureRequest missing = resolveWidths(tops, metrics, styles, cfg, &oe);
       diags.pid = ~0u;
       if (!missing.empty() || !images.filed.empty()) return Status::NeedMeasure;
-      fuseLegacy(tops);  // the legacy breaker's blocks (until P4-08)
       validThrough = (int)Stage::Measure;
     }
     // layout breaks the paragraphs (plan P1-15): overfull streams report
@@ -1022,10 +1021,6 @@ struct Doc {
     if (name == "blocktree") return dumpBlockTree(boxtree.tops, strs);
     if (name == "mathir") return dumpMathIRs(tops, strs, &mathEnv);
     if (name == "mathbox") return dumpMathBoxes(tops, strs);
-    if (name == "blocks") {
-      BoxPull answers(*this, BoxPull::Mode::Lookup, false);
-      return dumpBlocks(tops, strs, styles, &answers);
-    }
     if (name == "hlist") {
       BoxPull answers(*this, BoxPull::Mode::Lookup, false);
       return dumpHLists(tops, strs, styles, &answers);

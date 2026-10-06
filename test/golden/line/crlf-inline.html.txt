@@ -6,14 +6,14 @@
 <div class="tsr-para" data-pid="1" data-s0="81" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="44" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">quoted </span><span class="tsr-math" data-syn="math" data-copy="$a +
 b$" data-copy-group="2147483736" role="math" aria-label="a +
-b" data-s="7" data-e="17" style="width:25.391px;height:10.562px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-3.425px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:13.312px;top:-3.425px;font-size:16px;line-height:16px">+</span></span><span class="tsr-sp" data-syn="boundary" style="width:3.562px"></span><span class="tsr-math" data-syn="math" data-copy="$a +
+b" data-s="7" data-e="17" style="width:25.391px;height:10.562px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-3.425px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:13.312px;top:-3.425px;font-size:16px;line-height:16px">+</span></span><span class="tsr-sp" data-syn="objspace" style="width:3.562px"></span><span class="tsr-math" data-syn="math" data-copy="$a +
 b$" data-copy-group="2147483736" role="math" aria-label="a +
 b" data-s="7" data-e="17" style="width:9.406px;height:11.094px;vertical-align:-0.156px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">b</span></span><span class="tsr-r" data-s="18"> math and </span><span class="tsr-r tsr-i" data-s="31">x y</span><span class="tsr-r" data-s="39"> done.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="131" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="36" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">item </span><span class="tsr-math" data-syn="math" data-copy="$c +
 d$" data-copy-group="2147483784" role="math" aria-label="c +
-d" data-s="5" data-e="15" style="width:23.422px;height:10.562px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-3.425px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:11.344px;top:-3.425px;font-size:16px;line-height:16px">+</span></span><span class="tsr-sp" data-syn="boundary" style="width:3.562px"></span><span class="tsr-math" data-syn="math" data-copy="$c +
+d" data-s="5" data-e="15" style="width:23.422px;height:10.562px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-3.425px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:11.344px;top:-3.425px;font-size:16px;line-height:16px">+</span></span><span class="tsr-sp" data-syn="objspace" style="width:3.562px"></span><span class="tsr-math" data-syn="math" data-copy="$c +
 d$" data-copy-group="2147483784" role="math" aria-label="c +
 d" data-s="5" data-e="15" style="width:9.641px;height:11.234px;vertical-align:-0.297px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">d</span></span><span class="tsr-r" data-s="16"> and 3 end.</span></div>
 </div>

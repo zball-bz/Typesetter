@@ -239,6 +239,49 @@ e2e +2：浏览器中德语按 de-1996 的点断开（且至少一处是 en-US �
 
 **审阅结论：修正缺陷并改进。** ' . end' 的缺陷已修正；标记紧贴标点，符合 clreq 的做法；附着成为用户也可用的通用属性。
 
+## P4-08 原生项断行器与统一伸缩模型（T5 步骤 11 + T6 S16；D-X01）
+
+**变化：**
+1. **断行器直接读 HList。** 删除 fuseLegacy、LinebreakBlock、BreakBlock、BF_* 标志和 ColdRec::capSu；break/items.h 的 hlistToItems 把 HList 项直接映射为 TeX 项（Box、Glue、Penalty{Forbidden, Forced}、Disc{pre}）。断点用 HList 项序号表示。layout、render 不再读任何块标志。blocks golden 与 `blocks` 产品退役，由 hlist golden 取代（219 个文件删除）。
+2. **统一伸缩模型（v2 §8，D-X01）。** glue 的伸缩量 = 权重 × 段落的 juSu（基本样式中一个空格的测量宽度，量化方式与词间空格相同）：
+   - 词间空格、中西间距的权重为 1；
+   - 实际出现的 CJK 字间距权重为 k（0.6）；
+   - 标点空白、对象间的 glue 权重为 0。
+   断行器的容量因此是 (n_latin + k·n_cjk)·juSu，layout 按单位权重分配 slack，二者构造上一致。行末 CJK 字不再带幽灵容量。
+   - App C 修订，退役 0.1em 的 CJK 容量和设置 `doc.cjkGlue`；
+   - `doc.cjkJustify` 只影响 Emit；
+   - shrinkThreshold 校准结果是保持 0.37。juSu 等于原来的词间空格容量，拉丁文的收缩极限不变。试过 1/3、0.3、0.245：拉丁语料松行分别增加约 4.9k、5.4k、6.3k 行，不采用。
+3. **Disc 的接合字距向上取整**（v2 §7）。
+4. **CJK–拉丁间距按 CSS text-autospace 设置**（ideograph-alpha/numeric）：只在汉字与字母、数字之间加。汉字与拉丁标点之间不加（`圖/表/式`，旧为 `圖 / 表 / 式`）。
+5. **禁则（UAX #14）。**
+   - 汉字后紧跟窄的不可置于行首字符（CL CP EX IS SY 与 QU）时不断行，不再出现以 '/' 开头的行；
+   - 拉丁标点后紧跟汉字时可断，但开括号和引号之后不可断。
+6. 对象间 glue 的 spacer 改写为 `data-syn="objspace"`，不再冒用 "boundary"。
+
+**范围：**
+- 219 个 hlist：新增 `ju=` 行，cap 改为 st；
+- 219 个 layout：items=[…] 取代 blocks=[…]；
+- 171 个 breaks：断点改用项序号；
+- 31 个 html、1 个 paged、2 个 vlist。
+
+行界有变化的用例共 7 个：
+- cjk/punct-full、cjk/softwrap、notes/cjk-glue、figure/float、math/coverage-diag、pages/paged-doc：CJK 行的容量从 0.1em 变为 k·juSu，行末 CJK 字的幽灵容量消失；
+- doc/wrap-heading-caption：题注首行原先依赖"图"字的幽灵收缩容量，现改为放宽首行并给 measure 连字。
+
+其余 html 变化是 objspace 重命名（数学用例），以及汉字与拉丁标点之间不再插入间距（prose-guards、own-hide、quote-lang、eqref、supplements-ja/zh-hant）。
+
+真实语料 340 篇（mock）：
+- 151 篇的行界变化，新行跨度 7,107（5.4%），行数 132,141 → 131,986，行末连字 26,147 → 26,063；
+- Σ|dw| −0.6%，松行 −0.7%，收紧行（dw < −1px）+11.8%；
+- CJK：Σ|dc| −3.6%，CJK 松行（dc > 1.5px）−10.0%，CJK 收紧行（dc < −0.5px）+39.6%。单个 CJK 字距的收缩上限是 0.37·k·juSu ≈ 0.056em（16px 下约 0.9px），旧为 0.037em。
+
+**审阅结论：改进，有一处可接受的代价。**
+- 断行代价与渲染一致：消除了幽灵容量和 N 对 N−1 的错配；
+- CJK 行更少松散，短的末行减少，例如 paged-doc 的"切 / 分："、"结 / 束，"合回一行；
+- 汉字与拉丁标点不再被错误地拉开，也不再在 '/' 前断行。
+
+代价是混排或纯 CJK 行收紧的情况增多（每字距最多约 0.9px）。若要单独减少 CJK 的收缩，需要给 stretch 和 shrink 分设权重，这是对模型的扩展，不在本计划内。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。

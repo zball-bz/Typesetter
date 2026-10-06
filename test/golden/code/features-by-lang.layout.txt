@@ -1,9 +1,9 @@
 doc h=18740su
 para pid=0 y=0su w=19200su h=6144su
-  L0 y=0su left=0su w=19200su dw=307su dc=0su join=space blocks=[0,15) @[0,37)
-  L1 y=1536su left=0su w=19200su dw=128su dc=0su join=space blocks=[16,31) @[38,77)
-  L2 y=3072su left=0su w=19200su dw=-32su dc=0su join=space blocks=[32,53) @[78,131)
-  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[54,71) @[132,168)
+  L0 y=0su left=0su w=19200su dw=307su dc=0su join=space items=[0,15) @[0,37)
+  L1 y=1536su left=0su w=19200su dw=128su dc=0su join=space items=[16,31) @[38,77)
+  L2 y=3072su left=0su w=19200su dw=-32su dc=0su join=space items=[32,53) @[78,131)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last items=[54,71) @[132,168)
 para pid=1 y=7373su w=19200su h=1536su
   L0 code y=0su left=0su line=0 [0,10)
 para pid=2 y=10138su w=19200su h=3072su

@@ -1,14 +1,14 @@
 doc h=13517su
 para pid=0 y=0su w=19200su h=6144su
-  L0 y=0su left=0su w=19200su dw=704su dc=0su join=space blocks=[0,17) @[0,34)
-  L1 y=1536su left=0su w=19200su dw=307su dc=0su join=space blocks=[18,31) @[35,72)
-  L2 y=3072su left=0su w=19200su dw=-73su dc=0su join=space blocks=[32,49) @[73,115)
-  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[50,53) @[116,124)
+  L0 y=0su left=0su w=19200su dw=704su dc=0su join=space items=[0,17) @[0,34)
+  L1 y=1536su left=0su w=19200su dw=307su dc=0su join=space items=[18,31) @[35,72)
+  L2 y=3072su left=0su w=19200su dw=-73su dc=0su join=space items=[32,49) @[73,115)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last items=[50,53) @[116,124)
 para pid=1 y=7373su w=19200su h=6144su
   L0 code y=0su left=0su line=0 [0,26) marker
   L1 code y=1536su left=0su line=0 [26,40) cont cc=2
-  L2 cell=1 y=0su left=11520su w=7680su blocks=[0,6)
-  L3 cell=1 y=1536su left=11520su w=7680su blocks=[7,8)
+  L2 cell=1 y=0su left=11520su w=7680su items=[0,10)
+  L3 cell=1 y=1536su left=11520su w=7680su items=[11,12)
   L4 code y=3072su left=0su line=1 [0,23) marker
   L5 code y=4608su left=0su line=1 [23,44) cont cc=2
-  L6 cell=3 y=3072su left=11520su w=7680su blocks=[0,4)
+  L6 cell=3 y=3072su left=11520su w=7680su items=[0,7)

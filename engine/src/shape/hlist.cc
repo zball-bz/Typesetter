@@ -1,5 +1,7 @@
 #include "hlist.h"
 
+#include <cmath>
+
 #include "objects.h"
 #include "textrules.h"
 
@@ -58,9 +60,10 @@ void dumpHList(std::string& out, const HList& h, const Interner& strs, const Sty
     }
     appendf(out, " r%u @[%u,%u)\n", it.run, c.srcStart, c.srcEnd);
   };
+  // (plan P4-08) its justification unit
+  if (!h.items.empty()) appendf(out, "%sju=%dsu\n", indent, h.juSu);
   for (const HItem& it : h.items) {
     out += indent;
-    const ColdRec& c = h.cold[it.cold];
     switch (it.k) {
       case IK::Box: {
         const RunRec& r = h.runs[it.run];
@@ -83,13 +86,15 @@ void dumpHList(std::string& out, const HList& h, const Interner& strs, const Sty
         }
         appendf(out, " w=%dsu", it.w);
         if (r.rc == RealizeClass::LetterSpaced || (r.rc == RealizeClass::Pinned && r.syn != SynKind::Indent))
-          appendf(out, " wt=%g cap=%dsu", (double)it.x, c.capSu);
+          appendf(out, " wt=%g", (double)it.x);
         if (r.rc == RealizeClass::BlankBearing) out += (kCCFlags[it.cls] & kCC_open) ? " blank=L" : " blank=R";
         if (sp.k == AdvanceSpec::Defined) appendf(out, " defined=%gem", sp.em);
         break;
       }
       case IK::Glue: {
-        appendf(out, "glue %s w=%dsu x=%g cap=%dsu", gcName(it.cls), it.w, (double)it.x, c.capSu);
+        // (plan P4-08) its stretch = shrink: the weight times the unit
+        appendf(out, "glue %s w=%dsu x=%g", gcName(it.cls), it.w, (double)it.x);
+        if (it.x > 0 && it.cls != (u8)GC::Fill) appendf(out, " st=%dsu", (Su)std::lround((double)it.x * h.juSu));
         if (it.cls == (u8)GC::InterChar) break;
         const AdvanceSpec& sp = h.specs[it.aux];
         if (sp.k == AdvanceSpec::KernCtx) {

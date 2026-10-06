@@ -1,68 +1,79 @@
 top pid=0 units=1
  unit text indent=0su anchor="sec"
+  ju=411su
   box Alpha "Data" w=3278su r0 @[2,6)
   run r0 plain BOLD x1.60
 top pid=1 units=9
  unit text indent=0su anchor="tbl"
+  ju=257su
   box Alpha "Name" w=2049su r0 @[59,63)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "Qty" w=1537su r0 @[66,69)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "Price" w=2561su r0 @[72,77)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "Al" w=1025su r0 @[78,80)
   disc pen=0.7 w=0su pre="-" 513su kern="lp" r0 @[80,80)
   box Alpha "pha" w=1537su r0 @[80,83)
-  glue word w=257su x=1 cap=257su kern="a w" src r0 @[83,84)
+  glue word w=257su x=1 st=257su kern="a w" src r0 @[83,84)
   box Alpha "wid" w=1537su r0 @[84,87)
   disc pen=0.7 w=0su pre="-" 513su kern="dg" r0 @[87,87)
   box Alpha "get" w=1537su r0 @[87,90)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Digit "2" w=513su r0 @[93,94)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Digit "3.50" w=2049su r0 @[97,101)
   run r0 plain
  unit text indent=0su
-  box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[102,105)
-  glue inter w=0su x=0.6 cap=102su r0 @[102,105)
-  box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[105,108)
-  glue inter w=0su x=0.6 cap=102su r0 @[105,108)
-  box Ideo "条" w=1025su wt=0.6 cap=102su r0 @[108,111)
-  glue inter w=0su x=0.6 cap=102su r0 @[108,111)
-  box Ideo "目" w=1025su wt=0.6 cap=102su r0 @[111,114)
+  ju=257su
+  box Ideo "中" w=1025su wt=0.6 r0 @[102,105)
+  glue inter w=0su x=0.6 st=154su r0 @[102,105)
+  box Ideo "文" w=1025su wt=0.6 r0 @[105,108)
+  glue inter w=0su x=0.6 st=154su r0 @[105,108)
+  box Ideo "条" w=1025su wt=0.6 r0 @[108,111)
+  glue inter w=0su x=0.6 st=154su r0 @[108,111)
+  box Ideo "目" w=1025su wt=0.6 r0 @[111,114)
   pen 0 r0
   run r0 letter-spaced CJK
  unit text indent=0su
-  box Ideo "三" w=1025su wt=0.6 cap=102su r0 @[117,120)
+  ju=257su
+  box Ideo "三" w=1025su wt=0.6 r0 @[117,120)
   pen 0 r0
   run r0 letter-spaced CJK
  unit text indent=0su
+  ju=257su
   box Digit "12.00" w=2561su r0 @[123,128)
   run r0 plain
 top pid=2 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "To" w=1025su r0 @[138,140)
   disc pen=0.7 w=0su pre="-" 513su kern="ot" r0 @[140,140)
   box Alpha "tals" w=2049su r0 @[140,144)
-  glue word w=257su x=1 cap=257su kern="s a" src r0 @[144,145)
+  glue word w=257su x=1 st=257su kern="s a" src r0 @[144,145)
   box Alpha "ap" w=1025su r0 @[145,147)
   disc pen=0.7 w=0su pre="-" 513su kern="pp" r0 @[147,147)
   box Alpha "pear" w=2049su r0 @[147,151)
-  glue word w=257su x=1 cap=257su kern="r i" src r0 @[151,152)
+  glue word w=257su x=1 st=257su kern="r i" src r0 @[151,152)
   box Alpha "in" w=1025su r0 @[152,154)
-  glue word w=257su x=1 cap=257su src r0 @[154,154)
-  box Ideo "表" w=1025su wt=0.6 cap=102su r1 @[155,159)
+  glue word w=257su x=1 st=257su src r0 @[154,154)
+  box Ideo "表" w=1025su wt=0.6 r1 @[155,159)
   pen 0 r1
-  glue word w=257su x=1 cap=257su src r2 @[155,159)
+  glue word w=257su x=1 st=257su src r2 @[155,159)
   box Digit "1" w=513su r2 @[155,159)
-  glue word w=257su x=1 cap=257su kern="1 o" src r3 @[160,160)
+  glue word w=257su x=1 st=257su kern="1 o" src r3 @[160,160)
   box Alpha "of" w=1025su r3 @[160,162)
-  glue word w=257su x=1 cap=257su kern="f §" src r3 @[162,162)
+  glue word w=257su x=1 st=257su kern="f §" src r3 @[162,162)
   box Alpha "§1" w=1128su r4 @[163,167)
   box Infix "." w=513su r5 @[167,168)
   run r0 plain

@@ -88,13 +88,14 @@ boxtree/    ContentTree → the box tree (plan P1-18; docs/layout-design.md):
 emit/       the box tree's leaves → their shaped content: HLists (script
                                                 segmentation, CJK rules App C,
                                                 hyphenation, run instances), code
-                                                lines, cells and typed payloads;
-            fuseLegacy lowers each list to the legacy breaker's blocks (until
-            P4-08); legacy.cc keeps the pre-HList emitter as its CI oracle
-hyphen/     Liang runtime over compiled patterns (gen/)
+                                                lines, cells and typed payloads —
+                                                the item lists the breaker reads
+hyphen/     Liang dictionaries: TeX patterns compiled into one trie form (the
+            resident en-US, a language's from the hyphPatterns resource)
 measure/    MeasureRequest batching, per-doc metric store, exact/pending/invalid
             states (§9), ε policy (§7)
-break/      Knuth–Plass DP (port of PoC linebreak.ts, cost fn + parshape widths)
+break/      Knuth–Plass over the HList's TeX items (plan P4-08: stretch = weight ×
+            the paragraph's justification unit, v2 §8; cost fn + parshape widths)
 layout/     the box tree + shaped leaves → frames of fragments (a layouter
                                                 per LayouterId; breaks, vertical
                                                 metrics, spacing values, k-rule §8,

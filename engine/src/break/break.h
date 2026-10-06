@@ -6,13 +6,16 @@
 #include <unordered_map>
 
 #include "../emit/emit.h"
+#include "items.h"
 
 namespace tsr {
 
 struct BItem;
 
 struct BreakResult {
-  std::vector<u32> breakpoints;    // counts of blocks consumed per line, ascending
+  // per line, the HList item the next line starts at (its first Box or Disc
+  // after the break's discard; the last: the item count), ascending
+  std::vector<u32> breakpoints;
   double cost = 0;                 // demerits
   std::vector<u32> overfullLines;  // rescued lines (final pass): content wider than the line
   bool feasible = true;            // false: the final pass had to rescue
@@ -77,9 +80,9 @@ struct BreakParams {
   LineEnds ends;  // the stream's (layout sets it per stream)
 };
 
-BreakResult breakItems(const std::vector<BItem>& items, u32 nBlocks, const ParShape& shape,
-                       const BreakParams& params);
-BreakResult breakLines(const std::vector<BreakBlock>& blocks, const ParShape& shape,
+// items: the breaker's view of an HList (items.h hlistToItems), nItems the
+// HList's item count
+BreakResult breakItems(const std::vector<BItem>& items, u32 nItems, const ParShape& shape,
                        const BreakParams& params);
 
 // The cached form (editor-design.md §2): KP reads only the items, the line
@@ -108,7 +111,8 @@ class BreakMemo {
   size_t bytes_ = 0;
   size_t budget_ = kBudgetBytes;
 };
-BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, const ParShape& shape, const BreakParams& params,
-                             BreakMemo* memo);
+// (plan P4-08) an HList broken: its items read as the breaker's (no memo:
+// uncached)
+BreakResult breakLinesCached(const HList& h, const ParShape& shape, const BreakParams& params, BreakMemo* memo);
 
 }  // namespace tsr

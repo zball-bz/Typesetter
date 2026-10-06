@@ -1,6 +1,6 @@
 doc h=11981su
 para pid=0 y=0su w=19200su h=1536su
-  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,12) @[0,36)
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last items=[0,24) @[0,36)
 para pid=1 y=2765su w=19200su h=9216su
   L0 code y=0su left=0su line=0 [0,38)
   L1 code y=1536su left=0su line=0 [38,70) cont cc=6

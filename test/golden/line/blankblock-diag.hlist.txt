@@ -1,38 +1,43 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[30,31)
-  glue word w=257su x=1 cap=257su kern="A r" src r0 @[31,32)
+  glue word w=257su x=1 st=257su kern="A r" src r0 @[31,32)
   box Alpha "root" w=2049su r0 @[32,36)
-  glue word w=257su x=1 cap=257su kern="t s" src r0 @[36,37)
+  glue word w=257su x=1 st=257su kern="t s" src r0 @[36,37)
   box Alpha "state" w=2561su r0 @[37,42)
   disc pen=0.7 w=0su pre="-" 513su kern="em" r0 @[42,42)
   box Alpha "ment" w=2049su r0 @[42,46)
-  glue word w=257su x=1 cap=257su kern="t m" src r0 @[46,47)
+  glue word w=257su x=1 st=257su kern="t m" src r0 @[46,47)
   box Alpha "may" w=1537su r0 @[47,50)
-  glue word w=257su x=1 cap=257su kern="y h" src r0 @[50,51)
+  glue word w=257su x=1 st=257su kern="y h" src r0 @[50,51)
   box Alpha "hold" w=2049su r0 @[51,55)
-  glue word w=257su x=1 cap=257su kern="d b" src r0 @[55,56)
+  glue word w=257su x=1 st=257su kern="d b" src r0 @[55,56)
   box Alpha "blank" w=2561su r0 @[56,61)
-  glue word w=257su x=1 cap=257su kern="k l" src r0 @[61,62)
+  glue word w=257su x=1 st=257su kern="k l" src r0 @[61,62)
   box Alpha "lines:" w=3073su r0 @[62,68)
-  glue word w=257su x=1 cap=257su kern=": 3" src r0 @[68,68)
+  glue word w=257su x=1 st=257su kern=": 3" src r0 @[68,68)
   box Digit "3" w=513su r0 @[69,77)
   box Infix "." w=513su r0 @[77,78)
   run r0 plain
 top pid=1 units=2
  unit text indent=1536su marker="•"
+  ju=257su
   box Alpha "item" w=2049su r0 @[82,86)
   run r0 plain
  unit text indent=1536su marker="•"
+  ju=257su
   box Alpha "next" w=2049su r0 @[127,131)
-  glue word w=257su x=1 cap=257su kern="t i" src r0 @[131,132)
+  glue word w=257su x=1 st=257su kern="t i" src r0 @[131,132)
   box Alpha "item" w=2049su r0 @[132,136)
   run r0 plain
 top pid=2 units=2
  unit text indent=1024su
+  ju=257su
   box Alpha "quote" w=2561su r0 @[140,145)
   run r0 plain
  unit text indent=1024su
+  ju=257su
   box Alpha "af" w=1025su r0 @[187,189)
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[189,189)
   box Alpha "ter" w=1537su r0 @[189,192)

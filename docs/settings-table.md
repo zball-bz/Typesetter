@@ -13,8 +13,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `doc.baseSize` | num:4:96 | `18` | HostDefault | BoxTree, Emit, Measure, Layout, Paint | `baseSizePx` |
 | `doc.leading` | num:0.5:4 | `1.5` | HostDefault | Emit, Layout, Paint | `lineHeight` |
 | `doc.parGap` | num:0:10 | `1.2` | HostDefault | Layout, Paint |  |
-| `doc.cjkJustify` | num:0:4 | `0.6` | HostDefault | Emit, Layout |  |
-| `doc.cjkGlue` | num:0:1 | `0.1` | HostDefault | Emit |  |
+| `doc.cjkJustify` | num:0:4 | `0.6` | HostDefault | Emit |  |
 | `fonts.body` | font | `"\"Crimson Text\", Georgia, serif"` | HostDefault | Measure, Paint | `fontFamily` |
 | `fonts.cjk` | font | `"\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif"` | HostDefault | Measure, Paint | `cjkFontFamily` |
 | `fonts.mono` | font | `"monospace"` | HostDefault | Measure, Paint |  |

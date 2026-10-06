@@ -1423,7 +1423,7 @@ static void unitRegistry(const fs::path& root) {
     // (the semantic page writes a figure's caption from its caption part,
     // plan P3-23, which the figure constructor makes and a #!sketch region
     // does not: the registry rows' products are compared)
-    return d.product("index") + d.product("html") + d.product("blocks");
+    return d.product("index") + d.product("html") + d.product("hlist");
   };
   std::string builtin = products("parity-builtin"), declared = products("parity-declared");
   size_t at;
@@ -2071,122 +2071,160 @@ static void unitSettings() {
   }
 }
 
-// The breaker's item adapter (plan P0-12): legal breaks, discardables and the
-// block each break consumes.
+// A hand-made HList (plan P4-08: the breaker reads the HList): boxes, glue
+// of a weight, penalties, Discs with a pre box; its justification unit ju.
+struct HB {
+  HList h;
+  explicit HB(Su ju = 256) {
+    h.juSu = ju;
+    h.juPx = suToPx(ju);
+    h.runs.emplace_back();
+  }
+  HItem& add(IK k, Su w, float x) {
+    HItem it;
+    it.k = k;
+    it.w = w;
+    it.x = x;
+    it.cold = (u32)h.cold.size();
+    h.cold.emplace_back();
+    h.items.push_back(it);
+    return h.items.back();
+  }
+  HB& box(Su w, float pen = kPenInf) {
+    add(IK::Box, w, 0);
+    if (pen < kPenInf) add(IK::Penalty, 0, pen);
+    return *this;
+  }
+  HB& glue(Su w, float x = 1, GC c = GC::Word) {
+    add(IK::Glue, w, x).cls = (u8)c;
+    return *this;
+  }
+  HB& pen(float p) {
+    add(IK::Penalty, 0, p);
+    return *this;
+  }
+  HB& disc(Su w, Su pre, float pen) {
+    DiscRec d;
+    d.pre = (u32)h.side.size();
+    d.preN = 1;
+    HItem s;
+    s.w = pre;
+    h.side.push_back(s);
+    add(IK::Disc, w, pen).aux = (u32)h.discs.size();
+    h.discs.push_back(d);
+    return *this;
+  }
+  HB& space(Su w = 256) { return glue(w); }
+  HB& cjk(Su w, float k = 0.6f) {  // a CJK char and its realized gap
+    add(IK::Box, w, k);
+    return glue(0, k, GC::InterChar);
+  }
+};
+
+// The breaker's items (plan P4-08): read off the HList — legal breaks,
+// discardables, each glue's stretch its weight times the unit (v2 §8)
 static void unitBreakItems() {
-  auto blk = [](u16 flags, Su w, float pen, Su sw = 0, Su bw = 0) {
-    BreakBlock b;
-    b.flags = flags;
-    b.width = w;
-    b.breakPenalty = pen;
-    b.spaceWidth = sw;
-    b.breakWidth = bw;
-    return b;
-  };
-  std::vector<BreakBlock> bl = {
-      blk(0, 100, BREAK_INF),                            // 0 word piece
-      blk(BF_HYPHEN, -3, 0.7f, 0, 40),                   // 1 hyphen point
-      blk(0, 80, BREAK_INF),                             // 2 word piece
-      blk(BF_SPACE, 20, 0, 20),                          // 3 space
-      blk(BF_CJK, 1024, 0, 102),                         // 4 CJK char, breakable after
-      blk(BF_SPACE | BF_BOUND, 10, 0.8f),                // 5 math break glue, penalty
-      blk(BF_SPACE | BF_PUNCT_SP | BF_PUNCT_OPEN, 512, BREAK_INF),  // 6 rigid half
-      blk(0, 300, 1.2f),                                 // 7 URL piece
-  };
+  HB b(256);
+  b.box(100).disc(-3, 40, 0.7f).box(80).space(20).cjk(1024).box(1024, 0).glue(10, 1, GC::Autospace)
+      .glue(512, 0, GC::Blank).pen(kPenInf).box(300, 1.2f).glue(0, 0, GC::Fill).pen(-kPenInf);
   std::vector<BItem> it;
-  blocksToItems(bl, it);
+  hlistToItems(b.h, it);
   auto kinds = [&] {
     std::string s;
     for (const BItem& x : it)
       s += x.k == ItemKind::Box ? 'B' : x.k == ItemKind::Glue ? 'G'
-         : x.k == ItemKind::Disc ? 'D' : x.tag == PenTag::Forbidden ? 'f' : 'p';
+         : x.k == ItemKind::Disc ? 'D' : x.tag == PenTag::Forbidden ? 'f' : x.tag == PenTag::Forced ? 'F' : 'p';
     return s;
   };
-  CHECK(kinds() == "BDBGBfGppGfGBp");
-  CHECK(it[1].w == -3 && it[1].pre == 40 && it[1].pen == 700);
-  CHECK(it[5].k == ItemKind::Penalty && it[5].tag == PenTag::Forbidden && it[6].stretch == 102 &&
-        it[7].pen == 0 && it[7].block == 4);
-  CHECK(it[8].pen == 800 && it[8].block == 5 && it[9].w == 10);
-  CHECK(it[13].pen == 1200 && it[13].block == 7);
-  CHECK(penForbidden(BREAK_INF) && !penForbidden(1e17f) && penThousandths(0.95f) == 950);
+  CHECK(kinds() == "BDBGBGBpGGfBpGF");
+  CHECK(it[1].w == -3 && it[1].pre == 40 && it[1].pen == 700 && it[1].src == 1);
+  CHECK(it[3].stretch == 256 && it[3].shrink == 256 && it[3].w == 20);  // a word space: weight 1
+  CHECK(it[5].stretch == 154 && it[5].w == 0);                          // a CJK gap: k·ju
+  CHECK(it[8].stretch == 256 && it[9].stretch == 0 && it[9].w == 512);  // autospace 1, a blank rigid
+  CHECK(it[12].pen == 1200 && it[13].order == 1 && it[13].stretch == 0);
+  CHECK(penForbidden(kPenInf) && !penForbidden(1e17f) && penThousandths(0.95f) == 950);
 }
 
 // Breaker semantics (plans P0-12, P1-14; design T6 S1/S2).
 static void unitBreakSemantics() {
   BreakParams cp;
-  auto word = [](Su w, float pen = BREAK_INF) {
-    BreakBlock b;
-    b.width = w;
-    b.breakPenalty = pen;
-    return b;
-  };
-  auto space = [](Su w = 256) {
-    BreakBlock b;
-    b.flags = BF_SPACE;
-    b.width = b.spaceWidth = w;
-    return b;
+  auto brk = [&](const HB& b, Su width, const BreakParams& p) {
+    return breakLinesCached(b.h, ParShape{width}, p, nullptr);
   };
   {  // discard: the space at the break is not in the line — an exact fit is free
-    std::vector<BreakBlock> bl = {word(4000), space(), word(4000), space(), word(4000),
-                                      space(), word(9000)};
-    BreakResult r = breakLines(bl, ParShape{4000 + 256 + 4000 + 256 + 4000}, cp);
+    HB b;
+    b.box(4000).space().box(4000).space().box(4000).space().box(9000);
+    BreakResult r = brk(b, 4000 + 256 + 4000 + 256 + 4000, cp);
     CHECK((r.breakpoints == std::vector<u32>{6, 7}) && r.cost == 0);
   }
-  {  // a Forbidden (BREAK_INF) block is never a break; the rescue keeps the
-     // overlong run on a line of its own instead of collapsing the paragraph
-    std::vector<BreakBlock> bl = {word(3000), space(), word(30000), space(), word(3000),
-                                      space(), word(30000), space(), word(3000)};
-    BreakResult r = breakLines(bl, ParShape{19200}, cp);
+  {  // a Forbidden break is never taken; the rescue keeps the overlong run
+     // on a line of its own instead of collapsing the paragraph
+    HB b;
+    b.box(3000).space().box(30000).space().box(3000).space().box(30000).space().box(3000);
+    BreakResult r = brk(b, 19200, cp);
     // the rescue breaks from the best active node (lowest demerits): the
     // short word joins its run rather than standing alone underfull
     CHECK(!r.feasible && r.pass == 3 && (r.breakpoints == std::vector<u32>{4, 8, 9}));
     CHECK((r.overfullLines == std::vector<u32>{0, 1}));
     BreakMemo memo;
-    BreakResult c = breakLinesCached(bl, ParShape{19200}, cp, &memo);
+    BreakResult c = breakLinesCached(b.h, ParShape{19200}, cp, &memo);
     CHECK(c.breakpoints == r.breakpoints && c.overfullLines == r.overfullLines);
   }
   {  // the last line has fil stretch and normal shrink: slightly long is one line
-    std::vector<BreakBlock> bl = {word(6000), space(), word(6000), space(), word(6800)};
-    BreakResult r = breakLines(bl, ParShape{19200}, cp);  // 19312 > 19200, shrink 512
+    HB b;
+    b.box(6000).space().box(6000).space().box(6800);
+    BreakResult r = brk(b, 19200, cp);  // 19312 > 19200, shrink 512
     CHECK((r.breakpoints == std::vector<u32>{5}));
   }
-  {  // identical lines after discard report the latest break (the next line's
-     // first block): CJK char, then a space — layout's trimmed range
-    BreakBlock cjk = word(1024, 0);
-    cjk.flags = BF_CJK;
-    cjk.spaceWidth = 102;
-    std::vector<BreakBlock> bl;
-    for (int k = 0; k < 18; k++) bl.push_back(cjk);
-    bl.push_back(space());
-    bl.push_back(word(4000));
-    BreakResult r = breakLines(bl, ParShape{18432}, cp);
-    CHECK((r.breakpoints == std::vector<u32>{19, 20}));
+  {  // a line ends at its last CJK char's break; the next starts at the word
+     // after the space it discards (layout's trimmed range)
+    HB b;
+    for (int k = 0; k < 17; k++) b.cjk(1024);
+    b.box(1024, 0).space().box(4000);
+    BreakResult r = brk(b, 18432, cp);
+    CHECK((r.breakpoints == std::vector<u32>{37, 38}));
   }
   {  // a Forced penalty breaks wherever it appears
     std::vector<BItem> it(5);
-    it[0].k = ItemKind::Box; it[0].w = 1000; it[0].block = 0;
-    it[1].k = ItemKind::Penalty; it[1].tag = PenTag::Forced; it[1].block = 0;
-    it[2].k = ItemKind::Box; it[2].w = 1000; it[2].block = 1;
-    it[3].k = ItemKind::Glue; it[3].w = it[3].stretch = it[3].shrink = 256; it[3].block = 2;
-    it[4].k = ItemKind::Box; it[4].w = 1000; it[4].block = 3;
-    BreakResult r = breakItems(it, 4, ParShape{19200}, cp);
-    CHECK((r.breakpoints == std::vector<u32>{1, 4}));
+    it[0].k = ItemKind::Box; it[0].w = 1000; it[0].src = 0;
+    it[1].k = ItemKind::Penalty; it[1].tag = PenTag::Forced; it[1].src = 1;
+    it[2].k = ItemKind::Box; it[2].w = 1000; it[2].src = 2;
+    it[3].k = ItemKind::Glue; it[3].w = it[3].stretch = it[3].shrink = 256; it[3].src = 3;
+    it[4].k = ItemKind::Box; it[4].w = 1000; it[4].src = 4;
+    BreakResult r = breakItems(it, 5, ParShape{19200}, cp);
+    CHECK((r.breakpoints == std::vector<u32>{2, 5}));
   }
   {  // cost is bounded and the power is an integer product
-    std::vector<BreakBlock> bl = {word(100), space(), word(100)};
-    BreakResult r = breakLines(bl, ParShape{19200}, cp);
+    HB b;
+    b.box(100).space().box(100);
+    BreakResult r = brk(b, 19200, cp);
     CHECK(r.cost == 0);  // a short last line costs nothing (fil)
     BreakParams sq = cp;
     sq.cost.exponent = 2;
-    std::vector<BreakBlock> two = {word(9000), space(), word(9000), space(), word(9000)};
-    BreakResult a = breakLines(two, ParShape{18432}, sq);
+    HB two;
+    two.box(9000).space().box(9000).space().box(9000);
+    BreakResult a = brk(two, 18432, sq);
     CHECK(a.cost >= 0 && a.cost <= sq.cost.cap * 2);
+  }
+  {  // (plan P4-08; v2 §8) the capacity is the weights times the unit: the
+     // same line costs more when its glue is CJK gaps (k = 0.6) than spaces
+    HB lat, cjk;
+    for (int k = 0; k < 10; k++) lat.box(1024).space(0);
+    for (int k = 0; k < 10; k++) cjk.cjk(1024);
+    lat.box(1024).pen(-kPenInf).box(100);
+    cjk.box(1024).pen(-kPenInf).box(100);
+    BreakParams p = cp;
+    p.ends.lastEnd = {};  // the forced line justified, no fil
+    p.ends.end = {};
+    const Su width = 11 * 1024 + 512;
+    BreakResult a = brk(lat, width, p), c = brk(cjk, width, p);
+    CHECK(a.cost > 0 && c.cost > a.cost);
   }
 }
 
-// The KP memo (plans P0-11, P1-14) answers exactly what breakLines
-// computes: keys are validated on hit, and eviction under many distinct
-// streams only costs recomputation.
+// The KP memo (plans P0-11, P1-14) answers exactly what the uncached
+// breaker computes: keys are validated on hit, and eviction under many
+// distinct streams only costs recomputation.
 static void unitBreakMemo() {
   BreakMemo memo;
   memo.setBudget(20000 * 4);  // small: the second round must evict and recompute
@@ -2205,20 +2243,17 @@ static void unitBreakMemo() {
     const int kParas = 600;   // sanitizer builds: consistency only
 #endif
     for (int p = 0; p < kParas; p++) {
-      std::vector<BreakBlock> bl(40 + rnd(160));
-      for (size_t i = 0; i < bl.size(); i++) {
-        BreakBlock& b = bl[i];
-        b.width = (Su)(64 * (2 + rnd(60)));
-        b.spaceWidth = (i % 2) ? (Su)(64 * 4) : 0;
-        b.breakWidth = 0;
-        b.breakPenalty = (i % 2) ? 0.f : 1e9f;  // break at spaces only
+      HB b;
+      const u32 n = 40 + rnd(160);
+      for (u32 i = 0; i < n; i++) {
+        if (i % 2) b.space((Su)(64 * 4));  // breaks at spaces only
+        else b.box((Su)(64 * (2 + rnd(60))));
       }
-      bl.back().breakPenalty = 0;
       ParShape lw{(Su)(64 * (300 + rnd(200)))};
-      BreakResult a = breakLinesCached(bl, lw, cp, &memo);
-      BreakResult b = breakLines(bl, lw, cp);
-      if (a.breakpoints != b.breakpoints || a.cost != b.cost || a.overfullLines != b.overfullLines) mismatches++;
-      if (a.breakpoints.empty() || a.breakpoints.back() != bl.size()) mismatches++;
+      BreakResult x = breakLinesCached(b.h, lw, cp, &memo);
+      BreakResult y = breakLinesCached(b.h, lw, cp, nullptr);
+      if (x.breakpoints != y.breakpoints || x.cost != y.cost || x.overfullLines != y.overfullLines) mismatches++;
+      if (x.breakpoints.empty() || x.breakpoints.back() != b.h.items.size()) mismatches++;
     }
   }
   CHECK(mismatches == 0);
@@ -2448,7 +2483,7 @@ int main(int argc, char** argv) {
           failures++;
           continue;
         }
-        for (const char* p : {"blocktree", "blocks", "hlist", "breaks", "layout", "vlist"})
+        for (const char* p : {"blocktree", "hlist", "breaks", "layout", "vlist"})
           goldenCompare(g(p), doc.product(p), update, label + ":" + p);
         // the DisplayList dump (plan P1-18; a debug product): on request
         if (hasProduct("dl")) goldenCompare(g("dl"), doc.product("dl"), update, label + ":dl");

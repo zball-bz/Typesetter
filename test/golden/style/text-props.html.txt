@@ -19,7 +19,7 @@
 <div class="tsr-line" data-s="89" data-e="99" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="89">tarianism.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="489" style="position:relative;height:72px">
-<div class="tsr-line" data-s="0" data-e="98" data-join="space" data-overfull="1" style="top:0px;left:0px;width:300px;word-spacing:-1.486px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="https://example.com/a/very/long/path/that/stays/whole" data-s="45">https://example.com/a/very/long/path/that/stays/whole</a></div>
+<div class="tsr-line" data-s="0" data-e="98" data-join="space" data-overfull="1" style="top:0px;left:0px;width:300px;word-spacing:-1.48px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="https://example.com/a/very/long/path/that/stays/whole" data-s="45">https://example.com/a/very/long/path/that/stays/whole</a></div>
 <div class="tsr-line" data-s="100" data-e="138" data-join="none" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="100">beside </span><a class="tsr-r" href="https://example.com/a/very/long/path/that/may/break" data-s="107">https://example.com/a/very/long</a></div>
 <div class="tsr-line" data-s="138" data-e="164" style="top:48px;left:0px;width:300px"><a class="tsr-r" href="https://example.com/a/very/long/path/that/may/break" data-s="138">/path/that/may/break</a><span class="tsr-r" data-s="159"> here.</span></div>
 </div>

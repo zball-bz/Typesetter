@@ -1,7 +1,8 @@
 top pid=0 units=8
  unit text indent=1536su marker="•"
+  ju=257su
   box Alpha "I" w=513su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="I F" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="I F" src r0 @[1125,1131)
   box Alpha "Foun" w=2049su r0 @[1125,1131)
   disc pen=0.7 w=0su pre="-" 513su kern="nd" r0 @[1125,1131)
   box Alpha "da" w=1025su r0 @[1125,1131)
@@ -9,10 +10,11 @@ top pid=0 units=8
   box Alpha "tions" w=2561su r0 @[1125,1131)
   run r0 plain LINK link="#tsr-part-f"
  unit text indent=3072su marker="•"
+  ju=257su
   box Digit "1" w=513su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="1 T" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="1 T" src r0 @[1125,1131)
   box Alpha "Type" w=2049su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="e t" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="e t" src r0 @[1125,1131)
   box Alpha "the" w=1537su r0 @[1125,1131)
   disc pen=0.7 w=0su pre="-" 513su kern="eo" r0 @[1125,1131)
   box Alpha "o" w=513su r0 @[1125,1131)
@@ -20,23 +22,25 @@ top pid=0 units=8
   box Alpha "ry" w=1025su r0 @[1125,1131)
   run r0 plain LINK link="#tsr-ch-tt"
  unit text indent=4608su marker="•"
+  ju=257su
   box Digit "1.1" w=1537su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="1 J" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="1 J" src r0 @[1125,1131)
   box Alpha "Judg" w=2049su r0 @[1125,1131)
   disc pen=0.7 w=0su pre="-" 513su kern="gm" r0 @[1125,1131)
   box Alpha "ments" w=2561su r0 @[1125,1131)
   run r0 plain LINK link="#tsr-sec-j"
  unit text indent=3072su marker="•"
+  ju=257su
   box Digit "2" w=513su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="2 H" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="2 H" src r0 @[1125,1131)
   box Alpha "Ho" w=1025su r0 @[1125,1131)
   disc pen=0.7 w=0su pre="-" 513su kern="om" r0 @[1125,1131)
   box Alpha "mo" w=1025su r0 @[1125,1131)
   disc pen=0.7 w=0su pre="-" 513su kern="ot" r0 @[1125,1131)
   box Alpha "topy" w=2049su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="y t" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="y t" src r0 @[1125,1131)
   box Alpha "type" w=2049su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="e t" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="e t" src r0 @[1125,1131)
   box Alpha "the" w=1537su r0 @[1125,1131)
   disc pen=0.7 w=0su pre="-" 513su kern="eo" r0 @[1125,1131)
   box Alpha "o" w=513su r0 @[1125,1131)
@@ -44,8 +48,9 @@ top pid=0 units=8
   box Alpha "ry" w=1025su r0 @[1125,1131)
   run r0 plain LINK link="#tsr-ch-hott"
  unit text indent=1536su marker="•"
+  ju=257su
   box Alpha "II" w=1025su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="I M" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="I M" src r0 @[1125,1131)
   box Alpha "Math" w=2049su r0 @[1125,1131)
   disc pen=0.7 w=0su pre="-" 513su kern="he" r0 @[1125,1131)
   box Alpha "e" w=513su r0 @[1125,1131)
@@ -55,13 +60,15 @@ top pid=0 units=8
   box Alpha "ics" w=1537su r0 @[1125,1131)
   run r0 plain
  unit text indent=3072su marker="•"
+  ju=257su
   box Digit "3" w=513su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="3 S" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="3 S" src r0 @[1125,1131)
   box Alpha "Sets" w=2049su r0 @[1125,1131)
   run r0 plain LINK link="#tsr-ch-sets"
  unit text indent=3072su marker="•"
+  ju=257su
   box Alpha "A" w=513su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="A N" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="A N" src r0 @[1125,1131)
   box Alpha "No" w=1025su r0 @[1125,1131)
   disc pen=0.7 w=0su pre="-" 513su kern="ot" r0 @[1125,1131)
   box Alpha "ta" w=1025su r0 @[1125,1131)
@@ -69,129 +76,141 @@ top pid=0 units=8
   box Alpha "tion" w=2049su r0 @[1125,1131)
   run r0 plain LINK link="#tsr-ch-n"
  unit text indent=4608su marker="•"
+  ju=257su
   box Alpha "A.1" w=1537su r0 @[1125,1131)
-  glue word w=257su x=1 cap=257su kern="1 S" src r0 @[1125,1131)
+  glue word w=257su x=1 st=257su kern="1 S" src r0 @[1125,1131)
   box Alpha "Sym" w=1537su r0 @[1125,1131)
   disc pen=0.7 w=0su pre="-" 513su kern="mb" r0 @[1125,1131)
   box Alpha "bols" w=2049su r0 @[1125,1131)
   run r0 plain LINK link="#tsr-sec-s"
 top pid=1 units=1
  unit text indent=0su anchor="part-f"
+  ju=411su
   box Alpha "Part" w=3278su r0 @[1133,1146)
-  glue word w=411su x=1 cap=411su kern="t I" src r0 @[1133,1146)
+  glue word w=411su x=1 st=411su kern="t I" src r0 @[1133,1146)
   box Alpha "I" w=821su r0 @[1133,1146)
-  glue word w=411su x=1 cap=411su kern="I F" src r0 @[1133,1146)
+  glue word w=411su x=1 st=411su kern="I F" src r0 @[1133,1146)
   box Alpha "Foundations" w=9013su r0 @[1135,1146)
   run r0 plain BOLD x1.60
 top pid=2 units=1
  unit text indent=0su anchor="ch-tt"
+  ju=347su
   box Alpha "Chapter" w=4840su r0 @[1157,1171)
-  glue word w=347su x=1 cap=347su kern="r 1" src r0 @[1157,1171)
+  glue word w=347su x=1 st=347su kern="r 1" src r0 @[1157,1171)
   box Digit "1" w=693su r0 @[1157,1171)
-  glue word w=347su x=1 cap=347su kern="1 T" src r0 @[1157,1171)
+  glue word w=347su x=1 st=347su kern="1 T" src r0 @[1157,1171)
   box Alpha "Type" w=2766su r0 @[1160,1164)
-  glue word w=347su x=1 cap=347su kern="e t" src r0 @[1164,1165)
+  glue word w=347su x=1 st=347su kern="e t" src r0 @[1164,1165)
   box Alpha "theory" w=4149su r0 @[1165,1171)
   run r0 plain BOLD x1.35
 top pid=3 units=1
  unit text indent=0su anchor="sec-j"
+  ju=296su
   box Alpha "§1.1" w=2474su r0 @[1181,1194)
-  glue word w=296su x=1 cap=296su kern="1 J" src r0 @[1181,1194)
+  glue word w=296su x=1 st=296su kern="1 J" src r0 @[1181,1194)
   box Alpha "Judgments" w=5301su r0 @[1185,1194)
   run r0 plain BOLD x1.15
 top pid=4 units=1
  unit math indent=0su anchor="eq-j" w=2568su asc=700su desc=12su
   cell 0
+   ju=257su
    box OpenN "(1.1)" w=2561su r0 @[1204,1220)
    run r0 plain
 top pid=5 units=1
  unit text indent=0su anchor="ch-hott"
+  ju=347su
   box Alpha "Chapter" w=4840su r0 @[1222,1245)
-  glue word w=347su x=1 cap=347su kern="r 2" src r0 @[1222,1245)
+  glue word w=347su x=1 st=347su kern="r 2" src r0 @[1222,1245)
   box Digit "2" w=693su r0 @[1222,1245)
-  glue word w=347su x=1 cap=347su kern="2 H" src r0 @[1222,1245)
+  glue word w=347su x=1 st=347su kern="2 H" src r0 @[1222,1245)
   box Alpha "Homotopy" w=5531su r0 @[1225,1233)
-  glue word w=347su x=1 cap=347su kern="y t" src r0 @[1233,1234)
+  glue word w=347su x=1 st=347su kern="y t" src r0 @[1233,1234)
   box Alpha "type" w=2766su r0 @[1234,1238)
-  glue word w=347su x=1 cap=347su kern="e t" src r0 @[1238,1239)
+  glue word w=347su x=1 st=347su kern="e t" src r0 @[1238,1239)
   box Alpha "theory" w=4149su r0 @[1239,1245)
   run r0 plain BOLD x1.35
 top pid=6 units=1
  unit text indent=0su
+  ju=411su
   box Alpha "Part" w=3278su r0 @[1257,1270)
-  glue word w=411su x=1 cap=411su kern="t I" src r0 @[1257,1270)
+  glue word w=411su x=1 st=411su kern="t I" src r0 @[1257,1270)
   box Alpha "II" w=1640su r0 @[1257,1270)
-  glue word w=411su x=1 cap=411su kern="I M" src r0 @[1257,1270)
+  glue word w=411su x=1 st=411su kern="I M" src r0 @[1257,1270)
   box Alpha "Mathematics" w=9013su r0 @[1259,1270)
   run r0 plain BOLD x1.60
 top pid=7 units=1
  unit text indent=0su anchor="ch-sets"
+  ju=347su
   box Alpha "Chapter" w=4840su r0 @[1272,1279)
-  glue word w=347su x=1 cap=347su kern="r 3" src r0 @[1272,1279)
+  glue word w=347su x=1 st=347su kern="r 3" src r0 @[1272,1279)
   box Digit "3" w=693su r0 @[1272,1279)
-  glue word w=347su x=1 cap=347su kern="3 S" src r0 @[1272,1279)
+  glue word w=347su x=1 st=347su kern="3 S" src r0 @[1272,1279)
   box Alpha "Sets" w=2766su r0 @[1275,1279)
   run r0 plain BOLD x1.35
 top pid=8 units=1
  unit text indent=0su anchor="ch-n"
+  ju=347su
   box Alpha "Appendix" w=5531su r0 @[1304,1315)
-  glue word w=347su x=1 cap=347su kern="x A" src r0 @[1304,1315)
+  glue word w=347su x=1 st=347su kern="x A" src r0 @[1304,1315)
   box Alpha "A" w=693su r0 @[1304,1315)
-  glue word w=347su x=1 cap=347su kern="A N" src r0 @[1304,1315)
+  glue word w=347su x=1 st=347su kern="A N" src r0 @[1304,1315)
   box Alpha "Notation" w=5531su r0 @[1307,1315)
   run r0 plain BOLD x1.35
 top pid=9 units=1
  unit text indent=0su anchor="sec-s"
+  ju=296su
   box Alpha "§A.1" w=2474su r0 @[1324,1335)
-  glue word w=296su x=1 cap=296su kern="1 S" src r0 @[1324,1335)
+  glue word w=296su x=1 st=296su kern="1 S" src r0 @[1324,1335)
   box Alpha "Symbols" w=4123su r0 @[1328,1335)
   run r0 plain BOLD x1.15
 top pid=10 units=1
  unit math indent=0su anchor="eq-s" w=2420su asc=475su desc=12su
   cell 0
+   ju=257su
    box OpenN "(A.1)" w=2561su r0 @[1345,1361)
    run r0 plain
 top pid=11 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "See" w=1537su r0 @[1363,1366)
-  glue word w=257su x=1 cap=257su kern="e P" src r0 @[1366,1366)
+  glue word w=257su x=1 st=257su kern="e P" src r0 @[1366,1366)
   box Alpha "Part" w=2049su r1 @[1367,1374)
-  glue word w=257su x=1 cap=257su kern="t I" src r1 @[1367,1374)
+  glue word w=257su x=1 st=257su kern="t I" src r1 @[1367,1374)
   box Alpha "I" w=513su r1 @[1367,1374)
   box Infix "," w=513su r2 @[1374,1375)
-  glue word w=257su x=1 cap=257su kern=", C" src r2 @[1375,1375)
+  glue word w=257su x=1 st=257su kern=", C" src r2 @[1375,1375)
   box Alpha "Chap" w=2049su r3 @[1376,1384)
   disc pen=0.7 w=0su pre="-" 513su kern="pt" r3 @[1376,1384)
   box Alpha "ter" w=1537su r3 @[1376,1384)
-  glue word w=257su x=1 cap=257su kern="r 2" src r3 @[1376,1384)
+  glue word w=257su x=1 st=257su kern="r 2" src r3 @[1376,1384)
   box Digit "2" w=513su r3 @[1376,1384)
   box Infix "," w=513su r4 @[1384,1385)
-  glue word w=257su x=1 cap=257su kern=", §" src r4 @[1385,1385)
+  glue word w=257su x=1 st=257su kern=", §" src r4 @[1385,1385)
   box Alpha "§1.1" w=2152su r5 @[1386,1392)
   box Infix "," w=513su r6 @[1392,1393)
-  glue word w=257su x=1 cap=257su src r6 @[1393,1393)
-  box Ideo "式" w=1025su wt=0.6 cap=102su r7 @[1394,1399)
+  glue word w=257su x=1 st=257su src r6 @[1393,1393)
+  box Ideo "式" w=1025su wt=0.6 r7 @[1394,1399)
   pen 0 r7
-  glue word w=257su x=1 cap=257su src r8 @[1394,1399)
+  glue word w=257su x=1 st=257su src r8 @[1394,1399)
   box OpenN "(1.1)" w=2561su r8 @[1394,1399)
   box Infix "," w=513su r9 @[1399,1400)
-  glue word w=257su x=1 cap=257su kern=", A" src r9 @[1400,1400)
+  glue word w=257su x=1 st=257su kern=", A" src r9 @[1400,1400)
   box Alpha "Ap" w=1025su r10 @[1401,1406)
   disc pen=0.7 w=0su pre="-" 513su kern="pp" r10 @[1401,1406)
   box Alpha "pen" w=1537su r10 @[1401,1406)
   disc pen=0.7 w=0su pre="-" 513su kern="nd" r10 @[1401,1406)
   box Alpha "dix" w=1537su r10 @[1401,1406)
-  glue word w=257su x=1 cap=257su kern="x A" src r10 @[1401,1406)
+  glue word w=257su x=1 st=257su kern="x A" src r10 @[1401,1406)
   box Alpha "A" w=513su r10 @[1401,1406)
   box Infix "," w=513su r11 @[1406,1407)
-  glue word w=257su x=1 cap=257su kern=", §" src r11 @[1407,1407)
+  glue word w=257su x=1 st=257su kern=", §" src r11 @[1407,1407)
   box Alpha "§A.1" w=2152su r12 @[1408,1414)
-  glue word w=257su x=1 cap=257su kern="1 a" src r13 @[1415,1415)
+  glue word w=257su x=1 st=257su kern="1 a" src r13 @[1415,1415)
   box Alpha "and" w=1537su r13 @[1415,1418)
-  glue word w=257su x=1 cap=257su src r13 @[1418,1418)
-  box Ideo "式" w=1025su wt=0.6 cap=102su r14 @[1419,1424)
+  glue word w=257su x=1 st=257su src r13 @[1418,1418)
+  box Ideo "式" w=1025su wt=0.6 r14 @[1419,1424)
   pen 0 r14
-  glue word w=257su x=1 cap=257su src r15 @[1419,1424)
+  glue word w=257su x=1 st=257su src r15 @[1419,1424)
   box OpenN "(A.1)" w=2561su r15 @[1419,1424)
   box Infix "." w=513su r16 @[1424,1425)
   run r0 plain

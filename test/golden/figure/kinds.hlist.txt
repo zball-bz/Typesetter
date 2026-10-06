@@ -1,85 +1,91 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Fig" w=1537su r0 @[0,3)
   disc pen=0.7 w=0su pre="-" 513su kern="gu" r0 @[3,3)
   box Alpha "ures" w=2049su r0 @[3,7)
-  glue word w=257su x=1 cap=257su kern="s o" src r0 @[7,8)
+  glue word w=257su x=1 st=257su kern="s o" src r0 @[7,8)
   box Alpha "of" w=1025su r0 @[8,10)
-  glue word w=257su x=1 cap=257su kern="f t" src r0 @[10,11)
+  glue word w=257su x=1 st=257su kern="f t" src r0 @[10,11)
   box Alpha "ta" w=1025su r0 @[11,13)
   disc pen=0.7 w=0su pre="-" 513su kern="ab" r0 @[13,13)
   box Alpha "bles," w=2561su r0 @[13,18)
-  glue word w=257su x=1 cap=257su kern=", t" src r0 @[18,19)
+  glue word w=257su x=1 st=257su kern=", t" src r0 @[18,19)
   box Alpha "ta" w=1025su r0 @[19,21)
   disc pen=0.7 w=0su pre="-" 513su kern="ab" r0 @[21,21)
   box Alpha "bles" w=2049su r0 @[21,25)
-  glue word w=257su x=1 cap=257su kern="s i" src r0 @[25,26)
+  glue word w=257su x=1 st=257su kern="s i" src r0 @[25,26)
   box Alpha "in" w=1025su r0 @[26,28)
-  glue word w=257su x=1 cap=257su kern="n f" src r0 @[28,29)
+  glue word w=257su x=1 st=257su kern="n f" src r0 @[28,29)
   box Alpha "fig" w=1537su r0 @[29,32)
   disc pen=0.7 w=0su pre="-" 513su kern="gu" r0 @[32,32)
   box Alpha "ures" w=2049su r0 @[32,36)
-  glue word w=257su x=1 cap=257su kern="s a" src r0 @[36,37)
+  glue word w=257su x=1 st=257su kern="s a" src r0 @[36,37)
   box Alpha "and" w=1537su r0 @[37,40)
-  glue word w=257su x=1 cap=257su kern="d s" src r0 @[40,41)
+  glue word w=257su x=1 st=257su kern="d s" src r0 @[40,41)
   box Alpha "sub" w=1537su r0 @[41,44)
   disc pen=0.7 w=0su pre="-" 513su kern="bf" r0 @[44,44)
   box Alpha "fig" w=1537su r0 @[44,47)
   disc pen=0.7 w=0su pre="-" 513su kern="gu" r0 @[47,47)
   box Alpha "ures" w=2049su r0 @[47,51)
-  glue word w=257su x=1 cap=257su kern="s (" src r0 @[51,52)
+  glue word w=257su x=1 st=257su kern="s (" src r0 @[51,52)
   box OpenN "(plan" w=2561su r0 @[52,57)
-  glue word w=257su x=1 cap=257su kern="n P" src r0 @[57,58)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[57,58)
   box Alpha "P3-03)." w=3585su r0 @[58,65)
   run r0 plain
 top pid=1 units=5
  unit text indent=0su anchor="tab-in"
+  ju=257su
   box Alpha "Name" w=2049su r0 @[128,132)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "Qty" w=1537su r0 @[135,138)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "Al" w=1025su r0 @[139,141)
   disc pen=0.7 w=0su pre="-" 513su kern="lp" r0 @[141,141)
   box Alpha "pha" w=1537su r0 @[141,144)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Digit "2" w=513su r0 @[147,148)
   run r0 plain
  unit text indent=0su single-center
-  box Ideo "表" w=1025su wt=0.6 cap=102su r0 @[157,209)
+  ju=257su
+  box Ideo "表" w=1025su wt=0.6 r0 @[157,209)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[157,209)
+  glue word w=257su x=1 st=257su src r1 @[157,209)
   box Digit "1" w=513su r1 @[157,209)
   box ColonW "：" w=513su blank=R r2 @[157,209)
-  glue blank w=512su x=0 cap=0su r2 @[157,209)
+  glue blank w=512su x=0 r2 @[157,209)
   box Alpha "A" w=513su r3 @[157,158)
-  glue word w=257su x=1 cap=257su kern="A f" src r3 @[158,159)
+  glue word w=257su x=1 st=257su kern="A f" src r3 @[158,159)
   box Alpha "fig" w=1537su r3 @[159,162)
   disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[162,162)
   box Alpha "ure" w=1537su r3 @[162,165)
-  glue word w=257su x=1 cap=257su kern="e w" src r3 @[165,166)
+  glue word w=257su x=1 st=257su kern="e w" src r3 @[165,166)
   box Alpha "whose" w=2561su r3 @[166,171)
-  glue word w=257su x=1 cap=257su kern="e b" src r3 @[171,172)
+  glue word w=257su x=1 st=257su kern="e b" src r3 @[171,172)
   box Alpha "body" w=2049su r3 @[172,176)
-  glue word w=257su x=1 cap=257su kern="y i" src r3 @[176,177)
+  glue word w=257su x=1 st=257su kern="y i" src r3 @[176,177)
   box Alpha "is" w=1025su r3 @[177,179)
-  glue word w=257su x=1 cap=257su kern="s o" src r3 @[179,180)
+  glue word w=257su x=1 st=257su kern="s o" src r3 @[179,180)
   box Alpha "one" w=1537su r3 @[180,183)
-  glue word w=257su x=1 cap=257su kern="e t" src r3 @[183,184)
+  glue word w=257su x=1 st=257su kern="e t" src r3 @[183,184)
   box Alpha "ta" w=1025su r3 @[184,186)
   disc pen=0.7 w=0su pre="-" 513su kern="ab" r3 @[186,186)
   box Alpha "ble" w=1537su r3 @[186,189)
-  glue word w=257su x=1 cap=257su kern="e n" src r3 @[189,190)
+  glue word w=257su x=1 st=257su kern="e n" src r3 @[189,190)
   box Alpha "num" w=1537su r3 @[190,193)
   disc pen=0.7 w=0su pre="-" 513su kern="mb" r3 @[193,193)
   box Alpha "bers" w=2049su r3 @[193,197)
-  glue word w=257su x=1 cap=257su kern="s a" src r3 @[197,198)
+  glue word w=257su x=1 st=257su kern="s a" src r3 @[197,198)
   box Alpha "as" w=1025su r3 @[198,200)
-  glue word w=257su x=1 cap=257su kern="s a" src r3 @[200,201)
+  glue word w=257su x=1 st=257su kern="s a" src r3 @[200,201)
   box Alpha "a" w=513su r3 @[201,202)
-  glue word w=257su x=1 cap=257su kern="a t" src r3 @[202,203)
+  glue word w=257su x=1 st=257su kern="a t" src r3 @[202,203)
   box Alpha "ta" w=1025su r3 @[203,205)
   disc pen=0.7 w=0su pre="-" 513su kern="ab" r3 @[205,205)
   box Alpha "ble." w=2049su r3 @[205,209)
@@ -89,44 +95,49 @@ top pid=1 units=5
   run r3 plain
 top pid=2 units=5
  unit text indent=0su anchor="fig-kept"
+  ju=257su
   box Alpha "Name" w=2049su r0 @[281,285)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "Qty" w=1537su r0 @[288,291)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Alpha "Beta" w=2049su r0 @[292,296)
   run r0 plain
  unit text indent=0su
+  ju=257su
   box Digit "3" w=513su r0 @[299,300)
   run r0 plain
  unit text indent=0su single-center
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[309,354)
+  ju=257su
+  box Ideo "图" w=1025su wt=0.6 r0 @[309,354)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[309,354)
+  glue word w=257su x=1 st=257su src r1 @[309,354)
   box Digit "1" w=513su r1 @[309,354)
   box ColonW "：" w=513su blank=R r2 @[309,354)
-  glue blank w=512su x=0 cap=0su r2 @[309,354)
+  glue blank w=512su x=0 r2 @[309,354)
   box Alpha "Its" w=1537su r3 @[309,312)
-  glue word w=257su x=1 cap=257su kern="s k" src r3 @[312,313)
+  glue word w=257su x=1 st=257su kern="s k" src r3 @[312,313)
   box Alpha "kind" w=2049su r3 @[313,317)
-  glue word w=257su x=1 cap=257su kern="d s" src r3 @[317,318)
+  glue word w=257su x=1 st=257su kern="d s" src r3 @[317,318)
   box Alpha "says" w=2049su r3 @[318,322)
-  glue word w=257su x=1 cap=257su kern="s f" src r3 @[322,323)
+  glue word w=257su x=1 st=257su kern="s f" src r3 @[322,323)
   box Alpha "fig" w=1537su r3 @[323,326)
   disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[326,326)
   box Alpha "ure:" w=2049su r3 @[326,330)
-  glue word w=257su x=1 cap=257su kern=": i" src r3 @[330,331)
+  glue word w=257su x=1 st=257su kern=": i" src r3 @[330,331)
   box Alpha "it" w=1025su r3 @[331,333)
-  glue word w=257su x=1 cap=257su kern="t n" src r3 @[333,334)
+  glue word w=257su x=1 st=257su kern="t n" src r3 @[333,334)
   box Alpha "num" w=1537su r3 @[334,337)
   disc pen=0.7 w=0su pre="-" 513su kern="mb" r3 @[337,337)
   box Alpha "bers" w=2049su r3 @[337,341)
-  glue word w=257su x=1 cap=257su kern="s a" src r3 @[341,342)
+  glue word w=257su x=1 st=257su kern="s a" src r3 @[341,342)
   box Alpha "as" w=1025su r3 @[342,344)
-  glue word w=257su x=1 cap=257su kern="s a" src r3 @[344,345)
+  glue word w=257su x=1 st=257su kern="s a" src r3 @[344,345)
   box Alpha "a" w=513su r3 @[345,346)
-  glue word w=257su x=1 cap=257su kern="a f" src r3 @[346,347)
+  glue word w=257su x=1 st=257su kern="a f" src r3 @[346,347)
   box Alpha "fig" w=1537su r3 @[347,350)
   disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[350,350)
   box Alpha "ure." w=2049su r3 @[350,354)
@@ -137,41 +148,44 @@ top pid=2 units=5
 top pid=3 units=5
  unit img indent=0su anchor="fig-a" intrinsic=100x50px
  unit text indent=0su single-center
+  ju=257su
   box Digit "2(a)" w=2049su r0 @[447,461)
-  glue word w=257su x=1 cap=257su src r0 @[447,461)
+  glue word w=257su x=1 st=257su src r0 @[447,461)
   box Alpha "The" w=1537su r1 @[447,450)
-  glue word w=257su x=1 cap=257su kern="e l" src r1 @[450,451)
+  glue word w=257su x=1 st=257su kern="e l" src r1 @[450,451)
   box Alpha "left" w=2049su r1 @[451,455)
-  glue word w=257su x=1 cap=257su kern="t v" src r1 @[455,456)
+  glue word w=257su x=1 st=257su kern="t v" src r1 @[455,456)
   box Alpha "view." w=2561su r1 @[456,461)
   run r0 plain BOLD
   run r1 plain
  unit img indent=0su anchor="fig-b" intrinsic=100x50px
  unit text indent=0su single-center
+  ju=257su
   box Digit "2(b)" w=2049su r0 @[525,540)
-  glue word w=257su x=1 cap=257su src r0 @[525,540)
+  glue word w=257su x=1 st=257su src r0 @[525,540)
   box Alpha "The" w=1537su r1 @[525,528)
-  glue word w=257su x=1 cap=257su kern="e r" src r1 @[528,529)
+  glue word w=257su x=1 st=257su kern="e r" src r1 @[528,529)
   box Alpha "right" w=2561su r1 @[529,534)
-  glue word w=257su x=1 cap=257su kern="t v" src r1 @[534,535)
+  glue word w=257su x=1 st=257su kern="t v" src r1 @[534,535)
   box Alpha "view." w=2561su r1 @[535,540)
   run r0 plain BOLD
   run r1 plain
  unit text indent=0su single-center
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[550,573)
+  ju=257su
+  box Ideo "图" w=1025su wt=0.6 r0 @[550,573)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[550,573)
+  glue word w=257su x=1 st=257su src r1 @[550,573)
   box Digit "2" w=513su r1 @[550,573)
   box ColonW "：" w=513su blank=R r2 @[550,573)
-  glue blank w=512su x=0 cap=0su r2 @[550,573)
+  glue blank w=512su x=0 r2 @[550,573)
   box Alpha "Two" w=1537su r3 @[550,553)
-  glue word w=257su x=1 cap=257su kern="o v" src r3 @[553,554)
+  glue word w=257su x=1 st=257su kern="o v" src r3 @[553,554)
   box Alpha "views" w=2561su r3 @[554,559)
-  glue word w=257su x=1 cap=257su kern="s o" src r3 @[559,560)
+  glue word w=257su x=1 st=257su kern="s o" src r3 @[559,560)
   box Alpha "of" w=1025su r3 @[560,562)
-  glue word w=257su x=1 cap=257su kern="f o" src r3 @[562,563)
+  glue word w=257su x=1 st=257su kern="f o" src r3 @[562,563)
   box Alpha "one" w=1537su r3 @[563,566)
-  glue word w=257su x=1 cap=257su kern="e t" src r3 @[566,567)
+  glue word w=257su x=1 st=257su kern="e t" src r3 @[566,567)
   box Alpha "thing." w=3073su r3 @[567,573)
   run r0 letter-spaced BOLD CJK
   run r1 plain BOLD
@@ -179,49 +193,50 @@ top pid=3 units=5
   run r3 plain
 top pid=4 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "See" w=1537su r0 @[584,587)
-  glue word w=257su x=1 cap=257su src r0 @[587,587)
-  box Ideo "表" w=1025su wt=0.6 cap=102su r1 @[588,596)
+  glue word w=257su x=1 st=257su src r0 @[587,587)
+  box Ideo "表" w=1025su wt=0.6 r1 @[588,596)
   pen 0 r1
-  glue word w=257su x=1 cap=257su src r2 @[588,596)
+  glue word w=257su x=1 st=257su src r2 @[588,596)
   box Digit "1" w=513su r2 @[588,596)
-  glue word w=257su x=1 cap=257su kern="1 (" src r3 @[597,597)
+  glue word w=257su x=1 st=257su kern="1 (" src r3 @[597,597)
   box OpenN "(and" w=2049su r3 @[597,601)
-  glue word w=257su x=1 cap=257su src r3 @[601,601)
-  box Ideo "表" w=1025su wt=0.6 cap=102su r4 @[602,609)
+  glue word w=257su x=1 st=257su src r3 @[601,601)
+  box Ideo "表" w=1025su wt=0.6 r4 @[602,609)
   pen 0 r4
-  glue word w=257su x=1 cap=257su src r5 @[602,609)
+  glue word w=257su x=1 st=257su src r5 @[602,609)
   box Digit "1" w=513su r5 @[602,609)
   box Infix "," w=513su r6 @[609,610)
-  glue word w=257su x=1 cap=257su kern=", i" src r6 @[610,611)
+  glue word w=257su x=1 st=257su kern=", i" src r6 @[610,611)
   box Alpha "its" w=1537su r6 @[611,614)
-  glue word w=257su x=1 cap=257su kern="s t" src r6 @[614,615)
+  glue word w=257su x=1 st=257su kern="s t" src r6 @[614,615)
   box Alpha "ta" w=1025su r6 @[615,617)
   disc pen=0.7 w=0su pre="-" 513su kern="ab" r6 @[617,617)
   box Alpha "ble)," w=2561su r6 @[617,622)
-  glue word w=257su x=1 cap=257su src r6 @[622,622)
-  box Ideo "图" w=1025su wt=0.6 cap=102su r7 @[623,632)
+  glue word w=257su x=1 st=257su src r6 @[622,622)
+  box Ideo "图" w=1025su wt=0.6 r7 @[623,632)
   pen 0 r7
-  glue word w=257su x=1 cap=257su src r8 @[623,632)
+  glue word w=257su x=1 st=257su src r8 @[623,632)
   box Digit "1" w=513su r8 @[623,632)
   box Infix "," w=513su r9 @[632,633)
-  glue word w=257su x=1 cap=257su src r9 @[633,633)
-  box Ideo "图" w=1025su wt=0.6 cap=102su r10 @[634,643)
+  glue word w=257su x=1 st=257su src r9 @[633,633)
+  box Ideo "图" w=1025su wt=0.6 r10 @[634,643)
   pen 0 r10
-  glue word w=257su x=1 cap=257su src r11 @[634,643)
+  glue word w=257su x=1 st=257su src r11 @[634,643)
   box Digit "2" w=513su r11 @[634,643)
   box Infix "," w=513su r12 @[643,644)
-  glue word w=257su x=1 cap=257su src r12 @[644,644)
-  box Ideo "图" w=1025su wt=0.6 cap=102su r13 @[645,651)
+  glue word w=257su x=1 st=257su src r12 @[644,644)
+  box Ideo "图" w=1025su wt=0.6 r13 @[645,651)
   pen 0 r13
-  glue word w=257su x=1 cap=257su src r14 @[645,651)
+  glue word w=257su x=1 st=257su src r14 @[645,651)
   box Digit "2(a)" w=2049su r14 @[645,651)
-  glue word w=257su x=1 cap=257su kern=") a" src r15 @[652,652)
+  glue word w=257su x=1 st=257su kern=") a" src r15 @[652,652)
   box Alpha "and" w=1537su r15 @[652,655)
-  glue word w=257su x=1 cap=257su src r15 @[655,655)
-  box Ideo "图" w=1025su wt=0.6 cap=102su r16 @[656,662)
+  glue word w=257su x=1 st=257su src r15 @[655,655)
+  box Ideo "图" w=1025su wt=0.6 r16 @[656,662)
   pen 0 r16
-  glue word w=257su x=1 cap=257su src r17 @[656,662)
+  glue word w=257su x=1 st=257su src r17 @[656,662)
   box Digit "2(b)" w=2049su r17 @[656,662)
   box Infix "." w=513su r18 @[662,663)
   run r0 plain

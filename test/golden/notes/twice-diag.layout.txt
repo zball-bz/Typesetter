@@ -1,7 +1,7 @@
 doc h=9011su
 para pid=0 y=0su w=19200su h=1536su
-  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,11) @[0,51)
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last items=[0,11) @[0,51)
 para pid=1 y=2765su w=19200su h=6246su
   L0 rule y=768su left=0su w=19200su
-  L1 y=2765su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,9) @[9,27)
-  L2 y=4710su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,7) @[38,51)
+  L1 y=2765su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,9) @[9,27)
+  L2 y=4710su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,7) @[38,51)

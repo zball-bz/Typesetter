@@ -1,35 +1,37 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[23,24)
-  glue word w=257su x=1 cap=257su kern="A m" src r0 @[24,25)
+  glue word w=257su x=1 st=257su kern="A m" src r0 @[24,25)
   box Alpha "mod" w=1537su r0 @[25,28)
   disc pen=0.7 w=0su pre="-" 513su kern="du" r0 @[28,28)
   box Alpha "ule" w=1537su r0 @[28,31)
-  glue word w=257su x=1 cap=257su kern="e b" src r0 @[31,32)
+  glue word w=257su x=1 st=257su kern="e b" src r0 @[31,32)
   box Alpha "brings" w=3073su r0 @[32,38)
-  glue word w=257su x=1 cap=257su kern="s a" src r0 @[38,39)
+  glue word w=257su x=1 st=257su kern="s a" src r0 @[38,39)
   box Alpha "a" w=513su r0 @[39,40)
-  glue word w=257su x=1 cap=257su kern="a f" src r0 @[40,41)
+  glue word w=257su x=1 st=257su kern="a f" src r0 @[40,41)
   box Alpha "fence" w=2561su r0 @[41,46)
-  glue word w=257su x=1 cap=257su kern="e a" src r0 @[46,47)
+  glue word w=257su x=1 st=257su kern="e a" src r0 @[46,47)
   box Alpha "and" w=1537su r0 @[47,50)
-  glue word w=257su x=1 cap=257su kern="d a" src r0 @[50,51)
+  glue word w=257su x=1 st=257su kern="d a" src r0 @[50,51)
   box Alpha "a" w=513su r0 @[51,52)
-  glue word w=257su x=1 cap=257su kern="a m" src r0 @[52,53)
+  glue word w=257su x=1 st=257su kern="a m" src r0 @[52,53)
   box Alpha "math" w=2049su r0 @[53,57)
-  glue word w=257su x=1 cap=257su kern="h f" src r0 @[57,58)
+  glue word w=257su x=1 st=257su kern="h f" src r0 @[57,58)
   box Alpha "func" w=2049su r0 @[58,62)
   disc pen=0.7 w=0su pre="-" 513su kern="ct" r0 @[62,62)
   box Alpha "tion" w=2049su r0 @[62,66)
-  glue word w=257su x=1 cap=257su kern="n (" src r0 @[66,67)
+  glue word w=257su x=1 st=257su kern="n (" src r0 @[66,67)
   box OpenN "(plan" w=2561su r0 @[67,72)
-  glue word w=257su x=1 cap=257su kern="n P" src r0 @[72,73)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[72,73)
   box Alpha "P3-31):" w=3585su r0 @[73,80)
   run r0 plain
 top pid=1 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "LOUD" w=2049su r0 @[82,104)
-  glue word w=257su x=1 cap=257su kern="D T" src r0 @[82,104)
+  glue word w=257su x=1 st=257su kern="D T" src r0 @[82,104)
   box Alpha "TEXT" w=2049su r0 @[82,104)
   run r0 plain BOLD
 top pid=2 units=1

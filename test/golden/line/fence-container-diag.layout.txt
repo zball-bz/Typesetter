@@ -1,13 +1,13 @@
 doc h=17920su
 para pid=0 y=0su w=19200su h=8089su
-  L0 y=0su left=1536su w=17664su dw=73su dc=0su join=space marker blocks=[0,17) @[2,39)
-  L1 y=1536su left=1536su w=17664su dw=0su dc=0su join=para blocks=[18,23) @[40,49)
+  L0 y=0su left=1536su w=17664su dw=73su dc=0su join=space marker items=[0,17) @[2,39)
+  L1 y=1536su left=1536su w=17664su dw=0su dc=0su join=para items=[18,23) @[40,49)
   L2 code y=3481su left=1536su line=0 [0,8)
   L3 code y=5017su left=1536su line=1 [0,6)
   L4 code y=6553su left=1536su line=2 [0,1)
 para pid=1 y=9318su w=19200su h=4301su
-  L0 y=0su left=1024su w=18176su dw=0su dc=0su join=para blocks=[0,9) @[92,112)
+  L0 y=0su left=1024su w=18176su dw=0su dc=0su join=para items=[0,9) @[92,112)
   L1 code y=2765su left=1024su line=0 [0,13)
 para pid=2 y=14848su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=366su dc=0su join=space blocks=[0,15) @[137,173)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[16,17) @[174,180)
+  L0 y=0su left=0su w=19200su dw=366su dc=0su join=space items=[0,15) @[137,173)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last items=[16,17) @[174,180)

@@ -1,44 +1,48 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Be" w=1025su r0 @[0,2)
   disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[2,2)
   box Alpha "fore" w=2049su r0 @[2,6)
-  glue word w=257su x=1 cap=257su src r0 @[6,6)
+  glue word w=257su x=1 st=257su src r0 @[6,6)
   box Alpha "bold" w=2049su r1 @[8,12)
-  glue word w=257su x=1 cap=257su kern="d x" src r1 @[12,13)
+  glue word w=257su x=1 st=257su kern="d x" src r1 @[12,13)
   box Alpha "x" w=513su r1 @[13,14)
   run r0 plain
   run r1 plain BOLD
 top pid=1 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Be" w=1025su r0 @[17,19)
   disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[19,19)
   box Alpha "fore" w=2049su r0 @[19,23)
-  glue word w=257su x=1 cap=257su src r0 @[23,23)
+  glue word w=257su x=1 st=257su src r0 @[23,23)
   box Alpha "bold" w=2049su r1 @[32,36)
-  glue word w=257su x=1 cap=257su kern="d x" src r1 @[36,37)
+  glue word w=257su x=1 st=257su kern="d x" src r1 @[36,37)
   box Alpha "x" w=513su r1 @[37,38)
   run r0 plain
   run r1 plain BOLD
 top pid=2 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Af" w=1025su r0 @[128,130)
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[130,130)
   box Alpha "ter" w=1537su r0 @[130,133)
-  glue word w=257su x=1 cap=257su src r0 @[133,133)
+  glue word w=257su x=1 st=257su src r0 @[133,133)
   box Alpha "bold" w=2049su r1 @[135,139)
-  glue word w=257su x=1 cap=257su kern="d x" src r1 @[139,140)
+  glue word w=257su x=1 st=257su kern="d x" src r1 @[139,140)
   box Alpha "x" w=513su r1 @[140,141)
   run r0 plain
   run r1 plain BOLD
 top pid=3 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Af" w=1025su r0 @[144,146)
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[146,146)
   box Alpha "ter" w=1537su r0 @[146,149)
-  glue word w=257su x=1 cap=257su src r0 @[149,149)
+  glue word w=257su x=1 st=257su src r0 @[149,149)
   box Alpha "bold" w=2049su r1 @[158,162)
-  glue word w=257su x=1 cap=257su kern="d x" src r1 @[162,163)
+  glue word w=257su x=1 st=257su kern="d x" src r1 @[162,163)
   box Alpha "x" w=513su r1 @[163,164)
   run r0 plain
   run r1 plain BOLD

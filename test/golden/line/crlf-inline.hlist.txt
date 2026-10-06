@@ -1,29 +1,30 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[0,1)
-  glue word w=257su x=1 cap=257su src r0 @[1,1)
+  glue word w=257su x=1 st=257su src r0 @[1,1)
   box Alpha "con" w=1537su r1 @[10,13)
   disc pen=0.7 w=0su pre="-" 513su kern="nt" r1 @[13,13)
   box Alpha "tent" w=2049su r1 @[13,17)
-  glue word w=257su x=1 cap=257su kern="t o" src r1 @[17,18)
+  glue word w=257su x=1 st=257su kern="t o" src r1 @[17,18)
   box Alpha "over" w=2049su r1 @[19,23)
-  glue word w=257su x=1 cap=257su kern="r a" src r1 @[23,24)
+  glue word w=257su x=1 st=257su kern="r a" src r1 @[23,24)
   box Alpha "a" w=513su r1 @[24,25)
-  glue word w=257su x=1 cap=257su kern="a j" src r1 @[25,26)
+  glue word w=257su x=1 st=257su kern="a j" src r1 @[25,26)
   box Alpha "join" w=2049su r1 @[26,30)
-  glue word w=257su x=1 cap=257su src r2 @[32,32)
+  glue word w=257su x=1 st=257su src r2 @[32,32)
   box Alpha "and" w=1537su r2 @[32,35)
-  glue word w=257su x=1 cap=257su kern="d a" src r2 @[35,35)
+  glue word w=257su x=1 st=257su kern="d a" src r2 @[35,35)
   box Alpha "a" w=513su r3 @[37,38)
-  glue word w=257su x=1 cap=257su kern="a l" src r3 @[38,39)
+  glue word w=257su x=1 st=257su kern="a l" src r3 @[38,39)
   box Alpha "link" w=2049su r3 @[39,43)
-  glue word w=257su x=1 cap=257su kern="k t" src r3 @[43,44)
+  glue word w=257su x=1 st=257su kern="k t" src r3 @[43,44)
   box Alpha "text" w=2049su r3 @[45,49)
-  glue word w=257su x=1 cap=257su kern="t a" src r4 @[54,54)
+  glue word w=257su x=1 st=257su kern="t a" src r4 @[54,54)
   box Alpha "and" w=1537su r4 @[54,57)
-  glue word w=257su x=1 cap=257su src r4 @[57,57)
+  glue word w=257su x=1 st=257su src r4 @[57,57)
   box Alpha "code span" w=3701su r5 @[58,70)
-  glue word w=257su x=1 cap=257su src r6 @[71,71)
+  glue word w=257su x=1 st=257su src r6 @[71,71)
   box Alpha "end." w=2049su r6 @[71,75)
   run r0 plain
   run r1 plain BOLD
@@ -34,24 +35,25 @@ top pid=0 units=1
   run r6 plain
 top pid=1 units=1
  unit text indent=1024su
+  ju=257su
   box Alpha "quot" w=2049su r0 @[81,85)
   disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[85,85)
   box Alpha "ed" w=1025su r0 @[85,87)
-  glue word w=257su x=1 cap=257su src r0 @[87,87)
+  glue word w=257su x=1 st=257su src r0 @[87,87)
   box object o0 math part=0 asc=600su desc=76su "a +\nb" w=1625su r1 @[88,98)
   pen 0.95 r2
-  glue objspace w=228su x=0 cap=0su r2 @[88,98)
+  glue objspace w=228su x=0 r2 @[88,98)
   box object o0 math part=1 asc=700su desc=10su w=602su r3 @[88,98)
   pen 0 r3
-  glue word w=257su x=1 cap=257su src r4 @[99,99)
+  glue word w=257su x=1 st=257su src r4 @[99,99)
   box Alpha "math" w=2049su r4 @[99,103)
-  glue word w=257su x=1 cap=257su kern="h a" src r4 @[103,104)
+  glue word w=257su x=1 st=257su kern="h a" src r4 @[103,104)
   box Alpha "and" w=1537su r4 @[104,107)
-  glue word w=257su x=1 cap=257su src r4 @[107,107)
+  glue word w=257su x=1 st=257su src r4 @[107,107)
   box Alpha "x" w=513su r5 @[112,113)
-  glue word w=257su x=1 cap=257su kern="x y" src r5 @[113,114)
+  glue word w=257su x=1 st=257su kern="x y" src r5 @[113,114)
   box Alpha "y" w=513su r5 @[117,118)
-  glue word w=257su x=1 cap=257su src r6 @[120,120)
+  glue word w=257su x=1 st=257su src r6 @[120,120)
   box Alpha "done." w=2561su r6 @[120,125)
   obj o0 math parts=2 edges=Alpha/Alpha src="a +\nb" [w=1625su asc=600su desc=76su] [w=602su asc=700su desc=10su glue=228su]
   run r0 plain
@@ -63,18 +65,19 @@ top pid=1 units=1
   run r6 plain
 top pid=2 units=1
  unit text indent=1536su marker="•"
+  ju=257su
   box Alpha "item" w=2049su r0 @[131,135)
-  glue word w=257su x=1 cap=257su src r0 @[135,135)
+  glue word w=257su x=1 st=257su src r0 @[135,135)
   box object o0 math part=0 asc=600su desc=76su "c +\nd" w=1499su r1 @[136,146)
   pen 0.95 r2
-  glue objspace w=228su x=0 cap=0su r2 @[136,146)
+  glue objspace w=228su x=0 r2 @[136,146)
   box object o0 math part=1 asc=700su desc=19su w=617su r3 @[136,146)
   pen 0 r3
-  glue word w=257su x=1 cap=257su src r4 @[147,147)
+  glue word w=257su x=1 st=257su src r4 @[147,147)
   box Alpha "and" w=1537su r4 @[147,150)
-  glue word w=257su x=1 cap=257su kern="d 3" src r4 @[150,150)
+  glue word w=257su x=1 st=257su kern="d 3" src r4 @[150,150)
   box Digit "3" w=513su r4 @[151,162)
-  glue word w=257su x=1 cap=257su kern="3 e" src r4 @[163,163)
+  glue word w=257su x=1 st=257su kern="3 e" src r4 @[163,163)
   box Alpha "end." w=2049su r4 @[163,167)
   obj o0 math parts=2 edges=Alpha/Alpha src="c +\nd" [w=1499su asc=600su desc=76su] [w=617su asc=700su desc=19su glue=228su]
   run r0 plain

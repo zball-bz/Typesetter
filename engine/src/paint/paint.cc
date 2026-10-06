@@ -179,7 +179,12 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
     if (indentBox || spacer) {
       DLRun d;
       d.k = DLRun::K::Spacer;
-      d.syn = indentBox ? "indent" : fill ? "fill" : displaced ? "blank" : "boundary";
+      // (its glue class: plan P4-08 — an object's glue is no CJK–Latin boundary)
+      d.syn = indentBox                         ? "indent"
+              : fill                            ? "fill"
+              : displaced                       ? "blank"
+              : it.cls == (u8)GC::ObjectSpace   ? "objspace"
+                                                : "boundary";
       d.widthPx = h.cold[it.cold].rawPx;
       if (fill) d.widthPx += l.fillPx;
       else if (spacer) d.widthPx += l.wordDeltaPx * (double)it.x;

@@ -1,31 +1,34 @@
 top pid=0 units=4
  unit text indent=1536su marker="•"
+  ju=257su
   box Alpha "An" w=1025su r0 @[2,4)
-  glue word w=257su x=1 cap=257su kern="n i" src r0 @[4,5)
+  glue word w=257su x=1 st=257su kern="n i" src r0 @[4,5)
   box Alpha "item" w=2049su r0 @[5,9)
-  glue word w=257su x=1 cap=257su kern="m w" src r0 @[9,10)
+  glue word w=257su x=1 st=257su kern="m w" src r0 @[9,10)
   box Alpha "with" w=2049su r0 @[10,14)
-  glue word w=257su x=1 cap=257su kern="h d" src r0 @[14,15)
+  glue word w=257su x=1 st=257su kern="h d" src r0 @[14,15)
   box Alpha "dis" w=1537su r0 @[15,18)
   disc pen=0.7 w=0su pre="-" 513su kern="sp" r0 @[18,18)
   box Alpha "play" w=2049su r0 @[18,22)
-  glue word w=257su x=1 cap=257su kern="y m" src r0 @[22,23)
+  glue word w=257su x=1 st=257su kern="y m" src r0 @[22,23)
   box Alpha "math:" w=2561su r0 @[23,28)
-  glue word w=257su x=1 cap=257su src r0 @[28,28)
+  glue word w=257su x=1 st=257su src r0 @[28,28)
   run r0 plain
  unit math indent=1536su w=6064su asc=700su desc=76su
  unit text indent=1536su
-  glue word w=257su x=1 cap=257su src r0 @[59,59)
+  ju=257su
+  glue word w=257su x=1 st=257su src r0 @[59,59)
   box Alpha "and" w=1537su r0 @[59,62)
-  glue word w=257su x=1 cap=257su kern="d t" src r0 @[62,63)
+  glue word w=257su x=1 st=257su kern="d t" src r0 @[62,63)
   box Alpha "text" w=2049su r0 @[63,67)
-  glue word w=257su x=1 cap=257su kern="t a" src r0 @[67,68)
+  glue word w=257su x=1 st=257su kern="t a" src r0 @[67,68)
   box Alpha "af" w=1025su r0 @[68,70)
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[70,70)
   box Alpha "ter." w=2049su r0 @[70,74)
   run r0 plain
  unit text indent=1536su marker="•"
+  ju=257su
   box Alpha "Next" w=2049su r0 @[77,81)
-  glue word w=257su x=1 cap=257su kern="t i" src r0 @[81,82)
+  glue word w=257su x=1 st=257su kern="t i" src r0 @[81,82)
   box Alpha "item." w=2561su r0 @[82,87)
   run r0 plain

@@ -1,19 +1,19 @@
 doc h=28056su
 para pid=0 y=0su w=19200su h=6144su
-  L0 y=0su left=0su w=19200su dw=-13su dc=0su join=space blocks=[0,21) @[0,54)
-  L1 y=1536su left=0su w=19200su dw=22su dc=0su join=space blocks=[22,44) @[55,107)
-  L2 y=3072su left=0su w=19200su dw=22su dc=0su join=space blocks=[45,65) @[108,171)
-  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[66,67) @[172,177)
+  L0 y=0su left=0su w=19200su dw=-13su dc=0su join=space items=[0,21) @[0,54)
+  L1 y=1536su left=0su w=19200su dw=22su dc=0su join=space items=[22,44) @[55,107)
+  L2 y=3072su left=0su w=19200su dw=22su dc=0su join=space items=[45,65) @[108,171)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last items=[66,67) @[172,177)
 para pid=1 y=7373su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=46su dc=27su join=none blocks=[0,21) @[179,251)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[21,35) @[251,302)
+  L0 y=0su left=0su w=19200su dw=46su dc=27su join=none items=[0,38) @[179,251)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last items=[39,63) @[251,302)
 para pid=2 y=11674su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=-88su dc=0su join=space blocks=[0,20) @[304,366)
-  L1 y=1536su left=0su w=19200su dw=-29su dc=0su join=last blocks=[21,41) @[367,447)
+  L0 y=0su left=0su w=19200su dw=-88su dc=0su join=space items=[0,20) @[304,366)
+  L1 y=1536su left=0su w=19200su dw=-29su dc=0su join=last items=[21,41) @[367,447)
 para pid=3 y=15975su w=19200su h=12081su
   L0 rule y=768su left=0su w=19200su
-  L1 y=2765su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,5) @[39,49)
-  L2 y=4710su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,7) @[98,107)
-  L3 y=6655su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,7) @[150,166)
-  L4 y=8600su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,8) @[199,215)
-  L5 y=10545su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,8) @[271,287)
+  L1 y=2765su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,5) @[39,49)
+  L2 y=4710su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,7) @[98,107)
+  L3 y=6655su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,7) @[150,166)
+  L4 y=8600su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,13) @[199,215)
+  L5 y=10545su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,13) @[271,287)

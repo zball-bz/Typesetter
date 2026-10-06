@@ -10,7 +10,7 @@
 <div class="tsr-line" id="tsr-h-1" data-s="0" data-e="21" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">This heading survives</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="173" style="position:relative;height:24px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="25" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">请注意</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r" data-s="9">*</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-cjk" data-s="10">以下事项</span><span class="tsr-r tsr-cjk" data-s="22" style="margin-right:-8px">：</span></div>
+<div class="tsr-line" data-s="0" data-e="25" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">请注意</span><span class="tsr-r" data-s="9">*</span><span class="tsr-r tsr-cjk" data-s="10">以下事项</span><span class="tsr-r tsr-cjk" data-s="22" style="margin-right:-8px">：</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="201" style="position:relative;height:54.391px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="16" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r tsr-cjk" data-s="0">第一项</span><span class="tsr-r tsr-b tsr-cjk" data-s="10">重要</span></div>

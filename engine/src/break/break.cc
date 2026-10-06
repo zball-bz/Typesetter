@@ -11,7 +11,7 @@
 namespace tsr {
 
 // Breaking semantics (plans P0-12, P1-14; design T6 S1/S2) over the TeX item
-// projection of the block stream (items.h):
+// projection of the HList (items.h, plan P4-08):
 // - legal breaks: a Glue after a Box/Disc, a non-Forbidden Penalty or Disc;
 //   a Forced penalty must break; the paragraph end is a Forced break;
 // - discard: a line ending at a Glue excludes it; after any break (and at
@@ -225,7 +225,7 @@ struct Search {
 
 }  // namespace
 
-BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, const ParShape& shape,
+BreakResult breakItems(const std::vector<BItem>& it, u32 nItems, const ParShape& shape,
                        const BreakParams& params) {
   BreakResult res;
   const u32 n = (u32)it.size();
@@ -259,7 +259,7 @@ BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, const ParShape
   }
   if (best == ~0u) {  // only an empty active list: nothing to break
     res.feasible = false;
-    res.breakpoints = {nBlocks};
+    res.breakpoints = {nItems};
     return res;
   }
 
@@ -272,16 +272,16 @@ BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, const ParShape
   }
   std::reverse(chosen.begin(), chosen.end());
   std::reverse(over.begin(), over.end());
-  // a break's index is the first block of the next line after discard, so
-  // breaks giving identical lines report the same (latest) position and the
-  // dump indices match layout's trimmed ranges
+  // a break's position is the first item of the next line after discard,
+  // so breaks giving identical lines report the same (latest) position and
+  // the dump indices match layout's trimmed ranges
   for (u32 bi : chosen) {
     const u32 nb = para.nextBox[(u32)bk[bi] + 1];
-    const u32 at = nb < n ? it[nb].block : nBlocks;
-    if (at < nBlocks && (res.breakpoints.empty() || at > res.breakpoints.back()))
+    const u32 at = nb < n ? it[nb].src : nItems;
+    if (at < nItems && (res.breakpoints.empty() || at > res.breakpoints.back()))
       res.breakpoints.push_back(at);
   }
-  res.breakpoints.push_back(nBlocks);
+  res.breakpoints.push_back(nItems);
   for (u32 l = 0; l < (u32)over.size(); l++)
     if (over[l]) res.overfullLines.push_back(l);
   res.feasible = res.overfullLines.empty();
@@ -289,25 +289,18 @@ BreakResult breakItems(const std::vector<BItem>& it, u32 nBlocks, const ParShape
   return res;
 }
 
-BreakResult breakLines(const std::vector<BreakBlock>& blocks, const ParShape& shape,
-                       const BreakParams& params) {
-  std::vector<BItem> items;
-  blocksToItems(blocks, items);
-  return breakItems(items, (u32)blocks.size(), shape, params);
-}
-
 // The process-wide KP memo (plans P0-11, P1-14; shared across documents —
 // the editing loop's fast path). The key is a 128-bit hash of exactly what
-// the DP reads — the items' bytes, the block count, the line widths and the
+// the DP reads — the items' bytes, the item count, the line widths and the
 // params — and a hit is validated by the item count, so a collision would
 // need both 64-bit halves to agree. Least-recently-used entries go once the
 // stored words exceed the budget.
 namespace {
 
-Key128 breakKey(const std::vector<BItem>& items, u32 nBlocks, const ParShape& shape, const BreakParams& params) {
+Key128 breakKey(const std::vector<BItem>& items, u32 nItems, const ParShape& shape, const BreakParams& params) {
   Hasher h;
   h.bytes(items.data(), items.size() * sizeof(BItem));  // no padding (items.h static_assert)
-  h.word(((u64)nBlocks << 32) | (u32)items.size());
+  h.word(((u64)nItems << 32) | (u32)items.size());
   // the widths (the offsets break nothing)
   h.word(((u64)(u32)shape.rest.width << 32) | (u32)shape.lines.size());
   for (const LineSlot& l : shape.lines) h.word((u32)l.width);
@@ -357,17 +350,16 @@ void BreakMemo::erase(std::unordered_map<u64, Entry>::iterator it) {
   map_.erase(it);
 }
 
-BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, const ParShape& shape, const BreakParams& params,
-                             BreakMemo* memo) {
+BreakResult breakLinesCached(const HList& h, const ParShape& shape, const BreakParams& params, BreakMemo* memo) {
   static std::vector<BItem> items;  // scratch: rebuilt per call
-  blocksToItems(blocks, items);
-  if (!memo) return breakItems(items, (u32)blocks.size(), shape, params);
+  hlistToItems(h, items);
+  const u32 nItems = (u32)h.items.size();
+  if (!memo) return breakItems(items, nItems, shape, params);
   // the complete input, serialized: the key bytes compared on a hit
   static std::string key;
   key.assign((const char*)items.data(), items.size() * sizeof(BItem));  // no padding (items.h static_assert)
   auto put = [&](const void* p, size_t n) { key.append((const char*)p, n); };
-  const u32 nBlocks = (u32)blocks.size();
-  put(&nBlocks, 4);
+  put(&nItems, 4);
   put(&shape.rest.width, sizeof shape.rest.width);
   const u32 nLines = (u32)shape.lines.size();
   put(&nLines, 4);
@@ -384,9 +376,9 @@ BreakResult breakLinesCached(const std::vector<BreakBlock>& blocks, const ParSha
   put(&params.cost.cap, sizeof params.cost.cap);
   put(&params.tolerance, sizeof params.tolerance);
   put(&params.emergencyStretch, sizeof params.emergencyStretch);
-  const Key128 k = breakKey(items, nBlocks, shape, params);
+  const Key128 k = breakKey(items, nItems, shape, params);
   if (const BreakResult* hit = memo->find(k.lo ^ k.hi, key)) return *hit;
-  BreakResult r = breakItems(items, nBlocks, shape, params);
+  BreakResult r = breakItems(items, nItems, shape, params);
   memo->put(k.lo ^ k.hi, key, r);
   return r;
 }

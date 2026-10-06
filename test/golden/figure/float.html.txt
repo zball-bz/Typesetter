@@ -35,8 +35,7 @@
 <div class="tsr-para" data-pid="6" data-s0="0" style="position:relative;height:72px;margin-bottom:19.203px">
 <div class="tsr-rule" style="top:60px;left:0px;width:300px"></div>
 </div>
-<div class="tsr-para" data-pid="7" data-s0="885" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="54" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.176px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:0.706px;margin-right:-0.706px">分隔线等非文本单元会先越过浮动框再排</span></div>
-<div class="tsr-line" data-s="54" data-e="60" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="54">布</span><span class="tsr-r tsr-cjk" data-s="57" style="margin-right:-8px">。</span></div>
+<div class="tsr-para" data-pid="7" data-s0="885" style="position:relative;height:24px">
+<div class="tsr-line" data-s="0" data-e="60" style="top:0px;left:0px;width:300px;word-spacing:-1.053px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:-0.632px">分隔线等非文本单元会先越过浮动框再排布</span><span class="tsr-r tsr-cjk" data-s="57" style="margin-right:-8px">。</span></div>
 </div>
 </div>

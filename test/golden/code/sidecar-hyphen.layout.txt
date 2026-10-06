@@ -1,12 +1,12 @@
 doc h=13517su
 para pid=0 y=0su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=-43su dc=0su join=space blocks=[0,21) @[0,41)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[22,37) @[42,74)
+  L0 y=0su left=0su w=19200su dw=-43su dc=0su join=space items=[0,21) @[0,41)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last items=[22,37) @[42,74)
 para pid=1 y=4301su w=19200su h=9216su
   L0 code y=0su left=0su line=0 [0,14)
-  L1 cell=1 y=0su left=11520su w=7680su blocks=[0,9)
-  L2 cell=1 y=1536su left=11520su w=7680su blocks=[10,18)
-  L3 cell=1 y=3072su left=11520su w=7680su blocks=[18,27)
-  L4 cell=1 y=4608su left=11520su w=7680su blocks=[28,34)
-  L5 cell=1 y=6144su left=11520su w=7680su blocks=[34,35)
+  L1 cell=1 y=0su left=11520su w=7680su items=[0,9)
+  L2 cell=1 y=1536su left=11520su w=7680su items=[10,18)
+  L3 cell=1 y=3072su left=11520su w=7680su items=[18,27)
+  L4 cell=1 y=4608su left=11520su w=7680su items=[28,34)
+  L5 cell=1 y=6144su left=11520su w=7680su items=[34,35)
   L6 code y=7680su left=0su line=1 [0,11)

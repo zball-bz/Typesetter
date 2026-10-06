@@ -1,21 +1,24 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Be" w=1025su r0 @[0,2)
   disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[2,2)
   box Alpha "fore." w=2561su r0 @[2,7)
   run r0 plain
 top pid=1 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "⚠" w=616su r0 @[9,37)
-  glue word w=257su x=1 cap=257su kern="⚠ E" src r0 @[9,37)
+  glue word w=257su x=1 st=257su kern="⚠ E" src r0 @[9,37)
   box Alpha "Er" w=1025su r0 @[9,37)
   disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[9,37)
   box Alpha "ror:" w=2049su r0 @[9,37)
-  glue word w=257su x=1 cap=257su kern=": b" src r0 @[9,37)
+  glue word w=257su x=1 st=257su kern=": b" src r0 @[9,37)
   box Alpha "boom" w=2049su r0 @[9,37)
   run r0 plain CODE
 top pid=2 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Af" w=1025su r0 @[39,41)
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[41,41)
   box Alpha "ter." w=2049su r0 @[41,45)

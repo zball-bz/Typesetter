@@ -1,27 +1,28 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Par" w=1537su r0 @[0,3)
   disc pen=0.7 w=0su pre="-" 513su kern="ri" r0 @[3,3)
   box Alpha "i" w=513su r0 @[3,4)
   disc pen=0.7 w=0su pre="-" 513su kern="it" r0 @[4,4)
   box Alpha "ty" w=1025su r0 @[4,6)
-  glue word w=257su x=1 cap=257su kern="y (" src r0 @[6,7)
+  glue word w=257su x=1 st=257su kern="y (" src r0 @[6,7)
   box OpenN "(plan" w=2561su r0 @[7,12)
-  glue word w=257su x=1 cap=257su kern="n P" src r0 @[12,13)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[12,13)
   box Alpha "P2-07):" w=3585su r0 @[13,20)
-  glue word w=257su x=1 cap=257su kern=": s" src r0 @[20,21)
+  glue word w=257su x=1 st=257su kern=": s" src r0 @[20,21)
   box Alpha "see" w=1537su r0 @[21,24)
-  glue word w=257su x=1 cap=257su src r0 @[24,24)
-  box Ideo "图" w=1025su wt=0.6 cap=102su r1 @[25,28)
+  glue word w=257su x=1 st=257su src r0 @[24,24)
+  box Ideo "图" w=1025su wt=0.6 r1 @[25,28)
   pen 0 r1
-  glue word w=257su x=1 cap=257su src r2 @[25,28)
+  glue word w=257su x=1 st=257su src r2 @[25,28)
   box Digit "1" w=513su r2 @[25,28)
-  glue word w=257su x=1 cap=257su kern="1 a" src r3 @[29,29)
+  glue word w=257su x=1 st=257su kern="1 a" src r3 @[29,29)
   box Alpha "and" w=1537su r3 @[29,32)
-  glue word w=257su x=1 cap=257su src r3 @[32,32)
-  box Ideo "图" w=1025su wt=0.6 cap=102su r4 @[33,36)
+  glue word w=257su x=1 st=257su src r3 @[32,32)
+  box Ideo "图" w=1025su wt=0.6 r4 @[33,36)
   pen 0 r4
-  glue word w=257su x=1 cap=257su src r5 @[33,36)
+  glue word w=257su x=1 st=257su src r5 @[33,36)
   box Digit "2" w=513su r5 @[33,36)
   box Infix "." w=513su r6 @[36,37)
   run r0 plain
@@ -33,22 +34,23 @@ top pid=0 units=1
   run r6 plain
 top pid=1 units=1
  unit text indent=0su anchor="f1" single-center
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[61,83)
+  ju=257su
+  box Ideo "图" w=1025su wt=0.6 r0 @[61,83)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[61,83)
+  glue word w=257su x=1 st=257su src r1 @[61,83)
   box Digit "1" w=513su r1 @[61,83)
   box ColonW "：" w=513su blank=R r2 @[61,83)
-  glue blank w=512su x=0 cap=0su r2 @[61,83)
+  glue blank w=512su x=0 r2 @[61,83)
   box Alpha "A" w=513su r3 @[61,62)
-  glue word w=257su x=1 cap=257su kern="A b" src r3 @[62,63)
+  glue word w=257su x=1 st=257su kern="A b" src r3 @[62,63)
   box Alpha "built-" w=3073su r3 @[63,69)
   disc pen=0.7 w=0su pre=none kern="-i" r3 @[69,69)
   box Alpha "in" w=1025su r3 @[69,71)
-  glue word w=257su x=1 cap=257su kern="n f" src r3 @[71,72)
+  glue word w=257su x=1 st=257su kern="n f" src r3 @[71,72)
   box Alpha "fig" w=1537su r3 @[72,75)
   disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[75,75)
   box Alpha "ure" w=1537su r3 @[75,78)
-  glue word w=257su x=1 cap=257su kern="e r" src r3 @[78,79)
+  glue word w=257su x=1 st=257su kern="e r" src r3 @[78,79)
   box Alpha "row." w=2049su r3 @[79,83)
   run r0 letter-spaced BOLD CJK
   run r1 plain BOLD
@@ -56,18 +58,19 @@ top pid=1 units=1
   run r3 plain
 top pid=2 units=1
  unit text indent=0su anchor="f2" single-center
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[116,136)
+  ju=257su
+  box Ideo "图" w=1025su wt=0.6 r0 @[116,136)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[116,136)
+  glue word w=257su x=1 st=257su src r1 @[116,136)
   box Digit "2" w=513su r1 @[116,136)
   box ColonW "：" w=513su blank=R r2 @[116,136)
-  glue blank w=512su x=0 cap=0su r2 @[116,136)
+  glue blank w=512su x=0 r2 @[116,136)
   box Alpha "Its" w=1537su r3 @[116,119)
-  glue word w=257su x=1 cap=257su kern="s s" src r3 @[119,120)
+  glue word w=257su x=1 st=257su kern="s s" src r3 @[119,120)
   box Alpha "sec" w=1537su r3 @[120,123)
   disc pen=0.7 w=0su pre="-" 513su kern="co" r3 @[123,123)
   box Alpha "ond" w=1537su r3 @[123,126)
-  glue word w=257su x=1 cap=257su kern="d i" src r3 @[126,127)
+  glue word w=257su x=1 st=257su kern="d i" src r3 @[126,127)
   box Alpha "in" w=1025su r3 @[127,129)
   disc pen=0.7 w=0su pre="-" 513su kern="ns" r3 @[129,129)
   box Alpha "stance." w=3585su r3 @[129,136)

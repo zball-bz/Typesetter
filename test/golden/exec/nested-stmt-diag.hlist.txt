@@ -1,16 +1,19 @@
 top pid=0 units=2
  unit text indent=1536su marker="•"
+  ju=257su
   box Alpha "item" w=2049su r0 @[2,6)
-  glue word w=257su x=1 cap=257su kern="m o" src r0 @[6,7)
+  glue word w=257su x=1 st=257su kern="m o" src r0 @[6,7)
   box Alpha "one" w=1537su r0 @[7,10)
   run r0 plain
  unit text indent=1536su marker="•"
+  ju=257su
   box Alpha "item" w=2049su r0 @[26,30)
-  glue word w=257su x=1 cap=257su kern="m t" src r0 @[30,31)
+  glue word w=257su x=1 st=257su kern="m t" src r0 @[30,31)
   box Alpha "two" w=1537su r0 @[31,34)
   run r0 plain
 top pid=1 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Af" w=1025su r0 @[36,38)
   disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[38,38)
   box Alpha "ter." w=2049su r0 @[38,42)

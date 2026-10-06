@@ -1,19 +1,21 @@
 top pid=0 units=1
  unit text indent=0su anchor="h-1"
+  ju=411su
   box Alpha "One" w=2459su r0 @[314,317)
   run r0 plain BOLD x1.60
 top pid=1 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "First" w=2561su r0 @[319,324)
   box Alpha "①" w=432su anchor="fnref-1" r1 @[324,338)
-  glue word w=257su x=1 cap=257su src r2 @[339,339)
+  glue word w=257su x=1 st=257su src r2 @[339,339)
   box Alpha "and" w=1537su r2 @[339,342)
-  glue word w=257su x=1 cap=257su kern="d s" src r2 @[342,343)
+  glue word w=257su x=1 st=257su kern="d s" src r2 @[342,343)
   box Alpha "sec" w=1537su r2 @[343,346)
   disc pen=0.7 w=0su pre="-" 513su kern="co" r2 @[346,346)
   box Alpha "ond" w=1537su r2 @[346,349)
   box Alpha "②" w=432su anchor="fnref-2" r3 @[349,364)
-  glue word w=257su x=1 cap=257su src r4 @[365,365)
+  glue word w=257su x=1 st=257su src r4 @[365,365)
   box Alpha "notes." w=3073su r4 @[365,371)
   run r0 plain
   run r1 plain ref LINK x0.70 link="#tsr-fn-1" anchor="fnref-1"
@@ -22,27 +24,29 @@ top pid=1 units=1
   run r4 plain
 top pid=2 units=1
  unit text indent=0su anchor="h-1.1"
+  ju=347su
   box Alpha "A" w=693su r0 @[376,377)
-  glue word w=347su x=1 cap=347su kern="A s" src r0 @[377,378)
+  glue word w=347su x=1 st=347su kern="A s" src r0 @[377,378)
   box Alpha "subsection" w=6914su r0 @[378,388)
   run r0 plain BOLD x1.35
 top pid=3 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[390,391)
-  glue word w=257su x=1 cap=257su kern="A t" src r0 @[391,392)
+  glue word w=257su x=1 st=257su kern="A t" src r0 @[391,392)
   box Alpha "third" w=2561su r0 @[392,397)
   box Alpha "③" w=432su anchor="fnref-3" r1 @[397,411)
-  glue word w=257su x=1 cap=257su src r2 @[412,412)
+  glue word w=257su x=1 st=257su src r2 @[412,412)
   box Alpha "note," w=2561su r2 @[412,417)
-  glue word w=257su x=1 cap=257su kern=", s" src r2 @[417,418)
+  glue word w=257su x=1 st=257su kern=", s" src r2 @[417,418)
   box Alpha "still" w=2561su r2 @[418,423)
-  glue word w=257su x=1 cap=257su kern="l i" src r2 @[423,424)
+  glue word w=257su x=1 st=257su kern="l i" src r2 @[423,424)
   box Alpha "in" w=1025su r2 @[424,426)
-  glue word w=257su x=1 cap=257su kern="n c" src r2 @[426,427)
+  glue word w=257su x=1 st=257su kern="n c" src r2 @[426,427)
   box Alpha "chap" w=2049su r2 @[427,431)
   disc pen=0.7 w=0su pre="-" 513su kern="pt" r2 @[431,431)
   box Alpha "ter" w=1537su r2 @[431,434)
-  glue word w=257su x=1 cap=257su kern="r o" src r2 @[434,435)
+  glue word w=257su x=1 st=257su kern="r o" src r2 @[434,435)
   box Alpha "one." w=2049su r2 @[435,439)
   run r0 plain
   run r1 plain ref LINK x0.70 link="#tsr-fn-3" anchor="fnref-3"
@@ -50,48 +54,53 @@ top pid=3 units=1
 top pid=4 units=4
  unit rule indent=0su
  unit text indent=1536su anchor="fn-1" marker="①."
+  ju=257su
   box Alpha "One," w=1742su r0 @[326,330)
-  glue word w=219su x=1 cap=219su kern=", f" src r0 @[330,331)
+  glue word w=219su x=1 st=257su kern=", f" src r0 @[330,331)
   box Alpha "first." w=2613su r0 @[331,337)
-  glue word w=219su x=1 cap=219su kern=". ↩" src r0 @[324,338)
+  glue word w=219su x=1 st=257su kern=". ↩" src r0 @[324,338)
   box Alpha "↩" w=524su r1 @[324,338)
   run r0 plain x0.85
   run r1 plain ref LINK x0.85 link="#tsr-fnref-1"
  unit text indent=1536su anchor="fn-2" marker="②."
+  ju=257su
   box Alpha "One," w=1742su r0 @[351,355)
-  glue word w=219su x=1 cap=219su kern=", s" src r0 @[355,356)
+  glue word w=219su x=1 st=257su kern=", s" src r0 @[355,356)
   box Alpha "sec" w=1307su r0 @[356,359)
   disc pen=0.7 w=0su pre="-" 437su kern="co" r0 @[359,359)
   box Alpha "ond." w=1742su r0 @[359,363)
-  glue word w=219su x=1 cap=219su kern=". ↩" src r0 @[349,364)
+  glue word w=219su x=1 st=257su kern=". ↩" src r0 @[349,364)
   box Alpha "↩" w=524su r1 @[349,364)
   run r0 plain x0.85
   run r1 plain ref LINK x0.85 link="#tsr-fnref-2"
  unit text indent=1536su anchor="fn-3" marker="③."
+  ju=257su
   box Alpha "One," w=1742su r0 @[399,403)
-  glue word w=219su x=1 cap=219su kern=", t" src r0 @[403,404)
+  glue word w=219su x=1 st=257su kern=", t" src r0 @[403,404)
   box Alpha "third." w=2613su r0 @[404,410)
-  glue word w=219su x=1 cap=219su kern=". ↩" src r0 @[397,411)
+  glue word w=219su x=1 st=257su kern=". ↩" src r0 @[397,411)
   box Alpha "↩" w=524su r1 @[397,411)
   run r0 plain x0.85
   run r1 plain ref LINK x0.85 link="#tsr-fnref-3"
 top pid=5 units=1
  unit text indent=0su anchor="h-2"
+  ju=411su
   box Alpha "Two" w=2459su r0 @[443,446)
   run r0 plain BOLD x1.60
 top pid=6 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "Again" w=2561su r0 @[448,453)
   box Alpha "①" w=432su anchor="fnref-4" r1 @[453,467)
-  glue word w=257su x=1 cap=257su src r2 @[468,468)
+  glue word w=257su x=1 st=257su src r2 @[468,468)
   box Alpha "the" w=1537su r2 @[468,471)
-  glue word w=257su x=1 cap=257su kern="e f" src r2 @[471,472)
+  glue word w=257su x=1 st=257su kern="e f" src r2 @[471,472)
   box Alpha "first;" w=3073su r2 @[472,478)
-  glue word w=257su x=1 cap=257su kern="; ①" src r2 @[478,478)
+  glue word w=257su x=1 st=257su kern="; ①" src r2 @[478,478)
   box Alpha "①" w=616su r3 @[479,484)
-  glue word w=257su x=1 cap=257su kern="① s" src r4 @[485,485)
+  glue word w=257su x=1 st=257su kern="① s" src r4 @[485,485)
   box Alpha "stays" w=2561su r4 @[485,490)
-  glue word w=257su x=1 cap=257su kern="s u" src r4 @[490,491)
+  glue word w=257su x=1 st=257su kern="s u" src r4 @[490,491)
   box Alpha "unique." w=3585su r4 @[491,498)
   run r0 plain
   run r1 plain ref LINK x0.70 link="#tsr-fn-4" anchor="fnref-4"
@@ -101,10 +110,11 @@ top pid=6 units=1
 top pid=7 units=2
  unit rule indent=0su
  unit text indent=1536su anchor="fn-4" marker="①."
+  ju=257su
   box Alpha "Two," w=1742su r0 @[455,459)
-  glue word w=219su x=1 cap=219su kern=", f" src r0 @[459,460)
+  glue word w=219su x=1 st=257su kern=", f" src r0 @[459,460)
   box Alpha "first." w=2613su r0 @[460,466)
-  glue word w=219su x=1 cap=219su kern=". ↩" src r0 @[453,467)
+  glue word w=219su x=1 st=257su kern=". ↩" src r0 @[453,467)
   box Alpha "↩" w=524su r1 @[453,467)
   run r0 plain x0.85
   run r1 plain ref LINK x0.85 link="#tsr-fnref-4"

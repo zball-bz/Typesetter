@@ -1,6 +1,6 @@
 doc h=6246su
 para pid=0 y=0su w=19200su h=3481su
-  L0 y=0su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,3) @[2,10)
-  L1 y=1945su left=1536su w=17664su dw=0su dc=0su join=last marker blocks=[0,3) @[26,34)
+  L0 y=0su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,3) @[2,10)
+  L1 y=1945su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,3) @[26,34)
 para pid=1 y=4710su w=19200su h=1536su
-  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,3) @[36,42)
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last items=[0,3) @[36,42)

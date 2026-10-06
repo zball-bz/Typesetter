@@ -631,19 +631,10 @@
       ]
     },
     "doc.cjkJustify": {
+      "$comment": "k of v2 §8 (plan P4-08; D-X01): a CJK gap's justification weight against a word space's 1 — its share of a line's adjustment, and of the breaker's capacity (weights × the paragraph's space). App C's fixed 0.1em CJK capacity (doc.cjkGlue) is retired.",
       "field": "cjkJustifyK",
       "dom": "num:0:4",
       "def": 0.6,
-      "prec": "HostDefault",
-      "affects": [
-        "Emit",
-        "Layout"
-      ]
-    },
-    "doc.cjkGlue": {
-      "field": "cjkGlueEm",
-      "dom": "num:0:1",
-      "def": 0.1,
       "prec": "HostDefault",
       "affects": [
         "Emit"

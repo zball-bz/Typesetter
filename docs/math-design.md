@@ -309,7 +309,9 @@ down.**
   `breakPenalty` per its class, no stretch. The block carries its own
   `asc/desc` su so `layoutDoc`'s per-line max-advance picks it up (extend
   `LinebreakBlock` with optional intrinsic vertical extents — the mechanism
-  headings-in-line already wants).
+  headings-in-line already wants). As built (plans P1-13, P4-08): each
+  segment is an Object Box part of the HList with its own extents, the
+  glue between parts ObjectSpace glue; the breaker reads the HList.
 - `mathblock` becomes its own FlowUnit (kind `Math`): display style, centered
   on the measure, `ragged`, participates in labels/`@ref` via the resolver's
   existing equation counter hooks (document-model §5 already reserves it).

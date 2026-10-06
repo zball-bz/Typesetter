@@ -51,11 +51,10 @@ struct Fragment {
   i32 gridCell = -1;                 // (plan P3-10) >=0: the table cell it sits in
   u32 table = ~0u;                   // the table block it belongs to (its rules too):
                                      //   one atomic group on paged sheets
-  u32 blockBegin = 0, blockEnd = 0;  // trimmed range into the stream's blocks
-  u32 itemBegin = 0, itemEnd = 0;    // the same line in the stream's HList
-                                     //   items: what layout and paint read
-  double wordDeltaPx = 0;            // raw-px justification value (render uses this)
-  double cjkDeltaPx = 0;             // k × wordDeltaPx (v2 §8), letter-spacing value
+  u32 itemBegin = 0, itemEnd = 0;    // the line in the stream's HList items,
+                                     //   trimmed: what the breaker, layout and paint read
+  double wordDeltaPx = 0;            // raw-px adjustment per unit of glue weight (v2 §8)
+  double cjkDeltaPx = 0;             // its CJK gaps' share: k × wordDeltaPx, letter-spacing
   i32 wordDeltaSu = 0;               // rounded, for dumps
   i32 cjkDeltaSu = 0;
   Sep sep = Sep::Newline;            // what joins it to the next line in content text

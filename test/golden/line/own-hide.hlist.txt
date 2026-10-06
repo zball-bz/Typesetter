@@ -1,41 +1,43 @@
 top pid=0 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[0,1)
-  glue word w=257su x=1 cap=257su kern="A c" src r0 @[1,2)
+  glue word w=257su x=1 st=257su kern="A c" src r0 @[1,2)
   box Alpha "com" w=1537su r0 @[2,5)
   disc pen=0.7 w=0su pre="-" 513su kern="mm" r0 @[5,5)
   box Alpha "ment" w=2049su r0 @[5,9)
-  glue word w=257su x=1 cap=257su kern="t o" src r0 @[9,10)
+  glue word w=257su x=1 st=257su kern="t o" src r0 @[9,10)
   box Alpha "opened" w=3073su r0 @[10,16)
-  glue word w=257su x=1 cap=257su kern="d m" src r0 @[16,17)
+  glue word w=257su x=1 st=257su kern="d m" src r0 @[16,17)
   box Alpha "mid-" w=2049su r0 @[17,21)
   disc pen=0.7 w=0su pre=none kern="-l" r0 @[21,21)
   box Alpha "line" w=2049su r0 @[21,25)
-  glue word w=257su x=1 cap=257su kern="e a" src r0 @[87,87)
+  glue word w=257su x=1 st=257su kern="e a" src r0 @[87,87)
   box Alpha "and" w=1537su r0 @[87,90)
-  glue word w=257su x=1 cap=257su kern="d t" src r0 @[90,91)
+  glue word w=257su x=1 st=257su kern="d t" src r0 @[90,91)
   box Alpha "the" w=1537su r0 @[91,94)
-  glue word w=257su x=1 cap=257su kern="e p" src r0 @[94,95)
+  glue word w=257su x=1 st=257su kern="e p" src r0 @[94,95)
   box Alpha "para" w=2049su r0 @[95,99)
   disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[99,99)
   box Alpha "graph" w=2561su r0 @[99,104)
-  glue word w=257su x=1 cap=257su kern="h g" src r0 @[104,105)
+  glue word w=257su x=1 st=257su kern="h g" src r0 @[104,105)
   box Alpha "goes" w=2049su r0 @[105,109)
-  glue word w=257su x=1 cap=257su kern="s o" src r0 @[109,110)
+  glue word w=257su x=1 st=257su kern="s o" src r0 @[109,110)
   box Alpha "on." w=1537su r0 @[110,113)
   run r0 plain
 top pid=1 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[115,116)
-  glue word w=257su x=1 cap=257su kern="A c" src r0 @[116,117)
+  glue word w=257su x=1 st=257su kern="A c" src r0 @[116,117)
   box Alpha "code" w=2049su r0 @[117,121)
-  glue word w=257su x=1 cap=257su kern="e s" src r0 @[121,122)
+  glue word w=257su x=1 st=257su kern="e s" src r0 @[121,122)
   box Alpha "span" w=2049su r0 @[122,126)
-  glue word w=257su x=1 cap=257su src r0 @[126,126)
+  glue word w=257su x=1 st=257su src r0 @[126,126)
   box PostfixNum "%--" w=1307su r1 @[127,132)
-  glue word w=257su x=1 cap=257su src r2 @[133,133)
+  glue word w=257su x=1 st=257su src r2 @[133,133)
   box Alpha "hides" w=2561su r2 @[133,138)
-  glue word w=257su x=1 cap=257su kern="s n" src r2 @[138,139)
+  glue word w=257su x=1 st=257su kern="s n" src r2 @[138,139)
   box Alpha "noth" w=2049su r2 @[139,143)
   disc pen=0.7 w=0su pre="-" 513su kern="hi" r2 @[143,143)
   box Alpha "ing:" w=2049su r2 @[143,147)
@@ -44,108 +46,112 @@ top pid=1 units=1
   run r2 plain
 top pid=2 units=1
  unit text indent=0su anchor="h-1"
+  ju=411su
   box Alpha "This" w=3278su r0 @[150,154)
-  glue word w=411su x=1 cap=411su kern="s h" src r0 @[154,155)
+  glue word w=411su x=1 st=411su kern="s h" src r0 @[154,155)
   box Alpha "heading" w=5736su r0 @[155,162)
-  glue word w=411su x=1 cap=411su kern="g s" src r0 @[162,163)
+  glue word w=411su x=1 st=411su kern="g s" src r0 @[162,163)
   box Alpha "survives" w=6555su r0 @[163,171)
   run r0 plain BOLD x1.60
 top pid=3 units=1
  unit text indent=0su
-  box Ideo "请" w=1025su wt=0.6 cap=102su r0 @[173,176)
-  glue inter w=0su x=0.6 cap=102su r0 @[173,176)
-  box Ideo "注" w=1025su wt=0.6 cap=102su r0 @[176,179)
-  glue inter w=0su x=0.6 cap=102su r0 @[176,179)
-  box Ideo "意" w=1025su wt=0.6 cap=102su r0 @[179,182)
+  ju=257su
+  box Ideo "请" w=1025su wt=0.6 r0 @[173,176)
+  glue inter w=0su x=0.6 st=154su r0 @[173,176)
+  box Ideo "注" w=1025su wt=0.6 r0 @[176,179)
+  glue inter w=0su x=0.6 st=154su r0 @[176,179)
+  box Ideo "意" w=1025su wt=0.6 r0 @[179,182)
   pen 0 r0
-  glue autospace w=256su x=1 cap=256su r1 @[182,182)
-  box Alpha "*" w=513su r2 @[182,183)
-  glue autospace w=256su x=1 cap=256su r3 @[183,183)
-  box Ideo "以" w=1025su wt=0.6 cap=102su r4 @[183,186)
-  glue inter w=0su x=0.6 cap=102su r4 @[183,186)
-  box Ideo "下" w=1025su wt=0.6 cap=102su r4 @[186,189)
-  glue inter w=0su x=0.6 cap=102su r4 @[186,189)
-  box Ideo "事" w=1025su wt=0.6 cap=102su r4 @[189,192)
-  glue inter w=0su x=0.6 cap=102su r4 @[189,192)
-  box Ideo "项" w=1025su wt=0.6 cap=102su r4 @[192,195)
-  pen INF r4
-  glue inter w=0su x=0.6 cap=102su r4 @[192,195)
-  box ColonW "：" w=513su blank=R r5 @[195,198)
-  glue blank w=512su x=0 cap=0su r5 @[195,198)
+  box Alpha "*" w=513su r1 @[182,183)
+  pen 0 r1
+  box Ideo "以" w=1025su wt=0.6 r2 @[183,186)
+  glue inter w=0su x=0.6 st=154su r2 @[183,186)
+  box Ideo "下" w=1025su wt=0.6 r2 @[186,189)
+  glue inter w=0su x=0.6 st=154su r2 @[186,189)
+  box Ideo "事" w=1025su wt=0.6 r2 @[189,192)
+  glue inter w=0su x=0.6 st=154su r2 @[189,192)
+  box Ideo "项" w=1025su wt=0.6 r2 @[192,195)
+  pen INF r2
+  glue inter w=0su x=0.6 st=154su r2 @[192,195)
+  box ColonW "：" w=513su blank=R r3 @[195,198)
+  glue blank w=512su x=0 r3 @[195,198)
   run r0 letter-spaced CJK
   run r1 plain
-  run r2 plain
-  run r3 plain
-  run r4 letter-spaced CJK
-  run r5 blank-bearing CJK
+  run r2 letter-spaced CJK
+  run r3 blank-bearing CJK
 top pid=4 units=2
  unit text indent=1536su marker="•"
-  box Ideo "第" w=1025su wt=0.6 cap=102su r0 @[201,204)
-  glue inter w=0su x=0.6 cap=102su r0 @[201,204)
-  box Ideo "一" w=1025su wt=0.6 cap=102su r0 @[204,207)
-  glue inter w=0su x=0.6 cap=102su r0 @[204,207)
-  box Ideo "项" w=1025su wt=0.6 cap=102su r0 @[207,210)
-  glue inter w=0su x=0.6 cap=102su r0 @[207,210)
-  box Ideo "重" w=1025su wt=0.6 cap=102su r1 @[211,214)
-  glue inter w=0su x=0.6 cap=102su r1 @[211,214)
-  box Ideo "要" w=1025su wt=0.6 cap=102su r1 @[214,217)
+  ju=257su
+  box Ideo "第" w=1025su wt=0.6 r0 @[201,204)
+  glue inter w=0su x=0.6 st=154su r0 @[201,204)
+  box Ideo "一" w=1025su wt=0.6 r0 @[204,207)
+  glue inter w=0su x=0.6 st=154su r0 @[204,207)
+  box Ideo "项" w=1025su wt=0.6 r0 @[207,210)
+  glue inter w=0su x=0.6 st=154su r0 @[207,210)
+  box Ideo "重" w=1025su wt=0.6 r1 @[211,214)
+  glue inter w=0su x=0.6 st=154su r1 @[211,214)
+  box Ideo "要" w=1025su wt=0.6 r1 @[214,217)
   pen 0 r1
   run r0 letter-spaced CJK
   run r1 letter-spaced BOLD CJK
  unit text indent=1536su marker="•"
-  box Ideo "第" w=1025su wt=0.6 cap=102su r0 @[221,224)
-  glue inter w=0su x=0.6 cap=102su r0 @[221,224)
-  box Ideo "二" w=1025su wt=0.6 cap=102su r0 @[224,227)
-  glue inter w=0su x=0.6 cap=102su r0 @[224,227)
-  box Ideo "项" w=1025su wt=0.6 cap=102su r0 @[227,230)
+  ju=257su
+  box Ideo "第" w=1025su wt=0.6 r0 @[221,224)
+  glue inter w=0su x=0.6 st=154su r0 @[221,224)
+  box Ideo "二" w=1025su wt=0.6 r0 @[224,227)
+  glue inter w=0su x=0.6 st=154su r0 @[224,227)
+  box Ideo "项" w=1025su wt=0.6 r0 @[227,230)
   pen 0 r0
   run r0 letter-spaced CJK
 top pid=5 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[232,233)
-  glue word w=257su x=1 cap=257su kern="A s" src r0 @[233,234)
+  glue word w=257su x=1 st=257su kern="A s" src r0 @[233,234)
   box Alpha "stray" w=2561su r0 @[234,239)
-  glue word w=257su x=1 cap=257su kern="y $" src r0 @[239,240)
+  glue word w=257su x=1 st=257su kern="y $" src r0 @[239,240)
   box PrefixNum "$" w=513su r0 @[240,241)
-  glue word w=257su x=1 cap=257su kern="$ s" src r0 @[241,242)
+  glue word w=257su x=1 st=257su kern="$ s" src r0 @[241,242)
   box Alpha "sign" w=2049su r0 @[242,246)
-  glue word w=257su x=1 cap=257su kern="n a" src r0 @[246,247)
+  glue word w=257su x=1 st=257su kern="n a" src r0 @[246,247)
   box Alpha "at" w=1025su r0 @[247,249)
-  glue word w=257su x=1 cap=257su kern="t t" src r0 @[249,250)
+  glue word w=257su x=1 st=257su kern="t t" src r0 @[249,250)
   box Alpha "the" w=1537su r0 @[250,253)
-  glue word w=257su x=1 cap=257su kern="e e" src r0 @[253,254)
+  glue word w=257su x=1 st=257su kern="e e" src r0 @[253,254)
   box Alpha "end" w=1537su r0 @[254,257)
-  glue word w=257su x=1 cap=257su kern="d o" src r0 @[257,258)
+  glue word w=257su x=1 st=257su kern="d o" src r0 @[257,258)
   box Alpha "of" w=1025su r0 @[258,260)
-  glue word w=257su x=1 cap=257su kern="f a" src r0 @[260,261)
+  glue word w=257su x=1 st=257su kern="f a" src r0 @[260,261)
   box Alpha "a" w=513su r0 @[261,262)
-  glue word w=257su x=1 cap=257su kern="a l" src r0 @[262,263)
+  glue word w=257su x=1 st=257su kern="a l" src r0 @[262,263)
   box Alpha "line" w=2049su r0 @[263,267)
   run r0 plain
 top pid=6 units=1
  unit text indent=0su anchor="h-2"
+  ju=411su
   box Alpha "The" w=2459su r0 @[270,273)
-  glue word w=411su x=1 cap=411su kern="e h" src r0 @[273,274)
+  glue word w=411su x=1 st=411su kern="e h" src r0 @[273,274)
   box Alpha "heading" w=5736su r0 @[274,281)
-  glue word w=411su x=1 cap=411su kern="g a" src r0 @[281,282)
+  glue word w=411su x=1 st=411su kern="g a" src r0 @[281,282)
   box Alpha "after" w=4098su r0 @[282,287)
-  glue word w=411su x=1 cap=411su kern="r i" src r0 @[287,288)
+  glue word w=411su x=1 st=411su kern="r i" src r0 @[287,288)
   box Alpha "it" w=1640su r0 @[288,290)
-  glue word w=411su x=1 cap=411su kern="t s" src r0 @[290,291)
+  glue word w=411su x=1 st=411su kern="t s" src r0 @[290,291)
   box Alpha "survives" w=6555su r0 @[291,299)
   run r0 plain BOLD x1.60
 top pid=7 units=1
  unit text indent=0su
+  ju=257su
   box Alpha "A" w=513su r0 @[301,302)
-  glue word w=257su x=1 cap=257su kern="A c" src r0 @[302,303)
+  glue word w=257su x=1 st=257su kern="A c" src r0 @[302,303)
   box Alpha "call" w=2049su r0 @[303,307)
-  glue word w=257su x=1 cap=257su src r0 @[307,307)
+  glue word w=257su x=1 st=257su src r0 @[307,307)
   box Alpha "left-1" w=3073su r1 @[308,346)
-  glue word w=257su x=1 cap=257su kern="1 r" src r1 @[308,346)
+  glue word w=257su x=1 st=257su kern="1 r" src r1 @[308,346)
   box Alpha "right" w=2561su r1 @[308,346)
-  glue word w=257su x=1 cap=257su src r2 @[347,347)
+  glue word w=257su x=1 st=257su src r2 @[347,347)
   box Alpha "spans" w=2561su r2 @[347,352)
-  glue word w=257su x=1 cap=257su kern="s l" src r2 @[352,353)
+  glue word w=257su x=1 st=257su kern="s l" src r2 @[352,353)
   box Alpha "lines." w=3073su r2 @[353,359)
   run r0 plain
   run r1 plain BOLD

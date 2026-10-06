@@ -1,6 +1,5 @@
 // Content tree → flow units whose inline streams are HLists (plan P1-12;
-// shape/hlist.h), lowered to linebreak blocks for the legacy breaker
-// (document-model §6).
+// shape/hlist.h), which the breaker reads (plan P4-08; document-model §6).
 // M2: Latin words + spaces + hyphen points, links, inline/block code,
 // headings (size-composed styles), list markers, quote indents, rules.
 #pragma once
@@ -27,69 +26,6 @@ static_assert(ReadsWidth<LayoutSettings>, "the concept names the width row");
 
 struct ContentNode;
 struct ContentTree;
-
-enum : u16 {
-  BF_SPACE = 1,        // trimmed at line edges; carries stretch (unless punct)
-  BF_HYPHEN = 2,
-  BF_CJK = 4,          // CJK ideograph char block (letter-spacing target)
-  BF_PUNCT_GLYPH = 8,  // CJK punct glyph (half squeezed away when its
-  BF_PUNCT_SP = 16,    //   compressible half-space is absent)
-  BF_PUNCT_OPEN = 32,  // glyph blank is on the LEFT (squeeze margin-left)
-  BF_BOUND = 64,       // CJK–Latin boundary glue (synthetic, no character)
-  BF_INDENT = 128,     // paragraph indent block (synthetic, unbreakable)
-  BF_PAIR = 256,       // ——/…… two-char block: no internal letter-spacing
-  BF_REF = 512,        // resolver-synthesized run (rendered data-syn="ref";
-                       //   skipped by the copy rebuild, document-model §9.3)
-  BF_FIL = 1024,       // fil glue (plan P2-16: fill): takes the line's slack
-  BF_SYNTH = 2048,     // an inline object's synthetic glue (between a formula's
-                       //   parts; plan P3-26: no character, not a boundary)
-};
-
-struct LinebreakBlock {
-  Su width = 0, breakWidth = 0, spaceWidth = 0;
-  double rawPx = 0;        // unquantized measured width (justification math)
-  float breakPenalty = 0;  // INF = unbreakable after this block
-  float stretchWeight = 0;
-  StyleId style = 0;
-  u16 flags = 0;
-  StrRef text = 0;
-  StrRef linkUrl = 0;  // 0 = not inside a link
-  StrRef anchorId = 0; // inline anchor (footnote marker): run gets id="tsr-<id>"
-  // Latin word spaces: cross-space kerning context (document-model §6).
-  // gap width = m(trigram) - m(prevCh) - m(nextCh); 0 = no correction.
-  // Hyphen points reuse the same fields with a JUNCTION bigram (no space):
-  // adjacent pieces render as one shaped run, so the browser kerns across
-  // the piece boundary — the un-broken hyphen block carries that delta.
-  StrRef ctxTrigram = 0, ctxPrev = 0, ctxNext = 0;
-  float kernPx = 0;  // hyphen junction kern, applied when NOT broken here
-  bool widthResolved = false;
-  // (plan P3-26) an inline object's part (shape/objects.h): its kind and
-  // extents — its width DEFINED by the object, never measured; payload: the
-  // part's own (a formula segment's box), for the oracle to compare
-  bool obj = false;
-  ObjKind objKind = ObjKind::Math;
-  Su objAsc = 0, objDesc = 0;
-  const void* objPayload = nullptr;
-  Span span;
-  bool isSpace() const { return flags & BF_SPACE; }
-  bool isHyphen() const { return flags & BF_HYPHEN; }
-  bool isCjkChar() const { return (flags & BF_CJK) && !(flags & BF_PUNCT_GLYPH); }
-  bool isPunctGlyph() const { return flags & BF_PUNCT_GLYPH; }
-  bool isSynthetic() const { return flags & (BF_BOUND | BF_INDENT | BF_SYNTH); }
-};
-
-constexpr float BREAK_INF = kPenInf;
-
-// What the legacy breaker reads of a block (plan P1-12): production lowers
-// each HList to these (fuseLegacy); the full LinebreakBlock is built only for
-// the blocks dump.
-struct BreakBlock {
-  Su width = 0, breakWidth = 0, spaceWidth = 0;
-  float breakPenalty = 0;  // INF = unbreakable after this block
-  u16 flags = 0;           // the BF_ kind bits
-  bool isSpace() const { return flags & BF_SPACE; }
-  bool isHyphen() const { return flags & BF_HYPHEN; }
-};
 
 // A replaced box's size as emit knows it (plan P1-16; P3-28, design T6
 // IntrinsicSize): one record for every replaced box — an image, a raw box —
@@ -143,8 +79,6 @@ struct Flow {
   HList hl;
   StrRef anchor = 0;  // a label inside it (an inline labelled group): its first line's id
   Span span;          // (plan P3-07) a cell's or sidecar row's node: an empty cell's line
-  std::vector<BreakBlock> blocks;  // fuseLegacy(hl), for the legacy breaker
-  std::vector<u32> blockStart;     // block b = hl.items [blockStart[b], blockStart[b+1])
 };
 using TableCell = Flow;
 
@@ -278,19 +212,6 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
                              const StyleTable& styles, const EmitSettings& cfg,
                              ObjectEnv* objects = nullptr);
 
-// The lowering of an HList to today's blocks (plan P1-12; the legacy breaker
-// reads them until P4-08): a specified table per item and glue class, which
-// was equal field by field to what the pre-HList emitter produced until
-// P4-02 retired that emitter. The full form feeds the dumps; production
-// keeps only what the breaker reads.
-void fuseLegacy(const HList& h, std::vector<LinebreakBlock>& blocks, std::vector<u32>& blockStart);
-void fuseLegacy(const HList& h, std::vector<BreakBlock>& blocks, std::vector<u32>& blockStart);
-void fuseLegacy(std::vector<TopBlock>& tops);  // every unit and cell, the breaker's form
-
-// (boxes: the answers an image's header shows, as layout takes them; none:
-// a Provided image shows as its placeholder)
-std::string dumpBlocks(const std::vector<TopBlock>& tops, const Interner& strs,
-                       const StyleTable& styles, BoxAsker* boxes = nullptr);
 std::string dumpHLists(const std::vector<TopBlock>& tops, const Interner& strs,
                        const StyleTable& styles, BoxAsker* boxes = nullptr);
 std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& strs);

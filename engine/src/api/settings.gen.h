@@ -22,7 +22,6 @@ struct Config {
   double lineHeight = 1.5;  // doc.leading
   double paraSpacingEm = 1.2;  // doc.parGap
   double cjkJustifyK = 0.6;  // doc.cjkJustify
-  double cjkGlueEm = 0.1;  // doc.cjkGlue
   std::string bodyFont = "\"Crimson Text\", Georgia, serif";  // fonts.body
   std::string cjkFont = "\"Noto Serif CJK SC\", \"Source Han Serif SC\", \"Songti SC\", SimSun, serif";  // fonts.cjk
   std::string monoFont = "monospace";  // fonts.mono

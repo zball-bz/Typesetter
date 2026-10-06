@@ -1,32 +1,27 @@
-// The breaker's item projection (plan P0-12; design T6 S1, TeX semantics).
-//
-// The legacy block (BreakBlock: fuseLegacy's lowering of an HList, plan
-// P1-12) fuses box width, glue capacity and penalty under BF_* flags; every
-// layer used to re-derive what a break discards. The breaker reads TeX items
-// instead:
-//   Box      w                       (a word, glyph, formula, indent)
-//   Glue     w, stretch, shrink      (discarded at a break and at a line start)
+// The breaker's items (plan P0-12; design T6 S1/S16, TeX semantics), read
+// straight off the HList (plan P4-08: the item-native breaker; finding
+// break-layout-pages/glue-semantics-split):
+//   Box      w                        (a word, glyph, formula part, indent)
+//   Glue     w, stretch, shrink       (discarded at a break and at a line start)
 //   Penalty  pen | Forbidden | Forced (a break here keeps what precedes it)
-//   Disc     w (not broken), pre     (a hyphenation point)
+//   Disc     w (not broken), pre      (a break inside a word: its pre ends the line)
 // Legal breaks: a Glue preceded by a Box or Disc; a Penalty that is not
 // Forbidden; a Disc whose penalty is not Forbidden. A Forced penalty must
 // break, wherever it appears; the paragraph end is an implicit Forced break.
 //
-// Until the item-native breaker reads the HList (P4-08), blocksToItems is
-// the adapter:
-//   space / boundary / punct half   -> [Penalty(pen) if pen != 0] Glue(w, cap, cap)
-//   CJK char                        -> Box, Penalty(Forbidden), Glue(0, cap, cap), Penalty(pen)
-//   hyphen point                    -> Disc{w = junction kern, pre = hyphen width}
-//   anything else                   -> Box [, Penalty(pen) when breakable]
-// a penalty of -BREAK_INF becomes Penalty(Forced) (a hard line break)
-// "cap" is the block's spaceWidth (today's stretch = shrink capacity). Each
-// item records its source block: a break at an item consumes the blocks up to
-// and including `block` (breakpoints count blocks, as layout reads them).
+// The stretch model is v2 §8's (D-X01; finding emitter/kp-ignores-stretch-
+// weight): a glue's stretch and shrink are its weight times the stream's
+// justification unit, `HList::juSu` (a space of its base style) — 1 for a
+// word space and the CJK–Latin boundary, k for a realized CJK gap, 0 for a
+// punctuation blank or an object's glue (rigid) —, so the breaker's
+// capacity is (n_latin + k·n_cjk)·juSu and the renderer's per-gap
+// adjustment, slack / Σweights times each weight, agree by construction. A
+// fill (plan P2-16) is fil glue. Each item records its HList index.
 #pragma once
 #include <cmath>
 #include <type_traits>
 
-#include "../emit/emit.h"
+#include "../shape/hlist.h"
 
 namespace tsr {
 
@@ -42,72 +37,49 @@ struct BItem {
   Su stretch = 0, shrink = 0;
   i32 pen = 0;             // Penalty/Disc: thousandths
   Su pre = 0;              // Disc: width that ends the line when broken here
-  u32 block = 0;           // source block; a break here consumes blocks [.., block]
+  u32 src = 0;             // its HList item
 };
 // integral fields, no padding: the bytes are an exact cache-key domain
 static_assert(std::has_unique_object_representations_v<BItem>);
 
-// The one conversion from the emit-side float penalty (BREAK_INF = never,
-// -BREAK_INF = a forced break: a hard line break, plan P1-13).
-inline bool penForbidden(float p) { return !(p < BREAK_INF); }
-inline bool penForced(float p) { return p <= -BREAK_INF; }
+// The one conversion from the emit-side float penalty (kPenInf = never,
+// -kPenInf = a forced break: a hard line break, plan P1-13).
+inline bool penForbidden(float p) { return !(p < kPenInf); }
+inline bool penForced(float p) { return p <= -kPenInf; }
 inline i32 penThousandths(float p) { return (i32)std::lround((double)p * 1000.0); }
 
-inline void blocksToItems(const std::vector<BreakBlock>& blocks, std::vector<BItem>& out) {
+inline void hlistToItems(const HList& h, std::vector<BItem>& out) {
   out.clear();
-  out.reserve(blocks.size() * 2);
-  auto penalty = [&](u32 bi, float p) {
+  out.reserve(h.items.size());
+  for (u32 i = 0; i < (u32)h.items.size(); i++) {
+    const HItem& x = h.items[i];
     BItem it;
-    it.k = ItemKind::Penalty;
-    it.block = bi;
-    if (penForbidden(p)) it.tag = PenTag::Forbidden;
-    else if (penForced(p)) it.tag = PenTag::Forced;
-    else it.pen = penThousandths(p);
+    it.src = i;
+    switch (x.k) {
+      case IK::Box:
+        it.k = ItemKind::Box;
+        it.w = x.w;
+        break;
+      case IK::Glue:
+        it.k = ItemKind::Glue;
+        it.w = x.w;
+        if (x.cls == (u8)GC::Fill) it.order = 1;
+        else if (x.x > 0) it.stretch = it.shrink = (Su)std::lround((double)x.x * h.juSu);
+        break;
+      case IK::Penalty:
+      case IK::Disc:
+        it.k = x.k == IK::Penalty ? ItemKind::Penalty : ItemKind::Disc;
+        if (penForbidden(x.x)) it.tag = PenTag::Forbidden;
+        else if (penForced(x.x) && x.k == IK::Penalty) it.tag = PenTag::Forced;
+        else it.pen = penThousandths(x.x);
+        if (x.k == IK::Disc) {
+          it.w = x.w;  // the junction kern: the pieces shape as one run
+          const DiscRec& d = h.discs[x.aux];
+          for (u32 s = d.pre; s < d.pre + d.preN; s++) it.pre += h.side[s].w;
+        }
+        break;
+    }
     out.push_back(it);
-  };
-  for (u32 bi = 0; bi < (u32)blocks.size(); bi++) {
-    const BreakBlock& b = blocks[bi];
-    if (b.isHyphen()) {
-      BItem it;
-      it.k = ItemKind::Disc;
-      it.block = bi;
-      it.w = b.width;  // the junction kern: the pieces shape as one run
-      it.pre = b.breakWidth;
-      if (penForbidden(b.breakPenalty)) it.tag = PenTag::Forbidden;
-      else it.pen = penThousandths(b.breakPenalty);
-      out.push_back(it);
-      continue;
-    }
-    if (b.isSpace()) {
-      // a glue break carries its penalty on a Penalty in front of it (the
-      // glue then goes to the next line start and is discarded there); a
-      // Forbidden one keeps the glue from being a legal break at all
-      if (penForbidden(b.breakPenalty) || b.breakPenalty != 0) penalty(bi, b.breakPenalty);
-      BItem g;
-      g.k = ItemKind::Glue;
-      g.block = bi;
-      g.w = b.width;
-      g.stretch = g.shrink = b.spaceWidth;
-      if (b.flags & BF_FIL) g.order = 1;  // fill (plan P2-16)
-      out.push_back(g);
-      continue;
-    }
-    BItem box;
-    box.k = ItemKind::Box;
-    box.block = bi;
-    box.w = b.width;
-    out.push_back(box);
-    if (b.spaceWidth != 0) {  // CJK char: its attached gap capacity
-      penalty(bi, BREAK_INF);
-      BItem g;
-      g.k = ItemKind::Glue;
-      g.block = bi;
-      g.stretch = g.shrink = b.spaceWidth;
-      out.push_back(g);
-      penalty(bi, b.breakPenalty);
-    } else if (!penForbidden(b.breakPenalty)) {
-      penalty(bi, b.breakPenalty);
-    }
   }
 }
 

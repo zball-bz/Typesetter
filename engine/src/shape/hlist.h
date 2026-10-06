@@ -15,12 +15,12 @@
 // A boundary (the items between two Boxes/Discs) holds at most one legal
 // breakpoint; lintHList checks it on every golden.
 //
-// Until the item-native breaker (P4-08) the emitter writes the break
-// structure the lowering reads in this form: a box that may break after it carries a Penalty
-// right after it (none when an InterChar glue follows: that glue is the
-// break); a glue whose own penalty is not 0 carries it right before it. The
-// legacy breaker reads the lowering fuseLegacy (emit.h) of this list until
-// the item-native breaker (P4-08) deletes it with ColdRec::capSu.
+// The canonical TeX form (plan P4-08: the breaker reads it, break/items.h):
+// a box that may break after it carries a Penalty right after it (none when
+// an InterChar glue follows: that glue is the break); a glue whose own
+// penalty is not 0 carries it right before it. A glue's stretch and shrink
+// are its weight `x` times the list's justification unit `juSu` (v2 §8):
+// the breaker's capacity and the renderer's distribution are one rule.
 #pragma once
 #include <string>
 #include <vector>
@@ -59,7 +59,7 @@ struct HItem {  // the 24-byte hot record (design I9)
   u32 aux = 0;   // Box/Glue: AdvanceSpec index (InterChar: none); Disc: DiscRec index
   Su w = 0;      // natural width (Disc: unbroken), filled by resolveWidths
   float x = 0;   // Glue: stretch weight; Penalty/Disc: penalty; Box: the weight of
-                 //   its InterChar gap (LetterSpaced/Pinned; migration, P4-08)
+                 //   its InterChar gap (LetterSpaced/Pinned: finish gives it to the glue)
   u32 cold = 0;  // ColdRec index (a Penalty and an InterChar glue share their owner's)
 };
 static_assert(sizeof(HItem) == 24);
@@ -69,7 +69,6 @@ struct ColdRec {
   double rawPx = 0;              // unquantized advance (Disc: the junction kern;
                                  //   an InterChar glue has none: it shares its box's record)
   float blankLpx = 0, blankRpx = 0;  // a punctuation glyph's resolved blanks
-  Su capSu = 0;      // MIGRATION: today's stretch/shrink capacity (glue, CJK boxes; P4-08)
   StrRef anchor = 0; // IA_Anchor: the anchor name (id="tsr-<anchor>")
 };
 static_assert(sizeof(ColdRec) == 32);
@@ -166,6 +165,13 @@ struct HList {
   std::vector<InlineObject> objs;
   std::vector<ObjPart> parts;
   bool hasDeferred = false;  // an object waits for metrics (resolveWidths splices it)
+  // (plan P4-08; v2 §8, D-X01) the justification unit: a space of the
+  // stream's base style (its paragraph's, its cell's), measured — every
+  // glue's stretch and shrink is its weight times it
+  StyleId juStyle = 0;
+  StrRef juStr = 0;  // " " (emit's), what is measured
+  Su juSu = 0;
+  double juPx = 0;
   bool empty() const { return items.empty(); }
 };
 
@@ -186,8 +192,8 @@ inline bool isLetterSpacedBox(const HList& h, const HItem& it) {
   return it.k == IK::Box && h.runs[it.run].rc == RealizeClass::LetterSpaced;
 }
 
-// tsrc --stage=hlist: kind, class, attrs, w, stretch, numeric penalty,
-// capacity, run, source span per item; the run table per list
+// tsrc --stage=hlist: kind, class, attrs, w, weight, numeric penalty, run,
+// source span per item; the justification unit; the run table per list
 void dumpHList(std::string& out, const HList& h, const Interner& strs, const StyleTable& styles,
                const char* indent);
 // the legality lint: at most one legal breakpoint per boundary; none after an

@@ -84,10 +84,10 @@ selects the glyph set at emit time; the counter is unchanged.
   are lifted into `group{role:notes}` = rule + ordered list, items at
   0.85× with a `↩` ref back to the marker; built at `#notes()` or appended
   by `resolveDoc`. Refs inside note bodies resolve normally.
-- Emit: labelled refs set `LinebreakBlock.anchorId` (run gets `id=`);
-  a superscript ref forces `breakPenalty = INF` on the block before it, so
-  a marker never starts a line. No CJK–Latin boundary is inserted before
-  it (cross-node boundaries were never inserted; the digit hugs the text).
+- Emit: labelled refs anchor their first item (`IA_Anchor`: the run gets
+  `id=`); the marker is attached to what precedes it (`attach: prev`, plan
+  P4-07), so it never starts a line, and its role style has no CJK–Latin
+  spacing (the digit hugs the text).
   Known nit: after a closing punct the marker follows the punct's
   trailing half-space rather than hugging the glyph.
 - Render: `.tsr-sup` (paint-only raise via `position: relative`),
