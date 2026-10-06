@@ -1,0 +1,6 @@
+doc @[0,153)
+  para @[0,110)
+    text @[0,110) str="A row with more cells than the table's columns is reported, not cut: the table widens to hold it (plan P3-14)."
+  region @[112,152) name="table"
+    para @[129,144)
+      text @[129,144) str="a | b\nc | d | e"

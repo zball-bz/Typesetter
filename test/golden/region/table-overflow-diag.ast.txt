@@ -1,0 +1,11 @@
+doc @[0,305)
+  para @[0,157)
+    text @[0,157) str="A table whose columns cannot shrink to the measure (D-Y09): its unbreakable cells overflow it, on screen in a sideways scroll, with a table-overflow warning."
+  region @[159,304) name="table"
+    para @[199,296)
+      code @[199,225) str="pneumonoultramicroscopic"
+      text @[226,227) str=" | "
+      code @[228,256) str="silicovolcanoconiosis_long"
+      text @[257,258) str=" | "
+      code @[259,286) str="antidisestablishmentarian"
+      text @[287,296) str="\na | b | c"

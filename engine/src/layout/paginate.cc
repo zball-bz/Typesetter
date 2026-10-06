@@ -138,9 +138,22 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
     if (s < n && flow[s].table && !flow[s].tableStart)
       for (size_t x = 0; x < n; x++)
         if (flow[x].table == flow[s].table && (flow[x].paged & kPagedHeader)) header.push_back(x);
+    // (plan P3-14) the header's room: from its top to its table's first
+    // row after it (the padding under its rule)
+    i64 headerH = 0;
+    if (!header.empty()) {
+      const Box& h0 = flow[header.front()];
+      i64 end = flow[header.back()].bot;
+      for (size_t x = header.back() + 1; x < n; x++)
+        if (flow[x].table == h0.table) {
+          end = flow[x].top;
+          break;
+        }
+      headerH = end - h0.top;
+    }
     i64 lift = 0;  // what sits above the flow: carried floats, a repeated header, lifted floats
     for (size_t c : carried) lift += flow[c].h();
-    for (size_t x : header) lift += flow[x].h();
+    lift += headerH;
     std::vector<size_t> lifted, nextCarried;
     i64 insH = 0;
     bool anyIns = false;
@@ -216,7 +229,11 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
       cursor += b.h();
     };
     for (size_t c : carried) place(flow[c], false);
-    for (size_t x : header) place(flow[x], true);
+    if (!header.empty()) {
+      const i64 at = cursor, top0 = flow[header.front()].top;
+      for (size_t x : header) pg.bands.push_back(band(flow[x], at + (flow[x].top - top0) + S - flow[x].top, true));
+      cursor = at + headerH;
+    }
     for (size_t x : lifted)
       if (x < j) place(flow[x], false);
     const i64 flowShift = cursor;

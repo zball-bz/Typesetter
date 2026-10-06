@@ -1,0 +1,40 @@
+doc @[0,473) [base]
+  para @[0,99) [base]
+    text @[0,99) [base] str="Content-fitted columns, booktabs rules, a header row, cells spanning columns and rows (plan P3-14)."
+  table @[101,460) [base] cols=3 label="tbl-x" tracks="auto:l,1fr,6em:r" rules="booktabs" header=1
+    trow @[101,460) [base]
+      tcell @[101,460) [base]
+        text @[236,240) [base] str="Name"
+      tcell @[101,460) [base]
+        text @[243,248) [base] str="Value"
+      tcell @[101,460) [base]
+        text @[251,255) [base] str="Unit"
+    trow @[101,460) [base]
+      tcell @[101,460) [base]
+        text @[256,261) [base] str="Speed"
+      tcell @[101,460) [base]
+        text @[264,297) [base] str="the rate at which something moves"
+      tcell @[101,460) [base]
+        text @[300,302) [base] str="30"
+    trow @[101,460) [base]
+      tcell @[303,361) [base] colspan=2 align="c"
+        text @[335,360) [base] str="a cell across two columns"
+      tcell @[101,460) [base]
+        text @[364,365) [base] str="2"
+    trow @[101,460) [base]
+      tcell @[366,409) [base] rowspan=2 valign="middle"
+        text @[404,408) [base] str="tall"
+      tcell @[101,460) [base]
+        text @[412,433) [base] str="the first of two rows"
+      tcell @[101,460) [base]
+        text @[436,437) [base] str="1"
+    trow @[101,460) [base]
+      tcell @[101,460) [base]
+        text @[438,448) [base] str="the second"
+      tcell @[101,460) [base]
+        text @[451,452) [base] str="2"
+  para @[462,473) [base]
+    text @[462,465) [base] str="See " raw=0:0,4:3
+    ref @[466,472) [base] target="tbl-x"
+      text @[466,472) [base] str="表 1"
+    text @[472,473) [base] str="."

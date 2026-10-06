@@ -1,0 +1,18 @@
+doc @[0,474)
+  para @[0,99)
+    text @[0,99) str="Content-fitted columns, booktabs rules, a header row, cells spanning columns and rows (plan P3-14)."
+  region @[101,460) name="table"
+    para @[236,452)
+      text @[236,302) str="Name | Value | Unit\nSpeed | the rate at which something moves | 30\n"
+      splice @[303,361) expr="cell({colspan: 2, align: \"c\"})"
+        arg @[335,360)
+          text @[335,360) str="a cell across two columns"
+      text @[362,365) str=" | 2\n"
+      splice @[366,409) expr="cell({rowspan: 2, valign: \"middle\"})"
+        arg @[404,408)
+          text @[404,408) str="tall"
+      text @[410,452) str=" | the first of two rows | 1\nthe second | 2"
+  para @[462,473)
+    text @[462,465) str="See "
+    ref @[466,472) target="tbl-x"
+    text @[472,473) str="."

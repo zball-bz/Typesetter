@@ -91,6 +91,7 @@ struct DLBlock {
   u32 srcBase = 0;          // source anchors are relative to it (flowing output)
   Su h = 0;
   double gapAfterPx = -1;   // the gap to the next block (< 0: the last)
+  bool scrollX = false;     // (plan P3-14, D-Y09) content past the measure: scrolls sideways on screen
   std::vector<DLNode> nodes;  // fragment order
   std::vector<DLRun> runs;
 };

@@ -93,15 +93,69 @@ registry `kLayouters[LayouterId]` dispatches every block:
   flow, its caption rows broken to its width beneath it, the exclusion added.
 - **Grid** sets a code block on its ch grid (verbatim-design.md), the
   sidecar rows zipped beside each logical line at equal height.
-- **Table** breaks each cell to its column's content width and rules the
-  rows (three-line style).
+- **Table** (plans P3-10, P3-14) is a grid of flow roots. Its `TableSpec`
+  has:
+  - tracks: v1 `cols` are equal fr columns; `tracks` may be fr, fixed,
+    percent, or content-fitted (`auto`, `min`, `max`);
+  - a rule preset: `grid` (v1), `booktabs` or `none`;
+  - header rows;
+  - every cell's place, from the HTML table model: each cell goes at the
+    first free position of its row and covers its `colspan`×`rowspan`. A
+    position no cell covers holds an empty cell. A row longer than the
+    columns widens the table, and the executor reports it (`table-cells`).
 
-Every in-flow box that is not a paragraph clears the float beside it.
+  Track resolution (`tracks()`) proceeds in this order:
+  1. Fixed and percent columns come first.
+  2. Auto columns take their max-content if it fits. Otherwise they sit
+     between their min-content and max-content in proportion.
+  3. Fr columns share the rest above their min-content.
+  4. Intrinsic widths come from the cells' leaves. Min-content is the
+     widest run no legal break divides; max-content is the widest unbroken
+     line. A spanning cell's excess is shared by its columns.
+  5. A table that is still wider than the measure overflows it. This gives
+     a `table-overflow` warning (D-Y09). On screen its block scrolls
+     sideways; a paged sheet shows it.
+
+  Each cell is laid out at its columns' width and halign (its own `align`,
+  else its column's). A row takes its tallest single-row cell, and a cell
+  spanning rows stretches the last of them. `valign` places a cell within
+  its rows.
+
+  Pagination: page cuts fall between rows only, never inside a rowspan
+  group. The header rows, with the rules around them, are `kPagedHeader`:
+  they keep with the first row and repeat atop a continuation sheet, at
+  their original room.
+
+Every in-flow box that is not a paragraph clears the float beside it,
+unless its `beside: shrink` lays it out in the room its top line leaves
+(plan P3-14).
+
+**Block traits (plan P3-14).** `block()` wraps every layouter with the
+trait group (style-design.md §4):
+- the medium filter;
+- a pending Forced break (`break.before`, an empty `#pagebreak()` block,
+  `break.after`) set on the first content fragment;
+- the frame, for a framed block: a `Frame` fragment (`boxBlock`,
+  `kPagedFrame`) pushed first, the content box inset by padding and
+  border, the frame's height set after its content;
+- the shrink narrowing;
+- `keep: together`, which raises the tiers inside the block to
+  KeepTogether;
+- a container's `keep: with-next`.
+
+The stack's gap between two children is max(gap, after*, before*), the
+CSS-like collapsing of `space.*`, and the tops use the same rule. A
+paragraph's `par.hang` indents its ParShape slots after `hangAfter`. Its
+`breaker.*` traits set its BreakParams, and they are part of the memo key.
+Paged frames are not cut. Each sheet draws the frames of the blocks its flow
+meets, clipped. A box's `extTop`/`extBot` carry the padding of the frames
+it opens and closes, so a sheet starts at its frame. Paged output gets its
+own layout pass only when some block is for one medium (`media`).
 
 ## 5. Fragments
 
 `Fragment` (`layout.h`) is one materialized line or box in paint order:
-`kind` (`Line`, `Rule`, `CodeRow`, `Raw`, `Math`, `Image` — what it is
+`kind` (`Line`, `Rule`, `CodeRow`, `Raw`, `Math`, `Image`, `Frame` — what it is
 geometrically, replacing the old `special` codes), geometry (`y` is the top,
 a rule's too; dumps and paint place a rule at its band's middle), the leaf
 and track it belongs to, the item range of its stream, the justification

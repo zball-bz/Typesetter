@@ -18,6 +18,7 @@ export const DOMAINS = Object.freeze({
   extname: Object.freeze({ max: 32, re: /^(?:[a-z][a-z0-9\-]*)$/u }),
   len: Object.freeze({ max: 16, re: /^(?:0|[0-9]{1,4}(\.[0-9]{1,4})?(em|px))$/u }),
   gap: Object.freeze({ max: 16, re: /^(?:[0-9]{1,3}\/[1-9][0-9]{0,2}|0|[0-9]{1,4}(\.[0-9]{1,4})?(em|px))$/u }),
+  tracks: Object.freeze({ max: 1024, re: /^(?:(auto|min|max|[0-9]{1,4}(\.[0-9]{1,3})?(fr|em|px|%))(:[lcr])?(,(auto|min|max|[0-9]{1,4}(\.[0-9]{1,3})?(fr|em|px|%))(:[lcr])?)*)$/u }),
   lens: Object.freeze({ max: 80, re: /^(?:(0|[0-9]{1,4}(\.[0-9]{1,4})?(em|px))( (0|[0-9]{1,4}(\.[0-9]{1,4})?(em|px))){0,3})$/u }),
   where: Object.freeze({ max: 256, re: /^(?:[A-Za-z_][A-Za-z0-9_]*=[^;\x00-\x1f]*(;[A-Za-z_][A-Za-z0-9_]*=[^;\x00-\x1f]*)*)$/u }),
   features: Object.freeze({ max: 256, re: /^(?:( *("[A-Za-z0-9]{4}"|'[A-Za-z0-9]{4}')( +(on|off|[0-9]{1,3}))?( *, *("[A-Za-z0-9]{4}"|'[A-Za-z0-9]{4}')( +(on|off|[0-9]{1,3}))?)* *)?)$/u }),

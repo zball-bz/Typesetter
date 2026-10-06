@@ -1,0 +1,13 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {cell} = __rt.std;
+return (async () => {
+const __h = [
+() => ({cols: [{width: "auto", align: "l"}, {width: "1fr"}, {width: "6em", align: "r"}], rules: "booktabs", header: 1, label: "tbl-x"}),
+(__k) => (cell(...[{colspan: 2, align: "c"}], ...__k())),
+(__k) => (cell(...[{rowspan: 2, valign: "middle"}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

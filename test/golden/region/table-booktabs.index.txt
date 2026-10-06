@@ -1,0 +1,2 @@
+instance table 1 label=tbl-x @[101,460)
+label tbl-x -> table 1 @[101,460)

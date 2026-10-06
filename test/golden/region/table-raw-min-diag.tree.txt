@@ -1,0 +1,14 @@
+doc @[0,333) [base]
+  para @[0,134) [base]
+    text @[0,134) [base] str="A raw box's least width (plan P3-14) floors its content-fitted column; a box the host would measure keeps its declared height for now."
+  table @[136,333) [base] cols=2 tracks="auto,1fr"
+    trow @[136,333) [base]
+      tcell @[136,333) [base]
+        raw @[136,333) [base] html="plot" h=40 minWidth="8em"
+      tcell @[136,333) [base]
+        text @[136,333) [base] str="the column beside the box takes the room left"
+    trow @[136,333) [base]
+      tcell @[136,333) [base]
+        raw @[136,333) [base] html="host" h=20 measure="host"
+      tcell @[136,333) [base]
+        text @[136,333) [base] str="b"

@@ -542,10 +542,32 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
 inline bool isNodeArg(ArgK k) {
   return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::parSingleLine || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent || k == ArgK::keep || k == ArgK::spaceBefore || k == ArgK::spaceAfter || k == ArgK::breakBefore || k == ArgK::breakAfter || k == ArgK::parHang || k == ArgK::parHangAfter || k == ArgK::boxPadding || k == ArgK::boxBorder || k == ArgK::boxBorderColor || k == ArgK::boxBackground || k == ArgK::media || k == ArgK::beside || k == ArgK::breakerTolerance || k == ArgK::breakerStretch || k == ArgK::placeFloat;
 }
-// (plan P3-02; design T4: settable element arguments alias property rows)
-// whether a kind's attribute is its own style (the kind row's `prop` attrs)
-inline bool isPropAlias(Kind k, ArgK a) {
-  if (k == Kind::codeblock) return a == ArgK::snapKerning || a == ArgK::sidecarFrac || a == ArgK::contIndent || a == ArgK::features;
+// (plan P3-02; design T4: settable element arguments alias property rows;
+// plan P3-14: declared aliases) whether a kind's attribute is its own style:
+// the attribute of the row it patches — itself (the kind row's `prop`
+// attrs) or the one it is declared an alias of (`aliasOf`: an image's side
+// is its place.float)
+inline bool propAlias(Kind k, ArgK a, ArgK& to) {
+  if (k == Kind::codeblock && a == ArgK::snapKerning) {
+    to = ArgK::snapKerning;
+    return true;
+  }
+  if (k == Kind::codeblock && a == ArgK::sidecarFrac) {
+    to = ArgK::sidecarFrac;
+    return true;
+  }
+  if (k == Kind::codeblock && a == ArgK::contIndent) {
+    to = ArgK::contIndent;
+    return true;
+  }
+  if (k == Kind::codeblock && a == ArgK::features) {
+    to = ArgK::features;
+    return true;
+  }
+  if (k == Kind::image && a == ArgK::side) {
+    to = ArgK::placeFloat;
+    return true;
+  }
   return false;
 }
 

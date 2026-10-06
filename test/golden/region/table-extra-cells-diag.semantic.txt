@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="110">A row with more cells than the table&#39;s columns is reported, not cut: the table widens to hold it (plan P3-14).</p>
+<table data-pid="1" data-s="112" data-e="152">
+<tr><td>a</td><td>b</td></tr>
+<tr><td>c</td><td>d</td><td>e</td></tr>
+</table>
+</div>

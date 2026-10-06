@@ -1,0 +1,2 @@
+[136,142) function "#table"
+[142,333) embedded "({cols: [\"auto\", \"1fr\"]}, row(cell(raw(\"plot\", {h: 40, minWidth: \"8em\"})), cell(\"the column beside the box takes the room left\")), row(cell(raw(\"host\", {h: 20, measure: \"host\"})), cell(\"b\")))"

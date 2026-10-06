@@ -98,9 +98,11 @@ export function auditTypeset(root) {
     }
   }
 
-  // overflow: nothing escapes the paragraph box horizontally
+  // overflow: nothing escapes the paragraph box horizontally (a block that
+  // scrolls sideways — a table wider than the measure, D-Y09 — holds it)
   for (const para of root.querySelectorAll('.tsr-para')) {
-    if (para.scrollWidth > para.clientWidth + AUDIT.overflowPx && !para.querySelector('[data-overfull]')) {
+    if (para.scrollWidth > para.clientWidth + AUDIT.overflowPx && !para.querySelector('[data-overfull]') &&
+        getComputedStyle(para).overflowX === 'visible') {
       report.failures.push({
         audit: 'overflow',
         by: para.scrollWidth - para.clientWidth,

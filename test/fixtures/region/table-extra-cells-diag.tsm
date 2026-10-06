@@ -1,0 +1,6 @@
+A row with more cells than the table's columns is reported, not cut: the table widens to hold it (plan P3-14).
+
+#!table(cols: 2)
+a | b
+c | d | e
+#table!

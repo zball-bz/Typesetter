@@ -1,0 +1,14 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="87">A table longer than a sheet: its header row repeats atop the continuation (plan P3-14).</p>
+<table data-pid="1" data-s="89" data-e="417">
+<tr><th>Item</th><th>Description</th></tr>
+<tr><td>one</td><td>the first row of a table that is long enough to need two sheets</td></tr>
+<tr><td>two</td><td>the second row</td></tr>
+<tr><td>three</td><td>the third row</td></tr>
+<tr><td>four</td><td>the fourth row</td></tr>
+<tr><td>five</td><td>the fifth row</td></tr>
+<tr><td>six</td><td>the sixth row</td></tr>
+<tr><td>seven</td><td>the seventh row</td></tr>
+<tr><td>eight</td><td>the eighth row</td></tr>
+</table>
+</div>

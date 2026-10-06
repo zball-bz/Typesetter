@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="134">A raw box&#39;s least width (plan P3-14) floors its content-fitted column; a box the host would measure keeps its declared height for now.</p>
+<table data-pid="1" data-s="136" data-e="333">
+<tr><td><span class="tsr-iraw">plot</span></td><td>the column beside the box takes the room left</td></tr>
+<tr><td><span class="tsr-iraw">host</span></td><td>b</td></tr>
+</table>
+</div>

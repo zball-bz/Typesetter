@@ -265,6 +265,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
   for (const Fragment& l : fr.lines)
     if ((!l.srcSpan.empty() || l.spanned) && l.srcSpan.start < srcBase) srcBase = l.srcSpan.start;
   out.srcBase = srcBase == 0xFFFFFFFFu ? 0 : srcBase;
+  out.scrollX = fr.overflowR > fr.w;
   const Su measureR = suFloorPx(cfg.widthPx);
   for (size_t li = 0; li < fr.lines.size(); li++) {
     const Fragment& l = fr.lines[li];

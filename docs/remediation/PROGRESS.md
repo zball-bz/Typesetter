@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-14
+- 下一步：P3-15
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -80,7 +80,7 @@
 | P3-11 | 网格布局器；代码块 + sidecar 两轨表 | done | grep:plan P3-11 | 2026-10-06 | 6 个代码用例渲染不变（code/sidecar、snap-sidecar、sidecar-hyphen 的 html/paged 字节不变）；三个 sidecar 用例的结构 dump 变化（blocks/blocktree/hlist/breaks：两轨表、每逻辑行一个代码叶子与一个注释段落叶子；layout 的 sidecar 行 cell= 改为网格序号）；code/sidecar 新增 mathir/mathbox（注释中的公式现属单元）。snap+sidecar 守护用例未变化：其列预算错误已在 P1-03 修正。e2e：snap-kerning 用例增加 wrap:false 仍 snap 的检查（120px 下普通版有续行、不折行版无续行且有 data-snap） | 两个提交：结构（layout/grid.{h,cc} 的纯函数 wrapGridLine + GridParams{minCols, contIndent, commentAware, breakAfter}，四处硬编码 8 统一为 minCols；ch 探针由 code/grid.h 声明；solveGrid 注释与实际一致；golden 不变）+ 行为。box tree：带注释的代码块降级为两轨表（TableSpec 新增 ColSpec{percent, align, sidecar}、gapCodeEm、framed、lines）：每逻辑行一行——单行 Grid 叶子（LeafSource.lineLo/lineHi，标签由表承载、列表标记在首行）与注释段落叶子（无注释为空格，不输出占位行）。emit：buildGrid 每块构建一次（gridCache）后按行切片，GridData.firstLine，sidecar 字段与格内 cells 删除；snap 时也请求探针。layout：grid 不再有 sidecar 分支，代码轨即网格预算（snap 也用它），对齐（snap/预算）与折行解耦（wrap:false 时 snap 仍生效），行号与高亮按 firstLine；表格布局器按 ColSpec 解析轨道（Fr/Percent、轨间距、framed 才有内边距与线），lines 表每格行末为 newline、末行为块后分隔。paint：代码 run 按 firstLine 取行，sidecar 轨由列规格判断。分页：lines 表按行（逻辑行）分组。文档：verbatim-design §2/§5、code-design §4、tsm-changes |
 | P3-12 | VList 与分页阶段 | done | grep:plan P3-12 | 2026-10-06 | pages/paged-doc.paged：第 3 页不再以孤立的 `}` 开头（逻辑行之间的寡/孤行按 Avoid2），其后各页随之移动；其余分页守护用例（paged-boundary、paged-eq-ids、paged-float-bottom、paged-keep-fallback）字节不变；屏幕 golden 不变；单测 unitPaginate（放宽顺序与"放宽须把保持的内容整体移到下一页"、可见溢出、强制分页、页浮动上提/顺延、脚注插入到引用页底、表头在续页重复） | 布局器为每个片段声明分页罚分层级 PenTier（Normal、KeepTogether、WidowOrphan、KeepWithNext、Structural、Forced）：段落/格/题注流内寡孤行 2/2，代码块逻辑行之间寡孤行、行内续行 Structural，表格行内与其下的线 Structural、行间 Normal（代码表按行寡孤），浮动框为原子，块边界在 keepWithNext 块之后为 KeepWithNext；片段 paged 角色（Movable/Insert/Header，生产者在 P3-13/14/15）与 insertAt。paginate() 只读这些数据（不再看布局器种类）：Structural 连接的片段成盒，贪心切页，无干净切点时按 D-Y04 放宽（keep-together → 寡孤行 → keep-with-next），放宽只在能把保持的内容整体移到下一页时采用，每次放宽报 keep-violated；高于一页的原子独占一页并可见溢出（page-overflow，该页不 overflow:hidden）；页浮动上提/顺延、插入物到引用页底（PageSpec.footnoteSkip，降低目标高度）、表头在续页重复（PageBand.repeat，写出时无 id）、PageBand.yShift。PageSpec{h, footnoteSkip}；新设置 page.width（666）、page.margin（64），shell 的 print 由 page.* 推导纸张（不再写死 A4）与 paginate 宽度。测试：分页诊断属于分页产物，warm/fork 的诊断比较取分页前。文档：pages-design §2 |
 | P3-13 | 新集合、flow 与计数器 | done | grep:plan P3-13 | 2026-10-06 | 只新增用例，既有 golden 字节不变：semantics/hott-book（部/章/节按层级类、罗马数字加法计数系统、章跨部连续、附录、方程按章）、semantics/gap-zero 与 gap-one（[1,3]、[1,2,2,1,2]、[1,3,2]）、semantics/lists（lof/lot/用户定理列表与静态 head）、semantics/index（多行表按 key 分组、sortKey 排序、出现处锚点）、notes/named（三标记具名脚注 ↩ a b c）、notes/per-chapter（按章重置圈码、节末放置、序号锚点唯一）、notes/chapter-endnotes（用户 endnote flow、section 作用域 collector、like）、notes/styled-region（样式区域内脚注与作用域标记规则）、cite/refsection（refsection 内引文重新编号、各自文献表、作用域锚点）、pages/paged-inserts（deferred 脚注成为分页插入物，分隔线每页重复）；单测 unitRegistry（placement 校验、class like 打补丁 flow、collector like/scope、保留形状）、unitPaginate（分隔线代替脚注间距、每页重复） | collector 查询：classes 列表（lof/lot/用户列表）、head、group:key + order:sort-key（索引）、scope:section + depth、like；each{of:'occurrences'} 提供 anchor/ordinal/letter。索引条目是多行表 index 的行，出现处留空锚点（emit 零宽锚盒；legacy 预言机同步）。flow.placement：collector-only/end/section-end(depth)/deferred；每项只放一次（首个覆盖它的 collector 或放置）；deferred 在屏幕上同 end，条目带 insertAt（标记源位置，ContentNode→LayoutBlock→Fragment.paged=kPagedInsert），wrap 其余部分（分隔线）为 kPagedInsert|kPagedHeader，paginate 把条目放到标记所在页底、分隔线代替 footnoteSkip 并每页重复；layout dump 标注 insert@n/insert-sep。具名脚注：带 label 的 note 有名，ref(label,{form:'marker'}) 是其另一个标记（BIND 绑定，锚点 fnref-n.2…），条目回链全部标记。计数器：within.prefix:false（只重置不加前缀）、别名 body:ordinal（footnote 改用，fn-n 在重置时仍唯一）、键控计数器按 scope 类实例分段（内建 cite 作用域 refsection；行锚点 bib-<序>-key，每个作用域首次渲染拥有锚点）、按层级的大纲类取节点 level（TOC 嵌套）、加法计数系统。声明：类的 flow 补丁按字段合并；alias 补丁不给 ref 时保留原引用形式；stdlib $.collector 支持 like/scope/depth，$.counter 支持 scope。文档：semantics-design §9、notes-design、pages-design §5、tsm-changes |
-| P3-14 | 作者面特征（traits）与表格扩展 | todo | | | | |
+| P3-14 | 作者面特征（traits）与表格扩展 | done | grep:plan P3-14 | 2026-10-06 | 既有 golden 字节不变；新用例：style/theorem（框、keep together、space，含分页）、style/refs-hang（悬挂缩进参考文献）、pages/paged-lemma-keep、pages/paged-pagebreak（#pagebreak、break.before、media）、figure/beside-shrink、line/breaker-traits、region/table-booktabs（auto/fr/fixed 轨道、booktabs、表头、跨列/跨行、valign、格 align）、region/table-overflow-diag（D-Y09）、region/table-extra-cells-diag、region/table-raw-min-diag、pages/paged-table-header（续页重复表头）；单测不变 | T4 属性行（块粒度）：keep、space.before/after、break.before/after、par.hang/hangAfter、box.padding/border/borderColor/background、media、beside、breaker.tolerance/emergencyStretch、place.float（与既有 par.align/hyphenate、block.gap 同组）。box tree 读成 BlockTraits/BoxModel（xr、内容盒内缩）；layout 的 block() 统一包裹：媒体过滤、Forced 分页（#pagebreak 为空组，其 break 落到下一块）、Frame 片段（kPagedFrame，分页时各页裁切绘制，盒的 extTop/extBot 带上框的内边距）、shrink 收窄、keep together/with-next；栈间距 = max(gap, after*, before*)（未加框容器向首/末子塌缩）；段落 hang 改 ParShape、breaker 进 BreakParams；分页仅在有 media 块时另做一次 paged 布局。声明式别名：schema 属性 aliasOf（image side → placeFloat），由 propAlias 生成。表格：tracks（fr/固定/百分比/auto/min/max）、rules 预设 grid/booktabs/none、header 行（kPagedHeader，续页重复并保留原间距，与首行 keep）、HTML 表格模型的格放置（colspan/rowspan，空位补空格，行超列时加宽并由执行器报告 table-cells）、按内容的轨道求解（min/max-content 取自格内叶子）、valign、超宽 table-overflow（屏幕横向滚动、分页可见溢出，audit 放过滚动容器）；语义页 th/colspan/rowspan/vertical-align。raw 的 minWidth（内容适配列的下限）与 measure（host 时 info，P3-28 实现）。made 节点在其所在位置的规则环境里结算块属性（settleMade 修正）。lint：枚举属性按 schema 位次读（model.h attrEnum），轨道串由 model.h parseTracks 解析。文档：style-design §4、layout-design §4–5、tsm-changes |
 | P3-15 | 通用放置与独立布局（InlineBlock/子图） | todo | | | | |
 | P3-16 | 几何权威 | todo | | | | |
 | P3-17 | 块入行内的拆分策略 | todo | | | | |
@@ -157,6 +157,7 @@
 | P3-11 后 | 3.20 | 10.10 | 25.70 | 1.8 / 3.2 / 0.6 / 9.7 / 2.8 | 61.7 / 100.4 / 137.8 | 1.70 / 22.30 / 52.80 | 均在 P3 门限内 |
 | P3-12 后 | 3.30 | 10.40 | 26.20 | 1.7 / 3.1 / 0.7 / 9.8 / 2.9 | 63.7 / 100.1 / 144.7 | 1.60 / 21.50 / 56.00 | 均在 P3 门限内 |
 | P3-13 后 | 3.60 | 10.70 | 26.10 | 1.7 / 3.3 / 0.7 / 9.9 / 2.9 | 65.1 / 100.9 / 148.7 | 1.60 / 21.60 / 55.60 | 均在 P3 门限内 |
+| P3-14 后 | 3.40 | 10.70 | 25.70 | 1.8 / 3.2 / 0.7 / 9.7 / 2.8 | 65.0 / 101.6 / 141.7 | 1.60 / 21.70 / 56.00 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -331,6 +332,14 @@
 | P3-13 | P3-12 偏差中留给 P3-13 的 anchorPage（锚点所在页）与页码引用未做 | PLAN D-Y06 与"可选扩展"把页码引用列为本 goal 范围之外 | 可选扩展（D-Y06） |
 | P3-13 | footnote 的 labels 由 none 改为 user：带 label 的脚注成为具名脚注（此前 label 被忽略），锚点用该 label | 具名脚注需要；既有 golden 中没有带 label 的脚注，字节不变 | 无 |
 | P3-13 | cite/refsection 用例的文献行写在源文本里（entry role bibentry），未用 #bibliography(src) | 生成的文献行缺 span 属 P4-03 的 XFAIL 类，XFAIL 只能减少 | P4-03 |
+| P3-14 | 特征写作 `style: {…}` 或规则（`$.set`），区域头部顶层的特征键仍按 P2-08 报 ctor-arg（设计示例写 `#!lemma(keep: …)`） | P2-08 已裁定区域头部的样式键属于 style:，一个概念一种写法 | 无 |
+| P3-14 | place 只登记 place.float，仅图片读取（side 为其别名）；place.width/gap 与任意块的放置未做 | P3-15（通用放置与独立布局）负责任意块的放置 | P3-15 |
+| P3-14 | 未加 widows/orphans 特征（kOrphans/kWidows 仍为常量） | P3-14 要点未列；现有分页按 2/2 | 无 |
+| P3-14 | booktabs 的上下线与中线同粗 | 规则片段目前只有一种画法；粗细属 T7 的绘制类 | P3-23 |
+| P3-14 | 加框块是浮动的清除者，但框内的浮动仍登记在文档的排除表里（未把加框块做成独立 flow root） | 现有用例中框内没有浮动；独立布局属 P3-15 的 layoutDetached | P3-15 |
+| P3-14 | 语义页对按角色选择的规则（框、keep 等）仍不输出 CSS；media 块在语义页全部显示 | 角色/类选择器的 CSS 钩子属 P3-18/P3-23 | P3-23 |
+| P3-14 | 内容适配轨道的求解是简化的 CSS 自动表格布局：跨列格的超出平均分给各列；嵌套表格、代码块的固有宽度为近似（代码块视为可伸缩） | 现有用例足够；精确的嵌套固有宽度需要 layoutDetached | P3-15 |
+| P3-14 | 行的格多于列时表格加宽（CSS 的行为）并报告 table-cells，而不是只报告 | 截断会丢内容；加宽保留作者内容并可见 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

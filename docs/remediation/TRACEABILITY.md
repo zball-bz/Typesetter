@@ -1160,14 +1160,14 @@ Theme steps: — · findings: 1
 | `break-layout-pages/float-model-closed` | adhoc | high | P3-15 | |
 | `break-layout-pages/unit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `break-layout-pages/nested-stream-copies` | adhoc | high | P1-17 | grep:plan P1-17 |
-| `break-layout-pages/table-closed` | adhoc | high | P3-10, P3-14 | |
+| `break-layout-pages/table-closed` | adhoc | high | P3-10, P3-14 | grep:plan P3-14 |
 | `break-layout-pages/alignment-flags` | adhoc | medium | P3-09 || grep:plan P3-09 |
 | `break-layout-pages/vertical-spacing-constants` | adhoc | medium | P1-18, P3-01 | grep:plan P3-01 |
 | `break-layout-pages/code-wrap-in-layout` | adhoc | medium | P3-11 || grep:plan P3-11 |
 | `break-layout-pages/code-sidecar-three-box` | adhoc | medium | P3-11 || grep:plan P3-11 |
 | `break-layout-pages/comment-role-by-color` | adhoc | low | P2-08 | grep:plan P2-08 |
 | `break-layout-pages/paginator-in-serializer` | adhoc | high | P3-12 || grep:plan P3-12 |
-| `break-layout-pages/group-role-dispatch` | adhoc | high | P1-18, P3-14 | |
+| `break-layout-pages/group-role-dispatch` | adhoc | high | P1-18, P3-14 | grep:plan P3-14 |
 | `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 || grep:plan P3-08 |
 | `break-layout-pages/kp-window-heuristics` | adhoc | low | P1-14 | grep:plan P1-14 |
 | `break-layout-pages/overfull-collapses-paragraph` | issue | high | P0-12 | grep:plan P0-12 |
@@ -1317,7 +1317,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/codepoint-heuristics` | adhoc | low | P4-02 | |
 | `real-world-evidence/sup-attach-private` | adhoc | medium | P2-08, P4-07 | |
 | `real-world-evidence/description-list-missing` | adhoc | medium | P3-34 | |
-| `real-world-evidence/table-model-v1` | adhoc | medium | P3-14 | |
+| `real-world-evidence/table-model-v1` | adhoc | medium | P3-14 | grep:plan P3-14 |
 | `real-world-evidence/figure-model-single-image` | adhoc | medium | P3-15 | |
 | `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 || grep:plan P3-08 |
 | `real-world-evidence/resource-and-config-plumbing` | adhoc | medium | P3-21 | |

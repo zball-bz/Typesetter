@@ -1,0 +1,8 @@
+lower v1 abi 3d3ccfbb docEnd 334 holes 1 module d8adefdd956d8693
+piece 0 hole 0 js [145,349)
+block 0 content [0,134)
+  CALL para [0,134)
+    TEXT "A raw box's least width (plan P3-14) floors its content-fitted column; a box the host would measure keeps its declared height for now." [0,134)
+block 1 content [136,333) user framed holes 0..1
+  CALL para [136,333)
+    HOLE 0 [136,333)

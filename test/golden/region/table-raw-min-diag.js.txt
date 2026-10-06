@@ -1,0 +1,11 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {cell, raw, row, table} = __rt.std;
+return (async () => {
+const __h = [
+() => (table({cols: ["auto", "1fr"]}, row(cell(raw("plot", {h: 40, minWidth: "8em"})), cell("the column beside the box takes the room left")), row(cell(raw("host", {h: 20, measure: "host"})), cell("b")))),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

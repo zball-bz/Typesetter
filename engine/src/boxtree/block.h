@@ -97,8 +97,9 @@ enum class TraitsId : u8 {
 
 // (plan P3-10; design T6 TableSpec) a table's tracks: Fr(1) columns, or a
 // Percent share of the available width, each with its halign ('l', 'c',
-// 'r'); its children are one Cell block per grid position, row-major (a
-// short row padded with empty cells). A v1 table (`cols`, `align`) is
+// 'r'); its children are one Cell block per cell, row-major by its first
+// position (a position no cell covers holds an empty one; plan P3-14:
+// cells may span rows and columns). A v1 table (`cols`, `align`) is
 // framed: cell padding (table.cellPad / rowPad) and full-width rules. A
 // code block with sidecar notes is a two-track table of its lines (plan
 // P3-11): its code beside its notes a code em apart, unframed, a row per
@@ -108,12 +109,33 @@ struct ColSpec {
   float percent = 0;     // > 0: a Percent track; else Fr(1)
   u8 align = 'l';
   bool sidecar = false;  // a code block's notes (data-track="sidecar")
+  // (plan P3-14; design T6 SizeSpec) its width: a share of the room left
+  // (Fr: fr), a fixed length, a percent (above), or content-fitted (Auto
+  // between the cells' min- and max-content, Min, Max)
+  enum class W : u8 { Fr, Fixed, Auto, Min, Max } w = W::Fr;
+  float fr = 1;
+  Su fixed = 0;
+};
+// (plan P3-14) a cell's place: its first row and column, its spans, its
+// own alignment (0: the column's) and vertical alignment in its rows
+struct CellPlace {
+  u32 row = 0, col = 0, rowspan = 1, colspan = 1;
+  u8 halign = 0;
+  enum class V : u8 { Top, Middle, Bottom } valign = V::Top;
 };
 struct TableSpec {
   std::vector<ColSpec> cols;
   float gapCodeEm = 0;  // between tracks, in code em
-  bool framed = true;
+  bool framed = true;   // the cell padding (table.cellPad / rowPad)
   bool lines = false;
+  // (plan P3-14) its rules: a full grid (v1: above, between and below the
+  // rows), booktabs (above, under the header rows, below) or none; its
+  // header rows (repeated atop a continuation sheet); its cells' places, in
+  // the order of its cell blocks (row-major by first position), its rows
+  enum class Rules : u8 { Grid, Booktabs, None } rules = Rules::Grid;
+  u32 header = 0;
+  std::vector<CellPlace> place;
+  u32 rows = 0;
 };
 const char* traitsName(TraitsId t);
 

@@ -1,0 +1,11 @@
+Content-fitted columns, booktabs rules, a header row, cells spanning columns and rows (plan P3-14).
+
+#!table(cols: [{width: "auto", align: "l"}, {width: "1fr"}, {width: "6em", align: "r"}], rules: "booktabs", header: 1, label: "tbl-x")
+Name | Value | Unit
+Speed | the rate at which something moves | 30
+#cell({colspan: 2, align: "c"})[a cell across two columns] | 2
+#cell({rowspan: 2, valign: "middle"})[tall] | the first of two rows | 1
+the second | 2
+#table!
+
+See @tbl-x.

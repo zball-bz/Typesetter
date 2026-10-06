@@ -1,0 +1,49 @@
+doc @[0,417) [base]
+  para @[0,87) [base]
+    text @[0,87) [base] str="A table longer than a sheet: its header row repeats atop the continuation (plan P3-14)."
+  table @[89,417) [base] cols=2 tracks="auto,1fr" rules="booktabs" header=1
+    trow @[89,417) [base]
+      tcell @[89,417) [base]
+        text @[168,172) [base] str="Item"
+      tcell @[89,417) [base]
+        text @[175,186) [base] str="Description"
+    trow @[89,417) [base]
+      tcell @[89,417) [base]
+        text @[187,190) [base] str="one"
+      tcell @[89,417) [base]
+        text @[193,256) [base] str="the first row of a table that is long enough to need two sheets"
+    trow @[89,417) [base]
+      tcell @[89,417) [base]
+        text @[257,260) [base] str="two"
+      tcell @[89,417) [base]
+        text @[263,277) [base] str="the second row"
+    trow @[89,417) [base]
+      tcell @[89,417) [base]
+        text @[278,283) [base] str="three"
+      tcell @[89,417) [base]
+        text @[286,299) [base] str="the third row"
+    trow @[89,417) [base]
+      tcell @[89,417) [base]
+        text @[300,304) [base] str="four"
+      tcell @[89,417) [base]
+        text @[307,321) [base] str="the fourth row"
+    trow @[89,417) [base]
+      tcell @[89,417) [base]
+        text @[322,326) [base] str="five"
+      tcell @[89,417) [base]
+        text @[329,342) [base] str="the fifth row"
+    trow @[89,417) [base]
+      tcell @[89,417) [base]
+        text @[343,346) [base] str="six"
+      tcell @[89,417) [base]
+        text @[349,362) [base] str="the sixth row"
+    trow @[89,417) [base]
+      tcell @[89,417) [base]
+        text @[363,368) [base] str="seven"
+      tcell @[89,417) [base]
+        text @[371,386) [base] str="the seventh row"
+    trow @[89,417) [base]
+      tcell @[89,417) [base]
+        text @[387,392) [base] str="eight"
+      tcell @[89,417) [base]
+        text @[395,409) [base] str="the eighth row"

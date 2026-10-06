@@ -421,6 +421,7 @@ void writeBlockOpen(std::string& out, const DLBlock& b, bool positional) {
   }
   t.decl("position", "relative").px("height", suToPx(b.h));
   if (positional && b.gapAfterPx >= 0) t.px("margin-bottom", b.gapAfterPx);
+  if (b.scrollX) t.decl("overflow-x", "auto");  // (D-Y09) a table wider than the measure
   t.open();
   out += "\n";
 }

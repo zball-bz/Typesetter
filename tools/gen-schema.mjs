@@ -406,10 +406,11 @@ ph += `}\n// the style keys by name (plan P3-01: rules in JSON read them as\n// 
   `struct StyleKeyRow {\n  const char* key;\n  ArgK attr;\n};\ninline constexpr StyleKeyRow kStyleKeys[] = {\n` +
   allProps.filter(([, r]) => r.attr).flatMap(([, r]) => [...new Set([r.attr, r.key ?? r.attr])].map((k) => `    {"${k}", ArgK::${r.attr}},\n`)).join('') +
   `};\n// whether an attribute patches a block property\ninline bool isNodeArg(ArgK k) {\n  return ${blockProps.map(([, r]) => `k == ArgK::${r.attr}`).join(' || ')};\n}\n` +
-  `// (plan P3-02; design T4: settable element arguments alias property rows)\n// whether a kind's attribute is its own style (the kind row's \`prop\` attrs)\n` +
-  `inline bool isPropAlias(Kind k, ArgK a) {\n` +
-  Object.entries(S.kinds).filter(([n]) => n !== '$comment').filter(([, kd]) => Object.values(kd.attrs ?? {}).some((x) => x.prop))
-    .map(([n, kd]) => `  if (k == Kind::${n}) return ${Object.entries(kd.attrs).filter(([, x]) => x.prop).map(([an]) => `a == ArgK::${an}`).join(' || ')};\n`).join('') +
+  `// (plan P3-02; design T4: settable element arguments alias property rows;\n// plan P3-14: declared aliases) whether a kind's attribute is its own style:\n// the attribute of the row it patches — itself (the kind row's \`prop\`\n// attrs) or the one it is declared an alias of (\`aliasOf\`: an image's side\n// is its place.float)\n` +
+  `inline bool propAlias(Kind k, ArgK a, ArgK& to) {\n` +
+  Object.entries(S.kinds).filter(([n]) => n !== '$comment').filter(([, kd]) => Object.values(kd.attrs ?? {}).some((x) => x.prop || x.aliasOf))
+    .map(([n, kd]) => Object.entries(kd.attrs).filter(([, x]) => x.prop || x.aliasOf)
+      .map(([an, x]) => `  if (k == Kind::${n} && a == ArgK::${an}) {\n    to = ArgK::${x.aliasOf ?? an};\n    return true;\n  }\n`).join('')).join('') +
   `  return false;\n}\n\n}  // namespace tsr\n`;
 
 // the typeset serializer's run attributes and declarations

@@ -1,0 +1,19 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="134" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:6px"><span class="tsr-r" data-s="0">A raw box&#39;s least width (plan P3-14)</span></div>
+<div class="tsr-line" data-s="0" data-e="134" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">floors its content-fitted column; a box</span></div>
+<div class="tsr-line" data-s="0" data-e="134" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">the host would measure keeps its declared</span></div>
+<div class="tsr-line" data-s="0" data-e="134" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">height for now.</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="136" style="position:relative;height:115.188px">
+<div class="tsr-rule" style="top:0px;left:0px;width:300px"></div>
+<div class="tsr-raw" style="top:4.797px;left:6.406px;width:128px;height:40px">plot</div>
+<div class="tsr-line" data-s="0" data-e="197" data-join="space" data-ragged="1" data-track="cell" style="top:4.797px;left:147.219px;width:146.375px"><span class="tsr-r" data-s="0">the column beside</span></div>
+<div class="tsr-line" data-s="0" data-e="197" data-join="space" data-ragged="1" data-track="cell" style="top:28.797px;left:147.219px;width:146.375px"><span class="tsr-r" data-s="0">the box takes the</span></div>
+<div class="tsr-line" data-s="0" data-e="197" data-join="row" data-ragged="1" data-track="cell" style="top:52.797px;left:147.219px;width:146.375px"><span class="tsr-r" data-s="0">room left</span></div>
+<div class="tsr-rule" style="top:81.594px;left:0px;width:300px"></div>
+<div class="tsr-raw" style="top:86.391px;left:6.406px;width:128px;height:20px">host</div>
+<div class="tsr-line" data-s="0" data-e="197" data-ragged="1" data-track="cell" style="top:86.391px;left:147.219px;width:146.375px"><span class="tsr-r" data-s="0">b</span></div>
+<div class="tsr-rule" style="top:115.188px;left:0px;width:300px"></div>
+</div>
+</div>

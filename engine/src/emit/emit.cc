@@ -1038,6 +1038,16 @@ struct Emitter {
             for (const ArgVal& a : n->args) {
               if (a.key == ArgK::html && a.tag == ArgTag::Str) r.html = a.ref;
               if (a.key == ArgK::h && a.tag == ArgTag::Num) r.hPx = a.num;
+              if (a.key == ArgK::w && a.tag == ArgTag::Num) r.wPx = a.num;
+              if (a.key == ArgK::minWidth && a.tag == ArgTag::Str) {  // (plan P3-14)
+                const Len ml = parseLen(strs.get(a.ref));
+                r.minWPx = ml.unit == 2 ? (double)ml.v : ml.v * fontPx(n->style);
+              }
+              // (plan P3-14) a box the host measures arrives with P3-28's
+              // resources; until then it keeps its declared height
+              if (a.key == ArgK::measure && attrEnum(n, ArgK::measure, strs) == 2)  // declared | host
+                E.diags.add(Sev::Info, "raw-measure", n->span,
+                            "raw(measure: 'host'): host-measured boxes come later; its declared height is used");
             }
             if (r.hPx <= 0) r.hPx = cfg.lineHeight * cfg.baseSizePx;
             return;

@@ -1,0 +1,6 @@
+A table whose columns cannot shrink to the measure (D-Y09): its unbreakable cells overflow it, on screen in a sideways scroll, with a table-overflow warning.
+
+#!table(cols: ["auto", "auto", "auto"])
+`pneumonoultramicroscopic` | `silicovolcanoconiosis_long` | `antidisestablishmentarian`
+a | b | c
+#table!

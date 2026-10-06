@@ -1,0 +1,13 @@
+A table longer than a sheet: its header row repeats atop the continuation (plan P3-14).
+
+#!table(cols: [{width: "auto"}, {width: "1fr"}], header: 1, rules: "booktabs")
+Item | Description
+one | the first row of a table that is long enough to need two sheets
+two | the second row
+three | the third row
+four | the fourth row
+five | the fifth row
+six | the sixth row
+seven | the seventh row
+eight | the eighth row
+#table!

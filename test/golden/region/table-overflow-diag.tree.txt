@@ -1,0 +1,21 @@
+doc @[0,304) [base]
+  para @[0,157) [base]
+    text @[0,157) [base] str="A table whose columns cannot shrink to the measure (D-Y09): its unbreakable cells overflow it, on screen in a sideways scroll, with a table-overflow warning."
+  table @[159,304) [base] cols=3 tracks="auto,auto,auto"
+    trow @[159,304) [base]
+      tcell @[159,304) [base]
+        code @[199,225) [CODEx0.85]
+          text @[199,225) [CODEx0.85] str="pneumonoultramicroscopic"
+      tcell @[159,304) [base]
+        code @[228,256) [CODEx0.85]
+          text @[228,256) [CODEx0.85] str="silicovolcanoconiosis_long"
+      tcell @[159,304) [base]
+        code @[259,286) [CODEx0.85]
+          text @[259,286) [CODEx0.85] str="antidisestablishmentarian"
+    trow @[159,304) [base]
+      tcell @[159,304) [base]
+        text @[287,288) [base] str="a"
+      tcell @[159,304) [base]
+        text @[291,292) [base] str="b"
+      tcell @[159,304) [base]
+        text @[295,296) [base] str="c"

@@ -904,8 +904,13 @@ struct Doc {
       {
         Tag t(html, "div");
         t.attrSafe("class", "tsr-sheet");
-        // (plan P3-12) a sheet an atom overflows shows it: never clipped
-        t.decl("position", "relative").decl("overflow", pg.overflow > 0 ? "visible" : "hidden").px("height", suToPx(pr.height));
+        // (plan P3-12) a sheet an atom overflows shows it: never clipped —
+        // nor one a table wider than the measure crosses (plan P3-14, D-Y09)
+        bool wide = false;
+        for (const PageBand& band : pg.bands) wide = wide || lay.paras[band.para].overflowR > lay.paras[band.para].w;
+        t.decl("position", "relative")
+            .decl("overflow", pg.overflow > 0 || wide ? "visible" : "hidden")
+            .px("height", suToPx(pr.height));
         t.open();
         html += "\n";
       }

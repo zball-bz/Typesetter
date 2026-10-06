@@ -148,6 +148,8 @@ struct GridData {  // a code block (verbatim-design.md)
 struct RawData {  // handler-declared passthrough markup and its height
   StrRef html = 0;
   double hPx = 0;
+  double wPx = 0;  // (plan P3-14) its declared width: its intrinsic width in a content-fitted column
+  double minWPx = 0;  // (plan P3-14) the least width it takes (a content-fitted column's floor)
 };
 // figure-design.md §3: src 0 = placeholder (unsafe scheme or failed load —
 // the box carries the alt text); its display box is layout's

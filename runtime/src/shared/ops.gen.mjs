@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 14;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '16bce923';
+export const SCHEMA_HASH = '1705c110';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -171,7 +171,10 @@ export const SINCE = Object.freeze({
       "34": 9,
       "35": 9,
       "54": 11,
-      "55": 11
+      "55": 11,
+      "95": 14,
+      "96": 14,
+      "97": 14
     },
     "10": {
       "0": 9,
@@ -187,13 +190,17 @@ export const SINCE = Object.freeze({
     "11": {
       "0": 9,
       "6": 9,
+      "8": 14,
       "31": 9,
       "32": 9,
       "33": 9,
       "34": 9,
       "35": 9,
       "54": 11,
-      "55": 11
+      "55": 11,
+      "98": 14,
+      "99": 14,
+      "100": 14
     },
     "12": {
       "0": 9,
@@ -380,7 +387,9 @@ export const SINCE = Object.freeze({
       "34": 9,
       "35": 9,
       "54": 11,
-      "55": 11
+      "55": 11,
+      "101": 14,
+      "102": 14
     },
     "24": {
       "0": 9,
@@ -708,7 +717,15 @@ export const ARGK = Object.freeze({
   "beside": 91,
   "breakerTolerance": 92,
   "breakerStretch": 93,
-  "placeFloat": 94
+  "placeFloat": 94,
+  "tracks": 95,
+  "rules": 96,
+  "header": 97,
+  "colspan": 98,
+  "rowspan": 99,
+  "valign": 100,
+  "measure": 101,
+  "minWidth": 102
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -887,6 +904,9 @@ export const SCHEMA = Object.freeze({
       "cols": "int:1:64",
       "align": "token",
       "label": "label",
+      "tracks": "tracks",
+      "rules": "enum:grid|booktabs|none",
+      "header": "int:0:64",
       "role": "ident",
       "slot": "ident",
       "syn": "ident",
@@ -922,6 +942,10 @@ export const SCHEMA = Object.freeze({
     "body": "blocks",
     "inline": "unsupported",
     "attrs": {
+      "colspan": "int:1:64",
+      "rowspan": "int:1:1000",
+      "align": "enum:l|c|r",
+      "valign": "enum:top|middle|bottom",
       "label": "label",
       "role": "ident",
       "slot": "ident",
@@ -1197,6 +1221,8 @@ export const SCHEMA = Object.freeze({
       "html": "html",
       "w": "num:0:100000",
       "h": "num:0:100000",
+      "measure": "enum:declared|host",
+      "minWidth": "len",
       "label": "label",
       "role": "ident",
       "slot": "ident",

@@ -520,25 +520,57 @@ struct Sem {
       case Kind::table: {
         open("table", n, pid);
         out += "\n";
-        std::string_view align = argS(n, ArgK::align);
+        // its columns' alignment: the align letters (v1), else its tracks'
+        std::string align(argS(n, ArgK::align));
+        if (std::string_view tr = argS(n, ArgK::tracks); !tr.empty()) {
+          align.clear();
+          for (size_t at = 0; at <= tr.size();) {
+            size_t comma = tr.find(',', at);
+            if (comma == std::string_view::npos) comma = tr.size();
+            const std::string_view e = tr.substr(at, comma - at);
+            const size_t colon = e.find(':');
+            align += colon != std::string_view::npos && colon + 1 < e.size() ? e[colon + 1] : 'l';
+            at = comma + 1;
+          }
+        }
+        // (plan P3-14) header rows are th cells; spans as written
+        const int header = attrInt(n, ArgK::header, 0);
+        int r = 0;
+        std::vector<int> above;  // per column: the rows a cell above still spans
         for (const ContentNode* row : n->kids) {
           if (row->kind != Kind::trow) continue;
           out += "<tr>";
           size_t c = 0;
           for (const ContentNode* cell : row->kids) {
             if (cell->kind != Kind::tcell) continue;
-            char al = c < align.size() ? align[c] : 'l';
+            while (c < above.size() && above[c] > 0) c++;  // (its column: past the cells above spanning into it)
+            const std::string_view own = argS(cell, ArgK::align);
+            const char al = own.size() == 1 ? own[0] : c < align.size() ? align[c] : 'l';
+            const int cs = attrInt(cell, ArgK::colspan, 1), rs = attrInt(cell, ArgK::rowspan, 1);
+            const char* tag = r < header ? "th" : "td";
             {
-              Tag t(out, "td");
+              Tag t(out, tag);
+              if (cs > 1) t.num("colspan", (unsigned long long)cs);
+              if (rs > 1) t.num("rowspan", (unsigned long long)rs);
               if (al == 'c') t.style("text-align:center");
               else if (al == 'r') t.style("text-align:right");
+              const int va = attrEnum(cell, ArgK::valign, strs);  // top | middle | bottom
+              if (va == 2) t.decl("vertical-align", "middle");
+              if (va == 3) t.decl("vertical-align", "bottom");
               t.open();
             }
             for (const ContentNode* k : cell->kids) inl(k);
-            out += "</td>";
-            c++;
+            out += "</";
+            out += tag;
+            out += ">";
+            const size_t span = (size_t)(cs > 1 ? cs : 1);
+            if (above.size() < c + span) above.resize(c + span, 0);
+            for (size_t k = c; k < c + span; k++) above[k] = rs > 1 ? rs : 1;
+            c += span;
           }
+          for (int& a : above) a = a > 0 ? a - 1 : 0;
           out += "</tr>\n";
+          r++;
         }
         out += "</table>\n";
         return;

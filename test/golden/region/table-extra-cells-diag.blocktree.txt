@@ -1,0 +1,17 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,110)
+    paragraph para unit=0 @[0,110)
+top pid=1 leaves=5
+  stack root gap=1/1 @[112,152)
+    table table @[112,152)
+      stack cell @[112,152)
+        paragraph para unit=0 @[112,152)
+      stack cell @[112,152)
+        paragraph para unit=1 @[112,152)
+      stack cell @[0,0)
+      stack cell @[112,152)
+        paragraph para unit=2 @[112,152)
+      stack cell @[112,152)
+        paragraph para unit=3 @[112,152)
+      stack cell @[112,152)
+        paragraph para unit=4 @[112,152)

@@ -95,6 +95,7 @@ struct VEntry {
 struct ParaFrame {
   u32 pid = 0;
   Su x = 0, y = 0, w = 0, h = 0;
+  Su overflowR = 0;  // (plan P3-14) > w: content past the measure (a table wider than it, D-Y09)
   std::vector<Fragment> lines;
   std::vector<VEntry> vlist;
 };

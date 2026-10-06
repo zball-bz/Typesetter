@@ -1,0 +1,3 @@
+A raw box's least width (plan P3-14) floors its content-fitted column; a box the host would measure keeps its declared height for now.
+
+#table({cols: ["auto", "1fr"]}, row(cell(raw("plot", {h: 40, minWidth: "8em"})), cell("the column beside the box takes the room left")), row(cell(raw("host", {h: 20, measure: "host"})), cell("b")))

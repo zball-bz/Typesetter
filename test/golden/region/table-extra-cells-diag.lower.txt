@@ -1,0 +1,9 @@
+lower v1 abi 3d3ccfbb docEnd 153 holes 1 module 22bd8f7285f122cb
+piece 0 hole 0 js [103,120)
+block 0 content [0,110)
+  CALL para [0,110)
+    TEXT "A row with more cells than the table's columns is reported, not cut: the table widens to hold it (plan P3-14)." [0,110)
+block 1 content [112,152) user framed async holes 0..1
+  REGION async "table" args=hole 0 [112,152)
+    CALL para [129,144)
+      TEXT "a | b\nc | d | e" [129,144) seps=2,8,12

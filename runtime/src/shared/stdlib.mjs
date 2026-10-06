@@ -502,6 +502,29 @@ export function createStd(host) {
     return withArgs(node, { style: ob.makeNode(KIND.styled, merged, []) });
   };
   const collect = (what) => () => ob.makeNode(KIND.collect, { what }, []);
+  // (plan P3-14; design T6 TableSpec) a table's columns: `cols: n` equal
+  // ones (v1), or a list of {width, align} (or widths) — the tracks
+  // attribute: auto / min-content / max-content, a number of fr, 6em, 30%
+  const ALIGN = { l: 'l', c: 'c', r: 'r', left: 'l', center: 'c', right: 'r', start: 'l', end: 'r' };
+  const tableAttrs = (a) => {
+    if (!Array.isArray(a.cols)) return { ...a };
+    const tracks = a.cols.map((c) => {
+      const o = isPlainObject(c) ? c : { width: c };
+      let w = o.width ?? 'auto';
+      if (typeof w === 'number') w = `${w}fr`;
+      w = { 'min-content': 'min', 'max-content': 'max' }[w] ?? String(w);
+      const al = o.align !== undefined ? ALIGN[String(o.align)] : undefined;
+      if (o.align !== undefined && !al) diag(1, 'ctor-arg', `table: a column's align is l, c or r (${o.align})`);
+      return al ? `${w}:${al}` : w;
+    });
+    return { ...a, cols: tracks.length || 1, tracks: tracks.join(',') };
+  };
+  const tableCells = (cols, lengths) => {
+    if (cols === undefined) return;
+    lengths.forEach((n, i) => {
+      if (n > cols) diag(1, 'table-cells', `table: row ${i + 1} has ${n} cells for ${cols} columns (the table widens)`);
+    });
+  };
   const impls = {
     text: (call) => call.kids[0] ?? ob.makeText(''),
     error: (call) => ob.makeNode(KIND.error,
@@ -520,19 +543,28 @@ export function createStd(host) {
     },
     table: (call) => {
       const body = call.body;
+      const attrs = tableAttrs(call.attrs);
       if (body?.kids) {  // table(opts, row(…), …): its kids are its rows
         const trows = body.kids.map((k) => (k.kind === KIND.trow ? k
           : ob.makeNode(KIND.trow, {}, [ob.makeNode(KIND.tcell, {}, [k])])));
-        return ob.makeNode(KIND.table, ordered(SPECS.table.order, call.attrs), trows);
+        tableCells(attrs.cols, trows.map((r) => r.children.length));
+        return ob.makeNode(KIND.table, ordered(SPECS.table.order, attrs), trows);
       }
       const rows = body ? body.rows() : [];
-      const cols = call.attrs.cols ?? rows.reduce((m, r) => Math.max(m, r.length), 1);
+      // a pipe cell holding one #cell(…) is that cell (its spans, its align)
+      const cellOf = (c) => (c.length === 1 && isNode(c[0]) && c[0].kind === KIND.tcell ? c[0]
+        : ob.makeNode(KIND.tcell, {}, c));
+      const spans = rows.some((r) => r.some((c) => c.length === 1 && isNode(c[0]) && c[0].kind === KIND.tcell));
+      const cols = attrs.cols ?? rows.reduce((m, r) => Math.max(m, r.length), 1);
+      // (plan P3-14) a row longer than the table is reported, not cut: the
+      // table widens to hold it; a short one is padded (unless cells span)
+      tableCells(attrs.cols, rows.map((r) => r.length));
       const trows = rows.map((r) => {
-        const cells = r.slice(0, cols);
-        while (cells.length < cols) cells.push([]);
-        return ob.makeNode(KIND.trow, {}, cells.map((c) => ob.makeNode(KIND.tcell, {}, c)));
+        const cells = [...r];
+        while (!spans && cells.length < cols) cells.push([]);
+        return ob.makeNode(KIND.trow, {}, cells.map(cellOf));
       });
-      return ob.makeNode(KIND.table, ordered(SPECS.table.order, { ...call.attrs, cols }), trows);
+      return ob.makeNode(KIND.table, ordered(SPECS.table.order, { ...attrs, cols }), trows);
     },
     strong: styledBy({ weight: 700 }),
     em: styledBy({ italic: true }),

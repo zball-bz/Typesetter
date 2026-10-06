@@ -72,7 +72,7 @@ const AttrSpec kA_codeblock[] = {
     {70, "snapKerning", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {71, "sidecarFrac", Dom::Num, 0.1, 0.9, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {72, "contIndent", Dom::Int, 0, 40, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
-    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 15, false},
+    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 16, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -106,11 +106,15 @@ const AttrSpec kA_group[] = {
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {54, "style", Dom::Delta, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 0, false},
     {55, "attach", Dom::Enum, 0, 0, kM_group_attach, nullptr, 3, false, false, 0, 11, 0, false}};
+const char* const kM_table_rules[] = {"grid", "booktabs", "none"};
 const char* const kM_table_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_table[] = {
     {7, "cols", Dom::Int, 1, 64, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {8, "align", Dom::Token, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
+    {95, "tracks", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 13, false},
+    {96, "rules", Dom::Enum, 0, 0, kM_table_rules, nullptr, 3, false, false, 0, 14, 0, false},
+    {97, "header", Dom::Int, 0, 64, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -130,8 +134,14 @@ const AttrSpec kA_trow[] = {
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {54, "style", Dom::Delta, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 0, false},
     {55, "attach", Dom::Enum, 0, 0, kM_trow_attach, nullptr, 3, false, false, 0, 11, 0, false}};
+const char* const kM_tcell_align[] = {"l", "c", "r"};
+const char* const kM_tcell_valign[] = {"top", "middle", "bottom"};
 const char* const kM_tcell_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_tcell[] = {
+    {98, "colspan", Dom::Int, 1, 64, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
+    {99, "rowspan", Dom::Int, 1, 1000, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
+    {8, "align", Dom::Enum, 0, 0, kM_tcell_align, nullptr, 3, false, false, 0, 14, 0, false},
+    {100, "valign", Dom::Enum, 0, 0, kM_tcell_valign, nullptr, 3, false, false, 0, 14, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -246,11 +256,11 @@ const AttrSpec kA_styled[] = {
     {66, "matchClass", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
     {67, "matchLang", Dom::Lang, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
     {68, "matchDepth", Dom::Int, 1, 16, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
-    {69, "matchWhere", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 14, false},
+    {69, "matchWhere", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 15, false},
     {70, "snapKerning", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {71, "sidecarFrac", Dom::Num, 0.1, 0.9, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {72, "contIndent", Dom::Int, 0, 40, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
-    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 15, false},
+    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 16, false},
     {74, "punct", Dom::Enum, 0, 0, kM_styled_punct, nullptr, 3, false, false, 0, 13, 0, false},
     {76, "parSingleLine", Dom::Enum, 0, 0, kM_styled_parSingleLine, nullptr, 2, false, false, 0, 14, 0, false},
     {79, "keep", Dom::Enum, 0, 0, kM_styled_keep, nullptr, 3, false, false, 0, 14, 0, false},
@@ -260,8 +270,8 @@ const AttrSpec kA_styled[] = {
     {83, "breakAfter", Dom::Enum, 0, 0, kM_styled_breakAfter, nullptr, 2, false, false, 0, 14, 0, false},
     {84, "parHang", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 11, false},
     {85, "parHangAfter", Dom::Int, 0, 100, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
-    {86, "boxPadding", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 13, false},
-    {87, "boxBorder", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 13, false},
+    {86, "boxPadding", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 14, false},
+    {87, "boxBorder", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 14, false},
     {88, "boxBorderColor", Dom::Color, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
     {89, "boxBackground", Dom::Color, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
     {90, "media", Dom::Enum, 0, 0, kM_styled_media, nullptr, 3, false, false, 0, 14, 0, false},
@@ -330,11 +340,14 @@ const AttrSpec kA_mathinline[] = {
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {54, "style", Dom::Delta, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 0, false},
     {55, "attach", Dom::Enum, 0, 0, kM_mathinline_attach, nullptr, 3, false, false, 0, 11, 0, false}};
+const char* const kM_raw_measure[] = {"declared", "host"};
 const char* const kM_raw_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_raw[] = {
     {17, "html", Dom::Html, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {18, "w", Dom::Num, 0, 100000, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {19, "h", Dom::Num, 0, 100000, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
+    {101, "measure", Dom::Enum, 0, 0, kM_raw_measure, nullptr, 2, false, false, 0, 14, 0, false},
+    {102, "minWidth", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 11, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -537,9 +550,9 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"codeblock", Level::Block, Body::Code, InlineShape::Unsupported, 6, kA_codeblock, 18},
     {"rule", Level::Block, Body::None, InlineShape::Unsupported, 6, kA_rule, 9},
     {"group", Level::Adaptive, Body::Position, InlineShape::Container, 6, kA_group, 11},
-    {"table", Level::Block, Body::Rows, InlineShape::Unsupported, 6, kA_table, 11},
+    {"table", Level::Block, Body::Rows, InlineShape::Unsupported, 6, kA_table, 14},
     {"trow", Level::Block, Body::Cells, InlineShape::Unsupported, 6, kA_trow, 9},
-    {"tcell", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_tcell, 9},
+    {"tcell", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_tcell, 13},
     {"term", Level::Adaptive, Body::Inline, InlineShape::Unsupported, 6, kA_term, 10},
     {"collect", Level::Block, Body::Data, InlineShape::Unsupported, 6, kA_collect, 12},
     {"mathblock", Level::Block, Body::None, InlineShape::Unsupported, 6, kA_mathblock, 11},
@@ -551,7 +564,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"code", Level::Inline, Body::Text, InlineShape::Code, 6, kA_code, 9},
     {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 13},
     {"mathinline", Level::Inline, Body::None, InlineShape::Object, 6, kA_mathinline, 10},
-    {"raw", Level::Adaptive, Body::None, InlineShape::Object, 6, kA_raw, 12},
+    {"raw", Level::Adaptive, Body::None, InlineShape::Object, 6, kA_raw, 14},
     {"hardbreak", Level::Inline, Body::None, InlineShape::Break, 6, kA_hardbreak, 9},
     {"seq", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_seq, 9},
     {"image", Level::Adaptive, Body::None, InlineShape::Object, 6, kA_image, 15},

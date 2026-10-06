@@ -68,6 +68,24 @@ Format: `- [step] what changed — migration (if any)`.
 - [P3-01] Kind presentation is default rules, so rules can change it: headings (bold, 1.6/1.35/1.15em, ragged, keep with next), code and code blocks (mono at `code.scale`), captions (centred, unhyphenated, no indent), list and quote insets, footnote markers (`fn-marker`: raised, 0.7em), note bodies (`note-body`: 0.85em), caption labels and term names (bold), comment tokens (class `tok-comment`: italic, hanging at the content), error text (mono). A paragraph of a declared figure-box element is its caption.
 - [P3-01] A footnote's body takes the notes list's context, not its site's: a footnote in a heading is no longer bold and large (its own emphasis stays). A list inside a footnote indents by its own (smaller) em.
 - [P3-01] The semantic page writes what the document styled; the rules arrive as its stylesheet (`renderTsm` returns `css`, the static exporter inlines it; a mid-document `$.set` is marked with `data-tsr-env`).
+- [P3-14] Layout traits, set by rules or a block's own style:
+  - `$.set({role: 'theorem'}, {box: {padding: '0.4em 0.8em', border: '0 0 0 2px', borderColor: '#2f5d8a', background: '#f4f7fb'}, keep: 'together', space: {before: '1.5em', after: '1.5em'}})` frames a theorem, sets it apart and keeps it on one printed page.
+  - `keep: 'with-next'` keeps a block with the block after it when printing.
+  - `par: {hang: '2em'}` gives a hanging indent (reference lists).
+  - `break: {before: 'page'}` and `#pagebreak()` start a new printed page.
+  - `media: 'screen' | 'paged'` shows a block only on screen or only in print.
+  - `beside: 'shrink'` lets a code block or table sit beside a float instead of moving below it.
+  - `breaker: {tolerance, emergencyStretch}` tunes line breaking.
+
+  A region takes these as `style: {…}`, for example `#!aside(style: {break: {before: "page"}})`.
+- [P3-14] Tables:
+  - `cols` may list columns, `[{width: "auto", align: "l"}, {width: "1fr"}, {width: "6em", align: "r"}]`. A width is `auto`, `min-content`, `max-content`, a number of fr, a length or a percent.
+  - `rules: "booktabs" | "grid" | "none"`.
+  - `header: n` marks the header rows, which repeat on each printed page.
+  - Cells take `#cell({colspan, rowspan, align, valign})[…]`, also inside a pipe row.
+  - A table too wide for the page scrolls sideways on screen and warns `table-overflow`.
+  - A row with more cells than columns now widens the table and warns `table-cells`; the extra cells used to be silently dropped.
+  - `raw(html, {minWidth: "8em"})` sets the least width a raw box takes in a content-fitted column.
 - [P3-13] New collections and flows. All of these are declarations (docs/semantics-design.md §9); existing documents read as before.
   - Lists:
     - `#lof()` and `#lot()` list the figures and tables with their captions.

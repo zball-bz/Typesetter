@@ -1,0 +1,6 @@
+doc @[0,418)
+  para @[0,87)
+    text @[0,87) str="A table longer than a sheet: its header row repeats atop the continuation (plan P3-14)."
+  region @[89,417) name="table"
+    para @[168,409)
+      text @[168,409) str="Item | Description\none | the first row of a table that is long enough to need two sheets\ntwo | the second row\nthree | the third row\nfour | the fourth row\nfive | the fifth row\nsix | the sixth row\nseven | the seventh row\neight | the eighth row"

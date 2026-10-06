@@ -1,0 +1,9 @@
+lower v1 abi 3d3ccfbb docEnd 418 holes 1 module ea3bbf7326c48769
+piece 0 hole 0 js [103,182)
+block 0 content [0,87)
+  CALL para [0,87)
+    TEXT "A table longer than a sheet: its header row repeats atop the continuation (plan P3-14)." [0,87)
+block 1 content [89,417) user framed async holes 0..1
+  REGION async "table" args=hole 0 [89,417)
+    CALL para [168,409)
+      TEXT "Item | Description\none | the first row of a table that is long enough to need two sheets\ntwo | the second row\nthree | the third row\nfour | the fourth row\nfive | the fifth row\nsix | the sixth row\nseven | the seventh row\neight | the eighth row" [168,409) seps=5,23,93,116,137,159,179,201,225

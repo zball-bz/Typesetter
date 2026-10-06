@@ -115,7 +115,12 @@ class Builder {
     return nullptr;
   }
 
+  // an image's float side: its place.float (plan P3-14; its `side`
+  // argument is that trait's declared alias), 1 left, 2 right
   u8 sideOf(const ContentNode* n) const {
+    const u8 pf = props.get(n->props).placeFloat;
+    if (pf == PLACEFLOAT_LEFT || pf == PLACEFLOAT_RIGHT) return pf == PLACEFLOAT_LEFT ? 1 : 2;
+    if (pf == PLACEFLOAT_NONE) return 0;
     StrRef r = attrStr(n, ArgK::side);
     for (size_t i = 0; r && i < sideRefs.size(); i++)
       if (sideRefs[i] == r) return (u8)(i + 1);
@@ -240,7 +245,9 @@ class Builder {
     spec.gapCodeEm = 1;
     spec.framed = false;
     spec.lines = true;
-    t->blocks[tb].spec = (u32)t->tables.size();
+    spec.rules = TableSpec::Rules::None;
+    const u32 tableIdx = (u32)t->tables.size();
+    t->blocks[tb].spec = tableIdx;
     t->tables.push_back(std::move(spec));
     // its logical lines, as emit splits them: one text body by its line
     // breaks, else one kid per line
@@ -276,8 +283,36 @@ class Builder {
         leaf(LayouterId::Paragraph, Painter::None, TraitsId::Para, note, c1, 0, std::move(ns));
       }
       t->blocks[c1].end = (u32)t->blocks.size();
+      CellPlace p0, p1;  // (its row: the line and its note)
+      p0.row = p1.row = i;
+      p1.col = 1;
+      t->tables[tableIdx].place.push_back(p0);
+      t->tables[tableIdx].place.push_back(p1);
     }
+    t->tables[tableIdx].rows = lines;
     t->blocks[tb].end = (u32)t->blocks.size();
+  }
+  // (plan P3-14) a table's tracks: width[:align] by commas (model.h)
+  void tracksOf(std::string_view v, const ContentNode* n, std::vector<ColSpec>& out) const {
+    using K = TrackDecl::K;
+    using W = ColSpec::W;
+    for (const TrackDecl& t : parseTracks(v)) {
+      ColSpec c;
+      c.align = t.align;
+      switch (t.k) {
+        case K::Fr: c.fr = t.v; break;
+        case K::Percent: c.percent = t.v; break;
+        case K::Fixed:
+          c.w = W::Fixed;
+          c.fixed = lenSu(t.len, n);
+          break;
+        case K::Auto: c.w = W::Auto; break;
+        case K::Min: c.w = W::Min; break;
+        case K::Max: c.w = W::Max; break;
+      }
+      out.push_back(c);
+    }
+    if (out.empty()) out.push_back(ColSpec{});
   }
 
   // a table cell (plan P3-10): kept even when empty — it holds its grid
@@ -389,24 +424,80 @@ class Builder {
         // blocks) — no longer flattened into one inline stream
         const u32 tb = open(LayouterId::Table, Painter::None, TraitsId::Table, n, parent, x);
         TableSpec spec;
-        const int cols = attrInt(n, ArgK::cols, 1);
-        const StrRef al = attrStr(n, ArgK::align);
-        const std::string_view a = al ? strs.get(al) : std::string_view{};
-        for (u32 c = 0; c < (u32)(cols < 1 ? 1 : cols); c++)
-          spec.cols.push_back(ColSpec{0, c < a.size() ? (u8)a[c] : (u8)'l', false});
-        const u32 ncols = (u32)spec.cols.size();
-        t->blocks[tb].spec = (u32)t->tables.size();
-        t->tables.push_back(std::move(spec));
+        // its columns (plan P3-14): the tracks attribute, else v1's `cols`
+        // equal ones aligned by the `align` letters
+        if (StrRef tr = attrStr(n, ArgK::tracks)) {
+          tracksOf(strs.get(tr), n, spec.cols);
+        } else {
+          const int cols = attrInt(n, ArgK::cols, 1);
+          const StrRef al = attrStr(n, ArgK::align);
+          const std::string_view a = al ? strs.get(al) : std::string_view{};
+          for (u32 c = 0; c < (u32)(cols < 1 ? 1 : cols); c++)
+            spec.cols.push_back(ColSpec{0, c < a.size() ? (u8)a[c] : (u8)'l', false});
+        }
+        const int rules = attrEnum(n, ArgK::rules, strs);  // grid | booktabs | none
+        spec.rules = rules == 2 ? TableSpec::Rules::Booktabs : rules == 3 ? TableSpec::Rules::None : TableSpec::Rules::Grid;
+        // (HTML's table model) each cell at its row's first free position,
+        // covering its spans; a row longer than the columns widens the table
+        struct At {
+          const ContentNode* cell;
+          CellPlace p;
+        };
+        std::vector<At> at;
+        std::vector<std::vector<char>> used;
+        u32 r = 0;
         for (const ContentNode* row : n->kids) {
           if (row->kind != Kind::trow) continue;
+          if (used.size() <= r) used.resize(r + 1);
           u32 c = 0;
           for (const ContentNode* cell : row->kids) {
-            if (cell->kind != Kind::tcell || c >= ncols) continue;
-            cellBlock(cell, tb);
-            c++;
+            if (cell->kind != Kind::tcell) continue;
+            while (c < used[r].size() && used[r][c]) c++;
+            CellPlace p;
+            p.row = r;
+            p.col = c;
+            p.colspan = (u32)std::max(1, attrInt(cell, ArgK::colspan, 1));
+            p.rowspan = (u32)std::max(1, attrInt(cell, ArgK::rowspan, 1));
+            const std::string_view al = strs.get(attrStr(cell, ArgK::align));
+            p.halign = al.size() == 1 ? (u8)al[0] : 0;
+            const int va = attrEnum(cell, ArgK::valign, strs);  // top | middle | bottom
+            p.valign = va == 2 ? CellPlace::V::Middle : va == 3 ? CellPlace::V::Bottom : CellPlace::V::Top;
+            for (u32 rr = r; rr < r + p.rowspan; rr++) {
+              if (used.size() <= rr) used.resize(rr + 1);
+              if (used[rr].size() < c + p.colspan) used[rr].resize(c + p.colspan, 0);
+              for (u32 cc = c; cc < c + p.colspan; cc++) used[rr][cc] = 1;
+            }
+            at.push_back({cell, p});
+            c += p.colspan;
           }
-          for (; c < ncols; c++) cellBlock(nullptr, tb);
+          r++;
         }
+        // rows: as written (a span past the last is cut to it)
+        const u32 nrows = r;
+        u32 ncols = (u32)spec.cols.size();
+        for (At& a : at) {
+          a.p.rowspan = std::min(a.p.rowspan, nrows - a.p.row);
+          ncols = std::max(ncols, a.p.col + a.p.colspan);
+        }
+        while (spec.cols.size() < ncols) spec.cols.push_back(ColSpec{0, 'l', false});
+        // a position no cell covers holds an empty one
+        for (u32 rr = 0; rr < nrows; rr++)
+          for (u32 cc = 0; cc < ncols; cc++)
+            if (rr >= used.size() || cc >= used[rr].size() || !used[rr][cc]) {
+              CellPlace p;
+              p.row = rr;
+              p.col = cc;
+              at.push_back({nullptr, p});
+            }
+        std::stable_sort(at.begin(), at.end(), [](const At& a, const At& b) {
+          return a.p.row != b.p.row ? a.p.row < b.p.row : a.p.col < b.p.col;
+        });
+        spec.rows = nrows;
+        spec.header = (u32)std::clamp(attrInt(n, ArgK::header, 0), 0, (int)nrows);
+        for (const At& a : at) spec.place.push_back(a.p);
+        t->blocks[tb].spec = (u32)t->tables.size();
+        t->tables.push_back(std::move(spec));
+        for (const At& a : at) cellBlock(a.cell, tb);
         t->blocks[tb].end = (u32)t->blocks.size();
         return;
       }

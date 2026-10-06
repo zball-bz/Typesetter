@@ -1,6 +1,8 @@
 // Content tree + instantiation (document-model §2–§4); the style table is
 // style.h.
 #pragma once
+#include <cstdlib>
+
 #include "style.h"
 
 namespace tsr {
@@ -87,6 +89,62 @@ inline const ArgVal* extAttr(const ContentNode* n, StrRef name) {
   for (const ArgVal& a : n->args)
     if (a.key == ArgK::ext && a.name == name) return &a;
   return nullptr;
+}
+
+// (plan P3-14) an enum attribute's value as its place in the kind's
+// declared domain (schema "enum:a|b|c": 1, 2, 3); 0 when absent or not one
+// of them — layers read enum arguments by place, never by spelling
+inline int attrEnum(const ContentNode* n, ArgK k, const Interner& strs) {
+  const StrRef v = attrStr(n, k);
+  if (!v) return 0;
+  const KindInfo& ki = kKinds[(u16)n->kind];
+  for (u8 i = 0; i < ki.nAttrs; i++) {
+    const AttrSpec& a = ki.attrs[i];
+    if (a.key != (u16)k || a.dom != Dom::Enum) continue;
+    const std::string_view s = strs.get(v);
+    for (u8 m = 0; m < a.nMembers; m++)
+      if (s == a.members[m]) return m + 1;
+  }
+  return 0;
+}
+
+// (plan P3-14; design T6 SizeSpec) a table's tracks attribute (domain
+// "tracks": width[:align] by commas) as its columns' declarations
+struct TrackDecl {
+  enum class K : u8 { Fr, Fixed, Percent, Auto, Min, Max } k = K::Fr;
+  float v = 1;  // Fr: its share; Percent: its fraction of the measure
+  Len len;      // Fixed
+  u8 align = 'l';
+};
+inline std::vector<TrackDecl> parseTracks(std::string_view v) {
+  std::vector<TrackDecl> out;
+  for (size_t at = 0; at <= v.size();) {
+    size_t comma = v.find(',', at);
+    if (comma == std::string_view::npos) comma = v.size();
+    std::string_view e = v.substr(at, comma - at);
+    at = comma + 1;
+    if (e.empty()) continue;
+    TrackDecl t;
+    if (const size_t colon = e.find(':'); colon != std::string_view::npos) {
+      if (colon + 1 < e.size()) t.align = (u8)e[colon + 1];
+      e = e.substr(0, colon);
+    }
+    auto num = [&](size_t suffix) { return std::strtof(std::string(e.substr(0, e.size() - suffix)).c_str(), nullptr); };
+    constexpr std::string_view kAuto = "auto", kMin = "min", kMax = "max", kFr = "fr";
+    if (e == kAuto) t.k = TrackDecl::K::Auto;
+    else if (e == kMin) t.k = TrackDecl::K::Min;
+    else if (e == kMax) t.k = TrackDecl::K::Max;
+    else if (e.size() > 2 && e.substr(e.size() - 2) == kFr) t.v = std::max(0.001f, num(2));
+    else if (e.back() == '%') {
+      t.k = TrackDecl::K::Percent;
+      t.v = std::max(0.0001f, num(1) / 100.0f);
+    } else {
+      t.k = TrackDecl::K::Fixed;
+      t.len = parseLen(e);
+    }
+    out.push_back(t);
+  }
+  return out;
 }
 
 // (plan P3-07; design T7 CopyPolicy) what copy takes of a node, from its

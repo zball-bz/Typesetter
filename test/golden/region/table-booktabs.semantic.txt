@@ -1,0 +1,11 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="99">Content-fitted columns, booktabs rules, a header row, cells spanning columns and rows (plan P3-14).</p>
+<table data-pid="1" data-s="101" data-e="460" id="tsr-tbl-x">
+<tr><th>Name</th><th>Value</th><th style="text-align:right">Unit</th></tr>
+<tr><td>Speed</td><td>the rate at which something moves</td><td style="text-align:right">30</td></tr>
+<tr><td colspan="2" style="text-align:center">a cell across two columns</td><td style="text-align:right">2</td></tr>
+<tr><td rowspan="2" style="vertical-align:middle">tall</td><td>the first of two rows</td><td style="text-align:right">1</td></tr>
+<tr><td>the second</td><td style="text-align:right">2</td></tr>
+</table>
+<p data-pid="2" data-s="462" data-e="473">See <a href="#tsr-tbl-x">表 1</a>.</p>
+</div>

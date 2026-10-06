@@ -1,4 +1,4 @@
-# Style properties (design; as built from plan P1-02)
+# Style properties (design; as built from plans P1-02, P3-01, P3-14)
 
 ## 1. One vocabulary, declared once
 
@@ -127,8 +127,34 @@ centred (the semantic page: a shrink-to-fit centred box). The caption rule
 (D-Y05, LaTeX's `singlelinecheck`): justified, hyphenated, a one-line
 caption centred — block and float captions alike.
 
+Plan P3-14 added the **block trait group** (design T6 S12; integration
+ruling: no `$.role` — role defaults are rules, `$.set({role: …}, …)`):
+
+| row | values | inherits | layout reads it as |
+|---|---|---|---|
+| `keep` | together, with-next, both | no | page-cut tiers inside / after the block |
+| `space.before`, `space.after` | len | no | the gap above / below, max with the stack gap; collapses through an unframed container's first / last child |
+| `break.before`, `break.after` | auto, page | no | a Forced cut; `#pagebreak()` is an empty group whose break lands on the next block |
+| `par.hang`, `par.hangAfter` | len, number (default 1) | yes | the ParShape's lines after hangAfter start `hang` in |
+| `box.padding`, `box.border` | 1–4 lens (CSS order) | no | the content box inset; a Frame fragment under the content |
+| `box.borderColor`, `box.background` | colour | no | the frame's paint |
+| `media` | all, screen, paged | no | the block is laid out only for that medium |
+| `beside` | clear, shrink | no | a non-paragraph block beside a float clears it (D-Y02) or narrows |
+| `breaker.tolerance`, `breaker.emergencyStretch` | number, len | yes | the paragraph's BreakParams |
+| `place.float` | none, left, right, top, bottom, page | no | an image floats (from P3-15: any block) |
+
+Old spellings stay as declared aliases. A kind's schema attribute may say
+`aliasOf: <attribute>`: it is then the node's own style for that row, as
+the same-named `prop` attributes are. For example, an image's `side` is
+its `place.float`. `block.keepWithNext` is the P3-01 spelling of
+`keep: with-next`. A made node (a collector's output) settles its block
+properties in the rule env of its site, so a rule declared before the site
+reaches it. The semantic page's stylesheet has CSS forms for the rows: `break-inside`, margins,
+`break-before`/`after`, padding/text-indent for the hang, padding, border,
+background, `display: flow-root`, float.
+
 ## 5. Not yet
 
-Element style sections (P3-14) and scoped document knobs (P3-02); the
+Scoped document knobs (P3-02); the
 semantic page's role and class hooks (P3-18, P3-23); a token's colour is
 still its own until the class channel (P3-18).

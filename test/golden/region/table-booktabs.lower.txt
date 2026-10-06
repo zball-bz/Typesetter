@@ -1,0 +1,23 @@
+lower v1 abi 3d3ccfbb docEnd 474 holes 3 module c4107c4ebc3666a6
+piece 0 hole 0 js [128,263)
+piece 1 hole 1 js [265,321)
+piece 2 hole 2 js [323,385)
+block 0 content [0,99)
+  CALL para [0,99)
+    TEXT "Content-fitted columns, booktabs rules, a header row, cells spanning columns and rows (plan P3-14)." [0,99)
+block 1 content [101,460) user framed async holes 0..3
+  REGION async "table" args=hole 0 [101,460)
+    FRAME [236,452) holes 1..3
+      CALL para [236,452)
+        TEXT "Name | Value | Unit\nSpeed | the rate at which something moves | 30\n" [236,302) raw=0:0,67:66 seps=5,13,26,62
+        HOLE 1 [303,361)
+          TEXT "a cell across two columns" [335,360)
+        TEXT " | 2\n" [362,365) raw=0:0,1:0,5:3 seps=1
+        HOLE 2 [366,409)
+          TEXT "tall" [404,408)
+        TEXT " | the first of two rows | 1\nthe second | 2" [410,452) raw=0:0,1:0 seps=1,25,40
+block 2 content [462,473)
+  CALL para [462,473)
+    TEXT "See " [462,465) raw=0:0,4:3
+    CALL ref [466,472) target="tbl-x"
+    TEXT "." [472,473)

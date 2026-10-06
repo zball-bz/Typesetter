@@ -1,0 +1,16 @@
+doc @[0,152) [base]
+  para @[0,110) [base]
+    text @[0,110) [base] str="A row with more cells than the table's columns is reported, not cut: the table widens to hold it (plan P3-14)."
+  table @[112,152) [base] cols=2
+    trow @[112,152) [base]
+      tcell @[112,152) [base]
+        text @[129,130) [base] str="a"
+      tcell @[112,152) [base]
+        text @[133,134) [base] str="b"
+    trow @[112,152) [base]
+      tcell @[112,152) [base]
+        text @[135,136) [base] str="c"
+      tcell @[112,152) [base]
+        text @[139,140) [base] str="d"
+      tcell @[112,152) [base]
+        text @[143,144) [base] str="e"

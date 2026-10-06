@@ -987,12 +987,158 @@ class DocLayout {
     leave(b, l);
   }
 
-  // (plan P3-10; design T6 TableSpec, S9) a grid of flow roots: v1 tracks
-  // (`cols` equal columns, the cell padding inside), full-width rules above,
-  // between and below the rows; each cell's content is laid out by the
-  // ordinary layouters at its column's width and halign, then the row
-  // takes its tallest cell. The table is one box of the vertical list and
-  // one atomic group on paged sheets.
+  // (plan P3-14) the intrinsic widths of a block's content (CSS min- and
+  // max-content): the widest run no legal break divides, the widest line
+  // unbroken; a leaf's indent within the block is added
+  void intrinsic(u32 k, Su& mn, Su& mx) const {
+    const LayoutBlock& top = tree->blocks[k];
+    for (u32 i = k; i < top.end; i++) {
+      const LayoutBlock& b = tree->blocks[i];
+      if (!b.leaf()) continue;
+      const FlowUnit& u = tb->units[b.unit];
+      Su lmn = 0, lmx = 0;
+      switch (b.layouter) {
+        case LayouterId::Paragraph: {
+          Su run = 0, line = 0;
+          IK prev = IK::Penalty;
+          for (const HItem& it : u.hl.items) {
+            const bool brk = (it.k == IK::Glue && (prev == IK::Box || prev == IK::Disc)) ||
+                             (it.k == IK::Penalty && it.x < kPenInf);
+            if (it.k == IK::Penalty && it.x <= -kPenInf) {  // a forced break: a new line
+              lmx = std::max(lmx, line);
+              line = 0;
+            }
+            if (brk) {
+              lmn = std::max(lmn, run);
+              run = 0;
+            } else if (it.k != IK::Penalty) {
+              run += it.w;
+            }
+            if (it.k != IK::Penalty) line += it.w;
+            prev = it.k;
+          }
+          lmn = std::max(lmn, run);
+          lmx = std::max(lmx, line);
+          break;
+        }
+        case LayouterId::Replaced:
+          if (b.painter == Painter::Image) {
+            Su w = 0, h = 0;
+            resolveImageSize(std::get<ImageData>(u.data).size, 1e6, w, h);
+            lmn = lmx = w;
+          } else if (b.painter == Painter::Raw) {
+            const RawData& r = std::get<RawData>(u.data);
+            lmx = suRoundPx(std::max(r.wPx, r.minWPx));
+            lmn = suRoundPx(r.minWPx > 0 ? r.minWPx : r.wPx);
+          } else if (b.painter == Painter::MathRow) {
+            if (const MathBox* mb = std::get<MathData>(u.data).box) lmn = lmx = mb->w;
+          }
+          break;
+        default:  // a code block: as wide as the room (it wraps)
+          lmn = kRailMinLineSu;
+          break;
+      }
+      const Su ind = (b.x - top.x) + (b.xr - top.xr) + b.box.inset(1) + b.box.inset(3);
+      mn = std::max(mn, lmn + ind);
+      mx = std::max(mx, lmx + ind);
+    }
+  }
+
+  // (plan P3-14; design T6 resolveTracks) the columns' widths: fixed and
+  // percent first, content-fitted ones between their cells' min- and
+  // max-content (sharing what is left in proportion), fr ones sharing the
+  // rest; v1 tables (equal fr columns) and code tables as before
+  std::vector<Su> tracks(const LayoutBlock& b, const TableSpec& spec, const std::vector<u32>& cells, Su lineWidth,
+                         Su gap, Su padX) const {
+    using W = ColSpec::W;
+    const u32 ncols = (u32)spec.cols.size();
+    std::vector<Su> colW(ncols, 0);
+    bool content = false;
+    for (const ColSpec& c : spec.cols) content = content || (c.w != W::Fr && c.percent <= 0);
+    if (!content) {  // fr and percent only: the v1 arithmetic
+      Su fixed = gap * (Su)(ncols - 1);
+      float frs = 0;
+      for (u32 c = 0; c < ncols; c++) {
+        if (spec.cols[c].percent > 0) fixed += colW[c] = suRoundPx(spec.cols[c].percent * widthPx(b));
+        else frs += spec.cols[c].fr;
+      }
+      const u32 nFr = (u32)std::count_if(spec.cols.begin(), spec.cols.end(), [](const ColSpec& c) { return c.percent <= 0; });
+      bool equal = true;
+      for (const ColSpec& c : spec.cols) equal = equal && (c.percent > 0 || c.fr == 1);
+      for (u32 c = 0; c < ncols; c++) {
+        if (spec.cols[c].percent > 0) continue;
+        const Su frW = !nFr ? 0
+                       : equal ? (lineWidth - fixed) / (Su)nFr
+                               : (Su)((double)(lineWidth - fixed) * spec.cols[c].fr / frs);
+        colW[c] = spec.framed ? frW : std::max(frW, kRailMinLineSu);
+      }
+      return colW;
+    }
+    // the cells' intrinsic widths, a single column's at once, a spanning
+    // cell's excess shared by its columns
+    std::vector<Su> mn(ncols, 2 * padX + kRailMinLineSu), mx(ncols, 2 * padX);
+    for (int pass = 0; pass < 2; pass++)
+      for (size_t i = 0; i < cells.size() && i < spec.place.size(); i++) {
+        const CellPlace& p = spec.place[i];
+        if ((p.colspan > 1) != (pass == 1)) continue;
+        Su cmn = 0, cmx = 0;
+        intrinsic(cells[i], cmn, cmx);
+        cmn += 2 * padX;
+        cmx += 2 * padX;
+        Su have = gap * (Su)(p.colspan - 1), haveX = have;
+        for (u32 c = p.col; c < p.col + p.colspan; c++) {
+          have += mn[c];
+          haveX += mx[c];
+        }
+        for (u32 c = p.col; c < p.col + p.colspan; c++) {
+          if (cmn > have) mn[c] += (cmn - have) / (Su)p.colspan;
+          if (cmx > haveX) mx[c] += (cmx - haveX) / (Su)p.colspan;
+        }
+      }
+    for (u32 c = 0; c < ncols; c++) mx[c] = std::max(mx[c], mn[c]);
+    Su room = lineWidth - gap * (Su)(ncols - 1);
+    float frs = 0;
+    Su flexMin = 0, flexMax = 0;  // the content-fitted columns'
+    for (u32 c = 0; c < ncols; c++) {
+      const ColSpec& cs = spec.cols[c];
+      if (cs.percent > 0) room -= colW[c] = std::max(mn[c], suRoundPx(cs.percent * widthPx(b)));
+      else if (cs.w == W::Fixed) room -= colW[c] = std::max(mn[c], cs.fixed);
+      else if (cs.w == W::Min) room -= colW[c] = mn[c];
+      else if (cs.w == W::Max) room -= colW[c] = mx[c];
+      else if (cs.w == W::Auto) {
+        flexMin += mn[c];
+        flexMax += mx[c];
+      } else {
+        frs += cs.fr;
+        room -= mn[c];  // (an fr column's floor)
+      }
+    }
+    // auto columns: their max-content when it fits, else between their
+    // min and max in proportion to what each would take
+    const Su autoRoom = std::max<Su>(room, flexMin);
+    for (u32 c = 0; c < ncols; c++) {
+      if (spec.cols[c].w != W::Auto || spec.cols[c].percent > 0) continue;
+      colW[c] = autoRoom >= flexMax  ? mx[c]
+                : flexMax > flexMin ? mn[c] + (Su)((double)(autoRoom - flexMin) * (mx[c] - mn[c]) / (flexMax - flexMin))
+                                    : mn[c];
+      room -= colW[c];
+    }
+    // fr columns: the rest, above their floor
+    const Su frRoom = std::max<Su>(0, room);
+    for (u32 c = 0; c < ncols; c++)
+      if (spec.cols[c].w == W::Fr && spec.cols[c].percent <= 0)
+        colW[c] = mn[c] + (frs > 0 ? (Su)((double)frRoom * spec.cols[c].fr / frs) : 0);
+    return colW;
+  }
+
+  // (plan P3-10; design T6 TableSpec, S9; plan P3-14) a grid of flow roots:
+  // its tracks (equal v1 columns, or fixed / percent / content-fitted / fr
+  // ones), the cell padding inside; its rules (a full grid, booktabs, none);
+  // each cell's content laid out by the ordinary layouters at its columns'
+  // width and halign, a row taking its tallest single-row cell, a cell
+  // spanning rows the rows it spans (valign placing it in them); header
+  // rows repeat atop a continuation sheet. A table wider than the measure
+  // overflows it (table-overflow, D-Y09).
   void table(const LayoutBlock& b) {
     const u32 self = (u32)(&b - tree->blocks.data());
     const TableSpec& spec = tree->tables[b.spec];
@@ -1011,49 +1157,70 @@ class DocLayout {
     const Sep endSep = lastLeaf != ~0u ? tree->blocks[lastLeaf].sepAfter : Sep::Newline;
     const size_t first = fr->lines.size();
     std::vector<size_t> rowStarts;  // each row's first fragment
+    std::vector<char> joined;       // a row a cell above spans into
+    size_t headerEnd = first;       // past the header rows (and their rule)
     const u32 ncols = (u32)spec.cols.size();
-    if (ncols > 0 && !cells.empty()) {
-      // its tracks (plan P3-11: Fr(1) or Percent; v1 tables: equal columns,
-      // the padding inside): each column's start and content width
+    const u32 nRows = spec.rows;
+    if (ncols > 0 && !cells.empty() && spec.place.size() == cells.size()) {
       const Su padX = spec.framed ? suRoundPx(cfg.tableCellPadEm * cfg.baseSizePx) : 0;  // table.cellPad
       const Su padY = spec.framed ? suRoundPx(cfg.tableRowPadEm * cfg.baseSizePx) : 0;   // table.rowPad
       const Su gap = suRoundPx(spec.gapCodeEm * cfg.baseSizePx * cfg.codeScale);
-      std::vector<Su> colX(ncols), colW(ncols);
-      Su fixed = gap * (Su)(ncols - 1);
-      u32 nFr = 0;
-      for (u32 c = 0; c < ncols; c++) {
-        if (spec.cols[c].percent > 0) fixed += colW[c] = suRoundPx(spec.cols[c].percent * widthPx(b));
-        else nFr++;
-      }
-      const Su frW = nFr ? (lineWidth - fixed) / (Su)nFr : 0;
+      const std::vector<Su> colW = tracks(b, spec, cells, lineWidth, gap, padX);
+      std::vector<Su> colX(ncols);
+      Su total = 0;
       for (u32 c = 0, x = 0; c < ncols; c++) {
-        if (spec.cols[c].percent <= 0) colW[c] = spec.framed ? frW : std::max(frW, kRailMinLineSu);
         colX[c] = (Su)x;
         x += (u32)(colW[c] + gap);
+        total = (Su)x - gap;
       }
-      auto cellWidth = [&](u32 c) {
-        const Su w = colW[c] - 2 * padX;
+      bool content = false;
+      for (const ColSpec& c : spec.cols) content = content || (c.w != ColSpec::W::Fr && c.percent <= 0);
+      // (D-Y09) wider than the measure even at min-content: it overflows
+      if (total > lineWidth) {
+        diags.add(Sev::Warning, "table-overflow", b.span,
+                  "a table is wider than the measure at its columns' least widths");
+        fr->overflowR = std::max(fr->overflowR, (Su)(left(b) + total));
+      }
+      const Su ruleW = content ? std::min(total, std::max(total, lineWidth)) : lineWidth;
+      auto cellWidth = [&](const CellPlace& p) {
+        Su w = gap * (Su)(p.colspan - 1);
+        for (u32 c = p.col; c < p.col + p.colspan && c < ncols; c++) w += colW[c];
+        w -= 2 * padX;
         return w < kRailMinLineSu ? kRailMinLineSu : w;
       };
-      const size_t nRows = cells.size() / ncols;
       auto addRule = [&](i64 yy) {
         Fragment rl;
         rl.unitIdx = unit0;
         rl.kind = FragKind::Rule;
         rl.left = left(b);
-        rl.width = lineWidth;
+        rl.width = ruleW;
         rl.y = (Su)yy;
         fr->lines.push_back(rl);
       };
-      if (spec.framed) addRule(py);
-      for (size_t r = 0; r < nRows; r++) {
-        const i64 rowTop = py + padY;
-        i64 rowBottom = rowTop + baseLeading;
+      using R = TableSpec::Rules;
+      if (spec.rules != R::None) addRule(py);
+      // each row's last cell (by first position): its separator is a row's
+      std::vector<size_t> lastInRow(nRows, ~size_t(0));
+      for (size_t i = 0; i < cells.size(); i++) lastInRow[spec.place[i].row] = i;
+      joined.assign(nRows, 0);
+      for (const CellPlace& p : spec.place)
+        for (u32 r = p.row + 1; r < p.row + p.rowspan && r < nRows; r++) joined[r] = 1;
+      struct Laid {
+        size_t lo = 0, hi = 0;
+        i64 h = 0;
+      };
+      std::vector<Laid> laid(cells.size());
+      std::vector<i64> rowTop(nRows, 0);
+      size_t k = 0;  // the next cell, by first position
+      for (u32 r = 0; r < nRows; r++) {
+        const i64 top = py + padY;
+        rowTop[r] = top;
+        i64 rowBottom = top + baseLeading;
         rowStarts.push_back(fr->lines.size());
-        for (u32 c = 0; c < ncols; c++) {
-          const u32 k = (u32)(r * ncols + c);
-          const Su cellW = cellWidth(c);
-          const u8 a = spec.cols[c].align;
+        for (; k < cells.size() && spec.place[k].row == r; k++) {
+          const CellPlace& p = spec.place[k];
+          const Su cellW = cellWidth(p);
+          const u8 a = p.halign ? p.halign : spec.cols[p.col].align;
           const LineEnds halign = LineEnds::preset(a == 'c'   ? LineEnds::Preset::Center
                                                    : a == 'r' ? LineEnds::Preset::Right
                                                               : LineEnds::Preset::Left,
@@ -1062,11 +1229,11 @@ class DocLayout {
           // with what follows its last leaf. A code block's row ends a line
           // (plan P3-11): each of its cells ends with a newline, the last
           // row with what follows the block
-          const Sep cellSep = spec.lines ? (r + 1 < nRows ? Sep::Newline : endSep)
-                              : c + 1 < ncols  ? Sep::Tab
-                              : r + 1 < nRows  ? Sep::Row
-                                               : endSep;
-          const Su cellX = (Su)(left(b) + colX[c] + padX);
+          const Sep cellSep = spec.lines            ? (r + 1 < nRows ? Sep::Newline : endSep)
+                              : lastInRow[r] != k   ? Sep::Tab
+                              : r + 1 < nRows       ? Sep::Row
+                                                    : endSep;
+          const Su cellX = (Su)(left(b) + colX[p.col] + padX);
           const size_t before = fr->lines.size();
           // the cell: a flow root at its content box
           ExclusionMap cellFloats(em);
@@ -1074,7 +1241,7 @@ class DocLayout {
           const i64 savedPy = py;
           const Su savedGap = gapBefore;
           ctx = Ctx{cellX, cellW, suToPx(cellW), &cellFloats, &halign, true};
-          py = rowTop;
+          py = top;
           gapBefore = 0;
           block(cells[k]);
           const i64 cy = py;
@@ -1087,7 +1254,7 @@ class DocLayout {
             // a code line without a note has none (its notes copy alone)
             Fragment e;
             e.unitIdx = unit0;
-            e.y = (Su)rowTop;
+            e.y = (Su)top;
             e.left = cellX;
             e.width = cellW;
             e.height = baseLeading;
@@ -1107,21 +1274,42 @@ class DocLayout {
               break;
             }
           for (size_t q = before; q < fr->lines.size(); q++) fr->lines[q].gridCell = (i32)k;
-          if (cy > rowBottom) rowBottom = cy;
+          laid[k] = {before, fr->lines.size(), cy - top};
+          if (p.rowspan == 1 && cy > rowBottom) rowBottom = cy;
+        }
+        // the cells that end in this row: the rows they span hold them, and
+        // each stands where its valign says
+        for (size_t i = 0; i < k; i++) {
+          const CellPlace& p = spec.place[i];
+          if (p.row + p.rowspan - 1 != r) continue;
+          if (p.rowspan > 1) rowBottom = std::max(rowBottom, rowTop[p.row] + laid[i].h);
+          if (p.valign == CellPlace::V::Top) continue;
+          const i64 room = rowBottom - rowTop[p.row] - laid[i].h;
+          const i64 off = p.valign == CellPlace::V::Middle ? room / 2 : room;
+          if (off > 0)
+            for (size_t q = laid[i].lo; q < laid[i].hi; q++) fr->lines[q].y += (Su)off;
         }
         py = rowBottom + padY;
-        if (spec.framed) addRule(py);
+        const bool lastHeader = spec.header > 0 && r + 1 == spec.header;
+        if (spec.rules == R::Grid || (spec.rules == R::Booktabs && (lastHeader || r + 1 == nRows))) addRule(py);
+        if (lastHeader) headerEnd = fr->lines.size();
       }
     }
     for (size_t q = first; q < fr->lines.size(); q++) fr->lines[q].table = self;
     // (plan P3-12) a page cuts between rows only — a row (with the rule
-    // under it) is one atom; a code block's rows keep widows and orphans
+    // under it) is one atom, rows a cell spans one; a code block's rows
+    // keep widows and orphans; (plan P3-14) the header rows (and the rules
+    // above and under them) repeat atop a continuation sheet and keep with
+    // the first row after them
     for (size_t q = first; q < fr->lines.size(); q++) fr->lines[q].brk = PenTier::Structural;
     for (size_t r = 1; r < rowStarts.size(); r++) {
-      if (rowStarts[r] >= fr->lines.size()) continue;
+      if (rowStarts[r] >= fr->lines.size() || (r < joined.size() && joined[r])) continue;
       const bool wo = spec.lines && (r < kOrphans || rowStarts.size() - r < kWidows);
-      fr->lines[rowStarts[r]].brk = wo ? PenTier::WidowOrphan : PenTier::Normal;
+      fr->lines[rowStarts[r]].brk = wo                  ? PenTier::WidowOrphan
+                                    : r == spec.header ? PenTier::KeepWithNext
+                                                        : PenTier::Normal;
     }
+    for (size_t q = first; q < headerEnd; q++) fr->lines[q].paged |= kPagedHeader;
     if (first < fr->lines.size()) fr->lines[first].brk = PenTier::Normal;
     if (!ctx.cell) fr->vlist.push_back({unit0, gapBefore, l.clear, (Su)l.top, (Su)(py - l.top), false, self});
     gapBefore = 0;
