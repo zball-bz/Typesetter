@@ -4,7 +4,7 @@
 // and docs/syntax-table.md. Rows are data; behaviour (body modes, ownership,
 // block shapes) is a closed set implemented in code. Never hand-edit the
 // generated files.
-SYNTAX_VERSION(5)
+SYNTAX_VERSION(6)
 
 // ---- character classes ----------------------------------------------------
 CLASS(SpliceHead, "A-Za-z_$")
@@ -41,6 +41,10 @@ INLINE(brk,     "\\EOL",   "-",        -,         "-",                    "-",  
 // ---- blocks: id, shape, starter, interrupts, ownership, slot ---------------
 BLOCK(quote,   Prefix,   "> ",                  Always,    None,      quote)
 BLOCK(item,    Column,   "LIST_MARKER",         ListRule,  None,      item)
+// (plan P3-34; D-L08) a description item: its term up to the first `:` with a
+// blank or the line's end after it (outside atoms); consecutive ones at one
+// column are one description list (terms)
+BLOCK(term,    Column,   "/ TERM: ",            ListRule,  None,      terms)
 BLOCK(region,  Explicit, "#!NAME ARGS?",        Always,    Container, region)
 BLOCK(fence,   Verbatim, "``` INFO",            Always,    Container, fence)
 BLOCK(comment, Verbatim, "%--",                 LeafOwned, Container, comment)
@@ -71,6 +75,8 @@ SUGAR(para,    Block,  "",                                  "para")
 SUGAR(heading, Block,  "level:u8 label:str",                "heading level={level}{?label label=\"{label}\"}")
 SUGAR(list,    Block,  "ordered:bool start:i32",            "list {ordered?ordered:bullet} start={start}")
 SUGAR(item,    Block,  "",                                  "item")
+SUGAR(terms,   Block,  "",                                  "terms")
+SUGAR(termpart, Inline, "",                                 "term")
 SUGAR(quote,   Block,  "",                                  "quote")
 SUGAR(rule,    Block,  "",                                  "rule")
 SUGAR(fence,   Block,  "lang:str args:src bodyOffset:u32 bodyEnd:u32 lines:str info:str? label:str?", "codeblock lang=\"{lang}\"{?info info=\"{info}\"}{?label label=\"{label}\"} body=\"{$str}\"")

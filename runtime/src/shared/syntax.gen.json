@@ -1,5 +1,5 @@
 {
- "version": 5,
+ "version": 6,
  "classes": {
   "SpliceHead": "A-Za-z_$",
   "SpliceCont": "A-Za-z0-9_$",
@@ -159,6 +159,14 @@
    "interrupts": "ListRule",
    "own": "None",
    "slot": "item"
+  },
+  {
+   "id": "term",
+   "shape": "Column",
+   "starter": "/ TERM:",
+   "interrupts": "ListRule",
+   "own": "None",
+   "slot": "terms"
   },
   {
    "id": "region",
@@ -335,6 +343,16 @@
   {
    "id": "item",
    "form": "Block",
+   "payload": []
+  },
+  {
+   "id": "terms",
+   "form": "Block",
+   "payload": []
+  },
+  {
+   "id": "termpart",
+   "form": "Inline",
    "payload": []
   },
   {

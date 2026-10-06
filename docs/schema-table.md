@@ -1,7 +1,7 @@
 <!-- GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit. -->
 # Ops vocabulary (generated)
 
-The kind table of document-model §2.1, generated from `engine/schema/schema.json`. Ops version 14, min compat 11.
+The kind table of document-model §2.1, generated from `engine/schema/schema.json`. Ops version 15, min compat 11.
 
 | id | kind | level | body | inline | attributes (writer order: domain) | constructor |
 |---|---|---|---|---|---|---|
@@ -43,6 +43,7 @@ The kind table of document-model §2.1, generated from `engine/schema/schema.jso
 | 35 | `mathsrc` | trivia | none | skip | `src`: str; `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `mathsrc(src, {options}, …)` (sealed) |
 | 36 | `equations` | block | blocks | unsupported | `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `equations({options}, …)` |
 | 37 | `fill` | inline | none | fill | `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `fill({options}, …)` (nullary) |
+| 38 | `terms` | block | items | unsupported | `label`: label; `role`: ident; `slot`: ident; `syn`: ident; `copy`: copy; `class`: classlist; `ext`: ext; `style`: delta; `attach`: enum:prev\|next\|both | `terms({options}, …)` |
 
 Derived constructors (`stdlib.ctors`): `strong({options}, …)`, `em({options}, …)`, `style({options}, …)`, `figure(body, {options}, …)`, `toc({options}, …)` (nullary), `glossary({options}, …)` (nullary), `lof({options}, …)` (nullary), `lot({options}, …)` (nullary), `index({options}, …)` (nullary), `notes({options}, …)` (nullary), `pagebreak({options}, …)` (nullary), `linebreak({options}, …)` (nullary), `bibliography(src, {options}, …)`, `counterUpdate(counter, {options}, …)`, `node(kind, {options}, …)` (sealed). Std functions: `val`, `m`, `plain`, `use`.
 
@@ -67,3 +68,4 @@ Slots (the universal `slot` attribute's values a kind gives a meaning; plan P2-1
 | 2 | `extra` | ref | inline | a reference's bracket: its supplement word or a citation's locator (P2-09) |
 | 3 | `tag` | every block | inline | a block's tag in the margin: an equation's number, a site's mark (P3-03, T6) |
 | 4 | `caption` | group | inline | a figure's caption paragraphs (P3-03): its caption site attaches there, the semantic page's figcaption holds them |
+| 5 | `term` | item | inline | a description item's term (P3-34): its first paragraph runs it in (layout), the semantic page's dt |

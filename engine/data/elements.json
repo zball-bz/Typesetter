@@ -183,6 +183,13 @@
       "table": "glossary",
       "ref": [{ "slot": "title" }]
     },
+    "dterm-item": {
+      "$comment": "A description item that defines a glossary term (plan P3-34; design T3): role dterm on an item of a description list — a glossary row in place, titled by its term part, labelled by its own label.",
+      "select": [{ "node": "item", "role": "dterm" }],
+      "title": { "part": "term" },
+      "table": "glossary",
+      "ref": [{ "slot": "title" }]
+    },
     "bibentry": {
       "select": [{ "node": "entry", "role": "bibentry" }],
       "labels": "none",
@@ -382,6 +389,7 @@
     "para": { "element": "p" },
     "heading": { "element": "h{level}" },
     "list": { "projection": "list" },
+    "terms": { "element": "dl" },
     "item": { "element": "li" },
     "quote": { "element": "blockquote" },
     "codeblock": { "projection": "codeblock" },

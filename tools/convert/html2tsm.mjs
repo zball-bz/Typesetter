@@ -10,7 +10,7 @@
 //
 //   node tools/convert/html2tsm.mjs page.html --base https://pbr-book.org/4ed/Introduction/ > page.tsm
 import { readFileSync } from 'node:fs';
-import { em, strong, markers, escapeProse } from './prose.mjs';
+import { em, strong, markers, escapeProse, descriptionItems } from './prose.mjs';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
@@ -69,10 +69,14 @@ const inlineText = (s) => entities(s
 // (plan P3-33) no escape inside a URL; emphasis resolved with its neighbours
 const inline = (s) => markers(escapeProse(inlineText(s)));
 
-const re = /<(h2|h3|h4|p|li|pre)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;
+const re = /<(h2|h3|h4|p|li|pre|dl)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;
 let m;
 while ((m = re.exec(html))) {
   if (m[0].startsWith('```') || m[0].startsWith('#!figure')) { out.push('', m[0], ''); continue; }
+  if (m[1] === 'dl') {  // (plan P3-34) a description list
+    out.push('', ...descriptionItems(m[2], inline), '');
+    continue;
+  }
   const tag = m[1], body = inline(m[2]);
   if (!body) continue;
   if (tag === 'h2') out.push('', '= ' + body.replace(/^[\d.]+\s*/, ''), '');

@@ -1,0 +1,52 @@
+doc @[0,693) [base]
+  para @[0,74) [base]
+    text @[0,74) [base] str="A description list sets each term in bold at the start of its description."
+  terms @[76,474) [base]
+    item @[76,221) [base]
+      seq @[78,85) [BOLD] slot="term"
+        text @[78,85) [BOLD] str="Kerning"
+      para @[87,221) [base]
+        text @[87,221) [base] str="The adjustment of the space between two particular glyphs, so that their shapes sit evenly; its lines after the first hang two ems in."
+    item @[222,273) [base]
+      seq @[224,245) [BOLD] slot="term"
+        styled @[224,233) [BOLD]
+          text @[225,232) [BOLD] str="Leading"
+        text @[234,238) [BOLD] str=" with " raw=0:0,1:0,6:4
+        code @[239,245) [BOLD+CODEx0.85]
+          text @[239,245) [BOLD+CODEx0.85] str="code"
+      para @[247,273) [base]
+        text @[247,273) [base] str="Extra space between lines."
+    item @[274,341) [base]
+      seq @[276,282) [BOLD] slot="term"
+        text @[276,282) [BOLD] str="字距"
+      para @[284,341) [base]
+        text @[284,341) [base] str="中文术语与描述同样接排，续行悬挂缩进。"
+    item @[342,464) [base]
+      seq @[344,355) [BOLD] slot="term"
+        text @[344,355) [BOLD] str="Hyphenation"
+      para @[357,389) [base]
+        text @[357,389) [base] str="Breaking a word at a line's end."
+      para @[393,464) [base]
+        text @[393,464) [base] str="A second paragraph of the same description stands indented by the hang."
+    item @[465,474) [base]
+      seq @[467,473) [BOLD] slot="term"
+        text @[467,473) [BOLD] str="Orphan"
+  para @[476,643) [base]
+    text @[476,504) [base] str="The same list from a script: " raw=0:0,29:28
+  terms @[505,643) [base]
+    item @[512,596) [base] label="tracking" role="dterm"
+      seq @[512,596) [BOLD] slot="term"
+        text @[512,596) [BOLD] str="Tracking"
+      para @[572,595) [base]
+        text @[572,595) [base] str="Uniform letter spacing."
+    item @[597,642) [base]
+      seq @[597,642) [BOLD] slot="term"
+        styled @[597,642) [BOLD]
+          text @[597,642) [BOLD] str="Widow"
+      para @[623,641) [base]
+        text @[623,641) [base] str="A last line alone."
+  para @[645,693) [base]
+    text @[645,682) [base] str="A defined term is a glossary row: see " raw=0:0,38:37
+    ref @[683,692) [base] target="tracking"
+      text @[683,692) [base] str="Tracking"
+    text @[692,693) [base] str="."

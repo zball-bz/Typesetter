@@ -193,6 +193,10 @@
   "fill": [
    37,
    12
+  ],
+  "terms": [
+   38,
+   15
   ]
  },
  "keys": {
@@ -750,7 +754,16 @@
   "fill.class": 9,
   "fill.ext": 9,
   "fill.style": 11,
-  "fill.attach": 11
+  "fill.attach": 11,
+  "terms.label": 9,
+  "terms.role": 9,
+  "terms.slot": 9,
+  "terms.syn": 9,
+  "terms.copy": 9,
+  "terms.class": 9,
+  "terms.ext": 9,
+  "terms.style": 11,
+  "terms.attach": 11
  },
  "decls": {
   "element": [
@@ -802,6 +815,7 @@
   "margin": 1,
   "extra": 2,
   "tag": 3,
-  "caption": 4
+  "caption": 4,
+  "term": 5
  }
 }

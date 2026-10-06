@@ -14,7 +14,7 @@
     "resolved at instantiation — a space, or nothing between two wide characters (TextRules joinsWide);",
     "code and verbatim bodies (body code / text) keep their newlines."
   ],
-  "opsVersion": 14,
+  "opsVersion": 15,
   "minCompat": 11,
   "ops": {
     "MAKE_TEXT": {"id": 1, "since": 6},
@@ -206,7 +206,8 @@
     "mathsrc": {"id": 35, "level": "trivia", "inline": "skip", "body": "none", "since": 12, "ctor": {"params": ["attr:src"], "sealed": true}, "attrs": {
       "src": {"dom": "str"}}},
     "equations": {"id": 36, "level": "block", "inline": "unsupported", "body": "blocks", "since": 12, "ctor": {}, "attrs": {}},
-    "fill": {"id": 37, "level": "inline", "inline": "fill", "body": "none", "since": 12, "ctor": {"nullary": true}, "attrs": {}}
+    "fill": {"id": 37, "level": "inline", "inline": "fill", "body": "none", "since": 12, "ctor": {"nullary": true}, "attrs": {}},
+    "terms": {"$comment": "A description list (plan P3-34; D-L08): its items, each with its term in slot term; `/ term: description` lines.", "id": 38, "level": "block", "inline": "unsupported", "body": "items", "since": 15, "ctor": {}, "attrs": {}}
   },
   "universal": {
     "$comment": [
@@ -240,7 +241,8 @@
     "margin": {"id": 1, "on": ["codeblock"], "model": "data", "doc": "a code block's sidecar lines: one seq per logical line (P2-13)"},
     "extra": {"id": 2, "on": ["ref"], "model": "inline", "doc": "a reference's bracket: its supplement word or a citation's locator (P2-09)"},
     "tag": {"id": 3, "on": "block", "model": "inline", "doc": "a block's tag in the margin: an equation's number, a site's mark (P3-03, T6)"},
-    "caption": {"id": 4, "on": ["group"], "model": "inline", "doc": "a figure's caption paragraphs (P3-03): its caption site attaches there, the semantic page's figcaption holds them"}
+    "caption": {"id": 4, "on": ["group"], "model": "inline", "doc": "a figure's caption paragraphs (P3-03): its caption site attaches there, the semantic page's figcaption holds them"},
+    "term": {"id": 5, "on": ["item"], "model": "inline", "doc": "a description item's term (P3-34): its first paragraph runs it in (layout), the semantic page's dt"}
   },
   "decls": {
     "$comment": [

@@ -883,6 +883,25 @@ export const CTOR_SPECS = Object.freeze({
     "derived": false,
     "async": false
   },
+  "terms": {
+    "kind": "terms",
+    "params": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext",
+      "style",
+      "attach"
+    ],
+    "nullary": false,
+    "sealed": false,
+    "derived": false,
+    "async": false
+  },
   "strong": {
     "kind": "styled",
     "params": [],
@@ -1322,6 +1341,7 @@ export const STD_NAMES = Object.freeze([
   "styled",
   "table",
   "term",
+  "terms",
   "text",
   "toc",
   "use",

@@ -1,0 +1,13 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {item, m, term, terms} = __rt.std;
+return (async () => {
+const __h = [
+(__k) => ((terms)(...__k())),
+(__k) => (item(...[{term: "Tracking", role: "dterm", label: "tracking"}], ...__k())),
+(__k) => (item(...[{term: m`*Widow*`}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

@@ -7,7 +7,7 @@
 //
 //   node tools/convert/wiki2tsm.mjs page.wikitext [--lang zh] > page.tsm
 import { readFileSync } from 'node:fs';
-import { em, strong, markers, escapeProse } from './prose.mjs';
+import { em, strong, markers, escapeProse, termText } from './prose.mjs';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
@@ -123,6 +123,19 @@ for (const line of src.split('\n')) {
   if (/^#!figure|^#figure!/.test(line)) { out.push(line); continue; }
   if (/^\*+\s*/.test(line)) { out.push('- ' + inline(line.replace(/^\*+\s*/, ''))); continue; }
   if (/^#+\s*/.test(line)) { out.push('+ ' + inline(line.replace(/^#+\s*/, ''))); continue; }
+  // (plan P3-34) a definition: `; term : definition`, or `; term` and its
+  // `: definition` lines — `/ term: definition` (a colon in the term
+  // escaped); a lone `:` line (an indented remark) stays a paragraph
+  const dt = /^;\s*([^:]*?)\s*(?::\s*(.*))?$/.exec(line);
+  if (dt) {
+    out.push(`/ ${termText(inline(dt[1]))}:` + (dt[2] ? ' ' + inline(dt[2]) : ''));
+    continue;
+  }
+  if (/^:/.test(line) && out.length && /^\/ /.test(out.at(-1)) ) {
+    const def = inline(line.replace(/^:+\s*/, ''));
+    out[out.length - 1] += /:$/.test(out.at(-1)) ? ' ' + def : '\n  ' + def;
+    continue;
+  }
   if (/^[:;]/.test(line)) { out.push(inline(line.replace(/^[:;]+\s*/, ''))); continue; }
   if (/^\s*$/.test(line)) { out.push(''); continue; }
   out.push(inline(line));

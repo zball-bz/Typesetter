@@ -290,11 +290,15 @@ struct TokenWalk : Lines {
         return;
       }
       case SugarId::list:
+      case SugarId::terms:  // (plan P3-34)
         kids(n, kNoTag, qd);
+        return;
+      case SugarId::termpart:  // a description item's term, as strong text
+        kids(n, kAttribute, qd);
         return;
       case SugarId::item: {
         u32 m = sp.start;
-        if (all[m] == '-' || all[m] == '+') {
+        if (all[m] == '-' || all[m] == '+' || all[m] == '/') {
           m++;
         } else {
           while (m < sp.end && all[m] >= '0' && all[m] <= '9') m++;

@@ -1,0 +1,15 @@
+doc @[0,694)
+  para @[0,74) lines=1
+  terms @[76,474)
+    item @[76,221) term=@[78,85)
+      para @[87,221) lines=1
+    item @[222,273) term=@[224,245)
+      para @[247,273) lines=1
+    item @[274,341) term=@[276,282)
+      para @[284,341) lines=1
+    item @[342,464) term=@[344,355)
+      para @[357,389) lines=1
+      para @[393,464) lines=1
+    item @[465,474) term=@[467,473)
+  para @[476,643) lines=1
+  para @[645,693) lines=1

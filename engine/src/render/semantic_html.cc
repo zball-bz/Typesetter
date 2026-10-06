@@ -536,6 +536,43 @@ struct Sem {
         out += ordered ? "</ol>\n" : "</ul>\n";
         return;
       }
+      case Kind::terms: {
+        // (plan P3-34; D-L08) a description list: its element (dl), each item
+        // its term (slot term) as dt — its label there — and its other blocks
+        // as dd, a sole paragraph inline
+        const std::string el = elementOf(n, sh, "dl");
+        {
+          Tag t(out, el);
+          attrs(t, n, pid);
+          t.open();
+          out += "\n";
+        }
+        for (const ContentNode* item : n->kids) {
+          const ContentNode* term = nullptr;
+          std::vector<const ContentNode*> body;
+          for (const ContentNode* k : item->kids)
+            if (!term && slotOf(k, strs) == SlotId::Term) term = k;
+            else body.push_back(k);
+          if (term) {
+            Tag t(out, "dt");
+            if (std::string_view lid = argS(item, ArgK::label); !lid.empty()) t.id(lid);
+            t.open();
+            inlineKids(term);
+            out += "</dt>\n";
+          }
+          if (body.empty()) continue;
+          out += "<dd>";
+          if (body.size() == 1 && body[0]->kind == Kind::para) {
+            inlineKids(body[0]);
+          } else {
+            out += "\n";
+            for (const ContentNode* b : body) block(b, -1);
+          }
+          out += "</dd>\n";
+        }
+        close(el);
+        return;
+      }
       case Kind::equations: {
         // (plan P3-29, D-S11) display rows aligned at their `&`: each its own
         // formula (its number, its label), their columns shared

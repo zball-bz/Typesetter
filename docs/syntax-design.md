@@ -232,6 +232,14 @@ inside it end unclosed — and the starters and the leaf rules run:
 - **List identity** is (marker class, column): `-`, `+` and `N.` lists never
   merge; an `N.` that does not continue the numbering gets an info
   diagnostic (`list-number`).
+- **Description items** (plan P3-34; D-L08): `/ term: description` is a
+  Column item of the marker class `/`; its term runs to the first `:` with a
+  blank or the line's end after it, outside atoms and escapes (`\:` keeps a
+  colon in a term), and is parsed inline as the item's term part (AST
+  `term`, lowered to a `seq` in slot `term`); its description starts after
+  the colon and continues on lines indented to the column after `/ `. A `/`
+  line with no such colon, or with a blank term, is text. Consecutive items
+  at one column are one description list (`terms`).
 - **Fences** dedent their content by the opener's indentation relative to the
   container's content column (no double dedent in items). A fence inside a
   quote or item passes each body line's source offset to its handler

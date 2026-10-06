@@ -39,7 +39,8 @@ module.exports = {
   fenceDelim: `${esc(word(block.fence.starter))}[^\\n]*`,
   fenceRun: `${esc(word(block.fence.starter)[0])}{${word(block.fence.starter).length},}`,
   quoteMarker: `${esc(block.quote.starter.trimEnd())} ?`,
-  listMarker: '([-+]|[0-9]+\\.) ',
+  // (plan P3-34) `/ ` a description item's (its term up to `: ` is text here)
+  listMarker: '([-+/]|[0-9]+\\.) ',
   comment: `${esc(inline.comment.open)}${notCloser(inline.comment.close)}${esc(inline.comment.close)}`,
   commentOpen: esc(inline.comment.open),
   commentClose: esc(inline.comment.close),

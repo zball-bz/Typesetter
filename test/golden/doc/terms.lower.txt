@@ -1,0 +1,52 @@
+lower v1 abi 3d3ccfbb docEnd 694 holes 3 module 6bb086fd13351d26
+piece 0 hole 0 js [144,172)
+piece 1 hole 1 js [174,258)
+piece 2 hole 2 js [260,310)
+block 0 content [0,74)
+  CALL para [0,74)
+    TEXT "A description list sets each term in bold at the start of its description." [0,74)
+block 1 content [76,474)
+  CALL terms [76,474)
+    CALL item [76,221)
+      CALL seq [78,85) slot="term"
+        TEXT "Kerning" [78,85)
+      CALL para [87,221)
+        TEXT "The adjustment of the space between two particular glyphs, so that their shapes sit evenly; its lines after the first hang two ems in." [87,221)
+    CALL item [222,273)
+      CALL seq [224,245) slot="term"
+        CALL strong [224,233)
+          TEXT "Leading" [225,232)
+        TEXT " with " [234,238) raw=0:0,1:0,6:4
+        CALL code [239,245) text="code"
+      CALL para [247,273)
+        TEXT "Extra space between lines." [247,273)
+    CALL item [274,341)
+      CALL seq [276,282) slot="term"
+        TEXT "字距" [276,282)
+      CALL para [284,341)
+        TEXT "中文术语与描述同样接排，续行悬挂缩进。" [284,341)
+    CALL item [342,464)
+      CALL seq [344,355) slot="term"
+        TEXT "Hyphenation" [344,355)
+      CALL para [357,389)
+        TEXT "Breaking a word at a line's end." [357,389)
+      CALL para [393,464)
+        TEXT "A second paragraph of the same description stands indented by the hang." [393,464)
+    CALL item [465,474)
+      CALL seq [467,473) slot="term"
+        TEXT "Orphan" [467,473)
+block 2 content [476,643) user framed holes 0..3
+  CALL para [476,643)
+    TEXT "The same list from a script: " [476,504) raw=0:0,29:28
+    HOLE 0 [505,643)
+      CALL seq
+        HOLE 1 [512,596)
+          TEXT "Uniform letter spacing." [572,595)
+        TEXT " " [512,512) raw=0:0,1:0
+        HOLE 2 [597,642)
+          TEXT "A last line alone." [623,641)
+block 3 content [645,693)
+  CALL para [645,693)
+    TEXT "A defined term is a glossary row: see " [645,682) raw=0:0,38:37
+    CALL ref [683,692) target="tracking"
+    TEXT "." [692,693)

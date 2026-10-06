@@ -1,0 +1,13 @@
+A description list sets each term in bold at the start of its description.
+
+/ Kerning: The adjustment of the space between two particular glyphs, so that their shapes sit evenly; its lines after the first hang two ems in.
+/ *Leading* with `code`: Extra space between lines.
+/ 字距: 中文术语与描述同样接排，续行悬挂缩进。
+/ Hyphenation: Breaking a word at a line's end.
+
+  A second paragraph of the same description stands indented by the hang.
+/ Orphan:
+
+The same list from a script: #terms[#item({term: "Tracking", role: "dterm", label: "tracking"})[Uniform letter spacing.] #item({term: m`*Widow*`})[A last line alone.]]
+
+A defined term is a glossary row: see @tracking.

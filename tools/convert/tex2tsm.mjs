@@ -10,7 +10,7 @@
 //   node tools/convert/tex2tsm.mjs chapter.tex [--bib refs.bib --bib-out refs.json]
 import { readFileSync, writeFileSync } from 'node:fs';
 import { TEX_MATH } from '../../runtime/src/shared/math-vocab.gen.mjs';
-import { em, strong, markers } from './prose.mjs';
+import { em, strong, markers, termText } from './prose.mjs';
 
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
@@ -323,8 +323,14 @@ src = src.replace(/\\(cref|Cref|autoref|ref|eqref)\{([^{}]*)\}/g, (m, c, l) => `
 src = src.replace(/``/g, '“').replace(/''/g, '”').replace(/---/g, '—').replace(/--/g, '–').replace(/~/g, ' ');
 src = src.replace(/\\begin\{(itemize|enumerate|description)\}([\s\S]*?)\\end\{\1\}/g, (m, env, body) => {
   const mark = env === 'enumerate' ? '+' : '-';
-  return '\n' + body.trim().split(/\\item\s*/).filter((x) => x.trim())
-    .map((it) => `${mark} ${it.replace(/^\[([^\]]*)\]\s*/, (m, b) => strong(b) + ' ').replace(/\s*\n\s*/g, ' ').trim()}`).join('\n') + '\n';
+  return '\n' + body.trim().split(/\\item\s*/).filter((x) => x.trim()).map((it) => {
+    const flat = (s) => s.replace(/\s*\n\s*/g, ' ').trim();
+    // (plan P3-34) a description item is `/ term: description` (a colon in
+    // the term escaped); another list's [label] stays a bold lead
+    const dt = env === 'description' && /^\[([^\]]*)\]\s*/.exec(it);
+    if (dt) return `/ ${termText(flat(dt[1]))}: ${flat(it.slice(dt[0].length))}`;
+    return `${mark} ${flat(it.replace(/^\[([^\]]*)\]\s*/, (m, b) => strong(b) + ' '))}`;
+  }).join('\n') + '\n';
 });
 src = src.replace(/\\begin\{tabular\}\{([^{}]*)\}([\s\S]*?)\\end\{tabular\}/g, (m, spec, body) => {
   const cols = (spec.match(/[lcr]/g) || []).length || 2;
@@ -343,7 +349,7 @@ src = src.replace(/\u0001M(\d+)\u0001/g, (m, i) => maths[+i]);
 // HoTT sources put one sentence per line: join lines inside paragraphs
 src = src.split(/\n\s*\n/).map((p) => {
   const t = p.trim();
-  return /^(=|-|\+|\$ |#)/.test(t) ? t : t.replace(/\s*\n\s*/g, ' ');
+  return /^(=|-|\+|\$ |#|\/ )/.test(t) ? t : t.replace(/\s*\n\s*/g, ' ');
 }).join('\n\n');
 // bibliography: --bib-ref is the path the DOCUMENT will use for the CSL-JSON
 if (opt('--bib-ref')) src += `\n\n#bibliography(${JSON.stringify(opt('--bib-ref'))})\n`;

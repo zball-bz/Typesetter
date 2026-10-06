@@ -1024,6 +1024,15 @@ struct Emitter {
             const double px = ls.paraIndent.unit == 2 ? (double)ls.paraIndent.v : ls.paraIndent.v * em;
             sink.indent(u, n->style, n->span, px, ls.paraIndent.unit == 2 ? px / em : (double)ls.paraIndent.v);
           }
+          if (ls.runIn) {  // (plan P3-34) a description item's term, then a space
+            sink.walk(ls.runIn, u, ctx);
+            ContentNode sp;
+            sp.kind = Kind::text;
+            sp.span = {ls.runIn->span.end, ls.runIn->span.end};
+            sp.style = n->style;
+            sp.str = E.spaceRef;
+            sink.walk(&sp, u, ctx);
+          }
           for (const ContentNode* k : n->kids) sink.walk(k, u, ctx);  // the block's content
         }
         sink.finish(u);

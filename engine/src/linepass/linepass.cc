@@ -194,9 +194,16 @@ struct LinePass {
       char marker = 0;
       u32 markerLen = 0;
       int num = 1;
+      u32 colon = kNone;  // a description item's (plan P3-34)
       auto blankAt = [&](u32 q) { return q < le && (all[q] == ' ' || all[q] == '\t'); };
       if ((c == '-' || c == '+') && blankAt(p + 1)) {
         marker = c;
+        markerLen = 1;
+      } else if (c == '/' && blankAt(p + 1)) {
+        // (plan P3-34; D-L08) `/ term: description`: no term colon, no item
+        colon = termColon(p + 2, le);
+        if (colon == kNone || isBlank(p + 2, colon)) return;
+        marker = '/';
         markerLen = 1;
       } else if (c >= '0' && c <= '9') {
         u32 q = p;
@@ -227,7 +234,7 @@ struct LinePass {
         list = par->kids.back();
       if (!list) {
         list = mk(SkelKind::List);
-        list->ordered = marker != '-';
+        list->ordered = marker == '+' || marker == '.';
         list->marker = marker;
         list->markerCol = markerCol;
         list->start = num;
@@ -245,9 +252,40 @@ struct LinePass {
       list->kids.push_back(item);
       grow(list, le);
       open.push_back({item, Shape::Column, acol, list});
+      if (colon != kNone) {  // its term; its content starts after the colon (and a blank)
+        u32 ts = after, te = colon;
+        while (ts < te && (all[ts] == ' ' || all[ts] == '\t')) ts++;
+        while (te > ts && (all[te - 1] == ' ' || all[te - 1] == '\t')) te--;
+        item->termSpan = {ts, te};
+        u32 q = colon + 1, qc = acol;
+        for (u32 k = after; k < q; k++) qc = advance(all[k], qc);
+        if (blankAt(q)) qc = advance(all[q++], qc);
+        after = q;
+        acol = qc;
+      }
       pos = after;
       col = acol;
     }
+  }
+
+  // (plan P3-34) a description item's term colon: the first `:` after `q`
+  // with a blank or the line's end after it, outside atoms (a code span, a
+  // formula, a URL) and escapes; kNone when there is none
+  u32 termColon(u32 q, u32 le) const {
+    const std::string_view t = all.substr(0, le);
+    while (q < le) {
+      if (all[q] == '\\') {
+        q += 2;
+        continue;
+      }
+      if (const u32 e = atomEnd(t, q); e > q) {
+        q = e;
+        continue;
+      }
+      if (all[q] == ':' && (q + 1 >= le || all[q + 1] == ' ' || all[q + 1] == '\t')) return q;
+      q++;
+    }
+    return kNone;
   }
 
   // A block-granular parse error: diagnostic + an Error leaf that lowers to
@@ -1081,10 +1119,18 @@ static void dumpNode(std::string& out, const SkelNode* n, const SourceText& src,
       out += "\n";
       break;
     case SkelKind::List:
+      if (n->marker == '/') {  // (plan P3-34) a description list
+        appendf(out, "terms @[%u,%u)\n", n->span.start, n->span.end);
+        break;
+      }
       appendf(out, "list %s start=%d @[%u,%u)\n", n->ordered ? "ordered" : "bullet", n->start,
               n->span.start, n->span.end);
       break;
-    case SkelKind::Item: appendf(out, "item @[%u,%u)\n", n->span.start, n->span.end); break;
+    case SkelKind::Item:
+      appendf(out, "item @[%u,%u)", n->span.start, n->span.end);
+      if (!n->termSpan.empty()) appendf(out, " term=@[%u,%u)", n->termSpan.start, n->termSpan.end);
+      out += "\n";
+      break;
     case SkelKind::Quote: appendf(out, "quote @[%u,%u)\n", n->span.start, n->span.end); break;
     case SkelKind::Fence: {
       appendf(out, "fence @[%u,%u) lang=\"", n->span.start, n->span.end);

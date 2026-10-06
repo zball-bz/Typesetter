@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <unordered_map>
+#include <utility>
 
 #include "../code/overlay.h"
 #include "../elements/registry.h"
@@ -107,6 +108,9 @@ class Builder {
   TopTree* t = nullptr;
   std::vector<LeafSource>* leaves = nullptr;
   int figDepth = 0;  // inside a captions role: paragraphs are captions
+  // (plan P3-34) the next paragraph's run-in term and its hanging indent
+  const ContentNode* runIn_ = nullptr;
+  Su runInHang_ = 0;
   bool pendingBreak = false;  // (plan P3-14) for the next block opened
 
   // a block length (plan P3-01): em of the block's own size
@@ -377,16 +381,21 @@ class Builder {
       case Kind::para: {
         const bool caption = figDepth > 0;
         if (caption) s.role = LeafSource::Role::Caption;
+        // (plan P3-34) a description item's term runs in here
+        const ContentNode* runIn = std::exchange(runIn_, nullptr);
+        s.runIn = runIn;
         // 首行缩进 (App C): its par.indent (plan P3-01), never on a marker's
-        // line nor a paragraph's continuation after a block (plan P3-17)
+        // line, a run-in term's, nor a paragraph's continuation after a
+        // block (plan P3-17)
         const Len ind = props.get(n->props).parIndent;
         const bool cont = attrBool(n, ArgK::cont, false);
-        if (ind.unit && ind.v > 0 && marker == 0 && !cont) s.paraIndent = ind;
+        if (ind.unit && ind.v > 0 && marker == 0 && !runIn && !cont) s.paraIndent = ind;
         LayoutBlock& b = leaf(LayouterId::Paragraph, Painter::None, caption ? TraitsId::Caption : TraitsId::Para,
                               n, parent, x, std::move(s));
         b.marker = marker;
         b.markerStyle = n->style;
         b.tr.cont = cont;
+        if (runIn && !b.tr.hang) b.tr.hang = runInHang_;  // its lines after the first hang in
         return;
       }
       case Kind::heading: {
@@ -424,6 +433,52 @@ class Builder {
             b.marker = mref;
             b.markerStyle = item->style;
           }
+          close(it);
+        }
+        close(list);
+        return;
+      }
+      case Kind::terms: {
+        // (plan P3-34; D-L08) a description list: an item's term (its part in
+        // slot term; bold by the slot's default rule) runs in at the start of
+        // its first paragraph, whose lines after the first hang block.indent
+        // in (2em: the kind's default rule), as its later blocks stand; a term
+        // with no paragraph first is a paragraph of its own
+        const u32 list = open(LayouterId::Stack, Painter::None, TraitsId::List, n, parent, x);
+        const Su hang = lenSu(props.get(n->props).blockIndent, n);
+        for (const ContentNode* item : n->kids) {
+          const u32 it = open(LayouterId::Stack, Painter::None, TraitsId::Item, item, list, x);
+          const ContentNode* term = nullptr;
+          for (const ContentNode* k : item->kids)
+            if (slotOf(k, strs) == SlotId::Term) {
+              term = k;
+              break;
+            }
+          auto termAlone = [&] {
+            LeafSource ts;
+            ts.node = term;
+            LayoutBlock& b = leaf(LayouterId::Paragraph, Painter::None, TraitsId::Para, term, it, x, std::move(ts));
+            if (!b.tr.hang) b.tr.hang = hang;
+          };
+          bool first = true;
+          for (const ContentNode* k : item->kids) {
+            if (k == term) continue;
+            if (first && term) {
+              if (k->kind == Kind::para) {
+                runIn_ = term;
+                runInHang_ = hang;
+                walk(k, it, x, 0);
+                runIn_ = nullptr;
+              } else {
+                termAlone();
+                walk(k, it, x + hang, 0);
+              }
+            } else {
+              walk(k, it, x + hang, 0);
+            }
+            first = false;
+          }
+          if (first && term) termAlone();  // a term without a description
           close(it);
         }
         close(list);

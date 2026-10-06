@@ -25,9 +25,10 @@ struct SkelNode {
   bool content = false;         // CodeLet: `#let x = [ … ]`, a content literal (plan P2-12)
   Span langSpan;                // Fence: info string; Region: name
   Span labelSpan;               // Heading / Region: trailing <id> label (empty = none)
+  Span termSpan;                // Item of a description list (plan P3-34): its term
   u8 level = 0;                 // Heading
   bool ordered = false;         // List: marker != '-'
-  char marker = 0;              // List: marker class '-', '+' or '.' (N.)
+  char marker = 0;              // List: marker class '-', '+', '.' (N.) or '/' (a description list, P3-34)
   u32 markerCol = 0;            // List: the markers' column
   int start = 1;                // List (ordered)
   bool contained = false;       // Fence: inside a quote or list item (its

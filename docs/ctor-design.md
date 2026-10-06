@@ -18,7 +18,10 @@ Every public kind has a constructor, described in `engine/schema/schema.json`:
 ```
 
 A param is `attr:NAME[:DOMAIN]`, `projected:NAME`, `text`, `lines` or `body`;
-every attribute not bound positionally is an option. `doc` and `hardbreak`
+every attribute not bound positionally is an option. (Plan P3-34) An
+option named after one of the kind's slots (schema `slots`, its `on`)
+takes content: a `seq` in that slot, before the kids —
+`item({term: "Kerning"})[…]`, `para({tag: …})`. `doc` and `hardbreak`
 have none; (plan P3-33) the derived nullary `linebreak` makes a `hardbreak`
 (`\` at the end of a line lowers to it). The `stdlib` section adds the derived constructors
 (`strong`, `em`, `style`, `figure`, `toc`, `glossary`, `notes`,

@@ -39,7 +39,8 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `para` | block | — | inline | M1 |
 | `heading` | block | `level`, `label?` | inline | M2 |
 | `list` | block | `ordered`, `start?` | `item*` | M2 |
-| `item` | block | — | blocks | M2 |
+| `item` | block | — | blocks; in a description list its term, a `seq` in slot `term` (P3-34) | M2 |
+| `terms` | block | — (plan P3-34; D-L08: `/ term: description`) | `item*` (N6), each with its term | P3-34 |
 | `quote` | block | — | blocks | M2 |
 | `codeblock` | block | `lang`, `wrap?`, `lineNo?`, `hl?` (ops v3) | plain text child OR one `seq` per line of styled runs (CH1) | M2/CH |
 | `rule` | block | — | — | M2 |
@@ -446,7 +447,7 @@ and the paged output carry the same ids.
 ### 9.2 Semantic HTML
 
 Element mapping (plan P3-23; the **presentation map**, `engine/data/elements.json` `html`): a node shows as its row's element. A node's row is its class's (or its `like:` base's), else its role's, else its kind's. The built-in rows:
-- kinds: `para→p`, `heading→h{level}`, `list→ul|ol` (the list projection), `item→li`, `quote→blockquote`, `codeblock→pre>code` (the codeblock projection), `rule→hr`, `mathblock` (the math projection), `table→table/tr/td` (the table projection), `group→div[data-role]`;
+- kinds: `para→p`, `heading→h{level}`, `list→ul|ol` (the list projection), `terms→dl` (plan P3-34: each item's term part in `dt`, its other blocks in `dd`, a sole paragraph inline), `item→li`, `quote→blockquote`, `codeblock→pre>code` (the codeblock projection), `rule→hr`, `mathblock` (the math projection), `table→table/tr/td` (the table projection), `group→div[data-role]`;
 - classes: `figure→figure` (its caption part in `figcaption`), a defined `term→dl>dt+dd` (the term projection: the name in `dt`, the description and the blocks after it in `dd`);
 - collectors: `toc`, `lof`, `lot`, `index→nav`; `glossary`, `notes`, `bibliography→section`, each with its DPUB-ARIA role. A collector's output stands in a group of its role (its name), so a document's collector shows as `div[data-role=<name>]`;
 - generated roles, inline: `fn-marker→sup`, `caption-label`, `term-name→strong`. A role's element is not written where the run's own style says it already.

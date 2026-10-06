@@ -8,7 +8,7 @@
 // the binder, so `*x*`, `#strong[x]` and an override of strong agree.
 // A region is a constructor with a Body parameter. One std per execution:
 // its constructors write into that execution's OpBuf.
-import { KIND, SCHEMA, DECLS, ARGK } from './ops.gen.mjs';
+import { KIND, SCHEMA, DECLS, ARGK, SLOTS } from './ops.gen.mjs';
 import { CTOR_SPECS, STD_ALIASES } from './ctors.gen.mjs';
 import { isNode } from './opbuf.mjs';
 import { STYLE_KEYS, STYLE_SUGAR, STYLE_FLAGS, validDomain } from './props.gen.mjs';
@@ -238,6 +238,14 @@ export function createStd(host) {
   //    (aliases float→side, width/height→w/h), an unknown one dropped with
   //    a ctor-arg warning — unless the spec passes options raw;
   // 3. the rest are kids, through toContent.
+  // (plan P3-34) An option named after one of the kind's slots (schema
+  // "slots": a part, item({term: …})) takes content: a seq in that slot,
+  // before the kids.
+  const slotOf = (k, kind) => {
+    const s = Object.hasOwn(SLOTS, k) ? SLOTS[k] : null;
+    if (!s || !kind) return null;
+    return (s.on === 'block' ? SCHEMA_LEVEL[KIND[kind]] === 'block' : s.on.includes(kind)) ? k : null;
+  };
   const bind = (name, spec, args) => {
     const call = { attrs: {}, kids: [], lines: undefined, body: undefined, options: undefined, style: undefined };
     let i = 0;
@@ -252,6 +260,7 @@ export function createStd(host) {
     }
     if (i < args.length && isPlainObject(args[i])) call.options = args[i++];
     for (; i < args.length; i++) toContent(args[i], call.kids);
+    const parts = [];  // slot options' content
     if (call.options && spec.options !== 'raw') {
       const viaAlias = new Set();
       for (const [k0, v] of Object.entries(call.options)) {
@@ -273,6 +282,12 @@ export function createStd(host) {
         }
         const alias = STD_ALIASES[k0];
         const k = alias && spec.options.includes(alias) ? alias : k0;
+        if (!spec.options.includes(k) && slotOf(k, spec.kind)) {
+          const part = [];
+          toContent(v, part);
+          parts.push(ob.makeNode(KIND.seq, { slot: k }, part));
+          continue;
+        }
         if (!spec.options.includes(k)) {
           diag(1, 'ctor-arg', `${name}: unknown option ${k0}`);
           continue;
@@ -282,6 +297,7 @@ export function createStd(host) {
         if (alias) viaAlias.add(k);
       }
     }
+    if (parts.length) call.kids.unshift(...parts);
     if (spec.body && !call.body) call.body = kidsBody(call.kids);
     return call;
   };

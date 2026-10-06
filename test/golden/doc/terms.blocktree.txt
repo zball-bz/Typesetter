@@ -1,0 +1,30 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,74)
+    paragraph para unit=0 @[0,74)
+top pid=1 leaves=6
+  stack root gap=1/1 @[76,474)
+    stack list gap=1/3 @[76,474)
+      stack item @[76,221)
+        paragraph para unit=0 hang=2048su/1 @[87,221)
+      stack item @[222,273)
+        paragraph para unit=1 hang=2048su/1 @[247,273)
+      stack item @[274,341)
+        paragraph para unit=2 hang=2048su/1 @[284,341)
+      stack item @[342,464)
+        paragraph para unit=3 hang=2048su/1 @[357,389)
+        paragraph para unit=4 x=2048su @[393,464)
+      stack item @[465,474)
+        paragraph para unit=5 hang=2048su/1 @[467,473)
+top pid=2 leaves=1
+  stack root gap=1/1 @[476,643)
+    paragraph para unit=0 @[476,643)
+top pid=3 leaves=2
+  stack root gap=1/1 @[505,643)
+    stack list gap=1/3 @[505,643)
+      stack item anchor="tracking" @[512,596)
+        paragraph para unit=0 hang=2048su/1 carry="tracking" @[572,595)
+      stack item @[597,642)
+        paragraph para unit=1 hang=2048su/1 @[623,641)
+top pid=4 leaves=1
+  stack root gap=1/1 @[645,693)
+    paragraph para unit=0 @[645,693)

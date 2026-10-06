@@ -1316,7 +1316,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/locale-terms-switch` | adhoc | medium | P1-10, P3-30 | grep:plan P3-30 |
 | `real-world-evidence/codepoint-heuristics` | adhoc | low | P4-02 | |
 | `real-world-evidence/sup-attach-private` | adhoc | medium | P2-08, P4-07 | |
-| `real-world-evidence/description-list-missing` | adhoc | medium | P3-34 | |
+| `real-world-evidence/description-list-missing` | adhoc | medium | P3-34 | grep:plan P3-34 |
 | `real-world-evidence/table-model-v1` | adhoc | medium | P3-14 | grep:plan P3-14 |
 | `real-world-evidence/figure-model-single-image` | adhoc | medium | P3-15 | grep:plan P3-15 |
 | `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 || grep:plan P3-08 |

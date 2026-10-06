@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-34
+- 下一步：P3-35
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -100,7 +100,7 @@
 | P3-31 | 跨文档标签、项目驱动、#use | done | grep:plan P3-31 | 2026-10-07 | 既有 golden 不变。+3 用例 project/ch1-diag、project/ch2（互为对方清单输入，labels 产品与 X.labels.json 比对）、exec/use（#use 一个同目录模块：默认导出注册 fence 与数学函数） | 三次提交。engine：inputs.def（labels：其他文档 labels 产品组成的 JSON 数组，Ingest 前给出，fork 复制，脚本不可见）与 tsr2_set_input，解码器 semantic/manifest 校验形状与尺寸，fuzz_inputs；labels 产品 {v, doc, totals, labels}（编号按计数器分组且与起始值无关）；设置 project.doc / starts / urls；Resolve 先本地标签、再引文键、再其他文档的标签（ref-shadowed），外部标签按本文档的类模板与术语排。project：runtime/src/node/project.mjs renderProject（Pass A 求清单 → 起始值为续接计数器总数的前缀和 → Pass B，清单变化再一轮，至多 3 轮，project-unstable），tools/tsm-project.mjs（tsm.project.json），静态页抽到 tools/lib/static-page.mjs 与 export-static 共用，tools/check-project.mjs 进 G6；$.labels.import 经宿主读入 labels 输入（requester input，labels-import）。#use（D-I08）：异步 std 函数 use，ResourceJob.module 经定位器读取后以 URL + ?h=<内容哈希> import，默认导出以 ($, std) 调用，fences / regions / providers 导出按本次执行的 $ 注册（providers 只限本 job、docProviders 种类、store: false），失败为 use-module；录制器对每个用例同进程执行两次，字节不同即 NONDETERMINISTIC；policy 行 checkExecution 让 worker 与 renderTsm 在 dev 模式双执行（exec-nondeterministic）；shell typeset 新增 opts.baseUrl。安全评审补遗（inputs、#use）并修复另一文档页面 URL 未经链接策略的缺陷。文档：architecture.md（#use 改为动态导入）、host-protocol-design §5a/§5b、security-review、tsm-changes、syntax-design、lowering-design、document-model、testing、design-decisions-v2 |
 | P3-32 | boxInfo 在布局阶段消费；宽度依赖的编译期证明 | done | grep:plan P3-32 | 2026-10-07 | 无（blocks/hlist 的图片单元头经 Lookup 取答复，字节不变） | 两次提交。结构：生成器拆出 settings_views.gen.h（值类型与各阶段视图，Config 仅前置声明；视图构造移入 settings.gen.cc），settings.gen.h（Config、policy、编解码）只有 api/ 包含；lint 新增 config-closure（api/ 之外任何 include 链看不到 settings.gen.h），删去 P1-03 的临时正则规则；emit.h 以 static_assert 断言 Emit、Measure 视图无 host.width；顺带修复 layout.cc 的无序 z 读写。行为：Emit 不再读任何图片答复——Resolve 扫描只预先登记 boxInfo 需求（不再让块等待），行内图片为待定对象，由 Measure 的对象表图片 finalizer 结算（未答复则 Measure 等待；失败则 1em 占位并清 src），块级与浮动图片的尺寸 spec 为 Provided，由 Layout 经 BoxAsker 以宽 0 询问（未答复：布局临时，失败：占位，Fragment::placeholder 交给 paint）；BoxAnswer 增 w 与 pending；BoxPull 在 Settle 模式下对图片给出图片专用的 box-unsettled 文案。单元测试改为新契约：首轮请求同时含图片与全部宽度，两块都已发射。文档：host-protocol-design §1（Image sizes after Emit）、figure-design §2、document-model（视图与 config-closure）、architecture |
 | P3-33 | 正文防护、自动链接、转义、硬换行 | done | grep:plan P3-33 | 2026-10-07 | 计划所列 doc/url-break（斜体去掉、链接加上）、inline/emph（un*closed 为一个文本节点）、figure/pull-diag（NEED_IMAGES 为一个文本节点）；另有 doc/url-overlong、inline/hardbreak、line/own-hide（见偏差）；+1 用例 inline/prose-guards；7 个 .ops 重录 | 单提交落地（整合裁决）。syntax.def（版本 5）：url 行（开符 `SCHEME://`，在 `://` 处分派、向后核对协议；生成器支持前导占位符）、brk 行（`\` 加行尾，无体模式 None）、linebreak sugar；派生构造器 linebreak（nullary，生成 hardbreak 节点 → Penalty(Forced)，与 P1-13 同一罚分）。解析器：Intraword（`*`、`_` 夹在两个 ASCII 字母数字间为正文）、PrevIdent（`#` 裸值头紧跟标识符字符为正文；`@` 原有）、转义只对 ASCII 标点、`\`+行尾为硬换行（吞掉前导空白与下行缩进）、其他 `\` 保留、自动链接（lexUrl：词法器、括号匹配与行扫描共用；链接文字内不链接）、相邻 Text 合并（拼接 rawmap 与单元格切点）。导出：自动链接整段 property，硬换行 punctuation；tree-sitter 与 TextMate 语法加 autolink，词 token 吸收 @尾（一致性 96.8%）。转换器经 tools/convert/prose.mjs 输出在新规则下含义不变；已提交样例手工迁移。文档：syntax-design §5、tsm-changes、ctor-design、shaping-design、document-model |
-| P3-34 | 描述列表（/ term: desc） | todo | | | | |
+| P3-34 | 描述列表（/ term: desc） | done | grep:plan P3-34 | 2026-10-07 | 既有 golden 仅 locale/doc-decl 的 js/lower（`$.locale` 对象键 terms 绑定了新的 std 名，与 figure 同理）；+1 用例 doc/terms（全部阶段：语法、脚本构造、dterm 词汇表行与引用） | schema（ops v15）：kind terms（block，body items，ctor）与 slot term（on item，inline）；默认规则 terms 的 block.indent 2em、block.gap 1/3，slot term 加粗。syntax.def（版本 6）：BLOCK term（`/ TERM: `，Column）与 sugar terms/termpart；行扫描：`/` 标记类，术语到第一个后跟空白或行尾、位于原子与转义之外的 `:`（无此冒号或术语为空则为正文），描述从冒号后开始；AST：terms 与项的 term 部分（行内解析）→ 降级为 terms 与 seq{slot: term}。盒树：terms 无标记，项的 term 部分接排在首段开头（LeafSource::runIn：emit 先写术语与一个空格），首段续行悬挂 block.indent，后续块位于该缩进，无首段的术语自成一段。语义页：terms → dl，dt 为术语部分（项的标签在 dt 上），dd 为其余块（单段内联）；呈现表加 terms 行。构造器绑定：选项名为该 kind 的 slot 时取内容，作为该 slot 的 seq 子节点（item({term})、para({tag})）。dterm-item 类：role dterm 的项为词汇表行，标题取 term 部分。规范化：受检模型（list、terms、table、trow、equations）中部件之间的纯空白文本丢弃（原报 content-model）。转换器：tex2tsm 的 description、wiki2tsm 的 `;`/`:`、html2tsm 与 pbr2tsm 的 `<dl>` 输出 `/ term: desc`；hott 样例手工迁移；tree-sitter/TextMate 的列表标记加 `/`（一致性 96.7%）。文档：syntax-design §6、document-model、layout-design §4、ctor-design、tsm-changes |
 | P3-35 | 打印器、转换器套件、front matter、语料重转 | todo | | | | |
 | P3-36 | 导出包 | todo | | | | |
 | P3-37 | ABI 收尾与文档修订 | todo | | | | |
@@ -177,6 +177,7 @@
 | P3-31 后 | 3.60 | 12.10 | 28.00 | 1.7 / 3.1 / 0.9 / 10.6 / 3.6 | 71.8 / 109.7 / 156.2 | 2.00 / 22.90 / 58.80 | 均在 P3 门限内（35K update 距门限 12.27 余量小，与 P3-30 的 11.50 同在噪声范围）；默认不双执行（checkExecution 仅 dev 模式），无 #use 的文档不加载模块 |
 | P3-32 后 | 3.60 | 12.20 | 27.80 | 1.6 / 3.1 / 0.9 / 10.5 / 3.5 | 71.5 / 105.3 / 156.8 | 1.80 / 23.00 / 57.70 | 均在 P3 门限内；35K update 12.20 距门限 12.27 仅 0.07（复跑同值），P3-29 起 11.00 → 11.50 → 12.10 → 12.20。已排查：同机同时段 A/B，P3-30 提交的代码测得 12.20、HEAD 12.30（第二轮 14.90 / 16.30），差异在机器噪声内——上升来自测量环境，不是代码回退 |
 | P3-33 后 | 3.70 | 11.30 | 27.80 | 1.7 / 3.2 / 0.9 / 10.4 / 3.4 | 74.3 / 110.6 / 152.2 | 1.80 / 21.90 / 58.00 | 均在 P3 门限内；`:` 成为开符字节，87K 编译 1.60 → 1.70 |
+| P3-34 后 | 3.50 | 11.80 | 27.90 | 1.7 / 3.2 / 0.9 / 10.4 / 3.3 | 77.5 / 110.8 / 146.8 | 2.00 / 22.30 / 58.90 | 均在 P3 门限内；35K update 首次 3 轮测得 12.30（机器负载下），同机交替 A/B：P3-33 12.10 / 14.90 / 13.50、本步 12.50 / 12.40 / 12.70，同一分布；6 轮最小中位数 11.80（表中取此值），引擎内各阶段与 P3-33 相同 |
 
 ## 偏差记录（MD-11）
 
@@ -429,6 +430,11 @@
 | P3-33 | 本步同时修正四个转换器（tools/convert/prose.mjs：词内强调写函数形式 #em[…]/#strong[…]、URL 与链接目标内不转义；tex2tsm 另处理 TeX 的 \ 空格、\, \- 等与重音），并手工迁移已提交的 hott-introduction、wiki-huozi 两个样例；本地 pbr-1-1/1-2 重新转换；pbr-en/pbr-zh（含译文）未重转 | 旧的宽松转义掩盖了转换器输出中的 `\ `、`\TeX`、`y\#frag`；重新抓取会混入上游内容与 P3-29 转换器改动，手工迁移只含本步所需。转换器套件的整体改造（实体解码、代码段内不转义等）属 P3-35 | P3-35 |
 | P3-33 | 博客（../zball-io，只读）的 docs/example-hott.tsm 与 example-huozi.tsm 是旧样例的副本：重新 vendor 引擎后前者会显示若干 `\`（i.e.\ 、⟨\mathsf⟩ 等）、后者一处 URL 片段 #a5823 成为正文 | 本计划不修改 zball-io；需博客侧从本仓库重新复制这两个样例 | 博客侧 |
 | P3-33 | tree-sitter 语法不支持后顾：PrevIdent 对 `@` 以“词 token 吸收紧随的 @尾”近似，对 `#` 的裸值不处理（`- / function` 属已允许的近似） | 引擎 token 才是权威；一致性仍为 96.8% | 无 |
+| P3-34 | D-L08 写降级为 `terms(item({term:…})[…])`；解析器直接产出 seq{slot: term} 子节点（与 ref 的 extra 槽同法），`item({term})` 由构造器绑定的通用“槽选项”提供（任何 kind 的 slot 名都可作选项） | 一条通用规则让所有槽（term、tag、caption、extra）都能以选项写入，不为 term 单设 item 属性 | 无 |
+| P3-34 | run-in 与悬挂缩进由盒树与 emit 完成（LeafSource::runIn），而非站点模板改写内容树 | D-L08 写“layout 默认”；内容树保持术语与描述分离，语义页直接据此输出 dt/dd，复制与引用读同一结构 | 无 |
+| P3-34 | 计划写“dterm 类（P3-03）”：新增 dterm-item 类（选择 role dterm 的 item，标题取 term 部分），使描述项可选择成为词汇表行；语法形式不自动成为词汇表行 | T3：词汇表成员与列表版式正交；语法项默认不入表 | 无 |
+| P3-34 | 本步另修：受检模型（list、terms、table、trow、equations）部件之间的纯空白文本此前报 content-model 警告并包成错误节点，现直接丢弃（`#list[#item[a] #item[b]]`） | 测试脚本构造的描述列表时暴露；空白不是内容 | 无 |
+| P3-34 | 中文描述项的术语与描述之间同样是一个词间空格（可伸缩），未另设中文分隔 | 与西文一致；分隔样式可由后续语言规则数据化（T5） | P4 |
 | P3-26 | role=math 与 aria-label 未做（计划注明在 P3-27 落地）；多行显示的逐行编号属 P3-29 | 计划安排 | P3-27、P3-29 |
 | P3-26 | 编号与公式同基线（TeX \\eqno），取代 CSS 的垂直居中；编号在旁时其行框的行距不推进游标（行高不变） | TeX 的做法；避免所有带编号公式之后的内容下移 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |

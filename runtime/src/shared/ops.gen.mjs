@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
-export const OPS_VERSION = 14;
+export const OPS_VERSION = 15;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '32af8eb5';
+export const SCHEMA_HASH = 'b3eda818';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -53,7 +53,8 @@ export const SINCE = Object.freeze({
     "34": 12,
     "35": 12,
     "36": 12,
-    "37": 12
+    "37": 12,
+    "38": 15
   },
   "attr": {
     "0": {},
@@ -573,6 +574,17 @@ export const SINCE = Object.freeze({
       "35": 9,
       "54": 11,
       "55": 11
+    },
+    "38": {
+      "0": 9,
+      "6": 9,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "54": 11,
+      "55": 11
     }
   }
 });
@@ -626,7 +638,8 @@ export const KIND = Object.freeze({
   "math": 34,
   "mathsrc": 35,
   "equations": 36,
-  "fill": 37
+  "fill": 37,
+  "terms": 38
 });
 export const ARGK = Object.freeze({
   "label": 0,
@@ -1528,6 +1541,24 @@ export const SCHEMA = Object.freeze({
       "attach": "enum:prev|next|both"
     },
     "resolved": []
+  },
+  "terms": {
+    "id": 38,
+    "level": "block",
+    "body": "items",
+    "inline": "unsupported",
+    "attrs": {
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
+    },
+    "resolved": []
   }
 });
 export const DECLS = Object.freeze({
@@ -1612,6 +1643,13 @@ export const SLOTS = Object.freeze({
     "model": "inline",
     "on": [
       "group"
+    ]
+  },
+  "term": {
+    "id": 5,
+    "model": "inline",
+    "on": [
+      "item"
     ]
   }
 });

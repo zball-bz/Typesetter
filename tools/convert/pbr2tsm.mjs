@@ -13,7 +13,7 @@
 import { MATH_SYMBOLS } from '../../runtime/src/shared/math-vocab.gen.mjs';
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, statSync } from 'node:fs';
 import { join, basename } from 'node:path';
-import { em, strong, markers, escapeProse } from './prose.mjs';
+import { em, strong, markers, escapeProse, descriptionItems } from './prose.mjs';
 
 const args = process.argv.slice(2);
 const root = args.find((a) => !a.startsWith('--'));
@@ -513,10 +513,14 @@ function convertPage(html, base, stats) {
   const inline = (s) => markers(escapeProse(inlineText(s)));
 
   const out = [];
-  const re = /<(h2|h3|h4|p|li|pre)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp(?:-literate)?\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;
+  const re = /<(h2|h3|h4|p|li|pre|dl)(?:[^>]*)>([\s\S]*?)<\/\1>|```cpp(?:-literate)?\n[\s\S]*?\n```|#!figure[\s\S]*?#figure!/g;
   let m;
   while ((m = re.exec(html))) {
     if (m[0].startsWith('```') || m[0].startsWith('#!figure')) { out.push('', m[0], ''); continue; }
+    if (m[1] === 'dl') {  // (plan P3-34) a description list
+      out.push('', ...descriptionItems(m[2], inline), '');
+      continue;
+    }
     const tag = m[1], body = inline(m[2]);
     if (!body) continue;
     if (tag === 'h2') out.push('', '= ' + body.replace(/^[\d.]+\s*/, ''), '');

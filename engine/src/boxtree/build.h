@@ -22,6 +22,9 @@ struct LeafSource {
   } role = Role::Content;
   const ContentNode* node = nullptr;
   Len paraIndent;  // 首行缩进 (App C): its par.indent (plan P3-01); unset = none
+  // (plan P3-34; D-L08) a description item's term, run in at the start of
+  // its first paragraph (emit: its content, then a space)
+  const ContentNode* runIn = nullptr;
   // a float figure's caption paragraphs (the image leaf's caption rows), or
   // a code block's sidecar lines (its sidecar track)
   std::vector<const ContentNode*> rows;

@@ -403,7 +403,6 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         '$', 74,
         '(', 77,
         '*', 81,
-        '+', 55,
         '-', 54,
         '<', 104,
         '=', 60,
@@ -416,6 +415,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         '|', 109,
         '\t', 102,
         ' ', 102,
+        '+', 55,
+        '/', 55,
         'H', 92,
         'h', 92,
         0x0b, 109,
@@ -618,7 +619,6 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         '%', 159,
         '(', 158,
         '*', 166,
-        '+', 153,
         '-', 154,
         '<', 165,
         '=', 155,
@@ -631,6 +631,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         '|', 140,
         '\t', 164,
         ' ', 164,
+        '+', 153,
+        '/', 153,
         'H', 148,
         'h', 148,
       );
@@ -649,7 +651,6 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         '$', 157,
         '%', 159,
         '*', 166,
-        '+', 153,
         '-', 154,
         '<', 165,
         '=', 155,
@@ -662,6 +663,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         '|', 140,
         '\t', 164,
         ' ', 164,
+        '+', 153,
+        '/', 153,
         'H', 148,
         'h', 148,
       );
@@ -779,21 +782,21 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 56:
       ACCEPT_TOKEN(sym_fence_content);
       if (lookahead == ' ') ADVANCE(41);
-      if (lookahead == '=') ADVANCE(61);
+      if (lookahead == '=') ADVANCE(57);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(109);
       END_STATE();
     case 57:
       ACCEPT_TOKEN(sym_fence_content);
       if (lookahead == ' ') ADVANCE(41);
-      if (lookahead == '=') ADVANCE(56);
+      if (lookahead == '=') ADVANCE(61);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(109);
       END_STATE();
     case 58:
       ACCEPT_TOKEN(sym_fence_content);
       if (lookahead == ' ') ADVANCE(41);
-      if (lookahead == '=') ADVANCE(57);
+      if (lookahead == '=') ADVANCE(56);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(109);
       END_STATE();

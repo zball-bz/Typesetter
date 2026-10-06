@@ -63,6 +63,16 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
           spanOut();
           break;
         }
+        case SugarId::terms: {
+          out += "terms";
+          spanOut();
+          break;
+        }
+        case SugarId::termpart: {
+          out += "term";
+          spanOut();
+          break;
+        }
         case SugarId::quote: {
           out += "quote";
           spanOut();
@@ -276,6 +286,10 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
           break;
         }
         case SugarId::item:
+          break;
+        case SugarId::terms:
+          break;
+        case SugarId::termpart:
           break;
         case SugarId::quote:
           break;

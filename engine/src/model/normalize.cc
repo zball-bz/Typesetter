@@ -52,6 +52,10 @@ bool emptyContent(const ContentNode* k, const Interner& strs) {
     if (!emptyContent(c, strs)) return false;
   return true;
 }
+// blanks only (spaces, tabs, soft breaks)
+bool blankText(std::string_view s) {
+  return s.find_first_not_of(" \t\n") == std::string_view::npos;
+}
 bool emptyPara(const ContentNode* p, const Interner& strs) {
   if (p->kind != Kind::para) return false;
   for (const ContentNode* k : p->kids)
@@ -128,12 +132,13 @@ struct Norm {
     return n;
   }
   static bool checked(Kind k) {
-    return k == Kind::list || k == Kind::table || k == Kind::trow || k == Kind::equations;
+    return k == Kind::list || k == Kind::terms || k == Kind::table || k == Kind::trow || k == Kind::equations;
   }
   // N6: what a checked model admits
   static bool admits(Kind parent, Kind kid) {
     switch (parent) {
-      case Kind::list: return kid == Kind::item;
+      case Kind::list:
+      case Kind::terms: return kid == Kind::item;  // (plan P3-34)
       case Kind::table: return kid == Kind::trow;
       case Kind::trow: return kid == Kind::tcell;
       case Kind::equations: return kid == Kind::mathblock;
@@ -243,6 +248,10 @@ struct Norm {
       if (kp == Pos::Blocks && k->kind == Kind::para && splitPara(k, kids)) continue;  // N5
       kids.push_back(k);
     }
+    // (plan P3-34) between a checked model's parts, blanks are no text:
+    // #list[#item[a] #item[b]]
+    if (checked(cur->kind))
+      std::erase_if(kids, [&](const ContentNode* k) { return k->kind == Kind::text && blankText(strs.get(k->str)); });
     if (kp == Pos::Inline) {
       for (ContentNode*& k : kids) {
         if (part(k, cur) || effLevel(k) != Level::Block) continue;

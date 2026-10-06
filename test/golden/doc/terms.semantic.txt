@@ -1,0 +1,25 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="74">A description list sets each term in bold at the start of its description.</p>
+<dl data-pid="1" data-s="76" data-e="474">
+<dt>Kerning</dt>
+<dd>The adjustment of the space between two particular glyphs, so that their shapes sit evenly; its lines after the first hang two ems in.</dd>
+<dt><strong>Leading</strong> with <code>code</code></dt>
+<dd>Extra space between lines.</dd>
+<dt>字距</dt>
+<dd>中文术语与描述同样接排，续行悬挂缩进。</dd>
+<dt>Hyphenation</dt>
+<dd>
+<p data-s="357" data-e="389">Breaking a word at a line&#39;s end.</p>
+<p data-s="393" data-e="464">A second paragraph of the same description stands indented by the hang.</p>
+</dd>
+<dt>Orphan</dt>
+</dl>
+<p data-pid="2" data-s="476" data-e="643">The same list from a script: </p>
+<dl data-pid="3" data-s="505" data-e="643">
+<dt id="tsr-tracking">Tracking</dt>
+<dd>Uniform letter spacing.</dd>
+<dt><strong>Widow</strong></dt>
+<dd>A last line alone.</dd>
+</dl>
+<p data-pid="4" data-s="645" data-e="693">A defined term is a glossary row: see <a href="#tsr-tracking">Tracking</a>.</p>
+</div>

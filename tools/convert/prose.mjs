@@ -39,3 +39,21 @@ export function escapeProse(s) {
   return s.split(VERBATIM).map((part, k) => (k % 2 ? part
     : part.replace(/\$/g, '\\$').replace(/#/g, '\\#').replace(/@(?=[A-Za-z[])/g, '\\@'))).join('');
 }
+
+// (plan P3-34) a description item's term: a colon that would end it (one
+// before a blank or the end) escaped
+export const termText = (s) => s.replace(/:(?=\s|$)/g, '\\:');
+
+// (plan P3-34) an HTML <dl>'s body as description items, `/ term: definition`
+// (a term's further definitions continue its item); `inline` converts a
+// fragment of HTML to .tsm text
+export function descriptionItems(body, inline) {
+  const out = [];
+  for (const m of body.matchAll(/<(dt|dd)(?:\s[^>]*)?>([\s\S]*?)(?=<\/?(?:dt|dd|dl)\b|$)/g)) {
+    const text = inline(m[2].replace(/<\/(?:dt|dd)>\s*$/, ''));
+    if (!text) continue;
+    if (m[1] === 'dt') out.push(`/ ${termText(text)}:`);
+    else if (out.length) out[out.length - 1] += /:$/.test(out.at(-1)) ? ' ' + text : '\n  ' + text;
+  }
+  return out;
+}

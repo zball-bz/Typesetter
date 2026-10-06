@@ -673,6 +673,16 @@ struct Gen {
         num(l.start);
         return done(at, kids(n->kids()));
       }
+      case SugarId::terms: {  // (plan P3-34; D-L08) a description list
+        size_t at = callHead("terms", &n->span, 0);
+        return done(at, kids(n->kids()));
+      }
+      case SugarId::termpart: {  // its item's term: a seq in slot "term"
+        size_t at = callHead("seq", &n->span, 1);
+        key("slot");
+        w.constStr("term");
+        return done(at, kids(n->kids()));
+      }
       case SugarId::item:
       case SugarId::quote: {
         size_t at = callHead(n->sugar == SugarId::item ? "item" : "quote", &n->span, 0);

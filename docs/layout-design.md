@@ -161,6 +161,13 @@ The stack's gap between two children is max(gap, after*, before*), the
 CSS-like collapsing of `space.*`, and the tops use the same rule. A
 paragraph's `par.hang` indents its ParShape slots after `hangAfter`. Its
 `breaker.*` traits set its BreakParams, and they are part of the memo key.
+(Plan P3-34; D-L08) A description list (`terms`) is a stack of items with
+no marker: an item's term part (slot `term`, bold by the slot's default
+rule) runs in at the start of its first paragraph — emit sets its content,
+then a space, before the paragraph's (`LeafSource::runIn`) — whose lines
+after the first hang the list's `block.indent` in (2em by default), the
+item's later blocks standing at that indent; a term with no paragraph first
+is a paragraph of its own.
 Paged frames are not cut. Each sheet draws the frames of the blocks its flow
 meets, clipped. A box's `extTop`/`extBot` carry the padding of the frames
 it opens and closes, so a sheet starts at its frame. Paged output gets its

@@ -532,8 +532,8 @@ struct InlineParser {
       bool inl = false;  // content (not only statements), none of it blocks
       for (const AstNode* k : body) inl = inl || k->kind != AstKind::Stmt;
       for (const AstNode* k : body)
-        for (SugarId b : {SugarId::para, SugarId::heading, SugarId::list, SugarId::item, SugarId::quote,
-                          SugarId::rule, SugarId::fence, SugarId::region})
+        for (SugarId b : {SugarId::para, SugarId::heading, SugarId::list, SugarId::item, SugarId::terms,
+                          SugarId::quote, SugarId::rule, SugarId::fence, SugarId::region})
           if (k->isCall(b)) inl = false;
       if (inl) {
         auto ws = [&](u32 at) { return t[at] == ' ' || t[at] == '\t' || t[at] == '\n'; };
@@ -1043,6 +1043,11 @@ struct AstBuilder {
         return h;
       }
       case SkelKind::List: {
+        if (s->marker == '/') {  // (plan P3-34; D-L08) a description list
+          AstNode* d = A.call(SugarId::terms, s->span);
+          A.setKids(d, buildKids(s));
+          return d;
+        }
         AstNode* l = A.call<ListP>(SugarId::list, s->span);
         side<ListP>(l) = {s->ordered, s->start};
         A.setKids(l, buildKids(s));
@@ -1050,7 +1055,15 @@ struct AstBuilder {
       }
       case SkelKind::Item: {
         AstNode* it = A.call(SugarId::item, s->span);
-        A.setKids(it, buildKids(s));
+        std::vector<AstNode*> kids = buildKids(s);
+        if (!s->termSpan.empty()) {  // (plan P3-34) its term part, inline, first
+          AstNode* term = A.call(SugarId::termpart, s->termSpan);
+          depth++;
+          A.setKids(term, inlineParse({s->termSpan}));
+          depth--;
+          kids.insert(kids.begin(), term);
+        }
+        A.setKids(it, kids);
         return it;
       }
       case SkelKind::Quote: {

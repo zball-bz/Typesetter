@@ -54,7 +54,7 @@ $ Id_(U)(A,B) -> Equiv(A,B). $
 
 The univalence axiom states that this map is itself an equivalence. At the risk of oversimplifying, we can state this succinctly as follows:
 
-- *Univalence Axiom:* $(A = B) simeq (A simeq B)$.
+/ Univalence Axiom\:: $(A = B) simeq (A simeq B)$.
 
 In other words, identity is equivalent to equivalence. In particular, one may say that “equivalent types are identical”. However, this phrase is somewhat misleading, since it may sound like a sort of “skeletality” condition which _collapses_ the notion of equivalence to coincide with identity, whereas in fact univalence is about _expanding_ the notion of identity so as to coincide with the (unchanged) notion of equivalence.
 

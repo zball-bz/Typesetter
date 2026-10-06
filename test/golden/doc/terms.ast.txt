@@ -1,0 +1,47 @@
+doc @[0,694)
+  para @[0,74)
+    text @[0,74) str="A description list sets each term in bold at the start of its description."
+  terms @[76,474)
+    item @[76,221)
+      term @[78,85)
+        text @[78,85) str="Kerning"
+      para @[87,221)
+        text @[87,221) str="The adjustment of the space between two particular glyphs, so that their shapes sit evenly; its lines after the first hang two ems in."
+    item @[222,273)
+      term @[224,245)
+        styled @[224,233) marker=*
+          text @[225,232) str="Leading"
+        text @[234,238) str=" with "
+        code @[239,245) str="code"
+      para @[247,273)
+        text @[247,273) str="Extra space between lines."
+    item @[274,341)
+      term @[276,282)
+        text @[276,282) str="字距"
+      para @[284,341)
+        text @[284,341) str="中文术语与描述同样接排，续行悬挂缩进。"
+    item @[342,464)
+      term @[344,355)
+        text @[344,355) str="Hyphenation"
+      para @[357,389)
+        text @[357,389) str="Breaking a word at a line's end."
+      para @[393,464)
+        text @[393,464) str="A second paragraph of the same description stands indented by the hang."
+    item @[465,474)
+      term @[467,473)
+        text @[467,473) str="Orphan"
+  para @[476,643)
+    text @[476,504) str="The same list from a script: "
+    splice @[505,643) expr="terms"
+      arg @[512,642)
+        splice @[512,596) expr="item({term: \"Tracking\", role: \"dterm\", label: \"tracking\"})"
+          arg @[572,595)
+            text @[572,595) str="Uniform letter spacing."
+        text @[512,512) str=" "
+        splice @[597,642) expr="item({term: m`*Widow*`})"
+          arg @[623,641)
+            text @[623,641) str="A last line alone."
+  para @[645,693)
+    text @[645,682) str="A defined term is a glossary row: see "
+    ref @[683,692) target="tracking"
+    text @[692,693) str="."

@@ -55,6 +55,7 @@ inline constexpr const char* kStdNames[] = {
     "styled",
     "table",
     "term",
+    "terms",
     "text",
     "toc",
     "use",

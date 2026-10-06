@@ -1,7 +1,7 @@
 <!-- GENERATED from engine/src/syntax/syntax.def by tools/gen-syntax.mjs — do not edit. -->
 # Surface syntax (generated)
 
-From `engine/src/syntax/syntax.def`, syntax version 5. Behaviour for each body mode, ownership class and block shape: `docs/syntax-design.md`.
+From `engine/src/syntax/syntax.def`, syntax version 6. Behaviour for each body mode, ownership class and block shape: `docs/syntax-design.md`.
 
 ## Inline delimiters
 
@@ -26,6 +26,7 @@ From `engine/src/syntax/syntax.def`, syntax version 5. Behaviour for each body m
 |---|---|---|---|---|---|
 | `quote` | `Prefix` | `>` | `Always` | `None` | `quote` |
 | `item` | `Column` | `LIST_MARKER` | `ListRule` | `None` | `item` |
+| `term` | `Column` | `/ TERM:` | `ListRule` | `None` | `terms` |
 | `region` | `Explicit` | `#!NAME ARGS?` | `Always` | `Container` | `region` |
 | `fence` | `Verbatim` | `` ``` INFO `` | `Always` | `Container` | `fence` |
 | `comment` | `Verbatim` | `%--` | `LeafOwned` | `Container` | `comment` |
@@ -43,6 +44,8 @@ From `engine/src/syntax/syntax.def`, syntax version 5. Behaviour for each body m
 | `heading` | Block | level:u8 label:str | `heading level={level}{?label label="{label}"}` |
 | `list` | Block | ordered:bool start:i32 | `list {ordered?ordered:bullet} start={start}` |
 | `item` | Block | — | `item` |
+| `terms` | Block | — | `terms` |
+| `termpart` | Inline | — | `term` |
 | `quote` | Block | — | `quote` |
 | `rule` | Block | — | `rule` |
 | `fence` | Block | lang:str args:src bodyOffset:u32 bodyEnd:u32 lines:str info:str? label:str? | `codeblock lang="{lang}"{?info info="{info}"}{?label label="{label}"} body="{$str}"` |
