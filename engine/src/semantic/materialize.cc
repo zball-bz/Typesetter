@@ -244,10 +244,10 @@ struct Mat {
   ContentNode* resolveRef(ContentNode* r) {
     std::vector<std::string> members;
     std::vector<ContentNode*> extra;
-    const StrRef extraSlot = e.strs.find("extra");
+
     for (ContentNode* k : r->kids) {
       if (k->kind == Kind::ref) members.emplace_back(e.strs.get(attrStr(k, ArgK::target)));
-      else if (extraSlot && attrStr(k, ArgK::slot) == extraSlot) kidsOf(k, extra);
+      else if (slotOf(k, e.strs) == SlotId::Extra) kidsOf(k, extra);
     }
     r->kids.clear();
     std::string target(e.strs.get(attrStr(r, ArgK::target)));

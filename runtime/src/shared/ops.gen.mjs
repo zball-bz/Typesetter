@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 12;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = 'e8be850f';
+export const SCHEMA_HASH = '7ff81f80';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -51,7 +51,8 @@ export const SINCE = Object.freeze({
     "32": 10,
     "33": 10,
     "34": 12,
-    "35": 12
+    "35": 12,
+    "36": 12
   },
   "attr": {
     "0": {},
@@ -490,6 +491,17 @@ export const SINCE = Object.freeze({
       "35": 9,
       "54": 11,
       "55": 11
+    },
+    "36": {
+      "0": 9,
+      "6": 9,
+      "31": 9,
+      "32": 9,
+      "33": 9,
+      "34": 9,
+      "35": 9,
+      "54": 11,
+      "55": 11
     }
   }
 });
@@ -541,7 +553,8 @@ export const KIND = Object.freeze({
   "when": 32,
   "each": 33,
   "math": 34,
-  "mathsrc": 35
+  "mathsrc": 35,
+  "equations": 36
 });
 export const ARGK = Object.freeze({
   "label": 0,
@@ -805,7 +818,7 @@ export const SCHEMA = Object.freeze({
   "tcell": {
     "id": 11,
     "level": "block",
-    "body": "inline",
+    "body": "blocks",
     "inline": "unsupported",
     "attrs": {
       "label": "label",
@@ -1295,6 +1308,24 @@ export const SCHEMA = Object.freeze({
       "attach": "enum:prev|next|both"
     },
     "resolved": []
+  },
+  "equations": {
+    "id": 36,
+    "level": "block",
+    "body": "blocks",
+    "inline": "unsupported",
+    "attrs": {
+      "label": "label",
+      "role": "ident",
+      "slot": "ident",
+      "syn": "ident",
+      "copy": "copy",
+      "class": "classlist",
+      "ext": "ext",
+      "style": "delta",
+      "attach": "enum:prev|next|both"
+    },
+    "resolved": []
   }
 });
 export const DECLS = Object.freeze({
@@ -1352,5 +1383,26 @@ export const DECLS = Object.freeze({
     "id": 11,
     "since": 9,
     "hoisted": false
+  }
+});
+export const SLOTS = Object.freeze({
+  "margin": {
+    "id": 1,
+    "model": "data",
+    "on": [
+      "codeblock"
+    ]
+  },
+  "extra": {
+    "id": 2,
+    "model": "inline",
+    "on": [
+      "ref"
+    ]
+  },
+  "tag": {
+    "id": 3,
+    "model": "inline",
+    "on": "block"
   }
 });

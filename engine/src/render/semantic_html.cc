@@ -333,9 +333,8 @@ struct Sem {
         // its margin slot (plan P2-13: sidecar notes are content — a
         // footnote marker, a reference): an aside after the code, one
         // paragraph per annotated line (data-line counts from 1)
-        const StrRef margin = strs.find("margin");
         for (const ContentNode* k : n->kids) {
-          if (k->kind != Kind::group || !margin || attrStr(k, ArgK::slot) != margin) continue;
+          if (k->kind != Kind::group || slotOf(k, strs) != SlotId::Margin) continue;
           bool any = false;
           for (size_t li = 0; li < k->kids.size(); li++) {
             if (k->kids[li]->kids.empty()) continue;

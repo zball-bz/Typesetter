@@ -49,7 +49,6 @@ constexpr const char* kSides[] = {"left", "right"};
 class Builder {
  public:
   Builder(Interner& s, StyleTable& st, const Config& c, const Registry& r) : strs(s), styles(st), cfg(c), reg(r) {
-    marginRef = s.find("margin");
     for (const char* side : kSides) sideRefs.push_back(s.find(side));
   }
 
@@ -84,7 +83,6 @@ class Builder {
   const Config& cfg;
   const Registry& reg;
   std::vector<StrRef> sideRefs;
-  StrRef marginRef = 0;  // slot "margin": a code block's sidecar lines
   TopTree* t = nullptr;
   std::vector<LeafSource>* leaves = nullptr;
   int figDepth = 0;  // inside a captions role: paragraphs are captions
@@ -198,7 +196,7 @@ class Builder {
         // (plan P2-13: group{slot: margin}, made by the default fence) are
         // the block's second track
         for (const ContentNode* k : n->kids) {
-          if (k->kind == Kind::group && marginRef && attrStr(k, ArgK::slot) == marginRef) {
+          if (k->kind == Kind::group && slotOf(k, strs) == SlotId::Margin) {
             s.sidecar = k;
             s.rows.assign(k->kids.begin(), k->kids.end());
           }

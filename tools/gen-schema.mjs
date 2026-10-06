@@ -36,7 +36,7 @@ const resolvedAttr = (spec) => (spec.flags ?? []).includes('resolved');
 
 // ---- lock: ids and since values are immutable -------------------------------
 const lockOf = () => {
-  const L = { ops: {}, kinds: {}, keys: {}, attrs: {}, decls: {} };
+  const L = { ops: {}, kinds: {}, keys: {}, attrs: {}, decls: {}, slots: {} };
   for (const [n, o] of Object.entries(S.ops)) L.ops[n] = [o.id, o.since];
   for (const [n, k] of Object.entries(S.kinds)) {
     L.kinds[n] = [k.id, k.since];
@@ -44,11 +44,13 @@ const lockOf = () => {
   }
   for (const [n, id] of Object.entries(S.keys)) L.keys[n] = id;
   for (const [n, d] of Object.entries(S.decls ?? {})) if (n !== '$comment') L.decls[n] = [d.id, d.since];
+  for (const [n, sl] of Object.entries(S.slots ?? {})) if (n !== '$comment') L.slots[n] = sl.id;
   return L;
 };
 const now = lockOf();
 if (existsSync(lockPath)) {
   const locked = JSON.parse(readFileSync(lockPath, 'utf8'));
+  for (const sec of Object.keys(now)) locked[sec] ??= {};  // a new section (plan P2-16: slots)
   for (const sec of Object.keys(locked)) {
     for (const [n, v] of Object.entries(locked[sec])) {
       if (!(n in now[sec])) errors.push(`lock: ${sec}.${n} was removed (ids are immutable)`);
@@ -94,6 +96,7 @@ if (errors.length) {
 const byId = (o, f) => Object.entries(o).sort((a, b) => f(a[1]) - f(b[1]));
 const ops = byId(S.ops, (v) => v.id);
 const kinds = byId(S.kinds, (v) => v.id);
+const slots = Object.entries(S.slots ?? {}).filter(([n]) => n !== '$comment').sort((a, b) => a[1].id - b[1].id);
 const keys = byId(S.keys, (v) => v);
 const HDR = 'GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.';
 // The ABI handshake's schemaHash (plan P1-01, D-H06): FNV-1a 32 over the
@@ -151,6 +154,12 @@ let h = `// ${HDR}\n#pragma once\n#include <cstdint>\n\nnamespace tsr {\n\n` +
   `struct DeclInfo {\n  const char* name;\n  bool hoisted;\n  std::uint8_t since;\n};\n` +
   `constexpr std::uint16_t DECL_COUNT = ${Object.keys(S.decls ?? {}).filter((d) => d !== '$comment').length + 1};\n` +
   `extern const DeclInfo kDecls[DECL_COUNT];  // indexed by id (0: none)\n\n` +
+  `// a slot (plan P2-16; schema "slots"): a value of the universal slot\n// attribute a kind gives a meaning; its child is a part, exempt from the\n// parent's body model, its own kids at the slot's model\n` +
+  `enum class SlotId : std::uint8_t { None, ${slots.map(([n]) => cap(n)).join(', ')} };\n` +
+  `struct SlotInfo {\n  const char* name;\n  Body model;\n  bool anyBlock;  // on every block-level kind\n` +
+  `  const std::uint16_t* kinds;  // else on these\n  std::uint8_t nKinds;\n};\n` +
+  `constexpr std::uint8_t SLOT_COUNT = ${slots.length + 1};\n` +
+  `extern const SlotInfo kSlots[SLOT_COUNT];  // indexed by SlotId\n\n` +
   `struct KindInfo {\n  const char* name;\n  Level level;\n  Body body;\n  InlineShape inl;\n  std::uint8_t since;\n` +
   `  const AttrSpec* attrs;  // writer order\n  std::uint8_t nAttrs;\n};\n\n` +
   `extern const KindInfo kKinds[KIND_COUNT];  // indexed by Kind id\n` +
@@ -195,8 +204,18 @@ for (const [n, d] of Object.entries(S.decls ?? {}).filter(([n]) => n !== '$comme
   if (!['hoisted', 'positional'].includes(d.binding)) { console.error(`gen-schema: decls.${n}: binding`); process.exit(1); }
   declRows.push(`{${cstr(n)}, ${d.binding === 'hoisted'}, ${d.since}}`);
 }
+const slotRows = ['{nullptr, Body::None, false, nullptr, 0}'];
+for (const [n, sl] of slots) {
+  if (sl.id !== slotRows.length) { console.error(`gen-schema: slots.${n}: ids must run 1, 2, …`); process.exit(1); }
+  if (!BODIES.includes(sl.model)) { console.error(`gen-schema: slots.${n}: unknown model ${sl.model}`); process.exit(1); }
+  const on = sl.on === 'block' ? [] : sl.on;
+  for (const k of on) if (!S.kinds[k]) { console.error(`gen-schema: slots.${n}: unknown kind ${k}`); process.exit(1); }
+  if (on.length) cc += `const std::uint16_t kS_${n}[] = {${on.map((k) => S.kinds[k].id).join(', ')}};\n`;
+  slotRows.push(`{${cstr(n)}, Body::${cap(sl.model)}, ${sl.on === 'block'}, ${on.length ? `kS_${n}` : 'nullptr'}, ${on.length}}`);
+}
 cc += `}  // namespace\n\nconst KindInfo kKinds[KIND_COUNT] = {\n    ${kindRows.join(',\n    ')}};\n\n` +
-  `const DeclInfo kDecls[DECL_COUNT] = {\n    ${declRows.join(',\n    ')}};\n\n}  // namespace tsr\n`;
+  `const DeclInfo kDecls[DECL_COUNT] = {\n    ${declRows.join(',\n    ')}};\n\n` +
+  `const SlotInfo kSlots[SLOT_COUNT] = {\n    ${slotRows.join(',\n    ')}};\n\n}  // namespace tsr\n`;
 
 // ---- ops.gen.mjs -----------------------------------------------------------------
 const obj = (pairs) => Object.fromEntries(pairs);
@@ -204,6 +223,7 @@ const emit = (name, o) => `export const ${name} = Object.freeze(${JSON.stringify
 const schemaJs = obj(kinds.map(([n, k]) => [n, { id: k.id, level: k.level, body: k.body, inline: k.inline,
   attrs: Object.fromEntries(Object.entries(k.attrs).map(([a, s]) => [a, s.dom])),
   resolved: Object.entries(k.attrs).filter(([, s]) => resolvedAttr(s)).map(([a]) => a) }]));
+const slotsJs = obj(slots.map(([n, sl]) => [n, { id: sl.id, model: sl.model, on: sl.on }]));
 const declsJs = obj(Object.entries(S.decls ?? {}).filter(([n]) => n !== '$comment')
   .map(([n, d]) => [n, { id: d.id, since: d.since, hoisted: d.binding === 'hoisted' }]));
 // since tables for the writer's per-buffer version (plan P1-01)
@@ -221,7 +241,8 @@ const js = `// ${HDR}\n` +
   emit('KIND', obj(kinds.map(([n, k]) => [n, k.id]))) +
   emit('ARGK', obj(keys.map(([n, id]) => [n, id]))) +
   emit('SCHEMA', schemaJs) +
-  emit('DECLS', declsJs);
+  emit('DECLS', declsJs) +
+  emit('SLOTS', slotsJs);
 
 // ---- textual value domains (plan P1-02): one regex → C++ DFA + JS RegExp --------
 const domains = Object.entries(S.domains ?? {}).filter(([n]) => n !== '$comment');
@@ -573,6 +594,9 @@ md += '\nDerived constructors (`stdlib.ctors`): ' +
   Object.keys(ctorSpecs).filter((c) => ctorSpecs[c].derived).map(ctorSig).join(', ') +
   '. Std functions: ' + stdFunctions.map((f) => `\`${f}\``).join(', ') + '.\n';
 md += '\n| op | id |\n|---|---|\n' + ops.map(([n, o]) => `| ${n} | ${o.id} |`).join('\n') + '\n';
+md += '\nSlots (the universal `slot` attribute\'s values a kind gives a meaning; plan P2-16):\n\n' +
+  '| id | slot | on | model | |\n|---|---|---|---|---|\n' +
+  slots.map(([n, sl]) => `| ${sl.id} | \`${n}\` | ${sl.on === 'block' ? 'every block' : sl.on.join(', ')} | ${sl.model} | ${sl.doc ?? ''} |`).join('\n') + '\n';
 
 // ---- write / check ---------------------------------------------------------------
 const outputs = {

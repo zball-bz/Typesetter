@@ -152,7 +152,11 @@ ops      op stream (all ints varint/LEB128 unless noted)
 As built (plan P2-05; design T2 S9): **universal attributes**. Every kind but
 `doc` and `text` accepts, after its own attributes, `label` (an anchor — any
 block a labelled node opens carries it), `role` (the element class's name),
-`slot` (the part of its parent it fills), `syn` (the kind of generated text it
+`slot` (the part of its parent it fills — the values a kind gives a meaning
+are schema.json `slots`, plan P2-16: a code block's `margin`, a reference's
+`extra`, every block's `tag`; such a child is a part, exempt from its
+parent's body model in the normal form, its kids at the slot's model;
+consumers read the generated `SlotId`), `syn` (the kind of generated text it
 is), `copy` (`text` | `omit` | `replace:<text>`), `class` (style tokens, for
 T4) and **EXT** data: `argKey=ext nameStrRef argVal`, a scalar under a name
 matching `[a-z][a-z0-9-]{0,31}`, opaque to emit and layout (`extAttr(node,

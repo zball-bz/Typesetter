@@ -166,6 +166,17 @@
     "style": {"dom": "delta", "since": 11},
     "attach": {"dom": "enum:prev|next|both", "since": 11}
   },
+  "slots": {
+    "$comment": [
+      "Slots (plan P2-16; design T2 SlotSpec, INTEGRATION: the universal `slot`): the values of the slot",
+      "attribute a kind gives a meaning — a child in a slot is a part of its parent, not its content: it is",
+      "exempt from the parent's body model and its own children sit at the slot's model. on: the kinds",
+      "that take it, or \"block\" for every block-level kind. Consumers read the generated id (SlotId)."
+    ],
+    "margin": {"id": 1, "on": ["codeblock"], "model": "data", "doc": "a code block's sidecar lines: one seq per logical line (P2-13)"},
+    "extra": {"id": 2, "on": ["ref"], "model": "inline", "doc": "a reference's bracket: its supplement word or a citation's locator (P2-09)"},
+    "tag": {"id": 3, "on": "block", "model": "inline", "doc": "a block's tag in the margin: an equation's number, a site's mark (P3-03, T6)"}
+  },
   "decls": {
     "$comment": [
       "Declaration types (plan P2-05; design T2 S9; D-I06, D-I07): a DECL op carries one, with a name, EXT",

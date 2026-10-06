@@ -457,6 +457,8 @@ const AttrSpec kA_equations[] = {
     {35, "ext", Dom::Ext, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {54, "style", Dom::Delta, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 0, false},
     {55, "attach", Dom::Enum, 0, 0, kM_equations_attach, nullptr, 3, false, false, 0, 11, 0, false}};
+const std::uint16_t kS_margin[] = {6};
+const std::uint16_t kS_extra[] = {21};
 }  // namespace
 
 const KindInfo kKinds[KIND_COUNT] = {
@@ -511,5 +513,11 @@ const DeclInfo kDecls[DECL_COUNT] = {
     {"math.symbol", false, 9},
     {"math.op", false, 9},
     {"math.fn", false, 9}};
+
+const SlotInfo kSlots[SLOT_COUNT] = {
+    {nullptr, Body::None, false, nullptr, 0},
+    {"margin", Body::Data, false, kS_margin, 1},
+    {"extra", Body::Inline, false, kS_extra, 1},
+    {"tag", Body::Inline, true, nullptr, 0}};
 
 }  // namespace tsr

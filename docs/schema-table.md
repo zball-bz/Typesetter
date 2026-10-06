@@ -57,3 +57,11 @@ Derived constructors (`stdlib.ctors`): `strong({options}, …)`, `em({options}, 
 | AT | 8 |
 | RAWMAP | 9 |
 | DECL | 10 |
+
+Slots (the universal `slot` attribute's values a kind gives a meaning; plan P2-16):
+
+| id | slot | on | model | |
+|---|---|---|---|---|
+| 1 | `margin` | codeblock | data | a code block's sidecar lines: one seq per logical line (P2-13) |
+| 2 | `extra` | ref | inline | a reference's bracket: its supplement word or a citation's locator (P2-09) |
+| 3 | `tag` | every block | inline | a block's tag in the margin: an equation's number, a site's mark (P3-03, T6) |

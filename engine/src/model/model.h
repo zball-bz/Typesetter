@@ -65,6 +65,25 @@ inline const ArgVal* extAttr(const ContentNode* n, StrRef name) {
   return nullptr;
 }
 
+// The slot a node fills in its parent (plan P2-16; schema "slots"): None
+// when its slot attribute names none; slotOn: whether a kind takes it
+inline SlotId slotOf(const ContentNode* n, const Interner& strs) {
+  const StrRef r = attrStr(n, ArgK::slot);
+  if (!r) return SlotId::None;
+  const std::string_view v = strs.get(r);
+  for (u8 i = 1; i < SLOT_COUNT; i++)
+    if (v == kSlots[i].name) return (SlotId)i;
+  return SlotId::None;
+}
+inline bool slotOn(SlotId s, Kind parent) {
+  if (s == SlotId::None) return false;
+  const SlotInfo& si = kSlots[(u8)s];
+  if (si.anyBlock) return (u16)parent < KIND_COUNT && kKinds[(u16)parent].level == Level::Block;
+  for (u8 i = 0; i < si.nKinds; i++)
+    if (si.kinds[i] == (u16)parent) return true;
+  return false;
+}
+
 // A declaration (plan P2-05; design T2 S9): its type (kDecls), name, EXT
 // data and style-neutral templates, at its flow position (the EMITs before
 // it). Hoisted types: the last declaration of a name wins and the earlier
