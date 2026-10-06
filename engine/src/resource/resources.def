@@ -18,7 +18,7 @@
 //   columns:      name:type, types Str (a string of the batch's blob),
 //                 MetricKey (a row of the batch's metric-key table), U8, U16,
 //                 U32, F64, U32List
-RES_VERSION(2)
+RES_VERSION(3)
 RES(textWidth, 1, Content, false, "mk:MetricKey text:Str", "px:F64")
 RES(fontVmet, 2, Content, false, "mk:MetricKey", "asc:F64 desc:F64")
 RES(fontFace, 3, None, false, "family:Str src:Str weight:U16 style:U8", "status:U8")
@@ -28,3 +28,7 @@ RES(boxInfo, 5, Host, true, "kind:U8 ref:Str availPx:F64", "w:F64 h:F64 baseline
 // language tag the document's text names (en-US is resident): TeX pattern
 // text, exceptions as hyphenated words, the minima, the hyphen glyph
 RES(hyphPatterns, 6, Content, false, "lang:Str", "patterns:Str exceptions:Str leftmin:U8 rightmin:U8 hyphenChar:Str")
+// (plan P5-01; D-M03) a face's reference ink: the ink ascent of "H" and the
+// ink descent of "p" — per style, like fontVmet (v2 §6) — asked for only
+// under math.referenceInk, for a formula's text-font runs
+RES(fontInk, 7, Content, false, "mk:MetricKey", "asc:F64 desc:F64")

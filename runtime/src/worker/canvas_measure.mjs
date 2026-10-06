@@ -25,4 +25,12 @@ export class CanvasMeasurer {
       descent: m.fontBoundingBoxDescent ?? this.ctx.measureText('g').actualBoundingBoxDescent * 1.2,
     };
   }
+  // (plan P5-01; D-M03) the style's reference ink: a cap height and a
+  // descender, per style like vmet (v2 §6), for math.referenceInk
+  ink() {
+    return {
+      ascent: this.ctx.measureText('H').actualBoundingBoxAscent,
+      descent: this.ctx.measureText('p').actualBoundingBoxDescent,
+    };
+  }
 }

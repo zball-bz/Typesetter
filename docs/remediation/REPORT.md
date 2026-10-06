@@ -316,6 +316,25 @@ P4 把段落成形与断行重建在数据上：
 
 **阶段结论：改进。** 行更均匀，松行与 CJK 松行明显减少，连字更合语言。代价是收紧行增多，幅度在 TeX 收缩极限（shrinkThreshold 0.37）之内。
 
+## P5-01 多字体数学链与宿主数学字体（T8 S10；D-M06、D-M03）
+
+**变化：**
+1. **宿主数学字体。** `tools/mathc.py --tsmf` 把一个带 MATH 表的字体编译为 `.tsmf`（常量、字形度量、变体链、拼装部件，不含字形轮廓）。`--lenient` 服务于大小变体没有码位的字体（STIX Two、Libertinus），只保留能按码位绘制的部分。宿主经声明输入 `mathFonts` 交给引擎：worker 按声明字体（role `math`）的 `metrics` 取回，renderTsm 在 rootDir 下读取。进程级注册表按 blob 的哈希识别字体：同一字节只解码一次，至多 64 个。
+2. **字体链 `math.fonts`。** 每个码位取链上第一个覆盖它的字体，可伸缩字形取第一个有其构造的字体，所有 MATH 常量取主字体（链首）。数字等字面串由主字体整体测量；主字体缺字而后续字体有时，按码位逐个取字。名字只在本文档的输入字体与 `euler` 中解析，所以其他文档加载过什么不影响本文档。新诊断：`math-font-invalid`、`math-font-unknown`，以及 `math-font-mismatch`（轴高或 x 高与主字体相差超过 5%）。
+3. **绘制。** 宿主字体的字形写出内联 `font-family`（族名经解码白名单与 declEsc）。静态导出为宿主数学字体写出 `@font-face`。内嵌 Euler 仍由 mathfont.gen.mjs 一份清单同时服务导出与 pack-dist。
+4. **参考墨迹 `math.referenceInk`（默认关闭，D-M03）。** 打开后，公式中的文字串（名字、算子、引号文字）以所在样式的参考墨迹作为纵向范围："H" 的墨迹上沿与 "p" 的墨迹下沿，按样式取，与 v2 §6 一致，经新资源行 `fontInk`（RES_VERSION 3）获得。绘制仍按行盒钉住基线（MathBox::lineAsc/lineDesc）。
+5. **安全与模糊测试。** 新 fuzz 目标 `fuzz_tsmf`，安全评审补遗 P5-01。解码器限定度量范围：±8em，百分比常量 0…100；变体与部件必须是本字体自己的字形记录（fuzz 发现）。
+
+**golden：** 既有 219 个用例全部不变（Euler 覆盖的输入不受影响）。新增 4 个用例：
+- math/fonts-chain-diag：euler 在前、STIX 在后；ϱ、ς 取自 STIX，`中` 仍是测量过的文字叶。
+- math/fonts-primary-diag：STIX 为主字体；含一个未知名字和一个截断的 blob。
+- math/reference-ink：打开参考墨迹。`lim` 与 `"area"_"max"` 的下标各上移 2.4px，公式高度相应收紧，文字串仍按行盒绘制。
+- math/reference-ink-off：同一源文本，设置关闭，用于对照。
+
+**审阅结论：**
+- 改进：公式可以用宿主的数学字体，或补 Euler 缺的字形。
+- 中性：默认输出完全不变。参考墨迹为可选项，打开后，名字上的上下标与数学字母上的一致。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。

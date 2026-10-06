@@ -5,3 +5,7 @@
 //   labels: the other documents' labels products (a JSON array of them;
 //           semantic/manifest.h), read by Resolve
 INPUT(labels, 1, LabelManifestList, Resolve)
+//   mathFonts: a host's math fonts (plan P5-01; D-M06): .tsmf blobs back to
+//           back (tools/mathc.py --tsmf), loaded into the process-wide math
+//           font registry (by content hash) and named by math.fonts
+INPUT(mathFonts, 1, TsmfList, Resolve)

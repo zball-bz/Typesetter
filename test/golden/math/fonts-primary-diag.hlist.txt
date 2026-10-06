@@ -1,0 +1,75 @@
+top pid=0 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "STIX" w=2049su r0 @[0,4)
+  glue word w=257su x=1 st=257su kern="X T" src r0 @[4,5)
+  box Alpha "Two" w=1537su r0 @[5,8)
+  glue word w=257su x=1 st=257su kern="o M" src r0 @[8,9)
+  box Alpha "Math" w=2049su r0 @[9,13)
+  glue word w=257su x=1 st=257su kern="h a" src r0 @[13,14)
+  box Alpha "as" w=1025su r0 @[14,16)
+  glue word w=257su x=1 st=257su kern="s t" src r0 @[16,17)
+  box Alpha "the" w=1537su r0 @[17,20)
+  glue word w=257su x=1 st=257su kern="e p" src r0 @[20,21)
+  box Alpha "pri" w=1537su r0 @[21,24)
+  disc pen=0.7 w=0su pre="-" 513su kern="im" r0 @[24,24)
+  box Alpha "ma" w=1025su r0 @[24,26)
+  disc pen=0.7 w=0su pre="-" 513su kern="ar" r0 @[26,26)
+  box Alpha "ry:" w=1537su r0 @[26,29)
+  glue word w=257su x=1 st=257su src r0 @[29,29)
+  box object o0 math part=0 asc=831su desc=41su "x^2 + y^2 = r^2" w=1851su r1 @[30,47)
+  pen 0.95 r2
+  glue objspace w=228su x=0 r2 @[30,47)
+  box object o0 math part=1 asc=831su desc=241su w=891su r3 @[30,47)
+  pen 0.85 r4
+  glue objspace w=284su x=0 r4 @[30,47)
+  box object o0 math part=2 asc=404su desc=0su w=737su r5 @[30,47)
+  pen 0.8 r6
+  glue objspace w=284su x=0 r6 @[30,47)
+  box object o0 math part=3 asc=831su desc=0su w=785su r7 @[30,47)
+  pen 0 r7
+  glue word w=257su x=1 st=257su src r8 @[48,48)
+  box Alpha "and" w=1537su r8 @[48,51)
+  glue word w=257su x=1 st=257su src r8 @[51,51)
+  obj o0 math parts=4 edges=Alpha/Alpha src="x^2 + y^2 = r^2" [w=1851su asc=831su desc=41su] [w=891su asc=831su desc=241su glue=228su] [w=737su asc=404su desc=0su glue=284su] [w=785su asc=831su desc=0su glue=284su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 object
+  run r4 plain
+  run r5 object
+  run r6 plain
+  run r7 object
+  run r8 plain
+top pid=1 units=1
+ unit math indent=0su w=3578su asc=2178su desc=1425su
+top pid=2 units=1
+ unit text indent=0su
+  ju=257su
+  glue word w=257su x=1 st=257su src r0 @[76,76)
+  box Alpha "take" w=2049su r0 @[76,80)
+  glue word w=257su x=1 st=257su kern="e i" src r0 @[80,81)
+  box Alpha "its" w=1537su r0 @[81,84)
+  glue word w=257su x=1 st=257su kern="s g" src r0 @[84,85)
+  box Alpha "glyphs" w=3073su r0 @[85,91)
+  glue word w=257su x=1 st=257su kern="s a" src r0 @[91,92)
+  box Alpha "and" w=1537su r0 @[92,95)
+  glue word w=257su x=1 st=257su kern="d i" src r0 @[95,96)
+  box Alpha "its" w=1537su r0 @[96,99)
+  glue word w=257su x=1 st=257su kern="s c" src r0 @[99,100)
+  box Alpha "con" w=1537su r0 @[100,103)
+  disc pen=0.7 w=0su pre="-" 513su kern="ns" r0 @[103,103)
+  box Alpha "stants;" w=3585su r0 @[103,110)
+  glue word w=257su x=1 st=257su kern="; E" src r0 @[110,111)
+  box Alpha "Euler" w=2561su r0 @[111,116)
+  glue word w=257su x=1 st=257su kern="r c" src r0 @[116,117)
+  box Alpha "cov" w=1537su r0 @[117,120)
+  disc pen=0.7 w=0su pre="-" 513su kern="ve" r0 @[120,120)
+  box Alpha "ers" w=1537su r0 @[120,123)
+  glue word w=257su x=1 st=257su kern="s w" src r0 @[123,124)
+  box Alpha "what" w=2049su r0 @[124,128)
+  glue word w=257su x=1 st=257su kern="t i" src r0 @[128,129)
+  box Alpha "it" w=1025su r0 @[129,131)
+  glue word w=257su x=1 st=257su kern="t l" src r0 @[131,132)
+  box Alpha "lacks." w=3073su r0 @[132,138)
+  run r0 plain

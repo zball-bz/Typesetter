@@ -185,6 +185,22 @@ export const SETTINGS = Object.freeze({
       "Emit"
     ]
   },
+  "math.fonts": {
+    "dom": "json:array",
+    "def": [],
+    "prec": "HostDefault",
+    "affects": [
+      "Resolve"
+    ]
+  },
+  "math.referenceInk": {
+    "dom": "bool",
+    "def": false,
+    "prec": "HostDefault",
+    "affects": [
+      "Emit"
+    ]
+  },
   "math.breakAfter": {
     "dom": "classmap:0:1e18",
     "def": {
@@ -559,6 +575,8 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "urlMinLen": 20
   },
   "math": {
+    "fonts": [],
+    "referenceInk": false,
     "breakAfter": {
       "rel": 0.8,
       "bin": 0.95

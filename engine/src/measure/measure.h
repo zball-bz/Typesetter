@@ -26,6 +26,7 @@ struct MetricBacking {
   virtual ~MetricBacking() = default;
   virtual bool width(FaceId f, StrRef s, double& px) const = 0;
   virtual bool vmet(FaceId f, double& asc, double& desc) const = 0;
+  virtual bool ink(FaceId f, double& asc, double& desc) const = 0;
 };
 
 // Answers keyed by (string, face): a style query resolves its face first
@@ -73,10 +74,25 @@ class MetricStore {
     if (vmets_.size() <= f) vmets_.resize(f + 1);
     vmets_[f] = {suRoundPx(hostPx(ascentPx)), suRoundPx(hostPx(descentPx)), true};
   }
+  // (plan P5-01; D-M03) a face's reference ink (fontInk): kept like vmet
+  bool hasFaceInk(FaceId f) const {
+    if (f < inks_.size() && inks_[f].have) return true;
+    double a, d;
+    if (!backing_ || !backing_->ink(f, a, d)) return false;
+    const_cast<MetricStore*>(this)->provideInk(f, a, d);
+    return true;
+  }
+  bool hasInk(StyleId st) const { return hasFaceInk(faceOf(st)); }
+  const VMet& ink(StyleId st) const { return inks_[faceOf(st)]; }
+  void provideInk(FaceId f, double ascentPx, double descentPx) {
+    if (inks_.size() <= f) inks_.resize(f + 1);
+    inks_[f] = {suRoundPx(hostPx(ascentPx)), suRoundPx(hostPx(descentPx)), true};
+  }
   void invalidate() {
     head_.clear();
     slots_.clear();
     vmets_.clear();
+    inks_.clear();
   }
 
  private:
@@ -106,7 +122,7 @@ class MetricStore {
   const MetricBacking* backing_ = nullptr;
   std::vector<u32> head_;  // per string: 1 + its first slot, 0 = none
   std::vector<Slot> slots_;
-  std::vector<VMet> vmets_;
+  std::vector<VMet> vmets_, inks_;
   Su epsilon_ = 1;
 };
 
@@ -117,7 +133,8 @@ struct MeasureItem {
 struct MeasureRequest {
   std::vector<FaceId> vmetFaces;
   std::vector<MeasureItem> words;
-  bool empty() const { return vmetFaces.empty() && words.empty(); }
+  std::vector<FaceId> inkFaces;  // (plan P5-01) fontInk
+  bool empty() const { return vmetFaces.empty() && words.empty() && inkFaces.empty(); }
 };
 
 // What a pass that needs text metrics before Measure reads them through
@@ -129,6 +146,9 @@ struct MeasureNeeds {
   Interner* strs = nullptr;
   double docBasePx = 0;                 // Config::baseSizePx (style ids scale on it)
   std::vector<MeasureItem>* missing = nullptr;
+  // (plan P5-01; D-M03, math.referenceInk) a run's extents are its style's
+  // reference ink (fontInk), not its line metrics
+  bool referenceInk = false;
 };
 
 // The measurement description of a face (for the JS measurer and the mock).

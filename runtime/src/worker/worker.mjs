@@ -36,6 +36,7 @@ const host = new ResourceHost({ policy });
 {
   const canvas = canvasProviders(new CanvasMeasurer());
   host.register('textWidth', canvas.textWidth).register('fontVmet', canvas.fontVmet)
+    .register('fontInk', canvas.fontInk)
     .register('codeTokens', tokenProvider)
     .register('hyphPatterns', hyphProvider())
     .register('boxInfo', imageProvider({ get timeoutMs() { return policy.imageTimeoutMs; } }))
@@ -105,6 +106,31 @@ async function loadFonts(fonts) {
   if (!wait.length) return;
   await Promise.race([Promise.allSettled(wait),
                       new Promise((r) => setTimeout(r, policy.fontDeadlineMs))]);
+}
+
+// (plan P5-01; D-M06) a host's math fonts: a declared font with role
+// 'math' and `metrics` (its .tsmf, tools/mathc.py --tsmf) — its metrics
+// fetched once per URL, all of them back to back: the declared input
+// mathFonts (the engine loads them into its registry by content hash;
+// math.fonts names the chain). A metrics file that fails to load is left
+// out (the engine says what math.fonts names that it does not have).
+const mathMetrics = new Map();  // url → Promise<Uint8Array | null>
+async function mathFontsOf(fonts, baseUrl) {
+  const urls = (fonts ?? []).filter((f) => f.role === 'math' && f.metrics)
+    .map((f) => new URL(String(f.metrics), baseUrl ?? self.location.href).href);
+  if (!urls.length) return null;
+  for (const u of urls)
+    if (!mathMetrics.has(u))
+      mathMetrics.set(u, fetch(u).then((r) => (r.ok ? r.arrayBuffer() : null)).then((b) => b && new Uint8Array(b))
+        .catch(() => null));
+  const blobs = (await Promise.all(urls.map((u) => mathMetrics.get(u)))).filter(Boolean);
+  const out = new Uint8Array(blobs.reduce((n, b) => n + b.length, 0));
+  let at = 0;
+  for (const b of blobs) {
+    out.set(b, at);
+    at += b.length;
+  }
+  return out;
 }
 
 // Main-thread capabilities (plan P3-06; design T9 "capability"): work only
@@ -204,9 +230,10 @@ function postResult(M, doc, ids, tm, held) {
 // labels, the other documents' manifests as one JSON array), before Ingest
 function setInputs(M, doc, inputs) {
   for (const [name, value] of Object.entries(inputs ?? {})) {
-    if (typeof value !== 'string') continue;
+    // a JSON input (labels) as a string, a binary one (mathFonts) as bytes
+    if (typeof value !== 'string' && !(value instanceof Uint8Array)) continue;
     const n = M.stringToNewUTF8(name);
-    const bytes = new TextEncoder().encode(value);
+    const bytes = typeof value === 'string' ? new TextEncoder().encode(value) : value;
     const p = M._malloc(bytes.length || 1);
     M.HEAPU8.set(bytes, p);
     M._tsr2_set_input(doc, n, p, bytes.length);
@@ -346,7 +373,15 @@ async function runTypeset(s, { ids, msg }, stale) {
     mark('executeMs', t0);
     await yieldTurn();  // (counted in the edit's total, not in executeMs)
     if (stale()) { M._tsr_doc_free(doc); return false; }
-    setInputs(M, doc, mergeInputs(inputs, imported));  // (plan P3-31) its declared inputs, before Ingest
+    // (plan P3-31) its declared inputs, before Ingest; (plan P5-01) the
+    // declared math fonts' metrics unless the host gave mathFonts itself
+    const declared = mergeInputs(inputs, imported);
+    if (!declared.mathFonts) {
+      const blobs = await mathFontsOf(fontFaces, baseUrl);
+      if (stale()) { M._tsr_doc_free(doc); return false; }
+      if (blobs?.length) declared.mathFonts = blobs;
+    }
+    setInputs(M, doc, declared);
     t0 = performance.now();
     const opsPtr = M._malloc(ops.length);
     M.HEAPU8.set(ops, opsPtr);

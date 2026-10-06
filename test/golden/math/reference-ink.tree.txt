@@ -1,0 +1,17 @@
+doc @[0,284) [base]
+  para @[0,224) [base]
+    text @[0,117) [base] str="Under math.referenceInk (plan P5-01; D-M03) a formula's names take their style's reference ink, not its line metrics: " raw=0:0,118:117
+    mathinline @[118,141) [base]
+      mathsrc @[119,140) [base] src="sin^2 x + cos^2 x = 1"
+    text @[141,142) [base] str=", " raw=0:0,2:1
+    mathinline @[143,166) [base]
+      mathsrc @[144,165) [base] src="lim_(n -> oo) log_2 n"
+    text @[167,170) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[171,187) [base]
+      mathsrc @[172,186) [base] src="\"area\"_\"max\"^2"
+    text @[188,210) [base] str=" carry their scripts as " raw=0:0,1:0,24:22
+    mathinline @[211,218) [base]
+      mathsrc @[212,217) [base] src="x_i^2"
+    text @[219,224) [base] str=" does." raw=0:0,1:0
+  mathblock @[226,284) [base]
+    mathsrc @[228,282) [base] src="max_(1 <= k <= n) sin(k x)^2 = lim_(m -> oo) \"sup\"_m f"

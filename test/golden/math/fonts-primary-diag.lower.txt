@@ -1,0 +1,10 @@
+lower v1 abi 3d3ccfbb docEnd 139 holes 0 module none
+block 0 content [0,138)
+  CALL para [0,138)
+    TEXT "STIX Two Math as the primary: " [0,29) raw=0:0,30:29
+    CALL math [30,47)
+      CALL mathsrc [31,46) src="x^2 + y^2 = r^2"
+    TEXT " and " [48,51) raw=0:0,1:0,5:3
+    CALL math [52,75) display=true
+      CALL mathsrc [54,73) src="(sum_(k=1)^n 1/k)^2"
+    TEXT " take its glyphs and its constants; Euler covers what it lacks." [76,138) raw=0:0,1:0

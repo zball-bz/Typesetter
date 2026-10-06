@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "../model/model.h"
+#include "font.h"
 #include "ir.h"
 
 namespace tsr {
@@ -36,6 +37,11 @@ class MathEnv {
   // a claimed character's row in force at `epoch` (typed input takes its class)
   const MathDeclRow* claimed(u32 cp, u32 epoch) const;
   bool empty() const { return rows_.empty(); }
+  // (plan P5-01; D-M06) the document's math font chain (math.fonts, the
+  // fonts its mathFonts input loaded resolved against the registry): the
+  // first covering a code point sets it, the first supplies the constants;
+  // empty: the embedded font alone
+  std::vector<const MathFont*> fonts;
 
  private:
   std::vector<MathDeclRow> rows_;

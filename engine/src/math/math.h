@@ -31,6 +31,8 @@ struct MathBox {
   float px = 0;               // Glyph: font-size for emission (style-scaled)
   u16 font = 0;               // Glyph: its MathFont id (math/font.h), or kTextFont:
                               //   the document's text font (names, operators)
+  Su lineAsc = 0, lineDesc = 0;  // a kTextFont glyph whose extents are its reference ink
+                                 //   (math.referenceInk): its line metrics, its paint pin
   std::vector<MathKid> kids;  // HBox children
 };
 

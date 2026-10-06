@@ -235,7 +235,7 @@ As built (plan P0-11, `runtime/src/worker/worker.mjs`): the worker keeps one **m
 - **tools** (Node, build-time only; outputs committed under `engine/gen/` so CI needs no network):
   - `mathdict.py` — `engine/data/math/symbols.tsv` + the pinned UCD and MathML Core operator dictionary → `engine/gen/math_dict.h`, `math/atom.h` (the math vocabulary, docs/math-design.md §3);
   - `hyphc` — TeX hyphenation patterns → compact trie;
-  - `mathc.py` (python3 + fontTools) — `fonts/Euler-Math.otf` → `engine/gen/euler_math.h` (MATH constants, glyph records, vertical chains, assemblies);
+  - `mathc.py` (python3 + fontTools) — `fonts/Euler-Math.otf` → `engine/gen/euler_math.h` (MATH constants, glyph records, vertical chains, assemblies); with `--tsmf` (plan P5-01) any math font → a `.tsmf` blob, a host's math font for the declared input `mathFonts` (math-design §15);
   - `gen-schema` — `engine/schema/schema.json` → `ops.def`, `schema.gen.{h,cc}`, `shared/ops.gen.mjs`, `docs/schema-table.md` (§3);
   - `gen-syntax` — `engine/src/syntax/syntax.def` → `syntax.gen.{h,cc}`, `shared/syntax.gen.{mjs,json}`, `docs/syntax-table.md`.
 - **playground**: esbuild dev server; the page is also the e2e harness target.

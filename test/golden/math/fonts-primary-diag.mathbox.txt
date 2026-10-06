@@ -1,0 +1,48 @@
+inline pid=0 "x^2 + y^2 = r^2"
+hbox Ord w=1851 asc=831 desc=41
+  hbox Ord w=886 asc=831 desc=0
+    glyph "x" Ord w=490 asc=484 desc=0 px=16
+    glyph "2" Ord w=355 asc=462 desc=0 px=11.2 @(490,369)
+  glue w=228 @(886,0)
+  glyph "+" Bin w=737 asc=571 desc=41 px=16 @(1114,0)
+inline pid=0 ""
+hbox Ord w=891 asc=831 desc=241
+  hbox Ord w=891 asc=831 desc=241
+    glyph "y" Ord w=495 asc=484 desc=241 px=16
+    glyph "2" Ord w=355 asc=462 desc=0 px=11.2 @(495,369)
+inline pid=0 ""
+hbox Ord w=737 asc=404 desc=0
+  glyph "=" Rel w=737 asc=404 desc=-126 px=16
+inline pid=0 ""
+hbox Ord w=785 asc=831 desc=0
+  hbox Ord w=785 asc=831 desc=0
+    glyph "r" Ord w=389 asc=500 desc=0 px=16
+    glyph "2" Ord w=355 asc=462 desc=0 px=11.2 @(389,369)
+display pid=1
+hbox Ord w=3578 asc=2178 desc=1425
+  hbox Ord w=3578 asc=2178 desc=1425
+    hbox Ord w=3182 asc=1952 desc=1425
+      hbox Open w=496 asc=1952 desc=1425
+        hbox Open w=496 asc=3377 desc=0 @(0,-1425)
+          glyph "⎝" Open w=496 asc=1303 desc=0 px=16
+          glyph "⎜" Open w=496 asc=1280 desc=1 px=16 @(0,1049)
+          glyph "⎛" Open w=496 asc=1303 desc=0 px=16 @(0,2074)
+      hbox Op w=1260 asc=1446 desc=950 @(496,0)
+        hbox Op w=958 asc=791 desc=264 @(151,0)
+          glyph "∑" Op w=958 asc=801 desc=254 px=16 @(0,-10)
+        glyph "n" Ord w=413 asc=348 desc=0 px=11.2 @(424,1098)
+        hbox Ord w=1260 asc=506 desc=0 @(0,-950)
+          glyph "k" Ord w=389 asc=506 desc=0 px=11.2
+          glyph "=" Rel w=516 asc=283 desc=-88 px=11.2 @(389,0)
+          glyph "1" Ord w=355 asc=458 desc=0 px=11.2 @(905,0)
+      glue w=171 @(1756,0)
+      hbox Ord w=759 asc=1309 desc=655 @(1927,0)
+        glyph "1" Ord w=507 asc=654 desc=0 px=16 @(126,655)
+        rule w=555 h=70 @(102,229)
+        glyph "k" Ord w=555 asc=723 desc=0 px=16 @(102,-655)
+      hbox Close w=496 asc=1952 desc=1425 @(2686,0)
+        hbox Close w=496 asc=3377 desc=0 @(0,-1425)
+          glyph "⎠" Close w=496 asc=1303 desc=0 px=16
+          glyph "⎟" Close w=496 asc=1280 desc=1 px=16 @(0,1049)
+          glyph "⎞" Close w=496 asc=1303 desc=0 px=16 @(0,2074)
+    glyph "2" Ord w=355 asc=462 desc=0 px=11.2 @(3182,1716)

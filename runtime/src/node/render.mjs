@@ -100,11 +100,24 @@ export async function renderTsm(source, opts = {}) {
       const inner = (inputs.labels ?? '').trim().replace(/^\[|\]$/g, '').trim();
       inputs.labels = `[${[inner, ...imported.labels].filter(Boolean).join(',')}]`;
     }
+    // (plan P5-01; D-M06) the declared math fonts' metrics (role 'math',
+    // `metrics`: a .tsmf, relative to rootDir): the input mathFonts
+    if (!inputs.mathFonts) {
+      const { readFileSync } = await import('node:fs');
+      const blobs = [];
+      for (const f of opts.fonts ?? [])
+        if (f?.role === 'math' && f.metrics) {
+          try {
+            blobs.push(readFileSync(resolve(rootDir, String(f.metrics))));
+          } catch { /* left out: the engine says what math.fonts names that it lacks */ }
+        }
+      if (blobs.length) inputs.mathFonts = new Uint8Array(Buffer.concat(blobs));
+    }
     // (plan P3-31) its declared inputs (opts.inputs: {labels: '[manifest, …]'}), before Ingest
     for (const [name, value] of Object.entries(inputs)) {
-      if (typeof value !== 'string') continue;
+      if (typeof value !== 'string' && !(value instanceof Uint8Array)) continue;
       const n = M.stringToNewUTF8(name);
-      const bytes = new TextEncoder().encode(value);
+      const bytes = typeof value === 'string' ? new TextEncoder().encode(value) : value;
       const p = M._malloc(bytes.length || 1);
       M.HEAPU8.set(bytes, p);
       M._tsr2_set_input(doc, n, p, bytes.length);
@@ -149,8 +162,10 @@ export async function renderTsm(source, opts = {}) {
       manifest.push({ url: r.src, role: r.role, source: 'doc', status: r.allowed ? 'referenced' : 'denied', requester: 'image' });
     }
     manifest.push(...job.manifest());
-    for (const f of opts.fonts ?? [])
+    for (const f of opts.fonts ?? []) {
       if (f?.src) manifest.push({ url: String(f.src), role: 'font', source: 'host', status: 'declared', requester: 'host' });
+      if (f?.metrics) manifest.push({ url: String(f.metrics), role: 'font-metrics', source: 'host', status: 'declared', requester: 'host' });
+    }
     const diagnostics = M.UTF8ToString(M._tsr_diags(doc));
     const resolved = JSON.parse(product('settings'));
     const docinfo = JSON.parse(product('docinfo'));
@@ -165,7 +180,10 @@ export async function renderTsm(source, opts = {}) {
     return { html, css, diagnostics, diags: diagnostics, ok: !/^error /m.test(diagnostics), manifest,
              settings: resolved, docinfo, labels, profile,
              result: { head: { lang: docinfo.lang ?? '', title: docinfo.title ?? '', idPrefix, profile }, html, anchors },
-             resources: manifest, styles: { contract, theme, rules: css } };
+             resources: manifest, styles: { contract, theme, rules: css },
+             // (plan P5-01) the host's math faces, for a page that paints formulas
+             fonts: (opts.fonts ?? []).filter((f) => f?.role === 'math' && f.family && f.src)
+               .map((f) => ({ family: String(f.family), src: String(f.src), role: 'math' })) };
   } finally {
     M._tsr_doc_free(doc);
   }

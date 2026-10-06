@@ -1,0 +1,7 @@
+doc h=9162su
+para pid=0 y=0su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=-44su dc=-26su join=space items=[0,41) @[0,70)
+  L1 y=1536su left=0su w=19200su dw=38su dc=23su join=none items=[42,70) @[71,121)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last items=[71,107) @[121,176)
+para pid=1 y=5837su w=19200su h=3325su
+  L0 math y=0su left=7426su w=4347su

@@ -171,7 +171,7 @@ endif()
 #   CC=clang CXX=clang++ cmake -S engine -B engine/build-fuzz -DTSR_FUZZ=ON
 option(TSR_FUZZ "build libFuzzer targets (clang only)" OFF)
 if(TSR_FUZZ AND NOT EMSCRIPTEN)
-  foreach(t fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment fuzz_inputs)
+  foreach(t fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment fuzz_inputs fuzz_tsmf)
     add_executable(${t} fuzz/${t}.cc)
     target_link_libraries(${t} tsr_core)
     target_compile_options(${t} PRIVATE -fsanitize=fuzzer,address,undefined

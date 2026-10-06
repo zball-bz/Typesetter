@@ -1,0 +1,14 @@
+lower v1 abi 3d3ccfbb docEnd 202 holes 0 module none
+block 0 content [0,176)
+  CALL para [0,176)
+    TEXT "数学字体链：" [0,18)
+    CALL math [18,44)
+      CALL mathsrc [19,43) src="varrho + varsigma = 2 pi"
+    TEXT " 的 ϱ 与 ς 取自 STIX Two Math，其余仍取自 Euler；不在任何数学字体里的 " [45,136) raw=0:0,1:0,93:91
+    CALL math [137,142)
+      CALL mathsrc [138,141) src="中"
+    TEXT " 仍是测量过的文字叶子。" [143,176) raw=0:0,1:0
+block 1 content [178,201)
+  CALL para [178,201)
+    CALL math [178,201) display=true
+      CALL mathsrc [180,199) src="(sum_(k=1)^n 1/k)^2"

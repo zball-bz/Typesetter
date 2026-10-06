@@ -1,0 +1,81 @@
+inline pid=0 "sin^2 x + cos^2 x = 1"
+hbox Ord w=3656 asc=970 desc=154
+  hbox Op w=1945 asc=970 desc=154
+    glyph "sin" Op w=1536 asc=717 desc=154 line=819/205 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(1536,464)
+  glue w=171 @(1945,0)
+  glyph "x" Ord w=539 asc=475 desc=12 px=16 @(2116,0)
+  glue w=228 @(2655,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(2883,0)
+inline pid=0 ""
+hbox Ord w=2655 asc=970 desc=154
+  hbox Op w=1945 asc=970 desc=154
+    glyph "cos" Op w=1536 asc=717 desc=154 line=819/205 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(1536,464)
+  glue w=171 @(1945,0)
+  glyph "x" Ord w=539 asc=475 desc=12 px=16 @(2116,0)
+inline pid=0 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=0 ""
+hbox Ord w=511 asc=727 desc=7
+  glyph "1" Ord w=511 asc=727 desc=7 px=16
+inline pid=0 "lim_(n -> oo) log_2 n"
+hbox Ord w=6464 asc=717 desc=213
+  hbox Op w=3497 asc=717 desc=213
+    glyph "lim" Op w=1536 asc=717 desc=154 line=819/205 px=16
+    hbox Ord w=1910 asc=358 desc=8 @(1536,-205)
+      glyph "n" Ord w=476 asc=338 desc=7 px=11.2
+      glyph "→" Rel w=717 asc=358 desc=0 px=11.2 @(476,0)
+      glyph "∞" Ord w=717 asc=317 desc=8 px=11.2 @(1193,0)
+  glue w=171 @(3497,0)
+  hbox Op w=1945 asc=717 desc=205 @(3668,0)
+    glyph "log" Op w=1536 asc=717 desc=154 line=819/205 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(1536,-205)
+  glue w=171 @(5613,0)
+  glyph "n" Ord w=680 asc=482 desc=10 px=16 @(5784,0)
+inline pid=0 "\"area\"_\"max\"^2"
+hbox Ord w=3175 asc=970 desc=313
+  hbox Ord w=3175 asc=970 desc=313
+    glyph "area" Ord w=2048 asc=717 desc=154 line=819/205 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(2048,464)
+    glyph "max" Ord w=1076 asc=502 desc=108 line=573/143 px=11.2 @(2048,-205)
+inline pid=0 "x_i^2"
+hbox Ord w=948 asc=967 desc=199
+  hbox Ord w=948 asc=967 desc=199
+    glyph "x" Ord w=539 asc=475 desc=12 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(539,461)
+    glyph "i" Ord w=258 asc=490 desc=6 px=11.2 @(539,-193)
+display pid=1
+hbox Ord w=12548 asc=974 desc=941
+  hbox Op w=2378 asc=717 desc=941
+    glyph "max" Op w=1536 asc=717 desc=154 line=819/205 px=16 @(421,0)
+    hbox Ord w=2378 asc=509 desc=107 @(0,-834)
+      glyph "1" Ord w=358 asc=509 desc=5 px=11.2
+      glyph "≤" Rel w=573 asc=465 desc=107 px=11.2 @(358,0)
+      glyph "k" Ord w=398 asc=492 desc=5 px=11.2 @(931,0)
+      glyph "≤" Rel w=573 asc=465 desc=107 px=11.2 @(1329,0)
+      glyph "n" Ord w=476 asc=338 desc=7 px=11.2 @(1902,0)
+  glue w=171 @(2378,0)
+  glyph "sin" Op w=1536 asc=717 desc=154 line=819/205 px=16 @(2549,0)
+  hbox Ord w=2188 asc=974 desc=209 @(4085,0)
+    hbox Ord w=1779 asc=721 desc=209
+      glyph "(" Open w=336 asc=721 desc=209 px=16
+      glyph "k" Ord w=568 asc=702 desc=7 px=16 @(336,0)
+      glyph "x" Ord w=539 asc=475 desc=12 px=16 @(904,0)
+      glyph ")" Close w=336 asc=721 desc=209 px=16 @(1443,0)
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(1779,468)
+  glue w=284 @(6273,0)
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(6557,0)
+  glue w=284 @(7331,0)
+  hbox Op w=2090 asc=717 desc=781 @(7615,0)
+    glyph "lim" Op w=1536 asc=717 desc=154 line=819/205 px=16 @(277,0)
+    hbox Ord w=2090 asc=358 desc=13 @(0,-768)
+      glyph "m" Ord w=656 asc=338 desc=13 px=11.2
+      glyph "→" Rel w=717 asc=358 desc=0 px=11.2 @(656,0)
+      glyph "∞" Ord w=717 asc=317 desc=8 px=11.2 @(1373,0)
+  glue w=171 @(9705,0)
+  hbox Ord w=2243 asc=717 desc=218 @(9876,0)
+    glyph "sup" Ord w=1536 asc=717 desc=154 line=819/205 px=16
+    glyph "m" Ord w=656 asc=338 desc=13 px=11.2 @(1536,-205)
+  glyph "f" Ord w=429 asc=685 desc=12 px=16 @(12119,0)

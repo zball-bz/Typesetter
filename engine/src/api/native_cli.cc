@@ -2,12 +2,14 @@
 // (api/driver.h) and one settings document (plan P1-03):
 //   tsrc --stage=<product> [--ops=f.ops] [--profile=golden|path.json]
 //        [--fixture=f.fixture.json] [--settings=f.json] [--set path=value]…
-//        [--labels=m.json]… [--lint] <file.tsm>
+//        [--labels=m.json]… [--math-font=f.tsmf]… [--lint] <file.tsm>
 // Products are products.def (skeleton ast js tokens outline astjson ops tree
 // index semantic blocktree mathir mathbox blocks hlist breaks layout vlist paged html dl diags
 // settings); those after Ingest need --ops.
 // --labels (plan P3-31): another document's labels product, repeatable —
 // with the fixture's "inputs": {"labels": [...]}, the declared input labels.
+// --math-font (plan P5-01): a .tsmf, repeatable — with the fixture's
+// "inputs": {"mathFonts": [...]}, the declared input mathFonts.
 // Settings layer in order: profile, fixture, --settings, --set. A profile
 // name resolves to test/profiles/<name>.json under the current directory.
 // Legacy flags (--width --base --indent --punct --snap --page-height) are
@@ -68,6 +70,7 @@ int main(int argc, char** argv) {
   bool lint = false, fragmentsDump = false;
   std::string fragments;
   std::vector<std::string> labelFiles;  // (plan P3-31) --labels=F: the input labels
+  std::vector<std::string> mathFontFiles;  // (plan P5-01) --math-font=F: the input mathFonts
   for (int i = 1; i < argc; i++) {
     std::string a = argv[i];
     auto val = [&](size_t n) { return a.substr(n); };
@@ -97,6 +100,7 @@ int main(int argc, char** argv) {
     else if (a == "--lint") lint = true;
     else if (a.rfind("--fragments=", 0) == 0) fragments = val(12);
     else if (a.rfind("--labels=", 0) == 0) labelFiles.push_back(val(9));  // (plan P3-31) a manifest, repeatable
+    else if (a.rfind("--math-font=", 0) == 0) mathFontFiles.push_back(val(12));  // (plan P5-01) a .tsmf, repeatable
     else if (a == "--fragments-dump") fragmentsDump = true;
     else file = a;
   }
@@ -187,6 +191,19 @@ int main(int argc, char** argv) {
         return 2;
       }
       doc.setInput("labels", labels);
+    }
+    // (plan P5-01) the fixture's math fonts (.tsmf files, relative to it),
+    // then --math-font
+    std::vector<std::string> fonts;
+    for (const std::string& f : fx.mathFonts) fonts.push_back(dir + f);
+    fonts.insert(fonts.end(), mathFontFiles.begin(), mathFontFiles.end());
+    if (!fonts.empty()) {
+      std::string blobs, missing;
+      if (!mathFontsInput(fonts, blobs, missing)) {
+        fprintf(stderr, "cannot read %s\n", missing.c_str());
+        return 2;
+      }
+      doc.setInput("mathFonts", blobs);
     }
   }
 

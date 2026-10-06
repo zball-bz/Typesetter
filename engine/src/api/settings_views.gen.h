@@ -65,6 +65,7 @@ struct IngestSettings {
 };
 struct ResolveSettings {
   const std::string& lang;  // doc.lang
+  const std::string& mathFonts;  // math.fonts
   const std::string& supHeading;  // terms.heading
   const std::string& supTable;  // terms.table
   const std::string& supFigure;  // terms.figure
@@ -89,6 +90,7 @@ struct EmitSettings {
   const double& exHyphenPenalty;  // break.exHyphenPenalty
   const double& urlBreakPenalty;  // break.urlPenalty
   const u32& urlBreakMinLen;  // break.urlMinLen
+  const bool& mathReferenceInk;  // math.referenceInk
   const ClassMap& mathBreakAfter;  // math.breakAfter
   const ClassMap& mathBreakBefore;  // math.breakBefore
   EmitSettings(const Config& c);  // NOLINT: a Config is its view

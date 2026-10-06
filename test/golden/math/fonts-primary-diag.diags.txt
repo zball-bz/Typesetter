@@ -1,0 +1,3 @@
+warning math-font-invalid @[0,0) a math font of the input mathFonts is not loaded: a truncated .tsmf blob
+warning math-font-unknown @[0,0) no math font named 'nope' (the embedded 'euler', or a font of the input mathFonts)
+warning math-font-mismatch @[0,0) math font 'euler' differs from the primary 'stix-two-math' in its x-height by more than 5%: its glyphs sit on the primary's constants

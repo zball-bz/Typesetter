@@ -17,16 +17,27 @@ void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
       const double px = (double)b->px;
       // text-font run (names/operators): the box carries the body font's
       // ascent/descent from the host measurer; the span's line box equals
-      // the content area so the baseline lands exactly at `base`. A math
-      // font's glyph is pinned by its hhea line box (the registry's)
+      // the content area so the baseline lands exactly at `base` — its line
+      // metrics, also when its extents are its reference ink (plan P5-01).
+      // A math font's glyph is pinned by its hhea line box (the registry's)
       const bool text = b->font == kTextFont;
       const MathFont* mf = text ? nullptr : MathFontRegistry::get().byId(b->font);
       if (!text && !mf) mf = &MathFontRegistry::get().primary();
-      const double fA = text ? suToPx(b->asc) : (double)mf->hheaAsc * px / mf->upem;
-      const double fH = text ? suToPx(b->asc + b->desc) : (double)(mf->hheaAsc + mf->hheaDesc) * px / mf->upem;
+      const bool ink = text && (b->lineAsc || b->lineDesc);
+      const Su tA = ink ? b->lineAsc : b->asc, tD = ink ? b->lineDesc : b->desc;
+      const double fA = text ? suToPx(tA) : (double)mf->hheaAsc * px / mf->upem;
+      const double fH = text ? suToPx(tA + tD) : (double)(mf->hheaAsc + mf->hheaDesc) * px / mf->upem;
       Tag t(out, "span");
       t.attrSafe("class", text ? "tsr-mg tsr-mt" : "tsr-mg");
       t.px("left", suToPx(x)).px("top", suToPx(base) - fA).px("font-size", px).px("line-height", fH);
+      // (plan P5-01) a host's math font names its family (the contract's
+      // .tsr-mg is the embedded one's); the registry vetted the name
+      if (mf && mf->id != 0) {
+        std::string fam = "\"";
+        fam += mf->family;
+        fam += '"';
+        t.declEsc("font-family", fam);
+      }
       t.open();
       escapeHtml(out, strs.get(b->text));
       out += "</span>";

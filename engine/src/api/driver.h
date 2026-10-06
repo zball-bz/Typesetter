@@ -67,6 +67,7 @@ struct ProviderSet {
       boxes;
   std::function<double(const WireMetricKey& mk, std::string_view text)> width;
   std::function<void(const WireMetricKey& mk, double& asc, double& desc)> vmet;
+  std::function<void(const WireMetricKey& mk, double& asc, double& desc)> ink;  // (plan P5-01) fontInk
   std::function<bool(std::string_view lang, HyphAnswer& out)> hyph;  // (plan P4-06)
 };
 
@@ -98,6 +99,10 @@ inline ProviderSet mockProviders(std::string hyphDir = "test/hyph") {
     asc = 0.8 * mk.sizePx;
     desc = 0.2 * mk.sizePx;
   };
+  p.ink = [](const WireMetricKey& mk, double& asc, double& desc) {  // mock.h's
+    asc = 0.7 * mk.sizePx;
+    desc = 0.15 * mk.sizePx;
+  };
   return p;
 }
 
@@ -123,13 +128,16 @@ inline bool answerRound(Doc& doc, const ProviderSet& p) {
           if ((ok = (bool)p.width)) o.setF64(0, p.width(q.mks[r.col[0]], q.strings[r.col[1]]));
           break;
         case ResKind::fontVmet:
-          if ((ok = (bool)p.vmet)) {
+        case ResKind::fontInk: {
+          const auto& f = (ResKind)k.kind == ResKind::fontVmet ? p.vmet : p.ink;
+          if ((ok = (bool)f)) {
             double asc = 0, desc = 0;
-            p.vmet(q.mks[r.col[0]], asc, desc);
+            f(q.mks[r.col[0]], asc, desc);
             o.setF64(0, asc);
             o.setF64(1, desc);
           }
           break;
+        }
         case ResKind::codeTokens: {
           std::vector<CodeToken> toks;
           if ((ok = p.tokens && p.tokens(q.strings[r.col[0]], q.strings[r.col[1]], toks)))
@@ -189,8 +197,26 @@ struct FixtureConfig {
   // (plan P3-31) declared inputs: "inputs": {"labels": [files]} — the other
   // documents' labels products, relative to the fixture
   std::vector<std::string> labels;
+  // (plan P5-01) "inputs": {"mathFonts": [files]}: .tsmf blobs, back to back
+  std::vector<std::string> mathFonts;
   std::string error;                  // non-empty: the file is malformed
 };
+// (plan P5-01) the input `mathFonts` from .tsmf files: their bytes back to
+// back; false: a file cannot be read
+inline bool mathFontsInput(const std::vector<std::string>& files, std::string& out, std::string& missing) {
+  out.clear();
+  for (const std::string& file : files) {
+    std::ifstream f(file, std::ios::binary);
+    if (!f) {
+      missing = file;
+      return false;
+    }
+    std::stringstream ss;
+    ss << f.rdbuf();
+    out += ss.str();
+  }
+  return true;
+}
 // (plan P3-31) the input `labels` from manifest files (each a labels
 // product): a JSON array of them; false: a file cannot be read
 inline bool labelsInput(const std::vector<std::string>& files, std::string& out, std::string& missing) {
@@ -225,10 +251,14 @@ inline FixtureConfig parseFixtureConfig(std::string_view text) {
   if (const JsonValue* pr = v.get("products"); pr && pr->t == JsonValue::T::Arr)
     for (const JsonValue& x : pr->arr)
       if (x.t == JsonValue::T::Str) fc.products.push_back(x.str);
-  if (const JsonValue* in = v.get("inputs"); in && in->t == JsonValue::T::Obj)
+  if (const JsonValue* in = v.get("inputs"); in && in->t == JsonValue::T::Obj) {
     if (const JsonValue* l = in->get("labels"); l && l->t == JsonValue::T::Arr)
       for (const JsonValue& x : l->arr)
         if (x.t == JsonValue::T::Str) fc.labels.push_back(x.str);
+    if (const JsonValue* m = in->get("mathFonts"); m && m->t == JsonValue::T::Arr)
+      for (const JsonValue& x : m->arr)
+        if (x.t == JsonValue::T::Str) fc.mathFonts.push_back(x.str);
+  }
   return fc;
 }
 

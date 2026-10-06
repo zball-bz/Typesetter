@@ -5,7 +5,7 @@
 
 namespace tsr {
 
-constexpr u32 RES_VERSION = 2;
+constexpr u32 RES_VERSION = 3;
 
 enum class ResKind : u16 {
   textWidth = 1,
@@ -14,8 +14,9 @@ enum class ResKind : u16 {
   codeTokens = 4,
   boxInfo = 5,
   hyphPatterns = 6,
+  fontInk = 7,
 };
-constexpr u32 kResKindCount = 6;
+constexpr u32 kResKindCount = 7;
 
 enum class ColType : u8 { Str, MetricKey, U8, U16, U32, F64, U32List };
 struct ResCol {
@@ -38,6 +39,7 @@ inline constexpr ResKindInfo kResKinds[] = {
     {ResKind::codeTokens, "codeTokens", ResCache::Content, true, 2, 1, {{"lang", ColType::Str}, {"text", ColType::Str}}, {{"runs", ColType::U32List}}},
     {ResKind::boxInfo, "boxInfo", ResCache::Host, true, 3, 3, {{"kind", ColType::U8}, {"ref", ColType::Str}, {"availPx", ColType::F64}}, {{"w", ColType::F64}, {"h", ColType::F64}, {"baseline", ColType::F64}}},
     {ResKind::hyphPatterns, "hyphPatterns", ResCache::Content, false, 1, 5, {{"lang", ColType::Str}}, {{"patterns", ColType::Str}, {"exceptions", ColType::Str}, {"leftmin", ColType::U8}, {"rightmin", ColType::U8}, {"hyphenChar", ColType::Str}}},
+    {ResKind::fontInk, "fontInk", ResCache::Content, false, 1, 2, {{"mk", ColType::MetricKey}}, {{"asc", ColType::F64}, {"desc", ColType::F64}}},
 };
 inline const ResKindInfo* resKindInfo(u16 id) {
   for (const ResKindInfo& k : kResKinds)

@@ -117,6 +117,8 @@ webkit    default dsf                     audits only
 - `fuzz_linepass`, `fuzz_inline`: arbitrary bytes → must terminate without crash/ASan report; corpus seeded from fixtures.
 - `fuzz_opreader`: arbitrary buffers → must reject invalid input gracefully (it consumes JS-produced data; "trusted" does not extend to "well-formed").
 - `fuzz_lower` (plan P2-02): arbitrary bytes → the LowerProgram reader rejects with a reason or accepts a program whose every reference is in range; its dump is total. Seeds: the fixtures' programs.
+- `fuzz_settings`, `fuzz_resanswer`, `fuzz_fragment`, `fuzz_inputs`: the settings JSON, resource answers, fragment requests and declared labels inputs (security-review §4).
+- `fuzz_tsmf` (plan P5-01): arbitrary bytes → the `.tsmf` decoder refuses with a reason, or accepts a font whose lookups find each record and chain. Every formula of a fixed set must then lay out with that font as the primary and as a fallback, and each glyph leaf the font covers must be exactly as wide as its advances in that font (measure equals paint). Seeds: `test/math/*.tsmf`.
 
 ## 7. CI pipeline
 

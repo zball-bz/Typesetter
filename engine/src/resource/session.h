@@ -43,6 +43,8 @@ class Session {
   void putWidth(u32 mk, std::string_view text, double px);
   bool vmet(u32 mk, double& asc, double& desc) const;
   void putVmet(u32 mk, double asc, double desc);
+  bool ink(u32 mk, double& asc, double& desc) const;  // (plan P5-01) fontInk
+  void putInk(u32 mk, double asc, double desc);
   bool tokens(std::string_view lang, std::string_view body, std::vector<CodeToken>& out);
   void putTokens(std::string_view lang, std::string_view body, const std::vector<CodeToken>& toks);
   // (plan P4-06) a language's compiled hyphenation patterns: false: not
@@ -76,7 +78,7 @@ class Session {
   size_t widthBytes_ = 0;
   std::string probe_;  // the lookup key: mk bytes + text
   std::unordered_map<std::string, u32> mkIds_;
-  std::unordered_map<u32, std::pair<double, double>> vmets_;
+  std::unordered_map<u32, std::pair<double, double>> vmets_, inks_;
   std::unordered_map<std::string, std::vector<CodeToken>> tokens_;
   std::unordered_map<std::string, std::shared_ptr<const HyphenDict>> hyph_;
   size_t budget_;

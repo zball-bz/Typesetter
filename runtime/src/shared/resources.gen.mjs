@@ -1,6 +1,6 @@
 // GENERATED from engine/src/resource/resources.def by tools/gen-res.mjs — do not edit.
 // The resource kinds and their wire columns (docs/host-protocol-design.md §5).
-export const RES_VERSION = 2;
+export const RES_VERSION = 3;
 export const RES_KINDS = {
   "textWidth": {
     "id": 1,
@@ -157,6 +157,27 @@ export const RES_KINDS = {
       {
         "name": "hyphenChar",
         "type": "Str"
+      }
+    ]
+  },
+  "fontInk": {
+    "id": 7,
+    "cache": "Content",
+    "docProviders": false,
+    "key": [
+      {
+        "name": "mk",
+        "type": "MetricKey"
+      }
+    ],
+    "ans": [
+      {
+        "name": "asc",
+        "type": "F64"
+      },
+      {
+        "name": "desc",
+        "type": "F64"
       }
     ]
   }

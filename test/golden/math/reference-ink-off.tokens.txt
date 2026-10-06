@@ -1,0 +1,5 @@
+[118,141) type "$sin^2 x + cos^2 x = 1$"
+[143,166) type "$lim_(n -> oo) log_2 n$"
+[171,187) type "$\"area\"_\"max\"^2$"
+[211,218) type "$x_i^2$"
+[226,284) type "$ max_(1 <= k <= n) sin(k x)^2 = lim_(m -> oo) \"sup\"_m f $"

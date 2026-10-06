@@ -30,6 +30,7 @@ IngestSettings::IngestSettings(const Config& c)
       styleRules(c.styleRules) {}
 ResolveSettings::ResolveSettings(const Config& c)
     : lang(c.lang),
+      mathFonts(c.mathFonts),
       supHeading(c.supHeading),
       supTable(c.supTable),
       supFigure(c.supFigure),
@@ -50,6 +51,7 @@ EmitSettings::EmitSettings(const Config& c)
       exHyphenPenalty(c.exHyphenPenalty),
       urlBreakPenalty(c.urlBreakPenalty),
       urlBreakMinLen(c.urlBreakMinLen),
+      mathReferenceInk(c.mathReferenceInk),
       mathBreakAfter(c.mathBreakAfter),
       mathBreakBefore(c.mathBreakBefore) {}
 MeasureSettings::MeasureSettings(const Config& c)
@@ -125,6 +127,8 @@ const Row kRows[] = {
     {"break.exHyphenPenalty", stageBit(Stage::Emit), false},
     {"break.urlPenalty", stageBit(Stage::Emit), false},
     {"break.urlMinLen", stageBit(Stage::Emit), false},
+    {"math.fonts", stageBit(Stage::Resolve), true},
+    {"math.referenceInk", stageBit(Stage::Emit), false},
     {"math.breakAfter", stageBit(Stage::Emit), false},
     {"math.breakBefore", stageBit(Stage::Emit), false},
     {"cost.exponent", stageBit(Stage::Layout), false},
@@ -317,7 +321,18 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.urlBreakMinLen = (u32)x;
       return true;
     }
-    case 21: {  // math.breakAfter
+    case 21: {  // math.fonts
+      if (v.t != JsonValue::T::Arr) return type(why, "an array");
+      c.mathFonts.clear();
+      if (!v.arr.empty()) jsonDump(c.mathFonts, v);
+      return true;
+    }
+    case 22: {  // math.referenceInk
+      if (v.t != JsonValue::T::Bool) return type(why, "true or false");
+      c.mathReferenceInk = v.b;
+      return true;
+    }
+    case 23: {  // math.breakAfter
       if (v.t != JsonValue::T::Obj) return type(why, "an object of atom classes");
       static const char* const kC[] = {"ord", "op", "bin", "rel", "open", "close", "punct", "inner"};
       ClassMap cm;
@@ -334,7 +349,7 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.mathBreakAfter = cm;
       return true;
     }
-    case 22: {  // math.breakBefore
+    case 24: {  // math.breakBefore
       if (v.t != JsonValue::T::Obj) return type(why, "an object of atom classes");
       static const char* const kC[] = {"ord", "op", "bin", "rel", "open", "close", "punct", "inner"};
       ClassMap cm;
@@ -351,77 +366,77 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.mathBreakBefore = cm;
       return true;
     }
-    case 23: {  // cost.exponent
+    case 25: {  // cost.exponent
       double x;
       if (!num(v, 1, 4, true, x, why)) return false;
       c.cost.exponent = (u8)x;
       return true;
     }
-    case 24: {  // cost.shrinkThreshold
+    case 26: {  // cost.shrinkThreshold
       double x;
       if (!num(v, 0, 1, false, x, why)) return false;
       c.cost.shrinkThreshold = x;
       return true;
     }
-    case 25: {  // cost.shrinkCoeff
+    case 27: {  // cost.shrinkCoeff
       double x;
       if (!num(v, 0, 100, false, x, why)) return false;
       c.cost.shrinkCoeff = x;
       return true;
     }
-    case 26: {  // cost.cap
+    case 28: {  // cost.cap
       double x;
       if (!num(v, 1, 1e12, false, x, why)) return false;
       c.cost.cap = x;
       return true;
     }
-    case 27: {  // code.scale
+    case 29: {  // code.scale
       double x;
       if (!num(v, 0.1, 4, false, x, why)) return false;
       c.codeScale = x;
       return true;
     }
-    case 28: {  // code.contIndent
+    case 30: {  // code.contIndent
       double x;
       if (!num(v, 0, 40, true, x, why)) return false;
       c.verbatimContIndent = (int)x;
       return true;
     }
-    case 29: {  // code.sidecarFrac
+    case 31: {  // code.sidecarFrac
       double x;
       if (!num(v, 0.1, 0.9, false, x, why)) return false;
       c.sidebarFrac = x;
       return true;
     }
-    case 30: {  // code.snapKerning
+    case 32: {  // code.snapKerning
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.verbatimSnapKerning = v.b;
       return true;
     }
-    case 31: {  // code.minCols
+    case 33: {  // code.minCols
       double x;
       if (!num(v, 1, 1000, true, x, why)) return false;
       c.verbatimMinCols = (int)x;
       return true;
     }
-    case 32: {  // code.snapTolerance
+    case 34: {  // code.snapTolerance
       double x;
       if (!num(v, 0, 1, false, x, why)) return false;
       c.verbatimSnapTolerance = x;
       return true;
     }
-    case 33: {  // code.snapMaxQ
+    case 35: {  // code.snapMaxQ
       double x;
       if (!num(v, 1, 64, true, x, why)) return false;
       c.verbatimSnapMaxQ = (int)x;
       return true;
     }
-    case 34: {  // code.fontFeatures
+    case 36: {  // code.fontFeatures
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Features, v.str))) return type(why, "features");
       c.codeFontFeatures = v.str;
       return true;
     }
-    case 35: {  // code.fontFeaturesByLang
+    case 37: {  // code.fontFeaturesByLang
       if (v.t != JsonValue::T::Obj) return type(why, "an object of strings");
       std::map<std::string, std::string> mm;
       for (size_t mi = 0; mi < v.keys.size(); mi++) {
@@ -432,147 +447,147 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.codeFontFeaturesByLang = std::move(mm);
       return true;
     }
-    case 36: {  // layout.minWrapWidth
+    case 38: {  // layout.minWrapWidth
       double x;
       if (!num(v, 0, 100, false, x, why)) return false;
       c.minWrapWidthEm = x;
       return true;
     }
-    case 37: {  // table.cellPad
+    case 39: {  // table.cellPad
       double x;
       if (!num(v, 0, 10, false, x, why)) return false;
       c.tableCellPadEm = x;
       return true;
     }
-    case 38: {  // table.rowPad
+    case 40: {  // table.rowPad
       double x;
       if (!num(v, 0, 10, false, x, why)) return false;
       c.tableRowPadEm = x;
       return true;
     }
-    case 39: {  // terms.heading
+    case 41: {  // terms.heading
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supHeading = v.str;
       return true;
     }
-    case 40: {  // terms.table
+    case 42: {  // terms.table
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supTable = v.str;
       return true;
     }
-    case 41: {  // terms.figure
+    case 43: {  // terms.figure
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supFigure = v.str;
       return true;
     }
-    case 42: {  // terms.equation
+    case 44: {  // terms.equation
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.supEquation = v.str;
       return true;
     }
-    case 43: {  // terms.captionSep
+    case 45: {  // terms.captionSep
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.capSep = v.str;
       return true;
     }
-    case 44: {  // page.height
+    case 46: {  // page.height
       double x;
       if (!num(v, 16, 100000, false, x, why)) return false;
       c.pageHeightPx = x;
       return true;
     }
-    case 45: {  // page.width
+    case 47: {  // page.width
       double x;
       if (!num(v, 16, 100000, false, x, why)) return false;
       c.pageWidthPx = x;
       return true;
     }
-    case 46: {  // page.margin
+    case 48: {  // page.margin
       double x;
       if (!num(v, 0, 10000, false, x, why)) return false;
       c.pageMarginPx = x;
       return true;
     }
-    case 47: {  // semantics.elements
+    case 49: {  // semantics.elements
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semElements.clear();
       if (!v.keys.empty()) jsonDump(c.semElements, v);
       return true;
     }
-    case 48: {  // semantics.counters
+    case 50: {  // semantics.counters
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semCounters.clear();
       if (!v.keys.empty()) jsonDump(c.semCounters, v);
       return true;
     }
-    case 49: {  // semantics.collectors
+    case 51: {  // semantics.collectors
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semCollectors.clear();
       if (!v.keys.empty()) jsonDump(c.semCollectors, v);
       return true;
     }
-    case 50: {  // semantics.html
+    case 52: {  // semantics.html
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semHtml.clear();
       if (!v.keys.empty()) jsonDump(c.semHtml, v);
       return true;
     }
-    case 51: {  // semantics.systems
+    case 53: {  // semantics.systems
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.semSystems.clear();
       if (!v.keys.empty()) jsonDump(c.semSystems, v);
       return true;
     }
-    case 52: {  // project.doc
+    case 54: {  // project.doc
       if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
       c.projectDoc = v.str;
       return true;
     }
-    case 53: {  // project.starts
+    case 55: {  // project.starts
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.projectStarts.clear();
       if (!v.keys.empty()) jsonDump(c.projectStarts, v);
       return true;
     }
-    case 54: {  // project.urls
+    case 56: {  // project.urls
       if (v.t != JsonValue::T::Obj) return type(why, "an object");
       c.projectUrls.clear();
       if (!v.keys.empty()) jsonDump(c.projectUrls, v);
       return true;
     }
-    case 55: {  // render.idPrefix
+    case 57: {  // render.idPrefix
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Ident, v.str))) return type(why, "ident");
       c.idPrefix = v.str;
       return true;
     }
-    case 56: {  // source.frontMatter
+    case 58: {  // source.frontMatter
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.frontMatter = v.b;
       return true;
     }
-    case 57: {  // render.runWidths
+    case 59: {  // render.runWidths
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.runWidths = v.b;
       return true;
     }
-    case 58: {  // render.math
+    case 60: {  // render.math
       static const char* const kM[] = {"boxes", "source"};
       int m = member(v, kM, 2, why);
       if (m < 0) return false;
       c.renderMath = (u8)m;
       return true;
     }
-    case 59: {  // a11y.mathLabel
+    case 61: {  // a11y.mathLabel
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.a11yMathLabel = v.b;
       return true;
     }
-    case 60: {  // a11y.textLayer
+    case 62: {  // a11y.textLayer
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.a11yTextLayer = v.b;
       return true;
     }
-    case 61: {  // style.rules
+    case 63: {  // style.rules
       if (v.t != JsonValue::T::Arr) return type(why, "an array");
       c.styleRules.clear();
       if (!v.arr.empty()) jsonDump(c.styleRules, v);
@@ -694,7 +709,11 @@ std::string settingsJson(const Config& c) {
   num(out, (double)c.urlBreakPenalty);
   out += ", \"urlMinLen\": ";
   num(out, (double)c.urlBreakMinLen);
-  out += "}, \"math\": {\"breakAfter\": ";
+  out += "}, \"math\": {\"fonts\": ";
+  out += c.mathFonts.empty() ? "[]" : c.mathFonts;
+  out += ", \"referenceInk\": ";
+  out += c.mathReferenceInk ? "true" : "false";
+  out += ", \"breakAfter\": ";
   out += '{';
   { static const char* const kC[] = {"ord", "op", "bin", "rel", "open", "close", "punct", "inner"}; bool first = true;
     for (int k = 0; k < 8; k++) if (c.mathBreakAfter[(size_t)k] >= 0) { if (!first) out += ", "; first = false; jsonString(out, kC[k]); out += ": "; num(out, c.mathBreakAfter[(size_t)k]); } }

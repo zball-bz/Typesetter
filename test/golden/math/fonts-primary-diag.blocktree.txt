@@ -1,0 +1,9 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,138)
+    paragraph para unit=0 @[0,138)
+top pid=1 leaves=1
+  stack root gap=1/1 @[52,75)
+    replaced math math unit=0 ragged @[52,75)
+top pid=2 leaves=1
+  stack root gap=1/1 @[76,138)
+    paragraph para unit=0 cont @[76,138)

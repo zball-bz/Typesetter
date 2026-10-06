@@ -762,6 +762,26 @@
       ],
       "ctype": "u32"
     },
+    "math.fonts": {
+      "$comment": "(plan P5-01; D-M06) The math font chain: math fonts by name — 'euler' (embedded), a host's .tsmf from the declared input mathFonts by its name (tools/mathc.py --tsmf --name). A code point is set in the first that covers it, the first supplies every MATH constant. Empty: the input's fonts in order, then euler.",
+      "field": "mathFonts",
+      "dom": "json:array",
+      "def": [],
+      "prec": "HostDefault",
+      "affects": [
+        "Resolve"
+      ]
+    },
+    "math.referenceInk": {
+      "$comment": "(plan P5-01; D-M03) A formula's text-font runs (names, operators, quoted text) take their vertical extents from their style's reference ink — the ink ascent of 'H' and descent of 'p', the fontInk resource, per style (v2 §6) — instead of its line metrics, so scripts on a name sit as on a math-font letter. Off by default.",
+      "field": "mathReferenceInk",
+      "dom": "bool",
+      "def": false,
+      "prec": "HostDefault",
+      "affects": [
+        "Emit"
+      ]
+    },
     "math.breakAfter": {
       "$comment": "Where an inline formula may break (plan P3-25; design T8 Lazy MathLayout): the penalty after an atom of each class (a missing class: no break there); a break between two atoms costs min(after its left, before its right).",
       "field": "mathBreakAfter",

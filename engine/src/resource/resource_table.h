@@ -147,6 +147,7 @@ class ResourceTable {
     bool open = false;
     std::vector<MeasureItem> words;  // textWidth
     std::vector<FaceId> vmets;       // fontVmet
+    std::vector<FaceId> inks;        // fontInk (plan P5-01)
     std::vector<u32> tokens, boxes, hyphs;  // codeTokens, boxInfo, hyphPatterns: need indices
   } batch;
   u32 nextBatch = 1;

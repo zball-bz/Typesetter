@@ -73,7 +73,7 @@ export async function exportStatic(bundle, {
   if (docDir) {
     const realDocDir = await realpath(docDir);
     for (const m of bundle.resources ?? bundle.manifest ?? []) {
-      if (m.status === 'denied' || /^[a-z][a-z0-9+.-]*:/i.test(m.url) || m.role === 'font') continue;
+      if (m.status === 'denied' || /^[a-z][a-z0-9+.-]*:/i.test(m.url) || m.role === 'font' || m.role === 'font-metrics') continue;
       const from = m.url.startsWith(docDir + '/') ? m.url : resolve(docDir, m.url.startsWith('/') ? '.' + m.url : m.url);
       if (!from.startsWith(docDir + '/')) continue;
       let real;
@@ -98,8 +98,12 @@ export async function exportStatic(bundle, {
   const styles = bundle.styles ?? {};
   const bodyFont = settingOf(settings, 'fonts.body');
   const cjkFont = settingOf(settings, 'fonts.cjk');
+  // (plan P5-01) and the host's math fonts, where the host serves them
   const mathFace = math
-    ? `@font-face { font-family: ${JSON.stringify(MATH_FONT.family)}; src: url(${JSON.stringify(`${assets}/${MATH_FONT.file}`)}); }\n`
+    ? `@font-face { font-family: ${JSON.stringify(MATH_FONT.family)}; src: url(${JSON.stringify(`${assets}/${MATH_FONT.file}`)}); }\n` +
+      (bundle.fonts ?? []).filter((f) => f.role === 'math')
+        .map((f) => `@font-face { font-family: ${JSON.stringify(f.family.replace(/[<>{};]/g, ''))};` +
+          ` src: url(${JSON.stringify(f.src.replace(/[<>{};]/g, ''))}); }\n`).join('')
     : '';
   const head = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

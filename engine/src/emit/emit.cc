@@ -1748,8 +1748,8 @@ struct EmitPass::State {
   HlInline sink;
   Emitter e;  // (reads env.mathText at construction)
   State(EmitEnv en, const MetricStore* metrics)
-      : needs{metrics, &en.styles, &en.strs, en.cfg.baseSizePx, &missing}, env(en), sink(env), e(prepared(), sink) {
-  }
+      : needs{metrics, &en.styles, &en.strs, en.cfg.baseSizePx, &missing, en.cfg.mathReferenceInk}, env(en), sink(env),
+        e(prepared(), sink) {}
   EmitEnv& prepared() {
     prepareEnv(env);
     if (needs.metrics) env.mathText = &needs;
@@ -1883,7 +1883,7 @@ static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const Emit
   InlineObject& ob = h.objs[objIdx];
   {
     std::vector<MeasureItem> missing;
-    MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
+    MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing, cfg.mathReferenceInk};
     DiagSink scratch;
     const MathScope scope{env.math, ob.epoch, ob.style};
     std::vector<MathSeg> segs =
@@ -2042,9 +2042,8 @@ static void finalizePending(HList& h, MetricStore& store, const EmitSettings& cf
 // emit, finalized once its text-font runs are measured
 static void finalizeDisplay(MathData& m, MetricStore& store, const EmitSettings& cfg, ObjectEnv& env,
                             std::vector<MeasureItem>& need) {
-  (void)cfg;
   std::vector<MeasureItem> missing;
-  MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
+  MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing, cfg.mathReferenceInk};
   DiagSink scratch;
   const MathScope scope{env.math, m.epoch, m.style};
   // (plan P3-29) its rows of cells; one cell is the formula's box
@@ -2247,6 +2246,9 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
     }
     if (displays && objects) alignDisplays(tb, objects->arena);  // (plan P3-29)
   }
+  // a formula's text-font runs (math.cc textFontBox): their words, their
+  // faces' vmet and, under math.referenceInk (plan P5-01), reference ink
+  std::vector<bool> seenInk;
   for (const MeasureItem& m : need) {
     u64 k = MetricStore::key(m.str, m.face);
     if (!seenWord.count(k) && !store.hasFaceWord(m.str, m.face)) {
@@ -2257,6 +2259,11 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
       if (seenFace.size() <= m.face) seenFace.resize(m.face + 1, false);
       seenFace[m.face] = true;
       if (!store.hasFaceVmet(m.face)) req.vmetFaces.push_back(m.face);
+    }
+    if (cfg.mathReferenceInk && (m.face < seenInk.size() ? !seenInk[m.face] : true)) {
+      if (seenInk.size() <= m.face) seenInk.resize(m.face + 1, false);
+      seenInk[m.face] = true;
+      if (!store.hasFaceInk(m.face)) req.inkFaces.push_back(m.face);
     }
   }
   return req;

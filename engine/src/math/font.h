@@ -2,12 +2,19 @@
 // layout algorithms read a MathFont, not compiled-in globals; a process-wide
 // registry holds them (Euler-Math, embedded, is id 0, zero-copy over the
 // generated artifact engine/gen/euler_math.h). The paint side reads its
-// line metrics from here too. More fonts arrive through the resource
-// protocol (P5-01); the primary font supplies every MATH constant.
+// line metrics from here too. (Plan P5-01; D-M06) a host's fonts arrive as
+// .tsmf blobs (tools/mathc.py --tsmf) in the declared input mathFonts and
+// join the registry, deduplicated by the blob's hash; a document's math.fonts
+// names its chain — the first font that covers a code point sets it, the
+// primary (the first) supplies every MATH constant.
 #pragma once
+#include <memory>
+#include <string>
 #include <string_view>
+#include <vector>
 
 #include "../../gen/euler_math.h"
+#include "../support/hash128.h"
 #include "../support/support.h"
 
 namespace tsr {
@@ -23,6 +30,7 @@ constexpr u16 kTextFont = 0xFFFF;
 
 struct MathFont {
   u16 id = 0;
+  std::string_view name;    // what math.fonts calls it ("euler": the embedded)
   int upem = 1000;
   int hheaAsc = 0, hheaDesc = 0;  // the line box a glyph span is pinned to
   int minConnectorOverlap = 0;
@@ -64,17 +72,51 @@ struct MathFont {
   }
 };
 
-// One per WASM instance; documents reference fonts by id.
+// (plan P5-01) a decoded .tsmf: the font and the tables it points into —
+// its name and family views too, so it stays where it was decoded
+struct OwnedMathFont {
+  OwnedMathFont() = default;
+  OwnedMathFont(const OwnedMathFont&) = delete;
+  OwnedMathFont& operator=(const OwnedMathFont&) = delete;
+  void clear() {
+    font = MathFont{};
+    name.clear(), family.clear(), constants.clear(), glyphs.clear();
+    vert.clear(), horiz.clear(), variantCps.clear(), parts.clear();
+    blob = {};
+  }
+  MathFont font;
+  std::string name, family;
+  std::vector<int16_t> constants;
+  std::vector<GlyphRec> glyphs;
+  std::vector<VarChain> vert, horiz;
+  std::vector<u32> variantCps;
+  std::vector<AsmPart> parts;
+  Key128 blob;  // its .tsmf bytes' hash: the registry's identity of it
+};
+
+// One per WASM instance (process-wide); documents reference fonts by id.
 class MathFontRegistry {
  public:
-  static const MathFontRegistry& get();
+  static constexpr u16 kMaxFonts = 64;
+  static MathFontRegistry& get();
+  // the embedded font (Euler Math): the default chain, id 0
   const MathFont& primary() const { return *fonts_[0]; }
-  const MathFont* byId(u16 id) const { return id < count_ ? fonts_[id] : nullptr; }
+  const MathFont* byId(u16 id) const { return id < fonts_.size() ? fonts_[id] : nullptr; }
+  // decode a .tsmf blob, validated like ops (magic, version, bounds,
+  // sortedness, index ranges, a name and family that are safe to paint);
+  // false and err when it is not one
+  static bool decode(std::string_view tsmf, OwnedMathFont& out, std::string& err);
+  // decode and add it; idempotent by the blob's hash (the same bytes: the
+  // font already there); null and err when malformed or the registry is full
+  const MathFont* load(std::string_view tsmf, std::string& err);
+  // a declared input's blobs, back to back (each says its length): the
+  // fonts loaded, in order; a malformed one stops the scan (err)
+  std::vector<const MathFont*> loadAll(std::string_view blobs, std::string& err);
 
  private:
   MathFontRegistry();
-  const MathFont* fonts_[4] = {};
-  u16 count_ = 0;
+  std::vector<const MathFont*> fonts_;
+  std::vector<std::unique_ptr<OwnedMathFont>> owned_;
 };
 
 // Today's literals, in one place (design T8 MathPolicy; the math.* settings

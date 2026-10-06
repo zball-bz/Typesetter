@@ -49,14 +49,9 @@ inline std::string hexCp(u32 cp) {
   return buf;
 }
 
-// the primary math font (plan P1-23: a runtime object; it supplies every
-// MATH constant)
-inline const MathFont& primaryFont() { return MathFontRegistry::get().primary(); }
-inline double styleScale(u8 st) {
-  if (st >= SS) return primaryFont().constant(C::ScriptScriptPercentScaleDown) / 100.0;
-  if (st >= S) return primaryFont().constant(C::ScriptPercentScaleDown) / 100.0;
-  return 1.0;
-}
+// the embedded math font (plan P1-23: a runtime object), the chain when a
+// document names none
+inline const MathFont& embeddedFont() { return MathFontRegistry::get().primary(); }
 
 // ---- inter-atom glue (TeXbook p.170; KaTeX spacingData) --------------------
 // value&3: 0 none / 1 thin(3mu) / 2 med(4mu) / 3 thick(5mu);
@@ -83,8 +78,37 @@ struct Layouter {
   double basePx;
   const MeasureNeeds* text = nullptr;  // text-font runs (nullptr = Euler only)
   StyleId textBase = 0;                // the formula's style (MathScope)
+  const MathEnv* env = nullptr;        // (plan P5-01) its document's font chain
   std::vector<u32> uncovered;          // the code points warned about
-  const MathFont& F = primaryFont();
+  // the primary font: every MATH constant, every em-based measure
+  const MathFont& F = env && !env->fonts.empty() ? *env->fonts[0] : embeddedFont();
+
+  double styleScale(u8 st) const {
+    if (st >= SS) return F.constant(C::ScriptScriptPercentScaleDown) / 100.0;
+    if (st >= S) return F.constant(C::ScriptPercentScaleDown) / 100.0;
+    return 1.0;
+  }
+  // (plan P5-01) the font a code point is set in: the first of the chain that
+  // covers it; null: none does (a text leaf)
+  const MathFont* fontFor(u32 cp) const {
+    if (!env || env->fonts.empty()) return F.glyph(cp) ? &F : nullptr;
+    for (const MathFont* f : env->fonts)
+      if (f->glyph(cp)) return f;
+    return nullptr;
+  }
+  bool hasHChain(u32 cp) const {
+    const MathFont* f = stretchFont(cp, /*vertical=*/false);
+    return f && f->hchain(cp);
+  }
+  // the font a stretchy code point grows in: the first with a construction
+  // for it (its sizes and parts are that font's), else the one covering it
+  const MathFont* stretchFont(u32 cp, bool vertical) const {
+    if (env)
+      for (const MathFont* f : env->fonts)
+        if (vertical ? f->chain(cp) : f->hchain(cp)) return f;
+    if (vertical ? F.chain(cp) : F.hchain(cp)) return &F;
+    return fontFor(cp);
+  }
 
   MathBox* mkBox(MathKind k) {
     MathBox* b = arena.make<MathBox>();
@@ -93,11 +117,16 @@ struct Layouter {
   }
 
   Su toSu(double units, u8 st) { return F.su(units, basePx * styleScale(st)); }
+  // (plan P5-01) a glyph's design units in its own font
+  Su toSuIn(const MathFont& f, double units, u8 st) { return f.su(units, basePx * styleScale(st)); }
   Su constSu(C c, u8 st) { return toSu(F.constant(c), st); }
 
-  // one warning per uncovered code point of the formula (at most 8)
-  const GlyphRec* rec(u32 cp) {
-    const GlyphRec* r = F.glyph(cp);
+  // one warning per uncovered code point of the formula (at most 8); the
+  // record and, in `in`, the font it is in
+  const GlyphRec* rec(u32 cp, const MathFont** in = nullptr) {
+    const MathFont* f = fontFor(cp);
+    const GlyphRec* r = f ? f->glyph(cp) : nullptr;
+    if (in) *in = f;
     if (!r && std::find(uncovered.begin(), uncovered.end(), cp) == uncovered.end() && uncovered.size() < 8) {
       uncovered.push_back(cp);
       diags.add(Sev::Warning, "math-coverage", span, "symbol U+" + hexCp(cp) + " not in math font");
@@ -105,10 +134,12 @@ struct Layouter {
     return r;
   }
 
-  MathBox* glyphBox(u32 cp, u8 cls, u8 st) {
-    // a code point the math font does not cover is a measured text leaf (plan
+  // (plan P5-01) `in`: the font a size variant or part is in (its code
+  // points are that font's own); else the first of the chain covering it
+  MathBox* glyphBox(u32 cp, u8 cls, u8 st, const MathFont* in = nullptr) {
+    // a code point no math font covers is a measured text leaf (plan
     // P1-25; design T8 coverage chain): never a stand-in box another font paints
-    if (!F.glyph(cp) && text) {
+    if (!in && !fontFor(cp) && text) {
       rec(cp);  // the coverage warning, once per code point
       MathBox* t = textBox(cpToUtf8(cp), cls, st, /*textFont=*/true);
       t->cls = t->firstCls = t->lastCls = cls;
@@ -118,12 +149,15 @@ struct Layouter {
     b->cls = b->firstCls = b->lastCls = cls;
     b->text = strs.intern(cpToUtf8(cp));
     b->px = (float)(basePx * styleScale(st));
-    if (const GlyphRec* r = rec(cp)) {
-      b->w = toSu(r->adv, st);
-      b->asc = toSu(r->asc, st);
-      b->desc = toSu(r->desc, st);
-      b->italic = toSu(r->italic, st);
-      b->topAccent = r->topAccent != kNoTopAccent ? toSu(r->topAccent, st)
+    const MathFont* f = in;
+    const GlyphRec* r = in ? in->glyph(cp) : rec(cp, &f);
+    if (r && f) {
+      b->font = f->id;
+      b->w = toSuIn(*f, r->adv, st);
+      b->asc = toSuIn(*f, r->asc, st);
+      b->desc = toSuIn(*f, r->desc, st);
+      b->italic = toSuIn(*f, r->italic, st);
+      b->topAccent = r->topAccent != kNoTopAccent ? toSuIn(*f, r->topAccent, st)
                                                   : (b->w + b->italic) / 2;
     } else {
       b->w = toSu(kMathPolicy.missingAdvU, st);
@@ -147,16 +181,24 @@ struct Layouter {
     sty.sizeMul = (float)(basePx * styleScale(st) / text->docBasePx);
     StyleId sid = text->styles->idOf(sty);
     StrRef ref = text->strs->intern(txt);
-    if (!text->metrics->hasWord(ref, sid) || !text->metrics->hasVmet(sid)) {
+    if (!text->metrics->hasWord(ref, sid) || !text->metrics->hasVmet(sid) ||
+        (text->referenceInk && !text->metrics->hasInk(sid))) {
       if (text->missing) text->missing->push_back({ref, text->metrics->faceOf(sid)});
       return false;
     }
     const WordMet& wm = text->metrics->word(ref, sid);
-    const VMet& vm = text->metrics->vmet(sid);
+    // (plan P5-01; D-M03) its extents: its style's line metrics, or under
+    // math.referenceInk its reference ink — a cap height and a descender,
+    // what a math-font letter's own ink is compared with
+    const VMet& vm = text->referenceInk ? text->metrics->ink(sid) : text->metrics->vmet(sid);
     b->font = kTextFont;
     b->w = suCeilPx(wm.px);
     b->asc = vm.ascent;
     b->desc = vm.descent;
+    if (text->referenceInk) {  // painted by its line box all the same
+      b->lineAsc = text->metrics->vmet(sid).ascent;
+      b->lineDesc = text->metrics->vmet(sid).descent;
+    }
     b->italic = 0;
     b->topAccent = b->w / 2;
     return true;
@@ -169,6 +211,18 @@ struct Layouter {
     b->text = strs.intern(txt);
     b->px = (float)(basePx * styleScale(st));
     if (textFont && textFontBox(b, txt, st)) return b;
+    b->font = F.id;  // measured in the primary: painted in it
+    // (plan P5-01) a run the primary does not wholly cover that a later
+    // font of the chain completes: its code points one by one, each in the
+    // first font that has it (a code point none has stays the stand-in)
+    if (!textFont && env && env->fonts.size() > 1) {
+      bool split = false;
+      for (u32 i = 0; i < txt.size() && !split;) {
+        const u32 cp = utf8Next(txt, i);
+        split = !F.glyph(cp) && fontFor(cp);
+      }
+      if (split) return chainRun(txt, cls, st);
+    }
     double advU = 0;
     int ascU = 0, descU = 0, italU = 0;
     u32 i = 0;
@@ -176,7 +230,12 @@ struct Layouter {
       u32 cp = utf8Next(txt, i);
       // a text-font run measured on a later pass: the Euler stand-in must
       // not raise coverage warnings for glyphs it will never paint
-      if (const GlyphRec* r = textFont ? F.glyph(cp) : rec(cp)) {
+      // (a literal run is one span in the primary font: its records are
+      // that font's; a code point it lacks is warned about only when no
+      // font of the chain covers it)
+      const GlyphRec* r = F.glyph(cp);
+      if (!r && !textFont) rec(cp);
+      if (r) {
         advU += r->adv;
         if (r->asc > ascU) ascU = r->asc;
         if (r->desc > descU) descU = r->desc;
@@ -191,6 +250,22 @@ struct Layouter {
     return b;
   }
 
+  // a literal run across the chain's fonts: a box of its glyphs side by side
+  MathBox* chainRun(std::string_view txt, u8 cls, u8 st) {
+    MathBox* h = mkBox(MathKind::HBox);
+    h->cls = h->firstCls = h->lastCls = cls;
+    for (u32 i = 0; i < txt.size();) {
+      MathBox* g = glyphBox(utf8Next(txt, i), cls, st);
+      h->kids.push_back({h->w, 0, g});
+      h->w += g->w;
+      h->asc = std::max(h->asc, g->asc);
+      h->desc = std::max(h->desc, g->desc);
+      h->italic = g->italic;
+    }
+    h->topAccent = h->w / 2;
+    return h;
+  }
+
   MathBox* spacer(Su w) {
     MathBox* b = mkBox(MathKind::Spacer);
     b->w = w;
@@ -201,22 +276,25 @@ struct Layouter {
   // variant chain for the first glyph tall enough, else build the assembly
   // with extender repetition and uniform connector overlaps.
   MathBox* stretchVert(u32 cp, u8 cls, u8 st, Su target) {
-    MathBox* natural = glyphBox(cp, cls, st);
+    // (plan P5-01) in the font that has its construction: its natural size,
+    // its variants and its parts all that font's
+    const MathFont* G = stretchFont(cp, /*vertical=*/true);
+    MathBox* natural = glyphBox(cp, cls, st, G && G->glyph(cp) ? G : nullptr);
     if (natural->asc + natural->desc >= target) return natural;
-    const VarChain* ch = F.chain(cp);
+    const VarChain* ch = G ? G->chain(cp) : nullptr;
     if (!ch) return natural;
     MathBox* best = natural;
     for (int k = 0; k < ch->n; k++) {
-      u32 vcp = F.variantCps[ch->off + k];
-      MathBox* vb = glyphBox(vcp, cls, st);
+      u32 vcp = G->variantCps[ch->off + k];
+      MathBox* vb = glyphBox(vcp, cls, st, G);
       best = vb;
       if (vb->asc + vb->desc >= target) return vb;
     }
     if (ch->asmN == 0) return best;
     // assembly, font units first (bottom-to-top part order per OpenType)
-    const AsmPart* parts = &F.parts[ch->asmOff];
-    const int minOv = F.minConnectorOverlap;
-    double targetU = (double)target * F.upem /
+    const AsmPart* parts = &G->parts[ch->asmOff];
+    const int minOv = G->minConnectorOverlap;
+    double targetU = (double)target * G->upem /
                      (64.0 * basePx * styleScale(st));  // su → design units
     std::vector<const AsmPart*> list;
     for (int r = 1; r <= kMathPolicy.maxAssemblyRepeats; r++) {
@@ -245,13 +323,13 @@ struct Layouter {
         double H = full - o * (double)(list.size() - 1);
         MathBox* out = mkBox(MathKind::HBox);
         out->cls = out->firstCls = out->lastCls = cls;
-        out->asc = toSu(H, st);
+        out->asc = toSuIn(*G, H, st);
         out->desc = 0;
         double cursor = 0;  // ink height consumed, from the bottom
         for (const AsmPart* pp : list) {
-          MathBox* g = glyphBox(pp->cp, cls, st);
+          MathBox* g = glyphBox(pp->cp, cls, st, G);
           // part baseline so its ink bottom sits at `cursor` above box bottom
-          Su dy = toSu(cursor, st) + g->desc;
+          Su dy = toSuIn(*G, cursor, st) + g->desc;
           out->kids.push_back({0, dy, g});
           if (g->w > out->w) out->w = g->w;
           cursor += pp->fullAdv - o;
@@ -269,20 +347,21 @@ struct Layouter {
   // assembly at the target width (braces, arrows) — left to right, uniform
   // overlaps
   MathBox* stretchHoriz(u32 cp, u8 cls, u8 st, Su target, bool fit) {
-    MathBox* natural = glyphBox(cp, cls, st);
-    const VarChain* ch = F.hchain(cp);
+    const MathFont* G = stretchFont(cp, /*vertical=*/false);  // (plan P5-01) as stretchVert
+    MathBox* natural = glyphBox(cp, cls, st, G && G->glyph(cp) ? G : nullptr);
+    const VarChain* ch = G ? G->hchain(cp) : nullptr;
     if (!ch || natural->w >= target) return natural;
     MathBox* best = natural;
     for (int k = 0; k < ch->n; k++) {
-      MathBox* vb = glyphBox(F.variantCps[ch->off + k], cls, st);
+      MathBox* vb = glyphBox(G->variantCps[ch->off + k], cls, st, G);
       if (fit && vb->w > target) return best;
       best = vb;
       if (vb->w >= target) return vb;
     }
     if (ch->asmN == 0) return best;
-    const AsmPart* parts = &F.parts[ch->asmOff];
-    const int minOv = F.minConnectorOverlap;
-    const double targetU = (double)target * F.upem / (64.0 * basePx * styleScale(st));
+    const AsmPart* parts = &G->parts[ch->asmOff];
+    const int minOv = G->minConnectorOverlap;
+    const double targetU = (double)target * G->upem / (64.0 * basePx * styleScale(st));
     std::vector<const AsmPart*> list;
     for (int r = 1; r <= kMathPolicy.maxAssemblyRepeats; r++) {
       list.clear();
@@ -301,11 +380,11 @@ struct Layouter {
       out->cls = out->firstCls = out->lastCls = cls;
       double cursor = 0;
       for (const AsmPart* pp : list) {
-        MathBox* g = glyphBox(pp->cp, cls, st);
+        MathBox* g = glyphBox(pp->cp, cls, st, G);
         // its ink extents (a brace's lies above the baseline: a negative depth)
         out->asc = out->kids.empty() ? g->asc : std::max(out->asc, g->asc);
         out->desc = out->kids.empty() ? g->desc : std::max(out->desc, g->desc);
-        out->kids.push_back({toSu(cursor, st), 0, g});
+        out->kids.push_back({toSuIn(*G, cursor, st), 0, g});
         cursor += pp->fullAdv - o;
       }
       out->w = toSu(cursor + o, st);
@@ -839,7 +918,7 @@ struct Layouter {
                           (baseN->k == MNode::Run && baseN->kids.size() == 1 && baseN->kids[0]->k == MNode::Sym);
     bool wide = false;
     if (!oneGlyph && base->w > acc->w)
-      if (const u32 wc = F.hchain(accCp) ? accCp : combiningAccent(accCp); F.hchain(wc)) {
+      if (const u32 wc = hasHChain(accCp) ? accCp : combiningAccent(accCp); hasHChain(wc)) {
         MathBox* w = stretchHoriz(wc, kOrd, st, base->w, /*fit=*/true);
         if (w->w > acc->w) {
           acc = w;
@@ -1072,7 +1151,7 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
   // errors are local (plan P1-24): an Error leaf lays out in place
   MathIR ir = parseMath(src, arena, scope);
   if (parseDiags) reportMathDiags(ir, src, span, diags);
-  Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0};
+  Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0, scope ? scope->env : nullptr};
   return L.layout(ir.root, display ? D : T);
 }
 
@@ -1090,7 +1169,7 @@ std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
   std::vector<MathSeg> out;
   MathIR ir = parseMath(src, arena, scope);
   if (parseDiags) reportMathDiags(ir, src, span, diags);
-  Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0};
+  Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0, scope ? scope->env : nullptr};
   const u8 st = display ? D : T;
   const std::vector<MNode*>& kids = ir.root->kids;
   if (display || kids.empty()) {
@@ -1132,7 +1211,7 @@ MathRows layoutMathRows(std::string_view src, double sizePx, Arena& arena, Inter
   MathRows out;
   MathIR ir = parseMath(src, arena, scope);
   if (parseDiags) reportMathDiags(ir, src, span, diags);
-  Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0};
+  Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0, scope ? scope->env : nullptr};
   const u8 st = D;
   out.em = L.toSu(L.F.upem, st);
   const std::vector<MNode*>& kids = ir.root->kids;
@@ -1205,6 +1284,7 @@ static void dumpBox(std::string& out, const MathBox* b, const Interner& strs,
       appendEscaped(out, strs.get(b->text));
       appendf(out, "\" %s w=%d asc=%d desc=%d", cls, b->w, b->asc, b->desc);
       if (b->italic) appendf(out, " it=%d", b->italic);
+      if (b->lineAsc || b->lineDesc) appendf(out, " line=%d/%d", b->lineAsc, b->lineDesc);
       appendf(out, " px=%g", (double)b->px);
       break;
     case MathKind::Rule:

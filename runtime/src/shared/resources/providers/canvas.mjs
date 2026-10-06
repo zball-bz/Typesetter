@@ -32,5 +32,15 @@ export function canvasProviders(measurer = new CanvasMeasurer()) {
         });
       },
     },
+    // (plan P5-01) asked for only under math.referenceInk
+    fontInk: {
+      resolve(rows, { req }) {
+        return rows.map((r) => {
+          measurer.setStyle(styleOf(req.mks[r.mk]));
+          const { ascent, descent } = measurer.ink();
+          return { resId: r.resId, asc: ascent, desc: descent };
+        });
+      },
+    },
   };
 }

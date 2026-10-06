@@ -57,6 +57,10 @@ inline void mockProvide(const MeasureRequest& req, MetricStore& store, const Int
     double px = faces.get(f).sizePx;
     store.provideVmet(f, 0.8 * px, 0.2 * px);
   }
+  for (FaceId f : req.inkFaces) {  // (plan P5-01) a cap height and a descender
+    double px = faces.get(f).sizePx;
+    store.provideInk(f, 0.7 * px, 0.15 * px);
+  }
   for (const MeasureItem& it : req.words)
     store.provideWord(it.str, it.face, mockWordWidthPx(strs.get(it.str), faces.get(it.face).sizePx));
 }

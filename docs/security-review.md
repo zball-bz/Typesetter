@@ -112,6 +112,8 @@ Every decoder of host- or document-supplied bytes has a libFuzzer target
 | LowerProgram | the compiler's program buffer | `fuzz_lower` |
 | fragment programs (plan P2-13: `m\`…\``, `m.parse`, sidecar parse requests) | the host's request bytes | `fuzz_fragment` |
 | line pass, inline parser | `.tsm` source | `fuzz_linepass`, `fuzz_inline` |
+| declared inputs: labels manifests (plan P3-31) | `tsr2_set_input` | `fuzz_inputs` |
+| `.tsmf` math fonts (plan P5-01) and math layout with what it accepts | `tsr2_set_input` (`mathFonts`) | `fuzz_tsmf` |
 
 The runtime's JS decoders read only the engine's own output: the
 RenderResult frame (`commit.mjs decodeResult`) and the request codec
@@ -267,3 +269,68 @@ policy does the same for a host in dev mode (`exec-nondeterministic`).
 
 **Conclusion: closed.** One defect was fixed: the unchecked page of another
 document.
+
+## Addendum P5-01: host math fonts (`.tsmf`), reference ink
+
+**Surface.** A host's math font arrives as the declared input `mathFonts`:
+`.tsmf` blobs back to back (`tools/mathc.py --tsmf`, the format in
+math-design §15). In a browser, the worker fetches each declared font's
+`metrics` URL (role `math`). In Node, `renderTsm` reads it below `rootDir`.
+Either way it is the host's file, trusted by §0. The engine still treats
+the bytes as untrusted, as it does labels manifests. A document cannot
+supply one: a declared input is never shown to a script, and no document
+call adds to `mathFonts`.
+
+**The decoder** (`math/font.cc MathFontRegistry::decode`) validates the
+bytes as the ops reader does:
+- magic and version;
+- a total length that is exactly the blob's (`loadAll` splits the input by
+  each blob's own length);
+- every count bounded, both by a fixed limit and by the bytes left;
+- glyph records and variant chains sorted by code point;
+- every chain's variant and part ranges inside their tables;
+- every size variant and assembly part one of the font's own glyph records
+  (a `fuzz_tsmf` finding: a variant without a record laid out as a
+  stand-in painted in another font; replay `test/fuzz/fuzz_tsmf/`);
+- no trailing bytes;
+- `upem` in 16…16384, and the line metrics within ±4 em;
+- every MATH constant, glyph metric and assembly part within ±8 em (real
+  fonts stay under 4), and the three percentage constants within 0…100.
+  So no sum a formula makes leaves the Su range, and no style scale exceeds
+  1.
+
+A refusal says why (`math-font-invalid`). The target `fuzz_tsmf` decodes
+arbitrary bytes. For every blob it accepts, it checks the lookup invariants
+and lays out ten formulas in two styles, with the font first in the chain
+(its constants) and second (fallback glyphs). Those formulas cover scripts,
+limits, fractions, radicals, the vertical and horizontal stretch paths,
+accents, grids and text runs.
+
+**Paint.** A host font's name is `[a-z0-9-]{1,64}`. Its family has at most
+128 bytes and contains no control character, `"`, `\`, `<`, `>` or `;`.
+The family reaches markup only as the quoted CSS string of a glyph span's
+inline `font-family`, written by `declEsc`, so it cannot close the string,
+the declaration or the attribute. The static export writes each host math
+face's `@font-face` from the host's own font list (`renderTsm`'s `fonts`),
+with `<>{};` removed and the values JSON-quoted. That output cannot close
+the `<style>` element.
+
+**The registry** is process-wide (one per WASM instance), and fonts are
+identified by the hash of their blob. The same bytes are one font, decoded
+once. Different bytes are another font, even with the same name or the same
+woff2 hash, so no document is ever given another blob's tables. A
+document's `math.fonts` resolves names only among its own input's fonts and
+the embedded `euler`. What other documents loaded is invisible to it, and
+its output never depends on them. The registry holds at most 64 fonts and
+keeps each one until the process ends. A 65th distinct font is refused
+(`math-font-invalid`). **Accepted:** the bound is fixed, and a host
+recycles its worker.
+
+**Reference ink** (`math.referenceInk`, resource row `fontInk`) adds two
+non-negative finite numbers per face. They are validated like `fontVmet`'s
+and clamped by `MetricStore::hostPx`. A failed or missing row falls back to
+0.7 em and 0.2 em with a diagnostic. Reference ink is a host kind, not a
+document provider's (`docProviders` false).
+
+**Conclusion: closed.**
+

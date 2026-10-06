@@ -18,7 +18,12 @@ const fixtures = [...walk(fixturesDir)].map((p) => {
   const cfg = existsSync(fx) ? JSON.parse(readFileSync(fx, 'utf8')) : {};
   // (plan P3-31) its declared inputs: the labels manifests beside it, one array
   const labels = cfg.inputs?.labels?.map((f) => readFileSync(join(dirname(p), f), 'utf8'));
+  // (plan P5-01) its math fonts, declared as the host would: role 'math',
+  // their metrics (.tsmf) served beside it
+  const fonts = cfg.inputs?.mathFonts?.map((f) => ({ family: 'test-math', role: 'math',
+    metrics: `/test/fixtures/${relative(fixturesDir, dirname(p))}/${f}` }));
   return {
+    fonts,
     name: relative(fixturesDir, p).replace(/\.tsm$/, ''),
     source: readFileSync(p, 'utf8'),
     // the fixture's own settings (plan P1-03; its golden profile is native-only)
@@ -59,7 +64,7 @@ for (const f of fixtures) {
   test(`audit ${f.name}`, async ({ page }) => {
     await page.goto('/test/e2e/harness.html');
     await page.waitForFunction(() => window.__tsrReady);
-    const opts = { widthPx: 300, settings: f.settings, inputs: f.inputs, baseUrl: f.baseUrl };
+    const opts = { widthPx: 300, settings: f.settings, inputs: f.inputs, baseUrl: f.baseUrl, fonts: f.fonts };
     const res = await page.evaluate(
       async ({ source, opts }) => await window.__tsr.typeset(source, opts),
       { source: f.source, opts },

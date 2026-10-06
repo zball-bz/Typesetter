@@ -210,18 +210,24 @@ TSR_EXPORT void tsr2_doc_attach(WasmDoc* d, Session* s) { d->doc.attach(s); }
 // The JSON request and the per-kind provide exports below are shims of the
 // pull above (kept for existing hosts; the runtime uses tsr2_*).
 // JSON: {"styles":[{"id":0,"family":"...","sizePx":18,"weight":400,
-//   "italic":false,"needVmet":true,"words":["The","fox"]}]}
+//   "italic":false,"needVmet":true,"needInk":false,"words":["The","fox"]}]}
 // One entry per measurement face (plan P1-04): "id" is a FaceId, opaque to
-// the host, which echoes it in tsr_provide_word / tsr_provide_vmet.
+// the host, which echoes it in tsr_provide_word / tsr_provide_vmet /
+// tsr_provide_ink (plan P5-01: the reference ink, under math.referenceInk).
 TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
   MeasureRequest req = d->doc.pendingRequests();
   std::vector<FaceId> order;  // first-request order (deterministic)
   std::unordered_map<u32, std::vector<StrRef>> byFace;
-  std::unordered_map<u32, bool> needVmet;
+  std::unordered_map<u32, bool> needVmet, needInk;
   for (FaceId f : req.vmetFaces) {
     if (!byFace.count(f)) order.push_back(f);
     byFace[f];
     needVmet[f] = true;
+  }
+  for (FaceId f : req.inkFaces) {
+    if (!byFace.count(f)) order.push_back(f);
+    byFace[f];
+    needInk[f] = true;
   }
   for (const MeasureItem& it : req.words) {
     if (!byFace.count(it.face)) order.push_back(it.face);
@@ -238,9 +244,9 @@ TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
     first = false;
     appendf(out, "{\"id\":%u,\"family\":\"", f);
     jsonEscapeInto(out, desc.family);
-    appendf(out, "\",\"sizePx\":%g,\"weight\":%d,\"italic\":%s,\"needVmet\":%s,\"words\":[",
+    appendf(out, "\",\"sizePx\":%g,\"weight\":%d,\"italic\":%s,\"needVmet\":%s,\"needInk\":%s,\"words\":[",
             desc.sizePx, desc.weight, desc.italic ? "true" : "false",
-            needVmet.count(f) ? "true" : "false");
+            needVmet.count(f) ? "true" : "false", needInk.count(f) ? "true" : "false");
     bool fw = true;
     for (StrRef w : byFace[f]) {
       if (!fw) out += ",";
@@ -316,6 +322,11 @@ TSR_EXPORT void tsr_provide_word(WasmDoc* d, const char* word, int faceId, doubl
 TSR_EXPORT void tsr_provide_vmet(WasmDoc* d, int faceId, double ascPx, double descPx) {
   if (faceId < 0 || (size_t)faceId >= d->doc.faces.count()) return;
   d->doc.metrics.provideVmet((FaceId)faceId, ascPx, descPx);
+}
+
+TSR_EXPORT void tsr_provide_ink(WasmDoc* d, int faceId, double ascPx, double descPx) {
+  if (faceId < 0 || (size_t)faceId >= d->doc.faces.count()) return;
+  d->doc.metrics.provideInk((FaceId)faceId, ascPx, descPx);
 }
 
 TSR_EXPORT const char* tsr_render(WasmDoc* d) {

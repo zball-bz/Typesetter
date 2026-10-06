@@ -1,0 +1,40 @@
+inline pid=0 "varrho + varsigma = 2 pi"
+hbox Ord w=1479 asc=600 desc=242
+  glyph "ϱ" Ord w=478 asc=493 desc=242 px=16
+  glue w=228 @(478,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(706,0)
+inline pid=0 ""
+hbox Ord w=386 asc=493 desc=232
+  glyph "ς" Ord w=386 asc=493 desc=232 px=16
+inline pid=0 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=0 ""
+hbox Ord w=1135 asc=723 desc=5
+  glyph "2" Ord w=511 asc=723 desc=0 px=16
+  glyph "π" Ord w=624 asc=500 desc=5 px=16 @(511,0)
+inline pid=0 "中"
+hbox Ord w=1024 asc=819 desc=205
+  glyph "中" Ord w=1024 asc=819 desc=205 px=16
+display pid=1
+hbox Ord w=4347 asc=2045 desc=1280
+  hbox Ord w=4347 asc=2045 desc=1280
+    hbox Ord w=3938 asc=1792 desc=1280
+      hbox Open w=758 asc=1792 desc=1280
+        glyph "" Open w=758 asc=1792 desc=1280 px=16
+      hbox Op w=1479 asc=1516 desc=1146 @(758,0)
+        hbox Op w=1479 asc=973 desc=461
+          glyph "" Op w=1479 asc=973 desc=461 px=16
+        glyph "n" Ord w=476 asc=338 desc=7 px=11.2 @(501,1178)
+        hbox Ord w=1298 asc=509 desc=5 @(90,-1141)
+          glyph "k" Ord w=398 asc=492 desc=5 px=11.2
+          glyph "=" Rel w=542 asc=264 desc=-95 px=11.2 @(398,0)
+          glyph "1" Ord w=358 asc=509 desc=5 px=11.2 @(940,0)
+      glue w=171 @(2237,0)
+      hbox Ord w=772 asc=1420 desc=709 @(2408,0)
+        glyph "1" Ord w=511 asc=727 desc=7 px=16 @(130,693)
+        rule w=568 h=41 @(102,236)
+        glyph "k" Ord w=568 asc=702 desc=7 px=16 @(102,-702)
+      hbox Close w=758 asc=1792 desc=1280 @(3180,0)
+        glyph "" Close w=758 asc=1792 desc=1280 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(3938,1539)

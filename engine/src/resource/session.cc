@@ -90,6 +90,14 @@ bool Session::vmet(u32 mk, double& asc, double& desc) const {
   return true;
 }
 void Session::putVmet(u32 mk, double asc, double desc) { vmets_[mk] = {asc, desc}; }
+bool Session::ink(u32 mk, double& asc, double& desc) const {
+  auto it = inks_.find(mk);
+  if (it == inks_.end()) return false;
+  asc = it->second.first;
+  desc = it->second.second;
+  return true;
+}
+void Session::putInk(u32 mk, double asc, double desc) { inks_[mk] = {asc, desc}; }
 
 bool Session::tokens(std::string_view lang, std::string_view body, std::vector<CodeToken>& out) {
   std::string k(lang);

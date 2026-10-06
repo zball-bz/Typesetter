@@ -13,7 +13,7 @@ set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 BUILD=engine/build-fuzz
-TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment fuzz_inputs)
+TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment fuzz_inputs fuzz_tsmf)
 
 if [ ! -f "$BUILD/CMakeCache.txt" ]; then
   GEN="Unix Makefiles"; command -v ninja >/dev/null && GEN=Ninja
@@ -34,7 +34,8 @@ seed() {
       import { writeFileSync } from 'node:fs';
       const seeds = {
         empty: { batch: 1, kinds: {} },
-        width: { batch: 1, kinds: { textWidth: [{ resId: 0, px: 12.5 }], fontVmet: [{ resId: 0, asc: 14, desc: 4 }] } },
+        width: { batch: 1, kinds: { textWidth: [{ resId: 0, px: 12.5 }], fontVmet: [{ resId: 0, asc: 14, desc: 4 }],
+                                    fontInk: [{ resId: 0, asc: 11, desc: 3 }] } },
         tokens: { batch: 1, kinds: { codeTokens: [{ resId: 0, runs: [0, 1, 9, 2, 7, 1] }] } },
         image: { batch: 1, kinds: { boxInfo: [{ resId: 0, failed: true, msg: 'gone' }] } },
       };
@@ -58,6 +59,12 @@ seed() {
       { printf '['; cat "$f"; printf ']'; } > "$dir/$(basename "$f")"
     done
     printf '[]' > "$dir/seed-empty.json"
+    return
+  fi
+  if [ "$t" = fuzz_tsmf ]; then
+    # (plan P5-01) host math fonts: the test .tsmf blobs (STIX Two Math,
+    # Euler's own tables, a truncated one)
+    cp -n test/math/*.tsmf "$dir/" 2>/dev/null || true
     return
   fi
   if [ "$t" = fuzz_settings ]; then

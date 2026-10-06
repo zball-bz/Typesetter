@@ -1,0 +1,9 @@
+doc h=10875su
+para pid=0 y=0su w=19200su h=7680su
+  L0 y=0su left=0su w=19200su dw=512su dc=0su join=space items=[0,9) @[0,36)
+  L1 y=1536su left=0su w=19200su dw=512su dc=0su join=space items=[10,25) @[37,72)
+  L2 y=3072su left=0su w=19200su dw=43su dc=0su join=none hyphen items=[26,44) @[73,112)
+  L3 y=4608su left=0su w=19200su dw=380su dc=0su join=space items=[44,59) @[112,166)
+  L4 y=6144su left=0su w=19200su dw=-77su dc=0su join=last items=[61,80) @[167,224)
+para pid=1 y=8909su w=19200su h=1966su
+  L0 math y=0su left=3326su w=12548su

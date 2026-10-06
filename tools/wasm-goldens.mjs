@@ -77,6 +77,15 @@ for (const tsm of walk(fixtures)) {
       M._free(p);
       M._free(n);
     }
+    // (plan P5-01) its math fonts: the .tsmf files beside it, back to back
+    if (fx.inputs?.mathFonts) {
+      const bytes = Buffer.concat(fx.inputs.mathFonts.map((f) => readFileSync(join(dirname(tsm), f))));
+      const n = str('mathFonts'), p = M._malloc(bytes.length || 1);
+      M.HEAPU8.set(bytes, p);
+      M._tsr2_set_input(doc, n, p, bytes.length);
+      M._free(p);
+      M._free(n);
+    }
     const ops = readFileSync(opsPath);
     const op = M._malloc(ops.length);
     M.HEAPU8.set(ops, op);

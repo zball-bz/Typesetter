@@ -115,6 +115,7 @@ column tables of both codecs: `resource/resources.gen.h`,
 | codeTokens (4) | language, body (its overlay spans blanked: plan P3-22) | runs (start, end, tag)… | Content |
 | boxInfo (5) | kind (0 image, 1 svg, 2 html), ref (src, or the markup), the width it is measured at (px; 0: an image's intrinsic size) | w, h, baseline px (baseline from the top) | Host |
 | hyphPatterns (6) | language (BCP-47, as the text names it; plan P4-06) | TeX patterns, exceptions (hyphenated words), leftmin, rightmin, the hyphen glyph | Content |
+| fontInk (7) | metric key | the reference ink: ascent of "H", descent of "p", px (plan P5-01; asked only under `math.referenceInk`) | Content |
 
 The **metric key** is the complete measurement tuple (D-T04): the resolved
 family stack, the digest of the loaded declared faces in it (0 until
@@ -224,7 +225,7 @@ in one place, `runtime/src/shared/resources/`:
   and by real path when read. Reads revalidate: http(s) by ETag and
   Last-Modified, files by mtime and size.
 
-Providers in the worker: canvas `textWidth` and `fontVmet`, `codeTokens`
+Providers in the worker: canvas `textWidth`, `fontVmet` and `fontInk`, `codeTokens`
 (the highlighter), `hyphPatterns` (plan P4-06, `providers/hyph.mjs`: the
 dictionary assets of `runtime/assets/hyph` — tools/hyphc.mjs --assets —
 by tag, then by its shorter prefixes; Emit waits for the answers, a
@@ -287,6 +288,13 @@ As built (design T9 A7, T3 S7; INTEGRATION: T9's transport, T3's semantics):
   refused: unknown or after Ingest); `createEngine().typeset(src, el,
   {inputs: {labels}})`, `renderTsm(src, {inputs})`, `tsrc --labels=F`
   (repeatable), and a fixture's `"inputs": {"labels": [files]}`.
+  (Plan P5-01) `mathFonts`: a host's math fonts, `.tsmf` blobs back to back
+  (math-design §15; decoder `MathFontRegistry::decode`, fuzz target
+  `fuzz_tsmf`), named by `math.fonts`. The worker builds the input from the
+  declared fonts of role `math` that have a `metrics` URL (fetched once per
+  URL). `renderTsm` builds it from the same entries, read below `rootDir`.
+  A binary input is passed as a `Uint8Array`. Elsewhere it comes from
+  `tsrc --math-font=F` and a fixture's `"inputs": {"mathFonts": [files]}`.
 - The `labels` product (Resolve): `{"v":1, "doc", "totals": {counter: n},
   "labels": [{label, class, level, number: [[counter, [n…]]…], title,
   anchor}]}` — labels sorted, one per line; a number's components by counter

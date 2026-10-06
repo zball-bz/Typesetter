@@ -2,12 +2,14 @@
 //   tsr_tests <repo Typesetter dir> [--update]
 // Goldens live at test/golden/<area>/<name>.<stage>.txt.
 #include <chrono>
+#include <cstring>
 #include <cstdio>
 #include <filesystem>
 #include <functional>
 #include <fstream>
 #include <sstream>
 #include <set>
+#include <tuple>
 
 #include "../src/api/doc.h"
 #include "../src/layout/paginate.h"
@@ -27,6 +29,7 @@
 #include "../src/math/dict.h"
 #include "../src/math/ir.h"
 #include "../src/math/font.h"
+#include "../src/math/env.h"
 #include "../src/api/driver.h"
 #include "../src/render/html_writer.h"
 #include "../src/code/native_tokens.h"
@@ -781,6 +784,152 @@ static void unitMathGlyphs(const fs::path& root) {
   CHECK(n > 2000 && missing == 0);
 }
 
+// (plan P5-01; D-M06) host math fonts: the .tsmf codec, the registry, the
+// chain. test/math/euler-math.tsmf is the embedded font through mathc.py
+// --tsmf (named euler-copy): decoded, it is the generated header's tables.
+static void unitMathFontFiles(const fs::path& root) {
+  std::string euler, stix, truncated, err;
+  CHECK(readFile(root / "test/math/euler-math.tsmf", euler));
+  CHECK(readFile(root / "test/math/stix-two-math.tsmf", stix));
+  CHECK(readFile(root / "test/math/truncated.tsmf", truncated));
+  const MathFont& E = MathFontRegistry::get().primary();
+  {
+    OwnedMathFont o;
+    CHECK(MathFontRegistry::decode(euler, o, err));
+    const MathFont& f = o.font;
+    CHECK(f.name == "euler-copy" && f.family == E.family && f.contentHash == E.contentHash);
+    CHECK(f.upem == E.upem && f.hheaAsc == E.hheaAsc && f.hheaDesc == E.hheaDesc &&
+          f.minConnectorOverlap == E.minConnectorOverlap);
+    bool same = f.glyphCount == E.glyphCount && f.vertCount == E.vertCount && f.horizCount == E.horizCount;
+    for (int k = 0; same && k <= (int)C::RadicalDegreeBottomRaisePercent; k++)
+      same = f.constants[k] == E.constants[k];
+    for (int k = 0; same && k < f.glyphCount; k++)
+      same = std::memcmp(&f.glyphs[k], &E.glyphs[k], sizeof(GlyphRec)) == 0;
+    for (int k = 0; same && k < f.vertCount; k++) same = std::memcmp(&f.vert[k], &E.vert[k], sizeof(VarChain)) == 0;
+    for (int k = 0; same && k < f.horizCount; k++)
+      same = std::memcmp(&f.horiz[k], &E.horiz[k], sizeof(VarChain)) == 0;
+    CHECK(same && o.variantCps.size() == std::size(mathfont::kVariantCps) &&
+          o.parts.size() == std::size(mathfont::kAsmParts));
+    CHECK(std::equal(o.variantCps.begin(), o.variantCps.end(), E.variantCps));
+    for (size_t k = 0; k < o.parts.size(); k++)
+      CHECK(std::memcmp(&o.parts[k], &E.parts[k], sizeof(AsmPart)) == 0);
+  }
+  // a literal run the primary lacks part of: those code points from the
+  // next font of the chain, the rest still the primary's (plan P5-01)
+  {
+    OwnedMathFont o;
+    CHECK(MathFontRegistry::decode(euler, o, err));
+    o.glyphs.erase(std::remove_if(o.glyphs.begin(), o.glyphs.end(), [](const GlyphRec& g) { return g.cp == '1'; }),
+                   o.glyphs.end());
+    o.font.glyphs = o.glyphs.data();
+    o.font.glyphCount = (int)o.glyphs.size();
+    o.font.id = 999;
+    MathEnv env;
+    env.fonts = {&o.font, &E};
+    const MathScope scope{&env, 0, 0};
+    Arena arena;
+    Interner strs{arena};
+    DiagSink diags;
+    const MathBox* b = layoutMathFormula("3.14", false, 16, arena, strs, diags, Span{}, nullptr, true, &scope);
+    while (b && b->kind == MathKind::HBox && b->kids.size() == 1) b = b->kids[0].box;
+    std::string fonts;
+    for (const MathKid& k : b ? b->kids : std::vector<MathKid>{})
+      fonts += std::string(strs.get(k.box->text)) + ":" + std::to_string(k.box->font) + " ";
+    CHECK(fonts == "3:999 .:999 1:0 4:999 " && diags.items.empty());
+    Su w = 0;  // each glyph in its own font, rounded once (Euler's metrics either way)
+    for (char c : std::string("3.14")) w += E.su(E.glyph((u32)c)->adv, 16);
+    CHECK(b && b->w == w);
+  }
+  // refusals: each says why; no prefix of a blob is one
+  auto refuse = [&](std::string b, const char* why) {
+    OwnedMathFont o;
+    std::string e;
+    CHECK(!MathFontRegistry::decode(b, o, e) && e == why);
+  };
+  refuse("", "not a .tsmf blob");
+  refuse("TSMF", "not a .tsmf blob");
+  refuse(truncated, "truncated");
+  {  // (fuzz_tsmf finding) a variant the font has no record of would paint a stand-in
+    std::string b;
+    CHECK(readFile(root / "test/fuzz/fuzz_tsmf/variant-without-glyph.bin", b));
+    refuse(b, "a size variant without a glyph record");
+  }
+  refuse(stix + "x", "trailing bytes");
+  {
+    std::string b = stix;
+    b[4] = 2;
+    refuse(b, "unknown .tsmf version");
+    b = stix;
+    b[38] = 'S';  // the name's first byte (stix-two-math)
+    refuse(b, "bad font name");
+  }
+  for (size_t n = 0; n < euler.size(); n += n < 256 ? 1 : 97) {
+    OwnedMathFont o;
+    std::string e, b = euler.substr(0, n);
+    if (n >= 12) std::memcpy(b.data() + 8, &n, 4);  // a header that agrees
+    CHECK(!MathFontRegistry::decode(b, o, e) && !e.empty());
+  }
+  // the registry: by the blob (the same bytes, the same font); the input's blobs, in order
+  MathFontRegistry& reg = MathFontRegistry::get();
+  const MathFont* s1 = reg.load(stix, err);
+  const MathFont* s2 = reg.load(stix, err);
+  const MathFont* ec = reg.load(euler, err);
+  CHECK(s1 && s1 == s2 && s1->id > 0 && s1->name == "stix-two-math" && reg.byId(s1->id) == s1);
+  CHECK(ec && ec != &E && ec->id > 0 && ec->id != s1->id);  // Euler's tables, another blob
+  err.clear();
+  std::vector<const MathFont*> all = reg.loadAll(stix + euler + stix, err);
+  CHECK(err.empty() && all.size() == 3 && all[0] == s1 && all[1] == ec && all[2] == s1);
+  all = reg.loadAll(stix + truncated, err);
+  CHECK(all.size() == 1 && err == "a truncated .tsmf blob");
+  all = reg.loadAll("junk", err);
+  CHECK(all.empty() && err == "not a .tsmf blob");
+  // the chain: the first font that covers a code point sets it; the first
+  // one's MATH constants place it
+  auto fontOf = [](const MathBox* b, auto&& self) -> int {
+    if (b->kind == MathKind::Glyph && b->font != kTextFont) return b->font;
+    for (const MathKid& k : b->kids)
+      if (int f = self(k.box, self); f >= 0) return f;
+    return -1;
+  };
+  CHECK(!E.glyph(0x3F1) && s1->glyph(0x3F1));  // ϱ: STIX's alone
+  for (const auto& [chain, x, rho] : {std::tuple{std::vector<const MathFont*>{&E, s1}, 0, (int)s1->id},
+                                      std::tuple{std::vector<const MathFont*>{s1, &E}, (int)s1->id, (int)s1->id}}) {
+    MathEnv env;
+    env.fonts = chain;
+    const MathScope scope{&env, 0, 0};
+    Arena arena;
+    Interner strs{arena};
+    DiagSink diags;
+    CHECK(fontOf(layoutMathFormula("x", false, 16, arena, strs, diags, Span{}, nullptr, true, &scope), fontOf) == x);
+    CHECK(fontOf(layoutMathFormula("varrho", false, 16, arena, strs, diags, Span{}, nullptr, true, &scope),
+                 fontOf) == rho);
+    // what a glyph is measured in, it is painted in: a leaf of a math font
+    // is that font's code points, its width their advances in that font
+    // (literal runs, variants, parts alike)
+    auto painted = [&](const MathBox* b, auto&& self) -> bool {
+      if (b->kind == MathKind::Glyph && b->font != kTextFont) {
+        const MathFont* f = MathFontRegistry::get().byId(b->font);
+        if (!f) return false;
+        const std::string_view t = strs.get(b->text);
+        double adv = 0;
+        for (u32 i = 0; i < t.size();) {
+          const GlyphRec* g = f->glyph(utf8Next(t, i));
+          if (!g) return false;
+          adv += g->adv;
+        }
+        return std::abs(b->w - f->su(adv, b->px)) <= 1;
+      }
+      for (const MathKid& k : b->kids)
+        if (!self(k.box, self)) return false;
+      return true;
+    };
+    for (const char* src : {"x^2 + y_10 = 3.14 (sum_(k=1)^n 1/k)^2", "lr(( 1/(2/(3/4)) )) sqrt(x^2 + 1)",
+                            "overbrace(a + b, n) hat(x y z) vec(e) 1/2 varrho"})
+      for (const bool display : {false, true})
+        CHECK(painted(layoutMathFormula(src, display, 16, arena, strs, diags, Span{}, nullptr, true, &scope), painted));
+  }
+}
+
 // --- golden runner ---
 // the shared drive loop (api/driver.h) with the golden providers: native
 // tree-sitter tokens, the policy's image answer, the mock measurer
@@ -1488,6 +1637,22 @@ static void fuzzRegressions(const fs::path& root) {
     doc.cfg.baseSizePx = 16;
     if (target == "fuzz_opreader") {
       if (doc.ingest((const u8*)data.data(), data.size())) (void)doc.renderFallback();
+    } else if (target == "fuzz_tsmf") {  // (plan P5-01) refused with a reason, or laid out with
+      OwnedMathFont o;
+      std::string err;
+      if (!MathFontRegistry::decode(data, o, err)) {
+        CHECK(!err.empty());
+        continue;
+      }
+      o.font.id = 1;
+      MathEnv env;
+      env.fonts = {&o.font, &MathFontRegistry::get().primary()};
+      const MathScope scope{&env, 0, 0};
+      Arena arena;
+      Interner strs{arena};
+      DiagSink diags;
+      for (const char* src : {"sum_(n=1)^oo 1/n^s < oo <=> s > 1", "lr(( 1/(2/3) )) overbrace(a + b, n)"})
+        CHECK(layoutMathFormula(src, true, 16, arena, strs, diags, Span{}, nullptr, true, &scope));
     } else if (target == "fuzz_fragment") {  // (plan P2-13) as the target checks
       FragmentRequest req;
       std::vector<std::vector<FragmentText>> runs{{{data, 7}}};
@@ -2381,6 +2546,7 @@ int main(int argc, char** argv) {
   unitResources(fs::path(root));
   unitHostBoxes(fs::path(root));
   unitMathGlyphs(fs::path(root));
+  unitMathFontFiles(fs::path(root));
   unitMathIR();
   unitOpsWindow(fs::path(root));
   unitAstBytes(fs::path(root));
@@ -2459,6 +2625,19 @@ int main(int argc, char** argv) {
             continue;
           }
           doc.setInput("labels", labelsIn);
+        }
+        // (plan P5-01) its math fonts (.tsmf files beside it)
+        std::string mathFontsIn;
+        if (!fx.mathFonts.empty()) {
+          std::vector<std::string> files;
+          for (const std::string& f : fx.mathFonts) files.push_back((entry.path().parent_path() / f).string());
+          std::string missing;
+          if (!mathFontsInput(files, mathFontsIn, missing)) {
+            printf("FAIL %s: cannot read input %s\n", label.c_str(), missing.c_str());
+            failures++;
+            continue;
+          }
+          doc.setInput("mathFonts", mathFontsIn);
         }
         if (!doc.ingest((const u8*)ops.data(), ops.size())) {
           printf("FAIL %s: ops decode\n%s", label.c_str(), doc.dumpDiags().c_str());
@@ -2587,6 +2766,7 @@ int main(int argc, char** argv) {
           warm.configure(fx.settings);
           warm.compile(source);
           if (!labelsIn.empty()) warm.setInput("labels", labelsIn);
+          if (!mathFontsIn.empty()) warm.setInput("mathFonts", mathFontsIn);
           if (!warm.ingest((const u8*)ops.data(), ops.size()) || !typesetWithMock(warm) ||
               warm.product("html") != html || warm.product("diags") != screenDiags ||
               warm.product("breaks") != doc.product("breaks")) {
@@ -2610,6 +2790,7 @@ int main(int argc, char** argv) {
           fresh.configure("{\"host\":{\"width\":260}}");
           fresh.compile(source);
           if (!labelsIn.empty()) fresh.setInput("labels", labelsIn);
+          if (!mathFontsIn.empty()) fresh.setInput("mathFonts", mathFontsIn);
           bool ok = doc.forkInto(narrow, "{\"host\":{\"width\":260}}") && typesetWithMock(narrow) &&
                     fresh.ingest((const u8*)ops.data(), ops.size()) && typesetWithMock(fresh);
           if (!ok || narrow.product("html") != fresh.product("html") ||

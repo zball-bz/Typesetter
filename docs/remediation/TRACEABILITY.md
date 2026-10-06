@@ -1243,12 +1243,12 @@ Theme steps: — · findings: 1
 | `math/math-island-oneoff-syntax` | adhoc | low | P2-06, P2-15 | grep:plan P2-15 |
 | `math/math-opaque-string` | adhoc | high | P2-15 | grep:plan P2-15 |
 | `math/closed-vocabulary` | adhoc | high | P2-15 | grep:plan P2-15 |
-| `math/compiled-in-font` | adhoc | high | P1-23, P5-01 | |
+| `math/compiled-in-font` | adhoc | high | P1-23, P5-01 | grep:plan P5-01 |
 | `math/fence-pairs-ascii-only` | adhoc | medium | P3-24 | grep:plan P3-24 |
 | `math/math-leaves-bypass-style` | adhoc | medium | P1-25 | grep:plan P1-25 |
 | `math/math-text-pull-channel` | adhoc | medium | P1-25 | grep:plan P1-25 |
 | `math/math-span-lexer-triplication` | adhoc | medium | P2-11 | grep:plan P2-11 |
-| `math/missing-glyph-fallback` | adhoc | low | P1-25, P5-01 | |
+| `math/missing-glyph-fallback` | adhoc | low | P1-25, P5-01 | grep:plan P5-01 |
 | `math/island-scan-escapes-block` | issue | high | P0-04 | grep:plan P0-04 |
 | `math/prime-then-script-degrades` | issue | medium | P1-24 | grep:plan P1-24 |
 | `math/bracket-shedding-any-group` | issue | medium | P3-24 | grep:plan P3-24 |

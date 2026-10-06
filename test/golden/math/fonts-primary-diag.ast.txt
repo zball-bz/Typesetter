@@ -1,0 +1,9 @@
+doc @[0,139)
+  para @[0,138)
+    text @[0,29) str="STIX Two Math as the primary: "
+    math @[30,47) display=0 src="x^2 + y^2 = r^2"
+      text @[31,46) str="x^2 + y^2 = r^2"
+    text @[48,51) str=" and "
+    math @[52,75) display=1 src="(sum_(k=1)^n 1/k)^2"
+      text @[54,73) str="(sum_(k=1)^n 1/k)^2"
+    text @[76,138) str=" take its glyphs and its constants; Euler covers what it lacks."

@@ -665,3 +665,74 @@ Not done: bold/sans/calligraphic alphabets (Euler-Math does carry bold and
 sans alphabets; the vocabulary has no names for them yet — T8 adds the
 variant map), and text runs inside radicals/fractions are fine
 but inherit the math style size only — no separate text-style scaling.
+
+## 15. Host math fonts, the font chain, reference ink (plan P5-01)
+
+As built (design T8 S10; D-M06, D-M03; findings `math/compiled-in-font`,
+`math/missing-glyph-fallback`):
+
+- **`.tsmf`**: a math font's metrics as one little-endian blob, compiled by
+  `tools/mathc.py --font F.otf --tsmf out.tsmf --name NAME --family FAMILY
+  --woff2 W --out '' --manifest ''`. The data is what `engine/gen/
+  euler_math.h` holds for the embedded font: the 56 MATH constants, glyph
+  records (advance, ink ascent and descent, italic correction, top-accent
+  attachment), vertical and horizontal variant chains, the variants' code
+  points and assembly parts. The header carries `TSMF`, version 1, the
+  blob's total length, upem, hhea ascent and descent, MinConnectorOverlap,
+  the woff2's content hash, the font's name and its CSS family.
+  `--lenient` serves fonts whose size variants have no code point (STIX
+  Two, Libertinus): it keeps only what paints by code point (the reachable
+  variants, and the assemblies all of whose parts are reachable) instead of
+  failing the cmap gate. `test/math/` holds STIX Two Math (lenient),
+  Euler's own tables as `euler-math.tsmf` (`euler-copy`, the codec's round
+  trip in `unitMathFontFiles`), and a truncated blob.
+- **Loading**: the declared input `mathFonts` (inputs.def) holds blobs back
+  to back. At the start of Resolve, `Doc::resolveMathFonts` loads them into
+  the process-wide `MathFontRegistry`, which identifies a font by the hash
+  of its blob: the same bytes are decoded once, and a font keeps its id for
+  the life of the process (at most 64 fonts). The decoder validates the
+  blob like an ops buffer (security-review addendum P5-01; fuzz target
+  `fuzz_tsmf`). A malformed blob is `math-font-invalid`, and the fonts
+  before it still load.
+- **The chain**: the setting `math.fonts` lists font names: `euler`, and
+  the names of the document's input fonts (only those, so what another
+  document loaded never changes this one). An unknown name is
+  `math-font-unknown`. When the list is empty, the chain is the input's
+  fonts in order, then `euler`. The Layouter's primary `F` is the chain's
+  first font and supplies every constant. `fontFor(cp)` takes a glyph from
+  the first font that covers it, and `stretchFont` takes a stretchy glyph
+  from the first font with a chain for it. Positions are always in the
+  primary's constants, scaled by the glyph's own font's upem. Each glyph
+  box records its font id. A code point that no font covers is a measured
+  text leaf, as before (§14). When a secondary font's AxisHeight or
+  AccentBaseHeight differs from the primary's by more than 5%, Resolve
+  warns `math-font-mismatch` once per font: its glyphs sit on the
+  primary's axis.
+- **Paint**: a glyph of a host font names its family inline
+  (`font-family:"STIX Two Math"`). The embedded font's family is the
+  contract's `.tsr-mg`. The host declares the face the way it declares any
+  webfont: `fonts: [{family, src, role: 'math', metrics}]`. The shell
+  writes the `@font-face`. The worker fetches `metrics`, once per URL, into
+  `mathFonts` unless the host passed the input itself. `renderTsm` reads
+  `metrics` below `rootDir`, lists it in the manifest as `font-metrics`,
+  and returns the math faces as `fonts`. The static export writes their
+  `@font-face` next to Euler's. One manifest, `runtime/src/shared/
+  mathfont.gen.mjs`, serves the embedded font to both the static export and
+  pack-dist. A host's fonts are the host's assets.
+- **Reference ink** (`math.referenceInk`, off by default, D-M03): a text
+  run's vertical extents (§14) become its style's reference ink, the ink
+  ascent of "H" and the ink descent of "p", instead of the font's line
+  metrics. Scripts on a name then sit as they do on a math-font letter:
+  with the mock's 0.7/0.15 em, a subscript under `lim` rises by 2.4px at
+  16px. The ink is per style (v2 §6), the resource `fontInk`, asked for
+  only under the setting. The worker's canvas answers it with
+  `actualBoundingBox*`, the mock with 0.7 em and 0.15 em; a missing answer
+  falls back to 0.7 em and 0.2 em. The run is still painted by its line
+  box: `MathBox::lineAsc/lineDesc` keep the line metrics as the paint pin,
+  so the baseline lands where layout put it. Fixtures `math/reference-ink`
+  (on) and `math/reference-ink-off` (the same source with the setting off).
+- Goldens: unchanged for input Euler covers. New fixtures:
+  `math/fonts-chain-diag` (euler then STIX: ϱ and ς from STIX, `中` a text
+  leaf), `math/fonts-primary-diag` (STIX primary, an unknown name, a
+  truncated blob) and the two reference-ink fixtures.
+

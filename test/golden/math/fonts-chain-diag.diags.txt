@@ -1,0 +1,2 @@
+warning math-font-mismatch @[0,0) math font 'stix-two-math' differs from the primary 'euler' in its x-height by more than 5%: its glyphs sit on the primary's constants
+warning math-coverage @[137,142) symbol U+4E2D not in math font

@@ -157,6 +157,9 @@ struct Doc {
     bool vmet(FaceId f, double& asc, double& desc) const override {
       return d->session().vmet(d->sessionMk(f), asc, desc);
     }
+    bool ink(FaceId f, double& asc, double& desc) const override {
+      return d->session().ink(d->sessionMk(f), asc, desc);
+    }
   } backing{this};
 
   Doc() {
@@ -409,6 +412,7 @@ struct Doc {
   // block's sidecars arrive split, from the default fence: plan P2-13.)
   void stageResolve() {
     diags.begin(DiagOrigin::Resolve);
+    resolveMathFonts();
     resolveDoc(tree, arena, strs, styles, nodeProps, cascade, cfg, diags, *registry, index, inputs["labels"]);
     rt.clear();
     waitTokens.clear();
@@ -494,6 +498,62 @@ struct Doc {
       }
       rt.hyphDicts[l] = d;
     }
+  }
+
+  // (plan P5-01; D-M06) the document's math font chain: its mathFonts
+  // input's .tsmf blobs loaded into the process-wide registry (by content
+  // hash), math.fonts naming the chain — a name is first the input's, then
+  // the embedded 'euler'; unset: the input's fonts in order, then euler. A
+  // font whose axis height or x-height (AccentBaseHeight) differs from the
+  // primary's by more than 5% of an em's share is said to mismatch.
+  void resolveMathFonts() {
+    MathFontRegistry& reg = MathFontRegistry::get();
+    std::vector<const MathFont*> own;
+    if (auto it = inputs.find("mathFonts"); it != inputs.end() && !it->second.empty()) {
+      std::string err;
+      own = reg.loadAll(it->second, err);
+      if (!err.empty())
+        diags.add(Sev::Warning, "math-font-invalid", {}, "a math font of the input mathFonts is not loaded: " + err);
+    }
+    const MathFont* euler = &reg.primary();
+    auto byName = [&](std::string_view n) -> const MathFont* {
+      for (const MathFont* f : own)
+        if (f->name == n) return f;
+      return n == euler->name ? euler : nullptr;
+    };
+    std::vector<const MathFont*> chain;
+    auto add = [&](const MathFont* f) {
+      if (std::find(chain.begin(), chain.end(), f) == chain.end()) chain.push_back(f);
+    };
+    JsonValue v;
+    JsonReader rd;
+    if (!cfg.mathFonts.empty() && rd.parse(cfg.mathFonts, v) && v.t == JsonValue::T::Arr && !v.arr.empty()) {
+      for (const JsonValue& x : v.arr) {
+        if (x.t != JsonValue::T::Str) continue;
+        if (const MathFont* f = byName(x.str)) add(f);
+        else
+          diags.add(Sev::Warning, "math-font-unknown", {},
+                    "no math font named '" + x.str + "' (the embedded 'euler', or a font of the input mathFonts)");
+      }
+    } else {
+      for (const MathFont* f : own) add(f);
+      add(euler);
+    }
+    if (chain.empty()) add(euler);
+    const MathFont& p = *chain[0];
+    auto ratio = [](const MathFont& f, C c) { return (double)f.constant(c) / f.upem; };
+    for (size_t k = 1; k < chain.size(); k++)
+      for (C c : {C::AxisHeight, C::AccentBaseHeight}) {
+        const double a = ratio(p, c), b = ratio(*chain[k], c);
+        if (a > 0 && std::abs(b - a) > 0.05 * a) {
+          diags.add(Sev::Warning, "math-font-mismatch", {},
+                    "math font '" + std::string(chain[k]->name) + "' differs from the primary '" + std::string(p.name) +
+                        "' in its " + (c == C::AxisHeight ? "axis height" : "x-height") +
+                        " by more than 5%: its glyphs sit on the primary's constants");
+          break;
+        }
+      }
+    mathEnv.fonts = std::move(chain);
   }
 
   // a code block with a language and a plain body needs its tokens; the
@@ -666,10 +726,11 @@ struct Doc {
     b = {};
     b.id = rt.nextBatch++;
     b.open = true;
-    if (want(ResKind::textWidth) || want(ResKind::fontVmet)) {
+    if (want(ResKind::textWidth) || want(ResKind::fontVmet) || want(ResKind::fontInk)) {
       MeasureRequest mr = pendingRequests();
       if (want(ResKind::textWidth)) b.words = std::move(mr.words);
       if (want(ResKind::fontVmet)) b.vmets = std::move(mr.vmetFaces);
+      if (want(ResKind::fontInk)) b.inks = std::move(mr.inkFaces);
     }
     for (u32 i = 0; i < rt.tokenNeeds.size() && want(ResKind::codeTokens); i++)
       if (rt.tokenNeeds[i].st == ResState::Pending) b.tokens.push_back(i);
@@ -733,6 +794,10 @@ struct Doc {
       WireKind& k = kind(ResKind::fontVmet, b.vmets.size());
       for (size_t i = 0; i < b.vmets.size(); i++) k.rows[i].col[0] = mk(b.vmets[i]);
     }
+    if (!b.inks.empty()) {
+      WireKind& k = kind(ResKind::fontInk, b.inks.size());
+      for (size_t i = 0; i < b.inks.size(); i++) k.rows[i].col[0] = mk(b.inks[i]);
+    }
     if (!b.words.empty()) {
       WireKind& k = kind(ResKind::textWidth, b.words.size());
       for (size_t i = 0; i < b.words.size(); i++) {
@@ -762,7 +827,7 @@ struct Doc {
     };
     Tally tally[kResKindCount + 1] = {};
     std::vector<u8> seenWords(b.words.size()), seenVmets(b.vmets.size()), seenTokens(b.tokens.size()),
-        seenBoxes(b.boxes.size()), seenHyphs(b.hyphs.size());
+        seenBoxes(b.boxes.size()), seenHyphs(b.hyphs.size()), seenInks(b.inks.size());
     auto fresh = [&](std::vector<u8>& seen, u32 id, Tally& t) {
       if (id >= seen.size() || seen[id]) {
         t.invalid++;
@@ -794,6 +859,15 @@ struct Doc {
               if (r.flags & 1) session().putVmet(sessionMk(b.vmets[r.resId]), r.f64(0), r.f64(1));
             } else {
               failVmet(b.vmets[r.resId], ok ? t.invalid : t.failed);
+            }
+            break;
+          case ResKind::fontInk:
+            if (!fresh(seenInks, r.resId, t)) break;
+            if (ok && okNum(r.f64(0)) && okNum(r.f64(1))) {
+              metrics.provideInk(b.inks[r.resId], r.f64(0), r.f64(1));
+              if (r.flags & 1) session().putInk(sessionMk(b.inks[r.resId]), r.f64(0), r.f64(1));
+            } else {
+              failInk(b.inks[r.resId], ok ? t.invalid : t.failed);
             }
             break;
           case ResKind::codeTokens: {
@@ -850,6 +924,8 @@ struct Doc {
     Tally& tv = tally[(u16)ResKind::fontVmet];
     for (u32 i = 0; i < seenVmets.size(); i++)
       if (!seenVmets[i]) failVmet(b.vmets[i], tv.missing);
+    for (u32 i = 0; i < seenInks.size(); i++)
+      if (!seenInks[i]) failInk(b.inks[i], tally[(u16)ResKind::fontInk].missing);
     for (u32 i = 0; i < seenTokens.size(); i++)
       if (!seenTokens[i]) {
         tally[(u16)ResKind::codeTokens].missing++;
@@ -889,6 +965,13 @@ struct Doc {
     count++;
     const double px = faces.get(f).sizePx;
     metrics.provideVmet(f, px, 0.3 * px);
+  }
+  // reference ink the host did not give (plan P5-01): a Latin cap height
+  // and descender, 0.7em and 0.2em
+  void failInk(FaceId f, u32& count) {
+    count++;
+    const double px = faces.get(f).sizePx;
+    metrics.provideInk(f, 0.7 * px, 0.2 * px);
   }
 
   // Drives Emit → Measure → Layout (breaking included) as far as the host's answers
