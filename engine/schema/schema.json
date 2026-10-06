@@ -141,7 +141,8 @@
     "math": {"id": 34, "level": "inline", "inline": "object", "body": "data", "since": 12, "ctor": {}, "attrs": {
       "display": {"dom": "bool"}}},
     "mathsrc": {"id": 35, "level": "trivia", "inline": "skip", "body": "none", "since": 12, "ctor": {"params": ["attr:src"], "sealed": true}, "attrs": {
-      "src": {"dom": "str"}}}
+      "src": {"dom": "str"}}},
+    "equations": {"id": 36, "level": "block", "inline": "unsupported", "body": "blocks", "since": 12, "ctor": {}, "attrs": {}}
   },
   "universal": {
     "$comment": [

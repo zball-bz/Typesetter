@@ -50,6 +50,7 @@ KIND(when, 32)
 KIND(each, 33)
 KIND(math, 34)
 KIND(mathsrc, 35)
+KIND(equations, 36)
 
 ARGK(label, label, 0)
 ARGK(level, level, 1)

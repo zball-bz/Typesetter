@@ -24,8 +24,9 @@
 //                  splice of text among blocks)
 //   N5 diagnose:   a block in an Inline position stays where it is and says
 //                  so (block-in-inline; the split policy is P3-17)
-//   N6 models:     a list's kids are items, a table's rows, a row's cells:
-//                  any other child is an error{content-model} around it
+//   N6 models:     a list's kids are items, a table's rows, a row's cells,
+//                  an equations block's display formulas (plan P2-16): any
+//                  other child is an error{content-model} around it
 #include "model.h"
 
 namespace tsr {
@@ -98,12 +99,16 @@ struct Norm {
     n->span = sp;
     return n;
   }
+  static bool checked(Kind k) {
+    return k == Kind::list || k == Kind::table || k == Kind::trow || k == Kind::equations;
+  }
   // N6: what a checked model admits
   static bool admits(Kind parent, Kind kid) {
     switch (parent) {
       case Kind::list: return kid == Kind::item;
       case Kind::table: return kid == Kind::trow;
       case Kind::trow: return kid == Kind::tcell;
+      case Kind::equations: return kid == Kind::mathblock;
       default: return true;
     }
   }
@@ -146,7 +151,7 @@ struct Norm {
                     std::string(kindName(k->kind)) + " inside a paragraph stays where it is");
         }
       }
-    } else if (cur->kind != Kind::list && cur->kind != Kind::table && cur->kind != Kind::trow) {
+    } else if (!checked(cur->kind)) {
       // N4: a run of inline-level kids at a Blocks position is a paragraph
       std::vector<ContentNode*> out;
       out.reserve(kids.size());
@@ -177,7 +182,7 @@ struct Norm {
       }
       kids = std::move(out);
     }
-    if (cur->kind == Kind::list || cur->kind == Kind::table || cur->kind == Kind::trow) {  // N6
+    if (checked(cur->kind)) {  // N6
       for (ContentNode*& k : kids)
         if (levelOf(k->kind) != Level::Trivia && !admits(cur->kind, k->kind)) {
           const std::string msg = std::string("a ") + kindName(cur->kind) + " holds no " + kindName(k->kind);

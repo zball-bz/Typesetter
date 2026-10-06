@@ -185,6 +185,10 @@
   "mathsrc": [
    35,
    12
+  ],
+  "equations": [
+   36,
+   12
   ]
  },
  "keys": {
@@ -614,7 +618,16 @@
   "mathsrc.class": 9,
   "mathsrc.ext": 9,
   "mathsrc.style": 11,
-  "mathsrc.attach": 11
+  "mathsrc.attach": 11,
+  "equations.label": 9,
+  "equations.role": 9,
+  "equations.slot": 9,
+  "equations.syn": 9,
+  "equations.copy": 9,
+  "equations.class": 9,
+  "equations.ext": 9,
+  "equations.style": 11,
+  "equations.attach": 11
  },
  "decls": {
   "element": [
