@@ -255,6 +255,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
         t.attrSafe("data-syn", "raw");
         if (!d.span.empty()) t.num("data-s", d.span.start - srcBase);
         t.px("width", suToPx(d.w)).px("height", suToPx(d.h));
+        if (d.desc) t.px("vertical-align", -suToPx(d.desc));  // (plan P3-28) on its measured baseline
         t.open();
         out += strs.get(d.src);  // trusted passthrough, as the block form (§9)
         out += "</span>";

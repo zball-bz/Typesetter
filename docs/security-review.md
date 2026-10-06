@@ -40,6 +40,11 @@ value goes through `Tag::attr` (escaped) or a validated literal.
 **Conclusion: accepted, by §0.** The input is the author's own code's
 output.
 
+Plan P3-28: the shell's `measureHtml` capability writes the same markup,
+for a `raw(measure: 'host')` box, into a hidden probe in the document's view
+to measure it, and removes it in the same task — the markup the page then
+paints, nothing more.
+
 ## 2. Element and attribute allowlists (D-R09)
 
 Attributes:

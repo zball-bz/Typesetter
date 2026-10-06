@@ -10,6 +10,7 @@ import { sniffImageSize } from '../../../worker/image_sniff.mjs';
 
 export function imageProvider({ timeoutMs = 4000 } = {}) {
   return {
+    match: (row) => row.kind === 0,  // BoxKind image (plan P3-28: svg and html boxes are measured)
     async resolve(rows, { job, host, capability }) {
       const dims = await Promise.all(rows.map((r) => sizeOf(r.ref, job, host, capability, timeoutMs)));
       return rows.map((r, k) => ({ resId: r.resId, w: dims[k].w, h: dims[k].h, baseline: dims[k].h }));

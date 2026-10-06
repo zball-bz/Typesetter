@@ -1,0 +1,21 @@
+#{ $.fence("plot", (body, ctx) => ctx.raw(body.trim(), { height: 30, measure: "host" })) }
+
+Boxes the host measures at their width (plan P3-28): their height follows the measure.
+
+```plot
+<div class="chart"><p>A caption long enough to wrap over several lines of the box at the measure width of the golden profile.</p></div>
+```
+
+```plot
+<svg viewBox="0 0 400 100"></svg>
+```
+
+```plot
+<svg width="50%" viewBox="0 0 4 3"></svg>
+```
+
+```plot
+<svg width="10em" viewBox="0 0 4 3"></svg>
+```
+
+Inline, a box #raw("<b>wide inline text that wraps</b>", {w: 60, measure: "host"}) sits on its measured baseline; one #raw("<i>x</i>", {measure: "host"}) without a width keeps its size.

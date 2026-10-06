@@ -55,6 +55,7 @@ struct DLRun {
   Span span;                    // Math / Image / Raw: its source
   StrRef src = 0, alt = 0;      // Math: its source text; Image: src/alt; Raw: markup
   Su w = 0, h = 0;              // Image / Raw: the box
+  Su desc = 0;                  // Raw (plan P3-28): its part below the baseline
 };
 
 // One fragment, painted (design T7 DLLine / DLBox): geometry in su (the

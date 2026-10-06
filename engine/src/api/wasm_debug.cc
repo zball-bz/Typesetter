@@ -13,6 +13,15 @@ std::string debugOut;
 TSR_EXPORT void tsr_debug_mock_measure(WasmDoc* d) {
   Doc& doc = d->doc;
   mockProvide(doc.pendingRequests(), doc.metrics, doc.strs, doc.faces);
+  // (plan P3-28) svg and html boxes: the native mock's answer (the JSON
+  // request lists only images)
+  for (u32 i = 0; i < doc.rt.boxNeeds.size(); i++) {
+    const BoxNeed& b = doc.rt.boxNeeds[i];
+    if (b.st != ResState::Pending || b.kind == BoxKind::Image) continue;
+    double h = 0, base = 0;
+    mockBoxPx(doc.strs.get(b.src), b.availPx, h, base);
+    doc.settleBox(i, b.availPx, h, base, false);
+  }
 }
 
 // stage dumps in the golden formats: "breaks", "layout", "html"

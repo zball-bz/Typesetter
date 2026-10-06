@@ -1187,7 +1187,7 @@ Theme steps: — · findings: 1
 | `break-layout-pages/missed:1` | missed | medium | P0-10 | grep:plan P0-10 |
 | `break-layout-pages/missed:2` | missed | medium | P1-17, P3-07 || grep:plan P3-07 |
 | `break-layout-pages/missed:3` | missed | medium | P0-12 | grep:plan P0-12 |
-| `break-layout-pages/missed:4` | missed | medium | P3-28 | |
+| `break-layout-pages/missed:4` | missed | medium | P3-28 | grep:plan P3-28 |
 | `break-layout-pages/missed:5` | missed | low | P0-12 | grep:plan P0-12 |
 | `render-runtime/semantic-role-switch` | adhoc | high | P3-23 | grep:plan P3-23 |
 | `render-runtime/typeset-role-blind` | adhoc | high | P3-23 | grep:plan P3-23 |

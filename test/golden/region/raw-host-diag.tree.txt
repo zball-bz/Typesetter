@@ -1,0 +1,13 @@
+doc @[92,672) [base]
+  para @[92,178) [base]
+    text @[92,178) [base] str="Boxes the host measures at their width (plan P3-28): their height follows the measure."
+  raw @[180,327) [base] html="<div class=\"chart\"><p>A caption long enough to wrap over several lines of the box at the measure width of the golden profile.</p></div>" h=30 measure="host"
+  raw @[329,374) [base] html="<svg viewBox=\"0 0 400 100\"></svg>" h=30 measure="host"
+  raw @[376,429) [base] html="<svg width=\"50%\" viewBox=\"0 0 4 3\"></svg>" h=30 measure="host"
+  raw @[431,485) [base] html="<svg width=\"10em\" viewBox=\"0 0 4 3\"></svg>" h=30 measure="host"
+  para @[487,672) [base]
+    text @[487,500) [base] str="Inline, a box " raw=0:0,14:13
+    raw @[501,569) [base] html="<b>wide inline text that wraps</b>" w=60 measure="host"
+    text @[570,604) [base] str=" sits on its measured baseline; one " raw=0:0,1:0,36:34
+    raw @[605,640) [base] html="<i>x</i>" measure="host"
+    text @[641,672) [base] str=" without a width keeps its size." raw=0:0,1:0

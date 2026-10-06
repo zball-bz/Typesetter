@@ -208,9 +208,21 @@ in one place, `runtime/src/shared/resources/`:
   Last-Modified, files by mtime and size.
 
 Providers in the worker: canvas `textWidth` and `fontVmet`, `codeTokens`
-(the highlighter) and `boxInfo` (`providers/images.mjs`: the header sniff,
-then decode, then the main thread's `imageDims` capability; sizes cached by
-URL, failures only for the failure time to live). The host adds its own
+(the highlighter) and `boxInfo`: images (kind 0, `providers/images.mjs`: the
+header sniff, then decode, then the main thread's `imageDims` capability;
+sizes cached by URL, failures only for the failure time to live) and, plan
+P3-28, svg and html boxes (kinds 1 and 2, `providers/html-boxes.mjs`): the
+main thread's `measureHtml({html, widthPx, scope})` capability lays the
+markup out at the width in a hidden probe inside the document's typeset root
+(`scope`: the worker session's doc id) and answers `{h, baseline}`; answers
+are cached by (scope, width, markup). The engine answers an svg its
+attributes size (`resource/box.h svgBoxPx`) without asking. A box need is
+keyed by (kind, payload, width); Layout's needs make its run provisional
+(stages.def `Provisional`): the pull loop answers them like any batch, and
+Layout runs again — at most twice asking. The native driver's `boxes`
+provider and the WASM debug mock answer svg and html boxes with
+`measure/mock.h mockBoxPx` (the markup's text in 16px mock widths, in
+lines of the width, 20px each; baseline 4px above the bottom). The host adds its own
 with `createEngine({providers: [{kind, module}]})`: the worker imports each
 module and registers its default export before the next job runs. In Node,
 `renderTsm(source, {providers: [{kind, provider}]})` or

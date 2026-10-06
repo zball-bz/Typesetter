@@ -1,0 +1,14 @@
+doc @[0,673)
+  code-block @[0,90) js=" $.fence(\"plot\", (body, ctx) => ctx.raw(body.trim(), { height: 30, measure: \"host\" })) "
+  para @[92,178)
+    text @[92,178) str="Boxes the host measures at their width (plan P3-28): their height follows the measure."
+  codeblock @[180,327) lang="plot" body="<div class=\"chart\"><p>A caption long enough to wrap over several lines of the box at the measure width of the golden profile.</p></div>"
+  codeblock @[329,374) lang="plot" body="<svg viewBox=\"0 0 400 100\"></svg>"
+  codeblock @[376,429) lang="plot" body="<svg width=\"50%\" viewBox=\"0 0 4 3\"></svg>"
+  codeblock @[431,485) lang="plot" body="<svg width=\"10em\" viewBox=\"0 0 4 3\"></svg>"
+  para @[487,672)
+    text @[487,500) str="Inline, a box "
+    splice @[501,569) expr="raw(\"<b>wide inline text that wraps</b>\", {w: 60, measure: \"host\"})"
+    text @[570,604) str=" sits on its measured baseline; one "
+    splice @[605,640) expr="raw(\"<i>x</i>\", {measure: \"host\"})"
+    text @[641,672) str=" without a width keeps its size."

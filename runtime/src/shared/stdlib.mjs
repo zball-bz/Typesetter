@@ -757,8 +757,9 @@ export function createStd(host) {
       m: std.m,  // m`…`, m.parse(src, {offset: ctx.offset + …}), m.parseMany (plan P2-13)
       load: host.load,  // a document resource's text, a promise (plan P2-14)
       error: mkErr,
-      raw: (html, { width, height } = {}) =>
-        ob.makeNode(KIND.raw, { html: String(html), w: width, h: height }, []),
+      // the raw constructor's options (plan P3-28): w/h (width/height),
+      // measure: 'host', minWidth
+      raw: (html, opts = {}) => base.raw(String(html), opts),
       std,
       plain,
     };

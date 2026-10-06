@@ -12,6 +12,7 @@ import { ResourceHost } from '../shared/resources/host.mjs';
 import { canvasProviders } from '../shared/resources/providers/canvas.mjs';
 import { tokenProvider } from '../shared/resources/providers/tokens.mjs';
 import { imageProvider } from '../shared/resources/providers/images.mjs';
+import { htmlBoxProvider } from '../shared/resources/providers/html-boxes.mjs';
 import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
 import { POLICY } from '../shared/settings.gen.mjs';
 
@@ -35,7 +36,8 @@ const host = new ResourceHost({ policy });
   const canvas = canvasProviders(new CanvasMeasurer());
   host.register('textWidth', canvas.textWidth).register('fontVmet', canvas.fontVmet)
     .register('codeTokens', tokenProvider)
-    .register('boxInfo', imageProvider({ get timeoutMs() { return policy.imageTimeoutMs; } }));
+    .register('boxInfo', imageProvider({ get timeoutMs() { return policy.imageTimeoutMs; } }))
+    .register('boxInfo', htmlBoxProvider({ get timeoutMs() { return policy.imageTimeoutMs; } }));
 }
 const jobOf = (baseUrl) => host.job({ bases: { doc: baseUrl ?? self.location.href } });
 let session = 0;
@@ -137,7 +139,9 @@ function provideAnswer(M, doc, ans) {
 // layout), the rest is the provider side of the pull loop
 // `stale()` is the job's generation check: polled after every await, a
 // superseded job stops (returns false) instead of finishing stale work.
-async function measureLoop(M, doc, { tm = {}, baseUrl, job = jobOf(baseUrl), stale = () => false } = {}) {
+// `scope`: the document's id — where the main thread measures its host
+// boxes (plan P3-28)
+async function measureLoop(M, doc, { tm = {}, baseUrl, job = jobOf(baseUrl), stale = () => false, scope } = {}) {
   const mark = (k, t0) => { tm[k] = (tm[k] ?? 0) + performance.now() - t0; };
   for (let round = 0; round < policy.maxRounds; round++) {
     if (stale()) return false;
@@ -157,7 +161,7 @@ async function measureLoop(M, doc, { tm = {}, baseUrl, job = jobOf(baseUrl), sta
     // provider (image boxes in parallel, a capability for what the worker
     // cannot read)
     t0 = performance.now();
-    const ans = await job.answer(req, { stale, tm, capability: askCapability });
+    const ans = await job.answer(req, { stale, tm, capability: askCapability, scope });
     if (!ans || stale()) return false;
     mark('providersMs', t0);
     t0 = performance.now();
@@ -208,7 +212,7 @@ const MERGES = new Set(['update', 'relayout']);
 
 function enqueue(key, job) {
   let s = sessions.get(key);
-  if (!s) sessions.set(key, (s = { queue: [], running: null, gen: 0, doc: undefined }));
+  if (!s) sessions.set(key, (s = { key, queue: [], running: null, gen: 0, doc: undefined }));
   if (s.running && (job.kind === 'dispose' ||
                     (MERGES.has(job.kind) && s.running.kind === job.kind))) s.gen++;
   const last = s.queue[s.queue.length - 1];
@@ -301,7 +305,7 @@ async function runTypeset(s, { ids, msg }, stale) {
       for (const id of ids) postMessage({ type: 'semantic', id, html });
     }
 
-    if (!(await measureLoop(M, doc, { tm, job, stale }))) {
+    if (!(await measureLoop(M, doc, { tm, job, stale, scope: s.key }))) {
       M._tsr_doc_free(doc);
       return false;
     }
@@ -336,7 +340,7 @@ async function runPaginate(s, { ids, msg }) {
                                   ...(idPrefix ? { render: { idPrefix } } : {}) });
   if (doc === undefined) return postError(ids, 'paginate: cannot fork the document');
   try {
-    await measureLoop(M, doc, { baseUrl });
+    await measureLoop(M, doc, { baseUrl, scope: s.key });
     const html = M.UTF8ToString(M._tsr_render_pages(doc, pageHeightPx));
     const diags = M.UTF8ToString(M._tsr_diags(doc));
     for (const id of ids) postMessage({ type: 'result', id, html, diags, heightPx: 0 });
@@ -360,7 +364,7 @@ async function runRelayout(s, { ids, msg }, stale) {
   M._free(p);
   if (rc === 0) {
     const tm = {};
-    if (!(await measureLoop(M, s.doc, { tm, baseUrl: msg.baseUrl, stale }))) return false;
+    if (!(await measureLoop(M, s.doc, { tm, baseUrl: msg.baseUrl, stale, scope: s.key }))) return false;
     postResult(M, s.doc, ids, tm, msg.held);
     return;
   }
@@ -368,7 +372,7 @@ async function runRelayout(s, { ids, msg }, stale) {
   if (doc === undefined) return postError(ids, 'relayout: cannot fork the document');
   let ok = false;
   try {
-    ok = await measureLoop(M, doc, { baseUrl: msg.baseUrl, stale });
+    ok = await measureLoop(M, doc, { baseUrl: msg.baseUrl, stale, scope: s.key });
     if (!ok) return false;
     M._tsr_doc_free(s.doc);
     s.doc = doc;

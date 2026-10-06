@@ -1186,3 +1186,39 @@ test('a11y: formulas carry role=math and their source as label; the text layer i
   expect(paras[0]).toContain('in step');
   expect(paras.length).toBe(3);
 });
+
+// ---- host-measured boxes (plan P3-28; design T6 S14, T9 M11) --------------
+
+test('raw(measure: host): measured where it is painted, at its width; relayout measures again', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const words = 'Words of a caption that wraps over a number of lines at the narrow measure. '.repeat(3);
+  const source = '#{ $.fence("plot", (body, ctx) => ctx.raw(body.trim(), { height: 30, measure: "host" })) }\n\n' +
+    'Before the boxes.\n\n```plot\n<div style="height:57px;background:#eee"></div>\n```\n\n' +
+    '```plot\n<p style="margin:0">' + words + '</p>\n```\n\n' +
+    '```plot\n<svg viewBox="0 0 4 1"></svg>\n```\n\n' +
+    'After #raw("<span>one two three four</span>", {w: 48, measure: "host"}) it.';
+  const boxes = () => page.evaluate(() => ({
+    raw: [...document.querySelectorAll('#out .tsr-raw')].map((e) => ({
+      h: e.getBoundingClientRect().height, clipped: e.scrollHeight > e.clientHeight + 1 })),
+    iraw: [...document.querySelectorAll('#out .tsr-iraw')].map((e) => ({
+      h: e.getBoundingClientRect().height, va: e.style.verticalAlign, clipped: e.scrollHeight > e.clientHeight + 1 })),
+  }));
+  const r = await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }), source);
+  expect(r.diags).not.toMatch(/box-measure|box-unsettled|raw-measure/);
+  const narrow = await boxes();
+  expect(narrow.raw[0].h).toBeCloseTo(57, 1);           // a fixed-height div
+  expect(narrow.raw[1].h).toBeGreaterThan(57);          // wrapped text, all of it shown
+  expect(narrow.raw[1].clipped).toBe(false);
+  expect(narrow.raw[2].h).toBeCloseTo(75, 1);           // the engine's own svg answer: 300 × 1/4
+  expect(narrow.iraw[0].clipped).toBe(false);           // the inline box's lines, on its last baseline
+  expect(narrow.iraw[0].va).toMatch(/^-\d/);
+  expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
+  // a wider measure: the text box is shorter, the svg taller
+  await page.evaluate(async () => await window.__tsr.relayout(600));
+  const wide = await boxes();
+  expect(wide.raw[0].h).toBeCloseTo(57, 1);
+  expect(wide.raw[1].h).toBeLessThan(narrow.raw[1].h);
+  expect(wide.raw[1].clipped).toBe(false);
+  expect(wide.raw[2].h).toBeCloseTo(150, 1);
+});

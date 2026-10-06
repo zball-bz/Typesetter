@@ -375,8 +375,9 @@ Su streamAdvance(const HList& h, const MetricStore& metrics, Su baseLeading) {
 class DocLayout {
  public:
   DocLayout(const MetricStore& m, Interner& s, const LayoutSettings& c, DiagSink& d, LayoutResult& r, BreakMemo* memo,
-            bool paged)
-      : metrics(m), strs(s), cfg(c), diags(d), lr(r), memo_(memo), paged_(paged), measure(suFloorPx(c.widthPx)),
+            bool paged, BoxAsker* boxes)
+      : metrics(m), strs(s), cfg(c), diags(d), lr(r), memo_(memo), boxes_(boxes), paged_(paged),
+        measure(suFloorPx(c.widthPx)),
         baseLeading(suRoundPx(c.lineHeight * c.baseSizePx)), paraGap(suRoundPx(c.paraSpacingEm * c.baseSizePx)),
         minWrap(suRoundPx(c.minWrapWidthEm * c.baseSizePx)), em(suRoundPx(c.baseSizePx)), excl(suRoundPx(c.baseSizePx)) {
     bparams.cost = c.cost;
@@ -428,6 +429,7 @@ class DocLayout {
   DiagSink& diags;
   LayoutResult& lr;
   BreakMemo* memo_;  // the Session's KP memo (plan P1-21), or none
+  BoxAsker* boxes_;  // (plan P3-28) host boxes at their widths, or none (declared sizes)
   const bool paged_;  // (plan P3-14) laying out for paged sheets (media)
   const Su measure, baseLeading, paraGap;
   const Su minWrap;  // layout.minWrapWidth: narrower beside floats, text clears them
@@ -942,10 +944,19 @@ class DocLayout {
         f.kind = FragKind::Rule;
         f.height = baseLeading;  // its band: the rule at its middle
         break;
-      case Painter::Raw:
+      case Painter::Raw: {
+        // (plan P3-28; design T6 S14) a host box: its height the host's at
+        // the box's width (unanswered: the declared one, and this layout
+        // is provisional)
+        const RawData& r = std::get<RawData>(u.data);
         f.kind = FragKind::Raw;
-        f.height = suRoundPx(std::get<RawData>(u.data).size.h);
+        f.hostBox = r.size.source == SizeSource::Host;
+        double h = r.size.h;
+        if (f.hostBox && boxes_ && r.html)
+          if (const BoxAnswer a = boxes_->ask(r.kind, r.html, widthPx(b), b.span); a.ready) h = a.h;
+        f.height = suRoundPx(h);
         break;
+      }
       case Painter::Image: {
         // block figure image (figure-design.md §3): centred on the measure,
         // advance = display height (float placement is F2)
@@ -1591,9 +1602,9 @@ const DocLayout::Fn DocLayout::kLayouters[] = {&DocLayout::paragraph, &DocLayout
 }  // namespace
 
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics, Interner& strs,
-                       const LayoutSettings& cfg, DiagSink& diags, BreakMemo* memo, bool paged) {
+                       const LayoutSettings& cfg, DiagSink& diags, BreakMemo* memo, bool paged, BoxAsker* boxes) {
   LayoutResult lr;
-  DocLayout(metrics, strs, cfg, diags, lr, memo, paged).run(tops);
+  DocLayout(metrics, strs, cfg, diags, lr, memo, paged, boxes).run(tops);
   return lr;
 }
 
@@ -1635,7 +1646,9 @@ std::string dumpLayout(const LayoutResult& lr) {
           return;
         }
         if (l.kind == FragKind::Raw) {
-          appendf(out, "  L%zu raw y=%dsu left=%dsu w=%dsu\n", i, l.y, l.left, l.width);
+          appendf(out, "  L%zu raw y=%dsu left=%dsu w=%dsu", i, l.y, l.left, l.width);
+          if (l.hostBox) appendf(out, " host h=%dsu", l.height);  // (plan P3-28) measured at w
+          out += '\n';
           return;
         }
         if (l.kind == FragKind::Math) {

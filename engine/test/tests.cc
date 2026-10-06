@@ -535,6 +535,93 @@ static void unitResources(const fs::path& root) {
 // the dictionary parses back to its own symbol — a name, an operator key, a
 // delimiter in a symbol slot — and every TeX target the converters emit
 // (tools/convert, kTexNames) to the symbol it means
+// (plan P3-28; design T6 S14, T9 M11) host boxes: an svg its attributes
+// size is the engine's own answer; a box the host measures is asked for at
+// its width — one need per width, a provisional layout never painted, at
+// most two layout rounds — and a failure keeps its declared size
+static void unitHostBoxes(const fs::path& root) {
+  double h = 0, b = 0;
+  CHECK(svgBoxPx("<svg viewBox='0 0 400 100'></svg>", 300, h, b) && h == 75 && b == 75);
+  CHECK(svgBoxPx(" <SVG width=\"50%\" viewBox=\"0,0,4,3\">", 300, h, b) && h == 112.5);
+  CHECK(svgBoxPx("<svg height=40px viewBox='0 0 1 1'>", 300, h, b) && h == 40);
+  CHECK(!svgBoxPx("<svg width='10em' viewBox='0 0 4 3'>", 300, h, b));
+  CHECK(!svgBoxPx("<svg>", 300, h, b) && !svgBoxPx("<svgx viewBox='0 0 1 1'>", 300, h, b) &&
+        !svgBoxPx("<div><svg viewBox='0 0 1 1'></svg></div>", 300, h, b) &&
+        !svgBoxPx("<svg viewBox='0 0 0 1'>", 300, h, b));
+  CHECK(boxKindOf("<svg/>") == BoxKind::Svg && boxKindOf("<div></div>") == BoxKind::Html &&
+        boxKindOf("<svgx>") == BoxKind::Html);
+
+  std::string ops;
+  readFile(root / "test" / "fixtures" / "region" / "raw-host-diag.ops", ops);
+  auto fresh = [&](Doc& doc) { return doc.ingest((const u8*)ops.data(), ops.size()); };
+  auto has = [](const Doc& doc, std::string_view code) {
+    for (const Diag& d : doc.diags.items)
+      if (code == d.code) return true;
+    return false;
+  };
+  // the host's box rows, by kind and width
+  std::vector<std::pair<BoxKind, double>> asked;
+  ProviderSet p = mockProviders();
+  auto mock = p.boxes;
+  p.boxes = [&](BoxKind k, std::string_view ref, double w, double& bw, double& bh, double& bb) {
+    asked.push_back({k, w});
+    return mock(k, ref, w, bw, bh, bb);
+  };
+  // the first raw block's (the html box's) height
+  auto htmlBoxPx = [](const Doc& doc) { return suToPx(doc.layout.paras[1].lines[0].height); };
+  {
+    Doc doc;
+    CHECK(fresh(doc) && doc.configure(R"({"host":{"width":300}})") == 0);
+    bool painted = false;
+    u32 rounds = 0;
+    for (; rounds < 16 && doc.typeset() != Doc::Status::Ok; rounds++) {
+      painted = painted || !doc.render().empty();  // a provisional layout is never painted
+      CHECK(answerRound(doc, p));
+    }
+    CHECK(!painted && doc.typeset() == Doc::Status::Ok);
+    // the inline box at its declared width, the html block and the svg the
+    // engine cannot size at the measure; the two viewBox svgs never asked
+    CHECK(asked.size() == 3);
+    u32 at60 = 0, at300 = 0;
+    for (auto& [k, w] : asked) (w == 60 ? at60 : w == 300 ? at300 : at60 += 100)++;
+    CHECK(at60 == 1 && at300 == 2);
+    CHECK(htmlBoxPx(doc) == 60 && suToPx(doc.layout.paras[2].lines[0].height) == 75);
+    // a new width: only the width-dependent boxes, at it, in place
+    asked.clear();
+    doc.setWidth(900);
+    CHECK(doc.typeset() == Doc::Status::NeedMeasure && doc.done(Stage::Measure));
+    CHECK(driveToCompletion(doc, p) && asked.size() == 2 && asked[0].second == 900 && asked[1].second == 900);
+    CHECK(htmlBoxPx(doc) == 20 && suToPx(doc.layout.paras[2].lines[0].height) == 225);
+    // a fork at the same width asks for no box again
+    asked.clear();
+    Doc f;
+    CHECK(doc.forkInto(f, "{}") && driveToCompletion(f, p) && asked.empty() && htmlBoxPx(f) == 20);
+  }
+  {
+    // past the layout's asks a box keeps its declared height (box-unsettled)
+    Doc doc;
+    CHECK(fresh(doc));
+    for (u32 r = 0; r < 16; r++) {
+      if (doc.typeset() == Doc::Status::Ok) break;
+      if (doc.done(Stage::Measure)) {  // the layout asked: its boxes left unanswered, its last round
+        doc.layoutAsks = Doc::kLayoutAsks;
+        continue;
+      }
+      CHECK(answerRound(doc, p));
+    }
+    CHECK(doc.done(Stage::Layout) && has(doc, "box-unsettled") && htmlBoxPx(doc) == 30);
+  }
+  {
+    // a host that cannot measure: box-measure, the declared size
+    ProviderSet none = mockProviders();
+    none.boxes = [&](BoxKind k, std::string_view ref, double w, double& bw, double& bh, double& bb) {
+      return k == BoxKind::Image && mock(k, ref, w, bw, bh, bb);
+    };
+    Doc doc;
+    CHECK(fresh(doc) && driveToCompletion(doc, none) && has(doc, "box-measure") && htmlBoxPx(doc) == 30);
+  }
+}
+
 static void unitMathDict() {
   Arena arena;
   auto means = [&](std::string_view src, const SymbolInfo& e) {
@@ -2115,6 +2202,7 @@ int main(int argc, char** argv) {
   fuzzRegressions(fs::path(root));
   unitHostInputs(fs::path(root));
   unitResources(fs::path(root));
+  unitHostBoxes(fs::path(root));
   unitMathGlyphs(fs::path(root));
   unitMathIR();
   unitOpsWindow(fs::path(root));

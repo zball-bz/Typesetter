@@ -1,0 +1,18 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[92,178)
+    paragraph para unit=0 @[92,178)
+top pid=1 leaves=1
+  stack root gap=1/1 @[180,327)
+    replaced raw raw unit=0 @[180,327)
+top pid=2 leaves=1
+  stack root gap=1/1 @[329,374)
+    replaced raw raw unit=0 @[329,374)
+top pid=3 leaves=1
+  stack root gap=1/1 @[376,429)
+    replaced raw raw unit=0 @[376,429)
+top pid=4 leaves=1
+  stack root gap=1/1 @[431,485)
+    replaced raw raw unit=0 @[431,485)
+top pid=5 leaves=1
+  stack root gap=1/1 @[487,672)
+    paragraph para unit=0 @[487,672)

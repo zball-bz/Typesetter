@@ -1,0 +1,24 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="92" style="position:relative;height:72px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="86" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">Boxes the host measures at their width</span></div>
+<div class="tsr-line" data-s="0" data-e="86" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">(plan P3-28): their height follows the</span></div>
+<div class="tsr-line" data-s="0" data-e="86" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">measure.</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:60px;margin-bottom:19.203px">
+<div class="tsr-raw" style="top:0px;left:0px;width:300px;height:60px"><div class="chart"><p>A caption long enough to wrap over several lines of the box at the measure width of the golden profile.</p></div></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="0" style="position:relative;height:75px;margin-bottom:19.203px">
+<div class="tsr-raw" style="top:0px;left:0px;width:300px;height:75px"><svg viewBox="0 0 400 100"></svg></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="0" style="position:relative;height:112.5px;margin-bottom:19.203px">
+<div class="tsr-raw" style="top:0px;left:0px;width:300px;height:112.5px"><svg width="50%" viewBox="0 0 4 3"></svg></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="0" style="position:relative;height:20px;margin-bottom:19.203px">
+<div class="tsr-raw" style="top:0px;left:0px;width:300px;height:20px"><svg width="10em" viewBox="0 0 4 3"></svg></div>
+</div>
+<div class="tsr-para" data-pid="5" data-s0="487" style="position:relative;height:128px">
+<div class="tsr-line" data-s="0" data-e="117" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2.857px"><span class="tsr-r" data-s="0">Inline, a box </span><span class="tsr-iraw" data-syn="raw" data-s="14" style="width:60px;height:80px;vertical-align:-4px"><b>wide inline text that wraps</b></span><span class="tsr-r" data-s="83"> sits on its mea</span><span class="tsr-r" data-s="83" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="83" data-e="185" data-join="space" style="top:80px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="83">sured baseline; one </span><span class="tsr-iraw" data-syn="raw" data-s="118" style="width:16px;height:16px"><i>x</i></span><span class="tsr-r" data-s="154"> without a width</span></div>
+<div class="tsr-line" data-s="154" data-e="185" style="top:104px;left:0px;width:300px"><span class="tsr-r" data-s="154">keeps its size.</span></div>
+</div>
+</div>

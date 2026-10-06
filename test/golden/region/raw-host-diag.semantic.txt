@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="92" data-e="178">Boxes the host measures at their width (plan P3-28): their height follows the measure.</p>
+<div class="chart"><p>A caption long enough to wrap over several lines of the box at the measure width of the golden profile.</p></div>
+<svg viewBox="0 0 400 100"></svg>
+<svg width="50%" viewBox="0 0 4 3"></svg>
+<svg width="10em" viewBox="0 0 4 3"></svg>
+<p data-pid="5" data-s="487" data-e="672">Inline, a box <span class="tsr-iraw"><b>wide inline text that wraps</b></span> sits on its measured baseline; one <span class="tsr-iraw"><i>x</i></span> without a width keeps its size.</p>
+</div>

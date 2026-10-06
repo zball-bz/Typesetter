@@ -44,6 +44,7 @@ struct BoxNeed {
   Span span;  // the first requesting node's (diagnostics)
   ResState st = ResState::Pending;
   double w = 0, h = 0, baseline = 0;  // Ready: CSS px
+  bool emit = false;  // an Emit consumer waits on it (an image, an inline box): its answer re-runs Emit
 };
 
 class ResourceTable {

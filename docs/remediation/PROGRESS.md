@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-28
+- 下一步：P3-29
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -94,7 +94,7 @@
 | P3-25 | 运算符原子与单一 mlist→item 转换 | done | grep:plan P3-25 | 2026-10-06 | 两次提交。主体：19 个 golden（脚本 check325.py 核对：display/eqref/stretch/decl 的 mathbox 只是树变平，每个字形与规则线的绝对位置不变；holes-diag 断点后的负号由 Bin 正确降为 Ord；math/symbols 新断点）。fracPadEm：29 个 golden（check325b.py 数值审阅：每个顶层分式宽 +204su = 2×0.1em@16px，脚本级 72su、二级脚本 51su，嵌套按层累加） | 删除 MNode::BigOp：大算子是带 limits 模式的 Op 原子，上下标走唯一的 attach（limits() 或 display 下的 limits 对任何底都成立）；v2 §13 的贪婪作用域只作阅读注记 scopeEnd（到下一个 Rel 类原子，含直接输入的关系）。降级只做一遍（demote + pack）；行内分段：顶层原子各排一次、降级一次，断点代价 = min(math.breakAfter[左], math.breakBefore[右])，新增 classmap 设置域，取代三个 break.math* 键；删除 effClsOf。上下标保留底的首末类；pack 传递单个原子的 topAccent（删 layoutAccent 的重读）。单记号操作数规则（P3-24 遗留，本步补）：未知词作上下标或分式操作数时为字母串（x^ab = x^{ab}）；关系名作上标（x_in）报 info。fracPadEm 0.1em 单独提交 |
 | P3-26 | 数学采用通用协议；公式编号由布局测量 | done | grep:plan P3-26 | 2026-10-07 | 三次提交，各按格式由脚本核对。blocks：29 个 dump（obj 行 165、synthetic 胶 74、image/raw 部件 9）。html：36 个（公式的 data-src → data-copy + data-copy-group）。tag：11 个用例的 layout（新增 tag 行，无高度变化）、html/paged（定位 span → 测量的 tag 行；显示公式 top 取布局基线，差 ≤0.01px）、semantic（eqno 的 data-syn）、tree（tag 部件的 syn/copy）、blocks/hlist/breaks（tag 轨道）；+1 用例 math/eqno-below | LinebreakBlock 去掉 MathBox*：行内对象部件带种类、度量与不透明 payload（只供遗留 oracle 比较），blocks dump 统一写 obj 行；对象部件间的胶有自己的 BF_SYNTH（dump 为 synthetic），BF_BOUND 只表示 CJK–拉丁边界。公式的复制与任何替换 run 相同：data-syn="math"、data-copy=源码、同一公式的各部件同一 data-copy-group（源码起点加高位），删除 data-src 特例（paint、写出器、copy.mjs）。公式编号：删除 equation 类的 where: arg 站点与 ArgK::name 兼容（emit、语义页），tag 部件声明 syn eqno / copy omit；盒树把 tag 部件作为叶的第二轨，emit 塑形，布局按 End 对齐测量成行：与公式同基线放在版心末端，两者间距小于 1em 时移到公式下方，PenTier::Structural 不被分页切开；paint 轨道名 tag，删除 eqTag/eqRightPx 与外壳 CSS 的绝对定位。文档：document-model §9.4、tsm-changes |
 | P3-27 | 语义页数学盒与无障碍 | done | grep:plan P3-27 | 2026-10-07 | 两次提交，各由脚本核对。semantic：36 个 golden，唯一变化是 118 个公式由源码 code 变为数学盒。html/paged：37 个 golden，唯一变化是 194 处公式 span 加 role="math" 与 aria-label（源码） | 新设置 render.math（boxes|source，默认 boxes）、a11y.mathLabel（默认开）、a11y.textLayer（默认关）；生成器支持通用 enum 设置（u8 下标、k<Field><Value> 常量、按名序列化），设置段名可含数字。数学 span 写出器移到 render/math_html，两个写出器共用（placed 区分显示公式的绝对定位与 "$ … $" 复制写法）；语义页与片段按页面基准字号由数学字体度量排出公式盒（文本 run 用估算），role=math、aria-label=源码、data-copy 不变。export-static 在有公式时声明并复制数学字体，主题居中显示公式；check-export 覆盖盒与字体。paint 给数学 run 与显示公式带 mathLabel。外壳：默认行为 textLayer（设置开启时 commit 根 aria-hidden，overlay 中 sr-only 容器每块一段 contentBlocks，随每次 commit 重建）；copy.mjs 拆出 contentBlocksFromRange，ctx.ops.contentBlocks。e2e：a11y 用例（标签、文本层与复制一致、随 update 更新）。文档：document-model §9.3/§9.4、tsm-changes |
-| P3-28 | 宿主测量的替换盒（boxInfo） | todo | | | | |
+| P3-28 | 宿主测量的替换盒（boxInfo） | done | grep:plan P3-28 | 2026-10-07 | 两次提交。structure：无 golden 变化。behaviour：region/table-raw-min-diag 的 diags 去掉 raw-measure 占位提示、layout 的 host 盒行加 " host h=1280su"（mock 高度与声明高度同为 20px，其余字节不变）；+1 用例 region/raw-host-diag | IntrinsicSize {w, h, minW, scale, source: Declared|Provided|Host|Placeholder} 统一图片与 raw 的尺寸记录；盒需求按 (kind, 载荷, 宽度) 建键（BoxKind image|svg|html，resource/box.h），wire 的 boxInfo 行带 kind 与宽度，答复带 baseline；stages.def 中 Layout 的重跑类别为 Provisional（可重入且可提问：提问的一轮是临时的，不绘制）。raw(measure: 'host') 块盒：Layout 以可用宽度经 BoxAsker 提问，未答则本轮临时、拉取继续；宽度不依赖答复，一轮即可，最多提问两次（之后 box-unsettled，用声明高度）；宿主测不了时 box-measure，用声明高度；relayout 只按新宽度重问，同宽 fork 一个不问（已答盒随 fork 复制）。svg 根由引擎自答（px height，或 viewBox 按 px/% width 或盒宽缩放）。行内盒需声明 w（否则 raw-measure 警告），在 Emit 时按 w 提问、块等待，答后按测得基线放置（vertical-align 负深度）。原生 driver 的 boxes 提供者与 WASM 调试 mock 用 mockBoxPx 确定性作答。JS：htmlBoxProvider（kind≠0，LRU 缓存）经主线程 measureHtml 能力在文档自己的排版根中用隐藏探针测量（inline-block 宽 W，旁边零尺寸标记取基线）；worker 会话记住 key 作 scope。ctx.raw 改为 raw 构造器的全部选项。raw 内容（块与行内）统一按文档字体、换行、normal 行高排版（.tsr-line 的 line-height:0 不再漏入）。审计把行内 raw 盒当作一个片段。单元测试 unitHostBoxes；e2e 一例（测得高度、未裁切、行内基线、relayout 重测）。文档：document-model、host-protocol-design、security-review、tsm-changes |
 | P3-29 | 数学网格、equations 与显示行 | todo | | | | |
 | P3-30 | LocalePack 与文档语言 | todo | | | | |
 | P3-31 | 跨文档标签、项目驱动、#use | todo | | | | |
@@ -171,6 +171,7 @@
 | P3-25 后 | 3.30 | 10.90 | 26.80 | 1.7 / 3.0 / 0.8 / 10.2 / 3.2 | 69.2 / 107.2 / 146.8 | 1.80 / 22.00 / 58.10 | 均在 P3 门限内 |
 | P3-26 后 | 3.50 | 11.20 | 27.20 | 1.8 / 3.1 / 0.8 / 10.1 / 3.3 | 69.2 / 103.5 / 145.9 | 1.70 / 22.40 / 58.10 | 均在 P3 门限内 |
 | P3-27 后 | 3.60 | 11.20 | 27.20 | 1.7 / 3.1 / 0.8 / 10.0 / 3.3 | 74.0 / 108.8 / 151.7 | 1.70 / 22.10 / 57.50 | 均在 P3 门限内；文本层默认关，不进入基准路径 |
+| P3-28 后 | 3.40 | 11.00 | 27.60 | 1.9 / 3.2 / 0.8 / 10.1 / 3.2 | 68.8 / 105.1 / 150.2 | 1.80 / 22.20 / 58.00 | 均在 P3 门限内；无宿主盒的文档不提问，Layout 多一次空的 BoxPull |
 
 ## 偏差记录（MD-11）
 
@@ -392,6 +393,11 @@
 | P3-26 | Glue.synthetic 以遗留适配器的 BF_SYNTH 与 HList 已有的 GC::ObjectSpace 表达；T5 的通用 Glue.synthetic 字段随断行器改读 ItemList（P4-08） | LinebreakBlock 适配器在 P4-08 删除，届时由 T5 item 直接携带 | P4-08 |
 | P3-27 | 设计 S13 列 7 个数学 semantic golden；实际重录 36 个（118 个公式） | 设计写于用例扩充之前，此后含公式的用例增加；每个变化都由脚本核对为公式 code → 盒 | 无 |
 | P3-27 | 设计 S13 的“feed profile 默认 source”没有对应的 profile：仓库只有 golden profile，feed 宿主设 render.math: "source"；MathML feed 格式未实现 | 计划要点不含 MathML，document-model 与 v2 §13 仍拒绝 MathML；enum 设置可追加取值而不升 ops | 无 |
+| P3-28 | 计划写 `ctx.raw(html, {measure:'auto'})`；实现沿用 P3-14 已入 schema 的 `measure: 'host'`（enum declared\|host，since 14），svg 的引擎自答属于同一请求 | 不新增词汇、不升 ops；两个设计（T6 写 host、T9 写 auto）指同一件事 | 无 |
+| P3-28 | 计划写 `NEED_BOX{payload, widthSu} → {h, baseline}` 为新的需求状态；实现复用已有资源行 boxInfo（kind, ref, availPx → w, h, baseline），Layout 的需求经同一拉取循环答复 | RES_VERSION 不变，wire 列已有；一个资源词汇表 | 无 |
+| P3-28 | “图片走 IntrinsicSize 路径”在本步只统一尺寸记录；图片尺寸仍在 Emit 读取，Layout 消费 boxInfo 属 P3-32 | 计划 P3-32 明确承担 Layout 消费 | P3-32 |
+| P3-28 | 分页的 media 布局（渲染时）只查已有答复、不提问：新宽度上的盒用声明高度 | 渲染阶段不再拉取；仅 media 块改变宽度时出现 | 无 |
+| P3-28 | raw 内容统一按 normal 行高与换行排版：块 raw 过去继承宿主页面行高 | 测量与绘制须同一上下文；行内 raw 过去继承行的 line-height:0（文字叠在一起） | 无 |
 | P3-26 | role=math 与 aria-label 未做（计划注明在 P3-27 落地）；多行显示的逐行编号属 P3-29 | 计划安排 | P3-27、P3-29 |
 | P3-26 | 编号与公式同基线（TeX \\eqno），取代 CSS 的垂直居中；编号在旁时其行框的行距不推进游标（行高不变） | TeX 的做法；避免所有带编号公式之后的内容下移 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |

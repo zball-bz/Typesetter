@@ -65,11 +65,14 @@ const LAYOUT_CSS = `
 .tsr-imgph { position: absolute; border: 1px dashed currentColor; opacity: 0.5;
              display: flex; align-items: center; justify-content: center;
              font-size: 0.85em; box-sizing: border-box; }
-.tsr-raw { position: absolute; overflow: hidden; }
+/* (plan P3-28) raw content, block or inline, is laid out in one context —
+   the document's font, wrapping, normal line-height (a line's 0 must not
+   reach it) — the one measureHtml measures it in */
+.tsr-raw { position: absolute; overflow: hidden; white-space: normal; line-height: normal; }
 /* inline objects (plan P1-13): boxes on the baseline, of the engine's size */
 .tsr-iimg { vertical-align: baseline; }
 .tsr-iimgph { display: inline-block; border: 1px dashed currentColor; opacity: 0.5; box-sizing: border-box; }
-.tsr-iraw { display: inline-block; overflow: hidden; vertical-align: baseline; }
+.tsr-iraw { display: inline-block; overflow: hidden; vertical-align: baseline; white-space: normal; line-height: normal; }
 .tsr-sp { display: inline-block; }
 /* math (math-design.md §8): one inline box per formula, absolutely
    positioned glyph runs in the bundled font; rules are painted boxes */
@@ -156,7 +159,9 @@ function ensureBehaviorCss(b) {
 // Main-thread capabilities (plan P3-06; design T9 capability): the worker
 // asks one by name (cap? → cap). imageDims: an image the worker could not
 // read (cross-origin, no CORS) still yields its size through an <img>
-// (figure-design.md §2); 0×0 = failure.
+// (figure-design.md §2); 0×0 = failure. measureHtml (plan P3-28): a raw
+// box's height and baseline at a width — the shell's own, it needs the
+// document's view (createEngine adds it).
 export const defaultCapabilities = () => ({ imageDims: imageDimsByElement });
 function imageDimsByElement({ src }) {
   return new Promise((resolve) => {
@@ -165,6 +170,40 @@ function imageDimsByElement({ src }) {
     img.onerror = () => resolve({ w: 0, h: 0 });
     img.src = src;
   });
+}
+
+// measureHtml (plan P3-28; design T9 M11): a raw(measure: 'host') box's
+// markup laid out at its width where it will be painted — a hidden probe
+// in the document's typeset root (its fonts, the page's CSS), as an
+// inline-block of that width beside a zero-size mark on its baseline: its
+// height, and its baseline from its top (an inline-block's: its last line's,
+// or its bottom). Raw content is laid out in one context, block or inline
+// (LAYOUT_CSS .tsr-raw/.tsr-iraw): wrapping, normal line-height. Without a
+// view (a print fork's first round), the container, else the body.
+function measureHtmlIn(where) {
+  return ({ html, widthPx, scope }) => {
+    const host = where(scope) ?? document.body;
+    const probe = document.createElement('div');
+    probe.dataset.tsrShell = 'probe';
+    probe.setAttribute('aria-hidden', 'true');
+    probe.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;' +
+                          'white-space:nowrap;width:max-content;contain:layout style';
+    const box = document.createElement('span');
+    box.className = 'tsr-iraw';
+    box.style.cssText = `width:${Number(widthPx) || 0}px;height:auto;overflow:visible`;
+    box.innerHTML = String(html);  // the trusted passthrough the page will paint (security-review §1)
+    const mark = document.createElement('span');
+    mark.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
+    probe.append(box, mark);
+    host.appendChild(probe);
+    try {
+      const b = box.getBoundingClientRect();
+      const m = mark.getBoundingClientRect();
+      return { h: b.height, baseline: Math.min(b.height, Math.max(0, m.top - b.top)) };
+    } finally {
+      probe.remove();
+    }
+  };
 }
 
 // The measure/render contract: an element shows the engine's DOM with
@@ -197,7 +236,12 @@ export function createEngine(opts = {}) {
       kind: p.kind, module: new URL(p.module, document.baseURI).href })) });
   const behaviors = opts.behaviors ?? defaultBehaviors();
   const copy = opts.copy ?? installCopy;
-  const capabilities = { ...defaultCapabilities(), ...(opts.capabilities ?? {}) };
+  // (plan P3-28) measureHtml measures in the document's own view: a doc id → its typeset root
+  const viewOf = (docId) => {
+    for (const s of sessions.values()) if (s.docId === docId) return s.view.root ?? s.container;
+    return null;
+  };
+  const capabilities = { ...defaultCapabilities(), measureHtml: measureHtmlIn(viewOf), ...(opts.capabilities ?? {}) };
   let nextId = 1;
   const pending = new Map(); // id → {resolve, reject, onSemantic}
   const sessions = new Map(); // container → session

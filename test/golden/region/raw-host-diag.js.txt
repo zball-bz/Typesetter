@@ -1,0 +1,15 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {raw} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+ $.fence("plot", (body, ctx) => ctx.raw(body.trim(), { height: 30, measure: "host" })) 
+},
+() => (raw("<b>wide inline text that wraps</b>", {w: 60, measure: "host"})),
+() => (raw("<i>x</i>", {measure: "host"})),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

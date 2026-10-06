@@ -1,0 +1,24 @@
+lower v1 abi 3d3ccfbb docEnd 673 holes 3 module 7e88963c6162f464
+piece 0 hole 0 js [127,224)
+piece 1 hole 1 js [226,301)
+piece 2 hole 2 js [303,345)
+block 0 stmt [0,90) user framed holes 0..1
+  STMT 0
+block 1 content [92,178)
+  CALL para [92,178)
+    TEXT "Boxes the host measures at their width (plan P3-28): their height follows the measure." [92,178)
+block 2 content [180,327) async
+  FENCE async "plot" body="<div class=\"chart\"><p>A caption long enough to wrap over several lines of the box at the measure width of the golden profile.</p></div>" at=[188,323) lines=null [180,327)
+block 3 content [329,374) async
+  FENCE async "plot" body="<svg viewBox=\"0 0 400 100\"></svg>" at=[337,370) lines=null [329,374)
+block 4 content [376,429) async
+  FENCE async "plot" body="<svg width=\"50%\" viewBox=\"0 0 4 3\"></svg>" at=[384,425) lines=null [376,429)
+block 5 content [431,485) async
+  FENCE async "plot" body="<svg width=\"10em\" viewBox=\"0 0 4 3\"></svg>" at=[439,481) lines=null [431,485)
+block 6 content [487,672) user framed holes 1..3
+  CALL para [487,672)
+    TEXT "Inline, a box " [487,500) raw=0:0,14:13
+    HOLE 1 [501,569)
+    TEXT " sits on its measured baseline; one " [570,604) raw=0:0,1:0,36:34
+    HOLE 2 [605,640)
+    TEXT " without a width keeps its size." [641,672) raw=0:0,1:0

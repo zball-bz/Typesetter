@@ -77,7 +77,8 @@ void lineRuns(const Fragment& l, const HList& h, std::vector<DLRun>& out) {
           d.k = DLRun::K::Raw;
           d.src = ob.src;
           d.w = pt.w;
-          d.h = pt.asc;
+          d.h = pt.asc + pt.desc;
+          d.desc = pt.desc;  // (plan P3-28) a host box's measured baseline
           break;
         case ObjKind::Error:  // its text, in its run's style
           d = run(it, DLRun::K::Glyph);
@@ -301,7 +302,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         break;
       case FragKind::Raw: {
         const RawData& r = std::get<RawData>(u.data);
-        n.heightPx = r.size.h;
+        n.heightPx = l.hostBox ? suToPx(l.height) : r.size.h;  // (plan P3-28) measured: layout's
         n.src = r.html;
         break;
       }

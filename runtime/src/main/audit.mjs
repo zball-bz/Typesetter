@@ -42,7 +42,9 @@ export function auditTypeset(root) {
     const rects = [];
     for (const el of line.children) {
       if (getComputedStyle(el).position === 'absolute') continue;
-      if (el.dataset.syn === 'math') {  // one engine-defined fragment
+      // one engine-defined fragment: a formula, an inline raw box (its own
+      // lines are its content's, plan P3-28)
+      if (el.dataset.syn === 'math' || el.dataset.syn === 'raw') {
         const r = el.getBoundingClientRect();
         if (r.width > 0 && r.height > 0) rects.push(r);
         continue;

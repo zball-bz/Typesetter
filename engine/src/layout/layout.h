@@ -4,6 +4,7 @@
 #pragma once
 #include "../boxtree/block.h"
 #include "../break/break.h"
+#include "../resource/box.h"
 
 namespace tsr {
 
@@ -76,6 +77,7 @@ struct Fragment {
   float snapLatinPx = 0;             // snap-kerning letter-spacing (render)
   float snapCjkPx = 0;
   bool codeHl = false;               // hl-range line (background)
+  bool hostBox = false;              // (plan P3-28) a raw box the host measures at its width
   StrRef marker = 0;                 // a list marker / line number in the gutter
   StyleId markerStyle = 0;
   // (plan P3-16; design T7 Placement) what the marker is, and where it
@@ -123,10 +125,12 @@ struct LayoutResult {
 // Breaks and lays out (plan P1-15: breaking is layout's; the float
 // exclusions live at its cursor); overfull streams are reported to diags.
 // memo: the Session's KP memo (plan P1-21), or none (uncached). paged
-// (plan P3-14): the medium — blocks of the other one (media) are left out
+// (plan P3-14): the medium — blocks of the other one (media) are left out.
+// boxes (plan P3-28): where a host box's height at its width comes from
+// (none: its declared height)
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
                        Interner& strs, const LayoutSettings& cfg, DiagSink& diags, BreakMemo* memo = nullptr,
-                       bool paged = false);
+                       bool paged = false, BoxAsker* boxes = nullptr);
 
 std::string dumpBreaks(const LayoutResult& lr);
 std::string dumpLayout(const LayoutResult& lr);

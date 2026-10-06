@@ -1,0 +1,17 @@
+doc h=36065su
+para pid=0 y=0su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=213su dc=0su join=space blocks=[0,17) @[92,178)
+  L1 y=1536su left=0su w=19200su dw=205su dc=0su join=space blocks=[18,31) @[92,178)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[32,35) @[92,178)
+para pid=1 y=5837su w=19200su h=3840su
+  L0 raw y=0su left=0su w=19200su host h=3840su
+para pid=2 y=10906su w=19200su h=4800su
+  L0 raw y=0su left=0su w=19200su host h=4800su
+para pid=3 y=16935su w=19200su h=7200su
+  L0 raw y=0su left=0su w=19200su host h=7200su
+para pid=4 y=25364su w=19200su h=1280su
+  L0 raw y=0su left=0su w=19200su host h=1280su
+para pid=5 y=27873su w=19200su h=8192su
+  L0 y=0su left=0su w=19200su dw=183su dc=0su join=none hyphen blocks=[0,18) @[487,604)
+  L1 y=5120su left=0su w=19200su dw=213su dc=0su join=space blocks=[18,35) @[570,672)
+  L2 y=6656su left=0su w=19200su dw=0su dc=0su join=last blocks=[36,41) @[641,672)

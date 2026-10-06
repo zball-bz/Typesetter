@@ -545,14 +545,18 @@ struct HlInline final : InlineSink {
       }
       case ObjKind::Raw: {
         // handler-declared markup: one box of its declared size (1em when
-        // undeclared), sitting on the baseline
+        // undeclared), sitting on the baseline — or (plan P3-28, measure:
+        // 'host') of its declared width, its height and baseline the
+        // host's at that width (an unanswered box: the block waits)
         StyleId st = E.compose(n->style, ctx.add, ctx.mul);
         double w = 0, hh = 0;
         StrRef html = 0;
+        bool host = false;
         for (const ArgVal& a : n->args) {
           if (a.key == ArgK::html && a.tag == ArgTag::Str) html = a.ref;
           if (a.key == ArgK::w && a.tag == ArgTag::Num) w = a.num;
           if (a.key == ArgK::h && a.tag == ArgTag::Num) hh = a.num;
+          if (a.key == ArgK::measure) host = attrEnum(n, ArgK::measure, strs) == 2;  // declared | host
         }
         const double em = E.fontPx(st);
         u32 obj = addObject(u, ObjKind::Raw, n, st);
@@ -561,6 +565,14 @@ struct HlInline final : InlineSink {
         pt.obj = obj;
         pt.w = suRoundPx(w > 0 ? w : em);
         pt.asc = suRoundPx(hh > 0 ? hh : em);
+        if (host && !(w > 0))
+          E.diags.add(Sev::Warning, "raw-measure", n->span,
+                      "an inline raw(measure: 'host') is measured at its width: give it w; its declared size is used");
+        else if (host && E.boxes && html)
+          if (const BoxAnswer a = E.boxes->ask(boxKindOf(strs.get(html)), html, w, n->span); a.ready) {
+            pt.asc = suRoundPx(a.baseline);
+            pt.desc = suRoundPx(a.h) - pt.asc;
+          }
         objectBox(u, obj, pt, st, ctx, n->span, 0, true);
         return;
       }
@@ -1049,12 +1061,12 @@ struct Emitter {
                 const Len ml = parseLen(strs.get(a.ref));
                 r.size.minW = ml.unit == 2 ? (double)ml.v : ml.v * fontPx(n->style);
               }
-              // (plan P3-14) a box the host measures arrives with P3-28's
-              // resources; until then it keeps its declared height
+              // (plan P3-28) a box the host measures at layout's width (its
+              // declared height: the fallback)
               if (a.key == ArgK::measure && attrEnum(n, ArgK::measure, strs) == 2)  // declared | host
-                E.diags.add(Sev::Info, "raw-measure", n->span,
-                            "raw(measure: 'host'): host-measured boxes come later; its declared height is used");
+                r.size.source = SizeSource::Host;
             }
+            if (r.html) r.kind = boxKindOf(strs.get(r.html));
             if (r.size.h <= 0) r.size.h = cfg.lineHeight * cfg.baseSizePx;
             return;
           }
@@ -1175,9 +1187,10 @@ struct EmitPass::State {
   }
 };
 EmitPass::EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const EmitSettings& cfg,
-                   DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt)
+                   DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt, BoxAsker* boxes)
     : bt_(bt),
-      st_(std::make_unique<State>(EmitEnv{arena, diags, strs, styles, cfg, nullptr, rt, bt.math, bt.cascade}, metrics)) {}
+      st_(std::make_unique<State>(EmitEnv{arena, diags, strs, styles, cfg, nullptr, rt, bt.math, bt.cascade, boxes},
+                                  metrics)) {}
 EmitPass::~EmitPass() = default;
 bool EmitPass::top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing) {
   st_->missing.clear();

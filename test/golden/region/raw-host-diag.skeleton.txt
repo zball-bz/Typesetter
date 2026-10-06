@@ -1,0 +1,8 @@
+doc @[0,673)
+  code-block @[0,90) js=" $.fence(\"plot\", (body, ctx) => ctx.raw(body.trim(), { height: 30, measure: \"host\" })) "
+  para @[92,178) lines=1
+  fence @[180,327) lang="plot" lines=1
+  fence @[329,374) lang="plot" lines=1
+  fence @[376,429) lang="plot" lines=1
+  fence @[431,485) lang="plot" lines=1
+  para @[487,672) lines=1

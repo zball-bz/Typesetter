@@ -318,6 +318,28 @@ handler becomes a renderable error node. `raw` nodes are block units with
 handler-declared height (default one leading). Deferred: `m.parse` WASM
 re-entry, the indented cell-continuation rule, `#use`.
 
+As built (plan P3-28; design T6 S14, T9 M11): `raw(html, {measure: 'host'})`
+(and a handler's `ctx.raw(html, opts)`, which takes the raw constructor's
+options) is a box whose height the host measures at the box's width. A block
+box is measured at layout's available width: Layout files a boxInfo need
+(kind `svg` for an `<svg>` root, else `html`; the markup; the width) and its
+run is provisional — never painted — until the answer arrives; a relayout at
+another width asks again for that width only, a fork at the same width asks
+for nothing. Widths never depend on answers, so one round settles every box;
+Layout asks at most twice (`box-unsettled` after that), and a box the host
+cannot measure keeps its declared height (`box-measure`). An svg whose
+attributes size it (a px `height`, or a `viewBox` scaled to its px or %
+`width`, else the box's) is answered by the engine without a round trip. An
+inline box needs a declared `w` (`raw-measure` otherwise): it is measured at
+that width when its block is emitted, and sits on its measured baseline
+(`vertical-align` below the line's baseline by its depth). Raw content, block
+or inline, is laid out in one context: the document's font, wrapping, normal
+line-height — the context the browser's `measureHtml` capability measures in
+(a hidden probe in the document's typeset root). Images and raw boxes share
+one size record, `IntrinsicSize {w, h, minW, scale, source: Declared |
+Provided | Host | Placeholder}`. The sheets' own layout (a `media` paged
+render) uses the answers it has and asks for none.
+
 As built (plan P3-10; design T6 TableSpec, S9): a table is a box-tree
 container of **Cell blocks**, one per grid position (row-major; a short row
 padded with empty cells), each a **flow root**: its content is laid out by

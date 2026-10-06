@@ -11,6 +11,6 @@ para pid=1 y=7373su w=19200su h=7372su
   L3 cell=1 y=1843su left=9422su w=9368su blocks=[10,17)
   L4 cell=1 y=3379su left=9422su w=9368su blocks=[18,21)
   L5 rule y=5222su left=0su w=19200su
-  L6 raw y=5529su left=410su w=8192su
+  L6 raw y=5529su left=410su w=8192su host h=1280su
   L7 cell=3 y=5529su left=9422su w=9368su blocks=[0,1)
   L8 rule y=7372su left=0su w=19200su

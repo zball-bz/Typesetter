@@ -209,6 +209,7 @@ struct TopBlock {
 // rt: the answered resources (code tokens, image sizes; plan P1-19)
 struct BoxTree;
 class ResourceTable;
+class BoxAsker;
 
 // One Emit pass, top-level block by block (plan P1-20; design T9 M5): the
 // shaping scratch is shared across the pass. A block whose display formula
@@ -217,7 +218,7 @@ class ResourceTable;
 class EmitPass {
  public:
   EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const EmitSettings& cfg,
-           DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt);
+           DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt, BoxAsker* boxes = nullptr);
   ~EmitPass();
   bool top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing);
 

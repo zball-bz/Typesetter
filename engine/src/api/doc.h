@@ -84,7 +84,14 @@ struct Doc {
   bool done(Stage s) const { return validThrough >= (int)s; }
   void invalidateFrom(Stage s) {
     if (validThrough >= (int)s) validThrough = (int)s - 1;
+    if (s <= Stage::Layout) layoutAsks = 0;  // a new layout: its own rounds
   }
+  // (plan P3-28) how many times this layout has asked for host boxes: one
+  // round settles every box (widths never depend on answers), a second one
+  // the boxes a float's narrowing moved; after that the declared size
+  // stands (box-unsettled)
+  static constexpr u32 kLayoutAsks = 2;
+  u32 layoutAsks = 0;
   // the ops this document was ingested from: a fork rebuilds from them
   std::string opsBytes;
   enum class Status { Ok, NeedMeasure };
@@ -226,6 +233,14 @@ struct Doc {
       if (src && src->st != ResState::Pending)
         f.settleBox(i, src->w, src->h, src->baseline, src->st == ResState::Failed);
     }
+    // (plan P3-28) the boxes measured at a width: a fork at the same widths
+    // asks again for none of them (strings are cloned: same refs)
+    for (const BoxNeed& b : rt.boxNeeds)
+      if (b.st == ResState::Ready) {
+        bool fresh = false;
+        const u32 i = f.rt.needBox(b.kind, b.src, b.availPx, b.span, &fresh);
+        if (fresh) f.settleBox(i, b.w, b.h, b.baseline, false);
+      }
     return true;
   }
 
@@ -388,7 +403,11 @@ struct Doc {
       if (src && !safeImageSrc(strs.get(src)))
         diags.add(Sev::Warning, "image-src", n->span.empty() ? outer : n->span, "image src scheme not allowed");
       else if (src && !(iw > 0 && ih > 0))
-        waitBoxes[pid].push_back(rt.needBox(BoxKind::Image, src, 0, outer));
+      {
+        const u32 i = rt.needBox(BoxKind::Image, src, 0, outer);
+        rt.boxNeeds[i].emit = true;
+        waitBoxes[pid].push_back(i);
+      }
     }
     for (const ContentNode* k : n->kids) scanImageNeeds(k, pid, outer);
   }
@@ -409,24 +428,70 @@ struct Doc {
     if (st == ResState::Ready && !t.spans.empty()) t.merged = mergeSpans(t.toks, t.spans);
     invalidateFrom(Stage::Emit);
   }
-  // Box sizes: 0×0 (or anything not finite and positive) is a failed load:
-  // a placeholder and a warning. The author's own dims stay theirs (emit
-  // fills only what they left out — defect #24).
+  // Box sizes: an image's 0×0 (or anything not finite and positive) is a
+  // failed load: a placeholder and a warning. The author's own dims stay
+  // theirs (emit fills only what they left out — defect #24). An svg or
+  // html box (plan P3-28) is measured at its width: its height (0 is an
+  // empty box) and baseline; failed, it keeps its declared size.
   void settleBox(u32 i, double wPx, double hPx, double baselinePx, bool failed) {
     if (i >= rt.boxNeeds.size() || rt.boxNeeds[i].st != ResState::Pending) return;
     BoxNeed& b = rt.boxNeeds[i];
-    if (!failed && std::isfinite(wPx) && std::isfinite(hPx) && wPx > 0 && hPx > 0) {
+    const bool image = b.kind == BoxKind::Image;
+    if (!failed && std::isfinite(wPx) && std::isfinite(hPx) && (image ? wPx > 0 && hPx > 0 : hPx >= 0)) {
       b.st = ResState::Ready;
-      b.w = wPx;
+      b.w = image ? wPx : b.availPx;
       b.h = hPx;
       b.baseline = std::isfinite(baselinePx) && baselinePx >= 0 && baselinePx <= hPx ? baselinePx : hPx;
     } else {
       b.st = ResState::Failed;
-      diags.addAs(DiagOrigin::Provide, Sev::Warning, "image-load", b.span,
-                  "image failed to load: " + std::string(strs.get(b.src)));
+      if (image)
+        diags.addAs(DiagOrigin::Provide, Sev::Warning, "image-load", b.span,
+                    "image failed to load: " + std::string(strs.get(b.src)));
+      else
+        diags.addAs(DiagOrigin::Provide, Sev::Warning, "box-measure", b.span,
+                    "the host could not measure a raw(measure: 'host') box: its declared size is used");
     }
-    invalidateFrom(Stage::Emit);
+    if (b.emit) invalidateFrom(Stage::Emit);  // (a layout box: Layout is still to run)
   }
+
+  // (plan P3-28; design T6 S14, T9 M11) a stage's way to host boxes, for
+  // one run: an answered box's size; an unanswered one is answered by the
+  // engine when it can (an svg its attributes size), else filed — the run
+  // is provisional (the pull goes on) — or, past the layout's asks, settled
+  // as failed (box-unsettled). Lookup: answers only (the sheets' own layout,
+  // at render).
+  struct BoxPull final : BoxAsker {
+    enum class Mode : u8 { Ask, Settle, Lookup };
+    Doc& d;
+    Mode mode;
+    bool emit;               // its consumer is Emit (an inline box)
+    std::vector<u32> filed;  // the needs this run filed
+    BoxPull(Doc& doc, Mode m, bool atEmit) : d(doc), mode(m), emit(atEmit) {}
+    BoxAnswer ask(BoxKind kind, StrRef ref, double widthPx, Span span) override {
+      if (mode == Mode::Lookup) {
+        const BoxNeed* b = d.rt.box(kind, ref, widthPx);
+        return b && b->st == ResState::Ready ? BoxAnswer{true, b->h, b->baseline} : BoxAnswer{};
+      }
+      bool fresh = false;
+      const u32 i = d.rt.needBox(kind, ref, widthPx, span, &fresh);
+      if (emit) d.rt.boxNeeds[i].emit = true;
+      double h = 0, base = 0;
+      if (fresh && kind == BoxKind::Svg && svgBoxPx(d.strs.get(ref), widthPx, h, base))
+        d.settleBox(i, widthPx, h, base, false);  // the engine's own answer
+      BoxNeed& b = d.rt.boxNeeds[i];
+      if (b.st == ResState::Pending) {
+        if (mode == Mode::Ask) {
+          if (std::find(filed.begin(), filed.end(), i) == filed.end()) filed.push_back(i);
+        } else {
+          b.st = ResState::Failed;
+          d.diags.add(Sev::Warning, "box-unsettled", b.span,
+                      "a raw(measure: 'host') box was still unmeasured after " + std::to_string(kLayoutAsks) +
+                          " rounds (its width kept changing): its declared size is used");
+        }
+      }
+      return b.st == ResState::Ready ? BoxAnswer{true, b.h, b.baseline} : BoxAnswer{};
+    }
+  };
   // the old per-kind provide exports (shims of tsr2_provide): an answer to
   // no pending need is reported, never silently dropped
   void provideImage(u32 id, double wPx, double hPx) {
@@ -661,18 +726,28 @@ struct Doc {
         tops.assign(n, {});
         emitted.assign(n, 0);
       }
-      EmitPass pass(boxtree, arena, strs, styles, cfg, diags, nullptr, &rt);
+      // (plan P3-28) an inline host box files its need while its block
+      // emits: the block waits for it and emits again with the answer
+      BoxPull inlineBoxes(*this, BoxPull::Mode::Ask, /*atEmit=*/true);
+      EmitPass pass(boxtree, arena, strs, styles, cfg, diags, nullptr, &rt, &inlineBoxes);
       bool waiting = false;
       std::vector<MeasureItem> none;
       for (size_t t = 0; t < n; t++) {
         if (emitted[t]) continue;
         const u32 pid = boxtree.tops[t].pid;
-        if (topWaits(pid)) {  // a token or image answer of this block is pending
+        if (topWaits(pid)) {  // a token or box answer of this block is pending
           waiting = true;
           continue;
         }
         diags.beginPid(DiagOrigin::Emit, pid);  // a retry replaces its diagnostics
+        inlineBoxes.filed.clear();
         pass.top(t, tops[t], none);
+        if (!inlineBoxes.filed.empty()) {
+          if (pid >= waitBoxes.size()) waitBoxes.resize(pid + 1);
+          waitBoxes[pid].insert(waitBoxes[pid].end(), inlineBoxes.filed.begin(), inlineBoxes.filed.end());
+          waiting = true;
+          continue;
+        }
         emitted[t] = 1;
       }
       diags.origin = DiagOrigin::Emit;
@@ -696,7 +771,13 @@ struct Doc {
     // layout breaks the paragraphs (plan P1-15): overfull streams report
     // under the Layout origin
     diags.begin(DiagOrigin::Layout);
-    layout = layoutDoc(tops, metrics, strs, cfg, diags, &session().breakMemo);
+    // (plan P3-28) a host box at its width: a run that asks is provisional
+    BoxPull boxes(*this, layoutAsks < kLayoutAsks ? BoxPull::Mode::Ask : BoxPull::Mode::Settle, false);
+    layout = layoutDoc(tops, metrics, strs, cfg, diags, &session().breakMemo, false, &boxes);
+    if (!boxes.filed.empty()) {
+      layoutAsks++;
+      return Status::NeedMeasure;
+    }
     validThrough = (int)Stage::Layout;
     return Status::Ok;
   }
@@ -1002,7 +1083,8 @@ struct Doc {
     LayoutResult own;
     if (media) {
       DiagSink scratch;
-      own = layoutDoc(tops, metrics, strs, cfg, scratch, &session().breakMemo, /*paged=*/true);
+      BoxPull boxes(*this, BoxPull::Mode::Lookup, false);  // (no pull at render: a box at a new width keeps its declared size)
+      own = layoutDoc(tops, metrics, strs, cfg, scratch, &session().breakMemo, /*paged=*/true, &boxes);
     }
     const LayoutResult& lay = media ? own : layout;
     const PageResult pr = paginate(lay, spec, &diags);

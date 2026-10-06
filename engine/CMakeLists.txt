@@ -36,6 +36,7 @@ add_library(tsr_core STATIC
   src/math/ir.cc
   src/math/env.cc
   src/resolve/resolve.cc
+  src/resource/box.cc
   src/resource/codec.cc
   src/resource/resource_table.cc
   src/resource/session.cc

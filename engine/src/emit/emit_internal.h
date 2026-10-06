@@ -21,6 +21,7 @@ struct EmitEnv {
   const ResourceTable* rt = nullptr;      // answered code tokens and image sizes
   const MathEnv* math = nullptr;          // the document's math declarations (plan P2-15)
   const Cascade* cascade = nullptr;       // the rules, for code tokens (plan P3-01)
+  BoxAsker* boxes = nullptr;              // (plan P3-28) inline host boxes: answers, or a need filed
   StrRef spaceRef = 0, hyphenRef = 0, bulletRef = 0;
   StrRef errorSyn = 0;  // "error": error text's data-syn (plan P3-07)
   StrRef emptyRef = 0;  // "": an anchor box's text (plan P3-13)
