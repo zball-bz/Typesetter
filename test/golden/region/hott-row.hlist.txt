@@ -1,64 +1,61 @@
-top pid=0 units=1
- unit table indent=0su cols=5 cells=10
-  cell 0
-   box Other "Types" w=2561su r0 @[17,22)
-   run r0 plain
-  cell 1
-  cell 2
-   box Other "Log" w=1537su r0 @[28,33)
-   disc pen=0.7 w=0su pre="-" 513su kern="gi" r0 @[28,33)
-   box Other "ic" w=1025su r0 @[28,33)
-   run r0 plain
-  cell 3
-   box Other "Sets" w=2049su r0 @[36,40)
-   run r0 plain
-  cell 4
-   box Other "Ho" w=1025su r0 @[43,51)
-   disc pen=0.7 w=0su pre="-" 513su kern="om" r0 @[43,51)
-   box Other "mo" w=1025su r0 @[43,51)
-   disc pen=0.7 w=0su pre="-" 513su kern="ot" r0 @[43,51)
-   box Other "topy" w=2049su r0 @[43,51)
-   run r0 plain
-  cell 5
-   box object o0 math part=0 asc=819su desc=263su "Id_(A)" w=1627su r0 @[52,60)
-   pen 0 r0
-   obj o0 math parts=1 edges=Alpha/Alpha src="Id_(A)" [w=1627su asc=819su desc=263su]
-   run r0 object
-  cell 6
-  cell 7
-   box Other "equal" w=2561su r0 @[66,74)
-   disc pen=0.7 w=0su pre="-" 513su kern="li" r0 @[66,74)
-   box Other "i" w=513su r0 @[66,74)
-   disc pen=0.7 w=0su pre="-" 513su kern="it" r0 @[66,74)
-   box Other "ty" w=1025su r0 @[66,74)
-   glue word w=257su x=1 cap=257su src r0 @[66,74)
-   box object o0 math part=0 asc=377su desc=0su "=" w=774su r1 @[75,78)
-   pen 0 r1
-   obj o0 math parts=1 edges=Alpha/Alpha src="=" [w=774su asc=377su desc=0su]
-   run r0 plain
-   run r1 object
-  cell 8
-   box object o0 math part=0 asc=721su desc=215su "(x,x) | x ∈ A" w=2962su r0 @[81,98)
-   pen 0.85 r1
-   glue objspace w=284su x=0 cap=0su r1 @[81,98)
-   box object o0 math part=1 asc=554su desc=42su w=682su r2 @[81,98)
-   pen 0.8 r3
-   glue objspace w=284su x=0 cap=0su r3 @[81,98)
-   box object o0 math part=2 asc=696su desc=10su w=788su r4 @[81,98)
-   pen 0 r4
-   obj o0 math parts=3 edges=Alpha/Alpha src="(x,x) | x ∈ A" [w=2962su asc=721su desc=215su] [w=682su asc=554su desc=42su glue=284su] [w=788su asc=696su desc=10su glue=284su]
-   run r0 object
-   run r1 plain
-   run r2 object
-   run r3 plain
-   run r4 object
-  cell 9
-   box Other "path" w=2049su r0 @[101,111)
-   glue word w=257su x=1 cap=257su kern="h s" src r0 @[101,111)
-   box Other "space" w=2561su r0 @[101,111)
-   glue word w=257su x=1 cap=257su src r0 @[101,111)
-   box object o0 math part=0 asc=951su desc=10su "A^I" w=1121su r1 @[112,117)
-   pen 0 r1
-   obj o0 math parts=1 edges=Alpha/Alpha src="A^I" [w=1121su asc=951su desc=10su]
-   run r0 plain
-   run r1 object
+top pid=0 units=8
+ unit text indent=0su
+  box Other "Types" w=2561su r0 @[17,22)
+  run r0 plain
+ unit text indent=0su
+  box Other "Log" w=1537su r0 @[28,33)
+  disc pen=0.7 w=0su pre="-" 513su kern="gi" r0 @[28,33)
+  box Other "ic" w=1025su r0 @[28,33)
+  run r0 plain
+ unit text indent=0su
+  box Other "Sets" w=2049su r0 @[36,40)
+  run r0 plain
+ unit text indent=0su
+  box Other "Ho" w=1025su r0 @[43,51)
+  disc pen=0.7 w=0su pre="-" 513su kern="om" r0 @[43,51)
+  box Other "mo" w=1025su r0 @[43,51)
+  disc pen=0.7 w=0su pre="-" 513su kern="ot" r0 @[43,51)
+  box Other "topy" w=2049su r0 @[43,51)
+  run r0 plain
+ unit text indent=0su
+  box object o0 math part=0 asc=819su desc=263su "Id_(A)" w=1627su r0 @[52,60)
+  pen 0 r0
+  obj o0 math parts=1 edges=Alpha/Alpha src="Id_(A)" [w=1627su asc=819su desc=263su]
+  run r0 object
+ unit text indent=0su
+  box Other "equal" w=2561su r0 @[66,74)
+  disc pen=0.7 w=0su pre="-" 513su kern="li" r0 @[66,74)
+  box Other "i" w=513su r0 @[66,74)
+  disc pen=0.7 w=0su pre="-" 513su kern="it" r0 @[66,74)
+  box Other "ty" w=1025su r0 @[66,74)
+  glue word w=257su x=1 cap=257su src r0 @[66,74)
+  box object o0 math part=0 asc=377su desc=0su "=" w=774su r1 @[75,78)
+  pen 0 r1
+  obj o0 math parts=1 edges=Alpha/Alpha src="=" [w=774su asc=377su desc=0su]
+  run r0 plain
+  run r1 object
+ unit text indent=0su
+  box object o0 math part=0 asc=721su desc=215su "(x,x) | x ∈ A" w=2962su r0 @[81,98)
+  pen 0.85 r1
+  glue objspace w=284su x=0 cap=0su r1 @[81,98)
+  box object o0 math part=1 asc=554su desc=42su w=682su r2 @[81,98)
+  pen 0.8 r3
+  glue objspace w=284su x=0 cap=0su r3 @[81,98)
+  box object o0 math part=2 asc=696su desc=10su w=788su r4 @[81,98)
+  pen 0 r4
+  obj o0 math parts=3 edges=Alpha/Alpha src="(x,x) | x ∈ A" [w=2962su asc=721su desc=215su] [w=682su asc=554su desc=42su glue=284su] [w=788su asc=696su desc=10su glue=284su]
+  run r0 object
+  run r1 plain
+  run r2 object
+  run r3 plain
+  run r4 object
+ unit text indent=0su
+  box Other "path" w=2049su r0 @[101,111)
+  glue word w=257su x=1 cap=257su kern="h s" src r0 @[101,111)
+  box Other "space" w=2561su r0 @[101,111)
+  glue word w=257su x=1 cap=257su src r0 @[101,111)
+  box object o0 math part=0 asc=951su desc=10su "A^I" w=1121su r1 @[112,117)
+  pen 0 r1
+  obj o0 math parts=1 edges=Alpha/Alpha src="A^I" [w=1121su asc=951su desc=10su]
+  run r0 plain
+  run r1 object

@@ -9,9 +9,13 @@ top pid=2 leaves=2
     stack figure anchor="fig-a" @[148,237)
       replaced image image unit=0 ragged keep-with-next carry="fig-a" @[148,237)
       paragraph caption unit=1 single-center @[219,228)
-top pid=3 leaves=1
+top pid=3 leaves=2
   stack root gap=1/1 @[239,285)
-    table table unit=0 anchor="tab-a" @[239,285)
+    table table anchor="tab-a" @[239,285)
+      stack cell @[239,285)
+        paragraph para unit=0 carry="tab-a" @[239,285)
+      stack cell @[239,285)
+        paragraph para unit=1 @[239,285)
 top pid=4 leaves=1
   stack root gap=1/1 @[287,307)
     replaced math math unit=0 ragged anchor="eq-a" @[287,307)

@@ -4,12 +4,12 @@ vlist pid=1 y=4301su h=8601su
   glue 1229su
   box unit=0 table y=0su h=4300su
   glue 1229su
-  box unit=1 caption y=5529su h=3072su
+  box unit=4 caption y=5529su h=3072su
 vlist pid=2 y=14131su h=8601su
   glue 1229su
   box unit=0 table y=0su h=4300su
   glue 1229su
-  box unit=1 caption y=5529su h=3072su
+  box unit=4 caption y=5529su h=3072su
 vlist pid=3 y=23961su h=15924su
   glue 1229su
   box unit=0 image y=0su h=3200su

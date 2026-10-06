@@ -27,15 +27,14 @@ top pid=2 units=1
   word "a" w=513su pen=INF @[105,166)
   space w=257su stretch=1 @[105,166)
   word "group." w=3073su pen=INF @[105,166)
-top pid=3 units=1
- unit table indent=0su cols=2 cells=4
-  cell 0
+top pid=3 units=4
+ unit text indent=0su
   word "a" w=513su pen=INF @[168,239)
-  cell 1
+ unit text indent=0su
   word "b" w=513su pen=INF @[168,239)
-  cell 2
+ unit text indent=0su
   word "c" w=513su pen=INF @[168,239)
-  cell 3
+ unit text indent=0su
   word "d" w=513su pen=INF @[168,239)
 top pid=4 units=1
  unit text indent=0su

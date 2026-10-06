@@ -1,0 +1,24 @@
+doc h=25906su
+para pid=0 y=0su w=19200su h=4608su
+  L0 y=0su left=0su w=19200su dw=128su dc=0su join=space blocks=[0,15) @[0,102)
+  L1 y=1536su left=0su w=19200su dw=128su dc=0su join=space blocks=[16,33) @[0,102)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[34,41) @[0,102)
+para pid=1 y=5837su w=19200su h=17304su
+  L0 rule y=0su left=0su w=19200su
+  L1 cell=0 y=307su left=410su w=8780su blocks=[0,1)
+  L2 cell=1 y=307su left=13926su w=4864su blocks=[0,3)
+  L3 cell=1 y=2252su left=13414su w=5376su blocks=[0,5)
+  L4 rule y=4095su left=0su w=19200su
+  L5 cell=2 y=4402su left=410su w=8780su blocks=[0,5)
+  L6 cell=2 y=7167su left=410su w=8780su blocks=[0,7)
+  L7 cell=2 y=8703su left=410su w=8780su blocks=[8,13)
+  L8 cell=2 y=10239su left=410su w=8780su blocks=[14,19)
+  L9 cell=2 y=11775su left=410su w=8780su blocks=[20,21)
+  L10 cell=3 y=4402su left=16230su w=2560su blocks=[0,1)
+  L11 rule y=13618su left=0su w=19200su
+  L12 cell=4 y=13925su left=410su w=8780su blocks=[0,1)
+  L13 code y=13925su left=10010su line=0 [0,10)
+  L14 code y=15461su left=10010su line=1 [0,10)
+  L15 rule y=17304su left=0su w=19200su
+para pid=2 y=24370su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,6) @[422,438)

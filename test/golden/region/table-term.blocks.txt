@@ -43,15 +43,14 @@ top pid=0 units=1
   word "it" w=1025su pen=INF @[0,80)
   space w=257su stretch=1 @[0,80)
   word "lands." w=3073su pen=INF @[0,80)
-top pid=1 units=1
- unit table indent=0su anchor="parts" cols=2 cells=4
-  cell 0
+top pid=1 units=4
+ unit text indent=0su anchor="parts"
   word "Part" w=2049su pen=INF @[115,119)
-  cell 1
+ unit text indent=0su
   word "Note" w=2049su pen=INF @[122,126)
-  cell 2
+ unit text indent=0su
   word "Gear" w=2049su pen=INF @[127,131)
-  cell 3
+ unit text indent=0su anchor="gizmo"
   word "giz" w=1537su pen=INF BOLD @[134,173)
   hyphen bw=513su pen=0.70 BOLD @[134,173)
   word "mo" w=1025su pen=INF BOLD @[134,173)

@@ -12,9 +12,17 @@ top pid=2 leaves=1
   stack root gap=1/1 @[105,166)
     stack group anchor="a1" @[105,166)
       paragraph para unit=0 carry="a1" @[105,166)
-top pid=3 leaves=1
+top pid=3 leaves=4
   stack root gap=1/1 @[168,239)
-    table table unit=0 @[168,239)
+    table table @[168,239)
+      stack cell @[168,239)
+        paragraph para unit=0 @[168,239)
+      stack cell @[168,239)
+        paragraph para unit=1 @[168,239)
+      stack cell @[168,239)
+        paragraph para unit=2 @[168,239)
+      stack cell @[168,239)
+        paragraph para unit=3 @[168,239)
 top pid=4 leaves=1
   stack root gap=1/1 @[241,330)
     paragraph para unit=0 @[241,330)

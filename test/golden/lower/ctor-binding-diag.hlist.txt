@@ -31,20 +31,19 @@ top pid=2 units=1
   glue word w=257su x=1 cap=257su kern="a g" src r0 @[105,166)
   box Other "group." w=3073su r0 @[105,166)
   run r0 plain
-top pid=3 units=1
- unit table indent=0su cols=2 cells=4
-  cell 0
-   box Other "a" w=513su r0 @[168,239)
-   run r0 plain
-  cell 1
-   box Other "b" w=513su r0 @[168,239)
-   run r0 plain
-  cell 2
-   box Other "c" w=513su r0 @[168,239)
-   run r0 plain
-  cell 3
-   box Other "d" w=513su r0 @[168,239)
-   run r0 plain
+top pid=3 units=4
+ unit text indent=0su
+  box Other "a" w=513su r0 @[168,239)
+  run r0 plain
+ unit text indent=0su
+  box Other "b" w=513su r0 @[168,239)
+  run r0 plain
+ unit text indent=0su
+  box Other "c" w=513su r0 @[168,239)
+  run r0 plain
+ unit text indent=0su
+  box Other "d" w=513su r0 @[168,239)
+  run r0 plain
 top pid=4 units=1
  unit text indent=0su
   box Other "Raw" w=1537su r0 @[241,244)

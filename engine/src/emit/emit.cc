@@ -990,26 +990,8 @@ struct Emitter {
         }
         return;
       }
-      case LayouterId::Table: {
-        TableData& t = u.data.emplace<TableData>();
-        int cols = attrInt(n, ArgK::cols, 1);
-        if (cols < 1) cols = 1;
-        t.cols = (u32)cols;
-        std::string_view al = strs.get(attrStr(n, ArgK::align));
-        for (int c = 0; c < cols; c++) t.aligns.push_back(c < (int)al.size() ? (u8)al[(size_t)c] : (u8)'l');
-        for (const ContentNode* row : n->kids) {
-          if (row->kind != Kind::trow) continue;
-          u32 c = 0;
-          for (const ContentNode* cell : row->kids) {
-            if (cell->kind != Kind::tcell || c >= t.cols) continue;
-            u.cells.push_back(cellOf(cell->kids, {}));  // cell content flattens to one inline stream (v1)
-            u.cells.back().span = cell->span;
-            c++;
-          }
-          for (; c < t.cols; c++) u.cells.push_back({});
-        }
+      case LayouterId::Table:  // a container (plan P3-10): its cells' leaves are units
         return;
-      }
       case LayouterId::Replaced:
         switch (b.painter) {
           case Painter::Rule:
@@ -1744,7 +1726,6 @@ void fuseLegacy(std::vector<TopBlock>& tops) {
 static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u, const Interner& strs) {
   const char* k = "text";
   if (b.layouter == LayouterId::Grid) k = "code";
-  else if (b.layouter == LayouterId::Table) k = "table";
   else if (b.layouter == LayouterId::Replaced)
     k = b.painter == Painter::Raw ? "raw" : b.painter == Painter::MathRow ? "math" : b.painter == Painter::Image ? "img" : "rule";
   appendf(out, " unit %s indent=%dsu", k, b.x);
@@ -1764,7 +1745,6 @@ static void unitHeader(std::string& out, const LayoutBlock& b, const FlowUnit& u
     if (g->lineNo) appendf(out, " lineNo=%d", g->lineNo);
     if (!g->hlLines.empty()) appendf(out, " hl=%zu", g->hlLines.size());
   }
-  if (const TableData* t = std::get_if<TableData>(&u.data)) appendf(out, " cols=%u cells=%zu", t->cols, u.cells.size());
   if (const MathData* m = std::get_if<MathData>(&u.data); m && m->box)
     appendf(out, " w=%dsu asc=%dsu desc=%dsu", m->box->w, m->box->asc, m->box->desc);
   if (const ImageData* im = std::get_if<ImageData>(&u.data)) {

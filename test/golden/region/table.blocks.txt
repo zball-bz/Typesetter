@@ -1,15 +1,14 @@
 top pid=0 units=1
  unit text indent=0su anchor="sec"
   word "Data" w=3278su pen=INF BOLD x1.60 @[2,6)
-top pid=1 units=1
- unit table indent=0su anchor="tbl" cols=3 cells=9
-  cell 0
+top pid=1 units=9
+ unit text indent=0su anchor="tbl"
   word "Name" w=2049su pen=INF @[59,63)
-  cell 1
+ unit text indent=0su
   word "Qty" w=1537su pen=INF @[66,69)
-  cell 2
+ unit text indent=0su
   word "Price" w=2561su pen=INF @[72,77)
-  cell 3
+ unit text indent=0su
   word "Al" w=1025su pen=INF @[78,90)
   hyphen bw=513su pen=0.70 @[78,90)
   word "pha" w=1537su pen=INF @[78,90)
@@ -17,18 +16,18 @@ top pid=1 units=1
   word "wid" w=1537su pen=INF @[78,90)
   hyphen bw=513su pen=0.70 @[78,90)
   word "get" w=1537su pen=INF @[78,90)
-  cell 4
+ unit text indent=0su
   word "2" w=513su pen=INF @[93,94)
-  cell 5
+ unit text indent=0su
   word "3.50" w=2049su pen=INF @[97,101)
-  cell 6
+ unit text indent=0su
   cjk "中" w=1025su glue=102su wt=0.6 pen=0 @[102,114)
   cjk "文" w=1025su glue=102su wt=0.6 pen=0 @[102,114)
   cjk "条" w=1025su glue=102su wt=0.6 pen=0 @[102,114)
   cjk "目" w=1025su glue=102su wt=0.6 pen=0 @[102,114)
-  cell 7
+ unit text indent=0su
   cjk "三" w=1025su glue=102su wt=0.6 pen=0 @[117,120)
-  cell 8
+ unit text indent=0su
   word "12.00" w=2561su pen=INF @[123,128)
 top pid=2 units=1
  unit text indent=0su

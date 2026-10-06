@@ -2,49 +2,48 @@ top pid=0 units=1
  unit text indent=0su anchor="sec"
   box Other "Data" w=3278su r0 @[2,6)
   run r0 plain BOLD x1.60
-top pid=1 units=1
- unit table indent=0su anchor="tbl" cols=3 cells=9
-  cell 0
-   box Other "Name" w=2049su r0 @[59,63)
-   run r0 plain
-  cell 1
-   box Other "Qty" w=1537su r0 @[66,69)
-   run r0 plain
-  cell 2
-   box Other "Price" w=2561su r0 @[72,77)
-   run r0 plain
-  cell 3
-   box Other "Al" w=1025su r0 @[78,90)
-   disc pen=0.7 w=0su pre="-" 513su kern="lp" r0 @[78,90)
-   box Other "pha" w=1537su r0 @[78,90)
-   glue word w=257su x=1 cap=257su kern="a w" src r0 @[78,90)
-   box Other "wid" w=1537su r0 @[78,90)
-   disc pen=0.7 w=0su pre="-" 513su kern="dg" r0 @[78,90)
-   box Other "get" w=1537su r0 @[78,90)
-   run r0 plain
-  cell 4
-   box Other "2" w=513su r0 @[93,94)
-   run r0 plain
-  cell 5
-   box Other "3.50" w=2049su r0 @[97,101)
-   run r0 plain
-  cell 6
-   box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[102,114)
-   glue inter w=0su x=0.6 cap=102su r0 @[102,114)
-   box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[102,114)
-   glue inter w=0su x=0.6 cap=102su r0 @[102,114)
-   box Ideo "条" w=1025su wt=0.6 cap=102su r0 @[102,114)
-   glue inter w=0su x=0.6 cap=102su r0 @[102,114)
-   box Ideo "目" w=1025su wt=0.6 cap=102su r0 @[102,114)
-   pen 0 r0
-   run r0 letter-spaced CJK
-  cell 7
-   box Ideo "三" w=1025su wt=0.6 cap=102su r0 @[117,120)
-   pen 0 r0
-   run r0 letter-spaced CJK
-  cell 8
-   box Other "12.00" w=2561su r0 @[123,128)
-   run r0 plain
+top pid=1 units=9
+ unit text indent=0su anchor="tbl"
+  box Other "Name" w=2049su r0 @[59,63)
+  run r0 plain
+ unit text indent=0su
+  box Other "Qty" w=1537su r0 @[66,69)
+  run r0 plain
+ unit text indent=0su
+  box Other "Price" w=2561su r0 @[72,77)
+  run r0 plain
+ unit text indent=0su
+  box Other "Al" w=1025su r0 @[78,90)
+  disc pen=0.7 w=0su pre="-" 513su kern="lp" r0 @[78,90)
+  box Other "pha" w=1537su r0 @[78,90)
+  glue word w=257su x=1 cap=257su kern="a w" src r0 @[78,90)
+  box Other "wid" w=1537su r0 @[78,90)
+  disc pen=0.7 w=0su pre="-" 513su kern="dg" r0 @[78,90)
+  box Other "get" w=1537su r0 @[78,90)
+  run r0 plain
+ unit text indent=0su
+  box Other "2" w=513su r0 @[93,94)
+  run r0 plain
+ unit text indent=0su
+  box Other "3.50" w=2049su r0 @[97,101)
+  run r0 plain
+ unit text indent=0su
+  box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[102,114)
+  glue inter w=0su x=0.6 cap=102su r0 @[102,114)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[102,114)
+  glue inter w=0su x=0.6 cap=102su r0 @[102,114)
+  box Ideo "条" w=1025su wt=0.6 cap=102su r0 @[102,114)
+  glue inter w=0su x=0.6 cap=102su r0 @[102,114)
+  box Ideo "目" w=1025su wt=0.6 cap=102su r0 @[102,114)
+  pen 0 r0
+  run r0 letter-spaced CJK
+ unit text indent=0su
+  box Ideo "三" w=1025su wt=0.6 cap=102su r0 @[117,120)
+  pen 0 r0
+  run r0 letter-spaced CJK
+ unit text indent=0su
+  box Other "12.00" w=2561su r0 @[123,128)
+  run r0 plain
 top pid=2 units=1
  unit text indent=0su
   box Other "To" w=1025su r0 @[138,154)

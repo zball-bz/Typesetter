@@ -91,13 +91,12 @@ top pid=2 units=2
   box Other "ure." w=2049su r1 @[220,229)
   run r0 plain BOLD
   run r1 plain
-top pid=3 units=1
- unit table indent=0su anchor="tab-a" cols=2 cells=2
-  cell 0
-   box Other "x" w=513su r0 @[273,274)
-   run r0 plain
-  cell 1
-   box Other "y" w=513su r0 @[277,278)
-   run r0 plain
+top pid=3 units=2
+ unit text indent=0su anchor="tab-a"
+  box Other "x" w=513su r0 @[273,274)
+  run r0 plain
+ unit text indent=0su
+  box Other "y" w=513su r0 @[277,278)
+  run r0 plain
 top pid=4 units=1
  unit math indent=0su anchor="eq-a" w=3697su asc=967su desc=19su

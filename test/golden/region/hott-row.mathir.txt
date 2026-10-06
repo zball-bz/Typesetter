@@ -1,0 +1,25 @@
+inline pid=0 "Id_(A)"
+  run [0,6)
+    attach [0,6)
+      base: text "Id" op textfont [0,2)
+      sub: run [4,5)
+        sym U+0041 ord [4,5)
+inline pid=0 "="
+  run [0,1)
+    sym U+003D rel [0,1)
+inline pid=0 "(x,x) | x ∈ A"
+  run [0,15)
+    group U+0028 U+0029 [0,6)
+      run [1,4)
+        sym U+0078 ord [1,2)
+        sym U+002C punct [2,3)
+        sym U+0078 ord [3,4)
+    sym U+007C ord [6,7)
+    sym U+0078 ord [8,9)
+    sym U+2208 rel [10,13)
+    sym U+0041 ord [14,15)
+inline pid=0 "A^I"
+  run [0,3)
+    attach [0,3)
+      base: sym U+0041 ord [0,1)
+      sup: sym U+0049 ord [2,3)

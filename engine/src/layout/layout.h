@@ -26,8 +26,11 @@ struct Fragment {
   Su baseline = 0;                   // the baseline below y: the CSS inline formula
                                      //   (half the leading above the extents)
   u32 unitIdx = 0;                   // the leaf (TopTree::leaves)
-  i32 cellIdx = -1;                  // >=0: the leaf's other track (a table cell,
-                                     //   a caption row, a sidecar row)
+  i32 cellIdx = -1;                  // >=0: the leaf's other track (a float's caption
+                                     //   row, a code block's sidecar row)
+  i32 gridCell = -1;                 // (plan P3-10) >=0: the table cell it sits in
+  u32 table = ~0u;                   // the table block it belongs to (its rules too):
+                                     //   one atomic group on paged sheets
   u32 blockBegin = 0, blockEnd = 0;  // trimmed range into the stream's blocks
   u32 itemBegin = 0, itemEnd = 0;    // the same line in the stream's HList
                                      //   items: what layout and paint read
@@ -65,6 +68,7 @@ struct VEntry {
   Su gap = 0, clear = 0;
   Su y = 0, h = 0;
   bool out = false;  // a float: out of flow, no advance
+  u32 block = ~0u;   // a container's box (a table, plan P3-10): its block
 };
 
 struct ParaFrame {

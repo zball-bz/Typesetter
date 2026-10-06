@@ -63,7 +63,16 @@ struct BlockTraits {
 // what a block is (its layouter's case; the dumps' name)
 enum class TraitsId : u8 {
   Root, Para, Caption, Heading, List, Item, Quote, Group, Figure, Code, Table, Image, Float, Math, Raw,
-  Rule, Error, Marker, N
+  Rule, Error, Marker, Cell, N
+};
+
+// (plan P3-10; design T6 TableSpec, v1 form) a table's tracks: `cols`
+// equal Fr(1) columns, each with its halign ('l', 'c', 'r'); its children
+// are one Cell block per grid position, row-major (a short row padded with
+// empty cells)
+struct TableSpec {
+  u32 cols = 0;
+  std::vector<u8> aligns;
 };
 const char* traitsName(TraitsId t);
 
@@ -91,6 +100,7 @@ struct LayoutBlock {
   Span span;
   // (plan P3-09) a float leaf: its caption rows' own block properties
   BlockTraits rowTr;
+  u32 spec = ~0u;  // (plan P3-10) a table: its TopTree::tables entry
   // (plan P3-07) a leaf: the separator after its last line in content text
   // — Para where the semantic page sets it apart, Newline in a tight list
   // item and at the top's end (a new block is a new paragraph anyway)
@@ -103,6 +113,7 @@ struct TopTree {
   u32 pid = 0;
   std::vector<LayoutBlock> blocks;  // pre-order
   std::vector<u32> leaves;          // unit → block
+  std::vector<TableSpec> tables;    // the tables' tracks (plan P3-10)
   u32 lostAnchors = 0;              // labels a third on one leaf (none carries them)
 };
 

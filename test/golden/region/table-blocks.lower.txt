@@ -1,0 +1,13 @@
+lower v1 abi 3d3ccfbb docEnd 439 holes 1 module d77696858b813c20
+piece 0 hole 0 js [169,486)
+block 0 content [0,102)
+  CALL para [0,102)
+    TEXT "Table cells are flow roots: their block content is laid out, not flattened into one line (plan P3-10)." [0,102)
+block 1 content [104,420) user framed holes 0..1
+  CALL para [104,420)
+    HOLE 0 [104,420)
+block 2 content [422,438)
+  CALL para [422,438)
+    TEXT "See " [422,425) raw=0:0,4:3
+    CALL ref [426,437) target="tbl-blocks"
+    TEXT "." [437,438)

@@ -32,22 +32,21 @@ top pid=0 units=1
   glue word w=257su x=1 cap=257su kern="n P" src r0 @[0,65)
   box Other "P3-03)." w=3585su r0 @[0,65)
   run r0 plain
-top pid=1 units=2
- unit table indent=0su anchor="tab-in" cols=2 cells=4
-  cell 0
-   box Other "Name" w=2049su r0 @[128,132)
-   run r0 plain
-  cell 1
-   box Other "Qty" w=1537su r0 @[135,138)
-   run r0 plain
-  cell 2
-   box Other "Al" w=1025su r0 @[139,144)
-   disc pen=0.7 w=0su pre="-" 513su kern="lp" r0 @[139,144)
-   box Other "pha" w=1537su r0 @[139,144)
-   run r0 plain
-  cell 3
-   box Other "2" w=513su r0 @[147,148)
-   run r0 plain
+top pid=1 units=5
+ unit text indent=0su anchor="tab-in"
+  box Other "Name" w=2049su r0 @[128,132)
+  run r0 plain
+ unit text indent=0su
+  box Other "Qty" w=1537su r0 @[135,138)
+  run r0 plain
+ unit text indent=0su
+  box Other "Al" w=1025su r0 @[139,144)
+  disc pen=0.7 w=0su pre="-" 513su kern="lp" r0 @[139,144)
+  box Other "pha" w=1537su r0 @[139,144)
+  run r0 plain
+ unit text indent=0su
+  box Other "2" w=513su r0 @[147,148)
+  run r0 plain
  unit text indent=0su single-center
   box Ideo "表" w=1025su wt=0.6 cap=102su r0 @[157,209)
   pen 0 r0
@@ -88,20 +87,19 @@ top pid=1 units=2
   run r1 plain BOLD
   run r2 blank-bearing BOLD CJK
   run r3 plain
-top pid=2 units=2
- unit table indent=0su anchor="fig-kept" cols=2 cells=4
-  cell 0
-   box Other "Name" w=2049su r0 @[281,285)
-   run r0 plain
-  cell 1
-   box Other "Qty" w=1537su r0 @[288,291)
-   run r0 plain
-  cell 2
-   box Other "Beta" w=2049su r0 @[292,296)
-   run r0 plain
-  cell 3
-   box Other "3" w=513su r0 @[299,300)
-   run r0 plain
+top pid=2 units=5
+ unit text indent=0su anchor="fig-kept"
+  box Other "Name" w=2049su r0 @[281,285)
+  run r0 plain
+ unit text indent=0su
+  box Other "Qty" w=1537su r0 @[288,291)
+  run r0 plain
+ unit text indent=0su
+  box Other "Beta" w=2049su r0 @[292,296)
+  run r0 plain
+ unit text indent=0su
+  box Other "3" w=513su r0 @[299,300)
+  run r0 plain
  unit text indent=0su single-center
   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[309,354)
   pen 0 r0

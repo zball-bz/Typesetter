@@ -14,7 +14,7 @@ using Align = BlockTraits::Align;
 // caption centred, a heading and a block image keeping with what follows)
 constexpr const char* kTraitNames[] = {"root",  "para",  "caption", "heading", "list",  "item",
                                        "quote", "group", "figure",  "code",    "table", "image",
-                                       "float", "math",  "raw",     "rule",    "error", "marker"};
+                                       "float", "math",  "raw",     "rule",    "error", "marker", "cell"};
 static_assert(sizeof kTraitNames / sizeof kTraitNames[0] == (size_t)TraitsId::N, "one name per TraitsId");
 
 // What a group means to the box tree (finding emitter/figure-role-string-
@@ -166,6 +166,26 @@ class Builder {
     return t->blocks[i];
   }
 
+  // a table cell (plan P3-10): kept even when empty — it holds its grid
+  // position; its x is the cell's own (layout places the cell)
+  void cellBlock(const ContentNode* cell, u32 table) {
+    const u32 cb = open(LayouterId::Stack, Painter::None, TraitsId::Cell, cell, table, 0);
+    if (cell) {
+      // all blocks: laid out as blocks; any inline content (a term the
+      // resolver made a group of, beside text) keeps the cell one paragraph
+      bool blocks = !cell->kids.empty();
+      for (const ContentNode* k : cell->kids) blocks = blocks && !isInlineLevel(k->kind);
+      if (blocks) {
+        for (const ContentNode* k : cell->kids) walk(k, cb, 0, 0);
+      } else if (!cell->kids.empty()) {
+        LeafSource s;
+        s.node = cell;
+        leaf(LayouterId::Paragraph, Painter::None, TraitsId::Para, cell, cb, 0, std::move(s));
+      }
+    }
+    t->blocks[cb].end = (u32)t->blocks.size();
+  }
+
   void walk(const ContentNode* n, u32 parent, Su x, StrRef marker) {
     LeafSource s;
     s.node = n;
@@ -249,7 +269,30 @@ class Builder {
         leaf(LayouterId::Replaced, Painter::Rule, TraitsId::Rule, n, parent, x, std::move(s));
         return;
       case Kind::table: {
-        leaf(LayouterId::Table, Painter::None, TraitsId::Table, n, parent, x, std::move(s));
+        // (plan P3-10; design T6 S9) a grid of flow roots: one Cell block per
+        // position, its content laid out by the ordinary layouters at the
+        // column's width (inline content is one paragraph; block content its
+        // blocks) — no longer flattened into one inline stream
+        const u32 tb = open(LayouterId::Table, Painter::None, TraitsId::Table, n, parent, x);
+        TableSpec spec;
+        const int cols = attrInt(n, ArgK::cols, 1);
+        spec.cols = cols < 1 ? 1 : (u32)cols;
+        const StrRef al = attrStr(n, ArgK::align);
+        const std::string_view a = al ? strs.get(al) : std::string_view{};
+        for (u32 c = 0; c < spec.cols; c++) spec.aligns.push_back(c < a.size() ? (u8)a[c] : (u8)'l');
+        t->blocks[tb].spec = (u32)t->tables.size();
+        t->tables.push_back(spec);
+        for (const ContentNode* row : n->kids) {
+          if (row->kind != Kind::trow) continue;
+          u32 c = 0;
+          for (const ContentNode* cell : row->kids) {
+            if (cell->kind != Kind::tcell || c >= spec.cols) continue;
+            cellBlock(cell, tb);
+            c++;
+          }
+          for (; c < spec.cols; c++) cellBlock(nullptr, tb);
+        }
+        t->blocks[tb].end = (u32)t->blocks.size();
         return;
       }
       case Kind::raw:

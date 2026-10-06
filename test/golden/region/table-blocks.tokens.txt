@@ -1,0 +1,3 @@
+[104,110) function "#table"
+[110,420) embedded "({cols: 2, align: \"lr\", label: \"tbl-blocks\"},\n  row(cell(\"Steps\"), cell(list(false, item(\"first step\"), item(\"second step\")))),\n  row(cell(para(\"Two paragraphs.\"), para(\"The second one wraps at the column's narrow width.\")), cell(\"plain\")),\n  row(cell(\"Code\"), cell(codeblock(\"js\", \"let a = 1;\\nlet b = 2;\"))))"
+[426,437) constant "@tbl-blocks"

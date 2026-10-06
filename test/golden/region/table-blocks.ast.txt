@@ -1,0 +1,9 @@
+doc @[0,439)
+  para @[0,102)
+    text @[0,102) str="Table cells are flow roots: their block content is laid out, not flattened into one line (plan P3-10)."
+  para @[104,420)
+    splice @[104,420) expr="table({cols: 2, align: \"lr\", label: \"tbl-blocks\"},\nrow(cell(\"Steps\"), cell(list(false, item(\"first step\"), item(\"second step\")))),\nrow(cell(para(\"Two paragraphs.\"), para(\"The second one wraps at the column's narrow width.\")), cell(\"plain\")),\nrow(cell(\"Code\"), cell(codeblock(\"js\", \"let a = 1;\\nlet b = 2;\"))))"
+  para @[422,438)
+    text @[422,425) str="See "
+    ref @[426,437) target="tbl-blocks"
+    text @[437,438) str="."

@@ -318,6 +318,21 @@ handler becomes a renderable error node. `raw` nodes are block units with
 handler-declared height (default one leading). Deferred: `m.parse` WASM
 re-entry, the indented cell-continuation rule, `#use`.
 
+As built (plan P3-10; design T6 TableSpec, S9): a table is a box-tree
+container of **Cell blocks**, one per grid position (row-major; a short row
+padded with empty cells), each a **flow root**: its content is laid out by
+the ordinary layouters at the column's content width — a cell of inline
+content (or of inline content beside a block, as the resolver's inline
+term) is one paragraph, a cell of blocks lays out its blocks (paragraphs
+with their gaps, lists with markers, code blocks, formulas). Tracks are the
+v1 TableSpec (`cols` equal Fr(1) columns, halign from `align`, padding
+inside the cell, the 64su floor); a cell's paragraphs take their column's
+halign as a LineEnds preset; the row takes its tallest cell; the document's
+floats stay outside a cell. The table is one box of the vertical list and
+one atomic group on paged sheets. Cell lines carry `data-track="cell"`
+(P3-07), the layout dump prints `cell=<grid index>`, and the cells'
+paragraphs are units of their own (their breaks dump as `unit=`).
+
 ### 6.4 Measurement states
 
 MetricStore entries per (strRef × StyleId): `exact | pending(estimate) | invalid`. Bundled-font entries are born `exact` (precompiled metrics). A paragraph is `estimated` if any of its blocks is pending; upgrades re-run break+layout+render for exactly those paragraphs when measurements arrive.

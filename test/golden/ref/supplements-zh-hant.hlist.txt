@@ -116,13 +116,12 @@ top pid=2 units=2
   run r1 plain BOLD
   run r2 blank-bearing BOLD CJK
   run r3 plain
-top pid=3 units=1
- unit table indent=0su anchor="tab-a" cols=2 cells=2
-  cell 0
-   box Other "x" w=513su r0 @[272,273)
-   run r0 plain
-  cell 1
-   box Other "y" w=513su r0 @[276,277)
-   run r0 plain
+top pid=3 units=2
+ unit text indent=0su anchor="tab-a"
+  box Other "x" w=513su r0 @[272,273)
+  run r0 plain
+ unit text indent=0su
+  box Other "y" w=513su r0 @[276,277)
+  run r0 plain
 top pid=4 units=1
  unit math indent=0su anchor="eq-a" w=3697su asc=967su desc=19su

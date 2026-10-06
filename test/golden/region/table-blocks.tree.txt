@@ -1,0 +1,34 @@
+doc @[0,438) [base]
+  para @[0,102) [base]
+    text @[0,102) [base] str="Table cells are flow roots: their block content is laid out, not flattened into one line (plan P3-10)."
+  table @[104,420) [base] cols=2 align="lr" label="tbl-blocks"
+    trow @[104,420) [base]
+      tcell @[104,420) [base]
+        text @[104,420) [base] str="Steps"
+      tcell @[104,420) [base]
+        list @[104,420) [base] ordered=false
+          item @[104,420) [base]
+            para @[104,420) [base]
+              text @[104,420) [base] str="first step"
+          item @[104,420) [base]
+            para @[104,420) [base]
+              text @[104,420) [base] str="second step"
+    trow @[104,420) [base]
+      tcell @[104,420) [base]
+        para @[104,420) [base]
+          text @[104,420) [base] str="Two paragraphs."
+        para @[104,420) [base]
+          text @[104,420) [base] str="The second one wraps at the column's narrow width."
+      tcell @[104,420) [base]
+        text @[104,420) [base] str="plain"
+    trow @[104,420) [base]
+      tcell @[104,420) [base]
+        text @[104,420) [base] str="Code"
+      tcell @[104,420) [base]
+        codeblock @[104,420) [CODEx0.85] lang="js"
+          text @[104,420) [CODEx0.85] str="let a = 1;\nlet b = 2;"
+  para @[422,438) [base]
+    text @[422,425) [base] str="See " raw=0:0,4:3
+    ref @[426,437) [base] target="tbl-blocks"
+      text @[426,437) [base] str="表 1"
+    text @[437,438) [base] str="."

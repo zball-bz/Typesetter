@@ -363,6 +363,7 @@ class DocLayout {
         baseLeading(suRoundPx(c.lineHeight * c.baseSizePx)), paraGap(suRoundPx(c.paraSpacingEm * c.baseSizePx)),
         minWrap(suRoundPx(c.minWrapWidthEm * c.baseSizePx)), em(suRoundPx(c.baseSizePx)), excl(suRoundPx(c.baseSizePx)) {
     bparams.cost = c.cost;
+    ctx = Ctx{0, measure, c.widthPx, &excl, nullptr, false};
   }
 
   void run(const std::vector<TopBlock>& tops) {
@@ -404,6 +405,21 @@ class DocLayout {
   BreakMemo* memo_;  // the Session's KP memo (plan P1-21), or none
   const Su measure, baseLeading, paraGap;
   const Su minWrap;  // layout.minWrapWidth: narrower beside floats, text clears them
+  // (plan P3-10; design T6 flow roots) the container the layouters fill:
+  // the document's measure, or a table cell's content box — a flow root of
+  // its own (the document's floats stay outside), whose leaves keep no
+  // vertical-list entries and whose paragraphs take the column's halign
+  struct Ctx {
+    Su x0 = 0, width = 0;
+    double widthPx = 0;  // its width in px (image sizing)
+    ExclusionMap* excl = nullptr;
+    const LineEnds* halign = nullptr;
+    bool cell = false;
+  };
+  Ctx ctx;
+  Su left(const LayoutBlock& b) const { return ctx.x0 + b.x; }
+  Su width(const LayoutBlock& b) const { return ctx.width - b.x; }
+  double widthPx(const LayoutBlock& b) const { return ctx.widthPx - suToPx(b.x); }
   const Su em;       // the ragged presets' end stretch unit (D-Y01)
   // a block's line-end preset (plan P3-09): its par.align
   LineEnds endsOf(const BlockTraits& tr) const {
@@ -473,7 +489,7 @@ class DocLayout {
   // meets: to their bottom, plus the gap it stands below what precedes it
   Su clearance(const LayoutBlock& b) const {
     const i64 at = (i64)fr->y + py;
-    const i64 c = excl.clearY(at, b.x, measure);
+    const i64 c = ctx.excl->clearY(at, left(b), ctx.x0 + ctx.width);
     return c > at ? (Su)(c + gapBefore - at) : 0;
   }
   // a leaf ends: its anchor on its first fragment (a table's on its first
@@ -489,7 +505,7 @@ class DocLayout {
       fr->lines[at].anchor = b.carry;  // (a paragraph's first line has it already)
       fr->lines[at].anchor2 = b.carry2;
     }
-    fr->vlist.push_back({b.unit, gapBefore, l.clear, (Su)l.top, (Su)(py - l.top), out});
+    if (!ctx.cell) fr->vlist.push_back({b.unit, gapBefore, l.clear, (Su)l.top, (Su)(py - l.top), out});
     gapBefore = 0;
   }
 
@@ -516,18 +532,18 @@ class DocLayout {
   void paragraph(const LayoutBlock& b) {
     const FlowUnit& u = tb->units[b.unit];
     Leaf l = enter(false, b);
-    const Su lineWidth = measure - b.x;
+    const Su lineWidth = width(b);
     // (plan P3-08) its shape beside the floats its lines' bands meet; a
     // list marker's line keeps its marker's room beside a start float; a
     // column narrower than minWrapWidth: the paragraph clears the floats
     ParShape shape(lineWidth);
-    if (!excl.empty()) {
+    if (!ctx.excl->empty()) {
       const Su adv = streamAdvance(u.hl, metrics, baseLeading);
       const Su push = b.marker && b.parent != ~0u && tree->blocks[b.parent].parent != ~0u
                           ? tree->blocks[tree->blocks[b.parent].parent].pad
                           : 0;
       for (int tries = 0; tries < 64; tries++) {
-        shape = excl.shape((i64)fr->y + py, b.x, measure, baseLeading, adv, push);
+        shape = ctx.excl->shape((i64)fr->y + py, left(b), ctx.x0 + ctx.width, baseLeading, adv, push);
         bool narrow = false;
         for (const LineSlot& s : shape.lines) narrow = narrow || s.width < std::min(minWrap, lineWidth);
         if (!narrow) break;
@@ -539,14 +555,14 @@ class DocLayout {
       }
     }
     LinePolicy pol;
-    pol.ends = endsOf(b.tr);
+    pol.ends = ctx.halign ? *ctx.halign : endsOf(b.tr);  // (in a table cell: its column's halign)
     pol.singleCenter = b.tr.singleCenter;
     lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, shape, pol.ends)});
     pol.endSep = b.sepAfter;
     pol.marker = b.marker;
     pol.markerStyle = b.markerStyle;
     pol.anchor = b.carry ? b.carry : u.anchor;  // a block's label, else an inline one
-    py = materializeLines({u.hl, u.blockStart, (u32)u.blocks.size(), lr.breaks.back().r, shape, b.x, b.unit, -1},
+    py = materializeLines({u.hl, u.blockStart, (u32)u.blocks.size(), lr.breaks.back().r, shape, left(b), b.unit, -1},
                           pol, metrics, cfg, baseLeading, py, fr->lines);
     leave(b, l);
   }
@@ -558,11 +574,11 @@ class DocLayout {
       return;
     }
     Leaf l = enter(true, b);
-    const Su lineWidth = measure - b.x;
+    const Su lineWidth = width(b);
     Fragment f;
     f.unitIdx = b.unit;
     f.y = (Su)py;
-    f.left = b.x;
+    f.left = left(b);
     f.width = lineWidth;
     switch (b.painter) {
       case Painter::Rule:
@@ -577,11 +593,11 @@ class DocLayout {
         // block figure image (figure-design.md §3): centred on the measure,
         // advance = display height (float placement is F2)
         Su imgW = 0, imgH = 0;
-        resolveImageSize(std::get<ImageData>(u.data).size, cfg.widthPx - suToPx(b.x), imgW, imgH);
+        resolveImageSize(std::get<ImageData>(u.data).size, widthPx(b), imgW, imgH);
         f.kind = FragKind::Image;
         Su shift = (lineWidth - imgW) / 2;
         if (shift < 0) shift = 0;
-        f.left = b.x + shift;
+        f.left = left(b) + shift;
         f.width = imgW;
         f.height = imgH;
         f.srcSpan = b.span;
@@ -597,7 +613,7 @@ class DocLayout {
         f.kind = FragKind::Math;
         Su shift = (lineWidth - mb->w) / 2;
         if (shift < 0) shift = 0;
-        f.left = b.x + shift;
+        f.left = left(b) + shift;
         f.width = mb->w;
         f.srcSpan = b.span;
         f.height = std::max(mb->asc + mb->desc, baseLeading);
@@ -621,9 +637,9 @@ class DocLayout {
   // blocks that flow beside it narrow by the exclusion
   void floatBox(const LayoutBlock& b, const FlowUnit& u) {
     Leaf l = enter(false, b);
-    const Su lineWidth = measure - b.x;
+    const Su lineWidth = width(b);
     Su imgW = 0, imgH = 0;
-    resolveImageSize(std::get<ImageData>(u.data).size, cfg.widthPx - suToPx(b.x), imgW, imgH);
+    resolveImageSize(std::get<ImageData>(u.data).size, widthPx(b), imgW, imgH);
     i64 captionH = 0;
     // its caption rows: aligned as caption paragraphs say (D-Y05: as a
     // block figure's)
@@ -637,8 +653,8 @@ class DocLayout {
     // of its side it would overlap, below one of the other side when the
     // column between them would be narrower than minWrapWidth
     const bool start = b.floatSide == 1;
-    const Su boxLeft = start ? b.x : b.x + lineWidth - imgW;
-    const i64 top = excl.place((i64)fr->y + py, (i64)imgH + captionH, start, boxLeft, boxLeft + imgW, minWrap,
+    const Su boxLeft = start ? left(b) : left(b) + lineWidth - imgW;
+    const i64 top = ctx.excl->place((i64)fr->y + py, (i64)imgH + captionH, start, boxLeft, boxLeft + imgW, minWrap,
                                paraGap);
     Fragment f;
     f.unitIdx = b.unit;
@@ -665,7 +681,7 @@ class DocLayout {
                              b.unit, (i32)ci},
                             pol, metrics, cfg, baseLeading, cy, fr->lines);
     }
-    excl.add({top, (i64)fr->y + cy, boxLeft, boxLeft + imgW, start});
+    ctx.excl->add({top, (i64)fr->y + cy, boxLeft, boxLeft + imgW, start});
     if ((i64)fr->y + cy > floatBottomAbs) floatBottomAbs = (i64)fr->y + cy;
     leave(b, l, /*out=*/true);  // no advance: the float is out of flow
   }
@@ -674,9 +690,9 @@ class DocLayout {
     const FlowUnit& u = tb->units[b.unit];
     const GridData& g = std::get<GridData>(u.data);
     Leaf l = enter(true, b);
-    const Su lineWidth = measure - b.x;
+    const Su lineWidth = width(b);
     // the sidecar column is layout's (plan P1-16: code.sidecarFrac)
-    const Su sidebarW = g.sidecar ? suRoundPx(b.tr.sidecarFrac * (cfg.widthPx - suToPx(b.x))) : 0;
+    const Su sidebarW = g.sidecar ? suRoundPx(b.tr.sidecarFrac * (widthPx(b))) : 0;
     Su adv = baseLeading;
     Su rowBase = adv / 2;  // a row's baseline, centred (its line-height is the row)
     if (metrics.hasVmet(g.codeStyle)) {
@@ -879,7 +895,7 @@ class DocLayout {
         line.codeHl = hl;
         line.height = adv;
         line.baseline = rowBase;
-        line.left = b.x;
+        line.left = left(b);
         line.width = lineWidthCode;
         line.y = (Su)py;
         if (ri == 0 && g.lineNo > 0) {
@@ -904,7 +920,7 @@ class DocLayout {
         pol.anchor = cell.anchor;
         const ParShape shape(sidebarW);
         const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks[li], shape,
-                                         (Su)(b.x + lineWidthCode + gapSu), b.unit, (i32)li},
+                                         (Su)(left(b) + lineWidthCode + gapSu), b.unit, (i32)li},
                                         pol, metrics, cfg, baseLeading, rowTop, fr->lines);
         if (cy > py) py = cy;  // the equal-height constraint
       }
@@ -913,87 +929,108 @@ class DocLayout {
     leave(b, l);
   }
 
+  // (plan P3-10; design T6 TableSpec, S9) a grid of flow roots: v1 tracks
+  // (`cols` equal columns, the cell padding inside), full-width rules above,
+  // between and below the rows; each cell's content is laid out by the
+  // ordinary layouters at its column's width and halign, then the row
+  // takes its tallest cell. The table is one box of the vertical list and
+  // one atomic group on paged sheets.
   void table(const LayoutBlock& b) {
-    const FlowUnit& u = tb->units[b.unit];
-    const TableData& td = std::get<TableData>(u.data);
+    const u32 self = (u32)(&b - tree->blocks.data());
+    const TableSpec& spec = tree->tables[b.spec];
     Leaf l = enter(true, b);
-    const Su lineWidth = measure - b.x;
-    if (td.cols == 0) {
-      leave(b, l);
-      return;
-    }
-    // three-line-flavoured grid: full-width rules above, between, and
-    // below rows; equal columns; ragged cells aligned per column
-    const Su colW = lineWidth / (Su)td.cols;
-    const Su padX = suRoundPx(cfg.tableCellPadEm * cfg.baseSizePx);  // table.cellPad
-    const Su padY = suRoundPx(cfg.tableRowPadEm * cfg.baseSizePx);   // table.rowPad
-    Su cellW = colW - 2 * padX;
-    if (cellW < kRailMinLineSu) cellW = kRailMinLineSu;
-    // each cell breaks to its content width, set as its column's halign
-    auto cellEnds = [&](u32 col) {
-      const u8 a = td.aligns[col];
-      return LineEnds::preset(a == 'c'   ? LineEnds::Preset::Center
-                              : a == 'r' ? LineEnds::Preset::Right
-                                         : LineEnds::Preset::Left,
-                              em);
-    };
-    for (size_t ci = 0; ci < u.cells.size(); ci++) {
-      const Flow& c = u.cells[ci];
-      cellBreaks.push_back(breakStream(c.blocks, c.hl, ParShape(cellW), cellEnds((u32)(ci % td.cols))));
-      lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
-    }
-    const size_t nRows = u.cells.size() / td.cols;
-    auto addRule = [&](i64 yy) {
-      Fragment rl;
-      rl.unitIdx = b.unit;
-      rl.kind = FragKind::Rule;
-      rl.left = b.x;
-      rl.width = lineWidth;
-      rl.y = (Su)yy;
-      fr->lines.push_back(rl);
-    };
-    addRule(py);
-    for (size_t r = 0; r < nRows; r++) {
-      i64 rowTop = py + padY;
-      i64 rowBottom = rowTop + baseLeading;
-      for (u32 c = 0; c < td.cols; c++) {
-        const Flow& cell = u.cells[r * td.cols + c];
-        LinePolicy pol;
-        pol.ends = cellEnds(c);
-        pol.anchor = cell.anchor;
-        // (plan P3-07) a cell ends with a tab, a row with a row; the table
-        // with its unit's separator
-        pol.endSep = c + 1 < td.cols ? Sep::Tab : r + 1 < nRows ? Sep::Row : b.sepAfter;
-        const Su cellX = (Su)(b.x + (Su)c * colW + padX);
-        const size_t before = fr->lines.size();
-        const ParShape shape(cellW);
-        const i64 cy = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(),
-                                         cellBreaks[r * td.cols + c], shape, cellX, b.unit, (i32)(r * td.cols + c)},
-                                        pol, metrics, cfg, baseLeading, rowTop, fr->lines);
-        if (fr->lines.size() == before) {
-          // an empty cell still holds its place in content text: an empty
-          // line carrying its separator (no items, no height of its own)
-          Fragment e;
-          e.unitIdx = b.unit;
-          e.cellIdx = (i32)(r * td.cols + c);
-          e.y = (Su)rowTop;
-          e.left = cellX;
-          e.width = cellW;
-          e.height = baseLeading;
-          e.baseline = baseLeading / 2;
-          e.ragged = true;
-          e.sep = pol.endSep;
-          e.anchor = cell.anchor;
-          e.srcSpan = cell.span.empty() ? Span{b.span.start, b.span.start} : cell.span;
-          e.spanned = true;
-          fr->lines.push_back(e);
-        }
-        if (cy > rowBottom) rowBottom = cy;
+    const Su lineWidth = width(b);
+    std::vector<u32> cells;
+    for (u32 k = self + 1; k < b.end; k = tree->blocks[k].end) cells.push_back(k);
+    // a valid unit for its own fragments (rules, empty cells): its first
+    // leaf's, else the top's first
+    u32 unit0 = 0, lastLeaf = ~0u;
+    for (u32 k = self + 1; k < b.end; k++)
+      if (tree->blocks[k].leaf()) {
+        if (lastLeaf == ~0u) unit0 = tree->blocks[k].unit;
+        lastLeaf = k;
       }
-      py = rowBottom + padY;
+    const Sep endSep = lastLeaf != ~0u ? tree->blocks[lastLeaf].sepAfter : Sep::Newline;
+    const size_t first = fr->lines.size();
+    if (spec.cols > 0 && !cells.empty()) {
+      const Su colW = lineWidth / (Su)spec.cols;
+      const Su padX = suRoundPx(cfg.tableCellPadEm * cfg.baseSizePx);  // table.cellPad
+      const Su padY = suRoundPx(cfg.tableRowPadEm * cfg.baseSizePx);   // table.rowPad
+      Su cellW = colW - 2 * padX;
+      if (cellW < kRailMinLineSu) cellW = kRailMinLineSu;
+      const size_t nRows = cells.size() / spec.cols;
+      auto addRule = [&](i64 yy) {
+        Fragment rl;
+        rl.unitIdx = unit0;
+        rl.kind = FragKind::Rule;
+        rl.left = left(b);
+        rl.width = lineWidth;
+        rl.y = (Su)yy;
+        fr->lines.push_back(rl);
+      };
       addRule(py);
+      for (size_t r = 0; r < nRows; r++) {
+        const i64 rowTop = py + padY;
+        i64 rowBottom = rowTop + baseLeading;
+        for (u32 c = 0; c < spec.cols; c++) {
+          const u32 k = (u32)(r * spec.cols + c);
+          const u8 a = spec.aligns[c];
+          const LineEnds halign = LineEnds::preset(a == 'c'   ? LineEnds::Preset::Center
+                                                   : a == 'r' ? LineEnds::Preset::Right
+                                                              : LineEnds::Preset::Left,
+                                                   em);
+          // (plan P3-07) a cell ends with a tab, a row with a row; the table
+          // with what follows its last leaf
+          const Sep cellSep = c + 1 < spec.cols ? Sep::Tab : r + 1 < nRows ? Sep::Row : endSep;
+          const Su cellX = (Su)(left(b) + (Su)c * colW + padX);
+          const size_t before = fr->lines.size();
+          // the cell: a flow root at its content box
+          ExclusionMap cellFloats(em);
+          const Ctx saved = ctx;
+          const i64 savedPy = py;
+          const Su savedGap = gapBefore;
+          ctx = Ctx{cellX, cellW, suToPx(cellW), &cellFloats, &halign, true};
+          py = rowTop;
+          gapBefore = 0;
+          block(cells[k]);
+          const i64 cy = py;
+          ctx = saved;
+          py = savedPy;
+          gapBefore = savedGap;
+          if (fr->lines.size() == before) {
+            // an empty cell still holds its place in content text: an empty
+            // line carrying its separator (no items, no height of its own)
+            Fragment e;
+            e.unitIdx = unit0;
+            e.y = (Su)rowTop;
+            e.left = cellX;
+            e.width = cellW;
+            e.height = baseLeading;
+            e.baseline = baseLeading / 2;
+            e.ragged = true;
+            e.anchor = tree->blocks[cells[k]].anchor;
+            const Span sp = tree->blocks[cells[k]].span;
+            e.srcSpan = sp.empty() ? Span{b.span.start, b.span.start} : sp;
+            e.spanned = true;
+            fr->lines.push_back(e);
+          }
+          // its last line ends the cell
+          for (size_t q = fr->lines.size(); q-- > before;)
+            if (fr->lines[q].kind == FragKind::Line || fr->lines[q].kind == FragKind::CodeRow ||
+                fr->lines[q].kind == FragKind::Math) {
+              fr->lines[q].sep = cellSep;
+              break;
+            }
+          for (size_t q = before; q < fr->lines.size(); q++) fr->lines[q].gridCell = (i32)k;
+          if (cy > rowBottom) rowBottom = cy;
+        }
+        py = rowBottom + padY;
+        addRule(py);
+      }
     }
-    leave(b, l);
+    for (size_t q = first; q < fr->lines.size(); q++) fr->lines[q].table = self;
+    if (!ctx.cell) fr->vlist.push_back({unit0, gapBefore, l.clear, (Su)l.top, (Su)(py - l.top), false, self});
+    gapBefore = 0;
   }
 };
 const DocLayout::Fn DocLayout::kLayouters[] = {&DocLayout::paragraph, &DocLayout::stack, &DocLayout::replaced,
@@ -1053,9 +1090,9 @@ std::string dumpLayout(const LayoutResult& lr) {
                 l.left, l.width, l.height);
         continue;
       }
-      if (l.cellIdx >= 0) {
+      if (l.cellIdx >= 0 || l.gridCell >= 0) {
         appendf(out, "  L%zu cell=%d y=%dsu left=%dsu w=%dsu blocks=[%u,%u)%s\n",
-                i, l.cellIdx, l.y, l.left, l.width, l.blockBegin, l.blockEnd,
+                i, l.gridCell >= 0 ? l.gridCell : l.cellIdx, l.y, l.left, l.width, l.blockBegin, l.blockEnd,
                 l.overfull ? " overfull" : "");
         continue;
       }
@@ -1079,7 +1116,7 @@ std::string dumpVList(const LayoutResult& lr, const std::vector<TopBlock>& tops)
     for (const VEntry& v : fr.vlist) {
       if (v.gap) appendf(out, "  glue %dsu\n", v.gap);
       if (v.clear) appendf(out, "  clear %dsu\n", v.clear);
-      const LayoutBlock& b = t.blocks[t.leaves[v.unit]];
+      const LayoutBlock& b = v.block != ~0u ? t.blocks[v.block] : t.blocks[t.leaves[v.unit]];
       appendf(out, "  box unit=%u %s y=%dsu h=%dsu%s\n", v.unit, traitsName(b.traits), v.y, v.h,
               v.out ? " out-of-flow" : "");
     }

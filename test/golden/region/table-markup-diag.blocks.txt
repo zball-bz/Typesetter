@@ -1,16 +1,15 @@
-top pid=0 units=1
- unit table indent=0su cols=2 cells=6
-  cell 0
+top pid=0 units=6
+ unit text indent=0su
   word "a" w=513su pen=INF BOLD @[18,23)
   space w=257su stretch=1 BOLD @[18,23)
   word "|" w=513su pen=INF BOLD @[18,23)
   space w=257su stretch=1 BOLD @[18,23)
   word "b" w=513su pen=INF BOLD @[18,23)
-  cell 1
+ unit text indent=0su
   word "c" w=513su pen=INF @[27,28)
-  cell 2
+ unit text indent=0su
   word "x | y" w=1742su pen=INF CODE x0.85 @[29,36)
-  cell 3
+ unit text indent=0su
   word "|" w=513su pen=INF @[39,49)
   space w=257su stretch=1 @[39,49)
   word "lit" w=1537su pen=INF @[39,49)
@@ -18,7 +17,7 @@ top pid=0 units=1
   word "er" w=1025su pen=INF @[39,49)
   hyphen bw=513su pen=0.70 @[39,49)
   word "al" w=1025su pen=INF @[39,49)
-  cell 4
+ unit text indent=0su
   word "a" w=513su pen=INF BOLD @[51,66)
   space w=257su stretch=1 BOLD @[51,66)
   word "line" w=2049su pen=INF BOLD @[51,66)
@@ -26,5 +25,5 @@ top pid=0 units=1
   word "cross" w=2561su pen=INF BOLD @[51,66)
   hyphen bw=513su pen=0.70 BOLD @[51,66)
   word "ing" w=1537su pen=INF BOLD @[51,66)
-  cell 5
+ unit text indent=0su
   word "d" w=513su pen=INF @[70,71)

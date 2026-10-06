@@ -22,7 +22,7 @@ PageResult paginate(const LayoutResult& lr, const std::vector<TopBlock>& tops, d
     const TopTree& tree = *tops[p].tree;
     auto leafOf = [&](const Fragment& l) -> const LayoutBlock& { return tree.blocks[tree.leaves[l.unitIdx]]; };
     auto paraLine = [&](const Fragment& l) {
-      return l.kind == FragKind::Line && l.cellIdx < 0 && leafOf(l).layouter == LayouterId::Paragraph;
+      return l.kind == FragKind::Line && l.cellIdx < 0 && l.table == ~0u && leafOf(l).layouter == LayouterId::Paragraph;
     };
     // per-leaf paragraph line counts (widow/orphan bookkeeping)
     std::vector<u32> unitLines(tree.leaves.size(), 0), unitSeen(tree.leaves.size(), 0);
@@ -40,8 +40,11 @@ PageResult paginate(const LayoutResult& lr, const std::vector<TopBlock>& tops, d
       band.bot = band.top + l.height;
       size_t j = i + 1;
       auto sameUnit = [&](size_t k) { return k < fr.lines.size() && fr.lines[k].unitIdx == l.unitIdx; };
-      if (b.layouter == LayouterId::Table || b.floatSide != 0) {
-        // the whole leaf is atomic (a table with its rules; a float with its caption)
+      if (l.table != ~0u) {
+        // a table with its rules and cells is atomic (plan P3-10: its group)
+        while (j < fr.lines.size() && fr.lines[j].table == l.table) j++;
+      } else if (b.floatSide != 0) {
+        // the whole leaf is atomic (a float with its caption)
         while (sameUnit(j)) j++;
       } else if (b.layouter == LayouterId::Grid) {
         // one logical code line: its wrapped rows + zipped sidecar rows

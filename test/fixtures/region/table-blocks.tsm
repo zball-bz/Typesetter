@@ -1,0 +1,8 @@
+Table cells are flow roots: their block content is laid out, not flattened into one line (plan P3-10).
+
+#table({cols: 2, align: "lr", label: "tbl-blocks"},
+  row(cell("Steps"), cell(list(false, item("first step"), item("second step")))),
+  row(cell(para("Two paragraphs."), para("The second one wraps at the column's narrow width.")), cell("plain")),
+  row(cell("Code"), cell(codeblock("js", "let a = 1;\nlet b = 2;"))))
+
+See @tbl-blocks.

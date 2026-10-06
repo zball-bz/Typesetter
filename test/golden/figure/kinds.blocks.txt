@@ -31,17 +31,16 @@ top pid=0 units=1
   word "(plan" w=2561su pen=INF @[0,65)
   space w=257su stretch=1 @[0,65)
   word "P3-03)." w=3585su pen=INF @[0,65)
-top pid=1 units=2
- unit table indent=0su anchor="tab-in" cols=2 cells=4
-  cell 0
+top pid=1 units=5
+ unit text indent=0su anchor="tab-in"
   word "Name" w=2049su pen=INF @[128,132)
-  cell 1
+ unit text indent=0su
   word "Qty" w=1537su pen=INF @[135,138)
-  cell 2
+ unit text indent=0su
   word "Al" w=1025su pen=INF @[139,144)
   hyphen bw=513su pen=0.70 @[139,144)
   word "pha" w=1537su pen=INF @[139,144)
-  cell 3
+ unit text indent=0su
   word "2" w=513su pen=INF @[147,148)
  unit text indent=0su single-center
   cjk "表" w=1025su glue=102su wt=0.6 pen=0 BOLD @[157,209)
@@ -78,15 +77,14 @@ top pid=1 units=2
   word "ta" w=1025su pen=INF @[157,209)
   hyphen bw=513su pen=0.70 @[157,209)
   word "ble." w=2049su pen=INF @[157,209)
-top pid=2 units=2
- unit table indent=0su anchor="fig-kept" cols=2 cells=4
-  cell 0
+top pid=2 units=5
+ unit text indent=0su anchor="fig-kept"
   word "Name" w=2049su pen=INF @[281,285)
-  cell 1
+ unit text indent=0su
   word "Qty" w=1537su pen=INF @[288,291)
-  cell 2
+ unit text indent=0su
   word "Beta" w=2049su pen=INF @[292,296)
-  cell 3
+ unit text indent=0su
   word "3" w=513su pen=INF @[299,300)
  unit text indent=0su single-center
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[309,354)

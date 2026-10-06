@@ -1,3 +1,15 @@
-top pid=0 leaves=1
+top pid=0 leaves=6
   stack root gap=1/1 @[0,79)
-    table table unit=0 @[0,79)
+    table table @[0,79)
+      stack cell @[0,79)
+        paragraph para unit=0 @[0,79)
+      stack cell @[0,79)
+        paragraph para unit=1 @[0,79)
+      stack cell @[0,79)
+        paragraph para unit=2 @[0,79)
+      stack cell @[0,79)
+        paragraph para unit=3 @[0,79)
+      stack cell @[0,79)
+        paragraph para unit=4 @[0,79)
+      stack cell @[0,79)
+        paragraph para unit=5 @[0,79)

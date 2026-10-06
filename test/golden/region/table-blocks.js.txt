@@ -1,0 +1,14 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {cell, codeblock, item, list, para, row, table} = __rt.std;
+return (async () => {
+const __h = [
+() => (table({cols: 2, align: "lr", label: "tbl-blocks"},
+row(cell("Steps"), cell(list(false, item("first step"), item("second step")))),
+row(cell(para("Two paragraphs."), para("The second one wraps at the column's narrow width.")), cell("plain")),
+row(cell("Code"), cell(codeblock("js", "let a = 1;\nlet b = 2;"))))),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

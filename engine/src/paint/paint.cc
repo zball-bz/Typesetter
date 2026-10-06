@@ -335,10 +335,8 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.ragged = l.ragged || l.noGlue;
         // (plan P3-07) a second track's line: a table cell, a code block's
         // sidecar row, a float's caption row (data-cell retired)
-        if (l.cellIdx >= 0)
-          n.track = b.layouter == LayouterId::Table  ? "cell"
-                    : b.layouter == LayouterId::Grid ? "sidecar"
-                                                     : "caption";
+        if (l.gridCell >= 0) n.track = "cell";
+        else if (l.cellIdx >= 0) n.track = b.layouter == LayouterId::Grid ? "sidecar" : "caption";
         n.overfull = l.overfull;
         n.wordSpacingPx = l.wordDeltaPx;
         n.marker = l.marker;

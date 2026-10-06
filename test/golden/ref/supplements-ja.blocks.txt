@@ -74,11 +74,10 @@ top pid=2 units=2
   word "fig" w=1537su pen=INF @[208,217)
   hyphen bw=513su pen=0.70 @[208,217)
   word "ure." w=2049su pen=INF @[208,217)
-top pid=3 units=1
- unit table indent=0su anchor="tab-a" cols=2 cells=2
-  cell 0
+top pid=3 units=2
+ unit text indent=0su anchor="tab-a"
   word "x" w=513su pen=INF @[261,262)
-  cell 1
+ unit text indent=0su
   word "y" w=513su pen=INF @[265,266)
 top pid=4 units=1
  unit math indent=0su anchor="eq-a" w=3697su asc=967su desc=19su

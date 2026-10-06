@@ -1,0 +1,10 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="102">Table cells are flow roots: their block content is laid out, not flattened into one line (plan P3-10).</p>
+<table data-pid="1" data-s="104" data-e="420" id="tsr-tbl-blocks">
+<tr><td>Steps</td><td style="text-align:right">first stepsecond step</td></tr>
+<tr><td>Two paragraphs.The second one wraps at the column&#39;s narrow width.</td><td style="text-align:right">plain</td></tr>
+<tr><td>Code</td><td style="text-align:right">let a = 1;
+let b = 2;</td></tr>
+</table>
+<p data-pid="2" data-s="422" data-e="438">See <a href="#tsr-tbl-blocks">表 1</a>.</p>
+</div>

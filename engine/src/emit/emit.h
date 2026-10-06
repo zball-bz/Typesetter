@@ -145,10 +145,6 @@ struct GridData {  // a code block (verbatim-design.md)
   // (or the body) as a whole; empty when the code has no source
   std::vector<Span> lineSpans;
 };
-struct TableData {
-  u32 cols = 0;
-  std::vector<u8> aligns;  // per column 'l'/'c'/'r'
-};
 struct RawData {  // handler-declared passthrough markup and its height
   StrRef html = 0;
   double hPx = 0;
@@ -169,7 +165,7 @@ struct MathData {  // a display formula
   Span span;
   StyleId style = 0;  // its context style (paint: colour)
 };
-using LeafData = std::variant<std::monostate, RuleData, GridData, TableData, RawData, ImageData, MathData>;
+using LeafData = std::variant<std::monostate, RuleData, GridData, RawData, ImageData, MathData>;
 
 // A leaf's shaped content: its inline stream (paragraphs), its other tracks
 // (`cells`: a table's cells, a float's caption rows, a code block's sidecar
