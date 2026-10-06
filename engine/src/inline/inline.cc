@@ -525,6 +525,14 @@ struct InlineParser {
       hs = ke.headStart;
       he = ke.headEnd;
     }
+    if (branches.empty()) {  // its first body never closes (fuzz finding): an error, not a form
+      AstNode* e = A.node<ErrorP>(AstKind::Error, span(hash, kh.bodyOpen + 1));
+      e->str = strs.intern("keyword-form");
+      side<ErrorP>(e).message = strs.intern("#" + std::string(kKeywords[kh.kw].name) + "'s body is not closed");
+      pushItem(e);
+      i = kh.bodyOpen + 1;
+      return;
+    }
     AstNode* k = A.node(AstKind::Keyword, span(hash, end));
     k->str = strs.intern(kKeywords[kh.kw].name);
     A.setKids(k, branches);

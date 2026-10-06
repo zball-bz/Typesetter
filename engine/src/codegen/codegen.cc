@@ -98,6 +98,7 @@ struct Gen {
         break;
       case AstKind::Keyword: {
         if (frag) return 0;
+        if (!n->nkids) return 0;
         if (strs.get(n->str) != "if") return 1;  // a loop: one hole, its body a table of its own
         for (const AstNode* br : n->kids())
           c += (isElse(side<BranchP>(br).head) ? 0 : 1) + (declares(br) ? 1 : kidHoles(br));
@@ -374,6 +375,10 @@ struct Gen {
   // evaluated per iteration.
   bool keyword(const AstNode* n) {
     std::string_view kw = strs.get(n->str);
+    if (!n->nkids) {  // (the parser makes none: an unclosed body is an error)
+      emptyText();
+      return false;
+    }
     if (kw != "if") return ownTable(n->kids()[0], n, kw);
     size_t at = w.op(Lop::IF);
     w.u(n->nkids);
