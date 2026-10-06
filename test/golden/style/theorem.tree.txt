@@ -1,0 +1,30 @@
+doc @[547,984) [base]
+  heading @[547,568) [BOLDx1.60] level=1 label="h-1"
+    text @[549,568) [BOLDx1.60] str="Framed environments"
+  para @[570,668) [base]
+    text @[570,668) [base] str="A paragraph before the theorem, set at the measure; the theorem below stands a little further off."
+  group @[670,887) [base] role="theorem" label="thm-a"
+    para @[696,812) [base]
+      text @[696,812) [BOLD] str="Theorem 1."
+      text @[696,812) [base] str=" "
+      text @[696,812) [base] str="Every bounded monotone sequence of real numbers converges. Its limit is the supremum of its terms when it increases."
+    list @[814,877) [base] ordered=false start=1
+      item @[814,856) [base]
+        para @[816,856) [base]
+          text @[816,856) [base] str="a list inside the frame keeps its indent"
+      item @[857,877) [base]
+        para @[859,877) [base]
+          text @[859,877) [base] str="within the padding"
+  para @[889,984) [base]
+    text @[889,903) [base] str="The text after " raw=0:0,15:14
+    ref @[904,910) [base] target="thm-a"
+      text @[904,910) [base] str="Theorem 1"
+    text @[911,984) [base] str=" resumes at the paragraph gap or the theorem's space, whichever is larger." raw=0:0,1:0
+decl counter name="thm" flow=0 @[0,545) ext.row="{}"
+decl element name="theorem" flow=0 @[0,545) ext.row="{\"counter\":\"thm\",\"supplement\":{\"en\":\"Theorem \"},\"sites\":[{\"where\":\"prepend\",\"at\":\"first-para\",\"template\":{\"$t\":0}}],\"numbering\":\"always\"}"
+  seq @[0,0) [base]
+    styled @[0,0) [BOLD]
+      slot @[0,0) [BOLD] name="supplement"
+      slot @[0,0) [BOLD] name="number"
+      text @[0,0) [BOLD] str="."
+    text @[0,0) [base] str=" "

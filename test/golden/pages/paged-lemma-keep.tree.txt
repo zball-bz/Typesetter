@@ -1,0 +1,13 @@
+doc @[215,591) [base]
+  heading @[215,222) [BOLDx1.60] level=1 label="h-1"
+    text @[217,222) [BOLDx1.60] str="Keeps"
+  para @[224,364) [base]
+    text @[224,364) [base] str="Filler paragraph one fills most of the first sheet with ordinary running text so that the lemma comes close to the bottom edge of the sheet."
+  group @[366,425) [base] role="lemma"
+    para @[374,417) [base]
+      text @[374,417) [base] str="A lemma that fits at the foot of the sheet."
+  group @[427,573) [base] role="proof"
+    para @[435,565) [base]
+      text @[435,565) [base] str="Its proof, three lines long, which the lemma keeps with: neither is left alone at a sheet's foot, and the proof itself is not cut."
+  para @[575,591) [base]
+    text @[575,591) [base] str="After the proof."

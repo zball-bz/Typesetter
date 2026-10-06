@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 // Run style properties (plans P1-02, P2-08): the $.style.push / #style / style:
 // keys and their value domains.
-export const STYLE_KEYS = Object.freeze({"weight":"weight","italic":"italic","decoration":"decoration","fontRole":"fontRole","baseline":"baseline","code.hang":"hang","size":"size","font":"font","lang":"lang","color":"color","sizePx":"sizePx","par.indent":"parIndent","par.align":"parAlign","par.hyphenate":"parHyphenate","par.singleLine":"parSingleLine","block.gap":"blockGap","block.indent":"blockIndent","block.keepWithNext":"keepWithNext","list.marker":"listMarker","codeblock.snapKerning":"snapKerning","codeblock.sidecarFrac":"sidecarFrac","codeblock.contIndent":"contIndent","text.features":"features","text.punct":"punct"});
+export const STYLE_KEYS = Object.freeze({"weight":"weight","italic":"italic","decoration":"decoration","fontRole":"fontRole","baseline":"baseline","code.hang":"hang","size":"size","font":"font","lang":"lang","color":"color","sizePx":"sizePx","par.indent":"parIndent","par.align":"parAlign","par.hyphenate":"parHyphenate","par.singleLine":"parSingleLine","block.gap":"blockGap","block.indent":"blockIndent","block.keepWithNext":"keepWithNext","list.marker":"listMarker","codeblock.snapKerning":"snapKerning","codeblock.sidecarFrac":"sidecarFrac","codeblock.contIndent":"contIndent","keep":"keep","space.before":"spaceBefore","space.after":"spaceAfter","break.before":"breakBefore","break.after":"breakAfter","par.hang":"parHang","par.hangAfter":"parHangAfter","box.padding":"boxPadding","box.border":"boxBorder","box.borderColor":"boxBorderColor","box.background":"boxBackground","media":"media","beside":"beside","breaker.tolerance":"breakerTolerance","breaker.emergencyStretch":"breakerStretch","place.float":"placeFloat","text.features":"features","text.punct":"punct"});
 export const STYLE_SUGAR = Object.freeze({"bold":["weight",700],"italic":["italic",true],"underline":["decoration",1],"overline":["decoration",2],"strike":["decoration",4]});
 export const STYLE_FLAGS = Object.freeze({"decoration":{"under":1,"over":2,"strike":4}});
 export const DOMAINS = Object.freeze({
@@ -18,6 +18,7 @@ export const DOMAINS = Object.freeze({
   extname: Object.freeze({ max: 32, re: /^(?:[a-z][a-z0-9\-]*)$/u }),
   len: Object.freeze({ max: 16, re: /^(?:0|[0-9]{1,4}(\.[0-9]{1,4})?(em|px))$/u }),
   gap: Object.freeze({ max: 16, re: /^(?:[0-9]{1,3}\/[1-9][0-9]{0,2}|0|[0-9]{1,4}(\.[0-9]{1,4})?(em|px))$/u }),
+  lens: Object.freeze({ max: 80, re: /^(?:(0|[0-9]{1,4}(\.[0-9]{1,4})?(em|px))( (0|[0-9]{1,4}(\.[0-9]{1,4})?(em|px))){0,3})$/u }),
   where: Object.freeze({ max: 256, re: /^(?:[A-Za-z_][A-Za-z0-9_]*=[^;\x00-\x1f]*(;[A-Za-z_][A-Za-z0-9_]*=[^;\x00-\x1f]*)*)$/u }),
   features: Object.freeze({ max: 256, re: /^(?:( *("[A-Za-z0-9]{4}"|'[A-Za-z0-9]{4}')( +(on|off|[0-9]{1,3}))?( *, *("[A-Za-z0-9]{4}"|'[A-Za-z0-9]{4}')( +(on|off|[0-9]{1,3}))?)* *)?)$/u }),
 });

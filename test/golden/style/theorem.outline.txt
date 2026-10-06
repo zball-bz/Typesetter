@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Framed environments","label":null,"span":[547,568]}],"regions":[{"name":"theorem","label":"thm-a","span":[670,887]}],"fences":[],"labels":[{"id":"thm-a","rule":"region","span":[670,695]}],"diagnostics":[]}

@@ -1,0 +1,12 @@
+doc @[0,985)
+  code-block @[0,545) js="\n  // a theorem environment (plan P3-14): numbered with a run-in label, framed\n  // by a rule at its start edge, set apart, kept together on paged sheets\n  $.element('theorem', {counter: {name: 'thm'}, supplement: {en: 'Theorem '},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}]})\n  $.set({role: 'theorem'}, {box: {padding: '0.4em 0.8em', border: '0 0 0 2px', borderColor: '#2f5d8a', background: '#f4f7fb'},\n    keep: 'together', space: {before: '1.5em', after: '1.5em'}})\n"
+  heading1 @[547,568)
+  para @[570,668) lines=1
+  region @[670,887) name="theorem"
+    para @[696,812) lines=1
+    list bullet start=1 @[814,877)
+      item @[814,856)
+        para @[816,856) lines=1
+      item @[857,877)
+        para @[859,877) lines=1
+  para @[889,984) lines=1

@@ -366,8 +366,9 @@ Su streamAdvance(const HList& h, const MetricStore& metrics, Su baseLeading) {
 // the floats of the ExclusionMap.
 class DocLayout {
  public:
-  DocLayout(const MetricStore& m, Interner& s, const LayoutSettings& c, DiagSink& d, LayoutResult& r, BreakMemo* memo)
-      : metrics(m), strs(s), cfg(c), diags(d), lr(r), memo_(memo), measure(suFloorPx(c.widthPx)),
+  DocLayout(const MetricStore& m, Interner& s, const LayoutSettings& c, DiagSink& d, LayoutResult& r, BreakMemo* memo,
+            bool paged)
+      : metrics(m), strs(s), cfg(c), diags(d), lr(r), memo_(memo), paged_(paged), measure(suFloorPx(c.widthPx)),
         baseLeading(suRoundPx(c.lineHeight * c.baseSizePx)), paraGap(suRoundPx(c.paraSpacingEm * c.baseSizePx)),
         minWrap(suRoundPx(c.minWrapWidthEm * c.baseSizePx)), em(suRoundPx(c.baseSizePx)), excl(suRoundPx(c.baseSizePx)) {
     bparams.cost = c.cost;
@@ -377,6 +378,7 @@ class DocLayout {
   void run(const std::vector<TopBlock>& tops) {
     i64 y = 0;
     bool gap = false;  // a gap before the next top: an in-flow one came before
+    Su prevAfter = 0;  // the space the top before asks below it
     for (size_t p = 0; p < tops.size(); p++) {
       tb = &tops[p];
       tree = tb->tree;
@@ -384,8 +386,10 @@ class DocLayout {
       frame.pid = tb->pid;
       frame.w = measure;
       // the document's stack: a paragraph gap between tops — none after a
-      // top that is only out of flow (a float: zero advance, plan P3-08)
-      const Su topGap = gap ? paraGap : 0;
+      // top that is only out of flow (a float: zero advance, plan P3-08) —
+      // or the space either side asks for (plan P3-14)
+      Su topGap = gap ? std::max({paraGap, prevAfter, spaceBefore(0)}) : 0;
+      if (!shows(tree->blocks[0]) || (tree->blocks.size() > 1 && !shows(tree->blocks[1]))) topGap = 0;
       gapBefore = topGap;
       y += topGap;
       frame.y = (Su)y;
@@ -394,10 +398,14 @@ class DocLayout {
       block(0);
       frame.h = (Su)py;
       y += py;
-      bool outOnly = !frame.vlist.empty();
+      bool outOnly = !frame.vlist.empty() || frame.lines.empty();
       for (const VEntry& e : frame.vlist) outOnly = outOnly && e.out;
-      if (!outOnly) gap = true;
-      else y -= topGap;  // the float took no room: the next top stands where it would have
+      if (!outOnly) {
+        gap = true;
+        prevAfter = spaceAfter(0);
+      } else {
+        y -= topGap;  // the float took no room: the next top stands where it would have
+      }
       lr.paras.push_back(std::move(frame));
     }
     if (floatBottomAbs > y) y = floatBottomAbs;  // a trailing float still shows
@@ -411,6 +419,7 @@ class DocLayout {
   DiagSink& diags;
   LayoutResult& lr;
   BreakMemo* memo_;  // the Session's KP memo (plan P1-21), or none
+  const bool paged_;  // (plan P3-14) laying out for paged sheets (media)
   const Su measure, baseLeading, paraGap;
   const Su minWrap;  // layout.minWrapWidth: narrower beside floats, text clears them
   // (plan P3-10; design T6 flow roots) the container the layouters fill:
@@ -425,9 +434,13 @@ class DocLayout {
     bool cell = false;
   };
   Ctx ctx;
-  Su left(const LayoutBlock& b) const { return ctx.x0 + b.x; }
-  Su width(const LayoutBlock& b) const { return ctx.width - b.x; }
-  double widthPx(const LayoutBlock& b) const { return ctx.widthPx - suToPx(b.x); }
+  // a block's content box: inside its ancestors' indents and boxes (x at the
+  // start, xr at the end) and its own box (plan P3-14)
+  Su left(const LayoutBlock& b) const { return ctx.x0 + b.x + b.box.inset(3); }
+  Su width(const LayoutBlock& b) const { return ctx.width - b.x - b.xr - b.box.inset(3) - b.box.inset(1); }
+  double widthPx(const LayoutBlock& b) const {
+    return ctx.widthPx - suToPx(b.x + b.xr + b.box.inset(3) + b.box.inset(1));
+  }
   const Su em;       // the ragged presets' end stretch unit (D-Y01)
   // a block's line-end preset (plan P3-09): its par.align
   LineEnds endsOf(const BlockTraits& tr) const {
@@ -453,7 +466,88 @@ class DocLayout {
 
   using Fn = void (DocLayout::*)(const LayoutBlock&);
   static const Fn kLayouters[];  // the registry: one per LayouterId
-  void block(u32 b) { (this->*kLayouters[(size_t)tree->blocks[b].layouter])(tree->blocks[b]); }
+  // a block by its layouter, with the trait group around it (plan P3-14):
+  // the medium it shows in, a page break before / after it, its frame,
+  // narrowing beside a float, keeping its fragments together, keeping a
+  // container with what follows
+  bool forceNext = false;  // a page break before the next fragment laid out
+  void block(u32 i) {
+    const LayoutBlock& b = tree->blocks[i];
+    if (b.tr.media && b.tr.media != (paged_ ? 2 : 1)) return;  // not in this medium
+    const bool hooks = forceNext || b.tr.breakBefore || b.tr.breakAfter || b.tr.keepTogether || b.tr.shrink ||
+                       b.box.framed() || (b.tr.keepWithNext && !b.leaf());
+    if (!hooks) {
+      (this->*kLayouters[(size_t)b.layouter])(b);
+      return;
+    }
+    const bool force = forceNext || b.tr.breakBefore;
+    forceNext = false;
+    const size_t from = fr->lines.size();
+    // a framed block: a flow root clear of the floats its box meets, its
+    // frame under its content, its content inside its padding and border
+    size_t frameAt = ~size_t(0);
+    i64 frameTop = 0;
+    if (b.box.framed()) {
+      if (!ctx.excl->empty() && !ctx.cell) {
+        const i64 at = (i64)fr->y + py;
+        const i64 c = ctx.excl->clearY(at, ctx.x0 + b.x, ctx.x0 + ctx.width - b.xr);
+        if (c > at) py += c - at + gapBefore;
+      }
+      frameTop = py;
+      Fragment f;
+      f.kind = FragKind::Frame;
+      f.unitIdx = firstUnit(i);
+      f.boxBlock = i;
+      f.y = (Su)py;
+      f.left = ctx.x0 + b.x;
+      f.width = ctx.width - b.x - b.xr;
+      f.paged = kPagedFrame;
+      f.srcSpan = b.span;
+      frameAt = fr->lines.size();
+      fr->lines.push_back(f);
+      py += b.box.inset(0);
+    }
+    // beside a float, narrowed to the room its top line leaves (D-Y02:
+    // only when it says so; a paragraph narrows anyway)
+    const Ctx saved = ctx;
+    if (b.tr.shrink && !ctx.excl->empty() && b.layouter != LayouterId::Paragraph) {
+      Su a = ctx.x0 + b.x, c = ctx.x0 + ctx.width - b.xr;
+      const i64 at = (i64)fr->y + py;
+      ctx.excl->available(at, at + baseLeading, a, c);
+      if (c - a >= std::min(minWrap, ctx.width)) {
+        ctx.width -= (a - (ctx.x0 + b.x)) + ((ctx.x0 + ctx.width - b.xr) - c);
+        ctx.x0 = a - b.x;
+        ctx.widthPx = suToPx(ctx.width);
+        shrinking = true;
+      }
+    }
+    (this->*kLayouters[(size_t)b.layouter])(b);
+    shrinking = false;
+    ctx = saved;
+    if (frameAt != ~size_t(0)) {
+      py += b.box.inset(2);
+      fr->lines[frameAt].height = (Su)(py - frameTop);
+    }
+    // its first fragment of content (not its frame)
+    size_t first = from;
+    while (first < fr->lines.size() && fr->lines[first].kind == FragKind::Frame) first++;
+    if (force) {
+      if (first < fr->lines.size()) fr->lines[first].brk = PenTier::Forced;
+      else forceNext = true;  // nothing laid out: the break waits for what follows
+    }
+    if (b.tr.keepTogether)
+      for (size_t q = first + 1; q < fr->lines.size(); q++)
+        if (fr->lines[q].brk < PenTier::KeepTogether) fr->lines[q].brk = PenTier::KeepTogether;
+    if (b.tr.keepWithNext && !b.leaf()) keepNext = true;
+    if (b.tr.breakAfter) forceNext = true;
+  }
+  // a valid unit for a container's own fragments: its first leaf's
+  u32 firstUnit(u32 i) const {
+    for (u32 k = i; k < tree->blocks[i].end; k++)
+      if (tree->blocks[k].leaf()) return tree->blocks[k].unit;
+    return 0;
+  }
+  bool shrinking = false;  // (a block narrowed beside a float lays out there: no clearing)
 
   // Layout breaks its paragraphs (plan P1-15) with the cached KP (break.cc:
   // keyed by exactly the DP inputs, shared across documents — the editing
@@ -461,9 +555,13 @@ class DocLayout {
   // of its own (the final-pass rescue) and reported once per stream.
   // (plan P3-09) a stream breaks with the line-end glue it will be set with
   BreakResult breakStream(const std::vector<BreakBlock>& blocks, const HList& h, const ParShape& shape,
-                          const LineEnds& ends) {
+                          const LineEnds& ends, const BlockTraits* tr = nullptr) {
     BreakParams params = bparams;
     params.ends = ends;
+    if (tr) {  // (plan P3-14) its breaker: a tolerance pass, an emergency stretch
+      params.tolerance = tr->tolerance;
+      params.emergencyStretch = tr->emergencyStretch;
+    }
     BreakResult r = breakLinesCached(blocks, shape, params, memo_);
     if (!r.overfullLines.empty()) {
       Span sp{};
@@ -487,7 +585,7 @@ class DocLayout {
   };
   Leaf enter(bool clears, const LayoutBlock& b) {
     Leaf l{fr->lines.size(), 0, 0};
-    if (clears) l.clear = clearance(b);
+    if (clears && !shrinking) l.clear = clearance(b);
     py += l.clear;
     l.top = py;
     cellBreaks.clear();
@@ -547,6 +645,26 @@ class DocLayout {
     keepNext = keepsWithNext;
   }
 
+  // (plan P3-14; design T6 vertical algebra) the space a block asks above /
+  // below it, collapsing through an unframed container's first / last child
+  Su spaceBefore(u32 k) const {
+    const LayoutBlock& b = tree->blocks[k];
+    Su s = b.tr.spaceBefore;
+    if (!b.leaf() && !b.box.framed() && k + 1 < b.end) s = std::max(s, spaceBefore(k + 1));
+    return s;
+  }
+  Su spaceAfter(u32 k) const {
+    const LayoutBlock& b = tree->blocks[k];
+    Su s = b.tr.spaceAfter;
+    if (!b.leaf() && !b.box.framed() && k + 1 < b.end) {
+      u32 last = k + 1;
+      for (u32 c = k + 1; c < b.end; c = tree->blocks[c].end) last = c;
+      s = std::max(s, spaceAfter(last));
+    }
+    return s;
+  }
+  bool shows(const LayoutBlock& b) const { return !b.tr.media || b.tr.media == (paged_ ? 2 : 1); }
+
   void stack(const LayoutBlock& b) {
     u8 num, den;
     Su su;
@@ -554,16 +672,21 @@ class DocLayout {
     const Su gap = den ? (Su)((i64)paraGap * num / den) : su;
     const u32 self = (u32)(&b - tree->blocks.data());
     bool prevOut = false;  // the child before was only out of flow (a float)
+    u32 prev = ~0u;        // the child before, in flow
     for (u32 k = self + 1; k < b.end; k = tree->blocks[k].end) {
-      if (k > self + 1 && !prevOut) {
-        py += gap;
-        gapBefore = gap;
+      if (!shows(tree->blocks[k])) continue;  // (plan P3-14) not in this medium: no gap
+      if (prev != ~0u && !prevOut) {
+        // the gap, or more when either side asks for more space
+        const Su g = std::max({gap, spaceAfter(prev), spaceBefore(k)});
+        py += g;
+        gapBefore = g;
       }
       const size_t v0 = fr->vlist.size();
       block(k);
       prevOut = fr->vlist.size() > v0;
       for (size_t e = v0; e < fr->vlist.size(); e++) prevOut = prevOut && fr->vlist[e].out;
-      if (prevOut) gapBefore = k > self + 1 ? gap : gapBefore;  // what follows takes the float's gap
+      if (prevOut) gapBefore = prev != ~0u ? gap : gapBefore;  // what follows takes the float's gap
+      if (!prevOut) prev = k;
     }
   }
 
@@ -592,10 +715,27 @@ class DocLayout {
         l.top = py;
       }
     }
+    // (plan P3-14) a hanging indent: the lines after the first hangAfter
+    // start `hang` in (beside a float as anywhere: the same slots)
+    if (b.tr.hang > 0) {
+      const u32 n = std::max<u32>((u32)shape.lines.size(), b.tr.hangAfter);
+      for (u32 i = 0; i < n; i++) {
+        const LineSlot s0 = shape.at(i);
+        if (i >= shape.lines.size()) shape.lines.push_back(s0);
+        if (i >= b.tr.hangAfter) {
+          const Su h = std::min(b.tr.hang, shape.lines[i].width);
+          shape.lines[i].left += h;
+          shape.lines[i].width -= h;
+        }
+      }
+      const Su h = std::min(b.tr.hang, shape.rest.width);
+      shape.rest.left += h;
+      shape.rest.width -= h;
+    }
     LinePolicy pol;
     pol.ends = ctx.halign ? *ctx.halign : endsOf(b.tr);  // (in a table cell: its column's halign)
     pol.singleCenter = b.tr.singleCenter;
-    lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, shape, pol.ends)});
+    lr.breaks.push_back({tb->pid, b.unit, -1, breakStream(u.blocks, u.hl, shape, pol.ends, &b.tr)});
     pol.endSep = b.sepAfter;
     pol.marker = b.marker;
     pol.markerStyle = b.markerStyle;
@@ -994,9 +1134,9 @@ const DocLayout::Fn DocLayout::kLayouters[] = {&DocLayout::paragraph, &DocLayout
 }  // namespace
 
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics, Interner& strs,
-                       const LayoutSettings& cfg, DiagSink& diags, BreakMemo* memo) {
+                       const LayoutSettings& cfg, DiagSink& diags, BreakMemo* memo, bool paged) {
   LayoutResult lr;
-  DocLayout(metrics, strs, cfg, diags, lr, memo).run(tops);
+  DocLayout(metrics, strs, cfg, diags, lr, memo, paged).run(tops);
   return lr;
 }
 
@@ -1022,6 +1162,10 @@ std::string dumpLayout(const LayoutResult& lr) {
       [&] {
         if (l.kind == FragKind::Rule) {  // printed at its midline
           appendf(out, "  L%zu rule y=%dsu left=%dsu w=%dsu\n", i, l.y + l.height / 2, l.left, l.width);
+          return;
+        }
+        if (l.kind == FragKind::Frame) {
+          appendf(out, "  L%zu frame y=%dsu left=%dsu w=%dsu h=%dsu\n", i, l.y, l.left, l.width, l.height);
           return;
         }
         if (l.kind == FragKind::CodeRow) {

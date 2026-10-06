@@ -1,0 +1,7 @@
+[0,213) function "#{\n  // print control on user content (plan P3-14): a lemma keeps with the block\n  // after it; the proof keeps together\n  $.set({role: 'lemma'}, {keep: 'with-next'})\n  $.set({role: 'proof'}, {keep: 'together'})\n}"
+[215,216) keyword "="
+[217,222) function "Keeps"
+[366,373) function "#!lemma"
+[418,425) function "#lemma!"
+[427,434) function "#!proof"
+[566,573) function "#proof!"

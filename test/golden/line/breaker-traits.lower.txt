@@ -1,0 +1,11 @@
+lower v1 abi 3d3ccfbb docEnd 419 holes 1 module d5958209b2211b3e
+piece 0 hole 0 js [103,216)
+block 0 stmt [0,106) user framed holes 0..1
+  STMT 0
+block 1 content [108,245)
+  CALL para [108,245)
+    TEXT "A paragraph with the default breaker: the final pass alone, TeX's rescue for runs wider than the line; justified to the measure as usual." [108,245)
+block 2 content [247,418) async
+  REGION async "tight" [247,418)
+    CALL para [255,410)
+      TEXT "A region whose paragraphs break with a tolerance pass first and an emergency stretch, ragged at their end edge (plan P3-14: breaker is an inherited trait)." [255,410)

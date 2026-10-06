@@ -1,0 +1,15 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {style} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+ $.set('codeblock', {beside: 'shrink'}) 
+},
+() => ({src: "photos/tower.jpg", alt: "tower", w: 400, h: 300, scale: 0.4, float: "right", label: "fig-tower"}),
+() => ({style: {beside: "clear"}}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

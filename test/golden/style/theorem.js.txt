@@ -1,0 +1,21 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {slot, strong} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+
+  // a theorem environment (plan P3-14): numbered with a run-in label, framed
+  // by a rule at its start edge, set apart, kept together on paged sheets
+  $.element('theorem', {counter: {name: 'thm'}, supplement: {en: 'Theorem '},
+    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}]})
+  $.set({role: 'theorem'}, {box: {padding: '0.4em 0.8em', border: '0 0 0 2px', borderColor: '#2f5d8a', background: '#f4f7fb'},
+    keep: 'together', space: {before: '1.5em', after: '1.5em'}})
+
+},
+() => ({label: "thm-a"}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

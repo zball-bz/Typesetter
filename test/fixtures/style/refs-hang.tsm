@@ -1,0 +1,14 @@
+#{
+  // a hanging-indent reference list (plan P3-14): par.hang is inherited, so
+  // the bibliography's entries hang their turnover lines 2em in
+  $.set({role: 'bibliography'}, {par: {hang: '2em', indent: '0'}})
+}
+#let refs = $.collector('refs', {like: 'bibliography'})
+
+Cited: @kp81 and @knuth84.
+
+#refs()
+
+#entry({role: "bibentry", key: "kp81"})[Donald E. Knuth and Michael F. Plass. Breaking paragraphs into lines. Software: Practice and Experience 11(11), 1119–1184, 1981.]
+
+#entry({role: "bibentry", key: "knuth84"})[Donald E. Knuth. The TeXbook. Computers and Typesetting, volume A. Addison-Wesley, 1984.]

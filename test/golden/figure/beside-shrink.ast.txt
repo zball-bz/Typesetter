@@ -1,0 +1,9 @@
+doc @[0,367)
+  code-block @[0,43) js=" $.set('codeblock', {beside: 'shrink'}) "
+  para @[45,159)
+    text @[45,159) str="A block beside a float clears it by default (D-Y02); with beside: shrink it narrows to the room left (plan P3-14)."
+  region @[161,296) name="figure"
+    para @[273,287)
+      text @[273,287) str="A right float."
+  codeblock @[298,318) lang="js" body="let x = 1;"
+  codeblock @[320,366) lang="js" body="let y = 2;"

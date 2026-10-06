@@ -1,0 +1,14 @@
+doc @[0,592)
+  code-block @[0,213) js="\n  // print control on user content (plan P3-14): a lemma keeps with the block\n  // after it; the proof keeps together\n  $.set({role: 'lemma'}, {keep: 'with-next'})\n  $.set({role: 'proof'}, {keep: 'together'})\n"
+  heading @[215,222) level=1
+    text @[217,222) str="Keeps"
+  para @[224,364)
+    text @[224,364) str="Filler paragraph one fills most of the first sheet with ordinary running text so that the lemma comes close to the bottom edge of the sheet."
+  region @[366,425) name="lemma"
+    para @[374,417)
+      text @[374,417) str="A lemma that fits at the foot of the sheet."
+  region @[427,573) name="proof"
+    para @[435,565)
+      text @[435,565) str="Its proof, three lines long, which the lemma keeps with: neither is left alone at a sheet's foot, and the proof itself is not cut."
+  para @[575,591)
+    text @[575,591) str="After the proof."

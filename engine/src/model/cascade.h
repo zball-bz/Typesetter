@@ -132,6 +132,10 @@ class Cascade {
 // parent's env that match it. Its run style stays its maker's. Returns how
 // many it settled (none marked: no walk past a cheap check).
 constexpr u32 kPropsUnset = ~0u;
+// (plan P3-14) a made node with no site env of its own: it settles in its
+// parent's (a node made at a site — Cascade.make — keeps the site's, where
+// rules declared before the site are in force)
+constexpr u32 kEnvUnset = ~0u;
 size_t settleMade(ContentNode* root, const Cascade& cascade, NodePropsTable& props, const StyleTable& styles);
 
 // a host setting's value as patch text: the defaults name some

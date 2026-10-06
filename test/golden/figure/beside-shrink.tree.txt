@@ -1,0 +1,13 @@
+doc @[45,366) [base]
+  para @[45,159) [base]
+    text @[45,159) [base] str="A block beside a float clears it by default (D-Y02); with beside: shrink it narrows to the room left (plan P3-14)."
+  group @[161,296) [base] role="figure" label="fig-tower"
+    image @[161,296) [base] src="photos/tower.jpg" alt="tower" w=400 h=300 scale=0.4 side="right"
+    para @[273,287) [base] role="caption" slot="caption"
+      styled @[273,287) [BOLD] role="caption-label"
+        text @[273,287) [BOLD] str="图 1："
+      text @[273,287) [base] str="A right float."
+  codeblock @[298,318) [CODEx0.85] lang="js"
+    text @[304,314) [CODEx0.85] str="let x = 1;"
+  codeblock @[320,366) [CODEx0.85] lang="js"
+    text @[352,362) [CODEx0.85] str="let y = 2;"

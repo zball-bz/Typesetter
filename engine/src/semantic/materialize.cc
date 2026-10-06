@@ -84,6 +84,7 @@ struct Mat {
     n->kind = k;
     n->span = span;
     n->props = ~0u;  // kPropsUnset: settled at its place after materialize
+    n->env = kEnvUnset;  // (its parent's, unless it is made at a site: make())
     e.made++;
     return n;
   }
@@ -832,6 +833,7 @@ struct Mat {
     e.cascade.reenter(st, v, env, e.styles.get(k->scope), e.styles.get(oldParentScope));
     d->style = e.styles.idOf(st);
     d->props = ~0u;  // kPropsUnset: the destination's
+    d->env = kEnvUnset;
     e.made++;
     d->span = dest.span;
     d->rawmap = nullptr;
@@ -1089,6 +1091,7 @@ struct Mat {
     e.cascade.reenter(st, v, env, e.styles.get(k->scope), e.styles.get(oldParentScope));
     d->style = e.styles.idOf(st);
     d->props = ~0u;  // kPropsUnset
+    d->env = kEnvUnset;  // (block properties: the destination's)
     e.made++;
     for (ContentNode*& kid : d->kids) kid = lift(kid, d->style, k->scope, k->env);
     return d;

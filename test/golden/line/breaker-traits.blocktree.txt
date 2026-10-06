@@ -1,0 +1,7 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[108,245)
+    paragraph para unit=0 @[108,245)
+top pid=1 leaves=1
+  stack root gap=1/1 @[247,418)
+    stack group ragged tolerance=100 emergency=1536su @[247,418)
+      paragraph para unit=0 ragged tolerance=100 emergency=1536su @[255,410)

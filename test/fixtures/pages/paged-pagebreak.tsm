@@ -1,0 +1,19 @@
+= Page breaks
+
+The first sheet ends after this paragraph: a page break follows (plan P3-14).
+
+#pagebreak()
+
+The second sheet starts here, though the first had room.
+
+#!aside(style: {break: {before: "page"}})
+A region that starts a sheet of its own.
+#aside!
+
+#!note(style: {media: "screen"})
+Shown on screen only.
+#note!
+
+#!note(style: {media: "paged"})
+Printed only: this paragraph has no place on screen.
+#note!

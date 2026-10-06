@@ -1,0 +1,21 @@
+lower v1 abi 3d3ccfbb docEnd 592 holes 1 module 5d0f213529dd924d
+piece 0 hole 0 js [103,323)
+block 0 stmt [0,213) user framed holes 0..1
+  STMT 0
+block 1 content [215,222)
+  CALL heading [215,222) level=1 label=null
+    TEXT "Keeps" [217,222)
+block 2 content [224,364)
+  CALL para [224,364)
+    TEXT "Filler paragraph one fills most of the first sheet with ordinary running text so that the lemma comes close to the bottom edge of the sheet." [224,364)
+block 3 content [366,425) async
+  REGION async "lemma" [366,425)
+    CALL para [374,417)
+      TEXT "A lemma that fits at the foot of the sheet." [374,417)
+block 4 content [427,573) async
+  REGION async "proof" [427,573)
+    CALL para [435,565)
+      TEXT "Its proof, three lines long, which the lemma keeps with: neither is left alone at a sheet's foot, and the proof itself is not cut." [435,565)
+block 5 content [575,591)
+  CALL para [575,591)
+    TEXT "After the proof." [575,591)

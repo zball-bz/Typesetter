@@ -1,0 +1,26 @@
+<div class="tsr-doc tsr-paged" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
+<div class="tsr-band" data-b="0">
+<div class="tsr-line" id="tsr-h-1" data-s="2" data-e="13" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="2" style="font-size:25.6px">Page breaks</span></div>
+</div>
+<div class="tsr-band" data-b="1">
+<div class="tsr-line" data-s="15" data-e="92" data-join="none" style="top:44.812px;left:0px;width:300px;word-spacing:4.667px"><span class="tsr-r" data-s="15">The first sheet ends after this para</span><span class="tsr-r" data-s="15" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="15" data-e="92" style="top:68.812px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="15">graph: a page break follows (plan P3-14).</span></div>
+</div>
+</div>
+<div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
+<div class="tsr-band" data-b="3">
+<div class="tsr-line" data-s="108" data-e="164" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="108">The second sheet starts here, though the</span></div>
+<div class="tsr-line" data-s="108" data-e="164" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="108">first had room.</span></div>
+</div>
+</div>
+<div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
+<div class="tsr-band" data-b="4">
+<div class="tsr-line" data-s="208" data-e="248" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="208">A region that starts a sheet of its own.</span></div>
+</div>
+<div class="tsr-band" data-b="6">
+<div class="tsr-line" data-s="353" data-e="405" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="353">Printed only: this paragraph has no place</span></div>
+<div class="tsr-line" data-s="353" data-e="405" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="353">on screen.</span></div>
+</div>
+</div>
+</div>

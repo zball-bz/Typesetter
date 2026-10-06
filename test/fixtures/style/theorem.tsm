@@ -1,0 +1,21 @@
+#{
+  // a theorem environment (plan P3-14): numbered with a run-in label, framed
+  // by a rule at its start edge, set apart, kept together on paged sheets
+  $.element('theorem', {counter: {name: 'thm'}, supplement: {en: 'Theorem '},
+    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}]})
+  $.set({role: 'theorem'}, {box: {padding: '0.4em 0.8em', border: '0 0 0 2px', borderColor: '#2f5d8a', background: '#f4f7fb'},
+    keep: 'together', space: {before: '1.5em', after: '1.5em'}})
+}
+
+= Framed environments
+
+A paragraph before the theorem, set at the measure; the theorem below stands a little further off.
+
+#!theorem(label: "thm-a")
+Every bounded monotone sequence of real numbers converges. Its limit is the supremum of its terms when it increases.
+
+- a list inside the frame keeps its indent
+- within the padding
+#theorem!
+
+The text after @thm-a resumes at the paragraph gap or the theorem's space, whichever is larger.

@@ -1,0 +1,74 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "A" w=513su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="A b" src r0 @[45,159)
+  box Other "block" w=2561su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="k b" src r0 @[45,159)
+  box Other "be" w=1025su r0 @[45,159)
+  disc pen=0.7 w=0su pre="-" 513su kern="es" r0 @[45,159)
+  box Other "side" w=2049su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="e a" src r0 @[45,159)
+  box Other "a" w=513su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="a f" src r0 @[45,159)
+  box Other "float" w=2561su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="t c" src r0 @[45,159)
+  box Other "clears" w=3073su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="s i" src r0 @[45,159)
+  box Other "it" w=1025su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="t b" src r0 @[45,159)
+  box Other "by" w=1025su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="y d" src r0 @[45,159)
+  box Other "de" w=1025su r0 @[45,159)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[45,159)
+  box Other "fault" w=2561su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="t (" src r0 @[45,159)
+  box Other "(D-Y02);" w=4097su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="; w" src r0 @[45,159)
+  box Other "with" w=2049su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="h b" src r0 @[45,159)
+  box Other "be" w=1025su r0 @[45,159)
+  disc pen=0.7 w=0su pre="-" 513su kern="es" r0 @[45,159)
+  box Other "side:" w=2561su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern=": s" src r0 @[45,159)
+  box Other "shrink" w=3073su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="k i" src r0 @[45,159)
+  box Other "it" w=1025su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="t n" src r0 @[45,159)
+  box Other "nar" w=1537su r0 @[45,159)
+  disc pen=0.7 w=0su pre="-" 513su kern="rr" r0 @[45,159)
+  box Other "rows" w=2049su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="s t" src r0 @[45,159)
+  box Other "to" w=1025su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="o t" src r0 @[45,159)
+  box Other "the" w=1537su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="e r" src r0 @[45,159)
+  box Other "room" w=2049su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="m l" src r0 @[45,159)
+  box Other "left" w=2049su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="t (" src r0 @[45,159)
+  box Other "(plan" w=2561su r0 @[45,159)
+  glue word w=257su x=1 cap=257su kern="n P" src r0 @[45,159)
+  box Other "P3-14)." w=3585su r0 @[45,159)
+  run r0 plain
+top pid=1 units=1
+ unit img indent=0su anchor="fig-tower" intrinsic=400x300px scale=0.4 float=right
+  cell 0
+   box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[273,287)
+   pen 0 r0
+   glue word w=257su x=1 cap=257su src r1 @[273,287)
+   box Other "1" w=513su r1 @[273,287)
+   box ColonW "：" w=512su blank=R r2 @[273,287)
+   glue blank w=512su x=0 cap=0su r2 @[273,287)
+   box Other "A" w=513su r3 @[273,287)
+   glue word w=257su x=1 cap=257su kern="A r" src r3 @[273,287)
+   box Other "right" w=2561su r3 @[273,287)
+   glue word w=257su x=1 cap=257su kern="t f" src r3 @[273,287)
+   box Other "float." w=3073su r3 @[273,287)
+   run r0 letter-spaced BOLD CJK
+   run r1 plain BOLD
+   run r2 blank-bearing BOLD CJK
+   run r3 plain
+top pid=2 units=1
+ unit code indent=0su lines=1 wrap
+top pid=3 units=1
+ unit code indent=0su lines=1 wrap

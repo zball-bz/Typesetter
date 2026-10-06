@@ -564,6 +564,10 @@ export function createStd(host) {
     lot: collect('lot'),
     index: collect('index'),
     notes: collect('notes'),
+    // (plan P3-14) a page break: an empty group whose break.before lands on
+    // the block after it (screen: nothing)
+    pagebreak: () => ob.makeNode(KIND.group, { role: 'pagebreak',
+      style: ob.makeNode(KIND.styled, styleAttrs({ break: { before: 'page' } }), []) }, []),
     // citations (notes-design.md §2; plan P2-14): a promise — the data loads,
     // its entries become the table's rows here, and the collector stands in
     // place (a splice naming it awaits: schema "async")

@@ -12,6 +12,7 @@ struct Box {
   u32 para = 0;
   u32 lo = 0, hi = 0;    // [lo, hi) into its frame's fragments
   i64 top = 0, bot = 0;  // absolute su
+  i64 extTop = 0, extBot = 0;  // (plan P3-14) with the frames it opens / closes (their padding)
   PenTier tier = PenTier::Normal;  // a cut just before it
   u8 paged = 0;
   u64 table = 0;  // its table, (frame << 32 | block) + 1; 0: none
@@ -29,6 +30,7 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
   const i64 H = spec.h;
   pr.height = spec.h;
   std::vector<Box> flow, ins, sep;  // sep: the inserts' separator (plan P3-13)
+  std::vector<Box> frames;          // (plan P3-14) framed blocks' frames: drawn, not cut
   std::vector<u64> tablesSeen;
   for (u32 p = 0; p < (u32)lr.paras.size(); p++) {
     const ParaFrame& fr = lr.paras[p];
@@ -36,6 +38,16 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
     for (u32 i = 0; i < (u32)fr.lines.size(); i++) {
       const Fragment& l = fr.lines[i];
       const i64 t = (i64)fr.y + l.y, bo = t + l.height;
+      if (l.paged & kPagedFrame) {
+        Box f;
+        f.para = p;
+        f.lo = i;
+        f.hi = i + 1;
+        f.top = t;
+        f.bot = bo;
+        frames.push_back(f);
+        continue;
+      }
       std::vector<Box>& list = !(l.paged & kPagedInsert) ? flow : (l.paged & kPagedHeader) ? sep : ins;
       const u64 table = l.table != ~0u ? (((u64)p << 32) | l.table) + 1 : 0;
       if (l.brk == PenTier::Structural && last == &list && !list.empty() && list.back().para == p &&
@@ -71,6 +83,23 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
     }
   }
   std::stable_sort(flow.begin(), flow.end(), [](const Box& a, const Box& b) { return a.top < b.top; });
+  // (plan P3-14) a frame's padding and border go with the box it opens
+  // (above it) and the one it closes (below): a sheet starts at its frame
+  for (Box& b : flow) {
+    b.extTop = b.top;
+    b.extBot = b.bot;
+  }
+  for (const Box& f : frames) {
+    size_t a = ~size_t(0), z = ~size_t(0);
+    for (size_t x = 0; x < flow.size(); x++)
+      if (flow[x].para == f.para && flow[x].top >= f.top && flow[x].bot <= f.bot) {
+        if (a == ~size_t(0)) a = x;
+        z = x;
+      }
+    if (a == ~size_t(0)) continue;
+    flow[a].extTop = std::min(flow[a].extTop, f.top);
+    flow[z].extBot = std::max(flow[z].extBot, f.bot);
+  }
   // the separator above a sheet's inserts (its first: a rule), repeated on
   // every sheet that has any
   if (sep.size() > 1) sep.resize(1);
@@ -102,7 +131,7 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
   std::vector<size_t> carried;  // page floats deferred to the next sheet's top
   while (s < n || !carried.empty()) {
     Page pg;
-    const i64 S = s < n ? flow[s].top : flow[carried[0]].top;
+    const i64 S = s < n ? flow[s].extTop : flow[carried[0]].top;
     pg.top = S;
     // a table continued from an earlier sheet repeats its header rows
     std::vector<size_t> header;
@@ -133,9 +162,9 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
       i64 need = 0;
       for (u32 x : b.inserts) need += ins[x].h();
       const i64 skip = !anyIns && need > 0 ? insSkip : 0;
-      const i64 bottom = std::max(flowBot, b.bot) - S + lift + insH + need + skip;
+      const i64 bottom = std::max(flowBot, b.extBot) - S + lift + insH + need + skip;
       if (bottom <= H || k == s) {
-        flowBot = std::max(flowBot, b.bot);
+        flowBot = std::max(flowBot, b.extBot);
         insH += need + skip;
         anyIns = anyIns || need > 0;
         if (bottom > H) {  // an atom taller than a sheet: set alone, overflowing visibly
@@ -161,7 +190,7 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
       for (PenTier lvl : kLevels) {
         for (size_t jj = k; jj > s; jj--) {
           if (flow[jj].paged & kPagedMovable) continue;
-          if (flow[jj].tier <= lvl && (lvl == PenTier::Normal || flow[k].bot - flow[jj].top <= H)) {
+          if (flow[jj].tier <= lvl && (lvl == PenTier::Normal || flow[k].extBot - flow[jj].extTop <= H)) {
             j = jj;
             found = true;
             break;
@@ -191,6 +220,19 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
     for (size_t x : lifted)
       if (x < j) place(flow[x], false);
     const i64 flowShift = cursor;
+    // (plan P3-14) the frames of the blocks this sheet's flow meets, under
+    // it: a block cut by the sheet shows its frame's part here (the sheet
+    // clips), a continued one written without ids
+    {
+      i64 lo = INT64_MAX, hi = INT64_MIN;
+      for (size_t x = s; x < j; x++)
+        if (!(flow[x].paged & kPagedMovable)) {
+          lo = std::min(lo, flow[x].extTop);
+          hi = std::max(hi, flow[x].extBot);
+        }
+      for (const Box& f : frames)
+        if (f.top < hi && f.bot > lo) pg.bands.push_back(band(f, flowShift, f.top < lo));
+    }
     std::vector<u32> pageInserts;
     for (size_t x = s; x < j; x++) {
       if (flow[x].paged & kPagedMovable) continue;

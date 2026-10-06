@@ -1,0 +1,5 @@
+doc @[0,419)
+  code-block @[0,106) js=" $.set({role: 'tight'}, {breaker: {tolerance: 100, emergencyStretch: '1.5em'}, par: {align: 'start'}}) "
+  para @[108,245) lines=1
+  region @[247,418) name="tight"
+    para @[255,410) lines=1

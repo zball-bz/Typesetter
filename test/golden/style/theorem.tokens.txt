@@ -1,0 +1,8 @@
+[0,545) function "#{\n  // a theorem environment (plan P3-14): numbered with a run-in label, framed\n  // by a rule at its start edge, set apart, kept together on paged sheets\n  $.element('theorem', {counter: {name: 'thm'}, supplement: {en: 'Theorem '},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}]})\n  $.set({role: 'theorem'}, {box: {padding: '0.4em 0.8em', border: '0 0 0 2px', borderColor: '#2f5d8a', background: '#f4f7fb'},\n    keep: 'together', space: {before: '1.5em', after: '1.5em'}})\n}"
+[547,548) keyword "="
+[549,568) function "Framed environments"
+[670,695) function "#!theorem(label: \"thm-a\")"
+[814,815) keyword "-"
+[857,858) keyword "-"
+[878,887) function "#theorem!"
+[904,910) constant "@thm-a"

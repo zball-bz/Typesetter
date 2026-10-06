@@ -1,0 +1,28 @@
+lower v1 abi 3d3ccfbb docEnd 614 holes 5 module a7171867a0c9c7c6
+piece 0 hole 0 js [139,359)
+piece 1 hole 1 js [361,427)
+piece 2 hole 2 js [429,443)
+piece 3 hole 3 js [445,509)
+piece 4 hole 4 js [511,578)
+block 0 stmt [0,213) user framed holes 0..1
+  STMT 0
+block 1 stmt [214,269) user framed holes 1..2
+  STMT 1
+block 2 content [271,297)
+  CALL para [271,297)
+    TEXT "Cited: " [271,277) raw=0:0,7:6
+    CALL ref [278,283) target="kp81"
+    TEXT " and " [284,287) raw=0:0,1:0,5:3
+    CALL ref [288,296) target="knuth84"
+    TEXT "." [296,297)
+block 3 content [299,306) user framed holes 2..3
+  CALL para [299,306)
+    HOLE 2 [299,306)
+block 4 content [308,479) user framed holes 3..4
+  CALL para [308,479)
+    HOLE 3 [308,479)
+      TEXT "Donald E. Knuth and Michael F. Plass. Breaking paragraphs into lines. Software: Practice and Experience 11(11), 1119–1184, 1981." [348,478)
+block 5 content [481,613) user framed holes 4..5
+  CALL para [481,613)
+    HOLE 4 [481,613)
+      TEXT "Donald E. Knuth. The TeXbook. Computers and Typesetting, volume A. Addison-Wesley, 1984." [524,612)

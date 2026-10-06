@@ -109,6 +109,7 @@ struct Norm {
     n->kind = k;
     n->span = sp;
     n->props = ~0u;  // kPropsUnset (model/cascade.h)
+    n->env = ~0u;    // kEnvUnset: its parent's
     made++;
     return n;
   }

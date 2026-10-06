@@ -1,0 +1,2 @@
+instance figure 1 label=fig-tower @[161,296)
+label fig-tower -> figure 1 @[161,296)

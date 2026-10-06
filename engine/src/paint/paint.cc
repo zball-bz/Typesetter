@@ -285,6 +285,10 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
       case FragKind::Rule:
         n.y = l.y + l.height / 2;  // the rule at its band's middle
         break;
+      case FragKind::Frame:  // (plan P3-14) its block's box, under its content
+        n.heightPx = suToPx(l.height);
+        n.box = l.boxBlock < tree.blocks.size() ? &tree.blocks[l.boxBlock].box : nullptr;
+        break;
       case FragKind::Raw: {
         const RawData& r = std::get<RawData>(u.data);
         n.heightPx = r.hPx;

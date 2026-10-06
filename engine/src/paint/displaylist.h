@@ -81,6 +81,7 @@ struct DLNode {
   double mathTopPx = 0, eqRightPx = 0;
   // Image: src (0 = placeholder) and alt; Raw: markup
   StrRef src = 0, alt = 0;
+  const BoxModel* box = nullptr;  // (plan P3-14) Frame: its block's padding, border, colours
   const HList* h = nullptr;     // Line: the stream its Words / Chars runs read
   u32 runBegin = 0, runEnd = 0;  // into DLBlock::runs
 };

@@ -1,0 +1,21 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,13)
+    paragraph heading unit=0 ragged nohyphen keep-with-next anchor="h-1" @[0,13)
+top pid=1 leaves=1
+  stack root gap=1/1 @[15,92)
+    paragraph para unit=0 @[15,92)
+top pid=3 leaves=1
+  stack root gap=1/1 break-before @[108,164)
+    paragraph para unit=0 @[108,164)
+top pid=4 leaves=1
+  stack root gap=1/1 @[166,256)
+    stack group break-before @[166,256)
+      paragraph para unit=0 @[208,248)
+top pid=5 leaves=1
+  stack root gap=1/1 @[258,319)
+    stack group media=screen @[258,319)
+      paragraph para unit=0 @[291,312)
+top pid=6 leaves=1
+  stack root gap=1/1 @[321,412)
+    stack group media=paged @[321,412)
+      paragraph para unit=0 @[353,405)

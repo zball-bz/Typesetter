@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-tsr-env="03b6b5d54d96cc79" data-s="271" data-e="297">Cited: [<a href="#tsr-bib-kp81">1</a>] and [<a href="#tsr-bib-knuth84">2</a>].</p>
+<div data-role="bibliography" data-pid="1" data-tsr-env="03b6b5d54d96cc79" data-s="299" data-e="306">
+<hr data-s="299" data-e="306">
+<p data-s="308" data-e="479" id="tsr-bib-kp81">[1] Donald E. Knuth and Michael F. Plass. Breaking paragraphs into lines. Software: Practice and Experience 11(11), 1119–1184, 1981.</p>
+<p data-s="481" data-e="613" id="tsr-bib-knuth84">[2] Donald E. Knuth. The TeXbook. Computers and Typesetting, volume A. Addison-Wesley, 1984.</p>
+</div>
+</div>

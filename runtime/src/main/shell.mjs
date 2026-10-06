@@ -56,6 +56,9 @@ export const TSR_CSS = `
               user-select: none; -webkit-user-select: none; }
 .tsr-doc [data-syn="cont"] { user-select: none; -webkit-user-select: none; }
 .tsr-rule { position: absolute; height: 0; border-top: 1px solid currentColor; opacity: 0.35; }
+/* (plan P3-14) a framed block's border and background, under its lines */
+.tsr-frame { position: absolute; box-sizing: border-box; border: 0 solid currentColor;
+             pointer-events: none; user-select: none; -webkit-user-select: none; }
 .tsr-img { position: absolute; }
 .tsr-imgph { position: absolute; border: 1px dashed currentColor; opacity: 0.5;
              display: flex; align-items: center; justify-content: center;

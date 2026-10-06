@@ -1,0 +1,7 @@
+doc @[0,614)
+  code-block @[0,213) js="\n  // a hanging-indent reference list (plan P3-14): par.hang is inherited, so\n  // the bibliography's entries hang their turnover lines 2em in\n  $.set({role: 'bibliography'}, {par: {hang: '2em', indent: '0'}})\n"
+  code-let @[214,269) js=" refs = $.collector('refs', {like: 'bibliography'})"
+  para @[271,297) lines=1
+  para @[299,306) lines=1
+  para @[308,479) lines=1
+  para @[481,613) lines=1

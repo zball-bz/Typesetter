@@ -18,6 +18,7 @@ enum class FragKind : u8 {
   Raw,      // handler-declared markup of a declared height
   Math,     // a display formula's row
   Image,    // an image (or its placeholder)
+  Frame,    // (plan P3-14) a framed block's padding, border and background, under its content
 };
 // (plan P3-12; design T6 VList penalties, D-Y04) the tier of a page break
 // just before a fragment — the layouters declare it, pagination relaxes it in
@@ -31,6 +32,7 @@ enum class PenTier : u8 { Normal, KeepTogether, WidowOrphan, KeepWithNext, Struc
 constexpr u8 kPagedMovable = 1;  // a page float: to the top of its page, or the next
 constexpr u8 kPagedInsert = 2;   // a footnote insert: to the bottom of its reference's page
 constexpr u8 kPagedHeader = 4;   // a table header row: repeated atop a continuation page
+constexpr u8 kPagedFrame = 8;    // (plan P3-14) a frame: drawn, clipped, on every sheet its block meets
 // widows and orphans: lines a paragraph keeps together at a page cut
 constexpr u32 kOrphans = 2, kWidows = 2;
 
@@ -57,6 +59,7 @@ struct Fragment {
   PenTier brk = PenTier::Normal;     // a page break just before it (plan P3-12)
   u8 paged = 0;                      // its paged role (kPaged*)
   u32 insertAt = ~0u;                // an insert: the source position of its reference
+  u32 boxBlock = ~0u;                // (plan P3-14) a frame: its block (the top's blocks)
   bool spanned = false;              // srcSpan holds even when empty (a blank code row)
   bool endsWithHyphen = false;
   bool ragged = false;               // a line that is not justified (its stream's alignment)
@@ -111,9 +114,11 @@ struct LayoutResult {
 
 // Breaks and lays out (plan P1-15: breaking is layout's; the float
 // exclusions live at its cursor); overfull streams are reported to diags.
-// memo: the Session's KP memo (plan P1-21), or none (uncached)
+// memo: the Session's KP memo (plan P1-21), or none (uncached). paged
+// (plan P3-14): the medium — blocks of the other one (media) are left out
 LayoutResult layoutDoc(const std::vector<TopBlock>& tops, const MetricStore& metrics,
-                       Interner& strs, const LayoutSettings& cfg, DiagSink& diags, BreakMemo* memo = nullptr);
+                       Interner& strs, const LayoutSettings& cfg, DiagSink& diags, BreakMemo* memo = nullptr,
+                       bool paged = false);
 
 std::string dumpBreaks(const LayoutResult& lr);
 std::string dumpLayout(const LayoutResult& lr);

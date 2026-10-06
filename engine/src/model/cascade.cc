@@ -166,7 +166,7 @@ size_t settleMade(ContentNode* root, const Cascade& cascade, NodePropsTable& pro
       view.lang = st.lang;
       if (depth)
         for (u16 k : up) view.depth += k == (u16)n->kind;
-      const RuleEnvId env = a.parent ? a.parent->env : 0;
+      const RuleEnvId env = n->env != kEnvUnset ? n->env : a.parent ? a.parent->env : 0;
       cascade.fold(st, np, view, env, {});
       n->props = props.idOf(np);
       n->env = env;

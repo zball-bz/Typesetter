@@ -1,0 +1,4 @@
+instance heading 1 level=1 label=h-1 title="Framed environments" @[547,568)
+instance theorem 1 label=thm-a @[670,887)
+label h-1 -> heading 1 @[547,568)
+label thm-a -> theorem 1 @[670,887)

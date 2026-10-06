@@ -1,0 +1,20 @@
+#{
+  // print control on user content (plan P3-14): a lemma keeps with the block
+  // after it; the proof keeps together
+  $.set({role: 'lemma'}, {keep: 'with-next'})
+  $.set({role: 'proof'}, {keep: 'together'})
+}
+
+= Keeps
+
+Filler paragraph one fills most of the first sheet with ordinary running text so that the lemma comes close to the bottom edge of the sheet.
+
+#!lemma
+A lemma that fits at the foot of the sheet.
+#lemma!
+
+#!proof
+Its proof, three lines long, which the lemma keeps with: neither is left alone at a sheet's foot, and the proof itself is not cut.
+#proof!
+
+After the proof.

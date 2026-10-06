@@ -1,0 +1,4 @@
+instance bibentry @[308,479)
+instance bibentry @[481,613)
+row bib kp81 ordinal=1 @[308,479)
+row bib knuth84 ordinal=2 @[481,613)

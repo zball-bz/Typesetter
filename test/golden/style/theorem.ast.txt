@@ -1,0 +1,20 @@
+doc @[0,985)
+  code-block @[0,545) js="\n  // a theorem environment (plan P3-14): numbered with a run-in label, framed\n  // by a rule at its start edge, set apart, kept together on paged sheets\n  $.element('theorem', {counter: {name: 'thm'}, supplement: {en: 'Theorem '},\n    sites: [{where: 'prepend', at: 'first-para', template: [strong(slot('supplement'), slot('number'), '.'), ' ']}]})\n  $.set({role: 'theorem'}, {box: {padding: '0.4em 0.8em', border: '0 0 0 2px', borderColor: '#2f5d8a', background: '#f4f7fb'},\n    keep: 'together', space: {before: '1.5em', after: '1.5em'}})\n"
+  heading @[547,568) level=1
+    text @[549,568) str="Framed environments"
+  para @[570,668)
+    text @[570,668) str="A paragraph before the theorem, set at the measure; the theorem below stands a little further off."
+  region @[670,887) name="theorem"
+    para @[696,812)
+      text @[696,812) str="Every bounded monotone sequence of real numbers converges. Its limit is the supremum of its terms when it increases."
+    list @[814,877) bullet start=1
+      item @[814,856)
+        para @[816,856)
+          text @[816,856) str="a list inside the frame keeps its indent"
+      item @[857,877)
+        para @[859,877)
+          text @[859,877) str="within the padding"
+  para @[889,984)
+    text @[889,903) str="The text after "
+    ref @[904,910) target="thm-a"
+    text @[911,984) str=" resumes at the paragraph gap or the theorem's space, whichever is larger."

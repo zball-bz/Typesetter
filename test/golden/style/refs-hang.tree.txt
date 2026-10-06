@@ -1,0 +1,24 @@
+doc @[271,613) [base]
+  para @[271,297) [base]
+    text @[271,277) [base] str="Cited: " raw=0:0,7:6
+    ref @[278,283) [base] target="kp81"
+      text @[278,283) [base] str="["
+      link @[278,283) [base] target="bib-kp81"
+        text @[278,283) [base] str="1"
+      text @[278,283) [base] str="]"
+    text @[284,287) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[288,296) [base] target="knuth84"
+      text @[288,296) [base] str="["
+      link @[288,296) [base] target="bib-knuth84"
+        text @[288,296) [base] str="2"
+      text @[288,296) [base] str="]"
+    text @[296,297) [base] str="."
+  group @[299,306) [base] role="bibliography"
+    rule @[299,306) [base]
+    para @[308,479) [base] label="bib-kp81"
+      text @[308,479) [base] str="[1] "
+      text @[348,478) [base] str="Donald E. Knuth and Michael F. Plass. Breaking paragraphs into lines. Software: Practice and Experience 11(11), 1119–1184, 1981."
+    para @[481,613) [base] label="bib-knuth84"
+      text @[481,613) [base] str="[2] "
+      text @[524,612) [base] str="Donald E. Knuth. The TeXbook. Computers and Typesetting, volume A. Addison-Wesley, 1984."
+decl collector name="refs" flow=0 @[214,269) ext.row="{\"like\":\"bibliography\"}"

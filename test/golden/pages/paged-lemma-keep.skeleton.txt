@@ -1,0 +1,9 @@
+doc @[0,592)
+  code-block @[0,213) js="\n  // print control on user content (plan P3-14): a lemma keeps with the block\n  // after it; the proof keeps together\n  $.set({role: 'lemma'}, {keep: 'with-next'})\n  $.set({role: 'proof'}, {keep: 'together'})\n"
+  heading1 @[215,222)
+  para @[224,364) lines=1
+  region @[366,425) name="lemma"
+    para @[374,417) lines=1
+  region @[427,573) name="proof"
+    para @[435,565) lines=1
+  para @[575,591) lines=1

@@ -1,0 +1,15 @@
+#{ $.set('codeblock', {beside: 'shrink'}) }
+
+A block beside a float clears it by default (D-Y02); with beside: shrink it narrows to the room left (plan P3-14).
+
+#!figure(src: "photos/tower.jpg", alt: "tower", w: 400, h: 300, scale: 0.4, float: "right", label: "fig-tower")
+A right float.
+#figure!
+
+```js
+let x = 1;
+```
+
+```js(style: {beside: "clear"})
+let y = 2;
+```

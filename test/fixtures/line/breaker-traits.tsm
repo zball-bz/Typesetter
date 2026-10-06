@@ -1,0 +1,7 @@
+#{ $.set({role: 'tight'}, {breaker: {tolerance: 100, emergencyStretch: '1.5em'}, par: {align: 'start'}}) }
+
+A paragraph with the default breaker: the final pass alone, TeX's rescue for runs wider than the line; justified to the measure as usual.
+
+#!tight
+A region whose paragraphs break with a tolerance pass first and an emergency stretch, ragged at their end edge (plan P3-14: breaker is an inherited trait).
+#tight!

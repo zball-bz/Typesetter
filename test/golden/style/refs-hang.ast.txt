@@ -1,0 +1,19 @@
+doc @[0,614)
+  code-block @[0,213) js="\n  // a hanging-indent reference list (plan P3-14): par.hang is inherited, so\n  // the bibliography's entries hang their turnover lines 2em in\n  $.set({role: 'bibliography'}, {par: {hang: '2em', indent: '0'}})\n"
+  code-let @[214,269) js=" refs = $.collector('refs', {like: 'bibliography'})"
+  para @[271,297)
+    text @[271,277) str="Cited: "
+    ref @[278,283) target="kp81"
+    text @[284,287) str=" and "
+    ref @[288,296) target="knuth84"
+    text @[296,297) str="."
+  para @[299,306)
+    splice @[299,306) expr="refs()"
+  para @[308,479)
+    splice @[308,479) expr="entry({role: \"bibentry\", key: \"kp81\"})"
+      arg @[348,478)
+        text @[348,478) str="Donald E. Knuth and Michael F. Plass. Breaking paragraphs into lines. Software: Practice and Experience 11(11), 1119–1184, 1981."
+  para @[481,613)
+    splice @[481,613) expr="entry({role: \"bibentry\", key: \"knuth84\"})"
+      arg @[524,612)
+        text @[524,612) str="Donald E. Knuth. The TeXbook. Computers and Typesetting, volume A. Addison-Wesley, 1984."

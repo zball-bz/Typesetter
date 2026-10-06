@@ -39,6 +39,7 @@ inline constexpr const char* kStdNames[] = {
     "node",
     "note",
     "notes",
+    "pagebreak",
     "para",
     "plain",
     "quote",

@@ -1,0 +1,11 @@
+doc @[0,413)
+  heading1 @[0,13)
+  para @[15,92) lines=1
+  para @[94,106) lines=1
+  para @[108,164) lines=1
+  region @[166,256) name="aside"
+    para @[208,248) lines=1
+  region @[258,319) name="note"
+    para @[291,312) lines=1
+  region @[321,412) name="note"
+    para @[353,405) lines=1

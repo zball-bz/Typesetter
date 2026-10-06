@@ -162,6 +162,29 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       out += "</div>\n";
       return;
     }
+    case FragKind::Frame: {  // (plan P3-14) a framed block's border and background, under it
+      Tag t(out, "div");
+      t.attrSafe("class", "tsr-frame");
+      pos3(t).px("height", n.heightPx);
+      if (n.box) {
+        const BoxModel& b = *n.box;
+        if (b.border[0] || b.border[1] || b.border[2] || b.border[3]) {
+          std::string w;
+          for (int side = 0; side < 4; side++) {
+            char buf[48];
+            if (side) w += ' ';
+            w.append(buf, fmtPxBuf(buf, suToPx(b.border[side])));
+          }
+          t.decl("border-width", w);
+          if (b.borderColor) t.decl("border-color", strs.get(b.borderColor));  // (a validated colour)
+        }
+        if (b.background) t.decl("background", strs.get(b.background));
+      }
+      t.attrSafe("data-syn", "frame");
+      t.open();
+      out += "</div>\n";
+      return;
+    }
     case FragKind::Math: {  // display math (§8): the formula placed in its row
       {
         Tag t(out, "div");

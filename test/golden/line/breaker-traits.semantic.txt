@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<p data-pid="0" data-tsr-env="de4a5b852ea1b2d9" data-s="108" data-e="245">A paragraph with the default breaker: the final pass alone, TeX&#39;s rescue for runs wider than the line; justified to the measure as usual.</p>
+<div data-role="tight" data-pid="1" data-tsr-env="de4a5b852ea1b2d9" data-s="247" data-e="418">
+<p data-s="255" data-e="410">A region whose paragraphs break with a tolerance pass first and an emergency stretch, ragged at their end edge (plan P3-14: breaker is an inherited trait).</p>
+</div>
+</div>

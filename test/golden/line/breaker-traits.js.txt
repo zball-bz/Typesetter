@@ -1,0 +1,12 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => {
+ $.set({role: 'tight'}, {breaker: {tolerance: 100, emergencyStretch: '1.5em'}, par: {align: 'start'}}) 
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

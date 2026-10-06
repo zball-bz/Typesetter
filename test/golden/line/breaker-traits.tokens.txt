@@ -1,0 +1,3 @@
+[0,106) function "#{ $.set({role: 'tight'}, {breaker: {tolerance: 100, emergencyStretch: '1.5em'}, par: {align: 'start'}}) }"
+[247,254) function "#!tight"
+[411,418) function "#tight!"

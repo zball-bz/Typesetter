@@ -1,0 +1,6 @@
+doc @[108,418) [base]
+  para @[108,245) [base]
+    text @[108,245) [base] str="A paragraph with the default breaker: the final pass alone, TeX's rescue for runs wider than the line; justified to the measure as usual."
+  group @[247,418) [base] role="tight"
+    para @[255,410) [base]
+      text @[255,410) [base] str="A region whose paragraphs break with a tolerance pass first and an emergency stretch, ragged at their end edge (plan P3-14: breaker is an inherited trait)."

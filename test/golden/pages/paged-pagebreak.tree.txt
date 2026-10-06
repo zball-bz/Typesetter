@@ -1,0 +1,17 @@
+doc @[0,412) [base]
+  heading @[0,13) [BOLDx1.60] level=1 label="h-1"
+    text @[2,13) [BOLDx1.60] str="Page breaks"
+  para @[15,92) [base]
+    text @[15,92) [base] str="The first sheet ends after this paragraph: a page break follows (plan P3-14)."
+  group @[94,106) [base] role="pagebreak"
+  para @[108,164) [base]
+    text @[108,164) [base] str="The second sheet starts here, though the first had room."
+  group @[166,256) [base] role="aside"
+    para @[208,248) [base]
+      text @[208,248) [base] str="A region that starts a sheet of its own."
+  group @[258,319) [base] role="note"
+    para @[291,312) [base]
+      text @[291,312) [base] str="Shown on screen only."
+  group @[321,412) [base] role="note"
+    para @[353,405) [base]
+      text @[353,405) [base] str="Printed only: this paragraph has no place on screen."

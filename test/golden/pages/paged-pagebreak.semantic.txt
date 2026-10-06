@@ -1,0 +1,16 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="13" id="tsr-h-1">Page breaks</h1>
+<p data-pid="1" data-s="15" data-e="92">The first sheet ends after this paragraph: a page break follows (plan P3-14).</p>
+<div data-role="pagebreak" data-pid="2" data-s="94" data-e="106">
+</div>
+<p data-pid="3" data-s="108" data-e="164">The second sheet starts here, though the first had room.</p>
+<div data-role="aside" data-pid="4" data-s="166" data-e="256">
+<p data-s="208" data-e="248">A region that starts a sheet of its own.</p>
+</div>
+<div data-role="note" data-pid="5" data-s="258" data-e="319">
+<p data-s="291" data-e="312">Shown on screen only.</p>
+</div>
+<div data-role="note" data-pid="6" data-s="321" data-e="412">
+<p data-s="353" data-e="405">Printed only: this paragraph has no place on screen.</p>
+</div>
+</div>

@@ -44,6 +44,18 @@ class Builder {
     u32 root = open(LayouterId::Stack, Painter::None, TraitsId::Root, child, ~0u, 0);
     walk(child, root, 0, 0);
     close(root);
+    // (plan P3-14) the boxes: a framed block's descendants stand inside its
+    // padding and border, at both edges
+    std::vector<Su> inL(tt.blocks.size(), 0);  // the start insets around each block
+    for (u32 i = 0; i < (u32)tt.blocks.size(); i++) {
+      LayoutBlock& b = tt.blocks[i];
+      if (b.parent == ~0u) continue;
+      const LayoutBlock& p = tt.blocks[b.parent];
+      if (p.layouter == LayouterId::Table) continue;  // a cell: a flow root of its own (layout places it)
+      inL[i] = inL[b.parent] + p.box.inset(3);
+      b.x += inL[i];
+      b.xr = p.xr + p.box.inset(1);
+    }
     // anchors (finding emitter/anchor-opt-in-per-kind): an anchored block's
     // label rides the first leaf of its subtree whatever its kind (a marker
     // alone carries none); children come before parents in reverse
@@ -90,6 +102,7 @@ class Builder {
   TopTree* t = nullptr;
   std::vector<LeafSource>* leaves = nullptr;
   int figDepth = 0;  // inside a captions role: paragraphs are captions
+  bool pendingBreak = false;  // (plan P3-14) for the next block opened
 
   // a block length (plan P3-01): em of the block's own size
   Su lenSu(const Len& l, const ContentNode* n) const {
@@ -130,6 +143,13 @@ class Builder {
       b.tr.gapNum = b.tr.gapDen = 1;
     } else if (n) {
       traitsOf(n, b.tr);
+      boxOf(n, b.box);
+    }
+    // (plan P3-14) a page break an empty block asked for (#pagebreak())
+    // lands on the next block
+    if (pendingBreak) {
+      b.tr.breakBefore = true;
+      pendingBreak = false;
     }
     t->blocks.push_back(b);
     return (u32)t->blocks.size() - 1;
@@ -146,14 +166,54 @@ class Builder {
                                                 : Align::Justify;
     tr.singleCenter = np.parSingleLine == PARSINGLELINE_CENTER;
     tr.hyphenate = np.parHyphenate != PARHYPHENATE_FALSE;
-    tr.keepWithNext = np.keepWithNext;
+    tr.keepWithNext = np.keepWithNext || np.keep == KEEP_WITH_NEXT || np.keep == KEEP_BOTH;
     tr.snapKerning = np.snapKerning;
     if (np.sidecarFrac > 0) tr.sidecarFrac = np.sidecarFrac;
     tr.contIndent = (i32)np.contIndent;
+    // (plan P3-14) the block trait group
+    tr.keepTogether = np.keep == KEEP_TOGETHER || np.keep == KEEP_BOTH;
+    tr.spaceBefore = lenSu(np.spaceBefore, n);
+    tr.spaceAfter = lenSu(np.spaceAfter, n);
+    tr.breakBefore = np.breakBefore == BREAKBEFORE_PAGE;
+    tr.breakAfter = np.breakAfter == BREAKAFTER_PAGE;
+    tr.hang = lenSu(np.parHang, n);
+    if (np.parHangAfter > 0) tr.hangAfter = (u16)np.parHangAfter;
+    tr.media = np.media == MEDIA_SCREEN ? 1 : np.media == MEDIA_PAGED ? 2 : 0;
+    tr.shrink = np.beside == BESIDE_SHRINK;
+    if (np.breakerTolerance > 0) tr.tolerance = np.breakerTolerance;
+    tr.emergencyStretch = lenSu(np.breakerStretch, n);
   }
-  // a container without leaves is dropped: it takes no gap
+  // (plan P3-14) a node's box: its padding and border widths (CSS shorthand,
+  // in its own em), their colours
+  void boxOf(const ContentNode* n, BoxModel& box) const {
+    const NodeProps& np = props.get(n->props);
+    auto lens = [&](StrRef v, Su out[4]) {
+      if (!v) return;
+      Su l[4];
+      int k = 0;
+      const std::string_view sv = strs.get(v);
+      for (size_t at = 0; at < sv.size() && k < 4;) {
+        size_t sp = sv.find(' ', at);
+        if (sp == std::string_view::npos) sp = sv.size();
+        l[k++] = lenSu(parseLen(sv.substr(at, sp - at)), n);
+        at = sp + 1;
+      }
+      if (k == 0) return;
+      out[0] = l[0];
+      out[1] = k > 1 ? l[1] : l[0];
+      out[2] = k > 2 ? l[2] : l[0];
+      out[3] = k > 3 ? l[3] : out[1];
+    };
+    lens(np.boxPadding, box.pad);
+    lens(np.boxBorder, box.border);
+    box.borderColor = np.boxBorderColor;
+    box.background = np.boxBackground;
+  }
+  // a container without leaves is dropped: it takes no gap (a page break
+  // it asks for goes to the next block)
   void close(u32 i) {
     if (i + 1 == t->blocks.size() && !t->blocks[i].leaf() && i > 0) {
+      pendingBreak = pendingBreak || t->blocks[i].tr.breakBefore || t->blocks[i].tr.breakAfter;
       t->blocks.pop_back();
       return;
     }
@@ -455,6 +515,20 @@ std::string dumpBlockTree(const std::vector<TopTree>& tops, const Interner& strs
       if (!tr.hyphenate) out += " nohyphen";
       if (tr.keepWithNext) out += " keep-with-next";
       if (b.floatSide) out += b.floatSide == 1 ? " float=left" : " float=right";
+      // (plan P3-14) the trait group, where set
+      if (b.xr) appendf(out, " xr=%dsu", b.xr);
+      if (tr.keepTogether) out += " keep-together";
+      if (tr.spaceBefore || tr.spaceAfter) appendf(out, " space=%dsu/%dsu", tr.spaceBefore, tr.spaceAfter);
+      if (tr.breakBefore) out += " break-before";
+      if (tr.breakAfter) out += " break-after";
+      if (tr.hang) appendf(out, " hang=%dsu/%u", tr.hang, tr.hangAfter);
+      if (tr.media) out += tr.media == 1 ? " media=screen" : " media=paged";
+      if (tr.shrink) out += " shrink";
+      if (tr.tolerance >= 0) appendf(out, " tolerance=%g", tr.tolerance);
+      if (tr.emergencyStretch) appendf(out, " emergency=%dsu", tr.emergencyStretch);
+      if (b.box.framed())
+        appendf(out, " box=%d,%d,%d,%d/%d,%d,%d,%d", b.box.pad[0], b.box.pad[1], b.box.pad[2], b.box.pad[3],
+                b.box.border[0], b.box.border[1], b.box.border[2], b.box.border[3]);
       if (b.anchor) {
         out += " anchor=\"";
         appendEscaped(out, strs.get(b.anchor));

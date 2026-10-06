@@ -177,7 +177,42 @@ struct Writer {
         case ArgK::listMarker:
           if (np.listMarker) decl("list-style-type", strs.get(np.listMarker));
           break;
-        default: break;  // no CSS form on this page (hang, gap, lang)
+        // (plan P3-14) the block trait group's CSS forms
+        case ArgK::keep:
+          if (np.keep == KEEP_TOGETHER || np.keep == KEEP_BOTH) decl("break-inside", "avoid");
+          if (np.keep == KEEP_WITH_NEXT || np.keep == KEEP_BOTH) decl("break-after", "avoid");
+          break;
+        case ArgK::spaceBefore: decl("margin-block-start", len(np.spaceBefore)); break;
+        case ArgK::spaceAfter: decl("margin-block-end", len(np.spaceAfter)); break;
+        case ArgK::breakBefore: decl("break-before", np.breakBefore == BREAKBEFORE_PAGE ? "page" : "auto"); break;
+        case ArgK::breakAfter: decl("break-after", np.breakAfter == BREAKAFTER_PAGE ? "page" : "auto"); break;
+        case ArgK::parHang:  // (a first line hanging out: the CSS form of hangAfter 1)
+          decl("padding-inline-start", len(np.parHang));
+          decl("text-indent", np.parHang.v == 0 ? std::string("0") : "-" + len(np.parHang));
+          break;
+        case ArgK::boxPadding:
+          if (np.boxPadding) decl("padding", strs.get(np.boxPadding));
+          break;
+        case ArgK::boxBorder:
+          if (np.boxBorder) {
+            decl("border-style", "solid");
+            decl("border-width", strs.get(np.boxBorder));
+          }
+          break;
+        case ArgK::boxBorderColor:
+          if (np.boxBorderColor) decl("border-color", strs.get(np.boxBorderColor));
+          break;
+        case ArgK::boxBackground:
+          if (np.boxBackground) decl("background", strs.get(np.boxBackground));
+          break;
+        case ArgK::beside:
+          if (np.beside == BESIDE_SHRINK) decl("display", "flow-root");
+          break;
+        case ArgK::placeFloat:
+          if (np.placeFloat == PLACEFLOAT_LEFT || np.placeFloat == PLACEFLOAT_RIGHT)
+            decl("float", np.placeFloat == PLACEFLOAT_LEFT ? "inline-start" : "inline-end");
+          break;
+        default: break;  // no CSS form on this page (gap, lang, media, breaker)
       }
     }
     if (!d.empty()) d.pop_back();

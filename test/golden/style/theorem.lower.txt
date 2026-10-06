@@ -1,0 +1,27 @@
+lower v1 abi 3d3ccfbb docEnd 985 holes 2 module 7265cfe580e2e12f
+piece 0 hole 0 js [136,688)
+piece 1 hole 1 js [690,714)
+block 0 stmt [0,545) user framed holes 0..1
+  STMT 0
+block 1 content [547,568)
+  CALL heading [547,568) level=1 label=null
+    TEXT "Framed environments" [549,568)
+block 2 content [570,668)
+  CALL para [570,668)
+    TEXT "A paragraph before the theorem, set at the measure; the theorem below stands a little further off." [570,668)
+block 3 content [670,887) user framed async holes 1..2
+  REGION async "theorem" args=hole 1 [670,887)
+    CALL para [696,812)
+      TEXT "Every bounded monotone sequence of real numbers converges. Its limit is the supremum of its terms when it increases." [696,812)
+    CALL list [814,877) ordered=false start=1
+      CALL item [814,856)
+        CALL para [816,856)
+          TEXT "a list inside the frame keeps its indent" [816,856)
+      CALL item [857,877)
+        CALL para [859,877)
+          TEXT "within the padding" [859,877)
+block 4 content [889,984)
+  CALL para [889,984)
+    TEXT "The text after " [889,903) raw=0:0,15:14
+    CALL ref [904,910) target="thm-a"
+    TEXT " resumes at the paragraph gap or the theorem's space, whichever is larger." [911,984) raw=0:0,1:0

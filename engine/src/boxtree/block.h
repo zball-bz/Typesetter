@@ -59,6 +59,35 @@ struct BlockTraits {
   bool snapKerning = false;
   float sidecarFrac = 0.4f;
   i32 contIndent = 2;
+  // (plan P3-14; design T6 S12) the block trait group: a page cut inside
+  // it avoided (keep together; with-next is keepWithNext), the space above
+  // and below it (collapsing with its neighbours' and the stack's gap), a
+  // page break before / after it, its paragraphs' hanging indent (lines
+  // after the first hangAfter start `hang` in), where it shows (media:
+  // 0 all, 1 screen, 2 paged), whether it narrows beside a float instead of
+  // clearing it, its breaker's tolerance and emergency stretch
+  bool keepTogether = false;
+  Su spaceBefore = 0, spaceAfter = 0;
+  bool breakBefore = false, breakAfter = false;
+  Su hang = 0;
+  u16 hangAfter = 1;
+  u8 media = 0;
+  bool shrink = false;
+  double tolerance = -1;  // kNoTolerance
+  Su emergencyStretch = 0;
+};
+// (plan P3-14; design T6 BoxModel) a framed block: its padding and border
+// (top, right, bottom, left), their colours; its content box is inset by
+// both, and a frame fragment paints them under its content
+struct BoxModel {
+  Su pad[4] = {0, 0, 0, 0}, border[4] = {0, 0, 0, 0};
+  StrRef borderColor = 0, background = 0;
+  bool framed() const {
+    for (int i = 0; i < 4; i++)
+      if (pad[i] || border[i]) return true;
+    return background != 0;
+  }
+  Su inset(int side) const { return pad[side] + border[side]; }
 };
 // what a block is (its layouter's case; the dumps' name)
 enum class TraitsId : u8 {
@@ -120,6 +149,10 @@ struct LayoutBlock {
   // (plan P3-13) a deferred flow's entry: its marker's source position (its
   // fragments are the paged sheets' inserts); kInsertArea: their separator
   u32 insertAt = kNotInsert;
+  // (plan P3-14) its end edge's inset (the right paddings and borders of its
+  // ancestors, as x is the start's) and its own box
+  Su xr = 0;
+  BoxModel box;
   bool leaf() const { return unit != ~0u; }
 };
 

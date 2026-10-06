@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 14;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '2cebfc6d';
+export const SCHEMA_HASH = '16bce923';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -298,7 +298,23 @@ export const SINCE = Object.freeze({
       "72": 13,
       "73": 13,
       "74": 13,
-      "76": 14
+      "76": 14,
+      "79": 14,
+      "80": 14,
+      "81": 14,
+      "82": 14,
+      "83": 14,
+      "84": 14,
+      "85": 14,
+      "86": 14,
+      "87": 14,
+      "88": 14,
+      "89": 14,
+      "90": 14,
+      "91": 14,
+      "92": 14,
+      "93": 14,
+      "94": 14
     },
     "19": {
       "0": 9,
@@ -676,7 +692,23 @@ export const ARGK = Object.freeze({
   "kind": 75,
   "parSingleLine": 76,
   "to": 77,
-  "sortKey": 78
+  "sortKey": 78,
+  "keep": 79,
+  "spaceBefore": 80,
+  "spaceAfter": 81,
+  "breakBefore": 82,
+  "breakAfter": 83,
+  "parHang": 84,
+  "parHangAfter": 85,
+  "boxPadding": 86,
+  "boxBorder": 87,
+  "boxBorderColor": 88,
+  "boxBackground": 89,
+  "media": 90,
+  "beside": 91,
+  "breakerTolerance": 92,
+  "breakerStretch": 93,
+  "placeFloat": 94
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -1046,6 +1078,22 @@ export const SCHEMA = Object.freeze({
       "features": "features",
       "punct": "enum:full|book|none",
       "parSingleLine": "enum:align|center",
+      "keep": "enum:together|with-next|both",
+      "spaceBefore": "len",
+      "spaceAfter": "len",
+      "breakBefore": "enum:auto|page",
+      "breakAfter": "enum:auto|page",
+      "parHang": "len",
+      "parHangAfter": "int:0:100",
+      "boxPadding": "lens",
+      "boxBorder": "lens",
+      "boxBorderColor": "color",
+      "boxBackground": "color",
+      "media": "enum:all|screen|paged",
+      "beside": "enum:clear|shrink",
+      "breakerTolerance": "num:0:100000",
+      "breakerStretch": "len",
+      "placeFloat": "enum:none|left|right|top|bottom|page",
       "label": "label",
       "role": "ident",
       "slot": "ident",

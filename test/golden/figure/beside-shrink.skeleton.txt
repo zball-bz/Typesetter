@@ -1,0 +1,7 @@
+doc @[0,367)
+  code-block @[0,43) js=" $.set('codeblock', {beside: 'shrink'}) "
+  para @[45,159) lines=1
+  region @[161,296) name="figure"
+    para @[273,287) lines=1
+  fence @[298,318) lang="js" lines=1
+  fence @[320,366) lang="js(style: {beside: \"clear\"})" lines=1

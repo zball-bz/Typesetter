@@ -1,0 +1,12 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-tsr-env="71565bf7f7c8013f" data-s="547" data-e="568" id="tsr-h-1">Framed environments</h1>
+<p data-pid="1" data-tsr-env="71565bf7f7c8013f" data-s="570" data-e="668">A paragraph before the theorem, set at the measure; the theorem below stands a little further off.</p>
+<div data-role="theorem" data-pid="2" data-tsr-env="71565bf7f7c8013f" data-s="670" data-e="887" id="tsr-thm-a">
+<p data-s="696" data-e="812"><strong>Theorem 1.</strong> Every bounded monotone sequence of real numbers converges. Its limit is the supremum of its terms when it increases.</p>
+<ul data-s="814" data-e="877">
+<li>a list inside the frame keeps its indent</li>
+<li>within the padding</li>
+</ul>
+</div>
+<p data-pid="3" data-tsr-env="71565bf7f7c8013f" data-s="889" data-e="984">The text after <a href="#tsr-thm-a">Theorem 1</a> resumes at the paragraph gap or the theorem&#39;s space, whichever is larger.</p>
+</div>

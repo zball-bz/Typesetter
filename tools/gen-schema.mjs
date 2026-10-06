@@ -297,7 +297,7 @@ for (const [, r] of props) {
   if (r.type === 'flags')
     for (const [f, b] of Object.entries(r.flags)) ph += `constexpr u8 ${r.field.toUpperCase()}_${f} = ${1 << b};\n`;
   if (r.type === 'enum')
-    r.values.forEach((v, k) => { ph += `constexpr u8 ${r.field.toUpperCase()}_${v.toUpperCase()} = ${k + 1};\n`; });
+    r.values.forEach((v, k) => { ph += `constexpr u8 ${r.field.toUpperCase()}_${v.toUpperCase().replace(/[^A-Z0-9]/g, "_")} = ${k + 1};\n`; });
 }
 ph += `\n// a hash over the canonical bits of every field\nstruct StylingHash {\n  size_t operator()(const Styling& s) const {\n` +
   `    u64 h = 1469598103934665603ull;\n    auto mix = [&](u64 v) { h = (h ^ v) * 1099511628211ull; };\n`;
@@ -374,7 +374,7 @@ ph += `// A length (plan P3-01): em of the document's base size (rem-like) or px
 for (const [n, r] of blockProps) ph += `  ${BCT[r.type]} ${r.field} = ${BINIT[r.type]};  // ${n}${r.inherits ? ' (inherits)' : ''}\n`;
 ph += `  bool operator==(const NodeProps& o) const {\n    return ${blockProps.map(([, r]) => `${r.field} == o.${r.field}`).join(' &&\n           ')};\n  }\n};\n`;
 for (const [, r] of blockProps)
-  if (r.type === 'enum') r.values.forEach((v, k) => { ph += `constexpr u8 ${r.field.toUpperCase()}_${v.toUpperCase()} = ${k + 1};\n`; });
+  if (r.type === 'enum') r.values.forEach((v, k) => { ph += `constexpr u8 ${r.field.toUpperCase()}_${v.toUpperCase().replace(/[^A-Z0-9]/g, "_")} = ${k + 1};\n`; });
 ph += `struct NodePropsHash {\n  size_t operator()(const NodeProps& p) const {\n    u64 h = 1469598103934665603ull;\n` +
   `    auto mix = [&](u64 v) { h = (h ^ v) * 1099511628211ull; };\n    auto len = [&](const Len& l) {\n      u32 b;\n      std::memcpy(&b, &l.v, 4);\n      mix(b);\n      mix(l.unit);\n    };\n`;
 for (const [, r] of blockProps) {

@@ -72,7 +72,7 @@ const AttrSpec kA_codeblock[] = {
     {70, "snapKerning", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {71, "sidecarFrac", Dom::Num, 0.1, 0.9, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {72, "contIndent", Dom::Int, 0, 40, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
-    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 14, false},
+    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 15, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -215,6 +215,12 @@ const char* const kM_styled_parAlign[] = {"justify", "start", "center", "end"};
 const char* const kM_styled_parHyphenate[] = {"auto", "true", "false"};
 const char* const kM_styled_punct[] = {"full", "book", "none"};
 const char* const kM_styled_parSingleLine[] = {"align", "center"};
+const char* const kM_styled_keep[] = {"together", "with-next", "both"};
+const char* const kM_styled_breakBefore[] = {"auto", "page"};
+const char* const kM_styled_breakAfter[] = {"auto", "page"};
+const char* const kM_styled_media[] = {"all", "screen", "paged"};
+const char* const kM_styled_beside[] = {"clear", "shrink"};
+const char* const kM_styled_placeFloat[] = {"none", "left", "right", "top", "bottom", "page"};
 const char* const kM_styled_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_styled[] = {
     {21, "font", Dom::Font, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -240,13 +246,29 @@ const AttrSpec kA_styled[] = {
     {66, "matchClass", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
     {67, "matchLang", Dom::Lang, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
     {68, "matchDepth", Dom::Int, 1, 16, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
-    {69, "matchWhere", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 13, false},
+    {69, "matchWhere", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 14, false},
     {70, "snapKerning", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {71, "sidecarFrac", Dom::Num, 0.1, 0.9, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {72, "contIndent", Dom::Int, 0, 40, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
-    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 14, false},
+    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 15, false},
     {74, "punct", Dom::Enum, 0, 0, kM_styled_punct, nullptr, 3, false, false, 0, 13, 0, false},
     {76, "parSingleLine", Dom::Enum, 0, 0, kM_styled_parSingleLine, nullptr, 2, false, false, 0, 14, 0, false},
+    {79, "keep", Dom::Enum, 0, 0, kM_styled_keep, nullptr, 3, false, false, 0, 14, 0, false},
+    {80, "spaceBefore", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 11, false},
+    {81, "spaceAfter", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 11, false},
+    {82, "breakBefore", Dom::Enum, 0, 0, kM_styled_breakBefore, nullptr, 2, false, false, 0, 14, 0, false},
+    {83, "breakAfter", Dom::Enum, 0, 0, kM_styled_breakAfter, nullptr, 2, false, false, 0, 14, 0, false},
+    {84, "parHang", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 11, false},
+    {85, "parHangAfter", Dom::Int, 0, 100, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
+    {86, "boxPadding", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 13, false},
+    {87, "boxBorder", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 13, false},
+    {88, "boxBorderColor", Dom::Color, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
+    {89, "boxBackground", Dom::Color, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
+    {90, "media", Dom::Enum, 0, 0, kM_styled_media, nullptr, 3, false, false, 0, 14, 0, false},
+    {91, "beside", Dom::Enum, 0, 0, kM_styled_beside, nullptr, 2, false, false, 0, 14, 0, false},
+    {92, "breakerTolerance", Dom::Num, 0, 100000, nullptr, nullptr, 0, false, false, 0, 14, 0, false},
+    {93, "breakerStretch", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 11, false},
+    {94, "placeFloat", Dom::Enum, 0, 0, kM_styled_placeFloat, nullptr, 6, false, false, 0, 14, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -524,7 +546,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"error", Level::Adaptive, Body::None, InlineShape::Error, 6, kA_error, 11},
     {"comment", Level::Trivia, Body::Text, InlineShape::Skip, 6, kA_comment, 9},
     {"text", Level::Inline, Body::None, InlineShape::Text, 6, nullptr, 0},
-    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 39},
+    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 55},
     {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 12},
     {"code", Level::Inline, Body::Text, InlineShape::Code, 6, kA_code, 9},
     {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 13},

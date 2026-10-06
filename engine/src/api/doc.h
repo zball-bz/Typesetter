@@ -883,9 +883,21 @@ struct Doc {
     PageSpec spec;
     spec.h = suRoundPx(pageHeightPx);
     spec.footnoteSkip = suRoundPx(cfg.baseSizePx);
-    const PageResult pr = paginate(layout, spec, &diags);
-    std::vector<DLBlock> dl(layout.paras.size());
-    for (size_t p = 0; p < layout.paras.size(); p++) paintBlock(layout, p, tops, strs, cfg, dl[p]);
+    // (plan P3-14) blocks for one medium only (media): the sheets' own
+    // layout, without the screen's and with the paged ones (its overfull
+    // reports are the screen layout's already)
+    bool media = false;
+    for (const TopBlock& t : tops)
+      for (const LayoutBlock& b : t.tree->blocks) media = media || b.tr.media;
+    LayoutResult own;
+    if (media) {
+      DiagSink scratch;
+      own = layoutDoc(tops, metrics, strs, cfg, scratch, &session().breakMemo, /*paged=*/true);
+    }
+    const LayoutResult& lay = media ? own : layout;
+    const PageResult pr = paginate(lay, spec, &diags);
+    std::vector<DLBlock> dl(lay.paras.size());
+    for (size_t p = 0; p < lay.paras.size(); p++) paintBlock(lay, p, tops, strs, cfg, dl[p]);
     std::string html;
     writeRoot(html, "tsr-doc tsr-paged", paintRoot(cfg));
     for (const Page& pg : pr.pages) {
@@ -910,7 +922,7 @@ struct Doc {
           html += "\n";
         }
         // its place on the sheet; a repeated header row carries no ids
-        const Su at = (Su)((i64)layout.paras[band.para].y - pg.top + band.yShift);
+        const Su at = (Su)((i64)lay.paras[band.para].y - pg.top + band.yShift);
         if (band.repeat) {
           AnchorScope none(cfg.idPrefix, /*suppress=*/true);
           writeNodes(html, dl[band.para], band.lo, band.hi, at, styles, strs, cfg.baseSizePx);

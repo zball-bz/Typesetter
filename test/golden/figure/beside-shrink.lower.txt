@@ -1,0 +1,17 @@
+lower v1 abi 3d3ccfbb docEnd 367 holes 3 module e257d28f1f585178
+piece 0 hole 0 js [129,179)
+piece 1 hole 1 js [181,292)
+piece 2 hole 2 js [294,328)
+block 0 stmt [0,43) user framed holes 0..1
+  STMT 0
+block 1 content [45,159)
+  CALL para [45,159)
+    TEXT "A block beside a float clears it by default (D-Y02); with beside: shrink it narrows to the room left (plan P3-14)." [45,159)
+block 2 content [161,296) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [161,296)
+    CALL para [273,287)
+      TEXT "A right float." [273,287)
+block 3 content [298,318) async
+  FENCE async "js" body="let x = 1;" at=[304,314) lines=null [298,318)
+block 4 content [320,366) user framed async holes 2..3
+  FENCE async "js" args=hole 2 body="let y = 2;" at=[352,362) lines=null [320,366)

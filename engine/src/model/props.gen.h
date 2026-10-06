@@ -239,6 +239,22 @@ struct NodeProps {
   bool snapKerning = false;  // codeblock.snapKerning (inherits)
   float sidecarFrac = 0;  // codeblock.sidecarFrac (inherits)
   float contIndent = 0;  // codeblock.contIndent (inherits)
+  u8 keep = 0;  // keep
+  Len spaceBefore = {};  // space.before
+  Len spaceAfter = {};  // space.after
+  u8 breakBefore = 0;  // break.before
+  u8 breakAfter = 0;  // break.after
+  Len parHang = {};  // par.hang (inherits)
+  float parHangAfter = 0;  // par.hangAfter (inherits)
+  StrRef boxPadding = 0;  // box.padding
+  StrRef boxBorder = 0;  // box.border
+  StrRef boxBorderColor = 0;  // box.borderColor
+  StrRef boxBackground = 0;  // box.background
+  u8 media = 0;  // media
+  u8 beside = 0;  // beside
+  float breakerTolerance = 0;  // breaker.tolerance (inherits)
+  Len breakerStretch = {};  // breaker.emergencyStretch (inherits)
+  u8 placeFloat = 0;  // place.float
   bool operator==(const NodeProps& o) const {
     return parIndent == o.parIndent &&
            parAlign == o.parAlign &&
@@ -250,7 +266,23 @@ struct NodeProps {
            listMarker == o.listMarker &&
            snapKerning == o.snapKerning &&
            sidecarFrac == o.sidecarFrac &&
-           contIndent == o.contIndent;
+           contIndent == o.contIndent &&
+           keep == o.keep &&
+           spaceBefore == o.spaceBefore &&
+           spaceAfter == o.spaceAfter &&
+           breakBefore == o.breakBefore &&
+           breakAfter == o.breakAfter &&
+           parHang == o.parHang &&
+           parHangAfter == o.parHangAfter &&
+           boxPadding == o.boxPadding &&
+           boxBorder == o.boxBorder &&
+           boxBorderColor == o.boxBorderColor &&
+           boxBackground == o.boxBackground &&
+           media == o.media &&
+           beside == o.beside &&
+           breakerTolerance == o.breakerTolerance &&
+           breakerStretch == o.breakerStretch &&
+           placeFloat == o.placeFloat;
   }
 };
 constexpr u8 PARALIGN_JUSTIFY = 1;
@@ -262,6 +294,24 @@ constexpr u8 PARHYPHENATE_TRUE = 2;
 constexpr u8 PARHYPHENATE_FALSE = 3;
 constexpr u8 PARSINGLELINE_ALIGN = 1;
 constexpr u8 PARSINGLELINE_CENTER = 2;
+constexpr u8 KEEP_TOGETHER = 1;
+constexpr u8 KEEP_WITH_NEXT = 2;
+constexpr u8 KEEP_BOTH = 3;
+constexpr u8 BREAKBEFORE_AUTO = 1;
+constexpr u8 BREAKBEFORE_PAGE = 2;
+constexpr u8 BREAKAFTER_AUTO = 1;
+constexpr u8 BREAKAFTER_PAGE = 2;
+constexpr u8 MEDIA_ALL = 1;
+constexpr u8 MEDIA_SCREEN = 2;
+constexpr u8 MEDIA_PAGED = 3;
+constexpr u8 BESIDE_CLEAR = 1;
+constexpr u8 BESIDE_SHRINK = 2;
+constexpr u8 PLACEFLOAT_NONE = 1;
+constexpr u8 PLACEFLOAT_LEFT = 2;
+constexpr u8 PLACEFLOAT_RIGHT = 3;
+constexpr u8 PLACEFLOAT_TOP = 4;
+constexpr u8 PLACEFLOAT_BOTTOM = 5;
+constexpr u8 PLACEFLOAT_PAGE = 6;
 struct NodePropsHash {
   size_t operator()(const NodeProps& p) const {
     u64 h = 1469598103934665603ull;
@@ -293,6 +343,30 @@ struct NodePropsHash {
       std::memcpy(&b, &p.contIndent, 4);
       mix(b);
     }
+    mix((u64)p.keep);
+    len(p.spaceBefore);
+    len(p.spaceAfter);
+    mix((u64)p.breakBefore);
+    mix((u64)p.breakAfter);
+    len(p.parHang);
+    {
+      u32 b;
+      std::memcpy(&b, &p.parHangAfter, 4);
+      mix(b);
+    }
+    mix((u64)p.boxPadding);
+    mix((u64)p.boxBorder);
+    mix((u64)p.boxBorderColor);
+    mix((u64)p.boxBackground);
+    mix((u64)p.media);
+    mix((u64)p.beside);
+    {
+      u32 b;
+      std::memcpy(&b, &p.breakerTolerance, 4);
+      mix(b);
+    }
+    len(p.breakerStretch);
+    mix((u64)p.placeFloat);
     return (size_t)h;
   }
 };
@@ -307,6 +381,10 @@ inline NodeProps inheritProps(const NodeProps& parent) {
   p.snapKerning = parent.snapKerning;
   p.sidecarFrac = parent.sidecarFrac;
   p.contIndent = parent.contIndent;
+  p.parHang = parent.parHang;
+  p.parHangAfter = parent.parHangAfter;
+  p.breakerTolerance = parent.breakerTolerance;
+  p.breakerStretch = parent.breakerStretch;
   return p;
 }
 // folds one styled attribute onto block properties (values validated at decode)
@@ -338,6 +416,52 @@ inline void applyNodeArg(NodeProps& p, const ArgVal& a, Intern intern, View view
   if (a.key == ArgK::snapKerning && a.tag == ArgTag::Bool) p.snapKerning = a.num != 0;
   if (a.key == ArgK::sidecarFrac && a.tag == ArgTag::Num) p.sidecarFrac = (float)a.num;
   if (a.key == ArgK::contIndent && a.tag == ArgTag::Num) p.contIndent = (float)a.num;
+  if (a.key == ArgK::keep && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "together") p.keep = 1;
+    if (v == "with-next") p.keep = 2;
+    if (v == "both") p.keep = 3;
+  }
+  if (a.key == ArgK::spaceBefore && a.tag == ArgTag::Str) p.spaceBefore = parseLen(view(a.ref));
+  if (a.key == ArgK::spaceAfter && a.tag == ArgTag::Str) p.spaceAfter = parseLen(view(a.ref));
+  if (a.key == ArgK::breakBefore && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "auto") p.breakBefore = 1;
+    if (v == "page") p.breakBefore = 2;
+  }
+  if (a.key == ArgK::breakAfter && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "auto") p.breakAfter = 1;
+    if (v == "page") p.breakAfter = 2;
+  }
+  if (a.key == ArgK::parHang && a.tag == ArgTag::Str) p.parHang = parseLen(view(a.ref));
+  if (a.key == ArgK::parHangAfter && a.tag == ArgTag::Num) p.parHangAfter = (float)a.num;
+  if (a.key == ArgK::boxPadding && a.tag == ArgTag::Str) p.boxPadding = intern(a.ref);
+  if (a.key == ArgK::boxBorder && a.tag == ArgTag::Str) p.boxBorder = intern(a.ref);
+  if (a.key == ArgK::boxBorderColor && a.tag == ArgTag::Str) p.boxBorderColor = intern(a.ref);
+  if (a.key == ArgK::boxBackground && a.tag == ArgTag::Str) p.boxBackground = intern(a.ref);
+  if (a.key == ArgK::media && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "all") p.media = 1;
+    if (v == "screen") p.media = 2;
+    if (v == "paged") p.media = 3;
+  }
+  if (a.key == ArgK::beside && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "clear") p.beside = 1;
+    if (v == "shrink") p.beside = 2;
+  }
+  if (a.key == ArgK::breakerTolerance && a.tag == ArgTag::Num) p.breakerTolerance = (float)a.num;
+  if (a.key == ArgK::breakerStretch && a.tag == ArgTag::Str) p.breakerStretch = parseLen(view(a.ref));
+  if (a.key == ArgK::placeFloat && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "none") p.placeFloat = 1;
+    if (v == "left") p.placeFloat = 2;
+    if (v == "right") p.placeFloat = 3;
+    if (v == "top") p.placeFloat = 4;
+    if (v == "bottom") p.placeFloat = 5;
+    if (v == "page") p.placeFloat = 6;
+  }
 }
 // the style keys by name (plan P3-01: rules in JSON read them as
 // $.style.push does): each row's attribute name and its key path
@@ -380,6 +504,35 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
     {"codeblock.sidecarFrac", ArgK::sidecarFrac},
     {"contIndent", ArgK::contIndent},
     {"codeblock.contIndent", ArgK::contIndent},
+    {"keep", ArgK::keep},
+    {"spaceBefore", ArgK::spaceBefore},
+    {"space.before", ArgK::spaceBefore},
+    {"spaceAfter", ArgK::spaceAfter},
+    {"space.after", ArgK::spaceAfter},
+    {"breakBefore", ArgK::breakBefore},
+    {"break.before", ArgK::breakBefore},
+    {"breakAfter", ArgK::breakAfter},
+    {"break.after", ArgK::breakAfter},
+    {"parHang", ArgK::parHang},
+    {"par.hang", ArgK::parHang},
+    {"parHangAfter", ArgK::parHangAfter},
+    {"par.hangAfter", ArgK::parHangAfter},
+    {"boxPadding", ArgK::boxPadding},
+    {"box.padding", ArgK::boxPadding},
+    {"boxBorder", ArgK::boxBorder},
+    {"box.border", ArgK::boxBorder},
+    {"boxBorderColor", ArgK::boxBorderColor},
+    {"box.borderColor", ArgK::boxBorderColor},
+    {"boxBackground", ArgK::boxBackground},
+    {"box.background", ArgK::boxBackground},
+    {"media", ArgK::media},
+    {"beside", ArgK::beside},
+    {"breakerTolerance", ArgK::breakerTolerance},
+    {"breaker.tolerance", ArgK::breakerTolerance},
+    {"breakerStretch", ArgK::breakerStretch},
+    {"breaker.emergencyStretch", ArgK::breakerStretch},
+    {"placeFloat", ArgK::placeFloat},
+    {"place.float", ArgK::placeFloat},
     {"features", ArgK::features},
     {"text.features", ArgK::features},
     {"punct", ArgK::punct},
@@ -387,7 +540,7 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
 };
 // whether an attribute patches a block property
 inline bool isNodeArg(ArgK k) {
-  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::parSingleLine || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent;
+  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::parSingleLine || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent || k == ArgK::keep || k == ArgK::spaceBefore || k == ArgK::spaceAfter || k == ArgK::breakBefore || k == ArgK::breakAfter || k == ArgK::parHang || k == ArgK::parHangAfter || k == ArgK::boxPadding || k == ArgK::boxBorder || k == ArgK::boxBorderColor || k == ArgK::boxBackground || k == ArgK::media || k == ArgK::beside || k == ArgK::breakerTolerance || k == ArgK::breakerStretch || k == ArgK::placeFloat;
 }
 // (plan P3-02; design T4: settable element arguments alias property rows)
 // whether a kind's attribute is its own style (the kind row's `prop` attrs)
