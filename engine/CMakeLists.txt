@@ -45,6 +45,7 @@ add_library(tsr_core STATIC
   src/break/break.cc
   src/boxtree/build.cc
   src/layout/layout.cc
+  src/layout/grid.cc
   src/layout/paginate.cc
   src/paint/paint.cc
   src/render/typeset_html.cc

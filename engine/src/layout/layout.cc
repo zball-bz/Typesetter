@@ -8,6 +8,7 @@
 #include <unordered_set>
 
 #include "../code/grid.h"
+#include "grid.h"
 
 namespace tsr {
 
@@ -755,10 +756,10 @@ class DocLayout {
         grid = GridSpec{};             // budget-only fallback
       }
     }
-    auto isBreakable = [](u32 cp) {
-      return cp == ' ' || cp == '\t' || cp == ',' || cp == ';' ||
-             cp == ')' || cp == '}' || cp == ']' || cp == '>';
-    };
+    // (plan P3-11) its wrapping parameters: data (layout/grid.h)
+    GridParams gp;
+    gp.minCols = minCols;
+    gp.contIndent = b.tr.contIndent;
     std::unordered_set<u32> hlSet(g.hlLines.begin(), g.hlLines.end());
     bool first = true;
     size_t lastRow = ~size_t(0);  // the block's last code row: its unit's separator
@@ -770,104 +771,7 @@ class DocLayout {
         joined.append(strs.get(r.text));
         if (r.hang) commentSpans.push_back({b0, (u32)joined.size()});
       }
-      // hanging base: the logical line's own leading whitespace columns
-      i32 leadChars = 0;
-      while ((size_t)leadChars < joined.size() &&
-             (joined[leadChars] == ' ' || joined[leadChars] == '\t'))
-        leadChars++;
-      i32 leadCols = leadChars * latinAtoms;  // in atom units
-      auto contColsAt = [&](u32 breakByte) -> u16 {
-        i32 cc = leadCols / latinAtoms + b.tr.contIndent;
-        // comment-aware (verbatim-design §4): a break inside a comment
-        // run aligns the continuation to the comment's CONTENT column
-        for (auto [cs, ce] : commentSpans) {
-          if (breakByte <= cs || breakByte > ce) continue;
-          // column of the comment start
-          i32 col = 0;
-          u32 pb = 0;
-          while (pb < cs) {
-            u32 cp2 = utf8Next(joined, pb);
-            col += isWide(cp2) ? cjkCols : latinAtoms;
-          }
-          // lead-in: opening punctuation streak + one space
-          u32 q2 = cs;
-          i32 lead = 0;
-          while (q2 < ce && joined[q2] != ' ' &&
-                 !((joined[q2] >= 'a' && joined[q2] <= 'z') ||
-                   (joined[q2] >= 'A' && joined[q2] <= 'Z') ||
-                   (joined[q2] >= '0' && joined[q2] <= '9')) &&
-                 (u8)joined[q2] < 0x80) {
-            q2++;
-            lead++;
-          }
-          if (q2 < ce && joined[q2] == ' ') lead++;
-          cc = col / latinAtoms + lead;
-          break;
-        }
-        i32 colCap = cols / latinAtoms;
-        if (cc > colCap - minCols) cc = colCap > minCols ? colCap - minCols : 0;
-        if (cc < 0) cc = 0;
-        return (u16)cc;
-      };
-      struct Row { u32 lo, hi; };
-      std::vector<Row> rows;
-      std::vector<u16> rowContOut;
-      if (cols <= 0 || joined.empty()) {
-        rows.push_back({0, (u32)joined.size()});
-      } else {
-        u32 lo = 0;
-        u16 nextCont = 0;
-        std::vector<u16> rowCont;
-        while (lo < joined.size()) {
-          i32 avail = rows.empty() ? cols : cols - (i32)nextCont * latinAtoms;
-          if (avail < 8 * latinAtoms) avail = 8 * latinAtoms;
-          u32 p = lo;
-          i32 col = 0;
-          u32 lastBrk = 0;
-          while (p < joined.size()) {
-            u32 q = p;
-            u32 cp = utf8Next(joined, q);
-            i32 w = isWide(cp) ? cjkCols : latinAtoms;
-            if (col + w > avail) break;
-            col += w;
-            p = q;
-            if (isBreakable(cp)) {
-              lastBrk = p;  // break AFTER the boundary
-            } else if (isWide(cp) && !isOpenPunct(cp)) {
-              // CJK wraps between any two characters (clreq), except
-              // before a closing punct / after an opening one (禁则)
-              u32 r = q;
-              u32 nx = q < joined.size() ? utf8Next(joined, r) : 0;
-              if (!(nx && isClosePunct(nx))) lastBrk = p;
-            }
-          }
-          if (p >= joined.size()) {
-            rows.push_back({lo, (u32)joined.size()});
-            rowCont.push_back(nextCont);
-            break;
-          }
-          u32 cut = lastBrk > lo ? lastBrk : p;
-          if (cut <= lo) {  // guarantee progress on pathological input
-            u32 q = lo;
-            utf8Next(joined, q);
-            cut = q;
-          }
-          // trailing spaces stay in the ROW (not swallowed between
-          // slices): the copy rebuild must be byte-lossless, and pre
-          // whitespace at a ragged row's end is invisible anyway
-          u32 ext = cut;
-          while (ext < joined.size() && joined[ext] == ' ') ext++;
-          rows.push_back({lo, ext});
-          rowCont.push_back(nextCont);
-          nextCont = contColsAt(cut);  // the NEXT row's indent
-          lo = ext;
-        }
-        if (rows.empty()) {
-          rows.push_back({0, 0});
-          rowCont.push_back(0);
-        }
-        rowContOut = std::move(rowCont);
-      }
+      const std::vector<GridRow> rows = wrapGridLine(joined, commentSpans, cols, latinAtoms, cjkCols, gp);
       bool hl = hlSet.count(li + 1) != 0;
       const i64 rowTop = py;
       // (plan P3-07) its source: a row is its slice of an exact line, else
@@ -889,7 +793,7 @@ class DocLayout {
           line.srcSpan = exact ? Span{ls.start + rows[ri].lo, ls.start + rows[ri].hi} : ls;
           line.spanned = true;
         }
-        line.contCols = ri < rowContOut.size() ? rowContOut[ri] : 0;
+        line.contCols = rows[ri].cont;
         line.snapLatinPx = (float)grid.dLatinPx;
         line.snapCjkPx = (float)grid.dCjkPx;
         line.codeHl = hl;

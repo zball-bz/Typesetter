@@ -1,5 +1,7 @@
 #include "emit.h"
 
+#include "../code/grid.h"
+
 #include "../support/rails.h"
 #include "emit_internal.h"
 #include "../shape/objects.h"
@@ -893,8 +895,8 @@ struct Emitter {
         GridData& g = u.data.emplace<GridData>();
         g.codeStyle = n->style;  // mono at its size: the cascade's (plan P3-01)
         g.features = styles.get(n->style).features;
-        g.chRef = strs.intern("0");
-        g.cjkChRef = strs.intern("\xE4\xB8\xAD");
+        g.chRef = strs.intern(kGridProbeLatin);  // the grid's probes (code/grid.h)
+        g.cjkChRef = strs.intern(kGridProbeCjk);
         if (StrRef lang = attrStr(n, ArgK::lang)) g.lang = lang;
         g.wrap = attrBool(n, ArgK::wrap, g.wrap);
         g.lineNo = attrInt(n, ArgK::lineNo, g.lineNo);

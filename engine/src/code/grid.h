@@ -1,13 +1,23 @@
-// Rational grid solving (verbatim-design §2/§3): Stern–Brocot walk to the
-// first convergent p/q meeting BOTH the error budget (per-row drift under
-// half a pixel) and q ≤ 7 (beyond that a grid stops reading as monospace).
-// Snap-kerning deltas pull true advances onto the grid: the atom is chosen
-// from the WIDER side so the thinner script gains positive letter-spacing
-// (negative spacing squeezes ink and is never emitted).
+// Rational grid solving (verbatim-design §2/§3): a Stern–Brocot walk over
+// the CJK:Latin advance ratio keeps the mediant p/q with the smallest error
+// among q ≤ maxQ (code.snapMaxQ, 7: beyond that a grid stops reading as
+// monospace); `exact` reports whether that ratio also keeps natural flow
+// within the half-pixel-per-row drift budget. Snap-kerning deltas pull true
+// advances onto the grid: the atom is chosen from the WIDER side so the
+// thinner script gains positive letter-spacing (negative spacing squeezes
+// ink and is never emitted).
 #pragma once
+#include <string_view>
+
 #include "../support/rails.h"
 
 namespace tsr {
+
+// (plan P3-11; design T6 GridParams) the grid's measurement probes: one
+// Latin ch and one CJK char, measured in the code style — the only text a
+// code block asks the host to measure
+inline constexpr std::string_view kGridProbeLatin = "0";
+inline constexpr std::string_view kGridProbeCjk = "\xE4\xB8\xAD";  // 中
 
 struct GridSpec {
   int p = 2, q = 1;        // cjk : latin atoms
