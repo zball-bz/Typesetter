@@ -1285,8 +1285,10 @@ static void unitCascade() {
   StyleTable styles;
   DiagSink diags;
   Cascade cascade(strs);
-  auto setting = [](std::string_view k) -> std::string {
-    return k == "code.scale" ? "0.85" : k == "par.indent" ? "2" : k == "list.indent" || k == "quote.indent" ? "1.5" : "";
+  auto setting = [](std::string_view k, std::string& out) {
+    out = k == "code.scale" ? "0.85" : k == "par.indent" ? "2" : k == "list.indent" || k == "quote.indent" ? "1.5"
+        : k == "code.snapKerning" ? "false" : k == "code.sidecarFrac" ? "0.4" : k == "code.contIndent" ? "2" : "";
+    return true;
   };
   cascade.setBase(parseRules(defaultRulesJson(), strs, diags, "defaults", setting), {});
   CHECK(diags.items.empty());

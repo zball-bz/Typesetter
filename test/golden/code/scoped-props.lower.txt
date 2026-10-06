@@ -1,0 +1,18 @@
+lower v1 abi 3d3ccfbb docEnd 623 holes 3 module d7f318bd96ddfefa
+piece 0 hole 0 js [146,173)
+piece 1 hole 1 js [175,235)
+piece 2 hole 2 js [237,293)
+block 0 content [0,148)
+  CALL para [0,148)
+    TEXT "Code knobs are properties (plan P3-02): this block snaps to its grid by its\nown argument, the next one by none; a rule sets the continuation indent." [0,148)
+block 1 content [150,291) user framed async holes 0..1
+  FENCE async "js" args=hole 0 body="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";" at=[175,287) lines=null [150,291)
+block 2 stmt [293,346) user framed holes 1..2
+  STMT 1
+block 3 content [348,470) async
+  FENCE async "js" body="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";" at=[354,466) lines=null [348,470)
+block 4 content [472,622) user framed holes 2..3
+  CALL para [472,622)
+    TEXT "全角标点按段落设置挤压：“引号”，（括号）。" [472,538)
+    HOLE 2 [538,622)
+      TEXT "这一段不挤压：“引号”，（括号）。" [570,621)

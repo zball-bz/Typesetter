@@ -230,6 +230,11 @@ bool checkStyledValue(ArgVal& a, std::string_view text, std::string& why) {
   return ok;
 }
 
+Dom styledDom(ArgK k) {
+  const AttrSpec* sp = findSpec((u16)Kind::styled, (u16)k);
+  return sp ? sp->dom : Dom::Delta;
+}
+
 void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
   out = RawOps{};  // reset before any views exist — safe to move-assign empty
   RawOps& r = out;

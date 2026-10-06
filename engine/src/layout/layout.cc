@@ -591,7 +591,7 @@ class DocLayout {
     Leaf l = enter(true);
     const Su lineWidth = measure - b.x;
     // the sidecar column is layout's (plan P1-16: code.sidecarFrac)
-    const Su sidebarW = g.sidecar ? suRoundPx(cfg.sidebarFrac * (cfg.widthPx - suToPx(b.x))) : 0;
+    const Su sidebarW = g.sidecar ? suRoundPx(b.tr.sidecarFrac * (cfg.widthPx - suToPx(b.x))) : 0;
     Su adv = baseLeading;
     Su rowBase = adv / 2;  // a row's baseline, centred (its line-height is the row)
     if (metrics.hasVmet(g.codeStyle)) {
@@ -637,7 +637,7 @@ class DocLayout {
     // CJK = p atoms — with letter-spacing pulling advances onto it
     GridSpec grid;
     i32 latinAtoms = 1;
-    if (cfg.verbatimSnapKerning && chSu > 0 && g.cjkChRef &&
+    if (b.tr.snapKerning && chSu > 0 && g.cjkChRef &&
         metrics.hasWord(g.chRef, g.codeStyle) &&
         metrics.hasWord(g.cjkChRef, g.codeStyle)) {
       double chLpx = metrics.word(g.chRef, g.codeStyle).px;
@@ -675,7 +675,7 @@ class DocLayout {
         leadChars++;
       i32 leadCols = leadChars * latinAtoms;  // in atom units
       auto contColsAt = [&](u32 breakByte) -> u16 {
-        i32 cc = leadCols / latinAtoms + cfg.verbatimContIndent;
+        i32 cc = leadCols / latinAtoms + b.tr.contIndent;
         // comment-aware (verbatim-design §4): a break inside a comment
         // run aligns the continuation to the comment's CONTENT column
         for (auto [cs, ce] : commentSpans) {

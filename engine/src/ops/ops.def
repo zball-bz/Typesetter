@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 // X-macro lists consumed by engine/src/ops/ops.h and ops.cc.
 //
-// OPS_VERSION(12)
+// OPS_VERSION(13)
 
 OP(MAKE_TEXT, 1)
 OP(MAKE_NODE, 2)
@@ -123,3 +123,8 @@ ARGK(matchClass, matchClass, 66)
 ARGK(matchLang, matchLang, 67)
 ARGK(matchDepth, matchDepth, 68)
 ARGK(matchWhere, matchWhere, 69)
+ARGK(snapKerning, snapKerning, 70)
+ARGK(sidecarFrac, sidecarFrac, 71)
+ARGK(contIndent, contIndent, 72)
+ARGK(features, features, 73)
+ARGK(punct, punct, 74)

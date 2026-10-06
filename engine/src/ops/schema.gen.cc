@@ -68,6 +68,10 @@ const AttrSpec kA_codeblock[] = {
     {25, "lineNo", Dom::Int, 0, 1048576, nullptr, nullptr, 0, true, false, 0, 6, 0, false},
     {26, "hl", Dom::RangeSet, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {27, "sidecar", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
+    {70, "snapKerning", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
+    {71, "sidecarFrac", Dom::Num, 0.1, 0.9, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
+    {72, "contIndent", Dom::Int, 0, 40, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
+    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 14, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -207,6 +211,7 @@ const char* const kM_styled_baseline[] = {"super", "sub"};
 const char* const kM_styled_hang[] = {"indent", "content"};
 const char* const kM_styled_parAlign[] = {"justify", "start", "center", "end"};
 const char* const kM_styled_parHyphenate[] = {"auto", "true", "false"};
+const char* const kM_styled_punct[] = {"full", "book", "none"};
 const char* const kM_styled_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_styled[] = {
     {21, "font", Dom::Font, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -233,6 +238,11 @@ const AttrSpec kA_styled[] = {
     {67, "matchLang", Dom::Lang, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
     {68, "matchDepth", Dom::Int, 1, 16, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
     {69, "matchWhere", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 13, false},
+    {70, "snapKerning", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
+    {71, "sidecarFrac", Dom::Num, 0.1, 0.9, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
+    {72, "contIndent", Dom::Int, 0, 40, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
+    {73, "features", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 14, false},
+    {74, "punct", Dom::Enum, 0, 0, kM_styled_punct, nullptr, 3, false, false, 0, 13, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -494,7 +504,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"list", Level::Block, Body::Items, InlineShape::Unsupported, 6, kA_list, 11},
     {"item", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_item, 9},
     {"quote", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_quote, 9},
-    {"codeblock", Level::Block, Body::Code, InlineShape::Unsupported, 6, kA_codeblock, 14},
+    {"codeblock", Level::Block, Body::Code, InlineShape::Unsupported, 6, kA_codeblock, 18},
     {"rule", Level::Block, Body::None, InlineShape::Unsupported, 6, kA_rule, 9},
     {"group", Level::Adaptive, Body::Position, InlineShape::Container, 6, kA_group, 10},
     {"table", Level::Block, Body::Rows, InlineShape::Unsupported, 6, kA_table, 11},
@@ -506,7 +516,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"error", Level::Adaptive, Body::None, InlineShape::Error, 6, kA_error, 11},
     {"comment", Level::Trivia, Body::Text, InlineShape::Skip, 6, kA_comment, 9},
     {"text", Level::Inline, Body::None, InlineShape::Text, 6, nullptr, 0},
-    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 33},
+    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 38},
     {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 10},
     {"code", Level::Inline, Body::Text, InlineShape::Code, 6, kA_code, 9},
     {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 13},

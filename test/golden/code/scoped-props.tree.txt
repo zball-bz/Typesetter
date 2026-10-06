@@ -1,0 +1,11 @@
+doc @[0,622) [base]
+  para @[0,148) [base]
+    text @[0,148) [base] str="Code knobs are properties (plan P3-02): this block snaps to its grid by its own argument, the next one by none; a rule sets the continuation indent."
+  codeblock @[150,291) [CODEx0.85] lang="js" snapKerning=true
+    text @[175,287) [CODEx0.85] str="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";"
+  codeblock @[348,470) [CODEx0.85] lang="js"
+    text @[354,466) [CODEx0.85] str="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";"
+  para @[472,622) [base]
+    text @[472,538) [base] str="全角标点按段落设置挤压：“引号”，（括号）。"
+    styled @[538,622) [base punct=none] punct="none"
+      text @[570,621) [base punct=none] str="这一段不挤压：“引号”，（括号）。"

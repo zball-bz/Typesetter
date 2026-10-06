@@ -652,8 +652,10 @@ struct HlInline final : InlineSink {
         fixWidth(u, b, px, suRoundPx(px), glueSu);
       }
     };
+    // the run's text.punct (plan P3-02), else the document's cjk.punctCompress
+    const u8 runPunct = styles.get(st).punct;
     auto pushPunct = [&](std::string_view ch, bool open) {
-      const PunctCompress mode = cfg.punctCompress;
+      const PunctCompress mode = runPunct ? (PunctCompress)(runPunct - 1) : cfg.punctCompress;
       // an opening punct's leading half is owned by its glyph (IA_OwnedByNext):
       // the renderer squeezes a glyph only when its OWN half is absent
       if (open) {
@@ -847,6 +849,7 @@ struct Emitter {
       case LayouterId::Grid: {
         GridData& g = u.data.emplace<GridData>();
         g.codeStyle = n->style;  // mono at its size: the cascade's (plan P3-01)
+        g.features = styles.get(n->style).features;
         g.chRef = strs.intern("0");
         g.cjkChRef = strs.intern("\xE4\xB8\xAD");
         if (StrRef lang = attrStr(n, ArgK::lang)) g.lang = lang;

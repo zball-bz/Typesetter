@@ -119,6 +119,9 @@ class Builder {
                                                     : Align::Justify;
       b.tr.hyphenate = np.parHyphenate != PARHYPHENATE_FALSE;
       b.tr.keepWithNext = np.keepWithNext;
+      b.tr.snapKerning = np.snapKerning;
+      if (np.sidecarFrac > 0) b.tr.sidecarFrac = np.sidecarFrac;
+      b.tr.contIndent = (i32)np.contIndent;
     }
     t->blocks.push_back(b);
     return (u32)t->blocks.size() - 1;

@@ -262,7 +262,7 @@ struct Doc {
       JsonValue settings;
       JsonReader jr;
       jr.parse(settingsJson(cfg), settings);
-      auto setting = [&](std::string_view path) -> std::string {
+      auto setting = [&](std::string_view path, std::string& out) -> bool {
         const JsonValue* v = &settings;
         for (size_t at = 0; v && at <= path.size();) {
           size_t dot = path.find('.', at);
@@ -270,17 +270,27 @@ struct Doc {
           v = v->get(path.substr(at, dot - at));
           at = dot + 1;
         }
-        if (!v) return "";
-        if (v->t == JsonValue::T::Num) {
-          std::string t;
-          appendf(t, "%g", v->num);
-          return t;
-        }
-        return v->t == JsonValue::T::Str ? v->str : std::string();
+        out.clear();
+        if (!v) return false;
+        if (v->t == JsonValue::T::Num) appendf(out, "%g", v->num);
+        else if (v->t == JsonValue::T::Bool) out = v->b ? "true" : "false";
+        else if (v->t == JsonValue::T::Str) out = v->str;
+        else return false;
+        return true;
       };
-      cascade.setBase(parseRules(defaultRulesJson(), strs, diags, "defaults", setting),
-                      cfg.styleRules.empty() ? std::vector<StyleRule>{}
-                                             : parseRules(cfg.styleRules, strs, diags, "style.rules", setting));
+      // env 1: the per-language code features (code.fontFeaturesByLang:
+      // rules on code blocks of that language, plan P3-02), then style.rules
+      std::vector<StyleRule> host;
+      for (const auto& [lang, feats] : cfg.codeFontFeaturesByLang) {
+        StyleRule r;
+        r.sel.kind = (u16)Kind::codeblock;
+        r.sel.where.push_back({ArgK::lang, strs.intern(lang)});
+        r.patch.push_back({ArgK::features, ArgTag::Str, 0, strs.intern(feats)});
+        host.push_back(std::move(r));
+      }
+      if (!cfg.styleRules.empty())
+        for (StyleRule& r : parseRules(cfg.styleRules, strs, diags, "style.rules", setting)) host.push_back(std::move(r));
+      cascade.setBase(parseRules(defaultRulesJson(), strs, diags, "defaults", setting), std::move(host));
     }
     tree = instantiate(raw, arena, strs, styles, nodeProps, cascade, diags, *registry);
     checkDeclarations(raw, tree, *registry, strs, diags);

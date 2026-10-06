@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="148">Code knobs are properties (plan P3-02): this block snaps to its grid by its own argument, the next one by none; a rule sets the continuation indent.</p>
+<pre data-pid="1" data-s="150" data-e="291"><code class="language-js">const 标题 = &quot;中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格&quot;;</code></pre>
+<pre data-pid="2" data-tsr-env="eaaa23fffe5757fe" data-s="348" data-e="470"><code class="language-js">const 标题 = &quot;中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格&quot;;</code></pre>
+<p data-pid="3" data-tsr-env="eaaa23fffe5757fe" data-s="472" data-e="622">全角标点按段落设置挤压：“引号”，（括号）。这一段不挤压：“引号”，（括号）。</p>
+</div>

@@ -255,7 +255,7 @@ export const SETTINGS = Object.freeze({
     "def": 2,
     "prec": "HostDefault",
     "affects": [
-      "Layout"
+      "Ingest"
     ]
   },
   "code.sidecarFrac": {
@@ -263,7 +263,7 @@ export const SETTINGS = Object.freeze({
     "def": 0.4,
     "prec": "HostDefault",
     "affects": [
-      "Layout"
+      "Ingest"
     ]
   },
   "code.snapKerning": {
@@ -271,8 +271,7 @@ export const SETTINGS = Object.freeze({
     "def": false,
     "prec": "HostDefault",
     "affects": [
-      "Layout",
-      "Paint"
+      "Ingest"
     ]
   },
   "code.minCols": {
@@ -304,8 +303,7 @@ export const SETTINGS = Object.freeze({
     "def": "",
     "prec": "HostDefault",
     "affects": [
-      "Measure",
-      "Paint"
+      "Ingest"
     ]
   },
   "code.fontFeaturesByLang": {
@@ -313,7 +311,7 @@ export const SETTINGS = Object.freeze({
     "def": {},
     "prec": "HostDefault",
     "affects": [
-      "Paint"
+      "Ingest"
     ]
   },
   "table.cellPad": {

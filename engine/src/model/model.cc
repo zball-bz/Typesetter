@@ -174,6 +174,10 @@ struct Inst {
           for (const ArgVal& a : rn.args)
             if (a.key != ArgK::style) delta.push_back(interned(a));
         }
+        // a kind's settable arguments that alias property rows (plan P3-02:
+        // a code block's snapKerning, features, …) are its own style first
+        for (const ArgVal& a : rn.args)
+          if (isPropAlias(rn.kind, a.key)) delta.push_back(interned(a));
         for (const ArgVal& a : rn.args)
           if (a.key == ArgK::style && a.tag == ArgTag::Node)
             for (const ArgVal& b : raw.nodes[a.ref].args) delta.push_back(interned(b));

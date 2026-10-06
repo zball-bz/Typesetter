@@ -343,8 +343,9 @@ struct LegacyInline final : InlineSink {
       }
       u.legacy.push_back(b);
     };
+    const u8 runPunct = styles.get(st).punct;  // text.punct (plan P3-02)
     auto pushPunct = [&](std::string_view ch, bool open) {
-      const PunctCompress mode = cfg.punctCompress;
+      const PunctCompress mode = runPunct ? (PunctCompress)(runPunct - 1) : cfg.punctCompress;
       // BF_PUNCT_OPEN on a half-space marks it as an OPENING punct's leading
       // half — the renderer squeezes a glyph only when its OWN half is absent.
       const u16 openSpFlags = (u16)(BF_SPACE | BF_PUNCT_SP | BF_PUNCT_OPEN | ctx.addFlags);

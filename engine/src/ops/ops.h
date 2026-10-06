@@ -102,6 +102,9 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags);
 // JSON) through the same domain check — `text`: a Str value's string;
 // numbers are clamped like the reader's; false = drop it (`why`)
 bool checkStyledValue(ArgVal& a, std::string_view text, std::string& why);
+// a style attribute's value domain (Dom::Delta: none such) — a value read as
+// text (a rule naming a setting) takes its tag from it (plan P3-02)
+Dom styledDom(ArgK k);
 std::string dumpOps(const RawOps& r);
 
 }  // namespace tsr

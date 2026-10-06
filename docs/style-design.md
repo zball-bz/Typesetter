@@ -107,6 +107,14 @@ node's rule-free scope for the semantic page, whose stylesheet the same
 rules compile to (`render/rules_css.cc`). Precedence, scoping and the made
 and lifted nodes: docs/document-model.md §3, v2 §12.
 
+Plan P3-02 added the rows with evidence of scoped use: block
+`codeblock.snapKerning`, `codeblock.sidecarFrac`, `codeblock.contIndent`
+(their settings are the defaults through `defaults.json`; a code block's
+same-named arguments are its own style), run `text.features` (code's font
+features: measurement and paint read the run's) and run `text.punct` (CJK
+punctuation compression, `full|book|none`; unset reads the document's
+`cjk.punctCompress`).
+
 ## 5. Not yet
 
 Element style sections (P3-14) and scoped document knobs (P3-02); the

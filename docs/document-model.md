@@ -512,6 +512,21 @@ registry rows field by field before the document's own declarations
 (docs/semantics-design.md §6); `affects: Ingest`. The `supplements` and
 `counters` keys sketched above are these rows now.
 
+As built (plan P3-02): every stage reads its settings through a generated
+view (`settings.gen.h`: `IngestSettings` … `PaintSettings`) holding only the
+rows whose `affects` names it, so a read of an undeclared row does not
+compile and a settings patch reruns every stage that reads the row. The
+knobs with evidence of scoped use are properties, with the settings as
+their document defaults through the default rules: `codeblock.snapKerning`,
+`codeblock.sidecarFrac`, `codeblock.contIndent` (block rows; the code block
+arguments `snapKerning`, `sidecarFrac`, `contIndent`, `features` alias them),
+`text.features` (a run row: code and code blocks take `code.fontFeatures`,
+code blocks of a language `code.fontFeaturesByLang` — host rules — and
+measurement keys faces by it) and `text.punct` (a run row; unset: the
+document's `cjk.punctCompress`). Policy literals are Doc rows
+(`code.minCols`, `code.snapTolerance`, `code.snapMaxQ`, `table.cellPad`,
+`table.rowPad`); safety rails are named constexprs (`support/rails.h`).
+
 ## 12. Dump formats (golden-test contract, byte-exact)
 
 `--stage=mathbox` (M7): per-formula box trees in document order —

@@ -1,0 +1,6 @@
+doc @[0,623)
+  para @[0,148) lines=2
+  fence @[150,291) lang="js(snapKerning: true)" lines=1
+  code-block @[293,346) js=" $.set('codeblock', {codeblock: {contIndent: 6}}) "
+  fence @[348,470) lang="js" lines=1
+  para @[472,622) lines=1

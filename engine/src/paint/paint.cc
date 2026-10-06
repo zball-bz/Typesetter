@@ -313,12 +313,9 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.ragged = true;
         n.contJoin = li + 1 < fr.lines.size() && fr.lines[li + 1].kind == FragKind::CodeRow &&
                      fr.lines[li + 1].codeCont;
-        const std::string* feats = &cfg.codeFontFeatures;
-        if (g.lang) {
-          auto it = cfg.codeFontFeaturesByLang.find(std::string(strs.get(g.lang)));
-          if (it != cfg.codeFontFeaturesByLang.end()) feats = &it->second;
-        }
-        n.features = *feats;
+        // its text.features (plan P3-02: code.fontFeatures and the per-language
+        // map are rules on code blocks)
+        n.features = g.features ? strs.get(g.features) : std::string_view{};  // interned: lives with the doc
         if (l.height > 0) {
           // the baseline centred in the row; hl rows also paint height
           n.lineHeightPx = suToPx(l.height);

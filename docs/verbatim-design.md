@@ -27,7 +27,7 @@ Stern–Brocot tree and take the FIRST convergent p/q satisfying BOTH:
 
 - error budget: maxCols × |r − p/q| × chL < 0.5px (per-row drift under
   half a pixel), and
-- **q ≤ 7** (user bound: beyond that the result no longer reads as a
+- **q ≤ 7** (user bound: beyond that the result no longer reads as a As built (plan P3-02): the bound is the setting `code.snapMaxQ` (default 7), snap-kerning applies within `code.snapTolerance` of a character (default 0.1), the grid keeps at least `code.minCols` columns (default 8), and `snapKerning`, `sidecarFrac` and `contIndent` are per code block (the code block arguments, or rules: `$.set('codeblock', {codeblock: {contIndent: 4}})`).
   monospace grid).
 
 Grid atom g = chL/q; width classes {latin: q, cjk: p} atoms (a strict 2:1

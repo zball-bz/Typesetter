@@ -1,0 +1,182 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Code" w=2049su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="e k" src r0 @[0,148)
+  box Other "knobs" w=2561su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="s a" src r0 @[0,148)
+  box Other "are" w=1537su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="e p" src r0 @[0,148)
+  box Other "prop" w=2049su r0 @[0,148)
+  disc pen=0.7 w=0su pre="-" 513su kern="pe" r0 @[0,148)
+  box Other "er" w=1025su r0 @[0,148)
+  disc pen=0.7 w=0su pre="-" 513su kern="rt" r0 @[0,148)
+  box Other "ties" w=2049su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="s (" src r0 @[0,148)
+  box Other "(plan" w=2561su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="n P" src r0 @[0,148)
+  box Other "P3-02):" w=3585su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern=": t" src r0 @[0,148)
+  box Other "this" w=2049su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="s b" src r0 @[0,148)
+  box Other "block" w=2561su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="k s" src r0 @[0,148)
+  box Other "snaps" w=2561su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="s t" src r0 @[0,148)
+  box Other "to" w=1025su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="o i" src r0 @[0,148)
+  box Other "its" w=1537su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="s g" src r0 @[0,148)
+  box Other "grid" w=2049su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="d b" src r0 @[0,148)
+  box Other "by" w=1025su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="y i" src r0 @[0,148)
+  box Other "its" w=1537su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="s o" src r0 @[0,148)
+  box Other "own" w=1537su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="n a" src r0 @[0,148)
+  box Other "ar" w=1025su r0 @[0,148)
+  disc pen=0.7 w=0su pre="-" 513su kern="rg" r0 @[0,148)
+  box Other "gu" w=1025su r0 @[0,148)
+  disc pen=0.7 w=0su pre="-" 513su kern="um" r0 @[0,148)
+  box Other "ment," w=2561su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern=", t" src r0 @[0,148)
+  box Other "the" w=1537su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="e n" src r0 @[0,148)
+  box Other "next" w=2049su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="t o" src r0 @[0,148)
+  box Other "one" w=1537su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="e b" src r0 @[0,148)
+  box Other "by" w=1025su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="y n" src r0 @[0,148)
+  box Other "none;" w=2561su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="; a" src r0 @[0,148)
+  box Other "a" w=513su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="a r" src r0 @[0,148)
+  box Other "rule" w=2049su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="e s" src r0 @[0,148)
+  box Other "sets" w=2049su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="s t" src r0 @[0,148)
+  box Other "the" w=1537su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="e c" src r0 @[0,148)
+  box Other "con" w=1537su r0 @[0,148)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r0 @[0,148)
+  box Other "tin" w=1537su r0 @[0,148)
+  disc pen=0.7 w=0su pre="-" 513su kern="nu" r0 @[0,148)
+  box Other "u" w=513su r0 @[0,148)
+  disc pen=0.7 w=0su pre="-" 513su kern="ua" r0 @[0,148)
+  box Other "a" w=513su r0 @[0,148)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[0,148)
+  box Other "tion" w=2049su r0 @[0,148)
+  glue word w=257su x=1 cap=257su kern="n i" src r0 @[0,148)
+  box Other "in" w=1025su r0 @[0,148)
+  disc pen=0.7 w=0su pre="-" 513su kern="nd" r0 @[0,148)
+  box Other "dent." w=2561su r0 @[0,148)
+  run r0 plain
+top pid=1 units=1
+ unit code indent=0su lines=1 wrap
+top pid=2 units=1
+ unit code indent=0su lines=1 wrap
+top pid=3 units=1
+ unit text indent=0su
+  box Ideo "全" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "角" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "标" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "点" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "按" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "段" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "落" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "设" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "置" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "挤" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box Ideo "压" w=1025su wt=0.6 cap=102su r0 @[472,538)
+  pen INF r0
+  glue inter w=0su x=0.6 cap=102su r0 @[472,538)
+  box ColonW "：" w=512su blank=R r1 @[472,538)
+  glue blank w=512su x=0 cap=0su r1 @[472,538)
+  box AmbOpenQuote "“" w=103su blank=L r2 @[472,538)
+  box Ideo "引" w=1025su wt=0.6 cap=102su r3 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r3 @[472,538)
+  box Ideo "号" w=1025su wt=0.6 cap=102su r3 @[472,538)
+  pen INF r3
+  glue inter w=0su x=0.6 cap=102su r3 @[472,538)
+  box AmbCloseQuote "”" w=103su blank=R r4 @[472,538)
+  box CommaW "，" w=512su blank=R r5 @[472,538)
+  glue blank w=512su x=0 cap=0su r5 @[472,538)
+  box OpenW "（" w=512su blank=L r6 @[472,538)
+  box Ideo "括" w=1025su wt=0.6 cap=102su r7 @[472,538)
+  glue inter w=0su x=0.6 cap=102su r7 @[472,538)
+  box Ideo "号" w=1025su wt=0.6 cap=102su r7 @[472,538)
+  pen INF r7
+  glue inter w=0su x=0.6 cap=102su r7 @[472,538)
+  box CloseW "）" w=512su blank=R r8 @[472,538)
+  box FullStopW "。" w=512su blank=R r9 @[472,538)
+  glue blank w=512su x=0 cap=0su r9 @[472,538)
+  box Ideo "这" w=1025su wt=0.6 cap=102su r10 @[570,621)
+  glue inter w=0su x=0.6 cap=102su r10 @[570,621)
+  box Ideo "一" w=1025su wt=0.6 cap=102su r10 @[570,621)
+  glue inter w=0su x=0.6 cap=102su r10 @[570,621)
+  box Ideo "段" w=1025su wt=0.6 cap=102su r10 @[570,621)
+  glue inter w=0su x=0.6 cap=102su r10 @[570,621)
+  box Ideo "不" w=1025su wt=0.6 cap=102su r10 @[570,621)
+  glue inter w=0su x=0.6 cap=102su r10 @[570,621)
+  box Ideo "挤" w=1025su wt=0.6 cap=102su r10 @[570,621)
+  glue inter w=0su x=0.6 cap=102su r10 @[570,621)
+  box Ideo "压" w=1025su wt=0.6 cap=102su r10 @[570,621)
+  pen INF r10
+  glue inter w=0su x=0.6 cap=102su r10 @[570,621)
+  box ColonW "：" w=512su blank=R r11 @[570,621)
+  glue blank w=512su x=0 cap=0su r11 @[570,621)
+  glue blank w=512su x=0 cap=0su owned-by-next r12 @[570,621)
+  box AmbOpenQuote "“" w=103su blank=L r12 @[570,621)
+  box Ideo "引" w=1025su wt=0.6 cap=102su r13 @[570,621)
+  glue inter w=0su x=0.6 cap=102su r13 @[570,621)
+  box Ideo "号" w=1025su wt=0.6 cap=102su r13 @[570,621)
+  pen INF r13
+  glue inter w=0su x=0.6 cap=102su r13 @[570,621)
+  box AmbCloseQuote "”" w=103su blank=R r14 @[570,621)
+  pen INF r14
+  glue blank w=512su x=0 cap=0su r14 @[570,621)
+  box CommaW "，" w=512su blank=R r15 @[570,621)
+  glue blank w=512su x=0 cap=0su r15 @[570,621)
+  glue blank w=512su x=0 cap=0su owned-by-next r16 @[570,621)
+  box OpenW "（" w=512su blank=L r16 @[570,621)
+  box Ideo "括" w=1025su wt=0.6 cap=102su r17 @[570,621)
+  glue inter w=0su x=0.6 cap=102su r17 @[570,621)
+  box Ideo "号" w=1025su wt=0.6 cap=102su r17 @[570,621)
+  pen INF r17
+  glue inter w=0su x=0.6 cap=102su r17 @[570,621)
+  box CloseW "）" w=512su blank=R r18 @[570,621)
+  pen INF r18
+  glue blank w=512su x=0 cap=0su r18 @[570,621)
+  box FullStopW "。" w=512su blank=R r19 @[570,621)
+  glue blank w=512su x=0 cap=0su r19 @[570,621)
+  run r0 letter-spaced CJK
+  run r1 blank-bearing CJK
+  run r2 blank-bearing CJK
+  run r3 letter-spaced CJK
+  run r4 blank-bearing CJK
+  run r5 blank-bearing CJK
+  run r6 blank-bearing CJK
+  run r7 letter-spaced CJK
+  run r8 blank-bearing CJK
+  run r9 blank-bearing CJK
+  run r10 letter-spaced CJK punct=none
+  run r11 blank-bearing CJK punct=none
+  run r12 blank-bearing CJK punct=none
+  run r13 letter-spaced CJK punct=none
+  run r14 blank-bearing CJK punct=none
+  run r15 blank-bearing CJK punct=none
+  run r16 blank-bearing CJK punct=none
+  run r17 letter-spaced CJK punct=none
+  run r18 blank-bearing CJK punct=none
+  run r19 blank-bearing CJK punct=none

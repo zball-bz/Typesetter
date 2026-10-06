@@ -134,9 +134,10 @@ class Cascade {
 constexpr u32 kPropsUnset = ~0u;
 size_t settleMade(ContentNode* root, const Cascade& cascade, NodePropsTable& props, const StyleTable& styles);
 
-// a host setting's value as patch text ("" = unknown): the defaults name
-// some ({"setting": "code.scale", "unit": "em"} → "0.85em")
-using SettingText = std::function<std::string(std::string_view)>;
+// a host setting's value as patch text: the defaults name some
+// ({"setting": "code.scale", "unit": "em"} → "0.85em"); false: no such
+// setting; an empty value sets nothing (an optional setting left unset)
+using SettingText = std::function<bool(std::string_view path, std::string& out)>;
 // rules from their JSON: an array of [selector, patch] or {"select",
 // "patch", "force"}; a selector is a kind name or {kind, role, class, lang,
 // depth, …where}; a patch is styled attributes by name. A malformed rule is

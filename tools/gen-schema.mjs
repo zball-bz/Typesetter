@@ -355,8 +355,8 @@ for (const [, r] of props) {
 }
 ph += `}\n\n`;
 // ---- NodeProps (plan P3-01): block properties of a node, by the cascade
-const BCT = { len: 'Len', gap: 'Gap', enum: 'u8', bool: 'bool', str: 'StrRef' };
-const BINIT = { len: '{}', gap: '{}', enum: '0', bool: 'false', str: '0' };
+const BCT = { len: 'Len', gap: 'Gap', enum: 'u8', bool: 'bool', str: 'StrRef', num: 'float' };
+const BINIT = { len: '{}', gap: '{}', enum: '0', bool: 'false', str: '0', num: '0' };
 for (const [n, r] of blockProps) if (!BCT[r.type]) { console.error(`gen-schema: props.${n}: block type ${r.type}`); process.exit(1); }
 ph += `// A length (plan P3-01): em of the document's base size (rem-like) or px;\n// unit 0 = unset\nstruct Len {\n  float v = 0;\n  u8 unit = 0;  // 1 em, 2 px\n` +
   `  bool operator==(const Len& o) const { return v == o.v && unit == o.unit; }\n};\n` +
@@ -380,6 +380,7 @@ ph += `struct NodePropsHash {\n  size_t operator()(const NodeProps& p) const {\n
 for (const [, r] of blockProps) {
   if (r.type === 'len') ph += `    len(p.${r.field});\n`;
   else if (r.type === 'gap') ph += `    mix(p.${r.field}.num);\n    mix(p.${r.field}.den);\n    len(p.${r.field}.len);\n`;
+  else if (r.type === 'num') ph += `    {\n      u32 b;\n      std::memcpy(&b, &p.${r.field}, 4);\n      mix(b);\n    }\n`;
   else ph += `    mix((u64)p.${r.field});\n`;
 }
 ph += `    return (size_t)h;\n  }\n};\n` +
@@ -393,6 +394,7 @@ for (const [, r] of blockProps) {
   if (r.type === 'len') ph += `  if (${K} && a.tag == ArgTag::Str) p.${r.field} = parseLen(view(a.ref));\n`;
   if (r.type === 'gap') ph += `  if (${K} && a.tag == ArgTag::Str) p.${r.field} = parseGap(view(a.ref));\n`;
   if (r.type === 'bool') ph += `  if (${K} && a.tag == ArgTag::Bool) p.${r.field} = a.num != 0;\n`;
+  if (r.type === 'num') ph += `  if (${K} && a.tag == ArgTag::Num) p.${r.field} = (float)a.num;\n`;
   if (r.type === 'str') ph += `  if (${K} && a.tag == ArgTag::Str) p.${r.field} = intern(a.ref);\n`;
   if (r.type === 'enum') {
     ph += `  if (${K} && a.tag == ArgTag::Str) {\n    const std::string_view v = view(a.ref);\n`;
@@ -403,7 +405,12 @@ for (const [, r] of blockProps) {
 ph += `}\n// the style keys by name (plan P3-01: rules in JSON read them as\n// $.style.push does): each row's attribute name and its key path\n` +
   `struct StyleKeyRow {\n  const char* key;\n  ArgK attr;\n};\ninline constexpr StyleKeyRow kStyleKeys[] = {\n` +
   allProps.filter(([, r]) => r.attr).flatMap(([, r]) => [...new Set([r.attr, r.key ?? r.attr])].map((k) => `    {"${k}", ArgK::${r.attr}},\n`)).join('') +
-  `};\n// whether an attribute patches a block property\ninline bool isNodeArg(ArgK k) {\n  return ${blockProps.map(([, r]) => `k == ArgK::${r.attr}`).join(' || ')};\n}\n\n}  // namespace tsr\n`;
+  `};\n// whether an attribute patches a block property\ninline bool isNodeArg(ArgK k) {\n  return ${blockProps.map(([, r]) => `k == ArgK::${r.attr}`).join(' || ')};\n}\n` +
+  `// (plan P3-02; design T4: settable element arguments alias property rows)\n// whether a kind's attribute is its own style (the kind row's \`prop\` attrs)\n` +
+  `inline bool isPropAlias(Kind k, ArgK a) {\n` +
+  Object.entries(S.kinds).filter(([n]) => n !== '$comment').filter(([, kd]) => Object.values(kd.attrs ?? {}).some((x) => x.prop))
+    .map(([n, kd]) => `  if (k == Kind::${n}) return ${Object.entries(kd.attrs).filter(([, x]) => x.prop).map(([an]) => `a == ArgK::${an}`).join(' || ')};\n`).join('') +
+  `  return false;\n}\n\n}  // namespace tsr\n`;
 
 // the typeset serializer's run attributes and declarations
 let css = `// ${HDR}\n// A typeset run's attributes and style declarations (schema "props"; plan\n// P1-02). Values were validated at decode; text values are attribute-escaped.\n#pragma once\n#include <cstring>\n\n#include "../model/style.h"\n#include "html_writer.h"\n\nnamespace tsr {\n\n` +

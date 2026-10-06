@@ -87,6 +87,11 @@ struct IngestSettings {
   const double& listIndentEm;  // list.indent
   const double& quoteIndentEm;  // quote.indent
   const double& codeScale;  // code.scale
+  const int& verbatimContIndent;  // code.contIndent
+  const double& sidebarFrac;  // code.sidecarFrac
+  const bool& verbatimSnapKerning;  // code.snapKerning
+  const std::string& codeFontFeatures;  // code.fontFeatures
+  const std::map<std::string, std::string>& codeFontFeaturesByLang;  // code.fontFeaturesByLang
   const std::string& semElements;  // semantics.elements
   const std::string& semCounters;  // semantics.counters
   const std::string& semCollectors;  // semantics.collectors
@@ -97,6 +102,11 @@ struct IngestSettings {
         listIndentEm(c.listIndentEm),
         quoteIndentEm(c.quoteIndentEm),
         codeScale(c.codeScale),
+        verbatimContIndent(c.verbatimContIndent),
+        sidebarFrac(c.sidebarFrac),
+        verbatimSnapKerning(c.verbatimSnapKerning),
+        codeFontFeatures(c.codeFontFeatures),
+        codeFontFeaturesByLang(c.codeFontFeaturesByLang),
         semElements(c.semElements),
         semCounters(c.semCounters),
         semCollectors(c.semCollectors),
@@ -160,7 +170,6 @@ struct MeasureSettings {
   const std::string& cjkFont;  // fonts.cjk
   const std::string& monoFont;  // fonts.mono
   const std::string& monoCjkFont;  // fonts.monoCjk
-  const std::string& codeFontFeatures;  // code.fontFeatures
   MeasureSettings(const Config& c)  // NOLINT: a Config is its view
       : dppx(c.dppx),
         loadedFaces(c.loadedFaces),
@@ -170,8 +179,7 @@ struct MeasureSettings {
         bodyFont(c.bodyFont),
         cjkFont(c.cjkFont),
         monoFont(c.monoFont),
-        monoCjkFont(c.monoCjkFont),
-        codeFontFeatures(c.codeFontFeatures) {}
+        monoCjkFont(c.monoCjkFont) {}
 };
 struct LayoutSettings {
   const double& widthPx;  // host.width
@@ -180,9 +188,6 @@ struct LayoutSettings {
   const double& paraSpacingEm;  // doc.parGap
   const double& cjkJustifyK;  // doc.cjkJustify
   const double& codeScale;  // code.scale
-  const int& verbatimContIndent;  // code.contIndent
-  const double& sidebarFrac;  // code.sidecarFrac
-  const bool& verbatimSnapKerning;  // code.snapKerning
   const int& verbatimMinCols;  // code.minCols
   const double& verbatimSnapTolerance;  // code.snapTolerance
   const int& verbatimSnapMaxQ;  // code.snapMaxQ
@@ -196,9 +201,6 @@ struct LayoutSettings {
         paraSpacingEm(c.paraSpacingEm),
         cjkJustifyK(c.cjkJustifyK),
         codeScale(c.codeScale),
-        verbatimContIndent(c.verbatimContIndent),
-        sidebarFrac(c.sidebarFrac),
-        verbatimSnapKerning(c.verbatimSnapKerning),
         verbatimMinCols(c.verbatimMinCols),
         verbatimSnapTolerance(c.verbatimSnapTolerance),
         verbatimSnapMaxQ(c.verbatimSnapMaxQ),
@@ -221,9 +223,6 @@ struct PaintSettings {
   const std::string& cjkFont;  // fonts.cjk
   const std::string& monoFont;  // fonts.mono
   const std::string& monoCjkFont;  // fonts.monoCjk
-  const bool& verbatimSnapKerning;  // code.snapKerning
-  const std::string& codeFontFeatures;  // code.fontFeatures
-  const std::map<std::string, std::string>& codeFontFeaturesByLang;  // code.fontFeaturesByLang
   PaintSettings(const Config& c)  // NOLINT: a Config is its view
       : widthPx(c.widthPx),
         lang(c.lang),
@@ -233,10 +232,7 @@ struct PaintSettings {
         bodyFont(c.bodyFont),
         cjkFont(c.cjkFont),
         monoFont(c.monoFont),
-        monoCjkFont(c.monoCjkFont),
-        verbatimSnapKerning(c.verbatimSnapKerning),
-        codeFontFeatures(c.codeFontFeatures),
-        codeFontFeaturesByLang(c.codeFontFeaturesByLang) {}
+        monoCjkFont(c.monoCjkFont) {}
 };
 
 // host policy (schema "policy"): how hosts drive the engine

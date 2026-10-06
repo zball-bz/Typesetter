@@ -31,3 +31,4 @@ region/fence-handler.tsm:html:line-spans  # code rows / cells / captions / gener
 region/anchor-kinds.tsm:html:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 region/anchor-kinds.tsm:paged:line-spans  # code rows / cells / captions / generated lines lack spans (P3-07, P4-03)
 lower/labels-args-diag.tsm:html:line-spans  # code rows lack spans (P3-07): a P2-06 fixture of the existing class (its fence carries a label)
+code/scoped-props.tsm:html:line-spans  # code rows lack spans (P3-07): a P3-02 fixture of the existing class (per-block code properties)

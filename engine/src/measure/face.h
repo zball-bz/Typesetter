@@ -103,7 +103,8 @@ class FaceTable {
     k.italic = s.italic && script == Script::Latin ? 1 : 0;
     // the phase-1 projection (design T9 M4): features for code runs, the
     // run's language else the document's, the host's dppx
-    if (mono && !cfg_->codeFontFeatures.empty()) k.features = strs_->intern(cfg_->codeFontFeatures);
+    // (plan P3-02: the run's text.features — code's by the default rules)
+    k.features = s.features;
     k.lang = s.lang ? s.lang : strs_->intern(cfg_->lang);
     k.dppx = cfg_->dppx;
     k.faceDigest = loadedDigest(strs_->get(k.family));

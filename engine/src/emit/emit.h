@@ -125,6 +125,7 @@ struct CodeRun {
   StrRef cls = 0;     // tok-<tag> for a token run (rendered from P3-18)
 };
 struct GridData {  // a code block (verbatim-design.md)
+  StrRef features = 0;  // its text.features (plan P3-02): painted on its rows
   StyleId codeStyle = 0;
   std::vector<std::vector<CodeRun>> lines;
   // CH4 grid: monospace is a METRIC CONTRACT — every char is 1ch (CJK 2ch),

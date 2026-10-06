@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdlib>
 
 #include "../support/json.h"
 #include "semantic_data.gen.h"
@@ -344,13 +345,23 @@ std::vector<StyleRule> parseRules(std::string_view json, Interner& strs, DiagSin
         if (v.t == JsonValue::T::Obj) {  // {"setting": "code.scale", "unit": "em"}
           const JsonValue* s = v.get("setting");
           const JsonValue* u = v.get("unit");
-          text = setting && s && s->t == JsonValue::T::Str ? setting(s->str) : std::string();
-          if (text.empty()) {
+          if (!setting || !s || s->t != JsonValue::T::Str || !setting(s->str, text)) {
             bad("a patch names an unknown setting");
             continue;
           }
+          if (text.empty()) continue;  // unset: no value
           if (u && u->t == JsonValue::T::Str) text += u->str;
-          a.tag = ArgTag::Str;
+          // its tag from the attribute's domain (plan P3-02)
+          const Dom dom = styledDom(key);
+          if (dom == Dom::Bool) {
+            a.tag = ArgTag::Bool;
+            a.num = text == "true" ? 1 : 0;
+          } else if (dom == Dom::Num || dom == Dom::Int) {
+            a.tag = ArgTag::Num;
+            a.num = std::strtod(text.c_str(), nullptr);
+          } else {
+            a.tag = ArgTag::Str;
+          }
         } else if (v.t == JsonValue::T::Str) {
           a.tag = ArgTag::Str;
           text = v.str;

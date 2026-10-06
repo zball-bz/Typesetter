@@ -1,0 +1,11 @@
+doc @[0,623)
+  para @[0,148)
+    text @[0,148) str="Code knobs are properties (plan P3-02): this block snaps to its grid by its\nown argument, the next one by none; a rule sets the continuation indent."
+  codeblock @[150,291) lang="js" body="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";"
+  code-block @[293,346) js=" $.set('codeblock', {codeblock: {contIndent: 6}}) "
+  codeblock @[348,470) lang="js" body="const 标题 = \"中文与 ASCII 混排的一行代码足够长，在窄版心下需要折行并对齐到网格\";"
+  para @[472,622)
+    text @[472,538) str="全角标点按段落设置挤压：“引号”，（括号）。"
+    splice @[538,622) expr="style({text: {punct: \"none\"}})"
+      arg @[570,621)
+        text @[570,621) str="这一段不挤压：“引号”，（括号）。"

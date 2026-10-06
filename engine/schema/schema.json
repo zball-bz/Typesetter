@@ -14,7 +14,7 @@
     "resolved at instantiation — a space, or nothing between two wide characters (TextRules joinsWide);",
     "code and verbatim bodies (body code / text) keep their newlines."
   ],
-  "opsVersion": 12,
+  "opsVersion": 13,
   "minCompat": 11,
   "ops": {
     "MAKE_TEXT": {"id": 1, "since": 6},
@@ -39,7 +39,8 @@
     "baseline": 51, "size": 52, "hang": 53, "style": 54, "attach": 55, "display": 56,
     "parIndent": 57, "parAlign": 58, "parHyphenate": 59, "blockGap": 60, "blockIndent": 61,
     "keepWithNext": 62, "listMarker": 63, "matchKind": 64, "matchRole": 65, "matchClass": 66, "matchLang": 67,
-    "matchDepth": 68, "matchWhere": 69
+    "matchDepth": 68, "matchWhere": 69, "snapKerning": 70, "sidecarFrac": 71, "contIndent": 72, "features": 73,
+    "punct": 74
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -57,7 +58,11 @@
       "wrap": {"dom": "bool"},
       "lineNo": {"dom": "int:0:1048576", "coerce": "boolAsInt"},
       "hl": {"dom": "rangeset"},
-      "sidecar": {"dom": "str"}}},
+      "sidecar": {"dom": "str"},
+      "snapKerning": {"dom": "bool", "since": 13, "prop": true},
+      "sidecarFrac": {"dom": "num:0.1:0.9", "since": 13, "prop": true},
+      "contIndent": {"dom": "int:0:40", "since": 13, "prop": true},
+      "features": {"dom": "features", "since": 13, "prop": true}}},
     "rule": {"id": 7, "level": "block", "inline": "unsupported", "body": "none", "since": 6, "ctor": {"nullary": true}, "attrs": {}},
     "group": {"id": 8, "level": "adaptive", "inline": "container", "body": "position", "since": 6, "ctor": {}, "attrs": {
       "role": {"dom": "ident"},
@@ -109,7 +114,10 @@
       "matchClass": {"dom": "ident", "since": 12},
       "matchLang": {"dom": "lang", "since": 12},
       "matchDepth": {"dom": "int:1:16", "since": 12},
-      "matchWhere": {"dom": "where", "since": 12}}},
+      "matchWhere": {"dom": "where", "since": 12},
+      "snapKerning": {"dom": "bool", "since": 13}, "sidecarFrac": {"dom": "num:0.1:0.9", "since": 13},
+      "contIndent": {"dom": "int:0:40", "since": 13}, "features": {"dom": "features", "since": 13},
+      "punct": {"dom": "enum:full|book|none", "since": 13}}},
     "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "ctor": {"params": ["attr:url"]}, "attrs": {
       "url": {"dom": "url"}}},
     "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
@@ -410,6 +418,11 @@
     "block.indent": {"field": "blockIndent", "type": "len", "gran": "block", "inherits": false, "attr": "blockIndent", "key": "block.indent"},
     "block.keepWithNext": {"field": "keepWithNext", "type": "bool", "gran": "block", "inherits": false, "attr": "keepWithNext", "key": "block.keepWithNext"},
     "list.marker": {"field": "listMarker", "type": "str", "gran": "block", "inherits": true, "attr": "listMarker", "key": "list.marker"},
+    "codeblock.snapKerning": {"field": "snapKerning", "type": "bool", "gran": "block", "inherits": true, "attr": "snapKerning", "key": "codeblock.snapKerning"},
+    "codeblock.sidecarFrac": {"field": "sidecarFrac", "type": "num", "gran": "block", "inherits": true, "attr": "sidecarFrac", "key": "codeblock.sidecarFrac"},
+    "codeblock.contIndent": {"field": "contIndent", "type": "num", "gran": "block", "inherits": true, "attr": "contIndent", "key": "codeblock.contIndent"},
+    "text.features": {"field": "features", "type": "str", "attr": "features", "key": "text.features", "dump": {"label": "features", "quoted": true}},
+    "text.punct": {"field": "punct", "type": "enum", "attr": "punct", "key": "text.punct", "values": ["full", "book", "none"], "dump": {"label": "punct"}},
     "engine.script": {
       "field": "script",
       "type": "internal"
@@ -723,7 +736,7 @@
       "def": 2,
       "prec": "HostDefault",
       "affects": [
-        "Layout"
+        "Ingest"
       ],
       "ctype": "int"
     },
@@ -733,7 +746,7 @@
       "def": 0.4,
       "prec": "HostDefault",
       "affects": [
-        "Layout"
+        "Ingest"
       ]
     },
     "code.snapKerning": {
@@ -742,8 +755,7 @@
       "def": false,
       "prec": "HostDefault",
       "affects": [
-        "Layout",
-        "Paint"
+        "Ingest"
       ],
       "legacy": "verbatimSnapKerning"
     },
@@ -785,8 +797,7 @@
       "def": "",
       "prec": "HostDefault",
       "affects": [
-        "Measure",
-        "Paint"
+        "Ingest"
       ],
       "legacy": "codeFontFeatures"
     },
@@ -796,7 +807,7 @@
       "def": {},
       "prec": "HostDefault",
       "affects": [
-        "Paint"
+        "Ingest"
       ],
       "legacy": "codeFontFeaturesByLang"
     },

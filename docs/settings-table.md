@@ -34,14 +34,14 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `cost.shrinkCoeff` | num:0:100 | `0.6` | HostDefault | Layout |  |
 | `cost.cap` | num:1:1e12 | `10000` | HostDefault | Layout |  |
 | `code.scale` | num:0.1:4 | `0.85` | HostDefault | Ingest, Layout |  |
-| `code.contIndent` | int:0:40 | `2` | HostDefault | Layout |  |
-| `code.sidecarFrac` | num:0.1:0.9 | `0.4` | HostDefault | Layout |  |
-| `code.snapKerning` | bool | `false` | HostDefault | Layout, Paint | `verbatimSnapKerning` |
+| `code.contIndent` | int:0:40 | `2` | HostDefault | Ingest |  |
+| `code.sidecarFrac` | num:0.1:0.9 | `0.4` | HostDefault | Ingest |  |
+| `code.snapKerning` | bool | `false` | HostDefault | Ingest | `verbatimSnapKerning` |
 | `code.minCols` | int:1:1000 | `8` | HostDefault | Layout |  |
 | `code.snapTolerance` | num:0:1 | `0.1` | HostDefault | Layout |  |
 | `code.snapMaxQ` | int:1:64 | `7` | HostDefault | Layout |  |
-| `code.fontFeatures` | features | `""` | HostDefault | Measure, Paint | `codeFontFeatures` |
-| `code.fontFeaturesByLang` | map:features | `{}` | HostDefault | Paint | `codeFontFeaturesByLang` |
+| `code.fontFeatures` | features | `""` | HostDefault | Ingest | `codeFontFeatures` |
+| `code.fontFeaturesByLang` | map:features | `{}` | HostDefault | Ingest | `codeFontFeaturesByLang` |
 | `table.cellPad` | num:0:10 | `0.4` | HostDefault | Layout |  |
 | `table.rowPad` | num:0:10 | `0.3` | HostDefault | Layout |  |
 | `terms.heading` | str | `""` | HostDefault | Resolve |  |

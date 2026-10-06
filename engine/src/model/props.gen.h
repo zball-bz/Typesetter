@@ -21,6 +21,8 @@ struct Styling {
   StrRef lang = 0;  // text.lang
   StrRef color = 0;  // text.color
   float sizePx = 0;  // text.size
+  StrRef features = 0;  // text.features
+  u8 punct = 0;  // text.punct
   u8 script = 0;  // engine.script
   bool operator==(const Styling& o) const {
     return weight == o.weight &&
@@ -34,6 +36,8 @@ struct Styling {
            lang == o.lang &&
            color == o.color &&
            sizePx == o.sizePx &&
+           features == o.features &&
+           punct == o.punct &&
            script == o.script;
   }
 };
@@ -47,6 +51,9 @@ constexpr u8 BASELINE_SUPER = 1;
 constexpr u8 BASELINE_SUB = 2;
 constexpr u8 HANG_INDENT = 1;
 constexpr u8 HANG_CONTENT = 2;
+constexpr u8 PUNCT_FULL = 1;
+constexpr u8 PUNCT_BOOK = 2;
+constexpr u8 PUNCT_NONE = 3;
 
 // a hash over the canonical bits of every field
 struct StylingHash {
@@ -72,6 +79,8 @@ struct StylingHash {
       std::memcpy(&b, &s.sizePx, 4);
       mix(b);
     }
+    mix((u64)s.features);
+    mix((u64)s.punct);
     mix((u64)s.script);
     return (size_t)h;
   }
@@ -132,6 +141,13 @@ inline void applyStyleArg(Styling& st, const ArgVal& a, Intern intern, View view
     st.sizePx = (float)a.num;
     st.sizeMul = 1.0f;
   }
+  if (a.key == ArgK::features && a.tag == ArgTag::Str) st.features = intern(a.ref);
+  if (a.key == ArgK::punct && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "full") st.punct = 1;
+    if (v == "book") st.punct = 2;
+    if (v == "none") st.punct = 3;
+  }
 }
 
 // the value part of the tree and block dumps, in row order (each dump keeps
@@ -156,6 +172,16 @@ inline void appendStyleFields(std::string& out, const Styling& s, const Interner
     out += strs.get(s.color);
   }
   if (s.sizePx > 0) appendf(out, " size=%gpx", (double)s.sizePx);
+  if (s.features) {
+    out += " features=\"";
+    appendEscaped(out, strs.get(s.features));
+    out += "\"";
+  }
+  if (s.punct) {
+    static const char* const kV[] = {"full", "book", "none"};
+    out += " punct=";
+    out += kV[s.punct - 1];
+  }
 }
 
 // A length (plan P3-01): em of the document's base size (rem-like) or px;
@@ -209,6 +235,9 @@ struct NodeProps {
   Len blockIndent = {};  // block.indent
   bool keepWithNext = false;  // block.keepWithNext
   StrRef listMarker = 0;  // list.marker (inherits)
+  bool snapKerning = false;  // codeblock.snapKerning (inherits)
+  float sidecarFrac = 0;  // codeblock.sidecarFrac (inherits)
+  float contIndent = 0;  // codeblock.contIndent (inherits)
   bool operator==(const NodeProps& o) const {
     return parIndent == o.parIndent &&
            parAlign == o.parAlign &&
@@ -216,7 +245,10 @@ struct NodeProps {
            blockGap == o.blockGap &&
            blockIndent == o.blockIndent &&
            keepWithNext == o.keepWithNext &&
-           listMarker == o.listMarker;
+           listMarker == o.listMarker &&
+           snapKerning == o.snapKerning &&
+           sidecarFrac == o.sidecarFrac &&
+           contIndent == o.contIndent;
   }
 };
 constexpr u8 PARALIGN_JUSTIFY = 1;
@@ -245,6 +277,17 @@ struct NodePropsHash {
     len(p.blockIndent);
     mix((u64)p.keepWithNext);
     mix((u64)p.listMarker);
+    mix((u64)p.snapKerning);
+    {
+      u32 b;
+      std::memcpy(&b, &p.sidecarFrac, 4);
+      mix(b);
+    }
+    {
+      u32 b;
+      std::memcpy(&b, &p.contIndent, 4);
+      mix(b);
+    }
     return (size_t)h;
   }
 };
@@ -255,6 +298,9 @@ inline NodeProps inheritProps(const NodeProps& parent) {
   p.parAlign = parent.parAlign;
   p.parHyphenate = parent.parHyphenate;
   p.listMarker = parent.listMarker;
+  p.snapKerning = parent.snapKerning;
+  p.sidecarFrac = parent.sidecarFrac;
+  p.contIndent = parent.contIndent;
   return p;
 }
 // folds one styled attribute onto block properties (values validated at decode)
@@ -278,6 +324,9 @@ inline void applyNodeArg(NodeProps& p, const ArgVal& a, Intern intern, View view
   if (a.key == ArgK::blockIndent && a.tag == ArgTag::Str) p.blockIndent = parseLen(view(a.ref));
   if (a.key == ArgK::keepWithNext && a.tag == ArgTag::Bool) p.keepWithNext = a.num != 0;
   if (a.key == ArgK::listMarker && a.tag == ArgTag::Str) p.listMarker = intern(a.ref);
+  if (a.key == ArgK::snapKerning && a.tag == ArgTag::Bool) p.snapKerning = a.num != 0;
+  if (a.key == ArgK::sidecarFrac && a.tag == ArgTag::Num) p.sidecarFrac = (float)a.num;
+  if (a.key == ArgK::contIndent && a.tag == ArgTag::Num) p.contIndent = (float)a.num;
 }
 // the style keys by name (plan P3-01: rules in JSON read them as
 // $.style.push does): each row's attribute name and its key path
@@ -312,10 +361,26 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
     {"block.keepWithNext", ArgK::keepWithNext},
     {"listMarker", ArgK::listMarker},
     {"list.marker", ArgK::listMarker},
+    {"snapKerning", ArgK::snapKerning},
+    {"codeblock.snapKerning", ArgK::snapKerning},
+    {"sidecarFrac", ArgK::sidecarFrac},
+    {"codeblock.sidecarFrac", ArgK::sidecarFrac},
+    {"contIndent", ArgK::contIndent},
+    {"codeblock.contIndent", ArgK::contIndent},
+    {"features", ArgK::features},
+    {"text.features", ArgK::features},
+    {"punct", ArgK::punct},
+    {"text.punct", ArgK::punct},
 };
 // whether an attribute patches a block property
 inline bool isNodeArg(ArgK k) {
-  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker;
+  return k == ArgK::parIndent || k == ArgK::parAlign || k == ArgK::parHyphenate || k == ArgK::blockGap || k == ArgK::blockIndent || k == ArgK::keepWithNext || k == ArgK::listMarker || k == ArgK::snapKerning || k == ArgK::sidecarFrac || k == ArgK::contIndent;
+}
+// (plan P3-02; design T4: settable element arguments alias property rows)
+// whether a kind's attribute is its own style (the kind row's `prop` attrs)
+inline bool isPropAlias(Kind k, ArgK a) {
+  if (k == Kind::codeblock) return a == ArgK::snapKerning || a == ArgK::sidecarFrac || a == ArgK::contIndent || a == ArgK::features;
+  return false;
 }
 
 }  // namespace tsr

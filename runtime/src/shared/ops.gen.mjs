@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
-export const OPS_VERSION = 12;
+export const OPS_VERSION = 13;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '3200b38e';
+export const SCHEMA_HASH = '42836f3b';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -129,7 +129,11 @@ export const SINCE = Object.freeze({
       "34": 9,
       "35": 9,
       "54": 11,
-      "55": 11
+      "55": 11,
+      "70": 13,
+      "71": 13,
+      "72": 13,
+      "73": 13
     },
     "7": {
       "0": 9,
@@ -286,7 +290,12 @@ export const SINCE = Object.freeze({
       "66": 12,
       "67": 12,
       "68": 12,
-      "69": 12
+      "69": 12,
+      "70": 13,
+      "71": 13,
+      "72": 13,
+      "73": 13,
+      "74": 13
     },
     "19": {
       "0": 9,
@@ -652,7 +661,12 @@ export const ARGK = Object.freeze({
   "matchClass": 66,
   "matchLang": 67,
   "matchDepth": 68,
-  "matchWhere": 69
+  "matchWhere": 69,
+  "snapKerning": 70,
+  "sidecarFrac": 71,
+  "contIndent": 72,
+  "features": 73,
+  "punct": 74
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -767,6 +781,10 @@ export const SCHEMA = Object.freeze({
       "lineNo": "int:0:1048576",
       "hl": "rangeset",
       "sidecar": "str",
+      "snapKerning": "bool",
+      "sidecarFrac": "num:0.1:0.9",
+      "contIndent": "int:0:40",
+      "features": "features",
       "label": "label",
       "role": "ident",
       "slot": "ident",
@@ -1010,6 +1028,11 @@ export const SCHEMA = Object.freeze({
       "matchLang": "lang",
       "matchDepth": "int:1:16",
       "matchWhere": "where",
+      "snapKerning": "bool",
+      "sidecarFrac": "num:0.1:0.9",
+      "contIndent": "int:0:40",
+      "features": "features",
+      "punct": "enum:full|book|none",
       "label": "label",
       "role": "ident",
       "slot": "ident",

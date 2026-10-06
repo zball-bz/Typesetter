@@ -33,6 +33,10 @@ struct BlockTraits {
   enum class Align : u8 { Justify, Ragged, Center, End } align = Align::Justify;
   bool hyphenate = true;
   bool keepWithNext = false;  // paged: never the last block on a sheet
+  // a code block's grid (plan P3-02: codeblock.* rows)
+  bool snapKerning = false;
+  float sidecarFrac = 0.4f;
+  i32 contIndent = 2;
 };
 // what a block is (its layouter's case; the dumps' name)
 enum class TraitsId : u8 {
