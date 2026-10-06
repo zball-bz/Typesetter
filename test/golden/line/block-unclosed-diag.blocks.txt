@@ -1,8 +1,8 @@
 top pid=0 units=1
  unit text indent=0su
-  word "Be" w=1025su pen=INF @[0,7)
-  hyphen bw=513su pen=0.70 @[0,7)
-  word "fore." w=2561su pen=INF @[0,7)
+  word "Be" w=1025su pen=INF @[0,2)
+  hyphen bw=513su pen=0.70 @[2,2)
+  word "fore." w=2561su pen=INF @[2,7)
 top pid=1 units=1
  unit text indent=0su
   word "⚠" w=616su pen=INF CODE @[9,61)
@@ -36,14 +36,14 @@ top pid=1 units=1
   word "line" w=2049su pen=INF CODE @[9,61)
 top pid=2 units=1
  unit text indent=0su
-  word "Para" w=2049su pen=INF @[63,88)
-  hyphen bw=513su pen=0.70 @[63,88)
-  word "graph" w=2561su pen=INF @[63,88)
-  space w=257su stretch=1 @[63,88)
-  word "af" w=1025su pen=INF @[63,88)
-  hyphen bw=513su pen=0.70 @[63,88)
-  word "ter" w=1537su pen=INF @[63,88)
-  space w=257su stretch=1 @[63,88)
-  word "sur" w=1537su pen=INF @[63,88)
-  hyphen bw=513su pen=0.70 @[63,88)
-  word "vives." w=3073su pen=INF @[63,88)
+  word "Para" w=2049su pen=INF @[63,67)
+  hyphen bw=513su pen=0.70 @[67,67)
+  word "graph" w=2561su pen=INF @[67,72)
+  space w=257su stretch=1 @[72,73)
+  word "af" w=1025su pen=INF @[73,75)
+  hyphen bw=513su pen=0.70 @[75,75)
+  word "ter" w=1537su pen=INF @[75,78)
+  space w=257su stretch=1 @[78,79)
+  word "sur" w=1537su pen=INF @[79,82)
+  hyphen bw=513su pen=0.70 @[82,82)
+  word "vives." w=3073su pen=INF @[82,88)

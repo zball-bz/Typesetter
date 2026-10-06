@@ -6,15 +6,15 @@
 <div class="tsr-line" data-s="75" data-e="88" style="top:97.594px;left:16px;width:284px"><span class="tsr-r tsr-b" data-s="75">nested</span><span class="tsr-r" data-s="83"> call.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="158" style="position:relative;height:145.594px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="54" data-join="space" style="top:0px;left:40px;width:260px;word-spacing:0.667px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">an indented body is dedented by its</span></div>
-<div class="tsr-line" data-s="0" data-e="54" style="top:24px;left:40px;width:260px"><span class="tsr-r" data-s="0">common indentation</span></div>
-<div class="tsr-line" data-s="61" data-e="104" data-join="space" style="top:54.391px;left:40px;width:260px;word-spacing:3.333px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="61">so this list starts at the body&#39;s</span></div>
-<div class="tsr-line" data-s="61" data-e="104" style="top:78.391px;left:40px;width:260px"><span class="tsr-r" data-s="61">left edge</span></div>
+<div class="tsr-line" data-s="0" data-e="35" data-join="space" style="top:0px;left:40px;width:260px;word-spacing:0.667px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">an indented body is dedented by its</span></div>
+<div class="tsr-line" data-s="36" data-e="54" style="top:24px;left:40px;width:260px"><span class="tsr-r" data-s="36">common indentation</span></div>
+<div class="tsr-line" data-s="61" data-e="94" data-join="space" style="top:54.391px;left:40px;width:260px;word-spacing:3.333px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="61">so this list starts at the body&#39;s</span></div>
+<div class="tsr-line" data-s="95" data-e="104" style="top:78.391px;left:40px;width:260px"><span class="tsr-r" data-s="95">left edge</span></div>
 <div class="tsr-line" data-s="110" data-e="136" style="top:121.594px;left:16px;width:284px"><span class="tsr-r" data-s="110">and so does this paragraph</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="298" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="93" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.733px"><span class="tsr-r" data-s="0">A note with blocks</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px">1</a><span class="tsr-r" data-s="70"> continues the sen</span><span class="tsr-r" data-s="70" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="70" data-e="93" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="70">tence.</span></div>
+<div class="tsr-line" data-s="0" data-e="87" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.733px"><span class="tsr-r" data-s="0">A note with blocks</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px">1</a><span class="tsr-r" data-s="70"> continues the sen</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="87" data-e="93" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="87">tence.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="402" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="33" style="top:0px;left:40px;width:260px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">a single-line body that is a list</span></div>

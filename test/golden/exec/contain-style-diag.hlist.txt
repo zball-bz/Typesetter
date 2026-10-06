@@ -1,8 +1,8 @@
 top pid=0 units=1
  unit text indent=0su
-  box Other "Be" w=1025su r0 @[0,7)
-  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[0,7)
-  box Other "fore." w=2561su r0 @[0,7)
+  box Other "Be" w=1025su r0 @[0,2)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[2,2)
+  box Other "fore." w=2561su r0 @[2,7)
   run r0 plain
 top pid=1 units=1
  unit text indent=0su
@@ -20,15 +20,15 @@ top pid=1 units=1
   run r0 plain CODE
 top pid=2 units=1
  unit text indent=0su
-  box Other "This" w=2049su r0 @[75,102)
-  glue word w=257su x=1 cap=257su kern="s p" src r0 @[75,102)
-  box Other "para" w=2049su r0 @[75,102)
-  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[75,102)
-  box Other "graph" w=2561su r0 @[75,102)
-  glue word w=257su x=1 cap=257su kern="h i" src r0 @[75,102)
-  box Other "is" w=1025su r0 @[75,102)
-  glue word w=257su x=1 cap=257su kern="s n" src r0 @[75,102)
-  box Other "not" w=1537su r0 @[75,102)
-  glue word w=257su x=1 cap=257su kern="t b" src r0 @[75,102)
-  box Other "bold." w=2561su r0 @[75,102)
+  box Other "This" w=2049su r0 @[75,79)
+  glue word w=257su x=1 cap=257su kern="s p" src r0 @[79,80)
+  box Other "para" w=2049su r0 @[80,84)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[84,84)
+  box Other "graph" w=2561su r0 @[84,89)
+  glue word w=257su x=1 cap=257su kern="h i" src r0 @[89,90)
+  box Other "is" w=1025su r0 @[90,92)
+  glue word w=257su x=1 cap=257su kern="s n" src r0 @[92,93)
+  box Other "not" w=1537su r0 @[93,96)
+  glue word w=257su x=1 cap=257su kern="t b" src r0 @[96,97)
+  box Other "bold." w=2561su r0 @[97,102)
   run r0 plain

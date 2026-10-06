@@ -3,27 +3,27 @@
 <div class="tsr-line" id="tsr-intro" data-s="0" data-e="12" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Introduction</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="24" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="47" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3px"><span class="tsr-r" data-s="0">The typesetting engine resolves refer</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="97" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-0.457px"><span class="tsr-r" data-s="0">ences like </span><a class="tsr-r" href="#tsr-intro" data-s="48">§1</a><span class="tsr-r" data-s="55"> and </span><a class="tsr-r" href="#tsr-results" data-s="59">§2</a><span class="tsr-r" data-s="68"> before any rendering</span></div>
-<div class="tsr-line" data-s="68" data-e="97" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="68">happens.</span></div>
+<div class="tsr-line" data-s="0" data-e="37" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3px"><span class="tsr-r" data-s="0">The typesetting engine resolves refer</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="37" data-e="88" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-0.457px"><span class="tsr-r" data-s="37">ences like </span><a class="tsr-r" href="#tsr-intro" data-s="48">§1</a><span class="tsr-r" data-s="55"> and </span><a class="tsr-r" href="#tsr-results" data-s="59">§2</a><span class="tsr-r" data-s="68"> before any rendering</span></div>
+<div class="tsr-line" data-s="89" data-e="97" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="89">happens.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="126" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-h-1.1" data-s="0" data-e="6" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">Method</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="134" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="49" data-join="none" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Terms are definition sites with automat</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="49" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">ic labels.</span></div>
+<div class="tsr-line" data-s="0" data-e="39" data-join="none" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Terms are definition sites with automat</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="39" data-e="49" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="39">ic labels.</span></div>
 </div>
 <div class="tsr-para" data-role="term" data-pid="4" data-s0="185" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-measure" data-s="0" data-e="61" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.229px"><span class="tsr-r tsr-b" data-s="0">measure</span><span class="tsr-r" data-s="0"> — The width available to a single</span></div>
-<div class="tsr-line" data-s="15" data-e="60" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="15">typeset line.</span></div>
+<div class="tsr-line" data-s="47" data-e="60" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="47">typeset line.</span></div>
 </div>
 <div class="tsr-para" data-pid="5" data-s0="250" style="position:relative;height:25.609px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-results" data-s="0" data-e="7" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Results</span></div>
 </div>
 <div class="tsr-para" data-pid="6" data-s0="269" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="79" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1.371px"><span class="tsr-r" data-s="0">As promised in </span><a class="tsr-r" href="#tsr-intro" data-s="15">§1</a><span class="tsr-r" data-s="21">, the resolver links back</span></div>
-<div class="tsr-line" data-s="21" data-e="88" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="21">to sections and to terms such as </span><a class="tsr-r" href="#tsr-measure" data-s="80">measure</a></div>
+<div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1.371px"><span class="tsr-r" data-s="0">As promised in </span><a class="tsr-r" href="#tsr-intro" data-s="15">§1</a><span class="tsr-r" data-s="21">, the resolver links back</span></div>
+<div class="tsr-line" data-s="47" data-e="88" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="47">to sections and to terms such as </span><a class="tsr-r" href="#tsr-measure" data-s="80">measure</a></div>
 <div class="tsr-line" data-s="89" data-e="111" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="89">without a second pass.</span></div>
 </div>
 <div class="tsr-para" data-pid="7" data-s0="385" style="position:relative;height:24px;margin-bottom:19.203px">

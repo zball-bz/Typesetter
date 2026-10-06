@@ -29,6 +29,6 @@ top pid=0 units=1
   word "gine" w=2049su pen=INF CODE @[0,12)
 top pid=1 units=1
  unit text indent=0su
-  word "Af" w=1025su pen=INF @[14,20)
-  hyphen bw=513su pen=0.70 @[14,20)
-  word "ter." w=2049su pen=INF @[14,20)
+  word "Af" w=1025su pen=INF @[14,16)
+  hyphen bw=513su pen=0.70 @[16,16)
+  word "ter." w=2049su pen=INF @[16,20)

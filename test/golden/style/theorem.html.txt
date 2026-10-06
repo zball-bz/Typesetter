@@ -3,23 +3,23 @@
 <div class="tsr-line" id="tsr-h-1" data-s="0" data-e="19" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Framed environments</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="570" style="position:relative;height:72px;margin-bottom:24px">
-<div class="tsr-line" data-s="0" data-e="98" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">A paragraph before the theorem, set at</span></div>
-<div class="tsr-line" data-s="0" data-e="98" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">the measure; the theorem below stands a</span></div>
-<div class="tsr-line" data-s="0" data-e="98" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">little further off.</span></div>
+<div class="tsr-line" data-s="0" data-e="38" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">A paragraph before the theorem, set at</span></div>
+<div class="tsr-line" data-s="39" data-e="78" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="39">the measure; the theorem below stands a</span></div>
+<div class="tsr-line" data-s="79" data-e="98" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="79">little further off.</span></div>
 </div>
 <div class="tsr-para" data-role="theorem" data-pid="2" data-s0="670" style="position:relative;height:206.406px;margin-bottom:24px">
 <div class="tsr-frame" style="top:0px;left:0px;width:300px;height:206.406px;border-width:0px 0px 0px 2px;border-color:#2f5d8a;background:#f4f7fb" data-syn="frame"></div>
-<div class="tsr-line" id="tsr-thm-a" data-s="26" data-e="142" data-join="none" style="top:6.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r tsr-b" data-s="26">Theorem 1.</span><span class="tsr-r" data-s="26"> Every bounded monotone se</span><span class="tsr-r" data-s="26" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="26" data-e="142" data-join="space" style="top:30.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r" data-s="26">quence of real numbers converges. Its</span></div>
-<div class="tsr-line" data-s="26" data-e="142" data-join="space" style="top:54.406px;left:14.797px;width:272.406px;word-spacing:4.068px"><span class="tsr-r" data-s="26">limit is the supremum of its terms</span></div>
-<div class="tsr-line" data-s="26" data-e="142" data-join="para" style="top:78.406px;left:14.797px;width:272.406px"><span class="tsr-r" data-s="26">when it increases.</span></div>
-<div class="tsr-line" data-s="146" data-e="186" data-join="space" style="top:121.609px;left:38.797px;width:248.406px;word-spacing:1.401px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="146">a list inside the frame keeps its</span></div>
-<div class="tsr-line" data-s="146" data-e="186" style="top:145.609px;left:38.797px;width:248.406px"><span class="tsr-r" data-s="146">indent</span></div>
+<div class="tsr-line" id="tsr-thm-a" data-s="26" data-e="142" data-join="none" style="top:6.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r tsr-b" data-s="26">Theorem 1.</span><span class="tsr-r" data-s="26"> Every bounded monotone se</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="51" data-e="88" data-join="space" style="top:30.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r" data-s="51">quence of real numbers converges. Its</span></div>
+<div class="tsr-line" data-s="89" data-e="123" data-join="space" style="top:54.406px;left:14.797px;width:272.406px;word-spacing:4.068px"><span class="tsr-r" data-s="89">limit is the supremum of its terms</span></div>
+<div class="tsr-line" data-s="124" data-e="142" data-join="para" style="top:78.406px;left:14.797px;width:272.406px"><span class="tsr-r" data-s="124">when it increases.</span></div>
+<div class="tsr-line" data-s="146" data-e="179" data-join="space" style="top:121.609px;left:38.797px;width:248.406px;word-spacing:1.401px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="146">a list inside the frame keeps its</span></div>
+<div class="tsr-line" data-s="180" data-e="186" style="top:145.609px;left:38.797px;width:248.406px"><span class="tsr-r" data-s="180">indent</span></div>
 <div class="tsr-line" data-s="189" data-e="207" style="top:176px;left:38.797px;width:248.406px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="189">within the padding</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="889" style="position:relative;height:72px">
-<div class="tsr-line" data-s="0" data-e="95" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="0">The text after </span><a class="tsr-r" href="#tsr-thm-a" data-s="15">Theorem 1</a><span class="tsr-r" data-s="22"> resumes at the</span></div>
-<div class="tsr-line" data-s="22" data-e="95" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="22">paragraph gap or the theorem&#39;s space,</span></div>
-<div class="tsr-line" data-s="22" data-e="95" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="22">whichever is larger.</span></div>
+<div class="tsr-line" data-s="0" data-e="36" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="0">The text after </span><a class="tsr-r" href="#tsr-thm-a" data-s="15">Theorem 1</a><span class="tsr-r" data-s="22"> resumes at the</span></div>
+<div class="tsr-line" data-s="37" data-e="74" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="37">paragraph gap or the theorem&#39;s space,</span></div>
+<div class="tsr-line" data-s="75" data-e="95" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="75">whichever is larger.</span></div>
 </div>
 </div>

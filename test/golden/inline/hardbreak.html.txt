@@ -1,13 +1,13 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:120px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="58" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.667px"><span class="tsr-r" data-s="0">Raw ops fixture (hardbreak.tree.json):</span></div>
-<div class="tsr-line" data-s="0" data-e="58" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">this line ends here</span></div>
-<div class="tsr-line" data-s="60" data-e="165" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:5.714px"><span class="tsr-r" data-s="60">and the next one starts after a hard</span></div>
-<div class="tsr-line" data-s="60" data-e="165" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:4.667px"><span class="tsr-r" data-s="60">break, then the paragraph goes on and</span></div>
-<div class="tsr-line" data-s="60" data-e="165" style="top:96px;left:0px;width:300px"><span class="tsr-r" data-s="60">wraps at the measure as usual.</span></div>
+<div class="tsr-line" data-s="0" data-e="38" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.667px"><span class="tsr-r" data-s="0">Raw ops fixture (hardbreak.tree.json):</span></div>
+<div class="tsr-line" data-s="39" data-e="58" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="39">this line ends here</span></div>
+<div class="tsr-line" data-s="60" data-e="96" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:5.714px"><span class="tsr-r" data-s="60">and the next one starts after a hard</span></div>
+<div class="tsr-line" data-s="97" data-e="134" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:4.667px"><span class="tsr-r" data-s="97">break, then the paragraph goes on and</span></div>
+<div class="tsr-line" data-s="135" data-e="165" style="top:96px;left:0px;width:300px"><span class="tsr-r" data-s="135">wraps at the measure as usual.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="167" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="27" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">中文的硬换行在这里</span></div>
-<div class="tsr-line" data-s="29" data-e="56" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="29">下一行从这里开始</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="29">。</span></div>
+<div class="tsr-line" data-s="29" data-e="56" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="29">下一行从这里开始</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="53">。</span></div>
 </div>
 </div>

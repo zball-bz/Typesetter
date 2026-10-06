@@ -2,26 +2,26 @@ top pid=0 units=8
  unit text indent=0su
   word "Types" w=2561su pen=INF @[17,22)
  unit text indent=0su
-  word "Log" w=1537su pen=INF @[28,33)
-  hyphen bw=513su pen=0.70 @[28,33)
-  word "ic" w=1025su pen=INF @[28,33)
+  word "Log" w=1537su pen=INF @[28,31)
+  hyphen bw=513su pen=0.70 @[31,31)
+  word "ic" w=1025su pen=INF @[31,33)
  unit text indent=0su
   word "Sets" w=2049su pen=INF @[36,40)
  unit text indent=0su
-  word "Ho" w=1025su pen=INF @[43,51)
-  hyphen bw=513su pen=0.70 @[43,51)
-  word "mo" w=1025su pen=INF @[43,51)
-  hyphen bw=513su pen=0.70 @[43,51)
-  word "topy" w=2049su pen=INF @[43,51)
+  word "Ho" w=1025su pen=INF @[43,45)
+  hyphen bw=513su pen=0.70 @[45,45)
+  word "mo" w=1025su pen=INF @[45,47)
+  hyphen bw=513su pen=0.70 @[47,47)
+  word "topy" w=2049su pen=INF @[47,51)
  unit text indent=0su
   obj math "Id_(A)" w=1627su asc=819su desc=263su @[52,60)
  unit text indent=0su
-  word "equal" w=2561su pen=INF @[66,74)
-  hyphen bw=513su pen=0.70 @[66,74)
-  word "i" w=513su pen=INF @[66,74)
-  hyphen bw=513su pen=0.70 @[66,74)
-  word "ty" w=1025su pen=INF @[66,74)
-  space w=257su stretch=1 @[66,74)
+  word "equal" w=2561su pen=INF @[66,71)
+  hyphen bw=513su pen=0.70 @[71,71)
+  word "i" w=513su pen=INF @[71,72)
+  hyphen bw=513su pen=0.70 @[72,72)
+  word "ty" w=1025su pen=INF @[72,74)
+  space w=257su stretch=1 @[74,74)
   obj math "=" w=774su asc=377su desc=0su @[75,78)
  unit text indent=0su
   obj math "(x,x) | x ∈ A" w=2962su asc=721su desc=215su @[81,98)
@@ -30,8 +30,8 @@ top pid=0 units=8
   synthetic w=284su @[81,98)
   obj math "" w=788su asc=696su desc=10su @[81,98)
  unit text indent=0su
-  word "path" w=2049su pen=INF @[101,111)
-  space w=257su stretch=1 @[101,111)
-  word "space" w=2561su pen=INF @[101,111)
-  space w=257su stretch=1 @[101,111)
+  word "path" w=2049su pen=INF @[101,105)
+  space w=257su stretch=1 @[105,106)
+  word "space" w=2561su pen=INF @[106,111)
+  space w=257su stretch=1 @[111,111)
   obj math "A^I" w=1121su asc=951su desc=10su @[112,117)

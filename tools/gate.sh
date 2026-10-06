@@ -57,6 +57,7 @@ na() { want "$1" && RESULTS+=("n/a  $1 $2"); return 0; }
 
 g1() {
   cmake --build engine/build && ./engine/build/tsr_tests . || return 1
+  node tools/check-spans.mjs || return 1  # runs and lines point at their source (P4-03)
   node tools/check-tsrc.mjs --check  # tsrc --profile=golden reproduces every golden (P1-03)
 }
 g2() {

@@ -914,6 +914,7 @@ struct Mat {
     d->span = dest.span;
     d->rawmap = nullptr;
     d->nrawmap = 0;
+    d->srcExact = false;  // (plan P4-03) at its destination, not its source
     dropArg(d, ArgK::label);
     d->kids.clear();
     Ctx under = dest;

@@ -1,12 +1,12 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="103" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">A paragraph mentions the year 1984. Then</span></div>
-<div class="tsr-line" data-s="0" data-e="103" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:0.4px"><span class="tsr-r" data-s="0">it goes on: an N. line with N other than 1</span></div>
-<div class="tsr-line" data-s="0" data-e="103" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">does not interrupt.</span></div>
+<div class="tsr-line" data-s="0" data-e="40" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">A paragraph mentions the year 1984. Then</span></div>
+<div class="tsr-line" data-s="41" data-e="83" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:0.4px"><span class="tsr-r" data-s="41">it goes on: an N. line with N other than 1</span></div>
+<div class="tsr-line" data-s="84" data-e="103" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="84">does not interrupt.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="105" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="76" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A paragraph with a dash line - continues:</span></div>
-<div class="tsr-line" data-s="0" data-e="76" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">an empty item does not interrupt.</span></div>
+<div class="tsr-line" data-s="0" data-e="42" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A paragraph with a dash line - continues:</span></div>
+<div class="tsr-line" data-s="43" data-e="76" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="43">an empty item does not interrupt.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="183" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="30" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A paragraph followed by a list</span></div>
@@ -16,8 +16,8 @@
 <div class="tsr-line" data-s="7" data-e="10" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="7">two</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="229" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="46" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">Comment lines inside a paragraph are in</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="92" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">visible and the paragraph continues.</span></div>
+<div class="tsr-line" data-s="0" data-e="39" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">Comment lines inside a paragraph are in</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="39" data-e="92" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="39">visible and the paragraph continues.</span></div>
 </div>
 <div class="tsr-para" data-pid="6" data-s0="347" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="30" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Text after the closer is kept.</span></div>

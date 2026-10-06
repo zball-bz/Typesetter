@@ -1,8 +1,8 @@
 top pid=0 units=1
  unit text indent=0su
-  word "Be" w=1025su pen=INF @[0,7)
-  hyphen bw=513su pen=0.70 @[0,7)
-  word "fore." w=2561su pen=INF @[0,7)
+  word "Be" w=1025su pen=INF @[0,2)
+  hyphen bw=513su pen=0.70 @[2,2)
+  word "fore." w=2561su pen=INF @[2,7)
 top pid=1 units=1
  unit text indent=0su
   word "⚠" w=616su pen=INF CODE @[9,33)
@@ -36,6 +36,6 @@ top pid=1 units=1
   word "3)" w=1025su pen=INF CODE @[9,33)
 top pid=2 units=1
  unit text indent=0su
-  word "Af" w=1025su pen=INF @[35,41)
-  hyphen bw=513su pen=0.70 @[35,41)
-  word "ter." w=2049su pen=INF @[35,41)
+  word "Af" w=1025su pen=INF @[35,37)
+  hyphen bw=513su pen=0.70 @[37,37)
+  word "ter." w=2049su pen=INF @[37,41)

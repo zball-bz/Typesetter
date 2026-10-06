@@ -1,22 +1,22 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px;min-height:307.203px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="135" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">Opening text that occupies the first part</span></div>
-<div class="tsr-line" data-s="0" data-e="135" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="0">of the sheet so the following float be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="135" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">gins roughly one hundred pixels above the</span></div>
-<div class="tsr-line" data-s="0" data-e="135" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">sheet bottom.</span></div>
+<div class="tsr-line" data-s="0" data-e="41" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">Opening text that occupies the first part</span></div>
+<div class="tsr-line" data-s="42" data-e="80" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="42">of the sheet so the following float be</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="80" data-e="121" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="80">gins roughly one hundred pixels above the</span></div>
+<div class="tsr-line" data-s="122" data-e="135" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="122">sheet bottom.</span></div>
 </div>
 <div class="tsr-para" data-role="figure" data-pid="1" data-s0="137" style="position:relative;height:0px;margin-bottom:0px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-box" data-s="0" data-e="143" src="photos/box.png" alt="box" style="top:0px;left:180px;width:120px;height:120px">
 <div class="tsr-line" data-s="106" data-e="134" data-join="space" data-track="caption" style="top:120px;left:180px;width:120px;word-spacing:36px"><span class="tsr-r tsr-b tsr-cjk" data-s="106">图</span><span class="tsr-r tsr-b" data-s="106"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="106">：</span><span class="tsr-r" data-s="106">Right</span></div>
-<div class="tsr-line" data-s="106" data-e="134" data-join="space" data-track="caption" style="top:144px;left:180px;width:120px;word-spacing:8px"><span class="tsr-r" data-s="106">float near the</span></div>
-<div class="tsr-line" data-s="106" data-e="134" data-track="caption" style="top:168px;left:180px;width:120px"><span class="tsr-r" data-s="106">bottom.</span></div>
+<div class="tsr-line" data-s="112" data-e="126" data-join="space" data-track="caption" style="top:144px;left:180px;width:120px;word-spacing:8px"><span class="tsr-r" data-s="112">float near the</span></div>
+<div class="tsr-line" data-s="127" data-e="134" data-track="caption" style="top:168px;left:180px;width:120px"><span class="tsr-r" data-s="127">bottom.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="282" style="position:relative;height:144px">
-<div class="tsr-line" data-s="0" data-e="115" data-join="none" style="top:0px;left:0px;width:164px;word-spacing:8px"><span class="tsr-r" data-s="0">Text that wraps be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="115" data-join="none" style="top:24px;left:0px;width:164px;word-spacing:-1px"><span class="tsr-r" data-s="0">side the float and con</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="115" data-join="space" style="top:48px;left:0px;width:164px;word-spacing:5.333px"><span class="tsr-r" data-s="0">tinues onto the next</span></div>
-<div class="tsr-line" data-s="0" data-e="115" data-join="space" style="top:72px;left:0px;width:164px"><span class="tsr-r" data-s="0">sheet, where the float</span></div>
-<div class="tsr-line" data-s="0" data-e="115" data-join="space" style="top:96px;left:0px;width:164px;word-spacing:2.667px"><span class="tsr-r" data-s="0">must not straddle the</span></div>
-<div class="tsr-line" data-s="0" data-e="115" style="top:120px;left:0px;width:164px"><span class="tsr-r" data-s="0">boundary.</span></div>
+<div class="tsr-line" data-s="0" data-e="18" data-join="none" style="top:0px;left:0px;width:164px;word-spacing:8px"><span class="tsr-r" data-s="0">Text that wraps be</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="18" data-e="40" data-join="none" style="top:24px;left:0px;width:164px;word-spacing:-1px"><span class="tsr-r" data-s="18">side the float and con</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="40" data-e="60" data-join="space" style="top:48px;left:0px;width:164px;word-spacing:5.333px"><span class="tsr-r" data-s="40">tinues onto the next</span></div>
+<div class="tsr-line" data-s="61" data-e="83" data-join="space" style="top:72px;left:0px;width:164px"><span class="tsr-r" data-s="61">sheet, where the float</span></div>
+<div class="tsr-line" data-s="84" data-e="105" data-join="space" style="top:96px;left:0px;width:164px;word-spacing:2.667px"><span class="tsr-r" data-s="84">must not straddle the</span></div>
+<div class="tsr-line" data-s="106" data-e="115" style="top:120px;left:0px;width:164px"><span class="tsr-r" data-s="106">boundary.</span></div>
 </div>
 </div>

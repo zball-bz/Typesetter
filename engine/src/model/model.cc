@@ -197,12 +197,13 @@ struct Inst {
         if (rn.isText) {
           std::string_view str = raw.strings[rn.str];
           n->str = strs.intern(str);
+          const u32 rawLen = rn.span.end - rn.span.start;
+          const bool mapped = own && !rn.span.empty() && (map || str.size() == rawLen);
+          n->srcExact = mapped;  // (plan P4-03) its clusters' source spans are exact
           if (!p.verb && str.find('\n') != std::string_view::npos) {
             // soft breaks (plan P2-10) stay until the paragraph context
             // resolves them (plan P4-02: resolveSoftBreaks, after the normal
             // form); a mapped text keeps an explicit map for it to rebuild
-            const u32 rawLen = rn.span.end - rn.span.start;
-            const bool mapped = own && !rn.span.empty() && (map || str.size() == rawLen);
             if (mapped && !map) {
               identity = {0, 0};
               map = &identity;

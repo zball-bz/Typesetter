@@ -3,8 +3,8 @@
 <div class="tsr-line" id="tsr-top" data-s="0" data-e="7" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Regions</span></div>
 </div>
 <div class="tsr-para" data-role="figure" data-pid="1" data-s0="41" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" id="tsr-fig1" data-s="0" data-e="62" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r tsr-b tsr-cjk" data-s="0">图</span><span class="tsr-r tsr-b" data-s="0"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="0">：</span><span class="tsr-r" data-s="0">A pretend figure body line continu</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="62" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">ing on a second source line.</span></div>
+<div class="tsr-line" id="tsr-fig1" data-s="0" data-e="62" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r tsr-b tsr-cjk" data-s="0">图</span><span class="tsr-r tsr-b" data-s="0"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="0">：</span><span class="tsr-r" data-s="0">A pretend figure body line continu</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="34" data-e="62" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="34">ing on a second source line.</span></div>
 </div>
 <div class="tsr-para" data-role="aside" data-pid="2" data-s0="122" style="position:relative;height:97.594px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="32" data-join="para" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Side note with </span><span class="tsr-r tsr-b" data-s="16">emphasis</span><span class="tsr-r" data-s="26"> inside</span></div>

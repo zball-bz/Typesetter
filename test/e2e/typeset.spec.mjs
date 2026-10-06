@@ -136,6 +136,28 @@ test('copy rebuilds exact content text (Latin, hyphenated)', async ({ page }) =>
   expect(text).toBe(source);
 });
 
+// plan P4-03: a run's source anchor is its own first byte, a line's range
+// its own — not the paragraph's (findings emitter/coarse-source-spans,
+// render-runtime/missed:3)
+test('source anchors: runs and lines point at their own source', async ({ page }) => {
+  const source = '中文与 English words 混排时引擎会插入边界胶，比如 CJK 和 Latin 之间的间隙。';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, { widthPx: 200 }), { source });
+  const bytes = Buffer.from(source);
+  const runs = await page.evaluate(() => window.__tsr.offsets());
+  expect(runs.length).toBeGreaterThan(4);
+  for (const r of runs) {
+    const t = r.text.replace(/^\s+/, '');
+    const at = r.at + (r.text.length - t.length ? Buffer.byteLength(r.text.slice(0, r.text.length - t.length)) : 0);
+    expect(bytes.subarray(at, at + Buffer.byteLength(t[0])).toString(), `run "${r.text}"`).toBe(t[0]);
+  }
+  // the byte of "Latin" is on one line, which shows it
+  const lines = await page.evaluate((b) => window.__tsr.linesAt(b), bytes.indexOf('Latin'));
+  expect(lines.length).toBe(1);
+  expect(lines[0]).toContain('Latin');
+});
+
 test('math copies as source text', async ({ page }) => {
   const source = '面积为 $pi r^2$ 的圆，其周长为 $2 pi r$。';
   await page.goto('/test/e2e/harness.html');

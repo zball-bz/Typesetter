@@ -11,11 +11,11 @@
 <div class="tsr-para" data-pid="3" data-s0="390" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="49" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A third</span><a class="tsr-r tsr-sup" href="#tsr-fn-3" id="tsr-fnref-3" data-syn="fn-marker" style="font-size:11.2px">③</a><span class="tsr-r" data-s="22"> note, still in chapter one.</span></div>
 </div>
-<div class="tsr-para" data-role="notes" data-pid="4" data-s0="324" style="position:relative;height:127.984px;margin-bottom:19.203px">
+<div class="tsr-para" data-role="notes" data-pid="4" data-s0="326" style="position:relative;height:127.984px;margin-bottom:19.203px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="14" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">①.</span><span class="tsr-r" data-s="2" style="font-size:13.6px">One, first. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
-<div class="tsr-line" id="tsr-fn-2" data-s="25" data-e="40" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">②.</span><span class="tsr-r" data-s="27" style="font-size:13.6px">One, second. </span><a class="tsr-r" href="#tsr-fnref-2" data-syn="backlink" style="font-size:13.6px">↩</a></div>
-<div class="tsr-line" id="tsr-fn-3" data-s="73" data-e="87" style="top:103.984px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">③.</span><span class="tsr-r" data-s="75" style="font-size:13.6px">One, third. </span><a class="tsr-r" href="#tsr-fnref-3" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="12" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">①.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">One, first. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-2" data-s="25" data-e="38" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">②.</span><span class="tsr-r" data-s="25" style="font-size:13.6px">One, second. </span><a class="tsr-r" href="#tsr-fnref-2" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-3" data-s="73" data-e="85" style="top:103.984px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">③.</span><span class="tsr-r" data-s="73" style="font-size:13.6px">One, third. </span><a class="tsr-r" href="#tsr-fnref-3" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
 <div class="tsr-para" data-pid="5" data-s0="443" style="position:relative;height:25.609px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-h-2" data-s="0" data-e="3" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Two</span></div>
@@ -23,8 +23,8 @@
 <div class="tsr-para" data-pid="6" data-s0="448" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="50" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Again</span><a class="tsr-r tsr-sup" href="#tsr-fn-4" id="tsr-fnref-4" data-syn="fn-marker" style="font-size:11.2px">①</a><span class="tsr-r" data-s="20"> the first; </span><a class="tsr-r" href="#tsr-fn-4" data-s="31">①</a><span class="tsr-r" data-s="37"> stays unique.</span></div>
 </div>
-<div class="tsr-para" data-role="notes" data-pid="7" data-s0="453" style="position:relative;height:67.203px">
+<div class="tsr-para" data-role="notes" data-pid="7" data-s0="455" style="position:relative;height:67.203px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-fn-4" data-s="0" data-e="14" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">①.</span><span class="tsr-r" data-s="2" style="font-size:13.6px">Two, first. </span><a class="tsr-r" href="#tsr-fnref-4" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-4" data-s="0" data-e="12" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">①.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">Two, first. </span><a class="tsr-r" href="#tsr-fnref-4" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
 </div>

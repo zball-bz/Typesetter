@@ -61,6 +61,7 @@ node tools/review-corpus.mjs --check   # real-world corpus: no new error diagnos
 node tools/lint-arch.mjs       # architecture lint (baseline only shrinks)
 node tools/wasm-goldens.mjs --check    # WASM build breaks every fixture like the native goldens
 node tools/check-print.mjs     # printer round trip + escapeTsm (fixtures, corpus); G6
+node tools/check-spans.mjs     # html goldens: runs/lines point at their source; G1
 ```
 
 Audit remediation in progress: follow `docs/remediation/PLAN.md` and resume

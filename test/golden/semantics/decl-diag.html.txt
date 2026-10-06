@@ -6,8 +6,8 @@
 <div class="tsr-line" id="tsr-m1" data-s="0" data-e="6" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Noted.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="344" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="98" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">A counter that does not exist: and a slot</span></div>
-<div class="tsr-line" data-s="68" data-e="114" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.057px"><span class="tsr-r" data-s="68">outside a template: </span><span class="tsr-r tsr-code tsr-err" title="slot belongs in a declaration&#39;s template" data-syn="error">⚠ slot belongs in a</span></div>
+<div class="tsr-line" data-s="0" data-e="78" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">A counter that does not exist: and a slot</span></div>
+<div class="tsr-line" data-s="79" data-e="114" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.057px"><span class="tsr-r" data-s="79">outside a template: </span><span class="tsr-r tsr-code tsr-err" title="slot belongs in a declaration&#39;s template" data-syn="error">⚠ slot belongs in a</span></div>
 <div class="tsr-line" data-s="99" data-e="115" style="top:48px;left:0px;width:300px"><span class="tsr-r tsr-code tsr-err" title="slot belongs in a declaration&#39;s template" data-syn="error">declaration&#39;s template</span><span class="tsr-r" data-s="114">.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="461" style="position:relative;height:24px">

@@ -6,14 +6,14 @@ top pid=1 units=1
  unit text indent=0su
   box Other "Text" w=2049su r0 @[560,564)
   box Other "i" w=360su anchor="enref-1" r1 @[564,608)
-  glue word w=257su x=1 cap=257su src r2 @[609,623)
-  box Other "and" w=1537su r2 @[609,623)
-  glue word w=257su x=1 cap=257su kern="d a" src r2 @[609,623)
-  box Other "a" w=513su r2 @[609,623)
-  glue word w=257su x=1 cap=257su kern="a f" src r2 @[609,623)
-  box Other "foot" w=2049su r2 @[609,623)
-  disc pen=0.7 w=0su pre="-" 513su kern="tn" r2 @[609,623)
-  box Other "note" w=2049su r2 @[609,623)
+  glue word w=257su x=1 cap=257su src r2 @[609,609)
+  box Other "and" w=1537su r2 @[609,612)
+  glue word w=257su x=1 cap=257su kern="d a" src r2 @[612,613)
+  box Other "a" w=513su r2 @[613,614)
+  glue word w=257su x=1 cap=257su kern="a f" src r2 @[614,615)
+  box Other "foot" w=2049su r2 @[615,619)
+  disc pen=0.7 w=0su pre="-" 513su kern="tn" r2 @[619,619)
+  box Other "note" w=2049su r2 @[619,623)
   box Other "1" w=360su anchor="fnref-1" r3 @[623,649)
   box Other "." w=513su r4 @[649,650)
   run r0 plain
@@ -24,13 +24,13 @@ top pid=1 units=1
 top pid=2 units=2
  unit rule indent=0su
  unit text indent=1536su anchor="en-1" marker="i."
-  box Other "The" w=1307su r0 @[589,607)
-  glue word w=219su x=1 cap=219su kern="e f" src r0 @[589,607)
-  box Other "first" w=2178su r0 @[589,607)
-  glue word w=219su x=1 cap=219su kern="t e" src r0 @[589,607)
-  box Other "end" w=1307su r0 @[589,607)
-  disc pen=0.7 w=0su pre="-" 437su kern="dn" r0 @[589,607)
-  box Other "note." w=2178su r0 @[589,607)
+  box Other "The" w=1307su r0 @[589,592)
+  glue word w=219su x=1 cap=219su kern="e f" src r0 @[592,593)
+  box Other "first" w=2178su r0 @[593,598)
+  glue word w=219su x=1 cap=219su kern="t e" src r0 @[598,599)
+  box Other "end" w=1307su r0 @[599,602)
+  disc pen=0.7 w=0su pre="-" 437su kern="dn" r0 @[602,602)
+  box Other "note." w=2178su r0 @[602,607)
   glue word w=219su x=1 cap=219su src r0 @[564,608)
   box Other "↩" w=524su r1 @[564,608)
   run r0 plain x0.85
@@ -43,10 +43,10 @@ top pid=4 units=1
  unit text indent=0su
   box Other "More" w=2049su r0 @[672,676)
   box Other "ii" w=718su anchor="enref-2" r1 @[676,721)
-  glue word w=257su x=1 cap=257su src r2 @[722,730)
-  box Other "and" w=1537su r2 @[722,730)
-  glue word w=257su x=1 cap=257su kern="d m" src r2 @[722,730)
-  box Other "more" w=2049su r2 @[722,730)
+  glue word w=257su x=1 cap=257su src r2 @[722,722)
+  box Other "and" w=1537su r2 @[722,725)
+  glue word w=257su x=1 cap=257su kern="d m" src r2 @[725,726)
+  box Other "more" w=2049su r2 @[726,730)
   box Other "iii" w=1077su anchor="enref-3" r3 @[730,766)
   box Other "." w=513su r4 @[766,767)
   run r0 plain
@@ -57,23 +57,23 @@ top pid=4 units=1
 top pid=5 units=3
  unit rule indent=0su
  unit text indent=1536su anchor="en-2" marker="ii."
-  box Other "The" w=1307su r0 @[701,720)
-  glue word w=219su x=1 cap=219su kern="e s" src r0 @[701,720)
-  box Other "sec" w=1307su r0 @[701,720)
-  disc pen=0.7 w=0su pre="-" 437su kern="co" r0 @[701,720)
-  box Other "ond" w=1307su r0 @[701,720)
-  glue word w=219su x=1 cap=219su kern="d e" src r0 @[701,720)
-  box Other "end" w=1307su r0 @[701,720)
-  disc pen=0.7 w=0su pre="-" 437su kern="dn" r0 @[701,720)
-  box Other "note." w=2178su r0 @[701,720)
+  box Other "The" w=1307su r0 @[701,704)
+  glue word w=219su x=1 cap=219su kern="e s" src r0 @[704,705)
+  box Other "sec" w=1307su r0 @[705,708)
+  disc pen=0.7 w=0su pre="-" 437su kern="co" r0 @[708,708)
+  box Other "ond" w=1307su r0 @[708,711)
+  glue word w=219su x=1 cap=219su kern="d e" src r0 @[711,712)
+  box Other "end" w=1307su r0 @[712,715)
+  disc pen=0.7 w=0su pre="-" 437su kern="dn" r0 @[715,715)
+  box Other "note." w=2178su r0 @[715,720)
   glue word w=219su x=1 cap=219su src r0 @[676,721)
   box Other "↩" w=524su r1 @[676,721)
   run r0 plain x0.85
   run r1 plain ref LINK x0.85 link="#tsr-enref-2"
  unit text indent=1536su anchor="en-3" marker="iii."
-  box Other "The" w=1307su r0 @[755,765)
-  glue word w=219su x=1 cap=219su kern="e t" src r0 @[755,765)
-  box Other "third." w=2613su r0 @[755,765)
+  box Other "The" w=1307su r0 @[755,758)
+  glue word w=219su x=1 cap=219su kern="e t" src r0 @[758,759)
+  box Other "third." w=2613su r0 @[759,765)
   glue word w=219su x=1 cap=219su src r0 @[730,766)
   box Other "↩" w=524su r1 @[730,766)
   run r0 plain x0.85
@@ -81,17 +81,17 @@ top pid=5 units=3
 top pid=6 units=2
  unit rule indent=0su
  unit text indent=1536su anchor="fn-1" marker="1."
-  box Other "A" w=437su r0 @[625,648)
-  glue word w=219su x=1 cap=219su kern="A f" src r0 @[625,648)
-  box Other "foot" w=1742su r0 @[625,648)
-  disc pen=0.7 w=0su pre="-" 437su kern="tn" r0 @[625,648)
-  box Other "note," w=2178su r0 @[625,648)
-  glue word w=219su x=1 cap=219su kern=", a" src r0 @[625,648)
-  box Other "at" w=872su r0 @[625,648)
-  glue word w=219su x=1 cap=219su kern="t t" src r0 @[625,648)
-  box Other "the" w=1307su r0 @[625,648)
-  glue word w=219su x=1 cap=219su kern="e e" src r0 @[625,648)
-  box Other "end." w=1742su r0 @[625,648)
+  box Other "A" w=437su r0 @[625,626)
+  glue word w=219su x=1 cap=219su kern="A f" src r0 @[626,627)
+  box Other "foot" w=1742su r0 @[627,631)
+  disc pen=0.7 w=0su pre="-" 437su kern="tn" r0 @[631,631)
+  box Other "note," w=2178su r0 @[631,636)
+  glue word w=219su x=1 cap=219su kern=", a" src r0 @[636,637)
+  box Other "at" w=872su r0 @[637,639)
+  glue word w=219su x=1 cap=219su kern="t t" src r0 @[639,640)
+  box Other "the" w=1307su r0 @[640,643)
+  glue word w=219su x=1 cap=219su kern="e e" src r0 @[643,644)
+  box Other "end." w=1742su r0 @[644,648)
   glue word w=219su x=1 cap=219su src r0 @[623,649)
   box Other "↩" w=524su r1 @[623,649)
   run r0 plain x0.85

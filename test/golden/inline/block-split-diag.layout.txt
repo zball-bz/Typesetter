@@ -1,17 +1,17 @@
 doc h=31543su
 para pid=0 y=0su w=19200su h=6144su
   L0 y=0su left=0su w=19200su dw=205su dc=0su join=space blocks=[0,16) @[44,240)
-  L1 y=1536su left=0su w=19200su dw=128su dc=0su join=space blocks=[17,30) @[44,171)
-  L2 y=3072su left=0su w=19200su dw=102su dc=0su join=space blocks=[31,44) @[44,171)
-  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[45,54) @[44,171)
+  L1 y=1536su left=0su w=19200su dw=128su dc=0su join=space blocks=[17,30) @[79,118)
+  L2 y=3072su left=0su w=19200su dw=102su dc=0su join=space blocks=[31,44) @[119,158)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[45,54) @[159,171)
 para pid=1 y=7373su w=19200su h=1536su
   L0 rule y=768su left=0su w=19200su
 para pid=2 y=8909su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=43su dc=0su join=space blocks=[1,18) @[180,240)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[19,28) @[180,240)
+  L0 y=0su left=0su w=19200su dw=43su dc=0su join=space blocks=[1,18) @[180,220)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[19,28) @[221,240)
 para pid=3 y=13210su w=19200su h=3072su
   L0 y=0su left=0su w=19200su dw=73su dc=0su join=space blocks=[0,24) @[242,392)
-  L1 y=1536su left=0su w=19200su dw=-73su dc=0su join=last blocks=[25,44) @[242,321)
+  L1 y=1536su left=0su w=19200su dw=-73su dc=0su join=last blocks=[25,44) @[279,321)
 para pid=4 y=17511su w=19200su h=1536su
   L0 math y=0su left=7698su w=3804su
   L1 cell=0 y=423su left=17664su w=1536su blocks=[0,1)
@@ -22,5 +22,5 @@ para pid=6 y=23348su w=19200su h=8195su
   L0 y=0su left=0su w=19200su dw=-43su dc=0su join=space blocks=[0,11) @[396,426)
   L1 y=1639su left=0su w=19200su dw=-115su dc=0su join=space blocks=[12,21) @[419,426)
   L2 y=3278su left=0su w=19200su dw=-17su dc=0su join=space blocks=[22,29) @[419,426)
-  L3 y=4917su left=0su w=19200su dw=0su dc=0su join=space blocks=[30,39) @[419,451)
-  L4 y=6556su left=0su w=19200su dw=0su dc=0su join=last blocks=[40,49) @[427,451)
+  L3 y=4917su left=0su w=19200su dw=0su dc=0su join=space blocks=[30,39) @[419,429)
+  L4 y=6556su left=0su w=19200su dw=0su dc=0su join=last blocks=[40,49) @[430,451)

@@ -285,9 +285,21 @@ with `joinsWithoutSpace` of its two neighbours: `这是*强调*⏎中文`,
 parser builds one. The tree, the semantic page, titles and emit read the
 same text.
 
+**Per-item spans** (plan P4-03; design T5 step 6). Every item's `ColdRec`
+span is its own: emit maps a cluster's cooked bytes through its text node's
+cooked→raw map (`TextSource`, the identity without one) when the node is its
+own source (`srcExact`, set at instantiation, cleared when materialize
+moves a node). A byte the parser inserted (the space after a reference) has
+no extent; a byte it removed (a joined line's newline) belongs to neither
+neighbour. Word pieces — hyphenation segments, long-token cuts — get their
+slices; a hyphen and a boundary glue are points; a punctuation glyph's
+blanks share its span. Made text keeps its node's span. Paint takes a run's
+`data-s` from its first item with a source, layout a line's span from its
+first such item to the furthest end.
+
 ## 8. Next steps
 
-P4-03…P4-08: per-item spans, TextProps and locale sections (punctuation,
+P4-04…P4-08: TextProps and locale sections (punctuation,
 blanks, autospace as data), UCD-derived classes, hyphenation registry,
 attach edges and the item-native breaker (with it, the canonical TeX form
 and the end of the lowering).

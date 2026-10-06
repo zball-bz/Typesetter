@@ -445,12 +445,40 @@ struct HlInline final : InlineSink {
                  key(st, ctx, RealizeClass::Plain), sp, span, 0.0f, pen);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(0.0));
   }
-  void word(std::string_view w, const ContentNode* n, Flow& u, StyleId st, float pen, const ICtx& ctx) {
+  // (plan P4-03; design T5 per-item spans) the source of a text's cooked
+  // bytes [a, b): exact through its cooked→raw map (the identity without
+  // one) when the text is its own source, else the node's span; an empty
+  // range is a point (a hyphen, the boundary glue before a cluster)
+  struct TextSource {
+    const ContentNode* n = nullptr;
+    u32 raw(u32 k) const {  // the raw offset (from span.start) of cooked byte k
+      if (!n->nrawmap) return k;
+      u32 lo = 0, hi = n->nrawmap / 2;  // the last pair at or before k
+      while (hi - lo > 1) {
+        const u32 mid = (lo + hi) / 2;
+        if (n->rawmap[2 * mid] <= k) lo = mid;
+        else hi = mid;
+      }
+      return n->rawmap[2 * lo + 1] + (k - n->rawmap[2 * lo]);
+    }
+    // (a byte the parser inserted — a space after a reference — maps where
+    // the next one does: it has no extent; a byte it removed — a joined
+    // line's newline — is in neither neighbour's)
+    Span of(u32 a, u32 b) const {
+      if (!n->srcExact) return n->span;
+      const u32 s0 = n->span.start, start = raw(a);
+      if (a >= b) return Span{s0 + start, s0 + start};
+      const u32 end = std::min(raw(b - 1) + 1, raw(b));
+      return Span{s0 + start, s0 + std::max(start, end)};
+    }
+  };
+  TextSource tsrc;  // the text emitText shapes
+  void word(std::string_view w, Flow& u, StyleId st, float pen, const ICtx& ctx, Span span) {
     AdvanceSpec sp;
     sp.str = strs.intern(w);
-    push(u, IK::Box, firstCc(w), 0, key(st, ctx, RealizeClass::Plain), sp, n->span, 0.0f, pen);
+    push(u, IK::Box, firstCc(w), 0, key(st, ctx, RealizeClass::Plain), sp, span, 0.0f, pen);
   }
-  void hyphenPoint(const ContentNode* n, Flow& u, StyleId st, const ICtx& ctx) {
+  void hyphenPoint(Flow& u, StyleId st, const ICtx& ctx, Span span) {
     open(u);
     HList& h = B;
     AdvanceSpec hs;
@@ -461,15 +489,15 @@ struct HlInline final : InlineSink {
     h.specs.push_back(hs);
     pre.cold = (u32)h.cold.size();
     ColdRec pc;
-    pc.srcStart = n->span.start;
-    pc.srcEnd = n->span.end;
+    pc.srcStart = span.start;
+    pc.srcEnd = span.end;
     h.cold.push_back(pc);
     DiscRec d;
     d.pre = (u32)h.side.size();
     d.preN = 1;
     h.side.push_back(pre);
     const float pen = (float)cfg.hyphenPenalty;
-    u32 i = push(u, IK::Disc, 0, 0, key(st, ctx, RealizeClass::Plain), AdvanceSpec{}, n->span,
+    u32 i = push(u, IK::Disc, 0, 0, key(st, ctx, RealizeClass::Plain), AdvanceSpec{}, span,
                  pen, pen);
     h.specs.pop_back();  // a Disc's aux is its DiscRec
     h.items[i].aux = (u32)h.discs.size();
@@ -812,7 +840,9 @@ struct HlInline final : InlineSink {
 
   // tokenChars: the characters of the token it is part of (plan P4-02:
   // across style edges — a URL whose middle is emphasized is one token)
-  void emitWord(std::string_view w, const ContentNode* n, Flow& u, StyleId st, const ICtx& ctx, u32 tokenChars) {
+  // (at: w's cooked offset in the text, for its pieces' sources)
+  void emitWord(std::string_view w, u32 at, Flow& u, StyleId st, const ICtx& ctx, u32 tokenChars) {
+    auto src = [&](u32 a, u32 b) { return tsrc.of(at + a, at + b); };
     const bool noHyphen = ctx.noHyphen;
     // lead / core / trail split (ASCII letters core) for hyphenation
     u32 a = 0, b = (u32)w.size();
@@ -842,14 +872,14 @@ struct HlInline final : InlineSink {
         if (!cuts.empty()) {
           u32 from = 0;
           for (u32 cut : cuts) {
-            word(w.substr(from, cut - from), n, u, st, (float)cfg.urlBreakPenalty, ctx);
+            word(w.substr(from, cut - from), u, st, (float)cfg.urlBreakPenalty, ctx, src(from, cut));
             from = cut;
           }
-          word(w.substr(from), n, u, st, kPenInf, ctx);
+          word(w.substr(from), u, st, kPenInf, ctx, src(from, (u32)w.size()));
           return;
         }
       }
-      word(w, n, u, st, kPenInf, ctx);
+      word(w, u, st, kPenInf, ctx, src(0, (u32)w.size()));
       return;
     }
     u32 prev = 0;  // within core
@@ -859,8 +889,9 @@ struct HlInline final : InlineSink {
       if (k == 0) seg += w.substr(0, a);  // lead
       seg += w.substr(a + prev, end - prev);
       if (k == pts.size()) seg += w.substr(e);  // trail
-      word(seg, n, u, st, kPenInf, ctx);
-      if (k < pts.size()) hyphenPoint(n, u, st, ctx);
+      const u32 from = k == 0 ? 0 : a + prev, to = k == pts.size() ? (u32)w.size() : a + end;
+      word(seg, u, st, kPenInf, ctx, src(from, to));
+      if (k < pts.size()) hyphenPoint(u, st, ctx, src(to, to));
       prev = end;
     }
   }
@@ -880,13 +911,18 @@ struct HlInline final : InlineSink {
     // of the run's language (plan P3-30) and of its neighbours across
     // node edges
     const u32 base = contextOf(scanned ? scanned : n);
+    tsrc.n = n;
+    auto src = [&](u32 a, u32 b) { return tsrc.of(a, b); };
     auto wideAt = [&](u32 k) { return base != ~0u && base + k < cx.size() && cx[base + k].wide; };
     Prev prev = prevAt(base);
     std::string wordBuf;
     u32 i = 0;
-    u32 wordFrom = 0, wordEnd = 0;  // the clusters wordBuf holds
+    u32 wordFrom = 0, wordEnd = 0, wordByte = 0;  // the clusters wordBuf holds, its first byte
     auto addWord = [&](u32 start, u32 at) {
-      if (wordBuf.empty()) wordFrom = at;
+      if (wordBuf.empty()) {
+        wordFrom = at;
+        wordByte = start;
+      }
       wordBuf.append(s.data() + start, i - start);
       wordEnd = at + 1;
     };
@@ -903,10 +939,11 @@ struct HlInline final : InlineSink {
         if (atEnd)
           for (size_t k = base + wordEnd; k < cx.size() && narrowAt(k); k++) chars++;
       }
-      emitWord(wordBuf, n, u, st, ctx, chars);
+      emitWord(wordBuf, wordByte, u, st, ctx, chars);
       wordBuf.clear();
     };
-    auto boundary = [&] { autospace(u, st, ctx, n->span); };
+    // the boundary glue before the cluster at byte p: a point there
+    auto boundary = [&](u32 p) { autospace(u, st, ctx, src(p, p)); };
     auto lastIsCloseSp = [&] {  // a closing/dot punct's trailing half
       return count(u) > 0 && isBlank(count(u) - 1, /*ownedByNext=*/false);
     };
@@ -916,7 +953,7 @@ struct HlInline final : InlineSink {
     // for U+2014/U+2026 (1em single, 2em pairs — App C): canvas and DOM
     // disagree on their advance (full-width-ization, cluster shaping), so
     // measurement cannot predict rendering for them.
-    auto pushCjkChar = [&](std::string_view chars, double definedEm = 0) {
+    auto pushCjkChar = [&](std::string_view chars, Span span, double definedEm = 0) {
       AdvanceSpec sp;
       sp.str = strs.intern(chars);
       if (definedEm > 0) {
@@ -924,7 +961,7 @@ struct HlInline final : InlineSink {
         sp.em = definedEm;
       }
       const RealizeClass rc = definedEm > 0 ? RealizeClass::Pinned : RealizeClass::LetterSpaced;
-      u32 b = push(u, IK::Box, firstCc(chars), 0, key(stCjk, ctx, rc), sp, n->span,
+      u32 b = push(u, IK::Box, firstCc(chars), 0, key(stCjk, ctx, rc), sp, span,
                    (float)cfg.cjkJustifyK, 0.0f);
       B.cold[B.items[b].cold].capSu = glueSu;  // stretch capacity for the cost fn (App C)
       if (definedEm > 0) {
@@ -934,7 +971,8 @@ struct HlInline final : InlineSink {
     };
     // the run's text.punct (plan P3-02), else the document's cjk.punctCompress
     const u8 runPunct = styles.get(st).punct;
-    auto pushPunct = [&](std::string_view ch, bool open) {
+    // (span: the glyph's source; its blanks share it)
+    auto pushPunct = [&](std::string_view ch, Span span, bool open) {
       const PunctCompress mode = runPunct ? (PunctCompress)(runPunct - 1) : cfg.punctCompress;
       // an opening punct's leading half is owned by its glyph (IA_OwnedByNext):
       // the renderer squeezes a glyph only when its OWN half is absent
@@ -942,14 +980,14 @@ struct HlInline final : InlineSink {
         if (lastIsCloseSp()) {
           // closing/dot + opening
           if (mode == PunctCompress::Full) pop(u);  // set solid
-          else if (mode == PunctCompress::None) blank(u, stCjk, ctx, n->span, halfPx, true, 0.0f);
+          else if (mode == PunctCompress::None) blank(u, stCjk, ctx, span, halfPx, true, 0.0f);
           // Book: the closer's breakable half stays as the breathing space
         } else if (lastIsOpenGlyph()) {
           // opening + opening: solid (a breakable gap here would let the
           // first opener dangle at a line end — 禁则); None keeps a RIGID half
-          if (mode == PunctCompress::None) blank(u, stCjk, ctx, n->span, halfPx, true, kPenInf);
+          if (mode == PunctCompress::None) blank(u, stCjk, ctx, span, halfPx, true, kPenInf);
         } else {
-          blank(u, stCjk, ctx, n->span, halfPx, true, 0.0f);  // leading half — breakable, NOT stretchable
+          blank(u, stCjk, ctx, span, halfPx, true, 0.0f);  // leading half — breakable, NOT stretchable
         }
       } else {
         // 禁则: no break before a closing punct (inline formulas included) —
@@ -970,8 +1008,8 @@ struct HlInline final : InlineSink {
       sp.k = AdvanceSpec::MeasuredMinusBlanks;
       sp.str = strs.intern(ch);
       push(u, IK::Box, firstCc(ch), 0, key(stCjk, ctx, RealizeClass::BlankBearing), sp,
-           n->span, 0.0f, kPenInf);
-      if (!open) blank(u, stCjk, ctx, n->span, halfPx, false, 0.0f);
+           span, 0.0f, kPenInf);
+      if (!open) blank(u, stCjk, ctx, span, halfPx, false, 0.0f);
     };
 
     for (u32 e = 0; i < s.size();) {  // e: the cluster (its context entry: base + e)
@@ -994,7 +1032,7 @@ struct HlInline final : InlineSink {
         AdvanceSpec sp;
         sp.str = E.spaceRef;
         push(u, IK::Glue, (u8)GC::Word, IA_SourceSpace, key(st, ctx, RealizeClass::Plain),
-             sp, n->span, 1.0f, 0.0f);
+             sp, src(start, i), 1.0f, 0.0f);
         prev = Prev::None;
         continue;
       }
@@ -1019,20 +1057,20 @@ struct HlInline final : InlineSink {
             j = clusterEnd(s, i);
           }
           flushWord();
-          if (prev == Prev::Latin) boundary();
+          if (prev == Prev::Latin) boundary(start);
           if (cp2 == cp) {
-            pushCjkChar(s.substr(start, j - start), /*definedEm=*/2.0);
+            pushCjkChar(s.substr(start, j - start), src(start, j), /*definedEm=*/2.0);
             i = j;
             e++;
           } else {
-            pushCjkChar(s.substr(start, i - start), /*definedEm=*/1.0);
+            pushCjkChar(s.substr(start, i - start), src(start, i), /*definedEm=*/1.0);
           }
           prev = Prev::Cjk;
           continue;
         }
         flushWord();
-        if (prev == Prev::Latin) boundary();
-        pushCjkChar(s.substr(start, i - start));
+        if (prev == Prev::Latin) boundary(start);
+        pushCjkChar(s.substr(start, i - start), src(start, i));
         prev = Prev::Cjk;
         continue;
       }
@@ -1049,11 +1087,11 @@ struct HlInline final : InlineSink {
         flushWord();
         // no CJK–Latin boundary glue next to full-width punctuation: （1322
         // 年） sets solid (GB/T 15834; real-world-report.md)
-        pushPunct(s.substr(start, i - start), isOpenPunct(cp));
+        pushPunct(s.substr(start, i - start), src(start, i), isOpenPunct(cp));
         prev = Prev::Punct;
         continue;
       }
-      if (prev == Prev::Cjk) boundary();
+      if (prev == Prev::Cjk) boundary(start);
       addWord(start, at);
       prev = Prev::Latin;
     }

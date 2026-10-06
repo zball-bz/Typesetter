@@ -47,6 +47,16 @@ window.__tsr = {
   async paginate(opts) {
     return await handle.paginate(opts);
   },
+  // (plan P4-03) source anchors: each content run's text and the byte
+  // handle.offsetAt gives its text node; the lines handle.elementsAt finds
+  // for a byte
+  offsets() {
+    return [...out.querySelectorAll('.tsr-r[data-s]:not([data-syn])')]
+      .map((r) => ({ text: r.textContent, at: handle.offsetAt(r.firstChild) }));
+  },
+  linesAt(byte) {
+    return handle.elementsAt(byte).map((e) => e.textContent);
+  },
   // (plan P3-05) the commit session's view: block pids and keys; and a
   // dropped body, so the next result names a key the shell no longer holds
   held() {

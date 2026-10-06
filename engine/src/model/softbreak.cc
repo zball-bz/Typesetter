@@ -65,7 +65,7 @@ struct Pass {
       };
       std::string str(strs.get(n->str));
       std::vector<u32> map(n->rawmap, n->rawmap + n->nrawmap);
-      const bool mapped = n->nrawmap > 0;  // instantiation gave a mapped text an explicit map
+      const bool mapped = n->srcExact;  // (instantiation gave a mapped text an explicit map)
       rewriteSoftBreaks(str, map, n->span.end - n->span.start, mapped, join);
       n->str = strs.intern(str);
       if (mapped && !map.empty()) {

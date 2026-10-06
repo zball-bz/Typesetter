@@ -1,4 +1,4 @@
 doc h=3072su
 para pid=0 y=0su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=-57su dc=0su join=none hyphen blocks=[0,24) @[0,49)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[24,33) @[36,63)
+  L0 y=0su left=0su w=19200su dw=-57su dc=0su join=none hyphen blocks=[0,24) @[0,47)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[24,33) @[47,63)

@@ -10,8 +10,8 @@
 </div>
 <div class="tsr-para" data-pid="3" data-s0="44" style="position:relative;height:108.781px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="14" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">unordered item</span></div>
-<div class="tsr-line" data-s="17" data-e="72" data-join="space" style="top:30.391px;left:24px;width:276px;word-spacing:5px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="17">second unordered item continued at</span></div>
-<div class="tsr-line" data-s="17" data-e="72" data-join="para" style="top:54.391px;left:24px;width:276px"><span class="tsr-r" data-s="17">the content column</span></div>
+<div class="tsr-line" data-s="17" data-e="53" data-join="space" style="top:30.391px;left:24px;width:276px;word-spacing:5px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="17">second unordered item continued at</span></div>
+<div class="tsr-line" data-s="54" data-e="72" data-join="para" style="top:54.391px;left:24px;width:276px"><span class="tsr-r" data-s="54">the content column</span></div>
 <div class="tsr-line" data-s="77" data-e="88" style="top:84.781px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="77">nested item</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="135" style="position:relative;height:54.391px;margin-bottom:19.203px">
@@ -36,7 +36,7 @@
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="11" data-s0="322" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="48" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.6px"><span class="tsr-r" data-s="0">= not a heading, - not a list, &gt; not a</span></div>
-<div class="tsr-line" data-s="0" data-e="48" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">quote.</span></div>
+<div class="tsr-line" data-s="0" data-e="41" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.6px"><span class="tsr-r" data-s="0">= not a heading, - not a list, &gt; not a</span></div>
+<div class="tsr-line" data-s="42" data-e="48" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="42">quote.</span></div>
 </div>
 </div>

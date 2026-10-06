@@ -1,7 +1,7 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="127" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="56" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">A fence handler reads a document resource</span></div>
-<div class="tsr-line" data-s="0" data-e="56" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">with ctx.load:</span></div>
+<div class="tsr-line" data-s="0" data-e="41" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">A fence handler reads a document resource</span></div>
+<div class="tsr-line" data-s="42" data-e="56" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="42">with ctx.load:</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="185" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="42" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The data lists 4 entries.</span></div>

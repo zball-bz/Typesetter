@@ -24,11 +24,11 @@ top pid=1 units=1
   run r0 plain BOLD x1.60
 top pid=2 units=1
  unit text indent=0su anchor="h-1.1"
-  box Other "One" w=2075su r0 @[16,29)
-  glue word w=347su x=1 cap=347su kern="e p" src r0 @[16,29)
-  box Other "point" w=3458su r0 @[16,29)
-  glue word w=347su x=1 cap=347su kern="t o" src r0 @[16,29)
-  box Other "one" w=2075su r0 @[16,29)
+  box Other "One" w=2075su r0 @[16,19)
+  glue word w=347su x=1 cap=347su kern="e p" src r0 @[19,20)
+  box Other "point" w=3458su r0 @[20,25)
+  glue word w=347su x=1 cap=347su kern="t o" src r0 @[25,26)
+  box Other "one" w=2075su r0 @[26,29)
   run r0 plain BOLD x1.35
 top pid=3 units=1
  unit text indent=0su anchor="h-2"

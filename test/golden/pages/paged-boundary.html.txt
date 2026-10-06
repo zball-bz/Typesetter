@@ -3,20 +3,20 @@
 <div class="tsr-line" id="tsr-h-1" data-s="0" data-e="14" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Sheet boundary</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="18" style="position:relative;height:96px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="137" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">Filler paragraph one fills most of the</span></div>
-<div class="tsr-line" data-s="0" data-e="137" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">first sheet with ordinary running text so</span></div>
-<div class="tsr-line" data-s="0" data-e="137" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">that the next paragraph starts close to</span></div>
-<div class="tsr-line" data-s="0" data-e="137" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">the bottom edge.</span></div>
+<div class="tsr-line" data-s="0" data-e="38" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">Filler paragraph one fills most of the</span></div>
+<div class="tsr-line" data-s="39" data-e="80" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="39">first sheet with ordinary running text so</span></div>
+<div class="tsr-line" data-s="81" data-e="120" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="81">that the next paragraph starts close to</span></div>
+<div class="tsr-line" data-s="121" data-e="137" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="121">the bottom edge.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="157" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="93" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">Filler paragraph two continues to push</span></div>
-<div class="tsr-line" data-s="0" data-e="93" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.5px"><span class="tsr-r" data-s="0">the content down the page by a few more</span></div>
-<div class="tsr-line" data-s="0" data-e="93" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">lines of text.</span></div>
+<div class="tsr-line" data-s="0" data-e="38" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">Filler paragraph two continues to push</span></div>
+<div class="tsr-line" data-s="39" data-e="78" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.5px"><span class="tsr-r" data-s="39">the content down the page by a few more</span></div>
+<div class="tsr-line" data-s="79" data-e="93" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="79">lines of text.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="252" style="position:relative;height:96px">
-<div class="tsr-line" data-s="0" data-e="132" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:5px"><span class="tsr-r" data-s="0">This three-line paragraph starts near</span></div>
-<div class="tsr-line" data-s="0" data-e="132" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">the sheet boundary: its first line may</span></div>
-<div class="tsr-line" data-s="0" data-e="132" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">fit, but widow and orphan rules decide</span></div>
-<div class="tsr-line" data-s="0" data-e="132" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="0">where it breaks.</span></div>
+<div class="tsr-line" data-s="0" data-e="37" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:5px"><span class="tsr-r" data-s="0">This three-line paragraph starts near</span></div>
+<div class="tsr-line" data-s="38" data-e="76" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="38">the sheet boundary: its first line may</span></div>
+<div class="tsr-line" data-s="77" data-e="115" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="77">fit, but widow and orphan rules decide</span></div>
+<div class="tsr-line" data-s="116" data-e="132" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="116">where it breaks.</span></div>
 </div>
 </div>

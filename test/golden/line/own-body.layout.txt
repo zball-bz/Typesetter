@@ -5,14 +5,14 @@ para pid=0 y=0su w=19200su h=7782su
   L2 y=4710su left=1024su w=18176su dw=73su dc=0su join=space blocks=[0,19) @[78,116)
   L3 y=6246su left=1024su w=18176su dw=0su dc=0su join=last blocks=[20,25) @[125,138)
 para pid=1 y=9011su w=19200su h=9318su
-  L0 y=0su left=2560su w=16640su dw=43su dc=0su join=space marker blocks=[0,21) @[158,212)
-  L1 y=1536su left=2560su w=16640su dw=0su dc=0su join=last blocks=[22,33) @[158,212)
-  L2 y=3481su left=2560su w=16640su dw=213su dc=0su join=space marker blocks=[0,13) @[219,262)
-  L3 y=5017su left=2560su w=16640su dw=0su dc=0su join=last blocks=[14,17) @[219,262)
+  L0 y=0su left=2560su w=16640su dw=43su dc=0su join=space marker blocks=[0,21) @[158,193)
+  L1 y=1536su left=2560su w=16640su dw=0su dc=0su join=last blocks=[22,33) @[194,212)
+  L2 y=3481su left=2560su w=16640su dw=213su dc=0su join=space marker blocks=[0,13) @[219,252)
+  L3 y=5017su left=2560su w=16640su dw=0su dc=0su join=last blocks=[14,17) @[253,262)
   L4 y=7782su left=1024su w=18176su dw=0su dc=0su join=last blocks=[0,11) @[268,294)
 para pid=2 y=19558su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=239su dc=0su join=none hyphen blocks=[0,19) @[298,391)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[19,20) @[368,391)
+  L0 y=0su left=0su w=19200su dw=239su dc=0su join=none hyphen blocks=[0,19) @[298,385)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[19,20) @[385,391)
 para pid=3 y=23859su w=19200su h=1536su
   L0 y=0su left=2560su w=16640su dw=0su dc=0su join=last marker blocks=[0,13) @[402,435)
 para pid=4 y=26624su w=19200su h=8191su

@@ -1,8 +1,8 @@
 doc h=31028su
 para pid=0 y=0su w=19200su h=6144su
   L0 y=0su left=0su w=19200su dw=341su dc=0su join=space blocks=[0,19) @[0,37)
-  L1 y=1536su left=0su w=19200su dw=26su dc=0su join=none hyphen blocks=[20,45) @[38,100)
-  L2 y=3072su left=0su w=19200su dw=57su dc=0su join=space blocks=[45,68) @[63,140)
+  L1 y=1536su left=0su w=19200su dw=26su dc=0su join=none hyphen blocks=[20,45) @[38,97)
+  L2 y=3072su left=0su w=19200su dw=57su dc=0su join=space blocks=[45,68) @[97,140)
   L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last blocks=[69,81) @[141,168)
 para pid=1 y=7373su w=19200su h=23655su
   L0 rule y=768su left=0su w=19200su

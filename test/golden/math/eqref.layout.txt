@@ -10,5 +10,5 @@ para pid=3 y=8295su w=19200su h=2399su
   L0 math y=0su left=5706su w=7788su
   L1 cell=0 y=639su left=17664su w=1536su blocks=[0,1)
 para pid=4 y=11923su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=-3su dc=-2su join=none blocks=[0,23) @[172,238)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[23,39) @[223,260)
+  L0 y=0su left=0su w=19200su dw=-3su dc=-2su join=none blocks=[0,23) @[172,226)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[23,39) @[226,260)

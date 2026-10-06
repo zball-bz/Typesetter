@@ -1,12 +1,12 @@
 doc h=18740su
 para pid=0 y=0su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=-43su dc=0su join=none hyphen blocks=[0,18) @[0,54)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[18,23) @[0,54)
+  L0 y=0su left=0su w=19200su dw=-43su dc=0su join=none hyphen blocks=[0,18) @[0,40)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[18,23) @[40,54)
 para pid=1 y=4301su w=19200su h=1536su
   L0 code y=0su left=0su line=0 [0,22)
 para pid=2 y=7066su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=205su dc=0su join=space blocks=[0,21) @[90,160)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[22,39) @[90,160)
+  L0 y=0su left=0su w=19200su dw=205su dc=0su join=space blocks=[0,21) @[90,128)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[22,39) @[129,160)
 para pid=3 y=11367su w=19200su h=4608su
   L0 code y=0su left=0su line=0 [0,37)
   L1 code y=1536su left=0su line=0 [37,52) cont cc=2

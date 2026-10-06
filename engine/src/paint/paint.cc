@@ -37,7 +37,9 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
   };
   auto isGap = [&](i64 k) { return k >= 0 && v[k].k == IK::Glue && v[k].cls == (u8)GC::InterChar; };
   // a run opened at its first carrier: style, link, inline anchor, source
-  auto run = [&](const HItem& first, DLRun::K k) {
+  // (plan P4-03: its first item that has one — a space the parser inserted
+  // has none)
+  auto run = [&](const HItem& first, DLRun::K k, u32 to = 0) {
     const RunRec& r = h.runs[first.run];
     const ColdRec& c = h.cold[first.cold];
     DLRun d;
@@ -51,7 +53,15 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
     d.copyText = r.copyText;
     d.copyGroup = r.copyGroup;
     d.error = r.error;
-    if (c.srcEnd > c.srcStart) d.dataS = c.srcStart;
+    if (c.srcEnd > c.srcStart) {
+      d.dataS = c.srcStart;
+    } else {
+      for (u32 k = (u32)(&first - v.data()) + 1; k < to; k++)
+        if (const ColdRec& o = h.cold[v[k].cold]; o.srcEnd > o.srcStart) {
+          d.dataS = o.srcStart;
+          break;
+        }
+    }
     return d;
   };
   u32 i = l.itemBegin;
@@ -167,7 +177,7 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
       i64 last = -1;
       for (u32 k = i; k < j; k++)
         if (v[k].k != IK::Penalty) last = k;
-      DLRun d = run(it, DLRun::K::Chars);
+      DLRun d = run(it, DLRun::K::Chars, j);
       d.i = i;
       d.j = j;
       if (l.cjkDeltaPx != 0) {
@@ -186,7 +196,7 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
     // junction — the Disc's unbroken width modelled it. A Rigid run's
     // spaces are inside its boxes, measured as written: the line's
     // word-spacing stays off them (plan P4-01)
-    DLRun d = run(it, DLRun::K::Words);
+    DLRun d = run(it, DLRun::K::Words, j);
     d.i = i;
     d.j = j;
     if (r.rc == RealizeClass::Rigid && l.wordDeltaPx != 0)

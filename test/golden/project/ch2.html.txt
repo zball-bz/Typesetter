@@ -10,9 +10,9 @@
 <div class="tsr-line" data-s="0" data-e="16" data-ragged="1" data-track="tag" style="top:1.078px;left:276px;width:24px"><span class="tsr-r" data-syn="eqno">(2)</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="73" style="position:relative;height:96px">
-<div class="tsr-line" data-s="0" data-e="97" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.667px"><span class="tsr-r" data-s="0">It reads </span><a class="tsr-r tsr-cjk" href="ch1.html#tsr-fig-a" data-s="9">图</a><a class="tsr-r" href="ch1.html#tsr-fig-a" data-s="9"> 1</a><span class="tsr-r" data-s="16"> and </span><a class="tsr-r tsr-cjk" href="ch1.html#tsr-eq-a" data-s="20">式</a><a class="tsr-r" href="ch1.html#tsr-eq-a" data-s="20"> (1)</a><span class="tsr-r" data-s="26"> from the first</span></div>
-<div class="tsr-line" data-s="26" data-e="97" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="26">chapter, numbered as this book numbers</span></div>
-<div class="tsr-line" data-s="26" data-e="124" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:3.429px"><span class="tsr-r" data-s="26">them, and its own </span><a class="tsr-r tsr-cjk" href="#tsr-eq-b" data-s="98">式</a><a class="tsr-r" href="#tsr-eq-b" data-s="98"> (2)</a><span class="tsr-r" data-s="104"> continues the</span></div>
-<div class="tsr-line" data-s="104" data-e="124" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="104">count.</span></div>
+<div class="tsr-line" data-s="0" data-e="40" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.667px"><span class="tsr-r" data-s="0">It reads </span><a class="tsr-r tsr-cjk" href="ch1.html#tsr-fig-a" data-s="9">图</a><a class="tsr-r" href="ch1.html#tsr-fig-a" data-s="9"> 1</a><span class="tsr-r" data-s="16"> and </span><a class="tsr-r tsr-cjk" href="ch1.html#tsr-eq-a" data-s="20">式</a><a class="tsr-r" href="ch1.html#tsr-eq-a" data-s="20"> (1)</a><span class="tsr-r" data-s="26"> from the first</span></div>
+<div class="tsr-line" data-s="41" data-e="79" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="41">chapter, numbered as this book numbers</span></div>
+<div class="tsr-line" data-s="80" data-e="117" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:3.429px"><span class="tsr-r" data-s="80">them, and its own </span><a class="tsr-r tsr-cjk" href="#tsr-eq-b" data-s="98">式</a><a class="tsr-r" href="#tsr-eq-b" data-s="98"> (2)</a><span class="tsr-r" data-s="104"> continues the</span></div>
+<div class="tsr-line" data-s="118" data-e="124" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="118">count.</span></div>
 </div>
 </div>

@@ -15,8 +15,8 @@
 <div class="tsr-line" style="top:254.406px;left:0px;width:300px"><a class="tsr-r" href="https://tug.org/docs/liang/">docs/liang/</a></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="76" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="64" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">The same bibliography placed again car</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="64" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">ries no duplicate anchors.</span></div>
+<div class="tsr-line" data-s="0" data-e="38" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">The same bibliography placed again car</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="38" data-e="64" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="38">ries no duplicate anchors.</span></div>
 </div>
 <div class="tsr-para" data-role="bibliography" data-pid="3" data-s0="0" style="position:relative;height:278.406px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>

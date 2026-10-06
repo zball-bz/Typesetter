@@ -1143,7 +1143,7 @@ Theme steps: — · findings: 1
 | `emitter/negative-wordspacing-overfull` | issue | medium | P0-12 | grep:plan P0-12 |
 | `emitter/duplicate-diagnostics-on-reemit` | issue | medium | P0-11 | grep:plan P0-11 |
 | `emitter/silent-drops-of-unhandled-kinds` | issue | medium | P1-13, P2-11 | grep:plan P2-11 |
-| `emitter/coarse-source-spans` | issue | low | P4-03 | |
+| `emitter/coarse-source-spans` | issue | low | P4-03 | grep:plan P4-03 |
 | `emitter/full-reemit-for-math-text` | issue | low | P1-20, P1-25 | grep:plan P1-25 |
 | `emitter/dump-hides-finite-penalties` | issue | low | P1-12 | grep:plan P1-12 |
 | `emitter/missed:0` | missed | high | P0-10, P4-01 | grep:plan P4-01 |
@@ -1226,7 +1226,7 @@ Theme steps: — · findings: 1
 | `render-runtime/missed:0` | missed | high | P0-10, P4-01 | grep:plan P4-01 |
 | `render-runtime/missed:1` | missed | medium | P1-18 | grep:plan P1-18 |
 | `render-runtime/missed:2` | missed | medium | P1-02 | grep:plan P1-02 |
-| `render-runtime/missed:3` | missed | medium | P4-03 | |
+| `render-runtime/missed:3` | missed | medium | P4-03 | grep:plan P4-03 |
 | `render-runtime/missed:4` | missed | low | P3-05 | grep:plan P3-05 |
 | `render-runtime/missed:5` | missed | low | P3-07 || grep:plan P3-07 |
 | `math/call-construct-string-dispatch` | adhoc | high | P1-24 | grep:plan P1-24 |

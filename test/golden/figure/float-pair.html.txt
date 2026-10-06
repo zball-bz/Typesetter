@@ -1,10 +1,10 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:120px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="182" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.667px"><span class="tsr-r" data-s="0">Floats on both sides (plan P3-15): an</span></div>
-<div class="tsr-line" data-s="0" data-e="182" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">aside floated left takes its content&#39;s</span></div>
-<div class="tsr-line" data-s="0" data-e="182" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="0">width (FitBody), a code block floated</span></div>
-<div class="tsr-line" data-s="0" data-e="182" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="0">right a fixed width; the text between them</span></div>
-<div class="tsr-line" data-s="0" data-e="182" style="top:96px;left:0px;width:300px"><span class="tsr-r" data-s="0">narrows from both sides.</span></div>
+<div class="tsr-line" data-s="0" data-e="37" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.667px"><span class="tsr-r" data-s="0">Floats on both sides (plan P3-15): an</span></div>
+<div class="tsr-line" data-s="38" data-e="76" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="38">aside floated left takes its content&#39;s</span></div>
+<div class="tsr-line" data-s="77" data-e="114" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="77">width (FitBody), a code block floated</span></div>
+<div class="tsr-line" data-s="115" data-e="157" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="115">right a fixed width; the text between them</span></div>
+<div class="tsr-line" data-s="158" data-e="182" style="top:96px;left:0px;width:300px"><span class="tsr-r" data-s="158">narrows from both sides.</span></div>
 </div>
 <div class="tsr-para" data-role="aside" data-pid="1" data-s0="184" style="position:relative;height:0px;margin-bottom:0px">
 <div class="tsr-frame" style="top:0px;left:0px;width:135.281px;height:35.594px;border-width:1px 1px 1px 1px" data-syn="frame"></div>
@@ -14,13 +14,13 @@
 <div class="tsr-line tsr-row" data-s="0" data-e="10" data-ragged="1" style="top:54.797px;left:177.594px;width:122.406px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">let x = 1;</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="374" style="position:relative;height:192px">
-<div class="tsr-line" data-s="0" data-e="207" data-join="space" style="top:0px;left:151.281px;width:148.719px;word-spacing:18.359px"><span class="tsr-r" data-s="0">The right float</span></div>
-<div class="tsr-line" data-s="0" data-e="207" data-join="space" style="top:24px;left:151.281px;width:148.719px;word-spacing:14.359px"><span class="tsr-r" data-s="0">stands below the</span></div>
-<div class="tsr-line" data-s="0" data-e="207" data-join="none" style="top:48px;left:0px;width:170.797px;word-spacing:-1.301px"><span class="tsr-r" data-s="0">left one: the column be</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="207" data-join="none" style="top:72px;left:0px;width:170.797px;word-spacing:-1.301px"><span class="tsr-r" data-s="0">tween them would be nar</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="207" data-join="none" style="top:96px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="0">rower than the least wrap width. The para</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="207" data-join="space" style="top:120px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">graph narrows beside each, then widens</span></div>
-<div class="tsr-line" data-s="0" data-e="207" data-join="space" style="top:144px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="0">past their bottoms; both floats are out of</span></div>
-<div class="tsr-line" data-s="0" data-e="207" style="top:168px;left:0px;width:300px"><span class="tsr-r" data-s="0">flow.</span></div>
+<div class="tsr-line" data-s="0" data-e="15" data-join="space" style="top:0px;left:151.281px;width:148.719px;word-spacing:18.359px"><span class="tsr-r" data-s="0">The right float</span></div>
+<div class="tsr-line" data-s="16" data-e="32" data-join="space" style="top:24px;left:151.281px;width:148.719px;word-spacing:14.359px"><span class="tsr-r" data-s="16">stands below the</span></div>
+<div class="tsr-line" data-s="33" data-e="56" data-join="none" style="top:48px;left:0px;width:170.797px;word-spacing:-1.301px"><span class="tsr-r" data-s="33">left one: the column be</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="56" data-e="79" data-join="none" style="top:72px;left:0px;width:170.797px;word-spacing:-1.301px"><span class="tsr-r" data-s="56">tween them would be nar</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="79" data-e="120" data-join="none" style="top:96px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="79">rower than the least wrap width. The para</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="120" data-e="158" data-join="space" style="top:120px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="120">graph narrows beside each, then widens</span></div>
+<div class="tsr-line" data-s="159" data-e="201" data-join="space" style="top:144px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="159">past their bottoms; both floats are out of</span></div>
+<div class="tsr-line" data-s="202" data-e="207" style="top:168px;left:0px;width:300px"><span class="tsr-r" data-s="202">flow.</span></div>
 </div>
 </div>

@@ -1,8 +1,8 @@
 doc h=26723su
 para pid=0 y=0su w=19200su h=4608su
-  L0 y=0su left=0su w=19200su dw=146su dc=0su join=space blocks=[0,19) @[0,87)
-  L1 y=1536su left=0su w=19200su dw=102su dc=0su join=space blocks=[20,41) @[0,87)
-  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[42,43) @[0,87)
+  L0 y=0su left=0su w=19200su dw=146su dc=0su join=space blocks=[0,19) @[0,39)
+  L1 y=1536su left=0su w=19200su dw=102su dc=0su join=space blocks=[20,41) @[40,79)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[42,43) @[80,87)
 para pid=1 y=5837su w=19200su h=20886su
   L0 rule y=0su left=0su w=19200su
   L1 cell=0 y=307su left=410su w=2562su blocks=[0,1)

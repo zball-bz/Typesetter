@@ -8,12 +8,12 @@
 <div class="tsr-line" id="tsr-h-1" data-s="449" data-e="460" data-ragged="1" style="top:32.406px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="449" style="font-size:25.6px">Page floats</span></div>
 </div>
 <div class="tsr-band" data-b="1">
-<div class="tsr-line" data-s="462" data-e="544" data-join="space" style="top:77.219px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="462">Filler paragraph one fills the first part</span></div>
-<div class="tsr-line" data-s="462" data-e="544" style="top:101.219px;left:0px;width:300px"><span class="tsr-r" data-s="462">of the sheet with ordinary running text.</span></div>
+<div class="tsr-line" data-s="462" data-e="503" data-join="space" style="top:77.219px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="462">Filler paragraph one fills the first part</span></div>
+<div class="tsr-line" data-s="504" data-e="544" style="top:101.219px;left:0px;width:300px"><span class="tsr-r" data-s="504">of the sheet with ordinary running text.</span></div>
 </div>
 <div class="tsr-band" data-b="3">
-<div class="tsr-line" data-s="601" data-e="681" data-join="space" style="top:144.422px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="601">Filler paragraph two, after the top float</span></div>
-<div class="tsr-line" data-s="601" data-e="681" style="top:168.422px;left:0px;width:300px"><span class="tsr-r" data-s="601">in the source, before it on the sheet.</span></div>
+<div class="tsr-line" data-s="601" data-e="642" data-join="space" style="top:144.422px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="601">Filler paragraph two, after the top float</span></div>
+<div class="tsr-line" data-s="643" data-e="681" style="top:168.422px;left:0px;width:300px"><span class="tsr-r" data-s="643">in the source, before it on the sheet.</span></div>
 </div>
 <div class="tsr-band" data-role="bottomnote" data-b="4">
 <div class="tsr-frame" style="top:207.594px;left:0px;width:300px;height:32.406px;border-width:1px 1px 1px 1px" data-syn="frame"></div>
@@ -22,8 +22,8 @@
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
 <div class="tsr-band" data-b="5">
-<div class="tsr-line" data-s="745" data-e="820" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="745">Filler paragraph three, which the bottom</span></div>
-<div class="tsr-line" data-s="745" data-e="820" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="745">float leaves behind in the source.</span></div>
+<div class="tsr-line" data-s="745" data-e="785" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="745">Filler paragraph three, which the bottom</span></div>
+<div class="tsr-line" data-s="786" data-e="820" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="786">float leaves behind in the source.</span></div>
 </div>
 <div class="tsr-band" data-b="7">
 <div class="tsr-line" data-s="887" data-e="906" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="887">The last paragraph.</span></div>

@@ -1,7 +1,7 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="12" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" id="tsr-h-0.1" data-s="0" data-e="33" data-join="space" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">A heading made by its</span></div>
-<div class="tsr-line" data-s="0" data-e="33" data-ragged="1" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">constructor</span></div>
+<div class="tsr-line" id="tsr-h-0.1" data-s="0" data-e="21" data-join="space" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">A heading made by its</span></div>
+<div class="tsr-line" data-s="22" data-e="33" data-ragged="1" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="22" style="font-size:21.6px">constructor</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="48" style="position:relative;height:54.391px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="55" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">first</span></div>
@@ -23,7 +23,7 @@
 <div class="tsr-line" data-s="0" data-e="89" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Raw </span><span class="tsr-iraw" data-syn="raw" data-s="4" style="width:40px;height:10px">&#9632;</span><span class="tsr-r" data-s="45"> and a node </span><a class="tsr-r" href="#tsr-a1" data-s="56">a1</a><span class="tsr-r" data-s="85"> here</span></div>
 </div>
 <div class="tsr-para" data-pid="5" data-s0="332" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="87" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.25px"><span class="tsr-r" data-s="0">An image with an unknown option </span><img class="tsr-iimg" data-syn="image" data-s="32" draggable="false" src="x.png" alt="" style="width:10px;height:10px"><span class="tsr-r" data-s="74"> in a</span></div>
-<div class="tsr-line" data-s="74" data-e="87" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="74">sentence</span></div>
+<div class="tsr-line" data-s="0" data-e="78" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.25px"><span class="tsr-r" data-s="0">An image with an unknown option </span><img class="tsr-iimg" data-syn="image" data-s="32" draggable="false" src="x.png" alt="" style="width:10px;height:10px"><span class="tsr-r" data-s="74"> in a</span></div>
+<div class="tsr-line" data-s="79" data-e="87" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="79">sentence</span></div>
 </div>
 </div>

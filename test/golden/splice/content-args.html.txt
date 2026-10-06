@@ -4,7 +4,7 @@
 <div class="tsr-line" data-s="48" data-e="88" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="48">tip: boxed </span><span class="tsr-r tsr-b" data-s="70">bold</span><span class="tsr-r" data-s="76"> words here.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="137" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="68" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">Deep JS brackets stay JS: a and n: trail</span><span class="tsr-r" data-s="59" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="59" data-e="69" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="59">ing.</span></div>
+<div class="tsr-line" data-s="0" data-e="68" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">Deep JS brackets stay JS: a and n: trail</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="64" data-e="69" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="64">ing.</span></div>
 </div>
 </div>

@@ -3,17 +3,17 @@
 <div class="tsr-line" id="tsr-h-1" data-s="0" data-e="12" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Scoped rules</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="77" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="90" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">A rule set at the top level styles every</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="90" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">thing after it: the section heading below</span></div>
-<div class="tsr-line" data-s="0" data-e="90" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">is blue.</span></div>
+<div class="tsr-line" data-s="0" data-e="40" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:0.5px"><span class="tsr-r" data-s="0">A rule set at the top level styles every</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="40" data-e="81" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="40">thing after it: the section heading below</span></div>
+<div class="tsr-line" data-s="82" data-e="90" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="82">is blue.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="172" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" id="tsr-h-1.1" data-s="0" data-e="15" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px;color:#2f5d8a">Inside a region</span></div>
 </div>
 <div class="tsr-para" data-role="aside" data-pid="3" data-s0="197" style="position:relative;height:91.203px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="33" data-join="para" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Before the rule, </span><span class="tsr-r tsr-code tsr-pre" data-s="17" style="font-size:13.6px">code</span><span class="tsr-r" data-s="24"> is plain.</span></div>
-<div class="tsr-line" data-s="75" data-e="125" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:2.311px"><span class="tsr-r" data-s="75">After it, </span><span class="tsr-r tsr-code tsr-pre" data-s="85" style="font-size:13.6px;color:#a8432a">code</span><span class="tsr-r" data-s="92"> is red, to the end of the</span></div>
-<div class="tsr-line" data-s="92" data-e="125" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="92">region.</span></div>
+<div class="tsr-line" data-s="75" data-e="117" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:2.311px"><span class="tsr-r" data-s="75">After it, </span><span class="tsr-r tsr-code tsr-pre" data-s="85" style="font-size:13.6px;color:#a8432a">code</span><span class="tsr-r" data-s="92"> is red, to the end of the</span></div>
+<div class="tsr-line" data-s="118" data-e="125" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="118">region.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="332" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="40" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">After the region, </span><span class="tsr-r tsr-code tsr-pre" data-s="18" style="font-size:13.6px">code</span><span class="tsr-r" data-s="25"> is plain again.</span></div>

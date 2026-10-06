@@ -77,13 +77,15 @@ LineFill fillLine(const HList& h, const LineItems& r, const MetricStore& metrics
       if (pt->asc > f.maxAsc) f.maxAsc = pt->asc;
       if (pt->desc > f.maxDesc) f.maxDesc = pt->desc;
     }
+    // (plan P4-03; design T5) a line's source: from its first item that has
+    // one to the furthest end — made text later in the line (a note's
+    // backlink, which carries its note's span) never pulls the start back
     if (c.srcEnd > c.srcStart) {
       if (!spanSet) {
         f.span = Span{c.srcStart, c.srcEnd};
         spanSet = true;
-      } else {
-        if (c.srcStart < f.span.start) f.span.start = c.srcStart;
-        if (c.srcEnd > f.span.end) f.span.end = c.srcEnd;
+      } else if (c.srcEnd > f.span.end) {
+        f.span.end = c.srcEnd;
       }
     }
   }

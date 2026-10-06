@@ -20,6 +20,11 @@ struct ContentNode {
   // alias, a contained span)
   const u32* rawmap = nullptr;
   u32 nrawmap = 0;
+  // (plan P4-03) text: its str is its own source through rawmap (the
+  // identity when there is none) — every cluster has an exact source span;
+  // else (an alias, a contained or moved node, made text) its span is the
+  // node's
+  bool srcExact = false;
   std::vector<ArgVal> args;         // Str args re-pointed to doc interner
   std::vector<ContentNode*> kids;
   // (plan P2-15; design T8 MathEnv) the positional declarations in force

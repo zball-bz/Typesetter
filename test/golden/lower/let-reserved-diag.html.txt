@@ -4,8 +4,8 @@
 <div class="tsr-line" data-s="0" data-e="14" data-ragged="1" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-code tsr-err" title="SyntaxError: invalid JavaScript in this block" data-syn="error">this block</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="16" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="55" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Before the hoisting rule: reserved words</span></div>
-<div class="tsr-line" data-s="0" data-e="55" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">stay verbatim.</span></div>
+<div class="tsr-line" data-s="0" data-e="40" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Before the hoisting rule: reserved words</span></div>
+<div class="tsr-line" data-s="41" data-e="55" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="41">stay verbatim.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="123" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="40" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">helped text after a declaring block.</span></div>

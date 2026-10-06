@@ -1,33 +1,33 @@
 doc h=36865su
 para pid=0 y=0su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=128su dc=77su join=none blocks=[0,20) @[0,95)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[21,35) @[0,95)
+  L0 y=0su left=0su w=19200su dw=128su dc=77su join=none blocks=[0,20) @[0,53)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[21,35) @[53,95)
 para pid=1 y=4301su w=19200su h=0su
   L0 img y=0su left=11520su w=7680su h=5760su
   L1 cell=0 y=5760su left=11520su w=7680su blocks=[0,10)
   L2 cell=0 y=7296su left=11520su w=7680su blocks=[10,14)
 para pid=2 y=4301su w=19200su h=10752su
-  L0 y=0su left=0su w=10496su dw=142su dc=85su join=none blocks=[0,10) @[248,464)
-  L1 y=1536su left=0su w=10496su dw=47su dc=28su join=none blocks=[11,21) @[248,464)
-  L2 y=3072su left=0su w=10496su dw=47su dc=28su join=none blocks=[21,31) @[248,464)
-  L3 y=4608su left=0su w=10496su dw=53su dc=32su join=none blocks=[31,42) @[248,464)
-  L4 y=6144su left=0su w=10496su dw=47su dc=28su join=none blocks=[42,52) @[248,464)
-  L5 y=7680su left=0su w=10496su dw=53su dc=32su join=none blocks=[52,63) @[248,464)
-  L6 y=9216su left=0su w=19200su dw=0su dc=0su join=last blocks=[63,75) @[248,464)
+  L0 y=0su left=0su w=10496su dw=142su dc=85su join=none blocks=[0,10) @[248,278)
+  L1 y=1536su left=0su w=10496su dw=47su dc=28su join=none blocks=[11,21) @[278,308)
+  L2 y=3072su left=0su w=10496su dw=47su dc=28su join=none blocks=[21,31) @[308,338)
+  L3 y=4608su left=0su w=10496su dw=53su dc=32su join=none blocks=[31,42) @[338,368)
+  L4 y=6144su left=0su w=10496su dw=47su dc=28su join=none blocks=[42,52) @[368,398)
+  L5 y=7680su left=0su w=10496su dw=53su dc=32su join=none blocks=[52,63) @[398,428)
+  L6 y=9216su left=0su w=19200su dw=0su dc=0su join=last blocks=[63,75) @[428,464)
 para pid=3 y=16282su w=19200su h=4608su
-  L0 y=0su left=0su w=19200su dw=-25su dc=-15su join=none blocks=[0,20) @[466,634)
-  L1 y=1536su left=0su w=19200su dw=-27su dc=-16su join=none blocks=[20,41) @[466,634)
-  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[41,60) @[466,634)
+  L0 y=0su left=0su w=19200su dw=-25su dc=-15su join=none blocks=[0,20) @[466,523)
+  L1 y=1536su left=0su w=19200su dw=-27su dc=-16su join=none blocks=[20,41) @[523,580)
+  L2 y=3072su left=0su w=19200su dw=0su dc=0su join=last blocks=[41,60) @[580,634)
 para pid=4 y=22119su w=19200su h=0su
   L0 img y=0su left=0su w=7680su h=4608su
   L1 cell=0 y=4608su left=0su w=7680su blocks=[0,10)
   L2 cell=0 y=6144su left=0su w=7680su blocks=[10,12)
 para pid=5 y=22119su w=19200su h=4608su
-  L0 y=0su left=8704su w=10496su dw=47su dc=28su join=none blocks=[0,10) @[778,835)
-  L1 y=1536su left=8704su w=10496su dw=61su dc=37su join=space blocks=[10,22) @[778,845)
+  L0 y=0su left=8704su w=10496su dw=47su dc=28su join=none blocks=[0,10) @[778,808)
+  L1 y=1536su left=8704su w=10496su dw=61su dc=37su join=space blocks=[10,22) @[808,845)
   L2 y=3072su left=8704su w=10496su dw=0su dc=0su join=last blocks=[23,37) @[835,878)
 para pid=6 y=27956su w=19200su h=4608su
   L0 rule y=3840su left=0su w=19200su
 para pid=7 y=33793su w=19200su h=3072su
-  L0 y=0su left=0su w=19200su dw=75su dc=45su join=none blocks=[0,18) @[885,945)
-  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[18,20) @[885,945)
+  L0 y=0su left=0su w=19200su dw=75su dc=45su join=none blocks=[0,18) @[885,939)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[18,20) @[939,945)

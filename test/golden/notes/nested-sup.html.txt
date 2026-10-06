@@ -1,11 +1,11 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="160" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.2px"><span class="tsr-r" data-s="0">Energy is E = mc</span><span class="tsr-r tsr-sup" data-s="44">2</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px">1</a><span class="tsr-r" data-s="84">, a marker inside raised</span></div>
-<div class="tsr-line" data-s="84" data-e="160" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="84">text keeps the raise and is scaled from</span></div>
-<div class="tsr-line" data-s="84" data-e="160" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="84">its parent.</span></div>
+<div class="tsr-line" data-s="0" data-e="108" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-0.2px"><span class="tsr-r" data-s="0">Energy is E = mc</span><span class="tsr-r tsr-sup" data-s="44">2</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px">1</a><span class="tsr-r" data-s="84">, a marker inside raised</span></div>
+<div class="tsr-line" data-s="109" data-e="148" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="109">text keeps the raise and is scaled from</span></div>
+<div class="tsr-line" data-s="149" data-e="160" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="149">its parent.</span></div>
 </div>
-<div class="tsr-para" data-role="notes" data-pid="1" data-s0="45" style="position:relative;height:67.203px">
+<div class="tsr-para" data-role="notes" data-pid="1" data-s0="47" style="position:relative;height:67.203px">
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="38" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r tsr-sup" data-s="2" style="font-size:13.6px">A note marked inside a superscript. </span><a class="tsr-r tsr-sup" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="36" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r tsr-sup" data-s="0" style="font-size:13.6px">A note marked inside a superscript. </span><a class="tsr-r tsr-sup" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
 </div>

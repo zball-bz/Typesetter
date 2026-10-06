@@ -1,27 +1,27 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:96px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="81" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:13px"><span class="tsr-r" data-s="0">Markers between letters or digits</span></div>
-<div class="tsr-line" data-s="0" data-e="81" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:7px"><span class="tsr-r" data-s="0">are text: snake_case_name, 2*3*4 and</span></div>
-<div class="tsr-line" data-s="0" data-e="123" data-join="space" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">un*closed; </span><span class="tsr-r tsr-b" data-s="83">bold</span><span class="tsr-r" data-s="89"> and </span><span class="tsr-r tsr-i" data-s="94">emphasis</span><span class="tsr-r" data-s="104"> still pair,</span></div>
-<div class="tsr-line" data-s="104" data-e="140" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="104">as does </span><span class="tsr-r tsr-i" data-s="128">inside</span><span class="tsr-r" data-s="135">word.</span></div>
+<div class="tsr-line" data-s="0" data-e="33" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:13px"><span class="tsr-r" data-s="0">Markers between letters or digits</span></div>
+<div class="tsr-line" data-s="34" data-e="70" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:7px"><span class="tsr-r" data-s="34">are text: snake_case_name, 2*3*4 and</span></div>
+<div class="tsr-line" data-s="71" data-e="115" data-join="space" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="71">un*closed; </span><span class="tsr-r tsr-b" data-s="83">bold</span><span class="tsr-r" data-s="89"> and </span><span class="tsr-r tsr-i" data-s="94">emphasis</span><span class="tsr-r" data-s="104"> still pair,</span></div>
+<div class="tsr-line" data-s="116" data-e="140" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="116">as does </span><span class="tsr-r tsr-i" data-s="128">inside</span><span class="tsr-r" data-s="135">word.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="142" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="84" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:8px"><span class="tsr-r" data-s="0">A bare value after a word is text:</span></div>
-<div class="tsr-line" data-s="0" data-e="84" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:7px"><span class="tsr-r" data-s="0">word#todo, C#, user@host.org; a call</span></div>
-<div class="tsr-line" data-s="0" data-e="96" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">stays one: H</span><span class="tsr-r tsr-b" data-s="92">2</span><span class="tsr-r" data-s="94">O.</span></div>
+<div class="tsr-line" data-s="0" data-e="34" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:8px"><span class="tsr-r" data-s="0">A bare value after a word is text:</span></div>
+<div class="tsr-line" data-s="35" data-e="71" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:7px"><span class="tsr-r" data-s="35">word#todo, C#, user@host.org; a call</span></div>
+<div class="tsr-line" data-s="72" data-e="96" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="72">stays one: H</span><span class="tsr-r tsr-b" data-s="92">2</span><span class="tsr-r" data-s="94">O.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="240" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="94" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1.2px"><span class="tsr-r" data-s="0">Escapes: * _ # \ [ and \a keep their meaning</span></div>
-<div class="tsr-line" data-s="0" data-e="94" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="0">(the last keeps its backslash, as does</span></div>
-<div class="tsr-line" data-s="0" data-e="94" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">\é).</span></div>
+<div class="tsr-line" data-s="0" data-e="49" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1.2px"><span class="tsr-r" data-s="0">Escapes: * _ # \ [ and \a keep their meaning</span></div>
+<div class="tsr-line" data-s="50" data-e="88" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="50">(the last keeps its backslash, as does</span></div>
+<div class="tsr-line" data-s="89" data-e="94" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="89">\é).</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="336" style="position:relative;height:144px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="67" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:8.667px"><span class="tsr-r" data-s="0">A URL is a link, verbatim: </span><a class="tsr-r" href="https://example.com/a_b_c?q=1&amp;r=2#frag_x" data-s="27">https:/</a></div>
-<div class="tsr-line" data-s="27" data-e="85" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:8px"><a class="tsr-r" href="https://example.com/a_b_c?q=1&amp;r=2#frag_x" data-s="27">/example.com/a_b_c?q=1&amp;r=2#frag_x</a><span class="tsr-r" data-s="67">. In</span></div>
-<div class="tsr-line" data-s="67" data-e="124" data-join="none" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="67">parentheses (</span><a class="tsr-r" href="https://en.wikipedia.org/wiki/Foo_(bar)" data-s="85">https://en.wikipedia.org/</a></div>
-<div class="tsr-line" data-s="85" data-e="144" data-join="none" style="top:72px;left:0px;width:300px;word-spacing:13px"><a class="tsr-r" href="https://en.wikipedia.org/wiki/Foo_(bar)" data-s="85">wiki/Foo_(bar)</a><span class="tsr-r" data-s="124">) and beside CJK </span><span class="tsr-r tsr-cjk" data-s="124">见</span></div>
-<div class="tsr-line" data-s="144" data-e="221" data-join="space" style="top:96px;left:0px;width:300px;word-spacing:1.905px"><a class="tsr-r" href="https://example.org/" data-s="144">https://example.org/</a><span class="tsr-sp" data-syn="boundary" style="width:5.905px"></span><span class="tsr-r tsr-cjk" data-s="164" style="letter-spacing:1.143px">路径</span><span class="tsr-r tsr-cjk" data-s="164">。</span><span class="tsr-r" data-s="164"> An escaped</span></div>
-<div class="tsr-line" data-s="164" data-e="221" style="top:120px;left:0px;width:300px"><span class="tsr-r" data-s="164">colon is text: https://example.com.</span></div>
+<div class="tsr-line" data-s="0" data-e="34" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:8.667px"><span class="tsr-r" data-s="0">A URL is a link, verbatim: </span><a class="tsr-r" href="https://example.com/a_b_c?q=1&amp;r=2#frag_x" data-s="27">https:/</a></div>
+<div class="tsr-line" data-s="34" data-e="71" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:8px"><a class="tsr-r" href="https://example.com/a_b_c?q=1&amp;r=2#frag_x" data-s="34">/example.com/a_b_c?q=1&amp;r=2#frag_x</a><span class="tsr-r" data-s="67">. In</span></div>
+<div class="tsr-line" data-s="72" data-e="110" data-join="none" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="72">parentheses (</span><a class="tsr-r" href="https://en.wikipedia.org/wiki/Foo_(bar)" data-s="85">https://en.wikipedia.org/</a></div>
+<div class="tsr-line" data-s="110" data-e="144" data-join="none" style="top:72px;left:0px;width:300px;word-spacing:13px"><a class="tsr-r" href="https://en.wikipedia.org/wiki/Foo_(bar)" data-s="110">wiki/Foo_(bar)</a><span class="tsr-r" data-s="124">) and beside CJK </span><span class="tsr-r tsr-cjk" data-s="141">见</span></div>
+<div class="tsr-line" data-s="144" data-e="184" data-join="space" style="top:96px;left:0px;width:300px;word-spacing:1.905px"><a class="tsr-r" href="https://example.org/" data-s="144">https://example.org/</a><span class="tsr-sp" data-syn="boundary" style="width:5.905px"></span><span class="tsr-r tsr-cjk" data-s="164" style="letter-spacing:1.143px">路径</span><span class="tsr-r tsr-cjk" data-s="170">。</span><span class="tsr-r" data-s="173"> An escaped</span></div>
+<div class="tsr-line" data-s="185" data-e="221" style="top:120px;left:0px;width:300px"><span class="tsr-r" data-s="185">colon is text: https://example.com.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="560" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="40" data-join="space" style="top:0px;left:0px;width:300px"><a class="tsr-r" href="https://example.com" data-s="0">A link whose text is https://example.com</a></div>
@@ -29,8 +29,8 @@
 </div>
 <div class="tsr-para" data-pid="5" data-s0="638" style="position:relative;height:96px">
 <div class="tsr-line" data-s="0" data-e="27" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A hard break ends this line</span></div>
-<div class="tsr-line" data-s="30" data-e="80" data-join="none" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="30">and the next starts at the margin; </span><span class="tsr-r tsr-cjk" data-s="30">中文也</span></div>
-<div class="tsr-line" data-s="30" data-e="80" style="top:48px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="30">可以</span></div>
-<div class="tsr-line" data-s="82" data-e="94" style="top:72px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="82">硬换行</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="82">。</span></div>
+<div class="tsr-line" data-s="30" data-e="74" data-join="none" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="30">and the next starts at the margin; </span><span class="tsr-r tsr-cjk" data-s="65">中文也</span></div>
+<div class="tsr-line" data-s="74" data-e="80" style="top:48px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="74">可以</span></div>
+<div class="tsr-line" data-s="82" data-e="94" style="top:72px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="82">硬换行</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="91">。</span></div>
 </div>
 </div>

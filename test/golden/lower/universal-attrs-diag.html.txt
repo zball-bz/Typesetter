@@ -10,8 +10,8 @@
 <div class="tsr-line" data-s="0" data-e="64" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Styled by option: </span><span class="tsr-r tsr-i" data-s="18" style="color:#a8432a">word</span><span class="tsr-r" data-s="59"> here.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="351" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="77" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A field ?? stays empty until the resolver</span></div>
-<div class="tsr-line" data-s="37" data-e="77" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="37">fills it.</span></div>
+<div class="tsr-line" data-s="0" data-e="67" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A field ?? stays empty until the resolver</span></div>
+<div class="tsr-line" data-s="68" data-e="77" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="68">fills it.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="615" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="30" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A reference to the quote: </span><a class="tsr-r" href="#tsr-p1" data-s="26">p1</a><span class="tsr-r" data-s="29">.</span></div>

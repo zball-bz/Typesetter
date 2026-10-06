@@ -1,19 +1,19 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="110" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">A back-of-book index (plan P3-13): en</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="110" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">tries anywhere, a key with several occur</span><span class="tsr-r" data-s="0" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="0" data-e="110" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="0">rences, sorted by their sort key.</span></div>
+<div class="tsr-line" data-s="0" data-e="37" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="0">A back-of-book index (plan P3-13): en</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="37" data-e="77" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="37">tries anywhere, a key with several occur</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="77" data-e="110" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="77">rences, sorted by their sort key.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="112" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="86" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="0">A </span><span class="tsr-r" id="tsr-idx-1" data-s="2"></span><span class="tsr-r" data-s="48">monad is a monoid in endofunctors; the</span></div>
 <div class="tsr-line" data-s="87" data-e="149" style="top:24px;left:0px;width:300px"><span class="tsr-r" id="tsr-idx-2" data-s="87"></span><span class="tsr-r" data-s="123">zeta function comes later.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="263" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="101" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r" data-s="0">Every </span><span class="tsr-r" id="tsr-idx-3" data-s="6"></span><span class="tsr-r" data-s="65">functor preserves composition, and</span></div>
-<div class="tsr-line" data-s="65" data-e="173" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="65">a </span><span class="tsr-r" id="tsr-idx-4" data-s="102"></span><span class="tsr-r" data-s="139">monad is a functor with structure.</span></div>
+<div class="tsr-line" data-s="0" data-e="99" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r" data-s="0">Every </span><span class="tsr-r" id="tsr-idx-3" data-s="6"></span><span class="tsr-r" data-s="65">functor preserves composition, and</span></div>
+<div class="tsr-line" data-s="100" data-e="173" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="100">a </span><span class="tsr-r" id="tsr-idx-4" data-s="102"></span><span class="tsr-r" data-s="139">monad is a functor with structure.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="438" style="position:relative;height:24px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="84" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">单子</span><span class="tsr-r" id="tsr-idx-5" data-s="6"></span><span class="tsr-r tsr-cjk" data-s="63">与函子的关系</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="63">。</span></div>
+<div class="tsr-line" data-s="0" data-e="84" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="0">单子</span><span class="tsr-r" id="tsr-idx-5" data-s="6"></span><span class="tsr-r tsr-cjk" data-s="63">与函子的关系</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="81">。</span></div>
 </div>
 <div class="tsr-para" data-role="index" data-pid="4" data-s0="524" style="position:relative;height:115.172px">
 <div class="tsr-line" data-s="0" data-e="8" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r tsr-cjk" data-s="0">单子</span><span class="tsr-r" data-s="0"> </span><a class="tsr-r" href="#tsr-idx-5" data-s="0">1</a></div>

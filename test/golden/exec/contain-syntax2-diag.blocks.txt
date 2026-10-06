@@ -1,8 +1,8 @@
 top pid=0 units=1
  unit text indent=0su
-  word "Be" w=1025su pen=INF @[0,7)
-  hyphen bw=513su pen=0.70 @[0,7)
-  word "fore." w=2561su pen=INF @[0,7)
+  word "Be" w=1025su pen=INF @[0,2)
+  hyphen bw=513su pen=0.70 @[2,2)
+  word "fore." w=2561su pen=INF @[2,7)
 top pid=1 units=1
  unit text indent=0su
   word "⚠" w=616su pen=INF CODE @[9,21)
@@ -28,10 +28,10 @@ top pid=1 units=1
   word "block" w=2561su pen=INF CODE @[9,21)
 top pid=2 units=1
  unit text indent=0su
-  word "Mid" w=1537su pen=INF @[23,29)
-  hyphen bw=513su pen=0.70 @[23,29)
-  word "dle" w=1537su pen=INF @[23,29)
-  space w=257su stretch=1 @[23,29)
+  word "Mid" w=1537su pen=INF @[23,26)
+  hyphen bw=513su pen=0.70 @[26,26)
+  word "dle" w=1537su pen=INF @[26,29)
+  space w=257su stretch=1 @[29,29)
   word "3" w=513su pen=INF @[30,38)
   word "." w=513su pen=INF @[38,39)
 top pid=3 units=1
@@ -59,9 +59,9 @@ top pid=3 units=1
   word "block" w=2561su pen=INF CODE @[41,55)
 top pid=4 units=1
  unit text indent=0su
-  word "Af" w=1025su pen=INF @[57,62)
-  hyphen bw=513su pen=0.70 @[57,62)
-  word "ter" w=1537su pen=INF @[57,62)
-  space w=257su stretch=1 @[57,62)
+  word "Af" w=1025su pen=INF @[57,59)
+  hyphen bw=513su pen=0.70 @[59,59)
+  word "ter" w=1537su pen=INF @[59,62)
+  space w=257su stretch=1 @[62,62)
   word "12" w=1025su pen=INF @[63,71)
   word "." w=513su pen=INF @[71,72)

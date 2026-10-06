@@ -4,28 +4,28 @@
 <div class="tsr-line" id="tsr-h-1" data-s="549" data-e="568" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="549" style="font-size:25.6px">Framed environments</span></div>
 </div>
 <div class="tsr-band" data-b="1">
-<div class="tsr-line" data-s="570" data-e="668" data-join="space" style="top:44.812px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="570">A paragraph before the theorem, set at</span></div>
-<div class="tsr-line" data-s="570" data-e="668" data-join="space" style="top:68.812px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="570">the measure; the theorem below stands a</span></div>
-<div class="tsr-line" data-s="570" data-e="668" style="top:92.812px;left:0px;width:300px"><span class="tsr-r" data-s="570">little further off.</span></div>
+<div class="tsr-line" data-s="570" data-e="608" data-join="space" style="top:44.812px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="570">A paragraph before the theorem, set at</span></div>
+<div class="tsr-line" data-s="609" data-e="648" data-join="space" style="top:68.812px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="609">the measure; the theorem below stands a</span></div>
+<div class="tsr-line" data-s="649" data-e="668" style="top:92.812px;left:0px;width:300px"><span class="tsr-r" data-s="649">little further off.</span></div>
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
 <div class="tsr-band" data-role="theorem" data-b="2">
 <div class="tsr-frame" style="top:0px;left:0px;width:300px;height:206.406px;border-width:0px 0px 0px 2px;border-color:#2f5d8a;background:#f4f7fb" data-syn="frame"></div>
-<div class="tsr-line" id="tsr-thm-a" data-s="696" data-e="812" data-join="none" style="top:6.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r tsr-b" data-s="696">Theorem 1.</span><span class="tsr-r" data-s="696"> Every bounded monotone se</span><span class="tsr-r" data-s="696" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="696" data-e="812" data-join="space" style="top:30.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r" data-s="696">quence of real numbers converges. Its</span></div>
-<div class="tsr-line" data-s="696" data-e="812" data-join="space" style="top:54.406px;left:14.797px;width:272.406px;word-spacing:4.068px"><span class="tsr-r" data-s="696">limit is the supremum of its terms</span></div>
-<div class="tsr-line" data-s="696" data-e="812" data-join="para" style="top:78.406px;left:14.797px;width:272.406px"><span class="tsr-r" data-s="696">when it increases.</span></div>
-<div class="tsr-line" data-s="816" data-e="856" data-join="space" style="top:121.609px;left:38.797px;width:248.406px;word-spacing:1.401px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="816">a list inside the frame keeps its</span></div>
-<div class="tsr-line" data-s="816" data-e="856" style="top:145.609px;left:38.797px;width:248.406px"><span class="tsr-r" data-s="816">indent</span></div>
+<div class="tsr-line" id="tsr-thm-a" data-s="696" data-e="812" data-join="none" style="top:6.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r tsr-b" data-s="696">Theorem 1.</span><span class="tsr-r" data-s="696"> Every bounded monotone se</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="721" data-e="758" data-join="space" style="top:30.406px;left:14.797px;width:272.406px;word-spacing:-0.719px"><span class="tsr-r" data-s="721">quence of real numbers converges. Its</span></div>
+<div class="tsr-line" data-s="759" data-e="793" data-join="space" style="top:54.406px;left:14.797px;width:272.406px;word-spacing:4.068px"><span class="tsr-r" data-s="759">limit is the supremum of its terms</span></div>
+<div class="tsr-line" data-s="794" data-e="812" data-join="para" style="top:78.406px;left:14.797px;width:272.406px"><span class="tsr-r" data-s="794">when it increases.</span></div>
+<div class="tsr-line" data-s="816" data-e="849" data-join="space" style="top:121.609px;left:38.797px;width:248.406px;word-spacing:1.401px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="816">a list inside the frame keeps its</span></div>
+<div class="tsr-line" data-s="850" data-e="856" style="top:145.609px;left:38.797px;width:248.406px"><span class="tsr-r" data-s="850">indent</span></div>
 <div class="tsr-line" data-s="859" data-e="877" style="top:176px;left:38.797px;width:248.406px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="859">within the padding</span></div>
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
 <div class="tsr-band" data-b="3">
-<div class="tsr-line" data-s="889" data-e="984" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="889">The text after </span><a class="tsr-r" href="#tsr-thm-a" data-s="904">Theorem 1</a><span class="tsr-r" data-s="911"> resumes at the</span></div>
-<div class="tsr-line" data-s="911" data-e="984" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="911">paragraph gap or the theorem&#39;s space,</span></div>
-<div class="tsr-line" data-s="911" data-e="984" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="911">whichever is larger.</span></div>
+<div class="tsr-line" data-s="889" data-e="925" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="889">The text after </span><a class="tsr-r" href="#tsr-thm-a" data-s="904">Theorem 1</a><span class="tsr-r" data-s="911"> resumes at the</span></div>
+<div class="tsr-line" data-s="926" data-e="963" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:4.8px"><span class="tsr-r" data-s="926">paragraph gap or the theorem&#39;s space,</span></div>
+<div class="tsr-line" data-s="964" data-e="984" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="964">whichever is larger.</span></div>
 </div>
 </div>
 </div>

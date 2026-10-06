@@ -100,6 +100,20 @@ figure/float、figure/stack、region/table-tiny 的正文与图注、math/* 其�
 
 **审阅结论：改进。** 抽查博客语料：引用 `(1)` 后接"所"、`.tsm` 后接 `——`、链接 `§1` 两侧，均为应有的中西间距与断点。e2e 审计矩阵 1091 项通过（right-edge、line-integrity、overflow、copy）。
 
+## P4-03 逐项源 span（T5 步骤 6）
+
+**机械性变化，无排版变化。** 751 个 golden 文件（blocks 210、hlist 210、html 165、layout 154、paged 12）。去掉 span 字段（`@[s,e)`、`data-s`/`data-e` 的值、`data-s0`）后，与 P4-02 逐字节相同。其中 `data-s` 的有无有三处变化：
+- 连字符 run 不再带 `data-s`：连字符是合成的点；
+- 只有解析器插入的空格的 run 不再带 `data-s`；
+- 以 run-in 空格开头的 run 带上了 `data-s`：取其第一个有源的项。
+
+tools/check-spans.mjs 检查全部 213 个 html golden 的 2,835 个 run，结果为 0：
+- 每个内容 run 的 `data-s` 指向其首字符；
+- 同行 run 按源顺序；
+- 同一流的各行按源顺序。
+
+同一脚本用在 P4-02 的 golden 上报 396 处，即旧版 run 都取文字节点起点。语义页 340 篇不变；e2e 新增一项，验证 run 级 offsetAt 与行级 elementsAt。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。

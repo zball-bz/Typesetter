@@ -1,8 +1,8 @@
 top pid=0 units=1
  unit text indent=0su
-  box Other "Be" w=1025su r0 @[0,7)
-  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[0,7)
-  box Other "fore." w=2561su r0 @[0,7)
+  box Other "Be" w=1025su r0 @[0,2)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[2,2)
+  box Other "fore." w=2561su r0 @[2,7)
   run r0 plain
 top pid=1 units=1
  unit text indent=0su
@@ -31,7 +31,7 @@ top pid=1 units=1
 top pid=2 units=3
  unit text indent=1536su marker="•"
   box Other "item" w=2049su r0 @[90,94)
-  glue word w=257su x=1 cap=257su kern="m 1" src r0 @[90,94)
+  glue word w=257su x=1 cap=257su kern="m 1" src r0 @[94,94)
   box Other "1" w=513su r0 @[95,123)
   run r0 plain
  unit text indent=1536su
@@ -71,7 +71,7 @@ top pid=2 units=3
   run r0 plain CODE
  unit text indent=1536su marker="•"
   box Other "item" w=2049su r0 @[90,94)
-  glue word w=257su x=1 cap=257su kern="m 3" src r0 @[90,94)
+  glue word w=257su x=1 cap=257su kern="m 3" src r0 @[94,94)
   box Other "3" w=513su r0 @[95,123)
   run r0 plain
 top pid=3 units=1
@@ -103,18 +103,18 @@ top pid=3 units=1
   box AmbEllipsis "…" w=616su r0 @[127,133)
   glue word w=257su x=1 cap=257su src r0 @[127,133)
   box Other "]" w=513su r0 @[127,133)
-  glue word w=257su x=1 cap=257su src r1 @[134,154)
-  box Other "((" w=1025su r1 @[134,154)
-  glue word w=257su x=1 cap=257su kern="( [" src r1 @[134,154)
-  box Other "[" w=513su r1 @[134,154)
-  glue word w=257su x=1 cap=257su kern="[ b" src r1 @[134,154)
-  box Other "bro" w=1537su r1 @[134,154)
-  disc pen=0.7 w=0su pre="-" 513su kern="ok" r1 @[134,154)
-  box Other "ken" w=1537su r1 @[134,154)
-  glue word w=257su x=1 cap=257su kern="n h" src r1 @[134,154)
-  box Other "head" w=2049su r1 @[134,154)
-  glue word w=257su x=1 cap=257su kern="d ]" src r1 @[134,154)
-  box Other "]" w=513su r1 @[134,154)
+  glue word w=257su x=1 cap=257su src r1 @[134,134)
+  box Other "((" w=1025su r1 @[134,136)
+  glue word w=257su x=1 cap=257su kern="( [" src r1 @[136,137)
+  box Other "[" w=513su r1 @[137,138)
+  glue word w=257su x=1 cap=257su kern="[ b" src r1 @[138,139)
+  box Other "bro" w=1537su r1 @[141,144)
+  disc pen=0.7 w=0su pre="-" 513su kern="ok" r1 @[144,144)
+  box Other "ken" w=1537su r1 @[144,147)
+  glue word w=257su x=1 cap=257su kern="n h" src r1 @[147,148)
+  box Other "head" w=2049su r1 @[148,152)
+  glue word w=257su x=1 cap=257su kern="d ]" src r1 @[152,153)
+  box Other "]" w=513su r1 @[153,154)
   run r0 plain CODE
   run r1 plain
 top pid=4 units=1
@@ -146,14 +146,14 @@ top pid=4 units=1
   box AmbEllipsis "…" w=616su r0 @[156,159)
   glue word w=257su x=1 cap=257su src r0 @[156,159)
   box Other "]" w=513su r0 @[156,159)
-  glue word w=257su x=1 cap=257su src r1 @[160,174)
-  box Other "[no" w=1537su r1 @[160,174)
-  glue word w=257su x=1 cap=257su kern="o c" src r1 @[160,174)
-  box Other "con" w=1537su r1 @[160,174)
-  disc pen=0.7 w=0su pre="-" 513su kern="nd" r1 @[160,174)
-  box Other "di" w=1025su r1 @[160,174)
-  disc pen=0.7 w=0su pre="-" 513su kern="it" r1 @[160,174)
-  box Other "tion]" w=2561su r1 @[160,174)
+  glue word w=257su x=1 cap=257su src r1 @[160,160)
+  box Other "[no" w=1537su r1 @[160,163)
+  glue word w=257su x=1 cap=257su kern="o c" src r1 @[163,164)
+  box Other "con" w=1537su r1 @[164,167)
+  disc pen=0.7 w=0su pre="-" 513su kern="nd" r1 @[167,167)
+  box Other "di" w=1025su r1 @[167,169)
+  disc pen=0.7 w=0su pre="-" 513su kern="it" r1 @[169,169)
+  box Other "tion]" w=2561su r1 @[169,174)
   run r0 plain CODE
   run r1 plain
 top pid=5 units=1
@@ -187,38 +187,38 @@ top pid=5 units=1
   box AmbEllipsis "…" w=616su r0 @[176,181)
   glue word w=257su x=1 cap=257su src r0 @[176,181)
   box Other "]" w=513su r0 @[176,181)
-  glue word w=257su x=1 cap=257su src r1 @[182,190)
-  box Other "[or" w=1537su r1 @[182,190)
-  disc pen=0.7 w=0su pre="-" 513su kern="rp" r1 @[182,190)
-  box Other "phan]" w=2561su r1 @[182,190)
+  glue word w=257su x=1 cap=257su src r1 @[182,182)
+  box Other "[or" w=1537su r1 @[182,185)
+  disc pen=0.7 w=0su pre="-" 513su kern="rp" r1 @[185,185)
+  box Other "phan]" w=2561su r1 @[185,190)
   run r0 plain CODE
   run r1 plain
 top pid=6 units=2
  unit text indent=1536su marker="•"
-  box Other "a" w=513su r0 @[194,213)
-  glue word w=257su x=1 cap=257su kern="a n" src r0 @[194,213)
-  box Other "nest" w=2049su r0 @[194,213)
-  disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[194,213)
-  box Other "ed" w=1025su r0 @[194,213)
-  glue word w=257su x=1 cap=257su kern="d s" src r0 @[194,213)
-  box Other "style" w=2561su r0 @[194,213)
-  glue word w=257su x=1 cap=257su kern="e p" src r0 @[194,213)
-  box Other "push" w=2049su r0 @[194,213)
+  box Other "a" w=513su r0 @[194,195)
+  glue word w=257su x=1 cap=257su kern="a n" src r0 @[195,196)
+  box Other "nest" w=2049su r0 @[196,200)
+  disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[200,200)
+  box Other "ed" w=1025su r0 @[200,202)
+  glue word w=257su x=1 cap=257su kern="d s" src r0 @[202,203)
+  box Other "style" w=2561su r0 @[203,208)
+  glue word w=257su x=1 cap=257su kern="e p" src r0 @[208,209)
+  box Other "push" w=2049su r0 @[209,213)
   run r0 plain
  unit text indent=1536su
-  box Other "ends" w=2049su r0 @[251,274)
-  glue word w=257su x=1 cap=257su kern="s w" src r0 @[251,274)
-  box Other "with" w=2049su r0 @[251,274)
-  glue word w=257su x=1 cap=257su kern="h i" src r0 @[251,274)
-  box Other "its" w=1537su r0 @[251,274)
-  glue word w=257su x=1 cap=257su kern="s s" src r0 @[251,274)
-  box Other "state" w=2561su r0 @[251,274)
-  disc pen=0.7 w=0su pre="-" 513su kern="em" r0 @[251,274)
-  box Other "ment" w=2049su r0 @[251,274)
+  box Other "ends" w=2049su r0 @[251,255)
+  glue word w=257su x=1 cap=257su kern="s w" src r0 @[255,256)
+  box Other "with" w=2049su r0 @[256,260)
+  glue word w=257su x=1 cap=257su kern="h i" src r0 @[260,261)
+  box Other "its" w=1537su r0 @[261,264)
+  glue word w=257su x=1 cap=257su kern="s s" src r0 @[264,265)
+  box Other "state" w=2561su r0 @[265,270)
+  disc pen=0.7 w=0su pre="-" 513su kern="em" r0 @[270,270)
+  box Other "ment" w=2049su r0 @[270,274)
   run r0 plain
 top pid=7 units=1
  unit text indent=0su
-  box Other "Af" w=1025su r0 @[276,282)
-  disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[276,282)
-  box Other "ter." w=2049su r0 @[276,282)
+  box Other "Af" w=1025su r0 @[276,278)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[278,278)
+  box Other "ter." w=2049su r0 @[278,282)
   run r0 plain

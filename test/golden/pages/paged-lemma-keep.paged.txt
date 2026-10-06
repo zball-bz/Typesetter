@@ -4,10 +4,10 @@
 <div class="tsr-line" id="tsr-h-1" data-s="217" data-e="222" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="217" style="font-size:25.6px">Keeps</span></div>
 </div>
 <div class="tsr-band" data-b="1">
-<div class="tsr-line" data-s="224" data-e="364" data-join="space" style="top:44.812px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="224">Filler paragraph one fills most of the</span></div>
-<div class="tsr-line" data-s="224" data-e="364" data-join="space" style="top:68.812px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="224">first sheet with ordinary running text so</span></div>
-<div class="tsr-line" data-s="224" data-e="364" data-join="space" style="top:92.812px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="224">that the lemma comes close to the bottom</span></div>
-<div class="tsr-line" data-s="224" data-e="364" style="top:116.812px;left:0px;width:300px"><span class="tsr-r" data-s="224">edge of the sheet.</span></div>
+<div class="tsr-line" data-s="224" data-e="262" data-join="space" style="top:44.812px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="224">Filler paragraph one fills most of the</span></div>
+<div class="tsr-line" data-s="263" data-e="304" data-join="space" style="top:68.812px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="263">first sheet with ordinary running text so</span></div>
+<div class="tsr-line" data-s="305" data-e="345" data-join="space" style="top:92.812px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="305">that the lemma comes close to the bottom</span></div>
+<div class="tsr-line" data-s="346" data-e="364" style="top:116.812px;left:0px;width:300px"><span class="tsr-r" data-s="346">edge of the sheet.</span></div>
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
@@ -15,10 +15,10 @@
 <div class="tsr-line" data-s="374" data-e="417" style="top:0px;left:0px;width:300px;word-spacing:-0.889px"><span class="tsr-r" data-s="374">A lemma that fits at the foot of the sheet.</span></div>
 </div>
 <div class="tsr-band" data-role="proof" data-b="3">
-<div class="tsr-line" data-s="435" data-e="565" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="435">Its proof, three lines long, which the</span></div>
-<div class="tsr-line" data-s="435" data-e="565" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="435">lemma keeps with: neither is left alone</span></div>
-<div class="tsr-line" data-s="435" data-e="565" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-0.5px"><span class="tsr-r" data-s="435">at a sheet&#39;s foot, and the proof itself is</span></div>
-<div class="tsr-line" data-s="435" data-e="565" style="top:115.203px;left:0px;width:300px"><span class="tsr-r" data-s="435">not cut.</span></div>
+<div class="tsr-line" data-s="435" data-e="473" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="435">Its proof, three lines long, which the</span></div>
+<div class="tsr-line" data-s="474" data-e="513" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="474">lemma keeps with: neither is left alone</span></div>
+<div class="tsr-line" data-s="514" data-e="556" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-0.5px"><span class="tsr-r" data-s="514">at a sheet&#39;s foot, and the proof itself is</span></div>
+<div class="tsr-line" data-s="557" data-e="565" style="top:115.203px;left:0px;width:300px"><span class="tsr-r" data-s="557">not cut.</span></div>
 </div>
 <div class="tsr-band" data-b="4">
 <div class="tsr-line" data-s="575" data-e="591" style="top:158.406px;left:0px;width:300px"><span class="tsr-r" data-s="575">After the proof.</span></div>

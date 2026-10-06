@@ -10,8 +10,8 @@
 <div class="tsr-line" data-s="15" data-e="37" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="15">The step is immediate.</span><span class="tsr-sp" data-syn="fill" style="width:126.4px"></span><span class="tsr-r" data-s="15">∎</span></div>
 </div>
 <div class="tsr-para" data-role="dterm" data-pid="3" data-s0="413" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" id="tsr-lemma" data-s="0" data-e="59" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A lemma is a small theorem used on the way</span></div>
-<div class="tsr-line" data-s="0" data-e="59" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">to a larger one.</span></div>
+<div class="tsr-line" id="tsr-lemma" data-s="0" data-e="42" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A lemma is a small theorem used on the way</span></div>
+<div class="tsr-line" data-s="43" data-e="59" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="43">to a larger one.</span></div>
 </div>
 <div class="tsr-para" data-role="glossary" data-pid="4" data-s0="475" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="9" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:-0.7px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-lemma" data-s="0">lemma</a><span class="tsr-r" data-s="0"> — A lemma is a small theorem used</span></div>

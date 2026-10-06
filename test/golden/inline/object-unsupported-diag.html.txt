@@ -6,7 +6,7 @@
 <div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="15" style="position:relative;height:48px">
-<div class="tsr-line" data-s="0" data-e="55" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="0">in a sentence, and an image whose source</span></div>
-<div class="tsr-line" data-s="0" data-e="122" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">is not allowed </span><span class="tsr-iimg tsr-iimgph" data-syn="image" data-s="56" style="width:16px;height:16px"></span><span class="tsr-r" data-s="102"> stays a placeholder.</span></div>
+<div class="tsr-line" data-s="0" data-e="40" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="0">in a sentence, and an image whose source</span></div>
+<div class="tsr-line" data-s="41" data-e="122" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="41">is not allowed </span><span class="tsr-iimg tsr-iimgph" data-syn="image" data-s="56" style="width:16px;height:16px"></span><span class="tsr-r" data-s="102"> stays a placeholder.</span></div>
 </div>
 </div>

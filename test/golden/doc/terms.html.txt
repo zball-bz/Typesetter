@@ -1,30 +1,30 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="74" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A description list sets each term in bold</span></div>
-<div class="tsr-line" data-s="0" data-e="74" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="0">at the start of its description.</span></div>
+<div class="tsr-line" data-s="0" data-e="41" data-join="space" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A description list sets each term in bold</span></div>
+<div class="tsr-line" data-s="42" data-e="74" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="42">at the start of its description.</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="78" style="position:relative;height:367.953px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="143" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r tsr-b" data-s="0">Kerning</span><span class="tsr-r"> The adjustment of the space be</span><span class="tsr-r" data-s="9" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="9" data-e="143" data-join="space" style="top:24px;left:32px;width:268px"><span class="tsr-r" data-s="9">tween two particular glyphs, so that</span></div>
-<div class="tsr-line" data-s="9" data-e="143" data-join="space" style="top:48px;left:32px;width:268px;word-spacing:3.2px"><span class="tsr-r" data-s="9">their shapes sit evenly; its lines</span></div>
-<div class="tsr-line" data-s="9" data-e="143" style="top:72px;left:32px;width:268px"><span class="tsr-r" data-s="9">after the first hang two ems in.</span></div>
-<div class="tsr-line" data-s="147" data-e="195" data-join="space" style="top:102.391px;left:0px;width:300px;word-spacing:5.76px"><span class="tsr-r tsr-b" data-s="147">Leading with </span><span class="tsr-r tsr-b tsr-code tsr-pre" data-s="161" style="font-size:13.6px">code</span><span class="tsr-r"> Extra space between</span></div>
-<div class="tsr-line" data-s="169" data-e="195" style="top:126.391px;left:32px;width:268px"><span class="tsr-r" data-s="169">lines.</span></div>
-<div class="tsr-line" data-s="198" data-e="263" data-join="none" style="top:156.781px;left:0px;width:300px;word-spacing:-0.755px"><span class="tsr-r tsr-b tsr-cjk" data-s="198" style="letter-spacing:-0.453px;margin-right:0.453px">字距</span><span class="tsr-r"> </span><span class="tsr-r tsr-cjk" data-s="206" style="letter-spacing:-0.453px">中文术语与描述同样接排</span><span class="tsr-r tsr-cjk" data-s="206">，</span><span class="tsr-r tsr-cjk" data-s="206" style="letter-spacing:-0.453px;margin-right:0.453px">续行悬挂缩</span></div>
-<div class="tsr-line" data-s="206" data-e="263" style="top:180.781px;left:32px;width:268px"><span class="tsr-r tsr-cjk" data-s="206">进</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="206">。</span></div>
-<div class="tsr-line" data-s="266" data-e="311" data-join="space" style="top:211.172px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r tsr-b" data-s="266">Hyphenation</span><span class="tsr-r"> Breaking a word at a line&#39;s</span></div>
-<div class="tsr-line" data-s="279" data-e="311" data-join="para" style="top:235.172px;left:32px;width:268px"><span class="tsr-r" data-s="279">end.</span></div>
-<div class="tsr-line" data-s="315" data-e="386" data-join="none" style="top:265.562px;left:32px;width:268px;word-spacing:3.333px"><span class="tsr-r" data-s="315">A second paragraph of the same de</span><span class="tsr-r" data-s="315" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="315" data-e="386" data-join="space" style="top:289.562px;left:32px;width:268px;word-spacing:7px"><span class="tsr-r" data-s="315">scription stands indented by the</span></div>
-<div class="tsr-line" data-s="315" data-e="386" data-join="para" style="top:313.562px;left:32px;width:268px"><span class="tsr-r" data-s="315">hang.</span></div>
+<div class="tsr-line" data-s="0" data-e="39" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r tsr-b" data-s="0">Kerning</span><span class="tsr-r" data-s="9"> The adjustment of the space be</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="39" data-e="75" data-join="space" style="top:24px;left:32px;width:268px"><span class="tsr-r" data-s="39">tween two particular glyphs, so that</span></div>
+<div class="tsr-line" data-s="76" data-e="110" data-join="space" style="top:48px;left:32px;width:268px;word-spacing:3.2px"><span class="tsr-r" data-s="76">their shapes sit evenly; its lines</span></div>
+<div class="tsr-line" data-s="111" data-e="143" style="top:72px;left:32px;width:268px"><span class="tsr-r" data-s="111">after the first hang two ems in.</span></div>
+<div class="tsr-line" data-s="147" data-e="188" data-join="space" style="top:102.391px;left:0px;width:300px;word-spacing:5.76px"><span class="tsr-r tsr-b" data-s="147">Leading with </span><span class="tsr-r tsr-b tsr-code tsr-pre" data-s="161" style="font-size:13.6px">code</span><span class="tsr-r" data-s="169"> Extra space between</span></div>
+<div class="tsr-line" data-s="189" data-e="195" style="top:126.391px;left:32px;width:268px"><span class="tsr-r" data-s="189">lines.</span></div>
+<div class="tsr-line" data-s="198" data-e="257" data-join="none" style="top:156.781px;left:0px;width:300px;word-spacing:-0.755px"><span class="tsr-r tsr-b tsr-cjk" data-s="198" style="letter-spacing:-0.453px;margin-right:0.453px">字距</span><span class="tsr-r"> </span><span class="tsr-r tsr-cjk" data-s="206" style="letter-spacing:-0.453px">中文术语与描述同样接排</span><span class="tsr-r tsr-cjk" data-s="239">，</span><span class="tsr-r tsr-cjk" data-s="242" style="letter-spacing:-0.453px;margin-right:0.453px">续行悬挂缩</span></div>
+<div class="tsr-line" data-s="257" data-e="263" style="top:180.781px;left:32px;width:268px"><span class="tsr-r tsr-cjk" data-s="257">进</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="260">。</span></div>
+<div class="tsr-line" data-s="266" data-e="306" data-join="space" style="top:211.172px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r tsr-b" data-s="266">Hyphenation</span><span class="tsr-r" data-s="279"> Breaking a word at a line&#39;s</span></div>
+<div class="tsr-line" data-s="307" data-e="311" data-join="para" style="top:235.172px;left:32px;width:268px"><span class="tsr-r" data-s="307">end.</span></div>
+<div class="tsr-line" data-s="315" data-e="348" data-join="none" style="top:265.562px;left:32px;width:268px;word-spacing:3.333px"><span class="tsr-r" data-s="315">A second paragraph of the same de</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="348" data-e="380" data-join="space" style="top:289.562px;left:32px;width:268px;word-spacing:7px"><span class="tsr-r" data-s="348">scription stands indented by the</span></div>
+<div class="tsr-line" data-s="381" data-e="386" data-join="para" style="top:313.562px;left:32px;width:268px"><span class="tsr-r" data-s="381">hang.</span></div>
 <div class="tsr-line" data-s="389" data-e="395" style="top:343.953px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="389">Orphan</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="476" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="28" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">The same list from a script:</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="512" style="position:relative;height:54.391px;margin-bottom:19.203px">
-<div class="tsr-line" id="tsr-tracking" data-s="0" data-e="84" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0">Tracking</span><span class="tsr-r"> Uniform letter spacing.</span></div>
-<div class="tsr-line" data-s="85" data-e="130" style="top:30.391px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="85">Widow</span><span class="tsr-r"> A last line alone.</span></div>
+<div class="tsr-line" id="tsr-tracking" data-s="0" data-e="84" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0">Tracking</span><span class="tsr-r" data-s="60"> Uniform letter spacing.</span></div>
+<div class="tsr-line" data-s="85" data-e="130" style="top:30.391px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="85">Widow</span><span class="tsr-r" data-s="111"> A last line alone.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="645" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="37" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:4.571px"><span class="tsr-r" data-s="0">A defined term is a glossary row: see</span></div>
