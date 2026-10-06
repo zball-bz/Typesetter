@@ -336,6 +336,8 @@ struct Loader {
       if (str(x) != "figure") return fail("class html: only 'figure'");
       c.html = ElementClass::Html::Figure;
     }
+    if (c.numbering != ElementClass::Numbering::Never && c.counter == kNoIndex)
+      return fail("class '" + name + "' is numbered but has no counter");
     // a numbered class reads, by default, as its supplement and number
     if (!c.hasRef && c.counter != kNoIndex && c.numbering != ElementClass::Numbering::Never) {
       c.hasRef = true;

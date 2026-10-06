@@ -166,7 +166,9 @@ name, **field by field** (the last write wins; a new name appends a row):
    scalar fields (`$.declare('counter', 'c', {pattern: 'i'})`).
 
 `like: <own name>` in a patch means the previous layer's row, which a patch
-is anyway. A row the loader refuses is dropped — `decl-invalid` at the
+is anyway. A numbered class needs a counter (`$.element` declares one;
+a raw `$.declare` row without one is refused — fuzz finding
+`test/fuzz/fuzz_opreader/decl-numbered-no-counter.bin`). A row the loader refuses is dropped — `decl-invalid` at the
 declaration (`semantics-invalid` for a host row) — and the others stand;
 an unknown field is ignored with `decl-field`. An instance before its
 class's declaration works (hoisting) and says so (`decl-after-use`, info).
