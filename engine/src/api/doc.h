@@ -7,6 +7,7 @@
 #include "../code/tokens.h"
 #include "../codegen/codegen.h"
 #include "../math/env.h"
+#include "../model/cascade.h"
 #include "../resolve/resolve.h"
 #include "../semantic/declare.h"
 #include "../boxtree/build.h"
@@ -34,6 +35,8 @@ struct Doc {
 
   RawOps raw;
   StyleTable styles;
+  NodePropsTable nodeProps;  // block properties by the cascade (plan P3-01)
+  Cascade cascade{strs};     // the rules: defaults, host, $.set, style.where
   ContentTree tree;
   // the element registry (plan P1-10, P2-07): built at Ingest (PHASE 0,
   // semantic/declare.h) from the built-in rows — or `registryBase`, a
@@ -252,7 +255,31 @@ struct Doc {
     if (!raw.ok) return false;
     registryOwn = declaredRegistry(raw, cfg, registryBase, diags);
     registry = registryOwn.get();
-    tree = instantiate(raw, arena, strs, styles, diags, *registry);
+    // the base rules (plan P3-01): the engine's defaults, which read some
+    // host settings ({"setting": "code.scale"})
+    {
+      JsonValue settings;
+      JsonReader jr;
+      jr.parse(settingsJson(cfg), settings);
+      auto setting = [&](std::string_view path) -> std::string {
+        const JsonValue* v = &settings;
+        for (size_t at = 0; v && at <= path.size();) {
+          size_t dot = path.find('.', at);
+          if (dot == std::string_view::npos) dot = path.size();
+          v = v->get(path.substr(at, dot - at));
+          at = dot + 1;
+        }
+        if (!v) return "";
+        if (v->t == JsonValue::T::Num) {
+          std::string t;
+          appendf(t, "%g", v->num);
+          return t;
+        }
+        return v->t == JsonValue::T::Str ? v->str : std::string();
+      };
+      cascade.setBase(parseRules(defaultRulesJson(), strs, diags, "defaults", setting), {});
+    }
+    tree = instantiate(raw, arena, strs, styles, nodeProps, cascade, diags, *registry);
     checkDeclarations(raw, tree, *registry, strs, diags);
     mathEnv.build(tree.decls, strs, diags);
     validThrough = (int)Stage::Ingest;

@@ -1,6 +1,7 @@
 #include "model.h"
 
 #include "../elements/registry.h"
+#include "cascade.h"
 #include "softbreak.h"
 
 #include <algorithm>
@@ -15,7 +16,67 @@ struct Inst {
   StyleTable& styles;
   DiagSink& diags;
   const Registry& reg;
+  Cascade& cascade;
+  NodePropsTable& propsTable;
   u32 epoch = 0;  // the positional declarations before the EMIT being copied
+  bool depth = false;  // a rule selects by depth: ancestors are tracked
+  struct PathRec {
+    u16 kind;
+    u32 up;  // ~0u: none
+  };
+  std::vector<PathRec> paths;
+
+  // an attribute with its strings in the document's interner
+  ArgVal interned(const ArgVal& a) const {
+    ArgVal v = a;
+    if (a.tag == ArgTag::Str) v.ref = strs.intern(raw.strings[a.ref]);
+    if (a.key == ArgK::ext) v.name = strs.intern(raw.strings[a.name]);
+    return v;
+  }
+  static bool isMatch(ArgK k) {
+    return k == ArgK::matchKind || k == ArgK::matchRole || k == ArgK::matchClass || k == ArgK::matchLang ||
+           k == ArgK::matchDepth || k == ArgK::matchWhere;
+  }
+  // a styled node with match attributes is a rule (plan P3-01: $.set,
+  // style.where), its other attributes the patch
+  static bool isRule(const RawNode& n) {
+    if (n.kind != Kind::styled) return false;
+    for (const ArgVal& a : n.args)
+      if (isMatch(a.key)) return true;
+    return false;
+  }
+  StyleRule ruleOf(const RawNode& n) {
+    StyleRule r;
+    for (const ArgVal& a : n.args) {
+      const std::string_view v = a.tag == ArgTag::Str ? raw.strings[a.ref] : std::string_view{};
+      switch (a.key) {
+        case ArgK::matchKind:
+          for (u16 k = 0; k < KIND_COUNT; k++)
+            if (v == kKinds[k].name) r.sel.kind = k;
+          if (r.sel.kind == 0xFFFF) r.sel.kind = 0xFFFE;  // no such kind: matches nothing
+          break;
+        case ArgK::matchRole: r.sel.role = strs.intern(v); break;
+        case ArgK::matchClass: r.sel.cls = strs.intern(v); break;
+        case ArgK::matchLang: r.sel.lang = strs.intern(v); break;
+        case ArgK::matchDepth: r.sel.depth = (u8)a.num; break;
+        case ArgK::matchWhere:  // "level=1;ordered=true"
+          for (size_t at = 0; at < v.size();) {
+            size_t semi = v.find(';', at);
+            if (semi == std::string_view::npos) semi = v.size();
+            const std::string_view pair = v.substr(at, semi - at);
+            const size_t eq = pair.find('=');
+            if (eq != std::string_view::npos)
+              for (u16 k = 0; k < ARGK_COUNT; k++)
+                if (pair.substr(0, eq) == argName((ArgK)k)) r.sel.where.push_back({(ArgK)k, strs.intern(pair.substr(eq + 1))});
+            at = semi + 1;
+          }
+          break;
+        default:
+          if (a.key != ArgK::style) r.patch.push_back(interned(a));
+      }
+    }
+    return r;
+  }
 
   // fold one style attribute onto an effective style
   void applyPatch(Styling& st, const ArgVal& a) {
@@ -49,11 +110,24 @@ struct Inst {
     return e;
   }
 
-  ContentNode* copy(u32 rootId, const Styling& inherited) {
-    // verb: inside a code or verbatim body, whose newlines are its lines
-    struct Pending { ContentNode* parent; u32 id; Styling inh; u32 depth; u16 inside; bool verb; };
+  // rules: whether the rules in force apply (a declaration's template is
+  // style-neutral: they apply where it is used)
+  ContentNode* copy(u32 rootId, const Styling& inherited, RuleEnvId env0 = 0, bool rules = true) {
+    // verb: inside a code or verbatim body, whose newlines are its lines;
+    // props: the parent's block properties, env: the rules in force
+    struct Pending {
+      ContentNode* parent;
+      u32 id;
+      Styling inh;
+      u32 depth;
+      u16 inside;
+      bool verb;
+      PropsId props;
+      RuleEnvId env;
+      u32 path;
+    };
     std::vector<Pending> work;
-    work.push_back({nullptr, rootId, inherited, 0, 0, false});
+    work.push_back({nullptr, rootId, inherited, 0, 0, false, 0, env0, ~0u});
     ContentNode* result = nullptr;
     while (!work.empty()) {
       Pending p = std::move(work.back());
@@ -77,17 +151,25 @@ struct Inst {
         n = limitNode(sp, "maximum nesting depth");
       } else {
         budget--;
-        // a styled node's attributes are its delta; any node's `style` is
-        // its own (plan P2-08), applied after
-        if (rn.kind == Kind::styled)
-          for (const ArgVal& a : rn.args) applyPatch(ownStyle, a);
+        // its own delta: a styled node's attributes (unless it is a rule: a
+        // style.where, whose patch is its subtree's), then its `style` (plan
+        // P2-08); the cascade folds the rules in force under it (plan P3-01)
+        std::vector<ArgVal> delta;
+        RuleEnvId kidsEnv = p.env;
+        if (rn.kind == Kind::styled && isRule(rn)) {
+          kidsEnv = cascade.extend(p.env, ruleOf(rn));
+        } else if (rn.kind == Kind::styled) {
+          for (const ArgVal& a : rn.args)
+            if (a.key != ArgK::style) delta.push_back(interned(a));
+        }
         for (const ArgVal& a : rn.args)
-          if (a.key == ArgK::style && a.tag == ArgTag::Node) applyDelta(ownStyle, a.ref);
+          if (a.key == ArgK::style && a.tag == ArgTag::Node)
+            for (const ArgVal& b : raw.nodes[a.ref].args) delta.push_back(interned(b));
         n = arena.make<ContentNode>();
         n->kind = rn.kind;
         n->span = sp;
-        n->style = styles.idOf(ownStyle);
         n->declEpoch = epoch;
+        n->env = kidsEnv;
         const bool own = an.alias == kNoAlias && sp.start == rn.span.start && sp.end == rn.span.end;
         const std::vector<u32>* map = own && !rn.rawmap.empty() ? &rn.rawmap : nullptr;
         std::vector<u32> resolved;
@@ -137,32 +219,57 @@ struct Inst {
           if (a.key == ArgK::ext) v.name = strs.intern(raw.strings[a.name]);
           n->args.push_back(v);
         }
+        // the cascade (plan P3-01): the rules in force, then its own delta
+        NodeProps np = inheritProps(propsTable.get(p.props));
+        Cascade::NodeView view{n->kind};
+        view.args = &n->args;
+        view.role = attrStr(n, ArgK::role);
+        view.cls = attrStr(n, ArgK::class_);
+        view.lang = ownStyle.lang;
+        for (const ArgVal& a : delta)
+          if (a.key == ArgK::lang && a.tag == ArgTag::Str) view.lang = a.ref;
+        u32 path = p.path;
+        if (depth) {
+          paths.push_back({(u16)n->kind, p.path});
+          path = (u32)paths.size() - 1;
+          for (u32 up = p.path; up != ~0u; up = paths[up].up) view.depth += paths[up].kind == (u16)n->kind;
+        }
+        cascade.fold(ownStyle, np, view, rules ? p.env : 0, delta, rules);
+        n->style = styles.idOf(ownStyle);
+        n->props = propsTable.idOf(np);
         n->kids.reserve(rn.children.size());
         n->cls = reg.classify(n, p.inside, strs);  // membership, once (plan P1-10)
         descend = true;
+        if (descend)  // reversed, so children pop (and append) in order
+          for (size_t c = rn.children.size(); c-- > 0;)
+            work.push_back({n, rn.children[c], ownStyle, p.depth + 1, n->cls ? n->cls : p.inside,
+                            p.verb || kKinds[(u16)n->kind].body == Body::Code ||
+                                kKinds[(u16)n->kind].body == Body::Text,
+                            n->props, kidsEnv, path});
       }
       if (p.parent) p.parent->kids.push_back(n);
       else result = n;
-      if (descend)  // reversed, so children pop (and append) in order
-        for (size_t c = rn.children.size(); c-- > 0;)
-          work.push_back({n, rn.children[c], ownStyle, p.depth + 1, n->cls ? n->cls : p.inside,
-                          p.verb || kKinds[(u16)n->kind].body == Body::Code || kKinds[(u16)n->kind].body == Body::Text});
+      (void)descend;
     }
     return result;
   }
 };
 }  // namespace
 
-ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
-                        StyleTable& styles, DiagSink& diags, const Registry& reg) {
+ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs, StyleTable& styles, NodePropsTable& props,
+                        Cascade& cascade, DiagSink& diags, const Registry& reg) {
   ContentTree t;
   ContentNode* root = arena.make<ContentNode>();
   root->kind = Kind::doc;
   t.root = root;
   if (!raw.ok) return t;
 
-  Inst inst{raw, arena, strs, styles, diags, reg};
+  Inst inst{raw, arena, strs, styles, diags, reg, cascade, props, 0, false, {}};
   inst.budget = std::max<size_t>(kInstMinBudget, kInstPerRawNode * raw.nodes.size());
+  // depth selectors (plan P3-01) need each node's ancestors
+  inst.depth = cascade.usesDepth();
+  for (const RawNode& rn : raw.nodes)
+    for (const ArgVal& a : rn.args) inst.depth = inst.depth || a.key == ArgK::matchDepth;
   // the positional declarations' flow indices, in order (plan P2-15): EMIT k
   // copies with epoch = how many have a flow index at most k
   std::vector<u32> positional;
@@ -170,18 +277,24 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
     if (rd.type && !kDecls[rd.type].hoisted) positional.push_back(rd.flowIndex);
   std::stable_sort(positional.begin(), positional.end());
   u32 emits = 0;
-  std::vector<const SchedItem*> stack;  // schedule deltas (delta nodes)
+  // the schedule stack: style deltas (delta nodes) and rules (a $.set: a
+  // styled node with match attributes, plan P3-01), each with the rule env
+  // before it
+  std::vector<std::pair<const SchedItem*, RuleEnvId>> stack;
+  RuleEnvId env = 0;
   auto refold = [&] {
     Styling st{};
-    for (const SchedItem* d : stack) inst.applyDelta(st, d->a);
+    for (const auto& [d, e] : stack)
+      if (!Inst::isRule(raw.nodes[d->a])) inst.applyDelta(st, d->a);
     return st;
   };
   Styling cur{};
   for (const SchedItem& s : raw.sched) {
     switch (s.op) {
       case Op::STYLE_PUSH:
-        stack.push_back(&s);
-        inst.applyDelta(cur, s.a);
+        stack.push_back({&s, env});
+        if (Inst::isRule(raw.nodes[s.a])) env = cascade.extend(env, inst.ruleOf(raw.nodes[s.a]));
+        else inst.applyDelta(cur, s.a);
         break;
       case Op::STYLE_POP_TO: {
         u32 h = s.a;
@@ -189,13 +302,14 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
           diags.add(Sev::Warning, "style-underflow", {}, "STYLE_POP_TO above height");
           h = (u32)stack.size();
         }
+        if (h < stack.size()) env = stack[h].second;
         stack.resize(h);
         cur = refold();
         break;
       }
       case Op::EMIT:
         while (inst.epoch < positional.size() && positional[inst.epoch] <= emits) inst.epoch++;
-        root->kids.push_back(inst.copy(s.a, cur));
+        root->kids.push_back(inst.copy(s.a, cur, env));
         emits++;
         break;
       default:
@@ -223,7 +337,7 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
       if (a.key == ArgK::ext) v.name = strs.intern(raw.strings[a.name]);
       d.args.push_back(v);
     }
-    for (u32 id : rd.templates) d.templates.push_back(inst.copy(id, Styling{}));
+    for (u32 id : rd.templates) d.templates.push_back(inst.copy(id, Styling{}, 0, false));
     if (kDecls[d.type].hoisted) {
       auto it = std::find_if(last.begin(), last.end(),
                              [&](const auto& e) { return e.first.first == d.type && e.first.second == d.name; });

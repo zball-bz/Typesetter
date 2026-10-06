@@ -270,7 +270,8 @@ domCc += `struct Dfa {\n  const std::uint8_t* cls;\n  const std::uint8_t* next; 
   `  for (unsigned char c : s) {\n    q = f.next[q * f.classes + f.cls[c]];\n    if (q == 255) return false;\n  }\n` +
   `  return f.accept[q];\n}\n\n}  // namespace tsr\n`;
 // JS: the byte classes \x80-\xff mean any non-ASCII character (u flag)
-const jsRe = (re) => re.replace(/\\x80-\\xff/g, '\\u0080-\\u{10ffff}');
+// (a `/` outside a class ends a JS regex literal: escaped)
+const jsRe = (re) => re.replace(/\\x80-\\xff/g, '\\u0080-\\u{10ffff}').replace(/(?<!\\)\//g, '\\/');
 const domJs = `export const DOMAINS = Object.freeze({\n${domains.map(([n, d]) =>
   `  ${n}: Object.freeze({ max: ${d.max | 0}, re: /^(?:${jsRe(d.re)})$/u }),`).join('\n')}\n});\n` +
   `const utf8Length = (s) => { let n = 0; for (const c of s) { const cp = c.codePointAt(0); ` +
@@ -280,7 +281,10 @@ const domJs = `export const DOMAINS = Object.freeze({\n${domains.map(([n, d]) =>
   `  return (!d.max || utf8Length(s) <= d.max) && d.re.test(s);\n}\n`;
 
 // ---- run properties (plans P1-02, P2-08): Styling, its ops, dumps and CSS -----------
-const props = Object.entries(S.props ?? {}).filter(([n]) => n !== '$comment');
+const allProps = Object.entries(S.props ?? {}).filter(([n]) => n !== '$comment');
+const props = allProps.filter(([, r]) => r.gran !== 'block');
+// block properties (plan P3-01; design T4 PropRegistry: Block granularity)
+const blockProps = allProps.filter(([, r]) => r.gran === 'block');
 const flagsOf = (attrDom) => Object.fromEntries(attrDom.split(':').slice(1).join(':').split(',').map((x) => x.split('=')).map(([k, v]) => [k, +v]));
 const CT = { weight: 'u16', bool: 'bool', flags: 'u8', enum: 'u8', mul: 'float', str: 'StrRef', px: 'float', internal: 'u8' };
 const INIT = { weight: '0', bool: 'false', flags: '0', enum: '0', mul: '1.0f', str: '0', px: '0', internal: '0' };
@@ -349,7 +353,57 @@ for (const [, r] of props) {
     ph += `  if (s.${r.field}) {\n    static const char* const kV[] = {${r.values.map((v) => JSON.stringify(v)).join(', ')}};\n` +
       `    out += " ${r.dump.label}=";\n    out += kV[s.${r.field} - 1];\n  }\n`;
 }
-ph += `}\n\n}  // namespace tsr\n`;
+ph += `}\n\n`;
+// ---- NodeProps (plan P3-01): block properties of a node, by the cascade
+const BCT = { len: 'Len', gap: 'Gap', enum: 'u8', bool: 'bool', str: 'StrRef' };
+const BINIT = { len: '{}', gap: '{}', enum: '0', bool: 'false', str: '0' };
+for (const [n, r] of blockProps) if (!BCT[r.type]) { console.error(`gen-schema: props.${n}: block type ${r.type}`); process.exit(1); }
+ph += `// A length (plan P3-01): em of the document's base size (rem-like) or px;\n// unit 0 = unset\nstruct Len {\n  float v = 0;\n  u8 unit = 0;  // 1 em, 2 px\n` +
+  `  bool operator==(const Len& o) const { return v == o.v && unit == o.unit; }\n};\n` +
+  `// a gap: a fraction of the paragraph gap (num/den, integer division) or a length\nstruct Gap {\n  u8 num = 0, den = 0;\n  Len len;\n` +
+  `  bool operator==(const Gap& o) const { return num == o.num && den == o.den && len == o.len; }\n};\n` +
+  `// "1.5em" | "12px" | "0" (the len domain)\ninline Len parseLen(std::string_view v) {\n  Len l;\n  double x = 0;\n  size_t i = 0;\n` +
+  `  for (; i < v.size() && v[i] >= '0' && v[i] <= '9'; i++) x = x * 10 + (v[i] - '0');\n` +
+  `  if (i < v.size() && v[i] == '.')\n    for (double f = 0.1; ++i < v.size() && v[i] >= '0' && v[i] <= '9'; f /= 10) x += (v[i] - '0') * f;\n` +
+  `  l.v = (float)x;\n  l.unit = v.substr(i) == "px" ? 2 : 1;\n  return l;\n}\n` +
+  `// "1/3" or a length (the gap domain)\ninline Gap parseGap(std::string_view v) {\n  Gap g;\n  const size_t slash = v.find('/');\n` +
+  `  if (slash == std::string_view::npos) {\n    g.len = parseLen(v);\n    return g;\n  }\n  u32 a = 0, b = 0;\n` +
+  `  for (char c : v.substr(0, slash)) a = a * 10 + (u32)(c - '0');\n  for (char c : v.substr(slash + 1)) b = b * 10 + (u32)(c - '0');\n` +
+  `  g.num = (u8)a;\n  g.den = (u8)(b ? b : 1);\n  return g;\n}\n\n` +
+  `// A node's block properties (schema "props", gran block): one field per row.\n// 0 / false / unset = the initial value (the consumer's default)\nstruct NodeProps {\n`;
+for (const [n, r] of blockProps) ph += `  ${BCT[r.type]} ${r.field} = ${BINIT[r.type]};  // ${n}${r.inherits ? ' (inherits)' : ''}\n`;
+ph += `  bool operator==(const NodeProps& o) const {\n    return ${blockProps.map(([, r]) => `${r.field} == o.${r.field}`).join(' &&\n           ')};\n  }\n};\n`;
+for (const [, r] of blockProps)
+  if (r.type === 'enum') r.values.forEach((v, k) => { ph += `constexpr u8 ${r.field.toUpperCase()}_${v.toUpperCase()} = ${k + 1};\n`; });
+ph += `struct NodePropsHash {\n  size_t operator()(const NodeProps& p) const {\n    u64 h = 1469598103934665603ull;\n` +
+  `    auto mix = [&](u64 v) { h = (h ^ v) * 1099511628211ull; };\n    auto len = [&](const Len& l) {\n      u32 b;\n      std::memcpy(&b, &l.v, 4);\n      mix(b);\n      mix(l.unit);\n    };\n`;
+for (const [, r] of blockProps) {
+  if (r.type === 'len') ph += `    len(p.${r.field});\n`;
+  else if (r.type === 'gap') ph += `    mix(p.${r.field}.num);\n    mix(p.${r.field}.den);\n    len(p.${r.field}.len);\n`;
+  else ph += `    mix((u64)p.${r.field});\n`;
+}
+ph += `    return (size_t)h;\n  }\n};\n` +
+  `// a child's starting props: the inheriting rows of its parent's, the rest initial\ninline NodeProps inheritProps(const NodeProps& parent) {\n  NodeProps p;\n`;
+for (const [, r] of blockProps) if (r.inherits) ph += `  p.${r.field} = parent.${r.field};\n`;
+ph += `  return p;\n}\n` +
+  `// folds one styled attribute onto block properties (values validated at decode)\n` +
+  `template <class Intern, class View>\ninline void applyNodeArg(NodeProps& p, const ArgVal& a, Intern intern, View view) {\n`;
+for (const [, r] of blockProps) {
+  const K = `a.key == ArgK::${r.attr}`;
+  if (r.type === 'len') ph += `  if (${K} && a.tag == ArgTag::Str) p.${r.field} = parseLen(view(a.ref));\n`;
+  if (r.type === 'gap') ph += `  if (${K} && a.tag == ArgTag::Str) p.${r.field} = parseGap(view(a.ref));\n`;
+  if (r.type === 'bool') ph += `  if (${K} && a.tag == ArgTag::Bool) p.${r.field} = a.num != 0;\n`;
+  if (r.type === 'str') ph += `  if (${K} && a.tag == ArgTag::Str) p.${r.field} = intern(a.ref);\n`;
+  if (r.type === 'enum') {
+    ph += `  if (${K} && a.tag == ArgTag::Str) {\n    const std::string_view v = view(a.ref);\n`;
+    r.values.forEach((v, k) => { ph += `    if (v == ${JSON.stringify(v)}) p.${r.field} = ${k + 1};\n`; });
+    ph += `  }\n`;
+  }
+}
+ph += `}\n// the style keys by name (plan P3-01: rules in JSON read them as\n// $.style.push does): each row's attribute name and its key path\n` +
+  `struct StyleKeyRow {\n  const char* key;\n  ArgK attr;\n};\ninline constexpr StyleKeyRow kStyleKeys[] = {\n` +
+  allProps.filter(([, r]) => r.attr).flatMap(([, r]) => [...new Set([r.attr, r.key ?? r.attr])].map((k) => `    {"${k}", ArgK::${r.attr}},\n`)).join('') +
+  `};\n// whether an attribute patches a block property\ninline bool isNodeArg(ArgK k) {\n  return ${blockProps.map(([, r]) => `k == ArgK::${r.attr}`).join(' || ')};\n}\n\n}  // namespace tsr\n`;
 
 // the typeset serializer's run attributes and declarations
 let css = `// ${HDR}\n// A typeset run's attributes and style declarations (schema "props"; plan\n// P1-02). Values were validated at decode; text values are attribute-escaped.\n#pragma once\n#include <cstring>\n\n#include "../model/style.h"\n#include "html_writer.h"\n\nnamespace tsr {\n\n` +
@@ -375,7 +429,7 @@ css += `}\n\n}  // namespace tsr\n`;
 // the style keys (plan P2-08): each row's key → its styled attribute; sugar
 // keys → [attribute, value] (a decoration's value is its flag); flag names
 const styleKeys = {}, sugar = {}, styleFlags = {};
-for (const [, r] of props) {
+for (const [, r] of allProps) {
   if (!r.attr) continue;
   styleKeys[r.key ?? r.attr] = r.attr;
   for (const [k, v] of Object.entries(r.sugar ?? {}))

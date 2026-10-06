@@ -215,6 +215,21 @@ static const char* execDiagCode(std::string_view code) {
   return "script-diag";
 }
 
+bool checkStyledValue(ArgVal& a, std::string_view text, std::string& why) {
+  const AttrSpec* sp = findSpec((u16)Kind::styled, (u16)a.key);
+  if (!sp || sp->dom == Dom::Delta) {
+    why = "not a style attribute";
+    return false;
+  }
+  RawOps r;
+  r.strings.push_back(text);
+  const u32 ref = a.ref;
+  a.ref = 0;
+  const bool ok = validateArg(a, *sp, r, why);
+  a.ref = ref;
+  return ok;
+}
+
 void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
   out = RawOps{};  // reset before any views exist — safe to move-assign empty
   RawOps& r = out;

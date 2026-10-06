@@ -36,7 +36,10 @@
     "side": 30, "slot": 31, "syn": 32, "copy": 33, "class": 34, "ext": 35, "of": 36,
     "counter": 37, "set": 38, "step": 39, "add": 40, "numbering": 41, "supplement": 42, "key": 43,
     "sep": 44, "or": 45, "cited": 46, "weight": 47, "italic": 48, "decoration": 49, "fontRole": 50,
-    "baseline": 51, "size": 52, "hang": 53, "style": 54, "attach": 55, "display": 56
+    "baseline": 51, "size": 52, "hang": 53, "style": 54, "attach": 55, "display": 56,
+    "parIndent": 57, "parAlign": 58, "parHyphenate": 59, "blockGap": 60, "blockIndent": 61,
+    "keepWithNext": 62, "listMarker": 63, "matchKind": 64, "matchRole": 65, "matchClass": 66, "matchLang": 67,
+    "matchDepth": 68, "matchWhere": 69
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -93,7 +96,20 @@
       "fontRole": {"dom": "enum:body|mono", "since": 11},
       "baseline": {"dom": "enum:super|sub", "since": 11},
       "size": {"dom": "size", "since": 11},
-      "hang": {"dom": "enum:indent|content", "since": 11}}},
+      "hang": {"dom": "enum:indent|content", "since": 11},
+      "parIndent": {"dom": "len", "since": 12},
+      "parAlign": {"dom": "enum:justify|start|center|end", "since": 12},
+      "parHyphenate": {"dom": "enum:auto|true|false", "since": 12},
+      "blockGap": {"dom": "gap", "since": 12},
+      "blockIndent": {"dom": "len", "since": 12},
+      "keepWithNext": {"dom": "bool", "since": 12},
+      "listMarker": {"dom": "str", "since": 12},
+      "matchKind": {"dom": "ident", "since": 12},
+      "matchRole": {"dom": "ident", "since": 12},
+      "matchClass": {"dom": "ident", "since": 12},
+      "matchLang": {"dom": "lang", "since": 12},
+      "matchDepth": {"dom": "int:1:16", "since": 12},
+      "matchWhere": {"dom": "where", "since": 12}}},
     "link": {"id": 19, "level": "inline", "inline": "container", "body": "inline", "since": 6, "ctor": {"params": ["attr:url"]}, "attrs": {
       "url": {"dom": "url"}}},
     "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
@@ -269,6 +285,18 @@
       "max": 32,
       "re": "[a-z][a-z0-9\\-]*"
     },
+    "len": {
+      "max": 16,
+      "re": "0|[0-9]{1,4}(\\.[0-9]{1,4})?(em|px)"
+    },
+    "gap": {
+      "max": 16,
+      "re": "[0-9]{1,3}/[1-9][0-9]{0,2}|0|[0-9]{1,4}(\\.[0-9]{1,4})?(em|px)"
+    },
+    "where": {
+      "max": 256,
+      "re": "[A-Za-z_][A-Za-z0-9_]*=[^;\\x00-\\x1f]*(;[A-Za-z_][A-Za-z0-9_]*=[^;\\x00-\\x1f]*)*"
+    },
     "features": {
       "max": 256,
       "re": "( *(\"[A-Za-z0-9]{4}\"|'[A-Za-z0-9]{4}')( +(on|off|[0-9]{1,3}))?( *, *(\"[A-Za-z0-9]{4}\"|'[A-Za-z0-9]{4}')( +(on|off|[0-9]{1,3}))?)* *)?"
@@ -375,6 +403,13 @@
       "cssOrder": 1,
       "cssValue": "emPx"
     },
+    "par.indent": {"field": "parIndent", "type": "len", "gran": "block", "inherits": true, "attr": "parIndent", "key": "par.indent"},
+    "par.align": {"field": "parAlign", "type": "enum", "gran": "block", "inherits": true, "attr": "parAlign", "key": "par.align", "values": ["justify", "start", "center", "end"]},
+    "par.hyphenate": {"field": "parHyphenate", "type": "enum", "gran": "block", "inherits": true, "attr": "parHyphenate", "key": "par.hyphenate", "values": ["auto", "true", "false"]},
+    "block.gap": {"field": "blockGap", "type": "gap", "gran": "block", "inherits": false, "attr": "blockGap", "key": "block.gap"},
+    "block.indent": {"field": "blockIndent", "type": "len", "gran": "block", "inherits": false, "attr": "blockIndent", "key": "block.indent"},
+    "block.keepWithNext": {"field": "keepWithNext", "type": "bool", "gran": "block", "inherits": false, "attr": "keepWithNext", "key": "block.keepWithNext"},
+    "list.marker": {"field": "listMarker", "type": "str", "gran": "block", "inherits": true, "attr": "listMarker", "key": "list.marker"},
     "engine.script": {
       "field": "script",
       "type": "internal"

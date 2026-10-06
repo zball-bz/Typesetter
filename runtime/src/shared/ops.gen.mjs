@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 12;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '36115472';
+export const SCHEMA_HASH = 'e8e49093';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -273,7 +273,20 @@ export const SINCE = Object.freeze({
       "52": 11,
       "53": 11,
       "54": 11,
-      "55": 11
+      "55": 11,
+      "57": 12,
+      "58": 12,
+      "59": 12,
+      "60": 12,
+      "61": 12,
+      "62": 12,
+      "63": 12,
+      "64": 12,
+      "65": 12,
+      "66": 12,
+      "67": 12,
+      "68": 12,
+      "69": 12
     },
     "19": {
       "0": 9,
@@ -626,7 +639,20 @@ export const ARGK = Object.freeze({
   "hang": 53,
   "style": 54,
   "attach": 55,
-  "display": 56
+  "display": 56,
+  "parIndent": 57,
+  "parAlign": 58,
+  "parHyphenate": 59,
+  "blockGap": 60,
+  "blockIndent": 61,
+  "keepWithNext": 62,
+  "listMarker": 63,
+  "matchKind": 64,
+  "matchRole": 65,
+  "matchClass": 66,
+  "matchLang": 67,
+  "matchDepth": 68,
+  "matchWhere": 69
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -971,6 +997,19 @@ export const SCHEMA = Object.freeze({
       "baseline": "enum:super|sub",
       "size": "size",
       "hang": "enum:indent|content",
+      "parIndent": "len",
+      "parAlign": "enum:justify|start|center|end",
+      "parHyphenate": "enum:auto|true|false",
+      "blockGap": "gap",
+      "blockIndent": "len",
+      "keepWithNext": "bool",
+      "listMarker": "str",
+      "matchKind": "ident",
+      "matchRole": "ident",
+      "matchClass": "ident",
+      "matchLang": "lang",
+      "matchDepth": "int:1:16",
+      "matchWhere": "where",
       "label": "label",
       "role": "ident",
       "slot": "ident",

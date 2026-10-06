@@ -27,6 +27,7 @@ add_library(tsr_core STATIC
   src/ops/domains.gen.cc
   src/api/settings.gen.cc
   src/model/model.cc
+  src/model/cascade.cc
   src/model/normalize.cc
   src/code/tokens.cc
   src/math/math.cc
@@ -50,10 +51,11 @@ add_library(tsr_core STATIC
   src/render/semantic_html.cc
 )
 # built-in element rows and locale packs, embedded (plan P1-10)
-set(TSR_DATA data/elements.json data/locale/en.json data/locale/zh-Hans.json
+set(TSR_DATA data/elements.json data/defaults.json data/locale/en.json data/locale/zh-Hans.json
     data/locale/zh-Hant.json data/locale/ja.json)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${TSR_DATA})
 file(READ data/elements.json ELEMENTS_JSON)
+file(READ data/defaults.json DEFAULTS_JSON)
 file(READ data/locale/en.json LOCALE_EN)
 file(READ data/locale/zh-Hans.json LOCALE_ZH_HANS)
 file(READ data/locale/zh-Hant.json LOCALE_ZH_HANT)

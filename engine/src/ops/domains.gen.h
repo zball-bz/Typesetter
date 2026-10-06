@@ -6,7 +6,7 @@
 namespace tsr {
 
 // textual attribute domains (schema "domains"); whole-string match on bytes
-enum class TextDomain : std::uint8_t { Ident, Label, Lang, Size, Intlist, RangeSet, Color, Font, Copy, Classlist, Extname, Features };
+enum class TextDomain : std::uint8_t { Ident, Label, Lang, Size, Intlist, RangeSet, Color, Font, Copy, Classlist, Extname, Len, Gap, Where, Features };
 bool matchDomain(TextDomain d, std::string_view s);
 
 }  // namespace tsr

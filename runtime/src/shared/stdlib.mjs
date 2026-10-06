@@ -26,25 +26,30 @@ export const CONTENT = Symbol.for('tsm.content');
 // — and the boolean sugar bold, underline, overline, strike (bold: false is
 // weight 400). `unknown(key)` hears every other key. A style change on the
 // wire is a delta node: a childless styled node with these attributes.
+// the namespaced style keys (code: {hang}, par: {indent, align, hyphenate},
+// block: {gap, indent, keepWithNext}, list: {marker}: plan P3-01)
+const STYLE_GROUPS = new Set(Object.keys(STYLE_KEYS).filter((k) => k.includes('.')).map((k) => k.split('.')[0]));
 export const styleAttrs = (p, unknown) => {
   const out = {};
   const put = (attr, v, key) => {
+    const dom = SCHEMA.styled.attrs[attr] ?? '';
     if (STYLE_FLAGS[attr]) {  // a flag set: a name or a list of names, ORed
       for (const nm of Array.isArray(v) ? v : [v]) {
         const f = STYLE_FLAGS[attr][String(nm)];
         if (f) out[attr] = (out[attr] ?? 0) | f;
         else unknown?.(`${key}: ${nm}`);
       }
-    } else if (attr === 'size' && typeof v === 'number') out[attr] = `${v}em`;
+    } else if ((attr === 'size' || dom === 'len' || dom === 'gap') && typeof v === 'number') out[attr] = `${v}em`;
+    else if (dom.startsWith('enum:') && typeof v === 'boolean') out[attr] = String(v);  // par.hyphenate
     else out[attr] = v;
   };
   for (const [k, v] of Object.entries(p ?? {})) {
     if (v === undefined || v === null) continue;
-    if (k === 'code' && typeof v === 'object' && !Array.isArray(v)) {
+    if (STYLE_GROUPS.has(k) && typeof v === 'object' && !Array.isArray(v)) {
       for (const [k2, v2] of Object.entries(v)) {
-        const a = STYLE_KEYS[`code.${k2}`];
-        if (a && v2 !== undefined && v2 !== null) put(a, v2, `code.${k2}`);
-        else if (!a) unknown?.(`code.${k2}`);
+        const a = STYLE_KEYS[`${k}.${k2}`];
+        if (a && v2 !== undefined && v2 !== null) put(a, v2, `${k}.${k2}`);
+        else if (!a) unknown?.(`${k}.${k2}`);
       }
     } else if (STYLE_KEYS[k]) put(STYLE_KEYS[k], v, k);
     else if (STYLE_SUGAR[k]) {
@@ -59,7 +64,34 @@ export const styleAttrs = (p, unknown) => {
 const STYLED_ORDER = Object.keys(SCHEMA.styled.attrs);
 // a key that names a style row or its sugar (a region option spelled so is a
 // mistake: style: {…} carries style, plan P2-08)
-export const isStyleKey = (k) => k in STYLE_KEYS || k in STYLE_SUGAR || k === 'code';
+export const isStyleKey = (k) => k in STYLE_KEYS || k in STYLE_SUGAR || STYLE_GROUPS.has(k);
+
+// a selector as a rule's match attributes (plan P3-01; design T4 Selector):
+// a kind name, or {kind, role, class, lang, depth, …its own attributes
+// (level: 1)} — what the node was emitted with, never what a rule set
+export const matchAttrs = (sel) => {
+  if (typeof sel === 'string') return { matchKind: sel };
+  if (sel === null || typeof sel !== 'object' || Array.isArray(sel))
+    throw new TypeError('a selector is a kind name or {kind, role, class, lang, depth, …attributes}');
+  const out = {}, where = [];
+  for (const [k, v] of Object.entries(sel)) {
+    if (v === undefined || v === null) continue;
+    if (k === 'kind') out.matchKind = String(v);
+    else if (k === 'role') out.matchRole = String(v);
+    else if (k === 'class') out.matchClass = String(v);
+    else if (k === 'lang' || k === 'textLang') out.matchLang = String(v);
+    else if (k === 'depth') out.matchDepth = Number(v);
+    else where.push(`${k}=${v}`);
+  }
+  if (where.length) out.matchWhere = where.join(';');
+  if (!Object.keys(out).length) throw new TypeError('a selector selects something: {kind, role, class, …}');
+  return out;
+};
+// a rule's styled attributes: its match then its patch, in the writer's order
+export const ruleAttrs = (sel, patch, unknown) => {
+  const all = { ...matchAttrs(sel), ...styleAttrs(patch, unknown) };
+  return Object.fromEntries(STYLED_ORDER.filter((a) => a in all).map((a) => [a, all[a]]));
+};
 
 // ---- specs ------------------------------------------------------------------
 // a param's accepted JS type, from its attribute domain
@@ -860,6 +892,11 @@ export function createStd(host) {
       return mathNode(kids);
     },
   });
+
+  // style.where(selector, patch, ...kids) (plan P3-01): a rule for its
+  // content — the patch applies to the nodes inside that match the selector
+  std.style.where = (sel, patch, ...kids) =>
+    ob.makeNode(KIND.styled, ruleAttrs(sel, patch, styleKeyDiag('style.where')), kidsOf(kids));
 
   // ---- semantic declarations: canonical rows ----------------------------------
   // The JS sugar ends here: rows reach the engine in elements.json's form

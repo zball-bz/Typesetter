@@ -3,7 +3,7 @@
 // Works in Node (temp-file import) and in browsers/workers (blob URL import).
 import { KIND } from '../shared/ops.gen.mjs';
 import { OpBuf, isNode } from '../shared/opbuf.mjs';
-import { createStd, styleAttrs, NULLARY, CONTENT } from '../shared/stdlib.mjs';
+import { createStd, styleAttrs, ruleAttrs, NULLARY, CONTENT } from '../shared/stdlib.mjs';
 import { decodeProgram, Lowering, STUB, fragmentRequest, fragmentResponse } from '../shared/lower.mjs';
 import { BFLAG, LPIECE, PROGRAM_ABI } from '../shared/lower.gen.mjs';
 
@@ -151,6 +151,14 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     // $.std: the base constructors (unaffected by overrides), plain(), and
     // the manifest of what this execution has defined so far
     std: Object.freeze({ base: S.base, plain: S.plain, manifest: S.api.manifest }),
+    // $.set(selector, patch) (plan P3-01; design T4 Rules): a rule from here
+    // on — the patch applies to every later node the selector matches; it is
+    // a schedule entry like $.style.push (popTo pops it)
+    set(sel, patch) {
+      const d = ob.makeNode(KIND.styled, ruleAttrs(sel, patch, (k) => ob.diag(1, 'ctor-arg', `$.set: unknown style key ${k}`, here.s, here.e)), []);
+      styleStack.push(d);
+      ob.stylePush(d);
+    },
     style: {
       // a patch object only (plan P2-01: the raw bit-number form is gone)
       push(x) {

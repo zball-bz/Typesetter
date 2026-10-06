@@ -7,6 +7,8 @@
 namespace tsr {
 
 constexpr std::string_view kElementsJson = R"tsrdata(@ELEMENTS_JSON@)tsrdata";
+// the engine's default rules (plan P3-01: env 0 of the cascade)
+constexpr std::string_view kDefaultsJson = R"tsrdata(@DEFAULTS_JSON@)tsrdata";
 
 struct LocaleSource {
   std::string_view lang, json;

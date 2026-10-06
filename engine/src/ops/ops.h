@@ -98,6 +98,10 @@ struct RawOps {
 // short blob would sit in std::string's SSO buffer (a returned/moved RawOps
 // would carry views into the moved-from object).
 void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags);
+// a styled attribute's value from outside a buffer (plan P3-01: rules in
+// JSON) through the same domain check — `text`: a Str value's string;
+// numbers are clamped like the reader's; false = drop it (`why`)
+bool checkStyledValue(ArgVal& a, std::string_view text, std::string& why);
 std::string dumpOps(const RawOps& r);
 
 }  // namespace tsr

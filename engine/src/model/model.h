@@ -25,6 +25,10 @@ struct ContentNode {
   // a moved or cloned node keeps it, so a formula binds names as of its
   // place in the flow
   u32 declEpoch = 0;
+  // (plan P3-01; design T4 Cascade) its block properties (a NodePropsTable
+  // id: model/cascade.h) and the rules in force for its children (a RuleEnvId)
+  u32 props = 0;
+  u32 env = 0;
 };
 
 // Typed attribute accessors (plan P0-06). Values that came through the ops
@@ -112,9 +116,13 @@ constexpr size_t kInstPerRawNode = 64;
 // EMIT walk with emission-time style resolution; DAG values are copied per
 // emission (document-model §3).
 class Registry;
-// `reg` decides each node's class (its nearest classed ancestor included).
-ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
-                        StyleTable& styles, DiagSink& diags, const Registry& reg);
+class Cascade;
+class NodePropsTable;
+// `reg` decides each node's class (its nearest classed ancestor included);
+// `cascade` (plan P3-01) folds the rules in force into each node's style and
+// block properties (`props`).
+ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs, StyleTable& styles, NodePropsTable& props,
+                        Cascade& cascade, DiagSink& diags, const Registry& reg);
 
 std::string dumpTree(const ContentTree& t, const Interner& strs, const StyleTable& styles);
 

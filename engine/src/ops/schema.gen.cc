@@ -205,6 +205,8 @@ const std::uint8_t kB_styled_decoration[] = {0, 1, 2};
 const char* const kM_styled_fontRole[] = {"body", "mono"};
 const char* const kM_styled_baseline[] = {"super", "sub"};
 const char* const kM_styled_hang[] = {"indent", "content"};
+const char* const kM_styled_parAlign[] = {"justify", "start", "center", "end"};
+const char* const kM_styled_parHyphenate[] = {"auto", "true", "false"};
 const char* const kM_styled_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_styled[] = {
     {21, "font", Dom::Font, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -218,6 +220,19 @@ const AttrSpec kA_styled[] = {
     {51, "baseline", Dom::Enum, 0, 0, kM_styled_baseline, nullptr, 2, false, false, 0, 11, 0, false},
     {52, "size", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 11, 3, false},
     {53, "hang", Dom::Enum, 0, 0, kM_styled_hang, nullptr, 2, false, false, 0, 11, 0, false},
+    {57, "parIndent", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 11, false},
+    {58, "parAlign", Dom::Enum, 0, 0, kM_styled_parAlign, nullptr, 4, false, false, 0, 12, 0, false},
+    {59, "parHyphenate", Dom::Enum, 0, 0, kM_styled_parHyphenate, nullptr, 3, false, false, 0, 12, 0, false},
+    {60, "blockGap", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 12, false},
+    {61, "blockIndent", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 11, false},
+    {62, "keepWithNext", Dom::Bool, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
+    {63, "listMarker", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
+    {64, "matchKind", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
+    {65, "matchRole", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
+    {66, "matchClass", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
+    {67, "matchLang", Dom::Lang, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
+    {68, "matchDepth", Dom::Int, 1, 16, nullptr, nullptr, 0, false, false, 0, 12, 0, false},
+    {69, "matchWhere", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 12, 13, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -491,7 +506,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"error", Level::Adaptive, Body::None, InlineShape::Error, 6, kA_error, 11},
     {"comment", Level::Trivia, Body::Text, InlineShape::Skip, 6, kA_comment, 9},
     {"text", Level::Inline, Body::None, InlineShape::Text, 6, nullptr, 0},
-    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 20},
+    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 33},
     {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 10},
     {"code", Level::Inline, Body::Text, InlineShape::Code, 6, kA_code, 9},
     {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 13},
