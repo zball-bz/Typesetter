@@ -1,8 +1,8 @@
 top pid=0 leaves=2
   stack root gap=1/1 @[118,173)
     stack group @[118,173)
-      paragraph para unit=0 @[118,173)
-      paragraph para unit=1 @[118,173)
+      paragraph para unit=0 @[128,144)
+      paragraph para unit=1 @[146,163)
 top pid=1 leaves=2
   stack root gap=1/1 @[175,222)
     stack group @[175,222)
@@ -12,7 +12,7 @@ top pid=2 leaves=1
   stack root gap=1/1 @[305,344)
     stack group @[305,344)
       stack group anchor="c2" @[305,344)
-        paragraph para unit=0 carry="c2" @[305,344)
+        paragraph para unit=0 carry="c2" @[328,334)
 top pid=3 leaves=1
   stack root gap=1/1 @[346,377)
     stack group @[346,377)

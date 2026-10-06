@@ -1,8 +1,8 @@
 doc @[118,377) [base]
   group @[118,173) [base] role="callout"
-    para @[118,173) [base]
+    para @[128,144) [base]
       text @[128,144) [base] str="First paragraph."
-    para @[118,173) [base]
+    para @[146,163) [base]
       text @[146,163) [base] str="Second paragraph."
   group @[175,222) [base] role="callout"
     para @[185,201) [base]
@@ -11,7 +11,7 @@ doc @[118,377) [base]
       text @[203,220) [base] str="Second paragraph."
   group @[305,344) [base] role="frame"
     group @[305,344) [base] role="callout" label="c2"
-      para @[305,344) [base]
+      para @[328,334) [base]
         text @[328,334) [base] str="Third."
   group @[346,377) [base] role="frame"
     group @[346,377) [base] role="callout" label="c3"

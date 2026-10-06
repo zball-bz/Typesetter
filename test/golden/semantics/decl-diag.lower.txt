@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 527 holes 6 module 14e512c0f7d749a1
+lower v1 abi 4d4c6e49 docEnd 527 holes 6 module 73714a6d2bfcc385
 piece 0 hole 0 js [157,178)
 piece 1 hole 1 js [180,462)
 piece 2 hole 2 js [464,507)
@@ -10,9 +10,8 @@ block 0 content [0,30)
     TEXT "A memo before its declaration:" [0,30)
 block 1 content [32,65) user framed async holes 0..1
   REGION async "memo" args=hole 0 [32,65)
-    ROWS
-      row
-        TEXT "Noted." [52,58)
+    CALL para [52,58)
+      TEXT "Noted." [52,58)
 block 2 stmt [67,342) user framed holes 1..2
   STMT 1
 block 3 content [344,459) user framed holes 2..4

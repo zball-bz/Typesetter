@@ -17,13 +17,13 @@ LOWER_PROTOCOL(1)
 // LOP(name, code, operands) — body ops, preorder. The high bit of the op
 // byte (0x80) marks a subtree that awaits (a fence, a region — their
 // handlers may be async —, an async hole).
-LOP(TEXT,     1, "str s e nMap (cooked raw)*")   // raw relative to s (plan P2-04)
+LOP(TEXT,     1, "str s e nMap (cooked raw)* nSep sep*")   // raw relative to s (plan P2-04);
+                                                          // sep: a cell cut's cooked offset (plan P2-11)
 LOP(CALL,     2, "flags ctor [s e] nAttrs (key const)* nKids value*")
 LOP(HOLE,     3, "hole s e nKids value*")
 LOP(FRAME,    4, "s e holeLo holeHi value")
 LOP(FENCE,    5, "lang args label+1 info+1 body bodyOffset bodyEnd lines:const s e")
-LOP(REGION,   6, "name args label+1 s e nItems (value | ROWS)*")
-LOP(ROWS,     7, "nRows (nCells value*)*")   // a REGION item (or a FRAME's, there)
+LOP(REGION,   6, "name args label+1 s e nItems value*")
 LOP(STMT,     8, "hole")
 LOP(VERBATIM, 9, "ordinal")
 // args (FENCE, REGION): 0 = none, else (hole + 1) << 1 | 1 when that hole

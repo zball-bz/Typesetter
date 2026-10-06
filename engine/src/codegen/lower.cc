@@ -290,9 +290,8 @@ struct Walker {
     if (n > c.b.size() - c.p) return fail("count out of range");  // each item takes a byte
     return true;
   }
-  // one value; async: the op claims to await (checked against its kids).
-  // rows: a REGION item, where ROWS (a table paragraph) is a value too
-  bool value(int depth, bool& awaits, bool rows = false) {
+  // one value; async: the op claims to await (checked against its kids)
+  bool value(int depth, bool& awaits) {
     if (depth > kMaxDepth) return fail("nesting too deep");
     u8 opb;
     if (!c.byte(opb)) return fail("truncated op");
@@ -321,6 +320,16 @@ struct Walker {
           if (out) appendf(*out, "%s%u:%u", k ? "," : " raw=", c0, r0);
           pc = c0;
           pr = r0;
+        }
+        // its cell cuts (plan P2-11): cooked offsets of '|', increasing
+        u32 ns;
+        if (!count(ns)) return false;
+        for (u32 k = 0, prev = 0; k < ns; k++) {
+          u32 o;
+          if (!c.u(o)) return fail("truncated TEXT seps");
+          if ((k && o <= prev) || o >= P.strs[r].size() || P.strs[r][o] != '|') return fail("bad TEXT sep");
+          if (out) appendf(*out, "%s%u", k ? "," : " seps=", o);
+          prev = o;
         }
         if (out) *out += "\n";
         if (async) return fail("TEXT cannot await");
@@ -370,7 +379,7 @@ struct Walker {
         if (lo != next || lo > hi || hi > P.holes) return fail("FRAME hole range out of range");
         if (out) appendf(*out, " holes %u..%u\n", lo, hi);
         bool a;
-        if (!value(depth + 1, a, rows)) return false;
+        if (!value(depth + 1, a)) return false;
         if (next != hi) return fail("FRAME hole range differs from its holes");
         kidsAwait = a;
         break;
@@ -420,30 +429,12 @@ struct Walker {
         if (out) *out += "\n";
         for (u32 i = 0; i < n; i++) {
           bool a;
-          if (!value(depth + 1, a, true)) return false;
+          if (!value(depth + 1, a)) return false;
           kidsAwait |= a;
         }
         (void)argsAwait;
         if (!async) return fail("REGION must await");
         return true;
-      }
-      case Lop::ROWS: {
-        if (!rows) return fail("ROWS outside a REGION");
-        u32 nr;
-        if (!count(nr)) return false;
-        if (out) *out += "\n";
-        for (u32 r = 0; r < nr; r++) {
-          u32 nc;
-          if (!count(nc)) return false;
-          indent(depth + 1);
-          if (out) *out += "row\n";
-          for (u32 k = 0; k < nc; k++) {
-            bool a;
-            if (!value(depth + 2, a)) return false;
-            kidsAwait |= a;
-          }
-        }
-        break;
       }
       default:
         return fail("op not a value");

@@ -18,9 +18,9 @@ inline bool isLabelChar(char c) { return !((unsigned char)c < 0x20 || c == 0x7f 
 inline bool isEscapable(char c) { return (c >= '!' && c <= '/') || (c >= ':' && c <= '@') || (c >= '[' && c <= '`') || (c >= '{' && c <= '~'); }
 
 // sugar: a built-in Call's slot (its meaning); the payload struct follows
-enum class SugarId : u16 { para, heading, list, item, quote, rule, fence, region, strong, em, code, link, note, ref, math, arg, row, cell };
-constexpr const char* kSugarName[] = {"para", "heading", "list", "item", "quote", "rule", "fence", "region", "strong", "em", "code", "link", "note", "ref", "math", "arg", "row", "cell"};
-constexpr u32 kSugarCount = 18;
+enum class SugarId : u16 { para, heading, list, item, quote, rule, fence, region, strong, em, code, link, note, ref, math, arg };
+constexpr const char* kSugarName[] = {"para", "heading", "list", "item", "quote", "rule", "fence", "region", "strong", "em", "code", "link", "note", "ref", "math", "arg"};
+constexpr u32 kSugarCount = 16;
 
 // payloads (zero-width side records trailing their node)
 struct HeadingP {
@@ -65,6 +65,7 @@ struct ErrorP {
 };
 struct TextP {
   StrRef rawmap = 0;
+  StrRef seps = 0;
 };
 
 // inline rules (INLINE rows): precedence and body mode per rule

@@ -4,8 +4,8 @@ doc @[0,101) [base]
   heading @[7,15) [base] level=3 label="deep"
     text @[11,15) [base] str="Deep"
   group @[24,81) [base] role="figure" label="f1"
-    para @[24,81) [base] role="caption"
-      text @[24,81) [BOLD] str="Fig. 1: "
+    para @[46,72) [base] role="caption"
+      text @[46,72) [BOLD] str="Fig. 1: "
       text @[46,72) [base] str="A figure the host renamed."
   para @[83,101) [base]
     text @[83,86) [base] str="See " raw=0:0,4:3

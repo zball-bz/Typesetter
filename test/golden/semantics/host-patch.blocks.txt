@@ -6,10 +6,10 @@ top pid=1 units=1
   word "Deep" w=2357su pen=INF BOLD x1.15 @[11,15)
 top pid=2 units=1
  unit text indent=0su anchor="f1" centered
-  word "Fig." w=2049su pen=INF BOLD @[24,81)
-  space w=257su stretch=1 BOLD @[24,81)
-  word "1:" w=1025su pen=INF BOLD @[24,81)
-  space w=257su stretch=1 BOLD @[24,81)
+  word "Fig." w=2049su pen=INF BOLD @[46,72)
+  space w=257su stretch=1 BOLD @[46,72)
+  word "1:" w=1025su pen=INF BOLD @[46,72)
+  space w=257su stretch=1 BOLD @[46,72)
   word "A" w=513su pen=INF @[46,72)
   space w=257su stretch=1 @[46,72)
   word "figure" w=3073su pen=INF @[46,72)

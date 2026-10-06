@@ -3,8 +3,6 @@ doc @[0,183)
     text @[2,30) str="Heading before a tall figure"
   region @[32,158) name="figure"
     para @[113,149)
-      row @[113,149)
-        cell @[113,149)
-          text @[113,149) str="A figure 200px tall on 240px sheets."
+      text @[113,149) str="A figure 200px tall on 240px sheets."
   para @[160,182)
     text @[160,182) str="Text after the figure."

@@ -128,8 +128,6 @@ struct Conv {
       case SugarId::fence:
       case SugarId::region:
       case SugarId::arg:
-      case SugarId::row:
-      case SugarId::cell:
         // block structure cannot come out of an inline parse; flatten
         for (const AstNode* k : a->kids()) conv(k, bits, base, out);
         return;

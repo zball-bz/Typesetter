@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 982 holes 6 module d7dbfa229390a368
+lower v1 abi 4d4c6e49 docEnd 982 holes 6 module a710a2d55d1d581c
 piece 0 hole 0 js [162,202)
 piece 1 hole 1 js [204,250)
 piece 2 hole 2 js [252,284)
@@ -19,14 +19,12 @@ block 3 content [606,639) user framed holes 0..1
     HOLE 0 [606,639)
 block 4 content [641,726) user framed async holes 1..2
   REGION async "theorem" args=hole 1 [641,726)
-    ROWS
-      row
-        TEXT "Equivalent types are equal." [689,716)
+    CALL para [689,716)
+      TEXT "Equivalent types are equal." [689,716)
 block 5 content [728,809) user framed async holes 2..3
   REGION async "lemma" args=hole 2 [728,809)
-    ROWS
-      row
-        TEXT "Transport along a path is an equivalence." [760,801)
+    CALL para [760,801)
+      TEXT "Transport along a path is an equivalence." [760,801)
 block 6 content [811,981) user framed holes 3..6
   CALL para [811,981)
     TEXT "By " [811,813) raw=0:0,3:2

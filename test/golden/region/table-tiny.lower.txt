@@ -1,8 +1,6 @@
-lower v1 abi 9bdc5985 docEnd 31 holes 1 module a5ecd310489a1d86
+lower v1 abi 4d4c6e49 docEnd 31 holes 1 module f665e4469d27d9a2
 piece 0 hole 0 js [103,120)
 block 0 content [0,30) user framed async holes 0..1
   REGION async "table" args=hole 0 [0,30)
-    ROWS
-      row
-        TEXT "A" [17,18)
-        TEXT "B" [21,22)
+    CALL para [17,22)
+      TEXT "A | B" [17,22) seps=2

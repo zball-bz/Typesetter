@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 201 holes 0 module none
+lower v1 abi 4d4c6e49 docEnd 201 holes 0 module none
 block 0 content [0,18)
   CALL heading [0,18) level=1 label="sec-a"
     TEXT "Labelled heading" [2,18)
@@ -6,9 +6,11 @@ block 1 content [28,99)
   CALL para [28,99)
     TEXT "A short paragraph before a labelled display equation on the same sheet." [28,99)
 block 2 content [101,130)
-  CALL mathblock [101,130) src="a^2 + b^2 = c^2" label="eq-pyth"
+  CALL para [101,130)
+    CALL mathblock [101,130) src="a^2 + b^2 = c^2" label="eq-pyth"
 block 3 content [132,163)
-  CALL mathblock [132,163) src="e^(i pi) + 1 = 0" label="eq-euler"
+  CALL para [132,163)
+    CALL mathblock [132,163) src="e^(i pi) + 1 = 0" label="eq-euler"
 block 4 content [165,200)
   CALL para [165,200)
     TEXT "See " [165,168) raw=0:0,4:3

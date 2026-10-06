@@ -1,0 +1,20 @@
+doc @[0,79) [base]
+  table @[0,79) [base] cols=2
+    trow @[0,79) [base]
+      tcell @[0,79) [base]
+        styled @[17,24) [BOLD]
+          text @[18,23) [BOLD] str="a | b"
+      tcell @[0,79) [base]
+        text @[27,28) [base] str="c"
+    trow @[0,79) [base]
+      tcell @[0,79) [base]
+        code @[29,36) [base]
+          text @[29,36) [base] str="x | y"
+      tcell @[0,79) [base]
+        text @[39,49) [base] str="| literal" raw=0:0,1:2
+    trow @[0,79) [base]
+      tcell @[0,79) [base]
+        styled @[50,67) [BOLD]
+          text @[51,66) [BOLD] str="a line crossing"
+      tcell @[0,79) [base]
+        text @[70,71) [base] str="d"

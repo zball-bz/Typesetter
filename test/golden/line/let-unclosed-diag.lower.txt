@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 68 holes 0 module none
+lower v1 abi 4d4c6e49 docEnd 68 holes 0 module none
 block 0 content [0,12)
   CALL error [0,12) code="statement-unclosed" message="unterminated #let: dropped up to the next blank line"
 block 1 content [13,28)

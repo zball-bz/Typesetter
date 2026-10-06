@@ -4,17 +4,17 @@ doc @[568,981) [base]
   heading @[584,596) [base] level=1 label="ch-ua"
     text @[586,596) [base] str="Univalence"
   group @[641,726) [base] role="theorem" label="thm-ua" ext.title="Univalence"
-    para @[641,726) [base]
-      text @[641,726) [BOLD] str="Theorem 2.10"
-      text @[641,726) [base] str=" (Univalence)"
-      text @[641,726) [BOLD] str="."
-      text @[641,726) [base] str=" "
+    para @[689,716) [base]
+      text @[689,716) [BOLD] str="Theorem 2.10"
+      text @[689,716) [base] str=" (Univalence)"
+      text @[689,716) [BOLD] str="."
+      text @[689,716) [base] str=" "
       text @[689,716) [base] str="Equivalent types are equal."
   group @[728,809) [base] role="lemma" label="lem-transport"
-    para @[728,809) [base]
-      text @[728,809) [BOLD] str="Lemma 2.11"
-      text @[728,809) [BOLD] str="."
-      text @[728,809) [base] str=" "
+    para @[760,801) [base]
+      text @[760,801) [BOLD] str="Lemma 2.11"
+      text @[760,801) [BOLD] str="."
+      text @[760,801) [base] str=" "
       text @[760,801) [base] str="Transport along a path is an equivalence."
   para @[811,981) [base]
     text @[811,813) [base] str="By " raw=0:0,3:2

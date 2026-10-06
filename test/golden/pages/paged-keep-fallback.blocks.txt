@@ -12,11 +12,11 @@ top pid=0 units=1
 top pid=1 units=2
  unit img indent=0su anchor="fig-tall" intrinsic=300x200px
  unit text indent=0su centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[32,158)
-  space w=257su stretch=1 BOLD @[32,158)
-  word "1" w=513su pen=INF BOLD @[32,158)
-  punct-close "：" w=512su BOLD @[32,158)
-  punct-sp w=512su BOLD @[32,158)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[113,149)
+  space w=257su stretch=1 BOLD @[113,149)
+  word "1" w=513su pen=INF BOLD @[113,149)
+  punct-close "：" w=512su BOLD @[113,149)
+  punct-sp w=512su BOLD @[113,149)
   word "A" w=513su pen=INF @[113,149)
   space w=257su stretch=1 @[113,149)
   word "figure" w=3073su pen=INF @[113,149)

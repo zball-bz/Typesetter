@@ -1,0 +1,9 @@
+#!aside
+A display formula inside a region is a block of its own:
+
+$ e = m c^2 $ <eq-r>
+
+and the paragraph goes on.
+#aside!
+
+See @eq-r.

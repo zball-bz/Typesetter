@@ -1,18 +1,18 @@
 doc @[0,177) [base]
   group @[0,47) [base] role="outer"
-    para @[0,47) [base]
+    para @[8,19) [base]
       text @[8,19) [base] str="Outer text."
     group @[20,39) [base] role="inner"
-      para @[20,39) [base]
+      para @[28,39) [base]
         text @[28,39) [base] str="Inner text."
   para @[49,67) [base]
     text @[49,67) [base] str="After the regions."
   quote @[69,97) [base]
     group @[71,97) [base] role="aside"
-      para @[71,97) [base]
+      para @[81,97) [base]
         text @[81,97) [base] str="A quoted region."
   para @[98,144) [base]
     text @[98,144) [base] str="Not quoted: the quote and its region end here."
   group @[146,177) [base] role="lonely"
-    para @[146,177) [base]
+    para @[155,177) [base]
       text @[155,177) [base] str="Text without a closer."

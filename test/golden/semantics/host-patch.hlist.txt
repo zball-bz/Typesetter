@@ -8,10 +8,10 @@ top pid=1 units=1
   run r0 plain BOLD x1.15
 top pid=2 units=1
  unit text indent=0su anchor="f1" centered
-  box Other "Fig." w=2049su r0 @[24,81)
-  glue word w=257su x=1 cap=257su kern=". 1" src r0 @[24,81)
-  box Other "1:" w=1025su r0 @[24,81)
-  glue word w=257su x=1 cap=257su src r0 @[24,81)
+  box Other "Fig." w=2049su r0 @[46,72)
+  glue word w=257su x=1 cap=257su kern=". 1" src r0 @[46,72)
+  box Other "1:" w=1025su r0 @[46,72)
+  glue word w=257su x=1 cap=257su src r0 @[46,72)
   box Other "A" w=513su r1 @[46,72)
   glue word w=257su x=1 cap=257su kern="A f" src r1 @[46,72)
   box Other "figure" w=3073su r1 @[46,72)

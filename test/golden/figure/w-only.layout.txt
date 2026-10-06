@@ -4,5 +4,5 @@ para pid=0 y=0su w=19200su h=3072su
   L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[20,39) @[0,106)
 para pid=1 y=4301su w=19200su h=10061su
   L0 img y=0su left=5760su w=7680su h=5760su
-  L1 y=6989su left=0su w=19200su dw=0su dc=0su join=none blocks=[0,22) @[108,262)
+  L1 y=6989su left=0su w=19200su dw=0su dc=0su join=none blocks=[0,22) @[195,253)
   L2 y=8525su left=7808su w=11392su dw=0su dc=0su join=last blocks=[22,26) @[195,253)

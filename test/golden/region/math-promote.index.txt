@@ -1,0 +1,2 @@
+instance equation 1 label=eq-r @[66,86)
+label eq-r -> equation 1 @[66,86)

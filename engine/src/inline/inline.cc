@@ -25,6 +25,9 @@ struct Frame {
 struct LeafHints {
   const std::vector<Span>* bodies = nullptr;
   const std::vector<u32>* literal = nullptr;
+  // (plan P2-11) a region interior's paragraph: its top-level unescaped '|'
+  // are cell cuts (D-L05), recorded on their Text nodes (TextP seps)
+  bool cells = false;
 };
 
 // A content body re-enters the line pass (Blocks mode): defined below.
@@ -54,6 +57,7 @@ struct InlineParser {
   // text is its own raw slice
   std::vector<u32> rmap;
   u32 rmC = 0, rmR = 0;  // the last breakpoint
+  std::vector<u32> seps;  // the cell cuts in buf (cooked offsets; hints.cells)
   bool pendingSpace = false;
   // a line join is a soft break (plan P2-10): U+000A in the cooked text,
   // absorbing the blanks around it; the engine decides how it joins (a
@@ -114,9 +118,18 @@ struct InlineParser {
         appendf(m, "%s%u:%u", k ? "," : "", rmap[k], rmap[k + 1] - sp.start);
       side<TextP>(n).rawmap = strs.intern(m);
     }
+    if (!seps.empty()) {  // "o,o,…": the cooked offsets of its cell cuts
+      std::string m;
+      for (size_t k = 0; k < seps.size(); k++) {
+        if (k) m += ',';
+        m += std::to_string(seps[k]);
+      }
+      side<TextP>(n).seps = strs.intern(m);
+    }
     stack.back().items.push_back(n);
     buf.clear();
     rmap.clear();
+    seps.clear();
   }
 
   void spaceBeforeItem() {
@@ -541,10 +554,12 @@ struct InlineParser {
   void run() {
     stack.push_back({0});
     i = from;
-    // bytes the loop must look at: rule openers, blanks, joins, escapes
-    auto special = [](char ch) {
+    // bytes the loop must look at: rule openers, blanks, joins, escapes —
+    // and in a region paragraph the cell bar (plan P2-11)
+    const bool cells = hints.cells;
+    auto special = [cells](char ch) {
       return kInlineOpenerByte[(u8)ch] || ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' ||
-             ch == '\\';
+             ch == '\\' || (cells && ch == '|');
     };
     while (i < to) {
       const char c = t[i];
@@ -585,6 +600,8 @@ struct InlineParser {
         case InlineRule::none: break;
       }
       put(c, i);
+      if (c == '|' && hints.cells && stack.size() == 1)  // a cell cut (D-L05: top level only)
+        seps.push_back((u32)buf.size() - 1);
       i++;
     }
     flushText();
@@ -609,50 +626,6 @@ std::vector<AstNode*> parseLeaf(const SourceText& src, const std::vector<Span>& 
   return std::move(p.stack.back().items);
 }
 
-// Top-level segmentation of a region line at unescaped '|' (v2 §4.1): atoms
-// (escapes, code spans, math islands, comments, splices and their content
-// arguments) are opaque, so `a|b` in a code span, `$|x|$` or #f("a|b")[c|d]
-// never splits. '||' is an empty cell; leading and trailing empty segments
-// of a '|'-framed line drop.
-static void splitCells(std::string_view all, Span line, std::vector<Span>& cells) {
-  LeafText L(all, {line});
-  const std::string_view t = L.text();
-  const u32 n = (u32)t.size();
-  BracketMatcher brackets(t);
-  std::vector<u32> cuts;
-  for (u32 p = 0; p < n;) {
-    u32 e = atomEnd(t, p);
-    if (e > p) {
-      bool spliced = t[p] == '#';
-      p = e;
-      while (spliced && p < n && t[p] == '[') {  // content arguments
-        i32 close = brackets.body(p);
-        if (close < 0) break;
-        p = (u32)close + 1;
-      }
-      continue;
-    }
-    if (t[p] == '`') {  // an unclosed backtick run is literal
-      while (p < n && t[p] == '`') p++;
-      continue;
-    }
-    if (t[p] == '|') cuts.push_back(line.start + p);
-    p++;
-  }
-  u32 prev = line.start;
-  for (u32 cut : cuts) {
-    cells.push_back({prev, cut});
-    prev = cut + 1;
-  }
-  cells.push_back({prev, line.end});
-  auto blank = [&](Span sp) {
-    for (u32 k = sp.start; k < sp.end; k++)
-      if (all[k] != ' ' && all[k] != '\t' && all[k] != '\r') return false;
-    return true;
-  };
-  if (cells.size() > 1 && blank(cells.front())) cells.erase(cells.begin());
-  if (cells.size() > 1 && blank(cells.back())) cells.pop_back();
-}
 
 struct AstBuilder {
   const SourceText& src;
@@ -672,6 +645,7 @@ struct AstBuilder {
     return body;
   }
 
+  bool cellsNext = false;  // the next paragraph is a region's: it records cell cuts
   std::vector<AstNode*> inlineParse(const std::vector<Span>& spans, LeafHints hints = {}) {
     return parseLeaf(src, spans, arena, strs, diags, hints);
   }
@@ -702,7 +676,10 @@ struct AstBuilder {
         return errorNode(s->span, s->errCode, s->errMsg, /*report=*/false);
       case SkelKind::Para: {
         AstNode* p = A.call(SugarId::para, s->span);
-        A.setKids(p, inlineParse(s->lineSpans, {&s->bodies, &s->literalAt}));
+        LeafHints h{&s->bodies, &s->literalAt};
+        h.cells = cellsNext;
+        cellsNext = false;
+        A.setKids(p, inlineParse(s->lineSpans, h));
         // a ` <id>` closing a paragraph as literal text (not a formula's
         // label): say so (plan P2-06)
         if (!s->lineSpans.empty() && p->nkids) {
@@ -824,31 +801,12 @@ struct AstBuilder {
                       "the region has a label: argument and a <" + std::string(src.slice(s->labelSpan)) +
                           "> suffix: the label: argument wins");
         }
+        // its interior lowers like any blocks (plan P2-11); a paragraph
+        // records its cell cuts for body.rows()
         std::vector<AstNode*> kids;
         for (const SkelNode* k : s->kids) {
-          if (k->kind == SkelKind::Para) {
-            // line provenance (v2 §4.1): each source line is a row whose
-            // cells are the top-level '|' segmentation, inline-parsed
-            AstNode* p = A.call(SugarId::para, k->span);
-            std::vector<AstNode*> rows;
-            for (const Span& line : k->lineSpans) {
-              AstNode* row = A.call(SugarId::row, line);
-              std::vector<Span> cells;
-              splitCells(src.view(), line, cells);
-              std::vector<AstNode*> cellNodes;
-              for (const Span& c : cells) {
-                AstNode* cell = A.call(SugarId::cell, c);
-                A.setKids(cell, inlineParse({c}));
-                cellNodes.push_back(cell);
-              }
-              A.setKids(row, cellNodes);
-              rows.push_back(row);
-            }
-            A.setKids(p, rows);
-            kids.push_back(p);
-          } else {
-            kids.push_back(build(k));
-          }
+          cellsNext = k->kind == SkelKind::Para;
+          kids.push_back(build(k));
         }
         A.setKids(r, kids);
         return r;

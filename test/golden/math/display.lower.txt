@@ -1,13 +1,15 @@
-lower v1 abi 9bdc5985 docEnd 152 holes 0 module none
+lower v1 abi 4d4c6e49 docEnd 152 holes 0 module none
 block 0 content [0,24)
   CALL para [0,24)
     TEXT "黎曼级数判别法：" [0,24)
 block 1 content [26,63)
-  CALL mathblock [26,63) src="sum_(n=1)^oo 1/n^s < oo <=> s > 1"
+  CALL para [26,63)
+    CALL mathblock [26,63) src="sum_(n=1)^oo 1/n^s < oo <=> s > 1"
 block 2 content [65,107)
   CALL para [65,107)
     TEXT "因此调和级数在 " [65,86) raw=0:0,22:21
     CALL mathinline [87,94) src="s = 1"
     TEXT " 处发散。" [95,107) raw=0:0,1:0
 block 3 content [109,151)
-  CALL mathblock [109,151) src="f'(x) = lim_(h -> 0) (f(x+h) - f(x))/h"
+  CALL para [109,151)
+    CALL mathblock [109,151) src="f'(x) = lim_(h -> 0) (f(x+h) - f(x))/h"

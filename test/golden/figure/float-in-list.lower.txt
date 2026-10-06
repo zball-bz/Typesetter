@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 450 holes 1 module 51841caa1e9adae7
+lower v1 abi 4d4c6e49 docEnd 450 holes 1 module b7eef4915521c273
 piece 0 hole 0 js [103,210)
 block 0 content [0,60)
   CALL para [0,60)
@@ -13,9 +13,8 @@ block 1 content [62,449) user framed async holes 0..1
         TEXT "Second item holds a floated figure." [95,130)
       FRAME async [134,276) holes 0..1
         REGION async "figure" args=hole 0 [134,276)
-          ROWS
-            row
-              TEXT "A small floated icon." [244,265)
+          CALL para [244,265)
+            TEXT "A small floated icon." [244,265)
       CALL para [280,419)
         TEXT "The item text continues beside the float and should narrow around it for a few lines before returning to the full measure of the list body." [280,419)
     CALL item [420,449)

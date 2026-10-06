@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<table data-pid="0" data-s="0" data-e="79">
+<tr><td><strong>a | b</strong></td><td>c</td></tr>
+<tr><td><code>x | y</code></td><td>| literal</td></tr>
+<tr><td><strong>a line crossing</strong></td><td>d</td></tr>
+</table>
+</div>

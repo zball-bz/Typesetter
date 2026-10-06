@@ -1,0 +1,63 @@
+top pid=0 units=3
+ unit text indent=0su
+  box Other "A" w=513su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="A d" src r0 @[8,64)
+  box Other "dis" w=1537su r0 @[8,64)
+  disc pen=0.7 w=0su pre="-" 513su kern="sp" r0 @[8,64)
+  box Other "play" w=2049su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="y f" src r0 @[8,64)
+  box Other "for" w=1537su r0 @[8,64)
+  disc pen=0.7 w=0su pre="-" 513su kern="rm" r0 @[8,64)
+  box Other "mu" w=1025su r0 @[8,64)
+  disc pen=0.7 w=0su pre="-" 513su kern="ul" r0 @[8,64)
+  box Other "la" w=1025su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="a i" src r0 @[8,64)
+  box Other "in" w=1025su r0 @[8,64)
+  disc pen=0.7 w=0su pre="-" 513su kern="ns" r0 @[8,64)
+  box Other "side" w=2049su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="e a" src r0 @[8,64)
+  box Other "a" w=513su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="a r" src r0 @[8,64)
+  box Other "re" w=1025su r0 @[8,64)
+  disc pen=0.7 w=0su pre="-" 513su kern="eg" r0 @[8,64)
+  box Other "gion" w=2049su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="n i" src r0 @[8,64)
+  box Other "is" w=1025su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="s a" src r0 @[8,64)
+  box Other "a" w=513su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="a b" src r0 @[8,64)
+  box Other "block" w=2561su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="k o" src r0 @[8,64)
+  box Other "of" w=1025su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="f i" src r0 @[8,64)
+  box Other "its" w=1537su r0 @[8,64)
+  glue word w=257su x=1 cap=257su kern="s o" src r0 @[8,64)
+  box Other "own:" w=2049su r0 @[8,64)
+  run r0 plain
+ unit math indent=0su anchor="eq-r" w=3697su asc=967su desc=19su
+ unit text indent=0su
+  box Other "and" w=1537su r0 @[88,114)
+  glue word w=257su x=1 cap=257su kern="d t" src r0 @[88,114)
+  box Other "the" w=1537su r0 @[88,114)
+  glue word w=257su x=1 cap=257su kern="e p" src r0 @[88,114)
+  box Other "para" w=2049su r0 @[88,114)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[88,114)
+  box Other "graph" w=2561su r0 @[88,114)
+  glue word w=257su x=1 cap=257su kern="h g" src r0 @[88,114)
+  box Other "goes" w=2049su r0 @[88,114)
+  glue word w=257su x=1 cap=257su kern="s o" src r0 @[88,114)
+  box Other "on." w=1537su r0 @[88,114)
+  run r0 plain
+top pid=1 units=1
+ unit text indent=0su
+  box Other "See" w=1537su r0 @[124,127)
+  glue word w=257su x=1 cap=257su src r0 @[124,127)
+  box Ideo "式" w=1025su wt=0.6 cap=102su r1 @[128,133)
+  pen 0 r1
+  glue word w=257su x=1 cap=257su src r2 @[128,133)
+  box Other "(1)" w=1537su r2 @[128,133)
+  box Other "." w=513su r3 @[133,134)
+  run r0 plain
+  run r1 letter-spaced ref LINK CJK link="#tsr-eq-r"
+  run r2 plain ref LINK link="#tsr-eq-r"
+  run r3 plain

@@ -1,25 +1,11 @@
 doc @[0,126)
   region @[0,125) name="table"
     para @[17,117)
-      row @[17,51)
-        cell @[17,23)
-          text @[17,22) str="Types"
-        cell @[24,26)
-        cell @[27,34)
-          text @[28,33) str="Logic"
-        cell @[35,41)
-          text @[36,40) str="Sets"
-        cell @[42,51)
-          text @[43,51) str="Homotopy"
-      row @[52,117)
-        cell @[52,61)
-          math @[52,60) display=0 src="Id_(A)"
-        cell @[62,64)
-        cell @[65,79)
-          text @[66,74) str="equality "
-          math @[75,78) display=0 src="="
-        cell @[80,99)
-          math @[81,98) display=0 src="(x,x) | x ∈ A"
-        cell @[100,117)
-          text @[101,111) str="path space "
-          math @[112,117) display=0 src="A^I"
+      text @[17,51) str="Types | | Logic | Sets | Homotopy\n"
+      math @[52,60) display=0 src="Id_(A)"
+      text @[61,74) str=" | | equality "
+      math @[75,78) display=0 src="="
+      text @[79,80) str=" | "
+      math @[81,98) display=0 src="(x,x) | x ∈ A"
+      text @[99,111) str=" | path space "
+      math @[112,117) display=0 src="A^I"

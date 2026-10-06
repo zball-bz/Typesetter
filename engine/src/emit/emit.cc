@@ -317,8 +317,10 @@ struct HlInline final : InlineSink {
         return;
       case InlineShape::Unsupported:
         // a kind that cannot appear inline: an error box, never a silent drop
-        E.diags.add(Sev::Warning, "shape-unsupported", diagSpan(n, u),
-                    std::string(kKinds[(u16)n->kind].name) + " cannot appear inline");
+        // (a block-level one was reported by the normal form: block-in-inline)
+        if (levelOf(n->kind) != Level::Block)
+          E.diags.add(Sev::Warning, "shape-unsupported", diagSpan(n, u),
+                      std::string(kKinds[(u16)n->kind].name) + " cannot appear inline");
         object(n, u, ctx, ObjKind::Error);
         return;
     }

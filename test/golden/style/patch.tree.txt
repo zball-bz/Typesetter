@@ -16,5 +16,5 @@ doc @[69,579) [base]
       text @[400,406) [BOLD] str="粗体"
     text @[408,429) [base] str=" 一起参与断行。" raw=0:0,1:0
   group @[431,579) [base font="\"LXGW WenKai\", serif" lang=zh-TW] role="aside"
-    para @[431,579) [base font="\"LXGW WenKai\", serif" lang=zh-TW]
+    para @[493,571) [base font="\"LXGW WenKai\", serif" lang=zh-TW]
       text @[493,571) [base font="\"LXGW WenKai\", serif" lang=zh-TW] str="區域級作用域：字體與語言一起換，內部照樣是普通標記。"

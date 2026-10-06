@@ -1,27 +1,23 @@
-lower v1 abi 9bdc5985 docEnd 178 holes 0 module none
+lower v1 abi 4d4c6e49 docEnd 178 holes 0 module none
 block 0 content [0,47) async
   REGION async "outer" [0,47)
-    ROWS
-      row
-        TEXT "Outer text." [8,19)
+    CALL para [8,19)
+      TEXT "Outer text." [8,19)
     REGION async "inner" [20,39)
-      ROWS
-        row
-          TEXT "Inner text." [28,39)
+      CALL para [28,39)
+        TEXT "Inner text." [28,39)
 block 1 content [49,67)
   CALL para [49,67)
     TEXT "After the regions." [49,67)
 block 2 content [69,97) async
   CALL async quote [69,97)
     REGION async "aside" [71,97)
-      ROWS
-        row
-          TEXT "A quoted region." [81,97)
+      CALL para [81,97)
+        TEXT "A quoted region." [81,97)
 block 3 content [98,144)
   CALL para [98,144)
     TEXT "Not quoted: the quote and its region end here." [98,144)
 block 4 content [146,177) async
   REGION async "lonely" [146,177)
-    ROWS
-      row
-        TEXT "Text without a closer." [155,177)
+    CALL para [155,177)
+      TEXT "Text without a closer." [155,177)

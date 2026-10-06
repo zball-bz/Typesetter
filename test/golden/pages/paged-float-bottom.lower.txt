@@ -1,13 +1,12 @@
-lower v1 abi 9bdc5985 docEnd 398 holes 1 module 99eb24cfc9624560
+lower v1 abi 4d4c6e49 docEnd 398 holes 1 module 9dbcad64971e05c4
 piece 0 hole 0 js [103,208)
 block 0 content [0,135)
   CALL para [0,135)
     TEXT "Opening text that occupies the first part of the sheet so the following float begins roughly one hundred pixels above the sheet bottom." [0,135)
 block 1 content [137,280) user framed async holes 0..1
   REGION async "figure" args=hole 0 [137,280)
-    ROWS
-      row
-        TEXT "Right float near the bottom." [243,271)
+    CALL para [243,271)
+      TEXT "Right float near the bottom." [243,271)
 block 2 content [282,397)
   CALL para [282,397)
     TEXT "Text that wraps beside the float and continues onto the next sheet, where the float must not straddle the boundary." [282,397)

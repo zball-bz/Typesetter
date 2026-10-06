@@ -7,7 +7,7 @@ top pid=1 leaves=1
 top pid=2 leaves=1
   stack root gap=1/1 @[24,81)
     stack figure anchor="f1" @[24,81)
-      paragraph caption unit=0 centered nohyphen carry="f1" @[24,81)
+      paragraph caption unit=0 centered nohyphen carry="f1" @[46,72)
 top pid=3 leaves=1
   stack root gap=1/1 @[83,101)
     paragraph para unit=0 @[83,101)

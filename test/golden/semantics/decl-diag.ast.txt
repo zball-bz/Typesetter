@@ -3,9 +3,7 @@ doc @[0,527)
     text @[0,30) str="A memo before its declaration:"
   region @[32,65) name="memo"
     para @[52,58)
-      row @[52,58)
-        cell @[52,58)
-          text @[52,58) str="Noted."
+      text @[52,58) str="Noted."
   code-block @[67,342) js="\n  $.element('memo', {numbering: 'always', supplement: 'Memo '})\n  $.declare('element', 'broken', {counter: 'nope'})\n  $.declare('counter', 'c1', {colour: 'red'})\n  $.element('gather', {sites: [{template: [collect({what: 'toc'})]}]})\n  counterUpdate('heading', {step: 1})\n"
   para @[344,459)
     text @[344,374) str="A counter that does not exist: "

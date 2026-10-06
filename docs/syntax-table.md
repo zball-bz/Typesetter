@@ -53,8 +53,6 @@ From `engine/src/syntax/syntax.def`, syntax version 4. Behaviour for each body m
 | `ref` | Inline | — | `ref target="{$str}"` |
 | `math` | Both | display:bool label:str | `math display={display} src="{$str}"{?label label="{label}"}` |
 | `arg` | Inline | — | `arg` |
-| `row` | Block | — | `row` |
-| `cell` | Inline | — | `cell` |
 
 ## Character classes
 

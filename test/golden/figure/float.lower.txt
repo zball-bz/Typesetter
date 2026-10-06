@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 946 holes 2 module 8e62a788c19f3af6
+lower v1 abi 4d4c6e49 docEnd 946 holes 2 module 195201bf70e23932
 piece 0 hole 0 js [103,211)
 piece 1 hole 1 js [213,318)
 block 0 content [0,95)
@@ -6,9 +6,8 @@ block 0 content [0,95)
     TEXT "浮动插图与环绕（parshape）：右侧浮动，正文前若干行按收窄宽度断行。" [0,95)
 block 1 content [97,246) user framed async holes 0..1
   REGION async "figure" args=hole 0 [97,246)
-    ROWS
-      row
-        TEXT "右浮动的塔楼小图。" [210,237)
+    CALL para [210,237)
+      TEXT "右浮动的塔楼小图。" [210,237)
 block 2 content [248,464)
   CALL para [248,464)
     TEXT "正文围绕浮动图排布：前几行的断行宽度收窄为版心减去浮动框与间隙，越过浮动框底部之后恢复整幅版心宽度继续排布，段落之间的间距也计入占用高度的消耗。" [248,464)
@@ -17,9 +16,8 @@ block 3 content [466,634)
     TEXT "第二个段落若仍处于浮动高度之内，则继续以收窄宽度开始；此段足够长，尾部行应当已经回到整幅宽度，环绕由此自然结束。" [466,634)
 block 4 content [636,776) user framed async holes 1..2
   REGION async "figure" args=hole 1 [636,776)
-    ROWS
-      row
-        TEXT "左浮动的山门。" [746,767)
+    CALL para [746,767)
+      TEXT "左浮动的山门。" [746,767)
 block 5 content [778,878)
   CALL para [778,878)
     TEXT "左侧浮动时行盒整体右移，宽度同样收窄；" [778,835)

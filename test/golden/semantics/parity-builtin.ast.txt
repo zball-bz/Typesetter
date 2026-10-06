@@ -7,11 +7,7 @@ doc @[0,146)
     text @[36,37) str="."
   region @[39,92) name="figure"
     para @[61,83)
-      row @[61,83)
-        cell @[61,83)
-          text @[61,83) str="A built-in figure row."
+      text @[61,83) str="A built-in figure row."
   region @[94,145) name="figure"
     para @[116,136)
-      row @[116,136)
-        cell @[116,136)
-          text @[116,136) str="Its second instance."
+      text @[116,136) str="Its second instance."

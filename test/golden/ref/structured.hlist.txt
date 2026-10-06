@@ -8,10 +8,10 @@ top pid=1 units=1
   run r0 plain BOLD x1.35
 top pid=2 units=1
  unit text indent=0su anchor="fig-a" centered
-  box Other "Figure" w=3073su r0 @[39,82)
-  glue word w=257su x=1 cap=257su kern="e 1" src r0 @[39,82)
-  box Other "1:" w=1025su r0 @[39,82)
-  glue word w=257su x=1 cap=257su src r0 @[39,82)
+  box Other "Figure" w=3073su r0 @[64,73)
+  glue word w=257su x=1 cap=257su kern="e 1" src r0 @[64,73)
+  box Other "1:" w=1025su r0 @[64,73)
+  glue word w=257su x=1 cap=257su src r0 @[64,73)
   box Other "A" w=513su r1 @[64,73)
   glue word w=257su x=1 cap=257su kern="A f" src r1 @[64,73)
   box Other "figure." w=3585su r1 @[64,73)
@@ -19,10 +19,10 @@ top pid=2 units=1
   run r1 plain
 top pid=3 units=1
  unit text indent=0su anchor="fig-b" centered
-  box Other "Figure" w=3073su r0 @[84,126)
-  glue word w=257su x=1 cap=257su kern="e 2" src r0 @[84,126)
-  box Other "2:" w=1025su r0 @[84,126)
-  glue word w=257su x=1 cap=257su src r0 @[84,126)
+  box Other "Figure" w=3073su r0 @[109,117)
+  glue word w=257su x=1 cap=257su kern="e 2" src r0 @[109,117)
+  box Other "2:" w=1025su r0 @[109,117)
+  glue word w=257su x=1 cap=257su src r0 @[109,117)
   box Other "Another." w=4097su r1 @[109,117)
   run r0 plain BOLD
   run r1 plain

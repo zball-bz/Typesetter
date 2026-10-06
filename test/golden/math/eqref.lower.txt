@@ -1,16 +1,18 @@
-lower v1 abi 9bdc5985 docEnd 261 holes 0 module none
+lower v1 abi 4d4c6e49 docEnd 261 holes 0 module none
 block 0 content [0,48)
   CALL para [0,48)
     TEXT "质能关系是狭义相对论的核心结论：" [0,48)
 block 1 content [50,69)
-  CALL mathblock [50,69) src="E = m c^2" label="emc"
+  CALL para [50,69)
+    CALL mathblock [50,69) src="E = m c^2" label="emc"
 block 2 content [71,120)
   CALL para [71,120)
     TEXT "由" [71,74)
     CALL ref [74,78) target="emc"
     TEXT "可知能量与质量等价。高斯积分" [78,120)
 block 3 content [122,170)
-  CALL mathblock [122,170) src="int_(-oo)^oo e^(-x^2) d x = sqrt(pi)" label="gauss"
+  CALL para [122,170)
+    CALL mathblock [122,170) src="int_(-oo)^oo e^(-x^2) d x = sqrt(pi)" label="gauss"
 block 4 content [172,260)
   CALL para [172,260)
     TEXT "的值见" [172,181)

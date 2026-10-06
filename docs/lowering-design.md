@@ -57,13 +57,12 @@ and a REGION always do):
 
 | op | operands | runs as |
 |---|---|---|
-| TEXT | str s e nMap (cooked raw)* | `span(text(str))`, and its cooked→raw map (RAWMAP, document-model §4.3) |
+| TEXT | str s e nMap (cooked raw)* nSep sep* | `span(text(str))`, and its cooked→raw map (RAWMAP, document-model §4.3); (P2-11) the cooked offsets of its cell cuts — with its span, map and soft breaks, JS-only provenance (`ob.prov`) for `body.rows()` |
 | CALL | flags ctor [s e] nAttrs (key const)* nKids value* | `ctor(...attrs, ...kids)`, spanned if flagged |
 | HOLE | hole s e nKids value* | `val(h[hole](__k))` |
 | FRAME | s e holeLo holeHi value | the value inside a frame (§4) |
 | FENCE | lang args body bodyOffset lines s e | `span(val(await fence(lang, args, body, off, lines)))` |
-| REGION | name args s e nItems item* | `span(await region(name, args, items))` (always awaits: a handler may be async) |
-| ROWS | nRows (nCells value*)* | a table paragraph, as a region item |
+| REGION | name args s e nItems value* | `span(await region(name, args, items))` (always awaits: a handler may be async); (P2-11) its interior is ordinary blocks — the ROWS op of table paragraphs is gone |
 | STMT | hole | a statement hole (top-level block only) |
 | VERBATIM | ordinal | the module runs the statement (top-level block only) |
 

@@ -64,11 +64,11 @@ top pid=1 units=1
 top pid=2 units=2
  unit img indent=0su anchor="fig-a" intrinsic=120x60px
  unit text indent=0su centered
-  cjk "図" w=1025su glue=102su wt=0.6 pen=0 BOLD @[137,226)
-  space w=257su stretch=1 BOLD @[137,226)
-  word "1" w=513su pen=INF BOLD @[137,226)
-  punct-close "：" w=512su BOLD @[137,226)
-  punct-sp w=512su BOLD @[137,226)
+  cjk "図" w=1025su glue=102su wt=0.6 pen=0 BOLD @[208,217)
+  space w=257su stretch=1 BOLD @[208,217)
+  word "1" w=513su pen=INF BOLD @[208,217)
+  punct-close "：" w=512su BOLD @[208,217)
+  punct-sp w=512su BOLD @[208,217)
   word "A" w=513su pen=INF @[208,217)
   space w=257su stretch=1 @[208,217)
   word "figure." w=3585su pen=INF @[208,217)

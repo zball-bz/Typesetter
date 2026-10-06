@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 541 holes 3 module cdb592873e728faa
+lower v1 abi 4d4c6e49 docEnd 541 holes 3 module 39c2a520a517240e
 piece 0 hole 0 js [163,442)
 piece 1 hole 1 js [444,563)
 piece 2 hole 2 js [565,583)
@@ -10,7 +10,8 @@ block 2 content [383,392)
   CALL heading [383,392) level=1 label="methods"
     TEXT "Methods" [385,392)
 block 3 content [404,420)
-  CALL mathblock [404,420) src="a = b" label="eq-m"
+  CALL para [404,420)
+    CALL mathblock [404,420) src="a = b" label="eq-m"
 block 4 content [422,433) user framed holes 2..3
   CALL para [422,433)
     HOLE 2 [422,433)
@@ -21,7 +22,8 @@ block 6 content [454,463)
   CALL heading [454,463) level=2 label="lemmas"
     TEXT "Lemmas" [457,463)
 block 7 content [474,490)
-  CALL mathblock [474,490) src="c = d" label="eq-p"
+  CALL para [474,490)
+    CALL mathblock [474,490) src="c = d" label="eq-p"
 block 8 content [492,540)
   CALL para [492,540)
     TEXT "See " [492,495) raw=0:0,4:3

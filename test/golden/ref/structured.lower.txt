@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 290 holes 3 module 2ffd80d28067b1ff
+lower v1 abi 4d4c6e49 docEnd 290 holes 3 module c27da0bddca20a33
 piece 0 hole 0 js [127,151)
 piece 1 hole 1 js [153,177)
 piece 2 hole 2 js [179,217)
@@ -10,14 +10,12 @@ block 1 content [19,29)
     TEXT "Details" [22,29)
 block 2 content [39,82) user framed async holes 0..1
   REGION async "figure" args=hole 0 [39,82)
-    ROWS
-      row
-        TEXT "A figure." [64,73)
+    CALL para [64,73)
+      TEXT "A figure." [64,73)
 block 3 content [84,126) user framed async holes 1..2
   REGION async "figure" args=hole 1 [84,126)
-    ROWS
-      row
-        TEXT "Another." [109,117)
+    CALL para [109,117)
+      TEXT "Another." [109,117)
 block 4 content [128,289) user framed holes 2..3
   CALL para [128,289)
     TEXT "A group of labels: " [128,146) raw=0:0,19:18

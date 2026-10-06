@@ -2,7 +2,7 @@ doc @[0,526) [base]
   para @[0,30) [base]
     text @[0,30) [base] str="A memo before its declaration:"
   group @[32,65) [base] role="memo" label="m1"
-    para @[32,65) [base]
+    para @[52,58) [base]
       text @[52,58) [base] str="Noted."
   para @[344,459) [base]
     text @[344,374) [base] str="A counter that does not exist: " raw=0:0,31:30

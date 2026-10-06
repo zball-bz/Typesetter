@@ -5,7 +5,7 @@ top pid=1 leaves=2
   stack root gap=1/1 @[82,280)
     stack figure anchor="fig-wide" @[82,280)
       replaced image image unit=0 ragged keep-with-next carry="fig-wide" @[82,280)
-      paragraph caption unit=1 centered nohyphen @[82,280)
+      paragraph caption unit=1 centered nohyphen @[163,271)
 top pid=2 leaves=1
   stack root gap=1/1 @[282,329)
     paragraph para unit=0 @[282,329)

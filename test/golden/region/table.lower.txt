@@ -1,23 +1,12 @@
-lower v1 abi 9bdc5985 docEnd 169 holes 1 module 23248a74d91d1571
+lower v1 abi 4d4c6e49 docEnd 169 holes 1 module be4d0c2feac575e5
 piece 0 hole 0 js [103,148)
 block 0 content [0,6)
   CALL heading [0,6) level=1 label="sec"
     TEXT "Data" [2,6)
 block 1 content [14,136) user framed async holes 0..1
   REGION async "table" args=hole 0 [14,136)
-    ROWS
-      row
-        TEXT "Name" [59,63)
-        TEXT "Qty" [66,69)
-        TEXT "Price" [72,77)
-      row
-        TEXT "Alpha widget" [78,90)
-        TEXT "2" [93,94)
-        TEXT "3.50" [97,101)
-      row
-        TEXT "中文条目" [102,114)
-        TEXT "三" [117,120)
-        TEXT "12.00" [123,128)
+    CALL para [59,128)
+      TEXT "Name | Qty | Price\nAlpha widget | 2 | 3.50\n中文条目 | 三 | 12.00" [59,128) seps=5,11,32,36,56,62
 block 2 content [138,168)
   CALL para [138,168)
     TEXT "Totals appear in " [138,154) raw=0:0,17:16

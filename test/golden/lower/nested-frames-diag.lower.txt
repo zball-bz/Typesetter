@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 241 holes 4 module 47052377d64a47b9
+lower v1 abi 4d4c6e49 docEnd 241 holes 4 module 360c34d12598c09d
 piece 0 hole 0 js [113,169)
 piece 1 hole 1 js [171,185)
 piece 2 hole 2 js [187,201)
@@ -30,16 +30,13 @@ block 2 content [115,165) user framed holes 2..3
         TEXT " fails alone" [154,165) raw=0:0,1:0
 block 3 content [167,232) user framed async holes 3..4
   REGION async "aside" [167,232)
-    ROWS
-      row
-        TEXT "interior para stays" [175,194)
+    CALL para [175,194)
+      TEXT "interior para stays" [175,194)
     FRAME [196,224) holes 3..4
-      ROWS
-        row
-          CALL seq
-            TEXT "interior " [196,204) raw=0:0,9:8
-            HOLE 3 [205,212)
-            TEXT " fails alone" [213,224) raw=0:0,1:0
+      CALL para [196,224)
+        TEXT "interior " [196,204) raw=0:0,9:8
+        HOLE 3 [205,212)
+        TEXT " fails alone" [213,224) raw=0:0,1:0
 block 4 content [234,240)
   CALL para [234,240)
     TEXT "After." [234,240)

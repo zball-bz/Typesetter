@@ -104,14 +104,9 @@ inline bool isInlineLevel(Kind k) {
   return l == Level::Inline || l == Level::Transparent || l == Level::Trivia;
 }
 
-// Normal form (plan P0-07, normalize.cc): run on the instantiated tree, and
-// on every subtree the resolver builds.
-//   N1 empty-para: a paragraph of only empty text vanishes (placeholder splices)
-//   N2 unwrap:     a paragraph whose only child is block/adaptive-level IS that
-//                  block (a #term / #toc / #codeblock(…) splice alone on a line)
-//   N3 blocks:     a seq holding a block (a multi-block content body, plan
-//                  P1-08) takes its place among its siblings; a paragraph that
-//                  is only such a seq is those blocks
-void normalize(ContentNode* n, const Interner& strs);
+// Normal form (plans P0-07, P2-11; normalize.cc has the rules N1–N6): run on
+// the instantiated tree — positions, fallbacks, anonymous paragraphs, model
+// checks; diagnoses block-in-inline without splitting it
+void normalize(ContentNode* n, Arena& arena, Interner& strs, DiagSink& diags);
 
 }  // namespace tsr

@@ -210,14 +210,23 @@ export class Lowering {
     const { env } = this;
     switch (op) {
       case LOP.TEXT: {
-        const n = env.ob.makeText(this.S[this.u()]);
-        env.ob.span(n, this.u(), this.u());
+        const str = this.S[this.u()];
+        const n = env.ob.makeText(str);
+        const s = this.u(), e = this.u();
+        env.ob.span(n, s, e);
         const nm = this.u();
+        let m = null;
         if (nm) {  // its cooked→raw map (plan P2-04)
-          const m = new Array(2 * nm);
+          m = new Array(2 * nm);
           for (let k = 0; k < m.length; k++) m[k] = this.u();
           env.ob.rawmap(n, m);
         }
+        // its cell cuts (plan P2-11): with its soft breaks, the provenance
+        // body.rows() reads (JS-only, never on the wire)
+        const ns = this.u();
+        const seps = new Array(ns);
+        for (let k = 0; k < ns; k++) seps[k] = this.u();
+        if (ns || /\n|^\s|\s$/.test(str)) env.ob.prov.set(n.opId, { s, e, map: m, seps });
         return n;
       }
       case LOP.CALL: {
@@ -263,14 +272,6 @@ export class Lowering {
           here.s = ps;
           here.e = pe;
         }
-      }
-      case LOP.ROWS: {  // a table paragraph (a region item): rows of cell values
-        const rows = new Array(this.u());
-        for (let r = 0; r < rows.length; r++) {
-          const row = rows[r] = new Array(this.u());
-          for (let c = 0; c < row.length; c++) row[c] = this.v();
-        }
-        return rows;
       }
     }
     throw new Error(`LowerProgram: op ${op} at ${this.p - 1}`);
@@ -347,14 +348,6 @@ export class Lowering {
         for (let n = this.u(); n > 0; n--) items.push(await this.va());
         return env.at(await this.region(name, args, items, s, e), s, e, fresh);
       }
-      case LOP.ROWS: {
-        const rows = new Array(this.u());
-        for (let r = 0; r < rows.length; r++) {
-          const row = rows[r] = new Array(this.u());
-          for (let c = 0; c < row.length; c++) row[c] = await this.va();
-        }
-        return rows;
-      }
     }
     throw new Error(`LowerProgram: op ${op} at ${this.p - 1}`);
   }
@@ -423,6 +416,7 @@ export class Lowering {
       case LOP.TEXT: {
         this.u(); this.u(); this.u();
         for (let n = 2 * this.u(); n > 0; n--) this.u();
+        for (let n = this.u(); n > 0; n--) this.u();
         return;
       }
       case LOP.CALL: {
@@ -445,9 +439,6 @@ export class Lowering {
       case LOP.REGION:
         this.u(); this.u(); this.u(); this.u(); this.u();
         for (let n = this.u(); n > 0; n--) this.skipValue();
-        return;
-      case LOP.ROWS:
-        for (let r = this.u(); r > 0; r--) for (let c = this.u(); c > 0; c--) this.skipValue();
         return;
     }
     throw new Error('LowerProgram: bad op');

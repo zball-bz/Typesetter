@@ -144,11 +144,11 @@ top pid=4 units=1
 top pid=5 units=2
  unit img indent=0su anchor="fig-p" intrinsic=200x80px
  unit text indent=0su centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[496,611)
-  space w=257su stretch=1 BOLD @[496,611)
-  word "1" w=513su pen=INF BOLD @[496,611)
-  punct-close "：" w=512su BOLD @[496,611)
-  punct-sp w=512su BOLD @[496,611)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[572,602)
+  space w=257su stretch=1 BOLD @[572,602)
+  word "1" w=513su pen=INF BOLD @[572,602)
+  punct-close "：" w=512su BOLD @[572,602)
+  punct-sp w=512su BOLD @[572,602)
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 @[572,602)
   cjk "与" w=1025su glue=102su wt=0.6 pen=0 @[572,602)
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 @[572,602)

@@ -1,11 +1,11 @@
 top pid=0 leaves=1
   stack root gap=1/1 @[181,244)
     stack group anchor="b1" @[181,244)
-      paragraph para unit=0 carry="b1" @[181,244)
+      paragraph para unit=0 carry="b1" @[206,238)
 top pid=1 leaves=1
   stack root gap=1/1 @[246,330)
     stack group anchor="a1" @[246,330)
-      paragraph para unit=0 carry="a1" @[246,330)
+      paragraph para unit=0 carry="a1" @[272,322)
 top pid=2 leaves=1
   stack root gap=1/1 @[332,382)
     grid code unit=0 ragged nohyphen anchor="code1" @[332,382)

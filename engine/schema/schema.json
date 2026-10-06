@@ -104,13 +104,13 @@
       "supplement": {"dom": "str", "since": 10}}},
     "mathinline": {"id": 22, "level": "inline", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:src"]}, "attrs": {
       "src": {"dom": "str"}}},
-    "raw": {"id": 23, "level": "block", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:html"]}, "attrs": {
+    "raw": {"id": 23, "level": "adaptive", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:html"]}, "attrs": {
       "html": {"dom": "html"},
       "w": {"dom": "num:0:100000"},
       "h": {"dom": "num:0:100000"}}},
     "hardbreak": {"id": 24, "level": "inline", "inline": "break", "body": "none", "since": 6, "attrs": {}},
     "seq": {"id": 25, "level": "transparent", "inline": "container", "body": "position", "since": 6, "ctor": {"sealed": true}, "attrs": {}},
-    "image": {"id": 26, "level": "block", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:src"]}, "attrs": {
+    "image": {"id": 26, "level": "adaptive", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:src"]}, "attrs": {
       "src": {"dom": "url"},
       "alt": {"dom": "str"},
       "w": {"dom": "num:0:100000"},

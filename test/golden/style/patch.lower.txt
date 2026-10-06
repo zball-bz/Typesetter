@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 580 holes 6 module d23e2b315ea5eb68
+lower v1 abi 4d4c6e49 docEnd 580 holes 6 module 52ebdbe48b8e498c
 piece 0 hole 0 js [129,203)
 piece 1 hole 1 js [205,234)
 piece 2 hole 2 js [236,287)
@@ -29,6 +29,5 @@ block 3 content [216,429) user framed holes 2..5
     TEXT " 一起参与断行。" [408,429) raw=0:0,1:0
 block 4 content [431,579) user framed async holes 5..6
   REGION async "aside" args=hole 5 [431,579)
-    ROWS
-      row
-        TEXT "區域級作用域：字體與語言一起換，內部照樣是普通標記。" [493,571)
+    CALL para [493,571)
+      TEXT "區域級作用域：字體與語言一起換，內部照樣是普通標記。" [493,571)

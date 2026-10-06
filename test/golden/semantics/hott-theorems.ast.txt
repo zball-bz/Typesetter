@@ -8,14 +8,10 @@ doc @[0,982)
     splice @[606,639) expr="counterUpdate('thm', {set: [9]})"
   region @[641,726) name="theorem"
     para @[689,716)
-      row @[689,716)
-        cell @[689,716)
-          text @[689,716) str="Equivalent types are equal."
+      text @[689,716) str="Equivalent types are equal."
   region @[728,809) name="lemma"
     para @[760,801)
-      row @[760,801)
-        cell @[760,801)
-          text @[760,801) str="Transport along a path is an equivalence."
+      text @[760,801) str="Transport along a path is an equivalence."
   para @[811,981)
     text @[811,813) str="By "
     ref @[814,821) target="thm-ua"

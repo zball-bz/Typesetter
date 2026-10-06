@@ -2,13 +2,9 @@ doc @[0,378)
   code-let @[0,116) js=" callout = $.region(\"callout\", (body, ctx) => group({role: \"callout\", label: ctx.args.label}, ...body.blocks()))"
   region @[118,173) name="callout"
     para @[128,144)
-      row @[128,144)
-        cell @[128,144)
-          text @[128,144) str="First paragraph."
+      text @[128,144) str="First paragraph."
     para @[146,163)
-      row @[146,163)
-        cell @[146,163)
-          text @[146,163) str="Second paragraph."
+      text @[146,163) str="Second paragraph."
   para @[175,222)
     splice @[175,222) expr="callout"
       arg @[184,221)
@@ -19,9 +15,7 @@ doc @[0,378)
   code-block @[224,303) js=" $.region(\"callout\", (body, ctx) => group({role: \"frame\"}, ctx.next(body))) "
   region @[305,344) name="callout"
     para @[328,334)
-      row @[328,334)
-        cell @[328,334)
-          text @[328,334) str="Third."
+      text @[328,334) str="Third."
   para @[346,377)
     splice @[346,377) expr="callout({label: \"c3\"})"
       arg @[370,376)

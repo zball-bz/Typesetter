@@ -168,16 +168,6 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
           spanOut();
           break;
         }
-        case SugarId::row: {
-          out += "row";
-          spanOut();
-          break;
-        }
-        case SugarId::cell: {
-          out += "cell";
-          spanOut();
-          break;
-        }
       }
       break;
     case AstKind::Splice: {
@@ -235,6 +225,10 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       if (p.rawmap) {
       out += ",\"rawmap\":";
       jsonString(out, strs.get(p.rawmap));
+      }
+      if (p.seps) {
+      out += ",\"seps\":";
+      jsonString(out, strs.get(p.seps));
       }
       break;
     }
@@ -323,10 +317,6 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
           break;
         }
         case SugarId::arg:
-          break;
-        case SugarId::row:
-          break;
-        case SugarId::cell:
           break;
       }
       break;

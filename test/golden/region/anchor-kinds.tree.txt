@@ -7,11 +7,11 @@ doc @[0,258) [base]
   group @[79,161) [base] role="aside" label="box-b"
     heading @[103,119) [base] level=2 label="sec-in"
       text @[106,119) [base] str="Inner heading"
-    para @[79,161) [base]
+    para @[130,153) [base]
       text @[130,153) [base] str="Body text of the aside."
   group @[163,216) [base] role="aside" label="rule-c"
     rule @[188,191) [base]
-    para @[163,216) [base]
+    para @[193,208) [base]
       text @[193,208) [base] str="After the rule."
   para @[218,258) [base]
     text @[218,221) [base] str="See " raw=0:0,4:3

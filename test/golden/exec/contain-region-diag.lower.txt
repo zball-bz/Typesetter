@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 106 holes 1 module e58fd922bbbe844a
+lower v1 abi 4d4c6e49 docEnd 106 holes 1 module 6fa1bdfc8803218e
 piece 0 hole 0 js [103,176)
 block 0 stmt [0,66) user framed holes 0..1
   STMT 0
@@ -7,9 +7,8 @@ block 1 content [68,75)
     TEXT "Before." [68,75)
 block 2 content [77,97) async
   REGION async "boom" [77,97)
-    ROWS
-      row
-        TEXT "inside" [84,90)
+    CALL para [84,90)
+      TEXT "inside" [84,90)
 block 3 content [99,105)
   CALL para [99,105)
     TEXT "After." [99,105)

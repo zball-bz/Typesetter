@@ -10,9 +10,7 @@ doc @[0,701)
   codeblock @[385,494) lang="json" body="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}"
   region @[496,611) name="figure"
     para @[572,602)
-      row @[572,602)
-        cell @[572,602)
-          text @[572,602) str="图与图注保持在同页。"
+      text @[572,602) str="图与图注保持在同页。"
   para @[613,700)
     text @[613,679) str="尾段：越过图之后继续排布，直至文档结束，引用"
     ref @[679,685) target="fig-p"

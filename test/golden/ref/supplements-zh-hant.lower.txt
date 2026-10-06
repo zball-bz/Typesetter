@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 308 holes 2 module 000e3a600e0d0490
+lower v1 abi 4d4c6e49 docEnd 308 holes 2 module 166de61cd5c7ec94
 piece 0 hole 0 js [103,173)
 piece 1 hole 1 js [175,208)
 block 0 content [0,14)
@@ -17,14 +17,12 @@ block 1 content [24,146)
     TEXT "." [145,146)
 block 2 content [148,237) user framed async holes 0..1
   REGION async "figure" args=hole 0 [148,237)
-    ROWS
-      row
-        TEXT "A figure." [219,228)
+    CALL para [219,228)
+      TEXT "A figure." [219,228)
 block 3 content [239,285) user framed async holes 1..2
   REGION async "table" args=hole 1 [239,285)
-    ROWS
-      row
-        TEXT "x" [272,273)
-        TEXT "y" [276,277)
+    CALL para [272,277)
+      TEXT "x | y" [272,277) seps=2
 block 4 content [287,307)
-  CALL mathblock [287,307) src="e = m c^2" label="eq-a"
+  CALL para [287,307)
+    CALL mathblock [287,307) src="e = m c^2" label="eq-a"

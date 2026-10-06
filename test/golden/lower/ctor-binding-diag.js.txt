@@ -1,4 +1,4 @@
-export const abi = 0x9bdc5985;
+export const abi = 0x4d4c6e49;
 export default async (__rt, $) => {
 const {cell, group, heading, image, item, list, node, para, raw, row, table} = __rt.std;
 return (async () => {

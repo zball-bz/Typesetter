@@ -4,12 +4,12 @@ doc @[0,289) [base]
   heading @[19,29) [base] level=2 label="sec-b"
     text @[22,29) [base] str="Details"
   group @[39,82) [base] role="figure" label="fig-a"
-    para @[39,82) [base] role="caption"
-      text @[39,82) [BOLD] str="Figure 1: "
+    para @[64,73) [base] role="caption"
+      text @[64,73) [BOLD] str="Figure 1: "
       text @[64,73) [base] str="A figure."
   group @[84,126) [base] role="figure" label="fig-b"
-    para @[84,126) [base] role="caption"
-      text @[84,126) [BOLD] str="Figure 2: "
+    para @[109,117) [base] role="caption"
+      text @[109,117) [BOLD] str="Figure 2: "
       text @[109,117) [base] str="Another."
   para @[128,289) [base]
     text @[128,146) [base] str="A group of labels: " raw=0:0,19:18

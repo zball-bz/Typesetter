@@ -38,11 +38,11 @@ top pid=0 units=1
 top pid=1 units=2
  unit img indent=0su anchor="fig-light" intrinsic=512x384px
  unit text indent=0su centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[101,248)
-  space w=257su stretch=1 BOLD @[101,248)
-  word "1" w=513su pen=INF BOLD @[101,248)
-  punct-close "：" w=512su BOLD @[101,248)
-  punct-sp w=512su BOLD @[101,248)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[181,239)
+  space w=257su stretch=1 BOLD @[181,239)
+  word "1" w=513su pen=INF BOLD @[181,239)
+  punct-close "：" w=512su BOLD @[181,239)
+  punct-sp w=512su BOLD @[181,239)
   cjk "黄" w=1025su glue=102su wt=0.6 pen=0 @[181,222)
   cjk "昏" w=1025su glue=102su wt=0.6 pen=0 @[181,222)
   cjk "时" w=1025su glue=102su wt=0.6 pen=0 @[181,222)
@@ -68,11 +68,11 @@ top pid=1 units=2
 top pid=2 units=2
  unit img indent=0su placeholder
  unit text indent=0su centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[250,368)
-  space w=257su stretch=1 BOLD @[250,368)
-  word "2" w=513su pen=INF BOLD @[250,368)
-  punct-close "：" w=512su BOLD @[250,368)
-  punct-sp w=512su BOLD @[250,368)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[308,359)
+  space w=257su stretch=1 BOLD @[308,359)
+  word "2" w=513su pen=INF BOLD @[308,359)
+  punct-close "：" w=512su BOLD @[308,359)
+  punct-sp w=512su BOLD @[308,359)
   cjk "这" w=1025su glue=102su wt=0.6 pen=0 @[308,359)
   cjk "一" w=1025su glue=102su wt=0.6 pen=0 @[308,359)
   cjk "条" w=1025su glue=102su wt=0.6 pen=0 @[308,359)

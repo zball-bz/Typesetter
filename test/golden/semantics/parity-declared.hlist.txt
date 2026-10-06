@@ -33,12 +33,12 @@ top pid=0 units=1
   run r6 plain
 top pid=1 units=1
  unit text indent=0su anchor="f1" centered
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[39,92)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[61,83)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[39,92)
-  box Other "1" w=513su r1 @[39,92)
-  box ColonW "：" w=512su blank=R r2 @[39,92)
-  glue blank w=512su x=0 cap=0su r2 @[39,92)
+  glue word w=257su x=1 cap=257su src r1 @[61,83)
+  box Other "1" w=513su r1 @[61,83)
+  box ColonW "：" w=512su blank=R r2 @[61,83)
+  glue blank w=512su x=0 cap=0su r2 @[61,83)
   box Other "A" w=513su r3 @[61,83)
   glue word w=257su x=1 cap=257su kern="A b" src r3 @[61,83)
   box Other "built-in" w=4097su r3 @[61,83)
@@ -52,12 +52,12 @@ top pid=1 units=1
   run r3 plain
 top pid=2 units=1
  unit text indent=0su anchor="f2" centered
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[94,145)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[116,136)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[94,145)
-  box Other "2" w=513su r1 @[94,145)
-  box ColonW "：" w=512su blank=R r2 @[94,145)
-  glue blank w=512su x=0 cap=0su r2 @[94,145)
+  glue word w=257su x=1 cap=257su src r1 @[116,136)
+  box Other "2" w=513su r1 @[116,136)
+  box ColonW "：" w=512su blank=R r2 @[116,136)
+  glue blank w=512su x=0 cap=0su r2 @[116,136)
   box Other "Its" w=1537su r3 @[116,136)
   glue word w=257su x=1 cap=257su kern="s s" src r3 @[116,136)
   box Other "second" w=3073su r3 @[116,136)

@@ -1,0 +1,14 @@
+lower v1 abi 4d4c6e49 docEnd 135 holes 0 module none
+block 0 content [0,122) async
+  REGION async "aside" [0,122)
+    CALL para [8,64)
+      TEXT "A display formula inside a region is a block of its own:" [8,64)
+    CALL para [66,86)
+      CALL mathblock [66,86) src="e = m c^2" label="eq-r"
+    CALL para [88,114)
+      TEXT "and the paragraph goes on." [88,114)
+block 1 content [124,134)
+  CALL para [124,134)
+    TEXT "See " [124,127) raw=0:0,4:3
+    CALL ref [128,133) target="eq-r"
+    TEXT "." [133,134)

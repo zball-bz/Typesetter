@@ -88,7 +88,7 @@ Mapping from the per-feature kinds it replaced:
 | `Region` | `Call{region}` |
 | `Styled '*'` / `'_'` | `Call{strong}` / `Call{em}` |
 | `Code`, `Link`, `Note`, `Ref`, `Math` | `Call{code, link, note, ref, math}` |
-| `SpliceArg`, `Row`, `Cell` | `Call{arg, row, cell}` — legacy shapes until plans P2-13 (splice bodies) and P2-11 (region provenance) |
+| `SpliceArg` | `Call{arg}` — a legacy shape until plan P2-13 (splice bodies); `Row`/`Cell` were removed in P2-11 |
 | `CodeStmt` | `Stmt` |
 | `Splice`, `Text`, `Comment`, `Error`, `Doc` | unchanged kinds |
 
@@ -178,8 +178,12 @@ the inline stack were not adopted: they lose that acceptance case, let
 emphasis win over links — `*a [b* c](u)` — and change today's text node
 boundaries; see PROGRESS, deviations.)
 
-**Cells.** `splitCells` cuts a region line at `|` outside atoms and outside a
-splice's content arguments.
+**Cells.** As built (plan P2-11, D-L05): a region's paragraph is parsed like
+any paragraph; an unescaped `|` at its top level (not inside a pair, link,
+island or splice argument) is a cell cut, recorded on its Text node (TextP
+`seps`, cooked offsets) and carried by the LowerProgram's TEXT to the JS
+body (`body.rows()`). `splitCells`, the Row/Cell shapes and the ROWS op are
+gone.
 
 ## 6. The block automaton (as built from plan P1-07)
 

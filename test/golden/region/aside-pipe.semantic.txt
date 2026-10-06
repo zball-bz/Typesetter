@@ -1,5 +1,5 @@
 <div class="tsr-flow">
 <div data-role="aside" data-pid="0" data-s="0" data-e="80">
-<p data-s="0" data-e="80">绝对值 <code class="tsr-mathsrc">$|x|$</code> 的性质：<code class="tsr-mathsrc">$|a b| = |a| |b|$</code>。</p>
+<p data-s="24" data-e="72">绝对值 <code class="tsr-mathsrc">$|x|$</code> 的性质：<code class="tsr-mathsrc">$|a b| = |a| |b|$</code>。</p>
 </div>
 </div>

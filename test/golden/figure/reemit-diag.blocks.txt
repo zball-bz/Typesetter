@@ -54,11 +54,11 @@ top pid=0 units=1
 top pid=1 units=2
  unit img indent=0su anchor="fig-bad" placeholder
  unit text indent=0su centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[119,225)
-  space w=257su stretch=1 BOLD @[119,225)
-  word "1" w=513su pen=INF BOLD @[119,225)
-  punct-close "：" w=512su BOLD @[119,225)
-  punct-sp w=512su BOLD @[119,225)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[190,216)
+  space w=257su stretch=1 BOLD @[190,216)
+  word "1" w=513su pen=INF BOLD @[190,216)
+  punct-close "：" w=512su BOLD @[190,216)
+  punct-sp w=512su BOLD @[190,216)
   word "The" w=1537su pen=INF @[190,216)
   space w=257su stretch=1 @[190,216)
   word "placeholder" w=5633su pen=INF @[190,216)

@@ -6,19 +6,19 @@ top pid=1 units=1
   word "Details" w=4840su pen=INF BOLD x1.35 @[22,29)
 top pid=2 units=1
  unit text indent=0su anchor="fig-a" centered
-  word "Figure" w=3073su pen=INF BOLD @[39,82)
-  space w=257su stretch=1 BOLD @[39,82)
-  word "1:" w=1025su pen=INF BOLD @[39,82)
-  space w=257su stretch=1 BOLD @[39,82)
+  word "Figure" w=3073su pen=INF BOLD @[64,73)
+  space w=257su stretch=1 BOLD @[64,73)
+  word "1:" w=1025su pen=INF BOLD @[64,73)
+  space w=257su stretch=1 BOLD @[64,73)
   word "A" w=513su pen=INF @[64,73)
   space w=257su stretch=1 @[64,73)
   word "figure." w=3585su pen=INF @[64,73)
 top pid=3 units=1
  unit text indent=0su anchor="fig-b" centered
-  word "Figure" w=3073su pen=INF BOLD @[84,126)
-  space w=257su stretch=1 BOLD @[84,126)
-  word "2:" w=1025su pen=INF BOLD @[84,126)
-  space w=257su stretch=1 BOLD @[84,126)
+  word "Figure" w=3073su pen=INF BOLD @[109,117)
+  space w=257su stretch=1 BOLD @[109,117)
+  word "2:" w=1025su pen=INF BOLD @[109,117)
+  space w=257su stretch=1 BOLD @[109,117)
   word "Another." w=4097su pen=INF @[109,117)
 top pid=4 units=1
  unit text indent=0su

@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 259 holes 3 module d8271673a09ed4f2
+lower v1 abi 4d4c6e49 docEnd 259 holes 3 module e2e54927b93a852e
 piece 0 hole 0 js [103,127)
 piece 1 hole 1 js [129,153)
 piece 2 hole 2 js [155,180)
@@ -12,15 +12,13 @@ block 2 content [79,161) user framed async holes 1..2
   REGION async "aside" args=hole 1 [79,161)
     CALL heading [103,119) level=2 label="sec-in"
       TEXT "Inner heading" [106,119)
-    ROWS
-      row
-        TEXT "Body text of the aside." [130,153)
+    CALL para [130,153)
+      TEXT "Body text of the aside." [130,153)
 block 3 content [163,216) user framed async holes 2..3
   REGION async "aside" args=hole 2 [163,216)
     CALL rule [188,191)
-    ROWS
-      row
-        TEXT "After the rule." [193,208)
+    CALL para [193,208)
+      TEXT "After the rule." [193,208)
 block 4 content [218,258)
   CALL para [218,258)
     TEXT "See " [218,221) raw=0:0,4:3

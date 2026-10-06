@@ -1,0 +1,1 @@
+{"headings":[],"regions":[{"name":"aside","label":null,"span":[0,122]}],"fences":[],"labels":[{"id":"eq-r","rule":"math","span":[80,86]}],"diagnostics":[]}

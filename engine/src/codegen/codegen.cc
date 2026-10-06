@@ -134,6 +134,30 @@ struct Gen {
         if (digit) pairs.push_back(v);
         w.u((u32)pairs.size() / 2);
         for (u32 x : pairs) w.u(x);
+        // its cell cuts (plan P2-11): "o,…" → nSep o*
+        std::vector<u32> seps;
+        v = 0;
+        digit = false;
+        for (char ch : std::string_view(strs.get(side<TextP>(n).seps))) {
+          if (ch >= '0' && ch <= '9') {
+            v = v * 10 + (u32)(ch - '0');
+            digit = true;
+          } else if (digit) {
+            seps.push_back(v);
+            v = 0;
+            digit = false;
+          }
+        }
+        if (digit) seps.push_back(v);
+        w.u((u32)seps.size());
+        // offsets in the string as written (sanitized to UTF-8: an invalid
+        // byte before a bar widens to U+FFFD)
+        const std::string_view cooked = strs.get(n->str);
+        for (u32 x : seps) {
+          std::string pre;
+          appendUtf8Sanitized(pre, cooked.substr(0, x));
+          w.u((u32)pre.size());
+        }
         return false;
       }
       case AstKind::Comment:
@@ -244,27 +268,25 @@ struct Gen {
       case SugarId::arg:
         return body(n);
       case SugarId::para: {
-        // a paragraph that is exactly one display formula IS the mathblock
-        // (interim L1 rule until T2's normalization; no promotion in the AST)
-        const AstNode* only = n->nkids == 1 ? n->kids()[0] : nullptr;
-        if (only && only->isCall(SugarId::math) && side<MathP>(only).display) {
-          const StrRef label = side<MathP>(only).label;
-          callHead("mathblock", &only->span, label ? 2 : 1);
-          key("src");
-          w.constStr(strs.get(only->str));
-          if (label) {
-            key("label");
-            w.constStr(strs.get(label));
-          }
-          w.u(0);
-          return false;
-        }
         size_t at = callHead("para", &n->span, 0);
         return done(at, kids(n->kids()));
       }
-      case SugarId::math:
-        // mid-paragraph display degrades to inline (deterministic; documented)
-        return strCall("mathinline", n, "src", n->str);
+      case SugarId::math: {
+        if (!side<MathP>(n).display) return strCall("mathinline", n, "src", n->str);
+        // display math is a mathblock wherever it is (plan P2-11): the
+        // normal form places it — alone in its paragraph it is that block,
+        // inside one it falls back to inline (N1)
+        const StrRef label = side<MathP>(n).label;
+        callHead("mathblock", &n->span, label ? 2 : 1);
+        key("src");
+        w.constStr(strs.get(n->str));
+        if (label) {
+          key("label");
+          w.constStr(strs.get(label));
+        }
+        w.u(0);
+        return false;
+      }
       case SugarId::heading: {
         const HeadingP& h = side<HeadingP>(n);
         size_t at = callHead("heading", &n->span, 2);
@@ -376,42 +398,13 @@ struct Gen {
         span(n->span);
         std::span<AstNode* const> ks = n->kids();
         w.u((u32)ks.size());
-        for (const AstNode* k : ks) {
-          if (k->isCall(SugarId::para) && k->nkids && k->kids()[0]->isCall(SugarId::row)) {
-            // one source paragraph of table rows: rows of cell values,
-            // framed like any block that runs user code
-            const u32 hc = holeCount(k);
-            size_t frame = 0;
-            if (hc) {
-              frame = w.op(Lop::FRAME);
-              span(k->span);
-              w.u(w.holes);
-              w.u(w.holes + hc);
-            }
-            size_t at = w.op(Lop::ROWS);
-            bool r = false;
-            w.u(k->nkids);
-            for (const AstNode* row : k->kids()) {
-              w.u(row->nkids);
-              for (const AstNode* cell : row->kids()) r |= body(cell);
-            }
-            done(at, r);
-            if (hc) done(frame, r);
-            a |= r;
-          } else {
-            a |= block(k);
-          }
-        }
+        for (const AstNode* k : ks) a |= block(k);  // its interior: blocks like any (plan P2-11)
         (void)a;  // a region always awaits: its handler may be async (P2-03)
         return done(at, true);
       }
       case SugarId::rule:
         callHead("rule", &n->span, 0);
         w.u(0);
-        return false;
-      case SugarId::row:
-      case SugarId::cell:  // structural: consumed by region
-        emptyText();
         return false;
     }
     return false;

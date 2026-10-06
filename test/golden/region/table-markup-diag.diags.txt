@@ -1,0 +1,1 @@
+warning row-spans-markup @[0,79) markup across a line of a table row stays in the row it starts

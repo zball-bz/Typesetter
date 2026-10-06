@@ -213,7 +213,7 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
   root->span = root->kids.empty()
                    ? Span{}
                    : Span{root->kids.front()->span.start, root->kids.back()->span.end};
-  normalize(root, strs);  // after the root span: an unwrapped block keeps its span
+  normalize(root, arena, strs, diags);  // after the root span: an unwrapped block keeps its span
   return t;
 }
 

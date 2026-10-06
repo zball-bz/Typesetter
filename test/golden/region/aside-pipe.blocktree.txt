@@ -1,4 +1,4 @@
 top pid=0 leaves=1
   stack root gap=1/1 @[0,80)
     stack group @[0,80)
-      paragraph para unit=0 @[0,80)
+      paragraph para unit=0 @[24,72)

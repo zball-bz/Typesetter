@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 378 holes 5 module 51beafb39e703d38
+lower v1 abi 4d4c6e49 docEnd 378 holes 5 module d1311f5437469394
 piece 0 hole 0 js [142,269)
 piece 1 hole 1 js [271,301)
 piece 2 hole 2 js [303,389)
@@ -8,12 +8,10 @@ block 0 stmt [0,116) user framed holes 0..1
   STMT 0
 block 1 content [118,173) async
   REGION async "callout" [118,173)
-    ROWS
-      row
-        TEXT "First paragraph." [128,144)
-    ROWS
-      row
-        TEXT "Second paragraph." [146,163)
+    CALL para [128,144)
+      TEXT "First paragraph." [128,144)
+    CALL para [146,163)
+      TEXT "Second paragraph." [146,163)
 block 2 content [175,222) user framed holes 1..2
   CALL para [175,222)
     HOLE 1 [175,222)
@@ -26,9 +24,8 @@ block 3 stmt [224,303) user framed holes 2..3
   STMT 2
 block 4 content [305,344) user framed async holes 3..4
   REGION async "callout" args=hole 3 [305,344)
-    ROWS
-      row
-        TEXT "Third." [328,334)
+    CALL para [328,334)
+      TEXT "Third." [328,334)
 block 5 content [346,377) user framed holes 4..5
   CALL para [346,377)
     HOLE 4 [346,377)

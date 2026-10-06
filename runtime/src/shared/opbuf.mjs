@@ -20,6 +20,8 @@ export class OpBuf {
     this.nextId = 0;
     this.opCount = 0;
     this.spans = new Map();   // opId → [start, end] (node values are frozen)
+    // opId → a text's provenance {s, e, map, seps} (plan P2-11: JS-only)
+    this.prov = new Map();
     // per-buffer version (plan P1-01): the newest vocabulary row used, at
     // least MIN_COMPAT — a buffer readable by every engine that knows it
     this.version = OPS_MIN_COMPAT;

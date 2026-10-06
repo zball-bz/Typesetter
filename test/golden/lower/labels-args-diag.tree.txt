@@ -1,9 +1,9 @@
 doc @[181,832) [base]
   group @[181,244) [base] role="box" label="b1"
-    para @[181,244) [base]
+    para @[206,238) [base]
       text @[206,238) [base] str="A region labelled by its opener."
   group @[246,330) [base] role="aside" label="a1"
-    para @[246,330) [base]
+    para @[272,322) [base]
       text @[272,322) [base] str="A label: argument and a suffix: the argument wins."
   codeblock @[332,382) [base] lang="js" lineNo=1 label="code1"
     text @[368,378) [base] str="let x = 1;"

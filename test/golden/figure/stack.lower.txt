@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 902 holes 2 module 88d24108f3cbde0a
+lower v1 abi 4d4c6e49 docEnd 902 holes 2 module a4866b4dfc46fe16
 piece 0 hole 0 js [103,202)
 piece 1 hole 1 js [204,303)
 block 0 content [0,108)
@@ -6,14 +6,12 @@ block 0 content [0,108)
     TEXT "两张同侧浮动图连续出现时应当堆叠，而不是把第二张清到第一张之下留出空白。" [0,108)
 block 1 content [110,236) user framed async holes 0..1
   REGION async "figure" args=hole 0 [110,236)
-    ROWS
-      row
-        TEXT "第一张图。" [212,227)
+    CALL para [212,227)
+      TEXT "第一张图。" [212,227)
 block 2 content [238,385) user framed async holes 1..2
   REGION async "figure" args=hole 1 [238,385)
-    ROWS
-      row
-        TEXT "第二张图，紧接着第一张。" [340,376)
+    CALL para [340,376)
+      TEXT "第二张图，紧接着第一张。" [340,376)
 block 3 content [387,411)
   CALL heading [387,411) level=2 label=null
     TEXT "标题不清除浮动" [390,411)

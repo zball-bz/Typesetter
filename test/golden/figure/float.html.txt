@@ -5,7 +5,7 @@
 </div>
 <div class="tsr-para" data-pid="1" data-s0="97" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-tower" data-s="0" data-e="149" src="photos/tower.jpg" alt="塔楼" style="top:0px;left:180px;width:120px;height:90px">
-<div class="tsr-line" data-s="0" data-e="149" data-join="none" data-ragged="1" data-cell="1" style="top:90px;left:180px;width:120px;word-spacing:-1.176px"><span class="tsr-r tsr-b tsr-cjk" data-s="0" style="letter-spacing:-0.706px;margin-right:0.706px">图</span><span class="tsr-r tsr-b" data-s="0"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="0">：</span><span class="tsr-r tsr-cjk" data-s="113" style="letter-spacing:-0.706px;margin-right:0.706px">右浮动的塔</span></div>
+<div class="tsr-line" data-s="113" data-e="140" data-join="none" data-ragged="1" data-cell="1" style="top:90px;left:180px;width:120px;word-spacing:-1.176px"><span class="tsr-r tsr-b tsr-cjk" data-s="113" style="letter-spacing:-0.706px;margin-right:0.706px">图</span><span class="tsr-r tsr-b" data-s="113"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="113">：</span><span class="tsr-r tsr-cjk" data-s="113" style="letter-spacing:-0.706px;margin-right:0.706px">右浮动的塔</span></div>
 <div class="tsr-line" data-s="113" data-e="140" data-ragged="1" data-cell="1" style="top:114px;left:180px;width:120px"><span class="tsr-r tsr-cjk" data-s="113">楼小图</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="113">。</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="248" style="position:relative;height:168px;margin-bottom:19.2px">
@@ -24,7 +24,7 @@
 </div>
 <div class="tsr-para" data-pid="4" data-s0="636" style="position:relative;height:0px;margin-bottom:19.2px">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-gate" data-s="0" data-e="140" src="photos/gate.jpg" alt="山门" style="top:0px;left:0px;width:120px;height:72px">
-<div class="tsr-line" data-s="0" data-e="140" data-join="none" data-ragged="1" data-cell="1" style="top:72px;left:0px;width:120px;word-spacing:-1.176px"><span class="tsr-r tsr-b tsr-cjk" data-s="0" style="letter-spacing:-0.706px;margin-right:0.706px">图</span><span class="tsr-r tsr-b" data-s="0"> 2</span><span class="tsr-r tsr-b tsr-cjk" data-s="0">：</span><span class="tsr-r tsr-cjk" data-s="110" style="letter-spacing:-0.706px;margin-right:0.706px">左浮动的山</span></div>
+<div class="tsr-line" data-s="110" data-e="131" data-join="none" data-ragged="1" data-cell="1" style="top:72px;left:0px;width:120px;word-spacing:-1.176px"><span class="tsr-r tsr-b tsr-cjk" data-s="110" style="letter-spacing:-0.706px;margin-right:0.706px">图</span><span class="tsr-r tsr-b" data-s="110"> 2</span><span class="tsr-r tsr-b tsr-cjk" data-s="110">：</span><span class="tsr-r tsr-cjk" data-s="110" style="letter-spacing:-0.706px;margin-right:0.706px">左浮动的山</span></div>
 <div class="tsr-line" data-s="110" data-e="131" data-ragged="1" data-cell="1" style="top:96px;left:0px;width:120px"><span class="tsr-r tsr-cjk" data-s="110">门</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="110">。</span></div>
 </div>
 <div class="tsr-para" data-pid="5" data-s0="778" style="position:relative;height:72px;margin-bottom:19.2px">

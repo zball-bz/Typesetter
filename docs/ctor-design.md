@@ -115,10 +115,17 @@ style keys `font`, `lang`, `color`, `sizePx`) is the result's own style
 change — the universal `style` attribute when the result is one node, else a
 `styled` wrapper — and never reaches the handler; a style key at the top of
 a default region's header is a `ctor-arg` warning with the fix. A Body is
-`{blocks(), rows()}`: blocks() is the interior as blocks (the rows of a
-table paragraph rejoined with ` | `; a constructor's inline content kids as
-one paragraph, so `#!f(H) x #f!` ≡ `#f(H)[x]` — fixture `lower/region-call`),
-rows() the table's reading of it.
+`{blocks(), rows()}`: blocks() is the interior as blocks — as built (plan
+P2-11) lossless: a region's paragraphs are ordinary paragraphs, `|` is text
+and a line join a soft break; a constructor's inline content kids as one
+paragraph, so `#!f(H) x #f!` ≡ `#f(H)[x]` — fixture `lower/region-call`;
+rows() the table's reading of it: each paragraph's top-level soft breaks end
+rows and its cell cuts (an unescaped top-level `|`, D-L05: not inside pairs,
+links, islands or splice arguments — the parser's provenance on the text)
+end cells; each cell loses its edge blanks with its span and raw map kept, a
+framed line (`| a | b |`) its empty first and last cells; markup across a
+line stays in the row it starts (`row-spans-markup`); a later block
+continues the last cell.
 
 ## 5. Universal options, EXT and declarations (as built in P2-05)
 

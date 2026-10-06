@@ -24,11 +24,11 @@ top pid=0 units=1
   word "." w=513su pen=INF @[36,37)
 top pid=1 units=1
  unit text indent=0su anchor="f1" centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[39,92)
-  space w=257su stretch=1 BOLD @[39,92)
-  word "1" w=513su pen=INF BOLD @[39,92)
-  punct-close "：" w=512su BOLD @[39,92)
-  punct-sp w=512su BOLD @[39,92)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[61,83)
+  space w=257su stretch=1 BOLD @[61,83)
+  word "1" w=513su pen=INF BOLD @[61,83)
+  punct-close "：" w=512su BOLD @[61,83)
+  punct-sp w=512su BOLD @[61,83)
   word "A" w=513su pen=INF @[61,83)
   space w=257su stretch=1 @[61,83)
   word "built-in" w=4097su pen=INF @[61,83)
@@ -38,11 +38,11 @@ top pid=1 units=1
   word "row." w=2049su pen=INF @[61,83)
 top pid=2 units=1
  unit text indent=0su anchor="f2" centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[94,145)
-  space w=257su stretch=1 BOLD @[94,145)
-  word "2" w=513su pen=INF BOLD @[94,145)
-  punct-close "：" w=512su BOLD @[94,145)
-  punct-sp w=512su BOLD @[94,145)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[116,136)
+  space w=257su stretch=1 BOLD @[116,136)
+  word "2" w=513su pen=INF BOLD @[116,136)
+  punct-close "：" w=512su BOLD @[116,136)
+  punct-sp w=512su BOLD @[116,136)
   word "Its" w=1537su pen=INF @[116,136)
   space w=257su stretch=1 @[116,136)
   word "second" w=3073su pen=INF @[116,136)

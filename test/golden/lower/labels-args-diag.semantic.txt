@@ -1,9 +1,9 @@
 <div class="tsr-flow">
 <div data-role="box" data-pid="0" data-s="181" data-e="244" id="tsr-b1">
-<p data-s="181" data-e="244">A region labelled by its opener.</p>
+<p data-s="206" data-e="238">A region labelled by its opener.</p>
 </div>
 <div data-role="aside" data-pid="1" data-s="246" data-e="330" id="tsr-a1">
-<p data-s="246" data-e="330">A label: argument and a suffix: the argument wins.</p>
+<p data-s="272" data-e="322">A label: argument and a suffix: the argument wins.</p>
 </div>
 <pre data-pid="2" data-s="332" data-e="382" id="tsr-code1"><code class="language-js">let x = 1;</code></pre>
 <p data-pid="3" data-s="384" data-e="456">An inline formula <code class="tsr-mathsrc">$x^2$</code> keeps no label; a display formula does:</p>

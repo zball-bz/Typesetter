@@ -1,0 +1,6 @@
+doc @[0,135)
+  region @[0,122) name="aside"
+    para @[8,64) lines=1
+    para @[66,86) lines=1
+    para @[88,114) lines=1
+  para @[124,134) lines=1

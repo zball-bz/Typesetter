@@ -192,22 +192,46 @@ struct TokenWalk : Lines {
       }
     }
     for (const AstNode* k : n->kids()) {
-      if (!k->isCall(SugarId::para) || !k->nkids || !k->kids()[0]->isCall(SugarId::row)) {
+      if (!k->isCall(SugarId::para)) {
         walk(k, kNoTag, qd);
         continue;
       }
-      for (const AstNode* row : k->kids()) {
-        u32 at = row->span.start;
-        for (const AstNode* cell : row->kids()) {
-          for (u32 p = at; p < cell->span.start; p++)
-            if (all[p] == '|') tok(p, p + 1, kOperator);
-          kids(cell, kNoTag, qd);
-          at = cell->span.end;
-        }
-        for (u32 p = at; p < row->span.end; p++)
-          if (all[p] == '|') tok(p, p + 1, kOperator);
+      // a paragraph's cell cuts (plan P2-11: its Text nodes' seps) are bars
+      for (const AstNode* x : k->kids()) {
+        if (x->kind == AstKind::Text)
+          for (u32 c : numbers(strs.get(side<TextP>(x).seps))) {
+            const u32 r = x->span.start + rawOf(strs.get(side<TextP>(x).rawmap), c);
+            tok(r, r + 1, kOperator);
+          }
+        walk(x, kNoTag, qd);
       }
     }
+  }
+  // "a,b,…" / "c:r,…" → the numbers
+  static std::vector<u32> numbers(std::string_view m) {
+    std::vector<u32> out;
+    u32 v = 0;
+    bool digit = false;
+    for (char ch : m) {
+      if (ch >= '0' && ch <= '9') {
+        v = v * 10 + (u32)(ch - '0');
+        digit = true;
+      } else if (digit) {
+        out.push_back(v);
+        v = 0;
+        digit = false;
+      }
+    }
+    if (digit) out.push_back(v);
+    return out;
+  }
+  // a cooked offset's raw offset (relative to the span start) through a
+  // Text's cooked→raw map (empty: the identity)
+  static u32 rawOf(std::string_view map, u32 c) {
+    const std::vector<u32> m = numbers(map);
+    u32 r = c;
+    for (size_t k = 0; k + 1 < m.size() && m[k] <= c; k += 2) r = m[k + 1] + (c - m[k]);
+    return r;
   }
 
   void call(const AstNode* n, u8 textTag, u32 qd) {
@@ -215,8 +239,6 @@ struct TokenWalk : Lines {
     switch (n->sugar) {
       case SugarId::para:
       case SugarId::arg:
-      case SugarId::row:
-      case SugarId::cell:
         kids(n, textTag, qd);
         return;
       case SugarId::heading: {

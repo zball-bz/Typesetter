@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 11;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = 'd68c0a20';
+export const SCHEMA_HASH = '93119eb4';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -1010,7 +1010,7 @@ export const SCHEMA = Object.freeze({
   },
   "raw": {
     "id": 23,
-    "level": "block",
+    "level": "adaptive",
     "body": "none",
     "inline": "object",
     "attrs": {
@@ -1067,7 +1067,7 @@ export const SCHEMA = Object.freeze({
   },
   "image": {
     "id": 26,
-    "level": "block",
+    "level": "adaptive",
     "body": "none",
     "inline": "object",
     "attrs": {

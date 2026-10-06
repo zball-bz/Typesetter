@@ -35,12 +35,12 @@ top pid=0 units=1
 top pid=1 units=2
  unit img indent=0su anchor="fig-wide" intrinsic=300x100px
  unit text indent=0su centered
-  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[82,280)
+  box Ideo "图" w=1025su wt=0.6 cap=102su r0 @[163,271)
   pen 0 r0
-  glue word w=257su x=1 cap=257su src r1 @[82,280)
-  box Other "1" w=513su r1 @[82,280)
-  box ColonW "：" w=512su blank=R r2 @[82,280)
-  glue blank w=512su x=0 cap=0su r2 @[82,280)
+  glue word w=257su x=1 cap=257su src r1 @[163,271)
+  box Other "1" w=513su r1 @[163,271)
+  box ColonW "：" w=512su blank=R r2 @[163,271)
+  glue blank w=512su x=0 cap=0su r2 @[163,271)
   box Other "A" w=513su r3 @[163,271)
   glue word w=257su x=1 cap=257su kern="A c" src r3 @[163,271)
   box Other "caption" w=3585su r3 @[163,271)

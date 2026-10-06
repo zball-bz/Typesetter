@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 216 holes 2 module 29a66021fce032fc
+lower v1 abi 4d4c6e49 docEnd 216 holes 2 module e126fdf552feaa98
 piece 0 hole 0 js [128,161)
 piece 1 hole 1 js [163,190)
 block 0 content [0,80)
@@ -7,17 +7,12 @@ block 0 content [0,80)
 block 1 content [82,192) user framed async holes 0..2
   REGION async "table" args=hole 0 [82,192)
     FRAME [115,184) holes 1..2
-      ROWS
-        row
-          TEXT "Part" [115,119)
-          TEXT "Note" [122,126)
-        row
-          TEXT "Gear" [127,131)
-          CALL seq
-            HOLE 1 [134,173)
-              TEXT "gizmo" [140,145)
-              TEXT "a small mechanical device" [147,172)
-            TEXT " in the box" [174,184) raw=0:0,1:0
+      CALL para [115,184)
+        TEXT "Part | Note\nGear | " [115,133) raw=0:0,19:18 seps=5,17
+        HOLE 1 [134,173)
+          TEXT "gizmo" [140,145)
+          TEXT "a small mechanical device" [147,172)
+        TEXT " in the box" [174,184) raw=0:0,1:0
 block 2 content [194,215)
   CALL para [194,215)
     TEXT "See " [194,197) raw=0:0,4:3

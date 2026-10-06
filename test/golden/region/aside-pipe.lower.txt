@@ -1,12 +1,10 @@
-lower v1 abi 9bdc5985 docEnd 81 holes 1 module f887fd66c3ba0e30
+lower v1 abi 4d4c6e49 docEnd 81 holes 1 module 7292531900a43f8c
 piece 0 hole 0 js [103,127)
 block 0 content [0,80) user framed async holes 0..1
   REGION async "aside" args=hole 0 [0,80)
-    ROWS
-      row
-        CALL seq
-          TEXT "绝对值 " [24,33) raw=0:0,10:9
-          CALL mathinline [34,39) src="|x|"
-          TEXT " 的性质：" [40,52) raw=0:0,1:0
-          CALL mathinline [52,69) src="|a b| = |a| |b|"
-          TEXT "。" [69,72)
+    CALL para [24,72)
+      TEXT "绝对值 " [24,33) raw=0:0,10:9
+      CALL mathinline [34,39) src="|x|"
+      TEXT " 的性质：" [40,52) raw=0:0,1:0
+      CALL mathinline [52,69) src="|a b| = |a| |b|"
+      TEXT "。" [69,72)

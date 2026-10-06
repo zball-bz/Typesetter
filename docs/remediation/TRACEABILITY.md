@@ -972,7 +972,7 @@ Theme steps: — · findings: 1
 
 | finding | kind | sev | plan steps | status |
 |---|---|---|---|---|
-| `markup-language/region-pipe-segmentation` | adhoc | high | P0-04, P2-11 | |
+| `markup-language/region-pipe-segmentation` | adhoc | high | P0-04, P2-11 | grep:plan P2-11 |
 | `markup-language/inline-delimiter-scanners` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `markup-language/closed-constructor-set` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `markup-language/ctor-signature-vs-content-args` | adhoc | high | P2-03 | grep:plan P2-03 |
@@ -1002,7 +1002,7 @@ Theme steps: — · findings: 1
 | `markup-language/ambiguity-hazards` | issue | medium | P3-33 | |
 | `markup-language/ast-dump-note` | issue | low | P0-02 | grep:plan P0-02 |
 | `markup-language/doc-drift` | issue | low | P3-35 | |
-| `markup-language/missed:0` | missed | high | P2-11 | |
+| `markup-language/missed:0` | missed | high | P2-11 | grep:plan P2-11 |
 | `markup-language/missed:1` | missed | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/missed:2` | missed | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/missed:3` | missed | medium | P2-02, P3-01 | |
@@ -1010,13 +1010,13 @@ Theme steps: — · findings: 1
 | `markup-language/missed:5` | missed | low | P1-07 | grep:plan P1-07 |
 | `parser-frontend/per-feature-ast-kinds` | adhoc | high | P1-05 | grep:plan P1-05 |
 | `parser-frontend/inline-recognizer-cascade` | adhoc | high | P1-06 | grep:plan P1-06 |
-| `parser-frontend/region-pipe-segmentation-in-parser` | adhoc | high | P2-11 | |
+| `parser-frontend/region-pipe-segmentation-in-parser` | adhoc | high | P2-11 | grep:plan P2-11 |
 | `parser-frontend/cross-line-raw-scans` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/content-args-inline-only` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/keyword-forms-closed-set-missing` | adhoc | high | P2-12, P3-31 | |
 | `parser-frontend/code-statements-top-level-only` | adhoc | high | P2-12 | |
 | `parser-frontend/label-and-id-lexing-scattered` | adhoc | medium | P2-06 | grep:plan P2-06 |
-| `parser-frontend/display-math-by-ast-shape` | adhoc | medium | P2-11 | |
+| `parser-frontend/display-math-by-ast-shape` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `parser-frontend/parser-owned-cjk-line-join` | adhoc | medium | P2-10, P4-02 | |
 | `parser-frontend/fragment-parallel-lowering` | adhoc | high | P2-13 | |
 | `parser-frontend/region-fence-private-dispatch` | adhoc | medium | P2-03, P2-06 | grep:plan P2-06 |
@@ -1044,7 +1044,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/ctor-signatures-break-sugar-equivalence` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `codegen-ops-model/private-region-builders-and-missing-ctors` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `codegen-ops-model/region-meta-args-hijack` | adhoc | medium | P2-03, P2-08 | grep:plan P2-08 |
-| `codegen-ops-model/parse-time-pipe-segmentation` | adhoc | medium | P2-11 | |
+| `codegen-ops-model/parse-time-pipe-segmentation` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `codegen-ops-model/role-string-dispatch` | adhoc | high | P2-05 | grep:plan P2-05 |
 | `codegen-ops-model/sidecar-ingest-pass` | adhoc | medium | P2-13 | |
 | `codegen-ops-model/bibliography-placeholder-and-end-emission` | adhoc | medium | P2-07, P2-14 | |
@@ -1057,7 +1057,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/version-bump-per-vocabulary` | adhoc | medium | P1-01 | grep:plan P1-01 |
 | `codegen-ops-model/two-style-encodings-and-stack` | adhoc | medium | P0-06, P2-08 | grep:plan P2-08 |
 | `codegen-ops-model/val-coercion-adhoc` | adhoc | medium | P2-01 | grep:plan P2-01 |
-| `codegen-ops-model/block-promotion-peepholes` | adhoc | medium | P2-11 | |
+| `codegen-ops-model/block-promotion-peepholes` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `codegen-ops-model/duplicate-lowering-fragment` | adhoc | medium | P2-13 | |
 | `codegen-ops-model/note-kind-and-lift` | adhoc | medium | P3-01, P3-13 | |
 | `codegen-ops-model/collector-switch-and-fixed-counters` | adhoc | medium | P2-07 | grep:plan P2-07 |
@@ -1075,7 +1075,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/popto-stack-divergence` | issue | low | P0-08, P2-01 | grep:plan P2-01 |
 | `codegen-ops-model/contract-doc-drift` | issue | low | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/missed:0` | missed | high | P0-05, P2-02 | grep:plan P2-02 |
-| `codegen-ops-model/missed:1` | missed | high | P2-11 | |
+| `codegen-ops-model/missed:1` | missed | high | P2-11 | grep:plan P2-11 |
 | `codegen-ops-model/missed:2` | missed | medium | P2-03 | grep:plan P2-03 |
 | `codegen-ops-model/missed:3` | missed | medium | P0-06 | grep:plan P0-06 |
 | `codegen-ops-model/missed:4` | missed | low | P2-01 | grep:plan P2-01 |
@@ -1142,7 +1142,7 @@ Theme steps: — · findings: 1
 | `emitter/kp-ignores-stretch-weight` | issue | medium | P4-08 | |
 | `emitter/negative-wordspacing-overfull` | issue | medium | P0-12 | grep:plan P0-12 |
 | `emitter/duplicate-diagnostics-on-reemit` | issue | medium | P0-11 | grep:plan P0-11 |
-| `emitter/silent-drops-of-unhandled-kinds` | issue | medium | P1-13, P2-11 | |
+| `emitter/silent-drops-of-unhandled-kinds` | issue | medium | P1-13, P2-11 | grep:plan P2-11 |
 | `emitter/coarse-source-spans` | issue | low | P4-03 | |
 | `emitter/full-reemit-for-math-text` | issue | low | P1-20, P1-25 | grep:plan P1-25 |
 | `emitter/dump-hides-finite-penalties` | issue | low | P1-12 | grep:plan P1-12 |
@@ -1247,7 +1247,7 @@ Theme steps: — · findings: 1
 | `math/fence-pairs-ascii-only` | adhoc | medium | P3-24 | |
 | `math/math-leaves-bypass-style` | adhoc | medium | P1-25 | grep:plan P1-25 |
 | `math/math-text-pull-channel` | adhoc | medium | P1-25 | grep:plan P1-25 |
-| `math/math-span-lexer-triplication` | adhoc | medium | P2-11 | |
+| `math/math-span-lexer-triplication` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `math/missing-glyph-fallback` | adhoc | low | P1-25, P5-01 | |
 | `math/island-scan-escapes-block` | issue | high | P0-04 | grep:plan P0-04 |
 | `math/prime-then-script-degrades` | issue | medium | P1-24 | grep:plan P1-24 |
@@ -1260,7 +1260,7 @@ Theme steps: — · findings: 1
 | `math/doc-drift` | issue | low | P1-22 | grep:plan P1-22 |
 | `math/fallback-and-a11y` | issue | low | P3-26, P3-27 | |
 | `math/toc-excerpt-drops-math` | issue | low | P2-15 | |
-| `math/missed:0` | missed | high | P0-04, P2-11 | |
+| `math/missed:0` | missed | high | P0-04, P2-11 | grep:plan P2-11 |
 | `math/missed:1` | missed | high | P1-24 | grep:plan P1-24 |
 | `math/missed:2` | missed | medium | P3-24 | |
 | `math/missed:3` | missed | medium | P3-24 | |

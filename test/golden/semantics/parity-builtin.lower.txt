@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 146 holes 2 module e5c38b57c0a0c177
+lower v1 abi 4d4c6e49 docEnd 146 holes 2 module b4bba1e2a9c0365b
 piece 0 hole 0 js [103,124)
 piece 1 hole 1 js [126,147)
 block 0 content [0,37)
@@ -10,11 +10,9 @@ block 0 content [0,37)
     TEXT "." [36,37)
 block 1 content [39,92) user framed async holes 0..1
   REGION async "figure" args=hole 0 [39,92)
-    ROWS
-      row
-        TEXT "A built-in figure row." [61,83)
+    CALL para [61,83)
+      TEXT "A built-in figure row." [61,83)
 block 2 content [94,145) user framed async holes 1..2
   REGION async "figure" args=hole 1 [94,145)
-    ROWS
-      row
-        TEXT "Its second instance." [116,136)
+    CALL para [116,136)
+      TEXT "Its second instance." [116,136)

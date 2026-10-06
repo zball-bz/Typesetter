@@ -1,4 +1,4 @@
-lower v1 abi 9bdc5985 docEnd 226 holes 1 module da513fe8ceb8f655
+lower v1 abi 4d4c6e49 docEnd 226 holes 1 module 79a770ac8f528ce1
 piece 0 hole 0 js [103,173)
 block 0 content [0,117)
   CALL para [0,117)
@@ -7,6 +7,5 @@ block 0 content [0,117)
     TEXT " makes emit run twice (plan P0-11)." [83,117) raw=0:0,1:0
 block 1 content [119,225) user framed async holes 0..1
   REGION async "figure" args=hole 0 [119,225)
-    ROWS
-      row
-        TEXT "The placeholder stands in." [190,216)
+    CALL para [190,216)
+      TEXT "The placeholder stands in." [190,216)

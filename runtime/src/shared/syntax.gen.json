@@ -427,16 +427,6 @@
    "id": "arg",
    "form": "Inline",
    "payload": []
-  },
-  {
-   "id": "row",
-   "form": "Block",
-   "payload": []
-  },
-  {
-   "id": "cell",
-   "form": "Inline",
-   "payload": []
   }
  ]
 }

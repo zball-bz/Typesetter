@@ -34,11 +34,11 @@ top pid=0 units=1
 top pid=1 units=2
  unit img indent=0su anchor="fig-wide" intrinsic=300x100px
  unit text indent=0su centered
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[82,280)
-  space w=257su stretch=1 BOLD @[82,280)
-  word "1" w=513su pen=INF BOLD @[82,280)
-  punct-close "：" w=512su BOLD @[82,280)
-  punct-sp w=512su BOLD @[82,280)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[163,271)
+  space w=257su stretch=1 BOLD @[163,271)
+  word "1" w=513su pen=INF BOLD @[163,271)
+  punct-close "：" w=512su BOLD @[163,271)
+  punct-sp w=512su BOLD @[163,271)
   word "A" w=513su pen=INF @[163,271)
   space w=257su stretch=1 @[163,271)
   word "caption" w=3585su pen=INF @[163,271)

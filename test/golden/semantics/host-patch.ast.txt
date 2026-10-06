@@ -5,9 +5,7 @@ doc @[0,102)
     text @[11,15) str="Deep"
   region @[24,81) name="figure"
     para @[46,72)
-      row @[46,72)
-        cell @[46,72)
-          text @[46,72) str="A figure the host renamed."
+      text @[46,72) str="A figure the host renamed."
   para @[83,101)
     text @[83,86) str="See "
     ref @[87,92) target="deep"

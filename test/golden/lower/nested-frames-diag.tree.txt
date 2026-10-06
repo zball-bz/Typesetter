@@ -13,7 +13,7 @@ doc @[47,240) [base]
       text @[117,134) [base] str="quoted line stays"
     error @[139,165) [base] message="Error: deep" code="script-error"
   group @[167,232) [base] role="aside"
-    para @[167,232) [base]
+    para @[175,194) [base]
       text @[175,194) [base] str="interior para stays"
     error @[196,224) [base] message="Error: deep" code="script-error"
   para @[234,240) [base]

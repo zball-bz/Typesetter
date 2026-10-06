@@ -1,0 +1,5 @@
+[0,7) function "#!aside"
+[66,79) type "$ e = m c^2 $"
+[80,86) label "<eq-r>"
+[115,122) function "#aside!"
+[128,133) constant "@eq-r"

@@ -1,0 +1,13 @@
+lower v1 abi 4d4c6e49 docEnd 80 holes 1 module f665e4469d27d9a2
+piece 0 hole 0 js [103,120)
+block 0 content [0,79) user framed async holes 0..1
+  REGION async "table" args=hole 0 [0,79)
+    CALL para [17,71)
+      CALL strong [17,24)
+        TEXT "a | b" [18,23)
+      TEXT " | c\n" [25,28) raw=0:0,1:0,5:3 seps=1
+      CALL code [29,36) text="x | y"
+      TEXT " | | literal\n" [37,49) raw=0:0,1:0,4:4,13:12 seps=1
+      CALL strong [50,67)
+        TEXT "a line\ncrossing" [51,66)
+      TEXT " | d" [68,71) raw=0:0,1:0 seps=1

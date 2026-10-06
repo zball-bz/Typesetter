@@ -1091,6 +1091,9 @@ static void fuzzRegressions(const fs::path& root) {
     } else {
       doc.compile(data);
       (void)dumpAst(doc.ast, doc.src, doc.strs);
+      LowerProgram prog;  // the program codegen wrote reads back (as fuzz_inline checks)
+      std::string why;
+      CHECK(readLowerProgram(doc.js.program, prog, why));
     }
   }
 }

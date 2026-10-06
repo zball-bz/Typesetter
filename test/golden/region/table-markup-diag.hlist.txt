@@ -1,0 +1,36 @@
+top pid=0 units=1
+ unit table indent=0su cols=2 cells=6
+  cell 0
+   box Other "a" w=513su r0 @[18,23)
+   glue word w=257su x=1 cap=257su kern="a |" src r0 @[18,23)
+   box Other "|" w=513su r0 @[18,23)
+   glue word w=257su x=1 cap=257su kern="| b" src r0 @[18,23)
+   box Other "b" w=513su r0 @[18,23)
+   run r0 plain BOLD
+  cell 1
+   box Other "c" w=513su r0 @[27,28)
+   run r0 plain
+  cell 2
+   box Other "x | y" w=1742su r0 @[29,36)
+   run r0 plain CODE x0.85
+  cell 3
+   box Other "|" w=513su r0 @[39,49)
+   glue word w=257su x=1 cap=257su kern="| l" src r0 @[39,49)
+   box Other "lit" w=1537su r0 @[39,49)
+   disc pen=0.7 w=0su pre="-" 513su kern="te" r0 @[39,49)
+   box Other "er" w=1025su r0 @[39,49)
+   disc pen=0.7 w=0su pre="-" 513su kern="ra" r0 @[39,49)
+   box Other "al" w=1025su r0 @[39,49)
+   run r0 plain
+  cell 4
+   box Other "a" w=513su r0 @[51,66)
+   glue word w=257su x=1 cap=257su kern="a l" src r0 @[51,66)
+   box Other "line" w=2049su r0 @[51,66)
+   glue word w=257su x=1 cap=257su kern="e c" src r0 @[51,66)
+   box Other "cross" w=2561su r0 @[51,66)
+   disc pen=0.7 w=0su pre="-" 513su kern="si" r0 @[51,66)
+   box Other "ing" w=1537su r0 @[51,66)
+   run r0 plain BOLD
+  cell 5
+   box Other "d" w=513su r0 @[70,71)
+   run r0 plain

@@ -17,8 +17,8 @@ doc @[0,308) [base]
     text @[146,147) [base] str="."
   group @[149,238) [base] role="figure" label="fig-a"
     image @[149,238) [base] src="a.png" alt="a figure" w=120 h=60
-    para @[149,238) [base] role="caption"
-      text @[149,238) [BOLD] str="Figure 1: "
+    para @[220,229) [base] role="caption"
+      text @[220,229) [BOLD] str="Figure 1: "
       text @[220,229) [base] str="A figure."
   table @[240,286) [base] cols=2 label="tab-a"
     trow @[240,286) [base]

@@ -1,10 +1,10 @@
-lower v1 abi 9bdc5985 docEnd 88 holes 0 module none
+lower v1 abi 4d4c6e49 docEnd 88 holes 0 module none
 block 0 content [0,87)
   CALL list [0,87) ordered=false start=1
     CALL item [0,74)
       CALL para [2,74)
         TEXT "An item with display math:\n" [2,28) raw=0:0,27:26
-        CALL mathinline [31,56) src="x = a\n- b\n+ c"
+        CALL mathblock [31,56) src="x = a\n- b\n+ c"
         TEXT "\nand text after." [59,74) raw=0:0,1:0
     CALL item [75,87)
       CALL para [77,87)

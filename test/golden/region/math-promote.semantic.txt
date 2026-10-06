@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<div data-role="aside" data-pid="0" data-s="0" data-e="122">
+<p data-s="8" data-e="64">A display formula inside a region is a block of its own:</p>
+<p class="tsr-mathblock" data-s="66" data-e="86" id="tsr-eq-r"><code class="tsr-mathsrc">$ e = m c^2 $</code> <span class="tsr-eqno">(1)</span></p>
+<p data-s="88" data-e="114">and the paragraph goes on.</p>
+</div>
+<p data-pid="1" data-s="124" data-e="134">See <a href="#tsr-eq-r">式 (1)</a>.</p>
+</div>

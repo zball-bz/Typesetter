@@ -7,15 +7,11 @@ doc @[0,259)
     heading @[103,119) level=2 label="sec-in"
       text @[106,119) str="Inner heading"
     para @[130,153)
-      row @[130,153)
-        cell @[130,153)
-          text @[130,153) str="Body text of the aside."
+      text @[130,153) str="Body text of the aside."
   region @[163,216) name="aside"
     rule @[188,191)
     para @[193,208)
-      row @[193,208)
-        cell @[193,208)
-          text @[193,208) str="After the rule."
+      text @[193,208) str="After the rule."
   para @[218,258)
     text @[218,221) str="See "
     ref @[222,228) target="lst-a"

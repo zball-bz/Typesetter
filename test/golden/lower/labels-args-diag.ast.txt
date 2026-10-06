@@ -3,14 +3,10 @@ doc @[0,833)
   code-let @[105,179) js=" card = (o, ...c) => group({role: \"card\", label: o.label}, para(...c))"
   region @[181,244) name="box" label="b1"
     para @[206,238)
-      row @[206,238)
-        cell @[206,238)
-          text @[206,238) str="A region labelled by its opener."
+      text @[206,238) str="A region labelled by its opener."
   region @[246,330) name="aside" label="a2"
     para @[272,322)
-      row @[272,322)
-        cell @[272,322)
-          text @[272,322) str="A label: argument and a suffix: the argument wins."
+      text @[272,322) str="A label: argument and a suffix: the argument wins."
   codeblock @[332,382) lang="js" info="a title" label="code1" body="let x = 1;"
   para @[384,456)
     text @[384,401) str="An inline formula "

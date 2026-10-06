@@ -7,4 +7,4 @@ top pid=1 leaves=1
 top pid=2 leaves=1
   stack root gap=1/1 @[431,579)
     stack group @[431,579)
-      paragraph para unit=0 @[431,579)
+      paragraph para unit=0 @[493,571)

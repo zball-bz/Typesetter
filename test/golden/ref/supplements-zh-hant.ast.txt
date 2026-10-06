@@ -13,15 +13,9 @@ doc @[0,308)
     text @[145,146) str="."
   region @[148,237) name="figure"
     para @[219,228)
-      row @[219,228)
-        cell @[219,228)
-          text @[219,228) str="A figure."
+      text @[219,228) str="A figure."
   region @[239,285) name="table"
     para @[272,277)
-      row @[272,277)
-        cell @[272,274)
-          text @[272,273) str="x"
-        cell @[275,277)
-          text @[276,277) str="y"
+      text @[272,277) str="x | y"
   para @[287,307)
     math @[287,307) display=1 src="e = m c^2" label="eq-a"

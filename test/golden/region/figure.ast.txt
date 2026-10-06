@@ -3,20 +3,13 @@ doc @[0,244)
     text @[2,9) str="Regions"
   region @[17,112) name="figure"
     para @[41,103)
-      row @[41,67)
-        cell @[41,67)
-          text @[41,67) str="A pretend figure body line"
-      row @[68,103)
-        cell @[68,103)
-          text @[68,103) str="continuing on a second source line."
+      text @[41,103) str="A pretend figure body line\ncontinuing on a second source line."
   region @[114,197) name="aside"
     para @[122,154)
-      row @[122,154)
-        cell @[122,154)
-          text @[122,136) str="Side note with "
-          styled @[137,147) marker=*
-            text @[138,146) str="emphasis"
-          text @[148,154) str=" inside"
+      text @[122,136) str="Side note with "
+      styled @[137,147) marker=*
+        text @[138,146) str="emphasis"
+      text @[148,154) str=" inside"
     list @[155,189) bullet start=1
       item @[155,172)
         para @[157,172)

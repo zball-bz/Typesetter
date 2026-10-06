@@ -245,18 +245,17 @@ export function createStd(host) {
   };
 
   // ---- Body: a region's interior, or a constructor's content kids --------
-  // items (a region's interior, as the interpreter evaluated it): an Array
-  // is one source paragraph of table rows (rows of cell values); anything
-  // else is a block. blocks() is the interior as blocks — the rows of a
-  // paragraph rejoined into one para with " | " between cells (segmentation
-  // is provenance; the pipe belongs to the table) — built once; rows() is
-  // the table's reading: one row per source row, a later block continuing
-  // the last cell. Eager in this step: both read values already built.
+  // items (a region's interior, as the interpreter evaluated it): its blocks.
+  // blocks() is the interior as written (plan P2-11: lossless — a '|' is
+  // text, a line join a soft break); rows() is a table's reading of it:
+  // each paragraph's lines (its top-level soft breaks) are rows and its cell
+  // cuts (unescaped top-level '|': the parser's provenance) end cells; a
+  // later block continues the last cell.
   const regionBody = (items) => {
     let blocks;
     return Object.freeze({
       [BODY]: true,
-      blocks: () => (blocks ??= regionJoin(items)),
+      blocks: () => (blocks ??= items.flatMap((x) => toContent(x))),
       rows: () => tableRows(items),
     });
   };
@@ -274,36 +273,116 @@ export function createStd(host) {
       rows: () => null,
     });
   };
-  const regionJoin = (items) => {
-    const out = [];
-    for (const ch of items) {
-      if (Array.isArray(ch)) {
-        const acc = [];
-        ch.forEach((row, ri) => {
-          if (ri) acc.push(ob.makeText(' '));
-          row.forEach((cell, ci) => {
-            if (ci) acc.push(ob.makeText(' | '));
-            acc.push(...toContent(cell));
-          });
-        });
-        out.push(ob.makeNode(KIND.para, {}, acc));
-      } else out.push(...toContent(ch));
-    }
-    return out;
-  };
   const tableRows = (items) => {
     const rows = [];  // per row: array of per-cell content lists
     for (const ch of items) {
-      if (Array.isArray(ch)) {
-        for (const row of ch) rows.push(row.map((c) => toContent(c)));
-      } else if (rows.length) {
-        rows.at(-1).at(-1).push(...toContent(ch));  // continuation → last cell
-      } else if (isNode(ch) && ch.kind === KIND.error) {
-        rows.push([[ch]]);  // a failed first paragraph (its frame's error) stays visible
-      }
+      if (isNode(ch) && ch.kind === KIND.para) rows.push(...paraRows(ch));
+      else if (rows.length) rows.at(-1).at(-1).push(...toContent(ch));  // continuation → last cell
+      else if (isNode(ch) && ch.kind === KIND.error) rows.push([[ch]]);  // a failed first paragraph stays visible
       // other block content before the first row is dropped (documented limitation)
     }
     return rows;
+  };
+  const hasJoin = (n) => (n.text !== undefined ? n.text.includes('\n') : n.children.some(hasJoin));
+  // a paragraph's rows (plan P2-11): its text cut at top-level soft breaks
+  // (rows) and cell cuts (cells); a piece keeps its source span and raw map.
+  // Each cell loses the blanks at its edges, a framed line (| a | b |) its
+  // empty first and last cells; markup across a line join stays in the row
+  // it starts (row-spans-markup)
+  const paraRows = (para) => {
+    const rows = [];
+    let row, cell;
+    const newCell = () => { cell = []; row.push(cell); };
+    const newRow = () => { row = []; rows.push(row); newCell(); };
+    newRow();
+    for (const k of para.children) {
+      const pv = k.text !== undefined ? ob.prov.get(k.opId) : undefined;
+      if (!pv) {
+        if (k.text === undefined && hasJoin(k)) diag(1, 'row-spans-markup', 'markup across a line of a table row stays in the row it starts');
+        cell.push(k);
+        continue;
+      }
+      const seps = new Set(pv.seps);
+      const str = k.text;
+      let from = 0;
+      for (let i = 0, byte = 0; i < str.length;) {
+        const cp = str.codePointAt(i);
+        const units = cp > 0xffff ? 2 : 1;
+        if (cp === 10 || (cp === 124 && seps.has(byte))) {
+          if (i > from) cell.push({ src: k, pv, a: from, b: i });
+          if (cp === 10) newRow();
+          else newCell();
+          from = i + 1;
+        }
+        byte += cp < 0x80 ? 1 : cp < 0x800 ? 2 : cp < 0x10000 ? 3 : 4;
+        i += units;
+      }
+      if (from < str.length) cell.push({ src: k, pv, a: from, b: str.length });
+    }
+    return rows.map((r) => {
+      const cells = r.map(finishCell);
+      while (cells.length > 1 && !cells[0].length) cells.shift();
+      while (cells.length > 1 && !cells.at(-1).length) cells.pop();
+      return cells;
+    });
+  };
+  // a cell's content: its edge blanks trimmed, its pieces made text nodes
+  const finishCell = (cell) => {
+    const isPiece = (x) => !isNode(x);
+    if (cell.length && isPiece(cell[0])) {
+      const p = cell[0];
+      while (p.a < p.b && p.src.text[p.a] === ' ') p.a++;
+    }
+    if (cell.length && isPiece(cell.at(-1))) {
+      const p = cell.at(-1);
+      while (p.b > p.a && p.src.text[p.b - 1] === ' ') p.b--;
+    }
+    return cell.filter((x) => !isPiece(x) || x.b > x.a).map((x) => (isPiece(x) ? piece(x) : x));
+  };
+  // UTF-8 byte offset of a UTF-16 index of s
+  const byteAt = (s, i) => {
+    let b = 0;
+    for (let k = 0; k < i; k++) {
+      const c = s.charCodeAt(k);
+      if (c < 0x80) b += 1;
+      else if (c < 0x800) b += 2;
+      else if (c >= 0xd800 && c < 0xdc00) { b += 4; k++; }
+      else b += 3;
+    }
+    return b;
+  };
+  // the text node of a piece [a, b) of a text: its source span and its own
+  // cooked→raw map, built as the parser builds one (a breakpoint where the
+  // identity breaks, the end when the identity does not reach it, none when
+  // the piece is its own raw slice)
+  const piece = ({ src, pv, a, b }) => {
+    const str = src.text;
+    if (a === 0 && b === str.length) return src;
+    const t = ob.makeText(str.slice(a, b));
+    const aB = byteAt(str, a), bB = byteAt(str, b), totalB = byteAt(str, str.length);
+    const map = pv.map;
+    const rawOf = (c) => {
+      if (!map) return c;
+      let r = c;
+      for (let k = 0; k + 1 < map.length && map[k] <= c; k += 2) r = map[k + 1] + (c - map[k]);
+      return r;
+    };
+    const rawEnd = (c) => (c >= totalB ? pv.e - pv.s : rawOf(c));
+    const r0 = rawOf(aB), r1 = Math.max(r0, rawEnd(bB));
+    ob.span(t, pv.s + r0, pv.s + r1);
+    if (map) {
+      const m = [];
+      let prev = -2;
+      for (let c = aB; c < bB; c++) {
+        const r = rawOf(c) - r0;
+        if (c === aB || r !== prev + 1) m.push(c - aB, r);
+        prev = r;
+      }
+      const n = bB - aB, end = r1 - r0;
+      if (n === 0 || prev + 1 !== end) m.push(n, end);
+      if (!(m.length === 2 && m[1] === 0 && n === end)) ob.rawmap(t, m);
+    }
+    return t;
   };
 
   // ---- semantic values (plan P2-07; design T3) ------------------------------

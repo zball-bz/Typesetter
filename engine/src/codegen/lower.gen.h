@@ -6,7 +6,7 @@ namespace tsr {
 
 constexpr u32 LOWER_VERSION = 1;
 constexpr u32 LOWER_PROTOCOL = 1;
-constexpr u32 PROGRAM_ABI = 0x9bdc5985u;
+constexpr u32 PROGRAM_ABI = 0x4d4c6e49u;
 constexpr u8 kLopAsync = 0x80;
 
 enum class Lop : u8 {
@@ -16,7 +16,6 @@ enum class Lop : u8 {
   FRAME = 4,
   FENCE = 5,
   REGION = 6,
-  ROWS = 7,
   STMT = 8,
   VERBATIM = 9,
 };
@@ -51,7 +50,6 @@ inline const char* lopName(u8 op) {
     case 4: return "FRAME";
     case 5: return "FENCE";
     case 6: return "REGION";
-    case 7: return "ROWS";
     case 8: return "STMT";
     case 9: return "VERBATIM";
   }

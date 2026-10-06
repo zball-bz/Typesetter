@@ -5,14 +5,10 @@ doc @[0,290)
     text @[22,29) str="Details"
   region @[39,82) name="figure"
     para @[64,73)
-      row @[64,73)
-        cell @[64,73)
-          text @[64,73) str="A figure."
+      text @[64,73) str="A figure."
   region @[84,126) name="figure"
     para @[109,117)
-      row @[109,117)
-        cell @[109,117)
-          text @[109,117) str="Another."
+      text @[109,117) str="Another."
   para @[128,289)
     text @[128,146) str="A group of labels: "
     ref @[147,162) target="fig-a, fig-b"

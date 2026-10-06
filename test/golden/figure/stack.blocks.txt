@@ -41,11 +41,11 @@ top pid=0 units=1
 top pid=1 units=1
  unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4 float=right
   cell 0
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[110,236)
-  space w=257su stretch=1 BOLD @[110,236)
-  word "1" w=513su pen=INF BOLD @[110,236)
-  punct-close "：" w=512su BOLD @[110,236)
-  punct-sp w=512su BOLD @[110,236)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[212,227)
+  space w=257su stretch=1 BOLD @[212,227)
+  word "1" w=513su pen=INF BOLD @[212,227)
+  punct-close "：" w=512su BOLD @[212,227)
+  punct-sp w=512su BOLD @[212,227)
   cjk "第" w=1025su glue=102su wt=0.6 pen=0 @[212,227)
   cjk "一" w=1025su glue=102su wt=0.6 pen=0 @[212,227)
   cjk "张" w=1025su glue=102su wt=0.6 pen=0 @[212,227)
@@ -55,11 +55,11 @@ top pid=1 units=1
 top pid=2 units=1
  unit img indent=0su anchor="fig-b" intrinsic=400x200px scale=0.4 float=right
   cell 0
-  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[238,385)
-  space w=257su stretch=1 BOLD @[238,385)
-  word "2" w=513su pen=INF BOLD @[238,385)
-  punct-close "：" w=512su BOLD @[238,385)
-  punct-sp w=512su BOLD @[238,385)
+  cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[340,376)
+  space w=257su stretch=1 BOLD @[340,376)
+  word "2" w=513su pen=INF BOLD @[340,376)
+  punct-close "：" w=512su BOLD @[340,376)
+  punct-sp w=512su BOLD @[340,376)
   cjk "第" w=1025su glue=102su wt=0.6 pen=0 @[340,376)
   cjk "二" w=1025su glue=102su wt=0.6 pen=0 @[340,376)
   cjk "张" w=1025su glue=102su wt=0.6 pen=0 @[340,376)

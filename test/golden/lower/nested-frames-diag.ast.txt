@@ -21,14 +21,10 @@ doc @[0,241)
       text @[154,165) str=" fails alone"
   region @[167,232) name="aside"
     para @[175,194)
-      row @[175,194)
-        cell @[175,194)
-          text @[175,194) str="interior para stays"
+      text @[175,194) str="interior para stays"
     para @[196,224)
-      row @[196,224)
-        cell @[196,224)
-          text @[196,204) str="interior "
-          splice @[205,212) expr="boom()"
-          text @[213,224) str=" fails alone"
+      text @[196,204) str="interior "
+      splice @[205,212) expr="boom()"
+      text @[213,224) str=" fails alone"
   para @[234,240)
     text @[234,240) str="After."

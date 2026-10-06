@@ -1,13 +1,12 @@
-lower v1 abi 9bdc5985 docEnd 183 holes 1 module c7350914884c9ca9
+lower v1 abi 4d4c6e49 docEnd 183 holes 1 module c60b727d30d66f15
 piece 0 hole 0 js [103,183)
 block 0 content [0,30)
   CALL heading [0,30) level=1 label=null
     TEXT "Heading before a tall figure" [2,30)
 block 1 content [32,158) user framed async holes 0..1
   REGION async "figure" args=hole 0 [32,158)
-    ROWS
-      row
-        TEXT "A figure 200px tall on 240px sheets." [113,149)
+    CALL para [113,149)
+      TEXT "A figure 200px tall on 240px sheets." [113,149)
 block 2 content [160,182)
   CALL para [160,182)
     TEXT "Text after the figure." [160,182)
