@@ -125,3 +125,6 @@ top pid=3 units=2
   run r0 plain
 top pid=4 units=1
  unit math indent=0su anchor="eq-a" w=3697su asc=967su desc=19su
+  cell 0
+   box Other "(1)" w=1537su r0 @[287,307)
+   run r0 plain

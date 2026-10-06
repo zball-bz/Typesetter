@@ -1,0 +1,4 @@
+instance equation 1 label=wide @[103,157)
+instance equation 2 label=narrow @[198,216)
+label wide -> equation 1 @[103,157)
+label narrow -> equation 2 @[198,216)

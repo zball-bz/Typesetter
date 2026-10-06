@@ -1,0 +1,18 @@
+lower v1 abi 3d3ccfbb docEnd 244 holes 0 module none
+block 0 content [0,101)
+  CALL para [0,101)
+    TEXT "A formula too wide for its number beside it sets the number below, at the measure's end (plan P3-26):" [0,101)
+block 1 content [103,157)
+  CALL para [103,157)
+    CALL math [103,157) display=true label="wide"
+      CALL mathsrc [105,148) src="a_1 + a_2 + a_3 + a_4 + a_5 + a_6 + a_7 = b"
+block 2 content [159,243)
+  CALL para [159,243)
+    TEXT "A narrow one keeps it on its baseline: " [159,197) raw=0:0,39:38
+    CALL math [198,216) display=true label="narrow"
+      CALL mathsrc [200,205) src="x = 1"
+    TEXT " — see " [217,224) raw=0:0,1:0,9:7
+    CALL ref [225,230) target="wide"
+    TEXT " and " [231,234) raw=0:0,1:0,5:3
+    CALL ref [235,242) target="narrow"
+    TEXT "." [242,243)

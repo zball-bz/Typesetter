@@ -671,6 +671,9 @@ struct Mat {
         case SiteDef::Where::Tag: {  // its tag part (plan P3-03): content in slot "tag"
           ContentNode* tag = mk(Kind::seq, o->span, siteAt(o));
           setArg(tag, ArgK::slot, kSlots[(u8)SlotId::Tag].name);
+          // (plan P3-26) an equation number is no content: copy leaves it out
+          setArg(tag, ArgK::syn, "eqno");
+          setArg(tag, ArgK::copy, "omit");
           tag->synthetic = true;
           inst(site.tmpl, siteAt(o), s, tag, tag->kids);
           o->kids.push_back(tag);

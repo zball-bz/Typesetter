@@ -537,6 +537,9 @@ class Builder {
         return;
       }
       case Kind::mathblock: {
+        // (plan P3-26) its tag part (an equation number): its second track
+        for (const ContentNode* k : n->kids)
+          if (slotOf(k, strs) == SlotId::Tag) s.rows.push_back(k);
         leaf(LayouterId::Replaced, Painter::MathRow, TraitsId::Math, n, parent, x, std::move(s));
         return;
       }

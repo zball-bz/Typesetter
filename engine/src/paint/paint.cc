@@ -276,7 +276,6 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
   out.srcBase = srcBase == 0xFFFFFFFFu ? 0 : srcBase;
   out.scrollX = fr.overflowR > fr.w;
   out.role = tb.tree && tb.tree->role ? strs.get(tb.tree->role) : std::string_view{};
-  const Su measureR = suFloorPx(cfg.widthPx);
   for (size_t li = 0; li < fr.lines.size(); li++) {
     const Fragment& l = fr.lines[li];
     const LayoutBlock& b = tree.blocks[tree.leaves[l.unitIdx]];
@@ -307,16 +306,15 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         break;
       }
       case FragKind::Math: {
-        // display math (§8): the row's advance; the formula centred in it,
-        // its number at the measure's right edge
+        // display math (§8): the row's advance; the formula on the row's
+        // baseline, which layout set (plan P3-26: its number is a line of
+        // the leaf's tag track, measured and placed by layout)
         const MathData& m = std::get<MathData>(u.data);
         n.math = m.box;
         n.mathSrc = m.src;
         n.markerStyle = m.style;  // its paint style (colour)
-        n.eqTag = m.tag;
         n.heightPx = suToPx(l.height);
-        n.mathTopPx = suToPx(l.height - (m.box->asc + m.box->desc)) / 2.0;
-        n.eqRightPx = -suToPx(measureR - (l.left + l.width));
+        n.mathTopPx = suToPx(l.baseline - m.box->asc);
         n.ragged = true;
         break;
       }
@@ -359,7 +357,8 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
           const bool side = !ts.cols.empty() && ts.cols[(size_t)l.gridCell % ts.cols.size()].sidecar;
           n.track = side ? "sidecar" : "cell";
         } else if (l.cellIdx >= 0) {
-          n.track = "caption";  // a float's caption row
+          // a float's caption row; (plan P3-26) a display formula's number
+          n.track = b.painter == Painter::MathRow ? "tag" : "caption";
         }
         n.overfull = l.overfull;
         n.wordSpacingPx = l.wordDeltaPx;

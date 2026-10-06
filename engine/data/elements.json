@@ -101,7 +101,6 @@
       "numbering": "labelled",
       "supplement": "equation",
       "sites": [
-        { "where": "arg", "arg": "name", "template": ["(", { "slot": "number" }, ")"] },
         { "where": "tag", "template": ["(", { "slot": "number" }, ")"] }
       ],
       "ref": [{ "when": "extra", "kids": [{ "slot": "extra" }, " "], "else": [{ "slot": "supplement" }] }, "(", { "slot": "number" }, ")"]

@@ -8,5 +8,5 @@
 <table data-pid="3" data-s="228" data-e="274" id="tsr-tab-a">
 <tr><td>x</td><td>y</td></tr>
 </table>
-<p class="tsr-mathblock" data-pid="4" data-s="276" data-e="296" id="tsr-eq-a"><code class="tsr-mathsrc">$ e = m c^2 $</code> <span class="tsr-eqno">(1)</span></p>
+<p class="tsr-mathblock" data-pid="4" data-s="276" data-e="296" id="tsr-eq-a"><code class="tsr-mathsrc">$ e = m c^2 $</code> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
 </div>

@@ -27,7 +27,7 @@ doc @[0,296) [base]
         text @[261,262) [base] str="x"
       tcell @[228,274) [base]
         text @[265,266) [base] str="y"
-  mathblock @[276,296) [base] label="eq-a" name="(1)"
+  mathblock @[276,296) [base] label="eq-a"
     mathsrc @[278,287) [base] src="e = m c^2"
-    seq @[276,296) [base] slot="tag"
+    seq @[276,296) [base] slot="tag" syn="eqno" copy="omit"
       text @[276,296) [base] str="(1)"

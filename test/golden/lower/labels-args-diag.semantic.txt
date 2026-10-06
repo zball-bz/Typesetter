@@ -7,7 +7,7 @@
 </div>
 <pre data-pid="2" data-s="332" data-e="382" id="tsr-code1"><code class="language-js">let x = 1;</code></pre>
 <p data-pid="3" data-s="384" data-e="456">An inline formula <code class="tsr-mathsrc">$x^2$</code> keeps no label; a display formula does:</p>
-<p class="tsr-mathblock" data-pid="4" data-s="458" data-e="477" id="tsr-emc"><code class="tsr-mathsrc">$ E = m c^2 $</code> <span class="tsr-eqno">(1)</span></p>
+<p class="tsr-mathblock" data-pid="4" data-s="458" data-e="477" id="tsr-emc"><code class="tsr-mathsrc">$ E = m c^2 $</code> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
 <div data-role="card" data-pid="5" data-s="479" data-e="557" id="tsr-c1">
 <p data-s="479" data-e="557">A named argument list is one options object.</p>
 </div>

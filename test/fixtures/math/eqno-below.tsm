@@ -1,0 +1,5 @@
+A formula too wide for its number beside it sets the number below, at the measure's end (plan P3-26):
+
+$ a_1 + a_2 + a_3 + a_4 + a_5 + a_6 + a_7 = b $ <wide>
+
+A narrow one keeps it on its baseline: $ x = 1 $ <narrow> — see @wide and @narrow.

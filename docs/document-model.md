@@ -485,8 +485,11 @@ Copy produces **content text**, not markup source. As built (plan P3-07; design 
 - A formula renders as one `<span class="tsr-math" data-syn="math"
   data-copy="$…$" data-copy-group="…">` inline box (width/height/vertical-align from the MathBox;
   display formulas are a `Math` fragment: a centred row with an explicit
-  height, the formula placed in it by paint, and an optional `.tsr-eqno`
-  right-margin number, `data-syn="eqno"`, its offset computed by paint).
+  height, the formula on the row's baseline as layout set it. Its number
+  (plan P3-26) is a line of the leaf's tag track, measured and placed by
+  layout: on the formula's baseline at the measure's end, or below it at the
+  end when the two would come closer than an em; `data-track="tag"`, its
+  runs `data-syn="eqno"`, never parted from the formula by a page cut).
   Inside: absolutely positioned `.tsr-mg` glyph runs (baseline pinned by
   line-height == hhea height) and `.tsr-mr` rule boxes. Glyphs are painted
   BY CODEPOINT in the bundled font — the artifact's gating check guarantees

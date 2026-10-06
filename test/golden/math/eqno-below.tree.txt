@@ -1,0 +1,21 @@
+doc @[0,243) [base]
+  para @[0,101) [base]
+    text @[0,101) [base] str="A formula too wide for its number beside it sets the number below, at the measure's end (plan P3-26):"
+  mathblock @[103,157) [base] label="wide"
+    mathsrc @[105,148) [base] src="a_1 + a_2 + a_3 + a_4 + a_5 + a_6 + a_7 = b"
+    seq @[103,157) [base] slot="tag" syn="eqno" copy="omit"
+      text @[103,157) [base] str="(1)"
+  para @[159,243) [base]
+    text @[159,197) [base] str="A narrow one keeps it on its baseline: " raw=0:0,39:38
+  mathblock @[198,216) [base] label="narrow"
+    mathsrc @[200,205) [base] src="x = 1"
+    seq @[198,216) [base] slot="tag" syn="eqno" copy="omit"
+      text @[198,216) [base] str="(2)"
+  para @[217,243) [base] cont=true
+    text @[217,224) [base] str=" — see " raw=0:0,1:0,9:7
+    ref @[225,230) [base] target="wide"
+      text @[225,230) [base] str="式 (1)"
+    text @[231,234) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[235,242) [base] target="narrow"
+      text @[235,242) [base] str="式 (2)"
+    text @[242,243) [base] str="."

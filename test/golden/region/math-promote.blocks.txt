@@ -34,6 +34,8 @@ top pid=0 units=3
   space w=257su stretch=1 @[8,64)
   word "own:" w=2049su pen=INF @[8,64)
  unit math indent=0su anchor="eq-r" w=3697su asc=967su desc=19su
+  cell 0
+  word "(1)" w=1537su pen=INF @[66,86)
  unit text indent=0su
   word "and" w=1537su pen=INF @[88,114)
   space w=257su stretch=1 @[88,114)

@@ -79,7 +79,6 @@ const LAYOUT_CSS = `
 /* names / operators / "text" in formulas: upright, in the body font (the
    engine measured them there) — Euler stays for variables and symbols */
 .tsr-math .tsr-mg.tsr-mt { font-family: inherit; font-style: normal; }
-.tsr-eqno { position: absolute; top: 50%; transform: translateY(-50%); }
 `;
 export const TSR_CSS = CONTRACT_CSS + LAYOUT_CSS;
 export { THEME_CSS };

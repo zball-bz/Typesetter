@@ -1089,8 +1089,17 @@ struct Emitter {
           case Painter::MathRow: {
             // prepared here, laid out in Measure (plan P1-25): see math()
             MathData& m = u.data.emplace<MathData>();
-            for (const ArgVal& a : n->args)
-              if (a.key == ArgK::name && a.tag == ArgTag::Str) m.tag = a.ref;
+            // (plan P3-26) its tag part: a track layout measures and places
+            // (copied as the part says: an equation number is left out)
+            for (const ContentNode* k : ls.rows) {
+              ICtx cctx;
+              cctx.noHyphen = true;
+              if (const CopyAttr c = copyAttr(k, strs); c.marked && c.mode == CopyAttr::Mode::Omit) {
+                cctx.copy = CopyMode::Omit;
+                cctx.syn = strs.intern(c.syn);
+              }
+              u.cells.push_back(cellOf(k->kids, cctx));
+            }
             // (plan P2-15) its source; one clean fragment is its interned string
             const MathScope scope{E.math, n->declEpoch, n->style};
             m.src = m.formula = mathSourceRef(n, strs);

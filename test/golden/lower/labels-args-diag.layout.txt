@@ -11,6 +11,7 @@ para pid=3 y=9831su w=19200su h=3072su
   L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[24,35) @[417,456)
 para pid=4 y=14132su w=19200su h=1536su
   L0 math y=0su left=7698su w=3804su
+  L1 cell=0 y=423su left=17664su w=1536su blocks=[0,1)
 para pid=5 y=16897su w=19200su h=3072su
   L0 y=0su left=0su w=19200su dw=73su dc=0su join=none hyphen blocks=[0,22) @[512,556)
   L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[22,23) @[512,556)

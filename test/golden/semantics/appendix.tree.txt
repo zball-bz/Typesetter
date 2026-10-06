@@ -2,9 +2,9 @@ doc @[383,540) [base]
   heading @[383,392) [BOLDx1.60] level=1 label="methods"
     text @[383,392) [BOLDx1.60] str="1 "
     text @[385,392) [BOLDx1.60] str="Methods"
-  mathblock @[404,420) [base] label="eq-m" name="(1.1)"
+  mathblock @[404,420) [base] label="eq-m"
     mathsrc @[406,411) [base] src="a = b"
-    seq @[404,420) [base] slot="tag"
+    seq @[404,420) [base] slot="tag" syn="eqno" copy="omit"
       text @[404,420) [base] str="(1.1)"
   heading @[435,443) [BOLDx1.60] level=1 label="proofs"
     text @[435,443) [BOLDx1.60] str="A "
@@ -12,9 +12,9 @@ doc @[383,540) [base]
   heading @[454,463) [BOLDx1.35] level=2 label="lemmas"
     text @[454,463) [BOLDx1.35] str="A.1 "
     text @[457,463) [BOLDx1.35] str="Lemmas"
-  mathblock @[474,490) [base] label="eq-p" name="(A.1)"
+  mathblock @[474,490) [base] label="eq-p"
     mathsrc @[476,481) [base] src="c = d"
-    seq @[474,490) [base] slot="tag"
+    seq @[474,490) [base] slot="tag" syn="eqno" copy="omit"
       text @[474,490) [base] str="(A.1)"
   para @[492,540) [base]
     text @[492,495) [base] str="See " raw=0:0,4:3

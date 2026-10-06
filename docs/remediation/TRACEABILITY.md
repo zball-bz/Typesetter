@@ -1088,7 +1088,7 @@ Theme steps: — · findings: 1
 | `resolver/citation-path` | adhoc | high | P2-09 | grep:plan P2-09 |
 | `resolver/supplement-config` | adhoc | medium | P1-10 | grep:plan P1-10 |
 | `resolver/numbering-format-hardcoded` | adhoc | medium | P1-10 | grep:plan P1-10 |
-| `resolver/site-display-injection` | adhoc | medium | P3-03, P3-26 | |
+| `resolver/site-display-injection` | adhoc | medium | P3-03, P3-26 | grep:plan P3-26 |
 | `resolver/term-rewrite` | adhoc | medium | P1-10 | grep:plan P1-10 |
 | `resolver/excerpt-strings` | adhoc | medium | P3-03 | grep:plan P3-03 |
 | `resolver/presentation-constants` | adhoc | medium | P1-10 | grep:plan P1-10 |
@@ -1118,7 +1118,7 @@ Theme steps: — · findings: 1
 | `emitter/hardcoded-script-class-tables` | adhoc | high | P4-05 | |
 | `emitter/punct-compression-control-flow` | adhoc | high | P4-04 | |
 | `emitter/hyphenation-en-us-only` | adhoc | high | P4-06 | |
-| `emitter/math-only-inline-box` | adhoc | high | P1-13, P3-26 | |
+| `emitter/math-only-inline-box` | adhoc | high | P1-13, P3-26 | grep:plan P3-26 |
 | `emitter/flowunit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `emitter/figure-role-string-dispatch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `emitter/measure-dependent-geometry-in-emit` | adhoc | high | P1-16, P3-32 | |
@@ -1237,7 +1237,7 @@ Theme steps: — · findings: 1
 | `math/implicit-names-op-class` | adhoc | medium | P3-24 | grep:plan P3-24 |
 | `math/bigop-greedy-body` | adhoc | medium | P3-25 | grep:plan P3-25 |
 | `math/segmentation-class-preview` | adhoc | medium | P3-25 | grep:plan P3-25 |
-| `math/inline-math-special-block` | adhoc | medium | P1-13, P3-26 | |
+| `math/inline-math-special-block` | adhoc | medium | P1-13, P3-26 | grep:plan P3-26 |
 | `math/display-math-unit` | adhoc | medium | P1-18, P3-26, P3-29 | |
 | `math/equation-numbering` | adhoc | low | P2-07, P2-15 | grep:plan P2-15 |
 | `math/math-island-oneoff-syntax` | adhoc | low | P2-06, P2-15 | grep:plan P2-15 |

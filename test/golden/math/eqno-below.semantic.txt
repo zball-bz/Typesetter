@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="101">A formula too wide for its number beside it sets the number below, at the measure&#39;s end (plan P3-26):</p>
+<p class="tsr-mathblock" data-pid="1" data-s="103" data-e="157" id="tsr-wide"><code class="tsr-mathsrc">$ a_1 + a_2 + a_3 + a_4 + a_5 + a_6 + a_7 = b $</code> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
+<p data-pid="2" data-s="159" data-e="243">A narrow one keeps it on its baseline: </p>
+<p class="tsr-mathblock" data-pid="3" data-s="198" data-e="216" id="tsr-narrow"><code class="tsr-mathsrc">$ x = 1 $</code> <span class="tsr-eqno" data-syn="eqno">(2)</span></p>
+<p data-pid="4" data-s="217" data-e="243" style="margin-top:0;text-indent:0"> — see <a href="#tsr-wide">式 (1)</a> and <a href="#tsr-narrow">式 (2)</a>.</p>
+</div>

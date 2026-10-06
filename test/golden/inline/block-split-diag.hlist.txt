@@ -141,6 +141,9 @@ top pid=3 units=1
   run r1 plain
 top pid=4 units=1
  unit math indent=0su anchor="eq-mid" w=3804su asc=967su desc=19su
+  cell 0
+   box Other "(1)" w=1537su r0 @[322,344)
+   run r0 plain
 top pid=5 units=1
  unit text indent=0su
   glue word w=257su x=1 cap=257su src r0 @[345,383)

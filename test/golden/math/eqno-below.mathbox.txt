@@ -1,0 +1,52 @@
+display pid=1
+hbox Ord w=16549 asc=700 desc=166
+  hbox Ord w=1033 asc=477 desc=162
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "1" Ord w=358 asc=509 desc=5 px=11.2 @(624,-157)
+  glue w=228 @(1033,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(1261,0)
+  glue w=228 @(2034,0)
+  hbox Ord w=1033 asc=477 desc=154 @(2262,0)
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "2" Ord w=358 asc=506 desc=0 px=11.2 @(624,-154)
+  glue w=228 @(3295,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(3523,0)
+  glue w=228 @(4296,0)
+  hbox Ord w=1033 asc=477 desc=166 @(4524,0)
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "3" Ord w=358 asc=503 desc=12 px=11.2 @(624,-154)
+  glue w=228 @(5557,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(5785,0)
+  glue w=228 @(6558,0)
+  hbox Ord w=1033 asc=477 desc=159 @(6786,0)
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "4" Ord w=358 asc=503 desc=5 px=11.2 @(624,-154)
+  glue w=228 @(7819,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(8047,0)
+  glue w=228 @(8820,0)
+  hbox Ord w=1033 asc=477 desc=162 @(9048,0)
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "5" Ord w=358 asc=492 desc=8 px=11.2 @(624,-154)
+  glue w=228 @(10081,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(10309,0)
+  glue w=228 @(11082,0)
+  hbox Ord w=1033 asc=477 desc=163 @(11310,0)
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "6" Ord w=358 asc=502 desc=9 px=11.2 @(624,-154)
+  glue w=228 @(12343,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(12571,0)
+  glue w=228 @(13344,0)
+  hbox Ord w=1033 asc=477 desc=160 @(13572,0)
+    glyph "a" Ord w=624 asc=477 desc=12 px=16
+    glyph "7" Ord w=358 asc=497 desc=6 px=11.2 @(624,-154)
+  glue w=284 @(14605,0)
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(14889,0)
+  glue w=284 @(15663,0)
+  glyph "b" Ord w=602 asc=700 desc=10 px=16 @(15947,0)
+display pid=3
+hbox Ord w=2392 asc=727 desc=12
+  glyph "x" Ord w=539 asc=475 desc=12 px=16
+  glue w=284 @(539,0)
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(823,0)
+  glue w=284 @(1597,0)
+  glyph "1" Ord w=511 asc=727 desc=7 px=16 @(1881,0)

@@ -1,0 +1,6 @@
+[103,150) type "$ a_1 + a_2 + a_3 + a_4 + a_5 + a_6 + a_7 = b $"
+[151,157) label "<wide>"
+[198,207) type "$ x = 1 $"
+[208,216) label "<narrow>"
+[225,230) constant "@wide"
+[235,242) constant "@narrow"

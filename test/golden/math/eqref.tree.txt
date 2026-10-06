@@ -1,18 +1,18 @@
 doc @[0,260) [base]
   para @[0,48) [base]
     text @[0,48) [base] str="质能关系是狭义相对论的核心结论："
-  mathblock @[50,69) [base] label="emc" name="(1)"
+  mathblock @[50,69) [base] label="emc"
     mathsrc @[52,61) [base] src="E = m c^2"
-    seq @[50,69) [base] slot="tag"
+    seq @[50,69) [base] slot="tag" syn="eqno" copy="omit"
       text @[50,69) [base] str="(1)"
   para @[71,120) [base]
     text @[71,74) [base] str="由"
     ref @[74,78) [base] target="emc"
       text @[74,78) [base] str="式 (1)"
     text @[78,120) [base] str="可知能量与质量等价。高斯积分"
-  mathblock @[122,170) [base] label="gauss" name="(2)"
+  mathblock @[122,170) [base] label="gauss"
     mathsrc @[124,160) [base] src="int_(-oo)^oo e^(-x^2) d x = sqrt(pi)"
-    seq @[122,170) [base] slot="tag"
+    seq @[122,170) [base] slot="tag" syn="eqno" copy="omit"
       text @[122,170) [base] str="(2)"
   para @[172,260) [base]
     text @[172,181) [base] str="的值见"

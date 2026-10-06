@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P3
-- 下一步：P3-26
+- 下一步：P3-27
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -92,7 +92,7 @@
 | P3-23 | PresentationMap（元素行的 html 段） | done | grep:plan P3-23 | 2026-10-06 | 185 个 golden 变化（脚本 check323.py 核对：89 个 html/paged 只多 data-role，其一 semantics/lists 另因收集器成组；64 个 semantic、2 个 css、13 个 tree、12 个 blocktree 为下列有意修复）；+3 用例（figure/caption-paras、semantics/presentation、style/weight-size） | 中性移植：elements.json 新增 html 段（种类、生成角色、类的展示行，like 继承；吸收 P3-01 的 roles 映射与类的 html: figure），语义页按行取元素，字节不变后再做有意修复。有意修复：图注按 caption 部件写一个 figcaption（多段各为 p，块不再落入 figcaption，不再按首段猜测）；定义术语 dl/dt/dd（term 投影，模板给描述包一层 term-def 角色）；收集器输出外包一层以收集器名为角色的组（toc/lof/lot/index→nav，glossary/notes/bibliography→section，带 DPUB-ARIA 角色）；代码边注在语义页行内投影（行尾、按声明的标记、data-syn 使复制只取代码）；data-role：语义页与排版页 .tsr-para/.tsr-band 上的组角色（D-R02）；typeset.frame 声明的类得到 .tsr-frame[data-role] 框（D-Y11，内建无）；白名单：块/行内元素、slot 元素、ARIA 角色、projection，非法行拒绝注册表；kHtmlAttrs 增加 role。样式分歧：排版页写出 700 以外的 font-weight，语义页写出 sizeMul（em）与 sizePx×sizeMul；规则样式表按展示行取种类元素，角色选择器→[data-role]（仅限页面上带钩子的组），类选择器→.tsr-c-*。通道：semantics.html 宿主设置、$.element(name, {html})。文档：document-model §9.2、semantics-design、security-review 补遗、tsm-changes |
 | P3-24 | SymbolInfo 身份与数据驱动的数学族 | done | grep:plan P3-24 | 2026-10-06 | 2 个 mathir dump 多出 info math-implicit-name（math/decl 的 defeq 先于声明、region/hott-row 的 Id），其余 golden 不变（已验证）；+2 用例（math/symbols、math/negation-diag）；e2e 声明这两个用例的 info 诊断 | 谓词只读 SymbolInfo：直接输入的字符按其默认行成为 Op/Open/Close 记号（∑ 带 limits、≤ 结束大算子体、⟨⟩ 成组伸缩），具名定界符（langle、lceil…）同样开/闭组；! 规则：紧贴的符号取 UCD 否定或行内覆盖（| → ∤、‖ → ∦），无否定的关系为错误叶，其余为阶乘；删除 28 个 !x 行、_|_ 行与 !word/_|_ 词法分支，生成器拒绝字母与运算符字符混合的键，运算符字符集 kOpChars 生成；只剥圆括号（D-M01）；组内唯一的 | 或 ‖ 成为中间符（Rel，随组伸缩）；新原语 space/mstyle/mlimits/variant/class 与行 thin med thick quad wide、display inline script sscript、limits scripts、bb cal frak bold italic sans mono（字母表由 UCD 名称生成，含 letterlike 空位），无参数行裸用即常量；隐式名字报 info math-implicit-name（D-M04）；tex 列生成转换器映射（kTexNames/TEX_MATH），unitMathDict 把每个键与每个 TeX 目标解析回其符号（词法门禁）；tex2tsm 改用生成映射、字母表行、class(op, "X") 与空白行，并列出无符号的宏；pbr2tsm 加载时核对 MathSpeak 映射，粗体/手写/哥特字母用字母表。语料：review-corpus 340 篇 0 个新错误、typst 语料 199 篇通过。文档：design-decisions、math-design §13、tsm-changes |
 | P3-25 | 运算符原子与单一 mlist→item 转换 | done | grep:plan P3-25 | 2026-10-06 | 两次提交。主体：19 个 golden（脚本 check325.py 核对：display/eqref/stretch/decl 的 mathbox 只是树变平，每个字形与规则线的绝对位置不变；holes-diag 断点后的负号由 Bin 正确降为 Ord；math/symbols 新断点）。fracPadEm：29 个 golden（check325b.py 数值审阅：每个顶层分式宽 +204su = 2×0.1em@16px，脚本级 72su、二级脚本 51su，嵌套按层累加） | 删除 MNode::BigOp：大算子是带 limits 模式的 Op 原子，上下标走唯一的 attach（limits() 或 display 下的 limits 对任何底都成立）；v2 §13 的贪婪作用域只作阅读注记 scopeEnd（到下一个 Rel 类原子，含直接输入的关系）。降级只做一遍（demote + pack）；行内分段：顶层原子各排一次、降级一次，断点代价 = min(math.breakAfter[左], math.breakBefore[右])，新增 classmap 设置域，取代三个 break.math* 键；删除 effClsOf。上下标保留底的首末类；pack 传递单个原子的 topAccent（删 layoutAccent 的重读）。单记号操作数规则（P3-24 遗留，本步补）：未知词作上下标或分式操作数时为字母串（x^ab = x^{ab}）；关系名作上标（x_in）报 info。fracPadEm 0.1em 单独提交 |
-| P3-26 | 数学采用通用协议；公式编号由布局测量 | todo | | | | |
+| P3-26 | 数学采用通用协议；公式编号由布局测量 | done | grep:plan P3-26 | 2026-10-07 | 三次提交，各按格式由脚本核对。blocks：29 个 dump（obj 行 165、synthetic 胶 74、image/raw 部件 9）。html：36 个（公式的 data-src → data-copy + data-copy-group）。tag：11 个用例的 layout（新增 tag 行，无高度变化）、html/paged（定位 span → 测量的 tag 行；显示公式 top 取布局基线，差 ≤0.01px）、semantic（eqno 的 data-syn）、tree（tag 部件的 syn/copy）、blocks/hlist/breaks（tag 轨道）；+1 用例 math/eqno-below | LinebreakBlock 去掉 MathBox*：行内对象部件带种类、度量与不透明 payload（只供遗留 oracle 比较），blocks dump 统一写 obj 行；对象部件间的胶有自己的 BF_SYNTH（dump 为 synthetic），BF_BOUND 只表示 CJK–拉丁边界。公式的复制与任何替换 run 相同：data-syn="math"、data-copy=源码、同一公式的各部件同一 data-copy-group（源码起点加高位），删除 data-src 特例（paint、写出器、copy.mjs）。公式编号：删除 equation 类的 where: arg 站点与 ArgK::name 兼容（emit、语义页），tag 部件声明 syn eqno / copy omit；盒树把 tag 部件作为叶的第二轨，emit 塑形，布局按 End 对齐测量成行：与公式同基线放在版心末端，两者间距小于 1em 时移到公式下方，PenTier::Structural 不被分页切开；paint 轨道名 tag，删除 eqTag/eqRightPx 与外壳 CSS 的绝对定位。文档：document-model §9.4、tsm-changes |
 | P3-27 | 语义页数学盒与无障碍 | todo | | | | |
 | P3-28 | 宿主测量的替换盒（boxInfo） | todo | | | | |
 | P3-29 | 数学网格、equations 与显示行 | todo | | | | |
@@ -169,6 +169,7 @@
 | P3-23 后 | 3.40 | 10.90 | 26.70 | 1.8 / 3.0 / 0.8 / 9.9 / 3.2 | 69.6 / 99.1 / 147.4 | 1.70 / 23.10 / 55.60 | 均在 P3 门限内 |
 | P3-24 后 | 3.60 | 10.80 | 27.20 | 1.7 / 3.2 / 0.8 / 10.2 / 3.2 | 70.1 / 105.1 / 149.2 | 1.70 / 22.20 / 57.90 | 均在 P3 门限内 |
 | P3-25 后 | 3.30 | 10.90 | 26.80 | 1.7 / 3.0 / 0.8 / 10.2 / 3.2 | 69.2 / 107.2 / 146.8 | 1.80 / 22.00 / 58.10 | 均在 P3 门限内 |
+| P3-26 后 | 3.50 | 11.20 | 27.20 | 1.8 / 3.1 / 0.8 / 10.1 / 3.3 | 69.2 / 103.5 / 145.9 | 1.70 / 22.40 / 58.10 | 均在 P3 门限内 |
 
 ## 偏差记录（MD-11）
 
@@ -386,6 +387,10 @@
 | P3-24 | 设计 S4 的"单记号操作数规则"（未知词作操作数为字母串）在 P3-24 漏做，记作 x^a·b 的语言差异；P3-25 补上并更正 design-decisions | 发现于 P3-25 复读设计；语料与用例均无此类写法，补做不改 golden | 无 |
 | P3-25 | 数学断点设置名为 math.breakAfter / math.breakBefore（设计写 math.break.*） | 设置路径约定为 section.name 两段；值是按原子类的表（新 classmap 域，未给的类不断行） | 无 |
 | P3-25 | 段间胶仍带 BF_BOUND（设计如此：等 T5 的 Glue.synthetic） | 设计明定保留 | P4 |
+| P3-26 | 计划所列的 FlowUnit::K::Math、special=4 已在 P1-18 消失（显示公式是 Replaced 叶，painter MathRow，FragKind::Math 由布局居中）；本步删除剩下的 LinebreakBlock::math、渲染侧的编号定位与 name 兼容 | 先前步骤已完成架构迁移；本步只做剩余部分 | 无 |
+| P3-26 | Glue.synthetic 以遗留适配器的 BF_SYNTH 与 HList 已有的 GC::ObjectSpace 表达；T5 的通用 Glue.synthetic 字段随断行器改读 ItemList（P4-08） | LinebreakBlock 适配器在 P4-08 删除，届时由 T5 item 直接携带 | P4-08 |
+| P3-26 | role=math 与 aria-label 未做（计划注明在 P3-27 落地）；多行显示的逐行编号属 P3-29 | 计划安排 | P3-27、P3-29 |
+| P3-26 | 编号与公式同基线（TeX \\eqno），取代 CSS 的垂直居中；编号在旁时其行框的行距不推进游标（行高不变） | TeX 的做法；避免所有带编号公式之后的内容下移 | 无 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）

@@ -16,6 +16,7 @@ para pid=3 y=22013su w=19200su h=1536su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,3) @[1181,1194)
 para pid=4 y=24778su w=19200su h=1536su
   L0 math y=0su left=8316su w=2568su
+  L1 cell=0 y=293su left=16640su w=2560su blocks=[0,1)
 para pid=5 y=27543su w=19200su h=1536su
   L0 y=0su left=0su w=19200su dw=-38su dc=0su join=last blocks=[0,9) @[1222,1245)
 para pid=6 y=30308su w=19200su h=1639su
@@ -28,6 +29,7 @@ para pid=9 y=38706su w=19200su h=1536su
   L0 y=0su left=0su w=19200su dw=0su dc=0su join=last blocks=[0,3) @[1324,1335)
 para pid=10 y=41471su w=19200su h=1536su
   L0 math y=0su left=8390su w=2420su
+  L1 cell=0 y=180su left=16640su w=2560su blocks=[0,1)
 para pid=11 y=44236su w=19200su h=3072su
   L0 y=0su left=0su w=19200su dw=205su dc=0su join=space blocks=[0,21) @[1363,1400)
   L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last blocks=[22,39) @[1401,1425)

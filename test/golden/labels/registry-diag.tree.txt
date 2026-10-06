@@ -14,9 +14,9 @@ doc @[0,351) [base]
       styled @[149,193) [BOLD] role="caption-label"
         text @[149,193) [BOLD] str="图 2："
       text @[149,193) [base] str="Second figure reuses the label: it loses it."
-  mathblock @[204,220) [base] label="eq-1" name="(1)"
+  mathblock @[204,220) [base] label="eq-1"
     mathsrc @[206,211) [base] src="a = b"
-    seq @[204,220) [base] slot="tag"
+    seq @[204,220) [base] slot="tag" syn="eqno" copy="omit"
       text @[204,220) [base] str="(1)"
   mathblock @[222,238) [base]
     mathsrc @[224,229) [base] src="c = d"

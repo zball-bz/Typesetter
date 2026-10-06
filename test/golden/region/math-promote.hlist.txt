@@ -35,6 +35,9 @@ top pid=0 units=3
   box Other "own:" w=2049su r0 @[8,64)
   run r0 plain
  unit math indent=0su anchor="eq-r" w=3697su asc=967su desc=19su
+  cell 0
+   box Other "(1)" w=1537su r0 @[66,86)
+   run r0 plain
  unit text indent=0su
   box Other "and" w=1537su r0 @[88,114)
   glue word w=257su x=1 cap=257su kern="d t" src r0 @[88,114)

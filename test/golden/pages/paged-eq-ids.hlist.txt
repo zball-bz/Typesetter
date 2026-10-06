@@ -42,8 +42,14 @@ top pid=1 units=1
   run r0 plain
 top pid=2 units=1
  unit math indent=0su anchor="eq-pyth" w=5522su asc=967su desc=76su
+  cell 0
+   box Other "(1)" w=1537su r0 @[101,130)
+   run r0 plain
 top pid=3 units=1
  unit math indent=0su anchor="eq-euler" w=4850su asc=951su desc=76su
+  cell 0
+   box Other "(2)" w=1537su r0 @[132,163)
+   run r0 plain
 top pid=4 units=1
  unit text indent=0su
   box Other "See" w=1537su r0 @[165,168)

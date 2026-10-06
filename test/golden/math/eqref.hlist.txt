@@ -37,6 +37,9 @@ top pid=0 units=1
   run r1 blank-bearing CJK
 top pid=1 units=1
  unit math indent=0su anchor="emc" w=3804su asc=967su desc=19su
+  cell 0
+   box Other "(1)" w=1537su r0 @[50,69)
+   run r0 plain
 top pid=2 units=1
  unit text indent=0su
   box Ideo "由" w=1025su wt=0.6 cap=102su r0 @[71,74)
@@ -82,6 +85,9 @@ top pid=2 units=1
   run r5 letter-spaced CJK
 top pid=3 units=1
  unit math indent=0su anchor="gauss" w=7788su asc=1458su desc=941su
+  cell 0
+   box Other "(2)" w=1537su r0 @[122,170)
+   run r0 plain
 top pid=4 units=1
  unit text indent=0su
   box Ideo "的" w=1025su wt=0.6 cap=102su r0 @[172,181)

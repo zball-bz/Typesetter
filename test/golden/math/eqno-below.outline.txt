@@ -1,0 +1,1 @@
+{"headings":[],"regions":[],"fences":[],"labels":[{"id":"wide","rule":"math","span":[151,157]},{"id":"narrow","rule":"math","span":[208,216]}],"diagnostics":[]}

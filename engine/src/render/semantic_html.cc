@@ -558,17 +558,14 @@ struct Sem {
         out += " $</code>";
         {
           // the equation number on the no-JS page too (P0-09 k): its tag
-          // part (plan P3-03), else the compat name
-          const ContentNode* part = nullptr;
+          // part (plan P3-03; the compat name is gone, P3-26), which copy
+          // leaves out as on the typeset page
           for (const ContentNode* k : n->kids)
-            if (slotOf(k, strs) == SlotId::Tag) part = k;
-          std::string_view tag = argS(n, ArgK::name);
-          if (part || !tag.empty()) {
-            out += " <span class=\"tsr-eqno\">";
-            if (part) inlineKids(part);
-            else esc(out, tag);
-            out += "</span>";
-          }
+            if (slotOf(k, strs) == SlotId::Tag) {
+              out += " <span class=\"tsr-eqno\" data-syn=\"eqno\">";
+              inlineKids(k);
+              out += "</span>";
+            }
         }
         out += "</p>\n";
         return;

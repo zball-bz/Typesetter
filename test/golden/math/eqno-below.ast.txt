@@ -1,0 +1,15 @@
+doc @[0,244)
+  para @[0,101)
+    text @[0,101) str="A formula too wide for its number beside it sets the number below, at the measure's end (plan P3-26):"
+  para @[103,157)
+    math @[103,157) display=1 src="a_1 + a_2 + a_3 + a_4 + a_5 + a_6 + a_7 = b" label="wide"
+      text @[105,148) str="a_1 + a_2 + a_3 + a_4 + a_5 + a_6 + a_7 = b"
+  para @[159,243)
+    text @[159,197) str="A narrow one keeps it on its baseline: "
+    math @[198,216) display=1 src="x = 1" label="narrow"
+      text @[200,205) str="x = 1"
+    text @[217,224) str=" — see "
+    ref @[225,230) target="wide"
+    text @[231,234) str=" and "
+    ref @[235,242) target="narrow"
+    text @[242,243) str="."

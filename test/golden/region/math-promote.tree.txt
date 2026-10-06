@@ -2,9 +2,9 @@ doc @[0,134) [base]
   group @[0,122) [base] role="aside"
     para @[8,64) [base]
       text @[8,64) [base] str="A display formula inside a region is a block of its own:"
-    mathblock @[66,86) [base] label="eq-r" name="(1)"
+    mathblock @[66,86) [base] label="eq-r"
       mathsrc @[68,77) [base] src="e = m c^2"
-      seq @[66,86) [base] slot="tag"
+      seq @[66,86) [base] slot="tag" syn="eqno" copy="omit"
         text @[66,86) [base] str="(1)"
     para @[88,114) [base]
       text @[88,114) [base] str="and the paragraph goes on."

@@ -54,9 +54,9 @@ doc @[1125,1425) [base]
   heading @[1181,1194) [BOLDx1.15] level=3 label="sec-j"
     text @[1181,1194) [BOLDx1.15] str="§1.1 "
     text @[1185,1194) [BOLDx1.15] str="Judgments"
-  mathblock @[1204,1220) [base] label="eq-j" name="(1.1)"
+  mathblock @[1204,1220) [base] label="eq-j"
     mathsrc @[1206,1211) [base] src="a = b"
-    seq @[1204,1220) [base] slot="tag"
+    seq @[1204,1220) [base] slot="tag" syn="eqno" copy="omit"
       text @[1204,1220) [base] str="(1.1)"
   heading @[1222,1245) [BOLDx1.35] level=2 label="ch-hott"
     text @[1222,1245) [BOLDx1.35] str="Chapter 2 "
@@ -73,9 +73,9 @@ doc @[1125,1425) [base]
   heading @[1324,1335) [BOLDx1.15] level=3 label="sec-s"
     text @[1324,1335) [BOLDx1.15] str="§A.1 "
     text @[1328,1335) [BOLDx1.15] str="Symbols"
-  mathblock @[1345,1361) [base] label="eq-s" name="(A.1)"
+  mathblock @[1345,1361) [base] label="eq-s"
     mathsrc @[1347,1352) [base] src="x = x"
-    seq @[1345,1361) [base] slot="tag"
+    seq @[1345,1361) [base] slot="tag" syn="eqno" copy="omit"
       text @[1345,1361) [base] str="(A.1)"
   para @[1363,1425) [base]
     text @[1363,1366) [base] str="See " raw=0:0,4:3

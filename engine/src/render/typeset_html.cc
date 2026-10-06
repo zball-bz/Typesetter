@@ -206,15 +206,6 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
         t.open();
       }
       anchor2();
-      if (n.eqTag) {  // right-margin equation number, at the measure's right edge
-        Tag t(out, "span");
-        t.attrSafe("class", "tsr-eqno");
-        t.attrSafe("data-syn", "eqno");
-        t.px("right", n.eqRightPx);
-        t.open();
-        escapeHtml(out, strs.get(n.eqTag));
-        out += "</span>";
-      }
       mathSpan(out, n.math, n.mathSrc, /*display=*/true, strs, {}, n.mathTopPx, 0,
                n.markerStyle ? styles.get(n.markerStyle).color : 0);
       out += "</div>\n";

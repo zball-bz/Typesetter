@@ -976,7 +976,45 @@ class DocLayout {
         f.height = std::max(mb->asc + mb->desc, baseLeading);
         f.baseline = (f.height - (mb->asc + mb->desc)) / 2 + mb->asc;
         f.sep = b.sepAfter;  // a formula is copied (its source) like a paragraph
-        break;
+        if (u.cells.empty()) break;
+        // (plan P3-26; design T6 display rows) its number, measured: a line
+        // at the measure's end on the formula's baseline — or, when the two
+        // would come closer than an em, below it, still at the end (TeX's
+        // \eqno on a line of its own); never parted from it by a page cut
+        {
+          BlockTraits tagTr;
+          tagTr.align = BlockTraits::Align::End;
+          tagTr.hyphenate = false;
+          const LineEnds ends = endsOf(tagTr);
+          const ParShape shape(lineWidth);
+          const Flow& cell = u.cells[0];
+          cellBreaks.push_back(breakStream(cell.blocks, cell.hl, shape, ends));
+          lr.breaks.push_back({tb->pid, b.unit, (i32)cellBreaks.size() - 1, cellBreaks.back()});
+          LinePolicy pol;
+          pol.ends = ends;
+          std::vector<Fragment> tag;
+          const i64 tagH = materializeLines({cell.hl, cell.blockStart, (u32)cell.blocks.size(), cellBreaks.back(), shape,
+                                             left(b), b.unit, 0},
+                                            pol, metrics, cfg, baseLeading, 0, tag);
+          fr->lines.push_back(f);
+          if (tag.empty()) {
+            py += f.height;
+            leave(b, l);
+            return;
+          }
+          const bool beside = (i64)f.left + f.width + em <= (i64)tag[0].left;
+          const i64 top = beside ? (i64)f.y + f.baseline - tag[0].baseline : (i64)f.y + f.height;
+          for (Fragment& t : tag) {
+            t.y = (Su)(top + t.y);
+            t.brk = PenTier::Structural;
+            fr->lines.push_back(t);
+          }
+          // (beside it, the number's line overhangs the row with its
+          // leading: only a number below the formula advances the cursor)
+          py = beside ? (i64)f.y + f.height : top + tagH;
+          leave(b, l);
+          return;
+        }
       }
       case Painter::None:
         leave(b, l);

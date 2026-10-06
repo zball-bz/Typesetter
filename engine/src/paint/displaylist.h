@@ -81,8 +81,8 @@ struct DLNode {
   Fragment::Marker markerRole = Fragment::Marker::List;  // (plan P3-16) its placement: end edge at the line's start
   // Math: the formula, its source, its number, where it sits in the row
   const MathBox* math = nullptr;
-  StrRef mathSrc = 0, eqTag = 0;
-  double mathTopPx = 0, eqRightPx = 0;
+  StrRef mathSrc = 0;
+  double mathTopPx = 0;
   // Image: src (0 = placeholder) and alt; Raw: markup
   StrRef src = 0, alt = 0;
   const BoxModel* box = nullptr;  // (plan P3-14) Frame: its block's padding, border, colours

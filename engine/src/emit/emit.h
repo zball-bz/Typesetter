@@ -165,7 +165,7 @@ struct ImageData {
 };
 struct MathData {  // a display formula
   const MathBox* box = nullptr;  // laid out in Measure (plan P1-25), once its text runs are measured
-  StrRef tag = 0;  // "(n)" right-margin number
+  // (its equation number is the leaf's track, plan P3-26: FlowUnit::cells)
   StrRef src = 0;  // its source as written (the copy contract)
   StrRef formula = 0;  // (plan P2-15) its source as the lexer reads it
   u32 epoch = 0;       // its declaration epoch

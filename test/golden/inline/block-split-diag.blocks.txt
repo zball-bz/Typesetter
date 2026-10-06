@@ -136,6 +136,8 @@ top pid=3 units=1
   space w=257su stretch=1 @[242,321)
 top pid=4 units=1
  unit math indent=0su anchor="eq-mid" w=3804su asc=967su desc=19su
+  cell 0
+  word "(1)" w=1537su pen=INF @[322,344)
 top pid=5 units=1
  unit text indent=0su
   space w=257su stretch=1 @[345,383)

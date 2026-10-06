@@ -89,3 +89,5 @@ top pid=3 units=2
   word "y" w=513su pen=INF @[276,277)
 top pid=4 units=1
  unit math indent=0su anchor="eq-a" w=3697su asc=967su desc=19su
+  cell 0
+  word "(1)" w=1537su pen=INF @[287,307)

@@ -19,6 +19,8 @@ top pid=0 units=1
   punct-sp w=512su @[0,48)
 top pid=1 units=1
  unit math indent=0su anchor="emc" w=3804su asc=967su desc=19su
+  cell 0
+  word "(1)" w=1537su pen=INF @[50,69)
 top pid=2 units=1
  unit text indent=0su
   cjk "由" w=1025su glue=102su wt=0.6 pen=0 @[71,74)
@@ -42,6 +44,8 @@ top pid=2 units=1
   cjk "分" w=1025su glue=102su wt=0.6 pen=0 @[78,120)
 top pid=3 units=1
  unit math indent=0su anchor="gauss" w=7788su asc=1458su desc=941su
+  cell 0
+  word "(2)" w=1537su pen=INF @[122,170)
 top pid=4 units=1
  unit text indent=0su
   cjk "的" w=1025su glue=102su wt=0.6 pen=0 @[172,181)

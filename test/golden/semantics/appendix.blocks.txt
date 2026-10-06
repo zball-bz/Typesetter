@@ -5,6 +5,8 @@ top pid=0 units=1
   word "Methods" w=5736su pen=INF BOLD x1.60 @[385,392)
 top pid=1 units=1
  unit math indent=0su anchor="eq-m" w=2568su asc=700su desc=12su
+  cell 0
+  word "(1.1)" w=2561su pen=INF @[404,420)
 top pid=2 units=1
  unit text indent=0su anchor="proofs"
   word "A" w=821su pen=INF BOLD x1.60 @[435,443)
@@ -17,6 +19,8 @@ top pid=3 units=1
   word "Lemmas" w=4149su pen=INF BOLD x1.35 @[457,463)
 top pid=4 units=1
  unit math indent=0su anchor="eq-p" w=2457su asc=700su desc=19su
+  cell 0
+  word "(A.1)" w=2561su pen=INF @[474,490)
 top pid=5 units=1
  unit text indent=0su
   word "See" w=1537su pen=INF @[492,495)

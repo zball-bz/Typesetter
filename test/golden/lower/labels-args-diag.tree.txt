@@ -12,9 +12,9 @@ doc @[181,832) [base]
     mathinline @[402,416) [base]
       mathsrc @[403,406) [base] src="x^2"
     text @[417,456) [base] str=" keeps no label; a display formula does:" raw=0:0,1:0
-  mathblock @[458,477) [base] label="emc" name="(1)"
+  mathblock @[458,477) [base] label="emc"
     mathsrc @[460,469) [base] src="E = m c^2"
-    seq @[458,477) [base] slot="tag"
+    seq @[458,477) [base] slot="tag" syn="eqno" copy="omit"
       text @[458,477) [base] str="(1)"
   group @[479,557) [base] role="card" label="c1"
     para @[479,557) [base]

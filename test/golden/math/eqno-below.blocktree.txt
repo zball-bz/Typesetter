@@ -1,0 +1,15 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,101)
+    paragraph para unit=0 @[0,101)
+top pid=1 leaves=1
+  stack root gap=1/1 @[103,157)
+    replaced math math unit=0 ragged anchor="wide" @[103,157)
+top pid=2 leaves=1
+  stack root gap=1/1 @[159,243)
+    paragraph para unit=0 @[159,243)
+top pid=3 leaves=1
+  stack root gap=1/1 @[198,216)
+    replaced math math unit=0 ragged anchor="narrow" @[198,216)
+top pid=4 leaves=1
+  stack root gap=1/1 @[217,243)
+    paragraph para unit=0 cont @[217,243)
