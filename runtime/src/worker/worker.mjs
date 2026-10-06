@@ -212,6 +212,16 @@ function setInputs(M, doc, inputs) {
   }
 }
 
+// the host's inputs and the document's own ($.labels.import): one labels array
+function mergeInputs(given, imported) {
+  const out = { ...(given ?? {}) };
+  if (imported?.labels?.length) {
+    const inner = (out.labels ?? '').trim().replace(/^\[|\]$/g, '').trim();
+    out.labels = `[${[inner, ...imported.labels].filter(Boolean).join(',')}]`;
+  }
+  return out;
+}
+
 // (plan P3-30, D-T06) the document's language as the engine decided it — its
 // own, the host's or detected (doc.lang: auto): docinfo
 function docLangOf(M, doc) {
@@ -312,11 +322,12 @@ async function runTypeset(s, { ids, msg }, stale) {
 
     t0 = performance.now();
     const job = jobOf(baseUrl);  // (plan P3-21) its loads and its needs: one locator, one manifest
-    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M) });
+    const imported = {};  // (plan P3-31) the inputs the document asked for ($.labels.import)
+    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M), inputs: imported });
     mark('executeMs', t0);
     await yieldTurn();  // (counted in the edit's total, not in executeMs)
     if (stale()) { M._tsr_doc_free(doc); return false; }
-    setInputs(M, doc, inputs);  // (plan P3-31) its declared inputs, before Ingest
+    setInputs(M, doc, mergeInputs(inputs, imported));  // (plan P3-31) its declared inputs, before Ingest
     t0 = performance.now();
     const opsPtr = M._malloc(ops.length);
     M.HEAPU8.set(ops, opsPtr);

@@ -1313,10 +1313,22 @@ export function createStd(host) {
       ctor[NULLARY] = true;
       return ctor;
     },
-    // $.labels.import(src): cross-document labels — P3-31; until then it
-    // says so and imports nothing
+    // $.labels.import(src) (plan P3-31; design T3 S7, T9 A7): another
+    // document's labels manifest (its labels product, a project driver's
+    // X.labels.json) as this document's declared input `labels` — read by
+    // the host, given to the engine before Ingest, never to the script (a
+    // promise of nothing; a load failure says so)
     labelsImport(src) {
-      diag(0, 'labels-import', `$.labels.import(${JSON.stringify(String(src))}): cross-document labels arrive with P3-31; nothing imported`);
+      if (!host.input) {
+        diag(1, 'labels-import', `$.labels.import(${JSON.stringify(String(src))}): this host takes no inputs; nothing imported`);
+        return Promise.resolve();
+      }
+      const at = { s: here.s, e: here.e };
+      const p = host.input('labels', src).then(() => undefined, (e) => {
+        ob.diag(1, 'labels-import', `$.labels.import(${JSON.stringify(String(src))}): ${e?.message ?? e}`, at.s, at.e);
+      });
+      host.wait?.(p);
+      return p;
     },
     formatOf(name) {
       return registry.get('format', name)?.fn;

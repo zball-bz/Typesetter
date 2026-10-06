@@ -60,6 +60,7 @@ export { NULLARY, CONTENT };
 
 // prog: the decoded LowerProgram (its block table: where diagnostics point)
 export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
+  const pendingInputs = [];  // (plan P3-31) the inputs being read
   const blocks = prog.blocks;
   const docEnd = prog.docEnd;
   // the top-level block whose user code runs (an unframed statement's
@@ -79,6 +80,15 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     // a document resource (plan P2-14: ctx.load; P0-11: below rootDir or the
     // document's folder — P3-21 moves it to the common locator and cache)
     load: async (src, o = {}) => (await jobOf(opts)).load(String(src), { as: o.as ?? 'text' }),
+    // (plan P3-31; design T9 A7) a declared input the document asks for
+    // ($.labels.import): read by the host (requester 'input'), collected in
+    // opts.inputs for the engine, never returned to the script; execute
+    // waits for every one before it finishes
+    input: async (name, src) => {
+      const text = await (await jobOf(opts)).load(String(src), { as: 'text', requester: 'input', role: name });
+      if (opts.inputs) (opts.inputs[name] ??= []).push(text);
+    },
+    wait: (p) => pendingInputs.push(p),  // (what execute settles before it finishes)
     // citations (notes-design.md §2; plans P2-07, P2-14): #bibliography(src)
     // loads its data — once per source: another collector naming it lists
     // the same rows —, formats each entry with the 'bib' format entry, each
@@ -329,7 +339,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     });
   };
 
-  return { std, dollar, helpers, env };
+  return { std, dollar, helpers, env, pendingInputs };
 }
 
 const isSyntaxError = (e) => e?.name === 'SyntaxError' || e instanceof SyntaxError;
@@ -456,7 +466,7 @@ async function importModule(jsText) {
 export async function execute(compiled, opts = {}) {
   const prog = decodeProgram(compiled.program);
   const ob = new OpBuf();
-  const { std, dollar, helpers, env } = buildContext(ob, opts, prog);
+  const { std, dollar, helpers, env, pendingInputs } = buildContext(ob, opts, prog);
   const mod = prog.module ? await loadModule(prog, compiled.js) : null;
   const lowering = new Lowering(prog, env);
   const rt = {
@@ -470,5 +480,6 @@ export async function execute(compiled, opts = {}) {
   } catch (e) {
     helpers.failRest(e);  // an unframed statement threw (D-I10)
   }
+  await Promise.all(pendingInputs);  // (plan P3-31) its declared inputs, all read
   return ob.finalize();
 }

@@ -288,6 +288,22 @@ As built (design T9 A7, T3 S7; INTEGRATION: T9's transport, T3's semantics):
   terms and counter patterns after its producer's start, or shows its
   number, title or label when this document lacks its class; `#link({target})`
   reaches it too.
+- The project driver (`runtime/src/node/project.mjs` `renderProject`; CLI
+  `tools/tsm-project.mjs build [tsm.project.json]`, D-S07: `{files, out,
+  settings, urls, continue, offset}`; a document's key is its file name):
+  Pass A renders each document with only its key — its manifest; the
+  starts are the prefix sums, in book order, of the totals of the counters
+  in `continue` (default heading, figure, table, equation; plus `offset`);
+  Pass B renders each with `project.{doc, starts, urls}` and the others'
+  manifests as its labels input, once more when a manifest changed (a title
+  citing another document), at most three passes (`project-unstable`). It
+  writes `<key>.html` (the static page of `tools/lib/static-page.mjs`, the
+  one export-static writes; hydration gets the same settings and inputs)
+  and `<key>.labels.json`. `tools/check-project.mjs` (gate G6) builds a book.
+- `$.labels.import(src)` (a document's own): the host reads `src`
+  (requester `input`) and adds it to the labels input before Ingest; the
+  script gets nothing back; a failure is `labels-import`. A recorded
+  fixture declares the same file in its `inputs`.
 
 ## 6. ABI
 

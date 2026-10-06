@@ -8,8 +8,7 @@
 //                                 [--settings site.json]
 // --settings: the settings document (docs/settings-table.md) — document
 // language, fonts, sizes — used for the static page and passed to hydration.
-import { MATH_FONT } from '../runtime/src/shared/mathfont.gen.mjs';
-import { readFile, writeFile, mkdir, cp, access, realpath } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -33,122 +32,23 @@ if (inputs.length !== 1) {
   process.exit(2);
 }
 
-const [{ renderTsm }, { TSR_CSS, THEME_CSS }, { settingOf }] = await Promise.all([
-  import(join(root, 'runtime/src/node/render.mjs')),
-  import(join(root, 'runtime/src/main/shell.mjs')),
-  import(join(root, 'runtime/src/shared/settings.gen.mjs')),
-]);
+const { renderTsm } = await import(join(root, 'runtime/src/node/render.mjs'));
+const { pageHtml, copyResources, copyAssets, readSettings } = await import('./lib/static-page.mjs');
 
-const settings = settingsPath ? JSON.parse(await readFile(settingsPath, 'utf8')) : {};
-const bodyFont = settingOf(settings, 'fonts.body');
-const cjkFont = settingOf(settings, 'fonts.cjk');
+const settings = await readSettings(settingsPath);
 const source = await readFile(inputs[0], 'utf8');
 const docDir = dirname(resolve(inputs[0]));
-const { html: semantic, css: rulesCss, diagnostics, ok, manifest, docinfo } =
-  await renderTsm(source, { settings, baseDir: docDir, rootDir: docDir });
-if (diagnostics.trim()) console.error(diagnostics.trim());
-if (!ok) process.exit(1);
-// (plan P3-21) the page's language and title are the document's (docinfo)
-// (plan P3-30) the engine decides it — the document's own, the host's, or
-// detected (doc.lang: auto); an undecided one is und, never "auto"
-const lang = docinfo.lang || (settingOf(settings, 'doc.lang') === 'auto' ? 'und' : settingOf(settings, 'doc.lang'));
+const rendered = await renderTsm(source, { settings, baseDir: docDir, rootDir: docDir });
+if (rendered.diagnostics.trim()) console.error(rendered.diagnostics.trim());
+if (!rendered.ok) process.exit(1);
 
-const pageTitle = title ?? (docinfo.title || inputs[0].replace(/^.*\//, '').replace(/\.tsm$/, ''));
-const escapedSrc = source.replace(/<\/script/gi, '<\\/script');
-const hydrateBlock = hydrate ? `
-<script type="text/plain" id="tsr-src">${escapedSrc}</script>
-<script type="module">
-import { createEngine } from './assets/runtime/src/main/shell.mjs';
-const el = document.getElementById('tsr-root');
-const engine = createEngine();
-engine.typeset(document.getElementById('tsr-src').textContent, el, {
-  settings: ${JSON.stringify(settings).replace(/</g, '\\u003c')},
-  progressive: false,  // the static semantic page IS the first paint
-}).catch((e) => console.warn('tsr hydrate failed; static page stands', e));
-</script>` : '';
-
-// (plan P3-27) formulas as boxes on the static page too: their glyphs in the
-// bundled math font, beside the page (the hydrated page declares it again)
-const hasMath = semantic.includes('class="tsr-math"');
-const mathFace = hasMath
-  ? `@font-face { font-family: ${JSON.stringify(MATH_FONT.family)}; src: url(${JSON.stringify(`assets/${MATH_FONT.file}`)}); }\n`
-  : '';
-
-const html = `<!doctype html>
-<html lang="${lang.replace(/[^A-Za-z0-9-]/g, '')}">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${pageTitle.replace(/[<&]/g, '')}</title>
-<style>
-${mathFace}${TSR_CSS}
-${THEME_CSS}
-body { margin: 0 auto; max-width: 42em; padding: 2em 1em;
-       font-family: ${bodyFont.replace(/[<>{};]/g, '')}; }
-#tsr-root { --tsr-cjk-font: ${cjkFont.replace(/"/g, "'").replace(/[<>{};]/g, '')}; }
-.tsr-flow img { max-width: 100%; height: auto; }
-.tsr-flow pre { overflow-x: auto; }
-/* the rules (plan P3-01: engine defaults, host rules, the document's $.set) */
-${rulesCss}</style>
-</head>
-<body>
-<article id="tsr-root">
-${semantic}</article>${hydrateBlock}
-</body>
-</html>
-`;
-
+const { html, hasMath } = await pageHtml({
+  rendered, source, settings, title, hydrate,
+  fallbackTitle: inputs[0].replace(/^.*\//, '').replace(/\.tsm$/, ''),
+});
 await mkdir(outDir, { recursive: true });
 await writeFile(join(outDir, 'index.html'), html);
-if (hasMath || hydrate) {  // the math font manifest (P1-23): the static boxes' and the hydrated page's
-  await mkdir(dirname(join(outDir, 'assets', MATH_FONT.file)), { recursive: true });
-  await cp(join(root, MATH_FONT.file), join(outDir, 'assets', MATH_FONT.file));
-}
-
-// (plan P3-21) the document's own resources beside it: what the manifest
-// lists by a relative reference inside the document's folder (its images,
-// its loads), copied to the same place under out/ — the file's real path
-// too, so a symbolic link does not export a file from elsewhere
-let copied = 0;
-const realDocDir = await realpath(docDir);
-for (const m of manifest) {
-  if (m.status === 'denied' || /^[a-z][a-z0-9+.-]*:/i.test(m.url) || m.role === 'font') continue;
-  // (a load names its file; a reference is as written: /site-root or relative)
-  const from = m.url.startsWith(docDir + '/') ? m.url : resolve(docDir, m.url.startsWith('/') ? '.' + m.url : m.url);
-  if (!from.startsWith(docDir + '/')) continue;
-  const to = join(outDir, from.slice(docDir.length + 1));
-  try {
-    if (!(await realpath(from)).startsWith(realDocDir + '/')) {
-      console.error(`export-static: ${m.role} ${m.url} not copied (outside the post's folder)`);
-      continue;
-    }
-    await mkdir(dirname(to), { recursive: true });
-    await cp(from, to);
-    copied++;
-  } catch { console.error(`export-static: ${m.role} ${m.url} not copied (missing)`); }
-}
-
-if (hydrate) {
-  const assets = join(outDir, 'assets');
-  // (plan P3-21, D-I09) the runtime's module graph from its entry, by a
-  // lexical scan of its imports (a dynamic import it cannot follow warns)
-  const { moduleGraph } = await import('./lib/module-graph.mjs');
-  const graph = await moduleGraph(join(root, 'runtime/src/main/shell.mjs'));
-  for (const w of graph.warnings) console.error(w);
-  for (const f of graph.files) {
-    if (!f.startsWith(root + '/')) continue;
-    const to = join(assets, f.slice(root.length + 1));
-    await mkdir(dirname(to), { recursive: true });
-    await cp(f, to);
-  }
-  await mkdir(join(assets, 'engine/build-wasm'), { recursive: true });
-  for (const f of ['typesetter.js', 'typesetter.wasm'])
-    await cp(join(root, 'engine/build-wasm', f), join(assets, 'engine/build-wasm', f));
-  try {
-    await access(join(root, 'runtime/assets/hl'));
-    await cp(join(root, 'runtime/assets/hl'), join(assets, 'runtime/assets/hl'),
-             { recursive: true });
-  } catch { /* hl assets not built: hydrated code stays plain */ }
-}
+const copied = await copyResources({ manifest: rendered.manifest, docDir, outDir });
+await copyAssets({ outDir, math: hasMath, hydrate });
 console.log(`exported ${inputs[0]} -> ${resolve(outDir)}/index.html` +
             (copied ? ` (+${copied} resource${copied > 1 ? 's' : ''})` : '') + (hydrate ? ' (+assets)' : ''));

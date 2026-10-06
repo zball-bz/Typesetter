@@ -28,6 +28,8 @@ function getMod() {
 // resource host's log: #bibliography, $.load) and the fonts the host
 // declared (opts.fonts) — [{ url, role, source, status, requester }].
 // settings: the effective settings document. docinfo: { lang, title }.
+// labels (plan P3-31): its labels product — the manifest a project's other
+// documents read (opts.inputs: {labels: '[manifest, …]'} is the reverse).
 // opts.settings: the settings document (docs/settings-table.md; opts.lang is
 // sugar for doc.lang). opts.baseDir / opts.rootDir: where document resources
 // resolve — relative paths against baseDir, /site-root paths against rootDir
@@ -58,9 +60,15 @@ export async function renderTsm(source, opts = {}) {
       host = own;
     }
     const job = host.job({ bases: { doc: resolve(opts.baseDir ?? rootDir) }, root: rootDir });
-    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M) });
+    const imported = {};  // (plan P3-31) the inputs the document asked for ($.labels.import)
+    const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M), inputs: imported });
+    const inputs = { ...(opts.inputs ?? {}) };
+    if (imported.labels?.length) {
+      const inner = (inputs.labels ?? '').trim().replace(/^\[|\]$/g, '').trim();
+      inputs.labels = `[${[inner, ...imported.labels].filter(Boolean).join(',')}]`;
+    }
     // (plan P3-31) its declared inputs (opts.inputs: {labels: '[manifest, …]'}), before Ingest
-    for (const [name, value] of Object.entries(opts.inputs ?? {})) {
+    for (const [name, value] of Object.entries(inputs)) {
       if (typeof value !== 'string') continue;
       const n = M.stringToNewUTF8(name);
       const bytes = new TextEncoder().encode(value);
@@ -112,7 +120,8 @@ export async function renderTsm(source, opts = {}) {
       if (f?.src) manifest.push({ url: String(f.src), role: 'font', source: 'host', status: 'declared', requester: 'host' });
     const diagnostics = M.UTF8ToString(M._tsr_diags(doc));
     return { html, css, diagnostics, diags: diagnostics, ok: !/^error /m.test(diagnostics), manifest,
-             settings: JSON.parse(product('settings')), docinfo: JSON.parse(product('docinfo')) };
+             settings: JSON.parse(product('settings')), docinfo: JSON.parse(product('docinfo')),
+             labels: product('labels') };  // (plan P3-31) its labels product (a project's manifest)
   } finally {
     M._tsr_doc_free(doc);
   }
