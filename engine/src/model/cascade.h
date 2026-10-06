@@ -87,6 +87,21 @@ class Cascade {
   void fold(Styling& st, NodeProps& props, const NodeView& n, RuleEnvId env, const std::vector<ArgVal>& own,
             bool base = true) const;
 
+  // Cascade.make (T4): a node made after instantiation — the resolver's
+  // generated content — at its site: `st` is its parent's computed style,
+  // `scope` its parent's scope; the rules of `env` that match it fold in,
+  // then its own delta (a template's styled items: it wins per property, a
+  // relative size applies to the parent's); its scope takes the delta only
+  void make(Styling& st, Styling& scope, const NodeView& n, RuleEnvId env, const StyleDelta& own,
+            float mul) const;
+  // Cascade.lift (T4; D-S09): a moved node re-entered under a new parent —
+  // `st` is the new parent's computed style; the rules of `env` (its old
+  // parent's) fold in again, then its own delta, which is what its scope
+  // adds to its old parent's scope (run properties travel with it, rules
+  // that matched its old ancestors do not)
+  void reenter(Styling& st, const NodeView& n, RuleEnvId env, const Styling& scope,
+               const Styling& scopeParent) const;
+
  private:
   bool matches(const StyleSelector& s, const NodeView& n) const;
   Interner& strs_;

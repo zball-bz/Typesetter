@@ -130,7 +130,7 @@ struct Inst {
       ContentNode* parent;
       u32 id;
       Styling inh;
-      StyleId auth;  // the parent's authored style
+      StyleId scope;  // the parent's scope (model.h)
       u32 depth;
       u16 inside;
       bool verb;
@@ -253,13 +253,13 @@ struct Inst {
         }
         cascade.fold(ownStyle, np, view, rules ? p.env : 0, delta, rules);
         n->style = styles.idOf(ownStyle);
-        if (delta.empty() && (!rules || !p.env)) {
-          n->authored = p.auth;
-        } else {  // the same fold without the base rules
-          Styling a = styles.get(p.auth);
+        if (delta.empty()) {  // its scope: its own delta, no rule
+          n->scope = p.scope;
+        } else {
+          Styling a = styles.get(p.scope);
           NodeProps unused;
-          cascade.fold(a, unused, view, rules ? p.env : 0, delta, false);
-          n->authored = styles.idOf(a);
+          cascade.fold(a, unused, view, 0, delta, false);
+          n->scope = styles.idOf(a);
         }
         n->props = propsTable.idOf(np);
         n->kids.reserve(rn.children.size());
@@ -271,7 +271,7 @@ struct Inst {
             // plan P3-01) is beside its content, not in it: it takes the
             // node's own context, not its computed style
             const bool beside = dataPart(raw.nodes[rn.children[c]], n->kind);
-            work.push_back({n, rn.children[c], beside ? p.inh : ownStyle, beside ? p.auth : n->authored, p.depth + 1,
+            work.push_back({n, rn.children[c], beside ? p.inh : ownStyle, beside ? p.scope : n->scope, p.depth + 1,
                             n->cls ? n->cls : p.inside,
                             p.verb || kKinds[(u16)n->kind].body == Body::Code ||
                                 kKinds[(u16)n->kind].body == Body::Text,

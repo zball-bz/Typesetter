@@ -10,6 +10,8 @@
 #include <set>
 
 #include "../src/api/doc.h"
+#include "../src/code/tokens.h"
+#include "../src/model/cascade.h"
 #include "../src/break/items.h"
 #include "../src/hyphen/hyphen.h"
 #include "../src/inline/jslex.h"
@@ -1273,6 +1275,60 @@ static void unitFaces() {
 
 // The settings codec (plan P1-03): one JSON document, rows applied in
 // schema order, unknown paths and bad values diagnosed and skipped.
+// The cascade's factories (plan P3-01): the defaults parse clean; a code
+// token is made as text of class tok-<tag> (a comment italic and hanging by
+// the rules, its colour its own); make folds a role's rule under the site's
+// deltas; reenter keeps a moved node's own delta over the new parent.
+static void unitCascade() {
+  Arena a;
+  Interner strs{a};
+  StyleTable styles;
+  DiagSink diags;
+  Cascade cascade(strs);
+  auto setting = [](std::string_view k) -> std::string {
+    return k == "code.scale" ? "0.85" : k == "par.indent" ? "2" : k == "list.indent" || k == "quote.indent" ? "1.5" : "";
+  };
+  cascade.setBase(parseRules(defaultRulesJson(), strs, diags, "defaults", setting), {});
+  CHECK(diags.items.empty());
+  {
+    const std::string body = "x // c";
+    const CodeToken toks[] = {{0, 1, 0}, {2, 6, kTokenTagComment}};
+    std::vector<std::vector<TokenRun>> lines;
+    tokenLines(body, 0, &cascade, 0, toks, 2, strs, styles, lines);
+    CHECK(lines.size() == 1 && lines[0].size() == 3);
+    const Styling& k = styles.get(lines[0][0].style);
+    const Styling& c = styles.get(lines[0][2].style);
+    CHECK(!k.italic && k.hang == 0 && k.color);
+    CHECK(c.italic && c.hang == HANG_CONTENT && strs.get(c.color) == "var(--tsr-tok-comment)");
+    tokenLines(body, 0, nullptr, 0, toks, 2, strs, styles, lines);  // the semantic page's: no rules
+    CHECK(!styles.get(lines[0][2].style).italic);
+  }
+  {
+    Styling st, scope;
+    st.weight = 700;  // a site in bold
+    Cascade::NodeView v{Kind::ref};
+    v.role = strs.intern("fn-marker");
+    cascade.make(st, scope, v, 0, StyleDelta{}, 1.0f);
+    CHECK(st.baseline == BASELINE_SUPER && st.sizeMul == 0.7f && st.weight == 700 && scope.baseline == 0);
+    Styling st2, scope2;
+    cascade.make(st2, scope2, v, 0, StyleDelta{}, 0.5f);  // the site's own size wins over the rule's
+    CHECK(st2.sizeMul == 0.5f && scope2.sizeMul == 0.5f);
+  }
+  {
+    Styling parentScope, scope, st;
+    scope.weight = 700;  // its own delta at its old place
+    scope.sizeMul = 1.2f;
+    st.sizeMul = 0.85f;  // the new parent's (a note body)
+    Cascade::NodeView v{Kind::styled};
+    cascade.reenter(st, v, 0, scope, parentScope);
+    CHECK(st.weight == 700 && st.sizeMul == 0.85f * 1.2f);
+    Styling code;
+    code.sizeMul = 0.85f;
+    cascade.reenter(code, Cascade::NodeView{Kind::code}, 0, parentScope, parentScope);  // rules fold in again
+    CHECK(code.fontRole == FONTROLE_MONO && code.sizeMul == 0.85f * 0.85f);
+  }
+}
+
 static void unitSettings() {
   {
     Config c;
@@ -1532,6 +1588,7 @@ int main(int argc, char** argv) {
   unitImageSrc();
   unitCrlf();
   unitNestLimit();
+  unitCascade();
   unitInstLimits();
   unitHtmlWriter();
   unitBreakMemo();

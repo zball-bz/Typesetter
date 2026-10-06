@@ -7,5 +7,6 @@ doc @[0,225) [base]
   group @[119,225) [base] role="figure" label="fig-bad"
     image @[119,225) [base] src="javascript:alert(1)" alt="refused"
     para @[190,216) [base] role="caption"
-      text @[190,216) [BOLD] str="图 1："
+      styled @[190,216) [BOLD] role="caption-label"
+        text @[190,216) [BOLD] str="图 1："
       text @[190,216) [base] str="The placeholder stands in."

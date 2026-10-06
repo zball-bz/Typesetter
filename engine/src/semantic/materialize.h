@@ -7,6 +7,7 @@
 // entries. Words come from the locale terms.
 #pragma once
 #include "../semantic/index.h"
+#include "../model/cascade.h"
 #include "../semantic/terms.h"
 
 namespace tsr {
@@ -20,6 +21,7 @@ struct MaterializeEnv {
   const Terms& terms;
   Counters& counters;
   const Index& ix;
+  const Cascade& cascade;  // made and lifted nodes take the rules (plan P3-01)
   size_t made = 0;  // the nodes it made (unfolded: model/cascade.h settleMade)
 };
 

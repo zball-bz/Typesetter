@@ -16,13 +16,15 @@ doc @[0,131) [base]
     list @[0,131) [base] ordered=true
       item @[54,80) [base]
         para @[54,80) [base] label="fn-1"
-          text @[56,79) [BOLDx0.85] str="A note in bold context."
-          text @[54,80) [BOLDx0.85] str=" "
-          ref @[54,80) [BOLDx0.85] target="fnref-1" url="#tsr-fnref-1"
-            text @[54,80) [BOLDx0.85] str="↩"
+          styled @[54,80) [BOLDx0.85] role="note-body"
+            text @[56,79) [BOLDx0.85] str="A note in bold context."
+            text @[54,80) [BOLDx0.85] str=" "
+            ref @[54,80) [BOLDx0.85] target="fnref-1" url="#tsr-fnref-1"
+              text @[54,80) [BOLDx0.85] str="↩"
       item @[98,116) [base]
         para @[98,116) [base] label="fn-2"
-          text @[100,115) [EMx0.85] str="One in italics."
-          text @[98,116) [EMx0.85] str=" "
-          ref @[98,116) [EMx0.85] target="fnref-2" url="#tsr-fnref-2"
-            text @[98,116) [EMx0.85] str="↩"
+          styled @[98,116) [EMx0.85] role="note-body"
+            text @[100,115) [EMx0.85] str="One in italics."
+            text @[98,116) [EMx0.85] str=" "
+            ref @[98,116) [EMx0.85] target="fnref-2" url="#tsr-fnref-2"
+              text @[98,116) [EMx0.85] str="↩"

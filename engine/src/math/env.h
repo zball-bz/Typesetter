@@ -43,10 +43,13 @@ class MathEnv {
 };
 
 // what a formula binds against (plan P2-15): its document's declarations as
-// of its epoch; null = the built-ins only
+// of its epoch; null = the built-ins only. `style`: the formula's computed
+// style, under which its text-font runs are made (plan P3-01: they keep its
+// font, weight, language; the formula positions them)
 struct MathScope {
   const MathEnv* env = nullptr;
   u32 epoch = 0;
+  StyleId style = 0;
 };
 
 // A formula's source as the math lexer reads it (plan P2-15; design T8

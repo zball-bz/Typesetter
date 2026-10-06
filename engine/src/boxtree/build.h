@@ -10,6 +10,8 @@
 
 namespace tsr {
 
+class Cascade;
+
 // what emit shapes for one leaf
 struct LeafSource {
   enum class Role : u8 {
@@ -32,6 +34,7 @@ struct BoxTree {
   std::vector<TopTree> tops;
   std::vector<std::vector<LeafSource>> sources;  // per top, per unit
   const MathEnv* math = nullptr;  // the document's math declarations (plan P2-15)
+  const Cascade* cascade = nullptr;  // the rules, for what emit makes (code tokens, plan P3-01)
 };
 
 class Registry;

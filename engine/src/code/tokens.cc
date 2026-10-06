@@ -1,5 +1,7 @@
 #include "tokens.h"
 
+#include "../model/cascade.h"
+
 namespace tsr {
 
 int tokenTagFromCapture(std::string_view name) {
@@ -30,8 +32,8 @@ bool validTokens(std::string_view body, const CodeToken* toks, size_t n) {
   return true;
 }
 
-void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size_t n, Interner& strs,
-                StyleTable& styles, std::vector<std::vector<TokenRun>>& lines) {
+void tokenLines(std::string_view body, StyleId base, const Cascade* cascade, u32 env, const CodeToken* toks,
+                size_t n, Interner& strs, StyleTable& styles, std::vector<std::vector<TokenRun>>& lines) {
   lines.clear();
   // one interned style per tag, created lazily
   StyleId tagStyle[kTokenTagCount];
@@ -39,12 +41,14 @@ void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size
   auto styleFor = [&](u8 tag) {
     if (!tagStyleMade[tag]) {
       Styling s = styles.get(base);
-      std::string var = std::string("var(--tsr-tok-") + kTokenTags[tag] + ")";
-      s.color = strs.intern(var);
-      if (tag == kTokenTagComment) {  // comment: italic (duplex contract), hanging at its content
-        s.italic = true;
-        s.hang = HANG_CONTENT;
+      if (cascade) {  // text of class tok-<tag> under the body
+        Styling scope = s;
+        Cascade::NodeView v{Kind::text};
+        v.cls = strs.intern(std::string("tok-") + kTokenTags[tag]);
+        v.lang = s.lang;
+        cascade->make(s, scope, v, env, StyleDelta{}, 1.0f);
       }
+      s.color = strs.intern(std::string("var(--tsr-tok-") + kTokenTags[tag] + ")");
       tagStyle[tag] = styles.idOf(s);
       tagStyleMade[tag] = true;
     }

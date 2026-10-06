@@ -30,8 +30,9 @@ struct TItem {
   // Text: a literal; Slot / Term: a value (adjacent ones make one text);
   // Node: a node; Styled: a delta over its kids; When: kids if a slot is set,
   // else `orElse`; Each: the items (or keys) placeholder, `sep` between;
-  // Paras: a flow item's body as paragraphs (anchor on the first, `tail` at
-  // the end of the last, scaled by `scale`)
+  // Paras: a flow item's body as paragraphs, lifted (plan P3-01: anchor on
+  // the first, `tail` at the end of the last; `name`: the role of the
+  // inline wrapper its content is entered under, note-body)
   enum class K : u8 { Text, Slot, Term, Node, Styled, When, Each, Paras } k = K::Text;
   std::string name;
   Kind kind = Kind::text;
@@ -190,6 +191,14 @@ class Registry {
   std::vector<CounterSystem> systems;
   std::vector<CollectorDef> collectors;
   Template unresolved, unnumbered;
+  // (plan P3-01; T7's minimal role map) the element a generated role reads
+  // as on the semantic page — its presentation is the rules' (defaults.json)
+  std::vector<std::pair<std::string, std::string>> roleHtml;
+  std::string_view roleElement(std::string_view role) const {
+    for (const auto& [r, h] : roleHtml)
+      if (r == role) return h;
+    return {};
+  }
 
  private:
   std::vector<std::pair<ClassId, const Selector*>> byKind_[KIND_COUNT + 1];  // [KIND_COUNT]: any kind

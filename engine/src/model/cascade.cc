@@ -175,6 +175,46 @@ size_t settleMade(ContentNode* root, const Cascade& cascade, NodePropsTable& pro
   return settled;
 }
 
+void Cascade::make(Styling& st, Styling& scope, const NodeView& n, RuleEnvId env, const StyleDelta& own,
+                   float mul) const {
+  const Styling parent = st;
+  NodeProps unused;  // a made node's block properties: settleMade
+  fold(st, unused, n, env, {});
+  applyDelta(st, own);
+  if (mul != 1.0f) {  // relative to the parent's size, over a rule's
+    st.sizePx = parent.sizePx;
+    st.sizeMul = parent.sizeMul * mul;
+  }
+  applyDelta(scope, own);
+  scope.sizeMul *= mul;
+}
+
+void Cascade::reenter(Styling& st, const NodeView& n, RuleEnvId env, const Styling& scope,
+                      const Styling& scopeParent) const {
+  const Styling parent = st;
+  NodeProps unused;
+  fold(st, unused, n, env, {});
+  const Styling& a = scope;
+  const Styling& b = scopeParent;
+  if (a.weight != b.weight) st.weight = a.weight;
+  if (a.italic != b.italic) st.italic = a.italic;
+  st.decoration |= a.decoration & ~b.decoration;
+  if (a.fontRole != b.fontRole) st.fontRole = a.fontRole;
+  if (a.baseline != b.baseline) st.baseline = a.baseline;
+  if (a.hang != b.hang) st.hang = a.hang;
+  if (a.fontFamily != b.fontFamily) st.fontFamily = a.fontFamily;
+  if (a.lang != b.lang) st.lang = a.lang;
+  if (a.color != b.color) st.color = a.color;
+  if (a.script != b.script) st.script = a.script;
+  if (a.sizePx != b.sizePx) {  // an absolute size
+    st.sizePx = a.sizePx;
+    st.sizeMul = a.sizeMul;
+  } else if (a.sizeMul != b.sizeMul) {  // a relative one, against the new parent's
+    st.sizePx = parent.sizePx;
+    st.sizeMul = parent.sizeMul * (a.sizeMul / b.sizeMul);
+  }
+}
+
 // ---- rules in JSON ------------------------------------------------------------
 
 std::string_view defaultRulesJson() { return kDefaultsJson; }

@@ -11,7 +11,8 @@ doc @[0,449) [base]
       group @[134,276) [base] role="figure" label="fig-icon"
         image @[134,276) [base] src="photos/icon.png" alt="icon" w=200 h=200 scale=0.4 side="left"
         para @[244,265) [base] role="caption"
-          text @[244,265) [BOLD] str="图 1："
+          styled @[244,265) [BOLD] role="caption-label"
+            text @[244,265) [BOLD] str="图 1："
           text @[244,265) [base] str="A small floated icon."
       para @[280,419) [base]
         text @[280,419) [base] str="The item text continues beside the float and should narrow around it for a few lines before returning to the full measure of the list body."

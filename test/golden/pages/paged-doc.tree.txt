@@ -12,7 +12,8 @@ doc @[0,700) [base]
   group @[496,611) [base] role="figure" label="fig-p"
     image @[496,611) [base] src="photos/x.png" alt="样图" w=200 h=80
     para @[572,602) [base] role="caption"
-      text @[572,602) [BOLD] str="图 1："
+      styled @[572,602) [BOLD] role="caption-label"
+        text @[572,602) [BOLD] str="图 1："
       text @[572,602) [base] str="图与图注保持在同页。"
   para @[613,700) [base]
     text @[613,679) [base] str="尾段：越过图之后继续排布，直至文档结束，引用"

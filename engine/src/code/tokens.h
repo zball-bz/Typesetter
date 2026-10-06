@@ -29,17 +29,19 @@ bool validTokens(std::string_view body, const CodeToken* toks, size_t n);
 
 // The token answer over a plain code body (code-design.md §2/§3; plan P1-19:
 // the answer lives in the ResourceTable and the tree is never rewritten):
-// per line, its runs — a token's style is the base style with the tag's
-// colour "var(--tsr-tok-<tag>)" (a comment also italic), interned once per
-// tag; untokenized stretches keep the base style. Emit and the semantic
-// product both read it.
+// per line, its runs — a token is made under the body (Cascade.make, plan
+// P3-01) as text of class tok-<tag>, so the rules of `env` style it (the
+// defaults: a comment italic, hanging at its content), with the tag's colour
+// "var(--tsr-tok-<tag>)" as its own; interned once per tag; untokenized
+// stretches keep the base style. Emit reads it with the cascade, the
+// semantic page without (its scope: the colour only; rules are its CSS).
+class Cascade;
 struct TokenRun {
   std::string_view text;
-  StyleId style = 0;  // its tag's: the token colour, and (plan P2-08) a
-                      // comment's italic and code.hang content
+  StyleId style = 0;  // its tag's
   int tag = -1;       // its token tag (class tok-<tag>), -1: none
 };
-void tokenLines(std::string_view body, StyleId base, const CodeToken* toks, size_t n, Interner& strs,
-                StyleTable& styles, std::vector<std::vector<TokenRun>>& lines);
+void tokenLines(std::string_view body, StyleId base, const Cascade* cascade, u32 env, const CodeToken* toks,
+                size_t n, Interner& strs, StyleTable& styles, std::vector<std::vector<TokenRun>>& lines);
 
 }  // namespace tsr

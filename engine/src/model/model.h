@@ -29,11 +29,11 @@ struct ContentNode {
   // id: model/cascade.h) and the rules in force for its children (a RuleEnvId)
   u32 props = 0;
   u32 env = 0;
-  // (plan P3-01) its authored style: the document's own styling — style
-  // deltas and the document's rules ($.set, style.where), not the engine's
-  // defaults nor the host's rules, which reach the semantic page as its CSS.
-  // The semantic page writes it; everything else reads `style`.
-  StyleId authored = 0;
+  // (plan P3-01; T4 CascadeState) its scope: the rule-free projection of
+  // its style — the style deltas around it and its own, no rule — which the
+  // semantic page writes (the rules reach it as CSS) and lifting carries.
+  // Everything else reads `style`.
+  StyleId scope = 0;
 };
 
 // Typed attribute accessors (plan P0-06). Values that came through the ops

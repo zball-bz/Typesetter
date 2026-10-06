@@ -131,7 +131,7 @@ struct Loader {
       } else if (const JsonValue* s = x.get("paras")) {
         it.k = TItem::K::Paras;
         if (const JsonValue* a = member(*s, "anchor"); a && !targ(*a, it.anchor)) return false;
-        if (const JsonValue* z = member(*s, "scale")) it.size = (float)z->num;
+        if (const JsonValue* r = member(*s, "role")) it.name = str(r);
         if (!tmpl(member(*s, "tail"), it.tail)) return false;
       } else {
         return fail("unknown template item");
@@ -426,6 +426,15 @@ struct Loader {
     if (const JsonValue* cs = member(v, "collectors"))
       for (size_t k = 0; k < cs->keys.size(); k++)
         if (!collector(cs->keys[k], cs->vals[k])) return false;
+    if (const JsonValue* rs = member(v, "roles"))
+      for (size_t k = 0; k < rs->keys.size(); k++) {
+        if (rs->keys[k] == "$comment") continue;
+        const std::string h = str(member(rs->vals[k], "html"));
+        bool ok = !h.empty();
+        for (char c : h) ok = ok && c >= 'a' && c <= 'z';
+        if (!ok) return fail("role '" + rs->keys[k] + "': html is an element name");
+        r.roleHtml.push_back({rs->keys[k], h});
+      }
     return true;
   }
 };

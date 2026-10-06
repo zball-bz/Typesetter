@@ -50,14 +50,13 @@ struct Sem {
     t.open();
   }
 
-  // a text leaf in its authored style
+  // a text leaf in its scope (its rule-free style)
   void textRun(StyleId sid, std::string_view text) {
-    // leaf styles are the authored styles (instantiation folds styled
-    // deltas and the document's rules onto leaves — document-model §3,
-    // plan P3-01); render from them so token colors, resolver-fabricated
-    // bold, and patch styles all reach the no-JS page — the engine's
-    // defaults and the host's rules are the page's CSS. Kind::styled is
-    // transparent below.
+    // a leaf's scope is its rule-free style (instantiation folds styled
+    // deltas onto leaves — document-model §3, plan P3-01): render it, so
+    // token colours and patch styles reach the no-JS page; what rules add
+    // is the page's CSS, and roles map to elements (roleTag). Kind::styled
+    // is transparent below.
     const Styling& st = styles.get(sid);
     // a superscript nests its emphasis (sup > strong|em): it used to
     // drop the bold/italic of a marker inside emphasis (plan P1-02)
@@ -125,21 +124,39 @@ struct Sem {
   void inlineKids(const ContentNode* n) {
     for (const ContentNode* k : n->kids) inl(k);
   }
+  // its content, inside the element its role reads as on this page (the
+  // registry's role map, plan P3-01: the rules give it in the typeset view)
+  void roleKids(const ContentNode* n) {
+    const StrRef r = attrStr(n, ArgK::role);
+    const std::string_view tag = r && reg ? reg->roleElement(strs.get(r)) : std::string_view{};
+    if (!tag.empty()) {
+      out += "<";
+      out += tag;
+      out += ">";
+    }
+    inlineKids(n);
+    if (!tag.empty()) {
+      out += "</";
+      out += tag;
+      out += ">";
+    }
+  }
 
   void inl(const ContentNode* n) {
     switch (n->kind) {
       case Kind::text:
-        textRun(n->authored, strs.get(n->str));
+        textRun(n->scope, strs.get(n->str));
         return;
       case Kind::styled:
-        // transparent: the leaves carry the folded styles (above)
-        inlineKids(n);
+        // transparent: the leaves carry the folded styles (above), a role
+        // its element
+        roleKids(n);
         return;
       case Kind::link:
       case Kind::ref: {
         std::string_view url = argS(n, ArgK::url);
         if (url.empty()) {  // unresolved ref / grouped citation container
-          inlineKids(n);
+          roleKids(n);
           return;
         }
         {
@@ -149,7 +166,7 @@ struct Sem {
           if (!id.empty()) t.id(id);
           t.open();
         }
-        inlineKids(n);
+        roleKids(n);
         out += "</a>";
         return;
       }
@@ -313,7 +330,8 @@ struct Sem {
         if (tok && tok->st == ResState::Ready) {
           // its code tokens, folded here (the tree is never rewritten)
           std::vector<std::vector<TokenRun>> lines;
-          tokenLines(strs.get(body->str), body->authored, tok->toks.data(), tok->toks.size(), strs, styles, lines);
+          tokenLines(strs.get(body->str), body->scope, nullptr, 0, tok->toks.data(), tok->toks.size(), strs, styles,
+                     lines);
           for (size_t li = 0; li < lines.size(); li++) {
             if (li) out += "\n";
             for (const TokenRun& r : lines[li]) textRun(r.style, r.text);

@@ -74,7 +74,8 @@ doc @[0,593) [base]
     list @[0,593) [base] ordered=true
       item @[35,44) [base]
         para @[35,44) [base] label="fn-1"
-          text @[37,43) [basex0.85] str="a ] b" raw=0:0,3:4
-          text @[35,44) [basex0.85] str=" "
-          ref @[35,44) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
-            text @[35,44) [basex0.85] str="↩"
+          styled @[35,44) [basex0.85] role="note-body"
+            text @[37,43) [basex0.85] str="a ] b" raw=0:0,3:4
+            text @[35,44) [basex0.85] str=" "
+            ref @[35,44) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+              text @[35,44) [basex0.85] str="↩"

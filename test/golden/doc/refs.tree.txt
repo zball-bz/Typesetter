@@ -15,7 +15,8 @@ doc @[0,436) [base]
     text @[134,183) [base] str="Terms are definition sites with automatic labels."
   group @[185,246) [base] role="term" label="measure"
     para @[185,246) [base]
-      text @[185,246) [BOLD] str="measure"
+      styled @[185,246) [BOLD] role="term-name"
+        text @[185,246) [BOLD] str="measure"
       text @[185,246) [base] str=" — "
       text @[200,245) [base] str="The width available to a single typeset line."
   heading @[248,257) [BOLDx1.60] level=1 label="results"

@@ -5,6 +5,7 @@
 #include "math.h"
 
 #include "dict.h"
+#include "env.h"
 #include "font.h"
 #include "ir.h"
 
@@ -81,6 +82,7 @@ struct Layouter {
   Span span;
   double basePx;
   const MeasureNeeds* text = nullptr;  // text-font runs (nullptr = Euler only)
+  StyleId textBase = 0;                // the formula's style (MathScope)
   std::vector<u32> uncovered;          // the code points warned about
   const MathFont& F = primaryFont();
 
@@ -137,7 +139,11 @@ struct Layouter {
   bool textFontBox(MathBox* b, std::string_view txt, u8 st) {
     if (!text || !text->metrics || !text->styles || !text->strs || text->docBasePx <= 0)
       return false;
-    Styling sty;
+    // made under the formula (plan P3-01): its style at the math size, the
+    // formula positioning it
+    Styling sty = text->styles->get(textBase);
+    sty.baseline = 0;
+    sty.sizePx = 0;
     sty.sizeMul = (float)(basePx * styleScale(st) / text->docBasePx);
     StyleId sid = text->styles->idOf(sty);
     StrRef ref = text->strs->intern(txt);
@@ -797,7 +803,7 @@ MathBox* layoutMathFormula(std::string_view src, bool display, double sizePx,
   // errors are local (plan P1-24): an Error leaf lays out in place
   MathIR ir = parseMath(src, arena, scope);
   if (parseDiags) reportMathDiags(ir, src, span, diags);
-  Layouter L{arena, strs, diags, span, sizePx, text};
+  Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0};
   return L.layout(ir.root, display ? D : T);
 }
 
@@ -810,7 +816,7 @@ std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
   MathIR ir = parseMath(src, arena, scope);
   if (parseDiags) reportMathDiags(ir, src, span, diags);
   MNode* run = ir.root;
-  Layouter L{arena, strs, diags, span, sizePx, text};
+  Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0};
   u8 st = display ? D : T;
   const std::vector<MNode*>& kids = run->kids;
   size_t n = kids.size();

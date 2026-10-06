@@ -868,8 +868,8 @@ struct Emitter {
                                    : nullptr;
         if (tok && tok->st == ResState::Ready) {
           std::vector<std::vector<TokenRun>> lines;
-          tokenLines(strs.get(bodyKids[0]->str), bodyKids[0]->style, tok->toks.data(), tok->toks.size(), strs,
-                     styles, lines);
+          tokenLines(strs.get(bodyKids[0]->str), bodyKids[0]->style, E.cascade, bodyKids[0]->env, tok->toks.data(),
+                     tok->toks.size(), strs, styles, lines);
           for (const std::vector<TokenRun>& line : lines) {
             std::vector<CodeRun>& runs = g.lines.emplace_back();
             for (const TokenRun& r : line)
@@ -977,7 +977,7 @@ struct Emitter {
             for (const ArgVal& a : n->args)
               if (a.key == ArgK::name && a.tag == ArgTag::Str) m.tag = a.ref;
             // (plan P2-15) its source; one clean fragment is its interned string
-            const MathScope scope{E.math, n->declEpoch};
+            const MathScope scope{E.math, n->declEpoch, n->style};
             m.src = m.formula = mathSourceRef(n, strs);
             if (!m.src) {
               const MathSource ms = mathSource(n, strs, &diags);
@@ -1049,7 +1049,8 @@ struct EmitPass::State {
 };
 EmitPass::EmitPass(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles, const Config& cfg,
                    DiagSink& diags, const MetricStore* metrics, const ResourceTable* rt)
-    : bt_(bt), st_(std::make_unique<State>(EmitEnv{arena, diags, strs, styles, cfg, nullptr, rt, bt.math}, metrics)) {}
+    : bt_(bt),
+      st_(std::make_unique<State>(EmitEnv{arena, diags, strs, styles, cfg, nullptr, rt, bt.math, bt.cascade}, metrics)) {}
 EmitPass::~EmitPass() = default;
 bool EmitPass::top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing) {
   st_->missing.clear();
@@ -1061,7 +1062,7 @@ bool EmitPass::top(size_t t, TopBlock& out, std::vector<MeasureItem>& missing) {
 std::vector<TopBlock> emitDoc(const BoxTree& bt, Arena& arena, Interner& strs, StyleTable& styles,
                               const Config& cfg, DiagSink& diags, const MeasureNeeds* mathText,
                               const ResourceTable* rt) {
-  EmitEnv env{arena, diags, strs, styles, cfg, mathText, rt, bt.math};
+  EmitEnv env{arena, diags, strs, styles, cfg, mathText, rt, bt.math, bt.cascade};
   HlInline sink(env);
   return emitWith(bt, env, sink);
 }
@@ -1178,7 +1179,7 @@ static bool finalizeFormula(HList& h, size_t& at, MetricStore& store, const Conf
     std::vector<MeasureItem> missing;
     MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
     DiagSink scratch;
-    const MathScope scope{env.math, ob.epoch};
+    const MathScope scope{env.math, ob.epoch, ob.style};
     std::vector<MathSeg> segs =
         layoutMathSegments(env.strs.get(ob.formula), /*display=*/false, emPx(cfg, env.styles.get(ob.style)),
                            env.arena, env.strs, scratch, Span{h.cold[ph.cold].srcStart, h.cold[ph.cold].srcEnd},
@@ -1309,7 +1310,7 @@ static void finalizeDisplay(MathData& m, MetricStore& store, const Config& cfg, 
   std::vector<MeasureItem> missing;
   MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
   DiagSink scratch;
-  const MathScope scope{env.math, m.epoch};
+  const MathScope scope{env.math, m.epoch, m.style};
   MathBox* box = layoutMathFormula(env.strs.get(m.formula), /*display=*/true, m.sizePx, env.arena, env.strs, scratch,
                                    m.span, &mt, /*parseDiags=*/false, &scope);
   if (!missing.empty()) {

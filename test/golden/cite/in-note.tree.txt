@@ -57,13 +57,14 @@ doc @[0,219) [base]
     list @[0,219) [base] ordered=true
       item @[71,126) [base]
         para @[71,126) [base] label="fn-1"
-          text @[73,84) [basex0.85] str="The TeXbook " raw=0:0,12:11
-          ref @[85,93) [basex0.85] target="knuth84"
-            text @[85,93) [basex0.85] str="["
-            link @[85,93) [basex0.85] url="#tsr-bib-knuth84"
-              text @[85,93) [basex0.85] str="2"
-            text @[85,93) [basex0.85] str="]"
-          text @[94,125) [basex0.85] str=" is cited only inside this note." raw=0:0,1:0
-          text @[71,126) [basex0.85] str=" "
-          ref @[71,126) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
-            text @[71,126) [basex0.85] str="↩"
+          styled @[71,126) [basex0.85] role="note-body"
+            text @[73,84) [basex0.85] str="The TeXbook " raw=0:0,12:11
+            ref @[85,93) [basex0.85] target="knuth84"
+              text @[85,93) [basex0.85] str="["
+              link @[85,93) [basex0.85] url="#tsr-bib-knuth84"
+                text @[85,93) [basex0.85] str="2"
+              text @[85,93) [basex0.85] str="]"
+            text @[94,125) [basex0.85] str=" is cited only inside this note." raw=0:0,1:0
+            text @[71,126) [basex0.85] str=" "
+            ref @[71,126) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+              text @[71,126) [basex0.85] str="↩"

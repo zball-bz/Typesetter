@@ -13,7 +13,7 @@ void resolveDoc(ContentTree& tree, Arena& arena, Interner& strs, StyleTable& sty
   Terms terms(cfg);
   locate(tree.root, reg, counters, strs, index, diags);
   bindCites(tree.root, reg, counters, strs, index);
-  MaterializeEnv env{arena, strs, styles, diags, reg, terms, counters, index};
+  MaterializeEnv env{arena, strs, styles, diags, reg, terms, counters, index, cascade};
   tree.root = materialize(tree.root, env);
   if (env.made) settleMade(tree.root, cascade, props, styles);
   // what tools read after resolve: ordinals (spans, not nodes, outlive it)

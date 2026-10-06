@@ -18,7 +18,8 @@ doc @[0,296) [base]
   group @[137,226) [base] role="figure" label="fig-a"
     image @[137,226) [base] src="a.png" alt="a figure" w=120 h=60
     para @[208,217) [base] role="caption"
-      text @[208,217) [BOLD] str="図 1："
+      styled @[208,217) [BOLD] role="caption-label"
+        text @[208,217) [BOLD] str="図 1："
       text @[208,217) [base] str="A figure."
   table @[228,274) [base] cols=2 label="tab-a"
     trow @[228,274) [base]

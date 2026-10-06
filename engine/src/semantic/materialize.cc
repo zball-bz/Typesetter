@@ -7,21 +7,23 @@ namespace tsr {
 namespace {
 
 // A template's site: the span and style its nodes take (computed and
-// authored: model.h), plus the style deltas of the `styled` items around
+// scope: model.h), plus the style deltas of the `styled` items around
 // the current one.
 struct Ctx {
   Span span;
   StyleId style = 0;
   StyleDelta d;
   float size = 1.0f;
-  StyleId authored = 0;
+  StyleId scope = 0;
+  RuleEnvId env = 0;  // the rules in force there
 };
-// the site at a node
+// the site at a node: under it
 Ctx siteAt(const ContentNode* k) {
   Ctx c;
   c.span = k->span;
   c.style = k->style;
-  c.authored = k->authored;
+  c.scope = k->scope;
+  c.env = k->env;
   return c;
 }
 
@@ -80,18 +82,36 @@ struct Mat {
     e.made++;
     return n;
   }
-  // in a site's style
+  // at a site (Cascade.make, plan P3-01): its parent's style there, the
+  // rules that match it, the site's deltas over them
+  void make(ContentNode* n, const Ctx& c) {
+    Styling st = e.styles.get(c.style), sc = e.styles.get(c.scope);
+    Cascade::NodeView v{n->kind};
+    v.args = &n->args;
+    v.role = attrStr(n, ArgK::role);
+    v.cls = attrStr(n, ArgK::class_);
+    v.lang = st.lang;
+    e.cascade.make(st, sc, v, c.env, c.d, c.size);
+    n->style = e.styles.idOf(st);
+    n->scope = e.styles.idOf(sc);
+    n->env = c.env;
+  }
   ContentNode* mk(Kind k, Span span, const Ctx& c) {
     ContentNode* n = mk(k, span);
-    n->style = styleOf(c);
-    n->authored = compose(e.styles, c.authored, c.d, c.size);
+    make(n, c);
     return n;
+  }
+  // under a made node: its style, no delta pending
+  static Ctx under(const ContentNode* n, Span span) {
+    Ctx c = siteAt(n);
+    c.span = span;
+    return c;
   }
   // in a node's style
   ContentNode* mk(Kind k, Span span, const ContentNode* like) {
     ContentNode* n = mk(k, span);
     n->style = like->style;
-    n->authored = like->authored;
+    n->scope = like->scope;
     return n;
   }
   ContentNode* clone1(const ContentNode* n) {
@@ -120,13 +140,12 @@ struct Mat {
         return;
       }
   }
-  StyleId styleOf(const Ctx& c) { return compose(e.styles, c.style, c.d, c.size); }
   // a delta over inserted content: every node of the subtree, once
   ContentNode* delta(ContentNode* n, const Ctx& c) {
     if (c.d.empty() && c.size == 1.0f) return n;
     ContentNode* d = clone1(n);
     d->style = compose(e.styles, n->style, c.d, c.size);
-    d->authored = compose(e.styles, n->authored, c.d, c.size);
+    d->scope = compose(e.styles, n->scope, c.d, c.size);
     for (ContentNode*& k : d->kids) k = delta(k, c);
     return d;
   }
@@ -211,7 +230,7 @@ struct Mat {
   }
   ContentNode* node(const TItem& it, const Ctx& c, const Slots& s) {
     bool inline_ = isInlineLevel(it.kind);
-    ContentNode* n = inline_ || it.siteStyle ? mk(it.kind, c.span, c) : mk(it.kind, c.span);
+    ContentNode* n = mk(it.kind, c.span);
     for (const auto& [k, v] : it.args) {
       if (v.k == TArg::K::Bool || v.k == TArg::K::Num) {
         n->args.push_back({k, v.k == TArg::K::Bool ? ArgTag::Bool : ArgTag::Num, v.k == TArg::K::Bool ? (v.b ? 1.0 : 0.0) : v.num, 0});
@@ -220,7 +239,14 @@ struct Mat {
       std::string val = argValue(v, s);
       if (!val.empty() || v.k == TArg::K::Text) setArg(n, k, val);  // an empty slot: no argument
     }
-    inst(it.kids, c, s, n, n->kids);
+    // an inline node (or a block taking the site's style) is made at the
+    // site, its role and attributes selecting rules, and its content under it
+    if (inline_ || it.siteStyle) {
+      make(n, c);
+      inst(it.kids, under(n, c.span), s, n, n->kids);
+    } else {
+      inst(it.kids, c, s, n, n->kids);
+    }
     if (n->kind == Kind::ref) resolveRef(n);  // a generated reference reads like any other
     return n;
   }
@@ -746,34 +772,58 @@ struct Mat {
     inst(C.wrap, cc, ws, nullptr, out);
   }
 
-  // a body as paragraphs: an inline body is one paragraph, a block body keeps
-  // its blocks; the anchor goes on the first paragraph and the tail ends the
-  // last (both made when the body does not start or end with one)
+  // Cascade.lift (plan P3-01; T4, D-S09): a moved node and its subtree
+  // re-entered under a new parent (`style`): each keeps its own delta and
+  // its scope, the rules of its old place fold in again; block properties
+  // are the destination's (settled after materialize)
+  ContentNode* lift(const ContentNode* k, StyleId style, StyleId oldParentScope, RuleEnvId env) {
+    ContentNode* d = clone1(k);
+    Styling st = e.styles.get(style);
+    Cascade::NodeView v{k->kind};
+    v.args = &k->args;
+    v.role = attrStr(k, ArgK::role);
+    v.cls = attrStr(k, ArgK::class_);
+    v.lang = e.styles.get(k->scope).lang;
+    e.cascade.reenter(st, v, env, e.styles.get(k->scope), e.styles.get(oldParentScope));
+    d->style = e.styles.idOf(st);
+    d->props = ~0u;  // kPropsUnset
+    e.made++;
+    for (ContentNode*& kid : d->kids) kid = lift(kid, d->style, k->scope, k->env);
+    return d;
+  }
+
+  // a body as paragraphs, lifted from its site `c` (a note's): an inline
+  // body is one paragraph whose content is entered under an inline wrapper
+  // of the item's role (note-body: the rules size it), a block body keeps its
+  // blocks, entered as under that wrapper; the anchor goes on the first
+  // paragraph and the tail ends the last (both made when the body does not
+  // start or end with one)
   void paras(const TItem& it, const Ctx& c, const std::vector<ContentNode*>& body, const Slots& s,
              std::vector<ContentNode*>& out) {
-    Ctx scaled = c;
-    scaled.d = StyleDelta{};
-    scaled.size = it.size;
+    // the wrapper: made at the site's scope, in its rule env (run
+    // properties come from the site, not from rules that matched there)
+    Ctx site = c;
+    site.style = c.scope;
+    site.d = StyleDelta{};
+    site.size = 1.0f;
+    ContentNode* wrap = mk(Kind::styled, c.span);
+    if (!it.name.empty()) setArg(wrap, ArgK::role, it.name);
+    make(wrap, site);
     bool blocks = false;
     for (const ContentNode* k : body) blocks = blocks || !isInlineLevel(k->kind);
     std::vector<ContentNode*> res;
-    ContentNode* para = nullptr;
-    for (ContentNode* k : body) {
-      ContentNode* d = delta(k, scaled);
-      if (blocks) {
-        res.push_back(d);
-        continue;
-      }
-      if (!para) para = mk(Kind::para, c.span);
-      para->kids.push_back(d);
+    if (blocks) {
+      for (const ContentNode* k : body) res.push_back(lift(k, wrap->style, c.scope, c.env));
+    } else {
+      for (const ContentNode* k : body) wrap->kids.push_back(lift(k, wrap->style, c.scope, c.env));
+      ContentNode* para = mk(Kind::para, c.span);
+      para->kids.push_back(wrap);
+      res.push_back(para);
     }
-    if (!blocks && !para) para = mk(Kind::para, c.span);
-    if (para) res.push_back(para);
     ContentNode* first = nullptr;
     ContentNode* last = nullptr;
-    for (ContentNode*& k : res)
+    for (ContentNode* k : res)
       if (k->kind == Kind::para) {
-        k = clone1(k);
         if (!first) first = k;
         last = k;
       }
@@ -788,7 +838,9 @@ struct Mat {
       last = mk(Kind::para, c.span);
       res.push_back(last);
     }
-    inst(it.tail, c, s, last, last->kids);
+    // the tail: inside the wrapper (an inline body), else as under it
+    const bool inWrap = !blocks && last->kids.size() == 1 && last->kids[0] == wrap;
+    inst(it.tail, under(wrap, c.span), s, inWrap ? wrap : last, inWrap ? wrap->kids : last->kids);
     out.insert(out.end(), res.begin(), res.end());
   }
 

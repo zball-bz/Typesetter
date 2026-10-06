@@ -30,7 +30,8 @@ doc @[0,347) [base]
     list @[0,347) [base] ordered=true
       item @[249,291) [base]
         para @[249,291) [base] label="fn-1"
-          text @[251,290) [basex0.85] str="边注里的脚注是真正的脚注。"
-          text @[249,291) [basex0.85] str=" "
-          ref @[249,291) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
-            text @[249,291) [basex0.85] str="↩"
+          styled @[249,291) [basex0.85] role="note-body"
+            text @[251,290) [basex0.85] str="边注里的脚注是真正的脚注。"
+            text @[249,291) [basex0.85] str=" "
+            ref @[249,291) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+              text @[249,291) [basex0.85] str="↩"

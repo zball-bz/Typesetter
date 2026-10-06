@@ -120,8 +120,8 @@ struct LegacyInline final : InlineSink {
       case Kind::mathinline: {
         const MathSource ms = mathSource(n, strs);  // (plan P2-15)
         const StrRef srcRef = strs.intern(ms.copy);
-        const MathScope scope{E.math, n->declEpoch};
         StyleId st = compose(n->style, ctx.add, ctx.mul);
+        const MathScope scope{E.math, n->declEpoch, st};
         // CJK–formula boundary glue (App C: formulas are Latin-class)
         if (!u.legacy.empty() && u.legacy.back().isCjkChar()) {
           double px = kCjkBoundaryEm * fontPx(st);

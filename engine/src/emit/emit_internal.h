@@ -20,6 +20,7 @@ struct EmitEnv {
   const MeasureNeeds* mathText = nullptr;  // text-font runs in formulas (math-design §14)
   const ResourceTable* rt = nullptr;      // answered code tokens and image sizes
   const MathEnv* math = nullptr;          // the document's math declarations (plan P2-15)
+  const Cascade* cascade = nullptr;       // the rules, for code tokens (plan P3-01)
   StrRef spaceRef = 0, hyphenRef = 0, bulletRef = 0;
   // the presentation kinds put on their text (plan P2-08): the mono font role,
   // bold, a CJK run

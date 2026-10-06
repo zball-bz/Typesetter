@@ -47,13 +47,15 @@ doc @[97,448) [base]
     list @[97,448) [base] ordered=true
       item @[97,103) [base]
         para @[97,103) [base] label="fn-1"
-          text @[97,103) [basex0.85] str="A note made by m."
-          text @[97,103) [basex0.85] str=" "
-          ref @[97,103) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
-            text @[97,103) [basex0.85] str="↩"
+          styled @[97,103) [basex0.85] role="note-body"
+            text @[97,103) [basex0.85] str="A note made by m."
+            text @[97,103) [basex0.85] str=" "
+            ref @[97,103) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+              text @[97,103) [basex0.85] str="↩"
       item @[111,117) [base]
         para @[111,117) [base] label="fn-2"
-          text @[111,117) [basex0.85] str="A note made by m."
-          text @[111,117) [basex0.85] str=" "
-          ref @[111,117) [basex0.85] target="fnref-2" url="#tsr-fnref-2"
-            text @[111,117) [basex0.85] str="↩"
+          styled @[111,117) [basex0.85] role="note-body"
+            text @[111,117) [basex0.85] str="A note made by m."
+            text @[111,117) [basex0.85] str=" "
+            ref @[111,117) [basex0.85] target="fnref-2" url="#tsr-fnref-2"
+              text @[111,117) [basex0.85] str="↩"

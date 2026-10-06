@@ -4,7 +4,8 @@ doc @[0,945) [base]
   group @[97,246) [base] role="figure" label="fig-tower"
     image @[97,246) [base] src="photos/tower.jpg" alt="塔楼" w=400 h=300 scale=0.4 side="right"
     para @[210,237) [base] role="caption"
-      text @[210,237) [BOLD] str="图 1："
+      styled @[210,237) [BOLD] role="caption-label"
+        text @[210,237) [BOLD] str="图 1："
       text @[210,237) [base] str="右浮动的塔楼小图。"
   para @[248,464) [base]
     text @[248,464) [base] str="正文围绕浮动图排布：前几行的断行宽度收窄为版心减去浮动框与间隙，越过浮动框底部之后恢复整幅版心宽度继续排布，段落之间的间距也计入占用高度的消耗。"
@@ -13,7 +14,8 @@ doc @[0,945) [base]
   group @[636,776) [base] role="figure" label="fig-gate"
     image @[636,776) [base] src="photos/gate.jpg" alt="山门" w=400 h=240 scale=0.4 side="left"
     para @[746,767) [base] role="caption"
-      text @[746,767) [BOLD] str="图 2："
+      styled @[746,767) [BOLD] role="caption-label"
+        text @[746,767) [BOLD] str="图 2："
       text @[746,767) [base] str="左浮动的山门。"
   para @[778,878) [base]
     text @[778,835) [base] str="左侧浮动时行盒整体右移，宽度同样收窄；"

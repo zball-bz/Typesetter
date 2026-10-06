@@ -598,6 +598,7 @@ struct Doc {
     if (!done(Stage::BoxTree)) {  // the block structure (plan P1-18): once per resolved tree
       boxtree = buildBoxTree(tree, strs, styles, nodeProps, cfg, *registry);
       boxtree.math = &mathEnv;
+      boxtree.cascade = &cascade;
       validThrough = (int)Stage::BoxTree;
     }
     if (!done(Stage::Emit)) {
