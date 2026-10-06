@@ -51,6 +51,7 @@ struct DLRun {
   std::string_view seg;         // CodeText: its text
   u32 n = 0;                    // CodeCont: the column count
   const MathBox* math = nullptr;  // Math
+  bool mathLabel = false;         // Math (plan P3-27, a11y.mathLabel): role=math, aria-label
   Span span;                    // Math / Image / Raw: its source
   StrRef src = 0, alt = 0;      // Math: its source text; Image: src/alt; Raw: markup
   Su w = 0, h = 0;              // Image / Raw: the box
@@ -83,6 +84,7 @@ struct DLNode {
   const MathBox* math = nullptr;
   StrRef mathSrc = 0;
   double mathTopPx = 0;
+  bool mathLabel = false;  // (plan P3-27) role=math, aria-label
   // Image: src (0 = placeholder) and alt; Raw: markup
   StrRef src = 0, alt = 0;
   const BoxModel* box = nullptr;  // (plan P3-14) Frame: its block's padding, border, colours

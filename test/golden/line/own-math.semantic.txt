@@ -1,9 +1,11 @@
 <div class="tsr-flow">
 <ul data-pid="0" data-s="0" data-e="87">
 <li><p data-s="2" data-e="74">An item with display math: </p>
-<p class="tsr-mathblock" data-s="31" data-e="56"><code class="tsr-mathsrc">$ x = a
+<p class="tsr-mathblock" data-s="31" data-e="56"><span class="tsr-math" data-syn="math" data-copy="$ x = a
 - b
-+ c $</code></p>
++ c $" data-copy-group="2147483679" role="math" aria-label="x = a
+- b
++ c" data-s="31" data-e="56" style="width:94.75px;height:12.125px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">x</span><span class="tsr-mg" style="left:12.859px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:29.391px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:42.703px;top:-1.863px;font-size:16px;line-height:16px">−</span><span class="tsr-mg" style="left:58.359px;top:-1.863px;font-size:16px;line-height:16px">b</span><span class="tsr-mg" style="left:71.328px;top:-1.863px;font-size:16px;line-height:16px">+</span><span class="tsr-mg" style="left:86.969px;top:-1.863px;font-size:16px;line-height:16px">c</span></span></p>
 <p data-s="59" data-e="74" style="margin-top:0;text-indent:0"> and text after.</p>
 </li>
 <li>Next item.</li>

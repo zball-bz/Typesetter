@@ -8,6 +8,8 @@
 #include "../model/cascade.h"
 #include "../elements/registry.h"
 #include "../math/env.h"
+#include "../math/math.h"
+#include "math_html.h"
 #include "rules_css.h"
 
 namespace tsr {
@@ -24,6 +26,7 @@ struct Sem {
   const Registry* reg;     // the classes' semantic elements (plan P2-05)
   const Cascade* cascade;  // document envs (plan P3-01)
   const NodePropsTable* props;  // a code block's overlays (plan P3-22)
+  const SemanticMath& math;     // (plan P3-27) formulas as boxes or source
   std::string topEnv;      // the top-level block's env mark ("" = none)
   // a preview (renderSemanticFragment): references it leaves out
   const std::function<bool(StrRef)>* backlink = nullptr;
@@ -40,6 +43,25 @@ struct Sem {
   double argN(const ContentNode* n, ArgK k, double dflt) {
     const ArgVal* a = arg(n, k);
     return (a && a->tag == ArgTag::Num) ? a->num : dflt;
+  }
+
+  // (plan P3-27; design T7 S13, D-R07) a formula as its box: laid out from
+  // the math font's metrics alone (its text runs estimated in the math font
+  // before anything is measured), at its style's size, written as the
+  // typeset page writes it — role=math and its source as aria-label when the
+  // page labels formulas (D-R04)
+  void formulaBox(const ContentNode* n, bool display) {
+    const MathSource ms = mathSource(n, strs);
+    const MathScope scope{math.env, n->declEpoch, n->style};
+    DiagSink scratch;  // (what the typeset layout reports, not this estimate)
+    const double sizePx = emPx(math.basePx, styles.get(n->style));
+    const MathBox* box = layoutMathFormula(ms.text, display, sizePx, *math.arena, strs, scratch, n->span,
+                                           /*text=*/nullptr, /*parseDiags=*/false, &scope);
+    MathSpanOpts o;
+    o.display = display;
+    o.span = n->span;
+    o.label = math.label;
+    writeMathSpan(out, box, ms.copy, strs, o);
   }
 
   // (plan P3-07, D-R06) what copy takes of a node, as the typeset view
@@ -270,8 +292,12 @@ struct Sem {
         out += "<br>";
         return;
       case Kind::mathinline:
-        // §9.2: source-text fallback until the semantic phase learns boxes
-        // (its source as written: fragments and holes, plan P2-15)
+        // (plan P3-27, D-R07) its box, estimated before measurement; else
+        // its source as written (fragments and holes, plan P2-15)
+        if (math.boxes) {
+          formulaBox(n, /*display=*/false);
+          return;
+        }
         out += "<code class=\"tsr-mathsrc\">$";
         esc(out, mathSource(n, strs).copy);
         out += "$</code>";
@@ -553,9 +579,13 @@ struct Sem {
         return;
       case Kind::mathblock:
         open("p", n, pid, "tsr-mathblock");
-        out += "<code class=\"tsr-mathsrc\">$ ";
-        esc(out, mathSource(n, strs).copy);
-        out += " $</code>";
+        if (math.boxes) {
+          formulaBox(n, /*display=*/true);
+        } else {
+          out += "<code class=\"tsr-mathsrc\">$ ";
+          esc(out, mathSource(n, strs).copy);
+          out += " $</code>";
+        }
         {
           // the equation number on the no-JS page too (P0-09 k): its tag
           // part (plan P3-03; the compat name is gone, P3-26), which copy
@@ -761,13 +791,13 @@ struct Sem {
 
 std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& styles,
                            const ResourceTable* rt, const Registry* reg, const Cascade* cascade,
-                           const NodePropsTable* props) {
+                           const NodePropsTable* props, const SemanticMath& math) {
   std::string out;
   out += "<div class=\"tsr-flow\">\n";
   if (tree.root) {
     int pid = 0;
     for (const ContentNode* k : tree.root->kids) {
-      Sem s{strs, styles, out, rt, reg, cascade, props,
+      Sem s{strs, styles, out, rt, reg, cascade, props, math,
             cascade && !startsEnv(k) ? envAttr(*cascade, k->env, strs) : std::string()};
       s.block(k, pid);  // pid mirrors emitDoc's per-root-child numbering
       pid++;
@@ -780,10 +810,10 @@ std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& 
 std::string renderSemanticFragment(const ContentTree& tree, Interner& strs, StyleTable& styles,
                                    const ResourceTable* rt, const Registry* reg, const Cascade* cascade,
                                    const NodePropsTable* props, std::string_view label,
-                                   const std::function<bool(StrRef)>& backlink) {
+                                   const std::function<bool(StrRef)>& backlink, const SemanticMath& math) {
   std::string out;
   if (!tree.root || label.empty()) return out;
-  Sem s{strs, styles, out, rt, reg, cascade, props, std::string()};
+  Sem s{strs, styles, out, rt, reg, cascade, props, math, std::string()};
   s.backlink = &backlink;
   // the labelled node, and the item it begins (document order, first wins)
   const ContentNode* hit = nullptr;

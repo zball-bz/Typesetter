@@ -65,6 +65,13 @@ engine.typeset(document.getElementById('tsr-src').textContent, el, {
 }).catch((e) => console.warn('tsr hydrate failed; static page stands', e));
 </script>` : '';
 
+// (plan P3-27) formulas as boxes on the static page too: their glyphs in the
+// bundled math font, beside the page (the hydrated page declares it again)
+const hasMath = semantic.includes('class="tsr-math"');
+const mathFace = hasMath
+  ? `@font-face { font-family: ${JSON.stringify(MATH_FONT.family)}; src: url(${JSON.stringify(`assets/${MATH_FONT.file}`)}); }\n`
+  : '';
+
 const html = `<!doctype html>
 <html lang="${lang.replace(/[^A-Za-z0-9-]/g, '')}">
 <head>
@@ -72,7 +79,7 @@ const html = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${pageTitle.replace(/[<&]/g, '')}</title>
 <style>
-${TSR_CSS}
+${mathFace}${TSR_CSS}
 ${THEME_CSS}
 body { margin: 0 auto; max-width: 42em; padding: 2em 1em;
        font-family: ${bodyFont.replace(/[<>{};]/g, '')}; }
@@ -91,6 +98,10 @@ ${semantic}</article>${hydrateBlock}
 
 await mkdir(outDir, { recursive: true });
 await writeFile(join(outDir, 'index.html'), html);
+if (hasMath || hydrate) {  // the math font manifest (P1-23): the static boxes' and the hydrated page's
+  await mkdir(dirname(join(outDir, 'assets', MATH_FONT.file)), { recursive: true });
+  await cp(join(root, MATH_FONT.file), join(outDir, 'assets', MATH_FONT.file));
+}
 
 // (plan P3-21) the document's own resources beside it: what the manifest
 // lists by a relative reference inside the document's folder (its images,
@@ -131,7 +142,6 @@ if (hydrate) {
   await mkdir(join(assets, 'engine/build-wasm'), { recursive: true });
   for (const f of ['typesetter.js', 'typesetter.wasm'])
     await cp(join(root, 'engine/build-wasm', f), join(assets, 'engine/build-wasm', f));
-  await cp(join(root, MATH_FONT.file), join(assets, MATH_FONT.file));  // the math font manifest (P1-23)
   try {
     await access(join(root, 'runtime/assets/hl'));
     await cp(join(root, 'runtime/assets/hl'), join(assets, 'runtime/assets/hl'),

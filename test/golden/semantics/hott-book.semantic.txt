@@ -26,12 +26,12 @@
 <h1 data-pid="1" data-s="1133" data-e="1146" id="tsr-part-f">Part I Foundations</h1>
 <h2 data-pid="2" data-s="1157" data-e="1171" id="tsr-ch-tt">Chapter 1 Type theory</h2>
 <h3 data-pid="3" data-s="1181" data-e="1194" id="tsr-sec-j">§1.1 Judgments</h3>
-<p class="tsr-mathblock" data-pid="4" data-s="1204" data-e="1220" id="tsr-eq-j"><code class="tsr-mathsrc">$ a = b $</code> <span class="tsr-eqno" data-syn="eqno">(1.1)</span></p>
+<p class="tsr-mathblock" data-pid="4" data-s="1204" data-e="1220" id="tsr-eq-j"><span class="tsr-math" data-syn="math" data-copy="$ a = b $" data-copy-group="2147484852" role="math" aria-label="a = b" data-s="1204" data-e="1220" style="width:40.125px;height:11.125px;vertical-align:-0.188px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:14.188px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:30.719px;top:-1.863px;font-size:16px;line-height:16px">b</span></span> <span class="tsr-eqno" data-syn="eqno">(1.1)</span></p>
 <h2 data-pid="5" data-s="1222" data-e="1245" id="tsr-ch-hott">Chapter 2 Homotopy type theory</h2>
 <h1 data-pid="6" data-s="1257" data-e="1270">Part II Mathematics</h1>
 <h2 data-pid="7" data-s="1272" data-e="1279" id="tsr-ch-sets">Chapter 3 Sets</h2>
 <h2 data-pid="8" data-s="1304" data-e="1315" id="tsr-ch-n">Appendix A Notation</h2>
 <h3 data-pid="9" data-s="1324" data-e="1335" id="tsr-sec-s">§A.1 Symbols</h3>
-<p class="tsr-mathblock" data-pid="10" data-s="1345" data-e="1361" id="tsr-eq-s"><code class="tsr-mathsrc">$ x = x $</code> <span class="tsr-eqno" data-syn="eqno">(A.1)</span></p>
+<p class="tsr-mathblock" data-pid="10" data-s="1345" data-e="1361" id="tsr-eq-s"><span class="tsr-math" data-syn="math" data-copy="$ x = x $" data-copy-group="2147484993" role="math" aria-label="x = x" data-s="1345" data-e="1361" style="width:37.812px;height:7.609px;vertical-align:-0.188px"><span class="tsr-mg" style="left:0px;top:-5.378px;font-size:16px;line-height:16px">x</span><span class="tsr-mg" style="left:12.859px;top:-5.378px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:29.391px;top:-5.378px;font-size:16px;line-height:16px">x</span></span> <span class="tsr-eqno" data-syn="eqno">(A.1)</span></p>
 <p data-pid="11" data-s="1363" data-e="1425">See <a href="#tsr-part-f">Part I</a>, <a href="#tsr-ch-hott">Chapter 2</a>, <a href="#tsr-sec-j">§1.1</a>, <a href="#tsr-eq-j">式 (1.1)</a>, <a href="#tsr-ch-n">Appendix A</a>, <a href="#tsr-sec-s">§A.1</a> and <a href="#tsr-eq-s">式 (A.1)</a>.</p>
 </div>

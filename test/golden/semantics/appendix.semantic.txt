@@ -1,8 +1,8 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="383" data-e="392" id="tsr-methods">1 Methods</h1>
-<p class="tsr-mathblock" data-pid="1" data-s="404" data-e="420" id="tsr-eq-m"><code class="tsr-mathsrc">$ a = b $</code> <span class="tsr-eqno" data-syn="eqno">(1.1)</span></p>
+<p class="tsr-mathblock" data-pid="1" data-s="404" data-e="420" id="tsr-eq-m"><span class="tsr-math" data-syn="math" data-copy="$ a = b $" data-copy-group="2147484052" role="math" aria-label="a = b" data-s="404" data-e="420" style="width:40.125px;height:11.125px;vertical-align:-0.188px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:14.188px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:30.719px;top:-1.863px;font-size:16px;line-height:16px">b</span></span> <span class="tsr-eqno" data-syn="eqno">(1.1)</span></p>
 <h1 data-pid="2" data-s="435" data-e="443" id="tsr-proofs">A Proofs</h1>
 <h2 data-pid="3" data-s="454" data-e="463" id="tsr-lemmas">A.1 Lemmas</h2>
-<p class="tsr-mathblock" data-pid="4" data-s="474" data-e="490" id="tsr-eq-p"><code class="tsr-mathsrc">$ c = d $</code> <span class="tsr-eqno" data-syn="eqno">(A.1)</span></p>
+<p class="tsr-mathblock" data-pid="4" data-s="474" data-e="490" id="tsr-eq-p"><span class="tsr-math" data-syn="math" data-copy="$ c = d $" data-copy-group="2147484122" role="math" aria-label="c = d" data-s="474" data-e="490" style="width:38.391px;height:11.234px;vertical-align:-0.297px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:12.219px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:28.75px;top:-1.863px;font-size:16px;line-height:16px">d</span></span> <span class="tsr-eqno" data-syn="eqno">(A.1)</span></p>
 <p data-pid="5" data-s="492" data-e="540">See <a href="#tsr-methods">§1</a>, <a href="#tsr-proofs">Appendix A</a>, <a href="#tsr-lemmas">Appendix A.1</a>, <a href="#tsr-eq-m">Eq. (1.1)</a> and <a href="#tsr-eq-p">Eq. (A.1)</a>.</p>
 </div>

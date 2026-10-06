@@ -1,8 +1,8 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="51">三盒模型：行号、代码与结构化边注。</p>
-<pre data-pid="1" data-s="53" data-e="331"><code class="language-js">const memo = new Map(); <span class="tsr-margin" data-syn="sidecar">/// 记忆化容器，均摊 <code class="tsr-mathsrc">$O(1)$</code> 查询</span>
+<pre data-pid="1" data-s="53" data-e="331"><code class="language-js">const memo = new Map(); <span class="tsr-margin" data-syn="sidecar">/// 记忆化容器，均摊 <span class="tsr-math" data-syn="math" data-copy="$O(1)$" data-copy-group="2147483787" role="math" aria-label="O(1)" data-s="139" data-e="145" style="width:31.328px;height:14.625px;vertical-align:-3.266px"><span class="tsr-mg" style="left:0px;top:-1.441px;font-size:16px;line-height:16px">O</span><span class="tsr-mg" style="left:12.844px;top:-1.441px;font-size:16px;line-height:16px">(</span><span class="tsr-mg" style="left:18.094px;top:-1.441px;font-size:16px;line-height:16px">1</span><span class="tsr-mg" style="left:26.078px;top:-1.441px;font-size:16px;line-height:16px">)</span></span> 查询</span>
 function fib(n) {
-  if (n &lt;= 1) return n; <span class="tsr-margin" data-syn="sidecar">/// <strong>基例</strong>：<code class="tsr-mathsrc">$n &lt;= 1$</code> 时直接返回，详见 <a href="#tsr-base">§1</a><a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a></span>
+  if (n &lt;= 1) return n; <span class="tsr-margin" data-syn="sidecar">/// <strong>基例</strong>：<span class="tsr-math" data-syn="math" data-copy="$n &lt;= 1$" data-copy-group="2147483858" role="math" aria-label="n &lt;= 1" data-s="210" data-e="218" style="width:40.281px;height:13.75px;vertical-align:-2.391px"><span class="tsr-mg" style="left:0px;top:-1.441px;font-size:16px;line-height:16px">n</span><span class="tsr-mg" style="left:15.062px;top:-1.441px;font-size:16px;line-height:16px">≤</span><span class="tsr-mg" style="left:32.297px;top:-1.441px;font-size:16px;line-height:16px">1</span></span> 时直接返回，详见 <a href="#tsr-base">§1</a><a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a></span>
   return fib(n - 1) + fib(n - 2);
 }</code></pre>
 <h1 data-pid="2" data-s="333" data-e="347" id="tsr-base">基例说明</h1>

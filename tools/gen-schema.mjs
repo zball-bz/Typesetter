@@ -506,7 +506,7 @@ const settings = Object.entries(S.settings ?? {}).filter(([n]) => n !== '$commen
 const policy = Object.entries(S.policy ?? {}).filter(([n]) => n !== '$comment');
 for (const [n, r] of settings) {
   for (const a of r.affects) if (!STAGES.includes(a)) errors.push(`settings.${n}: unknown stage ${a}`);
-  if (!/^[a-z]+\.[A-Za-z]+$/.test(n)) errors.push(`settings.${n}: paths are section.name`);
+  if (!/^[a-z][a-z0-9]*\.[A-Za-z]+$/.test(n)) errors.push(`settings.${n}: paths are section.name`);
 }
 if (errors.length) { for (const e of errors) console.error('gen-schema: ' + e); process.exit(1); }
 const textDomains = domains.map(([n]) => n);
@@ -514,7 +514,10 @@ const textDomains = domains.map(([n]) => n);
 const ATOM_CLASSES = ['ord', 'op', 'bin', 'rel', 'open', 'close', 'punct', 'inner'];
 const ctypeOf = (r) => r.ctype ?? (r.dom.startsWith('num') ? 'double' : r.dom.startsWith('int') ? 'int'
   : r.dom === 'bool' ? 'bool' : r.dom.startsWith('map') ? 'std::map<std::string, std::string>'
-  : r.dom.startsWith('classmap') ? 'ClassMap' : 'std::string');
+  : r.dom.startsWith('classmap') ? 'ClassMap' : r.dom.startsWith('enum:') ? 'u8' : 'std::string');
+// (plan P3-27) an enum setting: its value's index, named k<Field><Value>
+const enumValues = (r) => r.dom.slice(5).split('|');
+const enumConst = (r, v) => `k${cap(r.field)}${v.split(/[^A-Za-z0-9]/).map(cap).join('')}`;
 const cLit = (r, v) => {
   const t = ctypeOf(r);
   if (r.ctype === 'PunctCompress') return `PunctCompress::${cap(v)}`;
@@ -523,6 +526,7 @@ const cLit = (r, v) => {
   if (r.dom.startsWith('json')) return '""';
   if (t === 'std::string') return JSON.stringify(v);
   if (t === 'bool') return v ? 'true' : 'false';
+  if (t === 'u8' && r.dom.startsWith('enum:')) return enumConst(r, v);
   return String(v);
 };
 const costRows = settings.filter(([, r]) => r.field.startsWith('cost.'));
@@ -531,6 +535,9 @@ const pc = settings.find(([, r]) => r.ctype === 'PunctCompress');
 let sh = `// ${HDR}\n// Host settings (schema "settings"; plan P1-03, design T4 M3 / T9 A4).\n#pragma once\n#include <array>\n#include <map>\n#include <string>\n#include <string_view>\n\n` +
   `#include "../support/support.h"\n#include "stages.h"\n\nnamespace tsr {\n\n` +
   `// a value per TeX atom class (ord, op, bin, rel, open, close, punct, inner); -1: none (plan P3-25)\nusing ClassMap = std::array<double, 8>;\n\n` +
+  settings.filter(([, r]) => !r.ctype && r.dom.startsWith('enum:'))
+    .map(([n, r]) => `// ${n} (plan P3-27: an enum setting is its value's index)\n` +
+      enumValues(r).map((v, k) => `inline constexpr u8 ${enumConst(r, v)} = ${k};\n`).join('') + '\n').join('') +
   `// Adjacent-punctuation compression style (clreq; v2 App C).\n//   Full: every adjacent gap compressed (newspaper-tight)\n` +
   `//   Book: close+close and open+open set solid, but a breakable half-width\n//         breathing space is kept between a closing/dot and an opening punct\n` +
   `//   None: full-width style — all punctuation spaces kept (rigid where 禁则\n//         forbids a break)\n` +
@@ -642,7 +649,7 @@ settings.forEach(([n, r], k) => {
   lastSec = sec;
   sc += `  out += ${JSON.stringify(pre + JSON.stringify(name) + ': ')};\n`;
   const t = ctypeOf(r);
-  if (r.ctype === 'PunctCompress') sc += `  { static const char* const kM[] = {${r.dom.slice(5).split('|').map((m) => JSON.stringify(m)).join(', ')}}; jsonString(out, kM[(int)${f}]); }\n`;
+  if (r.ctype === 'PunctCompress' || (t === 'u8' && r.dom.startsWith('enum:'))) sc += `  { static const char* const kM[] = {${r.dom.slice(5).split('|').map((m) => JSON.stringify(m)).join(', ')}}; jsonString(out, kM[(int)${f}]); }\n`;
   else if (t.startsWith('std::map')) sc += `  out += '{';\n  { bool first = true; for (const auto& [mk, mv] : ${f}) { if (!first) out += ", "; first = false; jsonString(out, mk); out += ": "; jsonString(out, mv); } }\n  out += '}';\n`;
   else if (t === 'ClassMap') sc += `  out += '{';\n  { static const char* const kC[] = {${ATOM_CLASSES.map((c) => JSON.stringify(c)).join(', ')}}; bool first = true;\n    for (int k = 0; k < 8; k++) if (${f}[(size_t)k] >= 0) { if (!first) out += ", "; first = false; jsonString(out, kC[k]); out += ": "; num(out, ${f}[(size_t)k]); } }\n  out += '}';\n`;
   else if (r.dom.startsWith('json')) sc += `  out += ${f}.empty() ? "${r.dom === 'json:array' ? '[]' : '{}'}" : ${f};\n`;

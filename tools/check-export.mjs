@@ -33,6 +33,8 @@ try {
   check(html.includes('<title>An exported post</title>'), 'the title is the first heading (docinfo)');
   check(existsSync(join(out, 'site/pic.png')), 'the image is copied beside the page');
   check(existsSync(join(out, 'site/refs.json')), 'the bibliography is copied beside the page');
+  check(html.includes('class="tsr-math"') && html.includes('role="math"'), 'a formula is its box, labelled (plan P3-27)');
+  check(/@font-face \{ font-family: [^;]+; src: url\("assets\//.test(html), 'the math font is declared for the static page');
   for (const f of ['runtime/src/main/shell.mjs', 'runtime/src/worker/worker.mjs', 'runtime/src/shared/resources/host.mjs',
                    'runtime/src/shared/theme.gen.mjs', 'engine/build-wasm/typesetter.wasm'])
     check(existsSync(join(out, 'site/assets', f)), `hydration has ${f}`);

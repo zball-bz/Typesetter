@@ -6,7 +6,7 @@
 <section data-role="notes" role="doc-endnotes" data-pid="4" data-s="0" data-e="313">
 <hr data-s="0" data-e="313">
 <ol data-s="0" data-e="313">
-<li id="tsr-fn-1">The note body carries <strong>markup</strong>, <code>code</code>, and math <code class="tsr-mathsrc">$x^2 + y^2$</code>. <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
+<li id="tsr-fn-1">The note body carries <strong>markup</strong>, <code>code</code>, and math <span class="tsr-math" data-syn="math" data-copy="$x^2 + y^2$" data-copy-group="2147483741" role="math" aria-label="x^2 + y^2" data-s="93" data-e="104" style="width:42.391px;height:16.016px;vertical-align:-3.172px"><span class="tsr-mg" style="left:0px;top:1.964px;font-size:13.6px;line-height:13.6px">x</span><span class="tsr-mg" style="left:7.156px;top:-0.897px;font-size:9.52px;line-height:9.52px">2</span><span class="tsr-mg" style="left:15.609px;top:1.964px;font-size:13.6px;line-height:13.6px">+</span><span class="tsr-mg" style="left:28.891px;top:1.964px;font-size:13.6px;line-height:13.6px">y</span><span class="tsr-mg" style="left:36.953px;top:-0.897px;font-size:9.52px;line-height:9.52px">2</span></span>. <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
 <li id="tsr-fn-2">Second note, short. <a href="#tsr-fnref-2" data-syn="backlink">↩</a></li>
 </ol>
 </section>

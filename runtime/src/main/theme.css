@@ -44,3 +44,5 @@
 .tsr-c-tok-embedded { color: var(--tsr-tok-embedded); }
 /* (plan P3-23) the plain page: a code block's sidecar note, inline after its line */
 .tsr-flow .tsr-margin { color: var(--tsr-tok-comment); font-style: italic; }
+/* (plan P3-27) the plain page: a display formula's box, centred in its paragraph */
+.tsr-flow p.tsr-mathblock { text-align: center; }

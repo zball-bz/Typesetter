@@ -14,6 +14,10 @@ namespace tsr {
 // a value per TeX atom class (ord, op, bin, rel, open, close, punct, inner); -1: none (plan P3-25)
 using ClassMap = std::array<double, 8>;
 
+// render.math (plan P3-27: an enum setting is its value's index)
+inline constexpr u8 kRenderMathBoxes = 0;
+inline constexpr u8 kRenderMathSource = 1;
+
 // Adjacent-punctuation compression style (clreq; v2 App C).
 //   Full: every adjacent gap compressed (newspaper-tight)
 //   Book: close+close and open+open set solid, but a breakable half-width
@@ -82,6 +86,9 @@ struct Config {
   std::string semHtml = "";  // semantics.html
   std::string semSystems = "";  // semantics.systems
   std::string idPrefix = "tsr-";  // render.idPrefix
+  u8 renderMath = kRenderMathBoxes;  // render.math
+  bool a11yMathLabel = true;  // a11y.mathLabel
+  bool a11yTextLayer = false;  // a11y.textLayer
   std::string styleRules = "";  // style.rules
   CostParams cost;
 };
@@ -238,6 +245,9 @@ struct PaintSettings {
   const std::string& monoFont;  // fonts.mono
   const std::string& monoCjkFont;  // fonts.monoCjk
   const std::string& idPrefix;  // render.idPrefix
+  const u8& renderMath;  // render.math
+  const bool& a11yMathLabel;  // a11y.mathLabel
+  const bool& a11yTextLayer;  // a11y.textLayer
   PaintSettings(const Config& c)  // NOLINT: a Config is its view
       : widthPx(c.widthPx),
         lang(c.lang),
@@ -248,7 +258,10 @@ struct PaintSettings {
         cjkFont(c.cjkFont),
         monoFont(c.monoFont),
         monoCjkFont(c.monoCjkFont),
-        idPrefix(c.idPrefix) {}
+        idPrefix(c.idPrefix),
+        renderMath(c.renderMath),
+        a11yMathLabel(c.a11yMathLabel),
+        a11yTextLayer(c.a11yTextLayer) {}
 };
 
 // host policy (schema "policy"): how hosts drive the engine

@@ -1,7 +1,8 @@
 <div class="tsr-flow">
 <h1 data-pid="0" data-s="0" data-e="13" id="tsr-h-1">CRLF source</h1>
-<p data-pid="1" data-s="17" data-e="70">A paragraph that spans two lines with <code class="tsr-mathsrc">$a +
-b$</code> math.</p>
+<p data-pid="1" data-s="17" data-e="70">A paragraph that spans two lines with <span class="tsr-math" data-syn="math" data-copy="$a +
+b$" data-copy-group="2147483704" role="math" aria-label="a +
+b" data-s="56" data-e="64" style="width:38.359px;height:12.125px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:13.312px;top:-1.863px;font-size:16px;line-height:16px">+</span><span class="tsr-mg" style="left:28.953px;top:-1.863px;font-size:16px;line-height:16px">b</span></span> math.</p>
 <pre data-pid="2" data-s="74" data-e="101"><code class="language-js">let x = 1;
 x++</code></pre>
 </div>

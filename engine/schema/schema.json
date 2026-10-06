@@ -1054,6 +1054,36 @@
         "Paint"
       ]
     },
+    "render.math": {
+      "$comment": "How the plain page (first paint, static export, a fragment) shows a formula (plan P3-27; design T7 S13, D-R07): boxes — the typeset page's glyph boxes, its text runs estimated before measurement — or source ($…$, a feed's choice).",
+      "field": "renderMath",
+      "dom": "enum:boxes|source",
+      "def": "boxes",
+      "prec": "HostDefault",
+      "affects": [
+        "Paint"
+      ]
+    },
+    "a11y.mathLabel": {
+      "$comment": "A formula's box is role=math with its source as aria-label, on both pages (plan P3-27, D-R04).",
+      "field": "a11yMathLabel",
+      "dom": "bool",
+      "def": true,
+      "prec": "HostDefault",
+      "affects": [
+        "Paint"
+      ]
+    },
+    "a11y.textLayer": {
+      "$comment": "The typeset lines are hidden from assistive technology and the shell keeps a visually hidden copy of each block's content text beside them (plan P3-27; design T7 S13): screen readers read words, not lines and hyphens. Off by default.",
+      "field": "a11yTextLayer",
+      "dom": "bool",
+      "def": false,
+      "prec": "HostDefault",
+      "affects": [
+        "Paint"
+      ]
+    },
     "style.rules": {
       "$comment": "The host's rules (plan P3-01; design T4 Rules, D-T03, D-T08): env 1, after the engine's defaults — an array of [selector, patch] or {select, patch, force}; a forced rule applies over a node's own style.",
       "field": "styleRules",

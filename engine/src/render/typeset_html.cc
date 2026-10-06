@@ -5,6 +5,7 @@
 #include "../math/font.h"
 #include "../math/math.h"
 #include "html_writer.h"
+#include "math_html.h"
 #include "style_css.gen.h"
 
 namespace tsr {
@@ -53,75 +54,18 @@ static void spanAttrs(Tag& t, Span sp, u32 base) {
   t.num("data-e", sp.end - base);
 }
 
-// Positioned glyph runs inside one formula (math-design.md §8): flatten the
-// MathBox tree to absolute (x, baseline) leaves. A glyph span pins its text
-// baseline by explicit line-height == the font's hhea height: the baseline
-// then sits exactly kAscender·px/upem below the span top.
-static void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
-                       Su x, Su base) {
-  switch (b->kind) {
-    case MathKind::Glyph: {
-      const double px = (double)b->px;
-      // text-font run (names/operators): the box carries the body font's
-      // ascent/descent from the host measurer; the span's line box equals
-      // the content area so the baseline lands exactly at `base`. A math
-      // font's glyph is pinned by its hhea line box (the registry's)
-      const bool text = b->font == kTextFont;
-      const MathFont* mf = text ? nullptr : MathFontRegistry::get().byId(b->font);
-      if (!text && !mf) mf = &MathFontRegistry::get().primary();
-      const double fA = text ? suToPx(b->asc) : (double)mf->hheaAsc * px / mf->upem;
-      const double fH = text ? suToPx(b->asc + b->desc) : (double)(mf->hheaAsc + mf->hheaDesc) * px / mf->upem;
-      Tag t(out, "span");
-      t.attrSafe("class", text ? "tsr-mg tsr-mt" : "tsr-mg");
-      t.px("left", suToPx(x)).px("top", suToPx(base) - fA).px("font-size", px).px("line-height", fH);
-      t.open();
-      escapeHtml(out, strs.get(b->text));
-      out += "</span>";
-      return;
-    }
-    case MathKind::Rule: {
-      Tag t(out, "span");
-      t.attrSafe("class", "tsr-mr");
-      t.px("left", suToPx(x)).px("top", suToPx(base - b->asc));
-      t.px("width", suToPx(b->w)).px("height", suToPx(b->asc + b->desc));
-      t.open();
-      out += "</span>";
-      return;
-    }
-    case MathKind::Spacer:
-      return;
-    case MathKind::HBox:
-      for (const MathKid& k : b->kids)
-        mathLeaves(out, k.box, strs, x + k.dx, base - k.dy);
-      return;
-  }
-}
-
-// One formula as an inline box (§8): width/height from the box, the baseline
-// pinned with vertical-align (inline) or an explicit top offset (display).
-// (plan P3-26) the copy contract as any replaced run's: data-syn="math", its
-// source as data-copy, every part of one formula in one data-copy-group
-// (its source start, high bit set — never a replaced node's small number),
-// so copy takes the source once whichever parts the selection holds.
-static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef,
-                     bool display, const Interner& strs, Span span,
-                     double displayTop = 0, u32 srcBase = 0, StrRef color = 0) {
-  Tag t(out, "span");
-  t.attrSafe("class", "tsr-math");
-  t.attrSafe("data-syn", "math");
-  std::string src = display ? "$ " : "$";
-  src += strs.get(srcRef);
-  src += display ? " $" : "$";
-  t.attr("data-copy", src);
-  t.num("data-copy-group", 0x80000000u | span.start);
-  if (!span.empty()) spanAttrs(t, span, srcBase);
-  t.px("width", suToPx(mb->w)).px("height", suToPx(mb->asc + mb->desc));
-  if (display) t.decl("position", "absolute").decl("left", "0").px("top", displayTop);
-  else t.px("vertical-align", -suToPx(mb->desc));
-  if (color) t.declEsc("color", strs.get(color));  // the formula's paint style (plan P1-25)
-  t.open();
-  mathLeaves(out, mb, strs, 0, mb->asc);
-  out += "</span>";
+// One formula as an inline box (render/math_html.h)
+static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef, bool display, const Interner& strs,
+                     Span span, double displayTop, u32 srcBase, bool label, StrRef color) {
+  MathSpanOpts o;
+  o.display = display;
+  o.placed = display;
+  o.displayTop = displayTop;
+  o.span = span;
+  o.srcBase = srcBase;
+  o.color = color;
+  o.label = label;
+  writeMathSpan(out, mb, strs.get(srcRef), strs, o);
 }
 
 // One painted node at an optional vertical rebase — shared by the flowing
@@ -206,7 +150,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
         t.open();
       }
       anchor2();
-      mathSpan(out, n.math, n.mathSrc, /*display=*/true, strs, {}, n.mathTopPx, 0,
+      mathSpan(out, n.math, n.mathSrc, /*display=*/true, strs, {}, n.mathTopPx, 0, n.mathLabel,
                n.markerStyle ? styles.get(n.markerStyle).color : 0);
       out += "</div>\n";
       return;
@@ -286,7 +230,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
           t.attr("href", hrefOf(d.link, strs));
           t.open();
         }
-        mathSpan(out, d.math, d.src, /*display=*/false, strs, d.span, 0, srcBase, styles.get(d.face).color);
+        mathSpan(out, d.math, d.src, /*display=*/false, strs, d.span, 0, srcBase, styles.get(d.face).color, d.mathLabel);
         if (d.link) out += "</a>";
         continue;
       }

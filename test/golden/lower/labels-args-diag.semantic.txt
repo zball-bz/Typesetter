@@ -6,8 +6,8 @@
 <p data-s="272" data-e="322">A label: argument and a suffix: the argument wins.</p>
 </div>
 <pre data-pid="2" data-s="332" data-e="382" id="tsr-code1"><code class="language-js">let x = 1;</code></pre>
-<p data-pid="3" data-s="384" data-e="456">An inline formula <code class="tsr-mathsrc">$x^2$</code> keeps no label; a display formula does:</p>
-<p class="tsr-mathblock" data-pid="4" data-s="458" data-e="477" id="tsr-emc"><code class="tsr-mathsrc">$ E = m c^2 $</code> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
+<p data-pid="3" data-s="384" data-e="456">An inline formula <span class="tsr-math" data-syn="math" data-copy="$x^2$" data-copy-group="2147484050" role="math" aria-label="x^2" data-s="402" data-e="416" style="width:14.812px;height:15.297px;vertical-align:-0.188px"><span class="tsr-mg" style="left:0px;top:2.309px;font-size:16px;line-height:16px">x</span><span class="tsr-mg" style="left:8.422px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span></span> keeps no label; a display formula does:</p>
+<p class="tsr-mathblock" data-pid="4" data-s="458" data-e="477" id="tsr-emc"><span class="tsr-math" data-syn="math" data-copy="$ E = m c^2 $" data-copy-group="2147484106" role="math" aria-label="E = m c^2" data-s="458" data-e="477" style="width:59.438px;height:15.406px;vertical-align:-0.297px"><span class="tsr-mg" style="left:0px;top:2.309px;font-size:16px;line-height:16px">E</span><span class="tsr-mg" style="left:14.094px;top:2.309px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:30.625px;top:2.309px;font-size:16px;line-height:16px">m</span><span class="tsr-mg" style="left:45.266px;top:2.309px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:53.047px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span></span> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
 <div data-role="card" data-pid="5" data-s="479" data-e="557" id="tsr-c1">
 <p data-s="479" data-e="557">A named argument list is one options object.</p>
 </div>

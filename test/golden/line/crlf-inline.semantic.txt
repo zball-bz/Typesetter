@@ -1,11 +1,13 @@
 <div class="tsr-flow">
 <p data-pid="0" data-s="0" data-e="75">A <strong>content over a join</strong> and <a href="u">a link text</a> and <code>code span</code> end.</p>
 <blockquote data-pid="1" data-s="79" data-e="125">
-<p data-s="81" data-e="125">quoted <code class="tsr-mathsrc">$a +
-b$</code> math and <em>x y</em> done.</p>
+<p data-s="81" data-e="125">quoted <span class="tsr-math" data-syn="math" data-copy="$a +
+b$" data-copy-group="2147483736" role="math" aria-label="a +
+b" data-s="88" data-e="98" style="width:38.359px;height:12.125px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:13.312px;top:-1.863px;font-size:16px;line-height:16px">+</span><span class="tsr-mg" style="left:28.953px;top:-1.863px;font-size:16px;line-height:16px">b</span></span> math and <em>x y</em> done.</p>
 </blockquote>
 <ul data-pid="2" data-s="129" data-e="167">
-<li>item <code class="tsr-mathsrc">$c +
-d$</code> and 3 end.</li>
+<li>item <span class="tsr-math" data-syn="math" data-copy="$c +
+d$" data-copy-group="2147483784" role="math" aria-label="c +
+d" data-s="136" data-e="146" style="width:36.625px;height:12.125px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:11.344px;top:-1.863px;font-size:16px;line-height:16px">+</span><span class="tsr-mg" style="left:26.984px;top:-1.863px;font-size:16px;line-height:16px">d</span></span> and 3 end.</li>
 </ul>
 </div>

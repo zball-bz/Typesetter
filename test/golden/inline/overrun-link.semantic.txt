@@ -1,3 +1,3 @@
 <div class="tsr-flow">
-<p data-pid="0" data-s="0" data-e="63">A link with a dollar: <a href="u">price $5</a> and a formula <code class="tsr-mathsrc">$x$</code> after it.</p>
+<p data-pid="0" data-s="0" data-e="63">A link with a dollar: <a href="u">price $5</a> and a formula <span class="tsr-math" data-syn="math" data-copy="$x$" data-copy-group="2147483698" role="math" aria-label="x" data-s="50" data-e="53" style="width:8.422px;height:7.609px;vertical-align:-0.188px"><span class="tsr-mg" style="left:0px;top:-5.378px;font-size:16px;line-height:16px">x</span></span> after it.</p>
 </div>

@@ -8,5 +8,5 @@
 <table data-pid="3" data-s="239" data-e="285" id="tsr-tab-a">
 <tr><td>x</td><td>y</td></tr>
 </table>
-<p class="tsr-mathblock" data-pid="4" data-s="287" data-e="307" id="tsr-eq-a"><code class="tsr-mathsrc">$ e = m c^2 $</code> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
+<p class="tsr-mathblock" data-pid="4" data-s="287" data-e="307" id="tsr-eq-a"><span class="tsr-math" data-syn="math" data-copy="$ e = m c^2 $" data-copy-group="2147483935" role="math" aria-label="e = m c^2" data-s="287" data-e="307" style="width:57.766px;height:15.406px;vertical-align:-0.297px"><span class="tsr-mg" style="left:0px;top:2.309px;font-size:16px;line-height:16px">e</span><span class="tsr-mg" style="left:12.422px;top:2.309px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:28.953px;top:2.309px;font-size:16px;line-height:16px">m</span><span class="tsr-mg" style="left:43.594px;top:2.309px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:51.375px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span></span> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
 </div>

@@ -25,7 +25,7 @@
 </blockquote>
 </blockquote>
 <pre data-pid="8" data-s="273" data-e="300"><code class="language-js">verbatim(island);</code></pre>
-<p class="tsr-mathblock" data-pid="9" data-s="302" data-e="315"><code class="tsr-mathsrc">$ a + b = c $</code></p>
+<p class="tsr-mathblock" data-pid="9" data-s="302" data-e="315"><span class="tsr-math" data-syn="math" data-copy="$ a + b = c $" data-copy-group="2147483950" role="math" aria-label="a + b = c" data-s="302" data-e="315" style="width:67.109px;height:12.125px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:13.312px;top:-1.863px;font-size:16px;line-height:16px">+</span><span class="tsr-mg" style="left:28.953px;top:-1.863px;font-size:16px;line-height:16px">b</span><span class="tsr-mg" style="left:42.797px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:59.328px;top:-1.863px;font-size:16px;line-height:16px">c</span></span></p>
 <hr data-pid="10" data-s="317" data-e="320">
 <p data-pid="11" data-s="322" data-e="370">= not a heading, - not a list, &gt; not a quote.</p>
 </div>

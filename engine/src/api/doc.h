@@ -1059,12 +1059,22 @@ struct Doc {
     return html;
   }
 
+  // (plan P3-27) how the plain page shows formulas: render.math, a11y.mathLabel
+  SemanticMath semanticMath() {
+    SemanticMath m;
+    m.boxes = cfg.renderMath == kRenderMathBoxes;
+    m.label = cfg.a11yMathLabel;
+    m.basePx = cfg.baseSizePx;
+    m.env = &mathEnv;
+    m.arena = &arena;
+    return m;
+  }
   // needs only the post-resolve tree — valid before any measurement
   std::string renderFallback() {
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
     AnchorScope ids(cfg.idPrefix);
-    std::string html = renderSemantic(tree, strs, styles, &rt, registry, &cascade, &nodeProps);
+    std::string html = renderSemantic(tree, strs, styles, &rt, registry, &cascade, &nodeProps, semanticMath());
     (void)rulesToCss(cascade, tree, strs, &diags, registry);  // what its stylesheet leaves out (rule-no-css)
     reportWriterDefects();
     return html;
@@ -1080,7 +1090,8 @@ struct Doc {
       auto it = index.labels.find(std::string(strs.get(to)));
       return it != index.labels.end() && it->second.k == LabelTarget::K::Marker;
     };
-    return renderSemanticFragment(tree, strs, styles, &rt, registry, &cascade, &nodeProps, label, backlink);
+    return renderSemanticFragment(tree, strs, styles, &rt, registry, &cascade, &nodeProps, label, backlink,
+                                  semanticMath());
   }
 
   // the semantic page's stylesheet (rulesToCss, plan P3-01): what the rules

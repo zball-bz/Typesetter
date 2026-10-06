@@ -1,6 +1,6 @@
 = An exported post
 
-A post with an image beside it and one citation @kp81 (plan P3-21: the static export copies what the post references).
+A post with an image beside it and one citation @kp81 (plan P3-21: the static export copies what the post references), and a formula, $a^2 + b^2$, that the static page sets as its box in the bundled math font (plan P3-27).
 
 #image("pic.png", {w: 10, h: 10})
 

@@ -447,6 +447,30 @@ export const SETTINGS = Object.freeze({
       "Paint"
     ]
   },
+  "render.math": {
+    "dom": "enum:boxes|source",
+    "def": "boxes",
+    "prec": "HostDefault",
+    "affects": [
+      "Paint"
+    ]
+  },
+  "a11y.mathLabel": {
+    "dom": "bool",
+    "def": true,
+    "prec": "HostDefault",
+    "affects": [
+      "Paint"
+    ]
+  },
+  "a11y.textLayer": {
+    "dom": "bool",
+    "def": false,
+    "prec": "HostDefault",
+    "affects": [
+      "Paint"
+    ]
+  },
   "style.rules": {
     "dom": "json:array",
     "def": [],
@@ -547,7 +571,12 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "systems": {}
   },
   "render": {
-    "idPrefix": "tsr-"
+    "idPrefix": "tsr-",
+    "math": "boxes"
+  },
+  "a11y": {
+    "mathLabel": true,
+    "textLayer": false
   },
   "style": {
     "rules": []

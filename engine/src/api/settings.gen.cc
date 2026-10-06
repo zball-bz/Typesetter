@@ -71,6 +71,9 @@ const Row kRows[] = {
     {"semantics.html", stageBit(Stage::Ingest), true},
     {"semantics.systems", stageBit(Stage::Ingest), true},
     {"render.idPrefix", stageBit(Stage::Paint), false},
+    {"render.math", stageBit(Stage::Paint), false},
+    {"a11y.mathLabel", stageBit(Stage::Paint), false},
+    {"a11y.textLayer", stageBit(Stage::Paint), false},
     {"style.rules", stageBit(Stage::Ingest), true},
 };
 constexpr u32 kRowCount = sizeof kRows / sizeof kRows[0];
@@ -434,7 +437,24 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       c.idPrefix = v.str;
       return true;
     }
-    case 53: {  // style.rules
+    case 53: {  // render.math
+      static const char* const kM[] = {"boxes", "source"};
+      int m = member(v, kM, 2, why);
+      if (m < 0) return false;
+      c.renderMath = (u8)m;
+      return true;
+    }
+    case 54: {  // a11y.mathLabel
+      if (v.t != JsonValue::T::Bool) return type(why, "true or false");
+      c.a11yMathLabel = v.b;
+      return true;
+    }
+    case 55: {  // a11y.textLayer
+      if (v.t != JsonValue::T::Bool) return type(why, "true or false");
+      c.a11yTextLayer = v.b;
+      return true;
+    }
+    case 56: {  // style.rules
       if (v.t != JsonValue::T::Arr) return type(why, "an array");
       c.styleRules.clear();
       if (!v.arr.empty()) jsonDump(c.styleRules, v);
@@ -628,6 +648,12 @@ std::string settingsJson(const Config& c) {
   out += c.semSystems.empty() ? "{}" : c.semSystems;
   out += "}, \"render\": {\"idPrefix\": ";
   jsonString(out, c.idPrefix);
+  out += ", \"math\": ";
+  { static const char* const kM[] = {"boxes", "source"}; jsonString(out, kM[(int)c.renderMath]); }
+  out += "}, \"a11y\": {\"mathLabel\": ";
+  out += c.a11yMathLabel ? "true" : "false";
+  out += ", \"textLayer\": ";
+  out += c.a11yTextLayer ? "true" : "false";
   out += "}, \"style\": {\"rules\": ";
   out += c.styleRules.empty() ? "[]" : c.styleRules;
   out += "}}";

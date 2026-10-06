@@ -49,6 +49,7 @@ add_library(tsr_core STATIC
   src/layout/grid.cc
   src/layout/paginate.cc
   src/paint/paint.cc
+  src/render/math_html.cc
   src/render/typeset_html.cc
   src/render/rules_css.cc
   src/render/semantic_html.cc

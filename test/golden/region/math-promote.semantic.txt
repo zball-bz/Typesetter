@@ -1,7 +1,7 @@
 <div class="tsr-flow">
 <div data-role="aside" data-pid="0" data-s="0" data-e="122">
 <p data-s="8" data-e="64">A display formula inside a region is a block of its own:</p>
-<p class="tsr-mathblock" data-s="66" data-e="86" id="tsr-eq-r"><code class="tsr-mathsrc">$ e = m c^2 $</code> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
+<p class="tsr-mathblock" data-s="66" data-e="86" id="tsr-eq-r"><span class="tsr-math" data-syn="math" data-copy="$ e = m c^2 $" data-copy-group="2147483714" role="math" aria-label="e = m c^2" data-s="66" data-e="86" style="width:57.766px;height:15.406px;vertical-align:-0.297px"><span class="tsr-mg" style="left:0px;top:2.309px;font-size:16px;line-height:16px">e</span><span class="tsr-mg" style="left:12.422px;top:2.309px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:28.953px;top:2.309px;font-size:16px;line-height:16px">m</span><span class="tsr-mg" style="left:43.594px;top:2.309px;font-size:16px;line-height:16px">c</span><span class="tsr-mg" style="left:51.375px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span></span> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
 <p data-s="88" data-e="114">and the paragraph goes on.</p>
 </div>
 <p data-pid="1" data-s="124" data-e="134">See <a href="#tsr-eq-r">式 (1)</a>.</p>

@@ -58,6 +58,9 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `semantics.html` | json | `{}` | HostDefault | Ingest |  |
 | `semantics.systems` | json | `{}` | HostDefault | Ingest |  |
 | `render.idPrefix` | ident | `"tsr-"` | HostDefault | Paint |  |
+| `render.math` | enum:boxes\|source | `"boxes"` | HostDefault | Paint |  |
+| `a11y.mathLabel` | bool | `true` | HostDefault | Paint |  |
+| `a11y.textLayer` | bool | `false` | HostDefault | Paint |  |
 | `style.rules` | json:array | `[]` | HostDefault | Ingest |  |
 
 ## Host policy
