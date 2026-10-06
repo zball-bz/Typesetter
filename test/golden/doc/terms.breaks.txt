@@ -1,7 +1,7 @@
 top pid=0 unit=0 lines=2 cost=0.0000 breakpoints=[20,35]
 top pid=1 unit=0 lines=4 cost=1.3040 breakpoints=[20,38,52,67]
 top pid=1 unit=1 lines=2 cost=2.8836 breakpoints=[18,19]
-top pid=1 unit=2 lines=2 cost=0.0085 breakpoints=[21,24]
+top pid=1 unit=2 lines=2 cost=0.0086 breakpoints=[21,24]
 top pid=1 unit=3 lines=2 cost=0.1160 breakpoints=[20,21]
 top pid=1 unit=4 lines=3 cost=6.4421 breakpoints=[18,34,35]
 top pid=1 unit=5 lines=1 cost=0.0000 breakpoints=[3]

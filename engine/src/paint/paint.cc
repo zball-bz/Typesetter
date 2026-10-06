@@ -184,18 +184,22 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
       continue;
     }
     if (it.k == IK::Box && r.rc == RealizeClass::BlankBearing) {
-      // the glyph's own blank (its half em) on this line, else squeezed away
-      const bool open = kCCFlags[it.cls] & kCC_open;
-      const i64 k = open ? prevOnLine(i) : nextOnLine(i);
-      const bool halfPresent = k >= 0 && v[k].k == IK::Glue && v[k].cls == (u8)GC::Blank &&
-                               ((v[k].attrs & IA_OwnedByNext) != 0) == open;
+      // (plan P4-04) the glyph's advance holds its blanks; a side whose own
+      // blank does not stand on this line (compressed away, or at the line's
+      // edge) is squeezed by an explicit px margin — the engine's px, never
+      // a CSS em
+      const ColdRec& c = h.cold[it.cold];
+      const i64 pk = prevOnLine(i), nk = nextOnLine(i);
+      const bool lead = pk >= 0 && v[pk].k == IK::Glue && v[pk].cls == (u8)GC::Blank && (v[pk].attrs & IA_OwnedByNext);
+      const bool trail = nk >= 0 && v[nk].k == IK::Glue && v[nk].cls == (u8)GC::Blank && !(v[nk].attrs & IA_OwnedByNext);
       DLRun d = run(it, DLRun::K::Glyph);
-      d.cls = halfPresent ? nullptr : (open ? "tsr-sqL" : "tsr-sqR");
-      d.text = h.specs[it.aux].str;
-      if (widths) {
-        const ColdRec& c = h.cold[it.cold];
-        d.predictPx = c.rawPx + (halfPresent ? (open ? c.blankLpx : c.blankRpx) : 0.0);
+      if (c.blankLpx > 0 && !lead) d.marginLeftPx = -c.blankLpx;
+      if (c.blankRpx > 0 && !trail) {
+        d.marginRight = true;
+        d.marginRightPx = -c.blankRpx;
       }
+      d.text = h.specs[it.aux].str;
+      if (widths) d.predictPx = c.rawPx + (lead ? c.blankLpx : 0.0) + (trail ? c.blankRpx : 0.0);
       emit(d);
       i++;
       continue;

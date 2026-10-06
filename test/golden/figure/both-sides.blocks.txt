@@ -45,7 +45,7 @@ top pid=1 units=1
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[198,203)
   space w=257su stretch=1 BOLD @[198,203)
   word "1" w=513su pen=INF BOLD @[198,203)
-  punct-close "：" w=512su BOLD @[198,203)
+  punct-close "：" w=513su BOLD @[198,203)
   punct-sp w=512su BOLD @[198,203)
   word "Left." w=2561su pen=INF @[198,203)
 top pid=2 units=1
@@ -54,7 +54,7 @@ top pid=2 units=1
   cjk "图" w=1025su glue=102su wt=0.6 pen=0 BOLD @[318,324)
   space w=257su stretch=1 BOLD @[318,324)
   word "2" w=513su pen=INF BOLD @[318,324)
-  punct-close "：" w=512su BOLD @[318,324)
+  punct-close "：" w=513su BOLD @[318,324)
   punct-sp w=512su BOLD @[318,324)
   word "Right." w=3073su pen=INF @[318,324)
 top pid=3 units=1

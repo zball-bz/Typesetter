@@ -42,7 +42,7 @@ top pid=0 units=1
   box Ideo "立" w=1025su wt=0.6 cap=102su r10 @[58,61)
   pen INF r10
   glue inter w=0su x=0.6 cap=102su r10 @[58,61)
-  box ColonW "；" w=512su blank=R r11 @[61,64)
+  box ColonW "；" w=513su blank=R r11 @[61,64)
   glue blank w=512su x=0 cap=0su r11 @[61,64)
   box Ideo "调" w=1025su wt=0.6 cap=102su r12 @[64,67)
   glue inter w=0su x=0.6 cap=102su r12 @[64,67)
@@ -71,7 +71,7 @@ top pid=0 units=1
   box Ideo "均" w=1025su wt=0.6 cap=102su r16 @[111,114)
   pen INF r16
   glue inter w=0su x=0.6 cap=102su r16 @[111,114)
-  box FullStopW "。" w=512su blank=R r17 @[114,117)
+  box FullStopW "。" w=513su blank=R r17 @[114,117)
   glue blank w=512su x=0 cap=0su r17 @[114,117)
   obj o0 math parts=4 edges=Alpha/Alpha src="x^2 + y^2 = z^2" [w=1949su asc=967su desc=76su] [w=1016su asc=967su desc=239su glue=228su] [w=774su asc=377su desc=0su glue=284su] [w=890su asc=967su desc=28su glue=284su]
   obj o1 math parts=1 edges=Alpha/Alpha src="2/(1/a + 1/b)" [w=1646su asc=909su desc=704su]

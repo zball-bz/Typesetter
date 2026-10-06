@@ -46,7 +46,7 @@ top pid=1 units=1
   box Ideo "す" w=1025su wt=0.6 cap=102su r0 @[64,67)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[64,67)
-  box FullStopW "。" w=512su blank=R r1 @[67,70)
+  box FullStopW "。" w=513su blank=R r1 @[67,70)
   glue blank w=512su x=0 cap=0su r1 @[67,70)
   box Ideo "図" w=1025su wt=0.6 cap=102su r2 @[70,73)
   glue inter w=0su x=0.6 cap=102su r2 @[70,73)
@@ -85,7 +85,7 @@ top pid=1 units=1
   box Ideo "す" w=1025su wt=0.6 cap=102su r2 @[121,124)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[121,124)
-  box FullStopW "。" w=512su blank=R r3 @[124,127)
+  box FullStopW "。" w=513su blank=R r3 @[124,127)
   glue blank w=512su x=0 cap=0su r3 @[124,127)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
@@ -98,7 +98,7 @@ top pid=2 units=2
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[221,236)
   box Other "1" w=513su r1 @[221,236)
-  box ColonW "：" w=512su blank=R r2 @[221,236)
+  box ColonW "：" w=513su blank=R r2 @[221,236)
   glue blank w=512su x=0 cap=0su r2 @[221,236)
   box Ideo "塔" w=1025su wt=0.6 cap=102su r3 @[221,224)
   glue inter w=0su x=0.6 cap=102su r3 @[221,224)
@@ -109,7 +109,7 @@ top pid=2 units=2
   box Ideo "真" w=1025su wt=0.6 cap=102su r3 @[230,233)
   pen INF r3
   glue inter w=0su x=0.6 cap=102su r3 @[230,233)
-  box FullStopW "。" w=512su blank=R r4 @[233,236)
+  box FullStopW "。" w=513su blank=R r4 @[233,236)
   glue blank w=512su x=0 cap=0su r4 @[233,236)
   run r0 letter-spaced BOLD CJK
   run r1 plain BOLD
@@ -155,7 +155,7 @@ top pid=4 units=1
   box Ideo "い" w=1025su wt=0.6 cap=102su r8 @[316,319)
   pen INF r8
   glue inter w=0su x=0.6 cap=102su r8 @[316,319)
-  box FullStopW "。" w=512su blank=R r9 @[319,322)
+  box FullStopW "。" w=513su blank=R r9 @[319,322)
   glue blank w=512su x=0 cap=0su r9 @[319,322)
   run r0 letter-spaced ref LINK CJK link="#tsr-fig-a"
   run r1 plain ref LINK link="#tsr-fig-a"

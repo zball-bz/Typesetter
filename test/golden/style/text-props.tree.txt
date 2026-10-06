@@ -1,0 +1,30 @@
+doc @[0,653) [base]
+  para @[0,108) [base]
+    text @[0,6) [base] str="中文"
+    styled @[6,50) [base] autospace="none"
+      text @[42,49) [base] str="English"
+    text @[50,108) [base] str="紧贴，默认 English 有间隙，中文English也有。"
+  para @[110,240) [base]
+    text @[110,125) [base] str="A sentence with " raw=0:0,16:15
+    styled @[126,200) [base] textWrap="nowrap"
+      text @[159,199) [base] str="a phrase that never breaks inside itself"
+    text @[201,240) [base] str=" and more words after it to wrap around." raw=0:0,1:0
+  para @[242,352) [base]
+    styled @[242,301) [base] textSpace="pre"
+      text @[273,300) [base] str="keep   these    spaces"
+    text @[302,322) [base] str=" as written; outside, " raw=0:0,1:0,22:20
+    text @[323,342) [base] str="these   spaces"
+    text @[343,352) [base] str=" collapse." raw=0:0,1:0
+  para @[354,487) [base]
+    styled @[354,433) [base] hyphens="none"
+      text @[388,432) [base] str="extraordinarily antidisestablishmentarianism"
+    text @[434,487) [base] str=" next to extraordinarily antidisestablishmentarianism." raw=0:0,1:0
+  para @[489,653) [base]
+    text @[489,492) [base] str="See " raw=0:0,4:3
+    styled @[493,588) [base] overflowWrap="normal"
+      link @[534,587) [base] url="https://example.com/a/very/long/path/that/stays/whole"
+        text @[534,587) [base] str="https://example.com/a/very/long/path/that/stays/whole"
+    text @[589,596) [base] str=" beside " raw=0:0,1:0
+    link @[596,647) [base] url="https://example.com/a/very/long/path/that/may/break"
+      text @[596,647) [base] str="https://example.com/a/very/long/path/that/may/break"
+    text @[648,653) [base] str=" here." raw=0:0,1:0

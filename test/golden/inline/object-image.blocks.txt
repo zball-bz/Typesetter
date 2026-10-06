@@ -25,7 +25,7 @@ top pid=0 units=1
   obj image "" w=1024su asc=1024su desc=0su @[73,104)
   cjk "中" w=1025su glue=102su wt=0.6 pen=0 @[104,107)
   cjk "文" w=1025su glue=102su wt=0.6 pen=INF @[107,110)
-  punct-close "。" w=512su @[110,113)
+  punct-close "。" w=513su @[110,113)
   punct-sp w=512su @[110,113)
   word "An" w=1025su pen=INF @[113,115)
   space w=257su stretch=1 @[115,116)

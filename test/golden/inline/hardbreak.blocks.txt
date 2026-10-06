@@ -87,5 +87,5 @@ top pid=1 units=1
   cjk "里" w=1025su glue=102su wt=0.6 pen=0 @[211,214)
   cjk "开" w=1025su glue=102su wt=0.6 pen=0 @[214,217)
   cjk "始" w=1025su glue=102su wt=0.6 pen=INF @[217,220)
-  punct-close "。" w=512su @[220,223)
+  punct-close "。" w=513su @[220,223)
   punct-sp w=512su @[220,223)

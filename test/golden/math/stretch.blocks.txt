@@ -20,7 +20,7 @@ top pid=0 units=1
   cjk "根" w=1025su glue=102su wt=0.6 pen=0 @[41,44)
   cjk "公" w=1025su glue=102su wt=0.6 pen=0 @[44,47)
   cjk "式" w=1025su glue=102su wt=0.6 pen=INF @[47,50)
-  punct-close "：" w=512su @[50,53)
+  punct-close "：" w=513su @[50,53)
   punct-sp w=512su @[50,53)
 top pid=1 units=1
  unit math indent=0su w=9409su asc=1705su desc=714su
@@ -41,7 +41,7 @@ top pid=2 units=1
   cjk "对" w=1025su glue=102su wt=0.6 pen=0 @[143,146)
   cjk "称" w=1025su glue=102su wt=0.6 pen=0 @[146,149)
   cjk "性" w=1025su glue=102su wt=0.6 pen=INF @[149,152)
-  punct-close "；" w=512su @[152,155)
+  punct-close "；" w=513su @[152,155)
   punct-sp w=512su @[152,155)
   cjk "立" w=1025su glue=102su wt=0.6 pen=0 @[155,158)
   cjk "方" w=1025su glue=102su wt=0.6 pen=0 @[158,161)
@@ -52,7 +52,7 @@ top pid=2 units=1
   obj math "" w=774su asc=377su desc=0su @[165,181)
   synthetic w=284su @[165,181)
   obj math "" w=511su asc=723su desc=0su @[165,181)
-  punct-close "。" w=512su @[181,184)
+  punct-close "。" w=513su @[181,184)
   punct-sp w=512su @[181,184)
 top pid=3 units=1
  unit math indent=0su w=10784su asc=1458su desc=941su
@@ -66,7 +66,7 @@ top pid=4 units=1
   cjk "作" w=1025su glue=102su wt=0.6 pen=0 @[258,261)
   space w=257su stretch=1 @[261,261)
   obj math "vec(e)" w=511su asc=834su desc=12su @[262,270)
-  punct-close "，" w=512su @[270,273)
+  punct-close "，" w=513su @[270,273)
   punct-sp w=512su @[270,273)
   cjk "均" w=1025su glue=102su wt=0.6 pen=0 @[273,276)
   cjk "值" w=1025su glue=102su wt=0.6 pen=0 @[276,279)
@@ -74,5 +74,5 @@ top pid=4 units=1
   cjk "作" w=1025su glue=102su wt=0.6 pen=0 @[282,285)
   space w=257su stretch=1 @[285,285)
   obj math "bar(x)" w=539su asc=680su desc=12su @[286,294)
-  punct-close "。" w=512su @[294,297)
+  punct-close "。" w=513su @[294,297)
   punct-sp w=512su @[294,297)

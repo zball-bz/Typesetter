@@ -37,7 +37,7 @@ top pid=0 units=1
   box Ideo "断" w=1025su wt=0.6 cap=102su r4 @[53,56)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[53,56)
-  box FullStopW "。" w=512su blank=R r5 @[56,59)
+  box FullStopW "。" w=513su blank=R r5 @[56,59)
   glue blank w=512su x=0 cap=0su r5 @[56,59)
   obj o0 math parts=1 edges=Alpha/Alpha src="x^^2" [w=1307su asc=1034su desc=12su]
   run r0 letter-spaced CJK

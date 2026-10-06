@@ -3,8 +3,8 @@
 <div class="tsr-line" id="tsr-top" data-s="0" data-e="9" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Footnotes</span></div>
 </div>
 <div class="tsr-para" data-pid="1" data-s0="19" style="position:relative;height:72px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="103" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.067px"><span class="tsr-r" data-s="0">A claim in running text</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px">1</a><span class="tsr-r" data-s="88"> continues after</span></div>
-<div class="tsr-line" data-s="104" data-e="163" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.733px"><span class="tsr-r" data-s="104">the marker, and a second note</span><a class="tsr-r tsr-sup" href="#tsr-fn-2" id="tsr-fnref-2" data-syn="fn-marker" style="font-size:11.2px">2</a><span class="tsr-r" data-s="156"> follows</span></div>
+<div class="tsr-line" data-s="0" data-e="103" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.067px"><span class="tsr-r" data-s="0">A claim in running text</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px;top:-5.04px">1</a><span class="tsr-r" data-s="88"> continues after</span></div>
+<div class="tsr-line" data-s="104" data-e="163" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.733px"><span class="tsr-r" data-s="104">the marker, and a second note</span><a class="tsr-r tsr-sup" href="#tsr-fn-2" id="tsr-fnref-2" data-syn="fn-marker" style="font-size:11.2px;top:-5.04px">2</a><span class="tsr-r" data-s="156"> follows</span></div>
 <div class="tsr-line" data-s="164" data-e="192" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="164">later in the same paragraph.</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="216" style="position:relative;height:24px;margin-bottom:19.203px">

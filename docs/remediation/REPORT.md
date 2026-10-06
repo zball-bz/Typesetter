@@ -114,6 +114,33 @@ tools/check-spans.mjs 检查全部 213 个 html golden 的 2,835 个 run，结�
 
 同一脚本用在 P4-02 的 golden 上报 396 处，即旧版 run 都取文字节点起点。语义页 340 篇不变；e2e 新增一项，验证 run 级 offsetAt 与行级 elementsAt。
 
+## P4-04 TextProps v1；标点、空白、autospace 数据化（T5 步骤 7）
+
+**前置：** 先建标点矩阵 e2e（test/e2e/punct.spec.mjs）和设置 render.runWidths（每个 run 写出引擎设定的宽度 data-w）。矩阵覆盖 11 类组合 × 3 种挤压模式，两端对齐行与末行都测，在 4 个 dsf 下比较渲染宽度与 data-w。用改动前的代码录下基线 punct-baseline.json：最大偏差 0.016px。改动后最大偏差仍是 0.016px，各项均不变。
+
+**变化：**
+1. **标点空白数据化。** compat.def 的 BLANK 行给出各类的前后空白，压缩规则写成一条：两段空白相遇时，none 两段都保留，book 保留一段（前者的，二者之间可断），full 都不保留。开括号之后再跟开括号时：book、full 实排；none 保留空白但不可断。闭合后再跟闭合时：book、full 去掉前一段空白；none 保留但不可断。这与旧的分支逐例相同。
+2. **挤压与上标抬升改为显式 px。** 字形一侧没有自己的空白时，用 margin px 挤压，取代 tsr-sqL/R 类；上标抬升改为 top px（superRaiseEm × 本 run 的 em），取代 CSS 的 -0.45em。契约 CSS 不再含引擎数值。
+3. **定义宽度数据化。** ADVANCE 行（—— 2em、— 1em、…… 2em、… 1em）取代代码中对 U+2014/U+2026 的特判。
+4. **标点字形加 ε。** 测量宽度减去空白后再加 ε（与词间空格相同）。
+5. **新文字属性。**
+   - `text.wrap`（nowrap：内部不可断）；
+   - `text.autospace`（none：两侧不加边界胶）；
+   - `text.hyphens` 与 `text.overflowWrap`（覆盖块的规则，P4-06 接手）；
+   - `text.space: pre`（空格保留在刚性盒内）。
+   opsVersion 15→16，现有录制不变。
+6. **拼接字符串中的连续空格折叠为一个**，与浏览器一致。旧版按多个空格预算，两端对齐行因此偏短。
+
+**范围：** 211 个 golden 文件：
+- hlist 60、blocks 60：标点字形宽 +1su ε；
+- breaks 32：只有代价数值，断点全部不变；
+- html 57、paged 2：tsr-sqL/R 改为 margin px（102 处右侧、11 处左侧），上标加 top px；
+- layout 不变。
+
+新用例 style/text-props 覆盖五个属性（overflowWrap normal 的 URL 有意溢出，产生 overfull-line）。rules-diff 0；语义页 340 篇不变。
+
+**审阅结论：等价实现，并修正一处缺陷。** 渲染与预测的偏差没有变化（≤0.016px）；拼接空格的预算修正属于改进。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。

@@ -4,11 +4,11 @@
 <div class="tsr-line" id="tsr-top" data-s="2" data-e="14" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b tsr-cjk" data-s="2" style="font-size:25.6px">分页样例</span></div>
 </div>
 <div class="tsr-band" data-b="1">
-<div class="tsr-line" data-s="22" data-e="79" data-join="none" style="top:44.812px;left:0px;width:300px;word-spacing:0.392px"><span class="tsr-r tsr-cjk" data-s="22" style="letter-spacing:0.235px">分页是布局之上的后处理</span><span class="tsr-r tsr-cjk" data-s="55">：</span><span class="tsr-r tsr-cjk" data-s="58" style="letter-spacing:0.235px">内容按带切分</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="76">，</span></div>
+<div class="tsr-line" data-s="22" data-e="79" data-join="none" style="top:44.812px;left:0px;width:300px;word-spacing:0.392px"><span class="tsr-r tsr-cjk" data-s="22" style="letter-spacing:0.235px">分页是布局之上的后处理</span><span class="tsr-r tsr-cjk" data-s="55">：</span><span class="tsr-r tsr-cjk" data-s="58" style="letter-spacing:0.235px">内容按带切分</span><span class="tsr-r tsr-cjk" data-s="76" style="margin-right:-8px">，</span></div>
 <div class="tsr-line" data-s="79" data-e="136" data-join="none" style="top:68.812px;left:0px;width:300px;word-spacing:-0.417px"><span class="tsr-r tsr-cjk" data-s="79" style="letter-spacing:-0.25px">贪心装页</span><span class="tsr-r tsr-cjk" data-s="91">，</span><span class="tsr-r tsr-cjk" data-s="94" style="letter-spacing:-0.25px">遇到孤行寡行</span><span class="tsr-r tsr-cjk" data-s="112">、</span><span class="tsr-r tsr-cjk" data-s="115" style="letter-spacing:-0.25px;margin-right:0.25px">标题悬尾等违例</span></div>
 <div class="tsr-line" data-s="136" data-e="193" data-join="none" style="top:92.812px;left:0px;width:300px;word-spacing:-0.417px"><span class="tsr-r tsr-cjk" data-s="136" style="letter-spacing:-0.25px">时回退切点</span><span class="tsr-r tsr-cjk" data-s="151">。</span><span class="tsr-r tsr-cjk" data-s="154" style="letter-spacing:-0.25px">这一段足够长</span><span class="tsr-r tsr-cjk" data-s="172">，</span><span class="tsr-r tsr-cjk" data-s="175" style="letter-spacing:-0.25px;margin-right:0.25px">可以在窄页高</span></div>
 <div class="tsr-line" data-s="193" data-e="250" data-join="none" style="top:116.812px;left:0px;width:300px;word-spacing:-0.392px"><span class="tsr-r tsr-cjk" data-s="193" style="letter-spacing:-0.235px">下跨越页边界</span><span class="tsr-r tsr-cjk" data-s="211">，</span><span class="tsr-r tsr-cjk" data-s="214" style="letter-spacing:-0.235px;margin-right:0.235px">从而测试寡行与孤行规则的</span></div>
-<div class="tsr-line" data-s="250" data-e="304" style="top:140.812px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="250">实际效果</span><span class="tsr-r tsr-cjk" data-s="262">，</span><span class="tsr-r tsr-cjk" data-s="265">并让回退逻辑真正运行一次</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="301">。</span></div>
+<div class="tsr-line" data-s="250" data-e="304" style="top:140.812px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="250">实际效果</span><span class="tsr-r tsr-cjk" data-s="262">，</span><span class="tsr-r tsr-cjk" data-s="265">并让回退逻辑真正运行一次</span><span class="tsr-r tsr-cjk" data-s="301" style="margin-right:-8px">。</span></div>
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
@@ -17,7 +17,7 @@
 </div>
 <div class="tsr-band" data-b="3">
 <div class="tsr-line" data-s="323" data-e="377" data-join="none" style="top:43.203px;left:0px;width:300px;word-spacing:1.25px"><span class="tsr-r tsr-cjk" data-s="323" style="letter-spacing:0.75px">标题不落页尾</span><span class="tsr-r tsr-cjk" data-s="341">；</span><span class="tsr-r tsr-cjk" data-s="344" style="letter-spacing:0.75px;margin-right:-0.75px">下面的代码块按逻辑行切</span></div>
-<div class="tsr-line" data-s="377" data-e="383" style="top:67.203px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="377">分</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="380">：</span></div>
+<div class="tsr-line" data-s="377" data-e="383" style="top:67.203px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="377">分</span><span class="tsr-r tsr-cjk" data-s="380" style="margin-right:-8px">：</span></div>
 </div>
 <div class="tsr-band" data-b="4">
 <div class="tsr-line tsr-row" data-s="393" data-e="394" data-ragged="1" style="top:110.406px;left:0px;width:300px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">{</span></div>
@@ -33,13 +33,13 @@
 </div>
 <div class="tsr-band" data-role="figure" data-b="5">
 <img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-p" data-s="496" data-e="611" src="photos/x.png" alt="样图" style="top:91.203px;left:50px;width:200px;height:80px">
-<div class="tsr-line" data-s="572" data-e="602" data-ragged="1" style="top:190.406px;left:52px;width:248px"><span class="tsr-r tsr-b tsr-cjk" data-s="572">图</span><span class="tsr-r tsr-b" data-s="572"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="572">：</span><span class="tsr-r tsr-cjk" data-s="572">图与图注保持在同页</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="599">。</span></div>
+<div class="tsr-line" data-s="572" data-e="602" data-ragged="1" style="top:190.406px;left:52px;width:248px"><span class="tsr-r tsr-b tsr-cjk" data-s="572">图</span><span class="tsr-r tsr-b" data-s="572"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="572">：</span><span class="tsr-r tsr-cjk" data-s="572">图与图注保持在同页</span><span class="tsr-r tsr-cjk" data-s="599" style="margin-right:-8px">。</span></div>
 </div>
 </div>
 <div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
 <div class="tsr-band" data-b="6">
 <div class="tsr-line" data-s="613" data-e="667" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.333px"><span class="tsr-r tsr-cjk" data-s="613" style="letter-spacing:0.8px">尾段</span><span class="tsr-r tsr-cjk" data-s="619">：</span><span class="tsr-r tsr-cjk" data-s="622" style="letter-spacing:0.8px">越过图之后继续排布</span><span class="tsr-r tsr-cjk" data-s="649">，</span><span class="tsr-r tsr-cjk" data-s="652" style="letter-spacing:0.8px;margin-right:-0.8px">直至文档结</span></div>
-<div class="tsr-line" data-s="667" data-e="700" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="667">束</span><span class="tsr-r tsr-cjk" data-s="670">，</span><span class="tsr-r tsr-cjk" data-s="673">引用</span><a class="tsr-r tsr-cjk" href="#tsr-fig-p" data-s="679">图</a><a class="tsr-r" href="#tsr-fig-p" data-s="679"> 1</a><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-cjk" data-s="685">照常解析</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="697">。</span></div>
+<div class="tsr-line" data-s="667" data-e="700" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="667">束</span><span class="tsr-r tsr-cjk" data-s="670">，</span><span class="tsr-r tsr-cjk" data-s="673">引用</span><a class="tsr-r tsr-cjk" href="#tsr-fig-p" data-s="679">图</a><a class="tsr-r" href="#tsr-fig-p" data-s="679"> 1</a><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-cjk" data-s="685">照常解析</span><span class="tsr-r tsr-cjk" data-s="697" style="margin-right:-8px">。</span></div>
 </div>
 </div>
 </div>

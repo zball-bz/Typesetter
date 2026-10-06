@@ -5,13 +5,13 @@ top pid=0 units=1
   box Ideo "说" w=1025su wt=0.6 cap=102su r0 @[3,6)
   pen 0 r0
   glue blank w=512su x=0 cap=0su owned-by-next r1 @[6,9)
-  box AmbOpenQuote "“" w=103su blank=L r1 @[6,9)
+  box AmbOpenQuote "“" w=104su blank=L r1 @[6,9)
   box Ideo "好" w=1025su wt=0.6 cap=102su r2 @[9,12)
   glue inter w=0su x=0.6 cap=102su r2 @[9,12)
   box Ideo "的" w=1025su wt=0.6 cap=102su r2 @[12,15)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[12,15)
-  box AmbCloseQuote "”" w=103su blank=R r3 @[15,18)
+  box AmbCloseQuote "”" w=104su blank=R r3 @[15,18)
   glue blank w=512su x=0 cap=0su r3 @[15,18)
   box Ideo "然" w=1025su wt=0.6 cap=102su r4 @[18,21)
   glue inter w=0su x=0.6 cap=102su r4 @[18,21)
@@ -22,7 +22,7 @@ top pid=0 units=1
   box Ideo "开" w=1025su wt=0.6 cap=102su r4 @[27,30)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[27,30)
-  box FullStopW "。" w=512su blank=R r5 @[30,33)
+  box FullStopW "。" w=513su blank=R r5 @[30,33)
   glue blank w=512su x=0 cap=0su r5 @[30,33)
   box Ideo "他" w=1025su wt=0.6 cap=102su r6 @[33,36)
   glue inter w=0su x=0.6 cap=102su r6 @[33,36)
@@ -39,11 +39,11 @@ top pid=0 units=1
   box Ideo "开" w=1025su wt=0.6 cap=102su r9 @[78,81)
   pen INF r9
   glue inter w=0su x=0.6 cap=102su r9 @[78,81)
-  box FullStopW "。" w=512su blank=R r10 @[81,84)
+  box FullStopW "。" w=513su blank=R r10 @[81,84)
   glue blank w=512su x=0 cap=0su r10 @[81,84)
-  box AmbOpenQuote "“" w=103su blank=L r11 @[105,108)
+  box AmbOpenQuote "“" w=104su blank=L r11 @[105,108)
   box Other "OK" w=1025su r12 @[108,110)
-  box AmbCloseQuote "”" w=103su blank=R r13 @[110,113)
+  box AmbCloseQuote "”" w=104su blank=R r13 @[110,113)
   glue blank w=512su x=0 cap=0su r13 @[110,113)
   glue word w=257su x=1 cap=257su src r14 @[115,115)
   box Ideo "不" w=1025su wt=0.6 cap=102su r15 @[115,118)
@@ -67,7 +67,7 @@ top pid=0 units=1
   box Ideo "角" w=1025su wt=0.6 cap=102su r15 @[142,145)
   pen INF r15
   glue inter w=0su x=0.6 cap=102su r15 @[142,145)
-  box FullStopW "。" w=512su blank=R r16 @[145,148)
+  box FullStopW "。" w=513su blank=R r16 @[145,148)
   glue blank w=512su x=0 cap=0su r16 @[145,148)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK

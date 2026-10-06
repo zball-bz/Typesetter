@@ -139,7 +139,7 @@ top pid=1 units=6
   cjk "样" w=1025su glue=102su wt=0.6 pen=0 @[308,311)
   cjk "接" w=1025su glue=102su wt=0.6 pen=0 @[311,314)
   cjk "排" w=1025su glue=102su wt=0.6 pen=INF @[314,317)
-  punct-close "，" w=512su @[317,320)
+  punct-close "，" w=513su @[317,320)
   punct-sp w=512su @[317,320)
   cjk "续" w=1025su glue=102su wt=0.6 pen=0 @[320,323)
   cjk "行" w=1025su glue=102su wt=0.6 pen=0 @[323,326)
@@ -147,7 +147,7 @@ top pid=1 units=6
   cjk "挂" w=1025su glue=102su wt=0.6 pen=0 @[329,332)
   cjk "缩" w=1025su glue=102su wt=0.6 pen=0 @[332,335)
   cjk "进" w=1025su glue=102su wt=0.6 pen=INF @[335,338)
-  punct-close "。" w=512su @[338,341)
+  punct-close "。" w=513su @[338,341)
   punct-sp w=512su @[338,341)
  unit text indent=0su
   word "Hy" w=1025su pen=INF BOLD @[344,346)

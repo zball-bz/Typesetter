@@ -11,10 +11,11 @@ namespace tsr {
 // from the schema's "settings" rows (plan P1-03): settings_views.gen.h.
 // Config itself (settings.gen.h) is the host's: no stage sees it (plan P3-32).
 
-// App C constants (em): punct compressible half, CJK–Latin boundary glue —
-// the rules' constants (engine/rules/locale/compat.def, plan P1-11).
-constexpr double kPunctHalfEm = kRule_punctHalfEm;
+// App C constants (em): the CJK–Latin boundary glue and a superscript's
+// raise — the rules' constants (engine/rules/locale/compat.def, plan P1-11);
+// punctuation blanks are the rules' per-class table (kBlanks, plan P4-04)
 constexpr double kCjkBoundaryEm = kRule_cjkBoundaryEm;
+constexpr double kSuperRaiseEm = kRule_superRaiseEm;
 // (Table pads are settings since plan P3-02: table.cellPad, table.rowPad;
 // heading sizes are default rules since P3-01: engine/data/defaults.json.)
 

@@ -1,0 +1,42 @@
+lower v1 abi 3d3ccfbb docEnd 654 holes 7 module 7c7cf2e1d1769c50
+piece 0 hole 0 js [135,195)
+piece 1 hole 1 js [197,254)
+piece 2 hole 2 js [256,311)
+piece 3 hole 3 js [313,347)
+piece 4 hole 4 js [349,375)
+piece 5 hole 5 js [377,435)
+piece 6 hole 6 js [437,502)
+block 0 content [0,108) user framed holes 0..1
+  CALL para [0,108)
+    TEXT "中文" [0,6)
+    HOLE 0 [6,50)
+      TEXT "English" [42,49)
+    TEXT "紧贴，默认 English 有间隙，中文English也有。" [50,108)
+block 1 content [110,240) user framed holes 1..2
+  CALL para [110,240)
+    TEXT "A sentence with " [110,125) raw=0:0,16:15
+    HOLE 1 [126,200)
+      TEXT "a phrase that never breaks inside itself" [159,199)
+    TEXT " and more words after it to wrap around." [201,240) raw=0:0,1:0
+block 2 content [242,352) user framed holes 2..5
+  CALL para [242,352)
+    HOLE 2 [242,301)
+      HOLE 3 [273,300)
+    TEXT " as written; outside, " [302,322) raw=0:0,1:0,22:20
+    HOLE 4 [323,342)
+    TEXT " collapse." [343,352) raw=0:0,1:0
+block 3 content [354,487) user framed holes 5..6
+  CALL para [354,487)
+    HOLE 5 [354,433)
+      TEXT "extraordinarily antidisestablishmentarianism" [388,432)
+    TEXT " next to extraordinarily antidisestablishmentarianism." [434,487) raw=0:0,1:0
+block 4 content [489,653) user framed holes 6..7
+  CALL para [489,653)
+    TEXT "See " [489,492) raw=0:0,4:3
+    HOLE 6 [493,588)
+      CALL link [534,587) url="https://example.com/a/very/long/path/that/stays/whole"
+        TEXT "https://example.com/a/very/long/path/that/stays/whole" [534,587)
+    TEXT " beside " [589,596) raw=0:0,1:0
+    CALL link [596,647) url="https://example.com/a/very/long/path/that/may/break"
+      TEXT "https://example.com/a/very/long/path/that/may/break" [596,647)
+    TEXT " here." [648,653) raw=0:0,1:0

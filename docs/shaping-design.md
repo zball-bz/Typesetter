@@ -33,8 +33,12 @@ joins; later: UAX #14 break class, blanks, autospace, font role).
 `tools/ucdc.mjs` (run by gen-all, checked by G9) compiles
 `engine/rules/locale/compat.def` — RULES_VERSION 0, today's classification
 as data: the five wide ranges, the clreq punctuation sets, the ambiguous
-classes, the columns, the kern cutoff, the App C constants (`punctHalfEm`
-0.5, `cjkBoundaryEm` 0.25) — plus the pinned UCD files
+classes, the columns, the kern cutoff, the App C constants
+(`cjkBoundaryEm` 0.25, `superRaiseEm` 0.45), and since plan P4-04 the
+punctuation blanks (`BLANK`: each class's leading and trailing blank, em —
+an opener's 0.5 before, a closer's or a stop's 0.5 after → `kBlanks`) and
+the defined advances (`ADVANCE`: —— 2em, — 1em, …… 2em, … 1em, longest
+first → `kDefinedAdvances`) — plus the pinned UCD files
 (`engine/rules/ucd/17.0.0`: LineBreak, EastAsianWidth, Scripts,
 emoji-data, GraphemeBreakProperty; `--fetch` re-downloads them) into
 `engine/gen/textrules.h`: the class enum and columns, a range table of
@@ -297,9 +301,41 @@ blanks share its span. Made text keeps its node's span. Paint takes a run's
 `data-s` from its first item with a source, layout a line's span from its
 first such item to the furthest end.
 
-## 8. Next steps
+## 8. Text properties, blanks and defined advances as data (plan P4-04; design T5 step 7)
 
-P4-04…P4-08: TextProps and locale sections (punctuation,
-blanks, autospace as data), UCD-derived classes, hyphenation registry,
+- **Blanks.** A punctuation glyph is measured less its class's blanks
+  (`blankOf`, em) plus the word epsilon; each blank stands as Blank glue.
+  One rule compresses them, the run's `text.punct` (else
+  `cjk.punctCompress`): where the previous glyph's trailing blank and this
+  one's leading blank meet, none keeps both, book keeps one (the previous
+  glyph's — the break between the two), full keeps neither; a leading blank
+  right after a glyph that kept none (an opener) is solid (book, full) or
+  rigid (none); a trailing blank before a glyph with no leading blank
+  (closer + closer) is dropped (book, full) or kept without a break (none).
+  Paint squeezes a side whose own blank does not stand with an explicit px
+  margin (`margin-left`/`margin-right`: the blank's px) — the contract CSS
+  no longer carries `tsr-sqL`/`tsr-sqR`, nor any engine number.
+- **Defined advances.** A cluster the context sets wide where an ADVANCE
+  sequence starts is one pinned box of that width; any sequence the rules
+  list opts in (no code names U+2014 or U+2026).
+- **Superscripts** are raised by the engine's px (`top`, `superRaiseEm` of
+  the run's em); `.tsr-sup` keeps position and decoration only.
+- **Text properties** (schema rows, the run's style, the cascade):
+  `text.wrap` (wrap | nowrap — CSS text-wrap-mode: a nowrap text breaks
+  nowhere inside), `text.space` (normal | pre — white-space-collapse: pre
+  keeps its spaces in rigid boxes; normal collapses a run of spaces, as the
+  browser does — a spliced string's too), `text.autospace` (none | normal:
+  the boundary glue at its edges), `text.hyphens` (none | manual | auto)
+  and `text.overflowWrap` (normal | separators | anywhere) over the block's
+  rule (a heading's, a caption's: neither), which P4-06 replaces.
+- **The punctuation matrix** (`test/e2e/punct.spec.mjs`, setting
+  `render.runWidths`): every combination of the classes in the three modes,
+  justified and ragged, at four device pixel ratios — each run's rendered
+  width within 1px of the engine's (`data-w`); before and after the change
+  at most 0.016px.
+
+## 9. Next steps
+
+P4-05…P4-08: UCD-derived classes, hyphenation registry,
 attach edges and the item-native breaker (with it, the canonical TeX form
 and the end of the lowering).

@@ -1,0 +1,17 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {style, text} = __rt.std;
+return (async () => {
+const __h = [
+(__k) => (style(...[{text: {autospace: 'none'}}], ...__k())),
+(__k) => (style(...[{text: {wrap: 'nowrap'}}], ...__k())),
+(__k) => (style(...[{text: {space: 'pre'}}], ...__k())),
+() => (("keep   these    spaces")),
+() => (("these   spaces")),
+(__k) => (style(...[{text: {hyphens: 'none'}}], ...__k())),
+(__k) => (style(...[{text: {overflowWrap: 'normal'}}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

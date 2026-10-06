@@ -7,7 +7,7 @@ top pid=0 units=1
   cjk "判" w=1025su glue=102su wt=0.6 pen=0 @[12,15)
   cjk "别" w=1025su glue=102su wt=0.6 pen=0 @[15,18)
   cjk "法" w=1025su glue=102su wt=0.6 pen=INF @[18,21)
-  punct-close "：" w=512su @[21,24)
+  punct-close "：" w=513su @[21,24)
   punct-sp w=512su @[21,24)
 top pid=1 units=1
  unit math indent=0su w=9278su asc=1495su desc=1148su
@@ -30,7 +30,7 @@ top pid=2 units=1
   cjk "处" w=1025su glue=102su wt=0.6 pen=0 @[95,98)
   cjk "发" w=1025su glue=102su wt=0.6 pen=0 @[98,101)
   cjk "散" w=1025su glue=102su wt=0.6 pen=INF @[101,104)
-  punct-close "。" w=512su @[104,107)
+  punct-close "。" w=513su @[104,107)
   punct-sp w=512su @[104,107)
 top pid=3 units=1
  unit math indent=0su w=11479su asc=1414su desc=891su

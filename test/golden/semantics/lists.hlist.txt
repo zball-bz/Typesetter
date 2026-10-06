@@ -18,7 +18,7 @@ top pid=1 units=1
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[606,612)
   box Other "1" w=513su r1 @[606,612)
-  box ColonW "：" w=512su blank=R r2 @[606,612)
+  box ColonW "：" w=513su blank=R r2 @[606,612)
   glue blank w=512su x=0 cap=0su r2 @[606,612)
   box Other "A" w=513su r3 @[606,612)
   glue word w=257su x=1 cap=257su kern="A f" src r3 @[606,612)
@@ -62,7 +62,7 @@ top pid=2 units=2
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[614,620)
   box Other "2" w=513su r1 @[614,620)
-  box ColonW "：" w=512su blank=R r2 @[614,620)
+  box ColonW "：" w=513su blank=R r2 @[614,620)
   glue blank w=512su x=0 cap=0su r2 @[614,620)
   box Other "A" w=513su r3 @[614,620)
   glue word w=257su x=1 cap=257su kern="A f" src r3 @[614,620)
@@ -116,7 +116,7 @@ top pid=4 units=2
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[707,754)
   box Other "1" w=513su r1 @[707,754)
-  box ColonW "：" w=512su blank=R r2 @[707,754)
+  box ColonW "：" w=513su blank=R r2 @[707,754)
   glue blank w=512su x=0 cap=0su r2 @[707,754)
   box Other "A" w=513su r3 @[707,708)
   glue word w=257su x=1 cap=257su kern="A f" src r3 @[708,709)
@@ -174,7 +174,7 @@ top pid=6 units=3
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[881,914)
   box Other "2" w=513su r1 @[881,914)
-  box ColonW "：" w=512su blank=R r2 @[881,914)
+  box ColonW "：" w=513su blank=R r2 @[881,914)
   glue blank w=512su x=0 cap=0su r2 @[881,914)
   box Other "A" w=513su r3 @[881,882)
   glue word w=257su x=1 cap=257su kern="A f" src r3 @[882,883)

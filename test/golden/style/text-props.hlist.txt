@@ -1,0 +1,216 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Ideo "中" w=1025su wt=0.6 cap=102su r0 @[0,3)
+  glue inter w=0su x=0.6 cap=102su r0 @[0,3)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r0 @[3,6)
+  pen 0 r0
+  box Other "Eng" w=1537su r1 @[42,45)
+  disc pen=0.7 w=0su pre="-" 513su kern="gl" r1 @[45,45)
+  box Other "lish" w=2049su r1 @[45,49)
+  box Ideo "紧" w=1025su wt=0.6 cap=102su r2 @[50,53)
+  glue inter w=0su x=0.6 cap=102su r2 @[50,53)
+  box Ideo "贴" w=1025su wt=0.6 cap=102su r2 @[53,56)
+  pen INF r2
+  glue inter w=0su x=0.6 cap=102su r2 @[53,56)
+  box CommaW "，" w=513su blank=R r3 @[56,59)
+  glue blank w=512su x=0 cap=0su r3 @[56,59)
+  box Ideo "默" w=1025su wt=0.6 cap=102su r4 @[59,62)
+  glue inter w=0su x=0.6 cap=102su r4 @[59,62)
+  box Ideo "认" w=1025su wt=0.6 cap=102su r4 @[62,65)
+  pen 0 r4
+  glue word w=257su x=1 cap=257su src r5 @[65,66)
+  box Other "Eng" w=1537su r5 @[66,69)
+  disc pen=0.7 w=0su pre="-" 513su kern="gl" r5 @[69,69)
+  box Other "lish" w=2049su r5 @[69,73)
+  glue word w=257su x=1 cap=257su src r5 @[73,74)
+  box Ideo "有" w=1025su wt=0.6 cap=102su r6 @[74,77)
+  glue inter w=0su x=0.6 cap=102su r6 @[74,77)
+  box Ideo "间" w=1025su wt=0.6 cap=102su r6 @[77,80)
+  glue inter w=0su x=0.6 cap=102su r6 @[77,80)
+  box Ideo "隙" w=1025su wt=0.6 cap=102su r6 @[80,83)
+  pen INF r6
+  glue inter w=0su x=0.6 cap=102su r6 @[80,83)
+  box CommaW "，" w=513su blank=R r7 @[83,86)
+  glue blank w=512su x=0 cap=0su r7 @[83,86)
+  box Ideo "中" w=1025su wt=0.6 cap=102su r8 @[86,89)
+  glue inter w=0su x=0.6 cap=102su r8 @[86,89)
+  box Ideo "文" w=1025su wt=0.6 cap=102su r8 @[89,92)
+  pen 0 r8
+  glue autospace w=256su x=1 cap=256su r9 @[92,92)
+  box Other "Eng" w=1537su r10 @[92,95)
+  disc pen=0.7 w=0su pre="-" 513su kern="gl" r10 @[95,95)
+  box Other "lish" w=2049su r10 @[95,99)
+  glue autospace w=256su x=1 cap=256su r11 @[99,99)
+  box Ideo "也" w=1025su wt=0.6 cap=102su r12 @[99,102)
+  glue inter w=0su x=0.6 cap=102su r12 @[99,102)
+  box Ideo "有" w=1025su wt=0.6 cap=102su r12 @[102,105)
+  pen INF r12
+  glue inter w=0su x=0.6 cap=102su r12 @[102,105)
+  box FullStopW "。" w=513su blank=R r13 @[105,108)
+  glue blank w=512su x=0 cap=0su r13 @[105,108)
+  run r0 letter-spaced CJK
+  run r1 plain
+  run r2 letter-spaced CJK
+  run r3 blank-bearing CJK
+  run r4 letter-spaced CJK
+  run r5 plain
+  run r6 letter-spaced CJK
+  run r7 blank-bearing CJK
+  run r8 letter-spaced CJK
+  run r9 plain
+  run r10 plain
+  run r11 plain
+  run r12 letter-spaced CJK
+  run r13 blank-bearing CJK
+top pid=1 units=1
+ unit text indent=0su
+  box Other "A" w=513su r0 @[110,111)
+  glue word w=257su x=1 cap=257su kern="A s" src r0 @[111,112)
+  box Other "sen" w=1537su r0 @[112,115)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r0 @[115,115)
+  box Other "tence" w=2561su r0 @[115,120)
+  glue word w=257su x=1 cap=257su kern="e w" src r0 @[120,121)
+  box Other "with" w=2049su r0 @[121,125)
+  glue word w=257su x=1 cap=257su kern="h a" src r0 @[125,125)
+  box Other "a" w=513su r1 @[159,160)
+  pen INF r1
+  glue word w=257su x=1 cap=257su kern="a p" src r1 @[160,161)
+  box Other "phrase" w=3073su r1 @[161,167)
+  pen INF r1
+  glue word w=257su x=1 cap=257su kern="e t" src r1 @[167,168)
+  box Other "that" w=2049su r1 @[168,172)
+  pen INF r1
+  glue word w=257su x=1 cap=257su kern="t n" src r1 @[172,173)
+  box Other "never" w=2561su r1 @[173,178)
+  pen INF r1
+  glue word w=257su x=1 cap=257su kern="r b" src r1 @[178,179)
+  box Other "breaks" w=3073su r1 @[179,185)
+  pen INF r1
+  glue word w=257su x=1 cap=257su kern="s i" src r1 @[185,186)
+  box Other "inside" w=3073su r1 @[186,192)
+  pen INF r1
+  glue word w=257su x=1 cap=257su kern="e i" src r1 @[192,193)
+  box Other "itself" w=3073su r1 @[193,199)
+  glue word w=257su x=1 cap=257su kern="f a" src r2 @[201,201)
+  box Other "and" w=1537su r2 @[201,204)
+  glue word w=257su x=1 cap=257su kern="d m" src r2 @[204,205)
+  box Other "more" w=2049su r2 @[205,209)
+  glue word w=257su x=1 cap=257su kern="e w" src r2 @[209,210)
+  box Other "words" w=2561su r2 @[210,215)
+  glue word w=257su x=1 cap=257su kern="s a" src r2 @[215,216)
+  box Other "af" w=1025su r2 @[216,218)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r2 @[218,218)
+  box Other "ter" w=1537su r2 @[218,221)
+  glue word w=257su x=1 cap=257su kern="r i" src r2 @[221,222)
+  box Other "it" w=1025su r2 @[222,224)
+  glue word w=257su x=1 cap=257su kern="t t" src r2 @[224,225)
+  box Other "to" w=1025su r2 @[225,227)
+  glue word w=257su x=1 cap=257su kern="o w" src r2 @[227,228)
+  box Other "wrap" w=2049su r2 @[228,232)
+  glue word w=257su x=1 cap=257su kern="p a" src r2 @[232,233)
+  box Other "around." w=3585su r2 @[233,240)
+  run r0 plain
+  run r1 plain
+  run r2 plain
+top pid=2 units=1
+ unit text indent=0su
+  box Other "keep   these    spaces" w=9473su r0 @[273,300)
+  glue word w=257su x=1 cap=257su kern="s a" src r1 @[302,302)
+  box Other "as" w=1025su r1 @[302,304)
+  glue word w=257su x=1 cap=257su kern="s w" src r1 @[304,305)
+  box Other "writ" w=2049su r1 @[305,309)
+  disc pen=0.7 w=0su pre="-" 513su kern="tt" r1 @[309,309)
+  box Other "ten;" w=2049su r1 @[309,313)
+  glue word w=257su x=1 cap=257su kern="; o" src r1 @[313,314)
+  box Other "out" w=1537su r1 @[314,317)
+  disc pen=0.7 w=0su pre="-" 513su kern="ts" r1 @[317,317)
+  box Other "side," w=2561su r1 @[317,322)
+  glue word w=257su x=1 cap=257su kern=", t" src r1 @[322,322)
+  box Other "these" w=2561su r1 @[323,342)
+  glue word w=257su x=1 cap=257su kern="e s" src r1 @[323,342)
+  box Other "spaces" w=3073su r1 @[323,342)
+  glue word w=257su x=1 cap=257su kern="s c" src r1 @[343,343)
+  box Other "col" w=1537su r1 @[343,346)
+  disc pen=0.7 w=0su pre="-" 513su kern="ll" r1 @[346,346)
+  box Other "lapse." w=3073su r1 @[346,352)
+  run r0 rigid
+  run r1 plain
+top pid=3 units=1
+ unit text indent=0su
+  box Other "extraordinarily" w=7681su r0 @[388,403)
+  glue word w=257su x=1 cap=257su kern="y a" src r0 @[403,404)
+  box Other "antidisestablishmentarianism" w=14337su r0 @[404,432)
+  glue word w=257su x=1 cap=257su kern="m n" src r1 @[434,434)
+  box Other "next" w=2049su r1 @[434,438)
+  glue word w=257su x=1 cap=257su kern="t t" src r1 @[438,439)
+  box Other "to" w=1025su r1 @[439,441)
+  glue word w=257su x=1 cap=257su kern="o e" src r1 @[441,442)
+  box Other "ex" w=1025su r1 @[442,444)
+  disc pen=0.7 w=0su pre="-" 513su kern="xt" r1 @[444,444)
+  box Other "tra" w=1537su r1 @[444,447)
+  disc pen=0.7 w=0su pre="-" 513su kern="ao" r1 @[447,447)
+  box Other "or" w=1025su r1 @[447,449)
+  disc pen=0.7 w=0su pre="-" 513su kern="rd" r1 @[449,449)
+  box Other "di" w=1025su r1 @[449,451)
+  disc pen=0.7 w=0su pre="-" 513su kern="in" r1 @[451,451)
+  box Other "nar" w=1537su r1 @[451,454)
+  disc pen=0.7 w=0su pre="-" 513su kern="ri" r1 @[454,454)
+  box Other "i" w=513su r1 @[454,455)
+  disc pen=0.7 w=0su pre="-" 513su kern="il" r1 @[455,455)
+  box Other "ly" w=1025su r1 @[455,457)
+  glue word w=257su x=1 cap=257su kern="y a" src r1 @[457,458)
+  box Other "an" w=1025su r1 @[458,460)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r1 @[460,460)
+  box Other "tidis" w=2561su r1 @[460,465)
+  disc pen=0.7 w=0su pre="-" 513su kern="se" r1 @[465,465)
+  box Other "es" w=1025su r1 @[465,467)
+  disc pen=0.7 w=0su pre="-" 513su kern="st" r1 @[467,467)
+  box Other "tab" w=1537su r1 @[467,470)
+  disc pen=0.7 w=0su pre="-" 513su kern="bl" r1 @[470,470)
+  box Other "lish" w=2049su r1 @[470,474)
+  disc pen=0.7 w=0su pre="-" 513su kern="hm" r1 @[474,474)
+  box Other "men" w=1537su r1 @[474,477)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r1 @[477,477)
+  box Other "tar" w=1537su r1 @[477,480)
+  disc pen=0.7 w=0su pre="-" 513su kern="ri" r1 @[480,480)
+  box Other "i" w=513su r1 @[480,481)
+  disc pen=0.7 w=0su pre="-" 513su kern="ia" r1 @[481,481)
+  box Other "an" w=1025su r1 @[481,483)
+  disc pen=0.7 w=0su pre="-" 513su kern="ni" r1 @[483,483)
+  box Other "ism." w=2049su r1 @[483,487)
+  run r0 plain
+  run r1 plain
+top pid=4 units=1
+ unit text indent=0su
+  box Other "See" w=1537su r0 @[489,492)
+  glue word w=257su x=1 cap=257su kern="e h" src r0 @[492,492)
+  box Other "https://example.com/a/very/long/path/that/stays/whole" w=27137su r1 @[534,587)
+  glue word w=257su x=1 cap=257su kern="e b" src r2 @[589,589)
+  box Other "be" w=1025su r2 @[589,591)
+  disc pen=0.7 w=0su pre="-" 513su kern="es" r2 @[591,591)
+  box Other "side" w=2049su r2 @[591,595)
+  glue word w=257su x=1 cap=257su kern="e h" src r2 @[595,596)
+  box Other "https:/" w=3585su r3 @[596,603)
+  pen 1.2 r3
+  box Other "/example." w=4609su r3 @[603,612)
+  pen 1.2 r3
+  box Other "com/" w=2049su r3 @[612,616)
+  pen 1.2 r3
+  box Other "a/very/" w=3585su r3 @[616,623)
+  pen 1.2 r3
+  box Other "long/" w=2561su r3 @[623,628)
+  pen 1.2 r3
+  box Other "path/" w=2561su r3 @[628,633)
+  pen 1.2 r3
+  box Other "that/" w=2561su r3 @[633,638)
+  pen 1.2 r3
+  box Other "may/" w=2049su r3 @[638,642)
+  pen 1.2 r3
+  box Other "break" w=2561su r3 @[642,647)
+  glue word w=257su x=1 cap=257su kern="k h" src r4 @[648,648)
+  box Other "here." w=2561su r4 @[648,653)
+  run r0 plain
+  run r1 plain LINK link="https://example.com/a/very/long/path/that/stays/whole"
+  run r2 plain
+  run r3 plain LINK link="https://example.com/a/very/long/path/that/may/break"
+  run r4 plain

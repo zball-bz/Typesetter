@@ -17,7 +17,7 @@ top pid=0 units=1
   box Ideo "容" w=1025su wt=0.6 cap=102su r0 @[21,24)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[21,24)
-  box ColonW "：" w=512su blank=R r1 @[24,27)
+  box ColonW "：" w=513su blank=R r1 @[24,27)
   glue blank w=512su x=0 cap=0su r1 @[24,27)
   box Ideo "块" w=1025su wt=0.6 cap=102su r2 @[27,30)
   glue inter w=0su x=0.6 cap=102su r2 @[27,30)
@@ -28,7 +28,7 @@ top pid=0 units=1
   box Ideo "图" w=1025su wt=0.6 cap=102su r2 @[36,39)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[36,39)
-  box CommaW "、" w=512su blank=R r3 @[39,42)
+  box CommaW "、" w=513su blank=R r3 @[39,42)
   glue blank w=512su x=0 cap=0su r3 @[39,42)
   box Ideo "编" w=1025su wt=0.6 cap=102su r4 @[42,45)
   glue inter w=0su x=0.6 cap=102su r4 @[42,45)
@@ -45,7 +45,7 @@ top pid=0 units=1
   box Ideo "用" w=1025su wt=0.6 cap=102su r4 @[60,63)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[60,63)
-  box FullStopW "。" w=512su blank=R r5 @[63,66)
+  box FullStopW "。" w=513su blank=R r5 @[63,66)
   glue blank w=512su x=0 cap=0su r5 @[63,66)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
@@ -60,7 +60,7 @@ top pid=1 units=2
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[175,228)
   box Other "1" w=513su r1 @[175,228)
-  box ColonW "：" w=512su blank=R r2 @[175,228)
+  box ColonW "：" w=513su blank=R r2 @[175,228)
   glue blank w=512su x=0 cap=0su r2 @[175,228)
   box Ideo "排" w=1025su wt=0.6 cap=102su r3 @[175,178)
   glue inter w=0su x=0.6 cap=102su r3 @[175,178)
@@ -77,7 +77,7 @@ top pid=1 units=2
   box Ideo "图" w=1025su wt=0.6 cap=102su r3 @[193,196)
   pen INF r3
   glue inter w=0su x=0.6 cap=102su r3 @[193,196)
-  box CommaW "，" w=512su blank=R r4 @[196,199)
+  box CommaW "，" w=513su blank=R r4 @[196,199)
   glue blank w=512su x=0 cap=0su r4 @[196,199)
   box Ideo "声" w=1025su wt=0.6 cap=102su r5 @[200,203)
   glue inter w=0su x=0.6 cap=102su r5 @[200,203)
@@ -96,7 +96,7 @@ top pid=1 units=2
   box Ideo "取" w=1025su wt=0.6 cap=102su r6 @[222,225)
   pen INF r6
   glue inter w=0su x=0.6 cap=102su r6 @[222,225)
-  box FullStopW "。" w=512su blank=R r7 @[225,228)
+  box FullStopW "。" w=513su blank=R r7 @[225,228)
   glue blank w=512su x=0 cap=0su r7 @[225,228)
   run r0 letter-spaced BOLD CJK
   run r1 plain BOLD
@@ -113,7 +113,7 @@ top pid=2 units=2
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[323,374)
   box Other "2" w=513su r1 @[323,374)
-  box ColonW "：" w=512su blank=R r2 @[323,374)
+  box ColonW "：" w=513su blank=R r2 @[323,374)
   glue blank w=512su x=0 cap=0su r2 @[323,374)
   box Ideo "过" w=1025su wt=0.6 cap=102su r3 @[323,326)
   glue inter w=0su x=0.6 cap=102su r3 @[323,326)
@@ -136,7 +136,7 @@ top pid=2 units=2
   box Ideo "心" w=1025su wt=0.6 cap=102su r3 @[350,353)
   pen INF r3
   glue inter w=0su x=0.6 cap=102su r3 @[350,353)
-  box CommaW "，" w=512su blank=R r4 @[353,356)
+  box CommaW "，" w=513su blank=R r4 @[353,356)
   glue blank w=512su x=0 cap=0su r4 @[353,356)
   box Ideo "按" w=1025su wt=0.6 cap=102su r5 @[356,359)
   glue inter w=0su x=0.6 cap=102su r5 @[356,359)
@@ -149,7 +149,7 @@ top pid=2 units=2
   box Ideo "放" w=1025su wt=0.6 cap=102su r5 @[368,371)
   pen INF r5
   glue inter w=0su x=0.6 cap=102su r5 @[368,371)
-  box FullStopW "。" w=512su blank=R r6 @[371,374)
+  box FullStopW "。" w=513su blank=R r6 @[371,374)
   glue blank w=512su x=0 cap=0su r6 @[371,374)
   run r0 letter-spaced BOLD CJK
   run r1 plain BOLD
@@ -175,7 +175,7 @@ top pid=3 units=1
   pen 0 r5
   glue word w=257su x=1 cap=257su src r6 @[403,412)
   box Other "2" w=513su r6 @[403,412)
-  box ColonW "；" w=512su blank=R r7 @[412,415)
+  box ColonW "；" w=513su blank=R r7 @[412,415)
   glue blank w=512su x=0 cap=0su r7 @[412,415)
   box Ideo "前" w=1025su wt=0.6 cap=102su r8 @[415,418)
   glue inter w=0su x=0.6 cap=102su r8 @[415,418)
@@ -196,7 +196,7 @@ top pid=3 units=1
   box Ideo "半" w=1025su wt=0.6 cap=102su r8 @[439,442)
   pen INF r8
   glue inter w=0su x=0.6 cap=102su r8 @[439,442)
-  box FullStopW "。" w=512su blank=R r9 @[442,445)
+  box FullStopW "。" w=513su blank=R r9 @[442,445)
   glue blank w=512su x=0 cap=0su r9 @[442,445)
   run r0 letter-spaced CJK
   run r1 letter-spaced ref LINK CJK link="#tsr-fig-pipe"

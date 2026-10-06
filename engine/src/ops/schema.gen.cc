@@ -234,6 +234,10 @@ const char* const kM_styled_media[] = {"all", "screen", "paged"};
 const char* const kM_styled_beside[] = {"clear", "shrink"};
 const char* const kM_styled_placeFloat[] = {"none", "left", "right", "top", "bottom", "page", "inline"};
 const char* const kM_styled_textSpace[] = {"normal", "pre"};
+const char* const kM_styled_textWrap[] = {"wrap", "nowrap"};
+const char* const kM_styled_autospace[] = {"none", "normal"};
+const char* const kM_styled_hyphens[] = {"none", "manual", "auto"};
+const char* const kM_styled_overflowWrap[] = {"normal", "separators", "anywhere"};
 const char* const kM_styled_attach[] = {"prev", "next", "both"};
 const AttrSpec kA_styled[] = {
     {21, "font", Dom::Font, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
@@ -284,6 +288,10 @@ const AttrSpec kA_styled[] = {
     {93, "breakerStretch", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 12, false},
     {94, "placeFloat", Dom::Enum, 0, 0, kM_styled_placeFloat, nullptr, 7, false, false, 0, 14, 0, false},
     {106, "textSpace", Dom::Enum, 0, 0, kM_styled_textSpace, nullptr, 2, false, false, 0, 14, 0, false},
+    {108, "textWrap", Dom::Enum, 0, 0, kM_styled_textWrap, nullptr, 2, false, false, 0, 16, 0, false},
+    {109, "autospace", Dom::Enum, 0, 0, kM_styled_autospace, nullptr, 2, false, false, 0, 16, 0, false},
+    {110, "hyphens", Dom::Enum, 0, 0, kM_styled_hyphens, nullptr, 3, false, false, 0, 16, 0, false},
+    {111, "overflowWrap", Dom::Enum, 0, 0, kM_styled_overflowWrap, nullptr, 3, false, false, 0, 16, 0, false},
     {103, "placeWidth", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 3, false},
     {104, "placeGap", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 14, 12, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
@@ -578,7 +586,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"error", Level::Adaptive, Body::None, InlineShape::Error, 6, kA_error, 11},
     {"comment", Level::Trivia, Body::Text, InlineShape::Skip, 6, kA_comment, 9},
     {"text", Level::Inline, Body::None, InlineShape::Text, 6, nullptr, 0},
-    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 59},
+    {"styled", Level::Transparent, Body::Position, InlineShape::Container, 6, kA_styled, 63},
     {"link", Level::Inline, Body::Inline, InlineShape::Container, 6, kA_link, 12},
     {"code", Level::Inline, Body::Text, InlineShape::Code, 6, kA_code, 9},
     {"ref", Level::Inline, Body::None, InlineShape::Container, 6, kA_ref, 13},

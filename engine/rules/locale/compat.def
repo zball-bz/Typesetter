@@ -35,6 +35,24 @@ COLUMN(joins, Ideo OpenW CloseW FullStopW CommaW ColonW ExclW AmbDash AmbEllipsi
 // codepoints at or above the cutoff, and wide ones, never kern across a space
 KERN_CUTOFF(2000)
 
+// (plan P4-04) punctuation blanks (em): the compressible space a glyph's
+// advance holds on its leading and trailing side (SC horizontal, App C:
+// openers before, closers and stops after). Adjacent blanks compress by the
+// run's punct mode (none keeps both, book keeps one where two meet, full
+// keeps none) — the glyph is measured less its blanks, which stand as glue
+BLANK(OpenW AmbOpenQuote, 0.5, 0)
+BLANK(CloseW FullStopW CommaW ColonW ExclW AmbCloseQuote, 0, 0.5)
+// (plan P4-04) defined advances (em): sequences whose DOM advance canvas
+// cannot predict (full-width-ization, cluster shaping) are set at a defined
+// width when the context sets them wide (App C: the em dash and ellipsis,
+// 2em doubled, 1em alone); the longest match wins
+ADVANCE(2014 2014, 2)
+ADVANCE(2014, 1)
+ADVANCE(2026 2026, 2)
+ADVANCE(2026, 1)
+
 // App C constants (em)
-CONST(punctHalfEm, 0.5)
 CONST(cjkBoundaryEm, 0.25)
+// (plan P4-04) a superscript run's raise (the engine writes it in px; it
+// was a CSS em)
+CONST(superRaiseEm, 0.45)

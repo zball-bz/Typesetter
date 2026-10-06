@@ -68,7 +68,7 @@ top pid=3 units=1
   box Ideo "项" w=1025su wt=0.6 cap=102su r4 @[192,195)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[192,195)
-  box ColonW "：" w=512su blank=R r5 @[195,198)
+  box ColonW "：" w=513su blank=R r5 @[195,198)
   glue blank w=512su x=0 cap=0su r5 @[195,198)
   run r0 letter-spaced CJK
   run r1 plain

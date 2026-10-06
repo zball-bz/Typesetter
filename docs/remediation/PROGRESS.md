@@ -6,7 +6,7 @@
 ## 当前位置
 
 - 阶段：P4
-- 下一步：P4-04
+- 下一步：P4-05
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -107,7 +107,7 @@
 | P4-01 | 按 run 实例成 run | done | grep:plan P4-01 | 2026-10-07 | 69 个 hlist（178 处词间胶加 kern 上下文：链接/引用/颜色边界两侧同字体；36 个行内代码 run plain→rigid）；1 个 html（locale/auto-en：两端对齐行上的行内代码加 word-spacing:0）；breaks/blocks/layout 不变，WASM 213/213；e2e AUDIT_XFAIL 1→0（semantics/appendix 通过） | 接合字距按成形 run：measure/face.h 新增 FaceStyle/faceStyleOf（字体由之决定的样式字段），FaceTable::faceOf 经它取值；kernContexts 的条件改为两侧是文字盒（Plain/Rigid）且两词与空格的 FaceStyle 相同，不再看链接（Chromium/Firefox 实测：同字体跨 span/a/颜色成形与配对字距，跨字体、letter-spacing、inline-block 不跨），旧发射器预言机同步，fuseCheck 全部相等。锚点是点：带标签引用的锚点在发射其文字之前给出，第一个 Box/Disc 取 IA_Anchor 并开启携带它的 run（RunRec.anchor），后续同键项可并入；索引条目的空锚点盒仍独占 run。行内代码为 Rigid，paint 在两端对齐且文字含词分隔符（CSS Text §8.1）时写 word-spacing:0（DLRun.rigid，dl dump 记 rigid）。ICtx 的 BF_REF 标志位换成 SynKind（P0-10 的过渡键），预言机映射回去。lintHList 新增：锚点开启其 run 且 run 携带它；KernCtx 只在两个文字盒之间。验收：87K 基准文档 DOM 节点 15,178→15,178；真实语料与用例 553 篇 733,686→733,686（增长 0%，D-X08 ≤10%），75 篇字节变化全部是 151 个 word-spacing:0；review-corpus 340 篇不变；rules-diff 0 变化。文档：shaping-design §5、document-model §9.1、render-design §2、REPORT.md |
 | P4-02 | 段落级成形器 | done | grep:plan P4-02 | 2026-10-07 | 57 个 golden 文件：hlist 16、breaks/layout/html 各 10、blocks 8、tree/semantic/paged 各 1——figure/block、figure/float、math/eqref、pages/paged-doc、inline/prose-guards、locale/quote-lang、splice/ascii-cut（跨节点边界胶）；math/grid、math/symbols（公式后不在标点前断行）；style/patch（跨节点软换行无缝，tree/semantic 同变）；doc/toc-clone、inline/bracket-island、math/decl、math/holes-diag、math/negation-diag、notes/basic 只有 hlist；+1 用例 cjk/cross-node；WASM 214/214 | 段落级成形：HlInline 的 walk/indent 只记录，finish 把记录展平为段落上下文（shape/context.h：每个字素簇一项，跨样式、链接、引用、错误边界；行内代码、公式为拉丁证据，图片、原始标记、硬换行为不透明，空格为空白），resolveContext 一次性解析歧义标点（破折号/省略号按 lang、成对或邻近 CJK；字母间 U+2019 为撇号；引号按 lang，否则前一字符为 CJK 或宽标点、后一字符为 CJK 或标点，成对联合判定），再按阅读顺序重放原有逐节点发射。文字节点的起始状态取段落中的前一字符，CJK–拉丁边界胶出现在强调、链接、引用、行内代码两侧（上标/下标标记两侧和 attach 边缘除外）；对象之后的断点看后邻（闭合标点与公式紧贴的拉丁文字或代码前禁断）；CJK 闭合标点前的键入空格不可断（LB13）；长 token 门限按字符、跨样式边界计数；CJK 盒按字素簇（textrules clusterEnd，UAX #29 GB3–GB13）。软换行：实例化保留 U+000A（映射文本带显式映射），规范形之后 model/softbreak.cc 按段落流以 joinsWithoutSpace 解析，可跨节点；连同歧义引号的上下文解析。删除旧发射器 emit/legacy.{h,cc}、fuseCheck、Flow::legacy、emitDoc/emitWith、InlineSink::done；tsrc --fuse-check 改为 --lint，corpus-run 对 199 篇 typst 语料做 HList lint（旧版两篇 `！ ？` 文档的闭合标点前断点已消除）。性能：clusterEnd 的 ASCII 与 CJK 统一表意字快路径、packed() 的汉字区间热路径（由生成表在编译期求得）、无歧义标点时跳过解析、软换行只在含软换行的流上建项。文档：shaping-design §7（新）、§1、§5、§6，syntax-design、document-model 的软换行，tsm-changes，REPORT，CLAUDE.md |
 | P4-03 | 逐项源 span | done | grep:plan P4-03 | 2026-10-07 | 751 个文件（blocks 210、hlist 210、html 165、layout 154、paged 12）——全部是 span 字段：去掉位置、data-s 的有无与 data-s0 后与 P4-02 逐字节相同；e2e +1（run 级 offsetAt 与行级 elementsAt） | ContentNode::srcExact（实例化时：文字是自身来源，映射或恒等；materialize 移动节点时清除）；emit 的 TextSource 把每个簇的熟字节经 cooked→raw 映射得到源 span（插入的字节为点、删除的字节不属于任一侧），词的连字段与长 token 切片各有切片，连字符与边界胶为点，标点的半宽随其字形；无映射的文字（造出的文字）保留节点 span。paint 的 run data-s 取其第一个有源的项；layout 的行 span 取第一个有源项的起点与最远的终点（不再取最小值：笔记回链等造出文字不会把行起点拉回）。tools/check-spans.mjs 进 G1：每个 html golden 的内容 run 的 data-s 指向其首字符（或其转义的反斜杠、造出文字的标记处），同行按源顺序，同一流的行按源顺序；对 P4-02 的 golden 报 396 处，对现在的为 0。文档：document-model §9.1、shaping-design §7、REPORT、CLAUDE.md |
-| P4-04 | TextProps v1；标点/空白/autospace 数据化 | todo | | | | |
+| P4-04 | TextProps v1；标点/空白/autospace 数据化 | done | grep:plan P4-04（前置 1d7b592） | 2026-10-07 | 211 个文件：hlist 60、blocks 60（标点字形 +ε 1su）、breaks 32（只有代价，断点全部不变）、html 57 与 paged 2（tsr-sqL/R → margin px，上标 top px）；layout 不变；+1 用例 style/text-props（e2e 预期一条 overfull-line）；e2e +1 标点矩阵（4 dsf，偏差 ≤0.016px，与基线相同） | 前置提交：render.runWidths 设置（paint 预测每个 run 的宽度：项的原始宽、行的词距/字距、留存的空白、钉住宽度，写为 data-w），标点矩阵 punct.spec.mjs 与改动前基线。compat.def 新增 BLANK（各类前后空白 em）、ADVANCE（——/—/……/… 的定义宽度）行与 CONST superRaiseEm，ucdc 生成 kBlanks/kDefinedAdvances；pushPunct 改为空白数据上的一条压缩规则（none/book/full）；定义宽度查表取代 U+2014/U+2026 特判（任何被上下文定为宽的簇都可选用）；resolveWidths 按 kBlanks 减空白并加 ε；paint 两侧各自判断自身空白是否留存，缺失一侧写 margin px，契约 CSS 去掉 tsr-sqL/R 与 -0.45em（gen-schema 不再读 squeeze）；上标 top 为引擎 px。新属性 text.wrap（wrap|nowrap）、text.autospace、text.hyphens、text.overflowWrap（opsVersion 16，styled 参数 108–111）；text.space pre 的空格进刚性盒；正常模式下文字中任意位置的连续空格折叠（原只在文字开头）。文档：shaping-design §2、§8（新）、style-design、document-model §9.1、tsm-changes、REPORT |
 | P4-05 | UCD 字符类（RULES_VERSION 1）与 Unicode 控制符 | todo | | | | |
 | P4-06 | 连字注册表、ExHyphen、hyphens/overflowWrap | todo | | | | |
 | P4-07 | attach 语义；脚注附着移出解析器 | todo | | | | |
@@ -186,6 +186,7 @@
 | P4-01 后 | 3.90 | 11.70 | 28.00 | 1.6 / 3.2 / 0.9 / 10.6 / 3.4 | 74.2 / 106.7 / 149.1 | 1.70 / 22.70 / 58.10 | 均在 P4 阶段门限内（P3 结束 ×1.05+0.3：update 4.19 / 12.48 / 29.60，relayout 2.19 / 23.09 / 62.04）；kernContexts 每个词间胶多两次样式比较，量不出差别 |
 | P4-02 后 | 3.90 | 11.50 | 28.50 | 1.7 / 3.1 / 0.9 / 11.2 / 3.3 | 71.4 / 106.8 / 152.1 | 1.70 / 22.00 / 59.20 | 均在 P4 门限内（4.19 / 12.48 / 29.60；relayout 2.19 / 23.09 / 62.04）；35K 为 6 轮（3 轮 12.80）。初版 87K 36.90（ingest +2.8：软换行逐字建项；engine +5.6：逐簇查表），按 callgrind 优化后 engine 11.2（P4-01 10.6，+0.6：段落上下文扫描） |
 | P4-03 后 | 3.80 | 12.30 | 28.30 | 1.7 / 3.1 / 0.9 / 11.0 / 3.3 | 73.3 / 112.2 / 155.2 | 1.70 / 22.10 / 59.50 | 均在 P4 门限内；35K 为 6 轮（update 3 轮 15.30、relayout 3 轮 23.30 为机器噪声）；同机交替 A/B 各 6 轮：P4-02 12.30 / 12.20、本步 12.50 / 15.40（各轮中位数多在 15–16，噪声大），引擎阶段两者均 4.5–4.6 |
+| P4-04 后 | 3.90 | 12.50 | 28.80 | 1.8 / 3.2 / 0.9 / 11.1 / 3.4 | 74.2 / 113.5 / 157.0 | 1.70 / 22.30 / 58.40 | 均在 P4 门限内或噪声边缘：35K update 6 轮 12.50（门限 12.48，引擎阶段 4.5 与 P4-02/03 相同；3 轮 13.90），35K relayout 6 轮 22.30（3 轮 23.50，机器负载 3.4）；定义宽度查表先比首码位（callgrind：EmitPass 72.3M，P4-02 优化后 69.1M，含 P4-03 的逐簇源映射） |
 
 ## 偏差记录（MD-11）
 
@@ -474,6 +475,12 @@
 | P4-02 | golden 变化与设计所列不同：cjk/softwrap、code/runs、code/sidecar、code/tsm-hl、math/stretch、inline/quotes、doc/url-break 不变；另有 math/grid、math/symbols、inline/prose-guards、locale/quote-lang、splice/ascii-cut 与 6 个只有 hlist 的用例；无 OPS 变动 | 这些用例在节点内已有正确上下文（如 inline/quotes 的引号证据在节点内），或没有跨节点边界；多出的是公式后标点与跨节点边界胶的修正；软换行自 P2-10 起已是 U+000A（INTEGRATION：P4 无需 OPS 变动） | 无 |
 | P4-03 | 行的 data-s 改为第一个有源项的起点（原为所有项的最小值） | 设计 T5 的规定（data-s = 第一项，data-e = 最远终点）；逐项 span 之后，造出文字（笔记回链带整条笔记的 span）会把最小值拉到前一行之前 | 无 |
 | P4-03 | 合成项（连字符、边界胶）与解析器插入的字节取点 span，没有 data-s 的 run 由行的 data-s 定位 | 它们在源中没有字节；offsetAt 沿 closest('[data-s]') 落到行 | 无 |
+| P4-04 | 设计的 whiteSpace（normal|nowrap|pre）拆为 text.space（normal|pre，CSS white-space-collapse）与新属性 text.wrap（wrap|nowrap，CSS text-wrap-mode） | 给已有行 text.space 增加取值会改变既有行的定义域（旧引擎读到新值会拒绝），新增属性是附加词汇；拆分也对应 CSS Text 4 的两个长属性 | 无 |
+| P4-04 | text.hyphens 与 text.overflowWrap 本步只作为对块规则（标题、题注不连字也不切 URL）的覆盖：manual 暂同 none（软连字符在 P4-05 的 Unicode 控制符），anywhere 暂同 separators | 设计步骤 9（P4-06）以这两个属性取代 noHyphen 并建紧急断行表 | P4-05、P4-06 |
+| P4-04 | 压缩写成空白数据上的一条规则，而非按 locale 的 SpacingCell 矩阵 | 现有三种模式的全部结果都由"两段空白相遇保留几段、开括号后实排、闭合后去空白"得出；繁体的居中标点等只需改 BLANK 行；矩阵在需要新的相遇结果时再引入 | 无 |
+| P4-04 | text.space: pre 只能保留树中已有的空格：解析器把作者键入的连续空格折叠为一个（拼接字符串中的空格保留） | 行内文本的空白折叠在前端（P2 以来）；改变它会改动所有文本的 cooked 形式 | 无 |
+| P4-04 | text.wrap nowrap 作用于文字节点；nowrap 范围内的行内代码与对象按自身规则断行 | 对象之后的断点由其后邻决定（P4-02）；nowrap 的语义是"文字内部不断" | 无 |
+| P4-04 | emitter/scattered-magic-constants 在本步打勾，其中连字最短核心 5 与 URL 最短片段 3 仍是代码常量 | 两者属于连字词典与紧急断行表（P4-06 的 emitter/hyphenation-en-us-only、emitter/url-break-special-path 覆盖）；其余引擎数值已入规则或设置，CSS 不再携带引擎数值 | P4-06 |
 
 ## 阻塞记录（§4.7）
 

@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="108">中文English紧贴，默认 English 有间隙，中文English也有。</p>
+<p data-pid="1" data-s="110" data-e="240">A sentence with a phrase that never breaks inside itself and more words after it to wrap around.</p>
+<p data-pid="2" data-s="242" data-e="352">keep   these    spaces as written; outside, these   spaces collapse.</p>
+<p data-pid="3" data-s="354" data-e="487">extraordinarily antidisestablishmentarianism next to extraordinarily antidisestablishmentarianism.</p>
+<p data-pid="4" data-s="489" data-e="653">See <a href="https://example.com/a/very/long/path/that/stays/whole">https://example.com/a/very/long/path/that/stays/whole</a> beside <a href="https://example.com/a/very/long/path/that/may/break">https://example.com/a/very/long/path/that/may/break</a> here.</p>
+</div>

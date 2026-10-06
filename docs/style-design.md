@@ -171,8 +171,10 @@ The stylesheet now has three parts:
   `style_css.gen.h` (`contractClasses`, which the serializer calls) and
   `runtime/src/shared/contract.gen.mjs` (`CONTRACT_CSS`). It holds the
   classes that carry metrics: `tsr-b`, `tsr-i`, `tsr-cjk`, `tsr-code`,
-  `tsr-pre`, `tsr-sup`, the combinations, and the CJK squeeze
-  `tsr-sqL`/`tsr-sqR`, whose half comes from T5's `compat.def`.
+  `tsr-pre`, `tsr-sup`, and the combinations. (Plan P4-04) It carries no
+  engine number: the CJK squeeze is an explicit px margin and a
+  superscript's raise an explicit px `top` the engine writes on the run
+  (their amounts are T5's `compat.def`).
 - The shell's **layout module** (T7: positioning). Together with the
   contract it forms `TSR_CSS`.
 - The **theme**: `runtime/src/main/theme.css`, mirrored in

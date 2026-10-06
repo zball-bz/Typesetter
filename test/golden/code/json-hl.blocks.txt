@@ -5,7 +5,7 @@ top pid=0 units=1
   cjk "高" w=1025su glue=102su wt=0.6 pen=0 @[5,8)
   cjk "亮" w=1025su glue=102su wt=0.6 pen=0 @[8,11)
   punct-sp w=512su @[11,14)
-  punct-open "（" w=512su @[11,14)
+  punct-open "（" w=513su @[11,14)
   word "na" w=1025su pen=INF @[14,16)
   hyphen bw=513su pen=0.70 @[16,16)
   word "tive" w=2049su pen=INF @[16,20)
@@ -16,7 +16,7 @@ top pid=0 units=1
   cjk "接" w=1025su glue=102su wt=0.6 pen=0 @[30,33)
   space w=257su stretch=1 @[33,34)
   word "tree-sitter" w=5633su pen=INF @[34,45)
-  punct-close "，" w=512su @[45,48)
+  punct-close "，" w=513su @[45,48)
   punct-sp w=512su @[45,48)
   cjk "与" w=1025su glue=102su wt=0.6 pen=0 @[48,51)
   space w=257su stretch=1 @[51,52)
@@ -37,8 +37,8 @@ top pid=0 units=1
   word "ta" w=1025su pen=INF @[84,86)
   hyphen bw=513su pen=0.70 @[86,86)
   word "ble" w=1537su pen=INF @[86,89)
-  punct-close "）" w=512su @[89,92)
-  punct-close "：" w=512su @[92,95)
+  punct-close "）" w=513su @[89,92)
+  punct-close "：" w=513su @[92,95)
   punct-sp w=512su @[92,95)
 top pid=1 units=1
  unit code indent=0su lines=1 wrap

@@ -13,7 +13,7 @@ top pid=0 units=1
   box Ideo "行" w=1025su wt=0.6 cap=102su r0 @[15,18)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[15,18)
-  box CommaW "、" w=512su blank=R r1 @[18,21)
+  box CommaW "、" w=513su blank=R r1 @[18,21)
   glue blank w=512su x=0 cap=0su r1 @[18,21)
   box Ideo "装" w=1025su wt=0.6 cap=102su r2 @[21,24)
   glue inter w=0su x=0.6 cap=102su r2 @[21,24)
@@ -32,7 +32,7 @@ top pid=0 units=1
   box Ideo "数" w=1025su wt=0.6 cap=102su r2 @[42,45)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[42,45)
-  box ColonW "：" w=512su blank=R r3 @[45,48)
+  box ColonW "：" w=513su blank=R r3 @[45,48)
   glue blank w=512su x=0 cap=0su r3 @[45,48)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
@@ -51,7 +51,7 @@ top pid=2 units=1
   box Ideo "饰" w=1025su wt=0.6 cap=102su r0 @[358,361)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[358,361)
-  box ColonW "：" w=512su blank=R r1 @[361,364)
+  box ColonW "：" w=513su blank=R r1 @[361,364)
   glue blank w=512su x=0 cap=0su r1 @[361,364)
   box Ideo "下" w=1025su wt=0.6 cap=102su r2 @[390,393)
   glue inter w=0su x=0.6 cap=102su r2 @[390,393)
@@ -60,7 +60,7 @@ top pid=2 units=1
   box Ideo "线" w=1025su wt=0.6 cap=102su r2 @[396,399)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[396,399)
-  box CommaW "、" w=512su blank=R r3 @[400,403)
+  box CommaW "、" w=513su blank=R r3 @[400,403)
   glue blank w=512su x=0 cap=0su r3 @[400,403)
   box Ideo "删" w=1025su wt=0.6 cap=102su r4 @[426,429)
   glue inter w=0su x=0.6 cap=102su r4 @[426,429)
@@ -69,7 +69,7 @@ top pid=2 units=1
   box Ideo "线" w=1025su wt=0.6 cap=102su r4 @[432,435)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[432,435)
-  box CommaW "、" w=512su blank=R r5 @[436,439)
+  box CommaW "、" w=513su blank=R r5 @[436,439)
   glue blank w=512su x=0 cap=0su r5 @[436,439)
   box Ideo "上" w=1025su wt=0.6 cap=102su r6 @[464,467)
   glue inter w=0su x=0.6 cap=102su r6 @[464,467)
@@ -78,7 +78,7 @@ top pid=2 units=1
   box Ideo "线" w=1025su wt=0.6 cap=102su r6 @[470,473)
   pen INF r6
   glue inter w=0su x=0.6 cap=102su r6 @[470,473)
-  box FullStopW "。" w=512su blank=R r7 @[474,477)
+  box FullStopW "。" w=513su blank=R r7 @[474,477)
   glue blank w=512su x=0 cap=0su r7 @[474,477)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK

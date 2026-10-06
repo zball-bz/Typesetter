@@ -461,7 +461,20 @@ constexpr UcdRange kUcdRanges[] = {
 };
 
 // the rules' constants (em)
-constexpr double kRule_punctHalfEm = 0.5;
 constexpr double kRule_cjkBoundaryEm = 0.25;
+constexpr double kRule_superRaiseEm = 0.45;
+
+// (plan P4-04) each class's punctuation blanks (em): leading, trailing
+struct Blank { float l, r; };
+constexpr Blank kBlanks[] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0.5, 0}, {0, 0.5}, {0, 0.5}, {0, 0.5}, {0, 0.5}, {0, 0.5}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0.5, 0}, {0, 0.5}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
+// (plan P4-04) defined advances: a sequence set at a defined width (em),
+// longest first
+struct DefinedAdvance { std::uint32_t seq[3]; std::uint8_t len; float em; };
+constexpr DefinedAdvance kDefinedAdvances[] = {
+    {{0x2014, 0x2014, 0x0}, 2, 2},
+    {{0x2026, 0x2026, 0x0}, 2, 2},
+    {{0x2014, 0x0, 0x0}, 1, 1},
+    {{0x2026, 0x0, 0x0}, 1, 1},
+};
 
 }  // namespace tsr

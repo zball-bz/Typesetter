@@ -6,7 +6,7 @@ top pid=0 units=1
   cjk "格" w=1025su glue=102su wt=0.6 pen=0 @[9,12)
   cjk "换" w=1025su glue=102su wt=0.6 pen=0 @[12,15)
   cjk "行" w=1025su glue=102su wt=0.6 pen=INF @[15,18)
-  punct-close "、" w=512su @[18,21)
+  punct-close "、" w=513su @[18,21)
   punct-sp w=512su @[18,21)
   cjk "行" w=1025su glue=102su wt=0.6 pen=0 @[21,24)
   cjk "号" w=1025su glue=102su wt=0.6 pen=0 @[24,27)
@@ -14,7 +14,7 @@ top pid=0 units=1
   cjk "行" w=1025su glue=102su wt=0.6 pen=0 @[30,33)
   cjk "高" w=1025su glue=102su wt=0.6 pen=0 @[33,36)
   cjk "亮" w=1025su glue=102su wt=0.6 pen=INF @[36,39)
-  punct-close "：" w=512su @[39,42)
+  punct-close "：" w=513su @[39,42)
   punct-sp w=512su @[39,42)
 top pid=1 units=1
  unit code indent=0su lines=1 wrap lineNo=1 hl=1

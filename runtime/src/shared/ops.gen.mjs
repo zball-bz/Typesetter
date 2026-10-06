@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
-export const OPS_VERSION = 15;
+export const OPS_VERSION = 16;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = 'aa07cd98';
+export const SCHEMA_HASH = '3781f050';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -328,7 +328,11 @@ export const SINCE = Object.freeze({
       "103": 14,
       "104": 14,
       "106": 14,
-      "107": 14
+      "107": 14,
+      "108": 16,
+      "109": 16,
+      "110": 16,
+      "111": 16
     },
     "19": {
       "0": 9,
@@ -749,7 +753,11 @@ export const ARGK = Object.freeze({
   "placeGap": 104,
   "cont": 105,
   "textSpace": 106,
-  "overlays": 107
+  "overlays": 107,
+  "textWrap": 108,
+  "autospace": 109,
+  "hyphens": 110,
+  "overflowWrap": 111
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -1148,6 +1156,10 @@ export const SCHEMA = Object.freeze({
       "breakerStretch": "len",
       "placeFloat": "enum:none|left|right|top|bottom|page|inline",
       "textSpace": "enum:normal|pre",
+      "textWrap": "enum:wrap|nowrap",
+      "autospace": "enum:none|normal",
+      "hyphens": "enum:none|manual|auto",
+      "overflowWrap": "enum:normal|separators|anywhere",
       "placeWidth": "size",
       "placeGap": "len",
       "label": "label",

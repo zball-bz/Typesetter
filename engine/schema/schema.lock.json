@@ -307,7 +307,11 @@
   "placeGap": 104,
   "cont": 105,
   "textSpace": 106,
-  "overlays": 107
+  "overlays": 107,
+  "textWrap": 108,
+  "autospace": 109,
+  "hyphens": 110,
+  "overflowWrap": 111
  },
  "attrs": {
   "para.cont": 14,
@@ -537,6 +541,10 @@
   "styled.breakerStretch": 14,
   "styled.placeFloat": 14,
   "styled.textSpace": 14,
+  "styled.textWrap": 16,
+  "styled.autospace": 16,
+  "styled.hyphens": 16,
+  "styled.overflowWrap": 16,
   "styled.placeWidth": 14,
   "styled.placeGap": 14,
   "styled.label": 9,

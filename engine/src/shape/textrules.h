@@ -76,6 +76,26 @@ inline bool isAmbDashOrEllipsis(u32 cp) {
   return c == CC::AmbDash || c == CC::AmbEllipsis;
 }
 
+// (plan P4-04) a punctuation glyph's blanks (em, its class's: the rules'
+// BLANK rows): the compressible space its advance holds before and after
+inline Blank blankOf(u32 cp) { return kBlanks[(u8)ccOf(cp)]; }
+
+// (plan P4-04) the defined advance (the rules' ADVANCE rows) that starts at
+// byte i of s (whose first codepoint is `first`), the longest: its entry
+// and, in end, the byte after it; null when none does
+inline const DefinedAdvance* definedAdvanceAt(std::string_view s, u32 i, u32 first, u32& end) {
+  for (const DefinedAdvance& d : kDefinedAdvances) {
+    if (d.seq[0] != first) continue;  // (the common case: no row starts with it)
+    u32 j = i, k = 0;
+    while (k < d.len && j < s.size() && utf8Next(s, j) == d.seq[k]) k++;
+    if (k == d.len) {
+      end = j;
+      return &d;
+    }
+  }
+  return nullptr;
+}
+
 // (plan P4-02) a letter or digit of an alphabetic script — what an
 // apostrophe sits between (UAX #29 MidLetter). Compat has no Alpha class
 // yet (P4-05): ASCII alphanumerics and the letters below U+2000 outside the

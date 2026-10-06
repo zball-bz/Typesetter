@@ -7,7 +7,7 @@ top pid=0 units=1
   space w=257su stretch=1 @[10,11)
   cjk "文" w=1025su glue=102su wt=0.6 pen=0 @[11,14)
   cjk "法" w=1025su glue=102su wt=0.6 pen=INF @[14,17)
-  punct-close "：" w=512su @[17,20)
+  punct-close "：" w=513su @[17,20)
   punct-sp w=512su @[17,20)
   word "Type" w=2049su pen=INF @[20,24)
   hyphen bw=513su pen=0.70 @[24,24)
@@ -23,7 +23,7 @@ top pid=0 units=1
   cjk "举" w=1025su glue=102su wt=0.6 pen=0 @[46,49)
   cjk "高" w=1025su glue=102su wt=0.6 pen=0 @[49,52)
   cjk "亮" w=1025su glue=102su wt=0.6 pen=INF @[52,55)
-  punct-close "。" w=512su @[55,58)
+  punct-close "。" w=513su @[55,58)
   punct-sp w=512su @[55,58)
 top pid=1 units=1
  unit code indent=0su lines=14 wrap

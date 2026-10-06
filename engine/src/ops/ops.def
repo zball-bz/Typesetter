@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 // X-macro lists consumed by engine/src/ops/ops.h and ops.cc.
 //
-// OPS_VERSION(15)
+// OPS_VERSION(16)
 
 OP(MAKE_TEXT, 1)
 OP(MAKE_NODE, 2)
@@ -162,3 +162,7 @@ ARGK(placeGap, placeGap, 104)
 ARGK(cont, cont, 105)
 ARGK(textSpace, textSpace, 106)
 ARGK(overlays, overlays, 107)
+ARGK(textWrap, textWrap, 108)
+ARGK(autospace, autospace, 109)
+ARGK(hyphens, hyphens, 110)
+ARGK(overflowWrap, overflowWrap, 111)

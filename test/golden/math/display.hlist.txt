@@ -15,7 +15,7 @@ top pid=0 units=1
   box Ideo "法" w=1025su wt=0.6 cap=102su r0 @[18,21)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[18,21)
-  box ColonW "：" w=512su blank=R r1 @[21,24)
+  box ColonW "：" w=513su blank=R r1 @[21,24)
   glue blank w=512su x=0 cap=0su r1 @[21,24)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
@@ -54,7 +54,7 @@ top pid=2 units=1
   box Ideo "散" w=1025su wt=0.6 cap=102su r8 @[101,104)
   pen INF r8
   glue inter w=0su x=0.6 cap=102su r8 @[101,104)
-  box FullStopW "。" w=512su blank=R r9 @[104,107)
+  box FullStopW "。" w=513su blank=R r9 @[104,107)
   glue blank w=512su x=0 cap=0su r9 @[104,107)
   obj o0 math parts=3 edges=Alpha/Alpha src="s = 1" [w=466su asc=477su desc=17su] [w=774su asc=377su desc=0su glue=284su] [w=511su asc=727su desc=7su glue=284su]
   run r0 letter-spaced CJK

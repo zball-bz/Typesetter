@@ -442,18 +442,11 @@ const contract = S.contract ?? { classes: {}, rules: [] };
 css += `// the contract classes a run's style gives it (schema "contract"; plan P3-18)\n` +
   `template <class Add>\ninline void contractClasses(const Styling& st, Add add) {\n` +
   Object.entries(contract.classes).map(([c, r]) => `  if (${r.when}) add("${c}");\n`).join('') + `}\n\n}  // namespace tsr\n`;
-// the contract's stylesheet: its classes, its rules, the punctuation squeeze
-// (its half from the TextRules data, T5)
-const squeezeEm = (() => {
-  const sq = contract.squeeze;
-  if (!sq) return null;
-  const def = readFileSync(join(root, sq.def), 'utf8');
-  const m = def.match(new RegExp(`CONST\\(${sq.const},\\s*([0-9.]+)\\)`));
-  if (!m) throw new Error(`contract squeeze: no CONST(${sq.const}, …) in ${sq.def}`);
-  return m[1];
-})();
+// the contract's stylesheet: its classes and its rules (plan P4-04: no
+// engine number — the punctuation squeeze and the superscript raise are px
+// the engine writes on the run)
 const contractCss = Object.entries(contract.classes).map(([c, r]) => `.${c} { ${r.css}; }`).concat(contract.rules)
-  .concat(squeezeEm ? [`.tsr-sqL { margin-left: -${squeezeEm}em; }`, `.tsr-sqR { margin-right: -${squeezeEm}em; }`] : []).join('\n');
+  .join('\n');
 const contractJs = `// ${HDR}\n// The render contract's stylesheet (schema "contract"; plan P3-18): the\n// metric-bearing classes the serializer writes, as the engine measured them.\n` +
   `export const CONTRACT_CSS = ${JSON.stringify(contractCss + '\n')};\n`;
 // (plan P3-20, P3-21; design T9 A2) the URL policy: engine/schema/url_policy.def

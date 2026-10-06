@@ -1,0 +1,9 @@
+中文#style({text: {autospace: 'none'}})[English]紧贴，默认 English 有间隙，中文English也有。
+
+A sentence with #style({text: {wrap: 'nowrap'}})[a phrase that never breaks inside itself] and more words after it to wrap around.
+
+#style({text: {space: 'pre'}})[#("keep   these    spaces")] as written; outside, #("these   spaces") collapse.
+
+#style({text: {hyphens: 'none'}})[extraordinarily antidisestablishmentarianism] next to extraordinarily antidisestablishmentarianism.
+
+See #style({text: {overflowWrap: 'normal'}})[https://example.com/a/very/long/path/that/stays/whole] beside https://example.com/a/very/long/path/that/may/break here.

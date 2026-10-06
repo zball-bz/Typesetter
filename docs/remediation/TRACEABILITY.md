@@ -1116,7 +1116,7 @@ Theme steps: — · findings: 1
 | `resolver/missed:5` | missed | low | P0-09, P1-03, P1-10 | grep:plan P1-10 |
 | `emitter/paragraph-blind-script-context` | adhoc | high | P4-02 | grep:plan P4-02 |
 | `emitter/hardcoded-script-class-tables` | adhoc | high | P4-05 | |
-| `emitter/punct-compression-control-flow` | adhoc | high | P4-04 | |
+| `emitter/punct-compression-control-flow` | adhoc | high | P4-04 | grep:plan P4-04 |
 | `emitter/hyphenation-en-us-only` | adhoc | high | P4-06 | |
 | `emitter/math-only-inline-box` | adhoc | high | P1-13, P3-26 | grep:plan P3-26 |
 | `emitter/flowunit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
@@ -1125,7 +1125,7 @@ Theme steps: — · findings: 1
 | `emitter/bf-flag-overload-and-rederivation` | adhoc | medium | P1-12 | grep:plan P1-12 |
 | `emitter/url-break-special-path` | adhoc | medium | P4-06 | |
 | `emitter/boundary-glue-constant` | adhoc | medium | P4-02 | grep:plan P4-02 |
-| `emitter/defined-width-dash-ellipsis` | adhoc | medium | P4-04 | |
+| `emitter/defined-width-dash-ellipsis` | adhoc | medium | P4-04 | grep:plan P4-04 |
 | `emitter/latin-quote-heuristic` | adhoc | medium | P4-02 | grep:plan P4-02 |
 | `emitter/sup-bit-attach-rule` | adhoc | medium | P4-07 | |
 | `emitter/kern-context-postpass` | adhoc | medium | P4-01 | |
@@ -1135,7 +1135,7 @@ Theme steps: — · findings: 1
 | `emitter/global-typography-config` | adhoc | medium | P3-02 | grep:plan P3-02 |
 | `emitter/codeblock-args-in-emit` | adhoc | low | P0-06, P3-02, P3-11 | |
 | `emitter/anchor-opt-in-per-kind` | adhoc | low | P1-18 | grep:plan P1-18 |
-| `emitter/scattered-magic-constants` | adhoc | low | P3-02, P4-04 | |
+| `emitter/scattered-magic-constants` | adhoc | low | P3-02, P4-04 | grep:plan P4-04 |
 | `emitter/stale-emit-on-relayout` | issue | high | P1-16 | grep:plan P1-16 |
 | `emitter/sizepx-em-mismatch` | issue | high | P0-08 | grep:plan P0-08 |
 | `emitter/kp-counts-discardable-glue` | issue | medium | P0-12 | grep:plan P0-12 |

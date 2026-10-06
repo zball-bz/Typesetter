@@ -33,7 +33,7 @@ top pid=0 units=1
   box Ideo "叠" w=1025su wt=0.6 cap=102su r0 @[45,48)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[45,48)
-  box CommaW "，" w=512su blank=R r1 @[48,51)
+  box CommaW "，" w=513su blank=R r1 @[48,51)
   glue blank w=512su x=0 cap=0su r1 @[48,51)
   box Ideo "而" w=1025su wt=0.6 cap=102su r2 @[51,54)
   glue inter w=0su x=0.6 cap=102su r2 @[51,54)
@@ -72,7 +72,7 @@ top pid=0 units=1
   box Ideo "白" w=1025su wt=0.6 cap=102su r2 @[102,105)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[102,105)
-  box FullStopW "。" w=512su blank=R r3 @[105,108)
+  box FullStopW "。" w=513su blank=R r3 @[105,108)
   glue blank w=512su x=0 cap=0su r3 @[105,108)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
@@ -85,7 +85,7 @@ top pid=1 units=1
    pen 0 r0
    glue word w=257su x=1 cap=257su src r1 @[212,227)
    box Other "1" w=513su r1 @[212,227)
-   box ColonW "：" w=512su blank=R r2 @[212,227)
+   box ColonW "：" w=513su blank=R r2 @[212,227)
    glue blank w=512su x=0 cap=0su r2 @[212,227)
    box Ideo "第" w=1025su wt=0.6 cap=102su r3 @[212,215)
    glue inter w=0su x=0.6 cap=102su r3 @[212,215)
@@ -96,7 +96,7 @@ top pid=1 units=1
    box Ideo "图" w=1025su wt=0.6 cap=102su r3 @[221,224)
    pen INF r3
    glue inter w=0su x=0.6 cap=102su r3 @[221,224)
-   box FullStopW "。" w=512su blank=R r4 @[224,227)
+   box FullStopW "。" w=513su blank=R r4 @[224,227)
    glue blank w=512su x=0 cap=0su r4 @[224,227)
    run r0 letter-spaced BOLD CJK
    run r1 plain BOLD
@@ -110,7 +110,7 @@ top pid=2 units=1
    pen 0 r0
    glue word w=257su x=1 cap=257su src r1 @[340,376)
    box Other "2" w=513su r1 @[340,376)
-   box ColonW "：" w=512su blank=R r2 @[340,376)
+   box ColonW "：" w=513su blank=R r2 @[340,376)
    glue blank w=512su x=0 cap=0su r2 @[340,376)
    box Ideo "第" w=1025su wt=0.6 cap=102su r3 @[340,343)
    glue inter w=0su x=0.6 cap=102su r3 @[340,343)
@@ -121,7 +121,7 @@ top pid=2 units=1
    box Ideo "图" w=1025su wt=0.6 cap=102su r3 @[349,352)
    pen INF r3
    glue inter w=0su x=0.6 cap=102su r3 @[349,352)
-   box CommaW "，" w=512su blank=R r4 @[352,355)
+   box CommaW "，" w=513su blank=R r4 @[352,355)
    glue blank w=512su x=0 cap=0su r4 @[352,355)
    box Ideo "紧" w=1025su wt=0.6 cap=102su r5 @[355,358)
    glue inter w=0su x=0.6 cap=102su r5 @[355,358)
@@ -136,7 +136,7 @@ top pid=2 units=1
    box Ideo "张" w=1025su wt=0.6 cap=102su r5 @[370,373)
    pen INF r5
    glue inter w=0su x=0.6 cap=102su r5 @[370,373)
-   box FullStopW "。" w=512su blank=R r6 @[373,376)
+   box FullStopW "。" w=513su blank=R r6 @[373,376)
    glue blank w=512su x=0 cap=0su r6 @[373,376)
    run r0 letter-spaced BOLD CJK
    run r1 plain BOLD
@@ -193,7 +193,7 @@ top pid=4 units=1
   box Ideo "绕" w=1025su wt=0.6 cap=102su r0 @[452,455)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[452,455)
-  box CommaW "，" w=512su blank=R r1 @[455,458)
+  box CommaW "，" w=513su blank=R r1 @[455,458)
   glue blank w=512su x=0 cap=0su r1 @[455,458)
   box Ideo "收" w=1025su wt=0.6 cap=102su r2 @[458,461)
   glue inter w=0su x=0.6 cap=102su r2 @[458,461)
@@ -220,7 +220,7 @@ top pid=4 units=1
   box Ideo "者" w=1025su wt=0.6 cap=102su r2 @[491,494)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[491,494)
-  box CommaW "，" w=512su blank=R r3 @[494,497)
+  box CommaW "，" w=513su blank=R r3 @[494,497)
   glue blank w=512su x=0 cap=0su r3 @[494,497)
   box Ideo "直" w=1025su wt=0.6 cap=102su r4 @[497,500)
   glue inter w=0su x=0.6 cap=102su r4 @[497,500)
@@ -259,7 +259,7 @@ top pid=4 units=1
   box Ideo "心" w=1025su wt=0.6 cap=102su r4 @[548,551)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[548,551)
-  box ColonW "；" w=512su blank=R r5 @[551,554)
+  box ColonW "；" w=513su blank=R r5 @[551,554)
   glue blank w=512su x=0 cap=0su r5 @[551,554)
   box Ideo "这" w=1025su wt=0.6 cap=102su r6 @[554,557)
   glue inter w=0su x=0.6 cap=102su r6 @[554,557)
@@ -280,7 +280,7 @@ top pid=4 units=1
   box Ideo "长" w=1025su wt=0.6 cap=102su r6 @[578,581)
   pen INF r6
   glue inter w=0su x=0.6 cap=102su r6 @[578,581)
-  box CommaW "，" w=512su blank=R r7 @[581,584)
+  box CommaW "，" w=513su blank=R r7 @[581,584)
   glue blank w=512su x=0 cap=0su r7 @[581,584)
   box Ideo "以" w=1025su wt=0.6 cap=102su r8 @[584,587)
   glue inter w=0su x=0.6 cap=102su r8 @[584,587)
@@ -311,7 +311,7 @@ top pid=4 units=1
   box Ideo "行" w=1025su wt=0.6 cap=102su r8 @[623,626)
   pen INF r8
   glue inter w=0su x=0.6 cap=102su r8 @[623,626)
-  box CommaW "，" w=512su blank=R r9 @[626,629)
+  box CommaW "，" w=513su blank=R r9 @[626,629)
   glue blank w=512su x=0 cap=0su r9 @[626,629)
   box Ideo "再" w=1025su wt=0.6 cap=102su r10 @[629,632)
   glue inter w=0su x=0.6 cap=102su r10 @[629,632)
@@ -358,7 +358,7 @@ top pid=4 units=1
   box Ideo "度" w=1025su wt=0.6 cap=102su r10 @[692,695)
   pen INF r10
   glue inter w=0su x=0.6 cap=102su r10 @[692,695)
-  box CommaW "，" w=512su blank=R r11 @[695,698)
+  box CommaW "，" w=513su blank=R r11 @[695,698)
   glue blank w=512su x=0 cap=0su r11 @[695,698)
   box Ideo "并" w=1025su wt=0.6 cap=102su r12 @[698,701)
   glue inter w=0su x=0.6 cap=102su r12 @[698,701)
@@ -397,7 +397,7 @@ top pid=4 units=1
   box Ideo "置" w=1025su wt=0.6 cap=102su r12 @[749,752)
   pen INF r12
   glue inter w=0su x=0.6 cap=102su r12 @[749,752)
-  box FullStopW "。" w=512su blank=R r13 @[752,755)
+  box FullStopW "。" w=513su blank=R r13 @[752,755)
   glue blank w=512su x=0 cap=0su r13 @[752,755)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
@@ -430,7 +430,7 @@ top pid=5 units=1
   box Ideo "布" w=1025su wt=0.6 cap=102su r0 @[775,778)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[775,778)
-  box CommaW "，" w=512su blank=R r1 @[778,781)
+  box CommaW "，" w=513su blank=R r1 @[778,781)
   glue blank w=512su x=0 cap=0su r1 @[778,781)
   box Ideo "此" w=1025su wt=0.6 cap=102su r2 @[781,784)
   glue inter w=0su x=0.6 cap=102su r2 @[781,784)
@@ -459,7 +459,7 @@ top pid=5 units=1
   box Ideo "域" w=1025su wt=0.6 cap=102su r2 @[817,820)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[817,820)
-  box CommaW "，" w=512su blank=R r3 @[820,823)
+  box CommaW "，" w=513su blank=R r3 @[820,823)
   glue blank w=512su x=0 cap=0su r3 @[820,823)
   box Ideo "回" w=1025su wt=0.6 cap=102su r4 @[823,826)
   glue inter w=0su x=0.6 cap=102su r4 @[823,826)
@@ -474,7 +474,7 @@ top pid=5 units=1
   box Ideo "心" w=1025su wt=0.6 cap=102su r4 @[838,841)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[838,841)
-  box ColonW "；" w=512su blank=R r5 @[841,844)
+  box ColonW "；" w=513su blank=R r5 @[841,844)
   glue blank w=512su x=0 cap=0su r5 @[841,844)
   box Ideo "如" w=1025su wt=0.6 cap=102su r6 @[844,847)
   glue inter w=0su x=0.6 cap=102su r6 @[844,847)
@@ -485,7 +485,7 @@ top pid=5 units=1
   box Ideo "有" w=1025su wt=0.6 cap=102su r6 @[853,856)
   pen INF r6
   glue inter w=0su x=0.6 cap=102su r6 @[853,856)
-  box CommaW "，" w=512su blank=R r7 @[856,859)
+  box CommaW "，" w=513su blank=R r7 @[856,859)
   glue blank w=512su x=0 cap=0su r7 @[856,859)
   box Ideo "说" w=1025su wt=0.6 cap=102su r8 @[859,862)
   glue inter w=0su x=0.6 cap=102su r8 @[859,862)
@@ -514,7 +514,7 @@ top pid=5 units=1
   box Ideo "误" w=1025su wt=0.6 cap=102su r8 @[895,898)
   pen INF r8
   glue inter w=0su x=0.6 cap=102su r8 @[895,898)
-  box FullStopW "。" w=512su blank=R r9 @[898,901)
+  box FullStopW "。" w=513su blank=R r9 @[898,901)
   glue blank w=512su x=0 cap=0su r9 @[898,901)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK

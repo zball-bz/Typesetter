@@ -41,6 +41,8 @@ const AUDIT_XFAIL = new Map([
 // reported (plan P0-12): these fixtures expect exactly that warning.
 const EXPECTED_DIAGS = new Map([
   ['doc/url-overlong', /^warning overfull-line [^\n]*\n$/],  // two 500px URL segments at 300px
+  // (plan P4-04) a URL whose overflowWrap is normal overflows on purpose
+  ['style/text-props', /^warning overfull-line [^\n]*\n$/],
   // a formula in a 47px table cell; Id is an undeclared name (plan P3-24, D-M04: info)
   ['region/hott-row', /^info math-implicit-name [^\n]*\nwarning overfull-line [^\n]*\n$/],
   // defeq before its declaration is a name, and says so (plan P3-24, D-M04)

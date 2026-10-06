@@ -1,0 +1,15 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,108)
+    paragraph para unit=0 @[0,108)
+top pid=1 leaves=1
+  stack root gap=1/1 @[110,240)
+    paragraph para unit=0 @[110,240)
+top pid=2 leaves=1
+  stack root gap=1/1 @[242,352)
+    paragraph para unit=0 @[242,352)
+top pid=3 leaves=1
+  stack root gap=1/1 @[354,487)
+    paragraph para unit=0 @[354,487)
+top pid=4 leaves=1
+  stack root gap=1/1 @[489,653)
+    paragraph para unit=0 @[489,653)

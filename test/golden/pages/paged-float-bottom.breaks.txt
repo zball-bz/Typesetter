@@ -1,3 +1,3 @@
 top pid=0 unit=0 lines=4 cost=0.8791 breakpoints=[20,40,60,65]
-top pid=1 unit=0 cell=0 lines=3 cost=270.7581 breakpoints=[7,13,14]
+top pid=1 unit=0 cell=0 lines=3 cost=270.4152 breakpoints=[7,13,14]
 top pid=2 unit=0 lines=6 cost=11.7609 breakpoints=[8,18,28,36,46,49]

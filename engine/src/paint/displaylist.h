@@ -39,14 +39,15 @@ struct DLRun {
   StrRef synName = 0, copyText = 0;
   u32 copyGroup = 0;
   u32 dataS = ~0u;       // its source start (absolute), ~0u = none
-  const char* cls = nullptr;  // an extra class (a squeezed glyph's tsr-sqL / tsr-sqR)
+  const char* cls = nullptr;  // an extra class
   StrRef error = 0;          // (plan P3-16) an error's run: tsr-err, its message as title
   float lh = 0;              // (plan P3-19) > 0: a user family's content-height line-height
   const char* syn = nullptr;  // its data-syn (hyphen, indent, boundary, …)
   // the run's own spacing (copied from layout's line values)
   enum class Fit : u8 { None, LetterSpacing, Pinned } fit = Fit::None;
   double letterPx = 0, marginRightPx = 0, widthPx = 0;
-  bool marginRight = false;
+  double marginLeftPx = 0;      // (plan P4-04) a squeezed glyph's leading blank
+  bool marginRight = false;     // (a squeezed glyph's trailing blank, a pinned box's gap, …)
   bool rigid = false;           // (plan P4-01) a Rigid run with spaces on a justified line: word-spacing 0
   double predictPx = -1;        // (plan P4-04, render.runWidths) its width as set: items, spacing, blanks (< 0: none)
   StrRef text = 0;              // Glyph: its text

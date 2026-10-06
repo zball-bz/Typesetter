@@ -13,7 +13,7 @@ top pid=0 units=1
   box Ideo "里" w=1025su wt=0.6 cap=102su r0 @[15,18)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[15,18)
-  box CommaW "，" w=512su blank=R r1 @[18,21)
+  box CommaW "，" w=513su blank=R r1 @[18,21)
   glue blank w=512su x=0 cap=0su r1 @[18,21)
   box Ideo "长" w=1025su wt=0.6 cap=102su r2 @[21,24)
   glue inter w=0su x=0.6 cap=102su r2 @[21,24)
@@ -84,7 +84,7 @@ top pid=0 units=1
   box Ideo "行" w=1025su wt=0.6 cap=102su r22 @[122,125)
   pen INF r22
   glue inter w=0su x=0.6 cap=102su r22 @[122,125)
-  box CommaW "，" w=512su blank=R r23 @[125,128)
+  box CommaW "，" w=513su blank=R r23 @[125,128)
   glue blank w=512su x=0 cap=0su r23 @[125,128)
   box Ideo "续" w=1025su wt=0.6 cap=102su r24 @[128,131)
   glue inter w=0su x=0.6 cap=102su r24 @[128,131)
@@ -109,7 +109,7 @@ top pid=0 units=1
   box Ideo "法" w=1025su wt=0.6 cap=102su r24 @[158,161)
   pen INF r24
   glue inter w=0su x=0.6 cap=102su r24 @[158,161)
-  box FullStopW "。" w=512su blank=R r25 @[161,164)
+  box FullStopW "。" w=513su blank=R r25 @[161,164)
   glue blank w=512su x=0 cap=0su r25 @[161,164)
   obj o0 math parts=9 edges=Alpha/Alpha src="a_1 + a_2 + a_3 = b_1 + b_2 <= c^2 + d^2" [w=2034su asc=600su desc=162su] [w=2034su asc=600su desc=154su glue=228su] [w=1033su asc=477su desc=166su glue=228su] [w=774su asc=377su desc=0su glue=284su] [w=2012su asc=700su desc=162su glue=284su] [w=1011su asc=700su desc=154su glue=228su] [w=819su asc=665su desc=153su glue=284su] [w=1908su asc=967su desc=76su glue=284su] [w=1026su asc=967su desc=19su glue=228su]
   run r0 letter-spaced CJK

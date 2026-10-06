@@ -24,6 +24,10 @@ struct Styling {
   StrRef features = 0;  // text.features
   u8 punct = 0;  // text.punct
   u8 space = 0;  // text.space
+  u8 wrap = 0;  // text.wrap
+  u8 autospace = 0;  // text.autospace
+  u8 hyphens = 0;  // text.hyphens
+  u8 overflowWrap = 0;  // text.overflowWrap
   StrRef classes = 0;  // text.classes
   u8 script = 0;  // engine.script
   bool operator==(const Styling& o) const {
@@ -41,6 +45,10 @@ struct Styling {
            features == o.features &&
            punct == o.punct &&
            space == o.space &&
+           wrap == o.wrap &&
+           autospace == o.autospace &&
+           hyphens == o.hyphens &&
+           overflowWrap == o.overflowWrap &&
            classes == o.classes &&
            script == o.script;
   }
@@ -60,6 +68,16 @@ constexpr u8 PUNCT_BOOK = 2;
 constexpr u8 PUNCT_NONE = 3;
 constexpr u8 SPACE_NORMAL = 1;
 constexpr u8 SPACE_PRE = 2;
+constexpr u8 WRAP_WRAP = 1;
+constexpr u8 WRAP_NOWRAP = 2;
+constexpr u8 AUTOSPACE_NONE = 1;
+constexpr u8 AUTOSPACE_NORMAL = 2;
+constexpr u8 HYPHENS_NONE = 1;
+constexpr u8 HYPHENS_MANUAL = 2;
+constexpr u8 HYPHENS_AUTO = 3;
+constexpr u8 OVERFLOWWRAP_NORMAL = 1;
+constexpr u8 OVERFLOWWRAP_SEPARATORS = 2;
+constexpr u8 OVERFLOWWRAP_ANYWHERE = 3;
 
 // a hash over the canonical bits of every field
 struct StylingHash {
@@ -88,6 +106,10 @@ struct StylingHash {
     mix((u64)s.features);
     mix((u64)s.punct);
     mix((u64)s.space);
+    mix((u64)s.wrap);
+    mix((u64)s.autospace);
+    mix((u64)s.hyphens);
+    mix((u64)s.overflowWrap);
     mix((u64)s.classes);
     mix((u64)s.script);
     return (size_t)h;
@@ -160,6 +182,28 @@ inline void applyStyleArg(Styling& st, const ArgVal& a, Intern intern, View view
     const std::string_view v = view(a.ref);
     if (v == "normal") st.space = 1;
     if (v == "pre") st.space = 2;
+  }
+  if (a.key == ArgK::textWrap && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "wrap") st.wrap = 1;
+    if (v == "nowrap") st.wrap = 2;
+  }
+  if (a.key == ArgK::autospace && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "none") st.autospace = 1;
+    if (v == "normal") st.autospace = 2;
+  }
+  if (a.key == ArgK::hyphens && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "none") st.hyphens = 1;
+    if (v == "manual") st.hyphens = 2;
+    if (v == "auto") st.hyphens = 3;
+  }
+  if (a.key == ArgK::overflowWrap && a.tag == ArgTag::Str) {
+    const std::string_view v = view(a.ref);
+    if (v == "normal") st.overflowWrap = 1;
+    if (v == "separators") st.overflowWrap = 2;
+    if (v == "anywhere") st.overflowWrap = 3;
   }
 }
 
@@ -573,6 +617,14 @@ inline constexpr StyleKeyRow kStyleKeys[] = {
     {"text.punct", ArgK::punct},
     {"textSpace", ArgK::textSpace},
     {"text.space", ArgK::textSpace},
+    {"textWrap", ArgK::textWrap},
+    {"text.wrap", ArgK::textWrap},
+    {"autospace", ArgK::autospace},
+    {"text.autospace", ArgK::autospace},
+    {"hyphens", ArgK::hyphens},
+    {"text.hyphens", ArgK::hyphens},
+    {"overflowWrap", ArgK::overflowWrap},
+    {"text.overflowWrap", ArgK::overflowWrap},
 };
 // whether an attribute patches a block property
 inline bool isNodeArg(ArgK k) {

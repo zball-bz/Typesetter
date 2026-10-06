@@ -13,7 +13,7 @@ top pid=0 units=1
   box Ideo "行" w=1025su wt=0.6 cap=102su r0 @[15,18)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[15,18)
-  box CommaW "、" w=512su blank=R r1 @[18,21)
+  box CommaW "、" w=513su blank=R r1 @[18,21)
   glue blank w=512su x=0 cap=0su r1 @[18,21)
   box Ideo "行" w=1025su wt=0.6 cap=102su r2 @[21,24)
   glue inter w=0su x=0.6 cap=102su r2 @[21,24)
@@ -28,7 +28,7 @@ top pid=0 units=1
   box Ideo "亮" w=1025su wt=0.6 cap=102su r2 @[36,39)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[36,39)
-  box ColonW "：" w=512su blank=R r3 @[39,42)
+  box ColonW "：" w=513su blank=R r3 @[39,42)
   glue blank w=512su x=0 cap=0su r3 @[39,42)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK

@@ -19,5 +19,5 @@ top pid=0 units=1
   cjk "带" w=1025su glue=102su wt=0.6 pen=0 @[47,50)
   cjk "诊" w=1025su glue=102su wt=0.6 pen=0 @[50,53)
   cjk "断" w=1025su glue=102su wt=0.6 pen=INF @[53,56)
-  punct-close "。" w=512su @[56,59)
+  punct-close "。" w=513su @[56,59)
   punct-sp w=512su @[56,59)

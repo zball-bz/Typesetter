@@ -32,7 +32,7 @@ top pid=0 units=1
   box Ideo "文" w=1025su wt=0.6 cap=102su r5 @[107,110)
   pen INF r5
   glue inter w=0su x=0.6 cap=102su r5 @[107,110)
-  box FullStopW "。" w=512su blank=R r6 @[110,113)
+  box FullStopW "。" w=513su blank=R r6 @[110,113)
   glue blank w=512su x=0 cap=0su r6 @[110,113)
   box Other "An" w=1025su r7 @[113,115)
   glue word w=257su x=1 cap=257su kern="n i" src r7 @[115,116)

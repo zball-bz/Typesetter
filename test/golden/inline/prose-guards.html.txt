@@ -31,6 +31,6 @@
 <div class="tsr-line" data-s="0" data-e="27" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A hard break ends this line</span></div>
 <div class="tsr-line" data-s="30" data-e="74" data-join="none" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="30">and the next starts at the margin; </span><span class="tsr-r tsr-cjk" data-s="65">中文也</span></div>
 <div class="tsr-line" data-s="74" data-e="80" style="top:48px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="74">可以</span></div>
-<div class="tsr-line" data-s="82" data-e="94" style="top:72px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="82">硬换行</span><span class="tsr-r tsr-cjk tsr-sqR" data-s="91">。</span></div>
+<div class="tsr-line" data-s="82" data-e="94" style="top:72px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="82">硬换行</span><span class="tsr-r tsr-cjk" data-s="91" style="margin-right:-8px">。</span></div>
 </div>
 </div>

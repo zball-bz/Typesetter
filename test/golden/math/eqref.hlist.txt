@@ -31,7 +31,7 @@ top pid=0 units=1
   box Ideo "论" w=1025su wt=0.6 cap=102su r0 @[42,45)
   pen INF r0
   glue inter w=0su x=0.6 cap=102su r0 @[42,45)
-  box ColonW "：" w=512su blank=R r1 @[45,48)
+  box ColonW "：" w=513su blank=R r1 @[45,48)
   glue blank w=512su x=0 cap=0su r1 @[45,48)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
@@ -68,7 +68,7 @@ top pid=2 units=1
   box Ideo "价" w=1025su wt=0.6 cap=102su r4 @[102,105)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[102,105)
-  box FullStopW "。" w=512su blank=R r5 @[105,108)
+  box FullStopW "。" w=513su blank=R r5 @[105,108)
   glue blank w=512su x=0 cap=0su r5 @[105,108)
   box Ideo "高" w=1025su wt=0.6 cap=102su r6 @[108,111)
   glue inter w=0su x=0.6 cap=102su r6 @[108,111)
@@ -102,7 +102,7 @@ top pid=4 units=1
   pen 0 r1
   glue word w=257su x=1 cap=257su src r2 @[181,187)
   box Other "(2)" w=1537su r2 @[181,187)
-  box ColonW "；" w=512su blank=R r3 @[187,190)
+  box ColonW "；" w=513su blank=R r3 @[187,190)
   glue blank w=512su x=0 cap=0su r3 @[187,190)
   box Ideo "无" w=1025su wt=0.6 cap=102su r4 @[190,193)
   glue inter w=0su x=0.6 cap=102su r4 @[190,193)
@@ -121,7 +121,7 @@ top pid=4 units=1
   box Ideo "号" w=1025su wt=0.6 cap=102su r4 @[211,214)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[211,214)
-  box FullStopW "。" w=512su blank=R r5 @[214,217)
+  box FullStopW "。" w=513su blank=R r5 @[214,217)
   glue blank w=512su x=0 cap=0su r5 @[214,217)
   box Ideo "设" w=1025su wt=0.6 cap=102su r6 @[217,220)
   pen 0 r6
@@ -136,7 +136,7 @@ top pid=4 units=1
   box Ideo "数" w=1025su wt=0.6 cap=102su r10 @[229,232)
   pen INF r10
   glue inter w=0su x=0.6 cap=102su r10 @[229,232)
-  box CommaW "，" w=512su blank=R r11 @[232,235)
+  box CommaW "，" w=513su blank=R r11 @[232,235)
   glue blank w=512su x=0 cap=0su r11 @[232,235)
   box Ideo "则" w=1025su wt=0.6 cap=102su r12 @[235,238)
   pen 0 r12
@@ -157,7 +157,7 @@ top pid=4 units=1
   box Ideo "立" w=1025su wt=0.6 cap=102su r20 @[254,257)
   pen INF r20
   glue inter w=0su x=0.6 cap=102su r20 @[254,257)
-  box FullStopW "。" w=512su blank=R r21 @[257,260)
+  box FullStopW "。" w=513su blank=R r21 @[257,260)
   glue blank w=512su x=0 cap=0su r21 @[257,260)
   obj o0 math parts=1 edges=Alpha/Alpha src="x" [w=539su asc=475su desc=12su]
   obj o1 math parts=3 edges=Alpha/Alpha src="x^2 >= 0" [w=948su asc=967su desc=12su] [w=819su asc=665su desc=153su glue=284su] [w=511su asc=721su desc=14su glue=284su]

@@ -75,7 +75,7 @@ top pid=2 units=2
   cjk "圖" w=1025su glue=102su wt=0.6 pen=0 BOLD @[219,228)
   space w=257su stretch=1 BOLD @[219,228)
   word "1" w=513su pen=INF BOLD @[219,228)
-  punct-close "：" w=512su BOLD @[219,228)
+  punct-close "：" w=513su BOLD @[219,228)
   punct-sp w=512su BOLD @[219,228)
   word "A" w=513su pen=INF @[219,220)
   space w=257su stretch=1 @[220,221)

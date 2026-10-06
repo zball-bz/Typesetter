@@ -105,7 +105,7 @@ top pid=2 units=2
   pen 0 r0
   glue word w=257su x=1 cap=257su src r1 @[219,228)
   box Other "1" w=513su r1 @[219,228)
-  box ColonW "：" w=512su blank=R r2 @[219,228)
+  box ColonW "：" w=513su blank=R r2 @[219,228)
   glue blank w=512su x=0 cap=0su r2 @[219,228)
   box Other "A" w=513su r3 @[219,220)
   glue word w=257su x=1 cap=257su kern="A f" src r3 @[220,221)

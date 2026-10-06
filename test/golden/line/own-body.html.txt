@@ -13,7 +13,7 @@
 <div class="tsr-line" data-s="110" data-e="136" style="top:121.594px;left:16px;width:284px"><span class="tsr-r" data-s="110">and so does this paragraph</span></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="298" style="position:relative;height:48px;margin-bottom:19.203px">
-<div class="tsr-line" data-s="0" data-e="87" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.733px"><span class="tsr-r" data-s="0">A note with blocks</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px">1</a><span class="tsr-r" data-s="70"> continues the sen</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="0" data-e="87" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:3.733px"><span class="tsr-r" data-s="0">A note with blocks</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px;top:-5.04px">1</a><span class="tsr-r" data-s="70"> continues the sen</span><span class="tsr-r" data-syn="hyphen">-</span></div>
 <div class="tsr-line" data-s="87" data-e="93" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="87">tence.</span></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="402" style="position:relative;height:24px;margin-bottom:19.203px">

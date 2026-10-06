@@ -92,7 +92,19 @@ export function buildRules(defPath = join(root, 'engine/rules/locale/compat.def'
   const kern = new Uint8Array(MAX);
   for (let cp = 0; cp < MAX; cp++) kern[cp] = !wide[cp] && cp < cutoff ? 1 : 0;
   const consts = rowsOf(lines, 'CONST').map((r) => r.split(',').map((s) => s.trim()));
-  return { version, classes, cc, kern, columns, consts };
+  // (plan P4-04) blanks per class, defined advances
+  const blanks = classes.map(() => [0, 0]);
+  for (const row of rowsOf(lines, 'BLANK')) {
+    const [members, l, r] = row.split(',').map((s) => s.trim());
+    for (const n of members.split(/\s+/)) blanks[ccIndex(n)] = [Number(l), Number(r)];
+  }
+  const advances = rowsOf(lines, 'ADVANCE').map((row) => {
+    const [cps, em] = row.split(',').map((s) => s.trim());
+    const seq = cps.split(/\s+/).map((h) => parseInt(h, 16));
+    if (seq.length > 3) throw new Error(`${defPath}: an ADVANCE sequence holds at most 3 codepoints`);
+    return { seq, em: Number(em) };
+  }).sort((a, b) => b.seq.length - a.seq.length);
+  return { version, classes, cc, kern, columns, consts, blanks, advances };
 }
 
 function generate() {
@@ -156,6 +168,16 @@ ${wrap(ucdRanges.map(([a, v]) => `{${hex(a)}, ${v}}`), 6)}
 
 // the rules' constants (em)
 ${R.consts.map(([n, v]) => `constexpr double kRule_${n} = ${v};`).join('\n')}
+
+// (plan P4-04) each class's punctuation blanks (em): leading, trailing
+struct Blank { float l, r; };
+constexpr Blank kBlanks[] = {${R.blanks.map(([l, r]) => `{${l}, ${r}}`).join(', ')}};
+// (plan P4-04) defined advances: a sequence set at a defined width (em),
+// longest first
+struct DefinedAdvance { std::uint32_t seq[3]; std::uint8_t len; float em; };
+constexpr DefinedAdvance kDefinedAdvances[] = {
+${R.advances.map((a) => `    {{${[...a.seq, 0, 0].slice(0, 3).map(hex).join(', ')}}, ${a.seq.length}, ${a.em}},`).join('\n')}
+};
 
 }  // namespace tsr
 `;

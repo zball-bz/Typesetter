@@ -11,7 +11,7 @@ top pid=0 units=1
   cjk "知" w=1025su glue=102su wt=0.6 pen=0 @[24,27)
   cjk "续" w=1025su glue=102su wt=0.6 pen=0 @[27,30)
   cjk "行" w=1025su glue=102su wt=0.6 pen=INF @[30,33)
-  punct-close "：" w=512su @[33,36)
+  punct-close "：" w=513su @[33,36)
   punct-sp w=512su @[33,36)
 top pid=1 units=1
  unit code indent=0su lines=2 wrap

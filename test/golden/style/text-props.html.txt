@@ -1,0 +1,26 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="86" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:1.935px"><span class="tsr-r tsr-cjk" data-s="0" style="letter-spacing:1.161px;margin-right:-1.161px">中文</span><span class="tsr-r" data-s="42">English</span><span class="tsr-r tsr-cjk" data-s="50" style="letter-spacing:1.161px">紧贴</span><span class="tsr-r tsr-cjk" data-s="56">，</span><span class="tsr-r tsr-cjk" data-s="59" style="letter-spacing:1.161px;margin-right:-1.161px">默认</span><span class="tsr-r" data-s="65"> English </span><span class="tsr-r tsr-cjk" data-s="74" style="letter-spacing:1.161px">有间隙</span><span class="tsr-r tsr-cjk" data-s="83" style="margin-right:-8px">，</span></div>
+<div class="tsr-line" data-s="86" data-e="108" style="top:24px;left:0px;width:300px"><span class="tsr-r tsr-cjk" data-s="86">中文</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r" data-s="92">English</span><span class="tsr-sp" data-syn="boundary" style="width:4px"></span><span class="tsr-r tsr-cjk" data-s="99">也有</span><span class="tsr-r tsr-cjk" data-s="105" style="margin-right:-8px">。</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="110" style="position:relative;height:72px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="15" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:94px"><span class="tsr-r" data-s="0">A sentence with</span></div>
+<div class="tsr-line" data-s="49" data-e="89" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="49">a phrase that never breaks inside itself</span></div>
+<div class="tsr-line" data-s="91" data-e="130" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="91">and more words after it to wrap around.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="273" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="49" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:-1.333px"><span class="tsr-r tsr-pre" data-s="0" style="word-spacing:0">keep   these    spaces</span><span class="tsr-r" data-s="29"> as written; outside,</span></div>
+<div class="tsr-line" data-s="50" data-e="79" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="50">these spaces collapse.</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="388" style="position:relative;height:96px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="15" data-join="space" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">extraordinarily</span></div>
+<div class="tsr-line" data-s="16" data-e="53" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:10px"><span class="tsr-r" data-s="16">antidisestablishmentarianism</span><span class="tsr-r" data-s="46"> next to</span></div>
+<div class="tsr-line" data-s="54" data-e="89" data-join="none" style="top:48px;left:0px;width:300px;word-spacing:16px"><span class="tsr-r" data-s="54">extraordinarily antidisestablishmen</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="89" data-e="99" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="89">tarianism.</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="489" style="position:relative;height:72px">
+<div class="tsr-line" data-s="0" data-e="98" data-join="space" data-overfull="1" style="top:0px;left:0px;width:300px;word-spacing:-1.486px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="https://example.com/a/very/long/path/that/stays/whole" data-s="45">https://example.com/a/very/long/path/that/stays/whole</a></div>
+<div class="tsr-line" data-s="100" data-e="134" data-join="none" style="top:24px;left:0px;width:300px;word-spacing:32px"><span class="tsr-r" data-s="100">beside </span><a class="tsr-r" href="https://example.com/a/very/long/path/that/may/break" data-s="107">https://example.com/a/very/</a></div>
+<div class="tsr-line" data-s="134" data-e="164" style="top:48px;left:0px;width:300px"><a class="tsr-r" href="https://example.com/a/very/long/path/that/may/break" data-s="134">long/path/that/may/break</a><span class="tsr-r" data-s="159"> here.</span></div>
+</div>
+</div>

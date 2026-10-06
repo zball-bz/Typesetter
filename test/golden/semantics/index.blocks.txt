@@ -142,7 +142,7 @@ top pid=3 units=1
   cjk "的" w=1025su glue=102su wt=0.6 pen=0 @[510,513)
   cjk "关" w=1025su glue=102su wt=0.6 pen=0 @[513,516)
   cjk "系" w=1025su glue=102su wt=0.6 pen=INF @[516,519)
-  punct-close "。" w=512su @[519,522)
+  punct-close "。" w=513su @[519,522)
   punct-sp w=512su @[519,522)
 top pid=4 units=4
  unit text indent=1536su marker="•"

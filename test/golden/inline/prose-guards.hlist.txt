@@ -228,7 +228,7 @@ top pid=3 units=1
   box Ideo "径" w=1025su wt=0.6 cap=102su r9 @[503,506)
   pen INF r9
   glue inter w=0su x=0.6 cap=102su r9 @[503,506)
-  box FullStopW "。" w=512su blank=R r10 @[506,509)
+  box FullStopW "。" w=513su blank=R r10 @[506,509)
   glue blank w=512su x=0 cap=0su r10 @[506,509)
   glue word w=257su x=1 cap=257su src r11 @[509,510)
   box Other "An" w=1025su r11 @[510,512)
@@ -329,7 +329,7 @@ top pid=5 units=1
   box Ideo "行" w=1025su wt=0.6 cap=102su r1 @[726,729)
   pen INF r1
   glue inter w=0su x=0.6 cap=102su r1 @[726,729)
-  box FullStopW "。" w=512su blank=R r2 @[729,732)
+  box FullStopW "。" w=513su blank=R r2 @[729,732)
   glue blank w=512su x=0 cap=0su r2 @[729,732)
   run r0 plain
   run r1 letter-spaced CJK

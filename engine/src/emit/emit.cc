@@ -309,9 +309,11 @@ struct HlInline final : InlineSink {
     u32 i = 0;
     return (u8)ccOf(utf8Next(s, i));
   }
+  bool nowrap = false;  // (plan P4-04, text.wrap) the text being shaped breaks nowhere inside
   u32 push(Flow& u, IK k, u8 cls, u8 attrs, const RunRec& rk, const AdvanceSpec& spec, Span span,
            float x, float pen) {
     open(u);
+    if (nowrap && pen > -kPenInf) pen = kPenInf;
     HList& h = B;
     HItem it;
     it.k = k;
@@ -406,11 +408,6 @@ struct HlInline final : InlineSink {
   bool isCjkChar(size_t i) const { return gapKind[i] == 1; }  // a CJK char, pinned or letter-spaced
   bool isObject(size_t i) const { return B.items[i].k == IK::Box && runOf(i).rc == RealizeClass::Object; }
   const InlineObject& objectOf(size_t i) const { return B.objs[B.parts[B.specs[B.items[i].aux].obj].obj]; }
-  bool isGlyph(size_t i, bool open) const {
-    const HItem& it = B.items[i];
-    return it.k == IK::Box && runOf(i).rc == RealizeClass::BlankBearing &&
-           ((kCCFlags[it.cls] & kCC_open) != 0) == open;
-  }
   bool isBlank(size_t i, bool ownedByNext) const {
     const HItem& it = B.items[i];
     return it.k == IK::Glue && it.cls == (u8)GC::Blank &&
@@ -424,8 +421,11 @@ struct HlInline final : InlineSink {
     // attach forbids (design T5: synthesized glue suppressed) — and none
     // beside a raised or lowered mark: a note's reference digit hugs the
     // text on both sides (notes-design §1)
+    // (plan P4-04) and none where either side's text.autospace is none
     if (count(u) == glueBan || styles.get(st).baseline ||
-        (count(u) > 0 && styles.get(runOf(count(u) - 1).face).baseline))
+        (count(u) > 0 && styles.get(runOf(count(u) - 1).face).baseline) ||
+        styles.get(st).autospace == AUTOSPACE_NONE ||
+        (count(u) > 0 && styles.get(runOf(count(u) - 1).face).autospace == AUTOSPACE_NONE))
       return;
     double px = kCjkBoundaryEm * E.fontPx(st);
     AdvanceSpec sp;
@@ -436,10 +436,12 @@ struct HlInline final : InlineSink {
                  sp, span, 1.0f, 0.0f);
     fixWidth(u, i, px, suRoundPx(px), suRoundPx(px));
   }
-  void blank(Flow& u, StyleId st, const ICtx& ctx, Span span, double px, bool ownedByNext, float pen) {
+  // a punctuation blank of `em` (the rules' BLANK rows, plan P4-04)
+  void blank(Flow& u, StyleId st, const ICtx& ctx, Span span, double em, bool ownedByNext, float pen) {
+    const double px = em * E.fontPx(st);
     AdvanceSpec sp;
     sp.k = AdvanceSpec::Fixed;
-    sp.em = kPunctHalfEm;
+    sp.em = em;
     sp.str = E.spaceRef;
     u32 i = push(u, IK::Glue, (u8)GC::Blank, ownedByNext ? IA_OwnedByNext : 0,
                  key(st, ctx, RealizeClass::Plain), sp, span, 0.0f, pen);
@@ -476,7 +478,9 @@ struct HlInline final : InlineSink {
   void word(std::string_view w, Flow& u, StyleId st, float pen, const ICtx& ctx, Span span) {
     AdvanceSpec sp;
     sp.str = strs.intern(w);
-    push(u, IK::Box, firstCc(w), 0, key(st, ctx, RealizeClass::Plain), sp, span, 0.0f, pen);
+    // (plan P4-04) text.space pre: its spaces are in its boxes, as written — Rigid
+    const RealizeClass rc = styles.get(st).space == SPACE_PRE ? RealizeClass::Rigid : RealizeClass::Plain;
+    push(u, IK::Box, firstCc(w), 0, key(st, ctx, rc), sp, span, 0.0f, pen);
   }
   void hyphenPoint(Flow& u, StyleId st, const ICtx& ctx, Span span) {
     open(u);
@@ -843,7 +847,13 @@ struct HlInline final : InlineSink {
   // (at: w's cooked offset in the text, for its pieces' sources)
   void emitWord(std::string_view w, u32 at, Flow& u, StyleId st, const ICtx& ctx, u32 tokenChars) {
     auto src = [&](u32 a, u32 b) { return tsrc.of(at + a, at + b); };
-    const bool noHyphen = ctx.noHyphen;
+    // (plan P4-04) the run's text.hyphens and text.overflowWrap over the
+    // block's rule (a heading or caption: neither); a pre or nowrap run
+    // breaks inside nowhere
+    const Styling& sty = styles.get(st);
+    const bool rigid = sty.space == SPACE_PRE || nowrap;
+    const bool hyph = !rigid && (sty.hyphens ? sty.hyphens == HYPHENS_AUTO : !ctx.noHyphen);
+    const bool cutSeparators = !rigid && (sty.overflowWrap ? sty.overflowWrap != OVERFLOWWRAP_NORMAL : !ctx.noHyphen);
     // lead / core / trail split (ASCII letters core) for hyphenation
     u32 a = 0, b = (u32)w.size();
     auto isL = [](char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); };
@@ -855,14 +865,14 @@ struct HlInline final : InlineSink {
       if (!isL(w[k])) coreLetters = false;
 
     std::vector<u32> pts;
-    if (!noHyphen && coreLetters && e - a >= kHyphenMinLetters && cfg.hyphenPenalty < kPenInf)
+    if (hyph && coreLetters && e - a >= kHyphenMinLetters && cfg.hyphenPenalty < kPenInf)
       pts = hyphenPoints(w.substr(a, e - a));
     if (pts.empty()) {
       // long unhyphenatable tokens (URLs, paths, identifiers): break
       // opportunities after separators, glyph-free — the browser's own
       // "break after slash" convention, under KP control (no hyphen glyph,
       // penalty urlBreakPenalty). Pieces stay one shaped run when unbroken.
-      if (!noHyphen && tokenChars >= cfg.urlBreakMinLen && cfg.urlBreakPenalty < kPenInf) {
+      if (cutSeparators && tokenChars >= cfg.urlBreakMinLen && cfg.urlBreakPenalty < kPenInf) {
         std::vector<u32> cuts;
         for (u32 k = 1; k + 1 < w.size(); k++) {
           char c = w[k];
@@ -902,7 +912,6 @@ struct HlInline final : InlineSink {
     StyleId st = E.compose(n->style, ctx.add, ctx.mul);
     StyleId stCjk = E.compose(st, E.cjk, 1.0f);
     std::string_view s = strs.get(n->str);
-    const double halfPx = kPunctHalfEm * E.fontPx(stCjk);
     const Su glueSu = suRoundPx(cfg.cjkGlueEm * E.fontPx(stCjk));
 
     // (plan P4-02) its place in the paragraph context: what precedes its
@@ -915,6 +924,10 @@ struct HlInline final : InlineSink {
     auto src = [&](u32 a, u32 b) { return tsrc.of(a, b); };
     auto wideAt = [&](u32 k) { return base != ~0u && base + k < cx.size() && cx[base + k].wide; };
     Prev prev = prevAt(base);
+    // (plan P4-04) text.space pre: spaces stay in the words, as written;
+    // text.wrap nowrap: nothing inside breaks
+    const bool pre = styles.get(st).space == SPACE_PRE;
+    nowrap = styles.get(st).wrap == WRAP_NOWRAP;
     std::string wordBuf;
     u32 i = 0;
     u32 wordFrom = 0, wordEnd = 0, wordByte = 0;  // the clusters wordBuf holds, its first byte
@@ -947,7 +960,10 @@ struct HlInline final : InlineSink {
     auto lastIsCloseSp = [&] {  // a closing/dot punct's trailing half
       return count(u) > 0 && isBlank(count(u) - 1, /*ownedByNext=*/false);
     };
-    auto lastIsOpenGlyph = [&] { return count(u) > 0 && isGlyph(count(u) - 1, /*open=*/true); };
+    // a punctuation glyph that kept no trailing blank (an opener)
+    auto lastIsGlyph = [&] {
+      return count(u) > 0 && B.items[count(u) - 1].k == IK::Box && runOf(count(u) - 1).rc == RealizeClass::BlankBearing;
+    };
     // definedEm > 0: the box's width is DEFINED, never measured, and the
     // renderer pins it to exactly that advance (RealizeClass::Pinned). Used
     // for U+2014/U+2026 (1em single, 2em pairs — App C): canvas and DOM
@@ -971,25 +987,23 @@ struct HlInline final : InlineSink {
     };
     // the run's text.punct (plan P3-02), else the document's cjk.punctCompress
     const u8 runPunct = styles.get(st).punct;
-    // (span: the glyph's source; its blanks share it)
-    auto pushPunct = [&](std::string_view ch, Span span, bool open) {
+    // A punctuation glyph (plan P4-04; finding emitter/punct-compression-
+    // control-flow): its blanks are its class's (the rules' BLANK rows: an
+    // opener's before it, a closer's or a stop's after it), measured off
+    // its advance and standing as glue. Where the previous glyph's trailing
+    // blank and this one's leading blank meet, the run's punct mode keeps
+    // both (none), one — the previous glyph's, the break between the two —
+    // (book) or neither (full); a leading blank right after a glyph that
+    // kept none (an opener) is solid (book, full) or rigid (none: a break
+    // there would leave the first opener dangling, 禁则); a trailing blank
+    // before a glyph with no leading blank (closer + closer) sets solid
+    // (book, full) or stays without a break (none). An opener's leading
+    // blank is owned by its glyph (IA_OwnedByNext): paint squeezes a side
+    // whose own blank is absent. (span: the glyph's source; its blanks share it)
+    auto pushPunct = [&](std::string_view ch, Span span, u32 cp) {
       const PunctCompress mode = runPunct ? (PunctCompress)(runPunct - 1) : cfg.punctCompress;
-      // an opening punct's leading half is owned by its glyph (IA_OwnedByNext):
-      // the renderer squeezes a glyph only when its OWN half is absent
-      if (open) {
-        if (lastIsCloseSp()) {
-          // closing/dot + opening
-          if (mode == PunctCompress::Full) pop(u);  // set solid
-          else if (mode == PunctCompress::None) blank(u, stCjk, ctx, span, halfPx, true, 0.0f);
-          // Book: the closer's breakable half stays as the breathing space
-        } else if (lastIsOpenGlyph()) {
-          // opening + opening: solid (a breakable gap here would let the
-          // first opener dangle at a line end — 禁则); None keeps a RIGID half
-          if (mode == PunctCompress::None) blank(u, stCjk, ctx, span, halfPx, true, kPenInf);
-        } else {
-          blank(u, stCjk, ctx, span, halfPx, true, 0.0f);  // leading half — breakable, NOT stretchable
-        }
-      } else {
+      const Blank bl = blankOf(cp);
+      if (isClosePunct(cp)) {
         // 禁则: no break before a closing punct (inline formulas included) —
         // nor at the typed spaces before it (plan P4-02; UAX #14 LB13: even
         // after spaces), so `！ ？` never puts the ？ at a line start
@@ -997,19 +1011,26 @@ struct HlInline final : InlineSink {
         while (k > 0 && B.items[k - 1].k == IK::Glue && B.items[k - 1].cls == (u8)GC::Word) pend[--k] = kPenInf;
         if (k < count(u) && k > 0 && !(pend[k - 1] <= -kPenInf)) pend[k - 1] = kPenInf;
         if (count(u) > 0 && (isCjkChar(count(u) - 1) || isObject(count(u) - 1))) forbidLast();
-        if (lastIsCloseSp()) {
-          // closing + closing: solid; None keeps the half but rigid (a break
-          // would put the second closer at a line start — 禁则)
-          if (mode == PunctCompress::None) forbidLast();
-          else pop(u);
+      }
+      if (bl.l > 0) {
+        if (lastIsCloseSp()) {  // two blanks meet
+          if (mode == PunctCompress::Full) pop(u);
+          else if (mode == PunctCompress::None) blank(u, stCjk, ctx, span, bl.l, true, 0.0f);
+        } else if (lastIsGlyph()) {  // after a glyph that kept no trailing blank
+          if (mode == PunctCompress::None) blank(u, stCjk, ctx, span, bl.l, true, kPenInf);
+        } else {
+          blank(u, stCjk, ctx, span, bl.l, true, 0.0f);  // breakable, NOT stretchable
         }
+      } else if (lastIsCloseSp()) {
+        if (mode == PunctCompress::None) forbidLast();
+        else pop(u);
       }
       AdvanceSpec sp;
       sp.k = AdvanceSpec::MeasuredMinusBlanks;
       sp.str = strs.intern(ch);
       push(u, IK::Box, firstCc(ch), 0, key(stCjk, ctx, RealizeClass::BlankBearing), sp,
            span, 0.0f, kPenInf);
-      if (!open) blank(u, stCjk, ctx, span, halfPx, false, 0.0f);
+      if (bl.r > 0) blank(u, stCjk, ctx, span, bl.r, false, 0.0f);
     };
 
     for (u32 e = 0; i < s.size();) {  // e: the cluster (its context entry: base + e)
@@ -1018,13 +1039,20 @@ struct HlInline final : InlineSink {
       i = clusterEnd(s, i);  // one grapheme cluster: a base and its marks
       u32 j0 = start;
       const u32 cp = (u8)s[start] < 0x80 ? (u8)s[start] : utf8Next(s, j0);
+      if ((cp == ' ' || cp == '\t') && pre) {
+        addWord(start, at);
+        prev = Prev::Latin;
+        continue;
+      }
       if (cp == ' ' || cp == '\t') {
         flushWord();
-        // a text that starts with a space right after a space (something
+        // a space right after a space adds none — the browser collapses it
+        // (text.space normal; plan P4-04: anywhere in a text — a spliced
+        // string's run of spaces —, as at a text's start, where something
         // between two texts rendered nothing: an undefined splice, a counter
-        // event) adds none — the browser collapses it, as TeX's input does
+        // event), as TeX's input does
         const size_t c = count(u);
-        if (start == 0 && c > 0 && B.items[c - 1].k == IK::Glue && B.items[c - 1].cls == (u8)GC::Word &&
+        if (c > 0 && B.items[c - 1].k == IK::Glue && B.items[c - 1].cls == (u8)GC::Word &&
             (B.items[c - 1].attrs & IA_SourceSpace)) {
           prev = Prev::None;
           continue;
@@ -1036,41 +1064,26 @@ struct HlInline final : InlineSink {
         prev = Prev::None;
         continue;
       }
-      // the em dash and ellipsis (ambiguous classes) sit outside the wide
-      // ranges but are CJK-class as the context resolves them (em-dash/
-      // ellipsis pairs, App C): defined-width pinned boxes — 2em as a pair,
-      // 1em alone (advance is unmeasurable, see pushCjkChar). An English
-      // em dash or ellipsis — single, with no CJK on either side — is
-      // ordinary text: it measures in the Latin face, where the 1em
-      // convention would over-budget it (blog EN pages showed ~2px).
-      if (isIdeo(cp) || isAmbDashOrEllipsis(cp)) {
-        if (isAmbDashOrEllipsis(cp)) {
-          if (!wideAt(at)) {
-            addWord(start, at);
-            prev = Prev::Latin;
-            continue;
-          }
-          u32 j = i, cp2 = 0;  // its pair, in this node
-          if (i < s.size()) {
-            u32 t = i;
-            cp2 = utf8Next(s, t);
-            j = clusterEnd(s, i);
-          }
-          flushWord();
-          if (prev == Prev::Latin) boundary(start);
-          if (cp2 == cp) {
-            pushCjkChar(s.substr(start, j - start), src(start, j), /*definedEm=*/2.0);
-            i = j;
-            e++;
-          } else {
-            pushCjkChar(s.substr(start, i - start), src(start, i), /*definedEm=*/1.0);
-          }
-          prev = Prev::Cjk;
-          continue;
-        }
+      // a CJK character, or a mark the context sets wide (the em dash, the
+      // ellipsis: ambiguous classes): a pinned box of a defined width when
+      // a defined advance starts here (the rules' ADVANCE rows, plan P4-04:
+      // canvas cannot predict their DOM advance — 2em doubled, 1em alone),
+      // else a letter-spaced box. A mark the context sets Latin — an English
+      // em dash — is ordinary text, below: it measures in the Latin face,
+      // where the 1em convention would over-budget it (blog EN pages
+      // showed ~2px).
+      if (!isOpenPunct(cp) && !isClosePunct(cp) && (isIdeo(cp) || wideAt(at))) {
         flushWord();
         if (prev == Prev::Latin) boundary(start);
-        pushCjkChar(s.substr(start, i - start), src(start, i));
+        u32 end = 0;
+        if (const DefinedAdvance* da = definedAdvanceAt(s, start, cp, end)) {
+          if (end < i) end = i;  // (its first cluster whole)
+          pushCjkChar(s.substr(start, end - start), src(start, end), da->em);
+          e += da->len - 1;  // its further clusters, one codepoint each
+          i = end;
+        } else {
+          pushCjkChar(s.substr(start, i - start), src(start, i));
+        }
         prev = Prev::Cjk;
         continue;
       }
@@ -1087,7 +1100,7 @@ struct HlInline final : InlineSink {
         flushWord();
         // no CJK–Latin boundary glue next to full-width punctuation: （1322
         // 年） sets solid (GB/T 15834; real-world-report.md)
-        pushPunct(s.substr(start, i - start), src(start, i), isOpenPunct(cp));
+        pushPunct(s.substr(start, i - start), src(start, i), cp);
         prev = Prev::Punct;
         continue;
       }
@@ -1096,6 +1109,7 @@ struct HlInline final : InlineSink {
       prev = Prev::Latin;
     }
     flushWord(/*atEnd=*/true);
+    nowrap = false;
   }
 
   void indent(Flow& u, StyleId st, Span span, double px, double em) override {
@@ -1866,15 +1880,17 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
       if (store.hasWord(sp.str, st) && ready) {
         const WordMet& w = store.word(sp.str, st);
         if (sp.k == AdvanceSpec::MeasuredMinusBlanks) {
-          // glyph advance minus its compressible half (App C): the half is
-          // the adjacent Blank glue (or was compressed away)
-          double halfPx = kPunctHalfEm * emPx(cfg, styles.get(st));
-          double gpx = w.px - halfPx;
+          // glyph advance less its blanks (the rules' BLANK rows, plan
+          // P4-04): they are the adjacent Blank glue (or were compressed
+          // away); the glyph budgets the word epsilon, as a space does
+          const Blank bl = kBlanks[it.cls];
+          const double em = emPx(cfg, styles.get(st));
+          double gpx = w.px - (bl.l + bl.r) * em;
           if (gpx < 0) gpx = 0;
-          it.w = suCeilPx(gpx);
+          it.w = suCeilPx(gpx) + (Su)cfg.epsilonPerWordSu;
           c.rawPx = gpx;
-          if (kCCFlags[it.cls] & kCC_open) c.blankLpx = (float)halfPx;
-          else c.blankRpx = (float)halfPx;
+          c.blankLpx = (float)(bl.l * em);
+          c.blankRpx = (float)(bl.r * em);
         } else if (it.k == IK::Glue) {
           double px = w.px;
           if (sp.k == AdvanceSpec::KernCtx) {

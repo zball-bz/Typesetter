@@ -340,11 +340,13 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       }
       if (d.fit == DLRun::Fit::Pinned) {
         t.decl("display", "inline-block").decl("text-align", "center").px("width", d.widthPx);
-        if (d.marginRight) t.px("margin-right", d.marginRightPx);
       } else if (d.fit == DLRun::Fit::LetterSpacing) {
         t.px("letter-spacing", d.letterPx);
-        if (d.marginRight) t.px("margin-right", d.marginRightPx);
       }
+      if (d.marginLeftPx != 0) t.px("margin-left", d.marginLeftPx);  // (plan P4-04) a squeezed blank
+      if (d.marginRight) t.px("margin-right", d.marginRightPx);
+      // (plan P4-04) a superscript's raise: the engine's px (the rules' superRaiseEm)
+      if (sty.baseline == BASELINE_SUPER) t.px("top", -kSuperRaiseEm * emPx(basePx, sty));
       if (d.rigid) t.decl("word-spacing", "0");  // (plan P4-01) its spaces are its boxes'
       if (d.syn) t.attrSafe("data-syn", d.syn);
       runWidth(t, d);

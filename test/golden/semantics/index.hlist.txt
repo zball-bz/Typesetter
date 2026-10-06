@@ -162,7 +162,7 @@ top pid=3 units=1
   box Ideo "系" w=1025su wt=0.6 cap=102su r2 @[516,519)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[516,519)
-  box FullStopW "。" w=512su blank=R r3 @[519,522)
+  box FullStopW "。" w=513su blank=R r3 @[519,522)
   glue blank w=512su x=0 cap=0su r3 @[519,522)
   run r0 letter-spaced CJK
   run r1 plain anchor="idx-5"

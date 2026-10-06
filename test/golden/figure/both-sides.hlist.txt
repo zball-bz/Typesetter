@@ -47,7 +47,7 @@ top pid=1 units=1
    pen 0 r0
    glue word w=257su x=1 cap=257su src r1 @[198,203)
    box Other "1" w=513su r1 @[198,203)
-   box ColonW "：" w=512su blank=R r2 @[198,203)
+   box ColonW "：" w=513su blank=R r2 @[198,203)
    glue blank w=512su x=0 cap=0su r2 @[198,203)
    box Other "Left." w=2561su r3 @[198,203)
    run r0 letter-spaced BOLD CJK
@@ -61,7 +61,7 @@ top pid=2 units=1
    pen 0 r0
    glue word w=257su x=1 cap=257su src r1 @[318,324)
    box Other "2" w=513su r1 @[318,324)
-   box ColonW "：" w=512su blank=R r2 @[318,324)
+   box ColonW "：" w=513su blank=R r2 @[318,324)
    glue blank w=512su x=0 cap=0su r2 @[318,324)
    box Other "Right." w=3073su r3 @[318,324)
    run r0 letter-spaced BOLD CJK

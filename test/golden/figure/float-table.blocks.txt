@@ -88,7 +88,7 @@ top pid=1 units=7
   cjk "表" w=1025su glue=102su wt=0.6 pen=0 BOLD @[284,300)
   space w=257su stretch=1 BOLD @[284,300)
   word "1" w=513su pen=INF BOLD @[284,300)
-  punct-close "：" w=512su BOLD @[284,300)
+  punct-close "：" w=513su BOLD @[284,300)
   punct-sp w=512su BOLD @[284,300)
   word "A" w=513su pen=INF @[284,285)
   space w=257su stretch=1 @[285,286)

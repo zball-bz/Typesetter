@@ -63,13 +63,13 @@ top pid=1 units=1
   box Ideo "的" w=1025su wt=0.6 cap=102su r0 @[142,145)
   pen 0 r0
   glue blank w=512su x=0 cap=0su owned-by-next r1 @[145,148)
-  box AmbOpenQuote "“" w=103su blank=L r1 @[145,148)
+  box AmbOpenQuote "“" w=104su blank=L r1 @[145,148)
   box Ideo "引" w=1025su wt=0.6 cap=102su r2 @[148,151)
   glue inter w=0su x=0.6 cap=102su r2 @[148,151)
   box Ideo "号" w=1025su wt=0.6 cap=102su r2 @[151,154)
   pen INF r2
   glue inter w=0su x=0.6 cap=102su r2 @[151,154)
-  box AmbCloseQuote "”" w=103su blank=R r3 @[154,157)
+  box AmbCloseQuote "”" w=104su blank=R r3 @[154,157)
   glue blank w=512su x=0 cap=0su r3 @[154,157)
   box Ideo "仍" w=1025su wt=0.6 cap=102su r4 @[157,160)
   glue inter w=0su x=0.6 cap=102su r4 @[157,160)
@@ -86,7 +86,7 @@ top pid=1 units=1
   box Ideo "点" w=1025su wt=0.6 cap=102su r4 @[175,178)
   pen INF r4
   glue inter w=0su x=0.6 cap=102su r4 @[175,178)
-  box CommaW "，" w=512su blank=R r5 @[178,181)
+  box CommaW "，" w=513su blank=R r5 @[178,181)
   glue blank w=512su x=0 cap=0su r5 @[178,181)
   box Ideo "前" w=1025su wt=0.6 cap=102su r6 @[181,184)
   glue inter w=0su x=0.6 cap=102su r6 @[181,184)
@@ -111,7 +111,7 @@ top pid=1 units=1
   box Ideo "隙" w=1025su wt=0.6 cap=102su r6 @[211,214)
   pen INF r6
   glue inter w=0su x=0.6 cap=102su r6 @[211,214)
-  box ColonW "；" w=512su blank=R r7 @[214,217)
+  box ColonW "；" w=513su blank=R r7 @[214,217)
   glue blank w=512su x=0 cap=0su r7 @[214,217)
   box Ideo "混" w=1025su wt=0.6 cap=102su r8 @[217,220)
   glue inter w=0su x=0.6 cap=102su r8 @[217,220)
@@ -120,7 +120,7 @@ top pid=1 units=1
   box Ideo "时" w=1025su wt=0.6 cap=102su r8 @[223,226)
   pen 0 r8
   glue blank w=512su x=0 cap=0su owned-by-next r9 @[226,229)
-  box AmbOpenQuote "“" w=103su blank=L r9 @[226,229)
+  box AmbOpenQuote "“" w=104su blank=L r9 @[226,229)
   box Other "Eng" w=1537su r10 @[229,232)
   disc pen=0.7 w=0su pre="-" 513su kern="gl" r10 @[232,232)
   box Other "lish" w=2049su r10 @[232,236)
@@ -128,7 +128,7 @@ top pid=1 units=1
   box Other "in" w=1025su r10 @[237,239)
   disc pen=0.7 w=0su pre="-" 513su kern="ns" r10 @[239,239)
   box Other "side" w=2049su r10 @[239,243)
-  box AmbCloseQuote "”" w=103su blank=R r11 @[243,246)
+  box AmbCloseQuote "”" w=104su blank=R r11 @[243,246)
   glue blank w=512su x=0 cap=0su r11 @[243,246)
   box Ideo "也" w=1025su wt=0.6 cap=102su r12 @[246,249)
   glue inter w=0su x=0.6 cap=102su r12 @[246,249)
@@ -147,7 +147,7 @@ top pid=1 units=1
   box Ideo "理" w=1025su wt=0.6 cap=102su r12 @[267,270)
   pen INF r12
   glue inter w=0su x=0.6 cap=102su r12 @[267,270)
-  box FullStopW "。" w=512su blank=R r13 @[270,273)
+  box FullStopW "。" w=513su blank=R r13 @[270,273)
   glue blank w=512su x=0 cap=0su r13 @[270,273)
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
