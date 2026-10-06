@@ -1,0 +1,59 @@
+doc @[0,543) [base]
+  para @[0,126) [base]
+    text @[0,98) [base] str="Display lines one after the other are one equations block (plan P3-29, D-S11): their rows align at " raw=0:0,99:98
+    code @[99,102) [CODEx0.85]
+      text @[99,102) [CODEx0.85] str="&"
+    text @[102,126) [base] str=", each its own equation."
+  equations @[128,195) [base]
+    mathblock @[128,154) [base] label="sq"
+      mathsrc @[130,147) [base] src="f(x) &= (x + 1)^2"
+      seq @[128,154) [base] slot="tag" syn="eqno" copy="omit"
+        text @[128,154) [base] str="(1)"
+    mathblock @[155,175) [base]
+      mathsrc @[157,173) [base] src="&= x^2 + 2 x + 1"
+    mathblock @[176,195) [base] label="bound"
+      mathsrc @[178,185) [base] src="&>= 2 x"
+      seq @[176,195) [base] slot="tag" syn="eqno" copy="omit"
+        text @[176,195) [base] str="(2)"
+  para @[197,262) [base]
+    text @[197,262) [base] str="A row break inside one formula keeps one number, on its last row:"
+  mathblock @[264,328) [base] label="binom"
+    mathsrc @[266,303) [base] src="g(x) &= sum_(k=0)^n binom(n, k) x^k \\"
+    mathsrc @[306,318) [base] src="&= (1 + x)^n"
+    seq @[264,328) [base] slot="tag" syn="eqno" copy="omit"
+      text @[264,328) [base] str="(3)"
+  para @[330,383) [base]
+    text @[330,342) [base] str="Rows without " raw=0:0,13:12
+    code @[343,346) [CODEx0.85]
+      text @[343,346) [CODEx0.85] str="&"
+    text @[347,364) [base] str=" are centred each: " raw=0:0,1:0,19:17
+  mathblock @[365,374) [base]
+    mathsrc @[367,372) [base] src="a = 1"
+  para @[375,383) [base] cont=true
+    text @[375,383) [base] str=" follows." raw=0:0,1:0
+  equations @[385,416) [base]
+    mathblock @[385,398) [base]
+      mathsrc @[387,396) [base] src="a + b = c"
+    mathblock @[399,416) [base]
+      mathsrc @[401,414) [base] src="d = e - f + g"
+  equations @[486,507) [base]
+    mathblock @[486,507) [base] label="eq-u"
+      mathsrc @[486,507) [base] src="u &= v + w"
+      seq @[486,507) [base] slot="tag" syn="eqno" copy="omit"
+        text @[486,507) [base] str="(4)"
+    mathblock @[486,507) [base]
+      mathsrc @[486,507) [base] src="v &= 2 w"
+  para @[509,543) [base]
+    text @[509,512) [base] str="See " raw=0:0,4:3
+    ref @[513,516) [base] target="sq"
+      text @[513,516) [base] str="式 (1)"
+    text @[516,517) [base] str=", " raw=0:0,2:1
+    ref @[518,524) [base] target="bound"
+      text @[518,524) [base] str="式 (2)"
+    text @[524,525) [base] str=", " raw=0:0,2:1
+    ref @[526,532) [base] target="binom"
+      text @[526,532) [base] str="式 (3)"
+    text @[533,536) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[537,542) [base] target="eq-u"
+      text @[537,542) [base] str="式 (4)"
+    text @[542,543) [base] str="."

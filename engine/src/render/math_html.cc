@@ -59,10 +59,9 @@ void mathLeaves(std::string& out, const MathBox* b, const Interner& strs,
 // (its source start, high bit set — never a replaced node's small number),
 // so copy takes the source once whichever parts the selection holds. (plan
 // P3-27, D-R04) its accessible name: role=math, the source as aria-label.
-void writeMathSpan(std::string& out, const MathBox* mb, std::string_view srcAsWritten, const Interner& strs,
-                   const MathSpanOpts& o) {
-  Tag t(out, "span");
-  t.attrSafe("class", "tsr-math");
+// what makes a span the formula: what copy takes of it (once per group), its
+// accessible name, its source span
+static void formulaAttrs(Tag& t, std::string_view srcAsWritten, const MathSpanOpts& o) {
   t.attrSafe("data-syn", "math");
   std::string src = o.display ? "$ " : "$";
   src += srcAsWritten;
@@ -73,10 +72,33 @@ void writeMathSpan(std::string& out, const MathBox* mb, std::string_view srcAsWr
     t.attrSafe("role", "math");
     t.attr("aria-label", srcAsWritten);
   }
+  if (o.hidden) t.attrSafe("aria-hidden", "true");
   if (!o.span.empty()) {
     t.num("data-s", o.span.start - o.srcBase);
     t.num("data-e", o.span.end - o.srcBase);
   }
+}
+
+void writeMathRows(std::string& out, const std::vector<const MathBox*>& rows, std::string_view srcAsWritten,
+                   const Interner& strs, const MathSpanOpts& o) {
+  Tag t(out, "span");
+  t.attrSafe("class", "tsr-math tsr-mathrows");
+  formulaAttrs(t, srcAsWritten, o);
+  t.open();
+  MathSpanOpts row = o;
+  row.bare = true;
+  for (size_t i = 0; i < rows.size(); i++) {
+    if (i) out += "<br>";
+    writeMathSpan(out, rows[i], srcAsWritten, strs, row);
+  }
+  out += "</span>";
+}
+
+void writeMathSpan(std::string& out, const MathBox* mb, std::string_view srcAsWritten, const Interner& strs,
+                   const MathSpanOpts& o) {
+  Tag t(out, "span");
+  t.attrSafe("class", "tsr-math");
+  if (!o.bare) formulaAttrs(t, srcAsWritten, o);
   t.px("width", suToPx(mb->w)).px("height", suToPx(mb->asc + mb->desc));
   if (o.placed) t.decl("position", "absolute").decl("left", "0").px("top", o.displayTop);
   else t.px("vertical-align", -suToPx(mb->desc));

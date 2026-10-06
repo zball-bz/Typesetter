@@ -86,6 +86,7 @@ struct DLNode {
   StrRef mathSrc = 0;
   double mathTopPx = 0;
   bool mathLabel = false;  // (plan P3-27) role=math, aria-label
+  bool mathHidden = false;  // (plan P3-29) a formula's later row (its first is named): aria-hidden
   // Image: src (0 = placeholder) and alt; Raw: markup
   StrRef src = 0, alt = 0;
   const BoxModel* box = nullptr;  // (plan P3-14) Frame: its block's padding, border, colours

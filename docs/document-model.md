@@ -525,13 +525,21 @@ Text layer (plan P3-27; setting `a11y.textLayer`, off by default): the `textLaye
   engine-defined line fragment.
 - Label (plan P3-27, `a11y.mathLabel`, on by default): every formula part
   carries `role="math"` and `aria-label` = its source as written (D-R04).
+- Rows (plan P3-29, D-S11): a formula of several rows (a line-final `\`)
+  is a fragment per row, a jot apart, its number on the last; its first
+  row carries the label, its later rows `aria-hidden="true"`. An
+  `equations` block (display lines one after the other) is a box-tree
+  container of its formulas, a jot apart, their columns shared at `&`.
+  A display formula's `data-copy-group` is its own source position.
 - Semantic page (§9.2; plan P3-27): `render.math: "boxes"` (the default)
   writes the same span — glyph runs, rules, `data-copy`, label — laid out
   at the page's base size, in flow (no absolute position); display inside
   `<p class="tsr-mathblock">`, which the theme centres. `"source"` writes
   `<code class="tsr-mathsrc">$src$</code>` inline, `$ src $` for display.
   `export-static` ships the math font (`@font-face` + `assets/`) when a
-  formula is present. MathML stays rejected (v2 §13).
+  formula is present. MathML stays rejected (v2 §13). (Plan P3-29) A
+  formula of several rows is one `span.tsr-math.tsr-mathrows` holding its
+  rows; an equations block is `div.tsr-equations` of its formulas' `p`s.
 
 ## 10. Diagnostics
 

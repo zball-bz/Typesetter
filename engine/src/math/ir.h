@@ -44,9 +44,10 @@ enum class SlotKind : u8 { Content, Sym, Ident, Rows };
 
 // (plan P3-29) Align: an alignment point (`&`) — a cell boundary in rows,
 // a column boundary of a display's rows; Rows: a rows argument, its kids the
-// rows, each a Run of cells (each a Run)
+// rows, each a Run of cells (each a Run); Break: a `\` ending its line — a
+// display's row break (D-S11), nothing elsewhere
 struct MNode {
-  enum K : u8 { Sym, Num, Text, Run, Attach, Frac, Group, Call, Param, Error, Align, Rows } k = Sym;
+  enum K : u8 { Sym, Num, Text, Run, Attach, Frac, Group, Call, Param, Error, Align, Rows, Break } k = Sym;
   u32 cp = 0;
   u8 cls = kOrd, flags = 0;
   std::string txt;            // Num/Text: the glyphs; Call: the row; Param: its name;

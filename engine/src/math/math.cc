@@ -365,6 +365,7 @@ struct Layouter {
         return textBox(n->txt, kOrd, st, /*textFont=*/true);
       case MNode::Rows: return layoutGrid(n, "c", st);  // (rows outside a grid: centred cells)
       case MNode::Align:  // (an alignment point no grid or display takes: nothing; runs skip it)
+      case MNode::Break:
       case MNode::Param: break;
     }
     return mkBox(MathKind::HBox);
@@ -379,7 +380,7 @@ struct Layouter {
     std::vector<MathBox*> boxes;
     boxes.reserve(hi - lo);
     for (size_t k = lo; k < hi; k++)
-      if (kids[k]->k != MNode::Align) boxes.push_back(layout(kids[k], st));
+      if (kids[k]->k != MNode::Align && kids[k]->k != MNode::Break) boxes.push_back(layout(kids[k], st));
     return assemble(boxes, st, startEdge, endEdge);
   }
 
@@ -1094,7 +1095,7 @@ std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
   std::vector<MathBox*> boxes;
   boxes.reserve(kids.size());
   for (MNode* k : kids)
-    if (k->k != MNode::Align) boxes.push_back(L.layout(k, st));
+    if (k->k != MNode::Align && k->k != MNode::Break) boxes.push_back(L.layout(k, st));
   L.demote(boxes, /*startEdge=*/true, /*endEdge=*/true);
   std::vector<size_t> cuts{0};
   std::vector<float> pens{0};
@@ -1113,6 +1114,78 @@ std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
     out.push_back({b, glue, pens[c]});
   }
   return out;
+}
+
+bool MathRows::aligned() const { return rows.size() > 1 || (rows.size() == 1 && rows[0].size() > 1); }
+
+// (plan P3-29) the formula's rows of cells: each cell laid out as a run of
+// its own (Rules 5–6 at its edges), a pair's right cell (odd columns) after
+// the Ord glue its first atom takes; a formula without row breaks or `&` is
+// one cell, laid out exactly as layoutMathFormula would
+MathRows layoutMathRows(std::string_view src, double sizePx, Arena& arena, Interner& strs, DiagSink& diags,
+                        Span span, const MeasureNeeds* text, bool parseDiags, const MathScope* scope) {
+  MathRows out;
+  MathIR ir = parseMath(src, arena, scope);
+  if (parseDiags) reportMathDiags(ir, src, span, diags);
+  Layouter L{arena, strs, diags, span, sizePx, text, scope ? scope->style : 0};
+  const u8 st = D;
+  out.em = L.toSu(L.F.upem, st);
+  const std::vector<MNode*>& kids = ir.root->kids;
+  std::vector<MathCell>* row = &out.rows.emplace_back();
+  size_t a = 0;
+  for (size_t i = 0; i <= kids.size(); i++) {
+    const bool end = i == kids.size();
+    if (!end && kids[i]->k != MNode::Align && kids[i]->k != MNode::Break) continue;
+    const bool odd = row->size() % 2 == 1;
+    MathBox* b = L.layoutSlice(kids, a, i, st, true, true);
+    row->push_back({b, odd && !b->kids.empty() ? L.pairGlue(kOrd, b->firstCls, st) : 0});
+    a = i + 1;
+    if (!end && kids[i]->k == MNode::Break) row = &out.rows.emplace_back();
+  }
+  // a last row with nothing in it (a final `\`) is no row
+  if (out.rows.size() > 1 && out.rows.back().size() == 1 && out.rows.back()[0].box->kids.empty()) out.rows.pop_back();
+  return out;
+}
+
+// (plan P3-29) the group's columns: each as wide as its widest cell, even
+// columns right-aligned and odd ones left-aligned, a pair joined, pairs an
+// em apart; a row is its cells at those offsets, as wide as the columns
+void alignMathRows(const std::vector<const MathRows*>& group, Arena& arena,
+                   std::vector<std::vector<MathBox*>>& out) {
+  std::vector<Su> colW;
+  Su em = 0;
+  for (const MathRows* m : group) {
+    em = std::max(em, m->em);
+    for (const std::vector<MathCell>& r : m->rows)
+      for (size_t c = 0; c < r.size(); c++) {
+        if (colW.size() <= c) colW.resize(c + 1, 0);
+        colW[c] = std::max(colW[c], r[c].lead + r[c].box->w);
+      }
+  }
+  std::vector<Su> colX(colW.size(), 0);
+  Su x = 0;
+  for (size_t c = 0; c < colW.size(); c++) {
+    if (c && c % 2 == 0) x += em;  // between pairs
+    colX[c] = x;
+    x += colW[c];
+  }
+  out.assign(group.size(), {});
+  for (size_t g = 0; g < group.size(); g++)
+    for (const std::vector<MathCell>& r : group[g]->rows) {
+      MathBox* row = arena.make<MathBox>();
+      row->kind = MathKind::HBox;
+      row->cls = row->firstCls = row->lastCls = kOrd;
+      row->w = x;
+      row->topAccent = x / 2;
+      for (size_t c = 0; c < r.size(); c++) {
+        const MathCell& cell = r[c];
+        const Su room = colW[c] - (cell.lead + cell.box->w);
+        row->kids.push_back({colX[c] + cell.lead + (c % 2 == 0 ? room : 0), 0, cell.box});
+        row->asc = std::max(row->asc, cell.box->asc);
+        row->desc = std::max(row->desc, cell.box->desc);
+      }
+      out[g].push_back(row);
+    }
 }
 
 static void dumpBox(std::string& out, const MathBox* b, const Interner& strs,

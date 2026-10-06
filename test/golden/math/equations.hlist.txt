@@ -1,0 +1,190 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Other "Dis" w=1537su r0 @[0,98)
+  disc pen=0.7 w=0su pre="-" 513su kern="sp" r0 @[0,98)
+  box Other "play" w=2049su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="y l" src r0 @[0,98)
+  box Other "lines" w=2561su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="s o" src r0 @[0,98)
+  box Other "one" w=1537su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="e a" src r0 @[0,98)
+  box Other "af" w=1025su r0 @[0,98)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r0 @[0,98)
+  box Other "ter" w=1537su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="r t" src r0 @[0,98)
+  box Other "the" w=1537su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="e o" src r0 @[0,98)
+  box Other "oth" w=1537su r0 @[0,98)
+  disc pen=0.7 w=0su pre="-" 513su kern="he" r0 @[0,98)
+  box Other "er" w=1025su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="r a" src r0 @[0,98)
+  box Other "are" w=1537su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="e o" src r0 @[0,98)
+  box Other "one" w=1537su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="e e" src r0 @[0,98)
+  box Other "equa" w=2049su r0 @[0,98)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[0,98)
+  box Other "tions" w=2561su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="s b" src r0 @[0,98)
+  box Other "block" w=2561su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="k (" src r0 @[0,98)
+  box Other "(plan" w=2561su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="n P" src r0 @[0,98)
+  box Other "P3-29," w=3073su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern=", D" src r0 @[0,98)
+  box Other "D-S11):" w=3585su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern=": t" src r0 @[0,98)
+  box Other "their" w=2561su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="r r" src r0 @[0,98)
+  box Other "rows" w=2049su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="s a" src r0 @[0,98)
+  box Other "align" w=2561su r0 @[0,98)
+  glue word w=257su x=1 cap=257su kern="n a" src r0 @[0,98)
+  box Other "at" w=1025su r0 @[0,98)
+  glue word w=257su x=1 cap=257su src r0 @[0,98)
+  box Other "&" w=437su r1 @[99,102)
+  box Other "," w=513su r2 @[102,126)
+  glue word w=257su x=1 cap=257su kern=", e" src r2 @[102,126)
+  box Other "each" w=2049su r2 @[102,126)
+  glue word w=257su x=1 cap=257su kern="h i" src r2 @[102,126)
+  box Other "its" w=1537su r2 @[102,126)
+  glue word w=257su x=1 cap=257su kern="s o" src r2 @[102,126)
+  box Other "own" w=1537su r2 @[102,126)
+  glue word w=257su x=1 cap=257su kern="n e" src r2 @[102,126)
+  box Other "equa" w=2049su r2 @[102,126)
+  disc pen=0.7 w=0su pre="-" 513su kern="at" r2 @[102,126)
+  box Other "tion." w=2561su r2 @[102,126)
+  run r0 plain
+  run r1 plain CODE x0.85
+  run r2 plain
+top pid=1 units=3
+ unit math indent=0su anchor="sq" w=7949su asc=980su desc=209su
+  cell 0
+   box Other "(1)" w=1537su r0 @[128,154)
+   run r0 plain
+ unit math indent=0su w=7949su asc=967su desc=76su
+ unit math indent=0su anchor="bound" w=7949su asc=723su desc=153su
+  cell 0
+   box Other "(2)" w=1537su r0 @[176,195)
+   run r0 plain
+top pid=2 units=1
+ unit text indent=0su
+  box Other "A" w=513su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="A r" src r0 @[197,262)
+  box Other "row" w=1537su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="w b" src r0 @[197,262)
+  box Other "break" w=2561su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="k i" src r0 @[197,262)
+  box Other "in" w=1025su r0 @[197,262)
+  disc pen=0.7 w=0su pre="-" 513su kern="ns" r0 @[197,262)
+  box Other "side" w=2049su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="e o" src r0 @[197,262)
+  box Other "one" w=1537su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="e f" src r0 @[197,262)
+  box Other "for" w=1537su r0 @[197,262)
+  disc pen=0.7 w=0su pre="-" 513su kern="rm" r0 @[197,262)
+  box Other "mu" w=1025su r0 @[197,262)
+  disc pen=0.7 w=0su pre="-" 513su kern="ul" r0 @[197,262)
+  box Other "la" w=1025su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="a k" src r0 @[197,262)
+  box Other "keeps" w=2561su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="s o" src r0 @[197,262)
+  box Other "one" w=1537su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="e n" src r0 @[197,262)
+  box Other "num" w=1537su r0 @[197,262)
+  disc pen=0.7 w=0su pre="-" 513su kern="mb" r0 @[197,262)
+  box Other "ber," w=2049su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern=", o" src r0 @[197,262)
+  box Other "on" w=1025su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="n i" src r0 @[197,262)
+  box Other "its" w=1537su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="s l" src r0 @[197,262)
+  box Other "last" w=2049su r0 @[197,262)
+  glue word w=257su x=1 cap=257su kern="t r" src r0 @[197,262)
+  box Other "row:" w=2049su r0 @[197,262)
+  run r0 plain
+top pid=3 units=1
+ unit math indent=0su anchor="binom" w=7290su asc=1516su desc=1147su
+  cell 0
+   box Other "(3)" w=1537su r0 @[264,328)
+   run r0 plain
+top pid=4 units=1
+ unit text indent=0su
+  box Other "Rows" w=2049su r0 @[330,342)
+  glue word w=257su x=1 cap=257su kern="s w" src r0 @[330,342)
+  box Other "with" w=2049su r0 @[330,342)
+  disc pen=0.7 w=0su pre="-" 513su kern="ho" r0 @[330,342)
+  box Other "out" w=1537su r0 @[330,342)
+  glue word w=257su x=1 cap=257su src r0 @[330,342)
+  box Other "&" w=437su r1 @[343,346)
+  glue word w=257su x=1 cap=257su src r2 @[347,364)
+  box Other "are" w=1537su r2 @[347,364)
+  glue word w=257su x=1 cap=257su kern="e c" src r2 @[347,364)
+  box Other "cen" w=1537su r2 @[347,364)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r2 @[347,364)
+  box Other "tred" w=2049su r2 @[347,364)
+  glue word w=257su x=1 cap=257su kern="d e" src r2 @[347,364)
+  box Other "each:" w=2561su r2 @[347,364)
+  glue word w=257su x=1 cap=257su src r2 @[347,364)
+  run r0 plain
+  run r1 plain CODE x0.85
+  run r2 plain
+top pid=5 units=1
+ unit math indent=0su w=2477su asc=727su desc=12su
+top pid=6 units=1
+ unit text indent=0su
+  glue word w=257su x=1 cap=257su src r0 @[375,383)
+  box Other "fol" w=1537su r0 @[375,383)
+  disc pen=0.7 w=0su pre="-" 513su kern="ll" r0 @[375,383)
+  box Other "lows." w=2561su r0 @[375,383)
+  run r0 plain
+top pid=7 units=2
+ unit math indent=0su w=4295su asc=700su desc=76su
+ unit math indent=0su w=5940su asc=700su desc=239su
+top pid=8 units=2
+ unit math indent=0su anchor="eq-u" w=4566su asc=600su desc=76su
+  cell 0
+   box Other "(4)" w=1537su r0 @[486,507)
+   run r0 plain
+ unit math indent=0su w=4566su asc=723su desc=11su
+top pid=9 units=1
+ unit text indent=0su
+  box Other "See" w=1537su r0 @[509,512)
+  glue word w=257su x=1 cap=257su src r0 @[509,512)
+  box Ideo "式" w=1025su wt=0.6 cap=102su r1 @[513,516)
+  pen 0 r1
+  glue word w=257su x=1 cap=257su src r2 @[513,516)
+  box Other "(1)" w=1537su r2 @[513,516)
+  box Other "," w=513su r3 @[516,517)
+  glue word w=257su x=1 cap=257su src r3 @[516,517)
+  box Ideo "式" w=1025su wt=0.6 cap=102su r4 @[518,524)
+  pen 0 r4
+  glue word w=257su x=1 cap=257su src r5 @[518,524)
+  box Other "(2)" w=1537su r5 @[518,524)
+  box Other "," w=513su r6 @[524,525)
+  glue word w=257su x=1 cap=257su src r6 @[524,525)
+  box Ideo "式" w=1025su wt=0.6 cap=102su r7 @[526,532)
+  pen 0 r7
+  glue word w=257su x=1 cap=257su src r8 @[526,532)
+  box Other "(3)" w=1537su r8 @[526,532)
+  glue word w=257su x=1 cap=257su src r9 @[533,536)
+  box Other "and" w=1537su r9 @[533,536)
+  glue word w=257su x=1 cap=257su src r9 @[533,536)
+  box Ideo "式" w=1025su wt=0.6 cap=102su r10 @[537,542)
+  pen 0 r10
+  glue word w=257su x=1 cap=257su src r11 @[537,542)
+  box Other "(4)" w=1537su r11 @[537,542)
+  box Other "." w=513su r12 @[542,543)
+  run r0 plain
+  run r1 letter-spaced ref LINK CJK link="#tsr-sq"
+  run r2 plain ref LINK link="#tsr-sq"
+  run r3 plain
+  run r4 letter-spaced ref LINK CJK link="#tsr-bound"
+  run r5 plain ref LINK link="#tsr-bound"
+  run r6 plain
+  run r7 letter-spaced ref LINK CJK link="#tsr-binom"
+  run r8 plain ref LINK link="#tsr-binom"
+  run r9 plain
+  run r10 letter-spaced ref LINK CJK link="#tsr-eq-u"
+  run r11 plain ref LINK link="#tsr-eq-u"
+  run r12 plain

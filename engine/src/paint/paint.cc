@@ -311,12 +311,15 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         // baseline, which layout set (plan P3-26: its number is a line of
         // the leaf's tag track, measured and placed by layout)
         const MathData& m = std::get<MathData>(u.data);
-        n.math = m.box;
+        n.math = l.mathRow < m.rows.size() ? m.rows[l.mathRow] : m.box;  // (plan P3-29) its row
         n.mathSrc = m.src;
         n.markerStyle = m.style;  // its paint style (colour)
         n.heightPx = suToPx(l.height);
-        n.mathTopPx = suToPx(l.baseline - m.box->asc);
-        n.mathLabel = cfg.a11yMathLabel;  // (plan P3-27, D-R04) role=math, aria-label
+        n.mathTopPx = suToPx(l.baseline - n.math->asc);
+        // (plan P3-27, D-R04) role=math, aria-label — on its first row; its
+        // later rows (plan P3-29) hidden, so it is read once
+        n.mathLabel = cfg.a11yMathLabel && l.mathRow == 0;
+        n.mathHidden = cfg.a11yMathLabel && l.mathRow > 0;
         n.ragged = true;
         break;
       }

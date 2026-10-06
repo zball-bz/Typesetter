@@ -320,7 +320,7 @@ struct InlineParser {
         fs = ++p;
         continue;
       }
-      if (c == '\\') {
+      if (c == '\\' && !(p + 1 < b && t[p + 1] == '\n')) {  // (a `\` ending its line is a row break, plan P3-29)
         p += 2;
         continue;
       }

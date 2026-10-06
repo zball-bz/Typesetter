@@ -1,6 +1,7 @@
 #include "semantic_html.h"
 
 #include <algorithm>
+#include <unordered_map>
 
 #include "html_writer.h"
 #include "../resource/resource_table.h"
@@ -52,17 +53,48 @@ struct Sem {
   // page labels formulas (D-R04)
   void formulaBox(const ContentNode* n, bool display) {
     const MathSource ms = mathSource(n, strs);
-    const MathScope scope{math.env, n->declEpoch, n->style};
-    DiagSink scratch;  // (what the typeset layout reports, not this estimate)
-    const double sizePx = emPx(math.basePx, styles.get(n->style));
-    const MathBox* box = layoutMathFormula(ms.text, display, sizePx, *math.arena, strs, scratch, n->span,
-                                           /*text=*/nullptr, /*parseDiags=*/false, &scope);
     MathSpanOpts o;
     o.display = display;
     o.span = n->span;
     o.label = math.label;
-    writeMathSpan(out, box, ms.copy, strs, o);
+    if (!display) {
+      const MathScope scope{math.env, n->declEpoch, n->style};
+      DiagSink scratch;  // (what the typeset layout reports, not this estimate)
+      const double sizePx = emPx(math.basePx, styles.get(n->style));
+      const MathBox* box = layoutMathFormula(ms.text, false, sizePx, *math.arena, strs, scratch, n->span,
+                                             /*text=*/nullptr, /*parseDiags=*/false, &scope);
+      writeMathSpan(out, box, ms.copy, strs, o);
+      return;
+    }
+    // (plan P3-29, D-S11) a display formula's rows — aligned with its
+    // equations block's (aligned below), else on their own — one under the
+    // other in one span: the formula
+    std::vector<const MathBox*> rows;
+    if (auto it = alignedRows.find(n); it != alignedRows.end()) {
+      rows = it->second;
+    } else {
+      const MathRows r = displayRows(n);
+      if (r.aligned()) {
+        std::vector<std::vector<MathBox*>> out1;
+        alignMathRows({&r}, *math.arena, out1);
+        rows.assign(out1[0].begin(), out1[0].end());
+      } else {
+        rows.push_back(r.rows[0][0].box);
+      }
+    }
+    if (rows.size() == 1) writeMathSpan(out, rows[0], ms.copy, strs, o);
+    else writeMathRows(out, rows, ms.copy, strs, o);
   }
+  // a display formula's rows of cells (its text runs estimated)
+  MathRows displayRows(const ContentNode* n) {
+    const MathSource ms = mathSource(n, strs);
+    const MathScope scope{math.env, n->declEpoch, n->style};
+    DiagSink scratch;
+    return layoutMathRows(ms.text, emPx(math.basePx, styles.get(n->style)), *math.arena, strs, scratch, n->span,
+                          /*text=*/nullptr, /*parseDiags=*/false, &scope);
+  }
+  // (plan P3-29) an equations block's formulas, aligned together: their rows
+  std::unordered_map<const ContentNode*, std::vector<const MathBox*>> alignedRows;
 
   // (plan P3-07, D-R06) what copy takes of a node, as the typeset view
   // says it: an omitted or replaced node's kind (its `syn`, else its kind)
@@ -500,6 +532,33 @@ struct Sem {
           out += "</li>\n";
         }
         out += ordered ? "</ol>\n" : "</ul>\n";
+        return;
+      }
+      case Kind::equations: {
+        // (plan P3-29, D-S11) display rows aligned at their `&`: each its own
+        // formula (its number, its label), their columns shared
+        open(elementOf(n, sh, "div"), n, pid, "tsr-equations");
+        out += "\n";
+        if (math.boxes) {
+          std::vector<const ContentNode*> members;
+          std::vector<MathRows> rows;
+          for (const ContentNode* k : n->kids)
+            if (k->kind == Kind::mathblock) {
+              members.push_back(k);
+              rows.push_back(displayRows(k));
+            }
+          bool aligned = false;
+          for (const MathRows& r : rows) aligned = aligned || r.aligned();
+          if (aligned) {
+            std::vector<const MathRows*> group;
+            for (const MathRows& r : rows) group.push_back(&r);
+            std::vector<std::vector<MathBox*>> out1;
+            alignMathRows(group, *math.arena, out1);
+            for (size_t i = 0; i < members.size(); i++) alignedRows[members[i]].assign(out1[i].begin(), out1[i].end());
+          }
+        }
+        for (const ContentNode* k : n->kids) block(k, -1);
+        close(elementOf(n, sh, "div"));
         return;
       }
       case Kind::quote: {

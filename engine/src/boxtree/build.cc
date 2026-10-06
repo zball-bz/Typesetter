@@ -18,7 +18,8 @@ using Align = BlockTraits::Align;
 // caption centred, a heading and a block image keeping with what follows)
 constexpr const char* kTraitNames[] = {"root",  "para",  "caption", "heading", "list",  "item",
                                        "quote", "group", "figure",  "code",    "table", "image",
-                                       "float", "math",  "raw",     "rule",    "error", "marker", "cell"};
+                                       "float", "math",  "raw",     "rule",    "error", "marker", "cell",
+                                       "equations"};
 static_assert(sizeof kTraitNames / sizeof kTraitNames[0] == (size_t)TraitsId::N, "one name per TraitsId");
 
 // What a group means to the box tree (finding emitter/figure-role-string-
@@ -414,6 +415,12 @@ class Builder {
           close(it);
         }
         close(list);
+        return;
+      }
+      case Kind::equations: {  // (plan P3-29, D-S11) display rows a jot apart, aligned at their `&`
+        const u32 e = open(LayouterId::Stack, Painter::None, TraitsId::Equations, n, parent, x);
+        for (const ContentNode* k : n->kids) walk(k, e, x, 0);
+        close(e);
         return;
       }
       case Kind::quote: {

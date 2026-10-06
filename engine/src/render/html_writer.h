@@ -160,8 +160,9 @@ inline constexpr std::string_view kHtmlAttrs[] = {
     // (plan P3-14) a table cell's spans
     "colspan", "rowspan",
     // (plan P3-23) a presentation row's ARIA role; (plan P3-27) a formula's
-    // accessible name (its source)
-    "role", "aria-label",
+    // accessible name (its source); (plan P3-29) a formula's later rows,
+    // hidden (its first is named)
+    "role", "aria-label", "aria-hidden",
 };
 static_assert(std::size(kHtmlAttrs) <= 32);
 constexpr int htmlAttrIndex(std::string_view name) {

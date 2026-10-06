@@ -1,0 +1,57 @@
+lower v1 abi 3d3ccfbb docEnd 544 holes 1 module 3f3a5a4b2629e85c
+piece 0 hole 0 js [139,167)
+piece 1 verbatim block 6 js [196,260)
+block 0 content [0,126)
+  CALL para [0,126)
+    TEXT "Display lines one after the other are one equations block (plan P3-29, D-S11): their rows align at " [0,98) raw=0:0,99:98
+    CALL code [99,102) text="&"
+    TEXT ", each its own equation." [102,126)
+block 1 content [128,195)
+  CALL para [128,195)
+    CALL math [128,154) display=true label="sq"
+      CALL mathsrc [130,147) src="f(x) &= (x + 1)^2"
+    TEXT "\n" [128,128) raw=0:0,1:0
+    CALL math [155,175) display=true
+      CALL mathsrc [157,173) src="&= x^2 + 2 x + 1"
+    TEXT "\n" [128,128) raw=0:0,1:0
+    CALL math [176,195) display=true label="bound"
+      CALL mathsrc [178,185) src="&>= 2 x"
+block 2 content [197,262)
+  CALL para [197,262)
+    TEXT "A row break inside one formula keeps one number, on its last row:" [197,262)
+block 3 content [264,328)
+  CALL para [264,328)
+    CALL math [264,328) display=true label="binom"
+      CALL mathsrc [266,303) src="g(x) &= sum_(k=0)^n binom(n, k) x^k \\"
+      CALL mathsrc [306,318) src="&= (1 + x)^n"
+block 4 content [330,383)
+  CALL para [330,383)
+    TEXT "Rows without " [330,342) raw=0:0,13:12
+    CALL code [343,346) text="&"
+    TEXT " are centred each: " [347,364) raw=0:0,1:0,19:17
+    CALL math [365,374) display=true
+      CALL mathsrc [367,372) src="a = 1"
+    TEXT " follows." [375,383) raw=0:0,1:0
+block 5 content [385,416)
+  CALL para [385,416)
+    CALL math [385,398) display=true
+      CALL mathsrc [387,396) src="a + b = c"
+    TEXT "\n" [385,385) raw=0:0,1:0
+    CALL math [399,416) display=true
+      CALL mathsrc [401,414) src="d = e - f + g"
+block 6 verbatim [418,485) user
+  VERBATIM 0
+block 7 content [486,507) user framed holes 0..1
+  CALL para [486,507)
+    HOLE 0 [486,507)
+block 8 content [509,543)
+  CALL para [509,543)
+    TEXT "See " [509,512) raw=0:0,4:3
+    CALL ref [513,516) target="sq"
+    TEXT ", " [516,517) raw=0:0,2:1
+    CALL ref [518,524) target="bound"
+    TEXT ", " [524,525) raw=0:0,2:1
+    CALL ref [526,532) target="binom"
+    TEXT " and " [533,536) raw=0:0,1:0,5:3
+    CALL ref [537,542) target="eq-u"
+    TEXT "." [542,543)

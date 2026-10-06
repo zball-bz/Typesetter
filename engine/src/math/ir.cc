@@ -16,7 +16,7 @@ namespace {
 struct Tok {
   // Hole / TextHole / ErrorHole (plan P2-15): a formula's hole units
   enum K : u8 { End, Num, Word, Op, Chr, Sup, Sub, Slash, Open, Close, Prime, Quote, Param, Hole, TextHole,
-                ErrorHole, Amp } k = End;
+                ErrorHole, Amp, Break } k = End;
   std::string text;                // Num/Word/Quote/Param
   const SymbolInfo* op = nullptr;  // Op (dictionary hit)
   u32 cp = 0;                      // Chr (direct char) / Open / Close
@@ -85,6 +85,15 @@ struct Lexer {
       t.text = std::string(s.substr(i + 1, e - (i + 1)));
       i = e < s.size() ? e + 1 : e;
       return t;
+    }
+    if (c == '\\') {  // (plan P3-29, D-S11) a `\` ending its line: a row break
+      u32 j = i + 1;
+      while (j < s.size() && (s[j] == ' ' || s[j] == '\t' || s[j] == '\r')) j++;
+      if (j >= s.size() || s[j] == '\n') {
+        i = j;
+        t.k = Tok::Break;
+        return t;
+      }
     }
     if (c == '\\' && i + 1 < s.size() && (s[i + 1] == '$' || s[i + 1] == '#')) {  // \$ and \#: themselves
       t.k = Tok::Chr;
@@ -579,6 +588,9 @@ struct Parser {
       case Tok::Amp:  // (plan P3-29) an alignment point: rows split at it; elsewhere it sets nothing
         advance();
         return mk(MNode::Align, lo, hi);
+      case Tok::Break:  // (plan P3-29) a display's row break; elsewhere it sets nothing
+        advance();
+        return mk(MNode::Break, lo, hi);
       case Tok::Slash:
         // a dangling / is an ordinary slash, as in TeX (formulas split across
         // sources routinely end mid-expression)
@@ -1118,6 +1130,7 @@ void dumpNode(std::string& out, const MNode* n, int depth, const char* role = nu
     case MNode::Param: appendf(out, "param #%s", n->txt.c_str()); break;
     case MNode::Error: out += "error \"" + n->txt + "\""; break;
     case MNode::Align: out += "align"; break;
+    case MNode::Break: out += "break"; break;
     case MNode::Rows: out += "rows"; break;
   }
   if (n->k != MNode::Run || n->hi > n->lo) appendf(out, " [%u,%u)", n->lo, n->hi);

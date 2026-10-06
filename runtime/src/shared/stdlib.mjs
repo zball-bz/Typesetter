@@ -937,6 +937,17 @@ export function createStd(host) {
       if (!mathName.test(t) && [...t].length !== 1) throw new TypeError(`math.sym: a symbol name or one character, not ${t}`);
       return mathNode([mathsrc(t)]);
     },
+    // (plan P3-29, D-S11) an equations block: display rows aligned at their
+    // `&`, each its own equation — a source string, {src, label}, or a
+    // display math value (math(src, {display: true, label}))
+    equations: (rows) => {
+      if (!Array.isArray(rows)) throw new TypeError('math.equations([rows]): an array of rows');
+      return ob.makeNode(KIND.equations, {}, rows.map((r) => {
+        if (typeof r === 'string') return mathNode([mathsrc(r)], { display: true });
+        if (isPlainObject(r) && typeof r.src === 'string') return mathNode([mathsrc(r.src)], { display: true, label: r.label });
+        return r;
+      }));
+    },
     call: (name, ...args) => {
       if (typeof name !== 'string' || !mathName.test(name)) throw new TypeError(`math.call: a function name, not ${name}`);
       const kids = [mathsrc(`${name}(`)];

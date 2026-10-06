@@ -973,19 +973,39 @@ class DocLayout {
       }
       case Painter::MathRow: {
         // display formula: centred on the measure, advance = box extents
-        const MathBox* mb = std::get<MathData>(u.data).box;
+        const MathData& md = std::get<MathData>(u.data);
+        const MathBox* mb = md.box;
         if (!mb) {
           leave(b, l);
           return;
         }
         f.kind = FragKind::Math;
-        Su shift = (lineWidth - mb->w) / 2;
-        if (shift < 0) shift = 0;
-        f.left = left(b) + shift;
-        f.width = mb->w;
         f.srcSpan = b.span;
-        f.height = std::max(mb->asc + mb->desc, baseLeading);
-        f.baseline = (f.height - (mb->asc + mb->desc)) / 2 + mb->asc;
+        auto row = [&](Fragment& rf, const MathBox* rb) {
+          Su shift = (lineWidth - rb->w) / 2;
+          if (shift < 0) shift = 0;
+          rf.left = left(b) + shift;
+          rf.width = rb->w;
+          rf.height = std::max(rb->asc + rb->desc, baseLeading);
+          rf.baseline = (rf.height - (rb->asc + rb->desc)) / 2 + rb->asc;
+        };
+        // (plan P3-29; design T6 S15) its rows, a jot (0.3em) apart, one
+        // fragment each — a page may break between them; its number on the
+        // last
+        for (size_t r = 0; r + 1 < md.rows.size(); r++) {
+          Fragment rf = f;
+          row(rf, md.rows[r]);
+          rf.mathRow = (u16)r;
+          rf.sep = Sep::Newline;
+          fr->lines.push_back(rf);
+          py += rf.height + suRoundPx(0.3 * md.sizePx);
+        }
+        if (!md.rows.empty()) {
+          f.y = (Su)py;
+          f.mathRow = (u16)(md.rows.size() - 1);
+          mb = md.rows.back();
+        }
+        row(f, mb);
         f.sep = b.sepAfter;  // a formula is copied (its source) like a paragraph
         if (u.cells.empty()) break;
         // (plan P3-26; design T6 display rows) its number, measured: a line

@@ -1,0 +1,1 @@
+{"headings":[],"regions":[],"fences":[],"labels":[{"id":"sq","rule":"math","span":[150,154]},{"id":"bound","rule":"math","span":[188,195]},{"id":"binom","rule":"math","span":[321,328]}],"diagnostics":[]}

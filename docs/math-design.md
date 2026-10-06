@@ -530,6 +530,32 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
     `big`, `Big`, `bigg`, `Bigg` at amsmath's 1.2, 1.8, 2.4, 3.0em, the
     symbol's class. `phantom(body, full|h|v|smash)`: its room without ink
     (`phantom`, `hphantom`, `vphantom`) or its ink without room (`smash`).
+- **Plan P3-29 (multi-row displays; D-S11, design T6 S15)**:
+  - Display lines one after the other in a paragraph — two or more, only
+    blanks between them — are one `equations` block (normalize N5): each
+    row its own formula (its label, its number), their columns shared. A
+    `\` ending a line inside one formula is a row break (`MNode::Break`;
+    the island splitter no longer reads it as an escape of the line break):
+    one formula of several rows, its number on its last row.
+    `math.equations([rows])` builds the block from a script (a row: a
+    source, `{src, label}`, or a display math value).
+  - Alignment is TeX's align: a row's cells are its top-level `&` pieces,
+    columns alternate right and left, a pair joined (its right cell after
+    the Ord glue its first atom takes), pairs an em apart. Measure lays out
+    each display formula's rows of cells (`layoutMathRows`; one cell is the
+    formula's box as before) and aligns a group (`alignMathRows`): an
+    equations block whose rows hold `&` or a row break, or one formula of
+    several rows or cells — every row as wide as the group's columns, so
+    rows centred one under the other align. Rows without `&` stay centred
+    each.
+  - Layout sets a formula's rows a jot (0.3em) apart, one Math fragment each
+    (a page may break between them); an equations block's rows are leaves a
+    jot apart (`block.gap: 0.3em`, defaults.json). The typeset page names a
+    formula on its first row and hides its later rows (`aria-hidden`); a
+    display formula's copy group is its own source position (copy takes
+    each formula once, its rows included). The plain page writes an
+    equations block as `div.tsr-equations` of its rows, aligned the same
+    way, and a formula of several rows as one span (`.tsr-mathrows`).
 - **`inf`** is the infimum text operator; ∞ is `oo`/`infty`/`infinity`
   (v1 listed `inf` as ∞ — collision, recorded deviation).
 - **v2 §13's dotted codex names** (`arrow.r`, `subset.eq`) are not

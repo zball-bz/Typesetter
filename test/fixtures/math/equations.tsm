@@ -1,0 +1,20 @@
+Display lines one after the other are one equations block (plan P3-29, D-S11): their rows align at `&`, each its own equation.
+
+$ f(x) &= (x + 1)^2 $ <sq>
+$ &= x^2 + 2 x + 1 $
+$ &>= 2 x $ <bound>
+
+A row break inside one formula keeps one number, on its last row:
+
+$ g(x) &= sum_(k=0)^n binom(n, k) x^k \
+  &= (1 + x)^n $ <binom>
+
+Rows without `&` are centred each: $ a = 1 $ follows.
+
+$ a + b = c $
+$ d = e - f + g $
+
+#{ const rows = [{src: 'u &= v + w', label: 'eq-u'}, 'v &= 2 w']; }
+#math.equations(rows)
+
+See @sq, @bound, @binom and @eq-u.

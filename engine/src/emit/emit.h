@@ -178,6 +178,12 @@ struct ImageData {
 };
 struct MathData {  // a display formula
   const MathBox* box = nullptr;  // laid out in Measure (plan P1-25), once its text runs are measured
+  // (plan P3-29; D-S11) its rows when it has row breaks or `&`, or stands in
+  // an equations block that aligns: each as wide as its group's columns
+  // (box: the first); its cells, laid out, wait for its group
+  std::vector<const MathBox*> rows;
+  const MathRows* cells = nullptr;
+  bool grouped = false;  // its group aligned it
   // (its equation number is the leaf's track, plan P3-26: FlowUnit::cells)
   StrRef src = 0;  // its source as written (the copy contract)
   StrRef formula = 0;  // (plan P2-15) its source as the lexer reads it

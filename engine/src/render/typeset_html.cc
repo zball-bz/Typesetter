@@ -56,9 +56,11 @@ static void spanAttrs(Tag& t, Span sp, u32 base) {
 
 // One formula as an inline box (render/math_html.h)
 static void mathSpan(std::string& out, const MathBox* mb, StrRef srcRef, bool display, const Interner& strs,
-                     Span span, double displayTop, u32 srcBase, bool label, StrRef color, u32 group = 0) {
+                     Span span, double displayTop, u32 srcBase, bool label, StrRef color, u32 group = 0,
+                     bool hidden = false) {
   MathSpanOpts o;
   o.group = group;
+  o.hidden = hidden;
   o.display = display;
   o.placed = display;
   o.displayTop = displayTop;
@@ -154,7 +156,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       // (plan P3-29) its copy group: its own source position (a block may
       // hold several formulas: an equations block's rows)
       mathSpan(out, n.math, n.mathSrc, /*display=*/true, strs, {}, n.mathTopPx, 0, n.mathLabel,
-               n.markerStyle ? styles.get(n.markerStyle).color : 0, n.span.start);
+               n.markerStyle ? styles.get(n.markerStyle).color : 0, n.span.start, n.mathHidden);
       out += "</div>\n";
       return;
     }

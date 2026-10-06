@@ -1,0 +1,37 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,126)
+    paragraph para unit=0 @[0,126)
+top pid=1 leaves=3
+  stack root gap=1/1 @[128,195)
+    stack equations gap=307su @[128,195)
+      replaced math math unit=0 ragged anchor="sq" @[128,154)
+      replaced math math unit=1 ragged @[155,175)
+      replaced math math unit=2 ragged anchor="bound" @[176,195)
+top pid=2 leaves=1
+  stack root gap=1/1 @[197,262)
+    paragraph para unit=0 @[197,262)
+top pid=3 leaves=1
+  stack root gap=1/1 @[264,328)
+    replaced math math unit=0 ragged anchor="binom" @[264,328)
+top pid=4 leaves=1
+  stack root gap=1/1 @[330,383)
+    paragraph para unit=0 @[330,383)
+top pid=5 leaves=1
+  stack root gap=1/1 @[365,374)
+    replaced math math unit=0 ragged @[365,374)
+top pid=6 leaves=1
+  stack root gap=1/1 @[375,383)
+    paragraph para unit=0 cont @[375,383)
+top pid=7 leaves=2
+  stack root gap=1/1 @[385,416)
+    stack equations gap=307su @[385,416)
+      replaced math math unit=0 ragged @[385,398)
+      replaced math math unit=1 ragged @[399,416)
+top pid=8 leaves=2
+  stack root gap=1/1 @[486,507)
+    stack equations gap=307su @[486,507)
+      replaced math math unit=0 ragged anchor="eq-u" @[486,507)
+      replaced math math unit=1 ragged @[486,507)
+top pid=9 leaves=1
+  stack root gap=1/1 @[509,543)
+    paragraph para unit=0 @[509,543)

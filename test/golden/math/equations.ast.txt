@@ -1,0 +1,46 @@
+doc @[0,544)
+  para @[0,126)
+    text @[0,98) str="Display lines one after the other are one equations block (plan P3-29, D-S11): their rows align at "
+    code @[99,102) str="&"
+    text @[102,126) str=", each its own equation."
+  para @[128,195)
+    math @[128,154) display=1 src="f(x) &= (x + 1)^2" label="sq"
+      text @[130,147) str="f(x) &= (x + 1)^2"
+    text @[128,128) str="\n"
+    math @[155,175) display=1 src="&= x^2 + 2 x + 1"
+      text @[157,173) str="&= x^2 + 2 x + 1"
+    text @[128,128) str="\n"
+    math @[176,195) display=1 src="&>= 2 x" label="bound"
+      text @[178,185) str="&>= 2 x"
+  para @[197,262)
+    text @[197,262) str="A row break inside one formula keeps one number, on its last row:"
+  para @[264,328)
+    math @[264,328) display=1 src="g(x) &= sum_(k=0)^n binom(n, k) x^k \\\n&= (1 + x)^n" label="binom"
+      text @[266,303) str="g(x) &= sum_(k=0)^n binom(n, k) x^k \\"
+      text @[306,318) str="&= (1 + x)^n"
+  para @[330,383)
+    text @[330,342) str="Rows without "
+    code @[343,346) str="&"
+    text @[347,364) str=" are centred each: "
+    math @[365,374) display=1 src="a = 1"
+      text @[367,372) str="a = 1"
+    text @[375,383) str=" follows."
+  para @[385,416)
+    math @[385,398) display=1 src="a + b = c"
+      text @[387,396) str="a + b = c"
+    text @[385,385) str="\n"
+    math @[399,416) display=1 src="d = e - f + g"
+      text @[401,414) str="d = e - f + g"
+  code-block @[418,485) js=" const rows = [{src: 'u &= v + w', label: 'eq-u'}, 'v &= 2 w']; "
+  para @[486,507)
+    splice @[486,507) expr="math.equations(rows)"
+  para @[509,543)
+    text @[509,512) str="See "
+    ref @[513,516) target="sq"
+    text @[516,517) str=", "
+    ref @[518,524) target="bound"
+    text @[524,525) str=", "
+    ref @[526,532) target="binom"
+    text @[533,536) str=" and "
+    ref @[537,542) target="eq-u"
+    text @[542,543) str="."

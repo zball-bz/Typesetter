@@ -23,7 +23,9 @@
 //                  splice of text among blocks)
 //   N5 split:      (plan P3-17, D-I02) a paragraph at a Blocks position
 //                  holding a block splits around it: [para, block,
-//                  para{cont}] — the continuation without a first-line
+//                  para{cont}] — (plan P3-29, D-S11: display lines one
+//                  after the other, two or more, are one equations block)
+//                  the continuation without a first-line
 //                  indent or the space before a paragraph; a block in any
 //                  other Inline position (a heading, a link, an inline
 //                  group) is an error{block-in-inline} around it
@@ -167,6 +169,7 @@ struct Norm {
       run.clear();
     };
     std::vector<ContentNode*> kids = p->kids;
+    const size_t from = out.size();
     for (ContentNode* k : kids) {
       if (effLevel(k) == Level::Block && !part(k, p)) {
         flush();
@@ -177,7 +180,28 @@ struct Norm {
       }
     }
     flush();
+    equations(p, out, from);
     return true;
+  }
+  // (plan P3-29, D-S11) display lines one after the other in a paragraph —
+  // two or more, nothing but blanks between them — are one equations
+  // block: its rows share their alignment, each its own equation (its label,
+  // its number)
+  void equations(const ContentNode* p, std::vector<ContentNode*>& out, size_t from) {
+    for (size_t i = from; i < out.size(); i++) {
+      size_t j = i;
+      while (j < out.size() && out[j]->kind == Kind::mathblock) j++;
+      if (j - i >= 2) {
+        ContentNode* e = mk(Kind::equations, {out[i]->span.start, out[j - 1]->span.end});
+        e->style = p->style;
+        e->scope = p->scope;
+        e->env = p->env;
+        e->declEpoch = p->declEpoch;
+        e->kids.assign(out.begin() + (long)i, out.begin() + (long)j);
+        out.erase(out.begin() + (long)i, out.begin() + (long)j);
+        out.insert(out.begin() + (long)i, e);
+      }
+    }
   }
 
   // a part of its parent: a child in a slot the parent takes

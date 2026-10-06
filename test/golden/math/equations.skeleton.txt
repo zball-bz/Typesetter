@@ -1,0 +1,10 @@
+doc @[0,544)
+  para @[0,126) lines=1
+  para @[128,195) lines=3
+  para @[197,262) lines=1
+  para @[264,328) lines=2
+  para @[330,383) lines=1
+  para @[385,416) lines=2
+  code-block @[418,485) js=" const rows = [{src: 'u &= v + w', label: 'eq-u'}, 'v &= 2 w']; "
+  para @[486,507) lines=1
+  para @[509,543) lines=1

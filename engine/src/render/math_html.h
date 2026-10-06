@@ -4,6 +4,7 @@
 #pragma once
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include "../math/math.h"
 
@@ -18,6 +19,8 @@ struct MathSpanOpts {
   StrRef color = 0;        // its paint style's colour
   bool label = false;      // (plan P3-27, D-R04) role=math, its source as aria-label
   u32 group = 0;           // (plan P3-29) its copy group's source position when its span is not written (a display row)
+  bool hidden = false;     // (plan P3-29) a formula's later row: aria-hidden (its first row carries the name)
+  bool bare = false;       // (plan P3-29) a row inside its formula's span: its box only
 };
 
 // <span class="tsr-math" data-syn="math" data-copy="$src$" …> with its
@@ -25,5 +28,10 @@ struct MathSpanOpts {
 // the author wrote it, without the dollars)
 void writeMathSpan(std::string& out, const MathBox* mb, std::string_view srcAsWritten, const Interner& strs,
                    const MathSpanOpts& o);
+// (plan P3-29) a display formula of several rows on a flowing page: one
+// span — the formula (its copy, its name, its source span) — holding its
+// rows, one under the other
+void writeMathRows(std::string& out, const std::vector<const MathBox*>& rows, std::string_view srcAsWritten,
+                   const Interner& strs, const MathSpanOpts& o);
 
 }  // namespace tsr

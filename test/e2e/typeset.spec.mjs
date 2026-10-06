@@ -1222,3 +1222,30 @@ test('raw(measure: host): measured where it is painted, at its width; relayout m
   expect(wide.raw[1].clipped).toBe(false);
   expect(wide.raw[2].h).toBeCloseTo(150, 1);
 });
+
+// ---- multi-row displays (plan P3-29, D-S11) --------------------------------
+
+test('equations: rows aligned at &, each copied once; a formula of rows copies once', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const source = 'Before.\n$ f(x) &= (x + 1)^2 $ <sq>\n$ &= x^2 + 2 x + 1 $\nAfter.\n\n' +
+                 '$ g &= a + b \\\n  &= c $ <g>\n';
+  const r = await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 420, progressive: false }), source);
+  expect(r.diags).toBe('');
+  const rows = await page.evaluate(() => [...document.querySelectorAll('#out .tsr-math')].map((e) => {
+    const b = e.getBoundingClientRect();
+    return { left: b.left, width: b.width, label: e.getAttribute('aria-label'), hidden: e.getAttribute('aria-hidden') };
+  }));
+  expect(rows.length).toBe(4);
+  // an equations block's rows: one width, one left edge (their columns shared)
+  expect(rows[0].width).toBeCloseTo(rows[1].width, 2);
+  expect(rows[0].left).toBeCloseTo(rows[1].left, 2);
+  // a formula of two rows: named once, its second row hidden
+  expect(rows[2].label).toBe('g &= a + b \\\n&= c');
+  expect(rows[3].hidden).toBe('true');
+  const text = await page.evaluate(() => window.__tsr.copyText());
+  expect(text.split('$ f(x) &= (x + 1)^2 $').length).toBe(2);
+  expect(text.split('$ &= x^2 + 2 x + 1 $').length).toBe(2);
+  expect(text.split('$ g &= a + b \\\n&= c $').length).toBe(2);
+  expect((await page.evaluate(() => window.__tsr.audit())).failures).toEqual([]);
+});

@@ -46,3 +46,8 @@
 .tsr-flow .tsr-margin { color: var(--tsr-tok-comment); font-style: italic; }
 /* (plan P3-27) the plain page: a display formula's box, centred in its paragraph */
 .tsr-flow p.tsr-mathblock { text-align: center; }
+/* (plan P3-29) a formula's rows (a jot apart), an equations block's rows */
+.tsr-flow .tsr-mathrows { line-height: 0; }
+.tsr-flow .tsr-mathrows > .tsr-math + br + .tsr-math { margin-top: 0.3em; }
+.tsr-flow .tsr-equations > p.tsr-mathblock { margin: 0.3em 0 0; }
+.tsr-flow .tsr-equations > p.tsr-mathblock:first-child { margin-top: 0; }

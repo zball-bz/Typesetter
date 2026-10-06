@@ -1451,14 +1451,58 @@ static void finalizeDisplay(MathData& m, MetricStore& store, const EmitSettings&
   MeasureNeeds mt{&store, &env.styles, &env.strs, env.docBasePx, &missing};
   DiagSink scratch;
   const MathScope scope{env.math, m.epoch, m.style};
-  MathBox* box = layoutMathFormula(env.strs.get(m.formula), /*display=*/true, m.sizePx, env.arena, env.strs, scratch,
-                                   m.span, &mt, /*parseDiags=*/false, &scope);
+  // (plan P3-29) its rows of cells; one cell is the formula's box
+  MathRows* rows = env.arena.make<MathRows>();
+  *rows = layoutMathRows(env.strs.get(m.formula), m.sizePx, env.arena, env.strs, scratch, m.span, &mt,
+                         /*parseDiags=*/false, &scope);
   if (!missing.empty()) {
     need.insert(need.end(), missing.begin(), missing.end());
     return;
   }
   keepLayoutDiags(scratch, env);
-  m.box = box;
+  m.cells = rows;
+  m.box = rows->rows[0][0].box;  // (an aligned one: replaced when its group aligns)
+}
+
+// (plan P3-29; design T8 S9, D-S11) the display formulas aligned together:
+// an equations block's rows share their columns when one of them has `&`
+// or a row break; a formula of several rows or cells outside one is a group
+// of its own. A group waits until each member is laid out.
+static void alignDisplays(TopBlock& tb, Arena& arena) {
+  if (!tb.tree) return;
+  auto mathOf = [&](u32 block) -> MathData* {
+    const LayoutBlock& b = tb.tree->blocks[block];
+    return b.leaf() && b.unit < tb.units.size() ? std::get_if<MathData>(&tb.units[b.unit].data) : nullptr;
+  };
+  auto align = [&](const std::vector<MathData*>& members) {
+    std::vector<const MathRows*> group;
+    for (MathData* m : members) group.push_back(m->cells);
+    std::vector<std::vector<MathBox*>> rows;
+    alignMathRows(group, arena, rows);
+    for (size_t i = 0; i < members.size(); i++) {
+      members[i]->rows.assign(rows[i].begin(), rows[i].end());
+      members[i]->box = rows[i].empty() ? members[i]->box : rows[i][0];
+      members[i]->grouped = true;
+    }
+  };
+  const std::vector<LayoutBlock>& blocks = tb.tree->blocks;
+  std::vector<bool> inGroup(blocks.size(), false);
+  for (u32 i = 0; i < blocks.size(); i++) {
+    if (blocks[i].traits != TraitsId::Equations) continue;
+    std::vector<MathData*> members;
+    bool ready = true, aligned = false, done = true;
+    for (u32 k = i + 1; k < blocks[i].end; k = blocks[k].end)
+      if (MathData* m = mathOf(k)) {
+        inGroup[k] = true;
+        members.push_back(m);
+        ready = ready && m->cells;
+        aligned = aligned || (m->cells && m->cells->aligned());
+        done = done && m->grouped;
+      }
+    if (ready && aligned && !done) align(members);
+  }
+  for (u32 k = 0; k < blocks.size(); k++)
+    if (MathData* m = mathOf(k); m && !inGroup[k] && m->cells && m->cells->aligned() && !m->grouped) align({m});
 }
 
 MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
@@ -1574,9 +1618,12 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
   };
   for (TopBlock& tb : tops) {
     if (objects && objects->diags) objects->diags->pid = tb.pid;  // a layout's diagnostics are its block's
+    bool displays = false;
     for (FlowUnit& u : tb.units) {
-      if (MathData* m = std::get_if<MathData>(&u.data); m && !m->box && objects)
-        finalizeDisplay(*m, store, cfg, *objects, need);
+      if (MathData* m = std::get_if<MathData>(&u.data); m && objects) {
+        if (!m->box) finalizeDisplay(*m, store, cfg, *objects, need);
+        displays = displays || !m->grouped;
+      }
       if (const GridData* g = std::get_if<GridData>(&u.data)) {
         needStyle(g->codeStyle);
         if (g->wrap || g->snap) {  // (plan P3-11: snap-kerning without wrap measures them too)
@@ -1589,6 +1636,7 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
       resolveItems(u.hl);
       for (TableCell& c : u.cells) resolveItems(c.hl);
     }
+    if (displays && objects) alignDisplays(tb, objects->arena);  // (plan P3-29)
   }
   for (const MeasureItem& m : need) {
     u64 k = MetricStore::key(m.str, m.face);
@@ -1954,7 +2002,11 @@ std::string dumpMathBoxes(const std::vector<TopBlock>& tops, const Interner& str
     for (const FlowUnit& u : tb.units) {
       if (const MathData* m = std::get_if<MathData>(&u.data); m && m->box) {
         appendf(out, "display pid=%u\n", tb.pid);
-        out += dumpMathBox(m->box, strs);
+        if (m->rows.size() < 2) out += dumpMathBox(m->box, strs);
+        for (size_t r = 0; m->rows.size() >= 2 && r < m->rows.size(); r++) {  // (plan P3-29) its rows
+          appendf(out, "row %zu\n", r);
+          out += dumpMathBox(m->rows[r], strs);
+        }
       }
       for (const HItem& it : u.hl.items) {
         const ObjPart* pt = objectPart(u.hl, it);

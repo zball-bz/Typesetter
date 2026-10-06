@@ -106,7 +106,7 @@ struct BoxModel {
 // what a block is (its layouter's case; the dumps' name)
 enum class TraitsId : u8 {
   Root, Para, Caption, Heading, List, Item, Quote, Group, Figure, Code, Table, Image, Float, Math, Raw,
-  Rule, Error, Marker, Cell, N
+  Rule, Error, Marker, Cell, Equations, N
 };
 
 // (plan P3-10; design T6 TableSpec) a table's tracks: Fr(1) columns, or a

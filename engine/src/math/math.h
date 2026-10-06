@@ -3,6 +3,7 @@
 // precompiled MATH artifact — natively golden-testable (--stage=mathbox).
 #pragma once
 #include <array>
+#include <vector>
 #include "../measure/measure.h"
 #include "../support/support.h"
 
@@ -70,6 +71,29 @@ std::vector<MathSeg> layoutMathSegments(std::string_view src, bool display,
                                         Interner& strs, DiagSink& diags,
                                         Span span, const MathBreaks& breaks, const MeasureNeeds* text = nullptr,
                                         bool parseDiags = true, const MathScope* scope = nullptr);
+
+// (plan P3-29; design T8 S9, D-S11) a display formula's rows: split at its
+// top-level row breaks (`\` ending a line), a row's cells at its top-level
+// alignment points (`&`) — TeX's align: columns alternate right and left, a
+// pair joined (its right cell opening as after an Ord), pairs an em apart.
+// A formula of one row without `&` is one cell, its box the formula's.
+struct MathCell {
+  MathBox* box = nullptr;
+  Su lead = 0;  // the room before it (a pair's right cell: the Ord glue)
+};
+struct MathRows {
+  std::vector<std::vector<MathCell>> rows;
+  Su em = 0;    // its size's em (the column gap)
+  bool aligned() const;  // more than one row, or a row of more than one cell
+};
+MathRows layoutMathRows(std::string_view src, double sizePx, Arena& arena, Interner& strs, DiagSink& diags,
+                        Span span, const MeasureNeeds* text = nullptr, bool parseDiags = true,
+                        const MathScope* scope = nullptr);
+// the rows of a group (an equations block's formulas, or one formula) with
+// their columns shared: each row a box as wide as the group's columns —
+// rows set one under the other align at their `&`. out[i]: member i's rows.
+void alignMathRows(const std::vector<const MathRows*>& group, Arena& arena,
+                   std::vector<std::vector<MathBox*>>& out);
 
 std::string dumpMathBox(const MathBox* box, const Interner& strs);
 
