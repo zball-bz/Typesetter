@@ -225,11 +225,11 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
     t.attrSafe("class", code && n.hl ? "tsr-line tsr-hlline" : "tsr-line");
     if (code) {
       t.attrSafe("data-ragged", "1");
-      if (n.contJoin) t.attrSafe("data-join", "none");
+      if (n.join) t.attrSafe("data-join", n.join);
     }
     anchor(t);
     lineSpan(t);
-    if (n.join) t.attrSafe("data-join", n.join);
+    if (!code && n.join) t.attrSafe("data-join", n.join);
     if (!code && n.ragged) t.attrSafe("data-ragged", "1");
     if (n.cell) t.attrSafe("data-cell", "1");
     if (n.overfull) t.attrSafe("data-overfull", "1");  // deliberate overflow (audit)

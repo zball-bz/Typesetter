@@ -22,6 +22,27 @@ enum class LayouterId : u8 { Paragraph, Stack, Replaced, Grid, Table };
 // what a Replaced block paints
 enum class Painter : u8 { None, Rule, Image, Raw, MathRow };
 
+// (plan P3-07; design T6/T7 Sep) what joins a line to the next in content
+// text — copy's separator: a break's (Space: a consumed source space; None:
+// a hyphen, a CJK break, no space) inside a stream; at a stream's end its
+// track's or unit's (Tab after a table cell, Row after a row's last cell,
+// Para after a unit the semantic page sets apart); Newline: a real line
+// boundary — a forced break, a code line's end, a block's last line (a
+// change of block implies a paragraph). Layout produces it, once per line.
+enum class Sep : u8 { Newline, Space, None, Tab, Row, Para };
+// its data-join spelling (Newline: no attribute)
+inline const char* sepName(Sep s) {
+  switch (s) {
+    case Sep::Newline: return nullptr;
+    case Sep::Space: return "space";
+    case Sep::None: return "none";
+    case Sep::Tab: return "tab";
+    case Sep::Row: return "row";
+    case Sep::Para: return "para";
+  }
+  return nullptr;
+}
+
 // A block's traits (design T6 BlockTraits, the subset today's layout uses):
 // a view compiled from its node's block properties (plan P3-01: NodeProps;
 // the default stylesheet, engine/data/defaults.json, gives today's values).

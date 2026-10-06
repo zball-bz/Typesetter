@@ -35,7 +35,7 @@ struct Fragment {
   double cjkDeltaPx = 0;             // k × wordDeltaPx (v2 §8), letter-spacing value
   i32 wordDeltaSu = 0;               // rounded, for dumps
   i32 cjkDeltaSu = 0;
-  u8 join = 0;                       // 0 last (no attr), 1 space, 2 none (hyphen)
+  Sep sep = Sep::Newline;            // what joins it to the next line in content text
   bool endsWithHyphen = false;
   bool ragged = false;               // a line that is not justified (its stream's policy)
   bool noGlue = false;               // no stretchable glue (URL-only line): set ragged

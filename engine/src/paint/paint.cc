@@ -308,11 +308,10 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
       case FragKind::CodeRow: {
         const GridData& g = std::get<GridData>(u.data);
         n.hl = l.codeHl;
-        // code rows are ragged by nature; a wrapped row additionally
-        // rejoins its continuation (§9.3)
+        // code rows are ragged by nature; a wrapped row rejoins its
+        // continuation (layout's separator, §9.3)
         n.ragged = true;
-        n.contJoin = li + 1 < fr.lines.size() && fr.lines[li + 1].kind == FragKind::CodeRow &&
-                     fr.lines[li + 1].codeCont;
+        n.join = sepName(l.sep);
         // its text.features (plan P3-02: code.fontFeatures and the per-language
         // map are rules on code blocks)
         n.features = g.features ? strs.get(g.features) : std::string_view{};  // interned: lives with the doc
@@ -327,7 +326,7 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         break;
       }
       case FragKind::Line: {
-        n.join = l.join == 1 ? "space" : l.join == 2 ? "none" : nullptr;
+        n.join = sepName(l.sep);
         n.ragged = l.ragged || l.noGlue;
         n.cell = l.cellIdx >= 0;
         n.overfull = l.overfull;

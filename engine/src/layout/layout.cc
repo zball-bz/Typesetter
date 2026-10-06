@@ -111,6 +111,7 @@ bool joinsSpace(const HList& h, u32 ihi) {
 // How a stream's lines sit and join (plan P1-17; design T6 LinePolicy).
 struct LinePolicy {
   enum class Join : u8 { FromBreak, Never } join = Join::FromBreak;  // cells: Never (document-model §6.3)
+  Sep endSep = Sep::Newline;  // the stream's last line's separator
   // Justify: the measure is filled; Ragged: it is not (tight lines still
   // shrink); Center: ragged, the slack split both sides; Cell: ragged, set
   // left, centre or right within the cell's content width
@@ -229,8 +230,12 @@ i64 materializeLines(const LineStream& s, const LinePolicy& pol, const MetricSto
       line.left += shift;
       line.width -= shift;  // the right edge stays at the content edge (audit: no overflow)
     }
+    // its separator (plan P3-07): the break's inside the stream, a forced
+    // break's newline, the stream's own at its end
     if (pol.join == LinePolicy::Join::FromBreak && !last)
-      line.join = (f.endsHyphen || !joinsSpace(s.h, r.ihi)) ? 2 : 1;
+      line.sep = (f.endsHyphen || !joinsSpace(s.h, r.ihi)) ? Sep::None : Sep::Space;
+    else if (bp == s.nBlocks)
+      line.sep = pol.endSep;
     Su advance = baseLeading;
     if (f.maxAsc + f.maxDesc > advance) advance = f.maxAsc + f.maxDesc;
     line.height = advance;
@@ -776,6 +781,9 @@ class DocLayout {
         line.cbLo = rows[ri].lo;
         line.cbHi = rows[ri].hi;
         line.codeCont = ri > 0;
+        // a wrapped row rejoins its continuation (§9.3); a code line ends
+        // with a newline
+        if (ri + 1 < rows.size()) line.sep = Sep::None;
         line.contCols = ri < rowContOut.size() ? rowContOut[ri] : 0;
         line.snapLatinPx = (float)grid.dLatinPx;
         line.snapCjkPx = (float)grid.dCjkPx;
@@ -935,7 +943,7 @@ std::string dumpLayout(const LayoutResult& lr) {
       }
       appendf(out, "  L%zu y=%dsu left=%dsu w=%dsu dw=%dsu dc=%dsu join=%s%s%s%s blocks=[%u,%u) @[%u,%u)\n",
               i, l.y, l.left, l.width, l.wordDeltaSu, l.cjkDeltaSu,
-              l.join == 0 ? "last" : l.join == 1 ? "space" : "none",
+              l.sep == Sep::Newline ? "last" : sepName(l.sep),
               l.endsWithHyphen ? " hyphen" : "", l.marker ? " marker" : "",
               l.overfull ? " overfull" : "",
               l.blockBegin, l.blockEnd, l.srcSpan.start, l.srcSpan.end);

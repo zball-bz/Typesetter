@@ -64,7 +64,6 @@ struct DLNode {
   bool cell = false;            // data-cell
   bool overfull = false;        // data-overfull
   bool hl = false;              // a highlighted code row
-  bool contJoin = false;        // a code row continued by the next: data-join=none
   double wordSpacingPx = 0;
   std::string_view features;    // a code row's font-feature-settings
   double lineHeightPx = 0;      // a code row's line-height (centred baseline)
