@@ -413,7 +413,7 @@ struct HlInline final : InlineSink {
 
   void container(const ContentNode* n, Flow& u, ICtx ctx) {
     if (n->kind == Kind::link) {  // an internal target (plan P3-04: the resolver's anchor), else its URL
-      if (n->anchorTo) ctx.url = {n->anchorTo, true};
+      if (n->anchorTo) ctx.url = {n->anchorTo, true, n->anchorDoc};
       else
         for (const ArgVal& a : n->args)
           if (a.key == ArgK::url && a.tag == ArgTag::Str) ctx.url = {a.ref, false};
@@ -443,7 +443,7 @@ struct HlInline final : InlineSink {
   void ref(const ContentNode* n, Flow& u, ICtx ctx) {
     // resolver output: kids = display text; a resolved one links to its
     // target's anchor (plan P3-04: SemInfo.targetAnchor)
-    if (n->anchorTo) ctx.url = {n->anchorTo, true};
+    if (n->anchorTo) ctx.url = {n->anchorTo, true, n->anchorDoc};
     ctx.addFlags |= BF_REF;
     const size_t before = count(u);
     for (const ContentNode* k : n->kids) walk(k, u, ctx);

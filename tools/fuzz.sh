@@ -13,7 +13,7 @@ set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 BUILD=engine/build-fuzz
-TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment)
+TARGETS=(fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment fuzz_inputs)
 
 if [ ! -f "$BUILD/CMakeCache.txt" ]; then
   GEN="Unix Makefiles"; command -v ninja >/dev/null && GEN=Ninja
@@ -48,6 +48,16 @@ seed() {
     for f in $(find test/fixtures -name "*.tsm" | sort); do
       engine/build/tsrc --stage=program "$f" > "$dir/$(echo "$f" | tr / _).bin" 2>/dev/null || true
     done
+    return
+  fi
+  if [ "$t" = fuzz_inputs ]; then
+    # (plan P3-31) labels inputs: the project fixtures' manifests, as the
+    # one array the input is
+    local f
+    for f in test/fixtures/project/*.labels.json; do
+      { printf '['; cat "$f"; printf ']'; } > "$dir/$(basename "$f")"
+    done
+    printf '[]' > "$dir/seed-empty.json"
     return
   fi
   if [ "$t" = fuzz_settings ]; then

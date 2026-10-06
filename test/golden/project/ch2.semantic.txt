@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="20" id="tsr-ch-two">The second chapter</h1>
+<h2 data-pid="1" data-s="31" data-e="43" id="tsr-sec-two">A section</h2>
+<p class="tsr-mathblock" data-pid="2" data-s="55" data-e="71" id="tsr-eq-b"><span class="tsr-math" data-syn="math" data-copy="$ x = y $" data-copy-group="2147483703" role="math" aria-label="x = y" data-s="55" data-e="71" style="width:38.875px;height:11.219px;vertical-align:-3.734px"><span class="tsr-mg" style="left:0px;top:-5.316px;font-size:16px;line-height:16px">x</span><span class="tsr-mg" style="left:12.859px;top:-5.316px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:29.391px;top:-5.316px;font-size:16px;line-height:16px">y</span></span> <span class="tsr-eqno" data-syn="eqno">(2)</span></p>
+<p data-pid="3" data-s="73" data-e="197">It reads <a href="ch1.html#tsr-fig-a">图 1</a> and <a href="ch1.html#tsr-eq-a">式 (1)</a> from the first chapter, numbered as this book numbers them, and its own <a href="#tsr-eq-b">式 (2)</a> continues the count.</p>
+</div>

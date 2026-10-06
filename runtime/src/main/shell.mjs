@@ -488,7 +488,7 @@ export function createEngine(opts = {}) {
       let semanticHtml = null;
       const res = await request(
         { type: 'typeset', id, source, settings: settingsAt(width), progressive,
-          fontFaces: fonts, baseUrl: document.baseURI },
+          fontFaces: fonts, baseUrl: document.baseURI, inputs: opts.inputs },
         (html, info) => {
           if (s.disposed) return;
           semanticHtml = html;
@@ -534,7 +534,7 @@ export function createEngine(opts = {}) {
           const rid = nextId++;
           const r = await request({ type: 'update', id: rid, docId: id,
             source: newSource, settings: settingsAt(width), progressive: false,
-            fontFaces: fonts, baseUrl: document.baseURI, held: heldKeys(view) });
+            fontFaces: fonts, baseUrl: document.baseURI, held: heldKeys(view), inputs: opts.inputs });
           if (s.disposed) throw superseded('update');
           docLang(container, r.lang);  // (an edit may change it: $.doc, or detection)
           // rects only for a listener (an edit's commit reads no layout)

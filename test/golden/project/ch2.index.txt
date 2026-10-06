@@ -1,0 +1,6 @@
+instance heading 2 level=1 label=ch-two title="The second chapter" @[0,20)
+instance heading 2.1 level=2 label=sec-two title="A section" @[31,43)
+instance equation 2 label=eq-b @[55,71)
+label ch-two -> heading 2 @[0,20)
+label sec-two -> heading 2.1 @[31,43)
+label eq-b -> equation 2 @[55,71)

@@ -1,0 +1,20 @@
+doc @[0,197) [base]
+  heading @[0,20) [BOLDx1.60] level=1 label="ch-two"
+    text @[2,20) [BOLDx1.60] str="The second chapter"
+  heading @[31,43) [BOLDx1.35] level=2 label="sec-two"
+    text @[34,43) [BOLDx1.35] str="A section"
+  mathblock @[55,71) [base] label="eq-b"
+    mathsrc @[57,62) [base] src="x = y"
+    seq @[55,71) [base] slot="tag" syn="eqno" copy="omit"
+      text @[55,71) [base] str="(2)"
+  para @[73,197) [base]
+    text @[73,81) [base] str="It reads " raw=0:0,9:8
+    ref @[82,88) [base] target="fig-a"
+      text @[82,88) [base] str="图 1"
+    text @[89,92) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[93,98) [base] target="eq-a"
+      text @[93,98) [base] str="式 (1)"
+    text @[99,170) [base] str=" from the first chapter, numbered as this book numbers them, and its own " raw=0:0,1:0,73:71
+    ref @[171,176) [base] target="eq-b"
+      text @[171,176) [base] str="式 (2)"
+    text @[177,197) [base] str=" continues the count." raw=0:0,1:0

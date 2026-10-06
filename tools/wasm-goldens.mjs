@@ -50,6 +50,15 @@ for (const tsm of walk(fixtures)) {
     const sp = str(readFileSync(tsm, 'utf8'));
     M._tsr_compile(doc, sp);
     M._free(sp);
+    // (plan P3-31) its declared inputs: the labels manifests beside it
+    if (fx.inputs?.labels) {
+      const labels = `[${fx.inputs.labels.map((f) => readFileSync(join(dirname(tsm), f), 'utf8')).join(',')}]`;
+      const n = str('labels'), bytes = new TextEncoder().encode(labels), p = M._malloc(bytes.length || 1);
+      M.HEAPU8.set(bytes, p);
+      M._tsr2_set_input(doc, n, p, bytes.length);
+      M._free(p);
+      M._free(n);
+    }
     const ops = readFileSync(opsPath);
     const op = M._malloc(ops.length);
     M.HEAPU8.set(ops, op);

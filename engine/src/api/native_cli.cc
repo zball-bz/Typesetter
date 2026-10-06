@@ -2,10 +2,12 @@
 // (api/driver.h) and one settings document (plan P1-03):
 //   tsrc --stage=<product> [--ops=f.ops] [--profile=golden|path.json]
 //        [--fixture=f.fixture.json] [--settings=f.json] [--set path=value]…
-//        [--fuse-check] <file.tsm>
+//        [--labels=m.json]… [--fuse-check] <file.tsm>
 // Products are products.def (skeleton ast js tokens outline astjson ops tree
 // index semantic blocktree mathir mathbox blocks hlist breaks layout vlist paged html dl diags
 // settings); those after Ingest need --ops.
+// --labels (plan P3-31): another document's labels product, repeatable —
+// with the fixture's "inputs": {"labels": [...]}, the declared input labels.
 // Settings layer in order: profile, fixture, --settings, --set. A profile
 // name resolves to test/profiles/<name>.json under the current directory.
 // Legacy flags (--width --base --indent --punct --snap --page-height) are
@@ -66,6 +68,7 @@ int main(int argc, char** argv) {
   std::string profile, fixture;
   bool fuse = false, fragmentsDump = false;
   std::string fragments;
+  std::vector<std::string> labelFiles;  // (plan P3-31) --labels=F: the input labels
   for (int i = 1; i < argc; i++) {
     std::string a = argv[i];
     auto val = [&](size_t n) { return a.substr(n); };
@@ -94,6 +97,7 @@ int main(int argc, char** argv) {
     else if (a == "--snap") layers.push_back(legacy("code", "snapKerning", "true"));
     else if (a == "--fuse-check") fuse = true;
     else if (a.rfind("--fragments=", 0) == 0) fragments = val(12);
+    else if (a.rfind("--labels=", 0) == 0) labelFiles.push_back(val(9));  // (plan P3-31) a manifest, repeatable
     else if (a == "--fragments-dump") fragmentsDump = true;
     else file = a;
   }
@@ -171,6 +175,21 @@ int main(int argc, char** argv) {
   Doc doc;
   for (const std::string& d : docs) doc.configure(d);
   doc.compile(std::move(source));
+  // (plan P3-31) declared inputs: the fixture's (relative to it), then --labels
+  {
+    std::vector<std::string> files;
+    const std::string dir = fixture.find('/') == std::string::npos ? "" : fixture.substr(0, fixture.rfind('/') + 1);
+    for (const std::string& f : fx.labels) files.push_back(dir + f);
+    files.insert(files.end(), labelFiles.begin(), labelFiles.end());
+    if (!files.empty()) {
+      std::string labels, missing;
+      if (!labelsInput(files, labels, missing)) {
+        fprintf(stderr, "cannot read %s\n", missing.c_str());
+        return 2;
+      }
+      doc.setInput("labels", labels);
+    }
+  }
 
   if (need > Stage::Compile && need <= Stage::Execute) need = Stage::Ingest;
   if (need >= Stage::Ingest || (stage == "diags" && !opsPath.empty())) {

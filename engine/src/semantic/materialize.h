@@ -6,6 +6,7 @@
 // prefixes, equation tags, term lines, flow markers), collector wraps and
 // entries. Words come from the locale terms.
 #pragma once
+#include "manifest.h"
 #include "../semantic/index.h"
 #include "../model/cascade.h"
 #include "../semantic/terms.h"
@@ -23,6 +24,9 @@ struct MaterializeEnv {
   const Index& ix;
   const Cascade& cascade;  // made and lifted nodes take the rules (plan P3-01)
   size_t made = 0;  // the nodes it made (unfolded: model/cascade.h settleMade)
+  // (plan P3-31) the other documents' labels and where their counters start
+  const ExternalLabels* external = nullptr;
+  const ProjectStarts* starts = nullptr;
 };
 
 // the output root for the input root

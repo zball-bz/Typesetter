@@ -85,6 +85,9 @@ struct Config {
   std::string semCollectors = "";  // semantics.collectors
   std::string semHtml = "";  // semantics.html
   std::string semSystems = "";  // semantics.systems
+  std::string projectDoc = "";  // project.doc
+  std::string projectStarts = "";  // project.starts
+  std::string projectUrls = "";  // project.urls
   std::string idPrefix = "tsr-";  // render.idPrefix
   u8 renderMath = kRenderMathBoxes;  // render.math
   bool a11yMathLabel = true;  // a11y.mathLabel
@@ -137,13 +140,17 @@ struct ResolveSettings {
   const std::string& supFigure;  // terms.figure
   const std::string& supEquation;  // terms.equation
   const std::string& capSep;  // terms.captionSep
+  const std::string& projectDoc;  // project.doc
+  const std::string& projectStarts;  // project.starts
   ResolveSettings(const Config& c)  // NOLINT: a Config is its view
       : lang(c.lang),
         supHeading(c.supHeading),
         supTable(c.supTable),
         supFigure(c.supFigure),
         supEquation(c.supEquation),
-        capSep(c.capSep) {}
+        capSep(c.capSep),
+        projectDoc(c.projectDoc),
+        projectStarts(c.projectStarts) {}
 };
 struct BoxTreeSettings {
   const std::string& lang;  // doc.lang
@@ -246,6 +253,7 @@ struct PaintSettings {
   const std::string& cjkFont;  // fonts.cjk
   const std::string& monoFont;  // fonts.mono
   const std::string& monoCjkFont;  // fonts.monoCjk
+  const std::string& projectUrls;  // project.urls
   const std::string& idPrefix;  // render.idPrefix
   const u8& renderMath;  // render.math
   const bool& a11yMathLabel;  // a11y.mathLabel
@@ -260,6 +268,7 @@ struct PaintSettings {
         cjkFont(c.cjkFont),
         monoFont(c.monoFont),
         monoCjkFont(c.monoCjkFont),
+        projectUrls(c.projectUrls),
         idPrefix(c.idPrefix),
         renderMath(c.renderMath),
         a11yMathLabel(c.a11yMathLabel),

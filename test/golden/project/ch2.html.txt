@@ -1,0 +1,18 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:25.609px;margin-bottom:19.203px">
+<div class="tsr-line" id="tsr-ch-two" data-s="0" data-e="18" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">The second chapter</span></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="34" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-line" id="tsr-sec-two" data-s="0" data-e="9" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">A section</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="55" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-line" id="tsr-eq-b" data-s="0" data-e="16" data-ragged="1" style="top:0px;left:130.562px;width:38.875px;height:24px"><span class="tsr-math" data-syn="math" data-copy="$ x = y $" data-copy-group="2147483703" role="math" aria-label="x = y" style="width:38.875px;height:11.219px;position:absolute;left:0;top:6.391px"><span class="tsr-mg" style="left:0px;top:-5.316px;font-size:16px;line-height:16px">x</span><span class="tsr-mg" style="left:12.859px;top:-5.316px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:29.391px;top:-5.316px;font-size:16px;line-height:16px">y</span></span></div>
+<div class="tsr-line" data-s="0" data-e="16" data-ragged="1" data-track="tag" style="top:1.078px;left:276px;width:24px"><span class="tsr-r" data-syn="eqno">(2)</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="73" style="position:relative;height:96px">
+<div class="tsr-line" data-s="0" data-e="97" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:2.667px"><span class="tsr-r" data-s="0">It reads </span><a class="tsr-r tsr-cjk" href="ch1.html#tsr-fig-a" data-s="9">图</a><a class="tsr-r" href="ch1.html#tsr-fig-a" data-s="9"> 1</a><span class="tsr-r" data-s="16"> and </span><a class="tsr-r tsr-cjk" href="ch1.html#tsr-eq-a" data-s="20">式</a><a class="tsr-r" href="ch1.html#tsr-eq-a" data-s="20"> (1)</a><span class="tsr-r" data-s="26"> from the first</span></div>
+<div class="tsr-line" data-s="26" data-e="97" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="26">chapter, numbered as this book numbers</span></div>
+<div class="tsr-line" data-s="26" data-e="124" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:3.429px"><span class="tsr-r" data-s="26">them, and its own </span><a class="tsr-r tsr-cjk" href="#tsr-eq-b" data-s="98">式</a><a class="tsr-r" href="#tsr-eq-b" data-s="98"> (2)</a><span class="tsr-r" data-s="104"> continues the</span></div>
+<div class="tsr-line" data-s="104" data-e="124" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="104">count.</span></div>
+</div>
+</div>

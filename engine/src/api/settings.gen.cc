@@ -70,6 +70,9 @@ const Row kRows[] = {
     {"semantics.collectors", stageBit(Stage::Ingest), true},
     {"semantics.html", stageBit(Stage::Ingest), true},
     {"semantics.systems", stageBit(Stage::Ingest), true},
+    {"project.doc", stageBit(Stage::Resolve), false},
+    {"project.starts", stageBit(Stage::Resolve), true},
+    {"project.urls", stageBit(Stage::Paint), true},
     {"render.idPrefix", stageBit(Stage::Paint), false},
     {"render.math", stageBit(Stage::Paint), false},
     {"a11y.mathLabel", stageBit(Stage::Paint), false},
@@ -432,29 +435,46 @@ bool applyRow(Config& c, u32 row, const JsonValue& v, std::string& why) {
       if (!v.keys.empty()) jsonDump(c.semSystems, v);
       return true;
     }
-    case 52: {  // render.idPrefix
+    case 52: {  // project.doc
+      if (v.t != JsonValue::T::Str || v.str.size() > 4096) return type(why, "a string");
+      c.projectDoc = v.str;
+      return true;
+    }
+    case 53: {  // project.starts
+      if (v.t != JsonValue::T::Obj) return type(why, "an object");
+      c.projectStarts.clear();
+      if (!v.keys.empty()) jsonDump(c.projectStarts, v);
+      return true;
+    }
+    case 54: {  // project.urls
+      if (v.t != JsonValue::T::Obj) return type(why, "an object");
+      c.projectUrls.clear();
+      if (!v.keys.empty()) jsonDump(c.projectUrls, v);
+      return true;
+    }
+    case 55: {  // render.idPrefix
       if (v.t != JsonValue::T::Str || (!matchDomain(TextDomain::Ident, v.str))) return type(why, "ident");
       c.idPrefix = v.str;
       return true;
     }
-    case 53: {  // render.math
+    case 56: {  // render.math
       static const char* const kM[] = {"boxes", "source"};
       int m = member(v, kM, 2, why);
       if (m < 0) return false;
       c.renderMath = (u8)m;
       return true;
     }
-    case 54: {  // a11y.mathLabel
+    case 57: {  // a11y.mathLabel
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.a11yMathLabel = v.b;
       return true;
     }
-    case 55: {  // a11y.textLayer
+    case 58: {  // a11y.textLayer
       if (v.t != JsonValue::T::Bool) return type(why, "true or false");
       c.a11yTextLayer = v.b;
       return true;
     }
-    case 56: {  // style.rules
+    case 59: {  // style.rules
       if (v.t != JsonValue::T::Arr) return type(why, "an array");
       c.styleRules.clear();
       if (!v.arr.empty()) jsonDump(c.styleRules, v);
@@ -646,6 +666,12 @@ std::string settingsJson(const Config& c) {
   out += c.semHtml.empty() ? "{}" : c.semHtml;
   out += ", \"systems\": ";
   out += c.semSystems.empty() ? "{}" : c.semSystems;
+  out += "}, \"project\": {\"doc\": ";
+  jsonString(out, c.projectDoc);
+  out += ", \"starts\": ";
+  out += c.projectStarts.empty() ? "{}" : c.projectStarts;
+  out += ", \"urls\": ";
+  out += c.projectUrls.empty() ? "{}" : c.projectUrls;
   out += "}, \"render\": {\"idPrefix\": ";
   jsonString(out, c.idPrefix);
   out += ", \"math\": ";

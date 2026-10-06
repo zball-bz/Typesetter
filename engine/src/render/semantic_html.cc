@@ -297,7 +297,9 @@ struct Sem {
         if (backlink && n->anchorTo && (*backlink)(n->anchorTo)) return;
         // its href: a resolved target's anchor (AnchorNamer, plan P3-04),
         // else a link's URL
-        const std::string href = n->anchorTo ? AnchorNamer::href(strs.get(n->anchorTo)) : std::string(argS(n, ArgK::url));
+        const std::string href = n->anchorTo && n->anchorDoc ? AnchorNamer::href(strs.get(n->anchorDoc), strs.get(n->anchorTo))
+                                 : n->anchorTo                ? AnchorNamer::href(strs.get(n->anchorTo))
+                                                              : std::string(argS(n, ArgK::url));
         if (href.empty()) {  // unresolved ref / grouped citation container
           roleKids(n);
           return;

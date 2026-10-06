@@ -338,6 +338,9 @@ struct Mat {
         cite(r, *T, keys, extra, c);
         return r;
       }
+      if (e.external)  // (plan P3-31) a label of another document of the project
+        if (auto x = e.external->byLabel.find(target); x != e.external->byLabel.end())
+          return externalRef(r, target, x->second, extra, c);
       e.diags.add(Sev::Warning, "ref-unresolved", r->span, "reference '" + target + "' has no label");
       Slots s;
       s.set("label", target);
@@ -350,6 +353,9 @@ struct Mat {
                     "'" + target + "' is both a label and a " + t.name + " key (the label wins)");
         break;
       }
+    if (e.external && e.external->byLabel.count(target))  // (plan P3-31)
+      e.diags.add(Sev::Info, "ref-shadowed", r->span,
+                  "'" + target + "' is a label here and in " + e.external->byLabel.at(target).doc + " (this one wins)");
     const LabelTarget& lt = it->second;
     const Template* form = nullptr;
     Slots s;
@@ -371,6 +377,49 @@ struct Mat {
       form = &e.reg.unnumbered;
     }
     r->anchorTo = e.strs.intern(target);  // its target's anchor (plan P3-04; the serializers spell it)
+    inst(*form, c, s, r, r->kids);
+    return r;
+  }
+
+  // (plan P3-31; design T3 LabelManifest) a reference to another document's
+  // label: formatted as this document formats its class — its own ref
+  // template, terms and counter patterns, the producer's start applied (its
+  // project.starts) — linking to that document's page; a class this one
+  // lacks shows its number, else its title, else the label
+  ContentNode* externalRef(ContentNode* r, const std::string& target, const ExternalLabel& x,
+                           std::vector<ContentNode*>& extra, const Ctx& c) {
+    std::string number;
+    const auto* starts = e.starts && e.starts->count(x.doc) ? &e.starts->at(x.doc) : nullptr;
+    for (size_t g = 0; g < x.number.size(); g++) {
+      std::vector<int> vals = x.number[g].second;
+      if (starts && !vals.empty())
+        if (auto it = starts->find(x.number[g].first); it != starts->end()) vals[0] += it->second;
+      const u16 cn = e.counters.counterNamed(x.number[g].first);
+      if (g) number += cn != kNoIndex ? e.reg.counters[cn].withinSep : std::string(".");
+      number += formatNumber(cn != kNoIndex ? std::string_view(e.reg.counters[cn].pattern) : std::string_view{}, vals,
+                             e.reg);
+    }
+    Slots s;
+    s.nodes.push_back({"extra", extra});
+    s.set("number", number);
+    s.set("title", x.title);
+    s.set("alias", x.anchor);
+    const Template* form = nullptr;
+    if (const ClassId cid = x.cls.empty() ? 0 : e.reg.classNamed(x.cls)) {
+      const ElementClass& C = e.reg.cls(cid);
+      s.set("supplement", supplementText(C.supplement));
+      if (StrRef sup = attrStr(r, ArgK::supplement)) s.put("supplement", std::string(e.strs.get(sup)));
+      if (C.hasRef) form = &C.ref;
+      if (StrRef f = attrStr(r, ArgK::form)) form = namedForm(C, e.strs.get(f), form, r);
+    }
+    if (!form) {
+      s.set("label", !number.empty() ? number : !x.title.empty() ? x.title : target);
+      form = &e.reg.unnumbered;
+    } else {
+      s.set("label", target);
+    }
+    r->anchorTo = e.strs.intern(x.anchor);
+    r->anchorDoc = e.strs.intern(x.doc);
     inst(*form, c, s, r, r->kids);
     return r;
   }
@@ -562,8 +611,15 @@ struct Mat {
     if (k->kind == Kind::link && attrStr(k, ArgK::target)) {  // a link to a label (plan P3-04)
       std::string target(e.strs.get(attrStr(k, ArgK::target)));
       ContentNode* l = clone1(k);
-      if (e.ix.labels.count(target)) l->anchorTo = e.strs.intern(target);
-      else e.diags.add(Sev::Warning, "ref-unresolved", k->span, "link target '" + target + "' has no label");
+      if (e.ix.labels.count(target)) {
+        l->anchorTo = e.strs.intern(target);
+      } else if (auto x = e.external ? e.external->byLabel.find(target) : decltype(e.external->byLabel.end()){};
+                 e.external && x != e.external->byLabel.end()) {  // (plan P3-31) another document's label
+        l->anchorTo = e.strs.intern(x->second.anchor);
+        l->anchorDoc = e.strs.intern(x->second.doc);
+      } else {
+        e.diags.add(Sev::Warning, "ref-unresolved", k->span, "link target '" + target + "' has no label");
+      }
       l->kids.clear();  // its content, walked like any other
       kidsOf(k, l->kids);
       out.push_back(own(k, l));

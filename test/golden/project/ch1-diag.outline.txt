@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"The first chapter","label":"ch-one","span":[0,19]}],"regions":[{"name":"figure","label":"fig-a","span":[192,301]}],"fences":[],"labels":[{"id":"ch-one","rule":"heading","span":[20,28]},{"id":"fig-a","rule":"region","span":[192,283]},{"id":"eq-a","rule":"math","span":[317,323]}],"diagnostics":[]}

@@ -1,0 +1,16 @@
+doc @[0,198)
+  heading @[0,20) level=1 label="ch-two"
+    text @[2,20) str="The second chapter"
+  heading @[31,43) level=2 label="sec-two"
+    text @[34,43) str="A section"
+  para @[55,71)
+    math @[55,71) display=1 src="x = y" label="eq-b"
+      text @[57,62) str="x = y"
+  para @[73,197)
+    text @[73,81) str="It reads "
+    ref @[82,88) target="fig-a"
+    text @[89,92) str=" and "
+    ref @[93,98) target="eq-a"
+    text @[99,170) str=" from the first chapter, numbered as this book numbers them, and its own "
+    ref @[171,176) target="eq-b"
+    text @[177,197) str=" continues the count."

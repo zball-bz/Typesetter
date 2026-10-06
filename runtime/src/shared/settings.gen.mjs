@@ -440,6 +440,30 @@ export const SETTINGS = Object.freeze({
       "Ingest"
     ]
   },
+  "project.doc": {
+    "dom": "str",
+    "def": "",
+    "prec": "HostOnly",
+    "affects": [
+      "Resolve"
+    ]
+  },
+  "project.starts": {
+    "dom": "json",
+    "def": {},
+    "prec": "HostOnly",
+    "affects": [
+      "Resolve"
+    ]
+  },
+  "project.urls": {
+    "dom": "json",
+    "def": {},
+    "prec": "HostOnly",
+    "affects": [
+      "Paint"
+    ]
+  },
   "render.idPrefix": {
     "dom": "ident",
     "def": "tsr-",
@@ -570,6 +594,11 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "collectors": {},
     "html": {},
     "systems": {}
+  },
+  "project": {
+    "doc": "",
+    "starts": {},
+    "urls": {}
   },
   "render": {
     "idPrefix": "tsr-",

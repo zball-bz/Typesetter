@@ -35,6 +35,9 @@ struct Instance {
   // (plan P3-13) a flow item's other markers (ref{form: 'marker'} to its
   // label), in document order: their anchors (its marker alias, '.', 2…)
   std::vector<std::string> occurrences;
+  // (plan P3-31) its number's raw components, by counter (Counters::groups):
+  // what the labels product exports
+  std::vector<std::pair<u16, std::vector<int>>> groups;
 };
 
 struct LabelTarget {
@@ -66,6 +69,10 @@ struct Index {
   std::unordered_map<const ContentNode*, u32> collectAt;
   // (plan P3-13) a marker reference: its flow item and occurrence (2…)
   std::unordered_map<const ContentNode*, std::pair<u32, u32>> occurrenceOf;
+  // (plan P3-31) its counters' totals (the steps of their first component,
+  // its own start not counted) and its own starts: the labels product's
+  std::vector<std::pair<std::string, int>> totals;
+  std::unordered_map<std::string, int> starts;
 
   const Row* row(std::string_view table, std::string_view key) const;
   std::vector<u32>& flow(const std::string& name);

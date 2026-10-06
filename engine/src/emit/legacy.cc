@@ -66,7 +66,7 @@ struct LegacyInline final : InlineSink {
         return;
       case Kind::link: {
         ICtx c2 = ctx;
-        if (n->anchorTo) c2.url = {n->anchorTo, true};  // (plan P3-04)
+        if (n->anchorTo) c2.url = {n->anchorTo, true, n->anchorDoc};  // (plan P3-04)
         else
           for (const ArgVal& a : n->args)
             if (a.key == ArgK::url && a.tag == ArgTag::Str) c2.url = {a.ref, false};
@@ -90,7 +90,7 @@ struct LegacyInline final : InlineSink {
       case Kind::ref: {
         // resolver output: kids = display text, url arg = "#tsr-<label>"
         ICtx c2 = ctx;
-        if (n->anchorTo) c2.url = {n->anchorTo, true};  // its target's anchor (plan P3-04)
+        if (n->anchorTo) c2.url = {n->anchorTo, true, n->anchorDoc};  // its target's anchor (plan P3-04)
         c2.addFlags |= BF_REF;
         const size_t before = u.legacy.size();
         for (const ContentNode* k : n->kids) inlineWalk(k, u, c2);

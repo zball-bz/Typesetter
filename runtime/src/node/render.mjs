@@ -59,6 +59,17 @@ export async function renderTsm(source, opts = {}) {
     }
     const job = host.job({ bases: { doc: resolve(opts.baseDir ?? rootDir) }, root: rootDir });
     const ops = await execute(compiledOf(M, doc), { host: job, parse: fragmentsOf(M) });
+    // (plan P3-31) its declared inputs (opts.inputs: {labels: '[manifest, …]'}), before Ingest
+    for (const [name, value] of Object.entries(opts.inputs ?? {})) {
+      if (typeof value !== 'string') continue;
+      const n = M.stringToNewUTF8(name);
+      const bytes = new TextEncoder().encode(value);
+      const p = M._malloc(bytes.length || 1);
+      M.HEAPU8.set(bytes, p);
+      M._tsr2_set_input(doc, n, p, bytes.length);
+      M._free(p);
+      M._free(n);
+    }
     const opsPtr = M._malloc(ops.length);
     M.HEAPU8.set(ops, opsPtr);
     const ingested = M._tsr_ingest(doc, opsPtr, ops.length) === 0;

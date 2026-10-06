@@ -13,6 +13,7 @@
 #include "../resolve/resolve.h"
 #include "../semantic/declare.h"
 #include "../semantic/locale.h"
+#include "../semantic/manifest.h"
 #include "../boxtree/build.h"
 #include "../resource/resource_table.h"
 #include "../resource/session.h"
@@ -203,6 +204,7 @@ struct Doc {
     if (!done(Stage::Ingest)) return false;
     f.cfg = cfg;
     f.langSource = langSource;  // (its language, as this document decided it)
+    f.inputs = inputs;          // (plan P3-31: its declared inputs are its identity)
     f.diags.begin(DiagOrigin::Settings);
     SettingsPatch p = applySettings(f.cfg, patch, f.diags);
     if (p.applied && firstStage(p.affects) <= Stage::Execute) return false;
@@ -339,6 +341,45 @@ struct Doc {
     validThrough = (int)Stage::Ingest;
     return true;
   }
+  // (plan P3-31) project.urls, parsed once per value: where the project's
+  // documents are published (an external reference's link)
+  std::unordered_map<std::string, std::string> projectUrls_;
+  std::string projectUrlsFrom_;
+  const std::unordered_map<std::string, std::string>& projectUrls() {
+    if (projectUrlsFrom_ != cfg.projectUrls) {
+      projectUrlsFrom_ = cfg.projectUrls;
+      projectUrls_.clear();
+      JsonValue v;
+      JsonReader rd;
+      if (!cfg.projectUrls.empty() && rd.parse(cfg.projectUrls, v) && v.t == JsonValue::T::Obj)
+        for (size_t k = 0; k < v.keys.size(); k++)
+          if (v.vals[k].t == JsonValue::T::Str) projectUrls_[v.keys[k]] = v.vals[k].str;
+    }
+    return projectUrls_;
+  }
+
+  // (plan P3-31; design T9 A7) its declared inputs (inputs.def), given
+  // before Ingest: part of its identity, a fork copies them; never shown to
+  // a script (the decoders validate them). false: an unknown input, or too
+  // late (the document has ingested)
+  std::unordered_map<std::string, std::string> inputs;
+  bool setInput(std::string_view name, std::string_view bytes) {
+    bool known = false;
+#define INPUT(n, version, schema, stage) known = known || name == #n;
+#include "inputs.def"
+#undef INPUT
+    if (!known) {
+      diags.add(Sev::Warning, "input-unknown", {}, "no declared input '" + std::string(name) + "' (inputs.def)");
+      return false;
+    }
+    if (done(Stage::Ingest)) {
+      diags.add(Sev::Warning, "input-late", {}, "input '" + std::string(name) + "' after Ingest: ignored (fork a new document)");
+      return false;
+    }
+    inputs[std::string(name)] = std::string(bytes);
+    return true;
+  }
+
   // (plan P3-30; D-T06) Phase 0: the document's language — its own
   // ($.doc({lang}): the last), else the host's doc.lang, else (auto) the
   // language of its text — before anything reads it (the terms, the faces,
@@ -367,7 +408,7 @@ struct Doc {
   // block's sidecars arrive split, from the default fence: plan P2-13.)
   void stageResolve() {
     diags.begin(DiagOrigin::Resolve);
-    resolveDoc(tree, arena, strs, styles, nodeProps, cascade, cfg, diags, *registry, index);
+    resolveDoc(tree, arena, strs, styles, nodeProps, cascade, cfg, diags, *registry, index, inputs["labels"]);
     rt.clear();
     waitTokens.clear();
     waitBoxes.clear();
@@ -873,6 +914,7 @@ struct Doc {
     if (name == "settings") return settingsJson(cfg) + "\n";
     if (name == "references") return referencesJson();  // (plan P3-21)
     if (name == "docinfo") return docinfoJson();
+    if (name == "labels") return labelsProduct(index, *registry, cfg.projectDoc);  // (plan P3-31)
     return {};
   }
 
@@ -886,7 +928,7 @@ struct Doc {
     if (!renderReady()) return {};
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
-    AnchorScope ids(cfg.idPrefix);  // (plan P3-06) render.idPrefix
+    AnchorScope ids(cfg.idPrefix, false, &projectUrls());  // (plan P3-06) render.idPrefix; (P3-31) project.urls
     // paint (plan P1-18): each block's DisplayList, written by the
     // stateless typeset backend
     std::string html;
@@ -919,7 +961,7 @@ struct Doc {
     if (!renderReady()) return {};
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
-    AnchorScope ids(cfg.idPrefix);
+    AnchorScope ids(cfg.idPrefix, false, &projectUrls());
     std::unordered_set<Key128, Key128Hash> have(held, held + nHeld);
     std::string root;
     writeRoot(root, "tsr-doc", paintRoot(cfg, &layout));
@@ -1094,7 +1136,7 @@ struct Doc {
     if (!renderReady()) return {};
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
-    AnchorScope ids(cfg.idPrefix);
+    AnchorScope ids(cfg.idPrefix, false, &projectUrls());
     // the sheets (layout/paginate.cc), each band's nodes rebased into its
     // sheet by the same stateless writer
     // (plan P3-12) the page's geometry: its content height; a sheet's
@@ -1187,7 +1229,7 @@ struct Doc {
   std::string renderFallback() {
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
-    AnchorScope ids(cfg.idPrefix);
+    AnchorScope ids(cfg.idPrefix, false, &projectUrls());
     std::string html = renderSemantic(tree, strs, styles, &rt, registry, &cascade, &nodeProps, semanticMath());
     (void)rulesToCss(cascade, tree, strs, &diags, registry);  // what its stylesheet leaves out (rule-no-css)
     reportWriterDefects();

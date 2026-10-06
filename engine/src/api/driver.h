@@ -3,7 +3,9 @@
 // same code. Hosts answer through a ProviderSet; the JS hosts' twin is the
 // worker's measureLoop.
 #pragma once
+#include <fstream>
 #include <functional>
+#include <sstream>
 
 #include "../measure/mock.h"
 #include "../support/json.h"
@@ -125,8 +127,29 @@ struct FixtureConfig {
   std::string profile = "golden";
   std::string settings = "{}";
   std::vector<std::string> products;  // extra products to golden
+  // (plan P3-31) declared inputs: "inputs": {"labels": [files]} — the other
+  // documents' labels products, relative to the fixture
+  std::vector<std::string> labels;
   std::string error;                  // non-empty: the file is malformed
 };
+// (plan P3-31) the input `labels` from manifest files (each a labels
+// product): a JSON array of them; false: a file cannot be read
+inline bool labelsInput(const std::vector<std::string>& files, std::string& out, std::string& missing) {
+  out = "[";
+  for (size_t i = 0; i < files.size(); i++) {
+    std::ifstream f(files[i], std::ios::binary);
+    if (!f) {
+      missing = files[i];
+      return false;
+    }
+    std::stringstream ss;
+    ss << f.rdbuf();
+    if (i) out += ',';
+    out += ss.str();
+  }
+  out += ']';
+  return true;
+}
 inline FixtureConfig parseFixtureConfig(std::string_view text) {
   FixtureConfig fc;
   JsonValue v;
@@ -143,6 +166,10 @@ inline FixtureConfig parseFixtureConfig(std::string_view text) {
   if (const JsonValue* pr = v.get("products"); pr && pr->t == JsonValue::T::Arr)
     for (const JsonValue& x : pr->arr)
       if (x.t == JsonValue::T::Str) fc.products.push_back(x.str);
+  if (const JsonValue* in = v.get("inputs"); in && in->t == JsonValue::T::Obj)
+    if (const JsonValue* l = in->get("labels"); l && l->t == JsonValue::T::Arr)
+      for (const JsonValue& x : l->arr)
+        if (x.t == JsonValue::T::Str) fc.labels.push_back(x.str);
   return fc;
 }
 

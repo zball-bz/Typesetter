@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"The second chapter","label":"ch-two","span":[0,20]},{"level":2,"title":"A section","label":"sec-two","span":[31,43]}],"regions":[],"fences":[],"labels":[{"id":"ch-two","rule":"heading","span":[21,29]},{"id":"sec-two","rule":"heading","span":[44,53]},{"id":"eq-b","rule":"math","span":[65,71]}],"diagnostics":[]}

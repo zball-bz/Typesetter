@@ -1,0 +1,6 @@
+instance heading 1 level=1 label=ch-one title="The first chapter" @[0,19)
+instance figure 1 label=fig-a @[192,301)
+instance equation 1 label=eq-a @[303,323)
+label ch-one -> heading 1 @[0,19)
+label fig-a -> figure 1 @[192,301)
+label eq-a -> equation 1 @[303,323)

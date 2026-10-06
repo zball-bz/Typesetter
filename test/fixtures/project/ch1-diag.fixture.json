@@ -1,0 +1,1 @@
+{"settings": {"project": {"doc": "ch1", "starts": {"ch2": {"heading": 1, "figure": 1, "equation": 1}}, "urls": {"ch2": "ch2.html"}}}, "inputs": {"labels": ["ch2.labels.json"]}, "products": ["labels"]}

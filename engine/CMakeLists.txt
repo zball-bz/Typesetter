@@ -16,6 +16,7 @@ add_library(tsr_core STATIC
   src/syntax/exports.cc
   src/elements/registry.cc
   src/semantic/locale.cc
+  src/semantic/manifest.cc
   src/semantic/terms.cc
   src/semantic/numbering.cc
   src/semantic/index.cc
@@ -170,7 +171,7 @@ endif()
 #   CC=clang CXX=clang++ cmake -S engine -B engine/build-fuzz -DTSR_FUZZ=ON
 option(TSR_FUZZ "build libFuzzer targets (clang only)" OFF)
 if(TSR_FUZZ AND NOT EMSCRIPTEN)
-  foreach(t fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment)
+  foreach(t fuzz_linepass fuzz_inline fuzz_opreader fuzz_settings fuzz_resanswer fuzz_lower fuzz_fragment fuzz_inputs)
     add_executable(${t} fuzz/${t}.cc)
     target_link_libraries(${t} tsr_core)
     target_compile_options(${t} PRIVATE -fsanitize=fuzzer,address,undefined

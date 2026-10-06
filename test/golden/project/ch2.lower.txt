@@ -1,0 +1,20 @@
+lower v1 abi 3d3ccfbb docEnd 198 holes 0 module none
+block 0 content [0,20)
+  CALL heading [0,20) level=1 label="ch-two"
+    TEXT "The second chapter" [2,20)
+block 1 content [31,43)
+  CALL heading [31,43) level=2 label="sec-two"
+    TEXT "A section" [34,43)
+block 2 content [55,71)
+  CALL para [55,71)
+    CALL math [55,71) display=true label="eq-b"
+      CALL mathsrc [57,62) src="x = y"
+block 3 content [73,197)
+  CALL para [73,197)
+    TEXT "It reads " [73,81) raw=0:0,9:8
+    CALL ref [82,88) target="fig-a"
+    TEXT " and " [89,92) raw=0:0,1:0,5:3
+    CALL ref [93,98) target="eq-a"
+    TEXT " from the first chapter, numbered as this book numbers them, and its own " [99,170) raw=0:0,1:0,73:71
+    CALL ref [171,176) target="eq-b"
+    TEXT " continues the count." [177,197) raw=0:0,1:0

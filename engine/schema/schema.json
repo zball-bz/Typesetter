@@ -1046,6 +1046,30 @@
         "Ingest"
       ]
     },
+    "project.doc": {
+      "$comment": "(plan P3-31; design T9 A7, T3 S7) this document's key in its project (its manifest's doc; \"\": no project).",
+      "field": "projectDoc",
+      "dom": "str",
+      "def": "",
+      "prec": "HostOnly",
+      "affects": ["Resolve"]
+    },
+    "project.starts": {
+      "$comment": "(plan P3-31) where each document's counters start: {doc: {counter: n}} — the project driver's prefix sums of the documents before it; this document's own row offsets its counters, the others' the numbers its external references show.",
+      "field": "projectStarts",
+      "dom": "json",
+      "def": {},
+      "prec": "HostOnly",
+      "affects": ["Resolve"]
+    },
+    "project.urls": {
+      "$comment": "(plan P3-31) where each document of the project is published: {doc: url}; an external reference links to its url and the target's anchor (none: the doc key).",
+      "field": "projectUrls",
+      "dom": "json",
+      "def": {},
+      "prec": "HostOnly",
+      "affects": ["Paint"]
+    },
     "render.idPrefix": {
       "$comment": "The prefix of every element id and internal href the serializers spell (plan P3-06; design T7 AnchorNamer): a page that holds two documents, or a print root beside the live view, gives each its own.",
       "field": "idPrefix",

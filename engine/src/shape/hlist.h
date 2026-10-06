@@ -114,6 +114,7 @@ enum class CopyMode : u8 { Text, Omit, Replace };
 struct LinkTarget {
   StrRef ref = 0;
   bool anchor = false;
+  StrRef doc = 0;  // (plan P3-31) an anchor in this other document of the project (its key)
   explicit operator bool() const { return ref != 0; }
   bool operator==(const LinkTarget&) const = default;
 };

@@ -1,0 +1,7 @@
+display pid=2
+hbox Ord w=2488 asc=479 desc=239
+  glyph "x" Ord w=539 asc=475 desc=12 px=16
+  glue w=284 @(539,0)
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16 @(823,0)
+  glue w=284 @(1597,0)
+  glyph "y" Ord w=607 asc=479 desc=239 px=16 @(1881,0)

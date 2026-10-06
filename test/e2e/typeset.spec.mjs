@@ -15,11 +15,15 @@ function* walk(dir) {
 }
 const fixtures = [...walk(fixturesDir)].map((p) => {
   const fx = p.replace(/\.tsm$/, '.fixture.json');
+  const cfg = existsSync(fx) ? JSON.parse(readFileSync(fx, 'utf8')) : {};
+  // (plan P3-31) its declared inputs: the labels manifests beside it, one array
+  const labels = cfg.inputs?.labels?.map((f) => readFileSync(join(dirname(p), f), 'utf8'));
   return {
     name: relative(fixturesDir, p).replace(/\.tsm$/, ''),
     source: readFileSync(p, 'utf8'),
     // the fixture's own settings (plan P1-03; its golden profile is native-only)
-    settings: existsSync(fx) ? JSON.parse(readFileSync(fx, 'utf8')).settings ?? {} : {},
+    settings: cfg.settings ?? {},
+    inputs: labels ? { labels: `[${labels.join(',')}]` } : undefined,
   };
 });
 
@@ -53,7 +57,7 @@ for (const f of fixtures) {
   test(`audit ${f.name}`, async ({ page }) => {
     await page.goto('/test/e2e/harness.html');
     await page.waitForFunction(() => window.__tsrReady);
-    const opts = { widthPx: 300, settings: f.settings };
+    const opts = { widthPx: 300, settings: f.settings, inputs: f.inputs };
     const res = await page.evaluate(
       async ({ source, opts }) => await window.__tsr.typeset(source, opts),
       { source: f.source, opts },

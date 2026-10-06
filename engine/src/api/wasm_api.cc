@@ -280,6 +280,12 @@ TSR_EXPORT const char* tsr_measure_requests(WasmDoc* d) {
   return out.c_str();
 }
 
+// (plan P3-31; design T9 A7) a declared input (inputs.def: labels), before
+// Ingest; 0: taken, 1: refused (unknown, or after Ingest: a diagnostic)
+TSR_EXPORT int tsr2_set_input(WasmDoc* d, const char* name, const u8* bytes, u32 len) {
+  return d->doc.setInput(name ? name : "", std::string_view((const char*)bytes, len)) ? 0 : 1;
+}
+
 // intrinsic CSS dims; 0×0 = load failure (placeholder + warning)
 TSR_EXPORT void tsr_provide_image(WasmDoc* d, int id, double wPx, double hPx) {
   d->doc.provideImage((u32)id, wPx, hPx);

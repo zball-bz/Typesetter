@@ -47,6 +47,7 @@ struct ContentNode {
   // resolved reference or an internal link points at — the serializers
   // spell its href (AnchorNamer); 0: none (unresolved, or an external URL)
   StrRef anchorTo = 0;
+  StrRef anchorDoc = 0;  // (plan P3-31) anchorTo is in this other document of the project (its key)
   // (plan P3-13; design T3 Placement::Deferred) a deferred flow's entry: an
   // insert of the page its marker (at this source position) stands on;
   // kInsertArea: the rest of the flow's wrap (the inserts' separator)

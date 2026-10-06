@@ -1,0 +1,7 @@
+= The second chapter <ch-two>
+
+== A section <sec-two>
+
+$ x = y $ <eq-b>
+
+It reads @fig-a and @eq-a from the first chapter, numbered as this book numbers them, and its own @eq-b continues the count.

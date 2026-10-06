@@ -46,6 +46,7 @@ struct RunClasses {
 // a link run's href (plan P3-04): an anchor through the AnchorNamer, else
 // the URL as written
 static std::string hrefOf(const LinkTarget& l, const Interner& strs) {
+  if (l.anchor && l.doc) return AnchorNamer::href(strs.get(l.doc), strs.get(l.ref));  // (plan P3-31) another document's
   return l.anchor ? AnchorNamer::href(strs.get(l.ref)) : std::string(strs.get(l.ref));
 }
 

@@ -197,6 +197,21 @@ function postResult(M, doc, ids, tm, held) {
     postMessage({ type: 'result', id, frame: f, html, diags, heightPx, timings: tm, lang }, [f]);
   });
 }
+// (plan P3-31; design T9 A7) a document's declared inputs (inputs.def:
+// labels, the other documents' manifests as one JSON array), before Ingest
+function setInputs(M, doc, inputs) {
+  for (const [name, value] of Object.entries(inputs ?? {})) {
+    if (typeof value !== 'string') continue;
+    const n = M.stringToNewUTF8(name);
+    const bytes = new TextEncoder().encode(value);
+    const p = M._malloc(bytes.length || 1);
+    M.HEAPU8.set(bytes, p);
+    M._tsr2_set_input(doc, n, p, bytes.length);
+    M._free(p);
+    M._free(n);
+  }
+}
+
 // (plan P3-30, D-T06) the document's language as the engine decided it — its
 // own, the host's or detected (doc.lang: auto): docinfo
 function docLangOf(M, doc) {
@@ -276,7 +291,7 @@ const yieldTurn = () => new Promise((resolve) => {
 async function runTypeset(s, { ids, msg }, stale) {
   // one settings document (plan P1-03): what to typeset; fontFaces: which
   // declared webfaces to load before measuring
-  const { source, settings, progressive, fontFaces, baseUrl } = msg;
+  const { source, settings, progressive, fontFaces, baseUrl, inputs } = msg;
   const tm = {};
   const mark = (k, t0) => { tm[k] = performance.now() - t0; };
   const M = await getMod();
@@ -301,6 +316,7 @@ async function runTypeset(s, { ids, msg }, stale) {
     mark('executeMs', t0);
     await yieldTurn();  // (counted in the edit's total, not in executeMs)
     if (stale()) { M._tsr_doc_free(doc); return false; }
+    setInputs(M, doc, inputs);  // (plan P3-31) its declared inputs, before Ingest
     t0 = performance.now();
     const opsPtr = M._malloc(ops.length);
     M.HEAPU8.set(ops, opsPtr);

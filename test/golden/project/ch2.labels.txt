@@ -1,0 +1,5 @@
+{"v":1,"doc":"ch2","totals":{"equation":1,"heading":1},"labels":[
+{"label":"ch-two","class":"heading","level":1,"number":[["heading",[1]]],"title":"The second chapter","anchor":"ch-two"},
+{"label":"eq-b","class":"equation","level":1,"number":[["equation",[1]]],"title":"","anchor":"eq-b"},
+{"label":"sec-two","class":"heading","level":2,"number":[["heading",[1,1]]],"title":"A section","anchor":"sec-two"}
+]}

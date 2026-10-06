@@ -14,6 +14,7 @@
 //   at decode (P0-06); declEsc escapes the ones that carry text.
 // - Element ids are spelled by AnchorNamer only.
 #pragma once
+#include <unordered_map>
 #include <cassert>
 #include <charconv>
 #include <cstdint>
@@ -117,6 +118,8 @@ struct AnchorNamer {
   struct Current {
     std::string prefix{kAnchorPrefix};
     bool suppress = false;
+    // (plan P3-31) project.urls: where the project's documents are published
+    const std::unordered_map<std::string, std::string>* urls = nullptr;
   };
   static Current& current() {
     static thread_local Current c;
@@ -134,13 +137,24 @@ struct AnchorNamer {
     h += label;
     return h;
   }
+  // (plan P3-31) a label of another document of the project: its page
+  // (project.urls; none: its key) and its id there
+  static std::string href(std::string_view doc, std::string_view label) {
+    const auto* urls = current().urls;
+    auto it = urls ? urls->find(std::string(doc)) : decltype(urls->end()){};
+    std::string h = urls && it != urls->end() ? it->second : std::string(doc);
+    return h + href(label);
+  }
 };
 // a render's anchor spelling, restored when it ends
 struct AnchorScope {
   AnchorNamer::Current saved;
-  explicit AnchorScope(std::string_view prefix, bool suppress = false) : saved(AnchorNamer::current()) {
+  explicit AnchorScope(std::string_view prefix, bool suppress = false,
+                       const std::unordered_map<std::string, std::string>* urls = nullptr)
+      : saved(AnchorNamer::current()) {
     AnchorNamer::current().prefix = std::string(prefix);
     AnchorNamer::current().suppress = suppress;
+    if (urls) AnchorNamer::current().urls = urls;
   }
   ~AnchorScope() { AnchorNamer::current() = saved; }
   AnchorScope(const AnchorScope&) = delete;

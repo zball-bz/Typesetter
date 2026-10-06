@@ -1,0 +1,25 @@
+doc @[0,455)
+  heading @[0,19) level=1 label="ch-one"
+    text @[2,19) str="The first chapter"
+  para @[30,190)
+    text @[30,120) str="A chapter of a book split into files (plan P3-31): it refers to the next chapter's section "
+    ref @[121,129) target="sec-two"
+    text @[130,149) str=" and to its equation "
+    ref @[150,155) target="eq-b"
+    text @[155,190) str=", and the next chapter refers back."
+  region @[192,301) name="figure"
+    para @[284,292)
+      text @[284,292) str="A tower."
+  para @[303,323)
+    math @[303,323) display=1 src="a + b = c" label="eq-a"
+      text @[305,314) str="a + b = c"
+  para @[325,454)
+    text @[325,342) str="Its own figure is "
+    ref @[343,349) target="fig-a"
+    text @[349,350) str="; "
+    splice @[351,395) expr="link({target: \"sec-two\"})"
+      arg @[378,394)
+        text @[378,394) str="the next section"
+    text @[396,423) str=" is a link across files, and "
+    ref @[424,432) target="nowhere"
+    text @[433,454) str=" is no label anywhere."

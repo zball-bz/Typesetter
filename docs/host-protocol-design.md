@@ -249,8 +249,8 @@ references, the job's log and the fonts the caller declared (`opts.fonts`).
 
 ## 5. Fixtures, profiles, tsrc
 
-- `test/profiles/golden.json` — `{host: {width: 300}, doc: {baseSize: 16}}`.
-- `X.fixture.json` next to a fixture — `{profile, settings, products}` —
+- `test/profiles/golden.json` — `{host: {width: 300}, doc: {baseSize: 16, lang: "zh-CN"}}`.
+- `X.fixture.json` next to a fixture — `{profile, settings, products, inputs}` —
   replaces the old file-name conventions (`*indent*`, `*punct-*`, `*snap*`,
   `*base18*`, `*paged*`). `"products": ["paged"]` goldens the pagination at the
   fixture's `page.height`. (`*diag*` still selects the diagnostics golden.)
@@ -259,6 +259,35 @@ references, the job's log and the fonts the caller declared (`opts.fonts`).
   all of them in gate G1. Settings layer profile < fixture < `--settings` <
   `--set path=value`; `--width/--base/--indent/--punct/--snap/--page-height`
   remain as sugar.
+
+## 5a. Declared inputs and cross-document labels (plan P3-31)
+
+As built (design T9 A7, T3 S7; INTEGRATION: T9's transport, T3's semantics):
+- `engine/src/api/inputs.def` lists the declared inputs — blobs a host gives
+  a document before Ingest, part of its identity (a fork copies them), never
+  shown to a script: `labels`, the other documents' labels products as one
+  JSON array (`semantic/manifest.h`, a validating decoder; fuzz target
+  `fuzz_inputs`). `tsr2_set_input(doc, name, bytes, len)` (0 taken, 1
+  refused: unknown or after Ingest); `createEngine().typeset(src, el,
+  {inputs: {labels}})`, `renderTsm(src, {inputs})`, `tsrc --labels=F`
+  (repeatable), and a fixture's `"inputs": {"labels": [files]}`.
+- The `labels` product (Resolve): `{"v":1, "doc", "totals": {counter: n},
+  "labels": [{label, class, level, number: [[counter, [n…]]…], title,
+  anchor}]}` — labels sorted, one per line; a number's components by counter
+  (within-parents first), start-independent (the document's own start taken
+  off); totals: the steps of each document-wide counter's first component.
+  A fixture whose products include `labels` and that has an `X.labels.json`
+  beside it is checked against it (`tsr_tests --update` rewrites it).
+- Settings: `project.doc` (its key), `project.starts` ({doc: {counter: n}}:
+  its own row offsets its counters; the others' are added to the numbers of
+  their labels), `project.urls` ({doc: url}: an external reference links to
+  `url#<id>`, the doc key when unset).
+- Resolve: a reference finds a local label first, then a citation key, then
+  another document's label (`ref-shadowed`, info, when a local one hides
+  it); an external label is formatted with this document's class templates,
+  terms and counter patterns after its producer's start, or shows its
+  number, title or label when this document lacks its class; `#link({target})`
+  reaches it too.
 
 ## 6. ABI
 

@@ -1,0 +1,12 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {link} = __rt.std;
+return (async () => {
+const __h = [
+() => ({src: "photos/tower.jpg", alt: "tower", w: 400, h: 300, scale: 0.4, label: "fig-a"}),
+(__k) => (link(...[{target: "sec-two"}], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

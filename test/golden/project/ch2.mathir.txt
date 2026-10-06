@@ -1,0 +1,5 @@
+display pid=2 "x = y"
+  run [0,5)
+    sym U+0078 ord [0,1)
+    sym U+003D rel [2,3)
+    sym U+0079 ord [4,5)

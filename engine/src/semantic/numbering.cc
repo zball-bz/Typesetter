@@ -243,6 +243,23 @@ std::string Counters::formatComps(u16 c, const std::vector<int>& comps) const {
 
 std::string Counters::format(u16 c) const { return formatComps(c, v_[c]); }
 
+std::vector<std::pair<u16, std::vector<int>>> Counters::groups(u16 c) const {
+  const CounterDef& d = reg_.counters[c];
+  std::vector<std::pair<u16, std::vector<int>>> out;
+  if (d.within != kNoIndex && d.withinPrefix) {
+    out = groups(d.within);
+    if (!out.empty()) out.back().second.resize((size_t)d.withinDepth, 0);
+  }
+  out.push_back({c, v_[c]});
+  return out;
+}
+
+void Counters::offset(u16 c, int n) {
+  std::vector<int>& v = v_[c];
+  if (v.empty()) v.push_back(0);
+  v[0] += n;
+}
+
 void Counters::apply(u16 c, const Event& ev) {
   std::vector<int>& v = v_[c];
   if (!ev.set.empty()) {

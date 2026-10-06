@@ -1,0 +1,7 @@
+doc @[0,455)
+  heading1 @[0,19) label="ch-one"
+  para @[30,190) lines=1
+  region @[192,301) name="figure"
+    para @[284,292) lines=1
+  para @[303,323) lines=1
+  para @[325,454) lines=1

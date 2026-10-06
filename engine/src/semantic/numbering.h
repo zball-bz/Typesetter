@@ -54,6 +54,13 @@ class Counters {
   void leaveScope(ClassId cls);
   // the supplement an event set for counter c (none: the class's)
   const Supplement* supplementOf(u16 c) const { return sup_[c].set() ? &sup_[c] : nullptr; }
+  // (plan P3-31) counter c's current number as raw components, by counter:
+  // its within-parents' first, then its own (what format(c) prints)
+  std::vector<std::pair<u16, std::vector<int>>> groups(u16 c) const;
+  // (plan P3-31) its first component now (0: never stepped), and a start
+  // offset before its first step (a project's documents before this one)
+  int top(u16 c) const { return v_[c].empty() ? 0 : v_[c][0]; }
+  void offset(u16 c, int n);
 
  private:
   struct Keyed {

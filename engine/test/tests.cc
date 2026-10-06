@@ -2268,6 +2268,20 @@ int main(int argc, char** argv) {
       if (fs::exists(opsPath)) {
         std::string ops;
         readFile(opsPath, ops);
+        // (plan P3-31) its declared inputs: the fixture's labels manifests
+        // (every document built from it below takes them too)
+        std::string labelsIn;
+        if (!fx.labels.empty()) {
+          std::vector<std::string> files;
+          for (const std::string& f : fx.labels) files.push_back((entry.path().parent_path() / f).string());
+          std::string missing;
+          if (!labelsInput(files, labelsIn, missing)) {
+            printf("FAIL %s: cannot read input %s\n", label.c_str(), missing.c_str());
+            failures++;
+            continue;
+          }
+          doc.setInput("labels", labelsIn);
+        }
         if (!doc.ingest((const u8*)ops.data(), ops.size())) {
           printf("FAIL %s: ops decode\n%s", label.c_str(), doc.dumpDiags().c_str());
           failures++;
@@ -2342,6 +2356,23 @@ int main(int argc, char** argv) {
         if (hasProduct("css")) goldenCompare(g("css"), doc.product("css"), update, label + ":css");
         // (plan P3-30) the document's language and where it came from
         if (hasProduct("docinfo")) goldenCompare(g("docinfo"), doc.product("docinfo"), update, label + ":docinfo");
+        // (plan P3-31) its labels product; a fixture's X.labels.json beside
+        // it (another fixture's input) is that product
+        if (hasProduct("labels")) {
+          const std::string labels = doc.product("labels");
+          goldenCompare(g("labels"), labels, update, label + ":labels");
+          const fs::path manifest = entry.path().parent_path() / (rel.stem().string() + ".labels.json");
+          std::string committed;
+          if (fs::exists(manifest) && readFile(manifest, committed) && committed != labels) {
+            if (update) {
+              std::ofstream(manifest, std::ios::binary) << labels;
+            } else {
+              printf("FAIL %s: %s is not its labels product (tsr_tests --update)\n", label.c_str(),
+                     manifest.filename().string().c_str());
+              failures++;
+            }
+          }
+        }
         // (pagination reports into the paged render's slice — keep-violated,
         // page-overflow, plan P3-12: the screen diagnostics are taken first)
         const std::string screenDiags = doc.product("diags");
@@ -2364,6 +2395,7 @@ int main(int argc, char** argv) {
           warm.configure(profile);
           warm.configure(fx.settings);
           warm.compile(source);
+          if (!labelsIn.empty()) warm.setInput("labels", labelsIn);
           if (!warm.ingest((const u8*)ops.data(), ops.size()) || !typesetWithMock(warm) ||
               warm.product("html") != html || warm.product("diags") != screenDiags ||
               warm.product("breaks") != doc.product("breaks")) {
@@ -2386,6 +2418,7 @@ int main(int argc, char** argv) {
           fresh.configure(fx.settings);
           fresh.configure("{\"host\":{\"width\":260}}");
           fresh.compile(source);
+          if (!labelsIn.empty()) fresh.setInput("labels", labelsIn);
           bool ok = doc.forkInto(narrow, "{\"host\":{\"width\":260}}") && typesetWithMock(narrow) &&
                     fresh.ingest((const u8*)ops.data(), ops.size()) && typesetWithMock(fresh);
           if (!ok || narrow.product("html") != fresh.product("html") ||

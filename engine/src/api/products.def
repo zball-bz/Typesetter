@@ -34,3 +34,4 @@ PRODUCT(diags, Compile)
 PRODUCT(settings, Compile)
 PRODUCT(references, Resolve)
 PRODUCT(docinfo, Resolve)
+PRODUCT(labels, Resolve)  // (plan P3-31) its labels for the other documents of its project

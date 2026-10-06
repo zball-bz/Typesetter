@@ -1,0 +1,11 @@
+= The first chapter <ch-one>
+
+A chapter of a book split into files (plan P3-31): it refers to the next chapter's section @sec-two and to its equation @eq-b, and the next chapter refers back.
+
+#!figure(src: "photos/tower.jpg", alt: "tower", w: 400, h: 300, scale: 0.4, label: "fig-a")
+A tower.
+#figure!
+
+$ a + b = c $ <eq-a>
+
+Its own figure is @fig-a; #link({target: "sec-two"})[the next section] is a link across files, and @nowhere is no label anywhere.

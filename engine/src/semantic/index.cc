@@ -112,7 +112,10 @@ struct Locator {
     if (C.counter != kNoIndex)
       if (const Supplement* s = counters.supplementOf(C.counter)) in.supplement = *s;
     const bool counted = C.counter != kNoIndex;  // (the loader refuses a numbered class without one)
-    if (C.numbering == ElementClass::Numbering::Always && counted) in.number = counters.step(C.counter, in.level);
+    if (C.numbering == ElementClass::Numbering::Always && counted) {
+      in.number = counters.step(C.counter, in.level);
+      in.groups = counters.groups(C.counter);  // (plan P3-31)
+    }
     if (C.title == ElementClass::Title::Text) {
       excerptInto(n, strs, in.title);
       in.titleNode = n;
@@ -137,8 +140,10 @@ struct Locator {
         std::string l(strs.get(attrStr(n, ArgK::label)));
         if (!l.empty() && userLabel(n, l, self)) {
           in.label = l;
-          if (C.numbering == ElementClass::Numbering::Labelled && counted)
+          if (C.numbering == ElementClass::Numbering::Labelled && counted) {
             in.number = counters.step(C.counter, in.level);
+            in.groups = counters.groups(C.counter);  // (plan P3-31)
+          }
         }
         break;
       }

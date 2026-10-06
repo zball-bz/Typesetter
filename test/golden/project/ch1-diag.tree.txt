@@ -1,0 +1,32 @@
+doc @[0,454) [base]
+  heading @[0,19) [BOLDx1.60] level=1 label="ch-one"
+    text @[2,19) [BOLDx1.60] str="The first chapter"
+  para @[30,190) [base]
+    text @[30,120) [base] str="A chapter of a book split into files (plan P3-31): it refers to the next chapter's section " raw=0:0,91:90
+    ref @[121,129) [base] target="sec-two"
+      text @[121,129) [base] str="§2.1"
+    text @[130,149) [base] str=" and to its equation " raw=0:0,1:0,21:19
+    ref @[150,155) [base] target="eq-b"
+      text @[150,155) [base] str="式 (2)"
+    text @[155,190) [base] str=", and the next chapter refers back."
+  group @[192,301) [base] role="figure" label="fig-a"
+    image @[192,301) [base] src="photos/tower.jpg" alt="tower" w=400 h=300 scale=0.4
+    para @[284,292) [base] role="caption" slot="caption"
+      styled @[284,292) [BOLD] role="caption-label"
+        text @[284,292) [BOLD] str="图 1："
+      text @[284,292) [base] str="A tower."
+  mathblock @[303,323) [base] label="eq-a"
+    mathsrc @[305,314) [base] src="a + b = c"
+    seq @[303,323) [base] slot="tag" syn="eqno" copy="omit"
+      text @[303,323) [base] str="(1)"
+  para @[325,454) [base]
+    text @[325,342) [base] str="Its own figure is " raw=0:0,18:17
+    ref @[343,349) [base] target="fig-a"
+      text @[343,349) [base] str="图 1"
+    text @[349,350) [base] str="; " raw=0:0,2:1
+    link @[351,395) [base] target="sec-two"
+      text @[378,394) [base] str="the next section"
+    text @[396,423) [base] str=" is a link across files, and " raw=0:0,1:0,29:27
+    ref @[424,432) [base] target="nowhere"
+      text @[424,432) [base] str="??"
+    text @[433,454) [base] str=" is no label anywhere." raw=0:0,1:0

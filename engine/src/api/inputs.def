@@ -1,0 +1,7 @@
+// Declared inputs (plan P3-31; design T9 A7): blobs a host gives a document
+// before Ingest — part of its identity (a fork copies them), never shown to
+// a script, each read by a validating decoder (fuzz target fuzz_inputs).
+// INPUT(name, version, schema, consumer stage)
+//   labels: the other documents' labels products (a JSON array of them;
+//           semantic/manifest.h), read by Resolve
+INPUT(labels, 1, LabelManifestList, Resolve)

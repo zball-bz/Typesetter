@@ -6,7 +6,7 @@ namespace tsr {
 
 constexpr std::uint8_t OPS_VERSION = 14;
 constexpr std::uint8_t OPS_MIN_COMPAT = 11;
-constexpr const char* SCHEMA_HASH = "dedc032c";
+constexpr const char* SCHEMA_HASH = "53076bb8";
 constexpr std::uint16_t KIND_COUNT = 38;
 constexpr std::uint16_t ARGK_COUNT = 108;
 

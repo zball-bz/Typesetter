@@ -1,0 +1,10 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-s="0" data-e="19" id="tsr-ch-one">The first chapter</h1>
+<p data-pid="1" data-s="30" data-e="190">A chapter of a book split into files (plan P3-31): it refers to the next chapter&#39;s section <a href="ch2.html#tsr-sec-two">§2.1</a> and to its equation <a href="ch2.html#tsr-eq-b">式 (2)</a>, and the next chapter refers back.</p>
+<figure data-role="figure" data-pid="2" data-s="192" data-e="301" id="tsr-fig-a">
+<img data-s="192" data-e="301" src="photos/tower.jpg" alt="tower" style="max-width:100%">
+<figcaption><strong>图 1：</strong>A tower.</figcaption>
+</figure>
+<p class="tsr-mathblock" data-pid="3" data-s="303" data-e="323" id="tsr-eq-a"><span class="tsr-math" data-syn="math" data-copy="$ a + b = c $" data-copy-group="2147483951" role="math" aria-label="a + b = c" data-s="303" data-e="323" style="width:67.109px;height:12.125px;vertical-align:-1.188px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:13.312px;top:-1.863px;font-size:16px;line-height:16px">+</span><span class="tsr-mg" style="left:28.953px;top:-1.863px;font-size:16px;line-height:16px">b</span><span class="tsr-mg" style="left:42.797px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:59.328px;top:-1.863px;font-size:16px;line-height:16px">c</span></span> <span class="tsr-eqno" data-syn="eqno">(1)</span></p>
+<p data-pid="4" data-s="325" data-e="454">Its own figure is <a href="#tsr-fig-a">图 1</a>; <a href="ch2.html#tsr-sec-two">the next section</a> is a link across files, and ?? is no label anywhere.</p>
+</div>
