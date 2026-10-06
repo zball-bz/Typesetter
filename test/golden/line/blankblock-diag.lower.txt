@@ -1,6 +1,8 @@
-lower v1 abi 4d4c6e49 docEnd 193 holes 1 module b88b856a03e24b82
+lower v1 abi 3d3ccfbb docEnd 193 holes 3 module ea0cf9fb9d1c1059
 piece 0 hole 0 js [103,118)
-piece 1 verbatim block 0 js [147,173)
+piece 1 hole 1 js [120,156)
+piece 2 hole 2 js [158,194)
+piece 3 verbatim block 0 js [223,249)
 block 0 verbatim [0,29) user
   VERBATIM 0
 block 1 content [30,78) user framed holes 0..1
@@ -8,19 +10,21 @@ block 1 content [30,78) user framed holes 0..1
     TEXT "A root statement may hold blank lines: " [30,68) raw=0:0,39:38
     HOLE 0 [69,77)
     TEXT "." [77,78)
-block 2 content [80,136)
+block 2 content [80,136) user framed holes 1..2
   CALL list [80,136) ordered=false start=1
     CALL item [80,124)
       CALL para [82,86)
         TEXT "item" [82,86)
-      CALL error [89,124) code="statement-nested-unsupported" message="statements inside lists, quotes and regions are not supported yet (plan P2-12)"
+      FRAME [89,124) holes 1..2
+        STMT 1
     CALL item [125,136)
       CALL para [127,136)
         TEXT "next item" [127,136)
-block 3 content [138,192)
+block 3 content [138,192) user framed holes 2..3
   CALL quote [138,192)
     CALL para [140,145)
       TEXT "quote" [140,145)
-    CALL error [148,184) code="statement-nested-unsupported" message="statements inside lists, quotes and regions are not supported yet (plan P2-12)"
+    FRAME [148,184) holes 2..3
+      STMT 2
     CALL para [187,192)
       TEXT "after" [187,192)

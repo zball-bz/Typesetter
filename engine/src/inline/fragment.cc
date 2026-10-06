@@ -47,8 +47,10 @@ struct Conv {
       }
       case AstKind::Comment:
         return;
-      case AstKind::Splice: {
-        // no executor in fragment context: splices stay literal
+      case AstKind::Splice:
+      case AstKind::Keyword:
+      case AstKind::Branch: {
+        // no executor in fragment context: splices (and keyword forms) stay literal
         diags.add(Sev::Info, "fragment-splice", outer,
                   "splices are not evaluated in inline fragments");
         ContentNode* t = mk(Kind::text, eff);

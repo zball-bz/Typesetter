@@ -44,6 +44,29 @@ struct SpliceLex {
 };
 bool lexSplice(std::string_view t, u32 hash, SpliceLex& out);
 
+// A keyword form after '#' (plan P2-12; syntax.def KEYWORD rows):
+//   '#' kw Blank* '(' JS ')' Blank* '[' content ']'
+// and, for an elseChain keyword, after each body:
+//   Blank* 'else' Blank* ('if' Blank* '(' JS ')' Blank*)? '[' content ']'
+// Blank is a space or a tab. The callers match the bodies (a block body
+// closes on a later line). `openAt`: a '(' whose JS ran out of text (an
+// open construct, as lexSplice's).
+struct KwHead {
+  int kw = -1;                     // kKeywords index
+  u32 headStart = 0, headEnd = 0;  // the JS inside the parentheses
+  u32 bodyOpen = kNoPos;           // its first body's '['
+  u32 openAt = kNoPos;
+};
+bool lexKeywordHead(std::string_view t, u32 hash, KwHead& out);
+// an else link at p (one past a body's ']'): `cond` set for `else if`
+struct KwElse {
+  bool cond = false;
+  u32 headStart = 0, headEnd = 0;
+  u32 bodyOpen = kNoPos;
+  u32 openAt = kNoPos;
+};
+bool lexElse(std::string_view t, u32 p, KwElse& out);
+
 // One past the atom starting at t[i], or i when none starts there.
 u32 atomEnd(std::string_view t, u32 i);
 

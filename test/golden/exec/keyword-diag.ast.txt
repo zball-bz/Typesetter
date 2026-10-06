@@ -1,0 +1,35 @@
+doc @[0,283)
+  para @[0,7)
+    text @[0,7) str="Before."
+  para @[9,54)
+    keyword @[9,54) if
+      branch @[9,36) head="missing.value"
+        text @[30,35) str="never"
+      branch @[37,54) head=""
+        text @[43,53) str="also never"
+  para @[56,125)
+    keyword @[56,125) for
+      branch @[56,125) head="const x of [1, 2, 3]"
+        list @[88,123) bullet start=1
+          item @[88,123)
+            para @[90,123)
+              text @[90,94) str="item "
+              splice @[95,123) expr="(x === 2 ? undefined.y : x)"
+  para @[127,154)
+    error @[127,133) code="keyword-form" msg="#while needs (…) and a body: #while (condition) [ … ]"
+    text @[134,154) str=" (( [\nbroken head\n]"
+  para @[156,174)
+    error @[156,159) code="keyword-form" msg="#if needs (…) and a body: #if (condition) [ … ]"
+    text @[160,174) str=" [no condition]"
+  para @[176,190)
+    error @[176,181) code="keyword-unsupported" msg="#else follows a body: #if (c) [ … ] else [ … ]"
+    text @[182,190) str=" [orphan]"
+  list @[192,274) bullet start=1
+    item @[192,274)
+      para @[194,213)
+        text @[194,213) str="a nested style push"
+      code-block @[216,248) js=" $.style.push({weight: 700}) "
+      para @[251,274)
+        text @[251,274) str="ends with its statement"
+  para @[276,282)
+    text @[276,282) str="After."

@@ -183,8 +183,9 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       out += side<StmtP>(n).let ? "code-let" : "code-block";
       spanOut();
       out += " js=\"";
-      appendEscaped(out, src.slice(side<StmtP>(n).js));
+      appendEscaped(out, strs.get(side<StmtP>(n).js));
       out += "\"";
+      out += side<StmtP>(n).content ? " content" : "";
       break;
     }
     case AstKind::Error: {
@@ -197,13 +198,28 @@ void dumpAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       out += "\"";
       break;
     }
+    case AstKind::Keyword: {
+      out += "keyword";
+      spanOut();
+      out += " ";
+      appendEscaped(out, strs.get(n->str));
+      break;
+    }
+    case AstKind::Branch: {
+      out += "branch";
+      spanOut();
+      out += " head=\"";
+      appendEscaped(out, src.slice(side<BranchP>(n).head));
+      out += "\"";
+      break;
+    }
   }
 }
 
 // one node's JSON members (no braces, no kids): kind, sugar, span, str and
 // its payload fields
 void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, const Interner& strs) {
-  static constexpr const char* kKind[] = {"doc", "text", "comment", "call", "splice", "stmt", "error"};
+  static constexpr const char* kKind[] = {"doc", "text", "comment", "call", "splice", "stmt", "error", "keyword", "branch"};
   out += "\"kind\":\"";
   out += kKind[(int)n->kind];
   out += "\"";
@@ -337,13 +353,25 @@ void jsonAstNode(std::string& out, const AstNode* n, const SourceText& src, cons
       out += ",\"let\":";
       out += p.let ? "true" : "false";
       out += ",\"js\":";
-      jsonString(out, src.slice(p.js));
+      jsonString(out, strs.get(p.js));
+      if (p.content) {
+      out += ",\"content\":";
+      out += "true";
+      }
       break;
     }
     case AstKind::Error: {
       const ErrorP& p = side<ErrorP>(n);
       out += ",\"message\":";
       jsonString(out, strs.get(p.message));
+      break;
+    }
+    case AstKind::Keyword:
+      break;
+    case AstKind::Branch: {
+      const BranchP& p = side<BranchP>(n);
+      out += ",\"head\":";
+      jsonString(out, src.slice(p.head));
       break;
     }
   }

@@ -8,13 +8,13 @@ doc @[0,193)
     item @[80,124)
       para @[82,86)
         text @[82,86) str="item"
-      error @[89,124) code="statement-nested-unsupported" msg="statements inside lists, quotes and regions are not supported yet (plan P2-12)"
+      code-block @[89,124) js="\n  let c = 1\n\n  let d = 2\n"
     item @[125,136)
       para @[127,136)
         text @[127,136) str="next item"
   quote @[138,192)
     para @[140,145)
       text @[140,145) str="quote"
-    error @[148,184) code="statement-nested-unsupported" msg="statements inside lists, quotes and regions are not supported yet (plan P2-12)"
+    code-block @[148,184) js="\n  let e = 1\n\n  let f = 2\n"
     para @[187,192)
       text @[187,192) str="after"

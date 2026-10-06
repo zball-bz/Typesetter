@@ -1,8 +1,22 @@
-export const abi = 0x4d4c6e49;
+export const abi = 0x3d3ccfbb;
 export default async (__rt, $) => {
 return (async () => {
 const __h = [
 () => ((a + b)),
+() => {
+
+  let c = 1
+
+  let d = 2
+
+},
+() => {
+
+  let e = 1
+
+  let f = 2
+
+},
 ];
 await __rt.run(__h, 0);
 

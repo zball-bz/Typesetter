@@ -1,0 +1,52 @@
+doc @[61,346) [base]
+  para @[61,94) [base]
+    text @[61,68) [base] str="Status: " raw=0:0,8:7
+    text @[79,82) [base] str="yes"
+    text @[93,94) [base] str="."
+  para @[96,212) [base]
+    seq @[96,212) [base]
+      text @[145,146) [base] str=" "
+      text @[169,178) [base] str="There are " raw=0:0,10:9
+      text @[179,181) [base] str="3"
+      text @[182,188) [base] str=" items." raw=0:0,1:0
+      text @[188,189) [base] str=" "
+  list @[214,245) [base] ordered=false start=1
+    item @[239,243) [base]
+      para @[241,243) [base]
+        text @[241,243) [base] str="alpha"
+    item @[239,243) [base]
+      para @[241,243) [base]
+        text @[241,243) [base] str="beta"
+    item @[239,243) [base]
+      para @[241,243) [base]
+        text @[241,243) [base] str="gamma"
+  para @[258,298) [base]
+    seq @[258,298) [base]
+      text @[274,275) [base] str=" "
+      text @[288,292) [base] str="Step " raw=0:0,5:4
+      text @[293,295) [base] str="1"
+      text @[295,296) [base] str="."
+      text @[296,297) [base] str=" "
+      text @[274,275) [base] str=" "
+      text @[288,292) [base] str="Step " raw=0:0,5:4
+      text @[293,295) [base] str="2"
+      text @[295,296) [base] str="."
+      text @[296,297) [base] str=" "
+      text @[274,275) [base] str=" "
+      text @[288,292) [base] str="Step " raw=0:0,5:4
+      text @[293,295) [base] str="3"
+      text @[295,296) [base] str="."
+      text @[296,297) [base] str=" "
+  para @[300,346) [base]
+    text @[300,312) [base] str="Inline loop: " raw=0:0,13:12
+    seq @[313,340) [base]
+      text @[335,337) [base] str="alpha"
+      text @[337,338) [base] str=","
+      text @[338,339) [base] str=" "
+      text @[335,337) [base] str="beta"
+      text @[337,338) [base] str=","
+      text @[338,339) [base] str=" "
+      text @[335,337) [base] str="gamma"
+      text @[337,338) [base] str=","
+      text @[338,339) [base] str=" "
+    text @[341,346) [base] str=" done." raw=0:0,1:0

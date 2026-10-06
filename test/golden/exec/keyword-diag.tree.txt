@@ -1,0 +1,32 @@
+doc @[0,282) [base]
+  para @[0,7) [base]
+    text @[0,7) [base] str="Before."
+  error @[9,54) [base] message="ReferenceError: missing is not defined" code="script-error"
+  list @[56,125) [base] ordered=false start=1
+    item @[88,123) [base]
+      para @[90,123) [base]
+        text @[90,94) [base] str="item " raw=0:0,5:4
+        text @[95,123) [base] str="1"
+    item @[88,123) [base]
+      error @[90,123) [base] message="TypeError: Cannot read properties of undefined (reading 'y')" code="script-error"
+    item @[88,123) [base]
+      para @[90,123) [base]
+        text @[90,94) [base] str="item " raw=0:0,5:4
+        text @[95,123) [base] str="3"
+  para @[127,154) [base]
+    error @[127,133) [base] message="#while needs (…) and a body: #while (condition) [ … ]" code="keyword-form"
+    text @[134,154) [base] str=" (( [ broken head ]" raw=0:0,1:0,6:7
+  para @[156,174) [base]
+    error @[156,159) [base] message="#if needs (…) and a body: #if (condition) [ … ]" code="keyword-form"
+    text @[160,174) [base] str=" [no condition]" raw=0:0,1:0
+  para @[176,190) [base]
+    error @[176,181) [base] message="#else follows a body: #if (c) [ … ] else [ … ]" code="keyword-unsupported"
+    text @[182,190) [base] str=" [orphan]" raw=0:0,1:0
+  list @[192,274) [base] ordered=false start=1
+    item @[192,274) [base]
+      para @[194,213) [base]
+        text @[194,213) [base] str="a nested style push"
+      para @[251,274) [base]
+        text @[251,274) [base] str="ends with its statement"
+  para @[276,282) [base]
+    text @[276,282) [base] str="After."

@@ -78,8 +78,15 @@ SUGAR(arg,     Inline, "",                                  "arg")
 
 // non-sugar node payloads (Splice, Stmt, Error)
 NODE(Splice, "expr:str lastCall:u32 named:bool?",           "splice expr=\"{expr}\"{named? named:}")
-NODE(Stmt,   "let:bool js:src",                             "{let?code-let:code-block} js=\"{js}\"")
+// js: the statement's JavaScript, its lines with their container prefixes
+// stripped (a content literal `#let x = [ … ]`: its name; kids: its body)
+NODE(Stmt,   "let:bool js:str content:bool?",               "{let?code-let:code-block} js=\"{js}\"{content? content:}")
 NODE(Error,  "message:str",                                 "error code=\"{$str}\" msg=\"{message}\"")
 NODE(Text,   "rawmap:str? seps:str?",                       "text str=\"{$str}\"")
 NODE(Comment, "",                                           "comment body=\"{$str}\"")
+// a keyword form (plan P2-12): $str = the keyword; kids = its Branch nodes
+NODE(Keyword, "",                                           "keyword {$str}")
+// a branch of a keyword form: its head JS (a condition, a for/while head;
+// empty: else) and, as kids, its body
+NODE(Branch, "head:src",                                    "branch head=\"{head}\"")
 NODE(Doc,    "",                                            "doc")

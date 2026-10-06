@@ -1,0 +1,9 @@
+doc @[0,347)
+  code-let @[0,44) js=" xs = Array.of(\"alpha\", \"beta\", \"gamma\")"
+  code-let @[45,59) js=" ok = true"
+  para @[61,94) lines=1
+  para @[96,212) lines=8
+  para @[214,245) lines=3
+  code-let @[247,257) js=" i = 0"
+  para @[258,298) lines=4
+  para @[300,346) lines=1

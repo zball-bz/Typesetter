@@ -1,0 +1,91 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {note} = __rt.std;
+return (async () => {
+let card, count, who, n, note, tally, last;
+const __h = [
+(__v) => { card = __v; },
+() => (card),
+() => (card),
+() => { count = (
+ 2
+); },
+() => (count),
+() => (count),
+() => { who = (
+ "the author"
+); },
+() => (who),
+() => { n = (
+ 1
+); },
+() => (
+n > 0
+),
+(__b) => {
+const __s0 = typeof n === "undefined" ? undefined : n;
+{
+let n = __s0;
+return __b([
+() => { n = (
+ 10
+); },
+() => (n),
+]);
+}
+},
+() => (n),
+(__b) => {
+const __r = [];
+for (
+const k of [1, 2]
+) {
+const __s0 = typeof line === "undefined" ? undefined : line;
+{
+let line = __s0;
+__r.push(__b([
+(__v) => { line = __v; },
+() => (k),
+() => (line),
+]));
+}
+}
+return __r;
+},
+() => { note = (
+ "inside a region"
+); },
+() => (note),
+() => { tally = (
+ 0
+); },
+() => { last = (
+ 0
+); },
+(__b) => {
+const __r = [];
+for (
+const k of Array.of(1, 2, 3)
+) {
+const __s0 = typeof tally === "undefined" ? undefined : tally;
+{
+let tally = __s0;
+__r.push(__b([
+() => { tally = (
+ tally + k
+); },
+() => {
+ last = tally 
+},
+]));
+}
+}
+return __r;
+},
+() => (tally),
+() => (last),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

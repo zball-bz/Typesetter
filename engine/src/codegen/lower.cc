@@ -188,6 +188,9 @@ struct Walker {
   std::string* out;
   std::string why;
   u32 next = 0;  // holes are numbered in preorder: the next one expected
+  u32 limit = UINT32_MAX;  // a scope's table size (plan P2-12); top level: P.holes
+
+  u32 cap() const { return limit == UINT32_MAX ? P.holes : limit; }
 
   bool fail(const char* w) {
     if (why.empty()) why = w;
@@ -271,7 +274,7 @@ struct Walker {
   bool holeRef(u32& h) {
     if (!c.u(h)) return fail("truncated hole ref");
     if (h != next) return fail("hole out of preorder");
-    if (next++ >= P.holes) return fail("hole ref out of range");
+    if (next++ >= cap()) return fail("hole ref out of range");
     return true;
   }
   // a FENCE / REGION args operand: 0, or (hole + 1) << 1 | awaits
@@ -282,7 +285,7 @@ struct Walker {
     if (a < 2) return fail("bad args ref");
     awaits = a & 1;
     if ((a >> 1) - 1 != next) return fail("hole out of preorder");
-    if (next++ >= P.holes) return fail("hole ref out of range");
+    if (next++ >= cap()) return fail("hole ref out of range");
     return true;
   }
   bool count(u32& n) {
@@ -376,7 +379,7 @@ struct Walker {
       case Lop::FRAME: {
         u32 lo, hi;
         if (!span(s, e) || !c.u(lo) || !c.u(hi)) return fail("truncated FRAME");
-        if (lo != next || lo > hi || hi > P.holes) return fail("FRAME hole range out of range");
+        if (lo != next || lo > hi || hi > cap()) return fail("FRAME hole range out of range");
         if (out) appendf(*out, " holes %u..%u\n", lo, hi);
         bool a;
         if (!value(depth + 1, a)) return false;
@@ -435,6 +438,65 @@ struct Walker {
         (void)argsAwait;
         if (!async) return fail("REGION must await");
         return true;
+      }
+      case Lop::STMT: {  // a statement anywhere (plan P2-12): no content
+        u32 h;
+        if (!holeRef(h)) return false;
+        if (out) appendf(*out, " %u\n", h);
+        return true;  // its hole may await on its own
+      }
+      case Lop::LET: {
+        u32 h;
+        if (!holeRef(h)) return false;
+        if (out) appendf(*out, " %u\n", h);
+        if (!value(depth + 1, kidsAwait)) return false;
+        break;
+      }
+      case Lop::IF: {
+        u32 n;
+        if (!count(n)) return false;
+        if (out) appendf(*out, " %u\n", n);
+        for (u32 i = 0; i < n; i++) {
+          u32 cond;
+          if (!c.u(cond)) return fail("truncated IF");
+          if (cond) {
+            if (cond - 1 != next) return fail("hole out of preorder");
+            if (next++ >= cap()) return fail("hole ref out of range");
+          } else if (i + 1 != n) {
+            return fail("IF else branch not last");
+          }
+          indent(depth + 1);
+          if (out) {
+            if (cond) appendf(*out, "when hole %u\n", cond - 1);
+            else *out += "else\n";
+          }
+          bool a;
+          if (!value(depth + 2, a)) return false;
+          kidsAwait |= a;
+        }
+        if (kidsAwait && !async) return fail("IF with awaiting branches must await");
+        return true;  // a condition may await on its own
+      }
+      case Lop::SCOPE:
+      case Lop::LOOP: {
+        // its own hole table, numbered from 0 (the hole's __b hands it over)
+        u32 h, nh;
+        if (!holeRef(h) || !c.u(nh)) return fail("truncated SCOPE");
+        if (out) appendf(*out, " %u table %u", h, nh);
+        if (op == Lop::LOOP && !span(s, e)) return false;
+        if (out) *out += "\n";
+        const u32 n0 = next, l0 = limit;
+        next = 0;
+        limit = nh;
+        bool a;
+        const bool ok = value(depth + 1, a);
+        const u32 used = next;
+        next = n0;
+        limit = l0;
+        if (!ok) return false;
+        if (used != nh) return fail("scope hole table differs from its holes");
+        if (a && !async) return fail("SCOPE with an awaiting body must await");
+        return true;  // the scope may await on its own (a loop head)
       }
       default:
         return fail("op not a value");

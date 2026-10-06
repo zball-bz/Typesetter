@@ -1,0 +1,119 @@
+lower v1 abi 3d3ccfbb docEnd 617 holes 20 module 868394390168ca06
+piece 0 hole 0 js [172,196)
+piece 1 hole 1 js [198,210)
+piece 2 hole 2 js [212,224)
+piece 3 hole 3 js [226,251)
+piece 4 hole 4 js [253,266)
+piece 5 hole 5 js [268,281)
+piece 6 hole 6 js [283,317)
+piece 7 hole 7 js [319,330)
+piece 8 hole 8 js [332,353)
+piece 9 hole 9 js [355,370)
+piece 10 hole 10 js [372,509)
+piece 11 hole 11 js [511,520)
+piece 12 hole 12 js [522,745)
+piece 13 hole 13 js [747,787)
+piece 14 hole 14 js [789,801)
+piece 15 hole 15 js [803,828)
+piece 16 hole 16 js [830,854)
+piece 17 hole 17 js [856,1103)
+piece 18 hole 18 js [1105,1118)
+piece 19 hole 19 js [1120,1132)
+block 0 content [0,54) user framed holes 0..1
+  LET 0
+    CALL seq
+      CALL strong [16,23)
+        TEXT "Card:" [17,22)
+      TEXT " a reusable piece of content." [24,52) raw=0:0,1:0
+block 1 content [56,79) user framed holes 1..3
+  CALL para [56,79)
+    HOLE 1 [56,61)
+    TEXT " Then again: " [62,73) raw=0:0,1:0,13:11
+    HOLE 2 [74,79)
+block 2 content [81,158) user framed holes 3..6
+  CALL list [81,158) ordered=false start=1
+    CALL item [81,132)
+      CALL para [83,93)
+        TEXT "first item" [83,93)
+      FRAME [96,110) holes 3..4
+        STMT 3
+      FRAME [113,132) holes 4..5
+        CALL para [113,132)
+          TEXT "holds " [113,118) raw=0:0,6:5
+          HOLE 4 [119,125)
+          TEXT " things" [126,132) raw=0:0,1:0
+    CALL item [133,158)
+      FRAME [135,158) holes 5..6
+        CALL para [135,158)
+          TEXT "second item sees " [135,151) raw=0:0,17:16
+          HOLE 5 [152,158)
+block 3 content [160,206) user framed holes 6..8
+  CALL quote [160,206)
+    CALL para [162,169)
+      TEXT "A quote" [162,169)
+    FRAME [172,195) holes 6..7
+      STMT 6
+    FRAME [198,206) holes 7..8
+      CALL para [198,206)
+        TEXT "by " [198,200) raw=0:0,3:2
+        HOLE 7 [201,205)
+        TEXT "." [205,206)
+block 4 stmt [208,218) user framed holes 8..9
+  STMT 8
+block 5 content [219,285) user framed holes 9..12
+  CALL para [219,285)
+    IF 1
+      when hole 9
+        SCOPE 10 table 2
+          CALL seq
+            TEXT "\n" [232,233)
+            FRAME [235,246) holes 0..1
+              STMT 0
+            TEXT "Inside, n is " [249,261) raw=0:0,13:12
+            FRAME [262,264) holes 1..2
+              HOLE 1 [262,264)
+            TEXT "." [264,265)
+            TEXT "\n" [265,266)
+    TEXT "\nOutside, n is " [268,281) raw=0:0,1:0,15:13
+    HOLE 11 [282,284)
+    TEXT "." [284,285)
+block 6 content [287,346) user framed holes 12..13
+  CALL para [287,346)
+    LOOP 12 table 3 [287,346)
+      CALL seq
+        TEXT "\n" [313,314)
+        FRAME [316,336) holes 0..2
+          LET 0
+            CALL seq
+              TEXT "Row " [329,332) raw=0:0,4:3
+              FRAME [333,335) holes 1..2
+                HOLE 1 [333,335)
+        FRAME [339,344) holes 2..3
+          HOLE 2 [339,344)
+        TEXT "\n" [344,345)
+block 7 content [348,427) user framed async holes 13..15
+  REGION async "aside" [348,427)
+    FRAME [356,385) holes 13..14
+      STMT 13
+    FRAME [386,419) holes 14..15
+      CALL para [386,419)
+        TEXT "A region holds statements: " [386,412) raw=0:0,27:26
+        HOLE 14 [413,418)
+        TEXT "." [418,419)
+block 8 stmt [429,443) user framed holes 15..16
+  STMT 15
+block 9 stmt [444,457) user framed holes 16..17
+  STMT 16
+block 10 content [458,616) user framed holes 17..20
+  CALL para [458,616)
+    LOOP 17 table 2 [458,542)
+      CALL seq
+        FRAME [498,520) holes 0..1
+          STMT 0
+        FRAME [523,540) holes 1..2
+          STMT 1
+    TEXT "\nEach pass starts from the outer tally (" [543,582) raw=0:0,1:0
+    HOLE 18 [582,588)
+    TEXT "): the last pass made " [588,609) raw=0:0,22:21
+    HOLE 19 [610,615)
+    TEXT "." [615,616)

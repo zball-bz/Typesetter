@@ -18,6 +18,7 @@
 (region_close) @function
 (code_statement) @function
 (code_block) @function
+(keyword_head) @keyword
 (splice_head) @function
 (splice_args) @embedded
 (reference) @constant

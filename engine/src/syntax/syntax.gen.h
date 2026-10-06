@@ -58,7 +58,8 @@ struct SpliceP {
 };
 struct StmtP {
   bool let = 0;
-  Span js{};
+  StrRef js = 0;
+  bool content = 0;
 };
 struct ErrorP {
   StrRef message = 0;
@@ -66,6 +67,9 @@ struct ErrorP {
 struct TextP {
   StrRef rawmap = 0;
   StrRef seps = 0;
+};
+struct BranchP {
+  Span head{};
 };
 
 // inline rules (INLINE rows): precedence and body mode per rule
@@ -132,6 +136,19 @@ inline const char* reservedSpliceHead(std::string_view w) {
   for (std::string_view k : kReserved)
     if (w == k) return "reserved-word";
   return nullptr;
+}
+
+// the keyword forms (plan P2-12): #kw (JS) [content]; an elseChain one continues
+// with else [content] / else if (JS) [content]
+struct KeywordRow {
+  std::string_view name;
+  bool elseChain;
+};
+constexpr KeywordRow kKeywords[] = {{"if", true}, {"for", false}, {"while", false}};
+inline int keywordIndex(std::string_view w) {
+  for (int k = 0; k < (int)(sizeof kKeywords / sizeof kKeywords[0]); k++)
+    if (w == kKeywords[k].name) return k;
+  return -1;
 }
 
 // highlight token tags (shared with runtime/src/shared/syntax.gen.mjs)

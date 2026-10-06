@@ -82,13 +82,49 @@ struct TokenWalk : Lines {
       case AstKind::Comment:
         tok(sp.start, sp.end, kComment);
         return;
-      case AstKind::Stmt:
-        tok(sp.start, sp.end, kFunction);
+      case AstKind::Stmt: {
+        if (!side<StmtP>(n).content) {
+          tok(sp.start, sp.end, kFunction);
+          return;
+        }
+        // a content literal (plan P2-12): `#let x = [` is code, its body
+        // content, its ']' punctuation
+        const size_t open = all.find('[', sp.start);
+        if (open == std::string_view::npos || open >= sp.end) return;
+        tok(sp.start, (u32)open + 1, kFunction);
+        kids(n, kNoTag, qd);
+        tok(sp.end - 1, sp.end, kPunct);
         return;
+      }
       case AstKind::Error:
         return;
       case AstKind::Splice:
         splice(n, qd);
+        return;
+      case AstKind::Keyword: {
+        // (plan P2-12) '#kw' and 'else' / 'else if': keyword; the heads'
+        // parentheses: embedded; the bodies: content
+        const u32 kw = (u32)strs.get(n->str).size();
+        bool first = true;
+        for (const AstNode* br : n->kids()) {
+          const Span bs = br->span, hd = side<BranchP>(br).head;
+          if (first) tok(bs.start, bs.start + 1 + kw, kKeyword);
+          else tok(bs.start, std::min(bs.start + (hd.empty() ? 4u : 4u), bs.end), kKeyword);
+          if (!hd.empty()) {
+            if (!first && hd.start > bs.start + 4) {  // the `if` of `else if`
+              u32 f = bs.start + 4;
+              while (f < hd.start && (all[f] == ' ' || all[f] == '\t')) f++;
+              if (f + 2 <= hd.start) tok(f, f + 2, kKeyword);
+            }
+            tok(hd.start - 1, hd.end + 1, kEmbedded);
+          }
+          first = false;
+          kids(br, kNoTag, qd);
+        }
+        return;
+      }
+      case AstKind::Branch:
+        kids(n, textTag, qd);
         return;
       case AstKind::Call:
         call(n, textTag, qd);
@@ -384,9 +420,11 @@ struct OutlineWalk : Lines {
       case AstKind::Splice:
       case AstKind::Stmt:
       case AstKind::Error:
+      case AstKind::Keyword:
+      case AstKind::Branch:
         break;
     }
-    if (n->kind == AstKind::Splice) return;
+    if (n->kind == AstKind::Splice || n->kind == AstKind::Keyword) return;
     for (const AstNode* k : n->kids()) text(k, out);
   }
   // `label: "id"` among a region's arguments

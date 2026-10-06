@@ -2,18 +2,12 @@
 <div class="tsr-para" data-pid="0" data-s0="30" style="position:relative;height:24px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="48" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A root statement may hold blank lines: 3.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="82" style="position:relative;height:132.781px;margin-bottom:19.2px">
+<div class="tsr-para" data-pid="1" data-s0="82" style="position:relative;height:54.391px;margin-bottom:19.2px">
 <div class="tsr-line" data-s="0" data-e="4" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">item</span></div>
-<div class="tsr-line" data-s="7" data-e="42" data-join="space" data-ragged="1" style="top:30.391px;left:24px;width:276px;word-spacing:-0.32px"><span class="tsr-r tsr-code" data-s="7">⚠ statements inside lists, quotes and</span></div>
-<div class="tsr-line" data-s="7" data-e="42" data-join="space" data-ragged="1" style="top:54.391px;left:24px;width:276px"><span class="tsr-r tsr-code" data-s="7">regions are not supported yet (plan</span></div>
-<div class="tsr-line" data-s="7" data-e="42" data-ragged="1" style="top:78.391px;left:24px;width:276px"><span class="tsr-r tsr-code" data-s="7">P2-12)</span></div>
-<div class="tsr-line" data-s="45" data-e="54" style="top:108.781px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="45">next item</span></div>
+<div class="tsr-line" data-s="45" data-e="54" style="top:30.391px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="45">next item</span></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="140" style="position:relative;height:158.406px">
+<div class="tsr-para" data-pid="2" data-s0="140" style="position:relative;height:67.203px">
 <div class="tsr-line" data-s="0" data-e="5" style="top:0px;left:16px;width:284px"><span class="tsr-r" data-s="0">quote</span></div>
-<div class="tsr-line" data-s="8" data-e="44" data-join="space" data-ragged="1" style="top:43.203px;left:16px;width:284px"><span class="tsr-r tsr-code" data-s="8">⚠ statements inside lists, quotes and</span></div>
-<div class="tsr-line" data-s="8" data-e="44" data-join="space" data-ragged="1" style="top:67.203px;left:16px;width:284px"><span class="tsr-r tsr-code" data-s="8">regions are not supported yet (plan</span></div>
-<div class="tsr-line" data-s="8" data-e="44" data-ragged="1" style="top:91.203px;left:16px;width:284px"><span class="tsr-r tsr-code" data-s="8">P2-12)</span></div>
-<div class="tsr-line" data-s="47" data-e="52" style="top:134.406px;left:16px;width:284px"><span class="tsr-r" data-s="47">after</span></div>
+<div class="tsr-line" data-s="47" data-e="52" style="top:43.203px;left:16px;width:284px"><span class="tsr-r" data-s="47">after</span></div>
 </div>
 </div>

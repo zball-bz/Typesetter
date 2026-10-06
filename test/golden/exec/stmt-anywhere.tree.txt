@@ -1,0 +1,63 @@
+doc @[56,616) [base]
+  para @[56,79) [base]
+    seq @[56,61) [base]
+      styled @[56,61) [BOLD]
+        text @[56,61) [BOLD] str="Card:"
+      text @[56,61) [base] str=" a reusable piece of content."
+    text @[62,73) [base] str=" Then again: " raw=0:0,1:0,13:11
+    seq @[74,79) [base]
+      styled @[74,79) [BOLD]
+        text @[74,79) [BOLD] str="Card:"
+      text @[74,79) [base] str=" a reusable piece of content."
+  list @[81,158) [base] ordered=false start=1
+    item @[81,132) [base]
+      para @[83,93) [base]
+        text @[83,93) [base] str="first item"
+      para @[113,132) [base]
+        text @[113,118) [base] str="holds " raw=0:0,6:5
+        text @[119,125) [base] str="2"
+        text @[126,132) [base] str=" things" raw=0:0,1:0
+    item @[133,158) [base]
+      para @[135,158) [base]
+        text @[135,151) [base] str="second item sees " raw=0:0,17:16
+        text @[152,158) [base] str="2"
+  quote @[160,206) [base]
+    para @[162,169) [base]
+      text @[162,169) [base] str="A quote"
+    para @[198,206) [base]
+      text @[198,200) [base] str="by " raw=0:0,3:2
+      text @[201,205) [base] str="the author"
+      text @[205,206) [base] str="."
+  para @[219,285) [base]
+    seq @[219,285) [base]
+      text @[232,233) [base] str=" "
+      text @[249,261) [base] str="Inside, n is " raw=0:0,13:12
+      text @[262,264) [base] str="10"
+      text @[264,265) [base] str="."
+      text @[265,266) [base] str=" "
+    text @[268,281) [base] str=" Outside, n is " raw=0:0,1:0,15:13
+    text @[282,284) [base] str="1"
+    text @[284,285) [base] str="."
+  para @[287,346) [base]
+    seq @[287,346) [base]
+      text @[313,314) [base] str=" "
+      seq @[339,344) [base]
+        text @[339,344) [base] str="Row "
+        text @[339,344) [base] str="1"
+      text @[344,345) [base] str=" "
+      text @[313,314) [base] str=" "
+      seq @[339,344) [base]
+        text @[339,344) [base] str="Row "
+        text @[339,344) [base] str="2"
+      text @[344,345) [base] str=" "
+  group @[348,427) [base] role="aside"
+    para @[386,419) [base]
+      text @[386,412) [base] str="A region holds statements: " raw=0:0,27:26
+      text @[413,418) [base] str="inside a region"
+      text @[418,419) [base] str="."
+  para @[458,616) [base]
+    text @[543,582) [base] str=" Each pass starts from the outer tally (" raw=0:0,1:0
+    text @[582,588) [base] str="0"
+    text @[588,609) [base] str="): the last pass made " raw=0:0,22:21
+    text @[610,615) [base] str="3"
+    text @[615,616) [base] str="."

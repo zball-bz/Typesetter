@@ -1,0 +1,39 @@
+#let card = [
+  *Card:* a reusable piece of content.
+]
+
+#card Then again: #card
+
+- first item
+  #let count = 2
+  holds #count things
+- second item sees #count
+
+> A quote
+> #let who = "the author"
+> by #who.
+
+#let n = 1
+#if (n > 0) [
+  #let n = 10
+  Inside, n is #n.
+]
+Outside, n is #n.
+
+#for (const k of [1, 2]) [
+  #let line = [Row #k]
+  #line
+]
+
+#!aside
+#let note = "inside a region"
+A region holds statements: #note.
+#aside!
+
+#let tally = 0
+#let last = 0
+#for (const k of Array.of(1, 2, 3)) [
+  #let tally = tally + k
+  #{ last = tally }
+]
+Each pass starts from the outer tally (#tally): the last pass made #last.

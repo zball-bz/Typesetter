@@ -1,0 +1,81 @@
+lower v1 abi 3d3ccfbb docEnd 347 holes 10 module b451052fef636c9d
+piece 0 hole 0 js [118,173)
+piece 1 hole 1 js [175,200)
+piece 2 hole 2 js [202,214)
+piece 3 hole 3 js [216,229)
+piece 4 hole 4 js [231,254)
+piece 5 hole 5 js [256,400)
+piece 6 hole 6 js [402,503)
+piece 7 hole 7 js [505,526)
+piece 8 hole 8 js [528,640)
+piece 9 hole 9 js [642,743)
+block 0 stmt [0,44) user framed holes 0..1
+  STMT 0
+block 1 stmt [45,59) user framed holes 1..2
+  STMT 1
+block 2 content [61,94) user framed holes 2..3
+  CALL para [61,94)
+    TEXT "Status: " [61,68) raw=0:0,8:7
+    IF 2
+      when hole 2
+        TEXT "yes" [79,82)
+      else
+        TEXT "no" [90,92)
+    TEXT "." [93,94)
+block 3 content [96,212) user framed holes 3..6
+  CALL para [96,212)
+    IF 3
+      when hole 3
+        CALL seq
+          TEXT "\n" [107,108)
+          TEXT "Hidden." [110,117)
+          TEXT "\n" [117,118)
+      when hole 4
+        SCOPE 5 table 2
+          CALL seq
+            TEXT "\n" [145,146)
+            FRAME [148,166) holes 0..1
+              STMT 0
+            TEXT "There are " [169,178) raw=0:0,10:9
+            FRAME [179,181) holes 1..2
+              HOLE 1 [179,181)
+            TEXT " items." [182,188) raw=0:0,1:0
+            TEXT "\n" [188,189)
+      else
+        CALL seq
+          TEXT "\n" [197,198)
+          TEXT "Few items." [200,210)
+          TEXT "\n" [210,211)
+block 4 content [214,245) user framed holes 6..7
+  CALL para [214,245)
+    LOOP 6 table 1 [214,245)
+      FRAME [239,243) holes 0..1
+        CALL list [239,243) ordered=false start=1
+          CALL item [239,243)
+            FRAME [241,243) holes 0..1
+              CALL para [241,243)
+                HOLE 0 [241,243)
+block 5 stmt [247,257) user framed holes 7..8
+  STMT 7
+block 6 content [258,298) user framed holes 8..9
+  CALL para [258,298)
+    LOOP 8 table 2 [258,298)
+      CALL seq
+        TEXT "\n" [274,275)
+        FRAME [277,285) holes 0..1
+          STMT 0
+        TEXT "Step " [288,292) raw=0:0,5:4
+        FRAME [293,295) holes 1..2
+          HOLE 1 [293,295)
+        TEXT "." [295,296)
+        TEXT "\n" [296,297)
+block 7 content [300,346) user framed holes 9..10
+  CALL para [300,346)
+    TEXT "Inline loop: " [300,312) raw=0:0,13:12
+    LOOP 9 table 1 [313,340)
+      CALL seq
+        FRAME [335,337) holes 0..1
+          HOLE 0 [335,337)
+        TEXT "," [337,338)
+        TEXT " " [338,339)
+    TEXT " done." [341,346) raw=0:0,1:0

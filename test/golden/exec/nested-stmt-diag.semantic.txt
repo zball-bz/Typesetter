@@ -1,8 +1,6 @@
 <div class="tsr-flow">
 <ul data-pid="0" data-s="0" data-e="34">
-<li><p data-s="2" data-e="10">item one</p>
-<div class="tsr-err" data-s="13" data-e="23" title="statements inside lists, quotes and regions are not supported yet (plan P2-12)">&#9888; statements inside lists, quotes and regions are not supported yet (plan P2-12)</div>
-</li>
+<li>item one</li>
 <li>item two</li>
 </ul>
 <p data-pid="1" data-s="36" data-e="42">After.</p>

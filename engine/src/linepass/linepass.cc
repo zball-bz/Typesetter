@@ -80,6 +80,7 @@ struct LinePass {
   u32 ownUntil = 0;         // the last owned line
   u32 ownResume = 0;        // raw offset on it where the scan resumes
   bool resumeAtBody = false;  // ... at a splice's block-form '['
+  bool chainNext = false;     // the owned body is an #if's: an else link may follow its ']'
   Span blockBody;           // the block-form body: its '[' and ']'
   std::vector<u32> leafLines, leafCols;  // per paragraph line: line, indent
 
@@ -360,10 +361,13 @@ struct LinePass {
   struct Left {
     u32 opener = kNone;
     bool container = false, block = false;
+    bool chain = false;  // a block-form body of an else-chain keyword (#if, plan P2-12)
   };
-  // (`args`: t[i] continues a splice's argument list, after a body's ']')
+  // (`args`: t[i] continues a splice's argument list, after a body's ']';
+  // `elseLink`: t[i] may continue an #if after a body's ']', plan P2-12)
   template <class RawOf>
-  u32 constructEnd(std::string_view t, u32 i, RawOf rawOf, Left& left, bool args = false) const {
+  u32 constructEnd(std::string_view t, u32 i, RawOf rawOf, Left& left, bool args = false,
+                   bool elseLink = false) const {
     const u32 n = (u32)t.size();
     auto bodyEnd = [&](u32 p) -> u32 {  // a content body's '[' at p
       if (reverted(rawOf(p))) return kNone;
@@ -387,6 +391,24 @@ struct LinePass {
       }
       return p;
     };
+    // a keyword form's bodies from the '[' at p, with its else links
+    auto keywordBodies = [&](u32 p, bool chain) -> u32 {
+      for (;;) {
+        const u32 e = bodyEnd(p);
+        if (e == kNone) {
+          left.chain = left.block && chain;
+          return kNone;
+        }
+        KwElse ke;
+        if (!chain || !lexElse(t, e, ke)) return e;
+        p = ke.bodyOpen;
+      }
+    };
+    if (elseLink) {
+      KwElse ke;
+      if (!lexElse(t, i, ke)) return kNone;
+      return keywordBodies(ke.bodyOpen, true);
+    }
     if (args) return argList(i);
     switch (inlineOpener(t, i)) {
       case InlineRule::code: {
@@ -408,6 +430,12 @@ struct LinePass {
         return kNone;
       }
       case InlineRule::splice: {
+        KwHead kh;  // a keyword form (plan P2-12): its bodies and else links
+        if (lexKeywordHead(t, i, kh)) return keywordBodies(kh.bodyOpen, kKeywords[kh.kw].elseChain);
+        if (kh.kw >= 0 && kh.openAt != kNoPos && !reverted(rawOf(kh.openAt))) {
+          left = {kh.openAt, false, false};
+          return kNone;
+        }
         SpliceLex sl;
         bool ok = lexSplice(t, i, sl);
         if (sl.openAt != kNoPos && !reverted(rawOf(sl.openAt))) {
@@ -443,6 +471,18 @@ struct LinePass {
       if (ownBodyLines(ln, i)) return;
       i++;
     }
+    if (args && chainNext) {  // an #if's body closed: `else [ … ]` may follow (plan P2-12)
+      chainNext = false;
+      Left left;
+      u32 end = constructEnd(t, i, rawOf, left, false, true);
+      if (end != kNone) {
+        i = end;
+        args = false;
+      } else if (left.opener != kNone && left.block) {
+        chainNext = left.chain;
+        if (ownBodyLines(ln, left.opener)) return;
+      }
+    }
     while (args && i < e && all[i] == '[') {  // more arguments after a body's ']'
       Left left;
       u32 end = constructEnd(t, i, rawOf, left, true);
@@ -450,6 +490,7 @@ struct LinePass {
         i = end;
         break;
       }
+      chainNext = left.chain;
       if (left.block ? ownBodyLines(ln, left.opener) : ownLines(ln, i, e, left, true)) return;
     }
     while (i < e) {
@@ -477,6 +518,7 @@ struct LinePass {
         i++;
         continue;
       }
+      chainNext = left.chain;
       if (left.block ? ownBodyLines(ln, left.opener) : ownLines(ln, i, e, left)) return;
       // the opener is literal now: read the construct again
     }
@@ -526,6 +568,7 @@ struct LinePass {
         ownUntil = sliceLine[k];
         ownResume = raw;
         resumeAtBody = end == kNone;
+        if (resumeAtBody) chainNext = l2.chain;
         return true;
       }
       if (l2.opener != kNone) unclosed = view.raw(l2.opener);
@@ -734,6 +777,40 @@ struct LinePass {
         sliceLine.push_back(next++);
       }
       LeafText view(all, slices);
+      // `#let x = [ … ]`: a content literal (plan P2-12) — its body is
+      // markup, matched as a content body's brackets (atoms skipped)
+      if (let) {
+        const std::string_view vt = view.text();
+        const JsSimpleLet sl = jsSimpleLet(vt.substr(4));
+        u32 open = 4 + sl.exprStart;
+        while (open < vt.size() && (vt[open] == ' ' || vt[open] == '\t')) open++;
+        if (sl.ok && open < vt.size() && vt[open] == '[') {
+          BracketMatcher bm(vt);
+          const i32 close = bm.body(open);
+          if (close < 0 && !exhausted) continue;
+          if (close >= 0) {
+            const u32 end = view.raw((u32)close + 1);
+            SkelNode* c = mk(SkelKind::CodeLet);
+            c->span = {pos, end};
+            c->inner = {view.raw(4 + sl.identStart), view.raw(4 + sl.identEnd)};  // its name
+            c->content = true;
+            // the body's lines, '[' and ']' excluded
+            const u32 bs = view.raw(open + 1), be = view.raw((u32)close);
+            for (const Span& sl2 : slices) {
+              const u32 a = std::max(sl2.start, bs), b2 = std::min(sl2.end, be);
+              if (sl2.end >= bs && sl2.start <= be) c->lineSpans.push_back({a, std::max(a, b2)});
+            }
+            parent()->kids.push_back(c);
+            size_t k = 0;
+            for (u32 at = 0; k + 1 < slices.size(); k++) {
+              at += (slices[k].end - slices[k].start) + 1;
+              if ((u32)close + 1 < at) break;
+            }
+            for (size_t l = 1; l <= k; l++) extend(slices[l].end);
+            return remainder(sliceLine[k], end, lineEnd(sliceLine[k]));
+          }
+        }
+      }
       JsScan s = scanJs(view.text(), let ? 4 : 1, !let);
       if (!s.ok) {
         bool ranOut = s.err && std::string_view(s.err) == "unterminated";
@@ -756,6 +833,12 @@ struct LinePass {
       c->span = {pos, end};
       if (let) c->inner = {pos + 4, s.hitSemicolon ? view.raw(s.end - 1) : end};
       else c->inner = {pos + 2, view.raw(s.end - 1)};
+      // its lines, container prefixes stripped (a statement in a quote)
+      for (const Span& sl2 : slices)
+        if (sl2.end >= c->inner.start && sl2.start <= c->inner.end) {
+          const u32 a = std::max(sl2.start, c->inner.start);
+          c->lineSpans.push_back({a, std::max(a, std::min(sl2.end, c->inner.end))});
+        }
       parent()->kids.push_back(c);
       for (size_t l = 1; l <= k; l++) extend(slices[l].end);
       return remainder(sliceLine[k], end, lineEnd(sliceLine[k]));

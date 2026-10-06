@@ -1,4 +1,4 @@
-lower v1 abi 4d4c6e49 docEnd 178 holes 0 module none
+lower v1 abi 3d3ccfbb docEnd 178 holes 0 module none
 block 0 content [0,95)
   CALL para [0,95)
     TEXT "JSON 高亮（native 静态链接 tree-sitter，与 web side module 同一份 parse table）：" [0,95)

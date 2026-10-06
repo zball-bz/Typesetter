@@ -1,0 +1,23 @@
+doc @[0,617)
+  code-let @[0,54) js="card"
+  para @[56,79) lines=1
+  list bullet start=1 @[81,158)
+    item @[81,132)
+      para @[83,93) lines=1
+      code-let @[96,110) js=" count = 2"
+      para @[113,132) lines=1
+    item @[133,158)
+      para @[135,158) lines=1
+  quote @[160,206)
+    para @[162,169) lines=1
+    code-let @[172,195) js=" who = \"the author\""
+    para @[198,206) lines=1
+  code-let @[208,218) js=" n = 1"
+  para @[219,285) lines=5
+  para @[287,346) lines=4
+  region @[348,427) name="aside"
+    code-let @[356,385) js=" note = \"inside a region\""
+    para @[386,419) lines=1
+  code-let @[429,443) js=" tally = 0"
+  code-let @[444,457) js=" last = 0"
+  para @[458,616) lines=5

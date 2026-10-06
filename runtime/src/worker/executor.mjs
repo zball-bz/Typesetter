@@ -80,6 +80,13 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     ob,
     here,
     height: () => styleStack.length,
+    // a statement nested in content (plan P2-12; D-L12) that pushed styles:
+    // they end with it — scoped style is $.set's, P3-01
+    styleInValue: (h) => {
+      dollar.style.popTo(h);
+      ob.diag(1, 'style-in-value', 'a style pushed inside nested content ends with its statement (scoped style: $.set, P3-01)',
+              here.s, here.e);
+    },
     popTo: (h) => dollar.style.popTo(h),
     // citations (notes-design.md §2; plan P2-07): the collector stands
     // where #bibliography is; the data loads after the program ran and each
@@ -209,6 +216,29 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     fence: S.fence,
     val: std.val,
     emit: (n) => { for (const x of S.toContent(n)) ob.emitNode(x); },
+    // a loop's iterations as one value (plan P2-12): their content in order,
+    // a body's seq opened, and adjacent lists of one kind joined — #for (…)
+    // [- #x] is one list; no iteration (or none with content): nothing
+    loop: (rs) => {
+      const xs = [];
+      for (const r of rs) {
+        for (const x of S.toContent(r)) {
+          if (x.kind === KIND.seq && Object.keys(x.args).length === 0) xs.push(...x.children);
+          else xs.push(x);
+        }
+      }
+      const out = [];
+      for (let i = 0; i < xs.length;) {
+        const x = xs[i];
+        let j = i + 1;
+        if (x.kind === KIND.list) {
+          while (j < xs.length && xs[j].kind === KIND.list && !!xs[j].args.ordered === !!x.args.ordered) j++;
+        }
+        out.push(j - i > 1 ? ob.makeNode(KIND.list, x.args, xs.slice(i, j).flatMap((l) => l.children)) : x);
+        i = j;
+      }
+      return out.length === 0 ? undefined : out.length === 1 ? out[0] : ob.makeNode(KIND.seq, {}, out);
+    },
     // a construct's result at its occurrence (plan P2-04): made during the
     // construct (id ≥ fresh) → SPAN unless it has one; an earlier value
     // spliced here → an AT alias
@@ -221,6 +251,13 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
       return ob.at(n, s, e);
     },
     height: () => styleStack.length,
+    // a statement nested in content (plan P2-12; D-L12) that pushed styles:
+    // they end with it — scoped style is $.set's, P3-01
+    styleInValue: (h) => {
+      dollar.style.popTo(h);
+      ob.diag(1, 'style-in-value', 'a style pushed inside nested content ends with its statement (scoped style: $.set, P3-01)',
+              here.s, here.e);
+    },
     setCurrent: (i) => { current = i; },
     failBlock: (err, h, i) => errorAt(i, ...failure(err, h)),
     fail: (err, h, s, e) => {

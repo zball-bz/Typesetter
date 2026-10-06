@@ -1,12 +1,17 @@
-lower v1 abi 4d4c6e49 docEnd 51 holes 0 module none
+lower v1 abi 3d3ccfbb docEnd 51 holes 1 module 405db0995be348ea
+piece 0 hole 0 js [103,115)
 block 0 content [0,7)
   CALL para [0,7)
     TEXT "Before." [0,7)
-block 1 content [9,42)
+block 1 content [9,42) user framed holes 0..1
   CALL para [9,42)
     TEXT "Status: " [9,16) raw=0:0,8:7
-    CALL error [17,20) code="keyword-unsupported" message="#if is not supported yet (keyword forms: plan P2-12)"
-    TEXT " (ok) [yes] else [no]." [21,42) raw=0:0,1:0
+    IF 2
+      when hole 0
+        TEXT "yes" [27,30)
+      else
+        TEXT "no" [38,40)
+    TEXT "." [41,42)
 block 2 content [44,50)
   CALL para [44,50)
     TEXT "After." [44,50)

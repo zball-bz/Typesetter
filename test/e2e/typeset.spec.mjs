@@ -138,7 +138,7 @@ test('math copies as source text', async ({ page }) => {
 // renders nothing (splice-undefined), a function is an error unless nullary
 // (#toc), m`…` keeps content values
 test('toContent: arrays, null, functions, m interpolation', async ({ page }) => {
-  const source = '#let xs = ["a", em("b"), 3]\n\nA #xs B #(null) C #(x => 1) D #(m`p ${strong("q")} r`) E\n';
+  const source = '#let xs = Array.of("a", em("b"), 3)\n\nA #xs B #(null) C #(x => 1) D #(m`p ${strong("q")} r`) E\n';
   await page.goto('/test/e2e/harness.html');
   await page.waitForFunction(() => window.__tsrReady);
   const res = await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, { widthPx: 600 }),

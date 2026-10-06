@@ -1,11 +1,12 @@
 # Lowering: the LowerProgram and the hole module
 
 Status: as built in plan P2-02 (design T2 S5, `docs/remediation/design/
-T2-constructor-ir.md`; decision MD-04, which amends v2 §2). Later steps:
-P2-03 (the bound constructor ABI and the registry: CALL attributes bind by
-key), P2-04 (SPAN/AT on hole results), P2-12 (keyword forms: IF/FOR ops),
-S10 (`#use` prologue frames), and the fragment entry points (`m```,
-`ctx.m.parse`, sidecar notes), which will produce programs in this format.
+T2-constructor-ir.md`; decision MD-04, which amends v2 §2), with P2-03 (the
+bound constructor ABI and the registry: CALL attributes bind by key), P2-04
+(SPAN/AT on hole results) and P2-12 (statements anywhere, keyword forms,
+content literals: IF/SCOPE/LOOP/LET, §3.1). Later steps: S10 (`#use`
+prologue frames), and the fragment entry points (`m```, `ctx.m.parse`,
+sidecar notes), which will produce programs in this format.
 
 ## 1. Shape
 
@@ -63,11 +64,16 @@ and a REGION always do):
 | FRAME | s e holeLo holeHi value | the value inside a frame (§4) |
 | FENCE | lang args body bodyOffset lines s e | `span(val(await fence(lang, args, body, off, lines)))` |
 | REGION | name args s e nItems value* | `span(await region(name, args, items))` (always awaits: a handler may be async); (P2-11) its interior is ordinary blocks — the ROWS op of table paragraphs is gone |
-| STMT | hole | a statement hole (top-level block only) |
+| STMT | hole | a statement hole; as a value (P2-12, nested) it is no content |
 | VERBATIM | ordinal | the module runs the statement (top-level block only) |
+| IF | nBranch (cond+1 value)* | (P2-12) the first branch whose condition hole holds (0: else) — the others skipped; none: no content |
+| SCOPE | hole nHoles value | (P2-12) `h[hole](__b)`: the value against the scope's own hole table (§3.1) |
+| LOOP | hole nHoles s e value | (P2-12) `h[hole](__b)`: the value once per iteration, the results as one value (§3.1) |
+| LET | hole value | (P2-12) `h[hole](value)`: binds a content literal; no content |
 
 `args` is 0 (none) or `(hole + 1) << 1 | awaits`. Holes are numbered in
-preorder, so the holes of any frame are one contiguous range; the reader
+preorder — per hole table: a SCOPE or LOOP value numbers its own from 0 —,
+so the holes of any frame are one contiguous range; the reader
 checks this exactly, together with every count, reference and span, the
 strings' UTF-8 and UTF-16 lengths, the blocks tiling the body, and the async
 bits agreeing with their subtrees (`readLowerProgram`; the fuzz target
@@ -110,7 +116,7 @@ await __rt.run(__h, 1);
   holes — a name never mentioned cannot be referenced, so a new constructor
   changes no module); the inner one holds the hoisted names and the user's
   declarations, which may shadow them (`#let list = 1`). Generated names are only `__rt`, `$`,
-  `__h` and `__k`; user bindings may not start with `__` (`reserved-name`).
+  `__h` and `__k` (and §3.1's); user bindings may not start with `__` (`reserved-name`).
 - **`#let x = e`** hoists `x` (once: a repeated `#let` reassigns, D-L02)
   and becomes the statement hole `x = (e)`. A reserved word (`#let class =
   1`) is not hoisted: the statement stays verbatim and is isolated as a
@@ -133,6 +139,82 @@ await __rt.run(__h, 1);
   that merely returns a promise splices it as an object, as before.
 - **No user code, no module.** The program then runs as segment 0 alone,
   and nothing is imported.
+
+### 3.1 Statements anywhere, keyword forms, content literals (P2-12)
+
+```js
+let xs, n;                                 // the document scope's names
+const __h = [
+() => (                                    // #if (n > 2) [ … ] — a condition
+n > 2
+),
+(__b) => {                                 // its body declares: a SCOPE
+const __s0 = typeof n === "undefined" ? undefined : n;
+{
+let n = __s0;                              // starts as the n it shadows
+return __b([                               // the body's own hole table
+() => { n = (n + 1); },                    //   #let n = n + 1
+() => (n),                                 //   #n
+]);
+}
+},
+(__b) => {                                 // #for (const x of xs) [ - #x ]
+const __r = [];
+for (
+const x of xs
+) {
+{
+__r.push(__b([
+() => (x),
+]));
+}
+}
+return __r;
+},
+(__v) => { card = __v; },                  // #let card = [ *Card* … ]
+];
+```
+
+- **Scopes.** The document is one scope; each keyword body is a scope of
+  its own. A scope's names are the `#let x = e` and `#let x = [ … ]`
+  statements anywhere in it — a list item, a quote, a region, a content
+  argument, a content literal — except inside a nested keyword body: they
+  are hoisted to the scope (once, D-L02). A body that declares names is a
+  SCOPE, and a loop body is always one: the scope's hole is the scope in JS
+  (the loop, the names it declares) and hands its table to `__b`, which
+  evaluates the body against it — the table's functions close over the
+  scope's names and the loop's bindings, made afresh per iteration. A
+  scope's names start as the names they shadow, read outside the block that
+  declares them, so `#let n = n + 1` reads the outer `n`, as before its
+  `#let`; the outer `n` is unchanged. A body that declares nothing (an `if`
+  branch) keeps its holes in the table around it.
+- **Statements anywhere.** A `#let` or `#{…}` nested in content is a STMT
+  (no content: a parent drops `undefined`) in its own frame. Only a
+  scope-level `#let x = e` binds beyond itself; a declaring `#{…}` or a
+  `#let` of a pattern nested in content keeps its bindings to itself (info
+  `statement-local`) — at top level it stays verbatim (D-I10). A nested
+  statement that leaves styles pushed has them popped, with
+  `style-in-value` (D-L12: scoped style is `$.set`, P3-01).
+- **Keyword forms.** `#if (c) [A] else if (d) [B] else [C]` is IF: the
+  conditions are holes evaluated in order until one holds, the other bodies
+  skipped; no branch taken is no content. `#for (head) [B]` and `#while
+  (c) [B]` are LOOPs: the loop is the user's JS (`for (head)`, `while (c)`),
+  the body is evaluated once per iteration, and the iterations become one
+  value (`env.loop`): their content in order, a body's seq opened, and
+  adjacent lists of one kind joined into one list (`#for (…) [- #x]` is one
+  list); no iteration, no content. A body's blocks — and a content
+  literal's — are each framed, so an error stays in the iteration it
+  happens in. A body that is inline content keeps its edge whitespace (a
+  space, or a line break: a soft break), so iterations do not run together
+  (`[#x, ]`).
+- **Content literals.** `#let x = [ … ]` is LET: its body is built where it
+  stands and bound to `x` (a content value; splicing it again is an AT
+  alias). This is a behavior change: `[…]` after `#let x =` was a JS array
+  — write `Array.of(…)` or `#{ let x = […] }` (tsm-changes).
+- **Generated names** add `__b`, `__r`, `__v` and `__s<i>`. A SCOPE or LOOP
+  hole is one piece of the SyntaxError isolation (§5): a broken condition or
+  loop head stubs its form, whose frame reports `script-syntax`.
+  `LOWER_PROTOCOL` is 2.
 - `export const abi` is checked against the runtime's `PROGRAM_ABI` before
   `default()` runs.
 

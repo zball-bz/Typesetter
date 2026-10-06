@@ -17,9 +17,12 @@ enum class SkelKind : u8 {
 struct SkelNode {
   SkelKind kind;
   Span span;                    // containers: every line attributed to them
-  Span inner;                   // code stmts: JS; Comment: body (raw)
+  Span inner;                   // code stmts: JS (a content literal: its name); Comment: body (raw)
   std::vector<Span> lineSpans;  // Para/Heading/Fence/Comment: per-line content
-                                // spans (container prefixes stripped)
+                                // spans (container prefixes stripped); code
+                                // stmts: the JS's lines (a content literal:
+                                // its body's)
+  bool content = false;         // CodeLet: `#let x = [ … ]`, a content literal (plan P2-12)
   Span langSpan;                // Fence: info string; Region: name
   Span labelSpan;               // Heading / Region: trailing <id> label (empty = none)
   u8 level = 0;                 // Heading

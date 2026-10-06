@@ -34,6 +34,59 @@ struct LeafHints {
 std::vector<AstNode*> parseBlocks(const SourceText& src, const std::vector<Span>& lines, Arena& arena,
                                   Interner& strs, DiagSink& diags);
 
+// A content body's lines (the first starts after its '['): the common
+// indentation of the lines after the first stripped (App B rule 4), parsed
+// as blocks; a body that is one paragraph unwraps to its inline content
+// (plan P1-08; content literals, plan P2-12)
+std::vector<AstNode*> parseContentLines(const SourceText& src, std::vector<Span> lines, Arena& arena,
+                                        Interner& strs, DiagSink& diags) {
+  const std::string_view all = src.view();
+  auto blankLine = [&](Span sp) {
+    for (u32 k = sp.start; k < sp.end; k++)
+      if (all[k] != ' ' && all[k] != '\t' && all[k] != '\r') return false;
+    return true;
+  };
+  auto indentOf = [&](Span sp, u32 limit, u32* pos) {
+    u32 col = 0, p = sp.start;
+    while (p < sp.end && (all[p] == ' ' || all[p] == '\t') && col < limit) {
+      col = all[p] == '\t' ? (col / 4 + 1) * 4 : col + 1;
+      p++;
+    }
+    if (pos) *pos = p;
+    return col;
+  };
+  u32 common = ~0u;
+  for (size_t k = 1; k < lines.size(); k++)
+    if (!blankLine(lines[k])) common = std::min(common, indentOf(lines[k], ~0u, nullptr));
+  if (common != ~0u && common > 0)
+    for (size_t k = 1; k < lines.size(); k++) {
+      u32 p;
+      indentOf(lines[k], common, &p);
+      lines[k].start = p;
+    }
+  std::vector<AstNode*> kids = parseBlocks(src, lines, arena, strs, diags);
+  // one paragraph — statements aside, which are no content (plan P2-12) —
+  // is its inline content, the statements where they stand
+  size_t paras = 0, other = 0;
+  for (const AstNode* k : kids) {
+    if (k->isCall(SugarId::para)) paras++;
+    else if (k->kind != AstKind::Stmt) other++;
+  }
+  if (paras == 1 && other == 0) {
+    std::vector<AstNode*> out;
+    for (AstNode* k : kids) {
+      if (k->kind == AstKind::Stmt) {
+        out.push_back(k);
+        continue;
+      }
+      std::span<AstNode* const> inl = k->kids();
+      out.insert(out.end(), inl.begin(), inl.end());
+    }
+    return out;
+  }
+  return kids;
+}
+
 // One parse of the range [from, to) of a leaf's text. Content bodies (link
 // text, content arguments, notes) are sub-parses bounded by their closer.
 struct InlineParser {
@@ -194,36 +247,7 @@ struct InlineParser {
       lines.push_back({L.raw(s0), L.raw(e)});
       s0 = e + 1;
     }
-    const std::string_view all = src.view();
-    auto blankLine = [&](Span sp) {
-      for (u32 k = sp.start; k < sp.end; k++)
-        if (all[k] != ' ' && all[k] != '\t' && all[k] != '\r') return false;
-      return true;
-    };
-    auto indentOf = [&](Span sp, u32 limit, u32* pos) {
-      u32 col = 0, p = sp.start;
-      while (p < sp.end && (all[p] == ' ' || all[p] == '\t') && col < limit) {
-        col = all[p] == '\t' ? (col / 4 + 1) * 4 : col + 1;
-        p++;
-      }
-      if (pos) *pos = p;
-      return col;
-    };
-    u32 common = ~0u;
-    for (size_t k = 1; k < lines.size(); k++)
-      if (!blankLine(lines[k])) common = std::min(common, indentOf(lines[k], ~0u, nullptr));
-    if (common != ~0u && common > 0)
-      for (size_t k = 1; k < lines.size(); k++) {
-        u32 p;
-        indentOf(lines[k], common, &p);
-        lines[k].start = p;
-      }
-    std::vector<AstNode*> kids = parseBlocks(src, lines, arena, strs, diags);
-    if (kids.size() == 1 && kids[0]->isCall(SugarId::para)) {
-      std::span<AstNode* const> inl = kids[0]->kids();
-      return {inl.begin(), inl.end()};
-    }
-    return kids;
+    return parseContentLines(src, std::move(lines), arena, strs, diags);
   }
 
   // A line join: a soft break (plan P2-10; U+000A in the text, resolved at
@@ -383,6 +407,62 @@ struct InlineParser {
     i++;
   }
 
+  // a keyword form (plan P2-12): a Keyword node of Branch nodes — each its
+  // head JS (a condition, a for/while head; none: else) and its body, parsed
+  // as a content body; an elseChain keyword takes `else [ … ]` and
+  // `else if (c) [ … ]` after a body
+  void keyword(u32 hash, KwHead kh) {
+    std::vector<AstNode*> branches;
+    u32 open = kh.bodyOpen, hs = kh.headStart, he = kh.headEnd, from = hash, end = kh.bodyOpen;
+    bool hasHead = true;
+    for (;;) {
+      const i32 close = bodyClose(open);
+      if (close < 0) {
+        diags.add(Sev::Error, "parse-inline", span(open, to), "unclosed keyword body");
+        break;
+      }
+      AstNode* br = A.node<BranchP>(AstKind::Branch, span(from, (u32)close + 1));
+      side<BranchP>(br).head = hasHead ? span(hs, he) : Span{};
+      std::vector<AstNode*> body = parseBody(open + 1, (u32)close);
+      // a body that is inline content keeps its edge whitespace as text does
+      // — a space, or a line break (a soft break) — so iterations do not run
+      // together (#for (const x of xs) [#x, ]); emit collapses it against a
+      // space beside it, and a line drops it at its edges
+      bool inl = false;  // content (not only statements), none of it blocks
+      for (const AstNode* k : body) inl = inl || k->kind != AstKind::Stmt;
+      for (const AstNode* k : body)
+        for (SugarId b : {SugarId::para, SugarId::heading, SugarId::list, SugarId::item, SugarId::quote,
+                          SugarId::rule, SugarId::fence, SugarId::region})
+          if (k->isCall(b)) inl = false;
+      if (inl) {
+        auto ws = [&](u32 at) { return t[at] == ' ' || t[at] == '\t' || t[at] == '\n'; };
+        auto edge = [&](u32 at) {
+          AstNode* n = A.node<TextP>(AstKind::Text, span(at, at + 1));
+          n->str = strs.intern(t.substr(at, 1));
+          return n;
+        };
+        if (ws(open + 1)) body.insert(body.begin(), edge(open + 1));
+        if ((u32)close > open + 1 && ws((u32)close - 1)) body.push_back(edge((u32)close - 1));
+      }
+      A.setKids(br, body);
+      branches.push_back(br);
+      end = (u32)close + 1;
+      KwElse ke;
+      if (!kKeywords[kh.kw].elseChain || !lexElse(t, end, ke)) break;
+      from = end;
+      while (from < to && (t[from] == ' ' || t[from] == '\t')) from++;
+      open = ke.bodyOpen;
+      hasHead = ke.cond;
+      hs = ke.headStart;
+      he = ke.headEnd;
+    }
+    AstNode* k = A.node(AstKind::Keyword, span(hash, end));
+    k->str = strs.intern(kKeywords[kh.kw].name);
+    A.setKids(k, branches);
+    pushItem(k);
+    i = end;
+  }
+
   // #head.chain(args)[content]…; or #(expr)[content]…
   void splice() {
     const u32 hash = i;
@@ -396,6 +476,12 @@ struct InlineParser {
     const u32 exprStart = hash + 1, exprEnd = s.end;
     spaceBeforeItem();
     flushText();
+    // a keyword form (plan P2-12): #if (c) [A] else [B], #for (h) [B], #while (c) [B]
+    KwHead kh;
+    if (!s.paren && lexKeywordHead(t, hash, kh)) {
+      keyword(hash, kh);
+      return;
+    }
     // a keyword as a bare head (#if, #for, #new …) would paste invalid JS
     // and fail the whole document: it becomes an error node (plan P0-05)
     if (!s.paren) {
@@ -409,9 +495,14 @@ struct InlineParser {
           if (close < 0) break;
           after = (u32)close + 1;
         }
-        std::string msg = std::string(code) == "keyword-unsupported"
-            ? "#" + std::string(head) + " is not supported yet (keyword forms: plan P2-12)"
-            : "'" + std::string(head) + "' is a reserved word and cannot start a splice";
+        const bool form = keywordIndex(head) >= 0;
+        std::string msg = form ? "#" + std::string(head) + " needs (…) and a body: #" + std::string(head) +
+                                     (head == "for" ? " (const x of xs) [ … ]" : " (condition) [ … ]")
+                          : head == "use"  ? std::string("#use is not supported yet (plan P3-31)")
+                          : head == "else" ? std::string("#else follows a body: #if (c) [ … ] else [ … ]")
+                          : head == "let"  ? std::string("#let starts a line: #let name = value")
+                          : "'" + std::string(head) + "' is a reserved word and cannot start a splice";
+        if (form) code = "keyword-form";
         diags.add(Sev::Error, code, span(hash, after), msg);
         AstNode* e = A.node<ErrorP>(AstKind::Error, span(hash, after));
         e->str = strs.intern(code);
@@ -813,18 +904,43 @@ struct AstBuilder {
       }
       case SkelKind::CodeLet:
       case SkelKind::CodeBlock: {
-        if (!top)  // was silently dropped (codegen text("")); P2-12 runs them
-          return errorNode(s->span, "statement-nested-unsupported",
-                           "statements inside lists, quotes and regions are not "
-                           "supported yet (plan P2-12)");
-        std::string_view reserved =
-            jsReservedBinding(src.slice(s->inner), s->kind == SkelKind::CodeLet);
+        const bool let = s->kind == SkelKind::CodeLet;
+        // its JS: its lines joined, container prefixes stripped (a content
+        // literal: its name)
+        std::string js;
+        if (s->content) {
+          js = src.slice(s->inner);
+        } else {
+          for (size_t l = 0; l < s->lineSpans.size(); l++) {
+            if (l) js += '\n';
+            js += src.slice(s->lineSpans[l]);
+          }
+        }
+        std::string_view reserved = jsReservedBinding(js, let);
         if (!reserved.empty())
           return errorNode(s->span, "reserved-name",
                            "'" + std::string(reserved) +
                                "': names starting with __ are reserved for the engine");
         AstNode* c = A.node<StmtP>(AstKind::Stmt, s->span);
-        side<StmtP>(c) = {s->kind == SkelKind::CodeLet, s->inner};
+        side<StmtP>(c) = {let, strs.intern(js), s->content};
+        // `#let x = [ … ]` (plan P2-12): its body is content
+        if (s->content) A.setKids(c, parseContentLines(src, s->lineSpans, arena, strs, diags));
+        // a statement anywhere (plan P2-12) runs where it stands; one nested
+        // in a block that declares (a #{…} with let/const/function, a #let of
+        // a pattern) keeps those bindings to itself
+        if (!top && !s->content) {
+          const std::string_view inner = js;
+          bool local;
+          if (let) {
+            const JsSimpleLet sl = jsSimpleLet(inner);
+            local = !sl.ok || jsReservedWord(inner.substr(sl.identStart, sl.identEnd - sl.identStart));
+          } else {
+            local = jsDeclares(inner);
+          }
+          if (local)
+            diags.add(Sev::Info, "statement-local", s->span,
+                      "the bindings of this nested statement stay inside it: bind a name with #let name = value");
+        }
         return c;
       }
     }

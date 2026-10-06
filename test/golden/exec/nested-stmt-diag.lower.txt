@@ -1,10 +1,12 @@
-lower v1 abi 4d4c6e49 docEnd 43 holes 0 module none
-block 0 content [0,34)
+lower v1 abi 3d3ccfbb docEnd 43 holes 1 module f1755cc6327ba065
+piece 0 hole 0 js [110,131)
+block 0 content [0,34) user framed holes 0..1
   CALL list [0,34) ordered=false start=1
     CALL item [0,23)
       CALL para [2,10)
         TEXT "item one" [2,10)
-      CALL error [13,23) code="statement-nested-unsupported" message="statements inside lists, quotes and regions are not supported yet (plan P2-12)"
+      FRAME [13,23) holes 0..1
+        STMT 0
     CALL item [24,34)
       CALL para [26,34)
         TEXT "item two" [26,34)

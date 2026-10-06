@@ -12,7 +12,7 @@
 
 namespace tsr {
 
-enum class AstKind : u8 { Doc, Text, Comment, Call, Splice, Stmt, Error };
+enum class AstKind : u8 { Doc, Text, Comment, Call, Splice, Stmt, Error, Keyword, Branch };
 
 struct AstNode {
   AstNode** kidv = nullptr;  // arena slice (kids())

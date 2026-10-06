@@ -1,0 +1,13 @@
+doc @[0,283)
+  para @[0,7) lines=1
+  para @[9,54) lines=1
+  para @[56,125) lines=3
+  para @[127,154) lines=3
+  para @[156,174) lines=1
+  para @[176,190) lines=1
+  list bullet start=1 @[192,274)
+    item @[192,274)
+      para @[194,213) lines=1
+      code-block @[216,248) js=" $.style.push({weight: 700}) "
+      para @[251,274) lines=1
+  para @[276,282) lines=1

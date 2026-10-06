@@ -10,9 +10,10 @@
 //
 // LOWER_VERSION: the program's binary layout; LOWER_PROTOCOL: the hole-module
 // calling convention (__rt.std, __rt.run(__h, segment), __rt.syntax(block),
-// a hole is h[i](__k) with __k() its content arguments).
+// a hole is h[i](__k) with __k() its content arguments; SCOPE and LOOP
+// holes h[i](__b), LET holes h[i](value): plan P2-12).
 LOWER_VERSION(1)
-LOWER_PROTOCOL(1)
+LOWER_PROTOCOL(2)
 
 // LOP(name, code, operands) — body ops, preorder. The high bit of the op
 // byte (0x80) marks a subtree that awaits (a fence, a region — their
@@ -24,11 +25,20 @@ LOP(HOLE,     3, "hole s e nKids value*")
 LOP(FRAME,    4, "s e holeLo holeHi value")
 LOP(FENCE,    5, "lang args label+1 info+1 body bodyOffset bodyEnd lines:const s e")
 LOP(REGION,   6, "name args label+1 s e nItems value*")
-LOP(STMT,     8, "hole")
+LOP(STMT,     8, "hole")                                  // its value: nothing
 LOP(VERBATIM, 9, "ordinal")
 // args (FENCE, REGION): 0 = none, else (hole + 1) << 1 | 1 when that hole
 // awaits. VERBATIM's ordinal k: the k-th verbatim block, piece holes + k;
 // the module runs segment k up to it.
+// Keyword forms and statements anywhere (plan P2-12):
+LOP(IF,       10, "nBranch (cond+1 value)*")   // cond 0: else; no branch taken: nothing
+LOP(SCOPE,    11, "hole nHoles value")         // a body with its own #let names
+LOP(LOOP,     12, "hole nHoles s e value")     // #for / #while: the body per iteration
+LOP(LET,      13, "hole value")                // #let x = [ … ]: its value: nothing
+// SCOPE and LOOP: the hole is h(__b) (the scope or the loop, in JS), and
+// __b(table) evaluates the value against `table`: a hole table of its own
+// (nHoles holes, numbered from 0), whose functions close over the scope's
+// names. LET's hole is h(v): it binds the name to the value.
 
 // CONST(name, tag) — a literal value (attrs, fence lines)
 CONST(Null,  0)

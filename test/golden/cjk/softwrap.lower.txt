@@ -1,4 +1,4 @@
-lower v1 abi 4d4c6e49 docEnd 156 holes 0 module none
+lower v1 abi 3d3ccfbb docEnd 156 holes 0 module none
 block 0 content [0,155)
   CALL para [0,155)
     TEXT "中文段落在源码里经常需要\n折行书写，两个汉字之间的\n换行必须无缝连接；但是 English\nwords 之间的折行仍然是空格。" [0,155)

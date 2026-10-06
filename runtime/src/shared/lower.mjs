@@ -11,7 +11,9 @@
 // has no module and runs as segment 0 alone. Every block that runs user code
 // executes inside a frame: an exception becomes an error block (top level)
 // or an error node in its parent (any deeper block), and the style stack
-// returns to the frame's entry height.
+// returns to the frame's entry height. A statement (STMT, LET) and an IF
+// that takes no branch are no content: their value is undefined, which no
+// parent keeps (plan P2-12).
 import {
   LOP, LCONST, LBLOCK, BFLAG, CFLAG, LOP_ASYNC, PROGRAM_ABI, LOWER_VERSION,
 } from './lower.gen.mjs';
@@ -84,10 +86,12 @@ export function decodeProgram(bytes) {
 
 // env (the executor's half): ob (OpBuf), call(ctor, attrs, kids) (a bound
 // constructor call: shared/stdlib.mjs), region(name, args, items),
+// loop(results) (a loop's iterations as one value, plan P2-12),
 // fence(tag, args, body, offset, lines), val(x), emit(node), at(node, s, e,
 // fresh) (a result at its occurrence: SPAN if made since id `fresh`, else
 // an AT alias),
-// height() (the style stack),
+// height() (the style stack), styleInValue(h) (a nested statement left
+// styles pushed: popped to h, diagnosed — D-L12 until P3-01),
 // setCurrent(block), fail(err, height, s, e) → an error node,
 // failBlock(err, height, block) (emits the error block), and here {s, e}:
 // the interpreter keeps it on the innermost splice, region, frame or block
@@ -236,7 +240,10 @@ export class Lowering {
         const attrs = this.attrs();
         const fresh = env.ob.nextId;
         const kids = [];
-        for (let n = this.u(); n > 0; n--) kids.push(this.v());
+        for (let n = this.u(); n > 0; n--) {
+          const x = this.v();
+          if (x !== undefined) kids.push(x);
+        }
         const node = env.call(f, attrs, kids);
         return fl & CFLAG.Spanned ? env.at(node, s, e, fresh) : node;
       }
@@ -273,8 +280,74 @@ export class Lowering {
           here.e = pe;
         }
       }
+      case LOP.STMT: {
+        const h0 = env.height();
+        this.hole(this.u())();
+        if (env.height() > h0) env.styleInValue(h0);
+        return undefined;
+      }
+      case LOP.LET: {
+        const f = this.hole(this.u());
+        f(this.v());
+        return undefined;
+      }
+      case LOP.IF: {
+        let r, taken = false;
+        for (let n = this.u(); n > 0; n--) {
+          const c = this.u();
+          if (!taken && (c === 0 || this.hole(c - 1)())) {
+            taken = true;
+            r = this.v();
+          } else {
+            this.skipValue();
+          }
+        }
+        return r;
+      }
+      case LOP.SCOPE: {
+        const f = this.hole(this.u());
+        this.u();
+        const pc = this.p;
+        const r = f((table) => this.scoped(table, pc, () => this.v()));
+        this.p = pc;
+        this.skipValue();
+        return r;
+      }
+      case LOP.LOOP: {
+        const f = this.hole(this.u());
+        this.u();
+        const s = this.u(), e = this.u();
+        const pc = this.p, fresh = env.ob.nextId;
+        const r = f((table) => this.scoped(table, pc, () => this.v()));
+        this.p = pc;
+        this.skipValue();
+        return env.at(env.loop(r), s, e, fresh);
+      }
     }
     throw new Error(`LowerProgram: op ${op} at ${this.p - 1}`);
+  }
+
+  // a scope's body (SCOPE, LOOP: plan P2-12), against its own hole table —
+  // once per call, from its start
+  scoped(table, pc, value) {
+    const h0 = this.h;
+    this.h = table;
+    this.p = pc;
+    try {
+      return value();
+    } finally {
+      this.h = h0;
+    }
+  }
+  async scopedAsync(table, pc) {
+    const h0 = this.h;
+    this.h = table;
+    this.p = pc;
+    try {
+      return await this.va();
+    } finally {
+      this.h = h0;
+    }
   }
 
   async va() {
@@ -290,7 +363,10 @@ export class Lowering {
         const attrs = this.attrs();
         const fresh = env.ob.nextId;
         const kids = [];
-        for (let n = this.u(); n > 0; n--) kids.push(await this.va());
+        for (let n = this.u(); n > 0; n--) {
+          const x = await this.va();
+          if (x !== undefined) kids.push(x);
+        }
         const node = env.call(f, attrs, kids);
         return fl & CFLAG.Spanned ? env.at(node, s, e, fresh) : node;
       }
@@ -345,8 +421,54 @@ export class Lowering {
         if (a & 1) args = await args;
         if (lb) args = { label: this.S[lb - 1], ...args };  // ` <id>`: an explicit label: wins
         const items = [];
-        for (let n = this.u(); n > 0; n--) items.push(await this.va());
+        for (let n = this.u(); n > 0; n--) {
+          const x = await this.va();
+          if (x !== undefined) items.push(x);
+        }
         return env.at(await this.region(name, args, items, s, e), s, e, fresh);
+      }
+      case LOP.STMT: {
+        const h0 = env.height();
+        await this.hole(this.u())();
+        if (env.height() > h0) env.styleInValue(h0);
+        return undefined;
+      }
+      case LOP.LET: {
+        const f = this.hole(this.u());
+        f(await this.va());
+        return undefined;
+      }
+      case LOP.IF: {
+        let r, taken = false;
+        for (let n = this.u(); n > 0; n--) {
+          const c = this.u();
+          if (!taken && (c === 0 || await this.hole(c - 1)())) {
+            taken = true;
+            r = await this.va();
+          } else {
+            this.skipValue();
+          }
+        }
+        return r;
+      }
+      case LOP.SCOPE: {
+        const f = this.hole(this.u());
+        this.u();
+        const pc = this.p;
+        const r = await f((table) => this.scopedAsync(table, pc));
+        this.p = pc;
+        this.skipValue();
+        return r;
+      }
+      case LOP.LOOP: {
+        const f = this.hole(this.u());
+        this.u();
+        const s = this.u(), e = this.u();
+        const pc = this.p, fresh = env.ob.nextId;
+        const r = await f((table) => this.scopedAsync(table, pc));
+        this.p = pc;
+        this.skipValue();
+        return env.at(env.loop(r), s, e, fresh);
       }
     }
     throw new Error(`LowerProgram: op ${op} at ${this.p - 1}`);
@@ -400,12 +522,16 @@ export class Lowering {
     const out = [];
     for (let i = 0; i < nk; i++) {
       if (this.b[this.p] & LOP_ASYNC) return this.kidsAsync(out, nk - i);
-      out.push(this.v());
+      const x = this.v();
+      if (x !== undefined) out.push(x);
     }
     return out;
   }
   async kidsAsync(out, n) {
-    for (let i = 0; i < n; i++) out.push(await this.va());
+    for (let i = 0; i < n; i++) {
+      const x = await this.va();
+      if (x !== undefined) out.push(x);
+    }
     return out;
   }
 
@@ -440,6 +566,13 @@ export class Lowering {
         this.u(); this.u(); this.u(); this.u(); this.u();
         for (let n = this.u(); n > 0; n--) this.skipValue();
         return;
+      case LOP.STMT: this.u(); return;
+      case LOP.LET: this.u(); this.skipValue(); return;
+      case LOP.IF:
+        for (let n = this.u(); n > 0; n--) { this.u(); this.skipValue(); }
+        return;
+      case LOP.SCOPE: this.u(); this.u(); this.skipValue(); return;
+      case LOP.LOOP: this.u(); this.u(); this.u(); this.u(); this.skipValue(); return;
     }
     throw new Error('LowerProgram: bad op');
   }

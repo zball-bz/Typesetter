@@ -1,0 +1,6 @@
+error keyword-form @[127,133) #while needs (…) and a body: #while (condition) [ … ]
+error keyword-form @[156,159) #if needs (…) and a body: #if (condition) [ … ]
+error keyword-unsupported @[176,181) #else follows a body: #if (c) [ … ] else [ … ]
+error script-error @[9,54) ReferenceError: missing is not defined
+error script-error @[90,123) TypeError: Cannot read properties of undefined (reading 'y')
+warning style-in-value @[216,248) a style pushed inside nested content ends with its statement (scoped style: $.set, P3-01)

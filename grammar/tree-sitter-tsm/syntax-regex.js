@@ -56,6 +56,8 @@ module.exports = {
     `${esc(inline.refs.open.slice(inline.ref.open.length))}[^\\]\\n]+\\])`,
   label: `<[${cls('IdStart')}][${cls('IdCont')}-]*>`,
   splice: `${esc(literal(inline.splice.open))}(\\(|[${cls('SpliceHead')}][${cls('SpliceCont')}.]*)`,
+  // a keyword form's head (#if, #for, #while: plan P2-12) and its else link
+  keywordHead: `${esc(literal(inline.splice.open))}(${SYN.keywords.map((k) => k.keyword).join('|')})`,
   // a splice's JS arguments, on one line, parentheses nested two deep
   spliceArgs: '\\(([^()\\n]|\\(([^()\\n]|\\([^()\\n]*\\))*\\))*\\)',
 };

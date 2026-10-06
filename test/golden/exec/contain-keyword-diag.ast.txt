@@ -3,7 +3,11 @@ doc @[0,51)
     text @[0,7) str="Before."
   para @[9,42)
     text @[9,16) str="Status: "
-    error @[17,20) code="keyword-unsupported" msg="#if is not supported yet (keyword forms: plan P2-12)"
-    text @[21,42) str=" (ok) [yes] else [no]."
+    keyword @[17,41) if
+      branch @[17,31) head="ok"
+        text @[27,30) str="yes"
+      branch @[32,41) head=""
+        text @[38,40) str="no"
+    text @[41,42) str="."
   para @[44,50)
     text @[44,50) str="After."

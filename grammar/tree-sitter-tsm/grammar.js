@@ -85,6 +85,7 @@ module.exports = grammar({
       $.link,
       $.reference,
       $.label,
+      $.keyword_form,
       $.splice,
       $.cell_bar,
       $.word,
@@ -105,6 +106,10 @@ module.exports = grammar({
     splice: ($) => prec.right(seq($.splice_head, optional($.splice_args))),
     splice_head: () => token(re(R.splice)),
     splice_args: () => token.immediate(re(R.spliceArgs)),
+    // #if (c) [ … ] else [ … ], #for (h) [ … ], #while (c) [ … ]: the head
+    // and its JS (the bodies are inline content; `else` is a word here)
+    keyword_form: ($) => prec.right(seq($.keyword_head, optional($.splice_args))),
+    keyword_head: () => token(prec(1, re(R.keywordHead))),
     cell_bar: () => token('|'),
 
     word: () => token(prec(-1, /[A-Za-z0-9_]+/)),

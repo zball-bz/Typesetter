@@ -993,7 +993,7 @@ Theme steps: — · findings: 1
 | `markup-language/quote-context-heuristic` | adhoc | low | P3-30, P4-02 | |
 | `markup-language/no-execution-containment` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `markup-language/spec-features-unimplemented` | issue | high | P0-05, P2-12, P3-31 | |
-| `markup-language/nested-code-statements-dropped` | issue | high | P0-05, P2-12 | |
+| `markup-language/nested-code-statements-dropped` | issue | high | P0-05, P2-12 | grep:plan P2-12 |
 | `markup-language/inline-scanner-overrun` | issue | high | P1-06 | grep:plan P1-06 |
 | `markup-language/same-line-trailing-text-dropped` | issue | medium | P1-07 | grep:plan P1-07 |
 | `markup-language/region-error-recovery` | issue | medium | P1-07 | grep:plan P1-07 |
@@ -1014,7 +1014,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/cross-line-raw-scans` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/content-args-inline-only` | adhoc | high | P1-08 | grep:plan P1-08 |
 | `parser-frontend/keyword-forms-closed-set-missing` | adhoc | high | P2-12, P3-31 | |
-| `parser-frontend/code-statements-top-level-only` | adhoc | high | P2-12 | |
+| `parser-frontend/code-statements-top-level-only` | adhoc | high | P2-12 | grep:plan P2-12 |
 | `parser-frontend/label-and-id-lexing-scattered` | adhoc | medium | P2-06 | grep:plan P2-06 |
 | `parser-frontend/display-math-by-ast-shape` | adhoc | medium | P2-11 | grep:plan P2-11 |
 | `parser-frontend/parser-owned-cjk-line-join` | adhoc | medium | P2-10, P4-02 | |
@@ -1032,7 +1032,7 @@ Theme steps: — · findings: 1
 | `parser-frontend/trailing-text-after-block-closers-dropped` | issue | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/fence-double-dedent-in-containers` | issue | medium | P1-07 | grep:plan P1-07 |
 | `parser-frontend/span-fidelity` | issue | medium | P1-07 | grep:plan P1-07 |
-| `parser-frontend/no-error-nodes` | issue | medium | P2-02, P2-12 | |
+| `parser-frontend/no-error-nodes` | issue | medium | P2-02, P2-12 | grep:plan P2-12 |
 | `parser-frontend/docs-drift` | issue | medium | P1-09 | grep:plan P1-09 |
 | `parser-frontend/ast-dump-missing-note` | issue | low | P0-02 | grep:plan P0-02 |
 | `parser-frontend/missed:0` | missed | high | P0-04, P1-06 | grep:plan P1-06 |

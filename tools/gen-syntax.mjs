@@ -142,6 +142,10 @@ h += `\n// a bare splice head that cannot start a JS expression (plan P0-05)\n` 
   `  static constexpr std::string_view kReserved[] = {${reserved.map((w) => JSON.stringify(w)).join(', ')}};\n` +
   `  for (std::string_view k : kUnsupported)\n    if (w == k) return "keyword-unsupported";\n` +
   `  for (std::string_view k : kReserved)\n    if (w == k) return "reserved-word";\n  return nullptr;\n}\n\n` +
+  `// the keyword forms (plan P2-12): #kw (JS) [content]; an elseChain one continues\n// with else [content] / else if (JS) [content]\n` +
+  `struct KeywordRow {\n  std::string_view name;\n  bool elseChain;\n};\n` +
+  `constexpr KeywordRow kKeywords[] = {${keywords.map(([k, ...p]) => `{${JSON.stringify(k)}, ${p.includes('elseChain')}}`).join(', ')}};\n` +
+  `inline int keywordIndex(std::string_view w) {\n  for (int k = 0; k < (int)(sizeof kKeywords / sizeof kKeywords[0]); k++)\n    if (w == kKeywords[k].name) return k;\n  return -1;\n}\n\n` +
   `// highlight token tags (shared with runtime/src/shared/syntax.gen.mjs)\n` +
   `constexpr const char* kTokenTags[] = {${tokenTags.map((t) => JSON.stringify(t)).join(', ')}};\n` +
   `constexpr int kTokenTagCount = ${tokenTags.length};\n\n}  // namespace tsr\n`;
@@ -212,7 +216,7 @@ const rowCase = (label, row, pe, depth) => {
     indent(dumpCode({ ...row, dump: row.dump.slice(head.length) }, pe), depth) +
     `${' '.repeat(depth + 2)}break;\n${' '.repeat(depth)}}\n`;
 };
-for (const k of ['Doc', 'Text', 'Comment', 'Call', 'Splice', 'Stmt', 'Error']) {
+for (const k of ['Doc', 'Text', 'Comment', 'Call', 'Splice', 'Stmt', 'Error', 'Keyword', 'Branch']) {
   if (k === 'Call') {
     cc += `    case AstKind::Call:\n      switch (n->sugar) {\n`;
     for (const sg of sugars)
@@ -227,7 +231,7 @@ cc += `  }\n}\n\n`;
 
 // ---- the JSON AST (tsrc --stage=astjson, tsr_parse_json; plan P1-09): one
 // node's fields, from the same payload rows
-const KIND_NAMES = ['Doc', 'Text', 'Comment', 'Call', 'Splice', 'Stmt', 'Error'];
+const KIND_NAMES = ['Doc', 'Text', 'Comment', 'Call', 'Splice', 'Stmt', 'Error', 'Keyword', 'Branch'];
 const jsonField = (name, type, v, optional) => {
   const key = `out += ${JSON.stringify(`,"${name}":`)};\n`;
   if (optional && type === 'str') return `  if (${v}) {\n  ${key}  jsonString(out, strs.get(${v}));\n  }\n`;

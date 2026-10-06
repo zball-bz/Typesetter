@@ -119,6 +119,8 @@ const tm = {
         },
         { name: 'constant.other.reference.tsm', match: R.reference },
         { name: 'entity.name.label.tsm', match: R.label },
+        { name: 'keyword.control.flow.tsm', match: `${R.keywordHead}(?!\\w)` },
+        { name: 'keyword.control.flow.tsm', match: '(?<=\\]|\\] )else\\b' },
         { name: 'entity.name.function.splice.tsm', match: R.splice },
       ],
     },

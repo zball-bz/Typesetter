@@ -1,0 +1,70 @@
+doc @[0,617)
+  code-let @[0,54) js="card" content
+    styled @[16,23) marker=*
+      text @[17,22) str="Card:"
+    text @[24,52) str=" a reusable piece of content."
+  para @[56,79)
+    splice @[56,61) expr="card"
+    text @[62,73) str=" Then again: "
+    splice @[74,79) expr="card"
+  list @[81,158) bullet start=1
+    item @[81,132)
+      para @[83,93)
+        text @[83,93) str="first item"
+      code-let @[96,110) js=" count = 2"
+      para @[113,132)
+        text @[113,118) str="holds "
+        splice @[119,125) expr="count"
+        text @[126,132) str=" things"
+    item @[133,158)
+      para @[135,158)
+        text @[135,151) str="second item sees "
+        splice @[152,158) expr="count"
+  quote @[160,206)
+    para @[162,169)
+      text @[162,169) str="A quote"
+    code-let @[172,195) js=" who = \"the author\""
+    para @[198,206)
+      text @[198,200) str="by "
+      splice @[201,205) expr="who"
+      text @[205,206) str="."
+  code-let @[208,218) js=" n = 1"
+  para @[219,285)
+    keyword @[219,267) if
+      branch @[219,267) head="n > 0"
+        text @[232,233) str="\n"
+        code-let @[235,246) js=" n = 10"
+        text @[249,261) str="Inside, n is "
+        splice @[262,264) expr="n"
+        text @[264,265) str="."
+        text @[265,266) str="\n"
+    text @[268,281) str="\nOutside, n is "
+    splice @[282,284) expr="n"
+    text @[284,285) str="."
+  para @[287,346)
+    keyword @[287,346) for
+      branch @[287,346) head="const k of [1, 2]"
+        text @[313,314) str="\n"
+        code-let @[316,336) js="line" content
+          text @[329,332) str="Row "
+          splice @[333,335) expr="k"
+        splice @[339,344) expr="line"
+        text @[344,345) str="\n"
+  region @[348,427) name="aside"
+    code-let @[356,385) js=" note = \"inside a region\""
+    para @[386,419)
+      text @[386,412) str="A region holds statements: "
+      splice @[413,418) expr="note"
+      text @[418,419) str="."
+  code-let @[429,443) js=" tally = 0"
+  code-let @[444,457) js=" last = 0"
+  para @[458,616)
+    keyword @[458,542) for
+      branch @[458,542) head="const k of Array.of(1, 2, 3)"
+        code-let @[498,520) js=" tally = tally + k"
+        code-block @[523,540) js=" last = tally "
+    text @[543,582) str="\nEach pass starts from the outer tally ("
+    splice @[582,588) expr="tally"
+    text @[588,609) str="): the last pass made "
+    splice @[610,615) expr="last"
+    text @[615,616) str="."

@@ -126,6 +126,61 @@ bool lexSplice(std::string_view t, u32 hash, SpliceLex& out) {
   return true;
 }
 
+namespace {
+bool isBlank(char c) { return c == ' ' || c == '\t'; }
+u32 skipBlank(std::string_view t, u32 p) {
+  while (p < t.size() && isBlank(t[p])) p++;
+  return p;
+}
+// a word at p followed by no identifier character: one past it, else 0
+u32 word(std::string_view t, u32 p, std::string_view w) {
+  if (t.substr(p, w.size()) != w) return 0;
+  const u32 e = p + (u32)w.size();
+  return e < t.size() && isSpliceCont(t[e]) ? 0 : e;
+}
+// '(' JS ')' Blank* '[' at p: the JS's span and the '['
+bool parenThenBody(std::string_view t, u32 p, u32& hs, u32& he, u32& open, u32& openAt) {
+  if (p >= t.size() || t[p] != '(') return false;
+  JsScan s = scanJs(t, p, true);
+  if (!s.ok) {
+    if (s.err && std::string_view(s.err) == "unterminated") openAt = p;
+    return false;
+  }
+  hs = p + 1;
+  he = s.end - 1;
+  const u32 q = skipBlank(t, s.end);
+  if (q >= t.size() || t[q] != '[') return false;
+  open = q;
+  return true;
+}
+}  // namespace
+
+bool lexKeywordHead(std::string_view t, u32 hash, KwHead& out) {
+  out = {};
+  u32 p = hash + 1, e = p;
+  while (e < t.size() && isSpliceCont(t[e])) e++;
+  const int kw = keywordIndex(t.substr(p, e - p));
+  if (kw < 0) return false;
+  out.kw = kw;
+  return parenThenBody(t, skipBlank(t, e), out.headStart, out.headEnd, out.bodyOpen, out.openAt);
+}
+
+bool lexElse(std::string_view t, u32 p, KwElse& out) {
+  out = {};
+  p = skipBlank(t, p);
+  const u32 e = word(t, p, "else");
+  if (!e) return false;
+  p = skipBlank(t, e);
+  if (p < t.size() && t[p] == '[') {
+    out.bodyOpen = p;
+    return true;
+  }
+  const u32 f = word(t, p, "if");
+  if (!f) return false;
+  out.cond = true;
+  return parenThenBody(t, skipBlank(t, f), out.headStart, out.headEnd, out.bodyOpen, out.openAt);
+}
+
 u32 atomEnd(std::string_view t, u32 i) {
   const u32 n = (u32)t.size();
   switch (inlineOpener(t, i)) {

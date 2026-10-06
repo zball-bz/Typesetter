@@ -1,0 +1,48 @@
+lower v1 abi 3d3ccfbb docEnd 283 holes 3 module bab8be52ea97e835
+piece 0 hole 0 js [129,152)
+piece 1 hole 1 js [154,288)
+piece 2 hole 2 js [290,329)
+block 0 content [0,7)
+  CALL para [0,7)
+    TEXT "Before." [0,7)
+block 1 content [9,54) user framed holes 0..1
+  CALL para [9,54)
+    IF 2
+      when hole 0
+        TEXT "never" [30,35)
+      else
+        TEXT "also never" [43,53)
+block 2 content [56,125) user framed holes 1..2
+  CALL para [56,125)
+    LOOP 1 table 1 [56,125)
+      FRAME [88,123) holes 0..1
+        CALL list [88,123) ordered=false start=1
+          CALL item [88,123)
+            FRAME [90,123) holes 0..1
+              CALL para [90,123)
+                TEXT "item " [90,94) raw=0:0,5:4
+                HOLE 0 [95,123)
+block 3 content [127,154)
+  CALL para [127,154)
+    CALL error [127,133) code="keyword-form" message="#while needs (…) and a body: #while (condition) [ … ]"
+    TEXT " (( [\nbroken head\n]" [134,154) raw=0:0,1:0,6:7
+block 4 content [156,174)
+  CALL para [156,174)
+    CALL error [156,159) code="keyword-form" message="#if needs (…) and a body: #if (condition) [ … ]"
+    TEXT " [no condition]" [160,174) raw=0:0,1:0
+block 5 content [176,190)
+  CALL para [176,190)
+    CALL error [176,181) code="keyword-unsupported" message="#else follows a body: #if (c) [ … ] else [ … ]"
+    TEXT " [orphan]" [182,190) raw=0:0,1:0
+block 6 content [192,274) user framed holes 2..3
+  CALL list [192,274) ordered=false start=1
+    CALL item [192,274)
+      CALL para [194,213)
+        TEXT "a nested style push" [194,213)
+      FRAME [216,248) holes 2..3
+        STMT 2
+      CALL para [251,274)
+        TEXT "ends with its statement" [251,274)
+block 7 content [276,282)
+  CALL para [276,282)
+    TEXT "After." [276,282)

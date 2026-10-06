@@ -1,9 +1,7 @@
-vlist pid=0 y=0su h=8498su
+vlist pid=0 y=0su h=3481su
   box unit=0 para y=0su h=1536su
   glue 409su
-  box unit=1 error y=1945su h=4608su
-  glue 409su
-  box unit=2 para y=6962su h=1536su
-vlist pid=1 y=9727su h=1536su
+  box unit=1 para y=1945su h=1536su
+vlist pid=1 y=4710su h=1536su
   glue 1229su
   box unit=0 para y=0su h=1536su

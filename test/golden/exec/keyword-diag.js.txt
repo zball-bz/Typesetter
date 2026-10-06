@@ -1,0 +1,29 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {style} = __rt.std;
+return (async () => {
+const __h = [
+() => (
+missing.value
+),
+(__b) => {
+const __r = [];
+for (
+const x of [1, 2, 3]
+) {
+{
+__r.push(__b([
+() => ((x === 2 ? undefined.y : x)),
+]));
+}
+}
+return __r;
+},
+() => {
+ $.style.push({weight: 700}) 
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

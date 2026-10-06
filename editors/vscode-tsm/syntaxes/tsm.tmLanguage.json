@@ -168,6 +168,14 @@
           "match": "<[A-Za-z_][A-Za-z0-9_-]*>"
         },
         {
+          "name": "keyword.control.flow.tsm",
+          "match": "#(if|for|while)(?!\\w)"
+        },
+        {
+          "name": "keyword.control.flow.tsm",
+          "match": "(?<=\\]|\\] )else\\b"
+        },
+        {
           "name": "entity.name.function.splice.tsm",
           "match": "#(\\(|[A-Za-z_$][A-Za-z0-9_$.]*)"
         }

@@ -1,0 +1,53 @@
+doc @[0,347)
+  code-let @[0,44) js=" xs = Array.of(\"alpha\", \"beta\", \"gamma\")"
+  code-let @[45,59) js=" ok = true"
+  para @[61,94)
+    text @[61,68) str="Status: "
+    keyword @[69,93) if
+      branch @[69,83) head="ok"
+        text @[79,82) str="yes"
+      branch @[84,93) head=""
+        text @[90,92) str="no"
+    text @[93,94) str="."
+  para @[96,212)
+    keyword @[96,212) if
+      branch @[96,119) head="!ok"
+        text @[107,108) str="\n"
+        text @[110,117) str="Hidden."
+        text @[117,118) str="\n"
+      branch @[120,190) head="xs.length > 2"
+        text @[145,146) str="\n"
+        code-let @[148,166) js=" n = xs.length"
+        text @[169,178) str="There are "
+        splice @[179,181) expr="n"
+        text @[182,188) str=" items."
+        text @[188,189) str="\n"
+      branch @[191,212) head=""
+        text @[197,198) str="\n"
+        text @[200,210) str="Few items."
+        text @[210,211) str="\n"
+  para @[214,245)
+    keyword @[214,245) for
+      branch @[214,245) head="const x of xs"
+        list @[239,243) bullet start=1
+          item @[239,243)
+            para @[241,243)
+              splice @[241,243) expr="x"
+  code-let @[247,257) js=" i = 0"
+  para @[258,298)
+    keyword @[258,298) while
+      branch @[258,298) head="i < 3"
+        text @[274,275) str="\n"
+        code-block @[277,285) js=" i++ "
+        text @[288,292) str="Step "
+        splice @[293,295) expr="i"
+        text @[295,296) str="."
+        text @[296,297) str="\n"
+  para @[300,346)
+    text @[300,312) str="Inline loop: "
+    keyword @[313,340) for
+      branch @[313,340) head="const x of xs"
+        splice @[335,337) expr="x"
+        text @[337,338) str=","
+        text @[338,339) str=" "
+    text @[341,346) str=" done."

@@ -1,0 +1,82 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+let xs, ok, i;
+const __h = [
+() => { xs = (
+ Array.of("alpha", "beta", "gamma")
+); },
+() => { ok = (
+ true
+); },
+() => (
+ok
+),
+() => (
+!ok
+),
+() => (
+xs.length > 2
+),
+(__b) => {
+const __s0 = typeof n === "undefined" ? undefined : n;
+{
+let n = __s0;
+return __b([
+() => { n = (
+ xs.length
+); },
+() => (n),
+]);
+}
+},
+(__b) => {
+const __r = [];
+for (
+const x of xs
+) {
+{
+__r.push(__b([
+() => (x),
+]));
+}
+}
+return __r;
+},
+() => { i = (
+ 0
+); },
+(__b) => {
+const __r = [];
+while (
+i < 3
+) {
+{
+__r.push(__b([
+() => {
+ i++ 
+},
+() => (i),
+]));
+}
+}
+return __r;
+},
+(__b) => {
+const __r = [];
+for (
+const x of xs
+) {
+{
+__r.push(__b([
+() => (x),
+]));
+}
+}
+return __r;
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

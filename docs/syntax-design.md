@@ -271,8 +271,10 @@ bodies keep their old shape; `#quote[- x]` is a list. Several blocks lower to
 a `seq` of blocks, which the model's normal form splices into the enclosing
 block (document-model §3, N3); footnotes keep block bodies as blocks.
 
-`@id[…]` supplements and `#let x = […]` content literals become content
-bodies with their owning steps (P2-06, P2-12).
+`@id[…]` supplements (P2-06) and `#let x = […]` content literals (P2-12,
+§10) are content bodies too. A body that is one paragraph *and statements*
+(P2-12: statements are no content) also unwraps, the statements kept where
+they stand.
 
 ## 8. Front-end exports and grammars (as built from plan P1-09)
 
@@ -350,9 +352,49 @@ ref's `extra` child, which the element row's template reads — the prefix
 word of a reference, the locator of a citation; `@[a, b]` lowers to a parent
 ref with child refs (docs/semantics-design.md §8).
 
-## 10. Next steps
+## 10. Statements anywhere, keyword forms, content literals (as built from plan P2-12)
+
+**Keyword forms** (`KEYWORD` rows: `if` with `elseChain`, `for`, `while`;
+the closed set of D-L06) are inline, at a line start or mid-paragraph:
+
+```
+'#' kw Blank* '(' JS ')' Blank* '[' content ']'
+  ( Blank* 'else' Blank* ( 'if' Blank* '(' JS ')' Blank* )? '[' content ']' )*   -- if only
+```
+
+`lexKeywordHead` / `lexElse` (syntax/lexer) match the heads; the bodies are
+content bodies (§7: block form when `[` ends its line, the line pass finding
+their closers — `keywordBodies` follows the else links across lines). The
+AST is `Keyword` ($str the keyword) over `Branch` nodes (`head`: the JS in
+the parentheses, none for `else`; kids: the body). A body that is inline
+content keeps its edge whitespace — a space, or a line break as a soft
+break — so `#for (const x of xs) [#x, ]` separates its iterations. A
+keyword without its parentheses and body (`#if [x]`), a lone `#else` and a
+bare `#let` mid-line are `keyword-form` / `keyword-unsupported` error nodes
+with the form's shape in the message; `#use` stays `keyword-unsupported`
+until P3-31.
+
+**Statements anywhere.** `#let …` and `#{…}` lines are statements in any
+container — a list item, a quote, a region, a content body, a keyword body.
+Their JS is their lines with the container prefixes stripped (a statement
+in a quote loses its `>` markers): `StmtP.js` is a string. A nested one
+that declares (a `#{…}` with let/const/function, a `#let` of a pattern)
+keeps its bindings (info `statement-local`).
+
+**Content literals.** `#let x = [` (blanks allowed after `=`) starts a
+content literal: its body is matched as a content body's brackets, across
+lines, and parsed in Blocks mode (§7); `StmtP.js` is the name, `content`
+is set, the kids are the body. It replaces the JS array literal in that
+position (tsm-changes).
+
+Highlighting: the engine tokens `#if`/`#for`/`#while`, `else` and the `if`
+of `else if` as keyword, the heads' parentheses as embedded, the bodies as
+content; a content literal's `#let x = [` as function, its body as content.
+The tree-sitter grammar has `keyword_form` (head + JS); the TextMate grammar
+colors the heads and an `else` after `]`.
+
+## 11. Next steps
 
 - P1-09: editor grammars from `syntax.gen.json`.
 - P2-11 / P2-13: region provenance and splice bodies delete the legacy
   `row`/`cell`/`arg` slots.
-- P2-12: keyword forms from `KEYWORD`.

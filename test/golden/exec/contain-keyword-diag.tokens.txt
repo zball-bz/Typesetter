@@ -1,0 +1,3 @@
+[17,20) keyword "#if"
+[21,25) embedded "(ok)"
+[32,36) keyword "else"

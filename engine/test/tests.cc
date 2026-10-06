@@ -802,7 +802,8 @@ static void unitRawMaps(const fs::path& root) {
 static void unitTokenConformance(const fs::path& root) {
   // (engine tag, tree-sitter tag); "-" = no token. Reasons:
   //   jslex     splice heads / JS arguments / statements (no JS lexer; a
-  //             /* comment */ in an argument list reads as a strong pair)
+  //             /* comment */ in an argument list reads as a strong pair;
+  //             a one-line content literal is one statement token)
   //   pairs     strict pairs and footnotes (regex pairs, opaque ^[…])
   //   lines     islands, links and comments across lines or nested; a
   //             paragraph's trailing ` <x>` (text: label-like-text, P2-06)
@@ -820,7 +821,8 @@ static void unitTokenConformance(const fs::path& root) {
       {"function", "label", "jslex"},      {"keyword", "-", "blocks"},
       {"keyword", "embedded", "blocks"},   {"label", "function", "lines"},
       {"label", "keyword", "lines"},       {"property", "-", "lines"},
-      {"punctuation", "-", "jslex"},       {"punctuation", "type", "lines"},
+      {"punctuation", "-", "jslex"},       {"punctuation", "function", "jslex"},
+      {"punctuation", "type", "lines"},
       {"string", "-", "lines"},            {"string", "attribute", "pairs"},
       {"type", "-", "lines"},              {"type", "attribute", "pairs"},
       {"type", "function", "lines"},       {"type", "keyword", "lines"},

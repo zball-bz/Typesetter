@@ -12,34 +12,97 @@ namespace tsr {
 namespace {
 
 
-// The holes of a subtree — splices, fence and region argument lists: the
-// user code a block runs itself. A block without any cannot throw, so it
-// gets no frame (the handlers of fences and regions are contained where
-// they are invoked).
-u32 holeCount(const AstNode* n) {
-  u32 c = 0;
-  if (n->kind == AstKind::Splice) c = 1;
-  else if (n->isCall(SugarId::fence) && !side<FenceP>(n).args.empty()) c = 1;
-  else if (n->isCall(SugarId::region) && !side<RegionP>(n).args.empty()) c = 1;
-  for (const AstNode* k : n->kids()) c += holeCount(k);
-  return c;
+// `#let name = expr` that becomes a hoisted name and an assignment hole
+bool hoistable(std::string_view inner, JsSimpleLet& sl) {
+  sl = jsSimpleLet(inner);
+  return sl.ok && !jsReservedWord(inner.substr(sl.identStart, sl.identEnd - sl.identStart));
 }
+
+// an else branch has no head (an `if` head is never at offset 0)
+bool isElse(Span head) { return head.start == 0 && head.end == 0; }
 
 void appendJs(std::string& out, std::string_view s) { appendUtf8Sanitized(out, s); }
 
 // AST → program ops. Each value-writing method returns whether the value
 // awaits (a fence, an async hole), which sets the async bit of its op and
 // of every op above it. Holes are numbered in preorder, so a frame's holes
-// are one contiguous range.
+// are one contiguous range. A scope (a keyword body declaring names, a loop
+// body: plan P2-12) has a hole table of its own, numbered from 0: its holes
+// are functions made inside the scope's JS, so they close over its names.
 struct Gen {
   const SourceText& src;
   const Interner& strs;
   LowerWriter& w;
-  std::vector<std::string> holes;  // the hole module's __h entries
+  std::vector<std::string> holes;  // the current hole table (top level: the module's __h)
 
   u32 newHole() {
     holes.emplace_back();
-    return w.holes++;
+    return (u32)holes.size() - 1;
+  }
+
+  // The holes of a subtree in the current table — splices, statements,
+  // keyword conditions, scopes and loops, fence and region argument lists:
+  // the user code a block runs itself. A block without any cannot throw, so
+  // it gets no frame (the handlers of fences and regions are contained where
+  // they are invoked).
+  u32 holeCount(const AstNode* n) const {
+    u32 c = 0;
+    switch (n->kind) {
+      case AstKind::Splice:
+      case AstKind::Stmt:  // its hole (a content literal's body follows)
+        c = 1;
+        break;
+      case AstKind::Keyword: {
+        if (strs.get(n->str) != "if") return 1;  // a loop: one hole, its body a table of its own
+        for (const AstNode* br : n->kids())
+          c += (isElse(side<BranchP>(br).head) ? 0 : 1) + (declares(br) ? 1 : kidHoles(br));
+        return c;
+      }
+      case AstKind::Call:
+        if (n->isCall(SugarId::fence) && !side<FenceP>(n).args.empty()) c = 1;
+        else if (n->isCall(SugarId::region) && !side<RegionP>(n).args.empty()) c = 1;
+        break;
+      case AstKind::Doc:
+      case AstKind::Text:
+      case AstKind::Comment:
+      case AstKind::Error:
+      case AstKind::Branch:
+        break;
+    }
+    return c + kidHoles(n);
+  }
+  u32 kidHoles(const AstNode* n) const {
+    u32 c = 0;
+    for (const AstNode* k : n->kids()) c += holeCount(k);
+    return c;
+  }
+  // The names a scope declares (plan P2-12; D-L02: a repeated #let is a
+  // reassignment): its `#let x = e` and `#let x = [ … ]` statements wherever
+  // they stand — a list item, a quote, a region, a content literal —, but
+  // not in a keyword body, which is a scope of its own. The document is one
+  // scope.
+  void scopeNames(const AstNode* n, std::vector<std::string>& out) const {
+    for (const AstNode* k : n->kids()) {
+      if (k->kind == AstKind::Keyword) continue;
+      if (k->kind == AstKind::Stmt && side<StmtP>(k).let) {
+        std::string_view name = bound(k);
+        if (!name.empty() && std::find(out.begin(), out.end(), name) == out.end()) out.emplace_back(name);
+      }
+      scopeNames(k, out);
+    }
+  }
+  // the name a #let binds in its scope: `#let x = e`, `#let x = [ … ]` (a
+  // pattern, a reserved word: none — the statement keeps it)
+  std::string_view bound(const AstNode* st) const {
+    std::string_view js = strs.get(side<StmtP>(st).js);
+    if (side<StmtP>(st).content) return jsReservedWord(js) ? std::string_view{} : js;
+    JsSimpleLet sl;
+    return hoistable(js, sl) ? js.substr(sl.identStart, sl.identEnd - sl.identStart) : std::string_view{};
+  }
+  bool declares(const AstNode* br) const {
+    std::vector<std::string> names;
+    scopeNames(br, names);
+    return !names.empty();
   }
   void span(Span s) {
     w.u(s.start);
@@ -86,9 +149,17 @@ struct Gen {
     if (!hc) return value(k);
     size_t at = w.op(Lop::FRAME);
     span(k->span);
-    w.u(w.holes);
-    w.u(w.holes + hc);
+    w.u((u32)holes.size());
+    w.u((u32)holes.size() + hc);
     return done(at, value(k));
+  }
+  // a keyword body or a content literal's: its one value, or a seq of its
+  // values — each in a frame when it runs user code, so an error stays in
+  // the block (the iteration) it happens in
+  bool blockBody(const AstNode* n) {
+    if (n->nkids == 1) return block(n->kids()[0]);
+    size_t at = callHead("seq", nullptr, 0);
+    return done(at, blockKids(n->kids()));
   }
   // a content body: its one value, or a seq of its values
   bool body(const AstNode* n) {
@@ -174,12 +245,144 @@ struct Gen {
         w.constStr(strs.get(side<ErrorP>(n).message));
         w.u(0);
         return false;
-      case AstKind::Stmt:  // nested statements are Error nodes (plan P0-05)
+      case AstKind::Stmt:
+        return stmt(n);
+      case AstKind::Keyword:
+        return keyword(n);
+      case AstKind::Branch:  // only inside its Keyword
       case AstKind::Doc:
         emptyText();
         return false;
     }
     return false;
+  }
+
+  // A statement's hole: `#let x = e` assigns the hoisted x (D-L02), any other
+  // #let and a #{…} run as written — at top level a declaring one is
+  // verbatim instead (codegen below), anywhere else its bindings stay inside
+  // it (statement-local).
+  std::string stmtHole(std::string_view inner, bool let, bool aw) const {
+    JsSimpleLet sl;
+    std::string hole;
+    if (let && hoistable(inner, sl)) {
+      hole = aw ? "async () => { " : "() => { ";
+      appendJs(hole, inner.substr(sl.identStart, sl.identEnd - sl.identStart));
+      hole += " = (\n";
+      appendJs(hole, inner.substr(sl.exprStart));
+      hole += "\n); }";
+      return hole;
+    }
+    hole = aw ? "async () => {\n" : "() => {\n";
+    if (let) hole += "let";
+    appendJs(hole, inner);
+    if (let) hole += ";";
+    hole += "\n}";
+    return hole;
+  }
+
+  // A statement anywhere (plan P2-12): STMT, which runs its hole and is no
+  // content; `#let x = [ … ]` (a content literal) is LET: its body is built
+  // where it stands and bound to x.
+  bool stmt(const AstNode* n) {
+    const StmtP& st = side<StmtP>(n);
+    std::string_view inner = strs.get(st.js);
+    if (st.content) {
+      const u32 h = newHole();
+      size_t at = w.op(Lop::LET);
+      w.u(h);
+      std::string t = bound(n).empty() ? "(__v) => { let " : "(__v) => { ";
+      appendJs(t, inner);
+      t += " = __v; }";
+      holes[h] = std::move(t);
+      return done(at, blockBody(n));
+    }
+    const bool aw = jsMentions(inner, "await");
+    const u32 h = newHole();
+    size_t at = w.op(Lop::STMT);
+    w.u(h);
+    holes[h] = stmtHole(inner, st.let, aw);
+    return done(at, aw);
+  }
+
+  // A keyword form (plan P2-12). #if: IF, each branch its condition (a hole,
+  // evaluated in order until one holds) and its body; a body that declares
+  // names is a SCOPE. #for / #while: LOOP — the loop is JS, its body a scope
+  // evaluated per iteration.
+  bool keyword(const AstNode* n) {
+    std::string_view kw = strs.get(n->str);
+    if (kw != "if") return ownTable(n->kids()[0], n, kw);
+    size_t at = w.op(Lop::IF);
+    w.u(n->nkids);
+    bool a = false;
+    for (const AstNode* br : n->kids()) {
+      const Span head = side<BranchP>(br).head;
+      if (isElse(head)) {
+        w.u(0);
+      } else {
+        std::string_view c = src.slice(head);
+        const bool aw = jsMentions(c, "await");
+        const u32 h = newHole();
+        std::string t = aw ? "async () => (\n" : "() => (\n";
+        appendJs(t, c);
+        t += "\n)";
+        holes[h] = std::move(t);
+        w.u(h + 1);
+        a |= aw;
+      }
+      a |= declares(br) ? ownTable(br, n, "") : blockBody(br);
+    }
+    return done(at, a);
+  }
+
+  // A body with a hole table of its own: SCOPE (kw empty) or LOOP. Its hole
+  // is the scope in JS — the loop, the names it declares — and hands its
+  // table to __b, which evaluates the body against it.
+  bool ownTable(const AstNode* br, const AstNode* form, std::string_view kw) {
+    const u32 h = newHole();
+    size_t at = w.op(kw.empty() ? Lop::SCOPE : Lop::LOOP);
+    w.u(h);
+    const u32 nh = kidHoles(br);
+    w.u(nh);
+    if (!kw.empty()) span(form->span);
+    std::vector<std::string> outer = std::move(holes);
+    holes.clear();
+    bool a = blockBody(br);
+    std::vector<std::string> inner = std::move(holes);
+    holes = std::move(outer);
+    std::string_view head = kw.empty() ? std::string_view{} : src.slice(side<BranchP>(br).head);
+    a |= jsMentions(head, "await");
+    // the scope's names start as the names they shadow (`#let n = n + 1`
+    // reads the outer n, as before its #let): read outside the block that
+    // declares them
+    std::vector<std::string> names;
+    scopeNames(br, names);
+    std::string t = a ? "async (__b) => {\n" : "(__b) => {\n";
+    if (!kw.empty()) {
+      t += "const __r = [];\n";
+      t += kw;
+      t += " (\n";
+      appendJs(t, head);
+      t += "\n) {\n";
+    }
+    for (size_t i = 0; i < names.size(); i++)
+      appendf(t, "const __s%zu = typeof %s === \"undefined\" ? undefined : %s;\n", i, names[i].c_str(),
+              names[i].c_str());
+    t += "{\n";
+    if (!names.empty()) {
+      t += "let ";
+      for (size_t i = 0; i < names.size(); i++) appendf(t, "%s%s = __s%zu", i ? ", " : "", names[i].c_str(), i);
+      t += ";\n";
+    }
+    t += kw.empty() ? "return " : "__r.push(";
+    t += a ? "await __b([\n" : "__b([\n";
+    for (const std::string& x : inner) {
+      t += x;
+      t += ",\n";
+    }
+    t += kw.empty() ? "]);\n}\n}" : "]));\n}\n}\nreturn __r;\n}";
+    holes[h] = std::move(t);
+    (void)nh;
+    return done(at, a);
   }
 
   // #expr, #f(args)[content]…: a hole. Content arguments go in structurally:
@@ -411,12 +614,6 @@ struct Gen {
   }
 };
 
-// `#let name = expr` that becomes a hoisted name and an assignment hole
-bool hoistable(std::string_view inner, JsSimpleLet& sl) {
-  sl = jsSimpleLet(inner);
-  return sl.ok && !jsReservedWord(inner.substr(sl.identStart, sl.identEnd - sl.identStart));
-}
-
 }  // namespace
 
 Lowered codegen(const AstNode* doc, const SourceText& src, const Interner& strs) {
@@ -426,14 +623,7 @@ Lowered codegen(const AstNode* doc, const SourceText& src, const Interner& strs)
 
   // hoisted #let names, deduplicated: a repeated #let is a reassignment (D-L02)
   std::vector<std::string> hoisted;
-  for (const AstNode* n : doc->kids()) {
-    if (n->kind != AstKind::Stmt || !side<StmtP>(n).let) continue;
-    std::string_view inner = src.slice(side<StmtP>(n).js);
-    JsSimpleLet sl;
-    if (!hoistable(inner, sl)) continue;
-    std::string name(inner.substr(sl.identStart, sl.identEnd - sl.identStart));
-    if (std::find(hoisted.begin(), hoisted.end(), name) == hoisted.end()) hoisted.push_back(name);
-  }
+  g.scopeNames(doc, hoisted);
 
   // a statement that declares at the top level (a #{…} with let/const/
   // function…, a #let of a pattern) stays verbatim at its place in the
@@ -449,31 +639,22 @@ Lowered codegen(const AstNode* doc, const SourceText& src, const Interner& strs)
     b.s = n->span.start;
     b.e = n->span.end;
     b.pc = (u32)w.body.size();
-    b.holeLo = w.holes;
-    if (n->kind == AstKind::Stmt) {
-      std::string_view inner = src.slice(side<StmtP>(n).js);
+    b.holeLo = (u32)g.holes.size();
+    if (n->kind == AstKind::Stmt && !side<StmtP>(n).content) {
+      std::string_view inner = strs.get(side<StmtP>(n).js);
       const bool aw = jsMentions(inner, "await");
-      std::string hole, verb;
+      std::string verb;
       JsSimpleLet sl;
+      // #let x = e → x = (e) and a declaration-free #{…}: framed holes
       bool isHole = true;
       if (side<StmtP>(n).let) {
-        if (hoistable(inner, sl)) {  // #let x = e → x = (e), framed
-          hole = aw ? "async () => { " : "() => { ";
-          appendJs(hole, inner.substr(sl.identStart, sl.identEnd - sl.identStart));
-          hole += " = (\n";
-          appendJs(hole, inner.substr(sl.exprStart));
-          hole += "\n); }";
-        } else {
+        if (!hoistable(inner, sl)) {
           isHole = false;
           verb = "let";
           appendJs(verb, inner);
           verb += ";";
         }
-      } else if (!jsDeclares(inner)) {  // declaration-free #{…}: framed
-        hole = aw ? "async () => {\n" : "() => {\n";
-        appendJs(hole, inner);
-        hole += "\n}";
-      } else {
+      } else if (jsDeclares(inner)) {
         isHole = false;
         appendJs(verb, inner);
       }
@@ -481,7 +662,7 @@ Lowered codegen(const AstNode* doc, const SourceText& src, const Interner& strs)
         b.kind = LBlock::Stmt;
         b.flags = kBlockUser | kBlockFramed | (aw ? kBlockAsync : 0);
         const u32 h = g.newHole();
-        g.holes[h] = std::move(hole);
+        g.holes[h] = g.stmtHole(inner, side<StmtP>(n).let, aw);
         size_t at = w.op(Lop::STMT);
         if (aw) w.markAsync(at);
         w.u(h);
@@ -492,14 +673,15 @@ Lowered codegen(const AstNode* doc, const SourceText& src, const Interner& strs)
         w.u((u32)verbatims.size());
         verbatims.push_back({(u32)w.blocks.size(), std::move(verb)});
       }
-    } else {
+    } else {  // a content literal is a content block of no content
       b.kind = LBlock::Content;
-      b.flags = holeCount(n) ? kBlockUser | kBlockFramed : 0;
+      b.flags = g.holeCount(n) ? kBlockUser | kBlockFramed : 0;
       if (g.value(n)) b.flags |= kBlockAsync;
     }
-    b.holeHi = w.holes;
+    b.holeHi = (u32)g.holes.size();
     w.blocks.push_back(b);
   }
+  w.holes = (u32)g.holes.size();
 
   // The hole module (only when there is user code):
   //   outer function: the user-visible names, shadowable by #let

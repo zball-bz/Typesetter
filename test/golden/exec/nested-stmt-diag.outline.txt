@@ -1,1 +1,1 @@
-{"headings":[],"regions":[],"fences":[],"labels":[],"diagnostics":[{"sev":"error","code":"statement-nested-unsupported","span":[13,23],"message":"statements inside lists, quotes and regions are not supported yet (plan P2-12)"}]}
+{"headings":[],"regions":[],"fences":[],"labels":[],"diagnostics":[]}

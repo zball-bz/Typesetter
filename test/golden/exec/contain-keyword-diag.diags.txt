@@ -1,1 +1,1 @@
-error keyword-unsupported @[17,20) #if is not supported yet (keyword forms: plan P2-12)
+error script-error @[9,42) ReferenceError: ok is not defined

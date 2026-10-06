@@ -1,0 +1,21 @@
+Before.
+
+#if (missing.value) [never] else [also never]
+
+#for (const x of [1, 2, 3]) [
+  - item #(x === 2 ? undefined.y : x)
+]
+
+#while (( [
+  broken head
+]
+
+#if [no condition]
+
+#else [orphan]
+
+- a nested style push
+  #{ $.style.push({weight: 700}) }
+  ends with its statement
+
+After.

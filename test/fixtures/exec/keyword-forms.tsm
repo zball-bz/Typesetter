@@ -1,0 +1,25 @@
+#let xs = Array.of("alpha", "beta", "gamma")
+#let ok = true
+
+Status: #if (ok) [yes] else [no].
+
+#if (!ok) [
+  Hidden.
+] else if (xs.length > 2) [
+  #let n = xs.length
+  There are #n items.
+] else [
+  Few items.
+]
+
+#for (const x of xs) [
+  - #x
+]
+
+#let i = 0
+#while (i < 3) [
+  #{ i++ }
+  Step #i.
+]
+
+Inline loop: #for (const x of xs) [#x, ] done.

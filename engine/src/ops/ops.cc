@@ -207,7 +207,8 @@ static u32 addString(RawOps& r, std::string s) {
 static const char* execDiagCode(std::string_view code) {
   static const char* const kCodes[] = {"splice-undefined", "splice-function", "splice-object", "script-error",
                                        "script-syntax", "region-error", "fence-error", "bib-load",
-                                       "ctor-arg", "ctor-error", "hook-recursion", "row-spans-markup"};
+                                       "ctor-arg", "ctor-error", "hook-recursion", "row-spans-markup",
+                                       "style-in-value"};
   for (const char* c : kCodes)
     if (code == c) return c;
   return "script-diag";
