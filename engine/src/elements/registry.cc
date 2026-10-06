@@ -225,8 +225,13 @@ struct Loader {
     return true;
   }
 
-  bool klass(const std::string& name, const JsonValue& v,
-             std::vector<std::pair<ClassId, std::string>>& insides) {
+  // a selector's `inside`, resolved once every class is known
+  struct Inside {
+    ClassId cls;
+    size_t sel;  // its selector's index in the class
+    std::string name;
+  };
+  bool klass(const std::string& name, const JsonValue& v, std::vector<Inside>& insides) {
     ElementClass c;
     if (const JsonValue* l = member(v, "like")) {
       ClassId base = classIndex(str(l));
@@ -247,7 +252,7 @@ struct Loader {
             sel.anyKind = false;
             if (!kindOf(x.vals[k].str, sel.kind)) return false;
           } else if (key == "inside") {
-            insides.push_back({self, x.vals[k].str});  // resolved once every class is known
+            insides.push_back({self, c.select.size(), x.vals[k].str});  // resolved once every class is known
             sel.inside = kNoIndex;
           } else {
             std::pair<ArgK, std::string> p;
@@ -297,15 +302,29 @@ struct Loader {
       }
     }
     if (const JsonValue* x = member(v, "outline")) c.outline = x->b;
+    if (const JsonValue* x = member(v, "refers-to"))
+      c.refersTo = str(x) == "enclosing" ? ElementClass::RefersTo::Enclosing : ElementClass::RefersTo::Self;
     if (!alias(member(v, "alias"), c.alias)) return false;
     if (const JsonValue* x = member(v, "sites")) {
       c.sites.clear();
       for (const JsonValue& s : x->arr) {
         SiteDef d;
         std::string where = str(member(s, "where"));
-        d.where = where == "arg" ? SiteDef::Where::Arg : where == "replace" ? SiteDef::Where::Replace
-                                                                            : SiteDef::Where::Prepend;
-        d.at = str(member(s, "at")) == "first-para" ? SiteDef::At::FirstPara : SiteDef::At::Self;
+        d.where = where == "arg"       ? SiteDef::Where::Arg
+                  : where == "replace" ? SiteDef::Where::Replace
+                  : where == "append"  ? SiteDef::Where::Append
+                  : where == "tag"     ? SiteDef::Where::Tag
+                                       : SiteDef::Where::Prepend;
+        // at: self | first-para | last-para | a slot's name (a part)
+        const std::string at = str(member(s, "at"));
+        d.at = at == "first-para" ? SiteDef::At::FirstPara : at == "last-para" ? SiteDef::At::LastPara : SiteDef::At::Self;
+        for (u8 k = 1; k < SLOT_COUNT && d.at == SiteDef::At::Self && !at.empty() && at != "self"; k++)
+          if (at == kSlots[k].name) {
+            d.at = SiteDef::At::Part;
+            d.part = (SlotId)k;
+          }
+        if (d.at == SiteDef::At::Self && !at.empty() && at != "self")
+          return fail("a site's at is self, first-para, last-para or a slot ('" + at + "')");
         if (const JsonValue* a = member(s, "arg"); a && !argOf(a->str, d.arg)) return false;
         if (!tmpl(member(s, "template"), d.tmpl)) return false;
         c.sites.push_back(std::move(d));
@@ -413,15 +432,14 @@ struct Loader {
     if (!systems(member(v, "systems")) || !counters(member(v, "counters"))) return false;
     if (!tmpl(member(v, "unresolved"), r.unresolved) || !tmpl(member(v, "unnumbered"), r.unnumbered))
       return false;
-    std::vector<std::pair<ClassId, std::string>> insides;
+    std::vector<Inside> insides;
     if (const JsonValue* cs = member(v, "classes"))
       for (size_t k = 0; k < cs->keys.size(); k++)
         if (!klass(cs->keys[k], cs->vals[k], insides)) return false;
-    for (auto& [c, name] : insides) {
-      ClassId in = classIndex(name);
-      if (!in) return fail("selector inside an undeclared class '" + name + "'");
-      for (Selector& s : r.classes[c].select)
-        if (s.inside == kNoIndex) s.inside = in;
+    for (const Inside& x : insides) {
+      ClassId in = classIndex(x.name);
+      if (!in) return fail("selector inside an undeclared class '" + x.name + "'");
+      r.classes[x.cls].select[x.sel].inside = in;  // its own selector (plan P3-03: one per selector)
     }
     if (const JsonValue* cs = member(v, "collectors"))
       for (size_t k = 0; k < cs->keys.size(); k++)

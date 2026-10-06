@@ -3,7 +3,7 @@ doc @[0,329) [base]
     text @[2,80) [BOLDx1.60] str="A heading long enough that it has to wrap across two lines at the test measure"
   group @[82,280) [base] role="figure" label="fig-wide"
     image @[82,280) [base] src="photos/wide.png" alt="wide" w=300 h=100
-    para @[163,271) [base] role="caption"
+    para @[163,271) [base] role="caption" slot="caption"
       styled @[163,271) [BOLD] role="caption-label"
         text @[163,271) [BOLD] str="图 1："
       text @[163,271) [base] str="A caption that is long enough to wrap onto a second line at the narrow measure, so copy must join its lines."

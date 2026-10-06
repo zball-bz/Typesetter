@@ -1,0 +1,16 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => ({label: "fig-tab"}),
+() => ({cols: 2, label: "tab-in"}),
+() => ({kind: "figure", label: "fig-kept"}),
+() => ({cols: 2}),
+() => ({label: "fig-pair"}),
+() => ({src: "a.png", w: 100, h: 50, label: "fig-a"}),
+() => ({src: "b.png", w: 100, h: 50, label: "fig-b"}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

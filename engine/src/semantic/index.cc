@@ -62,6 +62,7 @@ struct Locator {
   const Interner& strs;
   Index& ix;
   DiagSink& diags;
+  std::vector<u32> encl;  // the instances around the node visited, innermost last
 
   bool addLabel(const std::string& label, LabelTarget t, Span span) {
     if (ix.labels.count(label)) {
@@ -104,12 +105,18 @@ struct Locator {
       if (const Supplement* s = counters.supplementOf(C.counter)) in.supplement = *s;
     const bool counted = C.counter != kNoIndex;  // (the loader refuses a numbered class without one)
     if (C.numbering == ElementClass::Numbering::Always && counted) in.number = counters.step(C.counter, in.level);
-    if (C.title == ElementClass::Title::Text) excerptInto(n, strs, in.title);
+    if (C.title == ElementClass::Title::Text) {
+      excerptInto(n, strs, in.title);
+      in.titleNode = n;
+    }
     if (C.title == ElementClass::Title::Arg) in.title = strs.get(attrStr(n, C.titleArg));
     if (C.title == ElementClass::Title::Ext)
       for (const ArgVal& a : n->args)
         if (a.key == ArgK::ext && a.tag == ArgTag::Str && strs.get(a.name) == C.titleExt) in.title = strs.get(a.ref);
     LabelTarget self{LabelTarget::K::Instance, id, n->span};
+    // (plan P3-03) a class that refers to its enclosing instance: its label
+    // names that one (a table in a figure: @tab reads the figure's number)
+    if (C.refersTo == ElementClass::RefersTo::Enclosing && !encl.empty()) self.inst = encl.back();
     switch (C.labels) {
       case ElementClass::Labels::User: {
         std::string l(strs.get(attrStr(n, ArgK::label)));
@@ -186,6 +193,10 @@ struct Locator {
   void visit(const ContentNode* n) {
     if (n->cls) {
       instance(n, n->cls);
+      encl.push_back((u32)ix.instances.size() - 1);
+      for (const ContentNode* k : n->kids) visit(k);
+      encl.pop_back();
+      return;
     } else if (n->kind == Kind::event) {
       event(n);
       return;

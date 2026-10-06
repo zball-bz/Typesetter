@@ -26,6 +26,10 @@ struct Instance {
   bool aliased = false;  // the anchor is the alias (written as the node's label)
   std::string markerAlias;  // a flow item's marker anchor
   std::string title;
+  // (plan P3-03; D-S03) the node whose content is its title (Title::Text:
+  // the node itself): a collector clones it (cloneTitle); valid during
+  // resolve
+  const ContentNode* titleNode = nullptr;
   Supplement supplement;  // its class's, or an event's for its counter (plan P2-07)
 };
 

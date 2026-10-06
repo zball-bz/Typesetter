@@ -3,7 +3,7 @@ doc @[0,182) [base]
     text @[2,30) [BOLDx1.60] str="Heading before a tall figure"
   group @[32,158) [base] role="figure" label="fig-tall"
     image @[32,158) [base] src="photos/tall.png" alt="tall" w=300 h=200
-    para @[113,149) [base] role="caption"
+    para @[113,149) [base] role="caption" slot="caption"
       styled @[113,149) [BOLD] role="caption-label"
         text @[113,149) [BOLD] str="图 1："
       text @[113,149) [base] str="A figure 200px tall on 240px sheets."

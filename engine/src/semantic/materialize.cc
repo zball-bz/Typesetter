@@ -581,21 +581,23 @@ struct Mat {
         case SiteDef::Where::Arg:
           setArg(o, site.arg, textOf(site.tmpl, s));
           break;
-        case SiteDef::Where::Prepend: {
-          ContentNode* at = o;
-          if (site.at == SiteDef::At::FirstPara) {
-            at = nullptr;
-            for (ContentNode*& k : o->kids)
-              if (k->kind == Kind::para) {
-                k = clone1(k);
-                at = k;
-                break;
-              }
-          }
+        case SiteDef::Where::Prepend:
+        case SiteDef::Where::Append: {
+          ContentNode* at = siteTarget(o, site);
           if (!at) break;  // nothing to attach to (a captionless figure)
           std::vector<ContentNode*> gen;
           inst(site.tmpl, siteAt(at), s, at, gen);
-          at->kids.insert(at->kids.begin(), gen.begin(), gen.end());
+          for (ContentNode* g : gen) g->synthetic = true;  // a title's clone skips it (B3)
+          if (site.where == SiteDef::Where::Prepend) at->kids.insert(at->kids.begin(), gen.begin(), gen.end());
+          else at->kids.insert(at->kids.end(), gen.begin(), gen.end());
+          break;
+        }
+        case SiteDef::Where::Tag: {  // its tag part (plan P3-03): content in slot "tag"
+          ContentNode* tag = mk(Kind::seq, o->span, siteAt(o));
+          setArg(tag, ArgK::slot, kSlots[(u8)SlotId::Tag].name);
+          tag->synthetic = true;
+          inst(site.tmpl, siteAt(o), s, tag, tag->kids);
+          o->kids.push_back(tag);
           break;
         }
         case SiteDef::Where::Replace:
@@ -603,6 +605,34 @@ struct Mat {
       }
     }
     return o;
+  }
+  // where a prepend/append site attaches in `o` (cloned when it is a kid):
+  // itself, its first or last paragraph, or its first part in a slot (else
+  // its first paragraph)
+  ContentNode* siteTarget(ContentNode* o, const SiteDef& site) {
+    if (site.at == SiteDef::At::Self) return o;
+    ContentNode** hit = nullptr;
+    if (site.at == SiteDef::At::Part)
+      for (ContentNode*& k : o->kids)
+        if (slotOf(k, e.strs) == site.part) {
+          hit = &k;
+          break;
+        }
+    if (!hit && site.at != SiteDef::At::LastPara)
+      for (ContentNode*& k : o->kids)
+        if (k->kind == Kind::para) {
+          hit = &k;
+          break;
+        }
+    if (!hit && site.at == SiteDef::At::LastPara)
+      for (size_t i = o->kids.size(); i-- > 0;)
+        if (o->kids[i]->kind == Kind::para) {
+          hit = &o->kids[i];
+          break;
+        }
+    if (!hit) return nullptr;
+    *hit = clone1(*hit);
+    return *hit;
   }
 
   // --- collectors (B3) ---------------------------------------------------------------
@@ -632,6 +662,57 @@ struct Mat {
     }
   }
 
+  // (plan P3-03; D-S03) an entry's title: the instance's title content
+  // cloned (cloneTitle), else its title text
+  void titleSlot(const Instance& in, const Ctx& dest, Slots& s) {
+    if (!in.titleNode) {
+      s.set("title", in.title);
+      return;
+    }
+    std::vector<ContentNode*> nodes;
+    for (const ContentNode* k : in.titleNode->kids)
+      cloneTitle(k, dest, in.titleNode->scope, in.titleNode->env, nodes);
+    s.nodes.push_back({"title", nodes});
+  }
+  // cloneTitle (design T3 B3): a title's content copied into a collector —
+  // what a site generated, flows (a footnote: its marker), anchors,
+  // collectors, events and entries left out, a reference as its resolved
+  // text; the author's own styling kept and the destination's context
+  // taken (Cascade.lift); the copy belongs to the collector (its span, no
+  // raw map) and is never walked again
+  void cloneTitle(const ContentNode* k, const Ctx& dest, StyleId oldParentScope, RuleEnvId env,
+                  std::vector<ContentNode*>& out) {
+    if (k->synthetic || k->kind == Kind::comment || k->kind == Kind::collect || k->kind == Kind::event ||
+        k->kind == Kind::entry)
+      return;
+    if (k->cls && e.reg.cls(k->cls).flow) return;  // a flow item (a footnote) stays where it is
+    if (k->kind == Kind::ref) {  // its resolved text, unlinked
+      ContentNode* r = resolveRef(clone1(k));
+      for (const ContentNode* x : r->kids) cloneTitle(x, dest, k->scope, k->env, out);
+      return;
+    }
+    ContentNode* d = clone1(k);
+    Styling st = e.styles.get(dest.style);
+    Cascade::NodeView v{k->kind};
+    v.args = &k->args;
+    v.role = attrStr(k, ArgK::role);
+    v.cls = attrStr(k, ArgK::class_);
+    v.lang = e.styles.get(k->scope).lang;
+    e.cascade.reenter(st, v, env, e.styles.get(k->scope), e.styles.get(oldParentScope));
+    d->style = e.styles.idOf(st);
+    d->props = ~0u;  // kPropsUnset: the destination's
+    e.made++;
+    d->span = dest.span;
+    d->rawmap = nullptr;
+    d->nrawmap = 0;
+    dropArg(d, ArgK::label);
+    d->kids.clear();
+    Ctx under = dest;
+    under.style = d->style;
+    for (const ContentNode* x : k->kids) cloneTitle(x, under, k->scope, k->env, d->kids);
+    out.push_back(d);
+  }
+
   // the outline instances; nested by depth, each deeper level a new
   // instance of the wrap inside the last entry
   void outline(const CollectorDef& C, const Ctx& cc, std::vector<ContentNode*>& out) {
@@ -646,7 +727,7 @@ struct Mat {
     auto entry = [&](const Instance& in, ContentNode* container) {
       Slots s;
       s.set("number", in.number);
-      s.set("title", in.title);
+      titleSlot(in, cc, s);
       s.set("anchor", in.label);
       inst(C.entry, cc, s, container, container->kids);
     };
@@ -656,7 +737,7 @@ struct Mat {
         for (const Instance* in : items) {
           Slots s;
           s.set("number", in->number);
-          s.set("title", in->title);
+          titleSlot(*in, cc, s);
           s.set("anchor", in->label);
           inst(C.entry, cc, s, nullptr, o);
         }

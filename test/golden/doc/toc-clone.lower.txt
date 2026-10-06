@@ -1,0 +1,27 @@
+lower v1 abi 3d3ccfbb docEnd 117 holes 1 module 8f7bca886bfb4288
+piece 0 hole 0 js [127,138)
+block 0 content [0,4) user framed holes 0..1
+  CALL para [0,4)
+    HOLE 0 [0,4)
+block 1 content [6,70)
+  CALL heading [6,70) level=1 label="sec-a"
+    TEXT "Title with " [8,18) raw=0:0,11:10
+    CALL strong [19,29)
+      TEXT "emphasis" [20,28)
+    TEXT ", " [29,30) raw=0:0,2:1
+    CALL math [31,36)
+      CALL mathsrc [32,35) src="x^2"
+    TEXT ", a note" [36,44)
+    CALL note [44,59)
+      TEXT "A note body." [46,58)
+    TEXT " and " [60,63) raw=0:0,1:0,5:3
+    CALL ref [64,70) target="sec-b"
+block 2 content [80,85)
+  CALL para [80,85)
+    TEXT "Text." [80,85)
+block 3 content [87,96)
+  CALL heading [87,96) level=2 label="sec-b"
+    TEXT "Second" [90,96)
+block 4 content [106,116)
+  CALL para [106,116)
+    TEXT "More text." [106,116)

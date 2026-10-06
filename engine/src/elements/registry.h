@@ -95,9 +95,15 @@ struct AliasRule {  // generated labels: prefix + number | key
   bool hasRef = false;
 };
 
+// A site (design T3 Site; plan P3-03): where an instance's generated content
+// goes — before or after the content of the node, its first or last
+// paragraph, or a part (a slot: a figure's caption); into an argument (the
+// compat equation name); in place of the node; or as its tag part (the
+// margin tag: an equation's number)
 struct SiteDef {
-  enum class Where : u8 { Prepend, Arg, Replace } where = Where::Prepend;
-  enum class At : u8 { Self, FirstPara } at = At::Self;
+  enum class Where : u8 { Prepend, Append, Arg, Replace, Tag } where = Where::Prepend;
+  enum class At : u8 { Self, FirstPara, LastPara, Part } at = At::Self;
+  SlotId part = SlotId::None;  // At::Part (no such part: the first paragraph)
   ArgK arg = ArgK::label;
   Template tmpl;
 };
@@ -123,6 +129,9 @@ struct ElementClass {
   bool outline = false;
   AliasRule alias;
   std::vector<SiteDef> sites;
+  // (plan P3-03; design T3 refersTo) Enclosing: a label here names the
+  // nearest classed ancestor (a table in a figure: @tab is the figure)
+  enum class RefersTo : u8 { Self, Enclosing } refersTo = RefersTo::Self;
   Template ref;
   bool hasRef = false;
   std::optional<FlowDef> flow;

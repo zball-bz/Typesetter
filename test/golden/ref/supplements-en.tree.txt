@@ -17,7 +17,7 @@ doc @[0,308) [base]
     text @[146,147) [base] str="."
   group @[149,238) [base] role="figure" label="fig-a"
     image @[149,238) [base] src="a.png" alt="a figure" w=120 h=60
-    para @[220,229) [base] role="caption"
+    para @[220,229) [base] role="caption" slot="caption"
       styled @[220,229) [BOLD] role="caption-label"
         text @[220,229) [BOLD] str="Figure 1: "
       text @[220,229) [base] str="A figure."
@@ -29,3 +29,5 @@ doc @[0,308) [base]
         text @[277,278) [base] str="y"
   mathblock @[288,308) [base] label="eq-a" name="(1)"
     mathsrc @[290,299) [base] src="e = m c^2"
+    seq @[288,308) [base] slot="tag"
+      text @[288,308) [base] str="(1)"

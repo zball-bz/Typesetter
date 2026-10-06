@@ -989,6 +989,9 @@ static void unitRegistry(const fs::path& root) {
   size_t fig = json.find("\"figure\": {", cls);
   CHECK(cls != std::string::npos && fig != std::string::npos);
   json.replace(fig, 8, "\"illustration\"");
+  for (const char* ref : {"\"like\": \"figure\"", "\"inside\": \"figure\""})  // the rows built on it (P3-03)
+    for (size_t at = json.find(ref); at != std::string::npos; at = json.find(ref, at + 1))
+      json.replace(json.find("figure", at), 6, "illustration");
   std::unique_ptr<Registry> renamed = Registry::fromJson(json, err);
   CHECK(renamed != nullptr);
   if (!renamed) return;

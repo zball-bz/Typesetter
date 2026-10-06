@@ -6,7 +6,7 @@ doc @[0,225) [base]
     text @[83,117) [base] str=" makes emit run twice (plan P0-11)." raw=0:0,1:0
   group @[119,225) [base] role="figure" label="fig-bad"
     image @[119,225) [base] src="javascript:alert(1)" alt="refused"
-    para @[190,216) [base] role="caption"
+    para @[190,216) [base] role="caption" slot="caption"
       styled @[190,216) [BOLD] role="caption-label"
         text @[190,216) [BOLD] str="图 1："
       text @[190,216) [base] str="The placeholder stands in."

@@ -1,7 +1,7 @@
 // GENERATED from engine/schema/schema.json by tools/gen-schema.mjs — do not edit.
 export const OPS_VERSION = 13;
 export const OPS_MIN_COMPAT = 11;
-export const SCHEMA_HASH = '42836f3b';
+export const SCHEMA_HASH = '8232f74a';
 export const SINCE = Object.freeze({
   "op": {
     "1": 6,
@@ -156,7 +156,8 @@ export const SINCE = Object.freeze({
       "34": 9,
       "35": 9,
       "54": 11,
-      "55": 11
+      "55": 11,
+      "75": 13
     },
     "9": {
       "0": 6,
@@ -666,7 +667,8 @@ export const ARGK = Object.freeze({
   "sidecarFrac": 71,
   "contIndent": 72,
   "features": 73,
-  "punct": 74
+  "punct": 74,
+  "kind": 75
 });
 export const SCHEMA = Object.freeze({
   "doc": {
@@ -824,6 +826,7 @@ export const SCHEMA = Object.freeze({
       "role": "ident",
       "label": "label",
       "name": "str",
+      "kind": "ident",
       "slot": "ident",
       "syn": "ident",
       "copy": "copy",
@@ -1497,5 +1500,12 @@ export const SLOTS = Object.freeze({
     "id": 3,
     "model": "inline",
     "on": "block"
+  },
+  "caption": {
+    "id": 4,
+    "model": "inline",
+    "on": [
+      "group"
+    ]
   }
 });

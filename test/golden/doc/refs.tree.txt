@@ -35,25 +35,30 @@ doc @[0,436) [base]
     item @[404,410) [base]
       para @[404,410) [base]
         link @[404,410) [base] url="#tsr-intro"
-          text @[404,410) [base] str="1 Introduction"
+          text @[404,410) [base] str="1 "
+          text @[404,410) [base] str="Introduction"
       list @[404,410) [base] ordered=false
         item @[404,410) [base]
           para @[404,410) [base]
             link @[404,410) [base] url="#tsr-h-1.1"
-              text @[404,410) [base] str="1.1 Method"
+              text @[404,410) [base] str="1.1 "
+              text @[404,410) [base] str="Method"
     item @[404,410) [base]
       para @[404,410) [base]
         link @[404,410) [base] url="#tsr-results"
-          text @[404,410) [base] str="2 Results"
+          text @[404,410) [base] str="2 "
+          text @[404,410) [base] str="Results"
       list @[404,410) [base] ordered=false
         item @[404,410) [base]
           para @[404,410) [base]
             link @[404,410) [base] url="#tsr-h-2.1"
-              text @[404,410) [base] str="2.1 Table of contents"
+              text @[404,410) [base] str="2.1 "
+              text @[404,410) [base] str="Table of contents"
         item @[404,410) [base]
           para @[404,410) [base]
             link @[404,410) [base] url="#tsr-h-2.2"
-              text @[404,410) [base] str="2.2 Glossary"
+              text @[404,410) [base] str="2.2 "
+              text @[404,410) [base] str="Glossary"
   heading @[412,423) [BOLDx1.35] level=2 label="h-2.2"
     text @[415,423) [BOLDx1.35] str="Glossary"
   list @[425,436) [base] ordered=false

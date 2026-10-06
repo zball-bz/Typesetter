@@ -1,0 +1,29 @@
+Figures of tables, tables in figures and subfigures (plan P3-03).
+
+#!figure(label: "fig-tab")
+#!table(cols: 2, label: "tab-in")
+Name | Qty
+Alpha | 2
+#table!
+A figure whose body is one table numbers as a table.
+#figure!
+
+#!figure(kind: "figure", label: "fig-kept")
+#!table(cols: 2)
+Name | Qty
+Beta | 3
+#table!
+Its kind says figure: it numbers as a figure.
+#figure!
+
+#!figure(label: "fig-pair")
+#!figure(src: "a.png", w: 100, h: 50, label: "fig-a")
+The left view.
+#figure!
+#!figure(src: "b.png", w: 100, h: 50, label: "fig-b")
+The right view.
+#figure!
+Two views of one thing.
+#figure!
+
+See @fig-tab (and @tab-in, its table), @fig-kept, @fig-pair, @fig-a and @fig-b.

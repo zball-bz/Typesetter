@@ -402,11 +402,19 @@ struct Sem {
         out += "<code class=\"tsr-mathsrc\">$ ";
         esc(out, mathSource(n, strs).copy);
         out += " $</code>";
-        if (std::string_view tag = argS(n, ArgK::name); !tag.empty()) {
-          // the equation number on the no-JS page too (P0-09 k)
-          out += " <span class=\"tsr-eqno\">";
-          esc(out, tag);
-          out += "</span>";
+        {
+          // the equation number on the no-JS page too (P0-09 k): its tag
+          // part (plan P3-03), else the compat name
+          const ContentNode* part = nullptr;
+          for (const ContentNode* k : n->kids)
+            if (slotOf(k, strs) == SlotId::Tag) part = k;
+          std::string_view tag = argS(n, ArgK::name);
+          if (part || !tag.empty()) {
+            out += " <span class=\"tsr-eqno\">";
+            if (part) inlineKids(part);
+            else esc(out, tag);
+            out += "</span>";
+          }
         }
         out += "</p>\n";
         return;
@@ -434,9 +442,13 @@ struct Sem {
           // real HTML for the no-JS page (figure-design.md §5)
           open("figure", n, pid);
           out += "\n";
+          // its caption part (slot caption, plan P3-03) is the figcaption;
+          // a figure-box element with none reads its paragraphs as it
+          bool parts = false;
+          for (const ContentNode* k : n->kids) parts = parts || slotOf(k, strs) == SlotId::Caption;
           bool capOpen = false;
           for (const ContentNode* k : n->kids) {
-            if (k->kind == Kind::para) {
+            if (parts ? slotOf(k, strs) == SlotId::Caption : k->kind == Kind::para) {
               if (!capOpen) {
                 out += "<figcaption>";
                 capOpen = true;

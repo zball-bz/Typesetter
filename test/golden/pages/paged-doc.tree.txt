@@ -11,7 +11,7 @@ doc @[0,700) [base]
     text @[393,490) [CODEx0.85] str="{\n  \"a\": 1,\n  \"b\": [2, 3],\n  \"c\": \"long enough to wrap at the narrow measure used by the tests\"\n}"
   group @[496,611) [base] role="figure" label="fig-p"
     image @[496,611) [base] src="photos/x.png" alt="样图" w=200 h=80
-    para @[572,602) [base] role="caption"
+    para @[572,602) [base] role="caption" slot="caption"
       styled @[572,602) [BOLD] role="caption-label"
         text @[572,602) [BOLD] str="图 1："
       text @[572,602) [base] str="图与图注保持在同页。"

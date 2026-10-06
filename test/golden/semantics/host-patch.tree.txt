@@ -4,7 +4,7 @@ doc @[0,101) [base]
   heading @[7,15) [BOLDx1.15] level=3 label="deep"
     text @[11,15) [BOLDx1.15] str="Deep"
   group @[24,81) [base] role="figure" label="f1"
-    para @[46,72) [base] role="caption"
+    para @[46,72) [base] role="caption" slot="caption"
       styled @[46,72) [BOLD] role="caption-label"
         text @[46,72) [BOLD] str="Fig. 1: "
       text @[46,72) [base] str="A figure the host renamed."

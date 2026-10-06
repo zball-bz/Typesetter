@@ -1,0 +1,9 @@
+#toc
+
+= Title with *emphasis*, $x^2$, a note^[A note body.] and @sec-b <sec-a>
+
+Text.
+
+== Second <sec-b>
+
+More text.

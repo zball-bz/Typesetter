@@ -1,0 +1,95 @@
+top pid=0 units=2
+ unit text indent=1536su marker="•"
+  box Other "1" w=513su r0 @[0,4)
+  glue word w=257su x=1 cap=257su kern="1 T" src r0 @[0,4)
+  box Other "Ti" w=1025su r0 @[0,4)
+  disc pen=0.7 w=0su pre="-" 513su kern="it" r0 @[0,4)
+  box Other "tle" w=1537su r0 @[0,4)
+  glue word w=257su x=1 cap=257su kern="e w" src r0 @[0,4)
+  box Other "with" w=2049su r0 @[0,4)
+  glue word w=257su x=1 cap=257su src r0 @[0,4)
+  box Other "em" w=1025su r1 @[0,4)
+  disc pen=0.7 w=0su pre="-" 513su kern="mp" r1 @[0,4)
+  box Other "pha" w=1537su r1 @[0,4)
+  disc pen=0.7 w=0su pre="-" 513su kern="as" r1 @[0,4)
+  box Other "sis" w=1537su r1 @[0,4)
+  box Other "," w=513su r2 @[0,4)
+  glue word w=257su x=1 cap=257su src r2 @[0,4)
+  box object o0 math part=0 asc=967su desc=12su "x^2" w=948su r3 @[0,4)
+  pen 0 r3
+  box Other "," w=513su r4 @[0,4)
+  glue word w=257su x=1 cap=257su kern=", a" src r4 @[0,4)
+  box Other "a" w=513su r4 @[0,4)
+  glue word w=257su x=1 cap=257su kern="a n" src r4 @[0,4)
+  box Other "note" w=2049su r4 @[0,4)
+  glue word w=257su x=1 cap=257su kern="e a" src r4 @[0,4)
+  box Other "and" w=1537su r4 @[0,4)
+  glue word w=257su x=1 cap=257su kern="d §" src r4 @[0,4)
+  box Other "§1.1" w=2152su r4 @[0,4)
+  obj o0 math parts=1 edges=Alpha/Alpha src="x^2" [w=948su asc=967su desc=12su]
+  run r0 plain LINK link="#tsr-sec-a"
+  run r1 plain BOLD LINK link="#tsr-sec-a"
+  run r2 plain LINK link="#tsr-sec-a"
+  run r3 object LINK link="#tsr-sec-a"
+  run r4 plain LINK link="#tsr-sec-a"
+ unit text indent=3072su marker="•"
+  box Other "1.1" w=1537su r0 @[0,4)
+  glue word w=257su x=1 cap=257su kern="1 S" src r0 @[0,4)
+  box Other "Sec" w=1537su r0 @[0,4)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r0 @[0,4)
+  box Other "ond" w=1537su r0 @[0,4)
+  run r0 plain LINK link="#tsr-sec-b"
+top pid=1 units=1
+ unit text indent=0su anchor="sec-a"
+  box Other "Title" w=4098su r0 @[8,18)
+  glue word w=411su x=1 cap=411su kern="e w" src r0 @[8,18)
+  box Other "with" w=3278su r0 @[8,18)
+  glue word w=411su x=1 cap=411su kern="h e" src r0 @[8,18)
+  box Other "emphasis" w=6555su r0 @[20,28)
+  box Other "," w=821su r0 @[29,30)
+  glue word w=411su x=1 cap=411su src r0 @[29,30)
+  box object o0 math part=0 asc=1547su desc=20su "x^2" w=1516su r1 @[31,36)
+  pen 0 r1
+  box Other "," w=821su r2 @[36,44)
+  glue word w=411su x=1 cap=411su kern=", a" src r2 @[36,44)
+  box Other "a" w=821su r2 @[36,44)
+  glue word w=411su x=1 cap=411su kern="a n" src r2 @[36,44)
+  box Other "note" w=3278su r2 @[36,44)
+  box Other "1" w=575su anchor="fnref-1" r3 @[44,59)
+  glue word w=411su x=1 cap=411su src r4 @[60,63)
+  box Other "and" w=2459su r4 @[60,63)
+  glue word w=411su x=1 cap=411su src r4 @[60,63)
+  box Other "§1.1" w=3442su r5 @[64,70)
+  obj o0 math parts=1 edges=Alpha/Alpha src="x^2" [w=1516su asc=1547su desc=20su]
+  run r0 plain BOLD x1.60
+  run r1 object BOLD x1.60
+  run r2 plain BOLD x1.60
+  run r3 plain ref BOLD LINK x1.12 link="#tsr-fn-1" anchor="fnref-1"
+  run r4 plain BOLD x1.60
+  run r5 plain ref BOLD LINK x1.60 link="#tsr-sec-b"
+top pid=2 units=1
+ unit text indent=0su
+  box Other "Text." w=2561su r0 @[80,85)
+  run r0 plain
+top pid=3 units=1
+ unit text indent=0su anchor="sec-b"
+  box Other "Second" w=4149su r0 @[90,96)
+  run r0 plain BOLD x1.35
+top pid=4 units=1
+ unit text indent=0su
+  box Other "More" w=2049su r0 @[106,116)
+  glue word w=257su x=1 cap=257su kern="e t" src r0 @[106,116)
+  box Other "text." w=2561su r0 @[106,116)
+  run r0 plain
+top pid=5 units=2
+ unit rule indent=0su
+ unit text indent=1536su anchor="fn-1" marker="1."
+  box Other "A" w=437su r0 @[46,58)
+  glue word w=219su x=1 cap=219su kern="A n" src r0 @[46,58)
+  box Other "note" w=1742su r0 @[46,58)
+  glue word w=219su x=1 cap=219su kern="e b" src r0 @[46,58)
+  box Other "body." w=2178su r0 @[46,58)
+  glue word w=219su x=1 cap=219su src r0 @[44,59)
+  box Other "↩" w=524su r1 @[44,59)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-1"

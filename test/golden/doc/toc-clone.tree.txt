@@ -1,0 +1,50 @@
+doc @[0,116) [base]
+  list @[0,4) [base] ordered=false
+    item @[0,4) [base]
+      para @[0,4) [base]
+        link @[0,4) [base] url="#tsr-sec-a"
+          text @[0,4) [base] str="1 "
+          text @[0,4) [base] str="Title with "
+          styled @[0,4) [BOLD]
+            text @[0,4) [BOLD] str="emphasis"
+          text @[0,4) [base] str=", "
+          mathinline @[0,4) [base]
+            mathsrc @[0,4) [base] src="x^2"
+          text @[0,4) [base] str=", a note"
+          text @[0,4) [base] str=" and "
+          text @[0,4) [base] str="§1.1"
+      list @[0,4) [base] ordered=false
+        item @[0,4) [base]
+          para @[0,4) [base]
+            link @[0,4) [base] url="#tsr-sec-b"
+              text @[0,4) [base] str="1.1 "
+              text @[0,4) [base] str="Second"
+  heading @[6,70) [BOLDx1.60] level=1 label="sec-a"
+    text @[8,18) [BOLDx1.60] str="Title with " raw=0:0,11:10
+    styled @[19,29) [BOLDx1.60]
+      text @[20,28) [BOLDx1.60] str="emphasis"
+    text @[29,30) [BOLDx1.60] str=", " raw=0:0,2:1
+    mathinline @[31,36) [BOLDx1.60]
+      mathsrc @[32,35) [BOLDx1.60] src="x^2"
+    text @[36,44) [BOLDx1.60] str=", a note"
+    ref @[44,59) [BOLD+SUPx1.12] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" url="#tsr-fn-1"
+      text @[44,59) [BOLD+SUPx1.12] str="1"
+    text @[60,63) [BOLDx1.60] str=" and " raw=0:0,1:0,5:3
+    ref @[64,70) [BOLDx1.60] target="sec-b" url="#tsr-sec-b"
+      text @[64,70) [BOLDx1.60] str="§1.1"
+  para @[80,85) [base]
+    text @[80,85) [base] str="Text."
+  heading @[87,96) [BOLDx1.35] level=2 label="sec-b"
+    text @[90,96) [BOLDx1.35] str="Second"
+  para @[106,116) [base]
+    text @[106,116) [base] str="More text."
+  group @[0,116) [base] role="notes"
+    rule @[0,116) [base]
+    list @[0,116) [base] ordered=true
+      item @[44,59) [base]
+        para @[44,59) [base] label="fn-1"
+          styled @[44,59) [basex0.85] role="note-body"
+            text @[46,58) [basex0.85] str="A note body."
+            text @[44,59) [basex0.85] str=" "
+            ref @[44,59) [basex0.85] target="fnref-1" url="#tsr-fnref-1"
+              text @[44,59) [basex0.85] str="↩"

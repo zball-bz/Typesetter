@@ -1,0 +1,54 @@
+lower v1 abi 3d3ccfbb docEnd 664 holes 7 module 25eb17036e30729d
+piece 0 hole 0 js [103,129)
+piece 1 hole 1 js [131,165)
+piece 2 hole 2 js [167,210)
+piece 3 hole 3 js [212,229)
+piece 4 hole 4 js [231,258)
+piece 5 hole 5 js [260,313)
+piece 6 hole 6 js [315,368)
+block 0 content [0,65)
+  CALL para [0,65)
+    TEXT "Figures of tables, tables in figures and subfigures (plan P3-03)." [0,65)
+block 1 content [67,218) user framed async holes 0..2
+  REGION async "figure" args=hole 0 [67,218)
+    FRAME async [94,156) holes 1..2
+      REGION async "table" args=hole 1 [94,156)
+        CALL para [128,148)
+          TEXT "Name | Qty\nAlpha | 2" [128,148) seps=5,17
+    CALL para [157,209)
+      TEXT "A figure whose body is one table numbers as a table." [157,209)
+block 2 content [220,363) user framed async holes 2..4
+  REGION async "figure" args=hole 2 [220,363)
+    FRAME async [264,308) holes 3..4
+      REGION async "table" args=hole 3 [264,308)
+        CALL para [281,300)
+          TEXT "Name | Qty\nBeta | 3" [281,300) seps=5,16
+    CALL para [309,354)
+      TEXT "Its kind says figure: it numbers as a figure." [309,354)
+block 3 content [365,582) user framed async holes 4..7
+  REGION async "figure" args=hole 4 [365,582)
+    FRAME async [393,470) holes 5..6
+      REGION async "figure" args=hole 5 [393,470)
+        CALL para [447,461)
+          TEXT "The left view." [447,461)
+    FRAME async [471,549) holes 6..7
+      REGION async "figure" args=hole 6 [471,549)
+        CALL para [525,540)
+          TEXT "The right view." [525,540)
+    CALL para [550,573)
+      TEXT "Two views of one thing." [550,573)
+block 4 content [584,663)
+  CALL para [584,663)
+    TEXT "See " [584,587) raw=0:0,4:3
+    CALL ref [588,596) target="fig-tab"
+    TEXT " (and " [597,601) raw=0:0,1:0,6:4
+    CALL ref [602,609) target="tab-in"
+    TEXT ", its table), " [609,622) raw=0:0,14:13
+    CALL ref [623,632) target="fig-kept"
+    TEXT ", " [632,633) raw=0:0,2:1
+    CALL ref [634,643) target="fig-pair"
+    TEXT ", " [643,644) raw=0:0,2:1
+    CALL ref [645,651) target="fig-a"
+    TEXT " and " [652,655) raw=0:0,1:0,5:3
+    CALL ref [656,662) target="fig-b"
+    TEXT "." [662,663)

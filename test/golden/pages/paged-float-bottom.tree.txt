@@ -3,7 +3,7 @@ doc @[0,397) [base]
     text @[0,135) [base] str="Opening text that occupies the first part of the sheet so the following float begins roughly one hundred pixels above the sheet bottom."
   group @[137,280) [base] role="figure" label="fig-box"
     image @[137,280) [base] src="photos/box.png" alt="box" w=300 h=300 scale=0.4 side="right"
-    para @[243,271) [base] role="caption"
+    para @[243,271) [base] role="caption" slot="caption"
       styled @[243,271) [BOLD] role="caption-label"
         text @[243,271) [BOLD] str="图 1："
       text @[243,271) [base] str="Right float near the bottom."

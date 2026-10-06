@@ -1,0 +1,26 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,65)
+    paragraph para unit=0 @[0,65)
+top pid=1 leaves=2
+  stack root gap=1/1 @[67,218)
+    stack figure anchor="fig-tab" @[67,218)
+      table table unit=0 anchor="tab-in" @[94,156)
+      paragraph caption unit=1 centered nohyphen @[157,209)
+top pid=2 leaves=2
+  stack root gap=1/1 @[220,363)
+    stack figure anchor="fig-kept" @[220,363)
+      table table unit=0 carry="fig-kept" @[264,308)
+      paragraph caption unit=1 centered nohyphen @[309,354)
+top pid=3 leaves=5
+  stack root gap=1/1 @[365,582)
+    stack figure anchor="fig-pair" @[365,582)
+      stack figure anchor="fig-a" @[393,470)
+        replaced image image unit=0 ragged keep-with-next carry="fig-a" @[393,470)
+        paragraph caption unit=1 centered nohyphen @[447,461)
+      stack figure anchor="fig-b" @[471,549)
+        replaced image image unit=2 ragged keep-with-next carry="fig-b" @[471,549)
+        paragraph caption unit=3 centered nohyphen @[525,540)
+      paragraph caption unit=4 centered nohyphen @[550,573)
+top pid=4 leaves=1
+  stack root gap=1/1 @[584,663)
+    paragraph para unit=0 @[584,663)

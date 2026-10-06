@@ -10,6 +10,7 @@
     "heading": { "shape": "by-level", "level-arg": "level", "depth": 6, "gap": "zero" },
     "table": {},
     "figure": {},
+    "subfigure": { "within": { "counter": "figure", "depth": 1, "sep": "" }, "pattern": "(a)" },
     "equation": {},
     "footnote": {},
     "cite": { "keyed": true }
@@ -50,7 +51,7 @@
       "sites": [
         {
           "where": "prepend",
-          "at": "first-para",
+          "at": "caption",
           "template": [
             { "node": "styled", "args": { "role": "caption-label" }, "kids": [{ "slot": "supplement" }, { "slot": "number" }, { "term": "caption-sep" }] }
           ]
@@ -58,12 +59,42 @@
       ],
       "ref": [{ "when": "extra", "kids": [{ "slot": "extra" }, " "], "else": [{ "slot": "supplement" }] }, { "slot": "number" }]
     },
+    "table-figure": {
+      "$comment": "A figure whose body is one table (D-S01: the figure constructor sets kind table, or kind: says so) numbers as a table.",
+      "select": [{ "node": "group", "role": "figure", "kind": "table" }],
+      "like": "figure",
+      "counter": "table",
+      "supplement": "table"
+    },
+    "subfigure": {
+      "$comment": "A figure inside a figure (D-S02): numbered within it, (a); referenced as 图 1(a).",
+      "select": [{ "node": "group", "role": "figure", "inside": "figure" }, { "node": "group", "role": "figure", "inside": "table-figure" }],
+      "like": "figure",
+      "counter": "subfigure",
+      "sites": [
+        {
+          "where": "prepend",
+          "at": "caption",
+          "template": [{ "node": "styled", "args": { "role": "caption-label" }, "kids": [{ "slot": "number" }, " "] }]
+        }
+      ]
+    },
+    "figure-table": {
+      "$comment": "A table inside a figure: unnumbered, and a label on it names the figure (refers-to enclosing; Typst's table in figure).",
+      "select": [{ "node": "table", "inside": "figure" }, { "node": "table", "inside": "table-figure" }, { "node": "table", "inside": "subfigure" }],
+      "like": "table",
+      "numbering": "never",
+      "refers-to": "enclosing"
+    },
     "equation": {
       "select": [{ "node": "mathblock" }],
       "counter": "equation",
       "numbering": "labelled",
       "supplement": "equation",
-      "sites": [{ "where": "arg", "arg": "name", "template": ["(", { "slot": "number" }, ")"] }],
+      "sites": [
+        { "where": "arg", "arg": "name", "template": ["(", { "slot": "number" }, ")"] },
+        { "where": "tag", "template": ["(", { "slot": "number" }, ")"] }
+      ],
       "ref": [{ "when": "extra", "kids": [{ "slot": "extra" }, " "], "else": [{ "slot": "supplement" }] }, "(", { "slot": "number" }, ")"]
     },
     "footnote": {

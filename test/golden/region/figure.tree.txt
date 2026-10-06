@@ -2,7 +2,7 @@ doc @[0,243) [base]
   heading @[0,9) [BOLDx1.60] level=1 label="top"
     text @[2,9) [BOLDx1.60] str="Regions"
   group @[17,112) [base] role="figure" label="fig1"
-    para @[41,103) [base] role="caption"
+    para @[41,103) [base] role="caption" slot="caption"
       styled @[41,103) [BOLD] role="caption-label"
         text @[41,103) [BOLD] str="图 1："
       text @[41,103) [base] str="A pretend figure body line continuing on a second source line."

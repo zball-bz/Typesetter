@@ -1,0 +1,26 @@
+vlist pid=0 y=0su h=3072su
+  box unit=0 para y=0su h=3072su
+vlist pid=1 y=4301su h=8601su
+  glue 1229su
+  box unit=0 table y=0su h=4300su
+  glue 1229su
+  box unit=1 caption y=5529su h=3072su
+vlist pid=2 y=14131su h=8601su
+  glue 1229su
+  box unit=0 table y=0su h=4300su
+  glue 1229su
+  box unit=1 caption y=5529su h=3072su
+vlist pid=3 y=23961su h=15924su
+  glue 1229su
+  box unit=0 image y=0su h=3200su
+  glue 1229su
+  box unit=1 caption y=4429su h=1536su
+  glue 1229su
+  box unit=2 image y=7194su h=3200su
+  glue 1229su
+  box unit=3 caption y=11623su h=1536su
+  glue 1229su
+  box unit=4 caption y=14388su h=1536su
+vlist pid=4 y=41114su h=3072su
+  glue 1229su
+  box unit=0 para y=0su h=3072su

@@ -1,0 +1,21 @@
+doc @[0,117)
+  para @[0,4)
+    splice @[0,4) expr="toc"
+  heading @[6,70) level=1 label="sec-a"
+    text @[8,18) str="Title with "
+    styled @[19,29) marker=*
+      text @[20,28) str="emphasis"
+    text @[29,30) str=", "
+    math @[31,36) display=0 src="x^2"
+      text @[32,35) str="x^2"
+    text @[36,44) str=", a note"
+    note @[44,59)
+      text @[46,58) str="A note body."
+    text @[60,63) str=" and "
+    ref @[64,70) target="sec-b"
+  para @[80,85)
+    text @[80,85) str="Text."
+  heading @[87,96) level=2 label="sec-b"
+    text @[90,96) str="Second"
+  para @[106,116)
+    text @[106,116) str="More text."

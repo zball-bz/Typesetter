@@ -177,6 +177,7 @@ void build(const ContentNode* n, const Interner& strs, DiagSink* diags, MathSour
   }
   bool prevFragment = false;
   for (const ContentNode* k : n->kids) {
+    if (slotOn(slotOf(k, strs), n->kind)) continue;  // a part (its tag), not its source
     if (k->kind == Kind::mathsrc) {
       if (prevFragment) {
         m.text += '\n';
@@ -230,9 +231,15 @@ void build(const ContentNode* n, const Interner& strs, DiagSink* diags, MathSour
 
 StrRef mathSourceRef(const ContentNode* n, const Interner& strs) {
   StrRef r = attrStr(n, ArgK::src);
-  if (!r) {
-    if (n->kids.size() != 1 || n->kids[0]->kind != Kind::mathsrc) return 0;
-    r = attrStr(n->kids[0], ArgK::src);
+  if (!r) {  // one clean fragment, its parts (a tag) aside
+    const ContentNode* only = nullptr;
+    for (const ContentNode* k : n->kids) {
+      if (slotOn(slotOf(k, strs), n->kind)) continue;
+      if (only || k->kind != Kind::mathsrc) return 0;
+      only = k;
+    }
+    if (!only) return 0;
+    r = attrStr(only, ArgK::src);
   }
   for (char c : strs.get(r))
     if ((u8)c < 0x07) return 0;

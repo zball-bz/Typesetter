@@ -548,9 +548,14 @@ export function createStd(host) {
         for (const k of ['alt', 'w', 'h', 'scale', 'float', 'side']) if (a[k] !== undefined) o[k] = a[k];
         kids.push(base.image(a.src, o));
       }
-      // its paragraphs are its caption (plan P2-08: role caption)
-      for (const b of call.body.blocks()) kids.push(b.kind === KIND.para ? withArgs(b, { role: 'caption' }) : b);
-      return ob.makeNode(KIND.group, { role: 'figure', label: a.label }, kids);
+      // its paragraphs are its caption (plan P2-08: role caption; plan
+      // P3-03: the caption part, where its caption site attaches)
+      for (const b of call.body.blocks()) kids.push(b.kind === KIND.para ? withArgs(b, { role: 'caption', slot: 'caption' }) : b);
+      // its kind (D-S01): a body of one table (its caption aside) numbers as
+      // a table, unless kind: says otherwise
+      const body = kids.filter((k) => !(k.kind === KIND.para && k.args.slot === 'caption'));
+      const kind = a.kind ?? (body.length === 1 && body[0].kind === KIND.table ? 'table' : undefined);
+      return ob.makeNode(KIND.group, { role: 'figure', label: a.label, kind }, kids);
     },
     toc: collect('toc'),
     glossary: collect('glossary'),

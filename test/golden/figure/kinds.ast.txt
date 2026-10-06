@@ -1,0 +1,38 @@
+doc @[0,664)
+  para @[0,65)
+    text @[0,65) str="Figures of tables, tables in figures and subfigures (plan P3-03)."
+  region @[67,218) name="figure"
+    region @[94,156) name="table"
+      para @[128,148)
+        text @[128,148) str="Name | Qty\nAlpha | 2"
+    para @[157,209)
+      text @[157,209) str="A figure whose body is one table numbers as a table."
+  region @[220,363) name="figure"
+    region @[264,308) name="table"
+      para @[281,300)
+        text @[281,300) str="Name | Qty\nBeta | 3"
+    para @[309,354)
+      text @[309,354) str="Its kind says figure: it numbers as a figure."
+  region @[365,582) name="figure"
+    region @[393,470) name="figure"
+      para @[447,461)
+        text @[447,461) str="The left view."
+    region @[471,549) name="figure"
+      para @[525,540)
+        text @[525,540) str="The right view."
+    para @[550,573)
+      text @[550,573) str="Two views of one thing."
+  para @[584,663)
+    text @[584,587) str="See "
+    ref @[588,596) target="fig-tab"
+    text @[597,601) str=" (and "
+    ref @[602,609) target="tab-in"
+    text @[609,622) str=", its table), "
+    ref @[623,632) target="fig-kept"
+    text @[632,633) str=", "
+    ref @[634,643) target="fig-pair"
+    text @[643,644) str=", "
+    ref @[645,651) target="fig-a"
+    text @[652,655) str=" and "
+    ref @[656,662) target="fig-b"
+    text @[662,663) str="."

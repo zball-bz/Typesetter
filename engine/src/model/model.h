@@ -34,6 +34,9 @@ struct ContentNode {
   // semantic page writes (the rules reach it as CSS) and lifting carries.
   // Everything else reads `style`.
   StyleId scope = 0;
+  // (plan P3-03; design T3 SemInfo.synthetic) made by a site: a title's
+  // clone (a TOC entry) skips it
+  bool synthetic = false;
 };
 
 // Typed attribute accessors (plan P0-06). Values that came through the ops

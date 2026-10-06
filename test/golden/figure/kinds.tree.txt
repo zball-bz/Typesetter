@@ -1,0 +1,72 @@
+doc @[0,663) [base]
+  para @[0,65) [base]
+    text @[0,65) [base] str="Figures of tables, tables in figures and subfigures (plan P3-03)."
+  group @[67,218) [base] role="figure" label="fig-tab" kind="table"
+    table @[94,156) [base] cols=2 label="tab-in"
+      trow @[94,156) [base]
+        tcell @[94,156) [base]
+          text @[128,132) [base] str="Name"
+        tcell @[94,156) [base]
+          text @[135,138) [base] str="Qty"
+      trow @[94,156) [base]
+        tcell @[94,156) [base]
+          text @[139,144) [base] str="Alpha"
+        tcell @[94,156) [base]
+          text @[147,148) [base] str="2"
+    para @[157,209) [base] role="caption" slot="caption"
+      styled @[157,209) [BOLD] role="caption-label"
+        text @[157,209) [BOLD] str="表 1："
+      text @[157,209) [base] str="A figure whose body is one table numbers as a table."
+  group @[220,363) [base] role="figure" label="fig-kept" kind="figure"
+    table @[264,308) [base] cols=2
+      trow @[264,308) [base]
+        tcell @[264,308) [base]
+          text @[281,285) [base] str="Name"
+        tcell @[264,308) [base]
+          text @[288,291) [base] str="Qty"
+      trow @[264,308) [base]
+        tcell @[264,308) [base]
+          text @[292,296) [base] str="Beta"
+        tcell @[264,308) [base]
+          text @[299,300) [base] str="3"
+    para @[309,354) [base] role="caption" slot="caption"
+      styled @[309,354) [BOLD] role="caption-label"
+        text @[309,354) [BOLD] str="图 1："
+      text @[309,354) [base] str="Its kind says figure: it numbers as a figure."
+  group @[365,582) [base] role="figure" label="fig-pair"
+    group @[393,470) [base] role="figure" label="fig-a"
+      image @[393,470) [base] src="a.png" w=100 h=50
+      para @[447,461) [base] role="caption" slot="caption"
+        styled @[447,461) [BOLD] role="caption-label"
+          text @[447,461) [BOLD] str="2(a) "
+        text @[447,461) [base] str="The left view."
+    group @[471,549) [base] role="figure" label="fig-b"
+      image @[471,549) [base] src="b.png" w=100 h=50
+      para @[525,540) [base] role="caption" slot="caption"
+        styled @[525,540) [BOLD] role="caption-label"
+          text @[525,540) [BOLD] str="2(b) "
+        text @[525,540) [base] str="The right view."
+    para @[550,573) [base] role="caption" slot="caption"
+      styled @[550,573) [BOLD] role="caption-label"
+        text @[550,573) [BOLD] str="图 2："
+      text @[550,573) [base] str="Two views of one thing."
+  para @[584,663) [base]
+    text @[584,587) [base] str="See " raw=0:0,4:3
+    ref @[588,596) [base] target="fig-tab" url="#tsr-fig-tab"
+      text @[588,596) [base] str="表 1"
+    text @[597,601) [base] str=" (and " raw=0:0,1:0,6:4
+    ref @[602,609) [base] target="tab-in" url="#tsr-tab-in"
+      text @[602,609) [base] str="表 1"
+    text @[609,622) [base] str=", its table), " raw=0:0,14:13
+    ref @[623,632) [base] target="fig-kept" url="#tsr-fig-kept"
+      text @[623,632) [base] str="图 1"
+    text @[632,633) [base] str=", " raw=0:0,2:1
+    ref @[634,643) [base] target="fig-pair" url="#tsr-fig-pair"
+      text @[634,643) [base] str="图 2"
+    text @[643,644) [base] str=", " raw=0:0,2:1
+    ref @[645,651) [base] target="fig-a" url="#tsr-fig-a"
+      text @[645,651) [base] str="图 2(a)"
+    text @[652,655) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[656,662) [base] target="fig-b" url="#tsr-fig-b"
+      text @[656,662) [base] str="图 2(b)"
+    text @[662,663) [base] str="."

@@ -270,7 +270,8 @@
   "sidecarFrac": 71,
   "contIndent": 72,
   "features": 73,
-  "punct": 74
+  "punct": 74,
+  "kind": 75
  },
  "attrs": {
   "para.label": 9,
@@ -351,6 +352,7 @@
   "group.role": 6,
   "group.label": 6,
   "group.name": 6,
+  "group.kind": 13,
   "group.slot": 9,
   "group.syn": 9,
   "group.copy": 9,
@@ -731,6 +733,7 @@
  "slots": {
   "margin": 1,
   "extra": 2,
-  "tag": 3
+  "tag": 3,
+  "caption": 4
  }
 }

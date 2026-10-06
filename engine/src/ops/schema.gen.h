@@ -6,9 +6,9 @@ namespace tsr {
 
 constexpr std::uint8_t OPS_VERSION = 13;
 constexpr std::uint8_t OPS_MIN_COMPAT = 11;
-constexpr const char* SCHEMA_HASH = "42836f3b";
+constexpr const char* SCHEMA_HASH = "8232f74a";
 constexpr std::uint16_t KIND_COUNT = 38;
-constexpr std::uint16_t ARGK_COUNT = 75;
+constexpr std::uint16_t ARGK_COUNT = 76;
 
 enum class Level : std::uint8_t { Block, Inline, Adaptive, Transparent, Trivia };
 enum class Body : std::uint8_t { None, Inline, Blocks, Items, Code, Position, Rows, Cells, Data, Text };
@@ -46,7 +46,7 @@ extern const DeclInfo kDecls[DECL_COUNT];  // indexed by id (0: none)
 // a slot (plan P2-16; schema "slots"): a value of the universal slot
 // attribute a kind gives a meaning; its child is a part, exempt from the
 // parent's body model, its own kids at the slot's model
-enum class SlotId : std::uint8_t { None, Margin, Extra, Tag };
+enum class SlotId : std::uint8_t { None, Margin, Extra, Tag, Caption };
 struct SlotInfo {
   const char* name;
   Body model;
@@ -54,7 +54,7 @@ struct SlotInfo {
   const std::uint16_t* kinds;  // else on these
   std::uint8_t nKinds;
 };
-constexpr std::uint8_t SLOT_COUNT = 4;
+constexpr std::uint8_t SLOT_COUNT = 5;
 extern const SlotInfo kSlots[SLOT_COUNT];  // indexed by SlotId
 
 struct KindInfo {

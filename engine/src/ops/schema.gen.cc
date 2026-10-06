@@ -97,6 +97,7 @@ const AttrSpec kA_group[] = {
     {6, "role", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {0, "label", Dom::Label, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
     {9, "name", Dom::Str, 0, 0, nullptr, nullptr, 0, false, false, 0, 6, 0, false},
+    {75, "kind", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 13, 0, false},
     {31, "slot", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {32, "syn", Dom::Ident, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 0, false},
     {33, "copy", Dom::Text, 0, 0, nullptr, nullptr, 0, false, false, 0, 9, 8, false},
@@ -495,6 +496,7 @@ const AttrSpec kA_fill[] = {
     {55, "attach", Dom::Enum, 0, 0, kM_fill_attach, nullptr, 3, false, false, 0, 11, 0, false}};
 const std::uint16_t kS_margin[] = {6};
 const std::uint16_t kS_extra[] = {21};
+const std::uint16_t kS_caption[] = {8};
 }  // namespace
 
 const KindInfo kKinds[KIND_COUNT] = {
@@ -506,7 +508,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"quote", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_quote, 9},
     {"codeblock", Level::Block, Body::Code, InlineShape::Unsupported, 6, kA_codeblock, 18},
     {"rule", Level::Block, Body::None, InlineShape::Unsupported, 6, kA_rule, 9},
-    {"group", Level::Adaptive, Body::Position, InlineShape::Container, 6, kA_group, 10},
+    {"group", Level::Adaptive, Body::Position, InlineShape::Container, 6, kA_group, 11},
     {"table", Level::Block, Body::Rows, InlineShape::Unsupported, 6, kA_table, 11},
     {"trow", Level::Block, Body::Cells, InlineShape::Unsupported, 6, kA_trow, 9},
     {"tcell", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_tcell, 9},
@@ -555,6 +557,7 @@ const SlotInfo kSlots[SLOT_COUNT] = {
     {nullptr, Body::None, false, nullptr, 0},
     {"margin", Body::Data, false, kS_margin, 1},
     {"extra", Body::Inline, false, kS_extra, 1},
-    {"tag", Body::Inline, true, nullptr, 0}};
+    {"tag", Body::Inline, true, nullptr, 0},
+    {"caption", Body::Inline, false, kS_caption, 1}};
 
 }  // namespace tsr

@@ -1,0 +1,24 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:78.391px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="4" data-join="space" style="top:0px;left:24px;width:276px;word-spacing:1.312px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-sec-a" data-s="0">1 Title with </a><a class="tsr-r tsr-b" href="#tsr-sec-a" data-s="0">emphasis</a><a class="tsr-r" href="#tsr-sec-a" data-s="0">, </a><a class="tsr-r" href="#tsr-sec-a"><span class="tsr-math" data-syn="math" data-src="$x^2$" data-s="0" data-e="4" style="width:14.812px;height:15.297px;vertical-align:-0.188px"><span class="tsr-mg" style="left:0px;top:2.309px;font-size:16px;line-height:16px">x</span><span class="tsr-mg" style="left:8.422px;top:-1.054px;font-size:11.2px;line-height:11.2px">2</span></span></a><a class="tsr-r" href="#tsr-sec-a" data-s="0">, a note and</a></div>
+<div class="tsr-line" data-s="0" data-e="4" style="top:24px;left:24px;width:276px"><a class="tsr-r" href="#tsr-sec-a" data-s="0">§1.1</a></div>
+<div class="tsr-line" data-s="0" data-e="4" style="top:54.391px;left:48px;width:252px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><a class="tsr-r" href="#tsr-sec-b" data-s="0">1.1 Second</a></div>
+</div>
+<div class="tsr-para" data-pid="1" data-s0="8" style="position:relative;height:54.906px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-sec-a" data-s="0" data-e="36" data-join="space" data-ragged="1" style="top:0px;left:0px;width:300px;word-spacing:-1.322px"><span class="tsr-r tsr-b" data-s="0" style="font-size:25.6px">Title with emphasis, </span><span class="tsr-math" data-syn="math" data-src="$x^2$" data-s="23" data-e="28" style="width:23.688px;height:24.484px;vertical-align:-0.312px"><span class="tsr-mg" style="left:0px;top:3.692px;font-size:25.6px;line-height:25.6px">x</span><span class="tsr-mg" style="left:13.469px;top:-1.68px;font-size:17.92px;line-height:17.92px">2</span></span><span class="tsr-r tsr-b" data-s="28" style="font-size:25.6px">, a</span></div>
+<div class="tsr-line" data-s="28" data-e="62" data-ragged="1" style="top:29.297px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="28" style="font-size:25.6px">note</span><a class="tsr-r tsr-b tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="ref" style="font-size:17.92px">1</a><span class="tsr-r tsr-b" data-s="52" style="font-size:25.6px"> and </span><a class="tsr-r tsr-b" href="#tsr-sec-b" data-syn="ref" style="font-size:25.6px">§1.1</a></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="80" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="5" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Text.</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="90" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" id="tsr-sec-b" data-s="0" data-e="6" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">Second</span></div>
+</div>
+<div class="tsr-para" data-pid="4" data-s0="106" style="position:relative;height:24px;margin-bottom:19.2px">
+<div class="tsr-line" data-s="0" data-e="10" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">More text.</span></div>
+</div>
+<div class="tsr-para" data-pid="5" data-s0="44" style="position:relative;height:67.203px">
+<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="15" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="2" style="font-size:13.6px">A note body. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="ref" style="font-size:13.6px">↩</a></div>
+</div>
+</div>

@@ -1,0 +1,10 @@
+inline pid=0 "x^2"
+  run [0,3)
+    attach [0,3)
+      base: sym U+0078 ord [0,1)
+      sup: num "2" [2,3)
+inline pid=1 "x^2"
+  run [0,3)
+    attach [0,3)
+      base: sym U+0078 ord [0,1)
+      sup: num "2" [2,3)

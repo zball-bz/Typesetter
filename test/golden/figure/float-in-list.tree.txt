@@ -10,7 +10,7 @@ doc @[0,449) [base]
         text @[95,130) [base] str="Second item holds a floated figure."
       group @[134,276) [base] role="figure" label="fig-icon"
         image @[134,276) [base] src="photos/icon.png" alt="icon" w=200 h=200 scale=0.4 side="left"
-        para @[244,265) [base] role="caption"
+        para @[244,265) [base] role="caption" slot="caption"
           styled @[244,265) [BOLD] role="caption-label"
             text @[244,265) [BOLD] str="图 1："
           text @[244,265) [base] str="A small floated icon."

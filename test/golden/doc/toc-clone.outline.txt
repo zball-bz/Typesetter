@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"Title with emphasis, x^2, a noteA note body. and @sec-b","label":"sec-a","span":[6,70]},{"level":2,"title":"Second","label":"sec-b","span":[87,96]}],"regions":[],"fences":[],"labels":[{"id":"sec-a","rule":"heading","span":[71,78]},{"id":"sec-b","rule":"heading","span":[97,104]}],"diagnostics":[]}

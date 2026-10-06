@@ -40,7 +40,7 @@
     "parIndent": 57, "parAlign": 58, "parHyphenate": 59, "blockGap": 60, "blockIndent": 61,
     "keepWithNext": 62, "listMarker": 63, "matchKind": 64, "matchRole": 65, "matchClass": 66, "matchLang": 67,
     "matchDepth": 68, "matchWhere": 69, "snapKerning": 70, "sidecarFrac": 71, "contIndent": 72, "features": 73,
-    "punct": 74
+    "punct": 74, "kind": 75
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -67,7 +67,8 @@
     "group": {"id": 8, "level": "adaptive", "inline": "container", "body": "position", "since": 6, "ctor": {}, "attrs": {
       "role": {"dom": "ident"},
       "label": {"dom": "label"},
-      "name": {"dom": "str"}}},
+      "name": {"dom": "str"},
+      "kind": {"dom": "ident", "since": 13}}},
     "table": {"id": 9, "level": "block", "inline": "unsupported", "body": "rows", "since": 6, "ctor": {"params": ["body"]}, "attrs": {
       "cols": {"dom": "int:1:64"},
       "align": {"dom": "token"},
@@ -200,7 +201,8 @@
     ],
     "margin": {"id": 1, "on": ["codeblock"], "model": "data", "doc": "a code block's sidecar lines: one seq per logical line (P2-13)"},
     "extra": {"id": 2, "on": ["ref"], "model": "inline", "doc": "a reference's bracket: its supplement word or a citation's locator (P2-09)"},
-    "tag": {"id": 3, "on": "block", "model": "inline", "doc": "a block's tag in the margin: an equation's number, a site's mark (P3-03, T6)"}
+    "tag": {"id": 3, "on": "block", "model": "inline", "doc": "a block's tag in the margin: an equation's number, a site's mark (P3-03, T6)"},
+    "caption": {"id": 4, "on": ["group"], "model": "inline", "doc": "a figure's caption paragraphs (P3-03): its caption site attaches there, the semantic page's figcaption holds them"}
   },
   "decls": {
     "$comment": [

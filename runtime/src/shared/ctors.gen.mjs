@@ -180,6 +180,7 @@ export const CTOR_SPECS = Object.freeze({
       "role",
       "label",
       "name",
+      "kind",
       "slot",
       "syn",
       "copy",

@@ -1,0 +1,8 @@
+instance heading 1 level=1 label=sec-a title="Title with emphasis, x^2, a noteA note body. and " @[6,70)
+instance footnote 1 label=fn-1 marker=fnref-1 @[44,59)
+instance heading 1.1 level=2 label=sec-b title="Second" @[87,96)
+label sec-a -> heading 1 @[6,70)
+label fn-1 -> footnote 1 @[44,59)
+label fnref-1 -> footnote 1 (marker) @[44,59)
+label sec-b -> heading 1.1 @[87,96)
+flow notes: fn-1
