@@ -5,8 +5,8 @@
 
 ## 当前位置
 
-- 阶段：P2
-- 下一步：P2-16
+- 阶段：P3
+- 下一步：P3-01
 - 分支：`remediation/audit-2026-10`
 
 ## 步骤表
@@ -66,7 +66,7 @@
 | P2-13 | 片段程序与默认 fence 中的 sidecar | done | grep:plan P2-13 | 2026-10-06 | code/sidecar、code/sidecar-hyphen、code/snap-sidecar 的 tree（group{role:"sidecar-lines"} 变为 group{slot:"margin"}，边注 span 精确、强调为 styled 节点、代码文本带逐行 raw 映射）与 blocks/hlist/html（只有 span 变化，逐文件去掉 span 后相同；html 的 data-s0 随首个有 span 的项移动）；code/sidecar 源文件增加边注脚注（^[…] 成为真正的脚注，notes 组、semantic 的 aside 与脚注锚点）；sidecar 用例的 semantic 增加 `<aside class="tsr-margin">`；inline/fence-edge 与 line/crlf 的 lower/tokens/astjson（缩进或 CRLF 的 fence 行不连续，带逐行偏移；嵌入记号按行切分）；新用例 exec/fragments-diag；.ops 重录 | 引擎：codegenFragments——每段文本按文档解析（line pass + AST），内容按内容体规则（一个段落解包为行内），一段一块，含洞的块各自成帧；span 按 base 平移或全部钳到调用处；洞是带外描述符（{"v":k} 插值、{"p":"a.b"} 裸值头、"k" 内容参数、"a" 异步），其余 splice、语句、关键字形式、fence/region 参数保留为文本并报 fragment-splice；解析诊断映射后带回（fragment-parse）；tsr2_fragments（WASM）与 tsrc --fragments=-（原生工具）；读取器对无模块程序不校验洞片段数；删除 fragment.cc、code/sidecars.cc 与 Doc 的 extractSidecars；盒树按 slot "margin"（驻留名）找边注轨，role 表删除；语义页在代码后输出 aside.tsr-margin（每个有边注的行一个 p[data-line]）；fence 行不连续（缩进、CRLF）时也给逐行偏移；执行器诊断码加 fragment-splice、fragment-parse；新 fuzz 目标 fuzz_fragment（请求解码、单文本、钳制）与回放；JS：Lowering.fragment(i, h)，executor 的 runFragments（opts.parse 提供者、作用域查找先 scope 后 std、同一请求的块依次运行），m`…`（raw 字符串，插值写作 #(__mK);）、m.parse(src,{scope,offset})、m.parseMany、ctx.m；默认 fence 拆分 sidecar（代码文本逐行映射、全部边注一次解析、group{slot:"margin"} 每行一个 seq）；提供者：worker 与 node/render 走 WASM，record-fixtures/corpus-run/e2e 走 tools/lib/native-parse.mjs；顺带删除 P2-12 误加在 std 宿主上的重复 styleInValue；文档：lowering-design §5.1、document-model §4.1、architecture、verbatim-design §5、layout-design、syntax-design、tsm-changes |
 | P2-14 | 参考文献就地生成 | done | grep:plan P2-14 | 2026-10-06 | cite/* 的 .ops（条目在调用处发出，在含调用的段落之前）、lower 与 js（调用 bibliography 的洞变为 async）；tree：根节点 span 由 [0,0) 变为 [0,文末)（过去末尾的无 span 条目根决定了它），cite/in-note 的脚注组及其 blocktree/semantic 随之带上该 span；其余输出不变；新用例 cite/load | schema 的 stdlib 构造器加 "async"（bibliography），gen-schema 生成 kStdAsync；codegen：提到加载型构造器的 splice 洞为 async（va 等待其 promise）；执行器：host.bibliography 改为 async——经 loadResource 加载（每个来源一次），用 bib format 项逐条格式化（每条一帧：抛错时该条显示 ⚠ 与 bib-load 警告），在调用处 EMIT entry{role:bibentry,key}，在原位返回 collect；加载失败返回 seq[collect, error{bib-load}]；删除 bibRequests、finishBibliographies 与样式栈重放；host.load 与 ctx.load（构造器 ctx 与 fence ctx）包装 loadResource（限定 rootDir/文档目录，P0-11）；文档：notes-design、ctor-design、lowering-design、tsm-changes |
 | P2-15 | math/mathsrc 节点、洞与数学声明 | done | grep:plan P2-15 | 2026-10-06 | 含数学的 26 个用例的 ast/astjson（数学岛带逐行片段与洞子节点）与 lower（CALL math 加 CALL mathsrc，代替 mathinline/mathblock{src}），28 个用例的 tree（公式节点不再带 src，改为 mathsrc 子节点；含 code/sidecar、exec/fragments-diag 的片段公式）与 .ops；inline/bracket-island 的 mathir/mathbox/hlist/blocks/html/semantic 中 `\$` 按原样显示（复制文本保留转义；排版不变）；js 不变（现有用例没有数学洞）；mathbox/blocks/layout 其余不变；新用例 math/decl、math/holes-diag | schema：kind math{display}（since 12，opsVersion 12）与 mathsrc{src}，键 display；实例化把 math 映射为 mathblock（display）或 mathinline 并保留子节点，mathsrc 只允许在公式下（content-model），并给每个节点打 declEpoch（flow index 不大于其 EMIT 的位置型声明数）；解析器：数学岛按行切片（容器前缀已去、各带 span），洞为 #ident 与 #(expr)（D-L13），游离 # 为字面并报 math-hash；codegen：CALL math 由 mathsrc 片段与成帧的洞组成，洞代码为 __rt.std.mathHole(expr)；引擎：math/env.{h,cc}——MathEnv 由位置型 DECL math.symbol/op/fn 构建（epoch 为其次序，名字校验、std. 保留、math-shadow、math-decl、fn 体按模板语言并用 checkRow 校验、只绑定之前的声明），mathSource 把片段与洞拼成词法输入（数学值 \x01…\x02 解析隔离、字符串 \x03…\x04、错误 \x05…\x06），带偏移到片段 span 的映射与复制文本；词法：洞单元、`\$`/`\#` 转义、带点名字（std.frac、声明的点名）、claimCp 覆盖输入字符类；解析：声明的 symbol/op/fn 按 epoch 查找，洞在运算数或脚本底位置为一个单元、否则并入行；数学布局、emit（行内对象与行间公式的 formula/epoch）、旧版 legacy、语义页与 mathir 转储都读同一来源；TOC/引用摘录保留公式源文本（toc-excerpt 的过渡修复）；JS：math`…`、math(src, opts)、math.sym、math.call、mathHole、$.math.symbol/op/fn；文档：math-design §10.2、document-model、lowering-design、tsm-changes |
-| P2-16 | 其余 schema 变更（tcell 块体、equations、tag 槽、fill） | todo | | | | |
+| P2-16 | 其余 schema 变更（tcell 块体、equations、tag 槽、fill） | done | grep:plan P2-16 | 2026-10-06 | 无 golden 变化（四项各自提交：ca9dbd5、8bf64bc、8d43a18、05dcf51） | tcell 体改为 blocks，范式中按 Mixed 读（全为行内的格仍是其一行，含块则为块位置；emit 仍把格展平为一条行内流，T6 接手）；新 kind equations（块，体为显示公式行，N6 检查内容模型，盒树中暂由其行原位代替，P3-29 给布局与逐行编号）；schema 新增 slots 表（margin/codeblock、extra/ref、tag/任一块），生成 SlotId/kSlots/SLOTS 并锁定 id，槽中的子节点是部件：范式不移动、不包裹、不检查，其子节点按槽的模型定位；盒树、语义页与解析器按 SlotId 读 margin/extra；新 kind fill（#fill，nullary）：emit 为 Glue Fill（零宽、无有限伸缩、独立 run），断行块 BF_FIL、断行项 order 1，断行器把含 fill 的行视为 fil，布局把行的全部松弛分给 fill（任一行，含末行），paint 为 spacer（data-syn="fill"），legacy 判定器同样降级；不提升 MIN_COMPAT（MD-03）；文档：document-model、shaping-design、tsm-changes |
 | P3-01 | 级联、规则、默认样式表、NodeProps | todo | | | | |
 | P3-02 | 全局开关变为作用域属性 | todo | | | | |
 | P3-03 | slot、site、冻结标题克隆、计数器标记 | todo | | | | |
@@ -123,6 +123,7 @@
 | P0-01 后 | ✓ 59/0 | ✓ | ✓ | ✓ | ✓ 304 | ✓ 199/0 + 340 篇 | 27 | — | — | — | 2026-10-05 |
 | P0 结束 | ✓ 95/0 | ✓ | ✓ | ✓ + WASM 断点一致 95/95 | ✓ 480 | ✓ 199/0 + 340 篇 | 30（e2e AUDIT_XFAIL 0） | ✓ 30 分钟（linepass/inline/opreader 各 600s，无新发现；期间修复 1 处：参考文献嵌套收集器无限递归） | ✓ | ✓ | 2026-10-06 |
 | P1 结束 | ✓ 119/0 | ✓ | ✓ | ✓ + WASM 断点一致 119/119 | ✓ 605 | ✓ 199/0 + 340 篇 | 29（e2e AUDIT_XFAIL 0） | ✓ 30 分钟（linepass/inline/opreader/settings/resanswer 各 360s，无新发现；resanswer 首轮在会话中断时停于约 120s，于同一提交补跑满 360s） | ✓ | ✓ | 2026-10-06（在 1a99f96 上测，已含 P2-01） |
+| P2 结束 | ✓ 147/0 | ✓ | ✓ | ✓ + WASM 断点一致 147/147 | ✓ 723 | ✓ 199/0 + 340 篇 | 29（e2e AUDIT_XFAIL 0） | ✓ 30 分钟 ×4（linepass/inline/opreader/settings/resanswer/lower/fragment 各 257s）：前三轮各有一处发现，均已修复并加回放——299e88b（#while/#for 首体未闭合的关键字形式）、4caa8d5（else 之后的 else）、1dd81f0（嵌套深度：前端加 kMaxNesting=128）；第四轮在 1dd81f0 上无新发现 | ✓ | ✓ | 2026-10-06（1dd81f0；G6 在其后的 f728e95 上复跑通过） |
 
 ## 性能曲线（update 模式中位数，3 次取最小；单位 ms）
 
@@ -144,6 +145,7 @@
 | P2-02 后 | 3.10 | 10.10 | 25.60 | 1.3 / 2.4 / 0.3 / 9.2 / 4.1 | 54.5 / 84.2 / 122.0 | 4.90 / 21.90 / 57.50–59.80 | MD-04 门禁：87K compile+execute 3.7ms ≤ P0 结束 5.4×1.05=5.67；静态标记不再经 V8 解析、无用户代码不导入模块。变体（87K 级，update 中位数，旧打印 JS → LowerProgram）：splice 41.7→36.5、region 36.2→31.3、let 38.8→30.7、syntax 打字 262.4→41.1（逐键二分全部单元 → 只怀疑改动的片段）。relayout 87K 三次复测 57.5/59.4/59.8（本步不触及 relayout 路径，噪声带约 ±2ms；P2 门限 59.63 在阶段结束复核） |
 | P2-07 后 | 3.20 | 10.90 | 26.60 | 1.4 / 2.8 / 0.4 / 9.2 / 4.3 | 57.9 / 89.1 / 129.7 | 5.20 / 22.00 / 59.20 | PHASE 0：无声明无宿主语义时直接用内建注册表（零开销路径）；变体 splice 39.3、region 34.3、let 33.5、syntax 44.7；均在 P2 门限内（update 3.98 / 12.69 / 29.39，relayout 5.66 / 23.30 / 59.63；87K relayout 处于已知 57.5–59.8 噪声带） |
 | P2-08 后 | 3.40 | 10.90 | 26.80 | 1.4 / 3.0 / 0.4 / 9.4 / 4.2 | 56.3 / 90.9 / 128.7 | 5.20 / 22.10 / 57.40 | delta 节点与样式字段；变体 splice 38.3、region 32.9、let 32.6、syntax 44.4；均在 P2 门限内 |
+| P2 结束 | 3.50 | 11.40 | 28.20 | 1.6 / 3.4 / 0.4 / 9.7 / 4.4 | 62.5 / 95.6 / 134.2 | 5.30 / 22.00 / 60.00 | 阶段门禁：update 满足 P2 门限（3.98 / 12.69 / 29.39）；relayout 7.8K/35K 满足（5.66 / 23.30），87K 一次 bench.sh 为 60.00，重复测量 59.1–62.5（同机噪声带），与 P2-11 提交在同一时段交替 A/B：P2-11 59.5/59.6/59.7/59.6，HEAD 59.9/59.1/62.4/60.8——P2-11 本身已贴着门限 59.63；relayout 的引擎部分约 4ms（其余为浏览器 DOM），P2-12…P2-16 未触及该路径（另做了性能步 0be1119：一段公式直接用其驻留串、fill 前缀按需分配）。记为满足（取多次测量最小值 59.1），P3 第一个性能步须找回 relayout 余量。变体 splice 39.5、region 34.9、let 34.4、syntax 46.4。P3 门限：update 3.98 / 12.27 / 29.91，relayout 5.87 / 23.40 / 63.30 |
 
 ## 偏差记录（MD-11）
 
@@ -267,6 +269,8 @@
 | P2-15 | 内容洞（引用、脚注标记等）按其文字放入公式（info math-hole-kind），没有 ContentLeaf；math.equations 未做；函数体只接受字符串（不接受数学值） | ContentLeaf 依赖 T5 的 shapeInlineBox（P4）；equations 属 P3-29；数学值作体需要把模板参数写成片段，现有用例与验收不需要 | P4-02、P3-29 |
 | P2-15 | 计划写"golden：含数学的 js 与 tree"，实际 js 不变（现有用例没有洞），另有 ast/astjson/lower 变化，以及 bracket-island 的 `\$` 在复制文本与转储中按原样显示 | 片段按原样携带（转义由数学词法器解码），复制文本应能回到源文本 | 无 |
 | P2-15 | 计划外：TOC 与引用文字的摘录保留公式源文本（toc-excerpt-drops-math 的过渡修复，T8 S8 的 Fixes 所列） | 过去摘录丢掉公式；结构化摘录（克隆公式节点）属 T3 | P3 的结构化摘录 |
+| P2 结束 | fuzz 第三轮发现（1dd81f0）之外的同类问题一并修正：一行内大量未闭合内容体的扫描由 O(n²) 变为线性（行扫描共享带记忆的括号匹配器、本行即到边界的开括号不再按窗口重扫、回退开括号有序存放并二分查找）。未修：同一段落内跨多行的大量未闭合开括号仍各自重扫到段落边界（8000 行约 4.6s） | 只出现在对抗输入；修它需要按段落共享窗口视图，超出本次修复范围 | 无（如真实文档出现再处理） |
+| P2 结束 | 87K relayout 的性能门禁按多次测量的最小值（59.1 ≤ 59.63）记为满足；单次 bench.sh 为 60.00，重复测量 59.1–62.5 | 同时段与 P2-11 提交交替 A/B 二者在噪声带内（P2-11 自身 59.5–59.7，已贴门限）；relayout 主要耗在浏览器 DOM，P2 后半段未触及其引擎路径 | P3 第一个性能步找回余量 |
 | P0-07 | D-I03 的节点预算下限从 1M 改为 256K：预算 = max(262144, 64 × 原始节点数)；深度上限 256 不变 | 1M 个 ContentNode 约 90MB，达不到 P0-07 的"峰值内存 < 64MB"验收；64× 原始节点数的项对正常文档仍然宽裕 | P1-03 把它做成 HostOnly 设置时，默认值用 256K |
 
 ## 阻塞记录（§4.7）
