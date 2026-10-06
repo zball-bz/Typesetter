@@ -2,7 +2,8 @@
 // runs once, right after instantiation, driven by the schema's level classes
 // and body models. A node's kids sit at a position its body model gives:
 // Blocks (doc, item, quote; a block-level group), Inline (para, heading,
-// cell, link, term, entry; an inline group; a note's inline body), or Opaque (code and
+// link, term, entry; an inline group; an inline note or cell body — plan
+// P2-16 made a cell's body blocks, mixed like a note's), or Opaque (code and
 // verbatim text, data, none) — a `position` body (group, styled, seq,
 // when, each) takes the node's own position. Effective levels: Transparent
 // kinds (styled, seq) take their kids' (block when one of them is), Adaptive
@@ -62,11 +63,11 @@ Level effLevel(const ContentNode* n) {
   return Level::Inline;
 }
 
-// the position a node's kids sit at. A note's body is mixed (design T2:
-// Mixed): an inline body (^[…]) — the flow that places it makes its
-// paragraph — or blocks
+// the position a node's kids sit at. A note's body and a table cell's
+// (plan P2-16: blocks) are mixed (design T2: Mixed): inline content — the
+// flow that places it makes its paragraph, a cell is its line — or blocks
 Pos kidsPos(const ContentNode* n, Pos own) {
-  if (n->kind == Kind::note) {
+  if (n->kind == Kind::note || n->kind == Kind::tcell) {
     for (const ContentNode* k : n->kids)
       if (effLevel(k) == Level::Block) return Pos::Blocks;
     return Pos::Inline;

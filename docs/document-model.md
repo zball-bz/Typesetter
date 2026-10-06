@@ -46,7 +46,7 @@ Node = `{ kind: u16, span, style: StyleId, args, children }`. `style` is resolve
 | `group` | block | `role?`, `label?` | blocks | M2 |
 | `table` | block | `cols`, `align?`, `label?` | `trow*` | M6 |
 | `trow` | block | — | `tcell*` | M6 |
-| `tcell` | block | — | blocks | M6 |
+| `tcell` | block | — | blocks (schema since plan P2-16; mixed in the normal form: all-inline content is the cell's line, a block makes it blocks — emit flattens a cell to one stream until T6) | M6 |
 | `term` | block | `name`, `label?` | blocks (description) | M4 |
 | `collect` | block | `what` (a collector's name), `cited?` (P2-07) | — (expanded by resolver) | M4 |
 | `mathblock` | block | `src`, `label?`, `name?` (resolver: "(n)") | — (MathBox at emit) | M7 ✓ |

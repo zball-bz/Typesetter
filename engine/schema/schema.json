@@ -65,7 +65,7 @@
       "align": {"dom": "token"},
       "label": {"dom": "label"}}},
     "trow": {"id": 10, "level": "block", "inline": "unsupported", "body": "cells", "since": 6, "ctor": {"name": "row"}, "attrs": {}},
-    "tcell": {"id": 11, "level": "block", "inline": "unsupported", "body": "inline", "since": 6, "ctor": {"name": "cell"}, "attrs": {}},
+    "tcell": {"id": 11, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "ctor": {"name": "cell"}, "attrs": {}},
     "term": {"id": 12, "level": "adaptive", "inline": "unsupported", "body": "inline", "since": 6, "ctor": {"params": ["projected:name"]}, "attrs": {
       "name": {"dom": "str"}}},
     "collect": {"id": 13, "level": "block", "inline": "unsupported", "body": "data", "since": 6, "ctor": {}, "attrs": {

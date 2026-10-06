@@ -460,7 +460,7 @@ const KindInfo kKinds[KIND_COUNT] = {
     {"group", Level::Adaptive, Body::Position, InlineShape::Container, 6, kA_group, 10},
     {"table", Level::Block, Body::Rows, InlineShape::Unsupported, 6, kA_table, 11},
     {"trow", Level::Block, Body::Cells, InlineShape::Unsupported, 6, kA_trow, 9},
-    {"tcell", Level::Block, Body::Inline, InlineShape::Unsupported, 6, kA_tcell, 9},
+    {"tcell", Level::Block, Body::Blocks, InlineShape::Unsupported, 6, kA_tcell, 9},
     {"term", Level::Adaptive, Body::Inline, InlineShape::Unsupported, 6, kA_term, 10},
     {"collect", Level::Block, Body::Data, InlineShape::Unsupported, 6, kA_collect, 12},
     {"mathblock", Level::Block, Body::None, InlineShape::Unsupported, 6, kA_mathblock, 11},
