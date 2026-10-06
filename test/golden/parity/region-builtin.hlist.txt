@@ -1,0 +1,48 @@
+top pid=0 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "Equal" w=2561su r0 @[0,5)
+  glue word w=257su x=1 st=257su kern="l f" src r0 @[5,6)
+  box Alpha "foot" w=2049su r0 @[6,10)
+  disc pen=0.7 w=0su pre="-" 513su kern="ti" r0 @[10,10)
+  box Alpha "ing" w=1537su r0 @[10,13)
+  glue word w=257su x=1 st=257su kern="g (" src r0 @[13,14)
+  box OpenN "(plan" w=2561su r0 @[14,19)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[19,20)
+  box Alpha "P5-02):" w=3585su r0 @[20,27)
+  glue word w=257su x=1 st=257su kern=": a" src r0 @[27,28)
+  box Alpha "a" w=513su r0 @[28,29)
+  glue word w=257su x=1 st=257su kern="a r" src r0 @[29,30)
+  box Alpha "re" w=1025su r0 @[30,32)
+  disc pen=0.7 w=0su pre="-" 513su kern="eg" r0 @[32,32)
+  box Alpha "gion" w=2049su r0 @[32,36)
+  glue word w=257su x=1 st=257su kern="n o" src r0 @[36,37)
+  box Alpha "of" w=1025su r0 @[37,39)
+  glue word w=257su x=1 st=257su kern="f t" src r0 @[39,40)
+  box Alpha "the" w=1537su r0 @[40,43)
+  glue word w=257su x=1 st=257su kern="e d" src r0 @[43,44)
+  box Alpha "de" w=1025su r0 @[44,46)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[46,46)
+  box Alpha "fault" w=2561su r0 @[46,51)
+  glue word w=257su x=1 st=257su kern="t r" src r0 @[51,52)
+  box Alpha "row." w=2049su r0 @[52,56)
+  run r0 plain
+top pid=1 units=2
+ unit text indent=0su
+  ju=257su
+  box Alpha "Its" w=1537su r0 @[65,68)
+  glue word w=257su x=1 st=257su kern="s f" src r0 @[68,69)
+  box Alpha "first" w=2561su r0 @[69,74)
+  glue word w=257su x=1 st=257su kern="t p" src r0 @[74,75)
+  box Alpha "para" w=2049su r0 @[75,79)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[79,79)
+  box Alpha "graph." w=3073su r0 @[79,85)
+  run r0 plain
+ unit text indent=0su
+  ju=257su
+  box Alpha "Its" w=1537su r0 @[87,90)
+  glue word w=257su x=1 st=257su kern="s s" src r0 @[90,91)
+  box Alpha "sec" w=1537su r0 @[91,94)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r0 @[94,94)
+  box Alpha "ond." w=2049su r0 @[94,98)
+  run r0 plain

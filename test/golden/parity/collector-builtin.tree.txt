@@ -1,0 +1,27 @@
+doc @[0,162) [base]
+  para @[0,57) [base]
+    text @[0,57) [base] str="Equal footing (plan P5-02): the built-in list of figures."
+  group @[59,105) [base] role="figure" label="f1"
+    para @[81,96) [base] role="caption" slot="caption"
+      styled @[81,96) [BOLD] role="caption-label"
+        text @[81,96) [BOLD] str="图 1："
+      text @[81,96) [base] str="A first figure."
+  group @[107,154) [base] role="figure" label="f2"
+    para @[129,145) [base] role="caption" slot="caption"
+      styled @[129,145) [BOLD] role="caption-label"
+        text @[129,145) [BOLD] str="图 2："
+      text @[129,145) [base] str="A second figure."
+  group @[156,162) [base] role="lof"
+    list @[156,162) [base] ordered=false
+      item @[156,162) [base]
+        para @[156,162) [base]
+          link @[156,162) [base] target="f1"
+            text @[156,162) [base] str="图 1"
+          text @[156,162) [base] str="："
+          text @[156,162) [base] str="A first figure."
+      item @[156,162) [base]
+        para @[156,162) [base]
+          link @[156,162) [base] target="f2"
+            text @[156,162) [base] str="图 2"
+          text @[156,162) [base] str="："
+          text @[156,162) [base] str="A second figure."

@@ -662,5 +662,175 @@ inline bool propAlias(Kind k, ArgK a, ArgK& to) {
   }
   return false;
 }
+// (plan P5-02; P2: dispatch on generated ids) the property rows, in schema
+// order; propOf: the row an attribute patches (PropId::None: none)
+enum class PropId : u8 {
+  textWeight,
+  textItalic,
+  textDecoration,
+  textFontRole,
+  textBaseline,
+  codeHang,
+  textSizeMul,
+  textFont,
+  textLang,
+  textColor,
+  textSize,
+  parIndent,
+  parAlign,
+  parHyphenate,
+  parSingleLine,
+  blockGap,
+  blockIndent,
+  blockKeepWithNext,
+  listMarker,
+  codeblockSnapKerning,
+  codeblockSidecarFrac,
+  codeblockContIndent,
+  codeblockOverlays,
+  keep,
+  spaceBefore,
+  spaceAfter,
+  breakBefore,
+  breakAfter,
+  parHang,
+  parHangAfter,
+  boxPadding,
+  boxBorder,
+  boxBorderColor,
+  boxBackground,
+  media,
+  beside,
+  breakerTolerance,
+  breakerEmergencyStretch,
+  placeFloat,
+  placeWidth,
+  placeGap,
+  textFeatures,
+  textPunct,
+  textSpace,
+  textWrap,
+  textAutospace,
+  textHyphens,
+  textOverflowWrap,
+  textClasses,
+  engineScript,
+  None
+};
+inline constexpr PropId kPropOfArg[] = {  // by ArgK id
+    PropId::None,  // label
+    PropId::None,  // level
+    PropId::None,  // ordered
+    PropId::None,  // start
+    PropId::textLang,  // lang
+    PropId::None,  // body
+    PropId::None,  // role
+    PropId::None,  // cols
+    PropId::None,  // align
+    PropId::None,  // name
+    PropId::None,  // what
+    PropId::None,  // src
+    PropId::None,  // message
+    PropId::None,  // code
+    PropId::None,  // url
+    PropId::None,  // target
+    PropId::None,  // form
+    PropId::None,  // html
+    PropId::None,  // w
+    PropId::None,  // h
+    PropId::None,  // bits
+    PropId::textFont,  // font
+    PropId::textColor,  // color
+    PropId::textSize,  // sizePx
+    PropId::None,  // wrap
+    PropId::None,  // lineNo
+    PropId::None,  // hl
+    PropId::None,  // sidecar
+    PropId::None,  // scale
+    PropId::None,  // alt
+    PropId::None,  // side
+    PropId::None,  // slot
+    PropId::None,  // syn
+    PropId::None,  // copy
+    PropId::None,  // class
+    PropId::None,  // ext
+    PropId::None,  // of
+    PropId::None,  // counter
+    PropId::None,  // set
+    PropId::None,  // step
+    PropId::None,  // add
+    PropId::None,  // numbering
+    PropId::None,  // supplement
+    PropId::None,  // key
+    PropId::None,  // sep
+    PropId::None,  // or
+    PropId::None,  // cited
+    PropId::textWeight,  // weight
+    PropId::textItalic,  // italic
+    PropId::textDecoration,  // decoration
+    PropId::textFontRole,  // fontRole
+    PropId::textBaseline,  // baseline
+    PropId::textSizeMul,  // size
+    PropId::codeHang,  // hang
+    PropId::None,  // style
+    PropId::None,  // attach
+    PropId::None,  // display
+    PropId::parIndent,  // parIndent
+    PropId::parAlign,  // parAlign
+    PropId::parHyphenate,  // parHyphenate
+    PropId::blockGap,  // blockGap
+    PropId::blockIndent,  // blockIndent
+    PropId::blockKeepWithNext,  // keepWithNext
+    PropId::listMarker,  // listMarker
+    PropId::None,  // matchKind
+    PropId::None,  // matchRole
+    PropId::None,  // matchClass
+    PropId::None,  // matchLang
+    PropId::None,  // matchDepth
+    PropId::None,  // matchWhere
+    PropId::codeblockSnapKerning,  // snapKerning
+    PropId::codeblockSidecarFrac,  // sidecarFrac
+    PropId::codeblockContIndent,  // contIndent
+    PropId::textFeatures,  // features
+    PropId::textPunct,  // punct
+    PropId::None,  // kind
+    PropId::parSingleLine,  // parSingleLine
+    PropId::None,  // to
+    PropId::None,  // sortKey
+    PropId::keep,  // keep
+    PropId::spaceBefore,  // spaceBefore
+    PropId::spaceAfter,  // spaceAfter
+    PropId::breakBefore,  // breakBefore
+    PropId::breakAfter,  // breakAfter
+    PropId::parHang,  // parHang
+    PropId::parHangAfter,  // parHangAfter
+    PropId::boxPadding,  // boxPadding
+    PropId::boxBorder,  // boxBorder
+    PropId::boxBorderColor,  // boxBorderColor
+    PropId::boxBackground,  // boxBackground
+    PropId::media,  // media
+    PropId::beside,  // beside
+    PropId::breakerTolerance,  // breakerTolerance
+    PropId::breakerEmergencyStretch,  // breakerStretch
+    PropId::placeFloat,  // placeFloat
+    PropId::None,  // tracks
+    PropId::None,  // rules
+    PropId::None,  // header
+    PropId::None,  // colspan
+    PropId::None,  // rowspan
+    PropId::None,  // valign
+    PropId::None,  // measure
+    PropId::None,  // minWidth
+    PropId::placeWidth,  // placeWidth
+    PropId::placeGap,  // placeGap
+    PropId::None,  // cont
+    PropId::textSpace,  // textSpace
+    PropId::codeblockOverlays,  // overlays
+    PropId::textWrap,  // textWrap
+    PropId::textAutospace,  // autospace
+    PropId::textHyphens,  // hyphens
+    PropId::textOverflowWrap,  // overflowWrap
+};
+inline PropId propOf(ArgK k) { return (size_t)k < sizeof kPropOfArg / sizeof kPropOfArg[0] ? kPropOfArg[(size_t)k] : PropId::None; }
 
 }  // namespace tsr

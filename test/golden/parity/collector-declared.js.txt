@@ -1,0 +1,16 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+let figlist;
+const __h = [
+() => { figlist = (
+ $.collector('figlist', {like: 'lof'})
+); },
+() => ({label: "f1"}),
+() => ({label: "f2"}),
+() => (figlist()),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

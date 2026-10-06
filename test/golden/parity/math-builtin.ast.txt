@@ -1,0 +1,6 @@
+doc @[0,73)
+  para @[0,72)
+    text @[0,27) str="Equal footing (plan P5-02): "
+    math @[28,59) display=0 src="binom(n, k) = binom(n, n - k)"
+      text @[29,58) str="binom(n, k) = binom(n, n - k)"
+    text @[60,72) str=" by symmetry."

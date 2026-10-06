@@ -1,0 +1,3 @@
+#{ $.math.fn('choose', ['n', 'k'], 'lr((, stack(#n, #k), ))') }
+
+Equal footing (plan P5-02): $choose(n, k) = choose(n, n - k)$ by symmetry.

@@ -1,0 +1,8 @@
+instance bibentry @[1263,1309)
+instance bibentry @[1263,1309)
+instance bibentry @[1263,1309)
+instance bibentry @[1263,1309)
+row bib knuth84 @[1263,1309)
+row bib liang83 ordinal=2 @[1263,1309)
+row bib kp81 ordinal=1 @[1263,1309)
+row bib uncited @[1263,1309)

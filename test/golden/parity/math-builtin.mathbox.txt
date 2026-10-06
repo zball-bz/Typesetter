@@ -1,0 +1,29 @@
+inline pid=0 "binom(n, k) = binom(n, n - k)"
+hbox Ord w=1230 asc=870 desc=358
+  hbox Ord w=1230 asc=870 desc=358
+    hbox Open w=377 asc=870 desc=358
+      glyph "" Open w=377 asc=870 desc=358 px=16
+    hbox Ord w=476 asc=793 desc=358 @(377,0)
+      hbox Ord w=476 asc=338 desc=7 @(0,455)
+        glyph "n" Ord w=476 asc=338 desc=7 px=11.2
+      hbox Ord w=398 asc=492 desc=5 @(39,-353)
+        glyph "k" Ord w=398 asc=492 desc=5 px=11.2
+    hbox Close w=377 asc=870 desc=358 @(853,0)
+      glyph "" Close w=377 asc=870 desc=358 px=16
+inline pid=0 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=0 ""
+hbox Ord w=2170 asc=870 desc=360
+  hbox Ord w=2170 asc=870 desc=360
+    hbox Open w=377 asc=870 desc=358
+      glyph "" Open w=377 asc=870 desc=358 px=16
+    hbox Ord w=1416 asc=793 desc=360 @(377,0)
+      hbox Ord w=476 asc=338 desc=7 @(470,455)
+        glyph "n" Ord w=476 asc=338 desc=7 px=11.2
+      hbox Ord w=1416 asc=492 desc=7 @(0,-353)
+        glyph "n" Ord w=476 asc=338 desc=7 px=11.2
+        glyph "−" Bin w=542 asc=194 desc=-165 px=11.2 @(476,0)
+        glyph "k" Ord w=398 asc=492 desc=5 px=11.2 @(1018,0)
+    hbox Close w=377 asc=870 desc=358 @(1793,0)
+      glyph "" Close w=377 asc=870 desc=358 px=16

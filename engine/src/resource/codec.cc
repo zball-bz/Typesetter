@@ -76,7 +76,8 @@ size_t colSize(ColType t) {
     case ColType::U8: return 1;
     case ColType::U16: return 2;
     case ColType::F64: return 8;
-    default: return 4;  // Str, MetricKey, U32; a U32List's count
+    case ColType::Str: case ColType::MetricKey: case ColType::U32: case ColType::U32List:
+      return 4;  // Str, MetricKey, U32; a U32List's count
   }
 }
 
@@ -125,7 +126,8 @@ void encodeWire(const WireBatch& b, bool answer, std::string& out) {
           case ColType::U16: s.u16_((u16)r.col[c]); break;
           case ColType::F64: s.u64_(r.col[c]); break;
           case ColType::U32List: s.u32_((u32)r.list.size()); break;
-          default: s.u32_((u32)r.col[c]); break;
+          case ColType::Str: case ColType::MetricKey: case ColType::U32:
+            s.u32_((u32)r.col[c]); break;
         }
       }
       if (cols[c].type == ColType::U32List)
@@ -218,7 +220,8 @@ bool decodeWire(const u8* p, size_t n, bool answer, WireBatch& out, std::string&
             r.col[c] = len;
             break;
           }
-          default: r.col[c] = s.u32_(); break;
+          case ColType::Str: case ColType::MetricKey: case ColType::U32:
+            r.col[c] = s.u32_(); break;
         }
         if ((t == ColType::Str && !strOk(r.col[c])) || (t == ColType::MetricKey && r.col[c] >= out.mks.size())) {
           err = std::string("column ") + cols[c].name + " index out of range";

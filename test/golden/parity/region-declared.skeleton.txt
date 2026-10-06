@@ -1,0 +1,6 @@
+doc @[0,163)
+  code-block @[0,53) js=" $.region('note2', (body, ctx) => ctx.next(body)) "
+  para @[55,111) lines=1
+  region @[113,162) name="note2"
+    para @[121,141) lines=1
+    para @[143,154) lines=1

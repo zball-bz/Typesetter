@@ -1,0 +1,4 @@
+doc @[0,164)
+  code-block @[0,61) js=" $.fence('vtext', (body, ctx) => codeblock('text', body)) "
+  para @[63,126) lines=1
+  fence @[128,163) lang="vtext" lines=2

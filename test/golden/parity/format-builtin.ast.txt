@@ -1,0 +1,9 @@
+doc @[0,119)
+  para @[0,70)
+    text @[0,27) str="Equal footing (plan P5-02): "
+    ref @[28,33) target="kp81"
+    text @[34,37) str=" and "
+    ref @[38,46) target="liang83"
+    text @[47,70) str=" by the built-in format."
+  para @[72,118)
+    splice @[72,118) expr="bibliography(\"/test/fixtures/cite/refs.json\")"

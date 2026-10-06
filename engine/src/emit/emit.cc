@@ -1534,6 +1534,25 @@ struct Emitter {
       }
       if (n->span.empty()) g.lineSpans.clear();  // generated code: no source
     }
+    // (plan P5-02) snap-kerning spaces Latin and CJK text apart: where each
+    // line turns wide or back, classified once here for the painter
+    if (g.snap)
+      for (const std::vector<CodeRun>& line : g.lines) {
+        std::vector<u32>& flips = g.wideFlips.emplace_back();
+        bool wide = false;
+        u32 at = 0;
+        for (const CodeRun& r : line) {
+          const std::string_view t = strs.get(r.text);
+          for (u32 i = 0; i < t.size();) {
+            const u32 here = at + i;
+            if (isWide(utf8Next(t, i)) != wide) {
+              wide = !wide;
+              flips.push_back(here);
+            }
+          }
+          at += (u32)t.size();
+        }
+      }
     // (plan P3-07) a body's lines: its slices when it is the source as
     // written (its length is its span's), else the body as a whole
     if (g.lineSpans.empty() && bodyKids.size() == 1 && bodyKids[0]->kind == Kind::text && !n->span.empty()) {

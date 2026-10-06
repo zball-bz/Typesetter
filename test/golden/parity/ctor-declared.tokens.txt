@@ -1,0 +1,4 @@
+[0,87) function "#let bold = $.ctor('bold', () => (call) => node('styled', {weight: 700}, ...call.kids))"
+[117,122) function "#bold"
+[122,123) punctuation "["
+[138,139) punctuation "]"

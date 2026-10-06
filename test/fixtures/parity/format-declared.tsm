@@ -1,0 +1,29 @@
+#{
+  // the built-in 'bib' row, declared by the document (stdlib.mjs formatEntryDefault)
+  $.bib.format = (e, c) => {
+    const people = (e.author ?? e.editor ?? []).map((p) => p.literal ?? [p.given, p.family].filter(Boolean).join(' '));
+    const names = people.length <= 1 ? people.join('')
+      : people.length === 2 ? people.join(' and ')
+      : people.slice(0, -1).join(', ') + ', and ' + people.at(-1);
+    const year = e.issued?.['date-parts']?.[0]?.[0] ?? e.issued?.raw ?? '';
+    const parts = [];
+    if (names) parts.push(c.text(names + '.'));
+    if (e.title) parts.push(c.text(' '), c.em(c.text(e.title)), c.text('.'));
+    if (e['container-title']) {
+      let s = ' ' + e['container-title'];
+      if (e.volume) s += ' ' + e.volume;
+      if (e.issue) s += '(' + e.issue + ')';
+      if (e.page) s += ', ' + e.page;
+      parts.push(c.text(s + '.'));
+    }
+    const tail = [e.publisher, year].filter(Boolean).join(', ');
+    if (tail) parts.push(c.text(' ' + tail + '.'));
+    if (e.DOI) parts.push(c.text(' '), c.link('https://doi.org/' + e.DOI, c.text('doi:' + e.DOI)));
+    else if (e.URL) parts.push(c.text(' '), c.link(e.URL, c.text(e.URL)));
+    return parts;
+  }
+}
+
+Equal footing (plan P5-02): @kp81 and @liang83 by the built-in format.
+
+#bibliography("/test/fixtures/cite/refs.json")

@@ -1,0 +1,11 @@
+doc @[0,163)
+  para @[0,57)
+    text @[0,57) str="Equal footing (plan P5-02): the built-in list of figures."
+  region @[59,105) name="figure"
+    para @[81,96)
+      text @[81,96) str="A first figure."
+  region @[107,154) name="figure"
+    para @[129,145)
+      text @[129,145) str="A second figure."
+  para @[156,162)
+    splice @[156,162) expr="lof()"

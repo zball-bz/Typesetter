@@ -1,0 +1,10 @@
+lower v1 abi 3d3ccfbb docEnd 106 holes 0 module none
+block 0 content [0,56)
+  CALL para [0,56)
+    TEXT "Equal footing (plan P5-02): a region of the default row." [0,56)
+block 1 content [58,105) async
+  REGION async "memo" [58,105)
+    CALL para [65,85)
+      TEXT "Its first paragraph." [65,85)
+    CALL para [87,98)
+      TEXT "Its second." [87,98)

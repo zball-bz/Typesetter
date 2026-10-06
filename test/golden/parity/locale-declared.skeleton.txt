@@ -1,0 +1,5 @@
+doc @[0,358)
+  code-block @[0,277) js="\n  $.locale('en-x-copy', {terms: {section: '§', figure: 'Figure ', table: 'Table ', equation: 'Eq. ', appendix: 'Appendix ',\n    'caption-sep': ': ', 'range-sep': '–', 'ref-sep': ', ', unresolved: '??', backref: '↩', 'term-sep': ' — '}})\n  $.doc({lang: 'en-x-copy'})\n"
+  para @[279,315) lines=1
+  region @[317,357) name="figure"
+    para @[339,348) lines=1

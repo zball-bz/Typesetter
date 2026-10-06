@@ -325,7 +325,10 @@ struct Parser {
         cls = nt.cls;
         return true;
       case Tok::Word: return symbolOf(nt.text, cp, cls);
-      default: return false;
+      case Tok::End: case Tok::Num: case Tok::Sup: case Tok::Sub: case Tok::Slash: case Tok::Open:
+      case Tok::Close: case Tok::Prime: case Tok::Quote: case Tok::Param: case Tok::Hole: case Tok::TextHole:
+      case Tok::ErrorHole: case Tok::Amp: case Tok::Break:
+        return false;
     }
   }
   // whether the `!` at hand negates: a symbol with a negation (the UCD's,
@@ -604,7 +607,7 @@ struct Parser {
         err(lo, end, "operator without operand");
         return error(lo, end);
       }
-      default:
+      case Tok::End: case Tok::Close: 
         return nullptr;
     }
   }
@@ -938,7 +941,8 @@ struct Parser {
         n->kids = std::move(kids);
         return;
       }
-      default:
+      case MNode::Run: case MNode::Attach: case MNode::Frac: case MNode::Group: case MNode::Call:
+      case MNode::Param: case MNode::Error: case MNode::Align: case MNode::Rows: case MNode::Break: 
         for (MNode* k : {n->a, n->b, n->sub, n->sup, n->tl, n->bl}) mapLetters(k, alphabet, arena);
         for (MNode* k : n->kids) mapLetters(k, alphabet, arena);
         return;
@@ -1028,7 +1032,9 @@ struct Parser {
         if (m != "full" && m != "h" && m != "v" && m != "smash") bad("mode", m);
         return n;
       }
-      default: return n;
+      case Prim::None: case Prim::Frac: case Prim::Stack: case Prim::Radical: case Prim::Lr:
+      case Prim::Accent: case Prim::Rule: case Prim::Space: case Prim::Delim:
+        return n;
     }
   }
 

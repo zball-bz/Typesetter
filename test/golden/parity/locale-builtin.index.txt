@@ -1,0 +1,2 @@
+instance figure 1 label=f1 @[64,104)
+label f1 -> figure 1 @[64,104)

@@ -1,0 +1,13 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {codeblock} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+ $.fence('vtext', (body, ctx) => codeblock('text', body)) 
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

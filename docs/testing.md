@@ -120,6 +120,27 @@ webkit    default dsf                     audits only
 - `fuzz_settings`, `fuzz_resanswer`, `fuzz_fragment`, `fuzz_inputs`: the settings JSON, resource answers, fragment requests and declared labels inputs (security-review §4).
 - `fuzz_tsmf` (plan P5-01): arbitrary bytes → the `.tsmf` decoder refuses with a reason, or accepts a font whose lookups find each record and chain. Every formula of a fixed set must then lay out with that font as the primary and as a fallback, and each glyph leaf the font covers must be exactly as wide as its advances in that font (measure equals paint). Seeds: `test/math/*.tsmf`.
 
+## 6a. Architecture checks: principles P1–P13 (plan P5-02)
+
+Each principle of the remediation (docs/remediation/design/INTEGRATION.md
+§Principles) has a mechanical check that fails the gates:
+
+| principle | check |
+|---|---|
+| P1 built-ins are rows | lint `registry-name-literal` (no element class, counter, collector or math family name as a literal in engine/src; an allow-list with reasons); equal footing per registry: `unitEqualFooting` (element and counter, collector, ctor, region, fence, format, math family, locale: test/fixtures/parity, semantics/parity-*) and e2e "equal footing" (a host provider re-declaring the built-in code tokens, a behaviour re-declared under another name) |
+| P2 dispatch on ids | `-Werror=switch-enum` on every engine translation unit (no `default:` over an enum: Kind, ArgK via PropId, Op, …); lints `role-string-compare`, `interned-literal-compare`, `shell-dom-scrape` |
+| P3 one source per vocabulary | G9 `gen-all --check`; schema.lock; the token conformance test (unitTokenConformance) |
+| P4 declared inputs | lints `layout-includes-model`, `config-closure`, `render-sees-emit`, `textrules-scope`; native tests with mocks (no browser outside api/) |
+| P5 decide once | the same include lints (layout/paint read fragments, the DisplayList and emit's payloads — e.g. code's wide/narrow flips — never the classifier) |
+| P6 sugar == constructor | codegen lowers a sugar to the constructor of its name (`sugarCtor`, syntax.def); goldens lower/ctor-override, exec/let-ctor-name |
+| P7 one channel per concern | ops/RES/INPUT rows only by schema.lock, resources.def, inputs.def; notes and TOC goldens (moved and cloned nodes keep their bindings) |
+| P8 no new mini-languages | lint `engine-string-parser` (an allow-list with reasons) |
+| P9 total decoders | a libFuzzer target per decoder (tools/fuzz.sh: 9 targets) with replays; the exec/contain-* fixtures |
+| P10 additive wire | G3 `record-fixtures --check`, schema.lock, every .ops decoded by the golden runner |
+| P11 provenance | the golden runner's `provenanceCheck` (no @[0,0) node outside a declaration's template), contract `line-spans` (test/golden/XFAIL is empty), check-spans (G1), the anchor-closure contract |
+| P12 measurement contract | keys with unique object representations (BItem, MetricKey); warm == fresh for every fixture (the golden runner); the PAINT/MEASURE rows of schema props |
+| P13 determinism, performance | `-ffp-contract=off`; WASM == native breaks (G4); the recorder executes every fixture twice (G3); tools/bench.sh per phase (§4.5) |
+
 ## 7. CI pipeline
 
 | job | runs | gates PR |

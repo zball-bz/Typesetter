@@ -961,6 +961,7 @@
       ]
     },
     "terms.heading": {
+      "term": "section",
       "field": "supHeading",
       "dom": "str",
       "def": "",
@@ -971,6 +972,7 @@
       ]
     },
     "terms.table": {
+      "term": "table",
       "field": "supTable",
       "dom": "str",
       "def": "",
@@ -981,6 +983,7 @@
       ]
     },
     "terms.figure": {
+      "term": "figure",
       "field": "supFigure",
       "dom": "str",
       "def": "",
@@ -991,6 +994,7 @@
       ]
     },
     "terms.equation": {
+      "term": "equation",
       "field": "supEquation",
       "dom": "str",
       "def": "",
@@ -1001,6 +1005,7 @@
       ]
     },
     "terms.captionSep": {
+      "term": "caption-sep",
       "field": "capSep",
       "dom": "str",
       "def": "",

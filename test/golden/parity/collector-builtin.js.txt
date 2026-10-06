@@ -1,0 +1,13 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {lof} = __rt.std;
+return (async () => {
+const __h = [
+() => ({label: "f1"}),
+() => ({label: "f2"}),
+() => (lof()),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

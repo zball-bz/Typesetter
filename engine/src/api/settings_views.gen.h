@@ -75,6 +75,15 @@ struct ResolveSettings {
   const std::string& projectStarts;  // project.starts
   ResolveSettings(const Config& c);  // NOLINT: a Config is its view
 };
+// the settings that name a locale term's word (schema "term"), with their values
+template <class F>
+void forEachTermSetting(const ResolveSettings& c, F&& f) {
+  f("section", c.supHeading);
+  f("table", c.supTable);
+  f("figure", c.supFigure);
+  f("equation", c.supEquation);
+  f("caption-sep", c.capSep);
+}
 struct BoxTreeSettings {
   const std::string& lang;  // doc.lang
   const double& baseSizePx;  // doc.baseSize

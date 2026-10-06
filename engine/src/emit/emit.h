@@ -111,6 +111,10 @@ struct GridData {  // a code block (verbatim-design.md)
   std::vector<u32> hlLines;  // 1-based highlighted lines
   u32 firstLine = 0;         // (plan P3-11) a two-track table's row: the block line it shows first
   bool snap = false;         // snap-kerning: its probes are measured even when it does not wrap
+  // (plan P5-02; P5: decided once, carried as data) snap-kerning: per line
+  // (as `lines`), the byte offsets where its text turns wide (CJK) or back —
+  // a line starting wide flips at 0 — the painter's segments, classified here
+  std::vector<std::vector<u32>> wideFlips;
   // (plan P3-07) each logical line's source: exact when its length is the
   // line's (a verbatim body: a row is its slice), else the line's node
   // (or the body) as a whole; empty when the code has no source

@@ -1,0 +1,13 @@
+doc @[279,357) [base]
+  para @[279,315) [base]
+    text @[279,310) [base] str="Equal footing (plan P5-02): see " raw=0:0,32:31
+    ref @[311,314) [base] target="f1"
+      text @[311,314) [base] str="Figure 1"
+    text @[314,315) [base] str="."
+  group @[317,357) [base] role="figure" label="f1"
+    para @[339,348) [base] role="caption" slot="caption"
+      styled @[339,348) [BOLD] role="caption-label"
+        text @[339,348) [BOLD] str="Figure 1: "
+      text @[339,348) [base] str="A figure."
+decl locale name="en-x-copy" flow=0 @[0,277) ext.terms="{\"section\":\"§\",\"figure\":\"Figure \",\"table\":\"Table \",\"equation\":\"Eq. \",\"appendix\":\"Appendix \",\"caption-sep\":\": \",\"range-sep\":\"–\",\"ref-sep\":\", \",\"unresolved\":\"??\",\"backref\":\"↩\",\"term-sep\":\" — \"}"
+decl doc name="doc" flow=0 @[0,277) ext.lang="en-x-copy"

@@ -1,0 +1,15 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {node} = __rt.std;
+return (async () => {
+let bold;
+const __h = [
+() => { bold = (
+ $.ctor('bold', () => (call) => node('styled', {weight: 700}, ...call.kids))
+); },
+(__k) => ((bold)(...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

@@ -208,7 +208,12 @@ struct Conv {
       case Kind::note:
         // design T3 Templates rule 2: nothing counted, collected or flowing
         return err = std::string("a template may not contain ") + kindName(n.kind), false;
-      default: {
+      case Kind::doc: case Kind::para: case Kind::heading: case Kind::list: case Kind::item:
+      case Kind::quote: case Kind::codeblock: case Kind::rule: case Kind::group: case Kind::table:
+      case Kind::trow: case Kind::tcell: case Kind::term: case Kind::mathblock: case Kind::error:
+      case Kind::text: case Kind::link: case Kind::code: case Kind::ref: case Kind::mathinline:
+      case Kind::raw: case Kind::hardbreak: case Kind::image: case Kind::field: case Kind::math:
+      case Kind::mathsrc: case Kind::equations: case Kind::fill: case Kind::terms: {
         put(it, "node", text(kindName(n.kind)));
         JsonValue args;
         args.t = JsonValue::T::Obj;
@@ -229,7 +234,8 @@ struct Conv {
             case ArgTag::Str: v = text(raw.strings[a.ref]); break;
             case ArgTag::Num: v.t = JsonValue::T::Num, v.num = a.num; break;
             case ArgTag::Bool: v.t = JsonValue::T::Bool, v.b = a.num != 0; break;
-            default: continue;
+            case ArgTag::Null: case ArgTag::Node:
+              continue;
           }
           put(args, argName(a.key), std::move(v));
         }
@@ -299,7 +305,8 @@ bool declRow(const RawOps& raw, const RawDecl& d, Patch& p, std::string& err) {
       case ArgTag::Str: v = Conv::text(raw.strings[a.ref]); break;
       case ArgTag::Num: v.t = JsonValue::T::Num, v.num = a.num; break;
       case ArgTag::Bool: v.t = JsonValue::T::Bool, v.b = a.num != 0; break;
-      default: continue;
+      case ArgTag::Null: case ArgTag::Node:
+        continue;
     }
     if (JsonValue* have = member(row, n)) *have = std::move(v);
     else Conv::put(row, n, std::move(v));

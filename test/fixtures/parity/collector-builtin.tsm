@@ -1,0 +1,11 @@
+Equal footing (plan P5-02): the built-in list of figures.
+
+#!figure(label: "f1")
+A first figure.
+#figure!
+
+#!figure(label: "f2")
+A second figure.
+#figure!
+
+#lof()

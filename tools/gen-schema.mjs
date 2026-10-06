@@ -282,6 +282,14 @@ const domJs = `export const DOMAINS = Object.freeze({\n${domains.map(([n, d]) =>
 
 // ---- run properties (plans P1-02, P2-08): Styling, its ops, dumps and CSS -----------
 const allProps = Object.entries(S.props ?? {}).filter(([n]) => n !== '$comment');
+// (plan P5-02) a property row's id: its name in camel case (text.weight → textWeight)
+const propIdName = (n) => n.split('.').map((w, i) => (i ? w[0].toUpperCase() + w.slice(1) : w)).join('');
+// the ArgK ids in order, a name or null where an id is unused
+const argOrder = (() => {
+  const out = [];
+  for (const [n, id] of keys) out[id] = n;
+  return Array.from(out, (n) => n ?? null);
+})();
 const props = allProps.filter(([, r]) => r.gran !== 'block');
 // block properties (plan P3-01; design T4 PropRegistry: Block granularity)
 const blockProps = allProps.filter(([, r]) => r.gran === 'block');
@@ -411,7 +419,18 @@ ph += `}\n// the style keys by name (plan P3-01: rules in JSON read them as\n// 
   Object.entries(S.kinds).filter(([n]) => n !== '$comment').filter(([, kd]) => Object.values(kd.attrs ?? {}).some((x) => x.prop || x.aliasOf))
     .map(([n, kd]) => Object.entries(kd.attrs).filter(([, x]) => x.prop || x.aliasOf)
       .map(([an, x]) => `  if (k == Kind::${n} && a == ArgK::${an}) {\n    to = ArgK::${x.aliasOf ?? an};\n    return true;\n  }\n`).join('')).join('') +
-  `  return false;\n}\n\n}  // namespace tsr\n`;
+  `  return false;\n}\n` +
+  // (plan P5-02; principle P2) the property rows as ids, in schema order: a
+  // consumer that dispatches on a property switches over every row
+  // (-Werror=switch-enum), so a new row decides its case there
+  `// (plan P5-02; P2: dispatch on generated ids) the property rows, in schema\n// order; propOf: the row an attribute patches (PropId::None: none)\n` +
+  `enum class PropId : u8 {\n${allProps.map(([n]) => `  ${propIdName(n)},\n`).join('')}  None\n};\n` +
+  `inline constexpr PropId kPropOfArg[] = {  // by ArgK id\n${argOrder.map((an) => {
+    const row = an && allProps.find(([, r]) => r.attr === an);
+    return `    PropId::${row ? propIdName(row[0]) : 'None'},  // ${an ?? '(unused)'}\n`;
+  }).join('')}};\n` +
+  `inline PropId propOf(ArgK k) { return (size_t)k < sizeof kPropOfArg / sizeof kPropOfArg[0] ? kPropOfArg[(size_t)k] : PropId::None; }\n` +
+  `\n}  // namespace tsr\n`;
 
 // the typeset serializer's run attributes and declarations
 let css = `// ${HDR}\n// A typeset run's attributes and style declarations (schema "props"; plan\n// P1-02). Values were validated at decode; text values are attribute-escaped.\n#pragma once\n#include <cstdio>\n#include <cstring>\n\n#include "../model/style.h"\n#include "html_writer.h"\n\nnamespace tsr {\n\n` +
@@ -573,6 +592,13 @@ for (const st of VIEW_STAGES) {
   const inits = rows.map(([, r]) => `${r.field}(c.${r.field})`);
   if (cost) inits.push('cost(c.cost)');
   sv += `  ${st}Settings(const Config& c);  // NOLINT: a Config is its view\n};\n`;
+  // (plan P5-02; P1/P3) the rows that override a locale term (schema "term"):
+  // the term each one names, from the schema, not a list in the stage
+  const termRows = rows.filter(([, r]) => r.term);
+  if (termRows.length)
+    sv += `// the settings that name a locale term's word (schema "term"), with their values\n` +
+      `template <class F>\nvoid forEachTermSetting(const ${st}Settings& c, F&& f) {\n` +
+      termRows.map(([, r]) => `  f(${JSON.stringify(r.term)}, c.${r.field});\n`).join('') + `}\n`;
   viewCtors += `${st}Settings::${st}Settings(const Config& c)\n    : ${inits.join(',\n      ')} {}\n`;
 }
 sv += `\n}  // namespace tsr\n`;

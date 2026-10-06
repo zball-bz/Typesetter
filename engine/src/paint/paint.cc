@@ -1,8 +1,9 @@
 #include "displaylist.h"
 
+#include "../emit/emit.h"  // the leaves' payloads it paints (code runs, formulas, images)
+
 #include "../measure/face.h"
 #include "../shape/objects.h"
-#include "../shape/textrules.h"
 
 namespace tsr {
 
@@ -291,7 +292,10 @@ void codeRuns(const Fragment& l, const GridData& g, const Interner& strs, std::v
   u32 off = 0;
   // (a two-track table's row holds its slice of the block's lines: P3-11)
   if (l.codeLine < g.firstLine || l.codeLine - g.firstLine >= g.lines.size()) return;
-  for (const CodeRun& r : g.lines[l.codeLine - g.firstLine]) {
+  const u32 li = l.codeLine - g.firstLine;
+  // (plan P5-02) snapped: segments at the line's wide/narrow flips (emit's)
+  const std::vector<u32>* flips = snap && li < g.wideFlips.size() ? &g.wideFlips[li] : nullptr;
+  for (const CodeRun& r : g.lines[li]) {
     std::string_view t0 = strs.get(r.text);
     u32 rLo = off, rHi = off + (u32)t0.size();
     off = rHi;
@@ -301,18 +305,12 @@ void codeRuns(const Fragment& l, const GridData& g, const Interner& strs, std::v
     std::string_view seg = t0.substr(lo - rLo, hi - lo);
     u32 s0 = 0;
     while (s0 < seg.size()) {
-      u32 s1 = s0;
+      u32 s1 = (u32)seg.size();
       bool cjk = false;
-      if (snap) {
-        u32 probe = s0;
-        cjk = isWide(utf8Next(seg, probe));
-        while (s1 < seg.size()) {
-          u32 nx = s1;
-          if (isWide(utf8Next(seg, nx)) != cjk) break;
-          s1 = nx;
-        }
-      } else {
-        s1 = (u32)seg.size();
+      if (flips) {  // the flips at or before it: odd = wide; it ends at the next
+        auto nx = std::upper_bound(flips->begin(), flips->end(), lo + s0);
+        cjk = (nx - flips->begin()) & 1;
+        if (nx != flips->end() && *nx < hi) s1 = *nx - lo;
       }
       DLRun d;
       d.k = DLRun::K::CodeText;

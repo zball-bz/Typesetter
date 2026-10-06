@@ -1,0 +1,4 @@
+[0,61) function "#{ $.fence('vtext', (body, ctx) => codeblock('text', body)) }"
+[128,136) keyword "```vtext"
+[137,159) embedded "plain lines\n  indented"
+[160,163) keyword "```"

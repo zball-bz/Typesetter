@@ -377,7 +377,12 @@ struct Sem {
         out += "</span>";
         return;
       }
-      default:
+      case Kind::doc: case Kind::para: case Kind::heading: case Kind::list: case Kind::item:
+      case Kind::quote: case Kind::codeblock: case Kind::rule: case Kind::table: case Kind::trow:
+      case Kind::tcell: case Kind::term: case Kind::collect: case Kind::mathblock: case Kind::raw:
+      case Kind::seq: case Kind::image: case Kind::note: case Kind::field: case Kind::event: case Kind::slot:
+      case Kind::when: case Kind::each: case Kind::math: case Kind::mathsrc: case Kind::equations:
+      case Kind::fill: case Kind::terms: 
         // an inline object of the shaper's flatten table (plan P1-13) is
         // painted, never dropped; other kinds keep their content (block
         // kinds in inline position are the placement rules', P2-11/P3-17)
@@ -774,14 +779,7 @@ struct Sem {
         std::string align(argS(n, ArgK::align));
         if (std::string_view tr = argS(n, ArgK::tracks); !tr.empty()) {
           align.clear();
-          for (size_t at = 0; at <= tr.size();) {
-            size_t comma = tr.find(',', at);
-            if (comma == std::string_view::npos) comma = tr.size();
-            const std::string_view e = tr.substr(at, comma - at);
-            const size_t colon = e.find(':');
-            align += colon != std::string_view::npos && colon + 1 < e.size() ? e[colon + 1] : 'l';
-            at = comma + 1;
-          }
+          for (const TrackDecl& t : parseTracks(tr)) align += (char)t.align;  // (the domain's one reader)
         }
         // (plan P3-14) header rows are th cells; spans as written
         const int header = attrInt(n, ArgK::header, 0);
@@ -875,7 +873,11 @@ struct Sem {
         out += "</p>\n";
         return;
       }
-      default:
+      case Kind::doc: case Kind::item: case Kind::trow: case Kind::tcell: case Kind::term:
+      case Kind::collect: case Kind::text: case Kind::link: case Kind::code: case Kind::ref:
+      case Kind::mathinline: case Kind::hardbreak: case Kind::seq: case Kind::note: case Kind::field:
+      case Kind::event: case Kind::entry: case Kind::slot: case Kind::when: case Kind::each: case Kind::math:
+      case Kind::mathsrc: case Kind::fill: 
         // inline content at block level (defensive): wrap in a paragraph
         open("p", n, pid);
         inl(n);

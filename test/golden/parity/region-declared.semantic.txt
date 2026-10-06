@@ -1,0 +1,7 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="55" data-e="111">Equal footing (plan P5-02): a region of the default row.</p>
+<div data-role="note2" data-pid="1" data-s="113" data-e="162">
+<p data-s="121" data-e="141">Its first paragraph.</p>
+<p data-s="143" data-e="154">Its second.</p>
+</div>
+</div>

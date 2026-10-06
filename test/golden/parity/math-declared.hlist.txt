@@ -1,0 +1,37 @@
+top pid=0 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "Equal" w=2561su r0 @[65,70)
+  glue word w=257su x=1 st=257su kern="l f" src r0 @[70,71)
+  box Alpha "foot" w=2049su r0 @[71,75)
+  disc pen=0.7 w=0su pre="-" 513su kern="ti" r0 @[75,75)
+  box Alpha "ing" w=1537su r0 @[75,78)
+  glue word w=257su x=1 st=257su kern="g (" src r0 @[78,79)
+  box OpenN "(plan" w=2561su r0 @[79,84)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[84,85)
+  box Alpha "P5-02):" w=3585su r0 @[85,92)
+  glue word w=257su x=1 st=257su src r0 @[92,92)
+  box object o0 math part=0 asc=870su desc=358su "choose(n, k) = choose(n, n - k)" w=1230su r1 @[93,126)
+  pen 0.85 r2
+  glue objspace w=284su x=0 r2 @[93,126)
+  box object o0 math part=1 asc=377su desc=0su w=774su r3 @[93,126)
+  pen 0.8 r4
+  glue objspace w=284su x=0 r4 @[93,126)
+  box object o0 math part=2 asc=870su desc=360su w=2170su r5 @[93,126)
+  pen 0 r5
+  glue word w=257su x=1 st=257su src r6 @[127,127)
+  box Alpha "by" w=1025su r6 @[127,129)
+  glue word w=257su x=1 st=257su kern="y s" src r6 @[129,130)
+  box Alpha "sym" w=1537su r6 @[130,133)
+  disc pen=0.7 w=0su pre="-" 513su kern="mm" r6 @[133,133)
+  box Alpha "me" w=1025su r6 @[133,135)
+  disc pen=0.7 w=0su pre="-" 513su kern="et" r6 @[135,135)
+  box Alpha "try." w=2049su r6 @[135,139)
+  obj o0 math parts=3 edges=Alpha/Alpha src="choose(n, k) = choose(n, n - k)" [w=1230su asc=870su desc=358su] [w=774su asc=377su desc=0su glue=284su] [w=2170su asc=870su desc=360su glue=284su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 object
+  run r4 plain
+  run r5 object
+  run r6 plain

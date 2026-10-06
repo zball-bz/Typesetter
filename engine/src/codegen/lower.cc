@@ -498,7 +498,7 @@ struct Walker {
         if (a && !async) return fail("SCOPE with an awaiting body must await");
         return true;  // the scope may await on its own (a loop head)
       }
-      default:
+      case Lop::VERBATIM: 
         return fail("op not a value");
     }
     if (kidsAwait != async) return fail("async bit disagrees with the subtree");

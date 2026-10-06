@@ -1,0 +1,12 @@
+doc @[26,104) [base]
+  para @[26,62) [base]
+    text @[26,57) [base] str="Equal footing (plan P5-02): see " raw=0:0,32:31
+    ref @[58,61) [base] target="f1"
+      text @[58,61) [base] str="Figure 1"
+    text @[61,62) [base] str="."
+  group @[64,104) [base] role="figure" label="f1"
+    para @[86,95) [base] role="caption" slot="caption"
+      styled @[86,95) [BOLD] role="caption-label"
+        text @[86,95) [BOLD] str="Figure 1: "
+      text @[86,95) [base] str="A figure."
+decl doc name="doc" flow=0 @[0,24) ext.lang="en"

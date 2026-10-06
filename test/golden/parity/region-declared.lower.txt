@@ -1,0 +1,13 @@
+lower v1 abi 3d3ccfbb docEnd 163 holes 1 module 7b96936694b9d2b4
+piece 0 hole 0 js [103,163)
+block 0 stmt [0,53) user framed holes 0..1
+  STMT 0
+block 1 content [55,111)
+  CALL para [55,111)
+    TEXT "Equal footing (plan P5-02): a region of the default row." [55,111)
+block 2 content [113,162) async
+  REGION async "note2" [113,162)
+    CALL para [121,141)
+      TEXT "Its first paragraph." [121,141)
+    CALL para [143,154)
+      TEXT "Its second." [143,154)

@@ -1,0 +1,9 @@
+#{ $.region('note2', (body, ctx) => ctx.next(body)) }
+
+Equal footing (plan P5-02): a region of the default row.
+
+#!note2
+Its first paragraph.
+
+Its second.
+#note2!

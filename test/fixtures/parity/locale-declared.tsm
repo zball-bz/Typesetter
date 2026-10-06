@@ -1,0 +1,11 @@
+#{
+  $.locale('en-x-copy', {terms: {section: '§', figure: 'Figure ', table: 'Table ', equation: 'Eq. ', appendix: 'Appendix ',
+    'caption-sep': ': ', 'range-sep': '–', 'ref-sep': ', ', unresolved: '??', backref: '↩', 'term-sep': ' — '}})
+  $.doc({lang: 'en-x-copy'})
+}
+
+Equal footing (plan P5-02): see @f1.
+
+#!figure(label: "f1")
+A figure.
+#figure!

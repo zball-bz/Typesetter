@@ -1,0 +1,110 @@
+top pid=0 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "Equal" w=2561su r0 @[54,59)
+  glue word w=257su x=1 st=257su kern="l f" src r0 @[59,60)
+  box Alpha "foot" w=2049su r0 @[60,64)
+  disc pen=0.7 w=0su pre="-" 513su kern="ti" r0 @[64,64)
+  box Alpha "ing" w=1537su r0 @[64,67)
+  glue word w=257su x=1 st=257su kern="g (" src r0 @[67,68)
+  box OpenN "(plan" w=2561su r0 @[68,73)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[73,74)
+  box Alpha "P5-02):" w=3585su r0 @[74,81)
+  glue word w=257su x=1 st=257su kern=": t" src r0 @[81,82)
+  box Alpha "the" w=1537su r0 @[82,85)
+  glue word w=257su x=1 st=257su kern="e b" src r0 @[85,86)
+  box Alpha "built-" w=3073su r0 @[86,92)
+  disc pen=0.7 w=0su pre=none kern="-i" r0 @[92,92)
+  box Alpha "in" w=1025su r0 @[92,94)
+  glue word w=257su x=1 st=257su kern="n l" src r0 @[94,95)
+  box Alpha "list" w=2049su r0 @[95,99)
+  glue word w=257su x=1 st=257su kern="t o" src r0 @[99,100)
+  box Alpha "of" w=1025su r0 @[100,102)
+  glue word w=257su x=1 st=257su kern="f f" src r0 @[102,103)
+  box Alpha "fig" w=1537su r0 @[103,106)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r0 @[106,106)
+  box Alpha "ures." w=2561su r0 @[106,111)
+  run r0 plain
+top pid=1 units=1
+ unit text indent=0su anchor="f1" single-center
+  ju=257su
+  box Ideo "图" w=1025su wt=0.6 r0 @[135,150)
+  pen 0 r0
+  glue word w=257su x=1 st=257su src r1 @[135,150)
+  box Digit "1" w=513su r1 @[135,150)
+  box ColonW "：" w=513su blank=R r2 @[135,150)
+  glue blank w=512su x=0 r2 @[135,150)
+  box Alpha "A" w=513su r3 @[135,136)
+  glue word w=257su x=1 st=257su kern="A f" src r3 @[136,137)
+  box Alpha "first" w=2561su r3 @[137,142)
+  glue word w=257su x=1 st=257su kern="t f" src r3 @[142,143)
+  box Alpha "fig" w=1537su r3 @[143,146)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[146,146)
+  box Alpha "ure." w=2049su r3 @[146,150)
+  run r0 letter-spaced BOLD CJK
+  run r1 plain BOLD
+  run r2 blank-bearing BOLD CJK
+  run r3 plain
+top pid=2 units=1
+ unit text indent=0su anchor="f2" single-center
+  ju=257su
+  box Ideo "图" w=1025su wt=0.6 r0 @[183,199)
+  pen 0 r0
+  glue word w=257su x=1 st=257su src r1 @[183,199)
+  box Digit "2" w=513su r1 @[183,199)
+  box ColonW "：" w=513su blank=R r2 @[183,199)
+  glue blank w=512su x=0 r2 @[183,199)
+  box Alpha "A" w=513su r3 @[183,184)
+  glue word w=257su x=1 st=257su kern="A s" src r3 @[184,185)
+  box Alpha "sec" w=1537su r3 @[185,188)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r3 @[188,188)
+  box Alpha "ond" w=1537su r3 @[188,191)
+  glue word w=257su x=1 st=257su kern="d f" src r3 @[191,192)
+  box Alpha "fig" w=1537su r3 @[192,195)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[195,195)
+  box Alpha "ure." w=2049su r3 @[195,199)
+  run r0 letter-spaced BOLD CJK
+  run r1 plain BOLD
+  run r2 blank-bearing BOLD CJK
+  run r3 plain
+top pid=3 units=2
+ unit text indent=1536su marker="•"
+  ju=257su
+  box Ideo "图" w=1025su wt=0.6 r0 @[210,220)
+  pen 0 r0
+  glue word w=257su x=1 st=257su src r1 @[210,220)
+  box Digit "1" w=513su r1 @[210,220)
+  box ColonW "：" w=513su blank=R r2 @[210,220)
+  glue blank w=512su x=0 r2 @[210,220)
+  box Alpha "A" w=513su r3 @[210,220)
+  glue word w=257su x=1 st=257su kern="A f" src r3 @[210,220)
+  box Alpha "first" w=2561su r3 @[210,220)
+  glue word w=257su x=1 st=257su kern="t f" src r3 @[210,220)
+  box Alpha "fig" w=1537su r3 @[210,220)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[210,220)
+  box Alpha "ure." w=2049su r3 @[210,220)
+  run r0 letter-spaced LINK CJK link="#tsr-f1"
+  run r1 plain LINK link="#tsr-f1"
+  run r2 blank-bearing CJK
+  run r3 plain
+ unit text indent=1536su marker="•"
+  ju=257su
+  box Ideo "图" w=1025su wt=0.6 r0 @[210,220)
+  pen 0 r0
+  glue word w=257su x=1 st=257su src r1 @[210,220)
+  box Digit "2" w=513su r1 @[210,220)
+  box ColonW "：" w=513su blank=R r2 @[210,220)
+  glue blank w=512su x=0 r2 @[210,220)
+  box Alpha "A" w=513su r3 @[210,220)
+  glue word w=257su x=1 st=257su kern="A s" src r3 @[210,220)
+  box Alpha "sec" w=1537su r3 @[210,220)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r3 @[210,220)
+  box Alpha "ond" w=1537su r3 @[210,220)
+  glue word w=257su x=1 st=257su kern="d f" src r3 @[210,220)
+  box Alpha "fig" w=1537su r3 @[210,220)
+  disc pen=0.7 w=0su pre="-" 513su kern="gu" r3 @[210,220)
+  box Alpha "ure." w=2049su r3 @[210,220)
+  run r0 letter-spaced LINK CJK link="#tsr-f2"
+  run r1 plain LINK link="#tsr-f2"
+  run r2 blank-bearing CJK
+  run r3 plain

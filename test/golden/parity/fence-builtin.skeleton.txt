@@ -1,0 +1,3 @@
+doc @[0,100)
+  para @[0,63) lines=1
+  fence @[65,99) lang="text" lines=2

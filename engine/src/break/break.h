@@ -5,7 +5,8 @@
 #include <list>
 #include <unordered_map>
 
-#include "../emit/emit.h"
+#include "../api/settings_views.gen.h"
+#include "../shape/hlist.h"
 #include "items.h"
 
 namespace tsr {

@@ -1,0 +1,3 @@
+[65,72) keyword "```text"
+[73,95) embedded "plain lines\n  indented"
+[96,99) keyword "```"

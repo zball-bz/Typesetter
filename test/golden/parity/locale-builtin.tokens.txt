@@ -1,0 +1,4 @@
+[0,24) function "#{ $.doc({lang: 'en'}) }"
+[58,61) constant "@f1"
+[64,85) function "#!figure(label: \"f1\")"
+[96,104) function "#figure!"

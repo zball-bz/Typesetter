@@ -1,0 +1,3 @@
+[0,53) function "#{ $.region('note2', (body, ctx) => ctx.next(body)) }"
+[113,120) function "#!note2"
+[155,162) function "#note2!"

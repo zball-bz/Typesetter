@@ -1,0 +1,4 @@
+doc @[0,100)
+  para @[0,63)
+    text @[0,63) str="Equal footing (plan P5-02): a code block of the built-in fence."
+  codeblock @[65,99) lang="text" body="plain lines\n  indented"

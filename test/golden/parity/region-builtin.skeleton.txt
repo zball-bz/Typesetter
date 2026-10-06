@@ -1,0 +1,5 @@
+doc @[0,106)
+  para @[0,56) lines=1
+  region @[58,105) name="memo"
+    para @[65,85) lines=1
+    para @[87,98) lines=1

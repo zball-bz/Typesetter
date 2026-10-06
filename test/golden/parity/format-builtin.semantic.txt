@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="70">Equal footing (plan P5-02): [<a href="#tsr-bib-kp81">1</a>] and [<a href="#tsr-bib-liang83">2</a>] by the built-in format.</p>
+<section data-role="bibliography" role="doc-bibliography" data-pid="1" data-s="72" data-e="118">
+<hr data-s="72" data-e="118">
+<p data-s="72" data-e="118" id="tsr-bib-kp81">[1] Donald E. Knuth and Michael F. Plass. <em>Breaking Paragraphs into Lines</em>. Software: Practice and Experience 11(11), 1119-1184. 1981. <a href="https://doi.org/10.1002/spe.4380111102">doi:10.1002/spe.4380111102</a></p>
+<p data-s="72" data-e="118" id="tsr-bib-liang83">[2] Franklin Mark Liang. <em>Word Hy-phen-a-tion by Com-put-er</em>. Stanford University, 1983. <a href="https://tug.org/docs/liang/">https://tug.org/docs/liang/</a></p>
+</section>
+</div>

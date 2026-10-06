@@ -1,0 +1,40 @@
+doc @[1191,1309) [base]
+  para @[1191,1261) [base]
+    text @[1191,1218) [base] str="Equal footing (plan P5-02): " raw=0:0,28:27
+    ref @[1219,1224) [base] target="kp81"
+      text @[1219,1224) [base] str="["
+      link @[1219,1224) [base] target="bib-kp81"
+        text @[1219,1224) [base] str="1"
+      text @[1219,1224) [base] str="]"
+    text @[1225,1228) [base] str=" and " raw=0:0,1:0,5:3
+    ref @[1229,1237) [base] target="liang83"
+      text @[1229,1237) [base] str="["
+      link @[1229,1237) [base] target="bib-liang83"
+        text @[1229,1237) [base] str="2"
+      text @[1229,1237) [base] str="]"
+    text @[1238,1261) [base] str=" by the built-in format." raw=0:0,1:0
+  group @[1263,1309) [base] role="bibliography"
+    rule @[1263,1309) [base]
+    para @[1263,1309) [base] label="bib-kp81"
+      text @[1263,1309) [base] str="[1] "
+      text @[1263,1309) [base] str="Donald E. Knuth and Michael F. Plass."
+      text @[1263,1309) [base] str=" "
+      styled @[1263,1309) [EM]
+        text @[1263,1309) [EM] str="Breaking Paragraphs into Lines"
+      text @[1263,1309) [base] str="."
+      text @[1263,1309) [base] str=" Software: Practice and Experience 11(11), 1119-1184."
+      text @[1263,1309) [base] str=" 1981."
+      text @[1263,1309) [base] str=" "
+      link @[1263,1309) [base] url="https://doi.org/10.1002/spe.4380111102"
+        text @[1263,1309) [base] str="doi:10.1002/spe.4380111102"
+    para @[1263,1309) [base] label="bib-liang83"
+      text @[1263,1309) [base] str="[2] "
+      text @[1263,1309) [base] str="Franklin Mark Liang."
+      text @[1263,1309) [base] str=" "
+      styled @[1263,1309) [EM]
+        text @[1263,1309) [EM] str="Word Hy-phen-a-tion by Com-put-er"
+      text @[1263,1309) [base] str="."
+      text @[1263,1309) [base] str=" Stanford University, 1983."
+      text @[1263,1309) [base] str=" "
+      link @[1263,1309) [base] url="https://tug.org/docs/liang/"
+        text @[1263,1309) [base] str="https://tug.org/docs/liang/"

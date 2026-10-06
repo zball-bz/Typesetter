@@ -1,0 +1,8 @@
+doc @[0,105) [base]
+  para @[0,56) [base]
+    text @[0,56) [base] str="Equal footing (plan P5-02): a region of the default row."
+  group @[58,105) [base] role="memo"
+    para @[65,85) [base]
+      text @[65,85) [base] str="Its first paragraph."
+    para @[87,98) [base]
+      text @[87,98) [base] str="Its second."

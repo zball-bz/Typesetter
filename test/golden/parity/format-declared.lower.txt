@@ -1,0 +1,15 @@
+lower v1 abi 3d3ccfbb docEnd 1310 holes 2 module d6fc1a26428ba0af
+piece 0 hole 0 js [157,1353)
+piece 1 hole 1 js [1355,1414)
+block 0 stmt [0,1189) user framed holes 0..1
+  STMT 0
+block 1 content [1191,1261)
+  CALL para [1191,1261)
+    TEXT "Equal footing (plan P5-02): " [1191,1218) raw=0:0,28:27
+    CALL ref [1219,1224) target="kp81"
+    TEXT " and " [1225,1228) raw=0:0,1:0,5:3
+    CALL ref [1229,1237) target="liang83"
+    TEXT " by the built-in format." [1238,1261) raw=0:0,1:0
+block 2 content [1263,1309) user framed async holes 1..2
+  CALL async para [1263,1309)
+    HOLE async 1 [1263,1309)

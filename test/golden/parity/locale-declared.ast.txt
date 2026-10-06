@@ -1,0 +1,9 @@
+doc @[0,358)
+  code-block @[0,277) js="\n  $.locale('en-x-copy', {terms: {section: '§', figure: 'Figure ', table: 'Table ', equation: 'Eq. ', appendix: 'Appendix ',\n    'caption-sep': ': ', 'range-sep': '–', 'ref-sep': ', ', unresolved: '??', backref: '↩', 'term-sep': ' — '}})\n  $.doc({lang: 'en-x-copy'})\n"
+  para @[279,315)
+    text @[279,310) str="Equal footing (plan P5-02): see "
+    ref @[311,314) target="f1"
+    text @[314,315) str="."
+  region @[317,357) name="figure"
+    para @[339,348)
+      text @[339,348) str="A figure."

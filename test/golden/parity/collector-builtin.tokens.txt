@@ -1,0 +1,6 @@
+[59,80) function "#!figure(label: \"f1\")"
+[97,105) function "#figure!"
+[107,128) function "#!figure(label: \"f2\")"
+[146,154) function "#figure!"
+[156,160) function "#lof"
+[160,162) embedded "()"

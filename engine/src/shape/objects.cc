@@ -20,7 +20,14 @@ ObjKind objectKindOf(Kind k) {
     case Kind::mathinline: return ObjKind::Math;
     case Kind::image: return ObjKind::Image;
     case Kind::raw: return ObjKind::Raw;
-    default: return ObjKind::Error;  // not an object row: the error box
+    case Kind::doc: case Kind::para: case Kind::heading: case Kind::list: case Kind::item: case Kind::quote:
+    case Kind::codeblock: case Kind::rule: case Kind::group: case Kind::table: case Kind::trow:
+    case Kind::tcell: case Kind::term: case Kind::collect: case Kind::mathblock: case Kind::error:
+    case Kind::comment: case Kind::text: case Kind::styled: case Kind::link: case Kind::code: case Kind::ref:
+    case Kind::hardbreak: case Kind::seq: case Kind::note: case Kind::field: case Kind::event:
+    case Kind::entry: case Kind::slot: case Kind::when: case Kind::each: case Kind::math: case Kind::mathsrc:
+    case Kind::equations: case Kind::fill: case Kind::terms:
+      return ObjKind::Error;  // not an object row: the error box
   }
 }
 

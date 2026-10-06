@@ -1,0 +1,15 @@
+doc h=22119su
+para pid=0 y=0su w=19200su h=3072su
+  L0 y=0su left=0su w=19200su dw=-73su dc=0su join=space items=[0,21) @[1191,1240)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last items=[22,31) @[1241,1261)
+para pid=1 y=4301su w=19200su h=17818su
+  L0 rule y=768su left=0su w=19200su
+  L1 y=2765su left=0su w=19200su dw=922su dc=0su join=space items=[0,13) @[1263,1309)
+  L2 y=4301su left=0su w=19200su dw=704su dc=0su join=space items=[14,27) @[1263,1309)
+  L3 y=5837su left=0su w=19200su dw=-64su dc=0su join=space items=[28,48) @[1263,1309)
+  L4 y=7373su left=0su w=19200su dw=512su dc=0su join=none hyphen items=[49,59) @[1263,1309)
+  L5 y=8909su left=0su w=19200su dw=0su dc=0su join=para items=[59,62) @[1263,1309)
+  L6 y=11674su left=0su w=19200su dw=717su dc=0su join=none hyphen items=[0,12) @[1263,1309)
+  L7 y=13210su left=0su w=19200su dw=683su dc=0su join=space items=[12,26) @[1263,1309)
+  L8 y=14746su left=0su w=19200su dw=128su dc=0su join=none hyphen items=[27,45) @[1263,1309)
+  L9 y=16282su left=0su w=19200su dw=0su dc=0su join=last items=[45,46) @[1263,1309)

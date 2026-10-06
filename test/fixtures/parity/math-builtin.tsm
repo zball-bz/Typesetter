@@ -1,0 +1,1 @@
+Equal footing (plan P5-02): $binom(n, k) = binom(n, n - k)$ by symmetry.

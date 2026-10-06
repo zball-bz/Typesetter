@@ -1,0 +1,7 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[279,315)
+    paragraph para unit=0 @[279,315)
+top pid=1 leaves=1
+  stack root gap=1/1 @[317,357)
+    stack figure anchor="f1" @[317,357)
+      paragraph caption unit=0 single-center carry="f1" @[339,348)

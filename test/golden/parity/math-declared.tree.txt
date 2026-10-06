@@ -1,0 +1,7 @@
+doc @[65,139) [base]
+  para @[65,139) [base]
+    text @[65,92) [base] str="Equal footing (plan P5-02): " raw=0:0,28:27
+    mathinline @[93,126) [base]
+      mathsrc @[94,125) [base] src="choose(n, k) = choose(n, n - k)"
+    text @[127,139) [base] str=" by symmetry." raw=0:0,1:0
+decl math.fn name="choose" flow=0 @[0,63) ext.params="n,k" ext.body="lr((, stack(#n, #k), ))"

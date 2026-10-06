@@ -1,0 +1,1 @@
+{"kind":"doc","span":[0,100],"kids":[{"kind":"call","sugar":"para","span":[0,63],"kids":[{"kind":"text","span":[0,63],"str":"Equal footing (plan P5-02): a code block of the built-in fence."}]},{"kind":"call","sugar":"fence","span":[65,99],"str":"plain lines\n  indented","lang":"text","args":"","bodyOffset":73,"bodyEnd":95,"lines":""}]}

@@ -72,16 +72,15 @@ file(READ data/locale/locale.json LOCALE_TABLE)
 configure_file(src/semantic/semantic_data.gen.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/gen/semantic_data.gen.h @ONLY)
 target_include_directories(tsr_core PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/gen)
-target_compile_options(tsr_core PUBLIC -fno-exceptions -fno-rtti -Wall -Wextra -Werror=switch)
+# (plan P5-02; principle P2) every switch over an enum names every value —
+# a new kind, attribute or property row decides its case wherever one is
+# dispatched on (no default: over generated enums)
+target_compile_options(tsr_core PUBLIC -fno-exceptions -fno-rtti -Wall -Wextra -Werror=switch
+                       -Wswitch-enum -Werror=switch-enum)
 # no fused multiply-add: layout numbers must not depend on the target's FMA
 # (native goldens vs the WASM build; plan P0-12, design T6 I9)
 target_compile_options(tsr_core PRIVATE -ffp-contract=off)
 # front end: every enumerator handled explicitly, no default: arms (plan P0-02)
-set_source_files_properties(
-  src/linepass/linepass.cc src/inline/inline.cc
-  src/syntax/syntax.gen.cc src/syntax/lexer.cc src/syntax/exports.cc
-  src/codegen/codegen.cc
-  PROPERTIES COMPILE_OPTIONS "-Wswitch-enum;-Werror=switch-enum")
 target_include_directories(tsr_core PUBLIC src)
 
 if(EMSCRIPTEN)

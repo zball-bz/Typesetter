@@ -1,0 +1,7 @@
+[0,52) function "#let figlist = $.collector('figlist', {like: 'lof'})"
+[113,134) function "#!figure(label: \"f1\")"
+[151,159) function "#figure!"
+[161,182) function "#!figure(label: \"f2\")"
+[200,208) function "#figure!"
+[210,218) function "#figlist"
+[218,220) embedded "()"

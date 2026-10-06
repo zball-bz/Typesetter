@@ -1,0 +1,12 @@
+doc @[0,221)
+  code-let @[0,52) js=" figlist = $.collector('figlist', {like: 'lof'})"
+  para @[54,111)
+    text @[54,111) str="Equal footing (plan P5-02): the built-in list of figures."
+  region @[113,159) name="figure"
+    para @[135,150)
+      text @[135,150) str="A first figure."
+  region @[161,208) name="figure"
+    para @[183,199)
+      text @[183,199) str="A second figure."
+  para @[210,220)
+    splice @[210,220) expr="figlist()"

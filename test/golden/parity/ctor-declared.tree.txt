@@ -1,0 +1,6 @@
+doc @[89,155) [base]
+  para @[89,155) [base]
+    text @[89,116) [base] str="Equal footing (plan P5-02): " raw=0:0,28:27
+    styled @[117,139) [BOLD]
+      text @[123,138) [BOLD] str="a strong phrase"
+    text @[140,155) [base] str=" in a paragraph." raw=0:0,1:0

@@ -1,0 +1,3 @@
+[28,35) function "#strong"
+[35,36) punctuation "["
+[51,52) punctuation "]"

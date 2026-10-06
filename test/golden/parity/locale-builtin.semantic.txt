@@ -1,0 +1,6 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="26" data-e="62">Equal footing (plan P5-02): see <a href="#tsr-f1">Figure 1</a>.</p>
+<figure data-role="figure" data-pid="1" data-s="64" data-e="104" id="tsr-f1">
+<figcaption><strong>Figure 1: </strong>A figure.</figcaption>
+</figure>
+</div>

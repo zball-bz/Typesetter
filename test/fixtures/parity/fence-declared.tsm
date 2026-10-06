@@ -1,0 +1,8 @@
+#{ $.fence('vtext', (body, ctx) => codeblock('text', body)) }
+
+Equal footing (plan P5-02): a code block of the built-in fence.
+
+```vtext
+plain lines
+  indented
+```

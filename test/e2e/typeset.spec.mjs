@@ -1140,6 +1140,58 @@ test('resources: a host provider module answers its kind (createEngine({provider
   expect(r.img).toEqual([150, 50]);  // the module's answer, not a fetch of the src
 });
 
+// (plan P5-02; principle P1) equal footing for the runtime's registries: a
+// host's provider module that re-declares the built-in code-token row, and a
+// behaviour re-declared under another name, do exactly what the built-ins do
+test('equal footing: a host provider re-declaring the built-in code tokens', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const r = await page.evaluate(async () => {
+    const { createEngine } = await import('/runtime/src/main/shell.mjs');
+    const src = 'Code:\n\n```js\nconst answer = 42;  // the answer\nfunction f(x) { return x * 2; }\n```\n';
+    const run = async (opts) => {
+      const engine = createEngine(opts);
+      const el = document.getElementById('out2');
+      await engine.typeset(src, el, { widthPx: 400, progressive: false });
+      const html = el.innerHTML;
+      engine.dispose();
+      return html;
+    };
+    return { builtin: await run({}),
+             host: await run({ providers: [{ kind: 'codeTokens', module: '/test/e2e/provider-tokens.mjs' }] }) };
+  });
+  expect(r.builtin).toContain('tok-keyword');
+  expect(r.host).toBe(r.builtin);
+});
+
+test('equal footing: a behaviour re-declared under another name', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const src = 'A claim^[The note body carries *markup* and `code`.] continues.';
+  const popup = async (behaviors) => {
+    await page.evaluate(async ({ src, behaviors }) => {
+      const { createEngine, defaultBehaviors } = await import('/runtime/src/main/shell.mjs');
+      const { refPreview } = await import('/runtime/src/main/behaviors/ref-preview.mjs');
+      const list = behaviors === 'renamed'
+        ? [{ ...refPreview(), name: 'notePeek' }, ...defaultBehaviors().filter((b) => b.name !== 'refPreview')]
+        : defaultBehaviors();
+      window.__peek?.dispose();
+      window.__peek = createEngine({ behaviors: list });
+      await window.__peek.typeset(src, document.getElementById('out2'), { widthPx: 300, progressive: false });
+    }, { src, behaviors });
+    await page.hover('#out2 .tsr-doc a[href="#tsr-fn-1"][id]');
+    const pop = page.locator('#out2 .tsr-refpop');
+    await expect(pop).toBeVisible();
+    const html = await pop.evaluate((e) => e.outerHTML);
+    await page.mouse.move(0, 0);
+    await expect(pop).toHaveCount(0);
+    return html;
+  };
+  const builtin = await popup('builtin');
+  expect(builtin).toContain('<strong>markup</strong>');
+  expect(await popup('renamed')).toBe(builtin);
+});
+
 // ---- separators and the copy contract (plan P3-07) -----------------------
 
 test('copy: a table is tab-separated rows; an empty cell keeps its column', async ({ page }) => {

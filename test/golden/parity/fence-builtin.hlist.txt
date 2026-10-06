@@ -1,0 +1,31 @@
+top pid=0 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "Equal" w=2561su r0 @[0,5)
+  glue word w=257su x=1 st=257su kern="l f" src r0 @[5,6)
+  box Alpha "foot" w=2049su r0 @[6,10)
+  disc pen=0.7 w=0su pre="-" 513su kern="ti" r0 @[10,10)
+  box Alpha "ing" w=1537su r0 @[10,13)
+  glue word w=257su x=1 st=257su kern="g (" src r0 @[13,14)
+  box OpenN "(plan" w=2561su r0 @[14,19)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[19,20)
+  box Alpha "P5-02):" w=3585su r0 @[20,27)
+  glue word w=257su x=1 st=257su kern=": a" src r0 @[27,28)
+  box Alpha "a" w=513su r0 @[28,29)
+  glue word w=257su x=1 st=257su kern="a c" src r0 @[29,30)
+  box Alpha "code" w=2049su r0 @[30,34)
+  glue word w=257su x=1 st=257su kern="e b" src r0 @[34,35)
+  box Alpha "block" w=2561su r0 @[35,40)
+  glue word w=257su x=1 st=257su kern="k o" src r0 @[40,41)
+  box Alpha "of" w=1025su r0 @[41,43)
+  glue word w=257su x=1 st=257su kern="f t" src r0 @[43,44)
+  box Alpha "the" w=1537su r0 @[44,47)
+  glue word w=257su x=1 st=257su kern="e b" src r0 @[47,48)
+  box Alpha "built-" w=3073su r0 @[48,54)
+  disc pen=0.7 w=0su pre=none kern="-i" r0 @[54,54)
+  box Alpha "in" w=1025su r0 @[54,56)
+  glue word w=257su x=1 st=257su kern="n f" src r0 @[56,57)
+  box Alpha "fence." w=3073su r0 @[57,63)
+  run r0 plain
+top pid=1 units=1
+ unit code indent=0su lines=2 wrap

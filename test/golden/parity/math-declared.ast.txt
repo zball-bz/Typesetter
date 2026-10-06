@@ -1,0 +1,7 @@
+doc @[0,140)
+  code-block @[0,63) js=" $.math.fn('choose', ['n', 'k'], 'lr((, stack(#n, #k), ))') "
+  para @[65,139)
+    text @[65,92) str="Equal footing (plan P5-02): "
+    math @[93,126) display=0 src="choose(n, k) = choose(n, n - k)"
+      text @[94,125) str="choose(n, k) = choose(n, n - k)"
+    text @[127,139) str=" by symmetry."

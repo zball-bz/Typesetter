@@ -1,0 +1,4 @@
+[0,277) function "#{\n  $.locale('en-x-copy', {terms: {section: '§', figure: 'Figure ', table: 'Table ', equation: 'Eq. ', appendix: 'Appendix ',\n    'caption-sep': ': ', 'range-sep': '–', 'ref-sep': ', ', unresolved: '??', backref: '↩', 'term-sep': ' — '}})\n  $.doc({lang: 'en-x-copy'})\n}"
+[311,314) constant "@f1"
+[317,338) function "#!figure(label: \"f1\")"
+[349,357) function "#figure!"

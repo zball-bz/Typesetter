@@ -8,32 +8,9 @@ import { createStd, styleAttrs, ruleAttrs, NULLARY, CONTENT } from '../shared/st
 import { decodeProgram, Lowering, STUB, SCOPED, isScoped, fragmentRequest, fragmentResponse } from '../shared/lower.mjs';
 import { BFLAG, LPIECE, PROGRAM_ABI } from '../shared/lower.gen.mjs';
 
-// Default numeric bibliography formatter over CSL-JSON (notes-design.md §2):
-// "Author, Author, and Author. Title. Container vol(issue), pages.
-//  Publisher, year. doi/url". Overridable per document via $.bib.format.
-export function formatEntryDefault(e, c) {
-  const people = (e.author ?? e.editor ?? []).map((p) =>
-    p.literal ?? [p.given, p.family].filter(Boolean).join(' '));
-  const names = people.length <= 1 ? people.join('')
-    : people.length === 2 ? people.join(' and ')
-    : people.slice(0, -1).join(', ') + ', and ' + people.at(-1);
-  const year = e.issued?.['date-parts']?.[0]?.[0] ?? e.issued?.raw ?? '';
-  const parts = [];
-  if (names) parts.push(c.text(names + '.'));
-  if (e.title) parts.push(c.text(' '), c.em(c.text(e.title)), c.text('.'));
-  if (e['container-title']) {
-    let s = ' ' + e['container-title'];
-    if (e.volume) s += ' ' + e.volume;
-    if (e.issue) s += '(' + e.issue + ')';
-    if (e.page) s += ', ' + e.page;
-    parts.push(c.text(s + '.'));
-  }
-  const tail = [e.publisher, year].filter(Boolean).join(', ');
-  if (tail) parts.push(c.text(' ' + tail + '.'));
-  if (e.DOI) parts.push(c.text(' '), c.link('https://doi.org/' + e.DOI, c.text('doi:' + e.DOI)));
-  else if (e.URL) parts.push(c.text(' '), c.link(e.URL, c.text(e.URL)));
-  return parts;
-}
+// (plan P5-02; P1) the default bibliography format is the stdlib's built-in
+// 'bib' row (shared/stdlib.mjs formatEntryDefault), re-exported here
+export { formatEntryDefault } from '../shared/stdlib.mjs';
 
 // (plan P3-21; design T9 A2) a document's loads go through its resource
 // job (shared/resources/host.mjs: one locator, one cache, the manifest):
@@ -128,7 +105,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
         ob.diag(2, 'bib-load', message, s, e);
         return ob.makeNode(KIND.seq, {}, [node, n]);
       }
-      const fmt = S.api.formatOf('bib') ?? formatEntryDefault;
+      const fmt = S.api.formatOf('bib');  // the built-in row unless the document's replaced it
       for (const en of entries) {
         if (!en || !en.id) continue;
         let inline;
@@ -172,7 +149,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     load: S.api.load,
     bib: {
       set format(fn) { S.api.format('bib', fn); },
-      get format() { return S.api.formatOf('bib') ?? formatEntryDefault; },
+      get format() { return S.api.formatOf('bib'); },
     },
     // $.std: the base constructors (unaffected by overrides), plain(), and
     // the manifest of what this execution has defined so far

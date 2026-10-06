@@ -1,0 +1,4 @@
+instance figure 1 label=f1 @[59,105)
+instance figure 2 label=f2 @[107,154)
+label f1 -> figure 1 @[59,105)
+label f2 -> figure 2 @[107,154)

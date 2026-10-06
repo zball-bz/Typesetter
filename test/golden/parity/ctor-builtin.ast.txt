@@ -1,0 +1,7 @@
+doc @[0,69)
+  para @[0,68)
+    text @[0,27) str="Equal footing (plan P5-02): "
+    splice @[28,52) expr="strong"
+      arg @[36,51)
+        text @[36,51) str="a strong phrase"
+    text @[53,68) str=" in a paragraph."

@@ -1,0 +1,1 @@
+{"headings":[],"regions":[{"name":"figure","label":"f1","span":[64,104]}],"fences":[],"labels":[{"id":"f1","rule":"region","span":[64,85]}],"diagnostics":[]}

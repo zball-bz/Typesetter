@@ -1,0 +1,28 @@
+doc @[54,220) [base]
+  para @[54,111) [base]
+    text @[54,111) [base] str="Equal footing (plan P5-02): the built-in list of figures."
+  group @[113,159) [base] role="figure" label="f1"
+    para @[135,150) [base] role="caption" slot="caption"
+      styled @[135,150) [BOLD] role="caption-label"
+        text @[135,150) [BOLD] str="图 1："
+      text @[135,150) [base] str="A first figure."
+  group @[161,208) [base] role="figure" label="f2"
+    para @[183,199) [base] role="caption" slot="caption"
+      styled @[183,199) [BOLD] role="caption-label"
+        text @[183,199) [BOLD] str="图 2："
+      text @[183,199) [base] str="A second figure."
+  group @[210,220) [base] role="figlist"
+    list @[210,220) [base] ordered=false
+      item @[210,220) [base]
+        para @[210,220) [base]
+          link @[210,220) [base] target="f1"
+            text @[210,220) [base] str="图 1"
+          text @[210,220) [base] str="："
+          text @[210,220) [base] str="A first figure."
+      item @[210,220) [base]
+        para @[210,220) [base]
+          link @[210,220) [base] target="f2"
+            text @[210,220) [base] str="图 2"
+          text @[210,220) [base] str="："
+          text @[210,220) [base] str="A second figure."
+decl collector name="figlist" flow=0 @[0,52) ext.row="{\"like\":\"lof\"}"

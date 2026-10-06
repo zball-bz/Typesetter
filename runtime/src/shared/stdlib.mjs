@@ -171,6 +171,34 @@ export const softJoin = (s) => (s.includes('\n')
 // host: { ob, here ({s, e}: where the run is), height(), popTo(h),
 // bibliography(src, options, s, e) (a promise: plan P2-14), load(src) (a
 // document resource's text, a promise), fragments(texts, o) (plan P2-13) }
+// Default numeric bibliography formatter over CSL-JSON (notes-design.md §2):
+// "Author, Author, and Author. Title. Container vol(issue), pages.
+//  Publisher, year. doi/url". A built-in row of the format registry (plan P5-02),
+// replaced per document by $.bib.format.
+export function formatEntryDefault(e, c) {
+  const people = (e.author ?? e.editor ?? []).map((p) =>
+    p.literal ?? [p.given, p.family].filter(Boolean).join(' '));
+  const names = people.length <= 1 ? people.join('')
+    : people.length === 2 ? people.join(' and ')
+    : people.slice(0, -1).join(', ') + ', and ' + people.at(-1);
+  const year = e.issued?.['date-parts']?.[0]?.[0] ?? e.issued?.raw ?? '';
+  const parts = [];
+  if (names) parts.push(c.text(names + '.'));
+  if (e.title) parts.push(c.text(' '), c.em(c.text(e.title)), c.text('.'));
+  if (e['container-title']) {
+    let s = ' ' + e['container-title'];
+    if (e.volume) s += ' ' + e.volume;
+    if (e.issue) s += '(' + e.issue + ')';
+    if (e.page) s += ', ' + e.page;
+    parts.push(c.text(s + '.'));
+  }
+  const tail = [e.publisher, year].filter(Boolean).join(', ');
+  if (tail) parts.push(c.text(' ' + tail + '.'));
+  if (e.DOI) parts.push(c.text(' '), c.link('https://doi.org/' + e.DOI, c.text('doi:' + e.DOI)));
+  else if (e.URL) parts.push(c.text(' '), c.link(e.URL, c.text(e.URL)));
+  return parts;
+}
+
 export function createStd(host) {
   const { ob, here } = host;
   const diag = (sev, code, msg) => ob.diag(sev, code, msg, here.s, here.e);
@@ -655,6 +683,8 @@ export function createStd(host) {
   };
 
   const registry = new Registry();
+  // (plan P5-02; P1) the built-in formats are rows like a document's: 'bib'
+  registry.define('format', 'bib', () => formatEntryDefault, {});
   for (const [name, spec] of Object.entries(SPECS)) {
     const impl = impls[name] ?? (spec.kind ? kindImpl(spec) : null);
     if (!impl) throw new Error(`std: no implementation for ${name}`);

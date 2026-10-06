@@ -1,0 +1,8 @@
+doc @[0,156)
+  code-let @[0,87) js=" bold = $.ctor('bold', () => (call) => node('styled', {weight: 700}, ...call.kids))"
+  para @[89,155)
+    text @[89,116) str="Equal footing (plan P5-02): "
+    splice @[117,139) expr="bold"
+      arg @[123,138)
+        text @[123,138) str="a strong phrase"
+    text @[140,155) str=" in a paragraph."

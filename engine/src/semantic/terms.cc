@@ -38,11 +38,10 @@ Terms::Terms(const ResolveSettings& cfg, const std::vector<Decl>* decls, const I
     for (const LocalePack& p : builtinLocalePacks())
       if (p.lang == name) chain_.push_back(&p);
   }
-  const std::pair<const char*, const std::string*> kOverrides[] = {
-      {"section", &cfg.supHeading}, {"table", &cfg.supTable},     {"figure", &cfg.supFigure},
-      {"equation", &cfg.supEquation}, {"caption-sep", &cfg.capSep}};
-  for (const auto& [key, v] : kOverrides)
-    if (!v->empty()) overrides_[key] = *v;
+  // the host's words for terms (settings rows naming a term: schema "term")
+  forEachTermSetting(cfg, [&](const char* key, const std::string& v) {
+    if (!v.empty()) overrides_[key] = v;
+  });
 }
 
 std::string_view Terms::get(std::string_view key) const {

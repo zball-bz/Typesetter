@@ -142,7 +142,14 @@ struct Norm {
       case Kind::table: return kid == Kind::trow;
       case Kind::trow: return kid == Kind::tcell;
       case Kind::equations: return kid == Kind::mathblock;
-      default: return true;
+      case Kind::doc: case Kind::para: case Kind::heading: case Kind::item: case Kind::quote:
+      case Kind::codeblock: case Kind::rule: case Kind::group: case Kind::tcell: case Kind::term:
+      case Kind::collect: case Kind::mathblock: case Kind::error: case Kind::comment: case Kind::text:
+      case Kind::styled: case Kind::link: case Kind::code: case Kind::ref: case Kind::mathinline:
+      case Kind::raw: case Kind::hardbreak: case Kind::seq: case Kind::image: case Kind::note:
+      case Kind::field: case Kind::event: case Kind::entry: case Kind::slot: case Kind::when:
+      case Kind::each: case Kind::math: case Kind::mathsrc: case Kind::fill:
+        return true;
     }
   }
 

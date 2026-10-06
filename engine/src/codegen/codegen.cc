@@ -12,6 +12,9 @@
 namespace tsr {
 
 namespace {
+// (plan P5-02; principle P6: sugar == constructor) the constructor a sugar
+// lowers to is the one of its name (syntax.def's SUGAR rows)
+const char* sugarCtor(SugarId s) { return kSugarName[(u32)s]; }
 
 
 // `#let name = expr` that becomes a hoisted name and an assignment hole
@@ -561,17 +564,17 @@ struct Gen {
     switch (n->sugar) {
       case SugarId::strong:
       case SugarId::em: {
-        size_t at = callHead(n->sugar == SugarId::strong ? "strong" : "em", &n->span, 0);
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, 0);
         return done(at, kids(n->kids()));
       }
       case SugarId::code:
-        return strCall("code", n, "text", n->str);
+        return strCall(sugarCtor(n->sugar), n, "text", n->str);
       case SugarId::note: {
-        size_t at = callHead("note", &n->span, 0);
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, 0);
         return done(at, kids(n->kids()));
       }
       case SugarId::link: {
-        size_t at = callHead("link", &n->span, 1);
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, 1);
         key("url");
         w.constStr(strs.get(side<LinkP>(n).url));
         return done(at, kids(n->kids()));
@@ -579,7 +582,7 @@ struct Gen {
       case SugarId::arg:
         return body(n);
       case SugarId::para: {
-        size_t at = callHead("para", &n->span, 0);
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, 0);
         return done(at, kids(n->kids()));
       }
       case SugarId::math: {
@@ -590,7 +593,7 @@ struct Gen {
         // it (alone in its paragraph that block, inside one inline: N1)
         const bool display = side<MathP>(n).display;
         const StrRef label = side<MathP>(n).label;
-        size_t at = callHead("math", &n->span, (display ? 1 : 0) + (label ? 1 : 0));
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, (display ? 1 : 0) + (label ? 1 : 0));
         if (display) {
           key("display");
           w.constBool(true);
@@ -617,7 +620,7 @@ struct Gen {
       }
       case SugarId::heading: {
         const HeadingP& h = side<HeadingP>(n);
-        size_t at = callHead("heading", &n->span, 2);
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, 2);
         key("level");
         num(h.level);
         key("label");
@@ -644,13 +647,13 @@ struct Gen {
             at = comma + 1;
           }
         }
-        if (!n->nkids && ids.empty()) return strCall("ref", n, "target", n->str);
-        size_t at = callHead("ref", &n->span, 1);
+        if (!n->nkids && ids.empty()) return strCall(sugarCtor(n->sugar), n, "target", n->str);
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, 1);
         key("target");
         w.constStr(target);
         w.u((u32)ids.size() + (n->nkids ? 1 : 0));
         for (std::string_view id : ids) {
-          callHead("ref", nullptr, 1);
+          callHead(sugarCtor(SugarId::ref), nullptr, 1);
           key("target");
           w.constStr(id);
           w.u(0);
@@ -668,7 +671,7 @@ struct Gen {
       }
       case SugarId::list: {
         const ListP& l = side<ListP>(n);
-        size_t at = callHead("list", &n->span, 2);
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, 2);
         key("ordered");
         w.constBool(l.ordered);
         key("start");
@@ -676,7 +679,7 @@ struct Gen {
         return done(at, kids(n->kids()));
       }
       case SugarId::terms: {  // (plan P3-34; D-L08) a description list
-        size_t at = callHead("terms", &n->span, 0);
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, 0);
         return done(at, kids(n->kids()));
       }
       case SugarId::termpart: {  // its item's term: a seq in slot "term"
@@ -687,7 +690,7 @@ struct Gen {
       }
       case SugarId::item:
       case SugarId::quote: {
-        size_t at = callHead(n->sugar == SugarId::item ? "item" : "quote", &n->span, 0);
+        size_t at = callHead(sugarCtor(n->sugar), &n->span, 0);
         return done(at, blockKids(n->kids()));
       }
       case SugarId::fence: {
@@ -744,11 +747,11 @@ struct Gen {
         return done(at, true);
       }
       case SugarId::rule:
-        callHead("rule", &n->span, 0);
+        callHead(sugarCtor(n->sugar), &n->span, 0);
         w.u(0);
         return false;
       case SugarId::linebreak:  // (plan P3-33) `\` at a line's end: the linebreak constructor
-        callHead("linebreak", &n->span, 0);
+        callHead(sugarCtor(n->sugar), &n->span, 0);
         w.u(0);
         return false;
     }

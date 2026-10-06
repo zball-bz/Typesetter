@@ -1,0 +1,8 @@
+doc @[0,221)
+  code-let @[0,52) js=" figlist = $.collector('figlist', {like: 'lof'})"
+  para @[54,111) lines=1
+  region @[113,159) name="figure"
+    para @[135,150) lines=1
+  region @[161,208) name="figure"
+    para @[183,199) lines=1
+  para @[210,220) lines=1

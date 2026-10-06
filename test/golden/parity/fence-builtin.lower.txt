@@ -1,0 +1,6 @@
+lower v1 abi 3d3ccfbb docEnd 100 holes 0 module none
+block 0 content [0,63)
+  CALL para [0,63)
+    TEXT "Equal footing (plan P5-02): a code block of the built-in fence." [0,63)
+block 1 content [65,99) async
+  FENCE async "text" body="plain lines\n  indented" at=[73,95) lines=null [65,99)

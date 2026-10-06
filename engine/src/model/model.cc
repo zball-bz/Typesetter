@@ -60,30 +60,34 @@ struct Inst {
     StyleRule r;
     for (const ArgVal& a : n.args) {
       const std::string_view v = a.tag == ArgTag::Str ? raw.strings[a.ref] : std::string_view{};
-      switch (a.key) {
-        case ArgK::matchKind:
-          for (u16 k = 0; k < KIND_COUNT; k++)
-            if (v == kKinds[k].name) r.sel.kind = k;
-          if (r.sel.kind == 0xFFFF) r.sel.kind = 0xFFFE;  // no such kind: matches nothing
-          break;
-        case ArgK::matchRole: r.sel.role = strs.intern(v); break;
-        case ArgK::matchClass: r.sel.cls = strs.intern(v); break;
-        case ArgK::matchLang: r.sel.lang = strs.intern(v); break;
-        case ArgK::matchDepth: r.sel.depth = (u8)a.num; break;
-        case ArgK::matchWhere:  // "level=1;ordered=true"
-          for (size_t at = 0; at < v.size();) {
-            size_t semi = v.find(';', at);
-            if (semi == std::string_view::npos) semi = v.size();
-            const std::string_view pair = v.substr(at, semi - at);
-            const size_t eq = pair.find('=');
-            if (eq != std::string_view::npos)
-              for (u16 k = 0; k < ARGK_COUNT; k++)
-                if (pair.substr(0, eq) == argName((ArgK)k)) r.sel.where.push_back({(ArgK)k, strs.intern(pair.substr(eq + 1))});
-            at = semi + 1;
-          }
-          break;
-        default:
-          if (a.key != ArgK::style) r.patch.push_back(interned(a));
+      // the selector's keys (match*); every other attribute is the patch
+      // (an ArgK is one of ~110 rows: the few the selector reads, not a
+      // switch over all of them)
+      if (a.key == ArgK::matchKind) {
+        for (u16 k = 0; k < KIND_COUNT; k++)
+          if (v == kKinds[k].name) r.sel.kind = k;
+        if (r.sel.kind == 0xFFFF) r.sel.kind = 0xFFFE;  // no such kind: matches nothing
+      } else if (a.key == ArgK::matchRole) {
+        r.sel.role = strs.intern(v);
+      } else if (a.key == ArgK::matchClass) {
+        r.sel.cls = strs.intern(v);
+      } else if (a.key == ArgK::matchLang) {
+        r.sel.lang = strs.intern(v);
+      } else if (a.key == ArgK::matchDepth) {
+        r.sel.depth = (u8)a.num;
+      } else if (a.key == ArgK::matchWhere) {  // "level=1;ordered=true"
+        for (size_t at = 0; at < v.size();) {
+          size_t semi = v.find(';', at);
+          if (semi == std::string_view::npos) semi = v.size();
+          const std::string_view pair = v.substr(at, semi - at);
+          const size_t eq = pair.find('=');
+          if (eq != std::string_view::npos)
+            for (u16 k = 0; k < ARGK_COUNT; k++)
+              if (pair.substr(0, eq) == argName((ArgK)k)) r.sel.where.push_back({(ArgK)k, strs.intern(pair.substr(eq + 1))});
+          at = semi + 1;
+        }
+      } else if (a.key != ArgK::style) {
+        r.patch.push_back(interned(a));
       }
     }
     return r;
@@ -358,7 +362,8 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs, StyleTa
         root->kids.push_back(inst.copy(s.a, cur, env));
         emits++;
         break;
-      default:
+      case Op::MAKE_TEXT: case Op::MAKE_NODE: case Op::SPAN: case Op::DIAG: case Op::AT: case Op::RAWMAP:
+      case Op::DECL: 
         break;
     }
   }

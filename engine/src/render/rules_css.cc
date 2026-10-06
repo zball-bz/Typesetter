@@ -99,7 +99,7 @@ struct Writer {
         break;
       }
       case (u16)Kind::heading: {
-        const HtmlShape* h = reg ? reg->htmlRow("heading") : nullptr;
+        const HtmlShape* h = reg ? reg->htmlRow(kindName(Kind::heading)) : nullptr;
         if (h && !h->levelSuffix && !h->element.empty()) out = {h->element};
         else if (!level.empty()) out = {"h" + level};
         else out = {"h1", "h2", "h3", "h4", "h5", "h6"};
@@ -168,12 +168,12 @@ struct Writer {
     };
     bool sized = false;
     for (const ArgVal& a : r.patch) {
-      switch (a.key) {
-        case ArgK::weight:
+      switch (propOf(a.key)) {
+        case PropId::textWeight:
           if (st.weight) decl("font-weight", num("%g", st.weight));
           break;
-        case ArgK::italic: decl("font-style", st.italic ? "italic" : "normal"); break;
-        case ArgK::decoration: {
+        case PropId::textItalic: decl("font-style", st.italic ? "italic" : "normal"); break;
+        case PropId::textDecoration: {
           std::string t;
           if (st.decoration & DECORATION_UNDER) t += "underline ";
           if (st.decoration & DECORATION_OVER) t += "overline ";
@@ -184,78 +184,78 @@ struct Writer {
           }
           break;
         }
-        case ArgK::fontRole:
+        case PropId::textFontRole:
           if (st.fontRole == FONTROLE_MONO) decl("font-family", "var(--tsr-font-mono, monospace)");
           else if (st.fontRole == FONTROLE_BODY) decl("font-family", "var(--tsr-font-body, serif)");
           break;
-        case ArgK::baseline:
+        case PropId::textBaseline:
           if (st.baseline) decl("vertical-align", st.baseline == BASELINE_SUPER ? "super" : "sub");
           break;
-        case ArgK::size:
-        case ArgK::sizePx:
+        case PropId::textSizeMul:
+        case PropId::textSize:
           if (!sized) {  // one slot: the fold's last value
             sized = true;
             if (st.sizePx > 0) decl("font-size", num("%gpx", st.sizePx));
             else if (st.sizeMul != 1.0f) decl("font-size", num("%gem", st.sizeMul));
           }
           break;
-        case ArgK::font:
+        case PropId::textFont:
           if (st.fontFamily) decl("font-family", strs.get(st.fontFamily));
           break;
-        case ArgK::color:
+        case PropId::textColor:
           if (st.color) decl("color", strs.get(st.color));
           break;
-        case ArgK::parIndent: decl("text-indent", len(np.parIndent)); break;
-        case ArgK::parAlign:
+        case PropId::parIndent: decl("text-indent", len(np.parIndent)); break;
+        case PropId::parAlign:
           decl("text-align", np.parAlign == PARALIGN_START    ? "start"
                              : np.parAlign == PARALIGN_CENTER ? "center"
                              : np.parAlign == PARALIGN_END    ? "end"
                                                               : "justify");
           break;
-        case ArgK::parHyphenate: decl("hyphens", np.parHyphenate == PARHYPHENATE_FALSE ? "manual" : "auto"); break;
-        case ArgK::parSingleLine:  // (plan P3-09) a shrink-to-fit box, centred: one line centres, more fill the measure
+        case PropId::parHyphenate: decl("hyphens", np.parHyphenate == PARHYPHENATE_FALSE ? "manual" : "auto"); break;
+        case PropId::parSingleLine:  // (plan P3-09) a shrink-to-fit box, centred: one line centres, more fill the measure
           if (np.parSingleLine == PARSINGLELINE_CENTER) {
             decl("display", "table");
             decl("margin-inline", "auto");
           }
           break;
-        case ArgK::blockIndent: decl("padding-inline-start", len(np.blockIndent)); break;
-        case ArgK::keepWithNext: decl("break-after", np.keepWithNext ? "avoid" : "auto"); break;
-        case ArgK::listMarker:
+        case PropId::blockIndent: decl("padding-inline-start", len(np.blockIndent)); break;
+        case PropId::blockKeepWithNext: decl("break-after", np.keepWithNext ? "avoid" : "auto"); break;
+        case PropId::listMarker:
           if (np.listMarker) decl("list-style-type", strs.get(np.listMarker));
           break;
         // (plan P3-14) the block trait group's CSS forms
-        case ArgK::keep:
+        case PropId::keep:
           if (np.keep == KEEP_TOGETHER || np.keep == KEEP_BOTH) decl("break-inside", "avoid");
           if (np.keep == KEEP_WITH_NEXT || np.keep == KEEP_BOTH) decl("break-after", "avoid");
           break;
-        case ArgK::spaceBefore: decl("margin-block-start", len(np.spaceBefore)); break;
-        case ArgK::spaceAfter: decl("margin-block-end", len(np.spaceAfter)); break;
-        case ArgK::breakBefore: decl("break-before", np.breakBefore == BREAKBEFORE_PAGE ? "page" : "auto"); break;
-        case ArgK::breakAfter: decl("break-after", np.breakAfter == BREAKAFTER_PAGE ? "page" : "auto"); break;
-        case ArgK::parHang:  // (a first line hanging out: the CSS form of hangAfter 1)
+        case PropId::spaceBefore: decl("margin-block-start", len(np.spaceBefore)); break;
+        case PropId::spaceAfter: decl("margin-block-end", len(np.spaceAfter)); break;
+        case PropId::breakBefore: decl("break-before", np.breakBefore == BREAKBEFORE_PAGE ? "page" : "auto"); break;
+        case PropId::breakAfter: decl("break-after", np.breakAfter == BREAKAFTER_PAGE ? "page" : "auto"); break;
+        case PropId::parHang:  // (a first line hanging out: the CSS form of hangAfter 1)
           decl("padding-inline-start", len(np.parHang));
           decl("text-indent", np.parHang.v == 0 ? std::string("0") : "-" + len(np.parHang));
           break;
-        case ArgK::boxPadding:
+        case PropId::boxPadding:
           if (np.boxPadding) decl("padding", strs.get(np.boxPadding));
           break;
-        case ArgK::boxBorder:
+        case PropId::boxBorder:
           if (np.boxBorder) {
             decl("border-style", "solid");
             decl("border-width", strs.get(np.boxBorder));
           }
           break;
-        case ArgK::boxBorderColor:
+        case PropId::boxBorderColor:
           if (np.boxBorderColor) decl("border-color", strs.get(np.boxBorderColor));
           break;
-        case ArgK::boxBackground:
+        case PropId::boxBackground:
           if (np.boxBackground) decl("background", strs.get(np.boxBackground));
           break;
-        case ArgK::beside:
+        case PropId::beside:
           if (np.beside == BESIDE_SHRINK) decl("display", "flow-root");
           break;
-        case ArgK::placeFloat:
+        case PropId::placeFloat:
           if (np.placeFloat == PLACEFLOAT_LEFT || np.placeFloat == PLACEFLOAT_RIGHT)
             decl("float", np.placeFloat == PLACEFLOAT_LEFT ? "inline-start" : "inline-end");
           if (np.placeFloat == PLACEFLOAT_INLINE) {  // (plan P3-15) side by side
@@ -263,10 +263,18 @@ struct Writer {
             decl("vertical-align", "top");
           }
           break;
-        case ArgK::placeWidth:
+        case PropId::placeWidth:
           if (np.placeWidth) decl("width", strs.get(np.placeWidth));
           break;
-        default: break;  // no CSS form on this page (gap, lang, media, breaker)
+        case PropId::codeHang: case PropId::textLang: case PropId::blockGap:
+        case PropId::codeblockSnapKerning: case PropId::codeblockSidecarFrac:
+        case PropId::codeblockContIndent: case PropId::codeblockOverlays: case PropId::parHangAfter:
+        case PropId::media: case PropId::breakerTolerance: case PropId::breakerEmergencyStretch:
+        case PropId::placeGap: case PropId::textFeatures: case PropId::textPunct: case PropId::textSpace:
+        case PropId::textWrap: case PropId::textAutospace: case PropId::textHyphens:
+        case PropId::textOverflowWrap: case PropId::textClasses: case PropId::engineScript:
+        case PropId::None:
+          break;  // no CSS form on this page (gap, lang, media, breaker, the text model's rows)
       }
     }
     if (!d.empty()) d.pop_back();

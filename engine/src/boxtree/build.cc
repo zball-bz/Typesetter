@@ -654,7 +654,11 @@ class Builder {
         close(g);
         return;
       }
-      default:  // transparent: its children stand in its place
+      case Kind::doc: case Kind::item: case Kind::trow: case Kind::tcell: case Kind::term:
+      case Kind::collect: case Kind::text: case Kind::styled: case Kind::link: case Kind::code:
+      case Kind::ref: case Kind::mathinline: case Kind::hardbreak: case Kind::seq: case Kind::note:
+      case Kind::field: case Kind::event: case Kind::entry: case Kind::slot: case Kind::when:
+      case Kind::each: case Kind::math: case Kind::mathsrc: case Kind::fill: // transparent: its children stand in its place
         for (const ContentNode* k : n->kids) walk(k, parent, x, 0);
         return;
     }

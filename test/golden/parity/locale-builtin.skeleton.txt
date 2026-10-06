@@ -1,0 +1,5 @@
+doc @[0,105)
+  code-block @[0,24) js=" $.doc({lang: 'en'}) "
+  para @[26,62) lines=1
+  region @[64,104) name="figure"
+    para @[86,95) lines=1

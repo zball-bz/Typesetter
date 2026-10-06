@@ -8,6 +8,11 @@
 
 namespace tsr {
 
+// what layout reads (emit's product, measure's store): declared here only,
+// so the DisplayList and the writers above it never see emit (P4)
+struct TopBlock;
+class MetricStore;
+
 // What layout produces (plan P1-18; design T6 Fragment, T7 LaidOutLine /
 // LaidOutBox): one record per materialized line or box, in paint order. Its
 // kind is what it is geometrically — paint reads the leaf's payload by the

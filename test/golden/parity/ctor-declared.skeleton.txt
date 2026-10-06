@@ -1,0 +1,3 @@
+doc @[0,156)
+  code-let @[0,87) js=" bold = $.ctor('bold', () => (call) => node('styled', {weight: 700}, ...call.kids))"
+  para @[89,155) lines=1

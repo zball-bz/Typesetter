@@ -1,0 +1,5 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="63" data-e="126">Equal footing (plan P5-02): a code block of the built-in fence.</p>
+<pre data-pid="1" data-s="128" data-e="163"><code class="language-text">plain lines
+  indented</code></pre>
+</div>

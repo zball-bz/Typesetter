@@ -1,0 +1,18 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {figure, table, terms} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+
+  $.locale('en-x-copy', {terms: {section: '§', figure: 'Figure ', table: 'Table ', equation: 'Eq. ', appendix: 'Appendix ',
+    'caption-sep': ': ', 'range-sep': '–', 'ref-sep': ', ', unresolved: '??', backref: '↩', 'term-sep': ' — '}})
+  $.doc({lang: 'en-x-copy'})
+
+},
+() => ({label: "f1"}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

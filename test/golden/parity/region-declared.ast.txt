@@ -1,0 +1,9 @@
+doc @[0,163)
+  code-block @[0,53) js=" $.region('note2', (body, ctx) => ctx.next(body)) "
+  para @[55,111)
+    text @[55,111) str="Equal footing (plan P5-02): a region of the default row."
+  region @[113,162) name="note2"
+    para @[121,141)
+      text @[121,141) str="Its first paragraph."
+    para @[143,154)
+      text @[143,154) str="Its second."

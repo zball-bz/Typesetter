@@ -1,0 +1,29 @@
+top pid=0 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "Equal" w=2561su r0 @[0,5)
+  glue word w=257su x=1 st=257su kern="l f" src r0 @[5,6)
+  box Alpha "foot" w=2049su r0 @[6,10)
+  disc pen=0.7 w=0su pre="-" 513su kern="ti" r0 @[10,10)
+  box Alpha "ing" w=1537su r0 @[10,13)
+  glue word w=257su x=1 st=257su kern="g (" src r0 @[13,14)
+  box OpenN "(plan" w=2561su r0 @[14,19)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[19,20)
+  box Alpha "P5-02):" w=3585su r0 @[20,27)
+  glue word w=257su x=1 st=257su src r0 @[27,27)
+  box Alpha "a" w=513su r1 @[36,37)
+  glue word w=257su x=1 st=257su kern="a s" src r1 @[37,38)
+  box Alpha "strong" w=3073su r1 @[38,44)
+  glue word w=257su x=1 st=257su kern="g p" src r1 @[44,45)
+  box Alpha "phrase" w=3073su r1 @[45,51)
+  glue word w=257su x=1 st=257su src r2 @[53,53)
+  box Alpha "in" w=1025su r2 @[53,55)
+  glue word w=257su x=1 st=257su kern="n a" src r2 @[55,56)
+  box Alpha "a" w=513su r2 @[56,57)
+  glue word w=257su x=1 st=257su kern="a p" src r2 @[57,58)
+  box Alpha "para" w=2049su r2 @[58,62)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r2 @[62,62)
+  box Alpha "graph." w=3073su r2 @[62,68)
+  run r0 plain
+  run r1 plain BOLD
+  run r2 plain

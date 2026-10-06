@@ -1,0 +1,11 @@
+doc h=13312su
+para pid=0 y=0su w=19200su h=3072su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=space items=[0,15) @[54,94)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last items=[16,23) @[95,111)
+para pid=1 y=4301su w=19200su h=1536su
+  L0 y=0su left=4608su w=14592su dw=0su dc=0su join=last items=[0,13) @[135,150)
+para pid=2 y=7066su w=19200su h=1536su
+  L0 y=0su left=4352su w=14848su dw=0su dc=0su join=last items=[0,15) @[183,199)
+para pid=3 y=9831su w=19200su h=3481su
+  L0 y=0su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,13) @[210,220)
+  L1 y=1945su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,15) @[210,220)

@@ -1,0 +1,18 @@
+lower v1 abi 3d3ccfbb docEnd 163 holes 3 module d4febe79fe4ff314
+piece 0 hole 0 js [127,148)
+piece 1 hole 1 js [150,171)
+piece 2 hole 2 js [173,186)
+block 0 content [0,57)
+  CALL para [0,57)
+    TEXT "Equal footing (plan P5-02): the built-in list of figures." [0,57)
+block 1 content [59,105) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [59,105)
+    CALL para [81,96)
+      TEXT "A first figure." [81,96)
+block 2 content [107,154) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [107,154)
+    CALL para [129,145)
+      TEXT "A second figure." [129,145)
+block 3 content [156,162) user framed holes 2..3
+  CALL para [156,162)
+    HOLE 2 [156,162)

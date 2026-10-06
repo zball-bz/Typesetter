@@ -1,8 +1,9 @@
 #include "layout.h"
 
+#include "../emit/emit.h"
+
 #include "../support/rails.h"
 #include "../shape/objects.h"
-#include "../shape/textrules.h"
 
 #include <algorithm>
 #include <unordered_set>
@@ -1315,7 +1316,7 @@ class DocLayout {
             if (const MathBox* mb = std::get<MathData>(u.data).box) lmn = lmx = mb->w;
           }
           break;
-        default:  // a code block: as wide as the room (it wraps)
+        case LayouterId::Stack: case LayouterId::Grid: case LayouterId::Table: // a code block: as wide as the room (it wraps)
           lmn = kRailMinLineSu;
           break;
       }

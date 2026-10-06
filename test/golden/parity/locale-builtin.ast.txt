@@ -1,0 +1,9 @@
+doc @[0,105)
+  code-block @[0,24) js=" $.doc({lang: 'en'}) "
+  para @[26,62)
+    text @[26,57) str="Equal footing (plan P5-02): see "
+    ref @[58,61) target="f1"
+    text @[61,62) str="."
+  region @[64,104) name="figure"
+    para @[86,95)
+      text @[86,95) str="A figure."

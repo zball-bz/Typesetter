@@ -1,0 +1,6 @@
+doc @[0,72) [base]
+  para @[0,72) [base]
+    text @[0,27) [base] str="Equal footing (plan P5-02): " raw=0:0,28:27
+    mathinline @[28,59) [base]
+      mathsrc @[29,58) [base] src="binom(n, k) = binom(n, n - k)"
+    text @[60,72) [base] str=" by symmetry." raw=0:0,1:0

@@ -1,0 +1,2 @@
+[0,63) function "#{ $.math.fn('choose', ['n', 'k'], 'lr((, stack(#n, #k), ))') }"
+[93,126) type "$choose(n, k) = choose(n, n - k)$"

@@ -1,0 +1,2 @@
+[58,64) function "#!memo"
+[99,105) function "#memo!"

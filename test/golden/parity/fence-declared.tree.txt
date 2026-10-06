@@ -1,0 +1,5 @@
+doc @[63,163) [base]
+  para @[63,126) [base]
+    text @[63,126) [base] str="Equal footing (plan P5-02): a code block of the built-in fence."
+  codeblock @[128,163) [CODEx0.85] lang="text"
+    text @[128,163) [CODEx0.85] str="plain lines\n  indented"

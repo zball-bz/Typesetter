@@ -1,0 +1,13 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {math} = __rt.std;
+return (async () => {
+const __h = [
+() => {
+ $.math.fn('choose', ['n', 'k'], 'lr((, stack(#n, #k), ))') 
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

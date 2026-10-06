@@ -1,0 +1,7 @@
+#{ $.doc({lang: 'en'}) }
+
+Equal footing (plan P5-02): see @f1.
+
+#!figure(label: "f1")
+A figure.
+#figure!

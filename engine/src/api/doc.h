@@ -17,6 +17,7 @@
 #include "../boxtree/build.h"
 #include "../resource/resource_table.h"
 #include "../resource/session.h"
+#include "../emit/emit.h"
 #include "../layout/layout.h"
 #include "../layout/paginate.h"
 #include "../render/html_writer.h"
@@ -911,7 +912,7 @@ struct Doc {
             settleHyph(hi, std::move(d));
             break;
           }
-          default:
+          case ResKind::fontFace: 
             t.invalid++;
             break;
         }

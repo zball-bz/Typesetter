@@ -58,12 +58,90 @@ const RULES = [
     closure: /api\/settings\.gen\.h$/,
   },
   {
+    // (plan P5-02) P1: the registries' row names (element classes, counters,
+    // collectors, math families) are data — never literals in the engine.
+    // Allowed: the registry's own JSON decoders, dumps' name tables, and the
+    // entries below, each with its reason
+    id: 'registry-name-literal',
+    why: 'P1: element classes, counters, collectors and math families are rows of data files, not literals in engine/src',
+    files: () => files(['engine/src'], ['.cc', '.h']).filter((f) => !/\.gen\.|\/gen\/|elements\/registry\.cc$|semantic\/declare\.cc$|elements\/presentation\.h$|inline\/jslex\.h$/.test(f)),
+    re: () => new RegExp(`(?<!(member\\([^,]*,\\s*|get\\(\\s*))"(${registryNames().join('|')})"`),
+    skip: /^\s*\/\/|diags\.add|Sev::|prim\("|\bk[A-Z]\w*\[\]\s*=/,
+    allow: [
+      ['semantic/terms.cc', '"table"', 'locale term keys (engine/data/locale): the words of supplements, not classes'],
+      ['render/rules_css.cc', '"table"', 'CSS and HTML vocabulary (display: table, the <table> element)'],
+      ['render/semantic_html.cc', '"table"', 'the HTML <table> element'],
+      ['syntax/exports.cc', '"heading"', 'the editor outline\'s entry kinds (syntax/exports.h), not the class'],
+      ['api/doc.h', '"index"', 'a product name (products.def)'],
+      ['math/ir.cc', '"index"', "a math primitive's parameter name (the closed primitive table)"],
+      ['boxtree/build.cc', '"figure",  "code"', 'the trait names table (blocktree dump labels)'],
+      ['codegen/codegen.cc', 'constStr("term")', "the slot a term part fills (schema slots: term), the sugar's lowering"],
+    ],
+  },
+  {
+    // (plan P5-02) P2: dispatch on generated ids — an interned string is never
+    // compared with a literal spelling in the stages
+    id: 'interned-literal-compare',
+    why: 'P2: no stage compares an interned string with a literal (dispatch on generated ids / registry rows)',
+    files: () => files(['engine/src/resolve', 'engine/src/emit', 'engine/src/boxtree', 'engine/src/layout', 'engine/src/paint',
+                        'engine/src/render', 'engine/src/break', 'engine/src/semantic', 'engine/src/model', 'engine/src/shape'], ['.cc', '.h']),
+    re: /strs\.get\([^)]*\)\s*[!=]=\s*"|"\s*[!=]=\s*strs\.get\(/,
+  },
+  {
+    // (plan P5-02) P4/P5: the character classifier (TextRules) is the
+    // shaper's — layout, break, paint and render read its decisions as data
+    id: 'textrules-scope',
+    why: 'P4/P5: shape/textrules.h is included only by the shaper (shape/, emit/), hyphenation, the soft-break rule, the verbatim grid and the rule constants (api/config.h)',
+    files: () => files(['engine/src'], ['.cc', '.h']).filter((f) =>
+      !/engine\/src\/(shape|emit|hyphen)\/|model\/softbreak\.h$|layout\/grid\.cc$|api\/config\.h$/.test(f)),
+    re: /#include\s+"[^"]*shape\/textrules\.h"/,
+  },
+  {
+    // (plan P5-02) P4: the typeset writer and paint read fragments and the
+    // DisplayList, not emit's structures
+    id: 'render-sees-emit',
+    why: 'P4: paint/ and the typeset writer may not see emit/emit.h, not even through another header',
+    files: () => files(['engine/src/render'], ['typeset_html.cc', 'typeset_html.h']).concat(files(['engine/src/break'], ['.cc', '.h'])),
+    closure: /emit\/emit\.h$/,
+  },
+  {
+    // (plan P5-02) P8: the engine parses two embedded languages (the math
+    // island, NumberingPattern); string sugar arrives as structured records
+    id: 'engine-string-parser',
+    why: 'P8: no engine-side parser of string sugar outside the front end, math/ and numbering (the stdlib makes records)',
+    files: () => files(['engine/src'], ['.cc', '.h']).filter((f) =>
+      !/engine\/src\/(linepass|inline|syntax|codegen|math|support|ops|markup)\/|numbering|native_cli\.cc$|\.gen\./.test(f)),
+    re: /\.find\('[@:=;]'\)|\.find\("[@:=;]"\)|substr\(0,\s*\d+\)\s*==\s*"[a-z-]+[:@]"/,
+    allow: [
+      ['model/model.cc', "find('=')", "a rule's where record as the wire carries it: k=v pairs the stdlib's selector encoder wrote (decoding, not a sugar)"],
+      ['model/model.h', "find(':')", "the tracks attribute's value domain (a column's size:align), validated at decode like a length"],
+      ['semantic/declare.cc', '"term:"', "slot('term:key') in a declaration's template, read once into the registry row's {term} (P2-07's template form)"],
+    ],
+  },
+  {
     id: 'colour-as-semantics',
     why: 'P2: semantics never travel through paint values (use classes / properties)',
     files: () => files(['engine/src'], ['.cc', '.h']),
     re: /var\(--tsr-tok-comment\)/,
   },
 ];
+
+// (plan P5-02) the registries' row names, from their data files: element
+// classes, counters and collectors (engine/data/elements.json) and math
+// families (engine/data/math/stdlib.tsv)
+let regNames = null;
+function registryNames() {
+  if (regNames) return regNames;
+  const el = JSON.parse(readFileSync(join(root, 'engine/data/elements.json'), 'utf8'));
+  const names = new Set();
+  for (const sec of ['classes', 'counters', 'collectors'])
+    for (const k of Object.keys(el[sec] ?? {})) if (!k.startsWith('$')) names.add(k);
+  for (const line of readFileSync(join(root, 'engine/data/math/stdlib.tsv'), 'utf8').split('\n')) {
+    const n = line.split('\t')[0].trim();
+    if (/^[a-z][a-z0-9.]*$/.test(n)) names.add(n);
+  }
+  return (regNames = [...names].sort().map((n) => n.replace(/\./g, '\\.')));
+}
 
 // the headers a file sees, transitively (quoted includes that resolve in the
 // tree; system and generated-at-build headers are leaves): the first chain
@@ -95,8 +173,13 @@ for (const r of RULES) {
       if (chain) found.push({ rule: r.id, file: rel, line: 1, text: `sees ${chain.slice(1).map((p) => relative(join(root, 'engine/src'), p)).join(' → ')}` });
       continue;
     }
+    const re = typeof r.re === 'function' ? r.re() : r.re;
     readFileSync(f, 'utf8').split('\n').forEach((line, i) => {
-      if (r.re.test(line)) found.push({ rule: r.id, file: rel, line: i + 1, text: line.trim() });
+      if (r.skip && r.skip.test(line)) return;
+      if (!re.test(line.replace(/\s\/\/ .*$/, ''))) return;  // (a trailing comment is prose)
+      // an allowed use: its file and the text it holds, with a reason
+      if ((r.allow ?? []).some(([file, text]) => rel.endsWith(file) && line.includes(text))) return;
+      found.push({ rule: r.id, file: rel, line: i + 1, text: line.trim() });
     });
   }
 }

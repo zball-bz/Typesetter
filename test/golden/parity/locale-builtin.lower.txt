@@ -1,0 +1,14 @@
+lower v1 abi 3d3ccfbb docEnd 105 holes 2 module 9c6ad6baeb0cecf9
+piece 0 hole 0 js [103,134)
+piece 1 hole 1 js [136,157)
+block 0 stmt [0,24) user framed holes 0..1
+  STMT 0
+block 1 content [26,62)
+  CALL para [26,62)
+    TEXT "Equal footing (plan P5-02): see " [26,57) raw=0:0,32:31
+    CALL ref [58,61) target="f1"
+    TEXT "." [61,62)
+block 2 content [64,104) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [64,104)
+    CALL para [86,95)
+      TEXT "A figure." [86,95)

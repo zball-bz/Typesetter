@@ -1,0 +1,7 @@
+lower v1 abi 3d3ccfbb docEnd 73 holes 0 module none
+block 0 content [0,72)
+  CALL para [0,72)
+    TEXT "Equal footing (plan P5-02): " [0,27) raw=0:0,28:27
+    CALL math [28,59)
+      CALL mathsrc [29,58) src="binom(n, k) = binom(n, n - k)"
+    TEXT " by symmetry." [60,72) raw=0:0,1:0

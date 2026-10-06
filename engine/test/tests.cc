@@ -1005,6 +1005,28 @@ static void contractCheck(const std::string& label, const char* output, const st
   }
 }
 
+// (plan P5-02; principle P11: every rendered character has provenance) a
+// tree node without a source span stands only under a declaration (its
+// template: placed later at its site's span); anywhere else it has lost
+// the occurrence it came from
+static void provenanceCheck(const std::string& label, const std::string& tree) {
+  bool inDecl = false;
+  size_t at = 0;
+  for (size_t ln = 1; at < tree.size(); ln++) {
+    size_t nl = tree.find('\n', at);
+    if (nl == std::string::npos) nl = tree.size();
+    const std::string_view line(tree.data() + at, nl - at);
+    at = nl + 1;
+    if (!line.empty() && line[0] != ' ') inDecl = line.substr(0, 5) == "decl ";
+    if (!inDecl && line.find("@[0,0)") != std::string_view::npos) {
+      printf("FAIL provenance %s:tree line %zu: a node without a span: %.*s\n", label.c_str(), ln,
+             (int)std::min<size_t>(line.size(), 100), line.data());
+      failures++;
+      return;
+    }
+  }
+}
+
 // --- fuzz regressions (plan P0-03): every crash libFuzzer found is kept as
 // test/fuzz/<target>/<name> and replayed here, so the ASan/UBSan build (G2)
 // proves it stays fixed ---
@@ -1578,6 +1600,104 @@ static void unitRegistry(const fs::path& root) {
   size_t at;
   while ((at = declared.find("sketch")) != std::string::npos) declared.replace(at, 6, "figure");
   CHECK(!builtin.empty() && builtin == declared && builtin.find("instance figure 2") != std::string::npos);
+}
+
+// (plan P5-02; principle P1: built-ins are pre-loaded rows) equal footing,
+// per registry: a document that re-declares a built-in row under a new name
+// gets the built-in's output exactly, apart from the name. Each pair is two
+// fixtures (test/fixtures/parity, semantics/parity-*); their products are
+// compared with the source offsets taken out (the sources differ in length:
+// the declarations) and the new name read as the built-in's. The runtime's
+// registries (providers, behaviours) have theirs in the e2e suite.
+static std::string withoutSpans(std::string s) {
+  std::string out;
+  out.reserve(s.size());
+  for (size_t i = 0; i < s.size();) {
+    auto attr = [&](const char* a) {
+      const size_t n = std::strlen(a);
+      if (s.compare(i, n, a) != 0) return false;
+      size_t j = s.find('"', i + n);
+      if (j == std::string::npos) return false;
+      i = j + 1;
+      return true;
+    };
+    if (attr(" data-s=\"") || attr(" data-e=\"") || attr(" data-s0=\"") || attr(" data-copy-group=\"")) continue;
+    if (s.compare(i, 2, "@[") == 0) {  // a span: @[a,b)
+      const size_t j = s.find(')', i);
+      if (j != std::string::npos) {
+        i = j + 1;
+        continue;
+      }
+    }
+    if (s.compare(i, 5, " raw=") == 0) {  // a text's source map
+      i += 5;
+      while (i < s.size() && s[i] != ' ' && s[i] != '\n') i++;
+      continue;
+    }
+    out += s[i++];
+  }
+  return out;
+}
+static void unitEqualFooting(const fs::path& root) {
+  struct Pair {
+    const char* builtin;
+    const char* declared;
+    const char* declaredName;  // (null: the same name, re-declared)
+    const char* builtinName;
+    bool tree = true;         // its tree too (false: the rows' products only)
+  };
+  const Pair pairs[] = {
+      // element, counter (P2-07): a #!sketch region makes no caption part,
+      // as the figure constructor does — the rows' products are compared
+      {"semantics/parity-builtin", "semantics/parity-declared", "sketch", "figure", false},
+      {"parity/collector-builtin", "parity/collector-declared", "figlist", "lof"},
+      {"parity/ctor-builtin", "parity/ctor-declared", "bold", "strong"},
+      {"parity/region-builtin", "parity/region-declared", "note2", "memo"},
+      {"parity/fence-builtin", "parity/fence-declared", "vtext", "text"},
+      {"parity/math-builtin", "parity/math-declared", "choose", "binom"},
+      {"parity/locale-builtin", "parity/locale-declared", "en-x-copy", "en"},
+      {"parity/format-builtin", "parity/format-declared", nullptr, nullptr},  // the row 'bib' re-declared
+  };
+  auto products = [&](const std::string& rel, bool withTree) {
+    fs::path tsm = root / "test" / "fixtures" / (rel + ".tsm");
+    fs::path ops = tsm;
+    ops.replace_extension(".ops");
+    std::string src, buf, profile;
+    if (!readFile(tsm, src) || !readFile(ops, buf)) return std::string();
+    readFile(root / "test" / "profiles" / "golden.json", profile);
+    Doc d;
+    d.configure(profile);
+    d.compile(src);
+    d.ingest((const u8*)buf.data(), buf.size());
+    ProviderSet p = mockProviders(g_hyphDir);
+    driveToCompletion(d, p);
+    // the tree without its declaration records (the declared side has them)
+    std::string tree, t = d.product("tree");
+    bool decl = false;
+    for (size_t at = 0; at < t.size();) {
+      size_t nl = t.find('\n', at);
+      if (nl == std::string::npos) nl = t.size();
+      const std::string_view line(t.data() + at, nl - at);
+      if (!line.empty() && line[0] != ' ') decl = line.substr(0, 5) == "decl ";
+      if (!decl) (tree += line) += '\n';
+      at = nl + 1;
+    }
+    return withoutSpans((withTree ? tree : std::string()) + d.product("index") + d.product("html") + d.product("hlist"));
+  };
+  for (const Pair& pr : pairs) {
+    const std::string builtin = products(pr.builtin, pr.tree);
+    std::string declared = products(pr.declared, pr.tree);
+    const std::string from = pr.declaredName ? pr.declaredName : "", to = pr.builtinName ? pr.builtinName : "";
+    for (size_t at = 0; !from.empty() && (at = declared.find(from, at)) != std::string::npos; at += to.size())
+      declared.replace(at, from.size(), to);
+    if (builtin.empty() || builtin != declared) {
+      size_t i = 0;
+      while (i < builtin.size() && i < declared.size() && builtin[i] == declared[i]) i++;
+      printf("FAIL equal footing %s / %s: differ at byte %zu: \"%.60s\" vs \"%.60s\"\n", pr.builtin, pr.declared, i,
+             builtin.c_str() + std::min(i, builtin.size()), declared.c_str() + std::min(i, declared.size()));
+      failures++;
+    }
+  }
 }
 
 // AST bytes (plan P1-05 bench gate): node + side record + kid slot per
@@ -2547,6 +2667,7 @@ int main(int argc, char** argv) {
   unitHostBoxes(fs::path(root));
   unitMathGlyphs(fs::path(root));
   unitMathFontFiles(fs::path(root));
+  unitEqualFooting(fs::path(root));
   unitMathIR();
   unitOpsWindow(fs::path(root));
   unitAstBytes(fs::path(root));
@@ -2653,6 +2774,7 @@ int main(int argc, char** argv) {
               failures++;
             }
         goldenCompare(g("tree"), doc.product("tree"), update, label + ":tree");
+        provenanceCheck(label, doc.product("tree"));
         goldenCompare(g("index"), doc.product("index"), update, label + ":index");
         std::string semantic = doc.product("semantic");
         goldenCompare(g("semantic"), semantic, update, label + ":semantic");
