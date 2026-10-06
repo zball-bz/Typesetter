@@ -25,7 +25,8 @@ takes content: a `seq` in that slot, before the kids —
 have none; (plan P3-33) the derived nullary `linebreak` makes a `hardbreak`
 (`\` at the end of a line lowers to it). The `stdlib` section adds the derived constructors
 (`strong`, `em`, `style`, `figure`, `toc`, `glossary`, `notes`,
-`bibliography`, `node`; options `"raw"` = the options object reaches the
+`bibliography`, `node`; plan P4-07: `attach(side)[…]`, a group attached to
+what precedes it, follows it or both; options `"raw"` = the options object reaches the
 implementation unvalidated), the std functions (`val`, `m`, `plain`) and the
 option aliases (`float`→`side`, `width`/`height`→`w`/`h`).
 

@@ -620,6 +620,10 @@ export function createStd(host) {
     // (plan P3-33) a hard line break (`\` at the end of a line): a forced
     // break inside its paragraph (the hardbreak kind: Penalty(Forced))
     linebreak: () => ob.makeNode(KIND.hardbreak, {}, []),
+    // (plan P4-07; design T5 step 10) an inline extent attached to what
+    // precedes it ('prev', as a note's mark), follows it ('next') or both:
+    // no space, glue or break between (the attach attribute of a group)
+    attach: (call) => ob.makeNode(KIND.group, { attach: call.attrs.attach }, call.kids),
     // (plan P3-14) a page break: an empty group whose break.before lands on
     // the block after it (screen: nothing)
     pagebreak: () => ob.makeNode(KIND.group, { role: 'pagebreak',

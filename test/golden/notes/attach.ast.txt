@@ -1,0 +1,35 @@
+doc @[0,448)
+  para @[0,177)
+    text @[0,36) str="A claim with a space before its note "
+    note @[37,49)
+      text @[39,48) str="The note."
+    text @[49,95) str=". The sentence goes on after it, a second note "
+    note @[96,107)
+      text @[98,106) str="Another."
+    text @[108,143) str=" sits between words, and one written "
+    splice @[144,166) expr="note"
+      arg @[150,165)
+        text @[150,165) str="Called by name."
+    text @[167,177) str=" as a call."
+  para @[179,302)
+    text @[179,197) str="句末的脚注。"
+    note @[197,215)
+      text @[199,214) str="句号之后。"
+    text @[215,269) str="也粘在标点之后，括号后的脚注（如此）"
+    note @[269,287)
+      text @[271,286) str="括号之后。"
+    text @[287,302) str="同样如此。"
+  para @[304,447)
+    text @[304,330) str="Attached by hand: a dagger "
+    splice @[331,351) expr="attach('prev')"
+      arg @[347,350)
+        text @[347,350) str="†"
+    text @[352,376) str=" hugs its word, a pilcrow "
+    splice @[377,396) expr="attach('next')"
+      arg @[393,395)
+        text @[393,395) str="¶"
+    text @[397,421) str=" its next word, and a dot "
+    splice @[422,441) expr="attach('both')"
+      arg @[438,440)
+        text @[438,440) str="·"
+    text @[442,447) str=" both."

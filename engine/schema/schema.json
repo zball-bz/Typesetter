@@ -223,8 +223,9 @@
       "= content); copy: text | omit | replace:<text> (how a copy reads it); class: style tokens (T4);",
       "ext: EXT name/value pairs (scalar user data, opaque to emit and layout). Flags: resolved = only the",
       "resolver sets it (dropped from input). (plan P2-08, since 11) style: the node's own style change, a",
-      "delta node (a childless styled node); attach: prev | next | both — no line break between the node's",
-      "inline extent and what precedes / follows it (a footnote marker attaches to its word)."
+      "delta node (a childless styled node); attach: prev | next | both — the node's inline extent hugs",
+      "what precedes / follows it: no typed space, synthesized glue or line break between, a punctuation",
+      "glyph's trailing blank moved after it (plan P4-07; a footnote marker attaches to its word)."
     ],
     "label": {"dom": "label", "since": 9},
     "role": {"dom": "ident", "since": 9},
@@ -292,6 +293,7 @@
       "notes": {"kind": "collect", "nullary": true},
       "pagebreak": {"kind": "group", "nullary": true},
       "linebreak": {"kind": "hardbreak", "nullary": true},
+      "attach": {"kind": "group", "params": ["attr:attach"]},
       "bibliography": {"kind": "collect", "params": ["attr:src:str"], "options": "raw", "async": true},
       "counterUpdate": {"kind": "event", "params": ["attr:counter:ident"], "options": "raw"},
       "node": {"params": ["attr:kind:ident"], "options": "raw", "sealed": true}},

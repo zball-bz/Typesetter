@@ -369,7 +369,8 @@ struct HlInline final : InlineSink {
     HList& h = B;
     const size_t i = h.items.size();
     const bool anchored = it.attrs & IA_Anchor;
-    const bool isBlankGlue = it.k == IK::Glue && it.cls == (u8)GC::Blank;
+    // (a blank displaced by an attach, plan P4-07, is a spacer of its own)
+    const bool isBlankGlue = it.k == IK::Glue && it.cls == (u8)GC::Blank && !(it.attrs & IA_Displaced);
     const bool leadingBlank = isBlankGlue && (it.attrs & IA_OwnedByNext);
     const bool joins = (isBlankGlue && !leadingBlank) ||
                        (it.k == IK::Box && rk.rc == RealizeClass::BlankBearing && i > 0 &&
@@ -386,7 +387,7 @@ struct HlInline final : InlineSink {
                        (it.k == IK::Box && (k.rc == RealizeClass::BlankBearing || k.rc == RealizeClass::Pinned ||
                                             k.rc == RealizeClass::Object)) ||
                        (it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace ||
-                                              it.cls == (u8)GC::Fill));
+                                              it.cls == (u8)GC::Fill || (it.attrs & IA_Displaced)));
     if (h.runs.empty() || alone || single || anchored || !sameRunKey(h.runs.back(), k)) {
       h.runs.push_back(k);
       single = alone;
@@ -407,13 +408,21 @@ struct HlInline final : InlineSink {
     c.rawPx = px;
     c.capSu = cap;
   }
-  void pop(Flow&) {  // the last carrier, a punctuation blank
+  // the last carrier (a punctuation blank; plan P4-07: a typed space, a
+  // blank an attach displaces), and its run when it was the run's only one —
+  // the next carrier opens a run of its own
+  void pop(Flow&) {
     HList& h = B;
+    const u32 r = h.items.back().run;
     h.items.pop_back();
     h.specs.pop_back();
     h.cold.pop_back();
     pend.pop_back();
     gapKind.pop_back();
+    if (h.items.empty() || h.items.back().run != r) {
+      h.runs.pop_back();
+      single = true;
+    }
   }
   size_t count(const Flow& u) const { return cur == &u ? B.items.size() : 0; }
   // carrier predicates (the open unit)
@@ -430,14 +439,15 @@ struct HlInline final : InlineSink {
   size_t glueBan = ~(size_t)0;  // an attach edge (walk): no synthesized glue at this item
   void autospace(Flow& u, StyleId st, const ICtx& ctx, Span span) {
     // (plan P4-02) none at an attach edge — it would be the break the
-    // attach forbids (design T5: synthesized glue suppressed) — and none
-    // beside a raised or lowered mark: a note's reference digit hugs the
-    // text on both sides (notes-design §1)
-    // (plan P4-04) and none where either side's text.autospace is none
-    if (count(u) == glueBan || styles.get(st).baseline ||
-        (count(u) > 0 && styles.get(runOf(count(u) - 1).face).baseline) ||
-        styles.get(st).autospace == AUTOSPACE_NONE ||
-        (count(u) > 0 && styles.get(runOf(count(u) - 1).face).autospace == AUTOSPACE_NONE))
+    // attach forbids (design T5: synthesized glue suppressed); (plan P4-04)
+    // none where either side's text.autospace is none — a note's reference
+    // mark's (its role style, plan P4-07: the mark hugs the text on both
+    // sides, notes-design §1; a raised baseline alone says nothing); none
+    // after a punctuation blank (a blank an attach displaced: the glyph's
+    // spacing is there already)
+    if (count(u) == glueBan || styles.get(st).autospace == AUTOSPACE_NONE ||
+        (count(u) > 0 && (styles.get(runOf(count(u) - 1).face).autospace == AUTOSPACE_NONE ||
+                          isBlank(count(u) - 1, /*ownedByNext=*/false))))
       return;
     double px = kCjkBoundaryEm * E.fontPx(st);
     AdvanceSpec sp;
@@ -531,20 +541,60 @@ struct HlInline final : InlineSink {
   // inline extent and the item before it (prev) or after it (next) — a
   // footnote marker glues to its word, never a line start
   void walk(const ContentNode* n, Flow& u, ICtx ctx) override { record(u, {n, ctx}); }
+  // (plan P4-07; design T5 step 10, T1 S14) attached to what precedes it, a
+  // node's first atom hugs it: the typed space before it is not set (`word
+  // ^[note]. end` reads word¹. end, for a note however written), a
+  // punctuation glyph's trailing blank moves after it — the marker hugs the
+  // glyph (。¹), the blank stays a blank (displaced: a spacer) —, no
+  // synthesized glue and no break come between; attached to what follows,
+  // the same on its other side
   void doWalk(const ContentNode* n, Flow& u, ICtx ctx) {
     copyPolicy(n, u, ctx);
     const ArgVal* at = attr(n, ArgK::attach);
     if (!at || at->tag != ArgTag::Str) return shape(n, u, ctx);
     const std::string_view a = strs.get(at->ref);
-    const size_t before = count(u);
-    if (a != "next") glueBan = before;  // no glue between it and what precedes it
-    shape(n, u, ctx);
-    if (count(u) == before) return;
-    if (a != "next" && before > 0 && !(pend[before - 1] <= -kPenInf)) pend[before - 1] = kPenInf;
-    if (a != "prev") {
-      forbidLast();
-      glueBan = count(u);  // nor between it and what follows it
+    const bool prev = a != "next", next = a != "prev";
+    struct {
+      bool on = false;
+      HItem it;
+      AdvanceSpec spec;
+      ColdRec cold;
+      RunRec run;
+      float pen = 0;
+    } moved;
+    if (prev && count(u) > 0) {
+      if (collapsibleAt == count(u) - 1) popCarrier(u);  // a typed space
+      const size_t c = count(u);
+      if (c > 0 && isBlank(c - 1, /*ownedByNext=*/false)) {
+        moved = {true, B.items[c - 1], B.specs[B.items[c - 1].aux], B.cold[B.items[c - 1].cold],
+                 runOf(c - 1), pend[c - 1]};
+        popCarrier(u);
+      }
     }
+    const size_t before = count(u);
+    if (prev) glueBan = before;  // no glue between it and what precedes it
+    shape(n, u, ctx);
+    if (count(u) > before && prev && before > 0 && !(pend[before - 1] <= -kPenInf)) pend[before - 1] = kPenInf;
+    if (moved.on) {
+      const bool after = count(u) > before;  // (an empty node: the blank as it was)
+      RunRec rk = moved.run;
+      rk.rc = RealizeClass::Plain;
+      const Span sp{moved.cold.srcStart, moved.cold.srcEnd};
+      const u32 i = push(u, IK::Glue, (u8)GC::Blank, after ? IA_Displaced : 0, rk, moved.spec, sp, 0.0f, moved.pen);
+      B.items[i].w = moved.it.w;
+      B.items[i].st = moved.it.st;
+      B.cold[B.items[i].cold] = moved.cold;
+    }
+    if (count(u) == before) return;
+    if (next) {
+      forbidLast();
+      glueBan = count(u);           // nor between it and what follows it,
+      collapsibleAt = count(u) - 1;  // nor the typed space after it
+    }
+  }
+  void popCarrier(Flow& u) {
+    pop(u);
+    collapsibleAt = ~(size_t)0;
   }
   // (plan P3-07; design T7 CopyPolicy) a node's `copy` / `syn` attributes
   // set its text's copy policy, the innermost winning: copy "text",
@@ -670,13 +720,18 @@ struct HlInline final : InlineSink {
     } else if (n->kind == Kind::ref) {
       ref(n, u, ctx);
       return;
-    } else if (n->kind == Kind::group) {
-      // inline-embedded labeled group (e.g. a term spliced mid-paragraph):
-      // the containing unit carries the anchor so refs still land
-      for (const ArgVal& a : n->args)
-        if (a.key == ArgK::label && a.tag == ArgTag::Str && a.ref && !u.anchor) u.anchor = a.ref;
     }
+    // (plan P4-07; finding emitter/sup-bit-attach-rule) a labelled inline
+    // extent — a group (a term spliced mid-paragraph), a styled run — is an
+    // inline anchor, as a labelled ref is: its first carrier takes it (the
+    // anchor lands where it is, not at its paragraph's start)
+    const StrRef outer = anchorNext;
+    if (const StrRef label = attrStr(n, ArgK::label); label && !anchorNext) anchorNext = label;
     for (const ContentNode* k : n->kids) doWalk(k, u, ctx);
+    if (anchorNext && anchorNext != outer) {  // nothing carried it: its unit does
+      if (!u.anchor) u.anchor = anchorNext;
+      anchorNext = outer;
+    }
   }
 
   void code(const ContentNode* n, Flow& u, ICtx ctx) {

@@ -36,10 +36,11 @@ endnote section, not a footnote. Named form for reuse / long bodies:
   ordinal in document order and an auto-label `fn-<n>`; the marker node
   gets `ArgK::number` = "n". Notes are also entries in the label table so
   `@fn-3` works like any reference.
-- **emit**: the marker becomes a superscript inline block — a Latin-class
-  block with the number text, style flag `sup`, `breakPenalty=INF` glued
-  to the preceding block (never a line start; CJK 禁则 treats it as a
-  closing punct). Note *bodies* are lifted out of the paragraph into a new
+- **emit**: the marker is a superscript run (its role style, `fn-marker`:
+  raised, smaller, no CJK–Latin spacing) attached to what precedes it —
+  `attach: prev` (plan P4-07; shaping-design §11): never a line start, the
+  typed space before it not set (`word ^[n]. end` reads word¹. end), a
+  punctuation glyph's trailing blank moved after it (`。¹`). Note *bodies* are lifted out of the paragraph into a new
   FlowUnit kind `Note` appended to the document's note list (not to the
   flow). Each body is a TableCell-like block stream broken to the measure
   minus a hanging indent for the number.

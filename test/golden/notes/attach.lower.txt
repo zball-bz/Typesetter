@@ -1,0 +1,38 @@
+lower v1 abi 3d3ccfbb docEnd 448 holes 4 module 44f21e1881488c01
+piece 0 hole 0 js [136,163)
+piece 1 hole 1 js [165,205)
+piece 2 hole 2 js [207,247)
+piece 3 hole 3 js [249,289)
+block 0 content [0,177) user framed holes 0..1
+  CALL para [0,177)
+    TEXT "A claim with a space before its note " [0,36) raw=0:0,37:36
+    CALL note [37,49)
+      TEXT "The note." [39,48)
+    TEXT ". The sentence goes on after it, a second note " [49,95) raw=0:0,47:46
+    CALL note [96,107)
+      TEXT "Another." [98,106)
+    TEXT " sits between words, and one written " [108,143) raw=0:0,1:0,37:35
+    HOLE 0 [144,166)
+      TEXT "Called by name." [150,165)
+    TEXT " as a call." [167,177) raw=0:0,1:0
+block 1 content [179,302)
+  CALL para [179,302)
+    TEXT "句末的脚注。" [179,197)
+    CALL note [197,215)
+      TEXT "句号之后。" [199,214)
+    TEXT "也粘在标点之后，括号后的脚注（如此）" [215,269)
+    CALL note [269,287)
+      TEXT "括号之后。" [271,286)
+    TEXT "同样如此。" [287,302)
+block 2 content [304,447) user framed holes 1..4
+  CALL para [304,447)
+    TEXT "Attached by hand: a dagger " [304,330) raw=0:0,27:26
+    HOLE 1 [331,351)
+      TEXT "†" [347,350)
+    TEXT " hugs its word, a pilcrow " [352,376) raw=0:0,1:0,26:24
+    HOLE 2 [377,396)
+      TEXT "¶" [393,395)
+    TEXT " its next word, and a dot " [397,421) raw=0:0,1:0,26:24
+    HOLE 3 [422,441)
+      TEXT "·" [438,440)
+    TEXT " both." [442,447) raw=0:0,1:0

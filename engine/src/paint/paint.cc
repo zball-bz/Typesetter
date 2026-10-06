@@ -172,11 +172,14 @@ void lineRuns(const Fragment& l, const HList& h, const Interner& strs, std::vect
     }
     const bool indentBox = it.k == IK::Box && r.syn == SynKind::Indent;
     const bool fill = it.k == IK::Glue && it.cls == (u8)GC::Fill;  // (plan P2-16)
-    const bool spacer = it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace || fill);
+    // (plan P4-07) a blank an attach displaced after its mark stands alone
+    const bool displaced = it.k == IK::Glue && it.cls == (u8)GC::Blank && (it.attrs & IA_Displaced);
+    const bool spacer = it.k == IK::Glue && (it.cls == (u8)GC::Autospace || it.cls == (u8)GC::ObjectSpace || fill ||
+                                             displaced);
     if (indentBox || spacer) {
       DLRun d;
       d.k = DLRun::K::Spacer;
-      d.syn = indentBox ? "indent" : fill ? "fill" : "boundary";
+      d.syn = indentBox ? "indent" : fill ? "fill" : displaced ? "blank" : "boundary";
       d.widthPx = h.cold[it.cold].rawPx;
       if (fill) d.widthPx += l.fillPx;
       else if (spacer) d.widthPx += l.wordDeltaPx * (double)it.x;

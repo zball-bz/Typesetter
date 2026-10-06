@@ -6,6 +6,7 @@
 namespace tsr {
 
 inline constexpr const char* kStdNames[] = {
+    "attach",
     "bibliography",
     "cell",
     "code",

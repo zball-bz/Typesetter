@@ -50,7 +50,7 @@ top pid=1 units=4
   word "Note" w=2049su pen=INF @[122,126)
  unit text indent=0su
   word "Gear" w=2049su pen=INF @[127,131)
- unit text indent=0su anchor="gizmo"
+ unit text indent=0su
   word "giz" w=1537su pen=INF BOLD @[134,173)
   hyphen bw=513su pen=0.70 BOLD @[134,173)
   word "mo" w=1025su pen=INF BOLD @[134,173)

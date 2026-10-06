@@ -276,9 +276,10 @@ Latin word, a formula, code) instead of a blank state, so markup never
 changes typography (finding emitter/paragraph-blind-script-context):
 - CJK–Latin boundary glue (0.25em, App C) goes at every script edge —
   `中文*English*中文`, `中文[链接](…)`, `中文`code`中文`, a reference's
-  `(1)` before CJK — except beside a raised or lowered mark (a note's
-  reference digit hugs the text on both sides) and at an `attach` edge (the
-  glue would be the break the attach forbids);
+  `(1)` before CJK — except where a side's `text.autospace` is none (a
+  note's reference mark: its role style, so it hugs the text on both sides;
+  a raised baseline alone says nothing, plan P4-07), after a displaced blank
+  and at an `attach` edge (the glue would be the break the attach forbids);
 - the break after an inline object is its neighbour's (finding
   emitter/missed:1): never before a closer (CJK, or `, . ; : ! ? ) ] } %`
   and quotes), never between a formula and Latin text or code glued to it
@@ -420,7 +421,22 @@ The breaks inside a word are the token pass's (`emitWord`), each a Disc
   `overflowWrap: anywhere` any cluster boundary is one too. A pre run
   (inline code) takes only these.
 
-## 11. Next steps
+## 11. Attach edges (plan P4-07; design T5 step 10, T1 S14)
 
-P4-07, P4-08: attach edges and the item-native breaker (with it, the
-canonical TeX form and the end of the lowering).
+`attach: prev | next | both` (a universal attribute; `#attach('prev')[…]`,
+a group with it) attaches a node's inline extent to what precedes it,
+follows it, or both — a note's mark is `attach: prev` (elements.json):
+- the typed space at that edge is not set: `word ^[note]. end` reads
+  word¹. end (the parser keeps the space where it was written — the AST is
+  lossless —, and the old relocation that made it ' . end' is gone); a
+  no-break space stays;
+- no synthesized glue (CJK–Latin) and no break come between;
+- a punctuation glyph's trailing blank before the node moves after it
+  (`IA_Displaced`): the mark hugs the glyph (`。¹`, `）¹`) whose right side
+  paint squeezes, the blank stays a breakable blank — a spacer of its own
+  (`data-syn="blank"`).
+
+## 12. Next steps
+
+P4-08: the item-native breaker (with it, the canonical TeX form and the end
+of the lowering).

@@ -7,7 +7,7 @@
   [{"role": "caption"}, {"parAlign": "justify", "parSingleLine": "center", "parIndent": "0", "overflowWrap": "separators"}],
   [{"role": "caption-label"}, {"weight": 700, "hyphens": "manual"}],
   [{"role": "term-name"}, {"weight": 700}],
-  [{"role": "fn-marker"}, {"baseline": "super", "size": "0.7em"}],
+  [{"role": "fn-marker"}, {"baseline": "super", "size": "0.7em", "autospace": "none"}],
   [{"role": "note-body"}, {"size": "0.85em"}],
   [{"kind": "code"}, {"fontRole": "mono", "size": {"setting": "code.scale", "unit": "em"}, "features": {"setting": "code.fontFeatures"}, "textSpace": "pre", "overflowWrap": "separators"}],
   [{"kind": "codeblock"}, {"fontRole": "mono", "size": {"setting": "code.scale", "unit": "em"}, "parAlign": "start", "parHyphenate": "false", "features": {"setting": "code.fontFeatures"}, "snapKerning": {"setting": "code.snapKerning"}, "sidecarFrac": {"setting": "code.sidecarFrac"}, "contIndent": {"setting": "code.contIndent"}, "textSpace": "pre"}],

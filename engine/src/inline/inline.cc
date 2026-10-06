@@ -681,7 +681,9 @@ struct InlineParser {
   }
 
   // footnote sugar (notes-design.md §1): ^[inline body]; an unclosed form
-  // stays literal text. A space before it moves after the note (until P4-07).
+  // stays literal text. A space before it stays where it was written (plan
+  // P4-07; design T1 S14): its marker attaches to what precedes it at emit
+  // (attach: prev), for any note however written.
   void note() {
     i32 close = bodyClose(i + 1);
     if (close < 0) {
@@ -689,6 +691,7 @@ struct InlineParser {
       i++;
       return;
     }
+    spaceBeforeItem();
     flushText();
     AstNode* n = A.call(SugarId::note, span(i, (u32)close + 1));
     A.setKids(n, parseBody(i + 2, (u32)close));

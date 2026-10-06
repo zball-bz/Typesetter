@@ -1,0 +1,69 @@
+doc @[0,447) [base]
+  para @[0,177) [base]
+    text @[0,36) [base] str="A claim with a space before its note " raw=0:0,37:36
+    ref @[37,49) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
+      text @[37,49) [SUPx0.70] str="1"
+    text @[49,95) [base] str=". The sentence goes on after it, a second note " raw=0:0,47:46
+    ref @[96,107) [SUPx0.70] role="fn-marker" attach="prev" target="fn-2" label="fnref-2" syn="fn-marker" copy="omit"
+      text @[96,107) [SUPx0.70] str="2"
+    text @[108,143) [base] str=" sits between words, and one written " raw=0:0,1:0,37:35
+    ref @[144,166) [SUPx0.70] role="fn-marker" attach="prev" target="fn-3" label="fnref-3" syn="fn-marker" copy="omit"
+      text @[144,166) [SUPx0.70] str="3"
+    text @[167,177) [base] str=" as a call." raw=0:0,1:0
+  para @[179,302) [base]
+    text @[179,197) [base] str="句末的脚注。"
+    ref @[197,215) [SUPx0.70] role="fn-marker" attach="prev" target="fn-4" label="fnref-4" syn="fn-marker" copy="omit"
+      text @[197,215) [SUPx0.70] str="4"
+    text @[215,269) [base] str="也粘在标点之后，括号后的脚注（如此）"
+    ref @[269,287) [SUPx0.70] role="fn-marker" attach="prev" target="fn-5" label="fnref-5" syn="fn-marker" copy="omit"
+      text @[269,287) [SUPx0.70] str="5"
+    text @[287,302) [base] str="同样如此。"
+  para @[304,447) [base]
+    text @[304,330) [base] str="Attached by hand: a dagger " raw=0:0,27:26
+    group @[331,351) [base] attach="prev"
+      text @[347,350) [base] str="†"
+    text @[352,376) [base] str=" hugs its word, a pilcrow " raw=0:0,1:0,26:24
+    group @[377,396) [base] attach="next"
+      text @[393,395) [base] str="¶"
+    text @[397,421) [base] str=" its next word, and a dot " raw=0:0,1:0,26:24
+    group @[422,441) [base] attach="both"
+      text @[438,440) [base] str="·"
+    text @[442,447) [base] str=" both." raw=0:0,1:0
+  group @[0,447) [base] role="notes"
+    rule @[0,447) [base]
+    list @[0,447) [base] ordered=true
+      item @[37,49) [base]
+        para @[37,49) [base] label="fn-1"
+          styled @[37,49) [basex0.85] role="note-body"
+            text @[39,48) [basex0.85] str="The note."
+            text @[37,49) [basex0.85] str=" "
+            ref @[37,49) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
+              text @[37,49) [basex0.85] str="↩"
+      item @[96,107) [base]
+        para @[96,107) [base] label="fn-2"
+          styled @[96,107) [basex0.85] role="note-body"
+            text @[98,106) [basex0.85] str="Another."
+            text @[96,107) [basex0.85] str=" "
+            ref @[96,107) [basex0.85] target="fnref-2" syn="backlink" copy="omit"
+              text @[96,107) [basex0.85] str="↩"
+      item @[144,166) [base]
+        para @[144,166) [base] label="fn-3"
+          styled @[144,166) [basex0.85] role="note-body"
+            text @[150,165) [basex0.85] str="Called by name."
+            text @[144,166) [basex0.85] str=" "
+            ref @[144,166) [basex0.85] target="fnref-3" syn="backlink" copy="omit"
+              text @[144,166) [basex0.85] str="↩"
+      item @[197,215) [base]
+        para @[197,215) [base] label="fn-4"
+          styled @[197,215) [basex0.85] role="note-body"
+            text @[199,214) [basex0.85] str="句号之后。"
+            text @[197,215) [basex0.85] str=" "
+            ref @[197,215) [basex0.85] target="fnref-4" syn="backlink" copy="omit"
+              text @[197,215) [basex0.85] str="↩"
+      item @[269,287) [base]
+        para @[269,287) [base] label="fn-5"
+          styled @[269,287) [basex0.85] role="note-body"
+            text @[271,286) [basex0.85] str="括号之后。"
+            text @[269,287) [basex0.85] str=" "
+            ref @[269,287) [basex0.85] target="fnref-5" syn="backlink" copy="omit"
+              text @[269,287) [basex0.85] str="↩"

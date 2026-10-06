@@ -1,0 +1,266 @@
+top pid=0 units=1
+ unit text indent=0su
+  box Alpha "A" w=513su r0 @[0,1)
+  glue word w=257su x=1 cap=257su kern="A c" src r0 @[1,2)
+  box Alpha "claim" w=2561su r0 @[2,7)
+  glue word w=257su x=1 cap=257su kern="m w" src r0 @[7,8)
+  box Alpha "with" w=2049su r0 @[8,12)
+  glue word w=257su x=1 cap=257su kern="h a" src r0 @[12,13)
+  box Alpha "a" w=513su r0 @[13,14)
+  glue word w=257su x=1 cap=257su kern="a s" src r0 @[14,15)
+  box Alpha "space" w=2561su r0 @[15,20)
+  glue word w=257su x=1 cap=257su kern="e b" src r0 @[20,21)
+  box Alpha "be" w=1025su r0 @[21,23)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[23,23)
+  box Alpha "fore" w=2049su r0 @[23,27)
+  glue word w=257su x=1 cap=257su kern="e i" src r0 @[27,28)
+  box Alpha "its" w=1537su r0 @[28,31)
+  glue word w=257su x=1 cap=257su kern="s n" src r0 @[31,32)
+  box Alpha "note" w=2049su r0 @[32,36)
+  box Digit "1" w=360su anchor="fnref-1" r1 @[37,49)
+  box Infix "." w=513su r2 @[49,50)
+  glue word w=257su x=1 cap=257su kern=". T" src r2 @[50,51)
+  box Alpha "The" w=1537su r2 @[51,54)
+  glue word w=257su x=1 cap=257su kern="e s" src r2 @[54,55)
+  box Alpha "sen" w=1537su r2 @[55,58)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r2 @[58,58)
+  box Alpha "tence" w=2561su r2 @[58,63)
+  glue word w=257su x=1 cap=257su kern="e g" src r2 @[63,64)
+  box Alpha "goes" w=2049su r2 @[64,68)
+  glue word w=257su x=1 cap=257su kern="s o" src r2 @[68,69)
+  box Alpha "on" w=1025su r2 @[69,71)
+  glue word w=257su x=1 cap=257su kern="n a" src r2 @[71,72)
+  box Alpha "af" w=1025su r2 @[72,74)
+  disc pen=0.7 w=0su pre="-" 513su kern="ft" r2 @[74,74)
+  box Alpha "ter" w=1537su r2 @[74,77)
+  glue word w=257su x=1 cap=257su kern="r i" src r2 @[77,78)
+  box Alpha "it," w=1537su r2 @[78,81)
+  glue word w=257su x=1 cap=257su kern=", a" src r2 @[81,82)
+  box Alpha "a" w=513su r2 @[82,83)
+  glue word w=257su x=1 cap=257su kern="a s" src r2 @[83,84)
+  box Alpha "sec" w=1537su r2 @[84,87)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r2 @[87,87)
+  box Alpha "ond" w=1537su r2 @[87,90)
+  glue word w=257su x=1 cap=257su kern="d n" src r2 @[90,91)
+  box Alpha "note" w=2049su r2 @[91,95)
+  box Digit "2" w=360su anchor="fnref-2" r3 @[96,107)
+  glue word w=257su x=1 cap=257su src r4 @[108,108)
+  box Alpha "sits" w=2049su r4 @[108,112)
+  glue word w=257su x=1 cap=257su kern="s b" src r4 @[112,113)
+  box Alpha "be" w=1025su r4 @[113,115)
+  disc pen=0.7 w=0su pre="-" 513su kern="et" r4 @[115,115)
+  box Alpha "tween" w=2561su r4 @[115,120)
+  glue word w=257su x=1 cap=257su kern="n w" src r4 @[120,121)
+  box Alpha "words," w=3073su r4 @[121,127)
+  glue word w=257su x=1 cap=257su kern=", a" src r4 @[127,128)
+  box Alpha "and" w=1537su r4 @[128,131)
+  glue word w=257su x=1 cap=257su kern="d o" src r4 @[131,132)
+  box Alpha "one" w=1537su r4 @[132,135)
+  glue word w=257su x=1 cap=257su kern="e w" src r4 @[135,136)
+  box Alpha "writ" w=2049su r4 @[136,140)
+  disc pen=0.7 w=0su pre="-" 513su kern="tt" r4 @[140,140)
+  box Alpha "ten" w=1537su r4 @[140,143)
+  box Digit "3" w=360su anchor="fnref-3" r5 @[144,166)
+  glue word w=257su x=1 cap=257su src r6 @[167,167)
+  box Alpha "as" w=1025su r6 @[167,169)
+  glue word w=257su x=1 cap=257su kern="s a" src r6 @[169,170)
+  box Alpha "a" w=513su r6 @[170,171)
+  glue word w=257su x=1 cap=257su kern="a c" src r6 @[171,172)
+  box Alpha "call." w=2561su r6 @[172,177)
+  run r0 plain
+  run r1 plain ref LINK x0.70 link="#tsr-fn-1" anchor="fnref-1"
+  run r2 plain
+  run r3 plain ref LINK x0.70 link="#tsr-fn-2" anchor="fnref-2"
+  run r4 plain
+  run r5 plain ref LINK x0.70 link="#tsr-fn-3" anchor="fnref-3"
+  run r6 plain
+top pid=1 units=1
+ unit text indent=0su
+  box Ideo "句" w=1025su wt=0.6 cap=102su r0 @[179,182)
+  glue inter w=0su x=0.6 cap=102su r0 @[179,182)
+  box Ideo "末" w=1025su wt=0.6 cap=102su r0 @[182,185)
+  glue inter w=0su x=0.6 cap=102su r0 @[182,185)
+  box Ideo "的" w=1025su wt=0.6 cap=102su r0 @[185,188)
+  glue inter w=0su x=0.6 cap=102su r0 @[185,188)
+  box Ideo "脚" w=1025su wt=0.6 cap=102su r0 @[188,191)
+  glue inter w=0su x=0.6 cap=102su r0 @[188,191)
+  box Ideo "注" w=1025su wt=0.6 cap=102su r0 @[191,194)
+  pen INF r0
+  glue inter w=0su x=0.6 cap=102su r0 @[191,194)
+  box FullStopW "。" w=513su blank=R r1 @[194,197)
+  box Digit "4" w=360su anchor="fnref-4" r2 @[197,215)
+  glue blank w=512su x=0 cap=0su displaced r3 @[194,197)
+  box Ideo "也" w=1025su wt=0.6 cap=102su r4 @[215,218)
+  glue inter w=0su x=0.6 cap=102su r4 @[215,218)
+  box Ideo "粘" w=1025su wt=0.6 cap=102su r4 @[218,221)
+  glue inter w=0su x=0.6 cap=102su r4 @[218,221)
+  box Ideo "在" w=1025su wt=0.6 cap=102su r4 @[221,224)
+  glue inter w=0su x=0.6 cap=102su r4 @[221,224)
+  box Ideo "标" w=1025su wt=0.6 cap=102su r4 @[224,227)
+  glue inter w=0su x=0.6 cap=102su r4 @[224,227)
+  box Ideo "点" w=1025su wt=0.6 cap=102su r4 @[227,230)
+  glue inter w=0su x=0.6 cap=102su r4 @[227,230)
+  box Ideo "之" w=1025su wt=0.6 cap=102su r4 @[230,233)
+  glue inter w=0su x=0.6 cap=102su r4 @[230,233)
+  box Ideo "后" w=1025su wt=0.6 cap=102su r4 @[233,236)
+  pen INF r4
+  glue inter w=0su x=0.6 cap=102su r4 @[233,236)
+  box CommaW "，" w=513su blank=R r5 @[236,239)
+  glue blank w=512su x=0 cap=0su r5 @[236,239)
+  box Ideo "括" w=1025su wt=0.6 cap=102su r6 @[239,242)
+  glue inter w=0su x=0.6 cap=102su r6 @[239,242)
+  box Ideo "号" w=1025su wt=0.6 cap=102su r6 @[242,245)
+  glue inter w=0su x=0.6 cap=102su r6 @[242,245)
+  box Ideo "后" w=1025su wt=0.6 cap=102su r6 @[245,248)
+  glue inter w=0su x=0.6 cap=102su r6 @[245,248)
+  box Ideo "的" w=1025su wt=0.6 cap=102su r6 @[248,251)
+  glue inter w=0su x=0.6 cap=102su r6 @[248,251)
+  box Ideo "脚" w=1025su wt=0.6 cap=102su r6 @[251,254)
+  glue inter w=0su x=0.6 cap=102su r6 @[251,254)
+  box Ideo "注" w=1025su wt=0.6 cap=102su r6 @[254,257)
+  pen 0 r6
+  glue blank w=512su x=0 cap=0su owned-by-next r7 @[257,260)
+  box OpenW "（" w=513su blank=L r7 @[257,260)
+  box Ideo "如" w=1025su wt=0.6 cap=102su r8 @[260,263)
+  glue inter w=0su x=0.6 cap=102su r8 @[260,263)
+  box Ideo "此" w=1025su wt=0.6 cap=102su r8 @[263,266)
+  pen INF r8
+  glue inter w=0su x=0.6 cap=102su r8 @[263,266)
+  box CloseW "）" w=513su blank=R r9 @[266,269)
+  box Digit "5" w=360su anchor="fnref-5" r10 @[269,287)
+  glue blank w=512su x=0 cap=0su displaced r11 @[266,269)
+  box Ideo "同" w=1025su wt=0.6 cap=102su r12 @[287,290)
+  glue inter w=0su x=0.6 cap=102su r12 @[287,290)
+  box Ideo "样" w=1025su wt=0.6 cap=102su r12 @[290,293)
+  glue inter w=0su x=0.6 cap=102su r12 @[290,293)
+  box Ideo "如" w=1025su wt=0.6 cap=102su r12 @[293,296)
+  glue inter w=0su x=0.6 cap=102su r12 @[293,296)
+  box Ideo "此" w=1025su wt=0.6 cap=102su r12 @[296,299)
+  pen INF r12
+  glue inter w=0su x=0.6 cap=102su r12 @[296,299)
+  box FullStopW "。" w=513su blank=R r13 @[299,302)
+  glue blank w=512su x=0 cap=0su r13 @[299,302)
+  run r0 letter-spaced CJK
+  run r1 blank-bearing CJK
+  run r2 plain ref LINK x0.70 link="#tsr-fn-4" anchor="fnref-4"
+  run r3 plain CJK
+  run r4 letter-spaced CJK
+  run r5 blank-bearing CJK
+  run r6 letter-spaced CJK
+  run r7 blank-bearing CJK
+  run r8 letter-spaced CJK
+  run r9 blank-bearing CJK
+  run r10 plain ref LINK x0.70 link="#tsr-fn-5" anchor="fnref-5"
+  run r11 plain CJK
+  run r12 letter-spaced CJK
+  run r13 blank-bearing CJK
+top pid=2 units=1
+ unit text indent=0su
+  box Alpha "At" w=1025su r0 @[304,306)
+  disc pen=0.7 w=0su pre="-" 513su kern="tt" r0 @[306,306)
+  box Alpha "tached" w=3073su r0 @[306,312)
+  glue word w=257su x=1 cap=257su kern="d b" src r0 @[312,313)
+  box Alpha "by" w=1025su r0 @[313,315)
+  glue word w=257su x=1 cap=257su kern="y h" src r0 @[315,316)
+  box Alpha "hand:" w=2561su r0 @[316,321)
+  glue word w=257su x=1 cap=257su kern=": a" src r0 @[321,322)
+  box Alpha "a" w=513su r0 @[322,323)
+  glue word w=257su x=1 cap=257su kern="a d" src r0 @[323,324)
+  box Alpha "dag" w=1537su r0 @[324,327)
+  disc pen=0.7 w=0su pre="-" 513su kern="gg" r0 @[327,327)
+  box Alpha "ger" w=1537su r0 @[327,330)
+  box Alpha "†" w=616su r0 @[347,350)
+  glue word w=257su x=1 cap=257su kern="† h" src r0 @[352,352)
+  box Alpha "hugs" w=2049su r0 @[352,356)
+  glue word w=257su x=1 cap=257su kern="s i" src r0 @[356,357)
+  box Alpha "its" w=1537su r0 @[357,360)
+  glue word w=257su x=1 cap=257su kern="s w" src r0 @[360,361)
+  box Alpha "word," w=2561su r0 @[361,366)
+  glue word w=257su x=1 cap=257su kern=", a" src r0 @[366,367)
+  box Alpha "a" w=513su r0 @[367,368)
+  glue word w=257su x=1 cap=257su kern="a p" src r0 @[368,369)
+  box Alpha "pil" w=1537su r0 @[369,372)
+  disc pen=0.7 w=0su pre="-" 513su kern="lc" r0 @[372,372)
+  box Alpha "crow" w=2049su r0 @[372,376)
+  glue word w=257su x=1 cap=257su kern="w ¶" src r0 @[376,376)
+  box Alpha "¶" w=616su r0 @[393,395)
+  box Alpha "its" w=1537su r0 @[397,400)
+  glue word w=257su x=1 cap=257su kern="s n" src r0 @[400,401)
+  box Alpha "next" w=2049su r0 @[401,405)
+  glue word w=257su x=1 cap=257su kern="t w" src r0 @[405,406)
+  box Alpha "word," w=2561su r0 @[406,411)
+  glue word w=257su x=1 cap=257su kern=", a" src r0 @[411,412)
+  box Alpha "and" w=1537su r0 @[412,415)
+  glue word w=257su x=1 cap=257su kern="d a" src r0 @[415,416)
+  box Alpha "a" w=513su r0 @[416,417)
+  glue word w=257su x=1 cap=257su kern="a d" src r0 @[417,418)
+  box Alpha "dot" w=1537su r0 @[418,421)
+  box Alpha "·" w=616su r0 @[438,440)
+  box Alpha "both." w=2561su r0 @[442,447)
+  run r0 plain
+top pid=3 units=6
+ unit rule indent=0su
+ unit text indent=1536su anchor="fn-1" marker="1."
+  box Alpha "The" w=1307su r0 @[39,42)
+  glue word w=219su x=1 cap=219su kern="e n" src r0 @[42,43)
+  box Alpha "note." w=2178su r0 @[43,48)
+  glue word w=219su x=1 cap=219su kern=". ↩" src r0 @[37,49)
+  box Alpha "↩" w=524su r1 @[37,49)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-1"
+ unit text indent=1536su anchor="fn-2" marker="2."
+  box Alpha "An" w=872su r0 @[98,100)
+  disc pen=0.7 w=0su pre="-" 437su kern="no" r0 @[100,100)
+  box Alpha "oth" w=1307su r0 @[100,103)
+  disc pen=0.7 w=0su pre="-" 437su kern="he" r0 @[103,103)
+  box Alpha "er." w=1307su r0 @[103,106)
+  glue word w=219su x=1 cap=219su kern=". ↩" src r0 @[96,107)
+  box Alpha "↩" w=524su r1 @[96,107)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-2"
+ unit text indent=1536su anchor="fn-3" marker="3."
+  box Alpha "Called" w=2613su r0 @[150,156)
+  glue word w=219su x=1 cap=219su kern="d b" src r0 @[156,157)
+  box Alpha "by" w=872su r0 @[157,159)
+  glue word w=219su x=1 cap=219su kern="y n" src r0 @[159,160)
+  box Alpha "name." w=2178su r0 @[160,165)
+  glue word w=219su x=1 cap=219su kern=". ↩" src r0 @[144,166)
+  box Alpha "↩" w=524su r1 @[144,166)
+  run r0 plain x0.85
+  run r1 plain ref LINK x0.85 link="#tsr-fnref-3"
+ unit text indent=1536su anchor="fn-4" marker="4."
+  box Ideo "句" w=872su wt=0.6 cap=87su r0 @[199,202)
+  glue inter w=0su x=0.6 cap=87su r0 @[199,202)
+  box Ideo "号" w=872su wt=0.6 cap=87su r0 @[202,205)
+  glue inter w=0su x=0.6 cap=87su r0 @[202,205)
+  box Ideo "之" w=872su wt=0.6 cap=87su r0 @[205,208)
+  glue inter w=0su x=0.6 cap=87su r0 @[205,208)
+  box Ideo "后" w=872su wt=0.6 cap=87su r0 @[208,211)
+  pen INF r0
+  glue inter w=0su x=0.6 cap=87su r0 @[208,211)
+  box FullStopW "。" w=437su blank=R r1 @[211,214)
+  glue blank w=435su x=0 cap=0su r1 @[211,214)
+  glue word w=219su x=1 cap=219su src r2 @[197,215)
+  box Alpha "↩" w=524su r3 @[197,215)
+  run r0 letter-spaced CJK x0.85
+  run r1 blank-bearing CJK x0.85
+  run r2 plain x0.85
+  run r3 plain ref LINK x0.85 link="#tsr-fnref-4"
+ unit text indent=1536su anchor="fn-5" marker="5."
+  box Ideo "括" w=872su wt=0.6 cap=87su r0 @[271,274)
+  glue inter w=0su x=0.6 cap=87su r0 @[271,274)
+  box Ideo "号" w=872su wt=0.6 cap=87su r0 @[274,277)
+  glue inter w=0su x=0.6 cap=87su r0 @[274,277)
+  box Ideo "之" w=872su wt=0.6 cap=87su r0 @[277,280)
+  glue inter w=0su x=0.6 cap=87su r0 @[277,280)
+  box Ideo "后" w=872su wt=0.6 cap=87su r0 @[280,283)
+  pen INF r0
+  glue inter w=0su x=0.6 cap=87su r0 @[280,283)
+  box FullStopW "。" w=437su blank=R r1 @[283,286)
+  glue blank w=435su x=0 cap=0su r1 @[283,286)
+  glue word w=219su x=1 cap=219su src r2 @[269,287)
+  box Alpha "↩" w=524su r3 @[269,287)
+  run r0 letter-spaced CJK x0.85
+  run r1 blank-bearing CJK x0.85
+  run r2 plain x0.85
+  run r3 plain ref LINK x0.85 link="#tsr-fnref-5"

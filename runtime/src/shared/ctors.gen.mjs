@@ -1246,6 +1246,32 @@ export const CTOR_SPECS = Object.freeze({
     "derived": true,
     "async": false
   },
+  "attach": {
+    "kind": "group",
+    "params": [
+      {
+        "k": "attr",
+        "name": "attach",
+        "dom": "enum:prev|next|both"
+      }
+    ],
+    "options": [
+      "role",
+      "label",
+      "name",
+      "kind",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext",
+      "style"
+    ],
+    "nullary": false,
+    "sealed": false,
+    "derived": true,
+    "async": false
+  },
   "bibliography": {
     "kind": "collect",
     "params": [
@@ -1304,6 +1330,7 @@ export const STD_FUNCTIONS = Object.freeze([
   "use"
 ]);
 export const STD_NAMES = Object.freeze([
+  "attach",
   "bibliography",
   "cell",
   "code",

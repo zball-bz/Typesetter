@@ -1,0 +1,15 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="177">A claim with a space before its note <a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a>. The sentence goes on after it, a second note <a href="#tsr-fn-2" id="tsr-fnref-2" data-syn="fn-marker"><sup>2</sup></a> sits between words, and one written <a href="#tsr-fn-3" id="tsr-fnref-3" data-syn="fn-marker"><sup>3</sup></a> as a call.</p>
+<p data-pid="1" data-s="179" data-e="302">句末的脚注。<a href="#tsr-fn-4" id="tsr-fnref-4" data-syn="fn-marker"><sup>4</sup></a>也粘在标点之后，括号后的脚注（如此）<a href="#tsr-fn-5" id="tsr-fnref-5" data-syn="fn-marker"><sup>5</sup></a>同样如此。</p>
+<p data-pid="2" data-s="304" data-e="447">Attached by hand: a dagger † hugs its word, a pilcrow ¶ its next word, and a dot · both.</p>
+<section data-role="notes" role="doc-endnotes" data-pid="3" data-s="0" data-e="447">
+<hr data-s="0" data-e="447">
+<ol data-s="0" data-e="447">
+<li id="tsr-fn-1">The note. <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
+<li id="tsr-fn-2">Another. <a href="#tsr-fnref-2" data-syn="backlink">↩</a></li>
+<li id="tsr-fn-3">Called by name. <a href="#tsr-fnref-3" data-syn="backlink">↩</a></li>
+<li id="tsr-fn-4">句号之后。 <a href="#tsr-fnref-4" data-syn="backlink">↩</a></li>
+<li id="tsr-fn-5">括号之后。 <a href="#tsr-fnref-5" data-syn="backlink">↩</a></li>
+</ol>
+</section>
+</div>

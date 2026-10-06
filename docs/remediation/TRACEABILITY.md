@@ -989,7 +989,7 @@ Theme steps: — · findings: 1
 | `markup-language/style-surfaces` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `markup-language/cjk-softbreak-classifier` | adhoc | medium | P2-10, P4-02 | grep:plan P4-02 |
 | `markup-language/reference-forms-closed` | adhoc | medium | P2-09 | grep:plan P2-09 |
-| `markup-language/footnote-sugar-oneoff` | adhoc | low | P4-07 | |
+| `markup-language/footnote-sugar-oneoff` | adhoc | low | P4-07 | grep:plan P4-07 |
 | `markup-language/quote-context-heuristic` | adhoc | low | P3-30, P4-02 | grep:plan P4-02 |
 | `markup-language/no-execution-containment` | issue | high | P0-05, P2-02 | grep:plan P2-02 |
 | `markup-language/spec-features-unimplemented` | issue | high | P0-05, P2-12, P3-31 | grep:plan P3-31 |
@@ -1127,7 +1127,7 @@ Theme steps: — · findings: 1
 | `emitter/boundary-glue-constant` | adhoc | medium | P4-02 | grep:plan P4-02 |
 | `emitter/defined-width-dash-ellipsis` | adhoc | medium | P4-04 | grep:plan P4-04 |
 | `emitter/latin-quote-heuristic` | adhoc | medium | P4-02 | grep:plan P4-02 |
-| `emitter/sup-bit-attach-rule` | adhoc | medium | P4-07 | |
+| `emitter/sup-bit-attach-rule` | adhoc | medium | P4-07 | grep:plan P4-07 |
 | `emitter/kern-context-postpass` | adhoc | medium | P4-01 | grep:plan P4-06 |
 | `emitter/sidecar-role-string` | adhoc | medium | P2-13 | grep:plan P2-13 |
 | `emitter/comment-by-css-color` | adhoc | medium | P2-08 | grep:plan P2-08 |
@@ -1315,7 +1315,7 @@ Theme steps: — · findings: 1
 | `real-world-evidence/ref-cite-format-in-cpp` | adhoc | medium | P2-09 | grep:plan P2-09 |
 | `real-world-evidence/locale-terms-switch` | adhoc | medium | P1-10, P3-30 | grep:plan P3-30 |
 | `real-world-evidence/codepoint-heuristics` | adhoc | low | P4-02 | grep:plan P4-02 |
-| `real-world-evidence/sup-attach-private` | adhoc | medium | P2-08, P4-07 | |
+| `real-world-evidence/sup-attach-private` | adhoc | medium | P2-08, P4-07 | grep:plan P4-07 |
 | `real-world-evidence/description-list-missing` | adhoc | medium | P3-34 | grep:plan P3-34 |
 | `real-world-evidence/table-model-v1` | adhoc | medium | P3-14 | grep:plan P3-14 |
 | `real-world-evidence/figure-model-single-image` | adhoc | medium | P3-15 | grep:plan P3-15 |

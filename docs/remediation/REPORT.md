@@ -216,6 +216,29 @@ e2e +2：浏览器中德语按 de-1996 的点断开（且至少一处是 en-US �
 
 代价是行末连字符多了约 8%，连续连字的惩罚（doublehyphendemerits）属 P4-08 的断行器。题注保持自动连字，这是对设计的偏离，见偏差记录。
 
+## P4-07 attach 语义；脚注附着移出解析器（T5 步骤 10 + T1 S14）
+
+**变化：**
+1. **解析器不再搬动脚注前的空格。** `^[…]` 与其他行内项一样保留它前面的空格，AST 无损。旧版把空格移到标记之后，`word ^[n]. end` 排成 "word¹ . end"。
+2. **attach 由成形器实现**（prev / next / both，通用属性）：
+   - 该侧的输入空格不排出（不间断空格保留）；
+   - 不加合成胶（中西间距），不可断；
+   - prev 时，前一个标点字形的尾部空白挪到节点之后（IA_Displaced，画成独立的 spacer `data-syn="blank"`），字形右侧照常挤压，所以标记紧贴字形（`。¹`、`）¹`），空白仍可断。
+   脚注标记（elements.json 已设 attach: prev）、`#note[…]` 调用形式都走这条路。
+3. **上标不再有断行或间距语义。** autospace 不再看 baseline：标记两侧不加中西间距，改由角色样式 fn-marker 的 `autospace: none` 表达。
+4. **用户可用 `#attach('prev' | 'next' | 'both')[…]`**（stdlib 派生构造器，生成带 attach 的 group）。
+5. **带 label 的行内节点成为行内锚点**（与带 label 的引用相同），锚点落在其第一个项上，而不是所在段落的开头。
+
+**范围：**
+- notes/cjk-glue：句号后的脚注标记紧贴句号，空白移到标记之后（blocks、hlist、html）；
+- region/table-term：表格单元中术语的锚点 id 从行移到术语的 run 上（blocks、hlist、html）；
+- 断点、行数均不变；
+- 新用例 notes/attach：空格后的脚注（修复 ' . end'）、`#note[…]` 调用形式、句号和括号后的标记、三种手写 attach。
+
+真实语料 340 篇：断行全部不变；排版 HTML 有 2 篇变化（wiki-huozi、example-huozi：中文标点后的脚注标记）；语义页不变。
+
+**审阅结论：修正缺陷并改进。** ' . end' 的缺陷已修正；标记紧贴标点，符合 clreq 的做法；附着成为用户也可用的通用属性。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。
