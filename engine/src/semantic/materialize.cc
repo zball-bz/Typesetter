@@ -305,6 +305,14 @@ struct Mat {
       out.push_back(resolveRef(clone1(k)));
       return;
     }
+    if (k->kind == Kind::field) {  // (plan P2-05) filled by T3's elements; until then it reads unresolved
+      std::string name(e.strs.get(attrStr(k, ArgK::name)));
+      e.diags.add(Sev::Warning, "field-unresolved", k->span, "field '" + name + "' has no value");
+      Slots s;
+      s.set("label", name);
+      inst(e.reg.unresolved, Ctx{k->span, k->style}, s, nullptr, out);
+      return;
+    }
     if (k->cls) {
       const ElementClass& C = e.reg.cls(k->cls);
       if (C.replaced()) {  // B2: a replace site, then its content like any other

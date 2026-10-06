@@ -11,7 +11,9 @@ namespace tsr {
 
 // rt: answered code tokens render as their styled runs (plan P1-19)
 class ResourceTable;
+class Registry;
+// reg: the element registry, for each class's semantic element (plan P2-05)
 std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& styles,
-                           const ResourceTable* rt = nullptr);
+                           const ResourceTable* rt = nullptr, const Registry* reg = nullptr);
 
 }  // namespace tsr

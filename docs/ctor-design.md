@@ -115,7 +115,19 @@ table paragraph rejoined with ` | `; a constructor's inline content kids as
 one paragraph, so `#!f(H) x #f!` ≡ `#f(H)[x]` — fixture `lower/region-call`),
 rows() the table's reading of it.
 
-## 5. Manifest
+## 5. Universal options, EXT and declarations (as built in P2-05)
+
+Every kind's constructor takes the universal attributes as options (`label`,
+`role`, `slot`, `syn`, `copy`, `class`; document-model §4.3) and two
+universal options more: `ext: {name: scalar}` (EXT data; a name outside
+`[a-z][a-z0-9-]*` or a non-scalar value is a `ctor-arg` warning) and
+`style: {patch}` (the result wrapped in a `styled` scope, as `#style` would).
+`field(name, {of})` builds the `field` placeholder.
+`$.declare(type, name, data, ...templates)` writes a declaration (DECL) of a
+schema `decls` type at the current point of the flow: `data` is EXT, the
+templates are content (style-neutral until used).
+
+## 6. Manifest
 
 - static: `staticManifest()` (stdlib.mjs) — every built-in constructor's
   name, params, options, Body, nullary, sealed. The VS Code extension offers
@@ -125,16 +137,15 @@ rows() the table's reading of it.
 - runtime: `$.std.manifest()` adds what the document defined so far, and
   the fence tags.
 
-## 6. Deltas from the design (T2 S6)
+## 7. Deltas from the design (T2 S6)
 
 - The Body is eager: the interpreter builds the interior before the
   constructor runs (as the recorded documents require), and blocks()/rows()
   return arrays — awaiting them works, and keeps working when the Body
   becomes lazy (P2-13).
 - `m```'s markup re-entry is P2-13, so "m`*x*` ≡ `*x*`" is checked there.
-- The universal options (role, label, slot, ext, style) and `field` are
-  P2-05; until then an option outside the kind's attributes is a `ctor-arg`
-  warning.
+- The universal options (role, label, slot, ext, style) and `field` came in
+  P2-05 (§5).
 - Attribute values are checked by the ops reader (`ops-arg`), not by the
   binder; the binder checks names and, for positional params, types.
 - The legacy header style keys still scope every region (the design limits

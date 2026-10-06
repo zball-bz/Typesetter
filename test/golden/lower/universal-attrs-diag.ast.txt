@@ -1,0 +1,22 @@
+doc @[0,646)
+  para @[0,192)
+    splice @[0,192) expr="quote({role: \"lead\", label: \"p1\", slot: \"body\", syn: \"generated\", copy: \"omit\", class: \"wide note\", ext: {chart: \"bar\", rows: 3, live: true}}, para(\"A quote with every universal attribute.\"))"
+  para @[194,283)
+    text @[194,222) str="An image with a bad EXT name "
+    splice @[223,269) expr="image(\"x.png\", {w: 10, h: 10, ext: {Bad: 1}})"
+    text @[270,283) str=" in a sentence"
+  para @[285,349)
+    text @[285,302) str="Styled by option: "
+    splice @[303,343) expr="em({style: {color: \"#a8432a\"}}, \"word\")"
+    text @[344,349) str=" here."
+  para @[351,428)
+    text @[351,358) str="A field "
+    splice @[359,387) expr="field(\"title\", {of: \"doc\"})"
+    text @[388,428) str=" stays empty until the resolver fills it."
+  code-block @[430,526) js=" $.declare(\"element\", \"theorem\", {counter: \"thm\", numbered: true}, para(\"Theorem template\")) "
+  code-block @[528,583) js=" $.declare(\"element\", \"theorem\", {counter: \"thm2\"}) "
+  code-block @[585,613) js=" $.declare(\"rule\", \"r1\") "
+  para @[615,645)
+    text @[615,640) str="A reference to the quote: "
+    ref @[641,644) target="p1"
+    text @[644,645) str="."

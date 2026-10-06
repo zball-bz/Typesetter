@@ -35,6 +35,8 @@
     },
     "figure": {
       "select": [{ "node": "group", "role": "figure" }],
+      "box": "figure",
+      "html": "figure",
       "counter": "figure",
       "numbering": "always",
       "supplement": "figure",

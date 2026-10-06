@@ -1,0 +1,16 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,192)
+    stack quote pad=1024su anchor="p1" @[0,192)
+      paragraph para unit=0 x=1024su carry="p1" @[0,192)
+top pid=1 leaves=1
+  stack root gap=1/1 @[194,283)
+    paragraph para unit=0 @[194,283)
+top pid=2 leaves=1
+  stack root gap=1/1 @[285,349)
+    paragraph para unit=0 @[285,349)
+top pid=3 leaves=1
+  stack root gap=1/1 @[351,428)
+    paragraph para unit=0 @[351,428)
+top pid=4 leaves=1
+  stack root gap=1/1 @[615,645)
+    paragraph para unit=0 @[615,645)

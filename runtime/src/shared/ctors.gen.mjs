@@ -5,7 +5,15 @@ export const CTOR_SPECS = Object.freeze({
   "para": {
     "kind": "para",
     "params": [],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -24,7 +32,14 @@ export const CTOR_SPECS = Object.freeze({
         "dom": "label"
       }
     ],
-    "options": [],
+    "options": [
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -43,7 +58,15 @@ export const CTOR_SPECS = Object.freeze({
         "dom": "int:-1073741824:1073741824"
       }
     ],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -51,7 +74,15 @@ export const CTOR_SPECS = Object.freeze({
   "item": {
     "kind": "item",
     "params": [],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -59,7 +90,15 @@ export const CTOR_SPECS = Object.freeze({
   "quote": {
     "kind": "quote",
     "params": [],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -80,7 +119,14 @@ export const CTOR_SPECS = Object.freeze({
       "wrap",
       "lineNo",
       "hl",
-      "sidecar"
+      "sidecar",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": false,
     "sealed": false,
@@ -89,7 +135,15 @@ export const CTOR_SPECS = Object.freeze({
   "rule": {
     "kind": "rule",
     "params": [],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": true,
     "sealed": false,
     "derived": false
@@ -100,7 +154,12 @@ export const CTOR_SPECS = Object.freeze({
     "options": [
       "role",
       "label",
-      "name"
+      "name",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": false,
     "sealed": false,
@@ -116,7 +175,13 @@ export const CTOR_SPECS = Object.freeze({
     "options": [
       "cols",
       "align",
-      "label"
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": false,
     "sealed": false,
@@ -125,7 +190,15 @@ export const CTOR_SPECS = Object.freeze({
   "row": {
     "kind": "trow",
     "params": [],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -133,7 +206,15 @@ export const CTOR_SPECS = Object.freeze({
   "cell": {
     "kind": "tcell",
     "params": [],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -147,7 +228,15 @@ export const CTOR_SPECS = Object.freeze({
         "dom": "str"
       }
     ],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -157,7 +246,14 @@ export const CTOR_SPECS = Object.freeze({
     "params": [],
     "options": [
       "what",
-      "form"
+      "form",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": false,
     "sealed": false,
@@ -177,7 +273,14 @@ export const CTOR_SPECS = Object.freeze({
         "dom": "label"
       }
     ],
-    "options": [],
+    "options": [
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -196,7 +299,15 @@ export const CTOR_SPECS = Object.freeze({
         "dom": "str"
       }
     ],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": true,
     "derived": false
@@ -208,7 +319,15 @@ export const CTOR_SPECS = Object.freeze({
         "k": "text"
       }
     ],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -233,7 +352,14 @@ export const CTOR_SPECS = Object.freeze({
       "font",
       "lang",
       "color",
-      "sizePx"
+      "sizePx",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": false,
     "sealed": false,
@@ -248,7 +374,15 @@ export const CTOR_SPECS = Object.freeze({
         "dom": "url"
       }
     ],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -260,7 +394,15 @@ export const CTOR_SPECS = Object.freeze({
         "k": "text"
       }
     ],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -274,7 +416,15 @@ export const CTOR_SPECS = Object.freeze({
         "dom": "str"
       }
     ],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -288,7 +438,15 @@ export const CTOR_SPECS = Object.freeze({
         "dom": "str"
       }
     ],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -304,7 +462,14 @@ export const CTOR_SPECS = Object.freeze({
     ],
     "options": [
       "w",
-      "h"
+      "h",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": false,
     "sealed": false,
@@ -313,7 +478,15 @@ export const CTOR_SPECS = Object.freeze({
   "seq": {
     "kind": "seq",
     "params": [],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": true,
     "derived": false
@@ -332,7 +505,14 @@ export const CTOR_SPECS = Object.freeze({
       "w",
       "h",
       "scale",
-      "side"
+      "side",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": false,
     "sealed": false,
@@ -341,7 +521,38 @@ export const CTOR_SPECS = Object.freeze({
   "note": {
     "kind": "note",
     "params": [],
-    "options": [],
+    "options": [
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
+    "nullary": false,
+    "sealed": false,
+    "derived": false
+  },
+  "field": {
+    "kind": "field",
+    "params": [
+      {
+        "k": "attr",
+        "name": "name",
+        "dom": "str"
+      }
+    ],
+    "options": [
+      "of",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
+    ],
     "nullary": false,
     "sealed": false,
     "derived": false
@@ -354,7 +565,14 @@ export const CTOR_SPECS = Object.freeze({
       "font",
       "lang",
       "color",
-      "sizePx"
+      "sizePx",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": false,
     "sealed": false,
@@ -368,7 +586,14 @@ export const CTOR_SPECS = Object.freeze({
       "font",
       "lang",
       "color",
-      "sizePx"
+      "sizePx",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": false,
     "sealed": false,
@@ -399,7 +624,14 @@ export const CTOR_SPECS = Object.freeze({
     "params": [],
     "options": [
       "what",
-      "form"
+      "form",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": true,
     "sealed": false,
@@ -410,7 +642,14 @@ export const CTOR_SPECS = Object.freeze({
     "params": [],
     "options": [
       "what",
-      "form"
+      "form",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": true,
     "sealed": false,
@@ -421,7 +660,14 @@ export const CTOR_SPECS = Object.freeze({
     "params": [],
     "options": [
       "what",
-      "form"
+      "form",
+      "label",
+      "role",
+      "slot",
+      "syn",
+      "copy",
+      "class",
+      "ext"
     ],
     "nullary": true,
     "sealed": false,
@@ -475,6 +721,7 @@ export const STD_NAMES = Object.freeze([
   "comment",
   "em",
   "error",
+  "field",
   "figure",
   "glossary",
   "group",

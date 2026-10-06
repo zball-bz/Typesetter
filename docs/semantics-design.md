@@ -29,7 +29,10 @@ same — only the Index names the class.
   `sites` (templates attached when numbered: `prepend` at `first-para`, an
   `arg`, or a `replace` of the node), `ref` (the reference form), `flow`
   (a lifted item: its flow, placement, marker template and marker alias),
-  `table` (instances are rows of a keyed table).
+  `table` (instances are rows of a keyed table), and (as built in P2-05)
+  the presentation traits `box` (`"figure"`: the box tree's figure —
+  captions, floats) and `html` (`"figure"`: `<figure>`/`<figcaption>` on the
+  semantic page); no stage reads a role string to decide them.
 - **collectors**: a query (`classes: outline` nested by depth, a `table`
   with `cited` order and an `all-arg`, or a `flow`), the context entries
   take (`collector`, `instance`, `row`), and `wrap` / `entry` / `empty`

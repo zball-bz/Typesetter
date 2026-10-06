@@ -69,19 +69,24 @@ export class OpBuf {
     this.ops.push(OP.MAKE_NODE);
     this.vint(kind);
     const keys = Object.keys(args).filter((k) => args[k] !== undefined);
-    this.vint(keys.length);
+    // EXT data (plan P2-05): `ext: {name: scalar}` is one argument per name
+    const ext = keys.includes('ext') ? Object.entries(args.ext).filter(([, v]) => v !== undefined) : [];
+    this.vint(keys.length - (keys.includes('ext') ? 1 : 0) + ext.length);
     for (const k of keys) {
       const argk = ARGK[k];
       if (argk === undefined) throw new Error(`unknown arg key: ${k}`);
+      if (k === 'ext') {
+        for (const [name, v] of ext) {
+          this.uses(SINCE.attr[kind]?.[argk] ?? OPS_MIN_COMPAT);
+          this.vint(argk);
+          this.vint(this.strRef(name));
+          this.value(v, k);
+        }
+        continue;
+      }
       this.uses(SINCE.attr[kind]?.[argk] ?? OPS_MIN_COMPAT);
       this.vint(argk);
-      const v = args[k];
-      if (v === null) this.ops.push(ARG_NULL);
-      else if (typeof v === 'boolean') { this.ops.push(ARG_BOOL, v ? 1 : 0); }
-      else if (typeof v === 'number') { this.ops.push(ARG_NUM); this.f64(v); }
-      else if (typeof v === 'string') { this.ops.push(ARG_STR); this.vint(this.strRef(v)); }
-      else if (isNode(v)) { this.ops.push(ARG_NODE); this.vint(v.opId); }
-      else throw new Error(`bad arg value for ${k}`);
+      this.value(args[k], k);
     }
     this.vint(children.length);
     for (const c of children) {
@@ -92,6 +97,38 @@ export class OpBuf {
     return nodeValue({ kind, args: Object.freeze({ ...args }), children: Object.freeze([...children]), opId: id });
   }
 
+  value(v, k) {
+    if (v === null) this.ops.push(ARG_NULL);
+    else if (typeof v === 'boolean') { this.ops.push(ARG_BOOL, v ? 1 : 0); }
+    else if (typeof v === 'number') { this.ops.push(ARG_NUM); this.f64(v); }
+    else if (typeof v === 'string') { this.ops.push(ARG_STR); this.vint(this.strRef(v)); }
+    else if (isNode(v)) { this.ops.push(ARG_NODE); this.vint(v.opId); }
+    else throw new Error(`bad arg value for ${k}`);
+  }
+  // a declaration (plan P2-05, DECL since 9): its type id, span, name, EXT
+  // data and template nodes, at this point of the flow
+  decl(type, s, e, name, ext, templates) {
+    this.opCount++;
+    this.uses(SINCE.op[OP.DECL]);
+    this.ops.push(OP.DECL);
+    this.vint(type);
+    this.vint(s);
+    this.vint(e);
+    const data = Object.entries(ext).filter(([, v]) => v !== undefined);
+    this.vint(1 + data.length);
+    this.vint(ARGK.name);
+    this.value(String(name), 'name');
+    for (const [k, v] of data) {
+      this.vint(ARGK.ext);
+      this.vint(this.strRef(k));
+      this.value(v, 'ext');
+    }
+    this.vint(templates.length);
+    for (const t of templates) {
+      if (!isNode(t)) throw new Error('a template is not a node value');
+      this.vint(t.opId);
+    }
+  }
   emitNode(shadow) {
     this.opCount++;
     this.uses(SINCE.op[OP.EMIT]);

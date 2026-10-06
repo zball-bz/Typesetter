@@ -98,6 +98,11 @@ struct ElementClass {
   bool hasRef = false;
   std::optional<FlowDef> flow;
   std::string table;  // instances are rows of this keyed table (key = label)
+  // presentation traits (plan P2-05, finding role-string-dispatch: what a
+  // class means to the box tree and the semantic page, read through
+  // ContentNode::cls, never through its role string)
+  enum class Box : u8 { Plain, Figure } box = Box::Plain;   // Figure: captions, floats
+  enum class Html : u8 { Plain, Figure } html = Html::Plain;  // Figure: <figure>/<figcaption>
   bool replaced() const {
     for (const SiteDef& s : sites)
       if (s.where == SiteDef::Where::Replace) return true;

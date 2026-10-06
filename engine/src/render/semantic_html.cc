@@ -2,6 +2,7 @@
 
 #include "html_writer.h"
 #include "../resource/resource_table.h"
+#include "../elements/registry.h"
 
 namespace tsr {
 
@@ -14,6 +15,7 @@ struct Sem {
   StyleTable& styles;
   std::string& out;
   const ResourceTable* rt;  // answered code tokens (plan P1-19)
+  const Registry* reg;     // the classes' semantic elements (plan P2-05)
 
   const ArgVal* arg(const ContentNode* n, ArgK k) {
     for (const ArgVal& a : n->args)
@@ -351,8 +353,7 @@ struct Sem {
         return;
       }
       case Kind::group: {
-        std::string_view role = argS(n, ArgK::role);
-        if (role == "figure") {
+        if (n->cls && reg && reg->cls(n->cls).html == ElementClass::Html::Figure) {
           // real HTML for the no-JS page (figure-design.md §5)
           open("figure", n, pid);
           out += "\n";
@@ -374,6 +375,7 @@ struct Sem {
         }
         {
           Tag t(out, "div");
+          std::string_view role = argS(n, ArgK::role);  // the role is data for the page
           if (!role.empty()) t.attr("data-role", role);
           attrs(t, n, pid);
           t.open();
@@ -441,13 +443,13 @@ struct Sem {
 }  // namespace
 
 std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& styles,
-                           const ResourceTable* rt) {
+                           const ResourceTable* rt, const Registry* reg) {
   std::string out;
   out += "<div class=\"tsr-flow\">\n";
   if (tree.root) {
     int pid = 0;
     for (const ContentNode* k : tree.root->kids) {
-      Sem s{strs, styles, out, rt};
+      Sem s{strs, styles, out, rt, reg};
       s.block(k, pid);  // pid mirrors emitDoc's per-root-child numbering
       pid++;
     }

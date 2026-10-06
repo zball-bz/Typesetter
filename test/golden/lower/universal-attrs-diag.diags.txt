@@ -1,0 +1,4 @@
+warning ctor-arg @[223,269) image: ext name Bad is not [a-z][a-z0-9-]*
+info decl-redeclared @[528,583) element 'theorem' declared again: the later declaration wins
+warning field-unresolved @[359,387) field 'title' has no value
+info ref-unnumbered @[641,644) 'p1' names an unnumbered element; its label text is shown

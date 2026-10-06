@@ -253,6 +253,14 @@ struct Loader {
       c.flow = std::move(f);
     }
     if (const JsonValue* x = member(v, "table")) c.table = str(x);
+    if (const JsonValue* x = member(v, "box")) {
+      if (str(x) != "figure") return fail("class box: only 'figure'");
+      c.box = ElementClass::Box::Figure;
+    }
+    if (const JsonValue* x = member(v, "html")) {
+      if (str(x) != "figure") return fail("class html: only 'figure'");
+      c.html = ElementClass::Html::Figure;
+    }
     r.classes.push_back(std::move(c));
     return true;
   }

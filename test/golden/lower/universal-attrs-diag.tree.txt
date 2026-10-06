@@ -1,0 +1,28 @@
+doc @[0,645) [base]
+  quote @[0,192) [base] label="p1" role="lead" slot="body" syn="generated" copy="omit" class="wide note" ext.chart="bar" ext.rows=3 ext.live=true
+    para @[0,192) [base]
+      text @[0,192) [base] str="A quote with every universal attribute."
+  para @[194,283) [base]
+    text @[194,222) [base] str="An image with a bad EXT name " raw=0:0,29:28
+    image @[223,269) [base] src="x.png" w=10 h=10
+    text @[270,283) [base] str=" in a sentence" raw=0:0,1:0
+  para @[285,349) [base]
+    text @[285,302) [base] str="Styled by option: " raw=0:0,18:17
+    styled @[303,343) [base color=#a8432a] color="#a8432a"
+      styled @[303,343) [EM color=#a8432a]
+        text @[303,343) [EM color=#a8432a] str="word"
+    text @[344,349) [base] str=" here." raw=0:0,1:0
+  para @[351,428) [base]
+    text @[351,358) [base] str="A field " raw=0:0,8:7
+    text @[359,387) [base] str="??"
+    text @[388,428) [base] str=" stays empty until the resolver fills it." raw=0:0,1:0
+  para @[615,645) [base]
+    text @[615,640) [base] str="A reference to the quote: " raw=0:0,26:25
+    ref @[641,644) [base] target="p1" url="#tsr-p1"
+      text @[641,644) [base] str="p1"
+    text @[644,645) [base] str="."
+decl element name="theorem" flow=4 @[430,526) superseded ext.counter="thm" ext.numbered=true
+  para @[0,0) [base]
+    text @[0,0) [base] str="Theorem template"
+decl element name="theorem" flow=4 @[528,583) ext.counter="thm2"
+decl rule name="r1" flow=4 @[585,613)

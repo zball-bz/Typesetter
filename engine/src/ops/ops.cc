@@ -12,7 +12,7 @@ const char* kindName(Kind k) {
 #define KIND(n, c) \
   case Kind::n:    \
     return #n;
-#define ARGK(n, c)
+#define ARGK(e, n, c)
 #include "ops.def"
 #undef OP
 #undef KIND
@@ -25,8 +25,8 @@ const char* argName(ArgK a) {
   switch (a) {
 #define OP(n, c)
 #define KIND(n, c)
-#define ARGK(n, c) \
-  case ArgK::n:    \
+#define ARGK(e, n, c) \
+  case ArgK::e:       \
     return #n;
 #include "ops.def"
 #undef OP
@@ -70,6 +70,11 @@ struct Reader {
 // Shared arg decoding for MAKE_NODE args and STYLE_PUSH patches (v2).
 static const char* readArg(Reader& rd, const RawOps& r, ArgVal& a, bool allowNode) {
   a.key = (ArgK)rd.varint();
+  if (a.key == ArgK::ext) {  // EXT (plan P2-05): argKey nameStrRef argVal
+    u64 nm = rd.varint();
+    if (rd.fail || nm >= r.strings.size()) return "EXT bad name";
+    a.name = (u32)nm;
+  }
   a.tag = (ArgTag)rd.byte();
   switch (a.tag) {
     case ArgTag::Null: break;
@@ -161,6 +166,15 @@ static bool validateArg(ArgVal& a, const AttrSpec& sp, const RawOps& r, std::str
       return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::RangeSet, str()), "line range set");
     case Dom::Color: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Color, str()), "color");
     case Dom::Font: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Font, str()), "font family list");
+    case Dom::Text:
+      return wantStr(a.tag == ArgTag::Str && matchDomain((TextDomain)sp.textDom, str()), "value of its domain");
+    case Dom::Ext: {  // EXT: a scalar under a validated name (plan P2-05)
+      if (!matchDomain(TextDomain::Extname, r.strings[a.name])) {
+        why = "EXT name is not [a-z][a-z0-9-]{0,31}";
+        return false;
+      }
+      return a.tag == ArgTag::Bool || a.tag == ArgTag::Num || a.tag == ArgTag::Str;
+    }
     case Dom::Enum: {
       bool ok = false;
       if (a.tag == ArgTag::Str)
@@ -276,7 +290,8 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
             break;
           }
           std::string why;
-          if (validateArg(a, *sp, r, why)) kept.push_back(a);
+          if (sp->resolved) why = "set by the resolver, not by input";
+          else if (validateArg(a, *sp, r, why)) kept.push_back(a);
           if (!why.empty())
             pendingWarn.push_back({(u32)r.nodes.size(), std::string(kindName(n.kind)) + "." +
                                                             sp->name + ": " + why});
@@ -355,6 +370,38 @@ void decodeOps(const u8* buf, size_t len, RawOps& out, DiagSink& diags) {
         n.alias = t.alias != kNoAlias ? t.alias : (u32)id;  // aliases never chain
         n.span = {(u32)s, (u32)e};
         r.nodes.push_back(std::move(n));
+        break;
+      }
+      case Op::DECL: {
+        // a declaration (plan P2-05): type s e nargs (argKey argVal)* ntempl id*
+        RawDecl d;
+        u64 type = rd.varint(), s = rd.varint(), e = rd.varint(), nargs = rd.varint();
+        if (rd.fail || nargs > 64) { bad("DECL bad header"); return; }
+        d.span = {(u32)s, (u32)std::max(s, e)};
+        u32 emits = 0;
+        for (const SchedItem& it : r.sched) emits += it.op == Op::EMIT;
+        d.flowIndex = emits;
+        bool ok = type > 0 && type < DECL_COUNT && kDecls[type].since <= ver;
+        d.type = ok ? (u16)type : 0;
+        for (u64 i = 0; i < nargs; i++) {
+          ArgVal a;
+          const char* err = readArg(rd, r, a, /*allowNode=*/false);
+          if (err) { bad(err); return; }
+          const bool named = a.key == ArgK::name && a.tag == ArgTag::Str;
+          const bool ext = a.key == ArgK::ext && matchDomain(TextDomain::Extname, r.strings[a.name]) &&
+                           (a.tag == ArgTag::Bool || a.tag == ArgTag::Num || a.tag == ArgTag::Str);
+          if (named || ext) d.args.push_back(a);
+          else diags.add(Sev::Warning, "ops-arg", d.span, "DECL: an argument is neither its name nor EXT data");
+        }
+        u64 nt = rd.varint();
+        if (rd.fail || nt > 1u << 16) { bad("DECL bad template count"); return; }
+        for (u64 i = 0; i < nt; i++) {
+          u64 id = rd.varint();
+          if (rd.fail || id >= r.nodes.size()) { bad("DECL template id out of range"); return; }
+          d.templates.push_back((u32)id);
+        }
+        if (ok) r.decls.push_back(std::move(d));
+        else diags.add(Sev::Error, "ops-invalid", d.span, "DECL: unknown declaration type " + std::to_string(type));
         break;
       }
       case Op::RAWMAP: {

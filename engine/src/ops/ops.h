@@ -10,7 +10,7 @@ namespace tsr {
 enum class Op : u8 {
 #define OP(n, c) n = c,
 #define KIND(n, c)
-#define ARGK(n, c)
+#define ARGK(e, n, c)
 #include "ops.def"
 #undef OP
 #undef KIND
@@ -20,7 +20,7 @@ enum class Op : u8 {
 enum class Kind : u16 {
 #define OP(n, c)
 #define KIND(n, c) n = c,
-#define ARGK(n, c)
+#define ARGK(e, n, c)
 #include "ops.def"
 #undef OP
 #undef KIND
@@ -30,7 +30,7 @@ enum class Kind : u16 {
 enum class ArgK : u16 {
 #define OP(n, c)
 #define KIND(n, c)
-#define ARGK(n, c) n = c,
+#define ARGK(e, n, c) e = c,
 #include "ops.def"
 #undef OP
 #undef KIND
@@ -46,6 +46,7 @@ struct ArgVal {
   ArgTag tag;
   double num = 0;   // Bool: 0/1; Num: value
   u32 ref = 0;      // Str: StrRef (raw-buffer index); Node: node id
+  u32 name = 0;     // ArgK::ext (plan P2-05): the EXT name (a StrRef)
 };
 
 constexpr u32 kNoAlias = 0xFFFFFFFFu;
@@ -72,12 +73,23 @@ struct SchedItem {
 
 // Decoded, validated buffer. Strings live in the buffer's own table; the
 // model instantiation re-interns what it keeps.
+// a DECL op (plan P2-05; D-I07): its type (kDecls), span, flow position (the
+// EMITs before it), attributes (name, EXT data) and template node ids
+struct RawDecl {
+  u16 type = 0;
+  Span span;
+  u32 flowIndex = 0;
+  std::vector<ArgVal> args;
+  std::vector<u32> templates;
+};
+
 struct RawOps {
   std::vector<std::string_view> strings;  // views into `blob` (and `extra`)
   std::string blob;
   std::deque<std::string> extra;          // strings the reader synthesizes (error messages)
   std::vector<RawNode> nodes;
   std::vector<SchedItem> sched;
+  std::vector<RawDecl> decls;
   u8 version = 0;  // the buffer's version byte (within OPS_MIN_COMPAT..OPS_VERSION)
   bool ok = false;
 };

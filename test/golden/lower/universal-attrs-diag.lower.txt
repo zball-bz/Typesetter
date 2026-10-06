@@ -1,0 +1,37 @@
+lower v1 abi a42c4357 docEnd 646 holes 7 module fb06ae88b011eb4d
+piece 0 hole 0 js [160,359)
+piece 1 hole 1 js [361,414)
+piece 2 hole 2 js [416,463)
+piece 3 hole 3 js [465,500)
+piece 4 hole 4 js [502,605)
+piece 5 hole 5 js [607,669)
+piece 6 hole 6 js [671,706)
+block 0 content [0,192) user framed holes 0..1
+  CALL para [0,192)
+    HOLE 0 [0,192)
+block 1 content [194,283) user framed holes 1..2
+  CALL para [194,283)
+    TEXT "An image with a bad EXT name " [194,222) raw=0:0,29:28
+    HOLE 1 [223,269)
+    TEXT " in a sentence" [270,283) raw=0:0,1:0
+block 2 content [285,349) user framed holes 2..3
+  CALL para [285,349)
+    TEXT "Styled by option: " [285,302) raw=0:0,18:17
+    HOLE 2 [303,343)
+    TEXT " here." [344,349) raw=0:0,1:0
+block 3 content [351,428) user framed holes 3..4
+  CALL para [351,428)
+    TEXT "A field " [351,358) raw=0:0,8:7
+    HOLE 3 [359,387)
+    TEXT " stays empty until the resolver fills it." [388,428) raw=0:0,1:0
+block 4 stmt [430,526) user framed holes 4..5
+  STMT 4
+block 5 stmt [528,583) user framed holes 5..6
+  STMT 5
+block 6 stmt [585,613) user framed holes 6..7
+  STMT 6
+block 7 content [615,645)
+  CALL para [615,645)
+    TEXT "A reference to the quote: " [615,640) raw=0:0,26:25
+    CALL ref [641,644) target="p1"
+    TEXT "." [644,645)

@@ -1,0 +1,15 @@
+#quote({role: "lead", label: "p1", slot: "body", syn: "generated", copy: "omit", class: "wide note", ext: {chart: "bar", rows: 3, live: true}}, para("A quote with every universal attribute."))
+
+An image with a bad EXT name #image("x.png", {w: 10, h: 10, ext: {Bad: 1}}) in a sentence
+
+Styled by option: #em({style: {color: "#a8432a"}}, "word") here.
+
+A field #field("title", {of: "doc"}) stays empty until the resolver fills it.
+
+#{ $.declare("element", "theorem", {counter: "thm", numbered: true}, para("Theorem template")) }
+
+#{ $.declare("element", "theorem", {counter: "thm2"}) }
+
+#{ $.declare("rule", "r1") }
+
+A reference to the quote: @p1.

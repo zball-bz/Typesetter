@@ -126,6 +126,7 @@ export function buildContext(ob, opts = {}, prog = { blocks: [], docEnd: 0 }) {
     ctor: S.api.ctor,
     region: S.api.region,
     fence: S.api.fence,
+    declare: S.api.declare,
     bib: {
       set format(fn) { S.api.format('bib', fn); },
       get format() { return S.api.formatOf('bib') ?? formatEntryDefault; },

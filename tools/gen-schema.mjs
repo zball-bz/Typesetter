@@ -24,16 +24,26 @@ const schemaPath = join(root, 'engine/schema/schema.json');
 const lockPath = join(root, 'engine/schema/schema.lock.json');
 const S = JSON.parse(readFileSync(schemaPath, 'utf8'));
 const errors = [];
+// the universal attributes (plan P2-05): every kind but doc and text accepts
+// them after its own; a kind's own row of the same name wins
+const NO_UNIVERSALS = new Set(['doc', 'text']);
+for (const [n, k] of Object.entries(S.kinds)) {
+  if (NO_UNIVERSALS.has(n)) continue;
+  for (const [a, spec] of Object.entries(S.universal ?? {}))
+    if (a !== '$comment' && !(a in k.attrs)) k.attrs[a] = { ...spec };
+}
+const resolvedAttr = (spec) => (spec.flags ?? []).includes('resolved');
 
 // ---- lock: ids and since values are immutable -------------------------------
 const lockOf = () => {
-  const L = { ops: {}, kinds: {}, keys: {}, attrs: {} };
+  const L = { ops: {}, kinds: {}, keys: {}, attrs: {}, decls: {} };
   for (const [n, o] of Object.entries(S.ops)) L.ops[n] = [o.id, o.since];
   for (const [n, k] of Object.entries(S.kinds)) {
     L.kinds[n] = [k.id, k.since];
     for (const [a, spec] of Object.entries(k.attrs)) L.attrs[`${n}.${a}`] = spec.since ?? k.since;
   }
   for (const [n, id] of Object.entries(S.keys)) L.keys[n] = id;
+  for (const [n, d] of Object.entries(S.decls ?? {})) if (n !== '$comment') L.decls[n] = [d.id, d.since];
   return L;
 };
 const now = lockOf();
@@ -100,13 +110,19 @@ for (const [n, o] of ops) def += `OP(${n}, ${o.id})\n`;
 def += '\n';
 for (const [n, k] of kinds) def += `KIND(${n}, ${k.id})\n`;
 def += '\n';
-for (const [n, id] of keys) def += `ARGK(${n}, ${id})\n`;
+// ARGK(enumerator, name, id): a key named after a C++ keyword gets a
+// trailing underscore as its enumerator (class → class_), its name unchanged
+const CPP_RESERVED = new Set(['class', 'default', 'delete', 'new', 'this', 'union', 'enum', 'struct', 'template', 'operator']);
+for (const [n, id] of keys) def += `ARGK(${CPP_RESERVED.has(n) ? n + '_' : n}, ${n}, ${id})\n`;
 
 // ---- schema.gen.h / .cc --------------------------------------------------------
 const LEVELS = ['block', 'inline', 'adaptive', 'transparent', 'trivia'];
 const BODIES = ['none', 'inline', 'blocks', 'items', 'code', 'position', 'rows', 'cells', 'data', 'text'];
 const DOMS = ['bool', 'int', 'num', 'str', 'token', 'ident', 'label', 'lang', 'enum', 'flags',
-              'rangeset', 'color', 'font', 'html', 'url'];
+              'rangeset', 'color', 'font', 'html', 'url', 'text', 'ext'];
+// a "text" attribute domain is any regex domain of the domains section (plan
+// P2-05: copy, classlist): checked through its index in TextDomain
+const TEXT_DOMS = Object.keys(S.domains ?? {}).filter((d) => d !== '$comment');
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
 const cstr = (s) => JSON.stringify(s);
 let h = `// ${HDR}\n#pragma once\n#include <cstdint>\n\nnamespace tsr {\n\n` +
@@ -124,7 +140,12 @@ let h = `// ${HDR}\n#pragma once\n#include <cstdint>\n\nnamespace tsr {\n\n` +
   `struct AttrSpec {\n  std::uint16_t key;\n  const char* name;\n  Dom dom;\n  double lo, hi;   // Int / Num\n` +
   `  const char* const* members;  // Enum names, Flags names\n  const std::uint8_t* bits;     // Flags bit positions\n` +
   `  std::uint8_t nMembers;\n  bool boolAsInt;  // Int accepting true/false (lineNo)\n  bool hasDef;\n  double def;\n` +
-  `  std::uint8_t since;\n};\n\n` +
+  `  std::uint8_t since;\n  std::uint8_t textDom;  // Text: its TextDomain\n` +
+  `  bool resolved;  // set by the resolver only: dropped from input (plan P2-05)\n};\n\n` +
+  `// a declaration type (plan P2-05; schema "decls"): hoisted = the last of a\n// name wins, else positional\n` +
+  `struct DeclInfo {\n  const char* name;\n  bool hoisted;\n  std::uint8_t since;\n};\n` +
+  `constexpr std::uint16_t DECL_COUNT = ${Object.keys(S.decls ?? {}).filter((d) => d !== '$comment').length + 1};\n` +
+  `extern const DeclInfo kDecls[DECL_COUNT];  // indexed by id (0: none)\n\n` +
   `struct KindInfo {\n  const char* name;\n  Level level;\n  Body body;\n  InlineShape inl;\n  std::uint8_t since;\n` +
   `  const AttrSpec* attrs;  // writer order\n  std::uint8_t nAttrs;\n};\n\n` +
   `extern const KindInfo kKinds[KIND_COUNT];  // indexed by Kind id\n` +
@@ -136,7 +157,9 @@ const kindRows = [];
 for (const [n, k] of kinds) {
   const rows = [];
   for (const [a, spec] of Object.entries(k.attrs)) {
-    const [dom, ...rest] = spec.dom.split(':');
+    let [dom, ...rest] = spec.dom.split(':');
+    let textDom = 0;
+    if (!DOMS.includes(dom) && TEXT_DOMS.includes(dom)) { textDom = TEXT_DOMS.indexOf(dom); dom = 'text'; }
     if (!DOMS.includes(dom)) { console.error(`gen-schema: ${n}.${a}: unknown domain ${dom}`); process.exit(1); }
     let lo = 0, hi = 0, members = 'nullptr', bits = 'nullptr', nm = 0;
     if (dom === 'int' || dom === 'num') { lo = Number(rest[0]); hi = Number(rest[1]); }
@@ -154,19 +177,30 @@ for (const [n, k] of kinds) {
     const hasDef = 'def' in spec;
     const defv = hasDef ? Number(spec.def === true ? 1 : spec.def === false ? 0 : spec.def) : 0;
     rows.push(`{${S.keys[a]}, ${cstr(a)}, Dom::${dom === 'rangeset' ? 'RangeSet' : cap(dom)}, ${lo}, ${hi}, ` +
-              `${members}, ${bits}, ${nm}, ${spec.coerce === 'boolAsInt'}, ${hasDef}, ${defv}, ${spec.since ?? k.since}}`);
+              `${members}, ${bits}, ${nm}, ${spec.coerce === 'boolAsInt'}, ${hasDef}, ${defv}, ${spec.since ?? k.since}, ` +
+              `${textDom}, ${resolvedAttr(spec)}}`);
   }
   if (rows.length) cc += `const AttrSpec kA_${n}[] = {\n    ${rows.join(',\n    ')}};\n`;
   kindRows.push(`{${cstr(n)}, Level::${cap(k.level)}, Body::${cap(k.body)}, InlineShape::${cap(k.inline)}, ${k.since}, ` +
                 `${rows.length ? `kA_${n}` : 'nullptr'}, ${rows.length}}`);
 }
-cc += `}  // namespace\n\nconst KindInfo kKinds[KIND_COUNT] = {\n    ${kindRows.join(',\n    ')}};\n\n}  // namespace tsr\n`;
+const declRows = ['{nullptr, false, 0}'];
+for (const [n, d] of Object.entries(S.decls ?? {}).filter(([n]) => n !== '$comment').sort((a, b) => a[1].id - b[1].id)) {
+  if (d.id !== declRows.length) { console.error(`gen-schema: decls.${n}: ids must run 1, 2, …`); process.exit(1); }
+  if (!['hoisted', 'positional'].includes(d.binding)) { console.error(`gen-schema: decls.${n}: binding`); process.exit(1); }
+  declRows.push(`{${cstr(n)}, ${d.binding === 'hoisted'}, ${d.since}}`);
+}
+cc += `}  // namespace\n\nconst KindInfo kKinds[KIND_COUNT] = {\n    ${kindRows.join(',\n    ')}};\n\n` +
+  `const DeclInfo kDecls[DECL_COUNT] = {\n    ${declRows.join(',\n    ')}};\n\n}  // namespace tsr\n`;
 
 // ---- ops.gen.mjs -----------------------------------------------------------------
 const obj = (pairs) => Object.fromEntries(pairs);
 const emit = (name, o) => `export const ${name} = Object.freeze(${JSON.stringify(o, null, 2)});\n`;
 const schemaJs = obj(kinds.map(([n, k]) => [n, { id: k.id, level: k.level, body: k.body, inline: k.inline,
-  attrs: Object.fromEntries(Object.entries(k.attrs).map(([a, s]) => [a, s.dom])) }]));
+  attrs: Object.fromEntries(Object.entries(k.attrs).map(([a, s]) => [a, s.dom])),
+  resolved: Object.entries(k.attrs).filter(([, s]) => resolvedAttr(s)).map(([a]) => a) }]));
+const declsJs = obj(Object.entries(S.decls ?? {}).filter(([n]) => n !== '$comment')
+  .map(([n, d]) => [n, { id: d.id, since: d.since, hoisted: d.binding === 'hoisted' }]));
 // since tables for the writer's per-buffer version (plan P1-01)
 const sinceJs = {
   op: obj(ops.map(([, o]) => [o.id, o.since])),
@@ -181,7 +215,8 @@ const js = `// ${HDR}\n` +
   emit('OP', obj(ops.map(([n, o]) => [n, o.id]))) +
   emit('KIND', obj(kinds.map(([n, k]) => [n, k.id]))) +
   emit('ARGK', obj(keys.map(([n, id]) => [n, id]))) +
-  emit('SCHEMA', schemaJs);
+  emit('SCHEMA', schemaJs) +
+  emit('DECLS', declsJs);
 
 // ---- textual value domains (plan P1-02): one regex → C++ DFA + JS RegExp --------
 const domains = Object.entries(S.domains ?? {}).filter(([n]) => n !== '$comment');
@@ -443,7 +478,7 @@ const addCtor = (name, kindName, c, derived) => {
   const params = (c.params ?? []).map((p) => parseParam(name, attrs, p)).filter(Boolean);
   const bound = new Set(params.map((p) => p.name).filter(Boolean));
   const options = c.options === 'raw' ? 'raw'
-    : Object.keys(attrs ?? {}).filter((a) => !bound.has(a));
+    : Object.entries(attrs ?? {}).filter(([a, sp]) => !bound.has(a) && !resolvedAttr(sp)).map(([a]) => a);
   ctorSpecs[name] = { kind: kindName ?? null, params, options, nullary: !!c.nullary, sealed: !!c.sealed, derived };
 };
 for (const [n, k] of kinds) if (k.ctor) addCtor(k.ctor.name ?? n, n, k.ctor, false);

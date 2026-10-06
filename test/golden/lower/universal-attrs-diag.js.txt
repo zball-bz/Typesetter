@@ -1,0 +1,23 @@
+export const abi = 0xa42c4357;
+export default async (__rt, $) => {
+const {em, field, image, para, quote, style} = __rt.std;
+return (async () => {
+const __h = [
+() => (quote({role: "lead", label: "p1", slot: "body", syn: "generated", copy: "omit", class: "wide note", ext: {chart: "bar", rows: 3, live: true}}, para("A quote with every universal attribute."))),
+() => (image("x.png", {w: 10, h: 10, ext: {Bad: 1}})),
+() => (em({style: {color: "#a8432a"}}, "word")),
+() => (field("title", {of: "doc"})),
+() => {
+ $.declare("element", "theorem", {counter: "thm", numbered: true}, para("Theorem template")) 
+},
+() => {
+ $.declare("element", "theorem", {counter: "thm2"}) 
+},
+() => {
+ $.declare("rule", "r1") 
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

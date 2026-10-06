@@ -4,17 +4,17 @@
 
 namespace tsr {
 
-constexpr std::uint8_t OPS_VERSION = 8;
+constexpr std::uint8_t OPS_VERSION = 9;
 constexpr std::uint8_t OPS_MIN_COMPAT = 6;
-constexpr const char* SCHEMA_HASH = "d39ec886";
-constexpr std::uint16_t KIND_COUNT = 28;
-constexpr std::uint16_t ARGK_COUNT = 31;
+constexpr const char* SCHEMA_HASH = "3958a889";
+constexpr std::uint16_t KIND_COUNT = 29;
+constexpr std::uint16_t ARGK_COUNT = 37;
 
 enum class Level : std::uint8_t { Block, Inline, Adaptive, Transparent, Trivia };
 enum class Body : std::uint8_t { None, Inline, Blocks, Items, Code, Position, Rows, Cells, Data, Text };
 // what a kind becomes in an inline stream (the shaper's flatten table, plan P1-13)
 enum class InlineShape : std::uint8_t { Text, Container, Code, Object, Break, Error, Skip, Unsupported };
-enum class Dom : std::uint8_t { Bool, Int, Num, Str, Token, Ident, Label, Lang, Enum, Flags, RangeSet, Color, Font, Html, Url };
+enum class Dom : std::uint8_t { Bool, Int, Num, Str, Token, Ident, Label, Lang, Enum, Flags, RangeSet, Color, Font, Html, Url, Text, Ext };
 
 // One attribute of one kind: its wire key, value domain and default.
 struct AttrSpec {
@@ -29,7 +29,19 @@ struct AttrSpec {
   bool hasDef;
   double def;
   std::uint8_t since;
+  std::uint8_t textDom;  // Text: its TextDomain
+  bool resolved;  // set by the resolver only: dropped from input (plan P2-05)
 };
+
+// a declaration type (plan P2-05; schema "decls"): hoisted = the last of a
+// name wins, else positional
+struct DeclInfo {
+  const char* name;
+  bool hoisted;
+  std::uint8_t since;
+};
+constexpr std::uint16_t DECL_COUNT = 12;
+extern const DeclInfo kDecls[DECL_COUNT];  // indexed by id (0: none)
 
 struct KindInfo {
   const char* name;
@@ -43,6 +55,6 @@ struct KindInfo {
 
 extern const KindInfo kKinds[KIND_COUNT];  // indexed by Kind id
 // the version an opcode first appeared in (0 = no such opcode)
-constexpr std::uint8_t kOpSince[] = {0, 6, 6, 6, 6, 6, 6, 7, 8, 8};
+constexpr std::uint8_t kOpSince[] = {0, 6, 6, 6, 6, 6, 6, 7, 8, 8, 9};
 
 }  // namespace tsr

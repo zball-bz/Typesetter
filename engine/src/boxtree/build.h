@@ -31,6 +31,8 @@ struct BoxTree {
   std::vector<std::vector<LeafSource>> sources;  // per top, per unit
 };
 
-BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const Config& cfg);
+class Registry;
+BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const Config& cfg,
+                     const Registry& reg);
 
 }  // namespace tsr

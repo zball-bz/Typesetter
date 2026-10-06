@@ -1,0 +1,9 @@
+doc @[0,646)
+  para @[0,192) lines=1
+  para @[194,283) lines=1
+  para @[285,349) lines=1
+  para @[351,428) lines=1
+  code-block @[430,526) js=" $.declare(\"element\", \"theorem\", {counter: \"thm\", numbered: true}, para(\"Theorem template\")) "
+  code-block @[528,583) js=" $.declare(\"element\", \"theorem\", {counter: \"thm2\"}) "
+  code-block @[585,613) js=" $.declare(\"rule\", \"r1\") "
+  para @[615,645) lines=1

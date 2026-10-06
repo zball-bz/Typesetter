@@ -1045,7 +1045,7 @@ Theme steps: — · findings: 1
 | `codegen-ops-model/private-region-builders-and-missing-ctors` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `codegen-ops-model/region-meta-args-hijack` | adhoc | medium | P2-03, P2-08 | |
 | `codegen-ops-model/parse-time-pipe-segmentation` | adhoc | medium | P2-11 | |
-| `codegen-ops-model/role-string-dispatch` | adhoc | high | P2-05 | |
+| `codegen-ops-model/role-string-dispatch` | adhoc | high | P2-05 | grep:plan P2-05 |
 | `codegen-ops-model/sidecar-ingest-pass` | adhoc | medium | P2-13 | |
 | `codegen-ops-model/bibliography-placeholder-and-end-emission` | adhoc | medium | P2-07, P2-14 | |
 | `codegen-ops-model/cls-sup-feature-bit` | adhoc | medium | P2-08 | |
@@ -1307,7 +1307,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/missed:4` | missed | low | P3-11 | |
 | `real-world-evidence/role-figure-hardwired` | adhoc | high | P2-07 | |
 | `real-world-evidence/counters-fixed-fields` | adhoc | high | P2-07 | |
-| `real-world-evidence/open-arg-schema` | adhoc | high | P1-01, P2-05 | |
+| `real-world-evidence/open-arg-schema` | adhoc | high | P1-01, P2-05 | grep:plan P2-05 |
 | `real-world-evidence/sugar-dispatch-fixed` | adhoc | high | P2-03 | grep:plan P2-03 |
 | `real-world-evidence/no-tsm-printer` | adhoc | high | P3-35 | |
 | `real-world-evidence/lexical-syntax-copies` | adhoc | medium | P1-09 | grep:plan P1-09 |

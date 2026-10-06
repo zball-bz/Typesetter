@@ -8,10 +8,10 @@
 // the binder, so `*x*`, `#strong[x]` and an override of strong agree.
 // A region is a constructor with a Body parameter. One std per execution:
 // its constructors write into that execution's OpBuf.
-import { KIND, SCHEMA } from './ops.gen.mjs';
+import { KIND, SCHEMA, DECLS } from './ops.gen.mjs';
 import { CTOR_SPECS, STD_ALIASES } from './ctors.gen.mjs';
 import { isNode } from './opbuf.mjs';
-import { STYLE_KEYS, STYLE_SUGAR } from './props.gen.mjs';
+import { STYLE_KEYS, STYLE_SUGAR, validDomain } from './props.gen.mjs';
 import { Registry } from './registry.mjs';
 
 // The content protocol's markers (plan P2-01; design T2 S4): a function a
@@ -159,7 +159,7 @@ export function createStd(host) {
   //    a ctor-arg warning — unless the spec passes options raw;
   // 3. the rest are kids, through toContent.
   const bind = (name, spec, args) => {
-    const call = { attrs: {}, kids: [], lines: undefined, body: undefined, options: undefined };
+    const call = { attrs: {}, kids: [], lines: undefined, body: undefined, options: undefined, style: undefined };
     let i = 0;
     for (const p of spec.params) {
       if (i >= args.length || !accepts(p, args[i])) break;
@@ -175,6 +175,22 @@ export function createStd(host) {
     if (call.options && spec.options !== 'raw') {
       const viaAlias = new Set();
       for (const [k0, v] of Object.entries(call.options)) {
+        if (k0 === 'style' && isPlainObject(v)) {  // universal: a styled scope around the result
+          call.style = v;
+          continue;
+        }
+        if (k0 === 'ext' && spec.options.includes('ext')) {  // EXT: scalar data under checked names
+          if (!isPlainObject(v)) { diag(1, 'ctor-arg', `${name}: ext takes an object of names to values`); continue; }
+          const ext = {};
+          for (const [n, x] of Object.entries(v)) {
+            if (!validDomain('extname', n)) diag(1, 'ctor-arg', `${name}: ext name ${n} is not [a-z][a-z0-9-]*`);
+            else if (typeof x !== 'string' && typeof x !== 'number' && typeof x !== 'boolean') {
+              if (x !== undefined && x !== null) diag(1, 'ctor-arg', `${name}: ext ${n} is not a scalar`);
+            } else ext[n] = x;
+          }
+          call.attrs.ext = ext;
+          continue;
+        }
         const alias = STD_ALIASES[k0];
         const k = alias && spec.options.includes(alias) ? alias : k0;
         if (!spec.options.includes(k)) {
@@ -390,7 +406,11 @@ export function createStd(host) {
     t = function (...args) {
       const entry = registry.get('ctor', name);
       if (!entry) throw new TypeError(`${name} is not a constructor`);
-      return invoke(name, entry, bind(name, entry.spec, args));
+      const c = bind(name, entry.spec, args);
+      const r = invoke(name, entry, c);
+      // the universal style option (plan P2-05): a styled scope around it
+      if (!c.style || !isNode(r)) return r;
+      return ob.makeNode(KIND.styled, { bits: styleBits(c.style), ...styleValues(c.style) }, [r]);
     };
     Object.defineProperty(t, 'name', { value: name });
     if (registry.get('ctor', name)?.spec.nullary) t[NULLARY] = true;
@@ -540,6 +560,24 @@ export function createStd(host) {
     },
     format(name, fn) {
       registry.define('format', name, () => fn, { user: true });
+    },
+    // $.declare(type, name, data, ...templates) (plan P2-05): a typed
+    // declaration at this point of the flow — DECL (schema "decls": element,
+    // counter, collector, rule, math.*, …); data is EXT (scalar values under
+    // [a-z][a-z0-9-]* names), the templates are content
+    declare(type, name, data = {}, ...templates) {
+      const d = DECLS[type];
+      if (!d) throw new TypeError(`$.declare: unknown declaration type ${type}`);
+      if (typeof name !== 'string' || !name) throw new TypeError('$.declare: a name is required');
+      const ext = {};
+      if (!isPlainObject(data)) throw new TypeError('$.declare: data is an object of names to values');
+      for (const [n, x] of Object.entries(data)) {
+        if (!validDomain('extname', n)) throw new TypeError(`$.declare: data name ${n} is not [a-z][a-z0-9-]*`);
+        if (typeof x !== 'string' && typeof x !== 'number' && typeof x !== 'boolean')
+          throw new TypeError(`$.declare: data ${n} is not a scalar`);
+        ext[n] = x;
+      }
+      ob.decl(d.id, here.s, here.e, name, ext, kidsOf(templates));
     },
     formatOf(name) {
       return registry.get('format', name)?.fn;

@@ -9,7 +9,7 @@
     "  enum:A|B|C | flags:NAME=BIT,... | rangeset | color | font | html | url.",
     "Attribute order is the writer's order (today's constructor argument order)."
   ],
-  "opsVersion": 8,
+  "opsVersion": 9,
   "minCompat": 6,
   "ops": {
     "MAKE_TEXT": {"id": 1, "since": 6},
@@ -20,14 +20,15 @@
     "SPAN": {"id": 6, "since": 6},
     "DIAG": {"id": 7, "since": 7},
     "AT": {"id": 8, "since": 8},
-    "RAWMAP": {"id": 9, "since": 8}
+    "RAWMAP": {"id": 9, "since": 8},
+    "DECL": {"id": 10, "since": 9}
   },
   "keys": {
     "label": 0, "level": 1, "ordered": 2, "start": 3, "lang": 4, "body": 5, "role": 6, "cols": 7,
     "align": 8, "name": 9, "what": 10, "src": 11, "message": 12, "code": 13, "url": 14,
     "target": 15, "form": 16, "html": 17, "w": 18, "h": 19, "bits": 20, "font": 21, "color": 22,
     "sizePx": 23, "wrap": 24, "lineNo": 25, "hl": 26, "sidecar": 27, "scale": 28, "alt": 29,
-    "side": 30
+    "side": 30, "slot": 31, "syn": 32, "copy": 33, "class": 34, "ext": 35, "of": 36
   },
   "kinds": {
     "doc": {"id": 0, "level": "block", "inline": "unsupported", "body": "blocks", "since": 6, "attrs": {}},
@@ -64,7 +65,8 @@
       "form": {"dom": "enum:all"}}},
     "mathblock": {"id": 14, "level": "block", "inline": "unsupported", "body": "none", "since": 6, "ctor": {"params": ["attr:src", "attr:label"]}, "attrs": {
       "src": {"dom": "str"},
-      "label": {"dom": "label"}}},
+      "label": {"dom": "label"},
+      "name": {"dom": "str", "since": 9, "flags": ["resolved"]}}},
     "error": {"id": 15, "level": "adaptive", "inline": "error", "body": "none", "since": 6, "ctor": {"params": ["attr:code", "attr:message"], "sealed": true}, "attrs": {
       "message": {"dom": "str"},
       "code": {"dom": "ident"}}},
@@ -80,7 +82,8 @@
       "url": {"dom": "url"}}},
     "code": {"id": 20, "level": "inline", "inline": "code", "body": "text", "since": 6, "ctor": {"params": ["text"]}, "attrs": {}},
     "ref": {"id": 21, "level": "inline", "inline": "container", "body": "none", "since": 6, "ctor": {"params": ["attr:target"]}, "attrs": {
-      "target": {"dom": "str"}}},
+      "target": {"dom": "str"},
+      "url": {"dom": "url", "since": 9, "flags": ["resolved"]}}},
     "mathinline": {"id": 22, "level": "inline", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:src"]}, "attrs": {
       "src": {"dom": "str"}}},
     "raw": {"id": 23, "level": "block", "inline": "object", "body": "none", "since": 6, "ctor": {"params": ["attr:html"]}, "attrs": {
@@ -96,7 +99,47 @@
       "h": {"dom": "num:0:100000"},
       "scale": {"dom": "num:0:100"},
       "side": {"dom": "enum:left|right"}}},
-    "note": {"id": 27, "level": "inline", "inline": "unsupported", "body": "blocks", "since": 6, "ctor": {}, "attrs": {}}
+    "note": {"id": 27, "level": "inline", "inline": "unsupported", "body": "blocks", "since": 6, "ctor": {}, "attrs": {}},
+    "field": {"id": 28, "level": "inline", "inline": "skip", "body": "none", "since": 9, "ctor": {"params": ["attr:name"]}, "attrs": {
+      "name": {"dom": "str"},
+      "of": {"dom": "str"}}}
+  },
+  "universal": {
+    "$comment": [
+      "Universal attributes (plan P2-05; design T2 S9): every kind but doc and text accepts them, after",
+      "its own attributes; a kind that already has one keeps its own row (heading/group/table/term/",
+      "mathblock label and group role, since 6). label: an anchor; role: the element class's name; slot:",
+      "the part of its parent it fills (caption, margin, …); syn: the kind of generated text it is (absent",
+      "= content); copy: text | omit | replace:<text> (how a copy reads it); class: style tokens (T4);",
+      "ext: EXT name/value pairs (scalar user data, opaque to emit and layout). Flags: resolved = only the",
+      "resolver sets it (dropped from input)."
+    ],
+    "label": {"dom": "label", "since": 9},
+    "role": {"dom": "ident", "since": 9},
+    "slot": {"dom": "ident", "since": 9},
+    "syn": {"dom": "ident", "since": 9},
+    "copy": {"dom": "copy", "since": 9},
+    "class": {"dom": "classlist", "since": 9},
+    "ext": {"dom": "ext", "since": 9}
+  },
+  "decls": {
+    "$comment": [
+      "Declaration types (plan P2-05; design T2 S9; D-I06, D-I07): a DECL op carries one, with a name, EXT",
+      "data and templates, at its flow position. binding hoisted: the document's last declaration of a name",
+      "wins wherever it is (decl-redeclared info); positional: each applies from its position on. owner: the",
+      "plan step whose consumer reads it. Declarations are never region-scoped."
+    ],
+    "element": {"id": 1, "since": 9, "binding": "hoisted", "owner": "P2-07"},
+    "counter": {"id": 2, "since": 9, "binding": "hoisted", "owner": "P2-07"},
+    "collector": {"id": 3, "since": 9, "binding": "hoisted", "owner": "P2-07"},
+    "counter-system": {"id": 4, "since": 9, "binding": "hoisted", "owner": "P2-07"},
+    "doc": {"id": 5, "since": 9, "binding": "hoisted", "owner": "P2-07"},
+    "locale": {"id": 6, "since": 9, "binding": "hoisted", "owner": "P2-07"},
+    "fontRoles": {"id": 7, "since": 9, "binding": "hoisted", "owner": "P3"},
+    "rule": {"id": 8, "since": 9, "binding": "positional", "owner": "P3"},
+    "math.symbol": {"id": 9, "since": 9, "binding": "positional", "owner": "P3"},
+    "math.op": {"id": 10, "since": 9, "binding": "positional", "owner": "P3"},
+    "math.fn": {"id": 11, "since": 9, "binding": "positional", "owner": "P3"}
   },
   "stdlib": {
     "$comment": [
@@ -148,6 +191,18 @@
     "font": {
       "max": 512,
       "re": " *(\"[^\"'\\\\\\x00-\\x1f\\x7f]+\" *|'[^\"'\\\\\\x00-\\x1f\\x7f]+' *|[A-Za-z0-9_\\-\\x80-\\xff][A-Za-z0-9 _\\-\\x80-\\xff]*)(, *(\"[^\"'\\\\\\x00-\\x1f\\x7f]+\" *|'[^\"'\\\\\\x00-\\x1f\\x7f]+' *|[A-Za-z0-9_\\-\\x80-\\xff][A-Za-z0-9 _\\-\\x80-\\xff]*))*"
+    },
+    "copy": {
+      "max": 1024,
+      "re": "text|omit|replace:[^\\x00-\\x08\\x0b-\\x1f\\x7f]*"
+    },
+    "classlist": {
+      "max": 512,
+      "re": "[A-Za-z_][A-Za-z0-9_\\-]*( [A-Za-z_][A-Za-z0-9_\\-]*)*"
+    },
+    "extname": {
+      "max": 32,
+      "re": "[a-z][a-z0-9\\-]*"
     },
     "features": {
       "max": 256,

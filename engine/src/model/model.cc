@@ -84,6 +84,7 @@ struct Inst {
         for (const ArgVal& a : rn.args) {
           ArgVal v = a;
           if (a.tag == ArgTag::Str) v.ref = strs.intern(raw.strings[a.ref]);
+          if (a.key == ArgK::ext) v.name = strs.intern(raw.strings[a.name]);
           n->args.push_back(v);
         }
         n->kids.reserve(rn.children.size());
@@ -145,8 +146,44 @@ ContentTree instantiate(const RawOps& raw, Arena& arena, Interner& strs,
         break;
     }
   }
-  if (root->kids.empty() && !raw.nodes.empty())
+  if (root->kids.empty() && !raw.nodes.empty() && raw.decls.empty())
     diags.add(Sev::Warning, "ops-invalid", {}, "buffer has nodes but no EMIT");
+  // declarations (plan P2-05; D-I07: read after the whole buffer decoded,
+  // in any order): templates instantiate style-neutral (their styles bind
+  // where they are used); a hoisted name's last declaration wins
+  std::vector<std::pair<std::pair<u16, StrRef>, size_t>> last;
+  for (const RawDecl& rd : raw.decls) {
+    Decl d;
+    d.type = rd.type;
+    d.flowIndex = rd.flowIndex;
+    d.span = rd.span;
+    for (const ArgVal& a : rd.args) {
+      ArgVal v = a;
+      if (a.tag == ArgTag::Str) v.ref = strs.intern(raw.strings[a.ref]);
+      if (a.key == ArgK::name) {
+        d.name = v.ref;
+        continue;
+      }
+      if (a.key == ArgK::ext) v.name = strs.intern(raw.strings[a.name]);
+      d.args.push_back(v);
+    }
+    for (u32 id : rd.templates) d.templates.push_back(inst.copy(id, Styling{}));
+    if (kDecls[d.type].hoisted) {
+      auto it = std::find_if(last.begin(), last.end(),
+                             [&](const auto& e) { return e.first.first == d.type && e.first.second == d.name; });
+      if (it != last.end()) {
+        Decl& prev = t.decls[it->second];
+        prev.superseded = true;
+        diags.add(Sev::Info, "decl-redeclared", d.span,
+                  std::string(kDecls[d.type].name) + " '" + std::string(strs.get(d.name)) +
+                      "' declared again: the later declaration wins");
+        it->second = t.decls.size();
+      } else {
+        last.push_back({{d.type, d.name}, t.decls.size()});
+      }
+    }
+    t.decls.push_back(std::move(d));
+  }
   root->span = root->kids.empty()
                    ? Span{}
                    : Span{root->kids.front()->span.start, root->kids.back()->span.end};
@@ -194,7 +231,8 @@ static void dumpNode(std::string& out, const ContentNode* n, const Interner& str
   }
   for (const ArgVal& a : n->args) {
     if (n->kind == Kind::styled && a.key == ArgK::bits) continue;  // shown via style
-    appendf(out, " %s=", argName(a.key));
+    if (a.key == ArgK::ext) appendf(out, " ext.%s=", std::string(strs.get(a.name)).c_str());
+    else appendf(out, " %s=", argName(a.key));
     switch (a.tag) {
       case ArgTag::Null: out += "null"; break;
       case ArgTag::Bool: out += a.num ? "true" : "false"; break;
@@ -214,6 +252,22 @@ static void dumpNode(std::string& out, const ContentNode* n, const Interner& str
 std::string dumpTree(const ContentTree& t, const Interner& strs, const StyleTable& styles) {
   std::string out;
   if (t.root) dumpNode(out, t.root, strs, styles, 0);
+  for (const Decl& d : t.decls) {  // declarations (plan P2-05), after the tree
+    appendf(out, "decl %s name=\"", kDecls[d.type].name);
+    appendEscaped(out, strs.get(d.name));
+    appendf(out, "\" flow=%u @[%u,%u)%s", d.flowIndex, d.span.start, d.span.end, d.superseded ? " superseded" : "");
+    for (const ArgVal& a : d.args) {
+      appendf(out, " ext.%s=", std::string(strs.get(a.name)).c_str());
+      if (a.tag == ArgTag::Str) {
+        out += "\"";
+        appendEscaped(out, strs.get(a.ref));
+        out += "\"";
+      } else if (a.tag == ArgTag::Bool) out += a.num ? "true" : "false";
+      else appendf(out, "%g", a.num);
+    }
+    out += "\n";
+    for (const ContentNode* k : d.templates) dumpNode(out, k, strs, styles, 1);
+  }
   return out;
 }
 

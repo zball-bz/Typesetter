@@ -53,8 +53,30 @@ inline StrRef attrStr(const ContentNode* n, ArgK k) {
   return (a && a->tag == ArgTag::Str) ? a->ref : 0;
 }
 
+// EXT data (plan P2-05): the value of a node's EXT attribute `name`, or null
+inline const ArgVal* extAttr(const ContentNode* n, StrRef name) {
+  for (const ArgVal& a : n->args)
+    if (a.key == ArgK::ext && a.name == name) return &a;
+  return nullptr;
+}
+
+// A declaration (plan P2-05; design T2 S9): its type (kDecls), name, EXT
+// data and style-neutral templates, at its flow position (the EMITs before
+// it). Hoisted types: the last declaration of a name wins and the earlier
+// ones are superseded (decl-redeclared); positional ones apply in order.
+struct Decl {
+  u16 type = 0;
+  StrRef name = 0;
+  std::vector<ArgVal> args;  // EXT data (names and strings interned)
+  std::vector<ContentNode*> templates;
+  u32 flowIndex = 0;
+  Span span;
+  bool superseded = false;
+};
+
 struct ContentTree {
   ContentNode* root = nullptr;  // kind doc; children = pid-bearing blocks
+  std::vector<Decl> decls;      // in document order
 };
 
 // InstLimits (plan P0-07): the instantiated tree holds at most

@@ -14,6 +14,7 @@ inline constexpr const char* kStdNames[] = {
     "comment",
     "em",
     "error",
+    "field",
     "figure",
     "glossary",
     "group",

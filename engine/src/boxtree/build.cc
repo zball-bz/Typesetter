@@ -1,5 +1,7 @@
 #include "build.h"
 
+#include "../elements/registry.h"
+
 namespace tsr {
 
 namespace {
@@ -39,11 +41,14 @@ struct RoleInfo {
   bool captions = false;  // its paragraphs are captions; an image with a side floats
   bool sidecar = false;   // a code block's sidecar lines
 };
+// a figure-class group (its class's box trait, plan P2-05)
+constexpr RoleInfo kFigureRole{TraitsId::Figure, true, false};
+// the one role still read by name: a code block's sidecar lines (P2-13 makes
+// them a margin slot)
 constexpr struct {
   const char* name;
   RoleInfo info;
 } kRoles[] = {
-    {"figure", {TraitsId::Figure, true, false}},
     {"sidecar-lines", {TraitsId::Group, false, true}},
 };
 // image sides (figure-design.md §4): 1 left, 2 right
@@ -51,7 +56,7 @@ constexpr const char* kSides[] = {"left", "right"};
 
 class Builder {
  public:
-  Builder(Interner& s, StyleTable& st, const Config& c) : strs(s), styles(st), cfg(c) {
+  Builder(Interner& s, StyleTable& st, const Config& c, const Registry& r) : strs(s), styles(st), cfg(c), reg(r) {
     for (const auto& r : kRoles) roleRefs.push_back(s.find(r.name));
     for (const char* side : kSides) sideRefs.push_back(s.find(side));
   }
@@ -85,17 +90,20 @@ class Builder {
   Interner& strs;
   StyleTable& styles;
   const Config& cfg;
+  const Registry& reg;
   std::vector<StrRef> roleRefs, sideRefs;
   TopTree* t = nullptr;
   std::vector<LeafSource>* leaves = nullptr;
   int figDepth = 0;  // inside a captions role: paragraphs are captions
 
   const RoleInfo* roleOf(const ContentNode* n) const {
-    StrRef r = attrStr(n, ArgK::role);
+    if (n->cls && reg.cls(n->cls).box == ElementClass::Box::Figure) return &kFigureRole;
+    const StrRef r = attrStr(n, ArgK::role);
     for (size_t i = 0; r && i < roleRefs.size(); i++)
       if (roleRefs[i] == r) return &kRoles[i].info;
     return nullptr;
   }
+
   u8 sideOf(const ContentNode* n) const {
     StrRef r = attrStr(n, ArgK::side);
     for (size_t i = 0; r && i < sideRefs.size(); i++)
@@ -111,7 +119,12 @@ class Builder {
     b.traits = tr;
     b.parent = parent;
     b.x = x;
-    if (n) b.span = n->span;
+    if (n) {
+      b.span = n->span;
+      // a label is universal (plan P2-05): any block a node opens carries it
+      // — not the top-level wrapper, which only borrows its child's span
+      if (tr != TraitsId::Root) b.anchor = labelOf(n);
+    }
     t->blocks.push_back(b);
     return (u32)t->blocks.size() - 1;
   }
@@ -143,14 +156,12 @@ class Builder {
         else s.paraIndent = cfg.paraIndentEm > 0 && marker == 0;  // 首行缩进 (App C)
         LayoutBlock& b = leaf(LayouterId::Paragraph, Painter::None, caption ? TraitsId::Caption : TraitsId::Para,
                               n, parent, x, std::move(s));
-        b.anchor = labelOf(n);  // a labelled paragraph (note bodies)
         b.marker = marker;
         b.markerStyle = n->style;
         return;
       }
       case Kind::heading: {
         LayoutBlock& b = leaf(LayouterId::Paragraph, Painter::None, TraitsId::Heading, n, parent, x, std::move(s));
-        b.anchor = labelOf(n);
         b.marker = marker;
         b.markerStyle = n->style;
         return;
@@ -211,8 +222,7 @@ class Builder {
         leaf(LayouterId::Replaced, Painter::Rule, TraitsId::Rule, n, parent, x, std::move(s));
         return;
       case Kind::table: {
-        LayoutBlock& b = leaf(LayouterId::Table, Painter::None, TraitsId::Table, n, parent, x, std::move(s));
-        b.anchor = labelOf(n);
+        leaf(LayouterId::Table, Painter::None, TraitsId::Table, n, parent, x, std::move(s));
         return;
       }
       case Kind::raw:
@@ -226,8 +236,7 @@ class Builder {
         return;
       }
       case Kind::mathblock: {
-        LayoutBlock& b = leaf(LayouterId::Replaced, Painter::MathRow, TraitsId::Math, n, parent, x, std::move(s));
-        b.anchor = labelOf(n);
+        leaf(LayouterId::Replaced, Painter::MathRow, TraitsId::Math, n, parent, x, std::move(s));
         return;
       }
       case Kind::error:
@@ -238,7 +247,6 @@ class Builder {
       case Kind::group: {
         const RoleInfo* role = roleOf(n);
         u32 g = open(LayouterId::Stack, Painter::None, role ? role->traits : TraitsId::Group, n, parent, x);
-        t->blocks[g].anchor = labelOf(n);
         if (role && role->captions) {
           // float form (figure-design.md §4): the caption paragraphs ride the
           // image as rows broken to its width — the float box is image +
@@ -277,10 +285,11 @@ class Builder {
 
 const BlockTraits& traitsOf(TraitsId t) { return kTraits[(size_t)t]; }
 
-BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const Config& cfg) {
+BoxTree buildBoxTree(const ContentTree& tree, Interner& strs, StyleTable& styles, const Config& cfg,
+                     const Registry& reg) {
   BoxTree bt;
   if (!tree.root) return bt;
-  Builder b(strs, styles, cfg);
+  Builder b(strs, styles, cfg, reg);
   u32 pid = 0;
   for (const ContentNode* child : tree.root->kids) {
     TopTree t;

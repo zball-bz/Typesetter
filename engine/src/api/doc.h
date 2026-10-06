@@ -560,7 +560,7 @@ struct Doc {
     if (!done(Stage::Resolve)) return Status::NeedMeasure;
     if (done(Stage::Layout)) return Status::Ok;
     if (!done(Stage::BoxTree)) {  // the block structure (plan P1-18): once per resolved tree
-      boxtree = buildBoxTree(tree, strs, styles, cfg);
+      boxtree = buildBoxTree(tree, strs, styles, cfg, *registry);
       validThrough = (int)Stage::BoxTree;
     }
     if (!done(Stage::Emit)) {
@@ -732,7 +732,7 @@ struct Doc {
   std::string renderFallback() {
     diags.begin(DiagOrigin::Render);
     writerDefects() = {};
-    std::string html = renderSemantic(tree, strs, styles, &rt);
+    std::string html = renderSemantic(tree, strs, styles, &rt, registry);
     reportWriterDefects();
     return html;
   }

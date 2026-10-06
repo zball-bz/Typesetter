@@ -127,7 +127,30 @@ ops      op stream (all ints varint/LEB128 unless noted)
 0x09 RAWMAP      id n (cooked raw)*                 (since 8, plan P2-04:
                                      a text's cooked→raw map, raw relative
                                      to its span start)
+0x0A DECL        type s e nargs (argKey argVal)* ntempl id*   (since 9,
+                                     plan P2-05: a typed declaration at its
+                                     flow position)
 ```
+
+As built (plan P2-05; design T2 S9): **universal attributes**. Every kind but
+`doc` and `text` accepts, after its own attributes, `label` (an anchor — any
+block a labelled node opens carries it), `role` (the element class's name),
+`slot` (the part of its parent it fills), `syn` (the kind of generated text it
+is), `copy` (`text` | `omit` | `replace:<text>`), `class` (style tokens, for
+T4) and **EXT** data: `argKey=ext nameStrRef argVal`, a scalar under a name
+matching `[a-z][a-z0-9-]{0,31}`, opaque to emit and layout (`extAttr(node,
+name)`). The universal rows, the `field` kind (an inline placeholder: until
+T3's elements fill it, it reads as unresolved, `field-unresolved`) and DECL
+are since 9, so only buffers that use them advertise it. Attributes the
+resolver sets (`ref.url`, `mathblock.name`) are flagged *resolved* and
+dropped from input with `ops-arg`. **Declarations** (`$.declare(type, name,
+data, ...templates)`; types in schema.json `decls`): a DECL carries its type,
+span, flow position (the EMITs before it), name, EXT data and template nodes;
+the reader collects them after decoding (D-I07); instantiation makes them
+style-neutral `Decl`s on the content tree. A hoisted type's (element, counter,
+collector, counter-system, doc, locale, fontRoles) last declaration of a name
+wins wherever it is (`decl-redeclared` info); positional types (rule,
+math.*) apply from their position. The tree dump lists them after the tree.
 
 **Cooked→raw maps** (plan P2-04; design T1 TextRaw; the prerequisite of
 per-atom source spans, P4-03). A text's cooked string differs from its raw
