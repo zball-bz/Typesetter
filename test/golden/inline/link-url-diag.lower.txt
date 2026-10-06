@@ -1,0 +1,22 @@
+lower v1 abi 3d3ccfbb docEnd 243 holes 0 module none
+block 0 content [0,242)
+  CALL para [0,242)
+    TEXT "Links keep only safe targets (plan P3-20): " [0,42) raw=0:0,43:42
+    CALL link [43,74) url="https://example.org/a"
+      TEXT "a page" [44,50)
+    TEXT ", " [74,75) raw=0:0,2:1
+    CALL link [76,105) url="mailto:me@example.org"
+      TEXT "mail" [77,81)
+    TEXT ", " [105,106) raw=0:0,2:1
+    CALL link [107,133) url="notes/b.html#c"
+      TEXT "relative" [108,116)
+    TEXT ". These lose theirs: " [133,153) raw=0:0,21:20
+    CALL link [154,183) url="javascript:alert(1)"
+      TEXT "script" [155,161)
+    TEXT ", " [183,184) raw=0:0,2:1
+    CALL link [185,209) url="data:text/html,x"
+      TEXT "data" [186,190)
+    TEXT ", " [209,210) raw=0:0,2:1
+    CALL link [211,241) url="java\tscript:alert(1)"
+      TEXT "spaced" [212,218)
+    TEXT "." [241,242)

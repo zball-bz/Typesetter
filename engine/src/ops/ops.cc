@@ -163,9 +163,16 @@ static bool validateArg(ArgVal& a, const AttrSpec& sp, const RawOps& r, std::str
       a.num = (double)(v & mask);
       return true;
     }
+    case Dom::Url:
+      // (plan P3-20) a link's or a reference's href: an allowed scheme only
+      // (an image's src has its own policy: a placeholder and image-src)
+      if (sp.key == (u16)ArgK::url && a.tag == ArgTag::Str && !safeLinkUrl(str())) {
+        why = "a link URL is relative, http(s) or mailto";
+        return false;
+      }
+      return wantStr(true, "string");
     case Dom::Str:
     case Dom::Html:
-    case Dom::Url:
     case Dom::Token: return wantStr(true, "string");
     case Dom::Ident: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Ident, str()), "identifier");
     case Dom::Label: return wantStr(a.tag == ArgTag::Str && matchDomain(TextDomain::Label, str()), "label");

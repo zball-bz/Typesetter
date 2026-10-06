@@ -1,0 +1,21 @@
+doc @[0,242) [base]
+  para @[0,242) [base]
+    text @[0,42) [base] str="Links keep only safe targets (plan P3-20): " raw=0:0,43:42
+    link @[43,74) [base] url="https://example.org/a"
+      text @[44,50) [base] str="a page"
+    text @[74,75) [base] str=", " raw=0:0,2:1
+    link @[76,105) [base] url="mailto:me@example.org"
+      text @[77,81) [base] str="mail"
+    text @[105,106) [base] str=", " raw=0:0,2:1
+    link @[107,133) [base] url="notes/b.html#c"
+      text @[108,116) [base] str="relative"
+    text @[133,153) [base] str=". These lose theirs: " raw=0:0,21:20
+    link @[154,183) [base]
+      text @[155,161) [base] str="script"
+    text @[183,184) [base] str=", " raw=0:0,2:1
+    link @[185,209) [base]
+      text @[186,190) [base] str="data"
+    text @[209,210) [base] str=", " raw=0:0,2:1
+    link @[211,241) [base]
+      text @[212,218) [base] str="spaced"
+    text @[241,242) [base] str="."

@@ -1,0 +1,3 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="242">Links keep only safe targets (plan P3-20): <a href="https://example.org/a">a page</a>, <a href="mailto:me@example.org">mail</a>, <a href="notes/b.html#c">relative</a>. These lose theirs: script, data, spaced.</p>
+</div>

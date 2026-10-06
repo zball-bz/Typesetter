@@ -1,0 +1,1 @@
+Links keep only safe targets (plan P3-20): [a page](https://example.org/a), [mail](mailto:me@example.org), [relative](notes/b.html#c). These lose theirs: [script](javascript:alert(1)), [data](data:text/html,x), [spaced](java	script:alert(1)).

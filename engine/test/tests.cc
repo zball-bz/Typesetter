@@ -985,6 +985,15 @@ static void unitRegistry(const fs::path& root) {
   CHECK(!Registry::fromJson(R"({"classes":{"x":{"counter":"nope"}}})", err) && !err.empty());
   // a numbered class needs a counter (fuzz finding, plan P2-07)
   CHECK(!Registry::fromJson(R"({"classes":{"x":{"numbering":"always"}}})", err) && !err.empty());
+  // (plan P3-20) a role reads as an allowlisted phrasing element only
+  CHECK(!Registry::fromJson(R"({"roles":{"x":{"html":"script"}}})", err) && err.find("allowlist") != std::string::npos);
+  CHECK(Registry::fromJson(R"({"roles":{"x":{"html":"mark"}}})", err) != nullptr);
+  // (plan P3-20) link hrefs: relative, http(s), mailto — never another scheme
+  for (const char* ok : {"a.html", "/x/y", "#top", "?q=1", "https://e.org/a:b", "HTTP://e", "mailto:a@b", "x/y:z"})
+    CHECK(safeLinkUrl(ok));
+  for (const char* bad : {"javascript:alert(1)", "JavaScript:x", "java\tscript:x", " javascript:x", "data:text/html,x",
+                          "vbscript:x", "file:///etc/passwd"})
+    CHECK(!safeLinkUrl(bad));
   // (plan P3-13) flows: a placement is one of four; a class like another
   // patches its flow (the marker-alias's reference form kept); a collector
   // like another takes its query and templates, its scope given

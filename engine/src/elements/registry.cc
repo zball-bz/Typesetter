@@ -550,10 +550,15 @@ struct Loader {
     if (const JsonValue* rs = member(v, "roles"))
       for (size_t k = 0; k < rs->keys.size(); k++) {
         if (rs->keys[k] == "$comment") continue;
+        // (plan P3-20; D-R09) a role reads as a phrasing element of the
+        // allowlist: never script, style, iframe or another active element
+        static constexpr std::string_view kPhrasing[] = {"sup", "sub", "strong", "b", "em", "i", "small", "span",
+                                                         "code", "kbd", "samp", "var", "mark", "cite", "q", "abbr",
+                                                         "dfn", "s", "u", "del", "ins", "bdi", "time", "data"};
         const std::string h = str(member(rs->vals[k], "html"));
-        bool ok = !h.empty();
-        for (char c : h) ok = ok && c >= 'a' && c <= 'z';
-        if (!ok) return fail("role '" + rs->keys[k] + "': html is an element name");
+        bool ok = false;
+        for (std::string_view e : kPhrasing) ok = ok || h == e;
+        if (!ok) return fail("role '" + rs->keys[k] + "': html is a phrasing element of the allowlist ('" + h + "')");
         using Says = Registry::RoleHtml::Says;
         const Says says = h == "sup" ? Says::Super : h == "strong" || h == "b" ? Says::Bold
                           : h == "em" || h == "i" ? Says::Italic : Says::Nothing;

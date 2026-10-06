@@ -453,6 +453,29 @@ const contractCss = Object.entries(contract.classes).map(([c, r]) => `.${c} { ${
   .concat(squeezeEm ? [`.tsr-sqL { margin-left: -${squeezeEm}em; }`, `.tsr-sqR { margin-right: -${squeezeEm}em; }`] : []).join('\n');
 const contractJs = `// ${HDR}\n// The render contract's stylesheet (schema "contract"; plan P3-18): the\n// metric-bearing classes the serializer writes, as the engine measured them.\n` +
   `export const CONTRACT_CSS = ${JSON.stringify(contractCss + '\n')};\n`;
+// (plan P3-20, P3-21; design T9 A2) the URL policy: engine/schema/url_policy.def
+// as the engine's and the locator's one table
+const urlPolicy = readFileSync(join(root, 'engine/schema/url_policy.def'), 'utf8').split('\n')
+  .map((l) => l.match(/^SCHEME\((\w+),\s*([a-z ]+),\s*"([^"]*)"\)/)).filter(Boolean)
+  .map(([, name, uses, prefix]) => ({ name, uses: uses.trim().split(/\s+/), prefix }));
+const USES = { image: 1, link: 2, load: 4 };
+const useMask = (r) => r.uses.reduce((m, u) => m | (USES[u] ?? (() => { throw new Error(`url_policy: unknown use ${u}`); })()), 0);
+const urlH = `// ${HDR}\n// The URL policy (engine/schema/url_policy.def; plan P3-20): which references a\n// document may make, by use. A relative reference is allowed for every use.\n` +
+  `#pragma once\n#include <cstdint>\n#include <string>\n#include <string_view>\n\nnamespace tsr {\n\n` +
+  `enum class UrlUse : std::uint8_t { Image = 1, Link = 2, Load = 4 };\n\n` +
+  `inline bool urlAllowed(std::string_view src, UrlUse use) {\n` +
+  `  const size_t colon = src.find(':');\n  if (colon == std::string_view::npos) return true;\n` +
+  `  const size_t stop = src.find_first_of("/?#");\n  if (stop != std::string_view::npos && stop < colon) return true;\n` +
+  `  std::string low(src.substr(0, colon));\n  for (char& c : low) c = (char)((c >= 'A' && c <= 'Z') ? c + 32 : c);\n` +
+  `  const std::string_view rest = src.substr(colon + 1);\n  const std::uint8_t u = (std::uint8_t)use;\n` +
+  urlPolicy.map((r) => `  if (low == "${r.name}") return (u & ${useMask(r)}) && ${r.prefix ? `rest.rfind("${r.prefix}", 0) == 0` : 'true'};\n`).join('') +
+  `  (void)rest;\n  return false;\n}\n\n}  // namespace tsr\n`;
+const urlJs = `// ${HDR}\n// The URL policy (engine/schema/url_policy.def; plan P3-20): the locator's table,\n// the engine's safeImageSrc and safeLinkUrl. use: 'image' | 'link' | 'load'.\n` +
+  `const SCHEMES = ${JSON.stringify(Object.fromEntries(urlPolicy.map((r) => [r.name, { uses: r.uses, prefix: r.prefix }])))};\n` +
+  `export function urlAllowed(src, use) {\n  const s = String(src);\n  const colon = s.indexOf(':');\n  if (colon < 0) return true;\n` +
+  `  const stop = s.search(/[/?#]/);\n  if (stop >= 0 && stop < colon) return true;\n` +
+  `  const r = SCHEMES[s.slice(0, colon).toLowerCase()];\n  return !!r && r.uses.includes(use) && s.slice(colon + 1).startsWith(r.prefix);\n}\n`;
+
 // (plan P3-18) the default theme: runtime/src/main/theme.css as a module
 const themeCss = readFileSync(join(root, 'runtime/src/main/theme.css'), 'utf8');
 const themeJs = `// ${HDR}\n// The default theme (runtime/src/main/theme.css; plan P3-18): paint only.\n` +
@@ -719,6 +742,8 @@ const outputs = {
   'engine/src/render/style_css.gen.h': css,
   'runtime/src/shared/contract.gen.mjs': contractJs,
   'runtime/src/shared/theme.gen.mjs': themeJs,
+  'engine/src/support/url_policy.gen.h': urlH,
+  'runtime/src/shared/url_policy.gen.mjs': urlJs,
   'runtime/src/shared/props.gen.mjs': propsJs,
   'engine/src/api/settings.gen.h': sh,
   'engine/src/api/settings.gen.cc': sc,
