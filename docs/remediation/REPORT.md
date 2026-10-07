@@ -455,6 +455,22 @@ P3-36 节之外，重新 vendor 引擎后还需注意：
 - widows/orphans 作为特性；超长脚注的拆分。
 - PLAN §9 的可选扩展：T5 步骤 12（文档裁剪、hbox、ja/zh-Hant/ko 完整包）、边注与页边 figure、MathML feed。
 
+### 合并与博客配合（2026-10-07，计划完成之后）
+
+- **分支 CI**：推送后的首轮 CI（run 37555943489）中，web（含 1239 项 e2e）与 fuzz 通过；native 的 Debug 构建（runner 的 gcc 13）失败。原因是 unitMathFontFiles 用 memcmp 比较带填充字节的 GlyphRec、AsmPart，填充字节的值不确定（本地 gcc 15 碰巧相同）。bc22b525 改为逐字段比较。
+- **迁移博客时发现的两处引擎缺陷**（均已修复，带回归用例，全套门禁通过，e2e 1247 项）：
+  1. 061be8f4：settingsJson 按 schema 行序输出，而 `source.frontMatter` 夹在 `render.*` 的行之间，`render` 段被写了两次；JSON 读者只保留后一个，`renderTsm(…).settings` 因此丢了 `render.idPrefix`。exportStatic 的水合、页面上的第二份文档都会回落到默认前缀，造成 id 重复。修正：生成器按段分组输出；单测检查段名唯一。
+  2. 16e5cc9e：语义页上 `par.indent` 的规则（`p` 的 text-indent）经继承进入公式中绝对定位的字形块，字形整体右移一个缩进，压在后文上；宿主在容器上设 text-indent 也会移动每一条排版行。修正：布局模块对 `.tsr-doc`、`.tsr-math`、`.tsr-raw`、`.tsr-iraw` 重置 text-indent（与 P3-19 的 line-height 同类）。同一提交把语义页的公式编号放到版心右端、公式所在行（此前紧跟公式）。e2e 新增宿主缩进、段落缩进与编号位置三项检查。
+- **博客配合**：上文"博客配合事项"与 P3-36 节各项已在 zball-io 完成（分支 `engine-2026-10`，提交 5f7726e）：
+  - 站点设置文档（SITE、BY_LANG）在构建期与浏览器端共用；语言取 `docinfo.lang`；整份文件交给引擎（`source.frontMatter`）。
+  - 引擎样式随页面输出，每份文档的规则限定在各自的 article 内。
+  - 每页一个引擎、每篇 article 一个会话，译文使用独立的 idPrefix，宽度变化时 relayout。
+  - Atom 订阅改用 feed profile。
+  - dist 原样发布（含连字词典与高亮线程）；引用 public/ 之外的图片在构建期报错。
+  - 示例文档重新复制；语法、数学、代码、图表各篇按语法变化更新。
+  - 浏览器检查：10 个页面的水合、语言切换、宽度变化后的 relayout、打印都通过，无控制台错误与失败请求；无 JS 页面的缩进与公式排布正确。仅 HoTT 一个显示公式在 420px 宽度下超出版心，属内容本身（`overfull` 的设计行为）。
+  - 博客的部署依赖用 16e5cc9e 及之后的 main 发布的 engine-dist。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。
