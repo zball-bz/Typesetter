@@ -1,34 +1,43 @@
-lower v1 abi 3d3ccfbb docEnd 316 holes 0 module none
-block 0 content [0,276)
-  CALL para [0,276)
-    TEXT "A matched pair grows for its content's core, not for the scripts attached in it: " [0,80) raw=0:0,81:80
-    CALL math [81,88)
-      CALL mathsrc [82,87) src="(n^2)"
-    TEXT ", " [88,89) raw=0:0,2:1
-    CALL math [90,107)
-      CALL mathsrc [91,106) src="(x_i^2 + y_i^2)"
-    TEXT ", " [107,108) raw=0:0,2:1
-    CALL math [109,120)
-      CALL mathsrc [110,119) src="(e^(x^2))"
-    TEXT ", " [120,121) raw=0:0,2:1
-    CALL math [122,133)
-      CALL mathsrc [123,132) src="((x+1)^2)"
-    TEXT " and " [134,137) raw=0:0,1:0,5:3
-    CALL math [138,150)
-      CALL mathsrc [139,149) src="O(n log n)"
-    TEXT " keep their parentheses. A fraction grows them, " [151,197) raw=0:0,1:0,48:46
-    CALL math [198,205)
-      CALL mathsrc [199,204) src="(a/b)"
-    TEXT " and " [206,209) raw=0:0,1:0,5:3
-    CALL math [210,229)
-      CALL mathsrc [211,228) src="lfloor x/2 rfloor"
-    TEXT "; " [229,230) raw=0:0,2:1
-    CALL code [231,235) text="lr"
-    TEXT " covers the scripts too, " [236,259) raw=0:0,1:0,25:23
-    CALL math [260,275)
-      CALL mathsrc [261,274) src="lr((, n^2, ))"
-    TEXT "." [275,276)
-block 1 content [278,315)
-  CALL para [278,315)
-    CALL math [278,315) display=true
-      CALL mathsrc [280,313) src="(sum_(i=1)^n x_i^2) = (n (n+1))/2"
+lower v1 abi 3d3ccfbb docEnd 477 holes 0 module none
+block 0 content [0,437)
+  CALL para [0,437)
+    TEXT "A matched pair takes the size its content's core needs, and its scripts grow it by one size at most, when their reach is nearer the next size: " [0,142) raw=0:0,143:142
+    CALL math [143,150)
+      CALL mathsrc [144,149) src="(n^2)"
+    TEXT ", " [150,151) raw=0:0,2:1
+    CALL math [152,169)
+      CALL mathsrc [153,168) src="(x_i^2 + y_i^2)"
+    TEXT ", " [169,170) raw=0:0,2:1
+    CALL math [171,182)
+      CALL mathsrc [172,181) src="(e^(x^2))"
+    TEXT " and " [183,186) raw=0:0,1:0,5:3
+    CALL math [187,198)
+      CALL mathsrc [188,197) src="((x+1)^2)"
+    TEXT " take the next size, not the one after; " [199,237) raw=0:0,1:0,40:38
+    CALL math [238,245)
+      CALL mathsrc [239,244) src="(2^n)"
+    TEXT ", " [245,246) raw=0:0,2:1
+    CALL math [247,254)
+      CALL mathsrc [248,253) src="(x_i)"
+    TEXT " and " [255,258) raw=0:0,1:0,5:3
+    CALL math [259,271)
+      CALL mathsrc [260,270) src="O(n log n)"
+    TEXT " keep theirs, and so does " [272,296) raw=0:0,1:0,26:24
+    CALL math [297,306)
+      CALL mathsrc [298,305) src="(f'(x))"
+    TEXT " — a prime is the symbol's. A fraction grows them, " [307,358) raw=0:0,1:0,53:51
+    CALL math [359,366)
+      CALL mathsrc [360,365) src="(a/b)"
+    TEXT " and " [367,370) raw=0:0,1:0,5:3
+    CALL math [371,390)
+      CALL mathsrc [372,389) src="lfloor x/2 rfloor"
+    TEXT "; " [390,391) raw=0:0,2:1
+    CALL code [392,396) text="lr"
+    TEXT " covers the scripts too, " [397,420) raw=0:0,1:0,25:23
+    CALL math [421,436)
+      CALL mathsrc [422,435) src="lr((, n^2, ))"
+    TEXT "." [436,437)
+block 1 content [439,476)
+  CALL para [439,476)
+    CALL math [439,476) display=true
+      CALL mathsrc [441,474) src="(sum_(i=1)^n x_i^2) = (n (n+1))/2"

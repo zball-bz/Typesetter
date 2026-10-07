@@ -1,6 +1,6 @@
 top pid=0 leaves=1
-  stack root gap=1/1 @[0,276)
-    paragraph para unit=0 @[0,276)
+  stack root gap=1/1 @[0,437)
+    paragraph para unit=0 @[0,437)
 top pid=1 leaves=1
-  stack root gap=1/1 @[278,315)
-    replaced math math unit=0 centered @[278,315)
+  stack root gap=1/1 @[439,476)
+    replaced math math unit=0 centered @[439,476)

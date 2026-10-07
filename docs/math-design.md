@@ -229,13 +229,16 @@ Crosswalk: T = Typst file, K = KaTeX file.
   assemble parts with extender repetition, overlaps ≥ `MinConnectorOverlap`
   (20); center the result on the axis. [T `fragment/glyph.rs::stretch`;
   K `delimiter.ts` stacked path] *(post-P5)* A pair the formula matched
-  measures its content without the scripts attached in it (`MathBox::
-  coreAsc/coreDesc`, set by `layoutScript`, carried by `pack`): `(n^2)`,
-  `(x_i^2 + y_i^2)` keep their natural parentheses, as printed mathematics
-  sets them, where Euler's tall scripts (superscript shift 0.45 em, a script
-  "2" 0.49 em) took them to the 1.8 em variant. A fraction, a stack and an
-  operator's limits are core and still grow them; `lr(…)` covers the
-  scripts too. Fixture `math/delim-scripts`.
+  takes the size its content's core needs — the content without the scripts
+  attached in it (`MathBox::coreAsc/coreDesc`, set by `layoutScript`,
+  carried by `pack`): a fraction, a stack, an operator's limits — and its
+  scripts grow it by one size at most, when their reach (`reachAsc/
+  reachDesc`: the scripts but primes, which are the symbol's) is nearer the
+  next size than this one. Euler's scripts are tall (superscript shift
+  0.45 em, a script "2" 0.49 em): `(n^2)` asked 1.25 em and got the 1.8 em
+  variant past the 1.2 em one; now it takes 1.2 em, `(2^n)` and `(f'(x))`
+  keep the natural size. `lr(…)` covers the scripts too. Fixture
+  `math/delim-scripts`.
 - **Big operators**: in display style swap to the variant satisfying
   `DisplayOperatorMinHeight` (1130 in Euler-Math), center on axis; limits attach per above
   when style is display, as scripts otherwise (K `op.ts` delegation rule).

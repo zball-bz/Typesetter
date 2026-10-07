@@ -577,10 +577,13 @@ struct Layouter {
       x += boxes[i]->w;
       if (boxes[i]->asc > out->asc) out->asc = boxes[i]->asc;
       if (boxes[i]->desc > out->desc) out->desc = boxes[i]->desc;
-      if (coreAsc(boxes[i]) > out->coreAsc) out->coreAsc = coreAsc(boxes[i]);
-      if (coreDesc(boxes[i]) > out->coreDesc) out->coreDesc = coreDesc(boxes[i]);
+      out->coreAsc = std::max(out->coreAsc, coreAsc(boxes[i]));
+      out->coreDesc = std::max(out->coreDesc, coreDesc(boxes[i]));
+      out->reachAsc = std::max(out->reachAsc, reachAsc(boxes[i]));
+      out->reachDesc = std::max(out->reachDesc, reachDesc(boxes[i]));
     }
-    out->scripted = out->coreAsc != out->asc || out->coreDesc != out->desc;
+    out->scripted = out->coreAsc != out->asc || out->coreDesc != out->desc || out->reachAsc != out->asc ||
+                    out->reachDesc != out->desc;
     out->w = x;
     out->topAccent = hi - lo == 1 ? boxes[lo]->topAccent : x / 2;
     if (hi > lo) {
@@ -617,18 +620,24 @@ struct Layouter {
       out = attachScripts(base, n->sub, n->sup, st, isChar);
     }
     MathBox* res = n->tl || n->bl ? attachPre(out, base, n->tl, n->bl, st, isChar) : out;
-    // (post-P5) its core: its base's — scripts do not grow the delimiters
-    // around them, (x_i^2) keeps its parentheses —, or with limits the
-    // operator and its limits, which do
+    // (post-P5) its core: its base's — scripts grow the delimiters around
+    // them by a size at most, (x_i^2) —, or with limits the operator and its
+    // limits, which do; its reach: all of it but primes, f' (the symbol's)
     if (res != base) {
       res->coreAsc = limits ? out->asc : coreAsc(base);
       res->coreDesc = limits ? out->desc : coreDesc(base);
-      res->scripted = res->coreAsc != res->asc || res->coreDesc != res->desc;
+      const bool primes = n->primeSup && !n->sub && !n->tl && !n->bl;
+      res->reachAsc = primes ? reachAsc(base) : res->asc;
+      res->reachDesc = primes ? reachDesc(base) : res->desc;
+      res->scripted = res->coreAsc != res->asc || res->coreDesc != res->desc || res->reachAsc != res->asc ||
+                      res->reachDesc != res->desc;
     }
     return res;
   }
   static Su coreAsc(const MathBox* b) { return b->scripted ? b->coreAsc : b->asc; }
   static Su coreDesc(const MathBox* b) { return b->scripted ? b->coreDesc : b->desc; }
+  static Su reachAsc(const MathBox* b) { return b->scripted ? b->reachAsc : b->asc; }
+  static Su reachDesc(const MathBox* b) { return b->scripted ? b->reachDesc : b->desc; }
 
   // a script pair's shifts against a base (MATH constants, the TeX 18a
   // character-base refinement and Typst's joint collision resolution)
@@ -775,30 +784,36 @@ struct Layouter {
   // fenced content: delimiters stretch to the content when it outgrows the
   // natural glyph — target 2·max(asc−axis, desc+axis), 10% shortfall
   // tolerated (Typst short_fall); centred on the axis when stretched. A
-  // pair the formula matched itself measures its content without the
-  // scripts attached in it (MathBox::coreAsc): (n^2), (x_i^2 + y_i^2) keep
-  // their parentheses, as printed mathematics sets them, while a fraction,
-  // a stack or an operator's limits still grow them; lr(…) covers it all.
+  // pair the formula matched itself takes the size its content's core needs
+  // (without the scripts attached in it, MathBox::coreAsc: a fraction, a
+  // stack, an operator's limits), and the scripts grow it by one size at
+  // most, when their reach (MathBox::reachAsc: primes are the symbol's, not
+  // scripts) is nearer the next size than this one: (n^2) takes Euler's
+  // 1.2 em parentheses, not the 1.8 em ones its superscript's reach would
+  // ask for; (f'(x)) keeps its own. lr(…) covers it all.
   MathBox* fencedRun(const std::vector<MNode*>& kidsN, u32 openCp, u32 closeCp,
                      u8 st, bool asked = false) {
     std::vector<MathBox*> inner;
     inner.reserve(kidsN.size());
-    Su iAsc = 0, iDesc = 0;
+    Su iAsc = 0, iDesc = 0, cAsc = 0, cDesc = 0;
     for (MNode* k : kidsN) {
       if (k->k == MNode::Sym && k->mid) {  // (plan P3-24) its middle: stretched below, with the delimiters
         inner.push_back(nullptr);
         continue;
       }
       MathBox* b = layout(k, st);
-      const Su a = asked ? b->asc : coreAsc(b), d = asked ? b->desc : coreDesc(b);
-      if (a > iAsc) iAsc = a;
-      if (d > iDesc) iDesc = d;
+      iAsc = std::max(iAsc, asked ? b->asc : reachAsc(b));
+      iDesc = std::max(iDesc, asked ? b->desc : reachDesc(b));
+      cAsc = std::max(cAsc, coreAsc(b));
+      cDesc = std::max(cDesc, coreDesc(b));
       inner.push_back(b);
     }
-    Su axis = constSu(C::AxisHeight, st);
-    Su over = iAsc - axis, under = iDesc + axis;
-    Su target = 2 * (over > under ? over : under);
-    target = kMathPolicy.shortfall(target);  // short_fall
+    const Su axis = constSu(C::AxisHeight, st);
+    auto targetOf = [&](Su a, Su d) {  // short_fall
+      return kMathPolicy.shortfall(2 * std::max(a - axis, d + axis));
+    };
+    const Su full = targetOf(iAsc, iDesc);
+    const Su target = asked ? full : targetOf(cAsc, cDesc);
     auto delim = [&](u32 cp, u8 cls) {
       // (plan P3-29) `.`: no delimiter (TeX's \right.), its null space
       // (\nulldelimiterspace: 1.2pt at 10pt); none at all (an unclosed
@@ -810,9 +825,16 @@ struct Layouter {
         return sp;
       }
       MathBox* g = glyphBox(cp, cls, st);
-      if (g->asc + g->desc >= target) return g;  // natural glyph suffices
-      MathBox* sg = stretchVert(cp, cls, st, target);
-      return centerOnAxis(sg, cls, st);
+      MathBox* sg = g->asc + g->desc >= target ? g : stretchVert(cp, cls, st, target);
+      // the scripts' reach: the next size, if it is a glyph of its own (an
+      // assembly is past what scripts reach for) and the reach is nearer it
+      const Su size = sg->asc + sg->desc;
+      if (!asked && full > size && sg->kind == MathKind::Glyph) {
+        MathBox* up = stretchVert(cp, cls, st, size + 1);
+        const Su next = up->asc + up->desc;
+        if (up->kind == MathKind::Glyph && next > size && 2 * full >= size + next) sg = up;
+      }
+      return sg == g ? g : centerOnAxis(sg, cls, st);
     };
     for (size_t i = 0; i < inner.size(); i++)
       if (!inner[i]) inner[i] = delim(kidsN[i]->cp, kRel);
