@@ -68,8 +68,9 @@ node tools/check-print.mjs     # printer round trip + escapeTsm (fixtures, corpu
 node tools/check-spans.mjs     # html goldens: runs/lines point at their source; G1
 ```
 
-Audit remediation in progress: follow `docs/remediation/PLAN.md` and resume
-from `docs/remediation/PROGRESS.md`.
+The audit remediation (`docs/remediation/PLAN.md`, 101 steps) is complete:
+`docs/remediation/REPORT.md` is the final report (follow-ups, blog
+coordination), `PROGRESS.md` the record of every step and deviation.
 
 CI (`.github/workflows/ci.yml`) runs native (ASan Debug + Release), the web
 job (wasm + recordings check + corpus + e2e), and on main publishes the

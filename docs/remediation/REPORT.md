@@ -335,6 +335,126 @@ P4 把段落成形与断行重建在数据上：
 - 改进：公式可以用宿主的数学字体，或补 Euler 缺的字形。
 - 中性：默认输出完全不变。参考墨迹为可选项，打开后，名字上的上下标与数学字母上的一致。
 
+## P5-02 收尾（残留检查、机械检查、冷启动）
+
+**golden 变化**（逐类核对，全部为有意修复）：
+- 7 个 cite 用例：参考文献条目带上 #bibliography 调用的 span（tree、index、semantic、blocktree、hlist、layout、html 只变 span；breaks 不变），XFAIL 清空。
+- 3 个 html（line/own-math、math/equations、region/math-promote）：显示公式行带 `data-join="para"`，复制时公式后的段落另起一段。
+- 42 个 blocktree、42 个 hlist、2 个 css：显示公式与块图片按 par.align 放置。默认规则给 center，所以位置不变；dump 由 `ragged` 改为 `centered`，语义样式表把公式与图片居中，与排版页一致。
+- 40 个 html、2 个 paged、1 个 dl：只含 rule 或 raw 的块带上自己的 span（原为 data-s0="0"、无 span）。
+- 新用例 21 个：
+  - test/fixtures/parity 14 个；
+  - figure/framed-after-float、figure/inline-after-float；
+  - code/nowrap-lineno；
+  - pages/paged-tall-float-diag；
+  - math/display-align、math/bare-names；
+  - labels/term-collision-diag。
+
+**真实语料 340 篇：**
+- 与 P4 结束的 tsrc 逐篇比较，行数、行末连字、Σ|dw|、松行、收紧行，以及 CJK 各项完全相同：P5 没有改动任何断行。
+- 语义页只有 2 篇变化（hott-introduction 及其博客副本）：参考文献条目带上 `data-s`/`data-e`。
+
+**审阅结论：** 无排版变化。修复的都是正确性与出处：
+- 浮动旁的框与行内块；
+- 公式的复制分隔；
+- 超高页浮动；
+- 术语锚点冲突；
+- rule/raw 的 span；
+- 网格断点数据化。
+
+## 最终报告（P5-02）
+
+### 完成情况（PLAN §0）
+
+1. **TRACEABILITY**：369 条全部有状态。367 条为 `grep:plan Px-yy`，指向落地的步骤提交；2 条为 `kept:`（PLAN §9"代码网格采用贪心算法"）：api-measure-code/grid-is-codeblock-only、emitter/codeblock-args-in-emit。P5-02 逐条复核了此前漏勾的 34 条：6 路并行核对其发现与现行代码。其中 22 条已由原步骤解决；其余在 P5-02 修复（下节缺陷 A–L），或记为 kept。
+2. **§7 的 26 条高严重度缺陷**：各有回归用例，且全部通过。对照表见下文"§7 回归用例"；P5-02 为 #18、#23、#26 补了专门用例。
+3. **门禁与 xfail**：G1–G10 全绿（最终一轮：244 个用例 native 与 WASM 断点一致，e2e 1239 项，check-tsrc 4095 个 golden 文件 0 差异，语料 199/0 + 340 篇）；test/golden/XFAIL 为空（cite 的 6 项在 P5-02 修复）；e2e 的 AUDIT_XFAIL 为空。G8 --long 跑了两轮：第一轮发现一处软换行越界（e958acd3 修复并加回放），第二轮 9 个目标、约 1,872 万次执行无发现。
+4. **原则的机械检查**：P1–P13 各有检查，对照表见 testing.md §6a。
+   - 编译选项：-Werror=switch-enum 覆盖全部翻译单元。
+   - lint-arch 共 10 条规则，基线为 0。
+   - golden 运行器检查：provenanceCheck、warm == fresh、line-spans、锚点闭包。
+   - 双执行差分：录制器对每个用例执行两次。
+   - 同等地位：引擎侧 8 个注册表（element/counter、collector、ctor、region、fence、format、math 族、locale）由 golden 覆盖，运行时 2 个（provider、behavior）由 e2e 覆盖。
+5. **性能**：update、冷启动、relayout 在三个规模上都不超过基线 ×1.10 + 0.3，见下文"性能曲线"。
+6. **文档**：
+   - 新子系统都有 as-built 文档：math-design §15、code-design §2（高亮线程）、testing §6a、security-review 补遗。
+   - architecture、document-model、design-decisions-v2、CLAUDE.md 已修订。
+   - tsm-changes 已补齐每个对作者可见的步骤。
+   - P5-02 同时修正了核对中发现的 9 处设计文档漂移。
+7. **真实语料**：340 篇全部渲染，没有新增 error 级诊断（G6 review-corpus --check）。排版变化逐阶段审阅，见本文件各节与"P4 阶段审阅"；P5 不改变任何断行。
+
+### 性能曲线（update 中位数，三次取最小；冷启动为首次排版；单位 ms）
+
+| 时点 | update 7.8K / 35K / 87K | 冷启动 7.8K / 35K / 87K | relayout 7.8K / 35K / 87K |
+|---|---|---|---|
+| 基线（P0-00 重录） | 3.60 / 12.00 / 28.90 | 47.9 / 71.3 / 111.7 | 5.50 / 22.20 / 58.00 |
+| P0 结束 | 3.50 / 11.20 / 28.00 | 46.9 / 73.8 / 108.3 | 6.10 / 22.90 / 57.00 |
+| P1 结束 | 3.50 / 11.80 / 27.70 | 56.0 / 83.5 / 119.1 | 5.10 / 21.90 / 56.50 |
+| P2 结束 | 3.50 / 11.40 / 28.20 | 62.5 / 95.6 / 134.2 | 5.30 / 22.00 / 60.00 |
+| P3 结束 | 3.70 / 11.60 / 27.90 | 70.9 / 108.8 / 153.5 | 1.80 / 21.70 / 58.80 |
+| P4 结束 | 3.80 / 12.80 / 28.20 | 77.6 / 114.4 / 160.4 | 1.70 / 22.50 / 58.40 |
+| P5 结束 | 3.30 / 13.40 / 28.50 | 35.5 / 55.2 / 85.4 | 1.70 / 21.80 / 60.30 |
+| 终点门限（基线 ×1.10 + 0.3） | 4.26 / 13.50 / 32.09 | 53.0 / 78.7 / 123.2 | 6.35 / 24.72 / 64.10 |
+
+编辑延迟在整个计划中基本持平：引擎做了更多事（注册表、级联、段落上下文、项断行器），但增量路径（逐块键、按需重排、断行缓存）抵消了这部分开销。7.8K 的 relayout 在 P3（宽度无关的 emit 与原地重排）降到原来的约三分之一，35K、87K 持平（主要是浏览器的 DOM 工作）。冷启动在 P1–P4 随代码量逐步上升（wasm 由 440KB 增至 1.72MB，首次执行的惰性编译随之增加），P5-02 用三处改动找回，详见 PROGRESS 的"P5-02 冷启动"行。
+
+### §7 回归用例
+
+| # | 缺陷 | 回归用例 |
+|---|---|---|
+| 1 | 任一 JS 异常使整篇失败 | exec/contain-*-diag（11 种输入，外加 contain-region-diag） |
+| 2 | 关键字形式生成非法 JS | exec/keyword-forms、exec/keyword-diag、exec/stmt-anywhere |
+| 3 | 嵌套语句被丢弃 | exec/nested-stmt-diag、exec/stmt-anywhere |
+| 4 | contiguous() 越界 | inline/overrun-math、inline/overrun-link |
+| 5 | 行内 %-- 遮不住块标记 | line/own-hide（首段） |
+| 6 | 未闭合的 #let/#{ | line/let-unclosed-diag、line/block-unclosed-diag、line/let-escape-eof-diag |
+| 7 | 构造器名不能绑定 | exec/let-ctor-name、lower/ctor-override |
+| 8 | CRLF 改变语法 | line/crlf、line/crlf-inline、unitCrlf |
+| 9 | 括号匹配不感知岛 | inline/bracket-island |
+| 10 | 区域按竖线切分 | region/aside-pipe、region/hott-row、region/math-promote |
+| 11 | span 不是出现级 | lower/splice-twice；e2e"an edit between a #let and its splice" |
+| 12 | 指数级实例化 | unitInstLimits（2^40 的 DAG：节点预算与 inst-limit 诊断） |
+| 13 | CSS 注入 | style/inject-diag |
+| 14 | 块位置行内内容、行内图片被丢弃 | inline/object-image、inline/object-raw、exec/fragments-diag、inline/block-split-diag |
+| 15 | 脚注内的引用 | cite/in-note |
+| 16 | 改宽后图片尺寸 | e2e resize-image；运行器的 relayout == fresh |
+| 17 | 样式补丁 | style/patch |
+| 18 | BREAK_INF < INF | unitBreakItems；unitBreakSemantics（P5-02：唯一断点为 Forbidden 时也不取）；style/text-props |
+| 19 | 无可行断点时塌成一行 | doc/url-overlong；e2e overfull；unitBreakSemantics 的救援 |
+| 20 | 复制丢掉引文旁正文 | e2e"copy keeps the prose next to citations" |
+| 21 | snap-kerning 写两个 style | e2e snap-kerning；unitHtmlWriter |
+| 22 | 语义页脚注 id 悬空 | 每个用例的 anchor-closure 契约检查 |
+| 23 | 数学名遮蔽同名符号 | unitMathIR；math/bare-names（P5-02） |
+| 24 | 作者的 w 被覆盖 | figure/w-only；e2e w-only；unitResources |
+| 25 | worker 未按文档串行 | e2e two-docs |
+| 26 | DP 平局取决于迭代顺序 | wasm-goldens --check（G4）；unitBreakSemantics 的精确平局（P5-02） |
+
+### 偏差
+
+全部偏差逐条记在 PROGRESS.md 的"偏差记录"，每条写明理由与影响的后续步骤。对终态有影响的几条：
+- **CJK 收紧**：统一伸缩模型下，CJK 字距的收缩上限从 0.037em 升到约 0.056em，语料中 CJK 收紧行增加 43%（P4-08、P4 阶段审阅）。
+- **冷启动**：按 bench 的三次重载取最小值满足终点门禁。全新浏览器的首次访问 7.8K 仍约 120ms（P5-02）。
+- **代码行 span**：处理器生成的代码行只有整块 span（P5-02）。
+- **数学字体**：大小变体无码位的数学字体（STIX Two、Libertinus）经 --lenient 只保留可按码位绘制的部分（P5-01）。
+- **pagination**：widows/orphans 仍为常量（P3-14）；脚注插入不拆分（P3-13）。
+
+### 博客配合事项（P4–P5 追加）
+
+P3-36 节之外，重新 vendor 引擎后还需注意：
+1. **连字词典资产**：runtime/assets/hyph 由 `tools/hyphc.mjs --assets` 生成，pack-dist 已随包发布。博客的静态导出若自带资源目录，需包含它；否则非英语文本会警告 hyph-unavailable。
+2. **高亮线程**：外壳现在启动 runtime/src/worker/hl-worker.mjs 作为第二个 worker。它由 pack-dist 一并发布；export-static 的模块图会跟随 `new URL(…, import.meta.url)` 引用。博客的 CSP 若限制 worker 来源，需允许同源的这个脚本。不允许时自动回退到单线程。
+3. **资源表版本**：RES_VERSION 升到 3（新行 fontInk，只在 math.referenceInk 打开时请求）。只用随包运行时的宿主无需改动；自带编解码器的宿主需重新生成。
+4. **数学字体**：可选。宿主可以在 fonts 中声明 `role: 'math'` 的字体并给出 `metrics`（.tsmf），再用 `math.fonts` 选链。不声明时与原来一样只用 Euler。
+
+### 后续建议
+
+- 真实首访的冷启动：拆分 Doc::ingest、Doc::product 等大函数，或按需导入少用的 worker 模块，以减少首次执行的惰性编译（P5-02 剖析：Node 中 487 个函数、850KB、约 19ms）。
+- CJK 的伸长与收缩分设权重，单独约束 CJK 收紧（P4-08）。
+- 按字形 id 绘制大小变体，以支持变体无码位的数学字体（P5-01）。
+- 处理器生成代码的逐行 span（随文本带回偏移表）。
+- widows/orphans 作为特性；超长脚注的拆分。
+- PLAN §9 的可选扩展：T5 步骤 12（文档裁剪、hbox、ja/zh-Hant/ko 完整包）、边注与页边 figure、MathML feed。
+
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
 重新 vendor 引擎（`scripts/fetch-engine.mjs --local`）后，博客侧建议做如下改动；未改之前现有用法仍可工作（`renderTsm` 的旧字段都保留）。

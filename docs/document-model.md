@@ -127,6 +127,11 @@ strings  UTF-8 blob + varint end-offsets
 ops      op stream (all ints varint/LEB128 unless noted)
 ```
 
+*(As built, plan P1-01: the version byte is the newest vocabulary row the
+buffer uses — schema.json `opsVersion`, 16 at present — and the reader
+takes any buffer within [`minCompat`, `opsVersion`]; older buffers stay
+readable, P5-02 note.)*
+
 ### 4.3 Opcodes
 
 ```

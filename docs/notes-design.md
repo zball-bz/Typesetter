@@ -83,6 +83,9 @@ style at 0.85em.
 
 `cfg.supNote` = "" (bare digits) by default; CJK books sometimes prefer
 circled digits ①②③ — a config switch (`noteMarks: digits | circled`)
+*(as built, plan P2-07: no switch — the marks are the footnote counter's
+numbering pattern, `$.counter('footnote', {numbering: '①'})` or the host's
+`semantics.counters`)*
 selects the glyph set at emit time; the counter is unchanged.
 
 ### As built (2026-08)

@@ -276,6 +276,8 @@ M5  native fallback: semantic serializer, estimate states, paragraph upgrade
      Deferred: pending(estimate) metric states + webfont settle re-typeset
      (worker-scope font loading), size-adjust fallback descriptors]
 M6  extensibility: fence handler API, #!table + provenance queries, #use ergonomics
+    (as built, plan P3-31: #use is done — a module by URL, its fences,
+    regions and providers registered; host-protocol-design §5b)
     [DONE except #use — pulled ahead of M5 for the M4 synergy (numbered,
      referenceable tables): #!name(args) regions (generic → group{role:name}),
      codegen-materialized '|' segmentation provenance, __region/__fence
