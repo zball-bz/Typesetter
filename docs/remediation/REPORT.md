@@ -470,6 +470,9 @@ P3-36 节之外，重新 vendor 引擎后还需注意：
   - 示例文档重新复制；语法、数学、代码、图表各篇按语法变化更新。
   - 浏览器检查：10 个页面的水合、语言切换、宽度变化后的 relayout、打印都通过，无控制台错误与失败请求；无 JS 页面的缩进与公式排布正确。仅 HoTT 一个显示公式在 420px 宽度下超出版心，属内容本身（`overfull` 的设计行为）。
   - 博客的部署依赖用 16e5cc9e 及之后的 main 发布的 engine-dist。
+- **VS Code 插件与语法 skill**（c0f197bb）：
+  - 插件版本升到 0.3.0，使 release 中的 .vsix 对已装的 0.2.2 是一次更新。插件内的生成文件（TextMate 语法、literate 注入、hl.gen.js）由 gen-all 生成，G9 确认是最新的；本地重新 vendor 并打包，装在包内的引擎可以正常读取 front matter、输出 outline 和 tokens。
+  - 新增 `skills/tsm`：.tsm 的语法 skill（SKILL.md + reference.md），只写语法及其含义，不写写作规范。由 `tools/gen-skill.mjs` 从 `skills/tsm.src.md` 与引擎自身的表生成（构造器与选项、样式键、语言、数学函数与符号），已纳入 gen-all（G9 检查是否过期）；`tools/check-skill.mjs` 用引擎渲染其中全部示例，要求零诊断（G6 与 CI）。
 
 ## P3-36 博客（zball-io）需要的配合改动（MD-07：本计划不修改博客仓库）
 
