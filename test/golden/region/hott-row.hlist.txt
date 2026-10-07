@@ -23,9 +23,9 @@ top pid=0 units=8
   run r0 plain
  unit text indent=0su
   ju=257su
-  box object o0 math part=0 asc=819su desc=263su "Id_(A)" w=1627su r0 @[52,60)
+  box object o0 math part=0 asc=717su desc=212su "Id_(A)" w=1627su r0 @[52,60)
   pen 0 r0
-  obj o0 math parts=1 edges=Alpha/Alpha src="Id_(A)" [w=1627su asc=819su desc=263su]
+  obj o0 math parts=1 edges=Alpha/Alpha src="Id_(A)" [w=1627su asc=717su desc=212su]
   run r0 object
  unit text indent=0su
   ju=257su

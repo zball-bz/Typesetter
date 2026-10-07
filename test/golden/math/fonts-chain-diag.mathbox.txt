@@ -14,8 +14,8 @@ hbox Ord w=1135 asc=723 desc=5
   glyph "2" Ord w=511 asc=723 desc=0 px=16
   glyph "π" Ord w=624 asc=500 desc=5 px=16 @(511,0)
 inline pid=0 "中"
-hbox Ord w=1024 asc=819 desc=205
-  glyph "中" Ord w=1024 asc=819 desc=205 px=16
+hbox Ord w=1024 asc=717 desc=154
+  glyph "中" Ord w=1024 asc=717 desc=154 line=819/205 px=16
 display pid=1
 hbox Ord w=4347 asc=2045 desc=1280
   hbox Ord w=4347 asc=2045 desc=1280

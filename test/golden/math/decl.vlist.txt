@@ -3,13 +3,13 @@ vlist pid=0 y=0su h=3072su
 vlist pid=1 y=4301su h=4608su
   glue 1229su
   box unit=0 para y=0su h=4608su
-vlist pid=2 y=10138su h=1714su
+vlist pid=2 y=10138su h=1565su
   glue 1229su
-  box unit=0 math y=0su h=1714su
-vlist pid=3 y=13081su h=1536su
+  box unit=0 math y=0su h=1565su
+vlist pid=3 y=12932su h=1536su
   glue 1229su
   box unit=0 para y=0su h=1536su
-vlist pid=4 y=15846su h=5837su
+vlist pid=4 y=15697su h=5837su
   glue 1229su
   box unit=0 rule y=0su h=1536su
   glue 1229su

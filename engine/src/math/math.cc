@@ -577,7 +577,10 @@ struct Layouter {
       x += boxes[i]->w;
       if (boxes[i]->asc > out->asc) out->asc = boxes[i]->asc;
       if (boxes[i]->desc > out->desc) out->desc = boxes[i]->desc;
+      if (coreAsc(boxes[i]) > out->coreAsc) out->coreAsc = coreAsc(boxes[i]);
+      if (coreDesc(boxes[i]) > out->coreDesc) out->coreDesc = coreDesc(boxes[i]);
     }
+    out->scripted = out->coreAsc != out->asc || out->coreDesc != out->desc;
     out->w = x;
     out->topAccent = hi - lo == 1 ? boxes[lo]->topAccent : x / 2;
     if (hi > lo) {
@@ -605,15 +608,27 @@ struct Layouter {
     const bool isChar = n->a->k == MNode::Sym && !(fl & kFlagLarge);
     MathBox* base;
     MathBox* out;
-    if (n->limits || (fl & kFlagLimitsAlways) || ((fl & kFlagLimits) && isDisplay(st))) {
+    const bool limits = n->limits || (fl & kFlagLimitsAlways) || ((fl & kFlagLimits) && isDisplay(st));
+    if (limits) {
       base = n->a->k == MNode::Text ? textBox(n->a->txt, kOp, st, n->a->textFont) : layout(n->a, st);
       out = attachLimits(base, n->sub, n->sup, st);
     } else {
       base = layout(n->a, st);
       out = attachScripts(base, n->sub, n->sup, st, isChar);
     }
-    return n->tl || n->bl ? attachPre(out, base, n->tl, n->bl, st, isChar) : out;
+    MathBox* res = n->tl || n->bl ? attachPre(out, base, n->tl, n->bl, st, isChar) : out;
+    // (post-P5) its core: its base's — scripts do not grow the delimiters
+    // around them, (x_i^2) keeps its parentheses —, or with limits the
+    // operator and its limits, which do
+    if (res != base) {
+      res->coreAsc = limits ? out->asc : coreAsc(base);
+      res->coreDesc = limits ? out->desc : coreDesc(base);
+      res->scripted = res->coreAsc != res->asc || res->coreDesc != res->desc;
+    }
+    return res;
   }
+  static Su coreAsc(const MathBox* b) { return b->scripted ? b->coreAsc : b->asc; }
+  static Su coreDesc(const MathBox* b) { return b->scripted ? b->coreDesc : b->desc; }
 
   // a script pair's shifts against a base (MATH constants, the TeX 18a
   // character-base refinement and Typst's joint collision resolution)
@@ -759,9 +774,13 @@ struct Layouter {
 
   // fenced content: delimiters stretch to the content when it outgrows the
   // natural glyph — target 2·max(asc−axis, desc+axis), 10% shortfall
-  // tolerated (Typst short_fall); centred on the axis when stretched.
+  // tolerated (Typst short_fall); centred on the axis when stretched. A
+  // pair the formula matched itself measures its content without the
+  // scripts attached in it (MathBox::coreAsc): (n^2), (x_i^2 + y_i^2) keep
+  // their parentheses, as printed mathematics sets them, while a fraction,
+  // a stack or an operator's limits still grow them; lr(…) covers it all.
   MathBox* fencedRun(const std::vector<MNode*>& kidsN, u32 openCp, u32 closeCp,
-                     u8 st) {
+                     u8 st, bool asked = false) {
     std::vector<MathBox*> inner;
     inner.reserve(kidsN.size());
     Su iAsc = 0, iDesc = 0;
@@ -771,8 +790,9 @@ struct Layouter {
         continue;
       }
       MathBox* b = layout(k, st);
-      if (b->asc > iAsc) iAsc = b->asc;
-      if (b->desc > iDesc) iDesc = b->desc;
+      const Su a = asked ? b->asc : coreAsc(b), d = asked ? b->desc : coreDesc(b);
+      if (a > iAsc) iAsc = a;
+      if (d > iDesc) iDesc = d;
       inner.push_back(b);
     }
     Su axis = constSu(C::AxisHeight, st);
@@ -1066,7 +1086,7 @@ struct Layouter {
       case Prim::Lr: {
         const u32 open = arg(0) && arg(0)->k == MNode::Sym ? arg(0)->cp : 0;
         const u32 close = arg(2) && arg(2)->k == MNode::Sym ? arg(2)->cp : 0;
-        return fencedRun(run(arg(1)), open, close, st);
+        return fencedRun(run(arg(1)), open, close, st, /*asked=*/true);
       }
       case Prim::Accent:
         return layoutAccent(arg(1) && arg(1)->k == MNode::Sym ? arg(1)->cp : 0, content(0), st);

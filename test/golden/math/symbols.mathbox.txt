@@ -288,11 +288,11 @@ hbox Ord w=2498 asc=973 desc=1128
       glyph "x" Ord w=539 asc=475 desc=12 px=16
       glyph "i" Ord w=258 asc=490 desc=6 px=11.2 @(539,-154)
 inline pid=6 "limits(lim)_(x -> 0)"
-hbox Ord w=3039 asc=819 desc=266
-  hbox Ord w=3039 asc=819 desc=266
-    hbox Ord w=1536 asc=819 desc=205
-      glyph "lim" Op w=1536 asc=819 desc=205 px=16
-    hbox Ord w=1452 asc=505 desc=10 @(1536,-256)
+hbox Ord w=3039 asc=717 desc=215
+  hbox Ord w=3039 asc=717 desc=215
+    hbox Ord w=1536 asc=717 desc=154
+      glyph "lim" Op w=1536 asc=717 desc=154 line=819/205 px=16
+    hbox Ord w=1452 asc=505 desc=10 @(1536,-205)
       glyph "x" Ord w=377 asc=333 desc=9 px=11.2
       glyph "→" Rel w=717 asc=358 desc=0 px=11.2 @(377,0)
       glyph "0" Ord w=358 asc=505 desc=10 px=11.2 @(1094,0)

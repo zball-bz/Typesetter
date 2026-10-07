@@ -66,8 +66,8 @@ hbox Ord w=10618 asc=1485 desc=973
       hbox Ord w=6945 asc=1484 desc=972 @(568,0)
         hbox Ord w=539 asc=475 desc=12 @(0,614)
           glyph "x" Ord w=539 asc=475 desc=12 px=16
-        hbox Ord w=3461 asc=819 desc=205 @(2337,614)
-          glyph "if" Ord w=1024 asc=819 desc=205 px=16
+        hbox Ord w=3461 asc=721 desc=154 @(2337,614)
+          glyph "if" Ord w=1024 asc=717 desc=154 line=819/205 px=16
           glyph "x" Ord w=539 asc=475 desc=12 px=16 @(1024,0)
           glue w=284 @(1563,0)
           glyph "≥" Rel w=819 asc=665 desc=153 px=16 @(1847,0)
@@ -76,8 +76,8 @@ hbox Ord w=10618 asc=1485 desc=973
         hbox Ord w=1313 asc=475 desc=12 @(0,-614)
           glyph "−" Ord w=774 asc=276 desc=-236 px=16
           glyph "x" Ord w=539 asc=475 desc=12 px=16 @(774,0)
-        hbox Ord w=4608 asc=819 desc=205 @(2337,-614)
-          glyph "otherwise" Ord w=4608 asc=819 desc=205 px=16
+        hbox Ord w=4608 asc=717 desc=154 @(2337,-614)
+          glyph "otherwise" Ord w=4608 asc=717 desc=154 line=819/205 px=16
       glue w=123 @(7513,0)
 display pid=2
 hbox Ord w=7949 asc=1741 desc=1229

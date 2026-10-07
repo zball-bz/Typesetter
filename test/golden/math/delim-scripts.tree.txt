@@ -1,0 +1,32 @@
+doc @[0,315) [base]
+  para @[0,276) [base]
+    text @[0,80) [base] str="A matched pair grows for its content's core, not for the scripts attached in it: " raw=0:0,81:80
+    mathinline @[81,88) [base]
+      mathsrc @[82,87) [base] src="(n^2)"
+    text @[88,89) [base] str=", " raw=0:0,2:1
+    mathinline @[90,107) [base]
+      mathsrc @[91,106) [base] src="(x_i^2 + y_i^2)"
+    text @[107,108) [base] str=", " raw=0:0,2:1
+    mathinline @[109,120) [base]
+      mathsrc @[110,119) [base] src="(e^(x^2))"
+    text @[120,121) [base] str=", " raw=0:0,2:1
+    mathinline @[122,133) [base]
+      mathsrc @[123,132) [base] src="((x+1)^2)"
+    text @[134,137) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[138,150) [base]
+      mathsrc @[139,149) [base] src="O(n log n)"
+    text @[151,197) [base] str=" keep their parentheses. A fraction grows them, " raw=0:0,1:0,48:46
+    mathinline @[198,205) [base]
+      mathsrc @[199,204) [base] src="(a/b)"
+    text @[206,209) [base] str=" and " raw=0:0,1:0,5:3
+    mathinline @[210,229) [base]
+      mathsrc @[211,228) [base] src="lfloor x/2 rfloor"
+    text @[229,230) [base] str="; " raw=0:0,2:1
+    code @[231,235) [CODEx0.85]
+      text @[231,235) [CODEx0.85] str="lr"
+    text @[236,259) [base] str=" covers the scripts too, " raw=0:0,1:0,25:23
+    mathinline @[260,275) [base]
+      mathsrc @[261,274) [base] src="lr((, n^2, ))"
+    text @[275,276) [base] str="."
+  mathblock @[278,315) [base]
+    mathsrc @[280,313) [base] src="(sum_(i=1)^n x_i^2) = (n (n+1))/2"

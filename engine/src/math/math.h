@@ -33,6 +33,11 @@ struct MathBox {
                               //   the document's text font (names, operators)
   Su lineAsc = 0, lineDesc = 0;  // a kTextFont glyph whose extents are its reference ink
                                  //   (math.referenceInk): its line metrics, its paint pin
+  // (post-P5) its extents without the scripts attached to it — what a pair
+  // of delimiters the formula matched grows for; set where they differ
+  // (scripted), else asc/desc
+  bool scripted = false;
+  Su coreAsc = 0, coreDesc = 0;
   std::vector<MathKid> kids;  // HBox children
 };
 

@@ -17,7 +17,7 @@ top pid=0 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="at" r0 @[18,18)
   box Alpha "tion," w=2561su r0 @[18,23)
   glue word w=257su x=1 st=257su src r0 @[23,23)
-  box object o0 math part=0 asc=819su desc=205su "a defeq b" w=4128su r1 @[24,35)
+  box object o0 math part=0 asc=717su desc=154su "a defeq b" w=4128su r1 @[24,35)
   pen 0 r1
   glue word w=257su x=1 st=257su src r2 @[36,36)
   box Alpha "is" w=1025su r2 @[36,38)
@@ -36,7 +36,7 @@ top pid=0 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="ia" r2 @[62,62)
   box Alpha "ables." w=3073su r2 @[62,68)
   box Digit "1" w=360su anchor="fnref-1" r3 @[68,127)
-  obj o0 math parts=1 edges=Alpha/Alpha src="a defeq b" [w=4128su asc=819su desc=205su]
+  obj o0 math parts=1 edges=Alpha/Alpha src="a defeq b" [w=4128su asc=717su desc=154su]
   run r0 plain
   run r1 object
   run r2 plain
@@ -97,7 +97,7 @@ top pid=1 units=1
   box object o2 math part=0 asc=702su desc=10su "eqv(A, B)" w=2638su r13 @[494,505)
   box Infix "," w=513su r14 @[505,506)
   glue word w=257su x=1 st=257su src r14 @[506,506)
-  box object o3 math part=0 asc=819su desc=262su "idtype(U, a, b)" w=3983su r15 @[507,524)
+  box object o3 math part=0 asc=721su desc=215su "idtype(U, a, b)" w=3983su r15 @[507,524)
   pen 0 r15
   glue word w=257su x=1 st=257su src r16 @[525,525)
   box Alpha "and" w=1537su r16 @[525,528)
@@ -107,7 +107,7 @@ top pid=1 units=1
   obj o0 math parts=3 edges=Alpha/Alpha src="a defeq b" [w=624su asc=477su desc=12su] [w=796su asc=771su desc=0su glue=284su] [w=602su asc=700su desc=10su glue=284su]
   obj o1 math parts=3 edges=Alpha/Alpha src="a ≝ b" [w=624su asc=477su desc=12su] [w=796su asc=771su desc=0su glue=284su] [w=602su asc=700su desc=10su glue=284su]
   obj o2 math parts=1 edges=Alpha/Alpha src="eqv(A, B)" [w=2638su asc=702su desc=10su]
-  obj o3 math parts=1 edges=Alpha/Alpha src="idtype(U, a, b)" [w=3983su asc=819su desc=262su]
+  obj o3 math parts=1 edges=Alpha/Alpha src="idtype(U, a, b)" [w=3983su asc=721su desc=215su]
   obj o4 math parts=1 edges=Alpha/Alpha src="prd(x, A, B(x))" [w=4269su asc=768su desc=316su]
   run r0 plain
   run r1 object
@@ -129,7 +129,7 @@ top pid=1 units=1
   run r17 object
   run r18 plain
 top pid=2 units=1
- unit math indent=0su w=4283su asc=819su desc=895su centered
+ unit math indent=0su w=4283su asc=721su desc=844su centered
 top pid=3 units=1
  unit text indent=0su
   ju=257su
@@ -175,11 +175,11 @@ top pid=4 units=2
   disc pen=0.7 w=0su pre="-" 437su kern="di" r0 @[109,109)
   box Alpha "ing:" w=1742su r0 @[109,113)
   glue word w=219su x=1 st=257su src r0 @[113,113)
-  box object o0 math part=0 asc=696su desc=203su "x defeq y" w=3441su r1 @[114,125)
+  box object o0 math part=0 asc=609su desc=203su "x defeq y" w=3441su r1 @[114,125)
   box Infix "." w=437su r2 @[125,126)
   glue word w=219su x=1 st=257su kern=". ↩" src r2 @[68,127)
   box Alpha "↩" w=524su r3 @[68,127)
-  obj o0 math parts=1 edges=Alpha/Alpha src="x defeq y" [w=3441su asc=696su desc=203su]
+  obj o0 math parts=1 edges=Alpha/Alpha src="x defeq y" [w=3441su asc=609su desc=203su]
   run r0 plain x0.85
   run r1 object x0.85
   run r2 plain x0.85

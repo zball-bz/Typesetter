@@ -71,15 +71,15 @@ top pid=0 units=1
   glue word w=257su x=1 st=257su kern=", D" src r0 @[126,127)
   box Alpha "D-M04):" w=3585su r0 @[127,134)
   glue word w=257su x=1 st=257su src r0 @[134,134)
-  box object o0 math part=0 asc=819su desc=205su "a !<< b" w=2762su r1 @[135,144)
+  box object o0 math part=0 asc=717su desc=154su "a !<< b" w=2762su r1 @[135,144)
   pen 0 r1
   glue word w=257su x=1 st=257su src r2 @[145,145)
   box Alpha "and" w=1537su r2 @[145,148)
   glue word w=257su x=1 st=257su src r2 @[148,148)
-  box object o1 math part=0 asc=819su desc=215su "Equiv(A, B)" w=5146su r3 @[149,162)
+  box object o1 math part=0 asc=721su desc=215su "Equiv(A, B)" w=5146su r3 @[149,162)
   box Infix "." w=513su r4 @[162,163)
-  obj o0 math parts=1 edges=Alpha/Alpha src="a !<< b" [w=2762su asc=819su desc=205su]
-  obj o1 math parts=1 edges=Alpha/Alpha src="Equiv(A, B)" [w=5146su asc=819su desc=215su]
+  obj o0 math parts=1 edges=Alpha/Alpha src="a !<< b" [w=2762su asc=717su desc=154su]
+  obj o1 math parts=1 edges=Alpha/Alpha src="Equiv(A, B)" [w=5146su asc=721su desc=215su]
   run r0 plain
   run r1 object
   run r2 plain

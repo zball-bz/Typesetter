@@ -35,7 +35,7 @@ top pid=0 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="ul" r0 @[62,62)
   box Alpha "la" w=1025su r0 @[62,64)
   glue word w=257su x=1 st=257su src r0 @[64,64)
-  box object o0 math part=0 asc=819su desc=209su "f(x) \"if\" x > 0" w=3203su r1 @[65,82)
+  box object o0 math part=0 asc=721su desc=209su "f(x) \"if\" x > 0" w=3203su r1 @[65,82)
   pen 0.85 r2
   glue objspace w=284su x=0 r2 @[65,82)
   box object o0 math part=1 asc=541su desc=35su w=819su r3 @[65,82)
@@ -55,7 +55,7 @@ top pid=0 units=1
   box OpenN "(plan" w=2561su r6 @[104,109)
   glue word w=257su x=1 st=257su kern="n P" src r6 @[109,110)
   box Alpha "P0-11)." w=3585su r6 @[110,117)
-  obj o0 math parts=3 edges=Alpha/Alpha src="f(x) \"if\" x > 0" [w=3203su asc=819su desc=209su] [w=819su asc=541su desc=35su glue=284su] [w=511su asc=721su desc=14su glue=284su]
+  obj o0 math parts=3 edges=Alpha/Alpha src="f(x) \"if\" x > 0" [w=3203su asc=721su desc=209su] [w=819su asc=541su desc=35su glue=284su] [w=511su asc=721su desc=14su glue=284su]
   run r0 plain
   run r1 object
   run r2 plain

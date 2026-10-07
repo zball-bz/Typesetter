@@ -8,7 +8,7 @@ top pid=0 units=1
   box Ideo "式" w=1025su wt=0.6 r0 @[6,9)
   pen 0 r0
   glue word w=257su x=1 st=257su src r1 @[9,9)
-  box object o0 math part=0 asc=1034su desc=12su "x^^2" w=1307su r2 @[10,16)
+  box object o0 math part=0 asc=963su desc=12su "x^^2" w=1307su r2 @[10,16)
   pen 0 r2
   glue word w=257su x=1 st=257su src r3 @[17,17)
   box Ideo "会" w=1025su wt=0.6 r4 @[17,20)
@@ -40,7 +40,7 @@ top pid=0 units=1
   glue inter w=0su x=0.6 st=154su r4 @[53,56)
   box FullStopW "。" w=513su blank=R r5 @[56,59)
   glue blank w=512su x=0 r5 @[56,59)
-  obj o0 math parts=1 edges=Alpha/Alpha src="x^^2" [w=1307su asc=1034su desc=12su]
+  obj o0 math parts=1 edges=Alpha/Alpha src="x^^2" [w=1307su asc=963su desc=12su]
   run r0 letter-spaced CJK
   run r1 plain
   run r2 object

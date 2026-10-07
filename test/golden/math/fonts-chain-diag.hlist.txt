@@ -83,7 +83,7 @@ top pid=0 units=1
   box Ideo "的" w=1025su wt=0.6 r20 @[133,136)
   pen 0 r20
   glue word w=257su x=1 st=257su src r21 @[136,136)
-  box object o1 math part=0 asc=819su desc=205su "中" w=1024su r22 @[137,142)
+  box object o1 math part=0 asc=717su desc=154su "中" w=1024su r22 @[137,142)
   pen 0 r22
   glue word w=257su x=1 st=257su src r23 @[143,143)
   box Ideo "仍" w=1025su wt=0.6 r24 @[143,146)
@@ -110,7 +110,7 @@ top pid=0 units=1
   box FullStopW "。" w=513su blank=R r25 @[173,176)
   glue blank w=512su x=0 r25 @[173,176)
   obj o0 math parts=4 edges=Alpha/Alpha src="varrho + varsigma = 2 pi" [w=1479su asc=600su desc=242su] [w=386su asc=493su desc=232su glue=228su] [w=774su asc=377su desc=0su glue=284su] [w=1135su asc=723su desc=5su glue=284su]
-  obj o1 math parts=1 edges=Alpha/Alpha src="中" [w=1024su asc=819su desc=205su]
+  obj o1 math parts=1 edges=Alpha/Alpha src="中" [w=1024su asc=717su desc=154su]
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
   run r2 object

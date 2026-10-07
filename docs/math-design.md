@@ -228,7 +228,14 @@ Crosswalk: T = Typst file, K = KaTeX file.
   ~10% tolerated (Typst's `short_fall`); walk the variant chain, else
   assemble parts with extender repetition, overlaps ≥ `MinConnectorOverlap`
   (20); center the result on the axis. [T `fragment/glyph.rs::stretch`;
-  K `delimiter.ts` stacked path]
+  K `delimiter.ts` stacked path] *(post-P5)* A pair the formula matched
+  measures its content without the scripts attached in it (`MathBox::
+  coreAsc/coreDesc`, set by `layoutScript`, carried by `pack`): `(n^2)`,
+  `(x_i^2 + y_i^2)` keep their natural parentheses, as printed mathematics
+  sets them, where Euler's tall scripts (superscript shift 0.45 em, a script
+  "2" 0.49 em) took them to the 1.8 em variant. A fraction, a stack and an
+  operator's limits are core and still grow them; `lr(…)` covers the
+  scripts too. Fixture `math/delim-scripts`.
 - **Big operators**: in display style swap to the variant satisfying
   `DisplayOperatorMinHeight` (1130 in Euler-Math), center on axis; limits attach per above
   when style is display, as scripts otherwise (K `op.ts` delegation rule).
@@ -724,7 +731,7 @@ As built (design T8 S10; D-M06, D-M03; findings `math/compiled-in-font`,
   `@font-face` next to Euler's. One manifest, `runtime/src/shared/
   mathfont.gen.mjs`, serves the embedded font to both the static export and
   pack-dist. A host's fonts are the host's assets.
-- **Reference ink** (`math.referenceInk`, off by default, D-M03): a text
+- **Reference ink** (`math.referenceInk`, on by default since post-P5, D-M03): a text
   run's vertical extents (§14) become its style's reference ink, the ink
   ascent of "H" and the ink descent of "p", instead of the font's line
   metrics. Scripts on a name then sit as they do on a math-font letter:
@@ -736,6 +743,10 @@ As built (design T8 S10; D-M06, D-M03; findings `math/compiled-in-font`,
   box: `MathBox::lineAsc/lineDesc` keep the line metrics as the paint pin,
   so the baseline lands where layout put it. Fixtures `math/reference-ink`
   (on) and `math/reference-ink-off` (the same source with the setting off).
+  *(post-P5)* On by default: a name's line metrics (the body font's whole
+  ascent and descent) made `log` the tallest thing in `O(n log n)` and grew
+  its parentheses; the static page's estimate (the math font's own ink)
+  agreed with the ink, not with the line box.
 - Goldens: unchanged for input Euler covers. New fixtures:
   `math/fonts-chain-diag` (euler then STIX: ϱ and ς from STIX, `中` a text
   leaf), `math/fonts-primary-diag` (STIX primary, an unknown name, a

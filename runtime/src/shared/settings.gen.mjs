@@ -195,7 +195,7 @@ export const SETTINGS = Object.freeze({
   },
   "math.referenceInk": {
     "dom": "bool",
-    "def": false,
+    "def": true,
     "prec": "HostDefault",
     "affects": [
       "Emit"
@@ -592,7 +592,7 @@ export const SETTINGS_DEFAULTS = Object.freeze({
   },
   "math": {
     "fonts": [],
-    "referenceInk": false,
+    "referenceInk": true,
     "breakAfter": {
       "rel": 0.8,
       "bin": 0.95

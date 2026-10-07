@@ -773,10 +773,10 @@
       ]
     },
     "math.referenceInk": {
-      "$comment": "(plan P5-01; D-M03) A formula's text-font runs (names, operators, quoted text) take their vertical extents from their style's reference ink — the ink ascent of 'H' and descent of 'p', the fontInk resource, per style (v2 §6) — instead of its line metrics, so scripts on a name sit as on a math-font letter. Off by default.",
+      "$comment": "(plan P5-01; D-M03) A formula's text-font runs (names, operators, quoted text) take their vertical extents from their style's reference ink — the ink ascent of 'H' and descent of 'p', the fontInk resource, per style (v2 §6) — instead of its line metrics, so scripts on a name sit as on a math-font letter and a run's line box does not stretch the delimiters around it. On by default (post-P5; it was off).",
       "field": "mathReferenceInk",
       "dom": "bool",
-      "def": false,
+      "def": true,
       "prec": "HostDefault",
       "affects": [
         "Emit"

@@ -78,18 +78,18 @@ top pid=1 units=1
   box object o2 math part=1 asc=377su desc=0su w=774su r10 @[149,163)
   pen 0.8 r11
   glue objspace w=284su x=0 r11 @[149,163)
-  box object o2 math part=2 asc=819su desc=205su w=1536su r12 @[149,163)
+  box object o2 math part=2 asc=717su desc=154su w=1536su r12 @[149,163)
   box Infix "," w=513su r13 @[163,164)
   glue word w=257su x=1 st=257su src r13 @[164,164)
   box object o3 math part=0 asc=825su desc=11su "vec(v) times vec" w=1508su r14 @[165,183)
   pen 0.95 r15
   glue objspace w=228su x=0 r15 @[165,183)
-  box object o3 math part=1 asc=819su desc=205su w=1536su r16 @[165,183)
+  box object o3 math part=1 asc=717su desc=154su w=1536su r16 @[165,183)
   pen 0 r16
   glue word w=257su x=1 st=257su src r17 @[184,184)
   box Alpha "and" w=1537su r17 @[184,187)
   glue word w=257su x=1 st=257su src r17 @[187,187)
-  box object o4 math part=0 asc=819su desc=205su "sqrt x" w=2758su r18 @[188,196)
+  box object o4 math part=0 asc=717su desc=154su "sqrt x" w=2758su r18 @[188,196)
   pen 0 r18
   glue word w=257su x=1 st=257su src r19 @[197,197)
   box Alpha "be" w=1025su r19 @[197,199)
@@ -100,9 +100,9 @@ top pid=1 units=1
   box Infix "." w=513su r21 @[213,214)
   obj o0 math parts=2 edges=Alpha/Alpha src="p dot q" [w=1115su asc=481su desc=243su] [w=620su asc=516su desc=249su glue=228su]
   obj o1 math parts=2 edges=Alpha/Alpha src="hat(x) + hat" [w=1540su asc=805su desc=76su] [w=511su asc=753su desc=0su glue=228su]
-  obj o2 math parts=3 edges=Alpha/Alpha src="bar(y) = bar" [w=607su asc=684su desc=239su] [w=774su asc=377su desc=0su glue=284su] [w=1536su asc=819su desc=205su glue=284su]
-  obj o3 math parts=2 edges=Alpha/Alpha src="vec(v) times vec" [w=1508su asc=825su desc=11su] [w=1536su asc=819su desc=205su glue=228su]
-  obj o4 math parts=1 edges=Alpha/Alpha src="sqrt x" [w=2758su asc=819su desc=205su]
+  obj o2 math parts=3 edges=Alpha/Alpha src="bar(y) = bar" [w=607su asc=684su desc=239su] [w=774su asc=377su desc=0su glue=284su] [w=1536su asc=717su desc=154su glue=284su]
+  obj o3 math parts=2 edges=Alpha/Alpha src="vec(v) times vec" [w=1508su asc=825su desc=11su] [w=1536su asc=717su desc=154su glue=228su]
+  obj o4 math parts=1 edges=Alpha/Alpha src="sqrt x" [w=2758su asc=717su desc=154su]
   obj o5 math parts=1 edges=Alpha/Alpha src="sqrt(x)" [w=1384su asc=821su desc=225su]
   run r0 object
   run r1 plain

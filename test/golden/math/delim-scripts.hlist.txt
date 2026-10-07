@@ -1,0 +1,125 @@
+top pid=0 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "A" w=513su r0 @[0,1)
+  glue word w=257su x=1 st=257su kern="A m" src r0 @[1,2)
+  box Alpha "matched" w=3585su r0 @[2,9)
+  glue word w=257su x=1 st=257su kern="d p" src r0 @[9,10)
+  box Alpha "pair" w=2049su r0 @[10,14)
+  glue word w=257su x=1 st=257su kern="r g" src r0 @[14,15)
+  box Alpha "grows" w=2561su r0 @[15,20)
+  glue word w=257su x=1 st=257su kern="s f" src r0 @[20,21)
+  box Alpha "for" w=1537su r0 @[21,24)
+  glue word w=257su x=1 st=257su kern="r i" src r0 @[24,25)
+  box Alpha "its" w=1537su r0 @[25,28)
+  glue word w=257su x=1 st=257su kern="s c" src r0 @[28,29)
+  box Alpha "con" w=1537su r0 @[29,32)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r0 @[32,32)
+  box Alpha "tent's" w=3073su r0 @[32,38)
+  glue word w=257su x=1 st=257su kern="s c" src r0 @[38,39)
+  box Alpha "core," w=2561su r0 @[39,44)
+  glue word w=257su x=1 st=257su kern=", n" src r0 @[44,45)
+  box Alpha "not" w=1537su r0 @[45,48)
+  glue word w=257su x=1 st=257su kern="t f" src r0 @[48,49)
+  box Alpha "for" w=1537su r0 @[49,52)
+  glue word w=257su x=1 st=257su kern="r t" src r0 @[52,53)
+  box Alpha "the" w=1537su r0 @[53,56)
+  glue word w=257su x=1 st=257su kern="e s" src r0 @[56,57)
+  box Alpha "scripts" w=3585su r0 @[57,64)
+  glue word w=257su x=1 st=257su kern="s a" src r0 @[64,65)
+  box Alpha "at" w=1025su r0 @[65,67)
+  disc pen=0.7 w=0su pre="-" 513su kern="tt" r0 @[67,67)
+  box Alpha "tached" w=3073su r0 @[67,73)
+  glue word w=257su x=1 st=257su kern="d i" src r0 @[73,74)
+  box Alpha "in" w=1025su r0 @[74,76)
+  glue word w=257su x=1 st=257su kern="n i" src r0 @[76,77)
+  box Alpha "it:" w=1537su r0 @[77,80)
+  glue word w=257su x=1 st=257su src r0 @[80,80)
+  box object o0 math part=0 asc=967su desc=209su "(n^2)" w=1761su r1 @[81,88)
+  box Infix "," w=513su r2 @[88,89)
+  glue word w=257su x=1 st=257su src r2 @[89,89)
+  box object o1 math part=0 asc=967su desc=239su "(x_i^2 + y_i^2)" w=3865su r3 @[90,107)
+  box Infix "," w=513su r4 @[107,108)
+  glue word w=257su x=1 st=257su src r4 @[108,108)
+  box object o2 math part=0 asc=1145su desc=209su "(e^(x^2))" w=1902su r5 @[109,120)
+  box Infix "," w=513su r6 @[120,121)
+  glue word w=257su x=1 st=257su src r6 @[121,121)
+  box object o3 math part=0 asc=980su desc=209su "((x+1)^2)" w=4032su r7 @[122,133)
+  pen 0 r7
+  glue word w=257su x=1 st=257su src r8 @[134,134)
+  box Alpha "and" w=1537su r8 @[134,137)
+  glue word w=257su x=1 st=257su src r8 @[137,137)
+  box object o4 math part=0 asc=721su desc=209su "O(n log n)" w=4732su r9 @[138,150)
+  pen 0 r9
+  glue word w=257su x=1 st=257su src r10 @[151,151)
+  box Alpha "keep" w=2049su r10 @[151,155)
+  glue word w=257su x=1 st=257su kern="p t" src r10 @[155,156)
+  box Alpha "their" w=2561su r10 @[156,161)
+  glue word w=257su x=1 st=257su kern="r p" src r10 @[161,162)
+  box Alpha "paren" w=2561su r10 @[162,167)
+  disc pen=0.7 w=0su pre="-" 513su kern="nt" r10 @[167,167)
+  box Alpha "the" w=1537su r10 @[167,170)
+  disc pen=0.7 w=0su pre="-" 513su kern="es" r10 @[170,170)
+  box Alpha "ses." w=2049su r10 @[170,174)
+  glue word w=257su x=1 st=257su kern=". A" src r10 @[174,175)
+  box Alpha "A" w=513su r10 @[175,176)
+  glue word w=257su x=1 st=257su kern="A f" src r10 @[176,177)
+  box Alpha "frac" w=2049su r10 @[177,181)
+  disc pen=0.7 w=0su pre="-" 513su kern="ct" r10 @[181,181)
+  box Alpha "tion" w=2049su r10 @[181,185)
+  glue word w=257su x=1 st=257su kern="n g" src r10 @[185,186)
+  box Alpha "grows" w=2561su r10 @[186,191)
+  glue word w=257su x=1 st=257su kern="s t" src r10 @[191,192)
+  box Alpha "them," w=2561su r10 @[192,197)
+  glue word w=257su x=1 st=257su src r10 @[197,197)
+  box object o5 math part=0 asc=870su desc=360su "(a/b)" w=1395su r11 @[198,205)
+  pen 0 r11
+  glue word w=257su x=1 st=257su src r12 @[206,206)
+  box Alpha "and" w=1537su r12 @[206,209)
+  glue word w=257su x=1 st=257su src r12 @[209,209)
+  box object o6 math part=0 asc=870su desc=358su "lfloor x/2 rfloor" w=1547su r13 @[210,229)
+  box Infix ";" w=513su r14 @[229,230)
+  glue word w=257su x=1 st=257su src r14 @[230,230)
+  box Alpha "lr" w=872su r15 @[231,235)
+  glue word w=257su x=1 st=257su src r16 @[236,236)
+  box Alpha "cov" w=1537su r16 @[236,239)
+  disc pen=0.7 w=0su pre="-" 513su kern="ve" r16 @[239,239)
+  box Alpha "ers" w=1537su r16 @[239,242)
+  glue word w=257su x=1 st=257su kern="s t" src r16 @[242,243)
+  box Alpha "the" w=1537su r16 @[243,246)
+  glue word w=257su x=1 st=257su kern="e s" src r16 @[246,247)
+  box Alpha "scripts" w=3585su r16 @[247,254)
+  glue word w=257su x=1 st=257su kern="s t" src r16 @[254,255)
+  box Alpha "too," w=2049su r16 @[255,259)
+  glue word w=257su x=1 st=257su src r16 @[259,259)
+  box object o7 math part=0 asc=1178su desc=666su "lr((, n^2, ))" w=2097su r17 @[260,275)
+  box Infix "." w=513su r18 @[275,276)
+  obj o0 math parts=1 edges=Alpha/Alpha src="(n^2)" [w=1761su asc=967su desc=209su]
+  obj o1 math parts=1 edges=Alpha/Alpha src="(x_i^2 + y_i^2)" [w=3865su asc=967su desc=239su]
+  obj o2 math parts=1 edges=Alpha/Alpha src="(e^(x^2))" [w=1902su asc=1145su desc=209su]
+  obj o3 math parts=1 edges=Alpha/Alpha src="((x+1)^2)" [w=4032su asc=980su desc=209su]
+  obj o4 math parts=1 edges=Alpha/Alpha src="O(n log n)" [w=4732su asc=721su desc=209su]
+  obj o5 math parts=1 edges=Alpha/Alpha src="(a/b)" [w=1395su asc=870su desc=360su]
+  obj o6 math parts=1 edges=Alpha/Alpha src="lfloor x/2 rfloor" [w=1547su asc=870su desc=358su]
+  obj o7 math parts=1 edges=Alpha/Alpha src="lr((, n^2, ))" [w=2097su asc=1178su desc=666su]
+  run r0 plain
+  run r1 object
+  run r2 plain
+  run r3 object
+  run r4 plain
+  run r5 object
+  run r6 plain
+  run r7 object
+  run r8 plain
+  run r9 object
+  run r10 plain
+  run r11 object
+  run r12 plain
+  run r13 object
+  run r14 plain
+  run r15 rigid CODE x0.85
+  run r16 plain
+  run r17 object
+  run r18 plain
+top pid=1 units=1
+ unit math indent=0su w=9432su asc=1792su desc=1280su centered

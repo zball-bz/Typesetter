@@ -27,8 +27,8 @@ hbox Ord w=1625 asc=600 desc=76
   glue w=228 @(624,0)
   glyph "+" Bin w=773 asc=600 desc=76 px=16 @(852,0)
 inline pid=0 ""
-hbox Ord w=3049 asc=819 desc=205
-  glyph "text" Ord w=2048 asc=819 desc=205 px=16
+hbox Ord w=3049 asc=717 desc=154
+  glyph "text" Ord w=2048 asc=717 desc=154 line=819/205 px=16
   glue w=228 @(2048,0)
   glyph "+" Bin w=773 asc=600 desc=76 px=16 @(2276,0)
 inline pid=0 ""
@@ -41,8 +41,8 @@ inline pid=1 ""
 hbox Ord w=774 asc=377 desc=0
   glyph "=" Rel w=774 asc=377 desc=-135 px=16
 inline pid=1 ""
-hbox Ord w=20304 asc=819 desc=205
-  glyph "⚠ ReferenceError: missing is not defined" Ord w=19303 asc=819 desc=205 px=16
+hbox Ord w=20304 asc=717 desc=154
+  glyph "⚠ ReferenceError: missing is not defined" Ord w=19303 asc=717 desc=154 line=819/205 px=16
   glue w=228 @(19303,0)
   glyph "+" Bin w=773 asc=600 desc=76 px=16 @(19531,0)
 inline pid=1 ""

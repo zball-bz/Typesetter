@@ -35,7 +35,7 @@ struct Config {
   double urlBreakPenalty = 1.2;  // break.urlPenalty
   u32 urlBreakMinLen = 20;  // break.urlMinLen
   std::string mathFonts = "";  // math.fonts
-  bool mathReferenceInk = false;  // math.referenceInk
+  bool mathReferenceInk = true;  // math.referenceInk
   ClassMap mathBreakAfter = ClassMap{{-1, -1, 0.95, 0.8, -1, -1, -1, -1}};  // math.breakAfter
   ClassMap mathBreakBefore = ClassMap{{-1, -1, -1, 0.85, -1, -1, -1, -1}};  // math.breakBefore
   double codeScale = 0.85;  // code.scale

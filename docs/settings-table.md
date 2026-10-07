@@ -27,7 +27,7 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `break.urlPenalty` | num:0:1e18 | `1.2` | HostDefault | Emit |  |
 | `break.urlMinLen` | int:1:100000 | `20` | HostDefault | Emit |  |
 | `math.fonts` | json:array | `[]` | HostDefault | Resolve |  |
-| `math.referenceInk` | bool | `false` | HostDefault | Emit |  |
+| `math.referenceInk` | bool | `true` | HostDefault | Emit |  |
 | `math.breakAfter` | classmap:0:1e18 | `{"rel":0.8,"bin":0.95}` | HostDefault | Emit |  |
 | `math.breakBefore` | classmap:0:1e18 | `{"rel":0.85}` | HostDefault | Emit |  |
 | `cost.exponent` | int:1:4 | `3` | HostDefault | Layout |  |

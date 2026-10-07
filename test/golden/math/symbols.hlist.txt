@@ -415,7 +415,7 @@ top pid=6 units=1
   disc pen=0.7 w=0su pre="-" 513su kern="nl" r4 @[759,759)
   box Alpha "line," w=2561su r4 @[759,764)
   glue word w=257su x=1 st=257su src r4 @[764,764)
-  box object o2 math part=0 asc=819su desc=266su "limits(lim)_(x -> 0)" w=3039su r5 @[765,787)
+  box object o2 math part=0 asc=717su desc=215su "limits(lim)_(x -> 0)" w=3039su r5 @[765,787)
   pen 0 r5
   glue word w=257su x=1 st=257su src r6 @[788,788)
   box Alpha "and" w=1537su r6 @[788,791)
@@ -427,7 +427,7 @@ top pid=6 units=1
   box Infix "." w=513su r10 @[809,810)
   obj o0 math parts=1 edges=Alpha/Alpha src="a thin b med c thick d quad e wide f" [w=7036su asc=700su desc=19su]
   obj o1 math parts=1 edges=Alpha/Alpha src="display(sum_i x_i)" [w=2498su asc=973su desc=1128su]
-  obj o2 math parts=1 edges=Alpha/Alpha src="limits(lim)_(x -> 0)" [w=3039su asc=819su desc=266su]
+  obj o2 math parts=1 edges=Alpha/Alpha src="limits(lim)_(x -> 0)" [w=3039su asc=717su desc=215su]
   obj o3 math parts=2 edges=Alpha/Alpha src="class(rel, A) B" [w=788su asc=696su desc=10su] [w=671su asc=702su desc=1su glue=284su]
   run r0 plain
   run r1 object

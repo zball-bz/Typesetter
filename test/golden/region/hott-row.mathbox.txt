@@ -1,8 +1,8 @@
 inline pid=0 "Id_(A)"
-hbox Ord w=1627 asc=819 desc=263
-  hbox Op w=1627 asc=819 desc=263
-    glyph "Id" Op w=1024 asc=819 desc=205 px=16
-    hbox Ord w=552 asc=487 desc=7 @(1024,-256)
+hbox Ord w=1627 asc=717 desc=212
+  hbox Op w=1627 asc=717 desc=212
+    glyph "Id" Op w=1024 asc=717 desc=154 line=819/205 px=16
+    hbox Ord w=552 asc=487 desc=7 @(1024,-205)
       glyph "A" Ord w=552 asc=487 desc=7 px=11.2
 inline pid=0 "="
 hbox Ord w=774 asc=377 desc=0

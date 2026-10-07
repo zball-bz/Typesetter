@@ -1,0 +1,34 @@
+lower v1 abi 3d3ccfbb docEnd 316 holes 0 module none
+block 0 content [0,276)
+  CALL para [0,276)
+    TEXT "A matched pair grows for its content's core, not for the scripts attached in it: " [0,80) raw=0:0,81:80
+    CALL math [81,88)
+      CALL mathsrc [82,87) src="(n^2)"
+    TEXT ", " [88,89) raw=0:0,2:1
+    CALL math [90,107)
+      CALL mathsrc [91,106) src="(x_i^2 + y_i^2)"
+    TEXT ", " [107,108) raw=0:0,2:1
+    CALL math [109,120)
+      CALL mathsrc [110,119) src="(e^(x^2))"
+    TEXT ", " [120,121) raw=0:0,2:1
+    CALL math [122,133)
+      CALL mathsrc [123,132) src="((x+1)^2)"
+    TEXT " and " [134,137) raw=0:0,1:0,5:3
+    CALL math [138,150)
+      CALL mathsrc [139,149) src="O(n log n)"
+    TEXT " keep their parentheses. A fraction grows them, " [151,197) raw=0:0,1:0,48:46
+    CALL math [198,205)
+      CALL mathsrc [199,204) src="(a/b)"
+    TEXT " and " [206,209) raw=0:0,1:0,5:3
+    CALL math [210,229)
+      CALL mathsrc [211,228) src="lfloor x/2 rfloor"
+    TEXT "; " [229,230) raw=0:0,2:1
+    CALL code [231,235) text="lr"
+    TEXT " covers the scripts too, " [236,259) raw=0:0,1:0,25:23
+    CALL math [260,275)
+      CALL mathsrc [261,274) src="lr((, n^2, ))"
+    TEXT "." [275,276)
+block 1 content [278,315)
+  CALL para [278,315)
+    CALL math [278,315) display=true
+      CALL mathsrc [280,313) src="(sum_(i=1)^n x_i^2) = (n (n+1))/2"
