@@ -1,5 +1,7 @@
 // The module graph of an entry, by a lexical scan (plan P3-21, D-I09): the
-// files a static export copies for hydration. Followed: static `import …
+// files a static export copies for hydration (tools/lib/static-page.mjs),
+// and the files a document's #use module imports — renderTsm lists them in
+// its manifest, so a page publishes them beside the module. Followed: static `import …
 // from '…'` / `export … from '…'`, `import('…')` with a literal specifier,
 // and `new URL('…', import.meta.url)` (a worker, a sibling asset). A
 // dynamic import whose specifier is not a literal cannot be followed: it is

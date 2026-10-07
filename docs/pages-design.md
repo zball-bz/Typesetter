@@ -138,7 +138,7 @@ As built (plan P3-21; T9 M7; D-I09):
   relative, or files below the post's folder, are copied beside
   `index.html` at the same relative path, so the page's references hold.
 - The hydration assets are the module graph of `shell.mjs`
-  (`tools/lib/module-graph.mjs`: static imports and exports, literal dynamic
+  (`runtime/src/node/module-graph.mjs`: static imports and exports, literal dynamic
   imports, `new URL('…', import.meta.url)`), plus the wasm, the math font and
   the highlighter assets. A module that the page never loads (Node code,
   tests) is no longer copied. A non-literal dynamic import is a warning

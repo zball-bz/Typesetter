@@ -213,7 +213,10 @@ in one place, `runtime/src/shared/resources/`:
   loop's `answer(request, {stale, capability})`, the loads
   (`load(src, {as: 'text' | 'json' | 'bytes', role})`) and the
   **manifest**: `[{url, role, source, status, requester}]` of every load,
-  image and denial.
+  image and denial. In Node, `renderTsm` adds the files a `#use` module
+  imports (role `module`, requester `import`; `runtime/src/node/module-graph.mjs`,
+  a lexical scan): the JavaScript engine loads them, not the job, and a
+  page that publishes the module must publish them beside it.
 - **ResourceLocator** (`locator.mjs`): a reference resolves against the
   base of the source that made it (`bases.doc`: the page URL in a worker,
   the document's folder in Node), a `/path` against `root`. The requester

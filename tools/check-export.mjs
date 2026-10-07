@@ -58,6 +58,18 @@ try {
 
   // (plan P3-36; design T7 S14) the bundle and exportStatic
   const { exportStatic } = await import('../runtime/src/node/export.mjs');
+  // a #use module's own imports: listed (requester 'import'), so an export
+  // copies them beside it
+  execFileSync('mkdir', ['-p', join(docDir, 'lib')]);
+  writeFileSync(join(docDir, 'lib/mod.mjs'), "import { WORD } from './word.mjs';\nexport default function () {}\nexport const word = WORD;\n");
+  writeFileSync(join(docDir, 'lib/word.mjs'), "export const WORD = 'imported';\n");
+  const used = await renderTsm('#use("lib/mod.mjs")\n\nA paragraph.\n', { baseDir: docDir, rootDir: docDir });
+  check(used.ok && used.manifest.some((m) => m.role === 'module' && m.url === join(docDir, 'lib/mod.mjs') && m.requester === 'exec'),
+    'the manifest has the #use module');
+  check(used.manifest.some((m) => m.role === 'module' && m.url === join(docDir, 'lib/word.mjs') && m.requester === 'import'),
+    'the manifest has the module\'s own import');
+  const usedPage = await exportStatic(used, { docDir, hydrate: false });
+  check(usedPage.copy.some((c) => c.to === 'lib/word.mjs'), 'the export copies the module\'s import');
   const postDir = join(root, 'test/export');
   const postSrc = readFileSync(join(postDir, 'post.tsm'), 'utf8');
   const bundle = await renderTsm(postSrc, { baseDir: postDir, rootDir: postDir, settings: { doc: { lang: 'en' } } });

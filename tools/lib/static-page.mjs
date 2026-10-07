@@ -66,7 +66,7 @@ export async function copyAssets({ outDir, math, hydrate, log = console.error })
   if (!hydrate) return;
   // (plan P3-21, D-I09) the runtime's module graph from its entry, by a
   // lexical scan of its imports (a dynamic import it cannot follow warns)
-  const { moduleGraph } = await import('./module-graph.mjs');
+  const { moduleGraph } = await import('../../runtime/src/node/module-graph.mjs');
   const graph = await moduleGraph(join(root, 'runtime/src/main/shell.mjs'));
   for (const w of graph.warnings) log(w);
   for (const f of graph.files) {

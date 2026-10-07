@@ -10,6 +10,7 @@ import { checkAbi, compiledOf, fragmentsOf } from '../shared/abi.mjs';
 import { decodeRequest, encodeAnswer } from '../shared/rescodec.mjs';
 import { RES_KINDS } from '../shared/resources.gen.mjs';
 import { settingsFromOptions } from '../shared/settings.gen.mjs';
+import { moduleGraph } from './module-graph.mjs';
 
 let modPromise = null;
 let session = 0;
@@ -161,7 +162,20 @@ export async function renderTsm(source, opts = {}) {
       const r = JSON.parse(line);
       manifest.push({ url: r.src, role: r.role, source: 'doc', status: r.allowed ? 'referenced' : 'denied', requester: 'image' });
     }
-    manifest.push(...job.manifest());
+    const loads = job.manifest();
+    manifest.push(...loads);
+    // a #use module's own imports (requester 'import'): the JavaScript
+    // engine loads them, not the host, so the module graph names them — a
+    // page that publishes the module publishes them beside it
+    const listed = new Set(manifest.map((m) => m.url));
+    for (const m of loads) {
+      if (m.role !== 'module' || m.status !== 'ok' || /^[a-z][a-z0-9+.-]*:/i.test(m.url)) continue;
+      for (const file of (await moduleGraph(m.url)).files) {
+        if (listed.has(file)) continue;
+        listed.add(file);
+        manifest.push({ url: file, role: 'module', source: m.source, status: 'ok', requester: 'import' });
+      }
+    }
     for (const f of opts.fonts ?? []) {
       if (f?.src) manifest.push({ url: String(f.src), role: 'font', source: 'host', status: 'declared', requester: 'host' });
       if (f?.metrics) manifest.push({ url: String(f.metrics), role: 'font-metrics', source: 'host', status: 'declared', requester: 'host' });
