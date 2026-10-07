@@ -5,8 +5,8 @@
 <div class="tsr-line" data-s="75" data-e="114" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="75">before, the block, then the paragraph&#39;s</span></div>
 <div class="tsr-line" data-s="115" data-e="127" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="115">continuation</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:24px;margin-bottom:0px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-para" data-pid="1" data-s0="172" style="position:relative;height:24px;margin-bottom:0px">
+<div class="tsr-rule" data-s="0" data-e="7" style="top:12px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="180" style="position:relative;height:48px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="40" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:0.667px"><span class="tsr-r" data-s="0">without a first-line indent or the space</span></div>

@@ -14,7 +14,7 @@ top pid=3 leaves=1
     paragraph para unit=0 @[384,456)
 top pid=4 leaves=1
   stack root gap=1/1 @[458,477)
-    replaced math math unit=0 ragged anchor="emc" @[458,477)
+    replaced math math unit=0 centered anchor="emc" @[458,477)
 top pid=5 leaves=1
   stack root gap=1/1 @[479,557)
     stack group anchor="c1" @[479,557)

@@ -42,7 +42,7 @@ top pid=0 units=1
   run r7 object
   run r8 plain
 top pid=1 units=1
- unit math indent=0su w=3578su asc=2178su desc=1425su
+ unit math indent=0su w=3578su asc=2178su desc=1425su centered
 top pid=2 units=1
  unit text indent=0su
   ju=257su

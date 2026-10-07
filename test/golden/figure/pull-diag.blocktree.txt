@@ -4,10 +4,10 @@ top pid=0 leaves=1
 top pid=1 leaves=2
   stack root gap=1/1 @[101,248)
     stack figure anchor="fig-light" @[101,248)
-      replaced image image unit=0 ragged keep-with-next carry="fig-light" @[101,248)
+      replaced image image unit=0 centered keep-with-next carry="fig-light" @[101,248)
       paragraph caption unit=1 single-center @[181,239)
 top pid=2 leaves=2
   stack root gap=1/1 @[250,368)
     stack figure @[250,368)
-      replaced image image unit=0 ragged keep-with-next @[250,368)
+      replaced image image unit=0 centered keep-with-next @[250,368)
       paragraph caption unit=1 single-center @[308,359)

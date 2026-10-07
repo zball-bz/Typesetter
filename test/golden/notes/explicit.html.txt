@@ -7,7 +7,7 @@
 <div class="tsr-line" data-s="79" data-e="97" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="79">section is placed.</span></div>
 </div>
 <div class="tsr-para" data-role="notes" data-pid="2" data-s0="39" style="position:relative;height:97.594px;margin-bottom:19.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="82" data-e="90" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="5" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">One. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 <div class="tsr-line" id="tsr-fn-2" data-s="19" data-e="50" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="19" style="font-size:13.6px">Two, with a reference to </span><a class="tsr-r" href="#tsr-top" data-s="44" style="font-size:13.6px">§2</a><span class="tsr-r" data-s="48" style="font-size:13.6px">. </span><a class="tsr-r" href="#tsr-fnref-2" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>

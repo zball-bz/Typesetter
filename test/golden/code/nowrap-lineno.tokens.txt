@@ -1,0 +1,3 @@
+[92,121) keyword "```js(wrap: false, lineNo: 1)"
+[122,172) embedded "const answer = 42;\nfunction f(x) { return x * 2; }"
+[173,176) keyword "```"

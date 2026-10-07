@@ -6,10 +6,10 @@ top pid=1 leaves=1
     paragraph para unit=0 @[28,99)
 top pid=2 leaves=1
   stack root gap=1/1 @[101,130)
-    replaced math math unit=0 ragged anchor="eq-pyth" @[101,130)
+    replaced math math unit=0 centered anchor="eq-pyth" @[101,130)
 top pid=3 leaves=1
   stack root gap=1/1 @[132,163)
-    replaced math math unit=0 ragged anchor="eq-euler" @[132,163)
+    replaced math math unit=0 centered anchor="eq-euler" @[132,163)
 top pid=4 leaves=1
   stack root gap=1/1 @[165,200)
     paragraph para unit=0 @[165,200)

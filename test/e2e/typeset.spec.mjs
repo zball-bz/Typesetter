@@ -1205,6 +1205,15 @@ test('copy: a table is tab-separated rows; an empty cell keeps its column', asyn
   expect(audit.failures).toEqual([]);
 });
 
+test('copy: a display formula is a block of its own, the paragraph after it a new one', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  // (plan P5-02) a formula's line carries layout's separator (data-join)
+  const source = 'Before:\n\n$ e = m c^2 $\n\nand after.';
+  await page.evaluate(async (s) => await window.__tsr.typeset(s, { widthPx: 300, progressive: false }), source);
+  expect(await page.evaluate(() => window.__tsr.copyText())).toBe('Before:\n\n$ e = m c^2 $\n\nand after.');
+});
+
 test('copy: code with a sidecar copies the code; inside the sidecar, the note (D-R03)', async ({ page }) => {
   await page.goto('/test/e2e/harness.html');
   await page.waitForFunction(() => window.__tsrReady);
@@ -1253,6 +1262,14 @@ test('copy: the semantic page omits what the typeset view omits (D-R06)', async 
   expect(text).toContain('A claim continues.');
   expect(text).toContain('The note.');
   expect(text).not.toContain('↩');
+  // (plan P5-02) a selection inside one marked element copies as that element
+  // does, not as the browser would: the marker and backlink copy nothing
+  expect(await page.evaluate((h) => window.__tsr.copyInside(h, '[data-syn="fn-marker"]', 0, 1), sem)).toBe('');
+  expect(await page.evaluate((h) => window.__tsr.copyInside(h, '[data-syn="backlink"]', 0, 1), sem)).toBe('');
+  // and a selection inside one formula's glyphs copies its source
+  await page.evaluate(async () => await window.__tsr.typeset('A formula $x^2 + y$ here.', { widthPx: 300 }));
+  const sem2 = await page.evaluate(() => window.__tsr.semanticHtml());
+  expect(await page.evaluate((h) => window.__tsr.copyInside(h, '[data-copy]', 0, 1), sem2)).toBe('$x^2 + y$');
 });
 
 test('copy: an author\'s copy attribute replaces or omits, once per node', async ({ page }) => {

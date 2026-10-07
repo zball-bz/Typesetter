@@ -1,0 +1,16 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => {
+
+  $.set({role: 'theorem'}, {box: {padding: '0.4em 2em', border: '0 2px 0 2px'}})
+  $.element('theorem', {})
+
+},
+() => ({src: "photos/tower.jpg", alt: "t", w: 400, h: 100, scale: 0.2, float: "right", label: "fig-t"}),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

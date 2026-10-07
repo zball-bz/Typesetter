@@ -54,7 +54,7 @@ top pid=0 units=1
   run r12 letter-spaced CJK
   run r13 blank-bearing CJK
 top pid=1 units=1
- unit math indent=0su w=9409su asc=1705su desc=714su
+ unit math indent=0su w=9409su asc=1705su desc=714su centered
 top pid=2 units=1
  unit text indent=0su
   ju=257su
@@ -124,7 +124,7 @@ top pid=2 units=1
   run r16 object
   run r17 blank-bearing CJK
 top pid=3 units=1
- unit math indent=0su w=10784su asc=1458su desc=941su
+ unit math indent=0su w=10784su asc=1458su desc=941su centered
 top pid=4 units=1
  unit text indent=0su
   ju=257su

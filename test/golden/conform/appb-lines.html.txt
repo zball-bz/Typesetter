@@ -32,8 +32,8 @@
 <div class="tsr-para" data-pid="9" data-s0="302" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="13" data-ragged="1" style="top:0px;left:116.438px;width:67.109px;height:24px"><span class="tsr-math" data-syn="math" data-copy="$ a + b = c $" data-copy-group="2147483950" role="math" aria-label="a + b = c" style="width:67.109px;height:12.125px;position:absolute;left:0;top:5.938px"><span class="tsr-mg" style="left:0px;top:-1.863px;font-size:16px;line-height:16px">a</span><span class="tsr-mg" style="left:13.312px;top:-1.863px;font-size:16px;line-height:16px">+</span><span class="tsr-mg" style="left:28.953px;top:-1.863px;font-size:16px;line-height:16px">b</span><span class="tsr-mg" style="left:42.797px;top:-1.863px;font-size:16px;line-height:16px">=</span><span class="tsr-mg" style="left:59.328px;top:-1.863px;font-size:16px;line-height:16px">c</span></span></div>
 </div>
-<div class="tsr-para" data-pid="10" data-s0="0" style="position:relative;height:24px;margin-bottom:19.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-para" data-pid="10" data-s0="317" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-rule" data-s="0" data-e="3" style="top:12px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="11" data-s0="322" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="41" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:3.6px"><span class="tsr-r" data-s="0">= not a heading, - not a list, &gt; not a</span></div>

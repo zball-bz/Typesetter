@@ -287,6 +287,22 @@ export const SETTINGS = Object.freeze({
       "Ingest"
     ]
   },
+  "code.breakAfter": {
+    "dom": "str",
+    "def": " \t,;)}]>",
+    "prec": "HostDefault",
+    "affects": [
+      "Layout"
+    ]
+  },
+  "code.commentAware": {
+    "dom": "bool",
+    "def": true,
+    "prec": "HostDefault",
+    "affects": [
+      "Layout"
+    ]
+  },
   "code.minCols": {
     "dom": "int:1:1000",
     "def": 8,
@@ -596,6 +612,8 @@ export const SETTINGS_DEFAULTS = Object.freeze({
     "contIndent": 2,
     "sidecarFrac": 0.4,
     "snapKerning": false,
+    "breakAfter": " \t,;)}]>",
+    "commentAware": true,
     "minCols": 8,
     "snapTolerance": 0.1,
     "snapMaxQ": 7,

@@ -1,0 +1,9 @@
+doc @[58,241) [base]
+  para @[58,167) [base]
+    text @[58,167) [base] str="Display formulas flush left (plan P5-02): par.align places a formula's rows as it places a paragraph's lines."
+  mathblock @[169,189) [base]
+    mathsrc @[171,187) [base] src="e^(i pi) + 1 = 0"
+  para @[191,208) [base]
+    text @[191,208) [base] str="and a second one,"
+  mathblock @[210,241) [base]
+    mathsrc @[212,239) [base] src="sum_(k=1)^n k = (n (n+1))/2"

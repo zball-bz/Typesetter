@@ -3,10 +3,10 @@ top pid=0 leaves=1
     paragraph para unit=0 @[0,24)
 top pid=1 leaves=1
   stack root gap=1/1 @[26,63)
-    replaced math math unit=0 ragged @[26,63)
+    replaced math math unit=0 centered @[26,63)
 top pid=2 leaves=1
   stack root gap=1/1 @[65,107)
     paragraph para unit=0 @[65,107)
 top pid=3 leaves=1
   stack root gap=1/1 @[109,151)
-    replaced math math unit=0 ragged @[109,151)
+    replaced math math unit=0 centered @[109,151)

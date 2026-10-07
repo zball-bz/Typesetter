@@ -6,7 +6,7 @@ top pid=0 units=1
   box Alpha "Methods" w=5736su r0 @[385,392)
   run r0 plain BOLD x1.60
 top pid=1 units=1
- unit math indent=0su anchor="eq-m" w=2568su asc=700su desc=12su
+ unit math indent=0su anchor="eq-m" w=2568su asc=700su desc=12su centered
   cell 0
    ju=257su
    box OpenN "(1.1)" w=2561su r0 @[404,420)
@@ -26,7 +26,7 @@ top pid=3 units=1
   box Alpha "Lemmas" w=4149su r0 @[457,463)
   run r0 plain BOLD x1.35
 top pid=4 units=1
- unit math indent=0su anchor="eq-p" w=2457su asc=700su desc=19su
+ unit math indent=0su anchor="eq-p" w=2457su asc=700su desc=19su centered
   cell 0
    ju=257su
    box OpenN "(A.1)" w=2561su r0 @[474,490)

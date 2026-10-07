@@ -1,0 +1,5 @@
+doc @[0,176) [base]
+  para @[0,90) [base]
+    text @[0,90) [base] str="Line numbers on code that does not wrap (plan P5-02): the gutter is measured all the same."
+  codeblock @[92,176) [CODEx0.85] lang="js" wrap=false lineNo=1
+    text @[122,172) [CODEx0.85] str="const answer = 42;\nfunction f(x) { return x * 2; }"

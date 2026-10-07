@@ -24,6 +24,10 @@ struct Instance {
   std::string number;  // formatted; "" when unnumbered
   std::string label;   // its anchor: the accepted user label, else the alias
   bool aliased = false;  // the anchor is the alias (written as the node's label)
+  // (plan P5-02) its label is its own in the registry: a name of a shape
+  // some alias rule mints, or one an earlier node holds, is not — and a node
+  // whose label is not its own writes no anchor (no id twice)
+  bool anchored = true;
   std::string markerAlias;  // a flow item's marker anchor
   std::string title;
   // (plan P3-03; D-S03) the node whose content is its title (Title::Text:

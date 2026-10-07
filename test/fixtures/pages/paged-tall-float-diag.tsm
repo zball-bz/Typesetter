@@ -1,0 +1,26 @@
+#{
+  // (plan P5-02) a top float taller than a sheet: a sheet of its own,
+  // overflowing visibly with a warning; the flow goes on after it
+  $.set({role: 'topnote'}, {place: {float: 'top'}, box: {border: '1px', padding: '0.2em'}})
+}
+
+= A tall page float
+
+Filler paragraph one, before the float.
+
+#!topnote
+A long line of the tall float, number 1, that wraps across the measure.
+A long line of the tall float, number 2, that wraps across the measure.
+A long line of the tall float, number 3, that wraps across the measure.
+A long line of the tall float, number 4, that wraps across the measure.
+A long line of the tall float, number 5, that wraps across the measure.
+A long line of the tall float, number 6, that wraps across the measure.
+A long line of the tall float, number 7, that wraps across the measure.
+A long line of the tall float, number 8, that wraps across the measure.
+A long line of the tall float, number 9, that wraps across the measure.
+A long line of the tall float, number 10, that wraps across the measure.
+A long line of the tall float, number 11, that wraps across the measure.
+A long line of the tall float, number 12, that wraps across the measure.
+#topnote!
+
+The last paragraph, after the float in the source.

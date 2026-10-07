@@ -1,0 +1,26 @@
+lower v1 abi 3d3ccfbb docEnd 786 holes 2 module 9c74a11a2ce84e10
+piece 0 hole 0 js [103,222)
+piece 1 hole 1 js [224,327)
+block 0 stmt [0,112) user framed holes 0..1
+  STMT 0
+block 1 content [114,180)
+  CALL para [114,180)
+    TEXT "A paragraph before the float, set at the full measure of the page." [114,180)
+block 2 content [182,300) user framed async holes 1..2
+  REGION async "figure" args=hole 1 [182,300)
+    CALL para [286,291)
+      TEXT "Tiny." [286,291)
+block 3 content [302,455)
+  CALL para [302,455)
+    TEXT "Text beside the float that runs long enough to pass the bottom of the float box and return to the full measure afterwards, so the map is not empty below." [302,455)
+block 4 content [457,561)
+  CALL para [457,561)
+    TEXT "Another paragraph well below the float, at the full measure, padding the page so the float is behind us." [457,561)
+block 5 content [563,757) async
+  REGION async "theorem" [563,757)
+    CALL para [573,747)
+      TEXT "A framed paragraph after the float: its lines must stay inside the padding and border of the frame on the right side too, and never reach the frame's right edge or beyond it." [573,747)
+block 6 content [759,785) async
+  REGION async "theorem" [759,785)
+    CALL para [769,775)
+      TEXT "Short." [769,775)

@@ -147,7 +147,7 @@ top pid=3 units=1
   run r0 pinned indent
   run r1 plain
 top pid=4 units=1
- unit math indent=0su anchor="eq-mid" w=3804su asc=967su desc=19su
+ unit math indent=0su anchor="eq-mid" w=3804su asc=967su desc=19su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[322,344)

@@ -1,0 +1,51 @@
+doc @[0,395) [base]
+  para @[0,131) [base]
+    text @[0,131) [base] str="Term names against generated anchors (plan P5-02): a term named like a heading's anchor, and one named like a note's, take neither."
+  group @[133,187) [base] role="term"
+    para @[133,187) [base]
+      styled @[133,187) [BOLD] role="term-name"
+        text @[133,187) [BOLD] str="h-1"
+      text @[133,187) [base] str=" — "
+      styled @[133,187) [base] role="term-def"
+        text @[146,186) [base] str="A term whose name is a heading's anchor."
+  heading @[189,196) [BOLDx1.60] level=1 label="h-1"
+    text @[191,196) [BOLDx1.60] str="Intro"
+  para @[198,248) [base]
+    text @[198,214) [base] str="Text with a note"
+    ref @[214,223) [SUPx0.70] role="fn-marker" attach="prev" target="fn-1" label="fnref-1" syn="fn-marker" copy="omit"
+      text @[214,223) [SUPx0.70] str="1"
+    text @[224,242) [base] str=" and a reference to " raw=0:0,1:0,20:18
+    ref @[243,247) [base] target="h-1"
+      text @[243,247) [base] str="§1"
+    text @[247,248) [base] str="."
+  group @[250,302) [base] role="term"
+    para @[250,302) [base]
+      styled @[250,302) [BOLD] role="term-name"
+        text @[250,302) [BOLD] str="fn-1"
+      text @[250,302) [base] str=" — "
+      styled @[250,302) [base] role="term-def"
+        text @[264,301) [base] str="A term whose name is a note's anchor."
+  group @[304,333) [base] role="term" label="lemma"
+    para @[304,333) [base]
+      styled @[304,333) [BOLD] role="term-name"
+        text @[304,333) [BOLD] str="lemma"
+      text @[304,333) [base] str=" — "
+      styled @[304,333) [base] role="term-def"
+        text @[319,332) [base] str="A first term."
+  group @[335,395) [base] role="term"
+    para @[335,395) [base]
+      styled @[335,395) [BOLD] role="term-name"
+        text @[335,395) [BOLD] str="lemma"
+      text @[335,395) [base] str=" — "
+      styled @[335,395) [base] role="term-def"
+        text @[350,394) [base] str="The same name again: the first one keeps it."
+  group @[0,395) [base] role="notes"
+    rule @[0,395) [base]
+    list @[0,395) [base] ordered=true
+      item @[214,223) [base]
+        para @[214,223) [base] label="fn-1"
+          styled @[214,223) [basex0.85] role="note-body"
+            text @[216,222) [basex0.85] str="a note"
+            text @[214,223) [basex0.85] str=" "
+            ref @[214,223) [basex0.85] target="fnref-1" syn="backlink" copy="omit"
+              text @[214,223) [basex0.85] str="↩"

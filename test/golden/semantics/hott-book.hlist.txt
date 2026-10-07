@@ -111,7 +111,7 @@ top pid=3 units=1
   box Alpha "Judgments" w=5301su r0 @[1185,1194)
   run r0 plain BOLD x1.15
 top pid=4 units=1
- unit math indent=0su anchor="eq-j" w=2568su asc=700su desc=12su
+ unit math indent=0su anchor="eq-j" w=2568su asc=700su desc=12su centered
   cell 0
    ju=257su
    box OpenN "(1.1)" w=2561su r0 @[1204,1220)
@@ -164,7 +164,7 @@ top pid=9 units=1
   box Alpha "Symbols" w=4123su r0 @[1328,1335)
   run r0 plain BOLD x1.15
 top pid=10 units=1
- unit math indent=0su anchor="eq-s" w=2420su asc=475su desc=12su
+ unit math indent=0su anchor="eq-s" w=2420su asc=475su desc=12su centered
   cell 0
    ju=257su
    box OpenN "(A.1)" w=2561su r0 @[1345,1361)

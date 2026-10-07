@@ -1,0 +1,4 @@
+instance figure 1 label=fig-t @[182,300)
+instance theorem @[563,757)
+instance theorem @[759,785)
+label fig-t -> figure 1 @[182,300)

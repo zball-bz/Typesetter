@@ -1,0 +1,22 @@
+doc @[0,215)
+  para @[0,120)
+    text @[0,120) str="Bare names stay symbols (plan P1-24; §7 #23): a function or accent name without its parentheses is the symbol it names."
+  para @[122,214)
+    math @[122,131) display=0 src="p dot q"
+      text @[123,130) str="p dot q"
+    text @[131,132) str=", "
+    math @[133,147) display=0 src="hat(x) + hat"
+      text @[134,146) str="hat(x) + hat"
+    text @[147,148) str=", "
+    math @[149,163) display=0 src="bar(y) = bar"
+      text @[150,162) str="bar(y) = bar"
+    text @[163,164) str=", "
+    math @[165,183) display=0 src="vec(v) times vec"
+      text @[166,182) str="vec(v) times vec"
+    text @[184,187) str=" and "
+    math @[188,196) display=0 src="sqrt x"
+      text @[189,195) str="sqrt x"
+    text @[197,203) str=" beside "
+    math @[204,213) display=0 src="sqrt(x)"
+      text @[205,212) str="sqrt(x)"
+    text @[213,214) str="."

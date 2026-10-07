@@ -118,7 +118,7 @@ top pid=6 units=2
 top pid=8 units=1
  unit code indent=0su lines=1 wrap
 top pid=9 units=1
- unit math indent=0su w=4295su asc=700su desc=76su
+ unit math indent=0su w=4295su asc=700su desc=76su centered
 top pid=10 units=1
  unit rule indent=0su
 top pid=11 units=1

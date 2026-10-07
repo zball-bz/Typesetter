@@ -2,14 +2,14 @@
 <div class="tsr-para" data-pid="0" data-s0="271" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="26" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Cited: </span><span class="tsr-r" data-s="7">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-s="7">1</a><span class="tsr-r" data-s="7">]</span><span class="tsr-r" data-s="13"> and </span><span class="tsr-r" data-s="17">[</span><a class="tsr-r" href="#tsr-bib-knuth84" data-s="17">2</a><span class="tsr-r" data-s="17">]</span><span class="tsr-r" data-s="25">.</span></div>
 </div>
-<div class="tsr-para" data-role="refs" data-pid="1" data-s0="308" style="position:relative;height:230.406px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-bib-kp81" data-s="0" data-e="171" data-join="space" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="0">[1] Donald E. Knuth and Michael F. Plass.</span></div>
-<div class="tsr-line" data-s="78" data-e="109" data-join="space" style="top:67.203px;left:32px;width:268px;word-spacing:10.667px"><span class="tsr-r" data-s="78">Breaking paragraphs into lines.</span></div>
-<div class="tsr-line" data-s="110" data-e="143" data-join="space" style="top:91.203px;left:32px;width:268px;word-spacing:5.333px"><span class="tsr-r" data-s="110">Software: Practice and Experience</span></div>
-<div class="tsr-line" data-s="144" data-e="170" data-join="para" style="top:115.203px;left:32px;width:268px"><span class="tsr-r" data-s="144">11(11), 1119–1184, 1981.</span></div>
-<div class="tsr-line" id="tsr-bib-knuth84" data-s="173" data-e="305" data-join="none" style="top:158.406px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="173">[2] Donald E. Knuth. The TeXbook. Comput</span><span class="tsr-r" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="252" data-e="287" data-join="none" style="top:182.406px;left:32px;width:268px"><span class="tsr-r" data-s="252">ers and Typesetting, volume A. Addi</span><span class="tsr-r" data-syn="hyphen">-</span></div>
-<div class="tsr-line" data-s="287" data-e="304" style="top:206.406px;left:32px;width:268px"><span class="tsr-r" data-s="287">son-Wesley, 1984.</span></div>
+<div class="tsr-para" data-role="refs" data-pid="1" data-s0="299" style="position:relative;height:230.406px">
+<div class="tsr-rule" data-s="0" data-e="7" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-bib-kp81" data-s="9" data-e="180" data-join="space" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="9">[1] Donald E. Knuth and Michael F. Plass.</span></div>
+<div class="tsr-line" data-s="87" data-e="118" data-join="space" style="top:67.203px;left:32px;width:268px;word-spacing:10.667px"><span class="tsr-r" data-s="87">Breaking paragraphs into lines.</span></div>
+<div class="tsr-line" data-s="119" data-e="152" data-join="space" style="top:91.203px;left:32px;width:268px;word-spacing:5.333px"><span class="tsr-r" data-s="119">Software: Practice and Experience</span></div>
+<div class="tsr-line" data-s="153" data-e="179" data-join="para" style="top:115.203px;left:32px;width:268px"><span class="tsr-r" data-s="153">11(11), 1119–1184, 1981.</span></div>
+<div class="tsr-line" id="tsr-bib-knuth84" data-s="182" data-e="314" data-join="none" style="top:158.406px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="182">[2] Donald E. Knuth. The TeXbook. Comput</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="261" data-e="296" data-join="none" style="top:182.406px;left:32px;width:268px"><span class="tsr-r" data-s="261">ers and Typesetting, volume A. Addi</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="296" data-e="313" style="top:206.406px;left:32px;width:268px"><span class="tsr-r" data-s="296">son-Wesley, 1984.</span></div>
 </div>
 </div>

@@ -1,0 +1,21 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[114,180)
+    paragraph para unit=0 @[114,180)
+top pid=1 leaves=1
+  stack root gap=1/1 @[182,300)
+    stack figure anchor="fig-t" @[182,300)
+      replaced image float unit=0 float=right carry="fig-t" @[182,300)
+top pid=2 leaves=1
+  stack root gap=1/1 @[302,455)
+    paragraph para unit=0 @[302,455)
+top pid=3 leaves=1
+  stack root gap=1/1 @[457,561)
+    paragraph para unit=0 @[457,561)
+top pid=4 leaves=1
+  stack root gap=1/1 @[563,757)
+    stack group box=410,2048,410,2048/0,128,0,128 @[563,757)
+      paragraph para unit=0 x=2176su xr=2176su @[573,747)
+top pid=5 leaves=1
+  stack root gap=1/1 @[759,785)
+    stack group box=410,2048,410,2048/0,128,0,128 @[759,785)
+      paragraph para unit=0 x=2176su xr=2176su @[769,775)

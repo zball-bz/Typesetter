@@ -1,0 +1,36 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="114" style="position:relative;height:48px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="40" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="0">A paragraph before the float, set at the</span></div>
+<div class="tsr-line" data-s="41" data-e="66" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="41">full measure of the page.</span></div>
+</div>
+<div class="tsr-para" data-role="figure" data-pid="1" data-s0="182" style="position:relative;height:0px;margin-bottom:0px">
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-t" data-s="0" data-e="118" src="photos/tower.jpg" alt="t" style="top:0px;left:240px;width:60px;height:15px">
+<div class="tsr-line" data-s="104" data-e="109" data-join="none" data-track="caption" style="top:15px;left:240px;width:60px;word-spacing:24px"><span class="tsr-r tsr-b tsr-cjk" data-s="104">图</span><span class="tsr-r tsr-b" data-s="104"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="104" style="margin-right:-8px">：</span></div>
+<div class="tsr-line" data-s="104" data-e="109" data-track="caption" style="top:39px;left:240px;width:60px"><span class="tsr-r" data-s="104">Tiny.</span></div>
+</div>
+<div class="tsr-para" data-pid="2" data-s0="302" style="position:relative;height:120px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="31" data-join="space" style="top:0px;left:0px;width:224px;word-spacing:-0.8px"><span class="tsr-r" data-s="0">Text beside the float that runs</span></div>
+<div class="tsr-line" data-s="32" data-e="62" data-join="space" style="top:24px;left:0px;width:224px;word-spacing:0.8px"><span class="tsr-r" data-s="32">long enough to pass the bottom</span></div>
+<div class="tsr-line" data-s="63" data-e="93" data-join="space" style="top:48px;left:0px;width:224px;word-spacing:1.333px"><span class="tsr-r" data-s="63">of the float box and return to</span></div>
+<div class="tsr-line" data-s="94" data-e="136" data-join="space" style="top:72px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="94">the full measure afterwards, so the map is</span></div>
+<div class="tsr-line" data-s="137" data-e="153" style="top:96px;left:0px;width:300px"><span class="tsr-r" data-s="137">not empty below.</span></div>
+</div>
+<div class="tsr-para" data-pid="3" data-s0="457" style="position:relative;height:72px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="39" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.6px"><span class="tsr-r" data-s="0">Another paragraph well below the float,</span></div>
+<div class="tsr-line" data-s="40" data-e="80" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="40">at the full measure, padding the page so</span></div>
+<div class="tsr-line" data-s="81" data-e="104" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="81">the float is behind us.</span></div>
+</div>
+<div class="tsr-para" data-role="theorem" data-pid="4" data-s0="563" style="position:relative;height:156.812px;margin-bottom:19.203px">
+<div class="tsr-frame" style="top:0px;left:0px;width:300px;height:156.812px;border-width:0px 2px 0px 2px" data-syn="frame"></div>
+<div class="tsr-line" data-s="10" data-e="38" data-join="space" style="top:6.406px;left:34px;width:232px;word-spacing:6px"><span class="tsr-r" data-s="10">A framed paragraph after the</span></div>
+<div class="tsr-line" data-s="39" data-e="68" data-join="none" style="top:30.406px;left:34px;width:232px;word-spacing:2.4px"><span class="tsr-r" data-s="39">float: its lines must stay in</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="68" data-e="98" data-join="space" style="top:54.406px;left:34px;width:232px;word-spacing:2.4px"><span class="tsr-r" data-s="68">side the padding and border of</span></div>
+<div class="tsr-line" data-s="99" data-e="126" data-join="space" style="top:78.406px;left:34px;width:232px;word-spacing:7.2px"><span class="tsr-r" data-s="99">the frame on the right side</span></div>
+<div class="tsr-line" data-s="127" data-e="159" data-join="space" style="top:102.406px;left:34px;width:232px;word-spacing:-0.8px"><span class="tsr-r" data-s="127">too, and never reach the frame&#39;s</span></div>
+<div class="tsr-line" data-s="160" data-e="184" style="top:126.406px;left:34px;width:232px"><span class="tsr-r" data-s="160">right edge or beyond it.</span></div>
+</div>
+<div class="tsr-para" data-role="theorem" data-pid="5" data-s0="759" style="position:relative;height:36.812px">
+<div class="tsr-frame" style="top:0px;left:0px;width:300px;height:36.812px;border-width:0px 2px 0px 2px" data-syn="frame"></div>
+<div class="tsr-line" data-s="10" data-e="16" style="top:6.406px;left:34px;width:232px"><span class="tsr-r" data-s="10">Short.</span></div>
+</div>
+</div>

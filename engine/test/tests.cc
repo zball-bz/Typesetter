@@ -13,6 +13,7 @@
 
 #include "../src/api/doc.h"
 #include "../src/layout/paginate.h"
+#include "../src/layout/grid.h"
 #include "../src/support/hash128.h"
 #include "../src/code/overlay.h"
 #include "../src/code/tokens.h"
@@ -1602,6 +1603,44 @@ static void unitRegistry(const fs::path& root) {
   CHECK(!builtin.empty() && builtin == declared && builtin.find("instance figure 2") != std::string::npos);
 }
 
+// (plan P3-11, P5-02) the grid's wrapping: greedy after its break
+// characters (by code point: code.breakAfter), a continuation indented by
+// the line's lead plus contIndent, or, inside a comment, at its content
+static void unitWrapGridLine() {
+  auto rows = [](std::string_view t, i32 cols, const GridParams& gp, std::vector<std::pair<u32, u32>> hang = {}) {
+    std::string out;
+    for (const GridRow& r : wrapGridLine(t, hang, cols, 1, 2, gp))
+      out += "[" + std::string(t.substr(r.lo, r.hi - r.lo)) + "|" + std::to_string(r.cont) + "]";
+    return out;
+  };
+  GridParams gp;
+  gp.minCols = 4;
+  CHECK(rows("alpha, beta, gamma", 12, gp) == "[alpha, beta, |0][gamma|2]");
+  CHECK(rows("short", 0, gp) == "[short|0]");  // no budget: no wrap
+  // a break character of any script, from the setting
+  GridParams cjk = gp;
+  cjk.breakAfter = "\xE3\x80\x81";  // 、
+  CHECK(rows("abc\xE3\x80\x81" "defgh\xE3\x80\x81" "ij", 10, cjk) ==
+        "[abc\xE3\x80\x81|0][defgh\xE3\x80\x81|2][ij|2]");
+  // inside a comment run: the continuation at the comment's content column
+  const std::string_view code = "x = 1;  // a comment that runs on";
+  CHECK(rows(code, 20, gp, {{8, (u32)code.size()}}) == "[x = 1;  // a |0][comment |11][that |11][runs on|11]");
+}
+
+// (plan P5-02) line numbers on code that does not wrap: its probes are
+// measured (the gutter is ch columns), so the paged sheet's gutter holds them
+static void unitCodeGutter(const fs::path& root) {
+  std::string ops, profile, src;
+  readFile(root / "test/fixtures/code/nowrap-lineno.ops", ops);
+  readFile(root / "test/profiles/golden.json", profile);
+  readFile(root / "test/fixtures/code/nowrap-lineno.tsm", src);
+  Doc doc;
+  doc.configure(profile);
+  doc.compile(src);
+  CHECK(doc.ingest((const u8*)ops.data(), ops.size()) && typesetWithMock(doc));
+  CHECK(doc.layout.gutterSu > 0);
+}
+
 // (plan P5-02; principle P1: built-ins are pre-loaded rows) equal footing,
 // per registry: a document that re-declares a built-in row under a new name
 // gets the built-in's output exactly, apart from the name. Each pair is two
@@ -2123,7 +2162,8 @@ static void unitPaginate() {
 // in-flow line of the float fixtures, in document coordinates, stays clear
 // of every float box (image and caption rows), at any measure
 static void unitFloatsNeverOverlap(const fs::path& root) {
-  for (const char* name : {"float", "stack", "float-in-list", "both-sides", "wide-float"})
+  for (const char* name : {"float", "stack", "float-in-list", "both-sides", "wide-float",
+                           "framed-after-float", "inline-after-float"})  // (plan P5-02) frames, inline runs
     for (double width : {300.0, 240.0, 180.0, 420.0}) {
       Doc doc;
       std::string ops, profile, src;
@@ -2136,9 +2176,11 @@ static void unitFloatsNeverOverlap(const fs::path& root) {
       CHECK(doc.ingest((const u8*)ops.data(), ops.size()) && typesetWithMock(doc));
       struct Box { i64 y0, y1; Su x0, x1; };
       std::vector<Box> floats;
+      std::set<std::pair<const ParaFrame*, u32>> floatUnits;
       for (const ParaFrame& f : doc.layout.paras)
         for (const VEntry& e : f.vlist) {
           if (!e.out) continue;  // a float: its unit's fragments (image, caption rows)
+          floatUnits.insert({&f, e.unit});
           Box b{INT64_MAX, INT64_MIN, INT32_MAX, INT32_MIN};
           for (const Fragment& l : f.lines) {
             if (l.unitIdx != e.unit) continue;
@@ -2150,9 +2192,11 @@ static void unitFloatsNeverOverlap(const fs::path& root) {
           floats.push_back(b);
         }
       CHECK(!floats.empty());
+      // every in-flow fragment — lines, images, caption rows, inline runs'
+      // boxes (plan P5-02: subfigures) —, not a float's own
       for (const ParaFrame& f : doc.layout.paras)
         for (const Fragment& l : f.lines) {
-          if (l.kind != FragKind::Line || l.cellIdx >= 0) continue;
+          if (floatUnits.count({&f, l.unitIdx}) || l.kind == FragKind::Frame || l.height <= 0 || l.width <= 0) continue;
           const i64 y0 = (i64)f.y + l.y, y1 = y0 + l.height;
           for (const Box& b : floats) {
             const bool meets = y0 < b.y1 && b.y0 < y1 && l.left < b.x1 && b.x0 < l.left + l.width;
@@ -2469,6 +2513,25 @@ static void unitBreakSemantics() {
     BreakResult r = brk(b, 18432, cp);
     CHECK((r.breakpoints == std::vector<u32>{37, 38}));
   }
+  {  // (plan P5-02; §7 #18) a Forbidden penalty is never taken — even when it
+     // is the only break there is and the paragraph is set overfull
+    std::vector<BItem> it(3);
+    it[0].k = ItemKind::Box; it[0].w = 15000; it[0].src = 0;
+    it[1].k = ItemKind::Penalty; it[1].tag = PenTag::Forbidden; it[1].src = 1;
+    it[2].k = ItemKind::Box; it[2].w = 15000; it[2].src = 2;
+    BreakResult r = breakItems(it, 3, ParShape{19200}, cp);
+    CHECK(!r.feasible && (r.breakpoints == std::vector<u32>{3}) && (r.overfullLines == std::vector<u32>{0}));
+  }
+  {  // (plan P5-02; §7 #26) an exact tie — [ab|c] and [a|bc], two lines of
+     // badness 0 each — is broken by the total order (fewer lines, then the
+     // later parent), never by an iteration order: [ab|c]
+    std::vector<BItem> it(7);
+    for (u32 k : {0u, 3u, 6u}) { it[k].k = ItemKind::Box; it[k].w = 1000; it[k].src = k; }
+    for (u32 k : {1u, 4u}) { it[k].k = ItemKind::Glue; it[k].order = 1; it[k].stretch = 1; it[k].src = k; }
+    for (u32 k : {2u, 5u}) { it[k].k = ItemKind::Penalty; it[k].src = k; }
+    BreakResult r = breakItems(it, 7, ParShape{2500}, cp);
+    CHECK(r.feasible && (r.breakpoints == std::vector<u32>{6, 7}));  // (a breakpoint: where the next line starts)
+  }
   {  // a Forced penalty breaks wherever it appears
     std::vector<BItem> it(5);
     it[0].k = ItemKind::Box; it[0].w = 1000; it[0].src = 0;
@@ -2668,6 +2731,8 @@ int main(int argc, char** argv) {
   unitMathGlyphs(fs::path(root));
   unitMathFontFiles(fs::path(root));
   unitEqualFooting(fs::path(root));
+  unitCodeGutter(fs::path(root));
+  unitWrapGridLine();
   unitMathIR();
   unitOpsWindow(fs::path(root));
   unitAstBytes(fs::path(root));
@@ -2872,6 +2937,10 @@ int main(int argc, char** argv) {
           std::string paged = doc.product("paged");
           goldenCompare(g("paged"), paged, update, label + ":paged");
           contractCheck(label, "paged", paged, true);
+          // (plan P5-02) a *diag* fixture goldens the paged render's own
+          // diagnostics too (page-overflow, keep-violated)
+          if (rel.stem().string().find("diag") != std::string::npos)
+            goldenCompare(g("pageddiags"), doc.product("diags"), update, label + ":pageddiags");
         }
         for (const Diag& d : doc.diags.items)  // the writer saw a serializer defect
           if (std::string_view(d.code) == "render-attr") {

@@ -1,0 +1,35 @@
+lower v1 abi 3d3ccfbb docEnd 396 holes 4 module 11d730804ace6bc7
+piece 0 hole 0 js [128,165)
+piece 1 hole 1 js [167,205)
+piece 2 hole 2 js [207,246)
+piece 3 hole 3 js [248,287)
+block 0 content [0,131)
+  CALL para [0,131)
+    TEXT "Term names against generated anchors (plan P5-02): a term named like a heading's anchor, and one named like a note's, take neither." [0,131)
+block 1 content [133,187) user framed holes 0..1
+  CALL para [133,187)
+    HOLE 0 [133,187)
+      TEXT "A term whose name is a heading's anchor." [146,186)
+block 2 content [189,196)
+  CALL heading [189,196) level=1 label=null
+    TEXT "Intro" [191,196)
+block 3 content [198,248)
+  CALL para [198,248)
+    TEXT "Text with a note" [198,214)
+    CALL note [214,223)
+      TEXT "a note" [216,222)
+    TEXT " and a reference to " [224,242) raw=0:0,1:0,20:18
+    CALL ref [243,247) target="h-1"
+    TEXT "." [247,248)
+block 4 content [250,302) user framed holes 1..2
+  CALL para [250,302)
+    HOLE 1 [250,302)
+      TEXT "A term whose name is a note's anchor." [264,301)
+block 5 content [304,333) user framed holes 2..3
+  CALL para [304,333)
+    HOLE 2 [304,333)
+      TEXT "A first term." [319,332)
+block 6 content [335,395) user framed holes 3..4
+  CALL para [335,395)
+    HOLE 3 [335,395)
+      TEXT "The same name again: the first one keeps it." [350,394)

@@ -1,0 +1,28 @@
+doc @[0,396)
+  para @[0,131)
+    text @[0,131) str="Term names against generated anchors (plan P5-02): a term named like a heading's anchor, and one named like a note's, take neither."
+  para @[133,187)
+    splice @[133,187) expr="term(\"h-1\")"
+      arg @[146,186)
+        text @[146,186) str="A term whose name is a heading's anchor."
+  heading @[189,196) level=1
+    text @[191,196) str="Intro"
+  para @[198,248)
+    text @[198,214) str="Text with a note"
+    note @[214,223)
+      text @[216,222) str="a note"
+    text @[224,242) str=" and a reference to "
+    ref @[243,247) target="h-1"
+    text @[247,248) str="."
+  para @[250,302)
+    splice @[250,302) expr="term(\"fn-1\")"
+      arg @[264,301)
+        text @[264,301) str="A term whose name is a note's anchor."
+  para @[304,333)
+    splice @[304,333) expr="term(\"lemma\")"
+      arg @[319,332)
+        text @[319,332) str="A first term."
+  para @[335,395)
+    splice @[335,395) expr="term(\"lemma\")"
+      arg @[350,394)
+        text @[350,394) str="The same name again: the first one keeps it."

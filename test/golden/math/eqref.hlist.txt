@@ -37,7 +37,7 @@ top pid=0 units=1
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
 top pid=1 units=1
- unit math indent=0su anchor="emc" w=3804su asc=967su desc=19su
+ unit math indent=0su anchor="emc" w=3804su asc=967su desc=19su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[50,69)
@@ -88,7 +88,7 @@ top pid=2 units=1
   run r4 blank-bearing CJK
   run r5 letter-spaced CJK
 top pid=3 units=1
- unit math indent=0su anchor="gauss" w=7788su asc=1458su desc=941su
+ unit math indent=0su anchor="gauss" w=7788su asc=1458su desc=941su centered
   cell 0
    ju=257su
    box OpenN "(2)" w=1537su r0 @[122,170)

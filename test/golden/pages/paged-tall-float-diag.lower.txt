@@ -1,0 +1,17 @@
+lower v1 abi 3d3ccfbb docEnd 1237 holes 1 module 5a358db7853dcdd9
+piece 0 hole 0 js [103,344)
+block 0 stmt [0,234) user framed holes 0..1
+  STMT 0
+block 1 content [236,255)
+  CALL heading [236,255) level=1 label=null
+    TEXT "A tall page float" [238,255)
+block 2 content [257,296)
+  CALL para [257,296)
+    TEXT "Filler paragraph one, before the float." [257,296)
+block 3 content [298,1184) async
+  REGION async "topnote" [298,1184)
+    CALL para [308,1174)
+      TEXT "A long line of the tall float, number 1, that wraps across the measure.\nA long line of the tall float, number 2, that wraps across the measure.\nA long line of the tall float, number 3, that wraps across the measure.\nA long line of the tall float, number 4, that wraps across the measure.\nA long line of the tall float, number 5, that wraps across the measure.\nA long line of the tall float, number 6, that wraps across the measure.\nA long line of the tall float, number 7, that wraps across the measure.\nA long line of the tall float, number 8, that wraps across the measure.\nA long line of the tall float, number 9, that wraps across the measure.\nA long line of the tall float, number 10, that wraps across the measure.\nA long line of the tall float, number 11, that wraps across the measure.\nA long line of the tall float, number 12, that wraps across the measure." [308,1174)
+block 4 content [1186,1236)
+  CALL para [1186,1236)
+    TEXT "The last paragraph, after the float in the source." [1186,1236)

@@ -9,7 +9,7 @@ block pid=2 s0=106 h=4301su
     words "Inner heading"
   line y=2765su left=0su w=19200su base=819su
     words "Body text of the aside."
-block pid=3 s0=193 h=4301su
+block pid=3 s0=188 h=4301su
   rule y=768su left=0su w=19200su base=768su id="rule-c"
   line y=2765su left=0su w=19200su base=819su
     words "After the rule."

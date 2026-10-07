@@ -1,0 +1,4 @@
+doc @[0,177)
+  para @[0,90)
+    text @[0,90) str="Line numbers on code that does not wrap (plan P5-02): the gutter is measured all the same."
+  codeblock @[92,176) lang="js" body="const answer = 42;\nfunction f(x) { return x * 2; }"

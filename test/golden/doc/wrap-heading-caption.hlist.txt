@@ -34,7 +34,7 @@ top pid=0 units=1
   box Alpha "measure" w=5736su r0 @[73,80)
   run r0 plain BOLD x1.60
 top pid=1 units=2
- unit img indent=0su anchor="fig-wide" intrinsic=300x100px
+ unit img indent=0su anchor="fig-wide" intrinsic=300x100px centered
  unit text indent=0su single-center
   ju=257su
   box Ideo "图" w=1025su wt=0.6 r0 @[163,271)

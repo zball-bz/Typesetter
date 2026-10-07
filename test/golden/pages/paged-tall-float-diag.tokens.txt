@@ -1,0 +1,5 @@
+[0,234) function "#{\n  // (plan P5-02) a top float taller than a sheet: a sheet of its own,\n  // overflowing visibly with a warning; the flow goes on after it\n  $.set({role: 'topnote'}, {place: {float: 'top'}, box: {border: '1px', padding: '0.2em'}})\n}"
+[236,237) keyword "="
+[238,255) function "A tall page float"
+[298,307) function "#!topnote"
+[1175,1184) function "#topnote!"

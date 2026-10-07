@@ -1,0 +1,66 @@
+top pid=0 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "Dis" w=1537su r0 @[58,61)
+  disc pen=0.7 w=0su pre="-" 513su kern="sp" r0 @[61,61)
+  box Alpha "play" w=2049su r0 @[61,65)
+  glue word w=257su x=1 st=257su kern="y f" src r0 @[65,66)
+  box Alpha "for" w=1537su r0 @[66,69)
+  disc pen=0.7 w=0su pre="-" 513su kern="rm" r0 @[69,69)
+  box Alpha "mu" w=1025su r0 @[69,71)
+  disc pen=0.7 w=0su pre="-" 513su kern="ul" r0 @[71,71)
+  box Alpha "las" w=1537su r0 @[71,74)
+  glue word w=257su x=1 st=257su kern="s f" src r0 @[74,75)
+  box Alpha "flush" w=2561su r0 @[75,80)
+  glue word w=257su x=1 st=257su kern="h l" src r0 @[80,81)
+  box Alpha "left" w=2049su r0 @[81,85)
+  glue word w=257su x=1 st=257su kern="t (" src r0 @[85,86)
+  box OpenN "(plan" w=2561su r0 @[86,91)
+  glue word w=257su x=1 st=257su kern="n P" src r0 @[91,92)
+  box Alpha "P5-02):" w=3585su r0 @[92,99)
+  glue word w=257su x=1 st=257su kern=": p" src r0 @[99,100)
+  box Alpha "par.align" w=4609su r0 @[100,109)
+  glue word w=257su x=1 st=257su kern="n p" src r0 @[109,110)
+  box Alpha "places" w=3073su r0 @[110,116)
+  glue word w=257su x=1 st=257su kern="s a" src r0 @[116,117)
+  box Alpha "a" w=513su r0 @[117,118)
+  glue word w=257su x=1 st=257su kern="a f" src r0 @[118,119)
+  box Alpha "for" w=1537su r0 @[119,122)
+  disc pen=0.7 w=0su pre="-" 513su kern="rm" r0 @[122,122)
+  box Alpha "mu" w=1025su r0 @[122,124)
+  disc pen=0.7 w=0su pre="-" 513su kern="ul" r0 @[124,124)
+  box Alpha "la's" w=2049su r0 @[124,128)
+  glue word w=257su x=1 st=257su kern="s r" src r0 @[128,129)
+  box Alpha "rows" w=2049su r0 @[129,133)
+  glue word w=257su x=1 st=257su kern="s a" src r0 @[133,134)
+  box Alpha "as" w=1025su r0 @[134,136)
+  glue word w=257su x=1 st=257su kern="s i" src r0 @[136,137)
+  box Alpha "it" w=1025su r0 @[137,139)
+  glue word w=257su x=1 st=257su kern="t p" src r0 @[139,140)
+  box Alpha "places" w=3073su r0 @[140,146)
+  glue word w=257su x=1 st=257su kern="s a" src r0 @[146,147)
+  box Alpha "a" w=513su r0 @[147,148)
+  glue word w=257su x=1 st=257su kern="a p" src r0 @[148,149)
+  box Alpha "para" w=2049su r0 @[149,153)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[153,153)
+  box Alpha "graph's" w=3585su r0 @[153,160)
+  glue word w=257su x=1 st=257su kern="s l" src r0 @[160,161)
+  box Alpha "lines." w=3073su r0 @[161,167)
+  run r0 plain
+top pid=1 units=1
+ unit math indent=0su w=4850su asc=951su desc=76su
+top pid=2 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "and" w=1537su r0 @[191,194)
+  glue word w=257su x=1 st=257su kern="d a" src r0 @[194,195)
+  box Alpha "a" w=513su r0 @[195,196)
+  glue word w=257su x=1 st=257su kern="a s" src r0 @[196,197)
+  box Alpha "sec" w=1537su r0 @[197,200)
+  disc pen=0.7 w=0su pre="-" 513su kern="co" r0 @[200,200)
+  box Alpha "ond" w=1537su r0 @[200,203)
+  glue word w=257su x=1 st=257su kern="d o" src r0 @[203,204)
+  box Alpha "one," w=2049su r0 @[204,208)
+  run r0 plain
+top pid=3 units=1
+ unit math indent=0su w=7536su asc=1516su desc=1146su

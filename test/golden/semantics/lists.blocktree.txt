@@ -25,7 +25,7 @@ top pid=3 leaves=2
 top pid=4 leaves=2
   stack root gap=1/1 @[635,763)
     stack figure anchor="fig-a" @[635,763)
-      replaced image image unit=0 ragged keep-with-next carry="fig-a" @[635,763)
+      replaced image image unit=0 centered keep-with-next carry="fig-a" @[635,763)
       paragraph caption unit=1 single-center @[707,754)
 top pid=5 leaves=4
   stack root gap=1/1 @[765,823)

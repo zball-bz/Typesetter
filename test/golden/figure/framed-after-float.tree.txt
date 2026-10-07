@@ -1,0 +1,20 @@
+doc @[114,785) [base]
+  para @[114,180) [base]
+    text @[114,180) [base] str="A paragraph before the float, set at the full measure of the page."
+  group @[182,300) [base] role="figure" label="fig-t"
+    image @[182,300) [base] src="photos/tower.jpg" alt="t" w=400 h=100 scale=0.2 side="right"
+    para @[286,291) [base] role="caption" slot="caption"
+      styled @[286,291) [BOLD] role="caption-label"
+        text @[286,291) [BOLD] str="图 1："
+      text @[286,291) [base] str="Tiny."
+  para @[302,455) [base]
+    text @[302,455) [base] str="Text beside the float that runs long enough to pass the bottom of the float box and return to the full measure afterwards, so the map is not empty below."
+  para @[457,561) [base]
+    text @[457,561) [base] str="Another paragraph well below the float, at the full measure, padding the page so the float is behind us."
+  group @[563,757) [base] role="theorem"
+    para @[573,747) [base]
+      text @[573,747) [base] str="A framed paragraph after the float: its lines must stay inside the padding and border of the frame on the right side too, and never reach the frame's right edge or beyond it."
+  group @[759,785) [base] role="theorem"
+    para @[769,775) [base]
+      text @[769,775) [base] str="Short."
+decl element name="theorem" flow=0 @[0,112) ext.row="{}"

@@ -1,0 +1,15 @@
+doc h=23732su
+para pid=0 y=0su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last items=[0,13) @[0,29)
+para pid=1 y=2765su w=19200su h=0su
+  L0 img y=0su left=11520su w=7680su h=5760su
+  L1 cell=0 y=5760su left=11520su w=7680su items=[0,9)
+  L2 cell=0 y=7296su left=11520su w=7680su items=[10,11)
+para pid=2 y=2765su w=19200su h=20967su
+  L0 img y=10061su left=1568su w=6400su h=3200su
+  L1 y=14490su left=449su w=8639su dw=1248su dc=0su join=space items=[0,5) @[299,313)
+  L2 y=16026su left=449su w=8639su dw=0su dc=0su join=para items=[6,7) @[308,313)
+  L3 img y=10061su left=11231su w=6400su h=3840su
+  L4 y=15130su left=10112su w=8639su dw=992su dc=0su join=space items=[0,5) @[426,441)
+  L5 y=16666su left=10112su w=8639su dw=0su dc=0su join=para items=[6,7) @[436,441)
+  L6 y=19431su left=2816su w=16384su dw=0su dc=0su join=last items=[0,15) @[451,474)

@@ -1,0 +1,1 @@
+{"headings":[],"regions":[{"name":"figure","label":"fig-t","span":[182,300]},{"name":"theorem","label":null,"span":[563,757]},{"name":"theorem","label":null,"span":[759,785]}],"fences":[],"labels":[{"id":"fig-t","rule":"region","span":[182,285]}],"diagnostics":[]}

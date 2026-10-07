@@ -1,0 +1,22 @@
+#{
+  $.set({role: 'theorem'}, {box: {padding: '0.4em 2em', border: '0 2px 0 2px'}})
+  $.element('theorem', {})
+}
+
+A paragraph before the float, set at the full measure of the page.
+
+#!figure(src: "photos/tower.jpg", alt: "t", w: 400, h: 100, scale: 0.2, float: "right", label: "fig-t")
+Tiny.
+#figure!
+
+Text beside the float that runs long enough to pass the bottom of the float box and return to the full measure afterwards, so the map is not empty below.
+
+Another paragraph well below the float, at the full measure, padding the page so the float is behind us.
+
+#!theorem
+A framed paragraph after the float: its lines must stay inside the padding and border of the frame on the right side too, and never reach the frame's right edge or beyond it.
+#theorem!
+
+#!theorem
+Short.
+#theorem!

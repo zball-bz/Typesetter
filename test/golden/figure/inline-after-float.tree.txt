@@ -1,0 +1,26 @@
+doc @[0,483) [base]
+  para @[0,29) [base]
+    text @[0,29) [base] str="A paragraph before the float."
+  group @[31,166) [base] role="figure" label="fig-tower"
+    image @[31,166) [base] src="photos/tower.jpg" alt="tower" w=400 h=300 scale=0.4 side="right"
+    para @[143,157) [base] role="caption" slot="caption"
+      styled @[143,157) [BOLD] role="caption-label"
+        text @[143,157) [BOLD] str="图 1："
+      text @[143,157) [base] str="A right float."
+  group @[168,483) [base] role="figure" label="fig-pair"
+    group @[196,322) [base] role="figure" label="fig-a"
+      image @[196,322) [base] src="a.png" w=100 h=50
+      para @[299,313) [base] role="caption" slot="caption"
+        styled @[299,313) [BOLD] role="caption-label"
+          text @[299,313) [BOLD] str="2(a) "
+        text @[299,313) [base] str="The left view."
+    group @[323,450) [base] role="figure" label="fig-b"
+      image @[323,450) [base] src="b.png" w=100 h=60
+      para @[426,441) [base] role="caption" slot="caption"
+        styled @[426,441) [BOLD] role="caption-label"
+          text @[426,441) [BOLD] str="2(b) "
+        text @[426,441) [base] str="The right view."
+    para @[451,474) [base] role="caption" slot="caption"
+      styled @[451,474) [BOLD] role="caption-label"
+        text @[451,474) [BOLD] str="图 2："
+      text @[451,474) [base] str="Two views of one thing."

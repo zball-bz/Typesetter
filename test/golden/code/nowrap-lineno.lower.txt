@@ -1,0 +1,7 @@
+lower v1 abi 3d3ccfbb docEnd 177 holes 1 module 0f2aac341d05cb31
+piece 0 hole 0 js [103,135)
+block 0 content [0,90)
+  CALL para [0,90)
+    TEXT "Line numbers on code that does not wrap (plan P5-02): the gutter is measured all the same." [0,90)
+block 1 content [92,176) user framed async holes 0..1
+  FENCE async "js" args=hole 0 body="const answer = 42;\nfunction f(x) { return x * 2; }" at=[122,172) lines=null [92,176)

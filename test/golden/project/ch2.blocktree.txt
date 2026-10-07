@@ -6,7 +6,7 @@ top pid=1 leaves=1
     paragraph heading unit=0 ragged nohyphen keep-with-next anchor="sec-two" @[31,43)
 top pid=2 leaves=1
   stack root gap=1/1 @[55,71)
-    replaced math math unit=0 ragged anchor="eq-b" @[55,71)
+    replaced math math unit=0 centered anchor="eq-b" @[55,71)
 top pid=3 leaves=1
   stack root gap=1/1 @[73,197)
     paragraph para unit=0 @[73,197)

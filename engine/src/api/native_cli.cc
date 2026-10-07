@@ -135,6 +135,10 @@ int main(int argc, char** argv) {
     return 2;
   }
   Stage need;
+  // (plan P5-02) pageddiags: the diagnostics after the paged render (the
+  // golden runner's, for a *diag* fixture with a paged product)
+  const bool pagedDiags = stage == "pageddiags";
+  if (pagedDiags) stage = "paged";
   if (!Doc::productStage(stage, need)) {
     fprintf(stderr, "unknown product %s\n", stage.c_str());
     return 2;
@@ -253,6 +257,7 @@ int main(int argc, char** argv) {
     }
   }
   std::string out = doc.product(stage);
+  if (pagedDiags) out = doc.product("diags");
   fwrite(out.data(), 1, out.size(), stdout);
   return 0;
 }

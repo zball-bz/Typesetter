@@ -42,7 +42,7 @@ top pid=8 leaves=1
     grid code unit=0 ragged nohyphen @[273,300)
 top pid=9 leaves=1
   stack root gap=1/1 @[302,315)
-    replaced math math unit=0 ragged @[302,315)
+    replaced math math unit=0 centered @[302,315)
 top pid=10 leaves=1
   stack root gap=1/1 @[317,320)
     replaced rule rule unit=0 @[317,320)

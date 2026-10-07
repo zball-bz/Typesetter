@@ -122,6 +122,8 @@ struct LayoutSettings {
   const double& lineHeight;  // doc.leading
   const double& paraSpacingEm;  // doc.parGap
   const double& codeScale;  // code.scale
+  const std::string& verbatimBreakAfter;  // code.breakAfter
+  const bool& verbatimCommentAware;  // code.commentAware
   const int& verbatimMinCols;  // code.minCols
   const double& verbatimSnapTolerance;  // code.snapTolerance
   const int& verbatimSnapMaxQ;  // code.snapMaxQ

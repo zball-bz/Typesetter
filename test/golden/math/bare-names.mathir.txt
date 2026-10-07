@@ -1,0 +1,38 @@
+inline pid=1 "p dot q"
+  run [0,7)
+    sym U+0070 ord [0,1)
+    sym U+22C5 bin [2,5)
+    sym U+0071 ord [6,7)
+inline pid=1 "hat(x) + hat"
+  run [0,12)
+    call accent (hat) [0,7)
+      run [4,5)
+        sym U+0078 ord [4,5)
+      sym U+02C6 ord [0,7)
+    sym U+002B bin [7,8)
+    sym U+02C6 ord [9,12)
+inline pid=1 "bar(y) = bar"
+  run [0,12)
+    call rule (bar) [0,7)
+      run [4,5)
+        sym U+0079 ord [4,5)
+      text "over" ord [0,7)
+    sym U+003D rel [7,8)
+    text "bar" op textfont [9,12)
+inline pid=1 "vec(v) times vec"
+  run [0,16)
+    call accent (vec) [0,7)
+      run [4,5)
+        sym U+0076 ord [4,5)
+      sym U+20D7 ord [0,7)
+    sym U+00D7 bin [7,12)
+    text "vec" op textfont [13,16)
+inline pid=1 "sqrt x"
+  run [0,6)
+    text "sqrt" op textfont [0,4)
+    sym U+0078 ord [5,6)
+inline pid=1 "sqrt(x)"
+  run [0,7)
+    call radical (sqrt) [0,7)
+      run [5,6)
+        sym U+0078 ord [5,6)

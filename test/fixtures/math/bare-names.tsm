@@ -1,0 +1,3 @@
+Bare names stay symbols (plan P1-24; §7 #23): a function or accent name without its parentheses is the symbol it names.
+
+$p dot q$, $hat(x) + hat$, $bar(y) = bar$, $vec(v) times vec$ and $sqrt x$ beside $sqrt(x)$.

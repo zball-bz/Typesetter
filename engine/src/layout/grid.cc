@@ -1,5 +1,7 @@
 #include "grid.h"
 
+#include <algorithm>
+
 #include "../shape/textrules.h"
 
 namespace tsr {
@@ -12,7 +14,10 @@ std::vector<GridRow> wrapGridLine(std::string_view joined, const std::vector<std
     return rows;
   }
   const i32 minCols = gp.minCols;
-  auto breakAfter = [&](u32 cp) { return cp < 0x80 && gp.breakAfter.find((char)cp) != std::string_view::npos; };
+  // (plan P5-02) its break characters, by code point (any script's)
+  std::vector<u32> breakCps;
+  for (u32 i = 0; i < gp.breakAfter.size();) breakCps.push_back(utf8Next(gp.breakAfter, i));
+  auto breakAfter = [&](u32 cp) { return std::find(breakCps.begin(), breakCps.end(), cp) != breakCps.end(); };
   // hanging base: the logical line's own leading whitespace columns
   i32 leadChars = 0;
   while ((size_t)leadChars < joined.size() && (joined[leadChars] == ' ' || joined[leadChars] == '\t')) leadChars++;
@@ -30,15 +35,16 @@ std::vector<GridRow> wrapGridLine(std::string_view joined, const std::vector<std
         u32 cp2 = utf8Next(joined, pb);
         col += eawWide(cp2) ? cjkCols : latinAtoms;
       }
-      // lead-in: opening punctuation streak + one space
+      // lead-in: its opening marks (// # -- ；…: neither a word's characters
+      // nor a space, any script's) and one space, in columns
       u32 q2 = cs;
       i32 lead = 0;
-      while (q2 < ce && joined[q2] != ' ' &&
-             !((joined[q2] >= 'a' && joined[q2] <= 'z') || (joined[q2] >= 'A' && joined[q2] <= 'Z') ||
-               (joined[q2] >= '0' && joined[q2] <= '9')) &&
-             (u8)joined[q2] < 0x80) {
-        q2++;
-        lead++;
+      while (q2 < ce) {
+        u32 nx = q2;
+        const u32 cp2 = utf8Next(joined, nx);
+        if (cp2 == ' ' || isWordChar(cp2) || isIdeo(cp2)) break;
+        q2 = nx;
+        lead += eawWide(cp2) ? cjkCols / latinAtoms : 1;
       }
       if (q2 < ce && joined[q2] == ' ') lead++;
       cc = col / latinAtoms + lead;

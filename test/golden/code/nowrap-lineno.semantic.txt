@@ -1,0 +1,5 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="90">Line numbers on code that does not wrap (plan P5-02): the gutter is measured all the same.</p>
+<pre data-pid="1" data-s="92" data-e="176"><code class="language-js">const answer = 42;
+function f(x) { return x * 2; }</code></pre>
+</div>

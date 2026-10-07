@@ -42,6 +42,8 @@ struct Config {
   int verbatimContIndent = 2;  // code.contIndent
   double sidebarFrac = 0.4;  // code.sidecarFrac
   bool verbatimSnapKerning = false;  // code.snapKerning
+  std::string verbatimBreakAfter = " \t,;)}]>";  // code.breakAfter
+  bool verbatimCommentAware = true;  // code.commentAware
   int verbatimMinCols = 8;  // code.minCols
   double verbatimSnapTolerance = 0.1;  // code.snapTolerance
   int verbatimSnapMaxQ = 7;  // code.snapMaxQ

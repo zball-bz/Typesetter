@@ -878,6 +878,26 @@
       ],
       "legacy": "verbatimSnapKerning"
     },
+    "code.breakAfter": {
+      "$comment": "(plan P5-02; finding code-wrap-in-layout) The characters a code block's grid may wrap after (by code point: CJK text also wraps between any two characters, by kinsoku). Policy data, not a literal.",
+      "field": "verbatimBreakAfter",
+      "dom": "str",
+      "def": " \t,;)}]>",
+      "prec": "HostDefault",
+      "affects": [
+        "Layout"
+      ]
+    },
+    "code.commentAware": {
+      "$comment": "(plan P5-02) A break inside a hanging run (code.hang content: a comment) continues at the comment's content column (verbatim-design §4).",
+      "field": "verbatimCommentAware",
+      "dom": "bool",
+      "def": true,
+      "prec": "HostDefault",
+      "affects": [
+        "Layout"
+      ]
+    },
     "code.minCols": {
       "$comment": "The fewest columns a code block's grid keeps (verbatim-design §2; plan P3-02: it was a literal 8).",
       "field": "verbatimMinCols",

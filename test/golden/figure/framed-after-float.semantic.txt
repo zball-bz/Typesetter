@@ -1,0 +1,15 @@
+<div class="tsr-flow">
+<p data-pid="0" data-tsr-env="fd943ea95fe038cc" data-s="114" data-e="180">A paragraph before the float, set at the full measure of the page.</p>
+<figure data-role="figure" data-pid="1" data-tsr-env="fd943ea95fe038cc" data-s="182" data-e="300" id="tsr-fig-t">
+<img data-s="182" data-e="300" src="photos/tower.jpg" alt="t" style="max-width:100%">
+<figcaption><strong>图 1：</strong>Tiny.</figcaption>
+</figure>
+<p data-pid="2" data-tsr-env="fd943ea95fe038cc" data-s="302" data-e="455">Text beside the float that runs long enough to pass the bottom of the float box and return to the full measure afterwards, so the map is not empty below.</p>
+<p data-pid="3" data-tsr-env="fd943ea95fe038cc" data-s="457" data-e="561">Another paragraph well below the float, at the full measure, padding the page so the float is behind us.</p>
+<div data-role="theorem" data-pid="4" data-tsr-env="fd943ea95fe038cc" data-s="563" data-e="757">
+<p data-s="573" data-e="747">A framed paragraph after the float: its lines must stay inside the padding and border of the frame on the right side too, and never reach the frame&#39;s right edge or beyond it.</p>
+</div>
+<div data-role="theorem" data-pid="5" data-tsr-env="fd943ea95fe038cc" data-s="759" data-e="785">
+<p data-s="769" data-e="775">Short.</p>
+</div>
+</div>

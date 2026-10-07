@@ -35,7 +35,7 @@ top pid=0 units=3
   glue word w=257su x=1 st=257su kern="s o" src r0 @[59,60)
   box Alpha "own:" w=2049su r0 @[60,64)
   run r0 plain
- unit math indent=0su anchor="eq-r" w=3697su asc=967su desc=19su
+ unit math indent=0su anchor="eq-r" w=3697su asc=967su desc=19su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[66,86)

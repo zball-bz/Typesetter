@@ -15,7 +15,7 @@ top pid=1 units=1
   box Alpha "section" w=4840su r0 @[36,43)
   run r0 plain BOLD x1.35
 top pid=2 units=1
- unit math indent=0su anchor="eq-b" w=2488su asc=479su desc=239su
+ unit math indent=0su anchor="eq-b" w=2488su asc=479su desc=239su centered
   cell 0
    ju=257su
    box OpenN "(2)" w=1537su r0 @[55,71)

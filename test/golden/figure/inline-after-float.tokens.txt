@@ -1,0 +1,8 @@
+[31,142) function "#!figure(src: \"photos/tower.jpg\", alt: \"tower\", w: 400, h: 300, scale: 0.4, float: \"right\", label: \"fig-tower\")"
+[158,166) function "#figure!"
+[168,195) function "#!figure(label: \"fig-pair\")"
+[196,298) function "#!figure(src: \"a.png\", w: 100, h: 50, label: \"fig-a\", style: {place: {float: \"inline\", width: \"45%\"}})"
+[314,322) function "#figure!"
+[323,425) function "#!figure(src: \"b.png\", w: 100, h: 60, label: \"fig-b\", style: {place: {float: \"inline\", width: \"45%\"}})"
+[442,450) function "#figure!"
+[475,483) function "#figure!"

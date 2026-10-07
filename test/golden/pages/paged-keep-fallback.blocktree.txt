@@ -4,7 +4,7 @@ top pid=0 leaves=1
 top pid=1 leaves=2
   stack root gap=1/1 @[32,158)
     stack figure anchor="fig-tall" @[32,158)
-      replaced image image unit=0 ragged keep-with-next carry="fig-tall" @[32,158)
+      replaced image image unit=0 centered keep-with-next carry="fig-tall" @[32,158)
       paragraph caption unit=1 single-center @[113,149)
 top pid=2 leaves=1
   stack root gap=1/1 @[160,182)

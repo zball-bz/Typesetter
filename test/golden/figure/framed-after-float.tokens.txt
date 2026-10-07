@@ -1,0 +1,7 @@
+[0,112) function "#{\n  $.set({role: 'theorem'}, {box: {padding: '0.4em 2em', border: '0 2px 0 2px'}})\n  $.element('theorem', {})\n}"
+[182,285) function "#!figure(src: \"photos/tower.jpg\", alt: \"t\", w: 400, h: 100, scale: 0.2, float: \"right\", label: \"fig-t\")"
+[292,300) function "#figure!"
+[563,572) function "#!theorem"
+[748,757) function "#theorem!"
+[759,768) function "#!theorem"
+[776,785) function "#theorem!"

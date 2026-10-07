@@ -1,0 +1,18 @@
+lower v1 abi 3d3ccfbb docEnd 242 holes 1 module 0251e518e4424489
+piece 0 hole 0 js [103,166)
+block 0 stmt [0,56) user framed holes 0..1
+  STMT 0
+block 1 content [58,167)
+  CALL para [58,167)
+    TEXT "Display formulas flush left (plan P5-02): par.align places a formula's rows as it places a paragraph's lines." [58,167)
+block 2 content [169,189)
+  CALL para [169,189)
+    CALL math [169,189) display=true
+      CALL mathsrc [171,187) src="e^(i pi) + 1 = 0"
+block 3 content [191,208)
+  CALL para [191,208)
+    TEXT "and a second one," [191,208)
+block 4 content [210,241)
+  CALL para [210,241)
+    CALL math [210,241) display=true
+      CALL mathsrc [212,239) src="sum_(k=1)^n k = (n (n+1))/2"

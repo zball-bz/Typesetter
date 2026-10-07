@@ -1,0 +1,54 @@
+inline pid=1 "p dot q"
+hbox Ord w=1115 asc=481 desc=243
+  glyph "p" Ord w=603 asc=481 desc=243 px=16
+  glue w=228 @(603,0)
+  glyph "⋅" Bin w=284 asc=325 desc=-187 px=16 @(831,0)
+inline pid=1 ""
+hbox Ord w=620 asc=516 desc=249
+  glyph "q" Ord w=620 asc=516 desc=249 px=16
+inline pid=1 "hat(x) + hat"
+hbox Ord w=1540 asc=805 desc=76
+  hbox Ord w=539 asc=805 desc=12
+    hbox Ord w=539 asc=475 desc=12
+      glyph "x" Ord w=539 asc=475 desc=12 px=16
+    glyph "ˆ" Ord w=511 asc=753 desc=-463 px=16 @(15,52)
+  glue w=228 @(539,0)
+  glyph "+" Bin w=773 asc=600 desc=76 px=16 @(767,0)
+inline pid=1 ""
+hbox Ord w=511 asc=753 desc=0
+  glyph "ˆ" Ord w=511 asc=753 desc=-463 px=16
+inline pid=1 "bar(y) = bar"
+hbox Ord w=607 asc=684 desc=239
+  hbox Ord w=607 asc=684 desc=239
+    hbox Ord w=607 asc=479 desc=239
+      glyph "y" Ord w=607 asc=479 desc=239 px=16
+    rule w=607 h=41 @(0,602)
+inline pid=1 ""
+hbox Ord w=774 asc=377 desc=0
+  glyph "=" Rel w=774 asc=377 desc=-135 px=16
+inline pid=1 ""
+hbox Ord w=1536 asc=819 desc=205
+  glyph "bar" Op w=1536 asc=819 desc=205 px=16
+inline pid=1 "vec(v) times vec"
+hbox Ord w=1508 asc=825 desc=11
+  hbox Ord w=507 asc=825 desc=11
+    hbox Ord w=507 asc=480 desc=11
+      glyph "v" Ord w=507 asc=480 desc=11 px=16
+    glyph "⃗" Ord w=0 asc=768 desc=-490 px=16 @(484,57)
+  glue w=228 @(507,0)
+  glyph "×" Bin w=773 asc=517 desc=-7 px=16 @(735,0)
+inline pid=1 ""
+hbox Ord w=1536 asc=819 desc=205
+  glyph "vec" Op w=1536 asc=819 desc=205 px=16
+inline pid=1 "sqrt x"
+hbox Ord w=2758 asc=819 desc=205
+  glyph "sqrt" Op w=2048 asc=819 desc=205 px=16
+  glue w=171 @(2048,0)
+  glyph "x" Ord w=539 asc=475 desc=12 px=16 @(2219,0)
+inline pid=1 "sqrt(x)"
+hbox Ord w=1384 asc=821 desc=225
+  hbox Ord w=1384 asc=821 desc=225
+    glyph "√" Ord w=845 asc=799 desc=206 px=16 @(0,-19)
+    rule w=539 h=41 @(845,739)
+    hbox Ord w=539 asc=475 desc=12 @(845,0)
+      glyph "x" Ord w=539 asc=475 desc=12 px=16

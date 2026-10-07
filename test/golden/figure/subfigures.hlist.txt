@@ -74,7 +74,7 @@ top pid=0 units=1
   box Alpha "row." w=2049su r0 @[150,154)
   run r0 plain
 top pid=1 units=5
- unit img indent=0su anchor="fig-a" intrinsic=100x50px
+ unit img indent=0su anchor="fig-a" intrinsic=100x50px centered
  unit text indent=0su single-center
   ju=257su
   box Digit "1(a)" w=2049su r0 @[287,301)
@@ -86,7 +86,7 @@ top pid=1 units=5
   box Alpha "view." w=2561su r1 @[296,301)
   run r0 plain BOLD
   run r1 plain
- unit img indent=0su anchor="fig-b" intrinsic=100x60px
+ unit img indent=0su anchor="fig-b" intrinsic=100x60px centered
  unit text indent=0su single-center
   ju=257su
   box Digit "1(b)" w=2049su r0 @[414,465)

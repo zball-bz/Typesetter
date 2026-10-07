@@ -101,4 +101,4 @@ top pid=0 units=1
   run r13 object
   run r14 plain
 top pid=1 units=1
- unit math indent=0su w=12548su asc=974su desc=941su
+ unit math indent=0su w=12548su asc=974su desc=941su centered

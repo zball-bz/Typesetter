@@ -1,0 +1,14 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+const {term} = __rt.std;
+return (async () => {
+const __h = [
+(__k) => (term(...["h-1"], ...__k())),
+(__k) => (term(...["fn-1"], ...__k())),
+(__k) => (term(...["lemma"], ...__k())),
+(__k) => (term(...["lemma"], ...__k())),
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

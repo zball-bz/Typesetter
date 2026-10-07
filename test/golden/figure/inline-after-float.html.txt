@@ -1,0 +1,19 @@
+<div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-line" data-s="0" data-e="29" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A paragraph before the float.</span></div>
+</div>
+<div class="tsr-para" data-role="figure" data-pid="1" data-s0="31" style="position:relative;height:0px;margin-bottom:0px">
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-tower" data-s="0" data-e="135" src="photos/tower.jpg" alt="tower" style="top:0px;left:180px;width:120px;height:90px">
+<div class="tsr-line" data-s="112" data-e="126" data-join="space" data-track="caption" style="top:90px;left:180px;width:120px;word-spacing:12px"><span class="tsr-r tsr-b tsr-cjk" data-s="112">图</span><span class="tsr-r tsr-b" data-s="112"> 1</span><span class="tsr-r tsr-b tsr-cjk" data-s="112">：</span><span class="tsr-r" data-s="112">A right</span></div>
+<div class="tsr-line" data-s="120" data-e="126" data-track="caption" style="top:114px;left:180px;width:120px"><span class="tsr-r" data-s="120">float.</span></div>
+</div>
+<div class="tsr-para" data-role="figure" data-pid="2" data-s0="196" style="position:relative;height:327.609px">
+<span id="tsr-fig-pair" data-syn="anchor"></span><img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-a" data-s="0" data-e="126" src="a.png" alt="" style="top:157.203px;left:24.5px;width:100px;height:50px">
+<div class="tsr-line" data-s="103" data-e="117" data-join="space" style="top:226.406px;left:7.016px;width:134.984px;word-spacing:19.492px"><span class="tsr-r tsr-b" data-s="103">2(a) </span><span class="tsr-r" data-s="103">The left</span></div>
+<div class="tsr-line" data-s="112" data-e="117" data-join="para" style="top:250.406px;left:7.016px;width:134.984px"><span class="tsr-r" data-s="112">view.</span></div>
+<img class="tsr-img" draggable="false" data-syn="image" id="tsr-fig-b" data-s="127" data-e="254" src="b.png" alt="" style="top:157.203px;left:175.484px;width:100px;height:60px">
+<div class="tsr-line" data-s="230" data-e="245" data-join="space" style="top:236.406px;left:158px;width:134.984px;word-spacing:15.492px"><span class="tsr-r tsr-b" data-s="230">2(b) </span><span class="tsr-r" data-s="230">The right</span></div>
+<div class="tsr-line" data-s="240" data-e="245" data-join="para" style="top:260.406px;left:158px;width:134.984px"><span class="tsr-r" data-s="240">view.</span></div>
+<div class="tsr-line" data-s="255" data-e="278" data-ragged="1" style="top:303.609px;left:44px;width:256px"><span class="tsr-r tsr-b tsr-cjk" data-s="255">图</span><span class="tsr-r tsr-b" data-s="255"> 2</span><span class="tsr-r tsr-b tsr-cjk" data-s="255">：</span><span class="tsr-r" data-s="255">Two views of one thing.</span></div>
+</div>
+</div>

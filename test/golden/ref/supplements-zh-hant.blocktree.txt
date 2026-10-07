@@ -7,7 +7,7 @@ top pid=1 leaves=1
 top pid=2 leaves=2
   stack root gap=1/1 @[148,237)
     stack figure anchor="fig-a" @[148,237)
-      replaced image image unit=0 ragged keep-with-next carry="fig-a" @[148,237)
+      replaced image image unit=0 centered keep-with-next carry="fig-a" @[148,237)
       paragraph caption unit=1 single-center @[219,228)
 top pid=3 leaves=2
   stack root gap=1/1 @[239,285)
@@ -18,4 +18,4 @@ top pid=3 leaves=2
         paragraph para unit=1 @[239,285)
 top pid=4 leaves=1
   stack root gap=1/1 @[287,307)
-    replaced math math unit=0 ragged anchor="eq-a" @[287,307)
+    replaced math math unit=0 centered anchor="eq-a" @[287,307)

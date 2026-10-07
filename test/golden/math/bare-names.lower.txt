@@ -1,0 +1,24 @@
+lower v1 abi 3d3ccfbb docEnd 215 holes 0 module none
+block 0 content [0,120)
+  CALL para [0,120)
+    TEXT "Bare names stay symbols (plan P1-24; §7 #23): a function or accent name without its parentheses is the symbol it names." [0,120)
+block 1 content [122,214)
+  CALL para [122,214)
+    CALL math [122,131)
+      CALL mathsrc [123,130) src="p dot q"
+    TEXT ", " [131,132) raw=0:0,2:1
+    CALL math [133,147)
+      CALL mathsrc [134,146) src="hat(x) + hat"
+    TEXT ", " [147,148) raw=0:0,2:1
+    CALL math [149,163)
+      CALL mathsrc [150,162) src="bar(y) = bar"
+    TEXT ", " [163,164) raw=0:0,2:1
+    CALL math [165,183)
+      CALL mathsrc [166,182) src="vec(v) times vec"
+    TEXT " and " [184,187) raw=0:0,1:0,5:3
+    CALL math [188,196)
+      CALL mathsrc [189,195) src="sqrt x"
+    TEXT " beside " [197,203) raw=0:0,1:0,8:6
+    CALL math [204,213)
+      CALL mathsrc [205,212) src="sqrt(x)"
+    TEXT "." [213,214)

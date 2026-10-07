@@ -1,0 +1,16 @@
+export const abi = 0x3d3ccfbb;
+export default async (__rt, $) => {
+return (async () => {
+const __h = [
+() => {
+
+  // (plan P5-02) a top float taller than a sheet: a sheet of its own,
+  // overflowing visibly with a warning; the flow goes on after it
+  $.set({role: 'topnote'}, {place: {float: 'top'}, box: {border: '1px', padding: '0.2em'}})
+
+},
+];
+await __rt.run(__h, 0);
+})();
+};
+//# sourceURL=tsm:doc

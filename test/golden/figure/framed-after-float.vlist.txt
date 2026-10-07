@@ -1,0 +1,17 @@
+vlist pid=0 y=0su h=3072su
+  box unit=0 para y=0su h=3072su
+vlist pid=1 y=4301su h=0su
+  glue 1229su
+  box unit=0 float y=0su h=0su out-of-flow
+vlist pid=2 y=4301su h=7680su
+  glue 1229su
+  box unit=0 para y=0su h=7680su
+vlist pid=3 y=13210su h=4608su
+  glue 1229su
+  box unit=0 para y=0su h=4608su
+vlist pid=4 y=19047su h=10036su
+  glue 1229su
+  box unit=0 para y=410su h=9216su
+vlist pid=5 y=30312su h=2356su
+  glue 1229su
+  box unit=0 para y=410su h=1536su

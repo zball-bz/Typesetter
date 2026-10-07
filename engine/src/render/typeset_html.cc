@@ -110,6 +110,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       Tag t(out, "div");
       t.attrSafe("class", "tsr-raw");
       anchor(t);
+      lineSpan(t);  // (plan P5-02) its source, as a line's
       pos3(t).px("height", n.heightPx);
       t.open();
       anchor2();
@@ -121,6 +122,7 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
       Tag t(out, "div");
       t.attrSafe("class", "tsr-rule");
       anchor(t);
+      lineSpan(t);
       pos3(t);
       t.open();
       anchor2();
@@ -157,7 +159,9 @@ static void writeNode(std::string& out, const DLBlock& blk, const DLNode& n, Su 
         t.attrSafe("class", "tsr-line");
         anchor(t);
         lineSpan(t);
+        if (n.join) t.attrSafe("data-join", n.join);  // (plan P5-02) copied like a paragraph
         t.attrSafe("data-ragged", "1");
+        if (n.track) t.attrSafe("data-track", n.track);
         pos3(t).px("height", n.heightPx);
         t.open();
       }

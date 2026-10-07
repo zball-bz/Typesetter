@@ -35,4 +35,4 @@ top pid=1 units=1
   box Alpha "TEXT" w=2049su r0 @[82,104)
   run r0 plain BOLD
 top pid=2 units=1
- unit math indent=0su w=5522su asc=967su desc=76su
+ unit math indent=0su w=5522su asc=967su desc=76su centered

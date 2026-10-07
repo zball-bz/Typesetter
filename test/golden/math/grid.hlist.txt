@@ -38,11 +38,11 @@ top pid=0 units=1
   run r5 object
   run r6 plain
 top pid=1 units=1
- unit math indent=0su w=10618su asc=1485su desc=973su
+ unit math indent=0su w=10618su asc=1485su desc=973su centered
 top pid=2 units=1
- unit math indent=0su w=7949su asc=1741su desc=1229su
+ unit math indent=0su w=7949su asc=1741su desc=1229su centered
 top pid=3 units=1
- unit math indent=0su w=5118su asc=1792su desc=1280su
+ unit math indent=0su w=5118su asc=1792su desc=1280su centered
 top pid=4 units=1
  unit text indent=0su
   ju=257su
@@ -91,7 +91,7 @@ top pid=4 units=1
   run r7 object
   run r8 plain
 top pid=5 units=1
- unit math indent=0su w=5818su asc=1792su desc=1280su
+ unit math indent=0su w=5818su asc=1792su desc=1280su centered
 top pid=6 units=1
  unit text indent=0su
   ju=257su

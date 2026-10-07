@@ -446,6 +446,19 @@ class DocLayout {
   // a block's content box: inside its ancestors' indents and boxes (x at the
   // start, xr at the end) and its own box (plan P3-14)
   Su left(const LayoutBlock& b) const { return ctx.x0 + b.x + b.box.inset(3); }
+  // (plan P5-02; finding alignment-flags) a replaced box (a block image, a
+  // display formula's row) set on the measure by its par.align: start, end,
+  // centred (the default rules' center; justify, one box, centres too)
+  static Su alignShift(const LayoutBlock& b, Su room) {
+    if (room <= 0) return 0;
+    switch (b.tr.align) {
+      case BlockTraits::Align::Ragged: return 0;
+      case BlockTraits::Align::End: return room;
+      case BlockTraits::Align::Center:
+      case BlockTraits::Align::Justify: return room / 2;
+    }
+    return room / 2;
+  }
   Su width(const LayoutBlock& b) const { return ctx.width - b.x - b.xr - b.box.inset(3) - b.box.inset(1); }
   double widthPx(const LayoutBlock& b) const {
     return ctx.widthPx - suToPx(b.x + b.xr + b.box.inset(3) + b.box.inset(1));
@@ -695,6 +708,9 @@ class DocLayout {
       for (; z < boxes.size() && used + gaps[z - 1] + boxes[z].w <= room; z++) used += gaps[z - 1] + boxes[z].w;
       if (!firstLine) py += gapV;
       firstLine = false;
+      // (plan P5-02) a line of boxes is an in-flow box: it clears the floats
+      // its box meets (D-Y02), as any block that is not a paragraph does
+      if (!shrinking) py += clearance(parent);
       Su x = al == BlockTraits::Align::Ragged ? 0 : al == BlockTraits::Align::End ? room - used : (room - used) / 2;
       if (x < 0) x = 0;
       i64 h = 0;
@@ -883,7 +899,7 @@ class DocLayout {
                           ? tree->blocks[tree->blocks[b.parent].parent].pad
                           : 0;
       for (int tries = 0; tries < 64; tries++) {
-        shape = ctx.excl->shape((i64)fr->y + py, left(b), ctx.x0 + ctx.width, baseLeading, adv, push);
+        shape = ctx.excl->shape((i64)fr->y + py, left(b), left(b) + lineWidth, baseLeading, adv, push);
         bool narrow = false;
         for (const LineSlot& s : shape.lines) narrow = narrow || s.width < std::min(minWrap, lineWidth);
         if (!narrow) break;
@@ -954,6 +970,7 @@ class DocLayout {
       case Painter::Rule:
         f.kind = FragKind::Rule;
         f.height = baseLeading;  // its band: the rule at its middle
+        f.srcSpan = b.span;      // (plan P5-02) its source (a jump lands on it)
         break;
       case Painter::Raw: {
         // (plan P3-28; design T6 S14) a host box: its height the host's at
@@ -961,6 +978,7 @@ class DocLayout {
         // is provisional)
         const RawData& r = std::get<RawData>(u.data);
         f.kind = FragKind::Raw;
+        f.srcSpan = b.span;  // (plan P5-02) its source
         f.hostBox = r.size.source == SizeSource::Host;
         double h = r.size.h;
         if (f.hostBox && boxes_ && r.html)
@@ -976,8 +994,7 @@ class DocLayout {
         resolveImageSize(size, widthPx(b), imgW, imgH);
         f.kind = FragKind::Image;
         f.placeholder = size.placeholder();
-        Su shift = (lineWidth - imgW) / 2;
-        if (shift < 0) shift = 0;
+        Su shift = alignShift(b, lineWidth - imgW);
         f.left = left(b) + shift;
         f.width = imgW;
         f.height = imgH;
@@ -995,8 +1012,7 @@ class DocLayout {
         f.kind = FragKind::Math;
         f.srcSpan = b.span;
         auto row = [&](Fragment& rf, const MathBox* rb) {
-          Su shift = (lineWidth - rb->w) / 2;
-          if (shift < 0) shift = 0;
+          Su shift = alignShift(b, lineWidth - rb->w);
           rf.left = left(b) + shift;
           rf.width = rb->w;
           rf.height = std::max(rb->asc + rb->desc, baseLeading);
@@ -1187,6 +1203,8 @@ class DocLayout {
     GridParams gp;
     gp.minCols = minCols;
     gp.contIndent = b.tr.contIndent;
+    gp.breakAfter = cfg.verbatimBreakAfter;  // (plan P5-02) settings: code.breakAfter, code.commentAware
+    gp.commentAware = cfg.verbatimCommentAware;
     std::unordered_set<u32> hlSet(g.hlLines.begin(), g.hlLines.end());
     bool first = true;
     size_t lastRow = ~size_t(0);  // the block's last code row: its unit's separator

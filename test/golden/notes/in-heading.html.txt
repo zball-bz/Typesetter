@@ -8,9 +8,9 @@
 <div class="tsr-line" data-s="83" data-e="121" data-join="space" style="top:48px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="83">(D-S09): its own emphasis travels with</span></div>
 <div class="tsr-line" data-s="122" data-e="153" style="top:72px;left:0px;width:300px"><span class="tsr-r" data-s="122">it, the heading&#39;s rules do not.</span></div>
 </div>
-<div class="tsr-para" data-role="notes" data-pid="2" data-s0="25" style="position:relative;height:91.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="45" data-join="space" style="top:43.203px;left:24px;width:276px;word-spacing:0.822px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">The note body is set at the notes&#39; size, </span><span class="tsr-r tsr-b" data-s="42" style="font-size:13.6px">not</span></div>
-<div class="tsr-line" data-s="47" data-e="70" style="top:67.203px;left:24px;width:276px"><span class="tsr-r" data-s="47" style="font-size:13.6px">in the heading&#39;s bold. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-para" data-role="notes" data-pid="2" data-s0="0" style="position:relative;height:91.203px">
+<div class="tsr-rule" data-s="0" data-e="250" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="25" data-e="70" data-join="space" style="top:43.203px;left:24px;width:276px;word-spacing:0.822px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="25" style="font-size:13.6px">The note body is set at the notes&#39; size, </span><span class="tsr-r tsr-b" data-s="67" style="font-size:13.6px">not</span></div>
+<div class="tsr-line" data-s="72" data-e="95" style="top:67.203px;left:24px;width:276px"><span class="tsr-r" data-s="72" style="font-size:13.6px">in the heading&#39;s bold. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
 </div>

@@ -1,0 +1,2 @@
+instance heading 1 level=1 label=h-1 title="A tall page float" @[236,255)
+label h-1 -> heading 1 @[236,255)

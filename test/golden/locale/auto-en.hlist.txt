@@ -81,7 +81,7 @@ top pid=1 units=1
   run r1 rigid CODE x0.85
   run r2 plain
 top pid=2 units=2
- unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4
+ unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4 centered
  unit text indent=0su single-center
   ju=257su
   box Alpha "Figure" w=3073su r0 @[275,283)
@@ -96,7 +96,7 @@ top pid=2 units=2
   run r0 plain BOLD
   run r1 plain
 top pid=3 units=1
- unit math indent=0su anchor="eq-a" w=5522su asc=967su desc=76su
+ unit math indent=0su anchor="eq-a" w=5522su asc=967su desc=76su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[294,320)

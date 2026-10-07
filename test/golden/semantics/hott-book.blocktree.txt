@@ -33,7 +33,7 @@ top pid=3 leaves=1
     paragraph heading unit=0 ragged nohyphen keep-with-next anchor="sec-j" @[1181,1194)
 top pid=4 leaves=1
   stack root gap=1/1 @[1204,1220)
-    replaced math math unit=0 ragged anchor="eq-j" @[1204,1220)
+    replaced math math unit=0 centered anchor="eq-j" @[1204,1220)
 top pid=5 leaves=1
   stack root gap=1/1 @[1222,1245)
     paragraph heading unit=0 ragged nohyphen keep-with-next anchor="ch-hott" @[1222,1245)
@@ -51,7 +51,7 @@ top pid=9 leaves=1
     paragraph heading unit=0 ragged nohyphen keep-with-next anchor="sec-s" @[1324,1335)
 top pid=10 leaves=1
   stack root gap=1/1 @[1345,1361)
-    replaced math math unit=0 ragged anchor="eq-s" @[1345,1361)
+    replaced math math unit=0 centered anchor="eq-s" @[1345,1361)
 top pid=11 leaves=1
   stack root gap=1/1 @[1363,1425)
     paragraph para unit=0 @[1363,1425)

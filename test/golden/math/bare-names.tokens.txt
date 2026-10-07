@@ -1,0 +1,6 @@
+[122,131) type "$p dot q$"
+[133,147) type "$hat(x) + hat$"
+[149,163) type "$bar(y) = bar$"
+[165,183) type "$vec(v) times vec$"
+[188,196) type "$sqrt x$"
+[204,213) type "$sqrt(x)$"

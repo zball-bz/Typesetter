@@ -43,13 +43,13 @@ top pid=1 units=1
   box Alpha "sheet." w=3073su r0 @[93,99)
   run r0 plain
 top pid=2 units=1
- unit math indent=0su anchor="eq-pyth" w=5522su asc=967su desc=76su
+ unit math indent=0su anchor="eq-pyth" w=5522su asc=967su desc=76su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[101,130)
    run r0 plain
 top pid=3 units=1
- unit math indent=0su anchor="eq-euler" w=4850su asc=951su desc=76su
+ unit math indent=0su anchor="eq-euler" w=4850su asc=951su desc=76su centered
   cell 0
    ju=257su
    box OpenN "(2)" w=1537su r0 @[132,163)

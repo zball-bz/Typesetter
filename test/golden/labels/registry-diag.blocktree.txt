@@ -15,10 +15,10 @@ top pid=3 leaves=1
       paragraph caption unit=0 single-center @[149,193)
 top pid=4 leaves=1
   stack root gap=1/1 @[204,220)
-    replaced math math unit=0 ragged anchor="eq-1" @[204,220)
+    replaced math math unit=0 centered anchor="eq-1" @[204,220)
 top pid=5 leaves=1
   stack root gap=1/1 @[222,238)
-    replaced math math unit=0 ragged @[222,238)
+    replaced math math unit=0 centered @[222,238)
 top pid=6 leaves=1
   stack root gap=1/1 @[240,311)
     stack figure @[240,311)

@@ -10,7 +10,7 @@
 <div class="tsr-line" data-s="460" data-e="476" style="top:116.812px;left:0px;width:300px"><span class="tsr-r" data-s="460">paragraphs down.</span></div>
 </div>
 <div class="tsr-band" data-role="notes" data-b="6">
-<div class="tsr-rule" style="top:180px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="275" data-e="916" style="top:180px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-fn-1" data-s="323" data-e="367" data-join="space" style="top:192px;left:24px;width:276px;word-spacing:0.822px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="323" style="font-size:13.6px">The first note sits at the foot of the first</span></div>
 <div class="tsr-line" data-s="368" data-e="375" style="top:216px;left:24px;width:276px"><span class="tsr-r" data-s="368" style="font-size:13.6px">sheet. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
@@ -27,7 +27,7 @@
 <div class="tsr-line" data-s="729" data-e="753" style="top:139.203px;left:0px;width:300px"><span class="tsr-r" data-s="729">ever the page cut falls.</span></div>
 </div>
 <div class="tsr-band" data-role="notes" data-b="6">
-<div class="tsr-rule" style="top:180px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="275" data-e="916" style="top:180px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-fn-2" data-s="628" data-e="673" data-join="space" style="top:192px;left:24px;width:276px;word-spacing:-0.35px"><span class="tsr-marker tsr-r" data-syn="marker">2.</span><span class="tsr-r" data-s="628" style="font-size:13.6px">The second note, on the second sheet with its</span></div>
 <div class="tsr-line" data-s="674" data-e="682" style="top:216px;left:24px;width:276px"><span class="tsr-r" data-s="674" style="font-size:13.6px">marker. </span><a class="tsr-r" href="#tsr-fnref-2" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
@@ -42,7 +42,7 @@
 <div class="tsr-line" data-s="868" data-e="916" style="top:91.203px;left:0px;width:300px"><span class="tsr-r" data-s="868">The last note</span><a class="tsr-r tsr-sup" href="#tsr-fn-3" id="tsr-fnref-3" data-syn="fn-marker" style="font-size:11.2px;top:-5.04px">3</a><span class="tsr-r" data-s="900"> closes the text.</span></div>
 </div>
 <div class="tsr-band" data-role="notes" data-b="6">
-<div class="tsr-rule" style="top:204px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="275" data-e="916" style="top:204px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-fn-3" data-s="883" data-e="899" style="top:216px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">3.</span><span class="tsr-r" data-s="883" style="font-size:13.6px">The third note. </span><a class="tsr-r" href="#tsr-fnref-3" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
 </div>

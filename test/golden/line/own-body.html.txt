@@ -19,10 +19,10 @@
 <div class="tsr-para" data-pid="3" data-s0="402" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="33" style="top:0px;left:40px;width:260px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">a single-line body that is a list</span></div>
 </div>
-<div class="tsr-para" data-role="notes" data-pid="4" data-s0="316" style="position:relative;height:127.984px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-fn-1" data-s="3" data-e="31" data-join="para" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker" style="font-size:13.6px">1.</span><span class="tsr-r" data-s="3" style="font-size:13.6px">First paragraph of the note.</span></div>
-<div class="tsr-line" data-s="35" data-e="49" style="top:73.594px;left:44.406px;width:255.594px"><span class="tsr-marker tsr-r" data-syn="marker" style="font-size:13.6px">•</span><span class="tsr-r" data-s="35" style="font-size:13.6px">a listed point</span></div>
-<div class="tsr-line" data-s="0" data-e="51" style="top:103.984px;left:24px;width:276px"><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-para" data-role="notes" data-pid="4" data-s0="38" style="position:relative;height:127.984px">
+<div class="tsr-rule" data-s="0" data-e="398" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="281" data-e="309" data-join="para" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker" style="font-size:13.6px">1.</span><span class="tsr-r" data-s="281" style="font-size:13.6px">First paragraph of the note.</span></div>
+<div class="tsr-line" data-s="313" data-e="327" style="top:73.594px;left:44.406px;width:255.594px"><span class="tsr-marker tsr-r" data-syn="marker" style="font-size:13.6px">•</span><span class="tsr-r" data-s="313" style="font-size:13.6px">a listed point</span></div>
+<div class="tsr-line" data-s="278" data-e="329" style="top:103.984px;left:24px;width:276px"><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
 </div>

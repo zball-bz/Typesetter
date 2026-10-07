@@ -31,10 +31,10 @@ top pid=3 leaves=5
   stack root gap=1/1 @[365,582)
     stack figure anchor="fig-pair" @[365,582)
       stack figure anchor="fig-a" @[393,470)
-        replaced image image unit=0 ragged keep-with-next carry="fig-a" @[393,470)
+        replaced image image unit=0 centered keep-with-next carry="fig-a" @[393,470)
         paragraph caption unit=1 single-center @[447,461)
       stack figure anchor="fig-b" @[471,549)
-        replaced image image unit=2 ragged keep-with-next carry="fig-b" @[471,549)
+        replaced image image unit=2 centered keep-with-next carry="fig-b" @[471,549)
         paragraph caption unit=3 single-center @[525,540)
       paragraph caption unit=4 single-center @[550,573)
 top pid=4 leaves=1

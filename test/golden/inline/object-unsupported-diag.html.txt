@@ -2,8 +2,8 @@
 <div class="tsr-para" data-pid="0" data-s0="0" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="6" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">A rule</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:24px;margin-bottom:0px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-para" data-pid="1" data-s0="7" style="position:relative;height:24px;margin-bottom:0px">
+<div class="tsr-rule" data-s="0" data-e="7" style="top:12px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="2" data-s0="15" style="position:relative;height:48px">
 <div class="tsr-line" data-s="0" data-e="40" data-join="space" style="top:0px;left:0px;width:300px;word-spacing:1.143px"><span class="tsr-r" data-s="0">in a sentence, and an image whose source</span></div>

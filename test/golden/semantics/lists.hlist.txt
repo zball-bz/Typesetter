@@ -116,7 +116,7 @@ top pid=3 units=2
   run r0 plain LINK link="#tsr-thm-main"
   run r1 plain
 top pid=4 units=2
- unit img indent=0su anchor="fig-a" intrinsic=200x100px
+ unit img indent=0su anchor="fig-a" intrinsic=200x100px centered
  unit text indent=0su single-center
   ju=257su
   box Ideo "图" w=1025su wt=0.6 r0 @[707,754)

@@ -93,7 +93,7 @@ top pid=1 units=1
   run r16 plain ref LINK link="#tsr-eq-a"
   run r17 plain
 top pid=2 units=2
- unit img indent=0su anchor="fig-a" intrinsic=120x60px
+ unit img indent=0su anchor="fig-a" intrinsic=120x60px centered
  unit text indent=0su single-center
   ju=257su
   box Ideo "圖" w=1025su wt=0.6 r0 @[219,228)
@@ -121,7 +121,7 @@ top pid=3 units=2
   box Alpha "y" w=513su r0 @[276,277)
   run r0 plain
 top pid=4 units=1
- unit math indent=0su anchor="eq-a" w=3697su asc=967su desc=19su
+ unit math indent=0su anchor="eq-a" w=3697su asc=967su desc=19su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[287,307)

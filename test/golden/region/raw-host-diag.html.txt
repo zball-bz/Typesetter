@@ -4,17 +4,17 @@
 <div class="tsr-line" data-s="39" data-e="77" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:3.2px"><span class="tsr-r" data-s="39">(plan P3-28): their height follows the</span></div>
 <div class="tsr-line" data-s="78" data-e="86" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="78">measure.</span></div>
 </div>
-<div class="tsr-para" data-pid="1" data-s0="0" style="position:relative;height:60px;margin-bottom:19.203px">
-<div class="tsr-raw" style="top:0px;left:0px;width:300px;height:60px"><div class="chart"><p>A caption long enough to wrap over several lines of the box at the measure width of the golden profile.</p></div></div>
+<div class="tsr-para" data-pid="1" data-s0="180" style="position:relative;height:60px;margin-bottom:19.203px">
+<div class="tsr-raw" data-s="0" data-e="147" style="top:0px;left:0px;width:300px;height:60px"><div class="chart"><p>A caption long enough to wrap over several lines of the box at the measure width of the golden profile.</p></div></div>
 </div>
-<div class="tsr-para" data-pid="2" data-s0="0" style="position:relative;height:75px;margin-bottom:19.203px">
-<div class="tsr-raw" style="top:0px;left:0px;width:300px;height:75px"><svg viewBox="0 0 400 100"></svg></div>
+<div class="tsr-para" data-pid="2" data-s0="329" style="position:relative;height:75px;margin-bottom:19.203px">
+<div class="tsr-raw" data-s="0" data-e="45" style="top:0px;left:0px;width:300px;height:75px"><svg viewBox="0 0 400 100"></svg></div>
 </div>
-<div class="tsr-para" data-pid="3" data-s0="0" style="position:relative;height:112.5px;margin-bottom:19.203px">
-<div class="tsr-raw" style="top:0px;left:0px;width:300px;height:112.5px"><svg width="50%" viewBox="0 0 4 3"></svg></div>
+<div class="tsr-para" data-pid="3" data-s0="376" style="position:relative;height:112.5px;margin-bottom:19.203px">
+<div class="tsr-raw" data-s="0" data-e="53" style="top:0px;left:0px;width:300px;height:112.5px"><svg width="50%" viewBox="0 0 4 3"></svg></div>
 </div>
-<div class="tsr-para" data-pid="4" data-s0="0" style="position:relative;height:20px;margin-bottom:19.203px">
-<div class="tsr-raw" style="top:0px;left:0px;width:300px;height:20px"><svg width="10em" viewBox="0 0 4 3"></svg></div>
+<div class="tsr-para" data-pid="4" data-s0="431" style="position:relative;height:20px;margin-bottom:19.203px">
+<div class="tsr-raw" data-s="0" data-e="54" style="top:0px;left:0px;width:300px;height:20px"><svg width="10em" viewBox="0 0 4 3"></svg></div>
 </div>
 <div class="tsr-para" data-pid="5" data-s0="487" style="position:relative;height:128px">
 <div class="tsr-line" data-s="0" data-e="98" data-join="none" style="top:0px;left:0px;width:300px;word-spacing:2.857px"><span class="tsr-r" data-s="0">Inline, a box </span><span class="tsr-iraw" data-syn="raw" data-s="14" style="width:60px;height:80px;vertical-align:-4px"><b>wide inline text that wraps</b></span><span class="tsr-r" data-s="83"> sits on its mea</span><span class="tsr-r" data-syn="hyphen">-</span></div>

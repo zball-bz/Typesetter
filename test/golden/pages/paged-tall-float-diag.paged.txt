@@ -1,0 +1,42 @@
+<div class="tsr-doc tsr-paged" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
+<div class="tsr-sheet" style="position:relative;overflow:hidden;height:240px">
+<div class="tsr-band" data-b="0">
+<div class="tsr-line" id="tsr-h-1" data-s="238" data-e="255" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="238" style="font-size:25.6px">A tall page float</span></div>
+</div>
+<div class="tsr-band" data-b="1">
+<div class="tsr-line" data-s="257" data-e="296" style="top:44.812px;left:0px;width:300px"><span class="tsr-r" data-s="257">Filler paragraph one, before the float.</span></div>
+</div>
+<div class="tsr-band" data-b="3">
+<div class="tsr-line" data-s="1186" data-e="1228" data-join="space" style="top:88.016px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="1186">The last paragraph, after the float in the</span></div>
+<div class="tsr-line" data-s="1229" data-e="1236" style="top:112.016px;left:0px;width:300px"><span class="tsr-r" data-s="1229">source.</span></div>
+</div>
+</div>
+<div class="tsr-sheet" style="position:relative;overflow:visible;height:240px">
+<div class="tsr-band" data-role="topnote" data-b="2">
+<div class="tsr-frame" style="top:0px;left:0px;width:300px;height:560.406px;border-width:1px 1px 1px 1px" data-syn="frame"></div>
+<div class="tsr-line" data-s="308" data-e="348" data-join="space" style="top:4.203px;left:4.203px;width:291.594px;word-spacing:0.449px"><span class="tsr-r" data-s="308">A long line of the tall float, number 1,</span></div>
+<div class="tsr-line" data-s="349" data-e="386" data-join="space" style="top:28.203px;left:4.203px;width:291.594px;word-spacing:3.266px"><span class="tsr-r" data-s="349">that wraps across the measure. A long</span></div>
+<div class="tsr-line" data-s="387" data-e="425" data-join="space" style="top:52.203px;left:4.203px;width:291.594px;word-spacing:2.228px"><span class="tsr-r" data-s="387">line of the tall float, number 2, that</span></div>
+<div class="tsr-line" data-s="426" data-e="463" data-join="space" style="top:76.203px;left:4.203px;width:291.594px;word-spacing:3.266px"><span class="tsr-r" data-s="426">wraps across the measure. A long line</span></div>
+<div class="tsr-line" data-s="464" data-e="503" data-join="space" style="top:100.203px;left:4.203px;width:291.594px;word-spacing:1.085px"><span class="tsr-r" data-s="464">of the tall float, number 3, that wraps</span></div>
+<div class="tsr-line" data-s="504" data-e="542" data-join="space" style="top:124.203px;left:4.203px;width:291.594px;word-spacing:2.228px"><span class="tsr-r" data-s="504">across the measure. A long line of the</span></div>
+<div class="tsr-line" data-s="543" data-e="582" data-join="space" style="top:148.203px;left:4.203px;width:291.594px;word-spacing:0.599px"><span class="tsr-r" data-s="543">tall float, number 4, that wraps across</span></div>
+<div class="tsr-line" data-s="583" data-e="619" data-join="space" style="top:172.203px;left:4.203px;width:291.594px;word-spacing:4.513px"><span class="tsr-r" data-s="583">the measure. A long line of the tall</span></div>
+<div class="tsr-line" data-s="620" data-e="658" data-join="space" style="top:196.203px;left:4.203px;width:291.594px;word-spacing:1.932px"><span class="tsr-r" data-s="620">float, number 5, that wraps across the</span></div>
+<div class="tsr-line" data-s="659" data-e="698" data-join="space" style="top:220.203px;left:4.203px;width:291.594px;word-spacing:1.085px"><span class="tsr-r" data-s="659">measure. A long line of the tall float,</span></div>
+<div class="tsr-line" data-s="699" data-e="739" data-join="space" style="top:244.203px;left:4.203px;width:291.594px;word-spacing:-0.734px"><span class="tsr-r" data-s="699">number 6, that wraps across the measure.</span></div>
+<div class="tsr-line" data-s="740" data-e="780" data-join="space" style="top:268.203px;left:4.203px;width:291.594px;word-spacing:0.449px"><span class="tsr-r" data-s="740">A long line of the tall float, number 7,</span></div>
+<div class="tsr-line" data-s="781" data-e="818" data-join="space" style="top:292.203px;left:4.203px;width:291.594px;word-spacing:3.266px"><span class="tsr-r" data-s="781">that wraps across the measure. A long</span></div>
+<div class="tsr-line" data-s="819" data-e="857" data-join="space" style="top:316.203px;left:4.203px;width:291.594px;word-spacing:2.228px"><span class="tsr-r" data-s="819">line of the tall float, number 8, that</span></div>
+<div class="tsr-line" data-s="858" data-e="895" data-join="space" style="top:340.203px;left:4.203px;width:291.594px;word-spacing:3.266px"><span class="tsr-r" data-s="858">wraps across the measure. A long line</span></div>
+<div class="tsr-line" data-s="896" data-e="935" data-join="space" style="top:364.203px;left:4.203px;width:291.594px;word-spacing:1.085px"><span class="tsr-r" data-s="896">of the tall float, number 9, that wraps</span></div>
+<div class="tsr-line" data-s="936" data-e="974" data-join="space" style="top:388.203px;left:4.203px;width:291.594px;word-spacing:2.228px"><span class="tsr-r" data-s="936">across the measure. A long line of the</span></div>
+<div class="tsr-line" data-s="975" data-e="1015" data-join="space" style="top:412.203px;left:4.203px;width:291.594px;word-spacing:-0.734px"><span class="tsr-r" data-s="975">tall float, number 10, that wraps across</span></div>
+<div class="tsr-line" data-s="1016" data-e="1052" data-join="space" style="top:436.203px;left:4.203px;width:291.594px;word-spacing:4.513px"><span class="tsr-r" data-s="1016">the measure. A long line of the tall</span></div>
+<div class="tsr-line" data-s="1053" data-e="1092" data-join="space" style="top:460.203px;left:4.203px;width:291.594px;word-spacing:0.599px"><span class="tsr-r" data-s="1053">float, number 11, that wraps across the</span></div>
+<div class="tsr-line" data-s="1093" data-e="1132" data-join="space" style="top:484.203px;left:4.203px;width:291.594px;word-spacing:1.085px"><span class="tsr-r" data-s="1093">measure. A long line of the tall float,</span></div>
+<div class="tsr-line" data-s="1133" data-e="1169" data-join="none" style="top:508.203px;left:4.203px;width:291.594px;word-spacing:3.266px"><span class="tsr-r" data-s="1133">number 12, that wraps across the mea</span><span class="tsr-r" data-syn="hyphen">-</span></div>
+<div class="tsr-line" data-s="1169" data-e="1174" style="top:532.203px;left:4.203px;width:291.594px"><span class="tsr-r" data-s="1169">sure.</span></div>
+</div>
+</div>
+</div>

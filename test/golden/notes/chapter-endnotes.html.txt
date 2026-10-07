@@ -6,7 +6,7 @@
 <div class="tsr-line" data-s="0" data-e="90" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Text</span><a class="tsr-r tsr-sup" href="#tsr-en-1" id="tsr-enref-1" data-syn="fn-marker" style="font-size:11.2px;top:-5.04px">i</a><span class="tsr-r" data-s="49"> and a footnote</span><a class="tsr-r tsr-sup" href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker" style="font-size:11.2px;top:-5.04px">1</a><span class="tsr-r" data-s="89">.</span></div>
 </div>
 <div class="tsr-para" data-role="endnotes" data-pid="2" data-s0="589" style="position:relative;height:67.203px;margin-bottom:19.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="63" data-e="74" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-en-1" data-s="0" data-e="19" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">i.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">The first endnote. </span><a class="tsr-r" href="#tsr-enref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
 <div class="tsr-para" data-pid="3" data-s0="667" style="position:relative;height:25.609px;margin-bottom:19.203px">
@@ -16,12 +16,12 @@
 <div class="tsr-line" data-s="0" data-e="95" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">More</span><a class="tsr-r tsr-sup" href="#tsr-en-2" id="tsr-enref-2" data-syn="fn-marker" style="font-size:11.2px;top:-5.04px">ii</a><span class="tsr-r" data-s="50"> and more</span><a class="tsr-r tsr-sup" href="#tsr-en-3" id="tsr-enref-3" data-syn="fn-marker" style="font-size:11.2px;top:-5.04px">iii</a><span class="tsr-r" data-s="94">.</span></div>
 </div>
 <div class="tsr-para" data-role="endnotes" data-pid="5" data-s0="701" style="position:relative;height:97.594px;margin-bottom:19.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="68" data-e="79" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-en-2" data-s="0" data-e="20" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">ii.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">The second endnote. </span><a class="tsr-r" href="#tsr-enref-2" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 <div class="tsr-line" id="tsr-en-3" data-s="54" data-e="65" style="top:73.594px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">iii.</span><span class="tsr-r" data-s="54" style="font-size:13.6px">The third. </span><a class="tsr-r" href="#tsr-enref-3" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
-<div class="tsr-para" data-role="notes" data-pid="6" data-s0="625" style="position:relative;height:67.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="24" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">A footnote, at the end. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-para" data-role="notes" data-pid="6" data-s0="553" style="position:relative;height:67.203px">
+<div class="tsr-rule" data-s="0" data-e="227" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="72" data-e="96" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="72" style="font-size:13.6px">A footnote, at the end. </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
 </div>

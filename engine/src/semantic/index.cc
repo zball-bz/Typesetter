@@ -148,10 +148,18 @@ struct Locator {
         break;
       }
       case ElementClass::Labels::FromArg: {
+        // (plan P5-02) a name (a term's) is a user label: the reserved
+        // shapes are refused as for any, and a later duplicate anchors nothing
         std::string l(strs.get(attrStr(n, C.labelArg)));
         if (!l.empty()) {
           in.label = l;
-          addLabel(l, self, n->span);
+          if (reg.reservedShape(l)) {
+            diags.add(Sev::Warning, "label-reserved", n->span,
+                      "name '" + l + "' has the shape of a generated anchor: it is no label");
+            in.anchored = false;
+          } else {
+            in.anchored = addLabel(l, self, n->span);
+          }
         }
         break;
       }
@@ -161,7 +169,7 @@ struct Locator {
     if (in.label.empty() && C.alias.body != AliasRule::Body::None) {
       in.label = alias(C.alias, in.number, in.label, ordinal);
       in.aliased = true;
-      addLabel(in.label, self, n->span);
+      in.anchored = addLabel(in.label, self, n->span);
     }
     if (C.flow) {
       in.markerAlias = alias(C.flow->markerAlias, in.number, in.label, ordinal);

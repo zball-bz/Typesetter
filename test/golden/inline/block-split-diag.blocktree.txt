@@ -12,7 +12,7 @@ top pid=3 leaves=1
     paragraph para unit=0 @[242,392)
 top pid=4 leaves=1
   stack root gap=1/1 @[322,344)
-    replaced math math unit=0 ragged anchor="eq-mid" @[322,344)
+    replaced math math unit=0 centered anchor="eq-mid" @[322,344)
 top pid=5 leaves=1
   stack root gap=1/1 @[345,392)
     paragraph para unit=0 cont @[345,392)

@@ -3,7 +3,7 @@
 <div class="tsr-line" data-s="0" data-e="26" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">Cited: </span><span class="tsr-r" data-s="7">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-s="7">1</a><span class="tsr-r" data-s="7">]</span><span class="tsr-r" data-s="13"> and </span><span class="tsr-r" data-s="17">[</span><a class="tsr-r" href="#tsr-bib-liang83" data-s="17">2</a><span class="tsr-r" data-s="17">]</span><span class="tsr-r" data-s="25">.</span></div>
 </div>
 <div class="tsr-para" data-role="bibliography" data-pid="1" data-s0="28" style="position:relative;height:278.406px;margin-bottom:19.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="0" data-e="46" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-bib-kp81" data-s="0" data-e="46" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:14.4px"><span class="tsr-r" data-s="0">[1] Donald E. Knuth and Michael</span></div>
 <div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r" data-s="0">F. Plass. </span><span class="tsr-r tsr-i" data-s="0">Breaking Paragraphs into</span></div>
 <div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r tsr-i" data-s="0">Lines</span><span class="tsr-r" data-s="0">. Software: Practice and Experience</span></div>
@@ -19,7 +19,7 @@
 <div class="tsr-line" data-s="38" data-e="64" style="top:24px;left:0px;width:300px"><span class="tsr-r" data-s="38">ries no duplicate anchors.</span></div>
 </div>
 <div class="tsr-para" data-role="bibliography" data-pid="3" data-s0="28" style="position:relative;height:278.406px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="114" data-e="160" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:14.4px"><span class="tsr-r" data-s="0">[1] Donald E. Knuth and Michael</span></div>
 <div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r" data-s="0">F. Plass. </span><span class="tsr-r tsr-i" data-s="0">Breaking Paragraphs into</span></div>
 <div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r tsr-i" data-s="0">Lines</span><span class="tsr-r" data-s="0">. Software: Practice and Experience</span></div>

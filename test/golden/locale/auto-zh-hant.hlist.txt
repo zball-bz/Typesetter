@@ -111,7 +111,7 @@ top pid=1 units=1
   run r4 letter-spaced CJK
   run r5 blank-bearing CJK
 top pid=2 units=2
- unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4
+ unit img indent=0su anchor="fig-a" intrinsic=400x300px scale=0.4 centered
  unit text indent=0su single-center
   ju=257su
   box Ideo "圖" w=1025su wt=0.6 r0 @[242,257)
@@ -137,7 +137,7 @@ top pid=2 units=2
   run r3 letter-spaced CJK
   run r4 blank-bearing CJK
 top pid=3 units=1
- unit math indent=0su anchor="eq-a" w=5522su asc=967su desc=76su
+ unit math indent=0su anchor="eq-a" w=5522su asc=967su desc=76su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[268,294)

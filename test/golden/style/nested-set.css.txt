@@ -8,8 +8,8 @@
 :where(.tsr-c-tok-comment){font-style:italic}
 :where(ul,ol){padding-inline-start:1.5em}
 :where(blockquote){padding-inline-start:1em}
-:where(img){text-align:start;break-after:avoid}
-:where(p.tsr-mathblock){text-align:start}
+:where(img){text-align:center;break-after:avoid}
+:where(p.tsr-mathblock){text-align:center}
 :where(.tsr-err){font-family:var(--tsr-font-mono, monospace);text-align:start}
 :where(h2[data-tsr-env="09f39c4ab14bfafd"],[data-tsr-env="09f39c4ab14bfafd"] h2){color:#2f5d8a}
 :where(h2[data-tsr-env="cc9c3b0a294a580a"],[data-tsr-env="cc9c3b0a294a580a"] h2){color:#2f5d8a}

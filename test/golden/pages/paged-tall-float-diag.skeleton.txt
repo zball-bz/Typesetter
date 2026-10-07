@@ -1,0 +1,7 @@
+doc @[0,1237)
+  code-block @[0,234) js="\n  // (plan P5-02) a top float taller than a sheet: a sheet of its own,\n  // overflowing visibly with a warning; the flow goes on after it\n  $.set({role: 'topnote'}, {place: {float: 'top'}, box: {border: '1px', padding: '0.2em'}})\n"
+  heading1 @[236,255)
+  para @[257,296) lines=1
+  region @[298,1184) name="topnote"
+    para @[308,1174) lines=12
+  para @[1186,1236) lines=1

@@ -1,0 +1,24 @@
+lower v1 abi 3d3ccfbb docEnd 484 holes 4 module d825a61d22ce6242
+piece 0 hole 0 js [129,240)
+piece 1 hole 1 js [242,269)
+piece 2 hole 2 js [271,373)
+piece 3 hole 3 js [375,477)
+block 0 content [0,29)
+  CALL para [0,29)
+    TEXT "A paragraph before the float." [0,29)
+block 1 content [31,166) user framed async holes 0..1
+  REGION async "figure" args=hole 0 [31,166)
+    CALL para [143,157)
+      TEXT "A right float." [143,157)
+block 2 content [168,483) user framed async holes 1..4
+  REGION async "figure" args=hole 1 [168,483)
+    FRAME async [196,322) holes 2..3
+      REGION async "figure" args=hole 2 [196,322)
+        CALL para [299,313)
+          TEXT "The left view." [299,313)
+    FRAME async [323,450) holes 3..4
+      REGION async "figure" args=hole 3 [323,450)
+        CALL para [426,441)
+          TEXT "The right view." [426,441)
+    CALL para [451,474)
+      TEXT "Two views of one thing." [451,474)

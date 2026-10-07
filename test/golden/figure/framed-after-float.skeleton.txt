@@ -1,0 +1,11 @@
+doc @[0,786)
+  code-block @[0,112) js="\n  $.set({role: 'theorem'}, {box: {padding: '0.4em 2em', border: '0 2px 0 2px'}})\n  $.element('theorem', {})\n"
+  para @[114,180) lines=1
+  region @[182,300) name="figure"
+    para @[286,291) lines=1
+  para @[302,455) lines=1
+  para @[457,561) lines=1
+  region @[563,757) name="theorem"
+    para @[573,747) lines=1
+  region @[759,785) name="theorem"
+    para @[769,775) lines=1

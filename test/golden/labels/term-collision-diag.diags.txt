@@ -1,0 +1,3 @@
+warning label-reserved @[133,187) name 'h-1' has the shape of a generated anchor: it is no label
+warning label-reserved @[250,302) name 'fn-1' has the shape of a generated anchor: it is no label
+warning label-duplicate @[335,395) label 'lemma' declared twice (first wins)

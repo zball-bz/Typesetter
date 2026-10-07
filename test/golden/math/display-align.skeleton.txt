@@ -1,0 +1,6 @@
+doc @[0,242)
+  code-block @[0,56) js=" $.set({kind: 'mathblock'}, {par: {align: 'start'}}) "
+  para @[58,167) lines=1
+  para @[169,189) lines=1
+  para @[191,208) lines=1
+  para @[210,241) lines=1

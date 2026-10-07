@@ -146,7 +146,7 @@ top pid=2 units=5
   run r2 blank-bearing BOLD CJK
   run r3 plain
 top pid=3 units=5
- unit img indent=0su anchor="fig-a" intrinsic=100x50px
+ unit img indent=0su anchor="fig-a" intrinsic=100x50px centered
  unit text indent=0su single-center
   ju=257su
   box Digit "2(a)" w=2049su r0 @[447,461)
@@ -158,7 +158,7 @@ top pid=3 units=5
   box Alpha "view." w=2561su r1 @[456,461)
   run r0 plain BOLD
   run r1 plain
- unit img indent=0su anchor="fig-b" intrinsic=100x50px
+ unit img indent=0su anchor="fig-b" intrinsic=100x50px centered
  unit text indent=0su single-center
   ju=257su
   box Digit "2(b)" w=2049su r0 @[525,540)

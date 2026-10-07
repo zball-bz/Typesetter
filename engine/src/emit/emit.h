@@ -106,7 +106,6 @@ struct GridData {  // a code block (verbatim-design.md)
   StrRef chRef = 0;          // interned "0" (the Latin ch probe)
   StrRef cjkChRef = 0;       // interned "中" (measured CJK width — no more
                              //   assumed 2:1; budget uses the real ratio)
-  StrRef lang = 0;           // language tag (font-feature selection)
   i32 lineNo = 0;            // 0 = no numbers; else first line number
   std::vector<u32> hlLines;  // 1-based highlighted lines
   u32 firstLine = 0;         // (plan P3-11) a two-track table's row: the block line it shows first

@@ -1,7 +1,7 @@
 <div class="tsr-doc" lang="zh-CN" style="--tsr-font-body:&quot;Crimson Text&quot;, Georgia, serif;--tsr-font-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;--tsr-font-mono:monospace;--tsr-font-mono-cjk:&quot;Noto Serif CJK SC&quot;, &quot;Source Han Serif SC&quot;, &quot;Songti SC&quot;, SimSun, serif;font-size:16px">
 <div class="tsr-para" data-pid="0" data-s0="2" style="position:relative;height:108.781px">
 <div class="tsr-line" data-s="0" data-e="26" data-join="para" style="top:0px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">•</span><span class="tsr-r" data-s="0">An item with display math:</span></div>
-<div class="tsr-line" data-s="29" data-e="54" data-ragged="1" style="top:30.391px;left:114.625px;width:94.75px;height:24px"><span class="tsr-math" data-syn="math" data-copy="$ x = a
+<div class="tsr-line" data-s="29" data-e="54" data-join="para" data-ragged="1" style="top:30.391px;left:114.625px;width:94.75px;height:24px"><span class="tsr-math" data-syn="math" data-copy="$ x = a
 - b
 + c $" data-copy-group="2147483679" role="math" aria-label="x = a
 - b

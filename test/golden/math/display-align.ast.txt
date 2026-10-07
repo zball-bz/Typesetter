@@ -1,0 +1,12 @@
+doc @[0,242)
+  code-block @[0,56) js=" $.set({kind: 'mathblock'}, {par: {align: 'start'}}) "
+  para @[58,167)
+    text @[58,167) str="Display formulas flush left (plan P5-02): par.align places a formula's rows as it places a paragraph's lines."
+  para @[169,189)
+    math @[169,189) display=1 src="e^(i pi) + 1 = 0"
+      text @[171,187) str="e^(i pi) + 1 = 0"
+  para @[191,208)
+    text @[191,208) str="and a second one,"
+  para @[210,241)
+    math @[210,241) display=1 src="sum_(k=1)^n k = (n (n+1))/2"
+      text @[212,239) str="sum_(k=1)^n k = (n (n+1))/2"

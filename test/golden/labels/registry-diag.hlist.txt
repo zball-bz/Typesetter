@@ -73,13 +73,13 @@ top pid=3 units=1
   run r2 blank-bearing BOLD CJK
   run r3 plain
 top pid=4 units=1
- unit math indent=0su anchor="eq-1" w=2568su asc=700su desc=12su
+ unit math indent=0su anchor="eq-1" w=2568su asc=700su desc=12su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[204,220)
    run r0 plain
 top pid=5 units=1
- unit math indent=0su w=2457su asc=700su desc=19su
+ unit math indent=0su w=2457su asc=700su desc=19su centered
 top pid=6 units=1
  unit text indent=0su single-center
   ju=257su

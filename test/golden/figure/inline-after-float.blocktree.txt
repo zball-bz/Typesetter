@@ -1,0 +1,17 @@
+top pid=0 leaves=1
+  stack root gap=1/1 @[0,29)
+    paragraph para unit=0 @[0,29)
+top pid=1 leaves=1
+  stack root gap=1/1 @[31,166)
+    stack figure anchor="fig-tower" @[31,166)
+      replaced image float unit=0 float=right carry="fig-tower" @[31,166)
+top pid=2 leaves=5
+  stack root gap=1/1 @[168,483)
+    stack figure anchor="fig-pair" @[168,483)
+      stack figure place=inline/45% anchor="fig-a" @[196,322)
+        replaced image image unit=0 centered keep-with-next carry="fig-a" @[196,322)
+        paragraph caption unit=1 single-center @[299,313)
+      stack figure place=inline/45% anchor="fig-b" @[323,450)
+        replaced image image unit=2 centered keep-with-next carry="fig-b" @[323,450)
+        paragraph caption unit=3 single-center @[426,441)
+      paragraph caption unit=4 single-center @[451,474)

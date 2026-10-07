@@ -1,0 +1,1 @@
+{"headings":[{"level":1,"title":"A tall page float","label":null,"span":[236,255]}],"regions":[{"name":"topnote","label":null,"span":[298,1184]}],"fences":[],"labels":[],"diagnostics":[]}

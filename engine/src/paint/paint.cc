@@ -346,11 +346,21 @@ DLRoot paintRoot(const PaintSettings& cfg, const LayoutResult* lr) {
   return r;
 }
 
+// (plan P3-07) a line's track when it stands in a table cell: the cell's,
+// or a code block's notes' (plan P3-11: the sidecar column); null else
+static const char* cellTrackOf(const Fragment& l, const TopTree& tree) {
+  if (l.gridCell < 0 || l.table == ~0u) return nullptr;
+  const TableSpec& ts = tree.tables[tree.blocks[l.table].spec];
+  const bool side = !ts.cols.empty() && ts.cols[(size_t)l.gridCell % ts.cols.size()].sidecar;
+  return side ? "sidecar" : "cell";
+}
+
 void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& tops, const Interner& strs,
                 const PaintSettings& cfg, DLBlock& out, const StyleTable* styles, const MetricStore* metrics) {
   const ParaFrame& fr = lr.paras[p];
   const TopBlock& tb = tops[p];
   const TopTree& tree = *tb.tree;
+  auto cellTrack = [&](const Fragment& l) { return cellTrackOf(l, tree); };
   out.pid = fr.pid;
   out.h = fr.h;
   // (plan P3-16; D-Y08) the gap to the next block: layout's, in su — the one
@@ -412,6 +422,10 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.mathLabel = cfg.a11yMathLabel && l.mathRow == 0;
         n.mathHidden = cfg.a11yMathLabel && l.mathRow > 0;
         n.ragged = true;
+        // (plan P5-02) copied like a paragraph (layout's separator, §9.3), in
+        // a cell's track when it stands in one
+        n.join = sepName(l.sep);
+        n.track = cellTrack(l);
         break;
       }
       case FragKind::Image: {
@@ -448,10 +462,8 @@ void paintBlock(const LayoutResult& lr, size_t p, const std::vector<TopBlock>& t
         n.ragged = l.ragged || l.noGlue;
         // (plan P3-07) a second track's line: a table cell, a code block's
         // sidecar row, a float's caption row (data-cell retired)
-        if (l.gridCell >= 0 && l.table != ~0u) {  // a table cell — a code block's notes say so (plan P3-11)
-          const TableSpec& ts = tree.tables[tree.blocks[l.table].spec];
-          const bool side = !ts.cols.empty() && ts.cols[(size_t)l.gridCell % ts.cols.size()].sidecar;
-          n.track = side ? "sidecar" : "cell";
+        if (const char* tr = cellTrack(l)) {  // a table cell — a code block's notes say so (plan P3-11)
+          n.track = tr;
         } else if (l.cellIdx >= 0) {
           // a float's caption row; (plan P3-26) a display formula's number
           n.track = b.painter == Painter::MathRow ? "tag" : "caption";

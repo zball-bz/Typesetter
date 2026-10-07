@@ -162,6 +162,31 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
       pr.pages.push_back(std::move(pg));
       continue;
     }
+    // (plan P5-02) carried page floats taller than a sheet together: a sheet
+    // of their own, overflowing visibly (as a sheet of floats does) — the
+    // flow starts on the next one, never forced below them
+    {
+      i64 carriedH = 0;
+      for (size_t c : carried) carriedH += flow[c].h();
+      for (size_t c : carriedBottom) carriedH += flow[c].h();
+      if (carriedH > H) {
+        Page fp;
+        const size_t first = !carried.empty() ? carried[0] : carriedBottom[0];
+        fp.top = flow[first].top;
+        i64 cur = 0;
+        for (const std::vector<size_t>* list : {&carried, &carriedBottom})
+          for (size_t c : *list) {
+            fp.bands.push_back(band(flow[c], cur + fp.top - flow[c].top, false));
+            cur += flow[c].h();
+          }
+        fp.overflow = cur - H;
+        report("page-overflow", flow[first].span, "a page float taller than the page overflows it");
+        carried.clear();
+        carriedBottom.clear();
+        pr.pages.push_back(std::move(fp));
+        continue;
+      }
+    }
     Page pg;
     const i64 S = s < n ? flow[s].extTop : flow[!carried.empty() ? carried[0] : carriedBottom[0]].top;
     pg.top = S;
@@ -330,6 +355,7 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
     i64 bottomsH = 0;
     for (size_t x : bottoms) bottomsH += flow[x].h();
     i64 floorY = H - total;  // the inserts' top
+    i64 used = cursor + flowH;  // (plan P5-02) the sheet's lowest edge so far
     if (!bottoms.empty()) {
       i64 y = std::max(H - total - bottomsH, cursor + flowH);
       for (size_t x : bottoms) {
@@ -337,6 +363,7 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
         y += flow[x].h();
       }
       floorY = y;
+      used = std::max(used, y);
     }
     if (!pageInserts.empty()) {
       i64 y = std::max(H - total, std::max(cursor + flowH, bottoms.empty() ? cursor + flowH : floorY)) +
@@ -349,7 +376,11 @@ PageResult paginate(const LayoutResult& lr, const PageSpec& spec, DiagSink* diag
         pg.bands.push_back(band(ins[r], y + S - ins[r].top, false));
         y += ins[r].h();
       }
+      used = std::max(used, y);
     }
+    // (plan P5-02) a sheet whose content runs past its bottom shows it (the
+    // writer drops its clip) — whatever put it there
+    if (used > H && pg.overflow == 0) pg.overflow = used - H;
     // floats that did not fit wait for the next sheet; floats placed past
     // the cut are met again in the flow; page floats make the next sheet
     carried.clear();

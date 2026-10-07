@@ -1,0 +1,11 @@
+doc @[0,1237)
+  code-block @[0,234) js="\n  // (plan P5-02) a top float taller than a sheet: a sheet of its own,\n  // overflowing visibly with a warning; the flow goes on after it\n  $.set({role: 'topnote'}, {place: {float: 'top'}, box: {border: '1px', padding: '0.2em'}})\n"
+  heading @[236,255) level=1
+    text @[238,255) str="A tall page float"
+  para @[257,296)
+    text @[257,296) str="Filler paragraph one, before the float."
+  region @[298,1184) name="topnote"
+    para @[308,1174)
+      text @[308,1174) str="A long line of the tall float, number 1, that wraps across the measure.\nA long line of the tall float, number 2, that wraps across the measure.\nA long line of the tall float, number 3, that wraps across the measure.\nA long line of the tall float, number 4, that wraps across the measure.\nA long line of the tall float, number 5, that wraps across the measure.\nA long line of the tall float, number 6, that wraps across the measure.\nA long line of the tall float, number 7, that wraps across the measure.\nA long line of the tall float, number 8, that wraps across the measure.\nA long line of the tall float, number 9, that wraps across the measure.\nA long line of the tall float, number 10, that wraps across the measure.\nA long line of the tall float, number 11, that wraps across the measure.\nA long line of the tall float, number 12, that wraps across the measure."
+  para @[1186,1236)
+    text @[1186,1236) str="The last paragraph, after the float in the source."

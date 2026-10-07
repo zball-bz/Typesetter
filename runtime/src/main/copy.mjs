@@ -106,6 +106,10 @@ export function contentBlocksFromRange(range, root) {
 // the browser would copy it without them; else native copy (null).
 function semanticText(range, root) {
   if (!root.querySelector?.('[data-syn], [data-copy]')) return null;
+  // (plan P5-02) a range wholly inside one marked element — a note's
+  // marker, its backlink, a formula's glyphs: what that element copies as
+  for (let n = range.commonAncestorContainer; n && n !== root; n = n.parentNode)
+    if (n.nodeType === 1 && (n.dataset.syn !== undefined || n.dataset.copy !== undefined)) return n.dataset.copy ?? '';
   const frag = range.cloneContents();
   const marked = frag.querySelectorAll('[data-syn], [data-copy]');
   if (!marked.length) return null;

@@ -1,0 +1,27 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="131">Term names against generated anchors (plan P5-02): a term named like a heading&#39;s anchor, and one named like a note&#39;s, take neither.</p>
+<dl data-role="term" data-pid="1" data-s="133" data-e="187">
+<dt>h-1</dt>
+<dd>A term whose name is a heading&#39;s anchor.</dd>
+</dl>
+<h1 data-pid="2" data-s="189" data-e="196" id="tsr-h-1">Intro</h1>
+<p data-pid="3" data-s="198" data-e="248">Text with a note<a href="#tsr-fn-1" id="tsr-fnref-1" data-syn="fn-marker"><sup>1</sup></a> and a reference to <a href="#tsr-h-1">§1</a>.</p>
+<dl data-role="term" data-pid="4" data-s="250" data-e="302">
+<dt>fn-1</dt>
+<dd>A term whose name is a note&#39;s anchor.</dd>
+</dl>
+<dl data-role="term" data-pid="5" data-s="304" data-e="333" id="tsr-lemma">
+<dt>lemma</dt>
+<dd>A first term.</dd>
+</dl>
+<dl data-role="term" data-pid="6" data-s="335" data-e="395">
+<dt>lemma</dt>
+<dd>The same name again: the first one keeps it.</dd>
+</dl>
+<section data-role="notes" role="doc-endnotes" data-pid="7" data-s="0" data-e="395">
+<hr data-s="0" data-e="395">
+<ol data-s="0" data-e="395">
+<li id="tsr-fn-1">a note <a href="#tsr-fnref-1" data-syn="backlink">↩</a></li>
+</ol>
+</section>
+</div>

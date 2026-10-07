@@ -64,7 +64,7 @@ top pid=0 units=1
   run r5 object
   run r6 plain
 top pid=1 units=2
- unit img indent=0su anchor="fig-bad" placeholder
+ unit img indent=0su anchor="fig-bad" placeholder centered
  unit text indent=0su single-center
   ju=257su
   box Ideo "图" w=1025su wt=0.6 r0 @[190,216)

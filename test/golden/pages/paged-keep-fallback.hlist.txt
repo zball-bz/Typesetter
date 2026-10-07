@@ -12,7 +12,7 @@ top pid=0 units=1
   box Alpha "figure" w=4917su r0 @[24,30)
   run r0 plain BOLD x1.60
 top pid=1 units=2
- unit img indent=0su anchor="fig-tall" intrinsic=300x200px
+ unit img indent=0su anchor="fig-tall" intrinsic=300x200px centered
  unit text indent=0su single-center
   ju=257su
   box Ideo "图" w=1025su wt=0.6 r0 @[113,149)

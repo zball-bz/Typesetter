@@ -1,0 +1,15 @@
+A paragraph before the float.
+
+#!figure(src: "photos/tower.jpg", alt: "tower", w: 400, h: 300, scale: 0.4, float: "right", label: "fig-tower")
+A right float.
+#figure!
+
+#!figure(label: "fig-pair")
+#!figure(src: "a.png", w: 100, h: 50, label: "fig-a", style: {place: {float: "inline", width: "45%"}})
+The left view.
+#figure!
+#!figure(src: "b.png", w: 100, h: 60, label: "fig-b", style: {place: {float: "inline", width: "45%"}})
+The right view.
+#figure!
+Two views of one thing.
+#figure!

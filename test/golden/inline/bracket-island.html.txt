@@ -36,8 +36,8 @@
 <div class="tsr-para" data-pid="9" data-s0="548" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="45" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">References: </span><a class="tsr-r" href="#tsr-tgt" data-s="12">§1</a><span class="tsr-r" data-s="21"> and </span><a class="tsr-r" href="#tsr-a]b" data-s="25">§1.1</a><span class="tsr-r" data-s="33"> in brackets.</span></div>
 </div>
-<div class="tsr-para" data-role="notes" data-pid="10" data-s0="37" style="position:relative;height:67.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="7" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="0" style="font-size:13.6px">a ] b </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
+<div class="tsr-para" data-role="notes" data-pid="10" data-s0="0" style="position:relative;height:67.203px">
+<div class="tsr-rule" data-s="0" data-e="593" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="37" data-e="44" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r" data-s="37" style="font-size:13.6px">a ] b </span><a class="tsr-r" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px">↩</a></div>
 </div>
 </div>

@@ -1,0 +1,10 @@
+doc @[236,1236) [base]
+  heading @[236,255) [BOLDx1.60] level=1 label="h-1"
+    text @[238,255) [BOLDx1.60] str="A tall page float"
+  para @[257,296) [base]
+    text @[257,296) [base] str="Filler paragraph one, before the float."
+  group @[298,1184) [base] role="topnote"
+    para @[308,1174) [base]
+      text @[308,1174) [base] str="A long line of the tall float, number 1, that wraps across the measure. A long line of the tall float, number 2, that wraps across the measure. A long line of the tall float, number 3, that wraps across the measure. A long line of the tall float, number 4, that wraps across the measure. A long line of the tall float, number 5, that wraps across the measure. A long line of the tall float, number 6, that wraps across the measure. A long line of the tall float, number 7, that wraps across the measure. A long line of the tall float, number 8, that wraps across the measure. A long line of the tall float, number 9, that wraps across the measure. A long line of the tall float, number 10, that wraps across the measure. A long line of the tall float, number 11, that wraps across the measure. A long line of the tall float, number 12, that wraps across the measure."
+  para @[1186,1236) [base]
+    text @[1186,1236) [base] str="The last paragraph, after the float in the source."

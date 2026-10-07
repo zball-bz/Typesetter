@@ -1,0 +1,18 @@
+<div class="tsr-flow">
+<p data-pid="0" data-s="0" data-e="29">A paragraph before the float.</p>
+<figure data-role="figure" data-pid="1" data-s="31" data-e="166" id="tsr-fig-tower">
+<img data-s="31" data-e="166" src="photos/tower.jpg" alt="tower" style="max-width:100%">
+<figcaption><strong>图 1：</strong>A right float.</figcaption>
+</figure>
+<figure data-role="figure" data-pid="2" data-s="168" data-e="483" id="tsr-fig-pair">
+<figure data-role="figure" data-s="196" data-e="322" id="tsr-fig-a">
+<img data-s="196" data-e="322" src="a.png" alt="" style="max-width:100%">
+<figcaption><strong>2(a) </strong>The left view.</figcaption>
+</figure>
+<figure data-role="figure" data-s="323" data-e="450" id="tsr-fig-b">
+<img data-s="323" data-e="450" src="b.png" alt="" style="max-width:100%">
+<figcaption><strong>2(b) </strong>The right view.</figcaption>
+</figure>
+<figcaption><strong>图 2：</strong>Two views of one thing.</figcaption>
+</figure>
+</div>

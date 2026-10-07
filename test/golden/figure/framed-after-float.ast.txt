@@ -1,0 +1,17 @@
+doc @[0,786)
+  code-block @[0,112) js="\n  $.set({role: 'theorem'}, {box: {padding: '0.4em 2em', border: '0 2px 0 2px'}})\n  $.element('theorem', {})\n"
+  para @[114,180)
+    text @[114,180) str="A paragraph before the float, set at the full measure of the page."
+  region @[182,300) name="figure"
+    para @[286,291)
+      text @[286,291) str="Tiny."
+  para @[302,455)
+    text @[302,455) str="Text beside the float that runs long enough to pass the bottom of the float box and return to the full measure afterwards, so the map is not empty below."
+  para @[457,561)
+    text @[457,561) str="Another paragraph well below the float, at the full measure, padding the page so the float is behind us."
+  region @[563,757) name="theorem"
+    para @[573,747)
+      text @[573,747) str="A framed paragraph after the float: its lines must stay inside the padding and border of the frame on the right side too, and never reach the frame's right edge or beyond it."
+  region @[759,785) name="theorem"
+    para @[769,775)
+      text @[769,775) str="Short."

@@ -115,6 +115,18 @@ window.__tsr = {
   semanticHtml() {
     return handle.semanticHtml;
   },
+  // (plan P5-02) what copy takes of a range inside the first element a
+  // selector finds in the given HTML (put into #out2): its text node's
+  // characters [from, to)
+  copyInside(html, selector, from, to) {
+    const el = document.getElementById('out2');
+    el.innerHTML = html;
+    const t = document.createTreeWalker(el.querySelector(selector), NodeFilter.SHOW_TEXT).nextNode();
+    const range = document.createRange();
+    range.setStart(t, from);
+    range.setEnd(t, Math.min(to, t.length));
+    return contentTextFromRange(range, el);
+  },
   copyText() {
     const range = document.createRange();
     range.selectNodeContents(out);

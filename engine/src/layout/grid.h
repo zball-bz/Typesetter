@@ -16,8 +16,8 @@ struct GridParams {
   i32 minCols = 8;           // code.minCols: no row budget narrower, in columns
   i32 contIndent = 2;        // codeblock.contIndent: a continuation row's extra indent
   bool commentAware = true;  // a break inside a hanging run (a comment) aligns to its content
-  // break opportunities after these ASCII characters (CJK: between any two,
-  // by kinsoku)
+  // break opportunities after these characters, by code point (code.breakAfter;
+  // CJK: between any two, by kinsoku)
   std::string_view breakAfter = " \t,;)}]>";
 };
 

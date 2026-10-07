@@ -1,0 +1,82 @@
+top pid=0 units=1
+ unit text indent=0su
+  ju=257su
+  box Alpha "A" w=513su r0 @[0,1)
+  glue word w=257su x=1 st=257su kern="A p" src r0 @[1,2)
+  box Alpha "para" w=2049su r0 @[2,6)
+  disc pen=0.7 w=0su pre="-" 513su kern="ag" r0 @[6,6)
+  box Alpha "graph" w=2561su r0 @[6,11)
+  glue word w=257su x=1 st=257su kern="h b" src r0 @[11,12)
+  box Alpha "be" w=1025su r0 @[12,14)
+  disc pen=0.7 w=0su pre="-" 513su kern="ef" r0 @[14,14)
+  box Alpha "fore" w=2049su r0 @[14,18)
+  glue word w=257su x=1 st=257su kern="e t" src r0 @[18,19)
+  box Alpha "the" w=1537su r0 @[19,22)
+  glue word w=257su x=1 st=257su kern="e f" src r0 @[22,23)
+  box Alpha "float." w=3073su r0 @[23,29)
+  run r0 plain
+top pid=1 units=1
+ unit img indent=0su anchor="fig-tower" intrinsic=400x300px scale=0.4 float=right
+  cell 0
+   ju=257su
+   box Ideo "图" w=1025su wt=0.6 r0 @[143,157)
+   pen 0 r0
+   glue word w=257su x=1 st=257su src r1 @[143,157)
+   box Digit "1" w=513su r1 @[143,157)
+   box ColonW "：" w=513su blank=R r2 @[143,157)
+   glue blank w=512su x=0 r2 @[143,157)
+   box Alpha "A" w=513su r3 @[143,144)
+   glue word w=257su x=1 st=257su kern="A r" src r3 @[144,145)
+   box Alpha "right" w=2561su r3 @[145,150)
+   glue word w=257su x=1 st=257su kern="t f" src r3 @[150,151)
+   box Alpha "float." w=3073su r3 @[151,157)
+   run r0 letter-spaced BOLD CJK
+   run r1 plain BOLD
+   run r2 blank-bearing BOLD CJK
+   run r3 plain
+top pid=2 units=5
+ unit img indent=0su anchor="fig-a" intrinsic=100x50px centered
+ unit text indent=0su single-center
+  ju=257su
+  box Digit "2(a)" w=2049su r0 @[299,313)
+  glue word w=257su x=1 st=257su src r0 @[299,313)
+  box Alpha "The" w=1537su r1 @[299,302)
+  glue word w=257su x=1 st=257su kern="e l" src r1 @[302,303)
+  box Alpha "left" w=2049su r1 @[303,307)
+  glue word w=257su x=1 st=257su kern="t v" src r1 @[307,308)
+  box Alpha "view." w=2561su r1 @[308,313)
+  run r0 plain BOLD
+  run r1 plain
+ unit img indent=0su anchor="fig-b" intrinsic=100x60px centered
+ unit text indent=0su single-center
+  ju=257su
+  box Digit "2(b)" w=2049su r0 @[426,441)
+  glue word w=257su x=1 st=257su src r0 @[426,441)
+  box Alpha "The" w=1537su r1 @[426,429)
+  glue word w=257su x=1 st=257su kern="e r" src r1 @[429,430)
+  box Alpha "right" w=2561su r1 @[430,435)
+  glue word w=257su x=1 st=257su kern="t v" src r1 @[435,436)
+  box Alpha "view." w=2561su r1 @[436,441)
+  run r0 plain BOLD
+  run r1 plain
+ unit text indent=0su single-center
+  ju=257su
+  box Ideo "图" w=1025su wt=0.6 r0 @[451,474)
+  pen 0 r0
+  glue word w=257su x=1 st=257su src r1 @[451,474)
+  box Digit "2" w=513su r1 @[451,474)
+  box ColonW "：" w=513su blank=R r2 @[451,474)
+  glue blank w=512su x=0 r2 @[451,474)
+  box Alpha "Two" w=1537su r3 @[451,454)
+  glue word w=257su x=1 st=257su kern="o v" src r3 @[454,455)
+  box Alpha "views" w=2561su r3 @[455,460)
+  glue word w=257su x=1 st=257su kern="s o" src r3 @[460,461)
+  box Alpha "of" w=1025su r3 @[461,463)
+  glue word w=257su x=1 st=257su kern="f o" src r3 @[463,464)
+  box Alpha "one" w=1537su r3 @[464,467)
+  glue word w=257su x=1 st=257su kern="e t" src r3 @[467,468)
+  box Alpha "thing." w=3073su r3 @[468,474)
+  run r0 letter-spaced BOLD CJK
+  run r1 plain BOLD
+  run r2 blank-bearing BOLD CJK
+  run r3 plain

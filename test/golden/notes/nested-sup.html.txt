@@ -4,8 +4,8 @@
 <div class="tsr-line" data-s="109" data-e="148" data-join="space" style="top:24px;left:0px;width:300px;word-spacing:2.286px"><span class="tsr-r" data-s="109">text keeps the raise and is scaled from</span></div>
 <div class="tsr-line" data-s="149" data-e="160" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="149">its parent.</span></div>
 </div>
-<div class="tsr-para" data-role="notes" data-pid="1" data-s0="47" style="position:relative;height:67.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-fn-1" data-s="0" data-e="36" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r tsr-sup" data-s="0" style="font-size:13.6px;top:-6.12px">A note marked inside a superscript. </span><a class="tsr-r tsr-sup" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px;top:-6.12px">↩</a></div>
+<div class="tsr-para" data-role="notes" data-pid="1" data-s0="0" style="position:relative;height:67.203px">
+<div class="tsr-rule" data-s="0" data-e="160" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-fn-1" data-s="47" data-e="83" style="top:43.203px;left:24px;width:276px"><span class="tsr-marker tsr-r" data-syn="marker">1.</span><span class="tsr-r tsr-sup" data-s="47" style="font-size:13.6px;top:-6.12px">A note marked inside a superscript. </span><a class="tsr-r tsr-sup" href="#tsr-fnref-1" data-syn="backlink" style="font-size:13.6px;top:-6.12px">↩</a></div>
 </div>
 </div>

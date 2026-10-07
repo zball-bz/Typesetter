@@ -9,9 +9,9 @@
 <div class="tsr-line" id="tsr-sec-in" data-s="0" data-e="13" data-join="para" data-ragged="1" style="top:0px;left:0px;width:300px"><span id="tsr-box-b" data-syn="anchor"></span><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">Inner heading</span></div>
 <div class="tsr-line" data-s="24" data-e="47" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="24">Body text of the aside.</span></div>
 </div>
-<div class="tsr-para" data-role="aside" data-pid="3" data-s0="193" style="position:relative;height:67.203px;margin-bottom:19.203px">
-<div class="tsr-rule" id="tsr-rule-c" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" data-s="0" data-e="15" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="0">After the rule.</span></div>
+<div class="tsr-para" data-role="aside" data-pid="3" data-s0="188" style="position:relative;height:67.203px;margin-bottom:19.203px">
+<div class="tsr-rule" id="tsr-rule-c" data-s="0" data-e="3" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" data-s="5" data-e="20" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="5">After the rule.</span></div>
 </div>
 <div class="tsr-para" data-pid="4" data-s0="218" style="position:relative;height:24px">
 <div class="tsr-line" data-s="0" data-e="40" style="top:0px;left:0px;width:300px"><span class="tsr-r" data-s="0">See </span><a class="tsr-r" href="#tsr-lst-a" data-s="4">lst-a</a><span class="tsr-r" data-s="10">, </span><a class="tsr-r" href="#tsr-box-b" data-s="12">box-b</a><span class="tsr-r" data-s="18">, </span><a class="tsr-r" href="#tsr-sec-in" data-s="20">§1.1</a><span class="tsr-r" data-s="28"> and </span><a class="tsr-r" href="#tsr-rule-c" data-s="32">rule-c</a><span class="tsr-r" data-s="39">.</span></div>

@@ -1,0 +1,15 @@
+doc @[0,484)
+  para @[0,29)
+    text @[0,29) str="A paragraph before the float."
+  region @[31,166) name="figure"
+    para @[143,157)
+      text @[143,157) str="A right float."
+  region @[168,483) name="figure"
+    region @[196,322) name="figure"
+      para @[299,313)
+        text @[299,313) str="The left view."
+    region @[323,450) name="figure"
+      para @[426,441)
+        text @[426,441) str="The right view."
+    para @[451,474)
+      text @[451,474) str="Two views of one thing."

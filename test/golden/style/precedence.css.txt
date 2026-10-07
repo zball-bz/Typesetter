@@ -8,8 +8,8 @@
 :where(.tsr-c-tok-comment){font-style:italic}
 :where(ul,ol){padding-inline-start:1.5em}
 :where(blockquote){padding-inline-start:1em}
-:where(img){text-align:start;break-after:avoid}
-:where(p.tsr-mathblock){text-align:start}
+:where(img){text-align:center;break-after:avoid}
+:where(p.tsr-mathblock){text-align:center}
 :where(.tsr-err){font-family:var(--tsr-font-mono, monospace);text-align:start}
 :where(:not(pre) > code){color:#0000aa}
 :where(h1,h2,h3,h4,h5,h6){color:#333333}

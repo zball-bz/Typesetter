@@ -25,8 +25,8 @@
 <div class="tsr-line" data-s="38" data-e="78" data-join="space" style="top:24px;left:16px;width:284px"><span class="tsr-r" data-s="38">gine rather than the browser, wrapping</span></div>
 <div class="tsr-line" data-s="79" data-e="92" style="top:48px;left:16px;width:284px"><span class="tsr-r" data-s="79">across lines.</span></div>
 </div>
-<div class="tsr-para" data-pid="6" data-s0="0" style="position:relative;height:24px;margin-bottom:19.203px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-para" data-pid="6" data-s0="432" style="position:relative;height:24px;margin-bottom:19.203px">
+<div class="tsr-rule" data-s="0" data-e="3" style="top:12px;left:0px;width:300px"></div>
 </div>
 <div class="tsr-para" data-pid="7" data-s0="443" style="position:relative;height:48px">
 <div class="tsr-line tsr-row" data-s="0" data-e="24" data-ragged="1" style="top:0px;left:0px;width:300px;font-size:13.6px;line-height:24px"><span class="tsr-r tsr-code tsr-pre" style="font-size:13.6px">const x = compute(1, 2);</span></div>

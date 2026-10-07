@@ -1,0 +1,33 @@
+doc h=45800su
+para pid=0 y=0su w=19200su h=1639su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last items=[0,7) @[238,255)
+para pid=1 y=2868su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last items=[0,15) @[257,296)
+para pid=2 y=5633su w=19200su h=35866su
+  L0 frame y=0su left=0su w=19200su h=35866su
+  L1 y=269su left=269su w=18662su dw=29su dc=0su join=space items=[0,19) @[308,348)
+  L2 y=1805su left=269su w=18662su dw=209su dc=0su join=space items=[20,35) @[349,386)
+  L3 y=3341su left=269su w=18662su dw=143su dc=0su join=space items=[36,53) @[387,425)
+  L4 y=4877su left=269su w=18662su dw=209su dc=0su join=space items=[54,69) @[426,463)
+  L5 y=6413su left=269su w=18662su dw=69su dc=0su join=space items=[70,87) @[464,503)
+  L6 y=7949su left=269su w=18662su dw=143su dc=0su join=space items=[88,105) @[504,542)
+  L7 y=9485su left=269su w=18662su dw=38su dc=0su join=space items=[106,121) @[543,582)
+  L8 y=11021su left=269su w=18662su dw=289su dc=0su join=space items=[122,139) @[583,619)
+  L9 y=12557su left=269su w=18662su dw=124su dc=0su join=space items=[140,155) @[620,658)
+  L10 y=14093su left=269su w=18662su dw=69su dc=0su join=space items=[156,173) @[659,698)
+  L11 y=15629su left=269su w=18662su dw=-47su dc=0su join=space items=[174,191) @[699,739)
+  L12 y=17165su left=269su w=18662su dw=29su dc=0su join=space items=[192,211) @[740,780)
+  L13 y=18701su left=269su w=18662su dw=209su dc=0su join=space items=[212,227) @[781,818)
+  L14 y=20237su left=269su w=18662su dw=143su dc=0su join=space items=[228,245) @[819,857)
+  L15 y=21773su left=269su w=18662su dw=209su dc=0su join=space items=[246,261) @[858,895)
+  L16 y=23309su left=269su w=18662su dw=69su dc=0su join=space items=[262,279) @[896,935)
+  L17 y=24845su left=269su w=18662su dw=143su dc=0su join=space items=[280,297) @[936,974)
+  L18 y=26381su left=269su w=18662su dw=-47su dc=0su join=space items=[298,313) @[975,1015)
+  L19 y=27917su left=269su w=18662su dw=289su dc=0su join=space items=[314,331) @[1016,1052)
+  L20 y=29453su left=269su w=18662su dw=38su dc=0su join=space items=[332,347) @[1053,1092)
+  L21 y=30989su left=269su w=18662su dw=69su dc=0su join=space items=[348,365) @[1093,1132)
+  L22 y=32525su left=269su w=18662su dw=209su dc=0su join=none hyphen items=[366,382) @[1133,1169)
+  L23 y=34061su left=269su w=18662su dw=0su dc=0su join=last items=[382,383) @[1169,1174)
+para pid=3 y=42728su w=19200su h=3072su
+  L0 y=0su left=0su w=19200su dw=-73su dc=0su join=space items=[0,19) @[1186,1228)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last items=[20,21) @[1229,1236)

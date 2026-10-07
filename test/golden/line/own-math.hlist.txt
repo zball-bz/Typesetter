@@ -14,7 +14,7 @@ top pid=0 units=4
   box Alpha "math:" w=2561su r0 @[23,28)
   glue word w=257su x=1 st=257su src r0 @[28,28)
   run r0 plain
- unit math indent=1536su w=6064su asc=700su desc=76su
+ unit math indent=1536su w=6064su asc=700su desc=76su centered
  unit text indent=1536su
   ju=257su
   glue word w=257su x=1 st=257su src r0 @[59,59)

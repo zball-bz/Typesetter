@@ -5,7 +5,7 @@
 <div class="tsr-line" data-s="91" data-e="106" style="top:48px;left:0px;width:300px"><span class="tsr-r" data-s="91">still resolves.</span></div>
 </div>
 <div class="tsr-para" data-role="bibliography" data-pid="1" data-s0="108" style="position:relative;height:412.812px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="0" data-e="59" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-bib-liang83" data-s="0" data-e="59" data-join="none" style="top:43.203px;left:0px;width:300px;word-spacing:11.2px"><span class="tsr-r" data-s="0">[1] Franklin Mark Liang. </span><span class="tsr-r tsr-i" data-s="0">Word Hy-</span></div>
 <div class="tsr-line" data-s="0" data-e="59" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:10.667px"><span class="tsr-r tsr-i" data-s="0">phen-a-tion by Com-put-er</span><span class="tsr-r" data-s="0">. Stanford</span></div>
 <div class="tsr-line" data-s="0" data-e="59" data-join="none" style="top:91.203px;left:0px;width:300px;word-spacing:2px"><span class="tsr-r" data-s="0">University, 1983. </span><a class="tsr-r" href="https://tug.org/docs/liang/" data-s="0">https://tug.org/docs</a></div>

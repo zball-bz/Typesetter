@@ -72,7 +72,7 @@ top pid=0 units=1
   run r6 blank-bearing CJK
   run r7 blank-bearing CJK
 top pid=1 units=2
- unit img indent=0su anchor="fig-light" intrinsic=512x384px
+ unit img indent=0su anchor="fig-light" intrinsic=512x384px centered
  unit text indent=0su single-center
   ju=257su
   box Ideo "图" w=1025su wt=0.6 r0 @[181,239)
@@ -126,7 +126,7 @@ top pid=1 units=2
   run r7 letter-spaced CJK
   run r8 blank-bearing CJK
 top pid=2 units=2
- unit img indent=0su placeholder
+ unit img indent=0su placeholder centered
  unit text indent=0su single-center
   ju=257su
   box Ideo "图" w=1025su wt=0.6 r0 @[308,359)

@@ -138,4 +138,4 @@ top pid=0 units=1
   run r24 letter-spaced CJK
   run r25 blank-bearing CJK
 top pid=1 units=1
- unit math indent=0su w=4347su asc=2045su desc=1280su
+ unit math indent=0su w=4347su asc=2045su desc=1280su centered

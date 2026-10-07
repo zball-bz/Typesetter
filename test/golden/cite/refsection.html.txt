@@ -10,7 +10,7 @@
 <div class="tsr-line" id="tsr-h-1.1" data-s="0" data-e="11" data-join="para" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">Chapter one</span></div>
 <div class="tsr-line" data-s="13" data-e="62" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:-1.143px"><span class="tsr-r" data-s="13">Knuth and Plass </span><span class="tsr-r" data-s="29">[</span><a class="tsr-r" href="#tsr-bib-1-kp81" data-s="29">1</a><span class="tsr-r" data-s="29">]</span><span class="tsr-r" data-s="34">, then the TeXbook </span><span class="tsr-r" data-s="53">[</span><a class="tsr-r" href="#tsr-bib-1-knuth84" data-s="53">2</a><span class="tsr-r" data-s="53">]</span><span class="tsr-r" data-s="61">:</span></div>
 <div class="tsr-line" data-s="63" data-e="95" data-join="para" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="63">numbered afresh in this section.</span></div>
-<div class="tsr-rule" style="top:122.406px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="97" data-e="104" style="top:122.406px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-bib-1-kp81" data-s="285" data-e="380" data-join="space" style="top:153.609px;left:0px;width:300px"><span class="tsr-r" data-s="285">[1] Knuth and Plass, Breaking paragraphs</span></div>
 <div class="tsr-line" data-s="362" data-e="379" data-join="para" style="top:177.609px;left:0px;width:300px"><span class="tsr-r" data-s="362">into lines, 1981.</span></div>
 <div class="tsr-line" id="tsr-bib-1-knuth84" data-s="382" data-e="451" style="top:220.812px;left:0px;width:300px"><span class="tsr-r" data-s="382">[2] Knuth, The TeXbook, 1984.</span></div>
@@ -19,7 +19,7 @@
 <div class="tsr-line" id="tsr-h-1.2" data-s="0" data-e="11" data-join="para" data-ragged="1" style="top:0px;left:0px;width:300px"><span class="tsr-r tsr-b" data-s="0" style="font-size:21.6px">Chapter two</span></div>
 <div class="tsr-line" data-s="13" data-e="56" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:3.333px"><span class="tsr-r" data-s="13">The TeXbook again </span><span class="tsr-r" data-s="31">[</span><a class="tsr-r" href="#tsr-bib-2-knuth84" data-s="31">1</a><span class="tsr-r" data-s="31">]</span><span class="tsr-r" data-s="39">, first here, and</span></div>
 <div class="tsr-line" data-s="57" data-e="72" data-join="para" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="57">Liang </span><span class="tsr-r" data-s="63">[</span><a class="tsr-r" href="#tsr-bib-2-liang83" data-s="63">2</a><span class="tsr-r" data-s="63">]</span><span class="tsr-r" data-s="71">.</span></div>
-<div class="tsr-rule" style="top:122.406px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="74" data-e="81" style="top:122.406px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-bib-2-knuth84" data-s="247" data-e="316" data-join="para" style="top:153.609px;left:0px;width:300px"><span class="tsr-r" data-s="247">[1] Knuth, The TeXbook, 1984.</span></div>
 <div class="tsr-line" id="tsr-bib-2-liang83" data-s="318" data-e="404" data-join="space" style="top:196.812px;left:0px;width:300px"><span class="tsr-r" data-s="318">[2] Liang, Word hyphenation by computer,</span></div>
 <div class="tsr-line" data-s="398" data-e="403" style="top:220.812px;left:0px;width:300px"><span class="tsr-r" data-s="398">1983.</span></div>
@@ -27,11 +27,11 @@
 <div class="tsr-para" data-pid="4" data-s0="378" style="position:relative;height:24px;margin-bottom:19.203px">
 <div class="tsr-line" data-s="0" data-e="43" style="top:0px;left:0px;width:300px;word-spacing:-0.667px"><span class="tsr-r" data-s="0">Back outside: </span><span class="tsr-r" data-s="14">[</span><a class="tsr-r" href="#tsr-bib-kp81" data-s="14">2</a><span class="tsr-r" data-s="14">]</span><span class="tsr-r" data-s="20"> keeps its outer number.</span></div>
 </div>
-<div class="tsr-para" data-role="refs" data-pid="5" data-s0="432" style="position:relative;height:158.406px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
-<div class="tsr-line" id="tsr-bib-liang83" data-s="168" data-e="254" data-join="space" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="168">[1] Liang, Word hyphenation by computer,</span></div>
-<div class="tsr-line" data-s="248" data-e="253" data-join="para" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="248">1983.</span></div>
-<div class="tsr-line" id="tsr-bib-kp81" data-s="0" data-e="95" data-join="space" style="top:110.406px;left:0px;width:300px"><span class="tsr-r" data-s="0">[2] Knuth and Plass, Breaking paragraphs</span></div>
-<div class="tsr-line" data-s="77" data-e="94" style="top:134.406px;left:0px;width:300px"><span class="tsr-r" data-s="77">into lines, 1981.</span></div>
+<div class="tsr-para" data-role="refs" data-pid="5" data-s0="423" style="position:relative;height:158.406px">
+<div class="tsr-rule" data-s="0" data-e="7" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-line" id="tsr-bib-liang83" data-s="177" data-e="263" data-join="space" style="top:43.203px;left:0px;width:300px"><span class="tsr-r" data-s="177">[1] Liang, Word hyphenation by computer,</span></div>
+<div class="tsr-line" data-s="257" data-e="262" data-join="para" style="top:67.203px;left:0px;width:300px"><span class="tsr-r" data-s="257">1983.</span></div>
+<div class="tsr-line" id="tsr-bib-kp81" data-s="9" data-e="104" data-join="space" style="top:110.406px;left:0px;width:300px"><span class="tsr-r" data-s="9">[2] Knuth and Plass, Breaking paragraphs</span></div>
+<div class="tsr-line" data-s="86" data-e="103" style="top:134.406px;left:0px;width:300px"><span class="tsr-r" data-s="86">into lines, 1981.</span></div>
 </div>
 </div>

@@ -11,7 +11,7 @@
 <div class="tsr-line" data-s="130" data-e="153" style="top:131.219px;left:0px;width:300px"><span class="tsr-r" data-s="130">Body text of the aside.</span></div>
 </div>
 <div class="tsr-band" data-role="aside" data-b="3">
-<div class="tsr-rule" id="tsr-rule-c" style="top:186.422px;left:0px;width:300px"></div>
+<div class="tsr-rule" id="tsr-rule-c" data-s="188" data-e="191" style="top:186.422px;left:0px;width:300px"></div>
 <div class="tsr-line" data-s="193" data-e="208" style="top:217.625px;left:0px;width:300px"><span class="tsr-r" data-s="193">After the rule.</span></div>
 </div>
 <div class="tsr-band" data-b="4">

@@ -3,4 +3,4 @@ top pid=0 leaves=1
     paragraph para unit=0 @[0,176)
 top pid=1 leaves=1
   stack root gap=1/1 @[178,201)
-    replaced math math unit=0 ragged @[178,201)
+    replaced math math unit=0 centered @[178,201)

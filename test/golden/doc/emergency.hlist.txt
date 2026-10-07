@@ -106,7 +106,7 @@ top pid=1 units=1
   run r23 rigid CODE x0.85
   run r24 plain
 top pid=2 units=2
- unit img indent=0su intrinsic=300x100px
+ unit img indent=0su intrinsic=300x100px centered
  unit text indent=0su single-center
   ju=257su
   box Alpha "Figure" w=3073su r0 @[294,388)

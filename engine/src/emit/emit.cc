@@ -1474,7 +1474,6 @@ struct Emitter {
     g.features = styles.get(n->style).features;
     g.chRef = strs.intern(kGridProbeLatin);  // the grid's probes (code/grid.h)
     g.cjkChRef = strs.intern(kGridProbeCjk);
-    if (StrRef lang = attrStr(n, ArgK::lang)) g.lang = lang;
     g.wrap = attrBool(n, ArgK::wrap, g.wrap);
     g.lineNo = attrInt(n, ArgK::lineNo, g.lineNo);
     if (StrRef hl = attrStr(n, ArgK::hl))  // "3,5-7": validated by the reader
@@ -2253,7 +2252,9 @@ MeasureRequest resolveWidths(std::vector<TopBlock>& tops, MetricStore& store,
       }
       if (const GridData* g = std::get_if<GridData>(&u.data)) {
         needStyle(g->codeStyle);
-        if (g->wrap || g->snap) {  // (plan P3-11: snap-kerning without wrap measures them too)
+        // (plan P3-11: snap-kerning without wrap measures them too; plan
+        // P5-02: so do line numbers — their gutter is ch columns wide)
+        if (g->wrap || g->snap || g->lineNo) {
           for (StrRef probe : {g->chRef, g->cjkChRef}) {
             if (!probe || store.hasWord(probe, g->codeStyle)) continue;
             ask(probe, g->codeStyle);

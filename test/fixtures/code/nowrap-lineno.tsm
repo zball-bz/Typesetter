@@ -1,0 +1,6 @@
+Line numbers on code that does not wrap (plan P5-02): the gutter is measured all the same.
+
+```js(wrap: false, lineNo: 1)
+const answer = 42;
+function f(x) { return x * 2; }
+```

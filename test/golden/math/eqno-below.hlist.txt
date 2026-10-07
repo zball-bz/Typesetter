@@ -54,7 +54,7 @@ top pid=0 units=1
   box Alpha "P3-26):" w=3585su r0 @[94,101)
   run r0 plain
 top pid=1 units=1
- unit math indent=0su anchor="wide" w=16549su asc=700su desc=166su
+ unit math indent=0su anchor="wide" w=16549su asc=700su desc=166su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[103,157)
@@ -84,7 +84,7 @@ top pid=2 units=1
   glue word w=257su x=1 st=257su src r0 @[197,197)
   run r0 plain
 top pid=3 units=1
- unit math indent=0su anchor="narrow" w=2392su asc=727su desc=12su
+ unit math indent=0su anchor="narrow" w=2392su asc=727su desc=12su centered
   cell 0
    ju=257su
    box OpenN "(2)" w=1537su r0 @[198,216)

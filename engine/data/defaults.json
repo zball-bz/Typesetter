@@ -16,10 +16,10 @@
   [{"kind": "terms"}, {"blockIndent": "2em", "blockGap": "1/3"}],
   [{"slot": "term"}, {"weight": 700}],
   [{"kind": "quote"}, {"blockIndent": {"setting": "quote.indent", "unit": "em"}}],
-  [{"kind": "image"}, {"parAlign": "start", "keepWithNext": true}],
+  [{"kind": "image"}, {"parAlign": "center", "keepWithNext": true}],
   [{"kind": "image", "side": "left"}, {"parAlign": "justify", "keepWithNext": false}],
   [{"kind": "image", "side": "right"}, {"parAlign": "justify", "keepWithNext": false}],
-  [{"kind": "mathblock"}, {"parAlign": "start"}],
+  [{"kind": "mathblock"}, {"parAlign": "center"}],
   [{"kind": "equations"}, {"blockGap": "0.3em"}],
   [{"kind": "error"}, {"fontRole": "mono", "parAlign": "start"}]
 ]

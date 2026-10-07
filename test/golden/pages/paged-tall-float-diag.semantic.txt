@@ -1,0 +1,8 @@
+<div class="tsr-flow">
+<h1 data-pid="0" data-tsr-env="86be252f16e0546b" data-s="236" data-e="255" id="tsr-h-1">A tall page float</h1>
+<p data-pid="1" data-tsr-env="86be252f16e0546b" data-s="257" data-e="296">Filler paragraph one, before the float.</p>
+<div data-role="topnote" data-pid="2" data-tsr-env="86be252f16e0546b" data-s="298" data-e="1184">
+<p data-s="308" data-e="1174">A long line of the tall float, number 1, that wraps across the measure. A long line of the tall float, number 2, that wraps across the measure. A long line of the tall float, number 3, that wraps across the measure. A long line of the tall float, number 4, that wraps across the measure. A long line of the tall float, number 5, that wraps across the measure. A long line of the tall float, number 6, that wraps across the measure. A long line of the tall float, number 7, that wraps across the measure. A long line of the tall float, number 8, that wraps across the measure. A long line of the tall float, number 9, that wraps across the measure. A long line of the tall float, number 10, that wraps across the measure. A long line of the tall float, number 11, that wraps across the measure. A long line of the tall float, number 12, that wraps across the measure.</p>
+</div>
+<p data-pid="3" data-tsr-env="86be252f16e0546b" data-s="1186" data-e="1236">The last paragraph, after the float in the source.</p>
+</div>

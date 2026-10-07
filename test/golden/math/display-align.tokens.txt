@@ -1,0 +1,3 @@
+[0,56) function "#{ $.set({kind: 'mathblock'}, {par: {align: 'start'}}) }"
+[169,189) type "$ e^(i pi) + 1 = 0 $"
+[210,241) type "$ sum_(k=1)^n k = (n (n+1))/2 $"

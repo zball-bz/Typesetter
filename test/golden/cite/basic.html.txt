@@ -12,7 +12,7 @@
 <div class="tsr-line" data-s="268" data-e="305" style="top:144px;left:0px;width:300px"><span class="tsr-r" data-s="268">number; the uncited entry is omitted.</span></div>
 </div>
 <div class="tsr-para" data-role="bibliography" data-pid="2" data-s0="320" style="position:relative;height:369.609px">
-<div class="tsr-rule" style="top:12px;left:0px;width:300px"></div>
+<div class="tsr-rule" data-s="0" data-e="46" style="top:12px;left:0px;width:300px"></div>
 <div class="tsr-line" id="tsr-bib-kp81" data-s="0" data-e="46" data-join="space" style="top:43.203px;left:0px;width:300px;word-spacing:14.4px"><span class="tsr-r" data-s="0">[1] Donald E. Knuth and Michael</span></div>
 <div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:67.203px;left:0px;width:300px;word-spacing:11px"><span class="tsr-r" data-s="0">F. Plass. </span><span class="tsr-r tsr-i" data-s="0">Breaking Paragraphs into</span></div>
 <div class="tsr-line" data-s="0" data-e="46" data-join="space" style="top:91.203px;left:0px;width:300px;word-spacing:-1px"><span class="tsr-r tsr-i" data-s="0">Lines</span><span class="tsr-r" data-s="0">. Software: Practice and Experience</span></div>

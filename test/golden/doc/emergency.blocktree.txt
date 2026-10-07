@@ -7,7 +7,7 @@ top pid=1 leaves=1
 top pid=2 leaves=2
   stack root gap=1/1 @[232,397)
     stack figure @[232,397)
-      replaced image image unit=0 ragged keep-with-next @[232,397)
+      replaced image image unit=0 centered keep-with-next @[232,397)
       paragraph caption unit=1 single-center @[294,388)
 top pid=3 leaves=1
   stack root gap=1/1 @[399,531)

@@ -1,0 +1,24 @@
+doc h=32975su
+para pid=0 y=0su w=19200su h=6144su
+  L0 y=0su left=0su w=19200su dw=448su dc=0su join=space items=[0,17) @[0,36)
+  L1 y=1536su left=0su w=19200su dw=146su dc=0su join=none hyphen items=[18,34) @[37,75)
+  L2 y=3072su left=0su w=19200su dw=-73su dc=0su join=space items=[34,51) @[75,117)
+  L3 y=4608su left=0su w=19200su dw=0su dc=0su join=last items=[52,57) @[118,131)
+para pid=1 y=7373su w=19200su h=3072su
+  L0 y=0su left=0su w=19200su dw=211su dc=0su join=space items=[0,19) @[133,187)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last items=[20,23) @[179,186)
+para pid=2 y=11674su w=19200su h=1639su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last items=[0,1) @[191,196)
+para pid=3 y=14542su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last items=[0,23) @[198,248)
+para pid=4 y=17307su w=19200su h=3072su
+  L0 y=0su left=0su w=19200su dw=102su dc=0su join=none hyphen items=[0,20) @[250,302)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last items=[20,21) @[296,301)
+para pid=5 y=21608su w=19200su h=1536su
+  L0 y=0su left=0su w=19200su dw=0su dc=0su join=last items=[0,11) @[304,333)
+para pid=6 y=24373su w=19200su h=3072su
+  L0 y=0su left=0su w=19200su dw=-45su dc=0su join=space items=[0,19) @[335,395)
+  L1 y=1536su left=0su w=19200su dw=0su dc=0su join=last items=[20,23) @[385,394)
+para pid=7 y=28674su w=19200su h=4301su
+  L0 rule y=768su left=0su w=19200su
+  L1 y=2765su left=1536su w=17664su dw=0su dc=0su join=last marker items=[0,5) @[216,223)

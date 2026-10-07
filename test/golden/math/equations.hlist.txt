@@ -59,13 +59,13 @@ top pid=0 units=1
   run r1 rigid CODE x0.85
   run r2 plain
 top pid=1 units=3
- unit math indent=0su anchor="sq" w=7949su asc=980su desc=209su
+ unit math indent=0su anchor="sq" w=7949su asc=980su desc=209su centered
   cell 0
    ju=257su
    box OpenN "(1)" w=1537su r0 @[128,154)
    run r0 plain
- unit math indent=0su w=7949su asc=967su desc=76su
- unit math indent=0su anchor="bound" w=7949su asc=723su desc=153su
+ unit math indent=0su w=7949su asc=967su desc=76su centered
+ unit math indent=0su anchor="bound" w=7949su asc=723su desc=153su centered
   cell 0
    ju=257su
    box OpenN "(2)" w=1537su r0 @[176,195)
@@ -108,7 +108,7 @@ top pid=2 units=1
   box Alpha "row:" w=2049su r0 @[258,262)
   run r0 plain
 top pid=3 units=1
- unit math indent=0su anchor="binom" w=7290su asc=1516su desc=1147su
+ unit math indent=0su anchor="binom" w=7290su asc=1516su desc=1147su centered
   cell 0
    ju=257su
    box OpenN "(3)" w=1537su r0 @[264,328)
@@ -136,7 +136,7 @@ top pid=4 units=1
   run r1 rigid CODE x0.85
   run r2 plain
 top pid=5 units=1
- unit math indent=0su w=2477su asc=727su desc=12su
+ unit math indent=0su w=2477su asc=727su desc=12su centered
 top pid=6 units=1
  unit text indent=0su
   ju=257su
@@ -146,15 +146,15 @@ top pid=6 units=1
   box Alpha "lows." w=2561su r0 @[378,383)
   run r0 plain
 top pid=7 units=2
- unit math indent=0su w=4295su asc=700su desc=76su
- unit math indent=0su w=5940su asc=700su desc=239su
+ unit math indent=0su w=4295su asc=700su desc=76su centered
+ unit math indent=0su w=5940su asc=700su desc=239su centered
 top pid=8 units=2
- unit math indent=0su anchor="eq-u" w=4566su asc=600su desc=76su
+ unit math indent=0su anchor="eq-u" w=4566su asc=600su desc=76su centered
   cell 0
    ju=257su
    box OpenN "(4)" w=1537su r0 @[486,507)
    run r0 plain
- unit math indent=0su w=4566su asc=723su desc=11su
+ unit math indent=0su w=4566su asc=723su desc=11su centered
 top pid=9 units=1
  unit text indent=0su
   ju=257su

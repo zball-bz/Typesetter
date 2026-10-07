@@ -1,0 +1,13 @@
+Term names against generated anchors (plan P5-02): a term named like a heading's anchor, and one named like a note's, take neither.
+
+#term("h-1")[A term whose name is a heading's anchor.]
+
+= Intro
+
+Text with a note^[a note] and a reference to @h-1.
+
+#term("fn-1")[A term whose name is a note's anchor.]
+
+#term("lemma")[A first term.]
+
+#term("lemma")[The same name again: the first one keeps it.]

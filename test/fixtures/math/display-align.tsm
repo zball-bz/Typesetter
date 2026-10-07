@@ -1,0 +1,9 @@
+#{ $.set({kind: 'mathblock'}, {par: {align: 'start'}}) }
+
+Display formulas flush left (plan P5-02): par.align places a formula's rows as it places a paragraph's lines.
+
+$ e^(i pi) + 1 = 0 $
+
+and a second one,
+
+$ sum_(k=1)^n k = (n (n+1))/2 $

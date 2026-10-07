@@ -21,7 +21,7 @@ top pid=0 units=1
   run r0 letter-spaced CJK
   run r1 blank-bearing CJK
 top pid=1 units=1
- unit math indent=0su w=9278su asc=1495su desc=1148su
+ unit math indent=0su w=9278su asc=1495su desc=1148su centered
 top pid=2 units=1
  unit text indent=0su
   ju=257su
@@ -70,4 +70,4 @@ top pid=2 units=1
   run r8 letter-spaced CJK
   run r9 blank-bearing CJK
 top pid=3 units=1
- unit math indent=0su w=11479su asc=1414su desc=891su
+ unit math indent=0su w=11479su asc=1414su desc=891su centered

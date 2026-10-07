@@ -674,7 +674,7 @@ struct Mat {
     instanceSlots(*in, s);
     // the label it carries: the class's label argument, else its own
     std::string label(in->label.empty() ? e.strs.get(attrStr(k, ArgK::label)) : std::string_view(in->label));
-    s.set("label", label);
+    s.set("label", in->anchored ? label : std::string());  // (plan P5-02) not its own: no anchor
     std::vector<ContentNode*> inl, blk;
     for (ContentNode* x : k->kids) (isInlineLevel(x->kind) ? inl : blk).push_back(x);
     s.nodes.push_back({"inline-body", inl});
@@ -691,7 +691,7 @@ struct Mat {
     const ElementClass* C = in ? &e.reg.cls(in->cls) : nullptr;
     // its anchor where the node does not carry it: an alias, or a label from
     // an argument (a dterm's name, plan P3-03)
-    bool anchor = C && (in->aliased || (C->labels == ElementClass::Labels::FromArg && !in->label.empty())) &&
+    bool anchor = C && in->anchored && (in->aliased || (C->labels == ElementClass::Labels::FromArg && !in->label.empty())) &&
                   !C->flow && !C->replaced();
     if (C && C->marker && !in->number.empty()) {  // its number is its marker (SemInfo.number)
       if (o == n) o = clone1(n);
