@@ -28,7 +28,13 @@ function startServer({ assetRoot, mediaDir, docRoots = new Map() }) {
   const server = http.createServer(async (req, res) => {
     try {
       const url = new URL(req.url, 'http://x');
-      const p = path.normalize(decodeURIComponent(url.pathname));
+      // a URL path, so posix: path.normalize on Windows turns '/preview.html'
+      // into '\preview.html' and nothing below matches. path.join maps the
+      // '/' separators onto the filesystem's; a decoded '\' would be one on
+      // Windows that posix normalization never saw, so it is refused
+      const raw = decodeURIComponent(url.pathname);
+      if (raw.includes('\\') || raw.includes('\0')) throw new Error('bad path');
+      const p = path.posix.normalize(raw);
       let file = null;
       if (p === '/preview.html' || p === '/') {
         file = path.join(mediaDir, 'preview.html');
