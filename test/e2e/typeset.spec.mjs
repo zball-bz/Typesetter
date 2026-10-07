@@ -108,6 +108,70 @@ test('baseline: a host line-height leaves every baseline where the engine set it
   expect(report.lines).toBeGreaterThan(0);
 });
 
+// the host's text-indent (or a paragraph's, on the semantic page) moves no
+// ink: a line and a formula's glyph start where the engine set them
+test('indent: a host text-indent moves no line or formula glyph', async ({ page }) => {
+  const source = 'Prose with $e^(i pi) + 1 = 0$ inline, long enough to wrap onto a second line of the measure, ' +
+    'and $x_1 + x_2$ again.\n\n$ sum_(k=1)^n k = (n(n+1))/2 $\n';
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(() => { document.querySelector('#out').style.textIndent = '3em'; });
+  await page.evaluate(async ({ source }) => await window.__tsr.typeset(source, { widthPx: 400 }), { source });
+  // ink vs box: a block's text starts at its box unless text-indent moves it
+  const inkOffsets = (root) => page.evaluate((sel) => {
+    const out = [];
+    for (const e of document.querySelectorAll(sel)) {
+      const r = document.createRange();
+      r.selectNodeContents(e);
+      const ink = r.getClientRects()[0];
+      if (ink) out.push(Math.abs(ink.left - e.getBoundingClientRect().left));
+    }
+    return out;
+  }, root);
+  const typeset = await inkOffsets('#out .tsr-line, #out .tsr-mg');
+  expect(typeset.length).toBeGreaterThan(10);
+  expect(Math.max(...typeset)).toBeLessThan(0.5);
+  // the semantic page under a paragraph indent (par.indent's rule, a host's p rule)
+  const sem = await page.evaluate(() => window.__tsr.semanticHtml());
+  await page.evaluate((h) => {
+    const s = document.createElement('style');
+    s.textContent = '#sem p { text-indent: 2em }';
+    document.head.append(s);
+    const d = document.createElement('div');
+    d.id = 'sem';
+    d.style.width = '400px';
+    d.innerHTML = h;
+    document.body.append(d);
+  }, sem);
+  const semantic = await inkOffsets('#sem .tsr-mg');
+  expect(semantic.length).toBeGreaterThan(10);
+  expect(Math.max(...semantic)).toBeLessThan(0.5);
+});
+
+// (the theme) the semantic page sets a display formula's number at the end
+// of the measure, on the formula's line, the formula centred in the measure
+test('semantic page: an equation number at the end of the measure', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  await page.evaluate(async () => await window.__tsr.typeset('Before.\n\n$ a^2 + b^2 = c^2 $ <e-p>\n\nAfter @e-p.', { widthPx: 400 }));
+  const sem = await page.evaluate(() => window.__tsr.semanticHtml());
+  const g = await page.evaluate((h) => {
+    const d = document.createElement('div');
+    d.className = 'tsr-doc-static';
+    d.style.width = '400px';
+    d.innerHTML = h;
+    document.body.append(d);
+    const p = d.querySelector('p.tsr-mathblock'), n = p.querySelector('.tsr-eqno'), m = p.querySelector('.tsr-math');
+    const [pr, nr, mr] = [p, n, m].map((e) => e.getBoundingClientRect());
+    return { endGap: pr.right - nr.right, centre: (mr.left + mr.right) / 2 - (pr.left + pr.right) / 2,
+             overlap: Math.min(nr.bottom, mr.bottom) - Math.max(nr.top, mr.top), clear: nr.left - mr.right };
+  }, sem);
+  expect(Math.abs(g.endGap)).toBeLessThan(0.5);
+  expect(Math.abs(g.centre)).toBeLessThan(0.5);
+  expect(g.overlap).toBeGreaterThan(0);  // on the formula's line
+  expect(g.clear).toBeGreaterThan(0);
+});
+
 // --- M5: progressive upgrade, relayout, copy contract (§9.2/§9.3) ---------
 
 test('progressive semantic phase, upgrade records, relayout', async ({ page }) => {

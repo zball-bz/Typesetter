@@ -113,3 +113,12 @@ code's own extents as layout does. Without the factors (a page rendered
 without the shell) the runs fall back to `line-height: normal`. The dev
 audit checks every text line's baseline against this model, within 1px.
 
+The same holds across the line: the engine places every line, glyph and
+box itself, so an inherited `text-indent` (a host's on the container, a
+paragraph's on the semantic page: `par.indent`'s rule) must not move their
+ink. The shell's layout module resets it on the typeset root, formulas and
+raw boxes (`.tsr-doc, .tsr-math, .tsr-raw, .tsr-iraw { text-indent: 0 }`).
+On the semantic page a display formula's number (`.tsr-eqno`) stands at the
+end of the measure on the formula's line, the formula centred in the
+measure (theme: `p.tsr-mathblock:has(> .tsr-eqno)` pads both sides 3em).
+

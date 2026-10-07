@@ -46,6 +46,10 @@
 .tsr-flow .tsr-margin { color: var(--tsr-tok-comment); font-style: italic; }
 /* (plan P3-27) the plain page: a display formula's box, centred in its paragraph */
 .tsr-flow p.tsr-mathblock { text-align: center; }
+/* its number at the end of the measure, on the formula's baseline (where
+   the typeset page sets it); the formula stays centred in the measure */
+.tsr-flow p.tsr-mathblock:has(> .tsr-eqno) { position: relative; padding-inline: 3em; }
+.tsr-flow p.tsr-mathblock > .tsr-eqno { position: absolute; right: 0; }
 /* (plan P3-29) a formula's rows (a jot apart), an equations block's rows */
 .tsr-flow .tsr-mathrows { line-height: 0; }
 .tsr-flow .tsr-mathrows > .tsr-math + br + .tsr-math { margin-top: 0.3em; }

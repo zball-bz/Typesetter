@@ -43,6 +43,10 @@ export const TSR_CJK_FONT =
 // unless a host brings its own. Only what the engine's DOM needs to render
 // as measured: a behaviour brings its own CSS (plan P3-06).
 const LAYOUT_CSS = `
+/* the engine places every line, glyph and box itself: an inherited
+   text-indent (a host's, a paragraph's on the semantic page) would move
+   their ink — the typeset root, formulas and raw boxes reset it */
+.tsr-doc, .tsr-math, .tsr-raw, .tsr-iraw { text-indent: 0; }
 .tsr-doc { position: relative; text-rendering: geometricPrecision;
            /* the engine owns CJK punctuation compression (App C); Chromium's
               built-in trimming (text-spacing-trim: normal) would compress
