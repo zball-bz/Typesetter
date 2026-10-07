@@ -38,6 +38,18 @@ try {
   const bad = await renderTsm('#{ $.labels.import("missing.labels.json") }\n\nSee @sec-two.\n', { baseDir: dir, rootDir: dir });
   if (!bad.diagnostics.includes('labels-import')) fail('$.labels.import: a missing manifest says nothing');
 
+  // a project's document that imports another book's manifest links to
+  // where that book is published (urls: a key outside the project)
+  const { renderProject } = await import('../runtime/src/node/project.mjs');
+  writeFileSync(join(dir, 'other.labels.json'), JSON.stringify({ v: 1, doc: 'other', totals: {}, labels: [
+    { label: 'far', class: 'heading', level: 1, number: [['heading', [8]]], title: 'Far', anchor: 'far' }] }));
+  const ext = await renderProject({
+    files: [{ doc: 'near', source: '#{ $.labels.import("other.labels.json") }\n\n= Near\n\nSee @far.\n', baseDir: dir }],
+    settings: { doc: { lang: 'en' } }, urls: { near: '/near', other: 'https://example.org/other/' },
+  });
+  if (!ext.docs[0].html.includes('href="https://example.org/other/#tsr-far"') || ext.urls.near !== '/near')
+    fail(`renderProject: a link to an imported book's label goes where urls says (${ext.docs[0].html.match(/<a [^>]*>/)?.[0]})`);
+
   // (post-P5) the contents a host's navigation reads (bundle.contents): every
   // outline entry with its number as the project continues it, an
   // unnumbered class's without one, the title's HTML as a contents entry

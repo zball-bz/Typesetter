@@ -6,6 +6,8 @@
 //   const { docs, manifests, diagnostics } = await renderProject({
 //     files: [{ doc, source, baseDir, rootDir }],  // book order
 //     settings, urls, continue: ['heading', …], offset: { heading: 4 } })
+//   (urls: where documents are published — the project's, else <key>.html,
+//   and any other a document imports with $.labels.import)
 //
 // Pass A: each document with its key and nothing else — its labels product
 //   (start-independent, independent of what it imports).
@@ -41,7 +43,9 @@ export async function renderProject({ files, settings = {}, urls = {}, continue:
     const totals = JSON.parse(m).totals ?? {};
     for (const c of continued) acc[c] = (acc[c] ?? 0) + (totals[c] ?? 0);
   });
-  const allUrls = Object.fromEntries(keys.map((k) => [k, urls[k] ?? `${k}.html`]));
+  // where each document is published, and the documents outside the
+  // project its documents import ($.labels.import: another book's manifest)
+  const allUrls = { ...urls, ...Object.fromEntries(keys.map((k) => [k, urls[k] ?? `${k}.html`])) };
 
   // Pass B, again while a manifest changes (a title that cites another document)
   const diagnostics = [];

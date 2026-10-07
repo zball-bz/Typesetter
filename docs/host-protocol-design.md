@@ -329,6 +329,9 @@ As built (design T9 A7, T3 S7; INTEGRATION: T9's transport, T3's semantics):
   Pass B renders each with `project.{doc, starts, urls}` and the others'
   manifests as its labels input, once more when a manifest changed (a title
   citing another document), at most three passes (`project-unstable`). It
+  `urls` may also name documents outside the project — another book whose
+  manifest a document imports (`$.labels.import`) — so references to it link
+  where it is published (post-P5). It
   writes `<key>.html` (the static page of `tools/lib/static-page.mjs`, the
   one export-static writes; hydration gets the same settings and inputs)
   and `<key>.labels.json`. `tools/check-project.mjs` (gate G6) builds a book.
