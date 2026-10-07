@@ -2406,6 +2406,13 @@ static void unitSettings() {
     DiagSink d;
     SettingsPatch p = applySettings(b, settingsJson(a), d);
     CHECK(p.ok && d.items.empty() && settingsJson(b) == settingsJson(a));
+    // one object per section: a JSON reader keeps one of two equal keys, so a
+    // section written twice loses rows (render.idPrefix did)
+    JsonValue doc;
+    JsonReader jr;
+    CHECK(jr.parse(settingsJson(a), doc) && doc.t == JsonValue::T::Obj);
+    std::set<std::string> sections;
+    for (const auto& k : doc.keys) CHECK(sections.insert(std::string(k)).second);
   }
 }
 

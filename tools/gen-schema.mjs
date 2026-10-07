@@ -675,8 +675,16 @@ let sc = `// ${HDR}\n#include "settings.gen.h"\n\n#include <algorithm>\n#include
   `  for (const Hit& h : hits) {\n    std::string why;\n    if (applyRow(c, h.row, *h.v, why)) {\n      p.applied++;\n      p.affects |= kRows[h.row].affects;\n` +
   `    } else {\n      diags.add(Sev::Warning, "setting-type", {}, std::string(kRows[h.row].path) + ": " + why);\n    }\n  }\n  return p;\n}\n\n` +
   `std::string settingsJson(const Config& c) {\n  std::string out = "{";\n`;
+// one object per section, in the order sections first appear (a section's
+// rows need not be adjacent in the schema: a reader keeps one of two equal keys)
+const bySection = new Map();
+for (const row of settings) {
+  const sec = row[0].split('.')[0];
+  if (!bySection.has(sec)) bySection.set(sec, []);
+  bySection.get(sec).push(row);
+}
 let lastSec = null;
-settings.forEach(([n, r], k) => {
+[...bySection.values()].flat().forEach(([n, r]) => {
   const [sec, name] = n.split('.');
   const f = r.field.startsWith('cost.') ? `c.cost.${r.field.slice(5)}` : `c.${r.field}`;
   let pre = '';

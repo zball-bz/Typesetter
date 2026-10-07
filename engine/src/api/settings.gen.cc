@@ -809,12 +809,12 @@ std::string settingsJson(const Config& c) {
   out += c.projectUrls.empty() ? "{}" : c.projectUrls;
   out += "}, \"render\": {\"idPrefix\": ";
   jsonString(out, c.idPrefix);
-  out += "}, \"source\": {\"frontMatter\": ";
-  out += c.frontMatter ? "true" : "false";
-  out += "}, \"render\": {\"runWidths\": ";
+  out += ", \"runWidths\": ";
   out += c.runWidths ? "true" : "false";
   out += ", \"math\": ";
   { static const char* const kM[] = {"boxes", "source"}; jsonString(out, kM[(int)c.renderMath]); }
+  out += "}, \"source\": {\"frontMatter\": ";
+  out += c.frontMatter ? "true" : "false";
   out += "}, \"a11y\": {\"mathLabel\": ";
   out += c.a11yMathLabel ? "true" : "false";
   out += ", \"textLayer\": ";
