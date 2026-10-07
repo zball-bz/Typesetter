@@ -37,6 +37,26 @@ try {
   if (!r.html.includes('href="second/#tsr-sec-two"')) fail(`$.labels.import: no link to the imported label (${r.diagnostics.trim()})`);
   const bad = await renderTsm('#{ $.labels.import("missing.labels.json") }\n\nSee @sec-two.\n', { baseDir: dir, rootDir: dir });
   if (!bad.diagnostics.includes('labels-import')) fail('$.labels.import: a missing manifest says nothing');
+
+  // (post-P5) the contents a host's navigation reads (bundle.contents): every
+  // outline entry with its number as the project continues it, an
+  // unnumbered class's without one, the title's HTML as a contents entry
+  // copies it — a note's marker left out, a reference as its text, a
+  // formula at the document's size
+  const front = '#{ $.element("front", {like: "heading", select: [{node: "heading", role: "front"}], numbering: "never", sites: []}) }\n';
+  const t = await renderTsm(`${front}#heading(1, "pre", {role: "front"})[Preface]\n\n= Second <ch-two>\n\n== With $x^2$ and *em*^[A note.] after @ch-two <sec>\n\n=== Deeper\n\nBody $x^2$.\n`,
+                            { settings: { doc: { lang: 'en' }, project: { doc: 'two', starts: { two: { heading: 1 } } } } });
+  const toc = t.contents ?? [];
+  const row = (id) => toc.find((e) => e.id === id) ?? {};
+  if (toc.map((e) => e.number).join(' ') !== ' 2 2.1 2.1.1') fail(`toc: numbers ${JSON.stringify(toc.map((e) => e.number))}`);
+  if (row('tsr-pre').class !== 'front' || row('tsr-pre').html !== 'Preface') fail('toc: the unnumbered entry');
+  if (toc.map((e) => e.level).join() !== '1,1,2,3' || row('tsr-h-2.1.1').html !== 'Deeper') fail('toc: levels, a generated anchor');
+  const sec = row('tsr-sec').html ?? '';
+  const size = (html) => /class="tsr-mg" style="[^"]*font-size:([0-9.]+)px/.exec(html)?.[1];
+  const body = size(t.html.slice(t.html.indexOf('Body')));
+  if (!sec.includes('class="tsr-math"') || !body || size(sec) !== body || !sec.includes('<strong>em</strong>'))
+    fail(`toc: the title's formula (at the document's size) and emphasis: ${sec}`);
+  if (/<a\b|A note/.test(sec) || !sec.endsWith('after §2')) fail(`toc: a marker left out, a reference as its text: ${sec}`);
   if (!process.exitCode) console.log('project: ok');
 } finally {
   rmSync(dir, { recursive: true, force: true });

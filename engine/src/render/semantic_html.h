@@ -6,6 +6,9 @@
 // resolver ran first, so numbers and refs are already final (§11.1).
 #pragma once
 #include <functional>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 #include "../model/model.h"
 
@@ -48,5 +51,14 @@ std::string renderSemanticFragment(const ContentTree& tree, Interner& strs, Styl
                                    const ResourceTable* rt, const Registry* reg, const Cascade* cascade,
                                    const NodePropsTable* props, std::string_view label,
                                    const std::function<bool(StrRef)>& backlink, const SemanticMath& math = {});
+
+// (post-P5) the titles of the nodes `labels` name, each as inline HTML the
+// way a contents entry copies it (cloneTitle): a link or reference as its
+// text, a marker (a note's) left out; the caller suppresses ids
+// (AnchorScope). A label no node carries is absent.
+std::unordered_map<std::string, std::string> renderSemanticTitles(
+    const ContentTree& tree, Interner& strs, StyleTable& styles, const ResourceTable* rt, const Registry* reg,
+    const Cascade* cascade, const NodePropsTable* props, const std::unordered_set<std::string>& labels,
+    const SemanticMath& math = {});
 
 }  // namespace tsr

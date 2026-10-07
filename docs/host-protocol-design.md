@@ -332,6 +332,15 @@ As built (design T9 A7, T3 S7; INTEGRATION: T9's transport, T3's semantics):
   writes `<key>.html` (the static page of `tools/lib/static-page.mjs`, the
   one export-static writes; hydration gets the same settings and inputs)
   and `<key>.labels.json`. `tools/check-project.mjs` (gate G6) builds a book.
+- The contents (post-P5; product `contents`, `renderTsm(…).contents`): each
+  outline entry with an anchor (a heading, a document's own outline class),
+  in document order — `{class, level, number, anchor, id, title, html}`:
+  the number as the document formats it after its project start (`""`
+  unnumbered), the title as text and as inline HTML copied the way a
+  contents entry copies it (a reference as its text, a note's marker left
+  out, a formula at the document's size). A host builds its navigation from
+  it — a book's sidebar across its documents — without formatting numbers
+  itself.
 - `$.labels.import(src)` (a document's own): the host reads `src`
   (requester `input`) and adds it to the labels input before Ingest; the
   script gets nothing back; a failure is `labels-import`. A recorded

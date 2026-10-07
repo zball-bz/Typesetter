@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "html_writer.h"
 #include "../resource/resource_table.h"
@@ -31,6 +32,9 @@ struct Sem {
   std::string topEnv;      // the top-level block's env mark ("" = none)
   // a preview (renderSemanticFragment): references it leaves out
   const std::function<bool(StrRef)>* backlink = nullptr;
+  // a title as a contents entry copies it (renderSemanticTitles): a link or
+  // reference as its text, a marker left out
+  bool titleCopy = false;
 
   const ArgVal* arg(const ContentNode* n, ArgK k) {
     for (const ArgVal& a : n->args)
@@ -60,7 +64,9 @@ struct Sem {
     if (!display) {
       const MathScope scope{math.env, n->declEpoch, n->style};
       DiagSink scratch;  // (what the typeset layout reports, not this estimate)
-      const double sizePx = emPx(math.basePx, styles.get(n->style));
+      // (a title copied as a contents entry takes the entry's size: the
+      // document's, not its heading's — cloneTitle's Cascade.lift)
+      const double sizePx = titleCopy ? math.basePx : emPx(math.basePx, styles.get(n->style));
       const MathBox* box = layoutMathFormula(ms.text, false, sizePx, *math.arena, strs, scratch, n->span,
                                              /*text=*/nullptr, /*parseDiags=*/false, &scope);
       writeMathSpan(out, box, ms.copy, strs, o);
@@ -295,6 +301,10 @@ struct Sem {
       case Kind::link:
       case Kind::ref: {
         if (backlink && n->anchorTo && (*backlink)(n->anchorTo)) return;
+        if (titleCopy) {  // (cloneTitle: a flow item's marker stays where it is)
+          if (argS(n, ArgK::label).empty()) roleKids(n);
+          return;
+        }
         // its href: a resolved target's anchor (AnchorNamer, plan P3-04),
         // else a link's URL
         const std::string href = n->anchorTo && n->anchorDoc ? AnchorNamer::href(strs.get(n->anchorDoc), strs.get(n->anchorTo))
@@ -905,6 +915,29 @@ std::string renderSemantic(const ContentTree& tree, Interner& strs, StyleTable& 
   }
   out += "</div>\n";
   return out;
+}
+
+std::unordered_map<std::string, std::string> renderSemanticTitles(
+    const ContentTree& tree, Interner& strs, StyleTable& styles, const ResourceTable* rt, const Registry* reg,
+    const Cascade* cascade, const NodePropsTable* props, const std::unordered_set<std::string>& labels,
+    const SemanticMath& math) {
+  std::unordered_map<std::string, std::string> titles;
+  if (!tree.root || labels.empty()) return titles;
+  std::string out;
+  Sem s{strs, styles, out, rt, reg, cascade, props, math, std::string()};
+  s.titleCopy = true;
+  auto walk = [&](auto&& self, const ContentNode* n) -> void {
+    const std::string_view label = s.argS(n, ArgK::label);
+    if (!label.empty() && labels.count(std::string(label)) && !titles.count(std::string(label))) {
+      out.clear();
+      s.inlineKids(n);
+      titles.emplace(std::string(label), out);
+      return;
+    }
+    for (const ContentNode* k : n->kids) self(self, k);
+  };
+  walk(walk, tree.root);
+  return titles;
 }
 
 std::string renderSemanticFragment(const ContentTree& tree, Interner& strs, StyleTable& styles,

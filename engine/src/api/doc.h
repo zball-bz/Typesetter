@@ -1144,7 +1144,44 @@ struct Doc {
     if (name == "references") return referencesJson();  // (plan P3-21)
     if (name == "docinfo") return docinfoJson();
     if (name == "labels") return labelsProduct(index, *registry, cfg.projectDoc);  // (plan P3-31)
+    if (name == "contents") return contentsProduct();
     return {};
+  }
+
+  // (post-P5) its contents, for a host's navigation (a book's sidebar):
+  // each outline instance with an anchor, in document order — its class,
+  // level, number as the document formats it ("" unnumbered), anchor, title
+  // as text and as inline HTML the way a contents entry copies it
+  std::string contentsProduct() {
+    std::unordered_set<std::string> want;
+    for (const Instance& in : index.instances)
+      if (registry->cls(in.cls).outline && in.anchored) want.insert(in.label);
+    std::unordered_map<std::string, std::string> titles;
+    {
+      AnchorScope ids(cfg.idPrefix, /*suppress=*/true);
+      titles = renderSemanticTitles(tree, strs, styles, &rt, registry, &cascade, &nodeProps, want, semanticMath());
+    }
+    std::string out = "{\"v\":1,\"entries\":[";
+    bool first = true;
+    for (const Instance& in : index.instances) {
+      if (!registry->cls(in.cls).outline || !in.anchored) continue;
+      out += first ? "\n" : ",\n";
+      first = false;
+      out += "{\"class\":";
+      jsonString(out, registry->cls(in.cls).name);
+      appendf(out, ",\"level\":%d,\"number\":", in.level);
+      jsonString(out, in.number);
+      out += ",\"anchor\":";
+      jsonString(out, in.label);
+      out += ",\"title\":";
+      jsonString(out, in.title);
+      out += ",\"html\":";
+      const auto t = titles.find(in.label);
+      jsonString(out, t != titles.end() ? t->second : std::string());
+      out += '}';
+    }
+    out += "\n]}\n";
+    return out;
   }
 
   // rendering needs a converged typeset (finding unchecked-boundary-invariants)

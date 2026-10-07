@@ -49,6 +49,9 @@ export const syntaxTokens = (source, { settings } = {}) => frontEnd('_tsr_syntax
 // settings: the effective settings document. docinfo: { lang, title }.
 // labels (plan P3-31): its labels product — the manifest a project's other
 // documents read (opts.inputs: {labels: '[manifest, …]'} is the reverse).
+// contents (post-P5): its contents — [{class, level, number, anchor, id, title,
+// html}], each outline entry in document order, its number as the document
+// formats it, its title as inline HTML the way a contents entry copies it.
 // opts.settings: the settings document (docs/settings-table.md; opts.lang is
 // sugar for doc.lang). opts.baseDir / opts.rootDir: where document resources
 // resolve — relative paths against baseDir, /site-root paths against rootDir
@@ -191,9 +194,16 @@ export async function renderTsm(source, opts = {}) {
     try {
       anchors = (JSON.parse(labels).labels ?? []).map((l) => ({ id: idPrefix + l.anchor, label: l.label, cls: l.class }));
     } catch { /* no labels product */ }
+    // (post-P5) its contents: each outline entry (a heading) in document
+    // order, its number as the document formats it, its title as text and
+    // as inline HTML, its id on the page — a host's navigation
+    let contents = [];
+    try {
+      contents = (JSON.parse(product('contents')).entries ?? []).map((t) => ({ ...t, id: idPrefix + t.anchor }));
+    } catch { /* no contents product */ }
     const { contract, theme } = await pageStyles();
     return { html, css, diagnostics, diags: diagnostics, ok: !/^error /m.test(diagnostics), manifest,
-             settings: resolved, docinfo, labels, profile,
+             settings: resolved, docinfo, labels, contents, profile,
              result: { head: { lang: docinfo.lang ?? '', title: docinfo.title ?? '', idPrefix, profile }, html, anchors },
              resources: manifest, styles: { contract, theme, rules: css },
              // (plan P5-01) the host's math faces, for a page that paints formulas
