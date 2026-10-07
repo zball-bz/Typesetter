@@ -1,7 +1,8 @@
 # Footnotes & citations — design
 
 Status: footnotes and citations IMPLEMENTED (screen; footnote print
-inserts pending). As-built deltas are listed at the end of §1 and §2.
+inserts as built in plan P3-13, opt-in: a deferred flow, §1). As-built
+deltas are listed at the end of §1 and §2.
 Builds on design-decisions-v2 §11.1 and
 document-model §counters/collectors: *execution declares, the resolver
 decides*. Both features are reference-shaped — they reuse the label table,
@@ -60,6 +61,16 @@ endnote section, not a footnote. Named form for reuse / long bodies:
   page splits by lines with a continuation mark. Notes always sit at the
   sheet bottom, below the last band, above the margin. Widow/orphan and
   keep-rules stay as they are.
+  As built (plans P3-12, P3-13): there is no `renderPages` — pagination is
+  `engine/src/layout/paginate.cc` over the finished layout (layout-design
+  §6) and the paged product is `Doc::renderPaged` (api/doc.h). A deferred
+  flow's entries are inserts (`kPagedInsert`, `insertAt` = the marker's
+  source position): the box holding the marker takes their height, plus
+  once per sheet the separator (the flow's rule, repeated on every sheet
+  with notes; else `PageSpec.footnoteSkip`, an em), and moves to the next
+  sheet with them when it no longer fits. An insert is never split and has
+  no continuation mark (a PROGRESS P3-13 deviation): a note taller than a
+  sheet overflows it visibly (`page-overflow`).
 
 ### Measurement
 
@@ -77,7 +88,9 @@ selects the glyph set at emit time; the counter is unchanged.
 ### As built (2026-08)
 
 - Ops v6 adds inline `Kind::note` (`^[…]` → `note(...)` ctor); the named
-  `#note(name)[…]` form is NOT implemented — inline bodies only.
+  `#note(name)[…]` form is NOT implemented — inline bodies only. *(As
+  built, plan P3-13: named notes exist — `#note({label})[…]` defines one,
+  `#ref(label, {form: "marker"})` places its marker again; see below.)*
 - Resolver: counter + labels `fn-n` (the body item) and `fnref-n` (the
   marker); the note node is replaced by a `ref` to `fn-n` styled
   `CLS_SUP × 0.7`, so `@fn-n` from prose renders the same digit. Bodies
@@ -241,7 +254,7 @@ last block.
    counter, emit superscript, notes section, e2e audit for the marker's
    glue rule. One fixture per: basic, named/define, in-heading (diag),
    nested markup/math in body.
-2. Print inserts in renderPages.
+2. Print inserts in renderPages (as built, plan P3-13: in paginate.cc).
 3. `NEED_BIB` + numeric citations + bibliography collector.
 4. Circled marks / per-section reset / grouped-cite ranges ([1–3]) as
    polish.

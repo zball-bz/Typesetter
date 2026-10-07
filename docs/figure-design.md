@@ -194,8 +194,10 @@ the prefix model above:
 - `src` sanitizing: relative, `http(s):` and `data:image/*` only; anything
   else (notably `javascript:`) renders the placeholder + a warning. Attrs
   are HTML-escaped like all others.
-- Copy (§9.3): image blocks are synthetic — skipped, like `data-syn="ref"`;
-  the caption copies as text including the 图 n： prefix.
+- Copy (§9.3): image blocks are synthetic — skipped (the `<img>` or
+  placeholder carries `data-syn="image"` and is no `.tsr-line`); the caption
+  copies as text including the 图 n： prefix. (As built, plan P3-07: a
+  reference is no longer synthetic — it copies as its text, D-R01.)
 - Semantic serializer: `<figure><img src alt><figcaption>…</figcaption></figure>`
   (the group{role:figure} case), so the no-JS page is real HTML. As built
   in P3-03 the figcaption holds the caption part (a figure-box element with
@@ -240,7 +242,13 @@ the prefix model above:
   floatClearSu`) and advance with the stacks' gaps (plan P1-18: the gap of
   the deepest stack holding both blocks — a list's paraGap/3, else paraGap). Float registration charges image +
   caption rows + one paraGap of clearance; narrowing engages only when
-  `occl < measure − 1px`.
+  `occl < measure − 1px`. As built (plan P3-08; layout.cc `floatBox`,
+  `paragraph`, `clearance`, `run`): the exclusion is the float's box alone
+  (image + caption rows, no clearance charged) and the float takes zero
+  advance — the next block stands at its top. Every line whose band meets
+  a float narrows (no `measure − 1px` threshold); a paragraph clears instead
+  when any slot is narrower than `layout.minWrapWidth` (or the measure if
+  smaller), and a clearing block stands at the float bottom plus its own gap.
 - Float caption rows advance at `baseLeading` flat (no vmet/math extents) —
   formulas in float captions may sit tight; block-figure captions are
   ordinary text units and unaffected. Non-para kids of a *float* figure are

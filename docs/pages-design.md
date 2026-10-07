@@ -48,7 +48,10 @@ the finished `LayoutResult` (no re-break, no new layout mode):
     "≥2 lines of the next frame" refinement is not implemented);
   - **atomic**: display math, rules, raw units, figures (image+caption),
     and each code logical line (its wrapped rows + zipped sidecar rows
-    share rowTop — cut only between logical lines);
+    share rowTop — cut only between logical lines) (as built, plan P3-29:
+    a display formula of several rows is a fragment per row with Normal
+    tiers between them, so a sheet may break between its rows; its number
+    stays with the last row);
   - a cut that cannot satisfy the rules falls back to the greedy cut; an
     atom taller than a sheet is set alone — never an infinite loop.
 

@@ -30,8 +30,10 @@ forces rendering onto the grid, so the ratio need not be exact):
 
 - error budget: maxCols × |r − p/q| × chL < 0.5px (per-row drift under
   half a pixel), and
-- **q ≤ 7** (user bound: beyond that the result no longer reads as a As built (plan P3-02): the bound is the setting `code.snapMaxQ` (default 7), snap-kerning applies within `code.snapTolerance` of a character (default 0.1), the grid keeps at least `code.minCols` columns (default 8), and `snapKerning`, `sidecarFrac` and `contIndent` are per code block (the code block arguments, or rules: `$.set('codeblock', {codeblock: {contIndent: 4}})`).
+- **q ≤ 7** (user bound: beyond that the result no longer reads as a
   monospace grid).
+
+As built (plan P3-02): the bound is the setting `code.snapMaxQ` (default 7), snap-kerning applies within `code.snapTolerance` of a character (default 0.1), the grid keeps at least `code.minCols` columns (default 8), and `snapKerning`, `sidecarFrac` and `contIndent` are per code block (the code block arguments, or rules: `$.set('codeblock', {codeblock: {contIndent: 4}})`).
 
 Grid atom g = chL/q; width classes {latin: q, cjk: p} atoms (a strict 2:1
 font collapses to the current contract immediately). If no convergent
@@ -71,6 +73,15 @@ satisfies both, the block stays budget-only (no alignment features).
 The indent itself renders as literal spaces in the flow (font-independent,
 the e2e242e lesson), synthetic for both copy paths.
 
+As built (plan P5-02; layout/grid.cc `wrapGridLine`): the grid's break
+characters are the setting `code.breakAfter` (default `" \t,;)}]>"`),
+matched by code point, so any script's characters may be listed (CJK still
+wraps between any two characters, by kinsoku). Comment-aware continuation
+is the setting `code.commentAware` (default on); its runs are those whose
+style says `code.hang: content` (the default stylesheet's `tok-comment`),
+and the lead-in is the run's opening marks — neither a word's characters
+nor a space, any script's — plus one space.
+
 ## 5. The three-box model (V3, supersedes the two-column zip)
 
 **A code block IS three horizontally arranged boxes: gutter (line
@@ -109,7 +120,10 @@ inline markup: math, links, references, footnotes (`^[…]` is a real
 footnote). The box tree finds the sidecar track by the slot (no role
 string); the semantic page renders the notes as `<aside
 class="tsr-margin">` after the code, one `<p data-line>` per annotated
-line. `sidebarCol` configures the code box's right edge. Copy contract (OPEN): the sidecar is display content — copy emits
+line. `sidebarCol` configures the code box's right edge (as built, plan
+P3-11: no such setting — the code box is the first track of the two-track
+table below, boxtree/build.cc `codeTable`, and the notes track's share is
+`codeblock.sidecarFrac`). Copy contract (OPEN): the sidecar is display content — copy emits
 `/// ` + content text, not a byte-exact source round-trip. TeX
 precedent: listings escapechar, algorithmicx right-aligned \Comment.
 

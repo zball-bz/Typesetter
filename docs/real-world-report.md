@@ -53,13 +53,27 @@ except one HoTT line (+1.0px, an inline formula boundary — open).
   occlusion extends and takes the wider width), so text keeps flowing
   beside both. Opposite-side floats still clear. A piecewise `LineWidths`
   (K1 lines at width A, K2 at width B) would let text widen between two
-  floats of different widths; not needed for the corpus.
+  floats of different widths; not needed for the corpus. As built (plans
+  P3-08, P3-15): that piecewise shape is `ParShape` (one `{left, width}`
+  slot per line, break.h), and `floatShiftSu` is gone — the floats are an
+  `ExclusionMap` in layout.cc. Opposite-side floats now coexist with text
+  between them (figure/both-sides, figure/float-pair); one goes below the
+  other only when the column between would be narrower than
+  `layout.minWrapWidth` (`ExclusionMap::place`).
 - **Footnote inserts in print** still render as endnotes (notes-design §1).
+  As built (plan P3-13): `{flow: {placement: 'deferred'}}` on the footnote
+  element makes each note an insert at the foot of its marker's sheet
+  (pages/paged-inserts); the default placement stays `end`.
 - **Table column widths** are equal; the HoTT points-of-view table wants
-  content-fitted columns.
+  content-fitted columns. As built (plan P3-14): a table's `tracks`
+  (`auto`/`min`/`max` content-fitted, `fr`, fixed, `%`) opt in; unset, the
+  columns are still equal.
 - **Bibliography hanging indent**: entries are flush paragraphs; a
   hanging-indent unit (first line full, continuation indented) is a small
-  layout feature worth having for both notes and bibliographies.
+  layout feature worth having for both notes and bibliographies. As built
+  (plan P3-14): `par.hang` / `par.hangAfter` (inherited; the lines after the
+  first `hangAfter` start `hang` in, as ParShape slots), set by a rule
+  (fixture style/refs-hang); the default stylesheet leaves entries flush.
 
 ## Whole-book conversion (2026-09-01)
 

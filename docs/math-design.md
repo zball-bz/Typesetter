@@ -385,7 +385,8 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
   `\x01…\x02`, a string `\x03…\x04`, an error `\x05…\x06` — with a map
   placing every offset in its fragment (sub-span diagnostics of a
   multi-line island in a quote land on its line) and the copy text (the
-  source as written: data-src, the semantic page). A math value is
+  source as written: `data-copy` since plan P3-26, on the typeset page and
+  the semantic page's `render.math: "boxes"` — it was `data-src`). A math value is
   **parse-isolated**: its brackets and names cannot reach the formula; it is
   one unit as an operand or a script's base (`x^#n` with n = −3 is
   x^{−3}), otherwise its atoms join the run (TeX macro semantics). Other
@@ -591,7 +592,11 @@ Design T8 S8 (MathValue, MathEnv), D-L13, D-M02.
 - **禁则 extends to formulas**: no break between an inline formula and a
   following closing punct; quarter-em boundary glue on CJK–formula seams.
 - **Copy across segments**: a split formula carries its `$src$` on the
-  first segment only; later segments contribute empty data-src.
+  first segment only; later segments contribute empty data-src. (As built,
+  plan P3-26; render/math_html.cc `formulaAttrs`: every part carries the
+  source as `data-copy`, all in one `data-copy-group` — its source start,
+  high bit set — and copy takes it once per group, §9.3 of
+  document-model.md.)
 - **Accents are SPACING glyphs; `bar` is a rule.** Firefox and Chromium
   disagree on isolated combining-mark placement (different shaping
   fallbacks), so the dictionary maps hat/tilde/dot/… to their spacing

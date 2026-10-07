@@ -52,7 +52,8 @@ struct Fragment {
                                      //   (half the leading above the extents)
   u32 unitIdx = 0;                   // the leaf (TopTree::leaves)
   i32 cellIdx = -1;                  // >=0: the leaf's other track (a float's caption
-                                     //   row, a code block's sidecar row)
+                                     //   row, a formula's number; a code block's sidecar
+                                     //   rows are table cells since P3-11: gridCell)
   i32 gridCell = -1;                 // (plan P3-10) >=0: the table cell it sits in
   u32 table = ~0u;                   // the table block it belongs to (its rules too):
                                      //   one atomic group on paged sheets

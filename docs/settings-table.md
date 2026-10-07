@@ -38,6 +38,8 @@ The settings document of document-model §11 / docs/host-protocol-design.md, gen
 | `code.contIndent` | int:0:40 | `2` | HostDefault | Ingest |  |
 | `code.sidecarFrac` | num:0.1:0.9 | `0.4` | HostDefault | Ingest |  |
 | `code.snapKerning` | bool | `false` | HostDefault | Ingest | `verbatimSnapKerning` |
+| `code.breakAfter` | str | `" \t,;)}]>"` | HostDefault | Layout |  |
+| `code.commentAware` | bool | `true` | HostDefault | Layout |  |
 | `code.minCols` | int:1:1000 | `8` | HostDefault | Layout |  |
 | `code.snapTolerance` | num:0:1 | `0.1` | HostDefault | Layout |  |
 | `code.snapMaxQ` | int:1:64 | `7` | HostDefault | Layout |  |

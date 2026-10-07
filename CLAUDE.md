@@ -18,14 +18,17 @@ engine/src/        C++ core: api/ (Doc, wasm_api.cc) · ops/ (generated from
                    paginate) · paint/ (DisplayList) · render/ (stateless
                    typeset/paged writer + semantic) · math/ · code/ (token fold)
 engine/test/       native runner (unit + goldens); engine/gen/ generated tables
-runtime/src/       worker/ (executor, canvas measure, tokens) · main/ (shell.mjs,
-                   copy, audit) · node/render.mjs (renderTsm for SSGs) · shared/ops
+runtime/src/       worker/ (executor, canvas measure, tokens; hl-worker.mjs: the
+                   highlighter's own thread) · main/ (shell.mjs, copy, audit,
+                   behaviors/) · node/render.mjs (renderTsm for SSGs) · shared/
+                   (ops, stdlib, resources/: the resource host and providers)
 grammar/           tree-sitter-tsm (highlighting grammar; vendored parser.c in
                    third_party/grammars/tsm)
 editors/vscode-tsm VSCode extension (no build step; vendor/ via scripts/vendor.mjs)
 tools/             serve, record-fixtures, corpus-run, codehl-assets, pack-dist,
-                   export-static, bench-edit, hyphc, gen-schema/gen-syntax/gen-all,
-                   ucdc (TextRules tables) / rules-diff
+                   export-static, bench-edit, hyphc, mathc.py (math font metrics:
+                   the embedded header, a host's .tsmf), gen-schema/gen-syntax/
+                   gen-all, ucdc (TextRules tables) / rules-diff, lint-arch
 test/              fixtures/ (+ .ops recordings) · golden/ · e2e/ (Playwright) ·
                    corpus/ (typst-derived smoke corpus)
 docs/              architecture.md (stage map) + one *-design.md per feature
@@ -35,7 +38,7 @@ apps/playground    minimal engine host page
 ## Pipeline (docs/architecture.md)
 
 markup → linepass → inline → codegen (LowerProgram + hole module) → executor
-(shared/lower.mjs, ops v15: schema.json opsVersion) → ingest (PHASE 0: the element registry,
+(shared/lower.mjs, ops v16: schema.json opsVersion) → ingest (PHASE 0: the element registry,
 built-in rows < host semantics.* < the document's declarations) →
 resolver → box tree → emit → layout (KP break inside) → paginate → paint →
 render. Measurement is a **pull loop**:
@@ -58,7 +61,8 @@ tools/gate.sh --quick|--full   # remediation gates G1-G10 (docs/remediation/PLAN
 tools/fuzz.sh --smoke|--long   # libFuzzer targets; findings go to test/fuzz/<target>/
 tools/bench.sh                 # perf gate table (update/relayout at 7.8K/35K/87K)
 node tools/review-corpus.mjs --check   # real-world corpus: no new error diagnostics
-node tools/lint-arch.mjs       # architecture lint (baseline only shrinks)
+node tools/lint-arch.mjs       # architecture lint: principles P1–P13 (docs/testing.md §6a);
+                               #   new exceptions go in a rule's allow-list, with a reason
 node tools/wasm-goldens.mjs --check    # WASM build breaks every fixture like the native goldens
 node tools/check-print.mjs     # printer round trip + escapeTsm (fixtures, corpus); G6
 node tools/check-spans.mjs     # html goldens: runs/lines point at their source; G1
@@ -92,6 +96,11 @@ rolling `engine-dist` release.
   X.tsm` reproduces a golden. A fixture for vocabulary without surface syntax
   (e.g. inline/object-raw) declares its node tree in `X.tree.json`; `npm run record`
   encodes it instead of executing X.tsm.
+- Every switch over an enum names every value (`-Werror=switch-enum`; no
+  `default:` over a generated enum): a new kind, attribute or property row
+  decides its case wherever it is dispatched on. A new registry gets an
+  equal-footing pair (test/fixtures/parity, `unitEqualFooting`): a built-in
+  row re-declared under a new name gives the same output.
 - Commit per milestone; messages end with
   `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`.
 - Playwright probe scripts must live in the repo root (node_modules); they

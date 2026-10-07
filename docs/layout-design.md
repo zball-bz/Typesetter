@@ -196,6 +196,35 @@ paragraph widows and orphans of 2 lines), a violated cut backs up, an
 impossible one overflows. `PageResult` lists each sheet's origin and bands;
 the paged writer rebases each band's painted nodes into its sheet.
 
+As built (plans P3-12 to P3-15; paginate.cc reads fragment data only, no
+layouter kinds): each fragment carries the tier of a cut just before it
+(`PenTier`: Normal, KeepTogether, WidowOrphan, KeepWithNext, Structural,
+Forced) and a paged role (`kPaged*`). Fragments joined by Structural form a
+box: a table row with its rules (a table is cut between rows, its header
+rows repeated atop a continuation sheet), a wrapped code line, a float box,
+a line of inline blocks, a formula row with its number. Widows and orphans
+(2/2, paragraphs and code lines) are WidowOrphan, a `keep: together`
+block's inside KeepTogether, the cut after a keep-with-next block
+KeepWithNext, `#pagebreak` / `break.*` Forced. Cuts are greedy; with no
+clean cut the keeps relax in D-Y04's order — keep-together, then widows /
+orphans, then keep-with-next, each reported `keep-violated` — a relaxation
+taken only when it moves what it keeps onto the next sheet whole, else the
+greedy cut. A box taller than a sheet is set alone, overflowing visibly
+(`page-overflow`). Page floats (`place.float` `top` / `bottom` / `page`)
+are movable boxes the flow closes over: `top` to its sheet's top if it
+fits, else the next's; `bottom` to the foot, above the inserts; `page` to a
+sheet of floats after its sheet. Inserts (a deferred flow's entries:
+footnotes) go to the foot of the sheet holding their reference, under a
+separator repeated per sheet; an insert is never split — when it does not
+fit, the line holding its reference moves with it. A framed block's frame is
+drawn, clipped, on every sheet its block meets.
+
+As built (plan P5-02): page floats carried to a sheet that together exceed
+its height get a sheet of their own, overflowing visibly with a
+`page-overflow` warning (the flow starts on the next sheet), and any sheet
+whose content runs past its bottom, whatever put it there, is marked
+overflowing (`Page.overflow`: the writer drops its clip).
+
 ## 7. Boundaries
 
 Layout, break, paint and the typeset writer never see `model/model.h`, not

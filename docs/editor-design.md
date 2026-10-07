@@ -36,8 +36,10 @@ provider round trips. Compile/execute/ingest are cheap (<6 ms combined).
   alive for relayout/paginate.
 - **Cross-document KP cache** (break.cc `breakLinesCached`, plans P1-14,
   P1-21): the DP reads only its items (the bytes of the TeX item
-  projection), the LineWidths and the BreakParams, so a result is keyed by
-  exactly those — their bytes are stored and compared on a hit — in the
+  projection), the ParShape's line widths (break.h; plan P3-08 replaced
+  LineWidths, and the slots' left offsets are layout's, not the DP's) and
+  the BreakParams, so a result is keyed by exactly those — their bytes are
+  stored and compared on a hit — in the
   Session's memo slot (LRU within a byte budget). An edit re-breaks only the
   paragraphs it actually changed. Any new input the DP starts reading MUST
   be added to the key.

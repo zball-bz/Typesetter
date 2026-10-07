@@ -763,7 +763,7 @@ test('float figure: narrowed wrap lines, edge placement, recovery', async ({ pag
     [...document.querySelectorAll('.tsr-line')]
       .filter((l) => !l.querySelector('[data-syn="marker"]'))
       .map((l) => parseFloat(l.style.width)));
-  const body = widths.slice(1); // drop the figure-caption-free first para? none: caption rows are data-cell
+  const body = widths.slice(1); // drop the figure-caption-free first para? none: caption rows are data-track="caption" (P3-07; was data-cell)
   expect(Math.min(...body)).toBeLessThan(200);        // narrowed lines exist
   expect(Math.max(...body)).toBeCloseTo(300, 0);      // and recovery to full
   const text = await page.evaluate(() => window.__tsr.copyText());

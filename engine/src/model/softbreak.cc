@@ -4,6 +4,8 @@
 // breaks resolved with the paragraph context of shape/context.h.
 #include "softbreak.h"
 
+#include <algorithm>
+
 #include "../shape/context.h"
 #include "../shape/objects.h"
 #include "model.h"
@@ -57,6 +59,7 @@ struct Pass {
     for (Stream::Text& t : s.texts) {
       ContentNode* n = t.node;
       auto join = [&](u32 k) {
+        if (k >= t.breaks.size()) return false;  // (never: one entry per newline byte)
         const u32 e = t.breaks[k];
         if (e == 0 || e + 1 >= s.v.size()) return false;
         const CtxEntry& a = s.v[e - 1];
@@ -101,8 +104,11 @@ struct Pass {
       i = clusterEnd(str, i);
       u32 j = start;
       const u32 cp = utf8Next(str, j);
-      if (cp == '\n' || cp == ' ' || cp == '\t') {
-        if (cp == '\n') t.breaks.push_back((u32)s.v.size());
+      // (plan P5-02, fuzz finding) every newline byte is a soft break, as the
+      // rewrite counts them — also one inside a cluster ("\r\n" is one)
+      const u32 nls = (u32)std::count(str.begin() + start, str.begin() + i, '\n');
+      if (nls > 0 || cp == ' ' || cp == '\t') {
+        for (u32 k = 0; k < nls; k++) t.breaks.push_back((u32)s.v.size());
         s.v.push_back({CtxEntry::Blank});
       } else {
         s.v.push_back(ctxChar(cp, marks, s.ambiguous));
