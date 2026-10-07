@@ -80,6 +80,7 @@ g6() {
   node tools/check-export.mjs || return 1  # the static export (plan P3-21)
   node tools/check-project.mjs || return 1  # a project of files (plan P3-31)
   node tools/check-print.mjs || return 1  # the printer round trip and escapeTsm (plan P3-35)
+  node tools/check-skill.mjs || return 1  # the syntax skill's examples render clean
   if [ -f tools/review-corpus.mjs ]; then node tools/review-corpus.mjs --check; fi
 }
 

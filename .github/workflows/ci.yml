@@ -68,6 +68,8 @@ jobs:
         run: node tools/corpus-run.mjs
       - name: real-world corpus review (no new error diagnostics)
         run: node tools/review-corpus.mjs --check
+      - name: the syntax skill's examples render clean
+        run: node tools/check-skill.mjs
       - name: install chromium
         run: npx playwright install --with-deps chromium
       # a CJK serif with full-width punctuation glyphs, as real readers have;
