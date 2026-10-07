@@ -51,7 +51,8 @@ try {
   const r = await renderTsm(source, { baseDir: docDir, rootDir: docDir, providers: [{ kind: 'codeTokens', provider: tokens }] });
   check(r.html.includes('N is 7.'), '$.load reads a resource beside the document');
   check(r.html.includes('The secret was resource outside the document root.'), '$.load is confined to the document root');
-  check(r.manifest.some((m) => m.role === 'load' && m.url.endsWith('data.json') && m.status === 'ok'), 'the manifest has the load');
+  check(r.manifest.some((m) => m.role === 'load' && m.url === join(docDir, 'data.json') && m.ref === 'data.json' && m.status === 'ok'),
+    'the manifest has the load: where it resolved and as written');
   check(r.manifest.some((m) => m.url === '../secret.txt' && m.status === 'denied'), 'the manifest has the denied load');
   check(/<span class="tsr-c-tok-[a-z]+">alpha<\/span> beta/.test(r.html), 'the caller\'s codeTokens provider answered');
   check(/<span class="tsr-c-tok-number">1<\/span>/.test(r.html), 'the built-in highlighter still answers the rest');

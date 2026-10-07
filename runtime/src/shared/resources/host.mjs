@@ -12,7 +12,7 @@
 //   await job.load(src, { as: 'text' | 'json' | 'bytes' })   // $.load, ctx.load, #bibliography
 //   await job.module(src)                            // #use (plan P3-31): the module, imported by URL + content hash
 //   job.register(kind, provider)                     // a document's own provider (#use's providers)
-//   job.manifest()                                   // [{ url, role, source, status, requester }]
+//   job.manifest()                                   // [{ url, ref, role, source, status, requester }]
 //
 // A kind may have several providers (plan P3-22): a row goes to the latest
 // registered whose match(row) accepts it (no match: every row), so a host
@@ -118,7 +118,7 @@ class ResourceJob {
   async module(src, { source = 'doc' } = {}) {
     const where = this.locator.resolve(src, { source, requester: 'exec', use: 'load' });
     if (where.denied) {
-      this.note({ url: String(src), role: 'module', source, requester: 'exec', status: 'denied' });
+      this.note({ url: String(src), ref: String(src), role: 'module', source, requester: 'exec', status: 'denied' });
       throw new Error(`module ${where.denied}`);
     }
     const key = where.url ?? where.file;
@@ -126,10 +126,10 @@ class ResourceJob {
     try {
       bytes = await this.read(where);
     } catch (e) {
-      this.note({ url: key, role: 'module', source, requester: 'exec', status: 'failed' });
+      this.note({ url: key, ref: String(src), role: 'module', source, requester: 'exec', status: 'failed' });
       throw e;
     }
-    this.note({ url: key, role: 'module', source, requester: 'exec', status: 'ok' });
+    this.note({ url: key, ref: String(src), role: 'module', source, requester: 'exec', status: 'ok' });
     let url = where.url;
     if (!url) url = (await import('node:url')).pathToFileURL(where.file).href;
     return import(/* @vite-ignore */ `${url}${url.includes('?') ? '&' : '?'}h=${contentHash(bytes)}`);
@@ -150,16 +150,16 @@ class ResourceJob {
   async load(src, { as = 'text', source = 'doc', requester = 'exec', role = 'load' } = {}) {
     const where = this.locator.resolve(src, { source, requester, use: 'load' });
     if (where.denied) {
-      this.note({ url: String(src), role, source, requester, status: 'denied' });
+      this.note({ url: String(src), ref: String(src), role, source, requester, status: 'denied' });
       throw new Error(`resource ${where.denied}`);
     }
     const key = where.url ?? where.file;
     try {
       const bytes = await this.read(where);
-      this.note({ url: key, role, source, requester, status: 'ok' });
+      this.note({ url: key, ref: String(src), role, source, requester, status: 'ok' });
       return as === 'bytes' ? bytes : as === 'json' ? JSON.parse(utf8(bytes)) : utf8(bytes);
     } catch (e) {
-      this.note({ url: key, role, source, requester, status: 'failed' });
+      this.note({ url: key, ref: String(src), role, source, requester, status: 'failed' });
       throw e;
     }
   }

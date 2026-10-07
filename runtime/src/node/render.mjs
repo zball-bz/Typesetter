@@ -44,7 +44,8 @@ export const syntaxTokens = (source, { settings } = {}) => frontEnd('_tsr_syntax
 // rules (plan P3-01). manifest: everything the document references — its
 // images (the engine's references product), its execution loads (the
 // resource host's log: #bibliography, $.load) and the fonts the host
-// declared (opts.fonts) — [{ url, role, source, status, requester }].
+// declared (opts.fonts) — [{ url, ref, role, source, status, requester }]
+// (ref: the reference as the document wrote it; url: where it resolved).
 // settings: the effective settings document. docinfo: { lang, title }.
 // labels (plan P3-31): its labels product — the manifest a project's other
 // documents read (opts.inputs: {labels: '[manifest, …]'} is the reverse).
@@ -160,7 +161,7 @@ export async function renderTsm(source, opts = {}) {
     const manifest = [];
     for (const line of product('references').split('\n').filter(Boolean)) {
       const r = JSON.parse(line);
-      manifest.push({ url: r.src, role: r.role, source: 'doc', status: r.allowed ? 'referenced' : 'denied', requester: 'image' });
+      manifest.push({ url: r.src, ref: r.src, role: r.role, source: 'doc', status: r.allowed ? 'referenced' : 'denied', requester: 'image' });
     }
     const loads = job.manifest();
     manifest.push(...loads);

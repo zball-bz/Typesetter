@@ -212,8 +212,9 @@ in one place, `runtime/src/shared/resources/`:
 - **ResourceJob** (`host.job({bases, root})`, one per document): the pull
   loop's `answer(request, {stale, capability})`, the loads
   (`load(src, {as: 'text' | 'json' | 'bytes', role})`) and the
-  **manifest**: `[{url, role, source, status, requester}]` of every load,
-  image and denial. In Node, `renderTsm` adds the files a `#use` module
+  **manifest**: `[{url, ref, role, source, status, requester}]` of every
+  load, image and denial (`url`: where it resolved; `ref`: the reference as
+  the document wrote it, so a host can tell `/x` from `x`). In Node, `renderTsm` adds the files a `#use` module
   imports (role `module`, requester `import`; `runtime/src/node/module-graph.mjs`,
   a lexical scan): the JavaScript engine loads them, not the job, and a
   page that publishes the module must publish them beside it.
