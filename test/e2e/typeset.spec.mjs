@@ -1070,6 +1070,38 @@ test('refPreview: a note marker shows the engine fragment of its body', async ({
   await expect(pop).toHaveCount(0);
 });
 
+// the popup's width is its text's (max-content), up to 28em and the
+// container's width, and it stays inside the container — it used to shrink
+// to its narrowest (one CJK character a line: its overlay is 0 wide)
+test('refPreview: the popup is as wide as its text, within 28em and the container', async ({ page }) => {
+  await page.goto('/test/e2e/harness.html');
+  await page.waitForFunction(() => window.__tsrReady);
+  const zh = '史金波、雅森·吾守尔：《中国活字印刷术的发明和早期传播》，社会科学文献出版社，2000年。';
+  const src = `一段正文^[${zh}]接着写，还有一个短注^[短注。]。`;
+  const geom = async (marker) => {
+    await page.mouse.move(0, 0);
+    await page.hover(marker);
+    await expect(page.locator(POP)).toBeVisible();
+    return page.evaluate(() => {
+      const p = document.querySelector('.tsr-refpop'), c = document.querySelector('#out').getBoundingClientRect();
+      const r = p.getBoundingClientRect(), cs = getComputedStyle(p), em = parseFloat(cs.fontSize);
+      const box = ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].reduce((a, k) => a + parseFloat(cs[k]), 0);
+      return { w: r.width, left: r.left - c.left, right: c.right - r.right, cw: c.width, cap: 28 * em,
+               lines: Math.round((r.height - box) / parseFloat(cs.lineHeight)) };
+    });
+  };
+  for (const widthPx of [300, 700]) {
+    await page.evaluate(async ({ s, w }) => await window.__tsr.typeset(s, { widthPx: w, progressive: false }), { s: src, w: widthPx });
+    const long = await geom('#out .tsr-doc a[href="#tsr-fn-1"][id]');
+    expect(long.w).toBeGreaterThan(Math.min(long.cap, long.cw) - 2);  // the long note fills its cap
+    expect(long.w).toBeLessThanOrEqual(long.cw + 0.5);
+    expect(long.left).toBeGreaterThanOrEqual(-0.5);
+    expect(long.right).toBeGreaterThanOrEqual(-0.5);
+    const short = await geom('#out .tsr-doc a[href="#tsr-fn-2"][id]');
+    expect(short.lines).toBe(1);  // a short note: one line, as wide as its text
+    expect(short.w).toBeLessThan(long.w);
+  }
+});
 test('refPreview: CJK and hyphenated notes read as written', async ({ page }) => {
   await page.goto('/test/e2e/harness.html');
   await page.waitForFunction(() => window.__tsrReady);

@@ -9,7 +9,8 @@
 // the commit root, so the view keeps patching while it is open.
 
 export const REF_PREVIEW_CSS = `
-.tsr-refpop { position: absolute; z-index: 20; max-width: 28em; max-height: 45vh;
+.tsr-refpop { position: absolute; z-index: 20; box-sizing: border-box;
+  width: max-content; max-width: 28em; max-height: 45vh;
   overflow: auto; padding: 0.5em 0.7em; font-size: 0.85em; line-height: 1.45;
   font-family: var(--tsr-pop-font, inherit); background: var(--tsr-pop-bg, #fffdf7);
   color: var(--tsr-pop-fg, #1c1c1a); border: 1px solid rgba(0,0,0,0.18);
@@ -45,15 +46,19 @@ export function refPreview({ classes } = {}) {
         return wants(ref) ? { a, ref } : null;
       };
       const inPop = (t) => !!pop && pop.contains(t);
+      // its width is its text's (max-content), up to 28em and the part of
+      // the container the window shows. The overlay it sits in is 0 wide: a
+      // width the browser derives from it (auto, a percentage) is the
+      // narrowest the text allows — one CJK character a line.
       const place = (a) => {
         const or = ctx.overlay.getBoundingClientRect();
         const cr = ctx.container.getBoundingClientRect();
         const mr = a.getBoundingClientRect();
-        const w = Math.min(pop.offsetWidth, cr.width);
-        let left = mr.left - or.left;
-        const right = cr.right - or.left;  // the container's right edge, overlay coordinates
-        if (left + w > right) left = Math.max(cr.left - or.left, right - w);
-        pop.style.left = `${left}px`;
+        const lo = Math.max(cr.left, 0), hi = Math.min(cr.right, document.documentElement.clientWidth);
+        const em = parseFloat(getComputedStyle(pop).fontSize) || 16;
+        pop.style.maxWidth = `${Math.max(0, Math.min(28 * em, hi - lo))}px`;
+        const left = Math.max(lo, Math.min(mr.left, hi - pop.offsetWidth));
+        pop.style.left = `${left - or.left}px`;
         pop.style.top = `${mr.bottom - or.top + 6}px`;
       };
       // the fragment of the current reference, (re)written into the popup
