@@ -804,16 +804,25 @@ static void unitMathFontFiles(const fs::path& root) {
     bool same = f.glyphCount == E.glyphCount && f.vertCount == E.vertCount && f.horizCount == E.horizCount;
     for (int k = 0; same && k <= (int)C::RadicalDegreeBottomRaisePercent; k++)
       same = f.constants[k] == E.constants[k];
-    for (int k = 0; same && k < f.glyphCount; k++)
-      same = std::memcmp(&f.glyphs[k], &E.glyphs[k], sizeof(GlyphRec)) == 0;
-    for (int k = 0; same && k < f.vertCount; k++) same = std::memcmp(&f.vert[k], &E.vert[k], sizeof(VarChain)) == 0;
-    for (int k = 0; same && k < f.horizCount; k++)
-      same = std::memcmp(&f.horiz[k], &E.horiz[k], sizeof(VarChain)) == 0;
+    // field by field: the records have padding (memcmp reads indeterminate bytes)
+    auto sameGlyph = [](const GlyphRec& a, const GlyphRec& b) {
+      return a.cp == b.cp && a.adv == b.adv && a.asc == b.asc && a.desc == b.desc && a.italic == b.italic &&
+             a.topAccent == b.topAccent;
+    };
+    auto sameChain = [](const VarChain& a, const VarChain& b) {
+      return a.baseCp == b.baseCp && a.off == b.off && a.n == b.n && a.asmOff == b.asmOff && a.asmN == b.asmN;
+    };
+    for (int k = 0; same && k < f.glyphCount; k++) same = sameGlyph(f.glyphs[k], E.glyphs[k]);
+    for (int k = 0; same && k < f.vertCount; k++) same = sameChain(f.vert[k], E.vert[k]);
+    for (int k = 0; same && k < f.horizCount; k++) same = sameChain(f.horiz[k], E.horiz[k]);
     CHECK(same && o.variantCps.size() == std::size(mathfont::kVariantCps) &&
           o.parts.size() == std::size(mathfont::kAsmParts));
     CHECK(std::equal(o.variantCps.begin(), o.variantCps.end(), E.variantCps));
-    for (size_t k = 0; k < o.parts.size(); k++)
-      CHECK(std::memcmp(&o.parts[k], &E.parts[k], sizeof(AsmPart)) == 0);
+    for (size_t k = 0; k < o.parts.size(); k++) {
+      const AsmPart &a = o.parts[k], &b = E.parts[k];
+      CHECK(a.cp == b.cp && a.startOverlap == b.startOverlap && a.endOverlap == b.endOverlap &&
+            a.fullAdv == b.fullAdv && a.isExtender == b.isExtender);
+    }
   }
   // a literal run the primary lacks part of: those code points from the
   // next font of the chain, the rest still the primary's (plan P5-01)
