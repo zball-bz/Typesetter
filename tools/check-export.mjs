@@ -80,6 +80,9 @@ try {
   const page = await exportStatic(bundle, { docDir: postDir, source: postSrc, template: (p) => `<main data-lang="${p.lang}">${p.article}</main>${p.hydrate}` });
   check(page.html.startsWith('<main data-lang="en"><article id="tsr-root">'), 'a template function wraps the page');
   check(page.copy.some((c) => c.to === 'pic.png') && page.copy.some((c) => c.to === 'refs.json'), 'its resources to copy');
+  const mono = await exportStatic(await renderTsm(postSrc, { baseDir: postDir, rootDir: postDir,
+    settings: { doc: { lang: 'en' }, fonts: { mono: '"IBM Plex Mono", monospace' } } }), { docDir: postDir, hydrate: false });
+  check(mono.html.includes("--tsr-font-mono: 'IBM Plex Mono', monospace;"), 'the static page\'s code takes fonts.mono');
   const hydrated = /settings: (\{[^\n]*\}),/.exec(page.html);
   check(hydrated && !JSON.parse(hydrated[1]).host && JSON.parse(hydrated[1]).doc?.lang === 'en', 'hydration: the resolved settings, the host\'s rows aside');
   const embedded = await exportStatic(bundle, { docDir: postDir, embedResources: true, hydrate: false });

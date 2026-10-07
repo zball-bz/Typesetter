@@ -98,6 +98,11 @@ export async function exportStatic(bundle, {
   const styles = bundle.styles ?? {};
   const bodyFont = settingOf(settings, 'fonts.body');
   const cjkFont = settingOf(settings, 'fonts.cjk');
+  // (the typeset page's root says them; the static page's code reads them
+  // too: rules_css's var(--tsr-font-mono))
+  const monoFont = settingOf(settings, 'fonts.mono');
+  const monoCjkFont = settingOf(settings, 'fonts.monoCjk');
+  const cssFont = (f) => f.replace(/"/g, "'").replace(/[<>{};]/g, '');
   // (plan P5-01) and the host's math fonts, where the host serves them
   const mathFace = math
     ? `@font-face { font-family: ${JSON.stringify(MATH_FONT.family)}; src: url(${JSON.stringify(`${assets}/${MATH_FONT.file}`)}); }\n` +
@@ -113,7 +118,7 @@ ${mathFace}${styles.contract ?? ''}
 ${styles.theme ?? ''}
 body { margin: 0 auto; max-width: 42em; padding: 2em 1em;
        font-family: ${bodyFont.replace(/[<>{};]/g, '')}; }
-#tsr-root { --tsr-cjk-font: ${cjkFont.replace(/"/g, "'").replace(/[<>{};]/g, '')}; }
+#tsr-root { --tsr-cjk-font: ${cssFont(cjkFont)}; --tsr-font-mono: ${cssFont(monoFont)};${monoCjkFont ? ` --tsr-font-mono-cjk: ${cssFont(monoCjkFont)};` : ''} }
 .tsr-flow img { max-width: 100%; height: auto; }
 .tsr-flow pre { overflow-x: auto; }
 /* the rules (plan P3-01: engine defaults, host rules, the document's $.set) */
