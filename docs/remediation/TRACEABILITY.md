@@ -1110,7 +1110,7 @@ Theme steps: — · findings: 1
 | `resolver/untested-diagnostics` | issue | low | P0-09 | grep:plan P0-09 |
 | `resolver/missed:0` | missed | high | P2-03 | grep:plan P2-03 |
 | `resolver/missed:1` | missed | medium | P0-09 | grep:plan P0-09 |
-| `resolver/missed:2` | missed | medium | P3-04, P3-06 | grep:plan P3-06 | grep:plan P3-06 |
+| `resolver/missed:2` | missed | medium | P3-04, P3-06 | grep:plan P3-06 |
 | `resolver/missed:3` | missed | medium | P3-03 | grep:plan P3-03 |
 | `resolver/missed:4` | missed | low | P3-03 | grep:plan P3-03 |
 | `resolver/missed:5` | missed | low | P0-09, P1-03, P1-10 | grep:plan P1-10 |
@@ -1155,37 +1155,37 @@ Theme steps: — · findings: 1
 | `break-layout-pages/glue-semantics-split` | adhoc | high | P4-08 | grep:plan P4-08 |
 | `break-layout-pages/hyphen-url-not-discretionary` | adhoc | medium | P4-08 | grep:plan P4-08 |
 | `break-layout-pages/break-policy-config-knobs` | adhoc | medium | P4-06, P4-08 | grep:plan P4-08 |
-| `break-layout-pages/parshape-prefix-form` | adhoc | high | P3-08 | grep:plan P3-08 | grep:plan P3-08 |
+| `break-layout-pages/parshape-prefix-form` | adhoc | high | P3-08 | grep:plan P3-08 |
 | `break-layout-pages/float-tracker-replay` | adhoc | high | P1-15 | grep:plan P1-15 |
 | `break-layout-pages/float-model-closed` | adhoc | high | P3-15 | grep:plan P3-15 |
 | `break-layout-pages/unit-kind-switch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `break-layout-pages/nested-stream-copies` | adhoc | high | P1-17 | grep:plan P1-17 |
 | `break-layout-pages/table-closed` | adhoc | high | P3-10, P3-14 | grep:plan P3-14 |
-| `break-layout-pages/alignment-flags` | adhoc | medium | P3-09 | grep:plan P5-02 | grep:plan P3-09 |
+| `break-layout-pages/alignment-flags` | adhoc | medium | P3-09 | grep:plan P5-02 |
 | `break-layout-pages/vertical-spacing-constants` | adhoc | medium | P1-18, P3-01 | grep:plan P3-01 |
-| `break-layout-pages/code-wrap-in-layout` | adhoc | medium | P3-11 | grep:plan P5-02 | grep:plan P3-11 |
-| `break-layout-pages/code-sidecar-three-box` | adhoc | medium | P3-11 | grep:plan P3-11 | grep:plan P3-11 |
+| `break-layout-pages/code-wrap-in-layout` | adhoc | medium | P3-11 | grep:plan P5-02 |
+| `break-layout-pages/code-sidecar-three-box` | adhoc | medium | P3-11 | grep:plan P3-11 |
 | `break-layout-pages/comment-role-by-color` | adhoc | low | P2-08 | grep:plan P2-08 |
-| `break-layout-pages/paginator-in-serializer` | adhoc | high | P3-12 | grep:plan P3-12 | grep:plan P3-12 |
+| `break-layout-pages/paginator-in-serializer` | adhoc | high | P3-12 | grep:plan P3-12 |
 | `break-layout-pages/group-role-dispatch` | adhoc | high | P1-18, P3-14 | grep:plan P3-14 |
-| `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 | grep:plan P3-08 | grep:plan P3-08 |
+| `break-layout-pages/measure-definition-split` | adhoc | low | P3-08 | grep:plan P3-08 |
 | `break-layout-pages/kp-window-heuristics` | adhoc | low | P1-14 | grep:plan P1-14 |
 | `break-layout-pages/overfull-collapses-paragraph` | issue | high | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/emit-reads-measure-stale-on-relayout` | issue | high | P1-16 | grep:plan P1-16 |
-| `break-layout-pages/wide-float-overprints-text` | issue | medium | P3-08 | grep:plan P5-02 | grep:plan P3-08 |
+| `break-layout-pages/wide-float-overprints-text` | issue | medium | P3-08 | grep:plan P5-02 |
 | `break-layout-pages/break-inf-float-vs-double` | issue | medium | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/trailing-glue-in-break-cost` | issue | medium | P0-12 | grep:plan P0-12 |
-| `break-layout-pages/snap-kerning-ignores-sidecar` | issue | medium | P3-11 | grep:plan P3-11 | grep:plan P3-11 |
-| `break-layout-pages/float-adds-paragraph-gap` | issue | low | P3-08 | grep:plan P3-08 | grep:plan P3-08 |
-| `break-layout-pages/float-indent-geometry` | issue | low | P3-08 | grep:plan P5-02 | grep:plan P3-08 |
-| `break-layout-pages/paged-atoms-clipped` | issue | medium | P3-12 | grep:plan P5-02 | grep:plan P3-12 |
+| `break-layout-pages/snap-kerning-ignores-sidecar` | issue | medium | P3-11 | grep:plan P3-11 |
+| `break-layout-pages/float-adds-paragraph-gap` | issue | low | P3-08 | grep:plan P3-08 |
+| `break-layout-pages/float-indent-geometry` | issue | low | P3-08 | grep:plan P5-02 |
+| `break-layout-pages/paged-atoms-clipped` | issue | medium | P3-12 | grep:plan P5-02 |
 | `break-layout-pages/break-cache-robustness` | issue | low | P0-11, P1-14 | grep:plan P1-14 |
 | `break-layout-pages/api-hosts-layout-policy` | issue | medium | P1-03, P1-15 | grep:plan P1-15 |
 | `break-layout-pages/baseline-not-communicated` | issue | low | P1-18 | grep:plan P1-18 |
-| `break-layout-pages/doc-drift` | issue | low | P1-15, P3-12 | grep:plan P5-02 | grep:plan P3-12 |
-| `break-layout-pages/missed:0` | missed | medium | P1-18, P3-12 | grep:plan P3-12 | grep:plan P3-12 |
+| `break-layout-pages/doc-drift` | issue | low | P1-15, P3-12 | grep:plan P5-02 |
+| `break-layout-pages/missed:0` | missed | medium | P1-18, P3-12 | grep:plan P3-12 |
 | `break-layout-pages/missed:1` | missed | medium | P0-10 | grep:plan P0-10 |
-| `break-layout-pages/missed:2` | missed | medium | P1-17, P3-07 | grep:plan P3-07 | grep:plan P3-07 |
+| `break-layout-pages/missed:2` | missed | medium | P1-17, P3-07 | grep:plan P3-07 |
 | `break-layout-pages/missed:3` | missed | medium | P0-12 | grep:plan P0-12 |
 | `break-layout-pages/missed:4` | missed | medium | P3-28 | grep:plan P3-28 |
 | `break-layout-pages/missed:5` | missed | low | P0-12 | grep:plan P0-12 |
@@ -1193,10 +1193,10 @@ Theme steps: — · findings: 1
 | `render-runtime/typeset-role-blind` | adhoc | high | P3-23 | grep:plan P3-23 |
 | `render-runtime/linebox-special-dispatch` | adhoc | high | P1-18 | grep:plan P1-18 |
 | `render-runtime/render-layout-decisions` | adhoc | high | P1-18 | grep:plan P1-18 |
-| `render-runtime/paged-keep-rules-by-kind` | adhoc | medium | P3-12 | grep:plan P3-12 | grep:plan P3-12 |
-| `render-runtime/copy-syn-policy` | adhoc | medium | P3-07 | grep:plan P3-07 | grep:plan P3-07 |
-| `render-runtime/copy-line-separators` | adhoc | medium | P3-07 | grep:plan P5-02 | grep:plan P3-07 |
-| `render-runtime/shell-note-popups` | adhoc | high | P3-04, P3-06 | grep:plan P3-06 | grep:plan P3-06 |
+| `render-runtime/paged-keep-rules-by-kind` | adhoc | medium | P3-12 | grep:plan P3-12 |
+| `render-runtime/copy-syn-policy` | adhoc | medium | P3-07 | grep:plan P3-07 |
+| `render-runtime/copy-line-separators` | adhoc | medium | P3-07 | grep:plan P5-02 |
+| `render-runtime/shell-note-popups` | adhoc | high | P3-04, P3-06 | grep:plan P3-06 |
 | `render-runtime/shell-chunk-byte-coupling` | adhoc | medium | P3-05 | grep:plan P3-05 |
 | `render-runtime/anchor-namespace` | adhoc | medium | P3-04 | grep:plan P3-04 |
 | `render-runtime/css-contract-monolith` | adhoc | medium | P3-18 | grep:plan P3-18 |
@@ -1205,30 +1205,30 @@ Theme steps: — · findings: 1
 | `render-runtime/marker-gutter` | adhoc | low | P1-18, P3-16 | grep:plan P3-16 |
 | `render-runtime/config-plumbing` | adhoc | medium | P1-03 | grep:plan P1-03 |
 | `render-runtime/static-export-template` | adhoc | medium | P3-21, P3-36 | grep:plan P3-36 |
-| `render-runtime/anchor-decode-duplication` | adhoc | medium | P3-05 | grep:plan P5-02 | grep:plan P3-07 |
-| `render-runtime/audit-hint-attributes` | adhoc | low | P3-07 | grep:plan P3-07 | grep:plan P3-07 |
+| `render-runtime/anchor-decode-duplication` | adhoc | medium | P3-05 | grep:plan P5-02 |
+| `render-runtime/audit-hint-attributes` | adhoc | low | P3-07 | grep:plan P3-07 |
 | `render-runtime/duplicate-serializer-primitives` | adhoc | low | P0-10, P1-02 | grep:plan P1-02 |
-| `render-runtime/shell-feature-inventory` | adhoc | medium | P3-06 | grep:plan P3-06 | grep:plan P3-06 |
+| `render-runtime/shell-feature-inventory` | adhoc | medium | P3-06 | grep:plan P3-06 |
 | `render-runtime/snap-kerning-duplicate-style` | issue | high | P0-10 | grep:plan P0-10 |
 | `render-runtime/semantic-footnote-ids-dangle` | issue | high | P0-09, P0-10 | grep:plan P0-10 |
-| `render-runtime/copy-drops-blank-code-lines` | issue | medium | P3-07 | grep:plan P3-07 | grep:plan P3-07 |
+| `render-runtime/copy-drops-blank-code-lines` | issue | medium | P3-07 | grep:plan P3-07 |
 | `render-runtime/sidecar-hyphen-missing` | issue | medium | P1-17 | grep:plan P1-17 |
 | `render-runtime/sidecar-dropped-in-semantic` | issue | medium | P3-23 | grep:plan P3-23 |
-| `render-runtime/popup-breaks-patch` | issue | low | P3-06 | grep:plan P3-06 | grep:plan P3-06 |
+| `render-runtime/popup-breaks-patch` | issue | low | P3-06 | grep:plan P3-06 |
 | `render-runtime/host-line-height-leak` | issue | medium | P3-19 | grep:plan P3-19 |
 | `render-runtime/paged-gutter-clipping` | issue | medium | P3-16 | grep:plan P3-16 |
 | `render-runtime/trailing-float-and-gap-drift` | issue | low | P3-16 | grep:plan P3-16 |
 | `render-runtime/typeset-a11y` | issue | medium | P3-27 | grep:plan P3-27 |
 | `render-runtime/error-render-divergence` | issue | low | P3-16 | grep:plan P3-16 |
 | `render-runtime/hyphen-in-link-or-ref` | issue | low | P0-10 | grep:plan P0-10 |
-| `render-runtime/normative-doc-drift` | issue | low | P3-07 | grep:plan P5-02 | grep:plan P3-07 |
+| `render-runtime/normative-doc-drift` | issue | low | P3-07 | grep:plan P5-02 |
 | `render-runtime/swap-whole-container` | issue | low | P3-05 | grep:plan P3-05 |
 | `render-runtime/missed:0` | missed | high | P0-10, P4-01 | grep:plan P4-01 |
 | `render-runtime/missed:1` | missed | medium | P1-18 | grep:plan P1-18 |
 | `render-runtime/missed:2` | missed | medium | P1-02 | grep:plan P1-02 |
 | `render-runtime/missed:3` | missed | medium | P4-03 | grep:plan P4-03 |
 | `render-runtime/missed:4` | missed | low | P3-05 | grep:plan P3-05 |
-| `render-runtime/missed:5` | missed | low | P3-07 | grep:plan P5-02 | grep:plan P3-07 |
+| `render-runtime/missed:5` | missed | low | P3-07 | grep:plan P5-02 |
 | `math/call-construct-string-dispatch` | adhoc | high | P1-24 | grep:plan P1-24 |
 | `math/vocabulary-in-font-artifact` | adhoc | high | P1-22, P3-24 | grep:plan P3-24 |
 | `math/lexer-hardcoded-alphabet` | adhoc | medium | P3-24 | grep:plan P3-24 |
@@ -1277,7 +1277,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/token-class-as-color-string` | adhoc | high | P2-08 | grep:plan P2-08 |
 | `api-measure-code/language-registry-scattered` | adhoc | medium | P3-22 | grep:plan P3-22 |
 | `api-measure-code/literate-cpp-special-case` | adhoc | low | P3-22 | grep:plan P3-22 |
-| `api-measure-code/grid-is-codeblock-only` | adhoc | medium | P3-11 | kept: 代码网格采用贪心算法（PLAN §9；INTEGRATION Keep special：网格只由逐字内容到达）；其策略已是数据：code.minCols、code.breakAfter、code.commentAware、codeblock.contIndent（P5-02） | grep:plan P3-11 |
+| `api-measure-code/grid-is-codeblock-only` | adhoc | medium | P3-11 | kept: 代码网格采用贪心算法（PLAN §9；INTEGRATION Keep special：网格只由逐字内容到达）；其策略已是数据：code.minCols、code.breakAfter、code.commentAware、codeblock.contIndent（P5-02） |
 | `api-measure-code/sidecar-api-layer-rewrite` | adhoc | high | P2-13 | grep:plan P2-13 |
 | `api-measure-code/doc-typeset-hosts-layout-logic` | adhoc | medium | P1-15 | grep:plan P1-15 |
 | `api-measure-code/adhoc-invalidation-flags` | adhoc | high | P1-03 | grep:plan P1-03 |
@@ -1289,7 +1289,7 @@ Theme steps: — · findings: 1
 | `api-measure-code/snap-kerning-duplicate-style-attr` | issue | high | P0-10, P1-03 | grep:plan P1-03 |
 | `api-measure-code/relayout-stale-emit` | issue | high | P0-11, P1-16 | grep:plan P1-16 |
 | `api-measure-code/image-w-only-overwritten` | issue | high | P0-11, P1-19 | grep:plan P1-19 |
-| `api-measure-code/snap-ignores-sidecar-partition` | issue | medium | P1-03, P3-11 | grep:plan P3-11 | grep:plan P3-11 |
+| `api-measure-code/snap-ignores-sidecar-partition` | issue | medium | P1-03, P3-11 | grep:plan P3-11 |
 | `api-measure-code/late-font-stale-measure-cache` | issue | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/main-dims-rpc-race` | issue | medium | P0-11 | grep:plan P0-11 |
 | `api-measure-code/worker-no-per-doc-serialization` | issue | medium | P0-11 | grep:plan P0-11 |
@@ -1319,9 +1319,9 @@ Theme steps: — · findings: 1
 | `real-world-evidence/description-list-missing` | adhoc | medium | P3-34 | grep:plan P3-34 |
 | `real-world-evidence/table-model-v1` | adhoc | medium | P3-14 | grep:plan P3-14 |
 | `real-world-evidence/figure-model-single-image` | adhoc | medium | P3-15 | grep:plan P3-15 |
-| `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 | grep:plan P3-08 | grep:plan P3-08 |
+| `real-world-evidence/parshape-prefix` | adhoc | medium | P3-08 | grep:plan P3-08 |
 | `real-world-evidence/resource-and-config-plumbing` | adhoc | medium | P3-21 | grep:plan P3-21 |
-| `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 | grep:plan P3-06 | grep:plan P3-06 |
+| `real-world-evidence/notes-popups-dom-scraping` | adhoc | medium | P3-04, P3-06 | grep:plan P3-06 |
 | `real-world-evidence/presentation-constants` | adhoc | medium | P3-01 | grep:plan P3-01 |
 | `real-world-evidence/math-extensibility` | adhoc | medium | P3-29 | grep:plan P3-29 |
 | `real-world-evidence/no-cross-document-labels` | adhoc | high | P3-31 | grep:plan P3-31 |
